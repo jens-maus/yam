@@ -431,7 +431,7 @@ static BOOL FI_SearchPatternInHeader(const struct Search *search, const struct M
   BOOL found = FALSE;
 
   ENTER();
-  
+
   GetMailFile(mailfile, sizeof(mailfile), NULL, mail);
 
   if(StartUnpack(mailfile, fullfile, mail->Folder) != NULL)
@@ -1775,6 +1775,36 @@ BOOL ExecuteFilterAction(const struct FilterNode *filter, struct Mail *mail, str
     // PlaySound Action
     if(hasPlaySoundAction(filter) && *filter->playSound)
       PlaySound(filter->playSound);
+
+    // Status to "marked/unmarked" action
+    if(hasStatusToMarkedAction(filter) && filter->remote == FALSE)
+    {
+      setStatusToMarked(mail);
+    }
+    else if(hasStatusToUnmarkedAction(filter) && filter->remote == FALSE)
+    {
+      setStatusToUnmarked(mail);
+    }
+
+    // Status to "read/unread" action
+    if(hasStatusToReadAction(filter) && filter->remote == FALSE)
+    {
+      setStatusToRead(mail);
+    }
+    else if(hasStatusToUnreadAction(filter) && filter->remote == FALSE)
+    {
+      setStatusToUnread(mail);
+    }
+
+    // Status to "spam/not spam" action
+    if(hasStatusToSpamAction(filter) && filter->remote == FALSE)
+    {
+      setStatusToAutoSpam(mail);
+    }
+    else if(hasStatusToHamAction(filter) && filter->remote == FALSE)
+    {
+      setStatusToHam(mail);
+    }
 
     // Move Action
     if(hasMoveAction(filter) && filter->remote == FALSE)

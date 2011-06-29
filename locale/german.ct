@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.28 (21.6.2011)
+## version $VER: YAM.catalog 7.29 (29.6.2011)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -8625,4 +8625,40 @@ MSG_ER_NON_MIME_CONFORMANT_MAIL
 Beim Durchsuchen der Nachricht '%s' wurde keine 'MIME-Version' Kopfzeile gefunden. \
 Die Ausgabe könnte daher möglicherweise ungültige Daten enthalten oder aber beschädigt sein.
 ; MSGFILE
+;
+MSG_CO_ACTION_SET_STATUS_TO_MARKED
+Setze Status auf 'Markiert'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_MARKED
+Setze den Status der gefilterten Nachricht auf 'Markiert'
+;
+MSG_CO_ACTION_SET_STATUS_TO_UNMARKED
+Setze Status auf 'Nicht Markiert'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_UNMARKED
+Setze den Status der gefilterten Nachricht auf 'Nicht Markiert'
+;
+MSG_CO_ACTION_SET_STATUS_TO_READ
+Setze Status auf 'Gelesen'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_READ
+Setze den Status der gefilterten Nachricht auf 'Gelesen'
+;
+MSG_CO_ACTION_SET_STATUS_TO_UNREAD
+Setze Status auf 'Ungelesen'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_UNREAD
+Setze den Status der gefilterten Nachricht auf 'Ungelesen'
+;
+MSG_CO_ACTION_SET_STATUS_TO_SPAM
+Setze Status auf 'Spam'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_SPAM
+Setze den Status der gefilterten Nachricht auf 'Spam'
+;
+MSG_CO_ACTION_SET_STATUS_TO_HAM
+Setze Status auf 'kein Spam'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_HAM
+Setze den Status der gefilterten Nachricht auf 'kein Spam'
 ;

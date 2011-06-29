@@ -307,6 +307,12 @@ struct CO_GUIData
   Object *CH_TEXTSTYLES_WRITE;
   Object *CH_TEXTCOLORS_WRITE;
   Object *CH_NOTIOS41SYSTEM;
+  Object *CH_ASTATUSTOMARKED;
+  Object *CH_ASTATUSTOUNMARKED;
+  Object *CH_ASTATUSTOREAD;
+  Object *CH_ASTATUSTOUNREAD;
+  Object *CH_ASTATUSTOSPAM;
+  Object *CH_ASTATUSTOHAM;
 };
 
 struct CO_ClassData  /* configuration window */

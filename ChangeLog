@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-06-29 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_FI.c, YAM_CO.c: implemented new filter actions to mark a filtered mail
+    as (un)marked, (un)read or as spam/not spam. This closes #265.
+
 2011-06-29 Mariusz Danilewicz <mandi@interia.pl>
 
   * locale/polish.ct: update to the latest changes.

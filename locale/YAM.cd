@@ -7052,3 +7052,39 @@ No 'MIME-Version' header line was found while scanning the mail file '%s'. \
 The generated output may therefore contain invalid data or may be corrupted.
 ; MSGFILE
 ;
+MSG_CO_ACTION_SET_STATUS_TO_MARKED (2221//)
+Set status to 'Marked'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_MARKED (2222//)
+Set the status of the filtered mail to 'Marked'
+;
+MSG_CO_ACTION_SET_STATUS_TO_UNMARKED (2223//)
+Set status to 'Unmarked'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_UNMARKED (2224//)
+Set the status of the filtered mail to 'Unmarked'
+;
+MSG_CO_ACTION_SET_STATUS_TO_READ (2225//)
+Set status to 'Read'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_READ (2226//)
+Set the status of the filtered mail to 'Read'
+;
+MSG_CO_ACTION_SET_STATUS_TO_UNREAD (2227//)
+Set status to 'Unread'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_UNREAD (2228//)
+Set the status of the filtered mail to 'Unread'
+;
+MSG_CO_ACTION_SET_STATUS_TO_SPAM (2229//)
+Set status to 'Spam'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_SPAM (2230//)
+Set the status of the filtered mail to 'Spam'
+;
+MSG_CO_ACTION_SET_STATUS_TO_HAM (2231//)
+Set status to 'Not spam'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_HAM (2232//)
+Set the status of the filtered mail to 'Not spam'
+;

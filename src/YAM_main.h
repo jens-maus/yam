@@ -130,6 +130,7 @@ struct Part;
 #define setStatusToSent(mail)         MA_ChangeMailStatus(mail, SFLAG_SENT|SFLAG_READ, SFLAG_QUEUED|SFLAG_HOLD|SFLAG_ERROR)
 #define setStatusToDeleted(mail)      MA_ChangeMailStatus(mail, SFLAG_DELETED, SFLAG_NONE)
 #define setStatusToMarked(mail)       MA_ChangeMailStatus(mail, SFLAG_MARKED, SFLAG_NONE)
+#define setStatusToUnmarked(mail)     MA_ChangeMailStatus(mail, SFLAG_NONE, SFLAG_MARKED)
 #define setStatusToError(mail)        MA_ChangeMailStatus(mail, SFLAG_ERROR, SFLAG_NONE)
 #define setStatusToUserSpam(mail)     MA_ChangeMailStatus(mail, SFLAG_USERSPAM|SFLAG_READ, SFLAG_NEW|SFLAG_AUTOSPAM|SFLAG_HAM)
 #define setStatusToAutoSpam(mail)     MA_ChangeMailStatus(mail, SFLAG_AUTOSPAM, SFLAG_USERSPAM|SFLAG_HAM)
