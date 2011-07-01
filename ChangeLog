@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-07-01 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/WriteWindow.c: set a busy mouse pointer while writing the final mail
+    file. This makes a obvious why YAM does not react on user input while a
+    large attachment is being encoded.
+
 2011-06-29 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_FI.c, YAM_CO.c: implemented new filter actions to mark a filtered mail

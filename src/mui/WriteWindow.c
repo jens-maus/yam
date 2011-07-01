@@ -3969,14 +3969,20 @@ DECLARE(ComposeMail) // enum WriteMode mode
   if(newMailFile[0] != '\0' &&
      (comp.FH = fopen(newMailFile, "w")) != NULL)
   {
+    BOOL success;
     struct ExtendedMail *email;
     int stat = mode == WRITE_HOLD ? SFLAG_HOLD : SFLAG_QUEUED;
 
     setvbuf(comp.FH, NULL, _IOFBF, SIZE_FILEBUF);
 
-    // write out the message to our file and
-    // check that everything worked out fine.
-    if(WriteOutMessage(&comp) == FALSE)
+    // Write out the message to our file and check that everything worked out fine.
+    // Set a busy mouse pointer during this operation, since encoding large attachments
+    // might take quite a long time.
+    set(obj, MUIA_Window_Sleep, TRUE);
+    success = WriteOutMessage(&comp);
+    set(obj, MUIA_Window_Sleep, FALSE);
+
+    if(success == FALSE)
     {
       fclose(comp.FH);
 
