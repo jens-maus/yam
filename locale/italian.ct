@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.88 (21.06.2011)
+## version $VER: YAM.catalog 7.89 (1.07.2011)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -7,7 +7,7 @@
 ; Compiled with FlexCat 2.8 PPC (AmigaOS4)
 ; $Id$
 ;
-; based on YAM.cd 5670 2011-06-21
+; based on YAM.cd 5715 2011-06-29
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -10090,4 +10090,52 @@ L'output generato potrebbe contenere dati invalidi o corrotti.
 ; No 'MIME-Version' header line was found while scanning the mail file '%s'. \
 ; The generated output may therefore contain invalid data or may be corrupted.
 ; MSGFILE
+;
+MSG_CO_ACTION_SET_STATUS_TO_MARKED
+Imposta lo stato su 'Marcato'
+; Set status to 'Marked'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_MARKED
+Imposta lo stato del messaggio filtrato su 'Marcato'
+; Set the status of the filtered mail to 'Marked'
+;
+MSG_CO_ACTION_SET_STATUS_TO_UNMARKED
+Imposta lo stato su 'Non marcato'
+; Set status to 'Unmarked'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_UNMARKED
+Imposta lo stato del messaggio filtrato su 'Non marcato'
+; Set the status of the filtered mail to 'Unmarked'
+;
+MSG_CO_ACTION_SET_STATUS_TO_READ
+Imposta lo stato su 'Letto'
+; Set status to 'Read'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_READ
+Imposta lo stato del messaggio filtrato su 'Letto'
+; Set the status of the filtered mail to 'Read'
+;
+MSG_CO_ACTION_SET_STATUS_TO_UNREAD
+Imposta lo stato su 'Non letto'
+; Set status to 'Unread'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_UNREAD
+Imposta lo stato del messaggio filtrato su 'Non letto'
+; Set the status of the filtered mail to 'Unread'
+;
+MSG_CO_ACTION_SET_STATUS_TO_SPAM
+Imposta lo stato su 'Spam'
+; Set status to 'Spam'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_SPAM
+Imposta lo stato del messaggio filtrato su 'Spam'
+; Set the status of the filtered mail to 'Spam'
+;
+MSG_CO_ACTION_SET_STATUS_TO_HAM
+Imposta lo stato su 'Non spam'
+; Set status to 'Not spam'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_HAM
+Imposta lo stato del messaggio filtrato su 'Non spam'
+; Set the status of the filtered mail to 'Not spam'
 ;

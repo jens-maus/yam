@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-07-01 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: update to the latest changes.
+
 2011-07-01 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/WriteWindow.c: set a busy mouse pointer while writing the final mail
