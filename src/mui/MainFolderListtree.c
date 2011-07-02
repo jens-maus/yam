@@ -88,22 +88,20 @@ enum
 /* Private Functions */
 /// FormatFolderInfo
 // puts all user defined folder information into a string
-static void FormatFolderInfo(char *folderStr, const size_t maxLen, const struct Folder *folder, const ULONG flags)
+static void FormatFolderInfo(char *folderStr, const size_t maxLen,
+                             const struct Folder *folder, const struct MUI_NListtree_TreeNode *treeNode)
 {
   int imageIndex = -1;
 
   ENTER();
 
-  // add the folder image first, if it exists
+  // add the folder image
   if(folder->Type == FT_GROUP)
-    imageIndex = isFlagSet(flags, TNF_OPEN) ? FICON_ID_UNFOLD : FICON_ID_FOLD;
+    imageIndex = isFlagSet(treeNode->tn_Flags, TNF_OPEN) ? FICON_ID_UNFOLD : FICON_ID_FOLD;
   else
-    imageIndex = folder->ImageIndex;
+    imageIndex = folder->ImageIndex >= 0 ? folder->ImageIndex : FICON_ID_FOLD;
 
-  if(imageIndex >= 0)
-    snprintf(folderStr, maxLen, "\033o[%d] ", imageIndex);
-  else
-    strlcpy(folderStr, " ", maxLen);
+  snprintf(folderStr, maxLen, "\033o[%d]", imageIndex);
 
   // include the folder name/path
   if(folder->Name[0] != '\0')
@@ -112,7 +110,7 @@ static void FormatFolderInfo(char *folderStr, const size_t maxLen, const struct 
     snprintf(folderStr, maxLen, "%s[%s]", folderStr, FilePart(folder->Path));
 
   // append the numbers if this is an close folder group or a folder with a valid index
-  if((folder->Type == FT_GROUP && isFlagClear(flags, TNF_OPEN)) ||
+  if((folder->Type == FT_GROUP && isFlagClear(treeNode->tn_Flags, TNF_OPEN)) ||
      (folder->LoadedMode != LM_UNLOAD && folder->LoadedMode != LM_REBUILD))
   {
     char dst[SIZE_SMALL];
@@ -571,12 +569,13 @@ OVERLOAD(MUIM_NListtree_Display)
     ndm->Array[3] = data->newStr;
     ndm->Array[4] = data->sizeStr;
 
+    // create folderStr
+    FormatFolderInfo(data->folderStr, sizeof(data->folderStr), entry, ndm->TreeNode);
+
     switch(entry->Type)
     {
       case FT_GROUP:
       {
-        FormatFolderInfo(data->folderStr, sizeof(data->folderStr), entry, ndm->TreeNode->tn_Flags);
-
         ndm->Preparse[0] = (entry->New != 0 || entry->Unread != 0) ? C->StyleFGroupUnread : C->StyleFGroupRead;
 
         // show group stats for closed nodes only
@@ -600,8 +599,6 @@ OVERLOAD(MUIM_NListtree_Display)
 
       default:
       {
-        FormatFolderInfo(data->folderStr, sizeof(data->folderStr), entry, 0);
-
         if(entry->LoadedMode != LM_UNLOAD && entry->LoadedMode != LM_REBUILD)
         {
           if(entry->New != 0)
@@ -829,7 +826,7 @@ OVERLOAD(MUIM_ContextMenuChoice)
 //  Creates format definition for folder listtree
 DECLARE(MakeFormat)
 {
-  static const int defwidth[FOCOLNUM] = { -1,-1,-1,-1,-1 };
+  static const int defwidth[FOCOLNUM] = { 100,0,0,0,0 };
   char format[SIZE_LARGE];
   BOOL first = TRUE;
   int i;
@@ -845,7 +842,7 @@ DECLARE(MakeFormat)
       if(first)
         first = FALSE;
       else
-        strlcat(format, " BAR,", sizeof(format));
+        strlcat(format, " NOBAR,", sizeof(format));
 
       p = strlen(format);
       snprintf(&format[p], sizeof(format)-p, "COL=%d W=%d", i, defwidth[i]);
@@ -854,7 +851,7 @@ DECLARE(MakeFormat)
         strlcat(format, " P=\033r", sizeof(format));
     }
   }
-  strlcat(format, " BAR", sizeof(format));
+  strlcat(format, " NOBAR", sizeof(format));
 
   // set the new NList_Format to our object
   set(obj, MUIA_NList_Format, format);

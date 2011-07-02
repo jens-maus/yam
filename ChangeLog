@@ -5,6 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-07-02 Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_FO.c, mui/MainFolderListtree.c: removed the use of TNF_NOSIGN so that
+    the user style selected in the NListtree.mcc preferences are respected.
+    Previously we were forcing the user to our style which IMHO was not very
+    nice. In addition, we are always showing a folder icon now in front of
+    a message folder in case the user hasn't installed a custom icon. This
+    should make the look&feel more consistent. Furthermore we don't display
+    and vertical bar in the folder list anymore which should allow to make
+    it smaller.
+
 2011-07-01 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: update to the latest changes.

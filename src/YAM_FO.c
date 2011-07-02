@@ -870,13 +870,6 @@ BOOL FO_LoadTree(void)
             while(GetLine(&buffer, &size, fh) >= 0);
             fo->SortIndex = i++;
 
-            // Now we check if the foldergroup image was loaded and if not we enable the standard NListtree image
-            if(IsImageInCache("folder_fold") &&
-               IsImageInCache("folder_unfold"))
-            {
-              SET_FLAG(tnflags, TNF_NOSIGN);
-            }
-
             LockFolderList(G->folders);
             fnode = AddNewFolderNode(G->folders, fo);
             UnlockFolderList(G->folders);
@@ -923,13 +916,6 @@ BOOL FO_LoadTree(void)
               // if it is greater zero then the node should be displayed open
               if(atoi(buffer) > 0)
                 SET_FLAG(tnflags, TNF_OPEN);
-            }
-
-            // Now we check if the foldergroup image was loaded and if not we enable the standard NListtree image
-            if(IsImageInCache("folder_fold") &&
-               IsImageInCache("folder_unfold"))
-            {
-              SET_FLAG(tnflags, TNF_NOSIGN);
             }
 
             LockFolderList(G->folders);
@@ -1512,13 +1498,6 @@ HOOKPROTONHNONP(FO_NewFolderGroupFunc, void)
   {
     LONG tnflags = TNF_LIST | TNF_OPEN;
     struct FolderNode *fnode;
-
-    // Now we check if the foldergroup image was loaded and if not we enable the standard NListtree image
-    if(IsImageInCache("folder_fold") == TRUE &&
-       IsImageInCache("folder_unfold") == TRUE)
-    {
-      SET_FLAG(tnflags, TNF_NOSIGN);
-    }
 
     LockFolderList(G->folders);
     fnode = AddNewFolderNode(G->folders, memdup(&folder, sizeof(folder)));
