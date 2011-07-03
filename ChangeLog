@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-07-03 Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_AB.c: a double click on a folder in the addressbook doesn't popup the
+    edit window anymore. This should remove the confusion where a double click
+    on a TNF_LIST usually means opening/closing it rather than editing. Thus,
+    this should be now more consistent with how the mailfolderlist handles
+    this.
+  
 2011-07-02 Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_FO.c, mui/MainFolderListtree.c: removed the use of TNF_NOSIGN so that

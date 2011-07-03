@@ -2234,12 +2234,14 @@ HOOKPROTONHNONP(AB_DoubleClick, void)
   }
   else
   {
+    struct MUI_NListtree_TreeNode *active;
+
+    active = (struct MUI_NListtree_TreeNode *)xget(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active);
+
     if(G->AB->Mode == ABM_CONFIG &&
        G->AB->parentStringGadget != NULL)
     {
-      struct MUI_NListtree_TreeNode *active;
-
-      if((active = (struct MUI_NListtree_TreeNode *)xget(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active)) != NULL)
+      if(active != NULL)
       {
         struct ABEntry *addr = (struct ABEntry *)(active->tn_User);
 
@@ -2248,7 +2250,7 @@ HOOKPROTONHNONP(AB_DoubleClick, void)
 
       set(G->AB->GUI.WI, MUIA_Window_CloseRequest, TRUE);
     }
-    else
+    else if(isFlagClear(active->tn_Flags, TNF_LIST))
       AB_EditFunc();
   }
 
