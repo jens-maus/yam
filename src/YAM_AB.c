@@ -694,14 +694,16 @@ char *AB_CompleteAlias(const char *text)
 ///
 /// AB_FromAddrBook
 /*** AB_FromAddrBook - Inserts an address book entry into a recipient string ***/
-HOOKPROTONHNO(AB_FromAddrBook, void, ULONG *arg)
+HOOKPROTONHNO(AB_FromAddrBook, BOOL, ULONG *arg)
 {
   struct MUI_NListtree_TreeNode *active;
+  BOOL result = FALSE;
 
   ENTER();
 
   if(arg[0] != ABM_NONE &&
-     (active = (struct MUI_NListtree_TreeNode *)xget(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active)) != NULL)
+     (active = (struct MUI_NListtree_TreeNode *)xget(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active)) != NULL &&
+     isFlagClear(active->tn_Flags, TNF_LIST))
   {
     Object *writeWindow = NULL;
     struct ABEntry *addr = (struct ABEntry *)(active->tn_User);
@@ -745,10 +747,13 @@ HOOKPROTONHNO(AB_FromAddrBook, void, ULONG *arg)
       }
 
       DoMethod(writeWindow, MUIM_WriteWindow_AddRecipient, type, addr->Alias ? addr->Alias : addr->RealName);
+
+      result = TRUE;
     }
   }
 
-  LEAVE();
+  RETURN(result);
+  return result;
 }
 MakeStaticHook(AB_FromAddrBookHook, AB_FromAddrBook);
 
@@ -2229,29 +2234,28 @@ HOOKPROTONHNONP(AB_DoubleClick, void)
 
   if(G->AB->winNumber != -1)
   {
-    DoMethod(G->App, MUIM_CallHook, &AB_FromAddrBookHook, G->AB->Mode);
-    set(G->AB->GUI.WI, MUIA_Window_CloseRequest, TRUE);
+    if(DoMethod(G->App, MUIM_CallHook, &AB_FromAddrBookHook, G->AB->Mode) == TRUE)
+      set(G->AB->GUI.WI, MUIA_Window_CloseRequest, TRUE);
   }
   else
   {
     struct MUI_NListtree_TreeNode *active;
 
-    active = (struct MUI_NListtree_TreeNode *)xget(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active);
-
-    if(G->AB->Mode == ABM_CONFIG &&
-       G->AB->parentStringGadget != NULL)
+    if((active = (struct MUI_NListtree_TreeNode *)xget(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active)) != NULL &&
+        isFlagClear(active->tn_Flags, TNF_LIST))
     {
-      if(active != NULL)
+      if(G->AB->Mode == ABM_CONFIG &&
+         G->AB->parentStringGadget != NULL)
       {
         struct ABEntry *addr = (struct ABEntry *)(active->tn_User);
 
         DoMethod(G->AB->parentStringGadget, MUIM_Recipientstring_AddRecipient, addr->Alias ? addr->Alias : addr->RealName);
-      }
 
-      set(G->AB->GUI.WI, MUIA_Window_CloseRequest, TRUE);
+        set(G->AB->GUI.WI, MUIA_Window_CloseRequest, TRUE);
+      }
+      else
+        AB_EditFunc();
     }
-    else if(isFlagClear(active->tn_Flags, TNF_LIST))
-      AB_EditFunc();
   }
 
   LEAVE();

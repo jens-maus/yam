@@ -7,6 +7,9 @@ $URL$
 
 2011-07-03 Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_AB.c: double clicking on a TNF_LIST entry in the addrbook should now
+    also not be possible to select an entry for adding it to a recipientstring.
+    This was previously possible and caused potential confusions.
   * YAM_AB.c: a double click on a folder in the addressbook doesn't popup the
     edit window anymore. This should remove the confusion where a double click
     on a TNF_LIST usually means opening/closing it rather than editing. Thus,
