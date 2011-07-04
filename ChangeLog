@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-07-04 Thore Böckelmann <tboeckel@gmx.de>
+
+  * MailImport.c: a failed mail import, i.e. due to a low memory situation, will
+    now make sure that any temporary file created during the import is deleted
+    to free up the used memory.
+
 2011-07-03 Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_AB.c: double clicking on a TNF_LIST entry in the addrbook should now
@@ -15,7 +21,7 @@ $URL$
     on a TNF_LIST usually means opening/closing it rather than editing. Thus,
     this should be now more consistent with how the mailfolderlist handles
     this.
-  
+
 2011-07-02 Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_FO.c, mui/MainFolderListtree.c: removed the use of TNF_NOSIGN so that

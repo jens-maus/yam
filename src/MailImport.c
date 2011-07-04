@@ -600,7 +600,8 @@ static void BuildImportList(struct TransferContext *tc, const char *importFile)
         if(feof(ifh) == 0)
         {
           E(DBF_IMPORT, "while loop seems to have exited without having scanned until EOF!");
-          result = foundBody = FALSE;
+          result = FALSE;
+          foundBody = FALSE;
         }
 
         // after quiting the while() loop, we have to check
@@ -608,14 +609,15 @@ static void BuildImportList(struct TransferContext *tc, const char *importFile)
         if(foundBody == TRUE)
         {
           result = (AddMessageHeader(tc, &c, size, addr, tfname) != NULL);
-          DeleteFile(fname);
         }
         else if(ofh != NULL)
         {
           fclose(ofh);
           ofh = NULL;
-          DeleteFile(fname);
         }
+
+        // delete the temporary file in any case
+        DeleteFile(fname);
 
         fclose(ifh);
 
@@ -639,8 +641,10 @@ static void BuildImportList(struct TransferContext *tc, const char *importFile)
         // just have to go and call TR_AddMessageHeader to let
         // YAM analyze the file
         result = (AddMessageHeader(tc, &c, size, 0, tfname) != NULL);
-        DeleteFile(fname);
       }
+
+      // delete the temporary file in any case
+      DeleteFile(fname);
     }
     break;
 
