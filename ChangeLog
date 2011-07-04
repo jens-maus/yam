@@ -14,6 +14,8 @@ $URL$
   * MailImport.c: a failed mail import, i.e. due to a low memory situation, will
     now make sure that any temporary file created during the import is deleted
     to free up the used memory.
+  * YAM_FO.c: added some more characters to the list of forbidden characters for
+    path names.
 
 2011-07-03 Jens Langner <Jens.Langner@light-speed.de>
 
