@@ -1988,14 +1988,14 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
       }
 
       // lets check if entered folder path is valid or not
-      if(folder.Fullpath[0] == '\0')
+      if(folder.Path[0] == '\0')
       {
         MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, tr(MSG_OkayReq), tr(MSG_FO_FOLDERPATHINVALID));
 
         LEAVE();
         return;
       }
-      else if(FileExists(folder.Fullpath) == TRUE) // check if something with folder.Path already exists
+      else if(FileExists(folder.Fullpath) == TRUE) // check if the combined full path already exists
       {
         result = MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, tr(MSG_YesNoReq), tr(MSG_FO_FOLDEREXISTS));
       }

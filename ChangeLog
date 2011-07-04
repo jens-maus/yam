@@ -16,6 +16,8 @@ $URL$
     to free up the used memory.
   * YAM_FO.c: added some more characters to the list of forbidden characters for
     path names.
+  * YAM_FO.c: use the correct variable to check whether a valid path for the new
+    folder was entered.
 
 2011-07-03 Jens Langner <Jens.Langner@light-speed.de>
 
