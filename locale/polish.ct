@@ -1,11 +1,11 @@
-## version $VER: YAM.catalog 7.26 (29.06.2011)
+## version $VER: YAM.catalog 7.27 (04.07.2011)
 ## language polski
 ## codeset 5
 ;
 ## chunk AUTH Mariusz Danilewicz <mandi@interia.pl>
 ; YAM.ct - YAM 2.7 catalog polish translation file
 ; $Id$
-; in sync with .cd in revision 5710;
+; in sync with .cd in revision 5715;
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -9934,4 +9934,52 @@ lub mo¿e byæ uszkodzony.
 ; No 'MIME-Version' header line was found while scanning the mail file '%s'. \
 ; The generated output may therefore contain invalid data or may be corrupted.
 ; MSGFILE
+;
+MSG_CO_ACTION_SET_STATUS_TO_MARKED
+Ustawiono status na \"zaznaczona\"
+; Set status to 'Marked'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_MARKED
+Ustawia status odfiltrowanej wiadomo¶ci na \"zaznaczona\"
+; Set the status of the filtered mail to 'Marked'
+;
+MSG_CO_ACTION_SET_STATUS_TO_UNMARKED
+Ustawiono status na \"odznaczona\"
+; Set status to 'Unmarked'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_UNMARKED
+Ustawia status odfiltrowanej wiadomo¶ci na \"odznaczona\"
+; Set the status of the filtered mail to 'Unmarked'
+;
+MSG_CO_ACTION_SET_STATUS_TO_READ
+Ustawiono status na \"przeczytana\"
+; Set status to 'Read'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_READ
+Ustawia status odfiltrowanej wiadomo¶ci na \"przeczytana\"
+; Set the status of the filtered mail to 'Read'
+;
+MSG_CO_ACTION_SET_STATUS_TO_UNREAD
+Ustawiono status na \"nieprzeczytana\"
+; Set status to 'Unread'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_UNREAD
+Ustawia status odfiltrowanej wiadomo¶ci na \"nieprzeczytana\"
+; Set the status of the filtered mail to 'Unread'
+;
+MSG_CO_ACTION_SET_STATUS_TO_SPAM
+Ustawiono status na \"niechciana\"
+; Set status to 'Spam'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_SPAM
+Ustawia status odfiltrowanej wiadomo¶ci na \"niechciana\"
+; Set the status of the filtered mail to 'Spam'
+;
+MSG_CO_ACTION_SET_STATUS_TO_HAM
+Ustawiono status na \"po¿±dana\"
+; Set status to 'Not spam'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_HAM
+Ustawia status odfiltrowanej wiadomo¶ci na \"po¿±dana\"
+; Set the status of the filtered mail to 'Not spam'
 ;

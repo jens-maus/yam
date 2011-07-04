@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-07-04 Mariusz Danilewicz <mandi@interia.pl>
+
+  * locale/polish.ct: update to the latest changes.
+
 2011-07-04 Thore Böckelmann <tboeckel@gmx.de>
 
   * MailImport.c: a failed mail import, i.e. due to a low memory situation, will
