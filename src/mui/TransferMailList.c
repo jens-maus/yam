@@ -31,6 +31,7 @@
 #include "TransferMailList_cl.h"
 
 #include <string.h>
+#include <proto/dos.h>
 #include <proto/muimaster.h>
 #include <libraries/iffparse.h>
 #include <mui/NList_mcc.h>
@@ -62,6 +63,75 @@ struct Data
 };
 */
 
+/* Private Functions */
+/// MailCompare
+//  Compares two messages
+static int MailCompare(struct MailTransferNode *entry1, struct MailTransferNode *entry2, LONG column)
+{
+  struct Mail *mail1 = entry1->mail;
+  struct Mail *mail2 = entry2->mail;
+
+  switch (column)
+  {
+    case 0:
+    {
+      // mail index
+      return entry1->index - entry2->index;
+    }
+    break;
+    
+    case 1:
+    {
+      // status
+      int status1 = 0;
+      int status2 = 0;
+      
+      if(isFlagSet(entry1->tflags, TRF_DELETE)) status1 |= 1;
+      if(isFlagSet(entry2->tflags, TRF_DELETE)) status2 |= 1;
+      if(isFlagSet(entry1->tflags, TRF_TRANSFER)) status1 |= 2;
+      if(isFlagSet(entry2->tflags, TRF_TRANSFER)) status2 |= 2;
+      
+      return status2 - status1;
+    }
+    break;
+
+    case 2:
+    {
+      // mail size
+      return mail1->Size - mail2->Size;
+    }
+    break;
+
+    case 3:
+    {
+      // sender
+      char *addr1 = AddrName(mail1->From);
+      char *addr2 = AddrName(mail2->From);
+
+      return stricmp(addr1, addr2);
+    }
+    break;
+
+    case 4:
+    {
+      // subject
+      return stricmp(MA_GetRealSubject(mail1->Subject), MA_GetRealSubject(mail2->Subject));
+    }
+    break;
+
+    case 5:
+    {
+      // date
+      return CompareDates(&mail2->Date, &mail1->Date);
+    }
+    break;
+  }
+  
+  return 0;
+}
+
+///
+
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
@@ -74,6 +144,8 @@ OVERLOAD(OM_NEW)
     MUIA_ObjectID,             MAKE_ID('N','L','0','4'),
     MUIA_Font,                 C->FixedFontList ? MUIV_NList_Font_Fixed : MUIV_NList_Font,
     MUIA_ContextMenu,          NULL,
+    MUIA_NList_MinColSortable, 0,
+    MUIA_NList_TitleClick,     TRUE,
     MUIA_NList_MultiSelect,    MUIV_NList_MultiSelect_Default,
     MUIA_NList_Format,         "P=\033r BAR,W=-1 BAR,W=-1 MACW=9 P=\033r BAR,MICW=10 MACW=30 BAR,BAR,MICW=16 MACW=30 BAR,MICW=9 MACW=15 BAR",
     MUIA_NList_AutoVisible,    TRUE,
@@ -94,6 +166,9 @@ OVERLOAD(OM_NEW)
 
     DoMethod(obj, MUIM_NList_UseImage, data->downloadImage, SI_DOWNLOAD, MUIF_NONE);
     DoMethod(obj, MUIM_NList_UseImage, data->deleteImage, SI_DELETE, MUIF_NONE);
+
+    DoMethod(obj, MUIM_Notify, MUIA_NList_TitleClick,   MUIV_EveryTime, MUIV_Notify_Self, 4, MUIM_NList_Sort3, MUIV_TriggerValue,     MUIV_NList_SortTypeAdd_2Values, MUIV_NList_Sort3_SortType_Both);
+    DoMethod(obj, MUIM_Notify, MUIA_NList_SortType,     MUIV_EveryTime, MUIV_Notify_Self, 3, MUIM_Set,         MUIA_NList_TitleMark,  MUIV_TriggerValue);
   }
 
   RETURN((IPTR)obj);
@@ -121,6 +196,42 @@ OVERLOAD(OM_DISPOSE)
   }
 
   return DoSuperMethodA(cl,obj,msg);
+}
+
+///
+/// OVERLOAD(MUIM_NList_Compare)
+//  Message listview compare method
+OVERLOAD(MUIM_NList_Compare)
+{
+  struct MUIP_NList_Compare *ncm = (struct MUIP_NList_Compare *)msg;
+  struct MailTransferNode *entry1 = (struct MailTransferNode *)ncm->entry1;
+  struct MailTransferNode *entry2 = (struct MailTransferNode *)ncm->entry2;
+  LONG col1 = ncm->sort_type1 & MUIV_NList_TitleMark_ColMask;
+  LONG col2 = ncm->sort_type2 & MUIV_NList_TitleMark2_ColMask;
+  int cmp;
+
+  ENTER();
+
+  if(ncm->sort_type1 == (LONG)MUIV_NList_SortType_None)
+  {
+    RETURN(0);
+    return 0;
+  }
+
+  if(ncm->sort_type1 & MUIV_NList_TitleMark_TypeMask) cmp = MailCompare(entry2, entry1, col1);
+  else                                                cmp = MailCompare(entry1, entry2, col1);
+
+  if(cmp != 0 || col1 == col2)
+  {
+    RETURN(cmp);
+    return cmp;
+  }
+
+  if(ncm->sort_type2 & MUIV_NList_TitleMark2_TypeMask) cmp = MailCompare(entry2, entry1, col2);
+  else                                                 cmp = MailCompare(entry1, entry2, col2);
+
+  RETURN(cmp);
+  return cmp;
 }
 
 ///
@@ -188,7 +299,5 @@ OVERLOAD(MUIM_NList_Display)
 }
 
 ///
-
-/* Private Functions */
 
 /* Public Methods */

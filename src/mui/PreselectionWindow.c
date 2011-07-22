@@ -338,6 +338,9 @@ DECLARE(ChangeFlags) // ULONG flags
     tnode->tflags = msg->flags;
 
     DoMethod(data->transferMailList, MUIM_NList_Redraw, id);
+    
+    // usually the list might need to be resorted here if it is to be sorted by
+    // transfer status, but this will confuse the user more than it really helps
   }
   while(TRUE);
 

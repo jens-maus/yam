@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-07-22 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/TransferMailList.c: the preselection list is now sortable by clicking
+    on the list's title. This makes it a lot easier to i.e. select mails from
+    one person which are several days apart with lots of other mails between
+    them. This closes #268.
+
 2011-07-04 Mariusz Danilewicz <mandi@interia.pl>
 
   * locale/polish.ct: update to the latest changes.
