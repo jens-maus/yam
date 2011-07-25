@@ -75,26 +75,18 @@ static int MailCompare(struct MailTransferNode *entry1, struct MailTransferNode 
   {
     case 0:
     {
+      // status
+      // the transfer list cannot be sorted by status
+    }
+    break;
+
+    case 1:
+    {
       // mail index
       return entry1->index - entry2->index;
     }
     break;
     
-    case 1:
-    {
-      // status
-      int status1 = 0;
-      int status2 = 0;
-      
-      if(isFlagSet(entry1->tflags, TRF_DELETE)) status1 |= 1;
-      if(isFlagSet(entry2->tflags, TRF_DELETE)) status2 |= 1;
-      if(isFlagSet(entry1->tflags, TRF_TRANSFER)) status1 |= 2;
-      if(isFlagSet(entry2->tflags, TRF_TRANSFER)) status2 |= 2;
-      
-      return status2 - status1;
-    }
-    break;
-
     case 2:
     {
       // mail size
@@ -144,15 +136,14 @@ OVERLOAD(OM_NEW)
     MUIA_ObjectID,             MAKE_ID('N','L','0','4'),
     MUIA_Font,                 C->FixedFontList ? MUIV_NList_Font_Fixed : MUIV_NList_Font,
     MUIA_ContextMenu,          NULL,
-    MUIA_NList_MinColSortable, 0,
     MUIA_NList_TitleClick,     TRUE,
     MUIA_NList_MultiSelect,    MUIV_NList_MultiSelect_Default,
-    MUIA_NList_Format,         "P=\033r BAR,W=-1 BAR,W=-1 MACW=9 P=\033r BAR,MICW=10 MACW=30 BAR,BAR,MICW=16 MACW=30 BAR,MICW=9 MACW=15 BAR",
+    MUIA_NList_Format,         "W=-1 BAR,P=\033r BAR,W=-1 MACW=9 P=\033r BAR,MICW=10 MACW=30 BAR,BAR,MICW=16 MACW=30 BAR,MICW=9 MACW=15 BAR",
     MUIA_NList_AutoVisible,    TRUE,
+    MUIA_NList_MinColSortable, 1,
     MUIA_NList_Title,          TRUE,
     MUIA_NList_TitleSeparator, TRUE,
     MUIA_NList_DoubleClick,    TRUE,
-    MUIA_NList_MinColSortable, 0,
     MUIA_NList_Exports,        MUIV_NList_Exports_ColWidth|MUIV_NList_Exports_ColOrder,
     MUIA_NList_Imports,        MUIV_NList_Imports_ColWidth|MUIV_NList_Imports_ColOrder,
 
@@ -249,17 +240,17 @@ OVERLOAD(MUIM_NList_Display)
     struct Person *pe = &mail->From;
     GETDATA;
 
-    // mail index
-    snprintf(data->indexBuffer, sizeof(data->indexBuffer), "%d", entry->index);
-    ndm->strings[0] = data->indexBuffer;
-
     // status icon display
     data->statusBuffer[0] = '\0';
     if(isFlagSet(entry->tflags, TRF_TRANSFER))
       strlcat(data->statusBuffer, SI_STR(SI_DOWNLOAD), sizeof(data->statusBuffer));
     if(isFlagSet(entry->tflags, TRF_DELETE))
       strlcat(data->statusBuffer, SI_STR(SI_DELETE), sizeof(data->statusBuffer));
-    ndm->strings[1] = data->statusBuffer;
+    ndm->strings[0] = data->statusBuffer;
+
+    // mail index
+    snprintf(data->indexBuffer, sizeof(data->indexBuffer), "%d", entry->index);
+    ndm->strings[1] = data->indexBuffer;
 
     // size display
     if(C->WarnSize > 0 && mail->Size >= (C->WarnSize*1024))
@@ -286,8 +277,8 @@ OVERLOAD(MUIM_NList_Display)
   }
   else
   {
-    ndm->strings[0] = (STRPTR)tr(MSG_PRESELECT_INDEX);
-    ndm->strings[1] = (STRPTR)tr(MSG_MA_TitleStatus);
+    ndm->strings[0] = (STRPTR)tr(MSG_MA_TitleStatus);
+    ndm->strings[1] = (STRPTR)tr(MSG_PRESELECT_INDEX);
     ndm->strings[2] = (STRPTR)tr(MSG_Size);
     ndm->strings[3] = (STRPTR)tr(MSG_From);
     ndm->strings[4] = (STRPTR)tr(MSG_Subject);
