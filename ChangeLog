@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-07-25 Vit Sindlar <sindlarv at centrum dot cz>
+
+  * locale/czech.ct: updated Czech translation.
+
 2011-07-25 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/TransferMailList.c: swapped the columns for index and status and made

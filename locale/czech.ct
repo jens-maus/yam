@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.6 (17.3.2011)
+## version $VER: YAM.catalog 7.7 (25.7.2011)
 ## language czech
 ## codeset 5
 ;
@@ -9748,4 +9748,72 @@ MSG_ER_HELP_FILE_DOES_NOT_EXIST
 Soubor s nápovìdou ('%s') není k dispozici.
 ; The help file '%s' does not exist.
 ; FILE
+;
+MSG_EA_SEARCH_GRAVATAR
+Vyhledávání na gra_vatar.com...
+; Search on gra_vatar.com...
+;
+MSG_ER_NO_GRAVATAR_FOUND
+K adrese '%s' nelze najít avatara.\n\
+\n\
+Jednou z pøíèin mù¾e být to, ¾e u¾ivatel je¹tì pøíslu¹ný obrázek na gravatar.com nenahrál.
+; No Gravatar found for address '%s'.\n\
+; \n\
+; Perhaps the person has not uploaded a portrait image to gravatar.com yet.
+; ADDRESS
+;
+MSG_ER_NON_MIME_CONFORMANT_MAIL
+Pøi zpracování po¹tovního souboru '%s' nelze najít v hlavièce øádek 'MIME-Version'. \
+Výstupní data mohou být neplatná nebo jinak po¹kozená.
+; No 'MIME-Version' header line was found while scanning the mail file '%s'. \
+; The generated output may therefore contain invalid data or may be corrupted.
+; MSGFILE
+;
+MSG_CO_ACTION_SET_STATUS_TO_MARKED
+Zmìnit stav na 'oznaèené'
+; Set status to 'Marked'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_MARKED
+Zmìní stav filtrovaných zpráv na oznaèené.
+; Set the status of the filtered mail to 'Marked'
+;
+MSG_CO_ACTION_SET_STATUS_TO_UNMARKED
+Zmìnit stav na 'neoznaèené'
+; Set status to 'Unmarked'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_UNMARKED
+Zmìní stav filtrovaných zpráv na neoznaèené.
+; Set the status of the filtered mail to 'Unmarked'
+;
+MSG_CO_ACTION_SET_STATUS_TO_READ
+Zmìnit stav na 'pøeètené'
+; Set status to 'Read'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_READ
+Zmìní stav filtrovaných zpráv na pøeètené.
+; Set the status of the filtered mail to 'Read'
+;
+MSG_CO_ACTION_SET_STATUS_TO_UNREAD
+Zmìnit stav na 'nepøeètené'
+; Set status to 'Unread'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_UNREAD
+Zmìní stav filtrovaných zpráv na nepøeètené.
+; Set the status of the filtered mail to 'Unread'
+;
+MSG_CO_ACTION_SET_STATUS_TO_SPAM
+Zmìnit stav na 'spam'
+; Set status to 'Spam'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_SPAM
+Zmìní stav filtrovaných zpráv na spam.
+; Set the status of the filtered mail to 'Spam'
+;
+MSG_CO_ACTION_SET_STATUS_TO_HAM
+Zmìnit stav na 'není spam'
+; Set status to 'Not spam'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_HAM
+Zru¹í oznaèení filtrovaných zpráv jako spam.
+; Set the status of the filtered mail to 'Not spam'
 ;
