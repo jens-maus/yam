@@ -9,6 +9,8 @@ $URL$
 
   * mui/TransferMailList.c: swapped the columns for index and status and made
     the status column non-sortable.
+  * mui/MainFolderListtree.c: added some NULL pointer checks to the ChangeFolder
+    method. This closes #269.
     
 2011-07-22 Thore Böckelmann <tboeckel@gmx.de>
 

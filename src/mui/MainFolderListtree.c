@@ -878,10 +878,18 @@ DECLARE(EditFolder)
 // set the clicked folder as the current one
 DECLARE(ChangeFolder) // struct MUI_NListtree_TreeNode *treenode
 {
+  struct MUI_NListtree_TreeNode *tn = msg->treenode;
+
   ENTER();
 
-  SetCurrentFolder(((struct FolderNode *)msg->treenode->tn_User)->folder);
-  MA_ChangeFolder(NULL, FALSE);
+  // check the treenode and its user data, this method may be invoked with a NULL treenode
+  if(tn != NULL && tn->tn_User != NULL)
+  {
+    struct FolderNode *fnode = (struct FolderNode *)tn->tn_User;
+
+    SetCurrentFolder(fnode->folder);
+    MA_ChangeFolder(NULL, FALSE);
+  }
 
   LEAVE();
   return 0;
