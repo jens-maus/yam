@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-08-04 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/BirthdayRequestWindow.c: skipping a persons birthday for the current day
+    only worked if not more than person's birthday was today. If a second person
+    had the same birthday a probably already skipped birthday was forgotten 
+    again as the check file was completely overwritten, because the date check
+    compared too many characters.
+
 2011-07-25 Vit Sindlar <sindlarv at centrum dot cz>
 
   * locale/czech.ct: updated Czech translation.
@@ -15,7 +23,7 @@ $URL$
     the status column non-sortable.
   * mui/MainFolderListtree.c: added some NULL pointer checks to the ChangeFolder
     method. This closes #269.
-    
+
 2011-07-22 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/TransferMailList.c: the preselection list is now sortable by clicking

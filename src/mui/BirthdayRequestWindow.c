@@ -49,6 +49,13 @@
 
 #include "Debug.h"
 
+/* CLASSDATA
+struct Data
+{
+  Object *skipTodayCheckbox;
+};
+*/
+
 #define BIRTHDAYCHECKFILE "PROGDIR:.birthdaycheck"
 
 /* Private Functions */
@@ -67,12 +74,12 @@ static BOOL CheckBirthdayCheckFile(const char *alias)
   if((user = US_GetCurrentUser()) != NULL && (userName = user->Name) != NULL)
   {
     FILE *fh;
-    char dateString[64];
+    char todayDateString[64];
     BOOL userFound = FALSE;
     size_t buflen = 0;
 
     // get the current date
-    DateStamp2String(dateString, sizeof(dateString), NULL, DSS_DATE, TZC_NONE);
+    DateStamp2String(todayDateString, sizeof(todayDateString), NULL, DSS_DATE, TZC_NONE);
 
     if((fh = fopen(BIRTHDAYCHECKFILE, "r")) != NULL)
     {
@@ -90,11 +97,12 @@ static BOOL CheckBirthdayCheckFile(const char *alias)
           char *ptr;
           char *value;
 
-          if((value = strchr(buf, '=')) != NULL && value > buf)
+          SHOWSTRING(DBF_ALWAYS, buf);
+          if((value = strchr(buf, '=')) != NULL && value != buf)
           {
             // skip spaces and equal signs backwards
             ptr = value;
-            while(ptr > buf && (isspace(*ptr) || *ptr == '='))
+            while(ptr != buf && (isspace(*ptr) || *ptr == '='))
             {
               *ptr-- = '\0';
             }
@@ -105,10 +113,10 @@ static BOOL CheckBirthdayCheckFile(const char *alias)
 
             if(*buf != '\0' && *value != '\0')
             {
-              if(stricmp(buf, "Date") == 0)
+              if(stricmp(buf, "DATE") == 0)
               {
                 // if the date is not today we bail out here
-                if(stricmp(value, dateString) != 0)
+                if(stricmp(value, todayDateString) != 0)
                 {
                   break;
                 }
@@ -168,11 +176,12 @@ static void SaveBirthdayCheckFile(const char *alias)
   {
     char *buf;
     FILE *fh = NULL;
-    char dateString[64];
+    char todayDateString[64];
     BOOL writeNewFile = FALSE;
+    BOOL appendToFile = FALSE;
 
     // get the current date
-    DateStamp2String(dateString, sizeof(dateString), NULL, DSS_DATE, TZC_NONE);
+    DateStamp2String(todayDateString, sizeof(todayDateString), NULL, DSS_DATE, TZC_NONE);
 
     if((buf = FileToBuffer(BIRTHDAYCHECKFILE)) != NULL)
     {
@@ -187,13 +196,10 @@ static void SaveBirthdayCheckFile(const char *alias)
           while(*++ptr != '\0' && !isdigit(*ptr));
 
           // now we compare the date
-          if(stricmp(ptr, dateString) == 0)
+          if(strnicmp(ptr, todayDateString, strlen(todayDateString)) == 0)
           {
             // if the date is equal then we open the file in append mode
-            if((fh = fopen(BIRTHDAYCHECKFILE, "a")) != NULL)
-            {
-              setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
-            }
+            appendToFile = TRUE;
           }
           else
           {
@@ -218,13 +224,16 @@ static void SaveBirthdayCheckFile(const char *alias)
       }
     }
 
-    if(writeNewFile == TRUE)
+    if(writeNewFile == TRUE || appendToFile == TRUE)
     {
-      if((fh = fopen(BIRTHDAYCHECKFILE, "w")) != NULL)
+      if((fh = fopen(BIRTHDAYCHECKFILE, appendToFile ? "a" : "w")) != NULL)
       {
         setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
-        fprintf(fh, "%s\n", "YBC1 - YAM BirthdayCheck");
-        fprintf(fh, "DATE = %s\n", dateString);
+        if(writeNewFile == TRUE)
+        {
+          fprintf(fh, "%s\n", "YBC1 - YAM BirthdayCheck");
+          fprintf(fh, "DATE = %s\n", todayDateString);
+        }
       }
     }
 
@@ -332,13 +341,17 @@ OVERLOAD(OM_NEW)
 
         TAG_MORE, inittags(msg))) != NULL)
       {
+        GETDATA;
+
+        data->skipTodayCheckbox = skipTodayCheckbox;
+
         DoMethod(G->App, OM_ADDMEMBER, obj);
 
         // enable the checkbox by default
         set(skipTodayCheckbox, MUIA_Selected, TRUE);
 
-        DoMethod(yesButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 4, MUIM_BirthdayRequestWindow_FinishInput, skipTodayCheckbox, alias, 1);
-        DoMethod(noButton,  MUIM_Notify, MUIA_Pressed, FALSE, obj, 4, MUIM_BirthdayRequestWindow_FinishInput, skipTodayCheckbox, alias, 0);
+        DoMethod(yesButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_BirthdayRequestWindow_FinishInput, alias, TRUE);
+        DoMethod(noButton,  MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_BirthdayRequestWindow_FinishInput, alias, FALSE);
 
         xset(obj, MUIA_Window_Activate, TRUE,
                   MUIA_Window_Open,     TRUE);
@@ -357,14 +370,15 @@ OVERLOAD(OM_NEW)
 /* Public Methods */
 /// DECLARE(FinishInput)
 //
-DECLARE(FinishInput) // Object *checkbox, char *alias, int show
+DECLARE(FinishInput) // const char *alias, ULONG writeMail
 {
+  GETDATA;
   BOOL skipToday;
 
   ENTER();
 
   // before we close the window we remember the checkbox status
-  skipToday = xget(msg->checkbox, MUIA_Selected);
+  skipToday = xget(data->skipTodayCheckbox, MUIA_Selected);
 
   // close the requester window
   set(obj, MUIA_Window_Open, FALSE);
@@ -373,18 +387,18 @@ DECLARE(FinishInput) // Object *checkbox, char *alias, int show
   DoMethod(G->App, OM_REMMEMBER, obj);
   DoMethod(G->App, MUIM_Application_PushMethod, obj, 1, OM_DISPOSE);
 
-  if(msg->alias != NULL)
+  if(skipToday == TRUE)
+  {
+    // save the user and alias to the birthdaycheckfile
+    SaveBirthdayCheckFile(msg->alias);
+  }
+
+  // if the user click the yesButton we open a NewWriteMailWindow
+  if(msg->writeMail == TRUE)
   {
     struct WriteMailData *wmData;
 
-    if(skipToday == TRUE)
-    {
-      // save the user and alias to the birthdaycheckfile
-      SaveBirthdayCheckFile(msg->alias);
-    }
-
-    // if the user click the yesButton we open a NewWriteMailWindow
-    if(msg->show == 1 && (wmData = NewWriteMailWindow(NULL, 0)) != NULL)
+    if((wmData = NewWriteMailWindow(NULL, 0)) != NULL)
     {
       xset(wmData->window,
            MUIA_WriteWindow_To,      msg->alias,
