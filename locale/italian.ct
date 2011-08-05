@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.89 (1.07.2011)
+## version $VER: YAM.catalog 7.90 (5.08.2011)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -6433,13 +6433,12 @@ _Meno
 ; _Less
 ;
 MSG_MA_AUTOSAVEFOUND
-Il file '%s' di autosalvataggio è stato creato\n\
-in una precedente sessione.\n\
-Questo problema potrebbe essersi verificato a\n\
-causa di un possibile crash o reboot durante\n\
-la composizione di un messaggio.\n\
+Un file di autosalvataggio chiamato '%s'\n\
+è stato recuperato automaticamente da una precedente sessione di YAM.\n\
+Questo problema potrebbe essersi verificato a causa di un crash oppure di\n\
+un reboot improvviso durante la composizione di un messaggio di posta.\n\
 \n\
-Cosa si desidera fare con quel file?
+Cosa si desidera fare con questo file?
 ; YAM has found an autosaved message file '%s'\n\
 ; which was created in a previous session.\n\
 ; This may be due to a possible crash or reboot\n\
@@ -9203,9 +9202,9 @@ Set di cara_tteri
 ; _Charset
 ;
 MSG_HELP_WR_PO_CHARSET
-Usa questo menu a comparsa in modo da selezionare il\n\
-set di caratteri da utilizzare con questo messaggio.\n\
-Questo set verrà utilizzato in modo predefinito come\n\
+Usa questo menu a comparsa in modo da selezionare\n\
+il set di caratteri da utilizzare con questo messaggio.\n\
+Questo set verrà poi utilizzato in modo predefinito nel\n\
 set di caratteri globale.
 ; Use the popup button to select the character set\n\
 ; you would like YAM to use for this mail. This\n\

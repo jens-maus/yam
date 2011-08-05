@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-08-05 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: fixed some typos.
+
 2011-08-04 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/BirthdayRequestWindow.c: skipping a persons birthday for the current day
