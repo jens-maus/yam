@@ -350,8 +350,8 @@ OVERLOAD(OM_NEW)
         // enable the checkbox by default
         set(skipTodayCheckbox, MUIA_Selected, TRUE);
 
-        DoMethod(yesButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_BirthdayRequestWindow_FinishInput, alias, TRUE);
-        DoMethod(noButton,  MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_BirthdayRequestWindow_FinishInput, alias, FALSE);
+        DoMethod(yesButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 3, METHOD(FinishInput), alias, TRUE);
+        DoMethod(noButton,  MUIM_Notify, MUIA_Pressed, FALSE, obj, 3, METHOD(FinishInput), alias, FALSE);
 
         xset(obj, MUIA_Window_Activate, TRUE,
                   MUIA_Window_Open,     TRUE);

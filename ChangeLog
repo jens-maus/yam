@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-08-15 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/BirthdayRequestWindow.c: bumped the notification's parameter counter to
+    the correct value. This closes #271.
+
 2011-08-05 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: fixed some typos.
@@ -13,7 +18,7 @@ $URL$
 
   * mui/BirthdayRequestWindow.c: skipping a persons birthday for the current day
     only worked if not more than person's birthday was today. If a second person
-    had the same birthday a probably already skipped birthday was forgotten 
+    had the same birthday a probably already skipped birthday was forgotten
     again as the check file was completely overwritten, because the date check
     compared too many characters.
 
