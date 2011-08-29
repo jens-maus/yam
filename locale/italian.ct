@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.90 (5.08.2011)
+## version $VER: YAM.catalog 7.91 (29.08.2011)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -6680,7 +6680,7 @@ MSG_CO_CHARSETUNKNOWNWARN_BT
 ; *_Change to default|_Ignore
 ;
 MSG_ER_LIB
-Impossibile aprire '%s', versione v%lu.%lu\n\
+Impossibile aprire '%s', versione %lu.%lu\n\
 \n\
 Assicurati di avere per lo meno questa versione\n\
 minima installata nel percorso delle librerie.
@@ -6691,11 +6691,11 @@ minima installata nel percorso delle librerie.
 ; LIBRARY_NAME, LIBRARY_VERSION, LIBRARY_REVISION
 ;
 MSG_ER_LIB_URL
-Impossibile aprire '%s', versione v%lu.%lu\n\
+Impossibile aprire '%s', versione %lu.%lu\n\
 \n\
-Vai all'indirizzo '%s'\n\
 Scarica l'ultima versione disponibile, dopodichè assicurati\n\
-di averla correttamente installata nel percorso delle librerie.
+di averla correttamente installata nel percorso delle librerie.\n\
+Vai all'indirizzo '%s'
 ; Couldn't open required '%s', version v%lu.%lu\n\
 ; \n\
 ; Please visit '%s',\n\
@@ -6706,9 +6706,9 @@ di averla correttamente installata nel percorso delle librerie.
 MSG_ER_NO_MCC
 Impossibile aprire la classe MUI '%s' v%lu.%lu.\n\
 \n\
-Vai all'indirizzo '%s'\n\
 Scarica l'ultima versione disponibile, dopodichè assicurati\n\
-di averla correttamente installata nel tuo sistema.
+di averla correttamente installata nel tuo sistema.\n\
+Vai all'indirizzo '%s'
 ; Couldn't open required MUI custom class '%s' v%lu.%lu.\n\
 ; \n\
 ; Please visit '%s',\n\
@@ -6720,7 +6720,8 @@ MSG_ER_MCC_OLD
 Impossibile aprire la classe MUI '%s' v%lu.%lu.\n\
 \n\
 La versione attualmente in uso è la v%lu.%lu.\n\
-Si consiglia di scaricare l'ultima versione da\n\'%s'.
+Si consiglia di scaricare l'ultima versione da\n\
+'%s'.
 ; Couldn't open required MUI custom class '%s' v%lu.%lu.\n\
 ; \n\
 ; Currently installed is v%lu.%lu. Please upgrade by downloading\n\

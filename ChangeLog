@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-08-29 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: fixed some typo again :-)
+
 2011-08-15 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/BirthdayRequestWindow.c: bumped the notification's parameter counter to
