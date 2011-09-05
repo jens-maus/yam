@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.2 (13.06.2011)
+## version $VER: YAM.catalog 7.2 (05.09.2011)
 ## language français
 ## codeset 111
 ;
@@ -8171,11 +8171,11 @@ position actuelle de l'AppIcône.
 ; position of the AppIcon.
 ;
 MSG_CO_MOVE_HAM_TO_INCOMING
-Remettre les courrier « Acceptables » dans la boite de réce_ption
+Remettre les courriers « Acceptables » dans la boite de réce_ption
 ; Move 'not spam' e-mails back to _Incoming folder
 ;
 MSG_HELP_CH_MOVE_HAM_TO_INCOMING
-Avec cette option toutou courrier faussement classé\n\
+Avec cette option tout courrier faussement classé\n\
 comme indésirable puis marqué manuellement comme\n\
 acceptable sera remis dans la boite de réception.
 ; If enabled, any e-mail which was incorrectly classified\n\
@@ -9946,7 +9946,6 @@ Interface ARexx
 MSG_ER_HELP_FILE_DOES_NOT_EXIST
 Le fichier d'aide « %s » n'existe pas.
 ; The help file '%s' does not exist.
-;
 ; FILE
 ;
 MSG_EA_SEARCH_GRAVATAR
@@ -9960,6 +9959,61 @@ Cette personne n'a peut-être pas encore téléchargé de portrait sur gravatar.com.
 ; No Gravatar found for address '%s'.\n\
 ; \n\
 ; Perhaps the person has not uploaded a portrait image to gravatar.com yet.
-;
 ; ADDRESS
+;
+MSG_ER_NON_MIME_CONFORMANT_MAIL
+Aucune ligne d'entête « MIME-Version » trouvée lors de l'examen du fichier de message « %s ».\
+Par conséquent la sortie générée peut contenir des données invalides ou être corrompue.
+; No 'MIME-Version' header line was found while scanning the mail file '%s'. \
+; The generated output may therefore contain invalid data or may be corrupted.
+;
+; MSGFILE
+;
+MSG_CO_ACTION_SET_STATUS_TO_MARKED
+Mettre le statut « Marqué »
+; Set status to 'Marked'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_MARKED
+Met le statut des courriers filtrés à « Marqué »
+; Set the status of the filtered mail to 'Marked'
+;
+MSG_CO_ACTION_SET_STATUS_TO_UNMARKED
+Mettre le statut « Non Marqué »
+; Set status to 'Unmarked'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_UNMARKED
+Met le statut des courriers filtrés à « Non Marqué »
+; Set the status of the filtered mail to 'Unmarked'
+;
+MSG_CO_ACTION_SET_STATUS_TO_READ
+Mettre le statut « Lu »
+; Set status to 'Read'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_READ
+Met le statut des courriers filtrés à « Lu »
+; Set the status of the filtered mail to 'Read'
+;
+MSG_CO_ACTION_SET_STATUS_TO_UNREAD
+Mettre le statut « Non Lu »
+; Set status to 'Unread'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_UNREAD
+Met le statut des courriers filtrés à « Non Lu »
+; Set the status of the filtered mail to 'Unread'
+;
+MSG_CO_ACTION_SET_STATUS_TO_SPAM
+Mettre le statut « Indésirable »
+; Set status to 'Spam'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_SPAM
+Met le statut des courriers filtrés à « Indésirable »
+; Set the status of the filtered mail to 'Spam'
+;
+MSG_CO_ACTION_SET_STATUS_TO_HAM
+Mettre le statut « Acceptable »
+; Set status to 'Not spam'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_HAM
+Met le statut des courriers filtrés à « Acceptable »
+; Set the status of the filtered mail to 'Not spam'
 ;
