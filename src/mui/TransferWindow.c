@@ -73,6 +73,8 @@ OVERLOAD(OM_NEW)
     MUIA_Window_Title, tr(MSG_TRANSFERS_IN_PROGRESS),
     MUIA_Window_ID, MAKE_ID('T','R','A','N'),
     MUIA_Window_CloseGadget, TRUE,
+    MUIA_Window_UseRightBorderScroller, TRUE,
+    MUIA_Window_SizeRight, TRUE,
     MUIA_HelpNode, "TR_W",
     WindowContents, VGroup,
       MUIA_Background, MUII_GroupBack,

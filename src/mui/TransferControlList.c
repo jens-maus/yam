@@ -40,6 +40,20 @@
 /* Private Functions */
 
 /* Overloaded Methods */
+/// OVERLOAD(OM_NEW)
+OVERLOAD(OM_NEW)
+{
+  ENTER();
+
+  obj = DoSuperNew(cl, obj,
+    MUIA_Scrollgroup_UseWinBorder, TRUE,
+    TAG_MORE, inittags(msg));
+
+  RETURN((IPTR)obj);
+  return (IPTR)obj;
+}
+
+///
 /// OVERLOAD(MUIM_ObjectList_CreateItem)
 OVERLOAD(MUIM_ObjectList_CreateItem)
 {

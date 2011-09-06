@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-09-06 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/TransferWindow.c, TransferControlList.c: the transfer list's scrollbar
+    is now placed in the right window border.
+
 2011-09-05  Alexandre Balaban <abalaban@free.fr>
 
   * locale/french.ct: updated according to latest changes.
