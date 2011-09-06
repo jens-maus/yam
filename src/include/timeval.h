@@ -26,9 +26,6 @@
 
  $Id$
 
- Superclass:  MUIC_ObjectListitem
- Description: Displays statistics about a transfer in progress
-
 ***************************************************************************/
 
 // since the Amiga's timeval structure was renamed to
