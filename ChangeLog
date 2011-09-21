@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-09-21 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_UT.c: added some debug output to a failure upon opening a window.
+
 2011-09-06 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/TransferWindow.c, TransferControlList.c: the transfer list's scrollbar

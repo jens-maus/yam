@@ -3891,6 +3891,7 @@ BOOL SafeOpenWindow(Object *obj)
   if(success == FALSE)
   {
     // otherwise we perform a DisplayBeep()
+    E(DBF_ALWAYS, "cannot open window with title '%s'", (char *)xget(obj, MUIA_Window_Title));
     DisplayBeep(NULL);
   }
 
