@@ -8,6 +8,8 @@ $URL$
 2011-09-26 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_UT.c: added some more debug output to a failure upon opening a window.
+  * rexx/mailcheck.c: fixed the broken MAILCHECK ARexx command. The first POP3
+    account could not be checked for new mail due to a check >0 instead of >=0.
 
 2011-09-21 Thore Böckelmann <tboeckel@gmx.de>
 

@@ -132,11 +132,11 @@ void rx_mailcheck(UNUSED struct RexxHost *host, struct RexxParams *params, enum 
             pop++;
           }
         }
-        else if(pop > 0)
+        else
         {
           struct MailServerNode *msn;
 
-          if((msn = GetMailServer(&C->mailServerList, MST_POP3, *args->pop)) != NULL)
+          if((msn = GetMailServer(&C->mailServerList, MST_POP3, pop)) != NULL)
           {
             if(ReceiveMailsFromPOP(msn, args->manual ? RECEIVEF_USER|RECEIVEF_SIGNAL : RECEIVEF_AREXX|RECEIVEF_SIGNAL, &optional->dlResult) == TRUE)
             {
