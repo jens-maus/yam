@@ -3879,8 +3879,11 @@ BOOL SafeOpenWindow(Object *obj)
     // make sure we open the window object
     set(obj, MUIA_Window_Open, TRUE);
 
+    D(DBF_GUI, "window with title '%s' is %s", (char *)xget(obj, MUIA_Window_Title), xget(obj, MUIA_Window_Open) == TRUE ? "open" : "not open");
+    D(DBF_GUI, "YAM is %s", xget(_app(obj), MUIA_Application_Iconified) == TRUE ? "iconified" : "not iconified");
+
     // now we check whether the window was successfully
-    // open or the application has been in iconify state
+    // opened or the application is in iconify state
     if(xget(obj, MUIA_Window_Open) == TRUE ||
        xget(_app(obj), MUIA_Application_Iconified) == TRUE)
     {
@@ -3888,10 +3891,10 @@ BOOL SafeOpenWindow(Object *obj)
     }
   }
 
-  if(success == FALSE)
+  if(success == FALSE && obj != NULL)
   {
     // otherwise we perform a DisplayBeep()
-    E(DBF_ALWAYS, "cannot open window with title '%s'", (char *)xget(obj, MUIA_Window_Title));
+    E(DBF_ALWAYS, "failed to open window with title '%s'", (char *)xget(obj, MUIA_Window_Title));
     DisplayBeep(NULL);
   }
 
