@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-09-27 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MAf.c, YAM_UT.c: loading a folder's index no longer causes this index to
+    be expired as there is no need to mark a freshly loaded index as invalid.
+    Additionally this changes avoids trying to delete the .index files while it
+    is still opened for reading. Thanks to Colin Wenzel for the hint.
+
 2011-09-26 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_UT.c: added some more debug output to a failure upon opening a window.

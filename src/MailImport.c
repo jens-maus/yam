@@ -993,7 +993,7 @@ static void ProcessImport(struct TransferContext *tc, const char *importFile, st
                 GetSysTimeUTC(&mail->transDate);
 
               // add the mail to the folderlist now
-              if((mail = AddMailToList(mail, folder)) != NULL)
+              if((mail = AddMailToList(mail, folder, TRUE)) != NULL)
               {
                 // update the mailFile Path
                 strlcpy(mail->MailFile, FilePart(mfilePath), sizeof(mail->MailFile));
@@ -1083,7 +1083,7 @@ static void ProcessImport(struct TransferContext *tc, const char *importFile, st
                 GetSysTimeUTC(&mail->transDate);
 
               // add the mail to the folderlist now
-              if((mail = AddMailToList(mail, folder)) != NULL)
+              if((mail = AddMailToList(mail, folder, TRUE)) != NULL)
               {
                 // update the mailFile Path
                 strlcpy(mail->MailFile, FilePart(mfilePath), sizeof(mail->MailFile));

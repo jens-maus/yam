@@ -368,8 +368,10 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
             mail.cIRTMsgID = cmail.cIRTMsgID;
             mail.Size = cmail.size;
 
-            // finally add the new mail structure to our mail list
-            if(AddMailToList(&mail, folder) == NULL)
+            // finally add the new mail structure to our mail list,
+            // but don't expire the index, as we have the file currently opened and a freshly loaded
+            // index doesn't need to be marked as invalid
+            if(AddMailToList(&mail, folder, FALSE) == NULL)
             {
               E(DBF_FOLDER, "AddMailToList returned NULL!");
               error = TRUE;
@@ -2984,7 +2986,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
               {
                 struct Mail *newMail;
 
-                if((newMail = AddMailToList(&email->Mail, folder)) != NULL)
+                if((newMail = AddMailToList(&email->Mail, folder, TRUE)) != NULL)
                 {
                   // if this new mail hasn't got a valid transDate we have to check if we
                   // have to take the fileDate as a fallback value.

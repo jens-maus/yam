@@ -1487,10 +1487,9 @@ DECLARE(SaveDecryptedMail)
   struct ReadMailData *rmData = data->readMailData;
   struct Mail *mail = rmData->mail;
   struct Folder *folder = mail->Folder;
-  struct WritePart *p1;
   int choice;
 
-  if(!folder)
+  if(folder == NULL)
     return 0;
 
   if((choice = MUI_Request(G->App, rmData->readWindow, 0, tr(MSG_RE_SaveDecrypted),
@@ -1513,7 +1512,8 @@ DECLARE(SaveDecryptedMail)
       comp.refMail = mail;
       if((comp.FirstPart = NewMIMEpart(NULL)) != NULL)
       {
-        p1 = comp.FirstPart;
+        struct WritePart *p1 = comp.FirstPart;
+
         p1->Filename = rmData->firstPart->Next->Filename;
         WriteOutMessage(&comp);
         FreePartsList(p1);
@@ -1529,7 +1529,7 @@ DECLARE(SaveDecryptedMail)
         memcpy(&email->Mail.transDate, &mail->transDate, sizeof(email->Mail.transDate));
 
         // add the mail to the folder now
-        if((newmail = AddMailToList(&email->Mail, folder)) != NULL)
+        if((newmail = AddMailToList(&email->Mail, folder, TRUE)) != NULL)
         {
           // if this was a compressed/encrypted folder we need to pack the mail now
           if(folder->Mode > FM_SIMPLE)

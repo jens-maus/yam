@@ -755,7 +755,7 @@ static struct Mail *MA_MoveCopySingle(struct Mail *mail, struct Folder *from, st
       AppendToLogfile(LF_VERBOSE, 25, tr(MSG_LOG_CopyingVerbose), AddrName(mail->From), mail->Subject, from->Name, to->Name);
 
       // add the new mail
-      newMail = AddMailToList(mail, to);
+      newMail = AddMailToList(mail, to, TRUE);
 
       // restore the old filename in case it was changed by TransferMailFile()
       strlcpy(mail->MailFile, mfile, sizeof(mail->MailFile));
@@ -765,7 +765,7 @@ static struct Mail *MA_MoveCopySingle(struct Mail *mail, struct Folder *from, st
       AppendToLogfile(LF_VERBOSE, 23, tr(MSG_LOG_MovingVerbose), AddrName(mail->From), mail->Subject, from->Name, to->Name);
 
       // add the new mail
-      newMail = AddMailToList(mail, to);
+      newMail = AddMailToList(mail, to, TRUE);
 
       // now we have to check all opened write windows
       // for still valid references to the old mail and

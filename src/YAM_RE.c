@@ -3685,7 +3685,7 @@ static void RE_SendMDN(const enum MDNMode mode,
                 {
                   struct Mail *mdnMail;
 
-                  if((mdnMail = AddMailToList(&email->Mail, outfolder)) != NULL)
+                  if((mdnMail = AddMailToList(&email->Mail, outfolder, TRUE)) != NULL)
                   {
                     setStatusToQueued(mdnMail);
 

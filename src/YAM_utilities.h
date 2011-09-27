@@ -251,7 +251,7 @@ extern struct Hook    ExamineDirMatchHook;
 #endif
 
 // all the utility prototypes
-struct Mail *AddMailToList(const struct Mail *mail, struct Folder *folder);
+struct Mail *AddMailToList(const struct Mail *mail, struct Folder *folder, const BOOL expire);
 void     AddZombieFile(const char *fileName);
 char *   AllocReqText(const char *s);
 char *   AllocStrBuf(size_t initlen);

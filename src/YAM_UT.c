@@ -3191,7 +3191,7 @@ void DisplayMailList(struct Folder *fo, Object *lv)
 ///
 /// AddMailToList
 //  Adds a message to a folder
-struct Mail *AddMailToList(const struct Mail *mail, struct Folder *folder)
+struct Mail *AddMailToList(const struct Mail *mail, struct Folder *folder, const BOOL expire)
 {
   struct Mail *new;
 
@@ -3216,7 +3216,8 @@ struct Mail *AddMailToList(const struct Mail *mail, struct Folder *folder)
     if(!hasStatusRead(mail))
       folder->Unread++;
 
-    MA_ExpireIndex(folder);
+    if(expire == TRUE)
+      MA_ExpireIndex(folder);
   }
 
   RETURN(new);
@@ -3879,13 +3880,13 @@ BOOL SafeOpenWindow(Object *obj)
     // make sure we open the window object
     set(obj, MUIA_Window_Open, TRUE);
 
-    D(DBF_GUI, "window with title '%s' is %s (%ld)", (char *)xget(obj, MUIA_Window_Title), xget(obj, MUIA_Window_Open) == TRUE ? "open" : "not open", xget(obj, MUIA_Window_Open));
-    D(DBF_GUI, "YAM is %s (%ld)", xget(_app(obj), MUIA_Application_Iconified) == TRUE ? "iconified" : "not iconified", xget(_app(obj), MUIA_Application_Iconified));
+    D(DBF_GUI, "window with title '%s' is %s", (char *)xget(obj, MUIA_Window_Title), xget(obj, MUIA_Window_Open) == TRUE ? "open" : "not open");
+    D(DBF_GUI, "YAM is %s", xget(G->App, MUIA_Application_Iconified) == TRUE ? "iconified" : "not iconified");
 
     // now we check whether the window was successfully
     // opened or the application is in iconify state
     if(xget(obj, MUIA_Window_Open) == TRUE ||
-       xget(_app(obj), MUIA_Application_Iconified) == TRUE)
+       xget(G->App, MUIA_Application_Iconified) == TRUE)
     {
       success = TRUE;
     }
