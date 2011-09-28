@@ -123,7 +123,8 @@ $(OBJDIR)/DockyIcon.o: DockyIcon.c YAM.h include/xpk/xpk.h include/amiga-align.h
 $(OBJDIR)/FileInfo.o: FileInfo.c FileInfo.h extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h Debug.h
 $(OBJDIR)/FolderList.o: FolderList.c extrasrc.h include/SDI_compiler.h \
-  include/SDI_stdarg.h include/SDI_compiler.h FolderList.h Debug.h
+  include/SDI_stdarg.h include/SDI_compiler.h FolderList.h MailList.h \
+  YAM_utilities.h YAM_stringsizes.h YAM_folderconfig.h Debug.h
 $(OBJDIR)/HashTable.o: HashTable.c HashTable.h include/SDI_compiler.h \
   YAM_utilities.h YAM_stringsizes.h YAM_folderconfig.h Debug.h
 $(OBJDIR)/HTML2Mail.o: HTML2Mail.c HTML2Mail.h YAM_utilities.h \
