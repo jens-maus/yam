@@ -503,44 +503,35 @@ struct Folder *FO_NewFolder(enum FolderType type, const char *path, const char *
 
   ENTER();
 
-  if((folder = calloc(1, sizeof(*folder))) != NULL)
+  if((folder = AllocFolder()) != NULL)
   {
-    if((folder->messages = CreateMailList()) != NULL)
+    folder->Sort[0] = 1;
+    folder->Sort[1] = 3;
+    folder->Type = type;
+    folder->LastActive = -1;
+
+    // set the standard icon images, or none for a custom folder
+    switch(type)
     {
-      folder->Sort[0] = 1;
-      folder->Sort[1] = 3;
-      folder->Type = type;
-      folder->LastActive = -1;
-
-      // set the standard icon images, or none for a custom folder
-      switch(type)
-      {
-        case FT_INCOMING: folder->ImageIndex = FICON_ID_INCOMING; break;
-        case FT_OUTGOING: folder->ImageIndex = FICON_ID_OUTGOING; break;
-        case FT_TRASH:    folder->ImageIndex = FICON_ID_TRASH;    break;
-        case FT_SENT:     folder->ImageIndex = FICON_ID_SENT;     break;
-        case FT_SPAM:     folder->ImageIndex = FICON_ID_SPAM;     break;
-        default:          folder->ImageIndex = -1;                break;
-      }
-
-      strlcpy(folder->Path, path, sizeof(folder->Path));
-      strlcpy(folder->Name, name, sizeof(folder->Name));
-
-      if(strchr(path, ':') != NULL)
-        strlcpy(folder->Fullpath, path, sizeof(folder->Fullpath));
-      else
-        AddPath(folder->Fullpath, G->MA_MailDir, path, sizeof(folder->Fullpath));
-
-      if(CreateDirectory(folder->Fullpath) == FALSE)
-      {
-        DeleteMailList(folder->messages);
-        free(folder);
-        folder = NULL;
-      }
+      case FT_INCOMING: folder->ImageIndex = FICON_ID_INCOMING; break;
+      case FT_OUTGOING: folder->ImageIndex = FICON_ID_OUTGOING; break;
+      case FT_TRASH:    folder->ImageIndex = FICON_ID_TRASH;    break;
+      case FT_SENT:     folder->ImageIndex = FICON_ID_SENT;     break;
+      case FT_SPAM:     folder->ImageIndex = FICON_ID_SPAM;     break;
+      default:          folder->ImageIndex = -1;                break;
     }
+
+    strlcpy(folder->Path, path, sizeof(folder->Path));
+    strlcpy(folder->Name, name, sizeof(folder->Name));
+
+    if(strchr(path, ':') != NULL)
+      strlcpy(folder->Fullpath, path, sizeof(folder->Fullpath));
     else
+      AddPath(folder->Fullpath, G->MA_MailDir, path, sizeof(folder->Fullpath));
+
+    if(CreateDirectory(folder->Fullpath) == FALSE)
     {
-      free(folder);
+      FreeFolder(folder);
       folder = NULL;
     }
   }
@@ -582,13 +573,10 @@ BOOL FO_FreeFolder(struct Folder *folder)
     if(!isGroupFolder(folder))
       ClearMailList(folder->messages, TRUE);
 
-    // free the mail list itself
-    DeleteMailList(folder->messages);
-
     D(DBF_FOLDER, "freed folder '%s'", folder->Name);
 
     // now it's time to deallocate the folder itself
-    free(folder);
+    FreeFolder(folder);
     result = TRUE;
   }
 

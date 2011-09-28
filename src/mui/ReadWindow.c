@@ -933,7 +933,7 @@ DECLARE(CopyMailRequest)
           {
             struct Mail *newmail;
 
-            if((newmail = AddMailToList(mail, dstfolder, TRUE)) != NULL)
+            if((newmail = AddMailToFolder(mail, dstfolder)) != NULL)
             {
               if(GetCurrentFolder() == dstfolder)
                 DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_InsertSingle, newmail, MUIV_NList_Insert_Sorted);

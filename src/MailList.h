@@ -57,6 +57,7 @@ struct MailList *CreateMailList(void);
 void ClearMailList(struct MailList *mlist, const BOOL freeMails);
 void DeleteMailList(struct MailList *mlist);
 struct MailList *CloneMailList(const struct MailList *mlist);
+void MoveMailList(struct MailList *to, struct MailList *from);
 struct MailNode *AddNewMailNode(struct MailList *mlist, const struct Mail *mail);
 void AddMailNode(struct MailList *mlist, struct MailNode *mnode);
 void RemoveMailNode(struct MailList *mlist, struct MailNode *mnode);

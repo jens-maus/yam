@@ -1529,7 +1529,7 @@ DECLARE(SaveDecryptedMail)
         memcpy(&email->Mail.transDate, &mail->transDate, sizeof(email->Mail.transDate));
 
         // add the mail to the folder now
-        if((newmail = AddMailToList(&email->Mail, folder, TRUE)) != NULL)
+        if((newmail = AddMailToFolder(&email->Mail, folder)) != NULL)
         {
           // if this was a compressed/encrypted folder we need to pack the mail now
           if(folder->Mode > FM_SIMPLE)

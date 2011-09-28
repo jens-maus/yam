@@ -275,108 +275,122 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
 
         if(full == TRUE)
         {
+          struct Folder *tempFolder;
+
           ClearFolderMails(folder, TRUE);
-          for(;;)
+
+          // allocate a temporary folder structure to avoid having to lock the real folder's
+          // mail list for each single mail we get from the index
+          if((tempFolder = AllocFolder()) != NULL)
           {
-            struct Mail mail;
-            struct ComprMail cmail;
-            char buf[SIZE_LARGE];
-            char *line;
-            char *nextLine;
-            int lineNr;
-
-            memset(&mail, 0, sizeof(struct Mail));
-            if(fread(&cmail, sizeof(struct ComprMail), 1, fh) != 1)
+            for(;;)
             {
-              // check if we are here because of an error or EOF
-              if(ferror(fh) != 0 || feof(fh) == 0)
+              struct Mail *mail;
+              struct ComprMail cmail;
+              char buf[SIZE_LARGE];
+              char *line;
+              char *nextLine;
+              int lineNr;
+
+              if(fread(&cmail, sizeof(struct ComprMail), 1, fh) != 1)
               {
-                E(DBF_FOLDER, "error while loading ComprMail struct from .index file");
+                // check if we are here because of an error or EOF
+                if(ferror(fh) != 0 || feof(fh) == 0)
+                {
+                  E(DBF_FOLDER, "error while loading ComprMail struct from .index file");
+                  error = TRUE;
+                }
+
+                // if we end up here it is just a EOF and no error.
+                break;
+              }
+
+              if(cmail.moreBytes > sizeof(buf))
+              {
+                ER_NewError(tr(MSG_ER_INDEX_CORRUPTED), indexFileName, folder->Name, ftell(fh), cmail.mailFile, cmail.moreBytes);
+                corrupt = TRUE;
+                break;
+              }
+
+              if(fread(buf, cmail.moreBytes, 1, fh) != 1)
+              {
+                E(DBF_FOLDER, "fread error while reading index file");
                 error = TRUE;
+                break;
               }
 
-              // if we end up here it is just a EOF and no error.
-              break;
-            }
-
-            if(cmail.moreBytes > sizeof(buf))
-            {
-              ER_NewError(tr(MSG_ER_INDEX_CORRUPTED), indexFileName, folder->Name, ftell(fh), cmail.mailFile, cmail.moreBytes);
-              corrupt = TRUE;
-              break;
-            }
-
-            if(fread(buf, cmail.moreBytes, 1, fh) != 1)
-            {
-              E(DBF_FOLDER, "fread error while reading index file");
-              error = TRUE;
-              break;
-            }
-
-            line = buf;
-            lineNr = 0;
-            do
-            {
-              if((nextLine = strchr(line, '\n')) != NULL)
-                *nextLine++ = '\0';
-
-              lineNr++;
-
-              switch(lineNr)
+              // create a new mail structure
+              if((mail = AllocMail()) != NULL)
               {
-                case 1:
-                  strlcpy(mail.Subject, line, sizeof(mail.Subject));
-                break;
+                line = buf;
+                lineNr = 0;
+                do
+                {
+                  if((nextLine = strchr(line, '\n')) != NULL)
+                    *nextLine++ = '\0';
 
-                case 2:
-                  strlcpy(mail.From.Address, line, sizeof(mail.From.Address));
-                break;
+                  lineNr++;
 
-                case 3:
-                  strlcpy(mail.From.RealName, line, sizeof(mail.From.RealName));
-                break;
+                  switch(lineNr)
+                  {
+                    case 1:
+                      strlcpy(mail->Subject, line, sizeof(mail->Subject));
+                    break;
 
-                case 4:
-                  strlcpy(mail.To.Address, line, sizeof(mail.To.Address));
-                break;
+                    case 2:
+                      strlcpy(mail->From.Address, line, sizeof(mail->From.Address));
+                    break;
 
-                case 5:
-                  strlcpy(mail.To.RealName, line, sizeof(mail.To.RealName));
-                break;
+                    case 3:
+                      strlcpy(mail->From.RealName, line, sizeof(mail->From.RealName));
+                    break;
 
-                case 6:
-                  strlcpy(mail.ReplyTo.Address, line, sizeof(mail.ReplyTo.Address));
-                break;
+                    case 4:
+                      strlcpy(mail->To.Address, line, sizeof(mail->To.Address));
+                    break;
 
-                case 7:
-                  strlcpy(mail.ReplyTo.RealName, line, sizeof(mail.ReplyTo.RealName));
-                break;
+                    case 5:
+                      strlcpy(mail->To.RealName, line, sizeof(mail->To.RealName));
+                    break;
+
+                    case 6:
+                      strlcpy(mail->ReplyTo.Address, line, sizeof(mail->ReplyTo.Address));
+                    break;
+
+                    case 7:
+                      strlcpy(mail->ReplyTo.RealName, line, sizeof(mail->ReplyTo.RealName));
+                    break;
+                  }
+
+                  line = nextLine;
+                }
+                while(line != NULL && lineNr < 7);
+
+                mail->mflags = cmail.mflags;
+                mail->sflags = cmail.sflags;
+                // we have to make sure that the volatile flag field isn't loaded
+                setVOLValue(mail, 0);
+                strlcpy(mail->MailFile, cmail.mailFile, sizeof(mail->MailFile));
+                mail->Date = cmail.date;
+                mail->transDate = cmail.transDate;
+                mail->cMsgID = cmail.cMsgID;
+                mail->cIRTMsgID = cmail.cIRTMsgID;
+                mail->Size = cmail.size;
+
+                // finally add the new mail structure to the temporary folder
+                // no message list locking or index expiring is necessary here,
+                // because it is a temporary folder which is not publically known
+                AddMailToFolderSimple(mail, tempFolder);
               }
-
-              line = nextLine;
             }
-            while(line != NULL && lineNr < 7);
+          }
 
-            mail.Folder = folder;
-            mail.mflags = cmail.mflags;
-            mail.sflags = cmail.sflags;
-            setVOLValue(&mail, 0);  // we have to make sure that the volatile flag field isn't loaded
-            strlcpy(mail.MailFile, cmail.mailFile, sizeof(mail.MailFile));
-            mail.Date = cmail.date;
-            mail.transDate = cmail.transDate;
-            mail.cMsgID = cmail.cMsgID;
-            mail.cIRTMsgID = cmail.cIRTMsgID;
-            mail.Size = cmail.size;
-
-            // finally add the new mail structure to our mail list,
-            // but don't expire the index, as we have the file currently opened and a freshly loaded
-            // index doesn't need to be marked as invalid
-            if(AddMailToList(&mail, folder, FALSE) == NULL)
-            {
-              E(DBF_FOLDER, "AddMailToList returned NULL!");
-              error = TRUE;
-              break;
-            }
+          // if everything went well then move all mails from the temporary folder
+          // to the real folder
+          if(error == FALSE)
+          {
+            MoveFolderContents(folder, tempFolder);
+            FreeFolder(tempFolder);
           }
         }
       }
@@ -2986,7 +3000,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
               {
                 struct Mail *newMail;
 
-                if((newMail = AddMailToList(&email->Mail, folder, TRUE)) != NULL)
+                if((newMail = AddMailToFolder(&email->Mail, folder)) != NULL)
                 {
                   // if this new mail hasn't got a valid transDate we have to check if we
                   // have to take the fileDate as a fallback value.

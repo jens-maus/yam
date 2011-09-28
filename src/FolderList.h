@@ -60,6 +60,9 @@ void RemoveFolder(struct FolderList *flist, struct Folder *folder);
 void DeleteFolderNode(struct FolderNode *fnode);
 void MoveFolderNode(struct FolderList *flist, struct FolderNode *fnode, struct FolderNode *afterThis);
 struct FolderNode *TakeFolderNode(struct FolderList *flist);
+struct Folder *AllocFolder();
+void FreeFolder(struct Folder *folder);
+void MoveFolderContents(struct Folder *to, struct Folder *from);
 
 // check if a folder list is empty
 #define IsFolderListEmpty(flist)                  IsMinListEmpty(&(flist)->list)

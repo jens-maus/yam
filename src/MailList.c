@@ -175,6 +175,25 @@ struct MailList *CloneMailList(const struct MailList *mlist)
 }
 
 ///
+/// MoveMailList
+// move all mails from one mail list to another one
+void MoveMailList(struct MailList *to, struct MailList *from)
+{
+  ENTER();
+
+  LockMailList(to);
+  LockMailList(from);
+
+  MoveList((struct List *)&to->list, (struct List *)&from->list);
+  to->count = from->count;
+
+  UnlockMailList(from);
+  UnlockMailList(to);
+
+  LEAVE();
+}
+
+///
 /// AddNewMailNode
 // add a new mail to an existing list
 // if locking of the list is needed this must be done by the calling function

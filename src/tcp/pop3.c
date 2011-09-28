@@ -1138,7 +1138,7 @@ static BOOL LoadMessage(struct TransferContext *tc, struct Folder *inFolder, con
       {
         struct Mail *mail;
 
-        if((mail = AddMailToList(&email->Mail, inFolder, TRUE)) != NULL)
+        if((mail = AddMailToFolder(&email->Mail, inFolder)) != NULL)
         {
           // we have to get the actual Time and place it in the transDate, so that we know at
           // which time this mail arrived

@@ -32,6 +32,7 @@
 #include "extrasrc.h"
 
 #include "FolderList.h"
+#include "MailList.h"
 
 #include "Debug.h"
 
@@ -258,6 +259,74 @@ struct FolderNode *TakeFolderNode(struct FolderList *flist)
 
   RETURN(fnode);
   return fnode;
+}
+
+///
+/// AllocFolder
+// allocate a folder structure
+struct Folder *AllocFolder(void)
+{
+  struct Folder *folder;
+
+  ENTER();
+
+  if((folder = calloc(1, sizeof(*folder))) != NULL)
+  {
+    if((folder->messages = CreateMailList()) != NULL)
+    {
+      // everything is ok
+    }
+    else
+    {
+      free(folder);
+      folder = NULL;
+    }
+  }
+
+  RETURN(folder);
+  return folder;
+}
+
+///
+/// FreeFolder
+// free a folder structure
+void FreeFolder(struct Folder *folder)
+{
+  ENTER();
+
+  DeleteMailList(folder->messages);
+  free(folder);
+
+  LEAVE();
+}
+
+///
+/// MoveFolderContents
+// move all mails from one folder structure to another together with all stats
+void MoveFolderContents(struct Folder *to, struct Folder *from)
+{
+  ENTER();
+
+  // move over all messages
+  MoveMailList(to->messages, from->messages);
+
+  // copy the stats
+  to->Size = from->Size;
+  to->Total = from->Total;
+  to->New = from->New;
+  to->Unread = from->Unread;
+  to->Sent = from->Sent;
+  to->Deleted = from->Deleted;
+
+  // erase the stats of the originating folder
+  from->Size = 0;
+  from->Total = 0;
+  from->New = 0;
+  from->Unread = 0;
+  from->Sent = 0;
+  from->Deleted = 0;
+
+  LEAVE();
 }
 
 ///

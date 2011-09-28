@@ -3189,9 +3189,9 @@ void DisplayMailList(struct Folder *fo, Object *lv)
   LEAVE();
 }
 ///
-/// AddMailToList
+/// AddMailToFolder
 //  Adds a message to a folder
-struct Mail *AddMailToList(const struct Mail *mail, struct Folder *folder, const BOOL expire)
+struct Mail *AddMailToFolder(const struct Mail *mail, struct Folder *folder)
 {
   struct Mail *new;
 
@@ -3199,29 +3199,42 @@ struct Mail *AddMailToList(const struct Mail *mail, struct Folder *folder, const
 
   if((new = CloneMail(mail)) != NULL)
   {
-    new->Folder = folder;
-
-    // lets add the new Message to our message list
+    // add the cloned message to the folder
     LockMailList(folder->messages);
-    AddNewMailNode(folder->messages, new);
+    AddMailToFolderSimple(new, folder);
     UnlockMailList(folder->messages);
 
-    // lets summarize the stats
-    folder->Total++;
-    folder->Size += mail->Size;
-
-    if(hasStatusNew(mail))
-      folder->New++;
-
-    if(!hasStatusRead(mail))
-      folder->Unread++;
-
-    if(expire == TRUE)
-      MA_ExpireIndex(folder);
+    // expire the folder's index as we just added a new message
+    MA_ExpireIndex(folder);
   }
 
   RETURN(new);
   return new;
+}
+
+///
+/// AddMailToFolderSimple
+//  Adds a message to a folder with already locked mail list
+void AddMailToFolderSimple(struct Mail *mail, struct Folder *folder)
+{
+  ENTER();
+
+  mail->Folder = folder;
+
+  // let's add the new message to the folder's message list
+  AddNewMailNode(folder->messages, mail);
+
+  // let's summarize the stats
+  folder->Total++;
+  folder->Size += mail->Size;
+
+  if(hasStatusNew(mail))
+    folder->New++;
+
+  if(!hasStatusRead(mail))
+    folder->Unread++;
+
+  LEAVE();
 }
 
 ///
