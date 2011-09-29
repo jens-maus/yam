@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-09-29 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MAf.c: fixed a wrong pointer introduced by the latest changes.
+
 2011-09-28 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MAf.c, FolderList.c: the index loading now uses a temporary folder which

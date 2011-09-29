@@ -381,6 +381,12 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
                 // no message list locking or index expiring is necessary here,
                 // because it is a temporary folder which is not publically known
                 AddMailToFolderSimple(mail, tempFolder);
+
+                // the AddMailToFolderSimple() call set the mail's folder pointer to the
+                // temporary folder. But since this is a temporary one only and will be
+                // invalid after leaving this function we must set the mail's folder
+                // pointer to the correct current folder.
+                mail->Folder = folder;
               }
             }
           }
