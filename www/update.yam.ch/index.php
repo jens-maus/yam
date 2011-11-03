@@ -65,7 +65,7 @@ if($userVERSTR == "" || $userBUILDDATE == "")
 {
    // redirect the user to the download description page
    print "<head>";
-   print "<meta http-equiv='refresh' content='1; URL=http://www.yam.ch/Home/Downloads'>";
+   print "<meta http-equiv='refresh' content='1; URL=http://yam.ch/downloads'>";
    print "</head>";
 
    // exit here and do not continue processing
