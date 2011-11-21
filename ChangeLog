@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-11-21 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c: YAM now correctly terminates instead of restarting itself when
+    receiving APPLIBMT_Quit or APPLIBMT_ForceQuit via application.library in
+    case AmiUpdate wants to reboot the system.
+
 2011-09-29 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MAf.c: fixed a wrong pointer introduced by the latest changes.

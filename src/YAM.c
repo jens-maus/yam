@@ -2832,7 +2832,10 @@ int main(int argc, char **argv)
           // make sure to break out here in case
           // the Quit or ForceQuit succeeded.
           if(HandleDockyIcon() == TRUE)
+          {
+          	ret = 1;
             break;
+          }
         }
         #endif // __amigaos4__
 
