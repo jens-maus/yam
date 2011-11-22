@@ -298,6 +298,7 @@ DECLARE(CheckForUpdates) // ULONG quiet
     DoAction(obj, TA_DownloadURL, TT_DownloadURL_Server, C->UpdateServer,
                                   TT_DownloadURL_Request, request,
                                   TT_DownloadURL_Filename, data->tempFile->Filename,
+                                  TT_DownloadURL_Flags, DLURLF_NO_ERROR_ON_404,
                                   TAG_DONE);
     free(request);
 

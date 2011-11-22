@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-11-21 Jens Langner <Jens.Langner@light-speed.de>
+
+  * mui/UpdateNotifyWindow.c: the UpdateCheck mechanisms will now not
+    complain about a missing document anymore. This might have been the case
+    if the update.yam.ch server wasn't working correctly. However, the update
+    check is non critical and thus we can ignore that error completly.
+
 2011-11-21 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.c: YAM now correctly terminates instead of restarting itself when
