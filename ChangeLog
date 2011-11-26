@@ -5,6 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-11-26 Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_RE.c: modified the MIME boundary checks to make sure that the boundary
+    is placed on a single line with a final '\0' and only white spaces between
+    the boundary and the final NUL char. This should fix problems with slightly
+    broken mails where the boundary was not chosen unique enough and where in
+    the text it might partly show up. Previously YAM was just comparing the
+    beginning of a line with the defined boundary string. However RFC 2046
+    defines that the boundary should be on a single line with only white
+    spaces and the final CRLF. Thus, this fix should close #232.
+
 2011-11-21 Jens Langner <Jens.Langner@light-speed.de>
 
   * mui/UpdateNotifyWindow.c: the UpdateCheck mechanisms will now not

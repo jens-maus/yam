@@ -1201,21 +1201,43 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, const struct codeset *srcC
       if(boundaryLen > 0 && curlen >= boundaryLen+2 &&
          buf[0] == '-' && buf[1] == '-' && strncmp(buf+2, rp->CParBndr, boundaryLen) == 0)
       {
-        if(buf[boundaryLen+2] == '-' && buf[boundaryLen+3] == '-' &&
-           buf[boundaryLen+4] == '\0')
-        {
-          D(DBF_MAIL, "found end boundary of MIME part");
+        // we seem to have found the boundary character line. However, we do need
+        // to identify its valid end and see if this is the end boundary or another
+        // start boundary.
 
-          // we had success, so lets break out
-          result = TRUE;
-          break;
+        // check for an end boundary first
+        if(buf[boundaryLen+2] == '-' && buf[boundaryLen+3] == '-')
+        {
+          // check if the line ends properly (only white spaces and final \0 allowed
+          // as per RFC 2046.
+          int i = boundaryLen+4;
+          while(isspace(buf[i]))
+            i++;
+  
+          if(buf[i] == '\0')
+          {
+            D(DBF_MAIL, "found end MIME boundary");
+
+            // we had success, so lets break out
+            result = TRUE;
+            break;
+          }
         }
         else
         {
-          D(DBF_MAIL, "found start boundary, but didn't find end boundary");
+          // check if the line ends properly (only white spaces and final \0 allowed
+          // as per RFC 2046.
+          int i = boundaryLen+2;
+          while(isspace(buf[i]))
+            i++;
+  
+          if(buf[i] == '\0')
+          {
+            D(DBF_MAIL, "found new start MIME boundary");
 
-          // no success, return FALSE
-          break;
+            // no success, return FALSE
+            break;
+          }
         }
       }
 
