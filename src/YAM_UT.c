@@ -4162,7 +4162,7 @@ unsigned char ConvertKey(const struct IntuiMessage *imsg)
   ie.ie_EventAddress = (APTR *) *((ULONG *)imsg->IAddress);
 
   if(MapRawKey(&ie, (STRPTR)&code, 1, NULL) != 1)
-    E(DBF_GUI, "MapRawKey retuned != 1");
+    W(DBF_GUI, "MapRawKey returned != 1 (%08lx)", code);
 
   RETURN(code);
   return code;

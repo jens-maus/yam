@@ -674,7 +674,6 @@ OVERLOAD(MUIM_HandleEvent)
 
         default:
         {
-          BOOL changed = FALSE;
           BOOL closeMatchWin = FALSE;
           LONG selectSize;
 
@@ -689,8 +688,6 @@ OVERLOAD(MUIM_HandleEvent)
 
               if(content != NULL && (content[pos] == '\0' || content[pos] == ','))
                 DoMethod(obj, MUIM_BetterString_ClearSelected);
-
-              changed = TRUE;
             }
             else if((imsg->Code == IECODE_LEFT || imsg->Code == IECODE_RIGHT))
             {
@@ -714,31 +711,12 @@ OVERLOAD(MUIM_HandleEvent)
             }
           }
 
-          // if we do not have an early change result we
-          // do have to evaluate the superMethod call
-          if(changed == FALSE)
-          {
-            char *old;
-            char *new;
+          // call the SuperMethod now
+          result = DoSuperMethodA(cl, obj, msg);
 
-            // now we get a temporary copy of our string contents, call the supermethod
-            // and compare if something has changed or not
-            old = strdup((char *)xget(obj, MUIA_String_Contents));
-            result = DoSuperMethodA(cl, obj, msg);
-            new = (char *)xget(obj, MUIA_String_Contents);
-
-            // check if the content changed
-            if(strcmp(old, new) != 0)
-              changed = TRUE;
-
-            // free our temporary buffer
-            free(old);
-          }
-          else
-            result = DoSuperMethodA(cl, obj, msg);
-
-          // if the content changed we do get the current recipient
-          if(changed == TRUE)
+          // if the match window should be closed we don't need to
+          // open it beforehand
+          if(closeMatchWin == FALSE)
           {
             char *cur_rcpt = (char *)DoMethod(obj, MUIM_Recipientstring_CurrentRecipient);
             struct CustomABEntry *abentry;
@@ -783,10 +761,12 @@ OVERLOAD(MUIM_HandleEvent)
               }
             }
           }
-
-          // close the match window if it is open
-          if(closeMatchWin == TRUE && xget(data->Matchwindow, MUIA_Window_Open) == TRUE)
-            set(data->Matchwindow, MUIA_Window_Open, FALSE);
+          else
+          {
+            // close the match window if it is open
+            if(xget(data->Matchwindow, MUIA_Window_Open) == TRUE)
+              set(data->Matchwindow, MUIA_Window_Open, FALSE);
+          }
         }
         break;
       }

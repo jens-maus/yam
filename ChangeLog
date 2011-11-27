@@ -5,6 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-11-27 Jens Langner <Jens.Langner@light-speed.de>
+
+  * mui/AddrmatchlistPopup.c: modified addrmatchlist to also popup in case
+    only one entry was found. This should help in identifying more easily if
+    that single entry is the actual right one the user was searching for.
+  * mui/Recipientstring.c: modified class to make sure that on every change
+    in the string the addrmatchlist will be updated accordingly resulting in
+    an updated addrmatchlist object. Previously this was only done if the
+    actual text in the string object changed which wasn't the case for all
+    occasions. This fix should close #277.
+
 2011-11-26 Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_RE.c: modified the MIME boundary checks to make sure that the boundary

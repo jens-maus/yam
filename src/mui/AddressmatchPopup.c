@@ -301,9 +301,9 @@ DECLARE(Open) // char *str
 
   DoMethod(_app(obj), MUIM_YAMApplication_FindEmailMatches, msg->str, data->Matchlist);
 
-  /* is there more entries in the list and if only one, is it longer than what the user already typed... */
+  // is there more entries in the list and if only one, is it longer than what the user already typed...
   entries = xget(data->Matchlist, MUIA_NList_Entries);
-  if(entries > 0 && (DoMethod(data->Matchlist, MUIM_NList_GetEntry, 0, &entry), (entries != 1 || Stricmp(msg->str, entry->MatchString) != 0)))
+  if(entries > 0 && DoMethod(data->Matchlist, MUIM_NList_GetEntry, 0, &entry) != 0 && entry != NULL)
   {
     // now we return the complete first entry of the list of matches instead
     // of just the matching string to allow the recipient string to derive the
