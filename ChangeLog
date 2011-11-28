@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-11-28 Jens Langner <Jens.Langner@light-speed.de>
+
+  * HTML2Mail.l: implemented identification of <script> tag so that text
+    between a script tag is completely skipped in the HTML2Mail conversion.
+
 2011-11-27 Jens Langner <Jens.Langner@light-speed.de>
 
   * mui/AddrmatchlistPopup.c: modified addrmatchlist to also popup in case

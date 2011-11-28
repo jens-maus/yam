@@ -78,7 +78,7 @@
  */
 
 /* start conditions */
-%x COMMENT STYLE HREF PRE TITLE H BOLD ITALIC UNDERLINE LI
+%x COMMENT STYLE SCRIPT HREF PRE TITLE H BOLD ITALIC UNDERLINE LI
 
 /* common 'HTML' tag rules */
 NOT_GT        [^>]*
@@ -102,6 +102,12 @@ anything      .|[\n\t\r]
 "<style"{TAGSTART} { yy_push_state(STYLE); D(DBF_HTML, "<style>"); }
 <STYLE>{
   "</style>"  { yy_pop_state(); D(DBF_HTML, "</style>"); }
+  {anything}  { /*D(DBF_HTML, "[style]: '%s'", yytext);*/ /* do nothing */ }
+}
+
+"<script"{TAGSTART} { yy_push_state(SCRIPT); D(DBF_HTML, "<script>"); }
+<SCRIPT>{
+  "</script>" { yy_pop_state(); D(DBF_HTML, "</script>"); }
   {anything}  { /*D(DBF_HTML, "[style]: '%s'", yytext);*/ /* do nothing */ }
 }
 
