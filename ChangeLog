@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-12-08 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_AB.c: enhanced the date scanner to accept placeholders like %e, %-d,
+    %-m and %-y. This closes #280.
+
 2011-11-28 Jens Langner <Jens.Langner@light-speed.de>
 
   * HTML2Mail.l: implemented identification of <script> tag so that text

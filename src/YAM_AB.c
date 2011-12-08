@@ -222,7 +222,8 @@ static BOOL ScanDateString(const char *string, const char *fmt, struct tm *res)
       {
         switch(fc)
         {
-          case 'd':
+          case 'd': // %d  - day number with leading zeros (01-31)
+          case 'e': // %e  - day number with leading spaces ( 1-31)
           {
             SET_FLAG(flags, FLG_MDAY);
             state = SDS_DAY_OF_MONTH;
@@ -230,7 +231,7 @@ static BOOL ScanDateString(const char *string, const char *fmt, struct tm *res)
           }
           break;
 
-          case 'm':
+          case 'm': // %m  - month number with leading zeros (01-12)
           {
             SET_FLAG(flags, FLG_MON);
             state = SDS_MONTH;
@@ -238,16 +239,23 @@ static BOOL ScanDateString(const char *string, const char *fmt, struct tm *res)
           }
           break;
 
-          case 'Y':
+          case 'Y': // %Y  - year using four digits with leading zeros
           {
             SET_FLAG(flags, FLG_4DIGIT_YEAR);
           }
           // we fall through here
 
-          case 'y':
+          case 'y': // %y  - year using two digits with leading zeros (00-99)
           {
             SET_FLAG(flags, FLG_YEAR);
             state = SDS_YEAR;
+            fc = *fmt++;
+          }
+          break;
+
+          case '-':
+          {
+            // ignore any switches between with/without leading zeros/spaces
             fc = *fmt++;
           }
           break;
@@ -270,6 +278,10 @@ static BOOL ScanDateString(const char *string, const char *fmt, struct tm *res)
           state = SDS_DEFAULT;
           fc = *fmt++;
           sc = *string++;
+        }
+        else if(sc == ' ')
+        {
+          // ignore any spaces within the day spec
         }
         else if(sc >= '0' && sc <= '9')
         {
@@ -339,7 +351,7 @@ static BOOL ScanDateString(const char *string, const char *fmt, struct tm *res)
 
   // finally check if the calculated values are correct, but only those which
   // were specified in the format string
-  if(isFlagSet(flags, FLG_MDAY) || strstr(fmt, "%d") != NULL)
+  if(isFlagSet(flags, FLG_MDAY) || strstr(fmt, "%d") != NULL || strstr(fmt, "%-d") != NULL || strstr(fmt, "%e") != NULL)
   {
     if(res->tm_mday >= 1 && res->tm_mday <= 31)
     {
@@ -351,7 +363,7 @@ static BOOL ScanDateString(const char *string, const char *fmt, struct tm *res)
       result = FALSE;
     }
   }
-  if(isFlagSet(flags, FLG_MON) || strstr(fmt, "%m") != NULL)
+  if(isFlagSet(flags, FLG_MON) || strstr(fmt, "%m") != NULL || strstr(fmt, "%-m") != NULL)
   {
     if(res->tm_mon >= 1 && res->tm_mon <= 12)
     {
@@ -364,7 +376,7 @@ static BOOL ScanDateString(const char *string, const char *fmt, struct tm *res)
       result = FALSE;
     }
   }
-  if(isFlagSet(flags, FLG_YEAR) || strstr(fmt, "%y") != NULL || strstr(fmt, "%Y") != NULL)
+  if(isFlagSet(flags, FLG_YEAR) || strstr(fmt, "%y") != NULL || strstr(fmt, "%-y") != NULL || strstr(fmt, "%Y") != NULL)
   {
     if(isFlagSet(flags, FLG_4DIGIT_YEAR) || strstr(fmt, "%Y") != NULL)
     {
