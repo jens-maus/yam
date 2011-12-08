@@ -376,9 +376,9 @@ static BOOL ScanDateString(const char *string, const char *fmt, struct tm *res)
       result = FALSE;
     }
   }
-  if(isFlagSet(flags, FLG_YEAR) || strstr(fmt, "%y") != NULL || strstr(fmt, "%-y") != NULL || strstr(fmt, "%Y") != NULL)
+  if(isFlagSet(flags, FLG_YEAR) || strstr(fmt, "%y") != NULL || strstr(fmt, "%-y") != NULL || strstr(fmt, "%Y") != NULL || strstr(fmt, "%-Y") != NULL)
   {
-    if(isFlagSet(flags, FLG_4DIGIT_YEAR) || strstr(fmt, "%Y") != NULL)
+    if(isFlagSet(flags, FLG_4DIGIT_YEAR) || strstr(fmt, "%Y") != NULL || strstr(fmt, "%-Y") != NULL)
     {
       if(res->tm_year >= 1900)
       {
