@@ -8352,10 +8352,15 @@ MSG_CO_SPAM_STATISTICS
 ;
 MSG_ER_WRONG_DOB_FORMAT
 Das Geburtstagsdatum ist im falschen Format. Das korrekte Format ist '%s'.\n\
-%%d - Tag\n\
-%%m - Monat\n\
-%%y - Jahr (2-stellig)\n\
-%%Y - Jahr (4-stellig)\n\
+%%d  - Tag mit führenden Nullen (01-31)\n\
+%%-d - Tag ohne führende Nullen (1-31)\n\
+%%e  - Tag mit führenden Leerzeichen ( 1-31)\n\
+%%m  - Monat mit führenden Nullen (01-12)\n\
+%%-m - Monat ohne führende Nullen (1-12)\n\
+%%y  - Jahr mit führenden Nullen (00-99, 2-stellig)\n\
+%%-y - Jahr ohne führende Nullen (0-99, 2-stellig)\n\
+%%Y  - Jahr mit führenden Nullen (4-stellig)\n\
+%%-Y - Jahr ohne führenden Nullen (4-stellig)\n\
 Die Jahreszahl muss größer oder gleich 1900 sein.
 ;
 MSG_CO_PGPURL

@@ -6763,10 +6763,15 @@ MSG_CO_SPAM_STATISTICS (2142//)
 ;
 MSG_ER_WRONG_DOB_FORMAT (2143//)
 Date of birth uses a wrong format. The correct format is '%s'.\n\
-%%d - day\n\
-%%m - month\n\
-%%y - year (2 digits)\n\
-%%Y - year (4 digits)\n\
+%%d  - day with leading zeros (01-31)\n\
+%%-d - day without leading zeros (1-31)\n\
+%%e  - day with leading spaces ( 1-31)\n\
+%%m  - month with leading zeros (01-12)\n\
+%%-m - month without leading zeros (1-12)\n\
+%%y  - year with leading zeros (00-99, 2 digits)\n\
+%%-y - year without leading zeros (0-99, 2 digits)\n\
+%%Y  - year with leading zeros (4 digits)\n\
+%%-Y - year without leading zeros (4 digits)\n\
 The year number must be greater or equal 1900.
 ; DOBFORMAT
 ;

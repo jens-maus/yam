@@ -9,6 +9,8 @@ $URL$
 
   * YAM_AB.c: enhanced the date scanner to accept placeholders like %e, %-d,
     %-m and %-y. This closes #280.
+  * locale/YAM.cd: added the new possible placeholders to the error message
+    in case parsing the date fails to explain their meaning.
 
 2011-11-28 Jens Langner <Jens.Langner@light-speed.de>
 
