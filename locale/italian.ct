@@ -1,13 +1,13 @@
-## version $VER: YAM.catalog 7.91 (29.08.2011)
+## version $VER: YAM.catalog 7.92 (8.12.2011)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
 ;
 ; italian.ct - YAM 2.6p1/2.7 catalog translation file
-; Compiled with FlexCat 2.8 PPC (AmigaOS4)
+; Compiled with FlexCat 2.9 PPC (AmigaOS4)
 ; $Id$
 ;
-; based on YAM.cd 5715 2011-06-29
+; based on YAM.cd 5753 2011-12-08
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -9660,17 +9660,27 @@ MSG_CO_SPAM_STATISTICS
 ;
 MSG_ER_WRONG_DOB_FORMAT
 La data di nascita utilizza un formato errato. Il formato corretto è '%s'.\n\
-%%d - giorno\n\
-%%m - mese\n\
-%%y - anno (2 caratteri)\n\
-%%Y - anno (4 caratteri)\n\
+%%d  - giorno con lo zero iniziale (01-31)\n\
+%%-d - giorno senza lo zero iniziale (1-31)\n\
+%%e  - giorno con lo spazio iniziale ( 1-31)\n\
+%%m  - mese con lo zero iniziale (01-12)\n\
+%%-m - mese senza lo zero iniziale (1-12)\n\
+%%y  - anno con lo zero iniziale (00-99, 2 caratteri)\n\
+%%-y - anno senza lo zero iniziale (0-99, 2 caratteri)\n\
+%%Y  - anno con lo zero iniziale (4 caratteri)\n\
+%%-Y - anno senza lo zero iniziale (4 caratteri)\n\
 L'anno di nascita deve essere almeno superiore o uguale a 1900.
 ; DOBFORMAT
 ; Date of birth uses a wrong format. The correct format is '%s'.\n\
-; %%d - day\n\
-; %%m - month\n\
-; %%y - year (2 digits)\n\
-; %%Y - year (4 digits)\n\
+; %%d  - day with leading zeros (01-31)\n\
+; %%-d - day without leading zeros (1-31)\n\
+; %%e  - day with leading spaces ( 1-31)\n\
+; %%m  - month with leading zeros (01-12)\n\
+; %%-m - month without leading zeros (1-12)\n\
+; %%y  - year with leading zeros (00-99, 2 digits)\n\
+; %%-y - year without leading zeros (0-99, 2 digits)\n\
+; %%Y  - year with leading zeros (4 digits)\n\
+; %%-Y - year without leading zeros (4 digits)\n\
 ; The year number must be greater or equal 1900.
 ; DOBFORMAT
 ;
