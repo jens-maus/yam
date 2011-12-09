@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-12-09 Emilio Jimenez <ejim@ono.com>
+
+  * locale/spanish.ct: update to the latest change.
+
 2011-12-08 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: update to the latest changes.
