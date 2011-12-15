@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-12-15 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/AddrBookListtree.c, MainFolderListtree.c: added a workaround for a bug
+    in NListtree.mcc to avoid a NULL pointer access. This closes #281.
+
 2011-12-09 Emilio Jimenez <ejim@ono.com>
 
   * locale/spanish.ct: update to the latest change.
