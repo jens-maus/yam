@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+
+2011-12-15 Mariusz Danilewicz <mandi@interia.pl>
+
+  * locale/polish.ct: update to the latest changes.
+
 2011-12-15 Jens Langner <Jens.Langner@light-speed.de>
 
   * mui/MainFolderListtree.c, mui/MainMailList.c: added PCS format statements to

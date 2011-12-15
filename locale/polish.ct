@@ -1,11 +1,11 @@
-## version $VER: YAM.catalog 7.27 (04.07.2011)
+## version $VER: YAM.catalog 7.28 (15.12.2011)
 ## language polski
 ## codeset 5
 ;
 ## chunk AUTH Mariusz Danilewicz <mandi@interia.pl>
 ; YAM.ct - YAM 2.7 catalog polish translation file
 ; $Id$
-; in sync with .cd in revision 5715;
+; in sync with .cd in revision 5753
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -9515,16 +9515,26 @@ MSG_CO_SPAM_STATISTICS
 ;
 MSG_ER_WRONG_DOB_FORMAT
 Data urodzin u¿ywa niew³a¶ciwego formatu. Poprawnym formatem jest \"%s\".\n\
-%%d - dzieñ\n\
-%%m - miesi±c\n\
-%%y - rok (w postaci dwucyfrowej)\n\
-%%Y - rok (w postaci czterocyfrowej)\n\
+%%d  - dzieñ z zerami wiod±cymi (01-31)\n\
+%%-d - dzieñ bez zer wiod±cych (1-31)\n\
+%%e  - dzieñ ze spacjami wido±cymi ( 1-31)\n\
+%%m  - miesi±c z zerami wiod±cymi (01-12)\n\
+%%-m - miesi±c bez zer wiod±cych (1-12)\n\
+%%y  - rok z zerami wiod±cymi (00-99, w postaci dwucyfrowej)\n\
+%%-y - rok bez zer wiod±cych (0-99, w postaci dwucyfrowej)\n\
+%%Y  - rok z zerami wiod±cymi (w postaci czterocyfrowej)\n\
+%%-Y - rok bez zer wiod±cych (w postaci czterocyfrowej)\n\
 Rok musi byæ wiêkszy, b±d¼ równy 1900.
 ; Date of birth uses a wrong format. The correct format is '%s'.\n\
-; %%d - day\n\
-; %%m - month\n\
-; %%y - year (2 digits)\n\
-; %%Y - year (4 digits)\n\
+; %%d  - day with leading zeros (01-31)\n\
+; %%-d - day without leading zeros (1-31)\n\
+; %%e  - day with leading spaces ( 1-31)\n\
+; %%m  - month with leading zeros (01-12)\n\
+; %%-m - month without leading zeros (1-12)\n\
+; %%y  - year with leading zeros (00-99, 2 digits)\n\
+; %%-y - year without leading zeros (0-99, 2 digits)\n\
+; %%Y  - year with leading zeros (4 digits)\n\
+; %%-Y - year without leading zeros (4 digits)\n\
 ; The year number must be greater or equal 1900.
 ; DOBFORMAT
 ;
