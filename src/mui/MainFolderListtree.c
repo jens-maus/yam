@@ -794,6 +794,9 @@ OVERLOAD(MUIM_NListtree_CopyToClip)
 OVERLOAD(MUIM_ContextMenuChoice)
 {
   struct MUIP_ContextMenuChoice *m = (struct MUIP_ContextMenuChoice *)msg;
+  ULONG result = 0;
+
+  ENTER();
 
   switch(xget(m->item, MUIA_UserData))
   {
@@ -829,12 +832,11 @@ OVERLOAD(MUIM_ContextMenuChoice)
     case CMN_SEARCH:    { DoMethod(G->App, MUIM_CallHook, &FI_OpenHook); } break;
 
     default:
-    {
-      return DoSuperMethodA(cl, obj, (Msg)msg);
-    }
+      result = DoSuperMethodA(cl, obj, (Msg)msg);
   }
 
-  return 0;
+  RETURN(result);
+  return result;
 }
 
 ///
@@ -848,6 +850,8 @@ DECLARE(MakeFormat)
   char format[SIZE_LARGE];
   BOOL first = TRUE;
   int i;
+
+  ENTER();
 
   *format = '\0';
 
@@ -867,13 +871,18 @@ DECLARE(MakeFormat)
 
       if(i > 0)
         strlcat(format, " P=\033r", sizeof(format));
+      else
+        strlcat(format, " PCS=C", sizeof(format));
     }
   }
   strlcat(format, " NOBAR", sizeof(format));
 
+  SHOWSTRING(DBF_GUI, format);
+
   // set the new NList_Format to our object
   set(obj, MUIA_NList_Format, format);
 
+  LEAVE();
   return 0;
 }
 

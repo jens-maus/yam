@@ -724,6 +724,9 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
 OVERLOAD(MUIM_ContextMenuChoice)
 {
   struct MUIP_ContextMenuChoice *m = (struct MUIP_ContextMenuChoice *)msg;
+  ULONG result = 0;
+
+  ENTER();
 
   switch(xget(m->item, MUIA_UserData))
   {
@@ -781,12 +784,11 @@ OVERLOAD(MUIM_ContextMenuChoice)
     case MMEN_SELTOGG:        DoMethod(obj, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Toggle, NULL); break;
 
     default:
-    {
-      return DoSuperMethodA(cl, obj, msg);
-    }
+      result = DoSuperMethodA(cl, obj, msg);
   }
 
-  return 0;
+  RETURN(result);
+  return result;
 }
 
 ///
@@ -895,6 +897,8 @@ DECLARE(MakeFormat)
   BOOL first = TRUE;
   int i;
 
+  ENTER();
+
   *format = '\0';
 
   for(i = 0; i < MACOLNUM; i++)
@@ -911,15 +915,20 @@ DECLARE(MakeFormat)
       p = strlen(format);
       snprintf(&format[p], sizeof(format)-p, "COL=%d W=%d", i, defwidth[i]);
 
-      if(i == 5)
+      if(i == 5) // Size
         strlcat(format, " P=\033r", sizeof(format));
+      else if(i == 3 || i == 1) // Subject || Sender
+        strlcat(format, " PCS=R", sizeof(format));
     }
   }
   strlcat(format, " BAR", sizeof(format));
 
+  SHOWSTRING(DBF_GUI, format);
+
   // set the new NList_Format to our object
   set(obj, MUIA_NList_Format, format);
 
+  LEAVE();
   return 0;
 }
 
