@@ -5,13 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
-
-2011-12-15 Mariusz Danilewicz <mandi@interia.pl>
-
-  * locale/polish.ct: update to the latest changes.
-
 2011-12-15 Jens Langner <Jens.Langner@light-speed.de>
 
+  * HTML2Mail.l: reworked the main html2mail flex rules to behave somewhat more
+    hierarchically. Previously the rules were pretty much mixed up. Now they
+    should more cleanly convert a html mail (and especially embedded links)
+    to a somewhat more readable text. This should finally closes #279.
   * mui/MainFolderListtree.c, mui/MainMailList.c: added PCS format statements to
     the MUIA_NList_Format specs of the MainFolderListtree and the MainMailList.
     This is a new feature of NList and will automatically substitute text with
@@ -19,6 +18,10 @@ $URL$
     Folder Listtree the folder name will now be substitute centered and for
     the main mail list the Sender and Subject line will be substituted right
     aligned in case text doesn't fit anymore. Please test extensively! ;)
+
+2011-12-15 Mariusz Danilewicz <mandi@interia.pl>
+
+  * locale/polish.ct: update to the latest changes.
 
 2011-12-15 Thore Böckelmann <tboeckel@gmx.de>
 

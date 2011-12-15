@@ -93,92 +93,94 @@ anything      .|[\n\t\r]
 
 %%
 
-"<!--"  { yy_push_state(COMMENT); D(DBF_HTML, "<!--"); }
+"<!--".* { D(DBF_HTML, "%d: <!--", YY_START); yyless(4); yy_push_state(COMMENT); }
 <COMMENT>{
-  "-->"       { yy_pop_state(); D(DBF_HTML, "-->"); }
+  "-->"       { D(DBF_HTML, "%d: -->", YY_START); yy_pop_state(); }
   {anything}  { /*D(DBF_HTML, "[comment]: '%s'", yytext);*/ /* do nothing */ }
 }
 
-"<style"{TAGSTART} { yy_push_state(STYLE); D(DBF_HTML, "<style>"); }
+"<style"{TAGSTART} { D(DBF_HTML, "%d: <style>", YY_START); yyless(7); yy_push_state(STYLE); }
 <STYLE>{
-  "</style>"  { yy_pop_state(); D(DBF_HTML, "</style>"); }
+  "</style>"  { D(DBF_HTML, "%d: </style>", YY_START); yy_pop_state(); }
   {anything}  { /*D(DBF_HTML, "[style]: '%s'", yytext);*/ /* do nothing */ }
 }
 
-"<script"{TAGSTART} { yy_push_state(SCRIPT); D(DBF_HTML, "<script>"); }
+"<script"{TAGSTART} { D(DBF_HTML, "%d: <script>", YY_START); yyless(8); yy_push_state(SCRIPT); }
 <SCRIPT>{
-  "</script>" { yy_pop_state(); D(DBF_HTML, "</script>"); }
+  "</script>" { D(DBF_HTML, "%d: </script>", YY_START); yy_pop_state(); }
   {anything}  { /*D(DBF_HTML, "[style]: '%s'", yytext);*/ /* do nothing */ }
 }
 
-"<pre"{TAGSTART}   { yy_push_state(PRE); D(DBF_HTML, "<pre>"); }
+"<pre"{TAGSTART} { D(DBF_HTML, "%d: <pre>", YY_START); yyless(5); yy_push_state(PRE); }
 <PRE>{
-  "</pre>"    { yy_pop_state(); D(DBF_HTML, "</pre>"); return ht_PRE; }
+  "</pre>"    { D(DBF_HTML, "%d: </pre>", YY_START); yy_pop_state(); return ht_PRE; }
   {anything}  { return ht_NORMALTEXT; }
 }
 
-"<a "{NOT_GT}"href="  { yy_push_state(HREF); D(DBF_HTML, "<a href=: '%s'", yytext); }
+"<a ".* { D(DBF_HTML, "%d: <a '%s'", YY_START, yytext); yyless(3); yy_push_state(HREF); }
 <HREF>{
-  "\""        /* eat up quotes */
-  [^ >"]+     { yy_pop_state(); return ht_HREF; }
-  {anything}  { yy_pop_state(); }
+  "\"".*        { yyless(1); /* eat up quotes */ }
+  "\'".*        { yyless(1); /* eat up quotes */ }
+  "href="[^ >]+ { D(DBF_HTML, "%d: href='%s'", YY_START, yytext); return ht_HREF;} 
+  ">".*         { D(DBF_HTML, "%d: >", YY_START); yyless(1); yy_pop_state(); }
+  {anything}    { /* do nothing */ }
 }
 
-"<title"{TAGSTART} { yy_push_state(TITLE); D(DBF_HTML, "<title>"); return ht_TITLE; }
+"<title"{TAGSTART} { D(DBF_HTML, "%d: <title>", YY_START); yyless(7); yy_push_state(TITLE); return ht_TITLE; }
 <TITLE>{
-  "</title>"    { yy_pop_state(); D(DBF_HTML, "</title"); return ht_TITLE_END; }
+  "</title>"    { D(DBF_HTML, "%d: </title>", YY_START); yy_pop_state(); return ht_TITLE_END; }
   [\n\r]        /* do nothing */
   .             { return ht_NORMALTEXT; }
 }
 
-"<h"[[:digit:]]{TAGSTART} { yy_push_state(H); D(DBF_HTML, "<hX>"); return ht_HIGHLIGHT; }
+"<h"[[:digit:]]{TAGSTART} { D(DBF_HTML, "%d: <hX>", YY_START); yyless(4); yy_push_state(H); return ht_HIGHLIGHT; }
 <H>{
-  "</h"[[:digit:]]{TAGEND} { yy_pop_state(); D(DBF_HTML, "</hX>"); return ht_HIGHLIGHT_END; }
+  "</h"[[:digit:]]{TAGEND} { D(DBF_HTML, "%d: </hX>", YY_START); yy_pop_state(); return ht_HIGHLIGHT_END; }
   [\n\r]        /* do nothing */
   .             { return ht_NORMALTEXT; }
 }
 
-<*>("<b"|"<strong"){TAGSTART} { yy_push_state(BOLD); D(DBF_HTML, "<b>"); return ht_BOLD; }
+<*>("<b"|"<strong"){TAGSTART} { D(DBF_HTML, "%d: <b>", YY_START); yy_push_state(BOLD); return ht_BOLD; }
 <BOLD>{
-  "</b"{TAGEND} { yy_pop_state(); D(DBF_HTML, "</b>"); return ht_BOLD_END; }
+  "</"("b"|"strong"){TAGEND} { D(DBF_HTML, "%d: </b>", YY_START); yy_pop_state(); return ht_BOLD_END; }
   [\n\r]        /* do nothing */
   .             { return ht_NORMALTEXT; }
 }
 
-<*>("<i"|"<em"){TAGSTART} { yy_push_state(ITALIC); D(DBF_HTML, "<i>"); return ht_ITALIC; }
+<*>("<i"|"<em"){TAGSTART} { D(DBF_HTML, "%d: <i>", YY_START); yy_push_state(ITALIC); return ht_ITALIC; }
 <ITALIC>{
-  "</i"{TAGEND} { yy_pop_state(); D(DBF_HTML, "</i>"); return ht_ITALIC_END; }
+  "</"("i"|"em"){TAGEND} { D(DBF_HTML, "%d: </i>", YY_START); yy_pop_state(); return ht_ITALIC_END; }
   [\n\r]        /* do nothing */
   .             { return ht_NORMALTEXT; }
 }
 
-<*>"<u"{TAGSTART} { yy_push_state(UNDERLINE); D(DBF_HTML, "<u>"); return ht_UNDERLINE; }
+<*>"<u"{TAGSTART} { D(DBF_HTML, "%d: <u>", YY_START); yyless(3); yy_push_state(UNDERLINE); return ht_UNDERLINE; }
 <UNDERLINE>{
-  "</u"{TAGEND} { yy_pop_state(); D(DBF_HTML, "</u>"); return ht_UNDERLINE_END; }
+  "</u"{TAGEND} { D(DBF_HTML, "%d: </u>", YY_START); yy_pop_state(); return ht_UNDERLINE_END; }
   [\n\r]        /* do nothing */
   .             { return ht_NORMALTEXT; }
 }
 
-"<li"{TAGSTART} { yy_push_state(LI); D(DBF_HTML, "<li>"); return ht_LI; }
+"<li"{TAGSTART} { D(DBF_HTML, "%d: <li>", YY_START); yyless(4); yy_push_state(LI); return ht_LI; }
 <LI>{
-  "<li"{TAGSTART} { D(DBF_HTML, "<li>"); return ht_LI_IN; }
-  "</li"{TAGEND}  { yy_pop_state(); D(DBF_HTML, "</li>"); return ht_LI_END; }
-  "</ul"{TAGEND}  { yy_pop_state(); D(DBF_HTML, "</ul>"); return ht_UL; }
+  "<li"{TAGSTART} { D(DBF_HTML, "%d: <li>", YY_START); return ht_LI_IN; }
+  "</li"{TAGEND}  { D(DBF_HTML, "%d: </li>", YY_START); yy_pop_state(); return ht_LI_END; }
+  "</ul"{TAGEND}  { D(DBF_HTML, "%d: </ul>", YY_START); yy_pop_state(); return ht_UL; }
   [\n\r]        /* do nothing */
   .             { return ht_NORMALTEXT; }
 }
 
-"<br"{TAGEND}            { D(DBF_HTML, "<br>");  return ht_BR;         }
-"<div"{TAGEND}           { D(DBF_HTML, "<div>"); return ht_DIV;        }
-"<hr"{TAGEND}            { D(DBF_HTML, "<hr>");  return ht_HR;         }
-"<""/"?"p"{TAGEND}       { D(DBF_HTML, "<p>");   return ht_PARAGRAPH;  }
-"</a"{TAGEND}            { D(DBF_HTML, "</a>");  return ht_HREF_END;   }
-"</dd"{TAGEND}           { D(DBF_HTML, "</dd>"); return ht_DD;         }
-"</dl"{TAGEND}           { D(DBF_HTML, "</dl>"); return ht_DL;         }
-"</dt"{TAGEND}           { D(DBF_HTML, "</dt>"); return ht_DT;         }
-"</ul"{TAGEND}           { D(DBF_HTML, "</ul>"); return ht_UL;         }
+"<br"{TAGEND}            { D(DBF_HTML, "%d: <br>", YY_START);  return ht_BR;         }
+"<div"{TAGEND}           { D(DBF_HTML, "%d: <div>", YY_START); return ht_DIV;        }
+"<hr"{TAGEND}            { D(DBF_HTML, "%d: <hr>", YY_START);  return ht_HR;         }
+"<""/"?"p"{TAGEND}       { D(DBF_HTML, "%d: <p>", YY_START);   return ht_PARAGRAPH;  }
+"</a"{TAGEND}            { D(DBF_HTML, "%d: </a>", YY_START);  return ht_HREF_END;   }
+"</dd"{TAGEND}           { D(DBF_HTML, "%d: </dd>", YY_START); return ht_DD;         }
+"</dl"{TAGEND}           { D(DBF_HTML, "%d: </dl>", YY_START); return ht_DL;         }
+"</dt"{TAGEND}           { D(DBF_HTML, "%d: </dt>", YY_START); return ht_DT;         }
+"</ul"{TAGEND}           { D(DBF_HTML, "%d: </ul>", YY_START); return ht_UL;         }
 
-<*>"<"{NOT_GT}{TAGEND}   { D(DBF_HTML, "ignore: '%s'", yytext); /* do nothing */ }
+<*>"<"{NOT_GT}{TAGEND}   { D(DBF_HTML, "%d: ignore: '%s'", YY_START, yytext); /* do nothing */ }
 
 <*>"&sp;"          { return ht_SP;           }
 <*>"&excl;"        { return ht_EXCL;         }
@@ -434,7 +436,7 @@ char *html2mail(char *htmlTxt)
           case ht_HREF:
           {
             free(lastHref);
-            lastHref = strdup(yytext);
+            lastHref = UnquoteString(&yytext[5], TRUE);
           }
           break;
 
