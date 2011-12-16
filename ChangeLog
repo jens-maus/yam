@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-12-16 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/AddrBookListtree.c, MainFolderListtree.c: fixed wrong usage of
+    DoSuperMethod().
+
 2011-12-16 Jens Langner <Jens.Langner@light-speed.de>
 
   * extrasrc/strcasestr.c: renamed our own stristr() implementation to

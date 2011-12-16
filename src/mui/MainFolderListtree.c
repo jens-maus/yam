@@ -778,12 +778,12 @@ OVERLOAD(MUIM_NListtree_CopyToClip)
 {
   struct MUIP_NListtree_CopyToClip *ctc = (struct MUIP_NListtree_CopyToClip *)msg;
   ULONG result = 0;
-  
+
   ENTER();
 
   // invoke the method only if there is a treenode selected to workaround a bug in NListtree.mcc
   if(ctc->TreeNode != NULL && ctc->TreeNode->tn_Name != NULL)
-    result = DoSuperMethod(cl, obj, msg);
+    result = DoSuperMethodA(cl, obj, msg);
 
   RETURN(result);
   return result;
