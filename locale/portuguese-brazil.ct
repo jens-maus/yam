@@ -3566,7 +3566,7 @@ MSG_TR_MailTransferTo
 Transferir mensagem para %s
 ;
 MSG_TR_MsgInFile
-Mensagens no arquivo
+Mensagens no arquivo %s
 ;
 MSG_TR_MsgOnServer
 Mensagens no servidor

@@ -3936,7 +3936,7 @@ MSG_TR_MailTransferTo
 ; HOST
 ;
 MSG_TR_MsgInFile
-Μηνύματα στο αρχείο
+Μηνύματα στο αρχείο %s
 ; Messages in file
 ;
 MSG_TR_MsgOnServer

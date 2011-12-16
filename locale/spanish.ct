@@ -3884,7 +3884,7 @@ Transferencia de Correo hacia '%s'
 ; HOST
 ;
 MSG_TR_MsgInFile
-Mensajes en archivo
+Mensajes en archivo %s
 ; Messages in file
 ;
 MSG_TR_MsgOnServer

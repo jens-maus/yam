@@ -4486,7 +4486,7 @@ Postin siirto osoitteeseen '%s'
 ; HOST
 ;
 MSG_TR_MsgInFile
-Viestejä tiedostossa
+Viestejä tiedostossa %s
 ; Messages in file
 ;
 MSG_TR_MsgOnServer

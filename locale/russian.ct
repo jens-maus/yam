@@ -5109,7 +5109,7 @@ MSG_TR_MailTransferTo
 ;HOST
 ;
 MSG_TR_MsgInFile
-Сообщения в файле
+Сообщения в файле %s
 ;Messages in file
 ;
 MSG_TR_MsgOnServer

@@ -3203,7 +3203,7 @@ MSG_TR_MailTransferTo
 Mailoverdracht naar %s
 ;
 MSG_TR_MsgInFile
-Mailtjes in bestand
+Mailtjes in bestand %s
 ;
 MSG_TR_MsgOnServer
 Mailtjes op server

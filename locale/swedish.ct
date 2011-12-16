@@ -4182,7 +4182,7 @@ Skickar post till '%s'
 ; HOST
 ;
 MSG_TR_MsgInFile
-Meddelanden i fil
+Meddelanden i fil %s
 ; Messages in file
 ;
 MSG_TR_MsgOnServer

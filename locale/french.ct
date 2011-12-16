@@ -4476,7 +4476,7 @@ Envoi du courrier vers « %s »
 ; HOST
 ;
 MSG_TR_MsgInFile
-Messages dans le fichier
+Messages dans le fichier %s
 ; Messages in file
 ;
 MSG_TR_MsgOnServer

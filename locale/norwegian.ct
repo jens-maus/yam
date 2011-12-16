@@ -5145,7 +5145,7 @@ Overfører post til '%s'
 ; HOST
 ;
 MSG_TR_MsgInFile
-Beskjeder i fil
+Beskjeder i fil %s
 ; Messages in file
 ;
 MSG_TR_MsgOnServer

@@ -3607,7 +3607,7 @@ MSG_TR_MailTransferTo
 A transferir o correio para '%s'
 ;
 MSG_TR_MsgInFile
-Mensagens no Ficheiro
+Mensagens no Ficheiro %s
 ;
 MSG_TR_MsgOnServer
 Mensagens no Servidor

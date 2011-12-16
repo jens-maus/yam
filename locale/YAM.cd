@@ -3246,7 +3246,7 @@ Mail transfer to '%s'
 ; HOST
 ;
 MSG_TR_MsgInFile (1075//)
-Messages in file
+Messages in file %s
 ;
 MSG_TR_MsgOnServer (1076//)
 Messages on server

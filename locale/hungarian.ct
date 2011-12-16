@@ -4913,7 +4913,7 @@ Levél küldés - '%s'
 ; HOST
 ;
 MSG_TR_MsgInFile
-Üzenetek a fájlban
+Üzenetek a fájlban %s
 ; Messages in file
 ;
 MSG_TR_MsgOnServer

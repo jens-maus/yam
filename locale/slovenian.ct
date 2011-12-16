@@ -4894,7 +4894,7 @@ Prenos po¹te na stre¾nik '%s'
 ; HOST
 ;
 MSG_TR_MsgInFile
-Sporoèila v datoteki
+Sporoèila v datoteki %s
 ; Messages in file
 ;
 MSG_TR_MsgOnServer

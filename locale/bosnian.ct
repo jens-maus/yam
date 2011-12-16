@@ -4802,7 +4802,7 @@ Saljem postu na '%s'
 ; HOST
 ;
 MSG_TR_MsgInFile
-Poruke na fileu
+Poruke na fileu %s
 ; Messages in file
 ;
 MSG_TR_MsgOnServer

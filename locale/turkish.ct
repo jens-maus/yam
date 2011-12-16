@@ -4478,7 +4478,7 @@ MSG_TR_MailTransferTo
 ; HOST
 ;
 MSG_TR_MsgInFile
-Dosyadaki iletiler
+Dosyadaki iletiler %s
 ; Messages in file
 ;
 MSG_TR_MsgOnServer

@@ -4832,7 +4832,7 @@ Prenosim poruku za '%s'
 ; HOST
 ;
 MSG_TR_MsgInFile
-Poruka u fajlu
+Poruka u fajlu %s
 ; Messages in file
 ;
 MSG_TR_MsgOnServer

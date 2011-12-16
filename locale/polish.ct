@@ -4470,7 +4470,7 @@ Wysy³am pocztê na \"%s\"
 ; HOST
 ;
 MSG_TR_MsgInFile
-Wiadomo¶ci w pliku
+Wiadomo¶ci w pliku %s
 ; Messages in file
 ;
 MSG_TR_MsgOnServer

@@ -4456,7 +4456,7 @@ Trasferimento posta a '%s'
 ; HOST
 ;
 MSG_TR_MsgInFile
-Messaggi nel file
+Messaggi nel file %s
 ; Messages in file
 ;
 MSG_TR_MsgOnServer
