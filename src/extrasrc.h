@@ -79,7 +79,7 @@ struct Node;
 #define NEED_STCGFE
 #define NEED_VASTUBS
 #define NEED_CHANGEFILEPOSITION
-#define NEED_STRISTR
+#define NEED_STRCASESTR
 #endif // __amigaos3__
 
 /*
@@ -91,7 +91,7 @@ struct Node;
 #define NEED_GETDELIM
 #define NEED_MEMDUP
 #define NEED_STCGFE
-#define NEED_STRISTR
+#define NEED_STRCASESTR
 #endif // __amigaos4__
 
 /*
@@ -114,7 +114,6 @@ struct Node;
 #define NEED_MEMDUP
 #define NEED_VASPRINTF
 #define NEED_CHANGEFILEPOSITION
-#define NEED_STRISTR
 #endif // __MORPHOS__
 
 /*
@@ -138,7 +137,6 @@ struct Node;
 #define NEED_VASPRINTF
 #define NEED_VASTUBS
 #define NEED_CHANGEFILEPOSITION
-#define NEED_STRISTR
 #endif // __AROS__
 
 /*
@@ -289,8 +287,8 @@ LONG NewReadArgs(struct WBStartup *, struct NewRDArgs *);
 void NewFreeArgs(struct NewRDArgs *);
 #endif
 
-#if defined(NEED_STRISTR)
-char *stristr(const char *a, const char *b);
+#if defined(NEED_STRCASESTR)
+char *strcasestr(const char *haystack, const char *needle);
 #endif
 
 /*

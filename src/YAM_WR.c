@@ -1443,7 +1443,7 @@ static char *AppendRcpt(char *sbuf, const struct Person *pe, const BOOL excludem
           skip = TRUE;
 
         // if the string already contains this person then skip it
-        if(stristr(sbuf, ins) != NULL)
+        if(strcasestr(sbuf, ins) != NULL)
           skip = TRUE;
 
         if(skip == FALSE)

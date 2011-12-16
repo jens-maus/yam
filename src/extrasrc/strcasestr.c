@@ -26,12 +26,13 @@
 ***************************************************************************/
 
 #include <string.h>
+#include <ctype.h>
 
 #include "extrasrc.h"
 
-#if defined(NEED_STRISTR)
+#if defined(NEED_STRCASESTR)
 
-/// stristr()
+/// strcasestr()
 //
 //  Case insensitive version of strstr()
 //
@@ -39,27 +40,37 @@
 //        function is used during SetupDebug(). Calling ENTER() in
 //        that situation will cause infinite recursions due to the
 //        module check of ENTER().
-char *stristr(const char *a, const char *b)
+char *strcasestr(const char *haystack, const char *needle)
 {
-  char *s = NULL;
-
-  if(a != NULL && b != NULL)
+  if(haystack != NULL && needle != NULL)
   {
-    int l = strlen(b);
+    const char *p;
+    const char *startn = NULL;
+    const char *np = NULL;
 
-    for(; *a; a++)
+    for(p = haystack; *p; p++)
     {
-      if(strnicmp(a, b, l) == 0)
+      if(np)
       {
-        s = (char *)a;
-        break;
+        if(toupper(*p) == toupper(*np))
+        {
+          if(!*++np)
+            return (char *)startn;
+        }
+        else
+          np = 0;
+      }
+      else if(toupper(*p) == toupper(*needle))
+      {
+        np = needle + 1;
+        startn = p;
       }
     }
   }
 
-  return s;
+  return NULL;
 }
 
 #else
-  #warning "NEED_STRISTR missing or compilation unnecessary"
+  #warning "NEED_STRCASESTR missing or compilation unnecessary"
 #endif

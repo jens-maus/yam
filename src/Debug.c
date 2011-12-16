@@ -248,9 +248,9 @@ INLINE BOOL matchDebugSpec(const unsigned long c, const unsigned f,
   {
     match = TRUE;
   }
-  else if(stristr(debug_modules, m) != NULL)
+  else if(strcasestr(debug_modules, m) != NULL)
     match = TRUE;
-  else if(stristr(debug_files, file) != NULL)
+  else if(strcasestr(debug_files, file) != NULL)
     match = TRUE;
 
   return match;
@@ -367,13 +367,13 @@ void SetupDebug(void)
 
     // before we search for our debug tokens we search
     // for our special output tokens
-    if(stristr(s, "ansi") != NULL)
+    if(strcasestr(s, "ansi") != NULL)
       ansi_output = TRUE;
 
-    if(stristr(s, "stdout") != NULL)
+    if(strcasestr(s, "stdout") != NULL)
       stdout_output = TRUE;
 
-    if((t = stristr(s, "file:")) != NULL)
+    if((t = strcasestr(s, "file:")) != NULL)
     {
       char *e;
       char filename[256];

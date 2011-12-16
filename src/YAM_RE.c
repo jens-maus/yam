@@ -626,7 +626,7 @@ void RE_GetSigFromLog(struct ReadMailData *rmData, char *decrFor)
       {
         if(strnicmp(buf, "good signature", 14) == 0)
           sigDone = TRUE;
-        else if(strnicmp(buf, "bad signature", 13) == 0 || stristr(buf, "unknown keyid") != NULL)
+        else if(strnicmp(buf, "bad signature", 13) == 0 || strcasestr(buf, "unknown keyid") != NULL)
         {
           SET_FLAG(rmData->signedFlags, PGPS_BADSIG);
           sigDone = TRUE;
@@ -4187,9 +4187,9 @@ static BOOL RE_HandleMDNReport(const struct Part *frp)
 
     if((fh = fopen(buf, "w")) != NULL)
     {
-      if(stristr(type, "displayed"))
+      if(strcasestr(type, "displayed"))
         fprintf(fh, tr(MSG_RE_MDNdisplay), msgdesc);
-      else if(stristr(type, "deleted"))
+      else if(strcasestr(type, "deleted"))
         fprintf(fh, tr(MSG_RE_MDNdeleted), msgdesc, mode);
       else
         fprintf(fh, tr(MSG_RE_MDNunknown), msgdesc, type, mode);

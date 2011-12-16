@@ -97,8 +97,8 @@ OVERLOAD(MUIM_NList_Compare)
   // specification in the short headers string object.
   if(data->rmData->headerMode == HM_SHORTHEADER && C->ShortHeaders[0] != '\0')
   {
-    char *e1 = stristr(C->ShortHeaders, hdrNode1->name);
-    char *e2 = stristr(C->ShortHeaders, hdrNode2->name);
+    char *e1 = strcasestr(C->ShortHeaders, hdrNode1->name);
+    char *e2 = strcasestr(C->ShortHeaders, hdrNode2->name);
 
     // now we compare the position of the found pointers
     // so that a lower pointer get higher priorities

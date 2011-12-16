@@ -4846,7 +4846,7 @@ const char *IdentifyFile(const char *fname)
       else if(!strncmp(&buffer[8], "ILBM", 4) && !strncmp(buffer, "FORM", 4))    ctype = IntMimeTypeArray[MT_IM_ILBM].ContentType;
       else if(!strncmp(&buffer[8], "8SVX", 4) && !strncmp(buffer, "FORM", 4))    ctype = IntMimeTypeArray[MT_AU_8SVX].ContentType;
       else if(!strncmp(&buffer[8], "ANIM", 4) && !strncmp(buffer, "FORM", 4))    ctype = IntMimeTypeArray[MT_VI_ANIM].ContentType;
-      else if(stristr(buffer, "\nFrom:"))                                        ctype = IntMimeTypeArray[MT_ME_EMAIL].ContentType;
+      else if(strcasestr(buffer, "\nFrom:"))                                     ctype = IntMimeTypeArray[MT_ME_EMAIL].ContentType;
       else
       {
         // now we do a statistical analysis to see if the file

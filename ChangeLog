@@ -7,6 +7,11 @@ $URL$
 
 2011-12-16 Jens Langner <Jens.Langner@light-speed.de>
 
+  * extrasrc/strcasestr.c: renamed our own stristr() implementation to
+    strcasestr() as that is the more well-known name for it. In addition, a
+    slightly faster implementation is now in place. Furthermore, as MorphOS
+    and AROS seem to have own strcasestr() implementations in their C libraries
+    we give them preference for these platforms.
   * YAM_MA.c: changed the mail import requester to allow to select multiple
     files at once and start multiple mail file imports. Please note, however,
     that for every file there currently will be a separate preselection window
