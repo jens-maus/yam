@@ -3021,15 +3021,35 @@ HOOKPROTONHNONP(MA_ImportMessagesFunc, void)
     struct FileReqCache *frc;
 
     // pop up a requester to query the user for the input file.
-    if((frc = ReqFile(ASL_IMPORT, G->MA->GUI.WI, tr(MSG_MA_MessageImport), REQF_NONE, C->DetachDir, "")))
+    if((frc = ReqFile(ASL_IMPORT, G->MA->GUI.WI, tr(MSG_MA_MessageImport), REQF_MULTISELECT, C->DetachDir, "")))
     {
-      char inname[SIZE_PATHFILE];
+      char filename[SIZE_PATHFILE];
 
-      AddPath(inname, frc->drawer, frc->file, sizeof(inname));
+      if(frc->numArgs == 0)
+      {
+        D(DBF_GUI, "chosen file: [%s] from drawer: [%s]", frc->file, frc->drawer);
 
-      // now start the actual importing of the messages
-      if(MA_ImportMessages(inname, 0) == FALSE)
-        ER_NewError(tr(MSG_ER_MESSAGEIMPORT), inname);
+        AddPath(filename, frc->drawer, frc->file, sizeof(filename));
+
+        // now start the actual importing of the messages
+        if(MA_ImportMessages(filename, 0) == FALSE)
+          ER_NewError(tr(MSG_ER_MESSAGEIMPORT), filename);
+      }
+      else
+      {
+        int i;
+
+        for(i=0; i < frc->numArgs; i++)
+        {
+          D(DBF_GUI, "chosen file: [%s] from drawer: [%s]", frc->argList[i], frc->drawer);
+
+          AddPath(filename, frc->drawer, frc->argList[i], sizeof(filename));
+
+          // now start the actual importing of the messages
+          if(MA_ImportMessages(filename, 0) == FALSE)
+            ER_NewError(tr(MSG_ER_MESSAGEIMPORT), filename);
+        }
+      }
     }
   }
 

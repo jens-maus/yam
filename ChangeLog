@@ -5,6 +5,18 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-12-16 Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_MA.c: changed the mail import requester to allow to select multiple
+    files at once and start multiple mail file imports. Please note, however,
+    that for every file there currently will be a separate preselection window
+    opened as stuffing all mails from all selected files together will
+    require more substantial work. Nevertheless, mail import from several mbox
+    files are now possible. Thus, for the moment this closes #196.
+  * locale/*.ct: fixed all catalog files to have "%s" added to the MSG_TR_MsgInFile
+    entry or otherwise YAM can't add the name of the file the imported mails
+    will be display in the import preselection window.
+
 2011-12-15 Jens Langner <Jens.Langner@light-speed.de>
 
   * HTML2Mail.l: reworked the main html2mail flex rules to behave somewhat more
