@@ -7,6 +7,9 @@ $URL$
 
 2011-12-17 Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM.c: bumped all minimum required versions of all MCCs to what are
+    the latest versions available as there are new features and fixes
+    out there in these classes.
   * AVLTree.c: replace AllocVec/FreeVec calls with AllocVecPooled and
     FreeVecPooled as AllocVec/FreeVec are marked as deprecated in the
     latest OS4 SDK.
