@@ -35,19 +35,31 @@
 #define FESIZE 32
 #endif
 
-/* Get the filename extension. */
+// extract the filename extension from name and
+// return the position and store the extension in ext
 int stcgfe(char *ext, const char *name)
 {
-   const char *p = name + strlen(name);
-   const char *q = p;
-   while (p > name && *--p != '.' && *p != '/' && *p != ':');
-   if (*p++ == '.' && q - p < FESIZE)
-   {
-      memcpy(ext, p, q - p + 1);
-      return q - p;
-   }
-   *ext = '\0';
-   return 0;
+  const char *p = name + strlen(name); // set p to the end of the string
+  const char *q = p;
+
+  // walk from the end of the string to the beginning
+  // and stop if either '.' '/' or ':' is found
+  while(p > name && *--p != '.' && *p != '/' && *p != ':')
+   ;
+
+  // check if we found a '.' and that the extension
+  // is not longer than FESIZE
+  if(*p++ == '.' && q - p < FESIZE)
+  {
+    // copy the extension to ext and return the
+    // size of it to the caller
+    memcpy(ext, p, q - p + 1);
+    return q - p;
+  }
+
+  // we didn't find any extension
+  *ext = '\0';
+  return 0;
 }
 
 #else

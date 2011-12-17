@@ -31,20 +31,20 @@
 #include "extrasrc.h"
 
 #if defined(NEED_STRDUP)
-char *strdup(const char *str)
+char *strdup(const char *s)
 {
-  if(str)
-  {
-    char *s = malloc(1+strlen(str));
+  char *d = NULL;
 
-    if(s)
-    {
-      strcpy(s, str);
-      return s;
-    }
+  if(s != NULL)
+  {
+    size_t len = strlen(s) + 1;
+    void *new = malloc(len);
+
+    if(new == NULL)
+      d = (char *)memcpy(new, s, len);
   }
 
-  return NULL;
+  return d;
 }
 #else
   #warning "NEED_STRDUP missing or compilation unnecessary"

@@ -33,14 +33,15 @@
 #if defined(NEED_MEMDUP)
 /// memdup
 //  Duplicates a memory block of given size
-void *memdup(const void *source, const size_t size)
+void *memdup(const void *src, const size_t size)
 {
-  void *dest = NULL;
+  void *dst = NULL;
+  void *new;
 
-  if(source != NULL && (dest = malloc(size)) != NULL)
-    memcpy(dest, source, size);
+  if(src != NULL && (new = malloc(size)) != NULL)
+    dst = memcpy(new, src, size);
 
-  return dest;
+  return dst;
 }
 ///
 #else
