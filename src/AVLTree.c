@@ -49,8 +49,10 @@ struct AVL_Tree *CreateAVLTree(int (*compare)(const void *a, const void *b))
 
   ENTER();
 
-  if((tree = AllocVec(sizeof(*tree), MEMF_CLEAR|MEMF_ANY)) != NULL)
+  if((tree = AllocVecPooled(G->SharedMemPool, sizeof(*tree))) != NULL)
   {
+    tree->root = NULL;
+
     // set up a semaphore
     if((tree->lock = AllocSysObjectTags(ASOT_SEMAPHORE, TAG_DONE)) != NULL)
     {
@@ -58,7 +60,7 @@ struct AVL_Tree *CreateAVLTree(int (*compare)(const void *a, const void *b))
     }
     else
     {
-      FreeVec(tree);
+      FreeVecPooled(G->SharedMemPool, tree);
       tree = NULL;
     }
   }
@@ -81,7 +83,7 @@ void DeleteAVLTree(struct AVL_Tree *tree)
   FreeSysObject(ASOT_SEMAPHORE, tree->lock);
 
   // free the tree itself
-  FreeVec(tree);
+  FreeVecPooled(G->SharedMemPool, tree);
 
   LEAVE();
 }

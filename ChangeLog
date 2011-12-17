@@ -7,6 +7,9 @@ $URL$
 
 2011-12-17 Jens Langner <Jens.Langner@light-speed.de>
 
+  * AVLTree.c: replace AllocVec/FreeVec calls with AllocVecPooled and
+    FreeVecPooled as AllocVec/FreeVec are marked as deprecated in the
+    latest OS4 SDK.
   * extrasrc: slightly revised some of our own implementation of standard
     C functions and tried to make them more compatible to version found
     in other projects. Especially the strtok_r() function should be somewhat
