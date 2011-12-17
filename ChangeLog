@@ -7,6 +7,9 @@ $URL$
 
 2011-12-17 Jens Langner <Jens.Langner@light-speed.de>
 
+  * mui/AddrBookListtree.c, MainFolderListtree.c: now that a new
+    fixed NListtree.mcc is released the previously added workaround
+    could be removed.
   * YAM.c: bumped all minimum required versions of all MCCs to what are
     the latest versions available as there are new features and fixes
     out there in these classes.
