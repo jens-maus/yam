@@ -323,7 +323,7 @@ void EA_InsertBelowActive(struct ABEntry *addr, int flags)
   }
 
   // now we insert the node in the list accordingly and set it active automatically
-  DoMethod(lt, MUIM_NListtree_Insert, addr->Alias, addr, list, node, (flags | MUIV_NListtree_Insert_Flag_Active), TAG_DONE);
+  DoMethod(lt, MUIM_NListtree_Insert, addr->Alias, addr, list, node, (flags | MUIV_NListtree_Insert_Flag_Active));
 
   LEAVE();
 }

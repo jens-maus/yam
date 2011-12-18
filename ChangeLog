@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-12-18 Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM.c, YAM_EA.c: fixed some potentially critical DoMethod calls
+    to NListtree which might have showed some problems.
+
 2011-12-17 Jens Langner <Jens.Langner@light-speed.de>
 
   * mui/AddrBookListtree.c, MainFolderListtree.c: now that a new

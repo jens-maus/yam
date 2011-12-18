@@ -1715,7 +1715,7 @@ static void InitAfterLogin(void)
     {
       struct Folder *folder = fnode->folder;
 
-      DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, folder->Name, fnode, MUIV_NListtree_Insert_ListNode_Root);
+      DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, folder->Name, fnode, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE);
     }
 
     newfolders = TRUE;
