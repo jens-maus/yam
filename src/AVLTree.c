@@ -23,9 +23,6 @@
 
  $Id$
 
- Superclass:  MUIC_NListtree
- Description: NListtree class of the addressbook
-
 ***************************************************************************/
 
 #include "AVLTree.h"
