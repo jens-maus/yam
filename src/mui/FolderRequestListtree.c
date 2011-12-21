@@ -56,14 +56,12 @@ OVERLOAD(OM_NEW)
     struct Folder *prevFolder;
     struct Folder *excludeFolder;
     struct FolderNode *fnode;
-    ULONG pos;
 
     prevFolder = (struct Folder *)GetTagData(ATTR(Folder), (IPTR)NULL, inittags(msg));
     excludeFolder = (struct Folder *)GetTagData(ATTR(Exclude), (IPTR)NULL, inittags(msg));
 
     LockFolderListShared(G->folders);
 
-    pos = 0;
     ForEachFolderNode(G->folders, fnode)
     {
       struct Folder *folder = fnode->folder;
@@ -75,6 +73,10 @@ OVERLOAD(OM_NEW)
         if(isGroupFolder(folder))
           tnflags = TNF_LIST|TNF_OPEN;
 
+        // set the previously selected folder as active
+        if(folder == prevFolder)
+          SET_FLAG(tnflags, MUIV_NListtree_Insert_Flag_Active);
+
         // we first have to get the parent folder treenode
         if(folder->parent != NULL &&
            (tn_parent = (struct MUI_NListtree_TreeNode *)DoMethod(obj, MUIM_NListtree_FindUserData, MUIV_NListtree_FindUserData_ListNode_Root, folder->parent, MUIF_NONE)) != NULL)
@@ -85,13 +87,6 @@ OVERLOAD(OM_NEW)
         {
           DoMethod(obj, MUIM_NListtree_Insert, fnode->folder->Name, fnode, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags);
         }
-
-        // mark the previously selected folder
-        if(fnode->folder == prevFolder)
-          set(obj, MUIA_NList_Active, pos);
-
-        // count the added folders
-        pos++;
       }
     }
 
