@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-12-21 Jens Langner <Jens.Langner@light-speed.de>
+
+  * mui/FolderListtree, mui/FolderRequestListtree.c: implemented
+    a base class for the folder listtree and changed the old
+    FolderRequestList class to a Listtree class. In addition,
+    MainFolderListtree is also now derived from the new
+    FolderListtree class. In the end, this change allowed to 
+    use a listtree rather than a plain list for the folder
+    request window. Thus, this should close #136.
+
 2011-12-18 Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM.c, YAM_EA.c: fixed some potentially critical DoMethod calls

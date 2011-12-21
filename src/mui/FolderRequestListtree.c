@@ -23,14 +23,15 @@
 
  $Id$
 
- Superclass:  MUIC_NList
- Description: a list showing all available folders
+ Superclass:  MUIC_FolderListtree
+ Description: a listtree showing all available folders
 
 ***************************************************************************/
 
-#include "FolderRequestList_cl.h"
+#include "FolderRequestListtree_cl.h"
 
 #include <mui/NList_mcc.h>
+#include <mui/NListtree_mcc.h>
 
 #include "YAM.h"
 #include "YAM_mainFolder.h"
@@ -48,7 +49,7 @@ OVERLOAD(OM_NEW)
   if((obj = DoSuperNew(cl, obj,
 
     InputListFrame,
-    MUIA_List_AutoVisible, TRUE,
+    MUIA_NList_AutoVisible, TRUE,
 
     TAG_MORE, inittags(msg))) != NULL)
   {
@@ -65,19 +66,32 @@ OVERLOAD(OM_NEW)
     pos = 0;
     ForEachFolderNode(G->folders, fnode)
     {
-      if(!isGroupFolder(fnode->folder))
-      {
-        // check if the folder is to be excluded
-        if(fnode->folder != excludeFolder)
-        {
-          DoMethod(obj, MUIM_NList_InsertSingle, fnode->folder, MUIV_NList_Insert_Bottom);
-          // mark the previously selected folder
-          if(fnode->folder == prevFolder)
-            set(obj, MUIA_NList_Active, pos);
+      struct Folder *folder = fnode->folder;
+      ULONG tnflags = MUIF_NONE;
+      struct MUI_NListtree_TreeNode *tn_parent;
 
-          // count the added folders
-          pos++;
+      if(folder != excludeFolder)
+      {
+        if(isGroupFolder(folder))
+          tnflags = TNF_LIST|TNF_OPEN;
+
+        // we first have to get the parent folder treenode
+        if(folder->parent != NULL &&
+           (tn_parent = (struct MUI_NListtree_TreeNode *)DoMethod(obj, MUIM_NListtree_FindUserData, MUIV_NListtree_FindUserData_ListNode_Root, folder->parent, MUIF_NONE)) != NULL)
+        {
+          DoMethod(obj, MUIM_NListtree_Insert, fnode->folder->Name, fnode, tn_parent, MUIV_NListtree_Insert_PrevNode_Tail, tnflags);
         }
+        else
+        {
+          DoMethod(obj, MUIM_NListtree_Insert, fnode->folder->Name, fnode, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags);
+        }
+
+        // mark the previously selected folder
+        if(fnode->folder == prevFolder)
+          set(obj, MUIA_NList_Active, pos);
+
+        // count the added folders
+        pos++;
       }
     }
 
@@ -86,24 +100,6 @@ OVERLOAD(OM_NEW)
 
   RETURN((IPTR)obj);
   return (IPTR)obj;
-}
-
-///
-/// OVERLOAD(MUIM_NList_Display)
-OVERLOAD(MUIM_NList_Display)
-{
-  struct MUIP_NList_Display *ndm = (struct MUIP_NList_Display *)msg;
-  struct Folder *folder = (struct Folder *)ndm->entry;
-
-  ENTER();
-
-  if(folder != NULL)
-  {
-    ndm->strings[0] = folder->Name;
-  }
-
-  LEAVE();
-  return 0;
 }
 
 ///

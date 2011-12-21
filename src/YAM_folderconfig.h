@@ -171,7 +171,8 @@ struct Folder
 {
   Object *          imageObject;
   struct MailList * messages;
-  struct MUI_NListtree_TreeNode *Treenode;
+  struct MUI_NListtree_TreeNode *Treenode; // links to MainMailList
+  struct FolderNode *parent; // ptr to parent folder node, NULL if parent is root
   ULONG             Flags;
   LONG              Size;
   int               MLSignature;

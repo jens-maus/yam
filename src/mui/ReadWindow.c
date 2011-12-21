@@ -843,14 +843,18 @@ DECLARE(MoveMailRequest)
   struct Folder *srcfolder = mail->Folder;
   BOOL closeAfter = FALSE;
 
-  if(MailExists(mail, srcfolder))
+  ENTER();
+
+  if(MailExists(mail, srcfolder) == TRUE)
   {
     struct Folder *dstfolder = FolderRequest(tr(MSG_MA_MoveMsg),
                                              tr(MSG_MA_MoveMsgReq),
                                              tr(MSG_MA_MoveGad),
-                                             tr(MSG_Cancel), srcfolder, obj);
+                                             tr(MSG_Cancel),
+                                             NULL,
+                                             obj);
 
-    if(dstfolder)
+    if(dstfolder != NULL && dstfolder != srcfolder)
     {
       int pos = SelectMessage(mail); // select the message in the folder and return position
       int entries;
@@ -894,6 +898,7 @@ DECLARE(MoveMailRequest)
     }
   }
 
+  RETURN(0);
   return 0;
 }
 
@@ -906,12 +911,16 @@ DECLARE(CopyMailRequest)
   struct Mail *mail = rmData->mail;
   struct Folder *srcfolder = mail->Folder;
 
+  ENTER();
+
   if(MailExists(mail, srcfolder) == TRUE)
   {
     struct Folder *dstfolder = FolderRequest(tr(MSG_MA_CopyMsg),
                                              tr(MSG_MA_MoveMsgReq),
                                              tr(MSG_MA_CopyGad),
-                                             tr(MSG_Cancel), NULL, obj);
+                                             tr(MSG_Cancel),
+                                             NULL,
+                                             obj);
     if(dstfolder != NULL)
     {
       // if there is no source folder this is a virtual mail that we
@@ -946,6 +955,7 @@ DECLARE(CopyMailRequest)
     }
   }
 
+  RETURN(0);
   return 0;
 }
 
@@ -960,6 +970,8 @@ DECLARE(DeleteMailRequest) // ULONG qualifier
   struct Folder *delfolder = FO_GetFolderByType(FT_TRASH, NULL);
   BOOL delatonce = hasFlag(msg->qualifier, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT));
   BOOL closeAfter = FALSE;
+
+  ENTER();
 
   if(MailExists(mail, folder))
   {
@@ -1007,6 +1019,7 @@ DECLARE(DeleteMailRequest) // ULONG qualifier
       AppendToLogfile(LF_NORMAL, 22, tr(MSG_LOG_Moving), 1, folder->Name, delfolder->Name);
   }
 
+  RETURN(0);
   return 0;
 }
 

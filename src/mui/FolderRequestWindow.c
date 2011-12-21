@@ -33,13 +33,15 @@
 #include <proto/muimaster.h>
 #include <libraries/iffparse.h>
 #include <mui/NListview_mcc.h>
+#include <mui/NListtree_mcc.h>
 
 #include "YAM.h"
 
 #include "Locale.h"
 #include "MUIObjects.h"
+#include "FolderList.h"
 
-#include "mui/FolderRequestList.h"
+#include "mui/FolderRequestListtree.h"
 
 #include "Debug.h"
 
@@ -132,10 +134,10 @@ OVERLOAD(OM_NEW)
         Child, LLabel(bodyText),
         Child, listviewObj = NListviewObject,
           MUIA_CycleChain, TRUE,
-          MUIA_NListview_NList, listObj = FolderRequestListObject,
+          MUIA_NListview_NList, listObj = FolderRequestListtreeObject,
             MUIA_NList_DoubleClick, TRUE,
-            MUIA_FolderRequestList_Folder, prevFolder,
-            MUIA_FolderRequestList_Exclude, excludeFolder,
+            MUIA_FolderRequestListtree_Folder, prevFolder,
+            MUIA_FolderRequestListtree_Exclude, excludeFolder,
           End,
         End,
       End,
@@ -184,7 +186,13 @@ OVERLOAD(OM_GET)
 
     case ATTR(Folder):
     {
-      DoMethod(data->listObj, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, store);
+      struct MUI_NListtree_TreeNode *tn;
+
+      if((tn = (struct MUI_NListtree_TreeNode *)xget(data->listObj, MUIA_NListtree_Active)) != NULL)
+        *store = (IPTR)((struct FolderNode *)tn->tn_User)->folder;
+      else
+        *store = (IPTR)NULL;
+
       return TRUE;
     }
   }

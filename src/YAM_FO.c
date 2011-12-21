@@ -692,6 +692,7 @@ BOOL FO_LoadTree(void)
   FILE *fh;
   APTR lv = G->MA->GUI.NL_FOLDERS;
   struct MUI_NListtree_TreeNode *tn_root = MUIV_NListtree_Insert_ListNode_Root;
+  struct FolderNode *fnode_root = NULL; // NULL == root
 
   ENTER();
 
@@ -794,18 +795,9 @@ BOOL FO_LoadTree(void)
                 fnode = AddNewFolderNode(G->folders, fo);
                 UnlockFolderList(G->folders);
 
-                if(fnode == NULL)
-                {
-                  fclose(fh);
-                  free(buffer);
-                  free(fo);
-
-                  RETURN(FALSE);
-                  return FALSE;
-                }
-
                 // Now we add this folder to the folder listtree
-                if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_Insert, fo->Name, fnode, tn_root, MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE)) == NULL)
+                if(fnode == NULL || 
+                   (tn = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_Insert, fo->Name, fnode, tn_root, MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE)) == NULL)
                 {
                   fclose(fh);
                   free(buffer);
@@ -815,8 +807,9 @@ BOOL FO_LoadTree(void)
                   return FALSE;
                 }
 
-                // remember the treenode
+                // remember the treenode and folder root
                 fo->Treenode = tn;
+                fo->parent = fnode_root;
               }
             }
             else
@@ -862,7 +855,8 @@ BOOL FO_LoadTree(void)
             fnode = AddNewFolderNode(G->folders, fo);
             UnlockFolderList(G->folders);
 
-            if(fnode == NULL)
+            if(fnode == NULL ||
+               (tn = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_Insert, fo->Name, fnode, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags)) == NULL)
             {
               fclose(fh);
               free(buffer);
@@ -872,18 +866,9 @@ BOOL FO_LoadTree(void)
               return FALSE;
             }
 
-            if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_Insert, fo->Name, fnode, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags)) == NULL)
-            {
-              fclose(fh);
-              free(buffer);
-              free(fo);
-
-              RETURN(FALSE);
-              return FALSE;
-            }
-
-            // remember the treenode
+            // remember the treenode and folder root
             fo->Treenode = tn;
+            fo->parent = NULL;
           }
         }
         else if(strncmp(buffer, "@GROUP", 6) == 0)
@@ -910,18 +895,9 @@ BOOL FO_LoadTree(void)
             fnode = AddNewFolderNode(G->folders, fo);
             UnlockFolderList(G->folders);
 
-            if(fnode == NULL)
-            {
-              fclose(fh);
-              free(buffer);
-              free(fo);
-
-              RETURN(FALSE);
-              return FALSE;
-            }
-
             // now we are going to add this treenode to the list
-            if((tn_root = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_Insert, fo->Name, fnode, tn_root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags)) == NULL)
+            if(fnode == NULL ||
+               (tn_root = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_Insert, fo->Name, fnode, tn_root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags)) == NULL)
             {
               fclose(fh);
               free(buffer);
@@ -931,8 +907,12 @@ BOOL FO_LoadTree(void)
               return FALSE;
             }
 
-            // remember the treenode
+            // remember the treenode and folder parent
             fo->Treenode = tn_root;
+            fo->parent = fnode_root;
+
+            // set the new parent folder to this one
+            fnode_root = fnode;
 
             nested++;
           }
@@ -944,9 +924,18 @@ BOOL FO_LoadTree(void)
           // now we check if the nested is zero and if yes then we set tn_root = MUIV_NListtree_Insert_ListNode_Root
           // otherwise we go back to the root of the root
           if(nested == 0)
+          {
             tn_root = MUIV_NListtree_Insert_ListNode_Root;
+            fnode_root = NULL;
+          }
           else
+          {
             tn_root = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, tn_root, MUIV_NListtree_GetEntry_Position_Parent, MUIF_NONE);
+            if(tn_root != NULL)
+              fnode_root = (struct FolderNode *)tn_root->tn_User;
+            else
+              fnode_root = NULL;
+          }
         }
       }
 

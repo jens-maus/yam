@@ -3068,7 +3068,7 @@ HOOKPROTONHNONP(MA_MoveMessageFunc, void)
   {
     struct Folder *dst;
 
-    if((dst = FolderRequest(tr(MSG_MA_MoveMsg), tr(MSG_MA_MoveMsgReq), tr(MSG_MA_MoveGad), tr(MSG_Cancel), GetCurrentFolder(), G->MA->GUI.WI)) != NULL)
+    if((dst = FolderRequest(tr(MSG_MA_MoveMsg), tr(MSG_MA_MoveMsgReq), tr(MSG_MA_MoveGad), tr(MSG_Cancel), NULL, G->MA->GUI.WI)) != NULL)
       MA_MoveCopy(NULL, GetCurrentFolder(), dst, MVCPF_CLOSE_WINDOWS);
   }
 
