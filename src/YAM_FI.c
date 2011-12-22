@@ -33,6 +33,7 @@
 #include <libraries/iffparse.h>
 #include <mui/NBalance_mcc.h>
 #include <mui/NList_mcc.h>
+#include <mui/NListtree_mcc.h>
 #include <mui/NListview_mcc.h>
 #include <proto/dos.h>
 #include <proto/exec.h>
@@ -60,6 +61,7 @@
 
 #include "mui/ClassesExtra.h"
 #include "mui/FilterPopupList.h"
+#include "mui/FolderRequestListtree.h"
 #include "mui/MainMailList.h"
 #include "mui/ReadWindow.h"
 #include "mui/SearchControlGroup.h"
@@ -1036,26 +1038,24 @@ HOOKPROTONHNONP(FI_SearchFunc, void)
                                                        gui->BT_READ,
                                                        NULL);
   DoMethod(gui->LV_MAILS, MUIM_NList_Clear);
+
   // start with forbidden immediate display of found mails, this greatly speeds
   // up the search process if many mails match the search criteria.
   set(gui->LV_MAILS, MUIA_NList_Quiet, TRUE);
 
   if((flist = CreateFolderList()) != NULL)
   {
-    int id;
+    struct MUI_NListtree_TreeNode *tn = (struct MUI_NListtree_TreeNode *)MUIV_NListtree_NextSelected_Start;
 
-    id = MUIV_List_NextSelected_Start;
     while(TRUE)
     {
-      char *name;
       struct Folder *folder;
 
-      DoMethod(gui->LV_FOLDERS, MUIM_List_NextSelected, &id);
-      if(id == MUIV_List_NextSelected_End)
+      DoMethod(gui->LV_FOLDERS, MUIM_NListtree_NextSelected, &tn);
+      if(tn == (struct MUI_NListtree_TreeNode *)MUIV_NListtree_NextSelected_End)
         break;
 
-      DoMethod(gui->LV_FOLDERS, MUIM_List_GetEntry, id, &name);
-      if((folder = FO_GetFolderByName(name, NULL)) != NULL)
+      if((folder = ((struct FolderNode *)tn->tn_User)->folder) != NULL)
       {
         if(MA_GetIndex(folder) == TRUE)
         {
@@ -1221,7 +1221,7 @@ MakeStaticHook(CreateFilterFromSearchHook, CreateFilterFromSearch);
 ///
 /// FI_Open
 //  Opens find window
-HOOKPROTONHNONP(FI_Open, void)
+HOOKPROTONHNO(FI_OpenFunc, void, LONG *arg)
 {
   ENTER();
 
@@ -1230,38 +1230,35 @@ HOOKPROTONHNONP(FI_Open, void)
     if((G->FI = FI_New()) == NULL)
       DisposeModulePush(&G->FI);
   }
-  else if(G->FI->GUI.WI != NULL)
-  {
-    // clear the folder list
-    DoMethod(G->FI->GUI.LV_FOLDERS, MUIM_List_Clear);
-  }
-  else
+  else if(G->FI->GUI.WI == NULL)
     DisposeModulePush(&G->FI);
 
   if(G->FI != NULL && G->FI->GUI.WI != NULL)
   {
-    int apos = 0;
-    struct FolderNode *fnode;
-    int j = 0;
+    struct Folder *selectFolder = (struct Folder *)arg[0];
 
-    LockFolderListShared(G->folders);
-
-    ForEachFolderNode(G->folders, fnode)
+    // make sure to select the Folder in case the pointer
+    // was passed to this function
+    if(selectFolder != NULL)
     {
-      if(isGroupFolder(fnode->folder) == FALSE)
+      struct MUI_NListtree_TreeNode *tn;
+      int i=0;
+
+      // now we have to walk through the nlisttree and find
+      // the folder so that we can set it as active
+      while((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->FI->GUI.LV_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE)) != NULL)
       {
-        DoMethod(G->FI->GUI.LV_FOLDERS, MUIM_List_InsertSingle, fnode->folder->Name, MUIV_List_Insert_Bottom);
+        struct FolderNode *fnode = tn->tn_User;
 
-        if(fnode->folder == GetCurrentFolder())
-          apos = j;
+        if(fnode->folder == selectFolder)
+        {
+          set(G->FI->GUI.LV_FOLDERS, MUIA_NListtree_Active, tn);
+          break;
+        }
 
-        j++;
+        i++;
       }
     }
-
-    UnlockFolderList(G->folders);
-
-    set(G->FI->GUI.LV_FOLDERS, MUIA_List_Active, apos);
 
     // check if the window is already open
     if(xget(G->FI->GUI.WI, MUIA_Window_Open) == TRUE)
@@ -1281,7 +1278,7 @@ HOOKPROTONHNONP(FI_Open, void)
 
   LEAVE();
 }
-MakeHook(FI_OpenHook,FI_Open);
+MakeHook(FI_OpenHook, FI_OpenFunc);
 
 ///
 /// FI_SwitchFunc
@@ -1410,11 +1407,6 @@ HOOKPROTONHNONP(FI_Close, void)
   {
     G->FI->Abort = TRUE;
     G->FI->ClearOnEnd = TRUE;
-  }
-  else
-  {
-    // cleanup the result listview for the next session
-    DoMethod(G->FI->GUI.LV_MAILS, MUIM_NList_Clear);
   }
 
   // close the window. all the other stuff will be
@@ -2601,14 +2593,14 @@ static struct FI_ClassData *FI_New(void)
           Child, HGroup,
              MUIA_VertWeight, 1,
              Child, VGroup, GroupFrameT(tr(MSG_FI_FindIn)),
-                Child, ListviewObject,
-                   MUIA_Listview_Input, TRUE,
-                   MUIA_Listview_MultiSelect, TRUE,
-                   MUIA_CycleChain      , 1,
-                   MUIA_Listview_List, data->GUI.LV_FOLDERS = ListObject,
+                MUIA_HorizWeight, 1,
+                Child, NListviewObject,
+                   MUIA_CycleChain, 1,
+                   MUIA_NListview_NList, data->GUI.LV_FOLDERS = FolderRequestListtreeObject,
                       InputListFrame,
-                      MUIA_List_AutoVisible, TRUE,
-                      MUIA_List_AdjustWidth, TRUE,
+                      MUIA_NList_AutoVisible, TRUE,
+                      MUIA_NList_AdjustWidth, TRUE,
+                      MUIA_NListtree_MultiSelect, TRUE,
                    End,
                 End,
                 Child, HGroup,
@@ -2616,7 +2608,9 @@ static struct FI_ClassData *FI_New(void)
                   Child, bt_none = MakeButton(tr(MSG_FI_NOFOLDERS)),
                 End,
              End,
+             Child, NBalanceObject, End,
              Child, VGroup, GroupFrameT(tr(MSG_FI_FindWhat)),
+                MUIA_HorizWeight, 10,
                 Child, VSpace(0),
                 Child, data->GUI.GR_SEARCH = SearchControlGroupObject,
                   MUIA_SearchControlGroup_RemoteFilterMode, FALSE,
@@ -2637,8 +2631,7 @@ static struct FI_ClassData *FI_New(void)
                 Child, VSpace(0),
              End,
           End,
-          Child, NBalanceObject,
-          End,
+          Child, NBalanceObject, End,
           Child, VGroup, GroupFrameT(tr(MSG_FI_Results)),
              MUIA_VertWeight, 100,
              Child, NListviewObject,
@@ -2697,8 +2690,8 @@ static struct FI_ClassData *FI_New(void)
 
        DoMethod(bt_abort,                 MUIM_Notify, MUIA_Pressed,              FALSE,          MUIV_Notify_Application, 3, MUIM_WriteLong, TRUE, &(data->Abort));
        DoMethod(lv_fromrule,              MUIM_Notify, MUIA_Listview_DoubleClick, TRUE,           po_fromrule            , 2, MUIM_Popstring_Close, TRUE);
-       DoMethod(bt_all,                   MUIM_Notify, MUIA_Pressed,              FALSE,          data->GUI.LV_FOLDERS   , 5, MUIM_List_Select, MUIV_List_Select_All, MUIV_List_Select_On, NULL);
-       DoMethod(bt_none,                  MUIM_Notify, MUIA_Pressed,              FALSE,          data->GUI.LV_FOLDERS   , 5, MUIM_List_Select, MUIV_List_Select_All, MUIV_List_Select_Off, NULL);
+       DoMethod(bt_all,                   MUIM_Notify, MUIA_Pressed,              FALSE,          data->GUI.LV_FOLDERS   , 5, MUIM_NListtree_Select, MUIV_NListtree_Select_All, MUIV_NListtree_Select_On, MUIF_NONE, NULL);
+       DoMethod(bt_none,                  MUIM_Notify, MUIA_Pressed,              FALSE,          data->GUI.LV_FOLDERS   , 5, MUIM_NListtree_Select, MUIV_NListtree_Select_All, MUIV_NListtree_Select_Off, MUIF_NONE, NULL);
        DoMethod(bt_torule,                MUIM_Notify, MUIA_Pressed,              FALSE,          MUIV_Notify_Application, 2, MUIM_CallHook, &CreateFilterFromSearchHook);
        DoMethod(data->GUI.BT_SEARCH,      MUIM_Notify, MUIA_Pressed,              FALSE,          MUIV_Notify_Application, 2, MUIM_CallHook, &FI_SearchHook);
        DoMethod(data->GUI.BT_SELECT,      MUIM_Notify, MUIA_Pressed,              FALSE,          MUIV_Notify_Application, 2, MUIM_CallHook, &FI_SelectHook);

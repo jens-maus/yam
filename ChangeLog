@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-12-23 Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_FI.c: changed mail search window to also show a listtree
+    rather than a plain list. Also changed the search window to not
+    clear its mail list on exit and to also keep the same listtree
+    selection when reopening the window. This should be a bit more
+    intuitive in case a user want to return to the search window
+    and see the old search results.
+
 2011-12-21 Jens Langner <Jens.Langner@light-speed.de>
 
   * mui/FolderRequestListtree.c: implemented that custom folder image

@@ -529,7 +529,7 @@ OVERLOAD(MUIM_ContextMenuChoice)
     case CMN_EMPTYTRASH:{ DoMethod(G->App, MUIM_CallHook, &MA_DeleteDeletedHook, FALSE);} break;
     case CMN_EMPTYSPAM: { DoMethod(G->App, MUIM_CallHook, &MA_DeleteSpamHook, FALSE);   } break;
     case CMN_ALLTOREAD: { DoMethod(G->App, MUIM_CallHook, &MA_SetAllStatusToHook, SFLAG_READ, SFLAG_NEW); } break;
-    case CMN_SEARCH:    { DoMethod(G->App, MUIM_CallHook, &FI_OpenHook); } break;
+    case CMN_SEARCH:    { DoMethod(G->App, MUIM_CallHook, &FI_OpenHook, GetCurrentFolder()); } break;
 
     default:
       result = DoSuperMethodA(cl, obj, (Msg)msg);

@@ -193,7 +193,7 @@ OVERLOAD(OM_NEW)
     DoMethod(obj, MUIM_TheBar_Notify, TB_MAIN_SPAM,    MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &MA_ClassifyMessageHook, BC_SPAM);
     DoMethod(obj, MUIM_TheBar_Notify, TB_MAIN_HAM,     MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &MA_ClassifyMessageHook, BC_HAM);
     DoMethod(obj, MUIM_TheBar_Notify, TB_MAIN_FILTER,  MUIA_Pressed, FALSE, MUIV_Notify_Application, 5, MUIM_CallHook, &ApplyFiltersHook, APPLY_USER, MUIV_TheBar_Qualifier, NULL);
-    DoMethod(obj, MUIM_TheBar_Notify, TB_MAIN_FIND,    MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &FI_OpenHook);
+    DoMethod(obj, MUIM_TheBar_Notify, TB_MAIN_FIND,    MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &FI_OpenHook, NULL);
     DoMethod(obj, MUIM_TheBar_Notify, TB_MAIN_ADDRBOOK,MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &AB_OpenHook, ABM_EDIT);
     DoMethod(obj, MUIM_TheBar_Notify, TB_MAIN_CONFIG,  MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_OpenHook);
   }
