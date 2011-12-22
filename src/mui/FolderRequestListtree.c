@@ -30,6 +30,8 @@
 
 #include "FolderRequestListtree_cl.h"
 
+#include <proto/muimaster.h>
+
 #include <mui/NList_mcc.h>
 #include <mui/NListtree_mcc.h>
 
@@ -37,8 +39,19 @@
 #include "YAM_mainFolder.h"
 
 #include "FolderList.h"
+#include "MUIObjects.h"
+
+#include "mui/ImageArea.h"
 
 #include "Debug.h"
+
+/* CLASSDATA
+struct Data
+{
+  Object *userImage[SIZE_DEFAULT];
+  int userImageIndex[SIZE_DEFAULT];
+};
+*/
 
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
@@ -95,6 +108,80 @@ OVERLOAD(OM_NEW)
 
   RETURN((IPTR)obj);
   return (IPTR)obj;
+}
+
+///
+/// OVERLOAD(OM_DISPOSE)
+OVERLOAD(OM_DISPOSE)
+{
+  IPTR result;
+  GETDATA;
+  ULONG i;
+
+  ENTER();
+
+  for(i=0; i < ARRAY_SIZE(data->userImage); i++)
+  {
+    DoMethod(obj, MUIM_NList_UseImage, NULL, data->userImageIndex[i], MUIF_NONE);
+    if(data->userImage[i] != NULL)
+    {
+      MUI_DisposeObject(data->userImage[i]);
+      data->userImage[i] = NULL;
+      data->userImageIndex[i] = 0;
+    }
+  }
+
+  // dispose ourself
+  result = DoSuperMethodA(cl, obj, msg);
+
+  RETURN(result);
+  return result;
+}
+
+///
+/// OVERLOAD(MUIM_NListtree_Insert)
+OVERLOAD(MUIM_NListtree_Insert)
+{
+  GETDATA;
+  struct MUI_NListtree_TreeNode *tn;
+
+  ENTER();
+
+  // first let the list tree class do the actual insertion of the tree nodes
+  if((tn = (struct MUI_NListtree_TreeNode *)DoSuperMethodA(cl, obj, msg)) != NULL &&
+     tn->tn_User != NULL)
+  {
+    struct Folder *folder = ((struct FolderNode *)tn->tn_User)->folder;
+
+    // now we check wheter we should create an image object or not
+    if(folder->imageObject != NULL && folder->ImageIndex >= MAX_FOLDERIMG+1)
+    {
+      char *id = (char *)xget(folder->imageObject, MUIA_ImageArea_ID);
+      char *filename = (char *)xget(folder->imageObject, MUIA_ImageArea_Filename);
+
+      if(id != NULL && filename != NULL)
+      {
+        int i = 0;
+
+        // find a free slot in userImage[]
+        while(i < SIZE_DEFAULT && data->userImage[i] != NULL)
+          i++;
+
+        if(i < SIZE_DEFAULT)
+        {
+          if((data->userImage[i] = MakeImageObject(id, filename)) != NULL)
+          {
+            data->userImageIndex[i] = folder->ImageIndex;
+
+            DoMethod(obj, MUIM_NList_UseImage, data->userImage[i], data->userImageIndex[i]);
+          }
+        }
+      }
+    }
+  }
+
+  RETURN(tn);
+  return (IPTR)tn;
 }
 
 ///

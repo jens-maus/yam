@@ -7,6 +7,8 @@ $URL$
 
 2011-12-21 Jens Langner <Jens.Langner@light-speed.de>
 
+  * mui/FolderRequestListtree.c: implemented that custom folder image
+    object will also be created for the FolderRequestListtree.
   * mui/FolderListtree, mui/FolderRequestListtree.c: implemented
     a base class for the folder listtree and changed the old
     FolderRequestList class to a Listtree class. In addition,

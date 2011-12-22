@@ -199,7 +199,7 @@ OVERLOAD(OM_DISPOSE)
 
   ENTER();
 
-  for(i = 0; i < ARRAY_SIZE(data->folderImage); i++)
+  for(i=0; i < ARRAY_SIZE(data->folderImage); i++)
   {
     DoMethod(obj, MUIM_NList_UseImage, NULL, i, MUIF_NONE);
     if(data->folderImage[i] != NULL)
