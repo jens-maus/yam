@@ -273,7 +273,10 @@ OVERLOAD(OM_NEW)
         DoMethod(obj, MUIM_NList_UseImage, data->statusImage[i], i, MUIF_NONE);
     }
 
-    DoMethod(obj, METHOD(MakeFormat));
+    // only call MakeFormat if the user didn't specify NList_Format himself
+    if(GetTagData(MUIA_NList_Format, 0, inittags(msg)) == 0)
+      DoMethod(obj, METHOD(MakeFormat));
+
     if(handleDoubleClick == TRUE)
       DoMethod(obj, MUIM_Notify, MUIA_NList_DoubleClick,  MUIV_EveryTime, MUIV_Notify_Self, 2, METHOD(DoubleClicked), MUIV_TriggerValue);
     DoMethod(obj, MUIM_Notify, MUIA_NList_SelectChange, TRUE,           MUIV_Notify_Application, 2, MUIM_CallHook, &MA_ChangeSelectedHook);

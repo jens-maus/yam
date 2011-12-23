@@ -7,6 +7,9 @@ $URL$
 
 2011-12-23 Jens Langner <Jens.Langner@light-speed.de>
 
+  * mui/MainMailList.c: fixed bug where MakeFormat was called all
+    the time even for the Findwindow which has its own NList_Format
+    spec, overriding the MainMailLists' own one.
   * YAM_FI.c: changed mail search window to also show a listtree
     rather than a plain list. Also changed the search window to not
     clear its mail list on exit and to also keep the same listtree
