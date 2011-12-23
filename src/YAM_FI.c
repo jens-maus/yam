@@ -2639,7 +2639,7 @@ static struct FI_ClassData *FI_New(void)
                 MUIA_NListview_NList, data->GUI.LV_MAILS = MainMailListObject,
                    //MUIA_ObjectID,       MAKE_ID('N','L','0','3'),
                    MUIA_ContextMenu,    NULL,
-                   MUIA_NList_Format,   "COL=8 W=-1 MIW=-1 BAR, COL=1 W=35 BAR, COL=3 W=55 BAR, COL=4 W=-1 MIW=-1 BAR, COL=7 W=-1 MIW=-1 BAR, COL=5 W=10 MIW=-1 P=\33r BAR",
+                   MUIA_NList_Format,   "COL=8 W=-1 MIW=-1 PCS=C BAR, COL=1 W=35 PCS=R BAR, COL=3 W=55 PCS=R BAR, COL=4 W=-1 MIW=-1 BAR, COL=7 W=-1 MIW=-1 BAR, COL=5 W=10 MIW=-1 P=\33r BAR",
                    //MUIA_NList_Format,   "COL=8 W=-1 BAR, COL=1 W=-1 BAR, COL=3 W=-1 BAR, COL=4 W=-1 BAR, COL=7 W=-1 BAR, COL=5 W=-1 P=\33r BAR",
                    //MUIA_NList_Exports,  MUIV_NList_Exports_ColWidth|MUIV_NList_Exports_ColOrder,
                    //MUIA_NList_Imports,  MUIV_NList_Imports_ColWidth|MUIV_NList_Imports_ColOrder,
