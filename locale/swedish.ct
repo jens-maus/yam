@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.5 (14.01.2011)
+## version $VER: YAM.catalog 7.6 (24.12.2011)
 ## language svenska
 ## codeset 0
 ## chunk AUTH Pär Boberg
@@ -4183,7 +4183,7 @@ Skickar post till '%s'
 ;
 MSG_TR_MsgInFile
 Meddelanden i fil %s
-; Messages in file
+; Messages in file %s
 ;
 MSG_TR_MsgOnServer
 Meddelanden på servern
@@ -6475,10 +6475,6 @@ MSG_UPD_NOTIFICATION_NOUPDATE
 Meddela mig inte om uppdateringar i framtiden
 ; Do not notify me on updates in future
 ;
-MSG_UPD_NOTIFICATION_VISITURL
-Besök URL
-; Visit URL
-;
 MSG_UPD_NOTIFICATION_CLOSE
 Stäng
 ; Close
@@ -6648,26 +6644,6 @@ MSG_FI_GAUGETEXT
 %%ld av %ld meddelanden
 ; %%ld of %ld messages
 ; COUNT, COUNT
-;
-MSG_MA_MESSAGEINFO
-\ebNuvarande meddelande\en\nFrån: %s <%s>\nTill: %s <%s>\nÄrende: %s\nDatum: %s\nFilnamn: %s\nStorlek: %s
-; \ebCurrent message\en\n\
-; From: %s <%s>\n\
-; To: %s <%s>\n\
-; Subject: %s\n\
-; Date: %s\n\
-; Filename: %s\n\
-; Size: %s
-; NAME, ADDRESS, NAME, ADDRESS, SUBJECT, DATE, FILENAME, SIZE
-;
-MSG_MA_FOLDERINFO
-\ebNuvarande mapp\en\nNamn: %s\nSökväg: %s\nStorlek: %s\nMeddelanden: %ld (%ld nya, %ld olästa)
-; \ebCurrent folder\en\n\
-; Name: %s\n\
-; Path: %s\n\
-; Size: %s\n\
-; Messages: %ld (%ld new, %ld unread)
-; NAME, PATH, SIZE, COUNT, COUNT, COUNT
 ;
 MSG_MA_MIMEPART_INFO
 \ebBilaga - MIME-del #%ld\en\nNamn: %s\nBeskrivning: %s\nInnehållstyp: %s <%s>\nStorlek: ~%s
@@ -8630,17 +8606,22 @@ MSG_CO_SPAM_STATISTICS
 ; %ld (%ld words)
 ;
 MSG_ER_WRONG_DOB_FORMAT
-Födelsedagsdatumet är i fel format. Det korrekta formatet är '%s'.\n%%d - dag\n%%m - månad\n%%y - år (2 siffror)\n%%Y - år (4 siffror)\nÅr nummret måste vara större än eller lika med 1900!
+Födelsedagsdatumet är i fel format. Det korrekta formatet är '%s'.\n%%d - dag med inledande nollor (0-31)\n%%-d - dag utan inledande nollor (1-31)\n%%e - dag med inledande mellanrum ( 1-31)\n%%m - månad med inledande nollor (01-12)\n%%-m - månad utan inledande nollor (1-12)\n%%y - år med inledande nollor (00-99, 2 siffror)\n%%-y - år utan inledande nollor (0-99), 2 siffror)\n%%Y - år med inledande nollor (4 siffror)\n%%-Y år utan inledande nollor (4 siffror)\nÅrsnummret måste vara större än eller lika med 1900.
 ; Date of birth uses a wrong format. The correct format is '%s'.\n\
-; %%d - day\n\
-; %%m - month\n\
-; %%y - year (2 digits)\n\
-; %%Y - year (4 digits)\n\
+; %%d  - day with leading zeros (01-31)\n\
+; %%-d - day without leading zeros (1-31)\n\
+; %%e  - day with leading spaces ( 1-31)\n\
+; %%m  - month with leading zeros (01-12)\n\
+; %%-m - month without leading zeros (1-12)\n\
+; %%y  - year with leading zeros (00-99, 2 digits)\n\
+; %%-y - year without leading zeros (0-99, 2 digits)\n\
+; %%Y  - year with leading zeros (4 digits)\n\
+; %%-Y - year without leading zeros (4 digits)\n\
 ; The year number must be greater or equal 1900.
 ; DOBFORMAT
 ;
 MSG_CO_PGPURL
-URL till pubilk PGP-nyckel
+URL till publik PGP-nyckel
 ; URL to public PGP key
 ;
 MSG_HELP_CO_ST_PGPURL
@@ -8918,4 +8899,127 @@ MSG_HELP_CO_CH_DOWNLOAD_ON_STARTUP
 Kolla detta konto om det finns ny post vid varje\nuppstart av YAM automatiskt.
 ; Check this account for new mail on every\n\
 ; startup of YAM automatically.
+;
+MSG_IMPORT_UNKNOWN_FILE_FORMAT
+Okänt brevfilsformat i filen '%s'.
+; Unknown mail file format in file '%s'.
+;
+MSG_IMPORT_NO_MAILS
+Filen '%s' innehåller inga brev som kan importeras.
+; The file '%s' does not contain any importable mails.
+;
+MSG_CO_CONFIG_IS_LOCKED
+Konfigurationen är förnärvarande låst.\n\nVar god vänta tills alla POP3 och SMTP överföringar är klara.
+; The configuration is currently locked.\n\
+; \n\
+; Please wait until all POP3 and SMTP transfers are finished.
+;
+MSG_FOLDERINFO_SHORTHELP
+\ebMapp\en\nNamn: %s\nSökväg: %s\nStorlek: %s\nMedddelanden: %ld (%ld nya, %ld olästa)
+; \ebFolder\en\n\
+; Name: %s\n\
+; Path: %s\n\
+; Size: %s\n\
+; Messages: %ld (%ld new, %ld unread)
+;
+MSG_MAILINFO_SHORTHELP
+\ebBrev\en\nFrån: %s <%s>\nTill: %s <%s>\nÄrende: %s\nDatum: %s\nFilnamn: %s\nStorlek: %s
+; \ebMail\en\n\
+; From: %s <%s>\n\
+; To: %s <%s>\n\
+; Subject: %s\n\
+; Date: %s\n\
+; Filename: %s\n\
+; Size: %s
+;
+MSG_CO_UPDATE_DOWNLOAD_PATH
+Nedladdningsma_pp:
+; Download _path:
+;
+MSG_UPD_NOTIFICATION_DOWNLOAD
+Ladda ned
+; Download
+;
+MSG_TR_DOWNLOADING_FROM_SERVER
+Laddar ned från '%s'
+; Downloading from '%s'
+;
+MSG_MA_HELP
+Hjälp
+; Help
+;
+MSG_MA_HELP_CONTENTS
+Innehåll
+; Contents
+;
+MSG_MA_HELP_AREXX
+ARexx gränssnitt
+; ARexx interface
+;
+MSG_ER_HELP_FILE_DOES_NOT_EXIST
+Hjälpfilen '%s' finns inte.
+; The help file '%s' does not exist.
+;
+MSG_EA_SEARCH_GRAVATAR
+Sök på gra_vatar.com...
+; Search on gra_vatar.com...
+;
+MSG_ER_NO_GRAVATAR_FOUND
+Ingen Gravatar hittad för adress '%s'\n\nPersonen har kanske inte laddat upp ett porträtt till gravatar.com ännu.
+; No Gravatar found for address '%s'.\n\
+; \n\
+; Perhaps the person has not uploaded a portrait image to gravatar.com yet.
+;
+MSG_ER_NON_MIME_CONFORMANT_MAIL
+Ingen 'MIME-Version' rubrikrad hittades vid skanning av brevfilen '%s'. Den generarade utmatningen kan därför innehålla felaktig eller skadad data.
+; No 'MIME-Version' header line was found while scanning the mail file '%s'. \
+; The generated output may therefore contain invalid data or may be corrupted.
+;
+MSG_CO_ACTION_SET_STATUS_TO_MARKED
+Sätt status till 'Märkt'
+; Set status to 'Marked'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_MARKED
+Sätt status för de filtrerade breven till 'Märkt'
+; Set the status of the filtered mail to 'Marked'
+;
+MSG_CO_ACTION_SET_STATUS_TO_UNMARKED
+Sätt status till 'Omärkt'
+; Set status to 'Unmarked'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_UNMARKED
+Sätt status för de filtrerade breven till 'Omärkt'
+; Set the status of the filtered mail to 'Unmarked'
+;
+MSG_CO_ACTION_SET_STATUS_TO_READ
+Sätt status till 'Läst'
+; Set status to 'Read'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_READ
+Sätt status för de filtrerade breven till 'Läst'
+; Set the status of the filtered mail to 'Read'
+;
+MSG_CO_ACTION_SET_STATUS_TO_UNREAD
+Sätt status till 'Oläst'
+; Set status to 'Unread'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_UNREAD
+Sätt status för de filtrerade breven till 'Oläst'
+; Set the status of the filtered mail to 'Unread'
+;
+MSG_CO_ACTION_SET_STATUS_TO_SPAM
+Sätt status till 'Skräp'
+; Set status to 'Spam'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_SPAM
+Sätt status för de filtrerade breven till 'Skräp'
+; Set the status of the filtered mail to 'Spam'
+;
+MSG_CO_ACTION_SET_STATUS_TO_HAM
+Sätt status till 'Ej skräp'
+; Set status to 'Not spam'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_HAM
+Sätt status för de filtrerade breven till 'Ej skräp'
+; Set the status of the filtered mail to 'Not spam'
 ;
