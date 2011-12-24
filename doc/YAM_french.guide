@@ -1,10 +1,10 @@
 @database YAM.guide
-@$VER: YAM.guide 2.6 (15.09.2010)
+@$VER: YAM.guide 2.7 (24.12.2011)
 /***************************************************************************
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck\@yam.ch>
- Copyright (C) 2000-2010 by YAM Open Source Team
+ Copyright (C) 2000-2011 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -20,8 +20,7 @@
  along with this program; if not, write to the Free Software
  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
- YAM Official Support Site :  http://www.yam.ch/
- YAM OpenSource project    :  http://sourceforge.net/projects/yamos/
+ YAM Official Support Site :  http://yam.ch/
 
  $Id$
 
@@ -39,10 +38,10 @@
 @NODE "Main" "YAM - Documentation en Français (ATO-Fr)"
 
               @{B}=============================================
-               Y A M    (Yet Another Mailer)   VERSION 2.6
+               Y A M    (Yet Another Mailer)   VERSION 2.7
               =============================================@{UB}
 
-                          © 2000 par Marcel Beck
+                        © 1995-2000 par Marcel Beck
                 © 2000-2010 par l'équipe de YAM Open Source
 
 
@@ -216,16 +215,16 @@ Novembre 2000
    * @{" MUI " link "MUI"}, version 3.8 ou supérieure
    * Les classes additionnelles pour MUI :
 
-        - BetterString 11.14+
-            http://aminet.net/dev/mui/MCC_BetterString-11.14.lha
-        - NList 0.101+
-            http://aminet.net/dev/mui/MCC_NList-0.101.lha
-        - TextEditor 15.25+
-             http://aminet.net/dev/mui/MCC_TextEditor-15.25.lha
-        - Thebar 21.5+
-            http://aminet.net/dev/mui/MCC_TheBar-21.5.lha
+        - BetterString 11.21+
+            http://sf.net/projects/bstring-mcc/files/latest/download
+        - NList 0.111+
+            http://sf.net/projects/nlist-classes/files/latest/download
+        - TextEditor 15.37+
+            http://sf.net/projects/texteditor-mcc/files/latest/download
+        - Thebar 26.8+
+            http://sf.net/projects/thebar-mcc/files/latest/download
 
-   * Codesets.library 6.5+.
+   * Codesets.library 6.13+.
    * Une pile TCP/IP compatible AmiTCP (AmiTCP, Miami[DX], TermiteTCP ou
      RoadShow).
    * optionnel : XPK pour la compression/décompression des objets.
@@ -244,24 +243,32 @@ Novembre 2000
 
 @{B}INSTALLATION@{UB}
 
-   YAM 2.6 est distribué en trois archives différentes :
+   YAM 2.7 est distribué en trois archives différentes :
 
-@{b}YAM26-AmigaOS4.lha@{ub}
+@{b}YAM27-AmigaOS4.lha@{ub}
      YAM pour AmigaOS 4.
 
-@{b}YAM26-AmigaOS3.lha@{ub}
+@{b}YAM27-AmigaOS3.lha@{ub}
      YAM pour AmigaOS 3.
 
-@{b}YAM26-MorphOS.lha@{ub}
+@{b}YAM27-MorphOS.lha@{ub}
      YAM pour MorphOS.
 
+@{b}YAM27-AROS-i386.lha@{ub}
+     YAM pour AROS/i386.
+
+@{b}YAM27-AROS-ppc.lha@{ub}
+     YAM pour AROS/ppc.
+
+@{b}YAM27-AROS-x86_64.lha@{ub}
+     YAM pour AROS/x86_64.
 
 @{U}Installation avec Installer@{UU}
 
    Ouvrez le répertoire « Install », puis double-cliquez sur l'icône
 « Install-YAM » et suivez les instructions de l'installer. Si vous
 possédez une version antérieure de YAM, redémarrez votre Amiga après
-l'installation de YAM 2.6.
+l'installation de YAM 2.7.
 
 
 @{U}Installation manuelle@{UU}
@@ -269,7 +276,7 @@ l'installation de YAM 2.6.
    Si vous ne possédez pas l'Installer d'Amiga ou que pour une raison
 quelconque vous ne vouliez pas l'utiliser, procédez comme suit :
 
-- Copiez tout le répertoire « YAM 2.6 » dans le répertoire de destination.
+- Copiez tout le répertoire « YAM 2.7 » dans le répertoire de destination.
 
 - Copiez les bibliothèques Mui (mcc,mcp) du répertoire @{b}Install/MUI@{ub}
   dans le répertoire @{b}MUI:libs/MUI@{ub}.
@@ -277,7 +284,7 @@ quelconque vous ne vouliez pas l'utiliser, procédez comme suit :
 - Copiez toutes les bibliothèques situées dans le répertoire @{b}Install/Libs@{ub}
   vers @{b}LIBS:@{ub}.
 
-- Effacez le répertoire  « Install » dans « YAM 2.6 » car vous n'en avez plus besoin.
+- Effacez le répertoire  « Install » dans « YAM 2.7 » car vous n'en avez plus besoin.
 
 - Redémarrez votre Amiga et démarrez YAM depuis le nouvel emplacement en double-
   cliquant sur son icône.
@@ -515,7 +522,7 @@ Il est ainsi possible d'effacer un message particulier sans équivoque.
 « message-ID ».
 
 
-  X-Mailer: YAM 2.0beta4 - Amiga Mailer by Marcel Beck - http://www.yam.ch
+  X-Mailer: YAM 2.0beta4 - Amiga Mailer by Marcel Beck - http://yam.ch
 
    Nom et version du programme de courriers de l'expéditeur.
 
@@ -2463,7 +2470,7 @@ Le groupe sera créé si celui-ci n'existe pas déjà.
 L'URL sera affiché dans l'en-tête de chaque message envoyé si l'option
 « Ajouter données personnelles » est activée.
 
- @{i}Exemple :@{ui} http://www.yam.ch/gallery/BECK_Marcel.gif
+ @{i}Exemple :@{ui} http://yam.ch/gallery/BECK_Marcel.gif
 
 
 @{u}Serveur proxy HTTP@{uu}
@@ -2779,7 +2786,7 @@ l'intervalle de temps en secondes entre deux sauvegardes.
    C'est l'adresse de la page d'accueil de YAM qui est utilisée pour accéder
 à la galerie des portraits et pour la vérification de la version de YAM.
 
- @{i}Exemple :@{ui} SupportSite = http://www.yam.ch/
+ @{i}Exemple :@{ui} SupportSite = http://yam.ch/
 
 
 @{u}JumpToNewMsg@{uu}
@@ -5172,9 +5179,7 @@ et/ou l'adresse électronique, de vous connecter à l'Internet et de cliquer
 le bouton [Télécharger]. YAM commence par charger la liste des photos
 disponibles et recherche le nom de la personne. Si il trouve des
 informations manquantes à votre carnet d'adresses (nom, adresse e-mail et
-page d'accueil), celles-ci seront ajoutées et la photo téléchargée. Si vous
-désirez ajouter votre portrait à la collection, suivez les instructions
-données sur la page de YAM à l'adresse : http://www.yam.ch/gallery.html.
+page d'accueil), celles-ci seront ajoutées et la photo téléchargée.
 
 
 @{b}===================== liste ====================@{ub}
@@ -7041,7 +7046,7 @@ GETURL
 
          /* Download a file */
 
-         GETURL 'http://www.yam.ch/files/YAM22.lha' 'ram:YAM22.lha'
+         GETURL 'http://yam.ch/files/YAM22.lha' 'ram:YAM22.lha'
 
          /* Report results */
 
@@ -10822,7 +10827,7 @@ Problèmes connus
 ****************
 
    Ce chapitre mentionne quelques problèmes qui ne sont pas directement
-liés à YAM et ne peuvent donc pas être pris en compte par l'équipe YAMOS.
+liés à YAM et ne peuvent donc pas être pris en compte par l'équipe YAM.
 Reportez vous aux @{" rapports de bogues " link "INF2"} pour trouver
 les bogues qui concernent directement YAM.
 
@@ -11019,12 +11024,8 @@ Support - YAM sur Internet
 
    Afin de fournir à tous les utilisateurs des informations à jour à propos
 de YAM, Marcel Beck, son auteur originel, a rendu disponible sa page
-d'accueil sur le « World Wide Web » : http://www.yam.ch/
+d'accueil sur le « World Wide Web » : http://yam.ch/
 
-
-@{b}La page d'accueil de « l'Open Source » de YAM@{ub}
-
-   http://sourceforge.net/projects/yamos/
 
 @endnode
 
@@ -11051,7 +11052,7 @@ la liste de discussions de YAM. Pour y souscrire, envoyez un courrier
    http://www.freelists.org/archives/yam
 
 
-@{b}La liste de discussion YAMOS pour les développeurs@{ub}
+@{b}La liste de discussion YAM pour les développeurs@{ub}
 
    Si vous souhaitez participer au développement de YAM, vous êtes les
 bienvenus sur la liste YAMos-Dev. Pour y souscrire, envoyez un courrier
@@ -11071,9 +11072,9 @@ Support - rapporter des erreurs
 ===============================
 
 
-   Veuillez visiter http://sourceforge.net/tracker/?group_id=13560&atid=113560
-et remplir le formulaire ou bien naviguez dans la base de données des
-erreurs connues, rapportées par les utilisateurs de YAM.
+   Veuillez visiter http://bugs.yam.ch/ et remplir le formulaire ou bien
+naviguez dans la base de données des erreurs connues, rapportées par les
+utilisateurs de YAM.
 
    Si vous souhaitez remplir un rapport d'erreur, il faut que vous soyez
 au préalable enregistré sur le site de SourceForge.
@@ -11097,9 +11098,7 @@ précisions de votre part. L'erreur en sera corrigée plus rapidement.
 
          1b.  Veuillez noter que l'erreur peut déjà avoir été corrigée en
               interne, et par conséquent retirée de la base de données.
-              Vérifiez le fichier « ChangeLog », pour en être sûr :
-
-      http://yamos.svn.sourceforge.net/viewvc/yamos/trunk/ChangeLog?view=log
+              Vérifiez le fichier « ChangeLog », pour en être sûr.
 
       2. Essayez de faire au mieux pour indiquer une « courte description »
          mais très explicite du problème. N'oubliez pas d'indiquer la
@@ -11120,7 +11119,7 @@ précisions de votre part. L'erreur en sera corrigée plus rapidement.
 
    Si vous n'avez pas accès au Web, rappelez vous que vous pouvez toujours
 indiquer les erreurs sur la @{" liste de discussions de YAM " link "INF1"}, comme elle
-est lu par l'équipe de YAMOS, les erreurs seront enregistrées plus tard dans
+est lu par l'équipe de YAM, les erreurs seront enregistrées plus tard dans
 la base des erreurs à corriger par nos soins.
 
 @endnode
@@ -11134,9 +11133,8 @@ Support - Demandes d'améliorations
 ==================================
 
    Vous avez absolument besoin que YAM puisse faire ceci ou cela ? Décrivez
-l'amélioration souhaitée sur
-http://sourceforge.net/tracker/?atid=363560&group_id=13560&func=browse.
-J'étudierais votre requête pour une prochaine mise à jour.
+l'amélioration souhaitée sur http://bugs.yam.ch/. J'étudierais votre requête
+pour une prochaine mise à jour.
 
 @endnode
 
@@ -11151,8 +11149,8 @@ Support - Demandes de changements
     Si vous désirez qu'un point précis de YAM soit modifié ou
 amélioré, et que ce point n'apparaît ni dans un rapport de bogue,
 ni dans une demande d'amélioration, soumettez votre demande sur
-http://sourceforge.net/tracker/?atid=464455&group_id=13560&func=browse.
-Soyez précis dans votre demande, elle n'en sera que mieux comprise.
+http://bugs.yam.ch/. Soyez précis dans votre demande, elle n'en sera
+que mieux comprise.
 
 @endnode
 
@@ -11165,14 +11163,14 @@ Support - Dépôt SVN
 ===================
 
 
-   Le dépôt SVN YAMOS est hébergé par SourceForge.net et peut être téléchargé
+   Le dépôt SVN YAM est hébergé par SourceForge.net et peut être téléchargé
 à travers accès SVN anonyme. Vous pouvez obtenir les tous derniers sources de
 YAM (dans la branche trunk) en utilisant la commande suivante :
 
-     svn co https://yamos.svn.sourceforge.net/svnroot/yamos/trunk yamos
+     svn co https://svn.yam.ch/svn/yam/trunk yam
 
    Cela récupèrera les sources de notre tronc (NDT: 'trunk' en anglais) dans
-un répertoire local 'yamos'.
+un répertoire local 'yam'.
 
    Si vous avez déjà récupéré une version d'un des modules et que vous voulez
 le mettre à jour :
@@ -11181,7 +11179,7 @@ le mettre à jour :
      $> svn up
 
    Si vous souhaitez obtenir un accès en écriture pour contribuer à ce
-projet, merci de rejoindre la @{" liste des développeurs YAMOS " link "INF1"}
+projet, merci de rejoindre la @{" liste des développeurs YAM " link "INF1"}
 et de le demander là bas.
 
 @endnode
@@ -11201,7 +11199,6 @@ version de YAM :
 - Complètement retravailler l'interface du carnet d'adresse,
 - Support de plusieurs identités utilisateur (similaire à Thunderbird),
 - Support de GnuPG (via interface gpgme),
-- Transfert asynchrone des courriers (multithreading interne),
 - Menus contextuels configurables,
 - Barres d'outils configurables,
 - Support de plusieurs serveurs SMTP,
@@ -11217,17 +11214,17 @@ version de YAM :
 @{b}@{u}REMERCIEMENTS@{ub}@{uu}
 
 
-   YAM 2.6 vous est proposé par :
+   YAM 2.7 vous est proposé par :
 
       Jens Langner <Jens.Langner\@light-speed.de>
       Thore Boeckelmann <tboeckel\@gmx.de>
-      Gunther Nikl <gni\@gecko.de>
-      Alexey Ivanov <amis\@amiga.org.ru>
-      Matthias Rustler <mrustler\@gmx.de>
-
+      Frank Weber <opionline\@yahoo.de>
 
    Contributeurs
 
+      Gunther Nikl
+      Matthias Rustler
+      Alexey Ivanov
       David Rey
       Dirk Stoecker
       Christian Hattemer
@@ -11843,7 +11840,7 @@ elles ont une apparence très professionnelle maintenant.
 
    @{"YAM - Documentation en Français" link MAIN}
    @{"YAM dans le « World Wide Web »" link "INF0"}
-   @{"YAMOS team" link "CRED"}
+   @{"YAM team" link "CRED"}
 
 @{BODY}
 @endnode

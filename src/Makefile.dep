@@ -873,26 +873,27 @@ $(OBJDIR)/YAM_ER.o: YAM_ER.c include/mui/NListview_mcc.h include/libraries/mui.h
  YAM_main.h YAM_read.h BayesFilter.h mui/YAMApplication.h \
  mui/PreselectionWindow.h Debug.h
 $(OBJDIR)/YAM_FI.o: YAM_FI.c include/mui/NBalance_mcc.h include/mui/NList_mcc.h \
- include/libraries/mui.h include/mui/NListview_mcc.h \
- include/proto/muimaster.h include/interfaces/muimaster.h \
- include/inline4/muimaster.h extrasrc.h include/SDI_compiler.h \
- include/SDI_stdarg.h include/SDI_compiler.h include/SDI_hook.h \
- include/timeval.h YAM.h include/xpk/xpk.h include/amiga-align.h \
- include/default-align.h YAM_stringsizes.h YAM_userlist.h YAM_utilities.h \
- YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h Timer.h \
- YAM_config.h YAM_read.h YAM_write.h YAM_main.h tcp/pop3.h tcp/smtp.h \
- Logfile.h UpdateCheck.h mui/ConfigPageList.h mui/TransferWindow.h \
- tcp/Connection.h include/openssl/ssl.h include/proto/amissl.h \
- include/amissl/amissl.h include/openssl/e_os2.h \
- include/openssl/opensslconf.h include/openssl/aes.h \
- include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
- include/openssl/stack.h include/openssl/safestack.h \
- include/openssl/opensslv.h include/openssl/symhacks.h \
- include/openssl/bn.h include/openssl/ossl_typ.h \
- include/openssl/asn1_mac.h include/openssl/asn1t.h \
- include/openssl/blowfish.h include/openssl/buffer.h \
- include/openssl/cast.h include/openssl/comp.h include/openssl/conf.h \
- include/openssl/lhash.h include/openssl/conf_api.h include/openssl/des.h \
+ include/libraries/mui.h include/mui/NListtree_mcc.h \
+ include/mui/NListview_mcc.h include/proto/muimaster.h \
+ include/interfaces/muimaster.h include/inline4/muimaster.h extrasrc.h \
+ include/SDI_compiler.h include/SDI_stdarg.h include/SDI_compiler.h \
+ include/SDI_hook.h include/timeval.h YAM.h include/xpk/xpk.h \
+ include/amiga-align.h include/default-align.h YAM_stringsizes.h \
+ YAM_userlist.h YAM_utilities.h YAM_folderconfig.h BayesFilter.h \
+ HashTable.h Themes.h Timer.h YAM_config.h YAM_read.h YAM_write.h \
+ YAM_main.h tcp/pop3.h tcp/smtp.h Logfile.h UpdateCheck.h \
+ mui/ConfigPageList.h mui/TransferWindow.h tcp/Connection.h \
+ include/openssl/ssl.h include/proto/amissl.h include/amissl/amissl.h \
+ include/openssl/e_os2.h include/openssl/opensslconf.h \
+ include/openssl/aes.h include/openssl/asn1.h include/openssl/bio.h \
+ include/openssl/crypto.h include/openssl/stack.h \
+ include/openssl/safestack.h include/openssl/opensslv.h \
+ include/openssl/symhacks.h include/openssl/bn.h \
+ include/openssl/ossl_typ.h include/openssl/asn1_mac.h \
+ include/openssl/asn1t.h include/openssl/blowfish.h \
+ include/openssl/buffer.h include/openssl/cast.h include/openssl/comp.h \
+ include/openssl/conf.h include/openssl/lhash.h \
+ include/openssl/conf_api.h include/openssl/des.h \
  include/openssl/des_old.h include/openssl/ui_compat.h \
  include/openssl/ui.h include/openssl/dh.h include/openssl/dsa.h \
  include/openssl/dso.h include/openssl/ebcdic.h include/openssl/ec.h \
@@ -912,9 +913,10 @@ $(OBJDIR)/YAM_FI.o: YAM_FI.c include/mui/NBalance_mcc.h include/mui/NList_mcc.h 
  include/interfaces/amissl.h include/inline4/amissl.h YAM_configFile.h \
  YAM_error.h YAM_find.h YAM_global.h YAM_mainFolder.h mui/ClassesExtra.h \
  YAM_main.h YAM_read.h BayesFilter.h mui/FilterPopupList.h \
- mui/MainMailList.h Themes.h mui/ReadWindow.h mui/SearchControlGroup.h \
- mui/WriteWindow.h BoyerMooreSearch.h FolderList.h Locale.h MailList.h \
- MethodStack.h MUIObjects.h Requesters.h Threads.h Debug.h
+ mui/FolderRequestListtree.h mui/MainMailList.h Themes.h mui/ReadWindow.h \
+ mui/SearchControlGroup.h mui/WriteWindow.h BoyerMooreSearch.h \
+ FolderList.h Locale.h MailList.h MethodStack.h MUIObjects.h Requesters.h \
+ Threads.h Debug.h
 $(OBJDIR)/YAM_FO.o: YAM_FO.c include/mui/NList_mcc.h include/libraries/mui.h \
  include/mui/NListtree_mcc.h include/proto/muimaster.h \
  include/interfaces/muimaster.h include/inline4/muimaster.h \
@@ -1665,10 +1667,13 @@ $(OBJDIR)/$(MUIDIR)/FolderRequestListtree.o: mui/FolderRequestListtree.c \
  YAM_read.h YAM_write.h YAM_main.h BayesFilter.h HashTable.h \
  include/SDI_compiler.h extrasrc.h include/SDI_stdarg.h \
  include/SDI_compiler.h mui/FolderRequestListtree.h \
- include/mui/NList_mcc.h include/mui/NListtree_mcc.h YAM.h \
- include/xpk/xpk.h include/amiga-align.h include/default-align.h \
- YAM_userlist.h YAM_utilities.h YAM_folderconfig.h BayesFilter.h Themes.h \
- Timer.h include/timeval.h YAM_mainFolder.h FolderList.h Debug.h
+ include/proto/muimaster.h include/interfaces/muimaster.h \
+ include/inline4/muimaster.h include/mui/NList_mcc.h \
+ include/mui/NListtree_mcc.h YAM.h include/xpk/xpk.h \
+ include/amiga-align.h include/default-align.h YAM_userlist.h \
+ YAM_utilities.h YAM_folderconfig.h BayesFilter.h Themes.h Timer.h \
+ include/timeval.h YAM_mainFolder.h FolderList.h MUIObjects.h \
+ mui/ImageArea.h ImageCache.h include/mui/TheBar_mcc.h Debug.h
 $(OBJDIR)/$(MUIDIR)/FolderRequestWindow.o: mui/FolderRequestWindow.c \
  mui/FolderRequestWindow_cl.h include/libraries/mui.h mui/ClassesExtra.h \
  YAM_main.h YAM_stringsizes.h tcp/pop3.h tcp/smtp.h YAM_read.h \

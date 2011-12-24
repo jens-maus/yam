@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2010 by YAM Open Source Team
+ Copyright (C) 2000-2011 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -18,8 +18,7 @@
  along with this program; if not, write to the Free Software
  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
- YAM Official Support Site :  http://www.yam.ch/
- YAM OpenSource project    :  http://sourceforge.net/projects/yamos/
+ YAM Official Support Site :  http://yam.ch/
 
  $Id$
 
@@ -76,6 +75,3 @@ Spanish:
 
 Swedish:
   Pär Boberg         <pbobbenb@spray.se>
-
-
-The development of YAM is hosted by SourceForge http://www.sourceforge.net/

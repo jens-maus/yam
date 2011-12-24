@@ -112,7 +112,7 @@ static const char USED_VAR yam_stack_size[] = "$STACK:" STR(MIN_STACKSIZE) "\n";
 // to constant variables.
 #define __YAM           "YAM"
 #define __YAM_VERSION   "2.7"
-#define __YAM_DEVEL     "-dev"
+#define __YAM_DEVEL     ""
 #ifndef __YAM_BUILDID
 #define __YAM_BUILDID   0
 #endif
