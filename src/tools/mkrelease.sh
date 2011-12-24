@@ -37,6 +37,7 @@ case $1 in
     aros-i386)   yamsys="AROS-i386";;
     aros-ppc)    yamsys="AROS-ppc";;
     aros-x86_64) yamsys="AROS-x86_64";;
+    aros-arm)    yamsys="AROS-arm";;
 esac
 echo "  MK $yamsys release"
 
