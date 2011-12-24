@@ -1,8 +1,8 @@
-## version $VER: YAM.catalog 7.28 (15.12.2011)
+## version $VER: YAM.catalog 7.29 (24.12.2011)
 ## language polski
 ## codeset 5
-;
 ## chunk AUTH Mariusz Danilewicz <mandi@interia.pl>
+;
 ; YAM.ct - YAM 2.7 catalog polish translation file
 ; $Id$
 ; in sync with .cd in revision 5753
@@ -2625,10 +2625,6 @@ MSG_HELP_CO_CH_SEND
 Wysy³a oczekuj±ce wiadomo¶ci.
 ; Send queued messages.
 ;
-MSG_HELP_CO_CH_POPSTART
-Sprawdza pocztê.
-; Check for mail.
-;
 MSG_HELP_CO_CH_CHECKBD
 Sprawdza ksi±¿kê adresow± i przypomina\n\
 je¶li dzi¶ s± czyje¶ urodziny.
@@ -4473,10 +4469,6 @@ MSG_TR_MsgInFile
 Wiadomo¶ci w pliku %s
 ; Messages in file
 ;
-MSG_TR_MsgOnServer
-Wiadomo¶ci na serwerze
-; Messages on server
-;
 MSG_TR_Control
 Kontrola
 ; Control
@@ -4493,10 +4485,6 @@ MSG_TR_Leave
 _Zostaw
 ; L_eave
 ;
-MSG_TR_Pause
-_Pauza
-; _Pause
-;
 MSG_TR_Clear
 Wy_czy¶æ
 ; _Clear
@@ -4508,10 +4496,6 @@ Tylk_o skasuj
 MSG_TR_DownloadDelete
 Od_bierz i skasuj
 ; Do_wnload & delete
-;
-MSG_TR_Resume
-_Kontynuuj
-; _Resume
 ;
 MSG_TR_Start
 Z_acznij
@@ -6975,20 +6959,6 @@ Których zabezpieczeñ chcesz u¿yæ?
 ; default mail security settings.\n\
 ; \n\
 ; What type of security do you want to use?
-;
-MSG_ER_OPENTCPIP
-Nie mo¿na otworzyæ interfejsu biblioteki bsdsocket.library \
-wymaganego do po³±czenia TCP/IP.\n\
-\n\
-Proszê siê upewniæ, ¿e masz zainstalowany kompatybilny \
-i poprawnie skonfigurowany stos TCP/IP, oraz ¿e Twój \
-interfejs sieciowy jest uruchomiony i aktywny.
-; Couldn't open bsdsocket.library interface required for \
-; TCP/IP connections.\n\
-; \n\
-; Please make sure that you have a compatible and correctly \
-; configured TCP/IP stack installed, and that your network \
-; interface is up and running.
 ;
 MSG_WR_UUCODE
 Tekst zakodowany UUcode
@@ -9565,19 +9535,6 @@ w wersji v53.2 lub nowszej.
 ; If checked, YAM will use AmigaOS4.1's notification\n\
 ; system to notify the user about new received mails.\n\
 ; This requires at least application.library V53.2.
-;
-MSG_NO_OPENURL_LIB
-Biblioteka openurl.library nie jest zainstalowana w Twoim systemie.\n\
-W zwi±zku z tym program nie jest w stanie otworzyæ ¿±danego odsy³acza.\n\
-\n\
-Proszê uruchomiæ swoj± przegl±darkê internetow± i wpisaæ poni¿szy odno¶nik:\n\
-\"%s\"
-; openurl.library not installed on your system.\n\
-; Thus YAM is not able to open the requested link itself.\n\
-; \n\
-; Please launch your internet browser yourself and enter this link:\n\
-; '%s'
-; URL
 ;
 MSG_USERNAME_FALLBACK
 Jan Kowalski

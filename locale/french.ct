@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.2 (05.09.2011)
+## version $VER: YAM.catalog 7.3 (24.12.2011)
 ## language français
 ## codeset 111
 ;
@@ -2629,11 +2629,6 @@ MSG_HELP_CO_CH_SEND
 Envoyer les messages en attente
 ; Send queued messages.
 ;
-MSG_HELP_CO_CH_POPSTART
-Vérifie la présence de nouveaux\n\
-courriers sur le serveur
-; Check for mail.
-;
 MSG_HELP_CO_CH_CHECKBD
 Effectue une recherche dans le carnet d'adresses\n\
 et signale si c'est l'anniversaire de quelqu'un.
@@ -4479,10 +4474,6 @@ MSG_TR_MsgInFile
 Messages dans le fichier %s
 ; Messages in file
 ;
-MSG_TR_MsgOnServer
-Messages sur le serveur
-; Messages on server
-;
 MSG_TR_Control
 Contrôle
 ; Control
@@ -4499,10 +4490,6 @@ MSG_TR_Leave
 _Laisser sur serveur
 ; L_eave
 ;
-MSG_TR_Pause
-_Pause
-; _Pause
-;
 MSG_TR_Clear
 Au_cun
 ; _Clear
@@ -4514,10 +4501,6 @@ Effacer sur _serveur
 MSG_TR_DownloadDelete
 C_harger et effacer
 ; Do_wnload & delete
-;
-MSG_TR_Resume
-_Reprendre
-; _Resume
 ;
 MSG_TR_Start
 _Démarrer
@@ -6976,20 +6959,6 @@ Quel type de sécurité désirez-vous utiliser ?
 ; default mail security settings.\n\
 ; \n\
 ; What type of security do you want to use?
-;
-MSG_ER_OPENTCPIP
-Impossible d'ouvrir l'interface bsdsocket.library requise \
-pour les connexions TCP/IP.\n\
-\n\
-Veuillez vous assurer que vous disposez d'une pile TCP/IP \
-compatible et correctement configurée, et que votre interface \
-réseau est active et fonctionnelle.
-; Couldn't open bsdsocket.library interface required for \
-; TCP/IP connections.\n\
-; \n\
-; Please make sure that you have a compatible and correctly \
-; configured TCP/IP stack installed, and that your network \
-; interface is up and running.
 ;
 MSG_WR_UUCODE
 Texte UUencodé
@@ -9588,21 +9557,6 @@ Cela nécessite au minimum l'application.library V53.2.
 ; If checked, YAM will use AmigaOS4.1's notification\n\
 ; system to notify the user about new received mails.\n\
 ; This requires at least application.library V53.2.
-;
-MSG_NO_OPENURL_LIB
-openurl.library n'est pas installée sur votre\n\
-système. Par conséquent YAM n'est pas capable\n\
-d'ouvrir par lui-même le lien spécifié.\n\
-\n\
-Veuillez lancer vous même votre navigateur Internet\n\
-et y saisir le lien suivant :\n\
-« %s »
-; openurl.library not installed on your system.\n\
-; Thus YAM is not able to open the requested link itself.\n\
-; \n\
-; Please launch your internet browser yourself and enter this link:\n\
-; '%s'
-; URL
 ;
 MSG_USERNAME_FALLBACK
 Monsieur X

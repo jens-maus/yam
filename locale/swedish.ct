@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.6 (24.12.2011)
+## version $VER: YAM.catalog 7.7 (24.12.2011)
 ## language svenska
 ## codeset 0
 ## chunk AUTH Pär Boberg
@@ -2485,10 +2485,6 @@ MSG_HELP_CO_CH_SEND
 Skicka köade meddelanden.
 ; Send queued messages.
 ;
-MSG_HELP_CO_CH_POPSTART
-Kolla om det finns post.
-; Check for mail.
-;
 MSG_HELP_CO_CH_CHECKBD
 Kontrollera adressboken och\npåminn om någon fyller år.
 ; Check the address book and open a\n\
@@ -4185,10 +4181,6 @@ MSG_TR_MsgInFile
 Meddelanden i fil %s
 ; Messages in file %s
 ;
-MSG_TR_MsgOnServer
-Meddelanden på servern
-; Messages on server
-;
 MSG_TR_Control
 Kontroll
 ; Control
@@ -4205,10 +4197,6 @@ MSG_TR_Leave
 L_ämna
 ; L_eave
 ;
-MSG_TR_Pause
-_Paus
-; _Pause
-;
 MSG_TR_Clear
 _Inga
 ; _Clear
@@ -4220,10 +4208,6 @@ _Radera bara
 MSG_TR_DownloadDelete
 Hä_mta och radera
 ; Do_wnload & delete
-;
-MSG_TR_Resume
-_Fortsätt
-; _Resume
 ;
 MSG_TR_Start
 _Starta
@@ -6442,15 +6426,6 @@ Brevets mottagare har olika förvalda\nsäkerhetsinställningar.\n\nVilken typ av s
 ; \n\
 ; What type of security do you want to use?
 ;
-MSG_ER_OPENTCPIP
-YAM kunde inte öppna bsdsocket.library gränssnittet, nödvändigt för TCP/IP anslutningar.\n\nVänligen kontrollera att du har en kompatibel TCP/IP stack installerad, korrekt konfigurerad och att ditt nätverksgränssnitt är fungerande.
-; Couldn't open bsdsocket.library interface required for \
-; TCP/IP connections.\n\
-; \n\
-; Please make sure that you have a compatible and correctly \
-; configured TCP/IP stack installed, and that your network \
-; interface is up and running.
-;
 MSG_WR_UUCODE
 UUcode kodad text
 ; UUencoded text
@@ -8640,15 +8615,6 @@ Om vald, kommer YAM att använda AmigaOS4.1's\nnotifieringssystem för att notifie
 ; If checked, YAM will use AmigaOS4.1's notification\n\
 ; system to notify the user about new received mails.\n\
 ; This requires at least application.library V53.2.
-;
-MSG_NO_OPENURL_LIB
-openurl.library är inte installerat.\nDetta gör att YAM inte kan öppna den begärda länken själv.\n\nVar god starta din webbläsare och skriv in denna länk:\n'%s'
-; openurl.library not installed on your system.\n\
-; Thus YAM is not able to open the requested link itself.\n\
-; \n\
-; Please launch your internet browser yourself and enter this link:\n\
-; '%s'
-; URL
 ;
 MSG_USERNAME_FALLBACK
 John Doe

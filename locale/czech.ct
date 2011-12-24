@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.7 (25.7.2011)
+## version $VER: YAM.catalog 7.8 (24.12.2011)
 ## language czech
 ## codeset 5
 ;
@@ -2586,10 +2586,6 @@ MSG_HELP_CO_CH_SEND
 Ode¹le zprávy ve frontì, resp. slo¾ce 'K odeslání'.
 ; Send queued messages.
 ;
-MSG_HELP_CO_CH_POPSTART
-Pøipojí se k serveru a pøíp. stáhne novou po¹tu.
-; Check for mail.
-;
 MSG_HELP_CO_CH_CHECKBD
 Projde seznam kontaktù a má-li nìkdo narozeniny,\n\
 upozorní vás.
@@ -4407,10 +4403,6 @@ MSG_TR_MsgInFile
 Zprávy v souboru %s
 ; Messages in file
 ;
-MSG_TR_MsgOnServer
-Zprávy na serveru
-; Messages on server
-;
 MSG_TR_Control
 Pøehled mo¾ností
 ; Control
@@ -4427,10 +4419,6 @@ MSG_TR_Leave
 Úplnì vy_nechat
 ; L_eave
 ;
-MSG_TR_Pause
-_Pozastavit
-; _Pause
-;
 MSG_TR_Clear
 _Zru¹it výbìr
 ; _Clear
@@ -4442,10 +4430,6 @@ P_ouze smazat
 MSG_TR_DownloadDelete
 S_táhnout a smazat
 ; Do_wnload & delete
-;
-MSG_TR_Resume
-Pok_raèovat
-; _Resume
 ;
 MSG_TR_Start
 Prové_st
@@ -6872,20 +6856,6 @@ Jakým zpùsobem chcete tuto zprávu poslat?
 ; default mail security settings.\n\
 ; \n\
 ; What type of security do you want to use?
-;
-MSG_ER_OPENTCPIP
-Nelze otevøít knihovnu bsdsocket.library, kterou\n\
-potøebujete pro pøipojení k internetu.\n\
-\n\
-Zkontrolujte prosím, zda je správnì nainstalovaný\n\
-software pro pøipojení k internetu, provìøte jeho\n\
-konfiguraci a také, jestli jste pøipojení k síti.
-; Couldn't open bsdsocket.library interface required for \
-; TCP/IP connections.\n\
-; \n\
-; Please make sure that you have a compatible and correctly \
-; configured TCP/IP stack installed, and that your network \
-; interface is up and running.
 ;
 MSG_WR_UUCODE
 kódovaný text (UUencode)
@@ -9397,18 +9367,6 @@ Vy¾aduje knihovnu application.library V53.2 nebo novìj¹í.
 ; If checked, YAM will use AmigaOS4.1's notification\n\
 ; system to notify the user about new received mails.\n\
 ; This requires at least application.library V53.2.
-;
-MSG_NO_OPENURL_LIB
-Tato funkce vy¾aduje knihovnu openurl.library, která není\n\
-k dispozici.\n\
-Spus»te prohlí¾eè ruènì a zadejte do nìj tuto adresu:\n\
-'%s'
-; openurl.library not installed on your system.\n\
-; Thus YAM is not able to open the requested link itself.\n\
-; \n\
-; Please launch your internet browser yourself and enter this link:\n\
-; '%s'
-; URL
 ;
 MSG_USERNAME_FALLBACK
 Jan Novák

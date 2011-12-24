@@ -1917,9 +1917,6 @@ messages to unread.
 MSG_HELP_CO_CH_SEND (666//)
 Send queued messages.
 ;
-MSG_HELP_CO_CH_POPSTART (667//)
-Check for mail.
-;
 MSG_HELP_CO_CH_CHECKBD (668//)
 Check the address book and open a\n\
 reminder if it's a person's birthday.
@@ -3248,9 +3245,6 @@ Mail transfer to '%s'
 MSG_TR_MsgInFile (1075//)
 Messages in file %s
 ;
-MSG_TR_MsgOnServer (1076//)
-Messages on server
-;
 MSG_TR_Control (1077//)
 Control
 ;
@@ -3263,9 +3257,6 @@ _Download only
 MSG_TR_Leave (1080//)
 L_eave
 ;
-MSG_TR_Pause (1081//)
-_Pause
-;
 MSG_TR_Clear (1082//)
 _Clear
 ;
@@ -3274,9 +3265,6 @@ Delete _only
 ;
 MSG_TR_DownloadDelete (1084//)
 Do_wnload & delete
-;
-MSG_TR_Resume (1085//)
-_Resume
 ;
 MSG_TR_Start (1086//)
 _Start
@@ -5027,14 +5015,6 @@ The recipients of the e-mail have different\n\
 default mail security settings.\n\
 \n\
 What type of security do you want to use?
-;
-MSG_ER_OPENTCPIP (1677//)
-Couldn't open bsdsocket.library interface required for \
-TCP/IP connections.\n\
-\n\
-Please make sure that you have a compatible and correctly \
-configured TCP/IP stack installed, and that your network \
-interface is up and running.
 ;
 MSG_WR_UUCODE (1678//)
 UUencoded text
@@ -6791,14 +6771,6 @@ MSG_HELP_CO_CH_NOTIOS41SYSTEM (2150//)
 If checked, YAM will use AmigaOS4.1's notification\n\
 system to notify the user about new received mails.\n\
 This requires at least application.library V53.2.
-;
-MSG_NO_OPENURL_LIB (2151//)
-openurl.library not installed on your system.\n\
-Thus YAM is not able to open the requested link itself.\n\
-\n\
-Please launch your internet browser yourself and enter this link:\n\
-'%s'
-; URL
 ;
 MSG_USERNAME_FALLBACK (2152//)
 John Doe

@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.92 (8.12.2011)
+## version $VER: YAM.catalog 7.93 (24.12.2011)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -2634,11 +2634,6 @@ MSG_HELP_CO_CH_SEND
 Spedisce i messaggi in attesa.
 ; Send queued messages.
 ;
-MSG_HELP_CO_CH_POPSTART
-Verifica automaticamente la presenza di\n\
-nuovi messaggi all'avvio del programma.
-; Check for mail.
-;
 MSG_HELP_CO_CH_CHECKBD
 Verifica la rubrica ed apre un memorandum nel caso\n\
 sia il compleanno o l'anniversario di qualche amico o\n\
@@ -4459,10 +4454,6 @@ MSG_TR_MsgInFile
 Messaggi nel file %s
 ; Messages in file
 ;
-MSG_TR_MsgOnServer
-Messaggi nel server
-; Messages on server
-;
 MSG_TR_Control
 Controlla
 ; Control
@@ -4479,10 +4470,6 @@ MSG_TR_Leave
 Las_cia
 ; L_eave
 ;
-MSG_TR_Pause
-Pa_usa
-; _Pause
-;
 MSG_TR_Clear
 Pu_lisci
 ; _Clear
@@ -4494,10 +4481,6 @@ Cancella s_olamente
 MSG_TR_DownloadDelete
 Prele_va e cancella
 ; Do_wnload & delete
-;
-MSG_TR_Resume
-_Riprendi
-; _Resume
 ;
 MSG_TR_Start
 _Avvia
@@ -7008,21 +6991,6 @@ Quale tipo di sicurezza si desidera usare ?
 ; default mail security settings.\n\
 ; \n\
 ; What type of security do you want to use?
-;
-MSG_ER_OPENTCPIP
-Si è rilevato impossibile aprire l'interfaccia per la\n\
-bsdsocket.library, ciò è necessario per il corretto\n\
-funzionamento delle connessioni TCP/IP.\n\
-\n\
-Assicurati di aver installato uno stack TCP/IP compatibile e\n\
-che esso sia adeguatamente configurato, assicurati anche\n\
-che la tua connessione di rete sia attiva e ben funzionante.
-; Couldn't open bsdsocket.library interface required for \
-; TCP/IP connections.\n\
-; \n\
-; Please make sure that you have a compatible and correctly \
-; configured TCP/IP stack installed, and that your network \
-; interface is up and running.
 ;
 MSG_WR_UUCODE
 Testo UUencoded
@@ -9711,20 +9679,6 @@ application.library versione 53.2 o superiore.
 ; If checked, YAM will use AmigaOS4.1's notification\n\
 ; system to notify the user about new received mails.\n\
 ; This requires at least application.library V53.2.
-;
-MSG_NO_OPENURL_LIB
-La libreria openurl.library non è stata rilevata oppure non è stata\n\
-correttamente configurata.\n\
-YAM non sarà in grado di aprire automaticamente il link richiesto.\n\
-\n\
-Per favore scaricala manualmente da questo indirizzo:\n\
-'%s'
-; openurl.library not installed on your system.\n\
-; Thus YAM is not able to open the requested link itself.\n\
-; \n\
-; Please launch your internet browser yourself and enter this link:\n\
-; '%s'
-; URL
 ;
 ; *** Added for YAM 2.6p1/2.7 ********************************************************
 ;

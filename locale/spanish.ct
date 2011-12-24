@@ -1,7 +1,6 @@
-## version $VER: YAM.catalog 7.19 (09.12.2011)
+## version $VER: YAM.catalog 7.20 (24.12.2011)
 ## codeset 0
 ## language español
-## chunk AUTH Emilio Jimenez
 ## chunk AUTH Emilio Jimenez
 ; YAM.cd - YAM 2.7 catalog description file
 ;
@@ -2339,10 +2338,6 @@ MSG_HELP_CO_CH_SEND
 Enviar mensajes pendientes.
 ; Send queued messages.
 ;
-MSG_HELP_CO_CH_POPSTART
-Comprueba correo.
-; Check for mail.
-;
 MSG_HELP_CO_CH_CHECKBD
 Comprueba la agenda de contactos y abre un recordatorio\n si es el cumpleaños de algún contacto.
 ; Check the address book and open a\nreminder if it's a person's birthday.
@@ -3887,10 +3882,6 @@ MSG_TR_MsgInFile
 Mensajes en archivo %s
 ; Messages in file
 ;
-MSG_TR_MsgOnServer
-Mensajes en el servidor
-; Messages on server
-;
 MSG_TR_Control
 Control
 ; Control
@@ -3907,10 +3898,6 @@ MSG_TR_Leave
 De_jar
 ; L_eave
 ;
-MSG_TR_Pause
-_Pausa
-; _Pause
-;
 MSG_TR_Clear
 _Limpiar
 ; _Clear
@@ -3922,10 +3909,6 @@ Sólo B_orrar
 MSG_TR_DownloadDelete
 _Descargar y Borrar
 ; Do_wnload & delete
-;
-MSG_TR_Resume
-Continua_r
-; _Resume
 ;
 MSG_TR_Start
 _Iniciar
@@ -5913,11 +5896,6 @@ MSG_WR_SECURITYREQ
 Los destinatarios del correo tienen diferentes\npreferencias de seguridad por defecto.\n\nQué tipo de seguridad quieres aplicar?
 ; The recipients of the e-mail have different\ndefault mail security settings.\n\nWhat type of security do you want to use?
 ;
-MSG_ER_OPENTCPIP
-No puedo abrir entorno bsdsocket.library requerido para conexiones TCP/IP.\n\nPor favor asegúrate que tienes una pila TCP/IP compatible y correctamente configurada, y que la red está conectada y \
-activa.
-; Couldn't open bsdsocket.library interface required for TCP/IP connections.\n\nPlease make sure that you have a compatible and correctly configured TCP/IP stack installed, and that your network interface is up and running.
-;
 MSG_WR_UUCODE
 texto UUencoded
 ; UUencoded text
@@ -7736,11 +7714,6 @@ Notificación del sistema AmigaOS_4.1
 MSG_HELP_CO_CH_NOTIOS41SYSTEM
 Si está activado, YAM utilizará el sistema de notificaciones de AmigaOS4.1\n para informar al usuario del correo nuevo recibido.\nEsto requiere al menos la versión 53.2 de application.library.
 ; If checked, YAM will use AmigaOS4.1's notification\nsystem to notify the user about new received mails.\nThis requires at least application.library V53.2.
-;
-MSG_NO_OPENURL_LIB
-openurl.library no está instalada en tu sistema.\nYAM no puede abrir la conexión solicitada.\n\nPor favor inicia tu navegador de internet y copia este enlace:\n'%s'
-; openurl.library not installed on your system.\nThus YAM is not able to open the requested link itself.\n\nPlease launch your internet browser yourself and enter this link:\n'%s'
-; URL
 ;
 MSG_USERNAME_FALLBACK
 John Doe
