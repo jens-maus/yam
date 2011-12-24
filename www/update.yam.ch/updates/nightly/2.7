@@ -1,113 +1,114 @@
 VERSION: 2.7-dev
-BUILDID: 20110415
-BUILDDATE: 15.04.2011
-URL: m68k-amigaos http://nightly.yam.ch/2011-04-15-dev/YAM27dev-AmigaOS3.lha
-URL: ppc-amigaos http://nightly.yam.ch/2011-04-15-dev/YAM27dev-AmigaOS4.lha
-URL: ppc-morphos http://nightly.yam.ch/2011-04-15-dev/YAM27dev-MorphOS.lha
-URL: i386-aros http://nightly.yam.ch/2011-04-15-dev/YAM27dev-AROSi386.lha
-URL: ppc-aros http://nightly.yam.ch/2011-04-15-dev/YAM27dev-AROSppc.lha
-URL: x86_64-aros http://nightly.yam.ch/2011-04-15-dev/YAM27dev-AROSx86_64.lha
+BUILDID: 20111223
+BUILDDATE: 23.12.2011
+URL: m68k-amigaos http://nightly.yam.ch/2011-12-23-dev/YAM27dev-AmigaOS3.lha
+URL: ppc-amigaos http://nightly.yam.ch/2011-12-23-dev/YAM27dev-AmigaOS4.lha
+URL: ppc-morphos http://nightly.yam.ch/2011-12-23-dev/YAM27dev-MorphOS.lha
+URL: i386-aros http://nightly.yam.ch/2011-12-23-dev/YAM27dev-AROSi386.lha
+URL: ppc-aros http://nightly.yam.ch/2011-12-23-dev/YAM27dev-AROSppc.lha
+URL: x86_64-aros http://nightly.yam.ch/2011-12-23-dev/YAM27dev-AROSx86_64.lha
+URL: arm-aros http://nightly.yam.ch/2011-12-23-dev/YAM27dev-AROSarm.lha
 CHANGES:
 ---------------------------
 YAM Open Source - ChangeLog
 ---------------------------
 
-$Id: ChangeLog 5695 2011-04-14 12:28:30Z thboeckel $
+$Id: ChangeLog 5775 2011-12-22 23:22:53Z damato $
 $URL: file:///home/svn/yam/trunk/ChangeLog $
 
-2011-04-14 Thore Böckelmann <tboeckel@gmx.de>
+2011-12-23 Jens Langner <Jens.Langner@light-speed.de>
 
-  * mui/UserPortraitGroup.c: changed the base class from Virtgroup.mui to 
-    Group.mui since there is no need for a virtual group at all.
+  * YAM_FI.c: changed mail search window to also show a listtree
+    rather than a plain list. Also changed the search window to not
+    clear its mail list on exit and to also keep the same listtree
+    selection when reopening the window. This should be a bit more
+    intuitive in case a user want to return to the search window
+    and see the old search results.
 
-2011-04-14 Mariusz Danilewicz <mandi@interia.pl>
+2011-12-21 Jens Langner <Jens.Langner@light-speed.de>
+
+  * mui/FolderRequestListtree.c: implemented that custom folder image
+    object will also be created for the FolderRequestListtree.
+  * mui/FolderListtree, mui/FolderRequestListtree.c: implemented
+    a base class for the folder listtree and changed the old
+    FolderRequestList class to a Listtree class. In addition,
+    MainFolderListtree is also now derived from the new
+    FolderListtree class. In the end, this change allowed to 
+    use a listtree rather than a plain list for the folder
+    request window. Thus, this should close #136.
+
+2011-12-18 Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM.c, YAM_EA.c: fixed some potentially critical DoMethod calls
+    to NListtree which might have showed some problems.
+
+2011-12-17 Jens Langner <Jens.Langner@light-speed.de>
+
+  * mui/AddrBookListtree.c, MainFolderListtree.c: now that a new
+    fixed NListtree.mcc is released the previously added workaround
+    could be removed.
+  * YAM.c: bumped all minimum required versions of all MCCs to what are
+    the latest versions available as there are new features and fixes
+    out there in these classes.
+  * AVLTree.c: replace AllocVec/FreeVec calls with AllocVecPooled and
+    FreeVecPooled as AllocVec/FreeVec are marked as deprecated in the
+    latest OS4 SDK.
+  * extrasrc: slightly revised some of our own implementation of standard
+    C functions and tried to make them more compatible to version found
+    in other projects. Especially the strtok_r() function should be somewhat
+    more compatible to well-known implementations.
+
+2011-12-16 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/AddrBookListtree.c, MainFolderListtree.c: fixed wrong usage of
+    DoSuperMethod().
+
+2011-12-16 Jens Langner <Jens.Langner@light-speed.de>
+
+  * extrasrc/strcasestr.c: renamed our own stristr() implementation to
+    strcasestr() as that is the more well-known name for it. In addition, a
+    slightly faster implementation is now in place. Furthermore, as MorphOS
+    and AROS seem to have own strcasestr() implementations in their C libraries
+    we give them preference for these platforms.
+  * YAM_MA.c: changed the mail import requester to allow to select multiple
+    files at once and start multiple mail file imports. Please note, however,
+    that for every file there currently will be a separate preselection window
+    opened as stuffing all mails from all selected files together will
+    require more substantial work. Nevertheless, mail import from several mbox
+    files are now possible. Thus, for the moment this closes #196.
+  * locale/*.ct: fixed all catalog files to have "%s" added to the MSG_TR_MsgInFile
+    entry or otherwise YAM can't add the name of the file the imported mails
+    will be display in the import preselection window.
+
+2011-12-15 Jens Langner <Jens.Langner@light-speed.de>
+
+  * HTML2Mail.l: reworked the main html2mail flex rules to behave somewhat more
+    hierarchically. Previously the rules were pretty much mixed up. Now they
+    should more cleanly convert a html mail (and especially embedded links)
+    to a somewhat more readable text. This should finally closes #279.
+  * mui/MainFolderListtree.c, mui/MainMailList.c: added PCS format statements to
+    the MUIA_NList_Format specs of the MainFolderListtree and the MainMailList.
+    This is a new feature of NList and will automatically substitute text with
+    "..." at the position where text didn't fit into a column anymore. For the
+    Folder Listtree the folder name will now be substitute centered and for
+    the main mail list the Sender and Subject line will be substituted right
+    aligned in case text doesn't fit anymore. Please test extensively! ;)
+
+2011-12-15 Mariusz Danilewicz <mandi@interia.pl>
 
   * locale/polish.ct: update to the latest changes.
 
-2011-04-13 Samir Hawamdeh <s.hawamdeh@tin.it>
+2011-12-15 Thore Böckelmann <tboeckel@gmx.de>
 
-  * locale/italian.ct: fixed some typos.
+  * mui/AddrBookListtree.c, MainFolderListtree.c: added a workaround for a bug
+    in NListtree.mcc to avoid a NULL pointer access. This closes #281.
 
-2011-04-13 Thore Böckelmann <tboeckel@gmx.de>
+2011-12-09 Emilio Jimenez <ejim@ono.com>
 
-  * Threads.c: thread abortion can now be either synchonous or asynchronous.
+  * locale/spanish.ct: update to the latest change.
 
-2011-04-12 Thore Böckelmann <tboeckel@gmx.de>
+2011-12-08 Samir Hawamdeh <s.hawamdeh@tin.it>
 
-  * Threads.c: call DoMethod() directly upon thread termination instead of using
-    PushMethodOnStackWait().
-  * mui/UserPortraitGroup.c: the user will be prompted to select a different file
-    name for the portrait image to be downloaded in case it already exists.
-
-2011-04-11 Samir Hawamdeh <s.hawamdeh@tin.it>
-
-  * locale/italian.ct: update to the latest changes.
-
-2011-04-11 Thore Böckelmann <tboeckel@gmx.de>
-
-  * mui/UserPortraitGroup.c: it is possible to let YAM search for user portraits
-    on gravatar.com. The image will be downloaded to the gallery directory.
-    Refer to http://www.gravatar.com for details.
-  * mime/md5.c: changed to prototype of md5update() to accept buffer variables
-    of arbitrary type.
-
-2011-03-19 Emilio Jimenez <ejim@ono.com>
-
-  * locale/spanish.ct: update to the latest changes.
-
-2011-03-18 Thore Böckelmann <tboeckel@gmx.de>
-
-  * tcp/Connection.c: completely removed the semaphore lock around the
-    gethostbyname() call, since this was necessary for WinUAE only and caused
-    major headaches on other systems.
-  * Makefile: added the definition of "__amigaos3__" to make OS3 specific checks
-    easier.
-  * UpdateNotifyWindow.c: downloading an update file now opens a file requester
-    first to let the user modify the path and file name. Already existing files
-    are handled as well and the user must then choose whether to overwrite it or
-    not.
-
-2011-03-17 Vit Sindlar <sindlarv at centrum dot cz>
-
-  * locale/czech.ct: updated Czech translation.
-
-2011-03-17 Thore Böckelmann <tboeckel@gmx.de>
-
-  * tcp/Connection.c: obtain the connection semaphore in an interruptible way to
-    be able to be abortable while waiting for the lock.
-
-2011-03-16 Mariusz Danilewicz <mandi@interia.pl>
-
-  * locale/polish.ct: update to the latest changes.
-
-2011-03-16 Samir Hawamdeh <s.hawamdeh@tin.it>
-
-  * locale/italian.ct: ops wrong file committed, fixed.
-
-2011-03-15 Samir Hawamdeh <s.hawamdeh@tin.it>
-
-  * locale/italian.ct: update to the latest changes.
-
-2011-03-15 Thore Böckelmann <tboeckel@gmx.de>
-
-  * YAM_MA.c, locale/YAM.cd, locale/german.ct: added a Help menu which contains
-    two items for the main contents and the ARexx interface for now. This closes
-    #258.
-  * mui/YAMApplication.c: the existance of the help file YAM.guide is now
-    checked before MUI is told to display it. In case it is missing an error
-    message will pop up.
-
-2011-03-14 Thore Böckelmann <tboeckel@gmx.de>
-
-  * tcp/http.c: use MUIM_Set instead of OM_SET to activate the non-mail mode for
-    the transfer control group. OM_SET seems to be swallowed by MUI.
-  * tcp/http.c: activate the transfer window when downloading updates.
-
-2011-03-12 Emilio Jimenez <ejim@ono.com>
-
-  * locale/spanish.ct: update to the latest changes.
-
-2011-03-09  Alexandre Balaban <abalaban@free.fr>
 
 
 THIS IS JUST A 100 LINE STRIPPED VERSION OF THE CHANGELOG
