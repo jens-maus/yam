@@ -46,6 +46,7 @@ export PATH="/usr/local/amiga/gg/bin:/usr/local/amiga/bin:$PATH"
 MODULEPATH=${CHECKOUTDIR}/${MODULE}
 BUILDID=`date +%Y%m%d`
 BUILDVER="2.8"
+BUILDV=`echo ${BUILDVER} | tr -d "."`
 DEVDIR=$CHECKOUTDIR/`date +%F-dev`
 
 ###################################################################
@@ -127,8 +128,8 @@ compile_release()
     cp src/YAM.${TARGETEXT} $DEVDIR/YAM
     cp $MODULEPATH/icons/${TARGETEXT}/YAM.info $DEVDIR/
     cd $DEVDIR
-    $LHA ao5 YAM27dev-${TARGET}.lha YAM YAM.info ChangeLog README.txt themes locale >/dev/null 2>&1
-    $MD5SUM YAM27dev-${TARGET}.lha >YAM27dev-${TARGET}.lha.md5 
+    $LHA ao5 YAM${BUILDV}dev-${TARGET}.lha YAM YAM.info ChangeLog README.txt themes locale >/dev/null 2>&1
+    $MD5SUM YAM${BUILDV}dev-${TARGET}.lha >YAM${BUILDV}dev-${TARGET}.lha.md5 
     rm YAM
     set +x
     echo "done."
@@ -159,8 +160,8 @@ compile_debug()
     cp src/YAM.${TARGETEXT}.debug $DEVDIR/YAM.debug
     cp $MODULEPATH/icons/${TARGETEXT}/YAM.info $DEVDIR/YAM.debug.info
     cd $DEVDIR
-    $LHA ao5 YAM27dev-${TARGET}-debug.lha YAM.debug YAM.debug.info ChangeLog README.txt themes locale >/dev/null 2>&1
-    $MD5SUM YAM27dev-${TARGET}-debug.lha >YAM27dev-${TARGET}-debug.lha.md5 
+    $LHA ao5 YAM${BUILDV}dev-${TARGET}-debug.lha YAM.debug YAM.debug.info ChangeLog README.txt themes locale >/dev/null 2>&1
+    $MD5SUM YAM${BUILDV}dev-${TARGET}-debug.lha >YAM${BUILDV}dev-${TARGET}-debug.lha.md5 
     rm YAM.debug
     set +x
     echo "done."
@@ -191,7 +192,7 @@ create_catalogs()
 # The main stuff starts here
 #
 echo >&2 "yam-build.sh v${VERSION} - a script to build the nightly for YAM"
-echo >&2 "Copyright (c) 2004-2010 by Jens Langner <Jens.Langner@light-speed.de>"
+echo >&2 "Copyright (c) 2004-2011 by Jens Langner <Jens.Langner@light-speed.de>"
 echo >&2
 
 # define the variables we know
@@ -331,13 +332,13 @@ echo "creating new updatecheck file:"
 printf "VERSION: ${BUILDVER}-dev\n" >${UPDCHKPATH}/${BUILDVER}
 printf "BUILDID: ${BUILDID}\n" >>${UPDCHKPATH}/${BUILDVER}
 printf "BUILDDATE: `date +%d.%m.%Y`\n" >>${UPDCHKPATH}/${BUILDVER}
-printf "URL: m68k-amigaos http://nightly.yam.ch/`date +%F-dev`/YAM27dev-AmigaOS3.lha\n" >>${UPDCHKPATH}/${BUILDVER}
-printf "URL: ppc-amigaos http://nightly.yam.ch/`date +%F-dev`/YAM27dev-AmigaOS4.lha\n" >>${UPDCHKPATH}/${BUILDVER}
-printf "URL: ppc-morphos http://nightly.yam.ch/`date +%F-dev`/YAM27dev-MorphOS.lha\n" >>${UPDCHKPATH}/${BUILDVER}
-printf "URL: i386-aros http://nightly.yam.ch/`date +%F-dev`/YAM27dev-AROSi386.lha\n" >>${UPDCHKPATH}/${BUILDVER}
-printf "URL: ppc-aros http://nightly.yam.ch/`date +%F-dev`/YAM27dev-AROSppc.lha\n" >>${UPDCHKPATH}/${BUILDVER}
-printf "URL: x86_64-aros http://nightly.yam.ch/`date +%F-dev`/YAM27dev-AROSx86_64.lha\n" >>${UPDCHKPATH}/${BUILDVER}
-printf "URL: arm-aros http://nightly.yam.ch/`date +%F-dev`/YAM27dev-AROSarm.lha\n" >>${UPDCHKPATH}/${BUILDVER}
+printf "URL: m68k-amigaos http://nightly.yam.ch/`date +%F-dev`/YAM${BUILDV}dev-AmigaOS3.lha\n" >>${UPDCHKPATH}/${BUILDVER}
+printf "URL: ppc-amigaos http://nightly.yam.ch/`date +%F-dev`/YAM${BUILDV}dev-AmigaOS4.lha\n" >>${UPDCHKPATH}/${BUILDVER}
+printf "URL: ppc-morphos http://nightly.yam.ch/`date +%F-dev`/YAM${BUILDV}dev-MorphOS.lha\n" >>${UPDCHKPATH}/${BUILDVER}
+printf "URL: i386-aros http://nightly.yam.ch/`date +%F-dev`/YAM${BUILDV}dev-AROSi386.lha\n" >>${UPDCHKPATH}/${BUILDVER}
+printf "URL: ppc-aros http://nightly.yam.ch/`date +%F-dev`/YAM${BUILDV}dev-AROSppc.lha\n" >>${UPDCHKPATH}/${BUILDVER}
+printf "URL: x86_64-aros http://nightly.yam.ch/`date +%F-dev`/YAM${BUILDV}dev-AROSx86_64.lha\n" >>${UPDCHKPATH}/${BUILDVER}
+printf "URL: arm-aros http://nightly.yam.ch/`date +%F-dev`/YAM${BUILDV}dev-AROSarm.lha\n" >>${UPDCHKPATH}/${BUILDVER}
 printf "CHANGES:\n"  >>${UPDCHKPATH}/${BUILDVER}
 head -n 100 ${MODULEPATH}/ChangeLog >>${UPDCHKPATH}/${BUILDVER}
 printf "\n\nTHIS IS JUST A 100 LINE STRIPPED VERSION OF THE CHANGELOG\n" >>${UPDCHKPATH}/${BUILDVER}
