@@ -1,10 +1,28 @@
 #!/bin/sh
 #
+# YAM - Yet Another Mailer
+# Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
+# Copyright (C) 2000-2011 by YAM Open Source Team
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+# YAM Official Support Site :  http://yam.ch/
+#
 # A shell script to directly download the latest SVN sources of
 # the YAM project and builds different snapshots automatically
 # each night
-#
-# Copyright (c) 2004-2010 Jens Langner <Jens.Langner@light-speed.de>
 #
 # $Id$
 # $URL$
@@ -27,6 +45,7 @@ UPDCHKPATH="/var/www/www.yam.ch/update/updates/nightly" # path to the update che
 export PATH="/usr/local/amiga/gg/bin:/usr/local/amiga/bin:$PATH"
 MODULEPATH=${CHECKOUTDIR}/${MODULE}
 BUILDID=`date +%Y%m%d`
+BUILDVER="2.8"
 DEVDIR=$CHECKOUTDIR/`date +%F-dev`
 
 ###################################################################
@@ -309,19 +328,19 @@ set +x
 
 # now we can also update the updatecheck META file accordingly.
 echo "creating new updatecheck file:"
-printf "VERSION: 2.7-dev\n" >${UPDCHKPATH}/2.7
-printf "BUILDID: ${BUILDID}\n" >>${UPDCHKPATH}/2.7
-printf "BUILDDATE: `date +%d.%m.%Y`\n" >>${UPDCHKPATH}/2.7
-printf "URL: m68k-amigaos http://nightly.yam.ch/`date +%F-dev`/YAM27dev-AmigaOS3.lha\n" >>${UPDCHKPATH}/2.7
-printf "URL: ppc-amigaos http://nightly.yam.ch/`date +%F-dev`/YAM27dev-AmigaOS4.lha\n" >>${UPDCHKPATH}/2.7
-printf "URL: ppc-morphos http://nightly.yam.ch/`date +%F-dev`/YAM27dev-MorphOS.lha\n" >>${UPDCHKPATH}/2.7
-printf "URL: i386-aros http://nightly.yam.ch/`date +%F-dev`/YAM27dev-AROSi386.lha\n" >>${UPDCHKPATH}/2.7
-printf "URL: ppc-aros http://nightly.yam.ch/`date +%F-dev`/YAM27dev-AROSppc.lha\n" >>${UPDCHKPATH}/2.7
-printf "URL: x86_64-aros http://nightly.yam.ch/`date +%F-dev`/YAM27dev-AROSx86_64.lha\n" >>${UPDCHKPATH}/2.7
-printf "URL: arm-aros http://nightly.yam.ch/`date +%F-dev`/YAM27dev-AROSarm.lha\n" >>${UPDCHKPATH}/2.7
-printf "CHANGES:\n"  >>${UPDCHKPATH}/2.7
-head -n 100 ${MODULEPATH}/ChangeLog >>${UPDCHKPATH}/2.7
-printf "\n\nTHIS IS JUST A 100 LINE STRIPPED VERSION OF THE CHANGELOG\n" >>${UPDCHKPATH}/2.7
+printf "VERSION: ${BUILDVER}-dev\n" >${UPDCHKPATH}/${BUILDVER}
+printf "BUILDID: ${BUILDID}\n" >>${UPDCHKPATH}/${BUILDVER}
+printf "BUILDDATE: `date +%d.%m.%Y`\n" >>${UPDCHKPATH}/${BUILDVER}
+printf "URL: m68k-amigaos http://nightly.yam.ch/`date +%F-dev`/YAM27dev-AmigaOS3.lha\n" >>${UPDCHKPATH}/${BUILDVER}
+printf "URL: ppc-amigaos http://nightly.yam.ch/`date +%F-dev`/YAM27dev-AmigaOS4.lha\n" >>${UPDCHKPATH}/${BUILDVER}
+printf "URL: ppc-morphos http://nightly.yam.ch/`date +%F-dev`/YAM27dev-MorphOS.lha\n" >>${UPDCHKPATH}/${BUILDVER}
+printf "URL: i386-aros http://nightly.yam.ch/`date +%F-dev`/YAM27dev-AROSi386.lha\n" >>${UPDCHKPATH}/${BUILDVER}
+printf "URL: ppc-aros http://nightly.yam.ch/`date +%F-dev`/YAM27dev-AROSppc.lha\n" >>${UPDCHKPATH}/${BUILDVER}
+printf "URL: x86_64-aros http://nightly.yam.ch/`date +%F-dev`/YAM27dev-AROSx86_64.lha\n" >>${UPDCHKPATH}/${BUILDVER}
+printf "URL: arm-aros http://nightly.yam.ch/`date +%F-dev`/YAM27dev-AROSarm.lha\n" >>${UPDCHKPATH}/${BUILDVER}
+printf "CHANGES:\n"  >>${UPDCHKPATH}/${BUILDVER}
+head -n 100 ${MODULEPATH}/ChangeLog >>${UPDCHKPATH}/${BUILDVER}
+printf "\n\nTHIS IS JUST A 100 LINE STRIPPED VERSION OF THE CHANGELOG\n" >>${UPDCHKPATH}/${BUILDVER}
 
 # we write out the number of days to our last-build file
 # so that at least every 31 days a new YAM is automatically build even if no
