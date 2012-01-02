@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-01-02 Jens Langner <Jens.Langner@light-speed.de>
+
+  * misc: bumped all copyright notices to 2012 and added new shell script to
+    semi-automatically do the job in future.
+
 2012-01-02 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/MainFolderListtree.c: replaced the NOBAR title format by TBAR to enable
