@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-01-02 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/MainFolderListtree.c: replaced the NOBAR title format by TBAR to enable
+    separator bars in the title bar at least for easier column resizing. This
+    closes #285.
+
 #### YAM 2.7 RELEASE ####################################################
 
 2011-12-24 Jens Langner <Jens.Langner@light-speed.de>

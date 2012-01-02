@@ -564,7 +564,7 @@ DECLARE(MakeFormat)
       if(first)
         first = FALSE;
       else
-        strlcat(format, " NOBAR,", sizeof(format));
+        strlcat(format, " TBAR,", sizeof(format));
 
       p = strlen(format);
       snprintf(&format[p], sizeof(format)-p, "COL=%d W=%d", i, defwidth[i]);
@@ -575,7 +575,7 @@ DECLARE(MakeFormat)
         strlcat(format, " PCS=C", sizeof(format));
     }
   }
-  strlcat(format, " NOBAR", sizeof(format));
+  strlcat(format, " TBAR", sizeof(format));
 
   SHOWSTRING(DBF_GUI, format);
 
