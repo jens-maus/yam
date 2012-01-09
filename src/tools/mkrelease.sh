@@ -59,7 +59,7 @@ echo "  MK $yamsys/Catalogs"
 mkdir -p "release/$yamsys/YAM $yamver/Catalogs"
 cp ../icons/$1/Catalogs_directory.info "release/$yamsys/YAM $yamver/Catalogs.info"
 cp ../locale/YAM.cd "release/$yamsys/YAM $yamver/Catalogs/YAM.cd"
-for language in czech english-british french german italian polish spanish swedish; do
+for language in czech dutch english-british french german greek italian polish spanish swedish turkish; do
 	mkdir -p "release/$yamsys/YAM $yamver/Catalogs/$language"
 	cp ../locale/$language.catalog "release/$yamsys/YAM $yamver/Catalogs/$language/YAM.catalog"
 done
