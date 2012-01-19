@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.2 (16.9.2010)
+## version $VER: yam.catalog 7.3 (19.01.2012)
 ## language greek
 ## codeset 10
 ## chunk AUTH Antonis Iliakis
@@ -16,6 +16,7 @@
 ; and increase the last listed identifier number by one for your
 ; new entries. And if you delete an entry NEVER reorder or resort
 ; the ID numbers accordingly.
+;
 ;
 ; General
 ;
@@ -86,6 +87,10 @@ _Ακύρωση
 MSG_OkayReq
 *_Εντάξει
 ; *_Ok
+;
+;MSG_OkayCancelReq
+;*_Εντάξει|_Ακύρωση
+; *_Ok|_Cancel
 ;
 MSG_YesNoReq
 *_Ναι|_Οχι
@@ -429,8 +434,8 @@ MSG_LOG_CopyingVerbose
 ; Copied message from '%s' about '%s' from folder '%s' to '%s'
 ; SENDER, SUBJECT, FOLDER, FOLDER
 ;
-MSG_LOG_ConnectPOP
-Συνδεδεμένος με τον POP3 λογαριασμό '%s@%s': %ld μηνύματα περιμένουν
+;MSG_LOG_ConnectPOP
+;Συνδεδεμένος με τον POP3 λογαριασμό '%s@%s': %ld μηνύματα περιμένουν
 ; Logged in on POP3 account '%s@%s': %ld messages waiting
 ; USER_ID, HOST, COUNT
 ;
@@ -439,8 +444,8 @@ MSG_LOG_RetrievingVerbose
 ; Retrieved message from '%s' about '%s' (%ld bytes)
 ; SENDER, SUBJECT, SIZE
 ;
-MSG_LOG_Retrieving
-Ανακτήθηκαν %ld μηνύματα από τον POP3 λογαριασμό '%s@%s'
+;MSG_LOG_Retrieving
+;Ανακτήθηκαν %ld μηνύματα από τον POP3 λογαριασμό '%s@%s'
 ; Retrieved %ld message(s) from POP3 account '%s@%s'
 ; COUNT, USER_ID, HOST
 ;
@@ -757,13 +762,37 @@ MSG_MA_FlushIndices
 Εκκαθάριση δεικτών
 ; Flush indices
 ;
+;MSG_MA_MEdit
+;Επεξεργασία...
+; Edit...
+;
 MSG_MA_MDelete
 Διαγραφή
 ; Delete
 ;
+;MSG_MA_MMove
+;Μετακίνηση...
+; Move...
+;
+;MSG_MA_MCopy
+;Αντιγραφή...
+; Copy...
+;
 MSG_MA_Save
 Αποθήκευση...
 ; Save...
+;
+;MSG_MA_MReply
+;Απάντηση...
+; Reply...
+;
+;MSG_MA_MForward
+;Προώθηση...
+; Forward...
+;
+;MSG_MA_MBounce
+;Επιστροφή...
+; Bounce...
 ;
 MSG_MA_MGetAddress
 Αποθήκευση διεύθυνσης...
@@ -1243,6 +1272,7 @@ MSG_CO_PSAlwaysFast
 MSG_CO_TWNever
 πάντα απόκρυψη
 ; hide always
+
 ;
 MSG_CO_TWAuto
 αυτόματο
@@ -1256,8 +1286,8 @@ MSG_CO_Download
 Λήψη
 ; Download
 ;
-MSG_CO_AvoidDuplicates
-Αποφυγή διπλότυπων
+;MSG_CO_AvoidDuplicates
+;Αποφυγή διπλότυπων
 ; _Avoid duplicates
 ;
 MSG_CO_TransferWin
@@ -1676,16 +1706,16 @@ MSG_CO_EncryptToSelf
 Προσωπική κρυπτογράφηση
 ; _Encrypt to self
 ;
-MSG_CO_AnonMail
-Ανώνυμη αλληλογραφία
+;MSG_CO_AnonMail
+;Ανώνυμη αλληλογραφία
 ; Anonymous mail
 ;
-MSG_CO_ReMailer
-Αναταχυδρομητής
+;MSG_CO_ReMailer
+;Αναταχυδρομητής
 ; _Re-Mailer
 ;
-MSG_CO_ReMailerLine
-Πεδίο κεφαλίδας
+;MSG_CO_ReMailerLine
+;Πεδίο κεφαλίδας
 ; _Header field
 ;
 MSG_CO_Logfiles
@@ -1724,8 +1754,8 @@ MSG_CO_SendStart
 Αποστολή αλληλογραφίας στην ουρά εξερχομένων
 ; Send mail in outgoing queue
 ;
-MSG_CO_PopStart
-Λήψη νέας αλληλογραφίας
+;MSG_CO_PopStart
+;Λήψη νέας αλληλογραφίας
 ; Download new mail
 ;
 MSG_CO_CheckDOB
@@ -2015,8 +2045,8 @@ MSG_HELP_CO_CH_POPENABLED
 Κάντε έλεγχο του λογαριασμού ενώ\nγίνεται έλεγχος για νέα αλληλογραφία.
 ; Check this account while\nchecking for new mail.
 ;
-MSG_HELP_CO_CH_AVOIDDUP
-Εάν δεν κάνετε διαγραφή παλιάς αλληλογραφίας\nστον διακομιστή, επιλέξτε αυτή την επιλογή για να\nαποφύγετε τα διπλότυπα μηνύματα.
+;MSG_HELP_CO_CH_AVOIDDUP
+;Εάν δεν κάνετε διαγραφή παλιάς αλληλογραφίας\nστον διακομιστή, επιλέξτε αυτή την επιλογή για να\nαποφύγετε τα διπλότυπα μηνύματα.
 ; If you don't delete old mail\non the server, use this option\nto avoid duplicate messages.
 ;
 MSG_HELP_CO_CH_TRANSWIN
@@ -2212,7 +2242,7 @@ MSG_HELP_CO_ST_DEFVIEWER
 ; Program used to display\nattachments of unknown type.
 ;
 MSG_HELP_CO_ST_REPLYTO
-Αν θέλετε οι απαντήσεις των μηνυμάτων σας να στέλνονται\nπροκαθορισμένα κάπου αλλού επιπλεόν (ή αντί) της διεύθυνσης e-mail σας, καθορίστε\nαυτές τις διευθύνσεις εδώ.
+Αν θέλετε οι απαντήσεις των μηνυμάτων σας να στέλνονται\nπροκαθορισμένα κάπου αλλού επιπλεόν (ή αντί) της διεύθυνσης\ne-mail σας, καθορίστε αυτές τις διευθύνσεις εδώ.
 ; Should replies to your messages need to be sent by\ndefault somewhere else besides (or instead of) your\ne-mail address, specify those other addresses here.
 ;
 MSG_HELP_CO_ST_ORGAN
@@ -2343,12 +2373,12 @@ MSG_HELP_CO_CH_ENCSELF
 Κρυπτογράφηση νέων μηνυμάτων με το δημόσιο κλειδί σας,\nώστε να μπορείτε ακόμα να διαβάσετε ή να επεξεργαστείτε εξερχόμενα μηνύματα.
 ; Encrypt new messages with your public key,\nso you can still read or edit outgoing messages.
 ;
-MSG_HELP_CO_ST_REMAILER
-Διεύθυνση E-mail της υπηρεσίας αναταχυδρόμησης που θα\nχρησιμοποιηθεί για την αποστολή ανώνυμης αλληλογραφίας.
+;MSG_HELP_CO_ST_REMAILER
+;Διεύθυνση E-mail της υπηρεσίας αναταχυδρόμησης που θα\nχρησιμοποιηθεί για την αποστολή ανώνυμης αλληλογραφίας.
 ; E-mail address of the remailer service\nused to send anonymous mail.
 ;
-MSG_HELP_CO_ST_FIRSTLINE
-Αυτόματη εισαγωγή αυτής της γραμμής στην κορυφή\nόλων των μηνυμάτων που εστάλθηκαν μέσω της αναταχυδρόμησης.
+;MSG_HELP_CO_ST_FIRSTLINE
+;Αυτόματη εισαγωγή αυτής της γραμμής στην κορυφή\nόλων των μηνυμάτων που εστάλθηκαν μέσω της αναταχυδρόμησης.
 ; Automatically insert this line at the top\nof all messages sent through the remailer.
 ;
 MSG_HELP_CO_ST_LOGFILE
@@ -2379,8 +2409,8 @@ MSG_HELP_CO_CH_SEND
 Αποστολή μηνυμάτων στην ουρά.
 ; Send queued messages.
 ;
-MSG_HELP_CO_CH_POPSTART
-Έλεγχος για αλληλογραφία.
+;MSG_HELP_CO_CH_POPSTART
+;Έλεγχος για αλληλογραφία.
 ; Check for mail.
 ;
 MSG_HELP_CO_CH_CHECKBD
@@ -2501,6 +2531,11 @@ MSG_HELP_CO_BT_CANCEL
 ;
 ;
 ; Module AB - Routines
+;
+;MSG_AB_BirthdayReq
+;Σήμερα, ο/η %s γίνεται %ld χρονών.\n\nΘέλετε να στείλετε μια ευχετήρια κάρτα;
+; Today, %s reaches age %ld.\n\nDo you want to send a greetings card?
+; NAME, AGE
 ;
 MSG_AB_BirthdayReminder
 Υπενθύμιση Γενεθλίων
@@ -3399,8 +3434,8 @@ MSG_WR_SecBoth
 Σημείο και κωδικοποίηση
 ; Sign and encrypt
 ;
-MSG_WR_SecAnon
-Αποστολή ως ανώνυμο
+;MSG_WR_SecAnon
+;Αποστολή ως ανώνυμο
 ; Send anonymously
 ;
 MSG_WR_ImpHigh
@@ -3851,8 +3886,8 @@ MSG_TR_WaitWelcome
 Έγινε σύνδεση, αναμένωντας το μήνυμα υποδοχής...
 ; Connected, awaiting welcome message...
 ;
-MSG_TR_PopLoginReq
-Παρακαλώ εισάγετε τον POP3 κωδικό για τον λογαριασμό\n%s@%s
+;MSG_TR_PopLoginReq
+;Παρακαλώ εισάγετε τον POP3 κωδικό για τον λογαριασμό\n%s@%s
 ; Please enter POP3 password for account\n%s@%s
 ; USER_ID, HOST
 ;
@@ -3904,8 +3939,8 @@ MSG_TR_DeletingServerMail
 Διαγραφή αλληλογραφίας από τον διακομιστή...
 ; Deleting mail on server...
 ;
-MSG_TR_NewMailReq
-\e8Έχετε νεά αλληλογραφία!\e2\n\n%3ld μηνύματα λήφθηκαν,\n%3ld έμειναν στον διακομιστή\n%3ld διπλότυπα παραλήφτηκαν\n
+;MSG_TR_NewMailReq
+;\e8Έχετε νεά αλληλογραφία!\e2\n\n%3ld μηνύματα λήφθηκαν,\n%3ld έμειναν στον διακομιστή\n%3ld διπλότυπα παραλήφτηκαν\n
 ; \e8You have new mail!\e2\n\n%3ld messages downloaded,\n%3ld left on server\n%3ld duplicates skipped\n
 ; COUNT, COUNT, COUNT, COUNT
 ;
@@ -3937,10 +3972,10 @@ MSG_TR_MailTransferTo
 ;
 MSG_TR_MsgInFile
 Μηνύματα στο αρχείο %s
-; Messages in file
+; Messages in file %s
 ;
-MSG_TR_MsgOnServer
-Μηνύματα στον διακομιστή
+;MSG_TR_MsgOnServer
+;Μηνύματα στον διακομιστή
 ; Messages on server
 ;
 MSG_TR_Control
@@ -3959,8 +3994,8 @@ MSG_TR_Leave
 Άφησε
 ; L_eave
 ;
-MSG_TR_Pause
-Παύση
+;MSG_TR_Pause
+;Παύση
 ; _Pause
 ;
 MSG_TR_Clear
@@ -3975,8 +4010,8 @@ MSG_TR_DownloadDelete
 Λήψη & διαγραφή
 ; Do_wnload & delete
 ;
-MSG_TR_Resume
-Συνέχιση
+;MSG_TR_Resume
+;Συνέχιση
 ; _Resume
 ;
 MSG_TR_Start
@@ -5005,6 +5040,10 @@ MSG_FOLDER_NONSEL
 (καμία επιλογή)
 ; (none selected)
 ;
+;MSG_MAIL_NONSEL
+;(καμία επιλογή)
+; (none selected)
+;
 MSG_FO_NEWFGROUP
 Νέα ομάδα φακέλου...
 ; New folder group...
@@ -5544,6 +5583,18 @@ MSG_HELP_CO_NB_AUTOSAVE
 Πόσο συχνά θέλετε το YAM να γράφει στον δίσκο ένα αντίγραφο\nασφαλείας της αλληλογραφίας που γράφετε αυτή τη στιγμή.\nΕπιλέξτε 0 για απενεργοποίηση.
 ; How often YAM should write to disk a backup\nof the e-mail you are currently composing.\nSelect 0 to disable this feature.
 ;
+;MSG_ER_GENESISUSER_TITLE
+;Άγνωστος λογαριασμός χρήστη Genesis/AmiTCP!
+; Unknown Genesis/AmiTCP user account!
+;
+;MSG_ER_GENESISUSER
+;Το YAM αναγνώρισε ότι χρησιμοποιείτε Genesis/AmiTCP, αλλά\nδεν μπορεί να βρεί κάποιον λογαριασμό χρήστη YAM που αντιστοιχεί στον\nτρέχοντα καθολικό ενεργό λογιαριασμό που έχετε ρυθμίσει\nστο Genesis (%s).\nΒεβαιωθείτε ότι το όνομα χρήστη του Genesis και του YAM\nείναι συγχρονησμένα, αλλιώς η αυτόματη είσοδος δεν θα δουλεύει σωστά.
+; YAM has identified that you are using Genesis/AmiTCP, but\ncould not find a YAM user account which corresponds to\nthe currently active global account you have configured\nin Genesis (%s).\nPlease make sure that your Genesis user name and the YAM user name\nare in sync, otherwise the auto-login feature will not work\ncorrectly.
+;
+;MSG_ER_CONTINUEEXIT
+;*_Συνέχεια|Έξοδος
+; *_Continue|Exit
+;
 MSG_ER_MOVEFOLDERDIR
 Ένα σφάλμα συνέβει κατά την προσπάθεια μετακίνησης των περιεχομένων του φακέλου '%s' στον κατάλογο '%s'.\n\nΑυτό πιθανό να έγινε από μη επαρκή χώρο στο δίσκο ή μη έγκυρη ή μη εγγράψιμη διαδρομή προορισμού.
 ; An error occurred while trying to move the contents of folder '%s' to directory '%s'.\n\nThis may be due to insufficient space or an invalid or not writable destination path.
@@ -5962,8 +6013,8 @@ MSG_WR_SECURITYREQ_GADS
 *_Απλή|_Υπογγεγραμένη|_Κωδικοποιημένη|Υ_πογ. & Κωδ.|Α_νώνυμη|Α_κύρωση
 ; *_Plain|_Signed|_Encrypted|S_igned & encrypted|_Anonymous|_Cancel
 ;
-MSG_ER_OPENTCPIP
-Αδυναμία ανοίγματος της διεπαφής bsdsocket.library που απαιτείται για τις συνδέσεις TCP/IP.\n\nΠαρακαλώ βεβαιωθείτε ότι έχετε ένα συμβατό και σωστά εγκατεστημένο TCP/IP, και ότι η διεπαφή σύνδεσης τρέχει κανονικά.
+;MSG_ER_OPENTCPIP
+;Αδυναμία ανοίγματος της διεπαφής bsdsocket.library που απαιτείται για τις συνδέσεις TCP/IP.\n\nΠαρακαλώ βεβαιωθείτε ότι έχετε ένα συμβατό και σωστά εγκατεστημένο TCP/IP, και ότι η διεπαφή σύνδεσης τρέχει κανονικά.
 ; Couldn't open bsdsocket.library interface required for TCP/IP connections.\n\nPlease make sure that you have a compatible and correctly configured TCP/IP stack installed, and that your network interface is up and running.
 ;
 MSG_WR_UUCODE
@@ -5990,8 +6041,8 @@ MSG_UPD_NOTIFICATION_NOUPDATE
 Να μην ειδοποιούμαι για ενημερώσεις στο μέλλον
 ; Do not notify me on updates in future
 ;
-MSG_UPD_NOTIFICATION_VISITURL
-Επίσκεψη URL
+;MSG_UPD_NOTIFICATION_VISITURL
+;Επίσκεψη URL
 ; Visit URL
 ;
 MSG_UPD_NOTIFICATION_CLOSE
@@ -6127,8 +6178,8 @@ MSG_HELP_CO_CONVERTHTML
 Εάν το κύριο μέρος της αλληλογραφίας είναι HTML, το YAM θα\nτο μετατρέψει σε απλό κείμενο πριν το εμφανίσει.
 ; If the main part of an e-mail is HTML, YAM will\nconvert it to plain text before displaying it.
 ;
-MSG_RE_FOLLOWTHREAD
-Για αναζήτηση σε περισσότερες αλληλογραφίες του ίδιου νήματος,\nτο YAM πρέπει να φορτώσει επιπλέον δείκτες φακέλου. Αυτό μπορεί\nνα είναι μια χρονοβόρα διαδικασία και να καταναλώσει πολύ μνήμη.\n\nΠως θέλετε να συνεχίσετε;
+;MSG_RE_FOLLOWTHREAD
+;Για αναζήτηση σε περισσότερες αλληλογραφίες του ίδιου νήματος,\nτο YAM πρέπει να φορτώσει επιπλέον δείκτες φακέλου. Αυτό μπορεί\nνα είναι μια χρονοβόρα διαδικασία και να καταναλώσει πολύ μνήμη.\n\nΠως θέλετε να συνεχίσετε;
 ; In order to search for more mails of the same thread,\nYAM has to load additional folder indices. This may be\nquite time and memory consuming.\n\nDo you want to continue?
 ;
 MSG_TR_TRANSFERSTATUS
@@ -6146,13 +6197,13 @@ MSG_FI_GAUGETEXT
 ; %%ld of %ld messages
 ; COUNT, COUNT
 ;
-MSG_MA_MESSAGEINFO
-\ebΤρέχων μήνυμα\en\nΑπό: %s <%s>\nΠρος: %s <%s>\nΘέμα: %s\nΗμερομηνία: %s\nΑρχείο: %s\nΜέγεθος: %s
+;MSG_MA_MESSAGEINFO
+;\ebΤρέχων μήνυμα\en\nΑπό: %s <%s>\nΠρος: %s <%s>\nΘέμα: %s\nΗμερομηνία: %s\nΑρχείο: %s\nΜέγεθος: %s
 ; \ebCurrent message\en\nFrom: %s <%s>\nTo: %s <%s>\nSubject: %s\nDate: %s\nFilename: %s\nSize: %s
 ; NAME, ADDRESS, NAME, ADDRESS, SUBJECT, DATE, FILENAME, SIZE
 ;
-MSG_MA_FOLDERINFO
-\ebΤρέχων φάκελος\en\nΌνομα: %s\nΔιαδρομή: %s\nΜέγεθος: %s\nΜηνύματα: %ld (%ld νέα, %ld μη αναγνωσμένα)
+;MSG_MA_FOLDERINFO
+;\ebΤρέχων φάκελος\en\nΌνομα: %s\nΔιαδρομή: %s\nΜέγεθος: %s\nΜηνύματα: %ld (%ld νέα, %ld μη αναγνωσμένα)
 ; \ebCurrent folder\en\nName: %s\nPath: %s\nSize: %s\nMessages: %ld (%ld new, %ld unread)
 ; NAME, PATH, SIZE, COUNT, COUNT, COUNT
 ;
@@ -6508,16 +6559,16 @@ MSG_MA_UPDATEINDEX
 Ενημέρωση ευρετηρίου
 ; Update index
 ;
-MSG_MA_MSENDALL
-Αποστολή μηνυμάτων από την ουρά
+;MSG_MA_MSENDALL
+;Αποστολή μηνυμάτων από την ουρά
 ; Send queued mail
 ;
-MSG_MA_MEXCHANGE
-Ανταλλαγή μηνυμάτων
+;MSG_MA_MEXCHANGE
+;Ανταλλαγή μηνυμάτων
 ; Exchange mail
 ;
-MSG_MA_MGETMAIL
-Λήψη νέου μηνύματος
+;MSG_MA_MGETMAIL
+;Λήψη νέου μηνύματος
 ; Get new mail
 ;
 MSG_MA_MREAD
@@ -7487,24 +7538,24 @@ MSG_TR_FILTER_STATS_SPAM
 ; \nFiltering done:\n\n%3ld messages checked,\n%3ld bounced,\n%3ld forwarded,\n%3ld auto-replied,\n%3ld command activated,\n%3ld moved,\n%3ld deleted,\n%3ld classified as spam
 ; COUNT, COUNT, COUNT, COUNT, COUNT, COUNT, COUNT, COUNT
 ;
-MSG_CO_EXCHANGE_MAIL
-Ανταλλαγή αλληλογραφίας
+;MSG_CO_EXCHANGE_MAIL
+;Ανταλλαγή αλληλογραφίας
 ; Exchange mail
 ;
-MSG_CO_EXCHANGE_ORDER
-Ανταλλαγή σειράς
+;MSG_CO_EXCHANGE_ORDER
+;Ανταλλαγή σειράς
 ; Exchange order
 ;
-MSG_CO_EXCHANGE_ORDER_GET_FIRST
-λήψη μηνύματος πρώτα, μετά αποστολή
+;MSG_CO_EXCHANGE_ORDER_GET_FIRST
+;λήψη μηνύματος πρώτα, μετά αποστολή
 ; get mail first, then send mail
 ;
-MSG_CO_EXCHANGE_ORDER_SEND_FIRST
-αποστολή μηνύματος πρώτα, μετά λήψη
+;MSG_CO_EXCHANGE_ORDER_SEND_FIRST
+;αποστολή μηνύματος πρώτα, μετά λήψη
 ; send mail first, then get mail
 ;
-MSG_HELP_CO_CY_EXCHANGE_ORDER
-Η σειρά της ανταλλαγής αλληλογραφίας.
+;MSG_HELP_CO_CY_EXCHANGE_ORDER
+;Η σειρά της ανταλλαγής αλληλογραφίας.
 ; The order of the mail exchange.
 ;
 MSG_FCHANGE_WARN_TITLE
@@ -7805,6 +7856,11 @@ MSG_HELP_CO_ST_PGPURL
 Μπορείτε να προσδιορίσετε ένα URL όπου μπορεί να γίνει\nλήψη του κοινού κλειδιού PGP. Αυτό το URL\nθα τοποθετηθεί σε μια ξεχωριστή κεφαλίδα\nσε κάθε μήνυμα.
 ; You can specify an URL where your public\nPGP key can be downloaded from. This URL\nwill then placed into a separate header\nentry in every mail.
 ;
+;MSG_TR_NEW_MAIL_NOTIFY
+;Λήφθηκαν %ld νέα μηνύματα!
+; Received %ld new mails!
+; COUNT
+;
 MSG_CO_NOTIOS41SYSTEM
 Σύστημα προειδοποίησης AmigaOS 4.1
 ; AmigaOS_4.1 notification system
@@ -7813,8 +7869,8 @@ MSG_HELP_CO_CH_NOTIOS41SYSTEM
 Εάν επιλεχτεί, το YAM θα χρησιμοποιήσει το σύστημα\nπροειδοποίησης του AmigaOS4.1 για την ειδοποίηση του\nχρήστη σχετικά με νέα ληφθέντα μηνύματα.\nΑυτό απαιτεί τουλάχιστον την application.library V53.2.
 ; If checked, YAM will use AmigaOS4.1's notification\nsystem to notify the user about new received mails.\nThis requires at least application.library V53.2.
 ;
-MSG_NO_OPENURL_LIB
-Η openurl.library δεν είναι εγκατεστημένη στο σύστημά σας.\n\Συνεπώς το YAM δε μπορεί να ανοίξει την ζητούμενη τοποθεσία.\n\Παρακαλώ τρέξτε τον περιηγητή σας και εισάγετε την παρακάτω διεύθυνση:\n\'%s'
+;MSG_NO_OPENURL_LIB
+;Η openurl.library δεν είναι εγκατεστημένη στο σύστημά σας.\n\Συνεπώς το YAM δε μπορεί να ανοίξει την ζητούμενη τοποθεσία.\n\Παρακαλώ τρέξτε τον περιηγητή σας και εισάγετε την παρακάτω διεύθυνση:\n\'%s'
 ;openurl.library not installed on your system.\n\
 ;Thus YAM is not able to open the requested link itself.\n\
 ;\n\
@@ -7830,3 +7886,367 @@ MSG_RE_DEFAULT_MIMEPART_NAME
 Τμήμα %ld.%ld
 ;Part %ld.%ld
 ; PARENTNUMBER PARTNUMER
+;
+MSG_OPEN_WRITEWINDOWS
+Υπάρχουν ήδη μερικά ανοιχτά παράθυρα.\n\\n\Θέλετε να προχωρήσετε;
+; There are still some write windows open.\n\
+; \n\
+; How do you want to proceed?
+;
+MSG_OPEN_WRITEWINDOWS_GAD
+*_Αποθήκευση τώρα|_Εξοδος χωρίς αποθήκευση|Α_κύρωση
+; *_Save now|_Quit without saving|_Cancel
+;
+MSG_MA_MFORWARD_ATTACH
+ως συνημμένο
+; as attachment
+;
+MSG_MA_MFORWARD_INLINE
+ενσωματομένο
+; inlined
+;
+;MSG_CO_FWDMSG_ATTACH
+;ως συνημμένο
+; as attachment
+;
+MSG_CO_ScriptPreFilterMail
+Πριν το φιλτράρισμα
+; Before filter mail
+;
+MSG_CO_ScriptPostFilterMail
+Μετά το φιλτράρισμα
+; After filter mail
+;
+MSG_FI_DOS_PATTERN
+Χρήση μοτίβων AmigaDOS
+; Use AmigaDOS patterns
+;
+MSG_HELP_FI_CH_DOS_PATTERN
+Ενεργοποίηση μοτίβων AmigaDOS στην αναζήτηση.
+; Enable AmigaDOS patterns\n\
+; in the string search.
+;
+MSG_CTapplicationpgpsig
+Υπογραφή PGP
+; PGP signature
+;
+MSG_AB_BirthdayReqBody
+Σήμερα, στις %s, %s έφτασαν τα %ld χρόνια.\n\\n\Θέλετε να στείλετε μια ευχετήρια κάρτα;
+; Today, on %s, %s reaches age %ld.\n\
+; \n\
+; Do you want to send a greetings card?
+; DATE, NAME, AGE
+;
+MSG_ER_AREXX_EXECUTION_ERROR
+Η εκτέλεση της εντολής ARexx '%s' απέτυχε (κωδικός σφάλματος %ld).\n\Παρακαλώ βεβαιωθείτε ότι το αρχείο ARexx είναι προσβάσιμο και έγκυρο.
+; Execution of the ARexx command '%s' failed (error code %ld).\n\
+; Please make sure that the file is accessible and is a valid ARexx script.
+; COMMANDNAME, ERRORCODE
+;
+MSG_BIRTHDAYREQUEST_DONTSHOWAGAIN
+Να μην εμφανιστεί αυτό το μήνυμα ξανά σήμερα.
+; Do not show this requester today again.
+;
+MSG_RE_SAVE_FILE
+Αποθήκευση αρχείου
+; Save file
+;
+MSG_UPD_NO_UPDATES_FOUND_TITLE
+Δεν υπάρχουν ενημερώσεις λογισμικού
+; No software updates available
+;
+MSG_UPD_NO_UPDATES_FOUND
+Δεν υπάρχουν ενημερώσεις λογισμικού.\n\%s
+; There are no software updates available.\n\
+; %s
+; HINT
+MSG_UPD_NO_UPDATES_FOUND_HINT_AUTOCHECK
+Το YAM θα ελέγξει αυτόματα για τυχόν ενημερώσεις.
+; YAM will check for available updates automatically.
+;
+MSG_UPD_NO_UPDATES_FOUND_HINT_NOAUTOCHECK
+Παρακαλώ προσπαθήστε αργότερα ή ενεργοποιήστε τον αυτόματο έλεγχο ενημερώσεων.
+; Please try again later or activate the automatic\n\
+; software update check.
+;
+MSG_THREAD_EXIT_WARNING_TITLE
+Προειδοποίηση YAM
+; YAM warning
+;
+MSG_THREAD_EXIT_WARNING
+Βρέθηκαν υπο-νήματα που ακόμα εκτελούνται κατά την προσπάθεια καθαρισμού του YAM.\n\Παρακαλώ κλείστε όλα τα τυχόν υπο-νήματα (π.χ. προβολές ΜΙΜΕ, κτλ)\n\που πιθανόν να έχετε διενεργήσει από το YAM.\n\\n\Θέλετε να ξαναδοκιμάσετε να εγκαταλήψετε το YAM\n\ή να αγνοήσετε τα ήδη ενεργά υπό-νήματα (που μπορεί να προκαλέσουν σφάλματα αργότερα);
+; While trying to cleanup YAM still running sub threads\n\
+; have been found. Please make sure to close all still\n\
+; existing sub threads (e.g. MIME viewers, etc.) you may\n\
+; have initiated from YAM.\n\
+; \n\
+; Do you want to retry to quit YAM or ignore the still\n\
+; running sub thread (which could end up in later crashes)?
+;
+MSG_THREAD_EXIT_WARNING_BT
+_Επανάληψη|_Παράβλεψη
+; _Retry|_Ignore
+;
+MSG_EXECUTE_COMMAND_FAILED
+Η εκτέλεση της εντολής '%s' απέτυχε (κωδικός σφάλματος %ld: %s).
+; The execution of the command '%s' failed (error code %ld: %s).
+; COMMAND, ERRORCODE, ERRORSTRING
+;
+MSG_ERROR_METHODSTACK
+Αδύνατη η αρχικοποίηση της στοίβας μεθόδου.
+; Cannot initialize method stack.
+;
+MSG_TRANSFERS_IN_PROGRESS
+Μεταφορές σε εξέλιξη
+; Transfers in progress
+;
+MSG_ERROR_CONNECTIONS
+Αδύνατη η αρχικοποίηση των συνδέσεων.
+; Cannot initialize connections.
+;
+MSG_LOG_CONNECT_POP3
+Είσοδος στον POP3 λογιαριασμό '%s': %ld μηνύματα περιμένουν
+; Logged in on POP3 account '%s': %ld messages waiting
+; ACCOUNT, COUNT
+;
+MSG_LOG_RETRIEVED_POP3
+Ανακτήθηκαν %ld μηνύματα από τον POP3 λογαριασμό '%s'
+; Retrieved %ld message(s) from POP3 account '%s'
+; COUNT, ACCOUNT
+;
+MSG_TR_ENTER_POP3_PASSWORD
+Παρακαλώ εισάγετε τον κωδικό για τον\n\POP3 λογαριασμό '%s':
+; Please enter the password for\n\
+; POP3 account '%s':
+; ACCOUNT
+;
+MSG_ALTIMAGE_STATUS_DOWNLOAD
+Λ
+; D
+;
+MSG_ALTIMAGE_STATUS_DELETE
+Δ
+; X
+;
+MSG_PRESELECT_INDEX
+Ευρετήριο
+; Index
+;
+MSG_TR_WAIT_FOR_PASSWORD
+Αναμονή για την εισαγωγή του κωδικού χρήστη...
+; Waiting for user's password input...
+;
+MSG_TR_WAIT_FOR_PRESELECTION
+Αναμονή για την προεπιλογή του χρήστη...
+; Waiting for user's preselection...
+;
+MSG_POP3_NEW_MAIL_NOTIFY_REQ
+Έχετε νέο μήνυμα από τον λογαριασμό '%s'.\e2\n\\n\%3ld μηνύματα λήφθηκαν,\n\%3ld παρέμειναν στον διακομιστή\n\%3ld διπλά παραλείπονται\n
+; \e8You have new mail from account '%s'.\e2\n\
+; \n\
+; %3ld messages downloaded,\n\
+; %3ld left on server\n\
+; %3ld duplicates skipped\n
+; ACCOUNT, COUNT, COUNT, COUNT, COUNT
+;
+MSG_POP3_NEW_MAIL_NOTIFY_OS4_ONE
+%s\n\1 νέο μήνυμα ελήφθη.
+; %s\n\
+; Received 1 new mail.
+; ACCOUNT
+;
+MSG_POP3_NEW_MAIL_NOTIFY_OS4_MANY
+%s\n\Ελήφθησαν %ld νέα μηνύματα.
+; %s\n\
+; Received %ld new mails.
+; ACCOUNT, COUNT
+;
+MSG_MA_SEND_AND_GET_MAIL
+Αποστολή και λήψη μυνήματος
+; Send and get mail
+;
+MSG_MA_SEND_MAIL
+Αποστολή μηνύματος
+; Send mail
+;
+MSG_MA_GET_MAIL
+Λήψη μηνύματος
+; Get mail
+;
+;MSG_WR_SECURITYREQ_GADS
+;*_Απλό|_Υπογεγραμμένο|_Κρυπτογραφημένο|Υπο_γεγρ. & κρυπογρ.|Ακύ_ρωση
+; *_Plain|_Signed|_Encrypted|S_igned & encrypted|_Cancel
+;
+MSG_HTTP_CONNECTING_TO_SERVER
+Σύνδεση στον διακομιστή...
+; Connecting to server...
+;
+MSG_HTTP_SENDING_REQUEST
+Αποστολή αιτήματος HTTP...
+; Sending HTTP request...
+;
+MSG_HTTP_WAITING_FOR_ANSWER
+Αναμονή απάντησης του διακομιστή...
+; Waiting for server's answer...
+;
+MSG_HTTP_RECEIVING_DATA
+Λήψη δεδομένων...
+; Receiving data...
+;
+MSG_HTTP_DISCONNECTING_FROM_SERVER
+Αποσύνδεση από τον διακομιστή...
+; Disconnecting from server...
+;
+MSG_SHOW_TRANSFER_WINDOW
+Εμφάνιση μεταφορών σε εξέλιξη...
+; Show transfers in progress...
+;
+MSG_CO_APPLY_REMOTE_FILTERS
+Εφαρμογή απομακρυσμένων _φίλτρων
+; Apply remote _filters
+;
+MSG_HELP_CO_CH_APPLY_REMOTE_FILTERS
+Εφαρμογή όλων των καθορισμένων απομακρυσμένων φίλτρων κατά την\n\λήψη αλληλογραφίας από αυτό τον διακομιστή.
+; Apply all defined remote filters\n\
+; when downloading mail from this\n\
+; server.
+;
+MSG_CO_DOWNLOAD_ON_STARTUP
+Έλεγχος νέων μηνυμάτων κατά την εκκίνηση
+; Check for new mail on startup
+;
+MSG_HELP_CO_CH_DOWNLOAD_ON_STARTUP
+Έλεγχος του λογιαριασμού για νέα μηνύματα αυτόματα\n\κάθε φορά που γίνεται εκκίνηση του YAM.
+; Check this account for new mail on every\n\
+; startup of YAM automatically.
+;
+MSG_IMPORT_UNKNOWN_FILE_FORMAT
+Άγνωστος τύπος αρχείου μηνύματος στο αρχείο '%s'.
+; Unknown mail file format in file '%s'.
+; FILE
+;
+MSG_IMPORT_NO_MAILS
+Το αρχείο '%s' δεν περιέχει εισαγόμενα μηνύματα.
+; The file '%s' does not contain any importable mails.
+; FILE
+;
+MSG_CO_CONFIG_IS_LOCKED
+Οι ρυθμίσεις είναι κλειδωμένες προς το παρόν.\n\\n\Παρακαλώ περιμένετε μέχρι να τελειώσουν όλες οι POP3 και SMTP μεταφορές.
+; The configuration is currently locked.\n\
+; \n\
+; Please wait until all POP3 and SMTP transfers are finished.
+;
+MSG_FOLDERINFO_SHORTHELP
+\ebΦάκελος\en\n\Όνομα: %s\n\Διαδρομή: %s\n\Μέγεθος: %s\n\Μηνύματα: %ld (%ld νέα, %ld μη διαβασμένα)
+; \ebFolder\en\n\
+; Name: %s\n\
+; Path: %s\n\
+; Size: %s\n\
+; Messages: %ld (%ld new, %ld unread)
+; NAME, PATH, SIZE, COUNT, COUNT, COUNT
+;
+MSG_MAILINFO_SHORTHELP
+\ebΜήνυμα\en\n\Από: %s <%s>\n\Προς: %s <%s>\n\Θέμα: %s\n\Ημερ/νία: %s\n\Αρχείο: %s\n\Μέγεθος: %s
+; \ebMail\en\n\
+; From: %s <%s>\n\
+; To: %s <%s>\n\
+; Subject: %s\n\
+; Date: %s\n\
+; Filename: %s\n\
+; Size: %s
+; NAME, ADDRESS, NAME, ADDRESS, SUBJECT, DATE, FILENAME, SIZE
+;
+MSG_CO_UPDATE_DOWNLOAD_PATH
+Διαδρομή _λήψης:
+; Download _path:
+;
+MSG_UPD_NOTIFICATION_DOWNLOAD
+Λήψη
+; Download
+;
+MSG_TR_DOWNLOADING_FROM_SERVER
+Γίνεται λήψη από τον '%s'
+; Downloading from '%s'
+; SERVER
+MSG_MA_HELP
+Βοήθεια
+; Help
+;
+MSG_MA_HELP_CONTENTS
+Περιεχόμενα
+; Contents
+;
+MSG_MA_HELP_AREXX
+Περιβάλλον ARexx
+; ARexx interface
+;
+MSG_ER_HELP_FILE_DOES_NOT_EXIST
+Το αρχείο βοήθειας '%s' δεν υπάρχει.
+; The help file '%s' does not exist.
+; FILE
+;
+MSG_EA_SEARCH_GRAVATAR
+Αναζήτηση στο gra_vatar.com...
+; Search on gra_vatar.com...
+;
+MSG_ER_NO_GRAVATAR_FOUND
+Δεν βρέθηκε εικόνα για την διεύθυνση '%s'.\n\Πιθανόν το άτομο δεν έχει ανεβάσει κάποια στο gravatar.com ακόμα.
+; No Gravatar found for address '%s'.\n\
+; \n\
+; Perhaps the person has not uploaded a portrait image to gravatar.com yet.
+; ADDRESS
+;
+MSG_ER_NON_MIME_CONFORMANT_MAIL
+Δεν βρέθηκε γραμμή κεφαλίδας του 'ΜΙΜE-Version' κατά την σάρωση του αρχείου μηνύματος '%s'.\n\Προφανώς το αρχείο εξόδου θα περιέχει άκυρα δεδομένα ή μπορεί να είναι αλλοιωμένο.
+; No 'MIME-Version' header line was found while scanning the mail file '%s'. \
+; The generated output may therefore contain invalid data or may be corrupted.
+; MSGFILE
+;
+MSG_CO_ACTION_SET_STATUS_TO_MARKED
+Ορισμός κατάστασης σε 'Σημαδεμένο'
+; Set status to 'Marked'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_MARKED
+Ορισμός κατάστασης του φιλτραρισμένου μηνύματος σε 'Σημαδεμένο'
+; Set the status of the filtered mail to 'Marked'
+;
+MSG_CO_ACTION_SET_STATUS_TO_UNMARKED
+Ορισμός κατάστασης σε 'Μη-σημαδεμένο'
+; Set status to 'Unmarked'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_UNMARKED
+Ορισμός κατάστασης του φιλτραρισμένου μηνύματος σε 'Μη-σημαδεμένο'
+; Set the status of the filtered mail to 'Unmarked'
+;
+MSG_CO_ACTION_SET_STATUS_TO_READ
+Ορισμός κατάστασης σε 'Ανάγνωση'
+; Set status to 'Read'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_READ
+Ορισμός κατάστασης του φιλτραρισμένου μηνύματος σε 'Ανάγνωση'
+; Set the status of the filtered mail to 'Read'
+;
+MSG_CO_ACTION_SET_STATUS_TO_UNREAD
+Ορισμός κατάστασης σε 'Μη-αναγνωσμένο'
+; Set status to 'Unread'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_UNREAD
+Ορισμός κατάστασης του φιλτραρισμένου μηνύματος σε 'Μη-αναγνωσμένο'
+; Set the status of the filtered mail to 'Unread'
+;
+MSG_CO_ACTION_SET_STATUS_TO_SPAM
+Ορισμός κατάστασης σε 'Ενοχλ. Αλληλογραφία'
+; Set status to 'Spam'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_SPAM
+Ορισμός κατάστασης του φιλτραρισμένου μηνύματος σε 'Ενοχλ. Αλληλογραφία'
+; Set the status of the filtered mail to 'Spam'
+;
+MSG_CO_ACTION_SET_STATUS_TO_HAM
+Ορισμός κατάστασης σε 'Μη ενοχλ. αλληλογραφία'
+; Set status to 'Not spam'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_HAM
+Ορισμός κατάστασης του φιλτραρισμένου μηνύματος σε 'Μη ενοχλ. αλληλογραφία'
+; Set the status of the filtered mail to 'Not spam'
+;

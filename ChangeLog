@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-01-19 Thore Böckelmann <tboeckel@gmx.de>
+
+  * locale/greek.ct: updated greek translation kindly provided by Antonis
+    Iliakis.
+
 2012-01-09 Thore Böckelmann <tboeckel@gmx.de>
 
   * tools/mkrelease.sh: added missing translations to the build process.
