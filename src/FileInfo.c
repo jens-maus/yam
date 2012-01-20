@@ -35,9 +35,11 @@
 
 #include "Debug.h"
 
-// some filetype handling macros
-#define isFile(etype)     (etype < 0)
-#define isDrawer(etype)   (etype >= 0 && etype != ST_SOFTLINK && etype != ST_LINKDIR)
+#if !defined(__amigaos4__)
+// some filetype handling macros, used for non-AmigaOS4 builds only
+#define FIB_IS_FILE(fib)     ((fib)->fib_DirEntryType < 0)
+#define FIB_IS_DRAWER(fib)   ((fib)->fib_DirEntryType >= 0 && (fib)->fib_DirEntryType != ST_SOFTLINK && (fib)->fib_DirEntryType != ST_LINKDIR)
+#endif
 
 /// ObtainFileInfo
 // query file <name> for the information <which>. If successful, the queried
@@ -174,9 +176,9 @@ BOOL ObtainFileInfo(const char *name, enum FileInfo which, void *valuePtr)
 
             case FI_TYPE:
             {
-              if(isFile(fib->fib_DirEntryType))
+              if(FIB_IS_FILE(fib))
                 *((ULONG *)valuePtr) = FIT_FILE;
-              else if(isDrawer(fib->fib_DirEntryType))
+              else if(FIB_IS_DRAWER(fib))
                 *((ULONG *)valuePtr) = FIT_DRAWER;
               else
                 *((ULONG *)valuePtr) = FIT_UNKNOWN;
