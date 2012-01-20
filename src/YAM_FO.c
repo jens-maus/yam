@@ -353,6 +353,7 @@ BOOL FO_LoadConfig(struct Folder *fo)
   ENTER();
 
   AddPath(fname, fo->Fullpath, ".fconfig", sizeof(fname));
+  D(DBF_FOLDER, "load config file '%s' of folder '%s'", fname, fo->Name);
   if((fh = fopen(fname, "r")) != NULL)
   {
     char *buf = NULL;
@@ -437,6 +438,8 @@ BOOL FO_LoadConfig(struct Folder *fo)
 
     free(buf);
   }
+  else
+    E(DBF_FOLDER, "couldn't open folder config file '%s' of folder '%s'", fname, fo->Name);
 
   RETURN(success);
   return success;
@@ -697,6 +700,7 @@ BOOL FO_LoadTree(void)
   ENTER();
 
   fname = CreateFilename(".folders", foldersPath, sizeof(foldersPath));
+  D(DBF_FOLDER, "load folder tree from file '%s'", fname);
 
   if((fh = fopen(fname, "r")) != NULL)
   {
@@ -949,10 +953,15 @@ BOOL FO_LoadTree(void)
 
     success = TRUE;
   }
+  else
+    E(DBF_FOLDER, "failed to open folder tree file '%s'", fname);
 
   // if nested is still greater zero we have a misconfiguration
   if(nested > 0)
+  {
+    E(DBF_FOLDER, "malformed folder tree file '%s', nest counter %ld", fname, nested);
     success = FALSE;
+  }
 
   RETURN(success);
   return success;
@@ -1550,7 +1559,7 @@ HOOKPROTONHNONP(FO_NewFolderFunc, void)
       {
         strlcpy(folder.Path, frc->drawer, sizeof(folder.Path));
 
-        FO_LoadConfig(&folder);
+		FO_LoadConfig(&folder);
       }
       else
       {

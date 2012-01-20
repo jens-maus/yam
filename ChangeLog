@@ -9,6 +9,8 @@ $URL$
 
   * locale/greek.ct: updated greek translation kindly provided by Antonis
     Iliakis once more.
+  * YAM_FO.c: added some more debugging output when loading the folder tree file
+    and when loading the folder configuration file.
 
 2012-01-19 Thore Böckelmann <tboeckel@gmx.de>
 
