@@ -1,4 +1,4 @@
-## version $VER: yam.catalog 7.3 (19.01.2012)
+## version $VER: yam.catalog 7.4 (20.01.2012)
 ## language greek
 ## codeset 10
 ## chunk AUTH Antonis Iliakis
@@ -3971,7 +3971,7 @@ MSG_TR_MailTransferTo
 ;
 MSG_TR_MsgInFile
 Μηνύματα στο αρχείο %s
-; Messages in file %s
+; Messages in file
 ;
 ;MSG_TR_MsgOnServer
 ;Μηνύματα στον διακομιστή
@@ -7843,8 +7843,28 @@ MSG_CO_SPAM_STATISTICS
 ; %ld (%ld words)
 ;
 MSG_ER_WRONG_DOB_FORMAT
-Η ημερομηνία γέννησης χρησιμοποιεί μια λάθος μορφή. Η σωστή μορφή είναι '%s'.\n%%d - ημέρα\n%%m - μήνας\n%%y - έτος (2 ψηφία)\n%%Y - έτος (4 ψηφία)\nΗ χρονολογία πρέπει να είναι ίση ή μεγαλύτερη από το 1900!
-; Date of birth uses a wrong format. The correct format is '%s'.\n%%d - day\n%%m - month\n%%y - year (2 digits)\n%%Y - year (4 digits)\nThe year number must be greater or equal 1900!
+Η ημερομηνία γέννησης χρησιμοποιεί λάθος μορφή. Η σωστή μορφή είναι '%s'.\n\
+%%d  - ημέρα με αρχικά μηδενικά (01-31)\n\
+%%-d - ημέρα χωρίς αρχικά μηδενικά (1-31)\n\
+%%e  - ημέρα με αρχικά κενά ( 1-31)\n\
+%%m  - μήνας με αρχικά μηδενικά (01-12)\n\
+%%-m - μήνας χωρίς αρχικά μηδενικά (1-12)\n\
+%%y  - έτος με αρχικά μηδενικά (00-99, 2 ψηφία)\n\
+%%-y - έτος χωρίς αρχικά μηδενικά (0-99, 2 ψηφία)\n\
+%%Y  - έτος με αρχικά μηδενικά (4 ψηφία)\n\
+%%-Y - έτος χωρίς αρχικά μηδενικά (4 ψηφία)\n\
+Το έτος πρέπει να είναι μεγαλύτερο ή ίσο με 1900.
+; Date of birth uses a wrong format. The correct format is '%s'.\n\
+; %%d  - day with leading zeros (01-31)\n\
+; %%-d - day without leading zeros (1-31)\n\
+; %%e  - day with leading spaces ( 1-31)\n\
+; %%m  - month with leading zeros (01-12)\n\
+; %%-m - month without leading zeros (1-12)\n\
+; %%y  - year with leading zeros (00-99, 2 digits)\n\
+; %%-y - year without leading zeros (0-99, 2 digits)\n\
+; %%Y  - year with leading zeros (4 digits)\n\
+; %%-Y - year without leading zeros (4 digits)\n\
+; The year number must be greater or equal 1900.
 ; DOBFORMAT
 ;
 MSG_CO_PGPURL
