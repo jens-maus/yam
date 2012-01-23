@@ -439,7 +439,7 @@ BOOL FO_LoadConfig(struct Folder *fo)
     free(buf);
   }
   else
-    E(DBF_FOLDER, "couldn't open folder config file '%s' of folder '%s'", fname, fo->Name);
+    E(DBF_FOLDER, "couldn't open folder config file '%s' of folder '%s' (%s)", fname, fo->Name, strerror(errno));
 
   RETURN(success);
   return success;
@@ -457,6 +457,7 @@ BOOL FO_SaveConfig(struct Folder *fo)
   ENTER();
 
   AddPath(fname, fo->Fullpath, ".fconfig", sizeof(fname));
+  D(DBF_FOLDER, "save config file '%s' of folder '%s'", fname, fo->Name);
   if((fh = fopen(fname, "w")) != NULL)
   {
     struct DateStamp ds;
@@ -491,7 +492,10 @@ BOOL FO_SaveConfig(struct Folder *fo)
     result = TRUE;
   }
   else
+  {
+    E(DBF_FOLDER, "couldn't open folder config file '%s' of folder '%s' (%s)", fname, fo->Name, strerror(errno));
     ER_NewError(tr(MSG_ER_CantCreateFile), fname);
+  }
 
   RETURN(result);
   return result;
