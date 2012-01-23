@@ -138,7 +138,7 @@ OVERLOAD(OM_NEW)
     MUIA_ContextMenu,          NULL,
     MUIA_NList_TitleClick,     TRUE,
     MUIA_NList_MultiSelect,    MUIV_NList_MultiSelect_Default,
-    MUIA_NList_Format,         "W=-1 BAR,P=\033r BAR,W=-1 MACW=9 P=\033r BAR,MICW=10 MACW=30 BAR,BAR,MICW=16 MACW=30 BAR,MICW=9 MACW=15 BAR",
+    MUIA_NList_Format,         "W=-1 BAR,P=\033r PCS=R BAR,W=-1 MACW=9 P=\033r PCS=R BAR,MICW=10 MACW=30 PCS=R BAR,PCS=R BAR,MICW=16 MACW=30 PCS=R BAR,MICW=9 MACW=15 PCS=R BAR",
     MUIA_NList_AutoVisible,    TRUE,
     MUIA_NList_MinColSortable, 1,
     MUIA_NList_Title,          TRUE,

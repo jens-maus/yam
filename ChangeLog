@@ -9,6 +9,7 @@ $URL$
 
   * mui/ReadMailGroup.c, mui/Receipientstring.c: some minor non-functional
     changes.
+  * mui/TransferMailList.c: enabled right side text eliding for all columns.
 
 2012-01-20 Thore Böckelmann <tboeckel@gmx.de>
 
