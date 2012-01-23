@@ -147,15 +147,19 @@ static char *rcptok(char *s, BOOL *quote)
   while(*p != '\0')
   {
     if(*p == '"')
-      *quote ^= TRUE;
+	{
+      *quote = !(*quote);
+	}
     else if(*p == ',' && *quote == FALSE)
     {
       *p++ = '\0';
-      RETURN(s);
-      return s;
+	  break;
     }
     p++;
   }
+
+  // strip leading and trailing blanks
+  s = Trim(s);
 
   RETURN(s);
   return s;
@@ -838,7 +842,7 @@ DECLARE(Resolve) // ULONG flags
 
     D(DBF_GUI, "Resolve this string: '%s'", tmp);
     // tokenize string and resolve each recipient
-    while((s = Trim(rcptok(tmp, &quote))) != NULL)
+    while((s = rcptok(tmp, &quote)) != NULL)
     {
       char *marks;
 

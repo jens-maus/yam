@@ -288,31 +288,33 @@ static void HideAttachmentGroup(struct Data *data)
 ///
 /// ParamEnd
 //  Finds next parameter in header field
-static char *ParamEnd(char *s)
+static char *ParamEnd(const char *s)
 {
   char *result = NULL;
   BOOL inquotes = FALSE;
 
   ENTER();
 
-  while(*s)
+  while(*s != '\0')
   {
-    if(inquotes)
+    if(inquotes == TRUE)
     {
       if(*s == '"')
         inquotes = FALSE;
       else if(*s == '\\')
-        ++s;
+        s++;
     }
     else if(*s == ';')
     {
-      result = s;
+      result = (char *)s;
       break;
     }
     else if(*s == '"')
+	{
       inquotes = TRUE;
+	}
 
-    ++s;
+    s++;
   }
 
   RETURN(result);

@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-01-23 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/ReadMailGroup.c, mui/Receipientstring.c: some minor non-functional
+    changes.
+
 2012-01-20 Thore Böckelmann <tboeckel@gmx.de>
 
   * locale/greek.ct: updated greek translation kindly provided by Antonis
