@@ -727,7 +727,6 @@ OVERLOAD(MUIM_ContextMenuBuild)
   {
     struct Mail *mail = rmData->mail;
     BOOL isRealMail = !isVirtualMail(mail);
-    BOOL isSentMail = isRealMail ? isSentMailFolder(mail->Folder) : FALSE;
     BOOL hasAttach = data->activeAttachmentGroup;
     BOOL hasPGPKey = rmData->hasPGPKey;
     BOOL hasPGPSig = (hasPGPSOldFlag(rmData) || hasPGPSMimeFlag(rmData));
@@ -744,7 +743,7 @@ OVERLOAD(MUIM_ContextMenuBuild)
 
     data->contextMenu = MenustripObject,
       Child, MenuObjectT(data->menuTitle),
-        Child, Menuitem(tr(MSG_MA_MREPLY),   NULL, hasContent && !isSentMail, FALSE, RMEN_REPLY),
+        Child, Menuitem(tr(MSG_MA_MREPLY),   NULL, hasContent, FALSE, RMEN_REPLY),
         Child, MenuitemObject,
           MUIA_Menuitem_Title, tr(MSG_MA_MFORWARD),
           MUIA_Menuitem_Enabled, hasContent,

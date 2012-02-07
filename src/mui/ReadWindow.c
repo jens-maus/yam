@@ -634,7 +634,7 @@ DECLARE(ReadMail) // struct Mail *mail
   set(data->MI_DELETEATT, MUIA_Menuitem_Enabled, isRealMail && hasAttach);
   set(data->MI_CHSUBJ,    MUIA_Menuitem_Enabled, isRealMail && !inSpamFolder);
   set(data->MI_NAVIG,     MUIA_Menu_Enabled,     isRealMail);
-  set(data->MI_REPLY,     MUIA_Menuitem_Enabled, !isSentMail && !inSpamFolder && !hasStatusSpam(mail));
+  set(data->MI_REPLY,     MUIA_Menuitem_Enabled, !inSpamFolder && !hasStatusSpam(mail));
   set(data->MI_BOUNCE,    MUIA_Menuitem_Enabled, !isSentMail);
   set(data->MI_NEXTTHREAD,MUIA_Menuitem_Enabled, nextMailAvailable);
   set(data->MI_PREVTHREAD,MUIA_Menuitem_Enabled, prevMailAvailable);
@@ -673,7 +673,7 @@ DECLARE(ReadMail) // struct Mail *mail
     DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_NEXTTHREAD,  MUIA_TheBar_Attr_Disabled, !nextMailAvailable);
     DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_DELETE,      MUIA_TheBar_Attr_Disabled, !isRealMail);
     DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_MOVE,        MUIA_TheBar_Attr_Disabled, !isRealMail);
-    DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_REPLY,       MUIA_TheBar_Attr_Disabled, isSentMail || inSpamFolder || hasStatusSpam(mail));
+    DoMethod(data->windowToolbar, MUIM_TheBar_SetAttr, TB_READ_REPLY,       MUIA_TheBar_Attr_Disabled, inSpamFolder || hasStatusSpam(mail));
   }
 
   // update the status bar

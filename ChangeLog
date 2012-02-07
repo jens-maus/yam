@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-02-07 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/ReadMailGroup.c, mui/ReadWindow.c: enabled all "Reply" controls for the
+    sent mail folder. This was already the case within the main window and is
+    completely consistent now. This closes #288.
+
 2012-01-23 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/ReadMailGroup.c, mui/Receipientstring.c: some minor non-functional
