@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-02-24 Alper Sönmez <amithlondestek@gmail.com>
+
+  * locale/turkish.ct: updated according to the latest changes.
+
 2012-02-07 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/ReadMailGroup.c, mui/ReadWindow.c: enabled all "Reply" controls for the

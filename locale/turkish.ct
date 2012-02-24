@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.3 (24.12.2011)
+## version $VER: YAM.catalog 7.2 (24.02.2012)
 ## language türkçe
 ## codeset 0
 ## chunk AUTH Alper Sönmez <amithlondestek@gmail.com>
@@ -302,7 +302,7 @@ HTML dosyasý
 ; HTML document
 ;
 MSG_CTtextaguide
-AmigaGuide dokümaný
+AmigaGuide belgesi
 ; AmigaGuide document
 ;
 MSG_CTapplicationoctetstream
@@ -310,7 +310,7 @@ binary dosya
 ; binary file
 ;
 MSG_CTapplicationpostscript
-Postscript doküman
+Postscript belge
 ; Postscript document
 ;
 MSG_CTapplicationrtf
@@ -642,11 +642,11 @@ Durum
 ; Status
 ;
 MSG_MA_Scripts
-Script'ler
+Betikler
 ; Scripts
 ;
 MSG_MA_ExecuteScript
-Scripti çalýþtýr...
+Betik çalýþtýr...
 ; Execute script...
 ;
 MSG_MA_CheckSingle
@@ -1867,7 +1867,7 @@ _X Konumu
 ; Position _X
 ;
 MSG_CO_CloseGadget
-Kapatma butonu programý simge durumuna k_üçültür
+Kapatma butonu programý simge durumuna k_üçültsün
 ; Close _gadget iconifies program
 ;
 MSG_CO_SaveDelete
@@ -1907,7 +1907,7 @@ _Arþivleyici
 ; Archi_ver
 ;
 MSG_CO_ScriptMenu
-'Scripts' menü girdisi %ld
+'Betikler' menü girdisi %ld
 ; 'Scripts' menu entry %ld
 ; COUNT
 ;
@@ -2758,29 +2758,29 @@ kullanýlacak komut ve seçenekler.
 ; create archived attachments.
 ;
 MSG_HELP_CO_ST_RXNAME
-'Scriptler' menüsündeki\n\
-script'lerin açýklamalarý.
+'Betikler' menüsündeki\n\
+betiklerin açýklamalarý.
 ; Description of the script\n\
 ; in the 'Scripts' menu.
 ;
 MSG_HELP_CO_ST_SCRIPT
-Script'in dosya adý.
+Betiðin dosya adý.
 ; Filename of the script.
 ;
 MSG_HELP_CO_CY_ISADOS
-Script'in türü\n\
+Betiðin türü\n\
 (ARexx veya AmigaDOS).
 ; Type of the script\n\
 ; (ARexx or AmigaDOS).
 ;
 MSG_HELP_CO_CH_CONSOLE
-Script için giriþ ve çýkýþ olarak\n\
+Betik için giriþ ve çýkýþ olarak\n\
 kullanýlacak bir konsol penceresi aç.
 ; Open a console window to allow input\n\
 ; and output from the script.
 ;
 MSG_HELP_CO_CH_WAITTERM
-Script'i asenkronize olarak\n\
+Betiði eþzamanlý olarak\n\
 çalýþtýrma,\n\
 tamamlanmasý için bekle.
 ; Do not run the script\n\
@@ -4464,18 +4464,18 @@ MSG_TR_Downloading
 ; Module TR - Window
 ;
 MSG_TR_MailTransferFrom
-'%s'den posta aktarýmý
+'%s'dan posta aktarýmý
 ; Mail transfer from '%s'
 ; HOST
 ;
 MSG_TR_MailTransferTo
-'%s'ye posta aktarýmý
+'%s'a posta aktarýmý
 ; Mail transfer to '%s'
 ; HOST
 ;
 MSG_TR_MsgInFile
-Dosyadaki iletiler %s
-; Messages in file
+%s dosyasýndaki iletiler
+; Messages in file %s
 ;
 MSG_TR_Control
 Kontrol
@@ -4612,11 +4612,11 @@ Neden: Yetersiz hafýza veya ayarlarda geçersiz yol belirlenmiþ olmasý.
 ; Reason: out of memory or invalid path specified in the configuration.
 ;
 MSG_ER_ErrorConsole
-Script için konsol penceresi açýlamadý.
+Betik için konsol penceresi açýlamadý.
 ; Couldn't open console window for script.
 ;
 MSG_ER_ErrorARexxScript
-ARexx komutu '%s' gönderilemedi. Script'in varlýðýný kontrol ediniz.
+ARexx komutu '%s' gönderilemedi. Betiðin varlýðýný kontrol ediniz.
 ; Couldn't send ARexx command '%s'. Make sure that the script exists.
 ; REXX_COMMAND
 ;
@@ -5414,11 +5414,11 @@ Deþifre/görüntüleme...
 ; ADDED AFTER 13-MAR-1999
 ;
 MSG_CTapplicationadosscript
-AmigaDOS script
+AmigaDOS betiði
 ; AmigaDOS script
 ;
 MSG_CTapplicationrexx
-Rexx script
+Rexx betiði
 ; Rexx script
 ;
 ;
@@ -6590,7 +6590,7 @@ MSG_ER_MESSAGEIMPORT
 Lütfen dosyanýn okunur olduðunu ve YAM tarafýndan desteklenen RFC822 \
 uyumlu bir biçem kullandýðýný kontrol ediniz. Desteklenen biçemler: \
 'MBOX', 'DBX' (Outlook Express) veya yalýn RFC822 mektup dosyalarýdýr. \
-Daha ayrýntýlý bilgi için dökümantasyonu okuyunuz.
+Daha ayrýntýlý bilgi için belgelendirmeyi okuyunuz.
 ; An error occurred while trying to import mail from file '%s'.\n\
 ; \n\
 ; Please check that the file is readable and contains RFC822 compliant \
@@ -6804,11 +6804,11 @@ Adres defteri ile ilgili ayarlar...
 ; Configure address book related options...
 ;
 MSG_CO_SCRIPTS_TITLE
-Script Ayarlarý
+Betik Ayarlarý
 ; Scripts Settings
 ;
 MSG_CO_SCRIPTS_SUMMARY
-Yardýmcý scriptlerinizi ayarlayýn...
+Yardýmcý betiklerinizi ayarlayýn...
 ; Configure your helper scripts...
 ;
 MSG_CO_MIXED_TITLE
@@ -6981,10 +6981,6 @@ Deðiþiklikler:
 MSG_UPD_NOTIFICATION_NOUPDATE
 Bir daha güncellemelerle ilgili uyarma
 ; Do not notify me on updates in future
-;
-MSG_UPD_NOTIFICATION_VISITURL
-URL'e git
-; Visit URL
 ;
 MSG_UPD_NOTIFICATION_CLOSE
 Kapat
@@ -7178,36 +7174,6 @@ MSG_FI_GAUGETEXT
 ; %%ld of %ld messages
 ; COUNT, COUNT
 ;
-MSG_MA_MESSAGEINFO
-\ebÞimdiki ileti\en\n\
-Kimden: %s <%s>\n\
-Kime: %s <%s>\n\
-Konu: %s\n\
-Tarih: %s\n\
-Dosya adý: %s\n\
-Boyut: %s
-; \ebCurrent message\en\n\
-; From: %s <%s>\n\
-; To: %s <%s>\n\
-; Subject: %s\n\
-; Date: %s\n\
-; Filename: %s\n\
-; Size: %s
-; NAME, ADDRESS, NAME, ADDRESS, SUBJECT, DATE, FILENAME, SIZE
-;
-MSG_MA_FOLDERINFO
-\ebÞimdiki klasör\en\n\
-Ad: %s\n\
-Yol: %s\n\
-Boyut: %s\n\
-Ýleti: %ld (%ld yeni, %ld okunmamýþ)
-; \ebCurrent folder\en\n\
-; Name: %s\n\
-; Path: %s\n\
-; Size: %s\n\
-; Messages: %ld (%ld new, %ld unread)
-; NAME, PATH, SIZE, COUNT, COUNT, COUNT
-;
 MSG_MA_MIMEPART_INFO
 \ebEkteki - MIME kýsmý #%ld\en\n\
 Ad: %s\n\
@@ -7250,7 +7216,7 @@ Yanýtla/Ýlet
 ; Reply/Forward
 ;
 MSG_CO_GR_SCRIPTS
-Scriptler
+Betikler
 ; Scripts
 ;
 MSG_CO_GR_STARTUPQUIT
@@ -8306,7 +8272,7 @@ MSG_ABOUT_GPL
 Bu program ücretsiz yazýlýmdýr; GNU Kamu Lisansý\n\
 altýnda daðýtabilir ve/veya deðiþtirebilirsiniz.\n\
 Ayrýntýlý bilgi için birlikte gelen\n\
-dökümanlarý inceleyiniz.
+belgeleri inceleyiniz.
 ; This program is free software; you're welcome to\n\
 ; distribute and/or modify it under the terms of the\n\
 ; GNU Public License. See the enclosed documents for\n\
@@ -8939,7 +8905,7 @@ Bu MIME türü için\n\
 ; this MIME type.
 ;
 MSG_HELP_CO_LV_REXX
-Script'ler listesi.
+Betikler listesi.
 ; List of scripts.
 ;
 MSG_HELP_CO_BT_UPDATENOW
@@ -8963,7 +8929,7 @@ Hiçbir zaman
 ; Never
 ;
 MSG_MA_EXECUTESCRIPT_TITLE
-Çalýþtýrýlacak script'i seçin
+Çalýþtýrýlacak betiði seçin
 ; Select script to execute
 ;
 MSG_HELP_FI_BT_NONE
@@ -9519,16 +9485,26 @@ MSG_CO_SPAM_STATISTICS
 ;
 MSG_ER_WRONG_DOB_FORMAT
 Doðum tarihi biçemi yanlýþ. Doðru biçem: '%s'.\n\
-%%d - gün\n\
-%%m - ay\n\
-%%y - yýl (2 basamak)\n\
-%%Y - yýl (4 basamak)\n\
+%%d - gün (sýfýr kullanarak: '01-31')\n\
+%%-d - gün (sýfýr kullanmadan: '1-31')\n\
+%%e - gün (boþluk kullanarak: ' 1-31')\n\
+%%m - ay (sýfýr kullanarak: '01-12')\n\
+%%-m - ay (sýfýr kullanmadan: '1-12')\n\
+%%y - yýl (sýfýr kullanarak, 2 basamak: '00-99')\n\
+%%-y - yýl (sýfýr kullanmadan, 2 basamak: '0-99')\n\
+%%Y - yýl (sýfýr kullanarak, 4 basamak)\n\
+%%-Y - yýl (sýfýr kullanmadan, 4 basamak)\n\
 Yýl deðeri en az 1900 olabilir.
 ; Date of birth uses a wrong format. The correct format is '%s'.\n\
-; %%d - day\n\
-; %%m - month\n\
-; %%y - year (2 digits)\n\
-; %%Y - year (4 digits)\n\
+; %%d  - day with leading zeros (01-31)\n\
+; %%-d - day without leading zeros (1-31)\n\
+; %%e  - day with leading spaces ( 1-31)\n\
+; %%m  - month with leading zeros (01-12)\n\
+; %%-m - month without leading zeros (1-12)\n\
+; %%y  - year with leading zeros (00-99, 2 digits)\n\
+; %%-y - year without leading zeros (0-99, 2 digits)\n\
+; %%Y  - year with leading zeros (4 digits)\n\
+; %%-Y - year without leading zeros (4 digits)\n\
 ; The year number must be greater or equal 1900.
 ; DOBFORMAT
 ;
@@ -9623,7 +9599,7 @@ Bir tebrik kartý göndermek ister misiniz?
 ;
 MSG_ER_AREXX_EXECUTION_ERROR
 ARexx komutu '%s' baþarýsýz oldu (hata kodu %ld).\n\
-Lütfen dosyanýn eriþilebilirliðini ve geçerli bir ARexx scripti olduðunu doðrulayýn.
+Lütfen dosyanýn eriþilebilirliðini ve geçerli bir ARexx betiði olduðunu doðrulayýn.
 ; Execution of the ARexx command '%s' failed (error code %ld).\n\
 ; Please make sure that the file is accessible and is a valid ARexx script.
 ; COMMANDNAME, ERRORCODE
@@ -9822,4 +9798,149 @@ Her baþlangýçta bu hesaba yeni ileti gelip\n\
 gelmediðini otomatik olarak kontrol eder.
 ; Check this account for new mail on every\n\
 ; startup of YAM automatically.
+;
+MSG_IMPORT_UNKNOWN_FILE_FORMAT
+'%s' dosyasýnda bilinmeyen posta dosyasý biçemi
+; Unknown mail file format in file '%s'.
+; FILE
+;
+MSG_IMPORT_NO_MAILS
+'%s' dosyasý içe aktarýlabilecek bir posta içermiyor.
+; The file '%s' does not contain any importable mails.
+; FILE
+;
+MSG_CO_CONFIG_IS_LOCKED
+Ayarlar bölümü þu anda kilitlidir.\n\
+\n\
+Lütfen tüm POP3 ve SMTP aktarýmlarýnýn tamamlanmasýný bekleyin.
+; The configuration is currently locked.\n\
+; \n\
+; Please wait until all POP3 and SMTP transfers are finished.
+;
+MSG_FOLDERINFO_SHORTHELP
+\ebKlasör\en\n\
+Ad: %s\n\
+Yer: %s\n\
+Boyut: %s\n\
+Messages: %ld (%ld yeni, %ld okunmamýþ)
+; \ebFolder\en\n\
+; Name: %s\n\
+; Path: %s\n\
+; Size: %s\n\
+; Messages: %ld (%ld new, %ld unread)
+; NAME, PATH, SIZE, COUNT, COUNT, COUNT
+;
+MSG_MAILINFO_SHORTHELP
+\ebPosta\en\n\
+Kimden: %s <%s>\n\
+Kime: %s <%s>\n\
+Konu: %s\n\
+Tarih: %s\n\
+Dosya adý: %s\n\
+Boyut: %s
+; \ebMail\en\n\
+; From: %s <%s>\n\
+; To: %s <%s>\n\
+; Subject: %s\n\
+; Date: %s\n\
+; Filename: %s\n\
+; Size: %s
+; NAME, ADDRESS, NAME, ADDRESS, SUBJECT, DATE, FILENAME, SIZE
+;
+MSG_CO_UPDATE_DOWNLOAD_PATH
+Ýndirme _yeri:
+; Download _path:
+;
+MSG_UPD_NOTIFICATION_DOWNLOAD
+Ýndir
+; Download
+;
+MSG_TR_DOWNLOADING_FROM_SERVER
+'%s' sunucusundan indiriliyor
+; Downloading from '%s'
+; SERVER
+MSG_MA_HELP
+Yardým
+; Help
+;
+MSG_MA_HELP_CONTENTS
+Ýçindekiler
+; Contents
+;
+MSG_MA_HELP_AREXX
+ARexx arayüzü
+; ARexx interface
+;
+MSG_ER_HELP_FILE_DOES_NOT_EXIST
+Yardým dosyasý '%s' bulunamadý.
+; The help file '%s' does not exist.
+; FILE
+;
+MSG_EA_SEARCH_GRAVATAR
+gra_vatar.com'da ara...
+; Search on g_ravatar.com...
+;
+MSG_ER_NO_GRAVATAR_FOUND
+Þu adres için Gravatar bulunamadý: '%s'\n\
+\n\
+Þahýs vesikalýk resmini gravatar.com'a yüklememiþ olabilir.
+; No Gravatar found for address '%s'.\n\
+; \n\
+; Perhaps the person has not uploaded a portrait image to gravatar.com yet.
+; ADDRESS
+;
+MSG_ER_NON_MIME_CONFORMANT_MAIL
+Posta dosyasý '%s' tarandý ve bir 'MIME-Sürüm' baþlýðý satýrý bulunamadý. \
+Bu nedenle oluþturulmuþ çýktý bozuk olabilir veya geçersiz veri içerebilir.
+; No 'MIME-Version' header line was found while scanning the mail file '%s'. \
+; The generated output may therefore contain invalid data or may be corrupted.
+; MSGFILE
+;
+MSG_CO_ACTION_SET_STATUS_TO_MARKED
+Durumunu 'Ýþaretlenmiþ' yap
+; Set status to 'Marked'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_MARKED
+Süzülen postanýn durumunu 'Ýþaretlenmiþ' yapar
+; Set the status of the filtered mail to 'Marked'
+;
+MSG_CO_ACTION_SET_STATUS_TO_UNMARKED
+Durumunu 'Ýþaretlenmemiþ' yap
+; Set status to 'Unmarked'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_UNMARKED
+Süzülen postanýn durumunu 'Ýþaretlenmiþ' yapar
+; Set the status of the filtered mail to 'Unmarked'
+;
+MSG_CO_ACTION_SET_STATUS_TO_READ
+Durumunu 'Okunmuþ' yap
+; Set status to 'Read'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_READ
+Süzülen postanýn durumunu 'Okunmuþ' yapar
+; Set the status of the filtered mail to 'Read'
+;
+MSG_CO_ACTION_SET_STATUS_TO_UNREAD
+Durumunu 'Okunmamýþ' yap
+; Set status to 'Unread'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_UNREAD
+Süzülen postanýn durumunu 'Okunmamýþ' yapar
+; Set the status of the filtered mail to 'Unread'
+;
+MSG_CO_ACTION_SET_STATUS_TO_SPAM
+Durumunu 'Gereksiz' yap
+; Set status to 'Spam'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_SPAM
+Süzülen postanýn durumunu 'Gereksiz' yapar
+; Set the status of the filtered mail to 'Spam'
+;
+MSG_CO_ACTION_SET_STATUS_TO_HAM
+Durumunu 'Gereksiz deðil' yap
+; Set status to 'Not spam'
+;
+MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_HAM
+Süzülen postanýn durumunu 'Gereksiz deðil' yapar
+; Set the status of the filtered mail to 'Not spam'
 ;
