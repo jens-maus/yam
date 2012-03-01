@@ -1648,12 +1648,14 @@ MakeHook(FO_EditFolderHook, FO_EditFolderFunc);
 //  Removes the active folder
 HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
 {
+  struct Folder *folder = GetCurrentFolder();
+  struct FolderNode *fnode = (struct FolderNode *)folder->Treenode->tn_User;
   BOOL delete_folder = FALSE;
   Object *lv = G->MA->GUI.NL_FOLDERS;
 
   ENTER();
 
-  switch(GetCurrentFolder()->Type)
+  switch(folder->Type)
   {
     case FT_CUSTOM:
     case FT_CUSTOMSENT:
@@ -1663,23 +1665,22 @@ HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
       {
         // check if the folder that is about to be deleted is part
         // of an active filter and if so remove it from it
-        if(FolderIsUsedByFilters(GetCurrentFolder()->Name) == TRUE)
-          RemoveFolderFromFilters(GetCurrentFolder()->Name);
+        if(FolderIsUsedByFilters(folder->Name) == TRUE)
+          RemoveFolderFromFilters(folder->Name);
 
         delete_folder = TRUE;
-        DeleteMailDir(GetCurrentFolder()->Fullpath, FALSE);
-        ClearFolderMails(GetCurrentFolder(), TRUE);
+        DeleteMailDir(folder->Fullpath, FALSE);
 
         // Here we dispose the folderimage Object because the destructor
         // of the Folder Listtree can't do this without throwing enforcer hits
-        if(GetCurrentFolder()->imageObject != NULL)
+        if(folder->imageObject != NULL)
         {
           // we make sure that the NList also doesn't use the image in future anymore
-          DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, GetCurrentFolder()->ImageIndex, MUIF_NONE);
+          DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, folder->ImageIndex, MUIF_NONE);
 
           // and last, but not least we free the BC object here, so that this Object is also gone
-          MUI_DisposeObject(GetCurrentFolder()->imageObject);
-          GetCurrentFolder()->imageObject = NULL; // let's set it to NULL so that the destructor doesn't do the work again.
+          MUI_DisposeObject(folder->imageObject);
+          folder->imageObject = NULL; // let's set it to NULL so that the destructor doesn't do the work again.
         }
       }
     }
@@ -1688,7 +1689,7 @@ HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
     case FT_GROUP:
     {
       struct MUI_NListtree_TreeNode *tn_sub;
-      struct MUI_NListtree_TreeNode *tn_group = (struct MUI_NListtree_TreeNode *)xget(lv, MUIA_NListtree_Active);
+      struct MUI_NListtree_TreeNode *tn_group = folder->Treenode;
 
       // check if the active treenode is a list and if it is empty
       // we have to do this like the following because there is no other way to
@@ -1731,13 +1732,22 @@ HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
 
   if(delete_folder == TRUE)
   {
-    D(DBF_FOLDER, "deleting folder '%s'", GetCurrentFolder()->Name);
+    D(DBF_FOLDER, "deleting folder '%s'", folder->Name);
 
     // remove the entry from the listtree now
     DoMethod(lv, MUIM_NListtree_Remove, MUIV_NListtree_Remove_ListNode_Root, MUIV_NListtree_Remove_TreeNode_Active, MUIF_NONE);
 
-    // Save the Tree to the folder config now
+    // save the Tree to the folder config now
     FO_SaveTree();
+	
+	// remove the folder from the global folder list
+    LockFolderList(G->folders);
+	RemoveFolderNode(G->folders, fnode);
+    UnlockFolderList(G->folders);
+
+    // finally free all the memory
+	DeleteFolderNode(fnode);
+	FreeFolder(folder);
 
     // update the statistics in case the just deleted folder contained new or unread mail
     DisplayStatistics(NULL, TRUE);

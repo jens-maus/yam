@@ -11,6 +11,8 @@ $URL$
     action will be applied during startup only and not upon every index reload
     operation as this will happen more than once with automatic index flushing
     now and hence produce unreliable results.
+  * YAM_FO.c: deleting a folder will now immediately free all memory occupied
+    by the folder.
 
 2012-02-24 Alper Sönmez <amithlondestek@gmail.com>
 
