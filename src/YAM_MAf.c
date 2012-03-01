@@ -197,11 +197,16 @@ BOOL MA_PromptFolderPassword(struct Folder *fo, APTR win)
 //  Avoids invalid status values
 static void MA_ValidateStatus(struct Folder *folder)
 {
+  BOOL outgoing;
+  BOOL sent;
+
   ENTER();
 
-  if(C->UpdateNewMail == TRUE  ||
-     isOutgoingFolder(folder)  ||
-     isSentFolder(folder))
+  outgoing = isOutgoingFolder(folder);
+  sent = isSentFolder(folder);
+
+  // mark new mails as unread during the startup phase only, but not upon reloading a folder index
+  if(outgoing == TRUE || sent == TRUE || (C->UpdateNewMail == TRUE && G->InStartupPhase == TRUE))
   {
     struct MailNode *mnode;
 
@@ -215,9 +220,9 @@ static void MA_ValidateStatus(struct Folder *folder)
 
       if(hasStatusNew(mail))
       {
-        if(isOutgoingFolder(folder))
+        if(outgoing == TRUE)
           setStatusToQueued(mail);
-        else if(isSentFolder(folder))
+        else if(sent == TRUE)
           setStatusToSent(mail);
         else
           setStatusToUnread(mail);
