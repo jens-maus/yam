@@ -764,8 +764,6 @@ static BOOL MA_FlushIndex(struct Folder *folder, time_t minAccessTime)
     ClearFolderMails(folder, FALSE);
     folder->LoadedMode = LM_FLUSHED;
     CLEAR_FLAG(folder->Flags, FOFL_FREEXS);
-    // reset the New counter
-    folder->New = 0;
 
     flushed = TRUE;
   }

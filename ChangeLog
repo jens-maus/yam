@@ -13,6 +13,7 @@ $URL$
     now and hence produce unreliable results.
   * YAM_FO.c: deleting a folder will now immediately free all memory occupied
     by the folder.
+  * YAM_MAf.c: don't reset the folder's new mail counter upon index flushing.
 
 2012-02-24 Alper Sönmez <amithlondestek@gmail.com>
 
