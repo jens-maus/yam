@@ -1239,7 +1239,7 @@ HOOKPROTONHNO(FI_OpenFunc, void, LONG *arg)
 
     // formerly a folder was marked to be searched in only if one was given
     // as this is quite unintuitive we now fall back to the current folder
-    if(selectFolder == NULL)
+    if(selectFolder == NULL && (struct MUI_NListtree_TreeNode *)xget(G->FI->GUI.LV_FOLDERS, MUIA_NListtree_Active) == NULL)
       selectFolder = GetCurrentFolder();
 
     if(selectFolder != NULL)
