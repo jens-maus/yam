@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-03-20 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_FI.c: opening the search window from the toolbar or the global menu will
+    now use the current folder as default folder to be searched in. Having no
+    folder to be searched in is quite unintuitive and leads to confusion if the
+    user is sure that some mails must be found but don't get found as YAM does
+    not search anywhere. This closes #289.
+
 2012-03-01 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MAf.c: if "mark new mail as unread" is selected as startup option this

@@ -1237,8 +1237,11 @@ HOOKPROTONHNO(FI_OpenFunc, void, LONG *arg)
   {
     struct Folder *selectFolder = (struct Folder *)arg[0];
 
-    // make sure to select the Folder in case the pointer
-    // was passed to this function
+    // formerly a folder was marked to be searched in only if one was given
+    // as this is quite unintuitive we now fall back to the current folder
+    if(selectFolder == NULL)
+      selectFolder = GetCurrentFolder();
+
     if(selectFolder != NULL)
     {
       struct MUI_NListtree_TreeNode *tn;
