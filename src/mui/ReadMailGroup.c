@@ -134,7 +134,7 @@ enum { RMEN_HSHORT=100, RMEN_HFULL, RMEN_SNONE, RMEN_SDATA, RMEN_SFULL, RMEN_SIM
 /* Hooks */
 /// TextEditDoubleClickHook
 //  Handles double-clicks on an URL
-HOOKPROTONH(TextEditDoubleClickFunc, BOOL, Object *editor, struct ClickMessage *clickmsg)
+HOOKPROTONHNO(TextEditDoubleClickFunc, BOOL, struct ClickMessage *clickmsg)
 {
   BOOL result = FALSE;
 
@@ -167,10 +167,14 @@ HOOKPROTONH(TextEditDoubleClickFunc, BOOL, Object *editor, struct ClickMessage *
 
       *(++p) = '\0';
 
+      SHOWSTRING(DBF_GUI, surl);
+
       // now we start our quick lexical analysis to find a clickable element within
       // the doubleclick area
       if((type = ExtractURL(surl, &url)) != 0)
       {
+      	SHOWSTRING(DBF_GUI, url);
+
         switch(type)
         {
           case tEMAIL:
