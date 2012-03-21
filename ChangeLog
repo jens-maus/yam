@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-03-21 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/ReadMailGroup.c: removed a no longer needed version check for V15.26+ of
+    TextEditor.mcc as V15.37 is currently the required minimum version.
+
 2012-03-20 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_FI.c: opening the search window from the toolbar or the global menu will
@@ -96,7 +101,7 @@ $URL$
     a base class for the folder listtree and changed the old
     FolderRequestList class to a Listtree class. In addition,
     MainFolderListtree is also now derived from the new
-    FolderListtree class. In the end, this change allowed to 
+    FolderListtree class. In the end, this change allowed to
     use a listtree rather than a plain list for the folder
     request window. Thus, this should close #136.
 
