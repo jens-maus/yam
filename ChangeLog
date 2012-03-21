@@ -5,11 +5,6 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
-2012-03-21 Thore Böckelmann <tboeckel@gmx.de>
-
-  * Makefile: added and extended some rules to allow parallel builds, i.e. make
-    -j4 all
-
 2012-03-20 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_FI.c: opening the search window from the toolbar or the global menu will
