@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-03-30 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/MainMailList.c: don't create a bubble help string in case the list is
+    disabled (i.e. a folder group is selected).
+
 2012-03-21 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/ReadMailGroup.c: removed a no longer needed version check for V15.26+ of

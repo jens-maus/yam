@@ -797,42 +797,49 @@ OVERLOAD(MUIM_ContextMenuChoice)
 ///
 /// OVERLOAD(MUIM_CreateShortHelp)
 // set up a text for the bubble help
+extern void kprintf(const char *fmt,...);
 OVERLOAD(MUIM_CreateShortHelp)
 {
   struct MUIP_CreateShortHelp *csh = (struct MUIP_CreateShortHelp *)msg;
-  struct MUI_NList_TestPos_Result res;
   char *shortHelp = NULL;
 
   ENTER();
 
-  DoMethod(obj, MUIM_NList_TestPos, csh->mx, csh->my, &res);
-  if(res.entry != -1)
+  // don't create a help text in case we are disabled
+  if(xget(obj, MUIA_Disabled) == FALSE)
   {
-    struct Mail *mail;
+    struct MUI_NList_TestPos_Result res;
 
-    DoMethod(obj, MUIM_NList_GetEntry, res.entry, &mail);
-    if(mail != NULL)
+    DoMethod(obj, MUIM_NList_TestPos, csh->mx, csh->my, &res);
+    if(res.entry != -1)
     {
-      char datestr[64];
-      char sizestr[SIZE_DEFAULT];
+      struct Mail *mail;
 
-      // convert the datestamp of the mail to
-      // well defined string
-      DateStamp2String(datestr, sizeof(datestr), &mail->Date, (C->DSListFormat == DSS_DATEBEAT || C->DSListFormat == DSS_RELDATEBEAT) ? DSS_DATEBEAT : DSS_DATETIME, TZC_LOCAL);
-
-      // use FormatSize() to prettify the size display of the mail info
-      FormatSize(mail->Size, sizestr, sizeof(sizestr), SF_AUTO);
-
-      if(asprintf(&shortHelp, tr(MSG_MAILINFO_SHORTHELP), mail->From.RealName,
-                                                          mail->From.Address,
-                                                          mail->To.RealName,
-                                                          mail->To.Address,
-                                                          mail->Subject,
-                                                          datestr,
-                                                          mail->MailFile,
-                                                          sizestr) == -1)
+      DoMethod(obj, MUIM_NList_GetEntry, res.entry, &mail);
+      if(mail != NULL)
       {
-        shortHelp = NULL;
+        char datestr[64];
+        char sizestr[SIZE_DEFAULT];
+
+        // convert the datestamp of the mail to
+        // well defined string
+        DateStamp2String(datestr, sizeof(datestr), &mail->Date, (C->DSListFormat == DSS_DATEBEAT || C->DSListFormat == DSS_RELDATEBEAT) ? DSS_DATEBEAT : DSS_DATETIME, TZC_LOCAL);
+
+        // use FormatSize() to prettify the size display of the mail info
+        FormatSize(mail->Size, sizestr, sizeof(sizestr), SF_AUTO);
+
+        if(asprintf(&shortHelp, tr(MSG_MAILINFO_SHORTHELP), mail->From.RealName,
+                                                            mail->From.Address,
+                                                            mail->To.RealName,
+                                                            mail->To.Address,
+                                                            mail->Subject,
+                                                            datestr,
+                                                            mail->MailFile,
+                                                            sizestr) == -1)
+        {
+          // string formatting failed
+          shortHelp = NULL;
+        }
       }
     }
   }
