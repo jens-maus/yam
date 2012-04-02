@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-04-02 Jens Langner <Jens.Langner@light-speed.de>
+
+  * Makefile: removed all -funroll-loops flags as it does no good and might
+    in fact create some problems as known by the GCC guys. So better fully
+    rely on GCC doing it for us and not forcing loop unrolling under all
+    circumstances.
+
 2012-03-30 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/MainMailList.c: don't create a bubble help string in case the list is
