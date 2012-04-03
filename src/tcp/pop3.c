@@ -469,13 +469,13 @@ static BOOL GetMessageList(struct TransferContext *tc)
             TRF_TRANSFER|TRF_DELETE,
             TRF_TRANSFER|TRF_DELETE,
             TRF_NONE,
-            TRF_TRANSFER|TRF_PRESELECT,
+            TRF_TRANSFER|TRF_PRESELECT|TRF_SIZE_EXCEEDED,
             TRF_NONE,
-            TRF_TRANSFER|TRF_DELETE|TRF_PRESELECT,
+            TRF_TRANSFER|TRF_DELETE|TRF_PRESELECT|TRF_SIZE_EXCEEDED,
             TRF_PRESELECT,
-            TRF_TRANSFER|TRF_PRESELECT,
+            TRF_TRANSFER|TRF_PRESELECT|TRF_SIZE_EXCEEDED,
             TRF_PRESELECT,
-            TRF_TRANSFER|TRF_DELETE|TRF_PRESELECT
+            TRF_TRANSFER|TRF_DELETE|TRF_PRESELECT|TRF_SIZE_EXCEEDED
           };
           int tflags;
 
@@ -1461,7 +1461,7 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
                   // connection succeeded
                   success = TRUE;
 
-                  // but we continue only if there is something to download
+                  // but we continue only if there is something to be downloaded at all
                   if(msgs > 0)
                   {
                     // there are messages on the server
@@ -1503,7 +1503,12 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
                           if(ThreadWasAborted() == FALSE)
                           {
                             // scan the list for the first mail to be transferred
-                            ScanMailTransferList(tc->transferList, TRF_TRANSFER, &tc->firstToPreselect);
+							tc->firstToPreselect = -1;
+							// first try to find a mail that exceeds the automatic download size limitation
+							ScanMailTransferList(tc->transferList, TRF_SIZE_EXCEEDED, &tc->firstToPreselect);
+							// then fall back to the first mail to be preselected
+							if(tc->firstToPreselect < 0)
+                              ScanMailTransferList(tc->transferList, TRF_TRANSFER, &tc->firstToPreselect);
 
                             if((mustWait = GetAllMessageDetails(tc)) != 0)
                             {

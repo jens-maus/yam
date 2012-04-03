@@ -168,7 +168,6 @@ BOOL ScanMailTransferList(const struct MailTransferList *tlist, const ULONG flag
     i++;
   }
 
-
   RETURN(found);
   return found;
 }

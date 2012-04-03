@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-04-03 Thore Böckelmann <tboeckel@gmx.de>
+
+  * tcp/pop3.c: the preselection window will now favour the first mail which
+    exceeds the download size limitation over the first to be downloaded mail.
+    This has the advantage that the corresponding mail is immediately made
+    visible and is not hidden somewhere below if there is a download size
+    limitation and a mail exceeds this limit.
+
 2012-04-02 Jens Langner <Jens.Langner@light-speed.de>
 
   * Makefile: removed all -funroll-loops flags as it does no good and might
