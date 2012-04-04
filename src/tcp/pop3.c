@@ -1486,7 +1486,7 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
                         FilterDuplicates(tc);
 
                       // check the list of mails if some kind of preselection is required
-                      if(isFlagSet(tc->flags, RECEIVEF_USER) && ScanMailTransferList(tc->transferList, TRF_PRESELECT, NULL) == TRUE)
+                      if(isFlagSet(tc->flags, RECEIVEF_USER) && ScanMailTransferList(tc->transferList, TRF_PRESELECT, TRUE, NULL) == TRUE)
                       {
                         // show the preselection window in case user interaction is requested
                         D(DBF_NET, "preselection is required");
@@ -1504,11 +1504,12 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
                           {
                             // scan the list for the first mail to be transferred
 							tc->firstToPreselect = -1;
-							// first try to find a mail that exceeds the automatic download size limitation
-							ScanMailTransferList(tc->transferList, TRF_SIZE_EXCEEDED, &tc->firstToPreselect);
+							// first try to find a to be downloaded mail that exceeds
+							// the automatic download size limitation
+							ScanMailTransferList(tc->transferList, TRF_TRANSFER|TRF_SIZE_EXCEEDED, TRUE, &tc->firstToPreselect);
 							// then fall back to the first mail to be preselected
 							if(tc->firstToPreselect < 0)
-                              ScanMailTransferList(tc->transferList, TRF_TRANSFER, &tc->firstToPreselect);
+                              ScanMailTransferList(tc->transferList, TRF_TRANSFER, TRUE, &tc->firstToPreselect);
 
                             if((mustWait = GetAllMessageDetails(tc)) != 0)
                             {
@@ -1537,7 +1538,7 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
                       }
 
                       // is there anything left to transfer or delete?
-                      if(ThreadWasAborted() == FALSE && doDownload == TRUE && ScanMailTransferList(tc->transferList, TRF_TRANSFER|TRF_DELETE, NULL) == TRUE)
+                      if(ThreadWasAborted() == FALSE && doDownload == TRUE && ScanMailTransferList(tc->transferList, TRF_TRANSFER|TRF_DELETE, FALSE, NULL) == TRUE)
                       {
                         SumUpMails(tc);
                         PushMethodOnStack(tc->transferGroup, 3, MUIM_TransferControlGroup_Start, tc->numberOfMails, tc->totalSize);

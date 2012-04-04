@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-04-04 Thore Böckelmann <tboeckel@gmx.de>
+
+  * tcp/pop3, MailTransferList.c: reworked the preselection to start the list
+    at the first to be downloaded mail which exceeds the size limit. Before
+    YAM always started at the first big mail, even if that one had been down-
+    loaded before already.
+
 2012-04-03 Thore Böckelmann <tboeckel@gmx.de>
 
   * tcp/pop3.c: the preselection window will now favour the first mail which
