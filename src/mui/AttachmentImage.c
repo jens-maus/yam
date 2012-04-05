@@ -38,6 +38,7 @@
 
 #include "SDI_hook.h"
 
+#include <math.h>
 #include <stdlib.h>
 #include <string.h>
 #include <workbench/icon.h>
@@ -81,6 +82,7 @@ struct Data
 
   BOOL lastDecodedStatus;
   BOOL eventHandlerAdded;
+  BOOL isAfAOSIconLib;
 
   ULONG selectSecs;
   ULONG selectMicros;
@@ -168,6 +170,41 @@ static BOOL FindWriteWindow(struct Window *win)
   return found;
 }
 ///
+/// UnloadImage
+// unload and free all memory of a formerly loaded image
+static void UnloadImage(struct Data *data)
+{
+  if(data->normalBitMap != NULL)
+  {
+    FreeBitMap(data->normalBitMap);
+    data->normalBitMap = NULL;
+  }
+
+  if(data->normalBitMask != NULL)
+  {
+    FreeBitMap(data->normalBitMask);
+    data->normalBitMask = NULL;
+  }
+
+  if(data->selectedBitMap != NULL)
+  {
+    FreeBitMap(data->selectedBitMap);
+    data->selectedBitMap = NULL;
+  }
+
+  if(data->selectedBitMask != NULL)
+  {
+    FreeBitMap(data->selectedBitMask);
+    data->selectedBitMask = NULL;
+  }
+
+  if(data->diskObject != NULL)
+  {
+    FreeDiskObject(data->diskObject);
+    data->diskObject = NULL;
+  }
+}
+///
 /// LoadImage
 // function that (re)loads the images for both selected and unselected
 // state
@@ -186,35 +223,7 @@ static void LoadImage(Object *obj, struct Data *data)
     struct Rectangle sizeBounds;
 
     // we first make sure we have freed everything
-    if(data->normalBitMap)
-    {
-      FreeBitMap(data->normalBitMap);
-      data->normalBitMap = NULL;
-    }
-
-    if(data->normalBitMask)
-    {
-      FreeBitMap(data->normalBitMask);
-      data->normalBitMask = NULL;
-    }
-
-    if(data->selectedBitMap)
-    {
-      FreeBitMap(data->selectedBitMap);
-      data->selectedBitMap = NULL;
-    }
-
-    if(data->selectedBitMask)
-    {
-      FreeBitMap(data->selectedBitMask);
-      data->selectedBitMask = NULL;
-    }
-
-    if(data->diskObject)
-    {
-      FreeDiskObject(data->diskObject);
-      data->diskObject = NULL;
-    }
+    UnloadImage(data);
 
     // Set up the minimum and maximum sizes for the icons to take the dirty work
     // of scaling the icon images to the required size from us.
@@ -316,6 +325,7 @@ static void LoadImage(Object *obj, struct Data *data)
       ULONG orgWidth;
       ULONG orgHeight;
       ULONG screenDepth = GetBitMapAttr(screenBitMap, BMA_DEPTH);
+      struct DrawInfo *dri = GetScreenDrawInfo(_screen(obj));
 
       // prepare the drawIcon/GetIconRentagle tags
 
@@ -324,10 +334,11 @@ static void LoadImage(Object *obj, struct Data *data)
       #define ICONDRAWA_Transparency TAG_IGNORE
       #endif
 
-      struct TagItem drawIconTags[] = { { ICONDRAWA_Borderless,      TRUE  },
-                                        { ICONDRAWA_Frameless,       TRUE  },
-                                        { ICONDRAWA_Transparency,    255   },
-                                        { TAG_DONE,                  FALSE } };
+      struct TagItem drawIconTags[] = { { ICONDRAWA_Borderless,      TRUE       },
+                                        { ICONDRAWA_Frameless,       TRUE       },
+                                        { ICONDRAWA_Transparency,    255        },
+                                        { ICONDRAWA_DrawInfo,        (ULONG)dri },
+                                        { TAG_DONE,                  FALSE      } };
 
       // if this is an alternative part we draw it with
       // transparency of 50%
@@ -359,8 +370,8 @@ static void LoadImage(Object *obj, struct Data *data)
       }
       else
       {
-        orgWidth  = ((struct Image*)diskObject->do_Gadget.GadgetRender)->Width + 1;
-        orgHeight = ((struct Image*)diskObject->do_Gadget.GadgetRender)->Height + 1;
+        orgWidth  = ((struct Image*)diskObject->do_Gadget.GadgetRender)->Width;
+        orgHeight = ((struct Image*)diskObject->do_Gadget.GadgetRender)->Height;
 
         normalBitMask = NULL;
         selectedBitMask = NULL;
@@ -377,17 +388,17 @@ static void LoadImage(Object *obj, struct Data *data)
         // prepare the rastport for drawing the icon in it
         rp.BitMap = orgBitMap;
 
-        if(LIB_VERSION_IS_AT_LEAST(IconBase, 44, 0) == TRUE)
+        if(LIB_VERSION_IS_AT_LEAST(IconBase, 44, 0) == TRUE && data->isAfAOSIconLib == FALSE)
           DrawIconStateA(&rp, diskObject, NULL, 0, 0, IDS_SELECTED, drawIconTags);
         else
         {
-          if(diskObject->do_Gadget.Flags & GFLG_GADGHIMAGE)
-            DrawImage(&rp, ((struct Image*)diskObject->do_Gadget.SelectRender), 0, 0);
+          if(isFlagSet(diskObject->do_Gadget.Flags, GFLG_GADGHIMAGE))
+            DrawImage(&rp, ((struct Image *)diskObject->do_Gadget.SelectRender), 0, 0);
           else
-            DrawImage(&rp, ((struct Image*)diskObject->do_Gadget.GadgetRender), 0, 0);
+            DrawImage(&rp, ((struct Image *)diskObject->do_Gadget.GadgetRender), 0, 0);
         }
 
-        // calculate the scale factors now that we have fillup our source bitmap
+        // calculate the scale factors now that we have filled up our source bitmap
         if((scaleHeightDiff > 0 && data->maxHeight > 0) ||
            (scaleWidthDiff > 0 && data->maxWidth > 0))
         {
@@ -397,14 +408,14 @@ static void LoadImage(Object *obj, struct Data *data)
           if(scaleHeightDiff > scaleWidthDiff)
           {
             scaleFactor = (double)orgWidth / (double)orgHeight;
-            newWidth = scaleFactor * data->maxHeight + 0.5; // roundup the value
+            newWidth = lrint(scaleFactor * data->maxHeight + 0.5); // round up the value
             newHeight = data->maxHeight;
           }
           else
           {
             scaleFactor = (double)orgHeight / (double)orgWidth;
             newWidth = data->maxWidth;
-            newHeight = scaleFactor * data->maxWidth + 0.5; // roundup the value
+            newHeight = lrint(scaleFactor * data->maxWidth + 0.5); // round up the value
           }
         }
         else
@@ -487,10 +498,10 @@ static void LoadImage(Object *obj, struct Data *data)
 
         // now that we have the selectedBitMap filled we have to scale down the unselected state
         // of the icon as well.
-        if(LIB_VERSION_IS_AT_LEAST(IconBase, 44, 0) == TRUE)
+        if(LIB_VERSION_IS_AT_LEAST(IconBase, 44, 0) == TRUE && data->isAfAOSIconLib == FALSE)
           DrawIconStateA(&rp, diskObject, NULL, 0, 0, IDS_NORMAL, drawIconTags);
         else
-          DrawImage(&rp, ((struct Image*)diskObject->do_Gadget.GadgetRender), 0, 0);
+          DrawImage(&rp, ((struct Image *)diskObject->do_Gadget.GadgetRender), 0, 0);
 
         // now we can allocate a new bitmap which should carry the scaled unselected normal image
         if((data->normalBitMap = AllocBitMap(newWidth, newHeight, screenDepth, BMF_CLEAR | BMF_MINPLANES, orgBitMap)) != NULL)
@@ -565,6 +576,9 @@ static void LoadImage(Object *obj, struct Data *data)
           data->normalBitMask = NULL;
 
         FreeBitMap(orgBitMap);
+
+        if(dri != NULL)
+          FreeScreenDrawInfo(_screen(obj), dri);
       }
     }
     else
@@ -606,6 +620,17 @@ OVERLOAD(OM_NEW)
         case ATTR(Group)     : data->attachmentGroup = (Object *)tag->ti_Data; break;
       }
     }
+
+    #if defined(__amigaos3__)
+    // Check if the AfAOS replacement of icon.library is available.
+    // This patch has a broken DrawImageState() implementation which
+    // might cause crashes on some systems due to memory trashing,
+    // at least on my WinUAE system.
+    // This library has a version of 53.4, but an ID string containing a
+    // version number of 45.4. Very strange!
+    if(IconBase != NULL && LIB_VERSION_IS_AT_LEAST(IconBase, 44, 0) == TRUE && strstr(IconBase->lib_IdString, "45.4") != NULL)
+      data->isAfAOSIconLib = TRUE;
+    #endif
   }
 
   RETURN((IPTR)obj);
@@ -708,35 +733,7 @@ OVERLOAD(MUIM_Cleanup)
     data->eventHandlerAdded = FALSE;
   }
 
-  if(data->normalBitMap != NULL)
-  {
-    FreeBitMap(data->normalBitMap);
-    data->normalBitMap = NULL;
-  }
-
-  if(data->normalBitMask != NULL)
-  {
-    FreeBitMap(data->normalBitMask);
-    data->normalBitMask = NULL;
-  }
-
-  if(data->selectedBitMap != NULL)
-  {
-    FreeBitMap(data->selectedBitMap);
-    data->selectedBitMap = NULL;
-  }
-
-  if(data->selectedBitMask != NULL)
-  {
-    FreeBitMap(data->selectedBitMask);
-    data->selectedBitMask = NULL;
-  }
-
-  if(data->diskObject != NULL)
-  {
-    FreeDiskObject(data->diskObject);
-    data->diskObject = NULL;
-  }
+  UnloadImage(data);
 
   result = DoSuperMethodA(cl, obj, msg);
 

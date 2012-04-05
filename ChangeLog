@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-04-05 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/AttachmentImage.c: cleaned up source a bit. Also fixed a very bad crash
+    which happened on AmigaOS3 if icon.library of AfAOS is used. This one seems
+    to trash memory during DrawIconStateA() which then more sooner than later
+    causes crashes. If this version is found then YAM will fall back to the old
+    planar icons. This might look very ugly, but this is still better than
+    getting constant crashes if a mail has some attachments.
+
 2012-04-04 Thore Böckelmann <tboeckel@gmx.de>
 
   * tcp/pop3, MailTransferList.c: reworked the preselection to start the list
