@@ -33,7 +33,7 @@ CC = gcc
 RM = rm -f
 
 OBJS = gc.o lists.o crc32.o
-CFLAGS = -O3 -funroll-loops -fomit-frame-pointer -W -Wall -pedantic -Wno-strict-aliasing
+CFLAGS = -O3  -fomit-frame-pointer -W -Wall -pedantic -Wno-strict-aliasing
 
 .PHONY: clean
 
