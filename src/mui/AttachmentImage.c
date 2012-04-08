@@ -408,14 +408,14 @@ static void LoadImage(Object *obj, struct Data *data)
           if(scaleHeightDiff > scaleWidthDiff)
           {
             scaleFactor = (double)orgWidth / (double)orgHeight;
-            newWidth = lrint(scaleFactor * data->maxHeight + 0.5); // round up the value
+            newWidth = (scaleFactor * data->maxHeight) + 0.5; // round up the value
             newHeight = data->maxHeight;
           }
           else
           {
             scaleFactor = (double)orgHeight / (double)orgWidth;
             newWidth = data->maxWidth;
-            newHeight = lrint(scaleFactor * data->maxWidth + 0.5); // round up the value
+            newHeight = (scaleFactor * data->maxWidth) + 0.5; // round up the value
           }
         }
         else

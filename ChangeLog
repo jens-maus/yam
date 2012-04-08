@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-04-08 Jens Langner <Jens.Langner@light-speed.de>
+
+  * mui/AttachmentImage.c: removed lrint() usage to round value as this operation
+    is not what we want. lrint() rounds to nearest even integer rather than simply
+    rounding to next integer which a simple +0.5 does.
+
 2012-04-05 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/AttachmentImage.c: cleaned up source a bit. Also fixed a very bad crash
