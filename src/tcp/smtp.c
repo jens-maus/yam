@@ -27,6 +27,7 @@
 
 #include <ctype.h>
 #include <string.h>
+#include <unistd.h>
 
 #include <clib/alib_protos.h>
 #include <proto/exec.h>
@@ -319,6 +320,14 @@ static BOOL ConnectToSMTP(struct TransferContext *tc)
   {
     ULONG flags = 0;
     char *resp = NULL;
+    char hostName[256];
+
+    // before we go on we retrieve the FQDN of the machine we are sending the
+    // email from
+    if(gethostname(hostName, sizeof(hostName)-1) == 0)
+      hostName[sizeof(hostName)-1] = '\0'; // gethostname() may have returned 255 chars (man page)
+    else
+      hostName[0] = '\0'; // gethostname() failed: pretend empty string
 
     // per default we flag the SMTP to be capable of an ESMTP
     // connection.
@@ -332,12 +341,12 @@ static BOOL ConnectToSMTP(struct TransferContext *tc)
     // in case we require SMTP-AUTH or a TLS secure connection we
     // have to force an ESMTP connection
     if(hasServerAuth(tc->msn) || hasServerTLS(tc->msn))
-      resp = SendSMTPCommand(tc, ESMTP_EHLO, tc->msn->domain, tr(MSG_ER_BADRESPONSE_SMTP));
+      resp = SendSMTPCommand(tc, ESMTP_EHLO, hostName, tr(MSG_ER_BADRESPONSE_SMTP));
     else
     {
       // in all other cases, we first try to get an ESMTP connection
       // and if that doesn't work we go and do a normal SMTP connection
-      if((resp = SendSMTPCommand(tc, ESMTP_EHLO, tc->msn->domain, NULL)) == NULL)
+      if((resp = SendSMTPCommand(tc, ESMTP_EHLO, hostName, NULL)) == NULL)
       {
         D(DBF_NET, "ESMTP negotation failed, trying normal SMTP negotation");
 
@@ -347,7 +356,7 @@ static BOOL ConnectToSMTP(struct TransferContext *tc)
 
         // now we send a HELO command which signals we are not
         // going to use any ESMTP stuff
-        resp = SendSMTPCommand(tc, SMTP_HELO, tc->msn->domain, tr(MSG_ER_BADRESPONSE_SMTP));
+        resp = SendSMTPCommand(tc, SMTP_HELO, hostName, tr(MSG_ER_BADRESPONSE_SMTP));
 
         // signal we are not into ESMTP stuff
         CLEAR_FLAG(flags, SMTP_FLG_ESMTP);
@@ -635,11 +644,18 @@ static BOOL InitSMTPAUTH(struct TransferContext *tc)
           }
           else
           {
-            W(DBF_NET, "'realm' not found in challenge, using '%s' instead", tc->msn->domain);
+            char hostName[256];
+
+            if(gethostname(hostName, sizeof(hostName)-1) == 0)
+              hostName[sizeof(hostName)-1] = '\0'; // gethostname() may have returned 255 chars (man page)
+            else
+              hostName[0] = '\0'; // gethostname() failed: pretend empty string
+
+            W(DBF_NET, "'realm' not found in challenge, using '%s' instead", hostName);
 
             // if the challenge doesn't have a "realm" we assume our
             // choosen SMTP domain to be the realm
-            realm = strdup(tc->msn->domain);
+            realm = strdup(hostName);
           }
 
           D(DBF_NET, "realm: '%s'", realm);

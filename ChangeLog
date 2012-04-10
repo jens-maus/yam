@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-04-10 Jens Langner <Jens.Langner@light-speed.de>
+
+  * tcp/smtp.c, YAM_RE.c: gethostname() is now used instead of relying on the
+    user to specify a domain part in the SMTP configuration. In fact, according
+    to several RFCs talking on that matter, gethostname() should be more
+    appropriate than risking the user to enter a wrong domain entry in the
+    configuration.
+
 2012-04-08 Jens Langner <Jens.Langner@light-speed.de>
 
   * mui/AttachmentImage.c: removed lrint() usage to round value as this operation

@@ -28,6 +28,7 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include <clib/alib_protos.h>
 #include <clib/macros.h>
@@ -3594,11 +3595,19 @@ static void RE_SendMDN(const enum MDNMode mode,
         p2->ContentType = "message/disposition-notification";
         p2->Filename = tf2->Filename;
 
-        #warning "FIXME: fix for support of multiple SMTP servers missing"
         if((msn = GetMailServer(&C->mailServerList, MST_SMTP, 0)) != NULL)
         {
-          snprintf(buf, sizeof(buf), "%s; %s", msn->domain, yamversion);
-          //snprintf(buf, sizeof(buf), "%s; %s", C->SMTP_Domain, yamversion);
+          char hostName[256];
+
+          if(gethostname(hostName, sizeof(hostName)-1) == 0)
+            hostName[sizeof(hostName)-1] = '\0'; // gethostname() may have returned 255 chars (man page)
+          else
+            hostName[0] = '\0'; // gethostname() failed: pretend empty string
+
+          // according to RFC 3798 the Reporting-UA header of a MDN
+          // message should include the DNS-Name (hostname) of the
+          // machine that sends the MDN
+          snprintf(buf, sizeof(buf), "%s; %s", hostName, yamversion);
           EmitHeader(tf2->FP, "Reporting-UA", buf);
         }
 
