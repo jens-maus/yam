@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-04-11 Jens Langner <Jens.Langner@light-speed.de>
+
+  * Debug.c: implemented debug_files variable checking so that the debug framework
+    can now also be used to specify a number of filenames in the env variable for
+    which the debug output will be turned on.
+
 2012-04-10 Jens Langner <Jens.Langner@light-speed.de>
 
   * tcp/smtp.c, YAM_RE.c: gethostname() is now used instead of relying on the

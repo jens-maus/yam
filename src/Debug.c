@@ -427,6 +427,8 @@ void SetupDebug(void)
               _DBPRINTF("clear '%s' debug class flag.\n", dbclasses[i].token);
 
               CLEAR_FLAG(debug_classes, dbclasses[i].flag);
+
+              break;
             }
           }
         }
@@ -440,6 +442,8 @@ void SetupDebug(void)
               _DBPRINTF("set '%s' debug class flag\n", dbclasses[i].token);
 
               SET_FLAG(debug_classes, dbclasses[i].flag);
+
+              break;
             }
           }
         }
@@ -458,6 +462,8 @@ void SetupDebug(void)
               _DBPRINTF("clear '%s' debug flag\n", dbflags[i].token);
 
               CLEAR_FLAG(debug_flags, dbflags[i].flag);
+
+              break;
             }
           }
         }
@@ -492,6 +498,8 @@ void SetupDebug(void)
           }
           else
           {
+            int found=0;
+
             for(i=0; dbflags[i].token; i++)
             {
               if(strnicmp(s, dbflags[i].token, strlen(dbflags[i].token)) == 0)
@@ -499,7 +507,23 @@ void SetupDebug(void)
                 _DBPRINTF("set '%s' debug flag\n", dbflags[i].token);
 
                 SET_FLAG(debug_flags, dbflags[i].flag);
+
+                found=1;
+                break;
               }
+            }
+
+            if(found == 0)
+            {
+              // we haven't found the string as a debug flag
+              // so we go and add it to the debug_files string so
+              // that the user can define filenames to search for
+              if(debug_files[0] != '\0')
+                strlcat(debug_files, " ", sizeof(debug_files));
+
+              strlcat(debug_files, s, sizeof(debug_files));
+
+              _DBPRINTF("added '%s' debug files\n", s);
             }
           }
         }
