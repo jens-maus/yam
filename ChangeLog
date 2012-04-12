@@ -16,6 +16,8 @@ $URL$
     included. This is definitely a quirk of the MorphOS SDK.
   * extrasrc.h: added missing definition of NEED_STRCASESTR for the MorphOS
     build.
+  * extrasrc/gethostname.c: added a custom implementation of gethostname() for
+    the AROS build.
 
 2012-04-12 Jens Langner <Jens.Langner@light-speed.de>
 

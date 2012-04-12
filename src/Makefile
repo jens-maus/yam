@@ -333,6 +333,7 @@ ifeq ($(OS), aros-i386)
               SetProcWindow.o \
               asprintf.o \
               getdelim.o \
+              gethostname.o \
               memdup.o \
               stcgfe.o \
               strtok_r.o \
@@ -367,6 +368,7 @@ ifeq ($(OS), aros-ppc)
               SetProcWindow.o \
               asprintf.o \
               getdelim.o \
+              gethostname.o \
               memdup.o \
               stcgfe.o \
               strtok_r.o \
@@ -401,6 +403,7 @@ ifeq ($(OS), aros-x86_64)
               SetProcWindow.o \
               asprintf.o \
               getdelim.o \
+              gethostname.o \
               memdup.o \
               stcgfe.o \
               strtok_r.o \
@@ -435,6 +438,7 @@ ifeq ($(OS), aros-arm)
               SetProcWindow.o \
               asprintf.o \
               getdelim.o \
+              gethostname.o \
               memdup.o \
               stcgfe.o \
               strtok_r.o \
