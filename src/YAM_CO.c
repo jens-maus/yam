@@ -535,27 +535,34 @@ HOOKPROTONHNONP(CO_GetPOP3Entry, void)
 
   if(msn != NULL)
   {
-    nnset(gui->ST_POPACCOUNT,         MUIA_String_Contents, msn->account);
+    // all notifies here are nnset() notifies so that we don't trigger any additional
+    // notify or otherwise we would run into problems.
+
+    nnset(gui->CH_POPENABLED,         MUIA_Selected,        isServerActive(msn));
+    nnset(gui->ST_POPDESC,            MUIA_String_Contents, msn->description);
     nnset(gui->ST_POPHOST,            MUIA_String_Contents, msn->hostname);
     nnset(gui->ST_POPPORT,            MUIA_String_Integer,  msn->port);
     nnset(gui->ST_POPUSERID,          MUIA_String_Contents, msn->username);
     nnset(gui->ST_PASSWD,             MUIA_String_Contents, msn->password);
-    nnset(gui->CH_POPENABLED,         MUIA_Selected,        isServerActive(msn));
-    nnset(gui->CH_USEAPOP,            MUIA_Selected,        hasServerAPOP(msn));
     nnset(gui->CH_DOWNLOADONSTARTUP,  MUIA_Selected,        hasServerDownloadOnStartup(msn));
     nnset(gui->CH_APPLYREMOTEFILTERS, MUIA_Selected,        hasServerApplyRemoteFilters(msn));
     nnset(gui->CH_DELETE,             MUIA_Selected,        hasServerPurge(msn));
     nnset(gui->CY_PRESELECTION,       MUIA_Cycle_Active,    msn->preselection);
 
-    if(hasServerTLS(msn))
-      nnset(gui->RA_POP3SECURE, MUIA_Radio_Active, 1);
-    else if(hasServerSSL(msn))
-      nnset(gui->RA_POP3SECURE, MUIA_Radio_Active, 2);
+    if(hasServerAPOP(msn))
+      nnset(gui->CY_POPAUTH, MUIA_Cycle_Active, 1);
     else
-      nnset(gui->RA_POP3SECURE, MUIA_Radio_Active, 0);
+      nnset(gui->CY_POPAUTH, MUIA_Cycle_Active, 0);
+
+    if(hasServerTLS(msn))
+      nnset(gui->CY_POPSECURE, MUIA_Cycle_Active, 1);
+    else if(hasServerSSL(msn))
+      nnset(gui->CY_POPSECURE, MUIA_Cycle_Active, 2);
+    else
+      nnset(gui->CY_POPSECURE, MUIA_Cycle_Active, 0);
 
     // we have to enabled/disable the SSL support accordingly
-    set(gui->RA_POP3SECURE, MUIA_Disabled, G->TR_UseableTLS == FALSE);
+    set(gui->CY_POPSECURE, MUIA_Disabled, G->TR_UseableTLS == FALSE);
   }
 
   LEAVE();
@@ -582,10 +589,10 @@ HOOKPROTONHNONP(CO_PutPOP3Entry, void)
     {
       unsigned int oldSSLFlags = 0;
 
-      GetMUIString(msn->account,  gui->ST_POPACCOUNT, sizeof(msn->account));
-      GetMUIString(msn->hostname, gui->ST_POPHOST,    sizeof(msn->hostname));
-      GetMUIString(msn->username, gui->ST_POPUSERID,  sizeof(msn->username));
-      GetMUIString(msn->password, gui->ST_PASSWD,     sizeof(msn->password));
+      GetMUIString(msn->description,  gui->ST_POPDESC,    sizeof(msn->description));
+      GetMUIString(msn->hostname,     gui->ST_POPHOST,    sizeof(msn->hostname));
+      GetMUIString(msn->username,     gui->ST_POPUSERID,  sizeof(msn->username));
+      GetMUIString(msn->password,     gui->ST_PASSWD,     sizeof(msn->password));
       msn->preselection = GetMUICycle(gui->CY_PRESELECTION);
 
       if(GetMUICheck(gui->CH_POPENABLED) == TRUE)
@@ -593,10 +600,16 @@ HOOKPROTONHNONP(CO_PutPOP3Entry, void)
       else
         CLEAR_FLAG(msn->flags, MSF_ACTIVE);
 
-      if(GetMUICheck(gui->CH_USEAPOP) == TRUE)
-        SET_FLAG(msn->flags, MSF_APOP);
-      else
-        CLEAR_FLAG(msn->flags, MSF_APOP);
+      switch(GetMUICycle(gui->CY_POPAUTH))
+      {
+        case 1:
+          SET_FLAG(msn->flags, MSF_APOP);
+        break;
+
+        default:
+          CLEAR_FLAG(msn->flags, MSF_APOP);
+        break;
+      }
 
       if(GetMUICheck(gui->CH_DOWNLOADONSTARTUP) == TRUE)
         SET_FLAG(msn->flags, MSF_DOWNLOAD_ON_STARTUP);
@@ -615,15 +628,15 @@ HOOKPROTONHNONP(CO_PutPOP3Entry, void)
 
       // if the user hasn't yet entered an own account name or the default
       // account name is still present we go and set an automatic generated one
-      if(msn->account[0] == '\0' || strcmp(msn->account, tr(MSG_NewEntry)) == 0)
-        snprintf(msn->account, sizeof(msn->account), "%s@%s", msn->username, msn->hostname);
+      if(msn->description[0] == '\0' || strcmp(msn->description, tr(MSG_NewEntry)) == 0)
+        snprintf(msn->description, sizeof(msn->description), "%s@%s", msn->username, msn->hostname);
 
       // remember the current flags of the server
       oldSSLFlags = msn->flags;
 
-      switch(GetMUIRadio(gui->RA_POP3SECURE))
+      switch(GetMUICycle(gui->CY_POPSECURE))
       {
-        // TLSv1 secure connection
+        // TLSv1 secure connection (STARTTLS)
         case 1:
         {
           SET_FLAG(msn->flags, MSF_SEC_TLS);
@@ -631,7 +644,7 @@ HOOKPROTONHNONP(CO_PutPOP3Entry, void)
         }
         break;
 
-        // SSLv3 secure connection
+        // SSLv3 secure connection (SSL/TLS)
         case 2:
         {
           CLEAR_FLAG(msn->flags, MSF_SEC_TLS);
@@ -684,8 +697,8 @@ HOOKPROTONHNONP(CO_GetDefaultPOPFunc, void)
   {
     GetMUIString(msn->hostname, G->CO->GUI.ST_POPHOST0, sizeof(msn->hostname));
     GetMUIString(msn->password, G->CO->GUI.ST_PASSWD0, sizeof(msn->password));
-    if(msn->account[0] == '\0')
-      snprintf(msn->account, sizeof(msn->account), "%s@%s", msn->username, msn->hostname);
+    if(msn->description[0] == '\0')
+      snprintf(msn->description, sizeof(msn->description), "%s@%s", msn->username, msn->hostname);
 
     msn->port = 110;
   }
@@ -693,6 +706,241 @@ HOOKPROTONHNONP(CO_GetDefaultPOPFunc, void)
   LEAVE();
 }
 MakeHook(CO_GetDefaultPOPHook,CO_GetDefaultPOPFunc);
+
+///
+
+/**** SMTP servers ****/
+/// CO_GetSMTPEntry
+//  Fills form with data from selected list entry
+HOOKPROTONHNONP(CO_GetSMTPEntry, void)
+{
+  struct MailServerNode *msn = NULL;
+  struct CO_GUIData *gui = &G->CO->GUI;
+  LONG pos = MUIV_NList_GetPos_Start;
+
+  ENTER();
+
+  // get the currently selected SMTP server
+  DoMethod(gui->LV_SMTP, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &msn);
+
+  // make sure to disable GUI elements
+  if(msn == NULL || xget(gui->LV_SMTP, MUIA_NList_Entries) < 2)
+    set(gui->BT_SDEL, MUIA_Disabled, TRUE);
+  else
+    set(gui->BT_SDEL, MUIA_Disabled, FALSE);
+
+  if(msn != NULL)
+    DoMethod(gui->LV_SMTP, MUIM_NList_GetPos, msn, &pos);
+  else
+    pos = 0;
+
+  set(gui->BT_SMTPUP, MUIA_Disabled, pos == 0);
+  set(gui->BT_SMTPDOWN, MUIA_Disabled, pos == (LONG)xget(gui->LV_SMTP, MUIA_NList_Entries) - 1);
+
+  if(msn != NULL)
+  {
+    // all notifies here are nnset() notifies so that we don't trigger any additional
+    // notify or otherwise we would run into problems.
+
+    nnset(gui->CH_SMTPENABLED,   MUIA_Selected,        isServerActive(msn));
+    nnset(gui->ST_SMTPDESC,      MUIA_String_Contents, msn->description);
+    nnset(gui->ST_SMTPHOST,      MUIA_String_Contents, msn->hostname);
+    nnset(gui->ST_SMTPPORT,      MUIA_String_Integer,  msn->port);
+    nnset(gui->ST_SMTPAUTHUSER,  MUIA_String_Contents, msn->username);
+    nnset(gui->ST_SMTPAUTHPASS,  MUIA_String_Contents, msn->password);
+    nnset(gui->CH_SMTP8BIT,      MUIA_Selected,        hasServer8bit(msn));
+
+    xset(gui->CY_SMTPSECURE, MUIA_NoNotify,     TRUE,
+                             MUIA_Cycle_Active, MSF2SMTPSecMethod(msn),
+                             MUIA_Disabled,     G->TR_UseableTLS == FALSE);
+
+    nnset(gui->CY_SMTPAUTH, MUIA_Cycle_Active, hasServerAuth(msn) ? MSF2SMTPAuthMethod(msn)+1 : 0);
+    
+    set(gui->ST_SMTPAUTHUSER, MUIA_Disabled, hasServerAuth(msn) == FALSE);
+    set(gui->ST_SMTPAUTHPASS, MUIA_Disabled, hasServerAuth(msn) == FALSE);
+  }
+
+  LEAVE();
+}
+MakeHook(CO_GetSMTPEntryHook, CO_GetSMTPEntry);
+
+///
+/// CO_PutSMTPEntry
+//  Fills form data into selected list entry
+HOOKPROTONHNONP(CO_PutSMTPEntry, void)
+{
+  struct CO_GUIData *gui = &G->CO->GUI;
+  int p;
+
+  ENTER();
+
+  p = xget(gui->LV_SMTP, MUIA_NList_Active);
+  if(p != MUIV_NList_Active_Off)
+  {
+    struct MailServerNode *msn = NULL;
+
+    DoMethod(gui->LV_SMTP, MUIM_NList_GetEntry, p, &msn);
+    if(msn != NULL)
+    {
+      unsigned int oldSSLFlags = 0;
+
+      GetMUIString(msn->description,  gui->ST_SMTPDESC,    sizeof(msn->description));
+      GetMUIString(msn->hostname,     gui->ST_SMTPHOST,    sizeof(msn->hostname));
+      GetMUIString(msn->username,     gui->ST_SMTPAUTHUSER,sizeof(msn->username));
+      GetMUIString(msn->password,     gui->ST_SMTPAUTHPASS,sizeof(msn->password));
+
+      if(GetMUICheck(gui->CH_SMTPENABLED) == TRUE)
+        SET_FLAG(msn->flags, MSF_ACTIVE);
+      else
+        CLEAR_FLAG(msn->flags, MSF_ACTIVE);
+
+      // if the user hasn't yet entered an own account name or the default
+      // account name is still present we go and set an automatic generated one
+      if(msn->description[0] == '\0' || strcmp(msn->description, tr(MSG_NewEntry)) == 0)
+        snprintf(msn->description, sizeof(msn->description), "%s@%s", msn->username, msn->hostname);
+
+      if(GetMUICheck(gui->CH_SMTP8BIT) == TRUE)
+        SET_FLAG(msn->flags, MSF_ALLOW_8BIT);
+      else
+        CLEAR_FLAG(msn->flags, MSF_ALLOW_8BIT);
+
+      // remember the current flags of the server
+      oldSSLFlags = msn->flags;
+
+      switch(GetMUICycle(gui->CY_SMTPSECURE))
+      {
+        // TLSv1 secure connection (STARTTLS)
+        case 1:
+        {
+          SET_FLAG(msn->flags, MSF_SEC_TLS);
+          CLEAR_FLAG(msn->flags, MSF_SEC_SSL);
+        }
+        break;
+
+        // SSLv3 secure connection (SSL/TLS)
+        case 2:
+        {
+          CLEAR_FLAG(msn->flags, MSF_SEC_TLS);
+          SET_FLAG(msn->flags, MSF_SEC_SSL);
+        }
+        break;
+
+        // no secure connection
+        default:
+        {
+          CLEAR_FLAG(msn->flags, MSF_SEC_TLS);
+          CLEAR_FLAG(msn->flags, MSF_SEC_SSL);
+        }
+        break;
+      }
+
+      // check if the user changed something on the SSL/TLS options and
+      // update the port accordingly
+      if(oldSSLFlags != msn->flags)
+      {
+        if(hasServerSSL(msn) == TRUE)
+          nnset(gui->ST_SMTPPORT, MUIA_String_Integer, 465);
+        else
+          nnset(gui->ST_SMTPPORT, MUIA_String_Integer, 25);
+      }
+
+      // get port number
+      msn->port = GetMUIInteger(gui->ST_SMTPPORT);
+
+      switch(GetMUICycle(gui->CY_SMTPAUTH))
+      {
+        // No Authentication
+        case 0:
+        {
+          CLEAR_FLAG(msn->flags, MSF_AUTH);
+          CLEAR_FLAG(msn->flags, MSF_AUTH_AUTO);
+          CLEAR_FLAG(msn->flags, MSF_AUTH_DIGEST);
+          CLEAR_FLAG(msn->flags, MSF_AUTH_CRAM);
+          CLEAR_FLAG(msn->flags, MSF_AUTH_LOGIN);
+          CLEAR_FLAG(msn->flags, MSF_AUTH_PLAIN);
+        }
+        break;
+
+        // Auto
+        case 1:
+        {
+          SET_FLAG(msn->flags, MSF_AUTH);
+          SET_FLAG(msn->flags, MSF_AUTH_AUTO);
+          CLEAR_FLAG(msn->flags, MSF_AUTH_DIGEST);
+          CLEAR_FLAG(msn->flags, MSF_AUTH_CRAM);
+          CLEAR_FLAG(msn->flags, MSF_AUTH_LOGIN);
+          CLEAR_FLAG(msn->flags, MSF_AUTH_PLAIN);
+        }
+        break;
+
+        // DIGEST-MD5
+        case 2:
+        {
+          SET_FLAG(msn->flags, MSF_AUTH);
+          CLEAR_FLAG(msn->flags, MSF_AUTH_AUTO);
+          SET_FLAG(msn->flags, MSF_AUTH_DIGEST);
+          CLEAR_FLAG(msn->flags, MSF_AUTH_CRAM);
+          CLEAR_FLAG(msn->flags, MSF_AUTH_LOGIN);
+          CLEAR_FLAG(msn->flags, MSF_AUTH_PLAIN);
+        }
+        break;
+
+        // CRAM-MD5
+        case 3:
+        {
+          SET_FLAG(msn->flags, MSF_AUTH);
+          CLEAR_FLAG(msn->flags, MSF_AUTH_AUTO);
+          CLEAR_FLAG(msn->flags, MSF_AUTH_DIGEST);
+          SET_FLAG(msn->flags, MSF_AUTH_CRAM);
+          CLEAR_FLAG(msn->flags, MSF_AUTH_LOGIN);
+          CLEAR_FLAG(msn->flags, MSF_AUTH_PLAIN);
+        }
+        break;
+
+        // LOGIN
+        case 4:
+        {
+          SET_FLAG(msn->flags, MSF_AUTH);
+          CLEAR_FLAG(msn->flags, MSF_AUTH_AUTO);
+          CLEAR_FLAG(msn->flags, MSF_AUTH_DIGEST);
+          CLEAR_FLAG(msn->flags, MSF_AUTH_CRAM);
+          SET_FLAG(msn->flags, MSF_AUTH_LOGIN);
+          CLEAR_FLAG(msn->flags, MSF_AUTH_PLAIN);
+        }
+        break;
+
+        // PLAIN
+        case 5:
+        {
+          SET_FLAG(msn->flags, MSF_AUTH);
+          CLEAR_FLAG(msn->flags, MSF_AUTH_AUTO);
+          CLEAR_FLAG(msn->flags, MSF_AUTH_DIGEST);
+          CLEAR_FLAG(msn->flags, MSF_AUTH_CRAM);
+          CLEAR_FLAG(msn->flags, MSF_AUTH_LOGIN);
+          SET_FLAG(msn->flags, MSF_AUTH_PLAIN);
+        }
+        break;
+      }
+
+      if(GetMUICycle(gui->CY_SMTPAUTH) > 0)
+      {
+        set(gui->ST_SMTPAUTHUSER, MUIA_Disabled, FALSE);
+        set(gui->ST_SMTPAUTHPASS, MUIA_Disabled, FALSE);
+      }
+      else
+      {
+        set(gui->ST_SMTPAUTHUSER, MUIA_Disabled, TRUE);
+        set(gui->ST_SMTPAUTHPASS, MUIA_Disabled, TRUE);
+      }
+
+      // redraw the list
+      DoMethod(gui->LV_SMTP, MUIM_NList_Redraw, p);
+    }
+  }
+
+  LEAVE();
+}
+MakeHook(CO_PutSMTPEntryHook, CO_PutSMTPEntry);
 
 ///
 
@@ -1507,8 +1755,8 @@ void CO_Validate(struct Config *co, BOOL update)
           if(msn->username[0] == '\0')
             strlcpy(msn->username, co->EmailAddress, p ? (unsigned int)(p - co->EmailAddress + 1) : sizeof(msn->username));
 
-          if(msn->account[0] == '\0')
-            snprintf(msn->account, sizeof(msn->account), "%s@%s", msn->username, msn->hostname);
+          if(msn->description[0] == '\0')
+            snprintf(msn->description, sizeof(msn->description), "%s@%s", msn->username, msn->hostname);
         }
         break;
 
@@ -1520,8 +1768,8 @@ void CO_Validate(struct Config *co, BOOL update)
           if(msn->port == 0)
             msn->port = 25;
 
-          if(msn->domain[0] == '\0')
-            strlcpy(msn->domain, p ? p + 1 : "", sizeof(msn->domain));
+          if(msn->description[0] == '\0')
+            snprintf(msn->description, sizeof(msn->description), "%s@%s", msn->username, msn->hostname);
         }
         break;
 
@@ -1629,9 +1877,7 @@ void CO_Validate(struct Config *co, BOOL update)
 
   // check if the current configuration is already valid at an absolute
   // minimum.
-  #warning "FIXME: SMTP_Server check missing"
-  G->CO_Valid = (*co->EmailAddress && *co->RealName);
-  //G->CO_Valid = (*co->SMTP_Server && *co->EmailAddress && *co->RealName);
+  G->CO_Valid = (*co->EmailAddress && *co->RealName && *firstSMTP->hostname && *firstPOP3->hostname);
 
   // we try to find out the system charset and validate it with the
   // currently configured local charset
@@ -1825,23 +2071,6 @@ void CO_Validate(struct Config *co, BOOL update)
 
         if(msn != NULL)
           setstring(G->CO->GUI.ST_POPHOST0, msn->hostname);
-      }
-      break;
-
-      case cp_TCPIP:
-      {
-        struct MailServerNode *msn = GetMailServer(&co->mailServerList, MST_POP3, 0);
-
-        if(msn != NULL)
-        {
-          setstring(G->CO->GUI.ST_SMTPHOST, msn->hostname);
-          set(G->CO->GUI.ST_SMTPPORT, MUIA_String_Integer, msn->port);
-          setstring(G->CO->GUI.ST_DOMAIN, msn->domain);
-          setstring(G->CO->GUI.ST_SMTPAUTHUSER, msn->username);
-          setstring(G->CO->GUI.ST_SMTPAUTHPASS, msn->password);
-        }
-
-        DoMethod(G->CO->GUI.LV_POP3, MUIM_NList_Redraw, MUIV_NList_Redraw_All);
       }
       break;
 

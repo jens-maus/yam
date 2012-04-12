@@ -963,9 +963,6 @@ _Active
 MSG_CO_DeleteServerMail (357//)
 Delete mail _on server
 ;
-MSG_CO_UseAPOP (358//)
-_Log in using APOP
-;
 MSG_CO_PSNever (359//)
 never
 ;
@@ -1557,12 +1554,6 @@ MSG_HELP_CO_CH_DELETE (567//)
 Delete messages from\n\
 mail server after the\n\
 download.
-;
-MSG_HELP_CO_CH_USEAPOP (568//)
-Log in using APOP authentication\n\
-to keep your user name and password\n\
-away from prying eyes.\n\
-(not supported by all POP3 servers)
 ;
 MSG_HELP_CO_CH_POPENABLED (569//)
 Check this account while\n\
@@ -3980,9 +3971,6 @@ Error creating multipart PGP message. Encrypting/signing disabled.
 MSG_RE_FixedFont (1335//)
 Fixed font?
 ;
-MSG_CO_UseSMTPAUTH (1337//)
-Use SMTP AU_TH
-;
 MSG_CO_SMTPUser (1338//)
 Us_er name
 ;
@@ -4042,12 +4030,6 @@ MSG_CO_SIZEFORMAT04 (1365//)
 ;
 MSG_CO_SIZEFORMAT05 (1366//)
 10^-3 precision (0.001 GB/MB/KB)
-;
-MSG_HELP_CO_CH_USESMTPAUTH (1367//)
-Select if you wish to authenticate\n\
-yourself to a foreign SMTP server\n\
-(usually outside your ISP's domain).\n\
-If in doubt, don't enable this option.
 ;
 MSG_HELP_CO_ST_SMTPAUTHUSER (1368//)
 User name of the\n\
@@ -4517,24 +4499,6 @@ Mail file in old format found
 ;
 MSG_MA_CREQ_UNKNOWN_TITLE (1517//)
 Unknown file in folder directory found
-;
-MSG_CO_SMTPSECURE (1518//)
-Use secure connection:
-;
-MSG_CO_SMTPSECURE_NO (1519//)
-No
-;
-MSG_CO_SMTPSECURE_TLS (1520//)
-with TLSv1
-;
-MSG_CO_SMTPSECURE_SSL (1521//)
-with SSLv3
-;
-MSG_HELP_CO_RA_SMTPSECURE (1522//)
-A TLSv1 or SSLv3 secure connection will be established between\n\
-the SMTP server and YAM to send e-mail through an encrypted connection.\n\
-If these radio buttons are ghosted, it means AmiSSL support is\n\
-currently not available.
 ;
 MSG_CO_SHOWEMBEDDEDREADPANE (1523//)
 Show embedded read _pane in main window
@@ -5347,9 +5311,6 @@ Reset _spam state of all mails
 MSG_CO_SPAM_DELETESPAMFOLDER (1782//)
 _Delete Spam folder
 ;
-MSG_CO_SMTPAUTH_METHOD (1783//)
-Met_hod
-;
 MSG_HELP_CO_CY_SMTPAUTHMETHOD (1784//)
 Select here the authentication method YAM should use.\n\
 'Auto' lets YAM pick one automatically depending on\n\
@@ -5542,13 +5503,6 @@ All to read
 MSG_MA_MEDITASNEW (1844//)
 Edit as new...
 ;
-MSG_CO_POPACCOUNT (1845//)
-Account name
-;
-MSG_HELP_CO_ST_POPACCOUNT (1846//)
-An arbitrary name for this account which\n\
-will be used instead of user@host.
-;
 MSG_RE_SEARCH (1847//)
 Search...
 ;
@@ -5707,29 +5661,11 @@ Enable this if daylight saving time is\n\
 currently active in your time zone\n\
 (summer time).
 ;
-MSG_CO_SMTPSERVERPORT (1891//)
+MSG_CO_SMTP_SERVERPORT (1891//)
 Ser_ver/Port
 ;
-MSG_CO_POP3SERVERPORT (1892//)
+MSG_CO_POP_SERVERPORT (1892//)
 Serve_r/Port
-;
-MSG_CO_POP3SECURE (1893//)
-Use secure connection:
-;
-MSG_CO_POP3SECURE_NO (1894//)
-No
-;
-MSG_CO_POP3SECURE_TLS (1895//)
-with TLSv1
-;
-MSG_CO_POP3SECURE_SSL (1896//)
-with SSLv3
-;
-MSG_HELP_CO_RA_POP3SECURE (1897//)
-A TLSv1 or SSLv3 secure connection will be established between\n\
-the POP3 server and YAM to receive e-mail through an encrypted\n\
-connection. If these radio buttons are ghosted, it means AmiSSL\n\
-support is currently not available.
 ;
 MSG_CO_LOOKFEEL_THEMES (1898//)
 Themes
@@ -7064,4 +7000,106 @@ Set status to 'Not spam'
 ;
 MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_HAM (2232//)
 Set the status of the filtered mail to 'Not spam'
+;
+MSG_CO_SMTP_ACTIVE (2233//)
+_Active
+;
+MSG_CO_POP_AUTH (2234//)
+Authentification
+;
+MSG_HELP_CO_CY_POPAUTH (2235//)
+When not using any connection security\n\
+(TLS or SSL) the password can be send\n\
+using the APOP encryption algorithm instead.\n\
+(not supported by all POP3 servers)
+;
+MSG_CO_POP_AUTH_PLAIN (2236//)
+Plain Password
+;
+MSG_CO_POP_AUTH_APOP (2237//)
+Encrypted Password (APOP)
+;
+MSG_CO_POP_SECURITY (2238//)
+Connection Security
+;
+MSG_CO_POP_SECURITY_NONE (2239//)
+No Security
+;
+MSG_CO_POP_SECURITY_TLS (2240//)
+STARTTLS
+;
+MSG_CO_POP_SECURITY_SSL (2241//)
+SSL/TLS
+;
+MSG_HELP_CO_CY_POPSECURE (2242//)
+A STARTTLS or SSL/TLS secure connection will be\n\
+established between the POP3 server and YAM to receive\n\
+e-mail through an encrypted connection. If this cycle\n\
+gadget is ghosted, it means AmiSSL support is currently\n\
+not available.
+;
+MSG_CO_POP_SERVERLIST (2243//)
+Server List
+;
+MSG_CO_POP_SERVERSETTINGS (2244//)
+Server Settings
+;
+MSG_CO_POP_SECURITYAUTH (2245//)
+Security and Authentification
+;
+MSG_CO_POP_MSGHANDLING (2246//)
+Message handling 
+;
+MSG_CO_SMTP_SERVERLIST (2247//)
+Server List
+;
+MSG_CO_SMTP_SERVERSETTINGS (2248//)
+Server Settings
+;
+MSG_CO_POP_DESC (2249//)
+Description
+;
+MSG_HELP_CO_ST_POPDESC (2250//)
+An arbitrary description/name for this\n\
+server connection which will be used instead\n\
+of user@host.
+;
+MSG_CO_SMTP_DESC (2251//)
+Description
+;
+MSG_HELP_CO_ST_SMTPDESC (2252//)
+An arbitrary description/name for this\n\
+server connection which will be used instead\n\
+of user@host.
+;
+MSG_CO_SMTP_SECURITY (2253//)
+Connection Security
+;
+MSG_CO_SMTP_SECURITY_NONE (2254//)
+No Security
+;
+MSG_CO_SMTP_SECURITY_TLS (2255//)
+STARTTLS
+;
+MSG_CO_SMTP_SECURITY_SSL (2256//)
+SSL/TLS
+;
+MSG_CO_SMTP_SECURITYAUTH (2257//)
+Security and Authentification
+;
+MSG_HELP_CO_CY_SMTPSECURE (2258//)
+A STARTTLS or SSL/TLS secure connection will be\n\
+established between the SMTP server and YAM to receive\n\
+e-mail through an encrypted connection. If this cycle\n\
+gadget is ghosted, it means AmiSSL support is currently\n\
+not available.
+;
+MSG_CO_SMTP_AUTH (2259//)
+Authentification
+;
+MSG_CO_SMTPAUTH_NONE (2260//)
+No Authentication
+;
+MSG_CO_SMTP_OPTIONS (2261//)
+Options
 ;

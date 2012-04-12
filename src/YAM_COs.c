@@ -283,9 +283,10 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
         if(i == 0)
         {
           fprintf(fh, "SMTP-ID          = %08x\n", msn->id);
+          fprintf(fh, "SMTP-Enabled     = %s\n", Bool2Txt(isServerActive(msn)));
+          fprintf(fh, "SMTP-Description = %s\n", msn->description);
           fprintf(fh, "SMTP-Server      = %s\n", msn->hostname);
           fprintf(fh, "SMTP-Port        = %d\n", msn->port);
-          fprintf(fh, "SMTP-Domain      = %s\n", msn->domain);
           fprintf(fh, "SMTP-SecMethod   = %d\n", MSF2SMTPSecMethod(msn));
           fprintf(fh, "Allow8bit        = %s\n", Bool2Txt(hasServer8bit(msn)));
           fprintf(fh, "Use-SMTP-AUTH    = %s\n", Bool2Txt(hasServerAuth(msn)));
@@ -295,17 +296,16 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
         }
         else
         {
-          fprintf(fh, "SMTP%02d.ID        = %08x\n", i, msn->id);
-          fprintf(fh, "SMTP%02d.Account   = %s\n", i, msn->account);
-          fprintf(fh, "SMTP%02d.Server    = %s\n", i, msn->hostname);
-          fprintf(fh, "SMTP%02d.Port      = %d\n", i, msn->port);
-          fprintf(fh, "SMTP%02d.Domain    = %s\n", i, msn->domain);
-          fprintf(fh, "SMTP%02d.Enabled   = %s\n", i, Bool2Txt(isServerActive(msn)));
-          fprintf(fh, "SMTP%02d.SecMethod = %d\n", i, MSF2SMTPSecMethod(msn));
-          fprintf(fh, "SMTP%02d.Allow8bit = %s\n", i, Bool2Txt(hasServer8bit(msn)));
-          fprintf(fh, "SMTP%02d.SMTP-AUTH = %s\n", i, Bool2Txt(hasServerAuth(msn)));
-          fprintf(fh, "SMTP%02d.AUTH-User = %s\n", i, msn->username);
-          fprintf(fh, "SMTP%02d.AUTH-Pass = %s\n", i, Encrypt(msn->password));
+          fprintf(fh, "SMTP%02d.ID          = %08x\n", i, msn->id);
+          fprintf(fh, "SMTP%02d.Enabled     = %s\n", i, Bool2Txt(isServerActive(msn)));
+          fprintf(fh, "SMTP%02d.Description = %s\n", i, msn->description);
+          fprintf(fh, "SMTP%02d.Server      = %s\n", i, msn->hostname);
+          fprintf(fh, "SMTP%02d.Port        = %d\n", i, msn->port);
+          fprintf(fh, "SMTP%02d.SecMethod   = %d\n", i, MSF2SMTPSecMethod(msn));
+          fprintf(fh, "SMTP%02d.Allow8bit   = %s\n", i, Bool2Txt(hasServer8bit(msn)));
+          fprintf(fh, "SMTP%02d.SMTP-AUTH   = %s\n", i, Bool2Txt(hasServerAuth(msn)));
+          fprintf(fh, "SMTP%02d.AUTH-User   = %s\n", i, msn->username);
+          fprintf(fh, "SMTP%02d.AUTH-Pass   = %s\n", i, Encrypt(msn->password));
           fprintf(fh, "SMTP%02d.AUTH-Method = %d\n", i, MSF2SMTPAuthMethod(msn));
         }
 
@@ -322,12 +322,12 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
       if(msn->type == MST_POP3)
       {
         fprintf(fh, "POP%02d.ID                 = %08x\n", i, msn->id);
-        fprintf(fh, "POP%02d.Account            = %s\n", i, msn->account);
+        fprintf(fh, "POP%02d.Enabled            = %s\n", i, Bool2Txt(isServerActive(msn)));
+        fprintf(fh, "POP%02d.Account            = %s\n", i, msn->description);
         fprintf(fh, "POP%02d.Server             = %s\n", i, msn->hostname);
         fprintf(fh, "POP%02d.Port               = %d\n", i, msn->port);
         fprintf(fh, "POP%02d.User               = %s\n", i, msn->username);
         fprintf(fh, "POP%02d.Password           = %s\n", i, Encrypt(msn->password));
-        fprintf(fh, "POP%02d.Enabled            = %s\n", i, Bool2Txt(isServerActive(msn)));
         fprintf(fh, "POP%02d.SSLMode            = %d\n", i, MSF2POP3SecMethod(msn));
         fprintf(fh, "POP%02d.UseAPOP            = %s\n", i, Bool2Txt(hasServerAPOP(msn)));
         fprintf(fh, "POP%02d.Delete             = %s\n", i, Bool2Txt(hasServerPurge(msn)));
@@ -936,7 +936,6 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
           else if(stricmp(buf, "SMTP-ID") == 0)                  fSMTP->id = strtol(value, NULL, 16);
           else if(stricmp(buf, "SMTP-Server") == 0)              strlcpy(fSMTP->hostname, value, sizeof(fSMTP->hostname));
           else if(stricmp(buf, "SMTP-Port") == 0)                fSMTP->port = atoi(value);
-          else if(stricmp(buf, "SMTP-Domain") == 0)              strlcpy(fSMTP->domain, value, sizeof(fSMTP->domain));
           else if(stricmp(buf, "SMTP-SecMethod") == 0)           SET_FLAG(fSMTP->flags, SMTPSecMethod2MSF(atoi(value)));
           else if(stricmp(buf, "Allow8bit") == 0)                Txt2Bool(value) == TRUE ? SET_FLAG(fSMTP->flags, MSF_ALLOW_8BIT) : CLEAR_FLAG(fSMTP->flags, MSF_ALLOW_8BIT);
           else if(stricmp(buf, "Use-SMTP-TLS") == 0)             SET_FLAG(fSMTP->flags, SMTPSecMethod2MSF(atoi(value))); // obsolete
@@ -968,10 +967,9 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
 
                 // now find out which subtype this smtp configuration is
                 if(stricmp(q, "ID") == 0)                        msn->id = strtol(value, NULL, 16);
-                else if(stricmp(q, "Account") == 0)              strlcpy(msn->account, value, sizeof(msn->account));
+                else if(stricmp(q, "Account") == 0)              strlcpy(msn->description, value, sizeof(msn->description));
                 else if(stricmp(q, "Server") == 0)               strlcpy(msn->hostname, value, sizeof(msn->hostname));
                 else if(stricmp(q, "Port") == 0)                 msn->port = atoi(value);
-                else if(stricmp(q, "Domain") == 0)               strlcpy(msn->domain, value, sizeof(msn->domain));
                 else if(stricmp(q, "Enabled") == 0)              Txt2Bool(value) == TRUE ? SET_FLAG(msn->flags, MSF_ACTIVE) : CLEAR_FLAG(msn->flags, MSF_ACTIVE);
                 else if(stricmp(q, "SecMethod") == 0)            SET_FLAG(msn->flags, SMTPSecMethod2MSF(atoi(value)));
                 else if(stricmp(q, "Allow8bit") == 0)            Txt2Bool(value) == TRUE ? SET_FLAG(msn->flags, MSF_ALLOW_8BIT) : CLEAR_FLAG(msn->flags, MSF_ALLOW_8BIT);
@@ -1009,7 +1007,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
                 char *q = strchr(buf, '.')+1;
 
                 if(stricmp(q, "ID") == 0)                        msn->id = strtol(value, NULL, 16);
-                else if(stricmp(q, "Account") == 0)              strlcpy(msn->account, value, sizeof(msn->account));
+                else if(stricmp(q, "Account") == 0)              strlcpy(msn->description, value, sizeof(msn->description));
                 else if(stricmp(q, "Server") == 0)               strlcpy(msn->hostname, value, sizeof(msn->hostname));
                 else if(stricmp(q, "Port") == 0)                 msn->port = atoi(value);
                 else if(stricmp(q, "Password") == 0)             strlcpy(msn->password, Decrypt(value), sizeof(msn->password));
@@ -1686,104 +1684,6 @@ void CO_GetConfig(BOOL saveConfig)
       int i;
       struct MailServerNode *msn;
 
-      // try to get the SMTP server structure of the first SMTP server
-      if((msn = GetMailServer(&CE->mailServerList, MST_SMTP, 0)) != NULL)
-      {
-        GetMUIString(msn->hostname, gui->ST_SMTPHOST, sizeof(msn->hostname));
-        msn->port = GetMUIInteger(gui->ST_SMTPPORT);
-        GetMUIString(msn->domain, gui->ST_DOMAIN, sizeof(msn->domain));
-
-        switch(GetMUIRadio(gui->RA_SMTPSECURE))
-        {
-          case 0:
-          {
-            CLEAR_FLAG(msn->flags, MSF_SEC_TLS);
-            CLEAR_FLAG(msn->flags, MSF_SEC_SSL);
-          }
-          break;
-
-          case 1:
-          {
-            SET_FLAG(msn->flags, MSF_SEC_TLS);
-            CLEAR_FLAG(msn->flags, MSF_SEC_SSL);
-          }
-          break;
-
-          case 2:
-          {
-            CLEAR_FLAG(msn->flags, MSF_SEC_TLS);
-            SET_FLAG(msn->flags, MSF_SEC_SSL);
-          }
-          break;
-        }
-
-        if(GetMUICheck(gui->CH_SMTP8BIT) == TRUE)
-          SET_FLAG(msn->flags, MSF_ALLOW_8BIT);
-        else
-          CLEAR_FLAG(msn->flags, MSF_ALLOW_8BIT);
-
-        if(GetMUICheck(gui->CH_USESMTPAUTH) == TRUE)
-          SET_FLAG(msn->flags, MSF_AUTH);
-        else
-          CLEAR_FLAG(msn->flags, MSF_AUTH);
-
-        GetMUIString(msn->username, gui->ST_SMTPAUTHUSER, sizeof(msn->username));
-        GetMUIString(msn->password, gui->ST_SMTPAUTHPASS, sizeof(msn->password));
-
-        switch(GetMUICycle(gui->CY_SMTPAUTHMETHOD))
-        {
-          case 0:
-          {
-            SET_FLAG(msn->flags, MSF_AUTH_AUTO);
-            CLEAR_FLAG(msn->flags, MSF_AUTH_DIGEST);
-            CLEAR_FLAG(msn->flags, MSF_AUTH_CRAM);
-            CLEAR_FLAG(msn->flags, MSF_AUTH_LOGIN);
-            CLEAR_FLAG(msn->flags, MSF_AUTH_PLAIN);
-          }
-          break;
-
-          case 1:
-          {
-            CLEAR_FLAG(msn->flags, MSF_AUTH_AUTO);
-            SET_FLAG(msn->flags, MSF_AUTH_DIGEST);
-            CLEAR_FLAG(msn->flags, MSF_AUTH_CRAM);
-            CLEAR_FLAG(msn->flags, MSF_AUTH_LOGIN);
-            CLEAR_FLAG(msn->flags, MSF_AUTH_PLAIN);
-          }
-          break;
-
-          case 2:
-          {
-            CLEAR_FLAG(msn->flags, MSF_AUTH_AUTO);
-            CLEAR_FLAG(msn->flags, MSF_AUTH_DIGEST);
-            SET_FLAG(msn->flags, MSF_AUTH_CRAM);
-            CLEAR_FLAG(msn->flags, MSF_AUTH_LOGIN);
-            CLEAR_FLAG(msn->flags, MSF_AUTH_PLAIN);
-          }
-          break;
-
-          case 3:
-          {
-            CLEAR_FLAG(msn->flags, MSF_AUTH_AUTO);
-            CLEAR_FLAG(msn->flags, MSF_AUTH_DIGEST);
-            CLEAR_FLAG(msn->flags, MSF_AUTH_CRAM);
-            SET_FLAG(msn->flags, MSF_AUTH_LOGIN);
-            CLEAR_FLAG(msn->flags, MSF_AUTH_PLAIN);
-          }
-          break;
-
-          case 4:
-          {
-            CLEAR_FLAG(msn->flags, MSF_AUTH_AUTO);
-            CLEAR_FLAG(msn->flags, MSF_AUTH_DIGEST);
-            CLEAR_FLAG(msn->flags, MSF_AUTH_CRAM);
-            CLEAR_FLAG(msn->flags, MSF_AUTH_LOGIN);
-            SET_FLAG(msn->flags, MSF_AUTH_PLAIN);
-          }
-          break;
-        }
-      }
-
       // as the user may have changed the order of the POP3 servers
       // we have to make sure the order in the NList fits to the
       // exec list order of our POP3 server list
@@ -1796,6 +1696,27 @@ void CO_GetConfig(BOOL saveConfig)
           break;
 
         // for resorting the POP3 list we just have to remove that particular server
+        // and add it to the tail - all other operations like adding/removing should
+        // have been done by others already - so this is just resorting
+        Remove((struct Node *)msn);
+        AddTail((struct List *)&CE->mailServerList, (struct Node *)msn);
+
+        i++;
+      }
+      while(TRUE);
+
+      // as the user may have changed the order of the SMTP servers
+      // we have to make sure the order in the NList fits to the
+      // exec list order of our SMTP server list
+      i = 0;
+      do
+      {
+        msn = NULL;
+        DoMethod(gui->LV_SMTP, MUIM_NList_GetEntry, i, &msn);
+        if(msn == NULL || msn->type != MST_SMTP)
+          break;
+
+        // for resorting the SMTP list we just have to remove that particular server
         // and add it to the tail - all other operations like adding/removing should
         // have been done by others already - so this is just resorting
         Remove((struct Node *)msn);
@@ -2450,56 +2371,47 @@ void CO_SetConfig(void)
 
     case cp_TCPIP:
     {
-      int numPops = 0;
+      int numPOP = 0;
+      int numSMTP = 0;
       struct Node *curNode;
       struct MailServerNode *msn;
 
-      // try to get the mailer server structure of the first SMTP server
-      if((msn = GetMailServer(&CE->mailServerList, MST_SMTP, 0)) != NULL)
-      {
-        setstring(gui->ST_SMTPHOST, msn->hostname);
-        set(gui->ST_SMTPPORT, MUIA_String_Integer, msn->port);
-        setstring(gui->ST_DOMAIN, msn->domain);
-
-        xset(gui->RA_SMTPSECURE, MUIA_NoNotify,     TRUE,
-                                 MUIA_Radio_Active, MSF2SMTPSecMethod(msn),
-                                 MUIA_Disabled,     G->TR_UseableTLS == FALSE);
-
-        setcheckmark(gui->CH_SMTP8BIT, hasServer8bit(msn));
-        setcheckmark(gui->CH_USESMTPAUTH, hasServerAuth(msn));
-        setstring(gui->ST_SMTPAUTHUSER, msn->username);
-        setstring(gui->ST_SMTPAUTHPASS, msn->password);
-        setcycle(gui->CY_SMTPAUTHMETHOD, MSF2SMTPAuthMethod(msn));
-      }
-
-      // clear the list first
+      // clear the lists first
       set(gui->LV_POP3, MUIA_NList_Quiet, TRUE);
       DoMethod(gui->LV_POP3, MUIM_NList_Clear);
+      set(gui->LV_SMTP, MUIA_NList_Quiet, TRUE);
+      DoMethod(gui->LV_SMTP, MUIM_NList_Clear);
 
       // we iterate through our mail server list and make sure to populate
       // out NList object correctly.
-      numPops = 0;
       IterateList(&CE->mailServerList, curNode)
       {
         msn = (struct MailServerNode *)curNode;
 
+        if(msn->description[0] == '\0')
+          snprintf(msn->description, sizeof(msn->description), "%s@%s", msn->username, msn->hostname);
+
         if(msn->type == MST_POP3)
         {
-          if(msn->account[0] == '\0')
-            snprintf(msn->account, sizeof(msn->account), "%s@%s", msn->username, msn->hostname);
-
           DoMethod(gui->LV_POP3, MUIM_NList_InsertSingle, msn, MUIV_NList_Insert_Bottom);
-
-          numPops++;
+          numPOP++;
+        }
+        else if(msn->type == MST_SMTP)
+        {
+          DoMethod(gui->LV_SMTP, MUIM_NList_InsertSingle, msn, MUIV_NList_Insert_Bottom);
+          numSMTP++;
         }
       }
 
       // make sure the first entry is selected per default
       xset(gui->LV_POP3, MUIA_NList_Quiet, FALSE,
                          MUIA_NList_Active, MUIV_NList_Active_Top);
+      xset(gui->LV_SMTP, MUIA_NList_Quiet, FALSE,
+                         MUIA_NList_Active, MUIV_NList_Active_Top);
 
       // set the enabled stated of the del button according to the number of available accounts
-      set(gui->BT_PDEL, MUIA_Disabled, numPops < 2);
+      set(gui->BT_PDEL, MUIA_Disabled, numPOP < 2);
+      set(gui->BT_SDEL, MUIA_Disabled, numSMTP < 2);
     }
     break;
 

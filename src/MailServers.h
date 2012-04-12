@@ -110,9 +110,8 @@ struct MailServerNode
   enum MailServerType type;              // which type is this server? POP3 or SMTP?
   int id;                                // a unique ID for this server
 
-  char account[SIZE_USERID+SIZE_HOST+1]; // user definable account name
+  char description[SIZE_LARGE];          // user definable description
   char hostname[SIZE_HOST];              // servername/IP
-  char domain[SIZE_HOST];                // [SMTP] : the mail domain
   int  port;                             // the port
   char username[SIZE_USERID];            // the account ID/name
   char password[SIZE_USERID];            // the password for this account

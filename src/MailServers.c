@@ -181,7 +181,7 @@ static BOOL CompareMailServerNodes(const struct Node *n1, const struct Node *n2)
   // compare every single member of the structure, except the
   // list of downloaded mails for POP3 servers
   if(msn1->type != msn2->type ||
-     strcmp(msn1->account,  msn2->account) != 0 ||
+     strcmp(msn1->description,  msn2->description) != 0 ||
      strcmp(msn1->hostname, msn2->hostname) != 0 ||
      strcmp(msn1->username, msn2->username) != 0 ||
      strcmp(msn1->password, msn2->password) != 0 ||

@@ -56,6 +56,17 @@ int GetMUIRadio(Object *obj);
 #define GetMUIText(a, o, l)   strlcpy((a), (char *)xget((o), MUIA_Text_Contents), (l))
 #define SetHelp(o,str)        set(o, MUIA_ShortHelp, tr(str))
 
+// macros for more easy creation of objects
+#define HBar(str)             RectangleObject, \
+                                MUIA_FixHeightTxt, (str), \
+                                MUIA_Rectangle_BarTitle, (str), \
+                                MUIA_Rectangle_HBar, TRUE
+
+#define VBar(str)             RectangleObject, \
+                                MUIA_FixWidthTxt, (str), \
+                                MUIA_Rectangle_BarTitle, (str), \
+                                MUIA_Rectangle_VBar, TRUE
+
 BOOL isChildOfGroup(Object *group, Object *child);
 BOOL isChildOfFamily(Object *family, Object *child);
 

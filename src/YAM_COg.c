@@ -1074,7 +1074,7 @@ HOOKPROTONHNONP(CO_AddPOP3, void)
   if((msn = CreateNewMailServer(MST_POP3, CE, IsMinListEmpty(&CE->mailServerList))) != NULL)
   {
     if(IsMinListEmpty(&CE->mailServerList) == FALSE)
-      strlcpy(msn->account, tr(MSG_NewEntry), sizeof(msn->account));
+      strlcpy(msn->description, tr(MSG_NewEntry), sizeof(msn->description));
 
     DoMethod(G->CO->GUI.LV_POP3, MUIM_NList_InsertSingle, msn, MUIV_NList_Insert_Bottom);
 
@@ -1121,6 +1121,63 @@ HOOKPROTONHNONP(CO_DelPOP3, void)
   LEAVE();
 }
 MakeStaticHook(CO_DelPOP3Hook,CO_DelPOP3);
+
+///
+/// CO_AddSMTP
+//  Adds a new entry to the SMTP account list
+HOOKPROTONHNONP(CO_AddSMTP, void)
+{
+  struct MailServerNode *msn;
+
+  ENTER();
+
+  if((msn = CreateNewMailServer(MST_SMTP, CE, IsMinListEmpty(&CE->mailServerList))) != NULL)
+  {
+    if(IsMinListEmpty(&CE->mailServerList) == FALSE)
+      strlcpy(msn->description, tr(MSG_NewEntry), sizeof(msn->description));
+
+    DoMethod(G->CO->GUI.LV_SMTP, MUIM_NList_InsertSingle, msn, MUIV_NList_Insert_Bottom);
+
+    // add the server to the list
+    AddTail((struct List *)&CE->mailServerList, (struct Node *)msn);
+
+    // set the new entry active and make sure that the host gadget will be
+    // set as the new active object of the window as that gadget will be used
+    // to automatically set the account name.
+    set(G->CO->GUI.LV_SMTP, MUIA_NList_Active, MUIV_List_Active_Bottom);
+    set(G->CO->GUI.WI, MUIA_Window_ActiveObject, G->CO->GUI.ST_SMTPHOST);
+  }
+
+  LEAVE();
+}
+MakeStaticHook(CO_AddSMTPHook, CO_AddSMTP);
+
+///
+/// CO_DelSMTP
+//  Deletes an entry from the SMTP account list
+HOOKPROTONHNONP(CO_DelSMTP, void)
+{
+  struct CO_GUIData *gui = &G->CO->GUI;
+  struct MailServerNode *msn = NULL;
+
+  ENTER();
+
+  DoMethod(gui->LV_SMTP, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &msn);
+
+  if(msn != NULL &&
+     xget(gui->LV_SMTP, MUIA_NList_Entries) > 1)
+  {
+    DoMethod(gui->LV_SMTP, MUIM_NList_Remove, xget(gui->LV_SMTP, MUIA_NList_Active));
+
+    // remove it from the internal mail server list as well.
+    Remove((struct Node *)msn);
+
+    FreeSysObject(ASOT_NODE, msn);
+  }
+
+  LEAVE();
+}
+MakeStaticHook(CO_DelSMTPHook, CO_DelSMTP);
 
 ///
 /// GetAppIconPos
@@ -1499,27 +1556,34 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
   Object *obj;
   static const char *secureSMTPMethods[4];
   static const char *securePOP3Methods[4];
-  static const char *authMethods[6];
+  static const char *smtpAuthMethods[7];
+  static const char *pop3AuthMethods[3];
   static const char *preselectionModes[5];
+  static const char *rtitles[3];
 
   ENTER();
 
-  secureSMTPMethods[0] = tr(MSG_CO_SMTPSECURE_NO);
-  secureSMTPMethods[1] = tr(MSG_CO_SMTPSECURE_TLS);
-  secureSMTPMethods[2] = tr(MSG_CO_SMTPSECURE_SSL);
+  secureSMTPMethods[0] = tr(MSG_CO_SMTP_SECURITY_NONE);
+  secureSMTPMethods[1] = tr(MSG_CO_SMTP_SECURITY_TLS);
+  secureSMTPMethods[2] = tr(MSG_CO_SMTP_SECURITY_SSL);
   secureSMTPMethods[3] = NULL;
 
-  securePOP3Methods[0] = tr(MSG_CO_POP3SECURE_NO);
-  securePOP3Methods[1] = tr(MSG_CO_POP3SECURE_TLS);
-  securePOP3Methods[2] = tr(MSG_CO_POP3SECURE_SSL);
+  securePOP3Methods[0] = tr(MSG_CO_POP_SECURITY_NONE);
+  securePOP3Methods[1] = tr(MSG_CO_POP_SECURITY_TLS);
+  securePOP3Methods[2] = tr(MSG_CO_POP_SECURITY_SSL);
   securePOP3Methods[3] = NULL;
 
-  authMethods[0] = tr(MSG_CO_SMTPAUTH_AUTO);
-  authMethods[1] = tr(MSG_CO_SMTPAUTH_DIGEST);
-  authMethods[2] = tr(MSG_CO_SMTPAUTH_CRAM);
-  authMethods[3] = tr(MSG_CO_SMTPAUTH_LOGIN);
-  authMethods[4] = tr(MSG_CO_SMTPAUTH_PLAIN);
-  authMethods[5] = NULL;
+  smtpAuthMethods[0] = tr(MSG_CO_SMTPAUTH_NONE);
+  smtpAuthMethods[1] = tr(MSG_CO_SMTPAUTH_AUTO);
+  smtpAuthMethods[2] = tr(MSG_CO_SMTPAUTH_DIGEST);
+  smtpAuthMethods[3] = tr(MSG_CO_SMTPAUTH_CRAM);
+  smtpAuthMethods[4] = tr(MSG_CO_SMTPAUTH_LOGIN);
+  smtpAuthMethods[5] = tr(MSG_CO_SMTPAUTH_PLAIN);
+  smtpAuthMethods[6] = NULL;
+
+  pop3AuthMethods[0] = tr(MSG_CO_POP_AUTH_PLAIN);
+  pop3AuthMethods[1] = tr(MSG_CO_POP_AUTH_APOP);
+  pop3AuthMethods[2] = NULL;
 
   preselectionModes[PSM_NEVER]       = tr(MSG_CO_PSNever);
   preselectionModes[PSM_LARGE]       = tr(MSG_CO_PSLarge);
@@ -1527,180 +1591,212 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
   preselectionModes[PSM_ALWAYSLARGE] = tr(MSG_CO_PSAlwaysFast);
   preselectionModes[4] = NULL;
 
+  rtitles[0] = tr(MSG_CO_ReceiveMail);
+  rtitles[1] = tr(MSG_CO_SendMail);
+  rtitles[2] = NULL;
+
   obj = VGroup,
           MUIA_HelpNode, "CO01",
 
           ConfigPageHeaderObject("config_network_big", G->theme.configImages[CI_NETWORKBIG], tr(MSG_CO_TCPIP_TITLE), tr(MSG_CO_TCPIP_SUMMARY)),
 
-          Child, ScrollgroupObject,
-            MUIA_Scrollgroup_FreeHoriz, FALSE,
-            MUIA_Scrollgroup_AutoBars, TRUE,
-            MUIA_Scrollgroup_Contents, VGroupV,
+          Child, RegisterGroup(rtitles),
+            MUIA_CycleChain, TRUE,
+ 
+            // Receive MailServer List (POP3/IMAP)
+            Child, ScrollgroupObject,
+              MUIA_Scrollgroup_FreeHoriz, FALSE,
+              MUIA_Scrollgroup_AutoBars, TRUE,
+              MUIA_Scrollgroup_Contents, VGroupV,
 
-              Child, VGroup, GroupFrameT(tr(MSG_CO_SendMail)),
-                MUIA_Weight, 0,
-                Child, HGroup,
+                Child, HGroup, 
                   Child, VGroup,
-                    MUIA_HorizWeight, 80,
-                    Child, ColGroup(2),
-                      Child, Label2(tr(MSG_CO_SMTPSERVERPORT)),
-                      Child, HGroup,
-                        MUIA_Group_Spacing, 1,
-                        Child, data->GUI.ST_SMTPHOST = MakeString(SIZE_HOST, tr(MSG_CO_SMTPSERVERPORT)),
-                        Child, data->GUI.ST_SMTPPORT = BetterStringObject,
-                          StringFrame,
-                          MUIA_CycleChain,          TRUE,
-                          MUIA_FixWidthTxt,         "00000",
-                          MUIA_String_MaxLen,       5+1,
-                          MUIA_String_AdvanceOnCR,  TRUE,
-                          MUIA_String_Integer,      0,
-                          MUIA_String_Accept,       "0123456789",
-                        End,
-                      End,
+                    MUIA_HorizWeight, 30,
 
-                      Child, Label2(tr(MSG_CO_Domain)),
-                      Child, data->GUI.ST_DOMAIN = MakeString(SIZE_HOST,tr(MSG_CO_Domain)),
+                    Child, HBar(tr(MSG_CO_POP_SERVERLIST)), End,
 
-                      Child, HSpace(1),
-                      Child, LLabel(tr(MSG_CO_SMTPSECURE)),
-
-                      Child, HSpace(1),
-                      Child, HGroup,
-                        Child, HSpace(5),
-                        Child, data->GUI.RA_SMTPSECURE = RadioObject,
-                          MUIA_Radio_Entries, secureSMTPMethods,
-                          MUIA_CycleChain,    TRUE,
-                        End,
-                        Child, HSpace(0),
+                    Child, NListviewObject,
+                      MUIA_CycleChain, TRUE,
+                      MUIA_Weight,     60,
+                      MUIA_NListview_NList, data->GUI.LV_POP3 = AccountListObject,
                       End,
                     End,
 
-                    Child, HVSpace,
-                  End,
-
-                  Child, VSpace(0),
-
-                  Child, VGroup,
-                    MUIA_HorizWeight, 20,
-                    Child, ColGroup(2),
-                      Child, data->GUI.CH_SMTP8BIT = MakeCheck(tr(MSG_CO_Allow8bit)),
-                      Child, LLabel1(tr(MSG_CO_Allow8bit)),
-
-                      Child, data->GUI.CH_USESMTPAUTH = MakeCheck(tr(MSG_CO_UseSMTPAUTH)),
-                      Child, LLabel1(tr(MSG_CO_UseSMTPAUTH)),
-
-                      Child, HSpace(0),
+                    Child, ColGroup(3),
+                      Child, data->GUI.BT_PADD = MakeButton(tr(MSG_Add)),
+                      Child, data->GUI.BT_PDEL = MakeButton(tr(MSG_Del)),
                       Child, ColGroup(2),
-                        Child, Label2(tr(MSG_CO_SMTPUser)),
-                        Child, data->GUI.ST_SMTPAUTHUSER = MakeString(SIZE_USERID,tr(MSG_CO_SMTPUser)),
-
-                        Child, Label2(tr(MSG_CO_SMTPPass)),
-                        Child, data->GUI.ST_SMTPAUTHPASS = MakePassString(tr(MSG_CO_SMTPPass)),
-
-                        Child, Label2(tr(MSG_CO_SMTPAUTH_METHOD)),
-                        Child, data->GUI.CY_SMTPAUTHMETHOD = MakeCycle(authMethods, tr(MSG_CO_SMTPAUTH_METHOD)),
-                      End,
-                    End,
-
-                    Child, VSpace(0),
-                  End,
-                End,
-              End,
-
-              Child, HGroup, GroupFrameT(tr(MSG_CO_ReceiveMail)),
-                Child, VGroup,
-                  MUIA_HorizWeight, 30,
-                  Child, NListviewObject,
-                    MUIA_CycleChain, TRUE,
-                    MUIA_Weight,     60,
-                    MUIA_NListview_NList, data->GUI.LV_POP3 = AccountListObject,
-                    End,
-                  End,
-
-                  Child, ColGroup(3),
-                    Child, data->GUI.BT_PADD = MakeButton(tr(MSG_Add)),
-                    Child, data->GUI.BT_PDEL = MakeButton(tr(MSG_Del)),
-                    Child, ColGroup(2),
-                      MUIA_Group_Spacing, 1,
-                      Child, data->GUI.BT_POPUP = PopButton(MUII_ArrowUp),
-                      Child, data->GUI.BT_POPDOWN = PopButton(MUII_ArrowDown),
-                    End,
-                  End,
-                End,
-
-                Child, NBalanceObject, End,
-
-                Child, VGroup,
-                  MUIA_HorizWeight, 70,
-                  Child, VGroup,
-                    Child, ColGroup(2),
-                      Child, Label2(tr(MSG_CO_POPACCOUNT)),
-                      Child, data->GUI.ST_POPACCOUNT = MakeString(SIZE_HOST,tr(MSG_CO_POPACCOUNT)),
-
-                      Child, Label2(tr(MSG_CO_POP3SERVERPORT)),
-                      Child, HGroup,
                         MUIA_Group_Spacing, 1,
-                        Child, data->GUI.ST_POPHOST = MakeString(SIZE_HOST, tr(MSG_CO_POP3SERVERPORT)),
-                        Child, data->GUI.ST_POPPORT = BetterStringObject,
-                          StringFrame,
-                          MUIA_CycleChain,          TRUE,
-                          MUIA_FixWidthTxt,         "00000",
-                          MUIA_String_MaxLen,       5+1,
-                          MUIA_String_AdvanceOnCR,  TRUE,
-                          MUIA_String_Integer,      0,
-                          MUIA_String_Accept,       "0123456789",
+                        Child, data->GUI.BT_POPUP = PopButton(MUII_ArrowUp),
+                        Child, data->GUI.BT_POPDOWN = PopButton(MUII_ArrowDown),
+                      End,
+                    End,
+                  End,
+
+                  Child, NBalanceObject, End,
+
+                  Child, VGroup,
+                    MUIA_HorizWeight, 70,
+                    Child, VGroup,
+                      Child, ColGroup(2), GroupFrameT(tr(MSG_CO_POP_SERVERSETTINGS)),
+
+                        Child, HSpace(1),
+                        Child, MakeCheckGroup((Object **)&data->GUI.CH_POPENABLED, tr(MSG_CO_POPActive)),
+
+                        Child, Label2(tr(MSG_CO_POP_DESC)),
+                        Child, data->GUI.ST_POPDESC = MakeString(SIZE_HOST, tr(MSG_CO_POP_DESC)),
+
+                        Child, Label2(tr(MSG_CO_POP_SERVERPORT)),
+                        Child, HGroup,
+                          MUIA_Group_Spacing, 1,
+                          Child, data->GUI.ST_POPHOST = MakeString(SIZE_HOST, tr(MSG_CO_POP_SERVERPORT)),
+                          Child, data->GUI.ST_POPPORT = BetterStringObject,
+                            StringFrame,
+                            MUIA_CycleChain,          TRUE,
+                            MUIA_FixWidthTxt,         "00000",
+                            MUIA_String_MaxLen,       5+1,
+                            MUIA_String_AdvanceOnCR,  TRUE,
+                            MUIA_String_Integer,      0,
+                            MUIA_String_Accept,       "0123456789",
+                          End,
                         End,
+
+                        Child, HSpace(1),
+                        Child, HBar(tr(MSG_CO_POP_SECURITYAUTH)), End,
+
+                        Child, Label2(tr(MSG_CO_POP_SECURITY)),
+                        Child, data->GUI.CY_POPSECURE = MakeCycle(securePOP3Methods, tr(MSG_CO_POP_SECURITY)),
+
+                        Child, Label2(tr(MSG_CO_POP_AUTH)),
+                        Child, data->GUI.CY_POPAUTH = MakeCycle(pop3AuthMethods, tr(MSG_CO_POP_AUTH)),
+
+                        Child, Label2(tr(MSG_CO_POPUserID)),
+                        Child, data->GUI.ST_POPUSERID = MakeString(SIZE_USERID,tr(MSG_CO_POPUserID)),
+
+                        Child, Label2(tr(MSG_CO_Password)),
+                        Child, data->GUI.ST_PASSWD = MakePassString(tr(MSG_CO_Password)),
+
+                        Child, HSpace(1),
+                        Child, HBar(tr(MSG_CO_POP_MSGHANDLING)), End,
+
+                        Child, Label2(tr(MSG_CO_PreSelect)),
+                        Child, data->GUI.CY_PRESELECTION = MakeCycle(preselectionModes, tr(MSG_CO_PreSelect)),
+
+                        Child, HSpace(1),
+                        Child, MakeCheckGroup((Object **)&data->GUI.CH_DOWNLOADONSTARTUP, tr(MSG_CO_DOWNLOAD_ON_STARTUP)),
+
+                        Child, HSpace(1),
+                        Child, MakeCheckGroup((Object **)&data->GUI.CH_APPLYREMOTEFILTERS, tr(MSG_CO_APPLY_REMOTE_FILTERS)),
+
+                        Child, HSpace(1),
+                        Child, MakeCheckGroup((Object **)&data->GUI.CH_DELETE, tr(MSG_CO_DeleteServerMail)),
+
+                        Child, HVSpace,
+                        Child, HVSpace,
+
                       End,
-
-                      Child, Label2(tr(MSG_CO_POPUserID)),
-                      Child, data->GUI.ST_POPUSERID = MakeString(SIZE_USERID,tr(MSG_CO_POPUserID)),
-
-                      Child, Label2(tr(MSG_CO_Password)),
-                      Child, data->GUI.ST_PASSWD = MakePassString(tr(MSG_CO_Password)),
-
-                      Child, HSpace(1),
-                      Child, MakeCheckGroup((Object **)&data->GUI.CH_POPENABLED, tr(MSG_CO_POPActive)),
-
-                      Child, HSpace(1),
-                      Child, MakeCheckGroup((Object **)&data->GUI.CH_USEAPOP, tr(MSG_CO_UseAPOP)),
-
-                      Child, HSpace(1),
-                      Child, MakeCheckGroup((Object **)&data->GUI.CH_DOWNLOADONSTARTUP, tr(MSG_CO_DOWNLOAD_ON_STARTUP)),
-
-                      Child, HSpace(1),
-                      Child, MakeCheckGroup((Object **)&data->GUI.CH_APPLYREMOTEFILTERS, tr(MSG_CO_APPLY_REMOTE_FILTERS)),
-
-                      Child, HSpace(1),
-                      Child, MakeCheckGroup((Object **)&data->GUI.CH_DELETE, tr(MSG_CO_DeleteServerMail)),
-
-                      Child, Label2(tr(MSG_CO_PreSelect)),
-                      Child, data->GUI.CY_PRESELECTION = MakeCycle(preselectionModes, tr(MSG_CO_PreSelect)),
-
-                      Child, HSpace(1),
-                      Child, HGroup,
-                        Child, LLabel(tr(MSG_CO_POP3SECURE)),
-                        Child, HSpace(0),
-                      End,
-
-                      Child, HSpace(1),
-                      Child, HGroup,
-                        Child, HSpace(5),
-                        Child, data->GUI.RA_POP3SECURE = RadioObject,
-                          MUIA_Radio_Entries, securePOP3Methods,
-                          MUIA_CycleChain,    TRUE,
-                        End,
-                        Child, HSpace(0),
-                      End,
-
                     End,
                   End,
                 End,
-
               End,
-
-              Child, HVSpace,
-
             End,
+ 
+            // Send MailServer List (SMTP)
+            Child, ScrollgroupObject,
+              MUIA_Scrollgroup_FreeHoriz, FALSE,
+              MUIA_Scrollgroup_AutoBars, TRUE,
+              MUIA_Scrollgroup_Contents, VGroupV,
+
+                Child, HGroup, 
+                  Child, VGroup,
+                    MUIA_HorizWeight, 30,
+
+                    Child, HBar(tr(MSG_CO_SMTP_SERVERLIST)), End,
+
+                    Child, NListviewObject,
+                      MUIA_CycleChain, TRUE,
+                      MUIA_Weight,     60,
+                      MUIA_NListview_NList, data->GUI.LV_SMTP = AccountListObject,
+                      End,
+                    End,
+
+                    Child, ColGroup(3),
+                      Child, data->GUI.BT_SADD = MakeButton(tr(MSG_Add)),
+                      Child, data->GUI.BT_SDEL = MakeButton(tr(MSG_Del)),
+                      Child, ColGroup(2),
+                        MUIA_Group_Spacing, 1,
+                        Child, data->GUI.BT_SMTPUP = PopButton(MUII_ArrowUp),
+                        Child, data->GUI.BT_SMTPDOWN = PopButton(MUII_ArrowDown),
+                      End,
+                    End,
+                  End,
+
+                  Child, NBalanceObject, End,
+
+                  Child, VGroup,
+                    MUIA_HorizWeight, 70,
+                    Child, HGroup,
+                      Child, VGroup,
+                        MUIA_HorizWeight, 80,
+                        Child, ColGroup(2), GroupFrameT(tr(MSG_CO_SMTP_SERVERSETTINGS)),
+
+                          Child, HSpace(1),
+                          Child, MakeCheckGroup(&data->GUI.CH_SMTPENABLED, tr(MSG_CO_SMTP_ACTIVE)),
+
+                          Child, Label2(tr(MSG_CO_SMTP_DESC)),
+                          Child, data->GUI.ST_SMTPDESC = MakeString(SIZE_HOST, tr(MSG_CO_SMTP_DESC)),
+
+                          Child, Label2(tr(MSG_CO_SMTP_SERVERPORT)),
+                          Child, HGroup,
+                            MUIA_Group_Spacing, 1,
+                            Child, data->GUI.ST_SMTPHOST = MakeString(SIZE_HOST, tr(MSG_CO_SMTP_SERVERPORT)),
+                            Child, data->GUI.ST_SMTPPORT = BetterStringObject,
+                              StringFrame,
+                              MUIA_CycleChain,          TRUE,
+                              MUIA_FixWidthTxt,         "00000",
+                              MUIA_String_MaxLen,       5+1,
+                              MUIA_String_AdvanceOnCR,  TRUE,
+                              MUIA_String_Integer,      0,
+                              MUIA_String_Accept,       "0123456789",
+                            End,
+                          End,
+
+                          Child, HSpace(1),
+                          Child, HBar(tr(MSG_CO_SMTP_SECURITYAUTH)), End,
+
+                          Child, Label2(tr(MSG_CO_SMTP_SECURITY)),
+                          Child, data->GUI.CY_SMTPSECURE = MakeCycle(secureSMTPMethods, tr(MSG_CO_SMTP_SECURITY)),
+
+                          Child, Label2(tr(MSG_CO_SMTP_AUTH)),
+                          Child, data->GUI.CY_SMTPAUTH = MakeCycle(smtpAuthMethods, tr(MSG_CO_SMTP_AUTH)),
+
+                          Child, Label2(tr(MSG_CO_SMTPUser)),
+                          Child, data->GUI.ST_SMTPAUTHUSER = MakeString(SIZE_USERID,tr(MSG_CO_SMTPUser)),
+
+                          Child, Label2(tr(MSG_CO_SMTPPass)),
+                          Child, data->GUI.ST_SMTPAUTHPASS = MakePassString(tr(MSG_CO_SMTPPass)),
+
+                          Child, HSpace(1),
+                          Child, HBar(tr(MSG_CO_SMTP_OPTIONS)), End,
+
+                          Child, HSpace(1),
+                          Child, HGroup,
+                            Child, data->GUI.CH_SMTP8BIT = MakeCheck(tr(MSG_CO_Allow8bit)),
+                            Child, LLabel1(tr(MSG_CO_Allow8bit)),
+                            Child, HSpace(0),
+                          End,
+
+                          Child, HVSpace,
+                          Child, HVSpace,
+
+                        End,
+                      End,
+                    End,
+                  End,
+                End,
+              End,
+            End,
+
           End,
         End;
 
@@ -1708,63 +1804,68 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
   {
     SetHelp(data->GUI.ST_SMTPHOST,           MSG_HELP_CO_ST_SMTPHOST             );
     SetHelp(data->GUI.ST_SMTPPORT,           MSG_HELP_CO_ST_SMTPPORT             );
-    SetHelp(data->GUI.ST_DOMAIN,             MSG_HELP_CO_ST_DOMAIN               );
     SetHelp(data->GUI.CH_SMTP8BIT,           MSG_HELP_CO_CH_SMTP8BIT             );
-    SetHelp(data->GUI.CH_USESMTPAUTH,        MSG_HELP_CO_CH_USESMTPAUTH          );
     SetHelp(data->GUI.ST_SMTPAUTHUSER,       MSG_HELP_CO_ST_SMTPAUTHUSER         );
     SetHelp(data->GUI.ST_SMTPAUTHPASS,       MSG_HELP_CO_ST_SMTPAUTHPASS         );
-    SetHelp(data->GUI.CY_SMTPAUTHMETHOD,     MSG_HELP_CO_CY_SMTPAUTHMETHOD       );
+    SetHelp(data->GUI.CY_SMTPAUTH,           MSG_HELP_CO_CY_SMTPAUTHMETHOD       );
     SetHelp(data->GUI.LV_POP3,               MSG_HELP_CO_LV_POP3                 );
     SetHelp(data->GUI.BT_PADD,               MSG_HELP_CO_BT_PADD                 );
     SetHelp(data->GUI.BT_PDEL,               MSG_HELP_CO_BT_PDEL                 );
-    SetHelp(data->GUI.ST_POPACCOUNT,         MSG_HELP_CO_ST_POPACCOUNT           );
+    SetHelp(data->GUI.ST_POPDESC,            MSG_HELP_CO_ST_POPDESC              );
+    SetHelp(data->GUI.ST_SMTPDESC,           MSG_HELP_CO_ST_SMTPDESC             );
     SetHelp(data->GUI.ST_POPHOST,            MSG_HELP_CO_ST_POPHOST              );
     SetHelp(data->GUI.ST_POPPORT,            MSG_HELP_CO_ST_POPPORT              );
     SetHelp(data->GUI.ST_POPUSERID,          MSG_HELP_CO_ST_POPUSERID            );
     SetHelp(data->GUI.ST_PASSWD,             MSG_HELP_CO_ST_PASSWD               );
     SetHelp(data->GUI.CH_DELETE,             MSG_HELP_CO_CH_DELETE               );
-    SetHelp(data->GUI.CH_USEAPOP,            MSG_HELP_CO_CH_USEAPOP              );
+    SetHelp(data->GUI.CY_POPAUTH,            MSG_HELP_CO_CY_POPAUTH              );
     SetHelp(data->GUI.CH_POPENABLED,         MSG_HELP_CO_CH_POPENABLED           );
     SetHelp(data->GUI.CH_DOWNLOADONSTARTUP,  MSG_HELP_CO_CH_DOWNLOAD_ON_STARTUP  );
     SetHelp(data->GUI.CH_APPLYREMOTEFILTERS, MSG_HELP_CO_CH_APPLY_REMOTE_FILTERS );
-    SetHelp(data->GUI.RA_SMTPSECURE,         MSG_HELP_CO_RA_SMTPSECURE           );
-    SetHelp(data->GUI.RA_POP3SECURE,         MSG_HELP_CO_RA_POP3SECURE           );
+    SetHelp(data->GUI.CY_SMTPSECURE,         MSG_HELP_CO_CY_SMTPSECURE           );
+    SetHelp(data->GUI.CY_POPSECURE,          MSG_HELP_CO_CY_POPSECURE            );
     SetHelp(data->GUI.CY_PRESELECTION,       MSG_HELP_CO_CY_MSGSELECT            );
 
-    DoMethod(data->GUI.LV_POP3              , MUIM_Notify, MUIA_NList_Active    , MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_GetPOP3EntryHook, 0);
-    DoMethod(data->GUI.ST_POPACCOUNT        , MUIM_Notify, MUIA_String_Contents , MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_PutPOP3EntryHook, 0);
-    DoMethod(data->GUI.ST_POPHOST           , MUIM_Notify, MUIA_String_Contents , MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_PutPOP3EntryHook, 0);
-    DoMethod(data->GUI.ST_POPPORT           , MUIM_Notify, MUIA_String_Contents , MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_PutPOP3EntryHook, 0);
-    DoMethod(data->GUI.ST_POPUSERID         , MUIM_Notify, MUIA_String_Contents , MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_PutPOP3EntryHook, 0);
-    DoMethod(data->GUI.ST_PASSWD            , MUIM_Notify, MUIA_String_Contents , MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_PutPOP3EntryHook, 0);
-    DoMethod(data->GUI.CH_POPENABLED        , MUIM_Notify, MUIA_Selected        , MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_PutPOP3EntryHook, 0);
-    DoMethod(data->GUI.CH_USEAPOP           , MUIM_Notify, MUIA_Selected        , MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_PutPOP3EntryHook, 0);
-    DoMethod(data->GUI.CH_DELETE            , MUIM_Notify, MUIA_Selected        , MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_PutPOP3EntryHook, 0);
-    DoMethod(data->GUI.CH_DOWNLOADONSTARTUP , MUIM_Notify, MUIA_Selected        , MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_PutPOP3EntryHook, 0);
-    DoMethod(data->GUI.CH_APPLYREMOTEFILTERS, MUIM_Notify, MUIA_Selected        , MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_PutPOP3EntryHook, 0);
-    DoMethod(data->GUI.CY_PRESELECTION      , MUIM_Notify, MUIA_Cycle_Active    , MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_PutPOP3EntryHook, 0);
+    // connect POP3 related stuff to the corresponding Hooks
+    DoMethod(data->GUI.LV_POP3              , MUIM_Notify, MUIA_NList_Active    , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_GetPOP3EntryHook);
+    DoMethod(data->GUI.ST_POPDESC           , MUIM_Notify, MUIA_String_Contents , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
+    DoMethod(data->GUI.ST_POPHOST           , MUIM_Notify, MUIA_String_Contents , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
+    DoMethod(data->GUI.ST_POPPORT           , MUIM_Notify, MUIA_String_Contents , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
+    DoMethod(data->GUI.ST_POPUSERID         , MUIM_Notify, MUIA_String_Contents , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
+    DoMethod(data->GUI.ST_PASSWD            , MUIM_Notify, MUIA_String_Contents , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
+    DoMethod(data->GUI.CH_POPENABLED        , MUIM_Notify, MUIA_Selected        , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
+    DoMethod(data->GUI.CY_POPAUTH           , MUIM_Notify, MUIA_Cycle_Active    , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
+    DoMethod(data->GUI.CH_DELETE            , MUIM_Notify, MUIA_Selected        , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
+    DoMethod(data->GUI.CH_DOWNLOADONSTARTUP , MUIM_Notify, MUIA_Selected        , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
+    DoMethod(data->GUI.CH_APPLYREMOTEFILTERS, MUIM_Notify, MUIA_Selected        , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
+    DoMethod(data->GUI.CY_PRESELECTION      , MUIM_Notify, MUIA_Cycle_Active    , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
     DoMethod(data->GUI.BT_PADD              , MUIM_Notify, MUIA_Pressed         , FALSE         , MUIV_Notify_Application, 2, MUIM_CallHook, &CO_AddPOP3Hook);
     DoMethod(data->GUI.BT_PDEL              , MUIM_Notify, MUIA_Pressed         , FALSE         , MUIV_Notify_Application, 2, MUIM_CallHook, &CO_DelPOP3Hook);
     DoMethod(data->GUI.BT_POPUP             , MUIM_Notify, MUIA_Pressed         , FALSE, data->GUI.LV_POP3, 3, MUIM_NList_Move, MUIV_NList_Move_Selected, MUIV_NList_Move_Previous);
     DoMethod(data->GUI.BT_POPDOWN           , MUIM_Notify, MUIA_Pressed         , FALSE, data->GUI.LV_POP3, 3, MUIM_NList_Move, MUIV_NList_Move_Selected, MUIV_NList_Move_Next);
-    DoMethod(data->GUI.CH_USESMTPAUTH       , MUIM_Notify, MUIA_Selected        , MUIV_EveryTime, MUIV_Notify_Application , 7, MUIM_MultiSet, MUIA_Disabled, MUIV_NotTriggerValue, data->GUI.ST_SMTPAUTHUSER, data->GUI.ST_SMTPAUTHPASS, data->GUI.CY_SMTPAUTHMETHOD, NULL);
-
     // modify the POP3 port according to the security level selected.
-    DoMethod(data->GUI.RA_POP3SECURE, MUIM_Notify, MUIA_Radio_Active, MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_PutPOP3EntryHook, 0);
+    DoMethod(data->GUI.CY_POPSECURE, MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
 
-    // modify the SMTP port according to the security level selected.
-    DoMethod(data->GUI.RA_SMTPSECURE, MUIM_Notify, MUIA_Radio_Active, 0, data->GUI.ST_SMTPPORT,   3, MUIM_Set, MUIA_String_Integer, 25);
-    DoMethod(data->GUI.RA_SMTPSECURE, MUIM_Notify, MUIA_Radio_Active, 1, data->GUI.ST_SMTPPORT,   3, MUIM_Set, MUIA_String_Integer, 25);
-    DoMethod(data->GUI.RA_SMTPSECURE, MUIM_Notify, MUIA_Radio_Active, 2, data->GUI.ST_SMTPPORT,   3, MUIM_Set, MUIA_String_Integer, 465);
-
-    // disable some gadgets per default
-    set(data->GUI.ST_SMTPAUTHUSER,   MUIA_Disabled, TRUE);
-    set(data->GUI.ST_SMTPAUTHPASS,   MUIA_Disabled, TRUE);
-    set(data->GUI.CY_SMTPAUTHMETHOD, MUIA_Disabled, TRUE);
+    // connect SMTP related stuff to the corresponding Hooks
+    DoMethod(data->GUI.LV_SMTP              , MUIM_Notify, MUIA_NList_Active    , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_GetSMTPEntryHook);
+    DoMethod(data->GUI.ST_SMTPDESC          , MUIM_Notify, MUIA_String_Contents , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutSMTPEntryHook);
+    DoMethod(data->GUI.ST_SMTPHOST          , MUIM_Notify, MUIA_String_Contents , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutSMTPEntryHook);
+    DoMethod(data->GUI.ST_SMTPPORT          , MUIM_Notify, MUIA_String_Contents , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutSMTPEntryHook);
+    DoMethod(data->GUI.ST_SMTPAUTHUSER      , MUIM_Notify, MUIA_String_Contents , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutSMTPEntryHook);
+    DoMethod(data->GUI.ST_SMTPAUTHPASS      , MUIM_Notify, MUIA_String_Contents , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutSMTPEntryHook);
+    DoMethod(data->GUI.CH_SMTPENABLED       , MUIM_Notify, MUIA_Selected        , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutSMTPEntryHook);
+    DoMethod(data->GUI.CY_SMTPAUTH          , MUIM_Notify, MUIA_Cycle_Active    , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutSMTPEntryHook);
+    DoMethod(data->GUI.CH_SMTP8BIT,           MUIM_Notify, MUIA_Selected        , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutSMTPEntryHook);
+    DoMethod(data->GUI.BT_SADD              , MUIM_Notify, MUIA_Pressed         , FALSE         , MUIV_Notify_Application, 2, MUIM_CallHook, &CO_AddSMTPHook);
+    DoMethod(data->GUI.BT_SDEL              , MUIM_Notify, MUIA_Pressed         , FALSE         , MUIV_Notify_Application, 2, MUIM_CallHook, &CO_DelSMTPHook);
+    DoMethod(data->GUI.BT_SMTPUP            , MUIM_Notify, MUIA_Pressed         , FALSE, data->GUI.LV_SMTP, 3, MUIM_NList_Move, MUIV_NList_Move_Selected, MUIV_NList_Move_Previous);
+    DoMethod(data->GUI.BT_SMTPDOWN          , MUIM_Notify, MUIA_Pressed         , FALSE, data->GUI.LV_SMTP, 3, MUIM_NList_Move, MUIV_NList_Move_Selected, MUIV_NList_Move_Next);
 
     // set some additional cyclechain data
-    set(data->GUI.BT_POPUP,   MUIA_CycleChain, TRUE);
-    set(data->GUI.BT_POPDOWN, MUIA_CycleChain, TRUE);
+    set(data->GUI.BT_POPUP,    MUIA_CycleChain, TRUE);
+    set(data->GUI.BT_POPDOWN,  MUIA_CycleChain, TRUE);
+    set(data->GUI.BT_SMTPUP,   MUIA_CycleChain, TRUE);
+    set(data->GUI.BT_SMTPDOWN, MUIA_CycleChain, TRUE);
   }
 
   RETURN(obj);
@@ -1984,10 +2085,10 @@ Object *CO_PageFilters(struct CO_ClassData *data)
                          Child, RectangleObject,
                             MUIA_Weight, 1,
                          End,
-                          Child, RectangleObject,
-                            MUIA_Rectangle_HBar, TRUE,
-                            MUIA_FixHeight,      4,
-                          End,
+                         Child, RectangleObject,
+                           MUIA_Rectangle_HBar, TRUE,
+                           MUIA_FixHeight,      4,
+                         End,
                          Child, HGroup,
                             Child, data->GUI.BT_MORE = MakeButton(tr(MSG_CO_More)),
                             Child, HVSpace,

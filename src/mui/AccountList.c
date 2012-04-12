@@ -68,7 +68,7 @@ OVERLOAD(MUIM_NList_Display)
 
   if(msn != NULL)
   {
-    ndm->strings[0] = msn->account;
+    ndm->strings[0] = msn->description;
 
     // inactive accounts are shown in italics
     if(isServerActive(msn) == FALSE)

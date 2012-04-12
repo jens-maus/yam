@@ -2361,7 +2361,7 @@ BOOL ReceiveMailsFromPOP(struct MailServerNode *msn, const ULONG flags, struct D
     }
   }
   else
-    W(DBF_NET, "server '%s' is already in use", msn->account);
+    W(DBF_NET, "server '%s' is already in use", msn->description);
 
   RETURN(success);
   return success;
@@ -3736,10 +3736,10 @@ void MA_SetupDynamicMenus(void)
         Object *newObj;
 
         // create a new default account name only if none is yet given
-        if(msn->account[0] == '\0')
-          snprintf(msn->account, sizeof(msn->account), "%s@%s", msn->username, msn->hostname);
+        if(msn->description[0] == '\0')
+          snprintf(msn->description, sizeof(msn->description), "%s@%s", msn->username, msn->hostname);
 
-        newObj = Menuitem(msn->account, NULL, TRUE, FALSE, MMEN_POPHOST+i);
+        newObj = Menuitem(msn->description, NULL, TRUE, FALSE, MMEN_POPHOST+i);
         if(newObj != NULL)
         {
           // add the new menu item to the sublist

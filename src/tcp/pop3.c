@@ -231,7 +231,7 @@ static char *SendPOP3Command(struct TransferContext *tc, const enum POPCommand c
           }
         }
 
-        ER_NewError(errorMsg, tc->host, tc->msn->account, (char *)POPcmd[command], tc->pop3Buffer);
+        ER_NewError(errorMsg, tc->host, tc->msn->description, (char *)POPcmd[command], tc->pop3Buffer);
       }
     }
   }
@@ -885,7 +885,7 @@ static int ConnectToPOP3(struct TransferContext *tc)
 
   PushMethodOnStack(tc->transferGroup, 2, MUIM_TransferControlGroup_ShowStatus, tr(MSG_TR_Connecting));
 
-  BusyText(tr(MSG_TR_MailTransferFrom), tc->msn->account);
+  BusyText(tr(MSG_TR_MailTransferFrom), tc->msn->description);
 
   // now we start our connection to the POP3 server
   if((err = ConnectToHost(tc->connection, tc->host, tc->port)) != CONNECTERR_SUCCESS)
@@ -902,32 +902,32 @@ static int ConnectToPOP3(struct TransferContext *tc)
 
         // socket is already in use
         case CONNECTERR_SOCKET_IN_USE:
-          ER_NewError(tr(MSG_ER_CONNECTERR_SOCKET_IN_USE_POP3), tc->host, tc->msn->account);
+          ER_NewError(tr(MSG_ER_CONNECTERR_SOCKET_IN_USE_POP3), tc->host, tc->msn->description);
         break;
 
         // socket() execution failed
         case CONNECTERR_NO_SOCKET:
-          ER_NewError(tr(MSG_ER_CONNECTERR_NO_SOCKET_POP3), tc->host, tc->msn->account);
+          ER_NewError(tr(MSG_ER_CONNECTERR_NO_SOCKET_POP3), tc->host, tc->msn->description);
         break;
 
         // couldn't establish non-blocking IO
         case CONNECTERR_NO_NONBLOCKIO:
-          ER_NewError(tr(MSG_ER_CONNECTERR_NO_NONBLOCKIO_POP3), tc->host, tc->msn->account);
+          ER_NewError(tr(MSG_ER_CONNECTERR_NO_NONBLOCKIO_POP3), tc->host, tc->msn->description);
         break;
 
         // connection request timed out
         case CONNECTERR_TIMEDOUT:
-          ER_NewError(tr(MSG_ER_CONNECTERR_TIMEDOUT_POP3), tc->host, tc->msn->account);
+          ER_NewError(tr(MSG_ER_CONNECTERR_TIMEDOUT_POP3), tc->host, tc->msn->description);
         break;
 
         // unknown host - gethostbyname() failed
         case CONNECTERR_UNKNOWN_HOST:
-          ER_NewError(tr(MSG_ER_UNKNOWN_HOST_POP3), tc->host, tc->msn->account);
+          ER_NewError(tr(MSG_ER_UNKNOWN_HOST_POP3), tc->host, tc->msn->description);
         break;
 
         // general connection error
         case CONNECTERR_UNKNOWN_ERROR:
-          ER_NewError(tr(MSG_ER_CANNOT_CONNECT_POP3), tc->host, tc->msn->account);
+          ER_NewError(tr(MSG_ER_CANNOT_CONNECT_POP3), tc->host, tc->msn->description);
         break;
 
         case CONNECTERR_SSLFAILED:
@@ -973,7 +973,7 @@ static int ConnectToPOP3(struct TransferContext *tc)
       tc->useTLS = TRUE;
     else
     {
-      ER_NewError(tr(MSG_ER_INITTLS_POP3), tc->host, tc->msn->account);
+      ER_NewError(tr(MSG_ER_INITTLS_POP3), tc->host, tc->msn->description);
       goto out;
     }
   }
@@ -993,7 +993,7 @@ static int ConnectToPOP3(struct TransferContext *tc)
   {
     Object *passwordWin;
 
-    snprintf(tc->windowTitle, sizeof(tc->windowTitle), tr(MSG_TR_ENTER_POP3_PASSWORD), tc->msn->account);
+    snprintf(tc->windowTitle, sizeof(tc->windowTitle), tr(MSG_TR_ENTER_POP3_PASSWORD), tc->msn->description);
 
     if((passwordWin = (Object *)PushMethodOnStackWait(G->App, 5, MUIM_YAMApplication_CreatePasswordWindow, CurrentThread(), tr(MSG_TR_PopLogin), tc->windowTitle, sizeof(tc->password))) != NULL)
     {
@@ -1050,7 +1050,7 @@ static int ConnectToPOP3(struct TransferContext *tc)
     }
     else
     {
-      ER_NewError(tr(MSG_ER_NO_APOP), tc->host, tc->msn->account);
+      ER_NewError(tr(MSG_ER_NO_APOP), tc->host, tc->msn->description);
       goto out;
     }
   }
@@ -1450,7 +1450,7 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
 
               strlcpy(tc->password, msn->password, sizeof(tc->password));
 
-              snprintf(tc->transferGroupTitle, sizeof(tc->transferGroupTitle), tr(MSG_TR_MailTransferFrom), msn->account);
+              snprintf(tc->transferGroupTitle, sizeof(tc->transferGroupTitle), tr(MSG_TR_MailTransferFrom), msn->description);
 
               if((tc->transferGroup = (Object *)PushMethodOnStackWait(G->App, 6, MUIM_YAMApplication_CreateTransferGroup, CurrentThread(), tc->transferGroupTitle, tc->connection, TRUE, isFlagSet(tc->flags, RECEIVEF_USER))) != NULL)
               {
@@ -1492,7 +1492,7 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
                         D(DBF_NET, "preselection is required");
                         doDownload = FALSE;
 
-                        snprintf(tc->windowTitle, sizeof(tc->windowTitle), tr(MSG_TR_MailTransferFrom), tc->msn->account);
+                        snprintf(tc->windowTitle, sizeof(tc->windowTitle), tr(MSG_TR_MailTransferFrom), tc->msn->description);
 
                         if((tc->preselectWindow = (Object *)PushMethodOnStackWait(G->App, 5, MUIM_YAMApplication_CreatePreselectionWindow, CurrentThread(), tc->windowTitle, PRESELWINMODE_DOWNLOAD, tc->transferList)) != NULL)
                         {
@@ -1586,14 +1586,14 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
           snprintf(downloadedStr, sizeof(downloadedStr), "%d", (int)tc->downloadResult.downloaded);
           PushMethodOnStackWait(G->App, 3, MUIM_YAMApplication_StartMacro, MACRO_POSTGET, downloadedStr);
 
-          AppendToLogfile(LF_ALL, 30, tr(MSG_LOG_RETRIEVED_POP3), tc->downloadResult.downloaded, msn->account);
+          AppendToLogfile(LF_ALL, 30, tr(MSG_LOG_RETRIEVED_POP3), tc->downloadResult.downloaded, msn->description);
 
           // we only apply the filters if we downloaded something, or it's wasted
           D(DBF_THREAD, "filter %ld downloaded mails", tc->downloadResult.downloaded);
           if(tc->downloadResult.downloaded > 0)
           {
             PushMethodOnStackWait(G->App, 3, MUIM_YAMApplication_FilterNewMails, tc->msn->downloadedMails, &tc->filterResult);
-            PushMethodOnStackWait(G->App, 4, MUIM_YAMApplication_NewMailAlert, tc->msn->account, &tc->downloadResult, &tc->filterResult, tc->flags);
+            PushMethodOnStackWait(G->App, 4, MUIM_YAMApplication_NewMailAlert, tc->msn->description, &tc->downloadResult, &tc->filterResult, tc->flags);
           }
           else
           {
