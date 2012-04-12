@@ -38,6 +38,14 @@
 
 #include "Debug.h"
 
+/* CLASSDATA
+struct Data
+{
+  char numBuffer[SIZE_DEFAULT];
+};
+*/
+
+
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
@@ -47,7 +55,7 @@ OVERLOAD(OM_NEW)
   obj = DoSuperNew(cl, obj,
 
     InputListFrame,
-    MUIA_NList_Format,       "BAR, P=\033c NB CW=1 MICW=1 MACW=1, P=\033c NB CW=1 MICW=1 MACW=1, P=\033c NB CW=1 MICW=1 MACW=1, P=\033c NB CW=1 MICW=1 MACW=1",
+    MUIA_NList_Format,       "BAR P=\033l NB CW=2 MICW=2 MACW=2, BAR, P=\033c NB CW=1 MICW=1 MACW=1, P=\033c NB CW=1 MICW=1 MACW=1, P=\033c NB CW=1 MICW=1 MACW=1, P=\033c NB CW=1 MICW=1 MACW=1",
     MUIA_NList_Title,        TRUE,
     MUIA_NList_DragType,     MUIV_NList_DragType_Immediate,
     MUIA_NList_DragSortable, TRUE,
@@ -69,19 +77,25 @@ OVERLOAD(MUIM_NList_Display)
 
   if(entry != NULL)
   {
-    ndm->strings[0] = entry->name;
-    ndm->strings[1] = (entry->remote == TRUE) ? (char *)"x" : (char *)" ";
-    ndm->strings[2] = (entry->applyToNew == TRUE && entry->remote == FALSE) ?  (char *)"x" : (char *)" ";
-    ndm->strings[3] = (entry->applyToSent == TRUE && entry->remote == FALSE) ? (char *)"x" : (char *)" ";
-    ndm->strings[4] = (entry->applyOnReq == TRUE && entry->remote == FALSE) ?  (char *)"x" : (char *)" ";
+    GETDATA;
+
+    snprintf(data->numBuffer, sizeof(data->numBuffer), "%d)", (int)ndm->strings[-1]+1);
+
+    ndm->strings[0] = data->numBuffer;
+    ndm->strings[1] = entry->name;
+    ndm->strings[2] = (entry->remote == TRUE) ? (char *)"x" : (char *)" ";
+    ndm->strings[3] = (entry->applyToNew == TRUE && entry->remote == FALSE) ?  (char *)"x" : (char *)" ";
+    ndm->strings[4] = (entry->applyToSent == TRUE && entry->remote == FALSE) ? (char *)"x" : (char *)" ";
+    ndm->strings[5] = (entry->applyOnReq == TRUE && entry->remote == FALSE) ?  (char *)"x" : (char *)" ";
   }
   else
   {
-    ndm->strings[0] = (char *)tr(MSG_CO_Filter_Name);
-    ndm->strings[1] = (char *)tr(MSG_CO_Filter_RType);
-    ndm->strings[2] = (char *)tr(MSG_CO_Filter_NType);
-    ndm->strings[3] = (char *)tr(MSG_CO_Filter_SType);
-    ndm->strings[4] = (char *)tr(MSG_CO_Filter_UType);
+    ndm->strings[0] = (char *)"#";
+    ndm->strings[1] = (char *)tr(MSG_CO_Filter_Name);
+    ndm->strings[2] = (char *)tr(MSG_CO_Filter_RType);
+    ndm->strings[3] = (char *)tr(MSG_CO_Filter_NType);
+    ndm->strings[4] = (char *)tr(MSG_CO_Filter_SType);
+    ndm->strings[5] = (char *)tr(MSG_CO_Filter_UType);
   }
 
   LEAVE();
