@@ -7,6 +7,8 @@ $URL$
 
 2012-04-12 Jens Langner <Jens.Langner@light-speed.de>
 
+  * mui/AccountList.c: we now display the order number in the AccountList
+    so that the order of server is more clearly visible.
   * YAM_COs.c: fixed forgotten read routines for new SMTP-Enabled and
     SMTP-Description options in YAM config.
   * YAM_COs.c: beautified config output for SMTP server so that it is properly

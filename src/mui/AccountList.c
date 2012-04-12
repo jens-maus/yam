@@ -38,6 +38,13 @@
 
 #include "Debug.h"
 
+/* CLASSDATA
+struct Data
+{
+  char displayBuffer[SIZE_DEFAULT];
+};
+*/
+
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
@@ -68,11 +75,13 @@ OVERLOAD(MUIM_NList_Display)
 
   if(msn != NULL)
   {
-    ndm->strings[0] = msn->description;
+    GETDATA;
 
-    // inactive accounts are shown in italics
-    if(isServerActive(msn) == FALSE)
-      ndm->preparses[0] = (char *)MUIX_I;
+    snprintf(data->displayBuffer, sizeof(data->displayBuffer), "%d) %s%s" MUIX_N, (int)ndm->strings[-1]+1,
+                                                                                  isServerActive(msn) == FALSE ? MUIX_I : "",
+                                                                                  msn->description);
+
+    ndm->strings[0] = data->displayBuffer;
   }
 
   LEAVE();
