@@ -114,6 +114,7 @@ struct Node;
 #define NEED_MEMDUP
 #define NEED_VASPRINTF
 #define NEED_CHANGEFILEPOSITION
+#define NEED_STRCASESTR
 #endif // __MORPHOS__
 
 /*

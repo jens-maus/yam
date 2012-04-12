@@ -14,6 +14,8 @@ $URL$
   * YAM_RE.c, tcp/smtp.c: fixed broken MorphOS build by pretending that the
     header file proto/usergroup.h has already been included if unistd.h is
     included. This is definitely a quirk of the MorphOS SDK.
+  * extrasrc.h: added missing definition of NEED_STRCASESTR for the MorphOS
+    build.
 
 2012-04-12 Jens Langner <Jens.Langner@light-speed.de>
 
