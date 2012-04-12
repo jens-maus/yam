@@ -30,8 +30,11 @@
 ***************************************************************************/
 
 #include <sys/utsname.h>
+#include <string.h>
 
 #include "extrasrc.h"
+
+#include "Debug.h"
 
 #if defined(NEED_GETHOSTNAME)
 
@@ -48,9 +51,9 @@ int gethostname(char *name, size_t len)
     // obtain some information about the current kernel
     if((result = uname(&uts)) != -1)
     {
-	  // use the domain name as host name
-	  strlcpy(name, uts.domainname, len);
-	}
+      // setup a hopefully usable host name 
+      snprintf(name, len, "%s-%s-%s-%s", uts.sysname, uts.release, uts.version, uts.machine);
+    }
   }
 
   RETURN(result);
