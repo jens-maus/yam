@@ -282,31 +282,31 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
         // for the first SMTP server we output in the old format
         if(i == 0)
         {
-          fprintf(fh, "SMTP-ID          = %08x\n", msn->id);
-          fprintf(fh, "SMTP-Enabled     = %s\n", Bool2Txt(isServerActive(msn)));
-          fprintf(fh, "SMTP-Description = %s\n", msn->description);
-          fprintf(fh, "SMTP-Server      = %s\n", msn->hostname);
-          fprintf(fh, "SMTP-Port        = %d\n", msn->port);
-          fprintf(fh, "SMTP-SecMethod   = %d\n", MSF2SMTPSecMethod(msn));
-          fprintf(fh, "Allow8bit        = %s\n", Bool2Txt(hasServer8bit(msn)));
-          fprintf(fh, "Use-SMTP-AUTH    = %s\n", Bool2Txt(hasServerAuth(msn)));
-          fprintf(fh, "SMTP-AUTH-User   = %s\n", msn->username);
-          fprintf(fh, "SMTP-AUTH-Pass   = %s\n", Encrypt(msn->password));
-          fprintf(fh, "SMTP-AUTH-Method = %d\n", MSF2SMTPAuthMethod(msn));
+          fprintf(fh, "SMTP-ID                  = %08x\n", msn->id);
+          fprintf(fh, "SMTP-Enabled             = %s\n", Bool2Txt(isServerActive(msn)));
+          fprintf(fh, "SMTP-Description         = %s\n", msn->description);
+          fprintf(fh, "SMTP-Server              = %s\n", msn->hostname);
+          fprintf(fh, "SMTP-Port                = %d\n", msn->port);
+          fprintf(fh, "SMTP-SecMethod           = %d\n", MSF2SMTPSecMethod(msn));
+          fprintf(fh, "Allow8bit                = %s\n", Bool2Txt(hasServer8bit(msn)));
+          fprintf(fh, "Use-SMTP-AUTH            = %s\n", Bool2Txt(hasServerAuth(msn)));
+          fprintf(fh, "SMTP-AUTH-User           = %s\n", msn->username);
+          fprintf(fh, "SMTP-AUTH-Pass           = %s\n", Encrypt(msn->password));
+          fprintf(fh, "SMTP-AUTH-Method         = %d\n", MSF2SMTPAuthMethod(msn));
         }
         else
         {
-          fprintf(fh, "SMTP%02d.ID          = %08x\n", i, msn->id);
-          fprintf(fh, "SMTP%02d.Enabled     = %s\n", i, Bool2Txt(isServerActive(msn)));
-          fprintf(fh, "SMTP%02d.Description = %s\n", i, msn->description);
-          fprintf(fh, "SMTP%02d.Server      = %s\n", i, msn->hostname);
-          fprintf(fh, "SMTP%02d.Port        = %d\n", i, msn->port);
-          fprintf(fh, "SMTP%02d.SecMethod   = %d\n", i, MSF2SMTPSecMethod(msn));
-          fprintf(fh, "SMTP%02d.Allow8bit   = %s\n", i, Bool2Txt(hasServer8bit(msn)));
-          fprintf(fh, "SMTP%02d.SMTP-AUTH   = %s\n", i, Bool2Txt(hasServerAuth(msn)));
-          fprintf(fh, "SMTP%02d.AUTH-User   = %s\n", i, msn->username);
-          fprintf(fh, "SMTP%02d.AUTH-Pass   = %s\n", i, Encrypt(msn->password));
-          fprintf(fh, "SMTP%02d.AUTH-Method = %d\n", i, MSF2SMTPAuthMethod(msn));
+          fprintf(fh, "SMTP%02d.ID                = %08x\n", i, msn->id);
+          fprintf(fh, "SMTP%02d.Enabled           = %s\n", i, Bool2Txt(isServerActive(msn)));
+          fprintf(fh, "SMTP%02d.Description       = %s\n", i, msn->description);
+          fprintf(fh, "SMTP%02d.Server            = %s\n", i, msn->hostname);
+          fprintf(fh, "SMTP%02d.Port              = %d\n", i, msn->port);
+          fprintf(fh, "SMTP%02d.SecMethod         = %d\n", i, MSF2SMTPSecMethod(msn));
+          fprintf(fh, "SMTP%02d.Allow8bit         = %s\n", i, Bool2Txt(hasServer8bit(msn)));
+          fprintf(fh, "SMTP%02d.SMTP-AUTH         = %s\n", i, Bool2Txt(hasServerAuth(msn)));
+          fprintf(fh, "SMTP%02d.AUTH-User         = %s\n", i, msn->username);
+          fprintf(fh, "SMTP%02d.AUTH-Pass         = %s\n", i, Encrypt(msn->password));
+          fprintf(fh, "SMTP%02d.AUTH-Method       = %d\n", i, MSF2SMTPAuthMethod(msn));
         }
 
         i++;

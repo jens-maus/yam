@@ -7,6 +7,9 @@ $URL$
 
 2012-04-12 Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_COs.c: beautified config output for SMTP server so that it is properly
+    aligned to the POP server output in the .config file.
+  * YAM_COg.c: forgot to add notify for SMTP AUTH cycle gadget.
   * YAM_COg.c, misc: redesigned the TCP/IP configuration page of the YAM
     configuration window to be somewhat more intuitive. In addition, multiple
     SMTP servers can now be added in the GUI and will also be saved in the
