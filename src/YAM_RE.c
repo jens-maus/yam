@@ -28,6 +28,10 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
+#if defined(__MORPHOS__)
+// avoid conflicting function definitions due to broken headers in the MorphOS SDK
+#define PROTO_USERGROUP_H
+#endif
 #include <unistd.h>
 
 #include <clib/alib_protos.h>
@@ -1214,7 +1218,7 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, const struct codeset *srcC
           int i = boundaryLen+4;
           while(isspace(buf[i]))
             i++;
-  
+
           if(buf[i] == '\0')
           {
             D(DBF_MAIL, "found end MIME boundary");
@@ -1231,7 +1235,7 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, const struct codeset *srcC
           int i = boundaryLen+2;
           while(isspace(buf[i]))
             i++;
-  
+
           if(buf[i] == '\0')
           {
             D(DBF_MAIL, "found new start MIME boundary");

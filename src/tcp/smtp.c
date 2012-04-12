@@ -27,6 +27,10 @@
 
 #include <ctype.h>
 #include <string.h>
+#if defined(__MORPHOS__)
+// avoid conflicting function definitions due to broken headers in the MorphOS SDK
+#define PROTO_USERGROUP_H
+#endif
 #include <unistd.h>
 
 #include <clib/alib_protos.h>

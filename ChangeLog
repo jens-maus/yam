@@ -11,6 +11,9 @@ $URL$
     function gethostname() is not found.
   * MUIObjects.c, YAM_COg.c: renamed the HBar() macro to HBarT() as the other
     name is already in use by the AROS MUI headers, but with a different meaning.
+  * YAM_RE.c, tcp/smtp.c: fixed broken MorphOS build by pretending that the
+    header file proto/usergroup.h has already been included if unistd.h is
+    included. This is definitely a quirk of the MorphOS SDK.
 
 2012-04-12 Jens Langner <Jens.Langner@light-speed.de>
 
