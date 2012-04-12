@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-04-12 Thore Böckelmann <tboeckel@gmx.de>
+
+  * Makefile: added -lnet to the linker libs for the OS3 build. Otherwise the
+    function gethostname() is not found.
+
 2012-04-12 Jens Langner <Jens.Langner@light-speed.de>
 
   * mui/FilterList.c: the filter list will also contain the current position

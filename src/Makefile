@@ -247,7 +247,7 @@ ifeq ($(OS), os3)
   CPU	    = -m68020-60 -msoft-float
   CFLAGS  += -I./include/netinclude -DNO_INLINE_STDARG -D__amigaos3__
   LDFLAGS += -noixemul
-  LDLIBS  += -ldebug -lmui
+  LDLIBS  += -ldebug -lmui -lnet
 
   EXTRAOBJS = AllocSysObject.o \
               AllocVecPooled.o \
