@@ -1602,18 +1602,18 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
 
           Child, RegisterGroup(rtitles),
             MUIA_CycleChain, TRUE,
- 
+
             // Receive MailServer List (POP3/IMAP)
             Child, ScrollgroupObject,
               MUIA_Scrollgroup_FreeHoriz, FALSE,
               MUIA_Scrollgroup_AutoBars, TRUE,
               MUIA_Scrollgroup_Contents, VGroupV,
 
-                Child, HGroup, 
+                Child, HGroup,
                   Child, VGroup,
                     MUIA_HorizWeight, 30,
 
-                    Child, HBar(tr(MSG_CO_POP_SERVERLIST)), End,
+                    Child, HBarT(tr(MSG_CO_POP_SERVERLIST)), End,
 
                     Child, NListviewObject,
                       MUIA_CycleChain, TRUE,
@@ -1662,7 +1662,7 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
                         End,
 
                         Child, HSpace(1),
-                        Child, HBar(tr(MSG_CO_POP_SECURITYAUTH)), End,
+                        Child, HBarT(tr(MSG_CO_POP_SECURITYAUTH)), End,
 
                         Child, Label2(tr(MSG_CO_POP_SECURITY)),
                         Child, data->GUI.CY_POPSECURE = MakeCycle(securePOP3Methods, tr(MSG_CO_POP_SECURITY)),
@@ -1677,7 +1677,7 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
                         Child, data->GUI.ST_PASSWD = MakePassString(tr(MSG_CO_Password)),
 
                         Child, HSpace(1),
-                        Child, HBar(tr(MSG_CO_POP_MSGHANDLING)), End,
+                        Child, HBarT(tr(MSG_CO_POP_MSGHANDLING)), End,
 
                         Child, Label2(tr(MSG_CO_PreSelect)),
                         Child, data->GUI.CY_PRESELECTION = MakeCycle(preselectionModes, tr(MSG_CO_PreSelect)),
@@ -1700,18 +1700,18 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
                 End,
               End,
             End,
- 
+
             // Send MailServer List (SMTP)
             Child, ScrollgroupObject,
               MUIA_Scrollgroup_FreeHoriz, FALSE,
               MUIA_Scrollgroup_AutoBars, TRUE,
               MUIA_Scrollgroup_Contents, VGroupV,
 
-                Child, HGroup, 
+                Child, HGroup,
                   Child, VGroup,
                     MUIA_HorizWeight, 30,
 
-                    Child, HBar(tr(MSG_CO_SMTP_SERVERLIST)), End,
+                    Child, HBarT(tr(MSG_CO_SMTP_SERVERLIST)), End,
 
                     Child, NListviewObject,
                       MUIA_CycleChain, TRUE,
@@ -1762,7 +1762,7 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
                           End,
 
                           Child, HSpace(1),
-                          Child, HBar(tr(MSG_CO_SMTP_SECURITYAUTH)), End,
+                          Child, HBarT(tr(MSG_CO_SMTP_SECURITYAUTH)), End,
 
                           Child, Label2(tr(MSG_CO_SMTP_SECURITY)),
                           Child, data->GUI.CY_SMTPSECURE = MakeCycle(secureSMTPMethods, tr(MSG_CO_SMTP_SECURITY)),
@@ -1777,7 +1777,7 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
                           Child, data->GUI.ST_SMTPAUTHPASS = MakePassString(tr(MSG_CO_SMTPPass)),
 
                           Child, HSpace(1),
-                          Child, HBar(tr(MSG_CO_SMTP_OPTIONS)), End,
+                          Child, HBarT(tr(MSG_CO_SMTP_OPTIONS)), End,
 
                           Child, HSpace(1),
                           Child, HGroup,

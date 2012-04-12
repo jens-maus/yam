@@ -9,6 +9,8 @@ $URL$
 
   * Makefile: added -lnet to the linker libs for the OS3 build. Otherwise the
     function gethostname() is not found.
+  * MUIObjects.c, YAM_COg.c: renamed the HBar() macro to HBarT() as the other
+    name is already in use by the AROS MUI headers, but with a different meaning.
 
 2012-04-12 Jens Langner <Jens.Langner@light-speed.de>
 
