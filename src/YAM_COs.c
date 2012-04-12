@@ -934,6 +934,8 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
 
 /* TCP/IP */
           else if(stricmp(buf, "SMTP-ID") == 0)                  fSMTP->id = strtol(value, NULL, 16);
+          else if(stricmp(buf, "SMTP-Enabled") == 0)             Txt2Bool(value) == TRUE ? SET_FLAG(fSMTP->flags, MSF_ACTIVE) : CLEAR_FLAG(fSMTP->flags, MSF_ACTIVE);
+          else if(stricmp(buf, "SMTP-Description") == 0)         strlcpy(fSMTP->description, value, sizeof(fSMTP->description));
           else if(stricmp(buf, "SMTP-Server") == 0)              strlcpy(fSMTP->hostname, value, sizeof(fSMTP->hostname));
           else if(stricmp(buf, "SMTP-Port") == 0)                fSMTP->port = atoi(value);
           else if(stricmp(buf, "SMTP-SecMethod") == 0)           SET_FLAG(fSMTP->flags, SMTPSecMethod2MSF(atoi(value)));
