@@ -21,6 +21,10 @@ $URL$
 
 2012-04-12 Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_UT.c: implemented a own GetHostName() function which in fact calls
+    the corresponding function in the bsdsocket.library interface instead
+    of relying on implementation in each clib. This allows to get rid
+    of a wrapper function for gethostname() for AROS.
   * mui/FilterList.c: the filter list will also contain the current position
     now as this list is also a priority sorted list which should be more clear
     by showing the position explicity.

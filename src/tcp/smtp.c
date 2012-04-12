@@ -27,11 +27,6 @@
 
 #include <ctype.h>
 #include <string.h>
-#if defined(__MORPHOS__)
-// avoid conflicting function definitions due to broken headers in the MorphOS SDK
-#define PROTO_USERGROUP_H
-#endif
-#include <unistd.h>
 
 #include <clib/alib_protos.h>
 #include <proto/exec.h>
@@ -328,10 +323,7 @@ static BOOL ConnectToSMTP(struct TransferContext *tc)
 
     // before we go on we retrieve the FQDN of the machine we are sending the
     // email from
-    if(gethostname(hostName, sizeof(hostName)-1) == 0)
-      hostName[sizeof(hostName)-1] = '\0'; // gethostname() may have returned 255 chars (man page)
-    else
-      hostName[0] = '\0'; // gethostname() failed: pretend empty string
+    GetHostName(hostName, sizeof(hostName));
 
     // per default we flag the SMTP to be capable of an ESMTP
     // connection.
@@ -650,10 +642,7 @@ static BOOL InitSMTPAUTH(struct TransferContext *tc)
           {
             char hostName[256];
 
-            if(gethostname(hostName, sizeof(hostName)-1) == 0)
-              hostName[sizeof(hostName)-1] = '\0'; // gethostname() may have returned 255 chars (man page)
-            else
-              hostName[0] = '\0'; // gethostname() failed: pretend empty string
+            GetHostName(hostName, sizeof(hostName));
 
             W(DBF_NET, "'realm' not found in challenge, using '%s' instead", hostName);
 

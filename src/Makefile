@@ -247,7 +247,7 @@ ifeq ($(OS), os3)
   CPU	    = -m68020-60 -msoft-float
   CFLAGS  += -I./include/netinclude -DNO_INLINE_STDARG -D__amigaos3__
   LDFLAGS += -noixemul
-  LDLIBS  += -ldebug -lmui -lnet
+  LDLIBS  += -ldebug -lmui
 
   EXTRAOBJS = AllocSysObject.o \
               AllocVecPooled.o \
@@ -333,7 +333,6 @@ ifeq ($(OS), aros-i386)
               SetProcWindow.o \
               asprintf.o \
               getdelim.o \
-              gethostname.o \
               memdup.o \
               stcgfe.o \
               strtok_r.o \
@@ -368,7 +367,6 @@ ifeq ($(OS), aros-ppc)
               SetProcWindow.o \
               asprintf.o \
               getdelim.o \
-              gethostname.o \
               memdup.o \
               stcgfe.o \
               strtok_r.o \
@@ -403,7 +401,6 @@ ifeq ($(OS), aros-x86_64)
               SetProcWindow.o \
               asprintf.o \
               getdelim.o \
-              gethostname.o \
               memdup.o \
               stcgfe.o \
               strtok_r.o \
@@ -438,7 +435,6 @@ ifeq ($(OS), aros-arm)
               SetProcWindow.o \
               asprintf.o \
               getdelim.o \
-              gethostname.o \
               memdup.o \
               stcgfe.o \
               strtok_r.o \

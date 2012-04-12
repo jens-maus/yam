@@ -28,11 +28,6 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
-#if defined(__MORPHOS__)
-// avoid conflicting function definitions due to broken headers in the MorphOS SDK
-#define PROTO_USERGROUP_H
-#endif
-#include <unistd.h>
 
 #include <clib/alib_protos.h>
 #include <clib/macros.h>
@@ -3603,10 +3598,8 @@ static void RE_SendMDN(const enum MDNMode mode,
         {
           char hostName[256];
 
-          if(gethostname(hostName, sizeof(hostName)-1) == 0)
-            hostName[sizeof(hostName)-1] = '\0'; // gethostname() may have returned 255 chars (man page)
-          else
-            hostName[0] = '\0'; // gethostname() failed: pretend empty string
+          // retrieve the hostname as good as possible
+          GetHostName(hostName, sizeof(hostName));
 
           // according to RFC 3798 the Reporting-UA header of a MDN
           // message should include the DNS-Name (hostname) of the

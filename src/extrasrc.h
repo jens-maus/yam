@@ -138,7 +138,6 @@ struct Node;
 #define NEED_VASPRINTF
 #define NEED_VASTUBS
 #define NEED_CHANGEFILEPOSITION
-#define NEED_GETHOSTNAME
 #endif // __AROS__
 
 /*
@@ -291,10 +290,6 @@ void NewFreeArgs(struct NewRDArgs *);
 
 #if defined(NEED_STRCASESTR)
 char *strcasestr(const char *haystack, const char *needle);
-#endif
-
-#if defined(NEED_HOSTNAME)
-int gethostname(char *name, size_t len);
 #endif
 
 /*

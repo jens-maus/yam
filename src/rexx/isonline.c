@@ -37,8 +37,6 @@
 
 #include "Debug.h"
 
-extern struct Library *SocketBase;
-
 struct args
 {
   long dummy;
