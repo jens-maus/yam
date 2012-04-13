@@ -1,13 +1,13 @@
-## version $VER: YAM.catalog 7.93 (24.12.2011)
+## version $VER: YAM.catalog 7.94 (13.04.2012)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
 ;
-; italian.ct - YAM 2.6p1/2.7 catalog translation file
+; italian.ct - YAM 2.7/2.8-dev catalog translation file
 ; Compiled with FlexCat 2.9 PPC (AmigaOS4)
 ; $Id$
 ;
-; based on YAM.cd 5753 2011-12-08
+; based on YAM.cd 5835 2012-04-13
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -1282,10 +1282,6 @@ MSG_CO_DeleteServerMail
 Cancella la p_osta dal server
 ; Delete mail _on server
 ;
-MSG_CO_UseAPOP
-_Connessione tramite APOP
-; _Log in using APOP
-;
 MSG_CO_PSNever
 disattivata
 ; never
@@ -2084,17 +2080,6 @@ posta dopo il loro prelevamento.
 ; Delete messages from\n\
 ; mail server after the\n\
 ; download.
-;
-MSG_HELP_CO_CH_USEAPOP
-Connessione tramite autenticazione APOP.\n\
-Questa opzione consentirà di nascondere il\n\
-tuo nome utente e la tua password da occhi\n\
-indiscreti.\n\
-(Non supportata da tutti i server POP3)
-; Log in using APOP authentication\n\
-; to keep your user name and password\n\
-; away from prying eyes.\n\
-; (not supported by all POP3 servers)
 ;
 MSG_HELP_CO_CH_POPENABLED
 Verifica questo account durante la ricerca\n\
@@ -5473,10 +5458,6 @@ MSG_RE_FixedFont
 Spaziatura fissa?
 ; Fixed font?
 ;
-MSG_CO_UseSMTPAUTH
-Usa SMTP AUT_H
-; Use SMTP AU_TH
-;
 MSG_CO_SMTPUser
 I_D Utente
 ; Us_er name
@@ -5557,16 +5538,6 @@ Precisione 10^-2 (0.01 GB/MB/KB)
 MSG_CO_SIZEFORMAT05
 Precisione 10^-3 (0.001 GB/MB/KB)
 ; 10^-3 precision (0.001 GB/MB/KB)
-;
-MSG_HELP_CO_CH_USESMTPAUTH
-Seleziona questa opzione se si desidera autenticare\n\
-la propria persona su di un server SMTP sconosciuto\n\
-(generalmente al di fuori del tuo dominio ISP).\n\
-In caso di dubbio non attivare questa opzione.
-; Select if you wish to authenticate\n\
-; yourself to a foreign SMTP server\n\
-; (usually outside your ISP's domain).\n\
-; If in doubt, don't enable this option.
 ;
 MSG_HELP_CO_ST_SMTPAUTHUSER
 Inserisci qui il nome utente\n\
@@ -6265,33 +6236,6 @@ Trovato file di posta nel vecchio formato
 MSG_MA_CREQ_UNKNOWN_TITLE
 Trovato file sconosciuto nella directory della cartella
 ; Unknown file in folder directory found
-;
-MSG_CO_SMTPSECURE
-Usa connessione sicura:
-; Use secure connection:
-;
-MSG_CO_SMTPSECURE_NO
-No
-; No
-;
-MSG_CO_SMTPSECURE_TLS
-con TLSv1
-; with TLSv1
-;
-MSG_CO_SMTPSECURE_SSL
-con SSLv3
-; with SSLv3
-;
-MSG_HELP_CO_RA_SMTPSECURE
-Una connessione sicura TLSv1 o SSLv3 verrà stabilita tra il server\n\
-SMTP e YAM per l'invio dei messaggi attraverso una connessione.\n\
-criptata.\n\
-Nel caso questi pulsanti risultino disattivati significa che il supporto\n\
-AmiSSL non è al momento disponibile.
-; A TLSv1 or SSLv3 secure connection will be established between\n\
-; the SMTP server and YAM to send e-mail through an encrypted connection.\n\
-; If these radio buttons are ghosted, it means AmiSSL support is\n\
-; currently not available.
 ;
 MSG_CO_SHOWEMBEDDEDREADPANE
 Ante_prima del messaggio nella finestra principale
@@ -7461,10 +7405,6 @@ MSG_CO_SPAM_DELETESPAMFOLDER
 _Cancella la cartella Spam
 ; _Delete Spam folder
 ;
-MSG_CO_SMTPAUTH_METHOD
-_Metodo
-; Met_hod
-;
 MSG_HELP_CO_CY_SMTPAUTHMETHOD
 Questa opzione permette di specificare il metodo di\n\
 autentificazione SMTP-AUTH da utilizzare per il server\n\
@@ -7741,16 +7681,6 @@ MSG_MA_MEDITASNEW
 Modifica come nuovo...
 ; Edit as new...
 ;
-MSG_CO_POPACCOUNT
-Nome account
-; Account name
-;
-MSG_HELP_CO_ST_POPACCOUNT
-Il nome arbitrario di questo account che\n\
-sarà utilizzato al posto di utente@host.
-; An arbitrary name for this account which\n\
-; will be used instead of user@host.
-;
 MSG_RE_SEARCH
 Cerca...
 ; Search...
@@ -7986,40 +7916,13 @@ sia attualmente in vigore nella tua zona.\n\
 ; currently active in your time zone\n\
 ; (summer time).
 ;
-MSG_CO_SMTPSERVERPORT
+MSG_CO_SMTP_SERVERPORT
 Ser_ver/Porta
 ; Ser_ver/Port
 ;
-MSG_CO_POP3SERVERPORT
+MSG_CO_POP_SERVERPORT
 Serve_r/Porta
 ; Serve_r/Port
-;
-MSG_CO_POP3SECURE
-Utilizza connessione sicura:
-; Use secure connection:
-;
-MSG_CO_POP3SECURE_NO
-No
-; No
-;
-MSG_CO_POP3SECURE_TLS
-Con TLSv1
-; with TLSv1
-;
-MSG_CO_POP3SECURE_SSL
-Con SSLv3
-; with SSLv3
-;
-MSG_HELP_CO_RA_POP3SECURE
-Una connessione sicura TLSv1 o SSLv3 verrà stabilita tra il server POP3\n\
-e YAM in modo da poter ricevere messaggi attraverso una connessione\n\
-criptata.\n\
-Nel caso AmiSSL non sia presente nel sistema i radio pulsanti verranno\n\
-mostrati come non selezionabili.
-; A TLSv1 or SSLv3 secure connection will be established between\n\
-; the POP3 server and YAM to receive e-mail through an encrypted\n\
-; connection. If these radio buttons are ghosted, it means AmiSSL\n\
-; support is currently not available.
 ;
 MSG_CO_LOOKFEEL_THEMES
 Temi
@@ -10102,4 +10005,148 @@ Imposta lo stato su 'Non spam'
 MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_HAM
 Imposta lo stato del messaggio filtrato su 'Non spam'
 ; Set the status of the filtered mail to 'Not spam'
+;
+MSG_CO_SMTP_ACTIVE
+_Attivo
+; _Active
+;
+MSG_CO_POP_AUTH
+Autentificazione
+; Authentification
+;
+MSG_HELP_CO_CY_POPAUTH
+Nel caso non si utilizzi alcuna connessione sicura\n\
+di tipo TLS o SSL la password potrà essere inviata\n\
+usando un algoritmo di criptazione APOP.\n\
+(opzione non supportata da tutti i server POP3)
+; When not using any connection security\n\
+; (TLS or SSL) the password can be send\n\
+; using the APOP encryption algorithm instead.\n\
+; (not supported by all POP3 servers)
+;
+MSG_CO_POP_AUTH_PLAIN
+Password Semplice
+; Plain Password
+;
+MSG_CO_POP_AUTH_APOP
+Password Criptata (APOP)
+; Encrypted Password (APOP)
+;
+MSG_CO_POP_SECURITY
+Sicurezza Connessione
+; Connection Security
+;
+MSG_CO_POP_SECURITY_NONE
+Nessuna Sicurezza
+; No Security
+;
+MSG_CO_POP_SECURITY_TLS
+STARTTLS
+; STARTTLS
+;
+MSG_CO_POP_SECURITY_SSL
+SSL/TLS
+; SSL/TLS
+;
+MSG_HELP_CO_CY_POPSECURE
+Una connessione sicura di tipo STARTTLS o SSL/TLS verrà stabilita\n\
+tra il server POP3 e YAM in modo da ricevere i messaggi di posta\n\
+attraverso una connessione criptata.\n\
+Nel caso questi pulsanti risultino disattivi significa che il supporto\n\
+AmiSSL non è al momento disponibile.
+; A STARTTLS or SSL/TLS secure connection will be\n\
+; established between the POP3 server and YAM to receive\n\
+; e-mail through an encrypted connection. If this cycle\n\
+; gadget is ghosted, it means AmiSSL support is currently\n\
+; not available.
+;
+MSG_CO_POP_SERVERLIST
+Lista Server
+; Server List
+;
+MSG_CO_POP_SERVERSETTINGS
+Impostazioni Server
+; Server Settings
+;
+MSG_CO_POP_SECURITYAUTH
+Sicurezza e Autentificazione
+; Security and Authentification
+;
+MSG_CO_POP_MSGHANDLING
+Gestione messaggio
+; Message handling
+;
+MSG_CO_SMTP_SERVERLIST
+Lista Server
+; Server List
+;
+MSG_CO_SMTP_SERVERSETTINGS
+Impostazioni Server
+; Server Settings
+;
+MSG_CO_POP_DESC
+Descrizione
+; Description
+;
+MSG_HELP_CO_ST_POPDESC
+Il nome/descrizione arbitrario di questa connessione del\n\
+server che sarà utilizzato al posto di utente@host
+; An arbitrary description/name for this\n\
+; server connection which will be used instead\n\
+; of user@host.
+;
+MSG_CO_SMTP_DESC
+Descrizione
+; Description
+;
+MSG_HELP_CO_ST_SMTPDESC
+Il nome/descrizione arbitrario di questa connessione del\n\
+server che sarà utilizzato al posto di utente@host
+; An arbitrary description/name for this\n\
+; server connection which will be used instead\n\
+; of user@host.
+;
+MSG_CO_SMTP_SECURITY
+Sicurezza Connessione
+; Connection Security
+;
+MSG_CO_SMTP_SECURITY_NONE
+Nessuna Sicurezza
+; No Security
+;
+MSG_CO_SMTP_SECURITY_TLS
+STARTTLS
+; STARTTLS
+;
+MSG_CO_SMTP_SECURITY_SSL
+SSL/TLS
+; SSL/TLS
+;
+MSG_CO_SMTP_SECURITYAUTH
+Sicurezza e Autentificazione
+; Security and Authentification
+;
+MSG_HELP_CO_CY_SMTPSECURE
+Una connessione sicura di tipo STARTTLS o SSL/TLS verrà stabilita\n\
+tra il server SMTP e YAM in modo da ricevere i messaggi di posta\n\
+attraverso una connessione criptata.\n\
+Nel caso questi pulsanti risultino disattivi significa che il supporto\n\
+AmiSSL non è al momento disponibile.
+; A STARTTLS or SSL/TLS secure connection will be\n\
+; established between the SMTP server and YAM to receive\n\
+; e-mail through an encrypted connection. If this cycle\n\
+; gadget is ghosted, it means AmiSSL support is currently\n\
+; not available.
+;
+MSG_CO_SMTP_AUTH
+Autentificazione
+; Authentification
+;
+MSG_CO_SMTPAUTH_NONE
+Nessuna Autentificazione
+; No Authentication
+;
+MSG_CO_SMTP_OPTIONS
+Opzioni
+; Options
 ;
