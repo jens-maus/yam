@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-04-13 Thore Böckelmann <tboeckel@gmx.de>
+
+  * locale/german.ct: updated german translation.
+
 2012-04-12 Thore Böckelmann <tboeckel@gmx.de>
 
   * Makefile: added -lnet to the linker libs for the OS3 build. Otherwise the
