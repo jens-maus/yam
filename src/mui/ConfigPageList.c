@@ -63,6 +63,7 @@ enum ConfigPage
   cp_AllPages = -1,
   cp_FirstSteps = 0,
   cp_TCPIP,
+  cp_Identities,
   cp_NewMail,
   cp_Filters,
   cp_Spam,
@@ -98,6 +99,8 @@ OVERLOAD(OM_NEW)
     // create/load all bodychunkimages of our config icons
     data->configIcon[cp_FirstSteps  ] = MakeImageObject("config_firststep", G->theme.configImages[CI_FIRSTSTEP]);
     data->configIcon[cp_TCPIP       ] = MakeImageObject("config_network",   G->theme.configImages[CI_NETWORK]);
+    #warning own config_identities image missing yet (new theme version required)
+    data->configIcon[cp_Identities  ] = MakeImageObject("config_lists",     G->theme.configImages[CI_IDENTITIES]);
     data->configIcon[cp_NewMail     ] = MakeImageObject("config_newmail",   G->theme.configImages[CI_NEWMAIL]);
     data->configIcon[cp_Filters     ] = MakeImageObject("config_filters",   G->theme.configImages[CI_FILTERS]);
     data->configIcon[cp_Spam        ] = MakeImageObject("config_spam",      G->theme.configImages[CI_SPAM]);

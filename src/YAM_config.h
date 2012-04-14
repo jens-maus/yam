@@ -318,6 +318,22 @@ struct CO_GUIData
   Object *CH_ASTATUSTOUNREAD;
   Object *CH_ASTATUSTOSPAM;
   Object *CH_ASTATUSTOHAM;
+  Object *LV_IDENTITY;
+  Object *BT_IADD;
+  Object *BT_IDEL;
+  Object *BT_IDENTITYUP;
+  Object *BT_IDENTITYDOWN;
+  Object *ST_IDENTITY_DESC;
+  Object *ST_IDENTITY_REALNAME;
+  Object *ST_IDENTITY_EMAIL;
+  Object *ST_IDENTITY_REPLYTO;
+  Object *ST_IDENTITY_CC;
+  Object *ST_IDENTITY_BCC;
+  Object *ST_IDENTITY_ORG;
+  Object *ST_IDENTITY_EXTHEADER;
+  Object *ST_IDENTITY_PGPID;
+  Object *ST_IDENTITY_PGPURL;
+  Object *CH_IDENTITY_ENCSELF;
 };
 
 struct CO_ClassData  /* configuration window */

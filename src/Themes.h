@@ -76,7 +76,9 @@ struct DiskObject;
 #define CI_UPDATEBIG         33
 #define CI_WRITE             34
 #define CI_WRITEBIG          35
-#define CI_MAX               36
+#define CI_IDENTITIES        36
+#define CI_IDENTITIESBIG     37
+#define CI_MAX               38
 
 // images in the folder list
 #define FI_FIRST              0

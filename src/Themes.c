@@ -80,7 +80,9 @@ static const char * const configImageIDs[CI_MAX] =
   "config_spam",      "config_spam_big",
   "config_start",     "config_start_big",
   "config_update",    "config_update_big",
-  "config_write",     "config_write_big"
+  "config_write",     "config_write_big",
+  #warning own config_identities image missing yet
+  "config_lists",     "config_lists_big"
 };
 ///
 /// folder image IDs

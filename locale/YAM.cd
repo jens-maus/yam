@@ -7103,3 +7103,133 @@ No Authentication
 MSG_CO_SMTP_OPTIONS (2261//)
 Options
 ;
+MSG_CO_CRDIDENTITIES (2262//)
+Identities
+;
+MSG_CO_IDENTITIES_TITLE (2263//)
+Identities Settings
+;
+MSG_CO_IDENTITIES_SUMMARY (2264//)
+Manage multiple identities for composing mails...
+;
+MSG_CO_IDENTITY_LIST (2265//)
+Identities
+;
+MSG_CO_IDENTITY_SETTINGS (2266//)
+General Settings
+;
+MSG_HELP_CO_ST_IDENTITY_EMAIL (2267//)
+The e-mail address of the curently selected\n\
+identity.
+;
+MSG_CO_IDENTITY_REGISTER_SETTINGS (2268//)
+General Settings
+;
+MSG_CO_IDENTITY_REGISTER_COMPOSE (2269//)
+Compose Mail
+;
+MSG_CO_IDENTITY_REGISTER_PGPSEC (2270//)
+PGP-Security
+;
+MSG_CO_IDENTITY_NOSIGNATURE (2271//)
+No Signature
+;
+MSG_CO_IDENTITY_ABOVEQUOTE (2272//)
+above quotes
+;
+MSG_CO_IDENTITY_BELOWQUOTE (2273//)
+below quotes
+;
+MSG_CO_IDENTITY_DESCRIPTION (2274//)
+Description
+;
+MSG_CO_IDENTITY_MAILSERVER (2275//)
+Mail Server (SMTP)
+;
+MSG_CO_IDENTITY_DEFSIGNATURE (2276//)
+Default Signature
+;
+MSG_CO_IDENTITY_COMPOSE (2277//)
+Compose Mail Settings
+;
+MSG_CO_IDENTITY_CC (2278//)
+CC address
+;
+MSG_HELP_CO_ST_IDENTITY_CC (2279//)
+The default CC address that will be used\n\
+when composing a mail.
+;
+MSG_CO_IDENTITY_BCC (2280//)
+BCC address
+;
+MSG_HELP_CO_ST_IDENTITY_BCC (2281//)
+The default BCC address that will be used\n\
+when composing a mail.
+;
+MSG_CO_IDENTITY_REPLYTO (2282//)
+Reply-To address
+;
+MSG_HELP_CO_ST_IDENTITY_REPLYTO (2283//)
+The default Reply-To address that will be used\n\
+when composing a mail.
+;
+MSG_CO_IDENTITY_COMPOSE_OPTIONS (2284//)
+Options
+;
+MSG_CO_IDENTITY_COMPOSE_SENTFOLDER (2285//)
+Store sent mail to
+;
+MSG_CO_IDENTITY_COMPOSE_FOLDER (2286//)
+folder
+;
+MSG_CO_IDENTITY_COMPOSE_QUOTE (2287//)
+Quote messages when answering
+;
+MSG_CO_IDENTITY_COMPOSE_ANSWER (2288//)
+put my answer
+;
+MSG_CO_IDENTITY_COMPOSE_SIGNATURE (2289//)
+put my signature
+;
+MSG_CO_IDENTITY_USESIG_ANSWER (2290//)
+Use signature when answering
+;
+MSG_CO_IDENTITY_USESIG_FORWARD (2291//)
+Use signature when forwarding
+;
+MSG_CO_IDENTITY_PGPSETTINGS (2292//)
+PGP-Security Settings
+;
+MSG_CO_IDENTITY_USEPGP (2293//)
+Use PGP for this identity
+;
+MSG_CO_IDENTITY_PGPKEY_ID (2294//)
+PGP-Key ID
+;
+MSG_CO_IDENTITY_PGPKEY_URL (2295//)
+PGP-Key URL
+;
+MSG_CO_IDENTITY_PGP_OPTIONS (2296//)
+Options
+;
+MSG_CO_IDENTITY_PGP_SIGN_UNENC (2297//)
+Sign unencrypted mails per default
+;
+MSG_CO_IDENTITY_PGP_SIGN_ENC (2298//)
+Sign encrypted mails per default
+;
+MSG_CO_IDENTITY_PGP_ENCRYPTALL (2299//)
+Encrypt all mails per default
+;
+MSG_CO_IDENTITY_PGP_ADDOWN (2300//)
+Add own key when encrypting mails
+;
+MSG_CO_IDENTITY_PHOTOURL (2301//)
+URL to own image
+;
+MSG_CO_IDENTITY_ADDINFO (2302//)
+Add personal information
+;
+MSG_CO_IDENTITY_REQUESTMDN (2303//)
+Request a return receipt
+;

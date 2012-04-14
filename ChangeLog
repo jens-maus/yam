@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-04-14 Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_COg.c, misc: implemented a first prototype of the upcoming user identity
+    configuration GUI components. Please note while the GUI elements are there
+    now, the whole multi identity support is not implemented yet. Thus, the GUI
+    elements still represent a prototype to analyze which config options will
+    be required. In addition, this prototype might change rapidely over time.
+    Therefore, it would be better to refrain from translating all GUI elements
+    yet.
+
 2012-04-13 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: update to the latest changes.

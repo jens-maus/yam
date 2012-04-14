@@ -483,6 +483,7 @@ MUIOBJS = \
 	FolderRequestWindow.o \
 	GenericRequestWindow.o \
 	HeaderList.o \
+	IdentityList.o \
 	ImageArea.o \
 	InfoBar.o \
 	InfoWindow.o \

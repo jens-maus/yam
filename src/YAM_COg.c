@@ -68,6 +68,7 @@
 #include "mui/AccountList.h"
 #include "mui/ClassesExtra.h"
 #include "mui/FilterList.h"
+#include "mui/IdentityList.h"
 #include "mui/ImageArea.h"
 #include "mui/MailTextEdit.h"
 #include "mui/MimeTypeList.h"
@@ -1508,7 +1509,7 @@ Object *CO_PageFirstSteps(struct CO_ClassData *data)
                 Child, data->GUI.ST_REALNAME = MakeString(SIZE_REALNAME,tr(MSG_CO_RealName)),
 
                 Child, Label2(tr(MSG_CO_EmailAddress)),
-                Child, data->GUI.ST_EMAIL    = MakeString(SIZE_ADDRESS,tr(MSG_CO_EmailAddress)),
+                Child, MakeAddressField(&data->GUI.ST_EMAIL, tr(MSG_CO_EmailAddress), MSG_HELP_CO_ST_EMAIL, ABM_CONFIG, -1, MUIF_NONE),
 
                 Child, Label2(tr(MSG_CO_POPServer)),
                 Child, data->GUI.ST_POPHOST0  = MakeString(SIZE_HOST,tr(MSG_CO_POPServer)),
@@ -1535,7 +1536,6 @@ Object *CO_PageFirstSteps(struct CO_ClassData *data)
   if(obj != NULL)
   {
     SetHelp(data->GUI.ST_REALNAME,       MSG_HELP_CO_ST_REALNAME);
-    SetHelp(data->GUI.ST_EMAIL,          MSG_HELP_CO_ST_EMAIL);
     SetHelp(data->GUI.ST_POPHOST0,       MSG_HELP_CO_ST_POPHOST);
     SetHelp(data->GUI.ST_PASSWD0,        MSG_HELP_CO_ST_PASSWD);
     SetHelp(data->GUI.CY_TZONE,          MSG_HELP_CO_CY_TZONE);
@@ -1637,64 +1637,63 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
 
                   Child, VGroup,
                     MUIA_HorizWeight, 70,
-                    Child, VGroup,
-                      Child, ColGroup(2), GroupFrameT(tr(MSG_CO_POP_SERVERSETTINGS)),
 
-                        Child, HSpace(1),
-                        Child, MakeCheckGroup((Object **)&data->GUI.CH_POPENABLED, tr(MSG_CO_POPActive)),
+                    Child, ColGroup(2), GroupFrameT(tr(MSG_CO_POP_SERVERSETTINGS)),
 
-                        Child, Label2(tr(MSG_CO_POP_DESC)),
-                        Child, data->GUI.ST_POPDESC = MakeString(SIZE_HOST, tr(MSG_CO_POP_DESC)),
+                      Child, HSpace(1),
+                      Child, MakeCheckGroup((Object **)&data->GUI.CH_POPENABLED, tr(MSG_CO_POPActive)),
 
-                        Child, Label2(tr(MSG_CO_POP_SERVERPORT)),
-                        Child, HGroup,
-                          MUIA_Group_Spacing, 1,
-                          Child, data->GUI.ST_POPHOST = MakeString(SIZE_HOST, tr(MSG_CO_POP_SERVERPORT)),
-                          Child, data->GUI.ST_POPPORT = BetterStringObject,
-                            StringFrame,
-                            MUIA_CycleChain,          TRUE,
-                            MUIA_FixWidthTxt,         "00000",
-                            MUIA_String_MaxLen,       5+1,
-                            MUIA_String_AdvanceOnCR,  TRUE,
-                            MUIA_String_Integer,      0,
-                            MUIA_String_Accept,       "0123456789",
-                          End,
+                      Child, Label2(tr(MSG_CO_POP_DESC)),
+                      Child, data->GUI.ST_POPDESC = MakeString(SIZE_DEFAULT, tr(MSG_CO_POP_DESC)),
+
+                      Child, Label2(tr(MSG_CO_POP_SERVERPORT)),
+                      Child, HGroup,
+                        MUIA_Group_Spacing, 1,
+                        Child, data->GUI.ST_POPHOST = MakeString(SIZE_HOST, tr(MSG_CO_POP_SERVERPORT)),
+                        Child, data->GUI.ST_POPPORT = BetterStringObject,
+                          StringFrame,
+                          MUIA_CycleChain,          TRUE,
+                          MUIA_FixWidthTxt,         "00000",
+                          MUIA_String_MaxLen,       5+1,
+                          MUIA_String_AdvanceOnCR,  TRUE,
+                          MUIA_String_Integer,      0,
+                          MUIA_String_Accept,       "0123456789",
                         End,
-
-                        Child, HSpace(1),
-                        Child, HBarT(tr(MSG_CO_POP_SECURITYAUTH)), End,
-
-                        Child, Label2(tr(MSG_CO_POP_SECURITY)),
-                        Child, data->GUI.CY_POPSECURE = MakeCycle(securePOP3Methods, tr(MSG_CO_POP_SECURITY)),
-
-                        Child, Label2(tr(MSG_CO_POP_AUTH)),
-                        Child, data->GUI.CY_POPAUTH = MakeCycle(pop3AuthMethods, tr(MSG_CO_POP_AUTH)),
-
-                        Child, Label2(tr(MSG_CO_POPUserID)),
-                        Child, data->GUI.ST_POPUSERID = MakeString(SIZE_USERID,tr(MSG_CO_POPUserID)),
-
-                        Child, Label2(tr(MSG_CO_Password)),
-                        Child, data->GUI.ST_PASSWD = MakePassString(tr(MSG_CO_Password)),
-
-                        Child, HSpace(1),
-                        Child, HBarT(tr(MSG_CO_POP_MSGHANDLING)), End,
-
-                        Child, Label2(tr(MSG_CO_PreSelect)),
-                        Child, data->GUI.CY_PRESELECTION = MakeCycle(preselectionModes, tr(MSG_CO_PreSelect)),
-
-                        Child, HSpace(1),
-                        Child, MakeCheckGroup((Object **)&data->GUI.CH_DOWNLOADONSTARTUP, tr(MSG_CO_DOWNLOAD_ON_STARTUP)),
-
-                        Child, HSpace(1),
-                        Child, MakeCheckGroup((Object **)&data->GUI.CH_APPLYREMOTEFILTERS, tr(MSG_CO_APPLY_REMOTE_FILTERS)),
-
-                        Child, HSpace(1),
-                        Child, MakeCheckGroup((Object **)&data->GUI.CH_DELETE, tr(MSG_CO_DeleteServerMail)),
-
-                        Child, HVSpace,
-                        Child, HVSpace,
-
                       End,
+
+                      Child, HSpace(1),
+                      Child, HBarT(tr(MSG_CO_POP_SECURITYAUTH)), End,
+
+                      Child, Label2(tr(MSG_CO_POP_SECURITY)),
+                      Child, data->GUI.CY_POPSECURE = MakeCycle(securePOP3Methods, tr(MSG_CO_POP_SECURITY)),
+
+                      Child, Label2(tr(MSG_CO_POP_AUTH)),
+                      Child, data->GUI.CY_POPAUTH = MakeCycle(pop3AuthMethods, tr(MSG_CO_POP_AUTH)),
+
+                      Child, Label2(tr(MSG_CO_POPUserID)),
+                      Child, data->GUI.ST_POPUSERID = MakeString(SIZE_USERID,tr(MSG_CO_POPUserID)),
+
+                      Child, Label2(tr(MSG_CO_Password)),
+                      Child, data->GUI.ST_PASSWD = MakePassString(tr(MSG_CO_Password)),
+
+                      Child, HSpace(1),
+                      Child, HBarT(tr(MSG_CO_POP_MSGHANDLING)), End,
+
+                      Child, Label2(tr(MSG_CO_PreSelect)),
+                      Child, data->GUI.CY_PRESELECTION = MakeCycle(preselectionModes, tr(MSG_CO_PreSelect)),
+
+                      Child, HSpace(1),
+                      Child, MakeCheckGroup((Object **)&data->GUI.CH_DOWNLOADONSTARTUP, tr(MSG_CO_DOWNLOAD_ON_STARTUP)),
+
+                      Child, HSpace(1),
+                      Child, MakeCheckGroup((Object **)&data->GUI.CH_APPLYREMOTEFILTERS, tr(MSG_CO_APPLY_REMOTE_FILTERS)),
+
+                      Child, HSpace(1),
+                      Child, MakeCheckGroup((Object **)&data->GUI.CH_DELETE, tr(MSG_CO_DeleteServerMail)),
+
+                      Child, HVSpace,
+                      Child, HVSpace,
+
                     End,
                   End,
                 End,
@@ -1734,63 +1733,59 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
                   Child, NBalanceObject, End,
 
                   Child, VGroup,
-                    MUIA_HorizWeight, 70,
-                    Child, HGroup,
-                      Child, VGroup,
-                        MUIA_HorizWeight, 80,
-                        Child, ColGroup(2), GroupFrameT(tr(MSG_CO_SMTP_SERVERSETTINGS)),
+                    MUIA_HorizWeight, 80,
 
-                          Child, HSpace(1),
-                          Child, MakeCheckGroup(&data->GUI.CH_SMTPENABLED, tr(MSG_CO_SMTP_ACTIVE)),
+                    Child, ColGroup(2), GroupFrameT(tr(MSG_CO_SMTP_SERVERSETTINGS)),
 
-                          Child, Label2(tr(MSG_CO_SMTP_DESC)),
-                          Child, data->GUI.ST_SMTPDESC = MakeString(SIZE_HOST, tr(MSG_CO_SMTP_DESC)),
+                      Child, HSpace(1),
+                      Child, MakeCheckGroup(&data->GUI.CH_SMTPENABLED, tr(MSG_CO_SMTP_ACTIVE)),
 
-                          Child, Label2(tr(MSG_CO_SMTP_SERVERPORT)),
-                          Child, HGroup,
-                            MUIA_Group_Spacing, 1,
-                            Child, data->GUI.ST_SMTPHOST = MakeString(SIZE_HOST, tr(MSG_CO_SMTP_SERVERPORT)),
-                            Child, data->GUI.ST_SMTPPORT = BetterStringObject,
-                              StringFrame,
-                              MUIA_CycleChain,          TRUE,
-                              MUIA_FixWidthTxt,         "00000",
-                              MUIA_String_MaxLen,       5+1,
-                              MUIA_String_AdvanceOnCR,  TRUE,
-                              MUIA_String_Integer,      0,
-                              MUIA_String_Accept,       "0123456789",
-                            End,
-                          End,
+                      Child, Label2(tr(MSG_CO_SMTP_DESC)),
+                      Child, data->GUI.ST_SMTPDESC = MakeString(SIZE_DEFAULT, tr(MSG_CO_SMTP_DESC)),
 
-                          Child, HSpace(1),
-                          Child, HBarT(tr(MSG_CO_SMTP_SECURITYAUTH)), End,
-
-                          Child, Label2(tr(MSG_CO_SMTP_SECURITY)),
-                          Child, data->GUI.CY_SMTPSECURE = MakeCycle(secureSMTPMethods, tr(MSG_CO_SMTP_SECURITY)),
-
-                          Child, Label2(tr(MSG_CO_SMTP_AUTH)),
-                          Child, data->GUI.CY_SMTPAUTH = MakeCycle(smtpAuthMethods, tr(MSG_CO_SMTP_AUTH)),
-
-                          Child, Label2(tr(MSG_CO_SMTPUser)),
-                          Child, data->GUI.ST_SMTPAUTHUSER = MakeString(SIZE_USERID,tr(MSG_CO_SMTPUser)),
-
-                          Child, Label2(tr(MSG_CO_SMTPPass)),
-                          Child, data->GUI.ST_SMTPAUTHPASS = MakePassString(tr(MSG_CO_SMTPPass)),
-
-                          Child, HSpace(1),
-                          Child, HBarT(tr(MSG_CO_SMTP_OPTIONS)), End,
-
-                          Child, HSpace(1),
-                          Child, HGroup,
-                            Child, data->GUI.CH_SMTP8BIT = MakeCheck(tr(MSG_CO_Allow8bit)),
-                            Child, LLabel1(tr(MSG_CO_Allow8bit)),
-                            Child, HSpace(0),
-                          End,
-
-                          Child, HVSpace,
-                          Child, HVSpace,
-
+                      Child, Label2(tr(MSG_CO_SMTP_SERVERPORT)),
+                      Child, HGroup,
+                        MUIA_Group_Spacing, 1,
+                        Child, data->GUI.ST_SMTPHOST = MakeString(SIZE_HOST, tr(MSG_CO_SMTP_SERVERPORT)),
+                        Child, data->GUI.ST_SMTPPORT = BetterStringObject,
+                          StringFrame,
+                          MUIA_CycleChain,          TRUE,
+                          MUIA_FixWidthTxt,         "00000",
+                          MUIA_String_MaxLen,       5+1,
+                          MUIA_String_AdvanceOnCR,  TRUE,
+                          MUIA_String_Integer,      0,
+                          MUIA_String_Accept,       "0123456789",
                         End,
                       End,
+
+                      Child, HSpace(1),
+                      Child, HBarT(tr(MSG_CO_SMTP_SECURITYAUTH)), End,
+
+                      Child, Label2(tr(MSG_CO_SMTP_SECURITY)),
+                      Child, data->GUI.CY_SMTPSECURE = MakeCycle(secureSMTPMethods, tr(MSG_CO_SMTP_SECURITY)),
+
+                      Child, Label2(tr(MSG_CO_SMTP_AUTH)),
+                      Child, data->GUI.CY_SMTPAUTH = MakeCycle(smtpAuthMethods, tr(MSG_CO_SMTP_AUTH)),
+
+                      Child, Label2(tr(MSG_CO_SMTPUser)),
+                      Child, data->GUI.ST_SMTPAUTHUSER = MakeString(SIZE_USERID,tr(MSG_CO_SMTPUser)),
+
+                      Child, Label2(tr(MSG_CO_SMTPPass)),
+                      Child, data->GUI.ST_SMTPAUTHPASS = MakePassString(tr(MSG_CO_SMTPPass)),
+
+                      Child, HSpace(1),
+                      Child, HBarT(tr(MSG_CO_SMTP_OPTIONS)), End,
+
+                      Child, HSpace(1),
+                      Child, HGroup,
+                        Child, data->GUI.CH_SMTP8BIT = MakeCheck(tr(MSG_CO_Allow8bit)),
+                        Child, LLabel1(tr(MSG_CO_Allow8bit)),
+                        Child, HSpace(0),
+                      End,
+
+                      Child, HVSpace,
+                      Child, HVSpace,
+
                     End,
                   End,
                 End,
@@ -1866,6 +1861,272 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
     set(data->GUI.BT_POPDOWN,  MUIA_CycleChain, TRUE);
     set(data->GUI.BT_SMTPUP,   MUIA_CycleChain, TRUE);
     set(data->GUI.BT_SMTPDOWN, MUIA_CycleChain, TRUE);
+  }
+
+  RETURN(obj);
+  return obj;
+}
+
+///
+/// CO_PageIdentities
+Object *CO_PageIdentities(struct CO_ClassData *data)
+{
+  Object *obj;
+  static const char *rtitles[4];
+  static const char *smtpServers[3];
+  static const char *signatures[4];
+  static const char *sentFolders[3];
+  static const char *quotePosition[3];
+  static const char *signaturePosition[3];
+
+  rtitles[0] = tr(MSG_CO_IDENTITY_REGISTER_SETTINGS);
+  rtitles[1] = tr(MSG_CO_IDENTITY_REGISTER_COMPOSE);
+  rtitles[2] = tr(MSG_CO_IDENTITY_REGISTER_PGPSEC);
+  rtitles[3] = NULL;
+
+  smtpServers[0] = "Server 1";
+  smtpServers[1] = "Server 2";
+  smtpServers[2] = NULL;
+
+  signatures[0] = tr(MSG_CO_IDENTITY_NOSIGNATURE);
+  signatures[1] = "Privat";
+  signatures[2] = "Work";
+  signatures[3] = NULL;
+
+  sentFolders[0] = "Sent Folder 1";
+  sentFolders[1] = "Sent Folder 2";
+  sentFolders[2] = NULL;
+
+  quotePosition[0] = tr(MSG_CO_IDENTITY_ABOVEQUOTE);
+  quotePosition[1] = tr(MSG_CO_IDENTITY_BELOWQUOTE);
+  quotePosition[2] = NULL;
+
+  signaturePosition[0] = tr(MSG_CO_IDENTITY_BELOWQUOTE);
+  signaturePosition[1] = tr(MSG_CO_IDENTITY_ABOVEQUOTE);
+  signaturePosition[2] = NULL;
+
+  ENTER();
+
+  obj = VGroup,
+          MUIA_HelpNode, "CO17",
+
+          ConfigPageHeaderObject("config_lists_big", G->theme.configImages[CI_IDENTITIESBIG], tr(MSG_CO_IDENTITIES_TITLE), tr(MSG_CO_IDENTITIES_SUMMARY)),
+
+          Child, ScrollgroupObject,
+            MUIA_Scrollgroup_FreeHoriz, FALSE,
+            MUIA_Scrollgroup_AutoBars,  TRUE,
+            MUIA_Scrollgroup_Contents,  VGroupV,
+
+              Child, HGroup,
+                Child, VGroup,
+                  MUIA_HorizWeight, 70,
+
+                  Child, HBarT(tr(MSG_CO_IDENTITY_LIST)), End,
+
+                  Child, NListviewObject,
+                    MUIA_CycleChain, TRUE,
+                    MUIA_NListview_NList, data->GUI.LV_IDENTITY = IdentityListObject,
+                    End,
+                  End,
+
+                  Child, HGroup,
+                    Child, ColGroup(2),
+                      MUIA_Group_Spacing, 1,
+                      Child, data->GUI.BT_IADD = MakeButton(MUIX_B "+" MUIX_N),
+                      Child, data->GUI.BT_IDEL = MakeButton(MUIX_B "-" MUIX_N),
+                    End,
+                    Child, HVSpace,
+                    Child, ColGroup(2),
+                      MUIA_Group_Spacing, 1,
+                      Child, data->GUI.BT_IDENTITYUP = PopButton(MUII_ArrowUp),
+                      Child, data->GUI.BT_IDENTITYDOWN = PopButton(MUII_ArrowDown),
+                    End,
+                  End,
+                End,
+
+                Child, NBalanceObject, End,
+
+                Child, RegisterGroup(rtitles),
+                  MUIA_CycleChain, TRUE,
+                  MUIA_HorizWeight, 30,
+ 
+                  // General Settings
+                  Child, VGroup,
+                    Child, ColGroup(2), GroupFrameT(tr(MSG_CO_IDENTITY_SETTINGS)),
+  
+                      Child, Label2(tr(MSG_CO_IDENTITY_DESCRIPTION)),
+                      Child, data->GUI.ST_IDENTITY_DESC = MakeString(SIZE_DEFAULT, tr(MSG_CO_IDENTITY_DESCRIPTION)),
+
+                      Child, Label2(tr(MSG_CO_RealName)),
+                      Child, data->GUI.ST_IDENTITY_REALNAME = MakeString(SIZE_REALNAME, tr(MSG_CO_RealName)),
+  
+                      Child, Label2(tr(MSG_CO_EmailAddress)),
+                      Child, MakeAddressField(&data->GUI.ST_IDENTITY_EMAIL, tr(MSG_CO_EmailAddress), MSG_HELP_CO_ST_IDENTITY_EMAIL, ABM_CONFIG, -1, MUIF_NONE),
+  
+                      Child, Label2(tr(MSG_CO_Organization)),
+                      Child, data->GUI.ST_IDENTITY_ORG = MakeString(SIZE_DEFAULT, tr(MSG_CO_Organization)),
+
+                      Child, Label2(tr(MSG_CO_IDENTITY_MAILSERVER)),
+                      Child, MakeCycle(smtpServers, tr(MSG_CO_IDENTITY_MAILSERVER)),
+  
+                      Child, Label2(tr(MSG_CO_IDENTITY_DEFSIGNATURE)),
+                      Child, MakeCycle(signatures, tr(MSG_CO_IDENTITY_DEFSIGNATURE)),
+  
+                      Child, HVSpace,
+                      Child, HVSpace,
+
+                    End,
+                  End,
+
+                  // Compose Mail Settings
+                  Child, VGroup,
+                    Child, ColGroup(2), GroupFrameT(tr(MSG_CO_IDENTITY_COMPOSE)),
+
+                      Child, Label2(tr(MSG_CO_IDENTITY_CC)),
+                      Child, MakeAddressField(&data->GUI.ST_IDENTITY_CC, tr(MSG_CO_IDENTITY_CC), MSG_HELP_CO_ST_IDENTITY_CC, ABM_CONFIG, -1, AFF_ALLOW_MULTI),
+
+                      Child, Label2(tr(MSG_CO_IDENTITY_BCC)),
+                      Child, MakeAddressField(&data->GUI.ST_IDENTITY_BCC, tr(MSG_CO_IDENTITY_BCC), MSG_HELP_CO_ST_IDENTITY_BCC, ABM_CONFIG, -1, AFF_ALLOW_MULTI),
+
+                      Child, Label2(tr(MSG_CO_IDENTITY_REPLYTO)),
+                      Child, MakeAddressField(&data->GUI.ST_IDENTITY_REPLYTO, tr(MSG_CO_IDENTITY_REPLYTO), MSG_HELP_CO_ST_IDENTITY_REPLYTO, ABM_CONFIG, -1, AFF_ALLOW_MULTI),
+  
+                      Child, Label2(tr(MSG_CO_ExtraHeaders)),
+                      Child, data->GUI.ST_IDENTITY_EXTHEADER = MakeString(SIZE_LARGE, tr(MSG_CO_ExtraHeaders)),
+
+                      Child, Label2(tr(MSG_CO_IDENTITY_PHOTOURL)),
+                      Child, MakeString(SIZE_URL, tr(MSG_CO_IDENTITY_PHOTOURL)),
+
+                      Child, HSpace(1),
+                      Child, HBarT(tr(MSG_CO_IDENTITY_COMPOSE_OPTIONS)), End,
+
+                      Child, HSpace(1),
+                      Child, VGroup,
+                        Child, ColGroup(2),
+
+                          Child, MakeCheck(tr(MSG_CO_IDENTITY_COMPOSE_SENTFOLDER)),
+                          Child, HGroup,
+                            Child, LLabel1(tr(MSG_CO_IDENTITY_COMPOSE_SENTFOLDER)),
+                            Child, MakeCycle(sentFolders, tr(MSG_CO_IDENTITY_COMPOSE_SENTFOLDER)),
+                            Child, LLabel1(tr(MSG_CO_IDENTITY_COMPOSE_FOLDER)),
+                          End,
+
+                          Child, MakeCheck(tr(MSG_CO_IDENTITY_COMPOSE_QUOTE)),
+                          Child, LLabel1(tr(MSG_CO_IDENTITY_COMPOSE_QUOTE)),
+
+                          Child, HSpace(0),
+                          Child, HGroup,
+                            Child, LLabel1(tr(MSG_CO_IDENTITY_COMPOSE_ANSWER)),
+                            Child, MakeCycle(quotePosition, tr(MSG_CO_IDENTITY_COMPOSE_ANSWER)),
+                          End,
+
+                          Child, HSpace(0),
+                          Child, HGroup,
+                            Child, LLabel1(tr(MSG_CO_IDENTITY_COMPOSE_SIGNATURE)),
+                            Child, MakeCycle(signaturePosition, tr(MSG_CO_IDENTITY_COMPOSE_SIGNATURE)),
+                          End,
+
+                        End,
+                      End,
+                      
+                      Child, HSpace(1),
+                      Child, HGroup,
+                        Child, MakeCheck(tr(MSG_CO_IDENTITY_USESIG_ANSWER)),
+                        Child, LLabel1(tr(MSG_CO_IDENTITY_USESIG_ANSWER)),
+                        Child, HSpace(0),
+                      End,
+
+                      Child, HSpace(1),
+                      Child, HGroup,
+                        Child, MakeCheck(tr(MSG_CO_IDENTITY_USESIG_FORWARD)),
+                        Child, LLabel1(tr(MSG_CO_IDENTITY_USESIG_FORWARD)),
+                        Child, HSpace(0),
+                      End,
+
+                      Child, HSpace(1),
+                      Child, HGroup,
+                        Child, MakeCheck(tr(MSG_CO_IDENTITY_ADDINFO)),
+                        Child, LLabel1(tr(MSG_CO_IDENTITY_ADDINFO)),
+                        Child, HSpace(0),
+                      End,
+
+                      Child, HSpace(1),
+                      Child, HGroup,
+                        Child, MakeCheck(tr(MSG_CO_IDENTITY_REQUESTMDN)),
+                        Child, LLabel1(tr(MSG_CO_IDENTITY_REQUESTMDN)),
+                        Child, HSpace(0),
+                      End,
+
+                      Child, HVSpace,
+                      Child, HVSpace,
+
+                    End,
+                  End,
+
+                  // PGP-Security Settings
+                  Child, VGroup,
+                    Child, ColGroup(2), GroupFrameT(tr(MSG_CO_IDENTITY_PGPSETTINGS)),
+
+                      Child, HSpace(1),
+                      Child, HGroup,
+                        Child, MakeCheck(tr(MSG_CO_IDENTITY_USEPGP)),
+                        Child, LLabel1(tr(MSG_CO_IDENTITY_USEPGP)),
+                        Child, HSpace(0),
+                      End,
+
+                      Child, Label2(tr(MSG_CO_IDENTITY_PGPKEY_ID)),
+                      Child, MakePGPKeyList(&(data->GUI.ST_IDENTITY_PGPID), TRUE, tr(MSG_CO_IDENTITY_PGPKEY_ID)),
+
+                      Child, Label2(tr(MSG_CO_IDENTITY_PGPKEY_URL)),
+                      Child, data->GUI.ST_IDENTITY_PGPURL = MakeString(SIZE_URL, tr(MSG_CO_IDENTITY_PGPKEY_URL)),
+
+                      Child, HSpace(1),
+                      Child, HBarT(tr(MSG_CO_IDENTITY_PGP_OPTIONS)), End,
+
+                      Child, HSpace(1),
+                      Child, HGroup,
+                        Child, MakeCheck(tr(MSG_CO_IDENTITY_PGP_SIGN_UNENC)),
+                        Child, LLabel1(tr(MSG_CO_IDENTITY_PGP_SIGN_UNENC)),
+                        Child, HSpace(0),
+                      End,
+
+                      Child, HSpace(1),
+                      Child, HGroup,
+                        Child, MakeCheck(tr(MSG_CO_IDENTITY_PGP_SIGN_ENC)),
+                        Child, LLabel1(tr(MSG_CO_IDENTITY_PGP_SIGN_ENC)),
+                        Child, HSpace(0),
+                      End,
+
+                      Child, HSpace(1),
+                      Child, HGroup,
+                        Child, MakeCheck(tr(MSG_CO_IDENTITY_PGP_ENCRYPTALL)),
+                        Child, LLabel1(tr(MSG_CO_IDENTITY_PGP_ENCRYPTALL)),
+                        Child, HSpace(0),
+                      End,
+
+                      Child, HSpace(1),
+                      Child, HGroup,
+                        Child, data->GUI.CH_IDENTITY_ENCSELF = MakeCheck(tr(MSG_CO_IDENTITY_PGP_ADDOWN)),
+                        Child, LLabel1(tr(MSG_CO_IDENTITY_PGP_ADDOWN)),
+                        Child, HSpace(0),
+                      End,
+
+                      Child, HVSpace,
+                      Child, HVSpace,
+  
+                    End,
+                  End,
+
+                End,
+              End,
+            End,
+          End,
+        End;
+
+  if(obj != NULL)
+  {
+    // set help text to objects
+//    SetHelp(data->GUI.ST_SMTPHOST,           MSG_HELP_CO_ST_SMTPHOST             );
   }
 
   RETURN(obj);
@@ -2642,7 +2903,7 @@ Object *CO_PageWrite(struct CO_ClassData *data)
 
               Child, ColGroup(2), GroupFrameT(tr(MSG_CO_MessageHeader)),
                 Child, Label2(tr(MSG_CO_ReplyTo)),
-                Child, MakeAddressField(&data->GUI.ST_REPLYTO, tr(MSG_CO_ReplyTo), MSG_HELP_CO_ST_REPLYTO, ABM_CONFIG, -1, TRUE),
+                Child, MakeAddressField(&data->GUI.ST_REPLYTO, tr(MSG_CO_ReplyTo), MSG_HELP_CO_ST_REPLYTO, ABM_CONFIG, -1, AFF_ALLOW_MULTI),
                 Child, Label2(tr(MSG_CO_Organization)),
                 Child, data->GUI.ST_ORGAN = MakeString(SIZE_DEFAULT,tr(MSG_CO_Organization)),
                 Child, Label2(tr(MSG_CO_ExtraHeaders)),

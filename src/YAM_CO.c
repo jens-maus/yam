@@ -1063,6 +1063,11 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     AddTail((struct List *)&co->mailServerList, (struct Node *)CreateNewMailServer(MST_POP3, co, TRUE));
   }
 
+  if(page == cp_Identities || page == cp_AllPages)
+  {
+#warning Defaults for identities config page missing yet
+  }
+
   if(page == cp_NewMail || page == cp_AllPages)
   {
     co->TransferWindow = TWM_AUTO;
@@ -2627,6 +2632,7 @@ static struct CO_ClassData *CO_New(void)
     // put some labels on our configpagelist objects
     page[cp_FirstSteps  ].PageLabel = MSG_CO_CrdFirstSteps;
     page[cp_TCPIP       ].PageLabel = MSG_CO_CrdTCPIP;
+    page[cp_Identities  ].PageLabel = MSG_CO_CRDIDENTITIES;
     page[cp_NewMail     ].PageLabel = MSG_CO_CrdNewMail;
     page[cp_Filters     ].PageLabel = MSG_CO_CrdFilters;
     page[cp_Spam        ].PageLabel = MSG_CO_CRDSPAMFILTER;
@@ -2681,6 +2687,7 @@ static struct CO_ClassData *CO_New(void)
                 MUIA_Group_ActivePage, 0,
                 Child, CO_PageFirstSteps(data),
                 Child, CO_PageTCPIP(data),
+                Child, CO_PageIdentities(data),
                 Child, CO_PageNewMail(data),
                 Child, CO_PageFilters(data),
                 Child, CO_PageSpam(data),

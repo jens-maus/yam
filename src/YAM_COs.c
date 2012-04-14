@@ -1730,6 +1730,12 @@ void CO_GetConfig(BOOL saveConfig)
     }
     break;
 
+    case cp_Identities:
+    {
+    #warning GetConfig for identities config page missing
+    }
+    break;
+
     case cp_NewMail:
     {
       CE->TransferWindow    = GetMUICycle  (gui->CY_TRANSWIN);
@@ -2414,6 +2420,12 @@ void CO_SetConfig(void)
       // set the enabled stated of the del button according to the number of available accounts
       set(gui->BT_PDEL, MUIA_Disabled, numPOP < 2);
       set(gui->BT_SDEL, MUIA_Disabled, numSMTP < 2);
+    }
+    break;
+
+    case cp_Identities:
+    {
+    #warning SetConfig for identities config page missing
     }
     break;
 
