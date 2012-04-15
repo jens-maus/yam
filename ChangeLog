@@ -7,6 +7,8 @@ $URL$
 
 2012-04-15 Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_COg.c: changed identity config prototype to also use the new
+    folder listtree popup object for selecting the sent mail folder.
   * YAM_COg.c: changed all Str2Obj and Obj2Str hooks of all Popupobject
     objects to retrieve the List object by using xget() on the listview
     first so that method calls can be directly applied on the list

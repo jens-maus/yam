@@ -1891,10 +1891,10 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
 Object *CO_PageIdentities(struct CO_ClassData *data)
 {
   Object *obj;
+  Object *bt_sentfolder;
   static const char *rtitles[4];
   static const char *smtpServers[3];
   static const char *signatures[4];
-  static const char *sentFolders[3];
   static const char *quotePosition[3];
   static const char *signaturePosition[3];
 
@@ -1911,10 +1911,6 @@ Object *CO_PageIdentities(struct CO_ClassData *data)
   signatures[1] = "Privat";
   signatures[2] = "Work";
   signatures[3] = NULL;
-
-  sentFolders[0] = "Sent Folder 1";
-  sentFolders[1] = "Sent Folder 2";
-  sentFolders[2] = NULL;
 
   quotePosition[0] = tr(MSG_CO_IDENTITY_ABOVEQUOTE);
   quotePosition[1] = tr(MSG_CO_IDENTITY_BELOWQUOTE);
@@ -2026,7 +2022,20 @@ Object *CO_PageIdentities(struct CO_ClassData *data)
                           Child, MakeCheck(tr(MSG_CO_IDENTITY_COMPOSE_SENTFOLDER)),
                           Child, HGroup,
                             Child, LLabel1(tr(MSG_CO_IDENTITY_COMPOSE_SENTFOLDER)),
-                            Child, MakeCycle(sentFolders, tr(MSG_CO_IDENTITY_COMPOSE_SENTFOLDER)),
+                            Child, data->GUI.PO_IDENTITY_SENTFOLDER = PopobjectObject,
+                              MUIA_Popstring_String, data->GUI.TX_IDENTITY_SENTFOLDER = TextObject,
+                                TextFrame,
+                              End,
+                              MUIA_Popstring_Button, bt_sentfolder = PopButton(MUII_PopUp),
+                              MUIA_Popobject_StrObjHook, &PO_Text2ListHook,
+                              MUIA_Popobject_ObjStrHook, &PO_List2TextHook,
+                              MUIA_Popobject_WindowHook, &PO_WindowHook,
+                              MUIA_Popobject_Object, NListviewObject,
+                                MUIA_NListview_NList, data->GUI.LV_IDENTITY_SENTFOLDER = FolderRequestListtreeObject,
+                                  MUIA_NList_DoubleClick, TRUE,   
+                                End,
+                              End,
+                            End,
                             Child, LLabel1(tr(MSG_CO_IDENTITY_COMPOSE_FOLDER)),
                           End,
 
@@ -2144,8 +2153,14 @@ Object *CO_PageIdentities(struct CO_ClassData *data)
 
   if(obj != NULL)
   {
+    // enhance the CycleChain
+    set(bt_sentfolder, MUIA_CycleChain, TRUE);
+
     // set help text to objects
 //    SetHelp(data->GUI.ST_SMTPHOST,           MSG_HELP_CO_ST_SMTPHOST             );
+
+    DoMethod(data->GUI.LV_IDENTITY_SENTFOLDER, MUIM_Notify, MUIA_NList_DoubleClick, TRUE, data->GUI.PO_IDENTITY_SENTFOLDER, 2, MUIM_Popstring_Close, TRUE);
+    //DoMethod(data->GUI.TX_IDENTITY_SENTFOLDER, MUIM_Notify, MUIA_Text_Contents, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &SetActiveFilterDataHook);
   }
 
   RETURN(obj);

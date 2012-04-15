@@ -335,6 +335,9 @@ struct CO_GUIData
   Object *ST_IDENTITY_PGPID;
   Object *ST_IDENTITY_PGPURL;
   Object *CH_IDENTITY_ENCSELF;
+  Object *PO_IDENTITY_SENTFOLDER;
+  Object *TX_IDENTITY_SENTFOLDER;
+  Object *LV_IDENTITY_SENTFOLDER;
 };
 
 struct CO_ClassData  /* configuration window */
