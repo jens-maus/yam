@@ -158,21 +158,26 @@ Object *MakeInteger(int maxlen, const char *label)
 ///
 /// PO_SetPublicKey
 //  Copies public PGP key from list to string gadget
-HOOKPROTONH(PO_SetPublicKey, void, Object *pop, Object *string)
+HOOKPROTONH(PO_SetPublicKey, void, Object *listview, Object *string)
 {
-  char *var = NULL;
+  Object *list;
 
   ENTER();
 
-  DoMethod(pop, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &var);
-  if(var != NULL)
+  if((list = (Object *)xget(listview, MUIA_Listview_List)) != NULL)
   {
-    char buf[8 + 2 + 1]; // 8 chars + 2 extra chars required.
+    char *var = NULL;
 
-    strlcpy(buf, "0x", sizeof(buf));
-    strlcat(buf, var, sizeof(buf));
+    DoMethod(list, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &var);
+    if(var != NULL)
+    {
+      char buf[8 + 2 + 1]; // 8 chars + 2 extra chars required.
 
-    setstring(string, buf);
+      strlcpy(buf, "0x", sizeof(buf));
+      strlcat(buf, var, sizeof(buf));
+
+      setstring(string, buf);
+    }
   }
 
   LEAVE();
@@ -182,26 +187,25 @@ MakeStaticHook(PO_SetPublicKeyHook, PO_SetPublicKey);
 ///
 /// PO_ListPublicKeys
 //  Lists keys of public PGP keyring in a popup window
-HOOKPROTONH(PO_ListPublicKeys, long, APTR pop, APTR string)
+HOOKPROTONH(PO_ListPublicKeys, long, Object *listview, Object *string)
 {
-  APTR secret;
-  char *str;
+  BOOL secret;
   int retc, keys = 0;
   FILE *fp;
 
   ENTER();
 
-  secret = str = (char *)xget(pop, MUIA_UserData);
+  // should we display secret keys?
+  secret = (BOOL)xget(listview, MUIA_UserData);
+
   if(G->PGPVersion == 5)
-  {
     retc = PGPCommand("pgpk", "-l +language=us", KEEPLOG);
-  }
   else
   {
     char buf[SIZE_LARGE];
 
     strlcpy(buf, "-kv  ", sizeof(buf));
-    if(secret != NULL)
+    if(secret == TRUE)
     {
       char p;
 
@@ -218,9 +222,11 @@ HOOKPROTONH(PO_ListPublicKeys, long, APTR pop, APTR string)
   {
     char *buf = NULL;
     size_t size = 0;
+    char *str = (char *)xget(string, MUIA_String_Contents);
+    Object *list = (Object *)xget(listview, MUIA_Listview_List);
 
     str = (char *)xget(string, MUIA_String_Contents);
-    DoMethod(pop, MUIM_List_Clear);
+    DoMethod(list, MUIM_List_Clear);
 
     setvbuf(fp, NULL, _IOFBF, SIZE_FILEBUF);
 
@@ -231,7 +237,7 @@ HOOKPROTONH(PO_ListPublicKeys, long, APTR pop, APTR string)
       memset(entry, 0, SIZE_DEFAULT);
       if(G->PGPVersion == 5)
       {
-        if(strncmp(buf, "sec", 3) == 0 || (strncmp(&buf[1], "ub", 2) == 0 && secret == NULL))
+        if(strncmp(buf, "sec", 3) == 0 || (strncmp(&buf[1], "ub", 2) == 0 && secret == FALSE))
         {
           memcpy(entry, &buf[12], 8);
 
@@ -253,11 +259,13 @@ HOOKPROTONH(PO_ListPublicKeys, long, APTR pop, APTR string)
           strlcat(entry, &buf[29], sizeof(entry) - 8);
         }
       }
+
       if(entry[0] != '\0')
       {
-        DoMethod(pop, MUIM_List_InsertSingle, entry, MUIV_List_Insert_Bottom);
+        DoMethod(list, MUIM_List_InsertSingle, entry, MUIV_List_Insert_Bottom);
         if(!strncmp(entry, str, 8))
-          set(pop, MUIA_List_Active, keys);
+          set(list, MUIA_List_Active, keys);
+
         keys++;
       }
     }
@@ -269,6 +277,7 @@ HOOKPROTONH(PO_ListPublicKeys, long, APTR pop, APTR string)
     if(DeleteFile(PGPLOGFILE) == 0)
       AddZombieFile(PGPLOGFILE);
   }
+
   if(keys == 0)
     ER_NewError(tr(MSG_ER_NoPublicKeys), "", "");
 
@@ -282,9 +291,12 @@ MakeStaticHook(PO_ListPublicKeysHook, PO_ListPublicKeys);
 //  Creates a PGP id popup list
 Object *MakePGPKeyList(Object **st, BOOL secret, const char *label)
 {
-  Object *po, *lv;
+  Object *po;
+  Object *lv;
 
-  if ((po = PopobjectObject,
+  ENTER();
+
+  if((po = PopobjectObject,
         MUIA_Popstring_String, *st = MakeString(SIZE_DEFAULT, label),
         MUIA_Popstring_Button, PopButton(MUII_PopUp),
         MUIA_Popobject_StrObjHook, &PO_ListPublicKeysHook,
@@ -304,6 +316,7 @@ Object *MakePGPKeyList(Object **st, BOOL secret, const char *label)
     DoMethod(lv, MUIM_Notify, MUIA_Listview_DoubleClick, TRUE, po, 2, MUIM_Popstring_Close, TRUE);
   }
 
+  RETURN(po);
   return po;
 }
 
@@ -373,13 +386,15 @@ Object *MakeNumeric(int min, int max, BOOL percent)
 ///
 /// PO_CharsetOpenHook
 //  Sets the popup listview accordingly to the string gadget
-HOOKPROTONH(PO_CharsetOpenFunc, BOOL, Object *list, Object *str)
+HOOKPROTONH(PO_CharsetOpenFunc, BOOL, Object *listview, Object *str)
 {
   char *s;
+  Object *list;
 
   ENTER();
 
-  if((s = (char *)xget(str, MUIA_Text_Contents)) != NULL)
+  if((s = (char *)xget(str, MUIA_Text_Contents)) != NULL &&
+     (list = (Object *)xget(listview, MUIA_NListview_NList)) != NULL)
   {
     int i;
 
@@ -409,15 +424,20 @@ MakeStaticHook(PO_CharsetOpenHook, PO_CharsetOpenFunc);
 ///
 /// PO_CharsetCloseHook
 //  Pastes an entry from the popup listview into string gadget
-HOOKPROTONH(PO_CharsetCloseFunc, void, Object *list, Object *txt)
+HOOKPROTONH(PO_CharsetCloseFunc, void, Object *listview, Object *txt)
 {
-  char *var = NULL;
+  Object *list;
 
   ENTER();
 
-  DoMethod(list, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &var);
-  if(var != NULL)
-    set(txt, MUIA_Text_Contents, var);
+  if((list = (Object *)xget(listview, MUIA_NListview_NList)) != NULL)
+  {
+    char *var = NULL;
+
+    DoMethod(list, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &var);
+    if(var != NULL)
+      set(txt, MUIA_Text_Contents, var);
+  }
 
   LEAVE();
 }
@@ -456,7 +476,7 @@ Object *MakeCharsetPop(Object **string, Object **pop)
     struct codeset *codeset;
 
     set(*pop, MUIA_CycleChain,TRUE);
-    DoMethod(listview, MUIM_Notify, MUIA_Listview_DoubleClick, TRUE, po, 2, MUIM_Popstring_Close, TRUE);
+    DoMethod(list, MUIM_Notify, MUIA_NList_DoubleClick, TRUE, po, 2, MUIM_Popstring_Close, TRUE);
 
     // disable the popup button in case there are no charsets available
     if(xget(list, MUIA_NList_Entries) == 0)

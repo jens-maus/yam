@@ -173,13 +173,15 @@ MakeStaticHook(PO_List2TextHook, PO_List2TextFunc);
 ///
 /// PO_XPKOpenHook
 //  Sets a popup listview accordingly to its string gadget
-HOOKPROTONH(PO_XPKOpenFunc, BOOL, Object *list, Object *str)
+HOOKPROTONH(PO_XPKOpenFunc, BOOL, Object *listview, Object *str)
 {
   char *s;
+  Object *list;
 
   ENTER();
 
-  if((s = (char *)xget(str, MUIA_Text_Contents)))
+  if((s = (char *)xget(str, MUIA_Text_Contents)) != NULL &&
+     (list = (Object *)xget(listview, MUIA_Listview_List)) != NULL)
   {
     int i;
 
@@ -209,15 +211,20 @@ MakeStaticHook(PO_XPKOpenHook, PO_XPKOpenFunc);
 ///
 /// PO_XPKCloseHook
 //  Copies XPK sublibrary id from list to string gadget
-HOOKPROTONH(PO_XPKCloseFunc, void, Object *pop, Object *text)
+HOOKPROTONH(PO_XPKCloseFunc, void, Object *listview, Object *text)
 {
-  char *entry = NULL;
+  Object *list;
 
   ENTER();
 
-  DoMethod(pop, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &entry);
-  if(entry != NULL)
-    set(text, MUIA_Text_Contents, entry);
+  if((list = (Object *)xget(listview, MUIA_Listview_List)) != NULL)
+  {
+    char *entry = NULL;
+
+    DoMethod(list, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &entry);
+    if(entry != NULL)
+      set(text, MUIA_Text_Contents, entry);
+  }
 
   LEAVE();
 }
@@ -226,13 +233,15 @@ MakeStaticHook(PO_XPKCloseHook, PO_XPKCloseFunc);
 ///
 /// PO_MimeTypeListOpenHook
 //  Sets the popup listview accordingly to the string gadget
-HOOKPROTONH(PO_MimeTypeListOpenFunc, BOOL, Object *list, Object *str)
+HOOKPROTONH(PO_MimeTypeListOpenFunc, BOOL, Object *listview, Object *str)
 {
   char *s;
+  Object *list;
 
   ENTER();
 
-  if((s = (char *)xget(str, MUIA_String_Contents)) != NULL)
+  if((s = (char *)xget(str, MUIA_String_Contents)) != NULL &&
+     (list = (Object *)xget(listview, MUIA_Listview_List)) != NULL)
   {
     int i;
 
@@ -306,39 +315,44 @@ MakeStaticHook(PO_MimeTypeListOpenHook, PO_MimeTypeListOpenFunc);
 ///
 /// PO_MimeTypeListCloseHook
 //  Pastes an entry from the popup listview into string gadget
-HOOKPROTONH(PO_MimeTypeListCloseFunc, void, Object *list, Object *str)
+HOOKPROTONH(PO_MimeTypeListCloseFunc, void, Object *listview, Object *str)
 {
-  char *entry = NULL;
+  Object *list;
 
   ENTER();
 
-  DoMethod(list, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &entry);
-  if(entry)
+  if((list = (Object *)xget(listview, MUIA_Listview_List)) != NULL)
   {
-    set(str, MUIA_String_Contents, entry);
+    char *entry = NULL;
 
-    // in case that this close function is used with the
-    // string gadget in the YAM config window we have to do a deeper search
-    // as we also want to set the file extension and description gadgets
-    if(G->CO != NULL && str == G->CO->GUI.ST_CTYPE)
+    DoMethod(list, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &entry);
+    if(entry)
     {
-      struct CO_GUIData *gui = &G->CO->GUI;
-      int i;
+      set(str, MUIA_String_Contents, entry);
 
-      for(i=0; IntMimeTypeArray[i].ContentType != NULL; i++)
+      // in case that this close function is used with the
+      // string gadget in the YAM config window we have to do a deeper search
+      // as we also want to set the file extension and description gadgets
+      if(G->CO != NULL && str == G->CO->GUI.ST_CTYPE)
       {
-        struct IntMimeType *mt = (struct IntMimeType *)&IntMimeTypeArray[i];
+        struct CO_GUIData *gui = &G->CO->GUI;
+        int i;
 
-        if(stricmp(mt->ContentType, entry) == 0)
+        for(i=0; IntMimeTypeArray[i].ContentType != NULL; i++)
         {
-          // we also set the file extension
-          if(mt->Extension)
-            set(gui->ST_EXTENS, MUIA_String_Contents, mt->Extension);
+          struct IntMimeType *mt = (struct IntMimeType *)&IntMimeTypeArray[i];
 
-          // we also set the mime description
-          set(gui->ST_DESCRIPTION, MUIA_String_Contents, tr(mt->Description));
+          if(stricmp(mt->ContentType, entry) == 0)
+          {
+            // we also set the file extension
+            if(mt->Extension)
+              set(gui->ST_EXTENS, MUIA_String_Contents, mt->Extension);
 
-          break;
+            // we also set the mime description
+            set(gui->ST_DESCRIPTION, MUIA_String_Contents, tr(mt->Description));
+
+            break;
+          }
         }
       }
     }
@@ -351,45 +365,50 @@ MakeStaticHook(PO_MimeTypeListCloseHook, PO_MimeTypeListCloseFunc);
 ///
 /// PO_HandleVarHook
 //  Pastes an entry from variable listview into string gadget
-HOOKPROTONH(PO_HandleVarFunc, void, Object *pop, Object *string)
+HOOKPROTONH(PO_HandleVarFunc, void, Object *listview, Object *string)
 {
-  char *var;
+  Object *list;
 
   ENTER();
 
-  DoMethod(pop, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &var);
-  if(var != NULL)
+  if((list = (Object *)xget(listview, MUIA_NListview_NList)) != NULL)
   {
-    char addstr[3];
-    char *str = (char *)xget(string, MUIA_String_Contents);
-    LONG pos = xget(string, MUIA_String_BufferPos);
+    char *var = NULL;
 
-    strlcpy(addstr, var, sizeof(addstr));
-
-    if(str != NULL && str[0] != '\0')
+    DoMethod(list, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &var);
+    if(var != NULL)
     {
-      int len = strlen(str)+sizeof(addstr);
-      char *buf;
-
-      if((buf = calloc(1, len)) != NULL)
+      char addstr[3];
+      char *str = (char *)xget(string, MUIA_String_Contents);
+      LONG pos = xget(string, MUIA_String_BufferPos);
+  
+      strlcpy(addstr, var, sizeof(addstr));
+  
+      if(str != NULL && str[0] != '\0')
       {
-        // append the addstr to the right position
-
-        if(pos > 0)
-          strlcpy(buf, str, MIN(len, pos + 1));
-
-        strlcat(buf, addstr, len);
-
-        if(pos >= 0)
-          strlcat(buf, str + pos, len);
-
-        set(string, MUIA_String_Contents, buf);
-
-        free(buf);
+        int len = strlen(str)+sizeof(addstr);
+        char *buf;
+  
+        if((buf = calloc(1, len)) != NULL)
+        {
+          // append the addstr to the right position
+  
+          if(pos > 0)
+            strlcpy(buf, str, MIN(len, pos + 1));
+  
+          strlcat(buf, addstr, len);
+  
+          if(pos >= 0)
+            strlcat(buf, str + pos, len);
+  
+          set(string, MUIA_String_Contents, buf);
+  
+          free(buf);
+        }
       }
+      else
+        set(string, MUIA_String_Contents, addstr);
     }
-    else
-      set(string, MUIA_String_Contents, addstr);
   }
 
   LEAVE();
@@ -400,11 +419,13 @@ MakeStaticHook(PO_HandleVarHook, PO_HandleVarFunc);
 /// PO_HandleScriptsOpenHook
 // Hook which is used when the arexx/dos scripts popup window will
 // be opened and populate the listview.
-HOOKPROTONHNP(PO_HandleScriptsOpenFunc, BOOL, Object *list)
+HOOKPROTONHNP(PO_HandleScriptsOpenFunc, BOOL, Object *listview)
 {
+  Object *list;
   ENTER();
 
-  DoMethod(list, MUIM_PlaceholderPopupList_SetScriptEntry, xget(G->CO->GUI.LV_REXX, MUIA_NList_Active));
+  if((list = (Object *)xget(listview, MUIA_NListview_NList)) != NULL)
+    DoMethod(list, MUIM_PlaceholderPopupList_SetScriptEntry, xget(G->CO->GUI.LV_REXX, MUIA_NList_Active));
 
   RETURN(TRUE);
   return TRUE;
@@ -1240,7 +1261,10 @@ MakeStaticHook(InfoBarPosHook, InfoBarPosFunc);
 //  Creates a popup list of available XPK sublibraries
 static Object *MakeXPKPop(Object **text, BOOL encrypt)
 {
-  Object *lv, *po, *but;
+  Object *lv;
+  Object *list;
+  Object *po;
+  Object *but;
 
   ENTER();
 
@@ -1255,7 +1279,7 @@ static Object *MakeXPKPop(Object **text, BOOL encrypt)
     MUIA_Popobject_ObjStrHook, &PO_XPKCloseHook,
     MUIA_Popobject_WindowHook, &PO_WindowHook,
     MUIA_Popobject_Object, lv = ListviewObject,
-      MUIA_Listview_List, ListObject,
+      MUIA_Listview_List, list = ListObject,
         InputListFrame,
         MUIA_List_AutoVisible,   TRUE,
         MUIA_List_ConstructHook, MUIV_List_ConstructHook_String,
@@ -1288,7 +1312,7 @@ static Object *MakeXPKPop(Object **text, BOOL encrypt)
         }
 
         if(suits == TRUE)
-          DoMethod(lv, MUIM_List_InsertSingle, xpkNode->info.xpi_Name, MUIV_List_Insert_Sorted);
+          DoMethod(list, MUIM_List_InsertSingle, xpkNode->info.xpi_Name, MUIV_List_Insert_Sorted);
       }
 
       DoMethod(lv, MUIM_Notify, MUIA_Listview_DoubleClick, TRUE, po, 2, MUIM_Popstring_Close, TRUE);
@@ -1352,7 +1376,7 @@ Object *MakeMimeTypePop(Object **string, const char *desc)
 //  Creates a popup list containing variables and descriptions for phrases etc.
 static Object *MakeVarPop(Object **string, Object **popButton, const enum PlaceholderMode mode, const int size, const char *shortcut)
 {
-  Object *lv;
+  Object *list;
   Object *po;
 
   ENTER();
@@ -1368,14 +1392,14 @@ static Object *MakeVarPop(Object **string, Object **popButton, const enum Placeh
       MUIA_FixHeightTxt, "\n\n\n\n\n\n\n\n",
       MUIA_NListview_Horiz_ScrollBar, MUIV_NListview_HSB_None,
       MUIA_NListview_Vert_ScrollBar, MUIV_NListview_VSB_FullAuto,
-      MUIA_NListview_NList, lv = PlaceholderPopupListObject,
+      MUIA_NListview_NList, list = PlaceholderPopupListObject,
         MUIA_PlaceholderPopupList_Mode, mode,
       End,
     End,
 
   End))
   {
-    DoMethod(lv, MUIM_Notify, MUIA_NList_DoubleClick, TRUE, po, 2, MUIM_Popstring_Close, TRUE);
+    DoMethod(list, MUIM_Notify, MUIA_NList_DoubleClick, TRUE, po, 2, MUIM_Popstring_Close, TRUE);
     DoMethod(*string, MUIM_Notify, MUIA_Disabled, MUIV_EveryTime, po, 3, MUIM_Set, MUIA_Disabled, MUIV_TriggerValue);
   }
 

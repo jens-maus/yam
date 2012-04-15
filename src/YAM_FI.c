@@ -2542,10 +2542,16 @@ void RemoveFolderFromFilters(const char *folder)
 /*** GUI ***/
 /// InitFilterPopupList
 //  Creates a popup list of configured filters
-HOOKPROTONHNP(InitFilterPopupList, ULONG, Object *pop)
+HOOKPROTONHNP(InitFilterPopupList, ULONG, Object *listview)
 {
-  DoMethod(pop, MUIM_FilterPopupList_Popup);
+  Object *list;
 
+  ENTER();
+
+  if((list = (Object *)xget(listview, MUIA_NListview_NList)) != NULL)
+    DoMethod(list, MUIM_FilterPopupList_Popup);
+
+  RETURN(TRUE);
   return TRUE;
 }
 MakeStaticHook(InitFilterPopupListHook, InitFilterPopupList);
@@ -2553,20 +2559,28 @@ MakeStaticHook(InitFilterPopupListHook, InitFilterPopupList);
 ///
 /// SearchOptFromFilterPopup
 //  Gets search options from selected filter
-HOOKPROTONHNP(SearchOptFromFilterPopup, void, Object *pop)
+HOOKPROTONHNP(SearchOptFromFilterPopup, void, Object *listview)
 {
-  struct FilterNode *filter;
+  Object *list;
 
-  // get the currently active filter
-  DoMethod(pop, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &filter);
+  ENTER();
 
-  if(filter != NULL)
+  if((list = (Object *)xget(listview, MUIA_NListview_NList)) != NULL)
   {
-    struct RuleNode *rule;
+    struct FilterNode *filter;
 
-    if((rule = GetFilterRule(filter, 0)) != NULL)
-      DoMethod(G->FI->GUI.GR_SEARCH, MUIM_SearchControlGroup_GetFromRule, rule);
+    // get the currently active filter
+    DoMethod(list, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &filter);
+    if(filter != NULL)
+    {
+      struct RuleNode *rule;
+
+      if((rule = GetFilterRule(filter, 0)) != NULL)
+        DoMethod(G->FI->GUI.GR_SEARCH, MUIM_SearchControlGroup_GetFromRule, rule);
+    }
   }
+
+  LEAVE();
 }
 MakeStaticHook(SearchOptFromFilterPopupHook, SearchOptFromFilterPopup);
 

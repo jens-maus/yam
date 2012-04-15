@@ -7,6 +7,10 @@ $URL$
 
 2012-04-15 Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_COg.c: changed all Str2Obj and Obj2Str hooks of all Popupobject
+    objects to retrieve the List object by using xget() on the listview
+    first so that method calls can be directly applied on the list
+    object and doesn't need to get through the hierarchy of Group.mui.
   * YAM_COg.c: changed the PopupObject for selecting the folder for a filter
     action to use the FolderRequestListtree class so that a listtree is shown
     rather than a plain text list. This should be somewhat more intuitive
