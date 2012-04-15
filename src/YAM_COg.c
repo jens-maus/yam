@@ -68,6 +68,7 @@
 #include "mui/AccountList.h"
 #include "mui/ClassesExtra.h"
 #include "mui/FilterList.h"
+#include "mui/FolderRequestListtree.h"
 #include "mui/IdentityList.h"
 #include "mui/ImageArea.h"
 #include "mui/MailTextEdit.h"
@@ -120,63 +121,50 @@
 ***************************************************************************/
 
 /*** Hooks ***/
-/// PO_InitFolderList
-//  Creates a popup list of all folders
-HOOKPROTONH(PO_InitFolderList, BOOL, Object *pop, Object *str)
+/// PO_Text2ListFunc
+//  selects the folder as active which is currently in the 'str'
+//  object
+HOOKPROTONH(PO_Text2List, BOOL, Object *listview, Object *str)
 {
   char *s;
-  struct FolderNode *fnode;
-  ULONG i;
 
   ENTER();
 
   // get the currently set string
   s = (char *)xget(str, MUIA_Text_Contents);
 
-  DoMethod(pop, MUIM_List_Clear);
-
-  LockFolderListShared(G->folders);
-
-  i = 0;
-  ForEachFolderNode(G->folders, fnode)
+  if(s != NULL && listview != NULL)
   {
-    struct Folder *folder = fnode->folder;
-
-    if(isGroupFolder(folder) == FALSE)
-    {
-      DoMethod(pop, MUIM_List_InsertSingle, folder->Name, MUIV_List_Insert_Bottom);
-
-      // now we check whether we make that item active or not.
-      if(s != NULL && stricmp(folder->Name, s) == 0)
-      {
-        set(pop, MUIA_List_Active, i);
-        s = NULL;
-      }
-    }
-
-    i++;
+    Object *list = (Object *)xget(listview, MUIA_NListview_NList);
+    
+    // now try to find the node and activate it right away
+    DoMethod(list, MUIM_NListtree_FindName, MUIV_NListtree_FindName_ListNode_Root, s, MUIV_NListtree_FindName_Flag_Activate);
   }
-
-  UnlockFolderList(G->folders);
 
   RETURN(TRUE);
   return TRUE;
 }
-MakeStaticHook(PO_InitFolderListHook, PO_InitFolderList);
+MakeStaticHook(PO_Text2ListHook, PO_Text2List);
 
 ///
 /// PO_List2TextFunc
 //  Copies listview selection to text gadget
-HOOKPROTONH(PO_List2TextFunc, void, Object *list, Object *text)
+HOOKPROTONH(PO_List2TextFunc, void, Object *listview, Object *text)
 {
-  char *selection = NULL;
+  Object *list;
 
   ENTER();
 
-  DoMethod(list, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &selection);
+  if((list = (Object *)xget(listview, MUIA_NListview_NList)) != NULL && text != NULL)
+  {
+    struct MUI_NListtree_TreeNode *tn = (struct MUI_NListtree_TreeNode *)xget(list, MUIA_NListtree_Active);
 
-  if(selection)
-    set(text, MUIA_Text_Contents, selection);
+    if(tn != NULL && tn->tn_User != NULL)
+    {
+      struct FolderNode *fnode = (struct FolderNode *)tn->tn_User;
+      set(text, MUIA_Text_Contents, fnode->folder->Name);
+    }
+  }
 
   LEAVE();
 }
@@ -2403,16 +2391,13 @@ Object *CO_PageFilters(struct CO_ClassData *data)
                                    TextFrame,
                                 End,
                                 MUIA_Popstring_Button,bt_moveto = PopButton(MUII_PopUp),
-                                MUIA_Popobject_StrObjHook, &PO_InitFolderListHook,
+                                MUIA_Popobject_StrObjHook, &PO_Text2ListHook,
                                 MUIA_Popobject_ObjStrHook, &PO_List2TextHook,
                                 MUIA_Popobject_WindowHook, &PO_WindowHook,
-                                MUIA_Popobject_Object, data->GUI.LV_MOVETO = ListviewObject,
-                                   MUIA_Listview_List, ListObject,
-                                     InputListFrame,
-                                     MUIA_List_AutoVisible,   TRUE,
-                                     MUIA_List_ConstructHook, MUIV_List_ConstructHook_String,
-                                     MUIA_List_DestructHook,  MUIV_List_DestructHook_String,
-                                   End,
+                                MUIA_Popobject_Object, NListviewObject,
+                                  MUIA_NListview_NList, data->GUI.LV_MOVETO = FolderRequestListtreeObject,
+                                    MUIA_NList_DoubleClick, TRUE,   
+                                  End,
                                End,
                              End,
 
@@ -2504,8 +2489,7 @@ Object *CO_PageFilters(struct CO_ClassData *data)
       DoMethod(data->GUI.ST_APLAY             ,MUIM_Notify, MUIA_String_Contents      ,MUIV_EveryTime ,MUIV_Notify_Application        ,2 ,MUIM_CallHook          ,&SetActiveFilterDataHook);
       DoMethod(data->GUI.BT_APLAY             ,MUIM_Notify, MUIA_Pressed              ,FALSE          ,MUIV_Notify_Application        ,3 ,MUIM_CallHook          ,&CO_PlaySoundHook,data->GUI.ST_APLAY);
       DoMethod(data->GUI.TX_MOVETO            ,MUIM_Notify, MUIA_Text_Contents        ,MUIV_EveryTime ,MUIV_Notify_Application        ,2 ,MUIM_CallHook          ,&SetActiveFilterDataHook);
-      DoMethod(data->GUI.LV_MOVETO            ,MUIM_Notify, MUIA_Listview_DoubleClick ,TRUE           ,data->GUI.PO_MOVETO            ,2 ,MUIM_Popstring_Close   ,TRUE);
-      DoMethod(data->GUI.LV_MOVETO            ,MUIM_Notify, MUIA_Listview_DoubleClick ,TRUE           ,data->GUI.CH_AMOVE             ,3 ,MUIM_Set,MUIA_Selected ,TRUE);
+      DoMethod(data->GUI.LV_MOVETO            ,MUIM_Notify, MUIA_NList_DoubleClick,    TRUE           ,data->GUI.PO_MOVETO            ,2 ,MUIM_Popstring_Close   ,TRUE);
       DoMethod(data->GUI.BT_RADD              ,MUIM_Notify, MUIA_Pressed              ,FALSE          ,MUIV_Notify_Application        ,2 ,MUIM_CallHook          ,&AddNewFilterToListHook);
       DoMethod(data->GUI.BT_RDEL              ,MUIM_Notify, MUIA_Pressed              ,FALSE          ,MUIV_Notify_Application        ,2 ,MUIM_CallHook          ,&RemoveActiveFilterHook);
       DoMethod(data->GUI.BT_FILTERUP          ,MUIM_Notify, MUIA_Pressed              ,FALSE          ,data->GUI.LV_RULES             ,3 ,MUIM_NList_Move        ,MUIV_NList_Move_Selected   ,MUIV_NList_Move_Previous);
