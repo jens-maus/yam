@@ -7,6 +7,7 @@ $URL$
 
 2012-04-15 Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_COg.c: removed unnecessary (Object **) casts.
   * YAM_COg.c, YAM_COs.c: added a username string gadget to the first steps
     config page as that information is also required under all circumstances.
   * YAM_AB.c: the addressbook will also now respect the new Recipientstring

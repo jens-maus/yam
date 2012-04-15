@@ -1528,7 +1528,7 @@ Object *CO_PageFirstSteps(struct CO_ClassData *data)
                 Child, data->GUI.CY_TZONE = MakeCycle(tzone,tr(MSG_CO_TimeZone)),
 
                 Child, HSpace(1),
-                Child, MakeCheckGroup((Object **)&data->GUI.CH_DSTACTIVE, tr(MSG_CO_DSTACTIVE)),
+                Child, MakeCheckGroup(&data->GUI.CH_DSTACTIVE, tr(MSG_CO_DSTACTIVE)),
               End,
 
               Child, HVSpace,
@@ -1648,7 +1648,7 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
                     Child, ColGroup(2), GroupFrameT(tr(MSG_CO_POP_SERVERSETTINGS)),
 
                       Child, HSpace(1),
-                      Child, MakeCheckGroup((Object **)&data->GUI.CH_POPENABLED, tr(MSG_CO_POPActive)),
+                      Child, MakeCheckGroup(&data->GUI.CH_POPENABLED, tr(MSG_CO_POPActive)),
 
                       Child, Label2(tr(MSG_CO_POP_DESC)),
                       Child, data->GUI.ST_POPDESC = MakeString(SIZE_DEFAULT, tr(MSG_CO_POP_DESC)),
@@ -1690,13 +1690,13 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
                       Child, data->GUI.CY_PRESELECTION = MakeCycle(preselectionModes, tr(MSG_CO_PreSelect)),
 
                       Child, HSpace(1),
-                      Child, MakeCheckGroup((Object **)&data->GUI.CH_DOWNLOADONSTARTUP, tr(MSG_CO_DOWNLOAD_ON_STARTUP)),
+                      Child, MakeCheckGroup(&data->GUI.CH_DOWNLOADONSTARTUP, tr(MSG_CO_DOWNLOAD_ON_STARTUP)),
 
                       Child, HSpace(1),
-                      Child, MakeCheckGroup((Object **)&data->GUI.CH_APPLYREMOTEFILTERS, tr(MSG_CO_APPLY_REMOTE_FILTERS)),
+                      Child, MakeCheckGroup(&data->GUI.CH_APPLYREMOTEFILTERS, tr(MSG_CO_APPLY_REMOTE_FILTERS)),
 
                       Child, HSpace(1),
-                      Child, MakeCheckGroup((Object **)&data->GUI.CH_DELETE, tr(MSG_CO_DeleteServerMail)),
+                      Child, MakeCheckGroup(&data->GUI.CH_DELETE, tr(MSG_CO_DeleteServerMail)),
 
                       Child, HVSpace,
                       Child, HVSpace,
@@ -2182,7 +2182,7 @@ Object *CO_PageNewMail(struct CO_ClassData *data)
                 Child, VSpace(0),
 
                 Child, VGroup,
-                  Child, MakeCheckGroup((Object **)&data->GUI.CH_UPDSTAT, tr(MSG_CO_UpdateStatus)),
+                  Child, MakeCheckGroup(&data->GUI.CH_UPDSTAT, tr(MSG_CO_UpdateStatus)),
                   Child, HVSpace,
                 End,
               End,
@@ -2199,7 +2199,7 @@ Object *CO_PageNewMail(struct CO_ClassData *data)
                   Child, Label(tr(MSG_CO_Minutes)),
                   Child, HSpace(0),
                 End,
-                Child, MakeCheckGroup((Object **)&data->GUI.CH_DLLARGE, tr(MSG_CO_DownloadLarge)),
+                Child, MakeCheckGroup(&data->GUI.CH_DLLARGE, tr(MSG_CO_DownloadLarge)),
               End,
 
               Child, VGroup, GroupFrameT(tr(MSG_CO_Notification)),
@@ -2325,16 +2325,16 @@ Object *CO_PageFilters(struct CO_ClassData *data)
                          Child, data->GUI.ST_RNAME = MakeString(SIZE_NAME,tr(MSG_CO_Name)),
 
                          Child, HSpace(1),
-                         Child, MakeCheckGroup((Object **)&data->GUI.CH_REMOTE, tr(MSG_CO_Remote)),
+                         Child, MakeCheckGroup(&data->GUI.CH_REMOTE, tr(MSG_CO_Remote)),
 
                          Child, HSpace(1),
-                         Child, MakeCheckGroup((Object **)&data->GUI.CH_APPLYNEW, tr(MSG_CO_ApplyToNew)),
+                         Child, MakeCheckGroup(&data->GUI.CH_APPLYNEW, tr(MSG_CO_ApplyToNew)),
 
                          Child, HSpace(1),
-                         Child, MakeCheckGroup((Object **)&data->GUI.CH_APPLYSENT, tr(MSG_CO_ApplyToSent)),
+                         Child, MakeCheckGroup(&data->GUI.CH_APPLYSENT, tr(MSG_CO_ApplyToSent)),
 
                          Child, HSpace(1),
-                         Child, MakeCheckGroup((Object **)&data->GUI.CH_APPLYREQ, tr(MSG_CO_ApplyOnReq)),
+                         Child, MakeCheckGroup(&data->GUI.CH_APPLYREQ, tr(MSG_CO_ApplyOnReq)),
 
                          Child, HVSpace,
                          Child, HVSpace,
@@ -2417,14 +2417,14 @@ Object *CO_PageFilters(struct CO_ClassData *data)
                              End,
 
                          End,
-                         Child, MakeCheckGroup((Object **)&data->GUI.CH_ASTATUSTOMARKED, tr(MSG_CO_ACTION_SET_STATUS_TO_MARKED)),
-                         Child, MakeCheckGroup((Object **)&data->GUI.CH_ASTATUSTOUNMARKED, tr(MSG_CO_ACTION_SET_STATUS_TO_UNMARKED)),
-                         Child, MakeCheckGroup((Object **)&data->GUI.CH_ASTATUSTOREAD, tr(MSG_CO_ACTION_SET_STATUS_TO_READ)),
-                         Child, MakeCheckGroup((Object **)&data->GUI.CH_ASTATUSTOUNREAD, tr(MSG_CO_ACTION_SET_STATUS_TO_UNREAD)),
-                         Child, MakeCheckGroup((Object **)&data->GUI.CH_ASTATUSTOSPAM, tr(MSG_CO_ACTION_SET_STATUS_TO_SPAM)),
-                         Child, MakeCheckGroup((Object **)&data->GUI.CH_ASTATUSTOHAM, tr(MSG_CO_ACTION_SET_STATUS_TO_HAM)),
-                         Child, MakeCheckGroup((Object **)&data->GUI.CH_ADELETE, tr(MSG_CO_ActionDelete)),
-                         Child, MakeCheckGroup((Object **)&data->GUI.CH_ASKIP, tr(MSG_CO_ActionSkip)),
+                         Child, MakeCheckGroup(&data->GUI.CH_ASTATUSTOMARKED, tr(MSG_CO_ACTION_SET_STATUS_TO_MARKED)),
+                         Child, MakeCheckGroup(&data->GUI.CH_ASTATUSTOUNMARKED, tr(MSG_CO_ACTION_SET_STATUS_TO_UNMARKED)),
+                         Child, MakeCheckGroup(&data->GUI.CH_ASTATUSTOREAD, tr(MSG_CO_ACTION_SET_STATUS_TO_READ)),
+                         Child, MakeCheckGroup(&data->GUI.CH_ASTATUSTOUNREAD, tr(MSG_CO_ACTION_SET_STATUS_TO_UNREAD)),
+                         Child, MakeCheckGroup(&data->GUI.CH_ASTATUSTOSPAM, tr(MSG_CO_ACTION_SET_STATUS_TO_SPAM)),
+                         Child, MakeCheckGroup(&data->GUI.CH_ASTATUSTOHAM, tr(MSG_CO_ACTION_SET_STATUS_TO_HAM)),
+                         Child, MakeCheckGroup(&data->GUI.CH_ADELETE, tr(MSG_CO_ActionDelete)),
+                         Child, MakeCheckGroup(&data->GUI.CH_ASKIP, tr(MSG_CO_ActionSkip)),
                          Child, HVSpace,
 
                       End,
@@ -2579,14 +2579,14 @@ Object *CO_PageSpam(struct CO_ClassData *data)
               End,
 
               Child, VGroup, GroupFrameT(tr(MSG_CO_SPAM_RECOGNITION)),
-                Child, MakeCheckGroup((Object **)&data->GUI.CH_SPAMFILTERFORNEWMAIL, tr(MSG_CO_SPAM_FILTERFORNEWMAIL)),
-                Child, MakeCheckGroup((Object **)&data->GUI.CH_SPAMABOOKISWHITELIST, tr(MSG_CO_SPAM_ADDRESSBOOKISWHITELIST)),
-                Child, MakeCheckGroup((Object **)&data->GUI.CH_SPAMMARKONMOVE, tr(MSG_CO_SPAM_MARKONMOVE)),
-                Child, MakeCheckGroup((Object **)&data->GUI.CH_SPAMMARKASREAD, tr(MSG_CO_SPAM_MARK_AS_READ)),
-                Child, MakeCheckGroup((Object **)&data->GUI.CH_MOVEHAMTOINCOMING, tr(MSG_CO_MOVE_HAM_TO_INCOMING)),
+                Child, MakeCheckGroup(&data->GUI.CH_SPAMFILTERFORNEWMAIL, tr(MSG_CO_SPAM_FILTERFORNEWMAIL)),
+                Child, MakeCheckGroup(&data->GUI.CH_SPAMABOOKISWHITELIST, tr(MSG_CO_SPAM_ADDRESSBOOKISWHITELIST)),
+                Child, MakeCheckGroup(&data->GUI.CH_SPAMMARKONMOVE, tr(MSG_CO_SPAM_MARKONMOVE)),
+                Child, MakeCheckGroup(&data->GUI.CH_SPAMMARKASREAD, tr(MSG_CO_SPAM_MARK_AS_READ)),
+                Child, MakeCheckGroup(&data->GUI.CH_MOVEHAMTOINCOMING, tr(MSG_CO_MOVE_HAM_TO_INCOMING)),
                 Child, ColGroup(2),
                   Child, HSpace(5),
-                  Child, MakeCheckGroup((Object **)&data->GUI.CH_FILTERHAM, tr(MSG_CO_FILTER_HAM)),
+                  Child, MakeCheckGroup(&data->GUI.CH_FILTERHAM, tr(MSG_CO_FILTER_HAM)),
                 End,
               End,
 
@@ -2686,7 +2686,7 @@ Object *CO_PageRead(struct CO_ClassData *data)
               Child, data->GUI.ST_HEADERS = MakeString(SIZE_PATTERN, ""),
               Child, Label1(tr(MSG_CO_SenderInfo)),
               Child, data->GUI.CY_SENDERINFO = MakeCycle(siopt,tr(MSG_CO_SenderInfo)),
-              Child, MakeCheckGroup((Object **)&data->GUI.CH_WRAPHEAD, tr(MSG_CO_WrapHeader)),
+              Child, MakeCheckGroup(&data->GUI.CH_WRAPHEAD, tr(MSG_CO_WrapHeader)),
             End,
 
             Child, ColGroup(3), GroupFrameT(tr(MSG_CO_BodyLayout)),
@@ -2707,7 +2707,7 @@ Object *CO_PageRead(struct CO_ClassData *data)
               Child, data->GUI.CA_COLTEXT = PoppenObject,
                 MUIA_CycleChain, TRUE,
               End,
-              Child, MakeCheckGroup((Object **)&data->GUI.CH_FIXFEDIT, tr(MSG_CO_FixedFontEdit)),
+              Child, MakeCheckGroup(&data->GUI.CH_FIXFEDIT, tr(MSG_CO_FixedFontEdit)),
 
               Child, Label1(tr(MSG_CO_OldQuotes)),
               Child, HGroup,
@@ -2724,16 +2724,16 @@ Object *CO_PageRead(struct CO_ClassData *data)
                   MUIA_CycleChain, TRUE,
                 End,
               End,
-              Child, MakeCheckGroup((Object **)&data->GUI.CH_TEXTCOLORS_READ, tr(MSG_CO_TEXTCOLORS_READ)),
+              Child, MakeCheckGroup(&data->GUI.CH_TEXTCOLORS_READ, tr(MSG_CO_TEXTCOLORS_READ)),
 
               Child, Label1(tr(MSG_CO_URLCOLOR)),
               Child, data->GUI.CA_COLURL = PoppenObject,
                 MUIA_CycleChain, TRUE,
               End,
-              Child, MakeCheckGroup((Object **)&data->GUI.CH_TEXTSTYLES_READ, tr(MSG_CO_TEXTSTYLES_READ)),
+              Child, MakeCheckGroup(&data->GUI.CH_TEXTSTYLES_READ, tr(MSG_CO_TEXTSTYLES_READ)),
 
               Child, Label2(tr(MSG_CO_DEFAULTCHARSET)),
-              Child, MakeCharsetPop((Object **)&data->GUI.TX_DEFCHARSET_READ, &charsetPopButton),
+              Child, MakeCharsetPop(&data->GUI.TX_DEFCHARSET_READ, &charsetPopButton),
               Child, HSpace(1),
 
             End,
@@ -2781,8 +2781,8 @@ Object *CO_PageRead(struct CO_ClassData *data)
             End,
 
             Child, VGroup, GroupFrameT(tr(MSG_CO_OtherOptions)),
-              Child, MakeCheckGroup((Object **)&data->GUI.CH_MULTIWIN, tr(MSG_CO_MultiReadWin)),
-              Child, MakeCheckGroup((Object **)&data->GUI.CH_GLOBALMAILTHREADS, tr(MSG_CO_GLOBALMAILTHREADS)),
+              Child, MakeCheckGroup(&data->GUI.CH_MULTIWIN, tr(MSG_CO_MultiReadWin)),
+              Child, MakeCheckGroup(&data->GUI.CH_GLOBALMAILTHREADS, tr(MSG_CO_GLOBALMAILTHREADS)),
               Child, HGroup,
                 Child, data->GUI.CH_DELAYEDSTATUS = MakeCheck(tr(MSG_CO_SETSTATUSDELAYED1)),
                 Child, Label2(tr(MSG_CO_SETSTATUSDELAYED1)),
@@ -2794,11 +2794,11 @@ Object *CO_PageRead(struct CO_ClassData *data)
                 Child, Label2(tr(MSG_CO_SETSTATUSDELAYED2)),
                 Child, HSpace(0),
               End,
-              Child, MakeCheckGroup((Object **)&data->GUI.CH_CONVERTHTML, tr(MSG_CO_CONVERTHTML)),
-              Child, MakeCheckGroup((Object **)&data->GUI.CH_MAPFOREIGNCHARS, tr(MSG_CO_MAPFOREIGNCHARS)),
-              Child, MakeCheckGroup((Object **)&data->GUI.CH_DETECTCYRILLIC, tr(MSG_CO_DETECT_CYRILLIC)),
-              Child, MakeCheckGroup((Object **)&data->GUI.CH_ALLTEXTS, tr(MSG_CO_DisplayAll)),
-              Child, MakeCheckGroup((Object **)&data->GUI.CH_SHOWALTPARTS, tr(MSG_CO_SHOWALTPARTS)),
+              Child, MakeCheckGroup(&data->GUI.CH_CONVERTHTML, tr(MSG_CO_CONVERTHTML)),
+              Child, MakeCheckGroup(&data->GUI.CH_MAPFOREIGNCHARS, tr(MSG_CO_MAPFOREIGNCHARS)),
+              Child, MakeCheckGroup(&data->GUI.CH_DETECTCYRILLIC, tr(MSG_CO_DETECT_CYRILLIC)),
+              Child, MakeCheckGroup(&data->GUI.CH_ALLTEXTS, tr(MSG_CO_DisplayAll)),
+              Child, MakeCheckGroup(&data->GUI.CH_SHOWALTPARTS, tr(MSG_CO_SHOWALTPARTS)),
             End,
 
             Child, HVSpace,
@@ -2946,9 +2946,9 @@ Object *CO_PageWrite(struct CO_ClassData *data)
                       MUIA_Popstring_String,data->GUI.ST_EDITOR = MakeString(SIZE_PATHFILE,tr(MSG_CO_ExternalEditor)),
                       MUIA_Popstring_Button,PopButton(MUII_PopFile),
                     End,
-                    Child, MakeCheckGroup((Object **)&data->GUI.CH_LAUNCH, tr(MSG_CO_Launch)),
+                    Child, MakeCheckGroup(&data->GUI.CH_LAUNCH, tr(MSG_CO_Launch)),
                   End,
-                  Child, MakeCheckGroup((Object **)&data->GUI.CH_FIXEDFONT_WRITE, tr(MSG_CO_FIXEDFONT_WRITE)),
+                  Child, MakeCheckGroup(&data->GUI.CH_FIXEDFONT_WRITE, tr(MSG_CO_FIXEDFONT_WRITE)),
 
                   Child, Label2(tr(MSG_CO_NB_EMAILCACHE)),
                   Child, HGroup,
@@ -2960,7 +2960,7 @@ Object *CO_PageWrite(struct CO_ClassData *data)
                     End,
                     Child, HSpace(0),
                   End,
-                  Child, MakeCheckGroup((Object **)&data->GUI.CH_TEXTCOLORS_WRITE, tr(MSG_CO_TEXTCOLORS_WRITE)),
+                  Child, MakeCheckGroup(&data->GUI.CH_TEXTCOLORS_WRITE, tr(MSG_CO_TEXTCOLORS_WRITE)),
 
                   Child, Label2(tr(MSG_CO_NB_AUTOSAVE)),
                   Child, HGroup,
@@ -2972,19 +2972,19 @@ Object *CO_PageWrite(struct CO_ClassData *data)
                     End,
                     Child, HSpace(0),
                   End,
-                  Child, MakeCheckGroup((Object **)&data->GUI.CH_TEXTSTYLES_WRITE, tr(MSG_CO_TEXTSTYLES_WRITE)),
+                  Child, MakeCheckGroup(&data->GUI.CH_TEXTSTYLES_WRITE, tr(MSG_CO_TEXTSTYLES_WRITE)),
 
                   Child, Label2(tr(MSG_CO_DEFAULTCHARSET)),
-                  Child, MakeCharsetPop((Object **)&data->GUI.TX_DEFCHARSET_WRITE, &charsetPopButton),
+                  Child, MakeCharsetPop(&data->GUI.TX_DEFCHARSET_WRITE, &charsetPopButton),
                   Child, HSpace(1),
 
                 End,
               End,
 
               Child, VGroup, GroupFrameT(tr(MSG_CO_OtherOptions)),
-                Child, MakeCheckGroup((Object **)&data->GUI.CH_WARNSUBJECT, tr(MSG_CO_WARNSUBJECT)),
-                Child, MakeCheckGroup((Object **)&data->GUI.CH_REQUESTMDN, tr(MSG_CO_REQUESTMDN)),
-                Child, MakeCheckGroup((Object **)&data->GUI.CH_SAVESENT, tr(MSG_CO_SaveSent)),
+                Child, MakeCheckGroup(&data->GUI.CH_WARNSUBJECT, tr(MSG_CO_WARNSUBJECT)),
+                Child, MakeCheckGroup(&data->GUI.CH_REQUESTMDN, tr(MSG_CO_REQUESTMDN)),
+                Child, MakeCheckGroup(&data->GUI.CH_SAVESENT, tr(MSG_CO_SaveSent)),
               End,
 
               Child, HVSpace,
@@ -3062,18 +3062,18 @@ Object *CO_PageReplyForward(struct CO_ClassData *data)
                   Child, MakePhraseGroup(&data->GUI.ST_MREPLYHI, &data->GUI.ST_MREPLYTEXT, &data->GUI.ST_MREPLYBYE, tr(MSG_CO_MLRepInit), tr(MSG_HELP_CO_ST_MREPLYTEXT)),
 
                   Child, HSpace(1),
-                  Child, MakeCheckGroup((Object **)&data->GUI.CH_COMPADDR, tr(MSG_CO_VerifyAddress)),
+                  Child, MakeCheckGroup(&data->GUI.CH_COMPADDR, tr(MSG_CO_VerifyAddress)),
 
                   Child, HSpace(1),
-                  Child, MakeCheckGroup((Object **)&data->GUI.CH_QUOTE, tr(MSG_CO_DoQuote)),
+                  Child, MakeCheckGroup(&data->GUI.CH_QUOTE, tr(MSG_CO_DoQuote)),
 
                   Child, HSpace(1),
                   Child, ColGroup(2),
                     Child, HSpace(5),
-                    Child, MakeCheckGroup((Object **)&data->GUI.CH_QUOTEEMPTY, tr(MSG_CO_QuoteEmpty)),
+                    Child, MakeCheckGroup(&data->GUI.CH_QUOTEEMPTY, tr(MSG_CO_QuoteEmpty)),
 
                     Child, HSpace(5),
-                    Child, MakeCheckGroup((Object **)&data->GUI.CH_STRIPSIG, tr(MSG_CO_StripSignature)),
+                    Child, MakeCheckGroup(&data->GUI.CH_STRIPSIG, tr(MSG_CO_StripSignature)),
                   End,
 
                 End,
@@ -3142,7 +3142,7 @@ Object *CO_PageSignature(struct CO_ClassData *data)
             MUIA_Scrollgroup_Contents, VGroupV,
 
              Child, VGroup, GroupFrameT(tr(MSG_CO_Signature)),
-                Child, MakeCheckGroup((Object **)&data->GUI.CH_USESIG, tr(MSG_CO_UseSig)),
+                Child, MakeCheckGroup(&data->GUI.CH_USESIG, tr(MSG_CO_UseSig)),
                 Child, HGroup,
                    Child, data->GUI.CY_SIGNAT = MakeCycle(signat,""),
                    Child, data->GUI.BT_SIGEDIT = MakeButton(tr(MSG_CO_EditSig)),
@@ -3304,11 +3304,11 @@ Object *CO_PageLists(struct CO_ClassData *data)
             End,
 
             Child, VGroup, GroupFrameT(tr(MSG_CO_GENLISTCFG)),
-              Child, MakeCheckGroup((Object **)&data->GUI.CH_FIXFLIST, tr(MSG_CO_FixedFontList)),
-              Child, MakeCheckGroup((Object **)&data->GUI.CH_BEAT, tr(MSG_CO_SwatchBeat)),
-              Child, MakeCheckGroup((Object **)&data->GUI.CH_RELDATETIME, tr(MSG_CO_RELDATETIME)),
-              Child, MakeCheckGroup((Object **)&data->GUI.CH_ABOOKLOOKUP, tr(MSG_CO_ABOOKLOOKUP)),
-              Child, MakeCheckGroup((Object **)&data->GUI.CH_FOLDERDBLCLICK, tr(MSG_CO_FOLDERDBLCLICK)),
+              Child, MakeCheckGroup(&data->GUI.CH_FIXFLIST, tr(MSG_CO_FixedFontList)),
+              Child, MakeCheckGroup(&data->GUI.CH_BEAT, tr(MSG_CO_SwatchBeat)),
+              Child, MakeCheckGroup(&data->GUI.CH_RELDATETIME, tr(MSG_CO_RELDATETIME)),
+              Child, MakeCheckGroup(&data->GUI.CH_ABOOKLOOKUP, tr(MSG_CO_ABOOKLOOKUP)),
+              Child, MakeCheckGroup(&data->GUI.CH_FOLDERDBLCLICK, tr(MSG_CO_FOLDERDBLCLICK)),
             End,
 
             Child, HVSpace,
@@ -3399,10 +3399,10 @@ Object *CO_PageSecurity(struct CO_ClassData *data)
                 End,
 
                 Child, HSpace(1),
-                Child, MakeCheckGroup((Object **)&data->GUI.CH_SPLITLOG, tr(MSG_CO_LogSplit)),
+                Child, MakeCheckGroup(&data->GUI.CH_SPLITLOG, tr(MSG_CO_LogSplit)),
 
                 Child, HSpace(1),
-                Child, MakeCheckGroup((Object **)&data->GUI.CH_LOGALL, tr(MSG_CO_LogAllEvents)),
+                Child, MakeCheckGroup(&data->GUI.CH_LOGALL, tr(MSG_CO_LogAllEvents)),
 
               End,
 
@@ -3455,17 +3455,17 @@ Object *CO_PageStartupQuit(struct CO_ClassData *data)
             MUIA_Scrollgroup_Contents, VGroupV,
 
              Child, VGroup, GroupFrameT(tr(MSG_CO_OnStartup)),
-                Child, MakeCheckGroup((Object **)&data->GUI.CH_LOADALL, tr(MSG_CO_LoadAll)),
-                Child, MakeCheckGroup((Object **)&data->GUI.CH_MARKNEW, tr(MSG_CO_MarkNew)),
-                Child, MakeCheckGroup((Object **)&data->GUI.CH_DELETESTART, tr(MSG_CO_DeleteOld)),
-                Child, MakeCheckGroup((Object **)&data->GUI.CH_REMOVESTART, tr(MSG_CO_RemoveDel)),
-                Child, MakeCheckGroup((Object **)&data->GUI.CH_CHECKBD, tr(MSG_CO_CheckDOB)),
-                Child, MakeCheckGroup((Object **)&data->GUI.CH_SENDSTART, tr(MSG_CO_SendStart)),
+                Child, MakeCheckGroup(&data->GUI.CH_LOADALL, tr(MSG_CO_LoadAll)),
+                Child, MakeCheckGroup(&data->GUI.CH_MARKNEW, tr(MSG_CO_MarkNew)),
+                Child, MakeCheckGroup(&data->GUI.CH_DELETESTART, tr(MSG_CO_DeleteOld)),
+                Child, MakeCheckGroup(&data->GUI.CH_REMOVESTART, tr(MSG_CO_RemoveDel)),
+                Child, MakeCheckGroup(&data->GUI.CH_CHECKBD, tr(MSG_CO_CheckDOB)),
+                Child, MakeCheckGroup(&data->GUI.CH_SENDSTART, tr(MSG_CO_SendStart)),
              End,
              Child, VGroup, GroupFrameT(tr(MSG_CO_OnTermination)),
-                Child, MakeCheckGroup((Object **)&data->GUI.CH_SENDQUIT, tr(MSG_CO_SendStart)),
-                Child, MakeCheckGroup((Object **)&data->GUI.CH_DELETEQUIT, tr(MSG_CO_DeleteOld)),
-                Child, MakeCheckGroup((Object **)&data->GUI.CH_REMOVEQUIT, tr(MSG_CO_RemoveDel)),
+                Child, MakeCheckGroup(&data->GUI.CH_SENDQUIT, tr(MSG_CO_SendStart)),
+                Child, MakeCheckGroup(&data->GUI.CH_DELETEQUIT, tr(MSG_CO_DeleteOld)),
+                Child, MakeCheckGroup(&data->GUI.CH_REMOVEQUIT, tr(MSG_CO_RemoveDel)),
              End,
              Child, HVSpace,
 
@@ -3745,10 +3745,10 @@ Object *CO_PageScripts(struct CO_ClassData *data)
                    End,
 
                    Child, HSpace(1),
-                   Child, MakeCheckGroup((Object **)&data->GUI.CH_CONSOLE, tr(MSG_CO_OpenConsole)),
+                   Child, MakeCheckGroup(&data->GUI.CH_CONSOLE, tr(MSG_CO_OpenConsole)),
 
                    Child, HSpace(1),
-                   Child, MakeCheckGroup((Object **)&data->GUI.CH_WAITTERM, tr(MSG_CO_WaitTerm)),
+                   Child, MakeCheckGroup(&data->GUI.CH_WAITTERM, tr(MSG_CO_WaitTerm)),
 
                 End,
              End,
@@ -3871,8 +3871,8 @@ Object *CO_PageMixed(struct CO_ClassData *data)
 
                   End,
                 End,
-                Child, MakeCheckGroup((Object **)&data->GUI.CH_DOCKYICON, tr(MSG_CO_DOCKYICON)),
-                Child, MakeCheckGroup((Object **)&data->GUI.CH_CLGADGET, tr(MSG_CO_CloseGadget)),
+                Child, MakeCheckGroup(&data->GUI.CH_DOCKYICON, tr(MSG_CO_DOCKYICON)),
+                Child, MakeCheckGroup(&data->GUI.CH_CLGADGET, tr(MSG_CO_CloseGadget)),
               End,
 
               Child, VGroup, GroupFrameT(tr(MSG_CO_SaveDelete)),
@@ -3883,7 +3883,7 @@ Object *CO_PageMixed(struct CO_ClassData *data)
                   Child, Label2(tr(MSG_CO_ConfirmDelPart2)),
                   Child, HSpace(0),
                 End,
-                Child, MakeCheckGroup((Object **)&data->GUI.CH_REMOVE, tr(MSG_CO_Remove)),
+                Child, MakeCheckGroup(&data->GUI.CH_REMOVE, tr(MSG_CO_Remove)),
               End,
               Child, HGroup, GroupFrameT(tr(MSG_CO_XPK)),
                 Child, ColGroup(5),
@@ -4005,8 +4005,8 @@ Object *CO_PageLookFeel(struct CO_ClassData *data)
                   Child, Label1(tr(MSG_CO_SIZEFORMAT)),
                   Child, data->GUI.CY_SIZE = MakeCycle(sizef, tr(MSG_CO_SIZEFORMAT)),
                 End,
-                Child, MakeCheckGroup((Object **)&data->GUI.CH_EMBEDDEDREADPANE, tr(MSG_CO_SHOWEMBEDDEDREADPANE)),
-                Child, MakeCheckGroup((Object **)&data->GUI.CH_QUICKSEARCHBAR, tr(MSG_CO_QUICKSEARCHBAR)),
+                Child, MakeCheckGroup(&data->GUI.CH_EMBEDDEDREADPANE, tr(MSG_CO_SHOWEMBEDDEDREADPANE)),
+                Child, MakeCheckGroup(&data->GUI.CH_QUICKSEARCHBAR, tr(MSG_CO_QUICKSEARCHBAR)),
               End,
 
               Child, HVSpace,
