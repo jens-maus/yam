@@ -59,6 +59,7 @@ struct CO_GUIData
   Object *ST_REALNAME;
   Object *ST_EMAIL;
   Object *ST_POPHOST0;
+  Object *ST_USER0;
   Object *ST_PASSWD0;
   Object *CY_TZONE;
   Object *CH_DSTACTIVE;

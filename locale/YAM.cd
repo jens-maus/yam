@@ -7233,3 +7233,10 @@ Add personal information
 MSG_CO_IDENTITY_REQUESTMDN (2303//)
 Request a return receipt
 ;
+MSG_CO_SERVERNAME (2304//)
+Server name
+;
+MSG_HELP_CO_ST_USER (2305//)
+The username for accessing the\n\
+mail server.
+;

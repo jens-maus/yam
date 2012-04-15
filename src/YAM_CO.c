@@ -696,7 +696,9 @@ HOOKPROTONHNONP(CO_GetDefaultPOPFunc, void)
   if(msn != NULL)
   {
     GetMUIString(msn->hostname, G->CO->GUI.ST_POPHOST0, sizeof(msn->hostname));
+    GetMUIString(msn->username, G->CO->GUI.ST_USER0, sizeof(msn->username));
     GetMUIString(msn->password, G->CO->GUI.ST_PASSWD0, sizeof(msn->password));
+
     if(msn->description[0] == '\0')
       snprintf(msn->description, sizeof(msn->description), "%s@%s", msn->username, msn->hostname);
 
@@ -2075,7 +2077,10 @@ void CO_Validate(struct Config *co, BOOL update)
         struct MailServerNode *msn = GetMailServer(&co->mailServerList, MST_POP3, 0);
 
         if(msn != NULL)
+        {
           setstring(G->CO->GUI.ST_POPHOST0, msn->hostname);
+          setstring(G->CO->GUI.ST_USER0, msn->username);
+        }
       }
       break;
 

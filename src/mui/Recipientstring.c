@@ -65,6 +65,10 @@ struct Data
   BOOL MultipleRecipients;
   BOOL ResolveOnCR;
   BOOL AdvanceOnCR;                    // we have to save this attribute ourself because Betterstring.mcc is buggy.
+  BOOL NoFullName;
+  BOOL NoCache;
+  BOOL NoValid;
+  BOOL ResolveOnInactive;
 };
 */
 
@@ -147,14 +151,15 @@ static char *rcptok(char *s, BOOL *quote)
   while(*p != '\0')
   {
     if(*p == '"')
-	{
+    {
       *quote = !(*quote);
-	}
+    }
     else if(*p == ',' && *quote == FALSE)
     {
       *p++ = '\0';
-	  break;
+	    break;
     }
+
     p++;
   }
 
@@ -280,6 +285,10 @@ OVERLOAD(OM_NEW)
         case ATTR(MultipleRecipients) : data->MultipleRecipients = tag->ti_Data ; break;
         case ATTR(FromString)         : data->From = (Object *)tag->ti_Data     ; break;
         case ATTR(ReplyToString)      : data->ReplyTo = (Object *)tag->ti_Data  ; break;
+        case ATTR(NoFullName)         : data->NoFullName = tag->ti_Data         ; break;
+        case ATTR(NoCache)            : data->NoCache = tag->ti_Data            ; break;
+        case ATTR(NoValid)            : data->NoValid = tag->ti_Data            ; break;
+        case ATTR(ResolveOnInactive)  : data->ResolveOnInactive = tag->ti_Data  ; break;
 
         // we also catch foreign attributes
         case MUIA_String_AdvanceOnCR: data->AdvanceOnCR = tag->ti_Data     ; break;
@@ -330,7 +339,8 @@ OVERLOAD(OM_GET)
 
   switch(((struct opGet *)msg)->opg_AttrID)
   {
-    case ATTR(Popup) : *store = FALSE ; return TRUE;
+    case ATTR(Popup): *store = FALSE ; return TRUE;
+    case ATTR(NoFullName): *store = data->NoFullName; return TRUE;
 
     // we also return foreign attributes
     case MUIA_String_AdvanceOnCR: *store = data->AdvanceOnCR; return TRUE;
@@ -361,6 +371,42 @@ OVERLOAD(OM_SET)
       case ATTR(MultipleRecipients):
       {
         data->MultipleRecipients = tag->ti_Data;
+
+        // make the superMethod call ignore those tags
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
+
+      case ATTR(NoFullName):
+      {
+        data->NoFullName = tag->ti_Data;
+
+        // make the superMethod call ignore those tags
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
+
+      case ATTR(NoCache):
+      {
+        data->NoCache = tag->ti_Data;
+
+        // make the superMethod call ignore those tags
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
+
+      case ATTR(NoValid):
+      {
+        data->NoValid = tag->ti_Data;
+
+        // make the superMethod call ignore those tags
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
+
+      case ATTR(ResolveOnInactive):
+      {
+        data->ResolveOnInactive = tag->ti_Data;
 
         // make the superMethod call ignore those tags
         tag->ti_Tag = TAG_IGNORE;
@@ -496,6 +542,11 @@ OVERLOAD(MUIM_GoInactive)
   if(xget(data->Matchwindow, MUIA_Window_Activate) == FALSE)
     set(data->Matchwindow, MUIA_Window_Open, FALSE);
 
+  // we check if the user wants us to resolve the content
+  // of the string also when the string gadgets goes inactive.
+  if(data->ResolveOnInactive == TRUE)
+    DoMethod(obj, MUIM_Recipientstring_Resolve, MUIF_NONE);
+
   // remember the current selection before our superclass deletes these values because of going inactive
   data->bufferPos = xget(obj, MUIA_String_BufferPos);
   data->selectSize = xget(obj, MUIA_BetterString_SelectSize);
@@ -615,8 +666,11 @@ OVERLOAD(MUIM_HandleEvent)
               // if the user pressed Enter/Return with an open matchlist (s)he usually just
               // wanted to add the selected recipient instead of advancing to the subject
               // line.
-              if(data->AdvanceOnCR == TRUE && matchListWasOpen == FALSE)
+              if(data->AdvanceOnCR == TRUE &&
+                 (matchListWasOpen == FALSE || data->MultipleRecipients == FALSE))
+              {
                 set(_win(obj), MUIA_Window_ActiveObject, MUIV_Window_ActiveObject_Next);
+              }
               else
               {
                 // add a separator as more recipients may be wanted
@@ -742,7 +796,7 @@ OVERLOAD(MUIM_HandleEvent)
                   char address[SIZE_LARGE];
 
                   strlcpy(address, " >> ", sizeof(address));
-                  BuildAddress(&address[4], sizeof(address)-4, matchEntry->Address, matchEntry->RealName);
+                  BuildAddress(&address[4], sizeof(address)-4, matchEntry->Address, data->NoFullName ? NULL : matchEntry->RealName);
 
                   DoMethod(obj, MUIM_BetterString_Insert, address, pos);
 
@@ -817,9 +871,14 @@ DECLARE(Resolve) // ULONG flags
   quiet = muiRenderInfo(obj) == NULL ? TRUE : FALSE;
 
   // Lets check the flags first
-  if(hasNoFullNameFlag(msg->flags)) withrealname= FALSE;
-  if(hasNoValidFlag(msg->flags))    checkvalids = FALSE;
-  if(hasNoCacheFlag(msg->flags))    withcache   = FALSE;
+  if(hasNoFullNameFlag(msg->flags) || data->NoFullName)
+    withrealname = FALSE;
+
+  if(hasNoValidFlag(msg->flags) || data->NoValid)
+    checkvalids = FALSE;
+
+  if(hasNoCacheFlag(msg->flags) || data->NoCache)
+    withcache = FALSE;
 
   set(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_FindUserDataHook, &FindAddressHook);
 

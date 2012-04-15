@@ -1505,17 +1505,22 @@ Object *CO_PageFirstSteps(struct CO_ClassData *data)
             MUIA_Scrollgroup_Contents, VGroupV,
 
               Child, ColGroup(2), GroupFrameT(tr(MSG_CO_MinConfig)),
+
                 Child, Label2(tr(MSG_CO_RealName)),
                 Child, data->GUI.ST_REALNAME = MakeString(SIZE_REALNAME,tr(MSG_CO_RealName)),
 
                 Child, Label2(tr(MSG_CO_EmailAddress)),
-                Child, MakeAddressField(&data->GUI.ST_EMAIL, tr(MSG_CO_EmailAddress), MSG_HELP_CO_ST_EMAIL, ABM_CONFIG, -1, MUIF_NONE),
+                Child, MakeAddressField(&data->GUI.ST_EMAIL, tr(MSG_CO_EmailAddress), MSG_HELP_CO_ST_EMAIL, ABM_CONFIG, -1, AFF_NOFULLNAME|AFF_NOCACHE|AFF_NOVALID|AFF_RESOLVEINACTIVE),
 
-                Child, Label2(tr(MSG_CO_POPServer)),
-                Child, data->GUI.ST_POPHOST0  = MakeString(SIZE_HOST,tr(MSG_CO_POPServer)),
+                Child, Label2(tr(MSG_CO_SERVERNAME)),
+                Child, data->GUI.ST_POPHOST0 = MakeString(SIZE_HOST, tr(MSG_CO_SERVERNAME)),
+
+                Child, Label2(tr(MSG_CO_POPUserID)),
+                Child, data->GUI.ST_USER0 = MakeString(SIZE_USERID, tr(MSG_CO_POPUserID)),
 
                 Child, Label2(tr(MSG_CO_Password)),
-                Child, data->GUI.ST_PASSWD0   = MakePassString(tr(MSG_CO_Password)),
+                Child, data->GUI.ST_PASSWD0 = MakePassString(tr(MSG_CO_Password)),
+
               End,
 
               Child, ColGroup(2), GroupFrameT(tr(MSG_CO_SYSTEMSETTINGS)),
@@ -1537,12 +1542,14 @@ Object *CO_PageFirstSteps(struct CO_ClassData *data)
   {
     SetHelp(data->GUI.ST_REALNAME,       MSG_HELP_CO_ST_REALNAME);
     SetHelp(data->GUI.ST_POPHOST0,       MSG_HELP_CO_ST_POPHOST);
+    SetHelp(data->GUI.ST_USER0,          MSG_HELP_CO_ST_USER);
     SetHelp(data->GUI.ST_PASSWD0,        MSG_HELP_CO_ST_PASSWD);
     SetHelp(data->GUI.CY_TZONE,          MSG_HELP_CO_CY_TZONE);
     SetHelp(data->GUI.CH_DSTACTIVE,      MSG_HELP_CO_CH_DSTACTIVE);
 
-    DoMethod(data->GUI.ST_POPHOST0, MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_GetDefaultPOPHook, 0);
-    DoMethod(data->GUI.ST_PASSWD0,  MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_GetDefaultPOPHook, 0);
+    DoMethod(data->GUI.ST_POPHOST0, MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_GetDefaultPOPHook);
+    DoMethod(data->GUI.ST_USER0,  MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_GetDefaultPOPHook);
+    DoMethod(data->GUI.ST_PASSWD0,  MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_GetDefaultPOPHook);
   }
 
   RETURN(obj);
@@ -1961,7 +1968,7 @@ Object *CO_PageIdentities(struct CO_ClassData *data)
                       Child, data->GUI.ST_IDENTITY_REALNAME = MakeString(SIZE_REALNAME, tr(MSG_CO_RealName)),
   
                       Child, Label2(tr(MSG_CO_EmailAddress)),
-                      Child, MakeAddressField(&data->GUI.ST_IDENTITY_EMAIL, tr(MSG_CO_EmailAddress), MSG_HELP_CO_ST_IDENTITY_EMAIL, ABM_CONFIG, -1, MUIF_NONE),
+                      Child, MakeAddressField(&data->GUI.ST_IDENTITY_EMAIL, tr(MSG_CO_EmailAddress), MSG_HELP_CO_ST_IDENTITY_EMAIL, ABM_CONFIG, -1, AFF_NOFULLNAME|AFF_NOCACHE|AFF_NOVALID|AFF_RESOLVEINACTIVE),
   
                       Child, Label2(tr(MSG_CO_Organization)),
                       Child, data->GUI.ST_IDENTITY_ORG = MakeString(SIZE_DEFAULT, tr(MSG_CO_Organization)),

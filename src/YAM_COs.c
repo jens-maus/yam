@@ -2372,6 +2372,7 @@ void CO_SetConfig(void)
       if((msn = GetMailServer(&CE->mailServerList, MST_POP3, 0)) != NULL)
       {
         nnset(gui->ST_POPHOST0, MUIA_String_Contents, msn->hostname);
+        nnset(gui->ST_USER0,    MUIA_String_Contents, msn->username);
         nnset(gui->ST_PASSWD0,  MUIA_String_Contents, msn->password);
       }
     }

@@ -2260,10 +2260,28 @@ HOOKPROTONHNONP(AB_DoubleClick, void)
          G->AB->parentStringGadget != NULL)
       {
         struct ABEntry *addr = (struct ABEntry *)(active->tn_User);
+        char *recipient;
 
-        DoMethod(G->AB->parentStringGadget, MUIM_Recipientstring_AddRecipient, addr->Alias ? addr->Alias : addr->RealName);
+        // check if the recipient string object has the NoFullName tag set
+        // and if so we only add the recipient by email address
+        if(xget(G->AB->parentStringGadget, MUIA_Recipientstring_NoFullName) == TRUE)
+          recipient = addr->Address;
+        else if(addr->Alias != NULL)
+          recipient = addr->Alias;
+        else if(addr->RealName != NULL)
+          recipient = addr->RealName;
+        else
+          recipient = addr->Address;
 
+        // send the found recipient to the recipientstring object
+        DoMethod(G->AB->parentStringGadget, MUIM_Recipientstring_AddRecipient, recipient);
+
+        // close the addressbook again.
         set(G->AB->GUI.WI, MUIA_Window_CloseRequest, TRUE);
+
+        // make sure to set the parentString as the new active object in
+        // the window it belongs to because the user will return to it.
+        set(_win(G->AB->parentStringGadget), MUIA_Window_ActiveObject, G->AB->parentStringGadget);
       }
       else
         AB_EditFunc();

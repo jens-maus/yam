@@ -5,6 +5,24 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-04-15 Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_COg.c, YAM_COs.c: added a username string gadget to the first steps
+    config page as that information is also required under all circumstances.
+  * YAM_AB.c: the addressbook will also now respect the new Recipientstring
+    functionality and just insert email addresses if the NoFullName attribute
+    was set. In addition, it will reactive the string gadget as the active
+    object of the window so that the user will be back where he started.
+  * YAM_COg.c: made use of the new Recipientstring functionality by forcing the
+    E-mail configuration string gadgets (in FirstSteps and Identities) to use
+    the appropriate flags to force the gadget to not put any real name or alias
+    in the string object and also immediately resolve the address when the
+    object will get inactive for some reasons.
+  * mui/Recipientstring.c: implemented NoFullName, NoCache, NoValid and a new
+    ResolveOnInactive attribute which allows to better fine tune a
+    Recipientstring object for each purpose (e.g. not wanting any full names
+    but just mail addresses).
+
 2012-04-14 Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_COg.c, misc: implemented a first prototype of the upcoming user identity
