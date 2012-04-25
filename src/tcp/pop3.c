@@ -700,8 +700,9 @@ static int GetAllMessageDetails(struct TransferContext *tc)
       break;
   }
 
-  // get any remaining message details from the beginning of the list
-  if(tc->firstToPreselect > 0)
+  // get any remaining message details from the beginning of the list if the
+  // transfer has not yet been started or aborted
+  if(success == 1 && tc->firstToPreselect > 0)
   {
     tnode = FirstMailTransferNode(tc->transferList);
     line = 0;

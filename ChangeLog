@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-04-25 Thore Böckelmann <tboeckel@gmx.de>
+
+  * tcp/pop3.c: starting a mail transfer while not all mail details have been
+    obtained yet and the preselection does not start with the first mail no
+    longer requires a second click on the "Start" button but starts the transfer
+    immediately.
+
 2012-04-15 Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_COg.c: changed identity config prototype to also use the new
