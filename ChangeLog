@@ -5,6 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-04-26 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_FO.c: reworked the handling of modified folders. First of all the folder
+    structure compared in detail now instead of by a general memcmp() which
+    always signals a pending change as even volatile pointers will be compared.
+    Second there were several wrong checks for the new path as only parts of the
+    information were updated. Third a custom folder image was not handled
+    correctly during the move as the image file is locked by the datatypes system
+    and hence has to be released before performing the move. To make it short:
+    moving a folder was broken in several ways. This closes #296.
+
 2012-04-25 Thore Böckelmann <tboeckel@gmx.de>
 
   * tcp/pop3.c: starting a mail transfer while not all mail details have been

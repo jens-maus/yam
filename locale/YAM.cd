@@ -4316,9 +4316,6 @@ A file or directory with the given folder path already exists.\n\
 \n\
 Do you really want to proceed?
 ;
-MSG_FO_FOLDERMOVE (1470//)
-Do you really want to move the folder to another path?
-;
 MSG_FO_FOLDERNAMEINVALID (1471//)
 The specified folder name is empty or already exists.\n\
 Please enter a valid folder name before you proceed.
@@ -7240,3 +7237,9 @@ MSG_HELP_CO_ST_USER (2305//)
 The username for accessing the\n\
 mail server.
 ;
+MSG_FO_MOVEFOLDERTO (2306//)
+Do you really want to move the folder from\n\
+'%s'\n\
+to\n\
+'%s'?
+; FROM,TO

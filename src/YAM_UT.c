@@ -1674,7 +1674,10 @@ BOOL DeleteMailDir(const char *dir, BOOL isroot)
              strnicmp(filename, ".uidl", 6)    == 0)
           {
             if(DeleteFile(fname) == 0)
+            {
+			  W(DBF_FOLDER, "failed to delete file '%s' (error %ld)", fname, IoErr());
               result = FALSE;
+            }
           }
         }
       }
@@ -1686,7 +1689,10 @@ BOOL DeleteMailDir(const char *dir, BOOL isroot)
            stricmp(filename, ".index") == 0)
         {
           if(DeleteFile(fname) == 0)
+          {
+		    W(DBF_FOLDER, "failed to delete file '%s' (error %ld)", fname, IoErr());
             result = FALSE;
+          }
         }
       }
     }

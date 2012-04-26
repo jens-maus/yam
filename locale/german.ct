@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.31 (13.4.2012)
+## version $VER: YAM.catalog 7.32 (26.4.2012)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -5853,10 +5853,6 @@ Möchten Sie wirklich fortfahren?
 ; A file or directory with the given folder path already exists.\n\
 ; Do you really want to proceed?
 ;
-MSG_FO_FOLDERMOVE
-Möchten Sie wirklich das Verzeichnis dieses Postfaches verschieben?
-; Do you really want to move the folder to another path?
-;
 MSG_FO_FOLDERNAMEINVALID
 Es wurde kein Postfachname angegeben oder dieser existiert bereits.\n\
 \n\
@@ -8662,4 +8658,11 @@ keine Authentifizierung
 ;
 MSG_CO_SMTP_OPTIONS
 Optionen
+;
+MSG_FO_MOVEFOLDERTO
+Möchten Sie wirklich das Verzeichnis dieses Postfaches von\n\
+'%s'\n\
+nach\n\
+'%s'\n\
+verschieben?
 ;

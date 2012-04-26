@@ -502,6 +502,87 @@ BOOL FO_SaveConfig(struct Folder *fo)
 }
 
 ///
+/// FO_LoadFolderImage
+//  Loads the images for the folder that should be displayed in the NListtree
+static BOOL FO_LoadFolderImage(struct Folder *folder)
+{
+  BOOL success = FALSE;
+
+  ENTER();
+
+  // first we make sure that valid data is underway.
+  if(folder != NULL)
+  {
+    if(folder->ImageIndex >= MAX_FOLDERIMG+1)
+    {
+      char fname[SIZE_PATHFILE];
+      Object *lv = G->MA->GUI.NL_FOLDERS;
+
+      AddPath(fname, folder->Fullpath, ".fimage", sizeof(fname));
+      if(FileExists(fname) == TRUE)
+      {
+        // Now we say that this image could be used by this Listtree
+        if((folder->imageObject = MakeImageObject(fname, fname)) != NULL)
+        {
+          DoMethod(lv, MUIM_NList_UseImage, folder->imageObject, folder->ImageIndex, MUIF_NONE);
+
+          D(DBF_FOLDER, "successfully loaded folder image '%s'", fname);
+          success = TRUE;
+        }
+        else
+          E(DBF_FOLDER, "error while trying to create imageareaobejct for '%s'", fname);
+      }
+      else
+      {
+        D(DBF_FOLDER, "no folder image '%s' found", fname);
+        folder->imageObject = NULL;
+      }
+    }
+    else
+    {
+      W(DBF_FOLDER, "imageIndex of folder < MAX_FOLDERIMG (%ld < %ld)", folder->ImageIndex, MAX_FOLDERIMG+1);
+      folder->imageObject = NULL;
+    }
+  }
+  else
+    E(DBF_FOLDER, "folder == NULL");
+
+  RETURN(success);
+  return success;
+}
+
+///
+/// FO_UnloadFolderImage
+// unloads an image used by a folder
+static void FO_UnloadFolderImage(struct Folder *folder)
+{
+  ENTER();
+
+  if(folder != NULL)
+  {
+    // remove the image of this folder from the objectlist at the application
+    if(folder->imageObject != NULL)
+    {
+      // Here we cannot remove the BC_FImage from the BC_GROUP because the
+      // destructor of the Folder Listtree will call this function and then
+      // this BC_GROUP doesn't exists anymore. -> Enforcer hit !
+      // so if the user is going to remove this folder by hand we will remove
+      // the BC_FImage of it in the FO_DeleteFolderFunc() before the destructor
+      // is going to call this function.
+
+      // remove the bodychunk object from the nlist
+      DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, folder->ImageIndex, MUIF_NONE);
+
+      MUI_DisposeObject(folder->imageObject);
+      // let's set it to NULL so that the destructor doesn't do the work again.
+      folder->imageObject = NULL;
+    }
+  }
+
+  LEAVE();
+}
+
+///
 /// FO_NewFolder
 //  Initializes a new folder and creates its directory
 struct Folder *FO_NewFolder(enum FolderType type, const char *path, const char *name)
@@ -559,23 +640,9 @@ BOOL FO_FreeFolder(struct Folder *folder)
   if(folder != NULL)
   {
     D(DBF_FOLDER, "freeing folder '%s'", folder->Name);
-    // remove the image of this folder from the objectlist at the application
-    if(folder->imageObject != NULL)
-    {
-      // Here we cannot remove the BC_FImage from the BC_GROUP because the
-      // destructor of the Folder Listtree will call this function and then
-      // this BC_GROUP doesn't exists anymore. -> Enforcer hit !
-      // so if the user is going to remove this folder by hand we will remove
-      // the BC_FImage of it in the FO_DeleteFolderFunc() before the destructor
-      // is going to call this function.
 
-      // remove the bodychunk object from the nlist
-      DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, folder->ImageIndex, MUIF_NONE);
-
-      MUI_DisposeObject(folder->imageObject);
-      // let's set it to NULL so that the destructor doesn't do the work again.
-      folder->imageObject = NULL;
-    }
+    // unload the folder's image
+    FO_UnloadFolderImage(folder);
 
     if(!isGroupFolder(folder))
       ClearMailList(folder->messages, TRUE);
@@ -635,56 +702,6 @@ BOOL FO_CreateFolder(enum FolderType type, const char * const path, const char *
 
   RETURN(result);
   return result;
-}
-
-///
-/// FO_LoadFolderImage
-//  Loads the images for the folder that should be displayed in the NListtree
-static BOOL FO_LoadFolderImage(struct Folder *folder)
-{
-  BOOL success = FALSE;
-
-  ENTER();
-
-  // first we make sure that valid data is underway.
-  if(folder != NULL)
-  {
-    if(folder->ImageIndex >= MAX_FOLDERIMG+1)
-    {
-      char fname[SIZE_PATHFILE];
-      Object *lv = G->MA->GUI.NL_FOLDERS;
-
-      AddPath(fname, folder->Fullpath, ".fimage", sizeof(fname));
-      if(FileExists(fname) == TRUE)
-      {
-        // Now we say that this image could be used by this Listtree
-        if((folder->imageObject = MakeImageObject(fname, fname)) != NULL)
-        {
-          DoMethod(lv, MUIM_NList_UseImage, folder->imageObject, folder->ImageIndex, MUIF_NONE);
-
-          D(DBF_FOLDER, "successfully loaded folder image '%s'", fname);
-          success = TRUE;
-        }
-        else
-          E(DBF_FOLDER, "error while trying to create imageareaobejct for '%s'", fname);
-      }
-      else
-      {
-        D(DBF_FOLDER, "no folder image '%s' found", fname);
-        folder->imageObject = NULL;
-      }
-    }
-    else
-    {
-      W(DBF_FOLDER, "imageIndex of folder < MAX_FOLDERIMG (%ld < %ld)", folder->ImageIndex, MAX_FOLDERIMG+1);
-      folder->imageObject = NULL;
-    }
-  }
-  else
-    E(DBF_FOLDER, "folder == NULL");
-
-  RETURN(success);
-  return success;
 }
 
 ///
@@ -804,7 +821,7 @@ BOOL FO_LoadTree(void)
                 UnlockFolderList(G->folders);
 
                 // Now we add this folder to the folder listtree
-                if(fnode == NULL || 
+                if(fnode == NULL ||
                    (tn = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_Insert, fo->Name, fnode, tn_root, MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE)) == NULL)
                 {
                   fclose(fh);
@@ -1258,7 +1275,10 @@ static BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
     if(MoveFile(srcbuf, dstbuf) == TRUE)
       RepackMailFile(mail, fo->Mode, fo->Password);
     else
+    {
+      W(DBF_FOLDER, "failed to move file '%s' to '%s'", srcbuf, dstbuf);
       success = FALSE;
+    }
   }
 
   UnlockMailList(fo->messages);
@@ -1273,6 +1293,7 @@ static BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
     AddPath(dstbuf, fo->Fullpath, ".index", sizeof(dstbuf));
     if(FileExists(srcbuf) == TRUE && MoveFile(srcbuf, dstbuf) == FALSE)
     {
+	  W(DBF_FOLDER, "failed to move file '%s' to '%s'", srcbuf, dstbuf);
       success = FALSE;
     }
     else
@@ -1282,6 +1303,7 @@ static BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
       AddPath(dstbuf, fo->Fullpath, ".fimage", sizeof(dstbuf));
       if(FileExists(srcbuf) == TRUE && MoveFile(srcbuf, dstbuf) == FALSE)
       {
+	    W(DBF_FOLDER, "failed to copy file '%s' to '%s'", srcbuf, dstbuf);
         success = FALSE;
       }
       else
@@ -1289,7 +1311,7 @@ static BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
         // if we were able to successfully move all files
         // we can also delete the source directory. However,
         // we are NOT doing any error checking here as the
-        // source may be a VOLUME and as such not deleteable
+        // source may be a VOLUME and as such not deletable.
         DeleteMailDir(oldfo->Fullpath, FALSE);
       }
     }
@@ -1435,6 +1457,19 @@ static void FO_PutFolder(struct Folder *folder)
   // path
   if(folder->Path[strlen(folder->Path) - 1] == '/')
     folder->Path[strlen(folder->Path) - 1] = '\0';
+
+  // set up the full path to the folder
+  if(strchr(folder->Path, ':') != NULL)
+  {
+    // the path is an absolute path already
+    strlcpy(folder->Fullpath, folder->Path, sizeof(folder->Fullpath));
+  }
+  else
+  {
+    // concatenate the default mail dir and the folder's relative path to an absolute path
+    strlcpy(folder->Fullpath, G->MA_MailDir, sizeof(folder->Fullpath));
+    AddPart(folder->Fullpath, folder->Path, sizeof(folder->Fullpath));
+  }
 
   folder->MaxAge = GetMUINumer(gui->NM_MAXAGE);
   if(!isDefaultFolder(folder))
@@ -1739,7 +1774,7 @@ HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
 
     // save the Tree to the folder config now
     FO_SaveTree();
-	
+
 	// remove the folder from the global folder list
     LockFolderList(G->folders);
 	RemoveFolderNode(G->folders, fnode);
@@ -1773,6 +1808,43 @@ HOOKPROTONHNONP(FO_CloseFunc, void)
 MakeStaticHook(FO_CloseHook, FO_CloseFunc);
 
 ///
+/// CompareFolders
+// compare two folder structures for differences
+static BOOL CompareFolders(const struct Folder *fo1, const struct Folder *fo2)
+{
+  BOOL equal = TRUE;
+
+  ENTER();
+
+  if(strcmp(fo1->Name,             fo2->Name) != 0 ||
+     stricmp(fo1->Path,            fo2->Path) != 0 ||
+     stricmp(fo1->Fullpath,        fo2->Fullpath) != 0 ||
+     strcmp(fo1->Password,         fo2->Password) != 0 ||
+     strcmp(fo1->WriteIntro,       fo2->WriteIntro) != 0 ||
+     strcmp(fo1->WriteIntro,       fo2->WriteIntro) != 0 ||
+     strcmp(fo1->WriteGreetings,   fo2->WriteGreetings) != 0 ||
+     strcmp(fo1->MLFromAddress,    fo2->MLFromAddress) != 0 ||
+     strcmp(fo1->MLReplyToAddress, fo2->MLReplyToAddress) != 0 ||
+     strcmp(fo1->MLAddress,        fo2->MLAddress) != 0 ||
+     strcmp(fo1->MLPattern,        fo2->MLPattern) != 0 ||
+     fo1->Mode                  != fo2->Mode ||
+     fo1->Type                  != fo2->Type ||
+     fo1->MLSignature           != fo2->MLSignature ||
+     fo1->Sort[0]               != fo2->Sort[0] ||
+     fo1->Sort[1]               != fo2->Sort[1] ||
+     fo1->MaxAge                != fo2->MaxAge ||
+     fo1->ExpireUnread          != fo2->ExpireUnread ||
+     fo1->Stats                 != fo2->Stats ||
+     fo1->MLSupport             != fo2->MLSupport)
+  {
+    equal = FALSE;
+  }
+
+  RETURN(equal);
+  return equal;
+}
+
+///
 /// FO_SaveFunc
 //  Saves modified folder configuration
 HOOKPROTONHNONP(FO_SaveFunc, void)
@@ -1797,7 +1869,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
     FO_PutFolder(&folder);
 
     // check if something has changed and if not we exit here immediately
-    if(memcmp(&folder, oldfolder, sizeof(struct Folder)) == 0)
+    if(CompareFolders(&folder, oldfolder) == TRUE)
     {
       DisposeModulePush(&G->FO);
 
@@ -1826,6 +1898,11 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
     // copy the new Folder name
     strlcpy(oldfolder->Name, folder.Name, sizeof(oldfolder->Name));
 
+    SHOWSTRING(DBF_FOLDER, oldfolder->Path);
+    SHOWSTRING(DBF_FOLDER, oldfolder->Fullpath);
+    SHOWSTRING(DBF_FOLDER, folder.Path);
+    SHOWSTRING(DBF_FOLDER, folder.Fullpath);
+
     // if the folderpath string has changed
     if(stricmp(oldfolder->Path, folder.Path) != 0)
     {
@@ -1834,19 +1911,13 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
       {
         int result;
 
-        // check if the new folder already exists or not.
-        if(FileExists(folder.Fullpath) == FALSE)
-        {
-          result = MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, tr(MSG_YesNoReq), tr(MSG_FO_FOLDEREXISTS));
-        }
-        else
-        {
-          result = MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, tr(MSG_YesNoReq), tr(MSG_FO_FOLDERMOVE));
-        }
-
-        // If the user really wants to proceed
+        // ask the user whether to perform the move or not
+        result = MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, tr(MSG_YesNoReq), tr(MSG_FO_MOVEFOLDERTO), oldfolder->Fullpath, folder.Fullpath);
         if(result == 1)
         {
+          // first unload the old folder image to make it moveable/deletable
+          FO_UnloadFolderImage(oldfolder);
+
           if(Rename(oldfolder->Fullpath, folder.Fullpath) == FALSE)
           {
             if(!(CreateDirectory(folder.Fullpath) && FO_MoveFolderDir(&folder, oldfolder)))
@@ -1857,6 +1928,13 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
               return;
             }
           }
+
+          // now reload the image from the new path
+          if(FO_LoadFolderImage(&folder) == TRUE)
+          {
+            // remember the newly obtained image pointer
+            oldfolder->imageObject = folder.imageObject;
+          }
         }
         else
         {
@@ -1866,7 +1944,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
       }
 
       strlcpy(oldfolder->Path, folder.Path, sizeof(oldfolder->Path));
-      strlcpy(oldfolder->Fullpath, folder.Fullpath, sizeof(oldfolder->Path));
+      strlcpy(oldfolder->Fullpath, folder.Fullpath, sizeof(oldfolder->Fullpath));
     }
 
     strlcpy(oldfolder->WriteIntro,       folder.WriteIntro, sizeof(oldfolder->WriteIntro));
@@ -1963,19 +2041,6 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
     {
       FO_PutFolder(&folder);
       D(DBF_FOLDER, "new folder '%s'", folder.Name);
-
-      // set up the full path to the folder
-      if(strchr(folder.Path, ':') != NULL)
-      {
-        // the path is an absolute path already
-        strlcpy(folder.Fullpath, folder.Path, sizeof(folder.Fullpath));
-      }
-      else
-      {
-        // concatenate the default mail dir and the folder's relative path to an absolute path
-        strlcpy(folder.Fullpath, G->MA_MailDir, sizeof(folder.Fullpath));
-        AddPart(folder.Fullpath, folder.Path, sizeof(folder.Fullpath));
-      }
 
       // lets first check for a valid folder name
       // if the foldername is empty or the new name already exists it's invalid
