@@ -15,6 +15,8 @@ $URL$
     correctly during the move as the image file is locked by the datatypes system
     and hence has to be released before performing the move. To make it short:
     moving a folder was broken in several ways. This closes #296.
+  * YAM_FO.c: added an error message in case creating the directory of a new
+    folder fails.
 
 2012-04-25 Thore Böckelmann <tboeckel@gmx.de>
 

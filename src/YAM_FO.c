@@ -2062,7 +2062,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
       }
       else if(FileExists(folder.Fullpath) == TRUE) // check if the combined full path already exists
       {
-        result = MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, tr(MSG_YesNoReq), tr(MSG_FO_FOLDEREXISTS));
+        result = MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, tr(MSG_YesNoReq), tr(MSG_FO_FOLDER_ALREADY_EXISTS), folder.Fullpath);
       }
       else
         result = TRUE;
@@ -2120,6 +2120,12 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
         }
         else
         {
+		  LONG error = IoErr();
+		  char faultStr[256];
+
+		  Fault(error, NULL, faultStr, sizeof(faultStr));
+		  ER_NewError(tr(MSG_ER_CANNOT_CREATE_FOLDER), folder.Fullpath, faultStr);
+
           LEAVE();
           return;
         }

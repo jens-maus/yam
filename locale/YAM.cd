@@ -4311,11 +4311,6 @@ MSG_HELP_CO_CA_COLURL (1468//)
 Color used to display\n\
 clickable URL links.
 ;
-MSG_FO_FOLDEREXISTS (1469//)
-A file or directory with the given folder path already exists.\n\
-\n\
-Do you really want to proceed?
-;
 MSG_FO_FOLDERNAMEINVALID (1471//)
 The specified folder name is empty or already exists.\n\
 Please enter a valid folder name before you proceed.
@@ -7243,3 +7238,15 @@ Do you really want to move the folder from\n\
 to\n\
 '%s'?
 ; FROM,TO
+;
+MSG_FO_FOLDER_ALREADY_EXISTS (2307//)
+A file or directory named '%s' already exists\n\
+and will be overwritten/deleted.\n\
+\n\
+Do you really want to proceed?
+; PATH
+;
+MSG_ER_CANNOT_CREATE_FOLDER (2308//)
+Failed to create directory '%s' (%s).
+; PATH, ERROR
+;
