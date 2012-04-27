@@ -1640,7 +1640,7 @@ BOOL DeleteMailDir(const char *dir, BOOL isroot)
   ENTER();
 
   if((context = ObtainDirContextTags(EX_StringName,   (ULONG)dir,
-                                     EX_DoCurrentDir, TRUE,
+                                    EX_DoCurrentDir, TRUE,
                                      TAG_DONE)) != NULL)
   {
     struct ExamineData *ed;
@@ -1690,7 +1690,7 @@ BOOL DeleteMailDir(const char *dir, BOOL isroot)
         {
           if(DeleteFile(fname) == 0)
           {
-             W(DBF_FOLDER, "failed to delete file '%s' (error %ld)", fname, IoErr());
+            W(DBF_FOLDER, "failed to delete file '%s' (error %ld)", fname, IoErr());
             result = FALSE;
           }
         }
