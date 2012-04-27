@@ -121,6 +121,10 @@ CC      = gcc
 STRIP   = strip
 OBJDUMP = objdump
 
+# native compilation on host system
+HCC     = gcc
+HCFLAGS = -Wall -O0 -I.
+
 # path definitions
 CDUP  = /
 CDTHIS=
@@ -752,12 +756,12 @@ dump:
 # cleanup target
 .PHONY: clean
 clean:
-	-$(RM) $(TARGET) $(TARGET).debug $(TARGET).map $(addprefix $(OBJDIR)/,$(OBJS))
+	-$(RM) $(TARGET) $(TARGET).debug $(TARGET).map $(addprefix $(OBJDIR)/,$(OBJS)) svnrev.h
 
 # clean all including .obj directory
 .PHONY: cleanall
 cleanall: clean
-	-$(RM) Locale.? ParseEmail.c HTML2Mail.c $(MUIDIR)/Classes.* $(MUIDIR)/*_cl.h $(MUIDIR)/*.crc
+	-$(RM) Locale.? ParseEmail.c HTML2Mail.c $(MUIDIR)/Classes.* $(MUIDIR)/*_cl.h $(MUIDIR)/*.crc $(TOOLS)/svnrev
 	-$(RM) $(LOCALE)/*.catalog
 	-$(RMDIR) $(OBJDIR)
 
@@ -783,6 +787,10 @@ $(OBJDIR)/ParseEmail.o: ParseEmail.c
 $(OBJDIR)/HTML2Mail.o: HTML2Mail.c
 	@echo "  CC $<"
 	@$(CC) $(CFLAGS) -Wno-sign-compare -c $< -o $@
+
+svnrev.h: $(TOOLS)/svnrev
+	@echo "  GN $@"
+	@$(TOOLS)/svnrev -o$@ *.c *.h *.l $(MUIDIR)/*.c $(REXXDIR)/*.c $(MIMEDIR)/*.c $(MIMEDIR)/*.h $(TCPDIR)/*.c $(TCPDIR)/*.h $(EXTRADIR)/*.c $(EXTRADIR)/*.h
 
 ## DEPENDENCY GENERATION ##############
 
@@ -826,6 +834,21 @@ $(GENCLASSES)/GenClasses: $(GENCLASSES)/gc.c $(GENCLASSES)/gc.h \
 	$(GENCLASSES)/lists.c $(GENCLASSES)/lists.h \
 	$(GENCLASSES)/crc32.c $(GENCLASSES)/crc32.h
 	@$(MAKE) -C$(GENCLASSES)
+
+## SVNREV TOOL ########################
+
+ifeq ($(HOST), AmigaOS4)
+  # there is no SubVersion 1.7 for AmigaOS4 (yet), disable sqlite3 support
+  SVNREVCFLAGS = -DNOSQL
+  SVNREVLIBS =
+else
+  SVNREVCFLAGS =
+  SVNREVLIBS = -lsqlite3
+endif
+
+$(TOOLS)/svnrev: $(TOOLS)/svnrev.c $(TOOLS)/svnrev.h
+	@echo "  GN $@"
+	@$(HCC) $(HCFLAGS) $(SVNREVCFLAGS) $< -o $@ $(SVNREVLIBS)
 
 ## CATALOG GENERATION #################
 

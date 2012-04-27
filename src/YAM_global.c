@@ -31,6 +31,8 @@
 
 #include "YAM_global.h"
 
+#include "svnrev.h"
+
 // define for specifying the minimum stack size in bytes
 // YAM requests upon startup
 #define MIN_STACKSIZE 65536
@@ -129,8 +131,8 @@ const char * const yambuildid       = STR(__YAM_BUILDID);
 
 const char * const yamver           = __YAM_VERSION __YAM_DEVEL;
 const char * const yamversion       = __YAM " " __YAM_VERSION __YAM_DEVEL " [" SYSTEMSHORT "/" CPU "]";
-const char * const yamversionver    = __YAM_VERSION __YAM_DEVEL " [" SYSTEMSHORT "/" CPU "]";
-const char * const yamversionstring = "$VER: " __YAM " " __YAM_VERSION __YAM_DEVEL " [" SYSTEMSHORT "/" CPU "] (" __YAM_VERDATE ") " __YAM_COPYRIGHT;
+const char * const yamversionver    = __YAM_VERSION __YAM_DEVEL " [" SYSTEMSHORT "/" CPU "] [svn r" STR(SVN_REV) "]";
+const char * const yamversionstring = "$VER: " __YAM " " __YAM_VERSION __YAM_DEVEL " (" __YAM_VERDATE ") " __YAM_COPYRIGHT " [" SYSTEMSHORT "/" CPU "] [svn r" STR(SVN_REV) "]";
 const char * const yamcopyright     = __YAM_COPYRIGHT;
 const char * const yamfullcopyright = __YAM_FULLCOPYRIGHT;
 const char * const yamversiondate   = __YAM_VERDATE;

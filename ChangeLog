@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-04-27 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_global.c: added svnrev tool to generate a SVN repository revision number
+    which will be included in the version string.
+
 2012-04-26 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_FO.c: reworked the handling of modified folders. First of all the folder
