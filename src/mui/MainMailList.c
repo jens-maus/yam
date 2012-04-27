@@ -797,7 +797,6 @@ OVERLOAD(MUIM_ContextMenuChoice)
 ///
 /// OVERLOAD(MUIM_CreateShortHelp)
 // set up a text for the bubble help
-extern void kprintf(const char *fmt,...);
 OVERLOAD(MUIM_CreateShortHelp)
 {
   struct MUIP_CreateShortHelp *csh = (struct MUIP_CreateShortHelp *)msg;
