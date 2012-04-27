@@ -840,7 +840,7 @@ $(GENCLASSES)/GenClasses: $(GENCLASSES)/gc.c $(GENCLASSES)/gc.h \
 ifeq ($(HOST), AmigaOS4)
   # there is no SubVersion 1.7 for AmigaOS4 (yet), disable sqlite3 support
   SVNREVCFLAGS = -DNOSQL
-  SVNREVLIBS =
+  SVNREVLIBS = -lunix
 else
   SVNREVCFLAGS =
   SVNREVLIBS = -lsqlite3
