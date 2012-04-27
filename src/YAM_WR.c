@@ -1991,6 +1991,8 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
           {
             int i;
             char address[SIZE_LARGE];
+            BOOL reuseFromAddress = TRUE;
+            BOOL reuseReplyToAddress = TRUE;
 
             // free our temp text now
             free(cmsg);
@@ -2005,33 +2007,36 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
             // set the subject gadget
             set(wmData->window, MUIA_WriteWindow_Subject, mail->Subject);
 
-            // in case this is a EDITASNEW action we have to make sure
-            // to add the From: and ReplyTo: address of the user of
-            // YAM instead of filling in the data of the mail we
-            // are trying to edit.
-            if(wmData->mode == NMM_EDITASNEW)
+            // in case this is a EDITASNEW action with a mailing list
+            // folder we have to make sure to add the From: and ReplyTo:
+            // address of the mailing list
+            if(wmData->mode == NMM_EDITASNEW && folder->MLSupport == TRUE)
             {
-              if(folder->MLSupport == TRUE)
+              if(folder->MLFromAddress[0] != '\0')
               {
-                if(folder->MLFromAddress[0] != '\0')
-                  set(wmData->window, MUIA_WriteWindow_From, folder->MLFromAddress);
+                set(wmData->window, MUIA_WriteWindow_From, folder->MLFromAddress);
+                reuseFromAddress = FALSE;
+              }
 
-                if(folder->MLReplyToAddress[0] != '\0')
-                  set(wmData->window, MUIA_WriteWindow_ReplyTo, folder->MLReplyToAddress);
+              if(folder->MLReplyToAddress[0] != '\0')
+              {
+                set(wmData->window, MUIA_WriteWindow_ReplyTo, folder->MLReplyToAddress);
+                reuseReplyToAddress = FALSE;
               }
             }
-            else
-            {
-              // use all From:/ReplyTo: from the original mail
-              // instead.
 
+            if(reuseFromAddress == TRUE)
+            {
               // add all From: senders
               sbuf = StrBufCpy(sbuf, BuildAddress(address, sizeof(address), mail->From.Address, mail->From.RealName));
               for(i=0; i < email->NoSFrom; i++)
                 sbuf = AppendRcpt(sbuf, &email->SFrom[i], FALSE);
 
               set(wmData->window, MUIA_WriteWindow_From, sbuf);
+            }
 
+            if(reuseReplyToAddress == TRUE)
+            {
               // add all ReplyTo: recipients
               sbuf = StrBufCpy(sbuf, BuildAddress(address, sizeof(address), mail->ReplyTo.Address, mail->ReplyTo.RealName));
               for(i=0; i < email->NoSReplyTo; i++)

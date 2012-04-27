@@ -9,6 +9,8 @@ $URL$
 
   * YAM_global.c: added svnrev tool to generate a SVN repository revision number
     which will be included in the version string.
+  * YAM_WR.c: editing a mail in the outgoing folder as new will now leave the
+    From: and ReplyTo: field as they are. This closes #289.
 
 2012-04-26 Thore Böckelmann <tboeckel@gmx.de>
 
