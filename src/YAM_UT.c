@@ -1675,7 +1675,7 @@ BOOL DeleteMailDir(const char *dir, BOOL isroot)
           {
             if(DeleteFile(fname) == 0)
             {
-			  W(DBF_FOLDER, "failed to delete file '%s' (error %ld)", fname, IoErr());
+              W(DBF_FOLDER, "failed to delete file '%s' (error %ld)", fname, IoErr());
               result = FALSE;
             }
           }
@@ -1690,7 +1690,7 @@ BOOL DeleteMailDir(const char *dir, BOOL isroot)
         {
           if(DeleteFile(fname) == 0)
           {
-		    W(DBF_FOLDER, "failed to delete file '%s' (error %ld)", fname, IoErr());
+             W(DBF_FOLDER, "failed to delete file '%s' (error %ld)", fname, IoErr());
             result = FALSE;
           }
         }
