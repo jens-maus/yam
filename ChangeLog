@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-04-30 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/UpdateNotifyWindow.c, YAM.c: uniconifying YAM while the update
+    notification is still open will reparse the update file and populate the
+    formerly cleared list of available updates. This closes #297.
+
 2012-04-27 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_global.c: added svnrev tool to generate a SVN repository revision number

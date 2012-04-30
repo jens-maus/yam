@@ -1305,7 +1305,7 @@ void PopUp(void)
 {
   ENTER();
 
-  nnset(G->App, MUIA_Application_Iconified, FALSE);
+  set(G->App, MUIA_Application_Iconified, FALSE);
 
   // let the main window appear only if we are fully started yet
   if(G->InStartupPhase == FALSE)

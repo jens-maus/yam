@@ -69,6 +69,7 @@ struct Data
   char windowTitle[SIZE_DEFAULT];
   struct TempFile *tempFile;
   BOOL quiet;
+  BOOL updateSuccess;
 };
 */
 
@@ -183,6 +184,9 @@ OVERLOAD(OM_NEW)
       DoMethod(downloadButton,   MUIM_Notify, MUIA_Pressed, FALSE, obj, 1, METHOD(Download));
       DoMethod(closeButton,      MUIM_Notify, MUIA_Pressed, FALSE, obj, 3, METHOD(Close));
 
+      // reparse the update file upon uniconification
+      DoMethod(G->App, MUIM_Notify, MUIA_Application_Iconified, FALSE, obj, 1, METHOD(ParseUpdateFile));
+
       set(obj, MUIA_Window_Activate, TRUE);
     }
     else
@@ -201,6 +205,9 @@ OVERLOAD(OM_DISPOSE)
 {
   GETDATA;
 
+  // remove the notification
+  DoMethod(G->App, MUIM_KillNotifyObj, MUIA_Application_Iconified, obj);
+  // close the downloaded update file
   CloseTempFile(data->tempFile);
 
   return DoSuperMethodA(cl, obj, msg);
@@ -265,10 +272,10 @@ OVERLOAD(MUIM_ThreadFinished)
 
   ENTER();
 
-  // the thread which did the download has finished
-  // now parse the update file if the download was successful
-  if(tf->result == TRUE)
-    ParseUpdateFile(data->tempFile->Filename, data->quiet);
+  // remember the update check result
+  data->updateSuccess = tf->result;
+
+  DoMethod(obj, METHOD(ParseUpdateFile));
 
   BusyEnd();
 
@@ -401,7 +408,7 @@ DECLARE(Download)
   if(comp != NULL)
   {
     char urlFile[SIZE_FILE];
-    
+
     if(ExtractUpdateFilename(comp->url, urlFile, sizeof(urlFile)) == TRUE)
     {
       const char *drawer = C->UpdateDownloadPath;
@@ -442,7 +449,7 @@ DECLARE(Download)
         }
       }
       while(doDownload == TRUE);
-    
+
       if(doDownload == TRUE)
       {
         // start the download
@@ -495,6 +502,26 @@ DECLARE(Close)
 
   // now close the window for real.
   set(obj, MUIA_Window_Open, FALSE);
+
+  LEAVE();
+  return 0;
+}
+
+///
+/// DECLARE(ParseUpdateFile)
+// parse the downloaded update file
+void kprintf(const char *,...);
+DECLARE(ParseUpdateFile)
+{
+  GETDATA;
+
+  ENTER();
+
+  // the thread which did the download has finished
+  // now parse the update file if the download was successful
+  kprintf("%ld '%s'\n",data->updateSuccess,data->tempFile->Filename);
+  if(data->updateSuccess == TRUE)
+    ParseUpdateFile(data->tempFile->Filename, data->quiet);
 
   LEAVE();
   return 0;
