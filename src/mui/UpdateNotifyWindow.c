@@ -519,7 +519,6 @@ DECLARE(ParseUpdateFile)
 
   // the thread which did the download has finished
   // now parse the update file if the download was successful
-  kprintf("%ld '%s'\n",data->updateSuccess,data->tempFile->Filename);
   if(data->updateSuccess == TRUE)
     ParseUpdateFile(data->tempFile->Filename, data->quiet);
 
