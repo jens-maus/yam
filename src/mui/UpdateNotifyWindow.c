@@ -510,7 +510,6 @@ DECLARE(Close)
 ///
 /// DECLARE(ParseUpdateFile)
 // parse the downloaded update file
-void kprintf(const char *,...);
 DECLARE(ParseUpdateFile)
 {
   GETDATA;
