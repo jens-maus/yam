@@ -670,6 +670,7 @@ YAMOBJS = \
 	Timer.o \
 	UIDL.o \
 	UpdateCheck.o \
+	UserIdentity.o \
 	Debug.o
 
 # and the other object files where

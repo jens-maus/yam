@@ -7,6 +7,9 @@ $URL$
 
 2012-05-01 Jens Langner <Jens.Langner@light-speed.de>
 
+  * UserIdentity.c,h: implemented a first basic UserIdentityNode structure
+    with all related information that a user identity should contain as soon
+    as everything has been implemented.
   * Debug.h: when compiling YAM in non-debug mode the compiler will now replace
     forgotten kprintf() calls with a NOP and also emit a compiler warning to
     notify the user. This should reduce the potential of forgotten kprintf()
