@@ -476,6 +476,15 @@ void W(const unsigned long f, const char *format, ...);
 
 #define DumpDbgMalloc()       ((void)0)
 
+// we output a warning if kprintf-alike functions
+// are used when a non-debug version should be compiled
+#if defined(__GNUC__)
+#define DO_PRAGMA(x) _Pragma(#x)
+#define kprintf(...) DO_PRAGMA(message("#warning: kprintf() used in non-debug mode"))
+#else
+#define kprintf(...) ((void)0)
+#endif
+
 #endif // DEBUG
 
 #endif // DEBUG_H
