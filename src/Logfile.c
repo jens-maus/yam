@@ -80,6 +80,8 @@ void AppendToLogfile(const enum LFMode mode, const int id, const char *text, ...
         // add the logfile path to the filename.
         AddPath(logfile, C->LogfilePath[0] != '\0' ? C->LogfilePath : G->ProgDir, filename, sizeof(logfile));
 
+        D(DBF_ALWAYS, "logging id %ld, text '%s' to file '%s'", id, text, logfile);
+
         // open the file handle in 'append' mode and output the
         // text accordingly.
         if((fh = fopen(logfile, "a")) != NULL)

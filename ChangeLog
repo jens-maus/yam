@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-05-02 Thore Böckelmann <tboeckel@gmx.de>
+
+  * LogFile.c: added some debug output.
+
 2012-05-01 Jens Langner <Jens.Langner@light-speed.de>
 
   * UserIdentity.c,h: implemented a first basic UserIdentityNode structure
