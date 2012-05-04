@@ -134,10 +134,10 @@ enum { RMEN_HSHORT=100, RMEN_HFULL, RMEN_SNONE, RMEN_SDATA, RMEN_SFULL, RMEN_SIM
 /* Hooks */
 /// TextEditDoubleClickHook
 //  Handles double-clicks on an URL
-HOOKPROTONHNO(TextEditDoubleClickFunc, BOOL, struct ClickMessage *clickmsg)
+HOOKPROTONH(TextEditDoubleClickFunc, BOOL, Object *editor, struct ClickMessage *clickmsg)
 {
   // default to let TextEditor.mcc handle the double click
-  BOOL result = TRUE;
+  BOOL result = FALSE;
 
   ENTER();
 
@@ -185,7 +185,7 @@ HOOKPROTONHNO(TextEditDoubleClickFunc, BOOL, struct ClickMessage *clickmsg)
           {
             RE_ClickedOnMessage(url);
             // no further handling by TextEditor.mcc required
-            result = FALSE;
+            result = TRUE;
           }
           break;
 
@@ -193,7 +193,7 @@ HOOKPROTONHNO(TextEditDoubleClickFunc, BOOL, struct ClickMessage *clickmsg)
           {
             RE_ClickedOnMessage(&url[7]);
             // no further handling by TextEditor.mcc required
-            result = FALSE;
+            result = TRUE;
           }
           break;
 
@@ -221,7 +221,7 @@ HOOKPROTONHNO(TextEditDoubleClickFunc, BOOL, struct ClickMessage *clickmsg)
             url = NULL;
 
             // no further handling by TextEditor.mcc required
-            result = FALSE;
+            result = TRUE;
           }
           break;
 
@@ -234,6 +234,13 @@ HOOKPROTONHNO(TextEditDoubleClickFunc, BOOL, struct ClickMessage *clickmsg)
       free(url);
       free(line);
     }
+  }
+
+  // the result must be inverted for TE.mcc 15.37 due to a misinterpretation
+  // of a quite convoluted code
+  if(xget(editor, MUIA_Version) == 15 && xget(editor, MUIA_Revision) == 37)
+  {
+    result = !result;
   }
 
   RETURN(result);
