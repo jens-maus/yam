@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-05-04 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/ReadMailGroup.c: fixed the double click handling on URLs to let TE.mcc
+    no longer mark parts of the URL. If YAM did handle a double click on a valid
+    item TE.mcc will do no own double click handling. This closes #294.
+
 2012-05-02 Thore Böckelmann <tboeckel@gmx.de>
 
   * LogFile.c: added some debug output.

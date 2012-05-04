@@ -136,7 +136,10 @@ enum { RMEN_HSHORT=100, RMEN_HFULL, RMEN_SNONE, RMEN_SDATA, RMEN_SFULL, RMEN_SIM
 //  Handles double-clicks on an URL
 HOOKPROTONHNO(TextEditDoubleClickFunc, BOOL, struct ClickMessage *clickmsg)
 {
-  BOOL result = FALSE;
+  // default to let TextEditor.mcc handle the double click
+  BOOL result = TRUE;
+
+  ENTER();
 
   D(DBF_GUI, "DoubleClick: %ld - [%s]", clickmsg->ClickPosition, clickmsg->LineContents);
 
@@ -152,6 +155,7 @@ HOOKPROTONHNO(TextEditDoubleClickFunc, BOOL, struct ClickMessage *clickmsg)
       int pos = clickmsg->ClickPosition;
       char *surl;
       char *url = NULL;
+      char *eol = &line[strlen(line)];
       char *p;
       enum tokenType type;
 
@@ -162,7 +166,7 @@ HOOKPROTONHNO(TextEditDoubleClickFunc, BOOL, struct ClickMessage *clickmsg)
 
       // now find the end of the word the user clicked at
       p = &line[pos];
-      while(p+1 != &line[strlen(line)] && !isspace(*(p+1)))
+      while(p+1 != eol && !isspace(*(p+1)))
         p++;
 
       *(++p) = '\0';
@@ -180,12 +184,16 @@ HOOKPROTONHNO(TextEditDoubleClickFunc, BOOL, struct ClickMessage *clickmsg)
           case tEMAIL:
           {
             RE_ClickedOnMessage(url);
+            // no further handling by TextEditor.mcc required
+            result = FALSE;
           }
           break;
 
           case tMAILTO:
           {
             RE_ClickedOnMessage(&url[7]);
+            // no further handling by TextEditor.mcc required
+            result = FALSE;
           }
           break;
 
@@ -203,6 +211,7 @@ HOOKPROTONHNO(TextEditDoubleClickFunc, BOOL, struct ClickMessage *clickmsg)
             // TextEditor.mcc V15.26+ tells us the pressed qualifier
             // if the CTRL key is pressed we try to open a new window
             newWindow = hasFlag(clickmsg->Qualifier, IEQUALIFIER_CONTROL);
+            SHOWVALUE(DBF_GUI, newWindow);
 
             // don't invoke the GotoURL command right here in there hook, as the
             // execution may take lots of time
@@ -210,6 +219,9 @@ HOOKPROTONHNO(TextEditDoubleClickFunc, BOOL, struct ClickMessage *clickmsg)
 
             // don't free the URL string in this context
             url = NULL;
+
+            // no further handling by TextEditor.mcc required
+            result = FALSE;
           }
           break;
 
@@ -217,8 +229,6 @@ HOOKPROTONHNO(TextEditDoubleClickFunc, BOOL, struct ClickMessage *clickmsg)
             // nothing
           break;
         }
-
-        result = TRUE;
       }
 
       free(url);
@@ -226,6 +236,7 @@ HOOKPROTONHNO(TextEditDoubleClickFunc, BOOL, struct ClickMessage *clickmsg)
     }
   }
 
+  RETURN(result);
   return result;
 }
 MakeStaticHook(TextEditDoubleClickHook, TextEditDoubleClickFunc);
