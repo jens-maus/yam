@@ -136,7 +136,7 @@ HOOKPROTONH(PO_Text2List, BOOL, Object *listview, Object *str)
   if(s != NULL && listview != NULL)
   {
     Object *list = (Object *)xget(listview, MUIA_NListview_NList);
-    
+
     // now try to find the node and activate it right away
     DoMethod(list, MUIM_NListtree_FindName, MUIV_NListtree_FindName_ListNode_Root, s, MUIV_NListtree_FindName_Flag_Activate);
   }
@@ -381,28 +381,28 @@ HOOKPROTONH(PO_HandleVarFunc, void, Object *listview, Object *string)
       char addstr[3];
       char *str = (char *)xget(string, MUIA_String_Contents);
       LONG pos = xget(string, MUIA_String_BufferPos);
-  
+
       strlcpy(addstr, var, sizeof(addstr));
-  
+
       if(str != NULL && str[0] != '\0')
       {
         int len = strlen(str)+sizeof(addstr);
         char *buf;
-  
+
         if((buf = calloc(1, len)) != NULL)
         {
           // append the addstr to the right position
-  
+
           if(pos > 0)
             strlcpy(buf, str, MIN(len, pos + 1));
-  
+
           strlcat(buf, addstr, len);
-  
+
           if(pos >= 0)
             strlcat(buf, str + pos, len);
-  
+
           set(string, MUIA_String_Contents, buf);
-  
+
           free(buf);
         }
       }
@@ -1964,29 +1964,29 @@ Object *CO_PageIdentities(struct CO_ClassData *data)
                 Child, RegisterGroup(rtitles),
                   MUIA_CycleChain, TRUE,
                   MUIA_HorizWeight, 30,
- 
+
                   // General Settings
                   Child, VGroup,
                     Child, ColGroup(2), GroupFrameT(tr(MSG_CO_IDENTITY_SETTINGS)),
-  
+
                       Child, Label2(tr(MSG_CO_IDENTITY_DESCRIPTION)),
                       Child, data->GUI.ST_IDENTITY_DESC = MakeString(SIZE_DEFAULT, tr(MSG_CO_IDENTITY_DESCRIPTION)),
 
                       Child, Label2(tr(MSG_CO_RealName)),
                       Child, data->GUI.ST_IDENTITY_REALNAME = MakeString(SIZE_REALNAME, tr(MSG_CO_RealName)),
-  
+
                       Child, Label2(tr(MSG_CO_EmailAddress)),
                       Child, MakeAddressField(&data->GUI.ST_IDENTITY_EMAIL, tr(MSG_CO_EmailAddress), MSG_HELP_CO_ST_IDENTITY_EMAIL, ABM_CONFIG, -1, AFF_NOFULLNAME|AFF_NOCACHE|AFF_NOVALID|AFF_RESOLVEINACTIVE),
-  
+
                       Child, Label2(tr(MSG_CO_Organization)),
                       Child, data->GUI.ST_IDENTITY_ORG = MakeString(SIZE_DEFAULT, tr(MSG_CO_Organization)),
 
                       Child, Label2(tr(MSG_CO_IDENTITY_MAILSERVER)),
                       Child, MakeCycle(smtpServers, tr(MSG_CO_IDENTITY_MAILSERVER)),
-  
+
                       Child, Label2(tr(MSG_CO_IDENTITY_DEFSIGNATURE)),
                       Child, MakeCycle(signatures, tr(MSG_CO_IDENTITY_DEFSIGNATURE)),
-  
+
                       Child, HVSpace,
                       Child, HVSpace,
 
@@ -2005,7 +2005,7 @@ Object *CO_PageIdentities(struct CO_ClassData *data)
 
                       Child, Label2(tr(MSG_CO_IDENTITY_REPLYTO)),
                       Child, MakeAddressField(&data->GUI.ST_IDENTITY_REPLYTO, tr(MSG_CO_IDENTITY_REPLYTO), MSG_HELP_CO_ST_IDENTITY_REPLYTO, ABM_CONFIG, -1, AFF_ALLOW_MULTI),
-  
+
                       Child, Label2(tr(MSG_CO_ExtraHeaders)),
                       Child, data->GUI.ST_IDENTITY_EXTHEADER = MakeString(SIZE_LARGE, tr(MSG_CO_ExtraHeaders)),
 
@@ -2032,7 +2032,7 @@ Object *CO_PageIdentities(struct CO_ClassData *data)
                               MUIA_Popobject_WindowHook, &PO_WindowHook,
                               MUIA_Popobject_Object, NListviewObject,
                                 MUIA_NListview_NList, data->GUI.LV_IDENTITY_SENTFOLDER = FolderRequestListtreeObject,
-                                  MUIA_NList_DoubleClick, TRUE,   
+                                  MUIA_NList_DoubleClick, TRUE,
                                 End,
                               End,
                             End,
@@ -2056,7 +2056,7 @@ Object *CO_PageIdentities(struct CO_ClassData *data)
 
                         End,
                       End,
-                      
+
                       Child, HSpace(1),
                       Child, HGroup,
                         Child, MakeCheck(tr(MSG_CO_IDENTITY_USESIG_ANSWER)),
@@ -2141,7 +2141,7 @@ Object *CO_PageIdentities(struct CO_ClassData *data)
 
                       Child, HVSpace,
                       Child, HVSpace,
-  
+
                     End,
                   End,
 
@@ -2435,7 +2435,7 @@ Object *CO_PageFilters(struct CO_ClassData *data)
                                 MUIA_Popobject_WindowHook, &PO_WindowHook,
                                 MUIA_Popobject_Object, NListviewObject,
                                   MUIA_NListview_NList, data->GUI.LV_MOVETO = FolderRequestListtreeObject,
-                                    MUIA_NList_DoubleClick, TRUE,   
+                                    MUIA_NList_DoubleClick, TRUE,
                                   End,
                                End,
                              End,
