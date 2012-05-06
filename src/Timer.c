@@ -523,8 +523,8 @@ static void TimerDispatcher(const enum Timer tid)
       // get the actually active mail
       DoMethod(gui->PG_MAILLIST, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
 
-      // update the status of the mail to READ now
-      if(mail != NULL && (hasStatusNew(mail) || !hasStatusRead(mail)))
+      // update the status of the mail to READ now if this is not the outgoing folder
+      if(mail != NULL && !isOutgoingFolder(mail->Folder) && (hasStatusNew(mail) || !hasStatusRead(mail)))
       {
         setStatusToRead(mail); // set to OLD
         DisplayStatistics(mail->Folder, TRUE);

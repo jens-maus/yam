@@ -1054,8 +1054,12 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
         }
         else
         {
-          setStatusToRead(mail); // set to OLD
-          DisplayStatistics(folder, TRUE);
+          if(!isOutgoingFolder(mail->Folder))
+          {
+            // set mail status to OLD in any non-outgoing folder
+            setStatusToRead(mail);
+            DisplayStatistics(folder, TRUE);
+          }
         }
 
         // check for any MDN and allow to reply to it.

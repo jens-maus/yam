@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-05-06 Thore Böckelmann <tboeckel@gmx.de>
+
+  * Timer.c, mui/ReadMailGroup.c: a just read mail will only be marked as such,
+    if the current folder is not the outgoing folder. This modification solves
+    the inconsistency between a separate read window and the embedded read pane.
+    This closes #295.
+
 2012-05-04 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/ReadMailGroup.c: fixed the double click handling on URLs to let TE.mcc
