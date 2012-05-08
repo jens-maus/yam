@@ -41,6 +41,7 @@ struct UserIdentityNode
 {
   struct MinNode node;               // required for placing it into struct Config
 
+  int id;                            // unique id for the user identity
   BOOL active;                       // is this user identity currently active?
 
   char description[SIZE_LARGE];      // user definable description
@@ -79,6 +80,6 @@ struct UserIdentityNode *CreateNewUserIdentity(const struct Config *co);
 void FreeUserIdentityList(struct MinList *userIdentityList);
 BOOL CompareUserIdentityLists(const struct MinList *msl1, const struct MinList *msl2);
 struct UserIdentityNode *GetUserIdentity(const struct MinList *userIdentityList, const unsigned int num, const BOOL activeOnly);
-struct UserIdentityNode *WhichUserIdentity(const struct MinList *userIdentityList, const struct ExtendedMail *email);
+struct UserIdentityNode *WhichUserIdentity(const struct MinList *userIdentityList, const struct ExtendedMail *email);BOOL IsUniqueUserIdentityID(const struct MinList *userIdentityList, const int id);
 
 #endif // USERIDENTITY_H

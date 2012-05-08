@@ -2036,10 +2036,40 @@ void CO_Validate(struct Config *co, BOOL update)
       do
       {
         id = rand();
+
+        if(id == 0)
+          continue;
       }
       while(IsUniqueMailServerID(&co->mailServerList, id) == FALSE);
 
       msn->id = id;
+
+      saveAtEnd = TRUE;
+    }
+  }
+
+  // check all identities for valid and unique IDs
+  IterateList(&co->userIdentityList, curNode)
+  {
+    struct UserIdentityNode *uin = (struct UserIdentityNode *)curNode;
+
+    // check for a valid and unique ID
+    if(uin->id == 0)
+    {
+      int id;
+
+      // loop until we generated a unique ID
+      // usually this will happen with just one iteration
+      do
+      {
+        id = rand();
+
+        if(id == 0)
+          continue;
+      }
+      while(IsUniqueUserIdentityID(&co->userIdentityList, id) == FALSE);
+
+      uin->id = id;
 
       saveAtEnd = TRUE;
     }

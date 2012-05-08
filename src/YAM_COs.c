@@ -347,6 +347,7 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
     {
       struct UserIdentityNode *uin = (struct UserIdentityNode *)curNode;
 
+      fprintf(fh, "ID%02d.ID                 = %08x\n", i, uin->id);
       fprintf(fh, "ID%02d.Enabled            = %s\n", i, Bool2Txt(uin->active));
       fprintf(fh, "ID%02d.Description        = %s\n", i, uin->description);
       fprintf(fh, "ID%02d.Realname           = %s\n", i, uin->realname);
@@ -1089,7 +1090,8 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
                 char *q = strchr(buf, '.')+1;
 
                 // now find out which subtype this smtp configuration is
-                if(stricmp(q, "Enabled") == 0)                   uin->active = Txt2Bool(value);
+                if(stricmp(q, "ID") == 0)                        uin->id = strtol(value, NULL, 16);
+                else if(stricmp(q, "Enabled") == 0)              uin->active = Txt2Bool(value);
                 else if(stricmp(q, "Description") == 0)          strlcpy(uin->description, value, sizeof(uin->description));
                 else if(stricmp(q, "Realname") == 0)             strlcpy(uin->realname, value, sizeof(uin->realname));
                 else if(stricmp(q, "Address") == 0)              strlcpy(uin->address, value, sizeof(uin->address));

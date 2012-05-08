@@ -7,6 +7,10 @@ $URL$
 
 2012-05-08 Jens Langner <Jens.Langner@light-speed.de>
 
+  * UserIdentity.c, misc: implemented a unique ID for the user identities so
+    that we can link them later to e.g. the mailing list support of the folders.
+    Now the id can be matched equivalent to what is already done for the
+    mail servers.
   * tcp/smtp.c, misc: changed the TT_SendMails attributes and SendMails() to use
     a user identity node rather than a mail server directly so that we can
     deal with different things during an SMTP transfer procedure (e.g. using
