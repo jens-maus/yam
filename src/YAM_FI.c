@@ -1700,34 +1700,34 @@ struct MinList *CloneFilterList(enum ApplyFilterMode mode)
 BOOL ExecuteFilterAction(const struct FilterNode *filter, struct Mail *mail, struct FilterResult *result)
 {
   BOOL success = TRUE;
-  struct MailList *mlist;
 
   ENTER();
 
-  // initialize mlist
-  if((mlist = CreateMailList()) != NULL)
+  // Bounce Action
+  if(hasBounceAction(filter) && filter->remote == FALSE && *filter->bounceTo)
   {
-    AddNewMailNode(mlist, mail);
+    struct WriteMailData *wmData;
 
-    // Bounce Action
-    if(hasBounceAction(filter) && filter->remote == FALSE && *filter->bounceTo)
+    if((wmData = NewBounceMailWindow(mail, NEWF_QUIET)) != NULL)
     {
-      struct WriteMailData *wmData;
+      set(wmData->window, MUIA_WriteWindow_To, filter->bounceTo);
+      DoMethod(wmData->window, MUIM_WriteWindow_ComposeMail, WRITE_QUEUE);
 
-      if((wmData = NewBounceMailWindow(mail, NEWF_QUIET)) != NULL)
-      {
-        set(wmData->window, MUIA_WriteWindow_To, filter->bounceTo);
-        DoMethod(wmData->window, MUIM_WriteWindow_ComposeMail, WRITE_QUEUE);
-
-        if(result != NULL)
-          result->Bounced++;
-      }
+      if(result != NULL)
+        result->Bounced++;
     }
+  }
 
-    // Forward Action
-    if(hasForwardAction(filter) && filter->remote == FALSE && *filter->forwardTo)
+  // Forward Action
+  if(hasForwardAction(filter) && filter->remote == FALSE && *filter->forwardTo)
+  {
+    struct MailList *mlist;
+
+    if((mlist = CreateMailList()) != NULL)
     {
       struct WriteMailData *wmData;
+
+      AddNewMailNode(mlist, mail);
 
       if((wmData = NewForwardMailWindow(mlist, NEWF_QUIET)) != NULL)
       {
@@ -1737,12 +1737,21 @@ BOOL ExecuteFilterAction(const struct FilterNode *filter, struct Mail *mail, str
         if(result != NULL)
           result->Forwarded++;
       }
-    }
 
-    // Reply Action
-    if(hasReplyAction(filter) && filter->remote == FALSE && *filter->replyFile)
+      DeleteMailList(mlist);
+    }
+  }
+
+  // Reply Action
+  if(hasReplyAction(filter) && filter->remote == FALSE && *filter->replyFile)
+  {
+    struct MailList *mlist;
+
+    if((mlist = CreateMailList()) != NULL)
     {
       struct WriteMailData *wmData;
+
+      AddNewMailNode(mlist, mail);
 
       if((wmData = NewReplyMailWindow(mlist, NEWF_QUIET, NULL)) != NULL)
       {
@@ -1752,117 +1761,117 @@ BOOL ExecuteFilterAction(const struct FilterNode *filter, struct Mail *mail, str
         if(result != NULL)
           result->Replied++;
       }
-    }
 
-    // Execute Action
-    if(hasExecuteAction(filter) && *filter->executeCmd)
-    {
-      char mailfile[SIZE_PATHFILE];
-      char buf[SIZE_COMMAND + SIZE_PATHFILE];
-
-      GetMailFile(mailfile, sizeof(mailfile), NULL, mail);
-      snprintf(buf, sizeof(buf), "%s \"%s\"", filter->executeCmd, mailfile);
-      LaunchCommand(buf, FALSE, OUT_STDOUT);
-      if(result != NULL)
-          result->Executed++;
+      DeleteMailList(mlist);
     }
+  }
 
-    // PlaySound Action
-    if(hasPlaySoundAction(filter) && *filter->playSound)
-      PlaySound(filter->playSound);
+  // Execute Action
+  if(hasExecuteAction(filter) && *filter->executeCmd)
+  {
+    char mailfile[SIZE_PATHFILE];
+    char buf[SIZE_COMMAND + SIZE_PATHFILE];
 
-    // Status to "marked/unmarked" action
-    if(hasStatusToMarkedAction(filter) && filter->remote == FALSE)
-    {
-      setStatusToMarked(mail);
-    }
-    else if(hasStatusToUnmarkedAction(filter) && filter->remote == FALSE)
-    {
-      setStatusToUnmarked(mail);
-    }
+    GetMailFile(mailfile, sizeof(mailfile), NULL, mail);
+    snprintf(buf, sizeof(buf), "%s \"%s\"", filter->executeCmd, mailfile);
+    LaunchCommand(buf, FALSE, OUT_STDOUT);
+    if(result != NULL)
+        result->Executed++;
+  }
 
-    // Status to "read/unread" action
-    if(hasStatusToReadAction(filter) && filter->remote == FALSE)
-    {
-      setStatusToRead(mail);
-    }
-    else if(hasStatusToUnreadAction(filter) && filter->remote == FALSE)
-    {
-      setStatusToUnread(mail);
-    }
+  // PlaySound Action
+  if(hasPlaySoundAction(filter) && *filter->playSound)
+    PlaySound(filter->playSound);
 
-    // Status to "spam/not spam" action
-    if(hasStatusToSpamAction(filter) && filter->remote == FALSE)
-    {
-      setStatusToAutoSpam(mail);
-    }
-    else if(hasStatusToHamAction(filter) && filter->remote == FALSE)
-    {
-      setStatusToHam(mail);
-    }
+  // Status to "marked/unmarked" action
+  if(hasStatusToMarkedAction(filter) && filter->remote == FALSE)
+  {
+    setStatusToMarked(mail);
+  }
+  else if(hasStatusToUnmarkedAction(filter) && filter->remote == FALSE)
+  {
+    setStatusToUnmarked(mail);
+  }
 
-    // Move Action
-    if(hasMoveAction(filter) && filter->remote == FALSE)
-    {
-      struct Folder* fo;
+  // Status to "read/unread" action
+  if(hasStatusToReadAction(filter) && filter->remote == FALSE)
+  {
+    setStatusToRead(mail);
+  }
+  else if(hasStatusToUnreadAction(filter) && filter->remote == FALSE)
+  {
+    setStatusToUnread(mail);
+  }
 
-      if((fo = FO_GetFolderByName(filter->moveTo, NULL)) != NULL)
+  // Status to "spam/not spam" action
+  if(hasStatusToSpamAction(filter) && filter->remote == FALSE)
+  {
+    setStatusToAutoSpam(mail);
+  }
+  else if(hasStatusToHamAction(filter) && filter->remote == FALSE)
+  {
+    setStatusToHam(mail);
+  }
+
+  // Move Action
+  if(hasMoveAction(filter) && filter->remote == FALSE)
+  {
+    struct Folder* fo;
+
+    if((fo = FO_GetFolderByName(filter->moveTo, NULL)) != NULL)
+    {
+      if(mail->Folder != fo)
       {
-        if(mail->Folder != fo)
+        BOOL accessFreed = FALSE;
+        enum LoadedMode oldLoadedMode = fo->LoadedMode;
+
+        if(result != NULL)
+        result->Moved++;
+
+        // temporarily grant free access to the folder, but only if it has no free access yet
+        if(fo->LoadedMode != LM_VALID && isProtectedFolder(fo) && isFreeAccess(fo) == FALSE)
         {
-          BOOL accessFreed = FALSE;
-          enum LoadedMode oldLoadedMode = fo->LoadedMode;
-
-          if(result != NULL)
-          result->Moved++;
-
-          // temporarily grant free access to the folder, but only if it has no free access yet
-          if(fo->LoadedMode != LM_VALID && isProtectedFolder(fo) && isFreeAccess(fo) == FALSE)
-          {
-            SET_FLAG(fo->Flags, FOFL_FREEXS);
-            accessFreed = TRUE;
-          }
-
-          MA_MoveCopy(mail, mail->Folder, fo, MVCPF_CLOSE_WINDOWS);
-
-          // restore the old access mode if it was changed before
-          if(accessFreed)
-          {
-            // restore old index settings
-            // if it was not yet loaded before, the MA_MoveCopy() call changed this to "loaded"
-            fo->LoadedMode = oldLoadedMode;
-            CLEAR_FLAG(fo->Flags, FOFL_FREEXS);
-          }
-
-          // signal failure, although everything was successful yet
-          // but the mail is not available anymore for other filters
-          success = FALSE;
+          SET_FLAG(fo->Flags, FOFL_FREEXS);
+          accessFreed = TRUE;
         }
-      }
-      else
-        ER_NewError(tr(MSG_ER_CANTMOVEMAIL), mail->MailFile, filter->moveTo);
-    }
 
-    // Delete Action
-    if(hasDeleteAction(filter) && success == TRUE)
+        MA_MoveCopy(mail, mail->Folder, fo, MVCPF_CLOSE_WINDOWS);
+
+        // restore the old access mode if it was changed before
+        if(accessFreed)
+        {
+          // restore old index settings
+          // if it was not yet loaded before, the MA_MoveCopy() call changed this to "loaded"
+          fo->LoadedMode = oldLoadedMode;
+          CLEAR_FLAG(fo->Flags, FOFL_FREEXS);
+        }
+
+        // signal failure, although everything was successful yet
+        // but the mail is not available anymore for other filters
+        success = FALSE;
+      }
+    }
+    else
+      ER_NewError(tr(MSG_ER_CANTMOVEMAIL), mail->MailFile, filter->moveTo);
+  }
+
+  // Delete Action
+  if(hasDeleteAction(filter) && success == TRUE)
+  {
+    if(result != NULL)
+      result->Deleted++;
+
+    if(isSendMDNMail(mail) &&
+       (hasStatusNew(mail) || !hasStatusRead(mail)))
     {
-      if(result != NULL)
-          result->Deleted++;
-
-      if(isSendMDNMail(mail) &&
-         (hasStatusNew(mail) || !hasStatusRead(mail)))
-      {
-        RE_ProcessMDN(MDN_MODE_DELETE, mail, FALSE, TRUE);
-      }
-
-      MA_DeleteSingle(mail, DELF_CLOSE_WINDOWS|DELF_UPDATE_APPICON);
-
-      // signal failure, although everything was successful yet
-      // but the mail is not available anymore for other filters
-      success = FALSE;
+      RE_ProcessMDN(MDN_MODE_DELETE, mail, FALSE, TRUE);
     }
 
-    DeleteMailList(mlist);
+    MA_DeleteSingle(mail, DELF_CLOSE_WINDOWS|DELF_UPDATE_APPICON);
+
+    // signal failure, although everything was successful yet
+    // but the mail is not available anymore for other filters
+    success = FALSE;
   }
 
   RETURN(success);

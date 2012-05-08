@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-05-08 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_FI.c: executing a filter action for a mail will allocate a mail list
+    only if this is really required (forward and replay actions).
+
 2012-05-08 Jens Langner <Jens.Langner@light-speed.de>
 
   * UserIdentity.c, misc: implemented a unique ID for the user identities so
