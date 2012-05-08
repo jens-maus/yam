@@ -1889,6 +1889,19 @@ OVERLOAD(OM_SET)
       }
       break;
 
+      case ATTR(Identity):
+      {
+        if((struct UserIdentityNode* )tag->ti_Data != data->wmData->identity)
+        {
+          data->wmData->identity = (struct UserIdentityNode *)tag->ti_Data;
+          DoMethod(obj, MUIM_WriteWindow_UpdateIdentityList);
+        }
+
+        // make the superMethod call ignore those tags
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
+
       case ATTR(To):
       {
         setstring(data->ST_TO, tag->ti_Data);

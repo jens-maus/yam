@@ -1858,9 +1858,8 @@ struct WriteMailData *NewWriteMailWindow(struct Mail *mail, const int flags)
         if(folder->MLAddress[0] != '\0')
           set(wmData->window, MUIA_WriteWindow_To, folder->MLAddress);
 
-        #warning MLSupport should be made identity aware!!
-        //if(folder->MLFromAddress[0] != '\0')
-        //  set(wmData->window, MUIA_WriteWindow_From, folder->MLFromAddress);
+        if(folder->MLIdentity != NULL)
+          set(wmData->window, MUIA_WriteWindow_Identity, folder->MLIdentity);
 
         if(folder->MLReplyToAddress[0] != '\0')
           set(wmData->window, MUIA_WriteWindow_ReplyTo, folder->MLReplyToAddress);
@@ -2006,12 +2005,11 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
             // address of the mailing list
             if(wmData->mode == NMM_EDITASNEW && folder->MLSupport == TRUE)
             {
-              #warning MLSupport should be made identity aware
-              //if(folder->MLFromAddress[0] != '\0')
-              //{
-              //  set(wmData->window, MUIA_WriteWindow_From, folder->MLFromAddress);
-              //  reuseFromAddress = FALSE;
-              //}
+              if(folder->MLIdentity != NULL)
+              {
+                set(wmData->window, MUIA_WriteWindow_Identity, folder->MLIdentity);
+                reuseFromAddress = FALSE;
+              }
 
               if(folder->MLReplyToAddress[0] != '\0')
               {
@@ -2022,13 +2020,27 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
 
             if(reuseFromAddress == TRUE)
             {
+              struct Node *curNode;
+
               // add all From: senders
               sbuf = StrBufCpy(sbuf, BuildAddress(address, sizeof(address), mail->From.Address, mail->From.RealName));
               for(i=0; i < email->NoSFrom; i++)
                 sbuf = AppendRcpt(sbuf, &email->SFrom[i], FALSE);
 
-              #warning MLSupport should be made identity aware
-              //set(wmData->window, MUIA_WriteWindow_From, sbuf);
+              // now we have to find out which user identity we have to set
+              // so we go and search our user identity array comparing things
+              IterateList(&C->userIdentityList, curNode)
+              {
+                struct UserIdentityNode *uin = (struct UserIdentityNode *)curNode;
+
+                // check if the email address matches and 
+                // if so we found the user identity
+                if(strcasestr(sbuf, uin->address) != NULL)
+                {
+                  set(wmData->window, MUIA_WriteWindow_Identity, uin);
+                  break;
+                }
+              }
             }
 
             if(reuseReplyToAddress == TRUE)
@@ -2371,7 +2383,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
       BOOL altpat = FALSE;
       char *domain = NULL;
       char *mlistad = NULL;
-      char *rfrom = NULL;
+      struct UserIdentityNode *mlIdentity = NULL;
       char *rrepto = NULL;
       char *rto = AllocStrBuf(SIZE_ADDRESS);
       char *rcc = AllocStrBuf(SIZE_ADDRESS);
@@ -2522,8 +2534,8 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
                   mlistad = fnode->folder->MLAddress[0] != '\0' ? fnode->folder->MLAddress : NULL;
                   folder = fnode->folder;
 
-                  if(folder->MLFromAddress[0] != '\0')
-                    rfrom  = folder->MLFromAddress;
+                  if(folder->MLIdentity != NULL)
+                    mlIdentity = folder->MLIdentity;
 
                   if(folder->MLReplyToAddress[0] != '\0')
                     rrepto = folder->MLReplyToAddress;
@@ -2561,8 +2573,8 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
             {
               mlistad = folder->MLAddress[0] != '\0' ? folder->MLAddress : NULL;
 
-              if(folder->MLFromAddress[0] != '\0')
-                rfrom  = folder->MLFromAddress;
+              if(folder->MLIdentity != NULL)
+                mlIdentity = folder->MLIdentity;
 
               if(folder->MLReplyToAddress[0] != '\0')
                 rrepto = folder->MLReplyToAddress;
@@ -2788,10 +2800,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
         // extract the domain name from the To address or respective
         // the default To: mail address
         if((domain = strchr(pe.Address, '@')) == NULL)
-        {
-          #warning C->EmailAdress usage still here
-          //domain = strchr(C->EmailAddress, '@');
-        }
+          domain = strchr(wmData->identity->address, '@');
 
         if(C->AltReplyPattern[0] != '\0' && domain != NULL && MatchNoCase(domain, C->AltReplyPattern))
           altpat = TRUE;
@@ -2821,8 +2830,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
 
         // if the user wants to quote the mail text of the original mail,
         // we process it right now.
-        #warning C->QuoteMessage usage still here
-        if(/*C->QuoteMessage == TRUE &&*/ !hasNoQuoteFlag(flags))
+        if(wmData->identity->quoteMails == TRUE && !hasNoQuoteFlag(flags))
         {
           struct ReadMailData *rmData;
 
@@ -2884,9 +2892,8 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
 
       // If this is a reply to a mail belonging to a mailing list,
       // set the "From:" and "Reply-To:" addresses accordingly */
-      #warning MLSupport should be made identity aware
-      //if(rfrom != NULL)
-      //  set(wmData->window, MUIA_WriteWindow_From, rfrom);
+      if(mlIdentity != NULL)
+        set(wmData->window, MUIA_WriteWindow_Identity, mlIdentity);
 
       if(rrepto != NULL)
         set(wmData->window, MUIA_WriteWindow_ReplyTo, rrepto);

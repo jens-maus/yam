@@ -34,6 +34,7 @@
 
 // forward declarations
 struct MailList;
+struct UserIdentityList;
 
 struct FO_GUIData
 {
@@ -47,7 +48,7 @@ struct FO_GUIData
    Object *CH_REVERSE[2];
    Object *CH_EXPIREUNREAD;
    Object *ST_MLPATTERN;
-   Object *ST_MLFROMADDRESS;
+   Object *CY_MLIDENTITY;
    Object *ST_MLREPLYTOADDRESS;
    Object *ST_MLADDRESS;
    Object *CY_MLSIGNATURE;
@@ -64,6 +65,7 @@ struct FO_ClassData  /* folder configuration window */
 {
   struct FO_GUIData GUI;
   struct Folder *   EditFolder;
+  char **identityArray; // titles for the different identities that can be selected
 };
 
 // Foldertype macros
@@ -199,7 +201,7 @@ struct Folder
   char              Password[SIZE_USERID];
   char              MLPattern[SIZE_PATTERN];
   char              MLAddress[SIZE_ADDRESS];
-  char              MLFromAddress[SIZE_ADDRESS];
+  struct UserIdentityNode *MLIdentity;  // the user identity associated with the ML
   char              MLReplyToAddress[SIZE_ADDRESS];
   char              WriteIntro[SIZE_INTRO];
   char              WriteGreetings[SIZE_INTRO];

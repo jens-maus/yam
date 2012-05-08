@@ -16,6 +16,10 @@ $URL$
 
 2012-05-08 Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_WR.c, YAM_FO.c, YAM.c: changed the mailing list support of the folders
+    to let the user specify the default user identity rather than a complete
+    from address. This allowed to get rid of some more #warning regarding
+    the still not 100% implemented multiple identity/smtp server support.
   * YAM_COg.c, YAM_EA.c: we now simply use "+" and "-" instead of full fledged
     text to signal buttons for adding and deleting entries in a listview. This
     should be way more intuitive and clear than long text.
