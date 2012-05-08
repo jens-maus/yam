@@ -30,7 +30,7 @@
 
 // forward declarations
 struct MailList;
-struct MailServerNode;
+struct UserIdentityNode;
 
 enum SendMailMode
 {
@@ -41,6 +41,6 @@ enum SendMailMode
 };
 
 // prototypes
-BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMailMode mode);
+BOOL SendMails(struct UserIdentityNode *uin, struct MailList *mlist, enum SendMailMode mode);
 
 #endif /* SMTP_H */

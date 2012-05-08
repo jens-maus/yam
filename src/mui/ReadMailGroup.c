@@ -1127,8 +1127,6 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
   // be the headerPart
   if(dispheader == TRUE && rmData->firstPart != NULL && rmData->firstPart->headerList != NULL)
   {
-    struct Node *curNode;
-
     // Now we process the read headers to set all flags accordingly
     IterateList(rmData->firstPart->headerList, curNode)
     {

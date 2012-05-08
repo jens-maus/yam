@@ -125,6 +125,7 @@ struct TransferContext
 {
   struct Connection *conn;
   struct MailServerNode *msn;
+  struct UserIdentityNode *uin;          // ptr to user identity sending mails
   Object *transferGroup;
   char smtpBuffer[SIZE_LINE];            // RFC 2821 says 1000 should be enough
   char challenge[SIZE_LINE];
@@ -1055,15 +1056,12 @@ static int SendMessage(struct TransferContext *tc, struct Mail *mail)
   if((buf = malloc(buflen)) != NULL &&
      (fh = fopen(mailfile, "r")) != NULL)
   {
-    struct UserIdentityNode *uin = GetUserIdentity(&C->userIdentityList, 0, TRUE);
-
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
     // now we put together our parameters for our MAIL command
     // which in fact may contain serveral parameters as well according
     // to ESMTP extensions.
-    #warning multiple identity support missing here
-    snprintf(buf, buflen, "FROM:<%s>", uin->address);
+    snprintf(buf, buflen, "FROM:<%s>", tc->uin->address);
 
     // in case the server supports the ESMTP SIZE extension lets add the
     // size
@@ -1284,7 +1282,7 @@ static int SendMessage(struct TransferContext *tc, struct Mail *mail)
 
 ///
 /// SendMails
-BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMailMode mode)
+BOOL SendMails(struct UserIdentityNode *uin, struct MailList *mlist, enum SendMailMode mode)
 {
   BOOL success = FALSE;
   struct TransferContext *tc;
@@ -1296,7 +1294,10 @@ BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMail
 
   if((tc = calloc(1, sizeof(*tc))) != NULL)
   {
-    tc->msn = msn;
+    // link the user identity and the mail server in
+    // our transfercontext structure
+    tc->uin = uin;
+    tc->msn = uin->mailServer;
 
     // try to open the TCP/IP stack
     if((tc->conn = CreateConnection()) != NULL && ConnectionIsOnline(tc->conn) == TRUE)
@@ -1345,7 +1346,7 @@ BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMail
           char *p;
           char host[SIZE_HOST];
 
-          strlcpy(host, msn->hostname, sizeof(host));
+          strlcpy(host, tc->msn->hostname, sizeof(host));
 
           // If the hostname has a explicit :xxxxx port statement at the end we
           // take this one, even if its not needed anymore.
@@ -1355,7 +1356,7 @@ BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMail
             port = atoi(++p);
           }
           else
-            port = msn->port;
+            port = tc->msn->port;
 
           snprintf(tc->transferGroupTitle, sizeof(tc->transferGroupTitle), tr(MSG_TR_MailTransferTo), host);
 
@@ -1381,7 +1382,7 @@ BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMail
 
                 // first we check whether the user wants to connect to a plain SSLv3 server
                 // so that we initiate the SSL connection now
-                if(hasServerSSL(msn) == TRUE)
+                if(hasServerSSL(tc->msn) == TRUE)
                 {
                   // lets try to establish the SSL connection via AmiSSL
                   if(MakeSecureConnection(tc->conn) == TRUE)
@@ -1401,7 +1402,7 @@ BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMail
 
                   // Now we have to check whether the user has selected SSL/TLS
                   // and then we have to initiate the STARTTLS command followed by the TLS negotiation
-                  if(connected == TRUE && hasServerTLS(msn) == TRUE)
+                  if(connected == TRUE && hasServerTLS(tc->msn) == TRUE)
                   {
                     connected = InitSTARTTLS(tc);
 
@@ -1422,15 +1423,13 @@ BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMail
 
                   // If the user selected SMTP_AUTH we have to initiate
                   // a AUTH connection
-                  if(connected == TRUE && hasServerAuth(msn) == TRUE)
+                  if(connected == TRUE && hasServerAuth(tc->msn) == TRUE)
                     connected = InitSMTPAUTH(tc);
                 }
 
                 // If we are still "connected" we can proceed with transfering the data
                 if(connected == TRUE)
                 {
-                  struct Folder *outfolder = FO_GetFolderByType(FT_OUTGOING, NULL);
-                  struct Folder *sentfolder = FO_GetFolderByType(FT_SENT, NULL);
                   struct MailTransferNode *tn;
 
                   // set the success to TRUE as everything worked out fine
@@ -1475,6 +1474,15 @@ BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMail
                         setStatusToSent(mail->Reference);
                         if(PushMethodOnStackWait(G->App, 3, MUIM_YAMApplication_FilterMail, sentMailFilters, mail->Reference) == TRUE)
                         {
+                          struct Folder *outfolder = FO_GetFolderByType(FT_OUTGOING, NULL);
+                          struct Folder *sentfolder;
+
+                          // depending on the sentfolder settings in the user identity we 
+                          // store the mail in a different folder (but we fallback to the
+                          // first SENT folder found)
+                          if((sentfolder = FO_GetFolderByName(tc->uin->sentFolder, NULL)) == NULL)
+                            sentfolder = FO_GetFolderByType(FT_SENT, NULL);
+
                           // the filter process did not move the mail, hence we do it now
                           PushMethodOnStackWait(G->App, 5, MUIM_YAMApplication_MoveCopyMail, mail->Reference, outfolder, sentfolder, MVCPF_CLOSE_WINDOWS);
                         }
@@ -1514,7 +1522,7 @@ BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMail
                 else
                 {
                   // check if we end up here cause of the 8BITMIME differences
-                  if(has8BITMIME(msn->smtpFlags) == FALSE && hasServer8bit(msn) == TRUE)
+                  if(has8BITMIME(tc->msn->smtpFlags) == FALSE && hasServer8bit(tc->msn) == TRUE)
                   {
                     W(DBF_NET, "incorrect Allow8bit setting!");
                     err = CONNECTERR_INVALID8BIT;
@@ -1617,7 +1625,7 @@ BOOL SendMails(struct MailServerNode *msn, struct MailList *mlist, enum SendMail
   DeleteMailList(mlist);
 
   // mark the server as being no longer "in use"
-  CLEAR_FLAG(msn->flags, MSF_IN_USE);
+  CLEAR_FLAG(tc->msn->flags, MSF_IN_USE);
 
   // now we are done
   ReleaseSemaphore(G->configSemaphore);

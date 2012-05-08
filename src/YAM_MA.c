@@ -2525,7 +2525,8 @@ BOOL MA_Send(enum SendMailMode mode)
         // start the send process if there is anything left to be sent
         if(mlist->count != 0)
         {
-          success = (DoAction(NULL, TA_SendMails, TT_SendMails_MailServer, msn,
+          #warning proper user identity support missing
+          success = (DoAction(NULL, TA_SendMails, TT_SendMails_UserIdentity, GetUserIdentity(&C->userIdentityList, 0, TRUE),
                                                   TT_SendMails_Mails, mlist,
                                                   TT_SendMails_Mode, mode,
                                                   TAG_DONE) != NULL);

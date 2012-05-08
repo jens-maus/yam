@@ -4213,7 +4213,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
             // mark the server as "in use"
             SET_FLAG(uin->mailServer->flags, MSF_IN_USE);
 
-            mailSent = (DoAction(NULL, TA_SendMails, TT_SendMails_MailServer, uin->mailServer,
+            mailSent = (DoAction(NULL, TA_SendMails, TT_SendMails_UserIdentity, uin,
                                                      TT_SendMails_Mails, mlist,
                                                      TT_SendMails_Mode, SENDMAIL_ACTIVE_USER,
                                                      TAG_DONE) != NULL);
