@@ -7,6 +7,8 @@ $URL$
 
 2012-05-08 Jens Langner <Jens.Langner@light-speed.de>
 
+  * mui/WriteWindow.c: the text in the identity cycle gadget will now be
+    left aligned and the description added in brakets.
   * misc: second large change in trying to get the multiple identity feature
     implemented in YAM. While loading/saving/managing multiple identities
     works now as expected, sending/writing emails with another identity

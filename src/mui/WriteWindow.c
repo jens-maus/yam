@@ -4480,7 +4480,9 @@ DECLARE(UpdateIdentityList)
       struct UserIdentityNode *uin = (struct UserIdentityNode *)curNode;
       char address[SIZE_LARGE];
 
-      data->identities[i] = strdup(BuildAddress(address, sizeof(address), uin->address, uin->realname));
+      // construct the new string via sprintf() so that the necessary
+      // memory is automatically allocated.
+      asprintf(&data->identities[i], MUIX_L "%s " MUIX_I "(%s)" MUIX_N, BuildAddress(address, sizeof(address), uin->address, uin->realname), uin->description);
 
       i++;
     }
