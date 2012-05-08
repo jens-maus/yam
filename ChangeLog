@@ -7,6 +7,10 @@ $URL$
 
 2012-05-08 Jens Langner <Jens.Langner@light-speed.de>
 
+  * mui/WriteWindow.c, misc: finished another iteration for implementing
+    the multiple user identity support. Now it is possible to switch identities
+    in the write window and see things updated (like signature, etc.)
+    according to the settings in the configuration.
   * mui/WriteWindow.c: only user identities marked as "active" will now
     be added in the cycle gadget of the write window.
   * mui/WriteWindow.c: the text in the identity cycle gadget will now be

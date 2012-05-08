@@ -74,6 +74,8 @@ struct WriteMailData
   char *            references;         // ptr to "References:" message header to compose the message for
   struct codeset *  charset;            // the character set being used for this mail
 
+  struct UserIdentityNode *identity;    // ptr to the identity used for composing that mail
+
   char filename[SIZE_PATHFILE];         // filename of tmp text file
   struct DateStamp lastFileChangeTime;  // when was this file touched for the last time
   struct NotifyRequest *notifyRequest;  // file notification request

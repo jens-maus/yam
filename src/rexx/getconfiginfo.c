@@ -70,7 +70,7 @@ void rx_getconfiginfo(UNUSED struct RexxHost *host, struct RexxParams *params, e
     case RXIF_ACTION:
     {
       char *key = args->item;
-      struct UserIdentityNode *uin = GetUserIdentity(&C->userIdentityList, 0);
+      struct UserIdentityNode *uin = GetUserIdentity(&C->userIdentityList, 0, TRUE);
 
       #warning multiple identity support missing here, the rexx cmd should get an additional parameter?
 

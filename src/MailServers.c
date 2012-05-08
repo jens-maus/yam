@@ -79,7 +79,7 @@ struct MailServerNode *CreateNewMailServer(const enum MailServerType type, const
             struct UserIdentityNode *uin;
             struct MailServerNode *smtpMSN;
 
-            if((uin = GetUserIdentity(&co->userIdentityList, 0)) != NULL)
+            if((uin = GetUserIdentity(&co->userIdentityList, 0, TRUE)) != NULL)
             {
               char *p = strchr(uin->address, '@');
               strlcpy(msn->username, uin->address, p ? (unsigned int)(p - uin->address + 1) : sizeof(msn->username));

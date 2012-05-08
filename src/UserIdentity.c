@@ -173,7 +173,8 @@ BOOL CompareUserIdentityLists(const struct MinList *msl1, const struct MinList *
 ///
 /// GetUserIdentity
 // function to extract the structure of a User Identity from our user identity list
-struct UserIdentityNode *GetUserIdentity(const struct MinList *userIdentityList, const unsigned int num)
+struct UserIdentityNode *GetUserIdentity(const struct MinList *userIdentityList,
+                                         const unsigned int num, const BOOL activeOnly)
 {
   struct UserIdentityNode *result = NULL;
   unsigned int count = 0;
@@ -185,13 +186,16 @@ struct UserIdentityNode *GetUserIdentity(const struct MinList *userIdentityList,
   {
     struct UserIdentityNode *uin = (struct UserIdentityNode *)curNode;
 
-    if(count == num)
+    if(activeOnly == FALSE || uin->active == TRUE)
     {
-      result = uin;
-      break;
-    }
+      if(count == num)
+      {
+        result = uin;
+        break;
+      }
 
-    count++;
+      count++;
+    }
   }
 
   RETURN(result);

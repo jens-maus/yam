@@ -774,7 +774,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
       ASSERT(fSMTP != NULL);
 
       // get the first User Identity out of our config data
-      fUserIdentity = GetUserIdentity(&co->userIdentityList, 0);
+      fUserIdentity = GetUserIdentity(&co->userIdentityList, 0, TRUE);
       ASSERT(fUserIdentity != NULL);
 
       while(getline(&buf, &buflen, fh) > 0)
@@ -1076,7 +1076,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
 
               // try to get the UserIdentityNode structure with the found id or create
               // a new one
-              if((uin = GetUserIdentity(&co->userIdentityList, id)) == NULL)
+              if((uin = GetUserIdentity(&co->userIdentityList, id, FALSE)) == NULL)
               {
                 if((uin = CreateNewUserIdentity(co)) != NULL)
                   AddTail((struct List *)&co->userIdentityList, (struct Node *)uin);
@@ -1792,7 +1792,7 @@ void CO_GetConfig(BOOL saveConfig)
     {
       struct UserIdentityNode *uin;
 
-      if((uin = GetUserIdentity(&CE->userIdentityList, 0)) != NULL)
+      if((uin = GetUserIdentity(&CE->userIdentityList, 0, TRUE)) != NULL)
       {
         GetMUIString(uin->realname, gui->ST_REALNAME, sizeof(uin->realname));
         GetMUIString(uin->address, gui->ST_EMAIL, sizeof(uin->address));
@@ -2497,7 +2497,7 @@ void CO_SetConfig(void)
       struct UserIdentityNode *uin;
 
       // try to get the first user identity structure
-      if((uin = GetUserIdentity(&CE->userIdentityList, 0)) != NULL)
+      if((uin = GetUserIdentity(&CE->userIdentityList, 0, TRUE)) != NULL)
       {
         setstring(gui->ST_REALNAME, uin->realname);
         setstring(gui->ST_EMAIL, uin->address);

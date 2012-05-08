@@ -252,7 +252,7 @@ static void US_LoadUsers(void)
   // if the first user doesn't have a real name yet then copy over the name from the configuration
   if(G->Users.User[0].Name[0] == '\0')
   {
-    struct UserIdentityNode *uin = GetUserIdentity(&C->userIdentityList, 0);
+    struct UserIdentityNode *uin = GetUserIdentity(&C->userIdentityList, 0, TRUE);
 
     if(uin != NULL)
       strlcpy(G->Users.User[0].Name, uin->realname, sizeof(G->Users.User[0].Name));
@@ -545,7 +545,7 @@ HOOKPROTONHNONP(US_OpenFunc, void)
     // if the first user doesn't have a real name yet then copy over the name from the configuration
     if(G->Users.User[0].Name[0] == '\0')
     {
-      struct UserIdentityNode *uin = GetUserIdentity(&C->userIdentityList, 0);
+      struct UserIdentityNode *uin = GetUserIdentity(&C->userIdentityList, 0, TRUE);
 
       if(uin != NULL)
         strlcpy(G->Users.User[0].Name, uin->realname, sizeof(G->Users.User[0].Name));

@@ -2971,6 +2971,10 @@ struct WriteMailData *AllocWriteMailData(void)
     wmData->mode = NMM_NEW;
     DateStamp(&wmData->lastFileChangeTime);
     wmData->oldSecurity = SEC_NONE;
+
+    // per default the writemaildata ptr to the user identity
+    // links to the first active user identity in the list
+    wmData->identity = GetUserIdentity(&C->userIdentityList, 0, TRUE);
   }
 
   RETURN(wmData);

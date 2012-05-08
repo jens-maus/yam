@@ -82,7 +82,7 @@ void rx_userinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
     case RXIF_ACTION:
     {
       struct User *u = US_GetCurrentUser();
-      struct UserIdentityNode *uin = GetUserIdentity(&C->userIdentityList, 0);
+      struct UserIdentityNode *uin = GetUserIdentity(&C->userIdentityList, 0, TRUE);
 
       if(u != NULL && uin != NULL)
       {

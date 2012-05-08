@@ -4033,7 +4033,7 @@ struct MA_ClassData *MA_New(void)
     struct UserIdentityNode *uin;
 
     // get the first user identity to grab the realname from it
-    if((uin = GetUserIdentity(&C->userIdentityList, 0)) != NULL)
+    if((uin = GetUserIdentity(&C->userIdentityList, 0, TRUE)) != NULL)
       username = uin->realname;
 
     // get the RealName and/or username of the current user

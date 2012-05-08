@@ -1970,7 +1970,7 @@ void CO_Validate(struct Config *co, BOOL update)
   firstSMTP = GetMailServer(&co->mailServerList, MST_SMTP, 0);
 
   // get the first user Identity
-  firstIdentity = GetUserIdentity(&co->userIdentityList, 0);
+  firstIdentity = GetUserIdentity(&co->userIdentityList, 0, TRUE);
 
   if(firstPOP3 != NULL && firstSMTP != NULL && firstIdentity != NULL)
   {

@@ -1055,7 +1055,7 @@ static int SendMessage(struct TransferContext *tc, struct Mail *mail)
   if((buf = malloc(buflen)) != NULL &&
      (fh = fopen(mailfile, "r")) != NULL)
   {
-    struct UserIdentityNode *uin = GetUserIdentity(&C->userIdentityList, 0);
+    struct UserIdentityNode *uin = GetUserIdentity(&C->userIdentityList, 0, TRUE);
 
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 

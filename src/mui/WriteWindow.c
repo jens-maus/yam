@@ -194,7 +194,9 @@ enum
 /* Private Functions */
 /// WhichEncodingForFile
 //  Determines best MIME encoding mode for a file
-static enum Encoding WhichEncodingForFile(const char *fname, const char *ctype)
+static enum Encoding WhichEncodingForFile(const char *fname,
+                                          const char *ctype,
+                                          const struct MailServerNode *msn)
 {
   enum Encoding encoding = ENC_B64;
 
@@ -264,10 +266,8 @@ static enum Encoding WhichEncodingForFile(const char *fname, const char *ctype)
           // encoding or otherwise we have too long lines in our final mail
           encoding = ENC_QP;
         }
-        else if(binarychars == 0 && longlines == 0/* && C->Allow8bit == TRUE */)
+        else if(binarychars == 0 && longlines == 0 && hasServer8bit(msn))
         {
-          #warning FIXME: Address Allow8bit case for multiple SMTP servers!
-
           // if there are no binary chars and no long lines in the file and if
           // our SMTP server support 8bit character we can go and encode it via 8bit
           encoding = ENC_8BIT;
@@ -454,7 +454,7 @@ static struct WritePart *BuildPartsList(struct WriteMailData *wmData)
 
     p = first;
     p->IsTemp = TRUE;
-    p->EncType = WhichEncodingForFile(p->Filename, p->ContentType);
+    p->EncType = WhichEncodingForFile(p->Filename, p->ContentType, wmData->identity->mailServer);
 
     // now walk through our attachment list
     // and create additional parts
@@ -486,7 +486,7 @@ static struct WritePart *BuildPartsList(struct WriteMailData *wmData)
 
           // find out which encoding we use for the attachment
           if(att->IsMIME == TRUE)
-            np->EncType = WhichEncodingForFile(np->Filename, np->ContentType);
+            np->EncType = WhichEncodingForFile(np->Filename, np->ContentType, wmData->identity->mailServer);
           else
             np->EncType = ENC_UUE;
 
@@ -994,6 +994,7 @@ OVERLOAD(OM_NEW)
     Object *slider;
     struct TagItem *tags = inittags(msg);
     struct TagItem *tag;
+    struct UserIdentityNode *uin;
 
     // check for some tags present at OM_NEW
     while((tag = NextTagItem((APTR)&tags)) != NULL)
@@ -1004,6 +1005,9 @@ OVERLOAD(OM_NEW)
         case ATTR(Quiet): data->wmData->quietMode = (BOOL)tag->ti_Data; break;
       }
     }
+
+    // set user identity node
+    uin = data->wmData->identity;
 
     // if this write window is processed in NMM_BOUNCE mode we create
     // a slightly different graphical interface and hide all other things
@@ -1202,13 +1206,10 @@ OVERLOAD(OM_NEW)
           End,
           MenuChild, MenuitemObject,
             MUIA_Menuitem_Title,tr(MSG_CO_CrdSignature),
-            #warning "UseSignature not replaced by multiple identity equivalent"
-            //MenuChild, MenuitemCheck(signat[0], "0", TRUE, C->UseSignature == FALSE, TRUE, 0x0E, WMEN_SIGN0),
-            //MenuChild, MenuitemCheck(signat[1], "7", TRUE, C->UseSignature == TRUE,  TRUE, 0x0D, WMEN_SIGN1),
-            MenuChild, MenuitemCheck(signat[0], "0", TRUE, FALSE, TRUE, 0x0E, WMEN_SIGN0),
-            MenuChild, MenuitemCheck(signat[1], "7", TRUE, TRUE,  TRUE, 0x0D, WMEN_SIGN1),
-            MenuChild, MenuitemCheck(signat[2], "8", TRUE, FALSE, TRUE, 0x0B, WMEN_SIGN2),
-            MenuChild, MenuitemCheck(signat[3], "9", TRUE, FALSE, TRUE, 0x07, WMEN_SIGN3),
+            MenuChild, MenuitemCheck(signat[0], "0", TRUE, uin->signature == 0, TRUE, 0x0E, WMEN_SIGN0),
+            MenuChild, MenuitemCheck(signat[1], "7", TRUE, uin->signature == 1,  TRUE, 0x0D, WMEN_SIGN1),
+            MenuChild, MenuitemCheck(signat[2], "8", TRUE, uin->signature == 2, TRUE, 0x0B, WMEN_SIGN2),
+            MenuChild, MenuitemCheck(signat[3], "9", TRUE, uin->signature == 3, TRUE, 0x07, WMEN_SIGN3),
           End,
           MenuChild, MenuitemObject,
             MUIA_Menuitem_Title,tr(MSG_CO_CrdSecurity),
@@ -1395,8 +1396,6 @@ OVERLOAD(OM_NEW)
                     GroupFrameT(tr(MSG_WR_Signature)),
                     MUIA_CycleChain,    TRUE,
                     MUIA_Radio_Entries, signat,
-                    #warning "UseSignature not replaced by multiple identity equivalent"
-                    //MUIA_Radio_Active,  C->UseSignature ? 1 : 0,
                   End,
                   Child, HSpace(0),
                   Child, data->RA_SECURITY = RadioObject,
@@ -1670,22 +1669,15 @@ OVERLOAD(OM_NEW)
         DoMethod(data->RA_SECURITY,   MUIM_Notify, MUIA_Radio_Active,      4,              menuStripObject,         4, MUIM_SetUData, WMEN_SECUR4, MUIA_Menuitem_Checked, TRUE);
         DoMethod(obj,                 MUIM_Notify, MUIA_Window_MenuAction, WMEN_SECUR4,    data->RA_SECURITY,       3, MUIM_Set,      MUIA_Radio_Active, 4);
 
+        // set notify for identity cycle gadget
+        DoMethod(data->CY_FROM, MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, obj, 2, MUIM_WriteWindow_IdentityChanged, MUIV_TriggerValue);
+
         // set some default values for this newly created
         // write window
         DoMethod(obj, MUIM_WriteWindow_UpdateIdentityList);
-
-        #warning setting some defaults missing here
-        /*
-        setstring(data->ST_REPLYTO, C->ReplyTo);
-        setstring(data->ST_EXTHEADER, C->ExtraHeaders);
-        setcheckmark(data->CH_DELSEND, !C->SaveSent);
-        setcheckmark(data->CH_ADDINFO, C->AddMyInfo);
-        setcheckmark(data->CH_MDN, C->RequestMDN);
-        */
       }
 
-      // notify stuff shared by all mail modes
-
+      // set some help text
       SetHelp(data->ST_TO,        MSG_HELP_WR_ST_TO);
       SetHelp(data->BT_QUEUE,     MSG_HELP_WR_BT_QUEUE);
       SetHelp(data->BT_HOLD,      MSG_HELP_WR_BT_HOLD);
@@ -2283,27 +2275,36 @@ DECLARE(AddClipboard)
 DECLARE(AddPGPKey)
 {
   GETDATA;
-  #warning PGPKeyID missing here
-  char *myid = ""; //*C->MyPGPID ? C->MyPGPID : C->EmailAddress;
-  char options[SIZE_LARGE];
-  const char  *fname = "T:PubKey.asc";
+  struct UserIdentityNode *uin = data->wmData->identity;
 
   ENTER();
 
-  snprintf(options, sizeof(options), (G->PGPVersion == 5) ? "-x %s -o %s +force +batchmode=1" : "-kxa %s %s +f +bat", myid, fname);
-
-  if(!PGPCommand((G->PGPVersion == 5) ? "pgpk" : "pgp", options, 0))
+  if(uin->usePGP == TRUE)
   {
-    LONG size;
+    char *pgpid = uin->pgpKeyID[0] != '\0' ? uin->pgpKeyID : uin->address;
+    char options[SIZE_LARGE];
+    const char *fname = "T:PubKey.asc";
+ 
+    snprintf(options, sizeof(options), (G->PGPVersion == 5) ? "-x %s -o %s +force +batchmode=1" : "-kxa %s %s +f +bat", pgpid, fname);
 
-    if(ObtainFileInfo(fname, FI_SIZE, &size) == TRUE && size > 0)
+    // on error returns > 0
+    if(PGPCommand((G->PGPVersion == 5) ? "pgpk" : "pgp", options, 0) == 0)
     {
-      DoMethod(obj, MUIM_WriteWindow_AddAttachment, fname, NULL, TRUE);
-      setstring(data->ST_CTYPE, "application/pgp-keys");
+      LONG size = 0;
+
+      if(ObtainFileInfo(fname, FI_SIZE, &size) == TRUE && size > 0)
+      {
+        DoMethod(obj, MUIM_WriteWindow_AddAttachment, fname, NULL, TRUE);
+        setstring(data->ST_CTYPE, "application/pgp-keys");
+      }
+      else
+        ER_NewError(tr(MSG_ER_ErrorAppendKey), pgpid);
     }
     else
-      ER_NewError(tr(MSG_ER_ErrorAppendKey), myid);
+      ER_NewError(tr(MSG_ER_ErrorAppendKey), pgpid);
   }
+  else
+    DisplayBeep(NULL);
 
   RETURN(0);
   return 0;
@@ -2717,8 +2718,11 @@ DECLARE(ChangeSignature) // LONG signature
         if(data->useTextStyles == TRUE)
           SET_FLAG(flags, MUIF_MailTextEdit_LoadFromFile_UseStyles);
         if(data->useTextColors == TRUE)
-         SET_FLAG(flags, MUIF_MailTextEdit_LoadFromFile_UseColors);
-        DoMethod(editor, MUIM_MailTextEdit_LoadFromFile, tfout->Filename, xget(editor, MUIA_TextEditor_HasChanged), flags);
+          SET_FLAG(flags, MUIF_MailTextEdit_LoadFromFile_UseColors);
+        if(xget(editor, MUIA_TextEditor_HasChanged))
+          SET_FLAG(flags, MUIF_MailTextEdit_LoadFromFile_SetChanged);
+
+        DoMethod(editor, MUIM_MailTextEdit_LoadFromFile, tfout->Filename, flags);
 
         // make sure the temp file is deleted
         CloseTempFile(tfout);
@@ -3247,9 +3251,8 @@ DECLARE(AddSignature) // int signat
 
   ENTER();
 
-  #warning "UseSignature not replaced by multiple identity equivalent"
-  //if(signat == -1)
-  //  signat = C->UseSignature ? 1 : 0;
+  if(signat == -1)
+    signat = data->wmData->identity->signature;
 
   if(signat > 0)
   {
@@ -3613,6 +3616,7 @@ DECLARE(ReloadText) // ULONG changed
     SET_FLAG(flags, MUIF_MailTextEdit_LoadFromFile_UseStyles);
   if(data->useTextColors == TRUE)
     SET_FLAG(flags, MUIF_MailTextEdit_LoadFromFile_UseColors);
+
   result = DoMethod(data->TE_EDIT, MUIM_MailTextEdit_LoadFromFile, data->wmData->filename, flags);
 
   RETURN(result);
@@ -3750,7 +3754,6 @@ DECLARE(ComposeMail) // enum WriteMode mode
   BOOL winOpen = xget(obj, MUIA_Window_Open);
   struct WriteMailData *wmData = data->wmData;
   enum WriteMode mode = msg->mode;
-  struct UserIdentityNode *uin;
 
   ENTER();
 
@@ -3817,13 +3820,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
   comp.Mode = wmData->mode;
   comp.refMail = wmData->refMail;
   comp.OldSecurity = wmData->oldSecurity;
-
-  // here we have to match the user identity with the currently set 
-  // From cycle gadget object and set it in the struct Compose accordingly.
-  if((uin = GetUserIdentity(&C->userIdentityList, xget(data->CY_FROM, MUIA_Cycle_Active))) != NULL)
-    comp.Identity = uin;
-  else
-    E(DBF_UTIL, "couldn't identity user identity");
+  comp.Identity = wmData->identity;
 
   if(wmData->mode != NMM_BOUNCE)
   {
@@ -4205,6 +4202,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
       if(AddNewMailNode(mlist, newMail) != NULL)
       {
         BOOL mailSent = FALSE;
+        struct UserIdentityNode *uin = wmData->identity;
 
         set(obj, MUIA_Window_Open, FALSE);
 
@@ -4455,6 +4453,7 @@ DECLARE(UpdateIdentityList)
   GETDATA;
   struct Node *curNode;
   int numIdentities = 0;
+  int activeIdentity = 0;
 
   ENTER();
 
@@ -4492,11 +4491,49 @@ DECLARE(UpdateIdentityList)
         // memory is automatically allocated.
         asprintf(&data->identities[i], MUIX_L "%s " MUIX_I "(%s)" MUIX_N, BuildAddress(address, sizeof(address), uin->address, uin->realname), uin->description);
 
+        if(uin == data->wmData->identity)
+          activeIdentity = i;
+
         i++;
       }
     }
 
-    set(data->CY_FROM, MUIA_Cycle_Entries, data->identities);
+    xset(data->CY_FROM, MUIA_Cycle_Entries, data->identities,
+                        MUIA_Cycle_Active,  activeIdentity);
+
+    DoMethod(obj, MUIM_WriteWindow_IdentityChanged, activeIdentity);
+  }
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(IdentityChanged)
+//
+DECLARE(IdentityChanged) // ULONG identityNr
+{
+  GETDATA;
+  struct UserIdentityNode *uin;
+
+  ENTER();
+
+  // the user has changed the identity, thus we update certain things
+  // in the write window according to the settings in the user identity.
+  if((uin = GetUserIdentity(&C->userIdentityList, msg->identityNr, TRUE)) != NULL)
+  {
+    // first we update things in the write window GUI
+    set(data->RA_SIGNATURE, MUIA_Radio_Active, uin->signature);
+    set(data->ST_CC, MUIA_String_Contents, uin->mailCC);
+    set(data->ST_BCC, MUIA_String_Contents, uin->mailBCC);
+    set(data->ST_REPLYTO, MUIA_String_Contents, uin->mailReplyTo);
+    set(data->ST_EXTHEADER, MUIA_String_Contents, uin->extraHeaders);
+    set(data->CH_DELSEND, MUIA_Selected, uin->saveSentMail == FALSE);
+    set(data->CH_ADDINFO, MUIA_Selected, uin->addPersonalInfo);
+    set(data->CH_MDN, MUIA_Selected, uin->requestMDN);
+
+    // save a link to the userIdentity in the wmData
+    data->wmData->identity = uin;
   }
 
   RETURN(0);
