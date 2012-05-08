@@ -1776,7 +1776,7 @@ BOOL ExecuteFilterAction(const struct FilterNode *filter, struct Mail *mail, str
     snprintf(buf, sizeof(buf), "%s \"%s\"", filter->executeCmd, mailfile);
     LaunchCommand(buf, FALSE, OUT_STDOUT);
     if(result != NULL)
-        result->Executed++;
+      result->Executed++;
   }
 
   // PlaySound Action
@@ -1835,7 +1835,7 @@ BOOL ExecuteFilterAction(const struct FilterNode *filter, struct Mail *mail, str
           accessFreed = TRUE;
         }
 
-        MA_MoveCopy(mail, mail->Folder, fo, MVCPF_CLOSE_WINDOWS);
+        MA_MoveCopy(mail, mail->Folder, fo, MVCPF_CLOSE_WINDOWS|MVCPF_QUIET);
 
         // restore the old access mode if it was changed before
         if(accessFreed)
@@ -1867,7 +1867,7 @@ BOOL ExecuteFilterAction(const struct FilterNode *filter, struct Mail *mail, str
       RE_ProcessMDN(MDN_MODE_DELETE, mail, FALSE, TRUE);
     }
 
-    MA_DeleteSingle(mail, DELF_CLOSE_WINDOWS|DELF_UPDATE_APPICON);
+    MA_DeleteSingle(mail, DELF_CLOSE_WINDOWS|DELF_QUIET);
 
     // signal failure, although everything was successful yet
     // but the mail is not available anymore for other filters
@@ -1897,6 +1897,8 @@ void FilterMails(struct Folder *folder, const struct MailList *mlist, const int 
     ULONG m;
     int matches = 0;
     BOOL noFilters = IsMinListEmpty(filterList);
+    struct TimeVal lastStatsUpdate;
+    struct FilterResult lastResult;
 
     set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, TRUE);
     G->AppIconQuiet = TRUE;
@@ -1912,6 +1914,9 @@ void FilterMails(struct Folder *folder, const struct MailList *mlist, const int 
       BusyGaugeInt(tr(MSG_FI_BUSYCHECKSPAM), "", mlist->count);
 
     MA_StartMacro(MACRO_PREFILTER, NULL);
+
+    memset(&lastStatsUpdate, 0, sizeof(lastStatsUpdate));
+    memset(&lastResult, 0, sizeof(lastResult));
 
     m = 0;
     ForEachMailNode(mlist, mnode)
@@ -1958,7 +1963,7 @@ void FilterMails(struct Folder *folder, const struct MailList *mlist, const int 
                 setStatusToAutoSpam(mail);
 
               // move newly recognized spam to the spam folder
-              MA_MoveCopy(mail, folder, spamfolder, 0);
+              MA_MoveCopy(mail, folder, spamfolder, MVCPF_QUIET);
               wasSpam = TRUE;
 
               // update the stats
@@ -1983,6 +1988,18 @@ void FilterMails(struct Folder *folder, const struct MailList *mlist, const int 
         // see if we have to exit/abort in case it returns FALSE
         if(BusySet(++m) == FALSE)
           break;
+
+        // check if some mails were deleted, moved or recognized as spam
+        if((lastResult.Moved != result->Moved || lastResult.Deleted != result->Deleted || lastResult.Spam != result->Spam))
+        {
+          // now check if enough time has passed since the last update
+          if(TimeHasElapsed(&lastStatsUpdate, 500000) == TRUE)
+          {
+            // update the tree and remember the new stats
+            FolderTreeUpdate();
+            memcpy(&lastResult, result, sizeof(lastResult));
+          }
+        }
       }
     }
 
@@ -1999,6 +2016,11 @@ void FilterMails(struct Folder *folder, const struct MailList *mlist, const int 
 
     set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, FALSE);
     G->AppIconQuiet = FALSE;
+
+    // update the folder tree once more to get the stats correct
+    FolderTreeUpdate();
+
+    MA_ChangeSelected(FALSE);
 
     if(mode != APPLY_AUTO)
       DisplayStatistics(NULL, TRUE);

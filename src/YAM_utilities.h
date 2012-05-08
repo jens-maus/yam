@@ -347,6 +347,7 @@ int      ReadUInt32(FILE *stream, ULONG *value);
 int      WriteUInt32(FILE *stream, ULONG value);
 int      GetHostName(char *name, size_t namelen);
 void     FreeStrArray(char **array);
+void     FolderTreeUpdate(void);
 
 #if !defined(__amigaos4__)
 void MyBltMaskBitMapRastPort(struct BitMap *srcBitMap, LONG xSrc, LONG ySrc, struct RastPort *destRP, LONG xDest, LONG yDest, LONG xSize, LONG ySize, ULONG minterm, APTR bltMask);

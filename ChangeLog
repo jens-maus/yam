@@ -9,6 +9,10 @@ $URL$
 
   * YAM_FI.c: executing a filter action for a mail will allocate a mail list
     only if this is really required (forward and replay actions).
+  * YAM_MA.c, YAM_FI.c, YAM_UT.c: implemented a new flag for MA_MoveCopy to
+    suppress the constant folder tree update after moving a mail. This will be
+    done twice a second only now and should speed up filtering considerably,
+    especially if lots of mails are to be moved around.
 
 2012-05-08 Jens Langner <Jens.Langner@light-speed.de>
 

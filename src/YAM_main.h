@@ -190,16 +190,17 @@ enum ForwardMode
 };
 
 // flags for MA_MoveCopy and MA_MoveCopySingle
-#define MVCPF_COPY              (1<<0)
-#define MVCPF_CLOSE_WINDOWS     (1<<1)
-#define MVCPF_CHECK_CONNECTIONS (1<<2)
+#define MVCPF_COPY              (1<<0) // copy mail instead of moving it
+#define MVCPF_CLOSE_WINDOWS     (1<<1) // close possibly open read windows
+#define MVCPF_CHECK_CONNECTIONS (1<<2) // make sure there is an active connection
+#define MVCPF_QUIET             (1<<3) // don't update the folder/icon stats
 
 // flags for MA_DeleteSingle
-#define DELF_AT_ONCE            (1<<0)
-#define DELF_QUIET              (1<<1)
-#define DELF_CLOSE_WINDOWS      (1<<2)
+#define DELF_AT_ONCE            (1<<0) // delete immediately, don't move to Trash folder
+#define DELF_QUIET              (1<<1) // don't update the folder/icon stats
+#define DELF_CLOSE_WINDOWS      (1<<2) // close possibly open read windows
 #define DELF_UPDATE_APPICON     (1<<3)
-#define DELF_CHECK_CONNECTIONS  (1<<4)
+#define DELF_CHECK_CONNECTIONS  (1<<4) // make sure there is an active connection
 
 // flags and macros for creating new mails
 #define NEWF_QUIET               (1<<0)

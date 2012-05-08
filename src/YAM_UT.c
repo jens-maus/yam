@@ -4509,6 +4509,32 @@ void DisplayStatistics(struct Folder *fo, BOOL updateAppIcon)
 }
 
 ///
+/// FolderTreeUpdate
+// updates the stats of all folders and redraws the folder tree
+void FolderTreeUpdate(void)
+{
+  struct FolderNode *fnode;
+
+  ENTER();
+
+  LockFolderList(G->folders);
+
+  // update the stats of all folders
+  ForEachFolderNode(G->folders, fnode)
+  {
+    FO_UpdateStatistics(fnode->folder);
+  }
+
+  UnlockFolderList(G->folders);
+
+  // redraw the folder tree and the AppIcon
+  DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, MUIV_NListtree_Redraw_All, MUIF_NONE);
+  if(G->AppIconQuiet == FALSE)
+    UpdateAppIcon();
+
+  LEAVE();
+}
+
 /// CheckPrinter
 //  Checks if printer is ready to print something
 BOOL CheckPrinter(void)
@@ -5794,7 +5820,7 @@ void FreeStrArray(char **array)
       i++;
     }
     while(1);
-      
+
     free(array);
   }
 

@@ -887,13 +887,16 @@ void MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox
     else
       AppendToLogfile(LF_NORMAL, 22, tr(MSG_LOG_Moving), selected, FolderName(frombox), FolderName(tobox));
 
-    // refresh the folder statistics if necessary
-    if(isFlagClear(flags, MVCPF_COPY))
-      DisplayStatistics(frombox, FALSE);
+    if(isFlagClear(flags, MVCPF_QUIET))
+    {
+      // refresh the folder statistics if necessary
+      if(isFlagClear(flags, MVCPF_COPY))
+        DisplayStatistics(frombox, FALSE);
 
-    DisplayStatistics(tobox, TRUE);
+      DisplayStatistics(tobox, TRUE);
 
-    MA_ChangeSelected(FALSE);
+      MA_ChangeSelected(FALSE);
+    }
   }
 
   LEAVE();
