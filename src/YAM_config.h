@@ -148,9 +148,6 @@ struct CO_GUIData
   Object *CH_MULTIWIN;
   Object *CH_WRAPHEAD;
   Object *CH_TEXTSTYLES_READ;
-  Object *ST_REPLYTO;
-  Object *ST_ORGAN;
-  Object *ST_EXTHEADER;
   Object *ST_HELLOTEXT;
   Object *ST_BYETEXT;
   Object *ST_EDWRAP;
@@ -167,13 +164,11 @@ struct CO_GUIData
   Object *ST_MREPLYHI;
   Object *ST_MREPLYTEXT;
   Object *ST_MREPLYBYE;
-  Object *CH_QUOTE;
   Object *CH_QUOTEEMPTY;
   Object *CH_COMPADDR;
   Object *CH_STRIPSIG;
   Object *ST_FWDSTART;
   Object *ST_FWDEND;
-  Object *CH_USESIG;
   Object *CY_SIGNAT;
   Object *BT_SIGEDIT;
   Object *TE_SIGEDIT;
@@ -187,9 +182,6 @@ struct CO_GUIData
   Object *CH_BEAT;
   Object *CY_SIZE;
   Object *ST_PGPCMD;
-  Object *ST_MYPGPID;
-  Object *ST_PGPURL;
-  Object *CH_ENCSELF;
   Object *PO_LOGFILE;
   Object *ST_LOGFILE;
   Object *CY_LOGMODE;
@@ -219,8 +211,6 @@ struct CO_GUIData
   Object *ST_ATTACHDIR;
   Object *ST_GALLDIR;
   Object *ST_PROXY;
-  Object *ST_PHOTOURL;
-  Object *CH_ADDINFO;
   Object *CY_ATAB;
   Object *ST_NEWGROUP;
   Object *CH_ACOLS[ABCOLNUM];
@@ -238,7 +228,6 @@ struct CO_GUIData
   Object *CH_CONFIRM;
   Object *NB_CONFIRMDEL;
   Object *CH_REMOVE;
-  Object *CH_SAVESENT;
   Object *TX_PACKER;
   Object *TX_ENCPACK;
   Object *NB_PACKER;
@@ -295,7 +284,6 @@ struct CO_GUIData
   Object *CY_MDN_NODOMAIN;
   Object *CY_MDN_DELETE;
   Object *CY_MDN_OTHER;
-  Object *CH_REQUESTMDN;
   Object *CH_RELDATETIME;
   Object *CA_COLSIG;
   Object *GR_THEMES;
@@ -324,17 +312,33 @@ struct CO_GUIData
   Object *BT_IDEL;
   Object *BT_IDENTITYUP;
   Object *BT_IDENTITYDOWN;
-  Object *ST_IDENTITY_DESC;
+  Object *CH_IDENTITY_ENABLED;
+  Object *ST_IDENTITY_DESCRIPTION;
   Object *ST_IDENTITY_REALNAME;
   Object *ST_IDENTITY_EMAIL;
   Object *ST_IDENTITY_REPLYTO;
   Object *ST_IDENTITY_CC;
   Object *ST_IDENTITY_BCC;
-  Object *ST_IDENTITY_ORG;
-  Object *ST_IDENTITY_EXTHEADER;
+  Object *ST_IDENTITY_ORGANIZATION;
+  Object *CY_IDENTITY_MAILSERVER;
+  Object *CY_IDENTITY_SIGNATURE;
+  Object *ST_IDENTITY_EXTRAHEADER;
+  Object *ST_IDENTITY_PHOTOURL;
+  Object *CH_IDENTITY_SENTFOLDER;
+  Object *CH_IDENTITY_QUOTEMAILS;
+  Object *CY_IDENTITY_QUOTEPOS;
+  Object *CY_IDENTITY_SIGPOS;
+  Object *CH_IDENTITY_SIGREPLY;
+  Object *CH_IDENTITY_SIGFORWARD;
+  Object *CH_IDENTITY_ADDINFO;
+  Object *CH_IDENTITY_REQUESTMDN;
+  Object *CH_IDENTITY_USEPGP;
   Object *ST_IDENTITY_PGPID;
   Object *ST_IDENTITY_PGPURL;
-  Object *CH_IDENTITY_ENCSELF;
+  Object *CH_IDENTITY_PGPSIGN_UNENC;
+  Object *CH_IDENTITY_PGPSIGN_ENC;
+  Object *CH_IDENTITY_PGPENC_ALL;
+  Object *CH_IDENTITY_PGPENC_SELF;
   Object *PO_IDENTITY_SENTFOLDER;
   Object *TX_IDENTITY_SENTFOLDER;
   Object *LV_IDENTITY_SENTFOLDER;
@@ -347,6 +351,7 @@ struct CO_ClassData  /* configuration window */
   int  LastSig;
   BOOL Visited[cp_Max];
   BOOL UpdateAll;
+  char **smtpServerArray; // NUL-terminated array of smtpServer names
 };
 
 /*** RxHook structure ***/
@@ -475,13 +480,10 @@ struct Config
   BOOL  UseFixedFontWrite;
   BOOL  WrapHeader;
   BOOL  LaunchAlways;
-  BOOL  QuoteMessage;
   BOOL  QuoteEmptyLines;
   BOOL  CompareAddress;
   BOOL  StripSignature;
-  BOOL  UseSignature;
   BOOL  FixedFontList;
-  BOOL  EncryptToSelf;
   BOOL  SplitLogfile;
   BOOL  LogAllEvents;
   BOOL  SendOnStartup;
@@ -493,11 +495,9 @@ struct Config
   BOOL  SendOnQuit;
   BOOL  CleanupOnQuit;
   BOOL  RemoveOnQuit;
-  BOOL  AddMyInfo;
   BOOL  IconifyOnQuit;
   BOOL  Confirm;
   BOOL  RemoveAtOnce;
-  BOOL  SaveSent;
   BOOL  JumpToNewMsg;
   BOOL  JumpToIncoming;
   BOOL  JumpToRecentMsg;
@@ -530,7 +530,6 @@ struct Config
   BOOL  FilterHam;
   BOOL  DisplayAllAltPart;
   BOOL  MDNEnabled;
-  BOOL  RequestMDN;
   BOOL  ConfigIsSaved;
   BOOL  AutoClip;
   BOOL  FolderDoubleClick;
@@ -550,14 +549,9 @@ struct Config
   struct SocketOptions SocketOptions;
   struct DateStamp     BirthdayCheckTime;
 
-  char RealName[SIZE_REALNAME];
-  char EmailAddress[SIZE_ADDRESS];
   char NotifySound[SIZE_PATHFILE];
   char NotifyCommand[SIZE_COMMAND];
   char ShortHeaders[SIZE_PATTERN];
-  char ReplyTo[SIZE_ADDRESS];
-  char Organization[SIZE_DEFAULT];
-  char ExtraHeaders[SIZE_LARGE];
   char NewIntro[SIZE_INTRO];
   char Greetings[SIZE_INTRO];
   char Editor[SIZE_PATHFILE];
@@ -576,13 +570,10 @@ struct Config
   char TagsFile[SIZE_PATHFILE];
   char TagsSeparator[SIZE_SMALL];
   char PGPCmdPath[SIZE_PATH];
-  char MyPGPID[SIZE_DEFAULT];
-  char PGPURL[SIZE_URL];
   char LogfilePath[SIZE_PATH];
   char DetachDir[SIZE_PATH];
   char AttachDir[SIZE_PATH];
   char GalleryDir[SIZE_PATH];
-  char MyPictureURL[SIZE_URL];
   char NewAddrGroup[SIZE_NAME];
   char ProxyServer[SIZE_HOST];
   char TempDir[SIZE_PATH];
@@ -615,13 +606,14 @@ extern struct Config *CE;
 
 // external hooks
 extern struct Hook CO_EditSignatHook;
-extern struct Hook CO_SwitchSignatHook;
 extern struct Hook CO_SwitchSpamFilterHook;
 extern struct Hook CO_GetDefaultPOPHook;
 extern struct Hook CO_GetPOP3EntryHook;
 extern struct Hook CO_PutPOP3EntryHook;
 extern struct Hook CO_GetSMTPEntryHook;
 extern struct Hook CO_PutSMTPEntryHook;
+extern struct Hook CO_GetIdentityEntryHook;
+extern struct Hook CO_PutIdentityEntryHook;
 extern struct Hook CO_OpenHook;
 extern struct Hook CO_PL_DspFuncHook;
 extern struct Hook CO_RemoteToggleHook;
@@ -634,6 +626,7 @@ void CO_ClearConfig(struct Config *co);
 BOOL CO_IsValid(void);
 void CO_SetDefaults(struct Config *co, enum ConfigPage page);
 void CO_Validate(struct Config *co, BOOL update);
+void CO_UpdateSMTPServerArray(struct CO_ClassData *data);
 
 void GhostOutFilter(struct CO_GUIData *gui, struct FilterNode *filter);
 

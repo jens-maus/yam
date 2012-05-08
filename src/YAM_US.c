@@ -59,6 +59,7 @@
 #include "Logfile.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
+#include "UserIdentity.h"
 
 #include "Debug.h"
 
@@ -251,7 +252,10 @@ static void US_LoadUsers(void)
   // if the first user doesn't have a real name yet then copy over the name from the configuration
   if(G->Users.User[0].Name[0] == '\0')
   {
-    strlcpy(G->Users.User[0].Name, C->RealName, sizeof(G->Users.User[0].Name));
+    struct UserIdentityNode *uin = GetUserIdentity(&C->userIdentityList, 0);
+
+    if(uin != NULL)
+      strlcpy(G->Users.User[0].Name, uin->realname, sizeof(G->Users.User[0].Name));
 
     // if the first user still doesn't have a name then we use a fallback name
     if(G->Users.User[0].Name[0] == '\0')
@@ -540,7 +544,12 @@ HOOKPROTONHNONP(US_OpenFunc, void)
 
     // if the first user doesn't have a real name yet then copy over the name from the configuration
     if(G->Users.User[0].Name[0] == '\0')
-      strlcpy(G->Users.User[0].Name, C->RealName, sizeof(G->Users.User[0].Name));
+    {
+      struct UserIdentityNode *uin = GetUserIdentity(&C->userIdentityList, 0);
+
+      if(uin != NULL)
+        strlcpy(G->Users.User[0].Name, uin->realname, sizeof(G->Users.User[0].Name));
+    }
 
     if((G->US = US_New(!user->Limited)) != NULL)
     {

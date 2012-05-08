@@ -100,6 +100,7 @@
 #include "Requesters.h"
 #include "Rexx.h"
 #include "Threads.h"
+#include "UserIdentity.h"
 
 #include "Debug.h"
 
@@ -2466,6 +2467,7 @@ BOOL MA_Send(enum SendMailMode mode)
   ObtainSemaphoreShared(G->configSemaphore);
 
   // get the SMTP server first
+  #warning multiple SMTP server support missing here
   if((msn = GetMailServer(&C->mailServerList, MST_SMTP, 0)) != NULL)
   {
     // we only proceed if there isn't already a transfer
@@ -4026,8 +4028,13 @@ struct MA_ClassData *MA_New(void)
 
   if((data = calloc(1, sizeof(struct MA_ClassData))) != NULL)
   {
-    char *username = C->RealName;
+    char *username = NULL;
     struct User *user;
+    struct UserIdentityNode *uin;
+
+    // get the first user identity to grab the realname from it
+    if((uin = GetUserIdentity(&C->userIdentityList, 0)) != NULL)
+      username = uin->realname;
 
     // get the RealName and/or username of the current user
     if(username == NULL && (user = US_GetCurrentUser()) != NULL)

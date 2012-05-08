@@ -36,6 +36,7 @@
 #include <proto/exec.h>
 
 #include "YAM_config.h"
+#include "YAM_mainFolder.h"
 #include "YAM_utilities.h"
 
 #include "extrasrc.h"
@@ -60,13 +61,26 @@ struct UserIdentityNode *CreateNewUserIdentity(const struct Config *co)
                                           ASONODE_Min, TRUE,
                                           TAG_DONE)) != NULL)
   {
+    struct Folder *sentFolder;
+
     // initialize all variables as AllocSysObject() does not clear the memory
     memset(uin, 0, sizeof(*uin));
     uin->active = TRUE;
 
     // now we fill the UserIdentity structure with some sensible
     // defaults
+    uin->quoteMails = TRUE;
+    uin->pgpSelfEncrypt = TRUE;
+    uin->saveSentMail = TRUE;
+    uin->sigReply = TRUE;
+    uin->sigForwarding = TRUE;
 
+    // get the name of the first sent folder so that we make
+    // that one as the default
+    if((sentFolder = FO_GetFolderByType(FT_SENT, NULL)) != NULL)
+      strlcpy(uin->sentFolder, sentFolder->Name, sizeof(uin->sentFolder));
+    else
+      strlcpy(uin->sentFolder, FolderName[FT_SENT], sizeof(uin->sentFolder));
   }
 
   RETURN(uin);
@@ -80,7 +94,6 @@ void FreeUserIdentityList(struct MinList *userIdentityList)
   struct Node *curNode;
 
   ENTER();
-
 
   // we have to free the userIdentityList
   while((curNode = RemHead((struct List *)userIdentityList)) != NULL)
@@ -160,7 +173,7 @@ BOOL CompareUserIdentityLists(const struct MinList *msl1, const struct MinList *
 ///
 /// GetUserIdentity
 // function to extract the structure of a User Identity from our user identity list
-struct UserIdentityNode *GetUserIdentity(struct MinList *userIdentityList, const unsigned int num)
+struct UserIdentityNode *GetUserIdentity(const struct MinList *userIdentityList, const unsigned int num)
 {
   struct UserIdentityNode *result = NULL;
   unsigned int count = 0;
@@ -179,6 +192,62 @@ struct UserIdentityNode *GetUserIdentity(struct MinList *userIdentityList, const
     }
 
     count++;
+  }
+
+  RETURN(result);
+  return result;
+}
+
+///
+/// WhichUserIdentity
+// returns the user identity which belongs to a certain email structure
+struct UserIdentityNode *WhichUserIdentity(const struct MinList *userIdentityList, const struct ExtendedMail *email)
+{
+  struct UserIdentityNode *result = NULL;
+  struct Node *curNode;
+
+  ENTER();
+
+  // now we try to find out which user identity matches
+  // to a certain mail (thus, which mail was received by which user identity)
+  // here we simply browse through all potential recipient addresses of
+  // the email and compare it to the current user identity
+  IterateList(userIdentityList, curNode)
+  {
+    struct UserIdentityNode *uin = (struct UserIdentityNode *)curNode;
+    int i;
+
+    // search all To: addresses
+    if(stricmp(email->Mail.To.Address, uin->address) == 0)
+    {
+      result = uin;
+      break;
+    }
+
+    for(i=0; i < email->NoSTo; i++)
+    {
+      if(stricmp(email->STo[i].Address, uin->address) == 0)
+      {
+        result = uin;
+        break;
+      }
+    }
+
+    if(result != NULL)
+      break;
+
+    // search all CC addresses
+    for(i=0; i < email->NoCC; i++)
+    {
+      if(stricmp(email->CC[i].Address, uin->address) == 0)
+      {
+        result = uin;
+        break;
+      }
+    }
+
+    if(result != NULL)
+      break;
   }
 
   RETURN(result);

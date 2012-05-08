@@ -34,6 +34,8 @@
 
 #include "YAM_utilities.h"
 
+#include "UserIdentity.h"
+
 #include "Debug.h"
 
 /* CLASSDATA
@@ -64,28 +66,28 @@ OVERLOAD(OM_NEW)
 
 ///
 /// OVERLOAD(MUIM_NList_Display)
-//OVERLOAD(MUIM_NList_Display)
-//{
-//  struct MUIP_NList_Display *ndm = (struct MUIP_NList_Display *)msg;
-//  struct MailServerNode *msn = (struct MailServerNode *)ndm->entry;
-//
-//  ENTER();
-//
-//  if(msn != NULL)
-//  {
-//    GETDATA;
-//
-//    snprintf(data->displayBuffer, sizeof(data->displayBuffer), "%d) %s%s" MUIX_N, (int)ndm->strings[-1]+1,
-//                                                                                  isServerActive(msn) == FALSE ? MUIX_I : "",
-//                                                                                  msn->description);
-//
-//    ndm->strings[0] = data->displayBuffer;
-//  }
-//
-//  LEAVE();
-//  return 0;
-//}
-//
+OVERLOAD(MUIM_NList_Display)
+{
+  struct MUIP_NList_Display *ndm = (struct MUIP_NList_Display *)msg;
+  struct UserIdentityNode *uin = (struct UserIdentityNode *)ndm->entry;
+
+  ENTER();
+
+  if(uin != NULL)
+  {
+    GETDATA;
+
+    snprintf(data->displayBuffer, sizeof(data->displayBuffer), "%d) %s%s" MUIX_N, (int)ndm->strings[-1]+1,
+                                                                                  uin->active == FALSE ? MUIX_I : "",
+                                                                                  uin->description);
+
+    ndm->strings[0] = data->displayBuffer;
+  }
+
+  LEAVE();
+  return 0;
+}
+
 ///
 
 /* Private Functions */

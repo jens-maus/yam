@@ -42,6 +42,7 @@
 
 #include "MailList.h"
 #include "MailServers.h"
+#include "UserIdentity.h"
 
 #include "Debug.h"
 
@@ -75,14 +76,19 @@ struct MailServerNode *CreateNewMailServer(const enum MailServerType type, const
         {
           if(first == TRUE)
           {
-            char *p = strchr(co->EmailAddress, '@');
+            struct UserIdentityNode *uin;
+            struct MailServerNode *smtpMSN;
 
-            strlcpy(msn->username, co->EmailAddress, p ? (unsigned int)(p - co->EmailAddress + 1) : sizeof(msn->username));
+            if((uin = GetUserIdentity(&co->userIdentityList, 0)) != NULL)
+            {
+              char *p = strchr(uin->address, '@');
+              strlcpy(msn->username, uin->address, p ? (unsigned int)(p - uin->address + 1) : sizeof(msn->username));
+            }
 
             // now we get the first SMTP server in our list and reuse
             // the hostname of it for the new POP3 server
-            #warning "FIXME: use first SMTP server from list"
-            //strlcpy(msn->hostname, co->SMTP_Server, sizeof(msn->hostname));
+            if((smtpMSN = GetMailServer(&co->mailServerList, MST_SMTP, 0)) != NULL)
+              strlcpy(msn->hostname, smtpMSN->hostname, sizeof(msn->hostname));
           }
 
           msn->port = 110;
@@ -254,7 +260,6 @@ BOOL IsUniqueMailServerID(const struct MinList *mailServerList, const int id)
   struct Node *curNode;
 
   ENTER();
-
 
   IterateList(mailServerList, curNode)
   {

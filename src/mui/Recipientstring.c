@@ -934,8 +934,11 @@ DECLARE(Resolve) // ULONG flags
         DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
 
         /* email address lacks domain... */
+        #warning C->EmailAdress usage still here
+        /*
         if(tmp[1] == '\0')
           DoMethod(obj, MUIM_BetterString_Insert, strchr(C->EmailAddress, '@')+1, MUIV_BetterString_Insert_EndOfString);
+        */
       }
       else if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindUserData, MUIV_NListtree_FindUserData_ListNode_Root, s, MUIF_NONE))) /* entry found in address book */
       {
@@ -983,7 +986,8 @@ DECLARE(Resolve) // ULONG flags
                 {
                   char address[SIZE_LARGE];
 
-                  BuildAddress(address, sizeof(address), C->EmailAddress, entry->RealName);
+                  #warning C->EmailAdress usage still here 
+                  //BuildAddress(address, sizeof(address), C->EmailAddress, entry->RealName);
                   set(data->From, MUIA_String_Contents, address);
                 }
 
@@ -1041,8 +1045,9 @@ DECLARE(Resolve) // ULONG flags
           DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
 
           /* email address lacks domain... */
-          if(tmp[1] == '\0')
-            DoMethod(obj, MUIM_BetterString_Insert, strchr(C->EmailAddress, '@')+1, MUIV_BetterString_Insert_EndOfString);
+          #warning C->EmailAdress usage still here
+          //if(tmp[1] == '\0')
+          //  DoMethod(obj, MUIM_BetterString_Insert, strchr(C->EmailAddress, '@')+1, MUIV_BetterString_Insert_EndOfString);
         }
         else
         {

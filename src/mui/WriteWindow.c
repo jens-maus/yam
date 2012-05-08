@@ -67,6 +67,7 @@
 #include "ParseEmail.h"
 #include "Requesters.h"
 #include "Threads.h"
+#include "UserIdentity.h"
 
 #include "mime/uucode.h"
 #include "mui/MailTextEdit.h"
@@ -101,7 +102,7 @@ struct Data
   Object *ST_DESC;
   Object *ST_CC;
   Object *ST_BCC;
-  Object *ST_FROM;
+  Object *CY_FROM;
   Object *ST_REPLYTO;
   Object *ST_EXTHEADER;
   Object *CH_DELSEND;
@@ -144,6 +145,8 @@ struct Data
   char cursorPos[SIZE_SMALL];
   char windowTitle[SIZE_SUBJECT+1]; // string for the title text of the window
   char windowNumberStr[SIZE_SMALL]; // the unique window number as a string
+
+  char **identities; // titles for the different identities that can be selected
 };
 */
 
@@ -1199,8 +1202,11 @@ OVERLOAD(OM_NEW)
           End,
           MenuChild, MenuitemObject,
             MUIA_Menuitem_Title,tr(MSG_CO_CrdSignature),
-            MenuChild, MenuitemCheck(signat[0], "0", TRUE, C->UseSignature == FALSE, TRUE, 0x0E, WMEN_SIGN0),
-            MenuChild, MenuitemCheck(signat[1], "7", TRUE, C->UseSignature == TRUE,  TRUE, 0x0D, WMEN_SIGN1),
+            #warning "UseSignature not replaced by multiple identity equivalent"
+            //MenuChild, MenuitemCheck(signat[0], "0", TRUE, C->UseSignature == FALSE, TRUE, 0x0E, WMEN_SIGN0),
+            //MenuChild, MenuitemCheck(signat[1], "7", TRUE, C->UseSignature == TRUE,  TRUE, 0x0D, WMEN_SIGN1),
+            MenuChild, MenuitemCheck(signat[0], "0", TRUE, FALSE, TRUE, 0x0E, WMEN_SIGN0),
+            MenuChild, MenuitemCheck(signat[1], "7", TRUE, TRUE,  TRUE, 0x0D, WMEN_SIGN1),
             MenuChild, MenuitemCheck(signat[2], "8", TRUE, FALSE, TRUE, 0x0B, WMEN_SIGN2),
             MenuChild, MenuitemCheck(signat[3], "9", TRUE, FALSE, TRUE, 0x07, WMEN_SIGN3),
           End,
@@ -1241,6 +1247,9 @@ OVERLOAD(OM_NEW)
                 MUIA_HelpNode, "WR00",
 
                 Child, ColGroup(2),
+                  Child, Label(tr(MSG_WR_From)),
+                  Child, data->CY_FROM = MakeCycle(NULL, tr(MSG_WR_From)),
+
                   Child, Label(tr(MSG_WR_To)),
                   Child, MakeAddressField(&data->ST_TO, tr(MSG_WR_To), MSG_HELP_WR_ST_TO, ABM_TO, data->windowNumber, AFF_ALLOW_MULTI|AFF_EXTERNAL_SHORTCUTS),
 
@@ -1352,9 +1361,6 @@ OVERLOAD(OM_NEW)
                   Child, Label(tr(MSG_WR_BlindCopyTo)),
                   Child, MakeAddressField(&data->ST_BCC, tr(MSG_WR_BlindCopyTo), MSG_HELP_WR_ST_BCC, ABM_BCC, data->windowNumber, AFF_ALLOW_MULTI|AFF_EXTERNAL_SHORTCUTS),
 
-                  Child, Label(tr(MSG_WR_From)),
-                  Child, MakeAddressField(&data->ST_FROM, tr(MSG_WR_From), MSG_HELP_WR_ST_FROM, ABM_FROM, data->windowNumber, AFF_ALLOW_MULTI|AFF_EXTERNAL_SHORTCUTS),
-
                   Child, Label(tr(MSG_WR_ReplyTo)),
                   Child, MakeAddressField(&data->ST_REPLYTO, tr(MSG_WR_ReplyTo), MSG_HELP_WR_ST_REPLYTO, ABM_REPLYTO, data->windowNumber, AFF_ALLOW_MULTI|AFF_EXTERNAL_SHORTCUTS),
 
@@ -1389,7 +1395,8 @@ OVERLOAD(OM_NEW)
                     GroupFrameT(tr(MSG_WR_Signature)),
                     MUIA_CycleChain,    TRUE,
                     MUIA_Radio_Entries, signat,
-                    MUIA_Radio_Active,  C->UseSignature ? 1 : 0,
+                    #warning "UseSignature not replaced by multiple identity equivalent"
+                    //MUIA_Radio_Active,  C->UseSignature ? 1 : 0,
                   End,
                   Child, HSpace(0),
                   Child, data->RA_SECURITY = RadioObject,
@@ -1419,7 +1426,6 @@ OVERLOAD(OM_NEW)
     // check if object creation worked as expected
     if(obj != NULL)
     {
-      char address[SIZE_LARGE];
       char filename[SIZE_PATHFILE];
 
       if((data = (struct Data *)INST_DATA(cl,obj)) == NULL)
@@ -1452,8 +1458,9 @@ OVERLOAD(OM_NEW)
                   MUIA_Window_Title,         data->windowTitle);
 
         // set the key focus attributes of the TO and SUBJECT gadgets
+        #warning "disabled FromString here. what purpose does that have?"
         xset(data->ST_TO, MUIA_BetterString_KeyDownFocus, data->ST_SUBJECT,
-                          MUIA_Recipientstring_FromString, data->ST_FROM,
+                          //MUIA_Recipientstring_FromString, data->ST_FROM,
                           MUIA_Recipientstring_ReplyToString, data->ST_REPLYTO);
 
         xset(data->ST_SUBJECT, MUIA_BetterString_KeyUpFocus, data->ST_TO,
@@ -1665,12 +1672,16 @@ OVERLOAD(OM_NEW)
 
         // set some default values for this newly created
         // write window
-        setstring(data->ST_FROM, BuildAddress(address, sizeof(address), C->EmailAddress, C->RealName));
+        DoMethod(obj, MUIM_WriteWindow_UpdateIdentityList);
+
+        #warning setting some defaults missing here
+        /*
         setstring(data->ST_REPLYTO, C->ReplyTo);
         setstring(data->ST_EXTHEADER, C->ExtraHeaders);
         setcheckmark(data->CH_DELSEND, !C->SaveSent);
         setcheckmark(data->CH_ADDINFO, C->AddMyInfo);
         setcheckmark(data->CH_MDN, C->RequestMDN);
+        */
       }
 
       // notify stuff shared by all mail modes
@@ -1777,6 +1788,10 @@ OVERLOAD(OM_DISPOSE)
   ULONG result;
 
   ENTER();
+
+  // free the identity str array
+  if(data->identities != NULL)
+    FreeStrArray(data->identities);
 
   if(data->wmData->mode != NMM_BOUNCE)
   {
@@ -1912,15 +1927,6 @@ OVERLOAD(OM_SET)
       case ATTR(ReplyTo):
       {
         setstring(data->ST_REPLYTO, tag->ti_Data);
-
-        // make the superMethod call ignore those tags
-        tag->ti_Tag = TAG_IGNORE;
-      }
-      break;
-
-      case ATTR(From):
-      {
-        setstring(data->ST_FROM, tag->ti_Data);
 
         // make the superMethod call ignore those tags
         tag->ti_Tag = TAG_IGNORE;
@@ -2074,7 +2080,7 @@ DECLARE(EditActionPerformed) // enum EditAction action
           DoMethod(actObj, MUIM_TextEditor_ARexxCmd, "CUT");
         else if(actObj == data->ST_TO || actObj == data->ST_SUBJECT ||
                 actObj == data->ST_CC || actObj == data->ST_BCC ||
-                actObj == data->ST_FROM || actObj == data->ST_REPLYTO ||
+                actObj == data->ST_REPLYTO ||
                 actObj == data->ST_EXTHEADER || actObj == data->ST_DESC ||
                 actObj == data->ST_CTYPE)
         {
@@ -2089,7 +2095,7 @@ DECLARE(EditActionPerformed) // enum EditAction action
           DoMethod(actObj, MUIM_TextEditor_ARexxCmd, "COPY");
         else if(actObj == data->ST_TO || actObj == data->ST_SUBJECT ||
                 actObj == data->ST_CC || actObj == data->ST_BCC ||
-                actObj == data->ST_FROM || actObj == data->ST_REPLYTO ||
+                actObj == data->ST_REPLYTO ||
                 actObj == data->ST_EXTHEADER || actObj == data->ST_DESC ||
                 actObj == data->ST_CTYPE)
         {
@@ -2108,7 +2114,7 @@ DECLARE(EditActionPerformed) // enum EditAction action
           DoMethod(actObj, MUIM_TextEditor_ARexxCmd, "PASTE");
         else if(actObj == data->ST_TO || actObj == data->ST_SUBJECT ||
                 actObj == data->ST_CC || actObj == data->ST_BCC ||
-                actObj == data->ST_FROM || actObj == data->ST_REPLYTO ||
+                actObj == data->ST_REPLYTO ||
                 actObj == data->ST_EXTHEADER || actObj == data->ST_DESC ||
                 actObj == data->ST_CTYPE)
         {
@@ -2123,7 +2129,7 @@ DECLARE(EditActionPerformed) // enum EditAction action
           DoMethod(actObj, MUIM_TextEditor_ARexxCmd, "DELETE");
         else if(actObj == data->ST_TO || actObj == data->ST_SUBJECT ||
                 actObj == data->ST_CC || actObj == data->ST_BCC ||
-                actObj == data->ST_FROM || actObj == data->ST_REPLYTO ||
+                actObj == data->ST_REPLYTO ||
                 actObj == data->ST_EXTHEADER || actObj == data->ST_DESC ||
                 actObj == data->ST_CTYPE)
         {
@@ -2138,7 +2144,7 @@ DECLARE(EditActionPerformed) // enum EditAction action
           DoMethod(actObj, MUIM_TextEditor_ARexxCmd, "UNDO");
         else if(actObj == data->ST_TO || actObj == data->ST_SUBJECT ||
                 actObj == data->ST_CC || actObj == data->ST_BCC ||
-                actObj == data->ST_FROM || actObj == data->ST_REPLYTO ||
+                actObj == data->ST_REPLYTO ||
                 actObj == data->ST_EXTHEADER || actObj == data->ST_DESC ||
                 actObj == data->ST_CTYPE)
         {
@@ -2153,7 +2159,7 @@ DECLARE(EditActionPerformed) // enum EditAction action
           DoMethod(actObj, MUIM_TextEditor_ARexxCmd, "REDO");
         else if(actObj == data->ST_TO || actObj == data->ST_SUBJECT ||
                 actObj == data->ST_CC || actObj == data->ST_BCC ||
-                actObj == data->ST_FROM || actObj == data->ST_REPLYTO ||
+                actObj == data->ST_REPLYTO ||
                 actObj == data->ST_EXTHEADER || actObj == data->ST_DESC ||
                 actObj == data->ST_CTYPE)
         {
@@ -2168,7 +2174,7 @@ DECLARE(EditActionPerformed) // enum EditAction action
           DoMethod(actObj, MUIM_TextEditor_ARexxCmd, "SELECTALL");
         else if(actObj == data->ST_TO || actObj == data->ST_SUBJECT ||
                 actObj == data->ST_CC || actObj == data->ST_BCC ||
-                actObj == data->ST_FROM || actObj == data->ST_REPLYTO ||
+                actObj == data->ST_REPLYTO ||
                 actObj == data->ST_EXTHEADER || actObj == data->ST_DESC ||
                 actObj == data->ST_CTYPE)
         {
@@ -2183,7 +2189,7 @@ DECLARE(EditActionPerformed) // enum EditAction action
           DoMethod(actObj, MUIM_TextEditor_ARexxCmd, "SELECTNONE");
         else if(actObj == data->ST_TO || actObj == data->ST_SUBJECT ||
                 actObj == data->ST_CC || actObj == data->ST_BCC ||
-                actObj == data->ST_FROM || actObj == data->ST_REPLYTO ||
+                actObj == data->ST_REPLYTO ||
                 actObj == data->ST_EXTHEADER || actObj == data->ST_DESC ||
                 actObj == data->ST_CTYPE)
         {
@@ -2273,11 +2279,12 @@ DECLARE(AddClipboard)
 
 ///
 /// DECLARE(AddPGPKey)
-// Adds ASCII version of user's public PGP key as attachment ***/
+// Adds ASCII version of user's public PGP key as attachment
 DECLARE(AddPGPKey)
 {
   GETDATA;
-  char *myid = *C->MyPGPID ? C->MyPGPID : C->EmailAddress;
+  #warning PGPKeyID missing here
+  char *myid = ""; //*C->MyPGPID ? C->MyPGPID : C->EmailAddress;
   char options[SIZE_LARGE];
   const char  *fname = "T:PubKey.asc";
 
@@ -3240,10 +3247,11 @@ DECLARE(AddSignature) // int signat
 
   ENTER();
 
-  if(signat == -1)
-    signat = C->UseSignature ? 1 : 0;
+  #warning "UseSignature not replaced by multiple identity equivalent"
+  //if(signat == -1)
+  //  signat = C->UseSignature ? 1 : 0;
 
-  if(signat)
+  if(signat > 0)
   {
     FILE *fh_mail;
     BOOL addline = FALSE;
@@ -3302,7 +3310,8 @@ DECLARE(AddRecipient) // enum RcptType type, char *recipient
     break;
 
     case MUIV_WriteWindow_RcptType_From:
-      DoMethod(data->ST_FROM, MUIM_Recipientstring_AddRecipient, msg->recipient);
+    #warning here we need to match msg->recipient with the user identity and set it accordingly
+      //DoMethod(data->ST_FROM, MUIM_Recipientstring_AddRecipient, msg->recipient);
     break;
   }
 
@@ -3341,7 +3350,8 @@ DECLARE(InsertAddresses) // enum RcptType type, char **addr, ULONG add
     break;
 
     case MUIV_WriteWindow_RcptType_From:
-      str = data->ST_FROM;
+    #warning what to do here regarding multiple identity support?
+      //str = data->ST_FROM;
     break;
   }
 
@@ -3740,6 +3750,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
   BOOL winOpen = xget(obj, MUIA_Window_Open);
   struct WriteMailData *wmData = data->wmData;
   enum WriteMode mode = msg->mode;
+  struct UserIdentityNode *uin;
 
   ENTER();
 
@@ -3751,7 +3762,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
   memset(&comp, 0, sizeof(struct Compose));
 
   // first we check all input values and fill up
-  // the struct Compose variable
+  // the struct Compose structure
 
   // get the contents of the TO: String gadget and check if it is valid
   addr = (char *)DoMethod(data->ST_TO, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValid);
@@ -3807,39 +3818,15 @@ DECLARE(ComposeMail) // enum WriteMode mode
   comp.refMail = wmData->refMail;
   comp.OldSecurity = wmData->oldSecurity;
 
+  // here we have to match the user identity with the currently set 
+  // From cycle gadget object and set it in the struct Compose accordingly.
+  if((uin = GetUserIdentity(&C->userIdentityList, xget(data->CY_FROM, MUIA_Cycle_Active))) != NULL)
+    comp.Identity = uin;
+  else
+    E(DBF_UTIL, "couldn't identity user identity");
+
   if(wmData->mode != NMM_BOUNCE)
   {
-    // now we check the From gadget and raise an error if is invalid
-    addr = (char *)DoMethod(data->ST_FROM, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValid);
-    if(addr == NULL)
-    {
-      ER_NewError(tr(MSG_ER_AliasNotFound), (STRPTR)xget(data->ST_FROM, MUIA_String_Contents));
-
-      if(winOpen == TRUE)
-        set(data->RG_PAGE, MUIA_Group_ActivePage, 2);
-
-      set(obj, MUIA_Window_ActiveObject, data->ST_FROM);
-
-      RETURN(0);
-      return 0;
-    }
-    else if(addr[0] == '\0' && wmData->quietMode == FALSE)
-    {
-      // set the TO Field active and go back
-      if(winOpen == TRUE)
-        set(data->RG_PAGE, MUIA_Group_ActivePage, 2);
-
-      set(obj, MUIA_Window_ActiveObject, data->ST_FROM);
-
-      if(MUI_Request(G->App, obj, 0, NULL, tr(MSG_WR_NOSENDERREQGAD), tr(MSG_WR_ERRORNOSENDER)) == 0)
-      {
-        RETURN(0);
-        return 0;
-      }
-    }
-    else
-      comp.From = addr;
-
     // then we check the CC string gadget
     addr = (char *)DoMethod(data->ST_CC, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValid);
     if(addr == NULL)
@@ -4217,25 +4204,26 @@ DECLARE(ComposeMail) // enum WriteMode mode
     {
       if(AddNewMailNode(mlist, newMail) != NULL)
       {
-        struct MailServerNode *msn;
         BOOL mailSent = FALSE;
 
         set(obj, MUIA_Window_Open, FALSE);
 
-        if((msn = GetMailServer(&C->mailServerList, MST_SMTP, 0)) != NULL)
+        if(uin != NULL && uin->mailServer != NULL)
         {
-          if(hasServerInUse(msn) == FALSE)
+          if(hasServerInUse(uin->mailServer) == FALSE)
           {
             // mark the server as "in use"
-            SET_FLAG(msn->flags, MSF_IN_USE);
+            SET_FLAG(uin->mailServer->flags, MSF_IN_USE);
 
-            mailSent = (DoAction(NULL, TA_SendMails, TT_SendMails_MailServer, msn,
+            mailSent = (DoAction(NULL, TA_SendMails, TT_SendMails_MailServer, uin->mailServer,
                                                      TT_SendMails_Mails, mlist,
                                                      TT_SendMails_Mode, SENDMAIL_ACTIVE_USER,
                                                      TAG_DONE) != NULL);
             if(mailSent == FALSE)
-              CLEAR_FLAG(msn->flags, MSF_IN_USE);
+              CLEAR_FLAG(uin->mailServer->flags, MSF_IN_USE);
           }
+          else
+            W(DBF_MAIL, "uin->mailServer in use, couldn't sent out mail");
         }
 
         if(mailSent == FALSE)
@@ -4460,4 +4448,48 @@ DECLARE(MailFileModified)
 }
 
 ///
+/// DECLARE(UpdateIdentityList)
+//
+DECLARE(UpdateIdentityList)
+{
+  GETDATA;
+  struct Node *curNode;
+  int numIdentities = 0;
 
+  ENTER();
+
+  // we have to sync the content of the user identities
+  // with the GUI elements of the write window
+  if(data->identities != NULL)
+    FreeStrArray(data->identities);
+
+  // first we find out how many entries the user identity list
+  // has
+  IterateList(&C->userIdentityList, curNode)
+    numIdentities++;
+
+  // allocate enough space + 1 for NUL termination
+  if((data->identities = calloc(numIdentities+1, sizeof(char *))) != NULL)
+  {
+    int i = 0;
+
+    // now we walk through the userIdentityList again
+    // and clone the address string
+    IterateList(&C->userIdentityList, curNode)
+    {
+      struct UserIdentityNode *uin = (struct UserIdentityNode *)curNode;
+      char address[SIZE_LARGE];
+
+      data->identities[i] = strdup(BuildAddress(address, sizeof(address), uin->address, uin->realname));
+
+      i++;
+    }
+
+    set(data->CY_FROM, MUIA_Cycle_Entries, data->identities);
+  }
+
+  RETURN(0);
+  return 0;
+}
+
+///

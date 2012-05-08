@@ -5774,3 +5774,31 @@ int GetHostName(char *name, size_t namelen)
 }
 
 ///
+/// FreeStrArray
+// free() a NULL terminated array of strings
+void FreeStrArray(char **array)
+{
+  ENTER();
+
+  if(array != NULL)
+  {
+    int i=0;
+    char *p;
+
+    do
+    {
+      if((p = array[i]) == NULL)
+        break;
+
+      free(p);
+      i++;
+    }
+    while(1);
+      
+    free(array);
+  }
+
+  LEAVE();
+}
+
+///

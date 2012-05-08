@@ -925,6 +925,10 @@ static void Terminate(void)
     free(CE);
     CE = NULL;
 
+    // free the smtpServerArray
+    FreeStrArray(G->CO->smtpServerArray);
+    G->CO->smtpServerArray = NULL;
+
     DisposeModule(&G->CO);
   }
 
@@ -2559,9 +2563,9 @@ int main(int argc, char **argv)
     }
 
     // prepare the exec lists in G
-    NewList((struct List *)&(G->readMailDataList));
-    NewList((struct List *)&(G->writeMailDataList));
-    NewList((struct List *)&(G->zombieFileList));
+    NewMinList(&G->readMailDataList);
+    NewMinList(&G->writeMailDataList);
+    NewMinList(&G->zombieFileList);
 
     if((C = calloc(1, sizeof(struct Config))) == NULL)
     {
@@ -2570,9 +2574,10 @@ int main(int argc, char **argv)
     }
 
     // prepare the exec lists in C
-    NewList((struct List *)&(C->mailServerList));
-    NewList((struct List *)&(C->mimeTypeList));
-    NewList((struct List *)&(C->filterList));
+    NewMinList(&C->mailServerList);
+    NewMinList(&C->filterList);
+    NewMinList(&C->mimeTypeList);
+    NewMinList(&C->userIdentityList);
 
     // create the MEMF_SHARED memory pool we use for our
     // own AllocVecPooled() allocations later on

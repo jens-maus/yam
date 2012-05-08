@@ -36,6 +36,7 @@
 
 #include "FolderList.h"
 #include "Rexx.h"
+#include "UserIdentity.h"
 
 #include "Debug.h"
 
@@ -69,11 +70,20 @@ void rx_getconfiginfo(UNUSED struct RexxHost *host, struct RexxParams *params, e
     case RXIF_ACTION:
     {
       char *key = args->item;
+      struct UserIdentityNode *uin = GetUserIdentity(&C->userIdentityList, 0);
 
-      if(!strnicmp(key, "NAM", 3))
-        results->value = C->RealName;
-      else if(!strnicmp(key, "EMA", 3))
-        results->value = C->EmailAddress;
+      #warning multiple identity support missing here, the rexx cmd should get an additional parameter?
+
+      // here we just return the information of the first user identity
+      if(uin != NULL)
+      {
+        if(strnicmp(key, "NAM", 3) == 0)
+          results->value = uin->realname;
+        else if(strnicmp(key, "EMA", 3) == 0)
+          results->value = uin->address;
+        else
+          params->rc = RETURN_ERROR;
+      }
       else
         params->rc = RETURN_ERROR;
     }

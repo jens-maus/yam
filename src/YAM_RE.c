@@ -85,6 +85,7 @@
 #include "ParseEmail.h"
 #include "Requesters.h"
 #include "Threads.h"
+#include "UserIdentity.h"
 
 #include "Debug.h"
 
@@ -3519,6 +3520,7 @@ void RE_ClickedOnMessage(char *address)
 static void RE_SendMDN(const enum MDNMode mode,
                        const struct Mail *mail,
                        const struct Person *recipient,
+                       const struct UserIdentityNode *uin,
                        const BOOL sendnow,
                        const BOOL autoAction,
                        const BOOL autoSend)
@@ -3589,33 +3591,31 @@ static void RE_SendMDN(const enum MDNMode mode,
       {
         struct WritePart *p3;
         struct TempFile *tf3;
-        struct MailServerNode *msn;
+        char hostName[256];
 
         p2->ContentType = "message/disposition-notification";
         p2->Filename = tf2->Filename;
 
-        if((msn = GetMailServer(&C->mailServerList, MST_SMTP, 0)) != NULL)
-        {
-          char hostName[256];
+        // retrieve the hostname as good as possible
+        GetHostName(hostName, sizeof(hostName));
 
-          // retrieve the hostname as good as possible
-          GetHostName(hostName, sizeof(hostName));
-
-          // according to RFC 3798 the Reporting-UA header of a MDN
-          // message should include the DNS-Name (hostname) of the
-          // machine that sends the MDN
-          snprintf(buf, sizeof(buf), "%s; %s", hostName, yamversion);
-          EmitHeader(tf2->FP, "Reporting-UA", buf);
-        }
+        // according to RFC 3798 the Reporting-UA header of a MDN
+        // message should include the DNS-Name (hostname) of the
+        // machine that sends the MDN
+        snprintf(buf, sizeof(buf), "%s; %s", hostName, yamversion);
+        EmitHeader(tf2->FP, "Reporting-UA", buf);
 
         if(email->OriginalRcpt.Address[0] != '\0')
         {
-          snprintf(buf, sizeof(buf), "rfc822;%s", BuildAddress(address, sizeof(address), email->OriginalRcpt.Address, email->OriginalRcpt.RealName));
+          // email address only according to RFC 2298
+          snprintf(buf, sizeof(buf), "rfc822;%s", email->OriginalRcpt.Address);
           EmitHeader(tf2->FP, "Original-Recipient", buf);
         }
 
-        snprintf(buf, sizeof(buf), "rfc822;%s", BuildAddress(address, sizeof(address), C->EmailAddress, C->RealName));
+        // email address only according to RFC 2298
+        snprintf(buf, sizeof(buf), "rfc822;%s", uin != NULL ? uin->address : mail->To.Address);
         EmitHeader(tf2->FP, "Final-Recipient", buf);
+
         EmitHeader(tf2->FP, "Original-Message-ID", email->messageID);
         EmitHeader(tf2->FP, "Disposition", disp);
 
@@ -3678,6 +3678,7 @@ static void RE_SendMDN(const enum MDNMode mode,
           comp.Subject = buf;
           comp.GenerateMDN = TRUE;
           comp.FirstPart = p1;
+          comp.Identity = (struct UserIdentityNode *)uin;
 
           // create the subject
           switch(mode)
@@ -3730,23 +3731,27 @@ static void RE_SendMDN(const enum MDNMode mode,
                 // immediately we go and send it out
                 if(sendnow == TRUE && mlist->count != 0)
                 {
-                  if((msn = GetMailServer(&C->mailServerList, MST_SMTP, 0)) != NULL)
+                  if(uin != NULL && uin->mailServer != NULL)
                   {
-                    if(hasServerInUse(msn) == FALSE)
+                    if(hasServerInUse(uin->mailServer) == FALSE)
                     {
                       // mark the server as "in use"
-                      SET_FLAG(msn->flags, MSF_IN_USE);
+                      SET_FLAG(uin->mailServer->flags, MSF_IN_USE);
 
-                      mdnSent = (DoAction(NULL, TA_SendMails, TT_SendMails_MailServer, msn,
+                      mdnSent = (DoAction(NULL, TA_SendMails, TT_SendMails_MailServer, uin->mailServer,
                                                               TT_SendMails_Mails, mlist,
                                                               TT_SendMails_Mode, autoSend ? SENDMAIL_ACTIVE_AUTO : SENDMAIL_ACTIVE_USER,
                                                               TAG_DONE) != NULL);
 
                       // clear the "in use" flag if the send process failed
                       if(mdnSent == FALSE)
-                        CLEAR_FLAG(msn->flags, MSF_IN_USE);
+                        CLEAR_FLAG(uin->mailServer->flags, MSF_IN_USE);
                     }
+                    else
+                      W(DBF_MAIL, "mailServer already in use, can't sen out the message!");
                   }
+                  else
+                    W(DBF_MAIL, "uin == NULL || uin->mailServer == NULL");
                 }
 
                 // delete the mail list again if the MDN was not sent
@@ -3807,6 +3812,12 @@ BOOL RE_ProcessMDN(const enum MDNMode mode,
       {
         BOOL retPathWarning = FALSE;
         enum MDNAction action = MDN_ACTION_ASK; // per default we ask
+        struct UserIdentityNode *uin;
+
+        // we need to find out the user identity which belongs to the
+        // MDN request we received. Thus we use WhichUserIdentity()
+        // to identity the user identity
+        uin = WhichUserIdentity(&C->userIdentityList, email);
 
         // according to RFC 3798 section 2.1 an MDN should only be
         // automatically send in case the "Return-Path" address
@@ -3834,48 +3845,14 @@ BOOL RE_ProcessMDN(const enum MDNMode mode,
           // or Cc of the MDN requesting mail
           if(cont == TRUE)
           {
-            BOOL found;
-
-            // find out if our address is in the To
-            found = (stricmp(mail->To.Address, C->EmailAddress) == 0);
-            if(found == FALSE)
+            // the WhichUserIdentity() function searches the To and CC of an
+            // email and returns the user identity node in case they match.
+            // if not, it returns NULL, thus it does exactly what we need
+            if(uin == NULL)
             {
-              int i;
-
-              for(i=0; i < email->NoSTo; i++)
-              {
-                struct Person *pe = &email->STo[i];
-
-                if(stricmp(pe->Address, C->EmailAddress) == 0)
-                {
-                  found = TRUE;
-                  break;
-                }
-              }
-            }
-
-            // find out if our address is in Cc
-            if(found == FALSE)
-            {
-              int i;
-
-              for(i=0; i < email->NoCC; i++)
-              {
-                struct Person *pe = &email->CC[i];
-
-                if(stricmp(pe->Address, C->EmailAddress) == 0)
-                {
-                  found = TRUE;
-                  break;
-                }
-              }
-            }
-
-            // in case we found that our address is NOT in the
-            // To: or Cc: of the mail, we go and execute the user
-            // defined action for the MDN processing
-            if(found == FALSE)
-            {
+              // in case we found that our address is NOT in the
+              // To: or Cc: of the mail, we go and execute the user
+              // defined action for the MDN processing
               action = C->MDN_NoRecipient;
 
               cont = FALSE;
@@ -3886,7 +3863,7 @@ BOOL RE_ProcessMDN(const enum MDNMode mode,
 
           // try to find out if the sender is outside of the
           // domain of the current user
-          if(cont == TRUE && (p = strchr(C->EmailAddress, '@')) != NULL)
+          if(cont == TRUE && (p = strchr(uin->address, '@')) != NULL)
           {
             BOOL outsideDomain = FALSE;
             int domainLen = strlen(p);
@@ -3996,11 +3973,11 @@ BOOL RE_ProcessMDN(const enum MDNMode mode,
           break;
 
           case MDN_ACTION_SEND:
-            RE_SendMDN(mode, mail, &email->ReceiptTo, ConnectionIsOnline(NULL), autoAction, TRUE);
+            RE_SendMDN(mode, mail, &email->ReceiptTo, uin, ConnectionIsOnline(NULL), autoAction, TRUE);
           break;
 
           case MDN_ACTION_QUEUED:
-            RE_SendMDN(mode, mail, &email->ReceiptTo, FALSE, autoAction, TRUE);
+            RE_SendMDN(mode, mail, &email->ReceiptTo, uin, FALSE, autoAction, TRUE);
           break;
 
           case MDN_ACTION_ASK:
@@ -4033,14 +4010,14 @@ BOOL RE_ProcessMDN(const enum MDNMode mode,
             {
               // accept and send later
               case 1:
-                RE_SendMDN(mode, mail, &email->ReceiptTo, FALSE, autoAction, FALSE);
+                RE_SendMDN(mode, mail, &email->ReceiptTo, uin, FALSE, autoAction, FALSE);
               break;
 
               // accept and send now or ignore
               case 2:
               {
                 if(isonline == TRUE)
-                  RE_SendMDN(mode, mail, &email->ReceiptTo, TRUE, autoAction, FALSE);
+                  RE_SendMDN(mode, mail, &email->ReceiptTo, uin, TRUE, autoAction, FALSE);
                 else
                   D(DBF_MAIL, "user wants to ignore the MDN request");
               }

@@ -67,7 +67,7 @@ void rx_writeletter(UNUSED struct RexxHost *host, struct RexxParams *params, enu
       {
         if(CopyFile(G->ActiveRexxWMData->filename, 0, args->file, 0))
         {
-          if(C->UseSignature == TRUE && args->nosig == FALSE)
+          if(args->nosig == FALSE)
             DoMethod(G->ActiveRexxWMData->window, MUIM_WriteWindow_AddSignature, -1);
 
           DoMethod(G->ActiveRexxWMData->window, MUIM_WriteWindow_ReloadText, TRUE);

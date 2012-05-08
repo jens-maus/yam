@@ -85,6 +85,7 @@
 #include "MailServers.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
+#include "UserIdentity.h"
 
 #include "Debug.h"
 
@@ -935,6 +936,11 @@ HOOKPROTONHNONP(CO_PutSMTPEntry, void)
         set(gui->ST_SMTPAUTHPASS, MUIA_Disabled, TRUE);
       }
 
+      // we also have to update the SMTP Server Array
+      // in case the user changes to the Identities
+      // config page
+      CO_UpdateSMTPServerArray(G->CO);
+
       // redraw the list
       DoMethod(gui->LV_SMTP, MUIM_NList_Redraw, p);
     }
@@ -943,6 +949,228 @@ HOOKPROTONHNONP(CO_PutSMTPEntry, void)
   LEAVE();
 }
 MakeHook(CO_PutSMTPEntryHook, CO_PutSMTPEntry);
+
+///
+/// CO_UpdateSMTPServerArray
+//
+void CO_UpdateSMTPServerArray(struct CO_ClassData *data)
+{
+  struct Node *curNode;
+  int numSMTPserver = 0;
+
+  ENTER();
+
+  // free a previously prepared array
+  if(data->smtpServerArray != NULL)
+    FreeStrArray(data->smtpServerArray);
+
+  // we update the smtpServerArray with the names
+  // of the SMTP servers that are currently configured
+  IterateList(&CE->mailServerList, curNode)
+  {
+    struct MailServerNode *msn = (struct MailServerNode *)curNode;
+
+    if(isSMTPServer(msn) && isServerActive(msn)) 
+      numSMTPserver++;
+  }
+
+  // allocate enough space +1 for NUL termination
+  if((data->smtpServerArray = calloc(numSMTPserver+1, sizeof(char *))) != NULL)
+  {
+    int i = 0;
+
+    // now we walk through the mailServerList again
+    // and clone the address string
+    IterateList(&CE->mailServerList, curNode)
+    {
+      struct MailServerNode *msn = (struct MailServerNode *)curNode;
+   
+      if(isSMTPServer(msn) && isServerActive(msn))
+      {
+        data->smtpServerArray[i] = strdup(msn->description);
+
+        i++;
+      }
+    }
+
+    set(data->GUI.CY_IDENTITY_MAILSERVER, MUIA_Cycle_Entries, data->smtpServerArray);
+  }
+
+  LEAVE();
+}
+
+///
+
+/**** User Identities ****/
+/// CO_GetIdentityEntry
+//  Fills form with data from selected list entry
+HOOKPROTONHNONP(CO_GetIdentityEntry, void)
+{
+  struct UserIdentityNode *uin = NULL;
+  struct CO_GUIData *gui = &G->CO->GUI;
+  LONG pos = MUIV_NList_GetPos_Start;
+
+  ENTER();
+
+  // get the currently selected user identity
+  DoMethod(gui->LV_IDENTITY, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &uin);
+
+  // make sure to disable GUI elements
+  if(uin == NULL || xget(gui->LV_IDENTITY, MUIA_NList_Entries) < 2)
+    set(gui->BT_IDEL, MUIA_Disabled, TRUE);
+  else
+    set(gui->BT_IDEL, MUIA_Disabled, FALSE);
+
+  if(uin != NULL)
+    DoMethod(gui->LV_IDENTITY, MUIM_NList_GetPos, uin, &pos);
+  else
+    pos = 0;
+
+  set(gui->BT_IDENTITYUP, MUIA_Disabled, pos == 0);
+  set(gui->BT_IDENTITYDOWN, MUIA_Disabled, pos == (LONG)xget(gui->LV_IDENTITY, MUIA_NList_Entries) - 1);
+
+  if(uin != NULL)
+  {
+    // all notifies here are nnset() notifies so that we don't trigger any additional
+    // notify or otherwise we would run into problems.
+
+    nnset(gui->CH_IDENTITY_ENABLED,       MUIA_Selected,        uin->active);
+    nnset(gui->ST_IDENTITY_DESCRIPTION,   MUIA_String_Contents, uin->description);
+    nnset(gui->ST_IDENTITY_REALNAME,      MUIA_String_Contents, uin->realname);
+    nnset(gui->ST_IDENTITY_EMAIL,         MUIA_String_Contents, uin->address);
+    nnset(gui->ST_IDENTITY_ORGANIZATION,  MUIA_String_Contents, uin->organization);
+    nnset(gui->CY_IDENTITY_SIGNATURE,     MUIA_Cycle_Active,    uin->signature);
+    nnset(gui->ST_IDENTITY_CC,            MUIA_String_Contents, uin->mailCC);
+    nnset(gui->ST_IDENTITY_BCC,           MUIA_String_Contents, uin->mailBCC);
+    nnset(gui->ST_IDENTITY_REPLYTO,       MUIA_String_Contents, uin->mailReplyTo);
+    nnset(gui->ST_IDENTITY_EXTRAHEADER,   MUIA_String_Contents, uin->extraHeaders);
+    nnset(gui->ST_IDENTITY_PHOTOURL,      MUIA_String_Contents, uin->photoURL);
+    nnset(gui->CH_IDENTITY_SENTFOLDER,    MUIA_Selected,        uin->saveSentMail);
+    nnset(gui->TX_IDENTITY_SENTFOLDER,    MUIA_Text_Contents,   uin->sentFolder);
+    nnset(gui->CH_IDENTITY_QUOTEMAILS,    MUIA_Selected,        uin->quoteMails);
+    nnset(gui->CY_IDENTITY_QUOTEPOS,      MUIA_Cycle_Active,    uin->quotePosition);
+    nnset(gui->CY_IDENTITY_SIGPOS,        MUIA_Cycle_Active,    uin->signaturePosition);
+    nnset(gui->CH_IDENTITY_SIGREPLY,      MUIA_Selected,        uin->sigReply);
+    nnset(gui->CH_IDENTITY_SIGFORWARD,    MUIA_Selected,        uin->sigForwarding);
+    nnset(gui->CH_IDENTITY_ADDINFO,       MUIA_Selected,        uin->addPersonalInfo);
+    nnset(gui->CH_IDENTITY_REQUESTMDN,    MUIA_Selected,        uin->requestMDN);
+    nnset(gui->CH_IDENTITY_USEPGP,        MUIA_Selected,        uin->usePGP);
+    nnset(gui->ST_IDENTITY_PGPID,         MUIA_String_Contents, uin->pgpKeyID);
+    nnset(gui->ST_IDENTITY_PGPURL,        MUIA_String_Contents, uin->pgpKeyURL);
+    nnset(gui->CH_IDENTITY_PGPSIGN_UNENC, MUIA_Selected,        uin->pgpSignUnencrypted);
+    nnset(gui->CH_IDENTITY_PGPSIGN_ENC,   MUIA_Selected,        uin->pgpSignEncrypted);
+    nnset(gui->CH_IDENTITY_PGPENC_ALL,    MUIA_Selected,        uin->pgpEncryptAll);
+    nnset(gui->CH_IDENTITY_PGPENC_SELF,   MUIA_Selected,        uin->pgpSelfEncrypt);
+
+    // we have to set the correct mail server in the GUI so we browse through
+    // the mailServerList and match the ids
+    if(uin->mailServer != NULL)
+    {
+      struct Node *curNode;
+      int i = 0;
+
+      IterateList(&CE->mailServerList, curNode)
+      {
+        struct MailServerNode *msn = (struct MailServerNode *)curNode;
+
+        // we match the ids because the pointers may be different
+        if(msn->id == uin->mailServer->id)
+        {
+          nnset(gui->CY_IDENTITY_MAILSERVER, MUIA_Cycle_Active, i);
+          break;
+        }
+        else if(isSMTPServer(msn) && isServerActive(msn))
+          i++;
+      }
+    }
+  }
+
+  LEAVE();
+}
+MakeHook(CO_GetIdentityEntryHook, CO_GetIdentityEntry);
+
+///
+/// CO_PutIdentityEntry
+//  Fills form data into selected list entry
+HOOKPROTONHNONP(CO_PutIdentityEntry, void)
+{
+  struct CO_GUIData *gui = &G->CO->GUI;
+  int p;
+
+  ENTER();
+
+  p = xget(gui->LV_IDENTITY, MUIA_NList_Active);
+  if(p != MUIV_NList_Active_Off)
+  {
+    struct UserIdentityNode *uin = NULL;
+
+    DoMethod(gui->LV_IDENTITY, MUIM_NList_GetEntry, p, &uin);
+    if(uin != NULL)
+    {
+      struct Node *curNode;
+      int posMailServer;
+      int i;
+
+      uin->active = GetMUICheck(gui->CH_IDENTITY_ENABLED);
+      GetMUIString(uin->description,  gui->ST_IDENTITY_DESCRIPTION, sizeof(uin->description));
+      GetMUIString(uin->realname,     gui->ST_IDENTITY_REALNAME,    sizeof(uin->realname));
+      GetMUIString(uin->address,      gui->ST_IDENTITY_EMAIL,       sizeof(uin->address));
+      GetMUIString(uin->organization, gui->ST_IDENTITY_ORGANIZATION,sizeof(uin->organization));
+      uin->signature = GetMUICycle(gui->CY_IDENTITY_SIGNATURE);
+      GetMUIString(uin->mailCC,       gui->ST_IDENTITY_CC,          sizeof(uin->mailCC));
+      GetMUIString(uin->mailBCC,      gui->ST_IDENTITY_BCC,         sizeof(uin->mailBCC));
+      GetMUIString(uin->mailReplyTo,  gui->ST_IDENTITY_REPLYTO,     sizeof(uin->mailReplyTo));
+      GetMUIString(uin->extraHeaders, gui->ST_IDENTITY_EXTRAHEADER, sizeof(uin->mailReplyTo));
+      GetMUIString(uin->photoURL,     gui->ST_IDENTITY_PHOTOURL,    sizeof(uin->photoURL));
+      GetMUIText(uin->sentFolder,     gui->TX_IDENTITY_SENTFOLDER,  sizeof(uin->sentFolder));
+      uin->saveSentMail = GetMUICheck(gui->CH_IDENTITY_SENTFOLDER);
+      uin->quoteMails = GetMUICheck(gui->CH_IDENTITY_QUOTEMAILS);
+      uin->quotePosition = GetMUICycle(gui->CY_IDENTITY_QUOTEPOS);
+      uin->signaturePosition = GetMUICycle(gui->CY_IDENTITY_SIGPOS);
+      uin->sigReply = GetMUICheck(gui->CH_IDENTITY_SIGREPLY);
+      uin->sigForwarding = GetMUICheck(gui->CH_IDENTITY_SIGFORWARD);
+      uin->addPersonalInfo = GetMUICheck(gui->CH_IDENTITY_ADDINFO);
+      uin->requestMDN = GetMUICheck(gui->CH_IDENTITY_REQUESTMDN);
+      uin->usePGP = GetMUICheck(gui->CH_IDENTITY_USEPGP);
+      GetMUIString(uin->pgpKeyID,     gui->ST_IDENTITY_PGPID,       sizeof(uin->pgpKeyID));
+      GetMUIString(uin->pgpKeyURL,    gui->ST_IDENTITY_PGPURL,      sizeof(uin->pgpKeyURL));
+      uin->pgpSignUnencrypted = GetMUICheck(gui->CH_IDENTITY_PGPSIGN_UNENC);
+      uin->pgpSignEncrypted = GetMUICheck(gui->CH_IDENTITY_PGPSIGN_ENC);
+      uin->pgpEncryptAll = GetMUICheck(gui->CH_IDENTITY_PGPENC_ALL);
+      uin->pgpSelfEncrypt = GetMUICheck(gui->CH_IDENTITY_PGPENC_SELF);
+
+      // if the user hasn't yet entered an own account name or the default
+      // account name is still present we go and set an automatic generated one
+      if(uin->description[0] == '\0' || strcmp(uin->description, tr(MSG_NewEntry)) == 0)
+        strlcpy(uin->description, uin->address, sizeof(uin->description));
+
+      // now we iterate through the mailServerList and match
+      posMailServer = GetMUICycle(gui->CY_IDENTITY_MAILSERVER);
+      i = 0;
+      IterateList(&CE->mailServerList, curNode)
+      {
+        struct MailServerNode *msn = (struct MailServerNode *)curNode;
+
+        if(isSMTPServer(msn) && isServerActive(msn))
+        {
+          if(i == posMailServer)
+          {
+            uin->mailServer = msn;
+            break;
+          }
+
+          i++;
+        }
+      }
+
+      // redraw the list
+      DoMethod(gui->LV_IDENTITY, MUIM_NList_Redraw, p);
+    }
+  }
+
+  LEAVE();
+}
+MakeHook(CO_PutIdentityEntryHook, CO_PutIdentityEntry);
 
 ///
 
@@ -1017,6 +1245,9 @@ void CO_ClearConfig(struct Config *co)
 
   SHOWVALUE(DBF_CONFIG, co);
 
+  // we have to free the userIdentityList
+  FreeUserIdentityList(&co->userIdentityList);
+
   // we have to free the mailServerList
   FreeMailServerList(&co->mailServerList);
 
@@ -1043,9 +1274,6 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
 
   if(page == cp_FirstSteps || page == cp_AllPages)
   {
-    co->RealName[0] = '\0';
-    co->EmailAddress[0] = '\0';
-
     // If Locale is present, don't use the timezone from the config
     if(G->Locale != NULL)
       co->TimeZone = -G->Locale->loc_GMTOffset;
@@ -1067,7 +1295,11 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
 
   if(page == cp_Identities || page == cp_AllPages)
   {
-#warning Defaults for identities config page missing yet
+    // we have to free the userIdentityList
+    FreeUserIdentityList(&co->userIdentityList);
+
+    // fill the user identity list with an empty entry
+    AddTail((struct List *)&co->userIdentityList, (struct Node *)CreateNewUserIdentity(co));
   }
 
   if(page == cp_NewMail || page == cp_AllPages)
@@ -1136,9 +1368,6 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
 
   if(page == cp_Write || page == cp_AllPages)
   {
-    co->ReplyTo[0] = '\0';
-    co->Organization[0] = '\0';
-    co->ExtraHeaders[0] = '\0';
     strlcpy(co->NewIntro, tr(MSG_CO_NewIntroDef), sizeof(co->NewIntro));
     strlcpy(co->Greetings, tr(MSG_CO_GreetingsDef), sizeof(co->Greetings));
     co->WarnSubject = TRUE;
@@ -1151,8 +1380,6 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     co->LaunchAlways = FALSE;
     co->EmailCache = 10;
     co->AutoSave = 120;
-    co->RequestMDN = FALSE;
-    co->SaveSent = TRUE;
   }
 
   if(page == cp_ReplyForward || page == cp_AllPages)
@@ -1172,7 +1399,6 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     strlcpy(co->QuoteChar, ">", sizeof(co->QuoteChar));
     strlcpy(co->AltQuoteChar, "|", sizeof(co->AltQuoteChar));
 
-    co->QuoteMessage = TRUE;
     co->QuoteEmptyLines = TRUE;
     co->CompareAddress = TRUE;
     co->StripSignature = TRUE;
@@ -1181,7 +1407,6 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
 
   if(page == cp_Signature || page == cp_AllPages)
   {
-    co->UseSignature = FALSE;
     AddPath(co->TagsFile, G->ProgDir, ".taglines", sizeof(co->TagsFile));
     strlcpy(co->TagsSeparator, "%%", sizeof(co->TagsSeparator));
   }
@@ -1207,9 +1432,6 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     if(GetVar("PGPPATH", co->PGPCmdPath, sizeof(co->PGPCmdPath), 0) == -1)
       strlcpy(co->PGPCmdPath, "PGP:", sizeof(co->PGPCmdPath));
 
-    co->MyPGPID[0] = '\0';
-    co->PGPURL[0] = '\0';
-    co->EncryptToSelf = TRUE;
     co->LogAllEvents = TRUE;
     co->PGPPassInterval = 10; // 10 min per default
     strlcpy(co->LogfilePath, G->ProgDir, sizeof(co->LogfilePath));
@@ -1240,7 +1462,6 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
   {
     AddPath(co->GalleryDir, G->ProgDir, "Gallery", sizeof(co->GalleryDir));
     strlcpy(co->NewAddrGroup, "NEW", sizeof(co->NewAddrGroup));
-    co->AddMyInfo = FALSE;
     co->AddToAddrbook = 0;
     co->AddrbookCols = 1+2+4;
   }
@@ -1403,8 +1624,29 @@ static BOOL CopyConfigData(struct Config *dco, const struct Config *sco)
     }
   }
 
+  // for copying the user identity list we have to do a deep copy of the list
+  NewMinList(&dco->userIdentityList);
+
+  if(success == TRUE)
+  {
+    IterateList(&sco->userIdentityList, curNode)
+    {
+      struct UserIdentityNode *srcNode = (struct UserIdentityNode *)curNode;
+      struct UserIdentityNode *dstNode;
+
+      if((dstNode = DuplicateNode(srcNode, sizeof(*srcNode))) != NULL)
+        AddTail((struct List *)&dco->userIdentityList, (struct Node *)dstNode);
+      else
+      {
+        success = FALSE;
+        // bail out, no need to copy further data
+        break;
+      }
+    }
+  }
+
   // for copying the mimetype list we have to do a deep copy of the list
-  NewList((struct List *)&dco->mimeTypeList);
+  NewMinList(&dco->mimeTypeList);
 
   if(success == TRUE)
   {
@@ -1425,7 +1667,7 @@ static BOOL CopyConfigData(struct Config *dco, const struct Config *sco)
   }
 
   // for copying the filters we do have to do another deep copy
-  NewList((struct List *)&dco->filterList);
+  NewMinList(&dco->filterList);
 
   if(success == TRUE)
   {
@@ -1567,13 +1809,10 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      c1->UseTextColorsWrite              == c2->UseTextColorsWrite &&
      c1->WrapHeader                      == c2->WrapHeader &&
      c1->LaunchAlways                    == c2->LaunchAlways &&
-     c1->QuoteMessage                    == c2->QuoteMessage &&
      c1->QuoteEmptyLines                 == c2->QuoteEmptyLines &&
      c1->CompareAddress                  == c2->CompareAddress &&
      c1->StripSignature                  == c2->StripSignature &&
-     c1->UseSignature                    == c2->UseSignature &&
      c1->FixedFontList                   == c2->FixedFontList &&
-     c1->EncryptToSelf                   == c2->EncryptToSelf &&
      c1->SplitLogfile                    == c2->SplitLogfile &&
      c1->LogAllEvents                    == c2->LogAllEvents &&
      c1->SendOnStartup                   == c2->SendOnStartup &&
@@ -1585,11 +1824,9 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      c1->SendOnQuit                      == c2->SendOnQuit &&
      c1->CleanupOnQuit                   == c2->CleanupOnQuit &&
      c1->RemoveOnQuit                    == c2->RemoveOnQuit &&
-     c1->AddMyInfo                       == c2->AddMyInfo &&
      c1->IconifyOnQuit                   == c2->IconifyOnQuit &&
      c1->Confirm                         == c2->Confirm &&
      c1->RemoveAtOnce                    == c2->RemoveAtOnce &&
-     c1->SaveSent                        == c2->SaveSent &&
      c1->JumpToNewMsg                    == c2->JumpToNewMsg &&
      c1->JumpToIncoming                  == c2->JumpToIncoming &&
      c1->JumpToRecentMsg                 == c2->JumpToRecentMsg &&
@@ -1622,7 +1859,6 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      c1->FilterHam                       == c2->FilterHam &&
      c1->DisplayAllAltPart               == c2->DisplayAllAltPart &&
      c1->MDNEnabled                      == c2->MDNEnabled &&
-     c1->RequestMDN                      == c2->RequestMDN &&
      c1->AutoClip                        == c2->AutoClip &&
      c1->FolderDoubleClick               == c2->FolderDoubleClick &&
      c1->MapForeignChars                 == c2->MapForeignChars &&
@@ -1641,6 +1877,7 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      c1->SocketOptions.LowDelay          == c2->SocketOptions.LowDelay &&
 
      CompareMailServerLists(&c1->mailServerList, &c2->mailServerList) &&
+     CompareUserIdentityLists(&c1->userIdentityList, &c2->userIdentityList) &&
      CompareFilterLists(&c1->filterList, &c2->filterList) &&
      CompareMimeTypeLists(&c1->mimeTypeList, &c2->mimeTypeList) &&
      CompareRxHooks((const struct RxHook *)c1->RX, (const struct RxHook *)c2->RX) &&
@@ -1652,14 +1889,9 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      strcmp(c1->Color4thLevel.buf,   c2->Color4thLevel.buf) == 0 &&
      strcmp(c1->ColorURL.buf,        c2->ColorURL.buf) == 0 &&
      strcmp(c1->ColorSignature.buf,  c2->ColorSignature.buf) == 0 &&
-     strcmp(c1->RealName,            c2->RealName) == 0 &&
-     strcmp(c1->EmailAddress,        c2->EmailAddress) == 0 &&
      strcmp(c1->NotifySound,         c2->NotifySound) == 0 &&
      strcmp(c1->NotifyCommand,       c2->NotifyCommand) == 0 &&
      strcmp(c1->ShortHeaders,        c2->ShortHeaders) == 0 &&
-     strcmp(c1->ReplyTo,             c2->ReplyTo) == 0 &&
-     strcmp(c1->Organization,        c2->Organization) == 0 &&
-     strcmp(c1->ExtraHeaders,        c2->ExtraHeaders) == 0 &&
      strcmp(c1->NewIntro,            c2->NewIntro) == 0 &&
      strcmp(c1->Greetings,           c2->Greetings) == 0 &&
      strcmp(c1->Editor,              c2->Editor) == 0 &&
@@ -1678,13 +1910,10 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      strcmp(c1->TagsFile,            c2->TagsFile) == 0 &&
      strcmp(c1->TagsSeparator,       c2->TagsSeparator) == 0 &&
      strcmp(c1->PGPCmdPath,          c2->PGPCmdPath) == 0 &&
-     strcmp(c1->MyPGPID,             c2->MyPGPID) == 0 &&
-     strcmp(c1->PGPURL,              c2->PGPURL) == 0 &&
      strcmp(c1->LogfilePath,         c2->LogfilePath) == 0 &&
      strcmp(c1->DetachDir,           c2->DetachDir) == 0 &&
      strcmp(c1->AttachDir,           c2->AttachDir) == 0 &&
      strcmp(c1->GalleryDir,          c2->GalleryDir) == 0 &&
-     strcmp(c1->MyPictureURL,        c2->MyPictureURL) == 0 &&
      strcmp(c1->NewAddrGroup,        c2->NewAddrGroup) == 0 &&
      strcmp(c1->ProxyServer,         c2->ProxyServer) == 0 &&
      strcmp(c1->TempDir,             c2->TempDir) == 0 &&
@@ -1730,6 +1959,7 @@ void CO_Validate(struct Config *co, BOOL update)
   BOOL updateMenuShortcuts = FALSE;
   struct MailServerNode *firstPOP3;
   struct MailServerNode *firstSMTP;
+  struct UserIdentityNode *firstIdentity;
   struct Node *curNode;
 
   ENTER();
@@ -1739,10 +1969,11 @@ void CO_Validate(struct Config *co, BOOL update)
   firstPOP3 = GetMailServer(&co->mailServerList, MST_POP3, 0);
   firstSMTP = GetMailServer(&co->mailServerList, MST_SMTP, 0);
 
-  if(firstPOP3 != NULL && firstSMTP != NULL)
-  {
-    char *p = strchr(co->EmailAddress, '@');
+  // get the first user Identity
+  firstIdentity = GetUserIdentity(&co->userIdentityList, 0);
 
+  if(firstPOP3 != NULL && firstSMTP != NULL && firstIdentity != NULL)
+  {
     // now we walk through our mailserver list and check and fix certains
     // things in it
     IterateList(&co->mailServerList, curNode)
@@ -1760,7 +1991,10 @@ void CO_Validate(struct Config *co, BOOL update)
             msn->port = 110;
 
           if(msn->username[0] == '\0')
-            strlcpy(msn->username, co->EmailAddress, p ? (unsigned int)(p - co->EmailAddress + 1) : sizeof(msn->username));
+          {
+            char *p = strchr(firstIdentity->address, '@');
+            strlcpy(msn->username, firstIdentity->address, p ? (unsigned int)(p - firstIdentity->address + 1) : sizeof(msn->username));
+          }
 
           if(msn->description[0] == '\0')
             snprintf(msn->description, sizeof(msn->description), "%s@%s", msn->username, msn->hostname);
@@ -1884,7 +2118,10 @@ void CO_Validate(struct Config *co, BOOL update)
 
   // check if the current configuration is already valid at an absolute
   // minimum.
-  G->CO_Valid = (*co->EmailAddress && *co->RealName && *firstSMTP->hostname && *firstPOP3->hostname);
+  G->CO_Valid = (*firstIdentity->address != '\0' &&
+                 *firstIdentity->realname != '\0' &&
+                 *firstSMTP->hostname != '\0' &&
+                 *firstPOP3->hostname != '\0');
 
   // we try to find out the system charset and validate it with the
   // currently configured local charset
@@ -2322,21 +2559,6 @@ HOOKPROTONHNO(CO_EditSignatFunc, void, int *arg)
 MakeHook(CO_EditSignatHook,CO_EditSignatFunc);
 
 ///
-/// CO_SwitchSignatFunc
-//  Enables/Disables some object upon the status of the signature checkbox
-HOOKPROTONHNO(CO_SwitchSignatFunc, void, int *arg)
-{
-  BOOL enable = *arg;
-
-  set(G->CO->GUI.CY_SIGNAT,   MUIA_Disabled, enable);
-  set(G->CO->GUI.BT_SIGEDIT,  MUIA_Disabled, enable);
-  set(G->CO->GUI.TE_SIGEDIT,  MUIA_Disabled, enable);
-  set(G->CO->GUI.BT_INSTAG,   MUIA_Disabled, enable);
-  set(G->CO->GUI.BT_INSENV,   MUIA_Disabled, enable);
-}
-MakeHook(CO_SwitchSignatHook, CO_SwitchSignatFunc);
-
-///
 /// CO_OpenConfig
 //  Opens a different configuration file
 HOOKPROTONHNONP(CO_OpenConfig, void)
@@ -2541,6 +2763,10 @@ HOOKPROTONHNO(CO_CloseFunc, void, int *arg)
     free(CE);
     CE = NULL;
 
+    // free the smtpServerArray
+    FreeStrArray(G->CO->smtpServerArray);
+    G->CO->smtpServerArray = NULL;
+
     // Dipose&Close the config window stuff
     DisposeModulePush(&G->CO);
 
@@ -2562,6 +2788,8 @@ MakeStaticHook(CO_CloseHook, CO_CloseFunc);
 //  Opens configuration window
 HOOKPROTONHNONP(CO_OpenFunc, void)
 {
+  ENTER();
+
   BusyText(tr(MSG_BUSY_OPENINGCONFIG), "");
 
   // check if there isn't already a configuration
@@ -2605,6 +2833,8 @@ HOOKPROTONHNONP(CO_OpenFunc, void)
   }
 
   BusyEnd();
+
+  LEAVE();
 }
 MakeHook(CO_OpenHook,CO_OpenFunc);
 
@@ -2624,7 +2854,8 @@ static struct CO_ClassData *CO_New(void)
 
   if((data = calloc(1, sizeof(struct CO_ClassData))) != NULL)
   {
-    static struct PageList page[cp_Max], *pages[cp_Max + 1];
+    static struct PageList page[cp_Max];
+    static struct PageList *pages[cp_Max + 1];
     int i;
 
     for(i = cp_FirstSteps; i < cp_Max; i++)

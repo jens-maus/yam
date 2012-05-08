@@ -60,6 +60,7 @@
 #include "ParseEmail.h"
 #include "Requesters.h"
 #include "Timer.h"
+#include "UserIdentity.h"
 
 #include "mui/AttachmentGroup.h"
 #include "mui/HeaderList.h"
@@ -1103,6 +1104,8 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
   struct Person *from = &rmData->mail->From;
   struct ABEntry *ab = NULL;
   struct ABEntry abtmpl;
+  struct Node *curNode;
+  BOOL foundIdentity = FALSE;
   BOOL dispheader;
   int hits;
 
@@ -1157,15 +1160,31 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
   // X-SenderInfo information from the mail into a temporary ABEntry
   ExtractSenderInfo(rmData->mail, &abtmpl);
 
-  if(stricmp(from->Address, C->EmailAddress) == 0 || stricmp(from->RealName, C->RealName) == 0)
+  // we have to search through our identities and
+  // if if and email or realname matches the from address
+  // and if so we simply reuse that information
+  IterateList(&C->userIdentityList, curNode)
   {
-    if(ab == NULL)
+    struct UserIdentityNode *uin = (struct UserIdentityNode *)curNode;
+
+    if(stricmp(from->Address, uin->address) == 0 ||
+       stricmp(from->RealName, uin->realname) == 0)
     {
-      ab = &abtmpl;
-      *ab->Photo = '\0';
+      // if there is no addressbook entry for the user
+      // we use the template one but erase the photo link
+      if(ab == NULL)
+      {
+        ab = &abtmpl;
+        *ab->Photo = '\0';
+      }
+
+      foundIdentity = TRUE;
+
+      break;
     }
   }
-  else
+
+  if(foundIdentity == FALSE)
   {
     if(ab != NULL)
       RE_UpdateSenderInfo(ab, &abtmpl);

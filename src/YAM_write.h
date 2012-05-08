@@ -41,6 +41,7 @@ struct DateStamp;
 struct Mail;
 struct MailList;
 struct ReadMailData;
+struct UserIdentityNode;
 
 // enumeration with security levels a mail can
 // get so that it will be signed/encrypted and so on.
@@ -140,28 +141,27 @@ struct WritePart
 
 struct Compose
 {
-  FILE *             FH;
-  char *             MailTo;
-  char *             MailCC;
-  char *             MailBCC;
-  char *             From;
-  char *             ReplyTo;
-  char *             RealName;
-  const char *       Subject;
-  char *             ExtHeader;
-  char *             inReplyToMsgID; // ptr to In-Reply-To MsgIDs
-  char *             references;     // ptr to References MsgIDs
-  struct WritePart * FirstPart;
-  struct Mail *      refMail;        // ptr to the original mail we composing a new one from.
-  enum NewMailMode   Mode;           // the mode this mail was composed of
-  int                Importance;
-  int                Signature;
-  BOOL               RequestMDN;     // should a MDN be requested
-  BOOL               GenerateMDN;    // should a MDN report be generated?
-  BOOL               DelSend;
-  BOOL               UserInfo;
-  enum Security      Security;
-  enum Security      OldSecurity;
+  FILE *                    FH;             // ptr to file handle of mail
+  char *                    MailTo;         // array of To: addresses
+  char *                    MailCC;         // array of CC: addresses
+  char *                    MailBCC;        // array of BCC: addresses
+  struct UserIdentityNode * Identity;       // ptr to the user identity which should be used for sending the mail
+  char *                    ReplyTo;        // array of ReplyTo: addresses
+  const char *              Subject;        // subject of mail to compose
+  char *                    ExtHeader;      // some extra headers to add before sending
+  char *                    inReplyToMsgID; // ptr to In-Reply-To MsgIDs
+  char *                    references;     // ptr to References MsgIDs
+  struct WritePart *        FirstPart;      // ptr to first MIME part of mail
+  struct Mail *             refMail;        // ptr to the original mail we composing a new one from.
+  enum NewMailMode          Mode;           // the mode this mail was composed of
+  int                       Importance;     // the importance level of the mail (low/normal/high)
+  int                       Signature;      // the signature that is used when composing the mail
+  BOOL                      RequestMDN;     // should a MDN be requested?
+  BOOL                      GenerateMDN;    // should a MDN report be generated?
+  BOOL                      DelSend;        // should the mail be deleted after having sent it?
+  BOOL                      UserInfo;       // should personal user info be added to the mail?
+  enum Security             Security;       // (PGP) security level
+  enum Security             OldSecurity;
 };
 
 // Soft-style modes for text
@@ -183,7 +183,6 @@ void WriteContentTypeAndEncoding(FILE *fh, const struct WritePart *part);
 const char *EncodingName(const enum Encoding encoding);
 BOOL EncodePart(FILE *ofh, const struct WritePart *part);
 
-struct WriteMailData *CreateWriteWindow(const enum NewMailMode mailMode, const BOOL quietMode);
 struct WriteMailData *NewWriteMailWindow(struct Mail *mail, const int flags);
 struct WriteMailData *NewBounceMailWindow(struct Mail *mail, const int flags);
 struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags);

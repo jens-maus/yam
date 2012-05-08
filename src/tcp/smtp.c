@@ -46,6 +46,7 @@
 #include "MethodStack.h"
 #include "MUIObjects.h"
 #include "Threads.h"
+#include "UserIdentity.h"
 
 #include "mime/base64.h"
 #include "mime/md5.h"
@@ -1054,12 +1055,15 @@ static int SendMessage(struct TransferContext *tc, struct Mail *mail)
   if((buf = malloc(buflen)) != NULL &&
      (fh = fopen(mailfile, "r")) != NULL)
   {
+    struct UserIdentityNode *uin = GetUserIdentity(&C->userIdentityList, 0);
+
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
     // now we put together our parameters for our MAIL command
     // which in fact may contain serveral parameters as well according
     // to ESMTP extensions.
-    snprintf(buf, buflen, "FROM:<%s>", C->EmailAddress);
+    #warning multiple identity support missing here
+    snprintf(buf, buflen, "FROM:<%s>", uin->address);
 
     // in case the server supports the ESMTP SIZE extension lets add the
     // size

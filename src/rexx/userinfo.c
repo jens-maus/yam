@@ -37,6 +37,7 @@
 
 #include "FolderList.h"
 #include "Rexx.h"
+#include "UserIdentity.h"
 
 #include "Debug.h"
 
@@ -81,29 +82,38 @@ void rx_userinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
     case RXIF_ACTION:
     {
       struct User *u = US_GetCurrentUser();
-      int numfolders;
-      struct FolderNode *fnode;
+      struct UserIdentityNode *uin = GetUserIdentity(&C->userIdentityList, 0);
 
-      results->username = u->Name;
-      results->email = C->EmailAddress;
-      results->realname = C->RealName;
-      results->config = G->CO_PrefsFile;
-      results->maildir = G->MA_MailDir;
-
-      // count the real folders now
-      numfolders = 0;
-      LockFolderListShared(G->folders);
-      ForEachFolderNode(G->folders, fnode)
+      if(u != NULL && uin != NULL)
       {
-        struct Folder *folder = fnode->folder;
+        int numfolders;
+        struct FolderNode *fnode;
 
-        if(!isGroupFolder(folder))
-          numfolders++;
+        #warning multiple identity support missing
+
+        results->username = u->Name;
+        results->email = uin->address;
+        results->realname = uin->realname;
+        results->config = G->CO_PrefsFile;
+        results->maildir = G->MA_MailDir;
+
+        // count the real folders now
+        numfolders = 0;
+        LockFolderListShared(G->folders);
+        ForEachFolderNode(G->folders, fnode)
+        {
+          struct Folder *folder = fnode->folder;
+
+          if(!isGroupFolder(folder))
+            numfolders++;
+        }
+        UnlockFolderList(G->folders);
+
+        optional->folders = numfolders;
+        results->folders = &optional->folders;
       }
-      UnlockFolderList(G->folders);
-
-      optional->folders = numfolders;
-      results->folders = &optional->folders;
+      else
+        params->rc = RETURN_ERROR;
     }
     break;
 

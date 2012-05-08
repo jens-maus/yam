@@ -7250,3 +7250,6 @@ MSG_ER_CANNOT_CREATE_FOLDER (2308//)
 Failed to create directory '%s' (%s).
 ; PATH, ERROR
 ;
+MSG_CO_IdentityActive (2309//)
+_Active
+;

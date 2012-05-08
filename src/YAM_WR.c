@@ -67,6 +67,7 @@
 #include "MailServers.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
+#include "UserIdentity.h"
 
 #include "Debug.h"
 
@@ -104,16 +105,12 @@ static char *GetDateTime(void)
 ///
 /// NewMessageID
 //  Creates a unique id, used for Message-ID header field
-static void NewMessageID(char *idbuf, const size_t idbufSize)
+static void NewMessageID(char *idbuf, const size_t idbufSize, const struct MailServerNode *msn)
 {
   unsigned int seconds;
   struct DateStamp ds;
-  struct MailServerNode *msn;
 
   ENTER();
-
-#warning FIXME: support for multiple SMTP servers missing
-  msn = GetMailServer(&C->mailServerList, MST_SMTP, 0);
 
   // lets calculate the seconds
   DateStamp(&ds);
@@ -506,18 +503,14 @@ void WriteContentTypeAndEncoding(FILE *fh, const struct WritePart *part)
 ///
 /// WR_WriteUserInfo
 //  Outputs X-SenderInfo header line
-static void WR_WriteUserInfo(FILE *fh, const char *from)
+static void WR_WriteUserInfo(FILE *fh, struct Compose *comp)
 {
   struct ABEntry *ab = NULL;
-  struct Person pers = { "", "" };
 
   ENTER();
 
   // Now we extract the real email from the address string
-  if(from[0] != '\0')
-    ExtractAddress(from, &pers);
-
-  if(pers.Address[0] != '\0' && AB_SearchEntry(pers.Address, ASM_ADDRESS|ASM_USER, &ab) > 0)
+  if(AB_SearchEntry(comp->Identity->address, ASM_ADDRESS|ASM_USER, &ab) > 0)
   {
     if(ab->Type != AET_USER)
       ab = NULL;
@@ -525,13 +518,13 @@ static void WR_WriteUserInfo(FILE *fh, const char *from)
       ab = NULL;
   }
 
-  if(ab != NULL || C->MyPictureURL[0] != '\0')
+  if(ab != NULL || comp->Identity->photoURL[0] != '\0')
   {
     fputs("X-SenderInfo: 1", fh);
-    if(C->MyPictureURL[0] != '\0')
+    if(comp->Identity->photoURL[0] != '\0')
     {
       fputc(';', fh);
-      HeaderFputs(fh, C->MyPictureURL, "picture", 0);
+      HeaderFputs(fh, comp->Identity->photoURL, "picture", 0);
     }
 
     if(ab != NULL)
@@ -744,11 +737,11 @@ static BOOL WR_Bounce(FILE *fh, const struct Compose *comp)
       // now we add the "Resent-#?" type headers which are defined
       // by RFC2822 section 3.6.6. The RFC defined that these headers
       // should be added to the top of a message
-      EmitHeader(fh, "Resent-From", BuildAddress(address, sizeof(address), C->EmailAddress, C->RealName));
+      EmitHeader(fh, "Resent-From", BuildAddress(address, sizeof(address), comp->Identity->address, comp->Identity->realname));
       EmitHeader(fh, "Resent-Date", GetDateTime());
       if(comp->MailTo != NULL)
         EmitRcptHeader(fh, "Resent-To", comp->MailTo);
-      NewMessageID(msgID, sizeof(msgID));
+      NewMessageID(msgID, sizeof(msgID), comp->Identity->mailServer);
       EmitHeader(fh, "Resent-Message-ID", msgID);
 
       // now we copy the rest of the message
@@ -952,11 +945,13 @@ static BOOL WR_ComposePGP(FILE *fh, const struct Compose *comp, char *boundary)
     if(comp->MailBCC != NULL)
       ids = WR_GetPGPIds(comp->MailBCC, ids);
 
-    if(C->EncryptToSelf == TRUE && C->MyPGPID[0] != '\0')
+    if(comp->Identity->pgpSelfEncrypt == TRUE &&
+       comp->Identity->pgpKeyID[0] != '\0')
     {
       if(G->PGPVersion == 5)
         ids = StrBufCat(ids, "-r ");
-      ids = StrBufCat(ids, C->MyPGPID);
+
+      ids = StrBufCat(ids, comp->Identity->pgpKeyID);
     }
   }
 
@@ -1017,10 +1012,11 @@ static BOOL WR_ComposePGP(FILE *fh, const struct Compose *comp, char *boundary)
                        boundary);
 
            snprintf(options, sizeof(options), (G->PGPVersion == 5) ? "-ab %s +batchmode=1 +force" : "-sab %s +bat +f", tf2->Filename);
-           if(C->MyPGPID[0] != '\0')
+
+           if(comp->Identity->pgpKeyID[0] != '\0')
            {
              strlcat(options, " -u ", sizeof(options));
-             strlcat(options, C->MyPGPID, sizeof(options));
+             strlcat(options, comp->Identity->pgpKeyID, sizeof(options));
            }
 
            if(PGPCommand((G->PGPVersion == 5) ? "pgps" : "pgp", options, 0) == 0)
@@ -1078,10 +1074,10 @@ static BOOL WR_ComposePGP(FILE *fh, const struct Compose *comp, char *boundary)
 
            snprintf(options, sizeof(options), (G->PGPVersion == 5) ? "-a %s %s +batchmode=1 +force -s" : "-sea %s %s +bat +f", tf2->Filename, ids);
 
-           if(C->MyPGPID[0] != '\0')
+           if(comp->Identity->pgpKeyID[0] != '\0')
            {
              strlcat(options, " -u ", sizeof(options));
-             strlcat(options, C->MyPGPID, sizeof(options));
+             strlcat(options, comp->Identity->pgpKeyID, sizeof(options));
            }
 
            if(PGPCommand((G->PGPVersion == 5) ? "pgpe" : "pgp", options, 0) == 0)
@@ -1173,6 +1169,7 @@ BOOL WriteOutMessage(struct Compose *comp)
   struct WritePart *firstpart = comp->FirstPart;
   char buf[SIZE_DEFAULT];
   char msgID[SIZE_MSGID];
+  char address[SIZE_LARGE];
 
   ENTER();
 
@@ -1280,14 +1277,7 @@ BOOL WriteOutMessage(struct Compose *comp)
   if(buf[0] != '\0')
     EmitHeader(fh, "X-YAM-Options", &buf[1]);
 
-  if(comp->From != NULL)
-    EmitRcptHeader(fh, "From", comp->From);
-  else
-  {
-    char address[SIZE_LARGE];
-
-    EmitRcptHeader(fh, "From", BuildAddress(address, sizeof(address), C->EmailAddress, C->RealName));
-  }
+  EmitRcptHeader(fh, "From", BuildAddress(address, sizeof(address), comp->Identity->address, comp->Identity->realname));
 
   if(comp->ReplyTo != NULL)
     EmitRcptHeader(fh, "Reply-To", comp->ReplyTo);
@@ -1300,7 +1290,7 @@ BOOL WriteOutMessage(struct Compose *comp)
   EmitHeader(fh, "Date", GetDateTime());
 
   // output the Message-ID, In-Reply-To and References message headers
-  NewMessageID(msgID, sizeof(msgID));
+  NewMessageID(msgID, sizeof(msgID), comp->Identity->mailServer);
   EmitHeader(fh, "Message-ID", msgID);
   if(comp->inReplyToMsgID != NULL)
     EmitHeader(fh, "In-Reply-To", comp->inReplyToMsgID);
@@ -1311,42 +1301,41 @@ BOOL WriteOutMessage(struct Compose *comp)
   {
     if(comp->ReplyTo != NULL)
       EmitRcptHeader(fh, "Disposition-Notification-To", comp->ReplyTo);
-    else if(comp->From != NULL)
-      EmitRcptHeader(fh, "Disposition-Notification-To", comp->From);
     else
-      EmitRcptHeader(fh, "Disposition-Notification-To", C->EmailAddress);
+      EmitRcptHeader(fh, "Disposition-Notification-To", comp->Identity->address);
   }
+
   if(comp->Importance != 0)
     EmitHeader(fh, "Importance", comp->Importance == 1 ? "High" : "Low");
 
   fprintf(fh, "User-Agent: %s\n", yamuseragent);
 
   if(comp->UserInfo == TRUE)
-    WR_WriteUserInfo(fh, comp->From);
+    WR_WriteUserInfo(fh, comp);
 
   // if the PGP key ID is set we go and output the OpenPGP header
   // field which is defined at http://josefsson.org/openpgp-header/
-  if(C->MyPGPID[0] != '\0')
+  if(comp->Identity->pgpKeyID[0] != '\0')
   {
-    char *p = strchr(C->MyPGPID, 'x');
+    char *p = strchr(comp->Identity->pgpKeyID, 'x');
     if(p == NULL)
-      p = C->MyPGPID;
+      p = comp->Identity->pgpKeyID;
     else
       p++;
 
     fprintf(fh, "OpenPGP: id=%s", p);
 
-    if(C->PGPURL[0] != '\0')
+    if(comp->Identity->pgpKeyURL[0] != '\0')
     {
       fputc(';', fh);
-      HeaderFputs(fh, C->PGPURL, "url", 0);
+      HeaderFputs(fh, comp->Identity->pgpKeyURL, "url", 0);
     }
 
     fputc('\n', fh);
   }
 
-  if(C->Organization[0] != '\0')
-    EmitHeader(fh, "Organization", C->Organization);
+  if(comp->Identity->organization[0] != '\0')
+    EmitHeader(fh, "Organization", comp->Identity->organization);
 
   if(comp->Subject[0] != '\0')
     EmitHeader(fh, "Subject", comp->Subject);
@@ -1427,6 +1416,8 @@ static char *AppendRcpt(char *sbuf, const struct Person *pe, const BOOL excludem
       {
         ins = BuildAddress(address, sizeof(address), pe->Address, pe->RealName);
       }
+      #warning C->EmailAdress usage still here
+/*
       else
       {
         char addr[SIZE_ADDRESS];
@@ -1435,12 +1426,14 @@ static char *AppendRcpt(char *sbuf, const struct Person *pe, const BOOL excludem
         snprintf(addr, sizeof(addr), "%s%s", pe->Address, p ? p : "");
         ins = BuildAddress(address, sizeof(address), addr, pe->RealName);
       }
+*/
 
       if(ins != NULL)
       {
         // exclude the given person if it is ourself
-        if(excludeme == TRUE && stricmp(pe->Address, C->EmailAddress) == 0)
-          skip = TRUE;
+        #warning C->EmailAdress usage still here
+        //if(excludeme == TRUE && stricmp(pe->Address, C->EmailAddress) == 0)
+        //  skip = TRUE;
 
         // if the string already contains this person then skip it
         if(strcasestr(sbuf, ins) != NULL)
@@ -1736,7 +1729,7 @@ static void SetupExpandTextData(struct ExpandTextData *etd, const struct Mail *m
 // Function that creates a new WriteWindow object and returns
 // the referencing WriteMailData structure which was created
 // during that process - or NULL if an error occurred.
-struct WriteMailData *CreateWriteWindow(const enum NewMailMode mailMode, const BOOL quietMode)
+static struct WriteMailData *CreateWriteWindow(const enum NewMailMode mailMode, const BOOL quietMode)
 {
   Object *newWriteWindow;
 
@@ -1865,8 +1858,9 @@ struct WriteMailData *NewWriteMailWindow(struct Mail *mail, const int flags)
         if(folder->MLAddress[0] != '\0')
           set(wmData->window, MUIA_WriteWindow_To, folder->MLAddress);
 
-        if(folder->MLFromAddress[0] != '\0')
-          set(wmData->window, MUIA_WriteWindow_From, folder->MLFromAddress);
+        #warning MLSupport should be made identity aware!!
+        //if(folder->MLFromAddress[0] != '\0')
+        //  set(wmData->window, MUIA_WriteWindow_From, folder->MLFromAddress);
 
         if(folder->MLReplyToAddress[0] != '\0')
           set(wmData->window, MUIA_WriteWindow_ReplyTo, folder->MLReplyToAddress);
@@ -2012,11 +2006,12 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
             // address of the mailing list
             if(wmData->mode == NMM_EDITASNEW && folder->MLSupport == TRUE)
             {
-              if(folder->MLFromAddress[0] != '\0')
-              {
-                set(wmData->window, MUIA_WriteWindow_From, folder->MLFromAddress);
-                reuseFromAddress = FALSE;
-              }
+              #warning MLSupport should be made identity aware
+              //if(folder->MLFromAddress[0] != '\0')
+              //{
+              //  set(wmData->window, MUIA_WriteWindow_From, folder->MLFromAddress);
+              //  reuseFromAddress = FALSE;
+              //}
 
               if(folder->MLReplyToAddress[0] != '\0')
               {
@@ -2032,7 +2027,8 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
               for(i=0; i < email->NoSFrom; i++)
                 sbuf = AppendRcpt(sbuf, &email->SFrom[i], FALSE);
 
-              set(wmData->window, MUIA_WriteWindow_From, sbuf);
+              #warning MLSupport should be made identity aware
+              //set(wmData->window, MUIA_WriteWindow_From, sbuf);
             }
 
             if(reuseReplyToAddress == TRUE)
@@ -2792,7 +2788,10 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
         // extract the domain name from the To address or respective
         // the default To: mail address
         if((domain = strchr(pe.Address, '@')) == NULL)
-          domain = strchr(C->EmailAddress, '@');
+        {
+          #warning C->EmailAdress usage still here
+          //domain = strchr(C->EmailAddress, '@');
+        }
 
         if(C->AltReplyPattern[0] != '\0' && domain != NULL && MatchNoCase(domain, C->AltReplyPattern))
           altpat = TRUE;
@@ -2822,7 +2821,8 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
 
         // if the user wants to quote the mail text of the original mail,
         // we process it right now.
-        if(C->QuoteMessage == TRUE && !hasNoQuoteFlag(flags))
+        #warning C->QuoteMessage usage still here
+        if(/*C->QuoteMessage == TRUE &&*/ !hasNoQuoteFlag(flags))
         {
           struct ReadMailData *rmData;
 
@@ -2884,8 +2884,9 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
 
       // If this is a reply to a mail belonging to a mailing list,
       // set the "From:" and "Reply-To:" addresses accordingly */
-      if(rfrom != NULL)
-        set(wmData->window, MUIA_WriteWindow_From, rfrom);
+      #warning MLSupport should be made identity aware
+      //if(rfrom != NULL)
+      //  set(wmData->window, MUIA_WriteWindow_From, rfrom);
 
       if(rrepto != NULL)
         set(wmData->window, MUIA_WriteWindow_ReplyTo, rrepto);

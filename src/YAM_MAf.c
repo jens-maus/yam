@@ -1438,8 +1438,8 @@ static char **SplitAddressLine(const char *line, ULONG *numParts)
 
     // Get some memory for the part pointers. We allocate one more than we
     // counted before, because there is one more recipient than the number
-    // of commas.
-    if((parts = calloc(numCommas+1, sizeof(char *))) != NULL)
+    // of commas. And even one more to NUL terminate the char** array
+    if((parts = calloc(numCommas+2, sizeof(char *))) != NULL)
     {
       char *ptr = lineCopy;
       ULONG cnt = 0;
@@ -1486,26 +1486,6 @@ static char **SplitAddressLine(const char *line, ULONG *numParts)
 
   RETURN(parts);
   return parts;
-}
-
-///
-/// FreeStrArray
-// free a NULL terminated array of strings
-static void FreeStrArray(char **array, ULONG numEntries)
-{
-  ULONG i;
-
-  ENTER();
-
-  if(array != NULL)
-  {
-    for(i=0; i < numEntries; i++)
-      free(array[i]);
-
-    free(array);
-  }
-
-  LEAVE();
 }
 
 ///
@@ -1635,7 +1615,7 @@ static char *ValidateAddressLine(const char *line)
     }
 
     // free the array of parts
-    FreeStrArray(parts, numParts);
+    FreeStrArray(parts);
   }
 
   RETURN(validLine);
@@ -2184,7 +2164,9 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
 
   mail = &email->Mail;
   strlcpy(mail->MailFile, file, sizeof(mail->MailFile));
-  email->DelSend = !C->SaveSent;
+  #warning SaveSent not replaced yet by identity option
+  //email->DelSend = !C->SaveSent;
+
   GetMailFile(fullfile, sizeof(fullfile), folder, mail);
   if((fh = fopen(fullfile, "r")) != NULL)
   {

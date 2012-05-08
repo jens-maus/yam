@@ -5,6 +5,23 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-05-08 Jens Langner <Jens.Langner@light-speed.de>
+
+  * misc: second large change in trying to get the multiple identity feature
+    implemented in YAM. While loading/saving/managing multiple identities
+    works now as expected, sending/writing emails with another identity
+    still is NOT implemented. There are now a dozen #warning added in the
+    YAM code so that we can address the rest of the missing functionality
+    in a last bunch which will hopefully finalize the multiple identity
+    support. Please also note that large portions of the configuration
+    loading and saving routines has changed. Now, older YAM versions
+    will get problems when reading config files from this version on. Thus,
+    we need to add some kind of versioning in the Loading routines that
+    will prevent/warn from loading a config file with a higher version.
+    To make that more clear the YCO config version had been bumped to
+    YCO4 now. Unfortunately older YAM versions will still load them without
+    any warning.
+
 2012-05-06 Thore Böckelmann <tboeckel@gmx.de>
 
   * Timer.c, mui/ReadMailGroup.c: a just read mail will only be marked as such,

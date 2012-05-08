@@ -34,6 +34,7 @@
 struct Config;
 struct MailServerNode;
 struct Folder;
+struct ExtendedMail;
 
 // user identity data structure
 struct UserIdentityNode
@@ -54,7 +55,8 @@ struct UserIdentityNode
   char extraHeaders[SIZE_LARGE];     // user definable extra headers
   char photoURL[SIZE_URL];           // user definable URL to photo image
 
-  struct Folder *sentFolder;         // link to folder to put sent mail to
+  char sentFolder[SIZE_NAME];        // folder name for storing sent mail to
+  BOOL saveSentMail;                 // store sent mail to the folder yes/no
   BOOL quoteMails;                   // TRUE if user has quoted text enabled when replying/forwarding
   int quotePosition;                 // position where the quote should appear
   int signaturePosition;             // where should the signature appear
@@ -76,6 +78,7 @@ struct UserIdentityNode
 struct UserIdentityNode *CreateNewUserIdentity(const struct Config *co);
 void FreeUserIdentityList(struct MinList *userIdentityList);
 BOOL CompareUserIdentityLists(const struct MinList *msl1, const struct MinList *msl2);
-struct UserIdentityNode *GetUserIdentity(struct MinList *userIdentityList, const unsigned int num);
+struct UserIdentityNode *GetUserIdentity(const struct MinList *userIdentityList, const unsigned int num);
+struct UserIdentityNode *WhichUserIdentity(const struct MinList *userIdentityList, const struct ExtendedMail *email);
 
 #endif // USERIDENTITY_H
