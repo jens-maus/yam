@@ -4466,7 +4466,12 @@ DECLARE(UpdateIdentityList)
   // first we find out how many entries the user identity list
   // has
   IterateList(&C->userIdentityList, curNode)
-    numIdentities++;
+  {
+    struct UserIdentityNode *uin = (struct UserIdentityNode *)curNode;
+
+    if(uin->active)
+      numIdentities++;
+  }
 
   // allocate enough space + 1 for NUL termination
   if((data->identities = calloc(numIdentities+1, sizeof(char *))) != NULL)
@@ -4478,13 +4483,17 @@ DECLARE(UpdateIdentityList)
     IterateList(&C->userIdentityList, curNode)
     {
       struct UserIdentityNode *uin = (struct UserIdentityNode *)curNode;
-      char address[SIZE_LARGE];
 
-      // construct the new string via sprintf() so that the necessary
-      // memory is automatically allocated.
-      asprintf(&data->identities[i], MUIX_L "%s " MUIX_I "(%s)" MUIX_N, BuildAddress(address, sizeof(address), uin->address, uin->realname), uin->description);
+      if(uin->active)
+      {
+        char address[SIZE_LARGE];
 
-      i++;
+        // construct the new string via sprintf() so that the necessary
+        // memory is automatically allocated.
+        asprintf(&data->identities[i], MUIX_L "%s " MUIX_I "(%s)" MUIX_N, BuildAddress(address, sizeof(address), uin->address, uin->realname), uin->description);
+
+        i++;
+      }
     }
 
     set(data->CY_FROM, MUIA_Cycle_Entries, data->identities);

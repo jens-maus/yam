@@ -7,6 +7,8 @@ $URL$
 
 2012-05-08 Jens Langner <Jens.Langner@light-speed.de>
 
+  * mui/WriteWindow.c: only user identities marked as "active" will now
+    be added in the cycle gadget of the write window.
   * mui/WriteWindow.c: the text in the identity cycle gadget will now be
     left aligned and the description added in brakets.
   * misc: second large change in trying to get the multiple identity feature
