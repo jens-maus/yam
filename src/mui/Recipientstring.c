@@ -57,7 +57,7 @@
 struct Data
 {
   struct MUI_EventHandlerNode ehnode;
-  Object *Matchwindow;                
+  Object *Matchwindow;
   Object *ReplyTo;                    // used when resolving a list address
   STRPTR CurrentRecipient;
   ULONG bufferPos;
@@ -943,7 +943,7 @@ DECLARE(Resolve) // ULONG flags
 
           if(uin == NULL)
             uin = GetUserIdentity(&C->userIdentityList, 0, TRUE);
-            
+
           DoMethod(obj, MUIM_BetterString_Insert, strchr(uin->address, '@')+1, MUIV_BetterString_Insert_EndOfString);
         }
       }
@@ -1051,7 +1051,7 @@ DECLARE(Resolve) // ULONG flags
 
             if(uin == NULL)
               uin = GetUserIdentity(&C->userIdentityList, 0, TRUE);
-            
+
             DoMethod(obj, MUIM_BetterString_Insert, strchr(uin->address, '@')+1, MUIV_BetterString_Insert_EndOfString);
           }
         }
