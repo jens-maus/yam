@@ -1105,7 +1105,7 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
   struct ABEntry *ab = NULL;
   struct ABEntry abtmpl;
   struct Node *curNode;
-  BOOL foundIdentity = FALSE;
+  BOOL foundIdentity;
   BOOL dispheader;
   int hits;
 
@@ -1161,26 +1161,20 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
   // we have to search through our identities and
   // if if and email or realname matches the from address
   // and if so we simply reuse that information
-  IterateList(&C->userIdentityList, curNode)
+  if(FindUserIdentityByPerson(&C->userIdentityList, from) != NULL)
   {
-    struct UserIdentityNode *uin = (struct UserIdentityNode *)curNode;
-
-    if(stricmp(from->Address, uin->address) == 0 ||
-       stricmp(from->RealName, uin->realname) == 0)
+    // if there is no addressbook entry for the user
+    // we use the template one but erase the photo link
+    if(ab == NULL)
     {
-      // if there is no addressbook entry for the user
-      // we use the template one but erase the photo link
-      if(ab == NULL)
-      {
-        ab = &abtmpl;
-        *ab->Photo = '\0';
-      }
-
-      foundIdentity = TRUE;
-
-      break;
+      ab = &abtmpl;
+      *ab->Photo = '\0';
     }
+
+    foundIdentity = TRUE;
   }
+  else
+    foundIdentity = FALSE;
 
   if(foundIdentity == FALSE)
   {

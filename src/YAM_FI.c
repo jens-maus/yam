@@ -664,7 +664,7 @@ BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode,
       if((timeStr = strchr(match, ' ')) != NULL)
         timeStr++;
       else
-      	timeStr = (char *)"00:00:00";
+        timeStr = (char *)"00:00:00";
 
       search->Fast = FS_DATE;
       search->dateTime.dat_Format = FORMAT_DEF;
@@ -2429,9 +2429,10 @@ struct RuleNode *CreateNewRule(struct FilterNode *filter, const BOOL dosPattern)
 
   ENTER();
 
-  if((rule = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*rule),
-  	                                       ASONODE_Min, TRUE,
-  	                                       TAG_DONE)) != NULL)
+  if((rule = AllocSysObjectTags(ASOT_NODE,
+    ASONODE_Size, sizeof(*rule),
+    ASONODE_Min, TRUE,
+    TAG_DONE)) != NULL)
   {
     // set the default search mode (plain string search or DOS patterns)
     rule->search = NULL;

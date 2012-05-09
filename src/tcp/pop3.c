@@ -1504,12 +1504,12 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
                           if(ThreadWasAborted() == FALSE)
                           {
                             // scan the list for the first mail to be transferred
-							tc->firstToPreselect = -1;
-							// first try to find a to be downloaded mail that exceeds
-							// the automatic download size limitation
-							ScanMailTransferList(tc->transferList, TRF_TRANSFER|TRF_SIZE_EXCEEDED, TRUE, &tc->firstToPreselect);
-							// then fall back to the first mail to be preselected
-							if(tc->firstToPreselect < 0)
+                            tc->firstToPreselect = -1;
+                            // first try to find a to be downloaded mail that exceeds
+                            // the automatic download size limitation
+                            ScanMailTransferList(tc->transferList, TRF_TRANSFER|TRF_SIZE_EXCEEDED, TRUE, &tc->firstToPreselect);
+                            // then fall back to the first mail to be preselected
+                            if(tc->firstToPreselect < 0)
                               ScanMailTransferList(tc->transferList, TRF_TRANSFER, TRUE, &tc->firstToPreselect);
 
                             if((mustWait = GetAllMessageDetails(tc)) != 0)

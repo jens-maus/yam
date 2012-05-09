@@ -70,6 +70,7 @@
 #include "UserIdentity.h"
 
 #include "mime/uucode.h"
+#include "mui/IdentityChooser.h"
 #include "mui/MailTextEdit.h"
 #include "mui/ReadMailGroup.h"
 #include "mui/ReadWindow.h"
@@ -145,8 +146,6 @@ struct Data
   char cursorPos[SIZE_SMALL];
   char windowTitle[SIZE_SUBJECT+1]; // string for the title text of the window
   char windowNumberStr[SIZE_SMALL]; // the unique window number as a string
-
-  char **identities; // titles for the different identities that can be selected
 };
 */
 
@@ -1249,7 +1248,9 @@ OVERLOAD(OM_NEW)
 
                 Child, ColGroup(2),
                   Child, Label(tr(MSG_WR_From)),
-                  Child, data->CY_FROM = MakeCycle(NULL, tr(MSG_WR_From)),
+                  Child, data->CY_FROM = IdentityChooserObject,
+                    MUIA_ControlChar, ShortCut(tr(MSG_WR_From)),
+                    End,
 
                   Child, Label(tr(MSG_WR_To)),
                   Child, MakeAddressField(&data->ST_TO, tr(MSG_WR_To), MSG_HELP_WR_ST_TO, ABM_TO, data->windowNumber, AFF_ALLOW_MULTI|AFF_EXTERNAL_SHORTCUTS),
@@ -1670,11 +1671,7 @@ OVERLOAD(OM_NEW)
         DoMethod(obj,                 MUIM_Notify, MUIA_Window_MenuAction, WMEN_SECUR4,    data->RA_SECURITY,       3, MUIM_Set,      MUIA_Radio_Active, 4);
 
         // set notify for identity cycle gadget
-        DoMethod(data->CY_FROM, MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, obj, 2, MUIM_WriteWindow_IdentityChanged, MUIV_TriggerValue);
-
-        // set some default values for this newly created
-        // write window
-        DoMethod(obj, MUIM_WriteWindow_UpdateIdentityList);
+        DoMethod(data->CY_FROM, MUIM_Notify, MUIA_IdentityChooser_Identity, MUIV_EveryTime, obj, 2, METHOD(IdentityChanged), MUIV_TriggerValue);
       }
 
       // set some help text
@@ -1686,14 +1683,14 @@ OVERLOAD(OM_NEW)
       SetHelp(data->PO_CHARSET,   MSG_HELP_WR_PO_CHARSET);
 
       // set main window button notifies
-      DoMethod(data->BT_HOLD,       MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_WriteWindow_ComposeMail, WRITE_HOLD);
-      DoMethod(data->BT_QUEUE,      MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_WriteWindow_ComposeMail, WRITE_QUEUE);
-      DoMethod(data->BT_SEND,       MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_WriteWindow_ComposeMail, WRITE_SEND);
-      DoMethod(data->BT_CANCEL,     MUIM_Notify, MUIA_Pressed, FALSE, obj, 1, MUIM_WriteWindow_CancelAction);
+      DoMethod(data->BT_HOLD,       MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(ComposeMail), WRITE_HOLD);
+      DoMethod(data->BT_QUEUE,      MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(ComposeMail), WRITE_QUEUE);
+      DoMethod(data->BT_SEND,       MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(ComposeMail), WRITE_SEND);
+      DoMethod(data->BT_CANCEL,     MUIM_Notify, MUIA_Pressed, FALSE, obj, 1, METHOD(CancelAction));
 
       // connect the closerequest attribute to the cancelaction method so that
       // users might get informed of an eventually data loss
-      DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, obj, 1, MUIM_WriteWindow_CancelAction);
+      DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, obj, 1, METHOD(CancelAction));
 
       // prepare the temporary filename of that new write window
       snprintf(filename, sizeof(filename), "YAMw%08x-%d.tmp", (unsigned int)FindTask(NULL), data->windowNumber);
@@ -1780,10 +1777,6 @@ OVERLOAD(OM_DISPOSE)
   ULONG result;
 
   ENTER();
-
-  // free the identity str array
-  if(data->identities != NULL)
-    FreeStrArray(data->identities);
 
   if(data->wmData->mode != NMM_BOUNCE)
   {
@@ -1891,11 +1884,7 @@ OVERLOAD(OM_SET)
 
       case ATTR(Identity):
       {
-        if((struct UserIdentityNode* )tag->ti_Data != data->wmData->identity)
-        {
-          data->wmData->identity = (struct UserIdentityNode *)tag->ti_Data;
-          DoMethod(obj, MUIM_WriteWindow_UpdateIdentityList);
-        }
+        set(data->CY_FROM, MUIA_IdentityChooser_Identity, tag->ti_Data);
 
         // make the superMethod call ignore those tags
         tag->ti_Tag = TAG_IGNORE;
@@ -2297,7 +2286,7 @@ DECLARE(AddPGPKey)
     char *pgpid = uin->pgpKeyID[0] != '\0' ? uin->pgpKeyID : uin->address;
     char options[SIZE_LARGE];
     const char *fname = "T:PubKey.asc";
- 
+
     snprintf(options, sizeof(options), (G->PGPVersion == 5) ? "-x %s -o %s +force +batchmode=1" : "-kxa %s %s +f +bat", pgpid, fname);
 
     // on error returns > 0
@@ -4459,95 +4448,29 @@ DECLARE(MailFileModified)
 }
 
 ///
-/// DECLARE(UpdateIdentityList)
-//
-DECLARE(UpdateIdentityList)
-{
-  GETDATA;
-  struct Node *curNode;
-  int numIdentities = 0;
-  int activeIdentity = 0;
-
-  ENTER();
-
-  // we have to sync the content of the user identities
-  // with the GUI elements of the write window
-  if(data->identities != NULL)
-    FreeStrArray(data->identities);
-
-  // first we find out how many entries the user identity list
-  // has
-  IterateList(&C->userIdentityList, curNode)
-  {
-    struct UserIdentityNode *uin = (struct UserIdentityNode *)curNode;
-
-    if(uin->active)
-      numIdentities++;
-  }
-
-  // allocate enough space + 1 for NUL termination
-  if((data->identities = calloc(numIdentities+1, sizeof(char *))) != NULL)
-  {
-    int i = 0;
-
-    // now we walk through the userIdentityList again
-    // and clone the address string
-    IterateList(&C->userIdentityList, curNode)
-    {
-      struct UserIdentityNode *uin = (struct UserIdentityNode *)curNode;
-
-      if(uin->active)
-      {
-        char address[SIZE_LARGE];
-
-        // construct the new string via sprintf() so that the necessary
-        // memory is automatically allocated.
-        asprintf(&data->identities[i], MUIX_L "%s " MUIX_I "(%s)" MUIX_N, BuildAddress(address, sizeof(address), uin->address, uin->realname), uin->description);
-
-        if(uin == data->wmData->identity)
-          activeIdentity = i;
-
-        i++;
-      }
-    }
-
-    xset(data->CY_FROM, MUIA_Cycle_Entries, data->identities,
-                        MUIA_Cycle_Active,  activeIdentity);
-
-    DoMethod(obj, MUIM_WriteWindow_IdentityChanged, activeIdentity);
-  }
-
-  RETURN(0);
-  return 0;
-}
-
-///
 /// DECLARE(IdentityChanged)
 //
-DECLARE(IdentityChanged) // ULONG identityNr
+DECLARE(IdentityChanged) // struct UserIdentityNode *uin;
 {
   GETDATA;
-  struct UserIdentityNode *uin;
 
   ENTER();
 
   // the user has changed the identity, thus we update certain things
   // in the write window according to the settings in the user identity.
-  if((uin = GetUserIdentity(&C->userIdentityList, msg->identityNr, TRUE)) != NULL)
-  {
-    // first we update things in the write window GUI
-    set(data->RA_SIGNATURE, MUIA_Radio_Active, uin->signature);
-    set(data->ST_CC, MUIA_String_Contents, uin->mailCC);
-    set(data->ST_BCC, MUIA_String_Contents, uin->mailBCC);
-    set(data->ST_REPLYTO, MUIA_String_Contents, uin->mailReplyTo);
-    set(data->ST_EXTHEADER, MUIA_String_Contents, uin->extraHeaders);
-    set(data->CH_DELSEND, MUIA_Selected, uin->saveSentMail == FALSE);
-    set(data->CH_ADDINFO, MUIA_Selected, uin->addPersonalInfo);
-    set(data->CH_MDN, MUIA_Selected, uin->requestMDN);
 
-    // save a link to the userIdentity in the wmData
-    data->wmData->identity = uin;
-  }
+  // first we update things in the write window GUI
+  set(data->RA_SIGNATURE, MUIA_Radio_Active, msg->uin->signature);
+  set(data->ST_CC, MUIA_String_Contents, msg->uin->mailCC);
+  set(data->ST_BCC, MUIA_String_Contents, msg->uin->mailBCC);
+  set(data->ST_REPLYTO, MUIA_String_Contents, msg->uin->mailReplyTo);
+  set(data->ST_EXTHEADER, MUIA_String_Contents, msg->uin->extraHeaders);
+  set(data->CH_DELSEND, MUIA_Selected, msg->uin->saveSentMail == FALSE);
+  set(data->CH_ADDINFO, MUIA_Selected, msg->uin->addPersonalInfo);
+  set(data->CH_MDN, MUIA_Selected, msg->uin->requestMDN);
+
+  // save a link to the userIdentity in the wmData
+  data->wmData->identity = msg->uin;
 
   RETURN(0);
   return 0;

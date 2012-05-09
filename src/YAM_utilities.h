@@ -159,7 +159,7 @@ struct FileReqCache
 
 // calculate the offset of an element within a structure
 #ifndef OFFSET_OF
-#define OFFSET_OF(s, o)					(IPTR)(&((s *)NULL)->o)
+#define OFFSET_OF(s, o)    (IPTR)(&((s *)NULL)->o)
 #endif
 
 // Library open/close macros

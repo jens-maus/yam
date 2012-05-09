@@ -955,13 +955,7 @@ static void Terminate(void)
   }
 
   if(G->FO != NULL)
-  {
-    // free the identityArray
-    FreeStrArray(G->FO->identityArray);
-    G->FO->identityArray = NULL;
-
     DisposeModule(&G->FO);
-  }
 
   if(G->FI != NULL)
     DisposeModule(&G->FI);
@@ -2844,7 +2838,7 @@ int main(int argc, char **argv)
           // the Quit or ForceQuit succeeded.
           if(HandleDockyIcon() == TRUE)
           {
-          	ret = 1;
+            ret = 1;
             break;
           }
         }

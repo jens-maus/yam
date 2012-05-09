@@ -5713,9 +5713,10 @@ void *DuplicateNode(const void *node, const size_t size)
 
   ENTER();
 
-  if((dup = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, size,
-  	                                      ASONODE_Min, TRUE,
-  	                                      TAG_DONE)) != NULL)
+  if((dup = AllocSysObjectTags(ASOT_NODE,
+    ASONODE_Size, size,
+    ASONODE_Min, TRUE,
+    TAG_DONE)) != NULL)
   {
     memcpy(dup, node, size);
   }

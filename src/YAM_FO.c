@@ -58,6 +58,7 @@
 #include "YAM_utilities.h"
 
 #include "mui/ClassesExtra.h"
+#include "mui/IdentityChooser.h"
 #include "mui/ImageArea.h"
 #include "mui/MainFolderListtree.h"
 #include "mui/Recipientstring.h"
@@ -144,60 +145,6 @@ void ActivateFolder(const struct Folder *fo)
     SetCurrentFolder(fo);
   }
 
-  LEAVE();
-}
-
-///
-/// FO_UpdateIdentityArray
-// updates the str array containing all identities
-static void FO_UpdateIdentityArray(struct FO_ClassData *data)
-{
-  struct Node *curNode;
-  int numIdentities = 0;
-
-  ENTER();
-
-  // we have to sync the content of the user identities
-  // with the GUI elements of the write window
-  if(data->identityArray != NULL)
-    FreeStrArray(data->identityArray);
-
-  // first we find out how many entries the user identity list
-  // has
-  IterateList(&C->userIdentityList, curNode)
-  {
-    struct UserIdentityNode *uin = (struct UserIdentityNode *)curNode;
-
-    if(uin->active)
-      numIdentities++;
-  }
-
-  // allocate enough space + 1 for NUL termination
-  if((data->identityArray = calloc(numIdentities+1, sizeof(char *))) != NULL)
-  {
-    int i = 0;
-
-    // now we walk through the userIdentityList again
-    // and clone the address string
-    IterateList(&C->userIdentityList, curNode)
-    {
-      struct UserIdentityNode *uin = (struct UserIdentityNode *)curNode;
-
-      if(uin->active)
-      {
-        char address[SIZE_LARGE];
-
-        // construct the new string via sprintf() so that the necessary
-        // memory is automatically allocated.
-        asprintf(&data->identityArray[i], MUIX_L "%s " MUIX_I "(%s)" MUIX_N, BuildAddress(address, sizeof(address), uin->address, uin->realname), uin->description);
-
-        i++;
-      }
-    }
-
-    set(data->GUI.CY_MLIDENTITY, MUIA_Cycle_Entries, data->identityArray);
-  }
-  
   LEAVE();
 }
 
@@ -457,27 +404,7 @@ BOOL FO_LoadConfig(struct Folder *fo)
           else if(stricmp(buf, "Stats") == 0)          { fo->Stats = Txt2Bool(value); statsproc = TRUE; }
           else if(stricmp(buf, "ExpireUnread") == 0)   fo->ExpireUnread = Txt2Bool(value);
           else if(stricmp(buf, "MLSupport") == 0)      fo->MLSupport = Txt2Bool(value);
-          else if(stricmp(buf, "MLIdentityID") == 0)
-          {
-            long identityID = strtol(value, NULL, 16);
-
-            if(identityID > 0)
-            {
-              struct Node *curNode;
-
-              IterateList(&C->userIdentityList, curNode)
-              {
-                struct UserIdentityNode *uin = (struct UserIdentityNode *)curNode;
-
-                // check if we found exactly this ID
-                if(uin->id == identityID)
-                {
-                  fo->MLIdentity = uin;
-                  break;
-                }
-              }
-            }
-          }
+          else if(stricmp(buf, "MLIdentityID") == 0)   fo->MLIdentity = FindUserIdentityByID(&C->userIdentityList, strtol(value, NULL, 16));
           else if(stricmp(buf, "MLRepToAddr") == 0)    strlcpy(fo->MLReplyToAddress, value, sizeof(fo->MLReplyToAddress));
           else if(stricmp(buf, "MLAddress") == 0)      strlcpy(fo->MLAddress, value, sizeof(fo->MLAddress));
           else if(stricmp(buf, "MLPattern") == 0)      strlcpy(fo->MLPattern, value, sizeof(fo->MLPattern));
@@ -485,23 +412,7 @@ BOOL FO_LoadConfig(struct Folder *fo)
           else if(stricmp(buf, "WriteIntro") == 0)     strlcpy(fo->WriteIntro, value, sizeof(fo->WriteIntro));
           else if(stricmp(buf, "WriteGreetings") == 0) strlcpy(fo->WriteGreetings, value, sizeof(fo->WriteGreetings));
           // obsolete config parameters (we just read them)
-          else if(stricmp(buf, "MLFromAddr") == 0)
-          {
-            // we need to match the FromAddr with the user identity
-            struct Node *curNode;
-
-            IterateList(&C->userIdentityList, curNode)
-            {
-              struct UserIdentityNode *uin = (struct UserIdentityNode *)curNode;
-
-              // check if we find anything
-              if(strcasestr(value, uin->address) != NULL)
-              {
-                fo->MLIdentity = uin;
-                break;
-              }
-            }
-          }
+          else if(stricmp(buf, "MLFromAddr") == 0)     fo->MLIdentity = FindUserIdentityByAddress(&C->userIdentityList, value);
         }
       }
 
@@ -1387,7 +1298,7 @@ static BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
     AddPath(dstbuf, fo->Fullpath, ".index", sizeof(dstbuf));
     if(FileExists(srcbuf) == TRUE && MoveFile(srcbuf, dstbuf) == FALSE)
     {
-	  W(DBF_FOLDER, "failed to move file '%s' to '%s'", srcbuf, dstbuf);
+      W(DBF_FOLDER, "failed to move file '%s' to '%s'", srcbuf, dstbuf);
       success = FALSE;
     }
     else
@@ -1397,7 +1308,7 @@ static BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
       AddPath(dstbuf, fo->Fullpath, ".fimage", sizeof(dstbuf));
       if(FileExists(srcbuf) == TRUE && MoveFile(srcbuf, dstbuf) == FALSE)
       {
-	    W(DBF_FOLDER, "failed to copy file '%s' to '%s'", srcbuf, dstbuf);
+        W(DBF_FOLDER, "failed to copy file '%s' to '%s'", srcbuf, dstbuf);
         success = FALSE;
       }
       else
@@ -1512,25 +1423,8 @@ static void FO_GetFolder(struct Folder *folder)
        MUIA_Cycle_Active,    folder->MLSignature,
        MUIA_Disabled, !folder->MLSupport || isdefault);
 
-  // find out the userIdentity and which to select
-  i=0;
-  if(folder->MLIdentity != NULL)
-  {
-    struct Node *curNode;
-
-    IterateList(&C->userIdentityList, curNode)
-    {
-      struct UserIdentityNode *uin = (struct UserIdentityNode *)curNode;
-
-      if(uin->id == folder->MLIdentity->id)
-        break;
-      else if(uin->active == TRUE)
-        i++;
-    }
-  }
-
   xset(gui->CY_MLIDENTITY,
-       MUIA_Cycle_Active, i,
+       MUIA_IdentityChooser_Identity, folder->MLIdentity,
        MUIA_Disabled, !folder->MLSupport || isdefault);
 
   if(!isTrashFolder(folder) && !isSpamFolder(folder))
@@ -1613,7 +1507,7 @@ static void FO_PutFolder(struct Folder *folder)
   GetMUIString(folder->MLReplyToAddress, gui->ST_MLREPLYTOADDRESS, sizeof(folder->MLReplyToAddress));
   folder->MLSignature = GetMUICycle(gui->CY_MLSIGNATURE);
 
-  folder->MLIdentity = GetUserIdentity(&C->userIdentityList, GetMUICycle(gui->CY_MLIDENTITY), TRUE);
+  folder->MLIdentity = (struct UserIdentityNode *)xget(gui->CY_MLIDENTITY, MUIA_IdentityChooser_Identity);
 
   LEAVE();
 }
@@ -1709,7 +1603,7 @@ HOOKPROTONHNONP(FO_NewFolderFunc, void)
       {
         strlcpy(folder.Path, frc->drawer, sizeof(folder.Path));
 
-		FO_LoadConfig(&folder);
+        FO_LoadConfig(&folder);
       }
       else
       {
@@ -1886,14 +1780,14 @@ HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
     // save the Tree to the folder config now
     FO_SaveTree();
 
-	// remove the folder from the global folder list
+    // remove the folder from the global folder list
     LockFolderList(G->folders);
-	RemoveFolderNode(G->folders, fnode);
+    RemoveFolderNode(G->folders, fnode);
     UnlockFolderList(G->folders);
 
     // finally free all the memory
-	DeleteFolderNode(fnode);
-	FreeFolder(folder);
+    DeleteFolderNode(fnode);
+    FreeFolder(folder);
 
     // update the statistics in case the just deleted folder contained new or unread mail
     DisplayStatistics(NULL, TRUE);
@@ -2231,11 +2125,11 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
         }
         else
         {
-		  LONG error = IoErr();
-		  char faultStr[256];
+          LONG error = IoErr();
+          char faultStr[256];
 
-		  Fault(error, NULL, faultStr, sizeof(faultStr));
-		  ER_NewError(tr(MSG_ER_CANNOT_CREATE_FOLDER), folder.Fullpath, faultStr);
+          Fault(error, NULL, faultStr, sizeof(faultStr));
+          ER_NewError(tr(MSG_ER_CANNOT_CREATE_FOLDER), folder.Fullpath, faultStr);
 
           LEAVE();
           return;
@@ -2622,7 +2516,9 @@ static struct FO_ClassData *FO_New(void)
              Child, Label2(tr(MSG_FO_TO_ADDRESS)),
              Child, MakeAddressField(&data->GUI.ST_MLADDRESS, tr(MSG_FO_TO_ADDRESS), MSG_HELP_FO_ST_MLADDRESS, ABM_CONFIG, -1, AFF_ALLOW_MULTI),
              Child, Label2(tr(MSG_FO_FROM_ADDRESS)),
-             Child, data->GUI.CY_MLIDENTITY = MakeCycle(NULL, tr(MSG_FO_FROM_ADDRESS)),
+             Child, data->GUI.CY_MLIDENTITY = IdentityChooserObject,
+               MUIA_ControlChar, ShortCut(tr(MSG_FO_FROM_ADDRESS)),
+               End,
              Child, Label2(tr(MSG_FO_REPLYTO_ADDRESS)),
              Child, MakeAddressField(&data->GUI.ST_MLREPLYTOADDRESS, tr(MSG_FO_REPLYTO_ADDRESS), MSG_HELP_FO_ST_MLREPLYTOADDRESS, ABM_CONFIG, -1, AFF_ALLOW_MULTI),
              Child, Label1(tr(MSG_WR_Signature)),
@@ -2673,9 +2569,6 @@ static struct FO_ClassData *FO_New(void)
       DoMethod(data->GUI.CH_MLSUPPORT,   MUIM_Notify, MUIA_Selected, MUIV_EveryTime,  data->GUI.CY_MLIDENTITY,       3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
       DoMethod(data->GUI.CH_MLSUPPORT,   MUIM_Notify, MUIA_Selected, MUIV_EveryTime,  data->GUI.ST_MLREPLYTOADDRESS, 3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
       DoMethod(data->GUI.CH_MLSUPPORT,   MUIM_Notify, MUIA_Selected, MUIV_EveryTime,  data->GUI.CY_MLSIGNATURE,      3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
-
-      // we need to update the identity array
-      FO_UpdateIdentityArray(data);
     }
     else
     {

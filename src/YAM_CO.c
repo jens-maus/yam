@@ -758,7 +758,7 @@ HOOKPROTONHNONP(CO_GetSMTPEntry, void)
                              MUIA_Disabled,     G->TR_UseableTLS == FALSE);
 
     nnset(gui->CY_SMTPAUTH, MUIA_Cycle_Active, hasServerAuth(msn) ? MSF2SMTPAuthMethod(msn)+1 : 0);
-    
+
     set(gui->ST_SMTPAUTHUSER, MUIA_Disabled, hasServerAuth(msn) == FALSE);
     set(gui->ST_SMTPAUTHPASS, MUIA_Disabled, hasServerAuth(msn) == FALSE);
   }
@@ -961,8 +961,7 @@ void CO_UpdateSMTPServerArray(struct CO_ClassData *data)
   ENTER();
 
   // free a previously prepared array
-  if(data->smtpServerArray != NULL)
-    FreeStrArray(data->smtpServerArray);
+  FreeStrArray(data->smtpServerArray);
 
   // we update the smtpServerArray with the names
   // of the SMTP servers that are currently configured
@@ -970,7 +969,7 @@ void CO_UpdateSMTPServerArray(struct CO_ClassData *data)
   {
     struct MailServerNode *msn = (struct MailServerNode *)curNode;
 
-    if(isSMTPServer(msn) && isServerActive(msn)) 
+    if(isSMTPServer(msn) && isServerActive(msn))
       numSMTPserver++;
   }
 
@@ -984,7 +983,7 @@ void CO_UpdateSMTPServerArray(struct CO_ClassData *data)
     IterateList(&CE->mailServerList, curNode)
     {
       struct MailServerNode *msn = (struct MailServerNode *)curNode;
-   
+
       if(isSMTPServer(msn) && isServerActive(msn))
       {
         data->smtpServerArray[i] = strdup(msn->description);

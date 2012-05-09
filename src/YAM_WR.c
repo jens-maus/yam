@@ -2029,18 +2029,7 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
 
               // now we have to find out which user identity we have to set
               // so we go and search our user identity array comparing things
-              IterateList(&C->userIdentityList, curNode)
-              {
-                struct UserIdentityNode *uin = (struct UserIdentityNode *)curNode;
-
-                // check if the email address matches and 
-                // if so we found the user identity
-                if(strcasestr(sbuf, uin->address) != NULL)
-                {
-                  set(wmData->window, MUIA_WriteWindow_Identity, uin);
-                  break;
-                }
-              }
+              set(wmData->window, MUIA_WriteWindow_Identity, FindUserIdentityByAddress(&C->userIdentityList, sbuf));
             }
 
             if(reuseReplyToAddress == TRUE)

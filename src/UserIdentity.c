@@ -285,3 +285,94 @@ BOOL IsUniqueUserIdentityID(const struct MinList *userIdentityList, const int id
 }
 
 ///
+/// FindUserIdentityByID
+// find a user identity by a given ID
+struct UserIdentityNode *FindUserIdentityByID(const struct MinList *userIdentityList, const int id)
+{
+  struct UserIdentityNode *result = NULL;
+
+  ENTER();
+
+  if(id > 0)
+  {
+    struct Node *curNode;
+
+    IterateList(userIdentityList, curNode)
+    {
+      struct UserIdentityNode *uin = (struct UserIdentityNode *)curNode;
+
+      // check if we found exactly this ID
+      if(id == uin->id)
+      {
+        result = uin;
+        break;
+      }
+    }
+  }
+
+  RETURN(result);
+  return result;
+}
+
+///
+/// FindUserIdentityByAddress
+// find a user identity by a given address
+struct UserIdentityNode *FindUserIdentityByAddress(const struct MinList *userIdentityList, const char *address)
+{
+  struct UserIdentityNode *result = NULL;
+
+  ENTER();
+
+  if(address != NULL)
+  {
+    struct Node *curNode;
+
+    IterateList(userIdentityList, curNode)
+    {
+      struct UserIdentityNode *uin = (struct UserIdentityNode *)curNode;
+
+      // check if we found exactly this address
+      if(strcasestr(address, uin->address) != NULL)
+      {
+        result = uin;
+        break;
+      }
+    }
+  }
+
+  RETURN(result);
+  return result;
+}
+
+///
+/// FindUserIdentityByPerson
+// find a user identity by a given person
+struct UserIdentityNode *FindUserIdentityByPerson(const struct MinList *userIdentityList, const struct Person *person)
+{
+  struct UserIdentityNode *result = NULL;
+
+  ENTER();
+
+  if(person != NULL)
+  {
+    struct Node *curNode;
+
+    IterateList(userIdentityList, curNode)
+    {
+      struct UserIdentityNode *uin = (struct UserIdentityNode *)curNode;
+
+      // check if we found exactly this person
+      if(stricmp(person->Address, uin->address) == 0 ||
+         stricmp(person->RealName, uin->realname) == 0)
+      {
+        result = uin;
+        break;
+      }
+    }
+  }
+
+  RETURN(result);
+  return result;
+}
+
+///

@@ -65,7 +65,6 @@ struct FO_ClassData  /* folder configuration window */
 {
   struct FO_GUIData GUI;
   struct Folder *   EditFolder;
-  char **identityArray; // titles for the different identities that can be selected
 };
 
 // Foldertype macros
