@@ -1132,7 +1132,10 @@ void FO_UpdateStatistics(struct Folder *folder)
 {
   ENTER();
 
-  if(isGroupFolder(folder) == FALSE)
+  // make sure we don't deal with a group folder and
+  // the folder's index is valid. There is no point in
+  // updating the stats of a folder with a flushed index.
+  if(isGroupFolder(folder) == FALSE && folder->LoadedMode == LM_VALID)
   {
     struct MailNode *mnode;
 
