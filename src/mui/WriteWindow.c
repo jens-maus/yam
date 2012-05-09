@@ -1458,9 +1458,7 @@ OVERLOAD(OM_NEW)
                   MUIA_Window_Title,         data->windowTitle);
 
         // set the key focus attributes of the TO and SUBJECT gadgets
-        #warning "disabled FromString here. what purpose does that have?"
         xset(data->ST_TO, MUIA_BetterString_KeyDownFocus, data->ST_SUBJECT,
-                          //MUIA_Recipientstring_FromString, data->ST_FROM,
                           MUIA_Recipientstring_ReplyToString, data->ST_REPLYTO);
 
         xset(data->ST_SUBJECT, MUIA_BetterString_KeyUpFocus, data->ST_TO,

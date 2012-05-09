@@ -7,6 +7,10 @@ $URL$
 
 2012-05-09 Jens Langner <Jens.Langner@light-speed.de>
 
+  * mui/Recipientstring.c, mui/WriteWindow.c: removed the FromString
+    functionality which was not compatible with multiple identity support and
+    was questionable anyway as there is no reason why the addressbook list name
+    should be used as the realname in the From: header field.
   * UserIdentity.c: removed "struct Config" parameter from CreateNewUserIdentity()
     as it is not required.
   * Threads.c, tcp/smtp.c, misc: now that the user identity structure carries

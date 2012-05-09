@@ -56,8 +56,8 @@
 struct Data
 {
   struct MUI_EventHandlerNode ehnode;
-  Object *Matchwindow;                //, *Matchlist;
-  Object *From, *ReplyTo;             // used when resolving a list address
+  Object *Matchwindow;                
+  Object *ReplyTo;                    // used when resolving a list address
   STRPTR CurrentRecipient;
   ULONG bufferPos;
   ULONG selectSize;
@@ -283,7 +283,6 @@ OVERLOAD(OM_NEW)
       {
         case ATTR(ResolveOnCR)        : data->ResolveOnCR = tag->ti_Data        ; break;
         case ATTR(MultipleRecipients) : data->MultipleRecipients = tag->ti_Data ; break;
-        case ATTR(FromString)         : data->From = (Object *)tag->ti_Data     ; break;
         case ATTR(ReplyToString)      : data->ReplyTo = (Object *)tag->ti_Data  ; break;
         case ATTR(NoFullName)         : data->NoFullName = tag->ti_Data         ; break;
         case ATTR(NoCache)            : data->NoCache = tag->ti_Data            ; break;
@@ -407,15 +406,6 @@ OVERLOAD(OM_SET)
       case ATTR(ResolveOnInactive):
       {
         data->ResolveOnInactive = tag->ti_Data;
-
-        // make the superMethod call ignore those tags
-        tag->ti_Tag = TAG_IGNORE;
-      }
-      break;
-
-      case ATTR(FromString):
-      {
-        data->From = (Object *)tag->ti_Data;
 
         // make the superMethod call ignore those tags
         tag->ti_Tag = TAG_IGNORE;
@@ -981,15 +971,6 @@ DECLARE(Resolve) // ULONG flags
                 D(DBF_GUI, "Found list: »%s«", members);
                 DoMethod(obj, MUIM_Recipientstring_AddRecipient, members);
                 free(members);
-
-                if(data->From != NULL && entry->RealName[0] != '\0')
-                {
-                  char address[SIZE_LARGE];
-
-                  #warning C->EmailAdress usage still here 
-                  //BuildAddress(address, sizeof(address), C->EmailAddress, entry->RealName);
-                  set(data->From, MUIA_String_Contents, address);
-                }
 
                 if(data->ReplyTo != NULL && entry->Address[0] != '\0')
                   set(data->ReplyTo, MUIA_String_Contents, entry->Address);
