@@ -75,6 +75,17 @@ OVERLOAD(OM_NEW)
 }
 
 ///
+/// OVERLOAD(OM_DISPOSE)
+OVERLOAD(OM_DISPOSE)
+{
+  GETDATA;
+
+  FreeStrArray(data->identityArray);
+
+  return DoSuperMethodA(cl, obj, msg);
+}
+
+///
 /// OVERLOAD(OM_SET)
 OVERLOAD(OM_SET)
 {
