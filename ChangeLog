@@ -7,6 +7,14 @@ $URL$
 
 2012-05-09 Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_MA.c, YAM_WR.c, YAM_MAf.c, misc: finalized the multiple identity support
+    by implementing routines in MA_ExamineMail() for trying to identify the
+    corresponding user identity for a certain mail that is currently being
+    examined. Now a reply mail action should hopefully try its best to find
+    out which user identity to choose as well as forwarding and so on. Now
+    the user identity support should be fully implemented. However, only time
+    will show if this feature is already stable yet (users please report
+    any findings via our bugtracker!).
   * rexx/getconfigitem.c,rexx/userinfo.c: implemented an addition option to
     specify the identity number for which user identity related stuff should
     be returned via the REXX commands.

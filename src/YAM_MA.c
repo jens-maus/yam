@@ -2519,7 +2519,6 @@ BOOL MA_Send(enum SendMailMode mode)
     if(mlist->count != 0)
     {
       struct Node *nextNode;
-      struct UserIdentityNode *defIdentity = GetUserIdentity(&C->userIdentityList, 0, TRUE);
 
       SafeIterateList(mlist, curNode, nextNode)
       {
@@ -2531,15 +2530,7 @@ BOOL MA_Send(enum SendMailMode mode)
         // eventually stores the identityID in the email structure
         if((email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)) != NULL)
         {
-          struct UserIdentityNode *uin = NULL;
-
-          // now we identify the identity via the ID
-          if(email->identityID != 0)
-            uin = FindUserIdentityByID(&C->userIdentityList, email->identityID);
-
-          // if we couldn't find the identity we use the default one (the first one)
-          if(uin == NULL)
-            uin = defIdentity;
+          struct UserIdentityNode *uin = email->identity;
 
           // create a new mail list if this user identity
           // hasn't one yet

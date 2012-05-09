@@ -345,34 +345,3 @@ struct UserIdentityNode *FindUserIdentityByAddress(const struct MinList *userIde
 }
 
 ///
-/// FindUserIdentityByPerson
-// find a user identity by a given person
-struct UserIdentityNode *FindUserIdentityByPerson(const struct MinList *userIdentityList, const struct Person *person)
-{
-  struct UserIdentityNode *result = NULL;
-
-  ENTER();
-
-  if(person != NULL)
-  {
-    struct Node *curNode;
-
-    IterateList(userIdentityList, curNode)
-    {
-      struct UserIdentityNode *uin = (struct UserIdentityNode *)curNode;
-
-      // check if we found exactly this person
-      if(stricmp(person->Address, uin->address) == 0 ||
-         stricmp(person->RealName, uin->realname) == 0)
-      {
-        result = uin;
-        break;
-      }
-    }
-  }
-
-  RETURN(result);
-  return result;
-}
-
-///

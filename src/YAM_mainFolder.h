@@ -34,6 +34,7 @@
 
 // forward declarations
 struct Folder;
+struct UserIdentityNode;
 
 struct Mail
 {
@@ -58,31 +59,32 @@ struct Mail
 
 struct ExtendedMail
 {
-  struct Mail      Mail;
-  struct Person *  SFrom;          // ptr to an array of additional "From:" senders (excluding the main From:)
-  struct Person *  STo;            // ptr to an array of additional "To:" recipients (excluding the main To:)
-  struct Person *  SReplyTo;       // ptr to an array of additional "Reply-To:" recipients (excluding the main Reply-To:)
-  struct Person *  CC;             // ptr to an array of all "CC:" recipients
-  struct Person *  BCC;            // ptr to an array of all "BCC:" recipients
-  struct Person *  ResentTo;       // ptr to an array of "Resent-To:" recipients
-  char *           extraHeaders;   // YAM internal headers (X-YAM-Header-...)
-  char *           SenderInfo;
-  char *           messageID;      // the composed "Message-ID:" (only one MsgID)
-  char *           inReplyToMsgID; // the composed "In-Reply-To:" (a set of multiple IDs)
-  char *           references;     // the composed "References:" (a set of multiple IDs)
-  int              NoSFrom;        // number of additional senders in SFrom (minus one)
-  int              NoSTo;          // number of additional recipients in STo (minus one)
-  int              NoSReplyTo;     // number of additional recipients in SReplyTo (minus one)
-  int              NoCC;           // number of recipients in CC
-  int              NoBCC;          // number of recipients in BCC
-  int              NoResentTo;     // number of recipients in ResentTo
-  int              Signature;
-  int              Security;
-  int              identityID;     // id of the user identity found in the mail (X-YAM-Options:)
-  BOOL             DelSend;
-  struct Person    ReturnPath;     // the "Return-Path" address of the mail, if present
-  struct Person    ReceiptTo;      // the recipient in for a requested MDN
-  struct Person    OriginalRcpt;   // the original recipient for a requested MDN
+  struct Mail              Mail;
+  struct Person *          SFrom;          // ptr to an array of additional "From:" senders (excluding the main From:)
+  struct Person *          STo;            // ptr to an array of additional "To:" recipients (excluding the main To:)
+  struct Person *          SReplyTo;       // ptr to an array of additional "Reply-To:" recipients (excluding the main Reply-To:)
+  struct Person *          CC;             // ptr to an array of all "CC:" recipients
+  struct Person *          BCC;            // ptr to an array of all "BCC:" recipients
+  struct Person *          ResentTo;       // ptr to an array of "Resent-To:" recipients
+  char *                   extraHeaders;   // YAM internal headers (X-YAM-Header-...)
+  char *                   SenderInfo;
+  char *                   messageID;      // the composed "Message-ID:" (only one MsgID)
+  char *                   inReplyToMsgID; // the composed "In-Reply-To:" (a set of multiple IDs)
+  char *                   references;     // the composed "References:" (a set of multiple IDs)
+  int                      NoSFrom;        // number of additional senders in SFrom (minus one)
+  int                      NoSTo;          // number of additional recipients in STo (minus one)
+  int                      NoSReplyTo;     // number of additional recipients in SReplyTo (minus one)
+  int                      NoCC;           // number of recipients in CC
+  int                      NoBCC;          // number of recipients in BCC
+  int                      NoResentTo;     // number of recipients in ResentTo
+  int                      Signature;
+  int                      Security;
+  int                      identityID;     // id of the user identity found in the mail (X-YAM-Options:)
+  struct UserIdentityNode *identity;       // ptr to matched identity (can also be the default id)
+  BOOL                     DelSend;
+  struct Person            ReturnPath;     // the "Return-Path" address of the mail, if present
+  struct Person            ReceiptTo;      // the recipient in for a requested MDN
+  struct Person            OriginalRcpt;   // the original recipient for a requested MDN
 };
 
 extern struct Hook MA_FlushIndexHook;

@@ -79,10 +79,18 @@ OVERLOAD(OM_NEW)
 OVERLOAD(OM_DISPOSE)
 {
   GETDATA;
+  ULONG result;
 
+  ENTER();
+
+  // free the string array
   FreeStrArray(data->identityArray);
 
-  return DoSuperMethodA(cl, obj, msg);
+  // signal the super class to dispose as well
+  result = DoSuperMethodA(cl, obj, msg);
+
+  RETURN(result);
+  return result;
 }
 
 ///
@@ -98,15 +106,15 @@ OVERLOAD(OM_SET)
     {
       case ATTR(Identity):
       {
-	    struct UserIdentityNode *newIdentity = (struct UserIdentityNode *)tag->ti_Data;
+        struct UserIdentityNode *newIdentity = (struct UserIdentityNode *)tag->ti_Data;
 
-	    if(newIdentity != data->identity)
+        if(newIdentity != data->identity)
         {
           int i = 0;
 
           // find the new identity and set it as active entry
-		  if(newIdentity != NULL)
-		  {
+          if(newIdentity != NULL)
+          {
             struct Node *curNode;
 
             IterateList(&C->userIdentityList, curNode)
@@ -114,15 +122,16 @@ OVERLOAD(OM_SET)
               struct UserIdentityNode *uin = (struct UserIdentityNode *)curNode;
 
               if(uin->id == newIdentity->id)
-	            break;
+                break;
               else if(uin->active == TRUE)
-	            i++;
+                i++;
             }
-		  }
+          }
 
-		  data->identity = newIdentity;
-		  // set the new active item without triggering notifications
-		  nnset(obj, MUIA_Cycle_Active, i);
+          data->identity = newIdentity;
+
+          // set the new active item without triggering notifications
+          nnset(obj, MUIA_Cycle_Active, i);
         }
       }
       break;
@@ -133,8 +142,8 @@ OVERLOAD(OM_SET)
 
         // set the new identity and trigger possible notifications
         set(obj, ATTR(Identity), newIdentity);
-	  }
-	  break;
+      }
+      break;
     }
   }
 

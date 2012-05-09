@@ -73,6 +73,7 @@
 #include "MUIObjects.h"
 #include "Requesters.h"
 #include "Rexx.h"
+#include "UserIdentity.h"
 
 #include "Debug.h"
 
@@ -2213,7 +2214,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
     char timebuf[sizeof(struct TimeVal)+1]; // +1 because the b64decode does set a NUL byte
     struct Node *curNode;
     LONG size;
-
+    
     // Now we process the read header to set all flags accordingly
     IterateList(&headerList, curNode)
     {
@@ -2234,6 +2235,14 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
         ExtractAddress(value, &pe);
         mail->From = pe;
 
+        // we have to check if we can match the user identity
+        // from the email address
+        if(deep == TRUE &&
+           email->identity == NULL)
+        {
+          email->identity = FindUserIdentityByAddress(&C->userIdentityList, mail->From.Address);
+        }
+
         // if we have more addresses waiting we
         // go and process them yet
         if(p != NULL)
@@ -2244,7 +2253,16 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
               email->NoSFrom = MA_GetRecipients(p, &(email->SFrom));
 
             if(email->NoSFrom > 0)
+            {
+              int i;
+
+              // if we haven't found the identity yet we process the
+              // other from addresses
+              for(i=0; email->identity != NULL && i < email->NoSFrom; i++)
+                email->identity = FindUserIdentityByAddress(&C->userIdentityList, email->SFrom[i].Address);
+
               SET_FLAG(mail->mflags, MFLAG_MULTISENDER);
+            }
           }
           else if(strlen(p) >= 7) // minimum rcpts size "a@bc.de"
             SET_FLAG(mail->mflags, MFLAG_MULTISENDER);
@@ -2265,6 +2283,14 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
         ExtractAddress(value, &pe);
         mail->ReplyTo = pe;
 
+        // we have to check if we can match the user identity
+        // from the email address
+        if(deep == TRUE &&
+           email->identity == NULL)
+        {
+          email->identity = FindUserIdentityByAddress(&C->userIdentityList, mail->ReplyTo.Address);
+        }
+
         // if we have more addresses waiting we
         // go and process them yet
         if(p != NULL)
@@ -2275,7 +2301,16 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
               email->NoSReplyTo = MA_GetRecipients(p, &(email->SReplyTo));
 
             if(email->NoSReplyTo > 0)
+            {
+              int i;
+
+              // if we haven't found the identity yet we process the
+              // other from addresses
+              for(i=0; email->identity != NULL && i < email->NoSReplyTo; i++)
+                email->identity = FindUserIdentityByAddress(&C->userIdentityList, email->SReplyTo[i].Address);
+
               SET_FLAG(mail->mflags, MFLAG_MULTIREPLYTO);
+            }
           }
           else if(strlen(p) >= 7) // minimum rcpts size "a@bc.de"
             SET_FLAG(mail->mflags, MFLAG_MULTIREPLYTO);
@@ -2313,6 +2348,15 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
 
           ExtractAddress(value, &pe);
           mail->To = pe;
+
+          // we have to check if we can match the user identity
+          // from the email address
+          if(deep == TRUE &&
+             email->identity == NULL)
+          {
+            email->identity = FindUserIdentityByAddress(&C->userIdentityList, mail->To.Address);
+          }
+
           if(p != NULL)
           {
             if(deep == TRUE)
@@ -2321,7 +2365,16 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
                 email->NoSTo = MA_GetRecipients(p, &(email->STo));
 
               if(email->NoSTo > 0)
+              {
+                int i;
+
+                // if we haven't found the identity yet we process the
+                // other from addresses
+                for(i=0; email->identity != NULL && i < email->NoSTo; i++)
+                  email->identity = FindUserIdentityByAddress(&C->userIdentityList, email->STo[i].Address);
+
                 SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
+              }
             }
             else if(strlen(p) >= 7) // minimum rcpts size "a@bc.de"
               SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
@@ -2340,7 +2393,16 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
           D(DBF_MIME, "'Cc:' recipients: %ld", email->NoCC);
 
           if(email->NoCC > 0)
+          {
+            int i;
+
+            // if we haven't found the identity yet we process the
+            // other from addresses
+            for(i=0; email->identity != NULL && i < email->NoCC; i++)
+              email->identity = FindUserIdentityByAddress(&C->userIdentityList, email->CC[i].Address);
+
             SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
+          }
         }
         else if(strlen(value) >= 7) // minimum rcpts size "a@bc.de"
           SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
@@ -2355,7 +2417,16 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
           D(DBF_MIME, "'BCC:' recipients: %ld", email->NoBCC);
 
           if(email->NoBCC > 0)
+          {
+            int i;
+
+            // if we haven't found the identity yet we process the
+            // other from addresses
+            for(i=0; email->identity != NULL && i < email->NoBCC; i++)
+              email->identity = FindUserIdentityByAddress(&C->userIdentityList, email->BCC[i].Address);
+
             SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
+          }
         }
         else if(strlen(value) >= 7) // minimum rcpts size "a@bc.de"
           SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
@@ -2473,14 +2544,21 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
             D(DBF_MIME, "sigfile found: %d", email->Signature);
           }
 
-          // check if the identity is listed
+          // check if the identity is listed and if so this has
+          // absolute priority (so we overwrite any previously
+          // set email->identity ptr)
           if((p = strcasestr(value, "identity=")) != NULL)
           {
             char idStr[9] = ""; // the id is only 8 chars long + 1 NUL
             
             strlcpy(idStr, &p[9], sizeof(idStr));
             email->identityID = strtol(idStr, NULL, 16);
-            D(DBF_MIME, "found identity: '%s' %d", idStr, email->identityID);
+
+            // try to get the identity structure
+            if(email->identityID != 0)
+              email->identity = FindUserIdentityByID(&C->userIdentityList, email->identityID);
+
+            D(DBF_MIME, "found identity: '%s' %08x %08x", idStr, email->identityID, email->identity->id);
           }
 
           // check security flags
@@ -2531,6 +2609,14 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
         ExtractAddress(value, &pe);
         mail->From = pe;
 
+        // we have to check if we can match the user identity
+        // from the email address
+        if(deep == TRUE &&
+           email->identity == NULL)
+        {
+          email->identity = FindUserIdentityByAddress(&C->userIdentityList, mail->From.Address);
+        }
+
         D(DBF_MIME, "From: address obtained from Sender: header");
 
         // if we have more addresses waiting we
@@ -2543,7 +2629,16 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
               email->NoSFrom = MA_GetRecipients(p, &(email->SFrom));
 
             if(email->NoSFrom > 0)
+            {
+              int i;
+
+              // if we haven't found the identity yet we process the
+              // other from addresses
+              for(i=0; email->identity != NULL && i < email->NoSFrom; i++)
+                email->identity = FindUserIdentityByAddress(&C->userIdentityList, email->SFrom[i].Address);
+
               SET_FLAG(mail->mflags, MFLAG_MULTISENDER);
+            }
           }
           else if(strlen(p) >= 7) // minimum rcpts size "a@bc.de"
             SET_FLAG(mail->mflags, MFLAG_MULTISENDER);
@@ -2558,6 +2653,14 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
     // And now we close the Mailfile and clear the temporary headerList again
     fclose(fh);
     ClearHeaderList(&headerList);
+
+    // if we still don't have identified a potential user identity
+    // that matches the From:/To:/Reply-To:, etc. headers contents
+    // (e.g. because deep==FALSE) then we set the default identity
+    if(email->identity == NULL)
+      email->identity = GetUserIdentity(&C->userIdentityList, 0, TRUE);
+
+    D(DBF_MIME, "final identity: %08x '%s'", email->identity->id, email->identity->description);
 
     // in case the replyTo recipient doesn't have a realname yet and it is
     // completly the same like the from address we go and copy the realname as both
@@ -2709,7 +2812,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
 
   // finish up everything before we exit with an error
   if(fh != NULL)
-   fclose(fh);
+    fclose(fh);
 
   MA_FreeEMailStruct(email);
 

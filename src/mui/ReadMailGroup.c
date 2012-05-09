@@ -1159,9 +1159,9 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
   ExtractSenderInfo(rmData->mail, &abtmpl);
 
   // we have to search through our identities and
-  // if if and email or realname matches the from address
-  // and if so we simply reuse that information
-  if(FindUserIdentityByPerson(&C->userIdentityList, from) != NULL)
+  // if the email address matches the from address
+  // we simply reuse that information
+  if(FindUserIdentityByAddress(&C->userIdentityList, from->Address) != NULL)
   {
     // if there is no addressbook entry for the user
     // we use the template one but erase the photo link
