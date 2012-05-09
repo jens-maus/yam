@@ -1138,6 +1138,20 @@ HOOKPROTONHNONP(CO_PutIdentityEntry, void)
       uin->pgpEncryptAll = GetMUICheck(gui->CH_IDENTITY_PGPENC_ALL);
       uin->pgpSelfEncrypt = GetMUICheck(gui->CH_IDENTITY_PGPENC_SELF);
 
+      DoMethod(gui->WI, MUIM_MultiSet, MUIA_Disabled, uin->quoteMails == FALSE,
+        gui->CY_IDENTITY_QUOTEPOS,
+        gui->CY_IDENTITY_SIGPOS,
+        NULL);
+
+      DoMethod(gui->WI, MUIM_MultiSet, MUIA_Disabled, uin->usePGP == FALSE,
+        gui->ST_IDENTITY_PGPID,
+        gui->ST_IDENTITY_PGPURL,
+        gui->CH_IDENTITY_PGPSIGN_UNENC,
+        gui->CH_IDENTITY_PGPSIGN_ENC,
+        gui->CH_IDENTITY_PGPENC_ALL,
+        gui->CH_IDENTITY_PGPENC_SELF,
+        NULL);
+
       // if the user hasn't yet entered an own account name or the default
       // account name is still present we go and set an automatic generated one
       if(uin->description[0] == '\0' || strcmp(uin->description, tr(MSG_NewEntry)) == 0)

@@ -2108,13 +2108,9 @@ Object *CO_PageIdentities(struct CO_ClassData *data)
                           Child, LLabel1(tr(MSG_CO_IDENTITY_COMPOSE_QUOTE)),
 
                           Child, HSpace(0),
-                          Child, HGroup,
+                          Child, ColGroup(2),
                             Child, LLabel1(tr(MSG_CO_IDENTITY_COMPOSE_ANSWER)),
                             Child, data->GUI.CY_IDENTITY_QUOTEPOS = MakeCycle(quotePosition, tr(MSG_CO_IDENTITY_COMPOSE_ANSWER)),
-                          End,
-
-                          Child, HSpace(0),
-                          Child, HGroup,
                             Child, LLabel1(tr(MSG_CO_IDENTITY_COMPOSE_SIGNATURE)),
                             Child, data->GUI.CY_IDENTITY_SIGPOS = MakeCycle(signaturePosition, tr(MSG_CO_IDENTITY_COMPOSE_SIGNATURE)),
                           End,

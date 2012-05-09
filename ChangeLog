@@ -37,6 +37,8 @@ $URL$
 
 2012-05-09 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_CO.c, YAM_COg.c: changed the layout of some objects and disabled certain
+    objects when their parent enabler is inactive.
   * mui/IdentityChooser.c, misc: added new class derived from Cycle.mui to
     encapsulate the tedious stuff of keeping the list of active identites
     uptodate and to avoid implementing the same lookup and set job of changed
