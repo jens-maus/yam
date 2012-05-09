@@ -52,8 +52,8 @@ struct Mail
   struct Person    To;         // The main mail recipient (first entry in "To:")
   struct Person    ReplyTo;    // The main Reply-To recipients (first entry in "Reply-To:")
 
-  char             Subject[SIZE_SUBJECT];
-  char             MailFile[SIZE_MFILE];
+  char Subject[SIZE_SUBJECT];  // copy of the mail Subject: header
+  char MailFile[SIZE_MFILE];   // name of mail file (without path)
 };
 
 struct ExtendedMail

@@ -73,6 +73,8 @@ struct UserIdentityNode
   BOOL pgpSignEncrypted;             // sign encrypted mail per default
   BOOL pgpEncryptAll;                // encrypt all outgoing mails per default
   BOOL pgpSelfEncrypt;               // when encrypting also add own key
+
+  struct MailList *sentMailList;     // ptr to a list of mails for being sent
 };
 
 // public functions

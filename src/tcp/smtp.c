@@ -1624,6 +1624,9 @@ BOOL SendMails(struct UserIdentityNode *uin, struct MailList *mlist, enum SendMa
   // delete the list of mails
   DeleteMailList(mlist);
 
+  // make sure the sentMailList of the user identity is wiped
+  uin->sentMailList = NULL;
+
   // mark the server as being no longer "in use"
   CLEAR_FLAG(tc->msn->flags, MSF_IN_USE);
 

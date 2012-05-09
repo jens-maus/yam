@@ -7,6 +7,11 @@ $URL$
 
 2012-05-09 Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_MA.c, UserIdentity.h: waiting mail in the outgoing folder can now be
+    correctly sent through different smtp/identity branches. That means it
+    should be possible now to save mails for different identities and send them
+    in one large bunch and YAM will identify the identities correctly and send
+    the mails through the correct mail servers.
   * YAM_WR.c, mui/WriteWindow.c, YAM_MAf.c, misc: YAM will now store the selected
     user identity if a mail is being set on hold so that when continuing to write
     that mail the write window will popup with the correct identity selected

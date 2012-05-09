@@ -41,9 +41,9 @@ struct Mail;
 
 struct MailList
 {
-  struct MinList list;
-  struct SignalSemaphore *lockSemaphore;
-  ULONG count;
+  struct MinList list;                   // ptr to MinList to put it in exec lists
+  struct SignalSemaphore *lockSemaphore; // semaphore for locking the list
+  ULONG count;                           // number of entries in list
 };
 
 struct MailNode
