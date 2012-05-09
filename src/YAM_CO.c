@@ -1119,7 +1119,7 @@ HOOKPROTONHNONP(CO_PutIdentityEntry, void)
       GetMUIString(uin->mailCC,       gui->ST_IDENTITY_CC,          sizeof(uin->mailCC));
       GetMUIString(uin->mailBCC,      gui->ST_IDENTITY_BCC,         sizeof(uin->mailBCC));
       GetMUIString(uin->mailReplyTo,  gui->ST_IDENTITY_REPLYTO,     sizeof(uin->mailReplyTo));
-      GetMUIString(uin->extraHeaders, gui->ST_IDENTITY_EXTRAHEADER, sizeof(uin->mailReplyTo));
+      GetMUIString(uin->extraHeaders, gui->ST_IDENTITY_EXTRAHEADER, sizeof(uin->extraHeaders));
       GetMUIString(uin->photoURL,     gui->ST_IDENTITY_PHOTOURL,    sizeof(uin->photoURL));
       GetMUIText(uin->sentFolder,     gui->TX_IDENTITY_SENTFOLDER,  sizeof(uin->sentFolder));
       uin->saveSentMail = GetMUICheck(gui->CH_IDENTITY_SENTFOLDER);
