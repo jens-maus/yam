@@ -7,6 +7,10 @@ $URL$
 
 2012-05-09 Jens Langner <Jens.Langner@light-speed.de>
 
+  * Threads.c, tcp/smtp.c, misc: now that the user identity structure carries
+    a mail list we don't need TT_SendMails_Mails in SendMails() anymore since
+    the maillist can now be fetched directly in SendMails() via the user
+    identity structure.
   * YAM_MA.c, UserIdentity.h: waiting mail in the outgoing folder can now be
     correctly sent through different smtp/identity branches. That means it
     should be possible now to save mails for different identities and send them

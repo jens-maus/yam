@@ -239,7 +239,6 @@ static LONG DoThreadMessage(struct ThreadMessage *msg)
     case TA_SendMails:
     {
       result = SendMails((struct UserIdentityNode *)GetTagData(TT_SendMails_UserIdentity, (IPTR)NULL, msg->actionTags),
-                         (struct MailList *)GetTagData(TT_SendMails_Mails, (IPTR)NULL, msg->actionTags),
                          GetTagData(TT_SendMails_Mode, (IPTR)0, msg->actionTags));
     }
     break;

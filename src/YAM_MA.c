@@ -2584,7 +2584,6 @@ BOOL MA_Send(enum SendMailMode mode)
             // call the thread action now signaling that we want to sent the
             // associated mails
             sendMailSuccess = (DoAction(NULL, TA_SendMails, TT_SendMails_UserIdentity, uin,
-                                                            TT_SendMails_Mails, uin->sentMailList,
                                                             TT_SendMails_Mode, mode,
                                                             TAG_DONE) != NULL);
           }

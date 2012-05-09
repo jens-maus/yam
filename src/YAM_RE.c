@@ -3520,7 +3520,7 @@ void RE_ClickedOnMessage(char *address)
 static void RE_SendMDN(const enum MDNMode mode,
                        const struct Mail *mail,
                        const struct Person *recipient,
-                       const struct UserIdentityNode *uin,
+                       struct UserIdentityNode *uin,
                        const BOOL sendnow,
                        const BOOL autoAction,
                        const BOOL autoSend)
@@ -3613,7 +3613,7 @@ static void RE_SendMDN(const enum MDNMode mode,
         }
 
         // email address only according to RFC 2298
-        snprintf(buf, sizeof(buf), "rfc822;%s", uin != NULL ? uin->address : mail->To.Address);
+        snprintf(buf, sizeof(buf), "rfc822;%s", uin->address);
         EmitHeader(tf2->FP, "Final-Recipient", buf);
 
         EmitHeader(tf2->FP, "Original-Message-ID", email->messageID);
@@ -3678,7 +3678,7 @@ static void RE_SendMDN(const enum MDNMode mode,
           comp.Subject = buf;
           comp.GenerateMDN = TRUE;
           comp.FirstPart = p1;
-          comp.Identity = (struct UserIdentityNode *)uin;
+          comp.Identity = uin;
 
           // create the subject
           switch(mode)
@@ -3699,9 +3699,9 @@ static void RE_SendMDN(const enum MDNMode mode,
             if(MA_NewMailFile(outfolder, mfilePath, sizeof(mfilePath)) == TRUE &&
                (comp.FH = fopen(mfilePath, "w")) != NULL)
             {
-              struct MailList *mlist;
-
-              if((mlist = CreateMailList()) != NULL)
+              // create a new sentMailList in the userIdentity
+              // and then sent the mail
+              if((uin->sentMailList = CreateMailList()) != NULL)
               {
                 BOOL mdnSent = FALSE;
 
@@ -3721,7 +3721,7 @@ static void RE_SendMDN(const enum MDNMode mode,
                     // refresh the folder statistics before the transfer
                     DisplayStatistics(outfolder, TRUE);
 
-                    AddNewMailNode(mlist, mdnMail);
+                    AddNewMailNode(uin->sentMailList, mdnMail);
                   }
 
                   MA_FreeEMailStruct(email);
@@ -3729,9 +3729,9 @@ static void RE_SendMDN(const enum MDNMode mode,
 
                 // in case the user wants to send the message
                 // immediately we go and send it out
-                if(sendnow == TRUE && mlist->count != 0)
+                if(sendnow == TRUE && uin->sentMailList->count != 0)
                 {
-                  if(uin != NULL && uin->mailServer != NULL)
+                  if(uin->mailServer != NULL)
                   {
                     if(hasServerInUse(uin->mailServer) == FALSE)
                     {
@@ -3739,7 +3739,6 @@ static void RE_SendMDN(const enum MDNMode mode,
                       SET_FLAG(uin->mailServer->flags, MSF_IN_USE);
 
                       mdnSent = (DoAction(NULL, TA_SendMails, TT_SendMails_UserIdentity, uin,
-                                                              TT_SendMails_Mails, mlist,
                                                               TT_SendMails_Mode, autoSend ? SENDMAIL_ACTIVE_AUTO : SENDMAIL_ACTIVE_USER,
                                                               TAG_DONE) != NULL);
 
@@ -3756,7 +3755,10 @@ static void RE_SendMDN(const enum MDNMode mode,
 
                 // delete the mail list again if the MDN was not sent
                 if(mdnSent == FALSE)
-                  DeleteMailList(mlist);
+                {
+                  DeleteMailList(uin->sentMailList);
+                  uin->sentMailList = NULL;
+                }
 
                 // refresh the folder statistics after the transfer
                 DisplayStatistics(outfolder, TRUE);

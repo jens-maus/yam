@@ -41,6 +41,6 @@ enum SendMailMode
 };
 
 // prototypes
-BOOL SendMails(struct UserIdentityNode *uin, struct MailList *mlist, enum SendMailMode mode);
+BOOL SendMails(struct UserIdentityNode *uin, enum SendMailMode mode);
 
 #endif /* SMTP_H */

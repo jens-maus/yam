@@ -1282,7 +1282,7 @@ static int SendMessage(struct TransferContext *tc, struct Mail *mail)
 
 ///
 /// SendMails
-BOOL SendMails(struct UserIdentityNode *uin, struct MailList *mlist, enum SendMailMode mode)
+BOOL SendMails(struct UserIdentityNode *uin, enum SendMailMode mode)
 {
   BOOL success = FALSE;
   struct TransferContext *tc;
@@ -1313,9 +1313,9 @@ BOOL SendMails(struct UserIdentityNode *uin, struct MailList *mlist, enum SendMa
         PushMethodOnStackWait(G->App, 3, MUIM_YAMApplication_StartMacro, MACRO_PRESEND, NULL);
 
         // now we build the list of mails to be transfered.
-        LockMailListShared(mlist);
+        LockMailListShared(uin->sentMailList);
 
-        ForEachMailNode(mlist, mnode)
+        ForEachMailNode(uin->sentMailList, mnode)
         {
           struct Mail *mail = mnode->mail;
 
@@ -1335,7 +1335,7 @@ BOOL SendMails(struct UserIdentityNode *uin, struct MailList *mlist, enum SendMa
           }
         }
 
-        UnlockMailList(mlist);
+        UnlockMailList(uin->sentMailList);
 
         D(DBF_NET, "prepared %ld mails for sending, %ld bytes", transferList->count, totalSize);
 
@@ -1622,9 +1622,7 @@ BOOL SendMails(struct UserIdentityNode *uin, struct MailList *mlist, enum SendMa
   }
 
   // delete the list of mails
-  DeleteMailList(mlist);
-
-  // make sure the sentMailList of the user identity is wiped
+  DeleteMailList(uin->sentMailList);
   uin->sentMailList = NULL;
 
   // mark the server as being no longer "in use"

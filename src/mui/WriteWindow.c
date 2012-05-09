@@ -4196,18 +4196,17 @@ DECLARE(ComposeMail) // enum WriteMode mode
   // now we make sure we immediately send out the mail.
   if(mode == WRITE_SEND && newMail != NULL)
   {
-    struct MailList *mlist;
+    struct UserIdentityNode *uin = wmData->identity;
 
-    if((mlist = CreateMailList()) != NULL)
+    if((uin->sentMailList = CreateMailList()) != NULL)
     {
-      if(AddNewMailNode(mlist, newMail) != NULL)
-      {
-        BOOL mailSent = FALSE;
-        struct UserIdentityNode *uin = wmData->identity;
+      BOOL mailSent = FALSE;
 
+      if(AddNewMailNode(uin->sentMailList, newMail) != NULL)
+      {
         set(obj, MUIA_Window_Open, FALSE);
 
-        if(uin != NULL && uin->mailServer != NULL)
+        if(uin->mailServer != NULL)
         {
           if(hasServerInUse(uin->mailServer) == FALSE)
           {
@@ -4215,7 +4214,6 @@ DECLARE(ComposeMail) // enum WriteMode mode
             SET_FLAG(uin->mailServer->flags, MSF_IN_USE);
 
             mailSent = (DoAction(NULL, TA_SendMails, TT_SendMails_UserIdentity, uin,
-                                                     TT_SendMails_Mails, mlist,
                                                      TT_SendMails_Mode, SENDMAIL_ACTIVE_USER,
                                                      TAG_DONE) != NULL);
             if(mailSent == FALSE)
@@ -4224,9 +4222,12 @@ DECLARE(ComposeMail) // enum WriteMode mode
           else
             W(DBF_MAIL, "uin->mailServer in use, couldn't sent out mail");
         }
+      }
 
-        if(mailSent == FALSE)
-          DeleteMailList(mlist);
+      if(mailSent == FALSE)
+      {
+        DeleteMailList(uin->sentMailList);
+        uin->sentMailList = NULL;
       }
     }
   }
