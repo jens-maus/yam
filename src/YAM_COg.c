@@ -1818,7 +1818,7 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
                   Child, NBalanceObject, End,
 
                   Child, VGroup,
-                    MUIA_HorizWeight, 80,
+                    MUIA_HorizWeight, 70,
 
                     Child, ColGroup(2), GroupFrameT(tr(MSG_CO_SMTP_SERVERSETTINGS)),
 
@@ -1996,7 +1996,7 @@ Object *CO_PageIdentities(struct CO_ClassData *data)
 
               Child, HGroup,
                 Child, VGroup,
-                  MUIA_HorizWeight, 70,
+                  MUIA_HorizWeight, 30,
 
                   Child, HBarT(tr(MSG_CO_IDENTITY_LIST)), End,
 
@@ -2025,7 +2025,7 @@ Object *CO_PageIdentities(struct CO_ClassData *data)
 
                 Child, RegisterGroup(rtitles),
                   MUIA_CycleChain, TRUE,
-                  MUIA_HorizWeight, 30,
+                  MUIA_HorizWeight, 70,
 
                   // General Settings
                   Child, VGroup,
@@ -2237,9 +2237,9 @@ Object *CO_PageIdentities(struct CO_ClassData *data)
     SetHelp(data->GUI.CH_SAVESENT,         MSG_HELP_CO_CH_SAVESENT);
     SetHelp(data->GUI.CH_ADDINFO   ,MSG_HELP_WR_CH_ADDINFO   );
     SetHelp(data->GUI.CH_USESIG,  MSG_HELP_CO_CH_USESIG   );
- 
 
-*/ 
+
+*/
     // connect a notify if the user selects a different identity in the list
     DoMethod(data->GUI.LV_IDENTITY, MUIM_Notify, MUIA_NList_Active, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_GetIdentityEntryHook);
 
@@ -2284,7 +2284,7 @@ Object *CO_PageIdentities(struct CO_ClassData *data)
     // set some additional cyclechain data
     set(data->GUI.BT_IDENTITYUP,   MUIA_CycleChain, TRUE);
     set(data->GUI.BT_IDENTITYDOWN, MUIA_CycleChain, TRUE);
- 
+
     // update the SMTP server array so that the cycle gadget reflects the
     // right content
     CO_UpdateSMTPServerArray(data);
