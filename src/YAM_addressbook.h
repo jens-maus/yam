@@ -58,8 +58,7 @@ struct Person;
 #define isGroupSearch(mode)     (isFlagSet((mode), ASM_GROUP))
 #define isCompleteSearch(mode)  (isFlagSet((mode), ASM_COMPLETE))
 
-enum AddressbookMode { ABM_NONE=0, ABM_EDIT, ABM_TO, ABM_CC, ABM_BCC, ABM_REPLYTO, ABM_FROM, ABM_CONFIG };
-
+enum AddressbookMode { ABM_NONE=0, ABM_EDIT, ABM_TO, ABM_CC, ABM_BCC, ABM_REPLYTO, ABM_CONFIG };
 enum AddressbookFind { ABF_USER=0, ABF_RX, ABF_RX_NAME, ABF_RX_EMAIL, ABF_RX_NAMEEMAIL };
 
 struct AB_GUIData

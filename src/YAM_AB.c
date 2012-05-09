@@ -755,7 +755,6 @@ HOOKPROTONHNO(AB_FromAddrBook, BOOL, ULONG *arg)
         case ABM_CC:      type = MUIV_WriteWindow_RcptType_Cc; break;
         case ABM_BCC:     type = MUIV_WriteWindow_RcptType_BCC; break;
         case ABM_REPLYTO: type = MUIV_WriteWindow_RcptType_ReplyTo; break;
-        case ABM_FROM:    type = MUIV_WriteWindow_RcptType_From; break;
       }
 
       DoMethod(writeWindow, MUIM_WriteWindow_AddRecipient, type, addr->Alias ? addr->Alias : addr->RealName);
@@ -3002,7 +3001,6 @@ HOOKPROTONHNO(AB_OpenFunc, void, LONG *arg)
     case ABM_TO:      md = "(To)";      break;
     case ABM_CC:      md = "(CC)";      break;
     case ABM_BCC:     md = "(BCC)";     break;
-    case ABM_FROM:    md = "(From)";    break;
     case ABM_REPLYTO: md = "(Reply-To)";break;
     case ABM_CONFIG:  ab->parentStringGadget = (Object *)arg[1]; break;
     default:

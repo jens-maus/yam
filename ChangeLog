@@ -7,6 +7,8 @@ $URL$
 
 2012-05-09 Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_AB.c: removed ABM_FROM and all corresponding uses of it since it
+    is not used anymore since we have the user identity support.
   * mui/WriteWindow.c: address matching will now be properly performed for
     the AddRecipient() and InsertAddresses() method which are now user
     identity aware.
