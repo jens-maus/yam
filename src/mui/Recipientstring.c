@@ -45,6 +45,7 @@
 #include "YAM_config.h"
 #include "YAM_mainFolder.h"
 #include "MUIObjects.h"
+#include "UserIdentity.h"
 
 #include "mui/AddressmatchPopup.h"
 #include "mui/MainMailListGroup.h"
@@ -64,11 +65,12 @@ struct Data
   BOOL isActive;
   BOOL MultipleRecipients;
   BOOL ResolveOnCR;
-  BOOL AdvanceOnCR;                    // we have to save this attribute ourself because Betterstring.mcc is buggy.
+  BOOL AdvanceOnCR;                   // we have to save this attribute ourself because Betterstring.mcc is buggy.
   BOOL NoFullName;
   BOOL NoCache;
   BOOL NoValid;
   BOOL ResolveOnInactive;
+  struct UserIdentityNode *identity;  // ptr to the user identity currently active (or NULL)
 };
 */
 
@@ -415,6 +417,15 @@ OVERLOAD(OM_SET)
       case ATTR(ReplyToString):
       {
         data->ReplyTo = (Object *)tag->ti_Data;
+
+        // make the superMethod call ignore those tags
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
+
+      case ATTR(ActiveIdentity):
+      {
+        data->identity = (struct UserIdentityNode *)tag->ti_Data;
 
         // make the superMethod call ignore those tags
         tag->ti_Tag = TAG_IGNORE;
@@ -923,12 +934,18 @@ DECLARE(Resolve) // ULONG flags
         D(DBF_GUI, "Valid address found.. will not resolve it: %s", s);
         DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
 
-        /* email address lacks domain... */
-        #warning C->EmailAdress usage still here
-        /*
+        // check if email address lacks domain...
+        // and add the one from the currently active user identity
+        // or fallback to the default one
         if(tmp[1] == '\0')
-          DoMethod(obj, MUIM_BetterString_Insert, strchr(C->EmailAddress, '@')+1, MUIV_BetterString_Insert_EndOfString);
-        */
+        {
+          struct UserIdentityNode *uin = data->identity;
+
+          if(uin == NULL)
+            uin = GetUserIdentity(&C->userIdentityList, 0, TRUE);
+            
+          DoMethod(obj, MUIM_BetterString_Insert, strchr(uin->address, '@')+1, MUIV_BetterString_Insert_EndOfString);
+        }
       }
       else if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindUserData, MUIV_NListtree_FindUserData_ListNode_Root, s, MUIF_NONE))) /* entry found in address book */
       {
@@ -1025,10 +1042,18 @@ DECLARE(Resolve) // ULONG flags
           D(DBF_GUI, "Email address: '%s'", s);
           DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
 
-          /* email address lacks domain... */
-          #warning C->EmailAdress usage still here
-          //if(tmp[1] == '\0')
-          //  DoMethod(obj, MUIM_BetterString_Insert, strchr(C->EmailAddress, '@')+1, MUIV_BetterString_Insert_EndOfString);
+          // check if email address lacks domain...
+          // and add the one from the currently active user identity
+          // or fallback to the default one
+          if(tmp[1] == '\0')
+          {
+            struct UserIdentityNode *uin = data->identity;
+
+            if(uin == NULL)
+              uin = GetUserIdentity(&C->userIdentityList, 0, TRUE);
+            
+            DoMethod(obj, MUIM_BetterString_Insert, strchr(uin->address, '@')+1, MUIV_BetterString_Insert_EndOfString);
+          }
         }
         else
         {

@@ -4493,6 +4493,10 @@ DECLARE(IdentityChanged) // struct UserIdentityNode *uin;
   set(data->CH_DELSEND, MUIA_Selected, msg->uin->saveSentMail == FALSE);
   set(data->CH_ADDINFO, MUIA_Selected, msg->uin->addPersonalInfo);
   set(data->CH_MDN, MUIA_Selected, msg->uin->requestMDN);
+  set(data->ST_TO, MUIA_Recipientstring_ActiveIdentity, msg->uin);
+  set(data->ST_CC, MUIA_Recipientstring_ActiveIdentity, msg->uin);
+  set(data->ST_BCC, MUIA_Recipientstring_ActiveIdentity, msg->uin);
+  set(data->ST_REPLYTO, MUIA_Recipientstring_ActiveIdentity, msg->uin);
 
   // save a link to the userIdentity in the wmData
   data->wmData->identity = msg->uin;
