@@ -37,6 +37,7 @@ $URL$
 
 2012-05-09 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_COg.c: make sure the add/remove buttons have the same size.
   * YAM_FO.c: fixed the zero total counter of folders not affected by filters.
   * YAM_CO.c, YAM_COg.c: changed the layout of some objects and disabled certain
     objects when their parent enabler is inactive.
