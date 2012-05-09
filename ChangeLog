@@ -7,6 +7,9 @@ $URL$
 
 2012-05-09 Jens Langner <Jens.Langner@light-speed.de>
 
+  * mui/WriteWindow.c: address matching will now be properly performed for
+    the AddRecipient() and InsertAddresses() method which are now user
+    identity aware.
   * mui/Recipientstring.c, mui/WriteWindow.c: removed the FromString
     functionality which was not compatible with multiple identity support and
     was questionable anyway as there is no reason why the addressbook list name

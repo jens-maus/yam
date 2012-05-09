@@ -3311,8 +3311,15 @@ DECLARE(AddRecipient) // enum RcptType type, char *recipient
     break;
 
     case MUIV_WriteWindow_RcptType_From:
-    #warning here we need to match msg->recipient with the user identity and set it accordingly
-      //DoMethod(data->ST_FROM, MUIM_Recipientstring_AddRecipient, msg->recipient);
+    { 
+      struct UserIdentityNode *uin;
+
+      // try to match the identity by search through our user identities
+      if((uin = FindUserIdentityByAddress(&C->userIdentityList, msg->recipient)) != NULL)
+        set(data->CY_FROM, MUIA_IdentityChooser_Identity, uin);
+      else
+        DisplayBeep(NULL);
+    }
     break;
   }
 
@@ -3351,8 +3358,28 @@ DECLARE(InsertAddresses) // enum RcptType type, char **addr, ULONG add
     break;
 
     case MUIV_WriteWindow_RcptType_From:
-    #warning what to do here regarding multiple identity support?
-      //str = data->ST_FROM;
+    {
+      struct UserIdentityNode *uin;
+
+      // we try to match the addresses stored in **addr with the address
+      // of our user identities. But as there can be only ONE address
+      // we break out as soon as we have found one and beep otherwise
+      do
+      {
+        // try to match the identity by search through our user identities
+        if((uin = FindUserIdentityByAddress(&C->userIdentityList, *(msg->addr))) != NULL)
+        {
+          set(data->CY_FROM, MUIA_IdentityChooser_Identity, uin);
+          break;
+        }
+
+        ++msg->addr;
+      }
+      while(*(msg->addr) != NULL);
+ 
+      if(uin == NULL)
+        DisplayBeep(NULL);
+    }
     break;
   }
 
