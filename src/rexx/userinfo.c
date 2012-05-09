@@ -44,6 +44,7 @@
 struct args
 {
   struct RexxResult varStem;
+  long *identity;
 };
 
 struct results
@@ -82,14 +83,13 @@ void rx_userinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
     case RXIF_ACTION:
     {
       struct User *u = US_GetCurrentUser();
-      struct UserIdentityNode *uin = GetUserIdentity(&C->userIdentityList, 0, TRUE);
+      struct UserIdentityNode *uin;
 
+      uin = GetUserIdentity(&C->userIdentityList, args->identity != NULL ? args->identity[0] : 0, TRUE);
       if(u != NULL && uin != NULL)
       {
         int numfolders;
         struct FolderNode *fnode;
-
-        #warning multiple identity support missing
 
         results->username = u->Name;
         results->email = uin->address;

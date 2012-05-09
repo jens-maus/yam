@@ -7,6 +7,9 @@ $URL$
 
 2012-05-09 Jens Langner <Jens.Langner@light-speed.de>
 
+  * rexx/getconfigitem.c,rexx/userinfo.c: implemented an addition option to
+    specify the identity number for which user identity related stuff should
+    be returned via the REXX commands.
   * mui/Recipientstring.c, mui/WriteWindow.c: when entering just "name@" into
     a recipientstring object YAM will now correctly add the domain of the
     currently selected user identity (or the default).

@@ -44,6 +44,7 @@ struct args
 {
   struct RexxResult varStem;
   char *item;
+  long *identity;
 };
 
 struct results
@@ -70,11 +71,9 @@ void rx_getconfiginfo(UNUSED struct RexxHost *host, struct RexxParams *params, e
     case RXIF_ACTION:
     {
       char *key = args->item;
-      struct UserIdentityNode *uin = GetUserIdentity(&C->userIdentityList, 0, TRUE);
+      struct UserIdentityNode *uin;
 
-      #warning multiple identity support missing here, the rexx cmd should get an additional parameter?
-
-      // here we just return the information of the first user identity
+      uin = GetUserIdentity(&C->userIdentityList, args->identity != NULL ? args->identity[0] : 0, TRUE);
       if(uin != NULL)
       {
         if(strnicmp(key, "NAM", 3) == 0)
