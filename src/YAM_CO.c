@@ -1298,7 +1298,7 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     FreeUserIdentityList(&co->userIdentityList);
 
     // fill the user identity list with an empty entry
-    AddTail((struct List *)&co->userIdentityList, (struct Node *)CreateNewUserIdentity(co));
+    AddTail((struct List *)&co->userIdentityList, (struct Node *)CreateNewUserIdentity());
   }
 
   if(page == cp_NewMail || page == cp_AllPages)

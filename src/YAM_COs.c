@@ -1079,7 +1079,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
               // a new one
               if((uin = GetUserIdentity(&co->userIdentityList, id, FALSE)) == NULL)
               {
-                if((uin = CreateNewUserIdentity(co)) != NULL)
+                if((uin = CreateNewUserIdentity()) != NULL)
                   AddTail((struct List *)&co->userIdentityList, (struct Node *)uin);
                 else
                   E(DBF_CONFIG, "Couldn't create new UserIdentity structure %ld", id);

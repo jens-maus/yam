@@ -51,7 +51,7 @@
 
 /// CreateNewUserIdentity
 //  Initializes a new UserIdentityNode
-struct UserIdentityNode *CreateNewUserIdentity(const struct Config *co)
+struct UserIdentityNode *CreateNewUserIdentity(void)
 {
   struct UserIdentityNode *uin;
 
