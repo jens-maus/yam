@@ -65,7 +65,7 @@ struct ExtendedMail
   struct Person *  CC;             // ptr to an array of all "CC:" recipients
   struct Person *  BCC;            // ptr to an array of all "BCC:" recipients
   struct Person *  ResentTo;       // ptr to an array of "Resent-To:" recipients
-  char *           extraHeaders;   // YAM internal headers (X-YAM-...)
+  char *           extraHeaders;   // YAM internal headers (X-YAM-Header-...)
   char *           SenderInfo;
   char *           messageID;      // the composed "Message-ID:" (only one MsgID)
   char *           inReplyToMsgID; // the composed "In-Reply-To:" (a set of multiple IDs)
@@ -78,10 +78,11 @@ struct ExtendedMail
   int              NoResentTo;     // number of recipients in ResentTo
   int              Signature;
   int              Security;
+  int              identityID;     // id of the user identity found in the mail (X-YAM-Options:)
   BOOL             DelSend;
-  struct Person    ReturnPath;   // the "Return-Path" address of the mail, if present
-  struct Person    ReceiptTo;    // the recipient in for a requested MDN
-  struct Person    OriginalRcpt; // the original recipient for a requested MDN
+  struct Person    ReturnPath;     // the "Return-Path" address of the mail, if present
+  struct Person    ReceiptTo;      // the recipient in for a requested MDN
+  struct Person    OriginalRcpt;   // the original recipient for a requested MDN
 };
 
 extern struct Hook MA_FlushIndexHook;

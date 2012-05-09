@@ -45,6 +45,7 @@ struct UserIdentityNode;
 
 // enumeration with security levels a mail can
 // get so that it will be signed/encrypted and so on.
+// (the order has to match the SecCodes[] array)
 enum Security
 {
   SEC_NONE=0,      // no security
@@ -82,7 +83,6 @@ struct WriteMailData
   BOOL fileNotifyActive;                // is the file change notification currently active or not
 
   BOOL quietMode;                       // quietMode means no opened window, e.g. background processing
-  enum Security oldSecurity;
 };
 
 struct Attach
@@ -162,8 +162,8 @@ struct Compose
   BOOL                      GenerateMDN;    // should a MDN report be generated?
   BOOL                      DelSend;        // should the mail be deleted after having sent it?
   BOOL                      UserInfo;       // should personal user info be added to the mail?
-  enum Security             Security;       // (PGP) security level
-  enum Security             OldSecurity;
+  enum Security             Security;       // (PGP) security level to be applied to mail
+  enum Security             SelSecurity;    // (PGP) security level selected in WriteWindow
 };
 
 // Soft-style modes for text

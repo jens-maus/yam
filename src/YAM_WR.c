@@ -1173,6 +1173,8 @@ BOOL WriteOutMessage(struct Compose *comp)
 
   ENTER();
 
+D(DBF_ALWAYS, "security: %d", comp->Security);
+
   if(comp->Mode == NMM_BOUNCE)
   {
     if(comp->DelSend == TRUE)
@@ -1200,8 +1202,8 @@ BOOL WriteOutMessage(struct Compose *comp)
     return FALSE;
   }
 
-  /* encrypted multipart message requested? */
-  if(firstpart->Next != NULL && comp->Security > SEC_NONE  && comp->Security <= SEC_BOTH)
+  // encrypted multipart message requested?
+  if(firstpart->Next != NULL && comp->Security > SEC_NONE && comp->Security <= SEC_BOTH)
   {
     struct Compose tcomp;
     FILE *tfh;
@@ -1267,16 +1269,16 @@ BOOL WriteOutMessage(struct Compose *comp)
     }
   }
 
-  buf[0] = '\0';
-  if(comp->DelSend == TRUE)
-    strlcat(buf, ",delsent", sizeof(buf));
-  if(comp->Security != 0)
-    snprintf(&buf[strlen(buf)], sizeof(buf)-strlen(buf), ",%s", SecCodes[comp->Security]);
-  if(comp->Signature != 0)
-    snprintf(&buf[strlen(buf)], sizeof(buf)-strlen(buf), ",sigfile%d", comp->Signature-1);
-  if(buf[0] != '\0')
-    EmitHeader(fh, "X-YAM-Options", &buf[1]);
+  // now we add a "X-YAM-Options" header to the mail so
+  // that we can identify later certain options we have to set
+  // if the same mail is being edited by the user again
+  snprintf(buf, sizeof(buf), "sigfile%d,identity=%08x,security=%s%s", comp->Signature-1,
+                                                                      comp->Identity->id,
+                                                                      SecCodes[comp->SelSecurity],
+                                                                      comp->DelSend == TRUE ? ",delsent" : "");
+  EmitHeader(fh, "X-YAM-Options", buf);
 
+  // put the From: header entry into the mail
   EmitRcptHeader(fh, "From", BuildAddress(address, sizeof(address), comp->Identity->address, comp->Identity->realname));
 
   if(comp->ReplyTo != NULL)
@@ -2020,16 +2022,33 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
 
             if(reuseFromAddress == TRUE)
             {
-              struct Node *curNode;
+              BOOL found = FALSE;
 
-              // add all From: senders
-              sbuf = StrBufCpy(sbuf, BuildAddress(address, sizeof(address), mail->From.Address, mail->From.RealName));
-              for(i=0; i < email->NoSFrom; i++)
-                sbuf = AppendRcpt(sbuf, &email->SFrom[i], FALSE);
+              // we check if the ExamineMail operation found an identityID
+              // and if so we use that one, otherwise we search through
+              // the From: addresses
+              if(email->identityID != 0)
+              {
+                struct UserIdentityNode *uin;
 
-              // now we have to find out which user identity we have to set
-              // so we go and search our user identity array comparing things
-              set(wmData->window, MUIA_WriteWindow_Identity, FindUserIdentityByAddress(&C->userIdentityList, sbuf));
+                if((uin = FindUserIdentityByID(&C->userIdentityList, email->identityID)) != NULL)
+                {
+                  set(wmData->window, MUIA_WriteWindow_Identity, uin);
+                  found = TRUE;
+                }
+              }
+
+              if(found == FALSE)
+              {
+                // add all From: senders
+                sbuf = StrBufCpy(sbuf, BuildAddress(address, sizeof(address), mail->From.Address, mail->From.RealName));
+                for(i=0; i < email->NoSFrom; i++)
+                  sbuf = AppendRcpt(sbuf, &email->SFrom[i], FALSE);
+
+                // now we have to find out which user identity we have to set
+                // so we go and search our user identity array comparing things
+                set(wmData->window, MUIA_WriteWindow_Identity, FindUserIdentityByAddress(&C->userIdentityList, sbuf));
+              }
             }
 
             if(reuseReplyToAddress == TRUE)
@@ -2077,9 +2096,6 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
                                  MUIA_WriteWindow_Importance, getImportanceLevel(mail) == IMP_HIGH ? 0 : getImportanceLevel(mail)+1,
                                  MUIA_WriteWindow_Signature,  email->Signature,
                                  MUIA_WriteWindow_Security,   email->Security);
-
-            // let us safe the security state
-            wmData->oldSecurity = email->Security;
 
             // setup the write window from an existing readmailData structure
             DoMethod(wmData->window, MUIM_WriteWindow_SetupFromOldMail, rmData);
@@ -2966,7 +2982,6 @@ struct WriteMailData *AllocWriteMailData(void)
     memset(wmData, 0, sizeof(*wmData));
     wmData->mode = NMM_NEW;
     DateStamp(&wmData->lastFileChangeTime);
-    wmData->oldSecurity = SEC_NONE;
 
     // per default the writemaildata ptr to the user identity
     // links to the first active user identity in the list

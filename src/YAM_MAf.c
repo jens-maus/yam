@@ -2164,8 +2164,6 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
 
   mail = &email->Mail;
   strlcpy(mail->MailFile, file, sizeof(mail->MailFile));
-  #warning SaveSent not replaced yet by identity option
-  //email->DelSend = !C->SaveSent;
 
   GetMailFile(fullfile, sizeof(fullfile), folder, mail);
   if((fh = fopen(fullfile, "r")) != NULL)
@@ -2459,18 +2457,46 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
         if(stricmp(field, "x-yam-options") == 0)
         {
           char *p;
-          enum Security sec;
+          int sec;
 
-          if(strstr(value, "delsent") != NULL)
-            email->DelSend = TRUE;
-
-          if((p = strstr(value, "sigfile")) != NULL)
-            email->Signature = p[7]-'0'+1;
-
-          for(sec = SEC_SIGN; sec <= SEC_BOTH; sec++)
+          // check for the delsent flag first
+          if(strcasestr(value, "delsent") != NULL)
           {
-            if(strstr(value, SecCodes[sec]) != NULL)
-              email->Security = sec;
+            D(DBF_MIME, "delsent found");
+            email->DelSend = TRUE;
+          }
+
+          // check for the sigfileX flag
+          if((p = strcasestr(value, "sigfile")) != NULL)
+          {
+            email->Signature = atoi(&p[7])+1;
+            D(DBF_MIME, "sigfile found: %d", email->Signature);
+          }
+
+          // check if the identity is listed
+          if((p = strcasestr(value, "identity=")) != NULL)
+          {
+            char idStr[9] = ""; // the id is only 8 chars long + 1 NUL
+            
+            strlcpy(idStr, &p[9], sizeof(idStr));
+            email->identityID = strtol(idStr, NULL, 16);
+            D(DBF_MIME, "found identity: '%s' %d", idStr, email->identityID);
+          }
+
+          // check security flags
+          if((p = strcasestr(value, "security=")) != NULL)
+          {
+            // check for the security flags for signing/encrypting a mail
+            // but walk backwards here otherwise we can't use break
+            for(sec = SEC_DEFAULTS; sec >= SEC_NONE; sec--)
+            {
+              if(strcasestr(&p[9], SecCodes[sec]) != NULL)
+              {
+                email->Security = sec;
+                D(DBF_MIME, "found security: %d (%s)", email->Security, SecCodes[sec]);
+                break;
+              }
+            }
           }
         }
         else if(strnicmp(field, "x-yam-header-", 13) == 0)

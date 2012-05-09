@@ -1634,8 +1634,6 @@ OVERLOAD(OM_NEW)
         DoMethod(data->MI_DELSEND,   MUIM_Notify, MUIA_Menuitem_Checked,   MUIV_EveryTime, data->CH_DELSEND,        3, MUIM_Set,      MUIA_Selected, MUIV_TriggerValue);
         DoMethod(data->MI_MDN,       MUIM_Notify, MUIA_Menuitem_Checked,   MUIV_EveryTime, data->CH_MDN,            3, MUIM_Set,      MUIA_Selected, MUIV_TriggerValue);
         DoMethod(data->MI_ADDINFO,   MUIM_Notify, MUIA_Menuitem_Checked,   MUIV_EveryTime, data->CH_ADDINFO,        3, MUIM_Set,      MUIA_Selected, MUIV_TriggerValue);
-        DoMethod(data->RA_SECURITY,  MUIM_Notify, MUIA_Radio_Active,       4,              data->RA_SIGNATURE,      3, MUIM_Set,      MUIA_Radio_Active, 0);
-        DoMethod(data->RA_SECURITY,  MUIM_Notify, MUIA_Radio_Active,       4,              data->CH_ADDINFO,        3, MUIM_Set,      MUIA_Selected, FALSE);
         DoMethod(data->MI_FFONT,     MUIM_Notify, MUIA_Menuitem_Checked,   MUIV_EveryTime, obj, 1, MUIM_WriteWindow_StyleOptionsChanged);
         DoMethod(data->MI_TCOLOR,    MUIM_Notify, MUIA_Menuitem_Checked,   MUIV_EveryTime, obj, 1, MUIM_WriteWindow_StyleOptionsChanged);
         DoMethod(data->MI_TSTYLE,    MUIM_Notify, MUIA_Menuitem_Checked,   MUIV_EveryTime, obj, 1, MUIM_WriteWindow_StyleOptionsChanged);
@@ -3821,7 +3819,6 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
   comp.Mode = wmData->mode;
   comp.refMail = wmData->refMail;
-  comp.OldSecurity = wmData->oldSecurity;
   comp.Identity = wmData->identity;
 
   if(wmData->mode != NMM_BOUNCE)
@@ -3886,8 +3883,10 @@ DECLARE(ComposeMail) // enum WriteMode mode
     comp.Importance = 1-GetMUICycle(data->CY_IMPORTANCE);
     comp.RequestMDN = GetMUICheck(data->CH_MDN);
     comp.Signature = GetMUIRadio(data->RA_SIGNATURE);
+    comp.Security = GetMUIRadio(data->RA_SECURITY);
+    comp.SelSecurity = comp.Security;
 
-    if((comp.Security = GetMUIRadio(data->RA_SECURITY)) == SEC_DEFAULTS &&
+    if(comp.Security == SEC_DEFAULTS &&
        SetDefaultSecurity(&comp) == FALSE)
     {
       RETURN(0);

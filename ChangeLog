@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-05-09 Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_WR.c, mui/WriteWindow.c, YAM_MAf.c, misc: YAM will now store the selected
+    user identity if a mail is being set on hold so that when continuing to write
+    that mail the write window will popup with the correct identity selected
+    per default.
+
 2012-05-09 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/IdentityChooser.c, misc: added new class derived from Cycle.mui to
