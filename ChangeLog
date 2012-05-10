@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-05-10 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_CO.s: make sure that the PGP controls are always correctly enabled or
+    disabled according to the identity's "use PGP" state.
+
 2012-05-09 Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_MA.c, YAM_WR.c, YAM_MAf.c, misc: finalized the multiple identity support

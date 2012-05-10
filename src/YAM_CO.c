@@ -1084,6 +1084,20 @@ HOOKPROTONHNONP(CO_GetIdentityEntry, void)
     }
   }
 
+  DoMethod(gui->WI, MUIM_MultiSet, MUIA_Disabled, uin == NULL || uin->quoteMails == FALSE,
+    gui->CY_IDENTITY_QUOTEPOS,
+    gui->CY_IDENTITY_SIGPOS,
+    NULL);
+
+  DoMethod(gui->WI, MUIM_MultiSet, MUIA_Disabled, uin == NULL || uin->usePGP == FALSE,
+    gui->ST_IDENTITY_PGPID,
+    gui->ST_IDENTITY_PGPURL,
+    gui->CH_IDENTITY_PGPSIGN_UNENC,
+    gui->CH_IDENTITY_PGPSIGN_ENC,
+    gui->CH_IDENTITY_PGPENC_ALL,
+    gui->CH_IDENTITY_PGPENC_SELF,
+    NULL);
+
   LEAVE();
 }
 MakeHook(CO_GetIdentityEntryHook, CO_GetIdentityEntry);

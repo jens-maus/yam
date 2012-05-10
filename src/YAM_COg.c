@@ -2222,6 +2222,8 @@ Object *CO_PageIdentities(struct CO_ClassData *data)
   {
     // enhance the CycleChain
     set(bt_sentfolder, MUIA_CycleChain, TRUE);
+    set(data->GUI.BT_IDENTITYUP,   MUIA_CycleChain, TRUE);
+    set(data->GUI.BT_IDENTITYDOWN, MUIA_CycleChain, TRUE);
 
     // set help text to objects
 //    SetHelp(data->GUI.ST_SMTPHOST,           MSG_HELP_CO_ST_SMTPHOST             );
@@ -2282,10 +2284,6 @@ Object *CO_PageIdentities(struct CO_ClassData *data)
     DoMethod(data->GUI.BT_IDEL,         MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_DelIdentityHook);
     DoMethod(data->GUI.BT_IDENTITYUP,   MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.LV_IDENTITY, 3, MUIM_NList_Move, MUIV_NList_Move_Selected, MUIV_NList_Move_Previous);
     DoMethod(data->GUI.BT_IDENTITYDOWN, MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.LV_IDENTITY, 3, MUIM_NList_Move, MUIV_NList_Move_Selected, MUIV_NList_Move_Next);
-
-    // set some additional cyclechain data
-    set(data->GUI.BT_IDENTITYUP,   MUIA_CycleChain, TRUE);
-    set(data->GUI.BT_IDENTITYDOWN, MUIA_CycleChain, TRUE);
 
     // update the SMTP server array so that the cycle gadget reflects the
     // right content
