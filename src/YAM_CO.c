@@ -149,7 +149,7 @@ HOOKPROTONHNONP(AddNewRuleToList, void)
 
       // count number of rules already in filter
       numRules = CountNodes(&filter->ruleList);
-      
+
       // add a new GUI element for that particular rule
       newSearchGroup = SearchControlGroupObject,
                          MUIA_SearchControlGroup_RemoteFilterMode, filter->remote,
@@ -161,11 +161,11 @@ HOOKPROTONHNONP(AddNewRuleToList, void)
       {
         // fill the new search group with some content
         DoMethod(newSearchGroup, MUIM_SearchControlGroup_GetFromRule, rule);
-  
+
         // set some notifies
         DoMethod(newSearchGroup, MUIM_Notify, MUIA_SearchControlGroup_Modified, MUIV_EveryTime,
                                  MUIV_Notify_Application, 2, MUIM_CallHook, &SetActiveFilterDataHook);
-  
+
         // add it to our searchGroupList
         if(DoMethod(gui->GR_RGROUP, MUIM_Group_InitChange)) // required for a proper refresh
         {
@@ -176,7 +176,7 @@ HOOKPROTONHNONP(AddNewRuleToList, void)
           }
           DoMethod(gui->GR_RGROUP, MUIM_Group_ExitChange); // required for a proper refresh
         }
-  
+
         GhostOutFilter(gui, filter);
       }
     }
