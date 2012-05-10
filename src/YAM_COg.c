@@ -1703,6 +1703,7 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
                       Child, ColGroup(2),
                         MUIA_Group_Spacing, 1,
                         MUIA_Group_SameWidth, TRUE,
+                        MUIA_Weight, 1,
                         Child, data->GUI.BT_PADD = MakeButton(MUIX_B "+" MUIX_N),
                         Child, data->GUI.BT_PDEL = MakeButton(MUIX_B "-" MUIX_N),
                       End,
@@ -1806,6 +1807,7 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
                       Child, ColGroup(2),
                         MUIA_Group_Spacing, 1,
                         MUIA_Group_SameWidth, TRUE,
+                        MUIA_Weight, 1,
                         Child, data->GUI.BT_SADD = MakeButton(MUIX_B "+" MUIX_N),
                         Child, data->GUI.BT_SDEL = MakeButton(MUIX_B "-" MUIX_N),
                       End,
@@ -2014,6 +2016,7 @@ Object *CO_PageIdentities(struct CO_ClassData *data)
                     Child, ColGroup(2),
                       MUIA_Group_Spacing, 1,
                       MUIA_Group_SameWidth, TRUE,
+                      MUIA_Weight, 1,
                       Child, data->GUI.BT_IADD = MakeButton(MUIX_B "+" MUIX_N),
                       Child, data->GUI.BT_IDEL = MakeButton(MUIX_B "-" MUIX_N),
                     End,
@@ -2126,8 +2129,8 @@ Object *CO_PageIdentities(struct CO_ClassData *data)
 
                       Child, HSpace(1),
                       Child, HGroup,
-                        Child, data->GUI.CH_IDENTITY_SIGREPLY = MakeCheck(tr(MSG_CO_IDENTITY_USESIG_ANSWER)),
-                        Child, LLabel1(tr(MSG_CO_IDENTITY_USESIG_ANSWER)),
+                        Child, data->GUI.CH_IDENTITY_SIGREPLY = MakeCheck(tr(MSG_CO_IDENTITY_USESIG_REPLY)),
+                        Child, LLabel1(tr(MSG_CO_IDENTITY_USESIG_REPLY)),
                         Child, HSpace(0),
                       End,
 
@@ -2226,24 +2229,35 @@ Object *CO_PageIdentities(struct CO_ClassData *data)
     set(data->GUI.BT_IDENTITYDOWN, MUIA_CycleChain, TRUE);
 
     // set help text to objects
-//    SetHelp(data->GUI.ST_SMTPHOST,           MSG_HELP_CO_ST_SMTPHOST             );
-#warning SetHelp() missing
-/*
-    SetHelp(data->GUI.ST_REPLYTO,          MSG_HELP_CO_ST_REPLYTO);
-    SetHelp(data->GUI.ST_ORGAN,            MSG_HELP_CO_ST_ORGAN);
-    SetHelp(data->GUI.ST_EXTHEADER,        MSG_HELP_CO_ST_EXTHEADER);
-    SetHelp(data->GUI.CH_REQUESTMDN,       MSG_HELP_CO_CH_REQUESTMDN);
-    SetHelp(data->GUI.CH_QUOTE,       MSG_HELP_CO_CH_QUOTE);
-    SetHelp(data->GUI.ST_MYPGPID   ,MSG_HELP_CO_ST_MYPGPID  );
-    SetHelp(data->GUI.ST_PGPURL,    MSG_HELP_CO_ST_PGPURL   );
-    SetHelp(data->GUI.CH_ENCSELF   ,MSG_HELP_CO_CH_ENCSELF  );
-    SetHelp(data->GUI.ST_PHOTOURL  ,MSG_HELP_CO_ST_PHOTOURL  );
-    SetHelp(data->GUI.CH_SAVESENT,         MSG_HELP_CO_CH_SAVESENT);
-    SetHelp(data->GUI.CH_ADDINFO   ,MSG_HELP_WR_CH_ADDINFO   );
-    SetHelp(data->GUI.CH_USESIG,  MSG_HELP_CO_CH_USESIG   );
+    SetHelp(data->GUI.CH_IDENTITY_ENABLED,      MSG_HELP_CO_CH_IDENTITY_ENABLED);
+    SetHelp(data->GUI.ST_IDENTITY_DESCRIPTION,  MSG_HELP_CO_ST_IDENTITY_DESCRIPTION);
+    SetHelp(data->GUI.ST_IDENTITY_REALNAME,     MSG_HELP_CO_ST_IDENTITY_REALNAME);
+    SetHelp(data->GUI.ST_IDENTITY_EMAIL,        MSG_HELP_CO_ST_IDENTITY_EMAIL);
+    SetHelp(data->GUI.ST_IDENTITY_ORGANIZATION, MSG_HELP_CO_ST_IDENTITY_ORGANIZATION);
+    SetHelp(data->GUI.CY_IDENTITY_MAILSERVER,   MSG_HELP_CO_CY_IDENTITY_MAILSERVER);
+    SetHelp(data->GUI.CY_IDENTITY_SIGNATURE,    MSG_HELP_CO_CY_IDENTITY_SIGNATURE);
+    SetHelp(data->GUI.ST_IDENTITY_CC,           MSG_HELP_CO_ST_IDENTITY_CC);
+    SetHelp(data->GUI.ST_IDENTITY_BCC,          MSG_HELP_CO_ST_IDENTITY_BCC);
+    SetHelp(data->GUI.ST_IDENTITY_REPLYTO,      MSG_HELP_CO_ST_IDENTITY_REPLYTO);
+    SetHelp(data->GUI.ST_IDENTITY_EXTRAHEADER,  MSG_HELP_CO_ST_IDENTITY_EXTRAHEADER);
+    SetHelp(data->GUI.ST_IDENTITY_PHOTOURL,     MSG_HELP_CO_ST_IDENTITY_PHOTOURL);
+    SetHelp(data->GUI.CH_IDENTITY_SENTFOLDER,   MSG_HELP_CO_CH_IDENTITY_SENTFOLDER);
+    SetHelp(data->GUI.TX_IDENTITY_SENTFOLDER,   MSG_HELP_CO_TX_IDENTITY_SENTFOLDER);
+    SetHelp(data->GUI.CH_IDENTITY_QUOTEMAILS,   MSG_HELP_CO_CH_IDENTITY_QUOTEMAILS);
+    SetHelp(data->GUI.CY_IDENTITY_QUOTEPOS,     MSG_HELP_CO_CH_IDENTITY_QUOTEPOS);
+    SetHelp(data->GUI.CY_IDENTITY_SIGPOS,       MSG_HELP_CO_CH_IDENTITY_SIGPOS);
+    SetHelp(data->GUI.CH_IDENTITY_SIGREPLY,     MSG_HELP_CO_CH_IDENTITY_SIGREPLY);
+    SetHelp(data->GUI.CH_IDENTITY_SIGFORWARD,   MSG_HELP_CO_CH_IDENTITY_SIGFORWARD);
+    SetHelp(data->GUI.CH_IDENTITY_ADDINFO,      MSG_HELP_CO_CH_IDENTITY_ADDINFO);
+    SetHelp(data->GUI.CH_IDENTITY_REQUESTMDN,   MSG_HELP_CO_CH_IDENTITY_REQUESTMDN);
+    SetHelp(data->GUI.CH_IDENTITY_USEPGP,       MSG_HELP_CO_CH_IDENTITY_USEPGP);
+    SetHelp(data->GUI.ST_IDENTITY_PGPID,        MSG_HELP_CO_ST_IDENTITY_PGPID);
+    SetHelp(data->GUI.ST_IDENTITY_PGPURL,       MSG_HELP_CO_ST_IDENTITY_PGPURL);
+    SetHelp(data->GUI.CH_IDENTITY_PGPSIGN_UNENC,MSG_HELP_CO_CH_IDENTITY_PGPSIGN_UNENC);
+    SetHelp(data->GUI.CH_IDENTITY_PGPSIGN_ENC,  MSG_HELP_CO_CH_IDENTITY_PGPSIGN_ENC);
+    SetHelp(data->GUI.CH_IDENTITY_PGPENC_ALL,   MSG_HELP_CO_CH_IDENTITY_PGPENC_ALL);
+    SetHelp(data->GUI.CH_IDENTITY_PGPENC_SELF,  MSG_HELP_CO_CH_IDENTITY_PGPENC_SELF);
 
-
-*/
     // connect a notify if the user selects a different identity in the list
     DoMethod(data->GUI.LV_IDENTITY, MUIM_Notify, MUIA_NList_Active, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_GetIdentityEntryHook);
 
@@ -2321,36 +2335,35 @@ Object *CO_PageNewMail(struct CO_ClassData *data)
             MUIA_Scrollgroup_AutoBars, TRUE,
             MUIA_Scrollgroup_Contents, VGroupV,
 
-              Child, HGroup, GroupFrameT(tr(MSG_CO_Download)),
-                Child, ColGroup(2),
-                  Child, Label(tr(MSG_CO_TransferWin)),
-                  Child, data->GUI.CY_TRANSWIN = MakeCycle(trwopt, tr(MSG_CO_TransferWin)),
+              Child, ColGroup(3), GroupFrameT(tr(MSG_CO_Download)),
+                Child, Label(tr(MSG_CO_TransferWin)),
+                Child, data->GUI.CY_TRANSWIN = MakeCycle(trwopt, tr(MSG_CO_TransferWin)),
+                Child, HSpace(0),
 
-                  Child, Label(tr(MSG_CO_WarnSize1)),
-                  Child, HGroup,
-                    Child, data->GUI.ST_WARNSIZE = MakeInteger(5, tr(MSG_CO_WarnSize1)),
-                    Child, LLabel(tr(MSG_CO_WarnSize2)),
-                  End,
+                Child, Label(tr(MSG_CO_WarnSize1)),
+                Child, HGroup,
+                  Child, data->GUI.ST_WARNSIZE = MakeInteger(5, tr(MSG_CO_WarnSize1)),
+                  Child, LLabel(tr(MSG_CO_WarnSize2)),
                 End,
+                Child, HSpace(0),
 
-                Child, VSpace(0),
+                Child, HSpace(1),
+                Child, MakeCheckGroup(&data->GUI.CH_UPDSTAT, tr(MSG_CO_UpdateStatus)),
+                Child, HSpace(0),
 
-                Child, VGroup,
-                  Child, MakeCheckGroup(&data->GUI.CH_UPDSTAT, tr(MSG_CO_UpdateStatus)),
-                  Child, HVSpace,
-                End,
               End,
 
               Child, VGroup, GroupFrameT(tr(MSG_CO_AutoOperation)),
                 Child, HGroup,
-                  Child, Label(tr(MSG_CO_CheckMail)),
+                  Child, data->GUI.CH_INTERVAL = MakeCheck(tr(MSG_CO_CheckMail)),
+                  Child, Label2(tr(MSG_CO_CheckMail)),
                   Child, data->GUI.NM_INTERVAL = NumericbuttonObject,
                     MUIA_CycleChain,      TRUE,
-                    MUIA_Numeric_Min,     0,
+                    MUIA_Numeric_Min,     1,
                     MUIA_Numeric_Max,     240,
                     MUIA_Numeric_Default, 5,
                   End,
-                  Child, Label(tr(MSG_CO_Minutes)),
+                  Child, Label2(tr(MSG_CO_Minutes)),
                   Child, HSpace(0),
                 End,
                 Child, MakeCheckGroup(&data->GUI.CH_DLLARGE, tr(MSG_CO_DownloadLarge)),
@@ -2402,6 +2415,7 @@ Object *CO_PageNewMail(struct CO_ClassData *data)
     SetHelp(data->GUI.CY_TRANSWIN,       MSG_HELP_CO_CH_TRANSWIN);
     SetHelp(data->GUI.CH_UPDSTAT,        MSG_HELP_CO_CH_UPDSTAT);
     SetHelp(data->GUI.ST_WARNSIZE,       MSG_HELP_CO_ST_WARNSIZE);
+    SetHelp(data->GUI.CH_INTERVAL,       MSG_HELP_CO_ST_INTERVAL);
     SetHelp(data->GUI.NM_INTERVAL,       MSG_HELP_CO_ST_INTERVAL);
     SetHelp(data->GUI.CH_DLLARGE,        MSG_HELP_CO_CH_DLLARGE);
     SetHelp(data->GUI.CH_NOTIREQ,        MSG_HELP_CO_CH_NOTIREQ);
@@ -2424,6 +2438,7 @@ Object *CO_PageNewMail(struct CO_ClassData *data)
     DoMethod(data->GUI.CH_NOTISOUND,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,pa_notisound           ,3,MUIM_Set,MUIA_Disabled,MUIV_NotTriggerValue);
     DoMethod(data->GUI.CH_NOTISOUND,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,bt_notisound           ,3,MUIM_Set,MUIA_Disabled,MUIV_NotTriggerValue);
     DoMethod(data->GUI.CH_NOTICMD  ,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,pa_noticmd             ,3,MUIM_Set,MUIA_Disabled,MUIV_NotTriggerValue);
+    DoMethod(data->GUI.CH_INTERVAL, MUIM_Notify,MUIA_Selected,MUIV_EveryTime,data->GUI.NM_INTERVAL,  3,MUIM_Set,MUIA_Disabled,MUIV_NotTriggerValue);
   }
 
   RETURN(obj);
@@ -2465,6 +2480,7 @@ Object *CO_PageFilters(struct CO_ClassData *data)
                          Child, ColGroup(2),
                            MUIA_Group_Spacing, 1,
                            MUIA_Group_SameWidth, TRUE,
+                           MUIA_Weight, 1,
                            Child, data->GUI.BT_RADD = MakeButton(MUIX_B "+" MUIX_N),
                            Child, data->GUI.BT_RDEL = MakeButton(MUIX_B "-" MUIX_N),
                          End,
@@ -3195,8 +3211,11 @@ Object *CO_PageReplyForward(struct CO_ClassData *data)
                   Child, Label2(tr(MSG_CO_AltRepInit)),
                   Child, MakePhraseGroup(&data->GUI.ST_AREPLYHI, &data->GUI.ST_AREPLYTEXT, &data->GUI.ST_AREPLYBYE, tr(MSG_CO_AltRepInit), tr(MSG_HELP_CO_ST_AREPLYTEXT)),
 
-                  Child, Label2(tr(MSG_CO_AltRepPat)),
-                  Child, data->GUI.ST_AREPLYPAT = MakeString(SIZE_PATTERN, tr(MSG_CO_AltRepPat)),
+                  Child, HSpace(1),
+                  Child, HGroup,
+                    Child, Label2(tr(MSG_CO_AltRepPat)),
+                    Child, data->GUI.ST_AREPLYPAT = MakeString(SIZE_PATTERN, tr(MSG_CO_AltRepPat)),
+                  End,
 
                   Child, Label2(tr(MSG_CO_MLRepInit)),
                   Child, MakePhraseGroup(&data->GUI.ST_MREPLYHI, &data->GUI.ST_MREPLYTEXT, &data->GUI.ST_MREPLYBYE, tr(MSG_CO_MLRepInit), tr(MSG_HELP_CO_ST_MREPLYTEXT)),
@@ -3205,13 +3224,10 @@ Object *CO_PageReplyForward(struct CO_ClassData *data)
                   Child, MakeCheckGroup(&data->GUI.CH_COMPADDR, tr(MSG_CO_VerifyAddress)),
 
                   Child, HSpace(1),
-                  Child, ColGroup(2),
-                    Child, HSpace(5),
-                    Child, MakeCheckGroup(&data->GUI.CH_QUOTEEMPTY, tr(MSG_CO_QuoteEmpty)),
+                  Child, MakeCheckGroup(&data->GUI.CH_QUOTEEMPTY, tr(MSG_CO_QuoteEmpty)),
 
-                    Child, HSpace(5),
-                    Child, MakeCheckGroup(&data->GUI.CH_STRIPSIG, tr(MSG_CO_StripSignature)),
-                  End,
+                  Child, HSpace(1),
+                  Child, MakeCheckGroup(&data->GUI.CH_STRIPSIG, tr(MSG_CO_StripSignature)),
 
                 End,
               End,
@@ -3495,13 +3511,14 @@ Object *CO_PageSecurity(struct CO_ClassData *data)
                     ASLFR_DrawersOnly, TRUE,
                   End,
 
-                End,
-                Child, HGroup,
-                  Child, data->GUI.CH_PGPPASSINTERVAL = MakeCheck(tr(MSG_CO_PGPPASSINTERVAL1)),
-                  Child, Label2(tr(MSG_CO_PGPPASSINTERVAL1)),
-                  Child, data->GUI.NB_PGPPASSINTERVAL = MakeNumeric(1, 90, FALSE),
-                  Child, Label2(tr(MSG_CO_PGPPASSINTERVAL2)),
                   Child, HSpace(0),
+                  Child, HGroup,
+                    Child, data->GUI.CH_PGPPASSINTERVAL = MakeCheck(tr(MSG_CO_PGPPASSINTERVAL1)),
+                    Child, Label2(tr(MSG_CO_PGPPASSINTERVAL1)),
+                    Child, data->GUI.NB_PGPPASSINTERVAL = MakeNumeric(1, 90, FALSE),
+                    Child, Label2(tr(MSG_CO_PGPPASSINTERVAL2)),
+                    Child, HSpace(0),
+                  End,
                 End,
               End,
 
@@ -3635,6 +3652,7 @@ Object *CO_PageMIME(struct CO_ClassData *data)
                        Child, ColGroup(2),
                          MUIA_Group_Spacing, 1,
                          MUIA_Group_SameWidth, TRUE,
+                         MUIA_Weight, 1,
                          Child, data->GUI.BT_MADD = MakeButton(MUIX_B "+" MUIX_N),
                          Child, data->GUI.BT_MDEL = MakeButton(MUIX_B "-" MUIX_N),
                        End,
@@ -3678,6 +3696,11 @@ Object *CO_PageMIME(struct CO_ClassData *data)
 
                     Child, VSpace(0),
                   End,
+                End,
+
+                Child, RectangleObject,
+                  MUIA_Rectangle_HBar, TRUE,
+                  MUIA_FixHeight,      4,
                 End,
 
                 Child, HGroup,
@@ -3934,6 +3957,15 @@ Object *CO_PageMixed(struct CO_ClassData *data)
                   MUIA_Popstring_Button,PopButton(MUII_PopDrawer),
                   ASLFR_DrawersOnly, TRUE,
                 End,
+
+                Child, Label2(tr(MSG_CO_UPDATE_DOWNLOAD_PATH)),
+                Child, PopaslObject,
+                  MUIA_Popasl_Type, ASL_FileRequest,
+                  MUIA_Popstring_String, data->GUI.ST_UPDATEDOWNLOADPATH = MakeString(SIZE_PATH, tr(MSG_CO_UPDATE_DOWNLOAD_PATH)),
+                  MUIA_Popstring_Button, PopButton(MUII_PopDrawer),
+                  ASLFR_DrawersOnly, TRUE,
+                End,
+
               End,
 
               Child, VGroup, GroupFrameT(tr(MSG_CO_AppIcon)),
@@ -4016,6 +4048,7 @@ Object *CO_PageMixed(struct CO_ClassData *data)
               End,
 
               Child, HVSpace,
+
             End,
           End,
         End;
@@ -4186,16 +4219,6 @@ Object *CO_PageUpdate(struct CO_ClassData *data)
                   Child, data->GUI.TX_UPDATEDATE = TextObject,
                     MUIA_Text_Contents, "",
                   End,
-                End,
-              End,
-
-              Child, HGroup,
-                Child, Label2(tr(MSG_CO_UPDATE_DOWNLOAD_PATH)),
-                Child, data->GUI.PO_UPDATEDOWNLOADPATH = PopaslObject,
-                  MUIA_Popasl_Type, ASL_FileRequest,
-                  MUIA_Popstring_String, data->GUI.ST_UPDATEDOWNLOADPATH = MakeString(SIZE_PATH, tr(MSG_CO_UPDATE_DOWNLOAD_PATH)),
-                  MUIA_Popstring_Button, PopButton(MUII_PopDrawer),
-                  ASLFR_DrawersOnly, TRUE,
                 End,
               End,
 

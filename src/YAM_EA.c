@@ -793,6 +793,8 @@ static struct EA_ClassData *EA_New(int winnum, int type)
               Child, HGroup,
                  Child, ColGroup(2),
                     MUIA_Group_Spacing, 1,
+                    MUIA_Group_SameWidth, TRUE,
+                    MUIA_Weight, 1,
                     Child, data->GUI.BT_ADD = MakeButton(MUIX_B "+" MUIX_N),
                     Child, data->GUI.BT_DEL = MakeButton(MUIX_B "-" MUIX_N),
                  End,

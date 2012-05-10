@@ -7107,10 +7107,6 @@ Identities
 MSG_CO_IDENTITY_SETTINGS (2266//)
 General Settings
 ;
-MSG_HELP_CO_ST_IDENTITY_EMAIL (2267//)
-The e-mail address of the curently selected\n\
-identity.
-;
 MSG_CO_IDENTITY_REGISTER_SETTINGS (2268//)
 General Settings
 ;
@@ -7142,25 +7138,13 @@ MSG_CO_IDENTITY_COMPOSE (2277//)
 Compose Mail Settings
 ;
 MSG_CO_IDENTITY_CC (2278//)
-CC address
-;
-MSG_HELP_CO_ST_IDENTITY_CC (2279//)
-The default CC address that will be used\n\
-when composing a mail.
+CC: address
 ;
 MSG_CO_IDENTITY_BCC (2280//)
-BCC address
-;
-MSG_HELP_CO_ST_IDENTITY_BCC (2281//)
-The default BCC address that will be used\n\
-when composing a mail.
+BCC: address
 ;
 MSG_CO_IDENTITY_REPLYTO (2282//)
-Reply-To address
-;
-MSG_HELP_CO_ST_IDENTITY_REPLYTO (2283//)
-The default Reply-To address that will be used\n\
-when composing a mail.
+Reply-To: address
 ;
 MSG_CO_IDENTITY_COMPOSE_OPTIONS (2284//)
 Options
@@ -7180,8 +7164,8 @@ put my answer
 MSG_CO_IDENTITY_COMPOSE_SIGNATURE (2289//)
 put my signature
 ;
-MSG_CO_IDENTITY_USESIG_ANSWER (2290//)
-Use signature when answering
+MSG_CO_IDENTITY_USESIG_REPLY (2290//)
+Use signature when replying
 ;
 MSG_CO_IDENTITY_USESIG_FORWARD (2291//)
 Use signature when forwarding
@@ -7252,4 +7236,125 @@ _Active
 ;
 MSG_MA_FLUSH_ALL_INDICES (2310//)
 Flush all indices
+;
+MSG_FI_CONDITION (2311//)
+Condition
+;
+MSG_HELP_CO_CH_IDENTITY_ENABLED (2312//)
+If checked, this user identity is enabled for use.
+;
+MSG_HELP_CO_ST_IDENTITY_DESCRIPTION (2313//)
+A custom description for this\n\
+user identity.
+;
+MSG_HELP_CO_ST_IDENTITY_REALNAME (2314//)
+The realname "firstname lastname" for\n\
+this identity.
+;
+MSG_HELP_CO_ST_IDENTITY_EMAIL (2315//)
+The e-mail address associated with\n\
+this user identity.
+;
+MSG_HELP_CO_ST_IDENTITY_ORGANIZATION (2316//)
+Optional name of the organization\n\
+this identity belongs to.
+;
+MSG_HELP_CO_CY_IDENTITY_MAILSERVER (2317//)
+Allows you to select the outgoing SMTP server\n\
+which will be used when mail is going to be\n\
+sent using this user identity.
+;
+MSG_HELP_CO_ST_IDENTITY_CC (2318//)
+The default CC: recipients added when\n\
+composing a new mail.
+;
+MSG_HELP_CO_ST_IDENTITY_BCC (2319//)
+The default BCC: recipients added when\n\
+composing a new mail.
+;
+MSG_HELP_CO_ST_IDENTITY_REPLYTO (2320//)
+The default Reply-To: recipients added when\n\
+composing a new mail.
+;
+MSG_HELP_CO_ST_IDENTITY_EXTRAHEADER (2321//)
+Allows you to specify the default for putting\n\
+additional headers to an outgoing mail.
+;
+MSG_HELP_CO_ST_IDENTITY_PHOTOURL (2322//)
+An optional URL to a photo associated with\n\
+this user identity.
+;
+MSG_HELP_CO_CH_IDENTITY_SENTFOLDER (2323//)
+If enabled, sent mail will be stored in a\n\
+sent mail folder. Otherwise the sent mail\n\
+will be deleted.
+;
+MSG_HELP_CO_TX_IDENTITY_SENTFOLDER (2324//)
+Allows to specify which mail folder should\n\
+be used when storing sent mail.
+;
+MSG_HELP_CO_CH_IDENTITY_QUOTEMAILS (2325//)
+When replying or forwarding mails text will\n\
+be quoted if this option is enabled.
+;
+MSG_HELP_CO_CH_IDENTITY_QUOTEPOS (2326//)
+Allows to define if your answer should be\n\
+placed above or below quotes.
+;
+MSG_HELP_CO_CH_IDENTITY_SIGPOS (2327//)
+Allows to define if your signature should\n\
+appear below or above the quotes.
+;
+MSG_HELP_CO_CH_IDENTITY_SIGREPLY (2328//)
+If enabled, a signature will be added when\n\
+replying to a mail.
+;
+MSG_HELP_CO_CH_IDENTITY_SIGFORWARD (2329//)
+If enabled, a signature will be added when\n\
+forwarding a mail.
+;
+MSG_HELP_CO_CH_IDENTITY_ADDINFO (2330//)
+If enabled, personal information will be\n\
+added to the mail (X-SenderInfo header).\n\
+This requires an addressbook entry with\n\
+the same email address as this identity.
+;
+MSG_HELP_CO_CH_IDENTITY_REQUESTMDN (2331//)
+If enabled, a mail disposition notification\n\
+will be requested per default when composing\n\
+a mail.
+;
+MSG_HELP_CO_CH_IDENTITY_USEPGP (2332//)
+Allows to enable/disable the PGP functionality\n\
+for this whole user identity.
+;
+MSG_HELP_CO_ST_IDENTITY_PGPID (2333//)
+Allows to specify the PGP-Key ID which should\n\
+be used for this user identity.
+;
+MSG_HELP_CO_ST_IDENTITY_PGPURL (2334//)
+Allows to specify an URL where the public key\n\
+for this user identity can be accessed.
+;
+MSG_HELP_CO_CH_IDENTITY_PGPSIGN_UNENC (2335//)
+If enabled, the default is set to PGP sign all\n\
+unencrypted emails when starting to compose them.
+;
+MSG_HELP_CO_CH_IDENTITY_PGPSIGN_ENC (2336//)
+If enabled, the default is set to PGP sign all\n\
+encrypted emails when starting to compose them.
+;
+MSG_HELP_CO_CH_IDENTITY_PGPENC_ALL (2337//)
+If enabled, the default is set to PGP encrypt all\n\
+emails when starting to compose them.
+;
+MSG_HELP_CO_CH_IDENTITY_PGPENC_SELF (2338//)
+If enabled, all emails being encrypted via PGP\n\
+will have the PGP key added of this user identity.\n\
+If disabled, encrypted emails cannot be decrypted\n\
+by this user identity.
+;
+MSG_HELP_CO_CY_IDENTITY_SIGNATURE (2339//)
+Allow to selected the default signature that should\n\
+be used when composing emails.
 ;

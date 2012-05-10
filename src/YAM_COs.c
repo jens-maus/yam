@@ -1887,7 +1887,12 @@ void CO_GetConfig(BOOL saveConfig)
       CE->TransferWindow    = GetMUICycle  (gui->CY_TRANSWIN);
       CE->UpdateStatus      = GetMUICheck  (gui->CH_UPDSTAT);
       CE->WarnSize          = GetMUIInteger(gui->ST_WARNSIZE);
-      CE->CheckMailDelay    = GetMUINumer  (gui->NM_INTERVAL);
+
+      if(GetMUICheck(gui->CH_INTERVAL))
+        CE->CheckMailDelay = GetMUINumer(gui->NM_INTERVAL);
+      else
+        CE->CheckMailDelay = 0;
+
       CE->DownloadLarge     = GetMUICheck  (gui->CH_DLLARGE);
       CE->NotifyType        = (GetMUICheck(gui->CH_NOTIREQ)        ? NOTIFY_REQ        : 0)
                             + (GetMUICheck(gui->CH_NOTIOS41SYSTEM) ? NOTIFY_OS41SYSTEM : 0)
@@ -2405,6 +2410,7 @@ void CO_GetConfig(BOOL saveConfig)
       GetMUIString(CE->TempDir, gui->ST_TEMPDIR, sizeof(CE->TempDir));
       GetMUIString(CE->DetachDir, gui->ST_DETACHDIR, sizeof(CE->DetachDir));
       GetMUIString(CE->AttachDir, gui->ST_ATTACHDIR, sizeof(CE->AttachDir));
+      GetMUIString(CE->UpdateDownloadPath, gui->ST_UPDATEDOWNLOADPATH, sizeof(CE->UpdateDownloadPath));
       CE->WBAppIcon         = GetMUICheck  (gui->CH_WBAPPICON);
       CE->IconPositionX     = GetMUIInteger(gui->ST_APPX);
       CE->IconPositionY     = GetMUIInteger(gui->ST_APPY);
@@ -2462,8 +2468,6 @@ void CO_GetConfig(BOOL saveConfig)
           CE->UpdateInterval = 2419200; // 1 month
         break;
       }
-
-      GetMUIString(CE->UpdateDownloadPath, gui->ST_UPDATEDOWNLOADPATH, sizeof(CE->UpdateDownloadPath));
     }
     break;
 
@@ -2602,7 +2606,15 @@ void CO_SetConfig(void)
       setcycle(gui->CY_TRANSWIN, CE->TransferWindow);
       setcheckmark(gui->CH_UPDSTAT, CE->UpdateStatus);
       set(gui->ST_WARNSIZE, MUIA_String_Integer, CE->WarnSize);
-      set(gui->NM_INTERVAL, MUIA_Numeric_Value, CE->CheckMailDelay);
+
+      if(CE->CheckMailDelay > 0)
+      {
+        set(gui->NM_INTERVAL, MUIA_Numeric_Value, CE->CheckMailDelay);
+        set(gui->CH_INTERVAL, MUIA_Selected, TRUE);
+      }
+      else
+        set(gui->CH_INTERVAL, MUIA_Selected, FALSE);
+
       setcheckmark(gui->CH_DLLARGE, CE->DownloadLarge);
       setcheckmark(gui->CH_NOTIREQ, hasRequesterNotify(CE->NotifyType));
       setcheckmark(gui->CH_NOTIOS41SYSTEM, hasOS41SystemNotify(CE->NotifyType));
@@ -2871,6 +2883,7 @@ void CO_SetConfig(void)
       setstring(gui->ST_TEMPDIR, CE->TempDir);
       setstring(gui->ST_DETACHDIR, CE->DetachDir);
       setstring(gui->ST_ATTACHDIR, CE->AttachDir);
+      setstring(gui->ST_UPDATEDOWNLOADPATH, CE->UpdateDownloadPath);
       setcheckmark(gui->CH_WBAPPICON, CE->WBAppIcon);
       set(gui->ST_APPX, MUIA_String_Integer, abs(CE->IconPositionX));
       set(gui->ST_APPY, MUIA_String_Integer, abs(CE->IconPositionY));
@@ -2962,8 +2975,6 @@ void CO_SetConfig(void)
         // no update check was yet performed, so we clear our status gadgets
         set(gui->TX_UPDATEDATE, MUIA_Text_Contents, "");
       }
-
-      setstring(gui->ST_UPDATEDOWNLOADPATH, CE->UpdateDownloadPath);
     }
     break;
 

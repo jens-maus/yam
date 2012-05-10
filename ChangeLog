@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-05-10 Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_COg.c, misc: minor cosmetic housekeeping regarding the configuration
+    GUI elements. Also added all missing help texts for the new user identity
+    configuration elements. Translators can start to translate all the new
+    things now.
+
 2012-05-10 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MA.c: renamed the "Flush indices" menu item to "Flush all indices" to

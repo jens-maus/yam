@@ -66,9 +66,11 @@ struct Data
   Object *CH_SUBSTR[5];
   Object *CH_DOSPATTERN[5];
   Object *CY_COMBINE;
+  Object *RT_TITLE;
 
   Object *activeObject;
 
+  char *title;
   BOOL remoteFilterMode;
   BOOL showCombineCycle;
 };
@@ -155,10 +157,15 @@ OVERLOAD(OM_NEW)
   bcrit[2] = tr(MSG_CO_CTXor);
   bcrit[3] = NULL;
 
+  ENTER();
+
   // generate a temporary struct Data to which we store our data and
   // copy it later on
   if(!(data = tmpData = calloc(1, sizeof(struct Data))))
+  {
+    RETURN(0);
     return 0;
+  }
 
   // get eventually set attributes first
   while((tag = NextTagItem((APTR)&tags)) != NULL)
@@ -167,6 +174,9 @@ OVERLOAD(OM_NEW)
     {
       case ATTR(RemoteFilterMode) : data->remoteFilterMode = tag->ti_Data; break;
       case ATTR(ShowCombineCycle) : data->showCombineCycle = tag->ti_Data; break;
+      case ATTR(Position):
+        asprintf(&data->title, "%s %d:", tr(MSG_FI_CONDITION), (int)tag->ti_Data);
+      break;
     }
   }
 
@@ -174,6 +184,7 @@ OVERLOAD(OM_NEW)
 
     MUIA_Group_Horiz, FALSE,
     MUIA_HelpNode,     "FI_K",
+      Child, data->RT_TITLE = HBarT(data->title), End,
       Child, data->CY_COMBINE = MakeCycle(bcrit, ""),
       Child, HGroup,
         Child, Label1(tr(MSG_FI_SearchIn)),
@@ -261,10 +272,19 @@ OVERLOAD(OM_NEW)
     int i;
 
     if((data = (struct Data *)INST_DATA(cl, obj)) == NULL)
+    {
+      if(tmpData->title != NULL)
+        free(tmpData->title);
+
+      RETURN(0);
       return 0;
+    }
 
     // copy back the data stored in our temporarly struct Data
     memcpy(data, tmpData, sizeof(struct Data));
+
+    // make sure to show/hide the title
+    set(data->RT_TITLE, MUIA_ShowMe, data->title != NULL);
 
     // depending on the combinCycle mode we either show or hide it
     set(data->CY_COMBINE, MUIA_ShowMe, data->showCombineCycle);
@@ -336,8 +356,30 @@ OVERLOAD(OM_NEW)
   // free the temporary mem we allocated before
   free(tmpData);
 
+  RETURN((IPTR)obj);
   return (IPTR)obj;
 }
+
+///
+/// OVERLOAD(OM_DISPOSE)
+OVERLOAD(OM_DISPOSE)
+{
+  GETDATA;
+  ULONG result;
+
+  ENTER();
+
+  // free the title string
+  if(data->title != NULL)
+    free(data->title);
+
+  // signal the super class to dispose as well
+  result = DoSuperMethodA(cl, obj, msg);
+
+  RETURN(result);
+  return result;
+}
+
 ///
 /// OVERLOAD(OM_SET)
 OVERLOAD(OM_SET)

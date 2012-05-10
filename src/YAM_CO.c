@@ -133,6 +133,8 @@ HOOKPROTONHNONP(AddNewRuleToList, void)
   struct FilterNode *filter = NULL;
   struct CO_GUIData *gui = &G->CO->GUI;
 
+  ENTER();
+
   // get the active filterNode
   DoMethod(gui->LV_RULES, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &filter);
 
@@ -142,36 +144,45 @@ HOOKPROTONHNONP(AddNewRuleToList, void)
 
     if((rule = CreateNewRule(filter, FALSE)) != NULL)
     {
+      Object *newSearchGroup;
+      int numRules;
+
+      // count number of rules already in filter
+      numRules = CountNodes(&filter->ruleList);
+      
       // add a new GUI element for that particular rule
-      Object *newSearchGroup = SearchControlGroupObject,
-                                 MUIA_SearchControlGroup_RemoteFilterMode, filter->remote,
-                                 MUIA_SearchControlGroup_ShowCombineCycle, TRUE,
-                               End;
+      newSearchGroup = SearchControlGroupObject,
+                         MUIA_SearchControlGroup_RemoteFilterMode, filter->remote,
+                         MUIA_SearchControlGroup_ShowCombineCycle, TRUE,
+                         MUIA_SearchControlGroup_Position,         numRules,
+                       End;
 
-      if(newSearchGroup == NULL)
-        return;
-
-      // fill the new search group with some content
-      DoMethod(newSearchGroup, MUIM_SearchControlGroup_GetFromRule, rule);
-
-      // set some notifies
-      DoMethod(newSearchGroup, MUIM_Notify, MUIA_SearchControlGroup_Modified, MUIV_EveryTime,
-                               MUIV_Notify_Application, 2, MUIM_CallHook, &SetActiveFilterDataHook);
-
-      // add it to our searchGroupList
-      if(DoMethod(gui->GR_RGROUP, MUIM_Group_InitChange)) // required for a proper refresh
+      if(newSearchGroup != NULL)
       {
-        if(DoMethod(gui->GR_SGROUP, MUIM_Group_InitChange))
+        // fill the new search group with some content
+        DoMethod(newSearchGroup, MUIM_SearchControlGroup_GetFromRule, rule);
+  
+        // set some notifies
+        DoMethod(newSearchGroup, MUIM_Notify, MUIA_SearchControlGroup_Modified, MUIV_EveryTime,
+                                 MUIV_Notify_Application, 2, MUIM_CallHook, &SetActiveFilterDataHook);
+  
+        // add it to our searchGroupList
+        if(DoMethod(gui->GR_RGROUP, MUIM_Group_InitChange)) // required for a proper refresh
         {
-          DoMethod(gui->GR_SGROUP, OM_ADDMEMBER, newSearchGroup);
-          DoMethod(gui->GR_SGROUP, MUIM_Group_ExitChange);
+          if(DoMethod(gui->GR_SGROUP, MUIM_Group_InitChange))
+          {
+            DoMethod(gui->GR_SGROUP, OM_ADDMEMBER, newSearchGroup);
+            DoMethod(gui->GR_SGROUP, MUIM_Group_ExitChange);
+          }
+          DoMethod(gui->GR_RGROUP, MUIM_Group_ExitChange); // required for a proper refresh
         }
-        DoMethod(gui->GR_RGROUP, MUIM_Group_ExitChange); // required for a proper refresh
+  
+        GhostOutFilter(gui, filter);
       }
-
-      GhostOutFilter(gui, filter);
     }
   }
+
+  LEAVE();
 }
 MakeHook(AddNewRuleToListHook, AddNewRuleToList);
 
@@ -373,6 +384,7 @@ HOOKPROTONHNONP(GetActiveFilterData, void)
             Object *newSearchGroup = SearchControlGroupObject,
                                        MUIA_SearchControlGroup_RemoteFilterMode, filter->remote,
                                        MUIA_SearchControlGroup_ShowCombineCycle, i > 0,
+                                       MUIA_SearchControlGroup_Position, i+1,
                                      End;
 
             if(newSearchGroup == NULL)

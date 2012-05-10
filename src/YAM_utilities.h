@@ -292,6 +292,7 @@ void     DisplayStatistics(struct Folder *fo, BOOL updateAppIcon);
 void     DisposeModule(void *modptr);
 BOOL     DoPack(const char *file, const char *newfile, const struct Folder *folder);
 void *   DuplicateNode(const void *node, const size_t size);
+int      CountNodes(struct MinList *list);
 BOOL     DumpClipboard(FILE *out);
 char *   Encrypt(const char *source);
 void     GetPubScreenName(const struct Screen *screen, char *pubName, ULONG pubNameSize);

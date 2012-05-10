@@ -5726,6 +5726,23 @@ void *DuplicateNode(const void *node, const size_t size)
 }
 
 ///
+/// CountNodes
+//  returns the number of nodes currently in a struct List
+int CountNodes(struct MinList *list)
+{
+  struct Node *curNode;
+  int result = 0;
+
+  ENTER();
+
+  IterateList(list, curNode)
+    result++;
+
+  RETURN(result);
+  return result;
+}
+
+///
 /// CompareLists
 // compare two lists using a comparison function
 BOOL CompareLists(const struct List *lh1, const struct List *lh2, BOOL (* compare)(const struct Node *, const struct Node *))

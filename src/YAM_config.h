@@ -96,6 +96,7 @@ struct CO_GUIData
   Object *CY_TRANSWIN;
   Object *CH_UPDSTAT;
   Object *ST_WARNSIZE;
+  Object *CH_INTERVAL;
   Object *NM_INTERVAL;
   Object *CH_DLLARGE;
   Object *CH_NOTIREQ;
@@ -261,7 +262,6 @@ struct CO_GUIData
   Object *TX_UPDATESTATUS;
   Object *TX_UPDATEDATE;
   Object *ST_UPDATEDOWNLOADPATH;
-  Object *PO_UPDATEDOWNLOADPATH;
   Object *CH_DETECTCYRILLIC;
   Object *CH_ABOOKLOOKUP;
   Object *CH_CONVERTHTML;
