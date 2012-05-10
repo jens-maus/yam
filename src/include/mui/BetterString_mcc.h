@@ -2,7 +2,7 @@
 
  BetterString.mcc - A better String gadget MUI Custom Class
  Copyright (C) 1997-2000 Allan Odgaard
- Copyright (C) 2005-2009 by BetterString.mcc Open Source Team
+ Copyright (C) 2005-2012 by BetterString.mcc Open Source Team
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -16,7 +16,7 @@
 
  BetterString class Support Site:  http://www.sf.net/projects/bstring-mcc/
 
- $Id: BetterString_mcc.h 513 2009-06-06 12:05:38Z damato $
+ $Id: BetterString_mcc.h 317 2012-05-10 17:44:55Z damato $
 
 ***************************************************************************/
 
@@ -57,26 +57,27 @@ extern "C" {
 #endif
 
 // attributes
-#define MUIA_BetterString_SelectSize            0xad001001
-#define MUIA_BetterString_StayActive            0xad001003
-#define MUIA_BetterString_Columns               0xad001005
-#define MUIA_BetterString_NoInput               0xad001007
-#define MUIA_BetterString_KeyUpFocus            0xad001008
-#define MUIA_BetterString_KeyDownFocus          0xad001009
-#define MUIA_BetterString_InactiveContents      0xad00100a
-#define MUIA_BetterString_NoShortcuts           0xad00100c
-#define MUIA_BetterString_SelectOnActive        0xad00100d
+#define MUIA_BetterString_SelectSize            0xad001001UL
+#define MUIA_BetterString_StayActive            0xad001003UL
+#define MUIA_BetterString_Columns               0xad001005UL
+#define MUIA_BetterString_NoInput               0xad001007UL
+#define MUIA_BetterString_KeyUpFocus            0xad001008UL
+#define MUIA_BetterString_KeyDownFocus          0xad001009UL
+#define MUIA_BetterString_InactiveContents      0xad00100aUL
+#define MUIA_BetterString_NoShortcuts           0xad00100cUL
+#define MUIA_BetterString_SelectOnActive        0xad00100dUL
+#define MUIA_BetterString_NoNotify              0xad00100eUL
 
 // methods
-#define MUIM_BetterString_Insert                0xad001002
-#define MUIM_BetterString_ClearSelected         0xad001004
-#define MUIM_BetterString_FileNameStart         0xad001006
-#define MUIM_BetterString_DoAction              0xad00100b
+#define MUIM_BetterString_Insert                0xad001002UL
+#define MUIM_BetterString_ClearSelected         0xad001004UL
+#define MUIM_BetterString_FileNameStart         0xad001006UL
+#define MUIM_BetterString_DoAction              0xad00100bUL
 
 // values for MUIM_BetterString_Insert
-#define MUIV_BetterString_Insert_StartOfString  0x00000000
-#define MUIV_BetterString_Insert_EndOfString    0xfffffffe
-#define MUIV_BetterString_Insert_BufferPos      0xffffffff
+#define MUIV_BetterString_Insert_StartOfString  0x00000000UL
+#define MUIV_BetterString_Insert_EndOfString    0xfffffffeUL
+#define MUIV_BetterString_Insert_BufferPos      0xffffffffUL
 
 // result values of MUIM_BetterString_FileNameStart
 #define MUIR_BetterString_FileNameStart_Volume  -1

@@ -7,6 +7,10 @@ $URL$
 
 2012-05-10 Jens Langner <Jens.Langner@light-speed.de>
 
+  * mui/Recipientstring.c: updated Betterstring_mcc.h and made use of the new
+    MUIA_BetterString_NoNotify attribute to prevent betterstring from
+    sending out too many notifications for changed of MUIA_String_Contents.
+    This refs #299.
   * YAM_COg.c, misc: minor cosmetic housekeeping regarding the configuration
     GUI elements. Also added all missing help texts for the new user identity
     configuration elements. Translators can start to translate all the new

@@ -209,6 +209,9 @@ static void NormalizeSelection(Object *obj, BOOL clear)
     // NUL-terminate this recipient
     rcp[rcpSize] = '\0';
 
+    // stop betterstring from sending out notifications
+    set(obj, MUIA_BetterString_NoNotify, TRUE);
+
     // remove the current recipient from the string, including the " >> " marks
     // and everything typed so far
     xset(obj, MUIA_String_BufferPos, start,
@@ -218,6 +221,10 @@ static void NormalizeSelection(Object *obj, BOOL clear)
 
     // now insert the correct recipient again
     DoMethod(obj, MUIM_BetterString_Insert, rcp, start);
+
+    // turn notifications back on and trigger one
+    // immediately since Insert() was called.
+    set(obj, MUIA_BetterString_NoNotify, FALSE);
 
     free(rcp);
   }
@@ -1089,14 +1096,22 @@ DECLARE(AddRecipient) // STRPTR address
 
   D(DBF_GUI, "add recipient \"%s\"", msg->address);
 
-  if(data->MultipleRecipients == FALSE)
-    nnset(obj, MUIA_String_Contents, NULL);
+  // set String_Contents to NULL in case we have
+  // a single recipient in the string. Also set the
+  // no notify attribute of betterstring to prevent
+  // it from sending out two notifications in a row.
+  xset(obj, MUIA_BetterString_NoNotify, TRUE,
+            data->MultipleRecipients == FALSE ? MUIA_String_Contents : TAG_IGNORE, NULL);
 
   if((contents = (STRPTR)xget(obj, MUIA_String_Contents)) != NULL && contents[0] != '\0')
     DoMethod(obj, MUIM_BetterString_Insert, ", ", MUIV_BetterString_Insert_EndOfString);
 
   DoMethod(obj, MUIM_BetterString_Insert, msg->address, MUIV_BetterString_Insert_EndOfString);
-  set(obj, MUIA_String_BufferPos, -1);
+
+  // set bufferpos and reset NoNotify to FALSE
+  // so that a notification is triggered
+  xset(obj, MUIA_String_BufferPos, -1,
+            MUIA_BetterString_NoNotify, FALSE);
 
   RETURN(0);
   return 0;
@@ -1192,6 +1207,9 @@ DECLARE(ReplaceSelected) // char *address
     data->selectSize = 0;
   }
 
+  // make sure to stop betterstring from sending notifications
+  set(obj, MUIA_BetterString_NoNotify, TRUE);
+
   // we first have to clear the selected area
   DoMethod(obj, MUIM_BetterString_ClearSelected);
 
@@ -1219,6 +1237,9 @@ DECLARE(ReplaceSelected) // char *address
 
   xset(obj, MUIA_String_BufferPos, pos,
             MUIA_BetterString_SelectSize, strlen(new_address) - (pos - start));
+
+  // make sure to turn notifications back on
+  set(obj, MUIA_BetterString_NoNotify, FALSE);
 
   RETURN(0);
   return 0;
