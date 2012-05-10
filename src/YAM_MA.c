@@ -4197,7 +4197,7 @@ struct MA_ClassData *MA_New(void)
         MenuChild, MenuBarLabel,
         MenuChild, data->GUI.MI_DELDEL = Menuitem(tr(MSG_MA_REMOVEDELETED), "K", TRUE, FALSE, MMEN_DELDEL),
         MenuChild, data->GUI.MI_UPDINDEX = Menuitem(tr(MSG_MA_UPDATEINDEX), NULL, TRUE, FALSE, MMEN_INDEX),
-        MenuChild, Menuitem(tr(MSG_MA_FlushIndices), NULL, TRUE, FALSE, MMEN_FLUSH),
+        MenuChild, Menuitem(tr(MSG_MA_FLUSH_ALL_INDICES), NULL, TRUE, FALSE, MMEN_FLUSH),
         MenuChild, MenuBarLabel,
         MenuChild, data->GUI.MI_IMPORT = Menuitem(tr(MSG_FOLDER_IMPORT), NULL, TRUE, FALSE, MMEN_IMPORT),
         MenuChild, data->GUI.MI_EXPORT = Menuitem(tr(MSG_FOLDER_EXPORT), NULL, TRUE, FALSE, MMEN_EXPORT),

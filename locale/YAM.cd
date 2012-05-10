@@ -585,9 +585,6 @@ Reset
 MSG_MA_Select (211//)
 Select
 ;
-MSG_MA_FlushIndices (219//)
-Flush indices
-;
 MSG_MA_MDelete (227//)
 Delete
 ;
@@ -7252,4 +7249,7 @@ Failed to create directory '%s' (%s).
 ;
 MSG_CO_IdentityActive (2309//)
 _Active
+;
+MSG_MA_FLUSH_ALL_INDICES (2310//)
+Flush all indices
 ;

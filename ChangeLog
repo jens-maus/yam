@@ -7,6 +7,8 @@ $URL$
 
 2012-05-10 Thore Böckelmann <tboeckel@gmx.de>
 
+  * YAM_MA.c: renamed the "Flush indices" menu item to "Flush all indices" to
+    make more clear that the action affects all folders.
   * YAM_CO.s: make sure that the PGP controls are always correctly enabled or
     disabled according to the identity's "use PGP" state.
 

@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.33 (26.4.2012)
+## version $VER: YAM.catalog 7.34 (10.5.2012)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -766,10 +766,6 @@ Zurücksetzen
 MSG_MA_Select
 Auswählen
 ; Select
-;
-MSG_MA_FlushIndices
-Indizes freigeben
-; Flush indices
 ;
 MSG_MA_MDelete
 Löschen
@@ -8668,4 +8664,7 @@ verschieben?
 ;
 MSG_ER_CANNOT_CREATE_FOLDER
 Das Erstellen des Verzeichnisses '%s' ist fehlgeschlagen (%s).
+;
+MSG_MA_FLUSH_ALL_INDICES
+Alle Indizes freigeben
 ;
