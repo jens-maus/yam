@@ -114,44 +114,49 @@ static const char USED_VAR yam_stack_size[] = "$STACK:" STR(MIN_STACKSIZE) "\n";
 // to constant variables.
 #define __YAM           "YAM"
 #define __YAM_VERSION   "2.8"
+#ifndef __YAM_DEVEL
 #define __YAM_DEVEL     "-dev"
+#endif
 #ifndef __YAM_BUILDID
 #define __YAM_BUILDID   0
 #endif
 #define __YAM_COPYRIGHT     "Copyright (C) 2000-2012 YAM Open Source Team"
 #define __YAM_FULLCOPYRIGHT "Copyright (C) 1995-2000 Marcel Beck\n" __YAM_COPYRIGHT
 
+// find out something about the compiler used
+#if defined(__GNUC__)
+  #if defined(__GNUC_PATCHLEVEL__)
+    #define __YAM_COMPILER "GCC " STR(__GNUC__) "." STR(__GNUC_MINOR__) "." STR(__GNUC_PATCHLEVEL__)
+  #else
+    #define __YAM_COMPILER "GCC " STR(__GNUC__) "." STR(__GNUC_MINOR__) ".x"
+  #endif
+#elif defined(__VBCC__)
+  #define __YAM_COMPILER "VBCC"
+#elif defined(__SASC)
+  #define __YAM_COMPILER "SAS/C"
+#else
+  #define __YAM_COMPILER "unknown"
+  #warning "unknown compiler specification"
+#endif
+
+// __YAM_BUILDID is 0 for non-nightly builds
 #if __YAM_BUILDID == 0
-const char * const yamuseragent     = __YAM "/" __YAM_VERSION __YAM_DEVEL " (" SYSTEM "; " CPU "; rv:" __YAM_BUILDDATE ")";
 const char * const yambuildid       = "";
 #else
-const char * const yamuseragent     = __YAM "/" __YAM_VERSION __YAM_DEVEL "-" STR(__YAM_BUILDID) " (" SYSTEM "; " CPU "; rv:" __YAM_BUILDDATE ")";
-const char * const yambuildid       = STR(__YAM_BUILDID);
+const char * const yambuildid       = STR(__YAM_BUILDID)
 #endif
 
 const char * const yamver           = __YAM_VERSION __YAM_DEVEL;
-const char * const yamversion       = __YAM " " __YAM_VERSION __YAM_DEVEL " [" SYSTEMSHORT "/" CPU "]";
-const char * const yamversionver    = __YAM_VERSION __YAM_DEVEL " [" SYSTEMSHORT "/" CPU "] [svn r" STR(SVN_REV) "]";
-const char * const yamversionstring = "$VER: " __YAM " " __YAM_VERSION __YAM_DEVEL " (" __YAM_VERDATE ") " __YAM_COPYRIGHT " [" SYSTEMSHORT "/" CPU "] [svn r" STR(SVN_REV) "]";
+const char * const yamversion       = __YAM " " __YAM_VERSION __YAM_DEVEL " [" SYSTEMSHORT "/" CPU ", r" STR(SVN_REV) ", " __YAM_COMPILER "]";
+const char * const yamversionver    = __YAM_VERSION __YAM_DEVEL " [" SYSTEMSHORT "/" CPU "]";
+const char * const yamversionstring = "$VER: " __YAM " " __YAM_VERSION __YAM_DEVEL " (" __YAM_VERDATE ") " __YAM_COPYRIGHT " [" SYSTEMSHORT "/" CPU ", r" STR(SVN_REV) "]";
+const char * const yamuseragent     = __YAM "/" __YAM_VERSION __YAM_DEVEL " (" SYSTEM "; " CPU "; rv:" __YAM_BUILDDATE "r" STR(SVN_REV) ")";
 const char * const yamcopyright     = __YAM_COPYRIGHT;
 const char * const yamfullcopyright = __YAM_FULLCOPYRIGHT;
 const char * const yamversiondate   = __YAM_VERDATE;
+const char * const yamcompiler      = __YAM_COMPILER;
 const unsigned long yamversiondays  = __YAM_VERDAYS;
-
-#if defined(__GNUC__)
-  #if defined(__GNUC_PATCHLEVEL__)
-    const char * const yamcompiler = " (GCC " STR(__GNUC__) "." STR(__GNUC_MINOR__) "." STR(__GNUC_PATCHLEVEL__) ")";
-  #else
-    const char * const yamcompiler = " (GCC " STR(__GNUC__) "." STR(__GNUC_MINOR__) ".x)";
-  #endif
-#elif defined(__VBCC__)
-  const char * const yamcompiler = " (VBCC)";
-#elif defined(__SASC)
-  const char * const yamcompiler = " (SAS/C " STR(__VERSION__) "." STR(__REVISION__) ")";
-#else
-  const char * const yamcompiler = " (unknown)";
-  #warning "unknown compiler specification"
-#endif
+const unsigned long yamsvnrev       = SVN_REV;
 
 /* no longer external visible, this is done by proto files! */
 struct Library* DataTypesBase     = NULL;

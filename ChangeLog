@@ -7,6 +7,10 @@ $URL$
 
 2012-05-10 Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_global.c, mui/YAMApplication.c: slightly changed the version string
+    handling. Now the svn revision is put at different places so that it
+    is available e.g. in the about window, version string and in the online
+    update check mechanism.
   * YAM_utilities.h, misc: renamed the flag macros to somewhat shorter and
     more intuitive versions.
   * mui/Recipientstring.c: updated Betterstring_mcc.h and made use of the new

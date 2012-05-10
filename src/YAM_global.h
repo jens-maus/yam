@@ -43,6 +43,7 @@ extern const char* const yamcopyright;
 extern const char* const yamfullcopyright;
 extern const char* const yamcompiler;
 extern const unsigned long yamversiondays;
+extern const unsigned long yamsvnrev;
 extern struct WBStartup * WBmsg;
 #if defined(__amigaos3__)
 extern struct Library * PictureDTBase;

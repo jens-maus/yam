@@ -183,9 +183,14 @@ char *BuildUpdateRequest(void)
       snprintf(request, REQUEST_SIZE, "%s&builddate=%s", request, buf);
 
     // encode the language in which YAM is running
-    if(G->Catalog != NULL && urlencode(buf, G->Catalog->cat_Language, sizeof(buf)) > 0)
-      snprintf(request, REQUEST_SIZE, "%s&lang=%s%%20%d%%2E%d", request, buf, G->Catalog->cat_Version,
-                                                                              G->Catalog->cat_Revision);
+    if(G->Catalog != NULL)
+    {
+      if(urlencode(buf, G->Catalog->cat_Language, sizeof(buf)) > 0)
+        snprintf(request, REQUEST_SIZE, "%s&lang=%s%%20%d%%2E%d", request, buf, G->Catalog->cat_Version,
+                                                                                G->Catalog->cat_Revision);
+    }
+    else
+      snprintf(request, REQUEST_SIZE, "%s&lang=english", request);
 
     // Now we add some third party components
     // information for our update server as well.

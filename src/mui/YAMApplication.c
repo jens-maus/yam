@@ -622,7 +622,9 @@ OVERLOAD(OM_NEW)
 
     // now we add the compiler information as YAM can be
     // compiled with different versions and types of compilers
-    strlcat(data->compileInfo, yamcompiler, sizeof(data->compileInfo));
+    snprintf(data->compileInfo, sizeof(data->compileInfo), "%s (%s, r%ld)", data->compileInfo,
+                                                                            yamcompiler,
+                                                                            yamsvnrev);
 
     while((tag = NextTagItem((APTR)&tags)) != NULL)
     {
