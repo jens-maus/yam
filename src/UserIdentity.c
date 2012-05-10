@@ -41,6 +41,7 @@
 
 #include "extrasrc.h"
 
+#include "MailServers.h"
 #include "UserIdentity.h"
 
 #include "Debug.h"
@@ -119,19 +120,21 @@ static BOOL CompareUserIdentityNodes(const struct Node *n1, const struct Node *n
   ENTER();
 
   // compare every single member of the structure
-  if(uid1->active != uid2->active ||
+  if(uid1->id != uid2->id ||
+     uid1->active != uid2->active ||
      strcmp(uid1->description, uid2->description) != 0 ||
      strcmp(uid1->realname, uid2->realname) != 0 ||
      strcmp(uid1->address, uid2->address) != 0 ||
      strcmp(uid1->organization, uid2->organization) != 0 ||
-     uid1->mailServer != uid2->mailServer ||
+     uid1->mailServer->id != uid2->mailServer->id ||
      uid1->signature != uid2->signature ||
      strcmp(uid1->mailCC, uid2->mailCC) != 0 ||
      strcmp(uid1->mailBCC, uid2->mailBCC) != 0 ||
      strcmp(uid1->mailReplyTo, uid2->mailReplyTo) != 0 ||
      strcmp(uid1->extraHeaders, uid2->extraHeaders) != 0 ||
      strcmp(uid1->photoURL, uid2->photoURL) != 0 ||
-     uid1->sentFolder != uid2->sentFolder ||
+     strcmp(uid1->sentFolder, uid2->sentFolder) != 0 ||
+     uid1->saveSentMail != uid2->saveSentMail ||
      uid1->quoteMails != uid2->quoteMails ||
      uid1->quotePosition != uid2->quotePosition ||
      uid1->signaturePosition != uid2->signaturePosition ||
