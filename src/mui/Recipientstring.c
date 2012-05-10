@@ -177,7 +177,7 @@ static char *rcptok(char *s, BOOL *quote)
 // ' >> ' marks.
 static void NormalizeSelection(Object *obj, BOOL clear)
 {
-  LONG start = DoMethod(obj, MUIM_Recipientstring_RecipientStart);
+  LONG start = DoMethod(obj, METHOD(RecipientStart));
   LONG rcpSize;
   LONG marksSize = 0;
   char *rcp = (char *)xget(obj, MUIA_String_Contents) + start;
@@ -236,7 +236,7 @@ static void InsertAddress(Object *obj, const char *alias, const char *name, cons
   {
     // If we have an alias we just add this one and let the string object
     // resolve this alias later.
-    DoMethod(obj, MUIM_Recipientstring_AddRecipient, alias);
+    DoMethod(obj, METHOD(AddRecipient), alias);
   }
   else
   {
@@ -258,7 +258,7 @@ static void InsertAddress(Object *obj, const char *alias, const char *name, cons
         strlcat(fullName, ">", sizeof(fullName));
     }
 
-    DoMethod(obj, MUIM_Recipientstring_AddRecipient, fullName);
+    DoMethod(obj, METHOD(AddRecipient), fullName);
   }
 }
 
@@ -546,7 +546,7 @@ OVERLOAD(MUIM_GoInactive)
   // we check if the user wants us to resolve the content
   // of the string also when the string gadgets goes inactive.
   if(data->ResolveOnInactive == TRUE)
-    DoMethod(obj, MUIM_Recipientstring_Resolve, MUIF_NONE);
+    DoMethod(obj, METHOD(Resolve), MUIF_NONE);
 
   // remember the current selection before our superclass deletes these values because of going inactive
   data->bufferPos = xget(obj, MUIA_String_BufferPos);
@@ -653,7 +653,7 @@ OVERLOAD(MUIM_HandleEvent)
           if(data->ResolveOnCR == TRUE)
           {
             // only if we successfully resolved the string we move on to the next object.
-            if(DoMethod(obj, MUIM_Recipientstring_Resolve, hasFlag(imsg->Qualifier, (IEQUALIFIER_RSHIFT | IEQUALIFIER_LSHIFT)) ? MUIF_Recipientstring_Resolve_NoFullName : MUIF_NONE))
+            if(DoMethod(obj, METHOD(Resolve), hasFlag(imsg->Qualifier, (IEQUALIFIER_RSHIFT | IEQUALIFIER_LSHIFT)) ? MUIF_Recipientstring_Resolve_NoFullName : MUIF_NONE))
             {
               BOOL matchListWasOpen = xget(data->Matchwindow, MUIA_Window_Open);
 
@@ -777,7 +777,7 @@ OVERLOAD(MUIM_HandleEvent)
           // open it beforehand
           if(closeMatchWin == FALSE)
           {
-            char *cur_rcpt = (char *)DoMethod(obj, MUIM_Recipientstring_CurrentRecipient);
+            char *cur_rcpt = (char *)DoMethod(obj, METHOD(CurrentRecipient));
             struct CustomABEntry *abentry;
 
             if(cur_rcpt != NULL &&
@@ -809,7 +809,7 @@ OVERLOAD(MUIM_HandleEvent)
               {
                 // insert the matching string
                 char *new_address = UnquoteString(abentry->MatchString, TRUE);
-                ULONG start = DoMethod(obj, MUIM_Recipientstring_RecipientStart);
+                ULONG start = DoMethod(obj, METHOD(RecipientStart));
 
                 DoMethod(obj, MUIM_BetterString_Insert, &new_address[pos - start], pos);
 
@@ -900,13 +900,13 @@ DECLARE(Resolve) // ULONG flags
     // clear the string gadget without notifying others
     nnset(obj, MUIA_String_Contents, NULL);
 
-    D(DBF_GUI, "Resolve this string: '%s'", tmp);
+    D(DBF_GUI, "resolve this string '%s'", tmp);
     // tokenize string and resolve each recipient
     while((s = rcptok(tmp, &quote)) != NULL)
     {
       char *marks;
 
-      D(DBF_GUI, "token: '%s' (quoted: %ld)", s, quote);
+      D(DBF_GUI, "token '%s' (quoted %ld)", s, quote);
 
       // if the resolve string is empty we skip it and go on
       if(s[0] == '\0')
@@ -920,19 +920,19 @@ DECLARE(Resolve) // ULONG flags
       {
         D(DBF_GUI, "skipping marks");
         s = marks + 4;
-        D(DBF_GUI, "new token: '%s'", s);
+        D(DBF_GUI, "new token '%s'", s);
       }
       else if(strnicmp(s, "mailto:", 7) == 0)
       {
         D(DBF_GUI, "stripping 'mailto:' header");
         s = &s[7];
-        D(DBF_GUI, "new token: '%s'", s);
+        D(DBF_GUI, "new token '%s'", s);
       }
 
       if(checkvalids == FALSE && (tmp = strchr(s, '@')) != NULL)
       {
-        D(DBF_GUI, "Valid address found.. will not resolve it: %s", s);
-        DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
+        D(DBF_GUI, "valid address found.. will not resolve it '%s'", s);
+        DoMethod(obj, METHOD(AddRecipient), s);
 
         // check if email address lacks domain...
         // and add the one from the currently active user identity
@@ -951,7 +951,7 @@ DECLARE(Resolve) // ULONG flags
       {
         struct MUI_NListtree_TreeNode *nexttn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Next, MUIF_NONE);
 
-        D(DBF_GUI, "Found match: %s", s);
+        D(DBF_GUI, "found match '%s'", s);
 
         entry = (struct ABEntry *)tn->tn_User;
 
@@ -960,17 +960,17 @@ DECLARE(Resolve) // ULONG flags
         {
           if(entry->Type == AET_USER) /* it's a normal person */
           {
-            D(DBF_GUI, "\tPlain user: '%s' <%s>", entry->RealName, entry->Address);
+            D(DBF_GUI, "\tplain user '%s' <%s>", entry->RealName, entry->Address);
 
             if(withrealname == TRUE && entry->RealName[0] != '\0')
             {
               char address[SIZE_LARGE];
 
               BuildAddress(address, sizeof(address), entry->Address, entry->RealName);
-              DoMethod(obj, MUIM_Recipientstring_AddRecipient, address);
+              DoMethod(obj, METHOD(AddRecipient), address);
             }
             else
-              DoMethod(obj, MUIM_Recipientstring_AddRecipient, entry->Address);
+              DoMethod(obj, METHOD(AddRecipient), entry->Address);
           }
           else if(entry->Type == AET_LIST) /* it's a list of persons */
           {
@@ -985,8 +985,8 @@ DECLARE(Resolve) // ULONG flags
                 while((lf = strchr(members, '\n')) != NULL)
                   lf[0] = ',';
 
-                D(DBF_GUI, "Found list: »%s«", members);
-                DoMethod(obj, MUIM_Recipientstring_AddRecipient, members);
+                D(DBF_GUI, "found list '%s'", members);
+                DoMethod(obj, METHOD(AddRecipient), members);
                 free(members);
 
                 if(data->ReplyTo != NULL && entry->Address[0] != '\0')
@@ -997,15 +997,15 @@ DECLARE(Resolve) // ULONG flags
             }
             else
             {
-              D(DBF_GUI, "String doesn't allow multiple recipients");
-              DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
+              D(DBF_GUI, "string doesn't allow multiple recipients");
+              DoMethod(obj, METHOD(AddRecipient), s);
               res = FALSE;
             }
           }
           else /* it's unknown... */
           {
-            D(DBF_GUI, "Found matching entry in address book with unknown type: %ld", entry->Type);
-            DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
+            D(DBF_GUI, "found matching entry in address book with unknown type %ld", entry->Type);
+            DoMethod(obj, METHOD(AddRecipient), s);
             if(quiet == FALSE)
               set(_win(obj), MUIA_Window_ActiveObject, obj);
             res = FALSE;
@@ -1013,8 +1013,8 @@ DECLARE(Resolve) // ULONG flags
         }
         else
         {
-          D(DBF_GUI, "Found more than one matching entry in address book!");
-          DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
+          D(DBF_GUI, "found more than one matching entry in address book!");
+          DoMethod(obj, METHOD(AddRecipient), s);
           if(quiet == FALSE)
             set(_win(obj), MUIA_Window_ActiveObject, obj);
           res = FALSE;
@@ -1022,25 +1022,25 @@ DECLARE(Resolve) // ULONG flags
       }
       else if(withcache == TRUE && (entry = (struct ABEntry *)DoMethod(G->App, MUIM_YAMApplication_FindEmailCacheMatch, s)) != NULL)
       {
-        D(DBF_GUI, "\tEmailCache Hit: '%s' <%s>", entry->RealName, entry->Address);
+        D(DBF_GUI, "\temail cache Hit '%s' <%s>", entry->RealName, entry->Address);
         if(withrealname == TRUE && entry->RealName[0] != '\0')
         {
           char address[SIZE_LARGE];
 
           BuildAddress(address, sizeof(address), entry->Address, entry->RealName);
-          DoMethod(obj, MUIM_Recipientstring_AddRecipient, address);
+          DoMethod(obj, METHOD(AddRecipient), address);
         }
         else
-          DoMethod(obj, MUIM_Recipientstring_AddRecipient, entry->Address);
+          DoMethod(obj, METHOD(AddRecipient), entry->Address);
       }
       else
       {
-        D(DBF_GUI, "Entry not found: '%s'", s);
+        D(DBF_GUI, "entry not found '%s'", s);
 
         if((tmp = strchr(s, '@')) != NULL) /* entry seems to be an email address */
         {
-          D(DBF_GUI, "Email address: '%s'", s);
-          DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
+          D(DBF_GUI, "email address '%s'", s);
+          DoMethod(obj, METHOD(AddRecipient), s);
 
           // check if email address lacks domain...
           // and add the one from the currently active user identity
@@ -1057,8 +1057,8 @@ DECLARE(Resolve) // ULONG flags
         }
         else
         {
-          D(DBF_GUI, "No entry found in addressbook for alias: '%s'", s);
-          DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
+          D(DBF_GUI, "no entry found in addressbook for alias '%s'", s);
+          DoMethod(obj, METHOD(AddRecipient), s);
           if(quiet == FALSE)
             set(_win(obj), MUIA_Window_ActiveObject, obj);
           res = FALSE;
@@ -1156,7 +1156,7 @@ DECLARE(CurrentRecipient)
   pos = xget(obj, MUIA_String_BufferPos);
 
   if((buf[pos] == '\0' || buf[pos] == ',') &&
-     (data->CurrentRecipient = strdup(&buf[DoMethod(obj, MUIM_Recipientstring_RecipientStart)])) &&
+     (data->CurrentRecipient = strdup(&buf[DoMethod(obj, METHOD(RecipientStart))])) &&
      (end = strchr(data->CurrentRecipient, ',')))
   {
     end[0] = '\0';
@@ -1195,7 +1195,7 @@ DECLARE(ReplaceSelected) // char *address
   // we first have to clear the selected area
   DoMethod(obj, MUIM_BetterString_ClearSelected);
 
-  start = DoMethod(obj, MUIM_Recipientstring_RecipientStart);
+  start = DoMethod(obj, METHOD(RecipientStart));
   old = (char *)xget(obj, MUIA_String_Contents);
 
   // try to find out the length of our current recipient
