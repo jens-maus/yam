@@ -40,7 +40,7 @@
 #include <clib/alib_protos.h>
 
 #include "YAM_global.h"
-#include "YAM_utilities.h" // CLEAR_FLAG,SET_FLAG
+#include "YAM_utilities.h" // clearFlag,setFlag
 #include "extrasrc.h"
 
 #include "SDI_compiler.h"
@@ -426,7 +426,7 @@ void SetupDebug(void)
             {
               _DBPRINTF("clear '%s' debug class flag.\n", dbclasses[i].token);
 
-              CLEAR_FLAG(debug_classes, dbclasses[i].flag);
+              clearFlag(debug_classes, dbclasses[i].flag);
 
               break;
             }
@@ -441,7 +441,7 @@ void SetupDebug(void)
             {
               _DBPRINTF("set '%s' debug class flag\n", dbclasses[i].token);
 
-              SET_FLAG(debug_classes, dbclasses[i].flag);
+              setFlag(debug_classes, dbclasses[i].flag);
 
               break;
             }
@@ -461,7 +461,7 @@ void SetupDebug(void)
             {
               _DBPRINTF("clear '%s' debug flag\n", dbflags[i].token);
 
-              CLEAR_FLAG(debug_flags, dbflags[i].flag);
+              clearFlag(debug_flags, dbflags[i].flag);
 
               break;
             }
@@ -506,7 +506,7 @@ void SetupDebug(void)
               {
                 _DBPRINTF("set '%s' debug flag\n", dbflags[i].token);
 
-                SET_FLAG(debug_flags, dbflags[i].flag);
+                setFlag(debug_flags, dbflags[i].flag);
 
                 found=1;
                 break;

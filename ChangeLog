@@ -7,6 +7,8 @@ $URL$
 
 2012-05-10 Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_utilities.h, misc: renamed the flag macros to somewhat shorter and
+    more intuitive versions.
   * mui/Recipientstring.c: updated Betterstring_mcc.h and made use of the new
     MUIA_BetterString_NoNotify attribute to prevent betterstring from
     sending out too many notifications for changed of MUIA_String_Contents.

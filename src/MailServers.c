@@ -92,8 +92,8 @@ struct MailServerNode *CreateNewMailServer(const enum MailServerType type, const
           }
 
           msn->port = 110;
-          SET_FLAG(msn->flags, MSF_PURGEMESSGAES);
-          SET_FLAG(msn->flags, MSF_AVOID_DUPLICATES);
+          setFlag(msn->flags, MSF_PURGEMESSGAES);
+          setFlag(msn->flags, MSF_AVOID_DUPLICATES);
         }
         else
         {
@@ -130,7 +130,7 @@ struct MailServerNode *CloneMailServer(const struct MailServerNode *msn)
   if((clone = DuplicateNode(msn, sizeof(*msn))) != NULL)
   {
     // the clone is not in use
-    CLEAR_FLAG(clone->flags, MSF_IN_USE);
+    clearFlag(clone->flags, MSF_IN_USE);
 
     if(clone->type == MST_POP3)
     {

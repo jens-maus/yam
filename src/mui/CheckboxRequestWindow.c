@@ -227,9 +227,9 @@ DECLARE(ToggleFlag) // ULONG state, ULONG mask
   ENTER();
 
   if(msg->state)
-    SET_FLAG(data->flags, msg->mask);
+    setFlag(data->flags, msg->mask);
   else
-    CLEAR_FLAG(data->flags, msg->mask);
+    clearFlag(data->flags, msg->mask);
 
   LEAVE();
   return 0;

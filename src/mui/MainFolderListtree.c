@@ -510,9 +510,9 @@ OVERLOAD(MUIM_ContextMenuChoice)
       ULONG flag = (1 << (xget(m->item, MUIA_UserData)-1));
 
       if(isFlagSet(C->FolderCols, flag))
-        CLEAR_FLAG(C->FolderCols, flag);
+        clearFlag(C->FolderCols, flag);
       else
-        SET_FLAG(C->FolderCols, flag);
+        setFlag(C->FolderCols, flag);
 
       DoMethod(obj, METHOD(MakeFormat));
     }

@@ -445,7 +445,7 @@ void RE_DisplayMIME(const char *fname, const char *ctype)
         mail->Reference = NULL;
         mail->Folder    = NULL;
         mail->sflags    = SFLAG_READ; // this sets the mail as OLD
-        SET_FLAG(mail->mflags, MFLAG_NOFOLDER);
+        setFlag(mail->mflags, MFLAG_NOFOLDER);
 
         MA_FreeEMailStruct(email);
 
@@ -629,7 +629,7 @@ void RE_GetSigFromLog(struct ReadMailData *rmData, char *decrFor)
           sigDone = TRUE;
         else if(strnicmp(buf, "bad signature", 13) == 0 || strcasestr(buf, "unknown keyid") != NULL)
         {
-          SET_FLAG(rmData->signedFlags, PGPS_BADSIG);
+          setFlag(rmData->signedFlags, PGPS_BADSIG);
           sigDone = TRUE;
         }
 
@@ -643,7 +643,7 @@ void RE_GetSigFromLog(struct ReadMailData *rmData, char *decrFor)
           }
 
           if(RE_GetAddressFromLog(buf, rmData->sigAuthor) == TRUE)
-            SET_FLAG(rmData->signedFlags, PGPS_ADDRESS);
+            setFlag(rmData->signedFlags, PGPS_ADDRESS);
 
           break;
         }
@@ -982,7 +982,7 @@ static void RE_ParseContentParameters(char *str, struct Part *rp, enum parameter
 static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, enum ReadHeaderMode mode)
 {
   struct Node *curNode;
-  BOOL quietParsing = hasFlag(rp->rmData->parseFlags, PM_QUIET);
+  BOOL quietParsing = isAnyFlagSet(rp->rmData->parseFlags, PM_QUIET);
 
   ENTER();
 
@@ -1012,13 +1012,13 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, enum ReadHeaderM
     }
 
     // clear the subheaders flag
-    CLEAR_FLAG(rp->Flags, PFLAG_SUBHEADERS);
+    clearFlag(rp->Flags, PFLAG_SUBHEADERS);
 
     RETURN(FALSE);
     return FALSE;
   }
   else
-    SET_FLAG(rp->Flags, PFLAG_SUBHEADERS);
+    setFlag(rp->Flags, PFLAG_SUBHEADERS);
 
   // Now we process the read header to set all flags accordingly
   IterateList(rp->headerList, curNode)
@@ -1114,7 +1114,7 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, enum ReadHeaderM
          (strnicmp(rp->ContentDisposition, "attachment", 10) == 0 ||
           strnicmp(rp->ContentDisposition, "inline", 6) == 0))
       {
-        CLEAR_FLAG(rp->Flags, PFLAG_ALTPART);
+        clearFlag(rp->Flags, PFLAG_ALTPART);
       }
     }
     else if(mode == RHM_MAINHEADER && stricmp(field, "mime-version") == 0)
@@ -1123,7 +1123,7 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, enum ReadHeaderM
       // to have a "MIME-Version" header field within the main header
       // or otherwise the mail in not to be treated in anyway related
       // to the MIME standards.
-      SET_FLAG(rp->Flags, PFLAG_MIME);
+      setFlag(rp->Flags, PFLAG_MIME);
     }
   }
 
@@ -1355,7 +1355,7 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
   int decodeResult = 0;
   struct codeset *sourceCodeset = NULL;
   struct ReadMailData *rmData = rp->rmData;
-  BOOL quietParsing = hasFlag(rmData->parseFlags, PM_QUIET);
+  BOOL quietParsing = isAnyFlagSet(rmData->parseFlags, PM_QUIET);
 
   ENTER();
 
@@ -1615,14 +1615,14 @@ static FILE *RE_OpenNewPart(struct ReadMailData *rmData,
       if(first != NULL && (isAlternativePart(first) ||
          (first->ContentType[9] != '\0' && strnicmp(&first->ContentType[10], "alternative", 11) == 0)))
       {
-        SET_FLAG(newPart->Flags, PFLAG_ALTPART);
+        setFlag(newPart->Flags, PFLAG_ALTPART);
       }
     }
 
     // make sure to set the MIME conforming flag in
     // case the first one got that flag as well
     if(first != NULL && isMIMEconform(first))
-      SET_FLAG(newPart->Flags, PFLAG_MIME);
+      setFlag(newPart->Flags, PFLAG_MIME);
 
     // make sure we make the hierarchy clear
     newPart->Parent = first;
@@ -1830,9 +1830,9 @@ static BOOL RE_SaveThisPart(struct Part *rp)
 
   ENTER();
 
-  if(hasFlag(parseFlags, PM_ALL))
+  if(isAnyFlagSet(parseFlags, PM_ALL))
     result = TRUE;
-  else if(hasFlag(parseFlags, PM_TEXTS) && strnicmp(rp->ContentType, "text", 4) == 0)
+  else if(isAnyFlagSet(parseFlags, PM_TEXTS) && strnicmp(rp->ContentType, "text", 4) == 0)
     result = TRUE;
 
   RETURN(result);
@@ -1903,10 +1903,10 @@ static void RE_SetPartInfo(struct Part *rp)
      strnicmp(rp->ContentType, "text", 4) == 0 ||
      strnicmp(rp->ContentType, "message", 7) == 0)
   {
-    SET_FLAG(rp->Flags, PFLAG_PRINTABLE);
+    setFlag(rp->Flags, PFLAG_PRINTABLE);
   }
   else
-    CLEAR_FLAG(rp->Flags, PFLAG_PRINTABLE);
+    clearFlag(rp->Flags, PFLAG_PRINTABLE);
 
   // give the part a name if it has none yet
   if(rp->Name[0] == '\0')
@@ -1984,7 +1984,7 @@ static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
         if(parse_ok == TRUE)
           RE_SetPartInfo(hrp);
       }
-      else if(hasFlag(rp->rmData->parseFlags, PM_QUIET) == FALSE)
+      else if(isAnyFlagSet(rp->rmData->parseFlags, PM_QUIET) == FALSE)
         ER_NewError(tr(MSG_ER_CantCreateTempfile));
     }
 
@@ -2281,16 +2281,16 @@ BOOL RE_DecodePart(struct Part *rp)
             DeleteFile(filepath); // delete the temporary file again.
 
             if(Rename(rp->Filename, filepath) == 0)
-              CLEAR_FLAG(rp->Flags, PFLAG_DECODED);
+              clearFlag(rp->Flags, PFLAG_DECODED);
             else
-              SET_FLAG(rp->Flags, PFLAG_DECODED);
+              setFlag(rp->Flags, PFLAG_DECODED);
           }
           else
           {
             D(DBF_MAIL, "%s", decodeResult == 1 ? "successfully decoded" : "no decode required, did a raw copy");
 
             DeleteFile(rp->Filename);
-            SET_FLAG(rp->Flags, PFLAG_DECODED);
+            setFlag(rp->Flags, PFLAG_DECODED);
           }
 
           strlcpy(rp->Filename, filepath, sizeof(rp->Filename));
@@ -2310,7 +2310,7 @@ BOOL RE_DecodePart(struct Part *rp)
         fclose(in);
         DeleteFile(rp->Filename);
         strlcpy(rp->Filename, filepath, sizeof(rp->Filename));
-        SET_FLAG(rp->Flags, PFLAG_DECODED);
+        setFlag(rp->Flags, PFLAG_DECODED);
         RE_SetPartInfo(rp);
       }
       else
@@ -2342,13 +2342,13 @@ static void RE_HandleSignedMessage(struct Part *frp)
         char options[SIZE_LARGE];
 
         // flag the mail as having a PGP signature within the MIME encoding
-        SET_FLAG(frp->rmData->signedFlags, PGPS_MIME);
+        setFlag(frp->rmData->signedFlags, PGPS_MIME);
 
         ConvertCRLF(rp[0]->Filename, tf->Filename, TRUE);
         snprintf(options, sizeof(options), (G->PGPVersion == 5) ? "%s -o %s +batchmode=1 +force +language=us" : "%s %s +bat +f +lang=en", rp[1]->Filename, tf->Filename);
         error = PGPCommand((G->PGPVersion == 5) ? "pgpv": "pgp", options, NOERRORS|KEEPLOG);
         if(error > 0)
-          SET_FLAG(frp->rmData->signedFlags, PGPS_BADSIG);
+          setFlag(frp->rmData->signedFlags, PGPS_BADSIG);
 
         if(error >= 0)
           RE_GetSigFromLog(frp->rmData, NULL);
@@ -2450,9 +2450,9 @@ static void RE_HandleEncryptedMessage(struct Part *frp)
           FILE *in;
 
           if(decryptResult == 0)
-            SET_FLAG(frp->rmData->signedFlags, PGPS_MIME);
+            setFlag(frp->rmData->signedFlags, PGPS_MIME);
 
-          SET_FLAG(frp->rmData->encryptionFlags, PGPE_MIME);
+          setFlag(frp->rmData->encryptionFlags, PGPE_MIME);
 
           // if DecryptPGP() returns with 0 everything worked perfectly and we can
           // convert & copy our decrypted file over the encrypted part
@@ -2465,13 +2465,13 @@ static void RE_HandleEncryptedMessage(struct Part *frp)
               free(warnPart->ContentType);
 
               warnPart->ContentType = strdup("text/plain");
-              SET_FLAG(warnPart->Flags, PFLAG_PRINTABLE);
+              setFlag(warnPart->Flags, PFLAG_PRINTABLE);
               warnPart->EncodingCode = ENC_7BIT;
               *warnPart->Description = '\0';
               RE_ScanHeader(warnPart, in, NULL, RHM_MAINHEADER);
               fclose(in);
 
-              CLEAR_FLAG(warnPart->Flags, PFLAG_DECODED);
+              clearFlag(warnPart->Flags, PFLAG_DECODED);
               RE_DecodePart(warnPart);
               RE_UndoPart(encrPart); // undo the encrypted part because we have a decrypted now.
             }
@@ -2486,11 +2486,11 @@ static void RE_HandleEncryptedMessage(struct Part *frp)
             free(warnPart->ContentType);
 
             warnPart->ContentType = strdup("text/plain");
-            SET_FLAG(warnPart->Flags, PFLAG_PRINTABLE);
+            setFlag(warnPart->Flags, PFLAG_PRINTABLE);
             warnPart->EncodingCode = ENC_7BIT;
             *warnPart->Description = '\0';
-            SET_FLAG(warnPart->Flags, PFLAG_DECODED);
-            CLEAR_FLAG(warnPart->Flags, PFLAG_SUBHEADERS);
+            setFlag(warnPart->Flags, PFLAG_DECODED);
+            clearFlag(warnPart->Flags, PFLAG_SUBHEADERS);
           }
         }
       }
@@ -2557,7 +2557,7 @@ BOOL RE_LoadMessage(struct ReadMailData *rmData)
 
   ENTER();
 
-  if(hasFlag(rmData->parseFlags, PM_QUIET) == FALSE)
+  if(isAnyFlagSet(rmData->parseFlags, PM_QUIET) == FALSE)
     BusyText(tr(MSG_BusyReading), "");
 
   // with each new LoadMessage() we set a new uniqueID
@@ -2577,7 +2577,7 @@ BOOL RE_LoadMessage(struct ReadMailData *rmData)
 
     if(StartUnpack(rmData->readFile, tmpFile, folder) == NULL)
     {
-      if(hasFlag(rmData->parseFlags, PM_QUIET) == FALSE)
+      if(isAnyFlagSet(rmData->parseFlags, PM_QUIET) == FALSE)
         BusyEnd();
 
       RETURN(FALSE);
@@ -2638,20 +2638,20 @@ BOOL RE_LoadMessage(struct ReadMailData *rmData)
       if(isMultiPartMail(mail) == FALSE)
       {
         // set the MultiPart-Mixed flag
-        SET_FLAG(mail->mflags, MFLAG_MP_MIXED);
+        setFlag(mail->mflags, MFLAG_MP_MIXED);
 
         // if the mail is no virtual mail we can also
         // refresh the maillist depending information
         if(!isVirtualMail(mail))
         {
-          SET_FLAG(mail->Folder->Flags, FOFL_MODIFY);  // flag folder as modified
+          setFlag(mail->Folder->Flags, FOFL_MODIFY);  // flag folder as modified
           DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_RedrawMail, mail);
         }
       }
     }
   }
 
-  if(hasFlag(rmData->parseFlags, PM_QUIET) == FALSE)
+  if(isAnyFlagSet(rmData->parseFlags, PM_QUIET) == FALSE)
     BusyEnd();
 
   RETURN(result);
@@ -2907,7 +2907,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
               {
                 FILE *outfh;
                 char *nameptr = NULL;
-                BOOL quietParsing = hasFlag(rmData->parseFlags, PM_QUIET);
+                BOOL quietParsing = isAnyFlagSet(rmData->parseFlags, PM_QUIET);
 
                 D(DBF_MAIL, "inline UUencoded passage found!");
 
@@ -2953,7 +2953,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                     D(DBF_MAIL, "UU decoded %ld chars of part %ld.", decoded, uup->Nr);
 
                     if(decoded >= 0)
-                      SET_FLAG(uup->Flags, PFLAG_DECODED);
+                      setFlag(uup->Flags, PFLAG_DECODED);
                     else
                     {
                       switch(decoded)
@@ -2984,7 +2984,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                           if(quietParsing == FALSE)
                             ER_NewError(tr(MSG_ER_UUDEC_CHECKSUM), uup->Filename);
 
-                          SET_FLAG(uup->Flags, PFLAG_DECODED); // allow to save the resulting file
+                          setFlag(uup->Flags, PFLAG_DECODED); // allow to save the resulting file
                         }
                         break;
 
@@ -3000,7 +3000,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                           if(quietParsing == FALSE)
                             ER_NewError(tr(MSG_ER_UUDEC_TAGMISS), uup->Filename, "end");
 
-                          SET_FLAG(uup->Flags, PFLAG_DECODED); // allow to save the resulting file
+                          setFlag(uup->Flags, PFLAG_DECODED); // allow to save the resulting file
                         }
                         break;
 
@@ -3104,16 +3104,16 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                   if(RE_DecryptPGP(rmData, tf->Filename) == 0)
                   {
                     // flag the mail as having a inline PGP signature
-                    SET_FLAG(rmData->signedFlags, PGPS_OLD);
+                    setFlag(rmData->signedFlags, PGPS_OLD);
 
                     // make sure that the mail is flaged as signed
                     if(!isMP_SignedMail(rmData->mail))
                     {
-                      SET_FLAG(rmData->mail->mflags, MFLAG_MP_SIGNED);
+                      setFlag(rmData->mail->mflags, MFLAG_MP_SIGNED);
 
                       // flag folder as modified
                       if(rmData->mail->Folder)
-                        SET_FLAG(rmData->mail->Folder->Flags, FOFL_MODIFY);
+                        setFlag(rmData->mail->Folder->Flags, FOFL_MODIFY);
                     }
                   }
 
@@ -3140,16 +3140,16 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                 }
 
                 // flag the mail as being inline PGP encrypted
-                SET_FLAG(rmData->encryptionFlags, PGPE_OLD);
+                setFlag(rmData->encryptionFlags, PGPE_OLD);
 
                 // make sure that mail is flagged as crypted
                 if(!isMP_CryptedMail(rmData->mail))
                 {
-                  SET_FLAG(rmData->mail->mflags, MFLAG_MP_CRYPT);
+                  setFlag(rmData->mail->mflags, MFLAG_MP_CRYPT);
 
                   // flag folder as modified
                   if(rmData->mail->Folder)
-                    SET_FLAG(rmData->mail->Folder->Flags, FOFL_MODIFY);
+                    setFlag(rmData->mail->Folder->Flags, FOFL_MODIFY);
                 }
 
                 D(DBF_MAIL, "done with decryption");
@@ -3217,15 +3217,15 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
               else if(strncmp(rptr, "-----BEGIN PGP SIGNED MESSAGE", 29) == 0)
               {
                 // flag the mail as having a inline PGP signature
-                SET_FLAG(rmData->signedFlags, PGPS_OLD);
+                setFlag(rmData->signedFlags, PGPS_OLD);
 
                 if(!isMP_SignedMail(rmData->mail))
                 {
-                  SET_FLAG(rmData->mail->mflags, MFLAG_MP_SIGNED);
+                  setFlag(rmData->mail->mflags, MFLAG_MP_SIGNED);
 
                   // flag folder as modified
                   if(rmData->mail->Folder)
-                    SET_FLAG(rmData->mail->Folder->Flags, FOFL_MODIFY);
+                    setFlag(rmData->mail->Folder->Flags, FOFL_MODIFY);
                 }
               }
 /* other */   else
@@ -3736,7 +3736,7 @@ static void RE_SendMDN(const enum MDNMode mode,
                     if(hasServerInUse(uin->mailServer) == FALSE)
                     {
                       // mark the server as "in use"
-                      SET_FLAG(uin->mailServer->flags, MSF_IN_USE);
+                      setFlag(uin->mailServer->flags, MSF_IN_USE);
 
                       mdnSent = (DoAction(NULL, TA_SendMails, TT_SendMails_UserIdentity, uin,
                                                               TT_SendMails_Mode, autoSend ? SENDMAIL_ACTIVE_AUTO : SENDMAIL_ACTIVE_USER,
@@ -3744,7 +3744,7 @@ static void RE_SendMDN(const enum MDNMode mode,
 
                       // clear the "in use" flag if the send process failed
                       if(mdnSent == FALSE)
-                        CLEAR_FLAG(uin->mailServer->flags, MSF_IN_USE);
+                        clearFlag(uin->mailServer->flags, MSF_IN_USE);
                     }
                     else
                       W(DBF_MAIL, "mailServer already in use, can't sen out the message!");
@@ -4040,7 +4040,7 @@ BOOL RE_ProcessMDN(const enum MDNMode mode,
 
         // we processed this mail so we can go and clear the
         // SENDMDN flag
-        CLEAR_FLAG(mail->mflags, MFLAG_SENDMDN);
+        clearFlag(mail->mflags, MFLAG_SENDMDN);
       }
       else
         W(DBF_MAIL, "no 'Disposition-Notification-To' found!");
@@ -4185,7 +4185,7 @@ static BOOL RE_HandleMDNReport(const struct Part *frp)
       // message
       DeleteFile(rp[0]->Filename);
       strlcpy(rp[0]->Filename, buf, sizeof(rp[0]->Filename));
-      SET_FLAG(rp[0]->Flags, PFLAG_DECODED);
+      setFlag(rp[0]->Flags, PFLAG_DECODED);
       RE_SetPartInfo(rp[0]);
 
       result = TRUE;

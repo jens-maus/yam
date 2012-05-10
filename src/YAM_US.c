@@ -129,11 +129,11 @@ static void US_SaveUsers(void)
 
       flags = 0;
       if(user->Limited)
-        SET_FLAG(flags, UFLAG_LIMITED_USER);
+        setFlag(flags, UFLAG_LIMITED_USER);
       if(user->UseAddr)
-        SET_FLAG(flags, UFLAG_USE_GLOBAL_ADDRESSBOOK);
+        setFlag(flags, UFLAG_USE_GLOBAL_ADDRESSBOOK);
       if(user->UseDict)
-        SET_FLAG(flags, UFLAG_USE_GLOBAL_DICTIONARY);
+        setFlag(flags, UFLAG_USE_GLOBAL_DICTIONARY);
 
       if(user->Name != NULL)
         fprintf(fh, "@USER %s\n%s\n%d\n%s\n@ENDUSER\n", user->Name, user->MailDir, flags, Encrypt(user->Password));

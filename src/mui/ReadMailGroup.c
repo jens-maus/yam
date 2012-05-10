@@ -211,7 +211,7 @@ HOOKPROTONH(TextEditDoubleClickFunc, BOOL, Object *editor, struct ClickMessage *
 
             // TextEditor.mcc V15.26+ tells us the pressed qualifier
             // if the CTRL key is pressed we try to open a new window
-            newWindow = hasFlag(clickmsg->Qualifier, IEQUALIFIER_CONTROL);
+            newWindow = isAnyFlagSet(clickmsg->Qualifier, IEQUALIFIER_CONTROL);
             SHOWVALUE(DBF_GUI, newWindow);
 
             // don't invoke the GotoURL command right here in there hook, as the
@@ -938,7 +938,7 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
   // set the passed mail as the current mail read by our ReadMailData
   // structure
   rmData->mail = mail;
-  SET_FLAG(rmData->parseFlags, PM_ALL);
+  setFlag(rmData->parseFlags, PM_ALL);
 
   // load the message now
   if(RE_LoadMessage(rmData) == TRUE)
@@ -973,7 +973,7 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
           if(isMP_MixedMail(mail))
           {
             // clear the multipart/mixed flag
-            CLEAR_FLAG(mail->mflags, MFLAG_MP_MIXED);
+            clearFlag(mail->mflags, MFLAG_MP_MIXED);
 
             // update the status bar of an eventually existing read window.
             if(rmData->readWindow != NULL)
@@ -983,7 +983,7 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
             // refresh the maillist depending information
             if(!isVirtualMail(mail))
             {
-              SET_FLAG(mail->Folder->Flags, FOFL_MODIFY);  // flag folder as modified
+              setFlag(mail->Folder->Flags, FOFL_MODIFY);  // flag folder as modified
               DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_RedrawMail, mail);
             }
           }
@@ -1365,7 +1365,7 @@ DECLARE(CheckPGPSignature) // ULONG forceRequester
         FinishUnpack(fullfile);
         DeleteFile("T:PGP.tmp");
         if(error > 0)
-          SET_FLAG(rmData->signedFlags, PGPS_BADSIG);
+          setFlag(rmData->signedFlags, PGPS_BADSIG);
 
         if(error >= 0)
         {

@@ -887,7 +887,7 @@ OVERLOAD(MUIM_HandleEvent)
 
         // only clear the selection if the user hasn't used
         // the SHIFT key to select multiple items.
-        if(hasFlag(imsg->Qualifier, IEQUALIFIER_RSHIFT|IEQUALIFIER_LSHIFT) == FALSE)
+        if(isAnyFlagSet(imsg->Qualifier, IEQUALIFIER_RSHIFT|IEQUALIFIER_LSHIFT) == FALSE)
           DoMethod(data->attachmentGroup, MUIM_AttachmentGroup_ClearSelection);
 
         // invert the selection state
@@ -957,7 +957,7 @@ OVERLOAD(MUIM_HandleEvent)
 
           // only clear the selection if the user hasn't used
           // the SHIFT key to select multiple items.
-          if(hasFlag(imsg->Qualifier, IEQUALIFIER_RSHIFT|IEQUALIFIER_LSHIFT) == FALSE)
+          if(isAnyFlagSet(imsg->Qualifier, IEQUALIFIER_RSHIFT|IEQUALIFIER_LSHIFT) == FALSE)
             DoMethod(data->attachmentGroup, MUIM_AttachmentGroup_ClearSelection);
 
           set(obj, MUIA_Selected, !lastState);

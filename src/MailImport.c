@@ -334,13 +334,13 @@ static BOOL ReadDBXMessageInfo(struct TransferContext *tc, FILE *fh, char *outFi
 
     // check all flags and set the new mail status
     if(flags & (1UL << 5)) // mail has been marked
-      SET_FLAG(mailStatusFlags, SFLAG_MARKED);
+      setFlag(mailStatusFlags, SFLAG_MARKED);
 
     if(flags & (1UL << 7)) // mail has been read
-      SET_FLAG(mailStatusFlags, SFLAG_READ);
+      setFlag(mailStatusFlags, SFLAG_READ);
 
     if(flags & (1UL << 19)) // mail has replied status
-      SET_FLAG(mailStatusFlags, SFLAG_REPLIED);
+      setFlag(mailStatusFlags, SFLAG_REPLIED);
   }
 
   // Index number 4 points to the whole message
@@ -393,7 +393,7 @@ out:
       // add the found mail to our mail list
       if((tnode = AddMessageHeader(tc, mail_accu, fsize, msg_addr, FilePart(outFileName))) != NULL)
       {
-        SET_FLAG(tnode->mail->sflags, mailStatusFlags);
+        setFlag(tnode->mail->sflags, mailStatusFlags);
       }
 
       DeleteFile(outFileName);
@@ -982,11 +982,11 @@ static void ProcessImport(struct TransferContext *tc, const char *importFile, st
                 // state of a mail, but the Status header line does. Hence we derive this
                 // flag from the Status header line only.
                 if(isFlagClear(status, SFLAG_NEW) && isFlagSet(xstatus, SFLAG_NEW))
-                  CLEAR_FLAG(xstatus, SFLAG_NEW);
+                  clearFlag(xstatus, SFLAG_NEW);
               }
 
               // set the status flags now
-              SET_FLAG(mail->sflags, status | xstatus);
+              setFlag(mail->sflags, status | xstatus);
 
               // depending on the Status we have to set the transDate or not
               if(!hasStatusQueued(mail) && !hasStatusHold(mail))
@@ -1075,7 +1075,7 @@ static void ProcessImport(struct TransferContext *tc, const char *importFile, st
                 else
                   stat = SFLAG_NEW;
 
-                SET_FLAG(mail->sflags, stat);
+                setFlag(mail->sflags, stat);
               }
 
               // depending on the Status we have to set the transDate or not

@@ -441,20 +441,20 @@ HOOKPROTONHNONP(SetActiveFilterData, void)
     filter->applyToSent = GetMUICheck(gui->CH_APPLYSENT);
     filter->applyOnReq  = GetMUICheck(gui->CH_APPLYREQ);
     filter->actions = 0;
-    if(GetMUICheck(gui->CH_ABOUNCE))           SET_FLAG(filter->actions, FA_BOUNCE);
-    if(GetMUICheck(gui->CH_AFORWARD))          SET_FLAG(filter->actions, FA_FORWARD);
-    if(GetMUICheck(gui->CH_ARESPONSE))         SET_FLAG(filter->actions, FA_REPLY);
-    if(GetMUICheck(gui->CH_AEXECUTE))          SET_FLAG(filter->actions, FA_EXECUTE);
-    if(GetMUICheck(gui->CH_APLAY))             SET_FLAG(filter->actions, FA_PLAYSOUND);
-    if(GetMUICheck(gui->CH_AMOVE))             SET_FLAG(filter->actions, FA_MOVE);
-    if(GetMUICheck(gui->CH_ASTATUSTOMARKED))   SET_FLAG(filter->actions, FA_STATUSTOMARKED);
-    if(GetMUICheck(gui->CH_ASTATUSTOUNMARKED)) SET_FLAG(filter->actions, FA_STATUSTOUNMARKED);
-    if(GetMUICheck(gui->CH_ASTATUSTOREAD))     SET_FLAG(filter->actions, FA_STATUSTOREAD);
-    if(GetMUICheck(gui->CH_ASTATUSTOUNREAD))   SET_FLAG(filter->actions, FA_STATUSTOUNREAD);
-    if(GetMUICheck(gui->CH_ASTATUSTOSPAM))     SET_FLAG(filter->actions, FA_STATUSTOSPAM);
-    if(GetMUICheck(gui->CH_ASTATUSTOHAM))      SET_FLAG(filter->actions, FA_STATUSTOHAM);
-    if(GetMUICheck(gui->CH_ADELETE))           SET_FLAG(filter->actions, FA_DELETE);
-    if(GetMUICheck(gui->CH_ASKIP))             SET_FLAG(filter->actions, FA_SKIPMSG);
+    if(GetMUICheck(gui->CH_ABOUNCE))           setFlag(filter->actions, FA_BOUNCE);
+    if(GetMUICheck(gui->CH_AFORWARD))          setFlag(filter->actions, FA_FORWARD);
+    if(GetMUICheck(gui->CH_ARESPONSE))         setFlag(filter->actions, FA_REPLY);
+    if(GetMUICheck(gui->CH_AEXECUTE))          setFlag(filter->actions, FA_EXECUTE);
+    if(GetMUICheck(gui->CH_APLAY))             setFlag(filter->actions, FA_PLAYSOUND);
+    if(GetMUICheck(gui->CH_AMOVE))             setFlag(filter->actions, FA_MOVE);
+    if(GetMUICheck(gui->CH_ASTATUSTOMARKED))   setFlag(filter->actions, FA_STATUSTOMARKED);
+    if(GetMUICheck(gui->CH_ASTATUSTOUNMARKED)) setFlag(filter->actions, FA_STATUSTOUNMARKED);
+    if(GetMUICheck(gui->CH_ASTATUSTOREAD))     setFlag(filter->actions, FA_STATUSTOREAD);
+    if(GetMUICheck(gui->CH_ASTATUSTOUNREAD))   setFlag(filter->actions, FA_STATUSTOUNREAD);
+    if(GetMUICheck(gui->CH_ASTATUSTOSPAM))     setFlag(filter->actions, FA_STATUSTOSPAM);
+    if(GetMUICheck(gui->CH_ASTATUSTOHAM))      setFlag(filter->actions, FA_STATUSTOHAM);
+    if(GetMUICheck(gui->CH_ADELETE))           setFlag(filter->actions, FA_DELETE);
+    if(GetMUICheck(gui->CH_ASKIP))             setFlag(filter->actions, FA_SKIPMSG);
     GetMUIString(filter->bounceTo,   gui->ST_ABOUNCE, sizeof(filter->bounceTo));
     GetMUIString(filter->forwardTo,  gui->ST_AFORWARD, sizeof(filter->forwardTo));
     GetMUIString(filter->replyFile,  gui->ST_ARESPONSE, sizeof(filter->replyFile));
@@ -609,35 +609,35 @@ HOOKPROTONHNONP(CO_PutPOP3Entry, void)
       msn->preselection = GetMUICycle(gui->CY_PRESELECTION);
 
       if(GetMUICheck(gui->CH_POPENABLED) == TRUE)
-        SET_FLAG(msn->flags, MSF_ACTIVE);
+        setFlag(msn->flags, MSF_ACTIVE);
       else
-        CLEAR_FLAG(msn->flags, MSF_ACTIVE);
+        clearFlag(msn->flags, MSF_ACTIVE);
 
       switch(GetMUICycle(gui->CY_POPAUTH))
       {
         case 1:
-          SET_FLAG(msn->flags, MSF_APOP);
+          setFlag(msn->flags, MSF_APOP);
         break;
 
         default:
-          CLEAR_FLAG(msn->flags, MSF_APOP);
+          clearFlag(msn->flags, MSF_APOP);
         break;
       }
 
       if(GetMUICheck(gui->CH_DOWNLOADONSTARTUP) == TRUE)
-        SET_FLAG(msn->flags, MSF_DOWNLOAD_ON_STARTUP);
+        setFlag(msn->flags, MSF_DOWNLOAD_ON_STARTUP);
       else
-        CLEAR_FLAG(msn->flags, MSF_DOWNLOAD_ON_STARTUP);
+        clearFlag(msn->flags, MSF_DOWNLOAD_ON_STARTUP);
 
       if(GetMUICheck(gui->CH_APPLYREMOTEFILTERS) == TRUE)
-        SET_FLAG(msn->flags, MSF_APPLY_REMOTE_FILTERS);
+        setFlag(msn->flags, MSF_APPLY_REMOTE_FILTERS);
       else
-        CLEAR_FLAG(msn->flags, MSF_APPLY_REMOTE_FILTERS);
+        clearFlag(msn->flags, MSF_APPLY_REMOTE_FILTERS);
 
       if(GetMUICheck(gui->CH_DELETE) == TRUE)
-        SET_FLAG(msn->flags, MSF_PURGEMESSGAES);
+        setFlag(msn->flags, MSF_PURGEMESSGAES);
       else
-        CLEAR_FLAG(msn->flags, MSF_PURGEMESSGAES);
+        clearFlag(msn->flags, MSF_PURGEMESSGAES);
 
       // if the user hasn't yet entered an own account name or the default
       // account name is still present we go and set an automatic generated one
@@ -652,24 +652,24 @@ HOOKPROTONHNONP(CO_PutPOP3Entry, void)
         // TLSv1 secure connection (STARTTLS)
         case 1:
         {
-          SET_FLAG(msn->flags, MSF_SEC_TLS);
-          CLEAR_FLAG(msn->flags, MSF_SEC_SSL);
+          setFlag(msn->flags, MSF_SEC_TLS);
+          clearFlag(msn->flags, MSF_SEC_SSL);
         }
         break;
 
         // SSLv3 secure connection (SSL/TLS)
         case 2:
         {
-          CLEAR_FLAG(msn->flags, MSF_SEC_TLS);
-          SET_FLAG(msn->flags, MSF_SEC_SSL);
+          clearFlag(msn->flags, MSF_SEC_TLS);
+          setFlag(msn->flags, MSF_SEC_SSL);
         }
         break;
 
         // no secure connection
         default:
         {
-          CLEAR_FLAG(msn->flags, MSF_SEC_TLS);
-          CLEAR_FLAG(msn->flags, MSF_SEC_SSL);
+          clearFlag(msn->flags, MSF_SEC_TLS);
+          clearFlag(msn->flags, MSF_SEC_SSL);
         }
         break;
       }
@@ -805,9 +805,9 @@ HOOKPROTONHNONP(CO_PutSMTPEntry, void)
       GetMUIString(msn->password,     gui->ST_SMTPAUTHPASS,sizeof(msn->password));
 
       if(GetMUICheck(gui->CH_SMTPENABLED) == TRUE)
-        SET_FLAG(msn->flags, MSF_ACTIVE);
+        setFlag(msn->flags, MSF_ACTIVE);
       else
-        CLEAR_FLAG(msn->flags, MSF_ACTIVE);
+        clearFlag(msn->flags, MSF_ACTIVE);
 
       // if the user hasn't yet entered an own account name or the default
       // account name is still present we go and set an automatic generated one
@@ -815,9 +815,9 @@ HOOKPROTONHNONP(CO_PutSMTPEntry, void)
         snprintf(msn->description, sizeof(msn->description), "%s@%s", msn->username, msn->hostname);
 
       if(GetMUICheck(gui->CH_SMTP8BIT) == TRUE)
-        SET_FLAG(msn->flags, MSF_ALLOW_8BIT);
+        setFlag(msn->flags, MSF_ALLOW_8BIT);
       else
-        CLEAR_FLAG(msn->flags, MSF_ALLOW_8BIT);
+        clearFlag(msn->flags, MSF_ALLOW_8BIT);
 
       // remember the current flags of the server
       oldSSLFlags = msn->flags;
@@ -827,24 +827,24 @@ HOOKPROTONHNONP(CO_PutSMTPEntry, void)
         // TLSv1 secure connection (STARTTLS)
         case 1:
         {
-          SET_FLAG(msn->flags, MSF_SEC_TLS);
-          CLEAR_FLAG(msn->flags, MSF_SEC_SSL);
+          setFlag(msn->flags, MSF_SEC_TLS);
+          clearFlag(msn->flags, MSF_SEC_SSL);
         }
         break;
 
         // SSLv3 secure connection (SSL/TLS)
         case 2:
         {
-          CLEAR_FLAG(msn->flags, MSF_SEC_TLS);
-          SET_FLAG(msn->flags, MSF_SEC_SSL);
+          clearFlag(msn->flags, MSF_SEC_TLS);
+          setFlag(msn->flags, MSF_SEC_SSL);
         }
         break;
 
         // no secure connection
         default:
         {
-          CLEAR_FLAG(msn->flags, MSF_SEC_TLS);
-          CLEAR_FLAG(msn->flags, MSF_SEC_SSL);
+          clearFlag(msn->flags, MSF_SEC_TLS);
+          clearFlag(msn->flags, MSF_SEC_SSL);
         }
         break;
       }
@@ -867,72 +867,72 @@ HOOKPROTONHNONP(CO_PutSMTPEntry, void)
         // No Authentication
         case 0:
         {
-          CLEAR_FLAG(msn->flags, MSF_AUTH);
-          CLEAR_FLAG(msn->flags, MSF_AUTH_AUTO);
-          CLEAR_FLAG(msn->flags, MSF_AUTH_DIGEST);
-          CLEAR_FLAG(msn->flags, MSF_AUTH_CRAM);
-          CLEAR_FLAG(msn->flags, MSF_AUTH_LOGIN);
-          CLEAR_FLAG(msn->flags, MSF_AUTH_PLAIN);
+          clearFlag(msn->flags, MSF_AUTH);
+          clearFlag(msn->flags, MSF_AUTH_AUTO);
+          clearFlag(msn->flags, MSF_AUTH_DIGEST);
+          clearFlag(msn->flags, MSF_AUTH_CRAM);
+          clearFlag(msn->flags, MSF_AUTH_LOGIN);
+          clearFlag(msn->flags, MSF_AUTH_PLAIN);
         }
         break;
 
         // Auto
         case 1:
         {
-          SET_FLAG(msn->flags, MSF_AUTH);
-          SET_FLAG(msn->flags, MSF_AUTH_AUTO);
-          CLEAR_FLAG(msn->flags, MSF_AUTH_DIGEST);
-          CLEAR_FLAG(msn->flags, MSF_AUTH_CRAM);
-          CLEAR_FLAG(msn->flags, MSF_AUTH_LOGIN);
-          CLEAR_FLAG(msn->flags, MSF_AUTH_PLAIN);
+          setFlag(msn->flags, MSF_AUTH);
+          setFlag(msn->flags, MSF_AUTH_AUTO);
+          clearFlag(msn->flags, MSF_AUTH_DIGEST);
+          clearFlag(msn->flags, MSF_AUTH_CRAM);
+          clearFlag(msn->flags, MSF_AUTH_LOGIN);
+          clearFlag(msn->flags, MSF_AUTH_PLAIN);
         }
         break;
 
         // DIGEST-MD5
         case 2:
         {
-          SET_FLAG(msn->flags, MSF_AUTH);
-          CLEAR_FLAG(msn->flags, MSF_AUTH_AUTO);
-          SET_FLAG(msn->flags, MSF_AUTH_DIGEST);
-          CLEAR_FLAG(msn->flags, MSF_AUTH_CRAM);
-          CLEAR_FLAG(msn->flags, MSF_AUTH_LOGIN);
-          CLEAR_FLAG(msn->flags, MSF_AUTH_PLAIN);
+          setFlag(msn->flags, MSF_AUTH);
+          clearFlag(msn->flags, MSF_AUTH_AUTO);
+          setFlag(msn->flags, MSF_AUTH_DIGEST);
+          clearFlag(msn->flags, MSF_AUTH_CRAM);
+          clearFlag(msn->flags, MSF_AUTH_LOGIN);
+          clearFlag(msn->flags, MSF_AUTH_PLAIN);
         }
         break;
 
         // CRAM-MD5
         case 3:
         {
-          SET_FLAG(msn->flags, MSF_AUTH);
-          CLEAR_FLAG(msn->flags, MSF_AUTH_AUTO);
-          CLEAR_FLAG(msn->flags, MSF_AUTH_DIGEST);
-          SET_FLAG(msn->flags, MSF_AUTH_CRAM);
-          CLEAR_FLAG(msn->flags, MSF_AUTH_LOGIN);
-          CLEAR_FLAG(msn->flags, MSF_AUTH_PLAIN);
+          setFlag(msn->flags, MSF_AUTH);
+          clearFlag(msn->flags, MSF_AUTH_AUTO);
+          clearFlag(msn->flags, MSF_AUTH_DIGEST);
+          setFlag(msn->flags, MSF_AUTH_CRAM);
+          clearFlag(msn->flags, MSF_AUTH_LOGIN);
+          clearFlag(msn->flags, MSF_AUTH_PLAIN);
         }
         break;
 
         // LOGIN
         case 4:
         {
-          SET_FLAG(msn->flags, MSF_AUTH);
-          CLEAR_FLAG(msn->flags, MSF_AUTH_AUTO);
-          CLEAR_FLAG(msn->flags, MSF_AUTH_DIGEST);
-          CLEAR_FLAG(msn->flags, MSF_AUTH_CRAM);
-          SET_FLAG(msn->flags, MSF_AUTH_LOGIN);
-          CLEAR_FLAG(msn->flags, MSF_AUTH_PLAIN);
+          setFlag(msn->flags, MSF_AUTH);
+          clearFlag(msn->flags, MSF_AUTH_AUTO);
+          clearFlag(msn->flags, MSF_AUTH_DIGEST);
+          clearFlag(msn->flags, MSF_AUTH_CRAM);
+          setFlag(msn->flags, MSF_AUTH_LOGIN);
+          clearFlag(msn->flags, MSF_AUTH_PLAIN);
         }
         break;
 
         // PLAIN
         case 5:
         {
-          SET_FLAG(msn->flags, MSF_AUTH);
-          CLEAR_FLAG(msn->flags, MSF_AUTH_AUTO);
-          CLEAR_FLAG(msn->flags, MSF_AUTH_DIGEST);
-          CLEAR_FLAG(msn->flags, MSF_AUTH_CRAM);
-          CLEAR_FLAG(msn->flags, MSF_AUTH_LOGIN);
-          SET_FLAG(msn->flags, MSF_AUTH_PLAIN);
+          setFlag(msn->flags, MSF_AUTH);
+          clearFlag(msn->flags, MSF_AUTH_AUTO);
+          clearFlag(msn->flags, MSF_AUTH_DIGEST);
+          clearFlag(msn->flags, MSF_AUTH_CRAM);
+          clearFlag(msn->flags, MSF_AUTH_LOGIN);
+          setFlag(msn->flags, MSF_AUTH_PLAIN);
         }
         break;
       }

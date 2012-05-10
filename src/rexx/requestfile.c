@@ -80,11 +80,11 @@ void rx_requestfile(UNUSED struct RexxHost *host, struct RexxParams *params, enu
 
       mode = REQF_NONE;
       if(args->multiSelect != NULL)
-        SET_FLAG(mode, REQF_MULTISELECT);
+        setFlag(mode, REQF_MULTISELECT);
       if(args->drawersOnly != NULL)
-        SET_FLAG(mode, REQF_DRAWERSONLY);
+        setFlag(mode, REQF_DRAWERSONLY);
       if(args->saveMode != NULL)
-        SET_FLAG(mode, REQF_SAVEMODE);
+        setFlag(mode, REQF_SAVEMODE);
 
       if((frc = ReqFile(ASL_GENERIC, NULL, args->title, mode, args->drawer, args->file)) != NULL)
       {

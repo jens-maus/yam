@@ -918,7 +918,7 @@ BOOL FO_LoadTree(void)
             {
               // if it is greater zero then the node should be displayed open
               if(atoi(buffer) > 0)
-                SET_FLAG(tnflags, TNF_OPEN);
+                setFlag(tnflags, TNF_OPEN);
             }
 
             LockFolderList(G->folders);

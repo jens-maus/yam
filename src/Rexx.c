@@ -389,7 +389,7 @@ struct RexxHost *SetupARexxHost(const char *basename, struct MsgPort *usrport)
     if(usrport != NULL)
     {
       host->port = usrport;
-      SET_FLAG(host->flags, ARB_HF_USRMSGPORT);
+      setFlag(host->flags, ARB_HF_USRMSGPORT);
     }
     else
     {

@@ -746,9 +746,9 @@ OVERLOAD(MUIM_ContextMenuChoice)
       ULONG flag = (1 << (xget(m->item, MUIA_UserData)-1));
 
       if(isFlagSet(C->MessageCols, flag))
-        CLEAR_FLAG(C->MessageCols, flag);
+        clearFlag(C->MessageCols, flag);
       else
-        SET_FLAG(C->MessageCols, flag);
+        setFlag(C->MessageCols, flag);
 
       DoMethod(obj, METHOD(MakeFormat));
     }

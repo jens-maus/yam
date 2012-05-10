@@ -660,7 +660,7 @@ OVERLOAD(MUIM_HandleEvent)
           if(data->ResolveOnCR == TRUE)
           {
             // only if we successfully resolved the string we move on to the next object.
-            if(DoMethod(obj, METHOD(Resolve), hasFlag(imsg->Qualifier, (IEQUALIFIER_RSHIFT | IEQUALIFIER_LSHIFT)) ? MUIF_Recipientstring_Resolve_NoFullName : MUIF_NONE))
+            if(DoMethod(obj, METHOD(Resolve), isAnyFlagSet(imsg->Qualifier, (IEQUALIFIER_RSHIFT | IEQUALIFIER_LSHIFT)) ? MUIF_Recipientstring_Resolve_NoFullName : MUIF_NONE))
             {
               BOOL matchListWasOpen = xget(data->Matchwindow, MUIA_Window_Open);
 

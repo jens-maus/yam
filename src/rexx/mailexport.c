@@ -67,9 +67,9 @@ void rx_mailexport(UNUSED struct RexxHost *host, struct RexxParams *params, enum
       // we want to be woken up
       flags = EXPORTF_SIGNAL;
       if(args->quiet != 0)
-        SET_FLAG(flags, EXPORTF_QUIET);
+        setFlag(flags, EXPORTF_QUIET);
       if(args->append != 0)
-        SET_FLAG(flags, EXPORTF_APPEND);
+        setFlag(flags, EXPORTF_APPEND);
 
       if(MA_ExportMessages(args->filename, args->all != 0, flags) == TRUE)
         MiniMainLoop();

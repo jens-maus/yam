@@ -268,7 +268,7 @@ static void SetSocketOpts(struct Connection *conn)
 
     optlen = sizeof(optval);
     getsockopt(conn->socket, IPPROTO_IP, IP_TOS, &optval, &optlen);
-    D(DBF_NET, "IPTOS_LOWDELAY: %ld", hasFlag(optval, IPTOS_LOWDELAY));
+    D(DBF_NET, "IPTOS_LOWDELAY: %ld", isAnyFlagSet(optval, IPTOS_LOWDELAY));
 
     optlen = sizeof(optval);
     getsockopt(conn->socket, SOL_SOCKET, SO_SNDBUF, &optval, &optlen);
@@ -580,7 +580,7 @@ BOOL ConnectionIsOnline(struct Connection *conn)
 
         if(SocketBaseTagList(tags) == 0)
         {
-          if(hasFlag(status, SBSYSSTAT_Interfaces))
+          if(isAnyFlagSet(status, SBSYSSTAT_Interfaces))
             isonline = TRUE;
         }
         else

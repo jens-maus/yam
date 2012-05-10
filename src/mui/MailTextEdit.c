@@ -225,7 +225,7 @@ OVERLOAD(MUIM_HandleEvent)
           {
             // then we first clear the qualifier so that the real
             // TextEditor HandleEvent method treats this imsg as a normal DEL pressed imsg
-            CLEAR_FLAG(imsg->Qualifier, IEQUALIFIER_RCOMMAND);
+            clearFlag(imsg->Qualifier, IEQUALIFIER_RCOMMAND);
             ret = DoSuperMethodA(cl, obj, msg);
 
             // Now that the marked text is cleared we can insert our great [...]

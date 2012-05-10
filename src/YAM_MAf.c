@@ -462,7 +462,7 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
   else if(full == TRUE)
   {
     indexloaded = LM_VALID;
-    CLEAR_FLAG(folder->Flags, FOFL_MODIFY);
+    clearFlag(folder->Flags, FOFL_MODIFY);
   }
 
   RETURN(indexloaded);
@@ -535,7 +535,7 @@ BOOL MA_SaveIndex(struct Folder *folder)
 
     fclose(fh);
 
-    CLEAR_FLAG(folder->Flags, FOFL_MODIFY);
+    clearFlag(folder->Flags, FOFL_MODIFY);
     BusyEnd();
 
     success = TRUE;
@@ -627,7 +627,7 @@ void MA_ExpireIndex(struct Folder *folder)
     DeleteFile(indexFileName);
   }
 
-  SET_FLAG(folder->Flags, FOFL_MODIFY);
+  setFlag(folder->Flags, FOFL_MODIFY);
 
   LEAVE();
 }
@@ -707,7 +707,7 @@ void MA_RebuildIndexes(void)
 
                     ClearFolderMails(folder, FALSE);
                     folder->LoadedMode = LM_FLUSHED;
-                    CLEAR_FLAG(folder->Flags, FOFL_FREEXS);
+                    clearFlag(folder->Flags, FOFL_FREEXS);
                   }
                 }
               }
@@ -716,7 +716,7 @@ void MA_RebuildIndexes(void)
                 // otherwise we make sure everything is cleared
                 ClearFolderMails(folder, FALSE);
                 folder->LoadedMode = LM_FLUSHED;
-                CLEAR_FLAG(folder->Flags, FOFL_FREEXS);
+                clearFlag(folder->Flags, FOFL_FREEXS);
               }
             }
           }
@@ -764,7 +764,7 @@ static BOOL MA_FlushIndex(struct Folder *folder, time_t minAccessTime)
 
     ClearFolderMails(folder, FALSE);
     folder->LoadedMode = LM_FLUSHED;
-    CLEAR_FLAG(folder->Flags, FOFL_FREEXS);
+    clearFlag(folder->Flags, FOFL_FREEXS);
 
     flushed = TRUE;
   }
@@ -2261,11 +2261,11 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
               for(i=0; email->identity != NULL && i < email->NoSFrom; i++)
                 email->identity = FindUserIdentityByAddress(&C->userIdentityList, email->SFrom[i].Address);
 
-              SET_FLAG(mail->mflags, MFLAG_MULTISENDER);
+              setFlag(mail->mflags, MFLAG_MULTISENDER);
             }
           }
           else if(strlen(p) >= 7) // minimum rcpts size "a@bc.de"
-            SET_FLAG(mail->mflags, MFLAG_MULTISENDER);
+            setFlag(mail->mflags, MFLAG_MULTISENDER);
         }
 
         D(DBF_MIME, "'From' senders: %ld", email->NoSFrom+1);
@@ -2309,11 +2309,11 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
               for(i=0; email->identity != NULL && i < email->NoSReplyTo; i++)
                 email->identity = FindUserIdentityByAddress(&C->userIdentityList, email->SReplyTo[i].Address);
 
-              SET_FLAG(mail->mflags, MFLAG_MULTIREPLYTO);
+              setFlag(mail->mflags, MFLAG_MULTIREPLYTO);
             }
           }
           else if(strlen(p) >= 7) // minimum rcpts size "a@bc.de"
-            SET_FLAG(mail->mflags, MFLAG_MULTIREPLYTO);
+            setFlag(mail->mflags, MFLAG_MULTIREPLYTO);
         }
 
         D(DBF_MIME, "'ReplyTo' recipients: %ld", email->NoSReplyTo+1);
@@ -2333,7 +2333,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
       {
         ExtractAddress(value, &pe);
         email->ReceiptTo = pe;
-        SET_FLAG(mail->mflags, MFLAG_SENDMDN);
+        setFlag(mail->mflags, MFLAG_SENDMDN);
       }
       else if(stricmp(field, "to") == 0)
       {
@@ -2373,11 +2373,11 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
                 for(i=0; email->identity != NULL && i < email->NoSTo; i++)
                   email->identity = FindUserIdentityByAddress(&C->userIdentityList, email->STo[i].Address);
 
-                SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
+                setFlag(mail->mflags, MFLAG_MULTIRCPT);
               }
             }
             else if(strlen(p) >= 7) // minimum rcpts size "a@bc.de"
-              SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
+              setFlag(mail->mflags, MFLAG_MULTIRCPT);
           }
 
           D(DBF_MIME, "'To:' recipients: %ld", email->NoSTo+1);
@@ -2401,11 +2401,11 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
             for(i=0; email->identity != NULL && i < email->NoCC; i++)
               email->identity = FindUserIdentityByAddress(&C->userIdentityList, email->CC[i].Address);
 
-            SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
+            setFlag(mail->mflags, MFLAG_MULTIRCPT);
           }
         }
         else if(strlen(value) >= 7) // minimum rcpts size "a@bc.de"
-          SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
+          setFlag(mail->mflags, MFLAG_MULTIRCPT);
       }
       else if(stricmp(field, "bcc") == 0)
       {
@@ -2425,11 +2425,11 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
             for(i=0; email->identity != NULL && i < email->NoBCC; i++)
               email->identity = FindUserIdentityByAddress(&C->userIdentityList, email->BCC[i].Address);
 
-            SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
+            setFlag(mail->mflags, MFLAG_MULTIRCPT);
           }
         }
         else if(strlen(value) >= 7) // minimum rcpts size "a@bc.de"
-          SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
+          setFlag(mail->mflags, MFLAG_MULTIRCPT);
       }
       else if(stricmp(field, "resent-to") == 0)
       {
@@ -2495,31 +2495,31 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
           // we do specify the multipart content-type in
           // accordance to RFC 2046/RFC2387
           if(strnicmp(p, "mixed", 5) == 0)             // RFC 2046 (5.1.3)
-            SET_FLAG(mail->mflags, MFLAG_MP_MIXED);
+            setFlag(mail->mflags, MFLAG_MP_MIXED);
           else if(strnicmp(p, "alternative", 11) == 0) // RFC 2046 (5.1.4)
-            SET_FLAG(mail->mflags, MFLAG_MP_ALTERN);
+            setFlag(mail->mflags, MFLAG_MP_ALTERN);
           else if(strnicmp(p, "report", 6) == 0)       // RFC 3462
-            SET_FLAG(mail->mflags, MFLAG_MP_REPORT);
+            setFlag(mail->mflags, MFLAG_MP_REPORT);
           else if(strnicmp(p, "encrypted", 9) == 0)    // RFC 1847 (2.2)
-            SET_FLAG(mail->mflags, MFLAG_MP_CRYPT);
+            setFlag(mail->mflags, MFLAG_MP_CRYPT);
           else if(strnicmp(p, "signed", 6) == 0)       // RFC 1847 (2.1)
-            SET_FLAG(mail->mflags, MFLAG_MP_SIGNED);
+            setFlag(mail->mflags, MFLAG_MP_SIGNED);
           else
           {
             // "mixed" is the primary subtype and in fact RFC 2046 (5.1.7)
             // suggests to fall back to mixed if a MIME subtype is unknown
             // to a MIME parser, which we do here now.
-            SET_FLAG(mail->mflags, MFLAG_MP_MIXED);
+            setFlag(mail->mflags, MFLAG_MP_MIXED);
           }
         }
         else if(strnicmp(p, "message/partial", 15) == 0) // RFC 2046 (5.2.2)
         {
-          SET_FLAG(mail->mflags, MFLAG_PARTIAL);
+          setFlag(mail->mflags, MFLAG_PARTIAL);
         }
       }
       else if(stricmp(field, "x-senderinfo") == 0)
       {
-        SET_FLAG(mail->mflags, MFLAG_SENDERINFO);
+        setFlag(mail->mflags, MFLAG_SENDERINFO);
         if(deep == TRUE)
           email->SenderInfo = StrBufCpy(email->SenderInfo, value);
       }
@@ -2587,7 +2587,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
 
     // if now the mail is still not MULTIPART we have to check for uuencoded attachments
     if(!isMP_MixedMail(mail) && MA_DetectUUE(fh) == TRUE)
-      SET_FLAG(mail->mflags, MFLAG_MP_MIXED);
+      setFlag(mail->mflags, MFLAG_MP_MIXED);
 
     // in case we found no From: head line we try to construct a name
     // from a possible Sender: line
@@ -2637,11 +2637,11 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
               for(i=0; email->identity != NULL && i < email->NoSFrom; i++)
                 email->identity = FindUserIdentityByAddress(&C->userIdentityList, email->SFrom[i].Address);
 
-              SET_FLAG(mail->mflags, MFLAG_MULTISENDER);
+              setFlag(mail->mflags, MFLAG_MULTISENDER);
             }
           }
           else if(strlen(p) >= 7) // minimum rcpts size "a@bc.de"
-            SET_FLAG(mail->mflags, MFLAG_MULTISENDER);
+            setFlag(mail->mflags, MFLAG_MULTISENDER);
         }
 
         D(DBF_MIME, "'Sender' senders: %ld", email->NoSFrom+1);
@@ -2716,55 +2716,55 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
           switch(*ptr)
           {
             case SCHAR_READ:
-              SET_FLAG(mail->sflags, SFLAG_READ);
+              setFlag(mail->sflags, SFLAG_READ);
             break;
 
             case SCHAR_REPLIED:
-              SET_FLAG(mail->sflags, SFLAG_REPLIED);
+              setFlag(mail->sflags, SFLAG_REPLIED);
             break;
 
             case SCHAR_FORWARDED:
-              SET_FLAG(mail->sflags, SFLAG_FORWARDED);
+              setFlag(mail->sflags, SFLAG_FORWARDED);
             break;
 
             case SCHAR_NEW:
-              SET_FLAG(mail->sflags, SFLAG_NEW);
+              setFlag(mail->sflags, SFLAG_NEW);
             break;
 
             case SCHAR_QUEUED:
-              SET_FLAG(mail->sflags, SFLAG_QUEUED);
+              setFlag(mail->sflags, SFLAG_QUEUED);
             break;
 
             case SCHAR_HOLD:
-              SET_FLAG(mail->sflags, SFLAG_HOLD);
+              setFlag(mail->sflags, SFLAG_HOLD);
             break;
 
             case SCHAR_SENT:
-              SET_FLAG(mail->sflags, SFLAG_SENT);
+              setFlag(mail->sflags, SFLAG_SENT);
             break;
 
             case SCHAR_DELETED:
-              SET_FLAG(mail->sflags, SFLAG_DELETED);
+              setFlag(mail->sflags, SFLAG_DELETED);
             break;
 
             case SCHAR_MARKED:
-              SET_FLAG(mail->sflags, SFLAG_MARKED);
+              setFlag(mail->sflags, SFLAG_MARKED);
             break;
 
             case SCHAR_ERROR:
-              SET_FLAG(mail->sflags, SFLAG_ERROR);
+              setFlag(mail->sflags, SFLAG_ERROR);
             break;
 
             case SCHAR_USERSPAM:
-              SET_FLAG(mail->sflags, SFLAG_USERSPAM);
+              setFlag(mail->sflags, SFLAG_USERSPAM);
             break;
 
             case SCHAR_AUTOSPAM:
-              SET_FLAG(mail->sflags, SFLAG_AUTOSPAM);
+              setFlag(mail->sflags, SFLAG_AUTOSPAM);
             break;
 
             case SCHAR_HAM:
-              SET_FLAG(mail->sflags, SFLAG_HAM);
+              setFlag(mail->sflags, SFLAG_HAM);
             break;
           }
         }

@@ -188,10 +188,10 @@ DECLARE(Search) // ULONG flags
     ULONG flags = 0;
 
     if(hasFromTopFlag(msg->flags))
-      SET_FLAG(flags, MUIF_TextEditor_Search_FromTop);
+      setFlag(flags, MUIF_TextEditor_Search_FromTop);
 
     if(data->CaseSensitive)
-      SET_FLAG(flags, MUIF_TextEditor_Search_CaseSensitive);
+      setFlag(flags, MUIF_TextEditor_Search_CaseSensitive);
 
     // perform the text search and return an error as well as a displaybeep
     // if the search string wasn't found.

@@ -1831,7 +1831,7 @@ BOOL ExecuteFilterAction(const struct FilterNode *filter, struct Mail *mail, str
         // temporarily grant free access to the folder, but only if it has no free access yet
         if(fo->LoadedMode != LM_VALID && isProtectedFolder(fo) && isFreeAccess(fo) == FALSE)
         {
-          SET_FLAG(fo->Flags, FOFL_FREEXS);
+          setFlag(fo->Flags, FOFL_FREEXS);
           accessFreed = TRUE;
         }
 
@@ -1843,7 +1843,7 @@ BOOL ExecuteFilterAction(const struct FilterNode *filter, struct Mail *mail, str
           // restore old index settings
           // if it was not yet loaded before, the MA_MoveCopy() call changed this to "loaded"
           fo->LoadedMode = oldLoadedMode;
-          CLEAR_FLAG(fo->Flags, FOFL_FREEXS);
+          clearFlag(fo->Flags, FOFL_FREEXS);
         }
 
         // signal failure, although everything was successful yet
@@ -2054,7 +2054,7 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
     // query how many mails are currently selected/marked
     if(mode == APPLY_USER || mode == APPLY_RX || mode == APPLY_RX_ALL || mode == APPLY_SPAM)
     {
-      ULONG minselected = hasFlag(arg[1], (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT)) ? 1 : 2;
+      ULONG minselected = isAnyFlagSet(arg[1], (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT)) ? 1 : 2;
 
       if((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, mode == APPLY_RX)) != NULL)
       {
@@ -2442,7 +2442,7 @@ struct RuleNode *CreateNewRule(struct FilterNode *filter, const BOOL dosPattern)
     rule->comparison = CP_EQUAL;
     rule->flags = 0;
     if(dosPattern == TRUE)
-      SET_FLAG(rule->flags, SEARCHF_DOS_PATTERN);
+      setFlag(rule->flags, SEARCHF_DOS_PATTERN);
     rule->matchPattern[0] = '\0';
     rule->customField[0] = '\0';
 
@@ -2559,7 +2559,7 @@ void RemoveFolderFromFilters(const char *folder)
     {
       D(DBF_FILTER, "removing MoveTo folder '%s' of filer '%s'", folder, filter->name);
       filter->moveTo[0] = '\0';
-      CLEAR_FLAG(filter->actions, FA_MOVE);
+      clearFlag(filter->actions, FA_MOVE);
 
       // remember the modified configuration, but don't save it yet
       C->ConfigIsSaved = FALSE;

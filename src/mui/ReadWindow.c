@@ -968,7 +968,7 @@ DECLARE(DeleteMailRequest) // ULONG qualifier
   struct Mail *mail = rmData->mail;
   struct Folder *folder = mail->Folder;
   struct Folder *delfolder = FO_GetFolderByType(FT_TRASH, NULL);
-  BOOL delatonce = hasFlag(msg->qualifier, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT));
+  BOOL delatonce = isAnyFlagSet(msg->qualifier, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT));
   BOOL closeAfter = FALSE;
 
   ENTER();
@@ -1286,7 +1286,7 @@ DECLARE(SwitchMail) // LONG direction, ULONG qualifier
   mail = rmData->mail;
   folder = mail->Folder;
   direction = msg->direction;
-  onlynew = hasFlag(msg->qualifier, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT));
+  onlynew = isAnyFlagSet(msg->qualifier, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT));
 
   // save the direction we are going to process now
   data->lastDirection = direction;

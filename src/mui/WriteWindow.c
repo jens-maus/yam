@@ -2716,11 +2716,11 @@ DECLARE(ChangeSignature) // LONG signature
         // put everything in the editor
         flags = MUIF_NONE;
         if(data->useTextStyles == TRUE)
-          SET_FLAG(flags, MUIF_MailTextEdit_LoadFromFile_UseStyles);
+          setFlag(flags, MUIF_MailTextEdit_LoadFromFile_UseStyles);
         if(data->useTextColors == TRUE)
-          SET_FLAG(flags, MUIF_MailTextEdit_LoadFromFile_UseColors);
+          setFlag(flags, MUIF_MailTextEdit_LoadFromFile_UseColors);
         if(xget(editor, MUIA_TextEditor_HasChanged))
-          SET_FLAG(flags, MUIF_MailTextEdit_LoadFromFile_SetChanged);
+          setFlag(flags, MUIF_MailTextEdit_LoadFromFile_SetChanged);
 
         DoMethod(editor, MUIM_MailTextEdit_LoadFromFile, tfout->Filename, flags);
 
@@ -3638,11 +3638,11 @@ DECLARE(ReloadText) // ULONG changed
 
   flags = MUIF_NONE;
   if(msg->changed != FALSE)
-    SET_FLAG(flags, MUIF_MailTextEdit_LoadFromFile_SetChanged);
+    setFlag(flags, MUIF_MailTextEdit_LoadFromFile_SetChanged);
   if(data->useTextStyles == TRUE)
-    SET_FLAG(flags, MUIF_MailTextEdit_LoadFromFile_UseStyles);
+    setFlag(flags, MUIF_MailTextEdit_LoadFromFile_UseStyles);
   if(data->useTextColors == TRUE)
-    SET_FLAG(flags, MUIF_MailTextEdit_LoadFromFile_UseColors);
+    setFlag(flags, MUIF_MailTextEdit_LoadFromFile_UseColors);
 
   result = DoMethod(data->TE_EDIT, MUIM_MailTextEdit_LoadFromFile, data->wmData->filename, flags);
 
@@ -3663,11 +3663,11 @@ DECLARE(LoadText) // char *filename, ULONG changed
 
   flags = MUIF_NONE;
   if(msg->changed != FALSE)
-    SET_FLAG(flags, MUIF_MailTextEdit_LoadFromFile_SetChanged);
+    setFlag(flags, MUIF_MailTextEdit_LoadFromFile_SetChanged);
   if(data->useTextStyles == TRUE)
-    SET_FLAG(flags, MUIF_MailTextEdit_LoadFromFile_UseStyles);
+    setFlag(flags, MUIF_MailTextEdit_LoadFromFile_UseStyles);
   if(data->useTextColors == TRUE)
-    SET_FLAG(flags, MUIF_MailTextEdit_LoadFromFile_UseColors);
+    setFlag(flags, MUIF_MailTextEdit_LoadFromFile_UseColors);
   result = DoMethod(data->TE_EDIT, MUIM_MailTextEdit_LoadFromFile, msg->filename, flags);
 
   RETURN(result);
@@ -4238,13 +4238,13 @@ DECLARE(ComposeMail) // enum WriteMode mode
           if(hasServerInUse(uin->mailServer) == FALSE)
           {
             // mark the server as "in use"
-            SET_FLAG(uin->mailServer->flags, MSF_IN_USE);
+            setFlag(uin->mailServer->flags, MSF_IN_USE);
 
             mailSent = (DoAction(NULL, TA_SendMails, TT_SendMails_UserIdentity, uin,
                                                      TT_SendMails_Mode, SENDMAIL_ACTIVE_USER,
                                                      TAG_DONE) != NULL);
             if(mailSent == FALSE)
-              CLEAR_FLAG(uin->mailServer->flags, MSF_IN_USE);
+              clearFlag(uin->mailServer->flags, MSF_IN_USE);
           }
           else
             W(DBF_MAIL, "uin->mailServer in use, couldn't sent out mail");

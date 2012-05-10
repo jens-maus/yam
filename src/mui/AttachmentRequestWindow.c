@@ -162,7 +162,7 @@ OVERLOAD(OM_NEW)
     G->virtualMailpart[0]->Nr = PART_ORIGINAL;
     strlcpy(G->virtualMailpart[0]->Name, tr(MSG_RE_Original), sizeof(G->virtualMailpart[0]->Name));
     G->virtualMailpart[0]->Size = rmData->mail->Size;
-    SET_FLAG(G->virtualMailpart[0]->Flags, PFLAG_DECODED);
+    setFlag(G->virtualMailpart[0]->Flags, PFLAG_DECODED);
     DoMethod(listObj, MUIM_NList_InsertSingle, G->virtualMailpart[0], MUIV_NList_Insert_Top);
     set(listObj, MUIA_NList_Active, MUIV_NList_Active_Top);
 

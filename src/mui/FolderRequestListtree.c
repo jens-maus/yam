@@ -88,7 +88,7 @@ OVERLOAD(OM_NEW)
 
         // set the previously selected folder as active
         if(folder == prevFolder)
-          SET_FLAG(tnflags, MUIV_NListtree_Insert_Flag_Active);
+          setFlag(tnflags, MUIV_NListtree_Insert_Flag_Active);
 
         // we first have to get the parent folder treenode
         if(folder->parent != NULL &&

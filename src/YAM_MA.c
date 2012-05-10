@@ -1054,11 +1054,11 @@ unsigned int MA_FromStatusHeader(char *statusflags)
     switch(c)
     {
       case 'R':
-        SET_FLAG(sflags, SFLAG_READ);
+        setFlag(sflags, SFLAG_READ);
       break;
 
       case 'O':
-        CLEAR_FLAG(sflags, SFLAG_NEW);
+        clearFlag(sflags, SFLAG_NEW);
       break;
     }
   }
@@ -1085,42 +1085,42 @@ unsigned int MA_FromXStatusHeader(char *xstatusflags)
     switch(c)
     {
       case 'R':
-        SET_FLAG(sflags, SFLAG_READ);
-        CLEAR_FLAG(sflags, SFLAG_NEW);
+        setFlag(sflags, SFLAG_READ);
+        clearFlag(sflags, SFLAG_NEW);
       break;
 
       case 'A':
-        SET_FLAG(sflags, SFLAG_REPLIED);
+        setFlag(sflags, SFLAG_REPLIED);
       break;
 
       case 'F':
-        SET_FLAG(sflags, SFLAG_MARKED);
+        setFlag(sflags, SFLAG_MARKED);
       break;
 
       case 'D':
-        SET_FLAG(sflags, SFLAG_DELETED);
+        setFlag(sflags, SFLAG_DELETED);
       break;
 
       case 'T':
-        SET_FLAG(sflags, SFLAG_HOLD);
+        setFlag(sflags, SFLAG_HOLD);
       break;
 
       case 'X':
-        SET_FLAG(sflags, SFLAG_USERSPAM);
-        CLEAR_FLAG(sflags, SFLAG_AUTOSPAM);
-        CLEAR_FLAG(sflags, SFLAG_HAM);
+        setFlag(sflags, SFLAG_USERSPAM);
+        clearFlag(sflags, SFLAG_AUTOSPAM);
+        clearFlag(sflags, SFLAG_HAM);
       break;
 
       case 'J':
-        SET_FLAG(sflags, SFLAG_AUTOSPAM);
-        CLEAR_FLAG(sflags, SFLAG_USERSPAM);
-        CLEAR_FLAG(sflags, SFLAG_HAM);
+        setFlag(sflags, SFLAG_AUTOSPAM);
+        clearFlag(sflags, SFLAG_USERSPAM);
+        clearFlag(sflags, SFLAG_HAM);
       break;
 
       case 'Y':
-        SET_FLAG(sflags, SFLAG_HAM);
-        CLEAR_FLAG(sflags, SFLAG_USERSPAM);
-        CLEAR_FLAG(sflags, SFLAG_AUTOSPAM);
+        setFlag(sflags, SFLAG_HAM);
+        clearFlag(sflags, SFLAG_USERSPAM);
+        clearFlag(sflags, SFLAG_AUTOSPAM);
       break;
     }
   }
@@ -1522,10 +1522,10 @@ void MA_RemoveAttach(struct Mail *mail, struct Part **whichParts, BOOL warning)
 
             // clear the multipart/mixed flag only if we just removed all attachments
             if(keptParts == 0)
-              CLEAR_FLAG(mail->mflags, MFLAG_MP_MIXED);
+              clearFlag(mail->mflags, MFLAG_MP_MIXED);
 
             // flag folder as modified
-            SET_FLAG(mail->Folder->Flags, FOFL_MODIFY);
+            setFlag(mail->Folder->Flags, FOFL_MODIFY);
             DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_RedrawMail, mail);
 
             DeleteFile(fname);
@@ -1868,7 +1868,7 @@ enum NewMailMode CheckNewMailQualifier(const enum NewMailMode mode, const ULONG 
     // if the user pressed LSHIFT or RSHIFT while pressing
     // the 'forward' toolbar we do a BOUNCE message action
     // instead.
-    if(hasFlag(qualifier, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT)))
+    if(isAnyFlagSet(qualifier, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT)))
       newMode = NMM_BOUNCE;
     else
     {
@@ -1876,50 +1876,50 @@ enum NewMailMode CheckNewMailQualifier(const enum NewMailMode mode, const ULONG 
       // add any attachments from the original mail if
       // the CONTROL qualifier was pressed
       if(isFlagSet(qualifier, IEQUALIFIER_CONTROL))
-        SET_FLAG(*flags, NEWF_FWD_NOATTACH);
+        setFlag(*flags, NEWF_FWD_NOATTACH);
 
       // flag the foward message action to use the
       // alternative (not configured) forward mode
-      if(hasFlag(qualifier, (IEQUALIFIER_LALT|IEQUALIFIER_RALT)))
-        SET_FLAG(*flags, NEWF_FWD_ALTMODE);
+      if(isAnyFlagSet(qualifier, (IEQUALIFIER_LALT|IEQUALIFIER_RALT)))
+        setFlag(*flags, NEWF_FWD_ALTMODE);
     }
   }
   else if(mode == NMM_FORWARD_ATTACH)
   {
-    SET_FLAG(*flags, NEWF_FWD_AS_ATTACHMENT);
+    setFlag(*flags, NEWF_FWD_AS_ATTACHMENT);
 
     // flag the forward message action to not
     // add any attachments from the original mail if
     // the CONTROL qualifier was pressed
     if(isFlagSet(qualifier, IEQUALIFIER_CONTROL))
-      SET_FLAG(*flags, NEWF_FWD_NOATTACH);
+      setFlag(*flags, NEWF_FWD_NOATTACH);
   }
   else if(mode == NMM_FORWARD_INLINE)
   {
-    SET_FLAG(*flags, NEWF_FWD_INLINED);
+    setFlag(*flags, NEWF_FWD_INLINED);
 
     // flag the forward message action to not
     // add any attachments from the original mail if
     // the CONTROL qualifier was pressed
     if(isFlagSet(qualifier, IEQUALIFIER_CONTROL))
-      SET_FLAG(*flags, NEWF_FWD_NOATTACH);
+      setFlag(*flags, NEWF_FWD_NOATTACH);
   }
   else if(mode == NMM_REPLY)
   {
     // flag the reply mail action to reply to the
     // sender of the mail directly
-    if(hasFlag(qualifier, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT)))
-      SET_FLAG(*flags, NEWF_REP_PRIVATE);
+    if(isAnyFlagSet(qualifier, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT)))
+      setFlag(*flags, NEWF_REP_PRIVATE);
 
     // flag the reply mail action to reply to the mailing list
     // address instead.
-    if(hasFlag(qualifier, (IEQUALIFIER_LALT|IEQUALIFIER_RALT)))
-      SET_FLAG(*flags, NEWF_REP_MLIST);
+    if(isAnyFlagSet(qualifier, (IEQUALIFIER_LALT|IEQUALIFIER_RALT)))
+      setFlag(*flags, NEWF_REP_MLIST);
 
     // flag the reply mail action to not quote any text
     // of the original mail.
     if(isFlagSet(qualifier, IEQUALIFIER_CONTROL))
-      SET_FLAG(*flags, NEWF_REP_NOQUOTE);
+      setFlag(*flags, NEWF_REP_NOQUOTE);
   }
 
   RETURN(newMode);
@@ -2039,7 +2039,7 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
 /// MA_DeleteMessageFunc
 HOOKPROTONHNO(MA_DeleteMessageFunc, void, int *arg)
 {
-   BOOL delatonce = hasFlag(arg[0], (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT));
+   BOOL delatonce = isAnyFlagSet(arg[0], (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT));
 
    MA_DeleteMessage(delatonce, FALSE);
 }
@@ -2351,7 +2351,7 @@ BOOL ReceiveMailsFromPOP(struct MailServerNode *msn, const ULONG flags, struct D
   if(hasServerInUse(msn) == FALSE)
   {
     // mark the server as being "in use"
-    SET_FLAG(msn->flags, MSF_IN_USE);
+    setFlag(msn->flags, MSF_IN_USE);
 
     success = (DoAction(NULL, TA_ReceiveMails, TT_ReceiveMails_MailServer, msn,
                                                TT_ReceiveMails_Flags, flags,
@@ -2361,7 +2361,7 @@ BOOL ReceiveMailsFromPOP(struct MailServerNode *msn, const ULONG flags, struct D
     if(success == FALSE)
     {
       // clear the "in use" flag again in case of an error
-      CLEAR_FLAG(msn->flags, MSF_IN_USE);
+      clearFlag(msn->flags, MSF_IN_USE);
     }
   }
   else
@@ -2445,7 +2445,7 @@ HOOKPROTONHNO(MA_PopNowFunc, void, int *arg)
   // if the "get" button was clicked while a shift button was
   // pressed then a mail exchange is done rather than a simple
   // download of mails
-  if(hasFlag(qual, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT)))
+  if(isAnyFlagSet(qual, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT)))
     MA_ExchangeMail(arg[1]);
   else
     MA_PopNow(arg[0], arg[1], NULL);
@@ -2570,7 +2570,7 @@ BOOL MA_Send(enum SendMailMode mode)
           if(hasServerInUse(uin->mailServer) == FALSE)
           {
             // mark the server as "in use"
-            SET_FLAG(uin->mailServer->flags, MSF_IN_USE);
+            setFlag(uin->mailServer->flags, MSF_IN_USE);
 
             // call the thread action now signaling that we want to sent the
             // associated mails
@@ -2585,7 +2585,7 @@ BOOL MA_Send(enum SendMailMode mode)
             DeleteMailList(uin->sentMailList);
             uin->sentMailList = NULL;
 
-            CLEAR_FLAG(uin->mailServer->flags, MSF_IN_USE);
+            clearFlag(uin->mailServer->flags, MSF_IN_USE);
 
             success = FALSE;
           }
@@ -3013,8 +3013,8 @@ BOOL MA_ExportMessages(char *filename, const BOOL all, ULONG flags)
           {
             switch(MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_MESSAGEEXPORT), tr(MSG_MA_ExportAppendOpts), tr(MSG_MA_ExportAppendReq)))
             {
-              case 1: CLEAR_FLAG(flags, EXPORTF_APPEND); break;
-              case 2: SET_FLAG(flags, EXPORTF_APPEND); break;
+              case 1: clearFlag(flags, EXPORTF_APPEND); break;
+              case 2: setFlag(flags, EXPORTF_APPEND); break;
               case 0: filename = NULL;
             }
           }

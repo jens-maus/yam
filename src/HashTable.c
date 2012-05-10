@@ -752,12 +752,12 @@ ULONG HashTableEnumerate(struct HashTable *table, enum HashTableOperator (* etor
     if(HASH_ENTRY_IS_LIVE(entry))
     {
       op = etor(table, entry, i++, arg);
-      if(hasFlag(op, htoRemove))
+      if(isAnyFlagSet(op, htoRemove))
       {
         HashTableRawRemove(table, entry);
         didRemove = TRUE;
       }
-      if(hasFlag(op, htoStop))
+      if(isAnyFlagSet(op, htoStop))
         break;
     }
 

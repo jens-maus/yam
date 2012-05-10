@@ -225,7 +225,7 @@ static BOOL ScanDateString(const char *string, const char *fmt, struct tm *res)
           case 'd': // %d  - day number with leading zeros (01-31)
           case 'e': // %e  - day number with leading spaces ( 1-31)
           {
-            SET_FLAG(flags, FLG_MDAY);
+            setFlag(flags, FLG_MDAY);
             state = SDS_DAY_OF_MONTH;
             fc = *fmt++;
           }
@@ -233,7 +233,7 @@ static BOOL ScanDateString(const char *string, const char *fmt, struct tm *res)
 
           case 'm': // %m  - month number with leading zeros (01-12)
           {
-            SET_FLAG(flags, FLG_MON);
+            setFlag(flags, FLG_MON);
             state = SDS_MONTH;
             fc = *fmt++;
           }
@@ -241,13 +241,13 @@ static BOOL ScanDateString(const char *string, const char *fmt, struct tm *res)
 
           case 'Y': // %Y  - year using four digits with leading zeros
           {
-            SET_FLAG(flags, FLG_4DIGIT_YEAR);
+            setFlag(flags, FLG_4DIGIT_YEAR);
           }
           // we fall through here
 
           case 'y': // %y  - year using two digits with leading zeros (00-99)
           {
-            SET_FLAG(flags, FLG_YEAR);
+            setFlag(flags, FLG_YEAR);
             state = SDS_YEAR;
             fc = *fmt++;
           }

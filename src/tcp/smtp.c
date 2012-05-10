@@ -329,7 +329,7 @@ static BOOL ConnectToSMTP(struct TransferContext *tc)
 
     // per default we flag the SMTP to be capable of an ESMTP
     // connection.
-    SET_FLAG(flags, SMTP_FLG_ESMTP);
+    setFlag(flags, SMTP_FLG_ESMTP);
 
     // set the connection status
     PushMethodOnStack(tc->transferGroup, 2, MUIM_TransferControlGroup_ShowStatus, tr(MSG_TR_SendHello));
@@ -357,7 +357,7 @@ static BOOL ConnectToSMTP(struct TransferContext *tc)
         resp = SendSMTPCommand(tc, SMTP_HELO, hostName, tr(MSG_ER_BADRESPONSE_SMTP));
 
         // signal we are not into ESMTP stuff
-        CLEAR_FLAG(flags, SMTP_FLG_ESMTP);
+        clearFlag(flags, SMTP_FLG_ESMTP);
       }
     }
 
@@ -381,37 +381,37 @@ static BOOL ConnectToSMTP(struct TransferContext *tc)
 
           // lets see what features this server returns
           if(strnicmp(resp+4, "STARTTLS", 8) == 0)          // STARTTLS (RFC 2487)
-            SET_FLAG(flags, SMTP_FLG_STARTTLS);
+            setFlag(flags, SMTP_FLG_STARTTLS);
           else if(strnicmp(resp+4, "AUTH", 4) == 0)         // SMTP-AUTH (RFC 2554)
           {
             if(NULL != strstr(resp+9,"CRAM-MD5"))
-              SET_FLAG(flags, SMTP_FLG_AUTH_CRAM_MD5);
+              setFlag(flags, SMTP_FLG_AUTH_CRAM_MD5);
 
             if(NULL != strstr(resp+9,"DIGEST-MD5"))
-              SET_FLAG(flags, SMTP_FLG_AUTH_DIGEST_MD5);
+              setFlag(flags, SMTP_FLG_AUTH_DIGEST_MD5);
 
             if(NULL != strstr(resp+9,"PLAIN"))
-              SET_FLAG(flags, SMTP_FLG_AUTH_PLAIN);
+              setFlag(flags, SMTP_FLG_AUTH_PLAIN);
 
             if(NULL != strstr(resp+9,"LOGIN"))
-              SET_FLAG(flags, SMTP_FLG_AUTH_LOGIN);
+              setFlag(flags, SMTP_FLG_AUTH_LOGIN);
           }
           else if(strnicmp(resp+4, "SIZE", 4) == 0)         // STD:10 - SIZE declaration (RFC 1870)
-            SET_FLAG(flags, SMTP_FLG_SIZE);
+            setFlag(flags, SMTP_FLG_SIZE);
           else if(strnicmp(resp+4, "PIPELINING", 10) == 0)  // STD:60 - PIPELINING (RFC 2920)
-            SET_FLAG(flags, SMTP_FLG_PIPELINING);
+            setFlag(flags, SMTP_FLG_PIPELINING);
           else if(strnicmp(resp+4, "8BITMIME", 8) == 0)     // 8BITMIME support (RFC 1652)
-            SET_FLAG(flags, SMTP_FLG_8BITMIME);
+            setFlag(flags, SMTP_FLG_8BITMIME);
           else if(strnicmp(resp+4, "DSN", 3) == 0)          // DSN - Delivery Status Notifications (RFC 1891)
-            SET_FLAG(flags, SMTP_FLG_DSN);
+            setFlag(flags, SMTP_FLG_DSN);
           else if(strnicmp(resp+4, "ETRN", 4) == 0)         // ETRN - Remote Message Queue Starting (RFC 1985)
-            SET_FLAG(flags, SMTP_FLG_ETRN);
+            setFlag(flags, SMTP_FLG_ETRN);
           else if(strnicmp(resp+4, "ENHANCEDSTATUSCODES", 19) == 0) // Enhanced Status Codes (RFC 2034)
-            SET_FLAG(flags, SMTP_FLG_ENHANCEDSTATUSCODES);
+            setFlag(flags, SMTP_FLG_ENHANCEDSTATUSCODES);
           else if(strnicmp(resp+4, "DELIVERBY", 9) == 0)    // DELIVERBY Extension (RFC 2852)
-            SET_FLAG(flags, SMTP_FLG_DELIVERBY);
+            setFlag(flags, SMTP_FLG_DELIVERBY);
           else if(strnicmp(resp+4, "HELP", 4) == 0)         // HELP Extension (RFC 821)
-            SET_FLAG(flags, SMTP_FLG_HELP);
+            setFlag(flags, SMTP_FLG_HELP);
         }
       }
 
@@ -1626,7 +1626,7 @@ BOOL SendMails(struct UserIdentityNode *uin, enum SendMailMode mode)
   uin->sentMailList = NULL;
 
   // mark the server as being no longer "in use"
-  CLEAR_FLAG(tc->msn->flags, MSF_IN_USE);
+  clearFlag(tc->msn->flags, MSF_IN_USE);
 
   // now we are done
   ReleaseSemaphore(G->configSemaphore);

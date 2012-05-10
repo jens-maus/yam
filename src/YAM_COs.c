@@ -806,7 +806,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
             if(stricmp(buf, "POP3-Server") == 0)                 strlcpy(fPOP3->hostname, value, sizeof(fPOP3->hostname));
             else if(stricmp(buf, "POP3-Password") == 0)          strlcpy(fPOP3->password, Decrypt(value), sizeof(fPOP3->password));
             else if(stricmp(buf, "POP3-User") == 0)              strlcpy(fPOP3->username, value, sizeof(fPOP3->username));
-            else if(stricmp(buf, "DeleteOnServer") == 0)         Txt2Bool(value) == TRUE ? SET_FLAG(fPOP3->flags, MSF_PURGEMESSGAES) : CLEAR_FLAG(fPOP3->flags, MSF_PURGEMESSGAES);
+            else if(stricmp(buf, "DeleteOnServer") == 0)         Txt2Bool(value) == TRUE ? setFlag(fPOP3->flags, MSF_PURGEMESSGAES) : clearFlag(fPOP3->flags, MSF_PURGEMESSGAES);
             else if(stricmp(buf, "CheckMail") == 0)
             {
               if(Txt2Bool(value) == FALSE)
@@ -878,7 +878,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
                   rule->searchMode = SM_SUBJECT;
 
                 if(Txt2Bool(&p[2]) == TRUE)
-                  SET_FLAG(rule->flags, SEARCHF_CASE_SENSITIVE);
+                  setFlag(rule->flags, SEARCHF_CASE_SENSITIVE);
                 rule->comparison = Txt2Bool(&p[4]) ? CP_NOTEQUAL : CP_EQUAL;
                 p = strchr(p2 = &p[6], ';');
                 *p++ = '\0';
@@ -896,7 +896,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
                 strlcpy(filter->moveTo, p2, sizeof(filter->moveTo));
                 strlcpy(filter->forwardTo, p, sizeof(filter->forwardTo));
                 if(*filter->forwardTo != '\0')
-                  SET_FLAG(filter->actions, FA_FORWARD);
+                  setFlag(filter->actions, FA_FORWARD);
 
                 AddTail((struct List *)&co->filterList, (struct Node *)filter);
               }
@@ -954,17 +954,17 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
 
 /* TCP/IP */
           else if(stricmp(buf, "SMTP-ID") == 0)                  fSMTP->id = strtol(value, NULL, 16);
-          else if(stricmp(buf, "SMTP-Enabled") == 0)             Txt2Bool(value) == TRUE ? SET_FLAG(fSMTP->flags, MSF_ACTIVE) : CLEAR_FLAG(fSMTP->flags, MSF_ACTIVE);
+          else if(stricmp(buf, "SMTP-Enabled") == 0)             Txt2Bool(value) == TRUE ? setFlag(fSMTP->flags, MSF_ACTIVE) : clearFlag(fSMTP->flags, MSF_ACTIVE);
           else if(stricmp(buf, "SMTP-Description") == 0)         strlcpy(fSMTP->description, value, sizeof(fSMTP->description));
           else if(stricmp(buf, "SMTP-Server") == 0)              strlcpy(fSMTP->hostname, value, sizeof(fSMTP->hostname));
           else if(stricmp(buf, "SMTP-Port") == 0)                fSMTP->port = atoi(value);
-          else if(stricmp(buf, "SMTP-SecMethod") == 0)           SET_FLAG(fSMTP->flags, SMTPSecMethod2MSF(atoi(value)));
-          else if(stricmp(buf, "Allow8bit") == 0)                Txt2Bool(value) == TRUE ? SET_FLAG(fSMTP->flags, MSF_ALLOW_8BIT) : CLEAR_FLAG(fSMTP->flags, MSF_ALLOW_8BIT);
-          else if(stricmp(buf, "Use-SMTP-TLS") == 0)             SET_FLAG(fSMTP->flags, SMTPSecMethod2MSF(atoi(value))); // obsolete
-          else if(stricmp(buf, "Use-SMTP-AUTH") == 0)            Txt2Bool(value) == TRUE ? SET_FLAG(fSMTP->flags, MSF_AUTH) : CLEAR_FLAG(fSMTP->flags, MSF_AUTH);
+          else if(stricmp(buf, "SMTP-SecMethod") == 0)           setFlag(fSMTP->flags, SMTPSecMethod2MSF(atoi(value)));
+          else if(stricmp(buf, "Allow8bit") == 0)                Txt2Bool(value) == TRUE ? setFlag(fSMTP->flags, MSF_ALLOW_8BIT) : clearFlag(fSMTP->flags, MSF_ALLOW_8BIT);
+          else if(stricmp(buf, "Use-SMTP-TLS") == 0)             setFlag(fSMTP->flags, SMTPSecMethod2MSF(atoi(value))); // obsolete
+          else if(stricmp(buf, "Use-SMTP-AUTH") == 0)            Txt2Bool(value) == TRUE ? setFlag(fSMTP->flags, MSF_AUTH) : clearFlag(fSMTP->flags, MSF_AUTH);
           else if(stricmp(buf, "SMTP-AUTH-User") == 0)           strlcpy(fSMTP->username, value, sizeof(fSMTP->username));
           else if(stricmp(buf, "SMTP-AUTH-Pass") == 0)           strlcpy(fSMTP->password, Decrypt(value), sizeof(fSMTP->password));
-          else if(stricmp(buf, "SMTP-AUTH-Method") == 0)         SET_FLAG(fSMTP->flags, SMTPAuthMethod2MSF(atoi(value)));
+          else if(stricmp(buf, "SMTP-AUTH-Method") == 0)         setFlag(fSMTP->flags, SMTPAuthMethod2MSF(atoi(value)));
           else if(strnicmp(buf,"SMTP", 4) == 0 && isdigit(buf[4]) && isdigit(buf[5]) && strchr(buf, '.') != NULL)
           {
             int id = atoi(&buf[4]);
@@ -992,13 +992,13 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
                 else if(stricmp(q, "Account") == 0)              strlcpy(msn->description, value, sizeof(msn->description));
                 else if(stricmp(q, "Server") == 0)               strlcpy(msn->hostname, value, sizeof(msn->hostname));
                 else if(stricmp(q, "Port") == 0)                 msn->port = atoi(value);
-                else if(stricmp(q, "Enabled") == 0)              Txt2Bool(value) == TRUE ? SET_FLAG(msn->flags, MSF_ACTIVE) : CLEAR_FLAG(msn->flags, MSF_ACTIVE);
-                else if(stricmp(q, "SecMethod") == 0)            SET_FLAG(msn->flags, SMTPSecMethod2MSF(atoi(value)));
-                else if(stricmp(q, "Allow8bit") == 0)            Txt2Bool(value) == TRUE ? SET_FLAG(msn->flags, MSF_ALLOW_8BIT) : CLEAR_FLAG(msn->flags, MSF_ALLOW_8BIT);
-                else if(stricmp(q, "SMTP-AUTH") == 0)            Txt2Bool(value) == TRUE ? SET_FLAG(msn->flags, MSF_AUTH) : CLEAR_FLAG(msn->flags, MSF_AUTH);
+                else if(stricmp(q, "Enabled") == 0)              Txt2Bool(value) == TRUE ? setFlag(msn->flags, MSF_ACTIVE) : clearFlag(msn->flags, MSF_ACTIVE);
+                else if(stricmp(q, "SecMethod") == 0)            setFlag(msn->flags, SMTPSecMethod2MSF(atoi(value)));
+                else if(stricmp(q, "Allow8bit") == 0)            Txt2Bool(value) == TRUE ? setFlag(msn->flags, MSF_ALLOW_8BIT) : clearFlag(msn->flags, MSF_ALLOW_8BIT);
+                else if(stricmp(q, "SMTP-AUTH") == 0)            Txt2Bool(value) == TRUE ? setFlag(msn->flags, MSF_AUTH) : clearFlag(msn->flags, MSF_AUTH);
                 else if(stricmp(q, "AUTH-User") == 0)            strlcpy(msn->username, value, sizeof(msn->username));
                 else if(stricmp(q, "AUTH-Pass") == 0)            strlcpy(msn->password, Decrypt(value), sizeof(msn->password));
-                else if(stricmp(q, "AUTH-Method") == 0)          SET_FLAG(msn->flags, SMTPAuthMethod2MSF(atoi(value)));
+                else if(stricmp(q, "AUTH-Method") == 0)          setFlag(msn->flags, SMTPAuthMethod2MSF(atoi(value)));
                 else
                   W(DBF_CONFIG, "unknown '%s' SMTP config tag", q);
               }
@@ -1036,14 +1036,14 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
                 else if(stricmp(q, "Port") == 0)                 msn->port = atoi(value);
                 else if(stricmp(q, "Password") == 0)             strlcpy(msn->password, Decrypt(value), sizeof(msn->password));
                 else if(stricmp(q, "User") == 0)                 strlcpy(msn->username, value, sizeof(msn->username));
-                else if(stricmp(q, "Enabled") == 0)              Txt2Bool(value) == TRUE ? SET_FLAG(msn->flags, MSF_ACTIVE) : CLEAR_FLAG(msn->flags, MSF_ACTIVE);
-                else if(stricmp(q, "SSLMode") == 0)              SET_FLAG(msn->flags, POP3SecMethod2MSF(atoi(value)));
-                else if(stricmp(q, "UseAPOP") == 0)              Txt2Bool(value) == TRUE ? SET_FLAG(msn->flags, MSF_APOP) : CLEAR_FLAG(msn->flags, MSF_APOP);
-                else if(stricmp(q, "Delete") == 0)               Txt2Bool(value) == TRUE ? SET_FLAG(msn->flags, MSF_PURGEMESSGAES) : CLEAR_FLAG(msn->flags, MSF_PURGEMESSGAES);
-                else if(stricmp(q, "AvoidDuplicates") == 0)      Txt2Bool(value) == TRUE ? SET_FLAG(msn->flags, MSF_AVOID_DUPLICATES) : CLEAR_FLAG(msn->flags, MSF_AVOID_DUPLICATES);
-                else if(stricmp(q, "ApplyRemoteFilters") == 0)   Txt2Bool(value) == TRUE ? SET_FLAG(msn->flags, MSF_APPLY_REMOTE_FILTERS) : CLEAR_FLAG(msn->flags, MSF_APPLY_REMOTE_FILTERS);
+                else if(stricmp(q, "Enabled") == 0)              Txt2Bool(value) == TRUE ? setFlag(msn->flags, MSF_ACTIVE) : clearFlag(msn->flags, MSF_ACTIVE);
+                else if(stricmp(q, "SSLMode") == 0)              setFlag(msn->flags, POP3SecMethod2MSF(atoi(value)));
+                else if(stricmp(q, "UseAPOP") == 0)              Txt2Bool(value) == TRUE ? setFlag(msn->flags, MSF_APOP) : clearFlag(msn->flags, MSF_APOP);
+                else if(stricmp(q, "Delete") == 0)               Txt2Bool(value) == TRUE ? setFlag(msn->flags, MSF_PURGEMESSGAES) : clearFlag(msn->flags, MSF_PURGEMESSGAES);
+                else if(stricmp(q, "AvoidDuplicates") == 0)      Txt2Bool(value) == TRUE ? setFlag(msn->flags, MSF_AVOID_DUPLICATES) : clearFlag(msn->flags, MSF_AVOID_DUPLICATES);
+                else if(stricmp(q, "ApplyRemoteFilters") == 0)   Txt2Bool(value) == TRUE ? setFlag(msn->flags, MSF_APPLY_REMOTE_FILTERS) : clearFlag(msn->flags, MSF_APPLY_REMOTE_FILTERS);
                 else if(stricmp(q, "Preselection") == 0)         msn->preselection = atoi(value);
-                else if(stricmp(q, "DownloadOnStartup") == 0)    Txt2Bool(value) == TRUE ? SET_FLAG(msn->flags, MSF_DOWNLOAD_ON_STARTUP) : CLEAR_FLAG(msn->flags, MSF_DOWNLOAD_ON_STARTUP);
+                else if(stricmp(q, "DownloadOnStartup") == 0)    Txt2Bool(value) == TRUE ? setFlag(msn->flags, MSF_DOWNLOAD_ON_STARTUP) : clearFlag(msn->flags, MSF_DOWNLOAD_ON_STARTUP);
                 else
                   W(DBF_CONFIG, "unknown '%s' POP config tag", q);
               }
@@ -1268,9 +1268,9 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
                     CreateNewRule(lastFilter, TRUE);
 
                   if(Txt2Bool(value) == TRUE)
-                    SET_FLAG(rule->flags, SEARCHF_CASE_SENSITIVE);
+                    setFlag(rule->flags, SEARCHF_CASE_SENSITIVE);
                   else
-                    CLEAR_FLAG(rule->flags, SEARCHF_CASE_SENSITIVE);
+                    clearFlag(rule->flags, SEARCHF_CASE_SENSITIVE);
                 }
                 else if(strnicmp(q, "Substring", 9) == 0)
                 {
@@ -1280,9 +1280,9 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
                     CreateNewRule(lastFilter, TRUE);
 
                   if(Txt2Bool(value) == TRUE)
-                    SET_FLAG(rule->flags, SEARCHF_SUBSTRING);
+                    setFlag(rule->flags, SEARCHF_SUBSTRING);
                   else
-                    CLEAR_FLAG(rule->flags, SEARCHF_SUBSTRING);
+                    clearFlag(rule->flags, SEARCHF_SUBSTRING);
                 }
                 else if(strnicmp(q, "DOSPattern", 10) == 0)
                 {
@@ -1292,9 +1292,9 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
                     CreateNewRule(lastFilter, TRUE);
 
                   if(Txt2Bool(value) == TRUE)
-                    SET_FLAG(rule->flags, SEARCHF_DOS_PATTERN);
+                    setFlag(rule->flags, SEARCHF_DOS_PATTERN);
                   else
-                    CLEAR_FLAG(rule->flags, SEARCHF_DOS_PATTERN);
+                    clearFlag(rule->flags, SEARCHF_DOS_PATTERN);
                 }
                 else if(strnicmp(q, "Combine", 7) == 0 && atoi(value) > CB_NONE)
                 {
@@ -1739,17 +1739,17 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolder
               if(globalPOP3AvoidDuplicates != -1)
               {
                 if(globalPOP3AvoidDuplicates == TRUE)
-                  SET_FLAG(msn->flags, MSF_AVOID_DUPLICATES);
+                  setFlag(msn->flags, MSF_AVOID_DUPLICATES);
                 else
-                  CLEAR_FLAG(msn->flags, MSF_AVOID_DUPLICATES);
+                  clearFlag(msn->flags, MSF_AVOID_DUPLICATES);
               }
 
               if(globalDownloadOnStartup != -1)
               {
                 if(globalDownloadOnStartup == TRUE)
-                  SET_FLAG(msn->flags, MSF_DOWNLOAD_ON_STARTUP);
+                  setFlag(msn->flags, MSF_DOWNLOAD_ON_STARTUP);
                 else
-                  CLEAR_FLAG(msn->flags, MSF_DOWNLOAD_ON_STARTUP);
+                  clearFlag(msn->flags, MSF_DOWNLOAD_ON_STARTUP);
               }
 
               if(globalPOP3Preselection != -1)
@@ -2290,14 +2290,14 @@ void CO_GetConfig(BOOL saveConfig)
       for(i=1; i < FOCOLNUM; i++)
       {
         if(GetMUICheck(gui->CH_FCOLS[i]))
-          SET_FLAG(CE->FolderCols, (1<<i));
+          setFlag(CE->FolderCols, (1<<i));
       }
 
       CE->MessageCols = 1;
       for(i=1; i < MACOLNUM; i++)
       {
         if(GetMUICheck(gui->CH_MCOLS[i]))
-          SET_FLAG(CE->MessageCols, (1<<i));
+          setFlag(CE->MessageCols, (1<<i));
       }
 
       CE->FixedFontList = GetMUICheck(gui->CH_FIXFLIST);

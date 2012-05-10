@@ -522,11 +522,11 @@ DECLARE(PrepareSearch) // struct Search *search
 
   flags = 0;
   if(GetMUICheck(data->CH_CASESENS[pg]) == TRUE)
-    SET_FLAG(flags, SEARCHF_CASE_SENSITIVE);
+    setFlag(flags, SEARCHF_CASE_SENSITIVE);
   if((pg < 2 && GetMUICheck(data->CH_SUBSTR[pg]) == TRUE) || pg == 4)
-    SET_FLAG(flags, SEARCHF_SUBSTRING);
+    setFlag(flags, SEARCHF_SUBSTRING);
   if(GetMUICheck(data->CH_DOSPATTERN[pg]) == TRUE)
-    SET_FLAG(flags, SEARCHF_DOS_PATTERN);
+    setFlag(flags, SEARCHF_DOS_PATTERN);
 
   FI_PrepareSearch(msg->search,
                    GetMUICycle(data->CY_MODE[data->remoteFilterMode]),
@@ -565,17 +565,17 @@ DECLARE(SetToRule) // struct RuleNode *rule
 
   rule->flags = 0;
   if(data->CH_CASESENS[g] != NULL && GetMUICheck(data->CH_CASESENS[g]) == TRUE)
-    SET_FLAG(rule->flags, SEARCHF_CASE_SENSITIVE);
+    setFlag(rule->flags, SEARCHF_CASE_SENSITIVE);
 
   if(data->CH_SUBSTR[g] != NULL && GetMUICheck(data->CH_SUBSTR[g]) == TRUE)
-    SET_FLAG(rule->flags, SEARCHF_SUBSTRING);
+    setFlag(rule->flags, SEARCHF_SUBSTRING);
 
   if(data->CH_DOSPATTERN[g] != NULL && GetMUICheck(data->CH_DOSPATTERN[g]) == TRUE)
-    SET_FLAG(rule->flags, SEARCHF_DOS_PATTERN);
+    setFlag(rule->flags, SEARCHF_DOS_PATTERN);
 
   // enable DOS patterns automatically if a pattern file is given
   if(rule->comparison == 4)
-    SET_FLAG(rule->flags, SEARCHF_DOS_PATTERN);
+    setFlag(rule->flags, SEARCHF_DOS_PATTERN);
 
   return 0;
 }

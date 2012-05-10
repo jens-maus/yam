@@ -152,14 +152,14 @@ static void ApplyRemoteFilters(const struct MinList *filterList, struct MailTran
          PlaySound(filter->playSound);
 
       if(hasDeleteAction(filter))
-         SET_FLAG(tnode->tflags, TRF_DELETE);
+         setFlag(tnode->tflags, TRF_DELETE);
       else
-         CLEAR_FLAG(tnode->tflags, TRF_DELETE);
+         clearFlag(tnode->tflags, TRF_DELETE);
 
       if(hasSkipMsgAction(filter))
-         CLEAR_FLAG(tnode->tflags, TRF_TRANSFER);
+         clearFlag(tnode->tflags, TRF_TRANSFER);
       else
-         SET_FLAG(tnode->tflags, TRF_TRANSFER);
+         setFlag(tnode->tflags, TRF_TRANSFER);
 
       // get out of this loop after a successful search
       break;
@@ -489,7 +489,7 @@ static BOOL GetMessageList(struct TransferContext *tc)
 
           // if preselection is configured then force displaying this mail in the list
           if(tc->msn->preselection >= PSM_ALWAYS)
-            SET_FLAG(tflags, TRF_PRESELECT);
+            setFlag(tflags, TRF_PRESELECT);
 
           D(DBF_NET, "mail transfer mode %ld, tflags %08lx (dl large %ld, purge %ld, user %ld, warnsize %ld, size %ld, presel %ld)", mode, tflags, C->DownloadLarge, hasServerPurge(tc->msn), isFlagSet(tc->flags, RECEIVEF_USER), C->WarnSize*1024, newMail->Size, tc->msn->preselection);
 
@@ -789,11 +789,11 @@ static BOOL FilterDuplicates(struct TransferContext *tc)
                       // make sure the mail is flagged as being ignoreable
                       tc->downloadResult.dupeSkipped++;
                       // don't download this mail, because it has been downloaded before
-                      CLEAR_FLAG(tnode->tflags, TRF_TRANSFER);
+                      clearFlag(tnode->tflags, TRF_TRANSFER);
                       // exclude this mail from preselection for the same reason
-                      CLEAR_FLAG(tnode->tflags, TRF_PRESELECT);
+                      clearFlag(tnode->tflags, TRF_PRESELECT);
                       // mark this UIDL as old+new, thus it will be saved upon cleanup
-                      SET_FLAG(token->flags, UIDLF_NEW);
+                      setFlag(token->flags, UIDLF_NEW);
                     }
                   }
                 }
@@ -848,9 +848,9 @@ static BOOL FilterDuplicates(struct TransferContext *tc)
             {
               tc->downloadResult.dupeSkipped++;
               // don't download this mail, because it has been downloaded before
-              CLEAR_FLAG(tnode->tflags, TRF_TRANSFER);
+              clearFlag(tnode->tflags, TRF_TRANSFER);
               // mark this UIDL as old+new, thus it will be saved upon cleanup
-              SET_FLAG(token->flags, UIDLF_NEW);
+              setFlag(token->flags, UIDLF_NEW);
             }
           }
         }
@@ -1174,7 +1174,7 @@ static BOOL LoadMessage(struct TransferContext *tc, struct Folder *inFolder, con
       DeleteFile(msgfile);
 
       // we need to set the folder flags to modified so that the .index will be saved later.
-      SET_FLAG(inFolder->Flags, FOFL_MODIFY);
+      setFlag(inFolder->Flags, FOFL_MODIFY);
     }
   }
   else
@@ -1629,7 +1629,7 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
   }
 
   // mark the server as being no longer "in use"
-  CLEAR_FLAG(msn->flags, MSF_IN_USE);
+  clearFlag(msn->flags, MSF_IN_USE);
 
   // now we are done
   ReleaseSemaphore(G->configSemaphore);

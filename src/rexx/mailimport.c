@@ -67,9 +67,9 @@ void rx_mailimport(UNUSED struct RexxHost *host, struct RexxParams *params, enum
       // we want to be woken up
       flags = IMPORTF_SIGNAL;
       if(args->quiet != 0)
-        SET_FLAG(flags, IMPORTF_QUIET);
+        setFlag(flags, IMPORTF_QUIET);
       if(args->wait != 0)
-        SET_FLAG(flags, IMPORTF_WAIT);
+        setFlag(flags, IMPORTF_WAIT);
 
       if(MA_ImportMessages(args->filename, flags) == TRUE)
         MiniMainLoop();
