@@ -7,6 +7,9 @@ $URL$
 
 2012-05-10 Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_CO.c: when having modiied something in the config and trying to close
+    the window afterwards will now popup a warning requester reminding the
+    user that he might lose his changes.
   * UserIdentity.c: fixed CompareUserIdentityNodes() which did some compare
     operations incorrectly and caused CompareConfigData() to always return
     FALSE even if both configs were the same.

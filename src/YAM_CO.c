@@ -2784,16 +2784,23 @@ HOOKPROTONHNO(CO_CloseFunc, void, int *arg)
   // SMTP transfers. If the window is just to be closed we can go on without a lock.
   if(arg[0] == 0 || (gotSemaphore = AttemptSemaphore(G->configSemaphore)) != FALSE)
   {
+    BOOL configsEqual;
+
+    // make sure we have the latest state of the
+    // config in CE
+    CO_GetConfig(arg[0] == 2);
+
+    // now we compare the current config against
+    // the temporary config
+    configsEqual = CompareConfigData(C, CE);
+
     // check if we should copy our edited configuration
     // to the real one or if we should just free/drop it
     if(arg[0] != 0)
     {
-      // get the current state of the configuration
-      CO_GetConfig(arg[0] == 2);
-
       // before we copy over the configuration, we
       // check if it was changed at all
-      if(CompareConfigData(C, CE) == FALSE)
+      if(configsEqual == FALSE)
       {
         struct Config *tmpC;
 
@@ -2826,6 +2833,22 @@ HOOKPROTONHNO(CO_CloseFunc, void, int *arg)
         CO_SaveConfig(C, G->CO_PrefsFile);
       }
     }
+    else if(configsEqual == FALSE)
+    {
+      // check if configs are equal and if not ask the user how to proceed
+      int res = MUI_Request(G->App, NULL, 0,
+                            tr(MSG_CO_CONFIGWARNING_TITLE),
+                            tr(MSG_CO_CONFIGWARNING_BT),
+                            tr(MSG_CO_CONFIGWARNING));
+
+      // if user pressed Abort or ESC 
+      // the we keep the window open.
+      if(res == 0)
+      {
+        LEAVE();
+        return;
+      }
+    }
 
     // then we free our temporary config structure
     CO_ClearConfig(CE);
@@ -2844,9 +2867,7 @@ HOOKPROTONHNO(CO_CloseFunc, void, int *arg)
       ReleaseSemaphore(G->configSemaphore);
   }
   else
-  {
     ER_NewError(tr(MSG_CO_CONFIG_IS_LOCKED));
-  }
 
   LEAVE();
 }

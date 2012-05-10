@@ -7359,3 +7359,16 @@ Allows to select the default signature that\n\
 should be used when composing emails with this\n\
 user identity.
 ;
+MSG_CO_CONFIGWARNING_TITLE (2340//)
+Configuration Warning
+;
+MSG_CO_CONFIGWARNING (2341//)
+You have modified certain configuration\n\
+settings and will lose these changes\n\
+when closing the config window.\n\
+\n\
+How do you want to proceed?
+;
+MSG_CO_CONFIGWARNING_BT (2342//)
+_Close window|*_Abort
+;
