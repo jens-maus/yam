@@ -11,6 +11,8 @@ $URL$
     make more clear that the action affects all folders.
   * YAM_CO.s: make sure that the PGP controls are always correctly enabled or
     disabled according to the identity's "use PGP" state.
+  * mui/WriteWindow.c: set all the CC, BCC and ReplyTo strings as defined by the
+    identity right before opening the window.
 
 2012-05-09 Jens Langner <Jens.Langner@light-speed.de>
 

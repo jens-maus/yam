@@ -1668,6 +1668,8 @@ OVERLOAD(OM_NEW)
 
         // set notify for identity cycle gadget
         DoMethod(data->CY_FROM, MUIM_Notify, MUIA_IdentityChooser_Identity, MUIV_EveryTime, obj, 2, METHOD(IdentityChanged), MUIV_TriggerValue);
+        //
+        DoMethod(obj, METHOD(IdentityChanged), uin);
       }
 
       // set some help text
@@ -3311,7 +3313,7 @@ DECLARE(AddRecipient) // enum RcptType type, char *recipient
     break;
 
     case MUIV_WriteWindow_RcptType_From:
-    { 
+    {
       struct UserIdentityNode *uin;
 
       // try to match the identity by search through our user identities
@@ -3376,7 +3378,7 @@ DECLARE(InsertAddresses) // enum RcptType type, char **addr, ULONG add
         ++msg->addr;
       }
       while(*(msg->addr) != NULL);
- 
+
       if(uin == NULL)
         DisplayBeep(NULL);
     }
