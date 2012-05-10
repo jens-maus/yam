@@ -7355,6 +7355,7 @@ If disabled, encrypted emails cannot be decrypted\n\
 by this user identity.
 ;
 MSG_HELP_CO_CY_IDENTITY_SIGNATURE (2339//)
-Allow to selected the default signature that should\n\
-be used when composing emails.
+Allows to select the default signature that\n\
+should be used when composing emails with this\n\
+user identity.
 ;
