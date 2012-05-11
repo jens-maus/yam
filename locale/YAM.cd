@@ -7150,10 +7150,7 @@ MSG_CO_IDENTITY_COMPOSE_OPTIONS (2284//)
 Options
 ;
 MSG_CO_IDENTITY_COMPOSE_SENTFOLDER (2285//)
-Store sent mail to
-;
-MSG_CO_IDENTITY_COMPOSE_FOLDER (2286//)
-folder
+Store sent mail to folder
 ;
 MSG_CO_IDENTITY_COMPOSE_QUOTE (2287//)
 Quote messages when answering

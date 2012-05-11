@@ -8705,10 +8705,7 @@ MSG_CO_IDENTITY_COMPOSE_OPTIONS
 Optionen
 ;
 MSG_CO_IDENTITY_COMPOSE_SENTFOLDER
-Gesendete Nachrichten speichern im
-;
-MSG_CO_IDENTITY_COMPOSE_FOLDER
-Postfach
+Gesendete Nachrichten speichern im Postfach
 ;
 MSG_CO_IDENTITY_COMPOSE_QUOTE
 Nachrichten beim Beantworten zitieren
@@ -8750,7 +8747,7 @@ MSG_CO_IDENTITY_PGP_ENCRYPTALL
 alle Nachrichten verschlüsseln
 ;
 MSG_CO_IDENTITY_PGP_ADDOWN
-eigenen Schlüssel zum Verschlüsseln verwenden
+eigenen Schlüssel verwenden
 ;
 MSG_CO_IDENTITY_PHOTOURL
 URL des eigenen Fotos
