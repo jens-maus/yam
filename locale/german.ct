@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.34 (10.5.2012)
+## version $VER: YAM.catalog 7.35 (11.5.2012)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -5841,14 +5841,6 @@ MSG_HELP_CO_CA_COLURL
 In dieser Farbe werden alle Verweise auf URLs\nim Lesefenster und im Editor dargestellt.
 ; Color used for displaying clickable URL links
 ;
-MSG_FO_FOLDEREXISTS
-Eine Datei oder ein Verzeichnis mit dem angegebenen Pfad\n\
-existiert bereits.\n\
-\n\
-Möchten Sie wirklich fortfahren?
-; A file or directory with the given folder path already exists.\n\
-; Do you really want to proceed?
-;
 MSG_FO_FOLDERNAMEINVALID
 Es wurde kein Postfachname angegeben oder dieser existiert bereits.\n\
 \n\
@@ -8655,6 +8647,127 @@ keine Authentifizierung
 MSG_CO_SMTP_OPTIONS
 Optionen
 ;
+MSG_CO_CRDIDENTITIES
+Identitäten
+;
+MSG_CO_IDENTITIES_TITLE
+Identitäteneinstellungen
+;
+MSG_CO_IDENTITIES_SUMMARY
+Verwalten Sie mehrere Identiäten zum Erstellen von Nachrichten...
+;
+MSG_CO_IDENTITY_LIST
+Identitäten
+;
+MSG_CO_IDENTITY_SETTINGS
+Generelle Einstellungen
+;
+MSG_CO_IDENTITY_REGISTER_SETTINGS
+Generelle Einstellungen
+;
+MSG_CO_IDENTITY_REGISTER_COMPOSE
+Nachrichten erstellen
+;
+MSG_CO_IDENTITY_REGISTER_PGPSEC
+PGP-Verschlüsselung
+;
+MSG_CO_IDENTITY_NOSIGNATURE
+keine Signatur
+;
+MSG_CO_IDENTITY_ABOVEQUOTE
+über dem Zitat
+;
+MSG_CO_IDENTITY_BELOWQUOTE
+unter dem Zitat
+;
+MSG_CO_IDENTITY_DESCRIPTION
+Beschreibung
+;
+MSG_CO_IDENTITY_MAILSERVER
+Mailserver (SMTP)
+;
+MSG_CO_IDENTITY_DEFSIGNATURE
+Standard-Signatur
+;
+MSG_CO_IDENTITY_COMPOSE
+Einstellungen für neue Nachrichten
+;
+MSG_CO_IDENTITY_CC
+CC: Adresse
+;
+MSG_CO_IDENTITY_BCC
+BCC: Adresse
+;
+MSG_CO_IDENTITY_REPLYTO
+Reply-To: Adresse
+;
+MSG_CO_IDENTITY_COMPOSE_OPTIONS
+Optionen
+;
+MSG_CO_IDENTITY_COMPOSE_SENTFOLDER
+Gesendete Nachrichten speichern im
+;
+MSG_CO_IDENTITY_COMPOSE_FOLDER
+Postfach
+;
+MSG_CO_IDENTITY_COMPOSE_QUOTE
+Nachrichten beim Beantworten zitieren
+;
+MSG_CO_IDENTITY_COMPOSE_ANSWER
+Platziere meine Antwort
+;
+MSG_CO_IDENTITY_COMPOSE_SIGNATURE
+Platziere meine Signatur
+;
+MSG_CO_IDENTITY_USESIG_REPLY
+Signatur beim Beantworten verwenden
+;
+MSG_CO_IDENTITY_USESIG_FORWARD
+Signatur beim Weiterleiten verwenden
+;
+MSG_CO_IDENTITY_PGPSETTINGS
+Einstellungen für PGP-Verschlüsselung
+;
+MSG_CO_IDENTITY_USEPGP
+PGP für diese Identität verwenden
+;
+MSG_CO_IDENTITY_PGPKEY_ID
+PGP-Schlüssel-ID
+;
+MSG_CO_IDENTITY_PGPKEY_URL
+PGP-Schlüssel-URL
+;
+MSG_CO_IDENTITY_PGP_OPTIONS
+Optionen
+;
+MSG_CO_IDENTITY_PGP_SIGN_UNENC
+unverschlüsselte Nachtichten signieren
+;
+MSG_CO_IDENTITY_PGP_SIGN_ENC
+verschlüsselte Nachtichten signieren
+;
+MSG_CO_IDENTITY_PGP_ENCRYPTALL
+alle Nachrichten verschlüsseln
+;
+MSG_CO_IDENTITY_PGP_ADDOWN
+eigenen Schlüssel zum Verschlüsseln verwenden
+;
+MSG_CO_IDENTITY_PHOTOURL
+URL des eigenen Fotos
+;
+MSG_CO_IDENTITY_ADDINFO
+persönliche Informationen anhängen
+;
+MSG_CO_IDENTITY_REQUESTMDN
+Empfangsbestätigung anfordern
+;
+MSG_CO_SERVERNAME
+Server-Name
+;
+MSG_HELP_CO_ST_USER
+Der Benutzername zur Authentifizierung gegenüber\n\
+dem Mailserver.
+;
 MSG_FO_MOVEFOLDERTO
 Möchten Sie wirklich das Verzeichnis dieses Postfaches von\n\
 '%s'\n\
@@ -8662,9 +8775,147 @@ nach\n\
 '%s'\n\
 verschieben?
 ;
+MSG_FO_FOLDER_ALREADY_EXISTS
+Eine Datei oder ein Verzeichnis mit dem Namen '%s'\n\
+existiert bereits und wird überschrieben/gelöscht werden.\n\
+\n\
+Wollen Sie wirklich fortfahren?
+;
 MSG_ER_CANNOT_CREATE_FOLDER
 Das Erstellen des Verzeichnisses '%s' ist fehlgeschlagen (%s).
 ;
+MSG_CO_IdentityActive
+_Aktiv
+;
 MSG_MA_FLUSH_ALL_INDICES
 Alle Indizes freigeben
+;
+MSG_FI_CONDITION
+Bedingung
+;
+MSG_HELP_CO_CH_IDENTITY_ENABLED
+Ermöglicht die Verwendung dieser Benutzeridentität.
+;
+MSG_HELP_CO_ST_IDENTITY_DESCRIPTION
+Eine Beschreibung für diese Benutzeridentität.
+;
+MSG_HELP_CO_ST_IDENTITY_REALNAME
+Der Realname (Vorname Nachname) für diese\n\
+Benutzeridentität.
+;
+MSG_HELP_CO_ST_IDENTITY_EMAIL
+Die mit dieser Benutzeridentität verbundene E-Mail Adresse.
+;
+MSG_HELP_CO_ST_IDENTITY_ORGANIZATION
+Optionaler Name einer Organisation zu der diese\n\
+Benutzeridentität gehört.
+;
+MSG_HELP_CO_CY_IDENTITY_MAILSERVER
+Erlaubt Ihnen den SMTP-Server auszuwählen,\n\
+über den die Post dieser Benutzeridentität\n\
+versendet wird.
+;
+MSG_HELP_CO_ST_IDENTITY_CC
+Diese Empfänger werden beim Schreiben neuer Nachrichten\n\
+als CC: hinzugefügt.
+;
+MSG_HELP_CO_ST_IDENTITY_BCC
+Diese Empfänger werden beim Schreiben neuer Nachrichten\n\
+als BCC: hinzugefügt.
+;
+MSG_HELP_CO_ST_IDENTITY_REPLYTO
+Diese Empfänger werden beim Schreiben neuer Nachrichten\n\
+als ReplyTo: hinzugefügt.
+;
+MSG_HELP_CO_ST_IDENTITY_EXTRAHEADER
+Diese zusätzlichen Kopfzeilen werden beim Schreiben neuer\n\
+Nachrichten hinzugefügt.
+;
+MSG_HELP_CO_ST_IDENTITY_PHOTOURL
+Eine optionale URL eines Fotos dieser Benutzeridentität.
+;
+MSG_HELP_CO_CH_IDENTITY_SENTFOLDER
+Falls aktiv, werden gesendete Nachrichten in diesem\n\
+Postfach gespeichert. Ansonsten werden sie gelöscht.
+;
+MSG_HELP_CO_TX_IDENTITY_SENTFOLDER
+Läßt Sie ein Postfach für gesendete Nachrichten auswählen.
+;
+MSG_HELP_CO_CH_IDENTITY_QUOTEMAILS
+Beim Beantworten und Weiterleiten von Nachrichten\n\
+wird der ürsprüngliche Text zitiert.
+;
+MSG_HELP_CO_CH_IDENTITY_QUOTEPOS
+Erlaubt Ihnen auszuwählen, ob Ihre Antwort über\n\
+oder unter dem zitierten Text platziert wird.
+;
+MSG_HELP_CO_CH_IDENTITY_SIGPOS
+Erlaubt Ihnen auszuwählen, ob Ihre Signatur über\n\
+oder unter dem zitierten Text platziert wird.
+;
+MSG_HELP_CO_CH_IDENTITY_SIGREPLY
+Falls aktiv, wird die Signatur beim Beantworten\n\
+von Nachrichten zum Text hinzugefügt.
+;
+MSG_HELP_CO_CH_IDENTITY_SIGFORWARD
+Falls aktiv, wird die Signatur beim Weiterleiten\n\
+von Nachrichten zum Text hinzugefügt.
+;
+MSG_HELP_CO_CH_IDENTITY_ADDINFO
+Falls aktiv, werden Ihre persönlichen Informationen\n\
+zur Nachricht hinzugefügt (X-SenderInfo Kopfzeile).\n\
+Dies erfordert einen Eintrag im Adressbuch mit der\n\
+gleichen E-Mail Adresse wie diese Benutzeridentität.
+;
+MSG_HELP_CO_CH_IDENTITY_REQUESTMDN
+Falls aktiv, wird eine Empfangsbestätigung beim\n\
+Erstellen einer neuen Nachricht angefordert.
+;
+MSG_HELP_CO_CH_IDENTITY_USEPGP
+Erlaub die Verwendung von PGP für diese Benutzeridentität.
+;
+MSG_HELP_CO_ST_IDENTITY_PGPID
+Legt fest, welcher PGP-Schlüssel für diese\n\
+Benutzeridentität verwendet wird.
+;
+MSG_HELP_CO_ST_IDENTITY_PGPURL
+Erlaubt Ihnen eine URL anzugeben, von welcher der\n\
+öffentliche Schlüssel für diese Benutzeridentität\n\
+bezogen werden kann.
+;
+MSG_HELP_CO_CH_IDENTITY_PGPSIGN_UNENC
+Falls aktiv, werden neue Nachrichten mit Hilfe von\n\
+PGP signiert.
+;
+MSG_HELP_CO_CH_IDENTITY_PGPSIGN_ENC
+Falls aktiv, werden neue Nachrichten mit Hilfe von\n\
+PGP verschlüsselt.
+;
+MSG_HELP_CO_CH_IDENTITY_PGPENC_ALL
+Falls aktiv, werden alle neue Nachrichten mit Hilfe von\n\
+PGP verschlüsselt.
+;
+MSG_HELP_CO_CH_IDENTITY_PGPENC_SELF
+Falls aktiv, werden alle Nachrichten mit dem PGP-Schlüssel\n\
+dieser Benutzeridentität verschlüsselt.\n\
+Falls inaktiv, können verschlüsselte Nachtichten nicht\n\
+mit dieser Benutzeridentität entschlüsselt werden.
+;
+MSG_HELP_CO_CY_IDENTITY_SIGNATURE
+Erlaubt Ihnen festzulegen, welche Signatur\n\
+beim Erstellen neuer Nachrichten mit dieser\n\
+Benutzeridentität verwendet wird.
+;
+MSG_CO_CONFIGWARNING_TITLE
+Konfigurationswarnung
+;
+MSG_CO_CONFIGWARNING
+Sie haben einige Bereiche der Konfiguration\n\
+verändert und werden diese Änderungen verlieren,\n\
+wenn Sie das Konfigurationsfenster schließen.\n\
+\n\
+Wie wollen Sie fortfahren?
+;
+MSG_CO_CONFIGWARNING_BT
+_Fenster schließen|*_Abbruch
 ;

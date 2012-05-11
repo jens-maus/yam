@@ -7117,7 +7117,7 @@ MSG_CO_IDENTITY_REGISTER_PGPSEC (2270//)
 PGP-Security
 ;
 MSG_CO_IDENTITY_NOSIGNATURE (2271//)
-No Signature
+no signature
 ;
 MSG_CO_IDENTITY_ABOVEQUOTE (2272//)
 above quotes
@@ -7129,13 +7129,13 @@ MSG_CO_IDENTITY_DESCRIPTION (2274//)
 Description
 ;
 MSG_CO_IDENTITY_MAILSERVER (2275//)
-Mail Server (SMTP)
+Mail server (SMTP)
 ;
 MSG_CO_IDENTITY_DEFSIGNATURE (2276//)
-Default Signature
+Default signature
 ;
 MSG_CO_IDENTITY_COMPOSE (2277//)
-Compose Mail Settings
+Compose mail settings
 ;
 MSG_CO_IDENTITY_CC (2278//)
 CC: address
@@ -7159,10 +7159,10 @@ MSG_CO_IDENTITY_COMPOSE_QUOTE (2287//)
 Quote messages when answering
 ;
 MSG_CO_IDENTITY_COMPOSE_ANSWER (2288//)
-put my answer
+Put my answer
 ;
 MSG_CO_IDENTITY_COMPOSE_SIGNATURE (2289//)
-put my signature
+Put my signature
 ;
 MSG_CO_IDENTITY_USESIG_REPLY (2290//)
 Use signature when replying
@@ -7177,10 +7177,10 @@ MSG_CO_IDENTITY_USEPGP (2293//)
 Use PGP for this identity
 ;
 MSG_CO_IDENTITY_PGPKEY_ID (2294//)
-PGP-Key ID
+PGP key ID
 ;
 MSG_CO_IDENTITY_PGPKEY_URL (2295//)
-PGP-Key URL
+PGP key URL
 ;
 MSG_CO_IDENTITY_PGP_OPTIONS (2296//)
 Options
@@ -7198,7 +7198,7 @@ MSG_CO_IDENTITY_PGP_ADDOWN (2300//)
 Add own key when encrypting mails
 ;
 MSG_CO_IDENTITY_PHOTOURL (2301//)
-URL to own image
+URL to own photo
 ;
 MSG_CO_IDENTITY_ADDINFO (2302//)
 Add personal information
@@ -7249,7 +7249,7 @@ user identity.
 ;
 MSG_HELP_CO_ST_IDENTITY_REALNAME (2314//)
 The realname "firstname lastname" for\n\
-this identity.
+this user identity.
 ;
 MSG_HELP_CO_ST_IDENTITY_EMAIL (2315//)
 The e-mail address associated with\n\
@@ -7257,7 +7257,7 @@ this user identity.
 ;
 MSG_HELP_CO_ST_IDENTITY_ORGANIZATION (2316//)
 Optional name of the organization\n\
-this identity belongs to.
+this user identity belongs to.
 ;
 MSG_HELP_CO_CY_IDENTITY_MAILSERVER (2317//)
 Allows you to select the outgoing SMTP server\n\
@@ -7317,7 +7317,7 @@ MSG_HELP_CO_CH_IDENTITY_ADDINFO (2330//)
 If enabled, personal information will be\n\
 added to the mail (X-SenderInfo header).\n\
 This requires an addressbook entry with\n\
-the same email address as this identity.
+the same email address as this user identity.
 ;
 MSG_HELP_CO_CH_IDENTITY_REQUESTMDN (2331//)
 If enabled, a mail disposition notification\n\

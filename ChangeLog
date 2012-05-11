@@ -8,6 +8,8 @@ $URL$
 2012-05-11 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_COg.c: use the same order of options for quotes and signature.
+  * locale/YAM.cd, locale/german.ct: updated germand translation and fixed a
+    few quirks in the builtin english strings.
 
 2012-05-10 Jens Langner <Jens.Langner@light-speed.de>
 
