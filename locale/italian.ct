@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.94 (13.04.2012)
+## version $VER: YAM.catalog 7.95 (11.05.2012)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -7,7 +7,7 @@
 ; Compiled with FlexCat 2.9 PPC (AmigaOS4)
 ; $Id$
 ;
-; based on YAM.cd 5835 2012-04-13
+; based on YAM.cd 5912 2012-05-11
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -769,10 +769,6 @@ Resetta
 MSG_MA_Select
 Seleziona
 ; Select
-;
-MSG_MA_FlushIndices
-Pulisci indici
-; Flush indices
 ;
 MSG_MA_MDelete
 Elimina
@@ -1655,15 +1651,15 @@ Elimina _firma
 ; Stri_p signature
 ;
 MSG_CO_DefSig
-Firma predefinita
+predefinita
 ; Default signature
 ;
 MSG_CO_AltSig1
-Firma Alt. #1
+alternativa #1
 ; Alt. signature #1
 ;
 MSG_CO_AltSig2
-Firma Alt. #2
+alternativa #2
 ; Alt. signature #2
 ;
 MSG_CO_Signature
@@ -5957,18 +5953,6 @@ link URL cliccabili.
 ; Color used to display\n\
 ; clickable URL links.
 ;
-MSG_FO_FOLDEREXISTS
-Un file o una directory con il percorso della\n\
-cartella specificato è già esistente.\n\
-Sei sicuro di voler continuare?
-; A file or directory with the given folder path already exists.\n\
-; \n\
-; Do you really want to proceed?
-;
-MSG_FO_FOLDERMOVE
-Sei sicuro di voler spostare la cartella in un altro percorso?
-; Do you really want to move the folder to another path?
-;
 MSG_FO_FOLDERNAMEINVALID
 Il nome della cartella specificato è vuoto o già esistente.\n\
 Per favore inserisci un nome valido per la cartella prima di procedere.
@@ -7424,7 +7408,7 @@ sicuro viene visualizzato in cima.
 ; safest at the top.
 ;
 MSG_CO_SMTPAUTH_AUTO
-Auto
+auto
 ; Auto
 ;
 MSG_CO_SMTPAUTH_DIGEST
@@ -10007,7 +9991,7 @@ Imposta lo stato del messaggio filtrato su 'Non spam'
 ; Set the status of the filtered mail to 'Not spam'
 ;
 MSG_CO_SMTP_ACTIVE
-_Attivo
+_Attiva connessione
 ; _Active
 ;
 MSG_CO_POP_AUTH
@@ -10025,19 +10009,19 @@ usando un algoritmo di criptazione APOP.\n\
 ; (not supported by all POP3 servers)
 ;
 MSG_CO_POP_AUTH_PLAIN
-Password Semplice
+password semplice
 ; Plain Password
 ;
 MSG_CO_POP_AUTH_APOP
-Password Criptata (APOP)
+password criptata (APOP)
 ; Encrypted Password (APOP)
 ;
 MSG_CO_POP_SECURITY
-Sicurezza Connessione
+Sicurezza connessione
 ; Connection Security
 ;
 MSG_CO_POP_SECURITY_NONE
-Nessuna Sicurezza
+nessuna
 ; No Security
 ;
 MSG_CO_POP_SECURITY_TLS
@@ -10089,7 +10073,7 @@ Descrizione
 ; Description
 ;
 MSG_HELP_CO_ST_POPDESC
-Il nome/descrizione arbitrario di questa connessione del\n\
+Il nome/descrizione arbitrario per questa connessione del\n\
 server che sarà utilizzato al posto di utente@host
 ; An arbitrary description/name for this\n\
 ; server connection which will be used instead\n\
@@ -10100,18 +10084,18 @@ Descrizione
 ; Description
 ;
 MSG_HELP_CO_ST_SMTPDESC
-Il nome/descrizione arbitrario di questa connessione del\n\
+Il nome/descrizione arbitrario per questa connessione del\n\
 server che sarà utilizzato al posto di utente@host
 ; An arbitrary description/name for this\n\
 ; server connection which will be used instead\n\
 ; of user@host.
 ;
 MSG_CO_SMTP_SECURITY
-Sicurezza Connessione
+Sicurezza connessione
 ; Connection Security
 ;
 MSG_CO_SMTP_SECURITY_NONE
-Nessuna Sicurezza
+nessuna
 ; No Security
 ;
 MSG_CO_SMTP_SECURITY_TLS
@@ -10143,10 +10127,433 @@ Autentificazione
 ; Authentification
 ;
 MSG_CO_SMTPAUTH_NONE
-Nessuna Autentificazione
+nessuna
 ; No Authentication
 ;
 MSG_CO_SMTP_OPTIONS
 Opzioni
 ; Options
+;
+MSG_CO_CRDIDENTITIES
+Identità
+; Identities
+;
+MSG_CO_IDENTITIES_TITLE
+Impostazione delle identità
+; Identities Settings
+;
+MSG_CO_IDENTITIES_SUMMARY
+Gestisce molteplici identità per la composizione dei messaggi...
+; Manage multiple identities for composing mails...
+;
+MSG_CO_IDENTITY_LIST
+Identità
+; Identities
+;
+MSG_CO_IDENTITY_SETTINGS
+Impostazioni generali
+; General Settings
+;
+MSG_CO_IDENTITY_REGISTER_SETTINGS
+Impostazioni Generali
+; General Settings
+;
+MSG_CO_IDENTITY_REGISTER_COMPOSE
+Composizione Messaggio
+; Compose Mail
+;
+MSG_CO_IDENTITY_REGISTER_PGPSEC
+Sicurezza PGP
+; PGP-Security
+;
+MSG_CO_IDENTITY_NOSIGNATURE
+nessuna
+; No Signature
+;
+MSG_CO_IDENTITY_ABOVEQUOTE
+citazioni all'inizio
+; above quotes
+;
+MSG_CO_IDENTITY_BELOWQUOTE
+citazioni alla fine
+; below quotes
+;
+MSG_CO_IDENTITY_DESCRIPTION
+Descrizione
+; Description
+;
+MSG_CO_IDENTITY_MAILSERVER
+Server di posta (SMTP)
+; Mail Server (SMTP)
+;
+MSG_CO_IDENTITY_DEFSIGNATURE
+Firma predefinita
+; Default Signature
+;
+MSG_CO_IDENTITY_COMPOSE
+Impostazioni per la composizione del messaggio
+; Compose Mail Settings
+;
+MSG_CO_IDENTITY_CC
+Indirizzo CC:
+; CC: address
+;
+MSG_CO_IDENTITY_BCC
+Indirizzo BCC:
+; BCC: address
+;
+MSG_CO_IDENTITY_REPLYTO
+Indirizzo Rispondi-A:
+; Reply-To: address
+;
+MSG_CO_IDENTITY_COMPOSE_OPTIONS
+Opzioni
+; Options
+;
+MSG_CO_IDENTITY_COMPOSE_SENTFOLDER
+Salva messaggi inviati nella cartella
+; Store sent mail to folder
+;
+MSG_CO_IDENTITY_COMPOSE_QUOTE
+Citazione messaggi nella risposta
+; Quote messages when answering
+;
+MSG_CO_IDENTITY_COMPOSE_ANSWER
+nella mia risposta
+; put my answer
+;
+MSG_CO_IDENTITY_COMPOSE_SIGNATURE
+nella mia firma
+; put my signature
+;
+MSG_CO_IDENTITY_USESIG_REPLY
+Usa la firma nella risposta
+; Use signature when replying
+;
+MSG_CO_IDENTITY_USESIG_FORWARD
+Usa firma nel messaggio inoltrato
+; Use signature when forwarding
+;
+MSG_CO_IDENTITY_PGPSETTINGS
+Impostazioni per la sicurezza PGP
+; PGP-Security Settings
+;
+MSG_CO_IDENTITY_USEPGP
+Usa PGP per questa identità
+; Use PGP for this identity
+;
+MSG_CO_IDENTITY_PGPKEY_ID
+Chiave PGP-ID
+; PGP-Key ID
+;
+MSG_CO_IDENTITY_PGPKEY_URL
+Chiave PGP URL
+; PGP-Key URL
+;
+MSG_CO_IDENTITY_PGP_OPTIONS
+Opzioni
+; Options
+;
+MSG_CO_IDENTITY_PGP_SIGN_UNENC
+Segna messaggi decriptati in modo predefinito
+; Sign unencrypted mails per default
+;
+MSG_CO_IDENTITY_PGP_SIGN_ENC
+Segna messaggi criptati in modo predefinito
+; Sign encrypted mails per default
+;
+MSG_CO_IDENTITY_PGP_ENCRYPTALL
+Cripta tutti i messaggi in modo predefinito
+; Encrypt all mails per default
+;
+MSG_CO_IDENTITY_PGP_ADDOWN
+Aggiungi chiave per la criptazione dei messaggi
+; Add own key when encrypting mails
+;
+MSG_CO_IDENTITY_PHOTOURL
+URL immagine
+; URL to own image
+;
+MSG_CO_IDENTITY_ADDINFO
+Aggiungi informazioni personali
+; Add personal information
+;
+MSG_CO_IDENTITY_REQUESTMDN
+Richiedi una ricevuta di ritorno
+; Request a return receipt
+;
+MSG_CO_SERVERNAME
+Nome server
+; Server name
+;
+MSG_HELP_CO_ST_USER
+Il nome utente per accedere\n\
+al server di posta.
+; The username for accessing the\n\
+; mail server.
+;
+MSG_FO_MOVEFOLDERTO
+Sei sicuro di voler spostare la cartella da\n\
+'%s'\n\
+su\n\
+'%s'?
+; Do you really want to move the folder from\n\
+; '%s'\n\
+; to\n\
+; '%s'?
+; FROM,TO
+;
+MSG_FO_FOLDER_ALREADY_EXISTS
+Un file o una directory chiamato '%s' è già\n\
+esistente e verrà sovrascritto/cancellato.\n\
+\n\
+Sei sicuro di voler procedere?
+; A file or directory named '%s' already exists\n\
+; and will be overwritten/deleted.\n\
+; \n\
+; Do you really want to proceed?
+; PATH
+;
+MSG_ER_CANNOT_CREATE_FOLDER
+Impossibile creare la directory '%s' (%s).
+; Failed to create directory '%s' (%s).
+; PATH, ERROR
+;
+MSG_CO_IdentityActive
+_Attiva
+; _Active
+;
+MSG_MA_FLUSH_ALL_INDICES
+Pulisci tutti gli indici
+; Flush all indices
+;
+MSG_FI_CONDITION
+Condizione
+; Condition
+;
+MSG_HELP_CO_CH_IDENTITY_ENABLED
+Se selezionata questa identità sarà pronta per essere usata.
+; If checked, this user identity is enabled for use.
+;
+MSG_HELP_CO_ST_IDENTITY_DESCRIPTION
+Una descrizione personalizzata\n\
+per questa identità utente.
+; A custom description for this\n\
+; user identity.
+;
+MSG_HELP_CO_ST_IDENTITY_REALNAME
+Il vero "nome e cognome" di questa identità.
+; The realname "firstname lastname" for\n\
+; this identity.
+;
+MSG_HELP_CO_ST_IDENTITY_EMAIL
+L'indirizzo di posta associato a questa\n\
+identità utente.
+; The e-mail address associated with\n\
+; this user identity.
+;
+MSG_HELP_CO_ST_IDENTITY_ORGANIZATION
+Nome opzionale dell'organizzazione alla\n\
+quale questa identità appartiene.
+; Optional name of the organization\n\
+; this identity belongs to.
+;
+MSG_HELP_CO_CY_IDENTITY_MAILSERVER
+Consente di selezionare il server in uscita SMTP che\n\
+sarà utilizzato quando il messaggio sarà in procinto\n\
+di essere inviato attraverso questa identità.
+; Allows you to select the outgoing SMTP server\n\
+; which will be used when mail is going to be\n\
+; sent using this user identity.
+;
+MSG_HELP_CO_ST_IDENTITY_CC
+Verrà aggiunto un predefinito destinatario CC:\n\
+durante la composizione di un nuovo messaggio.
+; The default CC: recipients added when\n\
+; composing a new mail.
+;
+MSG_HELP_CO_ST_IDENTITY_BCC
+Verrà aggiunto un predefinito destinatario BCC:\n\
+durante la composizione di un nuovo messaggio.
+; The default BCC: recipients added when\n\
+; composing a new mail.
+;
+MSG_HELP_CO_ST_IDENTITY_REPLYTO
+Verrà aggiunto un predefinito destinatario Rispondi-A:\n\
+durante la composizione di un nuovo messaggio.
+; The default Reply-To: recipients added when\n\
+; composing a new mail.
+;
+MSG_HELP_CO_ST_IDENTITY_EXTRAHEADER
+Consente di specificare un valore predefinito per\n\
+l'aggiunta di intestazioni addizionali nel messaggio\n\
+di posta in uscita.
+; Allows you to specify the default for putting\n\
+; additional headers to an outgoing mail.
+;
+MSG_HELP_CO_ST_IDENTITY_PHOTOURL
+Un URL opzionale per la foto associata\n\
+a questa identità.
+; An optional URL to a photo associated with\n\
+; this user identity.
+;
+MSG_HELP_CO_CH_IDENTITY_SENTFOLDER
+Se selezionato la posta inviata verrà conservata nella\n\
+cartella dei messaggi inviati, in caso contrario questi\n\
+messaggi verranno cancellati.
+; If enabled, sent mail will be stored in a\n\
+; sent mail folder. Otherwise the sent mail\n\
+; will be deleted.
+;
+MSG_HELP_CO_TX_IDENTITY_SENTFOLDER
+Permette di specificare quale cartella di posta andrà\n\
+utilizzata per memorizzare i messaggi inviati.
+; Allows to specify which mail folder should\n\
+; be used when storing sent mail.
+;
+MSG_HELP_CO_CH_IDENTITY_QUOTEMAILS
+Se selezionato permette di citare ll testo del\n\
+messaggio quando si risponde o si inoltra un\n\
+messaggio.
+; When replying or forwarding mails text will\n\
+; be quoted if this option is enabled.
+;
+MSG_HELP_CO_CH_IDENTITY_QUOTEPOS
+Permette di specificare se il testo della risposta\n\
+dovrà essere posto al di sopra o al di sotto delle\n\
+citazioni.
+; Allows to define if your answer should be\n\
+; placed above or below quotes.
+;
+MSG_HELP_CO_CH_IDENTITY_SIGPOS
+Permette di specificare se la firma dovrà essere\n\
+posta al di sopra o al di sotto delle citazioni.
+; Allows to define if your signature should\n\
+; appear below or above the quotes.
+;
+MSG_HELP_CO_CH_IDENTITY_SIGREPLY
+Se selezionato verrà aggiunta una firma nel\n\
+messaggio di risposta.
+; If enabled, a signature will be added when\n\
+; replying to a mail.
+;
+MSG_HELP_CO_CH_IDENTITY_SIGFORWARD
+Se selezionato verrà aggiunta una firma nel\n\
+messaggio di inoltro.
+; If enabled, a signature will be added when\n\
+; forwarding a mail.
+;
+MSG_HELP_CO_CH_IDENTITY_ADDINFO
+Se selezionato verranno aggiunte al messaggio tutte\n\
+le informazioni personali (intestazione X-SenderInfo).\n\
+Questo richiede la presenza di una voce nella rubrica\n\
+avente lo stesso indirizzo e-mail di questa identità.
+; If enabled, personal information will be\n\
+; added to the mail (X-SenderInfo header).\n\
+; This requires an addressbook entry with\n\
+; the same email address as this identity.
+;
+MSG_HELP_CO_CH_IDENTITY_REQUESTMDN
+Se selezionato verrà richiesta in modo predefinito una\n\
+notifica di disposizione durante la composizione di un\n\
+messaggio.
+; If enabled, a mail disposition notification\n\
+; will be requested per default when composing\n\
+; a mail.
+;
+MSG_HELP_CO_CH_IDENTITY_USEPGP
+Permette di attivare/disattivare la funzionalità\n\
+PGP per l'intera identità utente.
+; Allows to enable/disable the PGP functionality\n\
+; for this whole user identity.
+;
+MSG_HELP_CO_ST_IDENTITY_PGPID
+Permette di specificare la chiave PGP-ID che dovrebbe\n\
+essere usata per questa identità utente.
+; Allows to specify the PGP-Key ID which should\n\
+; be used for this user identity.
+;
+MSG_HELP_CO_ST_IDENTITY_PGPURL
+Permette di specificare un URL per la chiave pubblica\n\
+a cui questa identità utente potrà accedere.
+; Allows to specify an URL where the public key\n\
+; for this user identity can be accessed.
+;
+MSG_HELP_CO_CH_IDENTITY_PGPSIGN_UNENC
+Se selezionato PGP verrà settato in modo da impostare\n\
+come decriptati tutti i messaggi in fase di composizione.
+; If enabled, the default is set to PGP sign all\n\
+; unencrypted emails when starting to compose them.
+;
+MSG_HELP_CO_CH_IDENTITY_PGPSIGN_ENC
+Se selezionato PGP verrà settato in modo da impostare\n\
+come criptati tutti i messaggi in fase di composizione.
+; If enabled, the default is set to PGP sign all\n\
+; encrypted emails when starting to compose them.
+;
+MSG_HELP_CO_CH_IDENTITY_PGPENC_ALL
+Se selezionato tutti i messaggi in fase di composizione\n\
+verranno impostati con una criptazione PGP.
+; If enabled, the default is set to PGP encrypt all\n\
+; emails when starting to compose them.
+;
+MSG_HELP_CO_CH_IDENTITY_PGPENC_SELF
+Se selezionato tutti i messaggi di posta criptati da una\n\
+chiave PGP verranno aggiunti a questa identità utente.\n\
+Se disattivato i messaggi criptati non potranni essere\n\
+decriptati da questa identità utente.
+; If enabled, all emails being encrypted via PGP\n\
+; will have the PGP key added of this user identity.\n\
+; If disabled, encrypted emails cannot be decrypted\n\
+; by this user identity.
+;
+MSG_HELP_CO_CY_IDENTITY_SIGNATURE
+Permette di selezionare la firma predefinita che\n\
+dovrebbe essere usata durante la composizione\n\
+dei messaggi usando questa specifica identità.
+; Allows to select the default signature that\n\
+; should be used when composing emails with this\n\
+; user identity.
+;
+MSG_CO_CONFIGWARNING_TITLE
+Avviso della configurazione
+; Configuration Warning
+;
+MSG_CO_CONFIGWARNING
+Sono state modificate alcune impostazioni nella\n\
+configurazione che verranno perse chiudendo la\n\
+finestra senza salvare.\n\
+\n\
+Come si desidera procedere?
+; You have modified certain configuration\n\
+; settings and will lose these changes\n\
+; when closing the config window.\n\
+; \n\
+; How do you want to proceed?
+;
+MSG_CO_CONFIGWARNING_BT
+_Chiudi|*_Annulla
+; _Close window|*_Abort
+;
+MSG_CO_CONFIGVERSIONWARNING_TITLE
+Avviso versione della configurazione
+; Configuration Version Warning
+;
+MSG_CO_CONFIGVERSIONWARNING
+Il file di configurazione che si sta cercando di caricare è stato\n\
+salvato da una versione più recente di YAM.\n\
+Continuando alcune impostazioni della configurazione di YAM\n\
+potrebbero andar perdute ripristinandosi automaticamente ai\n\
+valori predefiniti.
+; The configuration file that YAM tries to\n\
+; load was saved by a newer YAM version.\n\
+; If you continue to load this file some\n\
+; config settings might be lost and set\n\
+; to their default values.\n\
+; \n\
+; How do you want to proceed?
+;
+MSG_CO_CONFIGVERSIONWARNING_BT
+_Continua|*_Annulla
+; _Continue|*_Abort
 ;

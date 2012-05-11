@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2011-05-11 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: update to the latest changes.
+
 2012-05-11 Jens Langner <Jens.Langner@light-speed.de>
 
   * Themes.c, misc: renamed 'config_lists' theme image to 'config_identities'
