@@ -11,6 +11,7 @@ $URL$
   * locale/YAM.cd, locale/german.ct: updated germand translation and fixed a
     few quirks in the builtin english strings.
   * YAM_COg.c: slightly rearranged the layout to archive a more narrow window.
+  * YAM_CO.c: disabled the folder popup if the sent mails are to be deleted.
 
 2012-05-10 Jens Langner <Jens.Langner@light-speed.de>
 

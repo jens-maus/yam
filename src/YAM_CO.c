@@ -1110,6 +1110,10 @@ HOOKPROTONHNONP(CO_GetIdentityEntry, void)
     gui->CH_IDENTITY_PGPENC_SELF,
     NULL);
 
+  DoMethod(gui->WI, MUIM_MultiSet, MUIA_Disabled, uin == NULL || uin->saveSentMail == FALSE,
+    gui->PO_IDENTITY_SENTFOLDER,
+    NULL);
+
   LEAVE();
 }
 MakeHook(CO_GetIdentityEntryHook, CO_GetIdentityEntry);
@@ -1176,6 +1180,10 @@ HOOKPROTONHNONP(CO_PutIdentityEntry, void)
         gui->CH_IDENTITY_PGPSIGN_ENC,
         gui->CH_IDENTITY_PGPENC_ALL,
         gui->CH_IDENTITY_PGPENC_SELF,
+        NULL);
+
+      DoMethod(gui->WI, MUIM_MultiSet, MUIA_Disabled, uin->saveSentMail == FALSE,
+        gui->PO_IDENTITY_SENTFOLDER,
         NULL);
 
       // if the user hasn't yet entered an own account name or the default
@@ -2841,7 +2849,7 @@ HOOKPROTONHNO(CO_CloseFunc, void, int *arg)
                             tr(MSG_CO_CONFIGWARNING_BT),
                             tr(MSG_CO_CONFIGWARNING));
 
-      // if user pressed Abort or ESC 
+      // if user pressed Abort or ESC
       // the we keep the window open.
       if(res == 0)
       {
