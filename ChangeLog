@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-05-11 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_COg.c: use the same order of options for quotes and signature.
+
 2012-05-10 Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_CO.c: when having modiied something in the config and trying to close

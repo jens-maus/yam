@@ -1984,8 +1984,8 @@ Object *CO_PageIdentities(struct CO_ClassData *data)
   quotePosition[1] = tr(MSG_CO_IDENTITY_BELOWQUOTE);
   quotePosition[2] = NULL;
 
-  signaturePosition[0] = tr(MSG_CO_IDENTITY_BELOWQUOTE);
-  signaturePosition[1] = tr(MSG_CO_IDENTITY_ABOVEQUOTE);
+  signaturePosition[0] = tr(MSG_CO_IDENTITY_ABOVEQUOTE);
+  signaturePosition[1] = tr(MSG_CO_IDENTITY_BELOWQUOTE);
   signaturePosition[2] = NULL;
 
   ENTER();
