@@ -2649,7 +2649,7 @@ HOOKPROTONHNONP(CO_OpenConfig, void)
     char cname[SIZE_PATHFILE];
 
     AddPath(cname, frc->drawer, frc->file, sizeof(cname));
-    if(CO_LoadConfig(CE, cname, NULL) == TRUE)
+    if(CO_LoadConfig(CE, cname, NULL) == 1)
       CO_NewPrefsFile(cname);
 
     CO_SetConfig();

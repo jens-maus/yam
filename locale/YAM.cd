@@ -7369,3 +7369,18 @@ How do you want to proceed?
 MSG_CO_CONFIGWARNING_BT (2342//)
 _Close window|*_Abort
 ;
+MSG_CO_CONFIGVERSIONWARNING_TITLE (2343//)
+Configuration Version Warning
+;
+MSG_CO_CONFIGVERSIONWARNING (2344//)
+The configuration file that YAM tries to\n\
+load was saved by a newer YAM version.\n\
+If you continue to load this file some\n\
+config settings might be lost and set\n\
+to their default values.\n\
+\n\
+How do you want to proceed?
+;
+MSG_CO_CONFIGVERSIONWARNING_BT (2345//)
+_Continue|*_Abort
+;

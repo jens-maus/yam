@@ -1660,6 +1660,7 @@ static void InitAfterLogin(void)
   BOOL splashWasActive;
   char pubScreenName[MAXPUBSCREENNAME + 1];
   struct Screen *pubScreen;
+  int res;
 
   ENTER();
 
@@ -1668,11 +1669,13 @@ static void InitAfterLogin(void)
   D(DBF_STARTUP, "loading configuration...");
   SplashProgress(tr(MSG_LoadingConfig), 20);
 
-  if(CO_LoadConfig(C, G->CO_PrefsFile, &oldfolders) == FALSE)
-  {
-    // clear the config with defaults if the config file couldn't be loaded
-    CO_SetDefaults(C, cp_AllPages);
-  }
+  res = CO_LoadConfig(C, G->CO_PrefsFile, &oldfolders);
+  if(res == 0)
+    Abort(NULL); // user requested to abort because newer config file found
+  else if(res == -1)
+    CO_SetDefaults(C, cp_AllPages); // reset things to defaults if config file missing/invalid
+
+  // make sure the config has valid values
   CO_Validate(C, FALSE);
 
   // load all necessary graphics/themes

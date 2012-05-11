@@ -5,6 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-05-11 Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_CO.c, YAM_COs.c, YAM.c: YAM will now verify the version of the
+    config file it tries to load and if the version is higher than the
+    version it was compiled for it will popup a warning asking the user
+    how to continue since loading a newer config file might end up
+    in having some config settings reset to their default values. In
+    addition some recommendations have been added to the source code in
+    case config settings are being added/changed/removed and how the
+    version should be bumped/changed accordingly.
+
 2012-05-11 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_COg.c: use the same order of options for quotes and signature.
