@@ -43,7 +43,6 @@ Object *CO_PageRead(struct CO_ClassData *data);
 Object *CO_PageWrite(struct CO_ClassData *data);
 Object *CO_PageReplyForward(struct CO_ClassData *data);
 Object *CO_PageSignature(struct CO_ClassData *data);
-Object *CO_PageLists(struct CO_ClassData *data);
 Object *CO_PageSecurity(struct CO_ClassData *data);
 Object *CO_PageStartupQuit(struct CO_ClassData *data);
 Object *CO_PageMIME(struct CO_ClassData *data);

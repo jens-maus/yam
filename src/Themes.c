@@ -56,8 +56,9 @@
 //
 // VERSIONS:
 // 1: YAM 2.5
+// 2: YAM 2.8
 //
-#define THEME_REQVERSION 1
+#define THEME_REQVERSION 2
 
 // static image identifiers
 /// config image IDs
@@ -67,7 +68,6 @@ static const char * const configImageIDs[CI_MAX] =
   "config_answer",    "config_answer_big",
   "config_filters",   "config_filters_big",
   "config_firststep", "config_firststep_big",
-  "config_lists",     "config_lists_big",
   "config_lookfeel",  "config_lookfeel_big",
   "config_mime",      "config_mime_big",
   "config_misc",      "config_misc_big",
@@ -81,8 +81,7 @@ static const char * const configImageIDs[CI_MAX] =
   "config_start",     "config_start_big",
   "config_update",    "config_update_big",
   "config_write",     "config_write_big",
-  #warning own config_identities image missing yet
-  "config_lists",     "config_lists_big"
+  "config_identities","config_identities_big"
 };
 ///
 /// folder image IDs
@@ -370,7 +369,7 @@ LONG ParseThemeFile(const char *themeFile, struct Theme *theme)
 
     if(getline(&buf, &buflen, fh) >= 3 && strnicmp(buf, "YTH", 3) == 0)
     {
-      int version = buf[3]-'0';
+      int version = atoi(&buf[3]);
 
       // check if the these has the correct version
       if(version == THEME_REQVERSION)

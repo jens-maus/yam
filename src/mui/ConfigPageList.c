@@ -71,7 +71,6 @@ enum ConfigPage
   cp_Write,
   cp_ReplyForward,
   cp_Signature,
-  cp_Lists,
   cp_Security,
   cp_StartupQuit,
   cp_MIME,
@@ -99,8 +98,7 @@ OVERLOAD(OM_NEW)
     // create/load all bodychunkimages of our config icons
     data->configIcon[cp_FirstSteps  ] = MakeImageObject("config_firststep", G->theme.configImages[CI_FIRSTSTEP]);
     data->configIcon[cp_TCPIP       ] = MakeImageObject("config_network",   G->theme.configImages[CI_NETWORK]);
-    #warning own config_identities image missing yet (new theme version required)
-    data->configIcon[cp_Identities  ] = MakeImageObject("config_lists",     G->theme.configImages[CI_IDENTITIES]);
+    data->configIcon[cp_Identities  ] = MakeImageObject("config_identities",G->theme.configImages[CI_IDENTITIES]);
     data->configIcon[cp_NewMail     ] = MakeImageObject("config_newmail",   G->theme.configImages[CI_NEWMAIL]);
     data->configIcon[cp_Filters     ] = MakeImageObject("config_filters",   G->theme.configImages[CI_FILTERS]);
     data->configIcon[cp_Spam        ] = MakeImageObject("config_spam",      G->theme.configImages[CI_SPAM]);
@@ -108,7 +106,6 @@ OVERLOAD(OM_NEW)
     data->configIcon[cp_Write       ] = MakeImageObject("config_write",     G->theme.configImages[CI_WRITE]);
     data->configIcon[cp_ReplyForward] = MakeImageObject("config_answer",    G->theme.configImages[CI_ANSWER]);
     data->configIcon[cp_Signature   ] = MakeImageObject("config_signature", G->theme.configImages[CI_SIGNATURE]);
-    data->configIcon[cp_Lists       ] = MakeImageObject("config_lists",     G->theme.configImages[CI_LISTS]);
     data->configIcon[cp_Security    ] = MakeImageObject("config_security",  G->theme.configImages[CI_SECURITY]);
     data->configIcon[cp_StartupQuit ] = MakeImageObject("config_start",     G->theme.configImages[CI_START]);
     data->configIcon[cp_MIME        ] = MakeImageObject("config_mime",      G->theme.configImages[CI_MIME]);

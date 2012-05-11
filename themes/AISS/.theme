@@ -1,8 +1,8 @@
-YTH1 - YAM Theme
+YTH2 - YAM Theme
 Name    = AISS 4.8 (truecolor)
 Author  = YAM Development Team
 URL     = http://www.yam.ch/
-Version = 1.1 (02.03.2010)
+Version = 2.0 (11.05.2012)
 
 ; Image file substitutions
 ; <image id> = <file path>
@@ -20,8 +20,8 @@ config_filters                = config/config_filters
 config_filters_big            = config/config_filters_big
 config_firststep              = config/config_firststep
 config_firststep_big          = config/config_firststep_big
-config_lists                  = config/config_lists
-config_lists_big              = config/config_lists_big
+config_identities             = config/config_identities
+config_identities_big         = config/config_identities_big
 config_lookfeel               = config/config_lookfeel
 config_lookfeel_big           = config/config_lookfeel_big
 config_mime                   = config/config_mime

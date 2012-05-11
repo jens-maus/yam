@@ -7,6 +7,14 @@ $URL$
 
 2012-05-11 Jens Langner <Jens.Langner@light-speed.de>
 
+  * Themes.c, misc: renamed 'config_lists' theme image to 'config_identities'
+    as the default image for it matches the purpose of it. Also bumped the
+    minimum required theme version to 2 and modified all our default
+    themes to match that new version.
+  * YAM_COg.c: moved the 'lists' config page completely over to the
+    look&feel config page as that is were these GUI related config things
+    belong to. Now we just need to relayout that config page into
+    some page group or similar to make it look more nicely.
   * YAM_CO.c, YAM_COs.c, YAM.c: YAM will now verify the version of the
     config file it tries to load and if the version is higher than the
     version it was compiled for it will popup a warning asking the user

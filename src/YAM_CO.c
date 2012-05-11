@@ -1458,19 +1458,6 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     strlcpy(co->TagsSeparator, "%%", sizeof(co->TagsSeparator));
   }
 
-  if(page == cp_Lists || page == cp_AllPages)
-  {
-    co->FolderCols = (FCOL_NAME | FCOL_TOTAL);
-    co->MessageCols = (MCOL_STATUS | MCOL_SENDER | MCOL_SUBJECT | MCOL_DATE | MCOL_SIZE);
-    co->FixedFontList = FALSE;
-    co->DSListFormat = DSS_RELDATETIME;
-    co->ABookLookup = FALSE;
-    co->FolderCntMenu = TRUE;
-    co->MessageCntMenu = TRUE;
-    co->FolderInfoMode = FIM_NAME_AND_UNREAD_MAILS;
-    co->FolderDoubleClick = TRUE;
-  }
-
   if(page == cp_Security || page == cp_AllPages)
   {
     // we first try to see if there is a PGPPATH variable and if
@@ -1564,6 +1551,15 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     co->EmbeddedReadPane = TRUE;
     co->QuickSearchBar = TRUE;
     co->SizeFormat = SF_MIXED;
+    co->FolderCols = (FCOL_NAME | FCOL_TOTAL);
+    co->MessageCols = (MCOL_STATUS | MCOL_SENDER | MCOL_SUBJECT | MCOL_DATE | MCOL_SIZE);
+    co->FixedFontList = FALSE;
+    co->DSListFormat = DSS_RELDATETIME;
+    co->ABookLookup = FALSE;
+    co->FolderCntMenu = TRUE;
+    co->MessageCntMenu = TRUE;
+    co->FolderInfoMode = FIM_NAME_AND_UNREAD_MAILS;
+    co->FolderDoubleClick = TRUE;
   }
 
   if(page == cp_Update || page == cp_AllPages)
@@ -2444,26 +2440,6 @@ void CO_Validate(struct Config *co, BOOL update)
       updateMenuShortcuts = TRUE;
     }
 
-    if(G->CO->Visited[cp_Lists] == TRUE || G->CO->UpdateAll == TRUE)
-    {
-      // First we set the PG_MAILLIST and NL_FOLDER Quiet
-      set(G->MA->GUI.PG_MAILLIST,MUIA_NList_Quiet,     TRUE);
-      set(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Quiet, TRUE);
-
-      // Modify the ContextMenu flags
-      set(G->MA->GUI.PG_MAILLIST,MUIA_ContextMenu, C->MessageCntMenu ? MUIV_NList_ContextMenu_Always : MUIV_NList_ContextMenu_Never);
-      set(G->MA->GUI.NL_FOLDERS, MUIA_ContextMenu, C->FolderCntMenu ? MUIV_NList_ContextMenu_Always : MUIV_NList_ContextMenu_Never);
-
-      SaveLayout(FALSE);
-      DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_MainFolderListtree_MakeFormat);
-      DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_MakeFormat);
-      LoadLayout();
-
-      // Now we give the control back to the NLists
-      set(G->MA->GUI.PG_MAILLIST,MUIA_NList_Quiet,     FALSE);
-      set(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Quiet, FALSE);
-    }
-
     if(G->CO->Visited[cp_AddressBook] == TRUE || G->CO->UpdateAll == TRUE)
     {
       AB_MakeABFormat(G->AB->GUI.LV_ADDRESSES);
@@ -2489,8 +2465,19 @@ void CO_Validate(struct Config *co, BOOL update)
       // embedded read pane part or not
       MA_SetupEmbeddedReadPane();
 
+      // Modify the ContextMenu flags
+      set(G->MA->GUI.PG_MAILLIST,MUIA_ContextMenu, C->MessageCntMenu ? MUIV_NList_ContextMenu_Always : MUIV_NList_ContextMenu_Never);
+      set(G->MA->GUI.NL_FOLDERS, MUIA_ContextMenu, C->FolderCntMenu ? MUIV_NList_ContextMenu_Always : MUIV_NList_ContextMenu_Never);
+
       // Make sure to save the GUI layout before continuing
       SaveLayout(FALSE);
+
+      // recreate the MUIA_NList_Format strings
+      DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_MainFolderListtree_MakeFormat);
+      DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_MakeFormat);
+
+      // now reload the layout
+      LoadLayout();
 
       // Now we give the control back to the NLists
       set(G->MA->GUI.PG_MAILLIST,MUIA_NList_Quiet,     FALSE);
@@ -2974,7 +2961,6 @@ static struct CO_ClassData *CO_New(void)
     page[cp_Write       ].PageLabel = MSG_CO_CrdWrite;
     page[cp_ReplyForward].PageLabel = MSG_CO_GR_REPLYFORWARD;
     page[cp_Signature   ].PageLabel = MSG_CO_CrdSignature;
-    page[cp_Lists       ].PageLabel = MSG_CO_CrdLists;
     page[cp_Security    ].PageLabel = MSG_CO_CrdSecurity;
     page[cp_StartupQuit ].PageLabel = MSG_CO_GR_STARTUPQUIT;
     page[cp_MIME        ].PageLabel = MSG_CO_CrdMIME;
@@ -3029,7 +3015,6 @@ static struct CO_ClassData *CO_New(void)
                 Child, CO_PageWrite(data),
                 Child, CO_PageReplyForward(data),
                 Child, CO_PageSignature(data),
-                Child, CO_PageLists(data),
                 Child, CO_PageSecurity(data),
                 Child, CO_PageStartupQuit(data),
                 Child, CO_PageMIME(data),
