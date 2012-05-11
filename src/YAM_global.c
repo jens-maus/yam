@@ -143,7 +143,7 @@ static const char USED_VAR yam_stack_size[] = "$STACK:" STR(MIN_STACKSIZE) "\n";
 #if __YAM_BUILDID == 0
 const char * const yambuildid       = "";
 #else
-const char * const yambuildid       = STR(__YAM_BUILDID)
+const char * const yambuildid       = STR(__YAM_BUILDID);
 #endif
 
 const char * const yamver           = __YAM_VERSION __YAM_DEVEL;
