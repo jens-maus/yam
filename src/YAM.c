@@ -2017,7 +2017,7 @@ static void InitBeforeLogin(BOOL hidden)
   CheckMCC(MUIC_TheButton,  26, 8, TRUE, "http://www.sf.net/projects/thebar/");
 
   // Lets check for the correct BetterString.mcc version
-  CheckMCC(MUIC_BetterString, 11, 21, TRUE, "http://www.sf.net/projects/bstring-mcc/");
+  CheckMCC(MUIC_BetterString, 11, 22, TRUE, "http://www.sf.net/projects/bstring-mcc/");
 
   // we also make sure the user uses the latest brand of all other NList classes, such as
   // NListview, NFloattext etc.

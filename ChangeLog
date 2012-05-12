@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-05-12 Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM.c: bumped minimum required version of betterstring.mcc to 11.22 as
+    it has just been released and fixes an important issue preventing our
+    recipientstring from working correctly.
+  * include/libraries/muiaros.h: updated muiaros.h header file to latest
+    version available.
+
 2011-05-11 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: update to the latest changes.
