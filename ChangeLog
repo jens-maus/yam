@@ -7,6 +7,9 @@ $URL$
 
 2012-05-12 Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM.c: bumped also all the other third-party .mcc classes minimum
+    required version to the latest released versions because they all fix
+    important issues YAM might be affected from.
   * YAM.c: bumped minimum required version of betterstring.mcc to 11.22 as
     it has just been released and fixes an important issue preventing our
     recipientstring from working correctly.
