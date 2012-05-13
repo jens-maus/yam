@@ -5,6 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-05-13 Jens Langner <Jens.Langner@light-speed.de>
+
+  * mui/WriteWindow.c, misc: moved the CC/BCC and ReplyTo address fields
+    from the "Options" tab to the main "Message" tab. In addition they can
+    now be hided/shown via menuitems and hotkeys if they are required.
+    Furthermore they will be shown per default if they are filled with
+    default values in case these defaults are set in the selected user
+    identity. Even more, the identity chooser object will now be hided
+    per default if only one user identity is configured in the YAM
+    configuration. This should finally fulfill, thus closes #26.
+
 2012-05-12 Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM.c: bumped also all the other third-party .mcc classes minimum

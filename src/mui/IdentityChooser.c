@@ -41,8 +41,9 @@
 /* CLASSDATA
 struct Data
 {
-  struct UserIdentityNode *identity;
-  char **identityArray; // titles for the different identities that can be selected
+  struct UserIdentityNode *identity;  // ptr to currently selected user identity
+  char **identityArray;               // titles for the different identities that can be selected
+  int numIdentities;                  // number of identities
 };
 */
 
@@ -160,6 +161,7 @@ OVERLOAD(OM_GET)
   switch(((struct opGet *)msg)->opg_AttrID)
   {
     case ATTR(Identity): *store = (IPTR)data->identity; return TRUE;
+    case ATTR(NumIdentities): *store = (ULONG)data->numIdentities; return TRUE;
   }
 
   return DoSuperMethodA(cl, obj, msg);
@@ -230,6 +232,11 @@ DECLARE(UpdateIdentities)
       MUIA_Cycle_Entries, data->identityArray,
       MUIA_Cycle_Active, active);
   }
+  else
+    numIdentities = 0;
+
+  // save number of identities
+  data->numIdentities = numIdentities;
 
   RETURN(0);
   return 0;

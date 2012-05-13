@@ -2043,7 +2043,7 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
             {
               sbuf = AppendRcpt(sbuf, &email->CC[i], email->identity, FALSE);
             }
-            set(wmData->window, MUIA_WriteWindow_Cc, sbuf);
+            set(wmData->window, MUIA_WriteWindow_CC, sbuf);
 
             // add all "BCC:" recipients of the mail
             sbuf[0] = '\0';
@@ -2876,7 +2876,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
                            rrepto != NULL ? MUIA_WriteWindow_ReplyTo : TAG_IGNORE, rrepto,
                            rto[0] != '\0' ? MUIA_WriteWindow_To      : TAG_IGNORE, rto,
                            rsub[0] != '\0'? MUIA_WriteWindow_Subject : TAG_IGNORE, rsub,
-                           rcc[0] != '\0' ? (rto[0] != '\0' ? MUIA_WriteWindow_Cc : MUIA_WriteWindow_To) : TAG_IGNORE, rcc);
+                           rcc[0] != '\0' ? (rto[0] != '\0' ? MUIA_WriteWindow_CC : MUIA_WriteWindow_To) : TAG_IGNORE, rcc);
 
       // update the message text
       DoMethod(wmData->window, MUIM_WriteWindow_ReloadText, FALSE);

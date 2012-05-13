@@ -752,7 +752,7 @@ HOOKPROTONHNO(AB_FromAddrBook, BOOL, ULONG *arg)
       switch(arg[0])
       {
         case ABM_TO:      type = MUIV_WriteWindow_RcptType_To; break;
-        case ABM_CC:      type = MUIV_WriteWindow_RcptType_Cc; break;
+        case ABM_CC:      type = MUIV_WriteWindow_RcptType_CC; break;
         case ABM_BCC:     type = MUIV_WriteWindow_RcptType_BCC; break;
         case ABM_REPLYTO: type = MUIV_WriteWindow_RcptType_ReplyTo; break;
       }

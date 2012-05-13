@@ -3478,7 +3478,7 @@ void RE_ClickedOnMessage(char *address)
             set(wmData->window, MUIA_WriteWindow_MailBody, body);
 
           if(cc != NULL)
-            set(wmData->window, MUIA_WriteWindow_Cc, cc);
+            set(wmData->window, MUIA_WriteWindow_CC, cc);
 
           if(bcc != NULL)
             set(wmData->window, MUIA_WriteWindow_BCC, bcc);

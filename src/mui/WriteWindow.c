@@ -101,10 +101,21 @@ struct Data
   Object *CY_CTYPE;
   Object *ST_CTYPE;
   Object *ST_DESC;
+  Object *GR_HEADER;
+  Object *LB_CC;
   Object *ST_CC;
+  Object *GR_CC;
+  Object *MN_CC;
+  Object *LB_BCC;
   Object *ST_BCC;
+  Object *GR_BCC;
+  Object *MN_BCC;
+  Object *LB_FROM;
   Object *CY_FROM;
+  Object *LB_REPLYTO;
   Object *ST_REPLYTO;
+  Object *GR_REPLYTO;
+  Object *MN_REPLYTO;
   Object *ST_EXTHEADER;
   Object *CH_DELSEND;
   Object *CH_MDN;
@@ -143,6 +154,11 @@ struct Data
   BOOL useTextColors;  // use Textcolors for displaying the mail
   BOOL useTextStyles;  // use Textstyles for displaying the mail
 
+  BOOL fromRcptHided;     // TRUE if From: recipient field is hided
+  BOOL ccRcptHided;       // TRUE if CC: recipient field is hided
+  BOOL bccRcptHided;      // TRUE if BCC: recipient field is hided
+  BOOL replyToRcptHided;  // TRUE if Reply-To: recipient field is hided
+
   char cursorPos[SIZE_SMALL];
   char windowTitle[SIZE_SUBJECT+1]; // string for the title text of the window
   char windowNumberStr[SIZE_SMALL]; // the unique window number as a string
@@ -153,7 +169,7 @@ struct Data
 enum RcptType
 {
   MUIV_WriteWindow_RcptType_To = 0,
-  MUIV_WriteWindow_RcptType_Cc,
+  MUIV_WriteWindow_RcptType_CC,
   MUIV_WriteWindow_RcptType_BCC,
   MUIV_WriteWindow_RcptType_ReplyTo,
   MUIV_WriteWindow_RcptType_From
@@ -180,7 +196,7 @@ enum
   WMEN_IMPORT2,WMEN_SIGN0,WMEN_SIGN1,WMEN_SIGN2,WMEN_SIGN3,
   WMEN_SECUR0,WMEN_SECUR1,WMEN_SECUR2,WMEN_SECUR3,WMEN_SECUR4,WMEN_INSUUCODE,
   WMEN_SENDNOW,WMEN_QUEUE,WMEN_HOLD,WMEN_CANCEL,WMEN_SWITCH1,WMEN_SWITCH2,WMEN_SWITCH3,
-  WMEN_FFONT,WMEN_TSTYLE,WMEN_TCOLOR
+  WMEN_FFONT,WMEN_TSTYLE,WMEN_TCOLOR,WMEN_CC,WMEN_BCC,WMEN_REPLYTO
 };
 
 // style origin IDs
@@ -1091,10 +1107,10 @@ OVERLOAD(OM_NEW)
       //  G   Search again (WMEN_SEARCHAGAIN)
       //  H   Hold mail (reserved by YAM.cd)
       //  I   Italic soft-style (WMEN_STYLE_BOLD)
-      //  J
+      //  J   
       //  K   Colored soft-style (WMEN_STYLE_COLORED)
       //  L   Send later (reserved by YAM.cd)
-      //  M
+      //  M 
       //  N   New mail (WMEN_NEW)
       //  O   Open file (WMEN_OPEN)
       //  P   Insert as plain text (WMEN_PLAIN)
@@ -1111,6 +1127,9 @@ OVERLOAD(OM_NEW)
       //  1   Switch to Message view (WMEN_SWITCH1)
       //  2   Switch to Attachment view (WMEN_SWITCH2)
       //  3   Switch to Options view (WMEN_SWITCH3)
+      //  4   Show/Hide Cc Address-Field (WMEN_CC)
+      //  5   Show/Hide Bcc Address-Field (WMEN_BCC)
+      //  6   Show/Hide Reply-To Address-Field (WMEN_REPLYTO)
       //  0   Use signature1 (WMEN_SIGN0)
       //  7   Use signature2 (WMEN_SIGN1)
       //  8   Use signature3 (WMEN_SIGN2)
@@ -1191,6 +1210,9 @@ OVERLOAD(OM_NEW)
           MenuChild, Menuitem(tr(MSG_WR_MSWITCH_MSG), "1", TRUE, FALSE, WMEN_SWITCH1),
           MenuChild, Menuitem(tr(MSG_WR_MSWITCH_ATT), "2", TRUE, FALSE, WMEN_SWITCH2),
           MenuChild, Menuitem(tr(MSG_WR_MSWITCH_OPT), "3", TRUE, FALSE, WMEN_SWITCH3),
+          MenuChild, data->MN_CC = MenuitemCheck(tr(MSG_WR_MCCADDRFIELD), "4", TRUE, FALSE, TRUE, 0, WMEN_CC),
+          MenuChild, data->MN_BCC = MenuitemCheck(tr(MSG_WR_MBCCADDRFIELD), "5", TRUE, FALSE, TRUE, 0, WMEN_BCC),
+          MenuChild, data->MN_REPLYTO = MenuitemCheck(tr(MSG_WR_MREPLYTOADDRFIELD),"6", TRUE, FALSE, TRUE, 0, WMEN_REPLYTO),
         End,
         MenuChild, MenuObject,
           MUIA_Menu_Title, tr(MSG_Options),
@@ -1206,7 +1228,7 @@ OVERLOAD(OM_NEW)
           MenuChild, MenuitemObject,
             MUIA_Menuitem_Title,tr(MSG_CO_CrdSignature),
             MenuChild, MenuitemCheck(signat[0], "0", TRUE, uin->signature == 0, TRUE, 0x0E, WMEN_SIGN0),
-            MenuChild, MenuitemCheck(signat[1], "7", TRUE, uin->signature == 1,  TRUE, 0x0D, WMEN_SIGN1),
+            MenuChild, MenuitemCheck(signat[1], "7", TRUE, uin->signature == 1, TRUE, 0x0D, WMEN_SIGN1),
             MenuChild, MenuitemCheck(signat[2], "8", TRUE, uin->signature == 2, TRUE, 0x0B, WMEN_SIGN2),
             MenuChild, MenuitemCheck(signat[3], "9", TRUE, uin->signature == 3, TRUE, 0x07, WMEN_SIGN3),
           End,
@@ -1246,14 +1268,24 @@ OVERLOAD(OM_NEW)
               Child, VGroup,
                 MUIA_HelpNode, "WR00",
 
-                Child, ColGroup(2),
-                  Child, Label(tr(MSG_WR_From)),
+                Child, data->GR_HEADER = ColGroup(2),
+
+                  Child, data->LB_FROM = Label(tr(MSG_WR_From)),
                   Child, data->CY_FROM = IdentityChooserObject,
                     MUIA_ControlChar, ShortCut(tr(MSG_WR_From)),
                     End,
 
                   Child, Label(tr(MSG_WR_To)),
                   Child, MakeAddressField(&data->ST_TO, tr(MSG_WR_To), MSG_HELP_WR_ST_TO, ABM_TO, data->windowNumber, AFF_ALLOW_MULTI|AFF_EXTERNAL_SHORTCUTS),
+
+                  Child, data->LB_CC = Label("_CC"),
+                  Child, data->GR_CC = MakeAddressField(&data->ST_CC, tr(MSG_WR_CopyTo), MSG_HELP_WR_ST_CC, ABM_CC, data->windowNumber, AFF_ALLOW_MULTI|AFF_EXTERNAL_SHORTCUTS),
+
+                  Child, data->LB_BCC = Label("_BCC"),
+                  Child, data->GR_BCC = MakeAddressField(&data->ST_BCC, tr(MSG_WR_BlindCopyTo), MSG_HELP_WR_ST_BCC, ABM_BCC, data->windowNumber, AFF_ALLOW_MULTI|AFF_EXTERNAL_SHORTCUTS),
+
+                  Child, data->LB_REPLYTO = Label(tr(MSG_WR_ReplyTo)),
+                  Child, data->GR_REPLYTO = MakeAddressField(&data->ST_REPLYTO, tr(MSG_WR_ReplyTo), MSG_HELP_WR_ST_REPLYTO, ABM_REPLYTO, data->windowNumber, AFF_ALLOW_MULTI|AFF_EXTERNAL_SHORTCUTS),
 
                   Child, Label(tr(MSG_WR_Subject)),
                   Child, data->ST_SUBJECT = BetterStringObject,
@@ -1357,14 +1389,6 @@ OVERLOAD(OM_NEW)
               Child, VGroup,
                 MUIA_HelpNode, "WR02",
                 Child, ColGroup(2),
-                  Child, Label(tr(MSG_WR_CopyTo)),
-                  Child, MakeAddressField(&data->ST_CC, tr(MSG_WR_CopyTo), MSG_HELP_WR_ST_CC, ABM_CC, data->windowNumber, AFF_ALLOW_MULTI|AFF_EXTERNAL_SHORTCUTS),
-
-                  Child, Label(tr(MSG_WR_BlindCopyTo)),
-                  Child, MakeAddressField(&data->ST_BCC, tr(MSG_WR_BlindCopyTo), MSG_HELP_WR_ST_BCC, ABM_BCC, data->windowNumber, AFF_ALLOW_MULTI|AFF_EXTERNAL_SHORTCUTS),
-
-                  Child, Label(tr(MSG_WR_ReplyTo)),
-                  Child, MakeAddressField(&data->ST_REPLYTO, tr(MSG_WR_ReplyTo), MSG_HELP_WR_ST_REPLYTO, ABM_REPLYTO, data->windowNumber, AFF_ALLOW_MULTI|AFF_EXTERNAL_SHORTCUTS),
 
                   Child, Label(tr(MSG_WR_ExtraHeaders)),
                   Child, data->ST_EXTHEADER = BetterStringObject,
@@ -1535,6 +1559,9 @@ OVERLOAD(OM_NEW)
         DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SWITCH1,    data->RG_PAGE, 3, MUIM_Set, MUIA_Group_ActivePage, 0);
         DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SWITCH2,    data->RG_PAGE, 3, MUIM_Set, MUIA_Group_ActivePage, 1);
         DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SWITCH3,    data->RG_PAGE, 3, MUIM_Set, MUIA_Group_ActivePage, 2);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_CC,         obj, 2, METHOD(ToggleRecipientObject), MUIV_WriteWindow_RcptType_CC);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_BCC,        obj, 2, METHOD(ToggleRecipientObject), MUIV_WriteWindow_RcptType_BCC);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_REPLYTO,    obj, 2, METHOD(ToggleRecipientObject), MUIV_WriteWindow_RcptType_ReplyTo);
         DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_EMOT0,      data->TE_EDIT, 3, MUIM_TextEditor_InsertText, ":-)", MUIV_TextEditor_InsertText_Cursor);
         DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_EMOT1,      data->TE_EDIT, 3, MUIM_TextEditor_InsertText, ":-|", MUIV_TextEditor_InsertText_Cursor);
         DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_EMOT2,      data->TE_EDIT, 3, MUIM_TextEditor_InsertText, ":-(", MUIV_TextEditor_InsertText_Cursor);
@@ -1668,8 +1695,18 @@ OVERLOAD(OM_NEW)
 
         // set notify for identity cycle gadget
         DoMethod(data->CY_FROM, MUIM_Notify, MUIA_IdentityChooser_Identity, MUIV_EveryTime, obj, 2, METHOD(IdentityChanged), MUIV_TriggerValue);
-        //
+
+        // hide all optional recipient string object per default
+        DoMethod(obj, METHOD(HideRecipientObject), MUIV_WriteWindow_RcptType_CC);
+        DoMethod(obj, METHOD(HideRecipientObject), MUIV_WriteWindow_RcptType_BCC);
+        DoMethod(obj, METHOD(HideRecipientObject), MUIV_WriteWindow_RcptType_ReplyTo);
+
+        // make sure update the IdentityChooser status via the identitychanged method
         DoMethod(obj, METHOD(IdentityChanged), uin);
+
+        // if we only have one identitiy we hide the identitychooser object
+        if(xget(data->CY_FROM, MUIA_IdentityChooser_NumIdentities) < 2)
+          DoMethod(obj, METHOD(HideRecipientObject), MUIV_WriteWindow_RcptType_From);
       }
 
       // set some help text
@@ -1820,6 +1857,32 @@ OVERLOAD(OM_DISPOSE)
   if(G->AB->winNumber == data->windowNumber)
     G->AB->winNumber = -1;
 
+  // we have to dispose certain object on our own
+  // because they may be hided by the user
+  if(data->fromRcptHided == TRUE)
+  {
+    MUI_DisposeObject(data->LB_FROM);
+    MUI_DisposeObject(data->CY_FROM);
+  }
+
+  if(data->ccRcptHided == TRUE)
+  {
+    MUI_DisposeObject(data->LB_CC);
+    MUI_DisposeObject(data->GR_CC);
+  }
+
+  if(data->bccRcptHided == TRUE)
+  {
+    MUI_DisposeObject(data->LB_BCC);
+    MUI_DisposeObject(data->GR_BCC);
+  }
+
+  if(data->replyToRcptHided == TRUE)
+  {
+    MUI_DisposeObject(data->LB_REPLYTO);
+    MUI_DisposeObject(data->GR_REPLYTO);
+  }
+
   // signal the super class to dispose as well
   result = DoSuperMethodA(cl, obj, msg);
 
@@ -1898,9 +1961,10 @@ OVERLOAD(OM_SET)
       }
       break;
 
-      case ATTR(Cc):
+      case ATTR(CC):
       {
         setstring(data->ST_CC, tag->ti_Data);
+        DoMethod(obj, METHOD(ShowRecipientObject), MUIV_WriteWindow_RcptType_CC);
 
         // make the superMethod call ignore those tags
         tag->ti_Tag = TAG_IGNORE;
@@ -1910,6 +1974,7 @@ OVERLOAD(OM_SET)
       case ATTR(BCC):
       {
         setstring(data->ST_BCC, tag->ti_Data);
+        DoMethod(obj, METHOD(ShowRecipientObject), MUIV_WriteWindow_RcptType_BCC);
 
         // make the superMethod call ignore those tags
         tag->ti_Tag = TAG_IGNORE;
@@ -1919,6 +1984,7 @@ OVERLOAD(OM_SET)
       case ATTR(ReplyTo):
       {
         setstring(data->ST_REPLYTO, tag->ti_Data);
+        DoMethod(obj, METHOD(ShowRecipientObject), MUIV_WriteWindow_RcptType_ReplyTo);
 
         // make the superMethod call ignore those tags
         tag->ti_Tag = TAG_IGNORE;
@@ -3300,16 +3366,19 @@ DECLARE(AddRecipient) // enum RcptType type, char *recipient
       DoMethod(data->ST_TO, MUIM_Recipientstring_AddRecipient, msg->recipient);
     break;
 
-    case MUIV_WriteWindow_RcptType_Cc:
+    case MUIV_WriteWindow_RcptType_CC:
       DoMethod(data->ST_CC, MUIM_Recipientstring_AddRecipient, msg->recipient);
+      DoMethod(obj, METHOD(ShowRecipientObject), MUIV_WriteWindow_RcptType_CC);
     break;
 
     case MUIV_WriteWindow_RcptType_BCC:
       DoMethod(data->ST_BCC, MUIM_Recipientstring_AddRecipient, msg->recipient);
+      DoMethod(obj, METHOD(ShowRecipientObject), MUIV_WriteWindow_RcptType_BCC);
     break;
 
     case MUIV_WriteWindow_RcptType_ReplyTo:
       DoMethod(data->ST_REPLYTO, MUIM_Recipientstring_AddRecipient, msg->recipient);
+      DoMethod(obj, METHOD(ShowRecipientObject), MUIV_WriteWindow_RcptType_ReplyTo);
     break;
 
     case MUIV_WriteWindow_RcptType_From:
@@ -3347,16 +3416,19 @@ DECLARE(InsertAddresses) // enum RcptType type, char **addr, ULONG add
       str = data->ST_TO;
     break;
 
-    case MUIV_WriteWindow_RcptType_Cc:
+    case MUIV_WriteWindow_RcptType_CC:
       str = data->ST_CC;
+      DoMethod(obj, METHOD(ShowRecipientObject), MUIV_WriteWindow_RcptType_CC);
     break;
 
     case MUIV_WriteWindow_RcptType_BCC:
       str = data->ST_BCC;
+      DoMethod(obj, METHOD(ShowRecipientObject), MUIV_WriteWindow_RcptType_BCC);
     break;
 
     case MUIV_WriteWindow_RcptType_ReplyTo:
       str = data->ST_REPLYTO;
+      DoMethod(obj, METHOD(ShowRecipientObject), MUIV_WriteWindow_RcptType_ReplyTo);
     break;
 
     case MUIV_WriteWindow_RcptType_From:
@@ -4500,8 +4572,236 @@ DECLARE(IdentityChanged) // struct UserIdentityNode *uin;
   set(data->ST_BCC, MUIA_Recipientstring_ActiveIdentity, msg->uin);
   set(data->ST_REPLYTO, MUIA_Recipientstring_ActiveIdentity, msg->uin);
 
+  // check if we have to show the CC/BCC/ReplyTo string objects
+  // in case we filled in sensible information
+  if(msg->uin->mailCC[0] != '\0')
+    DoMethod(obj, METHOD(ShowRecipientObject), MUIV_WriteWindow_RcptType_CC);
+
+  if(msg->uin->mailBCC[0] != '\0')
+    DoMethod(obj, METHOD(ShowRecipientObject), MUIV_WriteWindow_RcptType_BCC);
+
+  if(msg->uin->mailReplyTo[0] != '\0')
+    DoMethod(obj, METHOD(ShowRecipientObject), MUIV_WriteWindow_RcptType_ReplyTo);
+
   // save a link to the userIdentity in the wmData
   data->wmData->identity = msg->uin;
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(HideRecipientObject)
+//
+DECLARE(HideRecipientObject) // enum RcptType rtype
+{
+  GETDATA;
+  ENTER();
+
+  if(DoMethod(data->GR_HEADER, MUIM_Group_InitChange))
+  {
+    switch(msg->rtype)
+    {
+      case MUIV_WriteWindow_RcptType_From:
+      {
+        DoMethod(data->GR_HEADER, OM_REMMEMBER, data->LB_FROM);
+        DoMethod(data->GR_HEADER, OM_REMMEMBER, data->CY_FROM);
+        data->fromRcptHided = TRUE;
+      }
+      break;
+
+      case MUIV_WriteWindow_RcptType_CC:
+      {
+        DoMethod(data->GR_HEADER, OM_REMMEMBER, data->LB_CC);
+        DoMethod(data->GR_HEADER, OM_REMMEMBER, data->GR_CC);
+        data->ccRcptHided = TRUE;
+
+        // make sure to set the menuitem object state correctly
+        nnset(data->MN_CC, MUIA_Menuitem_Checked, FALSE);
+      }
+      break;
+
+      case MUIV_WriteWindow_RcptType_BCC:
+      {
+        DoMethod(data->GR_HEADER, OM_REMMEMBER, data->LB_BCC);
+        DoMethod(data->GR_HEADER, OM_REMMEMBER, data->GR_BCC);
+        data->bccRcptHided = TRUE;
+
+        // make sure to set the menuitem object state correctly
+        nnset(data->MN_BCC, MUIA_Menuitem_Checked, FALSE);
+      }
+      break;
+
+      case MUIV_WriteWindow_RcptType_ReplyTo:
+      {
+        DoMethod(data->GR_HEADER, OM_REMMEMBER, data->LB_REPLYTO);
+        DoMethod(data->GR_HEADER, OM_REMMEMBER, data->GR_REPLYTO);
+        data->replyToRcptHided = TRUE;
+
+        // make sure to set the menuitem object state correctly
+        nnset(data->MN_REPLYTO, MUIA_Menuitem_Checked, FALSE);
+      }
+      break;
+
+      case MUIV_WriteWindow_RcptType_To:
+        // do nothing
+      break;
+    }
+
+    DoMethod(data->GR_HEADER, MUIM_Group_ExitChange);
+  }
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(ShowRecipientObject)
+//
+DECLARE(ShowRecipientObject) // enum RcptType rtype
+{
+  GETDATA;
+  ENTER();
+
+  if(DoMethod(data->GR_HEADER, MUIM_Group_InitChange))
+  {
+    int objPosition = 2; // 0 = first object in group, 2 because To: is always shown
+
+    switch(msg->rtype)
+    {
+      case MUIV_WriteWindow_RcptType_From:
+      {
+        // we only show it if it is already hided
+        if(data->fromRcptHided == TRUE)
+        {
+          DoMethod(data->GR_HEADER, OM_ADDMEMBER, data->LB_FROM);
+          DoMethod(data->GR_HEADER, OM_ADDMEMBER, data->CY_FROM);
+
+          objPosition -= 2; // -2 because To: is always shown but we place in front
+          DoMethod(data->GR_HEADER, MUIM_Group_MoveMember, data->LB_FROM, objPosition);
+          DoMethod(data->GR_HEADER, MUIM_Group_MoveMember, data->CY_FROM, objPosition+1);
+          data->fromRcptHided = FALSE;
+        }
+      }
+      break;
+
+      case MUIV_WriteWindow_RcptType_CC:
+      {
+        // we only show it if it is already hided
+        if(data->ccRcptHided == TRUE)
+        {
+          DoMethod(data->GR_HEADER, OM_ADDMEMBER, data->LB_CC);
+          DoMethod(data->GR_HEADER, OM_ADDMEMBER, data->GR_CC);
+
+          if(data->fromRcptHided == FALSE)
+            objPosition += 2;
+
+          DoMethod(data->GR_HEADER, MUIM_Group_MoveMember, data->LB_CC, objPosition);
+          DoMethod(data->GR_HEADER, MUIM_Group_MoveMember, data->GR_CC, objPosition+1);
+          data->ccRcptHided = FALSE;
+
+          // make sure to set the menuitem object state correctly
+          nnset(data->MN_CC, MUIA_Menuitem_Checked, TRUE);
+        }
+      }
+      break;
+
+      case MUIV_WriteWindow_RcptType_BCC:
+      {
+        // we only show it if it is already hided
+        if(data->bccRcptHided == TRUE)
+        {
+          DoMethod(data->GR_HEADER, OM_ADDMEMBER, data->LB_BCC);
+          DoMethod(data->GR_HEADER, OM_ADDMEMBER, data->GR_BCC);
+
+          if(data->fromRcptHided == FALSE)
+            objPosition += 2; 
+          if(data->ccRcptHided == FALSE)
+            objPosition += 2;
+
+          DoMethod(data->GR_HEADER, MUIM_Group_MoveMember, data->LB_BCC, objPosition);
+          DoMethod(data->GR_HEADER, MUIM_Group_MoveMember, data->GR_BCC, objPosition+1);
+          data->bccRcptHided = FALSE;
+
+          // make sure to set the menuitem object state correctly
+          nnset(data->MN_BCC, MUIA_Menuitem_Checked, TRUE);
+        }
+      }
+      break;
+
+      case MUIV_WriteWindow_RcptType_ReplyTo:
+      {
+        // we only show it if it is already hided
+        if(data->replyToRcptHided == TRUE)
+        {
+          DoMethod(data->GR_HEADER, OM_ADDMEMBER, data->LB_REPLYTO);
+          DoMethod(data->GR_HEADER, OM_ADDMEMBER, data->GR_REPLYTO);
+
+          if(data->fromRcptHided == FALSE)
+            objPosition += 2; 
+          if(data->ccRcptHided == FALSE)
+            objPosition += 2;
+          if(data->bccRcptHided == FALSE)
+            objPosition += 2;
+
+          DoMethod(data->GR_HEADER, MUIM_Group_MoveMember, data->LB_REPLYTO, objPosition);
+          DoMethod(data->GR_HEADER, MUIM_Group_MoveMember, data->GR_REPLYTO, objPosition+1);
+          data->replyToRcptHided = FALSE;
+
+          // make sure to set the menuitem object state correctly
+          nnset(data->MN_REPLYTO, MUIA_Menuitem_Checked, TRUE);
+        }
+      }
+      break;
+
+      case MUIV_WriteWindow_RcptType_To:
+        // do nothing
+      break;
+    }
+
+    DoMethod(data->GR_HEADER, MUIM_Group_ExitChange);
+  }
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(ToggleRecipientObject)
+//
+DECLARE(ToggleRecipientObject) // enum RcptType rtype
+{
+  GETDATA;
+  BOOL show = TRUE;
+  ENTER();
+
+  switch(msg->rtype)
+  {
+    case MUIV_WriteWindow_RcptType_From:
+      show = (data->fromRcptHided == TRUE);
+    break;
+
+    case MUIV_WriteWindow_RcptType_CC:
+      show = (data->ccRcptHided == TRUE);
+    break;
+
+    case MUIV_WriteWindow_RcptType_BCC:
+      show = (data->bccRcptHided == TRUE);
+    break;
+
+    case MUIV_WriteWindow_RcptType_ReplyTo:
+      show = (data->replyToRcptHided == TRUE);
+    break;
+
+    case MUIV_WriteWindow_RcptType_To:
+      // do nothing
+    break;
+  }
+
+  if(show == TRUE)
+    DoMethod(obj, METHOD(ShowRecipientObject), msg->rtype);
+  else
+    DoMethod(obj, METHOD(HideRecipientObject), msg->rtype);
 
   RETURN(0);
   return 0;
