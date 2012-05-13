@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.95 (11.05.2012)
+## version $VER: YAM.catalog 7.96 (13.05.2012)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -7,7 +7,7 @@
 ; Compiled with FlexCat 2.9 PPC (AmigaOS4)
 ; $Id$
 ;
-; based on YAM.cd 5912 2012-05-11
+; based on YAM.cd 5918 2012-05-13
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -100,7 +100,7 @@ Errore
 ; Error
 ;
 MSG_NewEntry
-- nuovo -
+- nuova -
 ; - new -
 ;
 MSG_Date
@@ -672,7 +672,7 @@ In uscita
 ; Outgoing
 ;
 MSG_MA_Sent
-Inviato
+Inviati
 ; Sent
 ;
 MSG_MA_TBRead
@@ -4823,7 +4823,7 @@ In sospeso
 ; On hold
 ;
 MSG_FI_StatSent
-Inviato
+Inviati
 ; Sent
 ;
 MSG_FI_OtherField
@@ -5904,11 +5904,11 @@ Ricevuto
 ; Received
 ;
 MSG_DATE_SENT
-Inviato
+Inviati
 ; Sent
 ;
 MSG_DATE_SNTRCVD
-Inviato/Ricevuto
+Inviati/Ricevuti
 ; Sent/Received
 ;
 MSG_CO_DATE_SNTRCVD
@@ -7526,9 +7526,9 @@ Caricamento aggiornamento dati...
 ; Loading update state data...
 ;
 MSG_CO_ASK_SAVE_SIGNATURE
-Le modifiche alla firma andrebbero salvate separatamente\n\
-rispetto alle impostazioni globali, questo per evitare\n\
-che essa possa essere inavvertitamente cancellata.\n\
+Le modifiche per la firma andrebbero salvate separatamente\n\
+rispetto alle impostazioni globali, questo per evitare che esse\n\
+possano essere inavvertitamente cancellate.\n\
 \n\
 Sei sicuro di voler salvare la firma adesso?
 ; Changes to the signatures must be saved separately\n\
@@ -10215,7 +10215,7 @@ Salva messaggi inviati nella cartella
 ; Store sent mail to folder
 ;
 MSG_CO_IDENTITY_COMPOSE_QUOTE
-Citazione messaggi nella risposta
+Citazione messaggi
 ; Quote messages when answering
 ;
 MSG_CO_IDENTITY_COMPOSE_ANSWER
@@ -10556,4 +10556,16 @@ valori predefiniti.
 MSG_CO_CONFIGVERSIONWARNING_BT
 _Continua|*_Annulla
 ; _Continue|*_Abort
+;
+MSG_WR_MCCADDRFIELD
+Campo indirizzo CC
+; Cc address field
+;
+MSG_WR_MBCCADDRFIELD
+Campo indirizzo BCC
+; Bcc address field
+;
+MSG_WR_MREPLYTOADDRFIELD
+Campo indirizzo Rispondi-A
+; Reply-To address field
 ;

@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-05-13 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: fixed some typo and update according to latest changes.
+   	
 2012-05-13 Jens Langner <Jens.Langner@light-speed.de>
 
   * mui/WriteWindow.c, misc: moved the CC/BCC and ReplyTo address fields
