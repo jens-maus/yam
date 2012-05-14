@@ -1678,7 +1678,13 @@ static BOOL CopyConfigData(struct Config *dco, const struct Config *sco)
       struct UserIdentityNode *dstNode;
 
       if((dstNode = DuplicateNode(srcNode, sizeof(*srcNode))) != NULL)
+      {
+        // make sure the mailserver of the copied node points to an
+        // entry of the copied mail server list
+        dstNode->mailServer = FindMailServer(&dco->mailServerList, srcNode->mailServer->id);
+        dstNode->sentMailList = NULL;
         AddTail((struct List *)&dco->userIdentityList, (struct Node *)dstNode);
+      }
       else
       {
         success = FALSE;

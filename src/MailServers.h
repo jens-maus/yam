@@ -132,5 +132,6 @@ void FreeMailServerList(struct MinList *mailServerList);
 BOOL CompareMailServerLists(const struct MinList *msl1, const struct MinList *msl2);
 struct MailServerNode *GetMailServer(const struct MinList *mailServerList, const enum MailServerType type, const unsigned int num);
 BOOL IsUniqueMailServerID(const struct MinList *mailServerList, const int id);
+struct MailServerNode *FindMailServer(const struct MinList *mailServerList, const int id);
 
 #endif // MAILSERVERS_H

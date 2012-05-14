@@ -278,3 +278,28 @@ BOOL IsUniqueMailServerID(const struct MinList *mailServerList, const int id)
 }
 
 ///
+/// FindMailServer
+// find a mail server based on a unique ID
+struct MailServerNode *FindMailServer(const struct MinList *mailServerList, const int id)
+{
+  struct MailServerNode *result = NULL;
+  struct Node *curNode;
+
+  ENTER();
+
+  IterateList(mailServerList, curNode)
+  {
+    struct MailServerNode *msn = (struct MailServerNode *)curNode;
+
+    if(msn->id == id)
+    {
+      result = msn;
+      break;
+    }
+  }
+
+  RETURN(result);
+  return result;
+}
+
+///
