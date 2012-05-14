@@ -4542,19 +4542,24 @@ void FolderTreeUpdate(void)
 
     if(isGroupFolder(folder) == FALSE)
     {
-      struct Folder *parent;
+      struct FolderNode *parentFNode;
 
       FO_UpdateStatistics(folder);
 
       // add the folder stats to the parent group's stats if it exists
-      if((parent = folder->parent->folder) != NULL)
+      parentFNode = folder->parent;
+      while(parentFNode != NULL)
       {
-        parent->Unread  = folder->Unread;
-        parent->New     = folder->New;
-        parent->Total   = folder->Total;
-        parent->Sent    = folder->Sent;
-        parent->Deleted = folder->Deleted;
-        parent->Size    = folder->Size;
+        struct Folder *parentFolder = parentFNode->folder;
+
+        parentFolder->Unread  += folder->Unread;
+        parentFolder->New     += folder->New;
+        parentFolder->Total   += folder->Total;
+        parentFolder->Sent    += folder->Sent;
+        parentFolder->Deleted += folder->Deleted;
+        parentFolder->Size    += folder->Size;
+
+        parentFNode = parentFolder->parent;
       }
 	}
   }
