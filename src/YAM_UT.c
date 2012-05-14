@@ -4519,10 +4519,43 @@ void FolderTreeUpdate(void)
 
   LockFolderList(G->folders);
 
-  // update the stats of all folders
+  // first clear the stats of all folder groups
   ForEachFolderNode(G->folders, fnode)
   {
-    FO_UpdateStatistics(fnode->folder);
+    struct Folder *folder = fnode->folder;
+
+    if(isGroupFolder(folder) == TRUE)
+    {
+      folder->Unread  = 0;
+      folder->New     = 0;
+      folder->Total   = 0;
+      folder->Sent    = 0;
+      folder->Deleted = 0;
+      folder->Size    = 0;
+    }
+  }
+
+  // new update the stats of all folders
+  ForEachFolderNode(G->folders, fnode)
+  {
+    if(isGroupFolder(folder) == FALSE)
+    {
+      struct Folder *folder = fnode->folder;
+      struct Folder *parent;
+
+      FO_UpdateStatistics(folder);
+
+      // add the folder stats to the parent group's stats if it exists
+      if((parent = folder->parent) != NULL)
+      {
+        parent->Unread  = folder->Unread;
+        parent->New     = folder->New;
+        parent->Total   = folder->Total;
+        parent->Sent    = folder->Sent;
+        parent->Deleted = folder->Deleted;
+        parent->Size    = folder->Size;
+      }
+	}
   }
 
   UnlockFolderList(G->folders);

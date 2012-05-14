@@ -5,14 +5,19 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
-2012-05-13 Samir Hawamdeh <s.hawamdeh@tin.it>
+2012-05-14 Thore Böckelmann <tboeckel@gmx.de>
 
-  * locale/italian.ct: fixed some typo and update according to latest changes.
   * MailServers.c, YAM_CO.c: added a new function to find a mail server given
     it unique ID. This is necessary to really create a deep copy a configuration
     which must not point to the source configuration in any way. Before the
     user identity's mail server pointer still pointed to the old configuration
     which became invalid as soon as the configuration window was closed.
+  * YAM_UT.c: extended the global folder stats update during a filter process to
+    update the stats of the group folders as well.
+
+2012-05-13 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: fixed some typo and update according to latest changes.
 
 2012-05-13 Jens Langner <Jens.Langner@light-speed.de>
 
