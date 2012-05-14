@@ -4538,15 +4538,16 @@ void FolderTreeUpdate(void)
   // new update the stats of all folders
   ForEachFolderNode(G->folders, fnode)
   {
+    struct Folder *folder = fnode->folder;
+
     if(isGroupFolder(folder) == FALSE)
     {
-      struct Folder *folder = fnode->folder;
       struct Folder *parent;
 
       FO_UpdateStatistics(folder);
 
       // add the folder stats to the parent group's stats if it exists
-      if((parent = folder->parent) != NULL)
+      if((parent = folder->parent->folder) != NULL)
       {
         parent->Unread  = folder->Unread;
         parent->New     = folder->New;
