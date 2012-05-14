@@ -1,8 +1,9 @@
-## version $VER: YAM.catalog 7.7 (24.12.2011)
+## version $VER: YAM.catalog 7.8 (14.05.2012)
 ## language svenska
 ## codeset 0
-## chunk AUTH Pär Boberg
 ;
+## chunk AUTH Pär Boberg
+; YAM.cd - YAM 2.7 catalog description file
 ; $Id$
 ;
 ; Please note that all catalog strings have to carry a proper
@@ -759,10 +760,6 @@ MSG_MA_Select
 Välj
 ; Select
 ;
-MSG_MA_FlushIndices
-Rensa index
-; Flush indices
-;
 MSG_MA_MDelete
 Radera
 ; Delete
@@ -1250,10 +1247,6 @@ A_ktiv
 MSG_CO_DeleteServerMail
 Radera p_ost på server
 ; Delete mail _on server
-;
-MSG_CO_UseAPOP
-_Logga in med APOP
-; _Log in using APOP
 ;
 MSG_CO_PSNever
 aldrig
@@ -2035,13 +2028,6 @@ Radera meddelanden på e-postservern\nefter att du hämtat dem.
 ; Delete messages from\n\
 ; mail server after the\n\
 ; download.
-;
-MSG_HELP_CO_CH_USEAPOP
-Logga in med APOP-autentisering\nför att förhindra andra att se ditt\nanvändarnamn och lösenord.\n\n(stöds inte av alla POP3-servrar).
-; Log in using APOP authentication\n\
-; to keep your user name and password\n\
-; away from prying eyes.\n\
-; (not supported by all POP3 servers)
 ;
 MSG_HELP_CO_CH_POPENABLED
 Kolla detta konto när\ndu kollar efter ny post.
@@ -5108,10 +5094,6 @@ MSG_RE_FixedFont
 Fast typsnitt?
 ; Fixed font?
 ;
-MSG_CO_UseSMTPAUTH
-Använd SMTP A_UTH
-; Use SMTP AU_TH
-;
 MSG_CO_SMTPUser
 Anv_ändarnamn
 ; Us_er name
@@ -5189,13 +5171,6 @@ MSG_CO_SIZEFORMAT04
 MSG_CO_SIZEFORMAT05
 10^-3 precision (0.001 GB/MB/KB)
 ; 10^-3 precision (0.001 GB/MB/KB)
-;
-MSG_HELP_CO_CH_USESMTPAUTH
-Välj om du vill autentisera\ndig själv till en främmande SMTP-server\n(vanligtvis utanför din ISP's domän).\nOm tvekande, aktivera inte detta val.
-; Select if you wish to authenticate\n\
-; yourself to a foreign SMTP server\n\
-; (usually outside your ISP's domain).\n\
-; If in doubt, don't enable this option.
 ;
 MSG_HELP_CO_ST_SMTPAUTHUSER
 Användarnamn för\nSMTP AUTH användaren.
@@ -5556,16 +5531,6 @@ Färg för visning av klickbara URL-länkar.
 ; Color used to display\n\
 ; clickable URL links.
 ;
-MSG_FO_FOLDEREXISTS
-En fil eller katalog med den givna mapp sökvägen existerar redan.\n\nVill du verkligen fortsätta?
-; A file or directory with the given folder path already exists.\n\
-; \n\
-; Do you really want to proceed?
-;
-MSG_FO_FOLDERMOVE
-Vill du verkligen flytta mappen till en annan sökväg?
-; Do you really want to move the folder to another path?
-;
 MSG_FO_FOLDERNAMEINVALID
 Det specifierade mapp namnet är tomt eller existerar redan.\nSkriv in ett giltigt mapp namn innan du fortsätter.
 ; The specified folder name is empty or already exists.\n\
@@ -5789,29 +5754,6 @@ Brevfil i gammalt format funnen
 MSG_MA_CREQ_UNKNOWN_TITLE
 Okänd fil i mappkatalogen funnen
 ; Unknown file in folder directory found
-;
-MSG_CO_SMTPSECURE
-Använd säker anslutning:
-; Use secure connection:
-;
-MSG_CO_SMTPSECURE_NO
-Nej
-; No
-;
-MSG_CO_SMTPSECURE_TLS
-med TLSv1
-; with TLSv1
-;
-MSG_CO_SMTPSECURE_SSL
-med SSLv3
-; with SSLv3
-;
-MSG_HELP_CO_RA_SMTPSECURE
-En TLSv1 eller SSLv3 säker anslutning kommer att etableras mellan\nSMTP-servern och YAM för att skicka e-post genom en krypterad anslutning.\nOm dessa knappar är skuggade, betyder det att AmiSSL support\nförnärvarande ej är tillgängligt.
-; A TLSv1 or SSLv3 secure connection will be established between\n\
-; the SMTP server and YAM to send e-mail through an encrypted connection.\n\
-; If these radio buttons are ghosted, it means AmiSSL support is\n\
-; currently not available.
 ;
 MSG_CO_SHOWEMBEDDEDREADPANE
 Inbäddad _läsvy i huvudfönstret
@@ -6851,10 +6793,6 @@ MSG_CO_SPAM_DELETESPAMFOLDER
 Ra_dera skräppostmappen
 ; _Delete Spam folder
 ;
-MSG_CO_SMTPAUTH_METHOD
-Me_tod
-; Met_hod
-;
 MSG_HELP_CO_CY_SMTPAUTHMETHOD
 Tillåter specifiering av SMTP AUTH metoden som\nskall användas för den konfigurerade servern.\n'Auto' väljer metod automatiskt beroende\npå serverns förmåga. De andra är för att\nspecifikt välja metod, där de säkraste\nmetoderna är listade överst.
 ; Select here the authentication method YAM should use.\n\
@@ -7104,15 +7042,6 @@ MSG_MA_MEDITASNEW
 Redigera som nytt...
 ; Edit as new...
 ;
-MSG_CO_POPACCOUNT
-Kontonamn
-; Account name
-;
-MSG_HELP_CO_ST_POPACCOUNT
-Ett godtyckligt namn för detta konto, som används\ninstället för användare@värd.
-; An arbitrary name for this account which\n\
-; will be used instead of user@host.
-;
 MSG_RE_SEARCH
 Sök...
 ; Search...
@@ -7315,36 +7244,13 @@ Aktivera detta om sommartid för\nnärvarande är aktivt i din tidszon.
 ; currently active in your time zone\n\
 ; (summer time).
 ;
-MSG_CO_SMTPSERVERPORT
-Server/_Port
+MSG_CO_SMTP_SERVERPORT
+Ser_ver/Port
 ; Ser_ver/Port
 ;
-MSG_CO_POP3SERVERPORT
-Server/Port
+MSG_CO_POP_SERVERPORT
+Serve_r/Port
 ; Serve_r/Port
-;
-MSG_CO_POP3SECURE
-Använd säker anslutning:
-; Use secure connection:
-;
-MSG_CO_POP3SECURE_NO
-Nej
-; No
-;
-MSG_CO_POP3SECURE_TLS
-med TLSv1
-; with TLSv1
-;
-MSG_CO_POP3SECURE_SSL
-med SSLv3
-; with SSLv3
-;
-MSG_HELP_CO_RA_POP3SECURE
-En TLSv1 eller SSLv3 säker anslutning kommer att upprättas mellan\nPOP3-servern och YAM för att ta emot e-post genom en krypterad\nanslutning. Om dessa knappar är inaktiverade, betyder det att\nAmiSSL stöd inte är tillgängligt för närvarande.
-; A TLSv1 or SSLv3 secure connection will be established between\n\
-; the POP3 server and YAM to receive e-mail through an encrypted\n\
-; connection. If these radio buttons are ghosted, it means AmiSSL\n\
-; support is currently not available.
 ;
 MSG_CO_LOOKFEEL_THEMES
 Teman
@@ -8869,10 +8775,12 @@ Kolla detta konto om det finns ny post vid varje\nuppstart av YAM automatiskt.
 MSG_IMPORT_UNKNOWN_FILE_FORMAT
 Okänt brevfilsformat i filen '%s'.
 ; Unknown mail file format in file '%s'.
+; FILE
 ;
 MSG_IMPORT_NO_MAILS
 Filen '%s' innehåller inga brev som kan importeras.
 ; The file '%s' does not contain any importable mails.
+; FILE
 ;
 MSG_CO_CONFIG_IS_LOCKED
 Konfigurationen är förnärvarande låst.\n\nVar god vänta tills alla POP3 och SMTP överföringar är klara.
@@ -8887,6 +8795,7 @@ MSG_FOLDERINFO_SHORTHELP
 ; Path: %s\n\
 ; Size: %s\n\
 ; Messages: %ld (%ld new, %ld unread)
+; NAME, PATH, SIZE, COUNT, COUNT, COUNT
 ;
 MSG_MAILINFO_SHORTHELP
 \ebBrev\en\nFrån: %s <%s>\nTill: %s <%s>\nÄrende: %s\nDatum: %s\nFilnamn: %s\nStorlek: %s
@@ -8897,6 +8806,7 @@ MSG_MAILINFO_SHORTHELP
 ; Date: %s\n\
 ; Filename: %s\n\
 ; Size: %s
+; NAME, ADDRESS, NAME, ADDRESS, SUBJECT, DATE, FILENAME, SIZE
 ;
 MSG_CO_UPDATE_DOWNLOAD_PATH
 Nedladdningsma_pp:
@@ -8909,7 +8819,7 @@ Ladda ned
 MSG_TR_DOWNLOADING_FROM_SERVER
 Laddar ned från '%s'
 ; Downloading from '%s'
-;
+; SERVER
 MSG_MA_HELP
 Hjälp
 ; Help
@@ -8925,6 +8835,7 @@ ARexx gränssnitt
 MSG_ER_HELP_FILE_DOES_NOT_EXIST
 Hjälpfilen '%s' finns inte.
 ; The help file '%s' does not exist.
+; FILE
 ;
 MSG_EA_SEARCH_GRAVATAR
 Sök på gra_vatar.com...
@@ -8935,11 +8846,13 @@ Ingen Gravatar hittad för adress '%s'\n\nPersonen har kanske inte laddat upp ett
 ; No Gravatar found for address '%s'.\n\
 ; \n\
 ; Perhaps the person has not uploaded a portrait image to gravatar.com yet.
+; ADDRESS
 ;
 MSG_ER_NON_MIME_CONFORMANT_MAIL
 Ingen 'MIME-Version' rubrikrad hittades vid skanning av brevfilen '%s'. Den generarade utmatningen kan därför innehålla felaktig eller skadad data.
 ; No 'MIME-Version' header line was found while scanning the mail file '%s'. \
 ; The generated output may therefore contain invalid data or may be corrupted.
+; MSGFILE
 ;
 MSG_CO_ACTION_SET_STATUS_TO_MARKED
 Sätt status till 'Märkt'
@@ -8988,4 +8901,585 @@ Sätt status till 'Ej skräp'
 MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_HAM
 Sätt status för de filtrerade breven till 'Ej skräp'
 ; Set the status of the filtered mail to 'Not spam'
+;
+MSG_CO_SMTP_ACTIVE
+_Aktiv
+; _Active
+;
+MSG_CO_POP_AUTH
+Autentisering
+; Authentification
+;
+MSG_HELP_CO_CY_POPAUTH
+När ingen anslutningssäkerhet används\n\
+(TLD eller SSL) kan lösenordet skickas\n\
+med APOP krypteringsalgoritm istället.\n\
+(stöds inte av alla POP3 servrar)
+; When not using any connection security\n\
+; (TLS or SSL) the password can be send\n\
+; using the APOP encryption algorithm instead.\n\
+; (not supported by all POP3 servers)
+;
+MSG_CO_POP_AUTH_PLAIN
+Lösenord i klartext
+; Plain Password
+;
+MSG_CO_POP_AUTH_APOP
+Krypterat lösenord (APOP)
+; Encrypted Password (APOP)
+;
+MSG_CO_POP_SECURITY
+Anslutningssäkerhet
+; Connection Security
+;
+MSG_CO_POP_SECURITY_NONE
+Ingen säkerhet
+; No Security
+;
+MSG_CO_POP_SECURITY_TLS
+STARTTLS
+; STARTTLS
+;
+MSG_CO_POP_SECURITY_SSL
+SSL/TLS
+; SSL/TLS
+;
+MSG_HELP_CO_CY_POPSECURE
+En STARTTLS eller SSL/TLS säker anslutning kommer\n\
+att etableras mellan POP3 servern och YAM för att\n\
+motta e-post genom en krypterad anslutning. Om denna\n\
+knapp är mörkad, så betyder det att AmiSSL stöd för närvarande\n\
+inte är tillgängligt.
+; A STARTTLS or SSL/TLS secure connection will be\n\
+; established between the POP3 server and YAM to receive\n\
+; e-mail through an encrypted connection. If this cycle\n\
+; gadget is ghosted, it means AmiSSL support is currently\n\
+; not available.
+;
+MSG_CO_POP_SERVERLIST
+Serverlista
+; Server List
+;
+MSG_CO_POP_SERVERSETTINGS
+Serverinställningar
+; Server Settings
+;
+MSG_CO_POP_SECURITYAUTH
+Säkerhet och autentisering
+; Security and Authentification
+;
+MSG_CO_POP_MSGHANDLING
+Meddelandehantering
+; Message handling
+;
+MSG_CO_SMTP_SERVERLIST
+Serverlista
+; Server List
+;
+MSG_CO_SMTP_SERVERSETTINGS
+Serverinställningar
+; Server Settings
+;
+MSG_CO_POP_DESC
+Beskrivning
+; Description
+;
+MSG_HELP_CO_ST_POPDESC
+En godtycklig beskrivning/namn för denna\n\
+serveranslutning som används istället för\n\
+user@host.
+; An arbitrary description/name for this\n\
+; server connection which will be used instead\n\
+; of user@host.
+;
+MSG_CO_SMTP_DESC
+Beskrivning
+; Description
+;
+MSG_HELP_CO_ST_SMTPDESC
+En godtycklig beskrivning/namn för denna\n\
+serveranslutning som används istället för\n\
+user@host.
+; An arbitrary description/name for this\n\
+; server connection which will be used instead\n\
+; of user@host.
+;
+MSG_CO_SMTP_SECURITY
+Anslutningssäkerhet
+; Connection Security
+;
+MSG_CO_SMTP_SECURITY_NONE
+Ingen säkerhet
+; No Security
+;
+MSG_CO_SMTP_SECURITY_TLS
+STARTTLS
+; STARTTLS
+;
+MSG_CO_SMTP_SECURITY_SSL
+SSL/TLS
+; SSL/TLS
+;
+MSG_CO_SMTP_SECURITYAUTH
+Säkerhet och autentisering
+; Security and Authentification
+;
+MSG_HELP_CO_CY_SMTPSECURE
+En STARTTLS eller SSL/TLS säker anslutning kommer\n\
+att etableras mellan SMTP servern och YAM för att\n\
+skicka e-post genom en krypterad anslutning. Om denna\n\
+knapp är mörkad, så betyder det att AmiSSL stöd för närvarande\n\
+inte är tillgängligt.
+; A STARTTLS or SSL/TLS secure connection will be\n\
+; established between the SMTP server and YAM to receive\n\
+; e-mail through an encrypted connection. If this cycle\n\
+; gadget is ghosted, it means AmiSSL support is currently\n\
+; not available.
+;
+MSG_CO_SMTP_AUTH
+Autentisering
+; Authentification
+;
+MSG_CO_SMTPAUTH_NONE
+Ingen autentisering
+; No Authentication
+;
+MSG_CO_SMTP_OPTIONS
+Alternativ
+; Options
+;
+MSG_CO_CRDIDENTITIES
+Identiteter
+; Identities
+;
+MSG_CO_IDENTITIES_TITLE
+Inställningar identiteter
+; Identities Settings
+;
+MSG_CO_IDENTITIES_SUMMARY
+Hantera flera identiteter för brevskrivning...
+; Manage multiple identities for composing mails...
+;
+MSG_CO_IDENTITY_LIST
+Identiteter
+; Identities
+;
+MSG_CO_IDENTITY_SETTINGS
+Generella inställningar
+; General Settings
+;
+MSG_CO_IDENTITY_REGISTER_SETTINGS
+Generella inställningar
+; General Settings
+;
+MSG_CO_IDENTITY_REGISTER_COMPOSE
+Skriv brev
+; Compose Mail
+;
+MSG_CO_IDENTITY_REGISTER_PGPSEC
+PGP säkerhet
+; PGP-Security
+;
+MSG_CO_IDENTITY_NOSIGNATURE
+ingen signatur
+; no signature
+;
+MSG_CO_IDENTITY_ABOVEQUOTE
+ovanför citering
+; above quotes
+;
+MSG_CO_IDENTITY_BELOWQUOTE
+nedanför citering
+; below quotes
+;
+MSG_CO_IDENTITY_DESCRIPTION
+Beskrivning
+; Description
+;
+MSG_CO_IDENTITY_MAILSERVER
+Server (SMTP)
+; Mail server (SMTP)
+;
+MSG_CO_IDENTITY_DEFSIGNATURE
+Förvald signatur
+; Default signature
+;
+MSG_CO_IDENTITY_COMPOSE
+Skriv brev inställningar
+; Compose mail settings
+;
+MSG_CO_IDENTITY_CC
+Kopia: adress
+; CC: address
+;
+MSG_CO_IDENTITY_BCC
+Dold kopia: adress
+; BCC: address
+;
+MSG_CO_IDENTITY_REPLYTO
+Svar till: adress
+; Reply-To: address
+;
+MSG_CO_IDENTITY_COMPOSE_OPTIONS
+Alternativ
+; Options
+;
+MSG_CO_IDENTITY_COMPOSE_SENTFOLDER
+Spara skickade brev till mapp
+; Store sent mail to folder
+;
+MSG_CO_IDENTITY_COMPOSE_QUOTE
+Citera meddelanden vid svar
+; Quote messages when answering
+;
+MSG_CO_IDENTITY_COMPOSE_ANSWER
+Placera mitt svar
+; Put my answer
+;
+MSG_CO_IDENTITY_COMPOSE_SIGNATURE
+Placera min signatur
+; Put my signature
+;
+MSG_CO_IDENTITY_USESIG_REPLY
+Använd signatur vid svar
+; Use signature when replying
+;
+MSG_CO_IDENTITY_USESIG_FORWARD
+Använd signatur vid vidarebefodring
+; Use signature when forwarding
+;
+MSG_CO_IDENTITY_PGPSETTINGS
+PGP säkerhetsinställningar
+; PGP-Security Settings
+;
+MSG_CO_IDENTITY_USEPGP
+Använd PGP för denna identitet
+; Use PGP for this identity
+;
+MSG_CO_IDENTITY_PGPKEY_ID
+PGP nyckel-ID
+; PGP key ID
+;
+MSG_CO_IDENTITY_PGPKEY_URL
+PGP nyckel-URL
+; PGP key URL
+;
+MSG_CO_IDENTITY_PGP_OPTIONS
+Alternativ
+; Options
+;
+MSG_CO_IDENTITY_PGP_SIGN_UNENC
+Signera okrypterade brev som standard
+; Sign unencrypted mails per default
+;
+MSG_CO_IDENTITY_PGP_SIGN_ENC
+Signera krypterade brev som standard
+; Sign encrypted mails per default
+;
+MSG_CO_IDENTITY_PGP_ENCRYPTALL
+Kryptera alla brev som standard
+; Encrypt all mails per default
+;
+MSG_CO_IDENTITY_PGP_ADDOWN
+Lägg till egen nyckel vid kryptering av brev
+; Add own key when encrypting mails
+;
+MSG_CO_IDENTITY_PHOTOURL
+URL till eget foto
+; URL to own photo
+;
+MSG_CO_IDENTITY_ADDINFO
+Lägg till personlig information
+; Add personal information
+;
+MSG_CO_IDENTITY_REQUESTMDN
+Begär ett svarskvitto
+; Request a return receipt
+;
+MSG_CO_SERVERNAME
+Servernamn
+; Server name
+;
+MSG_HELP_CO_ST_USER
+Användarnamn för mailservern.
+; The username for accessing the\n\
+; mail server.
+;
+MSG_FO_MOVEFOLDERTO
+Vill du verkligen flytta mappen från\n\
+'%s'\n\
+till\n\
+'%s'?
+; Do you really want to move the folder from\n\
+; '%s'\n\
+; to\n\
+; '%s'?
+; FROM,TO
+;
+MSG_FO_FOLDER_ALREADY_EXISTS
+En fil eller katalog med namn '%s' finns redan\n\
+och kommer att skrivas över/raderas.\n\
+\n\
+Vill du verkligen fortsätta?
+; A file or directory named '%s' already exists\n\
+; and will be overwritten/deleted.\n\
+; \n\
+; Do you really want to proceed?
+; PATH
+;
+MSG_ER_CANNOT_CREATE_FOLDER
+Kunde inte skapa katalog '%s' (%s).
+; Failed to create directory '%s' (%s).
+; PATH, ERROR
+;
+MSG_CO_IdentityActive
+_Aktiv
+; _Active
+;
+MSG_MA_FLUSH_ALL_INDICES
+Töm alla index
+; Flush all indices
+;
+MSG_FI_CONDITION
+Villkor
+; Condition
+;
+MSG_HELP_CO_CH_IDENTITY_ENABLED
+Om markerad, så är denna användare tillgänglig för användning.
+; If checked, this user identity is enabled for use.
+;
+MSG_HELP_CO_ST_IDENTITY_DESCRIPTION
+Egen beskrivning för denna användar\n\
+identitet.
+; A custom description for this\n\
+; user identity.
+;
+MSG_HELP_CO_ST_IDENTITY_REALNAME
+Riktigt namn "förnamn efternamn" för\n\
+denna användaridentitet.
+; The realname "firstname lastname" for\n\
+; this user identity.
+;
+MSG_HELP_CO_ST_IDENTITY_EMAIL
+E-postadressen som är associerad med\n\
+denna användaridentitet.
+; The e-mail address associated with\n\
+; this user identity.
+;
+MSG_HELP_CO_ST_IDENTITY_ORGANIZATION
+Valfritt namn på organisationen som\n\
+denna användaridentitet tillhör.
+; Optional name of the organization\n\
+; this user identity belongs to.
+;
+MSG_HELP_CO_CY_IDENTITY_MAILSERVER
+Tillåter dig att välja SMTP server som ska\n\
+användas när brev skickas med denna användar\n\
+identitet.
+; Allows you to select the outgoing SMTP server\n\
+; which will be used when mail is going to be\n\
+; sent using this user identity.
+;
+MSG_HELP_CO_ST_IDENTITY_CC
+Förvalda Kopia: mottagare som läggs till\n\
+vid skapande av nytt brev.
+; The default CC: recipients added when\n\
+; composing a new mail.
+;
+MSG_HELP_CO_ST_IDENTITY_BCC
+Förvalda Dold kopia: mottagare som läggs till\n\
+vid skapande av nytt brev.
+; The default BCC: recipients added when\n\
+; composing a new mail.
+;
+MSG_HELP_CO_ST_IDENTITY_REPLYTO
+Förvalda Svar till: mottagare som läggs till\n\
+vid skapande av nytt brev.
+; The default Reply-To: recipients added when\n\
+; composing a new mail.
+;
+MSG_HELP_CO_ST_IDENTITY_EXTRAHEADER
+Tillåter dig specifiera förval för extra brev\n\
+huvuden till utgående brev.
+; Allows you to specify the default for putting\n\
+; additional headers to an outgoing mail.
+;
+MSG_HELP_CO_ST_IDENTITY_PHOTOURL
+Valfri URL till ett foto, associerat med\n\
+denna användaridentitet.
+; An optional URL to a photo associated with\n\
+; this user identity.
+;
+MSG_HELP_CO_CH_IDENTITY_SENTFOLDER
+Om vald, kommer skickade brev att lagras i\n\
+en mapp för skickade brev. Annars kommer\n\
+skickade brev att raderas.
+; If enabled, sent mail will be stored in a\n\
+; sent mail folder. Otherwise the sent mail\n\
+; will be deleted.
+;
+MSG_HELP_CO_TX_IDENTITY_SENTFOLDER
+Tillåter dig att specifiera vilken brevmapp\n\
+som ska användas för att lagra skickade brev.
+; Allows to specify which mail folder should\n\
+; be used when storing sent mail.
+;
+MSG_HELP_CO_CH_IDENTITY_QUOTEMAILS
+Vid svar eller vidarebefodran, kommer brevtexten\n\
+att citeras om detta är valt.
+; When replying or forwarding mails text will\n\
+; be quoted if this option is enabled.
+;
+MSG_HELP_CO_CH_IDENTITY_QUOTEPOS
+Tillåter dig att definiera om ditt svar ska\n\
+placeras ovan- eller nedanför citerad text.
+; Allows to define if your answer should be\n\
+; placed above or below quotes.
+;
+MSG_HELP_CO_CH_IDENTITY_SIGPOS
+Tillåter dig att definiera om din signatur ska\n\
+placeras nedan- eller ovanför citerad text.
+; Allows to define if your signature should\n\
+; appear below or above the quotes.
+;
+MSG_HELP_CO_CH_IDENTITY_SIGREPLY
+Om vald, kommer en signatur att läggas till\n\
+när du svarar på ett brev.
+; If enabled, a signature will be added when\n\
+; replying to a mail.
+;
+MSG_HELP_CO_CH_IDENTITY_SIGFORWARD
+Om vald, kommer en signatur att läggas till\n\
+när du vidarebefodrar ett brev.
+; If enabled, a signature will be added when\n\
+; forwarding a mail.
+;
+MSG_HELP_CO_CH_IDENTITY_ADDINFO
+Om vald, kommer personlig information att\n\
+läggas till i brevet (X-SenderInfo huvud).\n\
+Detta kräver en adressbokspost med samma\n\
+e-postadress som denna användaridentitet.
+; If enabled, personal information will be\n\
+; added to the mail (X-SenderInfo header).\n\
+; This requires an addressbook entry with\n\
+; the same email address as this user identity.
+;
+MSG_HELP_CO_CH_IDENTITY_REQUESTMDN
+Om vald, kommer ett mottagningskvitto att begäras\n\
+som standard vid skapande av nytt brev.
+; If enabled, a mail disposition notification\n\
+; will be requested per default when composing\n\
+; a mail.
+;
+MSG_HELP_CO_CH_IDENTITY_USEPGP
+Tillåter dig att aktivera/inaktivera PGP funktionen\n\
+för denna användaridentitet.
+; Allows to enable/disable the PGP functionality\n\
+; for this whole user identity.
+;
+MSG_HELP_CO_ST_IDENTITY_PGPID
+Tillåter dig att specifiera PGP nyckel-ID som ska\n\
+användas för denna användaridentitet.
+; Allows to specify the PGP-Key ID which should\n\
+; be used for this user identity.
+;
+MSG_HELP_CO_ST_IDENTITY_PGPURL
+Tillåter dig att specifiera en URL, där den\n\
+publika nyckeln för denna användaridentitet\n\
+kan hittas.
+; Allows to specify an URL where the public key\n\
+; for this user identity can be accessed.
+;
+MSG_HELP_CO_CH_IDENTITY_PGPSIGN_UNENC
+Om vald, kommer PGP att signera alla okrypterade\n\
+brev som standard, när du börjar skriva dem.
+; If enabled, the default is set to PGP sign all\n\
+; unencrypted emails when starting to compose them.
+;
+MSG_HELP_CO_CH_IDENTITY_PGPSIGN_ENC
+Om vald, kommer PGP att signera alla krypterade\n\
+brev som standard, när du börjar skriva dem.
+; If enabled, the default is set to PGP sign all\n\
+; encrypted emails when starting to compose them.
+;
+MSG_HELP_CO_CH_IDENTITY_PGPENC_ALL
+Om vald, kommer PGP att kryptera alla brev när\n\
+du börjar skriva dem.
+; If enabled, the default is set to PGP encrypt all\n\
+; emails when starting to compose them.
+;
+MSG_HELP_CO_CH_IDENTITY_PGPENC_SELF
+Om vald, kommer alla brev som krypteras via PGP\n\
+att ha PGP nyckeln för denna användaridentitet tillagd.\n\
+Om inaktiverad, kommer krypterade brev inte att kunna\n\
+avkrypteras med denna användaridentitet.
+; If enabled, all emails being encrypted via PGP\n\
+; will have the PGP key added of this user identity.\n\
+; If disabled, encrypted emails cannot be decrypted\n\
+; by this user identity.
+;
+MSG_HELP_CO_CY_IDENTITY_SIGNATURE
+Tillåter dig att välja standard signaturen som\n\
+ska användas vid skapande av nytt brev med denna\n\
+användaridentitet.
+; Allows to select the default signature that\n\
+; should be used when composing emails with this\n\
+; user identity.
+;
+MSG_CO_CONFIGWARNING_TITLE
+Konfigurationsvarning
+; Configuration Warning
+;
+MSG_CO_CONFIGWARNING
+Du har ändrat vissa konfigurations\n\
+inställningar och kommer att förlora\n\
+dessa ändringar när du stänger fönstret.\n\
+\n\
+Hur vill du fortsätta?
+; You have modified certain configuration\n\
+; settings and will lose these changes\n\
+; when closing the config window.\n\
+; \n\
+; How do you want to proceed?
+;
+MSG_CO_CONFIGWARNING_BT
+_Stäng fönster|*_Avbryt
+; _Close window|*_Abort
+;
+MSG_CO_CONFIGVERSIONWARNING_TITLE
+Konfiguration versionsvarning
+; Configuration Version Warning
+;
+MSG_CO_CONFIGVERSIONWARNING
+Konfigurationsfilen som YAM försöker ladda,\n\
+sparades med en nyare version av YAM.\n\
+Om du fortsätter ladda denna fil, kommer\n\
+kanske vissa konfigurationsinställningar att\n\
+gå förlorade och satta till dess förvalda\n\
+värden.\n\
+\n\
+Hur vill du fortsätta?
+; The configuration file that YAM tries to\n\
+; load was saved by a newer YAM version.\n\
+; If you continue to load this file some\n\
+; config settings might be lost and set\n\
+; to their default values.\n\
+; \n\
+; How do you want to proceed?
+;
+MSG_CO_CONFIGVERSIONWARNING_BT
+_Fortsätt|*_Avbryt
+; _Continue|*_Abort
+;
+MSG_WR_MCCADDRFIELD
+Adressfält kopia
+; Cc address field
+;
+MSG_WR_MBCCADDRFIELD
+Adressfält dold kopia
+; Bcc address field
+;
+MSG_WR_MREPLYTOADDRFIELD
+Adressfält Svar till
+; Reply-To address field
 ;
