@@ -270,7 +270,7 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
     // now we write out ALL config options after another
-    // 
+    //
     // NOTE: When adding/changing items here make sure to bump
     //       the LATEST_CFG_VERSION define so that older YAM
     //       versions are being warned that the config format
@@ -728,7 +728,7 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
 
 ///
 /// CO_LoadConfig
-//  Loads configuration from a file. return 1 on success, 0 on error and -1 if 
+//  Loads configuration from a file. return 1 on success, 0 on error and -1 if
 //  no (valid) config file found
 int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders)
 {
@@ -813,7 +813,7 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
 
         // now we walk through our potential config options
         // an check if the name of it matches the one stored in buf
-        // 
+        //
         // NOTE: When adding/changing items here make sure to bump
         //       the LATEST_CFG_VERSION define so that older YAM
         //       versions are being warned that the config format
@@ -1577,7 +1577,7 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
             else if(stricmp(buf, "MyPGPID") == 0)
             {
               strlcpy(fUserIdentity->pgpKeyID, value, sizeof(fUserIdentity->pgpKeyID));
-  
+
               // we also set the usePGP in case the KeyID is not empty
               if(fUserIdentity->pgpKeyID[0] != '\0')
                 fUserIdentity->usePGP = TRUE;
