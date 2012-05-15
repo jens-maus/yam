@@ -4034,19 +4034,6 @@ Sätt prioriteten för\ndetta meddelande.
 ; Set the priority\n\
 ; of this message.
 ;
-MSG_HELP_WR_RA_SIGNATURE
-Vilken signatur vill du\ninfoga till detta meddelande?
-; Which signature do you want\n\
-; to append to this message?
-;
-MSG_HELP_WR_RA_SECURITY
-Välj ett av dessa säkerhetsval för att skicka\nditt meddelande PGP-signerat, krypterat eller\nanonymt. "Förvalt" försöker hitta mottagaren\ni din adressbok och använda säkerhets-\ninställningarna specifierade där.
-; Select one of these security options to send\n\
-; your message PGP signed or encrypted.\n\
-; "Default" tries to find the recipient\n\
-; in your address book and use the security\n\
-; settings specified there.
-;
 MSG_HELP_WR_BT_HOLD
 Kopiera det skapta meddelandet till Utkorgen\noch sätt dess status till 'Håll kvar'.
 ; Copy the created message to\n\
@@ -9473,13 +9460,53 @@ _Fortsätt|*_Avbryt
 ;
 MSG_WR_MCCADDRFIELD
 Adressfält kopia
-; Cc address field
+; CC address field
 ;
 MSG_WR_MBCCADDRFIELD
 Adressfält dold kopia
-; Bcc address field
+; BCC address field
 ;
 MSG_WR_MREPLYTOADDRFIELD
 Adressfält Svar till
 ; Reply-To address field
+;
+MSG_CO_LISTCOLUMNSETTINGS
+Kolumninställningar
+; Column settings
+;
+MSG_CO_LOOKFEEL_MAINWINDOW
+Huvudfönster
+; Main window
+;
+MSG_CO_LOOKFEEL_TITLE_THEME
+Tema
+; Theme
+;
+MSG_CO_LOOKFEEL_TITLE_INFO
+Information
+; Information
+;
+MSG_HELP_WR_CY_SIGNATURE
+Tillåter dig välja vilken signatur\n\
+som ska visas för nuvarande komponerat\n\
+brev.
+; Allows to select which signature\n\
+; show be used for the currently\n\
+; composed message.
+;
+MSG_WR_PGPSECURITY
+PGP säkerhetsnivå
+; PGP security level
+;
+MSG_HELP_WR_CY_SECURITY
+Tillåter dig att välja säkerhetsnivå för PGP.\n\
+Du kan välja om ett brev ska signeras, krypteras\n\
+eller både och. "Standard" försöker hitta,\n\
+mottagaren i adressboken och använda inställningarna\n\
+som är definierade där.
+; Allows to select the PGP security level.\n\
+; You can select if a message should be signed,\n\
+; encrypted or both. "Default" tries to find\n\
+; the recipient in your address book and use\n\
+; the settings defined there.
 ;
