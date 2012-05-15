@@ -771,15 +771,14 @@ void LoadTheme(struct Theme *theme, const char *themeName)
       char osIconImage[SIZE_PATHFILE];
 
       // first we try to obtain a system specific icon image
-      strlcpy(osIconImage, theme->iconImages[i], sizeof(osIconImage));
       #if defined(__amigaos3__)
-      strlcat(osIconImage, "_os3", sizeof(osIconImage));
+      snprintf(osIconImage, sizeof(osIconImage), "%s_os3", theme->iconImages[i]);
       #elif defined(__amigaos4__)
-      strlcat(osIconImage, "_os4", sizeof(osIconImage));
+      snprintf(osIconImage, sizeof(osIconImage), "%s_os4", theme->iconImages[i]);
       #elif defined(__MORPHOS__)
-      strlcat(osIconImage, "_mos", sizeof(osIconImage));
+      snprintf(osIconImage, sizeof(osIconImage), "%s_mos", theme->iconImages[i]);
       #elif defined(__AROS__)
-      strlcat(osIconImage, "_aros", sizeof(osIconImage));
+      snprintf(osIconImage, sizeof(osIconImage), "%s_aros", theme->iconImages[i]);
       #else
       #error no build system defined
       #endif
