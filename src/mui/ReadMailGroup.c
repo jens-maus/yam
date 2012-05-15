@@ -491,7 +491,9 @@ OVERLOAD(OM_NEW)
 
     // create a balance object we can use between our texteditor
     // and the attachment display
-    balanceObjectBottom = NBalanceObject, End;
+    balanceObjectBottom = NBalanceObject,
+      MUIA_Balance_Quiet, TRUE,
+    End;
 
     // create the scrolled group for our attachment display
     scrolledAttachmentGroup = HGroup,

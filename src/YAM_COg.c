@@ -1717,7 +1717,9 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
                     End,
                   End,
 
-                  Child, NBalanceObject, End,
+                  Child, NBalanceObject,
+                    MUIA_Balance_Quiet, TRUE,
+                  End,
 
                   Child, VGroup,
                     MUIA_HorizWeight, 70,
@@ -1821,7 +1823,9 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
                     End,
                   End,
 
-                  Child, NBalanceObject, End,
+                  Child, NBalanceObject,
+                    MUIA_Balance_Quiet, TRUE,
+                  End,
 
                   Child, VGroup,
                     MUIA_HorizWeight, 70,
@@ -2030,7 +2034,9 @@ Object *CO_PageIdentities(struct CO_ClassData *data)
                   End,
                 End,
 
-                Child, NBalanceObject, End,
+                Child, NBalanceObject,
+                  MUIA_Balance_Quiet, TRUE,
+                End,
 
                 Child, RegisterGroup(rtitles),
                   MUIA_CycleChain, TRUE,
@@ -2492,7 +2498,9 @@ Object *CO_PageFilters(struct CO_ClassData *data)
                          End,
                       End,
                    End,
-                   Child, NBalanceObject, End,
+                   Child, NBalanceObject,
+                      MUIA_Balance_Quiet, TRUE,
+                   End,
                    Child, RegisterGroup(rtitles),
                       MUIA_CycleChain, TRUE,
                       Child, ColGroup(2),
@@ -3532,7 +3540,9 @@ Object *CO_PageMIME(struct CO_ClassData *data)
                     End,
                   End,
 
-                  Child, NBalanceObject, End,
+                  Child, NBalanceObject,
+                    MUIA_Balance_Quiet, TRUE,
+                  End,
 
                   Child, VGroup,
                     MUIA_Weight, 70,

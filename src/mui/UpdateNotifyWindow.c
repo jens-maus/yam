@@ -127,7 +127,9 @@ OVERLOAD(OM_NEW)
           End,
         End,
 
-        Child, NBalanceObject, End,
+        Child, NBalanceObject,
+          MUIA_Balance_Quiet, TRUE,
+        End,
 
         Child, TextObject,
           MUIA_Text_Contents, tr(MSG_UPD_NOTIFICATION_CHANGES),

@@ -9,6 +9,10 @@ $URL$
 
   * ImageCache.c: added some more debug output to the toolbar image cache
     functions.
+  * misc: make use of MUI4's quiet mode for balancing objects. These will be
+    visible only if the mouse pointer is located over the object. In combination
+    with the custom mouse pointer of NBalance.mcc this gives an improved visual
+    feedback.
 
 2012-05-14 Pär Boberg <pbobbenb@spray.se>
 
