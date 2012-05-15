@@ -98,6 +98,7 @@ OVERLOAD(OM_NEW)
       MUIA_Window_RefWindow,  G->MA->GUI.WI,
       WindowContents, VGroup,
 
+        GroupSpacing(0),
         Child, HGroup,
           Child, MakeImageObject("config_update_big", G->theme.configImages[CI_UPDATEBIG]),
           Child, VGroup,

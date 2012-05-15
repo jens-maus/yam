@@ -4292,7 +4292,7 @@ struct MA_ClassData *MA_New(void)
           MUIA_ShowMe,  (C->InfoBar != IB_POS_OFF),
         End,
         Child, data->GUI.GR_BOTTOM = HGroup,
-          GroupSpacing(1),
+          GroupSpacing(0),
           Child, data->GUI.LV_FOLDERS = NListviewObject,
             MUIA_HelpNode,    "MA00",
             MUIA_CycleChain,  TRUE,

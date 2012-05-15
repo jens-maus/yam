@@ -1687,6 +1687,7 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
               MUIA_Scrollgroup_Contents, VGroupV,
 
                 Child, HGroup,
+                  GroupSpacing(0),
                   Child, VGroup,
                     MUIA_HorizWeight, 30,
 
@@ -1793,6 +1794,7 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
               MUIA_Scrollgroup_Contents, VGroupV,
 
                 Child, HGroup,
+                  GroupSpacing(0),
                   Child, VGroup,
                     MUIA_HorizWeight, 30,
 
@@ -2005,6 +2007,7 @@ Object *CO_PageIdentities(struct CO_ClassData *data)
             MUIA_Scrollgroup_Contents,  VGroupV,
 
               Child, HGroup,
+                GroupSpacing(0),
                 Child, VGroup,
                   MUIA_HorizWeight, 30,
 
@@ -2474,6 +2477,7 @@ Object *CO_PageFilters(struct CO_ClassData *data)
             MUIA_Scrollgroup_Contents, VGroupV,
 
               Child, HGroup,
+                   GroupSpacing(0),
                    Child, VGroup,
                       MUIA_Weight, 70,
                       Child, NListviewObject,
@@ -3519,6 +3523,7 @@ Object *CO_PageMIME(struct CO_ClassData *data)
 
               Child, VGroup,
                 Child, HGroup,
+                  GroupSpacing(0),
                   Child, VGroup,
                     MUIA_Weight, 30,
                     Child, NListviewObject,

@@ -340,6 +340,7 @@ static struct DI_ClassData *DI_New(void)
          MUIA_Window_ID, MAKE_ID('D','I','C','T'),
          WindowContents, VGroup,
             Child, HGroup,
+               GroupSpacing(0),
                Child, data->GUI.GR_LIST = ListviewObject,
                   MUIA_HorizWeight, G->Weights[4],
                   MUIA_Listview_DragType, MUIV_Listview_DragType_Immediate,

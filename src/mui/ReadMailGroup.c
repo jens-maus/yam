@@ -518,7 +518,7 @@ OVERLOAD(OM_NEW)
     obj = DoSuperNew(cl, obj,
 
             MUIA_Group_Horiz, FALSE,
-            GroupSpacing(1),
+            GroupSpacing(0),
             Child, headerGroup = HGroup,
               GroupSpacing(0),
               MUIA_VertWeight, hgVertWeight,
@@ -541,6 +541,7 @@ OVERLOAD(OM_NEW)
             End,
             Child, balanceObjectTop = NBalanceObject,
               MUIA_ShowMe, rmData->headerMode != HM_NOHEADER,
+              MUIA_Balance_Quiet, TRUE,
             End,
             Child, mailBodyGroup = VGroup,
               MUIA_VertWeight, tgVertWeight,

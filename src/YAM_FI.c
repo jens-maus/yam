@@ -2640,6 +2640,7 @@ static struct FI_ClassData *FI_New(void)
        MUIA_Window_ID, MAKE_ID('F','I','N','D'),
        WindowContents, VGroup,
           Child, HGroup,
+             GroupSpacing(0),
              MUIA_VertWeight, 1,
              Child, VGroup, GroupFrameT(tr(MSG_FI_FindIn)),
                 MUIA_HorizWeight, 1,
