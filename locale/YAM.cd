@@ -7385,13 +7385,13 @@ MSG_CO_CONFIGVERSIONWARNING_BT (2345//)
 _Continue|*_Abort
 ;
 MSG_WR_MCCADDRFIELD (2346//)
-Cc address field
+CC address field
 ;
 MSG_WR_MBCCADDRFIELD (2347//)
-Bcc address field
+BCC address field
 ;
 MSG_WR_MREPLYTOADDRFIELD (2348//)
-Reply-To address field
+ReplyTo address field
 ;
 MSG_CO_LISTCOLUMNSETTINGS (2349//)
 Column settings

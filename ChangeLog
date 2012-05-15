@@ -22,6 +22,7 @@ $URL$
     visible only if the mouse pointer is located over the object. In combination
     with the custom mouse pointer of NBalance.mcc this gives an improved visual
     feedback.
+  * locale/YAM.cd, locale/german.ct: updated german translation.
 
 2012-05-14 Pär Boberg <pbobbenb@spray.se>
 
