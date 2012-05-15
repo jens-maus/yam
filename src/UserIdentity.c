@@ -71,6 +71,8 @@ struct UserIdentityNode *CreateNewUserIdentity(void)
     // now we fill the UserIdentity structure with some sensible
     // defaults
     uin->quoteMails = TRUE;
+    uin->quotePosition = QPOS_BELOW;
+    uin->signaturePosition = SPOS_BELOW;
     uin->pgpSelfEncrypt = TRUE;
     uin->saveSentMail = TRUE;
     uin->sigReply = TRUE;

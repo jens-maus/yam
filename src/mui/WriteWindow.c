@@ -638,208 +638,6 @@ static char *TransformText(const char *source, const enum TransformMode mode, co
 }
 
 ///
-/// CreateHashTable
-//  Creates an index table for a database file
-static BOOL CreateHashTable(char *source, char *hashfile, char *sep)
-{
-  BOOL result = FALSE;
-  FILE *in;
-
-  ENTER();
-
-  if((in = fopen(source, "r")) != NULL)
-  {
-    FILE *out;
-
-    setvbuf(in, NULL, _IOFBF, SIZE_FILEBUF);
-
-    if((out = fopen(hashfile, "w")) != NULL)
-    {
-      char *buf = NULL;
-      size_t buflen = 0;
-      const size_t seplen = strlen(sep);
-
-      setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
-
-      // the first offset is always zero
-      WriteUInt32(out, 0);
-      while(getline(&buf, &buflen, in) > 0)
-      {
-        // if we found a separator write out the current offset
-        if(strncmp(buf, sep, seplen) == 0)
-          WriteUInt32(out, ftell(in));
-      }
-
-      fclose(out);
-
-      free(buf);
-
-      result = TRUE;
-    }
-
-    fclose(in);
-  }
-
-  RETURN(result);
-  return result;
-}
-
-///
-/// AddTagline
-//  Randomly selects a tagline and writes it to the message file
-static void AddTagline(FILE *fh_mail)
-{
-  ENTER();
-
-  if(C->TagsFile[0] != '\0')
-  {
-    char hashfile[SIZE_PATHFILE];
-    LONG tagsTime;
-    LONG hashTime;
-    BOOL createHashFile;
-    FILE *fh_tag;
-
-    snprintf(hashfile, sizeof(hashfile), "%s.hsh", C->TagsFile);
-
-    if(FileExists(hashfile) == FALSE)
-    {
-      // create the .hsh file if it doesn't exist
-      createHashFile = TRUE;
-    }
-    else if(ObtainFileInfo(C->TagsFile, FI_TIME, &tagsTime) == TRUE &&
-            ObtainFileInfo(hashfile, FI_TIME, &hashTime) == TRUE &&
-            tagsTime > hashTime)
-    {
-      // recreate the .hsh file if it is outdated
-      createHashFile = TRUE;
-    }
-    else
-    {
-      createHashFile = FALSE;
-    }
-
-    if(createHashFile == TRUE)
-      CreateHashTable(C->TagsFile, hashfile, C->TagsSeparator);
-
-    if((fh_tag = fopen(C->TagsFile, "r")) != NULL)
-    {
-      FILE *fh_hash;
-
-      setvbuf(fh_tag, NULL, _IOFBF, SIZE_FILEBUF);
-
-      if((fh_hash = fopen(hashfile, "r")) != NULL)
-      {
-        long hsize;
-
-        setvbuf(fh_hash, NULL, _IOFBF, SIZE_FILEBUF);
-
-        fseek(fh_hash, 0, SEEK_END);
-        hsize = ftell(fh_hash);
-        if((hsize = hsize / sizeof(long)) > 1)
-        {
-          long fpos;
-
-          // calculate a random offset
-          fpos = (((long)rand()) % hsize) * sizeof(long);
-          fseek(fh_hash, fpos, SEEK_SET);
-
-          // read the offset to the tagline from the hash file
-          if(ReadUInt32(fh_hash, (APTR)&fpos) == 1)
-          {
-            char *buf = NULL;
-            size_t bufsize = 0;
-
-            fseek(fh_tag, fpos, SEEK_SET);
-
-            if(GetLine(&buf, &bufsize, fh_tag) >= 0)
-            {
-              fputs(buf, fh_mail);
-
-              while(GetLine(&buf, &bufsize, fh_tag) >= 0)
-              {
-                if(strncmp(buf, C->TagsSeparator, strlen(C->TagsSeparator)) == 0)
-                  break;
-                else
-                  fprintf(fh_mail, "\n%s", buf);
-              }
-            }
-
-            free(buf);
-          }
-        }
-
-        fclose(fh_hash);
-      }
-      else
-        ER_NewError(tr(MSG_ER_CantOpenFile), hashfile);
-
-      fclose(fh_tag);
-    }
-    else
-      ER_NewError(tr(MSG_ER_CantOpenFile), C->TagsFile);
-  }
-
-  LEAVE();
-}
-
-///
-/// WriteSignature
-//  Writes signature to the message file
-static void WriteSignature(FILE *out, int signat)
-{
-  char sigPath[SIZE_PATHFILE];
-  char *sigFile;
-  LONG sigSize;
-
-  ENTER();
-
-  sigFile = CreateFilename(SigNames[signat], sigPath, sizeof(sigPath));
-
-  // check whether the signature file exists and contains at least one character
-  if(ObtainFileInfo(sigFile, FI_SIZE, &sigSize) == TRUE && sigSize > 0)
-  {
-    FILE *in;
-
-    // now append the signature file and fill the placeholders
-    if((in = fopen(sigFile, "r")) != NULL)
-    {
-      int ch;
-
-      setvbuf(in, NULL, _IOFBF, SIZE_FILEBUF);
-
-      fputs("-- \n", out);
-      while((ch = fgetc(in)) != EOF)
-      {
-        if(ch == '%')
-        {
-          ch = fgetc(in);
-
-          if(ch == 't')
-          {
-            AddTagline(out);
-            continue;
-          }
-
-          if(ch == 'e')
-          {
-            CopyFile(NULL, out, "ENV:SIGNATURE", NULL);
-            continue;
-          }
-
-          ungetc(ch, in);
-          ch = '%';
-        }
-        fputc(ch, out);
-      }
-
-      fclose(in);
-    }
-  }
-
-  LEAVE();
-}
-
-///
 
 /* Hooks */
 /// CloseWriteWindowHook
@@ -2772,8 +2570,7 @@ DECLARE(ChangeSignature) // LONG signature
           fwrite(buf, curlen, 1, tfout->FP);
         }
 
-        if(msg->signature > 0)
-          WriteSignature(tfout->FP, msg->signature-1);
+        WriteSignature(tfout->FP, msg->signature-1, TRUE);
 
         // now our out file is finished, so we can
         // put everything in our text editor.
@@ -3343,7 +3140,7 @@ DECLARE(AddSignature) // int signat
       if(addline)
         fputc('\n', fh_mail);
 
-      WriteSignature(fh_mail, signat-1);
+      WriteSignature(fh_mail, signat-1, TRUE);
       fclose(fh_mail);
     }
   }

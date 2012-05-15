@@ -1986,12 +1986,12 @@ Object *CO_PageIdentities(struct CO_ClassData *data)
   signatures[3] = tr(MSG_CO_AltSig2);
   signatures[4] = NULL;
 
-  quotePosition[0] = tr(MSG_CO_IDENTITY_ABOVEQUOTE);
-  quotePosition[1] = tr(MSG_CO_IDENTITY_BELOWQUOTE);
+  quotePosition[0] = tr(MSG_CO_IDENTITY_BELOWQUOTE);
+  quotePosition[1] = tr(MSG_CO_IDENTITY_ABOVEQUOTE);
   quotePosition[2] = NULL;
 
-  signaturePosition[0] = tr(MSG_CO_IDENTITY_ABOVEQUOTE);
-  signaturePosition[1] = tr(MSG_CO_IDENTITY_BELOWQUOTE);
+  signaturePosition[0] = tr(MSG_CO_IDENTITY_BELOWQUOTE);
+  signaturePosition[1] = tr(MSG_CO_IDENTITY_ABOVEQUOTE);
   signaturePosition[2] = NULL;
 
   ENTER();

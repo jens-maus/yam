@@ -196,5 +196,6 @@ void FreeWriteMailData(struct WriteMailData *wmData);
 BOOL CleanupWriteMailData(struct WriteMailData *wmData);
 struct WritePart *NewMIMEpart(struct WriteMailData *wmData);
 void CheckForAutoSaveFiles(void);
+void WriteSignature(FILE *out, int signature, BOOL separator);
 
 #endif /* YAM_WRITE_H */

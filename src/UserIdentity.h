@@ -36,6 +36,9 @@ struct MailServerNode;
 struct Folder;
 struct ExtendedMail;
 
+enum QuotePos { QPOS_BELOW=0, QPOS_ABOVE };
+enum SigPos { SPOS_BELOW=0, SPOS_ABOVE };
+
 // user identity data structure
 struct UserIdentityNode
 {
@@ -59,8 +62,8 @@ struct UserIdentityNode
   char sentFolder[SIZE_NAME];        // folder name for storing sent mail to
   BOOL saveSentMail;                 // store sent mail to the folder yes/no
   BOOL quoteMails;                   // TRUE if user has quoted text enabled when replying/forwarding
-  int quotePosition;                 // position where the quote should appear
-  int signaturePosition;             // where should the signature appear
+  enum QuotePos quotePosition;       // position where the quote should appear
+  enum SigPos signaturePosition;     // where should the signature appear
   BOOL sigReply;                     // use signature when replying
   BOOL sigForwarding;                // use signature when forwarding
   BOOL addPersonalInfo;              // add personal info when sending mails (in header)

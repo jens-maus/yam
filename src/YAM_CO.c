@@ -1096,10 +1096,8 @@ HOOKPROTONHNONP(CO_GetIdentityEntry, void)
     }
   }
 
-  DoMethod(gui->WI, MUIM_MultiSet, MUIA_Disabled, uin == NULL || uin->quoteMails == FALSE,
-    gui->CY_IDENTITY_QUOTEPOS,
-    gui->CY_IDENTITY_SIGPOS,
-    NULL);
+  set(gui->CY_IDENTITY_QUOTEPOS, MUIA_Disabled, uin == NULL || uin->quoteMails == FALSE);
+  set(gui->CY_IDENTITY_SIGPOS, MUIA_Disabled, uin == NULL || uin->quotePosition == QPOS_BELOW || uin->quoteMails == FALSE);
 
   DoMethod(gui->WI, MUIM_MultiSet, MUIA_Disabled, uin == NULL || uin->usePGP == FALSE,
     gui->ST_IDENTITY_PGPID,
@@ -1168,10 +1166,8 @@ HOOKPROTONHNONP(CO_PutIdentityEntry, void)
       uin->pgpEncryptAll = GetMUICheck(gui->CH_IDENTITY_PGPENC_ALL);
       uin->pgpSelfEncrypt = GetMUICheck(gui->CH_IDENTITY_PGPENC_SELF);
 
-      DoMethod(gui->WI, MUIM_MultiSet, MUIA_Disabled, uin->quoteMails == FALSE,
-        gui->CY_IDENTITY_QUOTEPOS,
-        gui->CY_IDENTITY_SIGPOS,
-        NULL);
+      set(gui->CY_IDENTITY_QUOTEPOS, MUIA_Disabled, uin->quoteMails == FALSE);
+      set(gui->CY_IDENTITY_SIGPOS, MUIA_Disabled, uin->quotePosition == QPOS_BELOW || uin->quoteMails == FALSE);
 
       DoMethod(gui->WI, MUIM_MultiSet, MUIA_Disabled, uin->usePGP == FALSE,
         gui->ST_IDENTITY_PGPID,

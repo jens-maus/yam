@@ -2545,7 +2545,7 @@ BOOL MA_Send(enum SendMailMode mode)
             AddMailNode(uin->sentMailList, mnode);
           }
           else
-            E("no user identity found for mail with subject '%s'", mail->Subject);
+            E(DBF_MAIL, "no user identity found for mail with subject '%s'", mail->Subject);
 
           // free the ExtendedMail struct
           MA_FreeEMailStruct(email);

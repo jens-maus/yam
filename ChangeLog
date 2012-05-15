@@ -7,6 +7,11 @@ $URL$
 
 2012-05-15 Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_WR.c, YAM_COg.c, misc: finally implemented the quote position and signature
+    position features of the new user identity support in YAM. In addition YAM
+    will also now respect the signature on reply/forward settings in the identity
+    support. Now YAM should put the signature and intro texts at the right positions
+    of the user selected these positions in the identity settings.
   * mui/WriteWindow.c: relayouted the "Options" tab of the write window to be
     somewhat more nice looking and consistent to what the other GUI elements in
     YAM look like.

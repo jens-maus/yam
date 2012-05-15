@@ -1783,7 +1783,12 @@ struct WriteMailData *NewWriteMailWindow(struct Mail *mail, const int flags)
      (wmData = CreateWriteWindow(NMM_NEW, quiet)) != NULL)
   {
     FILE *out;
+    struct UserIdentityNode *userIdentity;
 
+    // get the default user identity as a fallback
+    userIdentity = GetUserIdentity(&C->userIdentityList, 0, TRUE);
+
+    // open a new file for writing the default mail text
     if((out = fopen(wmData->filename, "w")) != NULL)
     {
       setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
@@ -1818,6 +1823,8 @@ struct WriteMailData *NewWriteMailWindow(struct Mail *mail, const int flags)
 
               set(wmData->window, MUIA_WriteWindow_To, sbuf);
 
+              userIdentity = email->identity;
+
               FreeStrBuf(sbuf);
               MA_FreeEMailStruct(email);
             }
@@ -1846,6 +1853,8 @@ struct WriteMailData *NewWriteMailWindow(struct Mail *mail, const int flags)
 
               set(wmData->window, MUIA_WriteWindow_To, sbuf);
 
+              userIdentity = email->identity;
+
               FreeStrBuf(sbuf);
               MA_FreeEMailStruct(email);
             }
@@ -1860,7 +1869,7 @@ struct WriteMailData *NewWriteMailWindow(struct Mail *mail, const int flags)
           set(wmData->window, MUIA_WriteWindow_To, folder->MLAddress);
 
         if(folder->MLIdentity != NULL)
-          set(wmData->window, MUIA_WriteWindow_Identity, folder->MLIdentity);
+          userIdentity = folder->MLIdentity;
 
         if(folder->MLReplyToAddress[0] != '\0')
           set(wmData->window, MUIA_WriteWindow_ReplyTo, folder->MLReplyToAddress);
@@ -1876,11 +1885,14 @@ struct WriteMailData *NewWriteMailWindow(struct Mail *mail, const int flags)
       else
         InsertIntroText(out, C->Greetings, NULL);
 
-      // close the output file handle
-      fclose(out);
+      // make sure to set the correct user identity
+      set(wmData->window, MUIA_WriteWindow_Identity, userIdentity);
 
       // add a signature to the mail depending on the selected signature for this list
-      DoMethod(wmData->window, MUIM_WriteWindow_AddSignature, folder->MLSupport ? folder->MLSignature: -1);
+      WriteSignature(out, folder->MLSupport ? folder->MLSignature : userIdentity->signature-1, TRUE);
+
+      // close the output file handle
+      fclose(out);
 
       // update the message text
       DoMethod(wmData->window, MUIM_WriteWindow_ReloadText, FALSE);
@@ -2136,9 +2148,11 @@ struct WriteMailData *NewForwardMailWindow(struct MailList *mlist, const int fla
     if((out = fopen(wmData->filename, "w")) != NULL)
     {
       int signature = -1;
+      int j = 0;
       enum ForwardMode fwdMode = C->ForwardMode;
       char *rsub = AllocStrBuf(SIZE_SUBJECT);
       struct MailNode *mnode;
+      struct UserIdentityNode *firstIdentity = NULL; // first identified identity over all mails
 
       // if the user wants to have the alternative
       // forward mode we go and select it here
@@ -2205,6 +2219,10 @@ struct WriteMailData *NewForwardMailWindow(struct MailList *mlist, const int fla
           return NULL;
         }
 
+        // save the identity ptr if this is our first iteration
+        if(firstIdentity == NULL)
+          firstIdentity = email->identity;
+
         SetupExpandTextData(&etd, &email->Mail);
         etd.OM_MessageID = email->messageID;
         etd.R_Name = mail->To.RealName[0] != '\0' ? mail->To.RealName : mail->To.Address;
@@ -2227,6 +2245,21 @@ struct WriteMailData *NewForwardMailWindow(struct MailList *mlist, const int fla
           }
         }
 
+        // we add the footer at the front if the user
+        // wants this
+        if(j == 0)
+        {
+          if(firstIdentity->quotePosition == QPOS_ABOVE)
+            InsertIntroText(out, C->Greetings, NULL);
+            
+          if(firstIdentity->sigForwarding == TRUE && 
+             (firstIdentity->quotePosition == QPOS_ABOVE && firstIdentity->signaturePosition == SPOS_ABOVE))
+          {
+            WriteSignature(out, signature == -1 ? firstIdentity->signature-1 : signature, FALSE);
+            fputs("\n", out);
+          }
+        }
+ 
         // depending on the selected forward mode we either
         // forward the email as inlined text or by simply putting
         // the original message as an attachment to the new one.
@@ -2296,14 +2329,26 @@ struct WriteMailData *NewForwardMailWindow(struct MailList *mlist, const int fla
 
         // free out temporary extended mail structure again.
         MA_FreeEMailStruct(email);
+
+        j++;
       }
 
+      // make sure the correct identity is set
+      set(wmData->window, MUIA_WriteWindow_Identity, firstIdentity);
+
       // add some footer with greatings.
-      InsertIntroText(out, C->Greetings, NULL);
-      fclose(out);
+      if(firstIdentity->quotePosition == QPOS_BELOW)
+        InsertIntroText(out, C->Greetings, NULL);
 
       // add a signature to the mail depending on the selected signature for this list
-      DoMethod(wmData->window, MUIM_WriteWindow_AddSignature, signature);
+      if(firstIdentity->sigForwarding == TRUE && 
+         (firstIdentity->quotePosition == QPOS_BELOW || firstIdentity->signaturePosition == SPOS_BELOW))
+      {
+        WriteSignature(out, signature == -1 ? firstIdentity->signature-1 : signature, TRUE);
+      }
+
+      // close the output file handle
+      fclose(out);
 
       // set the composed subject text
       set(wmData->window, MUIA_WriteWindow_Subject, rsub);
@@ -2781,6 +2826,10 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
         else
           altpat = FALSE;
 
+        // save the identity ptr if this is our first iteration
+        if(firstIdentity == NULL)
+          firstIdentity = email->identity;
+
         // insert a "Hello" text as the first intro text in case
         // this is our first iteration
         if(j == 0)
@@ -2800,11 +2849,22 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
           }
           else
             InsertIntroText(out, foundMLFolder ? C->MLReplyHello : (altpat ? C->AltReplyHello : C->ReplyHello), &etd);
+          // if the answer should be put in front of quoted text
+          // we need to insert the Bye text right away
+          if(firstIdentity->quotePosition == QPOS_ABOVE)
+            InsertIntroText(out, mlIntro ? C->MLReplyBye : (altpat ? C->AltReplyBye: C->ReplyBye), &etd);
+
+          if(firstIdentity->sigReply == TRUE && 
+             (firstIdentity->quotePosition == QPOS_ABOVE && firstIdentity->signaturePosition == SPOS_ABOVE))
+          {
+            WriteSignature(out, signature == -1 ? firstIdentity->signature-1 : signature, FALSE);
+            fputs("\n", out);
+          }
         }
 
         // if the user wants to quote the mail text of the original mail,
         // we process it right now.
-        if(wmData->identity->quoteMails == TRUE && !hasNoQuoteFlag(flags))
+        if(firstIdentity->quoteMails == TRUE && !hasNoQuoteFlag(flags))
         {
           struct ReadMailData *rmData;
 
@@ -2839,10 +2899,6 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
           }
         }
 
-        // save the identity ptr if this is our first iteration
-        if(firstIdentity == NULL)
-          firstIdentity = email->identity;
-
         // free out temporary extended mail structure again.
         MA_FreeEMailStruct(email);
 
@@ -2858,16 +2914,6 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
         wmData->references = StrBufCat(wmData->references, wmData->inReplyToMsgID);
       }
 
-      // now that the mail is finished, we go and output some footer message to
-      // the reply text.
-      InsertIntroText(out, mlIntro ? C->MLReplyBye : (altpat ? C->AltReplyBye: C->ReplyBye), &etd);
-
-      // close the filehandle
-      fclose(out);
-
-      // add a signature to the mail depending on the selected signature for this list
-      DoMethod(wmData->window, MUIM_WriteWindow_AddSignature, signature);
-
       // make sure the correct identity has been set (if multiple mails
       // had been selected only the first one will be considered, thought)
       // and also set other important GUI elements with information we
@@ -2877,6 +2923,22 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
                            rto[0] != '\0' ? MUIA_WriteWindow_To      : TAG_IGNORE, rto,
                            rsub[0] != '\0'? MUIA_WriteWindow_Subject : TAG_IGNORE, rsub,
                            rcc[0] != '\0' ? (rto[0] != '\0' ? MUIA_WriteWindow_CC : MUIA_WriteWindow_To) : TAG_IGNORE, rcc);
+
+      // now that the mail is finished, we go and output some footer message to
+      // the reply text. But we only do this if the user hasn't selected to have
+      // his text ABOVE the quotes
+      if(firstIdentity->quotePosition == QPOS_BELOW)
+        InsertIntroText(out, mlIntro ? C->MLReplyBye : (altpat ? C->AltReplyBye: C->ReplyBye), &etd);
+
+      // add a signature to the mail depending on the selected signature for this list
+      if(firstIdentity->sigReply == TRUE && 
+         (firstIdentity->quotePosition == QPOS_BELOW || firstIdentity->signaturePosition == SPOS_BELOW))
+      {
+        WriteSignature(out, signature == -1 ? firstIdentity->signature-1 : signature, TRUE);
+      }
+
+      // close the filehandle
+      fclose(out);
 
       // update the message text
       DoMethod(wmData->window, MUIM_WriteWindow_ReloadText, FALSE);
@@ -3225,3 +3287,213 @@ void CheckForAutoSaveFiles(void)
 }
 
 ///
+/// CreateHashTable
+//  Creates an index table for a database file
+static BOOL CreateHashTable(char *source, char *hashfile, char *sep)
+{
+  BOOL result = FALSE;
+  FILE *in;
+
+  ENTER();
+
+  if((in = fopen(source, "r")) != NULL)
+  {
+    FILE *out;
+
+    setvbuf(in, NULL, _IOFBF, SIZE_FILEBUF);
+
+    if((out = fopen(hashfile, "w")) != NULL)
+    {
+      char *buf = NULL;
+      size_t buflen = 0;
+      const size_t seplen = strlen(sep);
+
+      setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
+
+      // the first offset is always zero
+      WriteUInt32(out, 0);
+      while(getline(&buf, &buflen, in) > 0)
+      {
+        // if we found a separator write out the current offset
+        if(strncmp(buf, sep, seplen) == 0)
+          WriteUInt32(out, ftell(in));
+      }
+
+      fclose(out);
+
+      free(buf);
+
+      result = TRUE;
+    }
+
+    fclose(in);
+  }
+
+  RETURN(result);
+  return result;
+}
+
+///
+/// AddTagline
+//  Randomly selects a tagline and writes it to the message file
+static void AddTagline(FILE *fh_mail)
+{
+  ENTER();
+
+  if(C->TagsFile[0] != '\0')
+  {
+    char hashfile[SIZE_PATHFILE];
+    LONG tagsTime;
+    LONG hashTime;
+    BOOL createHashFile;
+    FILE *fh_tag;
+
+    snprintf(hashfile, sizeof(hashfile), "%s.hsh", C->TagsFile);
+
+    if(FileExists(hashfile) == FALSE)
+    {
+      // create the .hsh file if it doesn't exist
+      createHashFile = TRUE;
+    }
+    else if(ObtainFileInfo(C->TagsFile, FI_TIME, &tagsTime) == TRUE &&
+            ObtainFileInfo(hashfile, FI_TIME, &hashTime) == TRUE &&
+            tagsTime > hashTime)
+    {
+      // recreate the .hsh file if it is outdated
+      createHashFile = TRUE;
+    }
+    else
+    {
+      createHashFile = FALSE;
+    }
+
+    if(createHashFile == TRUE)
+      CreateHashTable(C->TagsFile, hashfile, C->TagsSeparator);
+
+    if((fh_tag = fopen(C->TagsFile, "r")) != NULL)
+    {
+      FILE *fh_hash;
+
+      setvbuf(fh_tag, NULL, _IOFBF, SIZE_FILEBUF);
+
+      if((fh_hash = fopen(hashfile, "r")) != NULL)
+      {
+        long hsize;
+
+        setvbuf(fh_hash, NULL, _IOFBF, SIZE_FILEBUF);
+
+        fseek(fh_hash, 0, SEEK_END);
+        hsize = ftell(fh_hash);
+        if((hsize = hsize / sizeof(long)) > 1)
+        {
+          long fpos;
+
+          // calculate a random offset
+          fpos = (((long)rand()) % hsize) * sizeof(long);
+          fseek(fh_hash, fpos, SEEK_SET);
+
+          // read the offset to the tagline from the hash file
+          if(ReadUInt32(fh_hash, (APTR)&fpos) == 1)
+          {
+            char *buf = NULL;
+            size_t bufsize = 0;
+
+            fseek(fh_tag, fpos, SEEK_SET);
+
+            if(GetLine(&buf, &bufsize, fh_tag) >= 0)
+            {
+              fputs(buf, fh_mail);
+
+              while(GetLine(&buf, &bufsize, fh_tag) >= 0)
+              {
+                if(strncmp(buf, C->TagsSeparator, strlen(C->TagsSeparator)) == 0)
+                  break;
+                else
+                  fprintf(fh_mail, "\n%s", buf);
+              }
+            }
+
+            free(buf);
+          }
+        }
+
+        fclose(fh_hash);
+      }
+      else
+        ER_NewError(tr(MSG_ER_CantOpenFile), hashfile);
+
+      fclose(fh_tag);
+    }
+    else
+      ER_NewError(tr(MSG_ER_CantOpenFile), C->TagsFile);
+  }
+
+  LEAVE();
+}
+
+///
+/// WriteSignature
+//  Writes signature to an already open file handle
+void WriteSignature(FILE *out, int signature, BOOL separator)
+{
+  ENTER();
+
+  if(signature >= 0)
+  {
+    char sigPath[SIZE_PATHFILE];
+    char *sigFile;
+    LONG sigSize;
+
+    sigFile = CreateFilename(SigNames[signature], sigPath, sizeof(sigPath));
+
+    // check whether the signature file exists and contains at least one character
+    if(ObtainFileInfo(sigFile, FI_SIZE, &sigSize) == TRUE && sigSize > 0)
+    {
+      FILE *in;
+
+      // now append the signature file and fill the placeholders
+      if((in = fopen(sigFile, "r")) != NULL)
+      {
+        int ch;
+
+        setvbuf(in, NULL, _IOFBF, SIZE_FILEBUF);
+
+        if(separator == TRUE)
+          fputs("-- \n", out);
+        else
+          fputs("\n", out);
+
+        while((ch = fgetc(in)) != EOF)
+        {
+          if(ch == '%')
+          {
+            ch = fgetc(in);
+
+            if(ch == 't')
+            {
+              AddTagline(out);
+              continue;
+            }
+
+            if(ch == 'e')
+            {
+              CopyFile(NULL, out, "ENV:SIGNATURE", NULL);
+              continue;
+            }
+
+            ungetc(ch, in);
+            ch = '%';
+          }
+          fputc(ch, out);
+        }
+
+        fclose(in);
+      }
+    }
+  }
+
+  LEAVE();
+}
+
+///
+
