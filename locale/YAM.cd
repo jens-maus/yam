@@ -3126,17 +3126,6 @@ MSG_HELP_WR_CY_IMPORTANCE (1044//)
 Set the priority\n\
 of this message.
 ;
-MSG_HELP_WR_RA_SIGNATURE (1045//)
-Which signature do you want\n\
-to append to this message?
-;
-MSG_HELP_WR_RA_SECURITY (1046//)
-Select one of these security options to send\n\
-your message PGP signed or encrypted.\n\
-"Default" tries to find the recipient\n\
-in your address book and use the security\n\
-settings specified there.
-;
 MSG_HELP_WR_BT_HOLD (1047//)
 Copy the created message to\n\
 the Outgoing folder and set\n\
@@ -7404,4 +7393,19 @@ Theme
 ;
 MSG_CO_LOOKFEEL_TITLE_INFO (2352//)
 Information
+;
+MSG_HELP_WR_CY_SIGNATURE (2353//)
+Allows to select which signature\n\
+show be used for the currently\n\
+composed message.
+;
+MSG_WR_PGPSECURITY (2354//)
+PGP security level
+;
+MSG_HELP_WR_CY_SECURITY (2355//)
+Allows to select the PGP security level.\n\
+You can select if a message should be signed,\n\
+encrypted or both. "Default" tries to find\n\
+the recipient in your address book and use\n\
+the settings defined there.
 ;

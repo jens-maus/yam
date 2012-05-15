@@ -122,9 +122,9 @@ struct Data
   Object *CH_MDN;
   Object *CH_ADDINFO;
   Object *CY_IMPORTANCE;
-  Object *RA_SECURITY;
+  Object *CY_SECURITY;
   Object *CH_DEFSECURITY;
-  Object *RA_SIGNATURE;
+  Object *CY_SIGNATURE;
   Object *BT_HOLD;
   Object *BT_QUEUE;
   Object *BT_SEND;
@@ -1390,6 +1390,7 @@ OVERLOAD(OM_NEW)
               Child, VGroup,
                 MUIA_HelpNode, "WR02",
                 Child, ColGroup(2),
+                  GroupFrameT(tr(MSG_Options)),
 
                   Child, Label(tr(MSG_WR_ExtraHeaders)),
                   Child, data->ST_EXTHEADER = BetterStringObject,
@@ -1404,32 +1405,30 @@ OVERLOAD(OM_NEW)
                   Child, Label(tr(MSG_WR_CHARSET)),
                   Child, MakeCharsetPop((Object **)&data->PO_CHARSET, &charsetPopButton),
 
-                End,
+                  Child, Label(tr(MSG_WR_Importance)),
+                  Child, data->CY_IMPORTANCE = MakeCycle(priority, tr(MSG_WR_Importance)),
 
-                Child, HGroup,
-                  Child, VGroup, GroupFrameT(tr(MSG_WR_SendOpt)),
-                    Child, MakeCheckGroup((Object **)&data->CH_DELSEND, tr(MSG_WR_DelSend)),
-                    Child, MakeCheckGroup((Object **)&data->CH_MDN,     tr(MSG_WR_Receipt)),
-                    Child, MakeCheckGroup((Object **)&data->CH_ADDINFO, tr(MSG_WR_AddInfo)),
-                    Child, HGroup,
-                      Child, Label(tr(MSG_WR_Importance)),
-                      Child, data->CY_IMPORTANCE = MakeCycle(priority, tr(MSG_WR_Importance)),
-                    End,
-                  End,
+                  Child, Label(tr(MSG_WR_Signature)),
+                  Child, data->CY_SIGNATURE = MakeCycle(signat, tr(MSG_WR_Signature)),
 
-                  Child, HSpace(0),
-                  Child, data->RA_SIGNATURE = RadioObject,
-                    GroupFrameT(tr(MSG_WR_Signature)),
-                    MUIA_CycleChain,    TRUE,
-                    MUIA_Radio_Entries, signat,
-                  End,
-                  Child, HSpace(0),
-                  Child, data->RA_SECURITY = RadioObject,
-                    GroupFrameT(tr(MSG_WR_Security)),
-                    MUIA_CycleChain,    TRUE,
-                    MUIA_Radio_Entries, security,
-                    MUIA_Radio_Active,  SEC_DEFAULTS,
-                  End,
+                  Child, Label(tr(MSG_WR_PGPSECURITY)),
+                  Child, data->CY_SECURITY = MakeCycle(security, tr(MSG_WR_PGPSECURITY)),
+
+                  Child, HSpace(1),
+                  Child, HBarT(tr(MSG_WR_SendOpt)), End,
+
+                  Child, HSpace(1),
+                  Child, MakeCheckGroup((Object **)&data->CH_DELSEND, tr(MSG_WR_DelSend)),
+
+                  Child, HSpace(1),
+                  Child, MakeCheckGroup((Object **)&data->CH_MDN,     tr(MSG_WR_Receipt)),
+
+                  Child, HSpace(1),
+                  Child, MakeCheckGroup((Object **)&data->CH_ADDINFO, tr(MSG_WR_AddInfo)),
+
+                  Child, HVSpace,
+                  Child, HVSpace,
+
                 End,
               End,
 
@@ -1522,8 +1521,8 @@ OVERLOAD(OM_NEW)
         SetHelp(data->CH_MDN,       MSG_HELP_WR_CH_RECEIPT);
         SetHelp(data->CH_ADDINFO,   MSG_HELP_WR_CH_ADDINFO);
         SetHelp(data->CY_IMPORTANCE,MSG_HELP_WR_CY_IMPORTANCE);
-        SetHelp(data->RA_SIGNATURE, MSG_HELP_WR_RA_SIGNATURE);
-        SetHelp(data->RA_SECURITY,  MSG_HELP_WR_RA_SECURITY);
+        SetHelp(data->CY_SIGNATURE, MSG_HELP_WR_CY_SIGNATURE);
+        SetHelp(data->CY_SECURITY,  MSG_HELP_WR_CY_SECURITY);
         SetHelp(data->LV_ATTACH,    MSG_HELP_WR_LV_ATTACH);
 
         // set the menuitem notifies
@@ -1650,7 +1649,7 @@ OVERLOAD(OM_NEW)
         DoMethod(data->RA_ENCODING,  MUIM_Notify, MUIA_Radio_Active,       MUIV_EveryTime, obj, 1, MUIM_WriteWindow_PutAttachmentEntry);
         DoMethod(data->ST_CTYPE,     MUIM_Notify, MUIA_String_Contents,    MUIV_EveryTime, obj, 1, MUIM_WriteWindow_PutAttachmentEntry);
         DoMethod(data->ST_DESC,      MUIM_Notify, MUIA_String_Contents,    MUIV_EveryTime, obj, 1, MUIM_WriteWindow_PutAttachmentEntry);
-        DoMethod(data->RA_SIGNATURE, MUIM_Notify, MUIA_Radio_Active,       MUIV_EveryTime, obj, 2, MUIM_WriteWindow_ChangeSignature, MUIV_TriggerValue);
+        DoMethod(data->CY_SIGNATURE, MUIM_Notify, MUIA_Cycle_Active,       MUIV_EveryTime, obj, 2, MUIM_WriteWindow_ChangeSignature, MUIV_TriggerValue);
         DoMethod(data->CH_DELSEND,   MUIM_Notify, MUIA_Selected,           MUIV_EveryTime, data->MI_DELSEND,        3, MUIM_Set,      MUIA_Menuitem_Checked, MUIV_TriggerValue);
         DoMethod(data->CH_MDN,       MUIM_Notify, MUIA_Selected,           MUIV_EveryTime, data->MI_MDN,            3, MUIM_Set,      MUIA_Menuitem_Checked, MUIV_TriggerValue);
         DoMethod(data->CH_ADDINFO,   MUIM_Notify, MUIA_Selected,           MUIV_EveryTime, data->MI_ADDINFO,        3, MUIM_Set,      MUIA_Menuitem_Checked, MUIV_TriggerValue);
@@ -1672,27 +1671,27 @@ OVERLOAD(OM_NEW)
         DoMethod(data->CY_IMPORTANCE, MUIM_Notify, MUIA_Cycle_Active,      2,              menuStripObject,         4, MUIM_SetUData, WMEN_IMPORT2, MUIA_Menuitem_Checked, TRUE);
         DoMethod(obj,                 MUIM_Notify, MUIA_Window_MenuAction, WMEN_IMPORT2,   data->CY_IMPORTANCE,     3, MUIM_Set,      MUIA_Cycle_Active, 2);
 
-        // set the notifies for the signature radio gadget
-        DoMethod(data->RA_SIGNATURE,  MUIM_Notify, MUIA_Radio_Active,      0,              menuStripObject,         4, MUIM_SetUData, WMEN_SIGN0, MUIA_Menuitem_Checked, TRUE);
-        DoMethod(obj,                 MUIM_Notify, MUIA_Window_MenuAction, WMEN_SIGN0,     data->RA_SIGNATURE,      3, MUIM_Set,      MUIA_Radio_Active, 0);
-        DoMethod(data->RA_SIGNATURE,  MUIM_Notify, MUIA_Radio_Active,      1,              menuStripObject,         4, MUIM_SetUData, WMEN_SIGN1, MUIA_Menuitem_Checked, TRUE);
-        DoMethod(obj,                 MUIM_Notify, MUIA_Window_MenuAction, WMEN_SIGN1,     data->RA_SIGNATURE,      3, MUIM_Set,      MUIA_Radio_Active, 1);
-        DoMethod(data->RA_SIGNATURE,  MUIM_Notify, MUIA_Radio_Active,      2,              menuStripObject,         4, MUIM_SetUData, WMEN_SIGN2, MUIA_Menuitem_Checked, TRUE);
-        DoMethod(obj,                 MUIM_Notify, MUIA_Window_MenuAction, WMEN_SIGN2,     data->RA_SIGNATURE,      3, MUIM_Set,      MUIA_Radio_Active, 2);
-        DoMethod(data->RA_SIGNATURE,  MUIM_Notify, MUIA_Radio_Active,      3,              menuStripObject,         4, MUIM_SetUData, WMEN_SIGN3, MUIA_Menuitem_Checked, TRUE);
-        DoMethod(obj,                 MUIM_Notify, MUIA_Window_MenuAction, WMEN_SIGN3,     data->RA_SIGNATURE,      3, MUIM_Set,      MUIA_Radio_Active, 3);
+        // set the notifies for the signature gadget
+        DoMethod(data->CY_SIGNATURE,  MUIM_Notify, MUIA_Cycle_Active,      0,              menuStripObject,         4, MUIM_SetUData, WMEN_SIGN0, MUIA_Menuitem_Checked, TRUE);
+        DoMethod(obj,                 MUIM_Notify, MUIA_Window_MenuAction, WMEN_SIGN0,     data->CY_SIGNATURE,      3, MUIM_Set,      MUIA_Cycle_Active, 0);
+        DoMethod(data->CY_SIGNATURE,  MUIM_Notify, MUIA_Cycle_Active,      1,              menuStripObject,         4, MUIM_SetUData, WMEN_SIGN1, MUIA_Menuitem_Checked, TRUE);
+        DoMethod(obj,                 MUIM_Notify, MUIA_Window_MenuAction, WMEN_SIGN1,     data->CY_SIGNATURE,      3, MUIM_Set,      MUIA_Cycle_Active, 1);
+        DoMethod(data->CY_SIGNATURE,  MUIM_Notify, MUIA_Cycle_Active,      2,              menuStripObject,         4, MUIM_SetUData, WMEN_SIGN2, MUIA_Menuitem_Checked, TRUE);
+        DoMethod(obj,                 MUIM_Notify, MUIA_Window_MenuAction, WMEN_SIGN2,     data->CY_SIGNATURE,      3, MUIM_Set,      MUIA_Cycle_Active, 2);
+        DoMethod(data->CY_SIGNATURE,  MUIM_Notify, MUIA_Cycle_Active,      3,              menuStripObject,         4, MUIM_SetUData, WMEN_SIGN3, MUIA_Menuitem_Checked, TRUE);
+        DoMethod(obj,                 MUIM_Notify, MUIA_Window_MenuAction, WMEN_SIGN3,     data->CY_SIGNATURE,      3, MUIM_Set,      MUIA_Cycle_Active, 3);
 
-        // set the notifies for the security radio gadget
-        DoMethod(data->RA_SECURITY,   MUIM_Notify, MUIA_Radio_Active,      0,              menuStripObject,         4, MUIM_SetUData, WMEN_SECUR0, MUIA_Menuitem_Checked, TRUE);
-        DoMethod(obj,                 MUIM_Notify, MUIA_Window_MenuAction, WMEN_SECUR0,    data->RA_SECURITY,       3, MUIM_Set,      MUIA_Radio_Active, 0);
-        DoMethod(data->RA_SECURITY,   MUIM_Notify, MUIA_Radio_Active,      1,              menuStripObject,         4, MUIM_SetUData, WMEN_SECUR1, MUIA_Menuitem_Checked, TRUE);
-        DoMethod(obj,                 MUIM_Notify, MUIA_Window_MenuAction, WMEN_SECUR1,    data->RA_SECURITY,       3, MUIM_Set,      MUIA_Radio_Active, 1);
-        DoMethod(data->RA_SECURITY,   MUIM_Notify, MUIA_Radio_Active,      2,              menuStripObject,         4, MUIM_SetUData, WMEN_SECUR2, MUIA_Menuitem_Checked, TRUE);
-        DoMethod(obj,                 MUIM_Notify, MUIA_Window_MenuAction, WMEN_SECUR2,    data->RA_SECURITY,       3, MUIM_Set,      MUIA_Radio_Active, 2);
-        DoMethod(data->RA_SECURITY,   MUIM_Notify, MUIA_Radio_Active,      3,              menuStripObject,         4, MUIM_SetUData, WMEN_SECUR3, MUIA_Menuitem_Checked, TRUE);
-        DoMethod(obj,                 MUIM_Notify, MUIA_Window_MenuAction, WMEN_SECUR3,    data->RA_SECURITY,       3, MUIM_Set,      MUIA_Radio_Active, 3);
-        DoMethod(data->RA_SECURITY,   MUIM_Notify, MUIA_Radio_Active,      4,              menuStripObject,         4, MUIM_SetUData, WMEN_SECUR4, MUIA_Menuitem_Checked, TRUE);
-        DoMethod(obj,                 MUIM_Notify, MUIA_Window_MenuAction, WMEN_SECUR4,    data->RA_SECURITY,       3, MUIM_Set,      MUIA_Radio_Active, 4);
+        // set the notifies for the security cycle gadget
+        DoMethod(data->CY_SECURITY,   MUIM_Notify, MUIA_Cycle_Active,      0,              menuStripObject,         4, MUIM_SetUData, WMEN_SECUR0, MUIA_Menuitem_Checked, TRUE);
+        DoMethod(obj,                 MUIM_Notify, MUIA_Window_MenuAction, WMEN_SECUR0,    data->CY_SECURITY,       3, MUIM_Set,      MUIA_Cycle_Active, 0);
+        DoMethod(data->CY_SECURITY,   MUIM_Notify, MUIA_Cycle_Active,      1,              menuStripObject,         4, MUIM_SetUData, WMEN_SECUR1, MUIA_Menuitem_Checked, TRUE);
+        DoMethod(obj,                 MUIM_Notify, MUIA_Window_MenuAction, WMEN_SECUR1,    data->CY_SECURITY,       3, MUIM_Set,      MUIA_Cycle_Active, 1);
+        DoMethod(data->CY_SECURITY,   MUIM_Notify, MUIA_Cycle_Active,      2,              menuStripObject,         4, MUIM_SetUData, WMEN_SECUR2, MUIA_Menuitem_Checked, TRUE);
+        DoMethod(obj,                 MUIM_Notify, MUIA_Window_MenuAction, WMEN_SECUR2,    data->CY_SECURITY,       3, MUIM_Set,      MUIA_Cycle_Active, 2);
+        DoMethod(data->CY_SECURITY,   MUIM_Notify, MUIA_Cycle_Active,      3,              menuStripObject,         4, MUIM_SetUData, WMEN_SECUR3, MUIA_Menuitem_Checked, TRUE);
+        DoMethod(obj,                 MUIM_Notify, MUIA_Window_MenuAction, WMEN_SECUR3,    data->CY_SECURITY,       3, MUIM_Set,      MUIA_Cycle_Active, 3);
+        DoMethod(data->CY_SECURITY,   MUIM_Notify, MUIA_Cycle_Active,      4,              menuStripObject,         4, MUIM_SetUData, WMEN_SECUR4, MUIA_Menuitem_Checked, TRUE);
+        DoMethod(obj,                 MUIM_Notify, MUIA_Window_MenuAction, WMEN_SECUR4,    data->CY_SECURITY,       3, MUIM_Set,      MUIA_Cycle_Active, 4);
 
         // set notify for identity cycle gadget
         DoMethod(data->CY_FROM, MUIM_Notify, MUIA_IdentityChooser_Identity, MUIV_EveryTime, obj, 2, METHOD(IdentityChanged), MUIV_TriggerValue);
@@ -2088,7 +2087,7 @@ OVERLOAD(OM_SET)
 
       case ATTR(Signature):
       {
-        setmutex(data->RA_SIGNATURE, tag->ti_Data);
+        setcycle(data->CY_SIGNATURE, tag->ti_Data);
 
         // make the superMethod call ignore those tags
         tag->ti_Tag = TAG_IGNORE;
@@ -2097,7 +2096,7 @@ OVERLOAD(OM_SET)
 
       case ATTR(Security):
       {
-        setmutex(data->RA_SECURITY, tag->ti_Data);
+        setcycle(data->CY_SECURITY, tag->ti_Data);
 
         // make the superMethod call ignore those tags
         tag->ti_Tag = TAG_IGNORE;
@@ -3349,9 +3348,9 @@ DECLARE(AddSignature) // int signat
     }
   }
 
-  // lets set the signature radiobutton
+  // lets set the signature cycle gadget
   // accordingly to the set signature
-  nnset(data->RA_SIGNATURE, MUIA_Radio_Active, signat);
+  nnset(data->CY_SIGNATURE, MUIA_Cycle_Active, signat);
 
   RETURN(0);
   return 0;
@@ -3986,8 +3985,8 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
     comp.Importance = 1-GetMUICycle(data->CY_IMPORTANCE);
     comp.RequestMDN = GetMUICheck(data->CH_MDN);
-    comp.Signature = GetMUIRadio(data->RA_SIGNATURE);
-    comp.Security = GetMUIRadio(data->RA_SECURITY);
+    comp.Signature = GetMUICycle(data->CY_SIGNATURE);
+    comp.Security = GetMUICycle(data->CY_SECURITY);
     comp.SelSecurity = comp.Security;
 
     if(comp.Security == SEC_DEFAULTS &&
@@ -4564,7 +4563,7 @@ DECLARE(IdentityChanged) // struct UserIdentityNode *uin;
   // in the write window according to the settings in the user identity.
 
   // first we update things in the write window GUI
-  set(data->RA_SIGNATURE, MUIA_Radio_Active, msg->uin->signature);
+  set(data->CY_SIGNATURE, MUIA_Cycle_Active, msg->uin->signature);
   set(data->ST_CC, MUIA_String_Contents, msg->uin->mailCC);
   set(data->ST_BCC, MUIA_String_Contents, msg->uin->mailBCC);
   set(data->ST_REPLYTO, MUIA_String_Contents, msg->uin->mailReplyTo);
