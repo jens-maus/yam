@@ -26,6 +26,8 @@ $URL$
     with the custom mouse pointer of NBalance.mcc this gives an improved visual
     feedback.
   * locale/YAM.cd, locale/german.ct: updated german translation.
+  * YAM_MA.c: added some more NULL pointer checks when distributing the mails to
+    be sent to their corresponding SMTP servers. This hopefully closes #301 again.
 
 2012-05-14 Pär Boberg <pbobbenb@spray.se>
 

@@ -2530,16 +2530,22 @@ BOOL MA_Send(enum SendMailMode mode)
         // eventually stores the identityID in the email structure
         if((email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)) != NULL)
         {
-          struct UserIdentityNode *uin = email->identity;
+          struct UserIdentityNode *uin;
 
-          // create a new mail list if this user identity
-          // hasn't one yet
-          if(uin->sentMailList == NULL)
-            uin->sentMailList = CreateMailList();
+          // make sure the identity exists
+          if((uin = email->identity) != NULL)
+          {
+            // create a new mail list if this user identity
+            // hasn't one yet
+            if(uin->sentMailList == NULL)
+              uin->sentMailList = CreateMailList();
 
-          // remove from global list add the current mail to the list
-          RemoveMailNode(mlist, mnode);
-          AddMailNode(uin->sentMailList, mnode);
+            // remove from global list add the current mail to the list
+            RemoveMailNode(mlist, mnode);
+            AddMailNode(uin->sentMailList, mnode);
+          }
+          else
+            E("no user identity found for mail with subject '%s'", mail->Subject);
 
           // free the ExtendedMail struct
           MA_FreeEMailStruct(email);
@@ -2592,6 +2598,11 @@ BOOL MA_Send(enum SendMailMode mode)
         }
       }
     }
+    else
+    {
+      // delete the mlist mail list as this is not required anymore
+      DeleteMailList(mlist);
+	}
   }
 
   // now we are done
