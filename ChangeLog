@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-05-15 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: update according to the latest changes.
+
 2012-05-15 Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_WR.c, YAM_COg.c, misc: finally implemented the quote position and signature

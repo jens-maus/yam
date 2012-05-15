@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.96 (13.05.2012)
+## version $VER: YAM.catalog 7.97 (15.05.2012)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -7,7 +7,7 @@
 ; Compiled with FlexCat 2.9 PPC (AmigaOS4)
 ; $Id$
 ;
-; based on YAM.cd 5918 2012-05-13
+; based on YAM.cd 5938 2012-05-15
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -4287,23 +4287,6 @@ Imposta una priorità per\n\
 questo messaggio.
 ; Set the priority\n\
 ; of this message.
-;
-MSG_HELP_WR_RA_SIGNATURE
-Quale firma si desidera allegare\n\
-a questo messaggio?
-; Which signature do you want\n\
-; to append to this message?
-;
-MSG_HELP_WR_RA_SECURITY
-Seleziona una di queste opzioni di sicurezza in modo da inviare il\n\
-messaggio come firma PGP oppure codificato.\n\
-Se impostato su "Predefinito" si cercherà di trovare il destinatario\n\
-all'interno della rubrica usando le impostazioni di sicurezza specificate.
-; Select one of these security options to send\n\
-; your message PGP signed or encrypted.\n\
-; "Default" tries to find the recipient\n\
-; in your address book and use the security\n\
-; settings specified there.
 ;
 MSG_HELP_WR_BT_HOLD
 Copia il messaggio creato nella cartella In uscita\n\
@@ -10568,4 +10551,45 @@ Campo indirizzo BCC
 MSG_WR_MREPLYTOADDRFIELD
 Campo indirizzo Rispondi-A
 ; Reply-To address field
+;
+MSG_CO_LISTCOLUMNSETTINGS
+Impostazioni colonna
+; Column settings
+;
+MSG_CO_LOOKFEEL_MAINWINDOW
+Finestra principale
+; Main window
+;
+MSG_CO_LOOKFEEL_TITLE_THEME
+Tema
+; Theme
+;
+MSG_CO_LOOKFEEL_TITLE_INFO
+Informazioni
+; Information
+;
+MSG_HELP_WR_CY_SIGNATURE
+Permette di selezionare quale firma\n\
+visualizzare nell'attuale messaggio\n\
+composto.
+; Allows to select which signature\n\
+; show be used for the currently\n\
+; composed message.
+;
+MSG_WR_PGPSECURITY
+Livello di sicurezza PGP
+; PGP security level
+;
+MSG_HELP_WR_CY_SECURITY
+Permette di selezionare il livello di sicurezza PGP.\n\
+E' possibile scegliere se un messaggio dovrà essere\n\
+firmato, criptato o entrambe le cose.\n\
+L'impostazione "predefinita" cercherà di trovare un\n\
+destinatario nella rubrica usando le impostazioni li\n\
+definite.
+; Allows to select the PGP security level.\n\
+; You can select if a message should be signed,\n\
+; encrypted or both. "Default" tries to find\n\
+; the recipient in your address book and use\n\
+; the settings defined there.
 ;
