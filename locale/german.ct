@@ -8917,13 +8917,13 @@ MSG_CO_CONFIGWARNING_BT
 _Fenster schlieﬂen|*_Abbruch
 ;
 MSG_WR_MCCADDRFIELD
-CC-Adresse
+CC-Adressfeld
 ;
 MSG_WR_MBCCADDRFIELD
-BCC-Adresse
+BCC-Adressefeld
 ;
 MSG_WR_MREPLYTOADDRFIELD
-ReplyTo-Adresse
+Reply-To-Adressfeld
 ;
 MSG_CO_LISTCOLUMNSETTINGS
 Spalteneinstellungen

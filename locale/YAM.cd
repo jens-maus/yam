@@ -7391,7 +7391,7 @@ MSG_WR_MBCCADDRFIELD (2347//)
 BCC address field
 ;
 MSG_WR_MREPLYTOADDRFIELD (2348//)
-ReplyTo address field
+Reply-To address field
 ;
 MSG_CO_LISTCOLUMNSETTINGS (2349//)
 Column settings
