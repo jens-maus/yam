@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-05-15 Thore Böckelmann <tboeckel@gmx.de>
+
+  * ImageCache.c: added some more debug output to the toolbar image cache
+    functions.
+
 2012-05-14 Pär Boberg <pbobbenb@spray.se>
 
   * locale/swedish.ct: updated according to changes.

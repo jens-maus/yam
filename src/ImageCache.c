@@ -726,6 +726,7 @@ struct MUIS_TheBar_Brush **ObtainToolbarImages(const enum TBType toolbar, const 
       toolbarCacheObject = G->AbookToolbarCacheObject;
     break;
   }
+  D(DBF_IMAGE, "cached toolbar object %ld %08lx", toolbar, toolbarCacheObject);
 
   if(toolbarCacheObject != NULL && xget(toolbarCacheObject, MUIA_TheBar_TextOnly) == FALSE)
   {
@@ -744,6 +745,7 @@ struct MUIS_TheBar_Brush **ObtainToolbarImages(const enum TBType toolbar, const 
       break;
     }
   }
+  D(DBF_IMAGE, "cached toolbar images %ld %08lx", toolbar, images);
 
   RETURN(images);
   return images;
