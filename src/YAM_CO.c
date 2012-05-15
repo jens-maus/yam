@@ -1427,6 +1427,9 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     co->LaunchAlways = FALSE;
     co->EmailCache = 10;
     co->AutoSave = 120;
+    co->ShowRcptFieldCC = TRUE;
+    co->ShowRcptFieldBCC = FALSE;
+    co->ShowRcptFieldReplyTo = FALSE;
   }
 
   if(page == cp_ReplyForward || page == cp_AllPages)
@@ -1819,6 +1822,9 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      c1->WriteIndexes                    == c2->WriteIndexes &&
      c1->ExpungeIndexes                  == c2->ExpungeIndexes &&
      c1->AutoSave                        == c2->AutoSave &&
+     c1->ShowRcptFieldCC                 == c2->ShowRcptFieldCC &&
+     c1->ShowRcptFieldBCC                == c2->ShowRcptFieldBCC &&
+     c1->ShowRcptFieldReplyTo            == c2->ShowRcptFieldReplyTo &&
      c1->HideGUIElements                 == c2->HideGUIElements &&
      c1->StackSize                       == c2->StackSize &&
      c1->SizeFormat                      == c2->SizeFormat &&

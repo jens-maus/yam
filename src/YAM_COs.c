@@ -504,19 +504,23 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
     fprintf(fh, "GlobalMailThreads= %s\n", Bool2Txt(co->GlobalMailThreads));
 
     fprintf(fh, "\n[Write]\n");
-    fprintf(fh, "NewIntro         = %s\n", co->NewIntro);
-    fprintf(fh, "Greetings        = %s\n", co->Greetings);
-    fprintf(fh, "WarnSubject      = %s\n", Bool2Txt(co->WarnSubject));
-    fprintf(fh, "EdWrapCol        = %d\n", co->EdWrapCol);
-    fprintf(fh, "EdWrapMode       = %d\n", co->EdWrapMode);
-    fprintf(fh, "Editor           = %s\n", co->Editor);
-    fprintf(fh, "LaunchAlways     = %s\n", Bool2Txt(co->LaunchAlways));
-    fprintf(fh, "EmailCache       = %d\n", co->EmailCache);
-    fprintf(fh, "AutoSave         = %d\n", co->AutoSave);
-    fprintf(fh, "WriteCharset     = %s\n", co->DefaultWriteCharset);
-    fprintf(fh, "FixedFontWrite   = %s\n", Bool2Txt(co->UseFixedFontWrite));
-    fprintf(fh, "TextStylesWrite  = %s\n", Bool2Txt(co->UseTextStylesWrite));
-    fprintf(fh, "TextColorsWrite  = %s\n", Bool2Txt(co->UseTextColorsWrite));
+    fprintf(fh, "NewIntro             = %s\n", co->NewIntro);
+    fprintf(fh, "Greetings            = %s\n", co->Greetings);
+    fprintf(fh, "WarnSubject          = %s\n", Bool2Txt(co->WarnSubject));
+    fprintf(fh, "EdWrapCol            = %d\n", co->EdWrapCol);
+    fprintf(fh, "EdWrapMode           = %d\n", co->EdWrapMode);
+    fprintf(fh, "Editor               = %s\n", co->Editor);
+    fprintf(fh, "LaunchAlways         = %s\n", Bool2Txt(co->LaunchAlways));
+    fprintf(fh, "EmailCache           = %d\n", co->EmailCache);
+    fprintf(fh, "AutoSave             = %d\n", co->AutoSave);
+    fprintf(fh, "WriteCharset         = %s\n", co->DefaultWriteCharset);
+    fprintf(fh, "FixedFontWrite       = %s\n", Bool2Txt(co->UseFixedFontWrite));
+    fprintf(fh, "TextStylesWrite      = %s\n", Bool2Txt(co->UseTextStylesWrite));
+    fprintf(fh, "TextColorsWrite      = %s\n", Bool2Txt(co->UseTextColorsWrite));
+    fprintf(fh, "ShowRcptFieldCC      = %s\n", Bool2Txt(co->ShowRcptFieldCC));
+    fprintf(fh, "ShowRcptFieldBCC     = %s\n", Bool2Txt(co->ShowRcptFieldBCC));
+    fprintf(fh, "ShowRcptFieldReplyTo = %s\n", Bool2Txt(co->ShowRcptFieldReplyTo));
+
 
     fprintf(fh, "\n[Reply/Forward]\n");
     fprintf(fh, "ReplyHello       = %s\n", co->ReplyHello);
@@ -1250,6 +1254,9 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
           else if(stricmp(buf, "FixedFontWrite") == 0)           co->UseFixedFontWrite = Txt2Bool(value);
           else if(stricmp(buf, "TextStylesWrite") == 0)          co->UseTextStylesWrite = Txt2Bool(value);
           else if(stricmp(buf, "TextColorsWrite") == 0)          co->UseTextColorsWrite = Txt2Bool(value);
+          else if(stricmp(buf, "ShowRcptFieldCC") == 0)          co->ShowRcptFieldCC = Txt2Bool(value);
+          else if(stricmp(buf, "ShowRcptFieldBCC") == 0)         co->ShowRcptFieldBCC = Txt2Bool(value);
+          else if(stricmp(buf, "ShowRcptFieldReplyTo") == 0)     co->ShowRcptFieldReplyTo = Txt2Bool(value);
 
 /* Reply/Forward */
           else if(stricmp(buf, "ReplyHello") == 0)               strlcpy(co->ReplyHello, value2, sizeof(co->ReplyHello));

@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-05-15 Jens Langner <Jens.Langner@light-speed.de>
+
+  * mui/WriteWindow.c, YAM_COs.c, YAM_CO.c: when manually switching the recipient
+    fields on/off YAM will now permanently remember the states of them in the
+    YAM configuration so that when opening a new write window the defaults for
+    showing this fields will be respected.
+
 2012-05-15 Thore Böckelmann <tboeckel@gmx.de>
 
   * ImageCache.c: added some more debug output to the toolbar image cache

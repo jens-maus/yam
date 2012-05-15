@@ -537,6 +537,9 @@ struct Config
   BOOL  GlobalMailThreads;
   BOOL  ShowFilterStats;
   BOOL  ConfirmRemoveAttachments;
+  BOOL  ShowRcptFieldCC;
+  BOOL  ShowRcptFieldBCC;
+  BOOL  ShowRcptFieldReplyTo;
 
   struct MUI_PenSpec   ColoredText;
   struct MUI_PenSpec   Color1stLevel;

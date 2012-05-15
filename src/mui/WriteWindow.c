@@ -53,6 +53,7 @@
 #include "YAM_addressbookEntry.h"
 #include "YAM_config.h"
 #include "YAM_configGUI.h"
+#include "YAM_configFile.h"
 #include "YAM_error.h"
 #include "YAM_global.h"
 #include "YAM_glossarydisplay.h"
@@ -1210,9 +1211,9 @@ OVERLOAD(OM_NEW)
           MenuChild, Menuitem(tr(MSG_WR_MSWITCH_MSG), "1", TRUE, FALSE, WMEN_SWITCH1),
           MenuChild, Menuitem(tr(MSG_WR_MSWITCH_ATT), "2", TRUE, FALSE, WMEN_SWITCH2),
           MenuChild, Menuitem(tr(MSG_WR_MSWITCH_OPT), "3", TRUE, FALSE, WMEN_SWITCH3),
-          MenuChild, data->MN_CC = MenuitemCheck(tr(MSG_WR_MCCADDRFIELD), "4", TRUE, FALSE, TRUE, 0, WMEN_CC),
-          MenuChild, data->MN_BCC = MenuitemCheck(tr(MSG_WR_MBCCADDRFIELD), "5", TRUE, FALSE, TRUE, 0, WMEN_BCC),
-          MenuChild, data->MN_REPLYTO = MenuitemCheck(tr(MSG_WR_MREPLYTOADDRFIELD),"6", TRUE, FALSE, TRUE, 0, WMEN_REPLYTO),
+          MenuChild, data->MN_CC = MenuitemCheck(tr(MSG_WR_MCCADDRFIELD), "4", TRUE, C->ShowRcptFieldCC, TRUE, 0, WMEN_CC),
+          MenuChild, data->MN_BCC = MenuitemCheck(tr(MSG_WR_MBCCADDRFIELD), "5", TRUE, C->ShowRcptFieldBCC, TRUE, 0, WMEN_BCC),
+          MenuChild, data->MN_REPLYTO = MenuitemCheck(tr(MSG_WR_MREPLYTOADDRFIELD),"6", TRUE, C->ShowRcptFieldReplyTo, TRUE, 0, WMEN_REPLYTO),
         End,
         MenuChild, MenuObject,
           MUIA_Menu_Title, tr(MSG_Options),
@@ -1559,9 +1560,9 @@ OVERLOAD(OM_NEW)
         DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SWITCH1,    data->RG_PAGE, 3, MUIM_Set, MUIA_Group_ActivePage, 0);
         DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SWITCH2,    data->RG_PAGE, 3, MUIM_Set, MUIA_Group_ActivePage, 1);
         DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SWITCH3,    data->RG_PAGE, 3, MUIM_Set, MUIA_Group_ActivePage, 2);
-        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_CC,         obj, 2, METHOD(ToggleRecipientObject), MUIV_WriteWindow_RcptType_CC);
-        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_BCC,        obj, 2, METHOD(ToggleRecipientObject), MUIV_WriteWindow_RcptType_BCC);
-        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_REPLYTO,    obj, 2, METHOD(ToggleRecipientObject), MUIV_WriteWindow_RcptType_ReplyTo);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_CC,         obj, 2, METHOD(MenuToggleRecipientObject), MUIV_WriteWindow_RcptType_CC);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_BCC,        obj, 2, METHOD(MenuToggleRecipientObject), MUIV_WriteWindow_RcptType_BCC);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_REPLYTO,    obj, 2, METHOD(MenuToggleRecipientObject), MUIV_WriteWindow_RcptType_ReplyTo);
         DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_EMOT0,      data->TE_EDIT, 3, MUIM_TextEditor_InsertText, ":-)", MUIV_TextEditor_InsertText_Cursor);
         DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_EMOT1,      data->TE_EDIT, 3, MUIM_TextEditor_InsertText, ":-|", MUIV_TextEditor_InsertText_Cursor);
         DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_EMOT2,      data->TE_EDIT, 3, MUIM_TextEditor_InsertText, ":-(", MUIV_TextEditor_InsertText_Cursor);
@@ -1696,10 +1697,14 @@ OVERLOAD(OM_NEW)
         // set notify for identity cycle gadget
         DoMethod(data->CY_FROM, MUIM_Notify, MUIA_IdentityChooser_Identity, MUIV_EveryTime, obj, 2, METHOD(IdentityChanged), MUIV_TriggerValue);
 
-        // hide all optional recipient string object per default
-        DoMethod(obj, METHOD(HideRecipientObject), MUIV_WriteWindow_RcptType_CC);
-        DoMethod(obj, METHOD(HideRecipientObject), MUIV_WriteWindow_RcptType_BCC);
-        DoMethod(obj, METHOD(HideRecipientObject), MUIV_WriteWindow_RcptType_ReplyTo);
+        // hide optional recipient string object depending on their
+        // defaults
+        if(C->ShowRcptFieldCC == FALSE)
+          DoMethod(obj, METHOD(HideRecipientObject), MUIV_WriteWindow_RcptType_CC);
+        if(C->ShowRcptFieldBCC == FALSE)
+          DoMethod(obj, METHOD(HideRecipientObject), MUIV_WriteWindow_RcptType_BCC);
+        if(C->ShowRcptFieldReplyTo == FALSE)
+          DoMethod(obj, METHOD(HideRecipientObject), MUIV_WriteWindow_RcptType_ReplyTo);
 
         // make sure update the IdentityChooser status via the identitychanged method
         DoMethod(obj, METHOD(IdentityChanged), uin);
@@ -4767,12 +4772,13 @@ DECLARE(ShowRecipientObject) // enum RcptType rtype
 }
 
 ///
-/// DECLARE(ToggleRecipientObject)
+/// DECLARE(MenuToggleRecipientObject)
 //
-DECLARE(ToggleRecipientObject) // enum RcptType rtype
+DECLARE(MenuToggleRecipientObject) // enum RcptType rtype
 {
   GETDATA;
   BOOL show = TRUE;
+  BOOL saveConfig = FALSE;
   ENTER();
 
   switch(msg->rtype)
@@ -4782,15 +4788,66 @@ DECLARE(ToggleRecipientObject) // enum RcptType rtype
     break;
 
     case MUIV_WriteWindow_RcptType_CC:
+    {
       show = (data->ccRcptHided == TRUE);
+
+      // if the user used the menuitem we set a new default
+      // in the configuration
+      if(C->ShowRcptFieldCC != show)
+      {
+        // save new value to global config
+        C->ShowRcptFieldCC = show;
+
+        // also save it to the temp CE struct in
+        // case the config window exists (is open)
+        if(G->CO != NULL && CE != NULL)
+          CE->ShowRcptFieldCC = show;
+
+        saveConfig = TRUE;
+      }
+    }
     break;
 
     case MUIV_WriteWindow_RcptType_BCC:
+    {
       show = (data->bccRcptHided == TRUE);
+
+      // if the user used the menuitem we set a new default
+      // in the configuration
+      if(C->ShowRcptFieldBCC != show)
+      {
+        // save new value to global config
+        C->ShowRcptFieldBCC = show;
+
+        // also save it to the temp CE struct in
+        // case the config window exists (is open)
+        if(G->CO != NULL && CE != NULL)
+          CE->ShowRcptFieldBCC = show;
+
+        saveConfig = TRUE;
+      }
+    }
     break;
 
     case MUIV_WriteWindow_RcptType_ReplyTo:
+    {
       show = (data->replyToRcptHided == TRUE);
+
+      // if the user used the menuitem we set a new default
+      // in the configuration
+      if(C->ShowRcptFieldReplyTo != show)
+      {
+        // save new value to global config
+        C->ShowRcptFieldReplyTo = show;
+
+        // also save it to the temp CE struct in
+        // case the config window exists (is open)
+        if(G->CO != NULL && CE != NULL)
+          CE->ShowRcptFieldReplyTo = show;
+
+        saveConfig = TRUE;
+      }
+    }
     break;
 
     case MUIV_WriteWindow_RcptType_To:
@@ -4798,10 +4855,16 @@ DECLARE(ToggleRecipientObject) // enum RcptType rtype
     break;
   }
 
+  // make sure to show/hide the recipient object
   if(show == TRUE)
     DoMethod(obj, METHOD(ShowRecipientObject), msg->rtype);
   else
     DoMethod(obj, METHOD(HideRecipientObject), msg->rtype);
+
+  // then we save the new default state for the
+  // manually hided/shown recipient object
+  if(saveConfig == TRUE)
+    CO_SaveConfig(C, G->CO_PrefsFile);
 
   RETURN(0);
   return 0;
