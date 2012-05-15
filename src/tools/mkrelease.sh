@@ -31,13 +31,13 @@
 # invoke this script as "./mkrelease os4" to build the release archives for AmigaOS4.x
 
 case $1 in
-    os3)         yamsys="AmigaOS3";;
-    os4)         yamsys="AmigaOS4";;
-    mos)         yamsys="MorphOS";;
-    aros-i386)   yamsys="AROS-i386";;
-    aros-ppc)    yamsys="AROS-ppc";;
-    aros-x86_64) yamsys="AROS-x86_64";;
-    aros-arm)    yamsys="AROS-arm";;
+    os3)         yamsys="AmigaOS3"; yamicons="os3";;
+    os4)         yamsys="AmigaOS4"; yamicons="os4";;
+    mos)         yamsys="MorphOS"; yamicons="mos";;
+    aros-i386)   yamsys="AROS-i386"; yamicons="aros";;
+    aros-ppc)    yamsys="AROS-ppc"; yamicons="aros";;
+    aros-x86_64) yamsys="AROS-x86_64"; yamicons="aros";;
+    aros-arm)    yamsys="AROS-arm"; yamicons="aros";;
 esac
 echo "  MK $yamsys release"
 
@@ -54,10 +54,10 @@ make OS=$1 DEBUG= DEVFLAGS= all
 rm -rf "release/$yamsys"
 mkdir -p "release/$yamsys"
 mkdir -p "release/$yamsys/YAM $yamver"
-cp ../icons/$1/YAM_directory.info "release/$yamsys/YAM $yamver.info"
+cp ../icons/$yamicons/YAM_directory.info "release/$yamsys/YAM $yamver.info"
 echo "  MK $yamsys/Catalogs"
 mkdir -p "release/$yamsys/YAM $yamver/Catalogs"
-cp ../icons/$1/Catalogs_directory.info "release/$yamsys/YAM $yamver/Catalogs.info"
+cp ../icons/$yamicons/Catalogs_directory.info "release/$yamsys/YAM $yamver/Catalogs.info"
 cp ../locale/YAM.cd "release/$yamsys/YAM $yamver/Catalogs/YAM.cd"
 for language in czech dutch english-british french german greek italian polish spanish swedish turkish; do
 	mkdir -p "release/$yamsys/YAM $yamver/Catalogs/$language"
@@ -65,41 +65,41 @@ for language in czech dutch english-british french german greek italian polish s
 done
 echo "  MK $yamsys/Docs"
 mkdir -p "release/$yamsys/YAM $yamver/Docs"
-cp ../icons/$1/Docs_directory.info "release/$yamsys/YAM $yamver/Docs.info"
+cp ../icons/$yamicons/Docs_directory.info "release/$yamsys/YAM $yamver/Docs.info"
 for language in english french german spanish; do
   cp ../doc/YAM_$language.guide "release/$yamsys/YAM $yamver/Docs/YAM_$language.guide"
-  cp ../icons/$1/guide.info "release/$yamsys/YAM $yamver/Docs/YAM_$language.guide.info"
+  cp ../icons/$yamicons/guide.info "release/$yamsys/YAM $yamver/Docs/YAM_$language.guide.info"
 done
 cp ../AUTHORS "release/$yamsys/YAM $yamver/Docs/AUTHORS"
-cp ../icons/$1/Docs_AUTHORS.info "release/$yamsys/YAM $yamver/Docs/AUTHORS.info"
+cp ../icons/$yamicons/Docs_AUTHORS.info "release/$yamsys/YAM $yamver/Docs/AUTHORS.info"
 cp ../ChangeLog "release/$yamsys/YAM $yamver/Docs/ChangeLog"
-cp ../icons/$1/Docs_ChangeLog.info "release/$yamsys/YAM $yamver/Docs/ChangeLog.info"
+cp ../icons/$yamicons/Docs_ChangeLog.info "release/$yamsys/YAM $yamver/Docs/ChangeLog.info"
 cp ../COPYING "release/$yamsys/YAM $yamver/Docs/COPYING"
-cp ../icons/$1/Docs_COPYING.info "release/$yamsys/YAM $yamver/Docs/COPYING.info"
+cp ../icons/$yamicons/Docs_COPYING.info "release/$yamsys/YAM $yamver/Docs/COPYING.info"
 echo "  MK $yamsys/Gallery"
 mkdir -p "release/$yamsys/YAM $yamver/Gallery"
-cp ../icons/$1/Gallery_directory.info "release/$yamsys/YAM $yamver/Gallery.info"
+cp ../icons/$yamicons/Gallery_directory.info "release/$yamsys/YAM $yamver/Gallery.info"
 cp ../doc/ReadMe_gallery "release/$yamsys/YAM $yamver/Gallery/ReadMe"
-cp ../icons/$1/ReadMe.info "release/$yamsys/YAM $yamver/Gallery/ReadMe.info"
+cp ../icons/$yamicons/ReadMe.info "release/$yamsys/YAM $yamver/Gallery/ReadMe.info"
 echo "  MK $yamsys/Install"
 mkdir -p "release/$yamsys/YAM $yamver/Install"
 svn --force export "https://svn.yam.ch/svn/yam/distribution/$yamsys/YAM%20$yamver/Install/" "release/$yamsys/YAM $yamver/Install/"
-cp ../icons/$1/Install_directory.info "release/$yamsys/YAM $yamver/Install.info"
+cp ../icons/$yamicons/Install_directory.info "release/$yamsys/YAM $yamver/Install.info"
 cp ../doc/Install-YAM "release/$yamsys/YAM $yamver/Install/Install-YAM"
-cp ../icons/$1/Install-YAM.info "release/$yamsys/YAM $yamver/Install/Install-YAM.info"
+cp ../icons/$yamicons/Install-YAM.info "release/$yamsys/YAM $yamver/Install/Install-YAM.info"
 echo "  MK $yamsys/Rexx"
 mkdir -p "release/$yamsys/YAM $yamver/Rexx"
 cp -r ../rexx/* "release/$yamsys/YAM $yamver/Rexx/"
-cp ../icons/$1/Rexx_directory.info "release/$yamsys/YAM $yamver/Rexx.info"
+cp ../icons/$yamicons/Rexx_directory.info "release/$yamsys/YAM $yamver/Rexx.info"
 echo "  MK $yamsys/Themes"
 mkdir -p "release/$yamsys/YAM $yamver/Themes"
 cp -r ../themes/* "release/$yamsys/YAM $yamver/Themes/"
-cp ../icons/$1/Themes_directory.info "release/$yamsys/YAM $yamver/Themes.info"
-cp ../icons/$1/Themes_ReadMe.info "release/$yamsys/YAM $yamver/Themes/ReadMe.info"
+cp ../icons/$yamicons/Themes_directory.info "release/$yamsys/YAM $yamver/Themes.info"
+cp ../icons/$yamicons/Themes_ReadMe.info "release/$yamsys/YAM $yamver/Themes/ReadMe.info"
 cp YAM.$1 "release/$yamsys/YAM $yamver/YAM"
-cp ../icons/$1/YAM.info "release/$yamsys/YAM $yamver/YAM.info"
+cp ../icons/$yamicons/YAM.info "release/$yamsys/YAM $yamver/YAM.info"
 cp ../doc/ReadMe "release/$yamsys/YAM $yamver/ReadMe"
-cp ../icons/$1/ReadMe.info "release/$yamsys/YAM $yamver/ReadMe.info"
+cp ../icons/$yamicons/ReadMe.info "release/$yamsys/YAM $yamver/ReadMe.info"
 cp ../doc/.addressbook "release/$yamsys/YAM $yamver/.addressbook"
 cp ../doc/.taglines "release/$yamsys/YAM $yamver/.taglines"
 echo "  MK YAM$yamarcver-$yamsys.lha"
