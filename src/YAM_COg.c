@@ -3987,6 +3987,7 @@ Object *CO_PageMixed(struct CO_ClassData *data)
 /// CO_PageLookFeel
 Object *CO_PageLookFeel(struct CO_ClassData *data)
 {
+  static const char *rtitles[3];
   static const char *sizef[6];
   static const char *infob[5];
   static const char *folderf[6];
@@ -3994,6 +3995,10 @@ Object *CO_PageLookFeel(struct CO_ClassData *data)
   Object *popButton;
 
   ENTER();
+
+  rtitles[0] = tr(MSG_CO_LOOKFEEL_THEMES);
+  rtitles[1] = tr(MSG_CO_LOOKFEEL_MAINWINDOW);
+  rtitles[2] = NULL;
 
   sizef[0] = tr(MSG_CO_SIZEFORMAT01);
   sizef[1] = tr(MSG_CO_SIZEFORMAT02);
@@ -4020,132 +4025,158 @@ Object *CO_PageLookFeel(struct CO_ClassData *data)
 
           ConfigPageHeaderObject("config_lookfeel_big", G->theme.configImages[CI_LOOKFEELBIG], tr(MSG_CO_LOOKFEEL_TITLE), tr(MSG_CO_LOOKFEEL_SUMMARY)),
 
-          Child, ScrollgroupObject,
-            MUIA_Scrollgroup_FreeHoriz, FALSE,
-            MUIA_Scrollgroup_AutoBars, TRUE,
-            MUIA_Scrollgroup_Contents, VGroupV,
+          Child, RegisterGroup(rtitles),
+            MUIA_CycleChain, TRUE,
 
-              Child, data->GUI.GR_THEMES = ThemeListGroupObject,
-                GroupFrameT(tr(MSG_CO_LOOKFEEL_THEMES)),
-                MUIA_VertWeight, 70,
+            // Themes settings
+            Child, ScrollgroupObject,
+              MUIA_Scrollgroup_FreeHoriz, FALSE,
+              MUIA_Scrollgroup_AutoBars, TRUE,
+              MUIA_Scrollgroup_Contents, VGroupV,
+
+                Child, data->GUI.GR_THEMES = ThemeListGroupObject,
+                End,
+
               End,
+            End,
 
-              Child, ColGroup(2), GroupFrameT(tr(MSG_CO_INFOBAR)),
-                Child, Label1(tr(MSG_CO_INFOBARPOS)),
-                Child, data->GUI.CY_INFOBAR = MakeCycle(infob, tr(MSG_CO_INFOBARPOS)),
+            // Main window settings
+            Child, ScrollgroupObject,
+              MUIA_Scrollgroup_FreeHoriz, FALSE,
+              MUIA_Scrollgroup_AutoBars, TRUE,
+              MUIA_Scrollgroup_Contents, VGroupV,
 
-                Child, Label2(tr(MSG_CO_FOLDERLABEL)),
-                Child, data->GUI.PO_INFOBARTXT = MakeVarPop(&data->GUI.ST_INFOBARTXT, &popButton, PHM_MAILSTATS, SIZE_DEFAULT, tr(MSG_CO_FOLDERLABEL)),
-              End,
+                // List column settings
+                Child, HGroup, GroupFrameT(tr(MSG_CO_LISTCOLUMNSETTINGS)),
 
-              Child, VGroup, GroupFrameT(tr(MSG_CO_GENLISTCFG)),
-                Child, HGroup,
+                  // Folder list columns
+                  Child, VGroup,
+
+                    Child, HBarT(tr(MSG_FolderList)), End,
+
+                    Child, ColGroup(3),
+                      MUIA_ShortHelp, tr(MSG_HELP_CO_CG_FO),
+
+                      Child, MakeStaticCheck(),
+                      Child, data->GUI.CY_FOLDERINFO = MakeCycle(folderf, tr(MSG_CO_FOLDERLABEL)),
+                      Child, HSpace(0),
+
+                      Child, data->GUI.CH_FCOLS[1] = MakeCheck(""),
+                      Child, LLabel(tr(MSG_Total)),
+                      Child, HSpace(0),
+
+                      Child, data->GUI.CH_FCOLS[2] = MakeCheck(""),
+                      Child, LLabel(tr(MSG_Unread)),
+                      Child, HSpace(0),
+
+                      Child, data->GUI.CH_FCOLS[3] = MakeCheck(""),
+                      Child, LLabel(tr(MSG_New)),
+                      Child, HSpace(0),
+
+                      Child, data->GUI.CH_FCOLS[4] = MakeCheck(""),
+                      Child, LLabel(tr(MSG_Size)),
+                      Child, HSpace(0),
+
+                      Child, data->GUI.CH_FCNTMENU = MakeCheck(""),
+                      Child, LLabel(tr(MSG_CO_CONTEXTMENU)),
+                      Child, HSpace(0),
+
+                    End,
+
+                    Child, HVSpace,
+
+                  End,
+
+                  Child, HSpace(8),
+
+                  // Message list columns
+                  Child, VGroup,
+
+                    Child, HBarT(tr(MSG_MessageList)), End,
+
+                    Child, ColGroup(3),
+                      MUIA_ShortHelp, tr(MSG_HELP_CO_CG_MA),
+
+                      Child, MakeStaticCheck(),
+                      Child, LLabel(tr(MSG_Status)),
+                      Child, HSpace(0),
+
+                      Child, data->GUI.CH_MCOLS[1] = MakeCheck(""),
+                      Child, LLabel(tr(MSG_SenderRecpt)),
+                      Child, HSpace(0),
+
+                      Child, data->GUI.CH_MCOLS[2] = MakeCheck(""),
+                      Child, LLabel(tr(MSG_ReturnAddress)),
+                      Child, HSpace(0),
+
+                      Child, data->GUI.CH_MCOLS[3] = MakeCheck(""),
+                      Child, LLabel(tr(MSG_Subject)),
+                      Child, HSpace(0),
+
+                      Child, data->GUI.CH_MCOLS[4] = MakeCheck(""),
+                      Child, LLabel(tr(MSG_MessageDate)),
+                      Child, HSpace(0),
+
+                      Child, data->GUI.CH_MCOLS[5] = MakeCheck(""),
+                      Child, LLabel(tr(MSG_Size)),
+                      Child, HSpace(0),
+
+                      Child, data->GUI.CH_MCOLS[6] = MakeCheck(""),
+                      Child, LLabel(tr(MSG_Filename)),
+                      Child, HSpace(0),
+
+                      Child, data->GUI.CH_MCOLS[7] = MakeCheck(""),
+                      Child, LLabel(tr(MSG_CO_DATE_SNTRCVD)),
+                      Child, HSpace(0),
+
+                      Child, data->GUI.CH_MCNTMENU = MakeCheck(""),
+                      Child, LLabel(tr(MSG_CO_CONTEXTMENU)),
+                      Child, HSpace(0),
+                    End,
+                  End,
+                End,
+
+                // InfoBar settings
+                Child, ColGroup(2), GroupFrameT(tr(MSG_CO_INFOBAR)),
+                  Child, Label1(tr(MSG_CO_INFOBARPOS)),
+                  Child, data->GUI.CY_INFOBAR = MakeCycle(infob, tr(MSG_CO_INFOBARPOS)),
+
+                  Child, Label2(tr(MSG_CO_FOLDERLABEL)),
+                  Child, data->GUI.PO_INFOBARTXT = MakeVarPop(&data->GUI.ST_INFOBARTXT, &popButton, PHM_MAILSTATS, SIZE_DEFAULT, tr(MSG_CO_FOLDERLABEL)),
+                End,
+
+                Child, ColGroup(2),
+                  GroupFrameT(tr(MSG_CO_GENLISTCFG)),
+
                   Child, Label1(tr(MSG_CO_SIZEFORMAT)),
                   Child, data->GUI.CY_SIZE = MakeCycle(sizef, tr(MSG_CO_SIZEFORMAT)),
-                End,
-                Child, MakeCheckGroup(&data->GUI.CH_EMBEDDEDREADPANE, tr(MSG_CO_SHOWEMBEDDEDREADPANE)),
-                Child, MakeCheckGroup(&data->GUI.CH_QUICKSEARCHBAR, tr(MSG_CO_QUICKSEARCHBAR)),
-              End,
 
-              Child, HGroup, GroupFrameT(tr(MSG_CO_FIELDLISTCFG)),
+                  Child, HSpace(1),
+                  Child, MakeCheckGroup(&data->GUI.CH_EMBEDDEDREADPANE, tr(MSG_CO_SHOWEMBEDDEDREADPANE)),
 
-                Child, VGroup,
-                  Child, RectangleObject,
-                    MUIA_VertWeight,          0,
-                    MUIA_Rectangle_HBar,      TRUE,
-                    MUIA_Rectangle_BarTitle,  tr(MSG_FolderList),
-                  End,
-                  Child, ColGroup(3),
-                    MUIA_ShortHelp, tr(MSG_HELP_CO_CG_FO),
+                  Child, HSpace(1),
+                  Child, MakeCheckGroup(&data->GUI.CH_QUICKSEARCHBAR, tr(MSG_CO_QUICKSEARCHBAR)),
 
-                    Child, MakeStaticCheck(),
-                    Child, data->GUI.CY_FOLDERINFO = MakeCycle(folderf, tr(MSG_CO_FOLDERLABEL)),
-                    Child, HSpace(0),
+                  Child, HSpace(1),
+                  Child, MakeCheckGroup(&data->GUI.CH_FIXFLIST, tr(MSG_CO_FixedFontList)),
 
-                    Child, data->GUI.CH_FCOLS[1] = MakeCheck(""),
-                    Child, LLabel(tr(MSG_Total)),
-                    Child, HSpace(0),
+                  Child, HSpace(1),
+                  Child, MakeCheckGroup(&data->GUI.CH_BEAT, tr(MSG_CO_SwatchBeat)),
 
-                    Child, data->GUI.CH_FCOLS[2] = MakeCheck(""),
-                    Child, LLabel(tr(MSG_Unread)),
-                    Child, HSpace(0),
+                  Child, HSpace(1),
+                  Child, MakeCheckGroup(&data->GUI.CH_RELDATETIME, tr(MSG_CO_RELDATETIME)),
 
-                    Child, data->GUI.CH_FCOLS[3] = MakeCheck(""),
-                    Child, LLabel(tr(MSG_New)),
-                    Child, HSpace(0),
+                  Child, HSpace(1),
+                  Child, MakeCheckGroup(&data->GUI.CH_ABOOKLOOKUP, tr(MSG_CO_ABOOKLOOKUP)),
 
-                    Child, data->GUI.CH_FCOLS[4] = MakeCheck(""),
-                    Child, LLabel(tr(MSG_Size)),
-                    Child, HSpace(0),
+                  Child, HSpace(1),
+                  Child, MakeCheckGroup(&data->GUI.CH_FOLDERDBLCLICK, tr(MSG_CO_FOLDERDBLCLICK)),
 
-                    Child, data->GUI.CH_FCNTMENU = MakeCheck(""),
-                    Child, LLabel(tr(MSG_CO_CONTEXTMENU)),
-                    Child, HSpace(0),
-
-                  End,
-                  Child, HVSpace,
                 End,
 
-                Child, HSpace(8),
+                Child, HVSpace,
 
-                Child, VGroup,
-                  Child, RectangleObject,
-                    MUIA_VertWeight,          0,
-                    MUIA_Rectangle_HBar,      TRUE,
-                    MUIA_Rectangle_BarTitle,  tr(MSG_MessageList),
-                  End,
-                  Child, ColGroup(3),
-                    MUIA_ShortHelp, tr(MSG_HELP_CO_CG_MA),
-
-                    Child, MakeStaticCheck(),
-                    Child, LLabel(tr(MSG_Status)),
-                    Child, HSpace(0),
-
-                    Child, data->GUI.CH_MCOLS[1] = MakeCheck(""),
-                    Child, LLabel(tr(MSG_SenderRecpt)),
-                    Child, HSpace(0),
-
-                    Child, data->GUI.CH_MCOLS[2] = MakeCheck(""),
-                    Child, LLabel(tr(MSG_ReturnAddress)),
-                    Child, HSpace(0),
-
-                    Child, data->GUI.CH_MCOLS[3] = MakeCheck(""),
-                    Child, LLabel(tr(MSG_Subject)),
-                    Child, HSpace(0),
-
-                    Child, data->GUI.CH_MCOLS[4] = MakeCheck(""),
-                    Child, LLabel(tr(MSG_MessageDate)),
-                    Child, HSpace(0),
-
-                    Child, data->GUI.CH_MCOLS[5] = MakeCheck(""),
-                    Child, LLabel(tr(MSG_Size)),
-                    Child, HSpace(0),
-
-                    Child, data->GUI.CH_MCOLS[6] = MakeCheck(""),
-                    Child, LLabel(tr(MSG_Filename)),
-                    Child, HSpace(0),
-
-                    Child, data->GUI.CH_MCOLS[7] = MakeCheck(""),
-                    Child, LLabel(tr(MSG_CO_DATE_SNTRCVD)),
-                    Child, HSpace(0),
-
-                    Child, data->GUI.CH_MCNTMENU = MakeCheck(""),
-                    Child, LLabel(tr(MSG_CO_CONTEXTMENU)),
-                    Child, HSpace(0),
-                  End,
-                End,
               End,
-
-              Child, VGroup, GroupFrameT(tr(MSG_CO_GENLISTCFG)),
-                Child, MakeCheckGroup(&data->GUI.CH_FIXFLIST, tr(MSG_CO_FixedFontList)),
-                Child, MakeCheckGroup(&data->GUI.CH_BEAT, tr(MSG_CO_SwatchBeat)),
-                Child, MakeCheckGroup(&data->GUI.CH_RELDATETIME, tr(MSG_CO_RELDATETIME)),
-                Child, MakeCheckGroup(&data->GUI.CH_ABOOKLOOKUP, tr(MSG_CO_ABOOKLOOKUP)),
-                Child, MakeCheckGroup(&data->GUI.CH_FOLDERDBLCLICK, tr(MSG_CO_FOLDERDBLCLICK)),
-              End,
-
-              Child, HVSpace,
-
             End,
           End,
 

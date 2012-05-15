@@ -7,6 +7,8 @@ $URL$
 
 2012-05-15 Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_COg.c: changed layout of look&feel config page by adding a register group
+    to separate between theme and main window settings.
   * mui/WriteWindow.c, YAM_COs.c, YAM_CO.c: when manually switching the recipient
     fields on/off YAM will now permanently remember the states of them in the
     YAM configuration so that when opening a new write window the defaults for

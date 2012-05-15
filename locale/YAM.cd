@@ -7393,3 +7393,15 @@ Bcc address field
 MSG_WR_MREPLYTOADDRFIELD (2348//)
 Reply-To address field
 ;
+MSG_CO_LISTCOLUMNSETTINGS (2349//)
+Column settings
+;
+MSG_CO_LOOKFEEL_MAINWINDOW (2350//)
+Main window
+;
+MSG_CO_LOOKFEEL_TITLE_THEME (2351//)
+Theme
+;
+MSG_CO_LOOKFEEL_TITLE_INFO (2352//)
+Information
+;

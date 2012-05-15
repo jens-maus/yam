@@ -34,6 +34,7 @@
 #include <string.h>
 #include <proto/dos.h>
 #include <proto/muimaster.h>
+#include <mui/NBalance_mcc.h>
 #include <mui/NList_mcc.h>
 #include <mui/NListview_mcc.h>
 
@@ -77,14 +78,18 @@ OVERLOAD(OM_NEW)
   ENTER();
 
   if((obj = DoSuperNew(cl, obj,
+          GroupSpacing(0),
           MUIA_Group_Horiz,       TRUE,
           MUIA_ContextMenu,       FALSE,
 
           Child, VGroup,
-            MUIA_FixWidth, 100,
+            MUIA_HorizWeight, 30,
+
+            Child, HBarT(tr(MSG_CO_LOOKFEEL_TITLE_THEME)), End,
 
             Child, NListviewObject,
               MUIA_CycleChain, TRUE,
+              MUIA_Weight, 60,
               MUIA_NListview_NList, themeListObject = ThemeListObject,
               End,
             End,
@@ -92,7 +97,14 @@ OVERLOAD(OM_NEW)
             Child, activateButtonObject = MakeButton(tr(MSG_CO_THEME_ACTIVATE)),
           End,
 
+          Child, NBalanceObject,
+            MUIA_Balance_Quiet, TRUE,
+          End,
+
           Child, VGroup,
+            GroupFrameT(tr(MSG_CO_LOOKFEEL_TITLE_INFO)),
+            MUIA_HorizWeight, 70,
+
             Child, themeTextObject = TextObject,
               MUIA_Text_PreParse, "\033b\033c",
             End,
@@ -151,6 +163,7 @@ OVERLOAD(OM_NEW)
                 MUIA_Text_SetMin, TRUE,
               End,
             End,
+
           End,
 
         TAG_MORE, inittags(msg))) != NULL)
