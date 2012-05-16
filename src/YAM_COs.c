@@ -291,53 +291,47 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
 
     // we iterate through our mail server list and ouput the SMTP servers in it
     i = 0;
-    IterateList(&co->mailServerList, curNode)
+    IterateList(&co->smtpServerList, curNode)
     {
       struct MailServerNode *msn = (struct MailServerNode *)curNode;
 
-      if(msn->type == MST_SMTP)
-      {
-        fprintf(fh, "SMTP%02d.ID                = %08x\n", i, msn->id);
-        fprintf(fh, "SMTP%02d.Enabled           = %s\n", i, Bool2Txt(isServerActive(msn)));
-        fprintf(fh, "SMTP%02d.Description       = %s\n", i, msn->description);
-        fprintf(fh, "SMTP%02d.Server            = %s\n", i, msn->hostname);
-        fprintf(fh, "SMTP%02d.Port              = %d\n", i, msn->port);
-        fprintf(fh, "SMTP%02d.SecMethod         = %d\n", i, MSF2SMTPSecMethod(msn));
-        fprintf(fh, "SMTP%02d.Allow8bit         = %s\n", i, Bool2Txt(hasServer8bit(msn)));
-        fprintf(fh, "SMTP%02d.SMTP-AUTH         = %s\n", i, Bool2Txt(hasServerAuth(msn)));
-        fprintf(fh, "SMTP%02d.AUTH-User         = %s\n", i, msn->username);
-        fprintf(fh, "SMTP%02d.AUTH-Pass         = %s\n", i, Encrypt(msn->password));
-        fprintf(fh, "SMTP%02d.AUTH-Method       = %d\n", i, MSF2SMTPAuthMethod(msn));
+      fprintf(fh, "SMTP%02d.ID                = %08x\n", i, msn->id);
+      fprintf(fh, "SMTP%02d.Enabled           = %s\n", i, Bool2Txt(isServerActive(msn)));
+      fprintf(fh, "SMTP%02d.Description       = %s\n", i, msn->description);
+      fprintf(fh, "SMTP%02d.Server            = %s\n", i, msn->hostname);
+      fprintf(fh, "SMTP%02d.Port              = %d\n", i, msn->port);
+      fprintf(fh, "SMTP%02d.SecMethod         = %d\n", i, MSF2SMTPSecMethod(msn));
+      fprintf(fh, "SMTP%02d.Allow8bit         = %s\n", i, Bool2Txt(hasServer8bit(msn)));
+      fprintf(fh, "SMTP%02d.SMTP-AUTH         = %s\n", i, Bool2Txt(hasServerAuth(msn)));
+      fprintf(fh, "SMTP%02d.AUTH-User         = %s\n", i, msn->username);
+      fprintf(fh, "SMTP%02d.AUTH-Pass         = %s\n", i, Encrypt(msn->password));
+      fprintf(fh, "SMTP%02d.AUTH-Method       = %d\n", i, MSF2SMTPAuthMethod(msn));
 
-        i++;
-      }
+      i++;
     }
 
     // we iterate through our mail server list and ouput the POP3 servers in it
     i = 0;
-    IterateList(&co->mailServerList, curNode)
+    IterateList(&co->pop3ServerList, curNode)
     {
       struct MailServerNode *msn = (struct MailServerNode *)curNode;
 
-      if(msn->type == MST_POP3)
-      {
-        fprintf(fh, "POP%02d.ID                 = %08x\n", i, msn->id);
-        fprintf(fh, "POP%02d.Enabled            = %s\n", i, Bool2Txt(isServerActive(msn)));
-        fprintf(fh, "POP%02d.Description        = %s\n", i, msn->description);
-        fprintf(fh, "POP%02d.Server             = %s\n", i, msn->hostname);
-        fprintf(fh, "POP%02d.Port               = %d\n", i, msn->port);
-        fprintf(fh, "POP%02d.User               = %s\n", i, msn->username);
-        fprintf(fh, "POP%02d.Password           = %s\n", i, Encrypt(msn->password));
-        fprintf(fh, "POP%02d.SSLMode            = %d\n", i, MSF2POP3SecMethod(msn));
-        fprintf(fh, "POP%02d.UseAPOP            = %s\n", i, Bool2Txt(hasServerAPOP(msn)));
-        fprintf(fh, "POP%02d.Delete             = %s\n", i, Bool2Txt(hasServerPurge(msn)));
-        fprintf(fh, "POP%02d.AvoidDuplicates    = %s\n", i, Bool2Txt(hasServerAvoidDuplicates(msn)));
-        fprintf(fh, "POP%02d.ApplyRemoteFilters = %s\n", i, Bool2Txt(hasServerApplyRemoteFilters(msn)));
-        fprintf(fh, "POP%02d.Preselection       = %d\n", i, msn->preselection);
-        fprintf(fh, "POP%02d.DownloadOnStartup  = %s\n", i, Bool2Txt(hasServerDownloadOnStartup(msn)));
+      fprintf(fh, "POP%02d.ID                 = %08x\n", i, msn->id);
+      fprintf(fh, "POP%02d.Enabled            = %s\n", i, Bool2Txt(isServerActive(msn)));
+      fprintf(fh, "POP%02d.Description        = %s\n", i, msn->description);
+      fprintf(fh, "POP%02d.Server             = %s\n", i, msn->hostname);
+      fprintf(fh, "POP%02d.Port               = %d\n", i, msn->port);
+      fprintf(fh, "POP%02d.User               = %s\n", i, msn->username);
+      fprintf(fh, "POP%02d.Password           = %s\n", i, Encrypt(msn->password));
+      fprintf(fh, "POP%02d.SSLMode            = %d\n", i, MSF2POP3SecMethod(msn));
+      fprintf(fh, "POP%02d.UseAPOP            = %s\n", i, Bool2Txt(hasServerAPOP(msn)));
+      fprintf(fh, "POP%02d.Delete             = %s\n", i, Bool2Txt(hasServerPurge(msn)));
+      fprintf(fh, "POP%02d.AvoidDuplicates    = %s\n", i, Bool2Txt(hasServerAvoidDuplicates(msn)));
+      fprintf(fh, "POP%02d.ApplyRemoteFilters = %s\n", i, Bool2Txt(hasServerApplyRemoteFilters(msn)));
+      fprintf(fh, "POP%02d.Preselection       = %d\n", i, msn->preselection);
+      fprintf(fh, "POP%02d.DownloadOnStartup  = %s\n", i, Bool2Txt(hasServerDownloadOnStartup(msn)));
 
-        i++;
-      }
+      i++;
     }
 
     fprintf(fh, "\n[Identities]\n");
@@ -354,7 +348,7 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
       fprintf(fh, "ID%02d.Realname           = %s\n", i, uin->realname);
       fprintf(fh, "ID%02d.Address            = %s\n", i, uin->address);
       fprintf(fh, "ID%02d.Organization       = %s\n", i, uin->organization);
-      fprintf(fh, "ID%02d.MailServerID       = %08x\n", i, uin->mailServer != NULL ? uin->mailServer->id : 0);
+      fprintf(fh, "ID%02d.MailServerID       = %08x\n", i, uin->smtpServer != NULL ? uin->smtpServer->id : 0);
       fprintf(fh, "ID%02d.Signature          = %d\n", i, uin->signature);
       fprintf(fh, "ID%02d.MailCC             = %s\n", i, uin->mailCC);
       fprintf(fh, "ID%02d.MailBCC            = %s\n", i, uin->mailBCC);
@@ -847,10 +841,10 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
 
               // try to get the SMTP server structure with the found id or create
               // a new one
-              if((msn = GetMailServer(&co->mailServerList, MST_SMTP, id)) == NULL)
+              if((msn = GetMailServer(&co->smtpServerList, id)) == NULL)
               {
                 if((msn = CreateNewMailServer(MST_SMTP, co, FALSE)) != NULL)
-                  AddTail((struct List *)&co->mailServerList, (struct Node *)msn);
+                  AddTail((struct List *)&co->smtpServerList, (struct Node *)msn);
                 else
                   E(DBF_CONFIG, "Couldn't create new SMTP structure %ld", id);
               }
@@ -890,10 +884,10 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
 
               // try to get the POP3 server structure with the found id or create
               // a new one
-              if((msn = GetMailServer(&co->mailServerList, MST_POP3, id)) == NULL)
+              if((msn = GetMailServer(&co->pop3ServerList, id)) == NULL)
               {
                 if((msn = CreateNewMailServer(MST_POP3, co, FALSE)) != NULL)
-                  AddTail((struct List *)&co->mailServerList, (struct Node *)msn);
+                  AddTail((struct List *)&co->pop3ServerList, (struct Node *)msn);
                 else
                   E(DBF_CONFIG, "Couldn't create new POP3 structure %ld", id);
               }
@@ -976,20 +970,20 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
                   {
                     struct Node *curNode;
 
-                    IterateList(&co->mailServerList, curNode)
+                    IterateList(&co->smtpServerList, curNode)
                     {
                       struct MailServerNode *msn = (struct MailServerNode *)curNode;
 
                       // check if we found exactly this ID
-                      if(msn->id == mailServerID && isSMTPServer(msn))
+                      if(msn->id == mailServerID)
                       {
-                        uin->mailServer = msn;
+                        uin->smtpServer = msn;
                         break;
                       }
                     }
                   }
 
-                  if(uin->mailServer == NULL)
+                  if(uin->smtpServer == NULL)
                     W(DBF_CONFIG, "Couldn't find SMTP Server with ID '%s' for Identity %d", value, id);
                 }
                 else if(stricmp(q, "Signature") == 0)            uin->signature = atoi(value);
@@ -1565,8 +1559,8 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
             struct UserIdentityNode *fUserIdentity;
 
             // get the first POP3/SMTP server out of our config data
-            fPOP3 = GetMailServer(&co->mailServerList, MST_POP3, 0);
-            fSMTP = GetMailServer(&co->mailServerList, MST_SMTP, 0);
+            fPOP3 = GetMailServer(&co->pop3ServerList, 0);
+            fSMTP = GetMailServer(&co->smtpServerList, 0);
             ASSERT(fPOP3 != NULL);
             ASSERT(fSMTP != NULL);
 
@@ -1774,32 +1768,29 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
           // will happen only once.
           struct Node *curNode;
 
-          IterateList(&co->mailServerList, curNode)
+          IterateList(&co->pop3ServerList, curNode)
           {
             struct MailServerNode *msn = (struct MailServerNode *)curNode;
 
-            if(msn->type == MST_POP3)
+            // apply only the found old settings and exclude the non-found ones
+            if(globalPOP3AvoidDuplicates != -1)
             {
-              // apply only the found old settings and exclude the non-found ones
-              if(globalPOP3AvoidDuplicates != -1)
-              {
-                if(globalPOP3AvoidDuplicates == TRUE)
-                  setFlag(msn->flags, MSF_AVOID_DUPLICATES);
-                else
-                  clearFlag(msn->flags, MSF_AVOID_DUPLICATES);
-              }
-
-              if(globalDownloadOnStartup != -1)
-              {
-                if(globalDownloadOnStartup == TRUE)
-                  setFlag(msn->flags, MSF_DOWNLOAD_ON_STARTUP);
-                else
-                  clearFlag(msn->flags, MSF_DOWNLOAD_ON_STARTUP);
-              }
-
-              if(globalPOP3Preselection != -1)
-                msn->preselection = globalPOP3Preselection;
+              if(globalPOP3AvoidDuplicates == TRUE)
+                setFlag(msn->flags, MSF_AVOID_DUPLICATES);
+              else
+                clearFlag(msn->flags, MSF_AVOID_DUPLICATES);
             }
+
+            if(globalDownloadOnStartup != -1)
+            {
+              if(globalDownloadOnStartup == TRUE)
+                setFlag(msn->flags, MSF_DOWNLOAD_ON_STARTUP);
+              else
+                clearFlag(msn->flags, MSF_DOWNLOAD_ON_STARTUP);
+            }
+
+            if(globalPOP3Preselection != -1)
+              msn->preselection = globalPOP3Preselection;
           }
         }
       }
@@ -1863,14 +1854,14 @@ void CO_GetConfig(BOOL saveConfig)
       {
         msn = NULL;
         DoMethod(gui->LV_POP3, MUIM_NList_GetEntry, i, &msn);
-        if(msn == NULL || msn->type != MST_POP3)
+        if(msn == NULL)
           break;
 
         // for resorting the POP3 list we just have to remove that particular server
         // and add it to the tail - all other operations like adding/removing should
         // have been done by others already - so this is just resorting
         Remove((struct Node *)msn);
-        AddTail((struct List *)&CE->mailServerList, (struct Node *)msn);
+        AddTail((struct List *)&CE->pop3ServerList, (struct Node *)msn);
 
         i++;
       }
@@ -1884,14 +1875,14 @@ void CO_GetConfig(BOOL saveConfig)
       {
         msn = NULL;
         DoMethod(gui->LV_SMTP, MUIM_NList_GetEntry, i, &msn);
-        if(msn == NULL || msn->type != MST_SMTP)
+        if(msn == NULL)
           break;
 
         // for resorting the SMTP list we just have to remove that particular server
         // and add it to the tail - all other operations like adding/removing should
         // have been done by others already - so this is just resorting
         Remove((struct Node *)msn);
-        AddTail((struct List *)&CE->mailServerList, (struct Node *)msn);
+        AddTail((struct List *)&CE->smtpServerList, (struct Node *)msn);
 
         i++;
       }
@@ -2554,7 +2545,7 @@ void CO_SetConfig(void)
       setcheckmark(gui->CH_DSTACTIVE, CE->DaylightSaving);
 
       // try to get the mailer server structure of the first POP3 server
-      if((msn = GetMailServer(&CE->mailServerList, MST_POP3, 0)) != NULL)
+      if((msn = GetMailServer(&CE->pop3ServerList, 0)) != NULL)
       {
         nnset(gui->ST_POPHOST0, MUIA_String_Contents, msn->hostname);
         nnset(gui->ST_USER0,    MUIA_String_Contents, msn->username);
@@ -2578,23 +2569,25 @@ void CO_SetConfig(void)
 
       // we iterate through our mail server list and make sure to populate
       // out NList object correctly.
-      IterateList(&CE->mailServerList, curNode)
+      IterateList(&CE->pop3ServerList, curNode)
       {
         msn = (struct MailServerNode *)curNode;
 
         if(msn->description[0] == '\0')
           snprintf(msn->description, sizeof(msn->description), "%s@%s", msn->username, msn->hostname);
 
-        if(msn->type == MST_POP3)
-        {
-          DoMethod(gui->LV_POP3, MUIM_NList_InsertSingle, msn, MUIV_NList_Insert_Bottom);
-          numPOP++;
-        }
-        else if(msn->type == MST_SMTP)
-        {
-          DoMethod(gui->LV_SMTP, MUIM_NList_InsertSingle, msn, MUIV_NList_Insert_Bottom);
-          numSMTP++;
-        }
+        DoMethod(gui->LV_POP3, MUIM_NList_InsertSingle, msn, MUIV_NList_Insert_Bottom);
+        numPOP++;
+      }
+      IterateList(&CE->smtpServerList, curNode)
+      {
+        msn = (struct MailServerNode *)curNode;
+
+        if(msn->description[0] == '\0')
+          snprintf(msn->description, sizeof(msn->description), "%s@%s", msn->username, msn->hostname);
+
+        DoMethod(gui->LV_SMTP, MUIM_NList_InsertSingle, msn, MUIV_NList_Insert_Bottom);
+        numSMTP++;
       }
 
       // make sure the first entry is selected per default

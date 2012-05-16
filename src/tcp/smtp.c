@@ -1297,7 +1297,7 @@ BOOL SendMails(struct UserIdentityNode *uin, enum SendMailMode mode)
     // link the user identity and the mail server in
     // our transfercontext structure
     tc->uin = uin;
-    tc->msn = uin->mailServer;
+    tc->msn = uin->smtpServer;
 
     // try to open the TCP/IP stack
     if((tc->conn = CreateConnection()) != NULL && ConnectionIsOnline(tc->conn) == TRUE)
@@ -1477,7 +1477,7 @@ BOOL SendMails(struct UserIdentityNode *uin, enum SendMailMode mode)
                           struct Folder *outfolder = FO_GetFolderByType(FT_OUTGOING, NULL);
                           struct Folder *sentfolder;
 
-                          // depending on the sentfolder settings in the user identity we 
+                          // depending on the sentfolder settings in the user identity we
                           // store the mail in a different folder (but we fallback to the
                           // first SENT folder found)
                           if((sentfolder = FO_GetFolderByName(tc->uin->sentFolder, NULL)) == NULL)

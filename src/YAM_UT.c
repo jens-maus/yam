@@ -3312,7 +3312,7 @@ void RemoveMailFromList(struct Mail *mail, const BOOL closeWindows, const BOOL c
       int i = 0;
       BOOL mailFound = FALSE;
 
-      while(mailFound == FALSE && (msn = GetMailServer(&C->mailServerList, MST_POP3, i)) != NULL)
+      while(mailFound == FALSE && (msn = GetMailServer(&C->pop3ServerList, i)) != NULL)
       {
         if(hasServerInUse(msn) == TRUE)
         {

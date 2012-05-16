@@ -2577,7 +2577,8 @@ int main(int argc, char **argv)
     }
 
     // prepare the exec lists in C
-    NewMinList(&C->mailServerList);
+    NewMinList(&C->pop3ServerList);
+    NewMinList(&C->smtpServerList);
     NewMinList(&C->filterList);
     NewMinList(&C->mimeTypeList);
     NewMinList(&C->userIdentityList);

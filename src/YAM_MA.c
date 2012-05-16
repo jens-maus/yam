@@ -2402,7 +2402,7 @@ BOOL MA_PopNow(int pop, const ULONG flags, struct DownloadResult *dlResult)
 
     success = TRUE;
     pop = 0;
-    while((msn = GetMailServer(&C->mailServerList, MST_POP3, pop)) != NULL)
+    while((msn = GetMailServer(&C->pop3ServerList, pop)) != NULL)
     {
       // fetch mails from active servers only
       if(isServerActive(msn) == TRUE)
@@ -2420,7 +2420,7 @@ BOOL MA_PopNow(int pop, const ULONG flags, struct DownloadResult *dlResult)
   {
     struct MailServerNode *msn;
 
-    if((msn = GetMailServer(&C->mailServerList, MST_POP3, pop)) != NULL)
+    if((msn = GetMailServer(&C->pop3ServerList, pop)) != NULL)
     {
       // we ignore the active state and possible startup flags for single servers
       success = ReceiveMailsFromPOP(msn, flags, dlResult);
@@ -2573,10 +2573,10 @@ BOOL MA_Send(enum SendMailMode mode)
         {
           // we only proceed if there isn't already a transfer
           // process in action for this server
-          if(hasServerInUse(uin->mailServer) == FALSE)
+          if(hasServerInUse(uin->smtpServer) == FALSE)
           {
             // mark the server as "in use"
-            setFlag(uin->mailServer->flags, MSF_IN_USE);
+            setFlag(uin->smtpServer->flags, MSF_IN_USE);
 
             // call the thread action now signaling that we want to sent the
             // associated mails
@@ -2591,7 +2591,7 @@ BOOL MA_Send(enum SendMailMode mode)
             DeleteMailList(uin->sentMailList);
             uin->sentMailList = NULL;
 
-            clearFlag(uin->mailServer->flags, MSF_IN_USE);
+            clearFlag(uin->smtpServer->flags, MSF_IN_USE);
 
             success = FALSE;
           }
@@ -3793,29 +3793,25 @@ void MA_SetupDynamicMenus(void)
 
     // we iterate through our mail server list and ouput the POP3 servers in it
     i = 0;
-    IterateList(&C->mailServerList, curNode)
+    IterateList(&C->pop3ServerList, curNode)
     {
       struct MailServerNode *msn = (struct MailServerNode *)curNode;
+      Object *newObj;
 
-      if(msn->type == MST_POP3)
+      // create a new default account name only if none is yet given
+      if(msn->description[0] == '\0')
+        snprintf(msn->description, sizeof(msn->description), "%s@%s", msn->username, msn->hostname);
+
+      newObj = Menuitem(msn->description, NULL, TRUE, FALSE, MMEN_POPHOST+i);
+      if(newObj != NULL)
       {
-        Object *newObj;
+        // add the new menu item to the sublist
+        DoMethod(G->MA->GUI.MI_CSINGLE, MUIM_Family_AddTail, newObj);
 
-        // create a new default account name only if none is yet given
-        if(msn->description[0] == '\0')
-          snprintf(msn->description, sizeof(msn->description), "%s@%s", msn->username, msn->hostname);
+        // add a notify for this item as well.
+        DoMethod(G->MA->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_POPHOST+i, MUIV_Notify_Application, 5, MUIM_CallHook, &MA_PopNowHook, i, RECEIVEF_USER, 0L);
 
-        newObj = Menuitem(msn->description, NULL, TRUE, FALSE, MMEN_POPHOST+i);
-        if(newObj != NULL)
-        {
-          // add the new menu item to the sublist
-          DoMethod(G->MA->GUI.MI_CSINGLE, MUIM_Family_AddTail, newObj);
-
-          // add a notify for this item as well.
-          DoMethod(G->MA->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_POPHOST+i, MUIV_Notify_Application, 5, MUIM_CallHook, &MA_PopNowHook, i, RECEIVEF_USER, 0L);
-
-          i++;
-        }
+        i++;
       }
 
       // we add the first MAXP3_MENU POP3 servers at most

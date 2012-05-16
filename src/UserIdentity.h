@@ -51,7 +51,7 @@ struct UserIdentityNode
   char realname[SIZE_REALNAME];      // real name (firstname + lastname)
   char address[SIZE_ADDRESS];        // email address
   char organization[SIZE_DEFAULT];   // organization
-  struct MailServerNode *mailServer; // SMTP server
+  struct MailServerNode *smtpServer; // SMTP server
   int signature;                     // number of signature
   char mailCC[SIZE_LARGE];           // predefined CC address field
   char mailBCC[SIZE_LARGE];          // predefined BCC address field

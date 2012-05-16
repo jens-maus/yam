@@ -413,7 +413,8 @@ enum WrapMode
 /*** Configuration main structure ***/
 struct Config
 {
-  struct MinList mailServerList;   // list of configured mail servers (SMTP/POP3/IMAP)
+  struct MinList pop3ServerList;   // list of configured POP3 servers
+  struct MinList smtpServerList;   // list of configured SMTP servers
   struct MinList filterList;       // list of currently available filter node
   struct MinList mimeTypeList;     // list of user defined MIME types
   struct MinList userIdentityList; // list of user identities

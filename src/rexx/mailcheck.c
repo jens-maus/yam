@@ -103,7 +103,7 @@ void rx_mailcheck(UNUSED struct RexxHost *host, struct RexxParams *params, enum 
           optional->remaining = 0;
 
           pop = 0;
-          while((msn = GetMailServer(&C->mailServerList, MST_POP3, pop)) != NULL)
+          while((msn = GetMailServer(&C->pop3ServerList, pop)) != NULL)
           {
             // fetch mails from active servers only
             if(isServerActive(msn) == TRUE)
@@ -136,7 +136,7 @@ void rx_mailcheck(UNUSED struct RexxHost *host, struct RexxParams *params, enum 
         {
           struct MailServerNode *msn;
 
-          if((msn = GetMailServer(&C->mailServerList, MST_POP3, pop)) != NULL)
+          if((msn = GetMailServer(&C->pop3ServerList, pop)) != NULL)
           {
             if(ReceiveMailsFromPOP(msn, args->manual ? RECEIVEF_USER|RECEIVEF_SIGNAL : RECEIVEF_AREXX|RECEIVEF_SIGNAL, &optional->dlResult) == TRUE)
             {

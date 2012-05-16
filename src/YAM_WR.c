@@ -741,7 +741,7 @@ static BOOL WR_Bounce(FILE *fh, const struct Compose *comp)
       EmitHeader(fh, "Resent-Date", GetDateTime());
       if(comp->MailTo != NULL)
         EmitRcptHeader(fh, "Resent-To", comp->MailTo);
-      NewMessageID(msgID, sizeof(msgID), comp->Identity->mailServer);
+      NewMessageID(msgID, sizeof(msgID), comp->Identity->smtpServer);
       EmitHeader(fh, "Resent-Message-ID", msgID);
 
       // now we copy the rest of the message
@@ -1292,7 +1292,7 @@ D(DBF_ALWAYS, "security: %d", comp->Security);
   EmitHeader(fh, "Date", GetDateTime());
 
   // output the Message-ID, In-Reply-To and References message headers
-  NewMessageID(msgID, sizeof(msgID), comp->Identity->mailServer);
+  NewMessageID(msgID, sizeof(msgID), comp->Identity->smtpServer);
   EmitHeader(fh, "Message-ID", msgID);
   if(comp->inReplyToMsgID != NULL)
     EmitHeader(fh, "In-Reply-To", comp->inReplyToMsgID);
@@ -1396,7 +1396,7 @@ char *WR_AutoSaveFile(const int winnr, char *dest, const size_t length)
 ///
 /// AppendRcpt()
 //  Appends a recipient address to a string
-static char *AppendRcpt(char *sbuf, const struct Person *pe, 
+static char *AppendRcpt(char *sbuf, const struct Person *pe,
                         struct UserIdentityNode *uin, const BOOL excludeme)
 {
   ENTER();
@@ -1422,7 +1422,7 @@ static char *AppendRcpt(char *sbuf, const struct Person *pe,
         // address does not contain any @ nor domain, lets add it
         char addr[SIZE_ADDRESS];
         char *p = NULL;
-        
+
         if(uin != NULL)
           p = strchr(uin->address, '@');
 
@@ -1815,7 +1815,7 @@ struct WriteMailData *NewWriteMailWindow(struct Mail *mail, const int flags)
             {
               int i;
               char *sbuf;
-              
+
               // add all "ReplyTo:" recipients of the mail
               sbuf = StrBufCpy(NULL, addr);
               for(i=0; i < email->NoSReplyTo; i++)
@@ -2251,15 +2251,15 @@ struct WriteMailData *NewForwardMailWindow(struct MailList *mlist, const int fla
         {
           if(firstIdentity->quotePosition == QPOS_ABOVE)
             InsertIntroText(out, C->Greetings, NULL);
-            
-          if(firstIdentity->sigForwarding == TRUE && 
+
+          if(firstIdentity->sigForwarding == TRUE &&
              (firstIdentity->quotePosition == QPOS_ABOVE && firstIdentity->signaturePosition == SPOS_ABOVE))
           {
             WriteSignature(out, signature == -1 ? firstIdentity->signature-1 : signature, FALSE);
             fputs("\n", out);
           }
         }
- 
+
         // depending on the selected forward mode we either
         // forward the email as inlined text or by simply putting
         // the original message as an attachment to the new one.
@@ -2341,7 +2341,7 @@ struct WriteMailData *NewForwardMailWindow(struct MailList *mlist, const int fla
         InsertIntroText(out, C->Greetings, NULL);
 
       // add a signature to the mail depending on the selected signature for this list
-      if(firstIdentity->sigForwarding == TRUE && 
+      if(firstIdentity->sigForwarding == TRUE &&
          (firstIdentity->quotePosition == QPOS_BELOW || firstIdentity->signaturePosition == SPOS_BELOW))
       {
         WriteSignature(out, signature == -1 ? firstIdentity->signature-1 : signature, TRUE);
@@ -2854,7 +2854,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
           if(firstIdentity->quotePosition == QPOS_ABOVE)
             InsertIntroText(out, mlIntro ? C->MLReplyBye : (altpat ? C->AltReplyBye: C->ReplyBye), &etd);
 
-          if(firstIdentity->sigReply == TRUE && 
+          if(firstIdentity->sigReply == TRUE &&
              (firstIdentity->quotePosition == QPOS_ABOVE && firstIdentity->signaturePosition == SPOS_ABOVE))
           {
             WriteSignature(out, signature == -1 ? firstIdentity->signature-1 : signature, FALSE);
@@ -2931,7 +2931,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
         InsertIntroText(out, mlIntro ? C->MLReplyBye : (altpat ? C->AltReplyBye: C->ReplyBye), &etd);
 
       // add a signature to the mail depending on the selected signature for this list
-      if(firstIdentity->sigReply == TRUE && 
+      if(firstIdentity->sigReply == TRUE &&
          (firstIdentity->quotePosition == QPOS_BELOW || firstIdentity->signaturePosition == SPOS_BELOW))
       {
         WriteSignature(out, signature == -1 ? firstIdentity->signature-1 : signature, TRUE);

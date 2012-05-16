@@ -3731,12 +3731,12 @@ static void RE_SendMDN(const enum MDNMode mode,
                 // immediately we go and send it out
                 if(sendnow == TRUE && uin->sentMailList->count != 0)
                 {
-                  if(uin->mailServer != NULL)
+                  if(uin->smtpServer != NULL)
                   {
-                    if(hasServerInUse(uin->mailServer) == FALSE)
+                    if(hasServerInUse(uin->smtpServer) == FALSE)
                     {
                       // mark the server as "in use"
-                      setFlag(uin->mailServer->flags, MSF_IN_USE);
+                      setFlag(uin->smtpServer->flags, MSF_IN_USE);
 
                       mdnSent = (DoAction(NULL, TA_SendMails, TT_SendMails_UserIdentity, uin,
                                                               TT_SendMails_Mode, autoSend ? SENDMAIL_ACTIVE_AUTO : SENDMAIL_ACTIVE_USER,
@@ -3744,13 +3744,13 @@ static void RE_SendMDN(const enum MDNMode mode,
 
                       // clear the "in use" flag if the send process failed
                       if(mdnSent == FALSE)
-                        clearFlag(uin->mailServer->flags, MSF_IN_USE);
+                        clearFlag(uin->smtpServer->flags, MSF_IN_USE);
                     }
                     else
                       W(DBF_MAIL, "mailServer already in use, can't sen out the message!");
                   }
                   else
-                    W(DBF_MAIL, "uin == NULL || uin->mailServer == NULL");
+                    W(DBF_MAIL, "uin == NULL || uin->smtpServer == NULL");
                 }
 
                 // delete the mail list again if the MDN was not sent

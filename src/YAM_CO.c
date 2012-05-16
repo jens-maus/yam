@@ -705,7 +705,7 @@ HOOKPROTONHNONP(CO_GetDefaultPOPFunc, void)
 
   // get the first POP3 server out of our
   // mail server list
-  msn = GetMailServer(&CE->mailServerList, MST_POP3, 0);
+  msn = GetMailServer(&CE->pop3ServerList, 0);
   if(msn != NULL)
   {
     GetMUIString(msn->hostname, G->CO->GUI.ST_POPHOST0, sizeof(msn->hostname));
@@ -977,11 +977,11 @@ void CO_UpdateSMTPServerArray(struct CO_ClassData *data)
 
   // we update the smtpServerArray with the names
   // of the SMTP servers that are currently configured
-  IterateList(&CE->mailServerList, curNode)
+  IterateList(&CE->smtpServerList, curNode)
   {
     struct MailServerNode *msn = (struct MailServerNode *)curNode;
 
-    if(isSMTPServer(msn) && isServerActive(msn))
+    if(isServerActive(msn))
       numSMTPserver++;
   }
 
@@ -992,11 +992,11 @@ void CO_UpdateSMTPServerArray(struct CO_ClassData *data)
 
     // now we walk through the mailServerList again
     // and clone the address string
-    IterateList(&CE->mailServerList, curNode)
+    IterateList(&CE->smtpServerList, curNode)
     {
       struct MailServerNode *msn = (struct MailServerNode *)curNode;
 
-      if(isSMTPServer(msn) && isServerActive(msn))
+      if(isServerActive(msn))
       {
         data->smtpServerArray[i] = strdup(msn->description);
 
@@ -1074,23 +1074,23 @@ HOOKPROTONHNONP(CO_GetIdentityEntry, void)
     nnset(gui->CH_IDENTITY_PGPENC_SELF,   MUIA_Selected,        uin->pgpSelfEncrypt);
 
     // we have to set the correct mail server in the GUI so we browse through
-    // the mailServerList and match the ids
-    if(uin->mailServer != NULL)
+    // the SMTP server list and match the ids
+    if(uin->smtpServer != NULL)
     {
       struct Node *curNode;
       int i = 0;
 
-      IterateList(&CE->mailServerList, curNode)
+      IterateList(&CE->smtpServerList, curNode)
       {
         struct MailServerNode *msn = (struct MailServerNode *)curNode;
 
         // we match the ids because the pointers may be different
-        if(msn->id == uin->mailServer->id)
+        if(msn->id == uin->smtpServer->id)
         {
           nnset(gui->CY_IDENTITY_MAILSERVER, MUIA_Cycle_Active, i);
           break;
         }
-        else if(isSMTPServer(msn) && isServerActive(msn))
+        else if(isServerActive(msn))
           i++;
       }
     }
@@ -1187,18 +1187,18 @@ HOOKPROTONHNONP(CO_PutIdentityEntry, void)
       if(uin->description[0] == '\0' || strcmp(uin->description, tr(MSG_NewEntry)) == 0)
         strlcpy(uin->description, uin->address, sizeof(uin->description));
 
-      // now we iterate through the mailServerList and match
+      // now we iterate through the SMTP server list and match
       posMailServer = GetMUICycle(gui->CY_IDENTITY_MAILSERVER);
       i = 0;
-      IterateList(&CE->mailServerList, curNode)
+      IterateList(&CE->smtpServerList, curNode)
       {
         struct MailServerNode *msn = (struct MailServerNode *)curNode;
 
-        if(isSMTPServer(msn) && isServerActive(msn))
+        if(isServerActive(msn))
         {
           if(i == posMailServer)
           {
-            uin->mailServer = msn;
+            uin->smtpServer = msn;
             break;
           }
 
@@ -1291,8 +1291,9 @@ void CO_ClearConfig(struct Config *co)
   // we have to free the userIdentityList
   FreeUserIdentityList(&co->userIdentityList);
 
-  // we have to free the mailServerList
-  FreeMailServerList(&co->mailServerList);
+  // we have to free the pop3ServerList and smtpServerList
+  FreeMailServerList(&co->pop3ServerList);
+  FreeMailServerList(&co->smtpServerList);
 
   // we have to free the mimeTypeList
   FreeMimeTypeList(&co->mimeTypeList);
@@ -1328,12 +1329,13 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
 
   if(page == cp_TCPIP || page == cp_AllPages)
   {
-    // we have to free the mailServerList
-    FreeMailServerList(&co->mailServerList);
+    // we have to free the pop3ServerList and smtpServerList
+    FreeMailServerList(&co->pop3ServerList);
+    FreeMailServerList(&co->smtpServerList);
 
     // fill the mailserver list with an empty POP3 and SMTP Server
-    AddTail((struct List *)&co->mailServerList, (struct Node *)CreateNewMailServer(MST_SMTP, co, TRUE));
-    AddTail((struct List *)&co->mailServerList, (struct Node *)CreateNewMailServer(MST_POP3, co, TRUE));
+    AddTail((struct List *)&co->smtpServerList, (struct Node *)CreateNewMailServer(MST_SMTP, co, TRUE));
+    AddTail((struct List *)&co->pop3ServerList, (struct Node *)CreateNewMailServer(MST_POP3, co, TRUE));
   }
 
   if(page == cp_Identities || page == cp_AllPages)
@@ -1645,9 +1647,9 @@ static BOOL CopyConfigData(struct Config *dco, const struct Config *sco)
   memcpy(dco, sco, sizeof(struct Config));
 
   // then we have to do a deep copy and allocate separate memory for our copy
-  NewMinList(&dco->mailServerList);
+  NewMinList(&dco->pop3ServerList);
 
-  IterateList(&sco->mailServerList, curNode)
+  IterateList(&sco->pop3ServerList, curNode)
   {
     struct MailServerNode *srcNode = (struct MailServerNode *)curNode;
     struct MailServerNode *dstNode;
@@ -1655,7 +1657,29 @@ static BOOL CopyConfigData(struct Config *dco, const struct Config *sco)
     // clone the server but give the clone its own private data
     if((dstNode = CloneMailServer(srcNode)) != NULL)
     {
-      AddTail((struct List *)&dco->mailServerList, (struct Node *)dstNode);
+      AddTail((struct List *)&dco->pop3ServerList, (struct Node *)dstNode);
+    }
+    else
+    {
+      success = FALSE;
+
+      // bail out, no need to copy further data
+      break;
+    }
+  }
+
+  // then we have to do a deep copy and allocate separate memory for our copy
+  NewMinList(&dco->smtpServerList);
+
+  IterateList(&sco->smtpServerList, curNode)
+  {
+    struct MailServerNode *srcNode = (struct MailServerNode *)curNode;
+    struct MailServerNode *dstNode;
+
+    // clone the server but give the clone its own private data
+    if((dstNode = CloneMailServer(srcNode)) != NULL)
+    {
+      AddTail((struct List *)&dco->smtpServerList, (struct Node *)dstNode);
     }
     else
     {
@@ -1680,7 +1704,7 @@ static BOOL CopyConfigData(struct Config *dco, const struct Config *sco)
       {
         // make sure the mailserver of the copied node points to an
         // entry of the copied mail server list
-        dstNode->mailServer = FindMailServer(&dco->mailServerList, srcNode->mailServer->id);
+        dstNode->smtpServer = FindMailServer(&dco->smtpServerList, srcNode->smtpServer->id);
         dstNode->sentMailList = NULL;
         AddTail((struct List *)&dco->userIdentityList, (struct Node *)dstNode);
       }
@@ -1927,7 +1951,8 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      c1->SocketOptions.NoDelay           == c2->SocketOptions.NoDelay &&
      c1->SocketOptions.LowDelay          == c2->SocketOptions.LowDelay &&
 
-     CompareMailServerLists(&c1->mailServerList, &c2->mailServerList) &&
+     CompareMailServerLists(&c1->pop3ServerList, &c2->pop3ServerList) &&
+     CompareMailServerLists(&c1->smtpServerList, &c2->smtpServerList) &&
      CompareUserIdentityLists(&c1->userIdentityList, &c2->userIdentityList) &&
      CompareFilterLists(&c1->filterList, &c2->filterList) &&
      CompareMimeTypeLists(&c1->mimeTypeList, &c2->mimeTypeList) &&
@@ -2017,63 +2042,55 @@ void CO_Validate(struct Config *co, BOOL update)
 
   // retrieve the first SMTP and POP3 server so that
   // we can synchronize their information
-  firstPOP3 = GetMailServer(&co->mailServerList, MST_POP3, 0);
-  firstSMTP = GetMailServer(&co->mailServerList, MST_SMTP, 0);
+  firstPOP3 = GetMailServer(&co->pop3ServerList, 0);
+  firstSMTP = GetMailServer(&co->smtpServerList, 0);
 
   // get the first user Identity
   firstIdentity = GetUserIdentity(&co->userIdentityList, 0, TRUE);
 
   if(firstPOP3 != NULL && firstSMTP != NULL && firstIdentity != NULL)
   {
-    // now we walk through our mailserver list and check and fix certains
+    // now we walk through our POP3 server list and check and fix certains
     // things in it
-    IterateList(&co->mailServerList, curNode)
+    IterateList(&co->pop3ServerList, curNode)
     {
       struct MailServerNode *msn = (struct MailServerNode *)curNode;
 
-      switch(msn->type)
-      {
-        case MST_POP3:
-        {
-          if(msn->hostname[0] == '\0')
-            strlcpy(msn->hostname, firstSMTP->hostname, sizeof(msn->hostname));
+	  if(msn->hostname[0] == '\0')
+		strlcpy(msn->hostname, firstSMTP->hostname, sizeof(msn->hostname));
 
-          if(msn->port == 0)
-            msn->port = 110;
+	  if(msn->port == 0)
+		msn->port = 110;
 
-          if(msn->username[0] == '\0')
-          {
-            char *p = strchr(firstIdentity->address, '@');
-            strlcpy(msn->username, firstIdentity->address, p ? (unsigned int)(p - firstIdentity->address + 1) : sizeof(msn->username));
-          }
+	  if(msn->username[0] == '\0')
+	  {
+		char *p = strchr(firstIdentity->address, '@');
+		strlcpy(msn->username, firstIdentity->address, p ? (unsigned int)(p - firstIdentity->address + 1) : sizeof(msn->username));
+	  }
 
-          if(msn->description[0] == '\0')
-            snprintf(msn->description, sizeof(msn->description), "%s@%s", msn->username, msn->hostname);
-        }
-        break;
-
-        case MST_SMTP:
-        {
-          if(msn->hostname[0] == '\0')
-            strlcpy(msn->hostname, firstPOP3->hostname, sizeof(msn->hostname));
-
-          if(msn->port == 0)
-            msn->port = 25;
-
-          if(msn->description[0] == '\0')
-            snprintf(msn->description, sizeof(msn->description), "%s@%s", msn->username, msn->hostname);
-        }
-        break;
-
-        default:
-          // nothing to do
-        break;
-      }
+	  if(msn->description[0] == '\0')
+		snprintf(msn->description, sizeof(msn->description), "%s@%s", msn->username, msn->hostname);
     }
+
+    // now we walk through our SMTP server list and check and fix certains
+    // things in it
+    IterateList(&co->smtpServerList, curNode)
+    {
+      struct MailServerNode *msn = (struct MailServerNode *)curNode;
+
+	  if(msn->hostname[0] == '\0')
+		strlcpy(msn->hostname, firstPOP3->hostname, sizeof(msn->hostname));
+
+	  if(msn->port == 0)
+		msn->port = 25;
+
+	  if(msn->description[0] == '\0')
+		snprintf(msn->description, sizeof(msn->description), "%s@%s", msn->username, msn->hostname);
+	}
   }
 
   // check all servers for valid and unique IDs
-  IterateList(&co->mailServerList, curNode)
+  IterateList(&co->pop3ServerList, curNode)
   {
     struct MailServerNode *msn = (struct MailServerNode *)curNode;
 
@@ -2091,7 +2108,34 @@ void CO_Validate(struct Config *co, BOOL update)
         if(id == 0)
           continue;
       }
-      while(IsUniqueMailServerID(&co->mailServerList, id) == FALSE);
+      while(IsUniqueMailServerID(&co->pop3ServerList, id) == FALSE);
+
+      msn->id = id;
+
+      saveAtEnd = TRUE;
+    }
+  }
+
+  // check all servers for valid and unique IDs
+  IterateList(&co->smtpServerList, curNode)
+  {
+    struct MailServerNode *msn = (struct MailServerNode *)curNode;
+
+    // check for a valid and unique ID, this is independend of the server type
+    if(msn->id == 0)
+    {
+      int id;
+
+      // loop until we generated a unique ID
+      // usually this will happen with just one iteration
+      do
+      {
+        id = rand();
+
+        if(id == 0)
+          continue;
+      }
+      while(IsUniqueMailServerID(&co->smtpServerList, id) == FALSE);
 
       msn->id = id;
 
@@ -2392,7 +2436,7 @@ void CO_Validate(struct Config *co, BOOL update)
     {
       case cp_FirstSteps:
       {
-        struct MailServerNode *msn = GetMailServer(&co->mailServerList, MST_POP3, 0);
+        struct MailServerNode *msn = GetMailServer(&co->pop3ServerList, 0);
 
         if(msn != NULL)
         {

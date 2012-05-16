@@ -470,7 +470,7 @@ static struct WritePart *BuildPartsList(struct WriteMailData *wmData)
 
     p = first;
     p->IsTemp = TRUE;
-    p->EncType = WhichEncodingForFile(p->Filename, p->ContentType, wmData->identity->mailServer);
+    p->EncType = WhichEncodingForFile(p->Filename, p->ContentType, wmData->identity->smtpServer);
 
     // now walk through our attachment list
     // and create additional parts
@@ -502,7 +502,7 @@ static struct WritePart *BuildPartsList(struct WriteMailData *wmData)
 
           // find out which encoding we use for the attachment
           if(att->IsMIME == TRUE)
-            np->EncType = WhichEncodingForFile(np->Filename, np->ContentType, wmData->identity->mailServer);
+            np->EncType = WhichEncodingForFile(np->Filename, np->ContentType, wmData->identity->smtpServer);
           else
             np->EncType = ENC_UUE;
 
@@ -906,10 +906,10 @@ OVERLOAD(OM_NEW)
       //  G   Search again (WMEN_SEARCHAGAIN)
       //  H   Hold mail (reserved by YAM.cd)
       //  I   Italic soft-style (WMEN_STYLE_BOLD)
-      //  J   
+      //  J
       //  K   Colored soft-style (WMEN_STYLE_COLORED)
       //  L   Send later (reserved by YAM.cd)
-      //  M 
+      //  M
       //  N   New mail (WMEN_NEW)
       //  O   Open file (WMEN_OPEN)
       //  P   Insert as plain text (WMEN_PLAIN)
@@ -4106,21 +4106,21 @@ DECLARE(ComposeMail) // enum WriteMode mode
       {
         set(obj, MUIA_Window_Open, FALSE);
 
-        if(uin->mailServer != NULL)
+        if(uin->smtpServer != NULL)
         {
-          if(hasServerInUse(uin->mailServer) == FALSE)
+          if(hasServerInUse(uin->smtpServer) == FALSE)
           {
             // mark the server as "in use"
-            setFlag(uin->mailServer->flags, MSF_IN_USE);
+            setFlag(uin->smtpServer->flags, MSF_IN_USE);
 
             mailSent = (DoAction(NULL, TA_SendMails, TT_SendMails_UserIdentity, uin,
                                                      TT_SendMails_Mode, SENDMAIL_ACTIVE_USER,
                                                      TAG_DONE) != NULL);
             if(mailSent == FALSE)
-              clearFlag(uin->mailServer->flags, MSF_IN_USE);
+              clearFlag(uin->smtpServer->flags, MSF_IN_USE);
           }
           else
-            W(DBF_MAIL, "uin->mailServer in use, couldn't sent out mail");
+            W(DBF_MAIL, "SMTP server '%s' in use, couldn't sent out mail", uin->smtpServer->description);
         }
       }
 
@@ -4516,7 +4516,7 @@ DECLARE(ShowRecipientObject) // enum RcptType rtype
           DoMethod(data->GR_HEADER, OM_ADDMEMBER, data->GR_BCC);
 
           if(data->fromRcptHided == FALSE)
-            objPosition += 2; 
+            objPosition += 2;
           if(data->ccRcptHided == FALSE)
             objPosition += 2;
 
@@ -4539,7 +4539,7 @@ DECLARE(ShowRecipientObject) // enum RcptType rtype
           DoMethod(data->GR_HEADER, OM_ADDMEMBER, data->GR_REPLYTO);
 
           if(data->fromRcptHided == FALSE)
-            objPosition += 2; 
+            objPosition += 2;
           if(data->ccRcptHided == FALSE)
             objPosition += 2;
           if(data->bccRcptHided == FALSE)

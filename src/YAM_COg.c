@@ -1082,15 +1082,15 @@ HOOKPROTONHNONP(CO_AddPOP3, void)
 
   ENTER();
 
-  if((msn = CreateNewMailServer(MST_POP3, CE, IsMinListEmpty(&CE->mailServerList))) != NULL)
+  if((msn = CreateNewMailServer(MST_POP3, CE, IsMinListEmpty(&CE->pop3ServerList))) != NULL)
   {
-    if(IsMinListEmpty(&CE->mailServerList) == FALSE)
+    if(IsMinListEmpty(&CE->pop3ServerList) == FALSE)
       strlcpy(msn->description, tr(MSG_NewEntry), sizeof(msn->description));
 
     DoMethod(G->CO->GUI.LV_POP3, MUIM_NList_InsertSingle, msn, MUIV_NList_Insert_Bottom);
 
     // add the server to the list
-    AddTail((struct List *)&CE->mailServerList, (struct Node *)msn);
+    AddTail((struct List *)&CE->pop3ServerList, (struct Node *)msn);
 
     // set the new entry active and make sure that the host gadget will be
     // set as the new active object of the window as that gadget will be used
@@ -1142,15 +1142,15 @@ HOOKPROTONHNONP(CO_AddSMTP, void)
 
   ENTER();
 
-  if((msn = CreateNewMailServer(MST_SMTP, CE, IsMinListEmpty(&CE->mailServerList))) != NULL)
+  if((msn = CreateNewMailServer(MST_SMTP, CE, IsMinListEmpty(&CE->smtpServerList))) != NULL)
   {
-    if(IsMinListEmpty(&CE->mailServerList) == FALSE)
+    if(IsMinListEmpty(&CE->smtpServerList) == FALSE)
       strlcpy(msn->description, tr(MSG_NewEntry), sizeof(msn->description));
 
     DoMethod(G->CO->GUI.LV_SMTP, MUIM_NList_InsertSingle, msn, MUIV_NList_Insert_Bottom);
 
     // add the server to the list
-    AddTail((struct List *)&CE->mailServerList, (struct Node *)msn);
+    AddTail((struct List *)&CE->smtpServerList, (struct Node *)msn);
 
     // set the new entry active and make sure that the host gadget will be
     // set as the new active object of the window as that gadget will be used

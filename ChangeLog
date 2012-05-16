@@ -11,6 +11,12 @@ $URL$
     descriptions.
   * mui/ReadMailGroup.c: removed the workaround for TE.mcc 15.37 as 15.38 is the
     required minimum version now.
+  * misc: separated the single list of POP3 and SMTP servers into two distinct
+    lists. Modifying the configuration has constantly reorderd the combined list
+    which makes it impossible to compare two configurations due to unchanged but
+    reordered servers within the list. Additionally this makes it possible to get
+    rid of server type checks as the list itself defines the type of servers it
+    carries.
 
 2012-05-15 Pär Boberg <pbobbenb@spray.se>
 

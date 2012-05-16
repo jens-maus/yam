@@ -64,10 +64,9 @@ struct MailServerNode *CreateNewMailServer(const enum MailServerType type, const
   {
     // initialize all variables as AllocSysObject() does not clear the memory
     memset(msn, 0, sizeof(*msn));
-    msn->type = type;
     msn->flags = MSF_ACTIVE;
 
-    switch(msn->type)
+    switch(type)
     {
       case MST_POP3:
       {
@@ -87,7 +86,7 @@ struct MailServerNode *CreateNewMailServer(const enum MailServerType type, const
 
             // now we get the first SMTP server in our list and reuse
             // the hostname of it for the new POP3 server
-            if((smtpMSN = GetMailServer(&co->mailServerList, MST_SMTP, 0)) != NULL)
+            if((smtpMSN = GetMailServer(&co->smtpServerList, 0)) != NULL)
               strlcpy(msn->hostname, smtpMSN->hostname, sizeof(msn->hostname));
           }
 
@@ -132,17 +131,15 @@ struct MailServerNode *CloneMailServer(const struct MailServerNode *msn)
     // the clone is not in use
     clearFlag(clone->flags, MSF_IN_USE);
 
-    if(clone->type == MST_POP3)
+    // POP3 servers keep a list of downloaded mails
+    if(msn->downloadedMails != NULL)
     {
-      // POP3 servers keep a list of downloaded mails
       if((clone->downloadedMails = CreateMailList()) == NULL)
       {
         FreeSysObject(ASOT_NODE, clone);
         clone = NULL;
       }
     }
-    else
-      clone->downloadedMails = NULL;
   }
 
   RETURN(clone);
@@ -156,7 +153,6 @@ void FreeMailServerList(struct MinList *mailServerList)
   struct Node *curNode;
 
   ENTER();
-
 
   // we have to free the mailServerList
   while((curNode = RemHead((struct List *)mailServerList)) != NULL)
@@ -186,7 +182,7 @@ static BOOL CompareMailServerNodes(const struct Node *n1, const struct Node *n2)
 
   // compare every single member of the structure, except the
   // list of downloaded mails for POP3 servers
-  if(msn1->type != msn2->type ||
+  if(msn1->id != msn2->id ||
      strcmp(msn1->description,  msn2->description) != 0 ||
      strcmp(msn1->hostname, msn2->hostname) != 0 ||
      strcmp(msn1->username, msn2->username) != 0 ||
@@ -222,8 +218,8 @@ BOOL CompareMailServerLists(const struct MinList *msl1, const struct MinList *ms
 
 ///
 /// GetMailServer
-// function to extract the structure of a POP3 server from our mailserver list
-struct MailServerNode *GetMailServer(const struct MinList *mailServerList, const enum MailServerType type, const unsigned int num)
+// return the num-th server from the list of servers
+struct MailServerNode *GetMailServer(const struct MinList *mailServerList, const unsigned int num)
 {
   struct MailServerNode *result = NULL;
   unsigned int count = 0;
@@ -235,16 +231,13 @@ struct MailServerNode *GetMailServer(const struct MinList *mailServerList, const
   {
     struct MailServerNode *msn = (struct MailServerNode *)curNode;
 
-    if(msn->type == type)
+    if(count == num)
     {
-      if(count == num)
-      {
-        result = msn;
-        break;
-      }
-
-      count++;
+      result = msn;
+      break;
     }
+
+    count++;
   }
 
   RETURN(result);

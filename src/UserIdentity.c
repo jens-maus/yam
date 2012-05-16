@@ -128,7 +128,7 @@ static BOOL CompareUserIdentityNodes(const struct Node *n1, const struct Node *n
      strcmp(uid1->realname, uid2->realname) != 0 ||
      strcmp(uid1->address, uid2->address) != 0 ||
      strcmp(uid1->organization, uid2->organization) != 0 ||
-     uid1->mailServer->id != uid2->mailServer->id ||
+     uid1->smtpServer->id != uid2->smtpServer->id ||
      uid1->signature != uid2->signature ||
      strcmp(uid1->mailCC, uid2->mailCC) != 0 ||
      strcmp(uid1->mailBCC, uid2->mailBCC) != 0 ||
