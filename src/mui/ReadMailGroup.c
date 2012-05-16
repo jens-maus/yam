@@ -237,13 +237,6 @@ HOOKPROTONH(TextEditDoubleClickFunc, BOOL, Object *editor, struct ClickMessage *
     }
   }
 
-  // the result must be inverted for TE.mcc 15.37 due to a misinterpretation
-  // of a quite convoluted code
-  if(xget(editor, MUIA_Version) == 15 && xget(editor, MUIA_Revision) == 37)
-  {
-    result = !result;
-  }
-
   RETURN(result);
   return result;
 }

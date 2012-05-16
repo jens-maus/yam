@@ -9,6 +9,8 @@ $URL$
 
   * YAM_COs.c: fixed the inconsistent loading and saving of POP3 and SMTP server
     descriptions.
+  * mui/ReadMailGroup.c: removed the workaround for TE.mcc 15.37 as 15.38 is the
+    required minimum version now.
 
 2012-05-15 Pär Boberg <pbobbenb@spray.se>
 
