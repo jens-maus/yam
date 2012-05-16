@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-05-16 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_COs.c: fixed the inconsistent loading and saving of POP3 and SMTP server
+    descriptions.
+
 2012-05-15 Pär Boberg <pbobbenb@spray.se>
 
   * locale/swedish.ct: updated according to changes.

@@ -323,7 +323,7 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
       {
         fprintf(fh, "POP%02d.ID                 = %08x\n", i, msn->id);
         fprintf(fh, "POP%02d.Enabled            = %s\n", i, Bool2Txt(isServerActive(msn)));
-        fprintf(fh, "POP%02d.Account            = %s\n", i, msn->description);
+        fprintf(fh, "POP%02d.Description        = %s\n", i, msn->description);
         fprintf(fh, "POP%02d.Server             = %s\n", i, msn->hostname);
         fprintf(fh, "POP%02d.Port               = %d\n", i, msn->port);
         fprintf(fh, "POP%02d.User               = %s\n", i, msn->username);
@@ -861,7 +861,7 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
 
                 // now find out which subtype this smtp configuration is
                 if(stricmp(q, "ID") == 0)                        msn->id = strtol(value, NULL, 16);
-                else if(stricmp(q, "Account") == 0)              strlcpy(msn->description, value, sizeof(msn->description));
+                else if(stricmp(q, "Description") == 0)          strlcpy(msn->description, value, sizeof(msn->description));
                 else if(stricmp(q, "Server") == 0)               strlcpy(msn->hostname, value, sizeof(msn->hostname));
                 else if(stricmp(q, "Port") == 0)                 msn->port = atoi(value);
                 else if(stricmp(q, "Enabled") == 0)              Txt2Bool(value) == TRUE ? setFlag(msn->flags, MSF_ACTIVE) : clearFlag(msn->flags, MSF_ACTIVE);
@@ -903,7 +903,7 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
                 char *q = strchr(buf, '.')+1;
 
                 if(stricmp(q, "ID") == 0)                        msn->id = strtol(value, NULL, 16);
-                else if(stricmp(q, "Account") == 0)              strlcpy(msn->description, value, sizeof(msn->description));
+                else if(stricmp(q, "Description") == 0)          strlcpy(msn->description, value, sizeof(msn->description));
                 else if(stricmp(q, "Server") == 0)               strlcpy(msn->hostname, value, sizeof(msn->hostname));
                 else if(stricmp(q, "Port") == 0)                 msn->port = atoi(value);
                 else if(stricmp(q, "Password") == 0)             strlcpy(msn->password, Decrypt(value), sizeof(msn->password));
