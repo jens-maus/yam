@@ -135,7 +135,7 @@ enum { RMEN_HSHORT=100, RMEN_HFULL, RMEN_SNONE, RMEN_SDATA, RMEN_SFULL, RMEN_SIM
 /* Hooks */
 /// TextEditDoubleClickHook
 //  Handles double-clicks on an URL
-HOOKPROTONH(TextEditDoubleClickFunc, BOOL, Object *editor, struct ClickMessage *clickmsg)
+HOOKPROTONHNO(TextEditDoubleClickFunc, BOOL, struct ClickMessage *clickmsg)
 {
   // default to let TextEditor.mcc handle the double click
   BOOL result = FALSE;
