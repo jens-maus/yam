@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.37 (15.5.2012)
+## version $VER: YAM.catalog 7.38 (17.05.2012)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -5535,7 +5535,7 @@ Soll bei leerer Betreff-\nzeile gewarnt werden?
 ; leave the subject line blank?
 ;
 MSG_WR_OKAYCANCELREQ
-*_Ok|_Abbruch
+*_Ok|_Abbrechen
 ; *_Ok|_Cancel
 ;
 MSG_WR_NOSUBJECTREQ
@@ -5564,7 +5564,7 @@ _Suchen
 ; _Search
 ;
 MSG_SEARCHWINDOW_BT_CANCEL
-_Abbruch
+_Abbrechen
 ; _Cancel
 ;
 MSG_SEARCHNOTFOUND_TITLE
@@ -7469,10 +7469,10 @@ und bisher nicht gespeichert.\n\
 Wie wollen Sie fortfahren?
 ;
 MSG_CONFIG_MODIFIED_GAD
-*Jetzt _speichern|_Beenden ohne speichern|_Abbruch
+*Jetzt _speichern|_Beenden ohne speichern|_Abbrechen
 ;
 MSG_ABOOK_MODIFIED_GAD
-*Jetzt _speichern|_Beenden ohne speichern|_Abbruch
+*Jetzt _speichern|_Beenden ohne speichern|_Abbrechen
 ;
 MSG_HELP_CO_BT_MIMEIMPORT
 Erlaubt MIME-Einstellungen von anderen\n\
@@ -7508,7 +7508,7 @@ Die Nachricht wird nicht verschlüsselt oder\n\
 signiert.
 ;
 MSG_WR_INVALIDSECURITY_GADS
-*_Ok|_Abbruch
+*_Ok|_Abbrechen
 ;
 MSG_ER_FILEENCODE
 Es trat ein Fehler bei dem Versuch auf die Datei '%s' \
@@ -8266,7 +8266,7 @@ Es sind noch Schreibfenster geöffnet.\n\
 Wie wollen Sie fortfahren?
 ;
 MSG_OPEN_WRITEWINDOWS_GAD
-*Jetzt _speichern|_Beenden ohne speichern|_Abbruch
+*Jetzt _speichern|_Beenden ohne speichern|_Abbrechen
 ;
 MSG_MA_MFORWARD_ATTACH
 als Anhang
@@ -8903,7 +8903,7 @@ wenn Sie das Konfigurationsfenster schließen.\n\
 Wie wollen Sie fortfahren?
 ;
 MSG_CO_CONFIGWARNING_BT
-_Fenster schließen|*_Abbruch
+_Fenster schließen|*_Abbrechen
 ;
 MSG_CO_CONFIGVERSIONWARNING_TITLE
 Konfigurationsversionswarning
@@ -8918,7 +8918,7 @@ auf Standardwerte zurückgestellt werden.\n\
 Wie wollen Sie fortfahren?
 ;
 MSG_CO_CONFIGVERSIONWARNING_BT
-_Fortfahren|*_Abbruch
+_Fortfahren|*_Abbrechen
 ;
 MSG_WR_MCCADDRFIELD
 CC-Adressfeld

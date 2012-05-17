@@ -7,6 +7,7 @@ $URL$
 
 2012-05-17 Jens Langner <Jens.Langner@light-speed.de>
 
+  * locale/german.ct: minor fixes
   * YAM_CO.c, UserIdentity.c: added some NULL pointer checks for uin->smtpServer
     and also made sure that smtpServer should always carry a valid pointer due to
     setting the first active smtpServer always as the default one when creating
