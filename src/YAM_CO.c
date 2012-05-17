@@ -1704,8 +1704,13 @@ static BOOL CopyConfigData(struct Config *dco, const struct Config *sco)
       {
         // make sure the mailserver of the copied node points to an
         // entry of the copied mail server list
-        dstNode->smtpServer = FindMailServer(&dco->smtpServerList, srcNode->smtpServer->id);
+        if(srcNode->smtpServer != NULL)
+          dstNode->smtpServer = FindMailServer(&dco->smtpServerList, srcNode->smtpServer->id);
+        else
+          dstNode->smtpServer = NULL;
+
         dstNode->sentMailList = NULL;
+
         AddTail((struct List *)&dco->userIdentityList, (struct Node *)dstNode);
       }
       else
@@ -1738,6 +1743,7 @@ static BOOL CopyConfigData(struct Config *dco, const struct Config *sco)
     }
   }
 
+D(DBF_ALWAYS, "jooo3");
   // for copying the filters we do have to do another deep copy
   NewMinList(&dco->filterList);
 

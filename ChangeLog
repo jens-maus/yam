@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-05-17 Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_CO.c, UserIdentity.c: added some NULL pointer checks for uin->smtpServer
+    and also made sure that smtpServer should always carry a valid pointer due to
+    setting the first active smtpServer always as the default one when creating
+    a new user identity via CreateNewUserIdentity(). This closes #304.
+
 2012-05-16 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_COs.c: fixed the inconsistent loading and saving of POP3 and SMTP server

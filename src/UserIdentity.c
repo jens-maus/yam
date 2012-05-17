@@ -63,6 +63,7 @@ struct UserIdentityNode *CreateNewUserIdentity(void)
                                           TAG_DONE)) != NULL)
   {
     struct Folder *sentFolder;
+    struct Node *curNode;
 
     // initialize all variables as AllocSysObject() does not clear the memory
     memset(uin, 0, sizeof(*uin));
@@ -77,6 +78,20 @@ struct UserIdentityNode *CreateNewUserIdentity(void)
     uin->saveSentMail = TRUE;
     uin->sigReply = TRUE;
     uin->sigForwarding = TRUE;
+
+    // we get the first valid smtpServer from the list and put that
+    // as the default one so that we don't have a NULL pointer in
+    // uin->smtpServer
+    IterateList(&C->smtpServerList, curNode)
+    {
+      struct MailServerNode *msn = (struct MailServerNode *)curNode;
+
+      if(isServerActive(msn))
+      {
+        uin->smtpServer = msn;
+        break;
+      }
+    }
 
     // get the name of the first sent folder so that we make
     // that one as the default
@@ -128,7 +143,7 @@ static BOOL CompareUserIdentityNodes(const struct Node *n1, const struct Node *n
      strcmp(uid1->realname, uid2->realname) != 0 ||
      strcmp(uid1->address, uid2->address) != 0 ||
      strcmp(uid1->organization, uid2->organization) != 0 ||
-     uid1->smtpServer->id != uid2->smtpServer->id ||
+     (uid1->smtpServer != NULL ? uid1->smtpServer->id : -1) != (uid2->smtpServer != NULL ? uid2->smtpServer->id : -1) ||
      uid1->signature != uid2->signature ||
      strcmp(uid1->mailCC, uid2->mailCC) != 0 ||
      strcmp(uid1->mailBCC, uid2->mailBCC) != 0 ||
