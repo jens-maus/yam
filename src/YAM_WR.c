@@ -1173,8 +1173,6 @@ BOOL WriteOutMessage(struct Compose *comp)
 
   ENTER();
 
-D(DBF_ALWAYS, "security: %d", comp->Security);
-
   if(comp->Mode == NMM_BOUNCE)
   {
     if(comp->DelSend == TRUE)
@@ -2229,13 +2227,13 @@ struct WriteMailData *NewForwardMailWindow(struct MailList *mlist, const int fla
         etd.R_Address = mail->To.Address;
 
         // we create a generic subject line for the forward
-        // action so that a forwarded mail will have a [Fwd: XXX] kinda
+        // action so that a forwarded mail will have a "Fwd: XXX" kinda
         // subject line instead of the original.
         if(mail->Subject != '\0')
         {
           char buffer[SIZE_LARGE];
 
-          snprintf(buffer, sizeof(buffer), "[Fwd: %s]", mail->Subject);
+          snprintf(buffer, sizeof(buffer), "Fwd: %s", mail->Subject);
           if(strstr(rsub, buffer) == NULL)
           {
             if(rsub[0] != '\0')
@@ -2624,190 +2622,202 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
         // now we should know how the user wants to
         // reply to the mail. The possible reply modes are:
         //
-        // repmode == 1 : To Sender (From:/ReplyTo:)
-        // repmode == 2 : To Sender and all recipients (From:/ReplyTo:, To:, CC:)
-        // repmode == 3 : To Recipients (To:, CC:)
-        if(repmode == 1)
+        // repmode == 1 : To Sender (From:/ReplyTo: -> To:)
+        // repmode == 2 : To Sender and all recipients (From:/ReplyTo: -> To:, To:+CC: -> CC:)
+        // repmode == 3 : To Recipients (To:+CC: -> To:)
+        switch(repmode)
         {
-          BOOL addDefault = FALSE;
+          // user wants to reply to sender of the
+          // mail only
+          case 1:
+          {
+            BOOL addDefault = FALSE;
 
-          // the user wants to reply to the Sender (From:), however we
-          // need to check whether he want to get asked or directly reply to
-          // the wanted address.
-          if(foundSentFolder == TRUE)
-          {
-            // the mail to which the user wants to reply is stored in a
-            // sent mail folder. As such all mail should originate from ourself
-            // and as such when he presses "reply" on it we send it to
-            // the To: address recipient instead.
-            rto = AppendRcpt(rto, &mail->To, email->identity, FALSE);
-            for(k=0; k < email->NoSTo; k++)
-              rto = AppendRcpt(rto, &email->STo[k], email->identity, FALSE);
-          }
-          else if(hasPrivateFlag(flags) == TRUE)
-          {
-            // the user seem to have pressed the SHIFT key, so
-            // we are going to "just"reply to the "From:" addresses of
-            // the original mail. so we add them accordingly.
-            rto = AppendRcpt(rto, &mail->From, email->identity, FALSE);
-            for(k=0; k < email->NoSFrom; k++)
-              rto = AppendRcpt(rto, &email->SFrom[k], email->identity, FALSE);
-          }
-          else if(foundMLFolder == TRUE && mlistad != NULL)
-          {
-            char *p;
-
-            if((p = strdup(mlistad)) != NULL)
+            // the user wants to reply to the Sender (From:/ReplyTo:), however we
+            // need to check whether he want to get asked or directly reply to
+            // the wanted address.
+            if(foundSentFolder == TRUE)
             {
-              char *ptr = p;
-
-              // we found a matching folder for the mail we are going to
-              // reply to, so we go and add the 'mlistad' to our To: addresses
-              while(ptr != NULL && *ptr != '\0')
-              {
-                char *next;
-
-                if((next = MyStrChr(ptr, ',')) != NULL)
-                  *next++ = '\0';
-
-                ExtractAddress(ptr, &pe);
-                rto = AppendRcpt(rto, &pe, email->identity, FALSE);
-
-                ptr = next;
-              }
-
-              free(p);
+              // the mail to which the user wants to reply is stored in a
+              // sent mail folder. As such all mail should originate from ourself
+              // and as such when he presses "reply" on it we send it to
+              // the To: address recipient instead.
+              rto = AppendRcpt(rto, &mail->To, email->identity, FALSE);
+              for(k=0; k < email->NoSTo; k++)
+                rto = AppendRcpt(rto, &email->STo[k], email->identity, FALSE);
             }
-          }
-          else if(C->CompareAddress == TRUE && hasMListFlag(flags) == FALSE &&
-                  mail->ReplyTo.Address[0] != '\0')
-          {
-            BOOL askUser = FALSE;
-
-            // now we have to check whether the ReplyTo: and From: of the original are the
-            // very same or not.
-            if(stricmp(mail->From.Address, mail->ReplyTo.Address) == 0)
+            else if(hasPrivateFlag(flags) == FALSE &&
+                    foundMLFolder == TRUE && mlistad != NULL)
             {
-              if(email->NoSFrom == email->NoSReplyTo)
+              char *p;
+
+              if((p = strdup(mlistad)) != NULL)
               {
-                for(k=0; k < email->NoSFrom; k++)
+                char *ptr = p;
+
+                // we found a matching folder for the mail we are going to
+                // reply to, so we go and add the 'mlistad' to our To: addresses
+                while(ptr != NULL && *ptr != '\0')
                 {
-                  if(stricmp(email->SFrom[k].Address, email->SReplyTo[k].Address) != 0)
+                  char *next;
+
+                  if((next = MyStrChr(ptr, ',')) != NULL)
+                    *next++ = '\0';
+
+                  ExtractAddress(ptr, &pe);
+                  rto = AppendRcpt(rto, &pe, email->identity, FALSE);
+
+                  ptr = next;
+                }
+
+                free(p);
+              }
+            }
+            else if(C->CompareAddress == TRUE &&
+                    (hasMListFlag(flags) == FALSE || hasPrivateFlag(flags) == TRUE) &&
+                    mail->ReplyTo.Address[0] != '\0')
+            {
+              BOOL askUser = FALSE;
+
+              // now we have to check whether the ReplyTo: and From: of the original are the
+              // very same or not.
+              if(stricmp(mail->From.Address, mail->ReplyTo.Address) == 0)
+              {
+                if(email->NoSFrom == email->NoSReplyTo)
+                {
+                  for(k=0; k < email->NoSFrom; k++)
                   {
-                    askUser = TRUE;
-                    break;
+                    if(stricmp(email->SFrom[k].Address, email->SReplyTo[k].Address) != 0)
+                    {
+                      askUser = TRUE;
+                      break;
+                    }
+                  }
+                }
+                else
+                  askUser = TRUE;
+              }
+              else
+                askUser = TRUE;
+
+              // if askUser == TRUE, we go and
+              // ask the user which address he wants to reply to.
+              if(askUser == TRUE)
+              {
+                snprintf(buffer, sizeof(buffer), tr(MSG_MA_CompareReq), mail->From.Address, mail->ReplyTo.Address);
+
+                switch(MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_MA_Compare3ReqOpt), buffer))
+                {
+                  // Both (From:/ReplyTo:) address
+                  case 3:
+                  {
+                    // add all From: addresses to the CC: list
+                    rcc = AppendRcpt(rcc, &mail->From, email->identity, FALSE);
+                    for(k=0; k < email->NoSFrom; k++)
+                      rcc = AppendRcpt(rcc, &email->SFrom[k], email->identity, FALSE);
+                  }
+                  // continue
+
+                  // Reply-To: addresses
+                  case 2:
+                  {
+                    rto = AppendRcpt(rto, &mail->ReplyTo, email->identity, FALSE);
+                    for(k=0; k < email->NoSReplyTo; k++)
+                      rto = AppendRcpt(rto, &email->SReplyTo[k], email->identity, FALSE);
+                  }
+                  break;
+
+                  // only From: addresses
+                  case 1:
+                  {
+                    rto = AppendRcpt(rto, &mail->From, email->identity, FALSE);
+                    for(k=0; k < email->NoSFrom; k++)
+                      rto = AppendRcpt(rto, &email->SFrom[k], email->identity, FALSE);
+                  }
+                  break;
+
+                  // cancel operation
+                  case 0:
+                  {
+                    MA_FreeEMailStruct(email);
+                    fclose(out);
+                    CleanupWriteMailData(wmData);
+                    FreeStrBuf(rto);
+                    FreeStrBuf(rcc);
+                    FreeStrBuf(rsub);
+
+                    RETURN(NULL);
+                    return NULL;
                   }
                 }
               }
               else
-                askUser = TRUE;
-            }
-            else
-              askUser = TRUE;
-
-            // if askUser == TRUE, we go and
-            // ask the user which address he wants to reply to.
-            if(askUser == TRUE)
-            {
-              snprintf(buffer, sizeof(buffer), tr(MSG_MA_CompareReq), mail->From.Address, mail->ReplyTo.Address);
-
-              switch(MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_MA_Compare3ReqOpt), buffer))
-              {
-                // Both (From:/ReplyTo:) address
-                case 3:
-                {
-                  // add all From: addresses to the CC: list
-                  rcc = AppendRcpt(rcc, &mail->From, email->identity, FALSE);
-                  for(k=0; k < email->NoSFrom; k++)
-                    rcc = AppendRcpt(rcc, &email->SFrom[k], email->identity, FALSE);
-                }
-                // continue
-
-                // Reply-To: addresses
-                case 2:
-                {
-                  rto = AppendRcpt(rto, &mail->ReplyTo, email->identity, FALSE);
-                  for(k=0; k < email->NoSReplyTo; k++)
-                    rto = AppendRcpt(rto, &email->SReplyTo[k], email->identity, FALSE);
-                }
-                break;
-
-                // only From: addresses
-                case 1:
-                {
-                  rto = AppendRcpt(rto, &mail->From, email->identity, FALSE);
-                  for(k=0; k < email->NoSFrom; k++)
-                    rto = AppendRcpt(rto, &email->SFrom[k], email->identity, FALSE);
-                }
-                break;
-
-                // cancel operation
-                case 0:
-                {
-                  MA_FreeEMailStruct(email);
-                  fclose(out);
-                  CleanupWriteMailData(wmData);
-                  FreeStrBuf(rto);
-                  FreeStrBuf(rcc);
-                  FreeStrBuf(rsub);
-
-                  RETURN(NULL);
-                  return NULL;
-                }
-              }
+                addDefault = TRUE;
             }
             else
               addDefault = TRUE;
-          }
-          else
-            addDefault = TRUE;
 
-          if(addDefault == TRUE)
-          {
-            // otherwise we check whether to use the ReplyTo: or From: addresses as the
-            // To: adress of our reply. If a ReplyTo: exists we use that one instead
-            if(mail->ReplyTo.Address[0] != '\0')
+            if(addDefault == TRUE)
             {
-              rto = AppendRcpt(rto, &mail->ReplyTo, email->identity, FALSE);
-              for(k=0; k < email->NoSReplyTo; k++)
-                rto = AppendRcpt(rto, &email->SReplyTo[k], email->identity, FALSE);
-            }
-            else
-            {
-              rto = AppendRcpt(rto, &mail->From, email->identity, FALSE);
-              for(k=0; k < email->NoSFrom; k++)
-                rto = AppendRcpt(rto, &email->SFrom[k], email->identity, FALSE);
+              // otherwise we check whether to use the ReplyTo: or From: addresses as the
+              // To: adress of our reply. If a ReplyTo: exists we use that one instead
+              if(mail->ReplyTo.Address[0] != '\0')
+              {
+                rto = AppendRcpt(rto, &mail->ReplyTo, email->identity, FALSE);
+                for(k=0; k < email->NoSReplyTo; k++)
+                  rto = AppendRcpt(rto, &email->SReplyTo[k], email->identity, FALSE);
+              }
+              else
+              {
+                rto = AppendRcpt(rto, &mail->From, email->identity, FALSE);
+                for(k=0; k < email->NoSFrom; k++)
+                  rto = AppendRcpt(rto, &email->SFrom[k], email->identity, FALSE);
+              }
             }
           }
-        }
-        else
-        {
+          break;
+
           // user wants to reply to all senders and recipients
-          // so let's add them
-          if(repmode == 2)
+          case 2:
           {
+            // user wants to reply to all senders and recipients
+            // so let's add them
             if(mail->ReplyTo.Address[0] != '\0')
             {
+              // add Reply-To: addresses to To:
               rto = AppendRcpt(rto, &mail->ReplyTo, email->identity, FALSE);
               for(k=0; k < email->NoSReplyTo; k++)
                 rto = AppendRcpt(rto, &email->SReplyTo[k], email->identity, FALSE);
             }
             else
             {
+              // add From: addresses to To:
               rto = AppendRcpt(rto, &mail->From, email->identity, FALSE);
               for(k=0; k < email->NoSFrom; k++)
                 rto = AppendRcpt(rto, &email->SFrom[k], email->identity, FALSE);
             }
+
+            // add To: addresses to CC:
+            rcc = AppendRcpt(rcc, &mail->To, email->identity, TRUE);
+            for(k=0; k < email->NoSTo; k++)
+              rcc = AppendRcpt(rcc, &email->STo[k], email->identity, TRUE);
           }
+          break;
 
-          // now add all original To: addresses
-          rto = AppendRcpt(rto, &mail->To, email->identity, TRUE);
-          for(k=0; k < email->NoSTo; k++)
-            rto = AppendRcpt(rto, &email->STo[k], email->identity, TRUE);
+          // user wants to reply to all 
+          // recipients of the mail
+          case 3:
+          {
+            // now add all original To: addresses to To:
+            rto = AppendRcpt(rto, &mail->To, email->identity, TRUE);
+            for(k=0; k < email->NoSTo; k++)
+              rto = AppendRcpt(rto, &email->STo[k], email->identity, TRUE);
 
-          // add the CC: addresses as well
-          for(k=0; k < email->NoCC; k++)
-            rcc = AppendRcpt(rcc, &email->CC[k], email->identity, TRUE);
+            // add the CC: addresses as well
+            for(k=0; k < email->NoCC; k++)
+              rcc = AppendRcpt(rcc, &email->CC[k], email->identity, TRUE);
+          }
+          break;
         }
 
         // extract the first address/name from our generated

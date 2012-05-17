@@ -7,6 +7,15 @@ $URL$
 
 2012-05-17 Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_WR.c: reworked the different reply modes to be somewhat more compatible
+    to what other clients do when replying to sender or replying to all recipients.
+    In addition, YAM will now create a standard subject like "Fwd: XXXX" when
+    forwarding a message and will omit brackets as this is not done by any other
+    mail client out there.
+  * YAM_MAf.c: fixed problem where most of the FindUserIdentityByAddress() calls
+    were omitted because of a incorrect identity NULL check. Now YAM should correctly
+    identify the identity if the mail address is found somewhere in the main header
+    of the mail that is to be replied/forwarded.
   * locale/german.ct: minor fixes
   * YAM_CO.c, UserIdentity.c: added some NULL pointer checks for uin->smtpServer
     and also made sure that smtpServer should always carry a valid pointer due to
