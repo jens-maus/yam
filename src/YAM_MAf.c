@@ -2241,6 +2241,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
            email->identity == NULL)
         {
           email->identity = FindUserIdentityByAddress(&C->userIdentityList, mail->From.Address);
+          D(DBF_MAIL, "finduinByAddr: '%s' %08lx", mail->From.Address, email->identity);
         }
 
         // if we have more addresses waiting we
@@ -2258,8 +2259,11 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
 
               // if we haven't found the identity yet we process the
               // other from addresses
-              for(i=0; email->identity != NULL && i < email->NoSFrom; i++)
+              for(i=0; email->identity == NULL && i < email->NoSFrom; i++)
+              {
                 email->identity = FindUserIdentityByAddress(&C->userIdentityList, email->SFrom[i].Address);
+                D(DBF_MAIL, "finduinByAddr: '%s' %08lx", email->SFrom[i].Address, email->identity);
+              }
 
               setFlag(mail->mflags, MFLAG_MULTISENDER);
             }
@@ -2289,6 +2293,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
            email->identity == NULL)
         {
           email->identity = FindUserIdentityByAddress(&C->userIdentityList, mail->ReplyTo.Address);
+          D(DBF_MAIL, "finduinByAddr: '%s' %08lx", mail->ReplyTo.Address, email->identity);
         }
 
         // if we have more addresses waiting we
@@ -2306,8 +2311,11 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
 
               // if we haven't found the identity yet we process the
               // other from addresses
-              for(i=0; email->identity != NULL && i < email->NoSReplyTo; i++)
+              for(i=0; email->identity == NULL && i < email->NoSReplyTo; i++)
+              {
                 email->identity = FindUserIdentityByAddress(&C->userIdentityList, email->SReplyTo[i].Address);
+                D(DBF_MAIL, "finduinByAddr: '%s' %08lx", email->SReplyTo[i].Address, email->identity);
+              }
 
               setFlag(mail->mflags, MFLAG_MULTIREPLYTO);
             }
@@ -2355,6 +2363,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
              email->identity == NULL)
           {
             email->identity = FindUserIdentityByAddress(&C->userIdentityList, mail->To.Address);
+            D(DBF_MAIL, "finduinByAddr: '%s' %08lx", mail->To.Address, email->identity);
           }
 
           if(p != NULL)
@@ -2370,8 +2379,11 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
 
                 // if we haven't found the identity yet we process the
                 // other from addresses
-                for(i=0; email->identity != NULL && i < email->NoSTo; i++)
+                for(i=0; email->identity == NULL && i < email->NoSTo; i++)
+                {
                   email->identity = FindUserIdentityByAddress(&C->userIdentityList, email->STo[i].Address);
+                  D(DBF_MAIL, "finduinByAddr: '%s' %08lx", email->STo[i].Address, email->identity);
+                }
 
                 setFlag(mail->mflags, MFLAG_MULTIRCPT);
               }
@@ -2398,8 +2410,11 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
 
             // if we haven't found the identity yet we process the
             // other from addresses
-            for(i=0; email->identity != NULL && i < email->NoCC; i++)
+            for(i=0; email->identity == NULL && i < email->NoCC; i++)
+            {
               email->identity = FindUserIdentityByAddress(&C->userIdentityList, email->CC[i].Address);
+              D(DBF_MAIL, "finduinByAddr: '%s' %08lx", email->CC[i].Address, email->identity);
+            }
 
             setFlag(mail->mflags, MFLAG_MULTIRCPT);
           }
@@ -2422,8 +2437,11 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
 
             // if we haven't found the identity yet we process the
             // other from addresses
-            for(i=0; email->identity != NULL && i < email->NoBCC; i++)
+            for(i=0; email->identity == NULL && i < email->NoBCC; i++)
+            {
               email->identity = FindUserIdentityByAddress(&C->userIdentityList, email->BCC[i].Address);
+              D(DBF_MAIL, "finduinByAddr: '%s' %08lx", email->BCC[i].Address, email->identity);
+            }
 
             setFlag(mail->mflags, MFLAG_MULTIRCPT);
           }
@@ -2556,9 +2574,12 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
 
             // try to get the identity structure
             if(email->identityID != 0)
+            {
               email->identity = FindUserIdentityByID(&C->userIdentityList, email->identityID);
+              D(DBF_MAIL, "finduinById: '%08x' %08lx", email->identityID, email->identity);
+            }
 
-            D(DBF_MIME, "found identity: '%s' %08x %08x", idStr, email->identityID, email->identity->id);
+            D(DBF_MAIL, "found identity: '%s' %08x %08x", idStr, email->identityID, email->identity->id);
           }
 
           // check security flags
@@ -2615,6 +2636,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
            email->identity == NULL)
         {
           email->identity = FindUserIdentityByAddress(&C->userIdentityList, mail->From.Address);
+          D(DBF_MAIL, "finduinByAddr: '%s' %08lx", mail->From.Address, email->identity);
         }
 
         D(DBF_MIME, "From: address obtained from Sender: header");
@@ -2634,8 +2656,11 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
 
               // if we haven't found the identity yet we process the
               // other from addresses
-              for(i=0; email->identity != NULL && i < email->NoSFrom; i++)
+              for(i=0; email->identity == NULL && i < email->NoSFrom; i++)
+              {
                 email->identity = FindUserIdentityByAddress(&C->userIdentityList, email->SFrom[i].Address);
+                D(DBF_MAIL, "finduinByAddr: '%s' %08lx", email->SFrom[i].Address, email->identity);
+              }
 
               setFlag(mail->mflags, MFLAG_MULTISENDER);
             }
@@ -2660,7 +2685,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
     if(email->identity == NULL)
       email->identity = GetUserIdentity(&C->userIdentityList, 0, TRUE);
 
-    D(DBF_MIME, "final identity: %08x '%s'", email->identity->id, email->identity->description);
+    D(DBF_MAIL, "final identity: %08x '%s'", email->identity->id, email->identity->description);
 
     // in case the replyTo recipient doesn't have a realname yet and it is
     // completly the same like the from address we go and copy the realname as both
