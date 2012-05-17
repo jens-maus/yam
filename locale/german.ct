@@ -568,11 +568,11 @@ Zu welcher Adresse möchten Sie antworten?
 ; ADDRESS, ADDRESS
 ;
 MSG_MA_Compare3ReqOpt
-_Von|*A_nwort an|_Beide|_Abbrechen
+_From|*_Reply-To|_Beide|_Abbrechen
 ; _From|*_Reply-To|_Both|_Cancel
 ;
 MSG_MA_Compare2ReqOpt
-_Von|*A_nwort an|_Abbrechen
+_From|*_Reply-To|_Abbrechen
 ; _From|*_Reply-To|_Cancel
 ;
 MSG_MA_ConfirmReq
