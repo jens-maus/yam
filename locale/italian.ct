@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.98 (18.05.2012)
+## version $VER: YAM.catalog 7.99 (19.05.2012)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -7,7 +7,7 @@
 ; Compiled with FlexCat 2.9 PPC (AmigaOS4)
 ; $Id$
 ;
-; based on YAM.cd 5938 2012-05-15
+; based on YAM.cd 5956 2012-05-18
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -1671,15 +1671,15 @@ Usa fi_rme
 ; Use s_ignatures
 ;
 MSG_CO_EditSig
-Mo_difica con editor esterno
+mo_difica con editor esterno
 ; _Edit in external editor
 ;
 MSG_CO_InsertTag
-Inserisci Tagline _casuale
+inserisci tagline _casuale
 ; Insert _random tagline
 ;
 MSG_CO_InsertENV
-Inserisci E_NV:Signature
+inserisci firma:E_NV
 ; Insert E_NV:Signature
 ;
 MSG_CO_Taglines
@@ -5499,23 +5499,23 @@ posta visualizzato?
 ; each mail to be displayed?
 ;
 MSG_CO_SIZEFORMAT01
-Vecchio formato - (1.234.567 byte)
+vecchio formato - (1.234.567 byte)
 ; Old format - (1.234.567 bytes)
 ;
 MSG_CO_SIZEFORMAT02
-Precisione mista (0.001 GB, 0.01 MB, 0.1 KB)
+precisione mista (0.001 GB, 0.01 MB, 0.1 KB)
 ; Mixed precision (0.001 GB, 0.01 MB, 0.1 KB)
 ;
 MSG_CO_SIZEFORMAT03
-Precisione 10^-1 (0.1 GB/MB/KB)
+precisione 10^-1 (0.1 GB/MB/KB)
 ; 10^-1 precision (0.1 GB/MB/KB)
 ;
 MSG_CO_SIZEFORMAT04
-Precisione 10^-2 (0.01 GB/MB/KB)
+precisione 10^-2 (0.01 GB/MB/KB)
 ; 10^-2 precision (0.01 GB/MB/KB)
 ;
 MSG_CO_SIZEFORMAT05
-Precisione 10^-3 (0.001 GB/MB/KB)
+precisione 10^-3 (0.001 GB/MB/KB)
 ; 10^-3 precision (0.001 GB/MB/KB)
 ;
 MSG_HELP_CO_ST_SMTPAUTHUSER
@@ -5704,19 +5704,19 @@ Pos_izione
 ; Pos_ition
 ;
 MSG_CO_INFOBARPOS01
-Sopra
+sopra
 ; Top
 ;
 MSG_CO_INFOBARPOS02
-Al centro
+centrata
 ; Center
 ;
 MSG_CO_INFOBARPOS03
-Sotto
+sotto
 ; Bottom
 ;
 MSG_CO_INFOBARPOS04
-Disattivata
+disattivata
 ; Disabled
 ;
 MSG_CO_FOLDERLABEL
@@ -6730,11 +6730,11 @@ Configurazione relativa al comportamento di YAM all'avvio ed alla chiusura...
 ; Configure what YAM should do on startup and exit...
 ;
 MSG_CO_MIME_TITLE
-Impostazioni dei Datatype MIME
+Impostazioni del tipo dei MIME
 ; MIME Types Settings
 ;
 MSG_CO_MIME_SUMMARY
-Configurazione relativa al tipo di MIME da gestire...
+Configurazione relativa al tipo di MIME e visualizzatori da gestire...
 ; Configure own MIME types and viewers...
 ;
 MSG_CO_ABOOK_TITLE
@@ -6850,15 +6850,15 @@ Aggiornamenti software
 ; Update check
 ;
 MSG_CO_UPDATE_DAILY
-Quotidiana
+quotidiana
 ; Daily
 ;
 MSG_CO_UPDATE_WEEKLY
-Settimanale
+settimanale
 ; Weekly
 ;
 MSG_CO_UPDATE_MONTHLY
-Mensile
+mensile
 ; Monthly
 ;
 MSG_CO_SEARCHFORUPDATES
@@ -6870,7 +6870,7 @@ Si verrà avvertiti nel caso si renda disponibile un nuovo aggiornamento.
 ; You will be notified as soon as updates are available.
 ;
 MSG_CO_SEARCHNOW
-Cerca a_desso
+cerca a_desso
 ; Check _now
 ;
 MSG_CO_LASTSEARCH
@@ -8079,27 +8079,27 @@ nell'etichetta della cartella.
 ; as the label of the folder.
 ;
 MSG_CO_FOLDERINFO01
-Nome cartelle
+nome cartella
 ; Folder name
 ;
 MSG_CO_FOLDERINFO02
-Nome cartella (nuova)
+nome cartella (nuova)
 ; Folder name (new)
 ;
 MSG_CO_FOLDERINFO03
-Nome cartella (non letta)
+nome cartella (non letta)
 ; Folder name (unread)
 ;
 MSG_CO_FOLDERINFO04
-Nome cartella (nuova/non letta)
+nome cartella (nuova/non letta)
 ; Folder name (new/unread)
 ;
 MSG_CO_FOLDERINFO05
-Nome cartella (non letta/nuova)
+nome cartella (non letta/nuova)
 ; Folder name (unread/new)
 ;
 MSG_FO_EXPIREUNREAD
-non letto
+non letta
 ; also unread
 ;
 MSG_HELP_FO_CH_EXPIREUNREAD
@@ -8898,7 +8898,7 @@ k
 ; k
 ;
 MSG_CO_UPDATE_NEVER
-Disattivata
+disattivata
 ; Never
 ;
 MSG_MA_EXECUTESCRIPT_TITLE
@@ -10592,4 +10592,8 @@ definite.
 ; encrypted or both. "Default" tries to find\n\
 ; the recipient in your address book and use\n\
 ; the settings defined there.
+;
+MSG_CO_MIMETYPE_TITLE
+Tipo di MIME
+; MIME type
 ;
