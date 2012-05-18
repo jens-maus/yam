@@ -3386,6 +3386,7 @@ Object *CO_PageSecurity(struct CO_ClassData *data)
 
               Child, VGroup, GroupFrameT("PGP (Pretty Good Privacy)"),
                 Child, ColGroup(2),
+
                   Child, Label2(tr(MSG_CO_PGPExe)),
                   Child, PopaslObject,
                     MUIA_Popasl_Type     ,ASL_FileRequest,
@@ -3394,7 +3395,7 @@ Object *CO_PageSecurity(struct CO_ClassData *data)
                     ASLFR_DrawersOnly, TRUE,
                   End,
 
-                  Child, HSpace(0),
+                  Child, HSpace(1),
                   Child, HGroup,
                     Child, data->GUI.CH_PGPPASSINTERVAL = MakeCheck(tr(MSG_CO_PGPPASSINTERVAL1)),
                     Child, Label2(tr(MSG_CO_PGPPASSINTERVAL1)),
@@ -3402,6 +3403,7 @@ Object *CO_PageSecurity(struct CO_ClassData *data)
                     Child, Label2(tr(MSG_CO_PGPPASSINTERVAL2)),
                     Child, HSpace(0),
                   End,
+
                 End,
               End,
 
@@ -3526,6 +3528,9 @@ Object *CO_PageMIME(struct CO_ClassData *data)
                   GroupSpacing(0),
                   Child, VGroup,
                     MUIA_Weight, 30,
+
+                    Child, HBarT(tr(MSG_CO_MIMETYPE_TITLE)), End,
+
                     Child, NListviewObject,
                        MUIA_CycleChain, TRUE,
                        MUIA_NListview_NList, data->GUI.LV_MIME = MimeTypeListObject,
@@ -3550,6 +3555,8 @@ Object *CO_PageMIME(struct CO_ClassData *data)
                   End,
 
                   Child, VGroup,
+                    GroupFrameT(tr(MSG_Options)),
+
                     MUIA_Weight, 70,
                     Child, data->GUI.GR_MIME = ColGroup(2),
                       Child, Label2(tr(MSG_CO_MimeType)),

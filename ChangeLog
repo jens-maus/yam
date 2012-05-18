@@ -7,6 +7,8 @@ $URL$
 
 2012-05-18 Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_COg.c: minor cosmetic changes to the config gui to be somewhat more
+    compatible to the general look&feel of the rest of the config gui.
   * YAM_MA.c: added MUIA_Balance_Quiet to the NBalanceObject that is added when
     using the embedded read pane. This should give a better visual feedback and
     a more compact main window user interface.

@@ -7409,3 +7409,6 @@ encrypted or both. "Default" tries to find\n\
 the recipient in your address book and use\n\
 the settings defined there.
 ;
+MSG_CO_MIMETYPE_TITLE (2356//)
+MIME type
+;
