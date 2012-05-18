@@ -3970,7 +3970,10 @@ void MA_SetupEmbeddedReadPane(void)
     {
       // the user want to have the embedded read pane added to the main
       // window, so lets do it now and create the object
-      G->MA->GUI.BL_MAILVIEW = mailBalanceObj = NBalanceObject, End;
+      G->MA->GUI.BL_MAILVIEW = mailBalanceObj = NBalanceObject, 
+                                                  MUIA_Balance_Quiet, TRUE,
+                                                End;
+
       if(mailBalanceObj != NULL)
       {
         G->MA->GUI.MN_EMBEDDEDREADPANE = readPaneObj = ReadMailGroupObject,
@@ -4312,13 +4315,16 @@ struct MA_ClassData *MA_New(void)
             MUIA_Balance_Quiet, TRUE,
           End,
           Child, data->GUI.GR_MAILVIEW = VGroup,
-            GroupSpacing(1),
-            Child, data->GUI.GR_QUICKSEARCHBAR = QuickSearchBarObject,
-              MUIA_ShowMe, C->QuickSearchBar,
-            End,
-            Child, data->GUI.PG_MAILLIST = MainMailListGroupObject,
-              MUIA_VertWeight, 25,
-              MUIA_HelpNode,   "MA01",
+            GroupSpacing(0),
+            Child, VGroup,
+              GroupSpacing(1),
+              Child, data->GUI.GR_QUICKSEARCHBAR = QuickSearchBarObject,
+                MUIA_ShowMe, C->QuickSearchBar,
+              End,
+              Child, data->GUI.PG_MAILLIST = MainMailListGroupObject,
+                MUIA_VertWeight, 25,
+                MUIA_HelpNode,   "MA01",
+              End,
             End,
           End,
         End,

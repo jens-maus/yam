@@ -7,6 +7,9 @@ $URL$
 
 2012-05-18 Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_MA.c: added MUIA_Balance_Quiet to the NBalanceObject that is added when
+    using the embedded read pane. This should give a better visual feedback and
+    a more compact main window user interface.
   * YAM_WR.c, mui/WriteWindow.c: implemented support for the mailing list support
     improving header fields "Mail-Followup-To:" and "Mail-Reply-To:". With these
     header fields YAM will now add the recipients in these header fields as the To:
