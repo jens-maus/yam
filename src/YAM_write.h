@@ -149,6 +149,8 @@ struct Compose
   char *                    MailBCC;        // array of BCC: addresses
   struct UserIdentityNode * Identity;       // ptr to the user identity which should be used for sending the mail
   char *                    ReplyTo;        // array of ReplyTo: addresses
+  char *                    MailReplyTo;    // array of Mail-Reply-To: addresses (for mailinglists)
+  char *                    MailFollowupTo; // array of Mail-Followup-To: addresses (for mailinglists)
   const char *              Subject;        // subject of mail to compose
   char *                    ExtHeader;      // some extra headers to add before sending
   char *                    inReplyToMsgID; // ptr to In-Reply-To MsgIDs

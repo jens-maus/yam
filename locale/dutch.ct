@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.2 (20.04.2010)
+## version $VER: YAM.catalog 7.3 (18.05.2012)
 ## language dutch
 ## codeset 0
 ## chunk AUTH Johan Banis
@@ -6078,7 +6078,7 @@ MSG_FI_DATE_FIELD
 \ebDatum\en
 ;
 MSG_FO_TO_PATTERN
-_Patroon (Aan:)
+_Patroon (Aan:/CC:)
 ;
 MSG_FO_TO_ADDRESS
 Bestemmingsadres (_Aan:)

@@ -1859,50 +1859,74 @@ void MA_FreeEMailStruct(struct ExtendedMail *email)
 
     if(email->SFrom != NULL)
     {
-      ASSERT(email->NoSFrom > 0);
+      ASSERT(email->NumSFrom > 0);
 
       free(email->SFrom);
       email->SFrom = NULL;
+      email->NumSFrom = 0;
     }
 
     if(email->STo != NULL)
     {
-      ASSERT(email->NoSTo > 0);
+      ASSERT(email->NumSTo > 0);
 
       free(email->STo);
       email->STo = NULL;
+      email->NumSTo = 0;
     }
 
     if(email->SReplyTo != NULL)
     {
-      ASSERT(email->NoSReplyTo > 0);
+      ASSERT(email->NumSReplyTo > 0);
 
       free(email->SReplyTo);
       email->SReplyTo = NULL;
+      email->NumSReplyTo = 0;
     }
 
     if(email->CC != NULL)
     {
-      ASSERT(email->NoCC > 0);
+      ASSERT(email->NumCC > 0);
 
       free(email->CC);
       email->CC = NULL;
+      email->NumCC = 0;
     }
 
     if(email->BCC != NULL)
     {
-      ASSERT(email->NoBCC > 0);
+      ASSERT(email->NumBCC > 0);
 
       free(email->BCC);
       email->BCC = NULL;
+      email->NumBCC = 0;
     }
 
     if(email->ResentTo != NULL)
     {
-      ASSERT(email->NoResentTo > 0);
+      ASSERT(email->NumResentTo > 0);
 
       free(email->ResentTo);
       email->ResentTo = NULL;
+      email->NumResentTo = 0;
+    }
+
+    if(email->FollowUpTo != NULL)
+    {
+      ASSERT(email->NumFollowUpTo > 0);
+
+      free(email->FollowUpTo);
+      email->FollowUpTo = NULL;
+      email->NumFollowUpTo = 0;
+    }
+
+    if(email->MailReplyTo != NULL)
+    {
+      ASSERT(email->NumMailReplyTo > 0);
+
+      free(email->MailReplyTo);
+      email->MailReplyTo = NULL;
+      email->NumMailReplyTo = 0;
     }
 
     free(email);
@@ -2250,16 +2274,16 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
         {
           if(deep == TRUE)
           {
-            if(email->NoSFrom == 0)
-              email->NoSFrom = MA_GetRecipients(p, &(email->SFrom));
+            if(email->NumSFrom == 0)
+              email->NumSFrom = MA_GetRecipients(p, &(email->SFrom));
 
-            if(email->NoSFrom > 0)
+            if(email->NumSFrom > 0)
             {
               int i;
 
               // if we haven't found the identity yet we process the
               // other from addresses
-              for(i=0; email->identity == NULL && i < email->NoSFrom; i++)
+              for(i=0; email->identity == NULL && i < email->NumSFrom; i++)
               {
                 email->identity = FindUserIdentityByAddress(&C->userIdentityList, email->SFrom[i].Address);
                 D(DBF_MAIL, "finduinByAddr: '%s' %08lx", email->SFrom[i].Address, email->identity);
@@ -2272,7 +2296,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
             setFlag(mail->mflags, MFLAG_MULTISENDER);
         }
 
-        D(DBF_MIME, "'From' senders: %ld", email->NoSFrom+1);
+        D(DBF_MIME, "'From' senders: %ld", email->NumSFrom+1);
       }
       else if(stricmp(field, "reply-to") == 0)
       {
@@ -2302,16 +2326,16 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
         {
           if(deep == TRUE)
           {
-            if(email->NoSReplyTo == 0)
-              email->NoSReplyTo = MA_GetRecipients(p, &(email->SReplyTo));
+            if(email->NumSReplyTo == 0)
+              email->NumSReplyTo = MA_GetRecipients(p, &(email->SReplyTo));
 
-            if(email->NoSReplyTo > 0)
+            if(email->NumSReplyTo > 0)
             {
               int i;
 
               // if we haven't found the identity yet we process the
               // other from addresses
-              for(i=0; email->identity == NULL && i < email->NoSReplyTo; i++)
+              for(i=0; email->identity == NULL && i < email->NumSReplyTo; i++)
               {
                 email->identity = FindUserIdentityByAddress(&C->userIdentityList, email->SReplyTo[i].Address);
                 D(DBF_MAIL, "finduinByAddr: '%s' %08lx", email->SReplyTo[i].Address, email->identity);
@@ -2324,7 +2348,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
             setFlag(mail->mflags, MFLAG_MULTIREPLYTO);
         }
 
-        D(DBF_MIME, "'ReplyTo' recipients: %ld", email->NoSReplyTo+1);
+        D(DBF_MIME, "'ReplyTo' recipients: %ld", email->NumSReplyTo+1);
       }
       else if(stricmp(field, "original-recipient") == 0)
       {
@@ -2370,16 +2394,16 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
           {
             if(deep == TRUE)
             {
-              if(email->NoSTo == 0)
-                email->NoSTo = MA_GetRecipients(p, &(email->STo));
+              if(email->NumSTo == 0)
+                email->NumSTo = MA_GetRecipients(p, &(email->STo));
 
-              if(email->NoSTo > 0)
+              if(email->NumSTo > 0)
               {
                 int i;
 
                 // if we haven't found the identity yet we process the
                 // other from addresses
-                for(i=0; email->identity == NULL && i < email->NoSTo; i++)
+                for(i=0; email->identity == NULL && i < email->NumSTo; i++)
                 {
                   email->identity = FindUserIdentityByAddress(&C->userIdentityList, email->STo[i].Address);
                   D(DBF_MAIL, "finduinByAddr: '%s' %08lx", email->STo[i].Address, email->identity);
@@ -2392,25 +2416,25 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
               setFlag(mail->mflags, MFLAG_MULTIRCPT);
           }
 
-          D(DBF_MIME, "'To:' recipients: %ld", email->NoSTo+1);
+          D(DBF_MIME, "'To:' recipients: %ld", email->NumSTo+1);
         }
       }
       else if(stricmp(field, "cc") == 0)
       {
         if(deep == TRUE)
         {
-          if(email->NoCC == 0)
-            email->NoCC = MA_GetRecipients(value, &(email->CC));
+          if(email->NumCC == 0)
+            email->NumCC = MA_GetRecipients(value, &(email->CC));
 
-          D(DBF_MIME, "'Cc:' recipients: %ld", email->NoCC);
+          D(DBF_MIME, "'Cc:' recipients: %ld", email->NumCC);
 
-          if(email->NoCC > 0)
+          if(email->NumCC > 0)
           {
             int i;
 
             // if we haven't found the identity yet we process the
             // other from addresses
-            for(i=0; email->identity == NULL && i < email->NoCC; i++)
+            for(i=0; email->identity == NULL && i < email->NumCC; i++)
             {
               email->identity = FindUserIdentityByAddress(&C->userIdentityList, email->CC[i].Address);
               D(DBF_MAIL, "finduinByAddr: '%s' %08lx", email->CC[i].Address, email->identity);
@@ -2426,18 +2450,18 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
       {
         if(deep == TRUE)
         {
-          if(email->NoBCC == 0)
-            email->NoBCC = MA_GetRecipients(value, &(email->BCC));
+          if(email->NumBCC == 0)
+            email->NumBCC = MA_GetRecipients(value, &(email->BCC));
 
-          D(DBF_MIME, "'BCC:' recipients: %ld", email->NoBCC);
+          D(DBF_MIME, "'BCC:' recipients: %ld", email->NumBCC);
 
-          if(email->NoBCC > 0)
+          if(email->NumBCC > 0)
           {
             int i;
 
             // if we haven't found the identity yet we process the
             // other from addresses
-            for(i=0; email->identity == NULL && i < email->NoBCC; i++)
+            for(i=0; email->identity == NULL && i < email->NumBCC; i++)
             {
               email->identity = FindUserIdentityByAddress(&C->userIdentityList, email->BCC[i].Address);
               D(DBF_MAIL, "finduinByAddr: '%s' %08lx", email->BCC[i].Address, email->identity);
@@ -2451,10 +2475,24 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
       }
       else if(stricmp(field, "resent-to") == 0)
       {
-        if(email->NoResentTo == 0)
-          email->NoResentTo = MA_GetRecipients(value, &(email->ResentTo));
+        if(email->NumResentTo == 0)
+          email->NumResentTo = MA_GetRecipients(value, &(email->ResentTo));
 
-        D(DBF_MIME, "'Resent-To:' recipients: %ld", email->NoResentTo);
+        D(DBF_MIME, "'Resent-To:' recipients: %ld", email->NumResentTo);
+      }
+      else if(stricmp(field, "mail-followup-to") == 0)
+      {
+        if(email->NumFollowUpTo == 0)
+          email->NumFollowUpTo = MA_GetRecipients(value, &(email->FollowUpTo));
+
+        D(DBF_MIME, "'Mail-Followup-To:' recipients: %ld", email->NumFollowUpTo);
+      }
+      else if(stricmp(field, "mail-reply-to") == 0)
+      {
+        if(email->NumMailReplyTo == 0)
+          email->NumMailReplyTo = MA_GetRecipients(value, &(email->MailReplyTo));
+
+        D(DBF_MIME, "'Mail-Reply-To:' recipients: %ld", email->NumMailReplyTo);
       }
       else if(stricmp(field, "subject") == 0)
       {
@@ -2647,16 +2685,16 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
         {
           if(deep == TRUE)
           {
-            if(email->NoSFrom == 0)
-              email->NoSFrom = MA_GetRecipients(p, &(email->SFrom));
+            if(email->NumSFrom == 0)
+              email->NumSFrom = MA_GetRecipients(p, &(email->SFrom));
 
-            if(email->NoSFrom > 0)
+            if(email->NumSFrom > 0)
             {
               int i;
 
               // if we haven't found the identity yet we process the
               // other from addresses
-              for(i=0; email->identity == NULL && i < email->NoSFrom; i++)
+              for(i=0; email->identity == NULL && i < email->NumSFrom; i++)
               {
                 email->identity = FindUserIdentityByAddress(&C->userIdentityList, email->SFrom[i].Address);
                 D(DBF_MAIL, "finduinByAddr: '%s' %08lx", email->SFrom[i].Address, email->identity);
@@ -2669,7 +2707,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
             setFlag(mail->mflags, MFLAG_MULTISENDER);
         }
 
-        D(DBF_MIME, "'Sender' senders: %ld", email->NoSFrom+1);
+        D(DBF_MIME, "'Sender' senders: %ld", email->NumSFrom+1);
 
         foundFrom = TRUE;
       }

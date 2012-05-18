@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.8 (24.12.2011)
+## version $VER: YAM.catalog 7.9 (18.05.2012)
 ## language czech
 ## codeset 5
 ;
@@ -8482,8 +8482,8 @@ MSG_FI_DATE_FIELD
 ; \ebDate\en
 ;
 MSG_FO_TO_PATTERN
-Maska (_Komu:)
-; _Pattern (To:)
+Maska (_Komu:/CC:)
+; _Pattern (To:/CC:)
 ;
 MSG_FO_TO_ADDRESS
 Adresa pøíjemce (Kom_u:)

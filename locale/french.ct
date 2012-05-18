@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.3 (24.12.2011)
+## version $VER: YAM.catalog 7.4 (18.05.2012)
 ## language français
 ## codeset 111
 ;
@@ -8638,8 +8638,8 @@ MSG_FI_DATE_FIELD
 ; \ebDate\en
 ;
 MSG_FO_TO_PATTERN
-_Motif (À:)
-; _Pattern (To:)
+_Motif (À:/CC:)
+; _Pattern (To:/CC:)
 ;
 MSG_FO_TO_ADDRESS
 Adresse du destinataire (_To:)

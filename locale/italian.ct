@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.97 (15.05.2012)
+## version $VER: YAM.catalog 7.98 (18.05.2012)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -8570,8 +8570,8 @@ MSG_FI_DATE_FIELD
 ; \ebDate\en
 ;
 MSG_FO_TO_PATTERN
-_Pattern (A:)
-; _Pattern (To:)
+_Pattern (A:/CC:)
+; _Pattern (To:/CC:)
 ;
 MSG_FO_TO_ADDRESS
 Indirizzo di destinazione (_A:)

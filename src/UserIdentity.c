@@ -248,7 +248,7 @@ struct UserIdentityNode *WhichUserIdentity(const struct MinList *userIdentityLis
       break;
     }
 
-    for(i=0; i < email->NoSTo; i++)
+    for(i=0; i < email->NumSTo; i++)
     {
       if(stricmp(email->STo[i].Address, uin->address) == 0)
       {
@@ -261,7 +261,7 @@ struct UserIdentityNode *WhichUserIdentity(const struct MinList *userIdentityLis
       break;
 
     // search all CC addresses
-    for(i=0; i < email->NoCC; i++)
+    for(i=0; i < email->NumCC; i++)
     {
       if(stricmp(email->CC[i].Address, uin->address) == 0)
       {

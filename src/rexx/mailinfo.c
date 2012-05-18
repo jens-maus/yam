@@ -156,11 +156,12 @@ void rx_mailinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
           else if(!hasStatusNew(mail))
             results->status = "O"; // Old status
 
-          if((results->fromall = calloc(email->NoSFrom+2, sizeof(char *))) != NULL)
+          if((results->fromall = calloc(email->NumSFrom+2, sizeof(char *))) != NULL)
           {
             if((results->fromall[0] = strdup(BuildAddress(optional->address, sizeof(optional->address), mail->From.Address, mail->From.RealName))) == NULL)
               params->rc = RETURN_ERROR;
-            for(i = 0; i < email->NoSFrom; i++)
+
+            for(i = 0; i < email->NumSFrom; i++)
             {
               if((results->fromall[i+1] = strdup(BuildAddress(optional->address, sizeof(optional->address), email->SFrom[i].Address, email->SFrom[i].RealName))) == NULL)
                 params->rc = RETURN_ERROR;
@@ -170,11 +171,12 @@ void rx_mailinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
           else
             params->rc = RETURN_ERROR;
 
-          if((results->toall = calloc(email->NoSTo+2, sizeof(char *))) != NULL)
+          if((results->toall = calloc(email->NumSTo+2, sizeof(char *))) != NULL)
           {
             if((results->toall[0] = strdup(BuildAddress(optional->address, sizeof(optional->address), mail->To.Address, mail->To.RealName))) == NULL)
               params->rc = RETURN_ERROR;
-            for(i = 0; i < email->NoSTo; i++)
+
+            for(i = 0; i < email->NumSTo; i++)
             {
               if((results->toall[i+1] = strdup(BuildAddress(optional->address, sizeof(optional->address), email->STo[i].Address, email->STo[i].RealName))) == NULL)
                 params->rc = RETURN_ERROR;
@@ -184,11 +186,12 @@ void rx_mailinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
           else
             params->rc = RETURN_ERROR;
 
-          if((results->replytoall = calloc(email->NoSReplyTo+2, sizeof(char *))) != NULL)
+          if((results->replytoall = calloc(email->NumSReplyTo+2, sizeof(char *))) != NULL)
           {
             if((results->replytoall[0] = strdup(BuildAddress(optional->address, sizeof(optional->address), mail->ReplyTo.Address[0] != '\0' ? mail->ReplyTo.Address : mail->From.Address, mail->ReplyTo.Address[0] != '\0' ? mail->ReplyTo.RealName : mail->From.RealName))) == NULL)
               params->rc = RETURN_ERROR;
-            for(i = 0; i < email->NoSReplyTo; i++)
+
+            for(i = 0; i < email->NumSReplyTo; i++)
             {
               if((results->replytoall[i+1] = strdup(BuildAddress(optional->address, sizeof(optional->address), email->SReplyTo[i].Address, email->SReplyTo[i].RealName))) == NULL)
                 params->rc = RETURN_ERROR;
@@ -198,9 +201,9 @@ void rx_mailinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
           else
             params->rc = RETURN_ERROR;
 
-          if((results->ccall = calloc(email->NoCC+1, sizeof(char *))) != NULL)
+          if((results->ccall = calloc(email->NumCC+1, sizeof(char *))) != NULL)
           {
-            for(i = 0; i < email->NoCC; i++)
+            for(i = 0; i < email->NumCC; i++)
             {
               if((results->ccall[i] = strdup(BuildAddress(optional->address, sizeof(optional->address), email->CC[i].Address, email->CC[i].RealName))) == NULL)
                 params->rc = RETURN_ERROR;
@@ -210,9 +213,9 @@ void rx_mailinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
           else
             params->rc = RETURN_ERROR;
 
-          if((results->bccall = calloc(email->NoBCC+1, sizeof(char *))) != NULL)
+          if((results->bccall = calloc(email->NumBCC+1, sizeof(char *))) != NULL)
           {
-            for(i = 0; i < email->NoBCC; i++)
+            for(i = 0; i < email->NumBCC; i++)
             {
               if((results->bccall[i] = strdup(BuildAddress(optional->address, sizeof(optional->address), email->BCC[i].Address, email->BCC[i].RealName))) == NULL)
                 params->rc = RETURN_ERROR;
@@ -222,9 +225,9 @@ void rx_mailinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
           else
             params->rc = RETURN_ERROR;
 
-          if((results->resenttoall = calloc(email->NoResentTo+1, sizeof(char *))) != NULL)
+          if((results->resenttoall = calloc(email->NumResentTo+1, sizeof(char *))) != NULL)
           {
-            for(i = 0; i < email->NoResentTo; i++)
+            for(i = 0; i < email->NumResentTo; i++)
             {
               if((results->resenttoall[i] = strdup(BuildAddress(optional->address, sizeof(optional->address), email->ResentTo[i].Address, email->ResentTo[i].RealName))) == NULL)
                 params->rc = RETURN_ERROR;

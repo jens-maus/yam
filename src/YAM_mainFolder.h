@@ -66,17 +66,21 @@ struct ExtendedMail
   struct Person *          CC;             // ptr to an array of all "CC:" recipients
   struct Person *          BCC;            // ptr to an array of all "BCC:" recipients
   struct Person *          ResentTo;       // ptr to an array of "Resent-To:" recipients
+  struct Person *          FollowUpTo;     // ptr to an array of "Mail-Followup-To:" recipients
+  struct Person *          MailReplyTo;    // ptr to an array of "Mail-Reply-To:" recipients
   char *                   extraHeaders;   // YAM internal headers (X-YAM-Header-...)
   char *                   SenderInfo;
   char *                   messageID;      // the composed "Message-ID:" (only one MsgID)
   char *                   inReplyToMsgID; // the composed "In-Reply-To:" (a set of multiple IDs)
   char *                   references;     // the composed "References:" (a set of multiple IDs)
-  int                      NoSFrom;        // number of additional senders in SFrom (minus one)
-  int                      NoSTo;          // number of additional recipients in STo (minus one)
-  int                      NoSReplyTo;     // number of additional recipients in SReplyTo (minus one)
-  int                      NoCC;           // number of recipients in CC
-  int                      NoBCC;          // number of recipients in BCC
-  int                      NoResentTo;     // number of recipients in ResentTo
+  int                      NumSFrom;       // number of additional senders in SFrom (minus one)
+  int                      NumSTo;         // number of additional recipients in STo (minus one)
+  int                      NumSReplyTo;    // number of additional recipients in SReplyTo (minus one)
+  int                      NumCC;          // number of recipients in CC
+  int                      NumBCC;         // number of recipients in BCC
+  int                      NumResentTo;    // number of recipients in ResentTo
+  int                      NumFollowUpTo;  // number of recipients in FollowUpTo
+  int                      NumMailReplyTo; // number of recipients in MailReplyTo
   int                      Signature;
   int                      Security;
   int                      identityID;     // id of the user identity found in the mail (X-YAM-Options:)

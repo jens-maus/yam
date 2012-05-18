@@ -1287,6 +1287,12 @@ BOOL WriteOutMessage(struct Compose *comp)
     EmitRcptHeader(fh, "CC", comp->MailCC);
   if(comp->MailBCC != NULL)
     EmitRcptHeader(fh, "BCC", comp->MailBCC);
+  if(comp->MailReplyTo != NULL)
+    EmitRcptHeader(fh, "Mail-Reply-To", comp->MailReplyTo);
+  if(comp->MailFollowupTo != NULL)
+    EmitRcptHeader(fh, "Mail-Followup-To", comp->MailFollowupTo);
+
+  // output the current date
   EmitHeader(fh, "Date", GetDateTime());
 
   // output the Message-ID, In-Reply-To and References message headers
@@ -1789,88 +1795,75 @@ struct WriteMailData *NewWriteMailWindow(struct Mail *mail, const int flags)
     // open a new file for writing the default mail text
     if((out = fopen(wmData->filename, "w")) != NULL)
     {
+      char *toAddr = AllocStrBuf(SIZE_ADDRESS);
+      char *replyToAddr = AllocStrBuf(SIZE_ADDRESS);
+
       setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
 
       wmData->refMail = mail;
 
       if(wmData->refMail != NULL)
       {
-        char address[SIZE_LARGE];
+        struct ExtendedMail *email;
 
         // check whether the old mail contains a ReplyTo: address
         // or not. And if so we prefer that one instead of using the
         // To: adresses
         if(mail->ReplyTo.Address[0] != '\0')
         {
-          char *addr = BuildAddress(address, sizeof(address), mail->ReplyTo.Address, mail->ReplyTo.RealName);
+          // add the Reply-To: address as the new To: address
+          toAddr = AppendRcpt(toAddr, &mail->ReplyTo, wmData->identity, FALSE);
 
-          if(addr != NULL)
+          // if the mail has multiple reply-to recipients
+          // we have to get them and add them as well
+          if(isMultiReplyToMail(mail) &&
+             (email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)) != NULL)
           {
-            struct ExtendedMail *email;
+            int i;
 
-            if(isMultiReplyToMail(mail) &&
-               (email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)) != NULL)
-            {
-              int i;
-              char *sbuf;
+            // add all "ReplyTo:" recipients of the mail
+            for(i=0; i < email->NumSReplyTo; i++)
+              toAddr = AppendRcpt(toAddr, &email->SReplyTo[i], email->identity, FALSE);
 
-              // add all "ReplyTo:" recipients of the mail
-              sbuf = StrBufCpy(NULL, addr);
-              for(i=0; i < email->NoSReplyTo; i++)
-                sbuf = AppendRcpt(sbuf, &email->SReplyTo[i], email->identity, FALSE);
+            // save the user identity
+            userIdentity = email->identity;
 
-              set(wmData->window, MUIA_WriteWindow_To, sbuf);
-
-              userIdentity = email->identity;
-
-              FreeStrBuf(sbuf);
-              MA_FreeEMailStruct(email);
-            }
-            else
-              set(wmData->window, MUIA_WriteWindow_To, addr);
+            MA_FreeEMailStruct(email);
           }
         }
         else
         {
-          char *addr = BuildAddress(address, sizeof(address), mail->From.Address, mail->From.RealName);
+          // add the From: address as the new To: address
+          toAddr = AppendRcpt(toAddr, &mail->From, wmData->identity, FALSE);
 
-          if(addr != NULL)
+          // if the mail has multiple From: recipients
+          // we have to get them and add them as well
+          if(isMultiSenderMail(mail) &&
+            (email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)) != NULL)
           {
-            struct ExtendedMail *email;
+            int i;
 
-            if(isMultiSenderMail(mail) &&
-              (email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)) != NULL)
-            {
-              char *sbuf;
-              int i;
+            // add all "From:" recipients of the mail
+            for(i=0; i < email->NumSFrom; i++)
+              toAddr = AppendRcpt(toAddr, &email->SFrom[i], email->identity, FALSE);
 
-              // add all "From:" recipients of the mail
-              sbuf = StrBufCpy(NULL, addr);
-              for(i=0; i < email->NoSFrom; i++)
-                sbuf = AppendRcpt(sbuf, &email->SFrom[i], email->identity, FALSE);
+            // save the user identity
+            userIdentity = email->identity;
 
-              set(wmData->window, MUIA_WriteWindow_To, sbuf);
-
-              userIdentity = email->identity;
-
-              FreeStrBuf(sbuf);
-              MA_FreeEMailStruct(email);
-            }
-            else
-              set(wmData->window, MUIA_WriteWindow_To, addr);
+            MA_FreeEMailStruct(email);
           }
         }
       }
       else if(folder->MLSupport == TRUE)
       {
         if(folder->MLAddress[0] != '\0')
-          set(wmData->window, MUIA_WriteWindow_To, folder->MLAddress);
+          toAddr = StrBufCpy(toAddr, folder->MLAddress);
 
         if(folder->MLIdentity != NULL)
           userIdentity = folder->MLIdentity;
 
         if(folder->MLReplyToAddress[0] != '\0')
-          set(wmData->window, MUIA_WriteWindow_ReplyTo, folder->MLReplyToAddress);
+          replyToAddr = StrBufCpy(replyToAddr, folder->MLReplyToAddress);
       }
 
       if(folder->WriteIntro[0] != '\0')
@@ -1884,7 +1877,9 @@ struct WriteMailData *NewWriteMailWindow(struct Mail *mail, const int flags)
         InsertIntroText(out, C->Greetings, NULL);
 
       // make sure to set the correct user identity
-      set(wmData->window, MUIA_WriteWindow_Identity, userIdentity);
+      xset(wmData->window, MUIA_WriteWindow_Identity, userIdentity,
+                           toAddr[0] != '\0' ? MUIA_WriteWindow_To : TAG_IGNORE, toAddr,
+                           replyToAddr[0] != '\0' ? MUIA_WriteWindow_ReplyTo : TAG_IGNORE, replyToAddr);
 
       // add a signature to the mail depending on the selected signature for this list
       WriteSignature(out, folder->MLSupport ? folder->MLSignature : userIdentity->signature-1, TRUE);
@@ -1901,6 +1896,9 @@ struct WriteMailData *NewWriteMailWindow(struct Mail *mail, const int flags)
 
       if(C->LaunchAlways == TRUE && quiet == FALSE)
         DoMethod(wmData->window, MUIM_WriteWindow_LaunchEditor);
+
+      FreeStrBuf(toAddr);
+      FreeStrBuf(replyToAddr);
     }
     else
     {
@@ -2034,7 +2032,7 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
             {
               // add all ReplyTo: recipients
               sbuf = StrBufCpy(sbuf, BuildAddress(address, sizeof(address), mail->ReplyTo.Address, mail->ReplyTo.RealName));
-              for(i=0; i < email->NoSReplyTo; i++)
+              for(i=0; i < email->NumSReplyTo; i++)
                 sbuf = AppendRcpt(sbuf, &email->SReplyTo[i], email->identity, FALSE);
 
               set(wmData->window, MUIA_WriteWindow_ReplyTo, sbuf);
@@ -2042,14 +2040,14 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
 
             // add all "To:" recipients of the mail
             sbuf = StrBufCpy(sbuf, BuildAddress(address, sizeof(address), mail->To.Address, mail->To.RealName));
-            for(i=0; i < email->NoSTo; i++)
+            for(i=0; i < email->NumSTo; i++)
               sbuf = AppendRcpt(sbuf, &email->STo[i], email->identity, FALSE);
 
             set(wmData->window, MUIA_WriteWindow_To, sbuf);
 
             // add all "CC:" recipients of the mail
             sbuf[0] = '\0';
-            for(i=0; i < email->NoCC; i++)
+            for(i=0; i < email->NumCC; i++)
             {
               sbuf = AppendRcpt(sbuf, &email->CC[i], email->identity, FALSE);
             }
@@ -2057,7 +2055,7 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
 
             // add all "BCC:" recipients of the mail
             sbuf[0] = '\0';
-            for(i=0; i < email->NoBCC; i++)
+            for(i=0; i < email->NumBCC; i++)
             {
               sbuf = AppendRcpt(sbuf, &email->BCC[i], email->identity, FALSE);
             }
@@ -2399,15 +2397,14 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
       int signature = -1;
       BOOL altpat = FALSE;
       char *domain = NULL;
-      char *mlistad = NULL;
       struct UserIdentityNode *firstIdentity = NULL; // first identified identity over all mails
-      char *rrepto = NULL;
       char *rto = AllocStrBuf(SIZE_ADDRESS);
       char *rcc = AllocStrBuf(SIZE_ADDRESS);
+      char *rrepto = AllocStrBuf(SIZE_ADDRESS);
       char *rsub = AllocStrBuf(SIZE_SUBJECT);
       char buffer[SIZE_LARGE];
       struct ExpandTextData etd;
-      BOOL mlIntro = FALSE;
+      BOOL mlIntro = FALSE; // an mailing list intro text was added
       struct MailNode *mnode;
 
       setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
@@ -2431,6 +2428,8 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
         struct Person pe;
         BOOL foundMLFolder = FALSE;
         BOOL foundSentFolder = FALSE;
+        char *mlistTo = NULL; // user-defined To: for mailing lists
+        char *mlistReplyTo = NULL;  // user-defined Reply-To: for mailing lists
 
         if((email = MA_ExamineMail(folder, mail->MailFile, TRUE)) == NULL)
         {
@@ -2526,36 +2525,56 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
             // and check if it matches a pattern
             ForEachFolderNode(G->folders, fnode)
             {
-              if(fnode->folder != NULL && fnode->folder->MLSupport == TRUE && fnode->folder->MLPattern[0] != '\0')
-              {
-                char *pattern = fnode->folder->MLPattern;
+              struct Folder *curFolder = fnode->folder;
 
-                if(MatchNoCase(mail->To.Address, pattern) == FALSE &&
-                   MatchNoCase(mail->To.RealName, pattern) == FALSE)
+              if(curFolder != NULL && curFolder->MLSupport == TRUE &&
+                 curFolder->MLPattern[0] != '\0')
+              {
+                // first, search in all To: addresses for the
+                // mailing list address
+                for(k=0; k < email->NumSTo+1; k++)
                 {
-                  for(k=0; k < email->NoSTo; k++)
+                  struct Person *person;
+    
+                  if(k == 0)
+                    person = &mail->To;
+                  else
+                    person = &email->STo[k-1];
+    
+                  if(MatchNoCase(person->Address, curFolder->MLPattern) == TRUE ||
+                     MatchNoCase(person->RealName, curFolder->MLPattern) == TRUE)
                   {
-                    if(MatchNoCase(email->STo[k].Address, pattern) ||
-                       MatchNoCase(email->STo[k].RealName, pattern))
+                    foundMLFolder = TRUE;
+                    break;
+                  }
+                }
+    
+                // second, search in all CC: addresses for the
+                // mailing list address
+                if(foundMLFolder == FALSE)
+                {
+                  for(k=0; k < email->NumCC; k++)
+                  {
+                    struct Person *person = &email->CC[k];
+      
+                    if(MatchNoCase(person->Address, curFolder->MLPattern) == TRUE ||
+                       MatchNoCase(person->RealName, curFolder->MLPattern) == TRUE)
                     {
                       foundMLFolder = TRUE;
                       break;
                     }
                   }
                 }
-                else
-                  foundMLFolder = TRUE;
 
                 if(foundMLFolder == TRUE)
                 {
-                  mlistad = fnode->folder->MLAddress[0] != '\0' ? fnode->folder->MLAddress : NULL;
-                  folder = fnode->folder;
+                  mlistTo = curFolder->MLAddress[0] != '\0' ? curFolder->MLAddress : NULL;
 
-                  if(folder->MLIdentity != NULL)
-                    email->identity = folder->MLIdentity;
+                  if(curFolder->MLIdentity != NULL)
+                    email->identity = curFolder->MLIdentity;
 
-                  if(folder->MLReplyToAddress[0] != '\0')
-                    rrepto = folder->MLReplyToAddress;
+                  if(curFolder->MLReplyToAddress[0] != '\0')
+                    mlistReplyTo = curFolder->MLReplyToAddress;
 
                   break;
                 }
@@ -2570,31 +2589,51 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
           }
           else if(folder->MLSupport == TRUE && folder->MLPattern[0] != '\0')
           {
-            if(MatchNoCase(mail->To.Address, folder->MLPattern) == FALSE &&
-               MatchNoCase(mail->To.RealName, folder->MLPattern) == FALSE)
+            // first, search in all To: addresses for the
+            // mailing list address
+            for(k=0; k < email->NumSTo+1; k++)
             {
-              for(k=0; k < email->NoSTo; k++)
+              struct Person *person;
+
+              if(k == 0)
+                person = &mail->To;
+              else
+                person = &email->STo[k-1];
+
+              if(MatchNoCase(person->Address, folder->MLPattern) == TRUE ||
+                 MatchNoCase(person->RealName, folder->MLPattern) == TRUE)
               {
-                if(MatchNoCase(email->STo[k].Address, folder->MLPattern) ||
-                   MatchNoCase(email->STo[k].RealName, folder->MLPattern))
+                foundMLFolder = TRUE;
+                break;
+              }
+            }
+
+            // second, search in all CC: addresses for the
+            // mailing list address
+            if(foundMLFolder == FALSE)
+            {
+              for(k=0; k < email->NumCC; k++)
+              {
+                struct Person *person = &email->CC[k];
+  
+                if(MatchNoCase(person->Address, folder->MLPattern) == TRUE ||
+                   MatchNoCase(person->RealName, folder->MLPattern) == TRUE)
                 {
                   foundMLFolder = TRUE;
                   break;
                 }
               }
             }
-            else
-              foundMLFolder = TRUE;
 
             if(foundMLFolder == TRUE)
             {
-              mlistad = folder->MLAddress[0] != '\0' ? folder->MLAddress : NULL;
+              mlistTo = folder->MLAddress[0] != '\0' ? folder->MLAddress : NULL;
 
               if(folder->MLIdentity != NULL)
                 email->identity = folder->MLIdentity;
 
               if(folder->MLReplyToAddress[0] != '\0')
-                rrepto = folder->MLReplyToAddress;
+                mlistReplyTo = folder->MLReplyToAddress;
             }
           }
         }
@@ -2643,20 +2682,22 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
               // and as such when he presses "reply" on it we send it to
               // the To: address recipient instead.
               rto = AppendRcpt(rto, &mail->To, email->identity, FALSE);
-              for(k=0; k < email->NoSTo; k++)
+              for(k=0; k < email->NumSTo; k++)
                 rto = AppendRcpt(rto, &email->STo[k], email->identity, FALSE);
             }
             else if(hasPrivateFlag(flags) == FALSE &&
-                    foundMLFolder == TRUE && mlistad != NULL)
+                    foundMLFolder == TRUE && mlistTo != NULL)
             {
               char *p;
 
-              if((p = strdup(mlistad)) != NULL)
+              // add all To: recipients of the mailing list config
+              // to the actual rto list
+              if(mlistTo != NULL && (p = strdup(mlistTo)) != NULL)
               {
                 char *ptr = p;
 
                 // we found a matching folder for the mail we are going to
-                // reply to, so we go and add the 'mlistad' to our To: addresses
+                // reply to, so we go and add the 'mailTo' to our To: addresses
                 while(ptr != NULL && *ptr != '\0')
                 {
                   char *next;
@@ -2672,22 +2713,53 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
 
                 free(p);
               }
+
+              // add all Reply-To: recipients of the mailing list config
+              // to the actual rrepto list
+              if(mlistReplyTo != NULL && (p = strdup(mlistReplyTo)) != NULL)
+              {
+                char *ptr = p;
+
+                // we found a matching folder for the mail we are going to
+                // reply to, so we go and add the 'mailReplyTo' to our Reply-To: addresses
+                while(ptr != NULL && *ptr != '\0')
+                {
+                  char *next;
+
+                  if((next = MyStrChr(ptr, ',')) != NULL)
+                    *next++ = '\0';
+
+                  ExtractAddress(ptr, &pe);
+                  rrepto = AppendRcpt(rrepto, &pe, email->identity, FALSE);
+
+                  ptr = next;
+                }
+
+                free(p);
+              }
             }
             else if(C->CompareAddress == TRUE &&
                     (hasMListFlag(flags) == FALSE || hasPrivateFlag(flags) == TRUE) &&
-                    mail->ReplyTo.Address[0] != '\0')
+                    (mail->ReplyTo.Address[0] != '\0' || email->NumMailReplyTo > 0))
             {
               BOOL askUser = FALSE;
 
-              // now we have to check whether the ReplyTo: and From: of the original are the
-              // very same or not.
-              if(stricmp(mail->From.Address, mail->ReplyTo.Address) == 0)
+              // Mail-Reply-To: takes preference over the plain Reply-To: header.
+              // Thus we check for that one first
+              if(email->NumMailReplyTo > 0)
               {
-                if(email->NoSFrom == email->NoSReplyTo)
+                if(email->NumSFrom+1 == email->NumMailReplyTo)
                 {
-                  for(k=0; k < email->NoSFrom; k++)
+                  for(k=0; k < email->NumMailReplyTo; k++)
                   {
-                    if(stricmp(email->SFrom[k].Address, email->SReplyTo[k].Address) != 0)
+                    int diff;
+
+                    if(k == 0)
+                      diff = stricmp(mail->From.Address, email->MailReplyTo[k].Address);
+                    else
+                      diff = stricmp(email->SFrom[k-1].Address, email->MailReplyTo[k].Address);
+
+                    if(diff != 0)
                     {
                       askUser = TRUE;
                       break;
@@ -2697,6 +2769,26 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
                 else
                   askUser = TRUE;
               }
+              // now we have to check whether the ReplyTo: and From: of the original
+              // message are the very same or not.
+              else if(email->NumSFrom == email->NumSReplyTo)
+              {
+                for(k=0; k < email->NumSFrom+1; k++)
+                {
+                  int diff;
+
+                  if(k == 0)
+                    diff = stricmp(mail->From.Address, mail->ReplyTo.Address);
+                  else
+                    diff = stricmp(email->SFrom[k-1].Address, email->SReplyTo[k-1].Address);
+
+                  if(diff != 0)
+                  {
+                    askUser = TRUE;
+                    break;
+                  }
+                }
+              }
               else
                 askUser = TRUE;
 
@@ -2704,26 +2796,27 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
               // ask the user which address he wants to reply to.
               if(askUser == TRUE)
               {
-                snprintf(buffer, sizeof(buffer), tr(MSG_MA_CompareReq), mail->From.Address, mail->ReplyTo.Address);
+                if(email->NumMailReplyTo > 0)
+                  snprintf(buffer, sizeof(buffer), tr(MSG_MA_CompareReq), mail->From.Address, email->MailReplyTo[0].Address);
+                else
+                  snprintf(buffer, sizeof(buffer), tr(MSG_MA_CompareReq), mail->From.Address, mail->ReplyTo.Address);
 
                 switch(MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_MA_Compare3ReqOpt), buffer))
                 {
-                  // Both (From:/ReplyTo:) address
+                  // Both (From:+ReplyTo:/Mail-Reply-To:) address
                   case 3:
                   {
                     // add all From: addresses to the CC: list
                     rcc = AppendRcpt(rcc, &mail->From, email->identity, FALSE);
-                    for(k=0; k < email->NoSFrom; k++)
+                    for(k=0; k < email->NumSFrom; k++)
                       rcc = AppendRcpt(rcc, &email->SFrom[k], email->identity, FALSE);
                   }
                   // continue
 
-                  // Reply-To: addresses
+                  // Reply-To:/Mail-Reply-To: addresses
                   case 2:
                   {
-                    rto = AppendRcpt(rto, &mail->ReplyTo, email->identity, FALSE);
-                    for(k=0; k < email->NoSReplyTo; k++)
-                      rto = AppendRcpt(rto, &email->SReplyTo[k], email->identity, FALSE);
+                    addDefault = TRUE;
                   }
                   break;
 
@@ -2731,7 +2824,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
                   case 1:
                   {
                     rto = AppendRcpt(rto, &mail->From, email->identity, FALSE);
-                    for(k=0; k < email->NoSFrom; k++)
+                    for(k=0; k < email->NumSFrom; k++)
                       rto = AppendRcpt(rto, &email->SFrom[k], email->identity, FALSE);
                   }
                   break;
@@ -2744,6 +2837,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
                     CleanupWriteMailData(wmData);
                     FreeStrBuf(rto);
                     FreeStrBuf(rcc);
+                    FreeStrBuf(rrepto);
                     FreeStrBuf(rsub);
 
                     RETURN(NULL);
@@ -2759,18 +2853,25 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
 
             if(addDefault == TRUE)
             {
-              // otherwise we check whether to use the ReplyTo: or From: addresses as the
-              // To: adress of our reply. If a ReplyTo: exists we use that one instead
-              if(mail->ReplyTo.Address[0] != '\0')
+              // we first check if there is a Mail-Reply-To: mail header and if so we
+              // use that instead of any Reply-To: or From: mail header. Otherwise we
+              // use the Reply-To: recipient list and if that is also not present we
+              // use the From: recipient list only.
+              if(email->NumMailReplyTo > 0)
+              {
+                for(k=0; k < email->NumMailReplyTo; k++)
+                  rto = AppendRcpt(rto, &email->MailReplyTo[k], email->identity, FALSE);
+              }
+              else if(mail->ReplyTo.Address[0] != '\0')
               {
                 rto = AppendRcpt(rto, &mail->ReplyTo, email->identity, FALSE);
-                for(k=0; k < email->NoSReplyTo; k++)
+                for(k=0; k < email->NumSReplyTo; k++)
                   rto = AppendRcpt(rto, &email->SReplyTo[k], email->identity, FALSE);
               }
               else
               {
                 rto = AppendRcpt(rto, &mail->From, email->identity, FALSE);
-                for(k=0; k < email->NoSFrom; k++)
+                for(k=0; k < email->NumSFrom; k++)
                   rto = AppendRcpt(rto, &email->SFrom[k], email->identity, FALSE);
               }
             }
@@ -2781,26 +2882,40 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
           case 2:
           {
             // user wants to reply to all senders and recipients
-            // so let's add them
-            if(mail->ReplyTo.Address[0] != '\0')
+            // here Mail-Followup-To: has preference over Reply-To: or the
+            // content of the From: recipient list
+            if(email->NumFollowUpTo > 0)
             {
-              // add Reply-To: addresses to To:
-              rto = AppendRcpt(rto, &mail->ReplyTo, email->identity, FALSE);
-              for(k=0; k < email->NoSReplyTo; k++)
-                rto = AppendRcpt(rto, &email->SReplyTo[k], email->identity, FALSE);
+              for(k=0; k < email->NumFollowUpTo; k++)
+                rto = AppendRcpt(rto, &email->FollowUpTo[k], email->identity, FALSE);
             }
             else
             {
-              // add From: addresses to To:
-              rto = AppendRcpt(rto, &mail->From, email->identity, FALSE);
-              for(k=0; k < email->NoSFrom; k++)
-                rto = AppendRcpt(rto, &email->SFrom[k], email->identity, FALSE);
-            }
+              if(email->NumMailReplyTo > 0)
+              {
+                for(k=0; k < email->NumMailReplyTo; k++)
+                  rto = AppendRcpt(rto, &email->MailReplyTo[k], email->identity, FALSE);
+              }
+              else if(mail->ReplyTo.Address[0] != '\0')
+              {
+                // add Reply-To: addresses to To:
+                rto = AppendRcpt(rto, &mail->ReplyTo, email->identity, FALSE);
+                for(k=0; k < email->NumSReplyTo; k++)
+                  rto = AppendRcpt(rto, &email->SReplyTo[k], email->identity, FALSE);
+              }
+              else
+              {
+                // add From: addresses to To:
+                rto = AppendRcpt(rto, &mail->From, email->identity, FALSE);
+                for(k=0; k < email->NumSFrom; k++)
+                  rto = AppendRcpt(rto, &email->SFrom[k], email->identity, FALSE);
+              }
 
-            // add To: addresses to CC:
-            rcc = AppendRcpt(rcc, &mail->To, email->identity, TRUE);
-            for(k=0; k < email->NoSTo; k++)
-              rcc = AppendRcpt(rcc, &email->STo[k], email->identity, TRUE);
+              // add To: addresses to CC:
+              rcc = AppendRcpt(rcc, &mail->To, email->identity, TRUE);
+              for(k=0; k < email->NumSTo; k++)
+                rcc = AppendRcpt(rcc, &email->STo[k], email->identity, TRUE);
+            }
           }
           break;
 
@@ -2810,11 +2925,11 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
           {
             // now add all original To: addresses to To:
             rto = AppendRcpt(rto, &mail->To, email->identity, TRUE);
-            for(k=0; k < email->NoSTo; k++)
+            for(k=0; k < email->NumSTo; k++)
               rto = AppendRcpt(rto, &email->STo[k], email->identity, TRUE);
 
             // add the CC: addresses as well
-            for(k=0; k < email->NoCC; k++)
+            for(k=0; k < email->NumCC; k++)
               rcc = AppendRcpt(rcc, &email->CC[k], email->identity, TRUE);
           }
           break;
@@ -2929,10 +3044,10 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
       // and also set other important GUI elements with information we
       // collected here.
       xset(wmData->window, MUIA_WriteWindow_Identity, firstIdentity,
-                           rrepto != NULL ? MUIA_WriteWindow_ReplyTo : TAG_IGNORE, rrepto,
                            rto[0] != '\0' ? MUIA_WriteWindow_To      : TAG_IGNORE, rto,
                            rsub[0] != '\0'? MUIA_WriteWindow_Subject : TAG_IGNORE, rsub,
-                           rcc[0] != '\0' ? (rto[0] != '\0' ? MUIA_WriteWindow_CC : MUIA_WriteWindow_To) : TAG_IGNORE, rcc);
+                           rcc[0] != '\0' ? (rto[0] != '\0' ? MUIA_WriteWindow_CC : MUIA_WriteWindow_To) : TAG_IGNORE, rcc,
+                           rrepto[0] != '\0' ? MUIA_WriteWindow_ReplyTo : TAG_IGNORE, rrepto);
 
       // now that the mail is finished, we go and output some footer message to
       // the reply text. But we only do this if the user hasn't selected to have
@@ -2966,6 +3081,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
       // free our temporary buffers
       FreeStrBuf(rto);
       FreeStrBuf(rcc);
+      FreeStrBuf(rrepto);
       FreeStrBuf(rsub);
     }
     else

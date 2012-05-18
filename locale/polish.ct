@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.29 (24.12.2011)
+## version $VER: YAM.catalog 7.30 (18.05.2012)
 ## language polski
 ## codeset 5
 ## chunk AUTH Mariusz Danilewicz <mandi@interia.pl>
@@ -8615,8 +8615,8 @@ MSG_FI_DATE_FIELD
 ; \ebDate\en
 ;
 MSG_FO_TO_PATTERN
-_Wzorzec (Do:)
-; _Pattern (To:)
+_Wzorzec (Do:/CC:)
+; _Pattern (To:/CC:)
 ;
 MSG_FO_TO_ADDRESS
 Adres docelowy (_Do:)

@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.20 (24.12.2011)
+## version $VER: YAM.catalog 7.21 (18.05.2012)
 ## codeset 0
 ## language español
 ## chunk AUTH Emilio Jimenez
@@ -7188,8 +7188,8 @@ MSG_FI_DATE_FIELD
 ; \ebDate\en
 ;
 MSG_FO_TO_PATTERN
-_Plantilla (Para:)
-; _Pattern (To:)
+_Plantilla (Para:/CC:)
+; _Pattern (To:/CC:)
 ;
 MSG_FO_TO_ADDRESS
 Dirección de destino (_Para:)

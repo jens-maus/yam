@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.8 (14.05.2012)
+## version $VER: YAM.catalog 7.9 (18.05.2012)
 ## language svenska
 ## codeset 0
 ;
@@ -7792,8 +7792,8 @@ MSG_FI_DATE_FIELD
 ; \ebDate\en
 ;
 MSG_FO_TO_PATTERN
-_Mönster (Till:)
-; _Pattern (To:)
+_Mönster (Till:/CC:)
+; _Pattern (To:/CC:)
 ;
 MSG_FO_TO_ADDRESS
 _Destinationsadress (Till:)

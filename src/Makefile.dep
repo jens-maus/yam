@@ -568,8 +568,8 @@ $(OBJDIR)/UserIdentity.o: UserIdentity.c YAM_config.h include/libraries/mui.h \
  include/openssl/ssl23.h include/openssl/tmdiff.h \
  include/openssl/txt_db.h include/amissl/tags.h \
  include/interfaces/amissl.h include/inline4/amissl.h YAM_mainFolder.h \
- extrasrc.h include/SDI_stdarg.h include/SDI_compiler.h UserIdentity.h \
- Debug.h
+ extrasrc.h include/SDI_stdarg.h include/SDI_compiler.h MailServers.h \
+ UserIdentity.h Debug.h
 $(OBJDIR)/YAM.o: YAM.c include/libraries/amisslmaster.h \
  include/mui/BetterString_mcc.h include/mui/NListview_mcc.h \
  include/libraries/mui.h include/mui/NList_mcc.h \
@@ -2585,11 +2585,12 @@ $(OBJDIR)/$(MUIDIR)/ThemeListGroup.o: mui/ThemeListGroup.c mui/ThemeListGroup_cl
  HashTable.h include/SDI_compiler.h extrasrc.h include/SDI_stdarg.h \
  include/SDI_compiler.h mui/ThemeListGroup.h include/proto/muimaster.h \
  include/interfaces/muimaster.h include/inline4/muimaster.h \
- include/mui/NList_mcc.h include/mui/NListview_mcc.h YAM.h \
- include/xpk/xpk.h include/amiga-align.h include/default-align.h \
- YAM_userlist.h YAM_utilities.h YAM_folderconfig.h BayesFilter.h Themes.h \
- Timer.h include/timeval.h YAM_config.h YAM_read.h Logfile.h \
- UpdateCheck.h mui/ConfigPageList.h mui/TransferWindow.h tcp/Connection.h \
+ include/mui/NBalance_mcc.h include/mui/NList_mcc.h \
+ include/mui/NListview_mcc.h YAM.h include/xpk/xpk.h \
+ include/amiga-align.h include/default-align.h YAM_userlist.h \
+ YAM_utilities.h YAM_folderconfig.h BayesFilter.h Themes.h Timer.h \
+ include/timeval.h YAM_config.h YAM_read.h Logfile.h UpdateCheck.h \
+ mui/ConfigPageList.h mui/TransferWindow.h tcp/Connection.h \
  include/openssl/ssl.h include/proto/amissl.h include/amissl/amissl.h \
  include/openssl/e_os2.h include/openssl/opensslconf.h \
  include/openssl/aes.h include/openssl/asn1.h include/openssl/bio.h \
@@ -2902,13 +2903,13 @@ $(OBJDIR)/$(MUIDIR)/WriteWindow.o: mui/WriteWindow.c mui/WriteWindow_cl.h \
  include/openssl/ssl23.h include/openssl/tmdiff.h \
  include/openssl/txt_db.h include/amissl/tags.h \
  include/interfaces/amissl.h include/inline4/amissl.h YAM_configGUI.h \
- YAM_error.h YAM_global.h YAM_glossarydisplay.h YAM_mainFolder.h \
- FileInfo.h Locale.h Logfile.h MailList.h MailServers.h MUIObjects.h \
- ParseEmail.h Requesters.h Threads.h UserIdentity.h mime/uucode.h \
- mui/IdentityChooser.h mui/MailTextEdit.h mui/ReadMailGroup.h \
- mui/ReadWindow.h mui/Recipientstring.h mui/Searchwindow.h \
- mui/WriteAttachmentList.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
- mui/PreselectionWindow.h tcp/smtp.h Debug.h
+ YAM_configFile.h YAM_error.h YAM_global.h YAM_glossarydisplay.h \
+ YAM_mainFolder.h FileInfo.h FolderList.h Locale.h Logfile.h MailList.h \
+ MailServers.h MUIObjects.h ParseEmail.h Requesters.h Threads.h \
+ UserIdentity.h mime/uucode.h mui/IdentityChooser.h mui/MailTextEdit.h \
+ mui/ReadMailGroup.h mui/ReadWindow.h mui/Recipientstring.h \
+ mui/Searchwindow.h mui/WriteAttachmentList.h mui/WriteWindowToolbar.h \
+ mui/YAMApplication.h mui/PreselectionWindow.h tcp/smtp.h Debug.h
 $(OBJDIR)/$(MUIDIR)/WriteWindowToolbar.o: mui/WriteWindowToolbar.c \
  mui/WriteWindowToolbar_cl.h include/libraries/mui.h mui/ClassesExtra.h \
  YAM_main.h YAM_stringsizes.h tcp/pop3.h tcp/smtp.h YAM_read.h \

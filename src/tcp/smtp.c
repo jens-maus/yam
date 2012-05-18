@@ -1086,9 +1086,9 @@ static int SendMessage(struct TransferContext *tc, struct Mail *mail)
         // if the mail in question has some "Resent-To:" mail
         // header information we use that information instead
         // of the one of the original mail
-        if(email->NoResentTo > 0)
+        if(email->NumResentTo > 0)
         {
-          for(j=0; j < email->NoResentTo; j++)
+          for(j=0; j < email->NumResentTo; j++)
           {
             snprintf(buf, buflen, "TO:<%s>", email->ResentTo[j].Address);
             if(SendSMTPCommand(tc, SMTP_RCPT, buf, tr(MSG_ER_BADRESPONSE_SMTP)) == NULL)
@@ -1103,7 +1103,7 @@ static int SendMessage(struct TransferContext *tc, struct Mail *mail)
             rcptok = FALSE;
 
           // now add the additional 'To:' recipients of the mail
-          for(j=0; j < email->NoSTo && rcptok; j++)
+          for(j=0; j < email->NumSTo && rcptok; j++)
           {
             snprintf(buf, buflen, "TO:<%s>", email->STo[j].Address);
             if(SendSMTPCommand(tc, SMTP_RCPT, buf, tr(MSG_ER_BADRESPONSE_SMTP)) == NULL)
@@ -1111,7 +1111,7 @@ static int SendMessage(struct TransferContext *tc, struct Mail *mail)
           }
 
           // add the 'Cc:' recipients
-          for(j=0; j < email->NoCC && rcptok; j++)
+          for(j=0; j < email->NumCC && rcptok; j++)
           {
             snprintf(buf, buflen, "TO:<%s>", email->CC[j].Address);
             if(SendSMTPCommand(tc, SMTP_RCPT, buf, tr(MSG_ER_BADRESPONSE_SMTP)) == NULL)
@@ -1119,7 +1119,7 @@ static int SendMessage(struct TransferContext *tc, struct Mail *mail)
           }
 
           // add the 'BCC:' recipients
-          for(j=0; j < email->NoBCC && rcptok; j++)
+          for(j=0; j < email->NumBCC && rcptok; j++)
           {
             snprintf(buf, buflen, "TO:<%s>", email->BCC[j].Address);
             if(SendSMTPCommand(tc, SMTP_RCPT, buf, tr(MSG_ER_BADRESPONSE_SMTP)) == NULL)

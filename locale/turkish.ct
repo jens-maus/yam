@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.2 (24.02.2012)
+## version $VER: YAM.catalog 7.3 (18.05.2012)
 ## language türkçe
 ## codeset 0
 ## chunk AUTH Alper Sönmez <amithlondestek@gmail.com>
@@ -8616,8 +8616,8 @@ MSG_FI_DATE_FIELD
 ; \ebDate\en
 ;
 MSG_FO_TO_PATTERN
-_Þablon (Kime:)
-; _Pattern (To:)
+_Þablon (Kime:/CC:)
+; _Pattern (To:/CC:)
 ;
 MSG_FO_TO_ADDRESS
 _Hedef adres (Kime:)

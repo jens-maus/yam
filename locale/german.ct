@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.38 (17.05.2012)
+## version $VER: YAM.catalog 7.39 (18.05.2012)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -7685,7 +7685,7 @@ MSG_FI_DATE_FIELD
 ; \ebDate\en
 ;
 MSG_FO_TO_PATTERN
-Empfängerm_uster (To:)
+Empfängerm_uster (To:/CC:)
 ;
 MSG_FO_TO_ADDRESS
 Zieladr_esse (To:)

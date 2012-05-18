@@ -143,7 +143,7 @@ static BOOL MatchMail(struct Mail *mail, enum ViewOptions vo,
         {
           int j;
 
-          for(j=0; j < email->NoSFrom && foundMatch == FALSE; j++)
+          for(j=0; j < email->NumSFrom && foundMatch == FALSE; j++)
           {
             foundMatch = ((APTR)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_AddrBookListtree_FindPerson, &email->SFrom[j]) != NULL);
           }
@@ -198,7 +198,7 @@ static BOOL MatchMail(struct Mail *mail, enum ViewOptions vo,
           {
             int j;
 
-            for(j=0; j < email->NoSFrom && foundMatch == FALSE; j++)
+            for(j=0; j < email->NumSFrom && foundMatch == FALSE; j++)
             {
               struct Person *pe = &email->SFrom[j];
 
@@ -227,7 +227,7 @@ static BOOL MatchMail(struct Mail *mail, enum ViewOptions vo,
           {
             int j;
 
-            for(j=0; j < email->NoSFrom && foundMatch == FALSE; j++)
+            for(j=0; j < email->NumSFrom && foundMatch == FALSE; j++)
             {
               struct Person *pe = &email->SFrom[j];
 
@@ -258,7 +258,7 @@ static BOOL MatchMail(struct Mail *mail, enum ViewOptions vo,
             int j;
 
             // search the additional To: recipients
-            for(j=0; j < email->NoSTo && foundMatch == FALSE; j++)
+            for(j=0; j < email->NumSTo && foundMatch == FALSE; j++)
             {
               struct Person *to = &email->STo[j];
 
@@ -266,7 +266,7 @@ static BOOL MatchMail(struct Mail *mail, enum ViewOptions vo,
                             BoyerMooreSearch(bmContext, to->RealName) != NULL);
             }
 
-            for(j=0; j < email->NoCC && foundMatch == FALSE; j++)
+            for(j=0; j < email->NumCC && foundMatch == FALSE; j++)
             {
               struct Person *cc = &email->CC[j];
 

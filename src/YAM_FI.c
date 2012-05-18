@@ -213,7 +213,7 @@ static BOOL FI_SearchPatternFast(const struct Search *search, const struct Mail 
       {
         int i;
 
-        for(i=0; i < email->NoSFrom; i++)
+        for(i=0; i < email->NumSFrom; i++)
         {
           if(FI_MatchPerson(search, &email->SFrom[i]) == TRUE)
           {
@@ -240,7 +240,7 @@ static BOOL FI_SearchPatternFast(const struct Search *search, const struct Mail 
       {
         int i;
 
-        for(i=0; i < email->NoSTo; i++)
+        for(i=0; i < email->NumSTo; i++)
         {
           if(FI_MatchPerson(search, &email->STo[i]) == TRUE)
           {
@@ -263,7 +263,7 @@ static BOOL FI_SearchPatternFast(const struct Search *search, const struct Mail 
       {
         int i;
 
-        for(i=0; i < email->NoCC; i++)
+        for(i=0; i < email->NumCC; i++)
         {
           if(FI_MatchPerson(search, &email->CC[i]) == TRUE)
           {
@@ -290,7 +290,7 @@ static BOOL FI_SearchPatternFast(const struct Search *search, const struct Mail 
       {
         int i;
 
-        for(i=0; i < email->NoSReplyTo; i++)
+        for(i=0; i < email->NumSReplyTo; i++)
         {
           if(FI_MatchPerson(search, &email->SReplyTo[i]) == TRUE)
           {

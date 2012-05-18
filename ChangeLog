@@ -5,6 +5,20 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-05-18 Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_WR.c, mui/WriteWindow.c: implemented support for the mailing list support
+    improving header fields "Mail-Followup-To:" and "Mail-Reply-To:". With these
+    header fields YAM will now add the recipients in these header fields as the To:
+    in case the user replying to the sender or to all recipients. Furthermore,
+    YAM will also now automatically add these headers if it finds a mailing list
+    address in the To:/CC:/BCC: fields of an outgoing mail.
+    This implements and closes #282.
+  * YAM_WR.c: changed the mailing list recognition code to identify a mail as being
+    sent to a mailing list by also checking all CC: addresses.
+  * YAM_mainFolder.h, misc: renamed all No* struct members in the ExtendedMail
+    struct to be called somehwat Num* instead.
+
 2012-05-17 Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_WR.c: reworked the different reply modes to be somewhat more compatible

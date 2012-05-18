@@ -6088,7 +6088,7 @@ MSG_FI_DATE_FIELD (2019//)
 \ebDate\en
 ;
 MSG_FO_TO_PATTERN (2020//)
-_Pattern (To:)
+_Pattern (To:/CC:)
 ;
 MSG_FO_TO_ADDRESS (2021//)
 Destination address (_To:)

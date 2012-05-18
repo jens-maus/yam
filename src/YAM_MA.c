@@ -2253,10 +2253,10 @@ void MA_GetAddress(struct MailList *mlist)
           {
             int j;
 
-            for(j=0; j < email->NoSTo; j++)
+            for(j=0; j < email->NumSTo; j++)
               DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddress(address, sizeof(address), email->STo[j].Address, email->STo[j].RealName), MUIV_List_Insert_Bottom);
 
-            for(j=0; j < email->NoCC; j++)
+            for(j=0; j < email->NumCC; j++)
               DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddress(address, sizeof(address), email->CC[j].Address, email->CC[j].RealName), MUIV_List_Insert_Bottom);
 
             MA_FreeEMailStruct(email);
@@ -2275,7 +2275,7 @@ void MA_GetAddress(struct MailList *mlist)
             {
               int j;
 
-              for(j=0; j < email->NoSReplyTo; j++)
+              for(j=0; j < email->NumSReplyTo; j++)
                 DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddress(address, sizeof(address), email->SReplyTo[j].Address, email->SReplyTo[j].RealName), MUIV_List_Insert_Bottom);
 
               MA_FreeEMailStruct(email);
@@ -2292,7 +2292,7 @@ void MA_GetAddress(struct MailList *mlist)
             {
               int j;
 
-              for(j=0; j < email->NoSFrom; j++)
+              for(j=0; j < email->NumSFrom; j++)
                 DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddress(address, sizeof(address), email->SFrom[j].Address, email->SFrom[j].RealName), MUIV_List_Insert_Bottom);
 
               MA_FreeEMailStruct(email);

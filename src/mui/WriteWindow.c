@@ -60,6 +60,7 @@
 #include "YAM_mainFolder.h"
 
 #include "FileInfo.h"
+#include "FolderList.h"
 #include "Locale.h"
 #include "Logfile.h"
 #include "MailList.h"
@@ -3654,6 +3655,8 @@ DECLARE(ComposeMail) // enum WriteMode mode
   BOOL winOpen = xget(obj, MUIA_Window_Open);
   struct WriteMailData *wmData = data->wmData;
   enum WriteMode mode = msg->mode;
+  struct FolderNode *fnode;
+  struct Folder *mlFolder = NULL;
 
   ENTER();
 
@@ -3774,6 +3777,42 @@ DECLARE(ComposeMail) // enum WriteMode mode
     else if(addr[0] != '\0')
       comp.ReplyTo = addr;
 
+    // now we search all To:,CC: and BCC: addresses and try to match them
+    // against all mailing lists
+    LockFolderListShared(G->folders);
+    
+    // walk through all folders and check if the
+    // mailing list support matches
+    ForEachFolderNode(G->folders, fnode)
+    {
+      struct Folder *curFolder = fnode->folder;
+
+      if(curFolder != NULL && curFolder->MLSupport == TRUE &&
+         curFolder->MLPattern[0] != '\0')
+      {
+        if((comp.MailTo != NULL && MatchNoCase(comp.MailTo, curFolder->MLPattern) == TRUE) ||
+           (comp.MailCC != NULL && MatchNoCase(comp.MailCC, curFolder->MLPattern) == TRUE) ||
+           (comp.MailBCC != NULL && MatchNoCase(comp.MailBCC, curFolder->MLPattern) == TRUE))
+        {
+          mlFolder = curFolder;
+          break;
+        }
+      }
+    }
+
+    // if we found that a configued mailing list matches
+    // we go and set Mail-Reply-To: and Mail-Followup-To:
+    if(mlFolder != NULL)
+    {
+      char address[SIZE_ADDRESS];
+      comp.MailReplyTo = strdup(BuildAddress(address, sizeof(address), comp.Identity->address, comp.Identity->realname));
+      comp.MailFollowupTo = strdup(mlFolder->MLAddress);
+    }
+
+    // unlock the folder list again
+    UnlockFolderList(G->folders);
+
+    // get the extra headers a user might have put into the mail
     comp.ExtHeader = (char *)xget(data->ST_EXTHEADER, MUIA_String_Contents);
 
     // In-Reply-To / References
@@ -3789,6 +3828,11 @@ DECLARE(ComposeMail) // enum WriteMode mode
     if(comp.Security == SEC_DEFAULTS &&
        SetDefaultSecurity(&comp) == FALSE)
     {
+      if(comp.MailReplyTo != NULL)
+        free(comp.MailReplyTo);
+      if(comp.MailFollowupTo != NULL)
+        free(comp.MailFollowupTo);
+
       RETURN(0);
       return 0;
     }
@@ -3820,6 +3864,11 @@ DECLARE(ComposeMail) // enum WriteMode mode
     // the attachments
     if((comp.FirstPart = BuildPartsList(wmData)) == NULL)
     {
+      if(comp.MailReplyTo != NULL)
+        free(comp.MailReplyTo);
+      if(comp.MailFollowupTo != NULL)
+        free(comp.MailFollowupTo);
+
       RETURN(0);
       return 0;
     }
@@ -3870,8 +3919,14 @@ DECLARE(ComposeMail) // enum WriteMode mode
     if(success == FALSE)
     {
       fclose(comp.FH);
+      comp.FH = NULL;
 
       DeleteFile(newMailFile);
+
+      if(comp.MailReplyTo != NULL)
+        free(comp.MailReplyTo);
+      if(comp.MailFollowupTo != NULL)
+        free(comp.MailFollowupTo);
 
       RETURN(0);
       return 0;
@@ -3904,13 +3959,13 @@ DECLARE(ComposeMail) // enum WriteMode mode
           {
             int j;
 
-            for(j = 0; j < email->NoSTo; j++)
+            for(j = 0; j < email->NumSTo; j++)
               DoMethod(_app(obj), MUIM_YAMApplication_AddToEmailCache, &email->STo[j]);
 
-            for(j = 0; j < email->NoCC; j++)
+            for(j = 0; j < email->NumCC; j++)
               DoMethod(_app(obj), MUIM_YAMApplication_AddToEmailCache, &email->CC[j]);
 
-            for(j = 0; j < email->NoBCC; j++)
+            for(j = 0; j < email->NumBCC; j++)
               DoMethod(_app(obj), MUIM_YAMApplication_AddToEmailCache, &email->BCC[j]);
           }
         }
@@ -4138,6 +4193,11 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
   // update the statistics of the outgoing folder
   DisplayStatistics(outfolder, TRUE);
+
+  if(comp.MailReplyTo != NULL)
+    free(comp.MailReplyTo);
+  if(comp.MailFollowupTo != NULL)
+    free(comp.MailFollowupTo);
 
   RETURN(0);
   return 0;

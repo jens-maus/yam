@@ -1,4 +1,4 @@
-## version $VER: yam.catalog 7.4 (20.01.2012)
+## version $VER: yam.catalog 7.5 (18.05.2012)
 ## language greek
 ## codeset 10
 ## chunk AUTH Antonis Iliakis
@@ -7334,8 +7334,8 @@ MSG_FI_DATE_FIELD
 ; \ebDate\en
 ;
 MSG_FO_TO_PATTERN
-Μοτίβο (Προς:)
-; _Pattern (To:)
+Μοτίβο (Προς:/CC:)
+; _Pattern (To:/CC:)
 ;
 MSG_FO_TO_ADDRESS
 Διεύθυνση προορισμού (Προς:)

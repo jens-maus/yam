@@ -3880,7 +3880,7 @@ BOOL RE_ProcessMDN(const enum MDNMode mode,
             {
               int i;
 
-              for(i=0; i < email->NoSFrom; i++)
+              for(i=0; i < email->NumSFrom; i++)
               {
                 struct Person *pe = &email->SFrom[i];
 
