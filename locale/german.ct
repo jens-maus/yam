@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.39 (18.05.2012)
+## version $VER: YAM.catalog 7.40 (18.05.2012)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -8957,4 +8957,7 @@ werden soll.\n\
 "Standard" versucht den Empfänger im Adressbuch zu\n\
 finden und die dort festgelegten Einstellungen\n\
 zu verwerden.
+;
+MSG_CO_MIMETYPE_TITLE
+MIME-Typ
 ;

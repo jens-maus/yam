@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-05-18 Thore Böckelmann <tboeckel@gmx.de>
+
+  * locale/german.ct: updated german translation.
+
 2012-05-18 Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_COg.c: minor cosmetic changes to the config gui to be somewhat more
