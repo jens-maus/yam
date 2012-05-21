@@ -12,6 +12,7 @@ $URL$
     timeouts of certain mail providers (i.e. web.de) while still being able to
     download mails from other servers which don't restrict the periodical mail
     download on time basis. This closes #305.
+  * locale/german.ct: adapted two translations.
 
 2012-05-18 Samir Hawamdeh <s.hawamdeh@tin.it>
 
