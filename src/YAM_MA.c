@@ -2403,7 +2403,7 @@ BOOL MA_PopNow(struct MailServerNode *msn, const ULONG flags, struct DownloadRes
     success = TRUE;
     IterateList(&C->pop3ServerList, curNode)
     {
-      struct MailServerNode *msn = (struct MailServerNode *)curNode;
+      msn = (struct MailServerNode *)curNode;
 
       // fetch mails from active servers only
       if(isServerActive(msn) == TRUE)
