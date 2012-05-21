@@ -30,9 +30,7 @@
 
 #include "timeval.h"
 
-#if defined(DEBUG)
 struct MailServerNode;
-#endif
 
 // all the different timers YAM is using
 enum Timer
