@@ -73,8 +73,8 @@ struct MailServerNode *CreateNewMailServer(const enum MailServerType type, const
         // POP3 servers keep a list of downloaded mails
         if((msn->downloadedMails = CreateMailList()) != NULL)
         {
-		  if(CreateTRequest(&msn->downloadTimer, -1, msn) == TRUE)
-		  {
+          if(CreateTRequest(&msn->downloadTimer, -1, msn) == TRUE)
+          {
             if(first == TRUE)
             {
               struct UserIdentityNode *uin;

@@ -1899,7 +1899,6 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      c1->InfoBar                         == c2->InfoBar &&
      c1->DaylightSaving                  == c2->DaylightSaving &&
      c1->UpdateStatus                    == c2->UpdateStatus &&
-//   c1->DownloadLarge                   == c2->DownloadLarge &&
      c1->DisplayAllTexts                 == c2->DisplayAllTexts &&
      c1->FixedFontEdit                   == c2->FixedFontEdit &&
      c1->MultipleReadWindows             == c2->MultipleReadWindows &&

@@ -59,7 +59,7 @@
 #include "Debug.h"
 
 /*** Timer processing function ***/
-/// PrepareTimeRequest
+/// PrepareTRequest
 // prepare a single time request
 static void PrepareTRequest(struct TRequest *timer, const int seconds, const int micros)
 {

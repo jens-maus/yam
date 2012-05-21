@@ -468,7 +468,6 @@ struct Config
 
   BOOL  DaylightSaving;
   BOOL  UpdateStatus;
-//BOOL  DownloadLarge;
   BOOL  DisplayAllTexts;
   BOOL  FixedFontEdit;
   BOOL  MultipleReadWindows;
