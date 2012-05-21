@@ -379,7 +379,7 @@ void RestartTimer(const enum Timer tid, const int seconds, const int micros)
 /*** Timer management functions ***/
 /// CreateTRequest
 // create a new time request, will be cloned from the first global request
-BOOL CreateTRequest(struct TRequest *timer, const int id, struct MailServerNode *msn)
+BOOL CreateTRequest(struct TRequest *timer, UNUSED const int id, UNUSED struct MailServerNode *msn)
 {
   BOOL success = FALSE;
 
@@ -404,8 +404,11 @@ BOOL CreateTRequest(struct TRequest *timer, const int id, struct MailServerNode 
 
   if(timer->tr != NULL)
   {
+    #if defined(DEBUG)
+    // remember some values for timer debugging
     timer->id = id;
     timer->pop3Server = msn;
+    #endif
 
     success = TRUE;
   }

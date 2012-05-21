@@ -30,7 +30,9 @@
 
 #include "timeval.h"
 
+#if defined(DEBUG)
 struct MailServerNode;
+#endif
 
 // all the different timers YAM is using
 enum Timer
@@ -54,11 +56,13 @@ struct TRequest
   struct TimeRequest *tr;             // pointer to the timerequest
   struct TimeVal startTime;           // at which time has this request been started
   struct TimeVal remainingTime;       // the remaining time if the request was paused
-  int id;                             // an ID of the list above or -1 for a POP3 timer
-  struct MailServerNode *pop3Server;  // back pointer to a POP3 server
   BOOL isRunning;                     // if the request is currenty active/running
   BOOL isPrepared;                    // if the request is prepared to get fired
   BOOL isPaused;                      // if the request is currently paused
+  #if defined(DEBUG)
+  int id;                             // an ID of the list above or -1 for a POP3 timer, debug only
+  struct MailServerNode *pop3Server;  // a back pointer to a POP3 server, debug only
+  #endif
 };
 
 struct Timers
