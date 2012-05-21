@@ -186,10 +186,7 @@ void FreeMailServerList(struct MinList *mailServerList)
       DeleteMailList(msn->downloadedMails);
 
     if(msn->downloadTimer.tr != NULL)
-    {
-      StopTRequest(&msn->downloadTimer);
       DeleteTRequest(&msn->downloadTimer);
-    }
 
     FreeSysObject(ASOT_NODE, msn);
   }

@@ -426,6 +426,7 @@ void DeleteTRequest(struct TRequest *timer)
 
   if(timer->tr != NULL)
   {
+    StopTRequest(timer);
     FreeSysObject(ASOT_IOREQUEST, timer->tr);
     timer->tr = NULL;
   }
