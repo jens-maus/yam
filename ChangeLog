@@ -13,6 +13,7 @@ $URL$
     download mails from other servers which don't restrict the periodical mail
     download on time basis. This closes #305.
   * locale/german.ct: adapted two translations.
+  * MailServers.c: make sure to stop a timer request before deleting it.
 
 2012-05-18 Samir Hawamdeh <s.hawamdeh@tin.it>
 
