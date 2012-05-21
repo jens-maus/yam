@@ -60,6 +60,7 @@ struct Data
   char fromBuffer[SIZE_DEFAULT];
   char sizeBuffer[SIZE_SMALL];
   char dateBuffer[64];
+  LONG sizeLimit;
 };
 */
 
@@ -86,7 +87,7 @@ static int MailCompare(struct MailTransferNode *entry1, struct MailTransferNode 
       return entry1->index - entry2->index;
     }
     break;
-    
+
     case 2:
     {
       // mail size
@@ -118,7 +119,7 @@ static int MailCompare(struct MailTransferNode *entry1, struct MailTransferNode 
     }
     break;
   }
-  
+
   return 0;
 }
 
@@ -154,6 +155,8 @@ OVERLOAD(OM_NEW)
     // prepare the group image
     data->downloadImage = MakeImageAltObject("status_download", G->theme.statusImages[SI_DOWNLOAD], tr(MSG_ALTIMAGE_STATUS_DOWNLOAD));
     data->deleteImage   = MakeImageAltObject("status_delete", G->theme.statusImages[SI_DELETE], tr(MSG_ALTIMAGE_STATUS_DELETE));
+
+    data->sizeLimit = GetTagData(ATTR(SizeLimit), 0, inittags(msg)) * 1024;
 
     DoMethod(obj, MUIM_NList_UseImage, data->downloadImage, SI_DOWNLOAD, MUIF_NONE);
     DoMethod(obj, MUIM_NList_UseImage, data->deleteImage, SI_DELETE, MUIF_NONE);
@@ -253,7 +256,7 @@ OVERLOAD(MUIM_NList_Display)
     ndm->strings[1] = data->indexBuffer;
 
     // size display
-    if(C->WarnSize > 0 && mail->Size >= (C->WarnSize*1024))
+    if(data->sizeLimit > 0 && mail->Size >= data->sizeLimit)
     {
       strlcpy(data->sizeBuffer, MUIX_PH, sizeof(data->sizeBuffer));
       FormatSize(mail->Size, &data->sizeBuffer[strlen(data->sizeBuffer)], sizeof(data->sizeBuffer)-strlen(data->sizeBuffer), SF_AUTO);

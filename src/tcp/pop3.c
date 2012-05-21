@@ -481,17 +481,17 @@ static BOOL GetMessageList(struct TransferContext *tc)
 
           newMail->Size  = size;
 
-          mode = (C->DownloadLarge == TRUE ? 1 : 0) +
+          mode = (hasServerDownloadLargeMails(tc->msn) == TRUE ? 1 : 0) +
                  (hasServerPurge(tc->msn) == TRUE ? 2 : 0) +
                  (isFlagSet(tc->flags, RECEIVEF_USER) ? 4 : 0) +
-                 ((tc->msn->preselection >= PSM_LARGE && C->WarnSize > 0 && newMail->Size >= (C->WarnSize*1024)) ? 8 : 0);
+                 ((tc->msn->preselection >= PSM_LARGE && tc->msn->largeMailSizeLimit > 0 && newMail->Size >= (tc->msn->largeMailSizeLimit*1024)) ? 8 : 0);
           tflags = mode2tflags[mode];
 
           // if preselection is configured then force displaying this mail in the list
           if(tc->msn->preselection >= PSM_ALWAYS)
             setFlag(tflags, TRF_PRESELECT);
 
-          D(DBF_NET, "mail transfer mode %ld, tflags %08lx (dl large %ld, purge %ld, user %ld, warnsize %ld, size %ld, presel %ld)", mode, tflags, C->DownloadLarge, hasServerPurge(tc->msn), isFlagSet(tc->flags, RECEIVEF_USER), C->WarnSize*1024, newMail->Size, tc->msn->preselection);
+          D(DBF_NET, "mail transfer mode %ld, tflags %08lx (dl large %ld, purge %ld, user %ld, warnsize %ld, size %ld, presel %ld)", mode, tflags, hasServerDownloadLargeMails(tc->msn), hasServerPurge(tc->msn), isFlagSet(tc->flags, RECEIVEF_USER), tc->msn->largeMailSizeLimit*1024, newMail->Size, tc->msn->preselection);
 
           // allocate a new MailTransferNode and add it to our
           // new transferlist
@@ -1495,7 +1495,7 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
 
                         snprintf(tc->windowTitle, sizeof(tc->windowTitle), tr(MSG_TR_MailTransferFrom), tc->msn->description);
 
-                        if((tc->preselectWindow = (Object *)PushMethodOnStackWait(G->App, 5, MUIM_YAMApplication_CreatePreselectionWindow, CurrentThread(), tc->windowTitle, PRESELWINMODE_DOWNLOAD, tc->transferList)) != NULL)
+                        if((tc->preselectWindow = (Object *)PushMethodOnStackWait(G->App, 5, MUIM_YAMApplication_CreatePreselectionWindow, CurrentThread(), tc->msn->largeMailSizeLimit, tc->windowTitle, PRESELWINMODE_DOWNLOAD, tc->transferList)) != NULL)
                         {
                           int mustWait;
 

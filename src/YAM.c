@@ -2212,7 +2212,7 @@ static void DoStartup(BOOL nocheck, BOOL hide)
       if(nocheck == FALSE && ConnectionIsOnline(NULL) == TRUE)
       {
         // perform the configured startup actions for receiving and sending mails
-        MA_PopNow(-1, RECEIVEF_STARTUP|RECEIVEF_USER, NULL);
+        MA_PopNow(NULL, RECEIVEF_STARTUP|RECEIVEF_USER, NULL);
 
         if(C->SendOnStartup == TRUE)
           SendWaitingMail(hide);
@@ -2769,17 +2769,18 @@ int main(int argc, char **argv)
     D(DBF_STARTUP, " methodStackSig    = %08lx", methodStackSig);
 
     // start our maintanance Timer requests for
-    // different purposes (writeindexes/mailcheck/autosave)
+    // different purposes (writeindexes/autosave)
     PrepareTimer(TIMER_WRINDEX,   C->WriteIndexes, 0);
-    PrepareTimer(TIMER_CHECKMAIL, C->CheckMailDelay*60, 0);
     PrepareTimer(TIMER_AUTOSAVE,  C->AutoSave, 0);
     PrepareTimer(TIMER_SPAMFLUSHTRAININGDATA, C->SpamFlushTrainingDataInterval, 0);
     PrepareTimer(TIMER_PURGEIDLETHREADS, 60, 0);
     StartTimer(TIMER_WRINDEX);
-    StartTimer(TIMER_CHECKMAIL);
     StartTimer(TIMER_AUTOSAVE);
     StartTimer(TIMER_SPAMFLUSHTRAININGDATA);
     StartTimer(TIMER_PURGEIDLETHREADS);
+
+    PreparePOP3Timers();
+    StartPOP3Timers();
 
     // initialize the automatic UpdateCheck facility and schedule an
     // automatic update check during startup if necessary

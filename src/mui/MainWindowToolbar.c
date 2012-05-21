@@ -188,7 +188,7 @@ OVERLOAD(OM_NEW)
     DoMethod(obj, MUIM_TheBar_Notify, TB_MAIN_NEWMAIL, MUIA_Pressed, FALSE, MUIV_Notify_Application, 4, MUIM_CallHook, &MA_NewMessageHook, NMM_NEW, MUIV_TheBar_Qualifier);
     DoMethod(obj, MUIM_TheBar_Notify, TB_MAIN_REPLY,   MUIA_Pressed, FALSE, MUIV_Notify_Application, 4, MUIM_CallHook, &MA_NewMessageHook, NMM_REPLY, MUIV_TheBar_Qualifier);
     DoMethod(obj, MUIM_TheBar_Notify, TB_MAIN_FORWARD, MUIA_Pressed, FALSE, MUIV_Notify_Application, 4, MUIM_CallHook, &MA_NewMessageHook, NMM_FORWARD, MUIV_TheBar_Qualifier);
-    DoMethod(obj, MUIM_TheBar_Notify, TB_MAIN_GETMAIL, MUIA_Pressed, FALSE, MUIV_Notify_Application, 8, MUIM_Application_PushMethod, G->App, 5, MUIM_CallHook, &MA_PopNowHook, -1, RECEIVEF_USER, MUIV_TheBar_Qualifier);
+    DoMethod(obj, MUIM_TheBar_Notify, TB_MAIN_GETMAIL, MUIA_Pressed, FALSE, MUIV_Notify_Application, 8, MUIM_Application_PushMethod, G->App, 5, MUIM_CallHook, &MA_PopNowHook, NULL, RECEIVEF_USER, MUIV_TheBar_Qualifier);
     DoMethod(obj, MUIM_TheBar_Notify, TB_MAIN_SENDALL, MUIA_Pressed, FALSE, MUIV_Notify_Application, 6, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &MA_SendHook, SENDMAIL_ALL_USER);
     DoMethod(obj, MUIM_TheBar_Notify, TB_MAIN_SPAM,    MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &MA_ClassifyMessageHook, BC_SPAM);
     DoMethod(obj, MUIM_TheBar_Notify, TB_MAIN_HAM,     MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &MA_ClassifyMessageHook, BC_HAM);

@@ -2334,7 +2334,7 @@ void MA_ExchangeMail(const ULONG receiveFlags)
 {
   ENTER();
 
-  MA_PopNow(-1, receiveFlags, NULL);
+  MA_PopNow(NULL, receiveFlags, NULL);
   MA_Send(isFlagSet(receiveFlags, RECEIVEF_USER) ? SENDMAIL_ALL_USER : SENDMAIL_ALL_AUTO);
 
   LEAVE();
@@ -2374,7 +2374,7 @@ BOOL ReceiveMailsFromPOP(struct MailServerNode *msn, const ULONG flags, struct D
 ///
 /// MA_PopNow
 //  Fetches new mail from POP3 account(s)
-BOOL MA_PopNow(int pop, const ULONG flags, struct DownloadResult *dlResult)
+BOOL MA_PopNow(struct MailServerNode *msn, const ULONG flags, struct DownloadResult *dlResult)
 {
   BOOL success = FALSE;
 
@@ -2396,14 +2396,15 @@ BOOL MA_PopNow(int pop, const ULONG flags, struct DownloadResult *dlResult)
   else if(isFlagSet(flags, RECEIVEF_USER))
     MA_StartMacro(MACRO_PREGET, "0");
 
-  if(pop == -1)
+  if(msn == NULL)
   {
-    struct MailServerNode *msn;
+    struct Node *curNode;
 
     success = TRUE;
-    pop = 0;
-    while((msn = GetMailServer(&C->pop3ServerList, pop)) != NULL)
+    IterateList(&C->pop3ServerList, curNode)
     {
+      struct MailServerNode *msn = (struct MailServerNode *)curNode;
+
       // fetch mails from active servers only
       if(isServerActive(msn) == TRUE)
       {
@@ -2412,19 +2413,12 @@ BOOL MA_PopNow(int pop, const ULONG flags, struct DownloadResult *dlResult)
         if(isFlagClear(flags, RECEIVEF_STARTUP) || hasServerDownloadOnStartup(msn) == TRUE)
           success &= ReceiveMailsFromPOP(msn, flags, dlResult);
       }
-
-      pop++;
     }
   }
   else
   {
-    struct MailServerNode *msn;
-
-    if((msn = GetMailServer(&C->pop3ServerList, pop)) != NULL)
-    {
-      // we ignore the active state and possible startup flags for single servers
-      success = ReceiveMailsFromPOP(msn, flags, dlResult);
-    }
+    // we ignore the active state and possible startup flags for single servers
+    success = ReceiveMailsFromPOP(msn, flags, dlResult);
   }
 
   // now we are done
@@ -2448,7 +2442,7 @@ HOOKPROTONHNO(MA_PopNowFunc, void, int *arg)
   if(isAnyFlagSet(qual, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT)))
     MA_ExchangeMail(arg[1]);
   else
-    MA_PopNow(arg[0], arg[1], NULL);
+    MA_PopNow((struct MailServerNode *)arg[0], arg[1], NULL);
 
   LEAVE();
 }
@@ -3809,7 +3803,7 @@ void MA_SetupDynamicMenus(void)
         DoMethod(G->MA->GUI.MI_CSINGLE, MUIM_Family_AddTail, newObj);
 
         // add a notify for this item as well.
-        DoMethod(G->MA->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_POPHOST+i, MUIV_Notify_Application, 5, MUIM_CallHook, &MA_PopNowHook, i, RECEIVEF_USER, 0L);
+        DoMethod(G->MA->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_POPHOST+i, MUIV_Notify_Application, 5, MUIM_CallHook, &MA_PopNowHook, msn, RECEIVEF_USER, 0L);
 
         i++;
       }
@@ -3970,7 +3964,7 @@ void MA_SetupEmbeddedReadPane(void)
     {
       // the user want to have the embedded read pane added to the main
       // window, so lets do it now and create the object
-      G->MA->GUI.BL_MAILVIEW = mailBalanceObj = NBalanceObject, 
+      G->MA->GUI.BL_MAILVIEW = mailBalanceObj = NBalanceObject,
                                                   MUIA_Balance_Quiet, TRUE,
                                                 End;
 
@@ -4383,9 +4377,9 @@ struct MA_ClassData *MA_New(void)
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_ABOOK,          MUIV_Notify_Application, 3, MUIM_CallHook,             &AB_OpenHook, ABM_EDIT);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EXPORT,         MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_ExportMessagesHook, TRUE);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_IMPORT,         MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_ImportMessagesHook);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_GETMAIL,        MUIV_Notify_Application, 5, MUIM_CallHook,             &MA_PopNowHook, -1, RECEIVEF_USER, 0);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_GETMAIL,        MUIV_Notify_Application, 5, MUIM_CallHook,             &MA_PopNowHook, NULL, RECEIVEF_USER, 0);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SENDMAIL,       MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_SendHook, SENDMAIL_ALL_USER);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EXMAIL,         MUIV_Notify_Application, 5, MUIM_CallHook,             &MA_PopNowHook, -1, RECEIVEF_USER, IEQUALIFIER_LSHIFT);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EXMAIL,         MUIV_Notify_Application, 5, MUIM_CallHook,             &MA_PopNowHook, NULL, RECEIVEF_USER, IEQUALIFIER_LSHIFT);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_READ,           MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_ReadMessageHook);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT,           MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_NewMessageHook, NMM_EDIT, 0);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_MOVE,           MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_MoveMessageHook);

@@ -316,20 +316,23 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
     {
       struct MailServerNode *msn = (struct MailServerNode *)curNode;
 
-      fprintf(fh, "POP%02d.ID                 = %08x\n", i, msn->id);
-      fprintf(fh, "POP%02d.Enabled            = %s\n", i, Bool2Txt(isServerActive(msn)));
-      fprintf(fh, "POP%02d.Description        = %s\n", i, msn->description);
-      fprintf(fh, "POP%02d.Server             = %s\n", i, msn->hostname);
-      fprintf(fh, "POP%02d.Port               = %d\n", i, msn->port);
-      fprintf(fh, "POP%02d.User               = %s\n", i, msn->username);
-      fprintf(fh, "POP%02d.Password           = %s\n", i, Encrypt(msn->password));
-      fprintf(fh, "POP%02d.SSLMode            = %d\n", i, MSF2POP3SecMethod(msn));
-      fprintf(fh, "POP%02d.UseAPOP            = %s\n", i, Bool2Txt(hasServerAPOP(msn)));
-      fprintf(fh, "POP%02d.Delete             = %s\n", i, Bool2Txt(hasServerPurge(msn)));
-      fprintf(fh, "POP%02d.AvoidDuplicates    = %s\n", i, Bool2Txt(hasServerAvoidDuplicates(msn)));
-      fprintf(fh, "POP%02d.ApplyRemoteFilters = %s\n", i, Bool2Txt(hasServerApplyRemoteFilters(msn)));
-      fprintf(fh, "POP%02d.Preselection       = %d\n", i, msn->preselection);
-      fprintf(fh, "POP%02d.DownloadOnStartup  = %s\n", i, Bool2Txt(hasServerDownloadOnStartup(msn)));
+      fprintf(fh, "POP%02d.ID                   = %08x\n", i, msn->id);
+      fprintf(fh, "POP%02d.Enabled              = %s\n", i, Bool2Txt(isServerActive(msn)));
+      fprintf(fh, "POP%02d.Description          = %s\n", i, msn->description);
+      fprintf(fh, "POP%02d.Server               = %s\n", i, msn->hostname);
+      fprintf(fh, "POP%02d.Port                 = %d\n", i, msn->port);
+      fprintf(fh, "POP%02d.User                 = %s\n", i, msn->username);
+      fprintf(fh, "POP%02d.Password             = %s\n", i, Encrypt(msn->password));
+      fprintf(fh, "POP%02d.SSLMode              = %d\n", i, MSF2POP3SecMethod(msn));
+      fprintf(fh, "POP%02d.UseAPOP              = %s\n", i, Bool2Txt(hasServerAPOP(msn)));
+      fprintf(fh, "POP%02d.Delete               = %s\n", i, Bool2Txt(hasServerPurge(msn)));
+      fprintf(fh, "POP%02d.AvoidDuplicates      = %s\n", i, Bool2Txt(hasServerAvoidDuplicates(msn)));
+      fprintf(fh, "POP%02d.ApplyRemoteFilters   = %s\n", i, Bool2Txt(hasServerApplyRemoteFilters(msn)));
+      fprintf(fh, "POP%02d.Preselection         = %d\n", i, msn->preselection);
+      fprintf(fh, "POP%02d.DownloadOnStartup    = %s\n", i, Bool2Txt(hasServerDownloadOnStartup(msn)));
+      fprintf(fh, "POP%02d.DownloadPeriodically = %s\n", i, Bool2Txt(hasServerDownloadPeriodically(msn)));
+      fprintf(fh, "POP%02d.DownloadInterval     = %d\n", i, msn->downloadInterval);
+      fprintf(fh, "POP%02d.DownloadLargeMails   = %s\n", i, Bool2Txt(hasServerDownloadLargeMails(msn)));
 
       i++;
     }
@@ -378,9 +381,6 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
     fprintf(fh, "\n[New mail]\n");
     fprintf(fh, "TransferWindow   = %d\n", co->TransferWindow);
     fprintf(fh, "UpdateStatus     = %s\n", Bool2Txt(co->UpdateStatus));
-    fprintf(fh, "WarnSize         = %d\n", co->WarnSize);
-    fprintf(fh, "CheckMailDelay   = %d\n", co->CheckMailDelay);
-    fprintf(fh, "DownloadLarge    = %s\n", Bool2Txt(co->DownloadLarge));
     fprintf(fh, "NotifyType       = %d\n", co->NotifyType);
     fprintf(fh, "NotifySound      = %s\n", co->NotifySound);
     fprintf(fh, "NotifyCommand    = %s\n", co->NotifyCommand);
@@ -758,7 +758,12 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
       int lastFilterID = -1;
       BOOL foundGlobalPOP3Options = FALSE;
       int globalPOP3AvoidDuplicates = -1;
-      int globalDownloadOnStartup = -1;
+      int globalPOP3DownloadOnStartup = -1;
+      int globalPOP3DownloadPeriodically = -1;
+      int globalPOP3DownloadInterval = -1;
+      int globalPOP3DownloadLargeMails = -1;
+      int globalPOP3DownloadSizeLimit = -1;
+      int globalPOP3DeleteOnServer = -1;
       int globalPOP3Preselection = -1;
 
       // before we continue we actually make a version check
@@ -910,6 +915,9 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
                 else if(stricmp(q, "ApplyRemoteFilters") == 0)   Txt2Bool(value) == TRUE ? setFlag(msn->flags, MSF_APPLY_REMOTE_FILTERS) : clearFlag(msn->flags, MSF_APPLY_REMOTE_FILTERS);
                 else if(stricmp(q, "Preselection") == 0)         msn->preselection = atoi(value);
                 else if(stricmp(q, "DownloadOnStartup") == 0)    Txt2Bool(value) == TRUE ? setFlag(msn->flags, MSF_DOWNLOAD_ON_STARTUP) : clearFlag(msn->flags, MSF_DOWNLOAD_ON_STARTUP);
+                else if(stricmp(q, "DownloadPeriodically") == 0) Txt2Bool(value) == TRUE ? setFlag(msn->flags, MSF_DOWNLOAD_PERIODICALLY) : clearFlag(msn->flags, MSF_DOWNLOAD_PERIODICALLY);
+                else if(stricmp(q, "DownloadInterval") == 0)     msn->downloadInterval = atoi(value);
+                else if(stricmp(q, "DownloadLargeMails") == 0)   Txt2Bool(value) == TRUE ? setFlag(msn->flags, MSF_DOWNLOAD_LARGE_MAILS) : clearFlag(msn->flags, MSF_DOWNLOAD_LARGE_MAILS);
                 else
                   W(DBF_CONFIG, "unknown '%s' POP config tag", q);
               }
@@ -925,12 +933,14 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
           else if(stricmp(buf, "PreSelection") == 0)             { globalPOP3Preselection = atoi(value); foundGlobalPOP3Options = TRUE; }
           else if(stricmp(buf, "TransferWindow") == 0)           co->TransferWindow = atoi(value);
           else if(stricmp(buf, "UpdateStatus") == 0)             co->UpdateStatus = Txt2Bool(value);
-          else if(stricmp(buf, "WarnSize") == 0)                 co->WarnSize = atoi(value);
-          else if(stricmp(buf, "CheckMailDelay") == 0)           co->CheckMailDelay = atoi(value);
-          else if(stricmp(buf, "DownloadLarge") == 0)            co->DownloadLarge = Txt2Bool(value);
+          else if(stricmp(buf, "WarnSize") == 0)                 { globalPOP3DownloadSizeLimit = atoi(value); foundGlobalPOP3Options = TRUE; }
+          else if(stricmp(buf, "CheckMail") == 0)                { globalPOP3DownloadPeriodically = Txt2Bool(value); foundGlobalPOP3Options = TRUE; }
+          else if(stricmp(buf, "CheckMailDelay") == 0)           { globalPOP3DownloadInterval = atoi(value); foundGlobalPOP3Options = TRUE; }
+          else if(stricmp(buf, "DownloadLarge") == 0)            { globalPOP3DownloadLargeMails = Txt2Bool(value); foundGlobalPOP3Options = TRUE; }
           else if(stricmp(buf, "NotifyType") == 0)               co->NotifyType = atoi(value);
           else if(stricmp(buf, "NotifySound") == 0)              strlcpy(co->NotifySound, value, sizeof(co->NotifySound));
           else if(stricmp(buf, "NotifyCommand") == 0)            strlcpy(co->NotifyCommand, value, sizeof(co->NotifyCommand));
+          else if(stricmp(buf, "DeleteOnServer") == 0)           { globalPOP3DeleteOnServer = Txt2Bool(value); foundGlobalPOP3Options = TRUE; }
 
 /* Identities */
           else if(strnicmp(buf,"ID", 2) == 0 && isdigit(buf[2]) && isdigit(buf[3]) && strchr(buf, '.') != NULL)
@@ -1296,7 +1306,7 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
           else if(stricmp(buf, "LogAllEvents") == 0)             co->LogAllEvents = Txt2Bool(value);
 
 /* Startup/Quit */
-          else if(stricmp(buf, "GetOnStartup") == 0)             { globalDownloadOnStartup = Txt2Bool(value); foundGlobalPOP3Options = TRUE; }
+          else if(stricmp(buf, "GetOnStartup") == 0)             { globalPOP3DownloadOnStartup = Txt2Bool(value); foundGlobalPOP3Options = TRUE; }
           else if(stricmp(buf, "SendOnStartup") == 0)            co->SendOnStartup = Txt2Bool(value);
           else if(stricmp(buf, "CleanupOnStartup") == 0)         co->CleanupOnStartup = Txt2Bool(value);
           else if(stricmp(buf, "RemoveOnStartup") == 0)          co->RemoveOnStartup = Txt2Bool(value);
@@ -1604,8 +1614,6 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
             else if(stricmp(buf, "POP3-Server") == 0)              strlcpy(fPOP3->hostname, value, sizeof(fPOP3->hostname));
             else if(stricmp(buf, "POP3-Password") == 0)            strlcpy(fPOP3->password, Decrypt(value), sizeof(fPOP3->password));
             else if(stricmp(buf, "POP3-User") == 0)                strlcpy(fPOP3->username, value, sizeof(fPOP3->username));
-            else if(stricmp(buf, "DeleteOnServer") == 0)           Txt2Bool(value) == TRUE ? setFlag(fPOP3->flags, MSF_PURGEMESSGAES) : clearFlag(fPOP3->flags, MSF_PURGEMESSGAES);
-            else if(stricmp(buf, "CheckMail") == 0)                Txt2Bool(value) == FALSE ? co->CheckMailDelay = 0 : ((void)0);
             else if(stricmp(buf, "Verbosity") == 0)                co->TransferWindow = atoi(value) > 0 ? TWM_SHOW : TWM_HIDE;
             else if(stricmp(buf, "WordWrap") == 0)                 co->EdWrapCol = atoi(value);
             else if(stricmp(buf, "DeleteOnExit") == 0)             co->RemoveAtOnce = !(co->RemoveOnQuit = Txt2Bool(value));
@@ -1781,12 +1789,46 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
                 clearFlag(msn->flags, MSF_AVOID_DUPLICATES);
             }
 
-            if(globalDownloadOnStartup != -1)
+            if(globalPOP3DownloadOnStartup != -1)
             {
-              if(globalDownloadOnStartup == TRUE)
+              if(globalPOP3DownloadOnStartup == TRUE)
                 setFlag(msn->flags, MSF_DOWNLOAD_ON_STARTUP);
               else
                 clearFlag(msn->flags, MSF_DOWNLOAD_ON_STARTUP);
+            }
+
+            if(globalPOP3DownloadPeriodically != -1)
+            {
+              if(globalPOP3DownloadPeriodically == TRUE)
+                setFlag(msn->flags, MSF_DOWNLOAD_PERIODICALLY);
+              else
+                clearFlag(msn->flags, MSF_DOWNLOAD_PERIODICALLY);
+            }
+
+            if(globalPOP3DownloadInterval != -1)
+            {
+              msn->downloadInterval = globalPOP3DownloadInterval;
+            }
+
+            if(globalPOP3DownloadLargeMails != -1)
+            {
+              if(globalPOP3DownloadLargeMails == TRUE)
+                setFlag(msn->flags, MSF_DOWNLOAD_LARGE_MAILS);
+              else
+                clearFlag(msn->flags, MSF_DOWNLOAD_LARGE_MAILS);
+            }
+
+            if(globalPOP3DownloadSizeLimit != -1)
+            {
+			  msn->largeMailSizeLimit = globalPOP3DownloadSizeLimit;
+			}
+
+			if(globalPOP3DeleteOnServer != -1)
+			{
+              if(globalPOP3DeleteOnServer == TRUE)
+                setFlag(msn->flags, MSF_PURGEMESSGAES);
+              else
+                clearFlag(msn->flags, MSF_PURGEMESSGAES);
             }
 
             if(globalPOP3Preselection != -1)
@@ -1922,14 +1964,6 @@ void CO_GetConfig(BOOL saveConfig)
     {
       CE->TransferWindow    = GetMUICycle  (gui->CY_TRANSWIN);
       CE->UpdateStatus      = GetMUICheck  (gui->CH_UPDSTAT);
-      CE->WarnSize          = GetMUIInteger(gui->ST_WARNSIZE);
-
-      if(GetMUICheck(gui->CH_INTERVAL))
-        CE->CheckMailDelay = GetMUINumer(gui->NM_INTERVAL);
-      else
-        CE->CheckMailDelay = 0;
-
-      CE->DownloadLarge     = GetMUICheck  (gui->CH_DLLARGE);
       CE->NotifyType        = (GetMUICheck(gui->CH_NOTIREQ)        ? NOTIFY_REQ        : 0)
                             + (GetMUICheck(gui->CH_NOTIOS41SYSTEM) ? NOTIFY_OS41SYSTEM : 0)
                             + (GetMUICheck(gui->CH_NOTISOUND)      ? NOTIFY_SOUND      : 0)
@@ -2639,17 +2673,6 @@ void CO_SetConfig(void)
     {
       setcycle(gui->CY_TRANSWIN, CE->TransferWindow);
       setcheckmark(gui->CH_UPDSTAT, CE->UpdateStatus);
-      set(gui->ST_WARNSIZE, MUIA_String_Integer, CE->WarnSize);
-
-      if(CE->CheckMailDelay > 0)
-      {
-        set(gui->NM_INTERVAL, MUIA_Numeric_Value, CE->CheckMailDelay);
-        set(gui->CH_INTERVAL, MUIA_Selected, TRUE);
-      }
-      else
-        set(gui->CH_INTERVAL, MUIA_Selected, FALSE);
-
-      setcheckmark(gui->CH_DLLARGE, CE->DownloadLarge);
       setcheckmark(gui->CH_NOTIREQ, hasRequesterNotify(CE->NotifyType));
       setcheckmark(gui->CH_NOTIOS41SYSTEM, hasOS41SystemNotify(CE->NotifyType));
       setcheckmark(gui->CH_NOTISOUND, hasSoundNotify(CE->NotifyType));

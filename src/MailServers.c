@@ -73,26 +73,39 @@ struct MailServerNode *CreateNewMailServer(const enum MailServerType type, const
         // POP3 servers keep a list of downloaded mails
         if((msn->downloadedMails = CreateMailList()) != NULL)
         {
-          if(first == TRUE)
-          {
-            struct UserIdentityNode *uin;
-            struct MailServerNode *smtpMSN;
-
-            if((uin = GetUserIdentity(&co->userIdentityList, 0, TRUE)) != NULL)
+		  if(CreateTRequest(&msn->downloadTimer, -1, msn) == TRUE)
+		  {
+            if(first == TRUE)
             {
-              char *p = strchr(uin->address, '@');
-              strlcpy(msn->username, uin->address, p ? (unsigned int)(p - uin->address + 1) : sizeof(msn->username));
+              struct UserIdentityNode *uin;
+              struct MailServerNode *smtpMSN;
+
+              if((uin = GetUserIdentity(&co->userIdentityList, 0, TRUE)) != NULL)
+              {
+                char *p = strchr(uin->address, '@');
+                strlcpy(msn->username, uin->address, p ? (unsigned int)(p - uin->address + 1) : sizeof(msn->username));
+              }
+
+              // now we get the first SMTP server in our list and reuse
+              // the hostname of it for the new POP3 server
+              if((smtpMSN = GetMailServer(&co->smtpServerList, 0)) != NULL)
+                strlcpy(msn->hostname, smtpMSN->hostname, sizeof(msn->hostname));
             }
 
-            // now we get the first SMTP server in our list and reuse
-            // the hostname of it for the new POP3 server
-            if((smtpMSN = GetMailServer(&co->smtpServerList, 0)) != NULL)
-              strlcpy(msn->hostname, smtpMSN->hostname, sizeof(msn->hostname));
+            msn->port = 110;
+            setFlag(msn->flags, MSF_PURGEMESSGAES);
+            setFlag(msn->flags, MSF_AVOID_DUPLICATES);
+            setFlag(msn->flags, MSF_DOWNLOAD_LARGE_MAILS);
+            // set a download interval of 10 minutes, but don't enable it
+            msn->downloadInterval = 10;
+            msn->largeMailSizeLimit = 1024;
           }
-
-          msn->port = 110;
-          setFlag(msn->flags, MSF_PURGEMESSGAES);
-          setFlag(msn->flags, MSF_AVOID_DUPLICATES);
+          else
+          {
+            DeleteMailList(msn->downloadedMails);
+            FreeSysObject(ASOT_NODE, msn);
+            msn = NULL;
+		  }
         }
         else
         {
@@ -134,11 +147,20 @@ struct MailServerNode *CloneMailServer(const struct MailServerNode *msn)
     // POP3 servers keep a list of downloaded mails
     if(msn->downloadedMails != NULL)
     {
-      if((clone->downloadedMails = CreateMailList()) == NULL)
+      if((clone->downloadedMails = CreateMailList()) != NULL)
+      {
+        if(CreateTRequest(&clone->downloadTimer, -1, clone) == FALSE)
+        {
+          DeleteMailList(clone->downloadedMails);
+          FreeSysObject(ASOT_NODE, clone);
+          clone = NULL;
+        }
+      }
+      else
       {
         FreeSysObject(ASOT_NODE, clone);
         clone = NULL;
-      }
+	  }
     }
   }
 
@@ -161,6 +183,8 @@ void FreeMailServerList(struct MinList *mailServerList)
 
     if(msn->downloadedMails != NULL)
       DeleteMailList(msn->downloadedMails);
+
+    DeleteTRequest(&msn->downloadTimer);
 
     FreeSysObject(ASOT_NODE, msn);
   }

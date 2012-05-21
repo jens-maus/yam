@@ -117,6 +117,7 @@ OVERLOAD(OM_NEW)
       Child, NListviewObject,
         MUIA_CycleChain, TRUE,
         MUIA_NListview_NList, transferMailList = TransferMailListObject,
+          MUIA_TransferMailList_SizeLimit, GetTagData(ATTR(SizeLimit), 0, inittags(msg)),
         End,
       End,
       Child, VGroup, GroupFrameT(tr(MSG_TR_Control)),
@@ -125,7 +126,7 @@ OVERLOAD(OM_NEW)
           Child, downloadDeleteButton = MakeButton(tr(MSG_TR_DownloadDelete)),
           Child, leaveButton = MakeButton(tr(MSG_TR_Leave)),
 
-          Child, noneButton= MakeButton(tr(MSG_TR_Clear)),
+          Child, noneButton = MakeButton(tr(MSG_TR_Clear)),
           Child, downloadOnlyButton = MakeButton(tr(MSG_TR_DownloadOnly)),
           Child, deleteOnlyButton = MakeButton(tr(MSG_TR_DeleteOnly)),
         End,

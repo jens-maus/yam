@@ -1322,14 +1322,6 @@ MSG_CO_UpdateStatus
 Status a_ktualisieren
 ; Update m_essage status
 ;
-MSG_CO_WarnSize1
-Grössen_limit
-; Size _limit
-;
-MSG_CO_WarnSize2
-KB
-; KB
-;
 MSG_CO_AutoOperation
 Automatischer Betrieb
 ; Automatic operation
@@ -1341,10 +1333,6 @@ Auf neue Post prüfen alle
 MSG_CO_Minutes
 Minuten
 ; minutes
-;
-MSG_CO_DownloadLarge
-_Grosse Nachrichten laden
-; _Download large messages
 ;
 MSG_CO_Notification
 Benachrichtigung
@@ -8960,4 +8948,10 @@ zu verwerden.
 ;
 MSG_CO_MIMETYPE_TITLE
 MIME-Typ
+;
+MSG_CO_DOWNLOAD_LARGE_MAILS1
+Nachrichten _größer als
+;
+MSG_CO_DOWNLOAD_LARGE_MAILS2
+KB laden
 ;

@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-05-21 Thore Böckelmann <tboeckel@gmx.de>
+
+  * misc: implemented a per POP3 server setting of mail download intervals along
+    with individual mail size limits. This finally makes it possible to avoid
+    timeouts of certain mail providers (i.e. web.de) while still being able to
+    download mails from other servers which don't restrict the periodical mail
+    download on time basis. This closes #305.
+
 2012-05-18 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: small little fixes here and there.

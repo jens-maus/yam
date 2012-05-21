@@ -420,8 +420,6 @@ struct Config
   struct MinList userIdentityList; // list of user identities
 
   int   TimeZone;
-  int   WarnSize;
-  int   CheckMailDelay;
   int   NotifyType;
   int   ShowHeader;
   int   ShowSenderInfo;
@@ -470,7 +468,7 @@ struct Config
 
   BOOL  DaylightSaving;
   BOOL  UpdateStatus;
-  BOOL  DownloadLarge;
+//BOOL  DownloadLarge;
   BOOL  DisplayAllTexts;
   BOOL  FixedFontEdit;
   BOOL  MultipleReadWindows;

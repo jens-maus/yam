@@ -993,12 +993,6 @@ _Pre-selection
 MSG_CO_UpdateStatus (370//)
 Update m_essage status
 ;
-MSG_CO_WarnSize1 (371//)
-Size _limit
-;
-MSG_CO_WarnSize2 (372//)
-KB
-;
 MSG_CO_AutoOperation (373//)
 Automatic operation
 ;
@@ -1007,9 +1001,6 @@ Check for new mail every
 ;
 MSG_CO_Minutes (375//)
 minutes
-;
-MSG_CO_DownloadLarge (376//)
-_Download large messages
 ;
 MSG_CO_Notification (377//)
 Notification
@@ -7411,4 +7402,10 @@ the settings defined there.
 ;
 MSG_CO_MIMETYPE_TITLE (2356//)
 MIME type
+;
+MSG_CO_DOWNLOAD_LARGE_MAILS1 (2357//)
+_Download messages larger than
+;
+MSG_CO_DOWNLOAD_LARGE_MAILS2 (2358//)
+KB
 ;

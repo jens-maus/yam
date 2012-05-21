@@ -376,7 +376,7 @@ struct MA_ClassData *MA_New(void);
 void  MA_SortWindow(void);
 void  MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox, const ULONG flags);
 void  MA_ExchangeMail(const ULONG receiveFlags);
-BOOL  MA_PopNow(int pop, const ULONG flags, struct DownloadResult *dlResult);
+BOOL  MA_PopNow(struct MailServerNode *msn, const ULONG flags, struct DownloadResult *dlResult);
 void  MA_RemoveAttach(struct Mail *mail, struct Part **whichParts, BOOL warning);
 BOOL  MA_Send(enum SendMailMode sendpos);
 void  MA_ChangeMailStatus(struct Mail *mail, int addflags, int clearflags);

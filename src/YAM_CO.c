@@ -558,9 +558,16 @@ HOOKPROTONHNONP(CO_GetPOP3Entry, void)
     nnset(gui->ST_POPUSERID,          MUIA_String_Contents, msn->username);
     nnset(gui->ST_PASSWD,             MUIA_String_Contents, msn->password);
     nnset(gui->CH_DOWNLOADONSTARTUP,  MUIA_Selected,        hasServerDownloadOnStartup(msn));
+    nnset(gui->CH_INTERVAL,           MUIA_Selected,        hasServerDownloadPeriodically(msn));
+    nnset(gui->NM_INTERVAL,           MUIA_Numeric_Value,   msn->downloadInterval);
+    nnset(gui->CH_DLLARGE,            MUIA_Selected,        hasServerDownloadLargeMails(msn));
+    nnset(gui->ST_WARNSIZE,           MUIA_String_Integer,  msn->largeMailSizeLimit);
     nnset(gui->CH_APPLYREMOTEFILTERS, MUIA_Selected,        hasServerApplyRemoteFilters(msn));
     nnset(gui->CH_DELETE,             MUIA_Selected,        hasServerPurge(msn));
     nnset(gui->CY_PRESELECTION,       MUIA_Cycle_Active,    msn->preselection);
+
+    set(gui->NM_INTERVAL, MUIA_Disabled, hasServerDownloadPeriodically(msn) == FALSE);
+    set(gui->ST_WARNSIZE, MUIA_Disabled, hasServerDownloadLargeMails(msn) == FALSE);
 
     if(hasServerAPOP(msn))
       nnset(gui->CY_POPAUTH, MUIA_Cycle_Active, 1);
@@ -628,6 +635,24 @@ HOOKPROTONHNONP(CO_PutPOP3Entry, void)
         setFlag(msn->flags, MSF_DOWNLOAD_ON_STARTUP);
       else
         clearFlag(msn->flags, MSF_DOWNLOAD_ON_STARTUP);
+
+      if(GetMUICheck(gui->CH_INTERVAL) == TRUE)
+        setFlag(msn->flags, MSF_DOWNLOAD_PERIODICALLY);
+      else
+        clearFlag(msn->flags, MSF_DOWNLOAD_PERIODICALLY);
+
+      set(gui->NM_INTERVAL, MUIA_Disabled, hasServerDownloadPeriodically(msn) == FALSE);
+
+      msn->downloadInterval = GetMUINumer(gui->NM_INTERVAL);
+
+      if(GetMUICheck(gui->CH_DLLARGE) == TRUE)
+        setFlag(msn->flags, MSF_DOWNLOAD_LARGE_MAILS);
+      else
+        clearFlag(msn->flags, MSF_DOWNLOAD_LARGE_MAILS);
+
+      set(gui->ST_WARNSIZE, MUIA_Disabled, hasServerDownloadLargeMails(msn) == FALSE);
+
+      msn->largeMailSizeLimit = GetMUIInteger(gui->ST_WARNSIZE);
 
       if(GetMUICheck(gui->CH_APPLYREMOTEFILTERS) == TRUE)
         setFlag(msn->flags, MSF_APPLY_REMOTE_FILTERS);
@@ -1351,9 +1376,6 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
   {
     co->TransferWindow = TWM_AUTO;
     co->UpdateStatus = TRUE;
-    co->DownloadLarge = TRUE;
-    co->WarnSize = 1024; // 1MB warn size
-    co->CheckMailDelay = 0;
     co->NotifyType = 1;
     co->NotifySound[0] = '\0';
     co->NotifyCommand[0] = '\0';
@@ -1828,8 +1850,6 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
   // plain variables as this will be the faster compare than the compares
   // of our nested structures/lists, etc.
   if(c1->TimeZone                        == c2->TimeZone &&
-     c1->WarnSize                        == c2->WarnSize &&
-     c1->CheckMailDelay                  == c2->CheckMailDelay &&
      c1->NotifyType                      == c2->NotifyType &&
      c1->ShowHeader                      == c2->ShowHeader &&
      c1->ShowSenderInfo                  == c2->ShowSenderInfo &&
@@ -1879,7 +1899,7 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      c1->InfoBar                         == c2->InfoBar &&
      c1->DaylightSaving                  == c2->DaylightSaving &&
      c1->UpdateStatus                    == c2->UpdateStatus &&
-     c1->DownloadLarge                   == c2->DownloadLarge &&
+//   c1->DownloadLarge                   == c2->DownloadLarge &&
      c1->DisplayAllTexts                 == c2->DisplayAllTexts &&
      c1->FixedFontEdit                   == c2->FixedFontEdit &&
      c1->MultipleReadWindows             == c2->MultipleReadWindows &&
@@ -2459,10 +2479,10 @@ void CO_Validate(struct Config *co, BOOL update)
       break;
     }
 
-    if(G->CO->Visited[cp_NewMail] == TRUE || G->CO->UpdateAll == TRUE)
+    if(G->CO->Visited[cp_TCPIP] == TRUE || G->CO->UpdateAll == TRUE)
     {
-      // requeue the timerequest for the CheckMailDelay
-      RestartTimer(TIMER_CHECKMAIL, co->CheckMailDelay*60, 0);
+      // requeue the timerequest for the POP3 servers
+      RestartPOP3Timers();
     }
 
     if(G->CO->Visited[cp_Spam] == TRUE || G->CO->UpdateAll == TRUE)

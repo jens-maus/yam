@@ -1140,7 +1140,7 @@ DECLARE(CreatePasswordWindow) // APTR thread, const char *title, const char *bod
 
 ///
 /// DECLARE(CreatePreselectionWindow)
-DECLARE(CreatePreselectionWindow) // APTR thread, const char *title, enum PreselectionWindowMode mode, struct MinList *mailList
+DECLARE(CreatePreselectionWindow) // APTR thread, const char *title, LONG sizeLimit, enum PreselectionWindowMode mode, struct MinList *mailList
 {
   Object *window;
 
@@ -1151,6 +1151,7 @@ DECLARE(CreatePreselectionWindow) // APTR thread, const char *title, enum Presel
     MUIA_PreselectionWindow_Thread, msg->thread,
     MUIA_PreselectionWindow_Mode, msg->mode,
     MUIA_PreselectionWindow_Mails, msg->mailList,
+    MUIA_PreselectionWindow_SizeLimit, msg->sizeLimit,
   End) != NULL)
   {
     // make sure the application isn't iconified

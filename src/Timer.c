@@ -45,6 +45,7 @@
 #include "timeval.h"
 
 #include "Locale.h"
+#include "MailServers.h"
 #include "MUIObjects.h"
 #include "Threads.h"
 #include "Timer.h"
@@ -58,24 +59,20 @@
 #include "Debug.h"
 
 /*** Timer processing function ***/
-/// PrepareTimer
-//  prepares a timer for being started with StartTimer() later on
-void PrepareTimer(const enum Timer tid, const int seconds, const int micros)
+/// PrepareTimeRequest
+// prepare a single time request
+static void PrepareTRequest(struct TRequest *timer, const int seconds, const int micros)
 {
   ENTER();
 
   if(seconds > 0 || micros > 0)
   {
-    struct TRequest *timer = &G->timerData.timer[tid];
-
     if(timer->isRunning == FALSE && timer->isPrepared == FALSE)
     {
-      struct TimeRequest *timeReq = timer->tr;
-
       // issue a new timerequest
-      timeReq->Request.io_Command  = TR_ADDREQUEST;
-      timeReq->Time.Seconds        = seconds;
-      timeReq->Time.Microseconds   = micros;
+      timer->tr->Request.io_Command  = TR_ADDREQUEST;
+      timer->tr->Time.Seconds        = seconds;
+      timer->tr->Time.Microseconds   = micros;
 
       // remember the remaining time
       timer->remainingTime.Seconds = seconds;
@@ -84,22 +81,46 @@ void PrepareTimer(const enum Timer tid, const int seconds, const int micros)
       // flag the timer to be prepared to get fired later on
       timer->isPrepared = TRUE;
     }
+    #if defined(DEBUG)
     else
-      W(DBF_TIMER, "timer[%ld]: already running/prepared", tid);
+    {
+      if(timer->id != -1)
+        W(DBF_TIMER, "timer[%ld]: already running/prepared", timer->id);
+      else if(timer->pop3Server != NULL)
+        W(DBF_TIMER, "timer[%s]: already running/prepared", timer->pop3Server->description);
+    }
+    #endif
   }
+  #if defined(DEBUG)
   else
-    W(DBF_TIMER, "timer[%ld]: secs and micros are zero, no prepare required", tid);
+  {
+    if(timer->id != -1)
+      W(DBF_TIMER, "timer[%ld]: secs and micros are zero, no prepare required", timer->id);
+    else if(timer->pop3Server != NULL)
+      W(DBF_TIMER, "timer[%s]: secs and micros are zero, no prepare required", timer->pop3Server->description);
+  }
+  #endif
 
   LEAVE();
 }
 
 ///
-/// StartTimer
-//  Start a delay depending on the time specified
-void StartTimer(const enum Timer tid)
+/// PrepareTimer
+//  prepares a timer for being started with StartTimer() later on
+void PrepareTimer(const enum Timer tid, const int seconds, const int micros)
 {
-  struct TRequest *timer = &G->timerData.timer[tid];
+  ENTER();
 
+  PrepareTRequest(&G->timerData.timer[tid], seconds, micros);
+
+  LEAVE();
+}
+
+///
+/// StartTRequest
+// start a timer request
+static void StartTRequest(struct TRequest *timer)
+{
   ENTER();
 
   if(timer->tr != NULL)
@@ -111,10 +132,16 @@ void StartTimer(const enum Timer tid)
 
       DateStamp2String(dateString, sizeof(dateString), NULL, DSS_DATETIME, TZC_NONE);
 
-      D(DBF_TIMER, "timer[%ld]: started @ %s to finish in %ld'%ld secs", tid,
-                                                                           dateString,
-                                                                           timer->tr->Time.Seconds,
-                                                                           timer->tr->Time.Microseconds);
+      if(timer->id != -1)
+      {
+        D(DBF_TIMER, "timer[%ld]: started @ %s to finish in %ld'%ld secs",
+          timer->id, dateString, timer->tr->Time.Seconds, timer->tr->Time.Microseconds);
+      }
+      else if(timer->pop3Server != NULL)
+      {
+        D(DBF_TIMER, "timer[%s]: started @ %s to finish in %ld'%ld secs",
+          timer->pop3Server->description, dateString, timer->tr->Time.Seconds, timer->tr->Time.Microseconds);
+	  }
       #endif
 
       // fire the timer by doing a SendIO()
@@ -127,24 +154,46 @@ void StartTimer(const enum Timer tid)
       timer->isRunning = TRUE;
       timer->isPrepared = FALSE;
     }
+    #if defined(DEBUG)
     else
-      W(DBF_TIMER, "timer[%ld]: either already running or not prepared to get fired", tid);
+    {
+      if(timer->id != -1)
+        W(DBF_TIMER, "timer[%ld]: either already running or not prepared to get fired", timer->id);
+      else if(timer->pop3Server != NULL)
+        W(DBF_TIMER, "timer[%s]: either already running or not prepared to get fired", timer->pop3Server->description);
+    }
+    #endif
   }
+  #if defined(DEBUG)
   else
-    W(DBF_TIMER, "timer[%ld]: timer is already cleaned up", tid);
+  {
+    if(timer->id != -1)
+      W(DBF_TIMER, "timer[%ld]: timer is already cleaned up", timer->id);
+    else if(timer->pop3Server != NULL)
+      W(DBF_TIMER, "timer[%s]: timer is already cleaned up", timer->pop3Server->description);
+  }
+  #endif
 
   LEAVE();
 }
 
 ///
-/// StopTimer
-//  Stop a currently running TimerIO request
-//  Please note that this function may NOT be used in the eventloop after having received
-//  a timer with GetMsg because CheckIO and friends are not defined to work there correctly.
-void StopTimer(const enum Timer tid)
+/// StartTimer
+//  Start a delay depending on the time specified
+void StartTimer(const enum Timer tid)
 {
-  struct TRequest *timer = &G->timerData.timer[tid];
+  ENTER();
 
+  StartTRequest(&G->timerData.timer[tid]);
+
+  LEAVE();
+}
+
+///
+/// StopTRequest
+// stop a time request
+static void StopTRequest(struct TRequest *timer)
+{
   ENTER();
 
   // check if we have a already issued ioreq running
@@ -167,13 +216,46 @@ void StopTimer(const enum Timer tid)
       timer->isRunning = FALSE;
       timer->isPrepared = FALSE;
 
-      D(DBF_TIMER, "timer[%ld]: successfully stopped", tid);
+      #if defined(DEBUG)
+      if(timer->id != -1)
+        D(DBF_TIMER, "timer[%ld]: successfully stopped", timer->id);
+      else if(timer->pop3Server != NULL)
+        D(DBF_TIMER, "timer[%s]: successfully stopped", timer->pop3Server->description);
+      #endif
     }
+    #if defined(DEBUG)
     else
-      E(DBF_TIMER, "timer[%ld]: is invalid and can't be stopped", tid);
+    {
+      if(timer->id != -1)
+        E(DBF_TIMER, "timer[%ld]: is invalid and can't be stopped", timer->id);
+      else if(timer->pop3Server != NULL)
+        E(DBF_TIMER, "timer[%s]: is invalid and can't be stopped", timer->pop3Server->description);
+    }
+    #endif
   }
+  #if defined(DEBUG)
   else
-    W(DBF_TIMER, "timer[%ld]: already stopped", tid);
+  {
+    if(timer->id != -1)
+      W(DBF_TIMER, "timer[%ld]: already stopped", timer->id);
+    else if(timer->pop3Server != NULL)
+      W(DBF_TIMER, "timer[%ld]: already stopped", timer->pop3Server->description);
+  }
+  #endif
+
+  LEAVE();
+}
+
+///
+/// StopTimer
+//  Stop a currently running TimerIO request
+//  Please note that this function may NOT be used in the eventloop after having received
+//  a timer with GetMsg because CheckIO and friends are not defined to work there correctly.
+void StopTimer(const enum Timer tid)
+{
+  ENTER();
+
+  StopTRequest(&G->timerData.timer[tid]);
 
   LEAVE();
 }
@@ -295,6 +377,60 @@ void RestartTimer(const enum Timer tid, const int seconds, const int micros)
 ///
 
 /*** Timer management functions ***/
+/// CreateTRequest
+// create a new time request, will be cloned from the first global request
+BOOL CreateTRequest(struct TRequest *timer, const int id, struct MailServerNode *msn)
+{
+  BOOL success = FALSE;
+
+  ENTER();
+
+  if(G->timerData.timer[0].tr != NULL)
+  {
+	// clone the first global request
+    timer->tr = AllocSysObjectTags(ASOT_IOREQUEST,
+      ASOIOR_Size,      sizeof(struct TimeRequest),
+      ASOIOR_Duplicate, (IPTR)G->timerData.timer[0].tr,
+      TAG_DONE);
+  }
+  else
+  {
+	// create a new request
+    timer->tr = AllocSysObjectTags(ASOT_IOREQUEST,
+      ASOIOR_Size,      sizeof(struct TimeRequest),
+      ASOIOR_ReplyPort, (IPTR)G->timerData.port,
+      TAG_DONE);
+  }
+
+  if(timer->tr != NULL)
+  {
+    timer->id = id;
+    timer->pop3Server = msn;
+
+    success = TRUE;
+  }
+
+  RETURN(success);
+  return success;
+}
+
+///
+/// DeleteTRequest
+// delete a cloned time request
+void DeleteTRequest(struct TRequest *timer)
+{
+  ENTER();
+
+  if(timer->tr != NULL)
+  {
+    FreeSysObject(ASOT_IOREQUEST, timer->tr);
+    timer->tr = NULL;
+  }
+
+  LEAVE();
+}
+
+///
 /// InitTimers
 //  Initializes timer resources
 BOOL InitTimers(void)
@@ -310,10 +446,7 @@ BOOL InitTimers(void)
 
     // we use AllocSysObjectTags to give the OS a better chance to
     // free the data in case YAM crashes (only available on OS4)
-    if((G->timerData.timer[0].tr = AllocSysObjectTags(ASOT_IOREQUEST,
-                                                ASOIOR_Size,      sizeof(struct TimeRequest),
-                                                ASOIOR_ReplyPort, (IPTR)G->timerData.port,
-                                                TAG_DONE)) != NULL)
+    if(CreateTRequest(&G->timerData.timer[0], 0, NULL) == TRUE)
     {
       // then open the device
       if(OpenDevice(TIMERNAME, UNIT_VBLANK, &G->timerData.timer[0].tr->Request, 0L) == 0)
@@ -329,10 +462,7 @@ BOOL InitTimers(void)
           {
             // we use AllocSysObjectTags to give the OS a better chance to
             // free the data in case YAM crashes (only available on OS4)
-            if((G->timerData.timer[tid].tr = AllocSysObjectTags(ASOT_IOREQUEST,
-                                                          ASOIOR_Size,      sizeof(struct TimeRequest),
-                                                          ASOIOR_Duplicate, (IPTR)G->timerData.timer[0].tr,
-                                                          TAG_DONE)) == NULL)
+            if(CreateTRequest(&G->timerData.timer[tid], tid, NULL) == FALSE)
             {
               break;
             }
@@ -376,16 +506,10 @@ void CleanupTimers(void)
     // and then we delete the IO requests
     for(tid = TIMER_WRINDEX + 1; tid < TIMER_NUM; tid++)
     {
-      if(G->timerData.timer[tid].tr != NULL)
-      {
-        FreeSysObject(ASOT_IOREQUEST, G->timerData.timer[tid].tr);
-
-        G->timerData.timer[tid].tr = NULL;
-      }
+	  DeleteTRequest(&G->timerData.timer[tid]);
     }
 
-    FreeSysObject(ASOT_IOREQUEST, G->timerData.timer[0].tr);
-    G->timerData.timer[0].tr = NULL;
+    DeleteTRequest(&G->timerData.timer[0]);
   }
 
   // remove the MsgPort now.
@@ -451,17 +575,6 @@ static void TimerDispatcher(const enum Timer tid)
 
       // prepare the timer to get fired again
       PrepareTimer(tid, C->WriteIndexes, 0);
-    }
-    break;
-
-    case TIMER_CHECKMAIL:
-    {
-      D(DBF_TIMER, "timer[%ld]: TIMER_CHECKMAIL fired @ %s", tid, dateString);
-
-      MA_PopNow(-1, RECEIVEF_TIMER, NULL);
-
-      // prepare the timer to get fired again
-      PrepareTimer(tid, C->CheckMailDelay*60, 0);
     }
     break;
 
@@ -639,6 +752,7 @@ BOOL ProcessTimerEvent(void)
   while((timeReq = (struct TimeRequest *)GetMsg(G->timerData.port)) != NULL)
   {
     enum Timer tid;
+    struct Node *curNode;
 
     for(tid=0; tid < TIMER_NUM; tid++)
     {
@@ -663,6 +777,38 @@ BOOL ProcessTimerEvent(void)
       }
     }
 
+    // continue to check the POP3 timers
+    ObtainSemaphoreShared(G->configSemaphore);
+
+    IterateList(&C->pop3ServerList, curNode)
+    {
+      struct MailServerNode *msn = (struct MailServerNode *)curNode;
+      struct TRequest *timer = &msn->downloadTimer;
+
+      if(timeReq == timer->tr)
+      {
+        // set the timer to be not running and not be prepared for
+        // another shot. Our dispatcher have to do the rest then
+        timer->isRunning = FALSE;
+        timer->isPrepared = FALSE;
+
+        // download the mails from this POP3 server
+        MA_PopNow(msn, RECEIVEF_TIMER, NULL);
+
+        // signal that we processed something
+        processed = TRUE;
+
+        // preparestart the server's timer again
+        PrepareTRequest(timer, msn->downloadInterval*60, 0);
+        StartTRequest(timer);
+
+        // break out of the loop
+        break;
+      }
+    }
+
+    ReleaseSemaphore(G->configSemaphore);
+
     // no ReplyMsg() needed
   }
 
@@ -674,9 +820,6 @@ BOOL ProcessTimerEvent(void)
 
     if(G->timerData.timer[TIMER_WRINDEX].isPrepared == TRUE)
       StartTimer(TIMER_WRINDEX);
-
-    if(G->timerData.timer[TIMER_CHECKMAIL].isPrepared == TRUE)
-      StartTimer(TIMER_CHECKMAIL);
 
     if(G->timerData.timer[TIMER_AUTOSAVE].isPrepared == TRUE)
       StartTimer(TIMER_AUTOSAVE);
@@ -703,9 +846,6 @@ BOOL ProcessTimerEvent(void)
   if(C->WriteIndexes > 0 && G->timerData.timer[TIMER_WRINDEX].isRunning == FALSE)
     E(DBF_ALWAYS, "timer[%ld]: TIMER_WRINDEX is not running and was probably lost!", TIMER_WRINDEX);
 
-  if(C->CheckMailDelay > 0 && G->timerData.timer[TIMER_CHECKMAIL].isRunning == FALSE)
-    E(DBF_ALWAYS, "timer[%ld]: TIMER_CHECKMAIL is not running and was probably lost!", TIMER_CHECKMAIL);
-
   if(C->AutoSave > 0 && G->timerData.timer[TIMER_AUTOSAVE].isRunning == FALSE)
     E(DBF_ALWAYS, "timer[%ld]: TIMER_AUTOSAVE is not running and was probably lost!", TIMER_AUTOSAVE);
   #endif
@@ -713,4 +853,78 @@ BOOL ProcessTimerEvent(void)
   RETURN(processed);
   return processed;
 }
+
+///
+/// PreparePOP3Timers
+// prepare the timers of all POP3 servers
+void PreparePOP3Timers(void)
+{
+  struct Node *curNode;
+
+  ENTER();
+
+  ObtainSemaphoreShared(G->configSemaphore);
+
+  IterateList(&C->pop3ServerList, curNode)
+  {
+    struct MailServerNode *msn = (struct MailServerNode *)curNode;
+
+    PrepareTRequest(&msn->downloadTimer, msn->downloadInterval*60, 0);
+  }
+
+  ReleaseSemaphore(G->configSemaphore);
+
+  LEAVE();
+}
+
+///
+/// StartPOP3Timers
+// start the timers of all active POP3 servers
+void StartPOP3Timers(void)
+{
+  struct Node *curNode;
+
+  ENTER();
+
+  ObtainSemaphoreShared(G->configSemaphore);
+
+  IterateList(&C->pop3ServerList, curNode)
+  {
+    struct MailServerNode *msn = (struct MailServerNode *)curNode;
+
+    if(isServerActive(msn) && hasServerDownloadPeriodically(msn))
+      StartTRequest(&msn->downloadTimer);
+  }
+
+  ReleaseSemaphore(G->configSemaphore);
+
+  LEAVE();
+}
+
+///
+/// RestartPOP3Timers
+// restart the timers of all active POP3 servers
+void RestartPOP3Timers(void)
+{
+  struct Node *curNode;
+
+  ENTER();
+
+  ObtainSemaphoreShared(G->configSemaphore);
+
+  IterateList(&C->pop3ServerList, curNode)
+  {
+    struct MailServerNode *msn = (struct MailServerNode *)curNode;
+
+    StopTRequest(&msn->downloadTimer);
+    PrepareTRequest(&msn->downloadTimer, msn->downloadInterval*60, 0);
+    if(isServerActive(msn) && hasServerDownloadPeriodically(msn))
+      StartTRequest(&msn->downloadTimer);
+  }
+
+  ReleaseSemaphore(G->configSemaphore);
+
+  LEAVE();
+}
+
 ///

@@ -30,11 +30,12 @@
 
 #include "timeval.h"
 
+struct MailServerNode;
+
 // all the different timers YAM is using
 enum Timer
 {
   TIMER_WRINDEX=0,
-  TIMER_CHECKMAIL,
   TIMER_AUTOSAVE,
   TIMER_READPANEUPDATE,
   TIMER_READSTATUSUPDATE,
@@ -50,12 +51,14 @@ enum Timer
 // own Timer structures we use
 struct TRequest
 {
-  struct TimeRequest *tr;       // pointer to the timerequest
-  struct TimeVal startTime;     // at which time has this request been started
-  struct TimeVal remainingTime; // the remaining time if the request was paused
-  BOOL isRunning;               // if the request is currenty active/running
-  BOOL isPrepared;              // if the request is prepared to get fired
-  BOOL isPaused;                // if the request is currently paused
+  struct TimeRequest *tr;             // pointer to the timerequest
+  struct TimeVal startTime;           // at which time has this request been started
+  struct TimeVal remainingTime;       // the remaining time if the request was paused
+  int id;                             // an ID of the list above or -1 for a POP3 timer
+  struct MailServerNode *pop3Server;  // back pointer to a POP3 server
+  BOOL isRunning;                     // if the request is currenty active/running
+  BOOL isPrepared;                    // if the request is prepared to get fired
+  BOOL isPaused;                      // if the request is currently paused
 };
 
 struct Timers
@@ -71,9 +74,18 @@ void PauseTimer(const enum Timer tid);
 void ResumeTimer(const enum Timer tid);
 void RestartTimer(const enum Timer tid, const int seconds, const int micros);
 
+void PreparePOP3Timers(void);
+void StartPOP3Timers(void);
+void RestartPOP3Timers(void);
+
+BOOL CreateTRequest(struct TRequest *timer, const int id, struct MailServerNode *msn);
+void DeleteTRequest(struct TRequest *timer);
+
 BOOL InitTimers(void);
 void CleanupTimers(void);
 BOOL ProcessTimerEvent(void);
+
+LONG MaxMailCheckInterval(void);
 
 #endif /* TIMER_H */
 

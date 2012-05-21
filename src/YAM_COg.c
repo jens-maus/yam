@@ -1773,10 +1773,32 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
                       Child, MakeCheckGroup(&data->GUI.CH_DOWNLOADONSTARTUP, tr(MSG_CO_DOWNLOAD_ON_STARTUP)),
 
                       Child, HSpace(1),
-                      Child, MakeCheckGroup(&data->GUI.CH_APPLYREMOTEFILTERS, tr(MSG_CO_APPLY_REMOTE_FILTERS)),
+                      Child, HGroup,
+                        Child, data->GUI.CH_INTERVAL = MakeCheck(tr(MSG_CO_CheckMail)),
+                        Child, Label2(tr(MSG_CO_CheckMail)),
+                        Child, data->GUI.NM_INTERVAL = NumericbuttonObject,
+                          MUIA_CycleChain,      TRUE,
+                          MUIA_Numeric_Min,     1,
+                          MUIA_Numeric_Max,     240,
+                          MUIA_Numeric_Default, 5,
+                        End,
+                        Child, Label2(tr(MSG_CO_Minutes)),
+                        Child, HSpace(0),
+                      End,
+
+                      Child, HSpace(1),
+                      Child, HGroup,
+                        Child, MakeCheckGroup(&data->GUI.CH_DLLARGE, tr(MSG_CO_DOWNLOAD_LARGE_MAILS1)),
+                        Child, data->GUI.ST_WARNSIZE = MakeInteger(5, tr(MSG_CO_DOWNLOAD_LARGE_MAILS1)),
+                        Child, LLabel(tr(MSG_CO_DOWNLOAD_LARGE_MAILS2)),
+                        Child, HSpace(0),
+                      End,
 
                       Child, HSpace(1),
                       Child, MakeCheckGroup(&data->GUI.CH_DELETE, tr(MSG_CO_DeleteServerMail)),
+
+                      Child, HSpace(1),
+                      Child, MakeCheckGroup(&data->GUI.CH_APPLYREMOTEFILTERS, tr(MSG_CO_APPLY_REMOTE_FILTERS)),
 
                       Child, HVSpace,
                       Child, HVSpace,
@@ -1913,6 +1935,10 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
     SetHelp(data->GUI.CY_POPAUTH,            MSG_HELP_CO_CY_POPAUTH              );
     SetHelp(data->GUI.CH_POPENABLED,         MSG_HELP_CO_CH_POPENABLED           );
     SetHelp(data->GUI.CH_DOWNLOADONSTARTUP,  MSG_HELP_CO_CH_DOWNLOAD_ON_STARTUP  );
+    SetHelp(data->GUI.CH_INTERVAL,           MSG_HELP_CO_ST_INTERVAL);
+    SetHelp(data->GUI.NM_INTERVAL,           MSG_HELP_CO_ST_INTERVAL);
+    SetHelp(data->GUI.CH_DLLARGE,            MSG_HELP_CO_CH_DLLARGE);
+    SetHelp(data->GUI.ST_WARNSIZE,           MSG_HELP_CO_ST_WARNSIZE);
     SetHelp(data->GUI.CH_APPLYREMOTEFILTERS, MSG_HELP_CO_CH_APPLY_REMOTE_FILTERS );
     SetHelp(data->GUI.CY_SMTPSECURE,         MSG_HELP_CO_CY_SMTPSECURE           );
     SetHelp(data->GUI.CY_POPSECURE,          MSG_HELP_CO_CY_POPSECURE            );
@@ -1929,6 +1955,10 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
     DoMethod(data->GUI.CY_POPAUTH           , MUIM_Notify, MUIA_Cycle_Active    , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
     DoMethod(data->GUI.CH_DELETE            , MUIM_Notify, MUIA_Selected        , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
     DoMethod(data->GUI.CH_DOWNLOADONSTARTUP , MUIM_Notify, MUIA_Selected        , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
+    DoMethod(data->GUI.CH_INTERVAL          , MUIM_Notify, MUIA_Selected        , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
+    DoMethod(data->GUI.NM_INTERVAL          , MUIM_Notify, MUIA_Numeric_Value   , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
+    DoMethod(data->GUI.CH_DLLARGE           , MUIM_Notify, MUIA_Selected        , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
+    DoMethod(data->GUI.ST_WARNSIZE          , MUIM_Notify, MUIA_String_Contents , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
     DoMethod(data->GUI.CH_APPLYREMOTEFILTERS, MUIM_Notify, MUIA_Selected        , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
     DoMethod(data->GUI.CY_PRESELECTION      , MUIM_Notify, MUIA_Cycle_Active    , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
     DoMethod(data->GUI.BT_PADD              , MUIM_Notify, MUIA_Pressed         , FALSE         , MUIV_Notify_Application, 2, MUIM_CallHook, &CO_AddPOP3Hook);
@@ -2348,33 +2378,10 @@ Object *CO_PageNewMail(struct CO_ClassData *data)
                 Child, data->GUI.CY_TRANSWIN = MakeCycle(trwopt, tr(MSG_CO_TransferWin)),
                 Child, HSpace(0),
 
-                Child, Label(tr(MSG_CO_WarnSize1)),
-                Child, HGroup,
-                  Child, data->GUI.ST_WARNSIZE = MakeInteger(5, tr(MSG_CO_WarnSize1)),
-                  Child, LLabel(tr(MSG_CO_WarnSize2)),
-                End,
-                Child, HSpace(0),
-
                 Child, HSpace(1),
                 Child, MakeCheckGroup(&data->GUI.CH_UPDSTAT, tr(MSG_CO_UpdateStatus)),
                 Child, HSpace(0),
 
-              End,
-
-              Child, VGroup, GroupFrameT(tr(MSG_CO_AutoOperation)),
-                Child, HGroup,
-                  Child, data->GUI.CH_INTERVAL = MakeCheck(tr(MSG_CO_CheckMail)),
-                  Child, Label2(tr(MSG_CO_CheckMail)),
-                  Child, data->GUI.NM_INTERVAL = NumericbuttonObject,
-                    MUIA_CycleChain,      TRUE,
-                    MUIA_Numeric_Min,     1,
-                    MUIA_Numeric_Max,     240,
-                    MUIA_Numeric_Default, 5,
-                  End,
-                  Child, Label2(tr(MSG_CO_Minutes)),
-                  Child, HSpace(0),
-                End,
-                Child, MakeCheckGroup(&data->GUI.CH_DLLARGE, tr(MSG_CO_DownloadLarge)),
               End,
 
               Child, VGroup, GroupFrameT(tr(MSG_CO_Notification)),
@@ -2422,10 +2429,6 @@ Object *CO_PageNewMail(struct CO_ClassData *data)
   {
     SetHelp(data->GUI.CY_TRANSWIN,       MSG_HELP_CO_CH_TRANSWIN);
     SetHelp(data->GUI.CH_UPDSTAT,        MSG_HELP_CO_CH_UPDSTAT);
-    SetHelp(data->GUI.ST_WARNSIZE,       MSG_HELP_CO_ST_WARNSIZE);
-    SetHelp(data->GUI.CH_INTERVAL,       MSG_HELP_CO_ST_INTERVAL);
-    SetHelp(data->GUI.NM_INTERVAL,       MSG_HELP_CO_ST_INTERVAL);
-    SetHelp(data->GUI.CH_DLLARGE,        MSG_HELP_CO_CH_DLLARGE);
     SetHelp(data->GUI.CH_NOTIREQ,        MSG_HELP_CO_CH_NOTIREQ);
     SetHelp(data->GUI.CH_NOTISOUND,      MSG_HELP_CO_CH_NOTISOUND);
     SetHelp(data->GUI.CH_NOTICMD,        MSG_HELP_CO_CH_NOTICMD);
@@ -2446,7 +2449,6 @@ Object *CO_PageNewMail(struct CO_ClassData *data)
     DoMethod(data->GUI.CH_NOTISOUND,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,pa_notisound           ,3,MUIM_Set,MUIA_Disabled,MUIV_NotTriggerValue);
     DoMethod(data->GUI.CH_NOTISOUND,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,bt_notisound           ,3,MUIM_Set,MUIA_Disabled,MUIV_NotTriggerValue);
     DoMethod(data->GUI.CH_NOTICMD  ,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,pa_noticmd             ,3,MUIM_Set,MUIA_Disabled,MUIV_NotTriggerValue);
-    DoMethod(data->GUI.CH_INTERVAL, MUIM_Notify,MUIA_Selected,MUIV_EveryTime,data->GUI.NM_INTERVAL,  3,MUIM_Set,MUIA_Disabled,MUIV_NotTriggerValue);
   }
 
   RETURN(obj);
