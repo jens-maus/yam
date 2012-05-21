@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.99 (19.05.2012)
+## version $VER: YAM.catalog 8.00 (21.05.2012)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -7,7 +7,7 @@
 ; Compiled with FlexCat 2.9 PPC (AmigaOS4)
 ; $Id$
 ;
-; based on YAM.cd 5956 2012-05-18
+; based on YAM.cd 5959 2012-05-21
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -1322,14 +1322,6 @@ MSG_CO_UpdateStatus
 Aggiorna stato m_essaggio
 ; Update m_essage status
 ;
-MSG_CO_WarnSize1
-Dimensione _limite
-; Size _limit
-;
-MSG_CO_WarnSize2
-KB
-; KB
-;
 MSG_CO_AutoOperation
 Operazione automatica
 ; Automatic operation
@@ -1341,10 +1333,6 @@ Controlla la posta ogni
 MSG_CO_Minutes
 minuto(i)
 ; minutes
-;
-MSG_CO_DownloadLarge
-Preleva messaggi gran_di
-; _Download large messages
 ;
 MSG_CO_Notification
 Notifica
@@ -4830,7 +4818,7 @@ Intero messaggio
 ; Whole message
 ;
 MSG_FI_SearchIn
-Ricerca in
+Ricerca su
 ; Search in
 ;
 MSG_FI_CaseSensitive
@@ -7757,19 +7745,19 @@ Ignora _tutto
 ; Ignore _all
 ;
 MSG_CO_MDN_ACTION_IGNORE
-Non inviare
+non inviare
 ; Never send
 ;
 MSG_CO_MDN_ACTION_SEND
-Invia sempre
+invia sempre
 ; Always send
 ;
 MSG_CO_MDN_ACTION_QUEUE
-Sempre in attesa
+sempre in attesa
 ; Always queue
 ;
 MSG_CO_MDN_ACTION_ASK
-Chiedi
+chiedi
 ; Ask me
 ;
 MSG_CO_MDN_TITLE
@@ -9574,15 +9562,15 @@ MSG_OPEN_WRITEWINDOWS_GAD
 ; *_Save now|_Quit without saving|_Cancel
 ;
 MSG_MA_MFORWARD_ATTACH
-Come allegato
+come allegato
 ; as attachment
 ;
 MSG_MA_MFORWARD_INLINE
-In coda
+in coda
 ; inlined
 ;
 MSG_CO_FWDMSG_ATTACH
-Come allegato
+come allegato
 ; as attachment
 ;
 MSG_CO_ScriptPreFilterMail
@@ -10596,4 +10584,12 @@ definite.
 MSG_CO_MIMETYPE_TITLE
 Tipo di MIME
 ; MIME type
+;
+MSG_CO_DOWNLOAD_LARGE_MAILS1
+_Preleva messaggi più grandi di
+; _Download messages larger than
+;
+MSG_CO_DOWNLOAD_LARGE_MAILS2
+KB
+; KB
 ;
