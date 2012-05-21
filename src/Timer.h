@@ -82,6 +82,7 @@ void RestartPOP3Timers(void);
 
 BOOL CreateTRequest(struct TRequest *timer, const int id, struct MailServerNode *msn);
 void DeleteTRequest(struct TRequest *timer);
+void StopTRequest(struct TRequest *timer);
 
 BOOL InitTimers(void);
 void CleanupTimers(void);

@@ -42,6 +42,7 @@
 
 #include "MailList.h"
 #include "MailServers.h"
+#include "Timer.h"
 #include "UserIdentity.h"
 
 #include "Debug.h"
