@@ -52,10 +52,14 @@
 
 #include "Debug.h"
 
+/* INCLUDE
+#include "Themes.h"
+*/
+
 /* CLASSDATA
 struct Data
 {
-  Object *folderImage[MAX_FOLDERIMG+1];
+  Object *folderImage[FI_MAX];
   char folderStr[SIZE_DEFAULT];
   char totalStr[SIZE_SMALL];
   char unreadStr[SIZE_SMALL];
@@ -181,6 +185,8 @@ OVERLOAD(OM_NEW)
     data->folderImage[FICON_ID_PROTECTED]   = MakeImageObject("status_crypt",        G->theme.statusImages[SI_CRYPT]);
     data->folderImage[FICON_ID_SPAM]        = MakeImageObject("folder_spam",         G->theme.folderImages[FI_SPAM]);
     data->folderImage[FICON_ID_SPAM_NEW]    = MakeImageObject("folder_spam_new",     G->theme.folderImages[FI_SPAMNEW]);
+    data->folderImage[FICON_ID_DRAFTS]      = MakeImageObject("folder_drafts",       G->theme.folderImages[FI_DRAFTS]);
+    data->folderImage[FICON_ID_DRAFTS_NEW]  = MakeImageObject("folder_drafts_new",   G->theme.folderImages[FI_DRAFTSNEW]);
     for(i = 0; i < ARRAY_SIZE(data->folderImage); i++)
       DoMethod(obj, MUIM_NList_UseImage, data->folderImage[i], i, MUIF_NONE);
   }

@@ -97,7 +97,9 @@ static const char * const folderImageIDs[FI_MAX] =
   "folder_spam",
   "folder_spam_new",
   "folder_trash",
-  "folder_trash_new"
+  "folder_trash_new",
+  "folder_drafts",
+  "folder_drafts_new"
 };
 ///
 /// icon image IDs

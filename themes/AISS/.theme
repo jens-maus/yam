@@ -2,7 +2,7 @@ YTH2 - YAM Theme
 Name    = AISS 4.8 (truecolor)
 Author  = YAM Development Team
 URL     = http://www.yam.ch/
-Version = 2.0 (11.05.2012)
+Version = 2.0 (22.05.2012)
 
 ; Image file substitutions
 ; <image id> = <file path>
@@ -54,6 +54,8 @@ folder_fold                   = TBImages:list_folderfold
 folder_unfold                 = TBImages:list_folderunfold
 folder_incoming               = TBImages:list_folderincoming
 folder_incoming_new           = TBImages:list_folderincoming
+folder_drafts                 = TBImages:list_folderoutgoing
+folder_drafts_new             = TBImages:list_folderoutgoing
 folder_outgoing               = TBImages:list_folderoutgoing
 folder_outgoing_new           = TBImages:list_folderoutgoing
 folder_sent                   = TBImages:list_foldersent

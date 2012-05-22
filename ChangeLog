@@ -15,6 +15,11 @@ $URL$
     specific decisions in general mail server functions easier.
   * MailServers.c: included the server specific settings in the comparison.
   * UIDL.c: extended the debug output a bit.
+  * YAM_FO.c, misc: started to implement a "Drafts" folder where mails will be
+    stored that are currently being edited. When finished this folder is meant to
+    replace the insufficient autosave files which just contain the mail body but
+    no recipients and subject. Please note that this folder is not yet used in
+    any way.
 
 2012-05-21 Samir Hawamdeh <s.hawamdeh@tin.it>
 

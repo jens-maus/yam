@@ -154,7 +154,7 @@ OVERLOAD(MUIM_NListtree_Insert)
     struct Folder *folder = ((struct FolderNode *)tn->tn_User)->folder;
 
     // now we check wheter we should create an image object or not
-    if(folder->imageObject != NULL && folder->ImageIndex >= MAX_FOLDERIMG+1)
+    if(folder->imageObject != NULL && folder->ImageIndex >= FI_MAX)
     {
       char *id = (char *)xget(folder->imageObject, MUIA_ImageArea_ID);
       char *filename = (char *)xget(folder->imageObject, MUIA_ImageArea_Filename);

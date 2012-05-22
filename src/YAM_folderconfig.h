@@ -77,6 +77,7 @@ enum FolderType { FT_CUSTOM=0,   // custom folder with received mail
                   FT_CUSTOMSENT, // custom folder with sent mail
                   FT_CUSTOMMIXED,// custom folder with sent&received mail
                   FT_SPAM,       // the mandatory SPAM folder
+                  FT_DRAFTS,     // the mandatory DRAFTS folder
                   FT_NUM         // MUST be the last one in the enum!
                 };
 
@@ -91,12 +92,14 @@ extern const char* const FolderName[FT_NUM];
 #define isCustomSentFolder(folder)  ((folder)->Type == FT_CUSTOMSENT)
 #define isCustomMixedFolder(folder) ((folder)->Type == FT_CUSTOMMIXED)
 #define isSpamFolder(folder)        (C->SpamFilterEnabled == TRUE && (folder)->Type == FT_SPAM)
+#define isDraftsFolder(folder)      ((folder)->Type == FT_DRAFTS)
 
 #define isDefaultFolder(folder)     (isIncomingFolder(folder) || \
                                      isOutgoingFolder(folder) || \
                                      isSentFolder(folder)     || \
                                      isTrashFolder(folder)    || \
-                                     isSpamFolder(folder))
+                                     isSpamFolder(folder)     || \
+                                     isDraftsFolder(folder))
 
 #define isSentMailFolder(folder) (isOutgoingFolder(folder)   || \
                                   isSentFolder(folder)       || \
@@ -154,6 +157,8 @@ enum FolderMode { FM_NORMAL=0,  // normal folder
 #define FICON_ID_PROTECTED      9  // status_crypt
 #define FICON_ID_SPAM           10 // folder_spam
 #define FICON_ID_SPAM_NEW       11 // folder_spam_new
+#define FICON_ID_DRAFTS         12 // folder_drafts
+#define FICON_ID_DRAFTS_NEW     13 // folder_drafts_new
 
 #define FICON_FOLD          "\033o[" STR(FICON_ID_FOLD)         "]"
 #define FICON_UNFOLD        "\033o[" STR(FICON_ID_UNFOLD)       "]"
@@ -167,6 +172,8 @@ enum FolderMode { FM_NORMAL=0,  // normal folder
 #define FICON_PROTECTED     "\033o[" STR(FICON_ID_PROTECTED)    "]"
 #define FICON_SPAM          "\033o[" STR(FICON_ID_SPAM)         "]"
 #define FICON_SPAM_NEW      "\033o[" STR(FICON_ID_SPAM_NEW)     "]"
+#define FICON_DRAFTS        "\033o[" STR(FICON_ID_DRAFTS)       "]"
+#define FICON_DRAFTS_NEW    "\033o[" STR(FICON_ID_DRAFTS_NEW)   "]"
 
 struct Folder
 {

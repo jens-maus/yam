@@ -1742,6 +1742,9 @@ static void InitAfterLogin(void)
   if(FO_GetFolderByType(FT_INCOMING, NULL) == NULL)
     newfolders |= FO_CreateFolder(FT_INCOMING, FolderName[FT_INCOMING], tr(MSG_MA_Incoming));
 
+  if(FO_GetFolderByType(FT_DRAFTS, NULL) == NULL)
+    newfolders |= FO_CreateFolder(FT_DRAFTS, FolderName[FT_DRAFTS], tr(MSG_MA_DRAFTS));
+
   if(FO_GetFolderByType(FT_OUTGOING, NULL) == NULL)
     newfolders |= FO_CreateFolder(FT_OUTGOING, FolderName[FT_OUTGOING], tr(MSG_MA_Outgoing));
 

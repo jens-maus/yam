@@ -58,11 +58,6 @@
 #define MAXP3_MENU      30  // the hardcoded max. for POP3 menu entries
 #define MAXRX_MENU      10  // the hardcoded max. for Rexx menu entries
 
-#define MAX_FOLDERIMG   11
-#define MAX_CFGIMG      36
-#define MAX_IMAGES      (MAX_FOLDERIMG+MAX_CFGIMG)
-
-#define MAXICONS         4
 #define MAXERR          50
 #define MAXUSERS        16
 #define MAXEA            4

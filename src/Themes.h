@@ -91,7 +91,9 @@ struct DiskObject;
 #define FI_SPAMNEW            8
 #define FI_TRASH              9
 #define FI_TRASHNEW          10
-#define FI_MAX               11
+#define FI_DRAFTS            11
+#define FI_DRAFTSNEW         12
+#define FI_MAX               13
 
 // the AppIcon images
 #define II_FIRST              0
