@@ -53,13 +53,13 @@
 #include "Debug.h"
 
 /* INCLUDE
-#include "Themes.h"
+#include "YAM_folderconfig.h"
 */
 
 /* CLASSDATA
 struct Data
 {
-  Object *folderImage[FI_MAX];
+  Object *folderImage[FICON_ID_MAX];
   char folderStr[SIZE_DEFAULT];
   char totalStr[SIZE_SMALL];
   char unreadStr[SIZE_SMALL];

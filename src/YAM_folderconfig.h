@@ -160,6 +160,7 @@ enum FolderMode { FM_NORMAL=0,  // normal folder
 #define FICON_ID_SPAM_NEW       11 // folder_spam_new
 #define FICON_ID_DRAFTS         12 // folder_drafts
 #define FICON_ID_DRAFTS_NEW     13 // folder_drafts_new
+#define FICON_ID_MAX            14
 
 #define FICON_FOLD          "\033o[" STR(FICON_ID_FOLD)         "]"
 #define FICON_UNFOLD        "\033o[" STR(FICON_ID_UNFOLD)       "]"

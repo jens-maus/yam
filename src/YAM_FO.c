@@ -520,7 +520,7 @@ static BOOL FO_LoadFolderImage(struct Folder *folder)
   // first we make sure that valid data is underway.
   if(folder != NULL)
   {
-    if(folder->ImageIndex >= FI_MAX)
+    if(folder->ImageIndex >= FICON_ID_MAX)
     {
       char fname[SIZE_PATHFILE];
       Object *lv = G->MA->GUI.NL_FOLDERS;
@@ -547,7 +547,7 @@ static BOOL FO_LoadFolderImage(struct Folder *folder)
     }
     else
     {
-      W(DBF_FOLDER, "imageIndex of folder < FI_MAX (%ld < %ld)", folder->ImageIndex, FI_MAX);
+      W(DBF_FOLDER, "imageIndex of folder < FICON_ID_MAX (%ld < %ld)", folder->ImageIndex, FICON_ID_MAX);
       folder->imageObject = NULL;
     }
   }
@@ -720,7 +720,9 @@ BOOL FO_LoadTree(void)
   char foldersPath[SIZE_PATHFILE];
   BOOL success = FALSE;
   char *fname;
-  int nested = 0, i = 0, j = FI_MAX;
+  int nested = 0;
+  int i = 0;
+  int j = FICON_ID_MAX;
   FILE *fh;
   APTR lv = G->MA->GUI.NL_FOLDERS;
   struct MUI_NListtree_TreeNode *tn_root = MUIV_NListtree_Insert_ListNode_Root;

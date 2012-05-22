@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-05-22 Jens Langner <Jens.Langner@light-speed.de>
+
+  * mui/FolderListtree.c, YAM_folderconfig.h, misc: fixed incorrect use of FI_MAX which
+    cause a warning to be emitted when compiling FolderListtree.c. Now FICON_ID_MAX is
+    specified in YAM_folderconfig.h and used correctly throughout the sources. FI_MAX
+    should really be used within Themes.c.
+
 2012-05-22 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: fixed wrong catalog version then update to the latest changes.
