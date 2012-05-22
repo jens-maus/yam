@@ -454,6 +454,7 @@ static BOOL SetDefaultSecurity(struct Compose *comp)
   RETURN(result);
   return result;
 }
+
 ///
 /// BuildPartsList
 //  Builds message parts from attachment list
@@ -480,7 +481,7 @@ static struct WritePart *BuildPartsList(struct WriteMailData *wmData)
       struct Attach *att = NULL;
       struct WritePart *np = NULL;
 
-      DoMethod(wmData->window, MUIM_WriteWindow_GetAttachment, i, &att);
+      DoMethod(wmData->window, METHOD(GetAttachment), i, &att);
       if(att == NULL)
         break;
 
@@ -639,6 +640,21 @@ static char *TransformText(const char *source, const enum TransformMode mode, co
 }
 
 ///
+/// FreeCompose
+// free a compose structure
+static void FreeCompose(struct Compose *comp)
+{
+  ENTER();
+
+  if(comp->MailReplyTo != NULL)
+    free(comp->MailReplyTo);
+  if(comp->MailFollowupTo != NULL)
+    free(comp->MailFollowupTo);
+
+  LEAVE();
+}
+
+///
 
 /* Hooks */
 /// CloseWriteWindowHook
@@ -693,12 +709,12 @@ HOOKPROTONHNO(AppMessageFunc, LONG, ULONG *arg)
 
         // call WR_App to let it put in the text of the file
         // to the write window
-        DoMethod(writeWindow, MUIM_WriteWindow_DroppedFile, buf);
+        DoMethod(writeWindow, METHOD(DroppedFile), buf);
       }
       else
       {
         // open the usual requester, but let it point to the dropped drawer
-        DoMethod(writeWindow, MUIM_WriteWindow_RequestAttachment, buf);
+        DoMethod(writeWindow, METHOD(RequestAttachment), buf);
       }
     }
   }
@@ -878,16 +894,16 @@ OVERLOAD(OM_NEW)
         End,
       TAG_MORE, inittags(msg))) != NULL)
       {
-        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SENDNOW,    obj, 2, MUIM_WriteWindow_ComposeMail, WRITE_SEND);
-        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_QUEUE,      obj, 2, MUIM_WriteWindow_ComposeMail, WRITE_QUEUE);
-        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_HOLD,       obj, 2, MUIM_WriteWindow_ComposeMail, WRITE_HOLD);
-        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_CANCEL,     obj, 1, MUIM_WriteWindow_CancelAction);
-        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_CUT,        obj, 2, MUIM_WriteWindow_EditActionPerformed, EA_CUT);
-        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_COPY,       obj, 2, MUIM_WriteWindow_EditActionPerformed, EA_COPY);
-        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_PASTE,      obj, 2, MUIM_WriteWindow_EditActionPerformed, EA_PASTE);
-        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_DELETE,     obj, 2, MUIM_WriteWindow_EditActionPerformed, EA_DELETE);
-        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SELECTALL,  obj, 2, MUIM_WriteWindow_EditActionPerformed, EA_SELECTALL);
-        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SELECTNONE, obj, 2, MUIM_WriteWindow_EditActionPerformed, EA_SELECTNONE);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SENDNOW,    obj, 2, METHOD(ComposeMail), WRITE_SEND);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_QUEUE,      obj, 2, METHOD(ComposeMail), WRITE_QUEUE);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_HOLD,       obj, 2, METHOD(ComposeMail), WRITE_HOLD);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_CANCEL,     obj, 1, METHOD(CancelAction));
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_CUT,        obj, 2, METHOD(EditActionPerformed), EA_CUT);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_COPY,       obj, 2, METHOD(EditActionPerformed), EA_COPY);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_PASTE,      obj, 2, METHOD(EditActionPerformed), EA_PASTE);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_DELETE,     obj, 2, METHOD(EditActionPerformed), EA_DELETE);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SELECTALL,  obj, 2, METHOD(EditActionPerformed), EA_SELECTALL);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SELECTNONE, obj, 2, METHOD(EditActionPerformed), EA_SELECTNONE);
       }
     }
     else
@@ -1326,35 +1342,35 @@ OVERLOAD(OM_NEW)
 
         // set the menuitem notifies
         DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_NEW,        data->TE_EDIT, 1, MUIM_TextEditor_ClearText);
-        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_OPEN,       obj, 2, MUIM_WriteWindow_EditorCmd, ED_OPEN);
-        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_INSFILE,    obj, 2, MUIM_WriteWindow_EditorCmd, ED_INSERT);
-        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_INSQUOT,    obj, 2, MUIM_WriteWindow_EditorCmd, ED_INSQUOT);
-        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_INSALTQUOT, obj, 2, MUIM_WriteWindow_EditorCmd, ED_INSALTQUOT);
-        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_INSROT13,   obj, 2, MUIM_WriteWindow_EditorCmd, ED_INSROT13);
-        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_INSUUCODE,  obj, 2, MUIM_WriteWindow_EditorCmd, ED_INSUUCODE);
-        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SAVEAS,     obj, 1, MUIM_WriteWindow_SaveTextAs);
-        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_EDIT,       obj, 1, MUIM_WriteWindow_LaunchEditor);
-        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SENDNOW,    obj, 2, MUIM_WriteWindow_ComposeMail, WRITE_SEND);
-        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_QUEUE,      obj, 2, MUIM_WriteWindow_ComposeMail, WRITE_QUEUE);
-        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_HOLD,       obj, 2, MUIM_WriteWindow_ComposeMail, WRITE_HOLD);
-        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_CANCEL,     obj, 1, MUIM_WriteWindow_CancelAction);
-        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_CUT,        obj, 2, MUIM_WriteWindow_EditActionPerformed, EA_CUT);
-        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_COPY,       obj, 2, MUIM_WriteWindow_EditActionPerformed, EA_COPY);
-        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_PASTE,      obj, 2, MUIM_WriteWindow_EditActionPerformed, EA_PASTE);
-        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_DELETE,     obj, 2, MUIM_WriteWindow_EditActionPerformed, EA_DELETE);
-        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_PASQUOT,    obj, 2, MUIM_WriteWindow_EditorCmd, ED_PASQUOT);
-        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_PASALTQUOT, obj, 2, MUIM_WriteWindow_EditorCmd, ED_PASALTQUOT);
-        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_PASROT13,   obj, 2, MUIM_WriteWindow_EditorCmd, ED_PASROT13);
-        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SEARCH,     obj, 2, MUIM_WriteWindow_Search, MUIF_NONE);
-        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SEARCHAGAIN,obj, 2, MUIM_WriteWindow_Search, MUIF_ReadMailGroup_Search_Again);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_OPEN,       obj, 2, METHOD(EditorCmd), ED_OPEN);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_INSFILE,    obj, 2, METHOD(EditorCmd), ED_INSERT);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_INSQUOT,    obj, 2, METHOD(EditorCmd), ED_INSQUOT);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_INSALTQUOT, obj, 2, METHOD(EditorCmd), ED_INSALTQUOT);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_INSROT13,   obj, 2, METHOD(EditorCmd), ED_INSROT13);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_INSUUCODE,  obj, 2, METHOD(EditorCmd), ED_INSUUCODE);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SAVEAS,     obj, 1, METHOD(SaveTextAs));
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_EDIT,       obj, 1, METHOD(LaunchEditor));
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SENDNOW,    obj, 2, METHOD(ComposeMail), WRITE_SEND);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_QUEUE,      obj, 2, METHOD(ComposeMail), WRITE_QUEUE);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_HOLD,       obj, 2, METHOD(ComposeMail), WRITE_HOLD);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_CANCEL,     obj, 1, METHOD(CancelAction));
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_CUT,        obj, 2, METHOD(EditActionPerformed), EA_CUT);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_COPY,       obj, 2, METHOD(EditActionPerformed), EA_COPY);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_PASTE,      obj, 2, METHOD(EditActionPerformed), EA_PASTE);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_DELETE,     obj, 2, METHOD(EditActionPerformed), EA_DELETE);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_PASQUOT,    obj, 2, METHOD(EditorCmd), ED_PASQUOT);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_PASALTQUOT, obj, 2, METHOD(EditorCmd), ED_PASALTQUOT);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_PASROT13,   obj, 2, METHOD(EditorCmd), ED_PASROT13);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SEARCH,     obj, 2, METHOD(Search), MUIF_NONE);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SEARCHAGAIN,obj, 2, METHOD(Search), MUIF_ReadMailGroup_Search_Again);
         DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_DICT,       MUIV_Notify_Application, 3, MUIM_CallHook, &DI_OpenHook, obj);
-        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_UNDO,       obj, 2, MUIM_WriteWindow_EditActionPerformed, EA_UNDO);
-        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_REDO,       obj, 2, MUIM_WriteWindow_EditActionPerformed, EA_REDO);
-        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_ADDFILE,    obj, 2, MUIM_WriteWindow_RequestAttachment, C->AttachDir);
-        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_ADDCLIP,    obj, 1, MUIM_WriteWindow_AddClipboard);
-        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_ADDPGP,     obj, 1, MUIM_WriteWindow_AddPGPKey);
-        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SELECTALL,  obj, 2, MUIM_WriteWindow_EditActionPerformed, EA_SELECTALL);
-        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SELECTNONE, obj, 2, MUIM_WriteWindow_EditActionPerformed, EA_SELECTNONE);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_UNDO,       obj, 2, METHOD(EditActionPerformed), EA_UNDO);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_REDO,       obj, 2, METHOD(EditActionPerformed), EA_REDO);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_ADDFILE,    obj, 2, METHOD(RequestAttachment), C->AttachDir);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_ADDCLIP,    obj, 1, METHOD(AddClipboard));
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_ADDPGP,     obj, 1, METHOD(AddPGPKey));
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SELECTALL,  obj, 2, METHOD(EditActionPerformed), EA_SELECTALL);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SELECTNONE, obj, 2, METHOD(EditActionPerformed), EA_SELECTNONE);
         DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SWITCH1,    data->RG_PAGE, 3, MUIM_Set, MUIA_Group_ActivePage, 0);
         DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SWITCH2,    data->RG_PAGE, 3, MUIM_Set, MUIA_Group_ActivePage, 1);
         DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SWITCH3,    data->RG_PAGE, 3, MUIM_Set, MUIA_Group_ActivePage, 2);
@@ -1375,17 +1391,17 @@ OVERLOAD(OM_NEW)
         if(data->TO_TOOLBAR != NULL)
         {
           // connect the buttons presses
-          DoMethod(data->TO_TOOLBAR, MUIM_TheBar_Notify, TB_WRITE_EDITOR,    MUIA_Pressed, FALSE, obj, 1, MUIM_WriteWindow_LaunchEditor);
-          DoMethod(data->TO_TOOLBAR, MUIM_TheBar_Notify, TB_WRITE_INSERT,    MUIA_Pressed, FALSE, obj, 2, MUIM_WriteWindow_EditorCmd, ED_INSERT);
+          DoMethod(data->TO_TOOLBAR, MUIM_TheBar_Notify, TB_WRITE_EDITOR,    MUIA_Pressed, FALSE, obj, 1, METHOD(LaunchEditor));
+          DoMethod(data->TO_TOOLBAR, MUIM_TheBar_Notify, TB_WRITE_INSERT,    MUIA_Pressed, FALSE, obj, 2, METHOD(EditorCmd), ED_INSERT);
           DoMethod(data->TO_TOOLBAR, MUIM_TheBar_Notify, TB_WRITE_CUT,       MUIA_Pressed, FALSE, data->TE_EDIT, 2, MUIM_TextEditor_ARexxCmd, "CUT");
           DoMethod(data->TO_TOOLBAR, MUIM_TheBar_Notify, TB_WRITE_COPY,      MUIA_Pressed, FALSE, data->TE_EDIT, 2, MUIM_TextEditor_ARexxCmd, "COPY");
           DoMethod(data->TO_TOOLBAR, MUIM_TheBar_Notify, TB_WRITE_PASTE,     MUIA_Pressed, FALSE, data->TE_EDIT, 2, MUIM_TextEditor_ARexxCmd, "PASTE");
           DoMethod(data->TO_TOOLBAR, MUIM_TheBar_Notify, TB_WRITE_UNDO,      MUIA_Pressed, FALSE, data->TE_EDIT, 2, MUIM_TextEditor_ARexxCmd, "UNDO");
-          DoMethod(data->TO_TOOLBAR, MUIM_TheBar_Notify, TB_WRITE_BOLD,      MUIA_Selected, MUIV_EveryTime, obj, 3, MUIM_WriteWindow_SetSoftStyle, SSM_BOLD, ORIGIN_TOOLBAR);
-          DoMethod(data->TO_TOOLBAR, MUIM_TheBar_Notify, TB_WRITE_ITALIC,    MUIA_Selected, MUIV_EveryTime, obj, 3, MUIM_WriteWindow_SetSoftStyle, SSM_ITALIC, ORIGIN_TOOLBAR);
-          DoMethod(data->TO_TOOLBAR, MUIM_TheBar_Notify, TB_WRITE_UNDERLINE, MUIA_Selected, MUIV_EveryTime, obj, 3, MUIM_WriteWindow_SetSoftStyle, SSM_UNDERLINE, ORIGIN_TOOLBAR);
-          DoMethod(data->TO_TOOLBAR, MUIM_TheBar_Notify, TB_WRITE_COLORED,   MUIA_Selected, MUIV_EveryTime, obj, 3, MUIM_WriteWindow_SetSoftStyle, SSM_COLOR, ORIGIN_TOOLBAR);
-          DoMethod(data->TO_TOOLBAR, MUIM_TheBar_Notify, TB_WRITE_SEARCH,    MUIA_Pressed, FALSE, obj, 3, MUIM_WriteWindow_Search, MUIF_NONE);
+          DoMethod(data->TO_TOOLBAR, MUIM_TheBar_Notify, TB_WRITE_BOLD,      MUIA_Selected, MUIV_EveryTime, obj, 3, METHOD(SetSoftStyle), SSM_BOLD, ORIGIN_TOOLBAR);
+          DoMethod(data->TO_TOOLBAR, MUIM_TheBar_Notify, TB_WRITE_ITALIC,    MUIA_Selected, MUIV_EveryTime, obj, 3, METHOD(SetSoftStyle), SSM_ITALIC, ORIGIN_TOOLBAR);
+          DoMethod(data->TO_TOOLBAR, MUIM_TheBar_Notify, TB_WRITE_UNDERLINE, MUIA_Selected, MUIV_EveryTime, obj, 3, METHOD(SetSoftStyle), SSM_UNDERLINE, ORIGIN_TOOLBAR);
+          DoMethod(data->TO_TOOLBAR, MUIM_TheBar_Notify, TB_WRITE_COLORED,   MUIA_Selected, MUIV_EveryTime, obj, 3, METHOD(SetSoftStyle), SSM_COLOR, ORIGIN_TOOLBAR);
+          DoMethod(data->TO_TOOLBAR, MUIM_TheBar_Notify, TB_WRITE_SEARCH,    MUIA_Pressed, FALSE, obj, 3, METHOD(Search), MUIF_NONE);
 
           // connect attributes to button disables
           DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_AreaMarked, MUIV_EveryTime, data->TO_TOOLBAR, 4, MUIM_TheBar_SetAttr, TB_WRITE_CUT, MUIA_TheBar_Attr_Disabled, MUIV_NotTriggerValue);
@@ -1414,8 +1430,8 @@ OVERLOAD(OM_NEW)
 
         if(data->TX_POSI != NULL)
         {
-          DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_CursorX, MUIV_EveryTime, obj, 1, MUIM_WriteWindow_UpdateCursorPos);
-          DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_CursorY, MUIV_EveryTime, obj, 1, MUIM_WriteWindow_UpdateCursorPos);
+          DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_CursorX, MUIV_EveryTime, obj, 1, METHOD(UpdateCursorPos));
+          DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_CursorY, MUIV_EveryTime, obj, 1, METHOD(UpdateCursorPos));
         }
 
         DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_StyleBold,      MUIV_EveryTime, data->MI_BOLD,      3, MUIM_NoNotifySet, MUIA_Menuitem_Checked, MUIV_TriggerValue);
@@ -1430,25 +1446,25 @@ OVERLOAD(OM_NEW)
         DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen,           11,              data->MI_COLORED,   3, MUIM_NoNotifySet, MUIA_Menuitem_Checked, FALSE);
         DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen,           12,              data->MI_COLORED,   3, MUIM_NoNotifySet, MUIA_Menuitem_Checked, FALSE);
 
-        DoMethod(data->MI_BOLD,      MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, obj, 3, MUIM_WriteWindow_SetSoftStyle, SSM_BOLD, ORIGIN_MENU);
-        DoMethod(data->MI_ITALIC,    MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, obj, 3, MUIM_WriteWindow_SetSoftStyle, SSM_ITALIC, ORIGIN_MENU);
-        DoMethod(data->MI_UNDERLINE, MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, obj, 3, MUIM_WriteWindow_SetSoftStyle, SSM_UNDERLINE, ORIGIN_MENU);
-        DoMethod(data->MI_COLORED,   MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, obj, 3, MUIM_WriteWindow_SetSoftStyle, SSM_COLOR, ORIGIN_MENU);
+        DoMethod(data->MI_BOLD,      MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, obj, 3, METHOD(SetSoftStyle), SSM_BOLD, ORIGIN_MENU);
+        DoMethod(data->MI_ITALIC,    MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, obj, 3, METHOD(SetSoftStyle), SSM_ITALIC, ORIGIN_MENU);
+        DoMethod(data->MI_UNDERLINE, MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, obj, 3, METHOD(SetSoftStyle), SSM_UNDERLINE, ORIGIN_MENU);
+        DoMethod(data->MI_COLORED,   MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, obj, 3, METHOD(SetSoftStyle), SSM_COLOR, ORIGIN_MENU);
 
         DoMethod(data->RG_PAGE,      MUIM_Notify, MUIA_Group_ActivePage,   0, MUIV_Notify_Window, 3, MUIM_Set, MUIA_Window_ActiveObject, data->TE_EDIT);
         DoMethod(data->RG_PAGE,      MUIM_Notify, MUIA_Group_ActivePage,   1, MUIV_Notify_Window, 3, MUIM_Set, MUIA_Window_ActiveObject, data->LV_ATTACH);
         DoMethod(data->ST_SUBJECT,   MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, MUIV_Notify_Window, 3, MUIM_Set, MUIA_Window_ActiveObject, data->TE_EDIT);
-        DoMethod(data->ST_SUBJECT,   MUIM_Notify, MUIA_String_Contents,    MUIV_EveryTime, obj, 1, MUIM_WriteWindow_UpdateWindowTitle);
-        DoMethod(data->BT_ADD,       MUIM_Notify, MUIA_Pressed,            FALSE,          obj, 2, MUIM_WriteWindow_RequestAttachment, C->AttachDir);
-        DoMethod(data->BT_ADDPACK,   MUIM_Notify, MUIA_Pressed,            FALSE,          obj, 1, MUIM_WriteWindow_AddArchive);
-        DoMethod(data->BT_DEL,       MUIM_Notify, MUIA_Pressed,            FALSE,          obj, 1, MUIM_WriteWindow_DeleteAttachment);
-        DoMethod(data->BT_DISPLAY,   MUIM_Notify, MUIA_Pressed,            FALSE,          obj, 1, MUIM_WriteWindow_DisplayAttachment);
-        DoMethod(data->LV_ATTACH,    MUIM_Notify, MUIA_NList_DoubleClick,  MUIV_EveryTime, obj, 1, MUIM_WriteWindow_DisplayAttachment);
-        DoMethod(data->LV_ATTACH,    MUIM_Notify, MUIA_NList_Active,       MUIV_EveryTime, obj, 1, MUIM_WriteWindow_GetAttachmentEntry);
-        DoMethod(data->RA_ENCODING,  MUIM_Notify, MUIA_Radio_Active,       MUIV_EveryTime, obj, 1, MUIM_WriteWindow_PutAttachmentEntry);
-        DoMethod(data->ST_CTYPE,     MUIM_Notify, MUIA_String_Contents,    MUIV_EveryTime, obj, 1, MUIM_WriteWindow_PutAttachmentEntry);
-        DoMethod(data->ST_DESC,      MUIM_Notify, MUIA_String_Contents,    MUIV_EveryTime, obj, 1, MUIM_WriteWindow_PutAttachmentEntry);
-        DoMethod(data->CY_SIGNATURE, MUIM_Notify, MUIA_Cycle_Active,       MUIV_EveryTime, obj, 2, MUIM_WriteWindow_ChangeSignature, MUIV_TriggerValue);
+        DoMethod(data->ST_SUBJECT,   MUIM_Notify, MUIA_String_Contents,    MUIV_EveryTime, obj, 1, METHOD(UpdateWindowTitle));
+        DoMethod(data->BT_ADD,       MUIM_Notify, MUIA_Pressed,            FALSE,          obj, 2, METHOD(RequestAttachment), C->AttachDir);
+        DoMethod(data->BT_ADDPACK,   MUIM_Notify, MUIA_Pressed,            FALSE,          obj, 1, METHOD(AddArchive));
+        DoMethod(data->BT_DEL,       MUIM_Notify, MUIA_Pressed,            FALSE,          obj, 1, METHOD(DeleteAttachment));
+        DoMethod(data->BT_DISPLAY,   MUIM_Notify, MUIA_Pressed,            FALSE,          obj, 1, METHOD(DisplayAttachment));
+        DoMethod(data->LV_ATTACH,    MUIM_Notify, MUIA_NList_DoubleClick,  MUIV_EveryTime, obj, 1, METHOD(DisplayAttachment));
+        DoMethod(data->LV_ATTACH,    MUIM_Notify, MUIA_NList_Active,       MUIV_EveryTime, obj, 1, METHOD(GetAttachmentEntry));
+        DoMethod(data->RA_ENCODING,  MUIM_Notify, MUIA_Radio_Active,       MUIV_EveryTime, obj, 1, METHOD(PutAttachmentEntry));
+        DoMethod(data->ST_CTYPE,     MUIM_Notify, MUIA_String_Contents,    MUIV_EveryTime, obj, 1, METHOD(PutAttachmentEntry));
+        DoMethod(data->ST_DESC,      MUIM_Notify, MUIA_String_Contents,    MUIV_EveryTime, obj, 1, METHOD(PutAttachmentEntry));
+        DoMethod(data->CY_SIGNATURE, MUIM_Notify, MUIA_Cycle_Active,       MUIV_EveryTime, obj, 2, METHOD(ChangeSignature), MUIV_TriggerValue);
         DoMethod(data->CH_DELSEND,   MUIM_Notify, MUIA_Selected,           MUIV_EveryTime, data->MI_DELSEND,        3, MUIM_Set,      MUIA_Menuitem_Checked, MUIV_TriggerValue);
         DoMethod(data->CH_MDN,       MUIM_Notify, MUIA_Selected,           MUIV_EveryTime, data->MI_MDN,            3, MUIM_Set,      MUIA_Menuitem_Checked, MUIV_TriggerValue);
         DoMethod(data->CH_ADDINFO,   MUIM_Notify, MUIA_Selected,           MUIV_EveryTime, data->MI_ADDINFO,        3, MUIM_Set,      MUIA_Menuitem_Checked, MUIV_TriggerValue);
@@ -1458,9 +1474,9 @@ OVERLOAD(OM_NEW)
         DoMethod(data->MI_DELSEND,   MUIM_Notify, MUIA_Menuitem_Checked,   MUIV_EveryTime, data->CH_DELSEND,        3, MUIM_Set,      MUIA_Selected, MUIV_TriggerValue);
         DoMethod(data->MI_MDN,       MUIM_Notify, MUIA_Menuitem_Checked,   MUIV_EveryTime, data->CH_MDN,            3, MUIM_Set,      MUIA_Selected, MUIV_TriggerValue);
         DoMethod(data->MI_ADDINFO,   MUIM_Notify, MUIA_Menuitem_Checked,   MUIV_EveryTime, data->CH_ADDINFO,        3, MUIM_Set,      MUIA_Selected, MUIV_TriggerValue);
-        DoMethod(data->MI_FFONT,     MUIM_Notify, MUIA_Menuitem_Checked,   MUIV_EveryTime, obj, 1, MUIM_WriteWindow_StyleOptionsChanged);
-        DoMethod(data->MI_TCOLOR,    MUIM_Notify, MUIA_Menuitem_Checked,   MUIV_EveryTime, obj, 1, MUIM_WriteWindow_StyleOptionsChanged);
-        DoMethod(data->MI_TSTYLE,    MUIM_Notify, MUIA_Menuitem_Checked,   MUIV_EveryTime, obj, 1, MUIM_WriteWindow_StyleOptionsChanged);
+        DoMethod(data->MI_FFONT,     MUIM_Notify, MUIA_Menuitem_Checked,   MUIV_EveryTime, obj, 1, METHOD(StyleOptionsChanged));
+        DoMethod(data->MI_TCOLOR,    MUIM_Notify, MUIA_Menuitem_Checked,   MUIV_EveryTime, obj, 1, METHOD(StyleOptionsChanged));
+        DoMethod(data->MI_TSTYLE,    MUIM_Notify, MUIA_Menuitem_Checked,   MUIV_EveryTime, obj, 1, METHOD(StyleOptionsChanged));
 
         // set the notifies for the importance cycle gadget
         DoMethod(data->CY_IMPORTANCE, MUIM_Notify, MUIA_Cycle_Active,      0,              menuStripObject,         4, MUIM_SetUData, WMEN_IMPORT0, MUIA_Menuitem_Checked, TRUE);
@@ -2084,7 +2100,7 @@ DECLARE(RequestAttachment) // STRPTR drawer
 
       AddPath(filename, frc->drawer, frc->file, sizeof(filename));
 
-      DoMethod(obj, MUIM_WriteWindow_AddAttachment, filename, NULL, FALSE);
+      DoMethod(obj, METHOD(AddAttachment), filename, NULL, FALSE);
     }
     else
     {
@@ -2096,7 +2112,7 @@ DECLARE(RequestAttachment) // STRPTR drawer
 
         AddPath(filename, frc->drawer, frc->argList[i], sizeof(filename));
 
-        DoMethod(obj, MUIM_WriteWindow_AddAttachment, filename, NULL, FALSE);
+        DoMethod(obj, METHOD(AddAttachment), filename, NULL, FALSE);
       }
     }
   }
@@ -2123,7 +2139,7 @@ DECLARE(AddClipboard)
       fclose(tf->FP);
       tf->FP = NULL;
 
-      DoMethod(obj, MUIM_WriteWindow_AddAttachment, tf->Filename, "clipboard.text", TRUE);
+      DoMethod(obj, METHOD(AddAttachment), tf->Filename, "clipboard.text", TRUE);
       free(tf);
 
       // don't delete this file by CloseTempFile()
@@ -2163,7 +2179,7 @@ DECLARE(AddPGPKey)
 
       if(ObtainFileInfo(fname, FI_SIZE, &size) == TRUE && size > 0)
       {
-        DoMethod(obj, MUIM_WriteWindow_AddAttachment, fname, NULL, TRUE);
+        DoMethod(obj, METHOD(AddAttachment), fname, NULL, TRUE);
         setstring(data->ST_CTYPE, "application/pgp-keys");
       }
       else
@@ -2419,7 +2435,7 @@ DECLARE(AddArchive)
           // allow requesters from DOS again
           SetProcWindow(oldwin);
 
-          DoMethod(obj, MUIM_WriteWindow_AddAttachment, filename, NULL, TRUE);
+          DoMethod(obj, METHOD(AddAttachment), filename, NULL, TRUE);
         }
         else
           ER_NewError(tr(MSG_ER_PACKERROR));
@@ -3651,12 +3667,13 @@ DECLARE(ComposeMail) // enum WriteMode mode
   struct Mail *newMail = NULL;
   char *addr;
   int numAttachments = 0;
-  struct Folder *outfolder = FO_GetFolderByType(FT_OUTGOING, NULL);
+  struct Folder *outfolder = FO_GetFolderByType(msg->mode == WRITE_DRAFT ? FT_DRAFTS : FT_OUTGOING, NULL);
   BOOL winOpen = xget(obj, MUIA_Window_Open);
   struct WriteMailData *wmData = data->wmData;
   enum WriteMode mode = msg->mode;
   struct FolderNode *fnode;
   struct Folder *mlFolder = NULL;
+  ULONG success = FALSE;
 
   ENTER();
 
@@ -3672,7 +3689,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
   // get the contents of the TO: String gadget and check if it is valid
   addr = (char *)DoMethod(data->ST_TO, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValid);
-  if(addr == NULL)
+  if(mode != WRITE_DRAFT && addr == NULL)
   {
     ER_NewError(tr(MSG_ER_AliasNotFound), (STRPTR)xget(data->ST_TO, MUIA_String_Contents));
 
@@ -3681,10 +3698,9 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
     set(obj, MUIA_Window_ActiveObject, data->ST_TO);
 
-    RETURN(0);
-    return 0;
+    goto out;
   }
-  else if(addr[0] == '\0' && wmData->quietMode == FALSE)
+  else if(mode != WRITE_DRAFT && addr[0] == '\0' && wmData->quietMode == FALSE)
   {
     // set the TO Field active and go back
     if(winOpen == TRUE)
@@ -3695,17 +3711,14 @@ DECLARE(ComposeMail) // enum WriteMode mode
     if(MUI_Request(G->App, obj, 0, NULL, tr(MSG_WR_NoRcptReqGad), tr(MSG_WR_ErrorNoRcpt)) != 0)
       mode = WRITE_HOLD;
     else
-    {
-      RETURN(0);
-      return 0;
-    }
+      goto out;
   }
   else
     comp.MailTo = addr; // To: address
 
   // get the content of the Subject: String gadget and check if it is empty or not.
   comp.Subject = (char *)xget(data->ST_SUBJECT, MUIA_String_Contents);
-  if(wmData->mode != NMM_BOUNCE && wmData->quietMode == FALSE && C->WarnSubject == TRUE &&
+  if(wmData->mode != NMM_BOUNCE && mode != WRITE_DRAFT && wmData->quietMode == FALSE && C->WarnSubject == TRUE &&
      (comp.Subject == NULL || comp.Subject[0] == '\0'))
   {
     if(winOpen == TRUE)
@@ -3714,10 +3727,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
     set(obj, MUIA_Window_ActiveObject, data->ST_SUBJECT);
 
     if(MUI_Request(G->App, obj, 0, NULL, tr(MSG_WR_OKAYCANCELREQ), tr(MSG_WR_NOSUBJECTREQ)) == 0)
-    {
-      RETURN(0);
-      return 0;
-    }
+      goto out;
   }
 
   comp.Mode = wmData->mode;
@@ -3728,7 +3738,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
   {
     // then we check the CC string gadget
     addr = (char *)DoMethod(data->ST_CC, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValid);
-    if(addr == NULL)
+    if(mode != WRITE_DRAFT && addr == NULL)
     {
       ER_NewError(tr(MSG_ER_AliasNotFound), (STRPTR)xget(data->ST_CC, MUIA_String_Contents));
 
@@ -3737,15 +3747,14 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
       set(obj, MUIA_Window_ActiveObject, data->ST_CC);
 
-      RETURN(0);
-      return 0;
+      goto out;
     }
     else if(addr[0] != '\0')
       comp.MailCC = addr;
 
     // then we check the BCC string gadget
     addr = (char *)DoMethod(data->ST_BCC, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValid);
-    if(addr == NULL)
+    if(mode != WRITE_DRAFT && addr == NULL)
     {
       ER_NewError(tr(MSG_ER_AliasNotFound), (STRPTR)xget(data->ST_BCC, MUIA_String_Contents));
 
@@ -3754,15 +3763,14 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
       set(obj, MUIA_Window_ActiveObject, data->ST_BCC);
 
-      RETURN(0);
-      return 0;
+      goto out;
     }
     else if(addr[0] != '\0')
       comp.MailBCC = addr;
 
     // then we check the ReplyTo string gadget
     addr = (char *)DoMethod(data->ST_REPLYTO, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValid);
-    if(addr == NULL)
+    if(mode != WRITE_DRAFT && addr == NULL)
     {
       ER_NewError(tr(MSG_ER_AliasNotFound), (STRPTR)xget(data->ST_REPLYTO, MUIA_String_Contents));
 
@@ -3771,8 +3779,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
       set(obj, MUIA_Window_ActiveObject, data->ST_REPLYTO);
 
-      RETURN(0);
-      return 0;
+      goto out;
     }
     else if(addr[0] != '\0')
       comp.ReplyTo = addr;
@@ -3828,13 +3835,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
     if(comp.Security == SEC_DEFAULTS &&
        SetDefaultSecurity(&comp) == FALSE)
     {
-      if(comp.MailReplyTo != NULL)
-        free(comp.MailReplyTo);
-      if(comp.MailFollowupTo != NULL)
-        free(comp.MailFollowupTo);
-
-      RETURN(0);
-      return 0;
+      goto out;
     }
 
     // find the selected charset and default to the global one if it
@@ -3864,16 +3865,10 @@ DECLARE(ComposeMail) // enum WriteMode mode
     // the attachments
     if((comp.FirstPart = BuildPartsList(wmData)) == NULL)
     {
-      if(comp.MailReplyTo != NULL)
-        free(comp.MailReplyTo);
-      if(comp.MailFollowupTo != NULL)
-        free(comp.MailFollowupTo);
-
-      RETURN(0);
-      return 0;
+      goto out;
     }
   }
-  else
+  else if(mode != WRITE_DRAFT)
     MA_StartMacro(MACRO_POSTWRITE, data->windowNumberStr);
 
   // now we check how the new mail file should be named
@@ -3903,9 +3898,8 @@ DECLARE(ComposeMail) // enum WriteMode mode
   if(newMailFile[0] != '\0' &&
      (comp.FH = fopen(newMailFile, "w")) != NULL)
   {
-    BOOL success;
     struct ExtendedMail *email;
-    int stat = mode == WRITE_HOLD ? SFLAG_HOLD : SFLAG_QUEUED;
+    int stat = (mode == WRITE_HOLD || mode == WRITE_DRAFT) ? SFLAG_HOLD : SFLAG_QUEUED;
 
     setvbuf(comp.FH, NULL, _IOFBF, SIZE_FILEBUF);
 
@@ -3916,24 +3910,15 @@ DECLARE(ComposeMail) // enum WriteMode mode
     success = WriteOutMessage(&comp);
     set(obj, MUIA_Window_Sleep, FALSE);
 
-    if(success == FALSE)
-    {
-      fclose(comp.FH);
-      comp.FH = NULL;
-
-      DeleteFile(newMailFile);
-
-      if(comp.MailReplyTo != NULL)
-        free(comp.MailReplyTo);
-      if(comp.MailFollowupTo != NULL)
-        free(comp.MailFollowupTo);
-
-      RETURN(0);
-      return 0;
-    }
-
     fclose(comp.FH);
     comp.FH = NULL;
+
+    if(success == FALSE)
+    {
+      DeleteFile(newMailFile);
+
+      goto out;
+    }
 
     // stop any pending file notification.
     if(wmData->fileNotifyActive == TRUE)
@@ -4189,18 +4174,20 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
   // make sure to dispose the window data by calling
   // CloseWriteWindowHook() as soon as this method is finished
-  DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &CloseWriteWindowHook, data->wmData);
+  if(mode != WRITE_DRAFT)
+    DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &CloseWriteWindowHook, data->wmData);
 
   // update the statistics of the outgoing folder
   DisplayStatistics(outfolder, TRUE);
 
-  if(comp.MailReplyTo != NULL)
-    free(comp.MailReplyTo);
-  if(comp.MailFollowupTo != NULL)
-    free(comp.MailFollowupTo);
+  // if we end up here then everything was successful
+  success = TRUE;
 
-  RETURN(0);
-  return 0;
+out:
+  FreeCompose(&comp);
+
+  RETURN(success);
+  return success;
 }
 
 ///
@@ -4255,10 +4242,10 @@ DECLARE(DroppedFile) // STRPTR fileName
       free(text);
     }
     else
-      DoMethod(obj, MUIM_WriteWindow_AddAttachment, msg->fileName, NULL, FALSE);
+      DoMethod(obj, METHOD(AddAttachment), msg->fileName, NULL, FALSE);
   }
   else
-    DoMethod(obj, MUIM_WriteWindow_AddAttachment, msg->fileName, NULL, FALSE);
+    DoMethod(obj, METHOD(AddAttachment), msg->fileName, NULL, FALSE);
 
   RETURN(0);
   return 0;
@@ -4275,12 +4262,10 @@ DECLARE(DoAutoSave)
 
   if(data->wmData->mode != NMM_BOUNCE)
   {
-    char fileName[SIZE_PATHFILE];
-
     // do the autosave only if something was modified
     if(xget(data->TE_EDIT, MUIA_TextEditor_HasChanged) == TRUE)
     {
-      if(DoMethod(data->TE_EDIT, MUIM_MailTextEdit_SaveToFile, WR_AutoSaveFile(data->windowNumber, fileName, sizeof(fileName))) == TRUE)
+      if(DoMethod(obj, METHOD(ComposeMail), WRITE_DRAFT) == TRUE)
       {
         // we just saved the mail text, so it is no longer modified
         set(data->TE_EDIT, MUIA_TextEditor_HasChanged, FALSE);
@@ -4289,13 +4274,11 @@ DECLARE(DoAutoSave)
         // tell about changes anymore if they don't happen from now on.
         data->autoSaved = TRUE;
 
-        D(DBF_MAIL, "saved mail text of write window #%d in autosave file '%s'", data->windowNumber, fileName);
+        D(DBF_MAIL, "saved mail text of write window #%d", data->windowNumber);
       }
-      else
-        W(DBF_MAIL, "EditorToFile failed");
     }
     else
-      D(DBF_MAIL, "No changes found in editor, no need to save an autosave file");
+      D(DBF_MAIL, "no changes found in editor, no need to save an autosave file");
   }
 
   RETURN(0);
@@ -4329,7 +4312,7 @@ DECLARE(CancelAction)
         case 1:
         {
           // send later
-          DoMethod(obj, MUIM_WriteWindow_ComposeMail, WRITE_QUEUE);
+          DoMethod(obj, METHOD(ComposeMail), WRITE_QUEUE);
           discard = FALSE;
         }
         break;
@@ -4395,7 +4378,7 @@ DECLARE(MailFileModified)
       if(keep == FALSE)
       {
         // let the TextEditor.mcc load the modified file and mark it as changed again
-        DoMethod(obj, MUIM_WriteWindow_ReloadText, TRUE);
+        DoMethod(obj, METHOD(ReloadText), TRUE);
 
         // remember this new date stamp
         memcpy(&data->wmData->lastFileChangeTime, &currentFileChangeTime, sizeof(data->wmData->lastFileChangeTime));

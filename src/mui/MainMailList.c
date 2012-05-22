@@ -875,9 +875,11 @@ DECLARE(DoubleClicked) // LONG entryNum
 
   if(msg->entryNum >= 0)
   {
+    struct Folder *folder = GetCurrentFolder();
+
     // A double click in the outgoing folder should popup a write
     // window instead.
-    if(GetCurrentFolder() != NULL && isOutgoingFolder(GetCurrentFolder()))
+    if(folder != NULL && (isOutgoingFolder(folder) || isDraftsFolder(folder)))
     {
       // in case the folder is the "outgoing" folder
       // we edit the mail instead.

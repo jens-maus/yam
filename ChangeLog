@@ -22,8 +22,10 @@ $URL$
   * YAM_FO.c, misc: started to implement a "Drafts" folder where mails will be
     stored that are currently being edited. When finished this folder is meant to
     replace the insufficient autosave files which just contain the mail body but
-    no recipients and subject. Please note that this folder is not yet used in
-    any way.
+    no recipients and subject.
+  * mui/WriteWindow.c, misc: the drafts folder is now used for automatically saved
+    mails. These can be edited later without loosing the recipients or subject.
+    Please note that this feature is not yet fully working.
 
 2012-05-21 Samir Hawamdeh <s.hawamdeh@tin.it>
 
@@ -57,7 +59,7 @@ $URL$
   * YAM_WR.c, mui/WriteWindow.c: implemented support for the mailing list support
     improving header fields "Mail-Followup-To:" and "Mail-Reply-To:". With these
     header fields YAM will now add the recipients in these header fields as the To:
-    in case the user replying to the sender or to all recipients. Furthermore,
+    in case the user replying to the sender or to al recipients. Furthermore,
     YAM will also now automatically add these headers if it finds a mailing list
     address in the To:/CC:/BCC: fields of an outgoing mail.
     This implements and closes #282.

@@ -1952,7 +1952,7 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
 
   // check if necessary settings fror writing are OK and open new window
   if(CO_IsValid() == TRUE &&
-     (wmData = CreateWriteWindow(isOutgoingFolder(folder) ? NMM_EDIT : NMM_EDITASNEW, quiet)) != NULL)
+     (wmData = CreateWriteWindow(isOutgoingFolder(folder) || isDraftsFolder(folder) ? NMM_EDIT : NMM_EDITASNEW, quiet)) != NULL)
   {
     FILE *out;
 
@@ -2535,12 +2535,12 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
                 for(k=0; k < email->NumSTo+1; k++)
                 {
                   struct Person *person;
-    
+
                   if(k == 0)
                     person = &mail->To;
                   else
                     person = &email->STo[k-1];
-    
+
                   if(MatchNoCase(person->Address, curFolder->MLPattern) == TRUE ||
                      MatchNoCase(person->RealName, curFolder->MLPattern) == TRUE)
                   {
@@ -2548,7 +2548,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
                     break;
                   }
                 }
-    
+
                 // second, search in all CC: addresses for the
                 // mailing list address
                 if(foundMLFolder == FALSE)
@@ -2556,7 +2556,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
                   for(k=0; k < email->NumCC; k++)
                   {
                     struct Person *person = &email->CC[k];
-      
+
                     if(MatchNoCase(person->Address, curFolder->MLPattern) == TRUE ||
                        MatchNoCase(person->RealName, curFolder->MLPattern) == TRUE)
                     {
@@ -2615,7 +2615,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
               for(k=0; k < email->NumCC; k++)
               {
                 struct Person *person = &email->CC[k];
-  
+
                 if(MatchNoCase(person->Address, folder->MLPattern) == TRUE ||
                    MatchNoCase(person->RealName, folder->MLPattern) == TRUE)
                 {
@@ -2919,7 +2919,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
           }
           break;
 
-          // user wants to reply to all 
+          // user wants to reply to all
           // recipients of the mail
           case 3:
           {

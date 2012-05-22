@@ -1051,7 +1051,7 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
         }
         else
         {
-          if(!isOutgoingFolder(mail->Folder))
+          if(!isOutgoingFolder(mail->Folder) && !isDraftsFolder(mail->Folder))
           {
             // set mail status to OLD in any non-outgoing folder
             setStatusToRead(mail);

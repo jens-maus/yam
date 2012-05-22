@@ -115,7 +115,8 @@ enum WriteMode
 {
   WRITE_HOLD,
   WRITE_SEND,
-  WRITE_QUEUE
+  WRITE_QUEUE,
+  WRITE_DRAFT
 };
 
 // mail text encoding codes
