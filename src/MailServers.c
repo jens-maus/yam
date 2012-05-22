@@ -237,7 +237,7 @@ static BOOL CompareMailServerNodes(const struct Node *n1, const struct Node *n2)
   // some server type specific stuff
   if(equal == TRUE)
   {
-    if(msn->type == MST_POP3)
+    if(msn1->type == MST_POP3)
     {
       if(msn1->preselection       != msn2->preselection ||
          msn1->downloadInterval   != msn2->downloadInterval ||
@@ -247,7 +247,7 @@ static BOOL CompareMailServerNodes(const struct Node *n1, const struct Node *n2)
         equal = FALSE;
       }
     }
-    else if(msn->type == MST_SMTP)
+    else if(msn1->type == MST_SMTP)
     {
       if(msn1->smtpFlags != msn2->smtpFlags)
       {
