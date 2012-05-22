@@ -13,6 +13,7 @@ $URL$
     IO requests.
   * MailServers.c: each mail server node carries it type again to make server
     specific decisions in general mail server functions easier.
+  * MailServers.c: included the server specific settings in the comparison.
 
 2012-05-21 Samir Hawamdeh <s.hawamdeh@tin.it>
 

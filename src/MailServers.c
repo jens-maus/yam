@@ -220,20 +220,41 @@ static BOOL CompareMailServerNodes(const struct Node *n1, const struct Node *n2)
 
   ENTER();
 
-  // compare every single member of the structure, except the
-  // list of downloaded mails for POP3 servers
-  if(msn1->id != msn2->id ||
-     strcmp(msn1->description,  msn2->description) != 0 ||
-     strcmp(msn1->hostname, msn2->hostname) != 0 ||
-     strcmp(msn1->username, msn2->username) != 0 ||
-     strcmp(msn1->password, msn2->password) != 0 ||
+  // compare the common members of the structure first
+  if(msn1->id             != msn2->id ||
+     strcmp(msn1->description, msn2->description) != 0 ||
+     strcmp(msn1->hostname,    msn2->hostname) != 0 ||
+     strcmp(msn1->username,    msn2->username) != 0 ||
+     strcmp(msn1->password,    msn2->password) != 0 ||
      msn1->port           != msn2->port ||
-     msn1->flags          != msn2->flags ||
-     msn1->smtpFlags      != msn2->smtpFlags ||
-     msn1->preselection   != msn2->preselection)
+     msn1->flags          != msn2->flags)
   {
     // something does not match
     equal = FALSE;
+  }
+
+  // if the two nodes are still considered equal then compare
+  // some server type specific stuff
+  if(equal == TRUE)
+  {
+    if(msn->type == MST_POP3)
+    {
+      if(msn1->preselection       != msn2->preselection ||
+         msn1->downloadInterval   != msn2->downloadInterval ||
+         msn1->largeMailSizeLimit != msn2->largeMailSizeLimit)
+      {
+        // something does not match
+        equal = FALSE;
+      }
+    }
+    else if(msn->type == MST_SMTP)
+    {
+      if(msn1->smtpFlags != msn2->smtpFlags)
+      {
+        // something does not match
+        equal = FALSE;
+      }
+    }
   }
 
   RETURN(equal);
