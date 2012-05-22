@@ -65,6 +65,7 @@ struct MailServerNode *CreateNewMailServer(const enum MailServerType type, const
   {
     // initialize all variables as AllocSysObject() does not clear the memory
     memset(msn, 0, sizeof(*msn));
+    msn->type = type;
     msn->flags = MSF_ACTIVE;
 
     switch(type)
@@ -142,12 +143,13 @@ struct MailServerNode *CloneMailServer(const struct MailServerNode *msn)
 
   if((clone = DuplicateNode(msn, sizeof(*msn))) != NULL)
   {
-    // the clone is not in use
+    // the clone is not in use yet
     clearFlag(clone->flags, MSF_IN_USE);
 
-    // POP3 servers keep a list of downloaded mails
-    if(msn->downloadedMails != NULL)
+    // prepare some stuff for POP3 servers
+    if(msn->type == MST_POP3)
     {
+      // POP3 servers keep a list of downloaded mails and a timer
       if((clone->downloadedMails = CreateMailList()) != NULL)
       {
         if(CreateTRequest(&clone->downloadTimer, -1, clone) == FALSE)
@@ -170,6 +172,24 @@ struct MailServerNode *CloneMailServer(const struct MailServerNode *msn)
 }
 
 ///
+/// DeleteMailServer
+void DeleteMailServer(struct MailServerNode *msn)
+{
+  ENTER();
+
+  // free some additional stuff of POP3 servers first
+  if(msn->type == MST_POP3)
+  {
+    DeleteMailList(msn->downloadedMails);
+    DeleteTRequest(&msn->downloadTimer);
+  }
+
+  FreeSysObject(ASOT_NODE, msn);
+
+  LEAVE();
+}
+
+///
 /// FreeMailServerList
 void FreeMailServerList(struct MinList *mailServerList)
 {
@@ -182,13 +202,7 @@ void FreeMailServerList(struct MinList *mailServerList)
   {
     struct MailServerNode *msn = (struct MailServerNode *)curNode;
 
-    if(msn->downloadedMails != NULL)
-      DeleteMailList(msn->downloadedMails);
-
-    if(msn->downloadTimer.tr != NULL)
-      DeleteTRequest(&msn->downloadTimer);
-
-    FreeSysObject(ASOT_NODE, msn);
+    DeleteMailServer(msn);
   }
 
   NewMinList(mailServerList);

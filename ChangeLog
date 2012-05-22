@@ -11,6 +11,8 @@ $URL$
     to avoid memory leaks.
   * Timer.c: stop the POP3 timers along with all other timers to avoid dangling
     IO requests.
+  * MailServers.c: each mail server node carries it type again to make server
+    specific decisions in general mail server functions easier.
 
 2012-05-21 Samir Hawamdeh <s.hawamdeh@tin.it>
 

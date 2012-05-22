@@ -113,6 +113,7 @@ struct MailServerNode
 {
   struct MinNode node;                   // required for placing it into struct Config
 
+  int type;                              // type of this sever (POP3, SMTP, etc)
   int id;                                // a unique ID for this server
 
   char description[SIZE_LARGE];          // user definable description
@@ -136,6 +137,7 @@ struct MailServerNode
 // public functions
 struct MailServerNode *CreateNewMailServer(const enum MailServerType type, const struct Config *co, const BOOL first);
 struct MailServerNode *CloneMailServer(const struct MailServerNode *msn);
+void DeleteMailServer(struct MailServerNode *msn);
 void FreeMailServerList(struct MinList *mailServerList);
 BOOL CompareMailServerLists(const struct MinList *msl1, const struct MinList *msl2);
 struct MailServerNode *GetMailServer(const struct MinList *mailServerList, const unsigned int num);
