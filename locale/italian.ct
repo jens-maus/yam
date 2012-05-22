@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.00 (21.05.2012)
+## version $VER: YAM.catalog 7.99 (22.05.2012)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -7,7 +7,7 @@
 ; Compiled with FlexCat 2.9 PPC (AmigaOS4)
 ; $Id$
 ;
-; based on YAM.cd 5959 2012-05-21
+; based on YAM.cd 5977 2012-05-22
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -10592,4 +10592,8 @@ _Preleva messaggi più grandi di
 MSG_CO_DOWNLOAD_LARGE_MAILS2
 KB
 ; KB
+;
+MSG_MA_DRAFTS
+Incompleti
+; Drafts
 ;

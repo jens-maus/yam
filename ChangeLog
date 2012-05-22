@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-05-22 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: fixed wrong catalog version then update to the latest changes.
+
 2012-05-22 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_CO.c: if copying a configuration fails it will be freed immediately again
