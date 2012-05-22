@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-05-22 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_CO.c: if copying a configuration fails it will be freed immediately again
+    to avoid memory leaks.
+
 2012-05-21 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: update according to the latest changes.

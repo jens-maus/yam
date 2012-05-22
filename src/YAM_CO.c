@@ -1765,7 +1765,6 @@ static BOOL CopyConfigData(struct Config *dco, const struct Config *sco)
     }
   }
 
-D(DBF_ALWAYS, "jooo3");
   // for copying the filters we do have to do another deep copy
   NewMinList(&dco->filterList);
 
@@ -1800,6 +1799,10 @@ D(DBF_ALWAYS, "jooo3");
 
   // remember that this configuration is not yet saved
   dco->ConfigIsSaved = FALSE;
+
+  // free the copied configuration in case anything failed
+  if(success == FALSE)
+    CO_ClearConfig(dco);
 
   // return if everything could be duplicated successfully
   RETURN(success);
