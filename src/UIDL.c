@@ -144,7 +144,7 @@ struct UIDLhash *InitUIDLhash(const struct MailServerNode *msn)
         free(uidl);
       }
       else
-        W(DBF_UIDL, "no UIDL database file found");
+        W(DBF_UIDL, "UIDL database file '%s' does not exist", uidlPath);
 
       // remember the mail server to be able to regenerate the file name upon cleanup
       uidlHash->mailServer = (struct MailServerNode *)msn;
