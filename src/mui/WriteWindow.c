@@ -156,10 +156,10 @@ struct Data
   BOOL useTextColors;  // use Textcolors for displaying the mail
   BOOL useTextStyles;  // use Textstyles for displaying the mail
 
-  BOOL fromRcptHided;     // TRUE if From: recipient field is hided
-  BOOL ccRcptHided;       // TRUE if CC: recipient field is hided
-  BOOL bccRcptHided;      // TRUE if BCC: recipient field is hided
-  BOOL replyToRcptHided;  // TRUE if Reply-To: recipient field is hided
+  BOOL fromRcptHidden;     // TRUE if From: recipient field is hidden
+  BOOL ccRcptHidden;       // TRUE if CC: recipient field is hidden
+  BOOL bccRcptHidden;      // TRUE if BCC: recipient field is hidden
+  BOOL replyToRcptHidden;  // TRUE if Reply-To: recipient field is hidden
 
   char cursorPos[SIZE_SMALL];
   char windowTitle[SIZE_SUBJECT+1]; // string for the title text of the window
@@ -1661,26 +1661,26 @@ OVERLOAD(OM_DISPOSE)
     G->AB->winNumber = -1;
 
   // we have to dispose certain object on our own
-  // because they may be hided by the user
-  if(data->fromRcptHided == TRUE)
+  // because they may be hidden by the user
+  if(data->fromRcptHidden == TRUE)
   {
     MUI_DisposeObject(data->LB_FROM);
     MUI_DisposeObject(data->CY_FROM);
   }
 
-  if(data->ccRcptHided == TRUE)
+  if(data->ccRcptHidden == TRUE)
   {
     MUI_DisposeObject(data->LB_CC);
     MUI_DisposeObject(data->GR_CC);
   }
 
-  if(data->bccRcptHided == TRUE)
+  if(data->bccRcptHidden == TRUE)
   {
     MUI_DisposeObject(data->LB_BCC);
     MUI_DisposeObject(data->GR_BCC);
   }
 
-  if(data->replyToRcptHided == TRUE)
+  if(data->replyToRcptHidden == TRUE)
   {
     MUI_DisposeObject(data->LB_REPLYTO);
     MUI_DisposeObject(data->GR_REPLYTO);
@@ -3780,7 +3780,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
     // now we search all To:,CC: and BCC: addresses and try to match them
     // against all mailing lists
     LockFolderListShared(G->folders);
-    
+
     // walk through all folders and check if the
     // mailing list support matches
     ForEachFolderNode(G->folders, fnode)
@@ -4467,7 +4467,7 @@ DECLARE(HideRecipientObject) // enum RcptType rtype
       {
         DoMethod(data->GR_HEADER, OM_REMMEMBER, data->LB_FROM);
         DoMethod(data->GR_HEADER, OM_REMMEMBER, data->CY_FROM);
-        data->fromRcptHided = TRUE;
+        data->fromRcptHidden = TRUE;
       }
       break;
 
@@ -4475,7 +4475,7 @@ DECLARE(HideRecipientObject) // enum RcptType rtype
       {
         DoMethod(data->GR_HEADER, OM_REMMEMBER, data->LB_CC);
         DoMethod(data->GR_HEADER, OM_REMMEMBER, data->GR_CC);
-        data->ccRcptHided = TRUE;
+        data->ccRcptHidden = TRUE;
 
         // make sure to set the menuitem object state correctly
         nnset(data->MN_CC, MUIA_Menuitem_Checked, FALSE);
@@ -4486,7 +4486,7 @@ DECLARE(HideRecipientObject) // enum RcptType rtype
       {
         DoMethod(data->GR_HEADER, OM_REMMEMBER, data->LB_BCC);
         DoMethod(data->GR_HEADER, OM_REMMEMBER, data->GR_BCC);
-        data->bccRcptHided = TRUE;
+        data->bccRcptHidden = TRUE;
 
         // make sure to set the menuitem object state correctly
         nnset(data->MN_BCC, MUIA_Menuitem_Checked, FALSE);
@@ -4497,7 +4497,7 @@ DECLARE(HideRecipientObject) // enum RcptType rtype
       {
         DoMethod(data->GR_HEADER, OM_REMMEMBER, data->LB_REPLYTO);
         DoMethod(data->GR_HEADER, OM_REMMEMBER, data->GR_REPLYTO);
-        data->replyToRcptHided = TRUE;
+        data->replyToRcptHidden = TRUE;
 
         // make sure to set the menuitem object state correctly
         nnset(data->MN_REPLYTO, MUIA_Menuitem_Checked, FALSE);
@@ -4532,8 +4532,8 @@ DECLARE(ShowRecipientObject) // enum RcptType rtype
     {
       case MUIV_WriteWindow_RcptType_From:
       {
-        // we only show it if it is already hided
-        if(data->fromRcptHided == TRUE)
+        // we only show it if it is already hidden
+        if(data->fromRcptHidden == TRUE)
         {
           DoMethod(data->GR_HEADER, OM_ADDMEMBER, data->LB_FROM);
           DoMethod(data->GR_HEADER, OM_ADDMEMBER, data->CY_FROM);
@@ -4541,25 +4541,25 @@ DECLARE(ShowRecipientObject) // enum RcptType rtype
           objPosition -= 2; // -2 because To: is always shown but we place in front
           DoMethod(data->GR_HEADER, MUIM_Group_MoveMember, data->LB_FROM, objPosition);
           DoMethod(data->GR_HEADER, MUIM_Group_MoveMember, data->CY_FROM, objPosition+1);
-          data->fromRcptHided = FALSE;
+          data->fromRcptHidden = FALSE;
         }
       }
       break;
 
       case MUIV_WriteWindow_RcptType_CC:
       {
-        // we only show it if it is already hided
-        if(data->ccRcptHided == TRUE)
+        // we only show it if it is already hidden
+        if(data->ccRcptHidden == TRUE)
         {
           DoMethod(data->GR_HEADER, OM_ADDMEMBER, data->LB_CC);
           DoMethod(data->GR_HEADER, OM_ADDMEMBER, data->GR_CC);
 
-          if(data->fromRcptHided == FALSE)
+          if(data->fromRcptHidden == FALSE)
             objPosition += 2;
 
           DoMethod(data->GR_HEADER, MUIM_Group_MoveMember, data->LB_CC, objPosition);
           DoMethod(data->GR_HEADER, MUIM_Group_MoveMember, data->GR_CC, objPosition+1);
-          data->ccRcptHided = FALSE;
+          data->ccRcptHidden = FALSE;
 
           // make sure to set the menuitem object state correctly
           nnset(data->MN_CC, MUIA_Menuitem_Checked, TRUE);
@@ -4569,20 +4569,20 @@ DECLARE(ShowRecipientObject) // enum RcptType rtype
 
       case MUIV_WriteWindow_RcptType_BCC:
       {
-        // we only show it if it is already hided
-        if(data->bccRcptHided == TRUE)
+        // we only show it if it is already hidden
+        if(data->bccRcptHidden == TRUE)
         {
           DoMethod(data->GR_HEADER, OM_ADDMEMBER, data->LB_BCC);
           DoMethod(data->GR_HEADER, OM_ADDMEMBER, data->GR_BCC);
 
-          if(data->fromRcptHided == FALSE)
+          if(data->fromRcptHidden == FALSE)
             objPosition += 2;
-          if(data->ccRcptHided == FALSE)
+          if(data->ccRcptHidden == FALSE)
             objPosition += 2;
 
           DoMethod(data->GR_HEADER, MUIM_Group_MoveMember, data->LB_BCC, objPosition);
           DoMethod(data->GR_HEADER, MUIM_Group_MoveMember, data->GR_BCC, objPosition+1);
-          data->bccRcptHided = FALSE;
+          data->bccRcptHidden = FALSE;
 
           // make sure to set the menuitem object state correctly
           nnset(data->MN_BCC, MUIA_Menuitem_Checked, TRUE);
@@ -4592,22 +4592,22 @@ DECLARE(ShowRecipientObject) // enum RcptType rtype
 
       case MUIV_WriteWindow_RcptType_ReplyTo:
       {
-        // we only show it if it is already hided
-        if(data->replyToRcptHided == TRUE)
+        // we only show it if it is already hidden
+        if(data->replyToRcptHidden == TRUE)
         {
           DoMethod(data->GR_HEADER, OM_ADDMEMBER, data->LB_REPLYTO);
           DoMethod(data->GR_HEADER, OM_ADDMEMBER, data->GR_REPLYTO);
 
-          if(data->fromRcptHided == FALSE)
+          if(data->fromRcptHidden == FALSE)
             objPosition += 2;
-          if(data->ccRcptHided == FALSE)
+          if(data->ccRcptHidden == FALSE)
             objPosition += 2;
-          if(data->bccRcptHided == FALSE)
+          if(data->bccRcptHidden == FALSE)
             objPosition += 2;
 
           DoMethod(data->GR_HEADER, MUIM_Group_MoveMember, data->LB_REPLYTO, objPosition);
           DoMethod(data->GR_HEADER, MUIM_Group_MoveMember, data->GR_REPLYTO, objPosition+1);
-          data->replyToRcptHided = FALSE;
+          data->replyToRcptHidden = FALSE;
 
           // make sure to set the menuitem object state correctly
           nnset(data->MN_REPLYTO, MUIA_Menuitem_Checked, TRUE);
@@ -4640,12 +4640,12 @@ DECLARE(MenuToggleRecipientObject) // enum RcptType rtype
   switch(msg->rtype)
   {
     case MUIV_WriteWindow_RcptType_From:
-      show = (data->fromRcptHided == TRUE);
+      show = (data->fromRcptHidden == TRUE);
     break;
 
     case MUIV_WriteWindow_RcptType_CC:
     {
-      show = (data->ccRcptHided == TRUE);
+      show = (data->ccRcptHidden == TRUE);
 
       // if the user used the menuitem we set a new default
       // in the configuration
@@ -4666,7 +4666,7 @@ DECLARE(MenuToggleRecipientObject) // enum RcptType rtype
 
     case MUIV_WriteWindow_RcptType_BCC:
     {
-      show = (data->bccRcptHided == TRUE);
+      show = (data->bccRcptHidden == TRUE);
 
       // if the user used the menuitem we set a new default
       // in the configuration
@@ -4687,7 +4687,7 @@ DECLARE(MenuToggleRecipientObject) // enum RcptType rtype
 
     case MUIV_WriteWindow_RcptType_ReplyTo:
     {
-      show = (data->replyToRcptHided == TRUE);
+      show = (data->replyToRcptHidden == TRUE);
 
       // if the user used the menuitem we set a new default
       // in the configuration
@@ -4718,7 +4718,7 @@ DECLARE(MenuToggleRecipientObject) // enum RcptType rtype
     DoMethod(obj, METHOD(HideRecipientObject), msg->rtype);
 
   // then we save the new default state for the
-  // manually hided/shown recipient object
+  // manually hidden/shown recipient object
   if(saveConfig == TRUE)
     CO_SaveConfig(C, G->CO_PrefsFile);
 
