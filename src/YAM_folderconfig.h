@@ -102,6 +102,7 @@ extern const char* const FolderName[FT_NUM];
                                      isDraftsFolder(folder))
 
 #define isSentMailFolder(folder) (isOutgoingFolder(folder)   || \
+                                  isDraftsFolder(folder)     || \
                                   isSentFolder(folder)       || \
                                   isCustomSentFolder(folder))
 
