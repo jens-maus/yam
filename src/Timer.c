@@ -239,7 +239,7 @@ static void StopTRequest(struct TRequest *timer)
     if(timer->id != -1)
       W(DBF_TIMER, "timer[%ld]: already stopped", timer->id);
     else if(timer->pop3Server != NULL)
-      W(DBF_TIMER, "timer[%ld]: already stopped", timer->pop3Server->description);
+      W(DBF_TIMER, "timer[%s]: already stopped", timer->pop3Server->description);
   }
   #endif
 
@@ -404,6 +404,9 @@ BOOL CreateTRequest(struct TRequest *timer, UNUSED const int id, UNUSED struct M
 
   if(timer->tr != NULL)
   {
+    timer->isRunning = FALSE;
+    timer->isPrepared = FALSE;
+
     #if defined(DEBUG)
     // remember some values for timer debugging
     timer->id = id;
@@ -497,6 +500,8 @@ void CleanupTimers(void)
     // first make sure every TimerIO is stoppped
     for(tid = TIMER_WRINDEX; tid < TIMER_NUM; tid++)
       StopTimer(tid);
+
+    StopPOP3Timers();
 
     // then close the device
     if(G->timerData.timer[0].tr->Request.io_Device != NULL)
@@ -898,6 +903,29 @@ void StartPOP3Timers(void)
 
     if(isServerActive(msn) && hasServerDownloadPeriodically(msn))
       StartTRequest(&msn->downloadTimer);
+  }
+
+  ReleaseSemaphore(G->configSemaphore);
+
+  LEAVE();
+}
+
+///
+/// StopPOP3Timers
+// stop the timers of all active POP3 servers
+void StopPOP3Timers(void)
+{
+  struct Node *curNode;
+
+  ENTER();
+
+  ObtainSemaphoreShared(G->configSemaphore);
+
+  IterateList(&C->pop3ServerList, curNode)
+  {
+    struct MailServerNode *msn = (struct MailServerNode *)curNode;
+
+    StopTRequest(&msn->downloadTimer);
   }
 
   ReleaseSemaphore(G->configSemaphore);

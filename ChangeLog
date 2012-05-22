@@ -9,6 +9,8 @@ $URL$
 
   * YAM_CO.c: if copying a configuration fails it will be freed immediately again
     to avoid memory leaks.
+  * Timer.c: stop the POP3 timers along with all other timers to avoid dangling
+    IO requests.
 
 2012-05-21 Samir Hawamdeh <s.hawamdeh@tin.it>
 
