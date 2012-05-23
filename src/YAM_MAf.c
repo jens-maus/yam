@@ -1338,6 +1338,10 @@ BOOL MA_NewMailFile(const struct Folder *folder, char *fullPath, const size_t fu
     snprintf(newFileName, sizeof(newFileName), "%s.%03d,N", dateFilePart, ++mCounter);
 
     AddPath(fullPath, folder->Fullpath, newFileName, fullPathSize);
+
+    // don't care about duplicate files in the drafts folder
+    if(isDraftsFolder(folder) == TRUE)
+      break;
   }
   while(mCounter < 999 && FileExists(fullPath) == TRUE);
 
@@ -2238,7 +2242,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
     char timebuf[sizeof(struct TimeVal)+1]; // +1 because the b64decode does set a NUL byte
     struct Node *curNode;
     LONG size;
-    
+
     // Now we process the read header to set all flags accordingly
     IterateList(&headerList, curNode)
     {
@@ -2606,7 +2610,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
           if((p = strcasestr(value, "identity=")) != NULL)
           {
             char idStr[9] = ""; // the id is only 8 chars long + 1 NUL
-            
+
             strlcpy(idStr, &p[9], sizeof(idStr));
             email->identityID = strtol(idStr, NULL, 16);
 
