@@ -3663,7 +3663,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
   struct Mail *newMail = NULL;
   char *addr;
   int numAttachments = 0;
-  struct Folder *outfolder = FO_GetFolderByType(msg->mode == WRITE_DRAFT ? FT_DRAFTS : FT_OUTGOING, NULL);
+  struct Folder *outfolder;
   BOOL winOpen = xget(obj, MUIA_Window_Open);
   struct WriteMailData *wmData = data->wmData;
   enum WriteMode mode = msg->mode;
@@ -3705,7 +3705,9 @@ DECLARE(ComposeMail) // enum WriteMode mode
     set(obj, MUIA_Window_ActiveObject, data->ST_TO);
 
     if(MUI_Request(G->App, obj, 0, NULL, tr(MSG_WR_NoRcptReqGad), tr(MSG_WR_ErrorNoRcpt)) != 0)
+    {
       mode = WRITE_HOLD;
+    }
     else
       goto out;
   }
@@ -3866,6 +3868,8 @@ DECLARE(ComposeMail) // enum WriteMode mode
   }
   else if(mode != WRITE_DRAFT)
     MA_StartMacro(MACRO_POSTWRITE, data->windowNumberStr);
+
+  outfolder = FO_GetFolderByType(mode == WRITE_HOLD || mode == WRITE_DRAFT ? FT_DRAFTS : FT_OUTGOING, NULL);
 
   // now we check how the new mail file should be named
   // or created off.

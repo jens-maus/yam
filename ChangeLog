@@ -9,6 +9,8 @@ $URL$
 
   * YAM_WR.c, misc: removed the old autosave file support as the automatic
     saving happens in the drafts folder now.
+  * mui/WriteWindow.c: defer the folder selection until the final compose mode
+    is fixed.
 
 2012-05-22 Jens Langner <Jens.Langner@light-speed.de>
 
