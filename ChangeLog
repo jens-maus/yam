@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-05-23 Pär Boberg <pbobbenb@spray.se>
+
+  * locale/swedish.ct: updated according to changes.
+
 2012-05-23 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_WR.c, misc: removed the old autosave file support as the automatic

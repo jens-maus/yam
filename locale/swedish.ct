@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.9 (18.05.2012)
+## version $VER: YAM.catalog 7.10 (22.05.2012)
 ## language svenska
 ## codeset 0
 ;
@@ -1292,14 +1292,6 @@ MSG_CO_UpdateStatus
 Uppdat_era meddelandestatus
 ; Update m_essage status
 ;
-MSG_CO_WarnSize1
-_Gräns
-; Size _limit
-;
-MSG_CO_WarnSize2
-kb
-; KB
-;
 MSG_CO_AutoOperation
 Hämta automatiskt
 ; Automatic operation
@@ -1311,10 +1303,6 @@ Leta efter ny post var
 MSG_CO_Minutes
 minut
 ; minutes
-;
-MSG_CO_DownloadLarge
-_Hämta stora meddelanden
-; _Download large messages
 ;
 MSG_CO_Notification
 Meddelande
@@ -5857,19 +5845,6 @@ MSG_CO_Less
 Mindre
 ; _Less
 ;
-MSG_MA_AUTOSAVEFOUND
-YAM har hittat en autosparad meddelandefil '%s'\nsom har skapats i en föregående session. Detta kan bero\npå en krash eller omstart, vid skrivning av ett meddelande.\n\nVad vill du göra med det meddelandet?
-; YAM has found an autosaved message file '%s'\n\
-; which was created in a previous session.\n\
-; This may be due to a possible crash or reboot\n\
-; while writing a message.\n\
-; \n\
-; What do you want to do with that message?
-;
-MSG_MA_AUTOSAVEFOUND_TITLE
-Autosparad fil hittad
-; Autosave file found
-;
 MSG_CO_NB_AUTOSAVE
 Autospara intervall
 ; Autosave interval
@@ -7305,10 +7280,6 @@ Det är inte rekommenderat att aktivera detta val\nmed så få som %ld brev klassif
 MSG_ER_CANNOT_CREATE_SEMAPHORE
 Kan inte skapa semafor!
 ; Can't create semaphore.
-;
-MSG_MA_AUTOSAVEFOUND_BUTTONS
-*Flytta till _Utkorgen|R_edigera|_Radera|_Ignorera
-; *Move to _Outgoing|_Edit|_Delete|_Ignore
 ;
 MSG_RE_HDR_FROM
 Från
@@ -9509,4 +9480,20 @@ som är definierade där.
 ; encrypted or both. "Default" tries to find\n\
 ; the recipient in your address book and use\n\
 ; the settings defined there.
+;
+MSG_CO_MIMETYPE_TITLE
+MIME-typ
+; MIME type
+;
+MSG_CO_DOWNLOAD_LARGE_MAILS1
+_Hämta meddelanden större än
+; _Download messages larger than
+;
+MSG_CO_DOWNLOAD_LARGE_MAILS2
+Kb
+; KB
+;
+MSG_MA_DRAFTS
+Utkast
+; Drafts
 ;
