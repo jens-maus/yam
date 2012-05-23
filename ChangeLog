@@ -19,6 +19,8 @@ $URL$
     are meant to replace the former version of an autosaved mail by intention.
   * mui/WriteWindow.c: finishing a mail (i.e. send now/later or put it on hold)
     will now delete the corresponding mail in the draft folder if it exists.
+  * YAM_FI.c: create new rules with a default combination of "OR" instead of
+    "none" to avoid mismatching configurations.
 
 2012-05-22 Jens Langner <Jens.Langner@light-speed.de>
 

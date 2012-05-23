@@ -2318,7 +2318,7 @@ static BOOL CompareFilterNodes(const struct Node *n1, const struct Node *n2)
 
   ENTER();
 
-  // compare every single member of the structure
+   // compare every single member of the structure
   if(fn1->actions         != fn2->actions ||
      fn1->remote          != fn2->remote ||
      fn1->applyToNew      != fn2->applyToNew ||
@@ -2436,7 +2436,7 @@ struct RuleNode *CreateNewRule(struct FilterNode *filter, const BOOL dosPattern)
   {
     // set the default search mode (plain string search or DOS patterns)
     rule->search = NULL;
-    rule->combine = CB_NONE;
+    rule->combine = CB_OR;
     rule->searchMode = SM_FROM;
     rule->subSearchMode = SSM_ADDRESS;
     rule->comparison = CP_EQUAL;
