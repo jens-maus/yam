@@ -2698,11 +2698,6 @@ int main(int argc, char **argv)
     AppendToLogfile(LF_ALL, 0, tr(MSG_LOG_Started));
     MA_StartMacro(MACRO_STARTUP, NULL);
 
-    // let us check for the existance of .autosaveXX.txt files
-    // and war the user accordingly if there exists such an
-    // autosave file.
-    CheckForAutoSaveFiles();
-
     if(yamFirst == TRUE)
     {
       struct WriteMailData *wmData;

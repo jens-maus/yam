@@ -4557,17 +4557,6 @@ _More
 MSG_CO_Less (1552//)
 _Less
 ;
-MSG_MA_AUTOSAVEFOUND (1563//)
-YAM has found an autosaved message file '%s'\n\
-which was created in a previous session.\n\
-This may be due to a possible crash or reboot\n\
-while writing a message.\n\
-\n\
-What do you want to do with that message?
-;
-MSG_MA_AUTOSAVEFOUND_TITLE (1564//)
-Autosave file found
-;
 MSG_CO_NB_AUTOSAVE (1566//)
 Autosave interval
 ;
@@ -5687,9 +5676,6 @@ Do you want to disable this option again?
 ;
 MSG_ER_CANNOT_CREATE_SEMAPHORE (1915//)
 Can't create semaphore.
-;
-MSG_MA_AUTOSAVEFOUND_BUTTONS (1916//)
-*Move to _Outgoing|_Edit|_Delete|_Ignore
 ;
 MSG_RE_HDR_FROM (1917//)
 From

@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.42 (22.05.2012)
+## version $VER: YAM.catalog 7.43 (23.05.2012)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -6116,18 +6116,6 @@ _Hinzufügen
 MSG_CO_Less
 _Entfernen
 ;
-MSG_MA_AUTOSAVEFOUND
-YAM hat eine automatische Sicherungsdatei '%s'\n\
-einer Nachricht gefunden, die in einer vorherigen Sitzung\n\
-erzeugt wurde. Dies könnte durch einen eventuellen Absturz oder\n\
-Neustart Ihres Systems, während Sie eine Mail geschrieben\n\
-haben, geschehen sein.\n\
-\n\
-Was möchten Sie mit dieser Nachricht tun?
-;
-MSG_MA_AUTOSAVEFOUND_TITLE
-Sicherungskopie gefunden
-;
 MSG_CO_NB_AUTOSAVE
 Sicherungskopieinterval
 ;
@@ -7269,9 +7257,6 @@ gelesen deaktivieren?
 ;
 MSG_ER_CANNOT_CREATE_SEMAPHORE
 Kann Semaphore nicht erstellen.
-;
-MSG_MA_AUTOSAVEFOUND_BUTTONS
-*In _Postausgang legen|_Editieren|_Löschen|_Ignorieren
 ;
 MSG_RE_HDR_FROM
 Von

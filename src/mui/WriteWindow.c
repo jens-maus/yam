@@ -1634,7 +1634,6 @@ OVERLOAD(OM_DISPOSE)
 
   if(data->wmData->mode != NMM_BOUNCE)
   {
-    char fileName[SIZE_PATHFILE];
     int i;
 
     // cleanup the attachment list
@@ -1667,9 +1666,6 @@ OVERLOAD(OM_DISPOSE)
       FreeSysObject(ASOT_PORT, data->notifyPort);
       data->notifyPort = NULL;
     }
-
-    // delete a possible autosave file
-    DeleteFile(WR_AutoSaveFile(data->windowNumber, fileName, sizeof(fileName)));
   }
 
   // check the reference window ptr of the addressbook
