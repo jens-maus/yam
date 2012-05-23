@@ -21,6 +21,9 @@ $URL$
     will now delete the corresponding mail in the draft folder if it exists.
   * YAM_FI.c: create new rules with a default combination of "OR" instead of
     "none" to avoid mismatching configurations.
+  * mui/AttachmentImage.c: the icon image is now drawn to a layered RastPort
+    which supports clipping. This should make the workaround for AfAOS'
+    icon.library unnecessary.
 
 2012-05-22 Jens Langner <Jens.Langner@light-speed.de>
 
