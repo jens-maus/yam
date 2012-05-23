@@ -164,7 +164,6 @@ struct Data
   char cursorPos[SIZE_SMALL];
   char windowTitle[SIZE_SUBJECT+1]; // string for the title text of the window
   char windowNumberStr[SIZE_SMALL]; // the unique window number as a string
-  char draftMailFile[SIZE_MFILE];   // name of the draft mail file
 };
 */
 
