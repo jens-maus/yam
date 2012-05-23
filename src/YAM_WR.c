@@ -67,6 +67,7 @@
 #include "MailServers.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
+#include "Signature.h"
 #include "UserIdentity.h"
 
 #include "Debug.h"
@@ -3425,56 +3426,64 @@ void WriteSignature(FILE *out, int signature, BOOL separator)
 
   if(signature >= 0)
   {
-    char sigPath[SIZE_PATHFILE];
-    char *sigFile;
-    LONG sigSize;
+    struct SignatureNode *sn;
 
-    sigFile = CreateFilename(SigNames[signature], sigPath, sizeof(sigPath));
-
-    // check whether the signature file exists and contains at least one character
-    if(ObtainFileInfo(sigFile, FI_SIZE, &sigSize) == TRUE && sigSize > 0)
+    // get the signature node
+    if((sn = GetSignature(&C->signatureList, signature, TRUE)) != NULL)
     {
-      FILE *in;
+      char sigPath[SIZE_PATHFILE];
+      char *sigFile;
+      LONG sigSize = 0;
 
-      // now append the signature file and fill the placeholders
-      if((in = fopen(sigFile, "r")) != NULL)
+      sigFile = CreateFilename(sn->filename, sigPath, sizeof(sigPath));
+
+      // check whether the signature file exists and contains at least one character
+      if(ObtainFileInfo(sigFile, FI_SIZE, &sigSize) == TRUE && sigSize > 0)
       {
-        int ch;
+        FILE *in;
 
-        setvbuf(in, NULL, _IOFBF, SIZE_FILEBUF);
-
-        if(separator == TRUE)
-          fputs("-- \n", out);
-        else
-          fputs("\n", out);
-
-        while((ch = fgetc(in)) != EOF)
+        // now append the signature file and fill the placeholders
+        if((in = fopen(sigFile, "r")) != NULL)
         {
-          if(ch == '%')
+          int ch;
+
+          setvbuf(in, NULL, _IOFBF, SIZE_FILEBUF);
+
+          if(separator == TRUE)
+            fputs("-- \n", out);
+          else
+            fputs("\n", out);
+
+          while((ch = fgetc(in)) != EOF)
           {
-            ch = fgetc(in);
-
-            if(ch == 't')
+            if(ch == '%')
             {
-              AddTagline(out);
-              continue;
-            }
+              ch = fgetc(in);
 
-            if(ch == 'e')
-            {
-              CopyFile(NULL, out, "ENV:SIGNATURE", NULL);
-              continue;
-            }
+              if(ch == 't')
+              {
+                AddTagline(out);
+                continue;
+              }
 
-            ungetc(ch, in);
-            ch = '%';
+              if(ch == 'e')
+              {
+                CopyFile(NULL, out, "ENV:SIGNATURE", NULL);
+                continue;
+              }
+
+              ungetc(ch, in);
+              ch = '%';
+            }
+            fputc(ch, out);
           }
-          fputc(ch, out);
-        }
 
-        fclose(in);
+          fclose(in);
+        }
       }
     }
+    else
+      W(DBF_ALWAYS, "couldn't get signature #%d in list", signature);
   }
 
   LEAVE();

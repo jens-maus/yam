@@ -7398,3 +7398,15 @@ KB
 MSG_MA_DRAFTS (2359//)
 Drafts
 ;
+MSG_CO_SIGNATURE (2360//)
+Signature
+;
+MSG_CO_SIGNATURES (2361//)
+Signatures
+;
+MSG_CO_SIGNATURE_DESCRIPTION (2362//)
+Description
+;
+MSG_CO_SIGNATURE_ACTIVE (2363//)
+_Active
+;

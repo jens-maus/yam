@@ -929,6 +929,10 @@ static void Terminate(void)
     FreeStrArray(G->CO->smtpServerArray);
     G->CO->smtpServerArray = NULL;
 
+    // free the signatureArray
+    FreeStrArray(G->CO->signatureArray);
+    G->CO->signatureArray = NULL;
+
     DisposeModule(&G->CO);
   }
 
@@ -2585,6 +2589,7 @@ int main(int argc, char **argv)
     NewMinList(&C->filterList);
     NewMinList(&C->mimeTypeList);
     NewMinList(&C->userIdentityList);
+    NewMinList(&C->signatureList);
 
     // create the MEMF_SHARED memory pool we use for our
     // own AllocVecPooled() allocations later on

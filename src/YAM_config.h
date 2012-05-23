@@ -170,7 +170,13 @@ struct CO_GUIData
   Object *CH_STRIPSIG;
   Object *ST_FWDSTART;
   Object *ST_FWDEND;
-  Object *CY_SIGNAT;
+  Object *CH_SIG_ACTIVE;
+  Object *ST_SIG_DESC;
+  Object *LV_SIGNATURE;
+  Object *BT_SIGADD;
+  Object *BT_SIGDEL;
+  Object *BT_SIGUP;
+  Object *BT_SIGDOWN;
   Object *BT_SIGEDIT;
   Object *TE_SIGEDIT;
   Object *BT_INSTAG;
@@ -348,10 +354,11 @@ struct CO_ClassData  /* configuration window */
 {
   struct CO_GUIData GUI;
   enum ConfigPage VisiblePage;
-  int  LastSig;
   BOOL Visited[cp_Max];
   BOOL UpdateAll;
-  char **smtpServerArray; // NUL-terminated array of smtpServer names
+  struct SignatureNode *previousSignature;  // ptr to the previously selected signature
+  char **smtpServerArray;                   // NUL-terminated array of smtpServer names
+  char **signatureArray;                    // NUL-terminated array of signature names
 };
 
 /*** RxHook structure ***/
@@ -418,6 +425,7 @@ struct Config
   struct MinList filterList;       // list of currently available filter node
   struct MinList mimeTypeList;     // list of user defined MIME types
   struct MinList userIdentityList; // list of user identities
+  struct MinList signatureList;    // list of signatures
 
   int   TimeZone;
   int   NotifyType;
@@ -615,6 +623,8 @@ extern struct Hook CO_GetSMTPEntryHook;
 extern struct Hook CO_PutSMTPEntryHook;
 extern struct Hook CO_GetIdentityEntryHook;
 extern struct Hook CO_PutIdentityEntryHook;
+extern struct Hook CO_GetSignatureEntryHook;
+extern struct Hook CO_PutSignatureEntryHook;
 extern struct Hook CO_OpenHook;
 extern struct Hook CO_PL_DspFuncHook;
 extern struct Hook CO_RemoteToggleHook;
@@ -628,6 +638,7 @@ BOOL CO_IsValid(void);
 void CO_SetDefaults(struct Config *co, enum ConfigPage page);
 void CO_Validate(struct Config *co, BOOL update);
 void CO_UpdateSMTPServerArray(struct CO_ClassData *data);
+void CO_UpdateSignatureArray(struct CO_ClassData *data);
 
 void GhostOutFilter(struct CO_GUIData *gui, struct FilterNode *filter);
 

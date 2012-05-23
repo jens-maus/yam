@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-05-23 Jens Langner <Jens.Langner@light-speed.de>
+
+  * Signature.c, mui/SignatureList.c, mui/SignatureChooser.c, misc: changed the
+    complete mail signature handling to use an exec list instead of a static
+    array of a maximal length of 3. That means that it is now possible to 
+    specify an unlimited amount of signatures. In addition, signatures can
+    be enabled/disabled now and can be given a own description. With this
+    unlimited signature feature it should now be possible to give every
+    user identity an own signature as well. This closes #307.
+
 2012-05-23 Pär Boberg <pbobbenb@spray.se>
 
   * locale/swedish.ct: updated according to changes.

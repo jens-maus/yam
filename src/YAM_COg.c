@@ -76,10 +76,12 @@
 #include "mui/PlaceholderPopupList.h"
 #include "mui/ScriptList.h"
 #include "mui/SearchControlGroup.h"
+#include "mui/SignatureList.h"
 #include "mui/ThemeListGroup.h"
 #include "mui/YAMApplication.h"
 
 #include "BayesFilter.h"
+#include "FileInfo.h"
 #include "FolderList.h"
 #include "ImageCache.h"
 #include "Locale.h"
@@ -87,6 +89,7 @@
 #include "MailServers.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
+#include "Signature.h"
 #include "Threads.h"
 #include "UIDL.h"
 #include "UserIdentity.h"
@@ -1235,7 +1238,7 @@ HOOKPROTONHNONP(CO_DelIdentity, void)
   if(uin != NULL &&
      xget(gui->LV_IDENTITY, MUIA_NList_Entries) > 1)
   {
-    DoMethod(gui->LV_IDENTITY, MUIM_NList_Remove, xget(gui->LV_SMTP, MUIA_NList_Active));
+    DoMethod(gui->LV_IDENTITY, MUIM_NList_Remove, xget(gui->LV_IDENTITY, MUIA_NList_Active));
 
     // remove it from the internal user identity list as well.
     Remove((struct Node *)uin);
@@ -1246,6 +1249,78 @@ HOOKPROTONHNONP(CO_DelIdentity, void)
   LEAVE();
 }
 MakeStaticHook(CO_DelIdentityHook, CO_DelIdentity);
+
+///
+/// CO_AddSignature
+//  Adds a new entry to the signature list
+HOOKPROTONHNONP(CO_AddSignature, void)
+{
+  struct SignatureNode *sn;
+
+  ENTER();
+
+  if((sn = CreateNewSignature()) != NULL)
+  {
+    int i;
+
+    // create new default values
+    strlcpy(sn->description, tr(MSG_NewEntry), sizeof(sn->description));
+
+    // make sure to use a unique signature file name
+    i = 1;
+    do
+    {
+      snprintf(sn->filename, sizeof(sn->filename), ".signature%d", i);
+      if(FindSignatureByFilename(&CE->signatureList, sn->filename) == NULL)
+        break;
+
+      i++;
+    }
+    while(TRUE);
+
+    // add the new signature to the list
+    DoMethod(G->CO->GUI.LV_SIGNATURE, MUIM_NList_InsertSingle, sn, MUIV_NList_Insert_Bottom);
+
+    // add the server to the list
+    AddTail((struct List *)&CE->signatureList, (struct Node *)sn);
+
+    // set the new entry active and make sure that the email gadget will be
+    // set as the new active object of the window as that gadget will be used
+    // to automatically set the account name.
+    set(G->CO->GUI.LV_SIGNATURE, MUIA_NList_Active, MUIV_List_Active_Bottom);
+    set(G->CO->GUI.WI, MUIA_Window_ActiveObject, G->CO->GUI.ST_SIG_DESC);
+  }
+
+  LEAVE();
+}
+MakeStaticHook(CO_AddSignatureHook, CO_AddSignature);
+
+///
+/// CO_DelSignature
+//  Deletes an entry from the signature list
+HOOKPROTONHNONP(CO_DelSignature, void)
+{
+  struct CO_GUIData *gui = &G->CO->GUI;
+  struct SignatureNode *sn = NULL;
+
+  ENTER();
+
+  DoMethod(gui->LV_SIGNATURE, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &sn);
+
+  if(sn != NULL &&
+     xget(gui->LV_SIGNATURE, MUIA_NList_Entries) > 1)
+  {
+    DoMethod(gui->LV_SIGNATURE, MUIM_NList_Remove, xget(gui->LV_SIGNATURE, MUIA_NList_Active));
+
+    // remove it from the internal user identity list as well.
+    Remove((struct Node *)sn);
+
+    FreeSysObject(ASOT_NODE, sn);
+  }
+
+  LEAVE();
+}
+MakeStaticHook(CO_DelSignatureHook, CO_DelSignature);
 
 ///
 /// GetAppIconPos
@@ -2001,7 +2076,6 @@ Object *CO_PageIdentities(struct CO_ClassData *data)
   Object *obj;
   Object *bt_sentfolder;
   static const char *rtitles[4];
-  static const char *signatures[5];
   static const char *quotePosition[3];
   static const char *signaturePosition[3];
 
@@ -2009,12 +2083,6 @@ Object *CO_PageIdentities(struct CO_ClassData *data)
   rtitles[1] = tr(MSG_CO_IDENTITY_REGISTER_COMPOSE);
   rtitles[2] = tr(MSG_CO_IDENTITY_REGISTER_PGPSEC);
   rtitles[3] = NULL;
-
-  signatures[0] = tr(MSG_CO_IDENTITY_NOSIGNATURE);
-  signatures[1] = tr(MSG_CO_DefSig);
-  signatures[2] = tr(MSG_CO_AltSig1);
-  signatures[3] = tr(MSG_CO_AltSig2);
-  signatures[4] = NULL;
 
   quotePosition[0] = tr(MSG_CO_IDENTITY_BELOWQUOTE);
   quotePosition[1] = tr(MSG_CO_IDENTITY_ABOVEQUOTE);
@@ -2098,7 +2166,7 @@ Object *CO_PageIdentities(struct CO_ClassData *data)
                       Child, data->GUI.CY_IDENTITY_MAILSERVER = MakeCycle(NULL, tr(MSG_CO_IDENTITY_MAILSERVER)),
 
                       Child, Label2(tr(MSG_CO_IDENTITY_DEFSIGNATURE)),
-                      Child, data->GUI.CY_IDENTITY_SIGNATURE = MakeCycle(signatures, tr(MSG_CO_IDENTITY_DEFSIGNATURE)),
+                      Child, data->GUI.CY_IDENTITY_SIGNATURE = MakeCycle(NULL, tr(MSG_CO_IDENTITY_DEFSIGNATURE)),
 
                       Child, HVSpace,
                       Child, HVSpace,
@@ -2337,9 +2405,10 @@ Object *CO_PageIdentities(struct CO_ClassData *data)
     DoMethod(data->GUI.BT_IDENTITYUP,   MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.LV_IDENTITY, 3, MUIM_NList_Move, MUIV_NList_Move_Selected, MUIV_NList_Move_Previous);
     DoMethod(data->GUI.BT_IDENTITYDOWN, MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.LV_IDENTITY, 3, MUIM_NList_Move, MUIV_NList_Move_Selected, MUIV_NList_Move_Next);
 
-    // update the SMTP server array so that the cycle gadget reflects the
-    // right content
+    // update the SMTP server and signature arrays so that the cycle gadgets
+    // reflect the right content
     CO_UpdateSMTPServerArray(data);
+    CO_UpdateSignatureArray(data);
   }
 
   RETURN(obj);
@@ -3284,82 +3353,147 @@ Object *CO_PageReplyForward(struct CO_ClassData *data)
 /// CO_PageSignature
 Object *CO_PageSignature(struct CO_ClassData *data)
 {
-   static const char *signat[4];
-   Object *grp;
-   Object *slider = ScrollbarObject, End;
+  Object *obj;
+  Object *slider = ScrollbarObject, End;
 
-   signat[0] = tr(MSG_CO_DefSig);
-   signat[1] = tr(MSG_CO_AltSig1);
-   signat[2] = tr(MSG_CO_AltSig2);
-   signat[3] = NULL;
+  ENTER();
 
-   if ((grp = VGroup,
-         MUIA_HelpNode, "CO07",
+  obj = VGroup,
+          MUIA_HelpNode, "CO07",
 
-         ConfigPageHeaderObject("config_signature_big", G->theme.configImages[CI_SIGNATUREBIG], tr(MSG_CO_SIGNATURE_TITLE), tr(MSG_CO_SIGNATURE_SUMMARY)),
+          ConfigPageHeaderObject("config_signature_big", G->theme.configImages[CI_SIGNATUREBIG], tr(MSG_CO_SIGNATURE_TITLE), tr(MSG_CO_SIGNATURE_SUMMARY)),
 
           Child, ScrollgroupObject,
             MUIA_Scrollgroup_FreeHoriz, FALSE,
             MUIA_Scrollgroup_AutoBars, TRUE,
             MUIA_Scrollgroup_Contents, VGroupV,
 
-             Child, VGroup, GroupFrameT(tr(MSG_CO_Signature)),
+              Child, VGroup,
                 Child, HGroup,
-                   Child, data->GUI.CY_SIGNAT = MakeCycle(signat,""),
-                   Child, data->GUI.BT_SIGEDIT = MakeButton(tr(MSG_CO_EditSig)),
+                  GroupSpacing(0),
+                  Child, VGroup,
+                    MUIA_HorizWeight, 30,
+
+                    Child, HBarT(tr(MSG_CO_SIGNATURES)), End,
+
+                    Child, NListviewObject,
+                      MUIA_CycleChain, TRUE,
+                      MUIA_Weight, 60,
+                      MUIA_NListview_NList, data->GUI.LV_SIGNATURE = SignatureListObject,
+                      End,
+                    End,
+
+                    Child, HGroup,
+                      Child, ColGroup(2),
+                        GroupSpacing(1),
+                        MUIA_Group_SameWidth, TRUE,
+                        MUIA_Weight, 1,
+                        Child, data->GUI.BT_SIGADD = MakeButton(MUIX_B "+" MUIX_N),
+                        Child, data->GUI.BT_SIGDEL = MakeButton(MUIX_B "-" MUIX_N),
+                      End,
+                      Child, HSpace(0),
+                      Child, ColGroup(2),
+                        GroupSpacing(1),
+                        MUIA_Group_SameWidth, TRUE,
+                        Child, data->GUI.BT_SIGUP = PopButton(MUII_ArrowUp),
+                        Child, data->GUI.BT_SIGDOWN = PopButton(MUII_ArrowDown),
+                      End,
+                    End,
+                  End,
+
+                  Child, NBalanceObject,
+                    MUIA_Balance_Quiet, TRUE,
+                  End,
+
+                  Child, VGroup, GroupFrameT(tr(MSG_CO_Signature)),
+                    Child, VGroup,
+                      Child, ColGroup(2),
+
+                        Child, HSpace(1),
+                        Child, MakeCheckGroup(&data->GUI.CH_SIG_ACTIVE, tr(MSG_CO_SIGNATURE_ACTIVE)),
+
+                        Child, Label2(tr(MSG_CO_SIGNATURE_DESCRIPTION)),
+                        Child, data->GUI.ST_SIG_DESC = MakeString(SIZE_DEFAULT, tr(MSG_CO_SIGNATURE_DESCRIPTION)),
+
+                      End,
+                    End,
+                    Child, HGroup,
+                      GroupSpacing(0),
+                      Child, data->GUI.TE_SIGEDIT = MailTextEditObject,
+                        InputListFrame,
+                        MUIA_CycleChain,            TRUE,
+                        MUIA_TextEditor_FixedFont,  TRUE,
+                        MUIA_TextEditor_ExportHook, MUIV_TextEditor_ExportHook_EMail,
+                        MUIA_TextEditor_Slider,     slider,
+                        MUIA_TextEditor_WrapMode,   MUIV_TextEditor_WrapMode_HardWrap,
+                        MUIA_TextEditor_WrapBorder, C->EdWrapCol,
+                      End,
+                      Child, slider,
+                    End,
+                    Child, data->GUI.BT_SIGEDIT = MakeButton(tr(MSG_CO_EditSig)),
+                    Child, ColGroup(2),
+                      Child, data->GUI.BT_INSTAG = MakeButton(tr(MSG_CO_InsertTag)),
+                      Child, data->GUI.BT_INSENV = MakeButton(tr(MSG_CO_InsertENV)),
+                    End,
+                  End,
                 End,
-                Child, HGroup,
-                   MUIA_Group_Spacing, 0,
-                   Child, data->GUI.TE_SIGEDIT = MailTextEditObject,
-                      InputListFrame,
-                      MUIA_CycleChain,            TRUE,
-                      MUIA_TextEditor_FixedFont,  TRUE,
-                      MUIA_TextEditor_ExportHook, MUIV_TextEditor_ExportHook_EMail,
-                      MUIA_TextEditor_Slider,     slider,
-                      MUIA_TextEditor_WrapMode,   MUIV_TextEditor_WrapMode_HardWrap,
-                      MUIA_TextEditor_WrapBorder, C->EdWrapCol,
-                   End,
-                   Child, slider,
-                End,
+              End,
+
+              Child, VGroup, GroupFrameT(tr(MSG_CO_Taglines)),
                 Child, ColGroup(2),
-                   Child, data->GUI.BT_INSTAG = MakeButton(tr(MSG_CO_InsertTag)),
-                   Child, data->GUI.BT_INSENV = MakeButton(tr(MSG_CO_InsertENV)),
+
+                  Child, Label2(tr(MSG_CO_TaglineFile)),
+                  Child, PopaslObject,
+                    MUIA_Popasl_Type, ASL_FileRequest,
+                    MUIA_Popstring_String, data->GUI.ST_TAGFILE = MakeString(SIZE_PATHFILE,tr(MSG_CO_TaglineFile)),
+                    MUIA_Popstring_Button, PopButton(MUII_PopFile),
+                  End,
+
+                  Child, Label2(tr(MSG_CO_TaglineSep)),
+                  Child, data->GUI.ST_TAGSEP = MakeString(SIZE_SMALL,tr(MSG_CO_TaglineSep)),
+
                 End,
-             End,
-             Child, VGroup, GroupFrameT(tr(MSG_CO_Taglines)),
-                Child, ColGroup(2),
-                   Child, Label2(tr(MSG_CO_TaglineFile)),
-                   Child, PopaslObject,
-                      MUIA_Popasl_Type     ,ASL_FileRequest,
-                      MUIA_Popstring_String,data->GUI.ST_TAGFILE = MakeString(SIZE_PATHFILE,tr(MSG_CO_TaglineFile)),
-                      MUIA_Popstring_Button,PopButton(MUII_PopFile),
-                   End,
-                   Child, Label2(tr(MSG_CO_TaglineSep)),
-                   Child, data->GUI.ST_TAGSEP = MakeString(SIZE_SMALL,tr(MSG_CO_TaglineSep)),
-                End,
-             End,
+              End,
 
-             Child, HVSpace,
+            End,
+          End,
 
-           End,
-         End,
+        End;
 
-      End))
-   {
-      SetHelp(data->GUI.CY_SIGNAT,  MSG_HELP_CO_CY_SIGNAT   );
-      SetHelp(data->GUI.BT_SIGEDIT, MSG_HELP_CO_BT_EDITSIG  );
-      SetHelp(data->GUI.BT_INSTAG,  MSG_HELP_CO_BT_INSTAG   );
-      SetHelp(data->GUI.BT_INSENV,  MSG_HELP_CO_BT_INSENV   );
-      SetHelp(data->GUI.ST_TAGFILE, MSG_HELP_CO_ST_TAGFILE  );
-      SetHelp(data->GUI.ST_TAGSEP,  MSG_HELP_CO_ST_TAGSEP   );
+  if(obj != NULL)
+  { 
+    // enhance the CycleChain
+    set(data->GUI.BT_SIGUP,   MUIA_CycleChain, TRUE);
+    set(data->GUI.BT_SIGDOWN, MUIA_CycleChain, TRUE);
 
-      DoMethod(data->GUI.BT_INSTAG, MUIM_Notify, MUIA_Pressed,      FALSE         , data->GUI.TE_SIGEDIT   , 3, MUIM_TextEditor_InsertText, "%t\n", MUIV_TextEditor_InsertText_Cursor);
-      DoMethod(data->GUI.BT_INSENV, MUIM_Notify, MUIA_Pressed,      FALSE         , data->GUI.TE_SIGEDIT   , 3, MUIM_TextEditor_InsertText, "%e\n", MUIV_TextEditor_InsertText_Cursor);
-      DoMethod(data->GUI.CY_SIGNAT, MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_EditSignatHook, FALSE);
-      DoMethod(data->GUI.BT_SIGEDIT,MUIM_Notify, MUIA_Pressed,      FALSE         , MUIV_Notify_Application, 3, MUIM_CallHook, &CO_EditSignatHook, TRUE);
-   }
+    // set help text for gadgets
+    SetHelp(data->GUI.BT_SIGEDIT, MSG_HELP_CO_BT_EDITSIG  );
+    SetHelp(data->GUI.BT_INSTAG,  MSG_HELP_CO_BT_INSTAG   );
+    SetHelp(data->GUI.BT_INSENV,  MSG_HELP_CO_BT_INSENV   );
+    SetHelp(data->GUI.ST_TAGFILE, MSG_HELP_CO_ST_TAGFILE  );
+    SetHelp(data->GUI.ST_TAGSEP,  MSG_HELP_CO_ST_TAGSEP   );
+    #warning "TODO: SetHelp missing for new items"
 
-   return grp;
+    // connect a notify if the user selects a different signature in the list
+    DoMethod(data->GUI.LV_SIGNATURE, MUIM_Notify, MUIA_NList_Active, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_GetSignatureEntryHook);
+
+    // connect notifies to update the SignatureNode according to the latest
+    // settings in this config page
+    DoMethod(data->GUI.CH_SIG_ACTIVE, MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutSignatureEntryHook);
+    DoMethod(data->GUI.ST_SIG_DESC,   MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutSignatureEntryHook);
+
+    // some button notifies
+    DoMethod(data->GUI.BT_SIGADD, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_AddSignatureHook);
+    DoMethod(data->GUI.BT_SIGDEL, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_DelSignatureHook);
+    DoMethod(data->GUI.BT_SIGUP,  MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.LV_SIGNATURE, 3, MUIM_NList_Move, MUIV_NList_Move_Selected, MUIV_NList_Move_Previous);
+    DoMethod(data->GUI.BT_SIGDOWN,MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.LV_SIGNATURE, 3, MUIM_NList_Move, MUIV_NList_Move_Selected, MUIV_NList_Move_Next);
+    DoMethod(data->GUI.BT_INSTAG, MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.TE_SIGEDIT, 3, MUIM_TextEditor_InsertText, "%t\n", MUIV_TextEditor_InsertText_Cursor);
+    DoMethod(data->GUI.BT_INSENV, MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.TE_SIGEDIT, 3, MUIM_TextEditor_InsertText, "%e\n", MUIV_TextEditor_InsertText_Cursor);
+    DoMethod(data->GUI.BT_SIGEDIT,MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_EditSignatHook);
+  }
+
+  RETURN(obj);
+  return obj;
 }
 
 ///

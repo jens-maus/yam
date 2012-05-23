@@ -68,6 +68,7 @@
 #include "MimeTypes.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
+#include "Signature.h"
 #include "UserIdentity.h"
 
 #include "Debug.h"
@@ -537,8 +538,23 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
     fprintf(fh, "StripSignature   = %s\n", Bool2Txt(co->StripSignature));
 
     fprintf(fh, "\n[Signature]\n");
-    fprintf(fh, "TagsFile         = %s\n", co->TagsFile);
-    fprintf(fh, "TagsSeparator    = %s\n", co->TagsSeparator);
+    fprintf(fh, "TagsFile          = %s\n", co->TagsFile);
+    fprintf(fh, "TagsSeparator     = %s\n", co->TagsSeparator);
+
+    // we iterate through our signature list and output 
+    // the data of each signature here
+    i = 0;
+    IterateList(&co->signatureList, curNode)
+    {
+      struct SignatureNode *sn = (struct SignatureNode *)curNode;
+
+      fprintf(fh, "SIG%02d.ID          = %08x\n", i, sn->id);
+      fprintf(fh, "SIG%02d.Enabled     = %s\n", i, Bool2Txt(sn->active));
+      fprintf(fh, "SIG%02d.Description = %s\n", i, sn->description);
+      fprintf(fh, "SIG%02d.Filename    = %s\n", i, sn->filename);
+
+      i++;
+    }
 
     fprintf(fh, "\n[Lists]\n");
     fprintf(fh, "FolderCols       = %d\n", co->FolderCols);
@@ -800,18 +816,31 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
         char *value;
         const char *value2 = "";
 
+        // find the "=" separator
         if((value = strchr(buf, '=')) != NULL)
         {
+          // now walk from there as long as we find a
+          // whitespace
           for(value2 = (++value)+1; isspace(*value); value++)
             ;
+
+          // now value should point to the start of the config
+          // value (without any leading whitespace) and value2
+          // just points to the position after "= " including
+          // any whitespace. This might be required for config
+          // options which might include white spaces right at
+          // the start.
         }
 
-        if((p = strpbrk(buf,"\r\n")) != NULL)
+        // search of a \r or \n and terminate the string there
+        if((p = strpbrk(buf, "\r\n")) != NULL)
           *p = '\0';
 
+        // search from the start of buf until = or a space and
+        // the NUL terminate the string there early so that buf[]
+        // only contain the config identifier
         for(p = buf; *p != '\0' && *p != '=' && !isspace(*p); p++)
           ;
-
         *p = '\0';
 
         // now we walk through our potential config options
@@ -1285,7 +1314,37 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
 /* Signature */
           else if(stricmp(buf, "TagsFile") == 0)                 strlcpy(co->TagsFile, value, sizeof(co->TagsFile));
           else if(stricmp(buf, "TagsSeparator") == 0)            strlcpy(co->TagsSeparator, value2, sizeof(co->TagsSeparator));
+          else if(strnicmp(buf,"SIG", 3) == 0 && isdigit(buf[3]) && isdigit(buf[4]) && strchr(buf, '.') != NULL)
+          {
+            int num = atoi(&buf[3]);
 
+            if(num >= 0)
+            {
+              struct SignatureNode *sn;
+
+              // try to get the nth SignatureNode structure in our list or create a new one
+              if((sn = GetSignature(&co->signatureList, num, FALSE)) == NULL)
+              {
+                if((sn = CreateNewSignature()) != NULL)
+                  AddTail((struct List *)&co->signatureList, (struct Node *)sn);
+                else
+                  E(DBF_CONFIG, "Couldn't create new Signature structure %ld", num);
+              }
+
+              if(sn != NULL)
+              {
+                char *q = strchr(buf, '.')+1;
+
+                // now find out which subtype this signature is
+                if(stricmp(q, "ID") == 0)               sn->id = strtol(value, NULL, 16);
+                else if(stricmp(q, "Enabled") == 0)     sn->active = Txt2Bool(value);
+                else if(stricmp(q, "Description") == 0) strlcpy(sn->description, value, sizeof(sn->description));
+                else if(stricmp(q, "Filename") == 0)    strlcpy(sn->filename, value, sizeof(sn->filename));
+                else
+                  W(DBF_CONFIG, "unknown '%s' SIG config tag", q);
+              }
+            }
+          }
 /* Lists */
           else if(stricmp(buf, "FolderCols") == 0)               co->FolderCols = atoi(value);
           else if(stricmp(buf, "MessageCols") == 0)              co->MessageCols = atoi(value);
@@ -2334,6 +2393,9 @@ void CO_GetConfig(BOOL saveConfig)
 
     case cp_Signature:
     {
+      int i;
+      struct SignatureNode *sn;
+
       GetMUIString(CE->TagsFile, gui->ST_TAGFILE, sizeof(CE->TagsFile));
       GetMUIString(CE->TagsSeparator, gui->ST_TAGSEP, sizeof(CE->TagsSeparator));
 
@@ -2345,10 +2407,37 @@ void CO_GetConfig(BOOL saveConfig)
         {
           char sigPath[SIZE_PATHFILE];
 
-          // save the modified signature only if the user told us to do so
-          DoMethod(gui->TE_SIGEDIT, MUIM_MailTextEdit_SaveToFile, CreateFilename(SigNames[G->CO->LastSig], sigPath, sizeof(sigPath)));
+          // get the active entry in the signature list
+          sn = NULL;
+          DoMethod(gui->LV_SIGNATURE, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &sn);
+          if(sn != NULL)
+          {
+            // save the modified signature only if the user told us to do so
+            DoMethod(gui->TE_SIGEDIT, MUIM_MailTextEdit_SaveToFile, CreateFilename(sn->filename, sigPath, sizeof(sigPath)));
+          }
         }
       }
+
+      // as the user may have changed the order of the signatures
+      // we have to make sure the order in the NList fits to the
+      // exec list order of our Signature list
+      i = 0;
+      do
+      {
+        sn = NULL;
+        DoMethod(gui->LV_SIGNATURE, MUIM_NList_GetEntry, i, &sn);
+        if(sn == NULL)
+          break;
+
+        // for resorting the UserIdentity list we just have to remove that particular identity
+        // and add it to the tail - all other operations like adding/removing should
+        // have been done by others already - so this is just resorting
+        Remove((struct Node *)sn);
+        AddTail((struct List *)&CE->signatureList, (struct Node *)sn);
+
+        i++;
+      }
+      while(TRUE);
     }
     break;
 
@@ -2816,12 +2905,37 @@ void CO_SetConfig(void)
 
     case cp_Signature:
     {
-      char sigPath[SIZE_PATHFILE];
+      int numSignatures = 0;
+      struct Node *curNode;
+      struct SignatureNode *sn;
 
       setstring(gui->ST_TAGFILE, CE->TagsFile);
       setstring(gui->ST_TAGSEP, CE->TagsSeparator);
-      setcycle(gui->CY_SIGNAT, G->CO->LastSig);
-      DoMethod(gui->TE_SIGEDIT, MUIM_MailTextEdit_LoadFromFile, CreateFilename(SigNames[G->CO->LastSig], sigPath, sizeof(sigPath)), MUIF_MailTextEdit_LoadFromFile_UseStyles|MUIF_MailTextEdit_LoadFromFile_UseColors);
+
+      // clear the list first
+      set(gui->LV_SIGNATURE, MUIA_NList_Quiet, TRUE);
+      DoMethod(gui->LV_SIGNATURE, MUIM_NList_Clear);
+
+      // we iterate through our user identity list and make sure to populate
+      // out NList object correctly.
+      IterateList(&CE->signatureList, curNode)
+      {
+        sn = (struct SignatureNode *)curNode;
+
+        // if the description is empty we use the mail address instead
+        if(sn->description[0] == '\0')
+          snprintf(sn->description, sizeof(sn->description), "%s %d", tr(MSG_CO_SIGNATURE), numSignatures+1);
+
+        DoMethod(gui->LV_SIGNATURE, MUIM_NList_InsertSingle, sn, MUIV_NList_Insert_Bottom);
+        numSignatures++;
+      }
+
+      // make sure the first entry is selected per default
+      xset(gui->LV_SIGNATURE, MUIA_NList_Quiet, FALSE,
+                              MUIA_NList_Active, MUIV_NList_Active_Top);
+
+      // set the enabled stated of the del button according to the number of available identities
+      set(gui->BT_SIGDEL, MUIA_Disabled, numSignatures < 2);
     }
     break;
 

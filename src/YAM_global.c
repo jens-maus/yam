@@ -225,11 +225,8 @@ struct UtilityIFace*      IUtility      = NULL;
 #endif
 #endif /* __amigaos4__ */
 
-struct WBStartup *WBmsg;
+struct WBStartup *WBmsg = NULL;
 
-const char* const SigNames[3] = { ".signature", ".altsignature1", ".altsignature2" };
 const char* const wdays[7] = { "Sun","Mon","Tue","Wed","Thu","Fri","Sat" };
 const char* const months[12] = { "Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec" };
 const char* const SecCodes[5] = { "none","sign","encrypt","sign+encrypt","standard" };
-
-

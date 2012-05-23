@@ -85,6 +85,7 @@
 #include "MailServers.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
+#include "Signature.h"
 #include "UserIdentity.h"
 
 #include "Debug.h"
@@ -1242,6 +1243,166 @@ MakeHook(CO_PutIdentityEntryHook, CO_PutIdentityEntry);
 
 ///
 
+/**** Signatures ***/
+/// CO_GetSignatureEntry
+//  Fills form with data from selected list entry
+HOOKPROTONHNONP(CO_GetSignatureEntry, void)
+{
+  struct SignatureNode *sn = NULL;
+  struct CO_GUIData *gui = &G->CO->GUI;
+  LONG pos = MUIV_NList_GetPos_Start;
+
+  ENTER();
+
+  // get the currently selected signature
+  DoMethod(gui->LV_SIGNATURE, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &sn);
+
+  // make sure to disable GUI elements
+  if(sn == NULL || xget(gui->LV_SIGNATURE, MUIA_NList_Entries) < 2)
+    set(gui->BT_SIGDEL, MUIA_Disabled, TRUE);
+  else
+    set(gui->BT_SIGDEL, MUIA_Disabled, FALSE);
+
+  if(sn != NULL)
+    DoMethod(gui->LV_SIGNATURE, MUIM_NList_GetPos, sn, &pos);
+  else
+    pos = 0;
+
+  set(gui->BT_SIGUP, MUIA_Disabled, pos == 0);
+  set(gui->BT_SIGDOWN, MUIA_Disabled, pos == (LONG)xget(gui->LV_SIGNATURE, MUIA_NList_Entries) - 1);
+
+  if(sn != NULL)
+  {
+    char sigPath[SIZE_PATHFILE];
+
+    // all notifies here are nnset() notifies so that we don't trigger any additional
+    // notify or otherwise we would run into problems.
+    nnset(gui->CH_SIG_ACTIVE, MUIA_Selected,        sn->active);
+    nnset(gui->ST_SIG_DESC,   MUIA_String_Contents, sn->description);
+
+    // check if we are switching signatures and if so we check if the editor has changed
+    // and in case that is true we ask the user to acknowledge and save the signature
+    if(xget(gui->TE_SIGEDIT, MUIA_TextEditor_HasChanged) == TRUE &&
+       G->CO->previousSignature != NULL)
+    {
+      if(MUI_Request(G->App, G->CO->GUI.WI, 0, NULL, tr(MSG_YesNoReq), tr(MSG_CO_ASK_SAVE_SIGNATURE)) > 0)
+      {
+        // save the modified signature only if the user told us to do so
+        DoMethod(gui->TE_SIGEDIT, MUIM_MailTextEdit_SaveToFile, CreateFilename(G->CO->previousSignature->filename, sigPath, sizeof(sigPath)));
+      }
+    }
+
+    // refresh the texteditor with the actually selected signature
+    if(DoMethod(gui->TE_SIGEDIT, MUIM_MailTextEdit_LoadFromFile, CreateFilename(sn->filename, sigPath, sizeof(sigPath)), MUIF_MailTextEdit_LoadFromFile_UseStyles|MUIF_MailTextEdit_LoadFromFile_UseColors) == FALSE)
+    {
+      W(DBF_CONFIG, "couldn't load signature file '%s' in texteditor", sn->filename);
+
+      DoMethod(gui->TE_SIGEDIT, MUIM_TextEditor_ClearText);
+
+      // remember the last displayed signature node
+      G->CO->previousSignature = sn;
+    }
+  }
+
+  LEAVE();
+}
+MakeHook(CO_GetSignatureEntryHook, CO_GetSignatureEntry);
+
+///
+/// CO_PutSignatureEntry
+//  Fills form data into selected list entry
+HOOKPROTONHNONP(CO_PutSignatureEntry, void)
+{
+  struct CO_GUIData *gui = &G->CO->GUI;
+  int p;
+
+  ENTER();
+
+  p = xget(gui->LV_SIGNATURE, MUIA_NList_Active);
+  if(p != MUIV_NList_Active_Off)
+  {
+    struct SignatureNode *sn = NULL;
+
+    DoMethod(gui->LV_SIGNATURE, MUIM_NList_GetEntry, p, &sn);
+    if(sn != NULL)
+    {
+      sn->active = GetMUICheck(gui->CH_SIG_ACTIVE);
+      GetMUIString(sn->description,  gui->ST_SIG_DESC, sizeof(sn->description));
+
+      // if the user hasn't yet entered an own description we generate an
+      // own one
+      if(sn->description[0] == '\0' || strcmp(sn->description, tr(MSG_NewEntry)) == 0)
+        strlcpy(sn->description, tr(MSG_CO_Signature), sizeof(sn->description));
+
+      // redraw the list
+      DoMethod(gui->LV_SIGNATURE, MUIM_NList_Redraw, p);
+    }
+  }
+
+  // we also have to update the Signature Array
+  // in case the user changes to the Identities
+  // config page
+  CO_UpdateSignatureArray(G->CO);
+
+  LEAVE();
+}
+MakeHook(CO_PutSignatureEntryHook, CO_PutSignatureEntry);
+
+///
+/// CO_UpdateSignatureArray
+//
+void CO_UpdateSignatureArray(struct CO_ClassData *data)
+{
+  struct Node *curNode;
+  int numSignatures = 0;
+
+  ENTER();
+
+  // free a previously prepared array
+  FreeStrArray(data->signatureArray);
+
+  // we update the signatureArray with the names
+  // of the signatures (description)
+  IterateList(&CE->signatureList, curNode)
+  {
+    struct SignatureNode *sn = (struct SignatureNode *)curNode;
+
+    if(sn->active == TRUE)
+      numSignatures++;
+  }
+
+  // allocate enough space +1 for NUL termination and another +1
+  // for "no entry"
+  if((data->signatureArray = calloc(numSignatures+2, sizeof(char *))) != NULL)
+  {
+    int i;
+
+    // add a "No Signature" at the front (index 0)
+    data->signatureArray[0] = strdup(tr(MSG_CO_IDENTITY_NOSIGNATURE));
+
+    // now we walk through the signatureList again
+    // and clone the description string
+    i = 1;
+    IterateList(&CE->signatureList, curNode)
+    {
+      struct SignatureNode *sn = (struct SignatureNode *)curNode;
+
+      if(sn->active == TRUE)
+      {
+        data->signatureArray[i] = strdup(sn->description);
+
+        i++;
+      }
+    }
+
+    set(data->GUI.CY_IDENTITY_SIGNATURE, MUIA_Cycle_Entries, data->signatureArray);
+  }
+
+  LEAVE();
+}
+
+///
+
 /**** ARexx Hooks ****/
 /// CO_IsValid
 //  Verifies if the required settings have been made
@@ -1312,6 +1473,9 @@ void CO_ClearConfig(struct Config *co)
   ENTER();
 
   SHOWVALUE(DBF_CONFIG, co);
+
+  // we have to free the signatureList
+  FreeSignatureList(&co->signatureList);
 
   // we have to free the userIdentityList
   FreeUserIdentityList(&co->userIdentityList);
@@ -1479,6 +1643,9 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
   {
     AddPath(co->TagsFile, G->ProgDir, ".taglines", sizeof(co->TagsFile));
     strlcpy(co->TagsSeparator, "%%", sizeof(co->TagsSeparator));
+
+    // we have to free the signatureList
+    FreeSignatureList(&co->signatureList);
   }
 
   if(page == cp_Security || page == cp_AllPages)
@@ -1492,7 +1659,7 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     co->LogAllEvents = TRUE;
     co->PGPPassInterval = 10; // 10 min per default
     strlcpy(co->LogfilePath, G->ProgDir, sizeof(co->LogfilePath));
-    co->LogfileMode = LF_NORMAL;
+    co->LogfileMode = LF_NONE; // we log nothing per default
     co->SplitLogfile = FALSE;
   }
 
@@ -1744,6 +1911,29 @@ static BOOL CopyConfigData(struct Config *dco, const struct Config *sco)
     }
   }
 
+  // for copying the signature list we have to do a deep copy of the list
+  NewMinList(&dco->signatureList);
+
+  if(success == TRUE)
+  {
+    IterateList(&sco->signatureList, curNode)
+    {
+      struct SignatureNode *srcNode = (struct SignatureNode *)curNode;
+      struct SignatureNode *dstNode;
+
+      if((dstNode = DuplicateNode(srcNode, sizeof(*srcNode))) != NULL)
+      {
+        AddTail((struct List *)&dco->signatureList, (struct Node *)dstNode);
+      }
+      else
+      {
+        success = FALSE;
+        // bail out, no need to copy further data
+        break;
+      }
+    }
+  }
+
   // for copying the mimetype list we have to do a deep copy of the list
   NewMinList(&dco->mimeTypeList);
 
@@ -1982,6 +2172,7 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      CompareMailServerLists(&c1->pop3ServerList, &c2->pop3ServerList) &&
      CompareMailServerLists(&c1->smtpServerList, &c2->smtpServerList) &&
      CompareUserIdentityLists(&c1->userIdentityList, &c2->userIdentityList) &&
+     CompareSignatureLists(&c1->signatureList, &c2->signatureList) &&
      CompareFilterLists(&c1->filterList, &c2->filterList) &&
      CompareMimeTypeLists(&c1->mimeTypeList, &c2->mimeTypeList) &&
      CompareRxHooks((const struct RxHook *)c1->RX, (const struct RxHook *)c2->RX) &&
@@ -2084,20 +2275,20 @@ void CO_Validate(struct Config *co, BOOL update)
     {
       struct MailServerNode *msn = (struct MailServerNode *)curNode;
 
-	  if(msn->hostname[0] == '\0')
-		strlcpy(msn->hostname, firstSMTP->hostname, sizeof(msn->hostname));
+      if(msn->hostname[0] == '\0')
+        strlcpy(msn->hostname, firstSMTP->hostname, sizeof(msn->hostname));
 
-	  if(msn->port == 0)
-		msn->port = 110;
+      if(msn->port == 0)
+        msn->port = 110;
 
-	  if(msn->username[0] == '\0')
-	  {
-		char *p = strchr(firstIdentity->address, '@');
-		strlcpy(msn->username, firstIdentity->address, p ? (unsigned int)(p - firstIdentity->address + 1) : sizeof(msn->username));
-	  }
+      if(msn->username[0] == '\0')
+      {
+        char *p = strchr(firstIdentity->address, '@');
+        strlcpy(msn->username, firstIdentity->address, p ? (unsigned int)(p - firstIdentity->address + 1) : sizeof(msn->username));
+      }
 
-	  if(msn->description[0] == '\0')
-		snprintf(msn->description, sizeof(msn->description), "%s@%s", msn->username, msn->hostname);
+      if(msn->description[0] == '\0')
+        snprintf(msn->description, sizeof(msn->description), "%s@%s", msn->username, msn->hostname);
     }
 
     // now we walk through our SMTP server list and check and fix certains
@@ -2106,15 +2297,15 @@ void CO_Validate(struct Config *co, BOOL update)
     {
       struct MailServerNode *msn = (struct MailServerNode *)curNode;
 
-	  if(msn->hostname[0] == '\0')
-		strlcpy(msn->hostname, firstPOP3->hostname, sizeof(msn->hostname));
+      if(msn->hostname[0] == '\0')
+        strlcpy(msn->hostname, firstPOP3->hostname, sizeof(msn->hostname));
 
-	  if(msn->port == 0)
-		msn->port = 25;
+      if(msn->port == 0)
+        msn->port = 25;
 
-	  if(msn->description[0] == '\0')
-		snprintf(msn->description, sizeof(msn->description), "%s@%s", msn->username, msn->hostname);
-	}
+      if(msn->description[0] == '\0')
+        snprintf(msn->description, sizeof(msn->description), "%s@%s", msn->username, msn->hostname);
+    }
   }
 
   // check all servers for valid and unique IDs
@@ -2193,6 +2384,111 @@ void CO_Validate(struct Config *co, BOOL update)
       while(IsUniqueUserIdentityID(&co->userIdentityList, id) == FALSE);
 
       uin->id = id;
+
+      saveAtEnd = TRUE;
+    }
+  }
+
+  // we make sure that the signature list is not empty and if
+  // so that normally signals that the config didn't carry any
+  // configuration items for signatures.
+  // In that case we check if the old-style signature files
+  // exist and if we we add these ones as the default ones
+  if(IsMinListEmpty(&co->signatureList))
+  {
+    char sigPath[SIZE_PATHFILE];
+    char *sigFile;
+    LONG sigSize = 0;
+    struct SignatureNode *sn;
+
+    // before YAM 2.8 we had three default signatures. We therefore
+    // check for these three files now and see if these are not empty
+    sigFile = CreateFilename(".signature", sigPath, sizeof(sigPath));
+    if(ObtainFileInfo(sigFile, FI_SIZE, &sigSize) == TRUE &&
+       sigSize > 0)
+    {
+      if((sn = CreateNewSignature()) != NULL)
+      {
+        char newSigPath[SIZE_PATHFILE];
+
+        // default description and filename
+        strlcpy(sn->description, tr(MSG_CO_DefSig), sizeof(sn->description));
+        strlcpy(sn->filename, ".signature1", sizeof(sn->filename));
+
+        // rename the .signature file to .signature1
+        Rename(sigFile, CreateFilename(sn->filename, newSigPath, sizeof(newSigPath)));
+
+        AddTail((struct List *)&co->signatureList, (struct Node *)sn);
+      }
+    }
+
+    // check for ".altsignature1" file
+    sigFile = CreateFilename(".altsignature1", sigPath, sizeof(sigPath));
+    if(ObtainFileInfo(sigFile, FI_SIZE, &sigSize) == TRUE &&
+       sigSize > 0)
+    {
+      if((sn = CreateNewSignature()) != NULL)
+      {
+        char newSigPath[SIZE_PATHFILE];
+
+        // default description and filename
+        strlcpy(sn->description, tr(MSG_CO_AltSig1), sizeof(sn->description));
+        strlcpy(sn->filename, ".signature2", sizeof(sn->filename));
+
+        // rename the .altsignature1 file to .signature2
+        Rename(sigFile, CreateFilename(sn->filename, newSigPath, sizeof(newSigPath)));
+
+        AddTail((struct List *)&co->signatureList, (struct Node *)sn);
+      }
+    }
+
+    // check for ".altsignature2" file
+    sigFile = CreateFilename(".altsignature2", sigPath, sizeof(sigPath));
+    if(ObtainFileInfo(sigFile, FI_SIZE, &sigSize) == TRUE &&
+       sigSize > 0)
+    {
+      if((sn = CreateNewSignature()) != NULL)
+      {
+        char newSigPath[SIZE_PATHFILE];
+
+        // default description and filename
+        strlcpy(sn->description, tr(MSG_CO_AltSig2), sizeof(sn->description));
+        strlcpy(sn->filename, ".signature3", sizeof(sn->filename));
+
+        // rename the .altsignature2 file to .signature3
+        Rename(sigFile, CreateFilename(sn->filename, newSigPath, sizeof(newSigPath)));
+
+        AddTail((struct List *)&co->signatureList, (struct Node *)sn);
+      }
+    }
+
+    #warning "TODO: what about a default signature in case no old one is there?"
+
+    saveAtEnd = TRUE;
+  }
+
+  // check all signatures for valid and unique IDs
+  IterateList(&co->signatureList, curNode)
+  {
+    struct SignatureNode *sn = (struct SignatureNode *)curNode;
+
+    // check for a valid and unique ID
+    if(sn->id == 0)
+    {
+      int id;
+
+      // loop until we generated a unique ID
+      // usually this will happen with just one iteration
+      do
+      {
+        id = rand();
+
+        if(id == 0)
+          continue;
+      }
+      while(IsUniqueSignatureID(&co->signatureList, id) == FALSE);
+
+      sn->id = id;
 
       saveAtEnd = TRUE;
     }
@@ -2645,57 +2941,42 @@ void CO_Validate(struct Config *co, BOOL update)
 ///
 /// CO_EditSignatFunc
 //  Edits the signature file
-HOOKPROTONHNO(CO_EditSignatFunc, void, int *arg)
+HOOKPROTONHNONP(CO_EditSignatFunc, void)
 {
-  int sig = GetMUICycle(G->CO->GUI.CY_SIGNAT);
-  BOOL editSig = (arg[0] != 0);
-  BOOL refresh;
-  char buffer[SIZE_COMMAND+SIZE_PATHFILE];
-  Object *ed = G->CO->GUI.TE_SIGEDIT;
+  struct CO_GUIData *gui = &G->CO->GUI;
+  struct SignatureNode *sn;
 
   ENTER();
 
-  if(xget(ed, MUIA_TextEditor_HasChanged) == TRUE)
-  {
-    if(MUI_Request(G->App, G->CO->GUI.WI, 0, NULL, tr(MSG_YesNoReq), tr(MSG_CO_ASK_SAVE_SIGNATURE)) > 0)
-    {
-      char sigPath[SIZE_PATHFILE];
+  // get the currently selected signature
+  DoMethod(gui->LV_SIGNATURE, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &sn);
 
-      // save the modified signature only if the user told us to do so
-      DoMethod(ed, MUIM_MailTextEdit_SaveToFile, CreateFilename(SigNames[G->CO->LastSig], sigPath, sizeof(sigPath)));
-    }
-  }
-
-  if(editSig == TRUE)
-  {
-    // if the signature should be modified with an external editor then
-    // we need to check if there is an editor defined
-    if(CE->Editor[0] != '\0')
-    {
-      char sigPath[SIZE_PATHFILE];
-
-      snprintf(buffer, sizeof(buffer), "%s \"%s\"", CE->Editor, GetRealPath(CreateFilename(SigNames[sig], sigPath, sizeof(sigPath))));
-      LaunchCommand(buffer, FALSE, OUT_NIL);
-      refresh = TRUE;
-    }
-    else
-      // no external editor defined, so we don't need to refresh the
-      // signature in the internal editor
-      refresh = FALSE;
-  }
-  else
-    // just display the new signature in the internal editor
-    refresh = TRUE;
-
-  if(refresh == TRUE)
+  // check if the currently selected signature is valid
+  // and if the user has configured an external editor at all.
+  if(sn != NULL && CE->Editor[0] != '\0')
   {
     char sigPath[SIZE_PATHFILE];
+    char buffer[SIZE_COMMAND+SIZE_PATHFILE];
 
-    // refresh the signature in the internal editor
-    if(DoMethod(ed, MUIM_MailTextEdit_LoadFromFile, CreateFilename(SigNames[sig], sigPath, sizeof(sigPath)), MUIF_MailTextEdit_LoadFromFile_UseStyles|MUIF_MailTextEdit_LoadFromFile_UseColors) == FALSE)
-      DoMethod(ed, MUIM_TextEditor_ClearText);
+    // make sure we save any modification first
+    if(xget(gui->TE_SIGEDIT, MUIA_TextEditor_HasChanged) == TRUE)
+    {
+      if(MUI_Request(G->App, G->CO->GUI.WI, 0, NULL, tr(MSG_YesNoReq), tr(MSG_CO_ASK_SAVE_SIGNATURE)) > 0)
+      {
+        // save the modified signature only if the user told us to do so
+        DoMethod(gui->TE_SIGEDIT, MUIM_MailTextEdit_SaveToFile, CreateFilename(sn->filename, sigPath, sizeof(sigPath)));
+      }
+    }
 
-    G->CO->LastSig = sig;
+    // launch the external editor and wait until it is
+    // finished...
+    snprintf(buffer, sizeof(buffer), "%s \"%s\"", CE->Editor, GetRealPath(CreateFilename(sn->filename, sigPath, sizeof(sigPath))));
+    LaunchCommand(buffer, FALSE, OUT_NIL);
+
+    // refresh the signature in the internal editor after the
+    // external is finished
+    if(DoMethod(gui->TE_SIGEDIT, MUIM_MailTextEdit_LoadFromFile, CreateFilename(sn->filename, sigPath, sizeof(sigPath)), MUIF_MailTextEdit_LoadFromFile_UseStyles|MUIF_MailTextEdit_LoadFromFile_UseColors) == FALSE)
+      DoMethod(gui->TE_SIGEDIT, MUIM_TextEditor_ClearText);
   }
 
   LEAVE();
@@ -2901,8 +3182,15 @@ HOOKPROTONHNO(CO_CloseFunc, void, int *arg)
         if(xget(G->CO->GUI.TE_SIGEDIT, MUIA_TextEditor_HasChanged) == TRUE)
         {
           char sigPath[SIZE_PATHFILE];
+          struct SignatureNode *sn = NULL;
 
-          DoMethod(G->CO->GUI.TE_SIGEDIT, MUIM_MailTextEdit_SaveToFile, CreateFilename(SigNames[G->CO->LastSig], sigPath, sizeof(sigPath)));
+          // get the active entry in the signature list
+          DoMethod(G->CO->GUI.LV_SIGNATURE, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &sn);
+          if(sn != NULL)
+          {
+            // save the modified signature only if the user told us to do so
+            DoMethod(G->CO->GUI.TE_SIGEDIT, MUIM_MailTextEdit_SaveToFile, CreateFilename(sn->filename, sigPath, sizeof(sigPath)));
+          }
         }
 
         CO_SaveConfig(C, G->CO_PrefsFile);
@@ -2933,6 +3221,10 @@ HOOKPROTONHNO(CO_CloseFunc, void, int *arg)
     // free the smtpServerArray
     FreeStrArray(G->CO->smtpServerArray);
     G->CO->smtpServerArray = NULL;
+
+    // free the signatureArray
+    FreeStrArray(G->CO->signatureArray);
+    G->CO->signatureArray = NULL;
 
     // Dipose&Close the config window stuff
     DisposeModulePush(&G->CO);

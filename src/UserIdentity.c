@@ -93,6 +93,8 @@ struct UserIdentityNode *CreateNewUserIdentity(void)
       }
     }
 
+    #warning "TODO: change 'int signature' member of struct UserIdentity to 'struct SignatureNode *' or signatureID?"
+
     // get the name of the first sent folder so that we make
     // that one as the default
     if((sentFolder = FO_GetFolderByType(FT_SENT, NULL)) != NULL)

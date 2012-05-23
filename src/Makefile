@@ -514,6 +514,8 @@ MUIOBJS = \
 	SearchControlGroup.o \
 	Searchwindow.o \
 	ShutdownWindow.o \
+	SignatureChooser.o \
+	SignatureList.o \
 	Splashwindow.o \
 	StringRequestWindow.o \
 	ThemeList.o \
@@ -666,6 +668,7 @@ YAMOBJS = \
 	ParseEmail.o \
 	Requesters.o \
 	Rexx.o \
+	Signature.o \
 	Themes.o \
 	Threads.o \
 	Timer.o \

@@ -78,6 +78,7 @@
 #include "mui/ReadWindow.h"
 #include "mui/Recipientstring.h"
 #include "mui/Searchwindow.h"
+#include "mui/SignatureChooser.h"
 #include "mui/WriteAttachmentList.h"
 #include "mui/WriteWindowToolbar.h"
 #include "mui/YAMApplication.h"
@@ -1047,6 +1048,7 @@ OVERLOAD(OM_NEW)
             MenuChild, MenuitemCheck(signat[1], "7", TRUE, uin->signature == 1, TRUE, 0x0D, WMEN_SIGN1),
             MenuChild, MenuitemCheck(signat[2], "8", TRUE, uin->signature == 2, TRUE, 0x0B, WMEN_SIGN2),
             MenuChild, MenuitemCheck(signat[3], "9", TRUE, uin->signature == 3, TRUE, 0x07, WMEN_SIGN3),
+            #warning "TODO: replace static menuitem list here with dynamic one"
           End,
           MenuChild, MenuitemObject,
             MUIA_Menuitem_Title,tr(MSG_CO_CrdSecurity),
@@ -1089,7 +1091,7 @@ OVERLOAD(OM_NEW)
                   Child, data->LB_FROM = Label(tr(MSG_WR_From)),
                   Child, data->CY_FROM = IdentityChooserObject,
                     MUIA_ControlChar, ShortCut(tr(MSG_WR_From)),
-                    End,
+                  End,
 
                   Child, Label(tr(MSG_WR_To)),
                   Child, MakeAddressField(&data->ST_TO, tr(MSG_WR_To), MSG_HELP_WR_ST_TO, ABM_TO, data->windowNumber, AFF_ALLOW_MULTI|AFF_EXTERNAL_SHORTCUTS),
@@ -1224,7 +1226,9 @@ OVERLOAD(OM_NEW)
                   Child, data->CY_IMPORTANCE = MakeCycle(priority, tr(MSG_WR_Importance)),
 
                   Child, Label(tr(MSG_WR_Signature)),
-                  Child, data->CY_SIGNATURE = MakeCycle(signat, tr(MSG_WR_Signature)),
+                  Child, data->CY_SIGNATURE = SignatureChooserObject,
+                    MUIA_ControlChar, ShortCut(tr(MSG_WR_Signature)),
+                  End,
 
                   Child, Label(tr(MSG_WR_PGPSECURITY)),
                   Child, data->CY_SECURITY = MakeCycle(security, tr(MSG_WR_PGPSECURITY)),
