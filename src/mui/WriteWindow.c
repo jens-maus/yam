@@ -3976,14 +3976,22 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
             if(rmData->mail == wmData->refMail)
             {
-              if(rmData->readWindow)
+              if(rmData->readWindow != NULL)
                 DoMethod(rmData->readWindow, MUIM_ReadWindow_ReadMail, newMail);
-              else if(rmData->readMailGroup)
+              else if(rmData->readMailGroup != NULL)
                 DoMethod(rmData->readMailGroup, MUIM_ReadMailGroup_ReadMail, newMail);
             }
           }
 
-          RemoveMailFromList(wmData->refMail, TRUE, TRUE);
+          if((mode == WRITE_SEND || mode == WRITE_QUEUE) && isDraftsFolder(wmData->refMail->Folder))
+          {
+            // delete the mail from the drafts folder
+            MA_DeleteSingle(wmData->refMail, DELF_AT_ONCE);
+          }
+          else
+          {
+            RemoveMailFromList(wmData->refMail, TRUE, TRUE);
+          }
           wmData->refMail = newMail;
         }
       }
@@ -4017,7 +4025,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
           struct Mail *mail = mnode->mail;
 
           if(mail != NULL && !isVirtualMail(mail) && mail->Folder != NULL &&
-             !isOutgoingFolder(mail->Folder) && !isSentFolder(mail->Folder))
+             !isOutgoingFolder(mail->Folder) && !isDraftsFolder(mail->Folder) && !isSentFolder(mail->Folder))
           {
             // process MDN notifications
             if(hasStatusNew(mail) || !hasStatusRead(mail))

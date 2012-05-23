@@ -12,6 +12,9 @@ $URL$
   * mui/WriteWindow.c: defer the folder selection until the final compose mode
     is fixed.
   * YAM_WR.c: bring the write window to the front for draft mails as well.
+  * mui/WriteWindow.c: editing a mail in the drafts folder and finally putting
+    this mail into the outgoing folder correctly removes it from the drafts
+    folder.
 
 2012-05-22 Jens Langner <Jens.Langner@light-speed.de>
 
