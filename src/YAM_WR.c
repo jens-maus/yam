@@ -1914,7 +1914,7 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
 
   // check if the mail in question resists in the outgoing
   // folder
-  if(isOutgoingFolder(folder))
+  if(isOutgoingFolder(folder) || isDraftsFolder(folder))
   {
     // search through our WriteMailDataList
     struct Node *curNode;

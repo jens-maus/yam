@@ -11,6 +11,7 @@ $URL$
     saving happens in the drafts folder now.
   * mui/WriteWindow.c: defer the folder selection until the final compose mode
     is fixed.
+  * YAM_WR.c: bring the write window to the front for draft mails as well.
 
 2012-05-22 Jens Langner <Jens.Langner@light-speed.de>
 
