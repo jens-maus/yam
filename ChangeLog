@@ -15,6 +15,10 @@ $URL$
   * mui/WriteWindow.c: editing a mail in the drafts folder and finally putting
     this mail into the outgoing folder correctly removes it from the drafts
     folder.
+  * YAM_MAf.c: don't care about duplicate mail files in the drafts folder. These
+    are meant to replace the former version of an autosaved mail by intention.
+  * mui/WriteWindow.c: finishing a mail (i.e. send now/later or put it on hold)
+    will now delete the corresponding mail in the draft folder if it exists.
 
 2012-05-22 Jens Langner <Jens.Langner@light-speed.de>
 

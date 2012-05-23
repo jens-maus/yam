@@ -164,6 +164,7 @@ struct Data
   char cursorPos[SIZE_SMALL];
   char windowTitle[SIZE_SUBJECT+1]; // string for the title text of the window
   char windowNumberStr[SIZE_SMALL]; // the unique window number as a string
+  char draftMailFile[SIZE_MFILE];   // name of the draft mail file
 };
 */
 
@@ -3994,6 +3995,17 @@ DECLARE(ComposeMail) // enum WriteMode mode
           }
           wmData->refMail = newMail;
         }
+        else if(wmData->mode == NMM_NEW && wmData->refMail != NULL)
+        {
+          // delete the draft mail from the drafts folder if writing the
+          // mail is to be finished and writing the mail was started from scratch
+          if((mode == WRITE_SEND || mode == WRITE_QUEUE) && isDraftsFolder(wmData->refMail->Folder))
+          {
+            // delete the mail from the drafts folder
+            MA_DeleteSingle(wmData->refMail, DELF_AT_ONCE);
+          }
+          wmData->refMail = newMail;
+        }
       }
 
       // cleanup the email structure
@@ -4119,26 +4131,35 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
   FreePartsList(comp.FirstPart);
 
-  // cleanup certain references
-  wmData->refMail = NULL;
-
-  if(wmData->refMailList != NULL)
+  // cleanup certain references if the window is to be closed
+  if(mode != WRITE_DRAFT)
   {
-    DeleteMailList(wmData->refMailList);
-    wmData->refMailList = NULL;
+    wmData->refMail = NULL;
+
+    if(wmData->refMailList != NULL)
+    {
+      DeleteMailList(wmData->refMailList);
+      wmData->refMailList = NULL;
+    }
+
+    // cleanup the In-Reply-To / References stuff
+    if(wmData->inReplyToMsgID != NULL)
+    {
+      FreeStrBuf(wmData->inReplyToMsgID);
+      wmData->inReplyToMsgID = NULL;
+    }
+
+    if(wmData->references != NULL)
+    {
+      FreeStrBuf(wmData->references);
+      wmData->references = NULL;
+    }
   }
-
-  // cleanup the In-Reply-To / References stuff
-  if(wmData->inReplyToMsgID != NULL)
+  else
   {
-    FreeStrBuf(wmData->inReplyToMsgID);
-    wmData->inReplyToMsgID = NULL;
-  }
-
-  if(wmData->references != NULL)
-  {
-    FreeStrBuf(wmData->references);
-    wmData->references = NULL;
+    // remember the new mail pointer in draft mode
+    if(wmData->refMail == NULL)
+      wmData->refMail = newMail;
   }
 
   // now we make sure we immediately send out the mail.
