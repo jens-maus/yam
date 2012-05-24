@@ -803,156 +803,107 @@ OVERLOAD(MUIM_AskMinMax)
 OVERLOAD(MUIM_Draw)
 {
   GETDATA;
-  LONG rel_y = 0;
-  struct RastPort *rp = _rp(obj);
+  struct MUIP_Draw *dmsg = (struct MUIP_Draw *)msg;
 
   ENTER();
 
+  // call the super method first
   DoSuperMethodA(cl, obj, msg);
 
-  // in case we successfully have an imageNode object
-  // we blit the image on our rastport
-  if(data->imageLoaded == TRUE)
+  if(isFlagSet(dmsg->flags, MADF_DRAWOBJECT) || isFlagSet(dmsg->flags, MADF_DRAWUPDATE))
   {
-    if(data->scaledBitMap != NULL)
+    LONG rel_y = 0;
+    struct RastPort *rp = _rp(obj);
+
+    // in case we successfully have an imageNode object
+    // we blit the image on our rastport
+    if(data->imageLoaded == TRUE)
     {
-      ULONG width = MIN(data->scaledWidth, (ULONG)_mwidth(obj));
-      ULONG height = MIN(data->scaledHeight, (ULONG)_mheight(obj));
+      if(data->scaledBitMap != NULL)
+      {
+        ULONG width = MIN(data->scaledWidth, (ULONG)_mwidth(obj));
+        ULONG height = MIN(data->scaledHeight, (ULONG)_mheight(obj));
 
-      // we use an own BltMaskBitMapRastPort() implemenation to also support
-      // interleaved images.
-      #if defined(__amigaos4__)
-      if(data->scaledBitMask != NULL)
-      {
-        D(DBF_IMAGE, "drawing scaled/masked bitmap image '%s' (%s)", data->id, data->filename);
-        BltBitMapTags(BLITA_Source,     data->scaledBitMap,
-                      BLITA_Dest,       rp,
-                      BLITA_SrcType,    BLITT_BITMAP,
-                      BLITA_DestType,   BLITT_RASTPORT,
-                      BLITA_DestX,      _mleft(obj) + (_mwidth(obj) - width) / 2,
-                      BLITA_DestY,      _mtop(obj) + (_mheight(obj) - data->label_height - height) / 2,
-                      BLITA_Width,      width,
-                      BLITA_Height,     height,
-                      BLITA_Minterm,    (ABC|ABNC|ANBC),
-                      BLITA_MaskPlane,  data->scaledBitMask->Planes[0],
-                      TAG_DONE);
-      }
-      else
-      {
-        D(DBF_IMAGE, "drawing scaled bitmap image '%s' (%s)", data->id, data->filename);
-        BltBitMapTags(BLITA_Source,     data->scaledBitMap,
-                      BLITA_Dest,       rp,
-                      BLITA_SrcType,    BLITT_BITMAP,
-                      BLITA_DestType,   BLITT_RASTPORT,
-                      BLITA_DestX,      _mleft(obj) + (_mwidth(obj) - width) / 2,
-                      BLITA_DestY,      _mtop(obj) + (_mheight(obj) - data->label_height - height) / 2,
-                      BLITA_Width,      width,
-                      BLITA_Height,     height,
-                      BLITA_Minterm,    (ABC|ABNC),
-                      TAG_DONE);
-      }
-      #else
-      if(data->scaledBitMask != NULL)
-      {
-        D(DBF_IMAGE, "drawing scaled/masked bitmap image '%s' (%s)", data->id, data->filename);
-        MyBltMaskBitMapRastPort(data->scaledBitMap,
-                                0,
-                                0,
-                                rp,
-                                _mleft(obj) + (_mwidth(obj) - width) / 2,
-                                _mtop(obj) + (_mheight(obj) - data->label_height - height) / 2,
-                                width,
-                                height,
-                                (ABC|ABNC|ANBC),
-                                data->scaledBitMask->Planes[0]);
-      }
-      else
-      {
-        D(DBF_IMAGE, "drawing scaled bitmap image '%s' (%s)", data->id, data->filename);
-        BltBitMapRastPort(data->scaledBitMap,
-                          0,
-                          0,
-                          rp,
-                          _mleft(obj) + (_mwidth(obj) - width) / 2,
-                          _mtop(obj) + (_mheight(obj) - data->label_height - height) / 2,
-                          width,
-                          height,
-                          (ABC|ABNC));
-      }
-      #endif
-
-      rel_y += height;
-    }
-    else if(data->scaledPixelArray != NULL)
-    {
-      ULONG width = MIN(data->scaledWidth, (ULONG)_mwidth(obj));
-      ULONG height = MIN(data->scaledHeight, (ULONG)_mheight(obj));
-
-      #if defined(__amigaos4__)
-      D(DBF_IMAGE, "drawing scaled (A)RGB image '%s' (%s)", data->id, data->filename);
-      BltBitMapTags(BLITA_Source,         data->scaledPixelArray,
-                    BLITA_Dest,           rp,
-                    BLITA_SrcType,        (data->imageNode.pixelFormat == PBPAFMT_ARGB) ? BLITT_ARGB32 : BLITT_RGB24,
-                    BLITA_DestType,       BLITT_RASTPORT,
-                    BLITA_DestX,          _mleft(obj) + (_mwidth(obj) - width) / 2,
-                    BLITA_DestY,          _mtop(obj) + (_mheight(obj) - data->label_height - height) / 2,
-                    BLITA_Width,          width,
-                    BLITA_Height,         height,
-                    BLITA_SrcBytesPerRow, data->scaledBytesPerRow,
-                    BLITA_UseSrcAlpha,    TRUE,
-                    TAG_DONE);
-      #else
-      // this also works for OS3, because we only have valid pixel data if
-      // cybergraphics.library and picture.datatype are able to handle the
-      // alpha channel correctly.
-      if(data->imageNode.pixelFormat == PBPAFMT_ARGB)
-      {
-        D(DBF_IMAGE, "drawing scaled ARGB image '%s' (%s)", data->id, data->filename);
-        WritePixelArrayAlpha(data->scaledPixelArray,
-                             0,
-                             0,
-                             data->scaledBytesPerRow,
-                             rp,
-                             _mleft(obj) + (_mwidth(obj) - width) / 2,
-                             _mtop(obj) + (_mheight(obj) - data->label_height - height) / 2,
-                             width,
-                             height,
-                             0xffffffff);
-      }
-      else
-      {
-        D(DBF_IMAGE, "drawing scaled RGB image '%s' (%s)", data->id, data->filename);
-        WritePixelArray(data->scaledPixelArray,
-                        0,
-                        0,
-                        data->scaledBytesPerRow,
-                        rp,
-                        _mleft(obj) + (_mwidth(obj) - width) / 2,
-                        _mtop(obj) + (_mheight(obj) - data->label_height - height) / 2,
-                        width,
-                        height,
-                        RECTFMT_RGB);
-      }
-      #endif
-
-      rel_y += height;
-    }
-    else
-    {
-      // blit the (A)RGB data if we retrieved them successfully.
-      if(data->imageNode.pixelArray != NULL)
-      {
         #if defined(__amigaos4__)
-        D(DBF_IMAGE, "drawing (A)RGB image '%s' (%s)", data->id, data->filename);
-        BltBitMapTags(BLITA_Source,         data->imageNode.pixelArray,
+        if(data->scaledBitMask != NULL)
+        {
+          D(DBF_IMAGE, "drawing scaled/masked bitmap image '%s' (%s)", data->id, data->filename);
+          BltBitMapTags(BLITA_Source,     data->scaledBitMap,
+                        BLITA_Dest,       rp,
+                        BLITA_SrcType,    BLITT_BITMAP,
+                        BLITA_DestType,   BLITT_RASTPORT,
+                        BLITA_DestX,      _mleft(obj) + (_mwidth(obj) - width) / 2,
+                        BLITA_DestY,      _mtop(obj) + (_mheight(obj) - data->label_height - height) / 2,
+                        BLITA_Width,      width,
+                        BLITA_Height,     height,
+                        BLITA_Minterm,    (ABC|ABNC|ANBC),
+                        BLITA_MaskPlane,  data->scaledBitMask->Planes[0],
+                        TAG_DONE);
+        }
+        else
+        {
+          D(DBF_IMAGE, "drawing scaled bitmap image '%s' (%s)", data->id, data->filename);
+          BltBitMapTags(BLITA_Source,     data->scaledBitMap,
+                        BLITA_Dest,       rp,
+                        BLITA_SrcType,    BLITT_BITMAP,
+                        BLITA_DestType,   BLITT_RASTPORT,
+                        BLITA_DestX,      _mleft(obj) + (_mwidth(obj) - width) / 2,
+                        BLITA_DestY,      _mtop(obj) + (_mheight(obj) - data->label_height - height) / 2,
+                        BLITA_Width,      width,
+                        BLITA_Height,     height,
+                        BLITA_Minterm,    (ABC|ABNC),
+                        TAG_DONE);
+        }
+        #else
+        if(data->scaledBitMask != NULL)
+        {
+          D(DBF_IMAGE, "drawing scaled/masked bitmap image '%s' (%s)", data->id, data->filename);
+          // we use an own BltMaskBitMapRastPort() implemenation to also support
+          // interleaved images.
+          MyBltMaskBitMapRastPort(data->scaledBitMap,
+                                  0,
+                                  0,
+                                  rp,
+                                  _mleft(obj) + (_mwidth(obj) - width) / 2,
+                                  _mtop(obj) + (_mheight(obj) - data->label_height - height) / 2,
+                                  width,
+                                  height,
+                                  (ABC|ABNC|ANBC),
+                                  data->scaledBitMask->Planes[0]);
+        }
+        else
+        {
+          D(DBF_IMAGE, "drawing scaled bitmap image '%s' (%s)", data->id, data->filename);
+          BltBitMapRastPort(data->scaledBitMap,
+                            0,
+                            0,
+                            rp,
+                            _mleft(obj) + (_mwidth(obj) - width) / 2,
+                            _mtop(obj) + (_mheight(obj) - data->label_height - height) / 2,
+                            width,
+                            height,
+                            (ABC|ABNC));
+        }
+        #endif
+
+        rel_y += height;
+      }
+      else if(data->scaledPixelArray != NULL)
+      {
+        ULONG width = MIN(data->scaledWidth, (ULONG)_mwidth(obj));
+        ULONG height = MIN(data->scaledHeight, (ULONG)_mheight(obj));
+
+        #if defined(__amigaos4__)
+        D(DBF_IMAGE, "drawing scaled (A)RGB image '%s' (%s)", data->id, data->filename);
+        BltBitMapTags(BLITA_Source,         data->scaledPixelArray,
                       BLITA_Dest,           rp,
                       BLITA_SrcType,        (data->imageNode.pixelFormat == PBPAFMT_ARGB) ? BLITT_ARGB32 : BLITT_RGB24,
                       BLITA_DestType,       BLITT_RASTPORT,
-                      BLITA_DestX,          _mleft(obj) + (_mwidth(obj) - data->imageNode.width) / 2,
-                      BLITA_DestY,          _mtop(obj) + (_mheight(obj) - data->label_height - data->imageNode.height) / 2,
-                      BLITA_Width,          data->imageNode.width,
-                      BLITA_Height,         data->imageNode.height,
-                      BLITA_SrcBytesPerRow, data->imageNode.bytesPerRow,
+                      BLITA_DestX,          _mleft(obj) + (_mwidth(obj) - width) / 2,
+                      BLITA_DestY,          _mtop(obj) + (_mheight(obj) - data->label_height - height) / 2,
+                      BLITA_Width,          width,
+                      BLITA_Height,         height,
+                      BLITA_SrcBytesPerRow, data->scaledBytesPerRow,
                       BLITA_UseSrcAlpha,    TRUE,
                       TAG_DONE);
         #else
@@ -961,152 +912,205 @@ OVERLOAD(MUIM_Draw)
         // alpha channel correctly.
         if(data->imageNode.pixelFormat == PBPAFMT_ARGB)
         {
-          D(DBF_IMAGE, "drawing ARGB image '%s' (%s)", data->id, data->filename);
-          WritePixelArrayAlpha(data->imageNode.pixelArray,
+          D(DBF_IMAGE, "drawing scaled ARGB image '%s' (%s)", data->id, data->filename);
+          WritePixelArrayAlpha(data->scaledPixelArray,
                                0,
                                0,
-                               data->imageNode.bytesPerRow,
+                               data->scaledBytesPerRow,
                                rp,
-                               _mleft(obj) + (_mwidth(obj) - data->imageNode.width) / 2,
-                               _mtop(obj) + (_mheight(obj) - data->label_height - data->imageNode.height) / 2,
-                               data->imageNode.width,
-                               data->imageNode.height,
+                               _mleft(obj) + (_mwidth(obj) - width) / 2,
+                               _mtop(obj) + (_mheight(obj) - data->label_height - height) / 2,
+                               width,
+                               height,
                                0xffffffff);
         }
         else
         {
-          D(DBF_IMAGE, "drawing RGB image '%s' (%s)", data->id, data->filename);
-          WritePixelArray(data->imageNode.pixelArray,
+          D(DBF_IMAGE, "drawing scaled RGB image '%s' (%s)", data->id, data->filename);
+          WritePixelArray(data->scaledPixelArray,
                           0,
                           0,
-                          data->imageNode.bytesPerRow,
+                          data->scaledBytesPerRow,
                           rp,
-                          _mleft(obj) + (_mwidth(obj) - data->imageNode.width) / 2,
-                          _mtop(obj) + (_mheight(obj) - data->label_height - data->imageNode.height) / 2,
-                          data->imageNode.width,
-                          data->imageNode.height,
+                          _mleft(obj) + (_mwidth(obj) - width) / 2,
+                          _mtop(obj) + (_mheight(obj) - data->label_height - height) / 2,
+                          width,
+                          height,
                           RECTFMT_RGB);
         }
         #endif
+
+        rel_y += height;
       }
-      // blit the bitmap if we retrieved it successfully.
-      else if(data->imageNode.bitmap != NULL)
+      else
       {
-        #if defined(__amigaos4__)
-        if(data->imageNode.mask != NULL)
+        // blit the (A)RGB data if we retrieved them successfully.
+        if(data->imageNode.pixelArray != NULL)
         {
-          D(DBF_IMAGE, "drawing masked bitmap image '%s' (%s)", data->id, data->filename);
-          BltBitMapTags(BLITA_Source,     data->imageNode.bitmap,
-                        BLITA_Dest,       rp,
-                        BLITA_SrcType,    BLITT_BITMAP,
-                        BLITA_DestType,   BLITT_RASTPORT,
-                        BLITA_DestX,      _mleft(obj) + (_mwidth(obj) - data->imageNode.width)/2,
-                        BLITA_DestY,      _mtop(obj)  + (_mheight(obj) - data->label_height - data->imageNode.height)/2,
-                        BLITA_Width,      data->imageNode.width,
-                        BLITA_Height,     data->imageNode.height,
-                        BLITA_Minterm,    (ABC|ABNC|ANBC),
-                        BLITA_MaskPlane,  data->imageNode.mask,
+          #if defined(__amigaos4__)
+          D(DBF_IMAGE, "drawing (A)RGB image '%s' (%s)", data->id, data->filename);
+          BltBitMapTags(BLITA_Source,         data->imageNode.pixelArray,
+                        BLITA_Dest,           rp,
+                        BLITA_SrcType,        (data->imageNode.pixelFormat == PBPAFMT_ARGB) ? BLITT_ARGB32 : BLITT_RGB24,
+                        BLITA_DestType,       BLITT_RASTPORT,
+                        BLITA_DestX,          _mleft(obj) + (_mwidth(obj) - data->imageNode.width) / 2,
+                        BLITA_DestY,          _mtop(obj) + (_mheight(obj) - data->label_height - data->imageNode.height) / 2,
+                        BLITA_Width,          data->imageNode.width,
+                        BLITA_Height,         data->imageNode.height,
+                        BLITA_SrcBytesPerRow, data->imageNode.bytesPerRow,
+                        BLITA_UseSrcAlpha,    TRUE,
                         TAG_DONE);
-        }
-        else
-        {
-          D(DBF_IMAGE, "drawing bitmap image '%s' (%s)", data->id, data->filename);
-          BltBitMapTags(BLITA_Source,     data->imageNode.bitmap,
-                        BLITA_Dest,       rp,
-                        BLITA_SrcType,    BLITT_BITMAP,
-                        BLITA_DestType,   BLITT_RASTPORT,
-                        BLITA_DestX,      _mleft(obj) + (_mwidth(obj) - data->imageNode.width)/2,
-                        BLITA_DestY,      _mtop(obj)  + (_mheight(obj) - data->label_height - data->imageNode.height)/2,
-                        BLITA_Width,      data->imageNode.width,
-                        BLITA_Height,     data->imageNode.height,
-                        BLITA_Minterm,    (ABC|ABNC),
-                        TAG_DONE);
-        }
-        #else
-        if(data->imageNode.mask != NULL)
-        {
-          // we use an own BltMaskBitMapRastPort() implemenation to also support
-          // interleaved images.
-          D(DBF_IMAGE, "drawing masked bitmap image '%s' (%s)", data->id, data->filename);
-          MyBltMaskBitMapRastPort(data->imageNode.bitmap,
-                                  0,
-                                  0,
-                                  rp,
-                                  _mleft(obj) + (_mwidth(obj) - data->imageNode.width)/2,
-                                  _mtop(obj) + (_mheight(obj) - data->label_height - data->imageNode.height)/2,
-                                  data->imageNode.width,
-                                  data->imageNode.height,
-                                  (ABC|ABNC|ANBC),
-                                  data->imageNode.mask);
-        }
-        else
-        {
-          D(DBF_IMAGE, "drawing bitmap image '%s' (%s)", data->id, data->filename);
-          BltBitMapRastPort(data->imageNode.bitmap,
+          #else
+          // this also works for OS3, because we only have valid pixel data if
+          // cybergraphics.library and picture.datatype are able to handle the
+          // alpha channel correctly.
+          if(data->imageNode.pixelFormat == PBPAFMT_ARGB)
+          {
+            D(DBF_IMAGE, "drawing ARGB image '%s' (%s)", data->id, data->filename);
+            WritePixelArrayAlpha(data->imageNode.pixelArray,
+                                 0,
+                                 0,
+                                 data->imageNode.bytesPerRow,
+                                 rp,
+                                 _mleft(obj) + (_mwidth(obj) - data->imageNode.width) / 2,
+                                 _mtop(obj) + (_mheight(obj) - data->label_height - data->imageNode.height) / 2,
+                                 data->imageNode.width,
+                                 data->imageNode.height,
+                                 0xffffffff);
+          }
+          else
+          {
+            D(DBF_IMAGE, "drawing RGB image '%s' (%s)", data->id, data->filename);
+            WritePixelArray(data->imageNode.pixelArray,
                             0,
                             0,
+                            data->imageNode.bytesPerRow,
                             rp,
-                            _mleft(obj) + (_mwidth(obj) - data->imageNode.width)/2,
-                            _mtop(obj) + (_mheight(obj) - data->label_height - data->imageNode.height)/2,
+                            _mleft(obj) + (_mwidth(obj) - data->imageNode.width) / 2,
+                            _mtop(obj) + (_mheight(obj) - data->label_height - data->imageNode.height) / 2,
                             data->imageNode.width,
                             data->imageNode.height,
-                            (ABC|ABNC));
+                            RECTFMT_RGB);
+          }
+          #endif
         }
-        #endif
+        // blit the bitmap if we retrieved it successfully.
+        else if(data->imageNode.bitmap != NULL)
+        {
+          #if defined(__amigaos4__)
+          if(data->imageNode.mask != NULL)
+          {
+            D(DBF_IMAGE, "drawing masked bitmap image '%s' (%s)", data->id, data->filename);
+            BltBitMapTags(BLITA_Source,     data->imageNode.bitmap,
+                          BLITA_Dest,       rp,
+                          BLITA_SrcType,    BLITT_BITMAP,
+                          BLITA_DestType,   BLITT_RASTPORT,
+                          BLITA_DestX,      _mleft(obj) + (_mwidth(obj) - data->imageNode.width)/2,
+                          BLITA_DestY,      _mtop(obj)  + (_mheight(obj) - data->label_height - data->imageNode.height)/2,
+                          BLITA_Width,      data->imageNode.width,
+                          BLITA_Height,     data->imageNode.height,
+                          BLITA_Minterm,    (ABC|ABNC|ANBC),
+                          BLITA_MaskPlane,  data->imageNode.mask,
+                          TAG_DONE);
+          }
+          else
+          {
+            D(DBF_IMAGE, "drawing bitmap image '%s' (%s)", data->id, data->filename);
+            BltBitMapTags(BLITA_Source,     data->imageNode.bitmap,
+                          BLITA_Dest,       rp,
+                          BLITA_SrcType,    BLITT_BITMAP,
+                          BLITA_DestType,   BLITT_RASTPORT,
+                          BLITA_DestX,      _mleft(obj) + (_mwidth(obj) - data->imageNode.width)/2,
+                          BLITA_DestY,      _mtop(obj)  + (_mheight(obj) - data->label_height - data->imageNode.height)/2,
+                          BLITA_Width,      data->imageNode.width,
+                          BLITA_Height,     data->imageNode.height,
+                          BLITA_Minterm,    (ABC|ABNC),
+                          TAG_DONE);
+          }
+          #else
+          if(data->imageNode.mask != NULL)
+          {
+            D(DBF_IMAGE, "drawing masked bitmap image '%s' (%s)", data->id, data->filename);
+            // we use an own BltMaskBitMapRastPort() implemenation to also support
+            // interleaved images.
+            MyBltMaskBitMapRastPort(data->imageNode.bitmap,
+                                    0,
+                                    0,
+                                    rp,
+                                    _mleft(obj) + (_mwidth(obj) - data->imageNode.width)/2,
+                                    _mtop(obj) + (_mheight(obj) - data->label_height - data->imageNode.height)/2,
+                                    data->imageNode.width,
+                                    data->imageNode.height,
+                                    (ABC|ABNC|ANBC),
+                                    data->imageNode.mask);
+          }
+          else
+          {
+            D(DBF_IMAGE, "drawing bitmap image '%s' (%s)", data->id, data->filename);
+            BltBitMapRastPort(data->imageNode.bitmap,
+                              0,
+                              0,
+                              rp,
+                              _mleft(obj) + (_mwidth(obj) - data->imageNode.width)/2,
+                              _mtop(obj) + (_mheight(obj) - data->label_height - data->imageNode.height)/2,
+                              data->imageNode.width,
+                              data->imageNode.height,
+                              (ABC|ABNC));
+          }
+          #endif
+        }
+
+        rel_y += data->imageNode.height;
       }
-
-      rel_y += data->imageNode.height;
     }
-  }
-  else if(data->altText != NULL && data->altText[0] != '\0')
-  {
-    LONG len;
-    struct TextExtent te;
-
-    if((len = TextFit(rp, data->altText, strlen(data->altText), &te, NULL, 1, _mwidth(obj), _mheight(obj))) > 0)
+    else if(data->altText != NULL && data->altText[0] != '\0')
     {
-      Move(rp, _mleft(obj) + (_mwidth(obj) - te.te_Width)/2, _mtop(obj) + (_mheight(obj) - te.te_Height)/2 + _font(obj)->tf_Baseline);
-      SetAPen(rp, _dri(obj)->dri_Pens[TEXTPEN]);
-      SetDrMd(rp, JAM1);
-      Text(rp, data->altText, len);
-    }
-  }
+      LONG len;
+      struct TextExtent te;
 
-  if(data->label && data->show_label)
-  {
-    STRPTR ufreestr = StripUnderscore(data->label);
-    struct TextExtent te;
-    LONG ufreelen;
-
-    if(ufreestr != NULL)
-    {
-      LONG len = ufreelen = strlen(ufreestr);
-      SetFont(rp,_font(obj));
-
-      len = TextFit(rp, ufreestr, ufreelen, &te, NULL, 1, _mwidth(obj), _font(obj)->tf_YSize);
-      if(len > 0)
+      if((len = TextFit(rp, data->altText, strlen(data->altText), &te, NULL, 1, _mwidth(obj), _mheight(obj))) > 0)
       {
-        char *str = data->label;
-        char *uptr;
-        LONG left = _mleft(obj);
-        left += (_mwidth(obj) - te.te_Width)/2;
-        Move(rp, left, _mbottom(obj)+_font(obj)->tf_Baseline - data->label_height);
+        Move(rp, _mleft(obj) + (_mwidth(obj) - te.te_Width)/2, _mtop(obj) + (_mheight(obj) - te.te_Height)/2 + _font(obj)->tf_Baseline);
         SetAPen(rp, _dri(obj)->dri_Pens[TEXTPEN]);
         SetDrMd(rp, JAM1);
+        Text(rp, data->altText, len);
+      }
+    }
 
-        if(!(uptr = strchr(str, '_')))
+    if(data->label != NULL && data->show_label == TRUE)
+    {
+      STRPTR ufreestr = StripUnderscore(data->label);
+
+      if(ufreestr != NULL)
+      {
+        LONG len;
+        struct TextExtent te;
+
+        SetFont(rp, _font(obj));
+
+        if((len = TextFit(rp, ufreestr, strlen(ufreestr), &te, NULL, 1, _mwidth(obj), _font(obj)->tf_YSize)) > 0)
         {
-          Text(rp, str, strlen(str));
-        }
-        else
-        {
-          Text(rp, str, uptr - str);
-          if(uptr[1])
+          char *str = data->label;
+          char *uptr;
+
+          Move(rp, _mleft(obj) + (_mwidth(obj) - te.te_Width)/2, _mbottom(obj)+_font(obj)->tf_Baseline - data->label_height);
+          SetAPen(rp, _dri(obj)->dri_Pens[TEXTPEN]);
+          SetDrMd(rp, JAM1);
+
+          if((uptr = strchr(str, '_')) == NULL)
           {
-            SetSoftStyle(rp, FSF_UNDERLINED, AskSoftStyle(rp));
-            Text(rp, uptr+1, 1);
-            SetSoftStyle(rp, FS_NORMAL, 0xffff);
-            Text(rp, uptr+2, strlen(uptr+2));
+            Text(rp, str, strlen(str));
+          }
+          else
+          {
+            Text(rp, str, uptr - str);
+            if(uptr[1] != '\0')
+            {
+              SetSoftStyle(rp, FSF_UNDERLINED, AskSoftStyle(rp));
+              Text(rp, uptr+1, 1);
+              SetSoftStyle(rp, FS_NORMAL, 0xffff);
+              Text(rp, uptr+2, strlen(uptr+2));
+            }
           }
         }
       }

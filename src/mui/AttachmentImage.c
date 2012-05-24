@@ -771,13 +771,14 @@ OVERLOAD(MUIM_AskMinMax)
 OVERLOAD(MUIM_Draw)
 {
   GETDATA;
+  struct MUIP_Draw *dmsg = (struct MUIP_Draw *)msg;
 
   ENTER();
 
   // call the super method first
   DoSuperMethodA(cl, obj, msg);
 
-  if(((struct MUIP_Draw *)msg)->flags & MADF_DRAWOBJECT)
+  if(isFlagSet(dmsg->flags, MADF_DRAWOBJECT) || isFlagSet(dmsg->flags, MADF_DRAWUPDATE))
   {
     struct BitMap *bitmap;
     struct BitMap *bitmask;

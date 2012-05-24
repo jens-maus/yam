@@ -16,6 +16,8 @@ $URL$
     in the superclass' MUIM_Draw method already.
   * mui/AttachmentImage.c: enable double buffering if the icon has a transparency
     mask.
+  * mui/AttachmentImage.c, mui/ImageArea.c: draw the image whenever either
+    MADF_DRAWOBJECT or MADF_DRAWUPDATE is set in the message flags.
 
 2012-05-23 Jens Langner <Jens.Langner@light-speed.de>
 
