@@ -5,11 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-05-24 Thore Böckelmann <tboeckel@gmx.de>
+
+  * Signature.c: added missing #include for all non-AmigaOS4 builds.
+
 2012-05-23 Jens Langner <Jens.Langner@light-speed.de>
 
   * Signature.c, mui/SignatureList.c, mui/SignatureChooser.c, misc: changed the
     complete mail signature handling to use an exec list instead of a static
-    array of a maximal length of 3. That means that it is now possible to 
+    array of a maximal length of 3. That means that it is now possible to
     specify an unlimited amount of signatures. In addition, signatures can
     be enabled/disabled now and can be given a own description. With this
     unlimited signature feature it should now be possible to give every

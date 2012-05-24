@@ -28,12 +28,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <proto/exec.h>
+
+#include "extrasrc.h"
 
 #if !defined(__amigaos4__)
 #include <clib/alib_protos.h>
 #endif
-
-#include <proto/exec.h>
 
 #include "YAM_utilities.h"
 
