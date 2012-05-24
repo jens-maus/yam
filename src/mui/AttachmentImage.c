@@ -323,7 +323,6 @@ static void LoadImage(Object *obj, struct Data *data)
       ULONG orgWidth;
       ULONG orgHeight;
       ULONG screenDepth = GetBitMapAttr(screenBitMap, BMA_DEPTH);
-      struct DrawInfo *dri = GetScreenDrawInfo(_screen(obj));
 
       // prepare the drawIcon/GetIconRentagle tags
 
@@ -332,11 +331,11 @@ static void LoadImage(Object *obj, struct Data *data)
       #define ICONDRAWA_Transparency TAG_IGNORE
       #endif
 
-      struct TagItem drawIconTags[] = { { ICONDRAWA_Borderless,      TRUE       },
-                                        { ICONDRAWA_Frameless,       TRUE       },
-                                        { ICONDRAWA_Transparency,    255        },
-                                        { ICONDRAWA_DrawInfo,        (ULONG)dri },
-                                        { TAG_DONE,                  FALSE      } };
+      struct TagItem drawIconTags[] = { { ICONDRAWA_Borderless,      TRUE             },
+                                        { ICONDRAWA_Frameless,       TRUE             },
+                                        { ICONDRAWA_Transparency,    255              },
+                                        { ICONDRAWA_DrawInfo,        (ULONG)_dri(obj) },
+                                        { TAG_DONE,                  FALSE            } };
 
       // if this is an alternative part we draw it with
       // transparency of 50%
@@ -586,9 +585,6 @@ static void LoadImage(Object *obj, struct Data *data)
 	    }
 
         FreeBitMap(orgBitMap);
-
-        if(dri != NULL)
-          FreeScreenDrawInfo(_screen(obj), dri);
       }
     }
     else

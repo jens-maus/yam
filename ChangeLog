@@ -10,6 +10,8 @@ $URL$
   * Signature.c: added missing #include for all non-AmigaOS4 builds.
   * YAM_COg.c, locale/YAM.cd: renamed the "default signature" label on the
     identity page to "signature".
+  * mui/AttachmentImage.c: use the DrawInfo pointer of MUI's renderinfo
+    structure instead of obtaining a new one.
 
 2012-05-23 Jens Langner <Jens.Langner@light-speed.de>
 
