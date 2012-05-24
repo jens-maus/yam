@@ -3467,12 +3467,19 @@ Object *CO_PageSignature(struct CO_ClassData *data)
     set(data->GUI.BT_SIGDOWN, MUIA_CycleChain, TRUE);
 
     // set help text for gadgets
-    SetHelp(data->GUI.BT_SIGEDIT, MSG_HELP_CO_BT_EDITSIG  );
-    SetHelp(data->GUI.BT_INSTAG,  MSG_HELP_CO_BT_INSTAG   );
-    SetHelp(data->GUI.BT_INSENV,  MSG_HELP_CO_BT_INSENV   );
-    SetHelp(data->GUI.ST_TAGFILE, MSG_HELP_CO_ST_TAGFILE  );
-    SetHelp(data->GUI.ST_TAGSEP,  MSG_HELP_CO_ST_TAGSEP   );
-    #warning "TODO: SetHelp missing for new items"
+    SetHelp(data->GUI.LV_SIGNATURE,  MSG_HELP_CO_LV_SIGNATURE);
+    SetHelp(data->GUI.BT_SIGADD,     MSG_HELP_CO_BT_SIGADD);
+    SetHelp(data->GUI.BT_SIGDEL,     MSG_HELP_CO_BT_SIGDEL);
+    SetHelp(data->GUI.BT_SIGUP,      MSG_HELP_CO_BT_SIGUP);
+    SetHelp(data->GUI.BT_SIGDOWN,    MSG_HELP_CO_BT_SIGDOWN);
+    SetHelp(data->GUI.CH_SIG_ACTIVE, MSG_HELP_CO_BT_SIG_ACTIVE);
+    SetHelp(data->GUI.ST_SIG_DESC,   MSG_HELP_CO_ST_SIG_DESC);
+    SetHelp(data->GUI.TE_SIGEDIT,    MSG_HELP_CO_TE_SIGEDIT);
+    SetHelp(data->GUI.BT_SIGEDIT,    MSG_HELP_CO_BT_EDITSIG);
+    SetHelp(data->GUI.BT_INSTAG,     MSG_HELP_CO_BT_INSTAG);
+    SetHelp(data->GUI.BT_INSENV,     MSG_HELP_CO_BT_INSENV);
+    SetHelp(data->GUI.ST_TAGFILE,    MSG_HELP_CO_ST_TAGFILE);
+    SetHelp(data->GUI.ST_TAGSEP,     MSG_HELP_CO_ST_TAGSEP);
 
     // connect a notify if the user selects a different signature in the list
     DoMethod(data->GUI.LV_SIGNATURE, MUIM_Notify, MUIA_NList_Active, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_GetSignatureEntryHook);

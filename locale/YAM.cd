@@ -7410,3 +7410,30 @@ _Active
 MSG_CO_IDENTITY_SIGNATURE (2364//)
 Signature
 ;
+MSG_HELP_CO_LV_SIGNATURE (2365//)
+List of all signatures
+;
+MSG_HELP_CO_BT_SIGADD (2366//)
+Adds a new signature to the list.
+;
+MSG_HELP_CO_BT_SIGDEL (2367//)
+Removes selected signature from list.
+;
+MSG_HELP_CO_BT_SIGUP (2368//)
+Moves signature one entry up.
+;
+MSG_HELP_CO_BT_SIGDOWN (2369//)
+Moves signature one entry down.
+;
+MSG_HELP_CO_BT_SIG_ACTIVE (2370//)
+Flags the currently selected signature\n\
+as active or inactive.
+;
+MSG_HELP_CO_ST_SIG_DESC (2371//)
+Allows you to enter a freetext\n\
+description for the signature.
+;
+MSG_HELP_CO_TE_SIGEDIT (2372//)
+Text editor for entering/changing\n\
+the signature text.
+;

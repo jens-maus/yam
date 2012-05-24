@@ -7,6 +7,8 @@ $URL$
 
 2012-05-24 Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_COg.c, locale/YAM.cd: added the missing help texts for the
+    new unlimited signatures configuration interface.
   * YAM_CO.c: removed warning as we wont' add any default signature
     for a new install of YAM.
   * UserIdentity.h, UserIdentity.c, YAM_COg.c, misc: the UserIdentity
