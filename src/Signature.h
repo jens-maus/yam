@@ -24,7 +24,7 @@
  YAM Official Support Site :  http://www.yam.ch
  YAM OpenSource project    :  http://sourceforge.net/projects/yamos/
 
- $Id: UserIdentity.h 5948 2012-05-16 15:07:49Z thboeckel $
+ $Id$
 
 ***************************************************************************/
 
