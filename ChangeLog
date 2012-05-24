@@ -14,6 +14,8 @@ $URL$
     structure instead of obtaining a new one.
   * mui/AttachmentImage.c: don't draw the image's background twice, this is done
     in the superclass' MUIM_Draw method already.
+  * mui/AttachmentImage.c: enable double buffering if the icon has a transparency
+    mask.
 
 2012-05-23 Jens Langner <Jens.Langner@light-speed.de>
 

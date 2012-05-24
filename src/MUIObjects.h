@@ -74,10 +74,6 @@ int GetMUIRadio(Object *obj);
 BOOL isChildOfGroup(Object *group, Object *child);
 BOOL isChildOfFamily(Object *family, Object *child);
 
-#ifndef MUIA_Scrollgroup_AutoBars
-#define MUIA_Scrollgroup_AutoBars           0x8042f50e /* V20 isg BOOL              */
-#endif
-
 /* ReturnID collecting macros
 ** every COLLECT_ have to be finished with a REISSUE_
 **

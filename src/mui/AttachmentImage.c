@@ -207,11 +207,13 @@ static void UnloadImage(struct Data *data)
 /// LoadImage
 // function that (re)loads the images for both selected and unselected
 // state
-static void LoadImage(Object *obj, struct Data *data)
+static void LoadImage(struct IClass *cl, Object *obj)
 {
   #ifndef ICONGETA_SizeBounds
   #define ICONGETA_SizeBounds TAG_IGNORE
   #endif
+
+  GETDATA;
 
   ENTER();
 
@@ -596,6 +598,13 @@ static void LoadImage(Object *obj, struct Data *data)
     data->lastDecodedStatus = isDecoded(mailPart);
   }
 
+  // there is no need to fill the background if we have no mask bitmap,
+  // but with a mask we should enable double buffering to reduce flickering
+  if(data->normalBitMask != NULL || data->selectedBitMask != NULL)
+    SetSuperAttrs(cl, obj, MUIA_DoubleBuffer, TRUE, MUIA_FillArea, TRUE, TAG_DONE);
+  else
+    SetSuperAttrs(cl, obj, MUIA_DoubleBuffer, FALSE, MUIA_FillArea, FALSE, TAG_DONE);
+
   LEAVE();
 }
 
@@ -695,7 +704,7 @@ OVERLOAD(MUIM_Setup)
   if(result != 0 && data->mailPart != NULL)
   {
     // make sure to load/reload the attachment image
-    LoadImage(obj, data);
+    LoadImage(cl, obj);
 
     // add an event handler for the drag&drop operations
     // this object supports.
@@ -779,7 +788,7 @@ OVERLOAD(MUIM_Draw)
     if(data->mailPart != NULL && isDecoded(data->mailPart) == TRUE &&
        data->lastDecodedStatus == FALSE && LIB_VERSION_IS_AT_LEAST(IconBase, 44, 0) == TRUE && G->DefIconsAvailable == TRUE)
     {
-      LoadImage(obj, data);
+      LoadImage(cl, obj);
     }
 
     // check the selected state
