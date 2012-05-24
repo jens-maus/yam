@@ -2509,8 +2509,6 @@ void CO_Validate(struct Config *co, BOOL update)
       }
     }
 
-    #warning "TODO: what about a default signature in case no old one is there?"
-
     saveAtEnd = TRUE;
   }
 
