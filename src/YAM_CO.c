@@ -1076,7 +1076,6 @@ HOOKPROTONHNONP(CO_GetIdentityEntry, void)
     nnset(gui->ST_IDENTITY_REALNAME,      MUIA_String_Contents, uin->realname);
     nnset(gui->ST_IDENTITY_EMAIL,         MUIA_String_Contents, uin->address);
     nnset(gui->ST_IDENTITY_ORGANIZATION,  MUIA_String_Contents, uin->organization);
-    nnset(gui->CY_IDENTITY_SIGNATURE,     MUIA_Cycle_Active,    uin->signature);
     nnset(gui->ST_IDENTITY_CC,            MUIA_String_Contents, uin->mailCC);
     nnset(gui->ST_IDENTITY_BCC,           MUIA_String_Contents, uin->mailBCC);
     nnset(gui->ST_IDENTITY_REPLYTO,       MUIA_String_Contents, uin->mailReplyTo);
@@ -1120,6 +1119,30 @@ HOOKPROTONHNONP(CO_GetIdentityEntry, void)
           i++;
       }
     }
+
+    // we have to set the correct signature in the GUI so we browse through
+    // the signature list and match the ids
+    if(uin->signature != NULL)
+    {
+      struct Node *curNode;
+      int i = 1;
+
+      IterateList(&CE->signatureList, curNode)
+      {
+        struct SignatureNode *sn = (struct SignatureNode *)curNode;
+
+        // we match the ids because the pointers may be different
+        if(sn->id == uin->signature->id)
+        {
+          nnset(gui->CY_IDENTITY_SIGNATURE, MUIA_Cycle_Active, i);
+          break;
+        }
+        else if(sn->active == TRUE)
+          i++;
+      }
+    }
+    else
+      nnset(gui->CY_IDENTITY_SIGNATURE, MUIA_Cycle_Active, 0);
   }
 
   set(gui->CY_IDENTITY_QUOTEPOS, MUIA_Disabled, uin == NULL || uin->quoteMails == FALSE);
@@ -1162,6 +1185,7 @@ HOOKPROTONHNONP(CO_PutIdentityEntry, void)
     {
       struct Node *curNode;
       int posMailServer;
+      int posSignature;
       int i;
 
       uin->active = GetMUICheck(gui->CH_IDENTITY_ENABLED);
@@ -1169,7 +1193,6 @@ HOOKPROTONHNONP(CO_PutIdentityEntry, void)
       GetMUIString(uin->realname,     gui->ST_IDENTITY_REALNAME,    sizeof(uin->realname));
       GetMUIString(uin->address,      gui->ST_IDENTITY_EMAIL,       sizeof(uin->address));
       GetMUIString(uin->organization, gui->ST_IDENTITY_ORGANIZATION,sizeof(uin->organization));
-      uin->signature = GetMUICycle(gui->CY_IDENTITY_SIGNATURE);
       GetMUIString(uin->mailCC,       gui->ST_IDENTITY_CC,          sizeof(uin->mailCC));
       GetMUIString(uin->mailBCC,      gui->ST_IDENTITY_BCC,         sizeof(uin->mailBCC));
       GetMUIString(uin->mailReplyTo,  gui->ST_IDENTITY_REPLYTO,     sizeof(uin->mailReplyTo));
@@ -1231,6 +1254,30 @@ HOOKPROTONHNONP(CO_PutIdentityEntry, void)
           i++;
         }
       }
+
+      // now we iterate through the Signature list and match
+      posSignature = GetMUICycle(gui->CY_IDENTITY_SIGNATURE);
+      if(posSignature > 0)
+      {
+        i = 1;
+        IterateList(&CE->signatureList, curNode)
+        {
+          struct SignatureNode *sn = (struct SignatureNode *)curNode;
+
+          if(sn->active == TRUE)
+          {
+            if(i == posSignature)
+            {
+              uin->signature = sn;
+              break;
+            }
+
+            i++;
+          }
+        }
+      }
+      else
+        uin->signature = NULL;
 
       // redraw the list
       DoMethod(gui->LV_IDENTITY, MUIM_NList_Redraw, p);

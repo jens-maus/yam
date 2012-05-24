@@ -62,6 +62,7 @@
 #include "mui/ImageArea.h"
 #include "mui/MainFolderListtree.h"
 #include "mui/Recipientstring.h"
+#include "mui/SignatureChooser.h"
 
 #include "FileInfo.h"
 #include "FolderList.h"
@@ -70,6 +71,7 @@
 #include "MailList.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
+#include "Signature.h"
 #include "UserIdentity.h"
 
 #include "Debug.h"
@@ -371,8 +373,8 @@ BOOL FO_LoadConfig(struct Folder *fo)
       BOOL statsproc = FALSE;
 
       // pick a default value for ML support parameters
-      fo->MLSignature  = 1;
-      fo->MLSupport    = TRUE;
+      fo->MLSignature = GetSignature(&C->signatureList, 0, TRUE);
+      fo->MLSupport   = TRUE;
 
       while(getline(&buf, &buflen, fh) > 0)
       {
@@ -410,7 +412,7 @@ BOOL FO_LoadConfig(struct Folder *fo)
           else if(stricmp(buf, "MLRepToAddr") == 0)    strlcpy(fo->MLReplyToAddress, value, sizeof(fo->MLReplyToAddress));
           else if(stricmp(buf, "MLAddress") == 0)      strlcpy(fo->MLAddress, value, sizeof(fo->MLAddress));
           else if(stricmp(buf, "MLPattern") == 0)      strlcpy(fo->MLPattern, value, sizeof(fo->MLPattern));
-          else if(stricmp(buf, "MLSignature") == 0)    fo->MLSignature = atoi(value);
+          else if(stricmp(buf, "MLSignatureID") == 0)  fo->MLSignature = FindSignatureByID(&C->signatureList, strtol(value, NULL, 16));
           else if(stricmp(buf, "WriteIntro") == 0)     strlcpy(fo->WriteIntro, value, sizeof(fo->WriteIntro));
           else if(stricmp(buf, "WriteGreetings") == 0) strlcpy(fo->WriteGreetings, value, sizeof(fo->WriteGreetings));
           // obsolete config parameters (we just read them)
@@ -430,7 +432,7 @@ BOOL FO_LoadConfig(struct Folder *fo)
       // and set some values which shouldn't be changed
       if(isDefaultFolder(fo))
       {
-        fo->MLSignature  = -1;
+        fo->MLSignature  = NULL;
         fo->MLSupport    = FALSE;
       }
 
@@ -486,7 +488,7 @@ BOOL FO_SaveConfig(struct Folder *fo)
     fprintf(fh, "MLRepToAddr    = %s\n", fo->MLReplyToAddress);
     fprintf(fh, "MLPattern      = %s\n", fo->MLPattern);
     fprintf(fh, "MLAddress      = %s\n", fo->MLAddress);
-    fprintf(fh, "MLSignature    = %d\n", fo->MLSignature);
+    fprintf(fh, "MLSignatureID  = %08x\n", fo->MLSignature != NULL ? fo->MLSignature->id : 0);
     fprintf(fh, "WriteIntro     = %s\n", fo->WriteIntro);
     fprintf(fh, "WriteGreetings = %s\n", fo->WriteGreetings);
     fclose(fh);
@@ -1432,7 +1434,7 @@ static void FO_GetFolder(struct Folder *folder)
        MUIA_Disabled, !folder->MLSupport || isdefault);
 
   xset(gui->CY_MLSIGNATURE,
-       MUIA_Cycle_Active,    folder->MLSignature,
+       MUIA_SignatureChooser_Signature, folder->MLSignature,
        MUIA_Disabled, !folder->MLSupport || isdefault);
 
   xset(gui->CY_MLIDENTITY,
@@ -1517,8 +1519,8 @@ static void FO_PutFolder(struct Folder *folder)
 
   GetMUIString(folder->MLAddress, gui->ST_MLADDRESS, sizeof(folder->MLAddress));
   GetMUIString(folder->MLReplyToAddress, gui->ST_MLREPLYTOADDRESS, sizeof(folder->MLReplyToAddress));
-  folder->MLSignature = GetMUICycle(gui->CY_MLSIGNATURE);
 
+  folder->MLSignature = (struct SignatureNode *)xget(gui->CY_MLSIGNATURE, MUIA_SignatureChooser_Signature);
   folder->MLIdentity = (struct UserIdentityNode *)xget(gui->CY_MLIDENTITY, MUIA_IdentityChooser_Identity);
 
   LEAVE();
@@ -1843,10 +1845,10 @@ static BOOL CompareFolders(const struct Folder *fo1, const struct Folder *fo2)
      strcmp(fo1->MLReplyToAddress, fo2->MLReplyToAddress) != 0 ||
      strcmp(fo1->MLAddress,        fo2->MLAddress) != 0 ||
      strcmp(fo1->MLPattern,        fo2->MLPattern) != 0 ||
-     fo1->MLIdentity            != fo2->MLIdentity ||
+     (fo1->MLIdentity != NULL ? fo1->MLIdentity->id : -1) != (fo2->MLIdentity != NULL ? fo2->MLIdentity->id : -1) ||
      fo1->Mode                  != fo2->Mode ||
      fo1->Type                  != fo2->Type ||
-     fo1->MLSignature           != fo2->MLSignature ||
+     (fo1->MLSignature != NULL ? fo1->MLSignature->id : -1) != (fo2->MLSignature != NULL ? fo2->MLSignature->id : -1) ||
      fo1->Sort[0]               != fo2->Sort[0] ||
      fo1->Sort[1]               != fo2->Sort[1] ||
      fo1->MaxAge                != fo2->MaxAge ||
@@ -2431,7 +2433,6 @@ static struct FO_ClassData *FO_New(void)
     static const char *ftypes[4];
     static const char *fmodes[5];
     static const char *sortopt[8];
-    static const char *fsignat[5];
 
     ftypes[0]  = tr(MSG_FO_FTRcvdMail);
     ftypes[1]  = tr(MSG_FO_FTSentMail);
@@ -2453,12 +2454,6 @@ static struct FO_ClassData *FO_New(void)
     sortopt[5] = tr(MSG_Size);
     sortopt[6] = tr(MSG_Status);
     sortopt[7] = NULL;
-
-    fsignat[0] = tr(MSG_WR_NoSig);
-    fsignat[1] = tr(MSG_WR_DefSig);
-    fsignat[2] = tr(MSG_WR_AltSig1);
-    fsignat[3] = tr(MSG_WR_AltSig2);
-    fsignat[4] = NULL;
 
     data->GUI.WI = WindowObject,
        MUIA_Window_Title, tr(MSG_FO_EditFolder),
@@ -2534,7 +2529,9 @@ static struct FO_ClassData *FO_New(void)
              Child, Label2(tr(MSG_FO_REPLYTO_ADDRESS)),
              Child, MakeAddressField(&data->GUI.ST_MLREPLYTOADDRESS, tr(MSG_FO_REPLYTO_ADDRESS), MSG_HELP_FO_ST_MLREPLYTOADDRESS, ABM_CONFIG, -1, AFF_ALLOW_MULTI),
              Child, Label1(tr(MSG_WR_Signature)),
-             Child, data->GUI.CY_MLSIGNATURE = MakeCycle(fsignat, tr(MSG_WR_Signature)),
+             Child, data->GUI.CY_MLSIGNATURE = SignatureChooserObject,
+               MUIA_ControlChar, ShortCut(tr(MSG_WR_Signature)),
+             End,
           End,
           Child, ColGroup(3),
              Child, data->GUI.BT_OKAY = MakeButton(tr(MSG_Okay)),

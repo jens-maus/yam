@@ -42,6 +42,7 @@
 #include "extrasrc.h"
 
 #include "MailServers.h"
+#include "Signature.h"
 #include "UserIdentity.h"
 
 #include "Debug.h"
@@ -93,7 +94,10 @@ struct UserIdentityNode *CreateNewUserIdentity(void)
       }
     }
 
-    #warning "TODO: change 'int signature' member of struct UserIdentity to 'struct SignatureNode *' or signatureID?"
+    // we get the first valid signature from the list and put that
+    // as the default one. However, putting NULL there would mean
+    // no signature
+    uin->signature = GetSignature(&C->signatureList, 0, TRUE);
 
     // get the name of the first sent folder so that we make
     // that one as the default

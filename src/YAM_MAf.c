@@ -73,6 +73,7 @@
 #include "MUIObjects.h"
 #include "Requesters.h"
 #include "Rexx.h"
+#include "Signature.h"
 #include "UserIdentity.h"
 
 #include "Debug.h"
@@ -2598,10 +2599,21 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
           }
 
           // check for the sigfileX flag
-          if((p = strcasestr(value, "sigfile")) != NULL)
+          if((p = strcasestr(value, "sigfile=")) != NULL)
           {
-            email->Signature = atoi(&p[7])+1;
-            D(DBF_MIME, "sigfile found: %d", email->Signature);
+            char idStr[9] = ""; // the is only 8 chars long + 1 NUL
+
+            strlcpy(idStr, &p[8], sizeof(idStr));
+            email->signatureID = strtol(idStr, NULL, 16);
+
+            // try to get the signature structure
+            if(email->signatureID != 0)
+            {
+              email->signature = FindSignatureByID(&C->signatureList, email->signatureID);
+              D(DBF_MAIL, "findSignatureById: '%08x' %08lx", email->signatureID, email->signature);
+            }
+
+            D(DBF_MAIL, "found signature: '%s' %08x %08x", idStr, email->signatureID, email->signature->id);
           }
 
           // check if the identity is listed and if so this has

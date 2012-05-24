@@ -5,6 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-05-24 Jens Langner <Jens.Langner@light-speed.de>
+
+  * UserIdentity.h, UserIdentity.c, YAM_COg.c, misc: the UserIdentity
+    structure will now host the signature using the SignatureNode struct
+    rather than a simply integer. This allowed to use the signature
+    struct directly rather than having to find out to which signature
+    the running index belongs. The .config file will now also have a
+    SignatureID entry in the user identity config settings with the ID
+    of the signature used. Also the folder settings/config will use
+    an id rathern than a running index.
+
 2012-05-24 Thore Böckelmann <tboeckel@gmx.de>
 
   * Signature.c: added missing #include for all non-AmigaOS4 builds.

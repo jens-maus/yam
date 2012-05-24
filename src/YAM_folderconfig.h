@@ -185,7 +185,6 @@ struct Folder
   struct FolderNode *parent; // ptr to parent folder node, NULL if parent is root
   ULONG             Flags;
   LONG              Size;
-  int               MLSignature;
   int               Total;
   int               New;
   int               Unread;
@@ -209,7 +208,8 @@ struct Folder
   char              Password[SIZE_USERID];
   char              MLPattern[SIZE_PATTERN];
   char              MLAddress[SIZE_ADDRESS];
-  struct UserIdentityNode *MLIdentity;  // the user identity associated with the ML
+  struct UserIdentityNode *MLIdentity;     // the user identity associated with the ML
+  struct SignatureNode *MLSignature;       // ptr to signature node (or NULL)
   char              MLReplyToAddress[SIZE_ADDRESS];
   char              WriteIntro[SIZE_INTRO];
   char              WriteGreetings[SIZE_INTRO];

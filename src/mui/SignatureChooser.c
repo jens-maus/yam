@@ -42,7 +42,8 @@
 /* CLASSDATA
 struct Data
 {
-  char **signatureArray;            // titles for the different signatures that can be selected
+  struct SignatureNode *curSignature; // ptr to currently active signature
+  char **signatureArray;              // titles for the different signatures that can be selected
 };
 */
 
@@ -59,8 +60,15 @@ OVERLOAD(OM_NEW)
 
     TAG_MORE, inittags(msg))) != NULL)
   {
+    GETDATA;
+
+    data->curSignature = (struct SignatureNode *)GetTagData(ATTR(Signature), (ULONG)NULL, inittags(msg));
+
     // set up the full description of all active signatures
     DoMethod(obj, METHOD(UpdateSignatures));
+
+    // notify ourselves about changed active items
+    DoMethod(obj, MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(SignatureIndex), MUIV_TriggerValue);
   }
 
   RETURN((IPTR)obj);
@@ -84,6 +92,83 @@ OVERLOAD(OM_DISPOSE)
 
   RETURN(result);
   return result;
+}
+
+///
+/// OVERLOAD(OM_SET)
+OVERLOAD(OM_SET)
+{
+  GETDATA;
+  struct TagItem *tags = inittags(msg), *tag;
+
+  while((tag = NextTagItem((APTR)&tags)) != NULL)
+  {
+    switch(tag->ti_Tag)
+    {
+      case ATTR(Signature):
+      {
+        struct SignatureNode *newSignature = (struct SignatureNode *)tag->ti_Data;
+
+        if(newSignature != data->curSignature)
+        {
+          int j = 0;
+
+          // find the new identity and set it as active entry
+          if(newSignature != NULL)
+          {
+            int i = 1;
+            struct Node *curNode;
+
+            IterateList(&C->signatureList, curNode)
+            {
+              struct SignatureNode *sn = (struct SignatureNode *)curNode;
+
+              if(sn->id == newSignature->id)
+              {
+                j = i;
+                break;
+              }
+              else if(sn->active == TRUE)
+                i++;
+            }
+          }
+
+          data->curSignature = newSignature;
+
+          // set the new active item without triggering notifications
+          nnset(obj, MUIA_Cycle_Active, j);
+        }
+      }
+      break;
+
+      case ATTR(SignatureIndex):
+      {
+        struct SignatureNode *newSignature = GetSignature(&C->signatureList, tag->ti_Data-1, TRUE);
+
+        // set the new identity and trigger possible notifications
+        set(obj, ATTR(Signature), newSignature);
+      }
+      break;
+    }
+  }
+
+  return DoSuperMethodA(cl, obj, msg);
+}
+
+///
+///
+/// OVERLOAD(OM_GET)
+OVERLOAD(OM_GET)
+{
+  GETDATA;
+  IPTR *store = ((struct opGet *)msg)->opg_Storage;
+
+  switch(((struct opGet *)msg)->opg_AttrID)
+  {
+    case ATTR(Signature): *store = (IPTR)data->curSignature; return TRUE;
+  }
+
+  return DoSuperMethodA(cl, obj, msg);
 }
 
 ///
@@ -150,3 +235,4 @@ DECLARE(UpdateSignatures)
 }
 
 ///
+

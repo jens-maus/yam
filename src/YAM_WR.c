@@ -1241,7 +1241,7 @@ BOOL WriteOutMessage(struct Compose *comp)
           // set filename to tempfile
           comp->FirstPart->Filename = tf->Filename;
           // only use sig in enclosed mail
-          comp->Signature = 0;
+          comp->Signature = NULL;
         }
         else
         {
@@ -1271,10 +1271,10 @@ BOOL WriteOutMessage(struct Compose *comp)
   // now we add a "X-YAM-Options" header to the mail so
   // that we can identify later certain options we have to set
   // if the same mail is being edited by the user again
-  snprintf(buf, sizeof(buf), "sigfile%d,identity=%08x,security=%s%s", comp->Signature-1,
-                                                                      comp->Identity->id,
-                                                                      SecCodes[comp->SelSecurity],
-                                                                      comp->DelSend == TRUE ? ",delsent" : "");
+  snprintf(buf, sizeof(buf), "sigfile=%08x,identity=%08x,security=%s%s", comp->Signature != NULL ? comp->Signature->id : 0,
+                                                                         comp->Identity->id,
+                                                                         SecCodes[comp->SelSecurity],
+                                                                         comp->DelSend == TRUE ? ",delsent" : "");
   EmitHeader(fh, "X-YAM-Options", buf);
 
   // put the From: header entry into the mail
@@ -1866,7 +1866,7 @@ struct WriteMailData *NewWriteMailWindow(struct Mail *mail, const int flags)
                            replyToAddr[0] != '\0' ? MUIA_WriteWindow_ReplyTo : TAG_IGNORE, replyToAddr);
 
       // add a signature to the mail depending on the selected signature for this list
-      WriteSignature(out, folder->MLSupport ? folder->MLSignature : userIdentity->signature-1, TRUE);
+      WriteSignature(out, folder->MLSupport ? folder->MLSignature : userIdentity->signature, TRUE);
 
       // close the output file handle
       fclose(out);
@@ -2055,7 +2055,7 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
                                  MUIA_WriteWindow_MDN,        isSendMDNMail(mail),
                                  MUIA_WriteWindow_AddInfo,    isSenderInfoMail(mail),
                                  MUIA_WriteWindow_Importance, getImportanceLevel(mail) == IMP_HIGH ? 0 : getImportanceLevel(mail)+1,
-                                 MUIA_WriteWindow_Signature,  email->Signature,
+                                 MUIA_WriteWindow_Signature,  email->signature,
                                  MUIA_WriteWindow_Security,   email->Security);
 
             // setup the write window from an existing readmailData structure
@@ -2127,7 +2127,7 @@ struct WriteMailData *NewForwardMailWindow(struct MailList *mlist, const int fla
 
     if((out = fopen(wmData->filename, "w")) != NULL)
     {
-      int signature = -1;
+      struct SignatureNode *signature = NULL;
       int j = 0;
       enum ForwardMode fwdMode = C->ForwardMode;
       char *rsub = AllocStrBuf(SIZE_SUBJECT);
@@ -2178,10 +2178,10 @@ struct WriteMailData *NewForwardMailWindow(struct MailList *mlist, const int fla
         struct ExpandTextData etd;
         struct Mail *mail = mnode->mail;
 
-        if(signature == -1 && mail->Folder != NULL)
+        if(signature == NULL && mail->Folder != NULL &&
+           mail->Folder->MLSupport == TRUE)
         {
-          if(mail->Folder->MLSupport == TRUE)
-            signature = mail->Folder->MLSignature;
+          signature = mail->Folder->MLSignature;
         }
 
         if((email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)) == NULL)
@@ -2235,7 +2235,7 @@ struct WriteMailData *NewForwardMailWindow(struct MailList *mlist, const int fla
           if(firstIdentity->sigForwarding == TRUE &&
              (firstIdentity->quotePosition == QPOS_ABOVE && firstIdentity->signaturePosition == SPOS_ABOVE))
           {
-            WriteSignature(out, signature == -1 ? firstIdentity->signature-1 : signature, FALSE);
+            WriteSignature(out, signature == NULL ? firstIdentity->signature : signature, FALSE);
             fputs("\n", out);
           }
         }
@@ -2324,7 +2324,7 @@ struct WriteMailData *NewForwardMailWindow(struct MailList *mlist, const int fla
       if(firstIdentity->sigForwarding == TRUE &&
          (firstIdentity->quotePosition == QPOS_BELOW || firstIdentity->signaturePosition == SPOS_BELOW))
       {
-        WriteSignature(out, signature == -1 ? firstIdentity->signature-1 : signature, TRUE);
+        WriteSignature(out, signature == NULL ? firstIdentity->signature : signature, TRUE);
       }
 
       // close the output file handle
@@ -2378,7 +2378,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
     {
       int j;
       int repmode = 1;
-      int signature = -1;
+      struct SignatureNode *signature = NULL;
       BOOL altpat = FALSE;
       char *domain = NULL;
       struct UserIdentityNode *firstIdentity = NULL; // first identified identity over all mails
@@ -2966,7 +2966,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
           if(firstIdentity->sigReply == TRUE &&
              (firstIdentity->quotePosition == QPOS_ABOVE && firstIdentity->signaturePosition == SPOS_ABOVE))
           {
-            WriteSignature(out, signature == -1 ? firstIdentity->signature-1 : signature, FALSE);
+            WriteSignature(out, signature == NULL ? firstIdentity->signature : signature, FALSE);
             fputs("\n", out);
           }
         }
@@ -3043,7 +3043,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
       if(firstIdentity->sigReply == TRUE &&
          (firstIdentity->quotePosition == QPOS_BELOW || firstIdentity->signaturePosition == SPOS_BELOW))
       {
-        WriteSignature(out, signature == -1 ? firstIdentity->signature-1 : signature, TRUE);
+        WriteSignature(out, signature == NULL ? firstIdentity->signature : signature, TRUE);
       }
 
       // close the filehandle
@@ -3420,70 +3420,62 @@ static void AddTagline(FILE *fh_mail)
 ///
 /// WriteSignature
 //  Writes signature to an already open file handle
-void WriteSignature(FILE *out, int signature, BOOL separator)
+void WriteSignature(FILE *out, struct SignatureNode *sn, BOOL separator)
 {
   ENTER();
 
-  if(signature >= 0)
+  if(sn != NULL)
   {
-    struct SignatureNode *sn;
+    char sigPath[SIZE_PATHFILE];
+    char *sigFile;
+    LONG sigSize = 0;
 
-    // get the signature node
-    if((sn = GetSignature(&C->signatureList, signature, TRUE)) != NULL)
+    sigFile = CreateFilename(sn->filename, sigPath, sizeof(sigPath));
+
+    // check whether the signature file exists and contains at least one character
+    if(ObtainFileInfo(sigFile, FI_SIZE, &sigSize) == TRUE && sigSize > 0)
     {
-      char sigPath[SIZE_PATHFILE];
-      char *sigFile;
-      LONG sigSize = 0;
+      FILE *in;
 
-      sigFile = CreateFilename(sn->filename, sigPath, sizeof(sigPath));
-
-      // check whether the signature file exists and contains at least one character
-      if(ObtainFileInfo(sigFile, FI_SIZE, &sigSize) == TRUE && sigSize > 0)
+      // now append the signature file and fill the placeholders
+      if((in = fopen(sigFile, "r")) != NULL)
       {
-        FILE *in;
+        int ch;
 
-        // now append the signature file and fill the placeholders
-        if((in = fopen(sigFile, "r")) != NULL)
+        setvbuf(in, NULL, _IOFBF, SIZE_FILEBUF);
+
+        if(separator == TRUE)
+          fputs("-- \n", out);
+        else
+          fputs("\n", out);
+
+        while((ch = fgetc(in)) != EOF)
         {
-          int ch;
-
-          setvbuf(in, NULL, _IOFBF, SIZE_FILEBUF);
-
-          if(separator == TRUE)
-            fputs("-- \n", out);
-          else
-            fputs("\n", out);
-
-          while((ch = fgetc(in)) != EOF)
+          if(ch == '%')
           {
-            if(ch == '%')
+            ch = fgetc(in);
+
+            if(ch == 't')
             {
-              ch = fgetc(in);
-
-              if(ch == 't')
-              {
-                AddTagline(out);
-                continue;
-              }
-
-              if(ch == 'e')
-              {
-                CopyFile(NULL, out, "ENV:SIGNATURE", NULL);
-                continue;
-              }
-
-              ungetc(ch, in);
-              ch = '%';
+              AddTagline(out);
+              continue;
             }
-            fputc(ch, out);
-          }
 
-          fclose(in);
+            if(ch == 'e')
+            {
+              CopyFile(NULL, out, "ENV:SIGNATURE", NULL);
+              continue;
+            }
+
+            ungetc(ch, in);
+            ch = '%';
+          }
+          fputc(ch, out);
         }
+
+        fclose(in);
       }
     }
-    else
-      W(DBF_ALWAYS, "couldn't get signature #%d in list", signature);
   }
 
   LEAVE();

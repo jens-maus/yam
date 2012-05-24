@@ -81,8 +81,9 @@ struct ExtendedMail
   int                      NumResentTo;    // number of recipients in ResentTo
   int                      NumFollowUpTo;  // number of recipients in FollowUpTo
   int                      NumMailReplyTo; // number of recipients in MailReplyTo
-  int                      Signature;
   int                      Security;
+  int                      signatureID;    // id of the signature found in the mail (X-YAM-Options:)
+  struct SignatureNode *   signature;      // ptr to matched signature (can also be NULL for no sig)
   int                      identityID;     // id of the user identity found in the mail (X-YAM-Options:)
   struct UserIdentityNode *identity;       // ptr to matched identity (can also be the default id)
   BOOL                     DelSend;

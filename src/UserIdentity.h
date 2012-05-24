@@ -35,6 +35,7 @@ struct Config;
 struct MailServerNode;
 struct Folder;
 struct ExtendedMail;
+struct SignatureNode;
 
 enum QuotePos { QPOS_BELOW=0, QPOS_ABOVE };
 enum SigPos { SPOS_BELOW=0, SPOS_ABOVE };
@@ -51,8 +52,8 @@ struct UserIdentityNode
   char realname[SIZE_REALNAME];      // real name (firstname + lastname)
   char address[SIZE_ADDRESS];        // email address
   char organization[SIZE_DEFAULT];   // organization
-  struct MailServerNode *smtpServer; // SMTP server
-  int signature;                     // number of signature
+  struct MailServerNode *smtpServer; // ptr to SMTP server node
+  struct SignatureNode *signature;   // ptr to Signature node (or NULL)
   char mailCC[SIZE_LARGE];           // predefined CC address field
   char mailBCC[SIZE_LARGE];          // predefined BCC address field
   char mailReplyTo[SIZE_LARGE];      // predefined ReplyTo address field

@@ -338,6 +338,25 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
       i++;
     }
 
+    fprintf(fh, "\n[Signature]\n");
+    fprintf(fh, "TagsFile          = %s\n", co->TagsFile);
+    fprintf(fh, "TagsSeparator     = %s\n", co->TagsSeparator);
+
+    // we iterate through our signature list and output 
+    // the data of each signature here
+    i = 0;
+    IterateList(&co->signatureList, curNode)
+    {
+      struct SignatureNode *sn = (struct SignatureNode *)curNode;
+
+      fprintf(fh, "SIG%02d.ID          = %08x\n", i, sn->id);
+      fprintf(fh, "SIG%02d.Enabled     = %s\n", i, Bool2Txt(sn->active));
+      fprintf(fh, "SIG%02d.Description = %s\n", i, sn->description);
+      fprintf(fh, "SIG%02d.Filename    = %s\n", i, sn->filename);
+
+      i++;
+    }
+
     fprintf(fh, "\n[Identities]\n");
 
     // we iterate through our mail server list and ouput the POP3 servers in it
@@ -353,7 +372,7 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
       fprintf(fh, "ID%02d.Address            = %s\n", i, uin->address);
       fprintf(fh, "ID%02d.Organization       = %s\n", i, uin->organization);
       fprintf(fh, "ID%02d.MailServerID       = %08x\n", i, uin->smtpServer != NULL ? uin->smtpServer->id : 0);
-      fprintf(fh, "ID%02d.Signature          = %d\n", i, uin->signature);
+      fprintf(fh, "ID%02d.SignatureID        = %08x\n", i, uin->signature != NULL ? uin->signature->id : 0);
       fprintf(fh, "ID%02d.MailCC             = %s\n", i, uin->mailCC);
       fprintf(fh, "ID%02d.MailBCC            = %s\n", i, uin->mailBCC);
       fprintf(fh, "ID%02d.MailReplyTo        = %s\n", i, uin->mailReplyTo);
@@ -536,25 +555,6 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
     fprintf(fh, "QuoteEmptyLines  = %s\n", Bool2Txt(co->QuoteEmptyLines));
     fprintf(fh, "CompareAddress   = %s\n", Bool2Txt(co->CompareAddress));
     fprintf(fh, "StripSignature   = %s\n", Bool2Txt(co->StripSignature));
-
-    fprintf(fh, "\n[Signature]\n");
-    fprintf(fh, "TagsFile          = %s\n", co->TagsFile);
-    fprintf(fh, "TagsSeparator     = %s\n", co->TagsSeparator);
-
-    // we iterate through our signature list and output 
-    // the data of each signature here
-    i = 0;
-    IterateList(&co->signatureList, curNode)
-    {
-      struct SignatureNode *sn = (struct SignatureNode *)curNode;
-
-      fprintf(fh, "SIG%02d.ID          = %08x\n", i, sn->id);
-      fprintf(fh, "SIG%02d.Enabled     = %s\n", i, Bool2Txt(sn->active));
-      fprintf(fh, "SIG%02d.Description = %s\n", i, sn->description);
-      fprintf(fh, "SIG%02d.Filename    = %s\n", i, sn->filename);
-
-      i++;
-    }
 
     fprintf(fh, "\n[Lists]\n");
     fprintf(fh, "FolderCols       = %d\n", co->FolderCols);
@@ -958,19 +958,45 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
           }
 
 /* New mail */
-          else if(stricmp(buf, "AvoidDuplicates") == 0)          { globalPOP3AvoidDuplicates = Txt2Bool(value); foundGlobalPOP3Options = TRUE; }
-          else if(stricmp(buf, "PreSelection") == 0)             { globalPOP3Preselection = atoi(value); foundGlobalPOP3Options = TRUE; }
           else if(stricmp(buf, "TransferWindow") == 0)           co->TransferWindow = atoi(value);
           else if(stricmp(buf, "UpdateStatus") == 0)             co->UpdateStatus = Txt2Bool(value);
-          else if(stricmp(buf, "WarnSize") == 0)                 { globalPOP3DownloadSizeLimit = atoi(value); foundGlobalPOP3Options = TRUE; }
-          else if(stricmp(buf, "CheckMail") == 0)                { globalPOP3DownloadPeriodically = Txt2Bool(value); foundGlobalPOP3Options = TRUE; }
-          else if(stricmp(buf, "CheckMailDelay") == 0)           { globalPOP3DownloadInterval = atoi(value); foundGlobalPOP3Options = TRUE; }
-          else if(stricmp(buf, "DownloadLarge") == 0)            { globalPOP3DownloadLargeMails = Txt2Bool(value); foundGlobalPOP3Options = TRUE; }
           else if(stricmp(buf, "NotifyType") == 0)               co->NotifyType = atoi(value);
           else if(stricmp(buf, "NotifySound") == 0)              strlcpy(co->NotifySound, value, sizeof(co->NotifySound));
           else if(stricmp(buf, "NotifyCommand") == 0)            strlcpy(co->NotifyCommand, value, sizeof(co->NotifyCommand));
-          else if(stricmp(buf, "DeleteOnServer") == 0)           { globalPOP3DeleteOnServer = Txt2Bool(value); foundGlobalPOP3Options = TRUE; }
+/* Signature */
+          else if(stricmp(buf, "TagsFile") == 0)                 strlcpy(co->TagsFile, value, sizeof(co->TagsFile));
+          else if(stricmp(buf, "TagsSeparator") == 0)            strlcpy(co->TagsSeparator, value2, sizeof(co->TagsSeparator));
+          else if(strnicmp(buf,"SIG", 3) == 0 && isdigit(buf[3]) && isdigit(buf[4]) && strchr(buf, '.') != NULL)
+          {
+            int num = atoi(&buf[3]);
 
+            if(num >= 0)
+            {
+              struct SignatureNode *sn;
+
+              // try to get the nth SignatureNode structure in our list or create a new one
+              if((sn = GetSignature(&co->signatureList, num, FALSE)) == NULL)
+              {
+                if((sn = CreateNewSignature()) != NULL)
+                  AddTail((struct List *)&co->signatureList, (struct Node *)sn);
+                else
+                  E(DBF_CONFIG, "Couldn't create new Signature structure %ld", num);
+              }
+
+              if(sn != NULL)
+              {
+                char *q = strchr(buf, '.')+1;
+
+                // now find out which subtype this signature is
+                if(stricmp(q, "ID") == 0)               sn->id = strtol(value, NULL, 16);
+                else if(stricmp(q, "Enabled") == 0)     sn->active = Txt2Bool(value);
+                else if(stricmp(q, "Description") == 0) strlcpy(sn->description, value, sizeof(sn->description));
+                else if(stricmp(q, "Filename") == 0)    strlcpy(sn->filename, value, sizeof(sn->filename));
+                else
+                  W(DBF_CONFIG, "unknown '%s' SIG config tag", q);
+              }
+            }
+          }
 /* Identities */
           else if(strnicmp(buf,"ID", 2) == 0 && isdigit(buf[2]) && isdigit(buf[3]) && strchr(buf, '.') != NULL)
           {
@@ -1001,31 +1027,8 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
                 else if(stricmp(q, "Realname") == 0)             strlcpy(uin->realname, value, sizeof(uin->realname));
                 else if(stricmp(q, "Address") == 0)              strlcpy(uin->address, value, sizeof(uin->address));
                 else if(stricmp(q, "Organization") == 0)         strlcpy(uin->organization, value, sizeof(uin->organization));
-                else if(stricmp(q, "MailServerID") == 0)
-                {
-                  long mailServerID = strtol(value, NULL, 16);
-
-                  if(mailServerID > 0)
-                  {
-                    struct Node *curNode;
-
-                    IterateList(&co->smtpServerList, curNode)
-                    {
-                      struct MailServerNode *msn = (struct MailServerNode *)curNode;
-
-                      // check if we found exactly this ID
-                      if(msn->id == mailServerID)
-                      {
-                        uin->smtpServer = msn;
-                        break;
-                      }
-                    }
-                  }
-
-                  if(uin->smtpServer == NULL)
-                    W(DBF_CONFIG, "Couldn't find SMTP Server with ID '%s' for Identity %d", value, id);
-                }
-                else if(stricmp(q, "Signature") == 0)            uin->signature = atoi(value);
+                else if(stricmp(q, "MailServerID") == 0)         uin->smtpServer = FindMailServer(&co->smtpServerList, strtol(value, NULL, 16));
+                else if(stricmp(q, "SignatureID") == 0)          uin->signature = FindSignatureByID(&co->signatureList, strtol(value, NULL, 16));
                 else if(stricmp(q, "MailCC") == 0)               strlcpy(uin->mailCC, value, sizeof(uin->mailCC));
                 else if(stricmp(q, "MailBCC") == 0)              strlcpy(uin->mailBCC, value, sizeof(uin->mailBCC));
                 else if(stricmp(q, "MailReplyTo") == 0)          strlcpy(uin->mailReplyTo, value, sizeof(uin->mailReplyTo));
@@ -1311,40 +1314,6 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
           else if(stricmp(buf, "CompareAddress") == 0)           co->CompareAddress = Txt2Bool(value);
           else if(stricmp(buf, "StripSignature") == 0)           co->StripSignature = Txt2Bool(value);
 
-/* Signature */
-          else if(stricmp(buf, "TagsFile") == 0)                 strlcpy(co->TagsFile, value, sizeof(co->TagsFile));
-          else if(stricmp(buf, "TagsSeparator") == 0)            strlcpy(co->TagsSeparator, value2, sizeof(co->TagsSeparator));
-          else if(strnicmp(buf,"SIG", 3) == 0 && isdigit(buf[3]) && isdigit(buf[4]) && strchr(buf, '.') != NULL)
-          {
-            int num = atoi(&buf[3]);
-
-            if(num >= 0)
-            {
-              struct SignatureNode *sn;
-
-              // try to get the nth SignatureNode structure in our list or create a new one
-              if((sn = GetSignature(&co->signatureList, num, FALSE)) == NULL)
-              {
-                if((sn = CreateNewSignature()) != NULL)
-                  AddTail((struct List *)&co->signatureList, (struct Node *)sn);
-                else
-                  E(DBF_CONFIG, "Couldn't create new Signature structure %ld", num);
-              }
-
-              if(sn != NULL)
-              {
-                char *q = strchr(buf, '.')+1;
-
-                // now find out which subtype this signature is
-                if(stricmp(q, "ID") == 0)               sn->id = strtol(value, NULL, 16);
-                else if(stricmp(q, "Enabled") == 0)     sn->active = Txt2Bool(value);
-                else if(stricmp(q, "Description") == 0) strlcpy(sn->description, value, sizeof(sn->description));
-                else if(stricmp(q, "Filename") == 0)    strlcpy(sn->filename, value, sizeof(sn->filename));
-                else
-                  W(DBF_CONFIG, "unknown '%s' SIG config tag", q);
-              }
-            }
-          }
 /* Lists */
           else if(stricmp(buf, "FolderCols") == 0)               co->FolderCols = atoi(value);
           else if(stricmp(buf, "MessageCols") == 0)              co->MessageCols = atoi(value);
@@ -1365,7 +1334,6 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
           else if(stricmp(buf, "LogAllEvents") == 0)             co->LogAllEvents = Txt2Bool(value);
 
 /* Startup/Quit */
-          else if(stricmp(buf, "GetOnStartup") == 0)             { globalPOP3DownloadOnStartup = Txt2Bool(value); foundGlobalPOP3Options = TRUE; }
           else if(stricmp(buf, "SendOnStartup") == 0)            co->SendOnStartup = Txt2Bool(value);
           else if(stricmp(buf, "CleanupOnStartup") == 0)         co->CleanupOnStartup = Txt2Bool(value);
           else if(stricmp(buf, "RemoveOnStartup") == 0)          co->RemoveOnStartup = Txt2Bool(value);
@@ -1657,7 +1625,7 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
             else if(stricmp(buf, "MyPictureURL") == 0)             strlcpy(fUserIdentity->photoURL, value, sizeof(fUserIdentity->photoURL));
             else if(stricmp(buf, "SaveSent") == 0)                 fUserIdentity->saveSentMail = Txt2Bool(value);
             else if(stricmp(buf, "AddMyInfo") == 0)                fUserIdentity->addPersonalInfo = Txt2Bool(value);
-            else if(stricmp(buf, "UseSignature") == 0)             fUserIdentity->signature = (Txt2Bool(value) == TRUE ? 1 : 0);
+            else if(stricmp(buf, "UseSignature") == 0)             fUserIdentity->signature = (Txt2Bool(value) == TRUE ? GetSignature(&co->signatureList, 0, TRUE) : NULL);
             else if(stricmp(buf, "SMTP-ID") == 0)                  fSMTP->id = strtol(value, NULL, 16);
             else if(stricmp(buf, "SMTP-Enabled") == 0)             Txt2Bool(value) == TRUE ? setFlag(fSMTP->flags, MSF_ACTIVE) : clearFlag(fSMTP->flags, MSF_ACTIVE);
             else if(stricmp(buf, "SMTP-Description") == 0)         strlcpy(fSMTP->description, value, sizeof(fSMTP->description));
@@ -1665,7 +1633,7 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
             else if(stricmp(buf, "SMTP-Port") == 0)                fSMTP->port = atoi(value);
             else if(stricmp(buf, "SMTP-SecMethod") == 0)           setFlag(fSMTP->flags, SMTPSecMethod2MSF(atoi(value)));
             else if(stricmp(buf, "Allow8bit") == 0)                Txt2Bool(value) == TRUE ? setFlag(fSMTP->flags, MSF_ALLOW_8BIT) : clearFlag(fSMTP->flags, MSF_ALLOW_8BIT);
-            else if(stricmp(buf, "Use-SMTP-TLS") == 0)             setFlag(fSMTP->flags, SMTPSecMethod2MSF(atoi(value))); // obsolete
+            else if(stricmp(buf, "Use-SMTP-TLS") == 0)             setFlag(fSMTP->flags, SMTPSecMethod2MSF(atoi(value)));
             else if(stricmp(buf, "Use-SMTP-AUTH") == 0)            Txt2Bool(value) == TRUE ? setFlag(fSMTP->flags, MSF_AUTH) : clearFlag(fSMTP->flags, MSF_AUTH);
             else if(stricmp(buf, "SMTP-AUTH-User") == 0)           strlcpy(fSMTP->username, value, sizeof(fSMTP->username));
             else if(stricmp(buf, "SMTP-AUTH-Pass") == 0)           strlcpy(fSMTP->password, Decrypt(value), sizeof(fSMTP->password));
@@ -1673,6 +1641,14 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
             else if(stricmp(buf, "POP3-Server") == 0)              strlcpy(fPOP3->hostname, value, sizeof(fPOP3->hostname));
             else if(stricmp(buf, "POP3-Password") == 0)            strlcpy(fPOP3->password, Decrypt(value), sizeof(fPOP3->password));
             else if(stricmp(buf, "POP3-User") == 0)                strlcpy(fPOP3->username, value, sizeof(fPOP3->username));
+            else if(stricmp(buf, "AvoidDuplicates") == 0)          { globalPOP3AvoidDuplicates = Txt2Bool(value); foundGlobalPOP3Options = TRUE; }
+            else if(stricmp(buf, "PreSelection") == 0)             { globalPOP3Preselection = atoi(value); foundGlobalPOP3Options = TRUE; }
+            else if(stricmp(buf, "GetOnStartup") == 0)             { globalPOP3DownloadOnStartup = Txt2Bool(value); foundGlobalPOP3Options = TRUE; }
+            else if(stricmp(buf, "DeleteOnServer") == 0)           { globalPOP3DeleteOnServer = Txt2Bool(value); foundGlobalPOP3Options = TRUE; }
+            else if(stricmp(buf, "WarnSize") == 0)                 { globalPOP3DownloadSizeLimit = atoi(value); foundGlobalPOP3Options = TRUE; }
+            else if(stricmp(buf, "CheckMail") == 0)                { globalPOP3DownloadPeriodically = Txt2Bool(value); foundGlobalPOP3Options = TRUE; }
+            else if(stricmp(buf, "CheckMailDelay") == 0)           { globalPOP3DownloadInterval = atoi(value); foundGlobalPOP3Options = TRUE; }
+            else if(stricmp(buf, "DownloadLarge") == 0)            { globalPOP3DownloadLargeMails = Txt2Bool(value); foundGlobalPOP3Options = TRUE; }
             else if(stricmp(buf, "Verbosity") == 0)                co->TransferWindow = atoi(value) > 0 ? TWM_SHOW : TWM_HIDE;
             else if(stricmp(buf, "WordWrap") == 0)                 co->EdWrapCol = atoi(value);
             else if(stricmp(buf, "DeleteOnExit") == 0)             co->RemoveAtOnce = !(co->RemoveOnQuit = Txt2Bool(value));
@@ -1879,11 +1855,11 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
 
             if(globalPOP3DownloadSizeLimit != -1)
             {
-			  msn->largeMailSizeLimit = globalPOP3DownloadSizeLimit;
-			}
+              msn->largeMailSizeLimit = globalPOP3DownloadSizeLimit;
+            }
 
-			if(globalPOP3DeleteOnServer != -1)
-			{
+            if(globalPOP3DeleteOnServer != -1)
+            {
               if(globalPOP3DeleteOnServer == TRUE)
                 setFlag(msn->flags, MSF_PURGEMESSGAES);
               else

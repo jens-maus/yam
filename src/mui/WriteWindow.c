@@ -1044,10 +1044,10 @@ OVERLOAD(OM_NEW)
           End,
           MenuChild, MenuitemObject,
             MUIA_Menuitem_Title,tr(MSG_CO_CrdSignature),
-            MenuChild, MenuitemCheck(signat[0], "0", TRUE, uin->signature == 0, TRUE, 0x0E, WMEN_SIGN0),
-            MenuChild, MenuitemCheck(signat[1], "7", TRUE, uin->signature == 1, TRUE, 0x0D, WMEN_SIGN1),
-            MenuChild, MenuitemCheck(signat[2], "8", TRUE, uin->signature == 2, TRUE, 0x0B, WMEN_SIGN2),
-            MenuChild, MenuitemCheck(signat[3], "9", TRUE, uin->signature == 3, TRUE, 0x07, WMEN_SIGN3),
+            MenuChild, MenuitemCheck(signat[0], "0", TRUE, /*uin->signature == 0*/FALSE, TRUE, 0x0E, WMEN_SIGN0),
+            MenuChild, MenuitemCheck(signat[1], "7", TRUE, /*uin->signature == 1*/TRUE, TRUE, 0x0D, WMEN_SIGN1),
+            MenuChild, MenuitemCheck(signat[2], "8", TRUE, /*uin->signature == 2*/FALSE, TRUE, 0x0B, WMEN_SIGN2),
+            MenuChild, MenuitemCheck(signat[3], "9", TRUE, /*uin->signature == 3*/FALSE, TRUE, 0x07, WMEN_SIGN3),
             #warning "TODO: replace static menuitem list here with dynamic one"
           End,
           MenuChild, MenuitemObject,
@@ -1468,7 +1468,6 @@ OVERLOAD(OM_NEW)
         DoMethod(data->RA_ENCODING,  MUIM_Notify, MUIA_Radio_Active,       MUIV_EveryTime, obj, 1, METHOD(PutAttachmentEntry));
         DoMethod(data->ST_CTYPE,     MUIM_Notify, MUIA_String_Contents,    MUIV_EveryTime, obj, 1, METHOD(PutAttachmentEntry));
         DoMethod(data->ST_DESC,      MUIM_Notify, MUIA_String_Contents,    MUIV_EveryTime, obj, 1, METHOD(PutAttachmentEntry));
-        DoMethod(data->CY_SIGNATURE, MUIM_Notify, MUIA_Cycle_Active,       MUIV_EveryTime, obj, 2, METHOD(ChangeSignature), MUIV_TriggerValue);
         DoMethod(data->CH_DELSEND,   MUIM_Notify, MUIA_Selected,           MUIV_EveryTime, data->MI_DELSEND,        3, MUIM_Set,      MUIA_Menuitem_Checked, MUIV_TriggerValue);
         DoMethod(data->CH_MDN,       MUIM_Notify, MUIA_Selected,           MUIV_EveryTime, data->MI_MDN,            3, MUIM_Set,      MUIA_Menuitem_Checked, MUIV_TriggerValue);
         DoMethod(data->CH_ADDINFO,   MUIM_Notify, MUIA_Selected,           MUIV_EveryTime, data->MI_ADDINFO,        3, MUIM_Set,      MUIA_Menuitem_Checked, MUIV_TriggerValue);
@@ -1514,6 +1513,9 @@ OVERLOAD(OM_NEW)
 
         // set notify for identity cycle gadget
         DoMethod(data->CY_FROM, MUIM_Notify, MUIA_IdentityChooser_Identity, MUIV_EveryTime, obj, 2, METHOD(IdentityChanged), MUIV_TriggerValue);
+
+        // set notify for signature cycle gadget
+        DoMethod(data->CY_SIGNATURE, MUIM_Notify, MUIA_SignatureChooser_Signature, MUIV_EveryTime, obj, 1, METHOD(SignatureChanged));
 
         // hide optional recipient string object depending on their
         // defaults
@@ -1902,7 +1904,7 @@ OVERLOAD(OM_SET)
 
       case ATTR(Signature):
       {
-        setcycle(data->CY_SIGNATURE, tag->ti_Data);
+        set(data->CY_SIGNATURE, MUIA_SignatureChooser_Signature, tag->ti_Data);
 
         // make the superMethod call ignore those tags
         tag->ti_Tag = TAG_IGNORE;
@@ -2550,9 +2552,9 @@ DECLARE(PutAttachmentEntry)
 }
 
 ///
-/// DECLARE(ChangeSignature)
+/// DECLARE(SignatureChanged)
 // Changes the current signature
-DECLARE(ChangeSignature) // LONG signature
+DECLARE(SignatureChanged)
 {
   GETDATA;
   struct TempFile *tfin;
@@ -2587,7 +2589,9 @@ DECLARE(ChangeSignature) // LONG signature
           fwrite(buf, curlen, 1, tfout->FP);
         }
 
-        WriteSignature(tfout->FP, msg->signature-1, TRUE);
+        // add the signature or in case the signature is NULL
+        // WriteSignature() will return immediatly
+        WriteSignature(tfout->FP, (struct SignatureNode *)xget(data->CY_SIGNATURE, MUIA_SignatureChooser_Signature), TRUE);
 
         // now our out file is finished, so we can
         // put everything in our text editor.
@@ -3128,17 +3132,27 @@ DECLARE(InsertAttachment) // struct Attach *attach
 ///
 /// DECLARE(AddSignature)
 //  Adds a signature to the end of the file
-DECLARE(AddSignature) // int signat
+DECLARE(AddSignature)
 {
   GETDATA;
-  int signat = msg->signat;
+  struct Node *curNode;
+  struct SignatureNode *signature = NULL;
 
   ENTER();
 
-  if(signat == -1)
-    signat = data->wmData->identity->signature;
+  // now we iterate through the signatureList
+  // for picking the signature from the currently
+  // selected identity
+  IterateList(&C->signatureList, curNode)
+  {
+    if(curNode == (struct Node *)data->wmData->identity->signature)
+    {
+      signature = data->wmData->identity->signature;
+      break;
+    }
+  }
 
-  if(signat > 0)
+  if(signature != NULL)
   {
     FILE *fh_mail;
     BOOL addline = FALSE;
@@ -3157,14 +3171,14 @@ DECLARE(AddSignature) // int signat
       if(addline)
         fputc('\n', fh_mail);
 
-      WriteSignature(fh_mail, signat-1, TRUE);
+      WriteSignature(fh_mail, signature, TRUE);
       fclose(fh_mail);
     }
   }
 
   // lets set the signature cycle gadget
   // accordingly to the set signature
-  nnset(data->CY_SIGNATURE, MUIA_Cycle_Active, signat);
+  nnset(data->CY_SIGNATURE, MUIA_SignatureChooser_Signature, signature);
 
   RETURN(0);
   return 0;
@@ -3830,7 +3844,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
     comp.Importance = 1-GetMUICycle(data->CY_IMPORTANCE);
     comp.RequestMDN = GetMUICheck(data->CH_MDN);
-    comp.Signature = GetMUICycle(data->CY_SIGNATURE);
+    comp.Signature = (struct SignatureNode *)xget(data->CY_SIGNATURE, MUIA_SignatureChooser_Signature);
     comp.Security = GetMUICycle(data->CY_SECURITY);
     comp.SelSecurity = comp.Security;
 
@@ -4435,7 +4449,7 @@ DECLARE(IdentityChanged) // struct UserIdentityNode *uin;
   // in the write window according to the settings in the user identity.
 
   // first we update things in the write window GUI
-  set(data->CY_SIGNATURE, MUIA_Cycle_Active, msg->uin->signature);
+  set(data->CY_SIGNATURE, MUIA_SignatureChooser_Signature, msg->uin->signature);
   set(data->ST_CC, MUIA_String_Contents, msg->uin->mailCC);
   set(data->ST_BCC, MUIA_String_Contents, msg->uin->mailBCC);
   set(data->ST_REPLYTO, MUIA_String_Contents, msg->uin->mailReplyTo);

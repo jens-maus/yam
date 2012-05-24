@@ -41,6 +41,7 @@ struct DateStamp;
 struct Mail;
 struct MailList;
 struct ReadMailData;
+struct SignatureNode;
 struct UserIdentityNode;
 
 // enumeration with security levels a mail can
@@ -160,7 +161,7 @@ struct Compose
   struct Mail *             refMail;        // ptr to the original mail we composing a new one from.
   enum NewMailMode          Mode;           // the mode this mail was composed of
   int                       Importance;     // the importance level of the mail (low/normal/high)
-  int                       Signature;      // the signature that is used when composing the mail
+  struct SignatureNode *    Signature;      // the signature that is used when composing the mail
   BOOL                      RequestMDN;     // should a MDN be requested?
   BOOL                      GenerateMDN;    // should a MDN report be generated?
   BOOL                      DelSend;        // should the mail be deleted after having sent it?
@@ -198,6 +199,6 @@ void FreeWriteMailData(struct WriteMailData *wmData);
 BOOL CleanupWriteMailData(struct WriteMailData *wmData);
 struct WritePart *NewMIMEpart(struct WriteMailData *wmData);
 void CheckForAutoSaveFiles(void);
-void WriteSignature(FILE *out, int signature, BOOL separator);
+void WriteSignature(FILE *out, struct SignatureNode *signature, BOOL separator);
 
 #endif /* YAM_WRITE_H */
