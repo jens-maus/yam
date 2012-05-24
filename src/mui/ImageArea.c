@@ -783,14 +783,14 @@ OVERLOAD(MUIM_AskMinMax)
   mi->MinHeight += data->noMinHeight ? 0 : minheight;
   mi->DefHeight += minheight;
   if(data->free_vert)
-    mi->MaxHeight = MUI_MAXMAX;
+    mi->MaxHeight += MUI_MAXMAX;
   else
     mi->MaxHeight += minheight;
 
   mi->MinWidth += minwidth;
   mi->DefWidth += minwidth;
   if(data->free_horiz)
-    mi->MaxWidth = MUI_MAXMAX;
+    mi->MaxWidth += MUI_MAXMAX;
   else
     mi->MaxWidth += minwidth;
 
