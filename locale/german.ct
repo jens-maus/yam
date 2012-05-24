@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.43 (23.05.2012)
+## version $VER: YAM.catalog 7.44 (24.05.2012)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -8648,9 +8648,6 @@ Beschreibung
 MSG_CO_IDENTITY_MAILSERVER
 Mailserver (SMTP)
 ;
-MSG_CO_IDENTITY_DEFSIGNATURE
-Standard-Signatur
-;
 MSG_CO_IDENTITY_COMPOSE
 Einstellungen für neue Nachrichten
 ;
@@ -8942,4 +8939,19 @@ KB laden
 ;
 MSG_MA_DRAFTS
 Entwürfe
+;
+MSG_CO_SIGNATURE
+Signatur
+;
+MSG_CO_SIGNATURES
+Signaturen
+;
+MSG_CO_SIGNATURE_DESCRIPTION
+Beschreibung
+;
+MSG_CO_SIGNATURE_ACTIVE
+_Aktiv
+;
+MSG_CO_IDENTITY_SIGNATURE
+Signatur
 ;

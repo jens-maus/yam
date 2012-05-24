@@ -2165,8 +2165,8 @@ Object *CO_PageIdentities(struct CO_ClassData *data)
                       Child, Label2(tr(MSG_CO_IDENTITY_MAILSERVER)),
                       Child, data->GUI.CY_IDENTITY_MAILSERVER = MakeCycle(NULL, tr(MSG_CO_IDENTITY_MAILSERVER)),
 
-                      Child, Label2(tr(MSG_CO_IDENTITY_DEFSIGNATURE)),
-                      Child, data->GUI.CY_IDENTITY_SIGNATURE = MakeCycle(NULL, tr(MSG_CO_IDENTITY_DEFSIGNATURE)),
+                      Child, Label2(tr(MSG_CO_IDENTITY_SIGNATURE)),
+                      Child, data->GUI.CY_IDENTITY_SIGNATURE = MakeCycle(NULL, tr(MSG_CO_IDENTITY_SIGNATURE)),
 
                       Child, HVSpace,
                       Child, HVSpace,
@@ -3461,7 +3461,7 @@ Object *CO_PageSignature(struct CO_ClassData *data)
         End;
 
   if(obj != NULL)
-  { 
+  {
     // enhance the CycleChain
     set(data->GUI.BT_SIGUP,   MUIA_CycleChain, TRUE);
     set(data->GUI.BT_SIGDOWN, MUIA_CycleChain, TRUE);

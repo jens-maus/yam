@@ -8,6 +8,8 @@ $URL$
 2012-05-24 Thore Böckelmann <tboeckel@gmx.de>
 
   * Signature.c: added missing #include for all non-AmigaOS4 builds.
+  * YAM_COg.c, locale/YAM.cd: renamed the "default signature" label on the
+    identity page to "signature".
 
 2012-05-23 Jens Langner <Jens.Langner@light-speed.de>
 

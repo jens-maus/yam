@@ -7097,9 +7097,6 @@ Description
 MSG_CO_IDENTITY_MAILSERVER (2275//)
 Mail server (SMTP)
 ;
-MSG_CO_IDENTITY_DEFSIGNATURE (2276//)
-Default signature
-;
 MSG_CO_IDENTITY_COMPOSE (2277//)
 Compose mail settings
 ;
@@ -7409,4 +7406,7 @@ Description
 ;
 MSG_CO_SIGNATURE_ACTIVE (2363//)
 _Active
+;
+MSG_CO_IDENTITY_SIGNATURE (2364//)
+Signature
 ;
