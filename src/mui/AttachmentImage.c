@@ -794,9 +794,6 @@ OVERLOAD(MUIM_Draw)
       bitmask = data->normalBitMask;
     }
 
-    // draw the background first.
-    DoMethod(obj, MUIM_DrawBackground, _mleft(obj), _mtop(obj), _mwidth(obj), _mheight(obj), 0, 0, MUIF_NONE);
-
     if(bitmap != NULL)
     {
       #if defined(__amigaos4__)
