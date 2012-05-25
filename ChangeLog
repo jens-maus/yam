@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-05-25 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: update according to the latest changes.
+
 2012-05-25 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_COs.c, YAM_MA.c: removed some superflous code to generate a valid server

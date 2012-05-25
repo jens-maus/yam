@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.99 (22.05.2012)
+## version $VER: YAM.catalog 7.99 (25.05.2012)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -7,7 +7,7 @@
 ; Compiled with FlexCat 2.9 PPC (AmigaOS4)
 ; $Id$
 ;
-; based on YAM.cd 5977 2012-05-22
+; based on YAM.cd 6004 2012-05-24
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -1583,15 +1583,15 @@ A_vvia immediatamente
 ; _Launch immediately
 ;
 MSG_CO_PhraseOpen
-Apertura
+apertura
 ; Open
 ;
 MSG_CO_PhraseIntro
-Intro
+intro
 ; Intro
 ;
 MSG_CO_PhraseClose
-Chiusura
+chiusura
 ; Close
 ;
 MSG_CO_Forwarding
@@ -5561,7 +5561,7 @@ AppIcon di YAM
 ; YAM AppIcon's label?
 ;
 MSG_OPENGUI
-Apertura della GUI...
+Inizializzazione e apertura della GUI...
 ; Opening GUI...
 ;
 MSG_CO_CONTEXTMENU
@@ -6313,24 +6313,6 @@ _Più
 MSG_CO_Less
 _Meno
 ; _Less
-;
-MSG_MA_AUTOSAVEFOUND
-Un file di autosalvataggio chiamato '%s'\n\
-è stato recuperato automaticamente da una precedente sessione di YAM.\n\
-Questo problema potrebbe essersi verificato a causa di un crash oppure di\n\
-un reboot improvviso durante la composizione di un messaggio di posta.\n\
-\n\
-Cosa si desidera fare con questo file?
-; YAM has found an autosaved message file '%s'\n\
-; which was created in a previous session.\n\
-; This may be due to a possible crash or reboot\n\
-; while writing a message.\n\
-; \n\
-; What do you want to do with that message?
-;
-MSG_MA_AUTOSAVEFOUND_TITLE
-Trovato file di autosalvataggio
-; Autosave file found
 ;
 MSG_CO_NB_AUTOSAVE
 Intervallo di autosalvataggio
@@ -7954,10 +7936,6 @@ Si desidera disattivare nuovamente questa opzione?
 MSG_ER_CANNOT_CREATE_SEMAPHORE
 Impossibile creare semaforo.
 ; Can't create semaphore.
-;
-MSG_MA_AUTOSAVEFOUND_BUTTONS
-*Sposta in _uscita|_Modifica|_Cancella|_Ignora
-; *Move to _Outgoing|_Edit|_Delete|_Ignore
 ;
 MSG_RE_HDR_FROM
 Da
@@ -10157,10 +10135,6 @@ MSG_CO_IDENTITY_MAILSERVER
 Server di posta (SMTP)
 ; Mail Server (SMTP)
 ;
-MSG_CO_IDENTITY_DEFSIGNATURE
-Firma predefinita
-; Default Signature
-;
 MSG_CO_IDENTITY_COMPOSE
 Impostazioni per la composizione del messaggio
 ; Compose Mail Settings
@@ -10596,4 +10570,62 @@ KB
 MSG_MA_DRAFTS
 Incompleti
 ; Drafts
+;
+MSG_CO_SIGNATURE
+Firma
+; Signature
+;
+MSG_CO_SIGNATURES
+Lista Firme
+; Signatures
+;
+MSG_CO_SIGNATURE_DESCRIPTION
+Descrizione
+; Description
+;
+MSG_CO_SIGNATURE_ACTIVE
+_Attiva
+; _Active
+;
+MSG_CO_IDENTITY_SIGNATURE
+_Firma
+; _ Signature
+;
+MSG_HELP_CO_LV_SIGNATURE
+Lista completa di tutte le firme
+; _ List of all signatures
+;
+MSG_HELP_CO_BT_SIGADD
+Aggiunge alla lista una nuova firma.
+; Adds a new signature to the list.
+;
+MSG_HELP_CO_BT_SIGDEL
+Rimuove dalla lista la firma selezionata.
+; Removes selected signature from list.
+;
+MSG_HELP_CO_BT_SIGUP
+Sposta la firma in alto di una voce.
+; Moves signature one entry up.
+;
+MSG_HELP_CO_BT_SIGDOWN
+Sposta la firma in basso di una voce.
+; Moves signature one entry down.
+;
+MSG_HELP_CO_BT_SIG_ACTIVE
+Contrassegna la firma attualmente\n\
+selezionata come attiva o disattiva.
+; Flags the currently selected signature\n\
+; as active or inactive.
+;
+MSG_HELP_CO_ST_SIG_DESC
+Permette di inserire un testo\n\
+descrittivo per la firma.
+; Allows you to enter a freetext\n\
+; description for the signature.
+;
+MSG_HELP_CO_TE_SIGEDIT
+Editor di testo per l'inserimento\n\
+o per la modifica della firma.
+; Text editor for entering/changing\n\
+; the signature text.
 ;
