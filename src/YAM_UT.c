@@ -4561,7 +4561,7 @@ void FolderTreeUpdate(void)
 
         parentFNode = parentFolder->parent;
       }
-	}
+    }
   }
 
   UnlockFolderList(G->folders);

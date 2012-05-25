@@ -2596,7 +2596,7 @@ BOOL MA_Send(enum SendMailMode mode)
     {
       // delete the mlist mail list as this is not required anymore
       DeleteMailList(mlist);
-	}
+    }
   }
 
   // now we are done

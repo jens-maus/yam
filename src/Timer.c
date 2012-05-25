@@ -141,7 +141,7 @@ static void StartTRequest(struct TRequest *timer)
       {
         D(DBF_TIMER, "timer[%s]: started @ %s to finish in %ld'%ld secs",
           timer->pop3Server->description, dateString, timer->tr->Time.Seconds, timer->tr->Time.Microseconds);
-	  }
+      }
       #endif
 
       // fire the timer by doing a SendIO()
