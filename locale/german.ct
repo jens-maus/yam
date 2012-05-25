@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.44 (24.05.2012)
+## version $VER: YAM.catalog 7.45 (25.05.2012)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -8954,4 +8954,31 @@ _Aktiv
 ;
 MSG_CO_IDENTITY_SIGNATURE
 Signatur
+;
+MSG_HELP_CO_LV_SIGNATURE
+Liste aller Signaturen
+;
+MSG_HELP_CO_BT_SIGADD
+Fügt der Liste eine neue Signatur hinzu.
+;
+MSG_HELP_CO_BT_SIGDEL
+Entfernt die gewählte Signatur aus der Liste.
+;
+MSG_HELP_CO_BT_SIGUP
+Verschiebt die Signatur nach oben.
+;
+MSG_HELP_CO_BT_SIGDOWN
+Verschiebt die Signatur nach unten.
+;
+MSG_HELP_CO_BT_SIG_ACTIVE
+Schaltet die gewählte Signatur\n\
+aktiv oder inaktiv.
+;
+MSG_HELP_CO_ST_SIG_DESC
+Erlaubt Ihnen eine frei wählbare\n\
+Beschreibung der Signatur einzugeben.
+;
+MSG_HELP_CO_TE_SIGEDIT
+Texteditor zum Eingeben/Ändern\n\
+des Signaturtextes.
 ;
