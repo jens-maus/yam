@@ -57,6 +57,7 @@
 
 #define MAXP3_MENU      30  // the hardcoded max. for POP3 menu entries
 #define MAXRX_MENU      10  // the hardcoded max. for Rexx menu entries
+#define MAXSIG_MENU      8  // the hardcoded max. for signature menu entries
 
 #define MAXERR          50
 #define MAXUSERS        16

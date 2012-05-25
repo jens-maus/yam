@@ -68,6 +68,7 @@
 #include "MUIObjects.h"
 #include "ParseEmail.h"
 #include "Requesters.h"
+#include "Signature.h"
 #include "Threads.h"
 #include "UserIdentity.h"
 
@@ -145,6 +146,8 @@ struct Data
   Object *MI_TSTYLE;
   Object *WI_SEARCH;
   Object *PO_CHARSET;
+  Object *MI_SIGNATURE;
+  Object *MI_SIGNATURES[MAXSIG_MENU];
 
   struct WriteMailData *wmData; // ptr to write mail data structure
   struct MsgPort *notifyPort;
@@ -196,7 +199,7 @@ enum
   WMEN_STYLE_COLORED,WMEN_EMOT0,WMEN_EMOT1,WMEN_EMOT2,WMEN_EMOT3,WMEN_UNDO,WMEN_REDO,
   WMEN_AUTOSP,WMEN_AUTOWRAP,WMEN_ADDFILE, WMEN_ADDCLIP, WMEN_ADDPGP,
   WMEN_DELSEND,WMEN_MDN,WMEN_ADDINFO,WMEN_IMPORT0,WMEN_IMPORT1,
-  WMEN_IMPORT2,WMEN_SIGN0,WMEN_SIGN1,WMEN_SIGN2,WMEN_SIGN3,
+  WMEN_IMPORT2,WMEN_SIGN0,WMEN_SIGN1,WMEN_SIGN2,WMEN_SIGN3,WMEN_SIGN4,WMEN_SIGN5,WMEN_SIGN6,WMEN_SIGN7,
   WMEN_SECUR0,WMEN_SECUR1,WMEN_SECUR2,WMEN_SECUR3,WMEN_SECUR4,WMEN_INSUUCODE,
   WMEN_SENDNOW,WMEN_QUEUE,WMEN_HOLD,WMEN_CANCEL,WMEN_SWITCH1,WMEN_SWITCH2,WMEN_SWITCH3,
   WMEN_FFONT,WMEN_TSTYLE,WMEN_TCOLOR,WMEN_CC,WMEN_BCC,WMEN_REPLYTO
@@ -947,10 +950,10 @@ OVERLOAD(OM_NEW)
       //  4   Show/Hide Cc Address-Field (WMEN_CC)
       //  5   Show/Hide Bcc Address-Field (WMEN_BCC)
       //  6   Show/Hide Reply-To Address-Field (WMEN_REPLYTO)
-      //  0   Use signature1 (WMEN_SIGN0)
-      //  7   Use signature2 (WMEN_SIGN1)
-      //  8   Use signature3 (WMEN_SIGN2)
-      //  9   Use signature4 (WMEN_SIGN3)
+      //  0   Use no signature (WMEN_SIGN0)
+      //  7   Use signature 1 (WMEN_SIGN1)
+      //  8   Use signature 2 (WMEN_SIGN2)
+      //  9   Use signature 3 (WMEN_SIGN3)
 
       menuStripObject = MenustripObject,
         MenuChild, MenuObject,
@@ -1042,13 +1045,8 @@ OVERLOAD(OM_NEW)
             MenuChild, MenuitemCheck(priority[1], NULL, TRUE, TRUE,  TRUE, 0x05, WMEN_IMPORT1),
             MenuChild, MenuitemCheck(priority[2], NULL, TRUE, FALSE, TRUE, 0x03, WMEN_IMPORT2),
           End,
-          MenuChild, MenuitemObject,
+          MenuChild, data->MI_SIGNATURE = MenuitemObject,
             MUIA_Menuitem_Title,tr(MSG_CO_CrdSignature),
-            MenuChild, MenuitemCheck(signat[0], "0", TRUE, /*uin->signature == 0*/FALSE, TRUE, 0x0E, WMEN_SIGN0),
-            MenuChild, MenuitemCheck(signat[1], "7", TRUE, /*uin->signature == 1*/TRUE, TRUE, 0x0D, WMEN_SIGN1),
-            MenuChild, MenuitemCheck(signat[2], "8", TRUE, /*uin->signature == 2*/FALSE, TRUE, 0x0B, WMEN_SIGN2),
-            MenuChild, MenuitemCheck(signat[3], "9", TRUE, /*uin->signature == 3*/FALSE, TRUE, 0x07, WMEN_SIGN3),
-            #warning "TODO: replace static menuitem list here with dynamic one"
           End,
           MenuChild, MenuitemObject,
             MUIA_Menuitem_Title,tr(MSG_CO_CrdSecurity),
@@ -1489,16 +1487,6 @@ OVERLOAD(OM_NEW)
         DoMethod(data->CY_IMPORTANCE, MUIM_Notify, MUIA_Cycle_Active,      2,              menuStripObject,         4, MUIM_SetUData, WMEN_IMPORT2, MUIA_Menuitem_Checked, TRUE);
         DoMethod(obj,                 MUIM_Notify, MUIA_Window_MenuAction, WMEN_IMPORT2,   data->CY_IMPORTANCE,     3, MUIM_Set,      MUIA_Cycle_Active, 2);
 
-        // set the notifies for the signature gadget
-        DoMethod(data->CY_SIGNATURE,  MUIM_Notify, MUIA_Cycle_Active,      0,              menuStripObject,         4, MUIM_SetUData, WMEN_SIGN0, MUIA_Menuitem_Checked, TRUE);
-        DoMethod(obj,                 MUIM_Notify, MUIA_Window_MenuAction, WMEN_SIGN0,     data->CY_SIGNATURE,      3, MUIM_Set,      MUIA_Cycle_Active, 0);
-        DoMethod(data->CY_SIGNATURE,  MUIM_Notify, MUIA_Cycle_Active,      1,              menuStripObject,         4, MUIM_SetUData, WMEN_SIGN1, MUIA_Menuitem_Checked, TRUE);
-        DoMethod(obj,                 MUIM_Notify, MUIA_Window_MenuAction, WMEN_SIGN1,     data->CY_SIGNATURE,      3, MUIM_Set,      MUIA_Cycle_Active, 1);
-        DoMethod(data->CY_SIGNATURE,  MUIM_Notify, MUIA_Cycle_Active,      2,              menuStripObject,         4, MUIM_SetUData, WMEN_SIGN2, MUIA_Menuitem_Checked, TRUE);
-        DoMethod(obj,                 MUIM_Notify, MUIA_Window_MenuAction, WMEN_SIGN2,     data->CY_SIGNATURE,      3, MUIM_Set,      MUIA_Cycle_Active, 2);
-        DoMethod(data->CY_SIGNATURE,  MUIM_Notify, MUIA_Cycle_Active,      3,              menuStripObject,         4, MUIM_SetUData, WMEN_SIGN3, MUIA_Menuitem_Checked, TRUE);
-        DoMethod(obj,                 MUIM_Notify, MUIA_Window_MenuAction, WMEN_SIGN3,     data->CY_SIGNATURE,      3, MUIM_Set,      MUIA_Cycle_Active, 3);
-
         // set the notifies for the security cycle gadget
         DoMethod(data->CY_SECURITY,   MUIM_Notify, MUIA_Cycle_Active,      0,              menuStripObject,         4, MUIM_SetUData, WMEN_SECUR0, MUIA_Menuitem_Checked, TRUE);
         DoMethod(obj,                 MUIM_Notify, MUIA_Window_MenuAction, WMEN_SECUR0,    data->CY_SECURITY,       3, MUIM_Set,      MUIA_Cycle_Active, 0);
@@ -1532,6 +1520,8 @@ OVERLOAD(OM_NEW)
         // if we only have one identitiy we hide the identitychooser object
         if(xget(data->CY_FROM, MUIA_IdentityChooser_NumIdentities) < 2)
           DoMethod(obj, METHOD(HideRecipientObject), MUIV_WriteWindow_RcptType_From);
+
+        DoMethod(obj, METHOD(UpdateSignatures));
       }
 
       // set some help text
@@ -4750,6 +4740,110 @@ DECLARE(MenuToggleRecipientObject) // enum RcptType rtype
   // manually hidden/shown recipient object
   if(saveConfig == TRUE)
     CO_SaveConfig(C, G->CO_PrefsFile);
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(UpdateSignatures)
+// update the signature menu
+DECLARE(UpdateSignatures)
+{
+  GETDATA;
+  int i;
+  struct SignatureNode *activeSig = data->wmData->identity->signature;
+  int activeSigIndex = 0;
+  Object *item;
+  struct Node *curNode;
+
+  ENTER();
+
+  // first remove all previous items and notifications
+  DoMethod(data->CY_SIGNATURE,  MUIM_KillNotifyObj, MUIA_Cycle_Active, data->MI_SIGNATURE);
+  for(i = 0; i < MAXSIG_MENU; i++)
+  {
+    if(data->MI_SIGNATURES[i] != NULL)
+    {
+      DoMethod(obj, MUIM_KillNotify, WMEN_SIGN0+i);
+      DoMethod(data->MI_SIGNATURE, MUIM_Family_Remove, data->MI_SIGNATURES[i]);
+      MUI_DisposeObject(data->MI_SIGNATURES[i]);
+      data->MI_SIGNATURES[i] = NULL;
+	}
+  }
+
+  // update the signature chooser
+  DoMethod(data->CY_SIGNATURE, MUIM_SignatureChooser_UpdateSignatures);
+
+  // add the "no signature" menu item
+  item = MenuitemCheck(tr(MSG_CO_IDENTITY_NOSIGNATURE), "0", TRUE, FALSE, 0, 0xff & ~(1<<0), WMEN_SIGN0);
+  if(item != NULL)
+  {
+    data->MI_SIGNATURES[0] = item;
+    DoMethod(data->MI_SIGNATURE, MUIM_Family_AddTail, item);
+    // set up the notifications
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SIGN0, data->CY_SIGNATURE, 3, MUIM_Set, MUIA_Cycle_Active, 0);
+    DoMethod(data->CY_SIGNATURE, MUIM_Notify, MUIA_Cycle_Active, 0, data->MI_SIGNATURE, 4, MUIM_SetUData, WMEN_SIGN0, MUIA_Menuitem_Checked, TRUE);
+  }
+
+  // add the first 7 signatures from the config
+  i = 1;
+  IterateList(&C->signatureList, curNode)
+  {
+    struct SignatureNode *sn = (struct SignatureNode *)curNode;
+
+    if(sn->active == TRUE)
+    {
+      if(i < MAXSIG_MENU)
+      {
+        // the first 3 signatures get a shortcut
+        switch(i)
+        {
+          case 1:
+            item = MenuitemCheck(sn->description, "7", TRUE, FALSE, 0, 0xff & ~(1<<1), WMEN_SIGN1);
+          break;
+
+          case 2:
+            item = MenuitemCheck(sn->description, "8", TRUE, FALSE, 0, 0xff & ~(1<<2), WMEN_SIGN2);
+          break;
+
+          case 3:
+            item = MenuitemCheck(sn->description, "9", TRUE, FALSE, 0, 0xff & ~(1<<3), WMEN_SIGN3);
+          break;
+
+          default:
+            item = MenuitemCheck(sn->description, NULL, TRUE, FALSE, 0, 0xff & ~(1<<i), WMEN_SIGN0+i);
+          break;
+        }
+
+        if(item != NULL)
+        {
+          data->MI_SIGNATURES[i] = item;
+          DoMethod(data->MI_SIGNATURE, MUIM_Family_AddTail, item);
+          // set up the notifications
+          DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SIGN0+i, data->CY_SIGNATURE, 3, MUIM_Set, MUIA_Cycle_Active, i);
+          DoMethod(data->CY_SIGNATURE, MUIM_Notify, MUIA_Cycle_Active, i, data->MI_SIGNATURE, 4, MUIM_SetUData, WMEN_SIGN0+i, MUIA_Menuitem_Checked, TRUE);
+        }
+
+        // if the current identity uses a signature then
+        // rembember the current one if it matches
+        if(activeSig != NULL && sn->id == activeSig->id)
+        {
+		  activeSigIndex = i;
+		}
+	  }
+	  else
+	  {
+        // maximum reached, bail out
+        break;
+	  }
+
+	  i++;
+	}
+  }
+
+  // check the item which belongs to the identity's signature
+  set(data->MI_SIGNATURES[activeSigIndex], MUIA_Menuitem_Checked, TRUE);
 
   RETURN(0);
   return 0;

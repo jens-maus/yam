@@ -77,6 +77,7 @@
 #include "mui/ReadMailGroup.h"
 #include "mui/ReadWindow.h"
 #include "mui/SearchControlGroup.h"
+#include "mui/WriteWindow.h"
 
 #include "DockyIcon.h"
 #include "FileInfo.h"
@@ -2296,6 +2297,7 @@ void CO_Validate(struct Config *co, BOOL update)
 {
   BOOL saveAtEnd = FALSE;
   BOOL updateReadWindows = FALSE;
+  BOOL updateWriteWindows = FALSE;
   BOOL updateHeaderMode = FALSE;
   BOOL updateSenderInfo = FALSE;
   BOOL updateMenuShortcuts = FALSE;
@@ -2538,6 +2540,9 @@ void CO_Validate(struct Config *co, BOOL update)
       saveAtEnd = TRUE;
     }
   }
+
+  // update the write windows in any case
+  updateWriteWindows = TRUE;
 
   // now we check whether our timezone setting is coherent to an
   // eventually set locale setting.
@@ -2948,7 +2953,7 @@ void CO_Validate(struct Config *co, BOOL update)
   if(saveAtEnd == TRUE)
     CO_SaveConfig(co, G->CO_PrefsFile);
 
-  // finally update possibly open read windows
+  // update possibly open read windows
   if(updateReadWindows == TRUE || updateHeaderMode == TRUE || updateSenderInfo == TRUE || updateMenuShortcuts == TRUE)
   {
     IterateList(&G->readMailDataList, curNode)
@@ -2977,6 +2982,17 @@ void CO_Validate(struct Config *co, BOOL update)
             DoMethod(rmData->readWindow, MUIM_ReadWindow_UpdateMenuShortcuts);
         }
       }
+    }
+  }
+
+  // update possibly open write windows
+  if(updateWriteWindows == TRUE)
+  {
+    IterateList(&G->writeMailDataList, curNode)
+    {
+      struct WriteMailData *wmData = (struct WriteMailData *)curNode;
+
+      DoMethod(wmData->window, MUIM_WriteWindow_UpdateSignatures);
     }
   }
 

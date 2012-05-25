@@ -9,6 +9,8 @@ $URL$
 
   * YAM_COs.c, YAM_MA.c: removed some superflous code to generate a valid server
     description. This is already ensured by the configuration validation.
+  * mui/WriteWindow.c: the signature menu items are now dynamically updated
+    according to the configuration.
 
 2012-05-24 Jens Langner <Jens.Langner@light-speed.de>
 
