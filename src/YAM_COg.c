@@ -71,11 +71,13 @@
 #include "mui/FolderRequestListtree.h"
 #include "mui/IdentityList.h"
 #include "mui/ImageArea.h"
+#include "mui/MailServerChooser.h"
 #include "mui/MailTextEdit.h"
 #include "mui/MimeTypeList.h"
 #include "mui/PlaceholderPopupList.h"
 #include "mui/ScriptList.h"
 #include "mui/SearchControlGroup.h"
+#include "mui/SignatureChooser.h"
 #include "mui/SignatureList.h"
 #include "mui/ThemeListGroup.h"
 #include "mui/YAMApplication.h"
@@ -2163,10 +2165,16 @@ Object *CO_PageIdentities(struct CO_ClassData *data)
                       Child, data->GUI.ST_IDENTITY_ORGANIZATION = MakeString(SIZE_DEFAULT, tr(MSG_CO_Organization)),
 
                       Child, Label2(tr(MSG_CO_IDENTITY_MAILSERVER)),
-                      Child, data->GUI.CY_IDENTITY_MAILSERVER = MakeCycle(NULL, tr(MSG_CO_IDENTITY_MAILSERVER)),
+                      Child, data->GUI.CY_IDENTITY_MAILSERVER = MailServerChooserObject,
+                        MUIA_MailServerChooser_MailServerList, &CE->smtpServerList,
+                        MUIA_ControlChar, ShortCut(tr(MSG_CO_IDENTITY_MAILSERVER)),
+                      End,
 
                       Child, Label2(tr(MSG_CO_IDENTITY_SIGNATURE)),
-                      Child, data->GUI.CY_IDENTITY_SIGNATURE = MakeCycle(NULL, tr(MSG_CO_IDENTITY_SIGNATURE)),
+                      Child, data->GUI.CY_IDENTITY_SIGNATURE = SignatureChooserObject,
+                        MUIA_SignatureChooser_SignatureList, &CE->signatureList,
+                        MUIA_ControlChar, ShortCut(tr(MSG_CO_IDENTITY_SIGNATURE)),
+                      End,
 
                       Child, HVSpace,
                       Child, HVSpace,
@@ -2407,8 +2415,8 @@ Object *CO_PageIdentities(struct CO_ClassData *data)
 
     // update the SMTP server and signature arrays so that the cycle gadgets
     // reflect the right content
-    CO_UpdateSMTPServerArray(data);
-    CO_UpdateSignatureArray(data);
+    DoMethod(data->GUI.CY_IDENTITY_MAILSERVER, MUIM_MailServerChooser_UpdateMailServers);
+    DoMethod(data->GUI.CY_IDENTITY_SIGNATURE, MUIM_SignatureChooser_UpdateSignatures);
   }
 
   RETURN(obj);

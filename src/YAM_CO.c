@@ -73,10 +73,12 @@
 #include "mui/MainFolderListtree.h"
 #include "mui/MainMailListGroup.h"
 #include "mui/MainWindowToolbar.h"
+#include "mui/MailServerChooser.h"
 #include "mui/MailTextEdit.h"
 #include "mui/ReadMailGroup.h"
 #include "mui/ReadWindow.h"
 #include "mui/SearchControlGroup.h"
+#include "mui/SignatureChooser.h"
 #include "mui/WriteWindow.h"
 
 #include "DockyIcon.h"
@@ -978,7 +980,7 @@ HOOKPROTONHNONP(CO_PutSMTPEntry, void)
       // we also have to update the SMTP Server Array
       // in case the user changes to the Identities
       // config page
-      CO_UpdateSMTPServerArray(G->CO);
+      DoMethod(gui->CY_IDENTITY_MAILSERVER, MUIM_MailServerChooser_UpdateMailServers);
 
       // redraw the list
       DoMethod(gui->LV_SMTP, MUIM_NList_Redraw, p);
@@ -988,54 +990,6 @@ HOOKPROTONHNONP(CO_PutSMTPEntry, void)
   LEAVE();
 }
 MakeHook(CO_PutSMTPEntryHook, CO_PutSMTPEntry);
-
-///
-/// CO_UpdateSMTPServerArray
-//
-void CO_UpdateSMTPServerArray(struct CO_ClassData *data)
-{
-  struct Node *curNode;
-  int numSMTPserver = 0;
-
-  ENTER();
-
-  // free a previously prepared array
-  FreeStrArray(data->smtpServerArray);
-
-  // we update the smtpServerArray with the names
-  // of the SMTP servers that are currently configured
-  IterateList(&CE->smtpServerList, curNode)
-  {
-    struct MailServerNode *msn = (struct MailServerNode *)curNode;
-
-    if(isServerActive(msn))
-      numSMTPserver++;
-  }
-
-  // allocate enough space +1 for NUL termination
-  if((data->smtpServerArray = calloc(numSMTPserver+1, sizeof(char *))) != NULL)
-  {
-    int i = 0;
-
-    // now we walk through the mailServerList again
-    // and clone the address string
-    IterateList(&CE->smtpServerList, curNode)
-    {
-      struct MailServerNode *msn = (struct MailServerNode *)curNode;
-
-      if(isServerActive(msn))
-      {
-        data->smtpServerArray[i] = strdup(msn->description);
-
-        i++;
-      }
-    }
-
-    set(data->GUI.CY_IDENTITY_MAILSERVER, MUIA_Cycle_Entries, data->smtpServerArray);
-  }
-
-  LEAVE();
-}
 
 ///
 
@@ -1113,7 +1067,7 @@ HOOKPROTONHNONP(CO_GetIdentityEntry, void)
         // we match the ids because the pointers may be different
         if(msn->id == uin->smtpServer->id)
         {
-          nnset(gui->CY_IDENTITY_MAILSERVER, MUIA_Cycle_Active, i);
+          nnset(gui->CY_IDENTITY_MAILSERVER, MUIA_MailServerChooser_MailServer, msn);
           break;
         }
         else if(isServerActive(msn))
@@ -1135,7 +1089,7 @@ HOOKPROTONHNONP(CO_GetIdentityEntry, void)
         // we match the ids because the pointers may be different
         if(sn->id == uin->signature->id)
         {
-          nnset(gui->CY_IDENTITY_SIGNATURE, MUIA_Cycle_Active, i);
+          nnset(gui->CY_IDENTITY_SIGNATURE, MUIA_SignatureChooser_Signature, sn);
           break;
         }
         else if(sn->active == TRUE)
@@ -1387,67 +1341,13 @@ HOOKPROTONHNONP(CO_PutSignatureEntry, void)
     }
   }
 
-  // we also have to update the Signature Array
-  // in case the user changes to the Identities
-  // config page
-  CO_UpdateSignatureArray(G->CO);
+  // update the signature chooser/ in case the user changed something
+  // on the Identities config page
+  DoMethod(gui->CY_IDENTITY_SIGNATURE, MUIM_SignatureChooser_UpdateSignatures);
 
   LEAVE();
 }
 MakeHook(CO_PutSignatureEntryHook, CO_PutSignatureEntry);
-
-///
-/// CO_UpdateSignatureArray
-//
-void CO_UpdateSignatureArray(struct CO_ClassData *data)
-{
-  struct Node *curNode;
-  int numSignatures = 0;
-
-  ENTER();
-
-  // free a previously prepared array
-  FreeStrArray(data->signatureArray);
-
-  // we update the signatureArray with the names
-  // of the signatures (description)
-  IterateList(&CE->signatureList, curNode)
-  {
-    struct SignatureNode *sn = (struct SignatureNode *)curNode;
-
-    if(sn->active == TRUE)
-      numSignatures++;
-  }
-
-  // allocate enough space +1 for NUL termination and another +1
-  // for "no entry"
-  if((data->signatureArray = calloc(numSignatures+2, sizeof(char *))) != NULL)
-  {
-    int i;
-
-    // add a "No Signature" at the front (index 0)
-    data->signatureArray[0] = strdup(tr(MSG_CO_IDENTITY_NOSIGNATURE));
-
-    // now we walk through the signatureList again
-    // and clone the description string
-    i = 1;
-    IterateList(&CE->signatureList, curNode)
-    {
-      struct SignatureNode *sn = (struct SignatureNode *)curNode;
-
-      if(sn->active == TRUE)
-      {
-        data->signatureArray[i] = strdup(sn->description);
-
-        i++;
-      }
-    }
-
-    set(data->GUI.CY_IDENTITY_SIGNATURE, MUIA_Cycle_Entries, data->signatureArray);
-  }
-
-  LEAVE();
-}
 
 ///
 
@@ -3279,14 +3179,6 @@ HOOKPROTONHNO(CO_CloseFunc, void, int *arg)
     CO_ClearConfig(CE);
     free(CE);
     CE = NULL;
-
-    // free the smtpServerArray
-    FreeStrArray(G->CO->smtpServerArray);
-    G->CO->smtpServerArray = NULL;
-
-    // free the signatureArray
-    FreeStrArray(G->CO->signatureArray);
-    G->CO->signatureArray = NULL;
 
     // Dipose&Close the config window stuff
     DisposeModulePush(&G->CO);

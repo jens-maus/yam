@@ -357,8 +357,6 @@ struct CO_ClassData  /* configuration window */
   BOOL Visited[cp_Max];
   BOOL UpdateAll;
   struct SignatureNode *previousSignature;  // ptr to the previously selected signature
-  char **smtpServerArray;                   // NUL-terminated array of smtpServer names
-  char **signatureArray;                    // NUL-terminated array of signature names
 };
 
 /*** RxHook structure ***/
@@ -637,8 +635,6 @@ void CO_ClearConfig(struct Config *co);
 BOOL CO_IsValid(void);
 void CO_SetDefaults(struct Config *co, enum ConfigPage page);
 void CO_Validate(struct Config *co, BOOL update);
-void CO_UpdateSMTPServerArray(struct CO_ClassData *data);
-void CO_UpdateSignatureArray(struct CO_ClassData *data);
 
 void GhostOutFilter(struct CO_GUIData *gui, struct FilterNode *filter);
 

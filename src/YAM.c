@@ -926,13 +926,6 @@ static void Terminate(void)
     CE = NULL;
 
     // free the smtpServerArray
-    FreeStrArray(G->CO->smtpServerArray);
-    G->CO->smtpServerArray = NULL;
-
-    // free the signatureArray
-    FreeStrArray(G->CO->signatureArray);
-    G->CO->signatureArray = NULL;
-
     DisposeModule(&G->CO);
   }
 

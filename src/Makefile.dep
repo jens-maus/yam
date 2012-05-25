@@ -578,7 +578,7 @@ $(OBJDIR)/UserIdentity.o: UserIdentity.c YAM_config.h include/libraries/mui.h \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_mainFolder.h \
   extrasrc.h include/SDI_stdarg.h include/SDI_compiler.h MailServers.h \
-  Timer.h UserIdentity.h Debug.h
+  Timer.h Signature.h UserIdentity.h Debug.h
 $(OBJDIR)/YAM_AB.o: YAM_AB.c include/mui/BetterString_mcc.h include/mui/NList_mcc.h \
   include/libraries/mui.h include/mui/NListview_mcc.h \
   include/proto/muimaster.h include/interfaces/muimaster.h \
@@ -731,8 +731,9 @@ $(OBJDIR)/YAM_CO.o: YAM_CO.c include/libraries/amisslmaster.h \
   YAM_configGUI.h YAM_error.h YAM_find.h YAM_global.h YAM_mainFolder.h \
   mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h mui/InfoBar.h \
   include/timeval.h mui/MainFolderListtree.h mui/MainMailListGroup.h \
-  mui/MainWindowToolbar.h mui/MailTextEdit.h mui/ReadMailGroup.h \
-  mui/ReadWindow.h mui/SearchControlGroup.h DockyIcon.h FileInfo.h \
+  mui/MainWindowToolbar.h mui/MailServerChooser.h mui/MailTextEdit.h \
+  mui/ReadMailGroup.h mui/ReadWindow.h mui/SearchControlGroup.h \
+  mui/SignatureChooser.h mui/WriteWindow.h DockyIcon.h FileInfo.h \
   Locale.h MimeTypes.h MailServers.h MUIObjects.h Requesters.h \
   Signature.h UserIdentity.h Debug.h
 $(OBJDIR)/YAM_COg.o: YAM_COg.c include/mui/BetterString_mcc.h \
@@ -780,9 +781,10 @@ $(OBJDIR)/YAM_COg.o: YAM_COg.c include/mui/BetterString_mcc.h \
   YAM_error.h YAM_find.h YAM_global.h YAM_mainFolder.h mui/AccountList.h \
   mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h mui/FilterList.h \
   mui/FolderRequestListtree.h mui/IdentityList.h mui/ImageArea.h \
-  ImageCache.h include/mui/TheBar_mcc.h HashTable.h mui/MailTextEdit.h \
-  mui/MimeTypeList.h mui/PlaceholderPopupList.h mui/ScriptList.h \
-  mui/SearchControlGroup.h mui/SignatureList.h mui/ThemeListGroup.h \
+  ImageCache.h include/mui/TheBar_mcc.h HashTable.h \
+  mui/MailServerChooser.h mui/MailTextEdit.h mui/MimeTypeList.h \
+  mui/PlaceholderPopupList.h mui/ScriptList.h mui/SearchControlGroup.h \
+  mui/SignatureChooser.h mui/SignatureList.h mui/ThemeListGroup.h \
   mui/YAMApplication.h mui/PreselectionWindow.h FileInfo.h FolderList.h \
   ImageCache.h Locale.h MimeTypes.h MailServers.h MUIObjects.h \
   Requesters.h Signature.h Threads.h UIDL.h UserIdentity.h Debug.h
@@ -1009,9 +1011,9 @@ $(OBJDIR)/YAM_FO.o: YAM_FO.c include/mui/NList_mcc.h include/libraries/mui.h \
   YAM_error.h YAM_find.h YAM_global.h YAM_mainFolder.h mui/ClassesExtra.h \
   YAM_main.h YAM_read.h BayesFilter.h mui/IdentityChooser.h \
   mui/ImageArea.h ImageCache.h include/mui/TheBar_mcc.h HashTable.h \
-  mui/MainFolderListtree.h mui/Recipientstring.h FileInfo.h FolderList.h \
-  ImageCache.h Locale.h MailList.h MUIObjects.h Requesters.h \
-  UserIdentity.h Debug.h
+  mui/MainFolderListtree.h mui/Recipientstring.h mui/SignatureChooser.h \
+  FileInfo.h FolderList.h ImageCache.h Locale.h MailList.h MUIObjects.h \
+  Requesters.h Signature.h UserIdentity.h Debug.h
 $(OBJDIR)/YAM_global.o: YAM_global.c include/SDI_compiler.h YAM_global.h svnrev.h
 $(OBJDIR)/YAM_MA.o: YAM_MA.c include/mui/NBalance_mcc.h include/mui/NList_mcc.h \
   include/libraries/mui.h include/mui/NListview_mcc.h \
@@ -1104,7 +1106,8 @@ $(OBJDIR)/YAM_MAf.o: YAM_MAf.c include/mui/NList_mcc.h include/libraries/mui.h \
   BayesFilter.h mui/InfoBar.h include/timeval.h mui/QuickSearchBar.h \
   mui/ReadMailGroup.h mime/base64.h mime/rfc2047.h AppIcon.h FileInfo.h \
   FolderList.h Locale.h MailList.h MUIObjects.h Requesters.h Rexx.h \
-  UserIdentity.h Debug.h include/amiga-align.h include/default-align.h
+  Signature.h UserIdentity.h Debug.h include/amiga-align.h \
+  include/default-align.h
 $(OBJDIR)/YAM_RE.o: YAM_RE.c include/mui/NList_mcc.h include/libraries/mui.h \
   include/mui/NListview_mcc.h include/mui/TextEditor_mcc.h \
   include/proto/codesets.h include/libraries/codesets.h \
@@ -1584,8 +1587,8 @@ $(OBJDIR)/$(MUIDIR)/Classes.o: mui/Classes.c mui/Classes.h mui/ClassesExtra.h \
   mui/FolderRequestListtree.h mui/FolderRequestWindow.h \
   mui/GenericRequestWindow.h mui/HeaderList.h mui/IdentityChooser.h \
   mui/IdentityList.h mui/ImageArea.h ImageCache.h mui/InfoBar.h \
-  include/timeval.h mui/InfoWindow.h mui/MailTextEdit.h \
-  mui/MainFolderListtree.h mui/MainMailList.h Themes.h \
+  include/timeval.h mui/InfoWindow.h mui/MailServerChooser.h \
+  mui/MailTextEdit.h mui/MainFolderListtree.h mui/MainMailList.h Themes.h \
   mui/MainMailListGroup.h mui/MainWindow.h mui/MainWindowToolbar.h \
   mui/MimeTypeList.h mui/ObjectList.h mui/ObjectListitem.h \
   mui/PassphraseRequestWindow.h mui/PlaceholderPopupList.h \
@@ -1897,6 +1900,13 @@ $(OBJDIR)/$(MUIDIR)/InfoWindow.o: mui/InfoWindow.c mui/InfoWindow_cl.h \
   YAM_userlist.h YAM_utilities.h YAM_folderconfig.h BayesFilter.h \
   Themes.h Timer.h include/timeval.h Locale.h MUIObjects.h \
   mui/MainWindow.h Debug.h
+$(OBJDIR)/$(MUIDIR)/MailServerChooser.o: mui/MailServerChooser.c mui/MailServerChooser_cl.h \
+  include/libraries/mui.h mui/ClassesExtra.h YAM_main.h YAM_stringsizes.h \
+  tcp/pop3.h tcp/smtp.h YAM_read.h YAM_write.h YAM_main.h BayesFilter.h \
+  HashTable.h include/SDI_compiler.h extrasrc.h include/SDI_stdarg.h \
+  include/SDI_compiler.h mui/MailServerChooser.h YAM_utilities.h \
+  YAM_folderconfig.h Locale.h MUIObjects.h MailServers.h Timer.h \
+  include/timeval.h Debug.h
 $(OBJDIR)/$(MUIDIR)/MailTextEdit.o: mui/MailTextEdit.c mui/MailTextEdit_cl.h \
   include/libraries/mui.h mui/ClassesExtra.h YAM_main.h YAM_stringsizes.h \
   tcp/pop3.h tcp/smtp.h YAM_read.h YAM_write.h YAM_main.h BayesFilter.h \
@@ -2982,12 +2992,12 @@ $(OBJDIR)/$(MUIDIR)/WriteWindow.o: mui/WriteWindow.c mui/WriteWindow_cl.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_configGUI.h \
   YAM_configFile.h YAM_error.h YAM_global.h YAM_glossarydisplay.h \
   YAM_mainFolder.h FileInfo.h FolderList.h Locale.h Logfile.h MailList.h \
-  MailServers.h MUIObjects.h ParseEmail.h Requesters.h Threads.h \
-  UserIdentity.h mime/uucode.h mui/IdentityChooser.h mui/MailTextEdit.h \
-  mui/ReadMailGroup.h mui/ReadWindow.h mui/Recipientstring.h \
-  mui/Searchwindow.h mui/SignatureChooser.h mui/WriteAttachmentList.h \
-  mui/WriteWindowToolbar.h mui/YAMApplication.h mui/PreselectionWindow.h \
-  tcp/smtp.h Debug.h
+  MailServers.h MUIObjects.h ParseEmail.h Requesters.h Signature.h \
+  Threads.h UserIdentity.h mime/uucode.h mui/IdentityChooser.h \
+  mui/MailTextEdit.h mui/ReadMailGroup.h mui/ReadWindow.h \
+  mui/Recipientstring.h mui/Searchwindow.h mui/SignatureChooser.h \
+  mui/WriteAttachmentList.h mui/WriteWindowToolbar.h mui/YAMApplication.h \
+  mui/PreselectionWindow.h tcp/smtp.h Debug.h
 $(OBJDIR)/$(MUIDIR)/WriteWindowToolbar.o: mui/WriteWindowToolbar.c \
   mui/WriteWindowToolbar_cl.h include/libraries/mui.h mui/ClassesExtra.h \
   YAM_main.h YAM_stringsizes.h tcp/pop3.h tcp/smtp.h YAM_read.h \

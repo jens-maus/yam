@@ -13,6 +13,8 @@ $URL$
     according to the configuration.
   * mui/WriteWindow.c, YAM_CO.c: the identity chooser is now updated after a
     configuration change as well.
+  * mui/MailServerChooser.c: implemented new class to choose a mail server to
+    avoid code duplication.
 
 2012-05-24 Jens Langner <Jens.Langner@light-speed.de>
 
