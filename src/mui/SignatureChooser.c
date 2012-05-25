@@ -28,6 +28,9 @@
 
 ***************************************************************************/
 
+#include <stdlib.h>
+#include <string.h>
+
 #include "SignatureChooser_cl.h"
 
 #include "YAM_config.h"
@@ -42,6 +45,7 @@
 /* CLASSDATA
 struct Data
 {
+  struct MinList *signatureList;      // list of signatures
   struct SignatureNode *curSignature; // ptr to currently active signature
   char **signatureArray;              // titles for the different signatures that can be selected
 };
@@ -62,7 +66,11 @@ OVERLOAD(OM_NEW)
   {
     GETDATA;
 
-    data->curSignature = (struct SignatureNode *)GetTagData(ATTR(Signature), (ULONG)NULL, inittags(msg));
+    // we must know the list on which we operate as there is a difference
+    // between the global config and the config being edited
+    // default to the global configration
+    data->signatureList = (struct MinList *)GetTagData(ATTR(SignatureList), (IPTR)&C->signatureList, inittags(msg));
+    data->curSignature = (struct SignatureNode *)GetTagData(ATTR(Signature), (IPTR)NULL, inittags(msg));
 
     // set up the full description of all active signatures
     DoMethod(obj, METHOD(UpdateSignatures));
@@ -105,11 +113,18 @@ OVERLOAD(OM_SET)
   {
     switch(tag->ti_Tag)
     {
+      case ATTR(SignatureList):
+      {
+        data->signatureList = (struct MinList *)tag->ti_Data;
+        DoMethod(obj, METHOD(UpdateSignatures));
+	  }
+	  break;
+
       case ATTR(Signature):
       {
         struct SignatureNode *newSignature = (struct SignatureNode *)tag->ti_Data;
 
-        if(newSignature != data->curSignature)
+        if(newSignature != data->curSignature && data->signatureList != NULL)
         {
           int j = 0;
 
@@ -119,7 +134,7 @@ OVERLOAD(OM_SET)
             int i = 1;
             struct Node *curNode;
 
-            IterateList(&C->signatureList, curNode)
+            IterateList(data->signatureList, curNode)
             {
               struct SignatureNode *sn = (struct SignatureNode *)curNode;
 
@@ -143,10 +158,13 @@ OVERLOAD(OM_SET)
 
       case ATTR(SignatureIndex):
       {
-        struct SignatureNode *newSignature = GetSignature(&C->signatureList, tag->ti_Data-1, TRUE);
+        if(data->signatureList != NULL)
+        {
+          struct SignatureNode *newSignature = GetSignature(data->signatureList, tag->ti_Data-1, TRUE);
 
-        // set the new identity and trigger possible notifications
-        set(obj, ATTR(Signature), newSignature);
+          // set the new signature and trigger possible notifications
+          set(obj, ATTR(Signature), newSignature);
+        }
       }
       break;
     }
@@ -181,8 +199,6 @@ OVERLOAD(OM_GET)
 DECLARE(UpdateSignatures)
 {
   GETDATA;
-  struct Node *curNode;
-  int numSignatures = 0;
 
   ENTER();
 
@@ -190,44 +206,50 @@ DECLARE(UpdateSignatures)
   // with the GUI elements of the write window
   FreeStrArray(data->signatureArray);
 
-  // first we find out how many entries the signature list
-  // has
-  IterateList(&C->signatureList, curNode)
+  if(data->signatureList != NULL)
   {
-    struct SignatureNode *sn = (struct SignatureNode *)curNode;
+    struct Node *curNode;
+    int numSignatures = 0;
 
-    if(sn->active == TRUE)
-      numSignatures++;
-  }
-
-  // allocate enough space +1 for NUL termination and another +1
-  // for "no entry"
-  if((data->signatureArray = calloc(numSignatures+2, sizeof(char *))) != NULL)
-  {
-    int i;
-
-    // add a "No Signature" at the front (index 0)
-    data->signatureArray[0] = strdup(tr(MSG_CO_IDENTITY_NOSIGNATURE));
-
-    // now we walk through the signatureList again
-    // and clone the address string
-    i = 1;
-    IterateList(&C->signatureList, curNode)
+    // first we find out how many entries the signature list
+    // has
+    IterateList(data->signatureList, curNode)
     {
       struct SignatureNode *sn = (struct SignatureNode *)curNode;
 
       if(sn->active == TRUE)
-      {
-        // construct the new string via asprintf() so that the necessary
-        // memory is automatically allocated.
-        data->signatureArray[i] = strdup(sn->description);
-
-        i++;
-      }
+        numSignatures++;
     }
 
-    // update the entry strings and set the active entry
-    nnset(obj, MUIA_Cycle_Entries, data->signatureArray);
+    // allocate enough space +1 for NUL termination and another +1
+    // for "no entry"
+    if((data->signatureArray = calloc(numSignatures+2, sizeof(char *))) != NULL)
+    {
+      int i;
+
+      // add a "No Signature" at the front (index 0)
+      data->signatureArray[0] = strdup(tr(MSG_CO_IDENTITY_NOSIGNATURE));
+
+      // now we walk through the signatureList again
+      // and clone the address string
+      i = 1;
+      IterateList(data->signatureList, curNode)
+      {
+        struct SignatureNode *sn = (struct SignatureNode *)curNode;
+
+        if(sn->active == TRUE)
+        {
+          // construct the new string via asprintf() so that the necessary
+          // memory is automatically allocated.
+          data->signatureArray[i] = strdup(sn->description);
+
+          i++;
+        }
+      }
+
+      // update the entry strings and set the active entry
+      nnset(obj, MUIA_Cycle_Entries, data->signatureArray);
+    }
   }
 
   RETURN(0);
@@ -235,4 +257,3 @@ DECLARE(UpdateSignatures)
 }
 
 ///
-

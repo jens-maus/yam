@@ -15,6 +15,8 @@ $URL$
     configuration change as well.
   * mui/MailServerChooser.c: implemented new class to choose a mail server to
     avoid code duplication.
+  * mui/SignatureChooser.c: the list to operate can now be specified to avoid
+    using pointers from the wrong list (normal config vs. edited config).
 
 2012-05-24 Jens Langner <Jens.Langner@light-speed.de>
 
