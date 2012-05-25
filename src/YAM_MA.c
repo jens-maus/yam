@@ -3792,10 +3792,6 @@ void MA_SetupDynamicMenus(void)
       struct MailServerNode *msn = (struct MailServerNode *)curNode;
       Object *newObj;
 
-      // create a new default account name only if none is yet given
-      if(msn->description[0] == '\0')
-        snprintf(msn->description, sizeof(msn->description), "%s@%s", msn->username, msn->hostname);
-
       newObj = Menuitem(msn->description, NULL, TRUE, FALSE, MMEN_POPHOST+i);
       if(newObj != NULL)
       {

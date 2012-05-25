@@ -342,7 +342,7 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
     fprintf(fh, "TagsFile          = %s\n", co->TagsFile);
     fprintf(fh, "TagsSeparator     = %s\n", co->TagsSeparator);
 
-    // we iterate through our signature list and output 
+    // we iterate through our signature list and output
     // the data of each signature here
     i = 0;
     IterateList(&co->signatureList, curNode)
@@ -2672,18 +2672,12 @@ void CO_SetConfig(void)
       {
         msn = (struct MailServerNode *)curNode;
 
-        if(msn->description[0] == '\0')
-          snprintf(msn->description, sizeof(msn->description), "%s@%s", msn->username, msn->hostname);
-
         DoMethod(gui->LV_POP3, MUIM_NList_InsertSingle, msn, MUIV_NList_Insert_Bottom);
         numPOP++;
       }
       IterateList(&CE->smtpServerList, curNode)
       {
         msn = (struct MailServerNode *)curNode;
-
-        if(msn->description[0] == '\0')
-          snprintf(msn->description, sizeof(msn->description), "%s@%s", msn->username, msn->hostname);
 
         DoMethod(gui->LV_SMTP, MUIM_NList_InsertSingle, msn, MUIV_NList_Insert_Bottom);
         numSMTP++;

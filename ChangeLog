@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-05-25 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_COs.c, YAM_MA.c: removed some superflous code to generate a valid server
+    description. This is already ensured by the configuration validation.
+
 2012-05-24 Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_COg.c, locale/YAM.cd: added the missing help texts for the
