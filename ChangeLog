@@ -11,6 +11,8 @@ $URL$
     description. This is already ensured by the configuration validation.
   * mui/WriteWindow.c: the signature menu items are now dynamically updated
     according to the configuration.
+  * mui/WriteWindow.c, YAM_CO.c: the identity chooser is now updated after a
+    configuration change as well.
 
 2012-05-24 Jens Langner <Jens.Langner@light-speed.de>
 

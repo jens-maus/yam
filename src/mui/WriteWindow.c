@@ -4769,7 +4769,7 @@ DECLARE(UpdateSignatures)
       DoMethod(data->MI_SIGNATURE, MUIM_Family_Remove, data->MI_SIGNATURES[i]);
       MUI_DisposeObject(data->MI_SIGNATURES[i]);
       data->MI_SIGNATURES[i] = NULL;
-	}
+    }
   }
 
   // update the signature chooser
@@ -4829,8 +4829,8 @@ DECLARE(UpdateSignatures)
         // rembember the current one if it matches
         if(activeSig != NULL && sn->id == activeSig->id)
         {
-		  activeSigIndex = i;
-		}
+          activeSigIndex = i;
+        }
 	  }
 	  else
 	  {
@@ -4839,13 +4839,28 @@ DECLARE(UpdateSignatures)
 	  }
 
 	  i++;
-	}
+    }
   }
 
   // check the item which belongs to the identity's signature
   set(data->MI_SIGNATURES[activeSigIndex], MUIA_Menuitem_Checked, TRUE);
 
-  RETURN(0);
+  LEAVE();
+  return 0;
+}
+
+///
+/// DECLARE(UpdateIdentities)
+// update the identity chooser
+DECLARE(UpdateIdentities)
+{
+  GETDATA;
+
+  ENTER();
+
+  DoMethod(data->CY_FROM, MUIM_IdentityChooser_UpdateIdentities);
+
+  LEAVE();
   return 0;
 }
 

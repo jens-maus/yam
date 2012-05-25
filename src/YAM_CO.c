@@ -2992,6 +2992,7 @@ void CO_Validate(struct Config *co, BOOL update)
     {
       struct WriteMailData *wmData = (struct WriteMailData *)curNode;
 
+      DoMethod(wmData->window, MUIM_WriteWindow_UpdateIdentities);
       DoMethod(wmData->window, MUIM_WriteWindow_UpdateSignatures);
     }
   }
