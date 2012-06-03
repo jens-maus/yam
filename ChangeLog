@@ -9,6 +9,8 @@ $URL$
 
   * YAM_CO.c: fixed the wrong no signature to any other signature state change.
   * mui/SignatureChooser.c: correctly handle the "no signature" entry.
+  * theme/default: updated the "Drafts" folder images kindly provided by Martin
+    "mason" Merz.
 
 2012-05-25 Samir Hawamdeh <s.hawamdeh@tin.it>
 
