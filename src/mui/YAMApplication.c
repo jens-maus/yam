@@ -311,7 +311,9 @@ static void FindAllABMatches(const char *text, Object *list, struct MUI_NListtre
         e.MatchField = 1;
         e.MatchString = entry->RealName;
       }
-      else if(Strnicmp(entry->Address, text, tl) == 0)
+      // don't match addresses in recipient lists
+      // for lists the address field represents the reply address and this should never match
+      else if(entry->Type != AET_LIST && Strnicmp(entry->Address, text, tl) == 0)
       {
         e.MatchField = 2;
         e.MatchString = entry->Address;
