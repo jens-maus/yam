@@ -3765,15 +3765,10 @@ void MA_SetupDynamicMenus(void)
   // dynamic Folder/Check menu items
   if(G->MA->GUI.MI_CSINGLE != NULL)
   {
-    int i=0;
-
+    // no need to kill the notifications of each item, these die with their objects
     DoMethod(G->MA->GUI.MN_FOLDER, MUIM_Family_Remove, G->MA->GUI.MI_CSINGLE);
     MUI_DisposeObject(G->MA->GUI.MI_CSINGLE);
     G->MA->GUI.MI_CSINGLE = NULL;
-
-    // now we clear all notifies
-    for(i=0; i < MAXP3_MENU; i++)
-      DoMethod(G->MA->GUI.WI, MUIM_KillNotify, MMEN_POPHOST+i);
   }
 
   G->MA->GUI.MI_CSINGLE = MenuitemObject,
@@ -3799,7 +3794,7 @@ void MA_SetupDynamicMenus(void)
         DoMethod(G->MA->GUI.MI_CSINGLE, MUIM_Family_AddTail, newObj);
 
         // add a notify for this item as well.
-        DoMethod(G->MA->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_POPHOST+i, MUIV_Notify_Application, 5, MUIM_CallHook, &MA_PopNowHook, msn, RECEIVEF_USER, 0L);
+        DoMethod(newObj, MUIM_Notify, MUIA_Menuitem_Trigger, MUIV_EveryTime, MUIV_Notify_Application, 5, MUIM_CallHook, &MA_PopNowHook, msn, RECEIVEF_USER, 0L);
 
         i++;
       }

@@ -11,6 +11,10 @@ $URL$
   * mui/SignatureChooser.c: correctly handle the "no signature" entry.
   * theme/default: updated the "Drafts" folder images kindly provided by Martin
     "mason" Merz.
+  * YAM_MA.c, mui/WriteWindow.c: use the attribute MUIA_Menuitem_Trigger instead
+    of MUIA_Window_MenuAction for menu item notifications. This apparoach has
+    the advantage that the notifications die together with their objects upon
+    updating dynamic items and don't need to be killed explicitly.
 
 2012-05-25 Samir Hawamdeh <s.hawamdeh@tin.it>
 

@@ -4782,7 +4782,7 @@ DECLARE(UpdateSignatures)
     data->MI_SIGNATURES[0] = item;
     DoMethod(data->MI_SIGNATURE, MUIM_Family_AddTail, item);
     // set up the notifications
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SIGN0, data->CY_SIGNATURE, 3, MUIM_Set, MUIA_Cycle_Active, 0);
+    DoMethod(item, MUIM_Notify, MUIA_Menuitem_Trigger, MUIV_EveryTime, data->CY_SIGNATURE, 3, MUIM_Set, MUIA_Cycle_Active, 0);
     DoMethod(data->CY_SIGNATURE, MUIM_Notify, MUIA_Cycle_Active, 0, data->MI_SIGNATURE, 4, MUIM_SetUData, WMEN_SIGN0, MUIA_Menuitem_Checked, TRUE);
   }
 
@@ -4821,7 +4821,7 @@ DECLARE(UpdateSignatures)
           data->MI_SIGNATURES[i] = item;
           DoMethod(data->MI_SIGNATURE, MUIM_Family_AddTail, item);
           // set up the notifications
-          DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SIGN0+i, data->CY_SIGNATURE, 3, MUIM_Set, MUIA_Cycle_Active, i);
+          DoMethod(item, MUIM_Notify, MUIA_Menuitem_Trigger, MUIV_EveryTime, data->CY_SIGNATURE, 3, MUIM_Set, MUIA_Cycle_Active, i);
           DoMethod(data->CY_SIGNATURE, MUIM_Notify, MUIA_Cycle_Active, i, data->MI_SIGNATURE, 4, MUIM_SetUData, WMEN_SIGN0+i, MUIA_Menuitem_Checked, TRUE);
         }
 
