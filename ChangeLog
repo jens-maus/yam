@@ -8,6 +8,7 @@ $URL$
 2012-06-03 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_CO.c: fixed the wrong no signature to any other signature state change.
+  * mui/SignatureChooser.c: correctly handle the "no signature" entry.
 
 2012-05-25 Samir Hawamdeh <s.hawamdeh@tin.it>
 

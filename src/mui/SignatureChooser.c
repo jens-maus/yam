@@ -128,7 +128,7 @@ OVERLOAD(OM_SET)
         {
           int j = 0;
 
-          // find the new identity and set it as active entry
+          // find the new signature and set it as active entry
           if(newSignature != NULL)
           {
             int i = 1;
@@ -160,7 +160,13 @@ OVERLOAD(OM_SET)
       {
         if(data->signatureList != NULL)
         {
-          struct SignatureNode *newSignature = GetSignature(data->signatureList, tag->ti_Data-1, TRUE);
+          struct SignatureNode *newSignature;
+
+          // the first item is always "no signature"
+          if(tag->ti_Data != 0)
+            newSignature = GetSignature(data->signatureList, tag->ti_Data-1, TRUE);
+          else
+            newSignature = NULL;
 
           // set the new signature and trigger possible notifications
           set(obj, ATTR(Signature), newSignature);
@@ -173,7 +179,6 @@ OVERLOAD(OM_SET)
   return DoSuperMethodA(cl, obj, msg);
 }
 
-///
 ///
 /// OVERLOAD(OM_GET)
 OVERLOAD(OM_GET)
