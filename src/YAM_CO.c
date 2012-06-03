@@ -1097,7 +1097,7 @@ HOOKPROTONHNONP(CO_GetIdentityEntry, void)
       }
     }
     else
-      nnset(gui->CY_IDENTITY_SIGNATURE, MUIA_Cycle_Active, 0);
+      nnset(gui->CY_IDENTITY_SIGNATURE, MUIA_SignatureChooser_Signature, NULL);
   }
 
   set(gui->CY_IDENTITY_QUOTEPOS, MUIA_Disabled, uin == NULL || uin->quoteMails == FALSE);
