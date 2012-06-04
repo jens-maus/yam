@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-06-04 Thore Böckelmann <tboeckel@gmx.de>
+
+  * MailImport.c, tcp/pop3.c: fixed the broken creation of the preselection
+    window.
+
 2012-06-03 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_CO.c: fixed the wrong no signature to any other signature state change.

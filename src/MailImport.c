@@ -1157,7 +1157,7 @@ BOOL ImportMails(const char *importFile, struct Folder *folder, const ULONG flag
 
             snprintf(tc->windowTitle, sizeof(tc->windowTitle), tr(MSG_TR_MsgInFile), importFile);
 
-            if((preselectWin = (Object *)PushMethodOnStackWait(G->App, 5, MUIM_YAMApplication_CreatePreselectionWindow, CurrentThread(), 0, tc->windowTitle, PRESELWINMODE_IMPORT, tc->importList)) != NULL)
+            if((preselectWin = (Object *)PushMethodOnStackWait(G->App, 6, MUIM_YAMApplication_CreatePreselectionWindow, CurrentThread(), tc->windowTitle, 0, PRESELWINMODE_IMPORT, tc->importList)) != NULL)
             {
               if(SleepThread() == TRUE)
               {
