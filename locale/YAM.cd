@@ -1556,10 +1556,6 @@ Message pre-selection shows (a part of) the contents of the\n\
 POP3 mailbox and allows you to select which messages you\n\
 want to download.
 ;
-MSG_HELP_CO_CH_UPDSTAT (573//)
-Mark new messages in the Incoming folder\n\
-as 'unread' before downloading new mail.
-;
 MSG_HELP_CO_ST_WARNSIZE (574//)
 Incoming messages bigger than this\n\
 will be considered as 'large'.

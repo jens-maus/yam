@@ -400,7 +400,6 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
 
     fprintf(fh, "\n[New mail]\n");
     fprintf(fh, "TransferWindow   = %d\n", co->TransferWindow);
-    fprintf(fh, "UpdateStatus     = %s\n", Bool2Txt(co->UpdateStatus));
     fprintf(fh, "NotifyType       = %d\n", co->NotifyType);
     fprintf(fh, "NotifySound      = %s\n", co->NotifySound);
     fprintf(fh, "NotifyCommand    = %s\n", co->NotifyCommand);
@@ -653,6 +652,7 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
     fprintf(fh, "UpdateDownloadPath = %s\n", co->UpdateDownloadPath);
 
     fprintf(fh, "\n[Advanced]\n");
+    fprintf(fh, "UpdateStatus             = %s\n", Bool2Txt(co->UpdateStatus));
     fprintf(fh, "LetterPart               = %d\n", co->LetterPart);
     fprintf(fh, "WriteIndexes             = %d\n", co->WriteIndexes);
     fprintf(fh, "ExpungeIndexes           = %d\n", co->ExpungeIndexes);
@@ -959,7 +959,6 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
 
 /* New mail */
           else if(stricmp(buf, "TransferWindow") == 0)           co->TransferWindow = atoi(value);
-          else if(stricmp(buf, "UpdateStatus") == 0)             co->UpdateStatus = Txt2Bool(value);
           else if(stricmp(buf, "NotifyType") == 0)               co->NotifyType = atoi(value);
           else if(stricmp(buf, "NotifySound") == 0)              strlcpy(co->NotifySound, value, sizeof(co->NotifySound));
           else if(stricmp(buf, "NotifyCommand") == 0)            strlcpy(co->NotifyCommand, value, sizeof(co->NotifyCommand));
@@ -1472,6 +1471,7 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
           else if(stricmp(buf, "UpdateDownloadPath") == 0)       strlcpy(co->UpdateDownloadPath, value, sizeof(co->UpdateDownloadPath));
 
 /*Advanced*/
+          else if(stricmp(buf, "UpdateStatus") == 0)             co->UpdateStatus = Txt2Bool(value);
           else if(stricmp(buf, "LetterPart") == 0)
           {
             co->LetterPart = atoi(value);
@@ -1998,7 +1998,6 @@ void CO_GetConfig(BOOL saveConfig)
     case cp_NewMail:
     {
       CE->TransferWindow    = GetMUICycle  (gui->CY_TRANSWIN);
-      CE->UpdateStatus      = GetMUICheck  (gui->CH_UPDSTAT);
       CE->NotifyType        = (GetMUICheck(gui->CH_NOTIREQ)        ? NOTIFY_REQ        : 0)
                             + (GetMUICheck(gui->CH_NOTIOS41SYSTEM) ? NOTIFY_OS41SYSTEM : 0)
                             + (GetMUICheck(gui->CH_NOTISOUND)      ? NOTIFY_SOUND      : 0)
@@ -2731,7 +2730,6 @@ void CO_SetConfig(void)
     case cp_NewMail:
     {
       setcycle(gui->CY_TRANSWIN, CE->TransferWindow);
-      setcheckmark(gui->CH_UPDSTAT, CE->UpdateStatus);
       setcheckmark(gui->CH_NOTIREQ, hasRequesterNotify(CE->NotifyType));
       setcheckmark(gui->CH_NOTIOS41SYSTEM, hasOS41SystemNotify(CE->NotifyType));
       setcheckmark(gui->CH_NOTISOUND, hasSoundNotify(CE->NotifyType));

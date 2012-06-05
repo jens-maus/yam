@@ -15,6 +15,9 @@ $URL$
   * YAM_CO.c: for AmigaOS4 the system is trusted to fully support automatic DST
     switching, thus there is no need to let the user set the DST state or give
     any notifications. This closes #313.
+  * YAM_CO.c: moved the "Update Status" setting to the hidden section and if set
+    then new mails will become "old" only upon starting YAM, but not ahead of
+    every mail download. This closes #309.
 
 2012-06-04 Thore Böckelmann <tboeckel@gmx.de>
 

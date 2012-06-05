@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.45 (25.05.2012)
+## version $VER: YAM.catalog 7.46 (5.6.2012)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -2071,12 +2071,6 @@ und vor dem Herunterladen eine Auswahl treffen\n\
 zu können.
 ; Enable this option to show the contents of the POP3 mailbox\n\
 ; and allow selection of the messages before downloading
-;
-MSG_HELP_CO_CH_UPDSTAT
-Neue Nachrichten im Posteingang vor dem\n\
-Holen neuer Post als ungelesen markieren.
-; Mark new messages in the incoming folder\n\
-; as unread before downloading new mail
 ;
 MSG_HELP_CO_ST_WARNSIZE
 Eingehende Nachrichten, welche diese Größe\n\

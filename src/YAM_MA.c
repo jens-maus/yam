@@ -903,58 +903,6 @@ void MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox
 }
 
 ///
-/// MA_UpdateStatus
-//  Changes status of all new messages to unread
-static void MA_UpdateStatus(void)
-{
-  struct FolderNode *fnode;
-
-  ENTER();
-
-  LockFolderListShared(G->folders);
-
-  ForEachFolderNode(G->folders, fnode)
-  {
-    struct Folder *folder = fnode->folder;
-
-    // handle all folders with a valid index, except the sent folder and folder groups
-    if(isGroupFolder(folder) == FALSE && isSentMailFolder(folder) == FALSE && folder->LoadedMode == LM_VALID)
-    {
-      BOOL updated = FALSE;
-      struct MailNode *mnode;
-
-      LockMailListShared(folder->messages);
-
-      ForEachMailNode(folder->messages, mnode)
-      {
-        struct Mail *mail = mnode->mail;
-
-        if(hasStatusNew(mail))
-        {
-          setStatusToUnread(mail);
-          updated = TRUE;
-        }
-      }
-
-      UnlockMailList(folder->messages);
-
-      // show the modified stats if we updated anything,
-      // but don't update the AppIcon yet
-      if(updated == TRUE)
-        DisplayStatistics(folder, FALSE);
-    }
-  }
-
-  UnlockFolderList(G->folders);
-
-  // finally update the AppIcon as well
-  if(G->AppIconQuiet == FALSE)
-    UpdateAppIcon();
-
-  LEAVE();
-}
-
-///
 /// MA_ToStatusHeader
 // Function that converts the current flags of a message
 // to "Status:" headerline flags
@@ -2383,9 +2331,6 @@ BOOL MA_PopNow(struct MailServerNode *msn, const ULONG flags, struct DownloadRes
   // make sure the mail server nodes do not vanish
   ObtainSemaphoreShared(G->configSemaphore);
 
-  if(C->UpdateStatus == TRUE)
-    MA_UpdateStatus();
-
   // the USER flag must be checked at last, because STARTUP and USER might be used together
   if(isFlagSet(flags, RECEIVEF_STARTUP))
     MA_StartMacro(MACRO_PREGET, "1");
@@ -2417,7 +2362,7 @@ BOOL MA_PopNow(struct MailServerNode *msn, const ULONG flags, struct DownloadRes
   }
   else
   {
-    // we ignore the active state and possible startup flags for single servers
+  // we ignore the active state and possible startup flags for single servers
     success = ReceiveMailsFromPOP(msn, flags, dlResult);
   }
 

@@ -2459,11 +2459,6 @@ Object *CO_PageNewMail(struct CO_ClassData *data)
                 Child, Label(tr(MSG_CO_TransferWin)),
                 Child, data->GUI.CY_TRANSWIN = MakeCycle(trwopt, tr(MSG_CO_TransferWin)),
                 Child, HSpace(0),
-
-                Child, HSpace(1),
-                Child, MakeCheckGroup(&data->GUI.CH_UPDSTAT, tr(MSG_CO_UpdateStatus)),
-                Child, HSpace(0),
-
               End,
 
               Child, VGroup, GroupFrameT(tr(MSG_CO_Notification)),
@@ -2510,7 +2505,6 @@ Object *CO_PageNewMail(struct CO_ClassData *data)
   if(obj != NULL)
   {
     SetHelp(data->GUI.CY_TRANSWIN,       MSG_HELP_CO_CH_TRANSWIN);
-    SetHelp(data->GUI.CH_UPDSTAT,        MSG_HELP_CO_CH_UPDSTAT);
     SetHelp(data->GUI.CH_NOTIREQ,        MSG_HELP_CO_CH_NOTIREQ);
     SetHelp(data->GUI.CH_NOTISOUND,      MSG_HELP_CO_CH_NOTISOUND);
     SetHelp(data->GUI.CH_NOTICMD,        MSG_HELP_CO_CH_NOTICMD);

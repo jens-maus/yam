@@ -94,7 +94,6 @@ struct CO_GUIData
   Object *CH_APPLYREMOTEFILTERS;
   Object *CY_PRESELECTION;
   Object *CY_TRANSWIN;
-  Object *CH_UPDSTAT;
   Object *ST_WARNSIZE;
   Object *CH_INTERVAL;
   Object *NM_INTERVAL;
