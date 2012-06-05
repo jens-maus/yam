@@ -2481,6 +2481,8 @@ void CO_Validate(struct Config *co, BOOL update)
   if(co->AutoDSTCheck == TRUE)
   {
     // check if we found an AutoDST tool or not.
+    // for AmigaOS4 it is assumed that the system fully supports DST switching without additional tools
+    #if !defined(__amigaos4__)
     if(G->CO_DST > 0 && co->DaylightSaving != (G->CO_DST == 2))
     {
       int res = MUI_Request(G->App, NULL, 0,
@@ -2501,6 +2503,7 @@ void CO_Validate(struct Config *co, BOOL update)
         saveAtEnd = TRUE;
       }
     }
+    #endif
   }
   else if(G->CO_DST > 0 && co->DaylightSaving == (G->CO_DST == 2))
   {

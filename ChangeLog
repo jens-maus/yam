@@ -12,6 +12,9 @@ $URL$
     supported from now on. This closes #310. The ARexx command still accepts
     the encoding paramater to keep old scripts running but will ignore it
     silently.
+  * YAM_CO.c: for AmigaOS4 the system is trusted to fully support automatic DST
+    switching, thus there is no need to let the user set the DST state or give
+    any notifications. This closes #313.
 
 2012-06-04 Thore Böckelmann <tboeckel@gmx.de>
 
