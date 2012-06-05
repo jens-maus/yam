@@ -3733,10 +3733,6 @@ MSG_WR_TitleContents
 Inhalt
 ; Contents
 ;
-MSG_WR_TitleEncoding
-Kod.
-; Enc.
-;
 MSG_WR_TitleDescription
 Beschreibung
 ; Description
@@ -4151,14 +4147,6 @@ Ausgewählte Anhänge mit einem\n\
 MIME-Programm anzeigen lassen.
 ; Use a configured MIME viewer\n\
 ; to display this attachment
-;
-MSG_HELP_WR_RA_ENCODING
-Gewünschtes Kodierungsverfahren für den ausgewählten Anhang.\n\
-Benutzen Sie UUencode nur dann, wenn der Empfänger\n\
-keinen MIME-kompatiblen Mailer besitzt.
-; Type of encoding used for the selected attachment.\n\
-; Select UUencode only if the recipient hasn't got\n\
-; a MIME compliant mailer.
 ;
 MSG_HELP_WR_ST_CTYPE
 MIME-Typ für den ausgewählten Anhang.\n\

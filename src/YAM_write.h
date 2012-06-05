@@ -90,7 +90,6 @@ struct Attach
 {
   int  Size;
 
-  BOOL IsMIME;
   BOOL IsTemp;
 
   char FilePath[SIZE_PATHFILE];

@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-06-05 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/WriteMailWindow.c: removed the GUI elements for selecting the encoding
+    of an attachment. Only MIME encoding (base64 and  quoted printable) is
+    supported from now on. This closes #310. The ARexx command still accepts
+    the encoding paramater to keep old scripts running but will ignore it
+    silently.
+
 2012-06-04 Thore Böckelmann <tboeckel@gmx.de>
 
   * MailImport.c, tcp/pop3.c: fixed the broken creation of the preselection

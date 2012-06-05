@@ -2756,9 +2756,6 @@ Size
 MSG_WR_TitleContents (926//)
 Contents
 ;
-MSG_WR_TitleEncoding (927//)
-Enc.
-;
 MSG_WR_TitleDescription (928//)
 Description
 ;
@@ -3066,11 +3063,6 @@ attachment from the list.
 MSG_HELP_WR_BT_DISPLAY (1031//)
 Use the configured MIME viewer\n\
 to display this attachment.
-;
-MSG_HELP_WR_RA_ENCODING (1032//)
-Type of encoding used for the selected attachment.\n\
-Select UUencode only if the recipient is not using\n\
-a MIME compliant mailer.
 ;
 MSG_HELP_WR_ST_CTYPE (1033//)
 MIME type for the selected attachment.\n\

@@ -505,13 +505,8 @@ static struct WritePart *BuildPartsList(struct WriteMailData *wmData)
           np->Description = att->Description;
           np->Name        = att->Name;
           np->IsTemp      = att->IsTemp;
-
           // find out which encoding we use for the attachment
-          if(att->IsMIME == TRUE)
-            np->EncType = WhichEncodingForFile(np->Filename, np->ContentType, wmData->identity->smtpServer);
-          else
-            np->EncType = ENC_UUE;
-
+          np->EncType = WhichEncodingForFile(np->Filename, np->ContentType, wmData->identity->smtpServer);
           np->charset = G->writeCharset;
 
           p = np;
@@ -1178,25 +1173,17 @@ OVERLOAD(OM_NEW)
                   Child, data->BT_DISPLAY = MakeButton(tr(MSG_WR_Display)),
                 End,
 
-                Child, HGroup,
-                  Child, data->RA_ENCODING = RadioObject,
-                    GroupFrameT(tr(MSG_WR_Encoding)),
-                    MUIA_Radio_Entries, encoding,
-                    MUIA_CycleChain, TRUE,
-                  End,
-                  Child, ColGroup(2),
-                    Child, Label2(tr(MSG_WR_ContentType)),
-                    Child, MakeMimeTypePop(&data->ST_CTYPE, tr(MSG_WR_ContentType)),
-                    Child, Label2(tr(MSG_WR_Description)),
-                    Child, data->ST_DESC = BetterStringObject,
-                      StringFrame,
-                      MUIA_BetterString_NoShortcuts, TRUE,
-                      MUIA_String_MaxLen,            SIZE_DEFAULT,
-                      MUIA_String_AdvanceOnCR,       TRUE,
-                      MUIA_ControlChar,              ShortCut(tr(MSG_WR_Description)),
-                      MUIA_CycleChain,               TRUE,
-                    End,
-                    Child, HSpace(0),
+                Child, ColGroup(2),
+                  Child, Label2(tr(MSG_WR_ContentType)),
+                  Child, MakeMimeTypePop(&data->ST_CTYPE, tr(MSG_WR_ContentType)),
+                  Child, Label2(tr(MSG_WR_Description)),
+                  Child, data->ST_DESC = BetterStringObject,
+                    StringFrame,
+                    MUIA_BetterString_NoShortcuts, TRUE,
+                    MUIA_String_MaxLen,            SIZE_DEFAULT,
+                    MUIA_String_AdvanceOnCR,       TRUE,
+                    MUIA_ControlChar,              ShortCut(tr(MSG_WR_Description)),
+                    MUIA_CycleChain,               TRUE,
                   End,
                 End,
               End,
@@ -1317,8 +1304,7 @@ OVERLOAD(OM_NEW)
         set(data->CY_IMPORTANCE, MUIA_Cycle_Active, TRUE);
 
         // disable certain GUI elements per default
-        DoMethod(G->App, MUIM_MultiSet,  MUIA_Disabled, TRUE, data->RA_ENCODING,
-                                                              data->ST_CTYPE,
+        DoMethod(G->App, MUIM_MultiSet,  MUIA_Disabled, TRUE, data->ST_CTYPE,
                                                               data->ST_DESC,
                                                               data->BT_DEL,
                                                               data->BT_DISPLAY,
@@ -1330,7 +1316,6 @@ OVERLOAD(OM_NEW)
         SetHelp(data->BT_ADDPACK,   MSG_HELP_WR_BT_ADDPACK);
         SetHelp(data->BT_DEL,       MSG_HELP_WR_BT_DEL);
         SetHelp(data->BT_DISPLAY,   MSG_HELP_WR_BT_DISPLAY);
-        SetHelp(data->RA_ENCODING,  MSG_HELP_WR_RA_ENCODING);
         SetHelp(data->ST_CTYPE,     MSG_HELP_WR_ST_CTYPE);
         SetHelp(data->ST_DESC,      MSG_HELP_WR_ST_DESC);
         SetHelp(data->ST_EXTHEADER, MSG_HELP_WR_ST_EXTHEADER);
@@ -1463,7 +1448,6 @@ OVERLOAD(OM_NEW)
         DoMethod(data->BT_DISPLAY,   MUIM_Notify, MUIA_Pressed,            FALSE,          obj, 1, METHOD(DisplayAttachment));
         DoMethod(data->LV_ATTACH,    MUIM_Notify, MUIA_NList_DoubleClick,  MUIV_EveryTime, obj, 1, METHOD(DisplayAttachment));
         DoMethod(data->LV_ATTACH,    MUIM_Notify, MUIA_NList_Active,       MUIV_EveryTime, obj, 1, METHOD(GetAttachmentEntry));
-        DoMethod(data->RA_ENCODING,  MUIM_Notify, MUIA_Radio_Active,       MUIV_EveryTime, obj, 1, METHOD(PutAttachmentEntry));
         DoMethod(data->ST_CTYPE,     MUIM_Notify, MUIA_String_Contents,    MUIV_EveryTime, obj, 1, METHOD(PutAttachmentEntry));
         DoMethod(data->ST_DESC,      MUIM_Notify, MUIA_String_Contents,    MUIV_EveryTime, obj, 1, METHOD(PutAttachmentEntry));
         DoMethod(data->CH_DELSEND,   MUIM_Notify, MUIA_Selected,           MUIV_EveryTime, data->MI_DELSEND,        3, MUIM_Set,      MUIA_Menuitem_Checked, MUIV_TriggerValue);
@@ -1823,15 +1807,6 @@ OVERLOAD(OM_SET)
       case ATTR(AttachDescription):
       {
         setstring(data->ST_DESC, tag->ti_Data);
-
-        // make the superMethod call ignore those tags
-        tag->ti_Tag = TAG_IGNORE;
-      }
-      break;
-
-      case ATTR(AttachEncoding):
-      {
-        setmutex(data->RA_ENCODING, tag->ti_Data);
 
         // make the superMethod call ignore those tags
         tag->ti_Tag = TAG_IGNORE;
@@ -2499,15 +2474,13 @@ DECLARE(GetAttachmentEntry)
   ENTER();
 
   DoMethod(data->LV_ATTACH, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &attach);
-  DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, attach ? FALSE : TRUE, data->RA_ENCODING,
-                                                                        data->ST_CTYPE,
+  DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, attach ? FALSE : TRUE, data->ST_CTYPE,
                                                                         data->ST_DESC,
                                                                         data->BT_DEL,
                                                                         data->BT_DISPLAY, NULL);
 
   if(attach != NULL)
   {
-    nnset(data->RA_ENCODING, MUIA_Radio_Active, attach->IsMIME ? 0 : 1);
     nnset(data->ST_CTYPE, MUIA_String_Contents, attach->ContentType);
     nnset(data->ST_DESC, MUIA_String_Contents, attach->Description);
   }
@@ -2529,9 +2502,6 @@ DECLARE(PutAttachmentEntry)
   DoMethod(data->LV_ATTACH, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &attach);
   if(attach != NULL)
   {
-    int ismime = xget(data->RA_ENCODING, MUIA_Radio_Active);
-
-    attach->IsMIME = (ismime == 0);
     GetMUIString(attach->ContentType, data->ST_CTYPE, sizeof(attach->ContentType));
     GetMUIString(attach->Description, data->ST_DESC, sizeof(attach->Description));
     DoMethod(data->LV_ATTACH, MUIM_NList_Redraw, MUIV_NList_Redraw_Active);
@@ -3078,9 +3048,6 @@ DECLARE(AddAttachment) // const char *filename, const char *name, ULONG istemp
     // and content.
     if(result == TRUE && (ctype = IdentifyFile(msg->filename)) != NULL && ctype[0] != '\0')
     {
-      int encoding = xget(data->RA_ENCODING, MUIA_Radio_Active);
-
-      attach.IsMIME = (encoding == 0);
       attach.IsTemp = msg->istemp;
       strlcpy(attach.FilePath, msg->filename, sizeof(attach.FilePath));
       strlcpy(attach.Name, msg->name ? msg->name : (char *)FilePart(msg->filename), sizeof(attach.Name));
@@ -3611,7 +3578,6 @@ DECLARE(SetupFromOldMail) // struct ReadMailData *rmData
       RE_DecodePart(part);
 
       attach.Size = part->Size;
-      attach.IsMIME = part->EncodingCode != ENC_UUE;
       attach.IsTemp = TRUE;
 
       if(part->Name)

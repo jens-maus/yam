@@ -2259,7 +2259,6 @@ struct WriteMailData *NewForwardMailWindow(struct MailList *mlist, const int fla
               strlcpy(attach.Description, mail->Subject, sizeof(attach.Description));
               strlcpy(attach.ContentType, "message/rfc822", sizeof(attach.ContentType));
               attach.Size = mail->Size;
-              attach.IsMIME = TRUE;
 
               // add the attachment to our attachment listview
               DoMethod(wmData->window, MUIM_WriteWindow_InsertAttachment, &attach);

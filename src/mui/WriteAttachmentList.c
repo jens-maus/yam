@@ -66,7 +66,7 @@ OVERLOAD(OM_NEW)
     MUIA_NList_DefaultObjectOnClick, FALSE,
     MUIA_NList_DragType,             MUIV_NList_DragType_Immediate,
     MUIA_NList_DragSortable,         TRUE,
-    MUIA_NList_Format,               "D=8 BAR,P=\033r D=8 BAR,D=8 BAR,P=\033c D=8 BAR,",
+    MUIA_NList_Format,               "D=8 BAR,P=\033r D=8 BAR,D=8 BAR,",
     MUIA_NList_Title,                TRUE,
 
     TAG_MORE, inittags(msg));
@@ -132,7 +132,6 @@ OVERLOAD(MUIM_DragDrop)
           strlcpy(attach.Description, mail->Subject, sizeof(attach.Description));
           strlcpy(attach.ContentType, "message/rfc822", sizeof(attach.ContentType));
           attach.Size = mail->Size;
-          attach.IsMIME = TRUE;
 
           // add the attachment to our attachment listview
           DoMethod(obj, MUIM_NList_InsertSingle, &attach, MUIV_NList_Insert_Bottom);
@@ -172,7 +171,6 @@ OVERLOAD(MUIM_DragDrop)
       strlcpy(attach.Description, mailPart->Description, sizeof(attach.Description));
       strlcpy(attach.ContentType, mailPart->ContentType, sizeof(attach.ContentType));
       attach.Size = mailPart->Size;
-      attach.IsMIME = mailPart->EncodingCode != ENC_UUE;
       attach.IsTemp = TRUE;
 
       if(mailPart->Name)
@@ -246,16 +244,14 @@ OVERLOAD(MUIM_NList_Display)
     ndm->strings[0] = entry->Name;
     ndm->strings[1] = data->sizeBuffer;
     ndm->strings[2] = (STRPTR)DescribeCT(entry->ContentType);
-    ndm->strings[3] = (STRPTR)(entry->IsMIME ? "MIME" : "UU");
-    ndm->strings[4] = entry->Description;
+    ndm->strings[3] = entry->Description;
   }
   else
   {
     ndm->strings[0] = (STRPTR)tr(MSG_WR_TitleFile);
     ndm->strings[1] = (STRPTR)tr(MSG_WR_TitleSize);
     ndm->strings[2] = (STRPTR)tr(MSG_WR_TitleContents);
-    ndm->strings[3] = (STRPTR)tr(MSG_WR_TitleEncoding);
-    ndm->strings[4] = (STRPTR)tr(MSG_WR_TitleDescription);
+    ndm->strings[3] = (STRPTR)tr(MSG_WR_TitleDescription);
   }
 
   LEAVE();

@@ -79,8 +79,11 @@ void rx_writeattach(UNUSED struct RexxHost *host, struct RexxParams *params, enu
         if(args->desc)
           set(wmData->window, MUIA_WriteWindow_AttachDescription, args->desc);
 
-        if(args->encmode)
-          set(wmData->window, MUIA_WriteWindow_AttachEncoding, strnicmp(args->encmode, "uu", 2) == 0 ? 1 : 0);
+        // The encoding selection is no longer possible. It is 2012 by now
+        // and every mail client should be able to handle MIME encoded
+        // attachments. Therefore YAM uses automatic encoding selection only
+        // from now on. However, the option must stay alive to not let old
+        // scripts fail for no good reason.
 
         if(args->ctype)
           set(wmData->window, MUIA_WriteWindow_AttachContentType, args->ctype);
