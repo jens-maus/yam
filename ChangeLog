@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-06-06 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_CO.c: completely removed the "UpdateStatus" variable as the option
+    "UpdateNewMail" from the Startup/Quit page serves exactly the same purpose.
+    Please note that a successfull update of new mails to unread ones requires
+    YAM to load all indices upon startup. Otherwise YAM will only reset the
+    new mail counter but will not update the mail files.
+
 2012-06-05 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/WriteMailWindow.c: removed the GUI elements for selecting the encoding

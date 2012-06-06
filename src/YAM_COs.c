@@ -652,7 +652,6 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
     fprintf(fh, "UpdateDownloadPath = %s\n", co->UpdateDownloadPath);
 
     fprintf(fh, "\n[Advanced]\n");
-    fprintf(fh, "UpdateStatus             = %s\n", Bool2Txt(co->UpdateStatus));
     fprintf(fh, "LetterPart               = %d\n", co->LetterPart);
     fprintf(fh, "WriteIndexes             = %d\n", co->WriteIndexes);
     fprintf(fh, "ExpungeIndexes           = %d\n", co->ExpungeIndexes);
@@ -1471,7 +1470,6 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
           else if(stricmp(buf, "UpdateDownloadPath") == 0)       strlcpy(co->UpdateDownloadPath, value, sizeof(co->UpdateDownloadPath));
 
 /*Advanced*/
-          else if(stricmp(buf, "UpdateStatus") == 0)             co->UpdateStatus = Txt2Bool(value);
           else if(stricmp(buf, "LetterPart") == 0)
           {
             co->LetterPart = atoi(value);

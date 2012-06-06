@@ -1487,7 +1487,6 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
   if(page == cp_NewMail || page == cp_AllPages)
   {
     co->TransferWindow = TWM_AUTO;
-    co->UpdateStatus = TRUE;
     co->NotifyType = 1;
     co->NotifySound[0] = '\0';
     co->NotifyCommand[0] = '\0';
@@ -2039,7 +2038,6 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      c1->ForwardMode                     == c2->ForwardMode &&
      c1->InfoBar                         == c2->InfoBar &&
      c1->DaylightSaving                  == c2->DaylightSaving &&
-     c1->UpdateStatus                    == c2->UpdateStatus &&
      c1->DisplayAllTexts                 == c2->DisplayAllTexts &&
      c1->FixedFontEdit                   == c2->FixedFontEdit &&
      c1->MultipleReadWindows             == c2->MultipleReadWindows &&

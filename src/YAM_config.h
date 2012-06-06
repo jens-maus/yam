@@ -472,7 +472,6 @@ struct Config
   enum  WrapMode           EdWrapMode;
 
   BOOL  DaylightSaving;
-  BOOL  UpdateStatus;
   BOOL  DisplayAllTexts;
   BOOL  FixedFontEdit;
   BOOL  MultipleReadWindows;

@@ -2362,7 +2362,7 @@ BOOL MA_PopNow(struct MailServerNode *msn, const ULONG flags, struct DownloadRes
   }
   else
   {
-  // we ignore the active state and possible startup flags for single servers
+    // we ignore the active state and possible startup flags for single servers
     success = ReceiveMailsFromPOP(msn, flags, dlResult);
   }
 
