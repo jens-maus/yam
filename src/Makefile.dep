@@ -3077,10 +3077,10 @@ $(OBJDIR)/$(MUIDIR)/YAMApplication.o: mui/YAMApplication.c mui/YAMApplication_cl
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_error.h \
   YAM_find.h YAM_global.h YAM_mainFolder.h AppIcon.h FileInfo.h Locale.h \
-  MUIObjects.h UpdateCheck.h Threads.h mui/AddrBookListtree.h \
-  mui/AddressmatchPopup.h mui/InfoWindow.h mui/StringRequestWindow.h \
-  mui/TransferControlGroup.h include/timeval.h mui/TransferWindow.h \
-  Debug.h
+  MailServers.h MUIObjects.h UpdateCheck.h Threads.h \
+  mui/AddrBookListtree.h mui/AddressmatchPopup.h mui/InfoWindow.h \
+  mui/StringRequestWindow.h mui/TransferControlGroup.h include/timeval.h \
+  mui/TransferWindow.h Debug.h
 $(OBJDIR)/$(REXXDIR)/addrdelete.o: rexx/addrdelete.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \

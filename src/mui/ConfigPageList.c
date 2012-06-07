@@ -64,7 +64,6 @@ enum ConfigPage
   cp_FirstSteps = 0,
   cp_TCPIP,
   cp_Identities,
-  cp_NewMail,
   cp_Filters,
   cp_Spam,
   cp_Read,
@@ -99,7 +98,6 @@ OVERLOAD(OM_NEW)
     data->configIcon[cp_FirstSteps  ] = MakeImageObject("config_firststep", G->theme.configImages[CI_FIRSTSTEP]);
     data->configIcon[cp_TCPIP       ] = MakeImageObject("config_network",   G->theme.configImages[CI_NETWORK]);
     data->configIcon[cp_Identities  ] = MakeImageObject("config_identities",G->theme.configImages[CI_IDENTITIES]);
-    data->configIcon[cp_NewMail     ] = MakeImageObject("config_newmail",   G->theme.configImages[CI_NEWMAIL]);
     data->configIcon[cp_Filters     ] = MakeImageObject("config_filters",   G->theme.configImages[CI_FILTERS]);
     data->configIcon[cp_Spam        ] = MakeImageObject("config_spam",      G->theme.configImages[CI_SPAM]);
     data->configIcon[cp_Read        ] = MakeImageObject("config_read",      G->theme.configImages[CI_READ]);

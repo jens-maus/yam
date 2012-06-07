@@ -1882,6 +1882,49 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
                       Child, HSpace(1),
                       Child, MakeCheckGroup(&data->GUI.CH_APPLYREMOTEFILTERS, tr(MSG_CO_APPLY_REMOTE_FILTERS)),
 
+                      Child, HSpace(1),
+                      Child, HBarT(tr(MSG_CO_POP_NOTIFICATION)), End,
+
+                      Child, HSpace(1),
+                      Child, HGroup,
+                        Child, data->GUI.CH_POP3_NOTIFY_REQ = MakeCheck(tr(MSG_CO_NotiReq)),
+                        Child, LLabel(tr(MSG_CO_NotiReq)),
+                        Child, HSpace(0),
+                      End,
+
+                      Child, HSpace(1),
+                      Child, HGroup,
+                        Child, data->GUI.CH_POP3_NOTIFY_OS41SYSTEM = MakeCheck(tr(MSG_CO_NOTIOS41SYSTEM)),
+                        Child, LLabel(tr(MSG_CO_NOTIOS41SYSTEM)),
+                        Child, HSpace(0),
+                      End,
+
+                      Child, HSpace(1),
+                      Child, HGroup,
+                        Child, data->GUI.CH_POP3_NOTIFY_SOUND = MakeCheck(tr(MSG_CO_NotiSound)),
+                        Child, LLabel(tr(MSG_CO_NotiSound)),
+                        Child, HGroup,
+                          MUIA_Group_HorizSpacing, 0,
+                          Child, data->GUI.PO_POP3_NOTIFY_SOUND = PopaslObject,
+                            MUIA_Popasl_Type, ASL_FileRequest,
+                            MUIA_Popstring_String, data->GUI.ST_POP3_NOTIFY_SOUND = MakeString(SIZE_PATHFILE, ""),
+                            MUIA_Popstring_Button, PopButton(MUII_PopFile),
+                          End,
+                          Child, data->GUI.BT_POP3_NOTIFY_SOUND = PopButton(MUII_TapePlay),
+                        End,
+                      End,
+
+                      Child, HSpace(1),
+                      Child, HGroup,
+                        Child, data->GUI.CH_POP3_NOTIFY_CMD = MakeCheck(tr(MSG_CO_NotiCommand)),
+                        Child, LLabel(tr(MSG_CO_NotiCommand)),
+                        Child, data->GUI.PO_POP3_NOTIFY_CMD = PopaslObject,
+                          MUIA_Popasl_Type, ASL_FileRequest,
+                          MUIA_Popstring_String, data->GUI.ST_POP3_NOTIFY_CMD = MakeString(SIZE_COMMAND, ""),
+                          MUIA_Popstring_Button, PopButton(MUII_PopFile),
+                        End,
+                      End,
+
                       Child, HVSpace,
                       Child, HVSpace,
 
@@ -1998,56 +2041,68 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
 
   if(obj != NULL)
   {
-    SetHelp(data->GUI.ST_SMTPHOST,           MSG_HELP_CO_ST_SMTPHOST             );
-    SetHelp(data->GUI.ST_SMTPPORT,           MSG_HELP_CO_ST_SMTPPORT             );
-    SetHelp(data->GUI.CH_SMTP8BIT,           MSG_HELP_CO_CH_SMTP8BIT             );
-    SetHelp(data->GUI.ST_SMTPAUTHUSER,       MSG_HELP_CO_ST_SMTPAUTHUSER         );
-    SetHelp(data->GUI.ST_SMTPAUTHPASS,       MSG_HELP_CO_ST_SMTPAUTHPASS         );
-    SetHelp(data->GUI.CY_SMTPAUTH,           MSG_HELP_CO_CY_SMTPAUTHMETHOD       );
-    SetHelp(data->GUI.LV_POP3,               MSG_HELP_CO_LV_POP3                 );
-    SetHelp(data->GUI.BT_PADD,               MSG_HELP_CO_BT_PADD                 );
-    SetHelp(data->GUI.BT_PDEL,               MSG_HELP_CO_BT_PDEL                 );
-    SetHelp(data->GUI.ST_POPDESC,            MSG_HELP_CO_ST_POPDESC              );
-    SetHelp(data->GUI.ST_SMTPDESC,           MSG_HELP_CO_ST_SMTPDESC             );
-    SetHelp(data->GUI.ST_POPHOST,            MSG_HELP_CO_ST_POPHOST              );
-    SetHelp(data->GUI.ST_POPPORT,            MSG_HELP_CO_ST_POPPORT              );
-    SetHelp(data->GUI.ST_POPUSERID,          MSG_HELP_CO_ST_POPUSERID            );
-    SetHelp(data->GUI.ST_PASSWD,             MSG_HELP_CO_ST_PASSWD               );
-    SetHelp(data->GUI.CH_DELETE,             MSG_HELP_CO_CH_DELETE               );
-    SetHelp(data->GUI.CY_POPAUTH,            MSG_HELP_CO_CY_POPAUTH              );
-    SetHelp(data->GUI.CH_POPENABLED,         MSG_HELP_CO_CH_POPENABLED           );
-    SetHelp(data->GUI.CH_DOWNLOADONSTARTUP,  MSG_HELP_CO_CH_DOWNLOAD_ON_STARTUP  );
-    SetHelp(data->GUI.CH_INTERVAL,           MSG_HELP_CO_ST_INTERVAL);
-    SetHelp(data->GUI.NM_INTERVAL,           MSG_HELP_CO_ST_INTERVAL);
-    SetHelp(data->GUI.CH_DLLARGE,            MSG_HELP_CO_CH_DLLARGE);
-    SetHelp(data->GUI.ST_WARNSIZE,           MSG_HELP_CO_ST_WARNSIZE);
-    SetHelp(data->GUI.CH_APPLYREMOTEFILTERS, MSG_HELP_CO_CH_APPLY_REMOTE_FILTERS );
-    SetHelp(data->GUI.CY_SMTPSECURE,         MSG_HELP_CO_CY_SMTPSECURE           );
-    SetHelp(data->GUI.CY_POPSECURE,          MSG_HELP_CO_CY_POPSECURE            );
-    SetHelp(data->GUI.CY_PRESELECTION,       MSG_HELP_CO_CY_MSGSELECT            );
+    SetHelp(data->GUI.ST_SMTPHOST,               MSG_HELP_CO_ST_SMTPHOST);
+    SetHelp(data->GUI.ST_SMTPPORT,               MSG_HELP_CO_ST_SMTPPORT);
+    SetHelp(data->GUI.CH_SMTP8BIT,               MSG_HELP_CO_CH_SMTP8BIT);
+    SetHelp(data->GUI.ST_SMTPAUTHUSER,           MSG_HELP_CO_ST_SMTPAUTHUSER);
+    SetHelp(data->GUI.ST_SMTPAUTHPASS,           MSG_HELP_CO_ST_SMTPAUTHPASS);
+    SetHelp(data->GUI.CY_SMTPAUTH,               MSG_HELP_CO_CY_SMTPAUTHMETHOD);
+    SetHelp(data->GUI.LV_POP3,                   MSG_HELP_CO_LV_POP3);
+    SetHelp(data->GUI.BT_PADD,                   MSG_HELP_CO_BT_PADD);
+    SetHelp(data->GUI.BT_PDEL,                   MSG_HELP_CO_BT_PDEL);
+    SetHelp(data->GUI.ST_POPDESC,                MSG_HELP_CO_ST_POPDESC);
+    SetHelp(data->GUI.ST_SMTPDESC,               MSG_HELP_CO_ST_SMTPDESC);
+    SetHelp(data->GUI.ST_POPHOST,                MSG_HELP_CO_ST_POPHOST);
+    SetHelp(data->GUI.ST_POPPORT,                MSG_HELP_CO_ST_POPPORT);
+    SetHelp(data->GUI.ST_POPUSERID,              MSG_HELP_CO_ST_POPUSERID);
+    SetHelp(data->GUI.ST_PASSWD,                 MSG_HELP_CO_ST_PASSWD);
+    SetHelp(data->GUI.CH_DELETE,                 MSG_HELP_CO_CH_DELETE);
+    SetHelp(data->GUI.CY_POPAUTH,                MSG_HELP_CO_CY_POPAUTH);
+    SetHelp(data->GUI.CH_POPENABLED,             MSG_HELP_CO_CH_POPENABLED);
+    SetHelp(data->GUI.CH_DOWNLOADONSTARTUP,      MSG_HELP_CO_CH_DOWNLOAD_ON_STARTUP );
+    SetHelp(data->GUI.CH_INTERVAL,               MSG_HELP_CO_ST_INTERVAL);
+    SetHelp(data->GUI.NM_INTERVAL,               MSG_HELP_CO_ST_INTERVAL);
+    SetHelp(data->GUI.CH_DLLARGE,                MSG_HELP_CO_CH_DLLARGE);
+    SetHelp(data->GUI.ST_WARNSIZE,               MSG_HELP_CO_ST_WARNSIZE);
+    SetHelp(data->GUI.CH_APPLYREMOTEFILTERS,     MSG_HELP_CO_CH_APPLY_REMOTE_FILTERS );
+    SetHelp(data->GUI.CY_SMTPSECURE,             MSG_HELP_CO_CY_SMTPSECURE);
+    SetHelp(data->GUI.CY_POPSECURE,              MSG_HELP_CO_CY_POPSECURE);
+    SetHelp(data->GUI.CY_PRESELECTION,           MSG_HELP_CO_CY_MSGSELECT);
+    SetHelp(data->GUI.CH_POP3_NOTIFY_REQ,        MSG_HELP_CO_CH_NOTIREQ);
+    SetHelp(data->GUI.CH_POP3_NOTIFY_SOUND,      MSG_HELP_CO_CH_NOTISOUND);
+    SetHelp(data->GUI.CH_POP3_NOTIFY_CMD,        MSG_HELP_CO_CH_NOTICMD);
+    SetHelp(data->GUI.ST_POP3_NOTIFY_CMD,        MSG_HELP_CO_ST_NOTICMD);
+    SetHelp(data->GUI.ST_POP3_NOTIFY_SOUND,      MSG_HELP_CO_ST_NOTISOUND);
+    SetHelp(data->GUI.CH_POP3_NOTIFY_OS41SYSTEM, MSG_HELP_CO_CH_NOTIOS41SYSTEM);
 
     // connect POP3 related stuff to the corresponding Hooks
-    DoMethod(data->GUI.LV_POP3              , MUIM_Notify, MUIA_NList_Active    , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_GetPOP3EntryHook);
-    DoMethod(data->GUI.ST_POPDESC           , MUIM_Notify, MUIA_String_Contents , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
-    DoMethod(data->GUI.ST_POPHOST           , MUIM_Notify, MUIA_String_Contents , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
-    DoMethod(data->GUI.ST_POPPORT           , MUIM_Notify, MUIA_String_Contents , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
-    DoMethod(data->GUI.ST_POPUSERID         , MUIM_Notify, MUIA_String_Contents , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
-    DoMethod(data->GUI.ST_PASSWD            , MUIM_Notify, MUIA_String_Contents , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
-    DoMethod(data->GUI.CH_POPENABLED        , MUIM_Notify, MUIA_Selected        , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
-    DoMethod(data->GUI.CY_POPAUTH           , MUIM_Notify, MUIA_Cycle_Active    , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
-    DoMethod(data->GUI.CH_DELETE            , MUIM_Notify, MUIA_Selected        , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
-    DoMethod(data->GUI.CH_DOWNLOADONSTARTUP , MUIM_Notify, MUIA_Selected        , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
-    DoMethod(data->GUI.CH_INTERVAL          , MUIM_Notify, MUIA_Selected        , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
-    DoMethod(data->GUI.NM_INTERVAL          , MUIM_Notify, MUIA_Numeric_Value   , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
-    DoMethod(data->GUI.CH_DLLARGE           , MUIM_Notify, MUIA_Selected        , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
-    DoMethod(data->GUI.ST_WARNSIZE          , MUIM_Notify, MUIA_String_Contents , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
-    DoMethod(data->GUI.CH_APPLYREMOTEFILTERS, MUIM_Notify, MUIA_Selected        , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
-    DoMethod(data->GUI.CY_PRESELECTION      , MUIM_Notify, MUIA_Cycle_Active    , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
-    DoMethod(data->GUI.BT_PADD              , MUIM_Notify, MUIA_Pressed         , FALSE         , MUIV_Notify_Application, 2, MUIM_CallHook, &CO_AddPOP3Hook);
-    DoMethod(data->GUI.BT_PDEL              , MUIM_Notify, MUIA_Pressed         , FALSE         , MUIV_Notify_Application, 2, MUIM_CallHook, &CO_DelPOP3Hook);
-    DoMethod(data->GUI.BT_POPUP             , MUIM_Notify, MUIA_Pressed         , FALSE, data->GUI.LV_POP3, 3, MUIM_NList_Move, MUIV_NList_Move_Selected, MUIV_NList_Move_Previous);
-    DoMethod(data->GUI.BT_POPDOWN           , MUIM_Notify, MUIA_Pressed         , FALSE, data->GUI.LV_POP3, 3, MUIM_NList_Move, MUIV_NList_Move_Selected, MUIV_NList_Move_Next);
-    DoMethod(data->GUI.CY_POPSECURE,          MUIM_Notify, MUIA_Cycle_Active,     MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
+    DoMethod(data->GUI.LV_POP3,                   MUIM_Notify, MUIA_NList_Active    , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_GetPOP3EntryHook);
+    DoMethod(data->GUI.ST_POPDESC,                MUIM_Notify, MUIA_String_Contents , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
+    DoMethod(data->GUI.ST_POPHOST,                MUIM_Notify, MUIA_String_Contents , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
+    DoMethod(data->GUI.ST_POPPORT,                MUIM_Notify, MUIA_String_Contents , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
+    DoMethod(data->GUI.ST_POPUSERID,              MUIM_Notify, MUIA_String_Contents , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
+    DoMethod(data->GUI.ST_PASSWD,                 MUIM_Notify, MUIA_String_Contents , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
+    DoMethod(data->GUI.CH_POPENABLED,             MUIM_Notify, MUIA_Selected        , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
+    DoMethod(data->GUI.CY_POPAUTH,                MUIM_Notify, MUIA_Cycle_Active    , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
+    DoMethod(data->GUI.CH_DELETE,                 MUIM_Notify, MUIA_Selected        , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
+    DoMethod(data->GUI.CH_DOWNLOADONSTARTUP,      MUIM_Notify, MUIA_Selected        , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
+    DoMethod(data->GUI.CH_INTERVAL,               MUIM_Notify, MUIA_Selected        , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
+    DoMethod(data->GUI.NM_INTERVAL,               MUIM_Notify, MUIA_Numeric_Value   , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
+    DoMethod(data->GUI.CH_DLLARGE,                MUIM_Notify, MUIA_Selected        , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
+    DoMethod(data->GUI.ST_WARNSIZE,               MUIM_Notify, MUIA_String_Contents , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
+    DoMethod(data->GUI.CH_APPLYREMOTEFILTERS,     MUIM_Notify, MUIA_Selected        , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
+    DoMethod(data->GUI.CY_PRESELECTION,           MUIM_Notify, MUIA_Cycle_Active    , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
+    DoMethod(data->GUI.BT_PADD,                   MUIM_Notify, MUIA_Pressed         , FALSE         , MUIV_Notify_Application, 2, MUIM_CallHook, &CO_AddPOP3Hook);
+    DoMethod(data->GUI.BT_PDEL,                   MUIM_Notify, MUIA_Pressed         , FALSE         , MUIV_Notify_Application, 2, MUIM_CallHook, &CO_DelPOP3Hook);
+    DoMethod(data->GUI.BT_POPUP,                  MUIM_Notify, MUIA_Pressed         , FALSE, data->GUI.LV_POP3, 3, MUIM_NList_Move, MUIV_NList_Move_Selected, MUIV_NList_Move_Previous);
+    DoMethod(data->GUI.BT_POPDOWN,                MUIM_Notify, MUIA_Pressed         , FALSE, data->GUI.LV_POP3, 3, MUIM_NList_Move, MUIV_NList_Move_Selected, MUIV_NList_Move_Next);
+    DoMethod(data->GUI.CY_POPSECURE,              MUIM_Notify, MUIA_Cycle_Active,     MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
+    DoMethod(data->GUI.CH_POP3_NOTIFY_REQ,        MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
+    DoMethod(data->GUI.CH_POP3_NOTIFY_OS41SYSTEM, MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
+    DoMethod(data->GUI.CH_POP3_NOTIFY_CMD,        MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
+    DoMethod(data->GUI.ST_POP3_NOTIFY_CMD,        MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
+    DoMethod(data->GUI.CH_POP3_NOTIFY_SOUND,      MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
+    DoMethod(data->GUI.ST_POP3_NOTIFY_SOUND,      MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
 
     // connect SMTP related stuff to the corresponding Hooks
     DoMethod(data->GUI.LV_SMTP              , MUIM_Notify, MUIA_NList_Active    , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_GetSMTPEntryHook);
@@ -2070,6 +2125,9 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
     set(data->GUI.BT_POPDOWN,  MUIA_CycleChain, TRUE);
     set(data->GUI.BT_SMTPUP,   MUIA_CycleChain, TRUE);
     set(data->GUI.BT_SMTPDOWN, MUIA_CycleChain, TRUE);
+
+    set(data->GUI.BT_POP3_NOTIFY_SOUND, MUIA_CycleChain, TRUE);
+    DoMethod(data->GUI.BT_POP3_NOTIFY_SOUND, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_PlaySoundHook, data->GUI.ST_POP3_NOTIFY_SOUND);
   }
 
   RETURN(obj);
@@ -2082,7 +2140,7 @@ Object *CO_PageIdentities(struct CO_ClassData *data)
 {
   Object *obj;
   Object *bt_sentfolder;
-  static const char *rtitles[4];
+  static const char *rtitles[5];
   static const char *quotePosition[3];
   static const char *signaturePosition[3];
 
@@ -2280,7 +2338,7 @@ Object *CO_PageIdentities(struct CO_ClassData *data)
                     End,
                   End,
 
-                  // PGP-Security Settings
+                  // PGP security settings
                   Child, VGroup,
                     Child, ColGroup(2), GroupFrameT(tr(MSG_CO_IDENTITY_PGPSETTINGS)),
 
@@ -2348,68 +2406,68 @@ Object *CO_PageIdentities(struct CO_ClassData *data)
     set(data->GUI.BT_IDENTITYDOWN, MUIA_CycleChain, TRUE);
 
     // set help text to objects
-    SetHelp(data->GUI.CH_IDENTITY_ENABLED,      MSG_HELP_CO_CH_IDENTITY_ENABLED);
-    SetHelp(data->GUI.ST_IDENTITY_DESCRIPTION,  MSG_HELP_CO_ST_IDENTITY_DESCRIPTION);
-    SetHelp(data->GUI.ST_IDENTITY_REALNAME,     MSG_HELP_CO_ST_IDENTITY_REALNAME);
-    SetHelp(data->GUI.ST_IDENTITY_EMAIL,        MSG_HELP_CO_ST_IDENTITY_EMAIL);
-    SetHelp(data->GUI.ST_IDENTITY_ORGANIZATION, MSG_HELP_CO_ST_IDENTITY_ORGANIZATION);
-    SetHelp(data->GUI.CY_IDENTITY_MAILSERVER,   MSG_HELP_CO_CY_IDENTITY_MAILSERVER);
-    SetHelp(data->GUI.CY_IDENTITY_SIGNATURE,    MSG_HELP_CO_CY_IDENTITY_SIGNATURE);
-    SetHelp(data->GUI.ST_IDENTITY_CC,           MSG_HELP_CO_ST_IDENTITY_CC);
-    SetHelp(data->GUI.ST_IDENTITY_BCC,          MSG_HELP_CO_ST_IDENTITY_BCC);
-    SetHelp(data->GUI.ST_IDENTITY_REPLYTO,      MSG_HELP_CO_ST_IDENTITY_REPLYTO);
-    SetHelp(data->GUI.ST_IDENTITY_EXTRAHEADER,  MSG_HELP_CO_ST_IDENTITY_EXTRAHEADER);
-    SetHelp(data->GUI.ST_IDENTITY_PHOTOURL,     MSG_HELP_CO_ST_IDENTITY_PHOTOURL);
-    SetHelp(data->GUI.CH_IDENTITY_SENTFOLDER,   MSG_HELP_CO_CH_IDENTITY_SENTFOLDER);
-    SetHelp(data->GUI.TX_IDENTITY_SENTFOLDER,   MSG_HELP_CO_TX_IDENTITY_SENTFOLDER);
-    SetHelp(data->GUI.CH_IDENTITY_QUOTEMAILS,   MSG_HELP_CO_CH_IDENTITY_QUOTEMAILS);
-    SetHelp(data->GUI.CY_IDENTITY_QUOTEPOS,     MSG_HELP_CO_CH_IDENTITY_QUOTEPOS);
-    SetHelp(data->GUI.CY_IDENTITY_SIGPOS,       MSG_HELP_CO_CH_IDENTITY_SIGPOS);
-    SetHelp(data->GUI.CH_IDENTITY_SIGREPLY,     MSG_HELP_CO_CH_IDENTITY_SIGREPLY);
-    SetHelp(data->GUI.CH_IDENTITY_SIGFORWARD,   MSG_HELP_CO_CH_IDENTITY_SIGFORWARD);
-    SetHelp(data->GUI.CH_IDENTITY_ADDINFO,      MSG_HELP_CO_CH_IDENTITY_ADDINFO);
-    SetHelp(data->GUI.CH_IDENTITY_REQUESTMDN,   MSG_HELP_CO_CH_IDENTITY_REQUESTMDN);
-    SetHelp(data->GUI.CH_IDENTITY_USEPGP,       MSG_HELP_CO_CH_IDENTITY_USEPGP);
-    SetHelp(data->GUI.ST_IDENTITY_PGPID,        MSG_HELP_CO_ST_IDENTITY_PGPID);
-    SetHelp(data->GUI.ST_IDENTITY_PGPURL,       MSG_HELP_CO_ST_IDENTITY_PGPURL);
-    SetHelp(data->GUI.CH_IDENTITY_PGPSIGN_UNENC,MSG_HELP_CO_CH_IDENTITY_PGPSIGN_UNENC);
-    SetHelp(data->GUI.CH_IDENTITY_PGPSIGN_ENC,  MSG_HELP_CO_CH_IDENTITY_PGPSIGN_ENC);
-    SetHelp(data->GUI.CH_IDENTITY_PGPENC_ALL,   MSG_HELP_CO_CH_IDENTITY_PGPENC_ALL);
-    SetHelp(data->GUI.CH_IDENTITY_PGPENC_SELF,  MSG_HELP_CO_CH_IDENTITY_PGPENC_SELF);
+    SetHelp(data->GUI.CH_IDENTITY_ENABLED,           MSG_HELP_CO_CH_IDENTITY_ENABLED);
+    SetHelp(data->GUI.ST_IDENTITY_DESCRIPTION,       MSG_HELP_CO_ST_IDENTITY_DESCRIPTION);
+    SetHelp(data->GUI.ST_IDENTITY_REALNAME,          MSG_HELP_CO_ST_IDENTITY_REALNAME);
+    SetHelp(data->GUI.ST_IDENTITY_EMAIL,             MSG_HELP_CO_ST_IDENTITY_EMAIL);
+    SetHelp(data->GUI.ST_IDENTITY_ORGANIZATION,      MSG_HELP_CO_ST_IDENTITY_ORGANIZATION);
+    SetHelp(data->GUI.CY_IDENTITY_MAILSERVER,        MSG_HELP_CO_CY_IDENTITY_MAILSERVER);
+    SetHelp(data->GUI.CY_IDENTITY_SIGNATURE,         MSG_HELP_CO_CY_IDENTITY_SIGNATURE);
+    SetHelp(data->GUI.ST_IDENTITY_CC,                MSG_HELP_CO_ST_IDENTITY_CC);
+    SetHelp(data->GUI.ST_IDENTITY_BCC,               MSG_HELP_CO_ST_IDENTITY_BCC);
+    SetHelp(data->GUI.ST_IDENTITY_REPLYTO,           MSG_HELP_CO_ST_IDENTITY_REPLYTO);
+    SetHelp(data->GUI.ST_IDENTITY_EXTRAHEADER,       MSG_HELP_CO_ST_IDENTITY_EXTRAHEADER);
+    SetHelp(data->GUI.ST_IDENTITY_PHOTOURL,          MSG_HELP_CO_ST_IDENTITY_PHOTOURL);
+    SetHelp(data->GUI.CH_IDENTITY_SENTFOLDER,        MSG_HELP_CO_CH_IDENTITY_SENTFOLDER);
+    SetHelp(data->GUI.TX_IDENTITY_SENTFOLDER,        MSG_HELP_CO_TX_IDENTITY_SENTFOLDER);
+    SetHelp(data->GUI.CH_IDENTITY_QUOTEMAILS,        MSG_HELP_CO_CH_IDENTITY_QUOTEMAILS);
+    SetHelp(data->GUI.CY_IDENTITY_QUOTEPOS,          MSG_HELP_CO_CH_IDENTITY_QUOTEPOS);
+    SetHelp(data->GUI.CY_IDENTITY_SIGPOS,            MSG_HELP_CO_CH_IDENTITY_SIGPOS);
+    SetHelp(data->GUI.CH_IDENTITY_SIGREPLY,          MSG_HELP_CO_CH_IDENTITY_SIGREPLY);
+    SetHelp(data->GUI.CH_IDENTITY_SIGFORWARD,        MSG_HELP_CO_CH_IDENTITY_SIGFORWARD);
+    SetHelp(data->GUI.CH_IDENTITY_ADDINFO,           MSG_HELP_CO_CH_IDENTITY_ADDINFO);
+    SetHelp(data->GUI.CH_IDENTITY_REQUESTMDN,        MSG_HELP_CO_CH_IDENTITY_REQUESTMDN);
+    SetHelp(data->GUI.CH_IDENTITY_USEPGP,            MSG_HELP_CO_CH_IDENTITY_USEPGP);
+    SetHelp(data->GUI.ST_IDENTITY_PGPID,             MSG_HELP_CO_ST_IDENTITY_PGPID);
+    SetHelp(data->GUI.ST_IDENTITY_PGPURL,            MSG_HELP_CO_ST_IDENTITY_PGPURL);
+    SetHelp(data->GUI.CH_IDENTITY_PGPSIGN_UNENC,     MSG_HELP_CO_CH_IDENTITY_PGPSIGN_UNENC);
+    SetHelp(data->GUI.CH_IDENTITY_PGPSIGN_ENC,       MSG_HELP_CO_CH_IDENTITY_PGPSIGN_ENC);
+    SetHelp(data->GUI.CH_IDENTITY_PGPENC_ALL,        MSG_HELP_CO_CH_IDENTITY_PGPENC_ALL);
+    SetHelp(data->GUI.CH_IDENTITY_PGPENC_SELF,       MSG_HELP_CO_CH_IDENTITY_PGPENC_SELF);
 
     // connect a notify if the user selects a different identity in the list
     DoMethod(data->GUI.LV_IDENTITY, MUIM_Notify, MUIA_NList_Active, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_GetIdentityEntryHook);
 
     // connect notifies to update the UserIdentityNode according to the latest
     // settings in this config page
-    DoMethod(data->GUI.CH_IDENTITY_ENABLED,       MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
-    DoMethod(data->GUI.ST_IDENTITY_DESCRIPTION,   MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
-    DoMethod(data->GUI.ST_IDENTITY_REALNAME,      MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
-    DoMethod(data->GUI.ST_IDENTITY_EMAIL,         MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
-    DoMethod(data->GUI.ST_IDENTITY_ORGANIZATION,  MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
-    DoMethod(data->GUI.CY_IDENTITY_MAILSERVER,    MUIM_Notify, MUIA_Cycle_Active,     MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
-    DoMethod(data->GUI.CY_IDENTITY_SIGNATURE,     MUIM_Notify, MUIA_Cycle_Active,     MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
-    DoMethod(data->GUI.ST_IDENTITY_CC,            MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
-    DoMethod(data->GUI.ST_IDENTITY_BCC,           MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
-    DoMethod(data->GUI.ST_IDENTITY_REPLYTO,       MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
-    DoMethod(data->GUI.ST_IDENTITY_EXTRAHEADER,   MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
-    DoMethod(data->GUI.ST_IDENTITY_PHOTOURL,      MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
-    DoMethod(data->GUI.CH_IDENTITY_SENTFOLDER,    MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
-    DoMethod(data->GUI.TX_IDENTITY_SENTFOLDER,    MUIM_Notify, MUIA_Text_Contents,    MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
-    DoMethod(data->GUI.CH_IDENTITY_QUOTEMAILS,    MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
-    DoMethod(data->GUI.CY_IDENTITY_QUOTEPOS,      MUIM_Notify, MUIA_Cycle_Active,     MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
-    DoMethod(data->GUI.CY_IDENTITY_SIGPOS,        MUIM_Notify, MUIA_Cycle_Active,     MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
-    DoMethod(data->GUI.CH_IDENTITY_SIGREPLY,      MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
-    DoMethod(data->GUI.CH_IDENTITY_SIGFORWARD,    MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
-    DoMethod(data->GUI.CH_IDENTITY_ADDINFO,       MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
-    DoMethod(data->GUI.CH_IDENTITY_REQUESTMDN,    MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
-    DoMethod(data->GUI.CH_IDENTITY_USEPGP,        MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
-    DoMethod(data->GUI.ST_IDENTITY_PGPID,         MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
-    DoMethod(data->GUI.ST_IDENTITY_PGPURL,        MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
-    DoMethod(data->GUI.CH_IDENTITY_PGPSIGN_UNENC, MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
-    DoMethod(data->GUI.CH_IDENTITY_PGPSIGN_ENC,   MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
-    DoMethod(data->GUI.CH_IDENTITY_PGPENC_ALL,    MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
-    DoMethod(data->GUI.CH_IDENTITY_PGPENC_SELF,   MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
+    DoMethod(data->GUI.CH_IDENTITY_ENABLED,           MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
+    DoMethod(data->GUI.ST_IDENTITY_DESCRIPTION,       MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
+    DoMethod(data->GUI.ST_IDENTITY_REALNAME,          MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
+    DoMethod(data->GUI.ST_IDENTITY_EMAIL,             MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
+    DoMethod(data->GUI.ST_IDENTITY_ORGANIZATION,      MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
+    DoMethod(data->GUI.CY_IDENTITY_MAILSERVER,        MUIM_Notify, MUIA_Cycle_Active,     MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
+    DoMethod(data->GUI.CY_IDENTITY_SIGNATURE,         MUIM_Notify, MUIA_Cycle_Active,     MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
+    DoMethod(data->GUI.ST_IDENTITY_CC,                MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
+    DoMethod(data->GUI.ST_IDENTITY_BCC,               MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
+    DoMethod(data->GUI.ST_IDENTITY_REPLYTO,           MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
+    DoMethod(data->GUI.ST_IDENTITY_EXTRAHEADER,       MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
+    DoMethod(data->GUI.ST_IDENTITY_PHOTOURL,          MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
+    DoMethod(data->GUI.CH_IDENTITY_SENTFOLDER,        MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
+    DoMethod(data->GUI.TX_IDENTITY_SENTFOLDER,        MUIM_Notify, MUIA_Text_Contents,    MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
+    DoMethod(data->GUI.CH_IDENTITY_QUOTEMAILS,        MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
+    DoMethod(data->GUI.CY_IDENTITY_QUOTEPOS,          MUIM_Notify, MUIA_Cycle_Active,     MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
+    DoMethod(data->GUI.CY_IDENTITY_SIGPOS,            MUIM_Notify, MUIA_Cycle_Active,     MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
+    DoMethod(data->GUI.CH_IDENTITY_SIGREPLY,          MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
+    DoMethod(data->GUI.CH_IDENTITY_SIGFORWARD,        MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
+    DoMethod(data->GUI.CH_IDENTITY_ADDINFO,           MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
+    DoMethod(data->GUI.CH_IDENTITY_REQUESTMDN,        MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
+    DoMethod(data->GUI.CH_IDENTITY_USEPGP,            MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
+    DoMethod(data->GUI.ST_IDENTITY_PGPID,             MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
+    DoMethod(data->GUI.ST_IDENTITY_PGPURL,            MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
+    DoMethod(data->GUI.CH_IDENTITY_PGPSIGN_UNENC,     MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
+    DoMethod(data->GUI.CH_IDENTITY_PGPSIGN_ENC,       MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
+    DoMethod(data->GUI.CH_IDENTITY_PGPENC_ALL,        MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
+    DoMethod(data->GUI.CH_IDENTITY_PGPENC_SELF,       MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutIdentityEntryHook);
 
     DoMethod(data->GUI.LV_IDENTITY_SENTFOLDER, MUIM_Notify, MUIA_NList_DoubleClick, TRUE, data->GUI.PO_IDENTITY_SENTFOLDER, 2, MUIM_Popstring_Close, TRUE);
 
@@ -2422,96 +2480,6 @@ Object *CO_PageIdentities(struct CO_ClassData *data)
     // reflect the right content
     DoMethod(data->GUI.CY_IDENTITY_MAILSERVER, MUIM_MailServerChooser_UpdateMailServers);
     DoMethod(data->GUI.CY_IDENTITY_SIGNATURE, MUIM_SignatureChooser_UpdateSignatures);
-  }
-
-  RETURN(obj);
-  return obj;
-}
-
-///
-/// CO_PageNewMail
-Object *CO_PageNewMail(struct CO_ClassData *data)
-{
-  Object *pa_notisound;
-  Object *bt_notisound;
-  Object *pa_noticmd;
-  Object *obj;
-
-  ENTER();
-
-  obj = VGroup,
-          MUIA_HelpNode, "CO02",
-
-          ConfigPageHeaderObject("config_newmail_big", G->theme.configImages[CI_NEWMAILBIG], tr(MSG_CO_NEWMAIL_TITLE), tr(MSG_CO_NEWMAIL_SUMMARY)),
-
-          Child, ScrollgroupObject,
-            MUIA_Scrollgroup_FreeHoriz, FALSE,
-            MUIA_Scrollgroup_AutoBars, TRUE,
-            MUIA_Scrollgroup_Contents, VGroupV,
-
-              Child, VGroup, GroupFrameT(tr(MSG_CO_Notification)),
-                Child, ColGroup(3),
-                  Child, data->GUI.CH_NOTIREQ =  MakeCheck(tr(MSG_CO_NotiReq)),
-                  Child, LLabel(tr(MSG_CO_NotiReq)),
-                  Child, HSpace(0),
-
-                  Child, data->GUI.CH_NOTIOS41SYSTEM = MakeCheck(tr(MSG_CO_NOTIOS41SYSTEM)),
-                  Child, LLabel(tr(MSG_CO_NOTIOS41SYSTEM)),
-                  Child, HSpace(0),
-                End,
-
-                Child, ColGroup(3),
-                  Child, data->GUI.CH_NOTISOUND = MakeCheck(tr(MSG_CO_NotiSound)),
-                  Child, LLabel(tr(MSG_CO_NotiSound)),
-                  Child, HGroup,
-                    MUIA_Group_HorizSpacing, 0,
-                    Child, pa_notisound = PopaslObject,
-                      MUIA_Popasl_Type,      ASL_FileRequest,
-                      MUIA_Popstring_String, data->GUI.ST_NOTISOUND = MakeString(SIZE_PATHFILE,""),
-                      MUIA_Popstring_Button, PopButton(MUII_PopFile),
-                    End,
-                    Child, bt_notisound = PopButton(MUII_TapePlay),
-                  End,
-
-                  Child, data->GUI.CH_NOTICMD = MakeCheck(tr(MSG_CO_NotiCommand)),
-                  Child, LLabel(tr(MSG_CO_NotiCommand)),
-                  Child, pa_noticmd = PopaslObject,
-                    MUIA_Popasl_Type,      ASL_FileRequest,
-                    MUIA_Popstring_String,data->GUI.ST_NOTICMD = MakeString(SIZE_COMMAND,""),
-                    MUIA_Popstring_Button,PopButton(MUII_PopFile),
-                  End,
-                End,
-              End,
-
-              Child, HVSpace,
-
-            End,
-          End,
-
-        End;
-
-  if(obj != NULL)
-  {
-    SetHelp(data->GUI.CH_NOTIREQ,        MSG_HELP_CO_CH_NOTIREQ);
-    SetHelp(data->GUI.CH_NOTISOUND,      MSG_HELP_CO_CH_NOTISOUND);
-    SetHelp(data->GUI.CH_NOTICMD,        MSG_HELP_CO_CH_NOTICMD);
-    SetHelp(data->GUI.ST_NOTICMD,        MSG_HELP_CO_ST_NOTICMD);
-    SetHelp(data->GUI.ST_NOTISOUND,      MSG_HELP_CO_ST_NOTISOUND);
-    SetHelp(data->GUI.CH_NOTIOS41SYSTEM, MSG_HELP_CO_CH_NOTIOS41SYSTEM);
-
-    DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, TRUE, pa_notisound, bt_notisound, pa_noticmd, NULL);
-
-    #if defined(__amigaos4__)
-    set(data->GUI.CH_NOTIOS41SYSTEM, MUIA_Disabled, G->applicationID == 0 || LIB_VERSION_IS_AT_LEAST(ApplicationBase, 53, 2) == FALSE);
-    #else // __amigaos4__
-    set(data->GUI.CH_NOTIOS41SYSTEM, MUIA_Disabled, TRUE);
-    #endif // __amigaos4__
-
-    set(bt_notisound,MUIA_CycleChain,1);
-    DoMethod(bt_notisound          ,MUIM_Notify,MUIA_Pressed ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook,&CO_PlaySoundHook,data->GUI.ST_NOTISOUND);
-    DoMethod(data->GUI.CH_NOTISOUND,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,pa_notisound           ,3,MUIM_Set,MUIA_Disabled,MUIV_NotTriggerValue);
-    DoMethod(data->GUI.CH_NOTISOUND,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,bt_notisound           ,3,MUIM_Set,MUIA_Disabled,MUIV_NotTriggerValue);
-    DoMethod(data->GUI.CH_NOTICMD  ,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,pa_noticmd             ,3,MUIM_Set,MUIA_Disabled,MUIV_NotTriggerValue);
   }
 
   RETURN(obj);

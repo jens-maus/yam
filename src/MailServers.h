@@ -132,6 +132,12 @@ struct MailServerNode
   int downloadInterval;                  // [MST_POP3]: mail download interval in minutes
   int largeMailSizeLimit;                // [MST_POP3]: mail size limit for preselection
   struct TRequest downloadTimer;         // [MST_POP3]: timer request for periodical mail downloads
+  BOOL notifyByRequester;                // [MST_POP3]: notify by a requester
+  BOOL notifyByOS41System;               // [MST_POP3]: notify by the OS4.1 notification system
+  BOOL notifyBySound;                    // [MST_POP3]: notify by playing a sound
+  BOOL notifyByCommand;                  // [MST_POP3]: notify by executing a command
+  char notifySound[SIZE_PATHFILE];       // [MST_POP3]: play a sound when new mails have been received
+  char notifyCommand[SIZE_COMMAND];      // [MST_POP3]: execute a command when new mails have been received
 };
 
 // public functions

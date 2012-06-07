@@ -1074,10 +1074,6 @@ MSG_CO_CrdTCPIP
 TCP/IP
 ; TCP/IP
 ;
-MSG_CO_CrdNewMail
-Neue Post
-; New mail
-;
 MSG_CO_CrdFilters
 Filter
 ; Filters
@@ -6311,12 +6307,6 @@ TCP/IP Einstellungen
 MSG_CO_TCPIP_SUMMARY
 Um Ihre SMTP und POP3 Server zu konfigurieren...
 ;
-MSG_CO_NEWMAIL_TITLE
-Neue Post Einstellungen
-;
-MSG_CO_NEWMAIL_SUMMARY
-Wie beim Eintreffen neuer Post agiert werden soll...
-;
 MSG_CO_FILTER_TITLE
 Nachrichtenfilter Einstellungen
 ;
@@ -8962,4 +8952,7 @@ des Signaturtextes.
 ;
 MSG_CO_MIXED_CONNECTIONS
 Verbindungen
+;
+MSG_CO_POP_NOTIFICATION
+Benachrichtigung bei neuen Nachrichten
 ;

@@ -53,6 +53,7 @@
 #include "AppIcon.h"
 #include "FileInfo.h"
 #include "Locale.h"
+#include "MailServers.h"
 #include "MUIObjects.h"
 #include "UpdateCheck.h"
 #include "Threads.h"
@@ -1000,11 +1001,11 @@ DECLARE(UpdateAppIcon)
 ///
 /// DECLARE(NewMailAlert)
 //  Notifies user when new mail is available
-DECLARE(NewMailAlert) // const char *account, struct DownloadResult *downloadResult, struct FilterResult *filterResult, const ULONG flags
+DECLARE(NewMailAlert) // struct MailServerNode *msn, struct DownloadResult *downloadResult, struct FilterResult *filterResult, const ULONG flags
 {
   ENTER();
 
-  SHOWSTRING(DBF_NET, msg->account);
+  SHOWSTRING(DBF_NET, msg->msn->description);
   SHOWVALUE(DBF_NET, msg->downloadResult->downloaded);
   SHOWVALUE(DBF_NET, msg->filterResult->Spam);
 
@@ -1012,7 +1013,7 @@ DECLARE(NewMailAlert) // const char *account, struct DownloadResult *downloadRes
   // and not all of them were spam mails
   if(msg->downloadResult->downloaded > 0 && msg->downloadResult->downloaded > msg->filterResult->Spam)
   {
-    if(hasRequesterNotify(C->NotifyType) && isFlagClear(msg->flags, RECEIVEF_AREXX))
+    if(msg->msn->notifyByRequester == TRUE && isFlagClear(msg->flags, RECEIVEF_AREXX))
     {
       char buffer[SIZE_LARGE];
 
@@ -1020,7 +1021,7 @@ DECLARE(NewMailAlert) // const char *account, struct DownloadResult *downloadRes
       if(xget(G->App, MUIA_Application_Iconified) == TRUE)
         PopUp();
 
-      snprintf(buffer, sizeof(buffer), tr(MSG_POP3_NEW_MAIL_NOTIFY_REQ), msg->account, msg->downloadResult->downloaded, msg->downloadResult->onServer-msg->downloadResult->deleted, msg->downloadResult->dupeSkipped);
+      snprintf(buffer, sizeof(buffer), tr(MSG_POP3_NEW_MAIL_NOTIFY_REQ), msg->msn->description, msg->downloadResult->downloaded, msg->downloadResult->onServer-msg->downloadResult->deleted, msg->downloadResult->dupeSkipped);
       if(C->SpamFilterEnabled == TRUE)
       {
         // include the number of spam classified mails
@@ -1056,7 +1057,7 @@ DECLARE(NewMailAlert) // const char *account, struct DownloadResult *downloadRes
     }
 
     #if defined(__amigaos4__)
-    if(hasOS41SystemNotify(C->NotifyType))
+    if(msg->msn->notifyByOS41System == TRUE)
     {
       D(DBF_GUI, "appID is %ld, application.lib is V%ld.%ld (needed V%ld.%ld)", G->applicationID, ApplicationBase->lib_Version, ApplicationBase->lib_Revision, 53, 7);
       // Notify() is V53.2+, but 53.7 fixes some serious issues
@@ -1089,11 +1090,11 @@ DECLARE(NewMailAlert) // const char *account, struct DownloadResult *downloadRes
     }
     #endif // __amigaos4__
 
-    if(hasCommandNotify(C->NotifyType))
-      LaunchCommand(C->NotifyCommand, FALSE, OUT_STDOUT);
+    if(msg->msn->notifyByCommand == TRUE)
+      LaunchCommand(msg->msn->notifyCommand, FALSE, OUT_STDOUT);
 
-    if(hasSoundNotify(C->NotifyType))
-      PlaySound(C->NotifySound);
+    if(msg->msn->notifyBySound == TRUE)
+      PlaySound(msg->msn->notifySound);
   }
 
   LEAVE();

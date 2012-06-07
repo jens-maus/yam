@@ -334,6 +334,12 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
       fprintf(fh, "POP%02d.DownloadPeriodically = %s\n", i, Bool2Txt(hasServerDownloadPeriodically(msn)));
       fprintf(fh, "POP%02d.DownloadInterval     = %d\n", i, msn->downloadInterval);
       fprintf(fh, "POP%02d.DownloadLargeMails   = %s\n", i, Bool2Txt(hasServerDownloadLargeMails(msn)));
+      fprintf(fh, "POP%02d.NotifyByRequester  = %s\n", i, Bool2Txt(msn->notifyByRequester));
+      fprintf(fh, "POP%02d.NotifyByOS41System = %s\n", i, Bool2Txt(msn->notifyByOS41System));
+      fprintf(fh, "POP%02d.NotifyBySound      = %s\n", i, Bool2Txt(msn->notifyBySound));
+      fprintf(fh, "POP%02d.NotifyByCommand    = %s\n", i, Bool2Txt(msn->notifyByCommand));
+      fprintf(fh, "POP%02d.NotifySound        = %s\n", i, msn->notifySound);
+      fprintf(fh, "POP%02d.NotifyCommand      = %s\n", i, msn->notifyCommand);
 
       i++;
     }
@@ -397,11 +403,6 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
 
       i++;
     }
-
-    fprintf(fh, "\n[New mail]\n");
-    fprintf(fh, "NotifyType       = %d\n", co->NotifyType);
-    fprintf(fh, "NotifySound      = %s\n", co->NotifySound);
-    fprintf(fh, "NotifyCommand    = %s\n", co->NotifyCommand);
 
     fprintf(fh, "\n[Filters]\n");
 
@@ -778,6 +779,10 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
       int globalPOP3DownloadSizeLimit = -1;
       int globalPOP3DeleteOnServer = -1;
       int globalPOP3Preselection = -1;
+      int globalPOP3NotifyType = -1;
+      char globalPOP3NotifySound[SIZE_PATHFILE] = "";
+      char globalPOP3NotifyCommand[SIZE_COMMAND] = "";
+
 
       // before we continue we actually make a version check
       // here so that in case the user tries to load
@@ -854,14 +859,11 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
         //
         if(*buf != '\0' && value != NULL)
         {
-
 /* First Steps */
-
           if(stricmp(buf, "TimeZone") == 0)             co->TimeZone = atoi(value);
           else if(stricmp(buf, "DaylightSaving") == 0)  co->DaylightSaving = Txt2Bool(value);
 
 /* TCP/IP */
-
           else if(strnicmp(buf,"SMTP", 4) == 0 && isdigit(buf[4]) && isdigit(buf[5]) && strchr(buf, '.') != NULL)
           {
             int id = atoi(&buf[4]);
@@ -944,6 +946,12 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
                 else if(stricmp(q, "DownloadPeriodically") == 0) Txt2Bool(value) == TRUE ? setFlag(msn->flags, MSF_DOWNLOAD_PERIODICALLY) : clearFlag(msn->flags, MSF_DOWNLOAD_PERIODICALLY);
                 else if(stricmp(q, "DownloadInterval") == 0)     msn->downloadInterval = atoi(value);
                 else if(stricmp(q, "DownloadLargeMails") == 0)   Txt2Bool(value) == TRUE ? setFlag(msn->flags, MSF_DOWNLOAD_LARGE_MAILS) : clearFlag(msn->flags, MSF_DOWNLOAD_LARGE_MAILS);
+                else if(stricmp(q, "NotifyByRequester") == 0)    msn->notifyByRequester = Txt2Bool(value);
+                else if(stricmp(q, "NotifyByOS41System") == 0)   msn->notifyByOS41System = Txt2Bool(value);
+                else if(stricmp(q, "NotifyBySound") == 0)        msn->notifyBySound = Txt2Bool(value);
+                else if(stricmp(q, "NotifyByCommand") == 0)      msn->notifyByCommand = Txt2Bool(value);
+                else if(stricmp(q, "NotifySound") == 0)          strlcpy(msn->notifySound, value, sizeof(msn->notifySound));
+                else if(stricmp(q, "NotifyCommand") == 0)        strlcpy(msn->notifyCommand, value, sizeof(msn->notifyCommand));
                 else
                   W(DBF_CONFIG, "unknown '%s' POP config tag", q);
               }
@@ -954,10 +962,6 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
               W(DBF_CONFIG, "POP3 id < 0 : %ld", id);
           }
 
-/* New mail */
-          else if(stricmp(buf, "NotifyType") == 0)               co->NotifyType = atoi(value);
-          else if(stricmp(buf, "NotifySound") == 0)              strlcpy(co->NotifySound, value, sizeof(co->NotifySound));
-          else if(stricmp(buf, "NotifyCommand") == 0)            strlcpy(co->NotifyCommand, value, sizeof(co->NotifyCommand));
 /* Signature */
           else if(stricmp(buf, "TagsFile") == 0)                 strlcpy(co->TagsFile, value, sizeof(co->TagsFile));
           else if(stricmp(buf, "TagsSeparator") == 0)            strlcpy(co->TagsSeparator, value2, sizeof(co->TagsSeparator));
@@ -992,6 +996,7 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
               }
             }
           }
+
 /* Identities */
           else if(strnicmp(buf,"ID", 2) == 0 && isdigit(buf[2]) && isdigit(buf[3]) && strchr(buf, '.') != NULL)
           {
@@ -1045,6 +1050,7 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
                 else if(stricmp(q, "PGPSignEncrypted") == 0)     uin->pgpSignEncrypted = Txt2Bool(value);
                 else if(stricmp(q, "PGPEncryptAll") == 0)        uin->pgpEncryptAll = Txt2Bool(value);
                 else if(stricmp(q, "PGPSelfEncrypt") == 0)       uin->pgpSelfEncrypt = Txt2Bool(value);
+
                 else
                   W(DBF_CONFIG, "unknown '%s' ID config tag", q);
               }
@@ -1648,6 +1654,9 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
             else if(stricmp(buf, "Verbosity") == 0)                co->TransferWindow = atoi(value) > 0 ? TWM_SHOW : TWM_HIDE;
             else if(stricmp(buf, "WordWrap") == 0)                 co->EdWrapCol = atoi(value);
             else if(stricmp(buf, "DeleteOnExit") == 0)             co->RemoveAtOnce = !(co->RemoveOnQuit = Txt2Bool(value));
+            else if(stricmp(buf, "NotifyType") == 0)               { globalPOP3NotifyType = atoi(value); foundGlobalPOP3Options = TRUE; }
+            else if(stricmp(buf, "NotifySound") == 0)              { strlcpy(globalPOP3NotifySound, value, sizeof(globalPOP3NotifySound)); foundGlobalPOP3Options = TRUE; }
+            else if(stricmp(buf, "NotifyCommand") == 0)            { strlcpy(globalPOP3NotifyCommand, value, sizeof(globalPOP3NotifyCommand)); foundGlobalPOP3Options = TRUE; }
             else if(strnicmp(buf, "Folder", 6) == 0 && oldfolders != NULL)
             {
               if(ofo == NULL)
@@ -1864,6 +1873,16 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
 
             if(globalPOP3Preselection != -1)
               msn->preselection = globalPOP3Preselection;
+
+            if(globalPOP3NotifyType != -1)
+            {
+              msn->notifyByRequester = isFlagSet(globalPOP3NotifyType, (1<<0));
+              msn->notifyByOS41System = isFlagSet(globalPOP3NotifyType, (1<<1));
+              msn->notifyBySound = isFlagSet(globalPOP3NotifyType, (1<<2));
+              msn->notifyByCommand = isFlagSet(globalPOP3NotifyType, (1<<3));
+            }
+            strlcpy(msn->notifySound, globalPOP3NotifySound, sizeof(msn->notifySound));
+            strlcpy(msn->notifyCommand, globalPOP3NotifyCommand, sizeof(msn->notifyCommand));
           }
         }
       }
@@ -1988,17 +2007,6 @@ void CO_GetConfig(BOOL saveConfig)
         i++;
       }
       while(TRUE);
-    }
-    break;
-
-    case cp_NewMail:
-    {
-      CE->NotifyType        = (GetMUICheck(gui->CH_NOTIREQ)        ? NOTIFY_REQ        : 0)
-                            + (GetMUICheck(gui->CH_NOTIOS41SYSTEM) ? NOTIFY_OS41SYSTEM : 0)
-                            + (GetMUICheck(gui->CH_NOTISOUND)      ? NOTIFY_SOUND      : 0)
-                            + (GetMUICheck(gui->CH_NOTICMD)        ? NOTIFY_CMD        : 0);
-      GetMUIString(CE->NotifySound, gui->ST_NOTISOUND, sizeof(CE->NotifySound));
-      GetMUIString(CE->NotifyCommand, gui->ST_NOTICMD, sizeof(CE->NotifyCommand));
     }
     break;
 
@@ -2720,17 +2728,6 @@ void CO_SetConfig(void)
 
       // set the enabled stated of the del button according to the number of available identities
       set(gui->BT_IDEL, MUIA_Disabled, numIdentities < 2);
-    }
-    break;
-
-    case cp_NewMail:
-    {
-      setcheckmark(gui->CH_NOTIREQ, hasRequesterNotify(CE->NotifyType));
-      setcheckmark(gui->CH_NOTIOS41SYSTEM, hasOS41SystemNotify(CE->NotifyType));
-      setcheckmark(gui->CH_NOTISOUND, hasSoundNotify(CE->NotifyType));
-      setcheckmark(gui->CH_NOTICMD, hasCommandNotify(CE->NotifyType));
-      setstring(gui->ST_NOTISOUND ,CE->NotifySound);
-      setstring(gui->ST_NOTICMD,CE->NotifyCommand);
     }
     break;
 

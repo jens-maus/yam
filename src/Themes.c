@@ -72,7 +72,6 @@ static const char * const configImageIDs[CI_MAX] =
   "config_mime",      "config_mime_big",
   "config_misc",      "config_misc_big",
   "config_network",   "config_network_big",
-  "config_newmail",   "config_newmail_big",
   "config_read",      "config_read_big",
   "config_scripts",   "config_scripts_big",
   "config_security",  "config_security_big",

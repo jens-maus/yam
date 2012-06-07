@@ -98,11 +98,6 @@ struct CO_GUIData
   Object *CH_INTERVAL;
   Object *NM_INTERVAL;
   Object *CH_DLLARGE;
-  Object *CH_NOTIREQ;
-  Object *CH_NOTISOUND;
-  Object *CH_NOTICMD;
-  Object *ST_NOTISOUND;
-  Object *ST_NOTICMD;
   Object *LV_RULES;
   Object *BT_RADD;
   Object *BT_RDEL;
@@ -305,7 +300,6 @@ struct CO_GUIData
   Object *CH_FIXEDFONT_WRITE;
   Object *CH_TEXTSTYLES_WRITE;
   Object *CH_TEXTCOLORS_WRITE;
-  Object *CH_NOTIOS41SYSTEM;
   Object *CH_ASTATUSTOMARKED;
   Object *CH_ASTATUSTOUNMARKED;
   Object *CH_ASTATUSTOREAD;
@@ -347,6 +341,15 @@ struct CO_GUIData
   Object *PO_IDENTITY_SENTFOLDER;
   Object *TX_IDENTITY_SENTFOLDER;
   Object *LV_IDENTITY_SENTFOLDER;
+  Object *CH_POP3_NOTIFY_REQ;
+  Object *CH_POP3_NOTIFY_OS41SYSTEM;
+  Object *CH_POP3_NOTIFY_SOUND;
+  Object *PO_POP3_NOTIFY_SOUND;
+  Object *ST_POP3_NOTIFY_SOUND;
+  Object *BT_POP3_NOTIFY_SOUND;
+  Object *CH_POP3_NOTIFY_CMD;
+  Object *PO_POP3_NOTIFY_CMD;
+  Object *ST_POP3_NOTIFY_CMD;
 };
 
 struct CO_ClassData  /* configuration window */
@@ -375,16 +378,6 @@ struct RxHook
 #define hasHideInfoFlag(f)    (isFlagSet((f), HIDE_INFO))
 #define hasHideXYFlag(f)      (isFlagSet((f), HIDE_XY))
 #define hasHideToolBarFlag(f) (isFlagSet((f), HIDE_TBAR))
-
-// notify flags for the notifiying method for new messages
-#define NOTIFY_REQ        (1<<0)
-#define NOTIFY_SOUND      (1<<1)
-#define NOTIFY_CMD        (1<<2)
-#define NOTIFY_OS41SYSTEM (1<<3)
-#define hasRequesterNotify(f)  (isFlagSet((f), NOTIFY_REQ))
-#define hasSoundNotify(f)      (isFlagSet((f), NOTIFY_SOUND))
-#define hasCommandNotify(f)    (isFlagSet((f), NOTIFY_CMD))
-#define hasOS41SystemNotify(f) (isFlagSet((f), NOTIFY_OS41SYSTEM))
 
 enum PrintMethod
 {
@@ -425,7 +418,6 @@ struct Config
   struct MinList signatureList;    // list of signatures
 
   int   TimeZone;
-  int   NotifyType;
   int   ShowHeader;
   int   ShowSenderInfo;
   int   EdWrapCol;
@@ -554,8 +546,6 @@ struct Config
   struct SocketOptions SocketOptions;
   struct DateStamp     BirthdayCheckTime;
 
-  char NotifySound[SIZE_PATHFILE];
-  char NotifyCommand[SIZE_COMMAND];
   char ShortHeaders[SIZE_PATTERN];
   char NewIntro[SIZE_INTRO];
   char Greetings[SIZE_INTRO];

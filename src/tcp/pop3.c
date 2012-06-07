@@ -1594,7 +1594,7 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
           if(tc->downloadResult.downloaded > 0)
           {
             PushMethodOnStackWait(G->App, 3, MUIM_YAMApplication_FilterNewMails, tc->msn->downloadedMails, &tc->filterResult);
-            PushMethodOnStackWait(G->App, 4, MUIM_YAMApplication_NewMailAlert, tc->msn->description, &tc->downloadResult, &tc->filterResult, tc->flags);
+            PushMethodOnStackWait(G->App, 4, MUIM_YAMApplication_NewMailAlert, tc->msn, &tc->downloadResult, &tc->filterResult, tc->flags);
           }
           else
           {

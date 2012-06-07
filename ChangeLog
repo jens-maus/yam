@@ -11,6 +11,8 @@ $URL$
   * YAM_COg.c: moved the transfer window setting to the Mixed page as this is an
     option which affects all kinds of TCP/IP connections and not just POP3 mail
     downloads.
+  * YAM_COg.c: moved the new mail notification settings to the POP3 server
+    settings on the TCP/IP page. This finally closes #315.
 
 2012-06-07 Samir Hawamdeh <s.hawamdeh@tin.it>
 

@@ -101,6 +101,14 @@ struct MailServerNode *CreateNewMailServer(const enum MailServerType type, const
             // set a download interval of 10 minutes, but don't enable it
             msn->downloadInterval = 10;
             msn->largeMailSizeLimit = 1024;
+            #if defined(__amigaos4__)
+            if(G->applicationID != 0 && LIB_VERSION_IS_AT_LEAST(ApplicationBase, 53, 2) == TRUE)
+              msn->notifyByOS41System = TRUE;
+            else
+              msn->notifyByRequester = TRUE;
+            #else
+            msn->notifyByRequester = TRUE;
+            #endif
           }
           else
           {
@@ -241,7 +249,13 @@ static BOOL CompareMailServerNodes(const struct Node *n1, const struct Node *n2)
     {
       if(msn1->preselection       != msn2->preselection ||
          msn1->downloadInterval   != msn2->downloadInterval ||
-         msn1->largeMailSizeLimit != msn2->largeMailSizeLimit)
+         msn1->largeMailSizeLimit != msn2->largeMailSizeLimit ||
+         msn1->notifyByRequester  != msn2->notifyByRequester ||
+         msn1->notifyByOS41System != msn2->notifyByOS41System ||
+         msn1->notifyBySound      != msn2->notifyBySound ||
+         msn1->notifyByCommand    != msn2->notifyByCommand ||
+         strcmp(msn1->notifySound,   msn2->notifySound) != 0 ||
+         strcmp(msn1->notifyCommand, msn2->notifyCommand) != 0)
       {
         // something does not match
         equal = FALSE;

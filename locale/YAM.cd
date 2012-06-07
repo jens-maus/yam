@@ -807,9 +807,6 @@ First steps
 MSG_CO_CrdTCPIP (301//)
 TCP/IP
 ;
-MSG_CO_CrdNewMail (302//)
-New mail
-;
 MSG_CO_CrdFilters (303//)
 Filters
 ;
@@ -4748,12 +4745,6 @@ TCP/IP Settings
 MSG_CO_TCPIP_SUMMARY (1622//)
 Configure your SMTP and POP3 accounts...
 ;
-MSG_CO_NEWMAIL_TITLE (1623//)
-New Mail Settings
-;
-MSG_CO_NEWMAIL_SUMMARY (1624//)
-How to handle and react upon incoming mail...
-;
 MSG_CO_FILTER_TITLE (1625//)
 Mail Filter Settings
 ;
@@ -7424,4 +7415,7 @@ the signature text.
 ;
 MSG_CO_MIXED_CONNECTIONS (2373//)
 Connections
+;
+MSG_CO_POP_NOTIFICATION (2374//)
+Notification for new mails
 ;

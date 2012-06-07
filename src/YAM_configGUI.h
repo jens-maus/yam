@@ -36,7 +36,6 @@ struct CO_ClassData;
 Object *CO_PageFirstSteps(struct CO_ClassData *data);
 Object *CO_PageTCPIP(struct CO_ClassData *data);
 Object *CO_PageIdentities(struct CO_ClassData *data);
-Object *CO_PageNewMail(struct CO_ClassData *data);
 Object *CO_PageFilters(struct CO_ClassData *data);
 Object *CO_PageSpam(struct CO_ClassData *data);
 Object *CO_PageRead(struct CO_ClassData *data);

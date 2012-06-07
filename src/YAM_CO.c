@@ -555,23 +555,39 @@ HOOKPROTONHNONP(CO_GetPOP3Entry, void)
     // all notifies here are nnset() notifies so that we don't trigger any additional
     // notify or otherwise we would run into problems.
 
-    nnset(gui->CH_POPENABLED,         MUIA_Selected,        isServerActive(msn));
-    nnset(gui->ST_POPDESC,            MUIA_String_Contents, msn->description);
-    nnset(gui->ST_POPHOST,            MUIA_String_Contents, msn->hostname);
-    nnset(gui->ST_POPPORT,            MUIA_String_Integer,  msn->port);
-    nnset(gui->ST_POPUSERID,          MUIA_String_Contents, msn->username);
-    nnset(gui->ST_PASSWD,             MUIA_String_Contents, msn->password);
-    nnset(gui->CH_DOWNLOADONSTARTUP,  MUIA_Selected,        hasServerDownloadOnStartup(msn));
-    nnset(gui->CH_INTERVAL,           MUIA_Selected,        hasServerDownloadPeriodically(msn));
-    nnset(gui->NM_INTERVAL,           MUIA_Numeric_Value,   msn->downloadInterval);
-    nnset(gui->CH_DLLARGE,            MUIA_Selected,        hasServerDownloadLargeMails(msn));
-    nnset(gui->ST_WARNSIZE,           MUIA_String_Integer,  msn->largeMailSizeLimit);
-    nnset(gui->CH_APPLYREMOTEFILTERS, MUIA_Selected,        hasServerApplyRemoteFilters(msn));
-    nnset(gui->CH_DELETE,             MUIA_Selected,        hasServerPurge(msn));
-    nnset(gui->CY_PRESELECTION,       MUIA_Cycle_Active,    msn->preselection);
+    nnset(gui->CH_POPENABLED,             MUIA_Selected,        isServerActive(msn));
+    nnset(gui->ST_POPDESC,                MUIA_String_Contents, msn->description);
+    nnset(gui->ST_POPHOST,                MUIA_String_Contents, msn->hostname);
+    nnset(gui->ST_POPPORT,                MUIA_String_Integer,  msn->port);
+    nnset(gui->ST_POPUSERID,              MUIA_String_Contents, msn->username);
+    nnset(gui->ST_PASSWD,                 MUIA_String_Contents, msn->password);
+    nnset(gui->CH_DOWNLOADONSTARTUP,      MUIA_Selected,        hasServerDownloadOnStartup(msn));
+    nnset(gui->CH_INTERVAL,               MUIA_Selected,        hasServerDownloadPeriodically(msn));
+    nnset(gui->NM_INTERVAL,               MUIA_Numeric_Value,   msn->downloadInterval);
+    nnset(gui->CH_DLLARGE,                MUIA_Selected,        hasServerDownloadLargeMails(msn));
+    nnset(gui->ST_WARNSIZE,               MUIA_String_Integer,  msn->largeMailSizeLimit);
+    nnset(gui->CH_APPLYREMOTEFILTERS,     MUIA_Selected,        hasServerApplyRemoteFilters(msn));
+    nnset(gui->CH_DELETE,                 MUIA_Selected,        hasServerPurge(msn));
+    nnset(gui->CY_PRESELECTION,           MUIA_Cycle_Active,    msn->preselection);
+    nnset(gui->CH_POP3_NOTIFY_REQ,        MUIA_Selected,        msn->notifyByRequester);
+    nnset(gui->CH_POP3_NOTIFY_OS41SYSTEM, MUIA_Selected,        msn->notifyByOS41System);
+    nnset(gui->CH_POP3_NOTIFY_SOUND,      MUIA_Selected,        msn->notifyBySound);
+    nnset(gui->CH_POP3_NOTIFY_CMD,        MUIA_Selected,        msn->notifyByCommand);
+    nnset(gui->ST_POP3_NOTIFY_SOUND,      MUIA_String_Contents, msn->notifySound);
+    nnset(gui->ST_POP3_NOTIFY_CMD,        MUIA_String_Contents, msn->notifyCommand);
 
     set(gui->NM_INTERVAL, MUIA_Disabled, hasServerDownloadPeriodically(msn) == FALSE);
     set(gui->ST_WARNSIZE, MUIA_Disabled, hasServerDownloadLargeMails(msn) == FALSE);
+
+    #if defined(__amigaos4__)
+    set(gui->CH_POP3_NOTIFY_OS41SYSTEM, MUIA_Disabled, G->applicationID == 0 || LIB_VERSION_IS_AT_LEAST(ApplicationBase, 53, 2) == FALSE);
+    #else // __amigaos4__
+    set(gui->CH_POP3_NOTIFY_OS41SYSTEM, MUIA_Disabled, TRUE);
+    #endif // __amigaos4__
+
+    set(gui->PO_POP3_NOTIFY_SOUND, MUIA_Disabled, msn == NULL || msn->notifyBySound == FALSE);
+    set(gui->BT_POP3_NOTIFY_SOUND, MUIA_Disabled, msn == NULL || msn->notifyBySound == FALSE);
+    set(gui->PO_POP3_NOTIFY_CMD, MUIA_Disabled, msn == NULL || msn->notifyByCommand == FALSE);
 
     if(hasServerAPOP(msn))
       nnset(gui->CY_POPAUTH, MUIA_Cycle_Active, 1);
@@ -714,6 +730,23 @@ HOOKPROTONHNONP(CO_PutPOP3Entry, void)
       }
 
       msn->port = GetMUIInteger(gui->ST_POPPORT);
+
+      msn->notifyByRequester = GetMUICheck(gui->CH_POP3_NOTIFY_REQ);
+      msn->notifyByOS41System = GetMUICheck(gui->CH_POP3_NOTIFY_OS41SYSTEM);
+      msn->notifyBySound = GetMUICheck(gui->CH_POP3_NOTIFY_SOUND);
+      msn->notifyByCommand = GetMUICheck(gui->CH_POP3_NOTIFY_CMD);
+      GetMUIString(msn->notifySound, gui->ST_POP3_NOTIFY_SOUND, sizeof(msn->notifySound));
+      GetMUIString(msn->notifyCommand, gui->ST_POP3_NOTIFY_CMD, sizeof(msn->notifyCommand));
+
+      #if defined(__amigaos4__)
+      set(gui->CH_POP3_NOTIFY_OS41SYSTEM, MUIA_Disabled, G->applicationID == 0 || LIB_VERSION_IS_AT_LEAST(ApplicationBase, 53, 2) == FALSE);
+      #else // __amigaos4__
+      set(gui->CH_POP3_NOTIFY_OS41SYSTEM, MUIA_Disabled, TRUE);
+      #endif // __amigaos4__
+
+      set(gui->PO_POP3_NOTIFY_SOUND, MUIA_Disabled, msn == NULL || msn->notifyBySound == FALSE);
+      set(gui->BT_POP3_NOTIFY_SOUND, MUIA_Disabled, msn == NULL || msn->notifyBySound == FALSE);
+      set(gui->PO_POP3_NOTIFY_CMD, MUIA_Disabled, msn == NULL || msn->notifyByCommand == FALSE);
 
       DoMethod(gui->LV_POP3, MUIM_NList_Redraw, p);
     }
@@ -1026,32 +1059,32 @@ HOOKPROTONHNONP(CO_GetIdentityEntry, void)
     // all notifies here are nnset() notifies so that we don't trigger any additional
     // notify or otherwise we would run into problems.
 
-    nnset(gui->CH_IDENTITY_ENABLED,       MUIA_Selected,        uin->active);
-    nnset(gui->ST_IDENTITY_DESCRIPTION,   MUIA_String_Contents, uin->description);
-    nnset(gui->ST_IDENTITY_REALNAME,      MUIA_String_Contents, uin->realname);
-    nnset(gui->ST_IDENTITY_EMAIL,         MUIA_String_Contents, uin->address);
-    nnset(gui->ST_IDENTITY_ORGANIZATION,  MUIA_String_Contents, uin->organization);
-    nnset(gui->ST_IDENTITY_CC,            MUIA_String_Contents, uin->mailCC);
-    nnset(gui->ST_IDENTITY_BCC,           MUIA_String_Contents, uin->mailBCC);
-    nnset(gui->ST_IDENTITY_REPLYTO,       MUIA_String_Contents, uin->mailReplyTo);
-    nnset(gui->ST_IDENTITY_EXTRAHEADER,   MUIA_String_Contents, uin->extraHeaders);
-    nnset(gui->ST_IDENTITY_PHOTOURL,      MUIA_String_Contents, uin->photoURL);
-    nnset(gui->CH_IDENTITY_SENTFOLDER,    MUIA_Selected,        uin->saveSentMail);
-    nnset(gui->TX_IDENTITY_SENTFOLDER,    MUIA_Text_Contents,   uin->sentFolder);
-    nnset(gui->CH_IDENTITY_QUOTEMAILS,    MUIA_Selected,        uin->quoteMails);
-    nnset(gui->CY_IDENTITY_QUOTEPOS,      MUIA_Cycle_Active,    uin->quotePosition);
-    nnset(gui->CY_IDENTITY_SIGPOS,        MUIA_Cycle_Active,    uin->signaturePosition);
-    nnset(gui->CH_IDENTITY_SIGREPLY,      MUIA_Selected,        uin->sigReply);
-    nnset(gui->CH_IDENTITY_SIGFORWARD,    MUIA_Selected,        uin->sigForwarding);
-    nnset(gui->CH_IDENTITY_ADDINFO,       MUIA_Selected,        uin->addPersonalInfo);
-    nnset(gui->CH_IDENTITY_REQUESTMDN,    MUIA_Selected,        uin->requestMDN);
-    nnset(gui->CH_IDENTITY_USEPGP,        MUIA_Selected,        uin->usePGP);
-    nnset(gui->ST_IDENTITY_PGPID,         MUIA_String_Contents, uin->pgpKeyID);
-    nnset(gui->ST_IDENTITY_PGPURL,        MUIA_String_Contents, uin->pgpKeyURL);
-    nnset(gui->CH_IDENTITY_PGPSIGN_UNENC, MUIA_Selected,        uin->pgpSignUnencrypted);
-    nnset(gui->CH_IDENTITY_PGPSIGN_ENC,   MUIA_Selected,        uin->pgpSignEncrypted);
-    nnset(gui->CH_IDENTITY_PGPENC_ALL,    MUIA_Selected,        uin->pgpEncryptAll);
-    nnset(gui->CH_IDENTITY_PGPENC_SELF,   MUIA_Selected,        uin->pgpSelfEncrypt);
+    nnset(gui->CH_IDENTITY_ENABLED,           MUIA_Selected,        uin->active);
+    nnset(gui->ST_IDENTITY_DESCRIPTION,       MUIA_String_Contents, uin->description);
+    nnset(gui->ST_IDENTITY_REALNAME,          MUIA_String_Contents, uin->realname);
+    nnset(gui->ST_IDENTITY_EMAIL,             MUIA_String_Contents, uin->address);
+    nnset(gui->ST_IDENTITY_ORGANIZATION,      MUIA_String_Contents, uin->organization);
+    nnset(gui->ST_IDENTITY_CC,                MUIA_String_Contents, uin->mailCC);
+    nnset(gui->ST_IDENTITY_BCC,               MUIA_String_Contents, uin->mailBCC);
+    nnset(gui->ST_IDENTITY_REPLYTO,           MUIA_String_Contents, uin->mailReplyTo);
+    nnset(gui->ST_IDENTITY_EXTRAHEADER,       MUIA_String_Contents, uin->extraHeaders);
+    nnset(gui->ST_IDENTITY_PHOTOURL,          MUIA_String_Contents, uin->photoURL);
+    nnset(gui->CH_IDENTITY_SENTFOLDER,        MUIA_Selected,        uin->saveSentMail);
+    nnset(gui->TX_IDENTITY_SENTFOLDER,        MUIA_Text_Contents,   uin->sentFolder);
+    nnset(gui->CH_IDENTITY_QUOTEMAILS,        MUIA_Selected,        uin->quoteMails);
+    nnset(gui->CY_IDENTITY_QUOTEPOS,          MUIA_Cycle_Active,    uin->quotePosition);
+    nnset(gui->CY_IDENTITY_SIGPOS,            MUIA_Cycle_Active,    uin->signaturePosition);
+    nnset(gui->CH_IDENTITY_SIGREPLY,          MUIA_Selected,        uin->sigReply);
+    nnset(gui->CH_IDENTITY_SIGFORWARD,        MUIA_Selected,        uin->sigForwarding);
+    nnset(gui->CH_IDENTITY_ADDINFO,           MUIA_Selected,        uin->addPersonalInfo);
+    nnset(gui->CH_IDENTITY_REQUESTMDN,        MUIA_Selected,        uin->requestMDN);
+    nnset(gui->CH_IDENTITY_USEPGP,            MUIA_Selected,        uin->usePGP);
+    nnset(gui->ST_IDENTITY_PGPID,             MUIA_String_Contents, uin->pgpKeyID);
+    nnset(gui->ST_IDENTITY_PGPURL,            MUIA_String_Contents, uin->pgpKeyURL);
+    nnset(gui->CH_IDENTITY_PGPSIGN_UNENC,     MUIA_Selected,        uin->pgpSignUnencrypted);
+    nnset(gui->CH_IDENTITY_PGPSIGN_ENC,       MUIA_Selected,        uin->pgpSignEncrypted);
+    nnset(gui->CH_IDENTITY_PGPENC_ALL,        MUIA_Selected,        uin->pgpEncryptAll);
+    nnset(gui->CH_IDENTITY_PGPENC_SELF,       MUIA_Selected,        uin->pgpSelfEncrypt);
 
     // we have to set the correct mail server in the GUI so we browse through
     // the SMTP server list and match the ids
@@ -1162,6 +1195,7 @@ HOOKPROTONHNONP(CO_PutIdentityEntry, void)
       uin->sigForwarding = GetMUICheck(gui->CH_IDENTITY_SIGFORWARD);
       uin->addPersonalInfo = GetMUICheck(gui->CH_IDENTITY_ADDINFO);
       uin->requestMDN = GetMUICheck(gui->CH_IDENTITY_REQUESTMDN);
+
       uin->usePGP = GetMUICheck(gui->CH_IDENTITY_USEPGP);
       GetMUIString(uin->pgpKeyID,     gui->ST_IDENTITY_PGPID,       sizeof(uin->pgpKeyID));
       GetMUIString(uin->pgpKeyURL,    gui->ST_IDENTITY_PGPURL,      sizeof(uin->pgpKeyURL));
@@ -1484,14 +1518,6 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     AddTail((struct List *)&co->userIdentityList, (struct Node *)CreateNewUserIdentity());
   }
 
-  if(page == cp_NewMail || page == cp_AllPages)
-  {
-    co->TransferWindow = TWM_AUTO;
-    co->NotifyType = 1;
-    co->NotifySound[0] = '\0';
-    co->NotifyCommand[0] = '\0';
-  }
-
   if(page == cp_Filters || page == cp_AllPages)
   {
     FreeFilterList(&co->filterList);
@@ -1666,11 +1692,12 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     strlcpy(co->XPKPackEncrypt, "HUFF", sizeof(co->XPKPackEncrypt));
     co->XPKPackEff = 50;
     co->XPKPackEncryptEff = 50;
+    co->TransferWindow = TWM_AUTO;
 
     // depending on the operating system we set the AppIcon
     // and docky icon defaults different
     #if defined(__amigaos4__)
-    if(ApplicationBase)
+    if(ApplicationBase != NULL)
     {
       co->DockyIcon = TRUE;
       co->WBAppIcon = FALSE;
@@ -1990,7 +2017,6 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
   // plain variables as this will be the faster compare than the compares
   // of our nested structures/lists, etc.
   if(c1->TimeZone                        == c2->TimeZone &&
-     c1->NotifyType                      == c2->NotifyType &&
      c1->ShowHeader                      == c2->ShowHeader &&
      c1->ShowSenderInfo                  == c2->ShowSenderInfo &&
      c1->EdWrapCol                       == c2->EdWrapCol &&
@@ -2130,8 +2156,6 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      strcmp(c1->Color4thLevel.buf,   c2->Color4thLevel.buf) == 0 &&
      strcmp(c1->ColorURL.buf,        c2->ColorURL.buf) == 0 &&
      strcmp(c1->ColorSignature.buf,  c2->ColorSignature.buf) == 0 &&
-     strcmp(c1->NotifySound,         c2->NotifySound) == 0 &&
-     strcmp(c1->NotifyCommand,       c2->NotifyCommand) == 0 &&
      strcmp(c1->ShortHeaders,        c2->ShortHeaders) == 0 &&
      strcmp(c1->NewIntro,            c2->NewIntro) == 0 &&
      strcmp(c1->Greetings,           c2->Greetings) == 0 &&
@@ -3281,7 +3305,6 @@ static struct CO_ClassData *CO_New(void)
     page[cp_FirstSteps  ].PageLabel = MSG_CO_CrdFirstSteps;
     page[cp_TCPIP       ].PageLabel = MSG_CO_CrdTCPIP;
     page[cp_Identities  ].PageLabel = MSG_CO_CRDIDENTITIES;
-    page[cp_NewMail     ].PageLabel = MSG_CO_CrdNewMail;
     page[cp_Filters     ].PageLabel = MSG_CO_CrdFilters;
     page[cp_Spam        ].PageLabel = MSG_CO_CRDSPAMFILTER;
     page[cp_Read        ].PageLabel = MSG_CO_CrdRead;
@@ -3335,7 +3358,6 @@ static struct CO_ClassData *CO_New(void)
                 Child, CO_PageFirstSteps(data),
                 Child, CO_PageTCPIP(data),
                 Child, CO_PageIdentities(data),
-                Child, CO_PageNewMail(data),
                 Child, CO_PageFilters(data),
                 Child, CO_PageSpam(data),
                 Child, CO_PageRead(data),
