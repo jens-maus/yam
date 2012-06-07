@@ -8,6 +8,9 @@ $URL$
 2012-06-07 Thore Böckelmann <tboeckel@gmx.de>
 
   * tcp/pop3.c, tcp/smtp.c: fixed two "access after free()" bugs.
+  * YAM_COg.c: moved the transfer window setting to the Mixed page as this is an
+    option which affects all kinds of TCP/IP connections and not just POP3 mail
+    downloads.
 
 2012-06-07 Samir Hawamdeh <s.hawamdeh@tin.it>
 

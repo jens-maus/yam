@@ -399,7 +399,6 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
     }
 
     fprintf(fh, "\n[New mail]\n");
-    fprintf(fh, "TransferWindow   = %d\n", co->TransferWindow);
     fprintf(fh, "NotifyType       = %d\n", co->NotifyType);
     fprintf(fh, "NotifySound      = %s\n", co->NotifySound);
     fprintf(fh, "NotifyCommand    = %s\n", co->NotifyCommand);
@@ -534,7 +533,6 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
     fprintf(fh, "ShowRcptFieldBCC     = %s\n", Bool2Txt(co->ShowRcptFieldBCC));
     fprintf(fh, "ShowRcptFieldReplyTo = %s\n", Bool2Txt(co->ShowRcptFieldReplyTo));
 
-
     fprintf(fh, "\n[Reply/Forward]\n");
     fprintf(fh, "ReplyHello       = %s\n", co->ReplyHello);
     fprintf(fh, "ReplyIntro       = %s\n", co->ReplyIntro);
@@ -636,7 +634,7 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
     fprintf(fh, "XPKPack          = %s;%d\n", co->XPKPack, co->XPKPackEff);
     fprintf(fh, "XPKPackEncrypt   = %s;%d\n", co->XPKPackEncrypt, co->XPKPackEncryptEff);
     fprintf(fh, "PackerCommand    = %s\n", co->PackerCommand);
-
+    fprintf(fh, "TransferWindow   = %d\n", co->TransferWindow);
 
     fprintf(fh, "\n[Look&Feel]\n");
     fprintf(fh, "Theme            = %s\n", co->ThemeName);
@@ -957,7 +955,6 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
           }
 
 /* New mail */
-          else if(stricmp(buf, "TransferWindow") == 0)           co->TransferWindow = atoi(value);
           else if(stricmp(buf, "NotifyType") == 0)               co->NotifyType = atoi(value);
           else if(stricmp(buf, "NotifySound") == 0)              strlcpy(co->NotifySound, value, sizeof(co->NotifySound));
           else if(stricmp(buf, "NotifyCommand") == 0)            strlcpy(co->NotifyCommand, value, sizeof(co->NotifyCommand));
@@ -1455,6 +1452,7 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
             co->XPKPackEncryptEff = atoi(&value[5]);
           }
           else if(stricmp(buf, "PackerCommand") == 0)            strlcpy(co->PackerCommand, value, sizeof(co->PackerCommand));
+          else if(stricmp(buf, "TransferWindow") == 0)           co->TransferWindow = atoi(value);
 
 /* Look&Feel */
           else if(stricmp(buf, "Theme") == 0)                    strlcpy(co->ThemeName, value, sizeof(co->ThemeName));
@@ -1995,7 +1993,6 @@ void CO_GetConfig(BOOL saveConfig)
 
     case cp_NewMail:
     {
-      CE->TransferWindow    = GetMUICycle  (gui->CY_TRANSWIN);
       CE->NotifyType        = (GetMUICheck(gui->CH_NOTIREQ)        ? NOTIFY_REQ        : 0)
                             + (GetMUICheck(gui->CH_NOTIOS41SYSTEM) ? NOTIFY_OS41SYSTEM : 0)
                             + (GetMUICheck(gui->CH_NOTISOUND)      ? NOTIFY_SOUND      : 0)
@@ -2521,6 +2518,7 @@ void CO_GetConfig(BOOL saveConfig)
       CE->XPKPackEff        = GetMUINumer  (gui->NB_PACKER);
       CE->XPKPackEncryptEff = GetMUINumer  (gui->NB_ENCPACK);
       GetMUIString(CE->PackerCommand, gui->ST_ARCHIVER, sizeof(CE->PackerCommand));
+      CE->TransferWindow = GetMUICycle  (gui->CY_TRANSWIN);
     }
     break;
 
@@ -2727,7 +2725,6 @@ void CO_SetConfig(void)
 
     case cp_NewMail:
     {
-      setcycle(gui->CY_TRANSWIN, CE->TransferWindow);
       setcheckmark(gui->CH_NOTIREQ, hasRequesterNotify(CE->NotifyType));
       setcheckmark(gui->CH_NOTIOS41SYSTEM, hasOS41SystemNotify(CE->NotifyType));
       setcheckmark(gui->CH_NOTISOUND, hasSoundNotify(CE->NotifyType));
@@ -3018,6 +3015,7 @@ void CO_SetConfig(void)
       setstring(gui->ST_ARCHIVER, CE->PackerCommand);
 
       set(gui->CH_APPICONPOS, MUIA_Disabled, CE->WBAppIcon == FALSE);
+      setcycle(gui->CY_TRANSWIN, CE->TransferWindow);
     }
     break;
 

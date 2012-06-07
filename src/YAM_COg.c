@@ -2432,18 +2432,12 @@ Object *CO_PageIdentities(struct CO_ClassData *data)
 /// CO_PageNewMail
 Object *CO_PageNewMail(struct CO_ClassData *data)
 {
-  static const char *trwopt[4];
   Object *pa_notisound;
   Object *bt_notisound;
   Object *pa_noticmd;
   Object *obj;
 
   ENTER();
-
-  trwopt[TWM_HIDE] = tr(MSG_CO_TWNever);
-  trwopt[TWM_AUTO] = tr(MSG_CO_TWAuto);
-  trwopt[TWM_SHOW] = tr(MSG_CO_TWAlways);
-  trwopt[3] = NULL;
 
   obj = VGroup,
           MUIA_HelpNode, "CO02",
@@ -2454,12 +2448,6 @@ Object *CO_PageNewMail(struct CO_ClassData *data)
             MUIA_Scrollgroup_FreeHoriz, FALSE,
             MUIA_Scrollgroup_AutoBars, TRUE,
             MUIA_Scrollgroup_Contents, VGroupV,
-
-              Child, ColGroup(3), GroupFrameT(tr(MSG_CO_Download)),
-                Child, Label(tr(MSG_CO_TransferWin)),
-                Child, data->GUI.CY_TRANSWIN = MakeCycle(trwopt, tr(MSG_CO_TransferWin)),
-                Child, HSpace(0),
-              End,
 
               Child, VGroup, GroupFrameT(tr(MSG_CO_Notification)),
                 Child, ColGroup(3),
@@ -2504,7 +2492,6 @@ Object *CO_PageNewMail(struct CO_ClassData *data)
 
   if(obj != NULL)
   {
-    SetHelp(data->GUI.CY_TRANSWIN,       MSG_HELP_CO_CH_TRANSWIN);
     SetHelp(data->GUI.CH_NOTIREQ,        MSG_HELP_CO_CH_NOTIREQ);
     SetHelp(data->GUI.CH_NOTISOUND,      MSG_HELP_CO_CH_NOTISOUND);
     SetHelp(data->GUI.CH_NOTICMD,        MSG_HELP_CO_CH_NOTICMD);
@@ -3961,10 +3948,16 @@ Object *CO_PageScripts(struct CO_ClassData *data)
 /// CO_PageMixed
 Object *CO_PageMixed(struct CO_ClassData *data)
 {
+  static const char *trwopt[4];
   Object *obj;
   Object *popButton;
 
   ENTER();
+
+  trwopt[TWM_HIDE] = tr(MSG_CO_TWNever);
+  trwopt[TWM_AUTO] = tr(MSG_CO_TWAuto);
+  trwopt[TWM_SHOW] = tr(MSG_CO_TWAlways);
+  trwopt[3] = NULL;
 
   obj = VGroup,
           MUIA_HelpNode, "CO14",
@@ -4089,6 +4082,10 @@ Object *CO_PageMixed(struct CO_ClassData *data)
                   Child, MakeVarPop(&data->GUI.ST_ARCHIVER, &popButton, PHM_ARCHIVE, SIZE_COMMAND, tr(MSG_CO_Archiver)),
                 End,
               End,
+              Child, ColGroup(2), GroupFrameT(tr(MSG_CO_MIXED_CONNECTIONS)),
+                Child, Label(tr(MSG_CO_TransferWin)),
+                Child, data->GUI.CY_TRANSWIN = MakeCycle(trwopt, tr(MSG_CO_TransferWin)),
+              End,
 
               Child, HVSpace,
 
@@ -4098,25 +4095,26 @@ Object *CO_PageMixed(struct CO_ClassData *data)
 
   if(obj != NULL)
   {
-    SetHelp(data->GUI.ST_TEMPDIR        ,MSG_HELP_CO_ST_TEMPDIR       );
-    SetHelp(data->GUI.ST_DETACHDIR      ,MSG_HELP_CO_ST_DETACHDIR     );
-    SetHelp(data->GUI.ST_ATTACHDIR      ,MSG_HELP_CO_ST_ATTACHDIR     );
-    SetHelp(data->GUI.CH_WBAPPICON      ,MSG_HELP_CO_CH_WBAPPICON     );
-    SetHelp(data->GUI.ST_APPX           ,MSG_HELP_CO_ST_APP           );
-    SetHelp(data->GUI.ST_APPY           ,MSG_HELP_CO_ST_APP           );
-    SetHelp(data->GUI.CH_APPICONPOS     ,MSG_HELP_CO_ST_APP           );
-    SetHelp(data->GUI.CH_DOCKYICON      ,MSG_HELP_CO_CH_DOCKYICON     );
-    SetHelp(data->GUI.CH_CLGADGET       ,MSG_HELP_CO_CH_CLGADGET      );
-    SetHelp(data->GUI.CH_CONFIRM        ,MSG_HELP_CO_CH_CONFIRM       );
-    SetHelp(data->GUI.NB_CONFIRMDEL     ,MSG_HELP_CO_NB_CONFIRMDEL    );
-    SetHelp(data->GUI.CH_REMOVE         ,MSG_HELP_CO_CH_REMOVE        );
-    SetHelp(data->GUI.TX_ENCPACK        ,MSG_HELP_CO_TX_ENCPACK       );
-    SetHelp(data->GUI.TX_PACKER         ,MSG_HELP_CO_TX_PACKER        );
-    SetHelp(data->GUI.NB_ENCPACK        ,MSG_HELP_CO_NB_ENCPACK       );
-    SetHelp(data->GUI.NB_PACKER         ,MSG_HELP_CO_NB_ENCPACK       );
-    SetHelp(data->GUI.ST_ARCHIVER       ,MSG_HELP_CO_ST_ARCHIVER      );
-    SetHelp(data->GUI.ST_APPICON        ,MSG_HELP_CO_ST_APPICON       );
-    SetHelp(data->GUI.BT_APPICONGETPOS  ,MSG_HELP_CO_BT_APPICONGETPOS );
+    SetHelp(data->GUI.ST_TEMPDIR,        MSG_HELP_CO_ST_TEMPDIR);
+    SetHelp(data->GUI.ST_DETACHDIR,      MSG_HELP_CO_ST_DETACHDIR);
+    SetHelp(data->GUI.ST_ATTACHDIR,      MSG_HELP_CO_ST_ATTACHDIR);
+    SetHelp(data->GUI.CH_WBAPPICON,      MSG_HELP_CO_CH_WBAPPICON);
+    SetHelp(data->GUI.ST_APPX,           MSG_HELP_CO_ST_APP);
+    SetHelp(data->GUI.ST_APPY,           MSG_HELP_CO_ST_APP);
+    SetHelp(data->GUI.CH_APPICONPOS,     MSG_HELP_CO_ST_APP);
+    SetHelp(data->GUI.CH_DOCKYICON,      MSG_HELP_CO_CH_DOCKYICON);
+    SetHelp(data->GUI.CH_CLGADGET,       MSG_HELP_CO_CH_CLGADGET);
+    SetHelp(data->GUI.CH_CONFIRM,        MSG_HELP_CO_CH_CONFIRM);
+    SetHelp(data->GUI.NB_CONFIRMDEL,     MSG_HELP_CO_NB_CONFIRMDEL);
+    SetHelp(data->GUI.CH_REMOVE,         MSG_HELP_CO_CH_REMOVE);
+    SetHelp(data->GUI.TX_ENCPACK,        MSG_HELP_CO_TX_ENCPACK);
+    SetHelp(data->GUI.TX_PACKER,         MSG_HELP_CO_TX_PACKER);
+    SetHelp(data->GUI.NB_ENCPACK,        MSG_HELP_CO_NB_ENCPACK);
+    SetHelp(data->GUI.NB_PACKER,         MSG_HELP_CO_NB_ENCPACK);
+    SetHelp(data->GUI.ST_ARCHIVER,       MSG_HELP_CO_ST_ARCHIVER);
+    SetHelp(data->GUI.ST_APPICON,        MSG_HELP_CO_ST_APPICON);
+    SetHelp(data->GUI.BT_APPICONGETPOS,  MSG_HELP_CO_BT_APPICONGETPOS);
+    SetHelp(data->GUI.CY_TRANSWIN,       MSG_HELP_CO_CH_TRANSWIN);
 
     DoMethod(obj, MUIM_MultiSet, MUIA_Disabled, TRUE, data->GUI.ST_APPX, data->GUI.ST_APPY, data->GUI.ST_APPICON, data->GUI.BT_APPICONGETPOS, NULL);
     DoMethod(data->GUI.CH_WBAPPICON, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, MUIV_Notify_Application, 9, MUIM_MultiSet, MUIA_Disabled, MUIV_NotTriggerValue, data->GUI.ST_APPX, data->GUI.ST_APPY, data->GUI.ST_APPICON, data->GUI.CH_APPICONPOS, data->GUI.BT_APPICONGETPOS, NULL);
@@ -4346,13 +4344,13 @@ Object *CO_PageLookFeel(struct CO_ClassData *data)
     SetHelp(data->GUI.ST_INFOBARTXT,       MSG_HELP_CO_ST_INFOBARTXT);
     SetHelp(data->GUI.CH_EMBEDDEDREADPANE, MSG_HELP_CO_CH_EMBEDDEDREADPANE);
     SetHelp(data->GUI.CY_SIZE,             MSG_HELP_CO_CY_SIZE);
-    SetHelp(data->GUI.CH_FIXFLIST,      MSG_HELP_CO_CH_FIXFLIST);
-    SetHelp(data->GUI.CH_BEAT,          MSG_HELP_CO_CH_BEAT);
-    SetHelp(data->GUI.CH_RELDATETIME,   MSG_HELP_CO_CH_RELDATETIME);
-    SetHelp(data->GUI.CH_ABOOKLOOKUP,   MSG_HELP_CO_CH_ABOOKLOOKUP);
-    SetHelp(data->GUI.CH_FCNTMENU,      MSG_HELP_CO_CONTEXTMENU);
-    SetHelp(data->GUI.CH_MCNTMENU,      MSG_HELP_CO_CONTEXTMENU);
-    SetHelp(data->GUI.CY_FOLDERINFO,    MSG_HELP_CO_CY_FOLDERINFO);
+    SetHelp(data->GUI.CH_FIXFLIST,         MSG_HELP_CO_CH_FIXFLIST);
+    SetHelp(data->GUI.CH_BEAT,             MSG_HELP_CO_CH_BEAT);
+    SetHelp(data->GUI.CH_RELDATETIME,      MSG_HELP_CO_CH_RELDATETIME);
+    SetHelp(data->GUI.CH_ABOOKLOOKUP,      MSG_HELP_CO_CH_ABOOKLOOKUP);
+    SetHelp(data->GUI.CH_FCNTMENU,         MSG_HELP_CO_CONTEXTMENU);
+    SetHelp(data->GUI.CH_MCNTMENU,         MSG_HELP_CO_CONTEXTMENU);
+    SetHelp(data->GUI.CY_FOLDERINFO,       MSG_HELP_CO_CY_FOLDERINFO);
 
     DoMethod(data->GUI.CY_INFOBAR, MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &InfoBarPosHook, MUIV_TriggerValue);
   }

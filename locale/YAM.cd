@@ -981,9 +981,6 @@ automatic
 MSG_CO_TWAlways (365//)
 show always
 ;
-MSG_CO_Download (366//)
-Download
-;
 MSG_CO_TransferWin (368//)
 _Transfer window
 ;
@@ -7424,4 +7421,7 @@ description for the signature.
 MSG_HELP_CO_TE_SIGEDIT (2372//)
 Text editor for entering/changing\n\
 the signature text.
+;
+MSG_CO_MIXED_CONNECTIONS (2373//)
+Connections
 ;
