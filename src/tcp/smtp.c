@@ -1286,6 +1286,7 @@ BOOL SendMails(struct UserIdentityNode *uin, enum SendMailMode mode)
 {
   BOOL success = FALSE;
   struct TransferContext *tc;
+  struct MailServerNode *msn = uin->smtpServer;
 
   ENTER();
 
@@ -1297,7 +1298,7 @@ BOOL SendMails(struct UserIdentityNode *uin, enum SendMailMode mode)
     // link the user identity and the mail server in
     // our transfercontext structure
     tc->uin = uin;
-    tc->msn = uin->smtpServer;
+    tc->msn = msn;
 
     // try to open the TCP/IP stack
     if((tc->conn = CreateConnection()) != NULL && ConnectionIsOnline(tc->conn) == TRUE)
@@ -1626,7 +1627,7 @@ BOOL SendMails(struct UserIdentityNode *uin, enum SendMailMode mode)
   uin->sentMailList = NULL;
 
   // mark the server as being no longer "in use"
-  clearFlag(tc->msn->flags, MSF_IN_USE);
+  clearFlag(msn->flags, MSF_IN_USE);
 
   // now we are done
   ReleaseSemaphore(G->configSemaphore);

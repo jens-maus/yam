@@ -1635,7 +1635,7 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
   ReleaseSemaphore(G->configSemaphore);
 
   // wake up the calling thread if this is requested
-  if(isFlagSet(tc->flags, RECEIVEF_SIGNAL))
+  if(isFlagSet(flags, RECEIVEF_SIGNAL))
     WakeupThread(NULL);
 
   RETURN(success);
