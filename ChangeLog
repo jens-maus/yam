@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-06-08 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/AttachmentImage.c: reworked the image loading process to favor icons
+    over bitmaps created from icons. This makes it possible to fully support an
+    icon's transparency.
+
 2012-06-07 Thore Böckelmann <tboeckel@gmx.de>
 
   * tcp/pop3.c, tcp/smtp.c: fixed two "access after free()" bugs.

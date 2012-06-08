@@ -66,6 +66,7 @@
 struct Data
 {
   struct DiskObject *diskObject;
+  struct DiskObject *drawDiskObject;
   struct Part *mailPart;
 
   struct BitMap *normalBitMap;
@@ -197,12 +198,47 @@ static void UnloadImage(struct Data *data)
     data->selectedBitMask = NULL;
   }
 
+  if(data->drawDiskObject != NULL)
+  {
+    if(data->diskObject == data->drawDiskObject)
+      data->diskObject = NULL;
+
+    FreeDiskObject(data->drawDiskObject);
+    data->drawDiskObject = NULL;
+  }
+
   if(data->diskObject != NULL)
   {
     FreeDiskObject(data->diskObject);
     data->diskObject = NULL;
   }
 }
+
+///
+/// GetIconSize
+// obtain the size of an icon
+static void GetIconSize(struct DiskObject *dobj, struct TagItem *tags, LONG *width, LONG *height)
+{
+  ENTER();
+
+  if(LIB_VERSION_IS_AT_LEAST(IconBase, 44, 0) == TRUE)
+  {
+    struct Rectangle rect;
+
+    GetIconRectangleA(NULL, dobj, NULL, &rect, tags);
+
+    *width  = rect.MaxX - rect.MinX + 1;
+    *height = rect.MaxY - rect.MinY + 1;
+  }
+  else
+  {
+    *width  = ((struct Image *)dobj->do_Gadget.GadgetRender)->Width;
+    *height = ((struct Image *)dobj->do_Gadget.GadgetRender)->Height;
+  }
+
+  LEAVE();
+}
+
 ///
 /// LoadImage
 // function that (re)loads the images for both selected and unselected
@@ -242,10 +278,11 @@ static void LoadImage(struct IClass *cl, Object *obj)
 
       D(DBF_GUI, "retrieving diskicon via DEFICONS for '%s'", mailPart->Filename);
 
-      diskObject = (struct DiskObject *)GetIconTags(mailPart->Filename, ICONGETA_FailIfUnavailable, FALSE,
-                                                                        ICONGETA_Screen,            _screen(obj),
-                                                                        ICONGETA_SizeBounds,        &sizeBounds,
-                                                                        TAG_DONE);
+      diskObject = (struct DiskObject *)GetIconTags(mailPart->Filename,
+        ICONGETA_FailIfUnavailable, FALSE,
+        ICONGETA_Screen,            _screen(obj),
+        ICONGETA_SizeBounds,        &sizeBounds,
+        TAG_DONE);
 
       #if defined(DEBUG)
       if(diskObject == NULL)
@@ -285,19 +322,21 @@ static void LoadImage(struct IClass *cl, Object *obj)
           def = "attach";
 
         // try to retrieve the icon for that type
-        diskObject = (struct DiskObject *)GetIconTags(NULL, ICONGETA_GetDefaultName, def,
-                                                            ICONGETA_Screen,         _screen(obj),
-                                                            ICONGETA_SizeBounds,     &sizeBounds,
-                                                            TAG_DONE);
+        diskObject = (struct DiskObject *)GetIconTags(NULL,
+          ICONGETA_GetDefaultName, def,
+          ICONGETA_Screen,         _screen(obj),
+          ICONGETA_SizeBounds,     &sizeBounds,
+          TAG_DONE);
 
         // if we still have not retrieved any icon we
         // obtain the standard project icon
         if(diskObject == NULL)
         {
-          diskObject = (struct DiskObject *)GetIconTags(NULL, ICONGETA_GetDefaultType, WBPROJECT,
-                                                              ICONGETA_Screen,         _screen(obj),
-                                                              ICONGETA_SizeBounds,     &sizeBounds,
-                                                              TAG_DONE);
+          diskObject = (struct DiskObject *)GetIconTags(NULL,
+            ICONGETA_GetDefaultType, WBPROJECT,
+            ICONGETA_Screen,         _screen(obj),
+            ICONGETA_SizeBounds,     &sizeBounds,
+            TAG_DONE);
 
           D(DBF_GUI, "diskobject for '%s' retrieved from default WBPROJECT type", mailPart->Filename);
         }
@@ -318,13 +357,12 @@ static void LoadImage(struct IClass *cl, Object *obj)
     // a temporary rastport so that we scan scale it down
     if(diskObject != NULL)
     {
-      struct BitMap *orgBitMap;
-      struct BitMap *screenBitMap = _screen(obj)->RastPort.BitMap;
-      PLANEPTR normalBitMask;
-      PLANEPTR selectedBitMask;
-      ULONG orgWidth;
-      ULONG orgHeight;
-      ULONG screenDepth = GetBitMapAttr(screenBitMap, BMA_DEPTH);
+      LONG orgWidth;
+      LONG orgHeight;
+      LONG scaleHeightDiff;
+      LONG scaleWidthDiff;
+      LONG newWidth;
+      LONG newHeight;
 
       // prepare the drawIcon/GetIconRentagle tags
 
@@ -345,248 +383,300 @@ static void LoadImage(struct IClass *cl, Object *obj)
         drawIconTags[2].ti_Data = 128;
 
       // get some information about our diskObject like width/height
-      // and the bitmask for transparency drawing
-      if(LIB_VERSION_IS_AT_LEAST(IconBase, 44, 0) == TRUE)
+      GetIconSize(diskObject, drawIconTags, &orgWidth, &orgHeight);
+
+      scaleHeightDiff = orgHeight - data->maxHeight;
+      scaleWidthDiff  = orgHeight - data->maxWidth;
+
+      // calculate the scale factors now that we have filled up our source bitmap
+      if((scaleHeightDiff > 0 && data->maxHeight > 0) ||
+         (scaleWidthDiff > 0 && data->maxWidth > 0))
       {
-        struct Rectangle rect;
-        struct TagItem iconCtrlTags[] = { { ICONCTRLA_GetImageMask1, (ULONG)NULL },
-                                          { ICONCTRLA_GetImageMask2, (ULONG)NULL },
-                                          { TAG_DONE,                FALSE       } };
+        double scaleFactor;
 
-        iconCtrlTags[0].ti_Data = (ULONG)&normalBitMask;
-        iconCtrlTags[1].ti_Data = (ULONG)&selectedBitMask;
-
-        GetIconRectangleA(NULL, diskObject, NULL, &rect, drawIconTags);
-
-        orgWidth  = rect.MaxX - rect.MinX + 1;
-        orgHeight = rect.MaxY - rect.MinY + 1;
-
-        // query the bitmask
-        IconControlA(diskObject, iconCtrlTags);
+        // make sure we are scaling proportional
+        if(scaleHeightDiff > scaleWidthDiff)
+        {
+          scaleFactor = (double)orgWidth / (double)orgHeight;
+          newWidth = (scaleFactor * data->maxHeight) + 0.5; // round up the value
+          newHeight = data->maxHeight;
+        }
+        else
+        {
+          scaleFactor = (double)orgHeight / (double)orgWidth;
+          newWidth = data->maxWidth;
+          newHeight = (scaleFactor * data->maxWidth) + 0.5; // round up the value
+        }
       }
       else
       {
-        orgWidth  = ((struct Image*)diskObject->do_Gadget.GadgetRender)->Width;
-        orgHeight = ((struct Image*)diskObject->do_Gadget.GadgetRender)->Height;
-
-        normalBitMask = NULL;
-        selectedBitMask = NULL;
+        newWidth  = orgWidth;
+        newHeight = orgHeight;
       }
 
-      // we first allocate a source bitmap with equal size to the icon size of the diskObject
-      if((orgBitMap = AllocBitMap(orgWidth, orgHeight, screenDepth, BMF_CLEAR | BMF_MINPLANES, screenBitMap)) != NULL)
+      // first try to let icon.library scale the icon
+      if(LIB_VERSION_IS_AT_LEAST(IconBase, 44, 0) == TRUE)
       {
-        // create a new layer info and a layer to get a clipping RastPort
-        struct Layer_Info *li;
-
-        if((li = NewLayerInfo()) != NULL)
+        if(newWidth != orgWidth || newHeight != orgHeight)
         {
-          struct Layer *l;
+          struct DiskObject *scaledDiskObject;
 
-          if((l = CreateUpfrontLayer(li, orgBitMap, 0, 0, orgWidth-1, orgHeight-1, LAYERSIMPLE, NULL)) != NULL)
+          #ifndef ICONDUPA_Width
+          #define ICONDUPA_Width TAG_IGNORE
+          #endif
+          #ifndef ICONDUPA_Height
+          #define ICONDUPA_Height TAG_IGNORE
+          #endif
+
+          if((scaledDiskObject = DupDiskObject(diskObject,
+            ICONDUPA_Width, newWidth,
+            ICONDUPA_Height, newHeight,
+            IA_Width, newWidth,
+            IA_Height, newHeight,
+            TAG_DONE)) != NULL)
           {
-            // the layer now provides a RastPort with active clipping
-            // we use this RastPort to let icon.library render the icon image to
-            struct RastPort *rp = l->rp;
-            LONG scaleHeightDiff = orgHeight - data->maxHeight;
-            LONG scaleWidthDiff  = orgHeight - data->maxWidth;
-            LONG newWidth;
-            LONG newHeight;
+            LONG scaledWidth;
+            LONG scaledHeight;
 
-            if(LIB_VERSION_IS_AT_LEAST(IconBase, 44, 0) == TRUE)
-              DrawIconStateA(rp, diskObject, NULL, 0, 0, IDS_SELECTED, drawIconTags);
+            // obtain the size of the scaled icon
+            GetIconSize(scaledDiskObject, drawIconTags, &scaledWidth, &scaledHeight);
+
+            // if the scaled icon has the demanded size then we will use this one
+            // during draw operations
+            if(scaledWidth == newWidth && scaledHeight == newHeight)
+            {
+              data->drawDiskObject = scaledDiskObject;
+              data->scaledWidth = newWidth;
+              data->scaledHeight = newHeight;
+            }
             else
             {
-              if(isFlagSet(diskObject->do_Gadget.Flags, GFLG_GADGHIMAGE))
-                DrawImage(rp, ((struct Image *)diskObject->do_Gadget.SelectRender), 0, 0);
+              FreeDiskObject(scaledDiskObject);
+            }
+          }
+        }
+        else
+        {
+          data->drawDiskObject = diskObject;
+          data->scaledWidth = orgWidth;
+          data->scaledHeight = orgHeight;
+        }
+      }
+
+      if(data->drawDiskObject == NULL)
+      {
+        // obtaining a scaled icon failed
+        // we have to fall back to the bitmap based approach
+        struct BitMap *orgBitMap;
+        struct BitMap *screenBitMap = _screen(obj)->RastPort.BitMap;
+        ULONG screenDepth = GetBitMapAttr(screenBitMap, BMA_DEPTH);
+        PLANEPTR normalBitMask;
+        PLANEPTR selectedBitMask;
+
+        // obtain the bitmask for transparency drawing
+        if(LIB_VERSION_IS_AT_LEAST(IconBase, 44, 0) == TRUE)
+        {
+          struct TagItem iconCtrlTags[] = { { ICONCTRLA_GetImageMask1, (ULONG)NULL },
+                                            { ICONCTRLA_GetImageMask2, (ULONG)NULL },
+                                            { TAG_DONE,                FALSE       } };
+
+          iconCtrlTags[0].ti_Data = (ULONG)&normalBitMask;
+          iconCtrlTags[1].ti_Data = (ULONG)&selectedBitMask;
+
+          // query the bitmask
+          IconControlA(diskObject, iconCtrlTags);
+        }
+        else
+        {
+          normalBitMask = NULL;
+          selectedBitMask = NULL;
+        }
+
+        // we first allocate a source bitmap with equal size to the icon size of the diskObject
+        if((orgBitMap = AllocBitMap(orgWidth, orgHeight, screenDepth, BMF_CLEAR | BMF_MINPLANES, screenBitMap)) != NULL)
+        {
+          // create a new layer info and a layer to get a clipping RastPort
+          struct Layer_Info *li;
+
+          if((li = NewLayerInfo()) != NULL)
+          {
+            struct Layer *l;
+
+            if((l = CreateUpfrontLayer(li, orgBitMap, 0, 0, orgWidth-1, orgHeight-1, LAYERSIMPLE, NULL)) != NULL)
+            {
+              // the layer now provides a RastPort with active clipping
+              // we use this RastPort to let icon.library render the icon image to
+              struct RastPort *rp = l->rp;
+
+              if(LIB_VERSION_IS_AT_LEAST(IconBase, 44, 0) == TRUE)
+                DrawIconStateA(rp, diskObject, NULL, 0, 0, IDS_SELECTED, drawIconTags);
+              else
+              {
+                if(isFlagSet(diskObject->do_Gadget.Flags, GFLG_GADGHIMAGE))
+                  DrawImage(rp, ((struct Image *)diskObject->do_Gadget.SelectRender), 0, 0);
+                else
+                  DrawImage(rp, ((struct Image *)diskObject->do_Gadget.GadgetRender), 0, 0);
+              }
+
+              // now we can allocate a new bitmap which should carry the scaled selected image
+              if((data->selectedBitMap = AllocBitMap(newWidth, newHeight, screenDepth, BMF_CLEAR | BMF_MINPLANES, orgBitMap)) != NULL)
+              {
+                struct BitScaleArgs args;
+
+                args.bsa_SrcBitMap = orgBitMap;
+                args.bsa_DestBitMap = data->selectedBitMap;
+                args.bsa_Flags = 0;
+
+                args.bsa_SrcY = 0;
+                args.bsa_DestY = 0;
+
+                args.bsa_SrcWidth = orgWidth;
+                args.bsa_SrcHeight = orgHeight;
+
+                args.bsa_XSrcFactor = orgWidth;
+                args.bsa_XDestFactor = newWidth;
+
+                args.bsa_YSrcFactor = orgHeight;
+                args.bsa_YDestFactor = newHeight;
+
+                args.bsa_SrcX = 0;
+                args.bsa_DestX = 0;
+
+                // scale the image now with the arguments set
+                BitMapScale(&args);
+
+                // read out the scaled values
+                data->scaledWidth  = args.bsa_DestWidth;
+                data->scaledHeight = args.bsa_DestHeight;
+
+                D(DBF_GUI, "AttachmentImage selected scale (w/h) from %ld/%ld to %ld/%ld", orgWidth,
+                                                                                           orgHeight,
+                                                                                           data->scaledWidth,
+                                                                                           data->scaledHeight);
+              }
+
+              // now we also scale the selected BitMask down, if it exists
+              if(selectedBitMask != NULL &&
+                 (data->selectedBitMask = AllocBitMap(newWidth, newHeight, 1L, BMF_CLEAR | BMF_MINPLANES, NULL)) != NULL)
+              {
+                struct BitScaleArgs args;
+                struct BitMap bm;
+
+                InitBitMap(&bm, 1L, orgWidth, orgHeight);
+                bm.Planes[0] = selectedBitMask;
+
+                args.bsa_SrcBitMap = &bm;
+                args.bsa_DestBitMap = data->selectedBitMask;
+                args.bsa_Flags = 0;
+
+                args.bsa_SrcY = 0;
+                args.bsa_DestY = 0;
+
+                args.bsa_SrcWidth = orgWidth;
+                args.bsa_SrcHeight = orgHeight;
+
+                args.bsa_XSrcFactor = orgWidth;
+                args.bsa_XDestFactor = newWidth;
+
+                args.bsa_YSrcFactor = orgHeight;
+                args.bsa_YDestFactor = newHeight;
+
+                args.bsa_SrcX = 0;
+                args.bsa_DestX = 0;
+
+                // scale the image now with the arguments set
+                BitMapScale(&args);
+              }
+              else
+                data->selectedBitMask = NULL;
+
+              // now that we have the selectedBitMap filled we have to scale down the unselected state
+              // of the icon as well.
+              if(LIB_VERSION_IS_AT_LEAST(IconBase, 44, 0) == TRUE)
+                DrawIconStateA(rp, diskObject, NULL, 0, 0, IDS_NORMAL, drawIconTags);
               else
                 DrawImage(rp, ((struct Image *)diskObject->do_Gadget.GadgetRender), 0, 0);
-            }
 
-            // calculate the scale factors now that we have filled up our source bitmap
-            if((scaleHeightDiff > 0 && data->maxHeight > 0) ||
-               (scaleWidthDiff > 0 && data->maxWidth > 0))
-            {
-              double scaleFactor;
-
-              // make sure we are scaling proportional
-              if(scaleHeightDiff > scaleWidthDiff)
+              // now we can allocate a new bitmap which should carry the scaled unselected normal image
+              if((data->normalBitMap = AllocBitMap(newWidth, newHeight, screenDepth, BMF_CLEAR | BMF_MINPLANES, orgBitMap)) != NULL)
               {
-                scaleFactor = (double)orgWidth / (double)orgHeight;
-                newWidth = (scaleFactor * data->maxHeight) + 0.5; // round up the value
-                newHeight = data->maxHeight;
-              }
-              else
-              {
-                scaleFactor = (double)orgHeight / (double)orgWidth;
-                newWidth = data->maxWidth;
-                newHeight = (scaleFactor * data->maxWidth) + 0.5; // round up the value
-              }
-            }
-            else
-            {
-              newWidth  = orgWidth;
-              newHeight = orgHeight;
-            }
+                struct BitScaleArgs args;
 
-            // now we can allocate a new bitmap which should carry the scaled selected image
-            if((data->selectedBitMap = AllocBitMap(newWidth, newHeight, screenDepth, BMF_CLEAR | BMF_MINPLANES, orgBitMap)) != NULL)
-            {
-              struct BitScaleArgs args;
+                args.bsa_SrcBitMap = orgBitMap;
+                args.bsa_DestBitMap = data->normalBitMap;
+                args.bsa_Flags = 0;
 
-              args.bsa_SrcBitMap = orgBitMap;
-              args.bsa_DestBitMap = data->selectedBitMap;
-              args.bsa_Flags = 0;
+                args.bsa_SrcY = 0;
+                args.bsa_DestY = 0;
 
-              args.bsa_SrcY = 0;
-              args.bsa_DestY = 0;
+                args.bsa_SrcWidth = orgWidth;
+                args.bsa_SrcHeight = orgHeight;
 
-              args.bsa_SrcWidth = orgWidth;
-              args.bsa_SrcHeight = orgHeight;
+                args.bsa_XSrcFactor = orgWidth;
+                args.bsa_XDestFactor = newWidth;
 
-              args.bsa_XSrcFactor = orgWidth;
-              args.bsa_XDestFactor = newWidth;
+                args.bsa_YSrcFactor = orgHeight;
+                args.bsa_YDestFactor = newHeight;
 
-              args.bsa_YSrcFactor = orgHeight;
-              args.bsa_YDestFactor = newHeight;
+                args.bsa_SrcX = 0;
+                args.bsa_DestX = 0;
 
-              args.bsa_SrcX = 0;
-              args.bsa_DestX = 0;
+                // scale the image now with the arguments set
+                BitMapScale(&args);
 
-              // scale the image now with the arguments set
-              BitMapScale(&args);
+                // read out the scaled values
+                data->scaledWidth  = args.bsa_DestWidth;
+                data->scaledHeight = args.bsa_DestHeight;
 
-              // read out the scaled values
-              data->scaledWidth  = args.bsa_DestWidth;
-              data->scaledHeight = args.bsa_DestHeight;
-
-              D(DBF_GUI, "AttachmentImage selected scale (w/h) from %ld/%ld to %ld/%ld", orgWidth,
+                D(DBF_GUI, "AttachmentImage normal scale (w/h) from %ld/%ld to %ld/%ld", orgWidth,
                                                                                          orgHeight,
                                                                                          data->scaledWidth,
                                                                                          data->scaledHeight);
+              }
+
+              // now we also scale the normal BitMask down, if it exists
+              if(normalBitMask != NULL &&
+                 (data->normalBitMask = AllocBitMap(newWidth, newHeight, 1L, BMF_CLEAR | BMF_MINPLANES, NULL)) != NULL)
+              {
+                struct BitScaleArgs args;
+                struct BitMap bm;
+
+                InitBitMap(&bm, 1L, orgWidth, orgHeight);
+                bm.Planes[0] = normalBitMask;
+
+                args.bsa_SrcBitMap = &bm;
+                args.bsa_DestBitMap = data->normalBitMask;
+                args.bsa_Flags = 0;
+
+                args.bsa_SrcY = 0;
+                args.bsa_DestY = 0;
+
+                args.bsa_SrcWidth = orgWidth;
+                args.bsa_SrcHeight = orgHeight;
+
+                args.bsa_XSrcFactor = orgWidth;
+                args.bsa_XDestFactor = newWidth;
+
+                args.bsa_YSrcFactor = orgHeight;
+                args.bsa_YDestFactor = newHeight;
+
+                args.bsa_SrcX = 0;
+                args.bsa_DestX = 0;
+
+                // scale the image now with the arguments set
+                BitMapScale(&args);
+              }
+              else
+                data->normalBitMask = NULL;
+
+              DeleteLayer(0, l);
             }
 
-            // now we also scale the selected BitMask down, if it exists
-            if(selectedBitMask != NULL &&
-               (data->selectedBitMask = AllocBitMap(newWidth, newHeight, 1L, BMF_CLEAR | BMF_MINPLANES, NULL)) != NULL)
-            {
-              struct BitScaleArgs args;
-              struct BitMap bm;
+            DisposeLayerInfo(li);
+	      }
 
-              InitBitMap(&bm, 1L, orgWidth, orgHeight);
-              bm.Planes[0] = selectedBitMask;
-
-              args.bsa_SrcBitMap = &bm;
-              args.bsa_DestBitMap = data->selectedBitMask;
-              args.bsa_Flags = 0;
-
-              args.bsa_SrcY = 0;
-              args.bsa_DestY = 0;
-
-              args.bsa_SrcWidth = orgWidth;
-              args.bsa_SrcHeight = orgHeight;
-
-              args.bsa_XSrcFactor = orgWidth;
-              args.bsa_XDestFactor = newWidth;
-
-              args.bsa_YSrcFactor = orgHeight;
-              args.bsa_YDestFactor = newHeight;
-
-              args.bsa_SrcX = 0;
-              args.bsa_DestX = 0;
-
-              // scale the image now with the arguments set
-              BitMapScale(&args);
-            }
-            else
-              data->selectedBitMask = NULL;
-
-            // now that we have the selectedBitMap filled we have to scale down the unselected state
-            // of the icon as well.
-            if(LIB_VERSION_IS_AT_LEAST(IconBase, 44, 0) == TRUE)
-              DrawIconStateA(rp, diskObject, NULL, 0, 0, IDS_NORMAL, drawIconTags);
-            else
-              DrawImage(rp, ((struct Image *)diskObject->do_Gadget.GadgetRender), 0, 0);
-
-            // now we can allocate a new bitmap which should carry the scaled unselected normal image
-            if((data->normalBitMap = AllocBitMap(newWidth, newHeight, screenDepth, BMF_CLEAR | BMF_MINPLANES, orgBitMap)) != NULL)
-            {
-              struct BitScaleArgs args;
-
-              args.bsa_SrcBitMap = orgBitMap;
-              args.bsa_DestBitMap = data->normalBitMap;
-              args.bsa_Flags = 0;
-
-              args.bsa_SrcY = 0;
-              args.bsa_DestY = 0;
-
-              args.bsa_SrcWidth = orgWidth;
-              args.bsa_SrcHeight = orgHeight;
-
-              args.bsa_XSrcFactor = orgWidth;
-              args.bsa_XDestFactor = newWidth;
-
-              args.bsa_YSrcFactor = orgHeight;
-              args.bsa_YDestFactor = newHeight;
-
-              args.bsa_SrcX = 0;
-              args.bsa_DestX = 0;
-
-              // scale the image now with the arguments set
-              BitMapScale(&args);
-
-              // read out the scaled values
-              data->scaledWidth  = args.bsa_DestWidth;
-              data->scaledHeight = args.bsa_DestHeight;
-
-              D(DBF_GUI, "AttachmentImage normal scale (w/h) from %ld/%ld to %ld/%ld", orgWidth,
-                                                                                       orgHeight,
-                                                                                       data->scaledWidth,
-                                                                                       data->scaledHeight);
-            }
-
-            // now we also scale the normal BitMask down, if it exists
-            if(normalBitMask != NULL &&
-               (data->normalBitMask = AllocBitMap(newWidth, newHeight, 1L, BMF_CLEAR | BMF_MINPLANES, NULL)) != NULL)
-            {
-              struct BitScaleArgs args;
-              struct BitMap bm;
-
-              InitBitMap(&bm, 1L, orgWidth, orgHeight);
-              bm.Planes[0] = normalBitMask;
-
-              args.bsa_SrcBitMap = &bm;
-              args.bsa_DestBitMap = data->normalBitMask;
-              args.bsa_Flags = 0;
-
-              args.bsa_SrcY = 0;
-              args.bsa_DestY = 0;
-
-              args.bsa_SrcWidth = orgWidth;
-              args.bsa_SrcHeight = orgHeight;
-
-              args.bsa_XSrcFactor = orgWidth;
-              args.bsa_XDestFactor = newWidth;
-
-              args.bsa_YSrcFactor = orgHeight;
-              args.bsa_YDestFactor = newHeight;
-
-              args.bsa_SrcX = 0;
-              args.bsa_DestX = 0;
-
-              // scale the image now with the arguments set
-              BitMapScale(&args);
-            }
-            else
-              data->normalBitMask = NULL;
-
-            DeleteLayer(0, l);
-          }
-
-          DisposeLayerInfo(li);
-	    }
-
-        FreeBitMap(orgBitMap);
+          FreeBitMap(orgBitMap);
+        }
       }
     }
     else
@@ -780,6 +870,7 @@ OVERLOAD(MUIM_Draw)
 
   if(isFlagSet(dmsg->flags, MADF_DRAWOBJECT) || isFlagSet(dmsg->flags, MADF_DRAWUPDATE))
   {
+    LONG state;
     struct BitMap *bitmap;
     struct BitMap *bitmask;
 
@@ -795,16 +886,33 @@ OVERLOAD(MUIM_Draw)
     // check the selected state
     if(xget(obj, MUIA_Selected) == TRUE)
     {
+      state = IDS_SELECTED;
       bitmap = data->selectedBitMap;
       bitmask = data->selectedBitMask;
     }
     else
     {
+      state = IDS_NORMAL;
       bitmap = data->normalBitMap;
       bitmask = data->normalBitMask;
     }
 
-    if(bitmap != NULL)
+    if(data->drawDiskObject != NULL && LIB_VERSION_IS_AT_LEAST(IconBase, 44, 0) == TRUE)
+    {
+      struct TagItem drawIconTags[] = { { ICONDRAWA_Borderless,      TRUE             },
+                                        { ICONDRAWA_Frameless,       TRUE             },
+                                        { ICONDRAWA_Transparency,    255              },
+                                        { ICONDRAWA_DrawInfo,        (ULONG)_dri(obj) },
+                                        { TAG_DONE,                  FALSE            } };
+
+      // if this is an alternative part we draw it with
+      // transparency of 50%
+      if(data->mailPart != NULL && isAlternativePart(data->mailPart))
+        drawIconTags[2].ti_Data = 128;
+
+      DrawIconStateA(_rp(obj), data->drawDiskObject, NULL, _mleft(obj), _mtop(obj), state, drawIconTags);
+    }
+    else if(bitmap != NULL)
     {
       #if defined(__amigaos4__)
       if(bitmask != NULL)

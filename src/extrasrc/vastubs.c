@@ -77,6 +77,8 @@ BOOL WorkbenchControl(STRPTR name, ...)
 #include <proto/icon.h>
 struct DiskObject *GetIconTags(MY_CONST_STRPTR name, ... )
 { return GetIconTagList(name, (struct TagItem *)(&name+1)); }
+struct DiskObject *DupDiskObject(const struct DiskObject *dobj, ... )
+{ return DupDiskObjectA(dobj, (struct TagItem *)(&dobj+1)); }
 
 #include <proto/xpkmaster.h>
 LONG XpkQueryTags(Tag tag, ...)
@@ -121,6 +123,12 @@ struct DiskObject *GetIconTags(CONST_STRPTR name, Tag tag1, ...)
 {
   AROS_SLOWSTACKTAGS_PRE(tag1)
   retval = (IPTR)GetIconTagList((name), (const struct TagItem *)AROS_SLOWSTACKTAGS_ARG(tag1));
+  AROS_SLOWSTACKTAGS_POST
+}
+struct DiskObject *DupDiskObject(const struct DiskObject *dobj, Tag tag1, ...)
+{
+  AROS_SLOWSTACKTAGS_PRE(tag1)
+  retval = (IPTR)DupDiskObjectA((dobj), (const struct TagItem *)AROS_SLOWSTACKTAGS_ARG(tag1));
   AROS_SLOWSTACKTAGS_POST
 }
 
