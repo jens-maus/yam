@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-06-09 Pär Boberg <pbobbenb@spray.se>
+
+  * locale/swedish.ct: updated according to changes.
+
 2012-06-08 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/AttachmentImage.c: reworked the image loading process to favor icons

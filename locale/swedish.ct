@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.10 (22.05.2012)
+## version $VER: YAM.catalog 7.11 (08.06.2012)
 ## language svenska
 ## codeset 0
 ;
@@ -1044,10 +1044,6 @@ MSG_CO_CrdTCPIP
 TCP/IP
 ; TCP/IP
 ;
-MSG_CO_CrdNewMail
-Ny post
-; New mail
-;
 MSG_CO_CrdFilters
 Filter
 ; Filters
@@ -1275,10 +1271,6 @@ automatiskt
 MSG_CO_TWAlways
 visa alltid
 ; show always
-;
-MSG_CO_Download
-Hämta
-; Download
 ;
 MSG_CO_TransferWin
 S_tatusfönster
@@ -2032,11 +2024,6 @@ Meddelandeförval visar (en del av) innehållet i din\nPOP3-postlåda och tillåter 
 ; Message pre-selection shows (a part of) the contents of the\n\
 ; POP3 mailbox and allows you to select which messages you\n\
 ; want to download.
-;
-MSG_HELP_CO_CH_UPDSTAT
-Markera nya meddelanden i Inkorgen\nsom 'olästa' innan hämtning av ny post.
-; Mark new messages in the Incoming folder\n\
-; as 'unread' before downloading new mail.
 ;
 MSG_HELP_CO_ST_WARNSIZE
 Inkommande meddelanden större\nän detta, betraktas som 'stora'.
@@ -3554,10 +3541,6 @@ MSG_WR_TitleContents
 Innehåll
 ; Contents
 ;
-MSG_WR_TitleEncoding
-Kodning
-; Enc.
-;
 MSG_WR_TitleDescription
 Beskrivning
 ; Description
@@ -3959,12 +3942,6 @@ MSG_HELP_WR_BT_DISPLAY
 Använd en konfigurerad MIME-visare\nför att visa denna bilaga.
 ; Use the configured MIME viewer\n\
 ; to display this attachment.
-;
-MSG_HELP_WR_RA_ENCODING
-Typ av kodningssätt för valda bilagor.\nAnvänd UUcode endast om mottagaren\ninte använder en MIME-kompatibel mailklient.
-; Type of encoding used for the selected attachment.\n\
-; Select UUencode only if the recipient is not using\n\
-; a MIME compliant mailer.
 ;
 MSG_HELP_WR_ST_CTYPE
 MIME-typ för valda bilagor.\nAnvänd om möjligt en från listan.
@@ -6101,14 +6078,6 @@ Inställningar TCP/IP
 MSG_CO_TCPIP_SUMMARY
 Konfigurera dina SMTP och POP3-konton...
 ; Configure your SMTP and POP3 accounts...
-;
-MSG_CO_NEWMAIL_TITLE
-Inställningar nya brev
-; New Mail Settings
-;
-MSG_CO_NEWMAIL_SUMMARY
-Vad som ska hända vid mottagning av nya brev...
-; How to handle and react upon incoming mail...
 ;
 MSG_CO_FILTER_TITLE
 Inställningar brevfilter
@@ -9058,10 +9027,6 @@ MSG_CO_IDENTITY_MAILSERVER
 Server (SMTP)
 ; Mail server (SMTP)
 ;
-MSG_CO_IDENTITY_DEFSIGNATURE
-Förvald signatur
-; Default signature
-;
 MSG_CO_IDENTITY_COMPOSE
 Skriv brev inställningar
 ; Compose mail settings
@@ -9496,4 +9461,70 @@ Kb
 MSG_MA_DRAFTS
 Utkast
 ; Drafts
+;
+MSG_CO_SIGNATURE
+Signatur
+; Signature
+;
+MSG_CO_SIGNATURES
+Signaturer
+; Signatures
+;
+MSG_CO_SIGNATURE_DESCRIPTION
+Beskrivning
+; Description
+;
+MSG_CO_SIGNATURE_ACTIVE
+_Aktiv
+; _Active
+;
+MSG_CO_IDENTITY_SIGNATURE
+Signatur
+; Signature
+;
+MSG_HELP_CO_LV_SIGNATURE
+Lista över alla signaturer
+; List of all signatures
+;
+MSG_HELP_CO_BT_SIGADD
+Lägger till en signatur till listan.
+; Adds a new signature to the list.
+;
+MSG_HELP_CO_BT_SIGDEL
+Tar bort vald signatur från listan.
+; Removes selected signature from list.
+;
+MSG_HELP_CO_BT_SIGUP
+Flyttar signatur ett steg upp.
+; Moves signature one entry up.
+;
+MSG_HELP_CO_BT_SIGDOWN
+Flyttar signatur ett steg ned.
+; Moves signature one entry down.
+;
+MSG_HELP_CO_BT_SIG_ACTIVE
+Flaggar nuvarande vald signatur som\n\
+aktiv eller inaktiv.
+; Flags the currently selected signature\n\
+; as active or inactive.
+;
+MSG_HELP_CO_ST_SIG_DESC
+Tillåter dig att skriva en beskrivning\n\
+för signaturen.
+; Allows you to enter a freetext\n\
+; description for the signature.
+;
+MSG_HELP_CO_TE_SIGEDIT
+Textredigerare för inmatning/ändring\n\
+av signaturen.
+; Text editor for entering/changing\n\
+; the signature text.
+;
+MSG_CO_MIXED_CONNECTIONS
+Anslutningar
+; Connections
+;
+MSG_CO_POP_NOTIFICATION
+Meddelande för nya brev
+; Notification for new mails
 ;
