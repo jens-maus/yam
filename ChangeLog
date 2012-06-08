@@ -12,6 +12,7 @@ $URL$
     icon's transparency.
   * MailServers.c, mui/YAMApplication.c: fixed the broken AmigaOS4 build by
     using the correct variables.
+  * mui/AttachmentObject.c: added 2 pixels more space between image and text.
 
 2012-06-07 Thore Böckelmann <tboeckel@gmx.de>
 

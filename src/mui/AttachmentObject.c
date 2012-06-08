@@ -111,7 +111,7 @@ OVERLOAD(OM_NEW)
   if((obj = DoSuperNew(cl, obj,
     MUIA_ContextMenu,   TRUE,
     MUIA_Group_Horiz,   TRUE,
-    MUIA_Group_Spacing, 0,
+    MUIA_Group_Spacing, 2,
     Child, imageObject = AttachmentImageObject,
       MUIA_CycleChain,               TRUE,
       MUIA_AttachmentImage_MailPart, mailPart,
@@ -567,7 +567,7 @@ DECLARE(UpdateDescription)
 
   // first line: the attachment name (filename or description)
   //             italic style in case it is an alternative part
-  p = data->mailPart->Name[0] != '\0' ? data->mailPart->Name : data->mailPart->Description; 
+  p = data->mailPart->Name[0] != '\0' ? data->mailPart->Name : data->mailPart->Description;
 
   if(isAlternativePart(data->mailPart))
     snprintf(data->descriptionBuffer, sizeof(data->descriptionBuffer), MUIX_I "%s" MUIX_N "\n", p);
