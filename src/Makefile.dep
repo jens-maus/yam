@@ -266,29 +266,32 @@ $(OBJDIR)/MailList.o: MailList.c extrasrc.h include/SDI_compiler.h \
   YAM_userlist.h YAM_utilities.h YAM_folderconfig.h BayesFilter.h \
   HashTable.h Themes.h Timer.h include/timeval.h YAM_mainFolder.h \
   MailList.h Debug.h
-$(OBJDIR)/MailServers.o: MailServers.c YAM_config.h include/libraries/mui.h \
-  YAM_read.h YAM_write.h YAM_main.h YAM_stringsizes.h tcp/pop3.h \
-  tcp/smtp.h YAM_utilities.h include/SDI_compiler.h YAM_folderconfig.h \
-  Logfile.h UpdateCheck.h include/timeval.h mui/ConfigPageList.h \
-  mui/TransferWindow.h tcp/Connection.h include/openssl/ssl.h \
-  include/proto/amissl.h include/amissl/amissl.h include/openssl/e_os2.h \
-  include/openssl/opensslconf.h include/openssl/aes.h \
-  include/openssl/asn1.h include/openssl/bio.h include/openssl/crypto.h \
-  include/openssl/stack.h include/openssl/safestack.h \
-  include/openssl/opensslv.h include/openssl/symhacks.h \
-  include/openssl/bn.h include/openssl/ossl_typ.h \
-  include/openssl/asn1_mac.h include/openssl/asn1t.h \
-  include/openssl/blowfish.h include/openssl/buffer.h \
-  include/openssl/cast.h include/openssl/comp.h include/openssl/conf.h \
-  include/openssl/lhash.h include/openssl/conf_api.h \
-  include/openssl/des.h include/openssl/des_old.h \
-  include/openssl/ui_compat.h include/openssl/ui.h include/openssl/dh.h \
-  include/openssl/dsa.h include/openssl/dso.h include/openssl/ebcdic.h \
-  include/openssl/ec.h include/openssl/err.h include/openssl/evp.h \
-  include/openssl/md2.h include/openssl/md4.h include/openssl/md5.h \
-  include/openssl/sha.h include/openssl/ripemd.h include/openssl/rc4.h \
-  include/openssl/rc2.h include/openssl/rc5.h include/openssl/idea.h \
-  include/openssl/mdc2.h include/openssl/rsa.h include/openssl/objects.h \
+$(OBJDIR)/MailServers.o: MailServers.c YAM.h include/xpk/xpk.h \
+  include/amiga-align.h include/default-align.h YAM_stringsizes.h \
+  YAM_userlist.h YAM_utilities.h include/SDI_compiler.h \
+  YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h Timer.h \
+  include/timeval.h YAM_config.h include/libraries/mui.h YAM_read.h \
+  YAM_write.h YAM_main.h tcp/pop3.h tcp/smtp.h Logfile.h UpdateCheck.h \
+  mui/ConfigPageList.h mui/TransferWindow.h tcp/Connection.h \
+  include/openssl/ssl.h include/proto/amissl.h include/amissl/amissl.h \
+  include/openssl/e_os2.h include/openssl/opensslconf.h \
+  include/openssl/aes.h include/openssl/asn1.h include/openssl/bio.h \
+  include/openssl/crypto.h include/openssl/stack.h \
+  include/openssl/safestack.h include/openssl/opensslv.h \
+  include/openssl/symhacks.h include/openssl/bn.h \
+  include/openssl/ossl_typ.h include/openssl/asn1_mac.h \
+  include/openssl/asn1t.h include/openssl/blowfish.h \
+  include/openssl/buffer.h include/openssl/cast.h include/openssl/comp.h \
+  include/openssl/conf.h include/openssl/lhash.h \
+  include/openssl/conf_api.h include/openssl/des.h \
+  include/openssl/des_old.h include/openssl/ui_compat.h \
+  include/openssl/ui.h include/openssl/dh.h include/openssl/dsa.h \
+  include/openssl/dso.h include/openssl/ebcdic.h include/openssl/ec.h \
+  include/openssl/err.h include/openssl/evp.h include/openssl/md2.h \
+  include/openssl/md4.h include/openssl/md5.h include/openssl/sha.h \
+  include/openssl/ripemd.h include/openssl/rc4.h include/openssl/rc2.h \
+  include/openssl/rc5.h include/openssl/idea.h include/openssl/mdc2.h \
+  include/openssl/rsa.h include/openssl/objects.h \
   include/openssl/obj_mac.h include/openssl/hmac.h \
   include/openssl/krb5_asn.h include/openssl/kssl.h \
   include/openssl/ocsp.h include/openssl/x509.h \
@@ -299,7 +302,7 @@ $(OBJDIR)/MailServers.o: MailServers.c YAM_config.h include/libraries/mui.h \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h extrasrc.h \
   include/SDI_stdarg.h include/SDI_compiler.h MailList.h MailServers.h \
-  Timer.h UserIdentity.h Debug.h
+  UserIdentity.h Debug.h
 $(OBJDIR)/MailTransferList.o: MailTransferList.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM_mainFolder.h \
   include/timeval.h YAM_utilities.h YAM_stringsizes.h YAM_folderconfig.h \

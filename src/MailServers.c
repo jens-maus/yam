@@ -33,8 +33,12 @@
 #include <clib/alib_protos.h>
 #endif
 
+#if defined(__amigaos4__)
+#include <proto/application.h>
+#endif
 #include <proto/exec.h>
 
+#include "YAM.h"
 #include "YAM_config.h"
 #include "YAM_utilities.h"
 

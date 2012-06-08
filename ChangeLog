@@ -10,6 +10,8 @@ $URL$
   * mui/AttachmentImage.c: reworked the image loading process to favor icons
     over bitmaps created from icons. This makes it possible to fully support an
     icon's transparency.
+  * MailServers.c, mui/YAMApplication.c: fixed the broken AmigaOS4 build by
+    using the correct variables.
 
 2012-06-07 Thore Böckelmann <tboeckel@gmx.de>
 

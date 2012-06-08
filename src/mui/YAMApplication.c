@@ -1070,9 +1070,9 @@ DECLARE(NewMailAlert) // struct MailServerNode *msn, struct DownloadResult *down
 
         // distinguish between single and multiple mails
         if(count == 1)
-          snprintf(message, sizeof(message), tr(MSG_POP3_NEW_MAIL_NOTIFY_OS4_ONE), msg->account);
+          snprintf(message, sizeof(message), tr(MSG_POP3_NEW_MAIL_NOTIFY_OS4_ONE), msg->msn->description);
         else
-          snprintf(message, sizeof(message), tr(MSG_POP3_NEW_MAIL_NOTIFY_OS4_MANY), msg->account, count);
+          snprintf(message, sizeof(message), tr(MSG_POP3_NEW_MAIL_NOTIFY_OS4_MANY), msg->msn->description, count);
 
         AddPath(imagePath, G->ProgDir, "Themes/default/notify", sizeof(imagePath));
 
