@@ -334,12 +334,12 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
       fprintf(fh, "POP%02d.DownloadPeriodically = %s\n", i, Bool2Txt(hasServerDownloadPeriodically(msn)));
       fprintf(fh, "POP%02d.DownloadInterval     = %d\n", i, msn->downloadInterval);
       fprintf(fh, "POP%02d.DownloadLargeMails   = %s\n", i, Bool2Txt(hasServerDownloadLargeMails(msn)));
-      fprintf(fh, "POP%02d.NotifyByRequester  = %s\n", i, Bool2Txt(msn->notifyByRequester));
-      fprintf(fh, "POP%02d.NotifyByOS41System = %s\n", i, Bool2Txt(msn->notifyByOS41System));
-      fprintf(fh, "POP%02d.NotifyBySound      = %s\n", i, Bool2Txt(msn->notifyBySound));
-      fprintf(fh, "POP%02d.NotifyByCommand    = %s\n", i, Bool2Txt(msn->notifyByCommand));
-      fprintf(fh, "POP%02d.NotifySound        = %s\n", i, msn->notifySound);
-      fprintf(fh, "POP%02d.NotifyCommand      = %s\n", i, msn->notifyCommand);
+      fprintf(fh, "POP%02d.NotifyByRequester    = %s\n", i, Bool2Txt(msn->notifyByRequester));
+      fprintf(fh, "POP%02d.NotifyByOS41System   = %s\n", i, Bool2Txt(msn->notifyByOS41System));
+      fprintf(fh, "POP%02d.NotifyBySound        = %s\n", i, Bool2Txt(msn->notifyBySound));
+      fprintf(fh, "POP%02d.NotifyByCommand      = %s\n", i, Bool2Txt(msn->notifyByCommand));
+      fprintf(fh, "POP%02d.NotifySound          = %s\n", i, msn->notifySound);
+      fprintf(fh, "POP%02d.NotifyCommand        = %s\n", i, msn->notifyCommand);
 
       i++;
     }
