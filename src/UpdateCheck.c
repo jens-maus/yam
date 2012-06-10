@@ -482,9 +482,9 @@ BOOL ExtractUpdateFilename(const char *url, char *file, size_t fileSize)
 {
   BOOL success = FALSE;
   char *p;
-  
+
   ENTER();
-  
+
   // try the last component first, this one should include a dot
   if((p = FilePart(url)) != NULL && strchr(p, '.') != NULL)
   {
@@ -502,7 +502,7 @@ BOOL ExtractUpdateFilename(const char *url, char *file, size_t fileSize)
     p = strrchr(file, '.');
     while(*p != '\0' && *p != '/')
       p++;
-    *p = '\0';  
+    *p = '\0';
 
     success = TRUE;
   }

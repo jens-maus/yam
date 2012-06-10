@@ -187,9 +187,6 @@ OVERLOAD(OM_NEW)
       DoMethod(downloadButton,   MUIM_Notify, MUIA_Pressed, FALSE, obj, 1, METHOD(Download));
       DoMethod(closeButton,      MUIM_Notify, MUIA_Pressed, FALSE, obj, 3, METHOD(Close));
 
-      // reparse the update file upon uniconification
-      DoMethod(G->App, MUIM_Notify, MUIA_Application_Iconified, FALSE, obj, 1, METHOD(ParseUpdateFile));
-
       set(obj, MUIA_Window_Activate, TRUE);
     }
     else
@@ -231,15 +228,7 @@ OVERLOAD(OM_SET)
       case MUIA_Window_Open:
       {
         // if the object should be hidden we clean it up also
-        if(tag->ti_Data == FALSE)
-        {
-          // we only clear the notify window's content if this
-          // close request wasn't issue due to an application iconification
-          // request
-          if(xget(G->App, MUIA_Application_Iconified) == FALSE)
-            DoMethod(obj, METHOD(Clear));
-        }
-        else
+        if(tag->ti_Data != FALSE)
         {
           char buf[64];
 

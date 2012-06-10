@@ -10,6 +10,10 @@ $URL$
   * YAM.c, YAM_COs.c: new standard folders created during the startup phase are
     now moved to a sensible position within the folder listtree automatically.
     This closes #314.
+  * mui/UpdateNotifyWindow.c: the list of available updates is no longer cleared
+    when the window is closed. This avoids the problem that the received list of
+    updates has to be parsed again upon deiconification and also closes #324 and
+    #326.
 
 2012-06-09 Pär Boberg <pbobbenb@spray.se>
 
