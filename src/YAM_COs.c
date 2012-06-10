@@ -2263,6 +2263,12 @@ void CO_GetConfig(BOOL saveConfig)
           }
           else
           {
+            // move the new spam folder after the trash folder
+            struct Folder *this = FO_GetFolderByType(FT_SPAM, NULL);
+            struct Folder *prev = FO_GetFolderByType(FT_TRASH, NULL);
+
+            DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Move, MUIV_NListtree_Move_OldListNode_Root, this->Treenode, MUIV_NListtree_Move_NewListNode_Root, prev->Treenode, MUIF_NONE);
+
             // update the toolbar to the new settings
             if(G->MA->GUI.TO_TOOLBAR != NULL)
               DoMethod(G->MA->GUI.TO_TOOLBAR, MUIM_MainWindowToolbar_UpdateSpamControls);

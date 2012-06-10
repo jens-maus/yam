@@ -1737,19 +1737,69 @@ static void InitAfterLogin(void)
   }
 
   if(FO_GetFolderByType(FT_INCOMING, NULL) == NULL)
-    newfolders |= FO_CreateFolder(FT_INCOMING, FolderName[FT_INCOMING], tr(MSG_MA_Incoming));
+  {
+    if(FO_CreateFolder(FT_INCOMING, FolderName[FT_INCOMING], tr(MSG_MA_Incoming)) == TRUE)
+    {
+      // move the new incoming folder to the top
+      struct Folder *this = FO_GetFolderByType(FT_INCOMING, NULL);
+
+      DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Move, MUIV_NListtree_Move_OldListNode_Root, this->Treenode, MUIV_NListtree_Move_NewListNode_Root, MUIV_NListtree_Move_NewTreeNode_Head, MUIF_NONE);
+      newfolders = TRUE;
+    }
+  }
+
 
   if(FO_GetFolderByType(FT_DRAFTS, NULL) == NULL)
-    newfolders |= FO_CreateFolder(FT_DRAFTS, FolderName[FT_DRAFTS], tr(MSG_MA_DRAFTS));
+  {
+    if(FO_CreateFolder(FT_DRAFTS, FolderName[FT_DRAFTS], tr(MSG_MA_DRAFTS)) == TRUE)
+    {
+      // move the new drafts folder after the incoming folder
+      struct Folder *this = FO_GetFolderByType(FT_DRAFTS, NULL);
+      struct Folder *prev = FO_GetFolderByType(FT_INCOMING, NULL);
+
+      DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Move, MUIV_NListtree_Move_OldListNode_Root, this->Treenode, MUIV_NListtree_Move_NewListNode_Root, prev->Treenode, MUIF_NONE);
+      newfolders = TRUE;
+    }
+  }
 
   if(FO_GetFolderByType(FT_OUTGOING, NULL) == NULL)
-    newfolders |= FO_CreateFolder(FT_OUTGOING, FolderName[FT_OUTGOING], tr(MSG_MA_Outgoing));
+  {
+    if(FO_CreateFolder(FT_OUTGOING, FolderName[FT_OUTGOING], tr(MSG_MA_Outgoing)) == TRUE)
+    {
+      // move the new outgoing folder after the drafts folder
+      struct Folder *this = FO_GetFolderByType(FT_OUTGOING, NULL);
+      struct Folder *prev = FO_GetFolderByType(FT_DRAFTS, NULL);
+
+      DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Move, MUIV_NListtree_Move_OldListNode_Root, this->Treenode, MUIV_NListtree_Move_NewListNode_Root, prev->Treenode, MUIF_NONE);
+      newfolders = TRUE;
+    }
+  }
 
   if(FO_GetFolderByType(FT_SENT, NULL) == NULL)
-    newfolders |= FO_CreateFolder(FT_SENT, FolderName[FT_SENT], tr(MSG_MA_Sent));
+  {
+    if(FO_CreateFolder(FT_SENT, FolderName[FT_SENT], tr(MSG_MA_Sent)) == TRUE)
+    {
+      // move the new sent folder after the outgoing folder
+      struct Folder *this = FO_GetFolderByType(FT_SENT, NULL);
+      struct Folder *prev = FO_GetFolderByType(FT_OUTGOING, NULL);
+
+      DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Move, MUIV_NListtree_Move_OldListNode_Root, this->Treenode, MUIV_NListtree_Move_NewListNode_Root, prev->Treenode, MUIF_NONE);
+      newfolders = TRUE;
+    }
+  }
 
   if(FO_GetFolderByType(FT_TRASH, NULL) == NULL)
-    newfolders |= FO_CreateFolder(FT_TRASH, FolderName[FT_TRASH], tr(MSG_MA_TRASH));
+  {
+    if(FO_CreateFolder(FT_TRASH, FolderName[FT_TRASH], tr(MSG_MA_TRASH)) == TRUE)
+    {
+      // move the new trash folder after the sent folder
+      struct Folder *this = FO_GetFolderByType(FT_TRASH, NULL);
+      struct Folder *prev = FO_GetFolderByType(FT_SENT, NULL);
+
+      DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Move, MUIV_NListtree_Move_OldListNode_Root, this->Treenode, MUIV_NListtree_Move_NewListNode_Root, prev->Treenode, MUIF_NONE);
+      newfolders = TRUE;
+    }
+  }
 
   if(C->SpamFilterEnabled == TRUE)
   {
@@ -1823,7 +1873,15 @@ static void InitAfterLogin(void)
           }
         }
         // finally, create the spam folder
-        newfolders |= FO_CreateFolder(FT_SPAM, FolderName[FT_SPAM], tr(MSG_MA_SPAM));
+        if(FO_CreateFolder(FT_SPAM, FolderName[FT_SPAM], tr(MSG_MA_SPAM)) == TRUE)
+        {
+          // move the new spam folder after the trash folder
+          struct Folder *this = FO_GetFolderByType(FT_SPAM, NULL);
+          struct Folder *prev = FO_GetFolderByType(FT_TRASH, NULL);
+
+          DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Move, MUIV_NListtree_Move_OldListNode_Root, this->Treenode, MUIV_NListtree_Move_NewListNode_Root, prev->Treenode, MUIF_NONE);
+          newfolders = TRUE;
+        }
       }
     }
   }

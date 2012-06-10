@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-06-10 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c, YAM_COs.c: new standard folders created during the startup phase are
+    now moved to a sensible position within the folder listtree automatically.
+    This closes #314.
+
 2012-06-09 Pär Boberg <pbobbenb@spray.se>
 
   * locale/swedish.ct: updated according to changes.
