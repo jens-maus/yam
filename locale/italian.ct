@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.99 (7.06.2012)
+## version $VER: YAM.catalog 7.99 (11.06.2012)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -7,7 +7,7 @@
 ; Compiled with FlexCat 2.9 PPC (AmigaOS4)
 ; $Id$
 ;
-; based on YAM.cd 6021 2012-06-06
+; based on YAM.cd 6027 2012-06-07
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -1074,10 +1074,6 @@ MSG_CO_CrdTCPIP
 TCP/IP
 ; TCP/IP
 ;
-MSG_CO_CrdNewMail
-Nuova posta
-; New mail
-;
 MSG_CO_CrdFilters
 Filtri
 ; Filters
@@ -1305,10 +1301,6 @@ automatica
 MSG_CO_TWAlways
 mostra sempre
 ; show always
-;
-MSG_CO_Download
-Ricezione
-; Download
 ;
 MSG_CO_TransferWin
 _Finestra trasferimenti
@@ -6609,14 +6601,6 @@ MSG_CO_TCPIP_SUMMARY
 Configurazione degli account SMTP e POP3...
 ; Configure your SMTP and POP3 accounts...
 ;
-MSG_CO_NEWMAIL_TITLE
-Impostazioni per i nuovi messaggi di posta
-; New Mail Settings
-;
-MSG_CO_NEWMAIL_SUMMARY
-Comportamento alla ricezione di nuovi messaggi...
-; How to handle and react upon incoming mail...
-;
 MSG_CO_FILTER_TITLE
 Impostazioni dei filtri di posta
 ; Mail Filter Settings
@@ -10610,4 +10594,12 @@ Editor di testo per l'inserimento\n\
 o per la modifica della firma.
 ; Text editor for entering/changing\n\
 ; the signature text.
+;
+MSG_CO_MIXED_CONNECTIONS
+Connessioni
+; Connections
+;
+MSG_CO_POP_NOTIFICATION
+Notifica dei nuovi messaggi
+; Notification for new mails
 ;

@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-06-10 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: update according to the latest changes.
+
 2012-06-10 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.c, YAM_COs.c: new standard folders created during the startup phase are
