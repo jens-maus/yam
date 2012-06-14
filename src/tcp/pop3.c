@@ -524,6 +524,9 @@ static BOOL GetMessageList(struct TransferContext *tc)
   else
     success = FALSE;
 
+  // remember the total number of mails on the server
+  tc->downloadResult.onServer = tc->transferList->count;
+
   RETURN(success);
   return success;
 }

@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-06-14 Thore Böckelmann <tboeckel@gmx.de>
+
+  * tcp/pop3.c: the number of messages left on the POP3 server was never
+    initialized and hence the final stats requester showed negative values.
+
 2012-06-10 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: update according to the latest changes.
