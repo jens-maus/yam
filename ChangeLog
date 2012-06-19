@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-06-19 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c: changed the pool creation to not lock memory pages.
+
 2012-06-14 Thore Böckelmann <tboeckel@gmx.de>
 
   * tcp/pop3.c: the number of messages left on the POP3 server was never

@@ -2644,11 +2644,13 @@ int main(int argc, char **argv)
 
     // create the MEMF_SHARED memory pool we use for our
     // own AllocVecPooled() allocations later on
-    if((G->SharedMemPool = AllocSysObjectTags(ASOT_MEMPOOL, ASOPOOL_MFlags,    MEMF_SHARED|MEMF_CLEAR,
-                                                            ASOPOOL_Puddle,    2048,
-                                                            ASOPOOL_Threshold, 1024,
-                                                            ASOPOOL_Name,      (ULONG)"YAM shared pool",
-                                                            TAG_DONE)) == NULL)
+    if((G->SharedMemPool = AllocSysObjectTags(ASOT_MEMPOOL,
+      ASOPOOL_MFlags,    MEMF_SHARED|MEMF_CLEAR,
+      ASOPOOL_Puddle,    2048,
+      ASOPOOL_Threshold, 1024,
+      ASOPOOL_Name,      (ULONG)"YAM shared pool",
+      ASOPOOL_LockMem,   FALSE,
+      TAG_DONE)) == NULL)
     {
       // break out immediately to signal an error!
       break;
