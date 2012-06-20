@@ -54,6 +54,7 @@
 #include <proto/wb.h>
 
 #include "YAM.h"
+#include "YAM_write.h"
 
 #include "Locale.h"
 #include "MUIObjects.h"
@@ -68,6 +69,7 @@ struct Data
   struct DiskObject *diskObject;
   struct DiskObject *drawDiskObject;
   struct Part *mailPart;
+  struct Attach *attachment;
 
   struct BitMap *normalBitMap;
   struct BitMap *selectedBitMap;
@@ -253,14 +255,25 @@ static void LoadImage(struct IClass *cl, Object *obj)
 
   ENTER();
 
-  if(data->mailPart != NULL)
+  if(data->mailPart != NULL || data->attachment != NULL)
   {
     struct Part *mailPart = data->mailPart;
+    struct Attach *attachment = data->attachment;
+    char *iconFile = NULL;
     struct DiskObject *diskObject = NULL;
     struct Rectangle sizeBounds;
 
     // we first make sure we have freed everything
     UnloadImage(data);
+
+    if(mailPart != NULL && isDecoded(mailPart) == TRUE && mailPart->Filename[0] != '\0')
+    {
+      iconFile = mailPart->Filename;
+    }
+     else if(attachment != NULL && attachment->FilePath[0] != '\0')
+    {
+      iconFile = attachment->FilePath;
+    }
 
     // Set up the minimum and maximum sizes for the icons to take the dirty work
     // of scaling the icon images to the required size from us.
@@ -272,13 +285,11 @@ static void LoadImage(struct IClass *cl, Object *obj)
 
     // only if we have at least icon.library >= v44 and we find deficons
     // we try to identify the file with deficons
-    if(isDecoded(mailPart) == TRUE && mailPart->Filename[0] != '\0' &&
-       LIB_VERSION_IS_AT_LEAST(IconBase, 44, 0) == TRUE && G->DefIconsAvailable == TRUE)
+    if(iconFile != NULL && LIB_VERSION_IS_AT_LEAST(IconBase, 44, 0) == TRUE && G->DefIconsAvailable == TRUE)
     {
+      D(DBF_GUI, "retrieving diskObject via DEFICONS for '%s'", iconFile);
 
-      D(DBF_GUI, "retrieving diskicon via DEFICONS for '%s'", mailPart->Filename);
-
-      diskObject = (struct DiskObject *)GetIconTags(mailPart->Filename,
+      diskObject = (struct DiskObject *)GetIconTags(iconFile,
         ICONGETA_FailIfUnavailable, FALSE,
         ICONGETA_Screen,            _screen(obj),
         ICONGETA_SizeBounds,        &sizeBounds,
@@ -286,7 +297,7 @@ static void LoadImage(struct IClass *cl, Object *obj)
 
       #if defined(DEBUG)
       if(diskObject == NULL)
-        W(DBF_GUI, "wasn't able to retrieve diskObject via DEFICONS: %ld", IoErr());
+        W(DBF_GUI, "retrieving diskObject via DEFICONS for '%s' failed, error %ld", iconFile, IoErr());
       #endif
     }
 
@@ -294,23 +305,30 @@ static void LoadImage(struct IClass *cl, Object *obj)
     // and load a default icon for a specific ContentType
     if(diskObject == NULL)
     {
+      char *contentType = NULL;
+
+      if(mailPart != NULL)
+        contentType = mailPart->ContentType;
+      else if(attachment != NULL)
+        contentType = attachment->ContentType;
+
       // with icon.library v44+ we can use GetIconTags again.
-      if(LIB_VERSION_IS_AT_LEAST(IconBase, 44, 0) == TRUE && mailPart->ContentType != NULL)
+      if(LIB_VERSION_IS_AT_LEAST(IconBase, 44, 0) == TRUE && contentType != NULL)
       {
         const char *def;
 
         // build the defaultname now
-        if(strnicmp(mailPart->ContentType, "image", 5) == 0)
+        if(strnicmp(contentType, "image", 5) == 0)
           def = "picture";
-        else if(strnicmp(mailPart->ContentType, "audio", 5) == 0)
+        else if(strnicmp(contentType, "audio", 5) == 0)
           def = "audio";
-        else if(strnicmp(mailPart->ContentType, "text", 4) == 0)
+        else if(strnicmp(contentType, "text", 4) == 0)
         {
-          if(strlen(mailPart->ContentType) > 5)
+          if(strlen(contentType) > 5)
           {
-            if(strnicmp((mailPart->ContentType)+5, "html", 4) == 0)
+            if(strnicmp((contentType)+5, "html", 4) == 0)
               def = "html";
-            else if(strnicmp((mailPart->ContentType)+5, "plain", 5) == 0)
+            else if(strnicmp((contentType)+5, "plain", 5) == 0)
               def = "ascii";
             else
               def = "text";
@@ -338,10 +356,10 @@ static void LoadImage(struct IClass *cl, Object *obj)
             ICONGETA_SizeBounds,     &sizeBounds,
             TAG_DONE);
 
-          D(DBF_GUI, "diskobject for '%s' retrieved from default WBPROJECT type", mailPart->Filename);
+          D(DBF_GUI, "diskobject for '%s' retrieved from default WBPROJECT type", iconFile);
         }
         else
-          D(DBF_GUI, "diskobject for '%s' retrieved from default '%s' type", mailPart->Filename, def);
+          D(DBF_GUI, "diskobject for '%s' retrieved from default '%s' type", iconFile, def);
       }
       else
       {
@@ -349,7 +367,7 @@ static void LoadImage(struct IClass *cl, Object *obj)
         // the attachment
         diskObject = GetDefDiskObject(WBPROJECT);
 
-        D(DBF_GUI, "diskobject for '%s' retrieved from default WBPROJECT (OS3.1) type", mailPart->Filename);
+        D(DBF_GUI, "diskobject for '%s' retrieved from default WBPROJECT (OS3.1) type", iconFile);
       }
     }
 
@@ -680,12 +698,12 @@ static void LoadImage(struct IClass *cl, Object *obj)
       }
     }
     else
-      W(DBF_GUI, "wasn't able to retrieve any diskobject for file '%s'", mailPart->Filename);
+      W(DBF_GUI, "retrieving any diskObject for file '%s' failed", iconFile);
 
     // store the diskObject in our instance data for later
     // reference
     data->diskObject = diskObject;
-    data->lastDecodedStatus = isDecoded(mailPart);
+    data->lastDecodedStatus = mailPart != NULL && isDecoded(mailPart);
   }
 
   // there is no need to fill the background if we have no mask bitmap,
@@ -720,6 +738,7 @@ OVERLOAD(OM_NEW)
       switch(tag->ti_Tag)
       {
         case ATTR(MailPart)  : data->mailPart = (struct Part *)tag->ti_Data; break;
+        case ATTR(Attachment): data->attachment = (struct Attach *)tag->ti_Data; break;
         case ATTR(MaxHeight) : data->maxHeight = (ULONG)tag->ti_Data; break;
         case ATTR(MaxWidth)  : data->maxWidth  = (ULONG)tag->ti_Data; break;
         case ATTR(Group)     : data->attachmentGroup = (Object *)tag->ti_Data; break;
@@ -754,6 +773,7 @@ OVERLOAD(OM_GET)
     case ATTR(DoubleClick) : *store = 1; return TRUE;
     case ATTR(DropPath)    : *store = (ULONG)data->dropPath;   return TRUE;
     case ATTR(MailPart)    : *store = (ULONG)data->mailPart;   return TRUE;
+    case ATTR(Attachment)  : *store = (ULONG)data->attachment; return TRUE;
     case ATTR(DiskObject)  : *store = (ULONG)data->diskObject; return TRUE;
   }
 
@@ -791,7 +811,7 @@ OVERLOAD(MUIM_Setup)
   // call the supermethod of the supercall first
   result = DoSuperMethodA(cl, obj, msg);
 
-  if(result != 0 && data->mailPart != NULL)
+  if(result != 0 && (data->mailPart != NULL || data->attachment != NULL))
   {
     // make sure to load/reload the attachment image
     LoadImage(cl, obj);
@@ -1283,6 +1303,24 @@ OVERLOAD(MUIM_CreateShortHelp)
                                                       mp->Description,
                                                       DescribeCT(mp->ContentType),
                                                       mp->ContentType,
+                                                      sizestr) == -1)
+    {
+      shortHelp = NULL;
+    }
+  }
+  else if(data->attachment != NULL)
+  {
+    struct Attach *att = data->attachment;
+    char sizestr[SIZE_DEFAULT];
+
+    FormatSize(att->Size, sizestr, sizeof(sizestr), SF_AUTO);
+
+    #warning use different string
+    if(asprintf(&shortHelp, tr(MSG_MA_MIMEPART_INFO), 0,
+                                                      att->Name,
+                                                      att->Description,
+                                                      DescribeCT(att->ContentType),
+                                                      att->ContentType,
                                                       sizestr) == -1)
     {
       shortHelp = NULL;

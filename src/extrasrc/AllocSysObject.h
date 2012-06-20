@@ -57,6 +57,7 @@
 #define ASOPOOL_Puddle      (TAG_USER + 11)
 #define ASOPOOL_Threshold   (TAG_USER + 12)
 #define ASOPOOL_Name        (TAG_USER + 13)
+#define ASOPOOL_LockMem     (TAG_USER + 14)
 
 #define ASOITEM_MFlags      (TAG_USER + 10)
 #define ASOITEM_ItemSize    (TAG_USER + 11)
