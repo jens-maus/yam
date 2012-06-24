@@ -154,7 +154,7 @@ static struct hostent *DupHostEnt(const struct hostent *hentry)
       for(i=0; hentry->h_aliases[i] != NULL; i++)
         aliascount++;
 
-      if((new_hentry->h_aliases = (char **)calloc(1, aliascount * sizeof(char*))) != NULL)
+      if((new_hentry->h_aliases = (STRPTR *)calloc(1, aliascount * sizeof(char *))) != NULL)
       {
         for(i=0; hentry->h_aliases[i] != NULL; i++)
           new_hentry->h_aliases[i] = strdup(hentry->h_aliases[i]);
@@ -171,7 +171,7 @@ static struct hostent *DupHostEnt(const struct hostent *hentry)
 
       for(i=0; hentry->h_addr_list[i] != 0; i++)
         addrcount++;
-    
+
       if((new_hentry->h_addr_list = (signed char **)calloc(1, addrcount * sizeof(char *))) != NULL)
       {
         for(i=0; hentry->h_addr_list[i] != NULL; i++)
@@ -823,10 +823,10 @@ struct hostent *GetHostByName(struct Connection *conn, const char *host)
 
               D(DBF_NET, "Host '%s':", host);
               D(DBF_NET, "  Officially: '%s'", hostaddr->h_name);
-  
+
               for(i = 0; hostaddr->h_aliases[i]; ++i)
                 D(DBF_NET, "  Alias: '%s'", hostaddr->h_aliases[i]);
-  
+
               D(DBF_NET, "  Type: '%s'", hostaddr->h_addrtype == AF_INET ? "AF_INET" : "AF_INET6");
               if(hostaddr->h_addrtype == AF_INET)
               {
@@ -890,7 +890,7 @@ int GetFQDN(struct Connection *conn, char *name, size_t namelen)
   if(name[0] != '\0')
   {
     int i;
-    static char validChars[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.-";
+    static const char validChars[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.-";
 
     validFQDN = TRUE;
     for(i=0; name[i] != '\0'; i++)
