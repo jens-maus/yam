@@ -7,6 +7,11 @@ $URL$
 
 2012-06-24 Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_UT.c, tcp/Connection.c: reworked the GetHostName() function to call
+    GetFQDN within Connection.c to always return a syntactically correct hostname
+    string (either valid hostname or IP literal string [x.x.x.x]). By having moved
+    this functionality to Connection.c it will now perform the DNS request in the
+    corresponding thread rather than always in the main thread. This closes #325.
   * tcp/Connection.c, YAM.h: fixed a potential runtime problem by duplicating
     the "struct hostent" structure that gethostbyname() returns as the documentation
     of that function mentions that static data is returned and we are potentially

@@ -123,5 +123,6 @@ int ReceiveLineFromHost(struct Connection *conn, char *vptr, const int maxlen);
 int SendToHost(struct Connection *conn, const char *ptr, const int len, const int flags);
 int SendLineToHost(struct Connection *conn, const char *vptr);
 int FlushConnection(struct Connection *conn);
+int GetFQDN(struct Connection *conn, char *name, size_t namelen);
 
 #endif /* TCP_H */

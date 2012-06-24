@@ -77,15 +77,6 @@
 #include <proto/application.h>
 #endif
 
-// include bsdsocket.h for GetHostName()
-// and make sure to NOT get global socketbase
-// definitions
-#define __NOLIBBASE__
-#define __NOGLOBALIFACE__
-#include <proto/bsdsocket.h>
-#undef __NOGLOBALIFACE__
-#undef __NOLIBBASE__
-
 #include "extrasrc.h"
 
 #include "SDI_hook.h"
@@ -5830,26 +5821,19 @@ BOOL CompareLists(const struct List *lh1, const struct List *lh2, BOOL (* compar
 int GetHostName(char *name, size_t namelen)
 {
   int result = -1;
-  struct Library *SocketBase;
-  #if defined(__amigaos4__)
-  struct SocketIFace *ISocket;
-  #endif
+  struct Connection *conn;
 
   ENTER();
 
-  // even if some clibs do have gethostname() we try to use the one
-  // of bsdsocket.library as that one might output a more appropriate
-  // guess of what the actual hostname is.
-  if((SocketBase = OpenLibrary("bsdsocket.library", 2L)) != NULL &&
-     GETINTERFACE("main", 1, ISocket, SocketBase))
+  // we create a temporary connection structure
+  // which is required to call GetFQDN()
+  if((conn = CreateConnection()) != NULL)
   {
-    if((result = gethostname(name, namelen-1)) == 0)
-      name[namelen-1] = '\0'; // gethostname() may have returned 255 chars (man page)
-    else
-      name[0] = '\0'; // gethostname() failed: pretend empty string
+    // call GetFQDN() to get a full qualified domain name (either valid hostname or
+    // [x.x.x.x] encoded string with IP.
+    result = GetFQDN(conn, name, namelen);
 
-    DROPINTERFACE(ISocket);
-    CloseLibrary(SocketBase);
+    DeleteConnection(conn);
   }
 
   RETURN(result);

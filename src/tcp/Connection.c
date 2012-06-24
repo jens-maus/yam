@@ -867,6 +867,77 @@ struct hostent *GetHostByName(struct Connection *conn, const char *host)
 }
 
 ///
+/// GetFQDN
+// function that returns either the hostname or [x.x.x.x] as the full qualified
+// domain name (FQDN) for things that have to comply to RFC 2822, etc.
+int GetFQDN(struct Connection *conn, char *name, size_t namelen)
+{
+  int result = -1;
+  BOOL validFQDN = FALSE;
+  GET_SOCKETBASE(conn);
+
+  ENTER();
+
+  if((result = gethostname(name, namelen-1)) == 0)
+    name[namelen-1] = '\0'; // gethostname() may have returned 255 chars max (cf. man page)
+  else
+    name[0] = '\0'; // gethostname() failed: pretend empty string
+
+  D(DBF_NET, "gethostname() returned: '%s'", name);
+
+  // now we have to check whether gethostname() returned a valid hostname or
+  // if there are invalid characters in it
+  if(name[0] != '\0')
+  {
+    int i;
+    static char validChars[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.-";
+
+    validFQDN = TRUE;
+    for(i=0; name[i] != '\0'; i++)
+    {
+      if(strchr(validChars, name[i]) == NULL)
+      {
+        validFQDN = FALSE;
+        break;
+      }
+    }
+
+    // if we found the hostname to be invalid (e.g. contain invalid characters)
+    // we get the IP for it and put that into brackets [x.x.x.x] instead.
+    if(validFQDN == FALSE)
+    {
+      struct hostent *hentry;
+
+      W(DBF_NET, "gethostname returned invalid hostname: '%s'", name);
+
+      if((hentry = GetHostByName(conn, name)) != NULL)
+      {
+        snprintf(name, namelen, "[%s]", Inet_NtoA(((struct in_addr *)hentry->h_addr_list[0])->s_addr));
+
+        validFQDN = TRUE;
+
+        W(DBF_NET, "using literal string '%s' instead", name);
+
+        FreeHostEnt(hentry);
+      }
+    }
+  }
+  else
+    W(DBF_NET, "gethostname() returned empty string");
+
+  // if we still have an invalid FQDN we simply insert the localhost address
+  // into the hostname string
+  if(validFQDN == FALSE)
+  {
+    strlcpy(name, "[127.0.0.1]", namelen);
+    W(DBF_NET, "using fallback string '%s' instead", name);
+  }
+
+  RETURN(result);
+  return result;
+}
+
+///
 /// ConnectToHost
 //  Creates a new connection and tries to connect to a internet service
 enum ConnectError ConnectToHost(struct Connection *conn, const char *host, const int port)

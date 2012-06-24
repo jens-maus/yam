@@ -325,7 +325,7 @@ static BOOL ConnectToSMTP(struct TransferContext *tc)
 
     // before we go on we retrieve the FQDN of the machine we are sending the
     // email from
-    GetHostName(hostName, sizeof(hostName));
+    GetFQDN(tc->conn, hostName, sizeof(hostName));
 
     // per default we flag the SMTP to be capable of an ESMTP
     // connection.
@@ -644,7 +644,7 @@ static BOOL InitSMTPAUTH(struct TransferContext *tc)
           {
             char hostName[256];
 
-            GetHostName(hostName, sizeof(hostName));
+            GetFQDN(tc->conn, hostName, sizeof(hostName));
 
             W(DBF_NET, "'realm' not found in challenge, using '%s' instead", hostName);
 
