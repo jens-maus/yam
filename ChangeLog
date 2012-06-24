@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-06-24 Jens Langner <Jens.Langner@light-speed.de>
+
+  * tcp/Connection.c, YAM.h: fixed a potential runtime problem by duplicating
+    the "struct hostent" structure that gethostbyname() returns as the documentation
+    of that function mentions that static data is returned and we are potentially
+    calling this function from several threads in parallel overwriting the return
+    host entry. Now GetHostByName() uses DupHostEnt() encapsulated by a separate
+    semaphore for locking the information. Afterwards FreeHostEnt() have to be
+    used to cleanup everything cached.
+
 2012-06-19 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.c: changed the pool creation to not lock memory pages.

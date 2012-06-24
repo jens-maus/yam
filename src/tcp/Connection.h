@@ -63,7 +63,6 @@ enum ConnectError
 struct Connection
 {
   LONG socket;                   // the socket ID returned by socket()
-  struct sockaddr_in socketAddr; // the host this connection was established to
 
   SSL_CTX *sslCtx;               // SSL context stuff
   SSL *ssl;

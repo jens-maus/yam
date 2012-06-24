@@ -100,8 +100,11 @@ BOOL InitConnections(void)
 
   ENTER();
 
-  if((G->connectionSemaphore = AllocSysObjectTags(ASOT_SEMAPHORE, TAG_DONE)) != NULL)
+  if((G->connectionSemaphore = AllocSysObjectTags(ASOT_SEMAPHORE, TAG_DONE)) != NULL &&
+     (G->hostResolveSemaphore = AllocSysObjectTags(ASOT_SEMAPHORE, TAG_DONE)) != NULL)
+  {
     success = TRUE;
+  }
 
   RETURN(success);
   return(success);
@@ -114,10 +117,105 @@ void CleanupConnections(void)
 {
   ENTER();
 
+  if(G->hostResolveSemaphore != NULL)
+  {
+    FreeSysObject(ASOT_SEMAPHORE, G->hostResolveSemaphore);
+    G->hostResolveSemaphore = NULL;
+  }
+
   if(G->connectionSemaphore != NULL)
   {
     FreeSysObject(ASOT_SEMAPHORE, G->connectionSemaphore);
     G->connectionSemaphore = NULL;
+  }
+
+  LEAVE();
+}
+
+///
+/// DupHostEnt
+// duplicates a whole hostent structure
+static struct hostent *DupHostEnt(const struct hostent *hentry)
+{
+  struct hostent *new_hentry = NULL;
+
+  ENTER();
+
+  if((new_hentry = calloc(1, sizeof(*new_hentry))) != NULL)
+  {
+    if(hentry->h_name != NULL)
+      new_hentry->h_name = strdup(hentry->h_name);
+
+    if(hentry->h_aliases != NULL)
+    {
+      int i;
+      int aliascount = 1;
+
+      for(i=0; hentry->h_aliases[i] != NULL; i++)
+        aliascount++;
+
+      if((new_hentry->h_aliases = (char **)calloc(1, aliascount * sizeof(char*))) != NULL)
+      {
+        for(i=0; hentry->h_aliases[i] != NULL; i++)
+          new_hentry->h_aliases[i] = strdup(hentry->h_aliases[i]);
+      }
+    }
+
+    new_hentry->h_addrtype = hentry->h_addrtype;
+    new_hentry->h_length = hentry->h_length;
+
+    if(hentry->h_addr_list)
+    {
+      int i;
+      int addrcount = 1;
+
+      for(i=0; hentry->h_addr_list[i] != 0; i++)
+        addrcount++;
+    
+      if((new_hentry->h_addr_list = (signed char **)calloc(1, addrcount * sizeof(char *))) != NULL)
+      {
+        for(i=0; hentry->h_addr_list[i] != NULL; i++)
+          new_hentry->h_addr_list[i] = (signed char *)strdup((char *)hentry->h_addr_list[i]);
+      }
+    }
+  }
+
+  RETURN(new_hentry);
+  return new_hentry;
+}
+
+///
+/// FreeHostEnt
+// frees a duplicated host entry
+static void FreeHostEnt(struct hostent *hentry)
+{
+  ENTER();
+
+  if(hentry != NULL)
+  {
+    if(hentry->h_name != NULL)
+      free(hentry->h_name);
+
+    if(hentry->h_aliases != NULL)
+    {
+      int i;
+
+      for(i=0; hentry->h_aliases[i] != NULL; i++)
+        free(hentry->h_aliases[i]);
+
+      free(hentry->h_aliases);
+    }
+
+    if(hentry->h_addr_list != NULL)
+    {
+      int i;
+      for(i=0; hentry->h_addr_list[i] != NULL; i++)
+        free(hentry->h_addr_list[i]);
+
+      free(hentry->h_addr_list);
+    }
+
+    free(hentry);
   }
 
   LEAVE();
@@ -661,7 +759,8 @@ BOOL ConnectionIsOnline(struct Connection *conn)
 
 ///
 /// GetHostByName
-// get a struct hostent* with timeout
+// get a struct hostent* with timeout; Note that the returned structure MUST
+// be cleaned with FreeHostEnt() afterwards.
 struct hostent *GetHostByName(struct Connection *conn, const char *host)
 {
   struct hostent *hostaddr = NULL;
@@ -693,6 +792,8 @@ struct hostent *GetHostByName(struct Connection *conn, const char *host)
     {
       if(OpenDevice(TIMERNAME, UNIT_VBLANK, (struct IORequest *)timeoutIO, 0L) == 0)
       {
+        struct hostent *hentry;
+
         // Let's start the timeout to let gethostbyname() return failure in case
         // the name could not be resolved within the given time limit.
         timeoutIO->Request.io_Command = TR_ADDREQUEST;
@@ -700,11 +801,48 @@ struct hostent *GetHostByName(struct Connection *conn, const char *host)
         timeoutIO->Time.Microseconds = 0;
         SendIO((struct IORequest *)timeoutIO);
 
+        // we have to makre sure only one task/process uses gethostbyname() at a
+        // time because it returns static data
+        ObtainSemaphore(G->hostResolveSemaphore);
+
         // this is what all the fuss is about
         // NOTE: on WinUAE this call might lock up when being called from several tasks
         // simultaneously, but since we have a timeout mechanism this will not end up
         // in a deadlock.
-        hostaddr = gethostbyname((char *)host);
+        if((hentry = gethostbyname((char *)host)) != NULL)
+        {
+          // duplicate the hostent structure as gethostbyname() references static data
+          // and thus may be overwriting it with the next call.
+          if((hostaddr = DupHostEnt(hentry)) != NULL)
+          {
+            // output some debug information in case users have problems
+            // with gethostbyname() returning incorrect things
+            #if defined(DEBUG)
+            {
+              int i;
+
+              D(DBF_NET, "Host '%s':", host);
+              D(DBF_NET, "  Officially: '%s'", hostaddr->h_name);
+  
+              for(i = 0; hostaddr->h_aliases[i]; ++i)
+                D(DBF_NET, "  Alias: '%s'", hostaddr->h_aliases[i]);
+  
+              D(DBF_NET, "  Type: '%s'", hostaddr->h_addrtype == AF_INET ? "AF_INET" : "AF_INET6");
+              if(hostaddr->h_addrtype == AF_INET)
+              {
+                for(i = 0; hostaddr->h_addr_list[i]; ++i)
+                  D(DBF_NET, "  Address: '%s'", Inet_NtoA(((struct in_addr *)hostaddr->h_addr_list[i])->s_addr));
+              }
+            }
+            #endif
+          }
+        }
+        else
+          E(DBF_NET, "gethostbyname() returned with error");
+
+        // release the semaphore as we are finished calling gethostbyname() and
+        // copied the information we needed
+        ReleaseSemaphore(G->hostResolveSemaphore);
 
         // abort the timer in case we were successful and clean up behind us
         if(CheckIO((struct IORequest *)timeoutIO) == NULL)
@@ -752,21 +890,6 @@ enum ConnectError ConnectToHost(struct Connection *conn, const char *host, const
     {
       int i;
 
-      #if defined(DEBUG)
-      D(DBF_NET, "Host '%s':", host);
-      D(DBF_NET, "  Officially: '%s'", hostaddr->h_name);
-
-      for(i = 0; hostaddr->h_aliases[i]; ++i)
-        D(DBF_NET, "  Alias: '%s'", hostaddr->h_aliases[i]);
-
-      D(DBF_NET, "  Type: '%s'", hostaddr->h_addrtype == AF_INET ? "AF_INET" : "AF_INET6");
-      if(hostaddr->h_addrtype == AF_INET)
-      {
-        for(i = 0; hostaddr->h_addr_list[i]; ++i)
-          D(DBF_NET, "  Address: '%s'", Inet_NtoA(((struct in_addr *)hostaddr->h_addr_list[i])->s_addr));
-      }
-      #endif
-
       // now we try a connection for every address we have for this host
       // because a hostname can have more than one IP in h_addr_list[]
       for(i = 0; hostaddr->h_addr_list[i]; ++i)
@@ -780,6 +903,7 @@ enum ConnectError ConnectToHost(struct Connection *conn, const char *host, const
           if(IoctlSocket(conn->socket, FIONBIO, (void *)&nonBlockingIO) != -1)
           {
             int connectIssued = 0;
+            struct sockaddr_in socketAddr; // the host this connection was established to
 
             D(DBF_NET, "host '%s', successfully set socket to non-blocking I/O", host);
 
@@ -788,12 +912,12 @@ enum ConnectError ConnectToHost(struct Connection *conn, const char *host, const
             SetSocketOpts(conn);
 
             // copy the hostaddr data in a local copy for further reference
-            memset(&conn->socketAddr, 0, sizeof(conn->socketAddr));
-            conn->socketAddr.sin_len    = sizeof(conn->socketAddr);
-            conn->socketAddr.sin_family = AF_INET;
-            conn->socketAddr.sin_port   = htons(port);
+            memset(&socketAddr, 0, sizeof(struct sockaddr_in));
+            socketAddr.sin_len    = sizeof(struct sockaddr_in);
+            socketAddr.sin_family = AF_INET;
+            socketAddr.sin_port   = htons(port);
 
-            memcpy(&conn->socketAddr.sin_addr, hostaddr->h_addr_list[i], (size_t)hostaddr->h_length);
+            memcpy(&socketAddr.sin_addr, hostaddr->h_addr_list[i], (size_t)hostaddr->h_length);
 
             D(DBF_NET, "trying TCP/IP connection to host '%s' with IP %s on port %ld", host, Inet_NtoA(((struct in_addr *)hostaddr->h_addr_list[i])->s_addr), port);
 
@@ -804,7 +928,7 @@ enum ConnectError ConnectToHost(struct Connection *conn, const char *host, const
             // a non-blocking connection this call will return immediately with -1 and
             // the errno value will be EINPROGRESS, EALREADY or EISCONN
             while(conn->error == CONNECTERR_NO_ERROR &&
-                  connect(conn->socket, (struct sockaddr *)&conn->socketAddr, sizeof(conn->socketAddr)) == -1)
+                  connect(conn->socket, (struct sockaddr *)&socketAddr, sizeof(struct sockaddr_in)) == -1)
             {
               LONG connerr = -1;
               struct TagItem tags[] =
@@ -960,6 +1084,9 @@ enum ConnectError ConnectToHost(struct Connection *conn, const char *host, const
         else
           E(DBF_NET, "connection result %ld, trying next IP of host '%s'", conn->error, host);
       }
+
+      // free the duplicate hostent structure
+      FreeHostEnt(hostaddr);
     }
     else
     {
