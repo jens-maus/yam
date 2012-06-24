@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.47 (7.6.2012)
+## version $VER: YAM.catalog 7.48 (24.6.2012)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -2725,8 +2725,8 @@ Geburtstagserinnerung
 ; Birthday Reminder
 ;
 MSG_AB_HappyBirthday
-Alles Gute zum Geburtstag.
-; Happy birthday.
+Alles Gute zum Geburtstag
+; Happy birthday
 ;
 MSG_AB_PersonAlias
 Alias (PERSON)
