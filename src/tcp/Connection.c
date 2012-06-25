@@ -26,6 +26,7 @@
 ***************************************************************************/
 
 #include <string.h>
+#include <ctype.h>
 
 #include <clib/alib_protos.h>
 #include <proto/amissl.h>
@@ -890,12 +891,13 @@ int GetFQDN(struct Connection *conn, char *name, size_t namelen)
   if(name[0] != '\0')
   {
     int i;
-    static const char validChars[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.-";
 
     validFQDN = TRUE;
     for(i=0; name[i] != '\0'; i++)
     {
-      if(strchr(validChars, name[i]) == NULL)
+      // check if name[i] is within "a-zA-Z0-9.-" or if this is an
+      // invalid character
+      if(isalnum(name[i]) == 0 && name[i] != '.' && name[i] != '-')
       {
         validFQDN = FALSE;
         break;
