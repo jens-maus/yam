@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-07-01 Jens Langner <Jens.Langner@light-speed.de>
+
+  * include: fixed the AmiSSL includes to use correct definitions of the STACK_OF()
+    macros which will be required for the upcoming SSL certificate check changes.
+
 2012-06-25 Jens Langner <Jens.Langner@light-speed.de>
 
   * tcp/Connection.c: replace use of static char variable to check for valid characters

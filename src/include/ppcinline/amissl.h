@@ -1893,7 +1893,7 @@
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define CONF_get_section(conf, section) \
-	LP2(0xb4c, STACK_OF_CONF_VALUE *, CONF_get_section, LHASH *, conf, a0, const char *, section, a1, \
+	LP2(0xb4c, STACK_OF(CONF_VALUE) *, CONF_get_section, LHASH *, conf, a0, const char *, section, a1, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define CONF_get_string(conf, group, name) \
@@ -1949,7 +1949,7 @@
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define NCONF_get_section(conf, section) \
-	LP2(0xba0, STACK_OF_CONF_VALUE *, NCONF_get_section, const CONF *, conf, a0, const char *, section, a1, \
+	LP2(0xba0, STACK_OF(CONF_VALUE) *, NCONF_get_section, const CONF *, conf, a0, const char *, section, a1, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define NCONF_get_string(conf, group, name) \
@@ -2049,7 +2049,7 @@
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define _CONF_get_section_values(conf, section) \
-	LP2(0xc36, STACK_OF_CONF_VALUE *, _CONF_get_section_values, const CONF *, conf, a0, const char *, section, a1, \
+	LP2(0xc36, STACK_OF(CONF_VALUE) *, _CONF_get_section_values, const CONF *, conf, a0, const char *, section, a1, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define _CONF_add_string(conf, section, value) \
@@ -3857,7 +3857,7 @@
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define OCSP_request_sign(req, signer, key, dgst, certs, flags) \
-	LP6(0x16ce, int, OCSP_request_sign, OCSP_REQUEST *, req, a0, X509 *, signer, a1, EVP_PKEY *, key, a2, const EVP_MD *, dgst, a3, STACK_OF_X509 *, certs, d0, unsigned long, flags, d1, \
+	LP6(0x16ce, int, OCSP_request_sign, OCSP_REQUEST *, req, a0, X509 *, signer, a1, EVP_PKEY *, key, a2, const EVP_MD *, dgst, a3, STACK_OF(X509) *, certs, d0, unsigned long, flags, d1, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define OCSP_response_status(resp) \
@@ -3893,7 +3893,7 @@
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define OCSP_request_verify(req, certs, store, flags) \
-	LP4(0x1704, int, OCSP_request_verify, OCSP_REQUEST *, req, a0, STACK_OF_X509 *, certs, a1, X509_STORE *, store, a2, unsigned long, flags, d0, \
+	LP4(0x1704, int, OCSP_request_verify, OCSP_REQUEST *, req, a0, STACK_OF(X509) *, certs, a1, X509_STORE *, store, a2, unsigned long, flags, d0, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define OCSP_parse_url(url, phost, pport, ppath, pssl) \
@@ -3941,11 +3941,11 @@
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define OCSP_basic_sign(brsp, signer, key, dgst, certs, flags) \
-	LP6(0x174c, int, OCSP_basic_sign, OCSP_BASICRESP *, brsp, a0, X509 *, signer, a1, EVP_PKEY *, key, a2, const EVP_MD *, dgst, a3, STACK_OF_X509 *, certs, d0, unsigned long, flags, d1, \
+	LP6(0x174c, int, OCSP_basic_sign, OCSP_BASICRESP *, brsp, a0, X509 *, signer, a1, EVP_PKEY *, key, a2, const EVP_MD *, dgst, a3, STACK_OF(X509) *, certs, d0, unsigned long, flags, d1, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define ASN1_STRING_encode(s, i2d, data, sk) \
-	LP4FP(0x1752, ASN1_STRING *, ASN1_STRING_encode, ASN1_STRING *, s, a0, __fpt, i2d, a1, char *, data, a2, STACK_OF_ASN1_OBJECT *, sk, a3, \
+	LP4FP(0x1752, ASN1_STRING *, ASN1_STRING_encode, ASN1_STRING *, s, a0, __fpt, i2d, a1, char *, data, a2, STACK_OF(ASN1_OBJECT) *, sk, a3, \
 	, AMISSL_BASE_NAME, int (*__fpt)(), IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define OCSP_crlID_new(url, n, tim) \
@@ -4429,7 +4429,7 @@
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define OCSP_basic_verify(bs, certs, st, flags) \
-	LP4(0x1a28, int, OCSP_basic_verify, OCSP_BASICRESP *, bs, a0, STACK_OF_X509 *, certs, a1, X509_STORE *, st, a2, unsigned long, flags, d0, \
+	LP4(0x1a28, int, OCSP_basic_verify, OCSP_BASICRESP *, bs, a0, STACK_OF(X509) *, certs, a1, X509_STORE *, st, a2, unsigned long, flags, d0, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define ERR_load_OCSP_strings() \
@@ -4465,7 +4465,7 @@
 	, AMISSL_BASE_NAME, int (*__fpt)(), IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define PEM_X509_INFO_read_bio(bp, sk, cb, u) \
-	LP4FP(0x1a5e, STACK_OF_X509_INFO *, PEM_X509_INFO_read_bio, BIO *, bp, a0, STACK_OF_X509_INFO *, sk, a1, __fpt, cb, a2, void *, u, a3, \
+	LP4FP(0x1a5e, STACK_OF(X509_INFO) *, PEM_X509_INFO_read_bio, BIO *, bp, a0, STACK_OF(X509_INFO) *, sk, a1, __fpt, cb, a2, void *, u, a3, \
 	, AMISSL_BASE_NAME, pem_password_cb * (*__fpt)(char *buf, int size, int rwflag, void *userdata), IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define PEM_X509_INFO_write_bio(bp, xi, enc, kstr, klen, cd, u) \
@@ -4713,27 +4713,27 @@
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define PKCS12_pack_p7data(sk) \
-	LP1(0x1bd2, PKCS7 *, PKCS12_pack_p7data, STACK_OF_PKCS12_SAFEBAG *, sk, a0, \
+	LP1(0x1bd2, PKCS7 *, PKCS12_pack_p7data, STACK_OF(PKCS12_SAFEBAG) *, sk, a0, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define PKCS12_unpack_p7data(p7) \
-	LP1(0x1bd8, STACK_OF_PKCS12_SAFEBAG *, PKCS12_unpack_p7data, PKCS7 *, p7, a0, \
+	LP1(0x1bd8, STACK_OF(PKCS12_SAFEBAG) *, PKCS12_unpack_p7data, PKCS7 *, p7, a0, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define PKCS12_pack_p7encdata(pbe_nid, pass, passlen, salt, saltlen, iter, bags) \
-	LP7(0x1bde, PKCS7 *, PKCS12_pack_p7encdata, LONG, pbe_nid, d0, const char *, pass, a0, LONG, passlen, d1, unsigned char *, salt, a1, LONG, saltlen, d2, LONG, iter, d3, STACK_OF_PKCS12_SAFEBAG *, bags, a2, \
+	LP7(0x1bde, PKCS7 *, PKCS12_pack_p7encdata, LONG, pbe_nid, d0, const char *, pass, a0, LONG, passlen, d1, unsigned char *, salt, a1, LONG, saltlen, d2, LONG, iter, d3, STACK_OF(PKCS12_SAFEBAG) *, bags, a2, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define PKCS12_unpack_p7encdata(p7, pass, passlen) \
-	LP3(0x1be4, STACK_OF_PKCS12_SAFEBAG *, PKCS12_unpack_p7encdata, PKCS7 *, p7, a0, const char *, pass, a1, LONG, passlen, d0, \
+	LP3(0x1be4, STACK_OF(PKCS12_SAFEBAG) *, PKCS12_unpack_p7encdata, PKCS7 *, p7, a0, const char *, pass, a1, LONG, passlen, d0, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define PKCS12_pack_authsafes(p12, safes) \
-	LP2(0x1bea, int, PKCS12_pack_authsafes, PKCS12 *, p12, a0, STACK_OF_PKCS7 *, safes, a1, \
+	LP2(0x1bea, int, PKCS12_pack_authsafes, PKCS12 *, p12, a0, STACK_OF(PKCS7) *, safes, a1, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define PKCS12_unpack_authsafes(p12) \
-	LP1(0x1bf0, STACK_OF_PKCS7 *, PKCS12_unpack_authsafes, PKCS12 *, p12, a0, \
+	LP1(0x1bf0, STACK_OF(PKCS7) *, PKCS12_unpack_authsafes, PKCS12 *, p12, a0, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define PKCS12_add_localkeyid(bag, name, namelen) \
@@ -4757,7 +4757,7 @@
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define PKCS12_get_attr_gen(attrs, attr_nid) \
-	LP2(0x1c14, ASN1_TYPE *, PKCS12_get_attr_gen, STACK_OF_X509_ATTRIBUTE *, attrs, a0, LONG, attr_nid, d0, \
+	LP2(0x1c14, ASN1_TYPE *, PKCS12_get_attr_gen, STACK_OF(X509_ATTRIBUTE) *, attrs, a0, LONG, attr_nid, d0, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define PKCS12_get_friendlyname(bag) \
@@ -4909,11 +4909,11 @@
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define PKCS12_parse(p12, pass, pkey, cert, ca) \
-	LP5(0x1cf8, int, PKCS12_parse, PKCS12 *, p12, a0, const char *, pass, a1, EVP_PKEY **, pkey, a2, X509 **, cert, a3, STACK_OF_X509 **, ca, d0, \
+	LP5(0x1cf8, int, PKCS12_parse, PKCS12 *, p12, a0, const char *, pass, a1, EVP_PKEY **, pkey, a2, X509 **, cert, a3, STACK_OF(X509) **, ca, d0, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define PKCS12_create(pass, name, pkey, cert, ca, nid_key, nid_cert, iter, mac_iter, keytype) \
-	LP10(0x1cfe, PKCS12 *, PKCS12_create, char *, pass, a0, char *, name, a1, EVP_PKEY *, pkey, a2, X509 *, cert, a3, STACK_OF_X509 *, ca, d0, LONG, nid_key, d1, LONG, nid_cert, d2, LONG, iter, d3, LONG, mac_iter, d4, LONG, keytype, d5, \
+	LP10(0x1cfe, PKCS12 *, PKCS12_create, char *, pass, a0, char *, name, a1, EVP_PKEY *, pkey, a2, X509 *, cert, a3, STACK_OF(X509) *, ca, d0, LONG, nid_key, d1, LONG, nid_cert, d2, LONG, iter, d3, LONG, mac_iter, d4, LONG, keytype, d5, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define i2d_PKCS12_bio(bp, p12) \
@@ -5217,7 +5217,7 @@
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define PKCS7_get_signer_info(p7) \
-	LP1(0x1ec6, STACK_OF_PKCS7_SIGNER_INFO *, PKCS7_get_signer_info, PKCS7 *, p7, a0, \
+	LP1(0x1ec6, STACK_OF(PKCS7_SIGNER_INFO) *, PKCS7_get_signer_info, PKCS7 *, p7, a0, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define PKCS7_add_recipient(p7, x509) \
@@ -5241,7 +5241,7 @@
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define PKCS7_digest_from_attributes(sk) \
-	LP1(0x1eea, ASN1_OCTET_STRING *, PKCS7_digest_from_attributes, STACK_OF_X509_ATTRIBUTE *, sk, a0, \
+	LP1(0x1eea, ASN1_OCTET_STRING *, PKCS7_digest_from_attributes, STACK_OF(X509_ATTRIBUTE) *, sk, a0, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define PKCS7_add_signed_attribute(p7si, nid, type, data) \
@@ -5261,27 +5261,27 @@
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define PKCS7_set_signed_attributes(p7si, sk) \
-	LP2(0x1f08, int, PKCS7_set_signed_attributes, PKCS7_SIGNER_INFO *, p7si, a0, STACK_OF_X509_ATTRIBUTE *, sk, a1, \
+	LP2(0x1f08, int, PKCS7_set_signed_attributes, PKCS7_SIGNER_INFO *, p7si, a0, STACK_OF(X509_ATTRIBUTE) *, sk, a1, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define PKCS7_set_attributes(p7si, sk) \
-	LP2(0x1f0e, int, PKCS7_set_attributes, PKCS7_SIGNER_INFO *, p7si, a0, STACK_OF_X509_ATTRIBUTE *, sk, a1, \
+	LP2(0x1f0e, int, PKCS7_set_attributes, PKCS7_SIGNER_INFO *, p7si, a0, STACK_OF(X509_ATTRIBUTE) *, sk, a1, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define PKCS7_sign(signcert, pkey, certs, data, flags) \
-	LP5(0x1f14, PKCS7 *, PKCS7_sign, X509 *, signcert, a0, EVP_PKEY *, pkey, a1, STACK_OF_X509 *, certs, a2, BIO *, data, a3, LONG, flags, d0, \
+	LP5(0x1f14, PKCS7 *, PKCS7_sign, X509 *, signcert, a0, EVP_PKEY *, pkey, a1, STACK_OF(X509) *, certs, a2, BIO *, data, a3, LONG, flags, d0, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define PKCS7_verify(p7, certs, store, indata, out, flags) \
-	LP6(0x1f1a, int, PKCS7_verify, PKCS7 *, p7, a0, STACK_OF_X509 *, certs, a1, X509_STORE *, store, a2, BIO *, indata, a3, BIO *, out, d0, LONG, flags, d1, \
+	LP6(0x1f1a, int, PKCS7_verify, PKCS7 *, p7, a0, STACK_OF(X509) *, certs, a1, X509_STORE *, store, a2, BIO *, indata, a3, BIO *, out, d0, LONG, flags, d1, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define PKCS7_get0_signers(p7, certs, flags) \
-	LP3(0x1f20, STACK_OF_X509 *, PKCS7_get0_signers, PKCS7 *, p7, a0, STACK_OF_X509 *, certs, a1, LONG, flags, d0, \
+	LP3(0x1f20, STACK_OF(X509) *, PKCS7_get0_signers, PKCS7 *, p7, a0, STACK_OF(X509) *, certs, a1, LONG, flags, d0, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define PKCS7_encrypt(certs, in, cipher, flags) \
-	LP4(0x1f26, PKCS7 *, PKCS7_encrypt, STACK_OF_X509 *, certs, a0, BIO *, in, a1, const EVP_CIPHER *, cipher, a2, LONG, flags, d0, \
+	LP4(0x1f26, PKCS7 *, PKCS7_encrypt, STACK_OF(X509) *, certs, a0, BIO *, in, a1, const EVP_CIPHER *, cipher, a2, LONG, flags, d0, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define PKCS7_decrypt(p7, pkey, cert, data, flags) \
@@ -5289,15 +5289,15 @@
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define PKCS7_add_attrib_smimecap(si, cap) \
-	LP2(0x1f32, int, PKCS7_add_attrib_smimecap, PKCS7_SIGNER_INFO *, si, a0, STACK_OF_X509_ALGOR *, cap, a1, \
+	LP2(0x1f32, int, PKCS7_add_attrib_smimecap, PKCS7_SIGNER_INFO *, si, a0, STACK_OF(X509_ALGOR) *, cap, a1, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define PKCS7_get_smimecap(si) \
-	LP1(0x1f38, STACK_OF_X509_ALGOR *, PKCS7_get_smimecap, PKCS7_SIGNER_INFO *, si, a0, \
+	LP1(0x1f38, STACK_OF(X509_ALGOR) *, PKCS7_get_smimecap, PKCS7_SIGNER_INFO *, si, a0, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define PKCS7_simple_smimecap(sk, nid, arg) \
-	LP3(0x1f3e, int, PKCS7_simple_smimecap, STACK_OF_X509_ALGOR *, sk, a0, LONG, nid, d0, LONG, arg, d1, \
+	LP3(0x1f3e, int, PKCS7_simple_smimecap, STACK_OF(X509_ALGOR) *, sk, a0, LONG, nid, d0, LONG, arg, d1, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define SMIME_write_PKCS7(bio, p7, data, flags) \
@@ -5641,15 +5641,15 @@
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define SSL_load_client_CA_file(file) \
-	LP1(0x2142, STACK_OF_X509_NAME *, SSL_load_client_CA_file, const char *, file, a0, \
+	LP1(0x2142, STACK_OF(X509_NAME) *, SSL_load_client_CA_file, const char *, file, a0, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define SSL_add_file_cert_subjects_to_stack(stackCAs, file) \
-	LP2(0x2148, int, SSL_add_file_cert_subjects_to_stack, STACK_OF_X509_NAME *, stackCAs, a0, const char *, file, a1, \
+	LP2(0x2148, int, SSL_add_file_cert_subjects_to_stack, STACK_OF(X509_NAME) *, stackCAs, a0, const char *, file, a1, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define SSL_add_dir_cert_subjects_to_stack(stackCAs, dir) \
-	LP2(0x214e, int, SSL_add_dir_cert_subjects_to_stack, STACK_OF_X509_NAME *, stackCAs, a0, const char *, dir, a1, \
+	LP2(0x214e, int, SSL_add_dir_cert_subjects_to_stack, STACK_OF(X509_NAME) *, stackCAs, a0, const char *, dir, a1, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define SSL_load_error_strings() \
@@ -5749,7 +5749,7 @@
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define SSL_get_peer_cert_chain(s) \
-	LP1(0x21e4, STACK_OF_X509 *, SSL_get_peer_cert_chain, const SSL *, s, a0, \
+	LP1(0x21e4, STACK_OF(X509) *, SSL_get_peer_cert_chain, const SSL *, s, a0, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define SSL_CTX_get_verify_mode(ctx) \
@@ -5945,7 +5945,7 @@
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define SSL_get_ciphers(s) \
-	LP1(0x230a, STACK_OF_SSL_CIPHER *, SSL_get_ciphers, const SSL *, s, a0, \
+	LP1(0x230a, STACK_OF(SSL_CIPHER) *, SSL_get_ciphers, const SSL *, s, a0, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define SSL_do_handshake(s) \
@@ -5989,19 +5989,19 @@
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define SSL_set_client_CA_list(s, name_list) \
-	LP2NR(0x234c, SSL_set_client_CA_list, SSL *, s, a0, STACK_OF_X509_NAME *, name_list, a1, \
+	LP2NR(0x234c, SSL_set_client_CA_list, SSL *, s, a0, STACK_OF(X509_NAME) *, name_list, a1, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define SSL_CTX_set_client_CA_list(ctx, name_list) \
-	LP2NR(0x2352, SSL_CTX_set_client_CA_list, SSL_CTX *, ctx, a0, STACK_OF_X509_NAME *, name_list, a1, \
+	LP2NR(0x2352, SSL_CTX_set_client_CA_list, SSL_CTX *, ctx, a0, STACK_OF(X509_NAME) *, name_list, a1, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define SSL_get_client_CA_list(s) \
-	LP1(0x2358, STACK_OF_X509_NAME *, SSL_get_client_CA_list, const SSL *, s, a0, \
+	LP1(0x2358, STACK_OF(X509_NAME) *, SSL_get_client_CA_list, const SSL *, s, a0, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define SSL_CTX_get_client_CA_list(s) \
-	LP1(0x235e, STACK_OF_X509_NAME *, SSL_CTX_get_client_CA_list, const SSL_CTX *, s, a0, \
+	LP1(0x235e, STACK_OF(X509_NAME) *, SSL_CTX_get_client_CA_list, const SSL_CTX *, s, a0, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define SSL_add_client_CA(ssl, x) \
@@ -6033,7 +6033,7 @@
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define SSL_dup_CA_list(sk) \
-	LP1(0x238e, STACK_OF_X509_NAME *, SSL_dup_CA_list, STACK_OF_X509_NAME *, sk, a0, \
+	LP1(0x238e, STACK_OF(X509_NAME) *, SSL_dup_CA_list, STACK_OF(X509_NAME) *, sk, a0, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define SSL_dup(ssl) \
@@ -6845,7 +6845,7 @@
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509_get_pubkey_parameters(pkey, chain) \
-	LP2(0x2850, int, X509_get_pubkey_parameters, EVP_PKEY *, pkey, a0, STACK_OF_X509 *, chain, a1, \
+	LP2(0x2850, int, X509_get_pubkey_parameters, EVP_PKEY *, pkey, a0, STACK_OF(X509) *, chain, a1, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define i2d_PUBKEY(a, pp) \
@@ -7393,15 +7393,15 @@
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509_REQ_get_extensions(req) \
-	LP1(0x2b86, STACK_OF_X509_EXTENSION *, X509_REQ_get_extensions, X509_REQ *, req, a0, \
+	LP1(0x2b86, STACK_OF(X509_EXTENSION) *, X509_REQ_get_extensions, X509_REQ *, req, a0, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509_REQ_add_extensions_nid(req, exts, nid) \
-	LP3(0x2b8c, int, X509_REQ_add_extensions_nid, X509_REQ *, req, a0, STACK_OF_X509_EXTENSION *, exts, a1, LONG, nid, d0, \
+	LP3(0x2b8c, int, X509_REQ_add_extensions_nid, X509_REQ *, req, a0, STACK_OF(X509_EXTENSION) *, exts, a1, LONG, nid, d0, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509_REQ_add_extensions(req, exts) \
-	LP2(0x2b92, int, X509_REQ_add_extensions, X509_REQ *, req, a0, STACK_OF_X509_EXTENSION *, exts, a1, \
+	LP2(0x2b92, int, X509_REQ_add_extensions, X509_REQ *, req, a0, STACK_OF(X509_EXTENSION) *, exts, a1, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509_REQ_get_attr_count(req) \
@@ -7621,31 +7621,31 @@
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509v3_get_ext_count(x) \
-	LP1(0x2cdc, int, X509v3_get_ext_count, const STACK_OF_X509_EXTENSION *, x, a0, \
+	LP1(0x2cdc, int, X509v3_get_ext_count, const STACK_OF(X509_EXTENSION) *, x, a0, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509v3_get_ext_by_NID(x, nid, lastpos) \
-	LP3(0x2ce2, int, X509v3_get_ext_by_NID, const STACK_OF_X509_EXTENSION *, x, a0, LONG, nid, d0, LONG, lastpos, d1, \
+	LP3(0x2ce2, int, X509v3_get_ext_by_NID, const STACK_OF(X509_EXTENSION) *, x, a0, LONG, nid, d0, LONG, lastpos, d1, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509v3_get_ext_by_OBJ(x, obj, lastpos) \
-	LP3(0x2ce8, int, X509v3_get_ext_by_OBJ, const STACK_OF_X509_EXTENSION *, x, a0, ASN1_OBJECT *, obj, a1, LONG, lastpos, d0, \
+	LP3(0x2ce8, int, X509v3_get_ext_by_OBJ, const STACK_OF(X509_EXTENSION) *, x, a0, ASN1_OBJECT *, obj, a1, LONG, lastpos, d0, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509v3_get_ext_by_critical(x, crit, lastpos) \
-	LP3(0x2cee, int, X509v3_get_ext_by_critical, const STACK_OF_X509_EXTENSION *, x, a0, LONG, crit, d0, LONG, lastpos, d1, \
+	LP3(0x2cee, int, X509v3_get_ext_by_critical, const STACK_OF(X509_EXTENSION) *, x, a0, LONG, crit, d0, LONG, lastpos, d1, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509v3_get_ext(x, loc) \
-	LP2(0x2cf4, X509_EXTENSION *, X509v3_get_ext, const STACK_OF_X509_EXTENSION *, x, a0, LONG, loc, d0, \
+	LP2(0x2cf4, X509_EXTENSION *, X509v3_get_ext, const STACK_OF(X509_EXTENSION) *, x, a0, LONG, loc, d0, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509v3_delete_ext(x, loc) \
-	LP2(0x2cfa, X509_EXTENSION *, X509v3_delete_ext, STACK_OF_X509_EXTENSION *, x, a0, LONG, loc, d0, \
+	LP2(0x2cfa, X509_EXTENSION *, X509v3_delete_ext, STACK_OF(X509_EXTENSION) *, x, a0, LONG, loc, d0, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509v3_add_ext(x, ex, loc) \
-	LP3(0x2d00, STACK_OF_X509_EXTENSION *, X509v3_add_ext, STACK_OF_X509_EXTENSION **, x, a0, X509_EXTENSION *, ex, a1, LONG, loc, d0, \
+	LP3(0x2d00, STACK_OF(X509_EXTENSION) *, X509v3_add_ext, STACK_OF(X509_EXTENSION) **, x, a0, X509_EXTENSION *, ex, a1, LONG, loc, d0, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509_get_ext_count(x) \
@@ -7789,39 +7789,39 @@
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509at_get_attr_count(x) \
-	LP1(0x2dd8, int, X509at_get_attr_count, const STACK_OF_X509_ATTRIBUTE *, x, a0, \
+	LP1(0x2dd8, int, X509at_get_attr_count, const STACK_OF(X509_ATTRIBUTE) *, x, a0, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509at_get_attr_by_NID(x, nid, lastpos) \
-	LP3(0x2dde, int, X509at_get_attr_by_NID, const STACK_OF_X509_ATTRIBUTE *, x, a0, LONG, nid, d0, LONG, lastpos, d1, \
+	LP3(0x2dde, int, X509at_get_attr_by_NID, const STACK_OF(X509_ATTRIBUTE) *, x, a0, LONG, nid, d0, LONG, lastpos, d1, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509at_get_attr_by_OBJ(sk, obj, lastpos) \
-	LP3(0x2de4, int, X509at_get_attr_by_OBJ, const STACK_OF_X509_ATTRIBUTE *, sk, a0, ASN1_OBJECT *, obj, a1, LONG, lastpos, d0, \
+	LP3(0x2de4, int, X509at_get_attr_by_OBJ, const STACK_OF(X509_ATTRIBUTE) *, sk, a0, ASN1_OBJECT *, obj, a1, LONG, lastpos, d0, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509at_get_attr(x, loc) \
-	LP2(0x2dea, X509_ATTRIBUTE *, X509at_get_attr, const STACK_OF_X509_ATTRIBUTE *, x, a0, LONG, loc, d0, \
+	LP2(0x2dea, X509_ATTRIBUTE *, X509at_get_attr, const STACK_OF(X509_ATTRIBUTE) *, x, a0, LONG, loc, d0, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509at_delete_attr(x, loc) \
-	LP2(0x2df0, X509_ATTRIBUTE *, X509at_delete_attr, STACK_OF_X509_ATTRIBUTE *, x, a0, LONG, loc, d0, \
+	LP2(0x2df0, X509_ATTRIBUTE *, X509at_delete_attr, STACK_OF(X509_ATTRIBUTE) *, x, a0, LONG, loc, d0, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509at_add1_attr(x, attr) \
-	LP2(0x2df6, STACK_OF_X509_ATTRIBUTE *, X509at_add1_attr, STACK_OF_X509_ATTRIBUTE **, x, a0, X509_ATTRIBUTE *, attr, a1, \
+	LP2(0x2df6, STACK_OF(X509_ATTRIBUTE) *, X509at_add1_attr, STACK_OF(X509_ATTRIBUTE) **, x, a0, X509_ATTRIBUTE *, attr, a1, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509at_add1_attr_by_OBJ(x, obj, type, bytes, len) \
-	LP5(0x2dfc, STACK_OF_X509_ATTRIBUTE *, X509at_add1_attr_by_OBJ, STACK_OF_X509_ATTRIBUTE **, x, a0, const ASN1_OBJECT *, obj, a1, LONG, type, d0, const unsigned char *, bytes, a2, LONG, len, d1, \
+	LP5(0x2dfc, STACK_OF(X509_ATTRIBUTE) *, X509at_add1_attr_by_OBJ, STACK_OF(X509_ATTRIBUTE) **, x, a0, const ASN1_OBJECT *, obj, a1, LONG, type, d0, const unsigned char *, bytes, a2, LONG, len, d1, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509at_add1_attr_by_NID(x, nid, type, bytes, len) \
-	LP5(0x2e02, STACK_OF_X509_ATTRIBUTE *, X509at_add1_attr_by_NID, STACK_OF_X509_ATTRIBUTE **, x, a0, LONG, nid, d0, LONG, type, d1, const unsigned char *, bytes, a1, LONG, len, d2, \
+	LP5(0x2e02, STACK_OF(X509_ATTRIBUTE) *, X509at_add1_attr_by_NID, STACK_OF(X509_ATTRIBUTE) **, x, a0, LONG, nid, d0, LONG, type, d1, const unsigned char *, bytes, a1, LONG, len, d2, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509at_add1_attr_by_txt(x, attrname, type, bytes, len) \
-	LP5(0x2e08, STACK_OF_X509_ATTRIBUTE *, X509at_add1_attr_by_txt, STACK_OF_X509_ATTRIBUTE **, x, a0, const char *, attrname, a1, LONG, type, d0, const unsigned char *, bytes, a2, LONG, len, d1, \
+	LP5(0x2e08, STACK_OF(X509_ATTRIBUTE) *, X509at_add1_attr_by_txt, STACK_OF(X509_ATTRIBUTE) **, x, a0, const char *, attrname, a1, LONG, type, d0, const unsigned char *, bytes, a2, LONG, len, d1, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509_ATTRIBUTE_create_by_NID(attr, nid, atrtype, data, len) \
@@ -7865,11 +7865,11 @@
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509_find_by_issuer_and_serial(sk, name, serial) \
-	LP3(0x2e4a, X509 *, X509_find_by_issuer_and_serial, STACK_OF_X509 *, sk, a0, X509_NAME *, name, a1, ASN1_INTEGER *, serial, a2, \
+	LP3(0x2e4a, X509 *, X509_find_by_issuer_and_serial, STACK_OF(X509) *, sk, a0, X509_NAME *, name, a1, ASN1_INTEGER *, serial, a2, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509_find_by_subject(sk, name) \
-	LP2(0x2e50, X509 *, X509_find_by_subject, STACK_OF_X509 *, sk, a0, X509_NAME *, name, a1, \
+	LP2(0x2e50, X509 *, X509_find_by_subject, STACK_OF(X509) *, sk, a0, X509_NAME *, name, a1, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define PBEPARAM_new() \
@@ -8017,15 +8017,15 @@
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509_OBJECT_idx_by_subject(h, type, name) \
-	LP3(0x2f2e, int, X509_OBJECT_idx_by_subject, STACK_OF_X509_OBJECT *, h, a0, LONG, type, d0, X509_NAME *, name, a1, \
+	LP3(0x2f2e, int, X509_OBJECT_idx_by_subject, STACK_OF(X509_OBJECT) *, h, a0, LONG, type, d0, X509_NAME *, name, a1, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509_OBJECT_retrieve_by_subject(h, type, name) \
-	LP3(0x2f34, X509_OBJECT *, X509_OBJECT_retrieve_by_subject, STACK_OF_X509_OBJECT *, h, a0, LONG, type, d0, X509_NAME *, name, a1, \
+	LP3(0x2f34, X509_OBJECT *, X509_OBJECT_retrieve_by_subject, STACK_OF(X509_OBJECT) *, h, a0, LONG, type, d0, X509_NAME *, name, a1, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509_OBJECT_retrieve_match(h, x) \
-	LP2(0x2f3a, X509_OBJECT *, X509_OBJECT_retrieve_match, STACK_OF_X509_OBJECT *, h, a0, X509_OBJECT *, x, a1, \
+	LP2(0x2f3a, X509_OBJECT *, X509_OBJECT_retrieve_match, STACK_OF(X509_OBJECT) *, h, a0, X509_OBJECT *, x, a1, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509_OBJECT_up_ref_count(a) \
@@ -8069,11 +8069,11 @@
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509_STORE_CTX_init(ctx, store, x509, chain) \
-	LP4(0x2f7c, int, X509_STORE_CTX_init, X509_STORE_CTX *, ctx, a0, X509_STORE *, store, a1, X509 *, x509, a2, STACK_OF_X509 *, chain, a3, \
+	LP4(0x2f7c, int, X509_STORE_CTX_init, X509_STORE_CTX *, ctx, a0, X509_STORE *, store, a1, X509 *, x509, a2, STACK_OF(X509) *, chain, a3, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509_STORE_CTX_trusted_stack(ctx, sk) \
-	LP2NR(0x2f82, X509_STORE_CTX_trusted_stack, X509_STORE_CTX *, ctx, a0, STACK_OF_X509 *, sk, a1, \
+	LP2NR(0x2f82, X509_STORE_CTX_trusted_stack, X509_STORE_CTX *, ctx, a0, STACK_OF(X509) *, sk, a1, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509_STORE_CTX_cleanup(ctx) \
@@ -8189,11 +8189,11 @@
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509_STORE_CTX_get_chain(ctx) \
-	LP1(0x3030, STACK_OF_X509 *, X509_STORE_CTX_get_chain, X509_STORE_CTX *, ctx, a0, \
+	LP1(0x3030, STACK_OF(X509) *, X509_STORE_CTX_get_chain, X509_STORE_CTX *, ctx, a0, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509_STORE_CTX_get1_chain(ctx) \
-	LP1(0x3036, STACK_OF_X509 *, X509_STORE_CTX_get1_chain, X509_STORE_CTX *, ctx, a0, \
+	LP1(0x3036, STACK_OF(X509) *, X509_STORE_CTX_get1_chain, X509_STORE_CTX *, ctx, a0, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509_STORE_CTX_set_cert(c, x) \
@@ -8201,7 +8201,7 @@
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509_STORE_CTX_set_chain(c, sk) \
-	LP2NR(0x3042, X509_STORE_CTX_set_chain, X509_STORE_CTX *, c, a0, STACK_OF_X509 *, sk, a1, \
+	LP2NR(0x3042, X509_STORE_CTX_set_chain, X509_STORE_CTX *, c, a0, STACK_OF(X509) *, sk, a1, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509_STORE_CTX_set_purpose(ctx, purpose) \
@@ -8373,7 +8373,7 @@
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define i2v_GENERAL_NAME(method, gen, ret) \
-	LP3(0x3144, STACK_OF_CONF_VALUE *, i2v_GENERAL_NAME, X509V3_EXT_METHOD *, method, a0, GENERAL_NAME *, gen, a1, STACK_OF_CONF_VALUE *, ret, a2, \
+	LP3(0x3144, STACK_OF(CONF_VALUE) *, i2v_GENERAL_NAME, X509V3_EXT_METHOD *, method, a0, GENERAL_NAME *, gen, a1, STACK_OF(CONF_VALUE) *, ret, a2, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define GENERAL_NAME_print(out, gen) \
@@ -8401,11 +8401,11 @@
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define i2v_GENERAL_NAMES(method, gen, extlist) \
-	LP3(0x316e, STACK_OF_CONF_VALUE *, i2v_GENERAL_NAMES, X509V3_EXT_METHOD *, method, a0, GENERAL_NAMES *, gen, a1, STACK_OF_CONF_VALUE *, extlist, a2, \
+	LP3(0x316e, STACK_OF(CONF_VALUE) *, i2v_GENERAL_NAMES, X509V3_EXT_METHOD *, method, a0, GENERAL_NAMES *, gen, a1, STACK_OF(CONF_VALUE) *, extlist, a2, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define v2i_GENERAL_NAMES(method, ctx, nval) \
-	LP3(0x3174, GENERAL_NAMES *, v2i_GENERAL_NAMES, X509V3_EXT_METHOD *, method, a0, X509V3_CTX *, ctx, a1, STACK_OF_CONF_VALUE *, nval, a2, \
+	LP3(0x3174, GENERAL_NAMES *, v2i_GENERAL_NAMES, X509V3_EXT_METHOD *, method, a0, X509V3_CTX *, ctx, a1, STACK_OF(CONF_VALUE) *, nval, a2, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define OTHERNAME_new() \
@@ -8697,7 +8697,7 @@
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509V3_EXT_add_nconf_sk(conf, ctx, section, sk) \
-	LP4(0x332a, int, X509V3_EXT_add_nconf_sk, CONF *, conf, a0, X509V3_CTX *, ctx, a1, char *, section, a2, STACK_OF_X509_EXTENSION **, sk, a3, \
+	LP4(0x332a, int, X509V3_EXT_add_nconf_sk, CONF *, conf, a0, X509V3_CTX *, ctx, a1, char *, section, a2, STACK_OF(X509_EXTENSION) **, sk, a3, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509V3_EXT_add_nconf(conf, ctx, section, cert) \
@@ -8733,7 +8733,7 @@
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509V3_add_value_bool_nf(name, asn1_bool, extlist) \
-	LP3(0x3360, int, X509V3_add_value_bool_nf, char *, name, a0, LONG, asn1_bool, d0, STACK_OF_CONF_VALUE **, extlist, a1, \
+	LP3(0x3360, int, X509V3_add_value_bool_nf, char *, name, a0, LONG, asn1_bool, d0, STACK_OF(CONF_VALUE) **, extlist, a1, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509V3_get_value_bool(value, asn1_bool) \
@@ -8757,7 +8757,7 @@
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509V3_get_section(ctx, section) \
-	LP2(0x3384, STACK_OF_CONF_VALUE *, X509V3_get_section, X509V3_CTX *, ctx, a0, char *, section, a1, \
+	LP2(0x3384, STACK_OF(CONF_VALUE) *, X509V3_get_section, X509V3_CTX *, ctx, a0, char *, section, a1, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509V3_string_free(ctx, str) \
@@ -8765,7 +8765,7 @@
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509V3_section_free(ctx, section) \
-	LP2NR(0x3390, X509V3_section_free, X509V3_CTX *, ctx, a0, STACK_OF_CONF_VALUE *, section, a1, \
+	LP2NR(0x3390, X509V3_section_free, X509V3_CTX *, ctx, a0, STACK_OF(CONF_VALUE) *, section, a1, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509V3_set_ctx(ctx, issuer, subject, req, crl, flags) \
@@ -8773,19 +8773,19 @@
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509V3_add_value(name, value, extlist) \
-	LP3(0x339c, int, X509V3_add_value, const char *, name, a0, const char *, value, a1, STACK_OF_CONF_VALUE **, extlist, a2, \
+	LP3(0x339c, int, X509V3_add_value, const char *, name, a0, const char *, value, a1, STACK_OF(CONF_VALUE) **, extlist, a2, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509V3_add_value_uchar(name, value, extlist) \
-	LP3(0x33a2, int, X509V3_add_value_uchar, const char *, name, a0, const unsigned char *, value, a1, STACK_OF_CONF_VALUE **, extlist, a2, \
+	LP3(0x33a2, int, X509V3_add_value_uchar, const char *, name, a0, const unsigned char *, value, a1, STACK_OF(CONF_VALUE) **, extlist, a2, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509V3_add_value_bool(name, asn1_bool, extlist) \
-	LP3(0x33a8, int, X509V3_add_value_bool, const char *, name, a0, LONG, asn1_bool, d0, STACK_OF_CONF_VALUE **, extlist, a1, \
+	LP3(0x33a8, int, X509V3_add_value_bool, const char *, name, a0, LONG, asn1_bool, d0, STACK_OF(CONF_VALUE) **, extlist, a1, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509V3_add_value_int(name, aint, extlist) \
-	LP3(0x33ae, int, X509V3_add_value_int, const char *, name, a0, ASN1_INTEGER *, aint, a1, STACK_OF_CONF_VALUE **, extlist, a2, \
+	LP3(0x33ae, int, X509V3_add_value_int, const char *, name, a0, ASN1_INTEGER *, aint, a1, STACK_OF(CONF_VALUE) **, extlist, a2, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define i2s_ASN1_INTEGER(meth, aint) \
@@ -8833,7 +8833,7 @@
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509V3_parse_list(line) \
-	LP1(0x33f6, STACK_OF_CONF_VALUE *, X509V3_parse_list, const char *, line, a0, \
+	LP1(0x33f6, STACK_OF(CONF_VALUE) *, X509V3_parse_list, const char *, line, a0, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509V3_EXT_d2i(ext) \
@@ -8841,7 +8841,7 @@
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509V3_get_d2i(x, nid, crit, idx) \
-	LP4(0x3402, void *, X509V3_get_d2i, STACK_OF_X509_EXTENSION *, x, a0, LONG, nid, d0, int *, crit, a1, int *, idx, a2, \
+	LP4(0x3402, void *, X509V3_get_d2i, STACK_OF(X509_EXTENSION) *, x, a0, LONG, nid, d0, int *, crit, a1, int *, idx, a2, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509V3_EXT_i2d(ext_nid, crit, ext_struc) \
@@ -8849,7 +8849,7 @@
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509V3_add1_i2d(x, nid, value, crit, flags) \
-	LP5(0x340e, int, X509V3_add1_i2d, STACK_OF_X509_EXTENSION **, x, a0, LONG, nid, d0, void *, value, a1, LONG, crit, d1, unsigned long, flags, d2, \
+	LP5(0x340e, int, X509V3_add1_i2d, STACK_OF(X509_EXTENSION) **, x, a0, LONG, nid, d0, void *, value, a1, LONG, crit, d1, unsigned long, flags, d2, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define hex_to_string(buffer, len) \
@@ -8865,7 +8865,7 @@
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509V3_EXT_val_prn(out, val, indent, ml) \
-	LP4NR(0x3426, X509V3_EXT_val_prn, BIO *, out, a0, STACK_OF_CONF_VALUE *, val, a1, LONG, indent, d0, LONG, ml, d1, \
+	LP4NR(0x3426, X509V3_EXT_val_prn, BIO *, out, a0, STACK_OF(CONF_VALUE) *, val, a1, LONG, indent, d0, LONG, ml, d1, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509V3_EXT_print(out, ext, flag, indent) \
@@ -8873,7 +8873,7 @@
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509V3_extensions_print(out, title, exts, flag, indent) \
-	LP5(0x3432, int, X509V3_extensions_print, BIO *, out, a0, char *, title, a1, STACK_OF_X509_EXTENSION *, exts, a2, unsigned long, flag, d0, LONG, indent, d1, \
+	LP5(0x3432, int, X509V3_extensions_print, BIO *, out, a0, char *, title, a1, STACK_OF(X509_EXTENSION) *, exts, a2, unsigned long, flag, d0, LONG, indent, d1, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
 #define X509_check_purpose(x, id, ca) \
