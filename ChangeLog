@@ -7,6 +7,13 @@ $URL$
 
 2012-07-01 Jens Langner <Jens.Langner@light-speed.de>
 
+  * Requesters.c, mui/YAMApplication.c: created a new YAMMUIRequestA() function which
+    takes the already preparsed requester text and can be called from any thread
+    without having to use PushMethodOnStackWait() directly. Now any thread could
+    directly call MUI_Request() without having to care about locking and reentrantness.
+
+2012-07-01 Jens Langner <Jens.Langner@light-speed.de>
+
   * include: fixed the AmiSSL includes to use correct definitions of the STACK_OF()
     macros which will be required for the upcoming SSL certificate check changes.
 

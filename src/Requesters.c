@@ -53,11 +53,14 @@
 #include "mui/GenericRequestWindow.h"
 #include "mui/PassphraseRequestWindow.h"
 #include "mui/StringRequestWindow.h"
+#include "mui/YAMApplication.h"
 
 #include "FolderList.h"
 #include "Locale.h"
+#include "MethodStack.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
+#include "Threads.h"
 
 #include "Debug.h"
 
@@ -69,12 +72,44 @@
 LONG YAMMUIRequest(Object *app, Object *parent, UNUSED LONG flags, const char *tit, const char *gad, const char *format, ...)
 {
   LONG result = -1;
-  char reqtxt[SIZE_LINE];
   va_list args;
+  char *reqtxt;
+
+  ENTER();
+
+  // resolve the requester txt first
+  va_start(args, format);
+  vasprintf(&reqtxt, format, args);
+  va_end(args);
+
+  // now call the YAMMUIRequestA() function which doesn't have a variable
+  // arguments list anymore.
+  result = YAMMUIRequestA(app, parent, flags, tit, gad, reqtxt);
+
+  // free the requester txt afterwards again
+  free(reqtxt);
+
+  RETURN(result);
+  return result;
+}
+
+LONG YAMMUIRequestA(Object *app, Object *parent, UNUSED LONG flags, const char *tit, const char *gad, const char *reqtxt)
+{
+  LONG result = -1;
   char *title;
   char *gadgets = NULL;
 
   ENTER();
+
+  // we make sure that every thread in YAM can call this function. If this isn't the
+  // main thread we simply push the message and wait until it returns.
+  if(IsMainThread() == FALSE)
+  {
+    result = PushMethodOnStackWait(G->App, 7, MUIM_YAMApplication_MUIRequestA, app, parent, flags, tit, gad, reqtxt);
+
+    RETURN(result);
+    return result;
+  }
 
   // as the title and gadgets are const, we provide
   // local copies of those string to not risk and .rodata
@@ -86,11 +121,6 @@ LONG YAMMUIRequest(Object *app, Object *parent, UNUSED LONG flags, const char *t
 
   if(gad != NULL)
     gadgets = strdup(gad);
-
-  // lets create the requester text
-  va_start(args, format);
-  vsnprintf(reqtxt, sizeof(reqtxt), format, args);
-  va_end(args);
 
   // if the applicationpointer is NULL we fall back to a standard requester
   if(app == NULL)
@@ -162,7 +192,7 @@ LONG YAMMUIRequest(Object *app, Object *parent, UNUSED LONG flags, const char *t
         while(TRUE);
       }
 
-     // remove & dispose the requester object
+      // remove & dispose the requester object
       DoMethod(G->App, OM_REMMEMBER, win);
       MUI_DisposeObject(win);
 

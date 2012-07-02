@@ -56,6 +56,7 @@
 #include "MailServers.h"
 #include "MUIObjects.h"
 #include "UpdateCheck.h"
+#include "Requesters.h"
 #include "Threads.h"
 
 #include "mui/AddrBookListtree.h"
@@ -1217,6 +1218,25 @@ DECLARE(Iconify)
   MA_UpdateIndexes();
 
   return 0;
+}
+
+///
+/// DECLARE(MUIRequestA)
+// call MUI requester
+DECLARE(MUIRequestA) // Object *app, Object *win, LONG flags, const char *title, const char *gadgets, const char *reqtxt
+{
+  LONG result;
+  ENTER();
+
+  result = YAMMUIRequestA(msg->app,
+                          msg->win,
+                          msg->flags,
+                          msg->title,
+                          msg->gadgets,
+                          msg->reqtxt);
+
+  RETURN(result);
+  return result;
 }
 
 ///

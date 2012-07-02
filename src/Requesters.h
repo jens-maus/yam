@@ -39,6 +39,7 @@
 #define isMultiReq(v)     (isFlagSet((v), ATTREQ_MULTI))
 
 LONG YAMMUIRequest(Object *app, Object *win, UNUSED LONG flags, const char *title, const char *gadgets, const char *format, ...);
+LONG YAMMUIRequestA(Object *app, Object *parent, UNUSED LONG flags, const char *tit, const char *gad, const char *reqtxt);
 int StringRequest(char *string, int size, const char *title, const char *body, const char *yestext, const char *alttext, const char *notext, BOOL secret, Object *parent);
 int PassphraseRequest(char *string, int size, Object *parent);
 struct Folder *FolderRequest(const char *title, const char *body, const char *yestext, const char *notext, struct Folder *exclude, Object *parent);
