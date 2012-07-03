@@ -2393,7 +2393,7 @@ struct FilterNode *CreateNewFilter(void)
 
     // and fill in the first rule as a filter can't have less than 1 rule
     // anyway
-    if(CreateNewRule(filter, FALSE) == NULL)
+    if(CreateNewRule(filter, 0) == NULL)
     {
       // creating the default rule failed, so we let this operation fail, too
       FreeSysObject(ASOT_NODE, filter);
@@ -2430,7 +2430,7 @@ void FreeFilterList(struct MinList *filterList)
 ///
 /// CreateNewRule
 //  Initializes a new filter rule
-struct RuleNode *CreateNewRule(struct FilterNode *filter, const BOOL dosPattern)
+struct RuleNode *CreateNewRule(struct FilterNode *filter, const int flags)
 {
   struct RuleNode *rule;
 
@@ -2447,9 +2447,7 @@ struct RuleNode *CreateNewRule(struct FilterNode *filter, const BOOL dosPattern)
     rule->searchMode = SM_FROM;
     rule->subSearchMode = SSM_ADDRESS;
     rule->comparison = CP_EQUAL;
-    rule->flags = 0;
-    if(dosPattern == TRUE)
-      setFlag(rule->flags, SEARCHF_DOS_PATTERN);
+    rule->flags = flags;
     rule->matchPattern[0] = '\0';
     rule->customField[0] = '\0';
 

@@ -1129,7 +1129,7 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
                   int n = atoi(q+5);
 
                   while((rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)) == NULL)
-                    CreateNewRule(lastFilter, TRUE);
+                    CreateNewRule(lastFilter, SEARCHF_DOS_PATTERN);
 
                   rule->searchMode = atoi(value);
                 }
@@ -1138,7 +1138,7 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
                   int n = atoi(q+8);
 
                   while((rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)) == NULL)
-                    CreateNewRule(lastFilter, TRUE);
+                    CreateNewRule(lastFilter, SEARCHF_DOS_PATTERN);
 
                   rule->subSearchMode = atoi(value);
                 }
@@ -1147,7 +1147,7 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
                   int n = atoi(q+11);
 
                   while((rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)) == NULL)
-                    CreateNewRule(lastFilter, TRUE);
+                    CreateNewRule(lastFilter, SEARCHF_DOS_PATTERN);
 
                   strlcpy(rule->customField, value, sizeof(rule->customField));
                 }
@@ -1156,7 +1156,7 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
                   int n = atoi(q+10);
 
                   while((rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)) == NULL)
-                    CreateNewRule(lastFilter, TRUE);
+                    CreateNewRule(lastFilter, SEARCHF_DOS_PATTERN);
 
                   rule->comparison = atoi(value);
                 }
@@ -1165,7 +1165,7 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
                   int n = atoi(q+5);
 
                   while((rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)) == NULL)
-                    CreateNewRule(lastFilter, TRUE);
+                    CreateNewRule(lastFilter, SEARCHF_DOS_PATTERN);
 
                   strlcpy(rule->matchPattern, value2, sizeof(rule->matchPattern));
                 }
@@ -1174,7 +1174,7 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
                   int n = atoi(q+8);
 
                   while((rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)) == NULL)
-                    CreateNewRule(lastFilter, TRUE);
+                    CreateNewRule(lastFilter, SEARCHF_DOS_PATTERN);
 
                   if(Txt2Bool(value) == TRUE)
                     setFlag(rule->flags, SEARCHF_CASE_SENSITIVE);
@@ -1186,7 +1186,7 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
                   int n = atoi(q+9);
 
                   while((rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)) == NULL)
-                    CreateNewRule(lastFilter, TRUE);
+                    CreateNewRule(lastFilter, SEARCHF_DOS_PATTERN);
 
                   if(Txt2Bool(value) == TRUE)
                     setFlag(rule->flags, SEARCHF_SUBSTRING);
@@ -1198,7 +1198,7 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
                   int n = atoi(q+10);
 
                   while((rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)) == NULL)
-                    CreateNewRule(lastFilter, TRUE);
+                    CreateNewRule(lastFilter, SEARCHF_DOS_PATTERN);
 
                   if(Txt2Bool(value) == TRUE)
                     setFlag(rule->flags, SEARCHF_DOS_PATTERN);
@@ -1212,7 +1212,7 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
                   // here we use n and not n-1 on purpose because the combine line
                   // refers always to the next one.
                   while((rule = GetFilterRule(lastFilter, n>0 ? n : 1)) == NULL)
-                    CreateNewRule(lastFilter, TRUE);
+                    CreateNewRule(lastFilter, SEARCHF_DOS_PATTERN);
 
                   rule->combine = atoi(value);
                 }

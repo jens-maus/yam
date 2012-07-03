@@ -196,7 +196,7 @@ BOOL CopyFilterData(struct FilterNode *dstFilter, struct FilterNode *srcFilter);
 void FreeFilterRuleList(struct FilterNode *filter);
 struct FilterNode *CreateNewFilter(void);
 void FreeFilterList(struct MinList *filterList);
-struct RuleNode *CreateNewRule(struct FilterNode *filter, const BOOL dosPattern);
+struct RuleNode *CreateNewRule(struct FilterNode *filter, const int flags);
 struct RuleNode *GetFilterRule(struct FilterNode *filter, int pos);
 BOOL DoFilterSearch(const struct FilterNode *filter, const struct Mail *mail);
 BOOL CompareFilterLists(const struct MinList *fl1, const struct MinList *fl2);
