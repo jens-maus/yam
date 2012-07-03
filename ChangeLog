@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-07-03 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_FI.c: added some debug messages to outline the different search
+    algorithms and their results.
+
 2012-07-01 Jens Langner <Jens.Langner@light-speed.de>
 
   * Requesters.c, mui/YAMApplication.c: created a new YAMMUIRequestA() function which

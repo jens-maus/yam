@@ -133,6 +133,8 @@ static BOOL FI_MatchString(const struct Search *search, const char *string)
           else
             match = (BOOL)MatchPatternNoCase(patternNode->pattern, (STRPTR)string);
 
+          D(DBF_FILTER, "did DOS pattern search of pattern '%s' against '%s', result %ld", patternNode->pattern, string, match);
+
           if(match == TRUE)
             break;
         }
@@ -140,11 +142,8 @@ static BOOL FI_MatchString(const struct Search *search, const char *string)
       else
       {
         match = (BOOL)(BoyerMooreSearch(search->bmContext, string) != NULL);
+        D(DBF_FILTER, "did Boyer-Moore substring search of '%s' in '%s', result %ld", search->bmContext->pattern, string, match);
       }
-
-      // check for non-matching search
-      if(search->Compare == 1)
-        match = !match;
     }
     break;
 
@@ -155,10 +154,7 @@ static BOOL FI_MatchString(const struct Search *search, const char *string)
         match = (BOOL)(strcmp(string, search->Match) < 0);
       else
         match = (BOOL)(Stricmp(string, search->Match) < 0);
-
-      // check for non-matching search
-      if(search->Compare == 3)
-        match = !match;
+      D(DBF_FILTER, "did string equality of '%s' against '%s', result %ld", search->Match, string, match);
     }
     break;
 
@@ -167,8 +163,11 @@ static BOOL FI_MatchString(const struct Search *search, const char *string)
       match = FALSE;
     }
     break;
-
   }
+
+  // check for non-matching search
+  if(search->Compare == 1 || search->Compare == 3)
+    match = !match;
 
   RETURN(match);
   return match;
@@ -775,14 +774,18 @@ BOOL FI_DoSearch(struct Search *search, const struct Mail *mail)
     }
     else
       searchString = SafeStr(NULL);
+
+    D(DBF_FILTER, "performing DOS pattern search for '%s'", searchString);
   }
   else if(search->bmContext != NULL)
   {
     searchString = search->bmContext->pattern;
+    D(DBF_FILTER, "performing Boyer-Moore substring search for '%s'", searchString);
   }
   else
   {
     searchString = SafeStr(NULL);
+    E(DBF_FILTER, "performing neither DOS pattern search nor Boyer-Moore substring search?!?");
   }
   #endif // DEBUG
 
