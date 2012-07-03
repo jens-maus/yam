@@ -115,9 +115,9 @@ static BOOL FI_MatchString(const struct Search *search, const char *string)
 
   switch(search->Compare)
   {
-    case 0:
-    case 1:
-    case 4:
+    case CP_EQUAL:
+    case CP_NOTEQUAL:
+    case CP_INPUT:
     {
       if(isFlagSet(search->flags, SEARCHF_DOS_PATTERN))
       {
@@ -139,35 +139,53 @@ static BOOL FI_MatchString(const struct Search *search, const char *string)
             break;
         }
       }
-      else
+      else if(isFlagSet(search->flags, SEARCHF_SUBSTRING))
       {
         match = (BOOL)(BoyerMooreSearch(search->bmContext, string) != NULL);
         D(DBF_FILTER, "did Boyer-Moore substring search of '%s' in '%s', result %ld", search->bmContext->pattern, string, match);
       }
+      else
+      {
+        if(isFlagSet(search->flags, SEARCHF_CASE_SENSITIVE))
+          match = (BOOL)(strcmp(string, search->Match) == 0);
+        else
+          match = (BOOL)(Stricmp(string, search->Match) == 0);
+        D(DBF_FILTER, "did string comparison of '%s' against '%s', result %ld", search->Match, string, match);
+	  }
+
+      // check for non-matching search
+      if(search->Compare == CP_NOTEQUAL)
+        match = !match;
     }
     break;
 
-    case 2:
-    case 3:
+    case CP_LOWER:
     {
       if(isFlagSet(search->flags, SEARCHF_CASE_SENSITIVE))
         match = (BOOL)(strcmp(string, search->Match) < 0);
       else
         match = (BOOL)(Stricmp(string, search->Match) < 0);
-      D(DBF_FILTER, "did string equality of '%s' against '%s', result %ld", search->Match, string, match);
+      D(DBF_FILTER, "did string lower comparison of '%s' against '%s', result %ld", search->Match, string, match);
+    }
+    break;
+
+    case CP_GREATER:
+    {
+      if(isFlagSet(search->flags, SEARCHF_CASE_SENSITIVE))
+        match = (BOOL)(strcmp(string, search->Match) > 0);
+      else
+        match = (BOOL)(Stricmp(string, search->Match) > 0);
+      D(DBF_FILTER, "did string greater comparison of '%s' against '%s', result %ld", search->Match, string, match);
     }
     break;
 
     default:
     {
+      E(DBF_FILTER, "unknown comparison mode %ld", search->Compare);
       match = FALSE;
     }
     break;
   }
-
-  // check for non-matching search
-  if(search->Compare == 1 || search->Compare == 3)
-    match = !match;
 
   RETURN(match);
   return match;
@@ -322,24 +340,39 @@ static BOOL FI_SearchPatternFast(const struct Search *search, const struct Mail 
 
       switch(search->Compare)
       {
-        case 0:
+        case CP_EQUAL:
+        {
           if(cmp == 0)
             found = TRUE;
+        }
         break;
 
-        case 1:
+        case CP_NOTEQUAL:
+        {
           if(cmp != 0)
             found = TRUE;
+        }
         break;
 
-        case 2:
+        case CP_LOWER:
+        {
           if(cmp > 0)
             found = TRUE;
+        }
         break;
 
-        case 3:
+        case CP_GREATER:
+        {
           if(cmp < 0)
             found = TRUE;
+        }
+        break;
+
+        case CP_INPUT:
+        {
+          // this cannot happen
+          E(DBF_FILTER, "CP_INPUT comparison for FS_DATE?");
+        }
         break;
       }
     }
@@ -352,24 +385,39 @@ static BOOL FI_SearchPatternFast(const struct Search *search, const struct Mail 
 
       switch(search->Compare)
       {
-        case 0:
+        case CP_EQUAL:
+        {
           if(cmp == 0)
             found = TRUE;
+        }
         break;
 
-        case 1:
+        case CP_NOTEQUAL:
+        {
           if(cmp != 0)
             found = TRUE;
+        }
         break;
 
-        case 2:
+        case CP_LOWER:
+        {
           if(cmp > 0)
             found = TRUE;
+        }
         break;
 
-        case 3:
+        case CP_GREATER:
+        {
           if(cmp < 0)
             found = TRUE;
+        }
+        break;
+
+        case CP_INPUT:
+        {
+          // this cannot happen
+          E(DBF_FILTER, "CP_INPUT comparison for FS_SIZE?");
+        }
         break;
       }
     }
@@ -616,7 +664,7 @@ static BOOL FI_GenerateListPatterns(struct Search *search)
 /// FI_PrepareSearch
 //  Initializes Search structure
 BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode,
-                      int persmode, int compar,
+                      int persmode, enum Comparison compare,
                       char stat, const char *match, const char *field, const int flags)
 {
   BOOL success = TRUE;
@@ -627,7 +675,7 @@ BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode,
   search->Mode       = mode;
   search->flags      = flags;
   search->PersMode   = persmode;
-  search->Compare    = compar;
+  search->Compare    = compare;
   search->Status     = stat;
   strlcpy(search->Match, match, sizeof(search->Match));
   strlcpy(search->Field, field, sizeof(search->Field));
@@ -705,7 +753,7 @@ BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode,
 
   if(success == TRUE)
   {
-    if(compar == 4)
+    if(compare == CP_INPUT)
     {
       success = FI_GenerateListPatterns(search);
     }
@@ -736,7 +784,7 @@ BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode,
           success = FALSE;
         }
       }
-      else
+      else if(isFlagSet(search->flags, SEARCHF_SUBSTRING))
       {
         // a simple substring search using the Boyer/Moore algorithm
         if((search->bmContext = BoyerMooreInit(search->Match, isFlagSet(flags, SEARCHF_CASE_SENSITIVE))) == NULL)
@@ -777,7 +825,7 @@ BOOL FI_DoSearch(struct Search *search, const struct Mail *mail)
 
     D(DBF_FILTER, "performing DOS pattern search for '%s'", searchString);
   }
-  else if(search->bmContext != NULL)
+  else if(isFlagSet(search->flags, SEARCHF_SUBSTRING) && search->bmContext != NULL)
   {
     searchString = search->bmContext->pattern;
     D(DBF_FILTER, "performing Boyer-Moore substring search for '%s'", searchString);
@@ -785,7 +833,7 @@ BOOL FI_DoSearch(struct Search *search, const struct Mail *mail)
   else
   {
     searchString = SafeStr(NULL);
-    E(DBF_FILTER, "performing neither DOS pattern search nor Boyer-Moore substring search?!?");
+    E(DBF_FILTER, "performing simple string comparison for '%s'", searchString);
   }
   #endif // DEBUG
 

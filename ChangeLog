@@ -12,6 +12,10 @@ $URL$
   * Requesters.c: check the return value of vasprintf() for failure.
   * YAM_FI.c: fixed some possible dangling pointers when doing a deep copy of a
     filter structure.
+  * YAM_FI.c: use the same enumeration values for the search structure as for
+    the rule structure which the search structure is derived from. Furthermore
+    the Boyer-Moore substring search will only be used if a substring search is
+    actually requested.
 
 2012-07-01 Jens Langner <Jens.Langner@light-speed.de>
 

@@ -116,7 +116,7 @@ struct Search
   long                 Size;
   enum SearchMode      Mode;
   int                  PersMode;
-  int                  Compare;
+  enum Comparison      Compare;
   char                 Status;  // mail status flags
   enum FastSearch      Fast;
   int                  flags;   // search flags, see above
@@ -181,7 +181,7 @@ extern struct Hook ApplyFiltersHook;
 extern const char mailStatusCycleMap[11];
 
 BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode, int persmode,
-                      int compar, char stat, const char *match, const char *field, const int flags);
+                      enum Comparison compare, char stat, const char *match, const char *field, const int flags);
 BOOL FI_DoSearch(struct Search *search, const struct Mail *mail);
 BOOL FI_FilterSingleMail(const struct MinList *filterList, struct Mail *mail, int *matches, struct FilterResult *result);
 
