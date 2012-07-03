@@ -2177,9 +2177,14 @@ BOOL CopyFilterData(struct FilterNode *dstFilter, struct FilterNode *srcFilter)
       // so start another deep copy
       if(rule->search != NULL)
       {
-        if((newRule->search = calloc(1, sizeof(struct Search))) != NULL)
+        if((newRule->search = malloc(sizeof(*newRule->search))) != NULL)
         {
           if(CopySearchData(newRule->search, rule->search) == FALSE)
+          {
+            // let the cloned search data point to the correct filter
+            newRule->search->filter = dstFilter;
+          }
+          else
           {
             success = FALSE;
             // bail out, no need to copy further data
@@ -2196,7 +2201,7 @@ BOOL CopyFilterData(struct FilterNode *dstFilter, struct FilterNode *srcFilter)
       else
         newRule->search = NULL;
 
-      // add the rule to the ruleList of our desitionation filter
+      // add the rule to the ruleList of our destination filter
       AddTail((struct List *)&dstFilter->ruleList, (struct Node *)newRule);
     }
     else
@@ -2224,6 +2229,8 @@ static BOOL CopySearchData(struct Search *dstSearch, struct Search *srcSearch)
   // raw copy all global stuff first
   memcpy(dstSearch, srcSearch, sizeof(*dstSearch));
 
+  dst->bmContext = NULL;
+
   // now we have to copy the patternList as well
   NewMinList(&dstSearch->patternList);
 
@@ -2243,9 +2250,6 @@ static BOOL CopySearchData(struct Search *dstSearch, struct Search *srcSearch)
       break;
     }
   }
-
-  // no need to handle srcSearch->bmContext as this will be allocation when
-  // performing the actual search
 
   RETURN(success);
   return success;
