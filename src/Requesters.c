@@ -139,9 +139,9 @@ LONG YAMMUIRequestA(Object *app, Object *parent, UNUSED LONG flags, const char *
 
       ErrReq.es_StructSize   = sizeof(struct EasyStruct);
       ErrReq.es_Flags        = 0;
-      ErrReq.es_Title        = title;
-      ErrReq.es_TextFormat   = reqtxt;
-      ErrReq.es_GadgetFormat = stripped_gadgets;
+      ErrReq.es_Title        = (STRPTR)title;
+      ErrReq.es_TextFormat   = (STRPTR)reqtxt;
+      ErrReq.es_GadgetFormat = (STRPTR)stripped_gadgets;
 
       result = EasyRequestArgs(NULL, &ErrReq, NULL, NULL);
 
