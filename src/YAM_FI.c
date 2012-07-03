@@ -2229,7 +2229,7 @@ static BOOL CopySearchData(struct Search *dstSearch, struct Search *srcSearch)
   // raw copy all global stuff first
   memcpy(dstSearch, srcSearch, sizeof(*dstSearch));
 
-  dst->bmContext = NULL;
+  dstSearch->bmContext = NULL;
 
   // now we have to copy the patternList as well
   NewMinList(&dstSearch->patternList);
