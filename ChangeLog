@@ -9,6 +9,7 @@ $URL$
 
   * YAM_FI.c: added some debug messages to outline the different search
     algorithms and their results.
+  * Requesters.c: check the return value of vasprintf() for failure.
 
 2012-07-01 Jens Langner <Jens.Langner@light-speed.de>
 

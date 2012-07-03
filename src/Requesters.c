@@ -79,12 +79,13 @@ LONG YAMMUIRequest(Object *app, Object *parent, UNUSED LONG flags, const char *t
 
   // resolve the requester txt first
   va_start(args, format);
-  vasprintf(&reqtxt, format, args);
+  if(vasprintf(&reqtxt, format, args) != -1)
+  {
+    // now call the YAMMUIRequestA() function which doesn't have a variable
+    // arguments list anymore.
+    result = YAMMUIRequestA(app, parent, flags, tit, gad, reqtxt);
+  }
   va_end(args);
-
-  // now call the YAMMUIRequestA() function which doesn't have a variable
-  // arguments list anymore.
-  result = YAMMUIRequestA(app, parent, flags, tit, gad, reqtxt);
 
   // free the requester txt afterwards again
   free(reqtxt);
