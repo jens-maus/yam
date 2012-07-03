@@ -821,7 +821,7 @@ BOOL FI_DoSearch(struct Search *search, const struct Mail *mail)
       searchString = spn->pattern;
     }
     else
-      searchString = SafeStr(NULL);
+      searchString = search->Match;
 
     D(DBF_FILTER, "performing DOS pattern search for '%s'", searchString);
   }
@@ -832,8 +832,8 @@ BOOL FI_DoSearch(struct Search *search, const struct Mail *mail)
   }
   else
   {
-    searchString = SafeStr(NULL);
-    E(DBF_FILTER, "performing simple string comparison for '%s'", searchString);
+    searchString = search->Match;
+    E(DBF_FILTER, "performing simple string search for '%s'", searchString);
   }
   #endif // DEBUG
 
