@@ -7419,3 +7419,37 @@ Connections
 MSG_CO_POP_NOTIFICATION (2374//)
 Notification for new mails
 ;
+MSG_SSL_CERT_WARNING_TITLE (2375//)
+SSL Certificate Warning
+;
+MSG_SSL_CERT_WARNING_BUTTONS (2376//)
+Accept|Accept Permanently|*Reject
+;
+MSG_SSL_CERT_WARNING_INTRO (2377//)
+Error validating server certificate for '\033b%s:%d\033n':
+; HOSTNAME, PORT
+;
+MSG_SSL_CERT_WARNING_UNTRUSTED (2378//)
+- The certificate is not issued by a trusted authority. Use the\n\
+  fingerprint to validate the certificate manually.
+;
+MSG_SSL_CERT_WARNING_IDMISMATCH (2379//)
+- The certificate hostname does not match.
+;
+MSG_SSL_CERT_WARNING_NOTYETVALID (2380//)
+- The certificate is not yet valid.
+;
+MSG_SSL_CERT_WARNING_EXPIRED (2381//)
+- The certificate has expired.
+;
+MSG_SSL_CERT_WARNING_OTHER (2382//)
+- The certificate has an unknown error.
+;
+MSG_SSL_CERT_WARNING_INFO (2383//)
+Certificate information:\n\
+- Hostname: \033b%s\033n\n\
+- Valid: \033b%s\033n until \033b%s\033n\n\
+- Issuer: \033b%s\033n\n\
+- Fingerprint: \033b%s\033n
+; HOSTNAME, VALID_FROM, VALID_TO, ISSUER, FINGERPRINT
+;

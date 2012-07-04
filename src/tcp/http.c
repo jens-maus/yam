@@ -34,6 +34,7 @@
 #include "YAM_global.h"
 
 #include "Locale.h"
+#include "MailServers.h"
 #include "MethodStack.h"
 #include "Threads.h"
 
@@ -48,14 +49,14 @@ struct TransferContext
 {
   struct Connection *connection;
   Object *transferGroup;
-  int hport;
 
   int (* receiveFunc)(struct Connection *, char *, const int); // binary or text based receive function
   LONG contentLength;
 
+  struct MailServerNode server; // dummy server structure to connect via ConnectToHost()
+
   char transferGroupTitle[SIZE_DEFAULT]; // the TransferControlGroup's title
   char url[SIZE_URL];
-  char host[SIZE_HOST];
   char serverPath[SIZE_LINE];
   char requestResponse[SIZE_LINE];
   char redirectedURL[SIZE_URL];
@@ -237,19 +238,19 @@ redirected:
 
       // extract the hostname from the URL or use the proxy server
       // address if specified.
-      strlcpy(tc->host, noproxy ? tc->url : C->ProxyServer, sizeof(tc->host));
+      strlcpy(tc->server.hostname, noproxy ? tc->url : C->ProxyServer, sizeof(tc->server.hostname));
 
       // extract the port on which we connect if the
       // hostname contain an ':' separator
-      if((bufptr = strchr(tc->host, ':')) != NULL)
+      if((bufptr = strchr(tc->server.hostname, ':')) != NULL)
       {
         *bufptr++ = '\0';
-        tc->hport = atoi(bufptr);
+        tc->server.port = atoi(bufptr);
       }
       else
-        tc->hport = noproxy ? 80 : 8080;
+        tc->server.port = noproxy ? 80 : 8080;
 
-      snprintf(tc->transferGroupTitle, sizeof(tc->transferGroupTitle), tr(MSG_TR_DOWNLOADING_FROM_SERVER), tc->host);
+      snprintf(tc->transferGroupTitle, sizeof(tc->transferGroupTitle), tr(MSG_TR_DOWNLOADING_FROM_SERVER), tc->server.hostname);
 
       // create a new transfer window
       if(tc->transferGroup == NULL)
@@ -261,7 +262,7 @@ redirected:
         PushMethodOnStack(tc->transferGroup, 2, MUIM_TransferControlGroup_ShowStatus, tr(MSG_HTTP_CONNECTING_TO_SERVER));
 
         // open the TCP/IP connection to 'host' under the port 'hport'
-        if((ConnectToHost(tc->connection, tc->host, tc->hport)) == CONNECTERR_SUCCESS)
+        if(ConnectToHost(tc->connection, &tc->server) == CONNECTERR_SUCCESS)
         {
           char *serverHost;
           char *port;
@@ -274,7 +275,7 @@ redirected:
           if(noproxy == TRUE)
           {
             snprintf(tc->serverPath, sizeof(tc->serverPath), "/%s", path);
-            serverHost = tc->host;
+            serverHost = tc->server.hostname;
           }
           else if((port = strchr(tc->url, ':')) != NULL)
           {
@@ -369,7 +370,7 @@ redirected:
             ER_NewError(tr(MSG_ER_SendHTTP));
         }
         else
-          ER_NewError(tr(MSG_ER_ConnectHTTP), tc->host);
+          ER_NewError(tr(MSG_ER_ConnectHTTP), tc->server.hostname);
 
         PushMethodOnStack(tc->transferGroup, 2, MUIM_TransferControlGroup_ShowStatus, tr(MSG_HTTP_DISCONNECTING_FROM_SERVER));
         DisconnectFromHost(tc->connection);

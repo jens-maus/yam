@@ -122,6 +122,9 @@ struct MailServerNode
   char username[SIZE_USERID];            // the account ID/name
   char password[SIZE_USERID];            // the password for this account
 
+  char certFingerprint[SIZE_DEFAULT];    // the fingerprint of the SSL certificate this server uses
+  int certFailures;                      // the SSL cert failures bitmask
+
   unsigned int flags;                    // for mail server flags (MSF_#?)
 
   // mail server type specific flags

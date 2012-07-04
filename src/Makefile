@@ -624,6 +624,7 @@ MIMEOBJS = \
 
 TCPOBJS = \
 	Connection.o \
+  ssl.o \
 	pop3.o \
 	smtp.o \
 	http.o

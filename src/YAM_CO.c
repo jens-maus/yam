@@ -1789,6 +1789,9 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     co->BirthdayCheckTime.ds_Days = 0;
     co->BirthdayCheckTime.ds_Minute = 0;
     co->BirthdayCheckTime.ds_Tick = 0;
+
+    // default SSL ciphers to use
+    strlcpy(co->DefaultSSLCiphers, "ALL:!LOW:!SSLv2:!EXP:!aNULL:@STRENGTH", sizeof(co->DefaultSSLCiphers));
   }
 
   LEAVE();

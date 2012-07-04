@@ -5,18 +5,31 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
-2012-07-04  Alexandre Balaban <abalaban@free.fr>
-
-  * locale/french.ct: updated according to latest changes.
-
 2012-07-04 Jens Langner <Jens.Langner@light-speed.de>
 
+  * tcp/ssl.c, tcp/Connection.c, misc: completely reworked the SSL connection
+    handling and moved all SSL related stuff into tcp/ssl.c. Now the random number
+    seed will be checked right before creating a secure connection. Also the
+    SSL connection setup has been updated to common sense. More important, YAM
+    will now check the validity of the SSL certificate during connection according
+    to common rules. In case an SSL certificate can not be verified a warning
+    requester will be presented to the user allowing to accept the certificate
+    once, permanently or simply reject the connection attempt. By permanently
+    accepting an SSL certificate YAM will store the fingerprint and the failures
+    bitmask in the YAM configuration so that for the next connection YAM will
+    not ask the user again until the validation results are different next
+    time. By having implemented full SSL certificate verification support YAM
+    makes a big leap forward regarding connection security. This closes #131.
   * YAM_UT.c, misc: reworked all "*StrBuf*" functions for allocating and
     string copy/concatenation operations for dynamic buffers. Now the function
     calls should be more common to how, e.g., strlcpy/strlcat are defined.
     In addition, realloc() is now used instead of complately allocating a
     new memory block for every concatenation. Overall this should make the
     API for dynamic buffers a bit more nice and consistent.
+
+2012-07-04  Alexandre Balaban <abalaban@free.fr>
+
+  * locale/french.ct: updated according to latest changes.
 
 2012-07-03 Thore Böckelmann <tboeckel@gmx.de>
 

@@ -307,6 +307,8 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
       fprintf(fh, "SMTP%02d.AUTH-User         = %s\n", i, msn->username);
       fprintf(fh, "SMTP%02d.AUTH-Pass         = %s\n", i, Encrypt(msn->password));
       fprintf(fh, "SMTP%02d.AUTH-Method       = %d\n", i, MSF2SMTPAuthMethod(msn));
+      fprintf(fh, "SMTP%02d.SSLCert           = %s\n", i, msn->certFingerprint);
+      fprintf(fh, "SMTP%02d.SSLCertFailures   = %d\n", i, msn->certFailures);
 
       i++;
     }
@@ -340,6 +342,8 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
       fprintf(fh, "POP%02d.NotifyByCommand      = %s\n", i, Bool2Txt(msn->notifyByCommand));
       fprintf(fh, "POP%02d.NotifySound          = %s\n", i, msn->notifySound);
       fprintf(fh, "POP%02d.NotifyCommand        = %s\n", i, msn->notifyCommand);
+      fprintf(fh, "POP%02d.SSLCert              = %s\n", i, msn->certFingerprint);
+      fprintf(fh, "POP%02d.SSLCertFailures      = %d\n", i, msn->certFailures);
 
       i++;
     }
@@ -711,6 +715,7 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
 
     DateStamp2String(buf, sizeof(buf), &co->BirthdayCheckTime, DSS_SHORTTIME, TZC_NONE);
     fprintf(fh, "BirthdayCheckTime        = %s\n", buf);
+    fprintf(fh, "DefaultSSLCiphers        = %s\n", co->DefaultSSLCiphers);
 
     // analyze if we really didn't meet an error during the
     // numerous write operations
@@ -782,7 +787,6 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
       int globalPOP3NotifyType = -1;
       char globalPOP3NotifySound[SIZE_PATHFILE] = "";
       char globalPOP3NotifyCommand[SIZE_COMMAND] = "";
-
 
       // before we continue we actually make a version check
       // here so that in case the user tries to load
@@ -898,6 +902,8 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
                 else if(stricmp(q, "AUTH-User") == 0)            strlcpy(msn->username, value, sizeof(msn->username));
                 else if(stricmp(q, "AUTH-Pass") == 0)            strlcpy(msn->password, Decrypt(value), sizeof(msn->password));
                 else if(stricmp(q, "AUTH-Method") == 0)          setFlag(msn->flags, SMTPAuthMethod2MSF(atoi(value)));
+                else if(stricmp(q, "SSLCert") == 0)              strlcpy(msn->certFingerprint, value, sizeof(msn->certFingerprint));
+                else if(stricmp(q, "SSLCertFailures") == 0)      msn->certFailures = atoi(value);
                 else
                   W(DBF_CONFIG, "unknown '%s' SMTP config tag", q);
               }
@@ -952,6 +958,8 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
                 else if(stricmp(q, "NotifyByCommand") == 0)      msn->notifyByCommand = Txt2Bool(value);
                 else if(stricmp(q, "NotifySound") == 0)          strlcpy(msn->notifySound, value, sizeof(msn->notifySound));
                 else if(stricmp(q, "NotifyCommand") == 0)        strlcpy(msn->notifyCommand, value, sizeof(msn->notifyCommand));
+                else if(stricmp(q, "SSLCert") == 0)              strlcpy(msn->certFingerprint, value, sizeof(msn->certFingerprint));
+                else if(stricmp(q, "SSLCertFailures") == 0)      msn->certFailures = atoi(value);
                 else
                   W(DBF_CONFIG, "unknown '%s' POP config tag", q);
               }
@@ -1589,6 +1597,7 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
           else if(stricmp(buf, "ShowFilterStats") == 0)          co->ShowFilterStats = Txt2Bool(value);
           else if(stricmp(buf, "ConfirmRemoveAttachments") == 0) co->ConfirmRemoveAttachments = Txt2Bool(value);
           else if(stricmp(buf, "BirthdayCheckTime") == 0)        String2DateStamp(&co->BirthdayCheckTime, value, DSS_TIME, TZC_NONE);
+          else if(stricmp(buf, "DefaultSSLCiphers") == 0)        strlcpy(co->DefaultSSLCiphers, value, sizeof(co->DefaultSSLCiphers));
 
 /* Obsolete options (previous YAM version write them, we just read them) */
           else if(version < LATEST_CFG_VERSION)

@@ -54,6 +54,7 @@
 #include "mui/TransferControlGroup.h"
 #include "mui/YAMApplication.h"
 #include "tcp/Connection.h"
+#include "tcp/ssl.h"
 
 #include "extrasrc.h"
 #include "Debug.h"
@@ -1305,6 +1306,10 @@ BOOL SendMails(struct UserIdentityNode *uin, enum SendMailMode mode)
     {
       struct MailTransferList *transferList;
 
+      // copy a link to the mailservernode for which we created
+      // the connection
+      tc->conn->server = tc->msn;
+
       if((transferList = CreateMailTransferList()) != NULL)
       {
         ULONG totalSize = 0;
@@ -1343,23 +1348,7 @@ BOOL SendMails(struct UserIdentityNode *uin, enum SendMailMode mode)
         // just go on if we really have something
         if(transferList->count > 0)
         {
-          int port;
-          char *p;
-          char host[SIZE_HOST];
-
-          strlcpy(host, tc->msn->hostname, sizeof(host));
-
-          // If the hostname has a explicit :xxxxx port statement at the end we
-          // take this one, even if its not needed anymore.
-          if((p = strchr(host, ':')) != NULL)
-          {
-            *p = '\0';
-            port = atoi(++p);
-          }
-          else
-            port = tc->msn->port;
-
-          snprintf(tc->transferGroupTitle, sizeof(tc->transferGroupTitle), tr(MSG_TR_MailTransferTo), host);
+          snprintf(tc->transferGroupTitle, sizeof(tc->transferGroupTitle), tr(MSG_TR_MailTransferTo), msn->hostname);
 
           D(DBF_GUI, "create transfer control group");
           if((tc->transferGroup = (Object *)PushMethodOnStackWait(G->App, 6, MUIM_YAMApplication_CreateTransferGroup, CurrentThread(), tc->transferGroupTitle, tc->conn, mode == SENDMAIL_ALL_USER || mode == SENDMAIL_ACTIVE_USER, TRUE)) != NULL)
@@ -1374,10 +1363,10 @@ BOOL SendMails(struct UserIdentityNode *uin, enum SendMailMode mode)
               PushMethodOnStack(tc->transferGroup, 3, MUIM_TransferControlGroup_Start, transferList->count, totalSize);
 
               PushMethodOnStack(tc->transferGroup, 2, MUIM_TransferControlGroup_ShowStatus, tr(MSG_TR_Connecting));
-              BusyText(tr(MSG_TR_MailTransferTo), host);
+              BusyText(tr(MSG_TR_MailTransferTo), msn->hostname);
 
-              D(DBF_NET, "connecting to host '%s' port %ld", host, port);
-              if((err = ConnectToHost(tc->conn, host, port)) == CONNECTERR_SUCCESS)
+              D(DBF_NET, "connecting to host '%s' port %ld", msn->hostname, msn->port);
+              if((err = ConnectToHost(tc->conn, tc->msn)) == CONNECTERR_SUCCESS)
               {
                 BOOL connected = FALSE;
 
@@ -1436,7 +1425,7 @@ BOOL SendMails(struct UserIdentityNode *uin, enum SendMailMode mode)
                   // set the success to TRUE as everything worked out fine
                   // until here.
                   success = TRUE;
-                  AppendToLogfile(LF_VERBOSE, 41, tr(MSG_LOG_ConnectSMTP), host);
+                  AppendToLogfile(LF_VERBOSE, 41, tr(MSG_LOG_ConnectSMTP), msn->hostname);
 
                   ForEachMailTransferNode(transferList, tn)
                   {
@@ -1507,9 +1496,9 @@ BOOL SendMails(struct UserIdentityNode *uin, enum SendMailMode mode)
                   PushMethodOnStack(tc->transferGroup, 1, MUIM_TransferControlGroup_Finish);
 
                   if(tc->conn->error == CONNECTERR_NO_ERROR)
-                    AppendToLogfile(LF_NORMAL, 40, tr(MSG_LOG_Sending), transferList->count, host);
+                    AppendToLogfile(LF_NORMAL, 40, tr(MSG_LOG_Sending), transferList->count, msn->hostname);
                   else
-                    AppendToLogfile(LF_NORMAL, 40, tr(MSG_LOG_SENDING_FAILED), transferList->count, host);
+                    AppendToLogfile(LF_NORMAL, 40, tr(MSG_LOG_SENDING_FAILED), transferList->count, msn->hostname);
 
                   // now we can disconnect from the SMTP
                   // server again
@@ -1551,46 +1540,46 @@ BOOL SendMails(struct UserIdentityNode *uin, enum SendMailMode mode)
                 // a socket is already in use so we return
                 // a specific error to the user
                 case CONNECTERR_SOCKET_IN_USE:
-                  ER_NewError(tr(MSG_ER_CONNECTERR_SOCKET_IN_USE_SMTP), host);
+                  ER_NewError(tr(MSG_ER_CONNECTERR_SOCKET_IN_USE_SMTP), msn->hostname);
                 break;
 
                 // socket() execution failed
                 case CONNECTERR_NO_SOCKET:
-                  ER_NewError(tr(MSG_ER_CONNECTERR_NO_SOCKET_SMTP), host);
+                  ER_NewError(tr(MSG_ER_CONNECTERR_NO_SOCKET_SMTP), msn->hostname);
                 break;
 
                 // couldn't establish non-blocking IO
                 case CONNECTERR_NO_NONBLOCKIO:
-                  ER_NewError(tr(MSG_ER_CONNECTERR_NO_NONBLOCKIO_SMTP), host);
+                  ER_NewError(tr(MSG_ER_CONNECTERR_NO_NONBLOCKIO_SMTP), msn->hostname);
                 break;
 
                 // the specified hostname isn't valid, so
                 // lets tell the user
                 case CONNECTERR_UNKNOWN_HOST:
-                  ER_NewError(tr(MSG_ER_UNKNOWN_HOST_SMTP), host);
+                  ER_NewError(tr(MSG_ER_UNKNOWN_HOST_SMTP), msn->hostname);
                 break;
 
                 // the connection request timed out, so tell
                 // the user
                 case CONNECTERR_TIMEDOUT:
-                  ER_NewError(tr(MSG_ER_CONNECTERR_TIMEDOUT_SMTP), host);
+                  ER_NewError(tr(MSG_ER_CONNECTERR_TIMEDOUT_SMTP), msn->hostname);
                 break;
 
                 // an error occurred while checking for 8bit MIME
                 // compatibility
                 case CONNECTERR_INVALID8BIT:
-                  ER_NewError(tr(MSG_ER_NO8BITMIME_SMTP), host);
+                  ER_NewError(tr(MSG_ER_NO8BITMIME_SMTP), msn->hostname);
                 break;
 
                 // error during initialization of an SSL connection
                 case CONNECTERR_SSLFAILED:
-                  ER_NewError(tr(MSG_ER_INITTLS_SMTP), host);
+                  ER_NewError(tr(MSG_ER_INITTLS_SMTP), msn->hostname);
                 break;
 
                 // an unknown error occurred so lets show
                 // a generic error message
                 case CONNECTERR_UNKNOWN_ERROR:
-                  ER_NewError(tr(MSG_ER_CANNOT_CONNECT_SMTP), host);
+                  ER_NewError(tr(MSG_ER_CANNOT_CONNECT_SMTP), msn->hostname);
                 break;
 
                 case CONNECTERR_NO_CONNECTION:

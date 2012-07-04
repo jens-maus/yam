@@ -65,6 +65,7 @@
 #include "mui/TransferControlGroup.h"
 #include "mui/YAMApplication.h"
 #include "tcp/Connection.h"
+#include "tcp/ssl.h"
 
 #include "extrasrc.h"
 #include "Debug.h"
@@ -115,9 +116,7 @@ struct TransferContext
   char lineBuffer[SIZE_LINE];
   char windowTitle[SIZE_DEFAULT];        // the preselection window's title
   char transferGroupTitle[SIZE_DEFAULT]; // the TransferControlGroup's title
-  char host[SIZE_HOST];
   char password[SIZE_PASSWORD];
-  int port;
   ULONG flags;
   struct UIDLhash *UIDLhashTable;   // for maintaining all UIDLs
   struct MinList *remoteFilters;
@@ -231,7 +230,7 @@ static char *SendPOP3Command(struct TransferContext *tc, const enum POPCommand c
           }
         }
 
-        ER_NewError(errorMsg, tc->host, tc->msn->description, (char *)POPcmd[command], tc->pop3Buffer);
+        ER_NewError(errorMsg, tc->msn->hostname, tc->msn->description, (char *)POPcmd[command], tc->pop3Buffer);
       }
     }
   }
@@ -892,7 +891,7 @@ static int ConnectToPOP3(struct TransferContext *tc)
   BusyText(tr(MSG_TR_MailTransferFrom), tc->msn->description);
 
   // now we start our connection to the POP3 server
-  if((err = ConnectToHost(tc->connection, tc->host, tc->port)) != CONNECTERR_SUCCESS)
+  if((err = ConnectToHost(tc->connection, tc->msn)) != CONNECTERR_SUCCESS)
   {
     if(isFlagSet(tc->flags, RECEIVEF_USER))
     {
@@ -906,32 +905,32 @@ static int ConnectToPOP3(struct TransferContext *tc)
 
         // socket is already in use
         case CONNECTERR_SOCKET_IN_USE:
-          ER_NewError(tr(MSG_ER_CONNECTERR_SOCKET_IN_USE_POP3), tc->host, tc->msn->description);
+          ER_NewError(tr(MSG_ER_CONNECTERR_SOCKET_IN_USE_POP3), tc->msn->hostname, tc->msn->description);
         break;
 
         // socket() execution failed
         case CONNECTERR_NO_SOCKET:
-          ER_NewError(tr(MSG_ER_CONNECTERR_NO_SOCKET_POP3), tc->host, tc->msn->description);
+          ER_NewError(tr(MSG_ER_CONNECTERR_NO_SOCKET_POP3), tc->msn->hostname, tc->msn->description);
         break;
 
         // couldn't establish non-blocking IO
         case CONNECTERR_NO_NONBLOCKIO:
-          ER_NewError(tr(MSG_ER_CONNECTERR_NO_NONBLOCKIO_POP3), tc->host, tc->msn->description);
+          ER_NewError(tr(MSG_ER_CONNECTERR_NO_NONBLOCKIO_POP3), tc->msn->hostname, tc->msn->description);
         break;
 
         // connection request timed out
         case CONNECTERR_TIMEDOUT:
-          ER_NewError(tr(MSG_ER_CONNECTERR_TIMEDOUT_POP3), tc->host, tc->msn->description);
+          ER_NewError(tr(MSG_ER_CONNECTERR_TIMEDOUT_POP3), tc->msn->hostname, tc->msn->description);
         break;
 
         // unknown host - gethostbyname() failed
         case CONNECTERR_UNKNOWN_HOST:
-          ER_NewError(tr(MSG_ER_UNKNOWN_HOST_POP3), tc->host, tc->msn->description);
+          ER_NewError(tr(MSG_ER_UNKNOWN_HOST_POP3), tc->msn->hostname, tc->msn->description);
         break;
 
         // general connection error
         case CONNECTERR_UNKNOWN_ERROR:
-          ER_NewError(tr(MSG_ER_CANNOT_CONNECT_POP3), tc->host, tc->msn->description);
+          ER_NewError(tr(MSG_ER_CANNOT_CONNECT_POP3), tc->msn->hostname, tc->msn->description);
         break;
 
         case CONNECTERR_SSLFAILED:
@@ -977,7 +976,7 @@ static int ConnectToPOP3(struct TransferContext *tc)
       tc->useTLS = TRUE;
     else
     {
-      ER_NewError(tr(MSG_ER_INITTLS_POP3), tc->host, tc->msn->description);
+      ER_NewError(tr(MSG_ER_INITTLS_POP3), tc->msn->hostname, tc->msn->description);
       goto out;
     }
   }
@@ -1054,7 +1053,7 @@ static int ConnectToPOP3(struct TransferContext *tc)
     }
     else
     {
-      ER_NewError(tr(MSG_ER_NO_APOP), tc->host, tc->msn->description);
+      ER_NewError(tr(MSG_ER_NO_APOP), tc->msn->hostname, tc->msn->description);
       goto out;
     }
   }
@@ -1075,7 +1074,7 @@ static int ConnectToPOP3(struct TransferContext *tc)
 
   sscanf(&resp[4], "%d", &msgs);
   if(msgs != 0)
-    AppendToLogfile(LF_VERBOSE, 31, tr(MSG_LOG_CONNECT_POP3), tc->msn->username, tc->host, msgs);
+    AppendToLogfile(LF_VERBOSE, 31, tr(MSG_LOG_CONNECT_POP3), tc->msn->username, tc->msn->hostname, msgs);
 
 out:
 
@@ -1415,7 +1414,11 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
 
     // try to open the TCP/IP stack
     if((tc->connection = CreateConnection()) != NULL && ConnectionIsOnline(tc->connection) == TRUE)
-    {
+    { 
+      // copy a link to the mailservernode for which we created
+      // the connection
+      tc->connection->server = tc->msn;
+
       if((tc->transferList = CreateMailTransferList()) != NULL)
       {
         if(hasServerApplyRemoteFilters(tc->msn) == FALSE || (tc->remoteFilters = CloneFilterList(APPLY_REMOTE)) != NULL)
@@ -1438,20 +1441,6 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
 
             if(uidlOk == TRUE)
             {
-              char *p;
-
-              strlcpy(tc->host, msn->hostname, sizeof(tc->host));
-
-              // If the hostname has a explicit :xxxxx port statement at the end we
-              // take this one, even if its not needed anymore.
-              if((p = strchr(tc->host, ':')) != NULL)
-              {
-                *p = '\0';
-                tc->port = atoi(++p);
-              }
-              else
-                tc->port = msn->port;
-
               strlcpy(tc->password, msn->password, sizeof(tc->password));
 
               snprintf(tc->transferGroupTitle, sizeof(tc->transferGroupTitle), tr(MSG_TR_MailTransferFrom), msn->description);

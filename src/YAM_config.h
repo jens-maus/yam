@@ -594,6 +594,7 @@ struct Config
   char AltQuoteChar[2];
   char ThemeName[SIZE_FILE];
   char UpdateDownloadPath[SIZE_PATH];
+  char DefaultSSLCiphers[SIZE_DEFAULT];
 };
 
 extern struct Config *C;

@@ -29,6 +29,7 @@
 #include <ctype.h>
 
 #include <clib/alib_protos.h>
+
 #include <proto/amissl.h>
 #include <proto/amisslmaster.h>
 
@@ -42,6 +43,7 @@
 #undef __NOGLOBALIFACE__
 #undef __NOLIBBASE__
 
+#include <proto/dos.h>
 #include <proto/exec.h>
 #include <proto/intuition.h>
 #if defined(__amigaos3__) || defined(__MORPHOS__)
@@ -71,10 +73,13 @@
 #include "YAM_config.h"
 #include "YAM_error.h"
 
+#include "MailServers.h"
 #include "Locale.h"
+#include "Requesters.h"
 #include "Threads.h"
 
 #include "tcp/Connection.h"
+#include "tcp/ssl.h"
 
 #include "extrasrc.h"
 #include "Debug.h"
@@ -942,7 +947,7 @@ int GetFQDN(struct Connection *conn, char *name, size_t namelen)
 ///
 /// ConnectToHost
 //  Creates a new connection and tries to connect to a internet service
-enum ConnectError ConnectToHost(struct Connection *conn, const char *host, const int port)
+enum ConnectError ConnectToHost(struct Connection *conn, const struct MailServerNode *msn)
 {
   enum ConnectError error = CONNECTERR_NO_CONNECTION;
 
@@ -953,10 +958,10 @@ enum ConnectError ConnectToHost(struct Connection *conn, const char *host, const
     struct hostent *hostaddr;
     GET_SOCKETBASE(conn);
 
-    D(DBF_NET, "connecting to host '%s' port %ld", host, port);
+    D(DBF_NET, "connecting to host '%s' port %ld", msn->hostname, msn->port);
 
     // obtain the hostent from the supplied host name
-    hostaddr = GetHostByName(conn, host);
+    hostaddr = GetHostByName(conn, msn->hostname);
 
     // check for a possible abortion and a successful obtainment of the hostent
     if(conn->abort == FALSE && hostaddr != NULL)
@@ -978,7 +983,7 @@ enum ConnectError ConnectToHost(struct Connection *conn, const char *host, const
             int connectIssued = 0;
             struct sockaddr_in socketAddr; // the host this connection was established to
 
-            D(DBF_NET, "host '%s', successfully set socket to non-blocking I/O", host);
+            D(DBF_NET, "host '%s', successfully set socket to non-blocking I/O", msn->hostname);
 
             // set the socket options the user has defined
             // in the configuration
@@ -988,11 +993,11 @@ enum ConnectError ConnectToHost(struct Connection *conn, const char *host, const
             memset(&socketAddr, 0, sizeof(struct sockaddr_in));
             socketAddr.sin_len    = sizeof(struct sockaddr_in);
             socketAddr.sin_family = AF_INET;
-            socketAddr.sin_port   = htons(port);
+            socketAddr.sin_port   = htons(msn->port);
 
             memcpy(&socketAddr.sin_addr, hostaddr->h_addr_list[i], (size_t)hostaddr->h_length);
 
-            D(DBF_NET, "trying TCP/IP connection to host '%s' with IP %s on port %ld", host, Inet_NtoA(((struct in_addr *)hostaddr->h_addr_list[i])->s_addr), port);
+            D(DBF_NET, "trying TCP/IP connection to host '%s' with IP %s on port %ld", msn->hostname, Inet_NtoA(((struct in_addr *)hostaddr->h_addr_list[i])->s_addr), msn->port);
 
             // set to no error per default
             conn->error = CONNECTERR_NO_ERROR;
@@ -1045,7 +1050,7 @@ enum ConnectError ConnectToHost(struct Connection *conn, const char *host, const
                     int errval = -1;
                     socklen_t errlen = sizeof(errval);
 
-                    D(DBF_NET, "host '%s', WaitSelect() succeeded", host);
+                    D(DBF_NET, "host '%s', WaitSelect() succeeded", msn->hostname);
 
                     // normally we should not set an error code here but
                     // continue cleanly so that a second connect() will
@@ -1072,13 +1077,13 @@ enum ConnectError ConnectToHost(struct Connection *conn, const char *host, const
                   {
                     // the WaitSelect() call timed out or it received a break
                     // signal
-                    W(DBF_NET, "host '%s', WaitSelect() socket timeout reached", host);
+                    W(DBF_NET, "host '%s', WaitSelect() socket timeout reached", msn->hostname);
                     conn->error = CONNECTERR_TIMEDOUT;
                   }
                   else
                   {
                     // the rest should signal an error
-                    E(DBF_NET, "host '%s', WaitSelect() returned an error: %ld", host, connerr);
+                    E(DBF_NET, "host '%s', WaitSelect() returned an error: %ld", msn->hostname, connerr);
                     conn->error = CONNECTERR_UNKNOWN_ERROR;
                   }
                 }
@@ -1120,6 +1125,9 @@ enum ConnectError ConnectToHost(struct Connection *conn, const char *host, const
             // now we are properly connected
             conn->isConnected = TRUE;
 
+            // lets save the msn structure for later reference
+            conn->server = (struct MailServerNode *)msn;
+
             ObtainSemaphore(G->connectionSemaphore);
             G->activeConnections++;
             ReleaseSemaphore(G->connectionSemaphore);
@@ -1155,7 +1163,7 @@ enum ConnectError ConnectToHost(struct Connection *conn, const char *host, const
         else if(conn->error == CONNECTERR_SUCCESS)
           break;
         else
-          E(DBF_NET, "connection result %ld, trying next IP of host '%s'", conn->error, host);
+          E(DBF_NET, "connection result %ld, trying next IP of host '%s'", conn->error, msn->hostname);
       }
 
       // free the duplicate hostent structure
@@ -1170,7 +1178,7 @@ enum ConnectError ConnectToHost(struct Connection *conn, const char *host, const
     if(conn->error != CONNECTERR_SUCCESS)
       E(DBF_NET, "ConnectToHost() connection error: %ld", conn->error);
     else
-      D(DBF_NET, "connection to '%s:%ld' succeeded", host, port);
+      D(DBF_NET, "connection to '%s:%ld' succeeded", msn->hostname, msn->port);
 
     error = conn->error;
   }
@@ -1197,7 +1205,33 @@ void DisconnectFromHost(struct Connection *conn)
       // shut down the SSL stuff
       if(conn->ssl != NULL)
       {
-        SSL_shutdown(conn->ssl);
+        int ret;
+
+        // clear any error
+        ERR_clear_error();
+
+        // call SSL_shutdown() to shutdown the SSL connection
+        // but take care of the return values
+        if((ret = SSL_shutdown(conn->ssl)) < 0)
+          E(DBF_NET, "SSL_shutdown (1st time) returned fatal error: %d %d", ret, SSL_get_error(conn->ssl, ret));
+        else if(ret == 0)
+        {
+          D(DBF_NET, "SSL_shutdown (1st time) returned: %d %d", ret, SSL_get_error(conn->ssl, ret));
+
+          // we wait "10 ticks" before issuing the second attempt to shutdown the SSL
+          // channel. NOTE: This is required due to a problem/bug in OpenSSL versions < 0.9.8m which
+          // AmiSSLv3 is based on as the second SSL_shutdown() call should return -1 and signal
+          // that we either have to perform a SSL_read() or SSL_write() again, which it doesn't.
+          Delay(10);
+
+          // According to docs at the OpenSSL website, this means that the shutdown
+          // has not yet finished, and we must call SSL_shutdown again..
+          if((ret = SSL_shutdown(conn->ssl)) <= 0)
+            W(DBF_NET, "SSL_shutdown (2nd time) failed: %d %d", ret, SSL_get_error(conn->ssl, ret));
+          else
+            D(DBF_NET, "SSL_shutdown (2nd time) returned: %d %d", ret, SSL_get_error(conn->ssl, ret));
+        }
+
         SSL_free(conn->ssl);
         conn->ssl = NULL;
       }
@@ -1226,253 +1260,6 @@ void DisconnectFromHost(struct Connection *conn)
   }
 
   LEAVE();
-}
-
-///
-/// MakeSecureConnection
-// Initialize an SSL/TLS session
-BOOL MakeSecureConnection(struct Connection *conn)
-{
-  BOOL secure = FALSE;
-
-  ENTER();
-
-  if(conn != NULL && conn->isConnected == TRUE)
-  {
-    if(AmiSSLBase != NULL)
-    {
-      long error;
-
-      #if defined(__amigaos4__)
-      error = InitAmiSSL(AmiSSL_ISocket, conn->socketIFace, TAG_DONE);
-      #else
-      error = InitAmiSSL(AmiSSL_SocketBase, conn->socketBase, TAG_DONE);
-      #endif
-
-      SHOWVALUE(DBF_NET, error);
-      if(error == 0)
-      {
-        char tmp[24+1];
-        SSL_METHOD *method = NULL;
-
-        // lets initialize the library first and load the error strings
-        // these function don't return any serious error
-        SSL_library_init();
-        SSL_load_error_strings();
-
-        // We have to feed the random number generator first
-        D(DBF_NET, "Seeding random number generator...");
-        snprintf(tmp, sizeof(tmp), "%08lx%08lx%08lx", (unsigned long)time((time_t *)NULL), (unsigned long)FindTask(NULL), (unsigned long)rand());
-        RAND_seed(tmp, strlen(tmp));
-
-        // prepare the SSL client methods here
-        if((method = SSLv23_client_method()) != NULL)
-        {
-          // get the SSL context
-          if((conn->sslCtx = SSL_CTX_new(method)) != NULL)
-          {
-            #if 0
-            char *CAfile = NULL;
-            char *CApath = NULL;
-
-            // In future we can give the user the ability to specify his own CA locations
-            // in the application instead of using the default ones.
-            if(CAfile != NULL || CApath != NULL)
-            {
-              D(DBF_NET, "CAfile = %s, CApath = %s", SafeStr(CAfile), SafeStr(CApath));
-              if((!SSL_CTX_load_verify_locations(conn->sslCtx, CAfile, CApath)))
-              {
-                E(DBF_NET, "Error setting default verify locations!");
-                RETURN(FALSE);
-                return FALSE;
-              }
-            }
-            #endif
-
-            // set the default SSL context verify pathes
-            if(SSL_CTX_set_default_verify_paths(conn->sslCtx))
-            {
-              // set the supported cipher list
-              if((SSL_CTX_set_cipher_list(conn->sslCtx, "DEFAULT")))
-              {
-                // for now we set the SSL certificate to 'NONE' as
-                // YAM can currently not manage SSL server certificates itself
-                // and therefore must be set to not verify them... unsafe?
-                // well, I would call it "convienent" for the moment :)
-                SSL_CTX_set_verify(conn->sslCtx, SSL_VERIFY_NONE, 0);
-
-                D(DBF_NET, "Initializing TLS/SSL session...");
-
-                // check if we are ready for creating the ssl connection
-                if((conn->ssl = SSL_new(conn->sslCtx)) != NULL)
-                {
-                  // set the socket descriptor to the ssl context
-                  if(SSL_set_fd(conn->ssl, (int)conn->socket))
-                  {
-                    BOOL errorState = FALSE;
-                    int res;
-
-                    // establish the ssl connection and take care of non-blocking IO
-                    while(errorState == FALSE && (res = SSL_connect(conn->ssl)) <= 0)
-                    {
-                      int err = SSL_get_error(conn->ssl, res);
-
-                      switch(err)
-                      {
-                        case SSL_ERROR_WANT_READ:
-                        case SSL_ERROR_WANT_WRITE:
-                        {
-                          // we are using non-blocking socket IO so an SSL_ERROR_WANT_READ
-                          // signals that the SSL socket wants us to wait until data
-                          // is available and reissue the SSL_connect() command.
-                          LONG retVal;
-                          GET_SOCKETBASE(conn);
-
-                          conn->timeout.tv_sec = C->SocketTimeout;
-                          conn->timeout.tv_usec = 0;
-
-                          // now we put our socket handle into a descriptor set
-                          // we can pass on to WaitSelect()
-                          FD_ZERO(&conn->fdset);
-                          FD_SET(conn->socket, &conn->fdset);
-
-                          // depending on the SSL error (WANT_READ/WANT_WRITE)
-                          // we either do a WaitSelect() on the read or write mode
-                          // as with SSL both things can happen
-                          // see http://www.openssl.org/docs/ssl/SSL_connect.html
-                          if(err == SSL_ERROR_WANT_READ)
-                            retVal = WaitSelect(conn->socket+1, &conn->fdset, NULL, NULL, (APTR)&conn->timeout, NULL);
-                          else
-                            retVal = WaitSelect(conn->socket+1, NULL, &conn->fdset, NULL, (APTR)&conn->timeout, NULL);
-
-                          // if WaitSelect() returns 1 we successfully waited for
-                          // being able to write to the socket. So we go and do another
-                          // iteration in the while() loop as the next connect() call should
-                          // return EISCONN if the connection really succeeded.
-                          if(retVal >= 1 && FD_ISSET(conn->socket, &conn->fdset))
-                          {
-                            // everything fine
-                            continue;
-                          }
-                          else if(retVal == 0)
-                          {
-                            W(DBF_NET, "WaitSelect() socket timeout reached");
-                            errorState = TRUE;
-                          }
-                          else
-                          {
-                            // the rest should signal an error
-                            E(DBF_NET, "WaitSelect() returned error %ld", err);
-                            errorState = TRUE;
-                          }
-                        }
-                        break;
-
-                        default:
-                        {
-                          E(DBF_NET, "SSL_connect() returned error %ld", err);
-                          errorState = TRUE;
-                        }
-                        break;
-                      }
-                    }
-
-                    if(errorState == FALSE)
-                    {
-                      // everything was successfully so lets set the result
-                      // value of that function to true
-                      secure = TRUE;
-
-                      // Certificate info
-                      // only for debug reasons
-                      #if defined(DEBUG)
-                      {
-                        char *x509buf;
-                        SSL_CIPHER *cipher;
-                        X509 *server_cert;
-                        cipher = SSL_get_current_cipher(conn->ssl);
-
-                        if(cipher != NULL)
-                          D(DBF_NET, "%s connection using %s", SSL_CIPHER_get_version(cipher), SSL_get_cipher(conn->ssl));
-
-                        if((server_cert = SSL_get_peer_certificate(conn->ssl)) == NULL)
-                          E(DBF_NET, "SSL_get_peer_certificate() error!");
-
-                        D(DBF_NET, "Server public key is %ld bits", EVP_PKEY_bits(X509_get_pubkey(server_cert)));
-
-                        #define X509BUFSIZE 4096
-
-                        if((x509buf = calloc(1, X509BUFSIZE)) != NULL)
-                        {
-                          D(DBF_NET, "Server certificate:");
-
-                          if(!(X509_NAME_oneline(X509_get_subject_name(server_cert), x509buf, X509BUFSIZE)))
-                            E(DBF_NET, "X509_NAME_oneline...[subject] error!");
-
-                          D(DBF_NET, "subject: %s", x509buf);
-
-                          if(!(X509_NAME_oneline(X509_get_issuer_name(server_cert), x509buf, X509BUFSIZE)))
-                            E(DBF_NET, "X509_NAME_oneline...[issuer] error!");
-
-                          D(DBF_NET, "issuer:  %s", x509buf);
-
-                          free(x509buf);
-                        }
-
-                        if(server_cert != NULL)
-                          X509_free(server_cert);
-                      }
-                      #endif
-                    }
-                  }
-                  else
-                    E(DBF_NET, "SSL_set_fd() error, socket %ld", conn->socket);
-                }
-                else
-                  E(DBF_NET, "can't create a new SSL structure for a connection.");
-              }
-              else
-                E(DBF_NET, "SSL_CTX_set_cipher_list() error!");
-            }
-            else
-              E(DBF_NET, "error setting default verify locations!");
-          }
-          else
-            E(DBF_NET, "can't create SSL_CTX object!");
-        }
-        else
-          E(DBF_NET, "SSLv23_client_method() error!");
-      }
-      else
-      {
-        E(DBF_NET, "InitAmiSSL() failed");
-        ER_NewError(tr(MSG_ER_INITAMISSL));
-      }
-    }
-    else
-      W(DBF_NET, "AmiSSLBase == NULL");
-
-    // if we weren't ale to initialize the TLS/SSL stuff we have to clear it
-    // before leaving
-    if(secure == FALSE)
-    {
-      if(conn->sslCtx != NULL)
-      {
-        SSL_CTX_free(conn->sslCtx);
-        conn->sslCtx = NULL;
-      }
-
-      conn->ssl = NULL;
-      conn->error = CONNECTERR_SSLFAILED;
-
-      // tell the user if secure connection are impossible due to AmiSSL being unavailable
-      if(AmiSSLBase == NULL)
-        ER_NewError(tr(MSG_ER_UNUSABLEAMISSL));
-    }
-  }
-
-  RETURN(secure);
-  return secure;
 }
 
 ///

@@ -238,6 +238,8 @@ static BOOL CompareMailServerNodes(const struct Node *n1, const struct Node *n2)
      strcmp(msn1->hostname,    msn2->hostname) != 0 ||
      strcmp(msn1->username,    msn2->username) != 0 ||
      strcmp(msn1->password,    msn2->password) != 0 ||
+     strcmp(msn1->certFingerprint, msn2->certFingerprint) != 0 ||
+     msn1->certFailures   != msn2->certFailures ||
      msn1->port           != msn2->port ||
      msn1->flags          != msn2->flags)
   {

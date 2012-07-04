@@ -73,7 +73,7 @@ LONG YAMMUIRequest(Object *app, Object *parent, UNUSED LONG flags, const char *t
 {
   LONG result = -1;
   va_list args;
-  char *reqtxt;
+  char *reqtxt = NULL;
 
   ENTER();
 

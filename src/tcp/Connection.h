@@ -35,6 +35,9 @@
 #include <openssl/ssl.h>
 #include <time.h>
 
+// forward declarations
+struct MailServerNode;
+
 // general connection/transfer error enumation values
 enum ConnectError
 {
@@ -62,36 +65,39 @@ enum ConnectError
 
 struct Connection
 {
-  LONG socket;                   // the socket ID returned by socket()
+  LONG socket;                      // the socket ID returned by socket()
 
-  SSL_CTX *sslCtx;               // SSL context stuff
+  SSL_CTX *sslCtx;                  // SSL context stuff
   SSL *ssl;
+  int sslCertFailures;              // SSL certification verification error bitmask
 
-  char *receiveBuffer;           // receive buffer
-  char *receivePtr;              // current pointer into the receive buffer
-  int receiveCount;              // number of received bytes for buffered I/O
-  int receiveBufferSize;         // receive buffer size
+  char *receiveBuffer;              // receive buffer
+  char *receivePtr;                 // current pointer into the receive buffer
+  int receiveCount;                 // number of received bytes for buffered I/O
+  int receiveBufferSize;            // receive buffer size
 
-  char *sendBuffer;              // send buffer
-  char *sendPtr;                 // current pointer into the send buffer
-  int sendCount;                 // numer of bytes to by sent for buffered I/O
-  int sendBufferSize;            // send buffer size
+  char *sendBuffer;                 // send buffer
+  char *sendPtr;                    // current pointer into the send buffer
+  int sendCount;                    // numer of bytes to by sent for buffered I/O
+  int sendBufferSize;               // send buffer size
 
-  struct fd_set fdset;           // file descriptors for WaitSelect()
-  struct timeval timeout;        // timeout for WaitSelect()
+  struct fd_set fdset;              // file descriptors for WaitSelect()
+  struct timeval timeout;           // timeout for WaitSelect()
 
-  enum ConnectError error;       // error value of the last action
+  enum ConnectError error;          // error value of the last action
 
-  struct Library *socketBase;    // local instance of SocketBase
+  struct Library *socketBase;       // local instance of SocketBase
   #if defined(__amigaos4__)
-  struct SocketIFace *socketIFace;
+  struct SocketIFace *socketIFace;  // local instance of socketIFace (OS4 only)
   #endif
 
-  LONG abortSignal;              // a copy of the thread's abort signal
+  struct MailServerNode *server;    // ptr to server this connection is associated with
 
-  BOOL connectedFromMainThread;  // who created this connection?
-  BOOL isConnected;              // has ConnectToHost() been called before?
-  BOOL abort;                    // should the connection be aborted?
+  LONG abortSignal;                 // a copy of the thread's abort signal
+
+  BOOL connectedFromMainThread;     // who created this connection?
+  BOOL isConnected;                 // has ConnectToHost() been called before?
+  BOOL abort;                       // should the connection be aborted?
 };
 
 // Socket Options a user can set in .config
@@ -110,14 +116,14 @@ struct SocketOptions
   BOOL LowDelay;     // IPTOS_LOWDELAY
 };
 
+// public functions
 BOOL InitConnections(void);
 void CleanupConnections(void);
 struct Connection *CreateConnection(void);
 void DeleteConnection(struct Connection *conn);
 BOOL ConnectionIsOnline(struct Connection *conn);
-enum ConnectError ConnectToHost(struct Connection *conn, const char *host, const int port);
+enum ConnectError ConnectToHost(struct Connection *conn, const struct MailServerNode *server);
 void DisconnectFromHost(struct Connection *conn);
-BOOL MakeSecureConnection(struct Connection *conn);
 int ReceiveFromHost(struct Connection *conn, char *vptr, const int maxlen);
 int ReceiveLineFromHost(struct Connection *conn, char *vptr, const int maxlen);
 int SendToHost(struct Connection *conn, const char *ptr, const int len, const int flags);
