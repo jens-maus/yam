@@ -180,8 +180,8 @@ extern struct Hook ApplyFiltersHook;
 
 extern const char mailStatusCycleMap[11];
 
-BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode, int persmode,
-                      enum Comparison compare, char stat, const char *match, const char *field, const int flags);
+BOOL FI_PrepareSearch(struct Search *search, const enum SearchMode mode, const int persmode,
+                      const enum Comparison compare, const char stat, const char *match, const char *field, const int flags);
 BOOL FI_DoSearch(struct Search *search, const struct Mail *mail);
 BOOL FI_FilterSingleMail(const struct MinList *filterList, struct Mail *mail, int *matches, struct FilterResult *result);
 

@@ -663,9 +663,9 @@ static BOOL FI_GenerateListPatterns(struct Search *search)
 ///
 /// FI_PrepareSearch
 //  Initializes Search structure
-BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode,
-                      int persmode, enum Comparison compare,
-                      char stat, const char *match, const char *field, const int flags)
+BOOL FI_PrepareSearch(struct Search *search, const enum SearchMode mode,
+                      const int persmode, const enum Comparison compare,
+                      const char stat, const char *match, const char *field, const int flags)
 {
   BOOL success = TRUE;
 
@@ -786,10 +786,15 @@ BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode,
       }
       else if(isFlagSet(search->flags, SEARCHF_SUBSTRING))
       {
-        // a simple substring search using the Boyer/Moore algorithm
+        // do a substring search using the Boyer/Moore algorithm
         if((search->bmContext = BoyerMooreInit(search->Match, isFlagSet(flags, SEARCHF_CASE_SENSITIVE))) == NULL)
           success = FALSE;
       }
+      else
+      {
+        // do an exact string match
+        // there is nothing to prepare here
+	  }
     }
   }
 
@@ -863,15 +868,15 @@ BOOL FI_DoSearch(struct Search *search, const struct Mail *mail)
 
     case SM_HEADER:
     {
-      int oldCompare = search->Compare;
+      enum Comparison oldCompare = search->Compare;
 
       // always perform a matching search
-      search->Compare = 0;
+      search->Compare = CP_EQUAL;
       found = FI_SearchPatternInHeader(search, mail);
       search->Compare = oldCompare;
 
       // invert the result in case a non-matching search was requested
-      if(oldCompare == 1)
+      if(oldCompare == CP_NOTEQUAL)
         found = !found;
 
       if(found == TRUE)
@@ -883,15 +888,15 @@ BOOL FI_DoSearch(struct Search *search, const struct Mail *mail)
 
     case SM_BODY:
     {
-      int oldCompare = search->Compare;
+      enum Comparison oldCompare = search->Compare;
 
       // always perform a matching search
-      search->Compare = 0;
+      search->Compare = CP_EQUAL;
       found = FI_SearchPatternInBody(search, mail);
       search->Compare = oldCompare;
 
       // invert the result in case a non-matching search was requested
-      if(oldCompare == 1)
+      if(oldCompare == CP_NOTEQUAL)
         found = !found;
 
       if(found == TRUE)
@@ -903,17 +908,17 @@ BOOL FI_DoSearch(struct Search *search, const struct Mail *mail)
 
     case SM_WHOLE:
     {
-      int oldCompare = search->Compare;
+      enum Comparison oldCompare = search->Compare;
 
       // always perform a matching search
-      search->Compare = 0;
+      search->Compare = CP_EQUAL;
       found = FI_SearchPatternInHeader(search, mail);
       if(found == FALSE)
         found = FI_SearchPatternInBody(search, mail);
       search->Compare = oldCompare;
 
       // invert the result in case a non-matching search was requested
-      if(oldCompare == 1)
+      if(oldCompare == CP_NOTEQUAL)
         found = !found;
 
       if(found == TRUE)
@@ -969,7 +974,7 @@ BOOL FI_DoSearch(struct Search *search, const struct Mail *mail)
       }
 
       // invert the result in case a non-matching search was requested
-      if(search->Compare == 1)
+      if(search->Compare == CP_NOTEQUAL)
         found = !found;
 
       if(found == TRUE)
