@@ -73,9 +73,10 @@ void rx_addrresolve(UNUSED struct RexxHost *host, struct RexxParams *params, enu
   {
     case RXIF_INIT:
     {
-      params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
-      params->results = AllocVecPooled(G->SharedMemPool, sizeof(*results));
-      params->optional = AllocVecPooled(G->SharedMemPool, sizeof(*optional));
+      args = params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
+      results = params->results = AllocVecPooled(G->SharedMemPool, sizeof(*results));
+      optional = params->optional = AllocVecPooled(G->SharedMemPool, sizeof(*optional));
+      optional->string = NULL;
     }
     break;
 
@@ -94,7 +95,7 @@ void rx_addrresolve(UNUSED struct RexxHost *host, struct RexxParams *params, enu
         // did the string change?
         if(res != NULL && strcmp(args->alias, res) != 0)
         {
-          optional->string = StrBufCpy(NULL, res);
+          StrBufCpy(&optional->string, res);
           results->recpt = optional->string;
         }
         else

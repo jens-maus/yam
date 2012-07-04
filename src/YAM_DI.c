@@ -73,8 +73,10 @@ static void DI_FinishEdit(void)
       struct Dict new;
       char *edtext = (char *)DoMethod((Object *)gui->TE_EDIT, MUIM_TextEditor_ExportText);
 
-      new.Text = StrBufCpy(NULL, edtext ? edtext : "");
-      if(G->DI->OldEntry->Text) FreeStrBuf(G->DI->OldEntry->Text);
+      new.Text = NULL;
+      StrBufCpy(&new.Text, edtext ? edtext : "");
+      if(G->DI->OldEntry->Text)
+        FreeStrBuf(G->DI->OldEntry->Text);
 
       GetMUIString(new.Alias, gui->ST_ALIAS, sizeof(new.Alias));
       if(*new.Alias == '\0')
@@ -160,13 +162,13 @@ static int DI_Load(void)
             if((p = strstr(buffer, "@ENDENTRY")) != NULL)
             {
               *p = 0;
-              entry.Text = StrBufCat(entry.Text, buffer);
+              StrBufCat(&entry.Text, buffer);
               break;
             }
             else
             {
-              entry.Text = StrBufCat(entry.Text, buffer);
-              entry.Text = StrBufCat(entry.Text, "\n");
+              StrBufCat(&entry.Text, buffer);
+              StrBufCat(&entry.Text, "\n");
             }
           }
 

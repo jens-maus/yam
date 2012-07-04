@@ -132,12 +132,12 @@ void rx_addredit(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
           char **p;
 
           if(args->add && ab->Members != NULL)
-            memb = StrBufCpy(NULL, ab->Members);
+            StrBufCpy(&memb, ab->Members);
 
           for(p = args->member; *p; p++)
           {
-            memb = StrBufCat(memb, *p);
-            memb = StrBufCat(memb, "\n");
+            StrBufCat(&memb, *p);
+            StrBufCat(&memb, "\n");
           }
 
           free(ab->Members);

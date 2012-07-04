@@ -1261,10 +1261,11 @@ void MA_RemoveAttach(struct Mail *mail, struct Part **whichParts, BOOL warning)
       while(whichParts[i] != NULL)
       {
         if(whichParts[i]->CParName != NULL)
-          fileList = StrBufCat(fileList, whichParts[i]->CParName);
+          StrBufCat(&fileList, whichParts[i]->CParName);
         else
-          fileList = StrBufCat(fileList, whichParts[i]->CParFileName);
-        fileList = StrBufCat(fileList, "\n");
+          StrBufCat(&fileList, whichParts[i]->CParFileName);
+
+        StrBufCat(&fileList, "\n");
         i++;
       }
 

@@ -877,8 +877,8 @@ BOOL AB_LoadTree(const char *fname, BOOL append, BOOL sorted)
               if(*buffer == '\0')
                 continue;
 
-              members = StrBufCat(members, buffer);
-              members = StrBufCat(members, "\n");
+              StrBufCat(&members, buffer);
+              StrBufCat(&members, "\n");
             }
 
             if((addr.Members = strdup(members)) != NULL)

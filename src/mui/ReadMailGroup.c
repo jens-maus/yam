@@ -1209,72 +1209,72 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
 
         if(*ab->RealName != '\0' && (newNode = AllocHeaderNode()) != NULL)
         {
-          newNode->name = StrBufCpy(NULL, MUIX_I);
-          newNode->name = StrBufCat(newNode->name, StripUnderscore(tr(MSG_EA_RealName)));
-          newNode->content = StrBufCpy(NULL, ab->RealName);
+          StrBufCpy(&newNode->name, MUIX_I);
+          StrBufCat(&newNode->name, StripUnderscore(tr(MSG_EA_RealName)));
+          StrBufCpy(&newNode->content, ab->RealName);
           AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
           DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
         }
 
         if(*ab->Street != '\0' && (newNode = AllocHeaderNode()) != NULL)
         {
-          newNode->name = StrBufCpy(NULL, MUIX_I);
-          newNode->name = StrBufCat(newNode->name, StripUnderscore(tr(MSG_EA_Street)));
-          newNode->content = StrBufCpy(NULL, ab->Street);
+          StrBufCpy(&newNode->name, MUIX_I);
+          StrBufCat(&newNode->name, StripUnderscore(tr(MSG_EA_Street)));
+          StrBufCpy(&newNode->content, ab->Street);
           AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
           DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
         }
 
         if(*ab->City != '\0' && (newNode = AllocHeaderNode()) != NULL)
         {
-          newNode->name = StrBufCpy(NULL, MUIX_I);
-          newNode->name = StrBufCat(newNode->name, StripUnderscore(tr(MSG_EA_City)));
-          newNode->content = StrBufCpy(NULL, ab->City);
+          StrBufCpy(&newNode->name, MUIX_I);
+          StrBufCat(&newNode->name, StripUnderscore(tr(MSG_EA_City)));
+          StrBufCpy(&newNode->content, ab->City);
           AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
           DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
         }
 
         if(*ab->Country != '\0' && (newNode = AllocHeaderNode()) != NULL)
         {
-          newNode->name = StrBufCpy(NULL, MUIX_I);
-          newNode->name = StrBufCat(newNode->name, StripUnderscore(tr(MSG_EA_Country)));
-          newNode->content = StrBufCpy(NULL, ab->Country);
+          StrBufCpy(&newNode->name, MUIX_I);
+          StrBufCat(&newNode->name, StripUnderscore(tr(MSG_EA_Country)));
+          StrBufCpy(&newNode->content, ab->Country);
           AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
           DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
         }
 
         if(*ab->Phone != '\0' && (newNode = AllocHeaderNode()) != NULL)
         {
-          newNode->name = StrBufCpy(NULL, MUIX_I);
-          newNode->name = StrBufCat(newNode->name, StripUnderscore(tr(MSG_EA_Phone)));
-          newNode->content = StrBufCpy(NULL, ab->Phone);
+          StrBufCpy(&newNode->name, MUIX_I);
+          StrBufCat(&newNode->name, StripUnderscore(tr(MSG_EA_Phone)));
+          StrBufCpy(&newNode->content, ab->Phone);
           AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
           DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
         }
 
         if(AB_ExpandBD(ab->BirthDay, dateStr, sizeof(dateStr)) == TRUE && (newNode = AllocHeaderNode()) != NULL)
         {
-          newNode->name = StrBufCpy(NULL, MUIX_I);
-          newNode->name = StrBufCat(newNode->name, StripUnderscore(tr(MSG_EA_DOB)));
-          newNode->content = StrBufCpy(NULL, dateStr);
+          StrBufCpy(&newNode->name, MUIX_I);
+          StrBufCat(&newNode->name, StripUnderscore(tr(MSG_EA_DOB)));
+          StrBufCpy(&newNode->content, dateStr);
           AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
           DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
         }
 
         if(*ab->Comment != '\0' && (newNode = AllocHeaderNode()) != NULL)
         {
-          newNode->name = StrBufCpy(NULL, MUIX_I);
-          newNode->name = StrBufCat(newNode->name, StripUnderscore(tr(MSG_EA_Description)));
-          newNode->content = StrBufCpy(NULL, ab->Comment);
+          StrBufCpy(&newNode->name, MUIX_I);
+          StrBufCat(&newNode->name, StripUnderscore(tr(MSG_EA_Description)));
+          StrBufCpy(&newNode->content, ab->Comment);
           AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
           DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
         }
 
         if(*ab->Homepage != '\0' && (newNode = AllocHeaderNode()) != NULL)
         {
-          newNode->name = StrBufCpy(NULL, MUIX_I);
-          newNode->name = StrBufCat(newNode->name, StripUnderscore(tr(MSG_EA_Homepage)));
-          newNode->content = StrBufCpy(NULL, ab->Homepage);
+          StrBufCpy(&newNode->name, MUIX_I);
+          StrBufCat(&newNode->name, StripUnderscore(tr(MSG_EA_Homepage)));
+          StrBufCpy(&newNode->content, ab->Homepage);
           AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
           DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
         }

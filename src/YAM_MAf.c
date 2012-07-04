@@ -1533,7 +1533,7 @@ static char *ValidateAddressLine(const char *line)
     if(numParts == 1)
     {
       // a single part is just taken as it is
-      validLine = StrBufCpy(validLine, parts[0]);
+      StrBufCpy(&validLine, parts[0]);
     }
     else if(numParts >= 2)
     {
@@ -1552,7 +1552,7 @@ static char *ValidateAddressLine(const char *line)
           SHOWSTRING(DBF_MIME, part);
 
           if(validLine != NULL)
-            validLine = StrBufCat(validLine, ", ");
+            StrBufCat(&validLine, ", ");
 
           if(strchr(part, '@') == NULL)
           {
@@ -1565,13 +1565,13 @@ static char *ValidateAddressLine(const char *line)
 
             // Most probably the @-less part was created because there was an unquoted
             // comma, so we add the missing quotes. They cause no harm.
-            validLine = StrBufCat(validLine, "\"");
-            validLine = StrBufCat(validLine, part);
+            StrBufCat(&validLine, "\"");
+            StrBufCat(&validLine, part);
             openQuotePending = TRUE;
 
             do
             {
-              validLine = StrBufCat(validLine, ", ");
+              StrBufCat(&validLine, ", ");
 
               part = parts[i];
               i++;
@@ -1591,10 +1591,10 @@ static char *ValidateAddressLine(const char *line)
                     *addrStart = '\0';
 
                     // append the first part
-                    validLine = StrBufCat(validLine, part);
+                    StrBufCat(&validLine, part);
 
                     // add the closing quote
-                    validLine = StrBufCat(validLine, "\"");
+                    StrBufCat(&validLine, "\"");
                     openQuotePending = FALSE;
 
                     // restore the space and continue with the remaining part
@@ -1604,7 +1604,7 @@ static char *ValidateAddressLine(const char *line)
                   atAppended = TRUE;
                 }
 
-                validLine = StrBufCat(validLine, part);
+                StrBufCat(&validLine, part);
               }
             }
             while(i < numParts && atAppended == FALSE);
@@ -1612,14 +1612,14 @@ static char *ValidateAddressLine(const char *line)
           else
           {
             // this is a valid part, just append it
-            validLine = StrBufCat(validLine, part);
+            StrBufCat(&validLine, part);
           }
         }
       }
 
       // close any still opened quote
       if(openQuotePending == TRUE)
-        validLine = StrBufCat(validLine, "\"");
+        StrBufCat(&validLine, "\"");
     }
 
     // free the array of parts
@@ -1674,7 +1674,7 @@ BOOL MA_ReadHeader(const char *mailFile, FILE *fh, struct MinList *headerList, e
             *(--ptr) = ' ';
 
           // now concatenate this new headerstring to our previous one
-          hdrNode->content = StrBufCat(hdrNode->content, ptr);
+          StrBufCat(&hdrNode->content, ptr);
         }
       }
       else
@@ -1757,11 +1757,11 @@ BOOL MA_ReadHeader(const char *mailFile, FILE *fh, struct MinList *headerList, e
 
             // use our StrBufCpy() function to copy the name of the header
             // into our ->name element
-            if((hdrNode->name = StrBufCpy(NULL, buffer)) != NULL)
+            if(StrBufCpy(&hdrNode->name, buffer) > 0)
             {
               // now we copy also the rest of buffer into the contents
               // of the headerNode
-              if((hdrNode->content = StrBufCpy(NULL, Trim(ptr+1))) != NULL)
+              if(StrBufCpy(&hdrNode->content, Trim(ptr+1)) > 0)
               {
                 // everything seemed to work fine, so lets continue
                 continue;
@@ -2507,17 +2507,17 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
       }
       else if(stricmp(field, "message-id") == 0)
       {
-        email->messageID = StrBufCpy(email->messageID, Trim(value));
+        StrBufCpy(&email->messageID, Trim(value));
         mail->cMsgID = CompressMsgID(email->messageID);
       }
       else if(stricmp(field, "in-reply-to") == 0)
       {
-        email->inReplyToMsgID = StrBufCpy(email->inReplyToMsgID, Trim(value));
+        StrBufCpy(&email->inReplyToMsgID, Trim(value));
         mail->cIRTMsgID = CompressMsgID(email->inReplyToMsgID);
       }
       else if(stricmp(field, "references") == 0)
       {
-        email->references = StrBufCpy(email->references, Trim(value));
+        StrBufCpy(&email->references, Trim(value));
       }
       else if(stricmp(field, "date") == 0)
       {
@@ -2584,7 +2584,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
       {
         setFlag(mail->mflags, MFLAG_SENDERINFO);
         if(deep == TRUE)
-          email->SenderInfo = StrBufCpy(email->SenderInfo, value);
+          StrBufCpy(&email->SenderInfo, value);
       }
       else if(deep == TRUE) // and if we end up here we check if we really have to go further
       {
@@ -2656,8 +2656,10 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
         }
         else if(strnicmp(field, "x-yam-header-", 13) == 0)
         {
-          email->extraHeaders = StrBufCat(StrBufCat(email->extraHeaders, &field[13]), ":");
-          email->extraHeaders = StrBufCat(StrBufCat(email->extraHeaders, value), "\\n");
+          StrBufCat(&email->extraHeaders, &field[13]);
+          StrBufCat(&email->extraHeaders, ":");
+          StrBufCat(&email->extraHeaders, value);
+          StrBufCat(&email->extraHeaders, "\\n");
         }
       }
     }

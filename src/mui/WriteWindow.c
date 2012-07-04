@@ -2275,9 +2275,7 @@ DECLARE(AddArchive)
             switch(*src)
             {
               case '%':
-              {
-                command = StrBufCat(command, "%");
-              }
+                StrBufCat(&command, "%");
               break;
 
               case 'a':
@@ -2286,13 +2284,13 @@ DECLARE(AddArchive)
                 if(strchr(arcpath, ' ') != NULL)
                 {
                   // surround the file name by quotes if it contains spaces
-                  command = StrBufCat(command, "\"");
-                  command = StrBufCat(command, arcpath);
+                  StrBufCat(&command, "\"");
+                  StrBufCat(&command, arcpath);
                   // remember to add the closing quotes
                   mustCloseQuote = TRUE;
                 }
                 else
-                  command = StrBufCat(command, arcpath);
+                  StrBufCat(&command, arcpath);
               }
               break;
 
@@ -2302,13 +2300,13 @@ DECLARE(AddArchive)
                 if(strchr(tf->Filename, ' ') != NULL)
                 {
                   // surround the file name by quotes if it contains spaces
-                  command = StrBufCat(command, "\"");
-                  command = StrBufCat(command, tf->Filename);
+                  StrBufCat(&command, "\"");
+                  StrBufCat(&command, tf->Filename);
                   // remember to add the closing quotes
                   mustCloseQuote = TRUE;
                 }
                 else
-                  command = StrBufCat(command, tf->Filename);
+                  StrBufCat(&command, tf->Filename);
               }
               break;
 
@@ -2321,7 +2319,7 @@ DECLARE(AddArchive)
                   char filename[SIZE_PATHFILE];
 
                   snprintf(filename, sizeof(filename), "\"%s\" ", frc->argList[i]);
-                  command = StrBufCat(command, filename);
+                  StrBufCat(&command, filename);
                 }
                 break;
               }
@@ -2334,13 +2332,13 @@ DECLARE(AddArchive)
             // to be closed we do it now and forget about the quotes afterwards.
             if(mustCloseQuote == TRUE)
             {
-              command = StrBufCat(command, "\" ");
+              StrBufCat(&command, "\" ");
               mustCloseQuote = FALSE;
             }
             else
             {
               // no quotes to be closed, just add the space character
-              command = StrBufCat(command, " ");
+              StrBufCat(&command, " ");
             }
           }
           else
@@ -2350,13 +2348,13 @@ DECLARE(AddArchive)
             chr[0] = *src;
             chr[1] = '\0';
 
-            command = StrBufCat(command, chr);
+            StrBufCat(&command, chr);
           }
         }
 
         // if there are still quotes to be closed do it now
         if(mustCloseQuote == TRUE)
-          command = StrBufCat(command, "\"");
+          StrBufCat(&command, "\"");
 
         // now we make the request drawer the current one temporarly.
         if((filedir = Lock(frc->drawer, ACCESS_READ)) != 0)

@@ -415,12 +415,15 @@ char *MyStrChr(const char *s, const char c)
 //  Allocates a dynamic buffer
 char *AllocStrBuf(size_t initlen)
 {
-  size_t *strbuf;
+  size_t *strbuf; // size_t because we store the length in the first area
 
   ENTER();
 
   if((strbuf = calloc(initlen+sizeof(size_t), sizeof(char))) != NULL)
-    *strbuf++ = initlen;
+  {
+    *strbuf = initlen;
+    strbuf++;
+  }
 
   RETURN(strbuf);
   return (char *)strbuf;
@@ -428,86 +431,92 @@ char *AllocStrBuf(size_t initlen)
 
 ///
 /// StrBufCpy
-//  Fills a dynamic buffer
-char *StrBufCpy(char *strbuf, const char *source)
+//  Fills a dynamic buffer and returns the length of the string
+size_t StrBufCpy(char **strbuf, const char *source)
 {
-  char *newstrbuf = NULL;
   size_t reqlen = (source != NULL) ? strlen(source) : 0;
 
   ENTER();
 
   // if our strbuf is NULL we have to allocate a new buffer
-  if(strbuf == NULL)
-    strbuf = AllocStrBuf(reqlen+1);
-
-  if(strbuf != NULL)
+  if(*strbuf == NULL)
+    *strbuf = AllocStrBuf(reqlen+1);
+  else
   {
-    size_t oldlen = ((size_t *)strbuf)[-1];
+    size_t oldlen = ((size_t *)*strbuf)[-1];
     size_t newlen;
 
     // make sure we allocate in SIZE_DEFAULT chunks
-    for(newlen = oldlen; newlen <= reqlen; newlen += SIZE_DEFAULT);
+    for(newlen = oldlen; newlen <= reqlen; newlen += SIZE_DEFAULT)
+      ;
 
     // if we have to change the size do it now
-    if(newlen != oldlen)
+    if(newlen > oldlen)
     {
-      FreeStrBuf(strbuf);                // free previous buffer
-      newstrbuf = AllocStrBuf(newlen+1); // allocate a new one
+      // use realloc to expand the dynamic array
+      if((*strbuf = realloc((*strbuf)-sizeof(size_t), (newlen+1)*sizeof(char)+sizeof(size_t))) == NULL)
+        reqlen = 0;
     }
-    else
-      newstrbuf = strbuf;
-
-    // do a string copy into the new buffer
-    if(newstrbuf != NULL && source != NULL)
-      strlcpy(newstrbuf, source, ((size_t *)newstrbuf)[-1]);
   }
 
-  RETURN(newstrbuf);
-  return newstrbuf;
+  // do a string copy into the new buffer
+  if(reqlen > 0)
+    reqlen = strlcpy(*strbuf, source, ((size_t *)*strbuf)[-1]);
+
+  RETURN(reqlen);
+  return reqlen;
 }
 
 ///
 /// StrBufCat
-//  String concatenation using a dynamic buffer
-char *StrBufCat(char *strbuf, const char *source)
+//  String concatenation using a dynamic buffer and return the length of the string
+size_t StrBufCat(char **strbuf, const char *source)
 {
-  char *newstrbuf = NULL;
   size_t reqlen = (source != NULL) ? strlen(source) : 0;
 
   ENTER();
 
   // if our strbuf is NULL we have to allocate a new buffer
-  if(strbuf == NULL)
-    strbuf = AllocStrBuf(reqlen+1);
-
-  if(strbuf != NULL)
+  if(*strbuf == NULL)
+    *strbuf = AllocStrBuf(reqlen+1);
+  else
   {
-    size_t oldlen = ((size_t *)strbuf)[-1];
+    size_t oldlen = ((size_t *)*strbuf)[-1];
     size_t newlen;
 
-    reqlen += strlen(strbuf);
+    // increase reqlen by the content length of
+    // the old strbuf
+    reqlen += strlen(*strbuf);
 
     // make sure we allocate in SIZE_DEFAULT chunks
-    for(newlen = oldlen; newlen <= reqlen; newlen += SIZE_DEFAULT);
+    for(newlen = oldlen; newlen <= reqlen; newlen += SIZE_DEFAULT)
+      ;
 
     // if we have to change the size do it now
-    if(newlen != oldlen)
+    if(newlen > oldlen)
     {
-      if((newstrbuf = AllocStrBuf(newlen+1)) != NULL)
-        strlcpy(newstrbuf, strbuf, newlen+1);
+      size_t *newstrbuf;
 
-      FreeStrBuf(strbuf);
+      // lets realloc the string instead of completely 
+      // creating a new one
+      if((newstrbuf = realloc((*strbuf)-sizeof(size_t), (newlen+1)*sizeof(char)+sizeof(size_t))) != NULL)
+      {
+        *newstrbuf = newlen+1;
+        newstrbuf++;
+      }
+      else  
+        reqlen = 0;
+
+      *strbuf = (char *)newstrbuf;
     }
-    else
-      newstrbuf = strbuf;
-
-    // do a string copy into the new buffer
-    if(newstrbuf != NULL && source != NULL)
-      strlcat(newstrbuf, source, newlen+1);
   }
 
-  RETURN(newstrbuf);
-  return newstrbuf;
+  // do a string concatenation into the new buffer
+  if(reqlen > 0)
+    reqlen = strlcat(*strbuf, source, ((size_t *)*strbuf)[-1]);
+
+  RETURN(reqlen);
+  return reqlen;
 }
 
 ///

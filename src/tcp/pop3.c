@@ -959,7 +959,7 @@ static int ConnectToPOP3(struct TransferContext *tc)
     if((resp = SendPOP3Command(tc, POPCMD_CONNECT, NULL, tr(MSG_ER_POP3WELCOME))) == NULL)
       goto out;
 
-    welcomemsg = StrBufCpy(NULL, resp);
+    StrBufCpy(&welcomemsg, resp);
 
     // If the user selected STLS support we have to first send the command
     // to start TLS negotiation (RFC 2595)
@@ -990,7 +990,7 @@ static int ConnectToPOP3(struct TransferContext *tc)
     if((resp = SendPOP3Command(tc, POPCMD_CONNECT, NULL, tr(MSG_ER_POP3WELCOME))) == NULL)
       goto out;
 
-    welcomemsg = StrBufCpy(NULL, resp);
+    StrBufCpy(&welcomemsg, resp);
   }
 
   if(tc->password[0] == '\0')

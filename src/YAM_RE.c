@@ -3674,7 +3674,7 @@ static void RE_SendMDN(const enum MDNMode mode,
 
           // finally, we compose the MDN mail
           memset(&comp, 0, sizeof(struct Compose));
-          comp.MailTo = StrBufCpy(comp.MailTo, BuildAddress(address, sizeof(address), recipient->Address, recipient->RealName));
+          StrBufCpy(&comp.MailTo, BuildAddress(address, sizeof(address), recipient->Address, recipient->RealName));
           comp.Subject = buf;
           comp.GenerateMDN = TRUE;
           comp.FirstPart = p1;
@@ -4134,7 +4134,7 @@ static BOOL RE_HandleMDNReport(const struct Part *frp)
               char desc[SIZE_LINE];
 
               snprintf(desc, sizeof(desc), "%s %s", msg, value);
-              msgdesc = StrBufCat(msgdesc, desc);
+              StrBufCat(&msgdesc, desc);
             }
           }
 
@@ -4147,7 +4147,7 @@ static BOOL RE_HandleMDNReport(const struct Part *frp)
     }
 
     // add a newline
-    msgdesc = StrBufCat(msgdesc, "\n");
+    StrBufCat(&msgdesc, "\n");
 
     // find out if the disposition was automatically
     // generated or via manual interaction

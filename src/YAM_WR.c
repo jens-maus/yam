@@ -704,9 +704,10 @@ static char *WR_GetPGPIds(const char *source, char *ids)
       pid = pe.RealName[0] ? pe.RealName : pe.Address;
       ER_NewError(tr(MSG_ER_ErrorNoPGPId), source, pid);
     }
-    ids = StrBufCat(ids, (G->PGPVersion == 5) ? "-r \"" : "\"");
-    ids = StrBufCat(ids, pid);
-    ids = StrBufCat(ids, "\" ");
+
+    StrBufCat(&ids, (G->PGPVersion == 5) ? "-r \"" : "\"");
+    StrBufCat(&ids, pid);
+    StrBufCat(&ids, "\" ");
   }
 
   RETURN(ids);
@@ -950,9 +951,9 @@ static BOOL WR_ComposePGP(FILE *fh, const struct Compose *comp, char *boundary)
        comp->Identity->pgpKeyID[0] != '\0')
     {
       if(G->PGPVersion == 5)
-        ids = StrBufCat(ids, "-r ");
+        StrBufCat(&ids, "-r ");
 
-      ids = StrBufCat(ids, comp->Identity->pgpKeyID);
+      StrBufCat(&ids, comp->Identity->pgpKeyID);
     }
   }
 
@@ -1435,9 +1436,9 @@ static char *AppendRcpt(char *sbuf, const struct Person *pe,
           // lets prepend a ", " sequence in case sbuf
           // is not empty
           if(*sbuf != '\0')
-            sbuf = StrBufCat(sbuf, ", ");
+            StrBufCat(&sbuf, ", ");
 
-          sbuf = StrBufCat(sbuf, ins);
+          StrBufCat(&sbuf, ins);
         }
       }
     }
@@ -1469,11 +1470,11 @@ static char *ExpandText(const char *src, struct ExpandTextData *etd)
       switch(*src)
       {
         case '\\':
-          dst = StrBufCat(dst, "\\");
+          StrBufCat(&dst, "\\");
         break;
 
         case 'n':
-          dst = StrBufCat(dst, "\n");
+          StrBufCat(&dst, "\n");
         break;
       }
     }
@@ -1483,7 +1484,7 @@ static char *ExpandText(const char *src, struct ExpandTextData *etd)
       switch(*src)
       {
         case 'n':
-          dst = StrBufCat(dst, etd->OS_Name);
+          StrBufCat(&dst, etd->OS_Name);
         break;
 
         case 'f':
@@ -1499,16 +1500,16 @@ static char *ExpandText(const char *src, struct ExpandTextData *etd)
             *p = 0;
             p = buf;
           }
-          dst = StrBufCat(dst, p);
+          StrBufCat(&dst, p);
         }
         break;
 
         case 's':
-          dst = StrBufCat(dst, etd->OM_Subject);
+          StrBufCat(&dst, etd->OM_Subject);
         break;
 
         case 'e':
-          dst = StrBufCat(dst, etd->OS_Address);
+          StrBufCat(&dst, etd->OS_Address);
         break;
 
         case 'd':
@@ -1516,7 +1517,7 @@ static char *ExpandText(const char *src, struct ExpandTextData *etd)
           char datstr[64];
 
           DateStamp2String(datstr, sizeof(datstr), &etd->OM_Date, DSS_DATE, TZC_NONE);
-          dst = StrBufCat(dst, datstr);
+          StrBufCat(&dst, datstr);
         }
         break;
 
@@ -1525,7 +1526,7 @@ static char *ExpandText(const char *src, struct ExpandTextData *etd)
           char datstr[64];
 
           DateStamp2String(datstr, sizeof(datstr), &etd->OM_Date, DSS_TIME, TZC_NONE);
-          dst = StrBufCat(dst, datstr);
+          StrBufCat(&dst, datstr);
         }
         break;
 
@@ -1535,7 +1536,7 @@ static char *ExpandText(const char *src, struct ExpandTextData *etd)
 
           int convertedTimeZone = (etd->OM_TimeZone/60)*100 + (etd->OM_TimeZone%60);
           snprintf(tzone, sizeof(tzone), "%+05d", convertedTimeZone);
-          dst = StrBufCat(dst, tzone);
+          StrBufCat(&dst, tzone);
         }
         break;
 
@@ -1544,7 +1545,7 @@ static char *ExpandText(const char *src, struct ExpandTextData *etd)
           char datstr[64];
 
           DateStamp2String(datstr, sizeof(datstr), &etd->OM_Date, DSS_WEEKDAY, TZC_NONE);
-          dst = StrBufCat(dst, datstr);
+          StrBufCat(&dst, datstr);
         }
         break;
 
@@ -1553,16 +1554,16 @@ static char *ExpandText(const char *src, struct ExpandTextData *etd)
           char datstr[64];
 
           DateStamp2RFCString(datstr, sizeof(datstr), &etd->OM_Date, etd->OM_TimeZone, FALSE);
-          dst = StrBufCat(dst, datstr);
+          StrBufCat(&dst, datstr);
         }
         break;
 
         case 'm':
-          dst = StrBufCat(dst, etd->OM_MessageID);
+          StrBufCat(&dst, etd->OM_MessageID);
         break;
 
         case 'r':
-          dst = StrBufCat(dst, etd->R_Name);
+          StrBufCat(&dst, etd->R_Name);
         break;
 
         case 'v':
@@ -1577,12 +1578,13 @@ static char *ExpandText(const char *src, struct ExpandTextData *etd)
             *p = '\0';
             p = buf;
           }
-          dst = StrBufCat(dst, p);
+
+          StrBufCat(&dst, p);
         }
         break;
 
         case 'a':
-          dst = StrBufCat(dst, etd->R_Address);
+          StrBufCat(&dst, etd->R_Address);
         break;
 
         case 'i':
@@ -1595,7 +1597,7 @@ static char *ExpandText(const char *src, struct ExpandTextData *etd)
               *p2++ = *++p;
           }
           *p2 = '\0';
-          dst = StrBufCat(dst, buf);
+          StrBufCat(&dst, buf);
         }
         break;
 
@@ -1612,7 +1614,7 @@ static char *ExpandText(const char *src, struct ExpandTextData *etd)
             }
           }
           *p2 = '\0';
-          dst = StrBufCat(dst, buf);
+          StrBufCat(&dst, buf);
         }
         break;
 
@@ -1620,7 +1622,7 @@ static char *ExpandText(const char *src, struct ExpandTextData *etd)
         {
           if((p = FileToBuffer(etd->HeaderFile)))
           {
-            dst = StrBufCat(dst, p);
+            StrBufCat(&dst, p);
             free(p);
           }
         }
@@ -1633,7 +1635,7 @@ static char *ExpandText(const char *src, struct ExpandTextData *etd)
 
        chr[0] = *src;
        chr[1] = '\0';
-       dst = StrBufCat(dst, chr);
+       StrBufCat(&dst, chr);
     }
   }
 
@@ -1841,13 +1843,13 @@ struct WriteMailData *NewWriteMailWindow(struct Mail *mail, const int flags)
       else if(folder->MLSupport == TRUE)
       {
         if(folder->MLAddress[0] != '\0')
-          toAddr = StrBufCpy(toAddr, folder->MLAddress);
+          StrBufCpy(&toAddr, folder->MLAddress);
 
         if(folder->MLIdentity != NULL)
           userIdentity = folder->MLIdentity;
 
         if(folder->MLReplyToAddress[0] != '\0')
-          replyToAddr = StrBufCpy(replyToAddr, folder->MLReplyToAddress);
+          StrBufCpy(&replyToAddr, folder->MLReplyToAddress);
       }
 
       if(folder->WriteIntro[0] != '\0')
@@ -1984,10 +1986,10 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
 
             // set the In-Reply-To / References message header references, if they exist
             if(email->inReplyToMsgID != NULL)
-              wmData->inReplyToMsgID = StrBufCpy(NULL, email->inReplyToMsgID);
+              StrBufCpy(&wmData->inReplyToMsgID, email->inReplyToMsgID);
 
             if(email->references != NULL)
-              wmData->references = StrBufCpy(NULL, email->references);
+              StrBufCpy(&wmData->references, email->references);
 
             // set the subject gadget
             set(wmData->window, MUIA_WriteWindow_Subject, mail->Subject);
@@ -2015,7 +2017,7 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
             if(reuseReplyToAddress == TRUE)
             {
               // add all ReplyTo: recipients
-              sbuf = StrBufCpy(sbuf, BuildAddress(address, sizeof(address), mail->ReplyTo.Address, mail->ReplyTo.RealName));
+              StrBufCpy(&sbuf, BuildAddress(address, sizeof(address), mail->ReplyTo.Address, mail->ReplyTo.RealName));
               for(i=0; i < email->NumSReplyTo; i++)
                 sbuf = AppendRcpt(sbuf, &email->SReplyTo[i], email->identity, FALSE);
 
@@ -2023,7 +2025,7 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
             }
 
             // add all "To:" recipients of the mail
-            sbuf = StrBufCpy(sbuf, BuildAddress(address, sizeof(address), mail->To.Address, mail->To.RealName));
+            StrBufCpy(&sbuf, BuildAddress(address, sizeof(address), mail->To.Address, mail->To.RealName));
             for(i=0; i < email->NumSTo; i++)
               sbuf = AppendRcpt(sbuf, &email->STo[i], email->identity, FALSE);
 
@@ -2219,9 +2221,9 @@ struct WriteMailData *NewForwardMailWindow(struct MailList *mlist, const int fla
           if(strstr(rsub, buffer) == NULL)
           {
             if(rsub[0] != '\0')
-              rsub = StrBufCat(rsub, "; ");
+              StrBufCat(&rsub, "; ");
 
-            rsub = StrBufCat(rsub, buffer);
+            StrBufCat(&rsub, buffer);
           }
         }
 
@@ -2464,32 +2466,32 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
           if(strstr(rsub, buffer) == NULL)
           {
             if(rsub[0] != '\0')
-              rsub = StrBufCat(rsub, "; ");
+              StrBufCat(&rsub, "; ");
 
-            rsub = StrBufCat(rsub, buffer);
+            StrBufCat(&rsub, buffer);
           }
         }
 
         // in case we are replying to a single message we also have to
         // save the messageID of the email we are replying to
         if(wmData->inReplyToMsgID != NULL)
-          wmData->inReplyToMsgID = StrBufCat(wmData->inReplyToMsgID, " ");
+          StrBufCat(&wmData->inReplyToMsgID, " ");
 
         if(email->messageID != NULL)
-          wmData->inReplyToMsgID = StrBufCat(wmData->inReplyToMsgID, email->messageID);
+          StrBufCat(&wmData->inReplyToMsgID, email->messageID);
 
         // in addition, we check for "References:" message header stuff
         if(wmData->references != NULL)
-          wmData->references = StrBufCat(wmData->references, " ");
+          StrBufCat(&wmData->references, " ");
 
         if(email->references != NULL)
-          wmData->references = StrBufCat(wmData->references, email->references);
+          StrBufCat(&wmData->references, email->references);
         else
         {
           // check if this email contains inReplyToMsgID data and if so we
           // create a new references header entry
           if(email->inReplyToMsgID != NULL)
-            wmData->references = StrBufCat(wmData->references, email->inReplyToMsgID);
+            StrBufCat(&wmData->references, email->inReplyToMsgID);
         }
 
         // Now we analyse the folder of the selected mail and if it
@@ -3017,9 +3019,9 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
       if(wmData->inReplyToMsgID != NULL)
       {
         if(wmData->references != NULL)
-          wmData->references = StrBufCat(wmData->references, " ");
+          StrBufCat(&wmData->references, " ");
 
-        wmData->references = StrBufCat(wmData->references, wmData->inReplyToMsgID);
+        StrBufCat(&wmData->references, wmData->inReplyToMsgID);
       }
 
       // make sure the correct identity has been set (if multiple mails

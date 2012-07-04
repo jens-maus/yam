@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-07-04 Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_UT.c, misc: reworked all "*StrBuf*" functions for allocating and
+    string copy/concatenation operations for dynamic buffers. Now the function
+    calls should be more common to how, e.g., strlcpy/strlcat are defined.
+    In addition, realloc() is now used instead of complately allocating a
+    new memory block for every concatenation. Overall this should make the
+    API for dynamic buffers a bit more nice and consistent.
+
 2012-07-03 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_FI.c: added some debug messages to outline the different search

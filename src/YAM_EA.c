@@ -534,8 +534,9 @@ HOOKPROTONHNO(EA_Okay, void, int *arg)
         DoMethod(gui->LV_MEMBER, MUIM_NList_GetEntry, i, &p);
         if(p == NULL)
           break;
-        members = StrBufCat(members, p);
-        members = StrBufCat(members, "\n");
+
+        StrBufCat(&members, p);
+        StrBufCat(&members, "\n");
       }
 
       if(old == TRUE)
@@ -552,6 +553,7 @@ HOOKPROTONHNO(EA_Okay, void, int *arg)
         EA_InsertBelowActive(addr, 0);
         free(addr->Members);
       }
+
       FreeStrBuf(members);
     }
     break;
