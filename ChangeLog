@@ -8,6 +8,9 @@ $URL$
 2012-07-05 Thore Böckelmann <tboeckel@gmx.de>
 
   * locale/german.ct: updated german translation.
+  * tcp/ssl.c: certificates are now loaded either from the supplied file
+    "PROGDIR:Certificates/yam-ca-bundle.crt" or from further certificate files
+    in PEM format in this directory if it exists.
 
 2012-07-05 Samir Hawamdeh <s.hawamdeh@tin.it>
 
