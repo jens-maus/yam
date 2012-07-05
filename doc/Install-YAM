@@ -1,5 +1,5 @@
 ;
-; $VER: Install-YAM 1.23 (23.12.2011) (c) 2000-2011 by YAM Open Source Team
+; $VER: Install-YAM 1.24 (5.7.2012) (c) 2000-2011 by YAM Open Source Team
 ; Language support added by Sönke Tesch/ATO
 ;
 ; $Id$
@@ -761,6 +761,17 @@
 )
 
 (complete 50)
+
+(set Certificates_dir (tackon YAM_dir "Certificates"))
+(if (not (exists Certificates_dir))
+    (makedir Certificates_dir)
+)
+(copyfiles
+    (source "/Certificates/")
+    (dest Certificates_dir)
+    (all)
+    (help @copyfiles-help)
+)
 
 (set Gallery_dir (tackon YAM_dir "Gallery"))
 (if (not (exists Gallery_dir))

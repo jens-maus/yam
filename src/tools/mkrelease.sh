@@ -63,6 +63,9 @@ for language in czech dutch english-british french german greek italian polish s
 	mkdir -p "release/$yamsys/YAM $yamver/Catalogs/$language"
 	cp ../locale/$language.catalog "release/$yamsys/YAM $yamver/Catalogs/$language/YAM.catalog"
 done
+echo "  MK $yamsys/Certificates"
+mkdir -p "release/$yamsys/YAM $yamver/Certificates"
+cp ../ssl/ca-bundle.crt "release/$yamsys/YAM $yamver/Certificates/ca-bundle.crt"
 echo "  MK $yamsys/Docs"
 mkdir -p "release/$yamsys/YAM $yamver/Docs"
 cp ../icons/$yamicons/Docs_directory.info "release/$yamsys/YAM $yamver/Docs.info"
