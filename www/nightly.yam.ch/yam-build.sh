@@ -33,7 +33,7 @@ VERSION="1.0"                        # the version of the tool
 SVN=/usr/bin/svn                     # path to the subversion tool
 SVNROOT="file:///home/svn/yam/trunk"
 MODULE=yamos                         # the main module to checkout
-CHECKOUTDIR=/usr/local/amiga/yam-build   # directory where to checkout to 
+CHECKOUTDIR=/usr/local/amiga/yam-build   # directory where to checkout to
 MAKE="make -j1"                      # path to GNU make tool
 LHA=lha                              # path to lha archive tool
 WEBDIR=/var/www/www.yam.ch/nightly   # path to where we put the builds
@@ -128,8 +128,8 @@ compile_release()
     cp src/YAM.${TARGETEXT} $DEVDIR/YAM
     cp $MODULEPATH/icons/${TARGETEXT}/YAM.info $DEVDIR/
     cd $DEVDIR
-    $LHA ao5 YAM${BUILDV}dev-${TARGET}.lha YAM YAM.info ChangeLog README.txt themes locale >/dev/null 2>&1
-    $MD5SUM YAM${BUILDV}dev-${TARGET}.lha >YAM${BUILDV}dev-${TARGET}.lha.md5 
+    $LHA ao5 YAM${BUILDV}dev-${TARGET}.lha YAM YAM.info ChangeLog README.txt themes locale certificates >/dev/null 2>&1
+    $MD5SUM YAM${BUILDV}dev-${TARGET}.lha >YAM${BUILDV}dev-${TARGET}.lha.md5
     rm YAM
     set +x
     echo "done."
@@ -160,8 +160,8 @@ compile_debug()
     cp src/YAM.${TARGETEXT}.debug $DEVDIR/YAM.debug
     cp $MODULEPATH/icons/${TARGETEXT}/YAM.info $DEVDIR/YAM.debug.info
     cd $DEVDIR
-    $LHA ao5 YAM${BUILDV}dev-${TARGET}-debug.lha YAM.debug YAM.debug.info ChangeLog README.txt themes locale >/dev/null 2>&1
-    $MD5SUM YAM${BUILDV}dev-${TARGET}-debug.lha >YAM${BUILDV}dev-${TARGET}-debug.lha.md5 
+    $LHA ao5 YAM${BUILDV}dev-${TARGET}-debug.lha YAM.debug YAM.debug.info ChangeLog README.txt themes locale certificates >/dev/null 2>&1
+    $MD5SUM YAM${BUILDV}dev-${TARGET}-debug.lha >YAM${BUILDV}dev-${TARGET}-debug.lha.md5
     rm YAM.debug
     set +x
     echo "done."
@@ -276,6 +276,10 @@ cp $MODULEPATH/ChangeLog $DEVDIR/
 cp -a $MODULEPATH/themes $DEVDIR/ >/dev/null 2>&1
 find $DEVDIR/themes/ -name ".svn" -exec rm -rf {} \; >/dev/null 2>&1
 
+# copy the certificates from the respository to a local copy
+cp -a $MODULEPATH/certificates $DEVDIR/ >/dev/null 2>&1
+find $DEVDIR/themes/ -name ".svn" -exec rm -rf {} \; >/dev/null 2>&1
+
 # let us generate all catalogs first
 create_catalogs
 
@@ -311,6 +315,7 @@ compile_debug AROSarm aros-arm
 rm $DEVDIR/ChangeLog $DEVDIR/README.txt
 rm -rf $DEVDIR/themes
 rm -rf $DEVDIR/locale
+rm -rf $DEVDIR/certificates
 rm $DEVDIR/YAM.info
 rm $DEVDIR/YAM.debug.info
 
@@ -324,7 +329,7 @@ rm -rf $WEBDIR/`basename $DEVDIR`
 mv -f $DEVDIR $WEBDIR
 cd $WEBDIR
 rm -f latest-dev
-ln -sf `basename $DEVDIR` latest-dev 
+ln -sf `basename $DEVDIR` latest-dev
 set +x
 
 # now we can also update the updatecheck META file accordingly.
