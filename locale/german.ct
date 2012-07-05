@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.48 (24.6.2012)
+## version $VER: YAM.catalog 7.49 (5.7.2012)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -8955,4 +8955,36 @@ Verbindungen
 ;
 MSG_CO_POP_NOTIFICATION
 Benachrichtigung bei neuen Nachrichten
+;
+MSG_SSL_CERT_WARNING_TITLE
+SSL-Zertificat-Warnung
+;
+MSG_SSL_CERT_WARNING_BUTTONS
+Akzeptieren|Dauerhaft akzeptieren|*Ablehnen
+;
+MSG_SSL_CERT_WARNING_INTRO
+Fehler beim Validieren des Serverzertifikats für '\033b%s:%d\033n':
+;
+MSG_SSL_CERT_WARNING_UNTRUSTED
+- Das Zertifikat wurde nicht von einer vertrauenswürdigen Authorität ausgestellt.\n\
+  Verwenden Sie bitte den Fingerabdruck, um das Zertifikat manuell zu validieren.
+;
+MSG_SSL_CERT_WARNING_IDMISMATCH
+- Der Hostname des Zertifikats stimmt nicht überein.
+;
+MSG_SSL_CERT_WARNING_NOTYETVALID
+- Das Zertifikat ist noch nicht gültig.
+;
+MSG_SSL_CERT_WARNING_EXPIRED
+- Das Zertifikat ist abgelaufen.
+;
+MSG_SSL_CERT_WARNING_OTHER
+- Das Zertifikat hat einen unbekannten Fehler.
+;
+MSG_SSL_CERT_WARNING_INFO
+Zertifikatinformation:\n\
+- Hostname: \033b%s\033n\n\
+- Gültigkeit: \033b%s\033n bis \033b%s\033n\n\
+- Aussteller: \033b%s\033n\n\
+- Fingerabdruck: \033b%s\033n
 ;
