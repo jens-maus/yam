@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.99 (11.06.2012)
+## version $VER: YAM.catalog 7.99 (5.07.2012)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -7,7 +7,7 @@
 ; Compiled with FlexCat 2.9 PPC (AmigaOS4)
 ; $Id$
 ;
-; based on YAM.cd 6027 2012-06-07
+; based on YAM.cd 6057 2012-07-05
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -2770,7 +2770,7 @@ Promemoria per il compleanno
 ;
 MSG_AB_HappyBirthday
 Buon compleanno!
-; Happy birthday.
+; Happy birthday
 ;
 MSG_AB_PersonAlias
 Pseudonimo (PERSONA)
@@ -10602,4 +10602,52 @@ Connessioni
 MSG_CO_POP_NOTIFICATION
 Notifica dei nuovi messaggi
 ; Notification for new mails
+;
+MSG_SSL_CERT_WARNING_TITLE
+Avviso Certificato SSL
+; SSL Certificate Warning
+;
+MSG_SSL_CERT_WARNING_BUTTONS
+Accetta|Accetta Permanentemente|*Rifiuta
+; Accept|Accept Permanently|*Reject
+;
+MSG_SSL_CERT_WARNING_INTRO
+Errore nel server durante la convalida del certificato per '\033b%s:%d\033n':
+; Error validating server certificate for '\033b%s:%d\033n':
+; HOSTNAME, PORT
+;
+MSG_SSL_CERT_WARNING_UNTRUSTED
+- Il certificato non è stato emesso da un'autorità attendibile.\n\
+  Usa una firma digitale per verificare il certificato manualmente.
+; - The certificate is not issued by a trusted authority. Use the\n\
+; fingerprint to validate the certificate manually.
+;
+MSG_SSL_CERT_WARNING_IDMISMATCH
+- Il nome host del certificato non corrisponde.
+; - The certificate hostname does not match.
+;
+MSG_SSL_CERT_WARNING_NOTYETVALID
+- Il certificato non è ancora stato validato.
+; - The certificate is not yet valid.
+;
+MSG_SSL_CERT_WARNING_EXPIRED
+- Il certificato è scaduto.
+; - The certificate has expired.
+;
+MSG_SSL_CERT_WARNING_OTHER
+- Il certificato contiene un errore sconosciuto.
+; - The certificate has an unknown error.
+;
+MSG_SSL_CERT_WARNING_INFO
+Informazioni sul certificato:\n\
+- Nome host: \033b%s\033n\n\
+- Validità: \033b%s\033n fino a \033b%s\033n\n\
+- Emittente: \033b%s\033n\n\
+- Firma digitale: \033b%s\033n
+; Certificate information:\n\
+; - Hostname: \033b%s\033n\n\
+; - Valid: \033b%s\033n until \033b%s\033n\n\
+; - Issuer: \033b%s\033n\n\
+; - Fingerprint: \033b%s\033n
+; HOSTNAME, VALID_FROM, VALID_TO, ISSUER, FINGERPRINT
 ;

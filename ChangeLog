@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-07-05 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: update according to the latest changes.
+
 2012-07-04 Jens Langner <Jens.Langner@light-speed.de>
 
   * tcp/ssl.c, tcp/Connection.c, misc: completely reworked the SSL connection
