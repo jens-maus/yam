@@ -278,7 +278,7 @@ find $DEVDIR/themes/ -name ".svn" -exec rm -rf {} \; >/dev/null 2>&1
 
 # copy the certificates from the respository to a local copy
 cp -a $MODULEPATH/certificates $DEVDIR/ >/dev/null 2>&1
-find $DEVDIR/themes/ -name ".svn" -exec rm -rf {} \; >/dev/null 2>&1
+find $DEVDIR/certificates/ -name ".svn" -exec rm -rf {} \; >/dev/null 2>&1
 
 # let us generate all catalogs first
 create_catalogs
