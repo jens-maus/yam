@@ -146,7 +146,7 @@ static int verify_callback(int preverify_ok, X509_STORE_CTX *x509_ctx)
           setFlag(failures, depth > 0 ? SSL_CERT_ERR_BADCHAIN : SSL_CERT_ERR_EXPIRED);
         }
         break;
-        
+
         case X509_V_OK:
           // nothing
         break;
@@ -157,7 +157,7 @@ static int verify_callback(int preverify_ok, X509_STORE_CTX *x509_ctx)
           // is a bailout
           setFlag(conn->sslCertFailures, SSL_CERT_ERR_UNHANDLED);
           W(DBF_NET, "ssl: Unhandled certification verification error: SSL_CERT_ERR_UNHANDLED");
-      
+
           // make sure we return an error and stop the
           // cert verification right away
           RETURN(0);
@@ -230,7 +230,7 @@ static int MatchHostname(const char *cn, size_t cnlen, const char *hostname)
     // this is a desirable policy tightening in the mean time.
 
     // check that hostname is not only a pure IP address by scanning it
-    // and searching for ˝." and numbers only
+    // and searching for ?." and numbers only
     for(i = 0; hostname[i] != '\0'; i++)
     {
       // check for IPv4 and IPv6 addresses
@@ -258,7 +258,7 @@ static int MatchHostname(const char *cn, size_t cnlen, const char *hostname)
   RETURN(result);
   return result;
 }
-  
+
 ///
 /// CheckCertificateIdentity
 // Check certificate identity.  Returns zero if identity matches; 1 if
@@ -290,7 +290,7 @@ static int CheckCertificateIdentity(const char *hostname, X509 *cert, char **ide
 
       switch(nm->type)
       {
-        // DNS: 
+        // DNS:
         case GEN_DNS:
         {
           char *name = (char *)ASN1_STRING_data(nm->d.ia5);
@@ -304,7 +304,7 @@ static int CheckCertificateIdentity(const char *hostname, X509 *cert, char **ide
         }
         break;
 
-        // "IP Address:" 
+        // "IP Address:"
         case GEN_IPADD:
         {
           char ipaddr[60];
@@ -350,7 +350,7 @@ static int CheckCertificateIdentity(const char *hostname, X509 *cert, char **ide
     #warning WORKAROUND: do we have any solution for that?
     // WORKAROUND: free the 'names' list manually. This is usually done via
     // "sk_GENERAL_NAME_pop_free(names, GENERAL_NAME_free)". However,
-    // this causes to leave unresolved symbols as GENERAL_NAME_free is 
+    // this causes to leave unresolved symbols as GENERAL_NAME_free is
     // a function in AmiSSL. Thus, we cleanup the list on our own.
     for(n = 0; n < names->num; n++)
     {
@@ -371,7 +371,7 @@ static int CheckCertificateIdentity(const char *hostname, X509 *cert, char **ide
     char *cname = NULL;
 
     // find the most specific commonName attribute.
-    do 
+    do
     {
       lastidx = idx;
       idx = X509_NAME_get_index_by_NID(subj, NID_commonName, lastidx);
@@ -487,7 +487,7 @@ static BOOL ASN1Time2TimeVal(const ASN1_TIME *atm, struct TimeVal *tv)
   if(atm->length >= 10)
   {
     char datestring[] = "MM-DD-YY HH:MM:SS";
-     
+
     // month
     datestring[0]  = atm->data[2];
     datestring[1]  = atm->data[3];
@@ -611,9 +611,11 @@ static int CheckCertificate(struct Connection *conn, struct Certificate *cert)
   // a useful error to the user.  "Um, something is wrong.  OK?" */
   if(isFlagSet(failures, SSL_CERT_ERR_UNHANDLED))
   {
+    #if defined(DEBUG)
     long result = SSL_get_verify_result(conn->ssl);
 
     E(DBF_NET, "Certificate verification error: %s", X509_verify_cert_error_string(result));
+    #endif
 
     RETURN(1);
     return 1;
@@ -772,7 +774,7 @@ BOOL MakeSecureConnection(struct Connection *conn)
         {
           char *CApath = (char *)"PROGDIR:certificates";
 
-          if(CApath != NULL && FileExists(CApath))
+          if(CApath != NULL && FileExists(CApath) == TRUE)
           {
             // 7) load the certificates (e.g. CA) from either a file or a directory path
             D(DBF_NET, "CApath = '%s'", SafeStr(CApath));
@@ -807,7 +809,7 @@ BOOL MakeSecureConnection(struct Connection *conn)
             else
             {
               // output some debug information on the
-              // available ciphers 
+              // available ciphers
               #if defined(DEBUG)
               {
                 int i = 0;
@@ -936,7 +938,7 @@ BOOL MakeSecureConnection(struct Connection *conn)
                         if(cipher != NULL)
                           D(DBF_NET, "%s connection using %s", SSL_CIPHER_get_version(cipher), SSL_get_cipher(conn->ssl));
 
-                        D(DBF_NET, "Certificate verify result: %d", SSL_get_verify_result(conn->ssl)); 
+                        D(DBF_NET, "Certificate verify result: %d", SSL_get_verify_result(conn->ssl));
 
                         if((server_cert = SSL_get_peer_certificate(conn->ssl)) == NULL)
                           E(DBF_NET, "SSL_get_peer_certificate() error!");
