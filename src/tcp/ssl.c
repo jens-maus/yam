@@ -773,7 +773,7 @@ BOOL MakeSecureConnection(struct Connection *conn)
         else
         {
           char *CApath = (char *)"PROGDIR:Certificates";
-          char *CAfile = (char *)"PROGDIR:Certificates/yam-ca-bundle.crt";
+          char *CAfile = (char *)"PROGDIR:Certificates/ca-bundle.crt";
 
           if(CApath != NULL && FileExists(CApath) == TRUE)
           {
