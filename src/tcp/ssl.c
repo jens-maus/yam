@@ -95,6 +95,9 @@ struct Certificate
   char      notAfter[SIZE_DEFAULT];
 };
 
+#define DEFAULT_CAPATH "PROGDIR:Certificates"
+#define DEFAULT_CAFILE "PROGDIR:Certificates/ca-bundle.crt"
+
 /// verify_callback
 // callback function that is called by AmiSSL/OpenSSL for every certification
 // verification step
@@ -772,14 +775,11 @@ BOOL MakeSecureConnection(struct Connection *conn)
           E(DBF_NET, "SSLv2 couldn't be disabled. SSL: %s", ERR_error_string(ERR_get_error(), NULL));
         else
         {
-          char *CApath = (char *)"PROGDIR:Certificates";
-          char *CAfile = (char *)"PROGDIR:Certificates/ca-bundle.crt";
-
-          if(CApath != NULL && FileExists(CApath) == TRUE)
+          if(FileExists(DEFAULT_CAPATH) == TRUE)
           {
             // 7) load the certificates (e.g. CA) from either a file or a directory path
-            D(DBF_NET, "CApath = '%s'", SafeStr(CApath));
-            if((rc = SSL_CTX_load_verify_locations(conn->sslCtx, CAfile, CApath)) == 0)
+            D(DBF_NET, "CAfile = '%s', CApath = '%s'", DEFAULT_CAFILE, DEFAULT_CAPATH);
+            if((rc = SSL_CTX_load_verify_locations(conn->sslCtx, DEFAULT_CAFILE, DEFAULT_CAPATH)) == 0)
               E(DBF_NET, "Error: setting default verify locations failed!");
           }
           else
