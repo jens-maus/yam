@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.21 (18.05.2012)
+## version $VER: YAM.catalog 7.21 (07.07.2012)
 ## codeset 0
 ## language español
 ## chunk AUTH Emilio Jimenez
@@ -743,10 +743,6 @@ MSG_MA_Select
 Seleccionar
 ; Select
 ;
-MSG_MA_FlushIndices
-Liberar índices
-; Flush indices
-;
 MSG_MA_MDelete
 Borrar
 ; Delete
@@ -1006,10 +1002,6 @@ MSG_CO_CrdTCPIP
 TCP/IP
 ; TCP/IP
 ;
-MSG_CO_CrdNewMail
-Nuevo correo
-; New mail
-;
 MSG_CO_CrdFilters
 Filtros
 ; Filters
@@ -1203,16 +1195,12 @@ _Nombre Usuario
 ; User name
 ;
 MSG_CO_POPActive
-_Activar
+_Activo
 ; _Active
 ;
 MSG_CO_DeleteServerMail
 _Borrar correo en servidor
 ; Delete mail _on server
-;
-MSG_CO_UseAPOP
-_Registro utilizando APOP
-; _Log in using APOP
 ;
 MSG_CO_PSNever
 nunca
@@ -1242,10 +1230,6 @@ MSG_CO_TWAlways
 mostrar siempre
 ; show always
 ;
-MSG_CO_Download
-Descargar
-; Download
-;
 MSG_CO_TransferWin
 Ventana _Transferencia
 ; _Transfer window
@@ -1258,14 +1242,6 @@ MSG_CO_UpdateStatus
 _Actualizar estado de mensajes
 ; Update m_essage status
 ;
-MSG_CO_WarnSize1
-_Límite Tamaño
-; Size _limit
-;
-MSG_CO_WarnSize2
-KB
-; KB
-;
 MSG_CO_AutoOperation
 Operación automática
 ; Automatic operation
@@ -1277,10 +1253,6 @@ Comprobar nuevo correo cada
 MSG_CO_Minutes
 minutos
 ; minutes
-;
-MSG_CO_DownloadLarge
-_Descargar mensajes grandes
-; _Download large messages
 ;
 MSG_CO_Notification
 Notificación
@@ -1978,10 +1950,6 @@ MSG_HELP_CO_CH_DELETE
 Borrar mensajes del\nservidor de correo después de\ndescargar.
 ; Delete messages from\nmail server after the\ndownload.
 ;
-MSG_HELP_CO_CH_USEAPOP
-Identificarse usando autenticación APOP\npara mantener tu nombre de usuario y clave\nfuera del alcance de fisgones.\n(no soportado por todos los servidores POP3)
-; Log in using APOP authentication\nto keep your user name and password\naway from prying eyes.\n(not supported by all POP3 servers)
-;
 MSG_HELP_CO_CH_POPENABLED
 Verifica esta cuenta mientras\ncomprueba correo nuevo.
 ; Check this account while\nchecking for new mail.
@@ -1993,10 +1961,6 @@ Mostrar ventana de progreso\ndurante la transferencia de correo.
 MSG_HELP_CO_CY_MSGSELECT
 Preselección de mensaje muestra (una parte de) el contenido del\nbuzón de correo POP3 y permite seleccionar que mensaje(s)\nquieres descargar.
 ; Message pre-selection shows (a part of) the contents of the\nPOP3 mailbox and allows you to select which messages you\nwant to download.
-;
-MSG_HELP_CO_CH_UPDSTAT
-Marca mensaje nuevo en la bandeja de entrada\ncomo 'no leído' antes de descargar correo nuevo.
-; Mark new messages in the Incoming folder\nas 'unread' before downloading new mail.
 ;
 MSG_HELP_CO_ST_WARNSIZE
 Mensajes entrantes mayores que esto\nse considerarán como 'grandes'.
@@ -2463,7 +2427,7 @@ Recordatorio de Cumpleaños
 ;
 MSG_AB_HappyBirthday
 Feliz Cumpleaños!
-; Happy birthday.
+; Happy birthday
 ;
 MSG_AB_PersonAlias
 Alias (PERSONA)
@@ -3328,10 +3292,6 @@ MSG_WR_TitleContents
 Contenido
 ; Contents
 ;
-MSG_WR_TitleEncoding
-Cod.
-; Enc.
-;
 MSG_WR_TitleDescription
 Descripción
 ; Description
@@ -3720,10 +3680,6 @@ MSG_HELP_WR_BT_DISPLAY
 Usa el visor MIME configurado\npara mostrar este anexo.
 ; Use the configured MIME viewer\nto display this attachment.
 ;
-MSG_HELP_WR_RA_ENCODING
-Tipo de codificación utilizado para el anexo seleccionado.\nSelecciona UUencode sólo si el destinatario no utiliza\nun gestor de correo basado en MIME.
-; Type of encoding used for the selected attachment.\nSelect UUencode only if the recipient is not using\na MIME compliant mailer.
-;
 MSG_HELP_WR_ST_CTYPE
 Tipo MIME para el anexo seleccionado.\nCuando sea posible, utiliza uno de la lista emergente.
 ; MIME type for the selected attachment.\nWhenever possible, use one from the popup list.
@@ -3767,15 +3723,6 @@ Crea campos de cabecera conteniendo datos\nde tu agenda personal de contactos.
 MSG_HELP_WR_CY_IMPORTANCE
 Fija la prioridad\nde este mensaje.
 ; Set the priority\nof this message.
-;
-MSG_HELP_WR_RA_SIGNATURE
-Qué firma quieres\nincluir en este mensaje?
-; Which signature do you want\nto append to this message?
-;
-MSG_HELP_WR_RA_SECURITY
-Selecciona una de estas opciones de seguridad para enviar\ntus mensajes firmados PGP, encriptado\no anónimamente. "Por defecto" intenta encontrar\nel destinatario en tu agenda de contactos y utilizar\n\
-las preferencias de seguridad configuradas.
-; Select one of these security options to send\nyour message PGP signed or encrypted.\n"Default" tries to find the recipient\nin your address book and use the security\nsettings specified there.
 ;
 MSG_HELP_WR_BT_HOLD
 Copia el mensaje creado a\nla bandeja de salida y fija\nsu estado en 'pendiente'.
@@ -3880,7 +3827,7 @@ Transferencia de Correo hacia '%s'
 ;
 MSG_TR_MsgInFile
 Mensajes en archivo %s
-; Messages in file
+; Messages in file %s
 ;
 MSG_TR_Control
 Control
@@ -4724,10 +4671,6 @@ MSG_RE_FixedFont
 Fuente fija?
 ; Fixed font?
 ;
-MSG_CO_UseSMTPAUTH
-Utilizar Au_tentificación SMTP
-; Use SMTP AU_TH
-;
 MSG_CO_SMTPUser
 Nombre de Us_uario
 ; Us_er name
@@ -4803,10 +4746,6 @@ precisión de 0.01 GB/MB/KB
 MSG_CO_SIZEFORMAT05
 precisión de 0.001 GB/MB/KB
 ; 10^-3 precision (0.001 GB/MB/KB)
-;
-MSG_HELP_CO_CH_USESMTPAUTH
-Seleccionalo si quieres identificarte\ntu autenticidad en un servidor SMTP ajeno\n(usualmente fuera de tu dominio ISP).\nEn caso de duda, no activar esta opción.
-; Select if you wish to authenticate\nyourself to a foreign SMTP server\n(usually outside your ISP's domain).\nIf in doubt, don't enable this option.
 ;
 MSG_HELP_CO_ST_SMTPAUTHUSER
 Usar nombre del\nusuario SMTP AUTH.
@@ -5129,14 +5068,6 @@ MSG_HELP_CO_CA_COLURL
 Color utilizado para mostrar\nenlaces clickables URL.
 ; Color used to display\nclickable URL links.
 ;
-MSG_FO_FOLDEREXISTS
-Ya existe un archivo o directorio con la ruta dada para la carpeta.\n\nQuieres realmente proceder?
-; A file or directory with the given folder path already exists.\n\nDo you really want to proceed?
-;
-MSG_FO_FOLDERMOVE
-Quieres realmente mover la carpeta a otra ruta?
-; Do you really want to move the folder to another path?
-;
 MSG_FO_FOLDERNAMEINVALID
 El nombre de carpeta especificado no es válido o ya existe.\nPor favor introduce un nombre de carpeta válido antes de seguir.
 ; The specified folder name is empty or already exists.\nPlease enter a valid folder name before you proceed.
@@ -5328,27 +5259,6 @@ MSG_MA_CREQ_UNKNOWN_TITLE
 Encontrado Archivo desconocido en el directorio de la carpeta
 ; Unknown file in folder directory found
 ;
-MSG_CO_SMTPSECURE
-Usar conexión segura:
-; Use secure connection:
-;
-MSG_CO_SMTPSECURE_NO
-No
-; No
-;
-MSG_CO_SMTPSECURE_TLS
-con TLSv1
-; with TLSv1
-;
-MSG_CO_SMTPSECURE_SSL
-con SSLv3
-; with SSLv3
-;
-MSG_HELP_CO_RA_SMTPSECURE
-Una conexión segura TLSv1 o SSLv3 se establecerá entre\nel servidor SMTP y YAM para enviar correo a través de una conexión encriptada.\nSi estos botones no estan activos, significa que el soporte de \
-AmiSSL\nno está actualmente disponible.
-; A TLSv1 or SSLv3 secure connection will be established between\nthe SMTP server and YAM to send e-mail through an encrypted connection.\nIf these radio buttons are ghosted, it means AmiSSL support is\ncurrently not available.
-;
 MSG_CO_SHOWEMBEDDEDREADPANE
 Mostrar un _panel de lectura en la ventana principal
 ; Show embedded read _pane in main window
@@ -5457,15 +5367,6 @@ _Más
 MSG_CO_Less
 Me_nos
 ; _Less
-;
-MSG_MA_AUTOSAVEFOUND
-YAM ha encontrado un archivo de autoguardado del mensaje '%s'\nque pudo ser creado en una sesión anterior.\nPuede deberse a un posible error o reinicio\nmientras escribía el mensaje.\n\nQué quieres \
-hacer con este mensaje?
-; YAM has found an autosaved message file '%s'\nwhich was created in a previous session.\nThis may be due to a possible crash or reboot\nwhile writing a message.\n\nWhat do you want to do with that message?
-;
-MSG_MA_AUTOSAVEFOUND_TITLE
-Encontrado archivo Autoguardado
-; Autosave file found
 ;
 MSG_CO_NB_AUTOSAVE
 Intervalo Auto_guardado
@@ -5681,14 +5582,6 @@ Configuración TCP/IP
 MSG_CO_TCPIP_SUMMARY
 Configura tus cuentas SMTP y POP3 ...
 ; Configure your SMTP and POP3 accounts...
-;
-MSG_CO_NEWMAIL_TITLE
-Configuración Nuevo Correo
-; New Mail Settings
-;
-MSG_CO_NEWMAIL_SUMMARY
-Como manejar y reaccionar con el correo entrante...
-; How to handle and react upon incoming mail...
 ;
 MSG_CO_FILTER_TITLE
 Configuración Filtro de Correo
@@ -6281,10 +6174,6 @@ MSG_CO_SPAM_DELETESPAMFOLDER
 _Borrar carpeta Spam
 ; _Delete Spam folder
 ;
-MSG_CO_SMTPAUTH_METHOD
-_Método
-; Met_hod
-;
 MSG_HELP_CO_CY_SMTPAUTHMETHOD
 Selecciona el método de autenticación que YAM deberá usar.\n'Auto' permite a YAM escoger uno automáticamente dependiendo de\nla capacidad del servidor y es el valor recomendado.\nLas otras te permiten\n\
  seleccionar una explícitamente. Estan listadas\npor orden de seguridad, de mayor a menor.
@@ -6515,14 +6404,6 @@ MSG_MA_MEDITASNEW
 Editar como nuevo...
 ; Edit as new...
 ;
-MSG_CO_POPACCOUNT
-Cuenta de C_orreo
-; Account name
-;
-MSG_HELP_CO_ST_POPACCOUNT
-Un nombre aleatorio para esta cuenta la cual\nserá usada en vez de usuario@dominio.
-; An arbitrary name for this account which\nwill be used instead of user@host.
-;
 MSG_RE_SEARCH
 Buscar...
 ; Search...
@@ -6696,37 +6577,16 @@ Activar Cambio _Horario de Verano (DST)
 ; D_aylight Saving Time (DST) is active
 ;
 MSG_HELP_CO_CH_DSTACTIVE
-Activalo si el cambio de horario de verano \nse utiliza en tu zona horaria\n(horario de verano).
+Activalo si el cambio de horario\nde verano se utiliza en tu zona horaria\n(horario de verano).
 ; Enable this if daylight saving time is\ncurrently active in your time zone\n(summer time).
 ;
-MSG_CO_SMTPSERVERPORT
+MSG_CO_SMTP_SERVERPORT
 Ser_vidor/Puerto
 ; Ser_ver/Port
 ;
-MSG_CO_POP3SERVERPORT
-_Servidor/Puerto
+MSG_CO_POP_SERVERPORT
+Ser_vidor/Puerto
 ; Serve_r/Port
-;
-MSG_CO_POP3SECURE
-Usar conexión segura:
-; Use secure connection:
-;
-MSG_CO_POP3SECURE_NO
-No
-; No
-;
-MSG_CO_POP3SECURE_TLS
-con TLSv1
-; with TLSv1
-;
-MSG_CO_POP3SECURE_SSL
-con SSLv3
-; with SSLv3
-;
-MSG_HELP_CO_RA_POP3SECURE
-Una conexión segura TLSv1 o SSLv3 se establecerá entre\nel servidor SMTP y YAM para enviar correo a través de una conexión encriptada.\nSi estos botones no estan activos, significa que el soporte de \
-AmiSSL\nno está actualmente disponible.
-; A TLSv1 or SSLv3 secure connection will be established between\nthe POP3 server and YAM to receive e-mail through an encrypted\nconnection. If these radio buttons are ghosted, it means AmiSSL\nsupport is currently not available.
 ;
 MSG_CO_LOOKFEEL_THEMES
 Temas
@@ -6787,10 +6647,6 @@ No es recomendable activar esta opción con tan\npocos como %ld correos clasifica
 MSG_ER_CANNOT_CREATE_SEMAPHORE
 No puedo crear semáforo!
 ; Can't create semaphore.
-;
-MSG_MA_AUTOSAVEFOUND_BUTTONS
-*Mover a bandeja de _salida|_Editar|_Borrar|_Ignorar
-; *Move to _Outgoing|_Edit|_Delete|_Ignore
 ;
 MSG_RE_HDR_FROM
 De
@@ -7188,7 +7044,7 @@ MSG_FI_DATE_FIELD
 ; \ebDate\en
 ;
 MSG_FO_TO_PATTERN
-_Plantilla (Para:/CC:)
+_Plantilla (Para:)
 ; _Pattern (To:/CC:)
 ;
 MSG_FO_TO_ADDRESS
@@ -8048,4 +7904,595 @@ Fijar estado a 'No spam'
 MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_HAM
 Fijar el estado del correo filtrado a 'No spam'
 ; Set the status of the filtered mail to 'Not spam'
+;
+MSG_CO_SMTP_ACTIVE
+_Activo
+; _Active
+;
+MSG_CO_POP_AUTH
+Autentificación
+; Authentification
+;
+MSG_HELP_CO_CY_POPAUTH
+Cuando no este utilizando conexión segura (TLS o SSL) la contraseña se puede enviar\nusando algoritmo de encriptación APOP. (no soportado por todos los servidores POP3)
+; When not using any connection security\n(TLS or SSL) the password can be send\nusing the APOP encryption algorithm instead.\n(not supported by all POP3 servers)
+;
+MSG_CO_POP_AUTH_PLAIN
+Contraseña
+; Plain Password
+;
+MSG_CO_POP_AUTH_APOP
+Contraseña encriptada (APOP)
+; Encrypted Password (APOP)
+;
+MSG_CO_POP_SECURITY
+Seguridad en conexión
+; Connection Security
+;
+MSG_CO_POP_SECURITY_NONE
+No segura
+; No Security
+;
+MSG_CO_POP_SECURITY_TLS
+STARTTLS
+; STARTTLS
+;
+MSG_CO_POP_SECURITY_SSL
+SSL/TLS
+; SSL/TLS
+;
+MSG_HELP_CO_CY_POPSECURE
+Se establecerá una conexión segura STARTTLS o SSL/TLS\nentre el servidor POP3 y YAM para recibir correo a través de una conexión ecriptada.\nSi este selector está sombreado, significa que el soporte \
+AmiSSL\nactualmente no está disponible.
+; A STARTTLS or SSL/TLS secure connection will be\nestablished between the POP3 server and YAM to receive\ne-mail through an encrypted connection. If this cycle\ngadget is ghosted, it means AmiSSL support is currently\nnot available.
+;
+MSG_CO_POP_SERVERLIST
+Lista Servidores
+; Server List
+;
+MSG_CO_POP_SERVERSETTINGS
+Preferencias Servidor
+; Server Settings
+;
+MSG_CO_POP_SECURITYAUTH
+Seguridad y Autentificación
+; Security and Authentification
+;
+MSG_CO_POP_MSGHANDLING
+Gestión de mensajes
+; Message handling
+;
+MSG_CO_SMTP_SERVERLIST
+Lista Servidor
+; Server List
+;
+MSG_CO_SMTP_SERVERSETTINGS
+Preferencias de Servidor
+; Server Settings
+;
+MSG_CO_POP_DESC
+Descripción
+; Description
+;
+MSG_HELP_CO_ST_POPDESC
+Cualquier descripción/nombre para esta conexión de servidor el cual se usará en vez de\nuser@host.
+; An arbitrary description/name for this\nserver connection which will be used instead\nof user@host.
+;
+MSG_CO_SMTP_DESC
+Descripción
+; Description
+;
+MSG_HELP_CO_ST_SMTPDESC
+Cualquier descripción/nombre para esta conexión de servidor el cual se usará en vez de\nuser@host.
+; An arbitrary description/name for this\nserver connection which will be used instead\nof user@host.
+;
+MSG_CO_SMTP_SECURITY
+Seguridad en conexión
+; Connection Security
+;
+MSG_CO_SMTP_SECURITY_NONE
+No segura
+; No Security
+;
+MSG_CO_SMTP_SECURITY_TLS
+STARTTLS
+; STARTTLS
+;
+MSG_CO_SMTP_SECURITY_SSL
+SSL/TLS
+; SSL/TLS
+;
+MSG_CO_SMTP_SECURITYAUTH
+Seguridad y Autentificación
+; Security and Authentification
+;
+MSG_HELP_CO_CY_SMTPSECURE
+Se establecerá una conexión segura STARTTLS o SSL/TLS\nentre el servidor POP3 y YAM para recibir correo a través de una conexión ecriptada.\nSi este selector está sombreado, significa que el soporte \
+AmiSSL\nactualmente no está disponible.
+; A STARTTLS or SSL/TLS secure connection will be\nestablished between the SMTP server and YAM to receive\ne-mail through an encrypted connection. If this cycle\ngadget is ghosted, it means AmiSSL support is currently\nnot available.
+;
+MSG_CO_SMTP_AUTH
+Autentificación
+; Authentification
+;
+MSG_CO_SMTPAUTH_NONE
+Sin Autentificación
+; No Authentication
+;
+MSG_CO_SMTP_OPTIONS
+Opciones
+; Options
+;
+MSG_CO_CRDIDENTITIES
+Identidades
+; Identities
+;
+MSG_CO_IDENTITIES_TITLE
+Preferencias de Identidades
+; Identities Settings
+;
+MSG_CO_IDENTITIES_SUMMARY
+Gestor de múltiples identidades para creación de correo...
+; Manage multiple identities for composing mails...
+;
+MSG_CO_IDENTITY_LIST
+Identidades
+; Identities
+;
+MSG_CO_IDENTITY_SETTINGS
+Preferencias Generales
+; General Settings
+;
+MSG_CO_IDENTITY_REGISTER_SETTINGS
+Preferencias Generales
+; General Settings
+;
+MSG_CO_IDENTITY_REGISTER_COMPOSE
+Creación de correo
+; Compose Mail
+;
+MSG_CO_IDENTITY_REGISTER_PGPSEC
+Seguridad PGP
+; PGP-Security
+;
+MSG_CO_IDENTITY_NOSIGNATURE
+Sin firma
+; no signature
+;
+MSG_CO_IDENTITY_ABOVEQUOTE
+antes del citado
+; above quotes
+;
+MSG_CO_IDENTITY_BELOWQUOTE
+después del citado
+; below quotes
+;
+MSG_CO_IDENTITY_DESCRIPTION
+Descripción
+; Description
+;
+MSG_CO_IDENTITY_MAILSERVER
+Servidor de Correo (SMTP)
+; Mail server (SMTP)
+;
+MSG_CO_IDENTITY_COMPOSE
+Configuración de composición de correo
+; Compose mail settings
+;
+MSG_CO_IDENTITY_CC
+Dirección CC
+; CC: address
+;
+MSG_CO_IDENTITY_BCC
+Dirección CCO
+; BCC: address
+;
+MSG_CO_IDENTITY_REPLYTO
+Dirección de Responder A
+; Reply-To: address
+;
+MSG_CO_IDENTITY_COMPOSE_OPTIONS
+Opciones
+; Options
+;
+MSG_CO_IDENTITY_COMPOSE_SENTFOLDER
+Guardar correo enviado a
+; Store sent mail to folder
+;
+MSG_CO_IDENTITY_COMPOSE_QUOTE
+Citar mensajes al responder
+; Quote messages when answering
+;
+MSG_CO_IDENTITY_COMPOSE_ANSWER
+Incluir mi consulta
+; Put my answer
+;
+MSG_CO_IDENTITY_COMPOSE_SIGNATURE
+Incluir mi firma
+; Put my signature
+;
+MSG_CO_IDENTITY_USESIG_REPLY
+Usar firma al responder
+; Use signature when replying
+;
+MSG_CO_IDENTITY_USESIG_FORWARD
+Utilizar firma cuando reenvie
+; Use signature when forwarding
+;
+MSG_CO_IDENTITY_PGPSETTINGS
+Preferencias de Seguridad PGP
+; PGP-Security Settings
+;
+MSG_CO_IDENTITY_USEPGP
+Utilizar PGP para esta indentidad
+; Use PGP for this identity
+;
+MSG_CO_IDENTITY_PGPKEY_ID
+PGP-Clave ID
+; PGP key ID
+;
+MSG_CO_IDENTITY_PGPKEY_URL
+PGP-Clave URL
+; PGP key URL
+;
+MSG_CO_IDENTITY_PGP_OPTIONS
+Opciones
+; Options
+;
+MSG_CO_IDENTITY_PGP_SIGN_UNENC
+Firmar correos no encriptados por defecto
+; Sign unencrypted mails per default
+;
+MSG_CO_IDENTITY_PGP_SIGN_ENC
+Firmar correos encriptados por defecto
+; Sign encrypted mails per default
+;
+MSG_CO_IDENTITY_PGP_ENCRYPTALL
+Encriptar todos los correos por defecto
+; Encrypt all mails per default
+;
+MSG_CO_IDENTITY_PGP_ADDOWN
+Añadir clave propia al encriptar correos
+; Add own key when encrypting mails
+;
+MSG_CO_IDENTITY_PHOTOURL
+URL de foto propia
+; URL to own photo
+;
+MSG_CO_IDENTITY_ADDINFO
+Añadir información personal
+; Add personal information
+;
+MSG_CO_IDENTITY_REQUESTMDN
+Con acuse de recibo
+; Request a return receipt
+;
+MSG_CO_SERVERNAME
+Servidor
+; Server name
+;
+MSG_HELP_CO_ST_USER
+Nombre de usuario para acceso al\nservidor de correo.
+; The username for accessing the\nmail server.
+;
+MSG_FO_MOVEFOLDERTO
+Realmente quiere mover la carpeta desde\n'%s'\nto\n'%s'?
+; Do you really want to move the folder from\n'%s'\nto\n'%s'?
+; FROM,TO
+;
+MSG_FO_FOLDER_ALREADY_EXISTS
+El archivo o directorio llamado '%s' ya existe\nyserá sobreescrito/borrado.\n\nRealmente quiere proceder?
+; A file or directory named '%s' already exists\nand will be overwritten/deleted.\n\nDo you really want to proceed?
+; PATH
+;
+MSG_ER_CANNOT_CREATE_FOLDER
+Error al crear el directorio '%s' (%s).
+; Failed to create directory '%s' (%s).
+; PATH, ERROR
+;
+MSG_CO_IdentityActive
+_Activo
+; _Active
+;
+MSG_MA_FLUSH_ALL_INDICES
+Eliminar todos losindices
+; Flush all indices
+;
+MSG_FI_CONDITION
+Condición
+; Condition
+;
+MSG_HELP_CO_CH_IDENTITY_ENABLED
+Si está activado, esta identidad del usuario está habilitada para su uso.
+; If checked, this user identity is enabled for use.
+;
+MSG_HELP_CO_ST_IDENTITY_DESCRIPTION
+Una descripción personalizada para esta\nidentidad de usuario.
+; A custom description for this\nuser identity.
+;
+MSG_HELP_CO_ST_IDENTITY_REALNAME
+El nombre real "nombre apellidos" de\nla identidad de este usuario.
+; The realname "firstname lastname" for\nthis user identity.
+;
+MSG_HELP_CO_ST_IDENTITY_EMAIL
+La dirección de correo asociada con\n la indentidad de este usuario.
+; The e-mail address associated with\nthis user identity.
+;
+MSG_HELP_CO_ST_IDENTITY_ORGANIZATION
+Nombre opcional de la organización\n a la que pertenece la identidad de este usuario.
+; Optional name of the organization\nthis user identity belongs to.
+;
+MSG_HELP_CO_CY_IDENTITY_MAILSERVER
+Le permite seleccionar el servidor SMTP de salida\nque será utilizado cuando el correo vaya a ser\nenviado con esta identidad de usuario.
+; Allows you to select the outgoing SMTP server\nwhich will be used when mail is going to be\nsent using this user identity.
+;
+MSG_HELP_CO_ST_IDENTITY_CC
+La dirección CC por defecto será utilizada\ncuando cree un correo.
+; The default CC: recipients added when\ncomposing a new mail.
+;
+MSG_HELP_CO_ST_IDENTITY_BCC
+La dirección CCO por defecto será utilizada\ncuando cree un correo.
+; The default BCC: recipients added when\ncomposing a new mail.
+;
+MSG_HELP_CO_ST_IDENTITY_REPLYTO
+La dirección de Responder A por defecto será utilizada cuando cree un correo.
+; The default Reply-To: recipients added when\ncomposing a new mail.
+;
+MSG_HELP_CO_ST_IDENTITY_EXTRAHEADER
+Le permite especificar el valor predeterminado para poner\n encabezados adicionales en un correo saliente.
+; Allows you to specify the default for putting\nadditional headers to an outgoing mail.
+;
+MSG_HELP_CO_ST_IDENTITY_PHOTOURL
+URL opcional a una fotografía asociada con\n la identidad de usuario.
+; An optional URL to a photo associated with\nthis user identity.
+;
+MSG_HELP_CO_CH_IDENTITY_SENTFOLDER
+Si está activado, el correo enviado se guardará en una\ncarpeta de correo enviado. De lo contrario el correo enviado\nserá eliminado.
+; If enabled, sent mail will be stored in a\nsent mail folder. Otherwise the sent mail\nwill be deleted.
+;
+MSG_HELP_CO_TX_IDENTITY_SENTFOLDER
+Permite especificar qué carpeta de correo debe\n utilizarse para almacenar los mensajes enviados.
+; Allows to specify which mail folder should\nbe used when storing sent mail.
+;
+MSG_HELP_CO_CH_IDENTITY_QUOTEMAILS
+Al responder o reenviar el texto del mensaje\n será citado, si esta opción está activada.
+; When replying or forwarding mails text will\nbe quoted if this option is enabled.
+;
+MSG_HELP_CO_CH_IDENTITY_QUOTEPOS
+Permite definir si la respuesta se debe situar\nencima o debajo del mensaje citado.
+; Allows to define if your answer should be\nplaced above or below quotes.
+;
+MSG_HELP_CO_CH_IDENTITY_SIGPOS
+Permite definir si la firma deberá\naparecer por debajo o por encima del mensaje citado.
+; Allows to define if your signature should\nappear below or above the quotes.
+;
+MSG_HELP_CO_CH_IDENTITY_SIGREPLY
+Si está activado, la firma se añadirá al\ncontestar un mensaje.
+; If enabled, a signature will be added when\nreplying to a mail.
+;
+MSG_HELP_CO_CH_IDENTITY_SIGFORWARD
+Si está activado, la firma se añadirá al\n reenviar un mensaje.
+; If enabled, a signature will be added when\nforwarding a mail.
+;
+MSG_HELP_CO_CH_IDENTITY_ADDINFO
+Si está activo, la información personal será\nañadida al correo (cabecera X-SenderInfo).\nEsto requiere una entrada en la agenda de contactos con\nla misma dirección de correo electrónico de esta \
+identidad de usuario.
+; If enabled, personal information will be\nadded to the mail (X-SenderInfo header).\nThis requires an addressbook entry with\nthe same email address as this user identity.
+;
+MSG_HELP_CO_CH_IDENTITY_REQUESTMDN
+Si está activado, se solicitará por defecto una\nnotificación de disposición de correo a la hora de componer\n el mensaje.
+; If enabled, a mail disposition notification\nwill be requested per default when composing\na mail.
+;
+MSG_HELP_CO_CH_IDENTITY_USEPGP
+Permite habilitar/deshabilitar la funcionalidad de PGP\npara la totalidad de la indentidad de este usuario.
+; Allows to enable/disable the PGP functionality\nfor this whole user identity.
+;
+MSG_HELP_CO_ST_IDENTITY_PGPID
+Permite especificar el ID de la clave PGP que\nserá utilizado para esta identidad de usuario.
+; Allows to specify the PGP-Key ID which should\nbe used for this user identity.
+;
+MSG_HELP_CO_ST_IDENTITY_PGPURL
+Permite especificar un URL donde se podrá\nacceder para obtener la clave pública de esta identidad de usuario.
+; Allows to specify an URL where the public key\nfor this user identity can be accessed.
+;
+MSG_HELP_CO_CH_IDENTITY_PGPSIGN_UNENC
+Si está activo, el valor predeterminado para PGP es firmar\ntodos los mensajes no encriptados cuando se empiece a componerlos.
+; If enabled, the default is set to PGP sign all\nunencrypted emails when starting to compose them.
+;
+MSG_HELP_CO_CH_IDENTITY_PGPSIGN_ENC
+Si está activo, el valor predeterminado para PGP es firmar\ntodos los mensajes encriptados cuando se empiece a componerlos.
+; If enabled, the default is set to PGP sign all\nencrypted emails when starting to compose them.
+;
+MSG_HELP_CO_CH_IDENTITY_PGPENC_ALL
+Si está activo, el valor predeterminado para PGP es encriptar\ntodos los mensajes cuando se empiece a componerlos.
+; If enabled, the default is set to PGP encrypt all\nemails when starting to compose them.
+;
+MSG_HELP_CO_CH_IDENTITY_PGPENC_SELF
+Si está activo, todos los mensajes que se encriptan a través de PGP\nse le añadirán la clave PGP de esta identidad de usuario.\n Si no está activo, los mensajes encriptados no pueden ser\n\
+desencriptados por esta identidad de usuario.
+; If enabled, all emails being encrypted via PGP\nwill have the PGP key added of this user identity.\nIf disabled, encrypted emails cannot be decrypted\nby this user identity.
+;
+MSG_HELP_CO_CY_IDENTITY_SIGNATURE
+Permite seleccionar la firma predeterminada que\nserá utilizada a la hora de componer mensajes con\nesta identidad de usuario.
+; Allows to select the default signature that\nshould be used when composing emails with this\nuser identity.
+;
+MSG_CO_CONFIGWARNING_TITLE
+Advertencia de Configuración
+; Configuration Warning
+;
+MSG_CO_CONFIGWARNING
+Se han modificado algunos valores de configuración y perderá\nlos cambios si cierra la ventana de configuración.\nDesea continuar?
+; You have modified certain configuration\nsettings and will lose these changes\nwhen closing the config window.\n\nHow do you want to proceed?
+;
+MSG_CO_CONFIGWARNING_BT
+_Cerrar ventana|*_Abortar
+; _Close window|*_Abort
+;
+MSG_CO_CONFIGVERSIONWARNING_TITLE
+Advertencia de la versión de Configuración
+; Configuration Version Warning
+;
+MSG_CO_CONFIGVERSIONWARNING
+El archivo de configuración que YAM trata de\n cargar fue salvado por una versión más reciente de YAM.\nSi continua cargando este archivo algunos ajustes\nde configuración se pueden perder y se \
+establezcan\n sus valores por defecto.\n\nCómo desea proceder?
+; The configuration file that YAM tries to\nload was saved by a newer YAM version.\nIf you continue to load this file some\nconfig settings might be lost and set\nto their default values.\n\nHow do you want to proceed?
+;
+MSG_CO_CONFIGVERSIONWARNING_BT
+_Continuar|*_Abortar
+; _Continue|*_Abort
+;
+MSG_WR_MCCADDRFIELD
+Campo dirección CC
+; CC address field
+;
+MSG_WR_MBCCADDRFIELD
+Campo dirección CCO
+; BCC address field
+;
+MSG_WR_MREPLYTOADDRFIELD
+Campo dirección Remitir a
+; Reply-To address field
+;
+MSG_CO_LISTCOLUMNSETTINGS
+Preferencias de Columna
+; Column settings
+;
+MSG_CO_LOOKFEEL_MAINWINDOW
+Ventana Principal
+; Main window
+;
+MSG_CO_LOOKFEEL_TITLE_THEME
+Tema
+; Theme
+;
+MSG_CO_LOOKFEEL_TITLE_INFO
+Información
+; Information
+;
+MSG_HELP_WR_CY_SIGNATURE
+Permite seleccionar que firma\nse mostrará para el mensaje\nrecientemente creado. 
+; Allows to select which signature\nshow be used for the currently\ncomposed message.
+;
+MSG_WR_PGPSECURITY
+Nivel de seguridad PGP
+; PGP security level
+;
+MSG_HELP_WR_CY_SECURITY
+Permite seleccionar el nivel de seguridad de PGP.\nSe puede seleccionar si un mensaje debe ser firmado,\nencriptado o ambas cosas. "Por defecto" trata de encontrar\nel receptor en la agenda de \
+contactos y utilizar\nlas preferencias definidas allí.
+; Allows to select the PGP security level.\nYou can select if a message should be signed,\nencrypted or both. "Default" tries to find\nthe recipient in your address book and use\nthe settings defined there.
+;
+MSG_CO_MIMETYPE_TITLE
+Tipo MIME
+; MIME type
+;
+MSG_CO_DOWNLOAD_LARGE_MAILS1
+_Descargar mensajes mayores de
+; _Download messages larger than
+;
+MSG_CO_DOWNLOAD_LARGE_MAILS2
+KB
+; KB
+;
+MSG_MA_DRAFTS
+Borradores
+; Drafts
+;
+MSG_CO_SIGNATURE
+Firma
+; Signature
+;
+MSG_CO_SIGNATURES
+Firmas
+; Signatures
+;
+MSG_CO_SIGNATURE_DESCRIPTION
+Descripción
+; Description
+;
+MSG_CO_SIGNATURE_ACTIVE
+_Activo
+; _Active
+;
+MSG_CO_IDENTITY_SIGNATURE
+Firma
+; Signature
+;
+MSG_HELP_CO_LV_SIGNATURE
+Lista de firmas
+; List of all signatures
+;
+MSG_HELP_CO_BT_SIGADD
+Añade una firma nueva a la lista.
+; Adds a new signature to the list.
+;
+MSG_HELP_CO_BT_SIGDEL
+Elimina la firma seleccionada de la lista.
+; Removes selected signature from list.
+;
+MSG_HELP_CO_BT_SIGUP
+Mueve la firma una posición hacia arriba.
+; Moves signature one entry up.
+;
+MSG_HELP_CO_BT_SIGDOWN
+Mueve la firma una posición hacia abajo.
+; Moves signature one entry down.
+;
+MSG_HELP_CO_BT_SIG_ACTIVE
+Indicador de la firma actualmente seleccionada\nque marca si está activa o no activa.
+; Flags the currently selected signature\nas active or inactive.
+;
+MSG_HELP_CO_ST_SIG_DESC
+Permite introducir texto libre\nde descripción de la firma.
+; Allows you to enter a freetext\ndescription for the signature.
+;
+MSG_HELP_CO_TE_SIGEDIT
+Editor de texto para introducir/modificar\n el texto de la firma.
+; Text editor for entering/changing\nthe signature text.
+;
+MSG_CO_MIXED_CONNECTIONS
+Conexiones
+; Connections
+;
+MSG_CO_POP_NOTIFICATION
+Notificación para nuevo correo
+; Notification for new mails
+;
+MSG_SSL_CERT_WARNING_TITLE
+Atención Certificado SSL
+; SSL Certificate Warning
+;
+MSG_SSL_CERT_WARNING_BUTTONS
+Aceptar|Aceptar Permanentemente|*Rechazar
+; Accept|Accept Permanently|*Reject
+;
+MSG_SSL_CERT_WARNING_INTRO
+Error en la validación del servidor para el certificado '\033b%s:%d\033n':
+; Error validating server certificate for '\033b%s:%d\033n':
+; HOSTNAME, PORT
+;
+MSG_SSL_CERT_WARNING_UNTRUSTED
+- El certificado no es emitido por una autoridad de confianza. Usar la\nhuella digital para validar el certificado manualmente.
+; - The certificate is not issued by a trusted authority. Use the\n  fingerprint to validate the certificate manually.
+;
+MSG_SSL_CERT_WARNING_IDMISMATCH
+- El nombre del certificado no coincide.
+; - The certificate hostname does not match.
+;
+MSG_SSL_CERT_WARNING_NOTYETVALID
+- El certificado todavía no es válido.
+; - The certificate is not yet valid.
+;
+MSG_SSL_CERT_WARNING_EXPIRED
+- El certificado ha expirado.
+; - The certificate has expired.
+;
+MSG_SSL_CERT_WARNING_OTHER
+- El certificado tiene un error desconocido.
+; - The certificate has an unknown error.
+;
+MSG_SSL_CERT_WARNING_INFO
+Información del Certificado:\n- Nombre: \033b%s\033n\n- Válido: \033b%s\033n hasta \033b%s\033n\n- Emisor: \033b%s\033n\n- Huella Digital: \033b%s\033n
+; Certificate information:\n- Hostname: \033b%s\033n\n- Valid: \033b%s\033n until \033b%s\033n\n- Issuer: \033b%s\033n\n- Fingerprint: \033b%s\033n
+; HOSTNAME, VALID_FROM, VALID_TO, ISSUER, FINGERPRINT
 ;

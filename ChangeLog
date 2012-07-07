@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-07-07 Emilio Jimenez <ejim@ono.com>
+
+  * locale/spanish.ct: updated to the latest changes.
+
 2012-07-05 Thore Böckelmann <tboeckel@gmx.de>
 
   * locale/german.ct: updated german translation.
