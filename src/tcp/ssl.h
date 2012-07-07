@@ -31,6 +31,33 @@
 // forward declarations
 struct Connection;
 
+// SSL certificate verification failures
+#define SSL_CERT_ERR_NONE         (0<<0) // no error
+#define SSL_CERT_ERR_NOTYETVALID  (1<<0) // the certificate is not yet valid
+#define SSL_CERT_ERR_EXPIRED      (1<<1) // the certificate has expired
+#define SSL_CERT_ERR_IDMISMATCH   (1<<2) // the hostname does not match hostname of server
+#define SSL_CERT_ERR_UNTRUSTED    (1<<3) // the certificate authority which signed the cert is not trusted
+#define SSL_CERT_ERR_BADCHAIN     (1<<4) // the certificate chain contained a cert which failed trust
+#define SSL_CERT_ERR_OTHER        (1<<5) // other certificate error not specified here
+#define SSL_CERT_ERR_UNHANDLED    (1<<6) // unhandled error occurred during cert verification
+
+#define SSL_DIGESTLEN 60
+
+// certificate structure
+struct Certificate
+{
+  struct Certificate *issuer; // links to the certificate of the issuer or NULL if top level
+
+  X509_NAME *subject_dn;
+  X509_NAME *issuer_dn;
+  X509      *subject;
+  char      *identity;
+  char      fingerprint[SSL_DIGESTLEN];
+  char      *issuerStr;
+  char      notBefore[SIZE_DEFAULT];
+  char      notAfter[SIZE_DEFAULT];
+};
+
 // public functions
 BOOL MakeSecureConnection(struct Connection *conn);
 

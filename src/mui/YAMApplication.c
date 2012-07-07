@@ -1240,3 +1240,17 @@ DECLARE(MUIRequestA) // Object *app, Object *win, LONG flags, const char *title,
 }
 
 ///
+/// DECLARE(CertWarningRequest)
+//
+DECLARE(CertWarningRequest) // struct Connection *conn, struct Certificate *cert
+{
+  BOOL result;
+  ENTER();
+
+  result = CertWarningRequest(msg->conn, msg->cert);
+
+  RETURN(result);
+  return result;
+}
+
+///

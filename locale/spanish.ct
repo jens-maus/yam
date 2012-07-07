@@ -8462,10 +8462,6 @@ MSG_SSL_CERT_WARNING_TITLE
 Atención Certificado SSL
 ; SSL Certificate Warning
 ;
-MSG_SSL_CERT_WARNING_BUTTONS
-Aceptar|Aceptar Permanentemente|*Rechazar
-; Accept|Accept Permanently|*Reject
-;
 MSG_SSL_CERT_WARNING_INTRO
 Error en la validación del servidor para el certificado '\033b%s:%d\033n':
 ; Error validating server certificate for '\033b%s:%d\033n':

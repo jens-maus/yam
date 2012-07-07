@@ -28,6 +28,10 @@
 
 ***************************************************************************/
 
+// forward declarations
+struct Connection;
+struct Certificate;
+
 // attachment requester flags & macros
 #define ATTREQ_DISP       (1<<0)
 #define ATTREQ_SAVE       (1<<1)
@@ -38,12 +42,16 @@
 #define isPrintReq(v)     (isFlagSet((v), ATTREQ_PRINT))
 #define isMultiReq(v)     (isFlagSet((v), ATTREQ_MULTI))
 
-LONG YAMMUIRequest(Object *app, Object *win, UNUSED LONG flags, const char *title, const char *gadgets, const char *format, ...);
-LONG YAMMUIRequestA(Object *app, Object *parent, UNUSED LONG flags, const char *tit, const char *gad, const char *reqtxt);
+// MUI_Request() flags
+#define MUIF_REQ_FLOATTEXT (1<<0)
+
+LONG YAMMUIRequest(Object *app, Object *win, LONG flags, const char *title, const char *gadgets, const char *format, ...);
+LONG YAMMUIRequestA(Object *app, Object *parent, LONG flags, const char *tit, const char *gad, const char *reqtxt);
 int StringRequest(char *string, int size, const char *title, const char *body, const char *yestext, const char *alttext, const char *notext, BOOL secret, Object *parent);
 int PassphraseRequest(char *string, int size, Object *parent);
 struct Folder *FolderRequest(const char *title, const char *body, const char *yestext, const char *notext, struct Folder *exclude, Object *parent);
 struct Part *AttachRequest(const char *title, const char *body, const char *yestext, const char *notext, int mode, struct ReadMailData *rmData);
 LONG CheckboxRequest(Object *parent, const char *tit, ULONG numBoxes, const char *text, ...);
+BOOL CertWarningRequest(struct Connection *conn, struct Certificate *cert);
 
 #endif /* REQUESTERS_H */

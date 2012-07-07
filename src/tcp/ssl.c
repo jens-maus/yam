@@ -47,7 +47,6 @@
 
 #include "YAM.h"
 #include "YAM_config.h"
-#include "YAM_configFile.h"
 #include "YAM_error.h"
 #include "YAM_utilities.h"
 
@@ -57,6 +56,7 @@
 #include "Requesters.h"
 
 #include "tcp/Connection.h"
+#include "tcp/ssl.h"
 
 #include "Debug.h"
 
@@ -67,33 +67,6 @@
 #else
 #define GET_SOCKETBASE(conn)  struct Library *SocketBase = (conn)->socketBase
 #endif
-
-// SSL certificate verification failures
-#define SSL_CERT_ERR_NONE         (0<<0) // no error
-#define SSL_CERT_ERR_NOTYETVALID  (1<<0) // the certificate is not yet valid
-#define SSL_CERT_ERR_EXPIRED      (1<<1) // the certificate has expired
-#define SSL_CERT_ERR_IDMISMATCH   (1<<2) // the hostname does not match hostname of server
-#define SSL_CERT_ERR_UNTRUSTED    (1<<3) // the certificate authority which signed the cert is not trusted
-#define SSL_CERT_ERR_BADCHAIN     (1<<4) // the certificate chain contained a cert which failed trust
-#define SSL_CERT_ERR_OTHER        (1<<5) // other certificate error not specified here
-#define SSL_CERT_ERR_UNHANDLED    (1<<6) // unhandled error occurred during cert verification
-
-#define SSL_DIGESTLEN 60
-
-// certificate structure
-struct Certificate
-{
-  struct Certificate *issuer; // links to the certificate of the issuer or NULL if top level
-
-  X509_NAME *subject_dn;
-  X509_NAME *issuer_dn;
-  X509      *subject;
-  char      *identity;
-  char      fingerprint[SSL_DIGESTLEN];
-  char      *issuerStr;
-  char      notBefore[SIZE_DEFAULT];
-  char      notAfter[SIZE_DEFAULT];
-};
 
 #define DEFAULT_CAPATH "PROGDIR:Certificates"
 #define DEFAULT_CAFILE "PROGDIR:Certificates/ca-bundle.crt"
@@ -602,17 +575,16 @@ static int CheckCertificate(struct Connection *conn, struct Certificate *cert)
 {
   X509 *x509_cert = cert->subject;
   int ret;
-  int failures = conn->sslCertFailures;
 
   ENTER();
 
-  SHOWVALUE(DBF_NET, failures);
+  SHOWVALUE(DBF_NET, conn->sslCertFailures);
 
   // If the verification callback hit a case which can't be mapped
   // to one of the exported error bits, it's treated as a hard
   // failure rather than invoking the callback, which can't present
   // a useful error to the user.  "Um, something is wrong.  OK?" */
-  if(isFlagSet(failures, SSL_CERT_ERR_UNHANDLED))
+  if(isFlagSet(conn->sslCertFailures, SSL_CERT_ERR_UNHANDLED))
   {
     #if defined(DEBUG)
     long result = SSL_get_verify_result(conn->ssl);
@@ -635,84 +607,30 @@ static int CheckCertificate(struct Connection *conn, struct Certificate *cert)
   else if(ret > 0)
   {
     D(DBF_NET, "ssl: verify failure SSL_CERT_ERR_IDMISMATCH found");
-    setFlag(failures, SSL_CERT_ERR_IDMISMATCH);
+    setFlag(conn->sslCertFailures, SSL_CERT_ERR_IDMISMATCH);
   }
 
   // check if the certificate chain could be verified or if
   // we need to ask the user how to continue
-  if(failures == SSL_CERT_ERR_NONE)
+  if(conn->sslCertFailures == SSL_CERT_ERR_NONE)
     ret = 0;
   else
   {
     // now that we have identified cert failures we check
     // if the user has already accepted these failures and
     // the cert or if we have to ask him once again
-    if((failures & ~conn->server->certFailures) != 0 || // check if any bits were added
+    if((conn->sslCertFailures & ~conn->server->certFailures) != 0 || // check if any bits were added
        stricmp(cert->fingerprint, conn->server->certFingerprint) != 0)
     {
       // ask user how to proceed and react upon his request
-      char *reqtxt = NULL;
-
-      StrBufCpy(&reqtxt, tr(MSG_SSL_CERT_WARNING_INTRO));
-      StrBufCat(&reqtxt, "\n\n");
-
-      if(isFlagSet(failures, SSL_CERT_ERR_UNTRUSTED))
-      {
-        StrBufCat(&reqtxt, tr(MSG_SSL_CERT_WARNING_UNTRUSTED));
-        StrBufCat(&reqtxt, "\n");
-      }
-
-      if(isFlagSet(failures, SSL_CERT_ERR_IDMISMATCH))
-      {
-        StrBufCat(&reqtxt, tr(MSG_SSL_CERT_WARNING_IDMISMATCH));
-        StrBufCat(&reqtxt, "\n");
-      }
-
-      if(isFlagSet(failures, SSL_CERT_ERR_NOTYETVALID))
-      {
-        StrBufCat(&reqtxt, tr(MSG_SSL_CERT_WARNING_NOTYETVALID));
-        StrBufCat(&reqtxt, "\n");
-      }
-
-      if(isFlagSet(failures, SSL_CERT_ERR_EXPIRED))
-      {
-        StrBufCat(&reqtxt, tr(MSG_SSL_CERT_WARNING_EXPIRED));
-        StrBufCat(&reqtxt, "\n");
-      }
-
-      if(isFlagSet(failures, SSL_CERT_ERR_OTHER))
-      {
-        StrBufCat(&reqtxt, tr(MSG_SSL_CERT_WARNING_OTHER));
-        StrBufCat(&reqtxt, "\n");
-      }
-
-      StrBufCat(&reqtxt, "\n");
-      StrBufCat(&reqtxt, tr(MSG_SSL_CERT_WARNING_INFO));
-
-      ret = MUI_Request(G->App, NULL, 0, tr(MSG_SSL_CERT_WARNING_TITLE), tr(MSG_SSL_CERT_WARNING_BUTTONS), reqtxt, conn->server->hostname, conn->server->port, cert->identity, cert->notBefore, cert->notAfter, cert->issuerStr, cert->fingerprint);
-
-      FreeStrBuf(reqtxt);
-
-      if(ret == 0)
-        ret = 1; // signal ERROR that aborts the SSL connection
-      else if(ret == 1)
+      if(CertWarningRequest(conn, cert) == TRUE)
         ret = 0; // signal NO error and continue the SSL connection
-      else if(ret == 2)
-      {
-        // user wants to accept the SSL certificate permanently
-        strlcpy(conn->server->certFingerprint, cert->fingerprint, sizeof(conn->server->certFingerprint));
-        conn->server->certFailures = failures;
-
-        // make sure to save the config
-        CO_SaveConfig(C, G->CO_PrefsFile);
-
-        // signal NO error
-        ret = 0;
-      }
+      else
+        ret = 1; // signal ERROR that aborts the SSL connection
     }
     else
     {
-      W(DBF_NET, "User accepted cert permanently %08lx vs %08lx", failures, conn->server->certFailures);
+      W(DBF_NET, "User accepted cert permanently %08lx vs %08lx", conn->sslCertFailures, conn->server->certFailures);
 
       // signal NO error
       ret = 0;

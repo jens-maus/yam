@@ -7423,7 +7423,7 @@ MSG_SSL_CERT_WARNING_TITLE (2375//)
 SSL Certificate Warning
 ;
 MSG_SSL_CERT_WARNING_BUTTONS (2376//)
-Accept|Accept Permanently|*Reject
+_Accept|Accept _Permanently|_Show Certificate|*_Reject
 ;
 MSG_SSL_CERT_WARNING_INTRO (2377//)
 Error validating server certificate for '\033b%s:%d\033n':
@@ -7452,4 +7452,8 @@ Certificate information:\n\
 - Issuer: \033b%s\033n\n\
 - Fingerprint: \033b%s\033n
 ; HOSTNAME, VALID_FROM, VALID_TO, ISSUER, FINGERPRINT
+;
+MSG_SSL_CERT_WARNING_SHOWTITLE (2384//)
+Certificate of %s:%d
+; HOSTNAME, PORT
 ;

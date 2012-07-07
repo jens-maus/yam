@@ -8960,7 +8960,7 @@ MSG_SSL_CERT_WARNING_TITLE
 SSL-Zertificat-Warnung
 ;
 MSG_SSL_CERT_WARNING_BUTTONS
-Akzeptieren|Dauerhaft akzeptieren|*Ablehnen
+_Akzeptieren|_Dauerhaft akzeptieren|_Zertifikat anzeigen|*A_blehnen
 ;
 MSG_SSL_CERT_WARNING_INTRO
 Fehler beim Validieren des Serverzertifikats für '\033b%s:%d\033n':

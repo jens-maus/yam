@@ -32,6 +32,8 @@
 
 #include <ctype.h>
 #include <string.h>
+
+#include <mui/NFloattext_mcc.h>
 #include <proto/muimaster.h>
 
 #include "YAM.h"
@@ -45,6 +47,8 @@
 struct Data
 {
   LONG result;
+  char *titleText;
+  char *buttons;
 };
 */
 
@@ -56,7 +60,12 @@ OVERLOAD(OM_NEW)
   char *titleText = NULL;
   char *bodyText = NULL;
   char *buttons = NULL;
+  BOOL floattext = FALSE;
+  BOOL sizeGadget = FALSE;
+  ULONG windowWidth;
+  ULONG windowHeight;
   Object *buttonGroup = NULL;
+  Object *bodyGroup = NULL;
 
   ENTER();
 
@@ -66,7 +75,7 @@ OVERLOAD(OM_NEW)
     {
       case MUIA_Window_Title:
       {
-        titleText = (char *)tag->ti_Data;
+        titleText = strdup((char *)tag->ti_Data);
         tag->ti_Tag = TAG_IGNORE;
       }
       break;
@@ -80,11 +89,56 @@ OVERLOAD(OM_NEW)
 
       case ATTR(Buttons):
       {
-        buttons = (char *)tag->ti_Data;
+        buttons = strdup((char *)tag->ti_Data);
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
+
+      case ATTR(Floattext):
+      {
+        floattext = tag->ti_Data;
         tag->ti_Tag = TAG_IGNORE;
       }
       break;
     }
+  }
+
+  // if the user wants to have a floattext we have to create
+  // the object accordingly
+  if(floattext == TRUE)
+  {
+    windowHeight = MUIV_Window_Width_MinMax(30);
+    windowWidth = MUIV_Window_Width_MinMax(25);
+    sizeGadget = TRUE;
+    bodyGroup = HGroup,
+                  GroupFrame,
+                  MUIA_Background, MUII_GroupBack,
+                  Child, NListviewObject,
+                    MUIA_Listview_Input,  FALSE,
+                    MUIA_NListview_NList, NFloattextObject,
+                      NoFrame,
+                      MUIA_Background, MUII_GroupBack,
+                      MUIA_NFloattext_Text, bodyText,
+                    End,
+                  End,
+                End;
+  }
+  else
+  {
+    windowHeight = MUIV_Window_Width_MinMax(0);
+    windowWidth = MUIV_Window_Width_MinMax(0);
+    sizeGadget = FALSE;
+    bodyGroup = HGroup,
+                  GroupFrame,
+                  MUIA_Background, MUII_GroupBack,
+                  Child, HSpace(0),
+                  Child, TextObject,
+                    InnerSpacing(4, 4),
+                    MUIA_Text_Contents, bodyText,
+                    MUIA_Text_SetMax,   TRUE,
+                  End,
+                  Child, HSpace(0),
+                End;
   }
 
   if((obj = DoSuperNew(cl, obj,
@@ -92,26 +146,16 @@ OVERLOAD(OM_NEW)
     MUIA_Window_Title,        (titleText != NULL) ? titleText : (char *)"YAM",
     MUIA_Window_LeftEdge,     MUIV_Window_LeftEdge_Centered,
     MUIA_Window_TopEdge,      MUIV_Window_TopEdge_Centered,
-    MUIA_Window_Width,        MUIV_Window_Width_MinMax(0),
-    MUIA_Window_Height,       MUIV_Window_Height_MinMax(0),
+    MUIA_Window_Width,        windowWidth,
+    MUIA_Window_Height,       windowHeight,
     MUIA_Window_CloseGadget,  FALSE,
-    MUIA_Window_SizeGadget,   FALSE,
+    MUIA_Window_SizeGadget,   sizeGadget,
     MUIA_Window_Activate,     TRUE,
     MUIA_Window_NoMenus,      TRUE,
     WindowContents, VGroup,
        MUIA_Background, MUII_RequesterBack,
        InnerSpacing(4, 4),
-       Child, HGroup,
-         GroupFrame,
-         MUIA_Background, MUII_GroupBack,
-         Child, HSpace(0),
-         Child, TextObject,
-           InnerSpacing(4, 4),
-           MUIA_Text_Contents, bodyText,
-           MUIA_Text_SetMax,   TRUE,
-         End,
-         Child, HSpace(0),
-       End,
+       Child, bodyGroup,
        Child, buttonGroup = HGroup,
          GroupSpacing(0),
        End,
@@ -119,6 +163,11 @@ OVERLOAD(OM_NEW)
 
     TAG_MORE, inittags(msg))) != NULL)
   {
+    GETDATA;
+
+    data->titleText = titleText;
+    data->buttons = buttons;
+
     // prepare the group for the change.
     if(buttons != NULL && DoMethod(buttonGroup, MUIM_Group_InitChange))
     {
@@ -242,6 +291,29 @@ OVERLOAD(OM_NEW)
 
   RETURN(obj);
   return (IPTR)obj;
+}
+
+///
+/// OVERLOAD(OM_DISPOSE)
+OVERLOAD(OM_DISPOSE)
+{
+  GETDATA;
+  ULONG result;
+
+  ENTER();
+
+  if(data->buttons != NULL)
+    free(data->buttons);
+
+  if(data->titleText != NULL)
+    free(data->titleText);
+
+  // then we call the supermethod to let
+  // MUI free the rest for us.
+  result = DoSuperMethodA(cl, obj, msg);
+
+  RETURN(result);
+  return result;
 }
 
 ///

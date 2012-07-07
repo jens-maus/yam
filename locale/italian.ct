@@ -10607,10 +10607,6 @@ MSG_SSL_CERT_WARNING_TITLE
 Avviso Certificato SSL
 ; SSL Certificate Warning
 ;
-MSG_SSL_CERT_WARNING_BUTTONS
-Accetta|Accetta Permanentemente|*Rifiuta
-; Accept|Accept Permanently|*Reject
-;
 MSG_SSL_CERT_WARNING_INTRO
 Errore nel server durante la convalida del certificato per '\033b%s:%d\033n':
 ; Error validating server certificate for '\033b%s:%d\033n':

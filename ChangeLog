@@ -7,6 +7,13 @@ $URL$
 
 2012-07-07 Jens Langner <Jens.Langner@light-speed.de>
 
+  * Requesters.c, mui/GenericRequestWindow.c, tcp/ssl.c, misc: moved the
+    SSL Certificate warning requester code to an own function in Requesters.c
+    and adapted GenericRequestWindow to allow to use a Floattext for 
+    creating requesters with resizable text. Now the certificate warning
+    requester has an additional button "Show Certificate" which will show
+    the whole human-readable output of the certificate in question so that a
+    user could better judge if he trusts this certificate or not.
   * Debug.c,h: added a DBF_MTRACK flag which allows to output information
     on all alloc and free calls. This flag should, however, handled with care
     as it will output tons a information.

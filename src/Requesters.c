@@ -37,12 +37,16 @@
 #include <proto/muimaster.h>
 #include <proto/utility.h>
 
+#include <proto/amissl.h>
+#include <proto/amisslmaster.h>
+
 #include "extrasrc.h"
 
 #include "SDI_hook.h"
 
 #include "YAM.h"
 #include "YAM_config.h"
+#include "YAM_configFile.h"
 #include "YAM_mainFolder.h"
 #include "YAM_read.h"
 
@@ -57,10 +61,14 @@
 
 #include "FolderList.h"
 #include "Locale.h"
+#include "MailServers.h"
 #include "MethodStack.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
 #include "Threads.h"
+
+#include "tcp/Connection.h"
+#include "tcp/ssl.h"
 
 #include "Debug.h"
 
@@ -69,7 +77,7 @@
 /// YAMMUIRequest
 // Own -secure- implementation of MUI_Request with collecting and reissueing ReturnIDs
 // We also have a wrapper #define MUI_Request for calling that function instead.
-LONG YAMMUIRequest(Object *app, Object *parent, UNUSED LONG flags, const char *tit, const char *gad, const char *format, ...)
+LONG YAMMUIRequest(Object *app, Object *parent, LONG flags, const char *tit, const char *gad, const char *format, ...)
 {
   LONG result = -1;
   va_list args;
@@ -94,11 +102,9 @@ LONG YAMMUIRequest(Object *app, Object *parent, UNUSED LONG flags, const char *t
   return result;
 }
 
-LONG YAMMUIRequestA(Object *app, Object *parent, UNUSED LONG flags, const char *tit, const char *gad, const char *reqtxt)
+LONG YAMMUIRequestA(Object *app, Object *parent, LONG flags, const char *title, const char *gadgets, const char *reqtxt)
 {
   LONG result = -1;
-  char *title;
-  char *gadgets = NULL;
 
   ENTER();
 
@@ -106,22 +112,11 @@ LONG YAMMUIRequestA(Object *app, Object *parent, UNUSED LONG flags, const char *
   // main thread we simply push the message and wait until it returns.
   if(IsMainThread() == FALSE)
   {
-    result = PushMethodOnStackWait(G->App, 7, MUIM_YAMApplication_MUIRequestA, app, parent, flags, tit, gad, reqtxt);
+    result = PushMethodOnStackWait(G->App, 7, MUIM_YAMApplication_MUIRequestA, app, parent, flags, title, gadgets, reqtxt);
 
     RETURN(result);
     return result;
   }
-
-  // as the title and gadgets are const, we provide
-  // local copies of those string to not risk and .rodata
-  // access.
-  if(tit != NULL)
-    title = strdup(tit);
-  else
-    title = strdup(tr(MSG_MA_ConfirmReq));
-
-  if(gad != NULL)
-    gadgets = strdup(gad);
 
   // if the applicationpointer is NULL we fall back to a standard requester
   if(app == NULL)
@@ -154,10 +149,11 @@ LONG YAMMUIRequestA(Object *app, Object *parent, UNUSED LONG flags, const char *
     Object *win;
 
     win = GenericRequestWindowObject,
-      MUIA_Window_Title,                 title,
-      MUIA_Window_RefWindow,             parent,
-      MUIA_GenericRequestWindow_Body,    reqtxt,
-      MUIA_GenericRequestWindow_Buttons, gadgets,
+      MUIA_Window_Title,                    title != NULL ? title : tr(MSG_MA_ConfirmReq),
+      MUIA_Window_RefWindow,                parent,
+      MUIA_GenericRequestWindow_Body,       reqtxt,
+      MUIA_GenericRequestWindow_Buttons,    gadgets,
+      MUIA_GenericRequestWindow_Floattext,  isFlagSet(flags, MUIF_REQ_FLOATTEXT),
     End;
 
     // lets see if the WindowObject could be created perfectly
@@ -201,9 +197,6 @@ LONG YAMMUIRequestA(Object *app, Object *parent, UNUSED LONG flags, const char *
       set(G->App, MUIA_Application_Sleep, FALSE);
     }
   }
-
-  free(title);
-  free(gadgets);
 
   RETURN(result);
   return result;
@@ -566,4 +559,173 @@ LONG CheckboxRequest(Object *parent, const char *tit, ULONG numBoxes, const char
 }
 
 ///
+/// CertWarningRequest
+// warns the user about a non-verified certificate
+BOOL CertWarningRequest(struct Connection *conn, struct Certificate *cert)
+{
+  BOOL result = FALSE;
 
+  ENTER();
+
+  // we make sure that every thread in YAM can call this function. If this isn't the
+  // main thread we simply push the message and wait until it returns.
+  if(IsMainThread() == FALSE)
+    result = PushMethodOnStackWait(G->App, 3, MUIM_YAMApplication_CertWarningRequest, conn, cert);
+  else
+  {
+    Object *win;
+    char *reqtxt = NULL;
+    char *format = NULL;
+    int failures = conn->sslCertFailures;
+
+    // now we create the requester text
+    StrBufCpy(&format, tr(MSG_SSL_CERT_WARNING_INTRO));
+    StrBufCat(&format, "\n\n");
+
+    if(isFlagSet(failures, SSL_CERT_ERR_UNTRUSTED))
+    {
+      StrBufCat(&format, tr(MSG_SSL_CERT_WARNING_UNTRUSTED));
+      StrBufCat(&format, "\n");
+    }
+
+    if(isFlagSet(failures, SSL_CERT_ERR_IDMISMATCH))
+    {
+      StrBufCat(&format, tr(MSG_SSL_CERT_WARNING_IDMISMATCH));
+      StrBufCat(&format, "\n");
+    }
+
+    if(isFlagSet(failures, SSL_CERT_ERR_NOTYETVALID))
+    {
+      StrBufCat(&format, tr(MSG_SSL_CERT_WARNING_NOTYETVALID));
+      StrBufCat(&format, "\n");
+    }
+
+    if(isFlagSet(failures, SSL_CERT_ERR_EXPIRED))
+    {
+      StrBufCat(&format, tr(MSG_SSL_CERT_WARNING_EXPIRED));
+      StrBufCat(&format, "\n");
+    }
+
+    if(isFlagSet(failures, SSL_CERT_ERR_OTHER))
+    {
+      StrBufCat(&format, tr(MSG_SSL_CERT_WARNING_OTHER));
+      StrBufCat(&format, "\n");
+    }
+
+    StrBufCat(&format, "\n");
+    StrBufCat(&format, tr(MSG_SSL_CERT_WARNING_INFO));
+
+    // convert the format string now to a full string
+    // with contents
+    asprintf(&reqtxt, format, conn->server->hostname, conn->server->port, cert->identity, cert->notBefore, cert->notAfter, cert->issuerStr, cert->fingerprint);
+
+    // free the format template right now
+    FreeStrBuf(format);
+
+    // create the window object now
+    win = GenericRequestWindowObject,
+      MUIA_Window_Title,                 tr(MSG_SSL_CERT_WARNING_TITLE),
+      MUIA_Window_RefWindow,             G->MA->GUI.WI,
+      MUIA_GenericRequestWindow_Body,    reqtxt,
+      MUIA_GenericRequestWindow_Buttons, tr(MSG_SSL_CERT_WARNING_BUTTONS),
+    End;
+
+    // lets see if the WindowObject could be created perfectly
+    if(win != NULL)
+    {
+      DoMethod(win, MUIM_Notify, MUIA_GenericRequestWindow_Result, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_Application_ReturnID, REQUESTER_RETURNID);
+
+      set(G->App, MUIA_Application_Sleep, TRUE);
+
+      if(SafeOpenWindow(win) == TRUE)
+      {
+        ULONG signals = 0;
+
+        do
+        {
+          if(DoMethod(G->App, MUIM_Application_NewInput, &signals) == REQUESTER_RETURNID)
+          {
+            int ret = xget(win, MUIA_GenericRequestWindow_Result);
+  
+            if(ret == 0) // user pressed 'Reject'
+            {
+              result = FALSE;
+              break;
+            }
+            else if(ret == 1) // user pressed 'Accept'
+            {
+              result = TRUE;
+              break;
+            }
+            else if(ret == 2) // user pressed 'Accept permanently'
+            {
+              // user wants to accept the SSL certificate permanently so lets
+              // save the fingerprint and the failure bitmask in the config structure
+              // of the MailServerNode
+              strlcpy(conn->server->certFingerprint, cert->fingerprint, sizeof(conn->server->certFingerprint));
+              conn->server->certFailures = failures;
+      
+              // make sure to save the config afterwards
+              CO_SaveConfig(C, G->CO_PrefsFile);
+      
+              // signal NO error
+              result = TRUE;
+
+              break;
+            }
+            else if(ret == 3) // user pressed 'Show Certificate'
+            {
+              BIO* temp_memory_bio = BIO_new(BIO_s_mem());
+              if(temp_memory_bio != NULL)
+              {
+                char *buffer;
+                char *reqtitle;
+
+                X509_print_ex(temp_memory_bio, cert->subject, XN_FLAG_COMPAT, 0);
+                BIO_write(temp_memory_bio, "\0", 1);
+                BIO_get_mem_data(temp_memory_bio, &buffer);
+
+                // create the requester title string
+                asprintf(&reqtitle, tr(MSG_SSL_CERT_WARNING_SHOWTITLE), conn->server->hostname, conn->server->port);
+
+                // open an additional MUI requester now
+                MUI_Request(G->App, win, MUIF_REQ_FLOATTEXT, reqtitle, tr(MSG_Okay), (char *)buffer);
+
+                free(reqtitle);
+                BIO_free(temp_memory_bio);
+              }
+              else
+                E(DBF_NET, "Failed to allocate temporary memory bio");
+            }
+          }
+
+          if(signals != 0)
+            signals = Wait(signals | SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_F);
+
+          // bail out if we receive a CTRL-C
+          if(isFlagSet(signals, SIGBREAKF_CTRL_C))
+            break;
+
+          // show ourselves if we receive a CTRL-F
+          if(isFlagSet(signals, SIGBREAKF_CTRL_F))
+            PopUp();
+        }
+        while(TRUE);
+      }
+
+      // remove & dispose the requester object
+      DoMethod(G->App, OM_REMMEMBER, win);
+      MUI_DisposeObject(win);
+
+      // wake up the application
+      set(G->App, MUIA_Application_Sleep, FALSE);
+    }
+
+    free(reqtxt);
+  }
+  
+  RETURN(result);
+  return result;
+}
+
+///
