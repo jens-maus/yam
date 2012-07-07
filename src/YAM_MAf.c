@@ -1181,6 +1181,7 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
   if(dateFilePart[0] == '\0')
   {
     struct TimeVal newDate;
+    char *b64_dateFilePart = NULL;
 
     // so we don't seem to have a transfer Date in the file comment.
     // What we do now is that we take the date from the original file
@@ -1189,7 +1190,15 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
     newDate.Microseconds = 0;
 
     // encode this date as a base64 encoded string
-    base64encode(dateFilePart, (unsigned char *)&newDate, sizeof(struct TimeVal));
+    if(base64encode(&b64_dateFilePart, (char *)&newDate, sizeof(newDate)) > 0)
+    {
+      if(strlcpy(dateFilePart, b64_dateFilePart, sizeof(dateFilePart)) > sizeof(dateFilePart))
+        W(DBF_ALWAYS, "length of b64_dateFilePart > dateFilePart");
+
+      free(b64_dateFilePart);
+    }
+    else
+      E(DBF_ALWAYS, "Error when trying to base64 encode dateFilePart");
   }
 
   // as the dateFilePart may contain slashes "/" we have to replace them
@@ -1313,7 +1322,7 @@ static ULONG CompressMsgID(const char *msgid)
 //  folder and also writes it into the mailfile parameter
 BOOL MA_NewMailFile(const struct Folder *folder, char *fullPath, const size_t fullPathSize)
 {
-  char dateFilePart[12+1];
+  char *dateFilePart = NULL;
   char newFileName[SIZE_MFILE];
   char *ptr;
   struct TimeVal curDate;
@@ -1327,7 +1336,7 @@ BOOL MA_NewMailFile(const struct Folder *folder, char *fullPath, const size_t fu
   GetSysTimeUTC(&curDate);
 
   // encode this date as a base64 encoded string
-  base64encode(dateFilePart, (unsigned char *)&curDate, sizeof(curDate));
+  base64encode(&dateFilePart, (char *)&curDate, sizeof(curDate));
 
   // as the dateFilePart may contain slashes "/" we have to replace them
   // with "-" chars to not drive the filesystem crazy :)
@@ -1349,6 +1358,8 @@ BOOL MA_NewMailFile(const struct Folder *folder, char *fullPath, const size_t fu
   while(mCounter < 999 && FileExists(fullPath) == TRUE);
 
   result = (mCounter < 999);
+
+  free(dateFilePart);
 
   RETURN(result);
   return result;
@@ -2242,7 +2253,6 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
     BOOL foundReplyTo = FALSE;
     char *ptr;
     char dateFilePart[12+1];
-    char timebuf[sizeof(struct TimeVal)+1]; // +1 because the b64decode does set a NUL byte
     struct Node *curNode;
     LONG size;
 
@@ -2756,6 +2766,8 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
     // any usable date or stuff
     if(folder != NULL)
     {
+      char *timebuf = NULL;
+
       // now we take the filename of our mailfile into account to check for
       // the transfer date at the start of the name and for the set status
       // flags at the end of it.
@@ -2769,7 +2781,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
         *ptr = '/';
 
       // lets decode the base64 encoded timestring in a temporary buffer
-      if(base64decode(timebuf, (unsigned char *)dateFilePart, 12) <= 0)
+      if(base64decode(&timebuf, dateFilePart, strlen(dateFilePart)) <= 0)
       {
         W(DBF_FOLDER, "WARNING: failure in decoding the encoded date from mailfile: '%s'", mail->MailFile);
 
@@ -2784,6 +2796,8 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
         // everything seems to have worked so lets copy the binary data in our
         // transDate structure
         memcpy(&mail->transDate, timebuf, sizeof(mail->transDate));
+
+        free(timebuf);
       }
 
       // now grab the status out of the end of the mailfilename

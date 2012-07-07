@@ -436,7 +436,7 @@ void MA_ChangeMailStatus(struct Mail *mail, int addflags, int clearflags)
 // into account
 BOOL MA_UpdateMailFile(struct Mail *mail)
 {
-  char dateFilePart[12 + 1];
+  char *dateFilePart = NULL;
   char statusFilePart[14 + 1];
   char oldFilePath[SIZE_PATHFILE];
   char *ptr;
@@ -446,7 +446,7 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
   ENTER();
 
   // modify the transferDate part
-  base64encode(dateFilePart, (unsigned char *)&mail->transDate, sizeof(mail->transDate));
+  base64encode(&dateFilePart, (char *)&mail->transDate, sizeof(mail->transDate));
 
   // for proper handling we have to remove an eventually existing "/" which
   // could be part of a base64 encoding
@@ -532,6 +532,8 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
         break;
     }
   }
+
+  free(dateFilePart);
 
   RETURN(success);
   return success;

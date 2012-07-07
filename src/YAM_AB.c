@@ -1103,7 +1103,6 @@ static BOOL AB_ImportTreeLDIF(const char *fname, BOOL append, BOOL sorted)
         key = buffer;
         if((value = strpbrk(key, ":")) != NULL)
         {
-          char b64buffer[SIZE_LARGE];
           BOOL utf8;
 
           *value++ = '\0';
@@ -1111,8 +1110,10 @@ static BOOL AB_ImportTreeLDIF(const char *fname, BOOL append, BOOL sorted)
           // a leading colon in the value marks a base64 encoded string
           if(value[0] == ':')
           {
+            char *b64buffer = NULL;
+
             // first decode it
-            base64decode(b64buffer, (const unsigned char *)&value[2], strlen(value) - 2);
+            base64decode(&b64buffer, &value[2], strlen(&value[2]));
 
             // now convert this prossible UTF8 string to a normal string
             value = CodesetsUTF8ToStr(CSA_Source,          Trim(b64buffer),
@@ -1120,6 +1121,8 @@ static BOOL AB_ImportTreeLDIF(const char *fname, BOOL append, BOOL sorted)
                                       CSA_MapForeignChars, C->MapForeignChars,
                                       TAG_DONE);
             utf8 = TRUE;
+
+            free(b64buffer);
           }
           else
           {
@@ -1264,7 +1267,7 @@ static void WriteLDIFLine(FILE *fh, const char *key, const char *valueFmt, ...)
 
   if(key[0] != '\0')
   {
-    char buffer[SIZE_LARGE];
+    char *buffer = NULL;
     va_list args;
     char *p;
     unsigned char c;
@@ -1273,7 +1276,7 @@ static void WriteLDIFLine(FILE *fh, const char *key, const char *valueFmt, ...)
 
     // put the arguments into the value string
     va_start(args, valueFmt);
-    vsnprintf(buffer, sizeof(buffer), valueFmt, args);
+    vasprintf(&buffer, valueFmt, args);
     va_end(args);
 
     // now check if the value string must be UTF8/base64 encoded
@@ -1319,13 +1322,17 @@ static void WriteLDIFLine(FILE *fh, const char *key, const char *valueFmt, ...)
       // convert the value string to UTF8
       if((utf8 = CodesetsUTF8Create(CSA_Source, buffer, TAG_DONE)) != NULL)
       {
+        char *b64_buffer = NULL;
+
         // we can reuse the former buffer here again, because we have a copy of the string
         // in utf8
-        if(base64encode(buffer, utf8, strlen((char *)utf8)) > 0)
+        if(base64encode(&b64_buffer, (char *)utf8, strlen((char *)utf8)) > 0)
         {
           // write the key and encoded value strings
           // these are separated by a double colon
-          fprintf(fh, "%s:: %s\n", key, buffer);
+          fprintf(fh, "%s:: %s\n", key, b64_buffer);
+
+          free(b64_buffer);
         }
 
         CodesetsFreeA(utf8, NULL);
@@ -1337,6 +1344,8 @@ static void WriteLDIFLine(FILE *fh, const char *key, const char *valueFmt, ...)
       // these are separated by a single colon
       fprintf(fh, "%s: %s\n", key, buffer);
     }
+
+    free(buffer);
   }
   else
   {
