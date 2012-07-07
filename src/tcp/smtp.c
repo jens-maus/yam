@@ -587,6 +587,8 @@ static BOOL InitSMTPAUTH(struct TransferContext *tc)
         char cnonce[16+1];
         char response[32+1];
         char *chalRet;
+        char *decResponse = NULL;
+        char *enctext = NULL;
 
         // get the challenge code from the response line of the
         // AUTH command.
@@ -601,11 +603,15 @@ static BOOL InitSMTPAUTH(struct TransferContext *tc)
         D(DBF_NET, "received DIGEST-MD5 challenge: '%s'", tc->challenge);
 
         // lets base64 decode it
-        if(base64decode(tc->challenge, (unsigned char *)tc->challenge, strlen(tc->challenge)) <= 0)
+        if(base64decode(&decResponse, tc->challenge, strlen(tc->challenge)) <= 0)
         {
           RETURN(FALSE);
           return FALSE;
         }
+
+        // now copy over decReponse to tc->challenge
+        strlcpy(tc->challenge, decResponse, sizeof(tc->challenge));
+        free(decResponse);
 
         D(DBF_NET, "decoded  DIGEST-MD5 challenge: '%s'", tc->challenge);
 
@@ -841,7 +847,16 @@ static BOOL InitSMTPAUTH(struct TransferContext *tc)
                  response);
 
         D(DBF_NET, "prepared challenge answer....: '%s'", tc->challenge);
-        base64encode(tc->tempBuffer, (unsigned char *)tc->challenge, strlen(tc->challenge));
+        if(base64encode(&enctext, tc->challenge, strlen(tc->challenge)) > 0)
+        {
+          strlcpy(tc->tempBuffer, enctext, sizeof(tc->tempBuffer));
+          free(enctext);
+        }
+        else
+        {
+          RETURN(FALSE);
+          return FALSE;
+        }
         D(DBF_NET, "encoded  challenge answer....: '%s'", tc->tempBuffer);
         strlcat(tc->tempBuffer, "\r\n", sizeof(tc->tempBuffer));
 
@@ -889,6 +904,8 @@ static BOOL InitSMTPAUTH(struct TransferContext *tc)
         char *login = tc->msn->username;
         char *password = tc->msn->password;
         char *chalRet;
+        char *decResponse = NULL;
+        char *enctext = NULL;
 
         // get the challenge code from the response line of the
         // AUTH command.
@@ -903,11 +920,15 @@ static BOOL InitSMTPAUTH(struct TransferContext *tc)
         D(DBF_NET, "received CRAM-MD5 challenge: '%s'", tc->challenge);
 
         // lets base64 decode it
-        if(base64decode(tc->challenge, (unsigned char *)tc->challenge, strlen(tc->challenge)) <= 0)
+        if(base64decode(&decResponse, tc->challenge, strlen(tc->challenge)) <= 0)
         {
           RETURN(FALSE);
           return FALSE;
         }
+
+        // now copy over decReponse to tc->challenge
+        strlcpy(tc->challenge, decResponse, sizeof(tc->challenge));
+        free(decResponse);
 
         D(DBF_NET, "decoded  CRAM-MD5 challenge: '%s'", tc->challenge);
 
@@ -918,7 +939,16 @@ static BOOL InitSMTPAUTH(struct TransferContext *tc)
 
         D(DBF_NET, "prepared CRAM-MD5 reponse..: '%s'", buf);
         // lets base64 encode the md5 challenge for the answer
-        base64encode(tc->tempBuffer, (unsigned char *)buf, strlen(buf));
+        if(base64encode(&enctext, buf, strlen(buf)) > 0)
+        {
+          strlcpy(tc->tempBuffer, enctext, sizeof(tc->tempBuffer));
+          free(enctext);
+        }
+        else
+        {
+          RETURN(FALSE);
+          return FALSE;
+        }
         D(DBF_NET, "encoded  CRAM-MD5 reponse..: '%s'", tc->tempBuffer);
         strlcat(tc->tempBuffer, "\r\n", sizeof(tc->tempBuffer));
 
@@ -943,9 +973,21 @@ static BOOL InitSMTPAUTH(struct TransferContext *tc)
       // send the AUTH command
       if((resp = SendSMTPCommand(tc, ESMTP_AUTH_LOGIN, NULL, tr(MSG_ER_BADRESPONSE_SMTP))) != NULL)
       {
+        char *enctext = NULL;
+
         // prepare the username challenge
         D(DBF_NET, "prepared AUTH LOGIN challenge: '%s'", tc->msn->username);
-        base64encode(tc->tempBuffer, (unsigned char *)tc->msn->username, strlen(tc->msn->username));
+        if(base64encode(&enctext, tc->msn->username, strlen(tc->msn->username)) > 0)
+        {
+          strlcpy(tc->tempBuffer, enctext, sizeof(tc->tempBuffer));
+          free(enctext);
+          enctext = NULL;
+        }
+        else
+        {
+          RETURN(FALSE);
+          return FALSE;
+        }
         D(DBF_NET, "encoded  AUTH LOGIN challenge: '%s'", tc->tempBuffer);
         strlcat(tc->tempBuffer, "\r\n", sizeof(tc->tempBuffer));
 
@@ -958,7 +1000,17 @@ static BOOL InitSMTPAUTH(struct TransferContext *tc)
           {
             // prepare the password challenge
             D(DBF_NET, "prepared AUTH LOGIN challenge: '%s'", tc->msn->password);
-            base64encode(tc->tempBuffer, (unsigned char *)tc->msn->password, strlen(tc->msn->password));
+            if(base64encode(&enctext, tc->msn->password, strlen(tc->msn->password)) > 0)
+            {
+              strlcpy(tc->tempBuffer, enctext, sizeof(tc->tempBuffer));
+              free(enctext);
+              enctext = NULL;
+            }
+            else
+            {
+              RETURN(FALSE);
+              return FALSE;
+            }
             D(DBF_NET, "encoded  AUTH LOGIN challenge: '%s'", tc->tempBuffer);
             strlcat(tc->tempBuffer, "\r\n", sizeof(tc->tempBuffer));
 
@@ -985,6 +1037,8 @@ static BOOL InitSMTPAUTH(struct TransferContext *tc)
     case MSF_AUTH_PLAIN:
     {
       int len=0;
+      char *enctext = NULL;
+
       D(DBF_NET, "processing AUTH PLAIN:");
 
       // The AUTH PLAIN command string is a single command string, so we go
@@ -999,11 +1053,18 @@ static BOOL InitSMTPAUTH(struct TransferContext *tc)
       len += snprintf(tc->challenge+len, sizeof(tc->challenge)-len, "%s", tc->msn->password);   // password
 
       // now we base64 encode this string and send it to the server
-      base64encode(tc->tempBuffer, (unsigned char *)tc->challenge, len);
+      if(base64encode(&enctext, tc->challenge, len) <= 0)
+      {
+        RETURN(FALSE);
+        return FALSE;
+      }
 
       // lets now form up the AUTH PLAIN command we are going to send
       // to the SMTP server for authorization purposes:
-      snprintf(tc->challenge, sizeof(tc->challenge), "%s %s\r\n", SMTPcmd[ESMTP_AUTH_PLAIN], tc->tempBuffer);
+      snprintf(tc->challenge, sizeof(tc->challenge), "%s %s\r\n", SMTPcmd[ESMTP_AUTH_PLAIN], enctext);
+
+      // free the encoded text
+      free(enctext);
 
       // now we send the SMTP AUTH command (UserName+Password)
       if(SendLineToHost(tc->conn, tc->challenge) > 0)

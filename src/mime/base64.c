@@ -62,53 +62,86 @@ static const unsigned char index_64[128] =
 /// base64encode()
 // optimized base64 encoding function returning the length of the
 // encoded string.
-int base64encode(char *to, const unsigned char *from, unsigned int len)
+int base64encode(char **out, const char *in, size_t inlen)
 {
-  char *fromp = (char*)from;
-  char *top = to;
-  unsigned char cbyte;
-  unsigned char obyte;
-  char end[3];
+  int result = 0;
+  char *buffer;
+  size_t outlen;
 
-  for (; len >= 3; len -= 3)
+  ENTER();
+
+  // Work out how big the output buffer
+  // should be. This must be a multiple of 4 bytes
+  outlen = (inlen*4)/3;
+  if((inlen % 3) > 0) // got to pad
+    outlen += 4 - (inlen % 3);
+
+  if(inlen > 0 && outlen > 0 &&
+     (buffer = malloc(outlen + 1)) != NULL) // +1 for the \0
   {
-    cbyte = *fromp++;
-    *top++ = basis_64[(int)(cbyte >> 2)];
-    obyte = (cbyte << 4) & 0x30;            /* 0011 0000 */
+    char *outp = buffer;
+    const char *inp = in;
+    unsigned char cbyte;
+    unsigned char obyte;
 
-    cbyte = *fromp++;
-    obyte |= (cbyte >> 4);                  /* 0000 1111 */
-    *top++ = basis_64[(int)obyte];
-    obyte = (cbyte << 2) & 0x3C;            /* 0011 1100 */
+    for(; inlen >= 3; inlen -= 3)
+    {
+      cbyte = *inp++;
+      *outp++ = basis_64[(int)(cbyte >> 2)];
+      obyte = (cbyte << 4) & 0x30;             // 0011 0000
 
-    cbyte = *fromp++;
-    obyte |= (cbyte >> 6);                  /* 0000 0011 */
-    *top++ = basis_64[(int)obyte];
-    *top++ = basis_64[(int)(cbyte & 0x3F)]; /* 0011 1111 */
+      cbyte = *inp++;
+      obyte |= (cbyte >> 4);                   // 0000 1111
+      *outp++ = basis_64[(int)obyte];
+      obyte = (cbyte << 2) & 0x3C;             // 0011 1100
+
+      cbyte = *inp++;
+      obyte |= (cbyte >> 6);                   // 0000 0011
+      *outp++ = basis_64[(int)obyte];
+      *outp++ = basis_64[(int)(cbyte & 0x3F)]; // 0011 1111
+    }
+
+    if(inlen > 0)
+    {
+      char end[3];
+
+      end[0] = *inp++;
+      if(--inlen)
+        end[1] = *inp++;
+      else
+        end[1] = '\0';
+
+      end[2] = '\0';
+
+      cbyte = end[0];
+      *outp++ = basis_64[(int)(cbyte >> 2)];
+      obyte = (cbyte << 4) & 0x30;            // 0011 0000
+
+      cbyte = end[1];
+      obyte |= (cbyte >> 4);
+      *outp++ = basis_64[(int)obyte];
+      obyte = (cbyte << 2) & 0x3C;            // 0011 1100
+
+      if(inlen > 0)
+        *outp++ = basis_64[(int)obyte];
+      else
+        *outp++ = '=';
+
+      *outp++ = '=';
+    }
+
+    // NUL-terminate the array
+    *outp = '\0';
+
+    // now write the addr of buffer to out
+    *out = buffer;
+
+    // return the length of the filled buffer
+    result = outp - buffer;
   }
 
-  if(len)
-  {
-    end[0] = *fromp++;
-    if(--len) end[1] = *fromp++; else end[1] = 0;
-    end[2] = 0;
-
-    cbyte = end[0];
-    *top++ = basis_64[(int)(cbyte >> 2)];
-    obyte = (cbyte << 4) & 0x30;            /* 0011 0000 */
-
-    cbyte = end[1];
-    obyte |= (cbyte >> 4);
-    *top++ = basis_64[(int)obyte];
-    obyte = (cbyte << 2) & 0x3C;            /* 0011 1100 */
-
-    if(len) *top++ = basis_64[(int)obyte];
-    else *top++ = '=';
-    *top++ = '=';
-  }
-
-  *top = 0;
-  return top - to;
+  RETURN(result);
+  return result;
 }
 
 ///
@@ -119,108 +152,122 @@ int base64encode(char *to, const unsigned char *from, unsigned int len)
 // string doesn`t have to be NUL-terminated and only 'len' characters
 // are going to be decoded. The decoding also stops as soon as the
 // ending padding '==' or '=' characters are found.
-int base64decode(char *to, const unsigned char *from, unsigned int len)
+int base64decode(char **out, const char *in, size_t inlen)
 {
   int result = 0;
-  unsigned char *fromp = (unsigned char *)from;
-  char *top = to;
+  unsigned char *outp;
 
   ENTER();
 
-  while(len >= 4)
+  if(inlen > 0 && (inlen % 4) == 0 &&
+     (outp = malloc(inlen * 3 / 4)) != NULL)
   {
-    unsigned char x;
-    unsigned char y;
+    unsigned char *inp = (unsigned char *)in;
 
-    // decrease len in advance
-    len--;
-
-    // get the first char, check if it is a valid b64 char and
-    // convert it accordingly to index_64[]
-    x = *fromp++;
-    if(x > 127 || (x = index_64[x]) == 255)
-      break; // error
-
-    // get the second char, check if it is a valid b64 char and
-    // convert it accordingly to index_64[]
-    y = *fromp++;
-    if(y == '\0' || y > 127 || (y = index_64[y]) == 255)
-      break; // error
-
-    len--;
-
-    // put the decoded b64 char into the output buffer.
-    *top++ = (x << 2) | (y >> 4);
-
-    // if we still have something left in the input buffer,
-    // we go on with our decoding
-    if(len > 0)
+    while(inlen >= 4)
     {
-      len--;
+      unsigned char x;
+      unsigned char y;
 
-      // get next char
-      x = *fromp++;
+      // decrease len in advance
+      inlen--;
 
-      // check char for the padding character '='
-      if(x == '=')
+      // get the first char, check if it is a valid b64 char and
+      // convert it accordingly to index_64[]
+      x = *inp++;
+      if(x > 127 || (x = index_64[x]) == 255)
+        break; // error
+
+      // get the second char, check if it is a valid b64 char and
+      // convert it accordingly to index_64[]
+      y = *inp++;
+      if(y == '\0' || y > 127 || (y = index_64[y]) == 255)
+        break; // error
+
+      inlen--;
+
+      // put the decoded b64 char into the output buffer.
+      *outp++ = (x << 2) | (y >> 4);
+
+      // if we still have something left in the input buffer,
+      // we go on with our decoding
+      if(inlen > 0)
       {
-        // check if there is still something left
-        // and if so it just have to be the padding char
-        if((len > 0 && *fromp++ != '='))
-          break; // error
+        inlen--;
 
-        len--;
+        // get next char
+        x = *inp++;
 
-        // we received the padding string
-        // lets break out here
-        break; // everything fine
-      }
-      else
-      {
-        // it isn't the padding char, so is it a valid
-        // b64 character instead?
-        if(x > 127 || (x = index_64[x]) == 255)
-          break; // error
-
-        // put the second decoded b64 char into our output
-        // buffer
-        *top++ = (y << 4) | (x >> 2);
-
-        // and check if there is something left again..
-        if(len > 0)
+        // check char for the padding character '='
+        if(x == '=')
         {
-          len--;
-
-          // get next char
-          y = *fromp++;
-
-          // is that char a padding char?
-          if(y == '=')
-          {
-            // we received the padding string
-            // lets break out here
-            break; // everything fine
-          }
-          else if(y > 127 || (y = index_64[y]) == 255) // char valid b64?
+          // check if there is still something left
+          // and if so it just have to be the padding char
+          if((inlen > 0 && *inp++ != '='))
             break; // error
-          else
-            *top++ = (x << 6) | y; // decode the third char as it is valid
+
+          inlen--;
+
+          // we received the padding string
+          // lets break out here
+          break; // everything fine
+        }
+        else
+        {
+          // it isn't the padding char, so is it a valid
+          // b64 character instead?
+          if(x > 127 || (x = index_64[x]) == 255)
+            break; // error
+
+          // put the second decoded b64 char into our output
+          // buffer
+          *outp++ = (y << 4) | (x >> 2);
+
+          // and check if there is something left again..
+          if(inlen > 0)
+          {
+            inlen--;
+
+            // get next char
+            y = *inp++;
+
+            // is that char a padding char?
+            if(y == '=')
+            {
+              // we received the padding string
+              // lets break out here
+              break; // everything fine
+            }
+            else if(y > 127 || (y = index_64[y]) == 255) // char valid b64?
+              break; // error
+            else
+              *outp++ = (x << 6) | y; // decode the third char as it is valid
+          }
         }
       }
     }
+
+    // make sure the string is
+    // NUL-terminated
+    *outp = '\0';
+
+    // if inlen is still > 0 it is a sign that the
+    // base64 decoding aborted. So we return a minus
+    // value to signal that short item count (error).
+    if(inlen > 0)
+    {
+      result = -(outp - (unsigned char *)*out);
+      free(*out);
+      *out = NULL;
+    }
+    else
+    {
+      result = (outp - (unsigned char *)*out);
+      *out = (char *)outp;
+    }
   }
-
-  // make sure the string is
-  // NUL-terminated
-  *top = '\0';
-
-  // if len is still > 0 it is a sign that the
-  // base64 decoding aborted. So we return a minus
-  // value to signal that short item count (error).
-  if(len > 0)
-    result = -(top-to);
-  else
-    result = top-to;
+  else 
+    *out = NULL;
 
   RETURN(result);
   return result;
@@ -241,13 +288,7 @@ long base64encode_file(FILE *in, FILE *out, BOOL convLF)
                                   // probably need to convert each LF into a CRLF we have to
                                   // have a buffer with a maximum space of 8190 bytes.
                                   // the other 2 bytes are to be safe. :)
-  char outbuffer[B64ENC_BUF*3];   // if we read in a maximum of 8190 bytes we will get out
-                                  // a base64 encoded string with a maximum of 11064 bytes
-                                  // but normally the routines shouldn`t occupy more than
-                                  // ~5600 bytes because we normally won`t have tons of LF`s
-                                  // in there. But by alloãating BUF*3 we should be on the safe
-                                  // side.
-
+  char *outbuffer = NULL;
   char *optr;
   BOOL eof_reached = FALSE;
   int next_unget = 0;
@@ -349,7 +390,7 @@ long base64encode_file(FILE *in, FILE *out, BOOL convLF)
     // now everything should be prepared so that we can call the
     // base64 encoding routine and let it convert our inbuffer to
     // the apropiate outbuffer
-    encoded = base64encode(outbuffer, (unsigned char *)inbuffer, read);
+    encoded = base64encode(&outbuffer, inbuffer, read);
     sumencoded += encoded;
 
     // if the base64encoding routine returns <= 0 then there is obviously
@@ -390,6 +431,8 @@ long base64encode_file(FILE *in, FILE *out, BOOL convLF)
       {
         E(DBF_MIME, "error on writing data!");
 
+        free(outbuffer);
+
         // an error must have occurred.
         RETURN(-1);
         return -1;
@@ -414,11 +457,17 @@ long base64encode_file(FILE *in, FILE *out, BOOL convLF)
       {
         E(DBF_MIME, "error on writing newline");
 
+        free(outbuffer);
+
         RETURN(-1);
         return -1;
       }
-      else missing_chars = 0;
+      else
+        missing_chars = 0;
     }
+
+    free(outbuffer);
+    outbuffer = NULL;
   }
 
   RETURN(sumencoded);
@@ -439,7 +488,7 @@ long base64decode_file(FILE *in, FILE *out,
                        struct codeset *srcCodeset, BOOL convCRLF)
 {
   char inbuffer[B64DEC_BUF+1];
-  char outbuffer[B64DEC_BUF/4*3];
+  char *outbuffer = NULL;
   char ungetbuf[3];
   long decodedChars = 0;
   size_t next_unget = 0;
@@ -542,7 +591,7 @@ long base64decode_file(FILE *in, FILE *out,
     // string, we can call the base64decode() function to finally
     // decode the string
     if(read <= 0 ||
-       (outLength = base64decode(outbuffer, (unsigned char *)inbuffer, read)) <= 0)
+       (outLength = base64decode(&outbuffer, inbuffer, read)) <= 0)
     {
       E(DBF_MIME, "error on decoding: %ld %ld", read, outLength);
 
@@ -565,16 +614,6 @@ long base64decode_file(FILE *in, FILE *out,
         return -1;
       }
     }
-
-    #if defined(DEBUG)
-    if(outLength > B64DEC_BUF/4*3)
-    {
-      E(DBF_MIME, "Error: outLength exceeds outbuffer boundaries!");
-
-      RETURN(-1);
-      return -1;
-    }
-    #endif
 
     // in case the user wants us to detect the correct cyrillic codeset
     // we do it now, but just if the source codeset isn't UTF-8
@@ -671,6 +710,8 @@ long base64decode_file(FILE *in, FILE *out,
     // we have to free it now
     if(dptr != outbuffer)
       CodesetsFreeA(dptr, NULL);
+    else
+      free(outbuffer);
 
     // increase the decodedChars counter
     decodedChars += outLength;

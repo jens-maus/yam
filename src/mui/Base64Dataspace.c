@@ -53,21 +53,22 @@ struct Data
 // d = data
 static char *EncodeData(APTR data, LONG len, ULONG id)
 {
-  char *base64String;
+  char *b64_buffer;
+  size_t b64_len;
 
   ENTER();
 
-  // our header has a size of 18
-  // base64 encoding will expand each 3 bytes to 4 bytes plus up to 3 padding bytes
-  // plus one byte for the trailing NUL
-  if((base64String = malloc(18 + (len*4)/3+3 + 1)) != NULL)
+  if((b64_len = base64encode(&b64_buffer, data, len)) > 0)
   {
-    snprintf(base64String, 18+1, "%08d;%08x;", (int)len, (int)id);
-    base64encode(&base64String[18], data, len);
+    // our header has a size of 18
+    // base64 encoding will expand each 3 bytes to 4 bytes plus up to 3 padding bytes
+    // plus one byte for the trailing NUL
+    if((b64_buffer = realloc(b64_buffer, 18 + b64_len + 1)) != NULL)
+      snprintf(b64_buffer, 18+b64_len+1, "%08d;%08x;%s", (int)len, (int)id, b64_buffer);
   }
 
-  RETURN(base64String);
-  return base64String;
+  RETURN(b64_buffer);
+  return b64_buffer;
 }
 
 ///
@@ -85,7 +86,7 @@ static BOOL DecodeData(const char *base64String, APTR *pdata, LONG *plen, ULONG 
     // we are going to modify the string so we must operated on a copy
     if((dupe = strdup(base64String)) != NULL)
     {
-      unsigned char *data = NULL;
+      char *data = NULL;
       LONG len = 0;
       ULONG id = 0;
       char *word = dupe;
@@ -110,7 +111,7 @@ static BOOL DecodeData(const char *base64String, APTR *pdata, LONG *plen, ULONG 
           break;
 
           case 2:
-            data = (unsigned char *)word;
+            data = word;
           break;
         }
 
@@ -121,23 +122,20 @@ static BOOL DecodeData(const char *base64String, APTR *pdata, LONG *plen, ULONG 
 
       if(len > 0 && id != 0 && data != NULL)
       {
-        char *raw;
+        char *raw = NULL;
 
-        if((raw = malloc(len)) != NULL)
+        // now convert the base64 string back to raw data
+        // everything is ok if the decoded amount of data matches the predicted size
+        if(base64decode(&raw, data, strlen((char *)data)) == len)
         {
-          // now convert the base64 string back to raw data
-          // everything is ok if the decoded amount of data matches the predicted size
-          if(base64decode(raw, data, strlen((char *)data)) == len)
-          {
-            *pdata = raw;
-            *plen = len;
-            *pid = id;
+          *pdata = raw;
+          *plen = len;
+          *pid = id;
 
-            success = TRUE;
-          }
-          else
-            free(raw);
+          success = TRUE;
         }
+        else if(raw != NULL)
+          free(raw);
       }
 
       free(dupe);

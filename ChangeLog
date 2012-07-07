@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-07-07 Jens Langner <Jens.Langner@light-speed.de>
+
+  * mime/base64.c, misc: reworked the base64 encoding/decoding functions to
+    allocate the output string rather than relyig that the user supplies a
+    large enough string. This should eliminate potential buffer overruns and
+    make the whole API a bit more clean.
+
 2012-07-07 Emilio Jimenez <ejim@ono.com>
 
   * locale/spanish.ct: updated to the latest changes.

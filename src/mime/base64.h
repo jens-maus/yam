@@ -35,8 +35,8 @@ struct codeset;
 static const char basis_64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 // base64 encoding/decoding routines
-int base64encode(char *to, const unsigned char *from, unsigned int len);
-int base64decode(char *to, const unsigned char *from, unsigned int len);
+int base64encode(char **out, const char *in, size_t inlen);
+int base64decode(char **out, const char *in, size_t inlen);
 long base64encode_file(FILE *in, FILE *out, BOOL convLF);
 long base64decode_file(FILE *in, FILE *out,
                        struct codeset *srcCodeset, BOOL convCRLF);

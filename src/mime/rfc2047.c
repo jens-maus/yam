@@ -810,10 +810,14 @@ static int rfc2047_decode_int(const char *text,
         // lets decode it.
         case 'b':
         {
-          int res = base64decode(enctext, (unsigned char *)enctext, strlen(enctext));
-
-          if(res > 0)
-            enctext[res] = '\0';
+          char *dectext = NULL;
+          int res;
+          
+          if((res = base64decode(&dectext, enctext, strlen(enctext))) > 0)
+          {
+            free(enctext);
+            enctext = dectext;
+          }
           else
           {
             result = -3; // signal an base64 decoding error.
