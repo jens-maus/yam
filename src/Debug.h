@@ -89,6 +89,7 @@
 #define DBF_PRINT    (1<<20)    // for print management
 #define DBF_THEME    (1<<21)    // for the Themes management (Themes.c)
 #define DBF_THREAD   (1<<22)    // for the Thread management (Thread.c)
+#define DBF_MTRACK   (1<<23)    // to show all memory allocations
 #define DBF_ALL      0xffffffff
 
 // debug modules

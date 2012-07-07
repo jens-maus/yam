@@ -361,6 +361,7 @@ void SetupDebug(void)
       { "print",    DBF_PRINT   },
       { "theme",    DBF_THEME   },
       { "thread",   DBF_THREAD  },
+      { "mtrack",   DBF_MTRACK  },
       { "all",      DBF_ALL     },
       { NULL,       0           }
     };
@@ -1137,6 +1138,9 @@ void _MEMTRACK(const char *file, const int line, const char *func, void *ptr, si
         DbgMallocCount++;
 
         ReleaseSemaphore(&DbgMallocListSema);
+
+        if(isFlagSet(debug_flags, DBF_MTRACK))
+          _DPRINTF(DBC_DEBUG, DBF_ALWAYS, NULL, file, line, "%s(%d): 0x%08lx", func, size, ptr);
       }
     }
     else
@@ -1169,6 +1173,8 @@ void _UNMEMTRACK(const char *file, const int line, const void *ptr)
 
     if(success == FALSE)
       _DPRINTF(DBC_WARNING, DBF_ALWAYS, NULL, file, line, "free of untracked memory area 0x%08lx attempted", ptr);
+    else if(isFlagSet(debug_flags, DBF_MTRACK))
+      _DPRINTF(DBC_DEBUG, DBF_ALWAYS, NULL, file, line, "free of 0x%08lx suceeded", ptr);
 
     ReleaseSemaphore(&DbgMallocListSema);
   }

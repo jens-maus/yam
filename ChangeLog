@@ -7,6 +7,9 @@ $URL$
 
 2012-07-07 Jens Langner <Jens.Langner@light-speed.de>
 
+  * Debug.c,h: added a DBF_MTRACK flag which allows to output information
+    on all alloc and free calls. This flag should, however, handled with care
+    as it will output tons a information.
   * YAM_MAf.c: fixed a crash problem where in case a mail contained multiple
     "References:" headers YAM was overwriting the old one. Now StrBufCat()
     is used instead solving the problem.
