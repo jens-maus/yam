@@ -810,16 +810,19 @@ static int rfc2047_decode_int(const char *text,
         // lets decode it.
         case 'b':
         {
+          char *etext = Trim(enctext);
           char *dectext = NULL;
           int res;
           
-          if((res = base64decode(&dectext, enctext, strlen(enctext))) > 0)
+          if((res = base64decode(&dectext, etext, strlen(etext))) > 0)
           {
             free(enctext);
             enctext = dectext;
           }
           else
           {
+            W(DBF_NET, "base64 decoding returned: %d '%s'", res, enctext);
+
             result = -3; // signal an base64 decoding error.
             unknown_enc = 1;
           }
