@@ -1715,7 +1715,7 @@ BOOL MA_ReadHeader(const char *mailFile, FILE *fh, struct MinList *headerList, e
           }
           else if(len == -3)
           {
-            W(DBF_FOLDER, "WARNING: base64 header decoding failed");
+            W(DBF_FOLDER, "WARNING: rfc2047 (base64) header decoding failed");
           }
 
           // now that we have decoded the headerline accoring to rfc2047
@@ -2198,6 +2198,8 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
 
   ENTER();
 
+  D(DBF_MAIL, "Examining mail file '%s' from folder '%s' with deep %d", file, folder->Name, deep);
+
   // first we generate a new ExtendedMail buffer
   if((email = calloc(1, sizeof(*email))) == NULL)
   {
@@ -2517,17 +2519,18 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
       }
       else if(stricmp(field, "message-id") == 0)
       {
-        StrBufCpy(&email->messageID, Trim(value));
+        StrBufCat(&email->messageID, Trim(value));
         mail->cMsgID = CompressMsgID(email->messageID);
       }
       else if(stricmp(field, "in-reply-to") == 0)
       {
-        StrBufCpy(&email->inReplyToMsgID, Trim(value));
+        StrBufCat(&email->inReplyToMsgID, Trim(value));
         mail->cIRTMsgID = CompressMsgID(email->inReplyToMsgID);
       }
       else if(stricmp(field, "references") == 0)
       {
-        StrBufCpy(&email->references, Trim(value));
+        StrBufCat(&email->references, Trim(value));
+        D(DBF_MAIL, "References: '%s'", email->references);
       }
       else if(stricmp(field, "date") == 0)
       {
@@ -2594,7 +2597,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
       {
         setFlag(mail->mflags, MFLAG_SENDERINFO);
         if(deep == TRUE)
-          StrBufCpy(&email->SenderInfo, value);
+          StrBufCat(&email->SenderInfo, value);
       }
       else if(deep == TRUE) // and if we end up here we check if we really have to go further
       {

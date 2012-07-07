@@ -7,6 +7,9 @@ $URL$
 
 2012-07-07 Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_MAf.c: fixed a crash problem where in case a mail contained multiple
+    "References:" headers YAM was overwriting the old one. Now StrBufCat()
+    is used instead solving the problem.
   * mime/rfc2047.c: fixed minor bug where an base64/rfc2047 encoded string
     was not trimmed before being supplied to base64decode().
   * mime/base64.c, misc: reworked the base64 encoding/decoding functions to
