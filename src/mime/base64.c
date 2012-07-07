@@ -155,14 +155,15 @@ int base64encode(char **out, const char *in, size_t inlen)
 int base64decode(char **out, const char *in, size_t inlen)
 {
   int result = 0;
-  unsigned char *outp;
+  unsigned char *buffer;
 
   ENTER();
 
   if(inlen > 0 && (inlen % 4) == 0 &&
-     (outp = malloc(inlen * 3 / 4)) != NULL)
+     (buffer = malloc(inlen * 3 / 4)) != NULL)
   {
     unsigned char *inp = (unsigned char *)in;
+    unsigned char *outp = buffer;
 
     while(inlen >= 4)
     {
@@ -263,7 +264,7 @@ int base64decode(char **out, const char *in, size_t inlen)
     else
     {
       result = (outp - (unsigned char *)*out);
-      *out = (char *)outp;
+      *out = (char *)buffer;
     }
   }
   else 
