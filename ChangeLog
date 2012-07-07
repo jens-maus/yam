@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-07-07 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: update according to the latest changes.
+
 2012-07-07 Jens Langner <Jens.Langner@light-speed.de>
 
   * Requesters.c, mui/GenericRequestWindow.c, tcp/ssl.c, misc: moved the

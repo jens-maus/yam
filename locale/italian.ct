@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.99 (5.07.2012)
+## version $VER: YAM.catalog 7.99 (7.07.2012)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -7,7 +7,7 @@
 ; Compiled with FlexCat 2.9 PPC (AmigaOS4)
 ; $Id$
 ;
-; based on YAM.cd 6057 2012-07-05
+; based on YAM.cd 6078 2012-07-07
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -1291,7 +1291,7 @@ sempre, solo dimensioni
 ; always, only sizes
 ;
 MSG_CO_TWNever
-nascondi sempre
+sempre nascosta
 ; hide always
 ;
 MSG_CO_TWAuto
@@ -1299,7 +1299,7 @@ automatica
 ; automatic
 ;
 MSG_CO_TWAlways
-mostra sempre
+sempre mostrata
 ; show always
 ;
 MSG_CO_TransferWin
@@ -5090,7 +5090,7 @@ Seleziona directory
 ; Module FO - Window
 ;
 MSG_FO_MessageDate
-Data messaggio
+Data del messaggio
 ; Message date
 ;
 MSG_FO_DateRecvd
@@ -10607,6 +10607,10 @@ MSG_SSL_CERT_WARNING_TITLE
 Avviso Certificato SSL
 ; SSL Certificate Warning
 ;
+MSG_SSL_CERT_WARNING_BUTTONS
+_Accetta|Accetta _Permanentemente|_Mostra Certificato|*_Rifiuta
+; _Accept|Accept _Permanently|_Show Certificate|*_Reject
+;
 MSG_SSL_CERT_WARNING_INTRO
 Errore nel server durante la convalida del certificato per '\033b%s:%d\033n':
 ; Error validating server certificate for '\033b%s:%d\033n':
@@ -10646,4 +10650,9 @@ Informazioni sul certificato:\n\
 ; - Issuer: \033b%s\033n\n\
 ; - Fingerprint: \033b%s\033n
 ; HOSTNAME, VALID_FROM, VALID_TO, ISSUER, FINGERPRINT
+;
+MSG_SSL_CERT_WARNING_SHOWTITLE
+Certificato di %s:%d
+; Certificate of %s:%d
+; HOSTNAME, PORT
 ;
