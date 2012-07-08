@@ -268,7 +268,7 @@ OVERLOAD(MUIM_TextEditor_HandleError)
   }
 
   if(errortxt)
-    MUI_Request(_app(obj), _win(obj), 0L, NULL, tr(MSG_OkayReq), errortxt);
+    MUI_Request(_app(obj), _win(obj), MUIF_NONE, NULL, tr(MSG_OkayReq), errortxt);
   else
     DisplayBeep(NULL);
 

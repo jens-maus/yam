@@ -367,9 +367,9 @@ DECLARE(ActivateTheme)
 
       // remind the users to save the configuration and
       // restart yam.
-      MUI_Request(G->App, G->CO->GUI.WI, 0, tr(MSG_ER_THEME_ACTIVATED_TITLE),
-                                            tr(MSG_Okay),
-                                            tr(MSG_ER_THEME_ACTIVATED));
+      MUI_Request(G->App, _win(obj), MUIF_NONE, tr(MSG_ER_THEME_ACTIVATED_TITLE),
+                                                tr(MSG_OkayReq),
+                                                tr(MSG_ER_THEME_ACTIVATED));
     }
     else
       W(DBF_THEME, "theme '%s' is already the currently active one!", themeName);

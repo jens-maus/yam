@@ -77,7 +77,7 @@
 /// YAMMUIRequest
 // Own -secure- implementation of MUI_Request with collecting and reissueing ReturnIDs
 // We also have a wrapper #define MUI_Request for calling that function instead.
-LONG YAMMUIRequest(Object *app, Object *parent, LONG flags, const char *tit, const char *gad, const char *format, ...)
+LONG YAMMUIRequest(const Object *app, const Object *parent, LONG flags, const char *tit, const char *gad, const char *format, ...)
 {
   LONG result = -1;
   va_list args;
@@ -102,7 +102,7 @@ LONG YAMMUIRequest(Object *app, Object *parent, LONG flags, const char *tit, con
   return result;
 }
 
-LONG YAMMUIRequestA(Object *app, Object *parent, LONG flags, const char *title, const char *gadgets, const char *reqtxt)
+LONG YAMMUIRequestA(const Object *app, const Object *parent, LONG flags, const char *title, const char *gadgets, const char *reqtxt)
 {
   LONG result = -1;
 
@@ -689,7 +689,7 @@ BOOL CertWarningRequest(struct Connection *conn, struct Certificate *cert)
                 asprintf(&reqtitle, tr(MSG_SSL_CERT_WARNING_SHOWTITLE), conn->server->hostname, conn->server->port);
 
                 // open an additional MUI requester now
-                MUI_Request(G->App, win, MUIF_REQ_FLOATTEXT, reqtitle, tr(MSG_Okay), (char *)buffer);
+                MUI_Request(G->App, win, MUIF_REQ_FLOATTEXT, reqtitle, tr(MSG_OkayReq), (char *)buffer);
 
                 free(reqtitle);
                 BIO_free(temp_memory_bio);

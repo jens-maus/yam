@@ -201,9 +201,9 @@ DECLARE(Search) // ULONG flags
       // top
       if(hasFromTopFlag(msg->flags))
       {
-        MUI_Request(_app(obj), data->ParentWindow, 0L, tr(MSG_SEARCHNOTFOUND_TITLE),
-                                                       tr(MSG_OkayReq),
-                                                       tr(MSG_SEARCHNOTFOUND_MSG), string);
+        MUI_Request(_app(obj), data->ParentWindow, MUIF_NONE, tr(MSG_SEARCHNOTFOUND_TITLE),
+                                                              tr(MSG_OkayReq),
+                                                              tr(MSG_SEARCHNOTFOUND_MSG), string);
       }
       else if(hasBeepOnFailureFlag(msg->flags))
       {

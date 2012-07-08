@@ -1369,9 +1369,9 @@ DECLARE(SwitchMail) // LONG direction, ULONG qualifier
             {
               if(fo != folder)
               {
-                if(MUI_Request(G->App, obj, 0, tr(MSG_MA_ConfirmReq),
-                                               tr(MSG_YesNoReq),
-                                               tr(MSG_RE_MoveNextFolderReq), fo->Name) == 0)
+                if(MUI_Request(G->App, obj, MUIF_NONE, tr(MSG_MA_ConfirmReq),
+                                                       tr(MSG_YesNoReq),
+                                                       tr(MSG_RE_MoveNextFolderReq), fo->Name) == 0)
                 {
                   abortJump = TRUE;
                   break;

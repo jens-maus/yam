@@ -418,7 +418,7 @@ DECLARE(Download)
 
           if(FileExists(path) == TRUE)
           {
-            if(MUI_Request(G->App, obj, 0, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_FILE_OVERWRITE), path) == 0)
+            if(MUI_Request(G->App, obj, MUIF_NONE, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_FILE_OVERWRITE), path) == 0)
             {
               // user chose not to overwrite the existing file, let him choose another one
             }

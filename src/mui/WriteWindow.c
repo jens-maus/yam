@@ -317,7 +317,7 @@ static enum Encoding WhichEncodingForFile(const char *fname,
 
 ///
 /// SetDefaultSecurity
-static BOOL SetDefaultSecurity(struct Compose *comp)
+static BOOL SetDefaultSecurity(struct Compose *comp, const Object *win)
 {
   BOOL result = TRUE;
   enum Security security = SEC_NONE;
@@ -387,10 +387,10 @@ static BOOL SetDefaultSecurity(struct Compose *comp)
               char address[SIZE_LARGE];
 
               // warn the user about this exeptional situation
-              if(MUI_Request(G->App, NULL, 0, tr(MSG_WR_INVALIDSECURITY_TITLE),
-                                              tr(MSG_WR_INVALIDSECURITY_GADS),
-                                              tr(MSG_WR_INVALIDSECURITY),
-                                              BuildAddress(address, sizeof(address), ab->Address, ab->RealName)) != 0)
+              if(MUI_Request(G->App, win, MUIF_NONE, tr(MSG_WR_INVALIDSECURITY_TITLE),
+                                                     tr(MSG_WR_INVALIDSECURITY_GADS),
+                                                     tr(MSG_WR_INVALIDSECURITY),
+                                                     BuildAddress(address, sizeof(address), ab->Address, ab->RealName)) != 0)
               {
                 currsec = SEC_NONE;
               }
@@ -418,8 +418,8 @@ static BOOL SetDefaultSecurity(struct Compose *comp)
           else
           {
             // conflict: two addresses have different defaults
-            int res = MUI_Request(G->App, NULL, 0, NULL, tr(MSG_WR_SECURITYREQ_GADS),
-                                                         tr(MSG_WR_SECURITYREQ));
+            int res = MUI_Request(G->App, win, MUIF_NONE, NULL, tr(MSG_WR_SECURITYREQ_GADS),
+                                                                tr(MSG_WR_SECURITYREQ));
 
             switch(res)
             {
@@ -2964,7 +2964,7 @@ DECLARE(SaveTextAs)
     AddPath(filename, frc->drawer, frc->file, sizeof(filename));
 
     if(FileExists(filename) == FALSE ||
-       MUI_Request(G->App, obj, 0, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_FILE_OVERWRITE), frc->file) != 0)
+       MUI_Request(G->App, obj, MUIF_NONE, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_FILE_OVERWRITE), frc->file) != 0)
     {
       DoMethod(data->TE_EDIT, MUIM_MailTextEdit_SaveToFile, data->wmData->filename);
 
@@ -3676,7 +3676,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
     set(obj, MUIA_Window_ActiveObject, data->ST_TO);
 
-    if(MUI_Request(G->App, obj, 0, NULL, tr(MSG_WR_NoRcptReqGad), tr(MSG_WR_ErrorNoRcpt)) != 0)
+    if(MUI_Request(G->App, obj, MUIF_NONE, NULL, tr(MSG_WR_NoRcptReqGad), tr(MSG_WR_ErrorNoRcpt)) != 0)
     {
       mode = WRITE_HOLD;
     }
@@ -3696,7 +3696,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
     set(obj, MUIA_Window_ActiveObject, data->ST_SUBJECT);
 
-    if(MUI_Request(G->App, obj, 0, NULL, tr(MSG_WR_OKAYCANCELREQ), tr(MSG_WR_NOSUBJECTREQ)) == 0)
+    if(MUI_Request(G->App, obj, MUIF_NONE, NULL, tr(MSG_WR_OKAYCANCELREQ), tr(MSG_WR_NOSUBJECTREQ)) == 0)
       goto out;
   }
 
@@ -3803,7 +3803,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
     comp.SelSecurity = comp.Security;
 
     if(comp.Security == SEC_DEFAULTS &&
-       SetDefaultSecurity(&comp) == FALSE)
+       SetDefaultSecurity(&comp, obj) == FALSE)
     {
       goto out;
     }
@@ -4012,7 +4012,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
           {
             // process MDN notifications
             if(hasStatusNew(mail) || !hasStatusRead(mail))
-              RE_ProcessMDN(MDN_MODE_DISPLAY, mail, FALSE, wmData->quietMode);
+              RE_ProcessMDN(MDN_MODE_DISPLAY, mail, FALSE, wmData->quietMode, obj);
 
             switch(wmData->mode)
             {
@@ -4300,7 +4300,7 @@ DECLARE(CancelAction)
     // ask the user what to do if the mail text was modified
     if(xget(data->TE_EDIT, MUIA_TextEditor_HasChanged) == TRUE || data->autoSaved == TRUE)
     {
-      switch(MUI_Request(G->App, obj, 0, NULL, tr(MSG_WR_DiscardChangesGad), tr(MSG_WR_DiscardChanges)))
+      switch(MUI_Request(G->App, obj, MUIF_NONE, NULL, tr(MSG_WR_DiscardChangesGad), tr(MSG_WR_DiscardChanges)))
       {
         case 0:
         {
@@ -4366,9 +4366,9 @@ DECLARE(MailFileModified)
       {
         // warn the user that both the tempfile and the content of the TextEditor.mcc
         // changed.
-        if(MUI_Request(G->App, obj, 0L, tr(MSG_FCHANGE_WARN_TITLE),
-                                        tr(MSG_YesNoReq),
-                                        tr(MSG_FCHANGE_WARN), data->windowNumber+1) == 0)
+        if(MUI_Request(G->App, obj, MUIF_NONE, tr(MSG_FCHANGE_WARN_TITLE),
+                                               tr(MSG_YesNoReq),
+                                               tr(MSG_FCHANGE_WARN), data->windowNumber+1) == 0)
         {
           // cancel / keep old text
           keep = TRUE;

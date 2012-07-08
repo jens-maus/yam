@@ -135,7 +135,7 @@ enum { RMEN_HSHORT=100, RMEN_HFULL, RMEN_SNONE, RMEN_SDATA, RMEN_SFULL, RMEN_SIM
 /* Hooks */
 /// TextEditDoubleClickHook
 //  Handles double-clicks on an URL
-HOOKPROTONHNO(TextEditDoubleClickFunc, BOOL, struct ClickMessage *clickmsg)
+HOOKPROTONH(TextEditDoubleClickFunc, BOOL, struct ClickMessage *clickmsg, Object *obj)
 {
   // default to let TextEditor.mcc handle the double click
   BOOL result = FALSE;
@@ -184,7 +184,7 @@ HOOKPROTONHNO(TextEditDoubleClickFunc, BOOL, struct ClickMessage *clickmsg)
         {
           case tEMAIL:
           {
-            RE_ClickedOnMessage(url);
+            RE_ClickedOnMessage(url, _win(obj));
             // no further handling by TextEditor.mcc required
             result = TRUE;
           }
@@ -192,7 +192,7 @@ HOOKPROTONHNO(TextEditDoubleClickFunc, BOOL, struct ClickMessage *clickmsg)
 
           case tMAILTO:
           {
-            RE_ClickedOnMessage(&url[7]);
+            RE_ClickedOnMessage(&url[7], _win(obj));
             // no further handling by TextEditor.mcc required
             result = TRUE;
           }
@@ -1061,7 +1061,7 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
 
         // check for any MDN and allow to reply to it.
         if(isSendMDNMail(mail))
-          RE_ProcessMDN(MDN_MODE_DISPLAY, mail, FALSE, FALSE);
+          RE_ProcessMDN(MDN_MODE_DISPLAY, mail, FALSE, FALSE, _win(obj));
       }
 
       // everything worked out fine so lets return it
@@ -1382,7 +1382,7 @@ DECLARE(CheckPGPSignature) // ULONG forceRequester
           strlcat(buffer, rmData->sigAuthor, sizeof(buffer));
         }
 
-        MUI_Request(G->App, _win(obj), MUIF_NONE, tr(MSG_RE_SigCheck), tr(MSG_Okay), buffer);
+        MUI_Request(G->App, _win(obj), MUIF_NONE, tr(MSG_RE_SigCheck), tr(MSG_OkayReq), buffer);
       }
     }
   }
@@ -1523,9 +1523,9 @@ DECLARE(SaveDecryptedMail)
   if(folder == NULL)
     return 0;
 
-  if((choice = MUI_Request(G->App, rmData->readWindow, 0, tr(MSG_RE_SaveDecrypted),
-                                                          tr(MSG_RE_SaveDecGads),
-                                                          tr(MSG_RE_SaveDecReq))) != 0)
+  if((choice = MUI_Request(G->App, rmData->readWindow, MUIF_NONE, tr(MSG_RE_SaveDecrypted),
+                                                                  tr(MSG_RE_SaveDecGads),
+                                                                  tr(MSG_RE_SaveDecReq))) != 0)
   {
     struct Compose comp;
     char mfilePath[SIZE_PATHFILE];
@@ -1696,7 +1696,7 @@ DECLARE(PrintMailRequest)
       switch(part->Nr)
       {
         case PART_ORIGINAL:
-          RE_PrintFile(rmData->readFile);
+          RE_PrintFile(rmData->readFile, _win(obj));
         break;
 
         case PART_ALLTEXT:
@@ -1707,14 +1707,14 @@ DECLARE(PrintMailRequest)
             fclose(prttmp->FP);
             prttmp->FP = NULL;
 
-            RE_PrintFile(prttmp->Filename);
+            RE_PrintFile(prttmp->Filename, _win(obj));
             CloseTempFile(prttmp);
           }
         }
         break;
 
         default:
-          RE_PrintFile(part->Filename);
+          RE_PrintFile(part->Filename, _win(obj));
       }
     }
 

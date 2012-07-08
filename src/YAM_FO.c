@@ -1564,11 +1564,14 @@ MakeHook(FO_NewFolderGroupHook, FO_NewFolderGroupFunc);
 //  Creates a new folder
 HOOKPROTONHNONP(FO_NewFolderFunc, void)
 {
-  int mode = MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_NewFolder), tr(MSG_FO_NewFolderGads), tr(MSG_FO_NewFolderReq));
   // must be static, otherwise the GUI will access random memory
   static struct Folder folder;
+  int mode;
 
   ENTER();
+
+  // call MUI_Request() first
+  mode = MUI_Request(G->App, G->MA->GUI.WI, MUIF_NONE, tr(MSG_MA_NewFolder), tr(MSG_FO_NewFolderGads), tr(MSG_FO_NewFolderReq));
 
   // reset the folder struct and set some default values.
   memset(&folder, 0, sizeof(struct Folder));
@@ -1715,7 +1718,7 @@ HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
     case FT_CUSTOMSENT:
     case FT_CUSTOMMIXED:
     {
-      if(MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_YesNoReq2), tr(MSG_CO_ConfirmDelete)) != 0)
+      if(MUI_Request(G->App, G->MA->GUI.WI, MUIF_NONE, NULL, tr(MSG_YesNoReq2), tr(MSG_CO_ConfirmDelete)) != 0)
       {
         // check if the folder that is about to be deleted is part
         // of an active filter and if so remove it from it
@@ -1751,7 +1754,7 @@ HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
       if((tn_sub = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, tn_group, MUIV_NListtree_GetEntry_Position_Head, MUIF_NONE)) != NULL)
       {
         // Now we popup a requester and if this requester is confirmed we move the subentries to the parent node.
-        if(MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_YesNoReq2), tr(MSG_FO_GROUP_CONFDEL)))
+        if(MUI_Request(G->App, G->MA->GUI.WI, MUIF_NONE, NULL, tr(MSG_YesNoReq2), tr(MSG_FO_GROUP_CONFDEL)))
         {
           struct MUI_NListtree_TreeNode *tn_sub_next = tn_sub;
 
@@ -1902,7 +1905,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
     // if the foldername is empty or it was changed and the new name already exists it's invalid
     if(folder.Name[0] == '\0' || (nameChanged == TRUE && FO_GetFolderByName(folder.Name, NULL) != NULL))
     {
-      MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, tr(MSG_OkayReq), tr(MSG_FO_FOLDERNAMEINVALID));
+      MUI_Request(G->App, G->FO->GUI.WI, MUIF_NONE, NULL, tr(MSG_OkayReq), tr(MSG_FO_FOLDERNAMEINVALID));
 
       LEAVE();
       return;
@@ -1931,7 +1934,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
         int result;
 
         // ask the user whether to perform the move or not
-        result = MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, tr(MSG_YesNoReq), tr(MSG_FO_MOVEFOLDERTO), oldfolder->Fullpath, folder.Fullpath);
+        result = MUI_Request(G->App, G->FO->GUI.WI, MUIF_NONE, NULL, tr(MSG_YesNoReq), tr(MSG_FO_MOVEFOLDERTO), oldfolder->Fullpath, folder.Fullpath);
         if(result == 1)
         {
           // first unload the old folder image to make it moveable/deletable
@@ -2065,7 +2068,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
       // if the foldername is empty or the new name already exists it's invalid
       if(folder.Name[0] == '\0' || FO_GetFolderByName(folder.Name, NULL) != NULL)
       {
-        MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, tr(MSG_OkayReq), tr(MSG_FO_FOLDERNAMEINVALID));
+        MUI_Request(G->App, G->FO->GUI.WI, MUIF_NONE, NULL, tr(MSG_OkayReq), tr(MSG_FO_FOLDERNAMEINVALID));
 
         LEAVE();
         return;
@@ -2074,14 +2077,14 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
       // lets check if entered folder path is valid or not
       if(folder.Path[0] == '\0')
       {
-        MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, tr(MSG_OkayReq), tr(MSG_FO_FOLDERPATHINVALID));
+        MUI_Request(G->App, G->FO->GUI.WI, MUIF_NONE, NULL, tr(MSG_OkayReq), tr(MSG_FO_FOLDERPATHINVALID));
 
         LEAVE();
         return;
       }
       else if(FileExists(folder.Fullpath) == TRUE) // check if the combined full path already exists
       {
-        result = MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, tr(MSG_YesNoReq), tr(MSG_FO_FOLDER_ALREADY_EXISTS), folder.Fullpath);
+        result = MUI_Request(G->App, G->FO->GUI.WI, MUIF_NONE, NULL, tr(MSG_YesNoReq), tr(MSG_FO_FOLDER_ALREADY_EXISTS), folder.Fullpath);
       }
       else
         result = TRUE;

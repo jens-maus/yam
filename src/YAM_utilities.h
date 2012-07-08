@@ -258,7 +258,7 @@ void     AddZombieFile(const char *fileName);
 char *   AllocReqText(const char *s);
 char *   AllocStrBuf(size_t initlen);
 BOOL     Busy(const char *text, const char *parameter, int cur, int max);
-BOOL     CheckPrinter(void);
+BOOL     CheckPrinter(const Object *win);
 void     ClearFolderMails(struct Folder *folder, BOOL resetstats);
 BOOL     DeleteZombieFiles(BOOL force);
 void     CloseTempFile(struct TempFile *tf);

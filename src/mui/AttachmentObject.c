@@ -466,13 +466,13 @@ DECLARE(Print)
   if(data->mailPart != NULL)
   {
     BusyText(tr(MSG_BusyDecPrinting), "");
-    RE_PrintFile(data->mailPart->Filename);
+    RE_PrintFile(data->mailPart->Filename, _win(obj));
     BusyEnd();
   }
   else if(data->attachment != NULL)
   {
     BusyText(tr(MSG_BusyDecPrinting), "");
-    RE_PrintFile(data->attachment->FilePath);
+    RE_PrintFile(data->attachment->FilePath, _win(obj));
     BusyEnd();
   }
 

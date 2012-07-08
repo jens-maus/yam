@@ -254,7 +254,7 @@ static BOOL InitLib(const char *libname,
 
         if(MUIMasterBase != NULL && G != NULL && G->App != NULL)
         {
-          answer = MUI_Request(NULL, NULL, 0L, tr(MSG_ErrorStartup), (gotoURLPossible == TRUE) ? tr(MSG_HOMEPAGE_QUIT_GAD) : tr(MSG_Quit), error);
+          answer = MUI_Request(G->App, NULL, MUIF_NONE, tr(MSG_ErrorStartup), (gotoURLPossible == TRUE) ? tr(MSG_HOMEPAGE_QUIT_GAD) : tr(MSG_Quit), error);
         }
         else if(IntuitionBase != NULL)
         {
@@ -381,7 +381,7 @@ static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, con
           {
             LONG answer;
 
-            answer = MUI_Request(NULL, NULL, 0L, tr(MSG_ErrorStartup), (gotoURLPossible == TRUE) ? tr(MSG_RETRY_HOMEPAGE_QUIT_GAD) : tr(MSG_RETRY_QUIT_GAD), tr(MSG_ER_MCC_IN_USE), name, minver, minrev, ver, rev, url);
+            answer = MUI_Request(G != NULL ? G->App : NULL, NULL, MUIF_NONE, tr(MSG_ErrorStartup), (gotoURLPossible == TRUE) ? tr(MSG_RETRY_HOMEPAGE_QUIT_GAD) : tr(MSG_RETRY_QUIT_GAD), tr(MSG_ER_MCC_IN_USE), name, minver, minrev, ver, rev, url);
             if(answer == 0)
             {
               // cancel
@@ -425,7 +425,7 @@ static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, con
           {
             LONG answer;
 
-            answer = MUI_Request(NULL, NULL, 0L, tr(MSG_ErrorStartup), (gotoURLPossible == TRUE) ? tr(MSG_RETRY_HOMEPAGE_QUIT_GAD) : tr(MSG_RETRY_QUIT_GAD), tr(MSG_ER_MCC_OLD), name, minver, minrev, ver, rev, url);
+            answer = MUI_Request(G != NULL ? G->App : NULL, NULL, MUIF_NONE, tr(MSG_ErrorStartup), (gotoURLPossible == TRUE) ? tr(MSG_RETRY_HOMEPAGE_QUIT_GAD) : tr(MSG_RETRY_QUIT_GAD), tr(MSG_ER_MCC_OLD), name, minver, minrev, ver, rev, url);
             if(answer == 0)
             {
               // cancel
@@ -453,7 +453,7 @@ static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, con
 
         // No MCC at all - no need to attempt flush
         flush = FALSE;
-        answer = MUI_Request(NULL, NULL, 0L, tr(MSG_ErrorStartup), (gotoURLPossible == TRUE) ? tr(MSG_RETRY_HOMEPAGE_QUIT_GAD) : tr(MSG_RETRY_QUIT_GAD), tr(MSG_ER_NO_MCC), name, minver, minrev, url);
+        answer = MUI_Request(G != NULL ? G->App : NULL, NULL, MUIF_NONE, tr(MSG_ErrorStartup), (gotoURLPossible == TRUE) ? tr(MSG_RETRY_HOMEPAGE_QUIT_GAD) : tr(MSG_RETRY_QUIT_GAD), tr(MSG_ER_NO_MCC), name, minver, minrev, url);
 
         if(answer == 0)
         {
@@ -1367,7 +1367,7 @@ BOOL StayInProg(void)
   {
     int result;
 
-    result = MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_ABOOK_MODIFIED_GAD), tr(MSG_AB_Modified));
+    result = MUI_Request(G->App, G->MA->GUI.WI, MUIF_NONE, NULL, tr(MSG_ABOOK_MODIFIED_GAD), tr(MSG_AB_Modified));
     switch(result)
     {
       default:
@@ -1397,7 +1397,7 @@ BOOL StayInProg(void)
   {
     int result;
 
-    result = MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_CONFIG_MODIFIED_GAD), tr(MSG_CONFIG_MODIFIED));
+    result = MUI_Request(G->App, G->MA->GUI.WI, MUIF_NONE, NULL, tr(MSG_CONFIG_MODIFIED_GAD), tr(MSG_CONFIG_MODIFIED));
     switch(result)
     {
       default:
@@ -1437,7 +1437,7 @@ BOOL StayInProg(void)
       {
         int result;
 
-        result = MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_OPEN_WRITEWINDOWS_GAD), tr(MSG_OPEN_WRITEWINDOWS));
+        result = MUI_Request(G->App, G->MA->GUI.WI, MUIF_NONE, NULL, tr(MSG_OPEN_WRITEWINDOWS_GAD), tr(MSG_OPEN_WRITEWINDOWS));
         switch(result)
         {
           default:
@@ -1494,7 +1494,7 @@ BOOL StayInProg(void)
 
     if(req == TRUE || G->CO != NULL || C->ConfirmOnQuit == TRUE)
     {
-      if(MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_QuitYAMReq)) == 0)
+      if(MUI_Request(G->App, G->MA->GUI.WI, MUIF_NONE, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_QuitYAMReq)) == 0)
         stayIn = TRUE;
     }
   }
@@ -1821,9 +1821,9 @@ static void InitAfterLogin(void)
         // let the user decide what to do
         ULONG result;
 
-        result = MUI_Request(G->App, NULL, 0, NULL,
-                                              tr(MSG_ER_SPAMDIR_EXISTS_ANSWERS),
-                                              tr(MSG_ER_SPAMDIR_EXISTS));
+        result = MUI_Request(G->App, G->MA->GUI.WI, MUIF_NONE, NULL,
+                                                               tr(MSG_ER_SPAMDIR_EXISTS_ANSWERS),
+                                                               tr(MSG_ER_SPAMDIR_EXISTS));
         switch(result)
         {
           default:
@@ -2212,7 +2212,7 @@ static BOOL SendWaitingMail(const BOOL hideDisplay)
       MA_ChangeFolder(fo, TRUE);
 
       // now ask the user for permission to send the mail.
-      sendableMail = MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_YesNoReq), tr(MSG_SendStartReq));
+      sendableMail = MUI_Request(G->App, G->MA->GUI.WI, MUIF_NONE, NULL, tr(MSG_YesNoReq), tr(MSG_SendStartReq));
     }
   }
 

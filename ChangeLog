@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-07-08 Jens Langner <Jens.Langner@light-speed.de>
+
+  * Requesters.c, misc: did some housekeeping regarding the function calls of
+    MUI_Request(). Now a refWindow should always be specified so that the position
+    will always be relative to it. In addition MUIF_NONE is now always applied.
+    Furthermore MSG_OkayReq is now used instead of MSG_Okay as that contains
+    definitions for a keyboard shortcut.
+
 2012-07-07 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: update according to the latest changes.

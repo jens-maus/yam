@@ -154,7 +154,7 @@ struct HeaderNode
 
 BOOL RE_DecodePart(struct Part *rp);
 void RE_DisplayMIME(const char *fname, const char *ctype);
-BOOL RE_ProcessMDN(const enum MDNMode mode, struct Mail *mail, const BOOL multi, const BOOL autoAction);
+BOOL RE_ProcessMDN(const enum MDNMode mode, struct Mail *mail, const BOOL multi, const BOOL autoAction, const Object *win);
 
 struct ReadMailData *CreateReadWindow(BOOL forceNewWindow);
 struct ReadMailData *AllocPrivateRMData(const struct Mail *mail, short parseFlags);
@@ -170,8 +170,8 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode rMode);
 void RE_UpdateSenderInfo(struct ABEntry *old, struct ABEntry *new);
 struct ABEntry *RE_AddToAddrbook(Object *win, struct ABEntry *templ);
 void RE_GetSigFromLog(struct ReadMailData *rmData, char *decrFor);
-void RE_ClickedOnMessage(char *address);
-BOOL RE_PrintFile(const char *filename);
+void RE_ClickedOnMessage(char *address, const Object *win);
+BOOL RE_PrintFile(const char *filename, const Object *win);
 BOOL RE_Export(struct ReadMailData *rmData, const char *source, const char *dest, const char *name, int nr, BOOL force, BOOL overwrite, const char *ctype);
 void RE_SaveAll(struct ReadMailData *rmData, const char *path);
 

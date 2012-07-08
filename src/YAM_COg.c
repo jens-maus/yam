@@ -447,7 +447,7 @@ HOOKPROTONHNONP(ImportMimeTypesFunc, void)
 
   ENTER();
 
-  if((mode = MUI_Request(G->App, G->CO->GUI.WI, 0, tr(MSG_CO_ImportMIME), tr(MSG_CO_ImportMIMEGads), tr(MSG_CO_ImportMIMEReq))) != 0)
+  if((mode = MUI_Request(G->App, G->CO->GUI.WI, MUIF_NONE, tr(MSG_CO_ImportMIME), tr(MSG_CO_ImportMIMEGads), tr(MSG_CO_ImportMIMEReq))) != 0)
   {
     struct FileReqCache *frc;
 
@@ -990,7 +990,7 @@ HOOKPROTONHNONP(ResetSpamTrainingDataFunc, void)
 {
   ENTER();
 
-  if(MUI_Request(G->App, G->CO->GUI.WI, 0, NULL, tr(MSG_YesNoReq2), tr(MSG_CO_SPAM_RESETTRAININGDATAASK)) != 0)
+  if(MUI_Request(G->App, G->CO->GUI.WI, MUIF_NONE, NULL, tr(MSG_YesNoReq2), tr(MSG_CO_SPAM_RESETTRAININGDATAASK)) != 0)
   {
     char buf[SIZE_DEFAULT];
 
@@ -1013,7 +1013,7 @@ HOOKPROTONHNONP(OptimizeSpamTrainingDataFunc, void)
 {
   ENTER();
 
-  if(MUI_Request(G->App, G->CO->GUI.WI, 0, NULL, tr(MSG_YesNoReq2), tr(MSG_CO_SPAM_OPTIMIZE_TRAININGDATA_ASK)) != 0)
+  if(MUI_Request(G->App, G->CO->GUI.WI, MUIF_NONE, NULL, tr(MSG_YesNoReq2), tr(MSG_CO_SPAM_OPTIMIZE_TRAININGDATA_ASK)) != 0)
   {
     char buf[SIZE_DEFAULT];
 

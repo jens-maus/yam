@@ -63,6 +63,7 @@
 #include "Requesters.h"
 #include "UpdateCheck.h"
 
+#include "mui/ClassesExtra.h"
 #include "mui/UpdateNotifyWindow.h"
 #include "mime/rfc1738.h"
 
@@ -434,7 +435,7 @@ BOOL ParseUpdateFile(const char *filename, const BOOL quiet)
 
       // show a requester if the check was triggered by the user
       if(quiet == FALSE)
-        MUI_Request(G->App, NULL, 0, tr(MSG_UPD_NO_UPDATES_FOUND_TITLE), tr(MSG_Okay), tr(MSG_UPD_NO_UPDATES_FOUND), (C->UpdateInterval > 0) ? tr(MSG_UPD_NO_UPDATES_FOUND_HINT_AUTOCHECK) : tr(MSG_UPD_NO_UPDATES_FOUND_HINT_NOAUTOCHECK));
+        MUI_Request(G->App, G->MA->GUI.WI, MUIF_NONE, tr(MSG_UPD_NO_UPDATES_FOUND_TITLE), tr(MSG_OkayReq), tr(MSG_UPD_NO_UPDATES_FOUND), (C->UpdateInterval > 0) ? tr(MSG_UPD_NO_UPDATES_FOUND_HINT_AUTOCHECK) : tr(MSG_UPD_NO_UPDATES_FOUND_HINT_NOAUTOCHECK));
     }
 
     // the updatecheck was successfull

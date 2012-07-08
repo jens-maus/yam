@@ -186,7 +186,7 @@ BOOL RE_Export(struct ReadMailData *rmData, const char *source,
   {
     if(FileExists(dest) == TRUE && overwrite == FALSE)
     {
-      if(MUI_Request(G->App, win, 0, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_FILE_OVERWRITE), FilePart(dest)) == 0)
+      if(MUI_Request(G->App, win, MUIF_NONE, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_FILE_OVERWRITE), FilePart(dest)) == 0)
         dest = NULL;
     }
   }
@@ -235,13 +235,13 @@ BOOL RE_Export(struct ReadMailData *rmData, const char *source,
 ///
 /// RE_PrintFile
 //  Prints a file. Currently it is just dumped to PRT:
-BOOL RE_PrintFile(const char *filename)
+BOOL RE_PrintFile(const char *filename, const Object *win)
 {
   BOOL success = FALSE;
 
   ENTER();
 
-  if(CheckPrinter() == TRUE)
+  if(CheckPrinter(win) == TRUE)
   {
     switch(C->PrintMethod)
     {
@@ -256,7 +256,7 @@ BOOL RE_PrintFile(const char *filename)
     // signal the failure to the user
     // in case we were not able to print something
     if(success == FALSE)
-      MUI_Request(G->App, NULL, 0, tr(MSG_ErrorReq), tr(MSG_OkayReq), tr(MSG_ER_PRINTER_FAILED));
+      MUI_Request(G->App, win, MUIF_NONE, tr(MSG_ErrorReq), tr(MSG_OkayReq), tr(MSG_ER_PRINTER_FAILED));
   }
 
   RETURN(success);
@@ -3338,7 +3338,7 @@ struct ABEntry *RE_AddToAddrbook(Object *win, struct ABEntry *templ)
       char address[SIZE_LARGE];
 
       snprintf(buf, sizeof(buf), tr(MSG_RE_AddSender), BuildAddress(address, sizeof(address), templ->Address, templ->RealName));
-      doit = MUI_Request(G->App, win, 0, NULL, tr(MSG_YesNoReq), buf);
+      doit = MUI_Request(G->App, win, MUIF_NONE, NULL, tr(MSG_YesNoReq), buf);
     }
     break;
 
@@ -3400,7 +3400,7 @@ struct ABEntry *RE_AddToAddrbook(Object *win, struct ABEntry *templ)
 ///
 /// RE_ClickedOnMessage
 //  User clicked on a e-mail address
-void RE_ClickedOnMessage(char *address)
+void RE_ClickedOnMessage(char *address, const Object *win)
 {
   int l;
 
@@ -3455,7 +3455,7 @@ void RE_ClickedOnMessage(char *address)
 
     snprintf(buf, sizeof(buf), tr(MSG_RE_SelectAddressReq), address);
 
-    switch(MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(hits ? MSG_RE_SelectAddressEdit : MSG_RE_SelectAddressAdd), buf))
+    switch(MUI_Request(G->App, win, MUIF_NONE, NULL, tr(hits ? MSG_RE_SelectAddressEdit : MSG_RE_SelectAddressAdd), buf))
     {
       case 1:
       {
@@ -3491,19 +3491,19 @@ void RE_ClickedOnMessage(char *address)
 
       case 2:
       {
-        int win;
+        int winNum;
 
         DoMethod(G->App, MUIM_CallHook, &AB_OpenHook, ABM_EDIT);
 
         if(hits != 0)
         {
-          if((win = EA_Init(ab->Type, ab)) >= 0)
-            EA_Setup(win, ab);
+          if((winNum = EA_Init(ab->Type, ab)) >= 0)
+            EA_Setup(winNum, ab);
         }
         else
         {
-          if((win = EA_Init(AET_USER, NULL)) >= 0)
-            setstring(G->EA[win]->GUI.ST_ADDRESS, address);
+          if((winNum = EA_Init(AET_USER, NULL)) >= 0)
+            setstring(G->EA[winNum]->GUI.ST_ADDRESS, address);
         }
       }
       break;
@@ -3791,7 +3791,8 @@ static void RE_SendMDN(const enum MDNMode mode,
 BOOL RE_ProcessMDN(const enum MDNMode mode,
                    struct Mail *mail,
                    const BOOL multi,
-                   const BOOL autoAction)
+                   const BOOL autoAction,
+                   const Object *win)
 {
   BOOL ignoreall = FALSE;
 
@@ -4007,7 +4008,7 @@ BOOL RE_ProcessMDN(const enum MDNMode mode,
               snprintf(buttons, sizeof(buttons), "%s|%s", buttons, tr(MSG_RE_MDN_IGNORE_ALL));
 
             // now ask the user
-            answer = MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_ConfirmReq), buttons, tr(MSG_RE_MDNReq));
+            answer = MUI_Request(G->App, win, MUIF_NONE, tr(MSG_MA_ConfirmReq), buttons, tr(MSG_RE_MDNReq));
             switch(answer)
             {
               // accept and send later

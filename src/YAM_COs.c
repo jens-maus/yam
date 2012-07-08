@@ -794,13 +794,25 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
       // that and eventually go on
       if(version > LATEST_CFG_VERSION)
       {
+        int res;
+        Object *refWindow;
+
+        // save a pointer to a reference window in case
+        // we need to open a requester
+        if(G->CO != NULL && G->CO->GUI.WI != NULL)
+          refWindow = G->CO->GUI.WI;
+        else if(G->MA != NULL && G->MA->GUI.WI != NULL)
+          refWindow = G->MA->GUI.WI;
+        else
+          refWindow = NULL;
+
         // ask the user how to proceed because we found out that he
         // tries to load a newer config file into this older YAM
         // version and thus he might end up losing some information.
-        int res = MUI_Request(G->App, NULL, 0,
-                              tr(MSG_CO_CONFIGVERSIONWARNING_TITLE),
-                              tr(MSG_CO_CONFIGVERSIONWARNING_BT),
-                              tr(MSG_CO_CONFIGVERSIONWARNING));
+        res = MUI_Request(G->App, refWindow, MUIF_NONE,
+                          tr(MSG_CO_CONFIGVERSIONWARNING_TITLE),
+                          tr(MSG_CO_CONFIGVERSIONWARNING_BT),
+                          tr(MSG_CO_CONFIGVERSIONWARNING));
 
         if(res == 0)
         {
@@ -2211,9 +2223,9 @@ void CO_GetConfig(BOOL saveConfig)
 
           // the directory "spam" already exists, but it is not the standard spam folder
           // let the user decide what to do
-          result = MUI_Request(G->App, NULL, 0, NULL,
-                                                tr(MSG_ER_SPAMDIR_EXISTS_ANSWERS),
-                                                tr(MSG_ER_SPAMDIR_EXISTS));
+          result = MUI_Request(G->App, G->CO->GUI.WI, MUIF_NONE, NULL,
+                                       tr(MSG_ER_SPAMDIR_EXISTS_ANSWERS),
+                                       tr(MSG_ER_SPAMDIR_EXISTS));
           switch(result)
           {
             default:
@@ -2295,9 +2307,9 @@ void CO_GetConfig(BOOL saveConfig)
           // Better ask the user if new spam mails really should be mark as "read", because
           // the filter is most probably not trained well enough an non-spam mails may be
           // marked as spam and read unnoticed.
-          if(MUI_Request(G->App, NULL, 0, NULL,
-                                          tr(MSG_YesNoReq),
-                                          tr(MSG_ER_SPAM_NOT_ENOUGH_CLASSIFIED_MAILS), numberClassified))
+          if(MUI_Request(G->App, G->CO->GUI.WI, MUIF_NONE, NULL,
+                                 tr(MSG_YesNoReq),
+                                 tr(MSG_ER_SPAM_NOT_ENOUGH_CLASSIFIED_MAILS), numberClassified))
           {
             CE->SpamMarkAsRead = FALSE;
           }
@@ -2396,7 +2408,7 @@ void CO_GetConfig(BOOL saveConfig)
       {
         // if the signature was modified but the config should not be saved but just be "used"
         // then ask the user if the changes to the signature should be made permanent
-        if(MUI_Request(G->App, G->CO->GUI.WI, 0, NULL, tr(MSG_YesNoReq), tr(MSG_CO_ASK_SAVE_SIGNATURE)) > 0)
+        if(MUI_Request(G->App, G->CO->GUI.WI, MUIF_NONE, NULL, tr(MSG_YesNoReq), tr(MSG_CO_ASK_SAVE_SIGNATURE)) > 0)
         {
           char sigPath[SIZE_PATHFILE];
 

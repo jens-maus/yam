@@ -311,9 +311,9 @@ BOOL US_Login(const char *username, const char *password, const char *maildir, c
     if(username != NULL)
     {
       // a user name was given at startup, but we didn't find it in our list
-      MUI_Request(G->App, NULL, 0, tr(MSG_ER_USER_UNKNOWN_TITLE),
-                                   tr(MSG_ER_USER_UNKNOWN_BUTTON),
-                                   tr(MSG_ER_USER_UNKNOWN_ERROR), username);
+      MUI_Request(G->App, G->SplashWinObject, MUIF_NONE, tr(MSG_ER_USER_UNKNOWN_TITLE),
+                                              tr(MSG_ER_USER_UNKNOWN_BUTTON),
+                                              tr(MSG_ER_USER_UNKNOWN_ERROR), username);
       userIndex = -1;
     }
     else if(G->Users.Num >= 2)
@@ -380,7 +380,8 @@ HOOKPROTONHNONP(US_DelFunc, void)
 
   if(user->MailDir[0] != '\0')
   {
-    m = MUI_Request(G->App, G->US->GUI.WI, 0, tr(MSG_MA_ConfirmReq), tr(MSG_US_RemoveReqGads), tr(MSG_US_RemoveReq));
+    m = MUI_Request(G->App, G->US->GUI.WI, MUIF_NONE,
+                    tr(MSG_MA_ConfirmReq), tr(MSG_US_RemoveReqGads), tr(MSG_US_RemoveReq));
 
     if(m == 1)
       DeleteMailDir(user->MailDir, TRUE);
@@ -467,7 +468,7 @@ static BOOL US_SaveUserList(void)
 
           if(ObtainFileInfo(user->MailDir, FI_TYPE, &type) == FALSE || type != FIT_DRAWER)
           {
-            if(MUI_Request(G->App, G->US->GUI.WI, 0, tr(MSG_MA_MUsers), tr(MSG_YesNoReq), tr(MSG_US_DIRECTORY_DOESNT_EXIST), user->MailDir, user->Name))
+            if(MUI_Request(G->App, G->US->GUI.WI, MUIF_NONE, tr(MSG_MA_MUsers), tr(MSG_YesNoReq), tr(MSG_US_DIRECTORY_DOESNT_EXIST), user->MailDir, user->Name))
             {
               if(CreateDirectory(user->MailDir) == TRUE)
                 validUser = TRUE;

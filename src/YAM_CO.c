@@ -1321,7 +1321,7 @@ HOOKPROTONHNONP(CO_GetSignatureEntry, void)
     if(xget(gui->TE_SIGEDIT, MUIA_TextEditor_HasChanged) == TRUE &&
        G->CO->previousSignature != NULL)
     {
-      if(MUI_Request(G->App, G->CO->GUI.WI, 0, NULL, tr(MSG_YesNoReq), tr(MSG_CO_ASK_SAVE_SIGNATURE)) > 0)
+      if(MUI_Request(G->App, G->CO->GUI.WI, MUIF_NONE, NULL, tr(MSG_YesNoReq), tr(MSG_CO_ASK_SAVE_SIGNATURE)) > 0)
       {
         // save the modified signature only if the user told us to do so
         DoMethod(gui->TE_SIGEDIT, MUIM_MailTextEdit_SaveToFile, CreateFilename(G->CO->previousSignature->filename, sigPath, sizeof(sigPath)));
@@ -1403,7 +1403,7 @@ BOOL CO_IsValid(void)
     else
       DoMethod(G->App, MUIM_CallHook, &CO_OpenHook);
 
-    MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_OkayReq), tr(MSG_CO_InvalidConf));
+    MUI_Request(G->App, G->MA->GUI.WI, MUIF_NONE, NULL, tr(MSG_OkayReq), tr(MSG_CO_InvalidConf));
   }
 
   RETURN(valid);
@@ -2230,8 +2230,18 @@ void CO_Validate(struct Config *co, BOOL update)
   struct MailServerNode *firstSMTP;
   struct UserIdentityNode *firstIdentity;
   struct Node *curNode;
+  Object *refWindow;
 
   ENTER();
+
+  // save a pointer to a reference window in case
+  // we need to open a requester
+  if(G->CO != NULL && G->CO->GUI.WI != NULL)
+    refWindow = G->CO->GUI.WI;
+  else if(G->MA != NULL && G->MA->GUI.WI != NULL)
+    refWindow = G->MA->GUI.WI;
+  else
+    refWindow = NULL;
 
   // retrieve the first SMTP and POP3 server so that
   // we can synchronize their information
@@ -2475,7 +2485,7 @@ void CO_Validate(struct Config *co, BOOL update)
   {
     if(G->Locale != NULL && co->TimeZone != -(G->Locale->loc_GMTOffset))
     {
-      int res = MUI_Request(G->App, NULL, 0,
+      int res = MUI_Request(G->App, refWindow, MUIF_NONE,
                             tr(MSG_CO_TIMEZONEWARN_TITLE),
                             tr(MSG_CO_TIMEZONEWARN_BT),
                             tr(MSG_CO_TIMEZONEWARN));
@@ -2510,7 +2520,7 @@ void CO_Validate(struct Config *co, BOOL update)
     #if !defined(__amigaos4__)
     if(G->CO_DST > 0 && co->DaylightSaving != (G->CO_DST == 2))
     {
-      int res = MUI_Request(G->App, NULL, 0,
+      int res = MUI_Request(G->App, refWindow, MUIF_NONE,
                             tr(MSG_CO_AUTODSTWARN_TITLE),
                             tr(MSG_CO_AUTODSTWARN_BT),
                             tr(MSG_CO_AUTODSTWARN));
@@ -2565,7 +2575,7 @@ void CO_Validate(struct Config *co, BOOL update)
       {
         if(stricmp(co->DefaultReadCharset, sysCodeset->name) != 0)
         {
-          int res = MUI_Request(G->App, NULL, 0,
+          int res = MUI_Request(G->App, refWindow, MUIF_NONE,
                                 tr(MSG_CO_CHARSETWARN_TITLE),
                                 tr(MSG_CO_CHARSETWARN_BT),
                                 tr(MSG_CO_CHARSETWARN),
@@ -2618,7 +2628,7 @@ void CO_Validate(struct Config *co, BOOL update)
                                     CSA_FallbackToDefault, FALSE,
                                     TAG_DONE)) == NULL)
   {
-    int res = MUI_Request(G->App, NULL, 0,
+    int res = MUI_Request(G->App, refWindow, MUIF_NONE,
                           tr(MSG_CO_CHARSETWARN_TITLE),
                           tr(MSG_CO_CHARSETUNKNOWNWARN_BT),
                           tr(MSG_CO_CHARSETUNKNOWNWARN),
@@ -2641,7 +2651,7 @@ void CO_Validate(struct Config *co, BOOL update)
                                      CSA_FallbackToDefault, FALSE,
                                      TAG_DONE)) == NULL)
   {
-    int res = MUI_Request(G->App, NULL, 0,
+    int res = MUI_Request(G->App, refWindow, MUIF_NONE,
                           tr(MSG_CO_CHARSETWARN_TITLE),
                           tr(MSG_CO_CHARSETUNKNOWNWARN_BT),
                           tr(MSG_CO_CHARSETUNKNOWNWARN),
@@ -2664,7 +2674,7 @@ void CO_Validate(struct Config *co, BOOL update)
   {
     if(AmiSSLMasterBase == NULL || AmiSSLBase == NULL || G->TR_UseableTLS == FALSE)
     {
-      int res = MUI_Request(G->App, NULL, 0,
+      int res = MUI_Request(G->App, refWindow, MUIF_NONE,
                             tr(MSG_CO_AMISSLWARN_TITLE),
                             tr(MSG_CO_AMISSLWARN_BT),
                             tr(MSG_CO_AMISSLWARN),
@@ -2951,7 +2961,7 @@ HOOKPROTONHNONP(CO_EditSignatFunc, void)
     // make sure we save any modification first
     if(xget(gui->TE_SIGEDIT, MUIA_TextEditor_HasChanged) == TRUE)
     {
-      if(MUI_Request(G->App, G->CO->GUI.WI, 0, NULL, tr(MSG_YesNoReq), tr(MSG_CO_ASK_SAVE_SIGNATURE)) > 0)
+      if(MUI_Request(G->App, G->CO->GUI.WI, MUIF_NONE, NULL, tr(MSG_YesNoReq), tr(MSG_CO_ASK_SAVE_SIGNATURE)) > 0)
       {
         // save the modified signature only if the user told us to do so
         DoMethod(gui->TE_SIGEDIT, MUIM_MailTextEdit_SaveToFile, CreateFilename(sn->filename, sigPath, sizeof(sigPath)));
@@ -3014,7 +3024,7 @@ HOOKPROTONHNONP(CO_SaveConfigAs, void)
     AddPath(cname, frc->drawer, frc->file, sizeof(cname));
 
     if(FileExists(cname) == FALSE ||
-       MUI_Request(G->App, G->CO->GUI.WI, 0, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_FILE_OVERWRITE), frc->file) != 0)
+       MUI_Request(G->App, G->CO->GUI.WI, MUIF_NONE, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_FILE_OVERWRITE), frc->file) != 0)
     {
       // the config is really saved
       CO_GetConfig(TRUE);
@@ -3189,7 +3199,7 @@ HOOKPROTONHNO(CO_CloseFunc, void, int *arg)
     else if(configsEqual == FALSE)
     {
       // check if configs are equal and if not ask the user how to proceed
-      int res = MUI_Request(G->App, NULL, 0,
+      int res = MUI_Request(G->App, G->CO->GUI.WI, MUIF_NONE,
                             tr(MSG_CO_CONFIGWARNING_TITLE),
                             tr(MSG_CO_CONFIGWARNING_BT),
                             tr(MSG_CO_CONFIGWARNING));

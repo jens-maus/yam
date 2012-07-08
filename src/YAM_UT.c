@@ -4576,7 +4576,7 @@ void FolderTreeUpdate(void)
 
 /// CheckPrinter
 //  Checks if printer is ready to print something
-BOOL CheckPrinter(void)
+BOOL CheckPrinter(const Object *win)
 {
   BOOL result = FALSE;
 
@@ -4636,9 +4636,9 @@ BOOL CheckPrinter(void)
 
                   // issue a requester telling the user about the faulty
                   // printer state
-                  res = MUI_Request(G->App, NULL, 0, tr(MSG_ErrorReq),
-                                                     tr(MSG_ER_PRINTER_OFFLINE_GADS),
-                                                     tr(MSG_ER_PRINTER_OFFLINE));
+                  res = MUI_Request(G->App, win, MUIF_NONE, tr(MSG_ErrorReq),
+                                                            tr(MSG_ER_PRINTER_OFFLINE_GADS),
+                                                            tr(MSG_ER_PRINTER_OFFLINE));
 
                   if(res == 0) // Cancel/ESC
                   {
@@ -4658,9 +4658,9 @@ BOOL CheckPrinter(void)
 
                   // issue a requester telling the user about the faulty
                   // printer state
-                  res = MUI_Request(G->App, NULL, 0, tr(MSG_ErrorReq),
-                                                     tr(MSG_ER_PRINTER_NOPAPER_GADS),
-                                                     tr(MSG_ER_PRINTER_NOPAPER));
+                  res = MUI_Request(G->App, win, MUIF_NONE, tr(MSG_ErrorReq),
+                                                            tr(MSG_ER_PRINTER_NOPAPER_GADS),
+                                                            tr(MSG_ER_PRINTER_NOPAPER));
 
                   if(res == 0) // Cancel/ESC
                   {

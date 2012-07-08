@@ -2414,7 +2414,7 @@ HOOKPROTONHNONP(AB_ExportLDIFABookFunc, void)
     AddPath(ldifname, frc->drawer, frc->file, sizeof(ldifname));
 
     if(FileExists(ldifname) == FALSE ||
-       MUI_Request(G->App, G->AB->GUI.WI, 0, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_FILE_OVERWRITE), frc->file) != 0)
+       MUI_Request(G->App, G->AB->GUI.WI, MUIF_NONE, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_FILE_OVERWRITE), frc->file) != 0)
     {
       AB_ExportTreeLDIF(ldifname);
     }
@@ -2479,7 +2479,7 @@ HOOKPROTONHNO(AB_ExportTabCSVABookFunc, void, int *arg)
     AddPath(aname, frc->drawer, frc->file, sizeof(aname));
 
     if(FileExists(aname) == FALSE ||
-       MUI_Request(G->App, G->AB->GUI.WI, 0, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_FILE_OVERWRITE), frc->file) != 0)
+       MUI_Request(G->App, G->AB->GUI.WI, MUIF_NONE, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_FILE_OVERWRITE), frc->file) != 0)
     {
       AB_ExportTreeTabCSV(aname, delim);
     }
@@ -2541,7 +2541,7 @@ HOOKPROTONHNONP(AB_SaveABookAsFunc, void)
     AddPath(G->AB_Filename, frc->drawer, frc->file, sizeof(G->AB_Filename));
 
     if(FileExists(G->AB_Filename) == FALSE ||
-       MUI_Request(G->App, G->AB->GUI.WI, 0, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_FILE_OVERWRITE), frc->file) != 0)
+       MUI_Request(G->App, G->AB->GUI.WI, MUIF_NONE, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_FILE_OVERWRITE), frc->file) != 0)
     {
       AB_SaveABookFunc();
     }
@@ -2691,10 +2691,10 @@ HOOKPROTONHNONP(AB_PrintABookFunc, void)
 
   ENTER();
 
-  mode = MUI_Request(G->App, G->AB->GUI.WI, 0, tr(MSG_Print), tr(MSG_AB_PrintReqGads), tr(MSG_AB_PrintReq));
+  mode = MUI_Request(G->App, G->AB->GUI.WI, MUIF_NONE, tr(MSG_Print), tr(MSG_AB_PrintReqGads), tr(MSG_AB_PrintReq));
   if(mode != 0)
   {
-    if(CheckPrinter())
+    if(CheckPrinter(G->AB->GUI.WI))
     {
       BOOL success = FALSE;
       FILE *prt;
@@ -2725,7 +2725,7 @@ HOOKPROTONHNONP(AB_PrintABookFunc, void)
       // signal the failure to the user
       // in case we were not able to print something
       if(success == FALSE)
-        MUI_Request(G->App, NULL, 0, tr(MSG_ErrorReq), tr(MSG_OkayReq), tr(MSG_ER_PRINTER_FAILED));
+        MUI_Request(G->App, G->AB->GUI.WI, MUIF_NONE, tr(MSG_ErrorReq), tr(MSG_OkayReq), tr(MSG_ER_PRINTER_FAILED));
     }
   }
 
@@ -2744,7 +2744,7 @@ HOOKPROTONHNONP(AB_PrintFunc, void)
 
   if((tn = (struct MUI_NListtree_TreeNode *)xget(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active)) != NULL)
   {
-    if(CheckPrinter())
+    if(CheckPrinter(G->AB->GUI.WI))
     {
       BOOL success = FALSE;
       FILE *prt;
@@ -2773,7 +2773,7 @@ HOOKPROTONHNONP(AB_PrintFunc, void)
       // signal the failure to the user
       // in case we were not able to print something
       if(success == FALSE)
-        MUI_Request(G->App, NULL, 0, tr(MSG_ErrorReq), tr(MSG_OkayReq), tr(MSG_ER_PRINTER_FAILED));
+        MUI_Request(G->App, G->AB->GUI.WI, MUIF_NONE, tr(MSG_ErrorReq), tr(MSG_OkayReq), tr(MSG_ER_PRINTER_FAILED));
     }
   }
 
@@ -2920,7 +2920,7 @@ int AB_FindEntry(const char *pattern, enum AddressbookFind mode, char **result)
 
             snprintf(buf, sizeof(buf), tr(MSG_AB_FoundEntry), ab->Alias, ab->RealName);
 
-            switch(MUI_Request(G->App, G->AB->GUI.WI, 0, tr(MSG_AB_FindEntry), tr(MSG_AB_FoundEntryGads), buf))
+            switch(MUI_Request(G->App, G->AB->GUI.WI, MUIF_NONE, tr(MSG_AB_FindEntry), tr(MSG_AB_FoundEntryGads), buf))
             {
               case 1:
                 // nothing
@@ -2969,7 +2969,7 @@ HOOKPROTONHNONP(AB_FindFunc, void)
     snprintf(searchPattern, sizeof(searchPattern), "#?%s#?", pattern);
 
     if(AB_FindEntry(searchPattern, ABF_USER, NULL) == 0)
-      MUI_Request(G->App, G->AB->GUI.WI, 0, tr(MSG_AB_FindEntry), tr(MSG_OkayReq), tr(MSG_AB_NoneFound));
+      MUI_Request(G->App, G->AB->GUI.WI, MUIF_NONE, tr(MSG_AB_FindEntry), tr(MSG_OkayReq), tr(MSG_AB_NoneFound));
   }
 
   LEAVE();
@@ -3049,7 +3049,7 @@ HOOKPROTONHNONP(AB_Close, void)
 
   if(G->AB->Modified)
   {
-    switch(MUI_Request(G->App, G->AB->GUI.WI, 0, NULL, tr(MSG_AB_ModifiedGads), tr(MSG_AB_Modified)))
+    switch(MUI_Request(G->App, G->AB->GUI.WI, MUIF_NONE, NULL, tr(MSG_AB_ModifiedGads), tr(MSG_AB_Modified)))
     {
       case 0: closeWin = FALSE; break;
       case 1: AB_SaveABookFunc(); break;

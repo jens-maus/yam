@@ -1920,7 +1920,7 @@ BOOL ExecuteFilterAction(const struct FilterNode *filter, struct Mail *mail, str
     if(isSendMDNMail(mail) &&
        (hasStatusNew(mail) || !hasStatusRead(mail)))
     {
-      RE_ProcessMDN(MDN_MODE_DELETE, mail, FALSE, TRUE);
+      RE_ProcessMDN(MDN_MODE_DELETE, mail, FALSE, TRUE, G->MA->GUI.WI);
     }
 
     MA_DeleteSingle(mail, DELF_CLOSE_WINDOWS|DELF_QUIET);
@@ -2147,7 +2147,7 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
         else
           snprintf(buf, sizeof(buf), tr(MSG_MA_CONFIRMFILTER_SELECTED), folder->Name);
 
-        if(MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), buf) == 0)
+        if(MUI_Request(G->App, G->MA->GUI.WI, MUIF_NONE, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), buf) == 0)
           applyFilters = FALSE;
       }
 
@@ -2178,7 +2178,8 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
                                                                  filterResult.Moved,
                                                                  filterResult.Deleted);
             }
-            MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_OkayReq), buf);
+
+            MUI_Request(G->App, G->MA->GUI.WI, MUIF_NONE, NULL, tr(MSG_OkayReq), buf);
           }
         }
       }

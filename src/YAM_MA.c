@@ -1253,7 +1253,7 @@ void MA_RemoveAttach(struct Mail *mail, struct Part **whichParts, BOOL warning)
   else
   {
     if(whichParts == NULL)
-      goOn = (MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_YesNoReq2), tr(MSG_MA_DELETEATTREQUEST)) != 0);
+      goOn = (MUI_Request(G->App, G->MA->GUI.WI, MUIF_NONE, NULL, tr(MSG_YesNoReq2), tr(MSG_MA_DELETEATTREQUEST)) != 0);
     else
     {
       // build a list of filenames which will be deleted
@@ -1271,7 +1271,7 @@ void MA_RemoveAttach(struct Mail *mail, struct Part **whichParts, BOOL warning)
         i++;
       }
 
-      goOn = (MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_YesNoReq2), tr(MSG_MA_DELETESELECTEDREQUEST), fileList) != 0);
+      goOn = (MUI_Request(G->App, G->MA->GUI.WI, MUIF_NONE, NULL, tr(MSG_YesNoReq2), tr(MSG_MA_DELETESELECTEDREQUEST), fileList) != 0);
 
       FreeStrBuf(fileList);
     }
@@ -1525,7 +1525,7 @@ HOOKPROTONHNONP(MA_RemoveAttachFunc, void)
   // we need to warn the user of this operation we put up a requester
   // before we go on
   if(C->ConfirmRemoveAttachments == TRUE)
-    goOn = (MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_YesNoReq2), tr(MSG_MA_DELETEATTREQUEST)) > 0);
+    goOn = (MUI_Request(G->App, G->MA->GUI.WI, MUIF_NONE, NULL, tr(MSG_YesNoReq2), tr(MSG_MA_DELETEATTREQUEST)) > 0);
   else
     goOn = TRUE;
 
@@ -1628,7 +1628,7 @@ HOOKPROTONHNO(MA_SavePrintFunc, void, int *arg)
 
   ENTER();
 
-  if(doprint == FALSE || CheckPrinter() == TRUE)
+  if(doprint == FALSE || CheckPrinter(G->MA->GUI.WI) == TRUE)
   {
     struct MailList *mlist;
 
@@ -1658,7 +1658,7 @@ HOOKPROTONHNO(MA_SavePrintFunc, void, int *arg)
               {
                 if(CopyFile("PRT:", 0, tf->Filename, 0) == FALSE)
                 {
-                  MUI_Request(G->App, NULL, 0, tr(MSG_ErrorReq), tr(MSG_OkayReq), tr(MSG_ER_PRINTER_FAILED));
+                  MUI_Request(G->App, G->MA->GUI.WI, MUIF_NONE, tr(MSG_ErrorReq), tr(MSG_OkayReq), tr(MSG_ER_PRINTER_FAILED));
                   abortPrint = TRUE;
                 }
               }
@@ -1905,7 +1905,7 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
 
         snprintf(buffer, sizeof(buffer), tr(MSG_MA_CONFIRMDELETION), mlist->count);
 
-        if(MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq2), buffer) == 0)
+        if(MUI_Request(G->App, G->MA->GUI.WI, MUIF_NONE, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq2), buffer) == 0)
           okToDelete = FALSE;
       }
 
@@ -1939,7 +1939,7 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
           if(isSendMDNMail(mail) && ignoreall == FALSE &&
              (hasStatusNew(mail) || !hasStatusRead(mail)))
           {
-            ignoreall = RE_ProcessMDN(MDN_MODE_DELETE, mail, (mlist->count >= 2), FALSE);
+            ignoreall = RE_ProcessMDN(MDN_MODE_DELETE, mail, (mlist->count >= 2), FALSE, G->MA->GUI.WI);
           }
 
           // call our subroutine with quiet option
@@ -2141,7 +2141,7 @@ void MA_GetAddress(struct MailList *mlist)
         char buffer[SIZE_LARGE];
         snprintf(buffer, sizeof(buffer), tr(MSG_MA_ADD_WHICH_ADDRESS), mail->From.Address, mail->ReplyTo.Address);
 
-        switch(MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_MA_Compare2ReqOpt), buffer))
+        switch(MUI_Request(G->App, G->MA->GUI.WI, MUIF_NONE, NULL, tr(MSG_MA_Compare2ReqOpt), buffer))
         {
           case 2: pe = &mail->ReplyTo; break;
           case 1: pe = &mail->From; break;
@@ -2964,7 +2964,7 @@ BOOL MA_ExportMessages(char *filename, const BOOL all, ULONG flags)
           // now check whether the file exists and ask if it should be overwritten
           if(FileExists(filename) == TRUE)
           {
-            switch(MUI_Request(G->App, G->MA->GUI.WI, 0, tr(MSG_MA_MESSAGEEXPORT), tr(MSG_MA_ExportAppendOpts), tr(MSG_MA_ExportAppendReq)))
+            switch(MUI_Request(G->App, G->MA->GUI.WI, MUIF_NONE, tr(MSG_MA_MESSAGEEXPORT), tr(MSG_MA_ExportAppendOpts), tr(MSG_MA_ExportAppendReq)))
             {
               case 1: clearFlag(flags, EXPORTF_APPEND); break;
               case 2: setFlag(flags, EXPORTF_APPEND); break;

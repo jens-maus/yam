@@ -2629,7 +2629,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
         {
           // ask the user and in case he want to abort, quit this
           // function immediately.
-          if((repmode = MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_MA_ReplyReqOpt), tr(MSG_MA_ReplyReq))) == 0)
+          if((repmode = MUI_Request(G->App, G->MA->GUI.WI, MUIF_NONE, NULL, tr(MSG_MA_ReplyReqOpt), tr(MSG_MA_ReplyReq))) == 0)
           {
             MA_FreeEMailStruct(email);
             fclose(out);
@@ -2786,7 +2786,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
                 else
                   snprintf(buffer, sizeof(buffer), tr(MSG_MA_CompareReq), mail->From.Address, mail->ReplyTo.Address);
 
-                switch(MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, tr(MSG_MA_Compare3ReqOpt), buffer))
+                switch(MUI_Request(G->App, G->MA->GUI.WI, MUIF_NONE, NULL, tr(MSG_MA_Compare3ReqOpt), buffer))
                 {
                   // Both (From:+ReplyTo:/Mail-Reply-To:) address
                   case 3:

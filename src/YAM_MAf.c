@@ -3068,7 +3068,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
                 // let's ask if the user wants to convert the file or not
                 if(convertAllOld == FALSE && skipAllOld == FALSE)
                 {
-                  res = MUI_Request(G->App, NULL, 0,
+                  res = MUI_Request(G->App, G->MA != NULL ? G->MA->GUI.WI : NULL, MUIF_NONE,
                                     tr(MSG_MA_CREQ_OLDFILE_TITLE),
                                     tr(MSG_MA_YESNOTOALL),
                                     tr(MSG_MA_CREQUEST_OLDFILE),
@@ -3117,7 +3117,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
                 // lets ask if the user wants to convert the file or not
                 if(convertAllUnknown == FALSE && skipAllUnknown == FALSE)
                 {
-                  res = MUI_Request(G->App, NULL, 0,
+                  res = MUI_Request(G->App, G->MA != NULL ? G->MA->GUI.WI : NULL, MUIF_NONE,
                                     tr(MSG_MA_CREQ_UNKNOWN_TITLE),
                                     tr(MSG_MA_YESNOTOALL),
                                     tr(MSG_MA_CREQUEST_UNKNOWN),
@@ -3185,7 +3185,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
                 // warn the user and ask him how to proceed with
                 // the file
 
-                int res = MUI_Request(G->App, NULL, 0,
+                int res = MUI_Request(G->App, G->MA != NULL ? G->MA->GUI.WI : NULL, MUIF_NONE,
                                      tr(MSG_MA_INVALIDMFILE_TITLE),
                                      tr(MSG_MA_INVALIDMFILE_BT),
                                      tr(MSG_MA_INVALIDMFILE),

@@ -36,6 +36,8 @@
 #include "Requesters.h"
 #include "Rexx.h"
 
+#include "mui/ClassesExtra.h"
+
 #include "Debug.h"
 
 struct args
@@ -77,7 +79,7 @@ void rx_request(UNUSED struct RexxHost *host, struct RexxParams *params, enum Re
     {
       char *reqtext = AllocReqText(args->body);
 
-      optional->result = MUI_Request(G->App, NULL, 0, NULL, args->gadgets, reqtext);
+      optional->result = MUI_Request(G->App, NULL, MUIF_NONE, NULL, args->gadgets, reqtext);
       results->result = &optional->result;
 
       free(reqtext);
