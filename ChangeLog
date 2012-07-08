@@ -7,6 +7,10 @@ $URL$
 
 2012-07-08 Jens Langner <Jens.Langner@light-speed.de>
 
+  * base64.c: fixed bug in base64decode() where an incorrect pointer was used for
+    the calculation of the final output string length. This caused crashes when
+    extracting attachments from base64 encoded emails after the recent base64
+    API changes.
   * Requesters.c, misc: did some housekeeping regarding the function calls of
     MUI_Request(). Now a refWindow should always be specified so that the position
     will always be relative to it. In addition MUIF_NONE is now always applied.

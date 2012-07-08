@@ -257,13 +257,13 @@ int base64decode(char **out, const char *in, size_t inlen)
     // value to signal that short item count (error).
     if(inlen > 0)
     {
-      result = -(outp - (unsigned char *)*out);
-      free(*out);
+      result = -(outp - buffer);
+      free(buffer);
       *out = NULL;
     }
     else
     {
-      result = (outp - (unsigned char *)*out);
+      result = (outp - buffer);
       *out = (char *)buffer;
     }
   }
