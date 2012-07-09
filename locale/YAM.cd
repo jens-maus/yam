@@ -7457,3 +7457,27 @@ MSG_SSL_CERT_WARNING_SHOWTITLE (2384//)
 Certificate of %s:%d
 ; HOSTNAME, PORT
 ;
+MSG_ER_WARN_CAFILE (2385//)
+While trying to establish a SSL connection the certificate bundle \
+file '%s' was found to be missing.\n\
+\n\
+Please make sure that the file exists and is uptodate or otherwise \
+each SSL connection will be flagged as unverified.
+; FILEPATH
+;
+MSG_ER_WARN_LOADCAPATH (2386//)
+While trying to load the certificate bundle '%s' or individual \
+certificate files from '%s' an error occurred.\n\
+\n\
+Please make sure that no invalid file has been placed in the \
+certificate folder.
+; FILEPATH, DIRPATH
+;
+MSG_ER_WARN_CAPATH (2387//)
+While trying to setup a SSL certificate verify the directory '%s' \
+was found to be missing.\n\
+\n\
+Please make sure that the path exists and contains the certificate \
+bundle file as supplied during the installation process of YAM.
+; DIRPATH
+;

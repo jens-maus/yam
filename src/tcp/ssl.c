@@ -693,19 +693,29 @@ BOOL MakeSecureConnection(struct Connection *conn)
           E(DBF_NET, "SSLv2 couldn't be disabled. SSL: %s", ERR_error_string(ERR_get_error(), NULL));
         else
         {
+          rc = 0; // make sure set_default_verify_paths() is called
+
           if(FileExists(DEFAULT_CAPATH) == TRUE)
           {
-            // 7) load the certificates (e.g. CA) from either a file or a directory path
             D(DBF_NET, "CAfile = '%s', CApath = '%s'", DEFAULT_CAFILE, DEFAULT_CAPATH);
+
+            if(FileExists(DEFAULT_CAFILE) == FALSE)
+              ER_NewError(tr(MSG_ER_WARN_CAFILE), DEFAULT_CAFILE);
+
+            // 7) load the certificates (e.g. CA) from either a file or a directory path
             if((rc = SSL_CTX_load_verify_locations(conn->sslCtx, DEFAULT_CAFILE, DEFAULT_CAPATH)) == 0)
-              E(DBF_NET, "Error: setting default verify locations failed!");
+            {
+              W(DBF_NET, "Warning: setting default verify locations failed!");
+
+              ER_NewError(tr(MSG_ER_WARN_LOADCAPATH), DEFAULT_CAPATH, DEFAULT_CAFILE);
+            }
           }
           else
-          {
-            // 7) if no CA file or path is given we set the default pathes
-            if((rc = SSL_CTX_set_default_verify_paths(conn->sslCtx)) == 0)
-              E(DBF_NET, "Error: setting default verify locations failed");
-          }
+            ER_NewError(tr(MSG_ER_WARN_CAPATH), DEFAULT_CAPATH);
+
+          // 7) if no CA file or path is given we set the default pathes
+          if(rc == 0 && (rc = SSL_CTX_set_default_verify_paths(conn->sslCtx)) == 0)
+            E(DBF_NET, "Error: setting default verify locations failed");
 
           // 8) set SSL_VERIFY_PEER so that we later can decide on our own in the verify_callback
           //    function wheter the connection should continue or if it should be terminated right away.

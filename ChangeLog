@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-07-09 Jens Langner <Jens.Langner@light-speed.de>
+
+  * locale/YAM.cd, tcp/ssl.c: added some error and warning output in case the CAPATH
+    and/or CAFILE was not found during the SSL certificate verification process.
+    This should give users a hint why YAM pops up a SSL verification error even if
+    the connection peer uses fully verified certificates.
+
 2012-07-08 Jens Langner <Jens.Langner@light-speed.de>
 
   * base64.c: fixed bug in base64decode() where an incorrect pointer was used for
