@@ -8989,5 +8989,5 @@ Zertifikatinformation:\n\
 - Fingerabdruck: \033b%s\033n
 ;
 MSG_SSL_CERT_WARNING_SHOWTITLE
-Zertifikate von %s:%d
+Zertifikat von %s:%d
 ;
