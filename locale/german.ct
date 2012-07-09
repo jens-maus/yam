@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.50 (9.7.2012)
+## version $VER: YAM.catalog 7.51 (9.7.2012)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -8990,4 +8990,19 @@ Zertifikatinformation:\n\
 ;
 MSG_SSL_CERT_WARNING_SHOWTITLE
 Zertifikat von %s:%d
+;
+MSG_ER_WARN_CAFILE
+Beim Aufbau der SSL-Verbinung wurde die Zertifikat-Bündeldatei '%s' nicht gefunden.\n\
+\n\
+Bitte stellen Sie sicher, dass die Datei existiert und aktuell ist. Anderenfalls wird jede SSL-Verbindung als unverifiziert deklariert.
+;
+MSG_ER_WARN_LOADCAPATH
+Beim Lesen der Zertifikat-Bündeldatei '%s' oder von individuellen Zertifikaten im Verzeichnis '%s' ist ein Fehler aufgetreten.\n\
+\n\
+Bitte stellen Sie sicher, dass sich keine ungültigen Dateien im Zertifikatverzeichnis befinden.
+;
+MSG_ER_WARN_CAPATH
+Beim Aufbau der SSL-Zertifikatprüfung wurde das Verzeichnis '%s' nicht gefunden.\n\
+\n\
+Bitte stellen Sie sicher, dass der Pfad existiert und die Zertifikat-Bündeldatei enthält, so wie sie von der Installation von YAM bereit gestellt wurde.
 ;
