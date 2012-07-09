@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.49 (5.7.2012)
+## version $VER: YAM.catalog 7.50 (9.7.2012)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -8987,4 +8987,7 @@ Zertifikatinformation:\n\
 - Gültigkeit: \033b%s\033n bis \033b%s\033n\n\
 - Aussteller: \033b%s\033n\n\
 - Fingerabdruck: \033b%s\033n
+;
+MSG_SSL_CERT_WARNING_SHOWTITLE
+Zertifikate von %s:%d
 ;
