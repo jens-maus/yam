@@ -2534,6 +2534,7 @@ Object *CO_PageFilters(struct CO_ClassData *data)
                            Child, data->GUI.BT_FILTERDOWN = PopButton(MUII_ArrowDown),
                          End,
                       End,
+                      Child, data->GUI.BT_FILTER_IMPORT = MakeButton(tr(MSG_CO_FILTER_IMPORT)),
                    End,
                    Child, NBalanceObject,
                       MUIA_Balance_Quiet, TRUE,
@@ -2693,6 +2694,7 @@ Object *CO_PageFilters(struct CO_ClassData *data)
       set(bt_moveto,MUIA_CycleChain, TRUE);
       set(data->GUI.BT_FILTERUP, MUIA_CycleChain, TRUE);
       set(data->GUI.BT_FILTERDOWN, MUIA_CycleChain, TRUE);
+      set(data->GUI.BT_FILTER_IMPORT, MUIA_CycleChain, TRUE);
 
       GhostOutFilter(&(data->GUI), NULL);
 
@@ -2739,6 +2741,7 @@ Object *CO_PageFilters(struct CO_ClassData *data)
       DoMethod(data->GUI.CH_ASTATUSTOHAM      ,MUIM_Notify, MUIA_Selected             ,TRUE           ,data->GUI.CH_ASTATUSTOSPAM     ,3 ,MUIM_Set               ,MUIA_Selected              ,FALSE);
       DoMethod(data->GUI.BT_MORE              ,MUIM_Notify, MUIA_Pressed              ,FALSE          ,MUIV_Notify_Application        ,2 ,MUIM_CallHook          ,&AddNewRuleToListHook);
       DoMethod(data->GUI.BT_LESS              ,MUIM_Notify, MUIA_Pressed              ,FALSE          ,MUIV_Notify_Application        ,2 ,MUIM_CallHook          ,&RemoveLastRuleHook);
+      DoMethod(data->GUI.BT_FILTER_IMPORT     ,MUIM_Notify, MUIA_Pressed              ,FALSE          ,MUIV_Notify_Application        ,2 ,MUIM_CallHook          ,&ImportFilterHook);
    }
 
    return grp;

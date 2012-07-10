@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.52 (10.7.2012)
+## version $VER: YAM.catalog 7.53 (10.7.2012)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -9013,4 +9013,10 @@ MSG_HELP_CO_CH_AABORT
 Nach der Behandlung dieses Filters wird der\n\
 weitere Filterprozess abgebrochen. Foldende\n\
 Filter werden nicht mehr angewandt.
+;
+MSG_CO_FILTER_IMPORT
+Importieren...
+;
+MSG_FILTER_IMPORT_TITLE
+Filter importieren
 ;

@@ -2636,6 +2636,363 @@ void RemoveFolderFromFilters(const char *folder)
 }
 
 ///
+/// ImportFilter
+// import filters from Thunderbird's .sfd file
+BOOL ImportFilter(const char *fileName)
+{
+  BOOL success = FALSE;
+  FILE *fh;
+
+  ENTER();
+
+  if((fh = fopen(fileName, "r")) != NULL)
+  {
+    char *buf = NULL;
+    size_t size = 0;
+    struct FilterNode *filter = NULL;
+    char *lastAction = NULL;
+
+    setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+
+    while(GetLine(&buf, &size, fh) >= 0)
+    {
+      char *eq;
+
+      // each line looks like this
+      // keyword="value"
+      if((eq = strchr(buf, '=')) != NULL)
+      {
+        char *value;
+
+        *eq++ = '\0';
+        value = UnquoteString(eq, FALSE);
+
+        // every "name" line introduces a new filter
+        if(stricmp(buf, "name") == 0)
+        {
+          // push a previous filter to the configuration
+          if(filter != NULL)
+          {
+            if(G->CO != NULL)
+            {
+              DoMethod(G->CO->GUI.LV_RULES, MUIM_NList_InsertSingle, filter, MUIV_NList_Insert_Bottom);
+              set(G->CO->GUI.LV_RULES, MUIA_NList_Active, MUIV_NList_Active_Bottom);
+              AddTail((struct List *)&CE->filterList, (struct Node *)filter);
+            }
+            else
+            {
+              AddTail((struct List *)&C->filterList, (struct Node *)filter);
+            }
+
+            success = TRUE;
+          }
+
+          // create a new filter node and remember the name
+          if((filter = CreateNewFilter()) != NULL)
+          {
+            strlcpy(filter->name, eq, sizeof(filter->name));
+          }
+          else
+          {
+            success = FALSE;
+            break;
+          }
+        }
+        else if(stricmp(buf, "enabled") == 0)
+        {
+          // if the filter is not enabled we keep it nevertheless, but it will never be applied
+          if(stricmp(value, "yes") != 0)
+          {
+            filter->remote = FALSE;
+            filter->applyOnReq = FALSE;
+            filter->applyToNew = FALSE;
+            filter->applyToSent = FALSE;
+          }
+        }
+        else if(stricmp(buf, "action") == 0)
+        {
+          // transform actions without further information into direct actions of our filter
+          if(filter != NULL)
+          {
+            if(stricmp(buf, "mark read") == 0)
+            {
+              setFlag(filter->actions, FA_STATUSTOREAD);
+            }
+            else if(stricmp(buf, "mark unread") == 0)
+            {
+              setFlag(filter->actions, FA_STATUSTOUNREAD);
+            }
+            else if(stricmp(buf, "mark flagged") == 0)
+            {
+              setFlag(filter->actions, FA_STATUSTOMARKED);
+            }
+            else if(stricmp(buf, "delete") == 0)
+            {
+              setFlag(filter->actions, FA_DELETE);
+            }
+            else if(stricmp(buf, "stop execution") == 0)
+            {
+              setFlag(filter->actions, FA_ABORT);
+            }
+
+            // remember this action
+            free(lastAction);
+            lastAction = strdup(value);
+          }
+        }
+        else if(stricmp(buf, "actionvalue") == 0)
+        {
+          // handle further action values
+          if(lastAction != NULL && filter != NULL)
+          {
+            if(stricmp(lastAction, "forward") == 0)
+            {
+              setFlag(filter->actions, FA_FORWARD);
+              strlcpy(filter->forwardTo, value, sizeof(filter->forwardTo));
+            }
+            else if(stricmp(lastAction, "junkscore") == 0)
+            {
+              // usually only values of 0 and 100 are used, but just to be sure
+              // we treat every value greater than 50% as true junk
+              if(atoi(value) >= 50)
+                setFlag(filter->actions, FA_STATUSTOSPAM);
+              else
+                setFlag(filter->actions, FA_STATUSTOHAM);
+            }
+          }
+        }
+        else if(stricmp(buf, "condition") == 0)
+        {
+          int ruleCount = 0;
+
+          // parse the conditions. These look like
+          // AND/OR (field,comparison,string) [AND/OR (field,comparison,string) ...]
+          while(value != NULL && value[0] != '\0')
+          {
+            struct RuleNode *rule;
+            char *p;
+            char *q;
+
+            while((rule = GetFilterRule(filter, ruleCount)) == NULL)
+              CreateNewRule(filter, 0);
+
+            // transform the combination into rule combinations
+            if(strnicmp(value, "and", 3) == 0)
+              rule->combine = CB_AND;
+            else if(strnicmp(value, "or", 2) == 0)
+              rule->combine = CB_OR;
+
+            p = strchr(value, '(');
+            q = strchr(value, ')');
+            if(p != NULL && q != NULL && q > p)
+            {
+              char *s = p+1;
+              int part = 0;
+              char *comparison = NULL;
+
+              *q = '\0';
+
+              while(s != NULL && s[0] != '\0')
+              {
+                if((p = strchr(s, ',')) != NULL)
+                  *p++ = '\0';
+
+                switch(part)
+                {
+                  case 0:
+                  {
+                    if(stricmp(s, "subject") == 0)
+                    {
+                      rule->searchMode = SM_SUBJECT;
+                    }
+                    else if(stricmp(s, "from") == 0)
+                    {
+                      rule->searchMode = SM_FROM;
+                    }
+                    else if(stricmp(s, "to") == 0)
+                    {
+                      rule->searchMode = SM_TO;
+                    }
+                    else if(stricmp(s, "cc") == 0)
+                    {
+                      rule->searchMode = SM_CC;
+                    }
+                    else if(stricmp(s, "body") == 0)
+                    {
+                      rule->searchMode = SM_BODY;
+                    }
+                    else if(stricmp(s, "date") == 0)
+                    {
+                      rule->searchMode = SM_DATE;
+                    }
+                    else if(stricmp(s, "size") == 0)
+                    {
+                      rule->searchMode = SM_SIZE;
+                    }
+                    else if(s[0] == '"')
+                    {
+                      // comparisons within special header lines are included in quotes
+                      char *t;
+
+                      if((t = strchr(s+1, '"')) != NULL)
+                      {
+                        *t = '\0';
+		                    rule->searchMode = SM_HEADLINE;
+                        strlcpy(rule->customField, s+1, sizeof(rule->customField));
+                      }
+                    }
+                    else
+                    {
+                      rule->searchMode = SM_WHOLE;
+                    }
+                  }
+                  break;
+
+                  case 1:
+                  {
+                    comparison = s;
+                  }
+                  break;
+
+                  case 2:
+                  {
+                    if(comparison != NULL)
+                    {
+                      if(rule->searchMode == SM_SIZE)
+                      {
+                        strlcpy(rule->matchPattern, s, sizeof(rule->matchPattern));
+                        if(stricmp(comparison, "is") == 0)
+                        {
+                          rule->comparison = CP_EQUAL;
+                        }
+                        else if(stricmp(comparison, "is greater than") == 0)
+                        {
+                          rule->comparison = CP_GREATER;
+                        }
+                        else if(stricmp(comparison, "is less than") == 0)
+                        {
+                          rule->comparison = CP_LOWER;
+                        }
+                      }
+                      else if(rule->searchMode == SM_DATE)
+                      {
+                        strlcpy(rule->matchPattern, s, sizeof(rule->matchPattern));
+                        if(stricmp(comparison, "is") == 0)
+                        {
+                          rule->comparison = CP_EQUAL;
+                        }
+                        else if(stricmp(comparison, "isn't") == 0)
+                        {
+                          rule->comparison = CP_NOTEQUAL;
+                        }
+                        else if(stricmp(comparison, "is before") == 0)
+                        {
+                          rule->comparison = CP_LOWER;
+                        }
+                        else if(stricmp(comparison, "is after") == 0)
+                        {
+                          rule->comparison = CP_GREATER;
+                        }
+                      }
+                      else
+                      {
+                        if(stricmp(comparison, "is") == 0)
+                        {
+                          setFlag(rule->flags, SEARCHF_CASE_SENSITIVE);
+                          strlcpy(rule->matchPattern, s, sizeof(rule->matchPattern));
+                          rule->comparison = CP_EQUAL;
+                        }
+                        else if(stricmp(comparison, "isn't") == 0)
+                        {
+                          setFlag(rule->flags, SEARCHF_CASE_SENSITIVE);
+                          strlcpy(rule->matchPattern, s, sizeof(rule->matchPattern));
+                          rule->comparison = CP_NOTEQUAL;
+                        }
+                        else if(stricmp(comparison, "contains") == 0)
+                        {
+                          setFlag(rule->flags, SEARCHF_CASE_SENSITIVE);
+                          setFlag(rule->flags, SEARCHF_SUBSTRING);
+                          strlcpy(rule->matchPattern, s, sizeof(rule->matchPattern));
+                          rule->comparison = CP_EQUAL;
+                        }
+                        else if(stricmp(comparison, "doesn't contain") == 0)
+                        {
+                          setFlag(rule->flags, SEARCHF_CASE_SENSITIVE);
+                          setFlag(rule->flags, SEARCHF_SUBSTRING);
+                          strlcpy(rule->matchPattern, s, sizeof(rule->matchPattern));
+                          rule->comparison = CP_NOTEQUAL;
+                        }
+                        else if(stricmp(comparison, "begins with") == 0)
+                        {
+                          setFlag(rule->flags, SEARCHF_CASE_SENSITIVE);
+                          setFlag(rule->flags, SEARCHF_DOS_PATTERN);
+                          snprintf(rule->matchPattern, sizeof(rule->matchPattern), "%s#?", s);
+                        }
+                        else if(stricmp(comparison, "ends with") == 0)
+                        {
+                          setFlag(rule->flags, SEARCHF_CASE_SENSITIVE);
+                          setFlag(rule->flags, SEARCHF_DOS_PATTERN);
+                          snprintf(rule->matchPattern, sizeof(rule->matchPattern), "#?%s", s);
+                        }
+                      }
+                    }
+                  }
+                  break;
+
+                  default:
+                  {
+                  }
+                  break;
+                }
+
+                s = p;
+                part++;
+              }
+
+              // skip the closing brace
+              q++;
+              // skip spaces either until the next condition or until the end of the string
+              while(*q == ' ' && *q != '\0')
+                q++;
+            }
+
+            value = q;
+            ruleCount++;
+          }
+        }
+        else
+        {
+          D(DBF_FILTER, "skipping keyword '%s' value '%s'", buf, value);
+        }
+      }
+	  }
+
+    // free the last remembered action
+    free(lastAction);
+
+    // push the last created filter to the configuration
+    if(filter != NULL)
+    {
+      if(G->CO != NULL)
+      {
+        DoMethod(G->CO->GUI.LV_RULES, MUIM_NList_InsertSingle, filter, MUIV_NList_Insert_Bottom);
+        set(G->CO->GUI.LV_RULES, MUIA_NList_Active, MUIV_NList_Active_Bottom);
+        AddTail((struct List *)&CE->filterList, (struct Node *)filter);
+      }
+      else
+      {
+        AddTail((struct List *)&C->filterList, (struct Node *)filter);
+      }
+    }
+
+    fclose(fh);
+  }
+
+  RETURN(success);
+  return success;
+}
+
+///
 
 /*** GUI ***/
 /// InitFilterPopupList

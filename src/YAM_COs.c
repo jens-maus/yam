@@ -851,7 +851,7 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
         }
 
         // search of a \r or \n and terminate the string there
-        if((p = strpbrk(buf, "\r\n")) != NULL)
+        if((p = strpbrk(buf, "\n")) != NULL)
           *p = '\0';
 
         // search from the start of buf until = or a space and

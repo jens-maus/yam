@@ -497,14 +497,14 @@ size_t StrBufCat(char **strbuf, const char *source)
     {
       size_t *newstrbuf;
 
-      // lets realloc the string instead of completely 
+      // lets realloc the string instead of completely
       // creating a new one
       if((newstrbuf = realloc((*strbuf)-sizeof(size_t), (newlen+1)*sizeof(char)+sizeof(size_t))) != NULL)
       {
         *newstrbuf = newlen+1;
         newstrbuf++;
       }
-      else  
+      else
         reqlen = 0;
 
       *strbuf = (char *)newstrbuf;
@@ -1252,6 +1252,7 @@ struct FileReqCache *ReqFile(enum ReqFileType num, Object *win,
     "#?.xml",                              // ASL_ABOOK_XML
     "#?",                                  // ASL_GENERIC
     "#?",                                  // ASL_UPDATE
+    "#?.sfd",                              // ASL_FILTER
   };
 
   struct FileReqCache *result = NULL;

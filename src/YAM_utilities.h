@@ -92,6 +92,7 @@ enum ReqFileType
   ASL_ABOOK_XML,
   ASL_GENERIC,
   ASL_UPDATE,
+  ASL_FILTER,
   ASL_MAX
 };
 

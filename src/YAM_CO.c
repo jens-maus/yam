@@ -247,6 +247,28 @@ HOOKPROTONHNONP(RemoveLastRule, void)
 MakeHook(RemoveLastRuleHook, RemoveLastRule);
 
 ///
+/// ImportFilterHook
+//  Import filter settings from a .sfd file
+HOOKPROTONHNP(ImportFilterFunc, void, Object *obj)
+{
+  struct FileReqCache *frc;
+
+  ENTER();
+
+  if((frc = ReqFile(ASL_FILTER, _win(obj), tr(MSG_FILTER_IMPORT_TITLE), 0, "PROGDIR:", "")) != NULL)
+  {
+    char path[SIZE_PATHFILE];
+
+    AddPath(path, frc->drawer, frc->file, sizeof(path));
+    ImportFilter(path);
+  }
+
+  LEAVE();
+}
+MakeHook(ImportFilterHook, ImportFilterFunc);
+
+///
+
 /// GhostOutFilter
 //  Enables/disables GUI gadgets in filter form
 void GhostOutFilter(struct CO_GUIData *gui, struct FilterNode *filter)

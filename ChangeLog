@@ -9,6 +9,11 @@ $URL$
 
   * YAM_FI.c: implemented "abort filter" action for filters. This will cause the
     filter process to be aborted after executing that specific filter.
+  * YAM_COg.c, YAM_FI.c: implemented a filter import from Thunderbird's .sfd
+    files. This import will try to replicate the given filters as close as
+    possible using YAM's filtering facilities. Please note that not all features
+    of Thunderbird's filters can be replicated by YAM due to fundamental
+    differences in operation. This closes #128.
 
 2012-07-09 Jens Langner <Jens.Langner@light-speed.de>
 

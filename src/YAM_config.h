@@ -351,6 +351,7 @@ struct CO_GUIData
   Object *CH_POP3_NOTIFY_CMD;
   Object *PO_POP3_NOTIFY_CMD;
   Object *ST_POP3_NOTIFY_CMD;
+  Object *BT_FILTER_IMPORT;
 };
 
 struct CO_ClassData  /* configuration window */
@@ -620,6 +621,7 @@ extern struct Hook SetActiveFilterDataHook;
 extern struct Hook GetActiveFilterDataHook;
 extern struct Hook AddNewRuleToListHook;
 extern struct Hook RemoveLastRuleHook;
+extern struct Hook ImportFilterHook;
 
 void CO_ClearConfig(struct Config *co);
 BOOL CO_IsValid(void);

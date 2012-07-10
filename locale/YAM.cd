@@ -7489,3 +7489,9 @@ Abort the filter process after this\n\
 filter. Following filters will not\n\
 be executed anymore.
 ;
+MSG_CO_FILTER_IMPORT (2390//)
+Import...
+;
+MSG_FILTER_IMPORT_TITLE (2391//)
+Import filter
+;
