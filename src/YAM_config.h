@@ -128,6 +128,7 @@ struct CO_GUIData
   Object *CH_AMOVE;
   Object *CH_ADELETE;
   Object *CH_ASKIP;
+  Object *CH_AABORT;
   Object *CY_HEADER;
   Object *ST_HEADERS;
   Object *CY_SENDERINFO;

@@ -1930,6 +1930,13 @@ BOOL ExecuteFilterAction(const struct FilterNode *filter, struct Mail *mail, str
     success = FALSE;
   }
 
+  // Abort Action
+  if(hasAbortAction(filter))
+  {
+    // just signal failure to abort further handling of this mail
+    success = FALSE;
+  }
+
   RETURN(success);
   return success;
 }

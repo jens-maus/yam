@@ -7481,3 +7481,11 @@ Please make sure that the path exists and contains the certificate \
 bundle file as supplied during the installation process of YAM.
 ; DIRPATH
 ;
+MSG_CO_ACTION_ABORT_FILTER (2388//)
+Abort filter process
+;
+MSG_HELP_CO_CH_AABORT (2389//)
+Abort the filter process after this\n\
+filter. Following filters will not\n\
+be executed anymore.
+;
