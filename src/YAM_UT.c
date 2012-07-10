@@ -4575,6 +4575,7 @@ void FolderTreeUpdate(void)
   LEAVE();
 }
 
+///
 /// CheckPrinter
 //  Checks if printer is ready to print something
 BOOL CheckPrinter(const Object *win)
