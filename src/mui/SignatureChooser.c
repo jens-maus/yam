@@ -117,8 +117,8 @@ OVERLOAD(OM_SET)
       {
         data->signatureList = (struct MinList *)tag->ti_Data;
         DoMethod(obj, METHOD(UpdateSignatures));
-	  }
-	  break;
+      }
+      break;
 
       case ATTR(Signature):
       {
