@@ -1254,7 +1254,7 @@ HOOKPROTONHNONP(CreateFilterFromSearch, void)
   {
     struct FilterNode *filter;
 
-    if((filter = CreateNewFilter()) != NULL)
+    if((filter = CreateNewFilter(FA_ABORT)) != NULL)
     {
       struct RuleNode *rule;
 
@@ -2426,7 +2426,7 @@ BOOL CompareFilterLists(const struct MinList *fl1, const struct MinList *fl2)
 ///
 /// CreateNewFilter
 //  Initializes a new filter
-struct FilterNode *CreateNewFilter(void)
+struct FilterNode *CreateNewFilter(const int actions)
 {
   struct FilterNode *filter;
 
@@ -2436,7 +2436,7 @@ struct FilterNode *CreateNewFilter(void)
                                              ASONODE_Min, TRUE,
                                              TAG_DONE)) != NULL)
   {
-    filter->actions = 0;
+    filter->actions = actions;
     filter->remote = FALSE;
     filter->applyToNew = TRUE;
     filter->applyOnReq = TRUE;
@@ -2688,7 +2688,7 @@ BOOL ImportFilter(const char *fileName)
           }
 
           // create a new filter node and remember the name
-          if((filter = CreateNewFilter()) != NULL)
+          if((filter = CreateNewFilter(FA_ABORT)) != NULL)
           {
             strlcpy(filter->name, eq, sizeof(filter->name));
           }

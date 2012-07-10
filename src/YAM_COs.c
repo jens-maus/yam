@@ -1115,7 +1115,7 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
 
               if(lastFilter == NULL)
               {
-                if((lastFilter = CreateNewFilter()))
+                if((lastFilter = CreateNewFilter(0)))
                 {
                   AddTail((struct List *)&co->filterList, (struct Node *)lastFilter);
                   lastFilterID = curFilterID;
@@ -1726,7 +1726,7 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
             {
               struct FilterNode *filter;
 
-              if((filter = CreateNewFilter()) != NULL)
+              if((filter = CreateNewFilter(0)) != NULL)
               {
                 struct RuleNode *rule;
                 char *p2;

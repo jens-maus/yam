@@ -14,6 +14,8 @@ $URL$
     possible using YAM's filtering facilities. Please note that not all features
     of Thunderbird's filters can be replicated by YAM due to fundamental
     differences in operation. This closes #128.
+  * YAM_FI.c, YAM_COg.c, YAM_COs.c: automatically and manually created filers now
+    abort the filtering process by default.
 
 2012-07-09 Jens Langner <Jens.Langner@light-speed.de>
 
