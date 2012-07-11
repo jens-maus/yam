@@ -28,6 +28,8 @@ $URL$
   * YAM_MA.c, YAM_RE.c, YAM_UT.c: set the initial weights of the embedded read
     pane upon creating it. Furthermore set two unused weight values to their
     default values.
+  * YAM_UT.c: fixed the dynamic string buffer functions to not use realloc() as
+    this does not zero the additional space. This closes #332.
 
 2012-07-11 Thore Böckelmann <tboeckel@gmx.de>
 

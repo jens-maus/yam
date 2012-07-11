@@ -453,9 +453,18 @@ size_t StrBufCpy(char **strbuf, const char *source)
     // if we have to change the size do it now
     if(newlen > oldlen)
     {
-      // use realloc to expand the dynamic array
-      if((*strbuf = realloc((*strbuf)-sizeof(size_t), (newlen+1)*sizeof(char)+sizeof(size_t))) == NULL)
-        reqlen = 0;
+      char *newstrbuf;
+
+      // allocate a new buffer and replace the old one with it
+      if((newstrbuf = AllocStrBuf(newlen+1)) != NULL)
+      {
+        FreeStrBuf(*strbuf);
+        *strbuf = newstrbuf;
+      }
+      else
+      {
+      	reqlen = 0;
+      }
     }
   }
 
@@ -495,19 +504,19 @@ size_t StrBufCat(char **strbuf, const char *source)
     // if we have to change the size do it now
     if(newlen > oldlen)
     {
-      size_t *newstrbuf;
+      char *newstrbuf;
 
-      // lets realloc the string instead of completely
-      // creating a new one
-      if((newstrbuf = realloc((*strbuf)-sizeof(size_t), (newlen+1)*sizeof(char)+sizeof(size_t))) != NULL)
+      // allocate a new buffer, copy the old contents to it and replace the old one with it
+      if((newstrbuf = AllocStrBuf(newlen+1)) != NULL)
       {
-        *newstrbuf = newlen+1;
-        newstrbuf++;
+        memmove(newstrbuf, *strbuf, oldlen);
+        FreeStrBuf(*strbuf);
+        *strbuf = newstrbuf;
       }
       else
-        reqlen = 0;
-
-      *strbuf = (char *)newstrbuf;
+      {
+      	reqlen = 0;
+      }
     }
   }
 
