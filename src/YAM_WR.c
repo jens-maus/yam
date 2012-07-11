@@ -1986,10 +1986,16 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
 
             // set the In-Reply-To / References message header references, if they exist
             if(email->inReplyToMsgID != NULL)
+            {
+              D(DBF_MAIL, "adding inReplyToMsgID '%s'", email->inReplyToMsgID);
               StrBufCpy(&wmData->inReplyToMsgID, email->inReplyToMsgID);
+            }
 
             if(email->references != NULL)
+            {
+              D(DBF_MAIL, "adding references '%s'", email->references);
               StrBufCpy(&wmData->references, email->references);
+            }
 
             // set the subject gadget
             set(wmData->window, MUIA_WriteWindow_Subject, mail->Subject);
@@ -2017,17 +2023,25 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
             if(reuseReplyToAddress == TRUE)
             {
               // add all ReplyTo: recipients
+              D(DBF_MAIL, "adding ReplyTo recipient '%s'", mail->ReplyTo.Address);
               StrBufCpy(&sbuf, BuildAddress(address, sizeof(address), mail->ReplyTo.Address, mail->ReplyTo.RealName));
               for(i=0; i < email->NumSReplyTo; i++)
+              {
+                D(DBF_MAIL, "adding ReplyTo recipient '%s'", email->SReplyTo[i].Address);
                 sbuf = AppendRcpt(sbuf, &email->SReplyTo[i], email->identity, FALSE);
+              }
 
               set(wmData->window, MUIA_WriteWindow_ReplyTo, sbuf);
             }
 
             // add all "To:" recipients of the mail
+            D(DBF_MAIL, "adding To recipient '%s'", mail->To.Address);
             StrBufCpy(&sbuf, BuildAddress(address, sizeof(address), mail->To.Address, mail->To.RealName));
             for(i=0; i < email->NumSTo; i++)
+            {
+              D(DBF_MAIL, "adding To recipient '%s'", email->STo[i].Address);
               sbuf = AppendRcpt(sbuf, &email->STo[i], email->identity, FALSE);
+            }
 
             set(wmData->window, MUIA_WriteWindow_To, sbuf);
 
@@ -2035,6 +2049,7 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
             sbuf[0] = '\0';
             for(i=0; i < email->NumCC; i++)
             {
+              D(DBF_MAIL, "adding CC recipient '%s'", email->CC[i].Address);
               sbuf = AppendRcpt(sbuf, &email->CC[i], email->identity, FALSE);
             }
             set(wmData->window, MUIA_WriteWindow_CC, sbuf);
@@ -2043,6 +2058,7 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
             sbuf[0] = '\0';
             for(i=0; i < email->NumBCC; i++)
             {
+              D(DBF_MAIL, "adding BCC recipient '%s'", email->BCC[i].Address);
               sbuf = AppendRcpt(sbuf, &email->BCC[i], email->identity, FALSE);
             }
             set(wmData->window, MUIA_WriteWindow_BCC, sbuf);
