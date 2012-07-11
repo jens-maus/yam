@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.53 (10.7.2012)
+## version $VER: YAM.catalog 7.54 (11.7.2012)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -9009,9 +9009,9 @@ Bitte stellen Sie sicher, dass der Pfad existiert und die Zertifikat-Bündeldatei
 MSG_CO_ACTION_ABORT_FILTER
 Filterprozess beenden
 ;
-MSG_HELP_CO_CH_AABORT
+MSG_HELP_CO_CH_ATERMINATE
 Nach der Behandlung dieses Filters wird der\n\
-weitere Filterprozess abgebrochen. Foldende\n\
+weitere Filterprozess beendet. Foldende\n\
 Filter werden nicht mehr angewandt.
 ;
 MSG_CO_FILTER_IMPORT

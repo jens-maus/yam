@@ -7484,8 +7484,8 @@ bundle file as supplied during the installation process of YAM.
 MSG_CO_ACTION_ABORT_FILTER (2388//)
 Abort filter process
 ;
-MSG_HELP_CO_CH_AABORT (2389//)
-Abort the filter process after this\n\
+MSG_HELP_CO_CH_ATERMINATE (2389//)
+Terminate the filter process after this\n\
 filter. Following filters will not\n\
 be executed anymore.
 ;

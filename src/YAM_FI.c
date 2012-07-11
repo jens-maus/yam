@@ -1254,7 +1254,7 @@ HOOKPROTONHNONP(CreateFilterFromSearch, void)
   {
     struct FilterNode *filter;
 
-    if((filter = CreateNewFilter(FA_ABORT)) != NULL)
+    if((filter = CreateNewFilter(FA_TERMINATE)) != NULL)
     {
       struct RuleNode *rule;
 
@@ -1930,10 +1930,10 @@ BOOL ExecuteFilterAction(const struct FilterNode *filter, struct Mail *mail, str
     success = FALSE;
   }
 
-  // Abort Action
-  if(hasAbortAction(filter))
+  // Termiante Action
+  if(hasTerminateAction(filter))
   {
-    // just signal failure to abort further handling of this mail
+    // just signal failure to terminate further handling of this mail
     success = FALSE;
   }
 
@@ -2688,7 +2688,7 @@ BOOL ImportFilter(const char *fileName)
           }
 
           // create a new filter node and remember the name
-          if((filter = CreateNewFilter(FA_ABORT)) != NULL)
+          if((filter = CreateNewFilter(FA_TERMINATE)) != NULL)
           {
             strlcpy(filter->name, eq, sizeof(filter->name));
           }
@@ -2732,7 +2732,7 @@ BOOL ImportFilter(const char *fileName)
             }
             else if(stricmp(buf, "stop execution") == 0)
             {
-              setFlag(filter->actions, FA_ABORT);
+              setFlag(filter->actions, FA_TERMINATE);
             }
 
             // remember this action

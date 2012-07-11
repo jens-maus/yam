@@ -84,7 +84,7 @@ enum Comparison       { CP_EQUAL=0, CP_NOTEQUAL, CP_LOWER, CP_GREATER, CP_INPUT 
 #define FA_STATUSTOUNREAD   (1<<11)
 #define FA_STATUSTOSPAM     (1<<12)
 #define FA_STATUSTOHAM      (1<<13)
-#define FA_ABORT            (1<<14)
+#define FA_TERMINATE        (1<<14)
 #define hasBounceAction(filter)           (isFlagSet((filter)->actions, FA_BOUNCE))
 #define hasForwardAction(filter)          (isFlagSet((filter)->actions, FA_FORWARD))
 #define hasReplyAction(filter)            (isFlagSet((filter)->actions, FA_REPLY))
@@ -99,7 +99,7 @@ enum Comparison       { CP_EQUAL=0, CP_NOTEQUAL, CP_LOWER, CP_GREATER, CP_INPUT 
 #define hasStatusToUnreadAction(filter)   (isFlagSet((filter)->actions, FA_STATUSTOUNREAD))
 #define hasStatusToSpamAction(filter)     (isFlagSet((filter)->actions, FA_STATUSTOSPAM))
 #define hasStatusToHamAction(filter)      (isFlagSet((filter)->actions, FA_STATUSTOHAM))
-#define hasAbortAction(filter)            (isFlagSet((filter)->actions, FA_ABORT))
+#define hasTerminateAction(filter)        (isFlagSet((filter)->actions, FA_TERMINATE))
 
 struct SearchPatternNode
 {

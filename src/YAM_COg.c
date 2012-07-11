@@ -1040,7 +1040,7 @@ HOOKPROTONHNONP(AddNewFilterToList, void)
 {
   struct FilterNode *filterNode;
 
-  if((filterNode = CreateNewFilter(FA_ABORT)) != NULL)
+  if((filterNode = CreateNewFilter(FA_TERMINATE)) != NULL)
   {
     DoMethod(G->CO->GUI.LV_RULES, MUIM_NList_InsertSingle, filterNode, MUIV_NList_Insert_Bottom);
     set(G->CO->GUI.LV_RULES, MUIA_NList_Active, MUIV_NList_Active_Bottom);
@@ -2643,7 +2643,7 @@ Object *CO_PageFilters(struct CO_ClassData *data)
                          Child, MakeCheckGroup(&data->GUI.CH_ASTATUSTOHAM, tr(MSG_CO_ACTION_SET_STATUS_TO_HAM)),
                          Child, MakeCheckGroup(&data->GUI.CH_ADELETE, tr(MSG_CO_ActionDelete)),
                          Child, MakeCheckGroup(&data->GUI.CH_ASKIP, tr(MSG_CO_ActionSkip)),
-                         Child, MakeCheckGroup(&data->GUI.CH_AABORT, tr(MSG_CO_ACTION_ABORT_FILTER)),
+                         Child, MakeCheckGroup(&data->GUI.CH_ATERMINATE, tr(MSG_CO_ACTION_TERMINATE_FILTER)),
                          Child, HVSpace,
 
                       End,
@@ -2681,7 +2681,7 @@ Object *CO_PageFilters(struct CO_ClassData *data)
       SetHelp(data->GUI.CH_ASTATUSTOHAM,      MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_HAM);
       SetHelp(data->GUI.CH_ADELETE,           MSG_HELP_CO_CH_ADELETE);
       SetHelp(data->GUI.CH_ASKIP,             MSG_HELP_CO_CH_ASKIP);
-      SetHelp(data->GUI.CH_AABORT,            MSG_HELP_CO_CH_AABORT);
+      SetHelp(data->GUI.CH_ATERMINATE,        MSG_HELP_CO_CH_ATERMINATE);
       SetHelp(data->GUI.BT_RADD,              MSG_HELP_CO_BT_RADD);
       SetHelp(data->GUI.BT_RDEL,              MSG_HELP_CO_BT_RDEL);
       SetHelp(data->GUI.BT_MORE,              MSG_HELP_CO_BT_MORE);
@@ -2718,7 +2718,7 @@ Object *CO_PageFilters(struct CO_ClassData *data)
       DoMethod(data->GUI.CH_ASTATUSTOHAM      ,MUIM_Notify, MUIA_Selected             ,MUIV_EveryTime ,MUIV_Notify_Application        ,2 ,MUIM_CallHook          ,&SetActiveFilterDataHook);
       DoMethod(data->GUI.CH_ADELETE           ,MUIM_Notify, MUIA_Selected             ,MUIV_EveryTime ,MUIV_Notify_Application        ,2 ,MUIM_CallHook          ,&SetActiveFilterDataHook);
       DoMethod(data->GUI.CH_ASKIP             ,MUIM_Notify, MUIA_Selected             ,MUIV_EveryTime ,MUIV_Notify_Application        ,2 ,MUIM_CallHook          ,&SetActiveFilterDataHook);
-      DoMethod(data->GUI.CH_AABORT            ,MUIM_Notify, MUIA_Selected             ,MUIV_EveryTime ,MUIV_Notify_Application        ,2 ,MUIM_CallHook          ,&SetActiveFilterDataHook);
+      DoMethod(data->GUI.CH_ATERMINATE        ,MUIM_Notify, MUIA_Selected             ,MUIV_EveryTime ,MUIV_Notify_Application        ,2 ,MUIM_CallHook          ,&SetActiveFilterDataHook);
       DoMethod(data->GUI.ST_ABOUNCE           ,MUIM_Notify, MUIA_String_BufferPos     ,MUIV_EveryTime ,MUIV_Notify_Application        ,2 ,MUIM_CallHook          ,&SetActiveFilterDataHook);
       DoMethod(data->GUI.ST_AFORWARD          ,MUIM_Notify, MUIA_String_BufferPos     ,MUIV_EveryTime ,MUIV_Notify_Application        ,2 ,MUIM_CallHook          ,&SetActiveFilterDataHook);
       DoMethod(data->GUI.ST_ARESPONSE         ,MUIM_Notify, MUIA_String_Contents      ,MUIV_EveryTime ,MUIV_Notify_Application        ,2 ,MUIM_CallHook          ,&SetActiveFilterDataHook);

@@ -301,7 +301,7 @@ void GhostOutFilter(struct CO_GUIData *gui, struct FilterNode *filter)
   set(gui->CH_ASTATUSTOHAM,      MUIA_Disabled, filter == NULL || isremote);
   set(gui->CH_ADELETE,           MUIA_Disabled, filter == NULL);
   set(gui->CH_ASKIP,             MUIA_Disabled, filter == NULL || !isremote);
-  set(gui->CH_AABORT,            MUIA_Disabled, filter == NULL);
+  set(gui->CH_ATERMINATE,        MUIA_Disabled, filter == NULL);
   set(gui->ST_ABOUNCE,           MUIA_Disabled, filter == NULL || isremote || !xget(gui->CH_ABOUNCE,   MUIA_Selected));
   set(gui->ST_AFORWARD,          MUIA_Disabled, filter == NULL || isremote || !xget(gui->CH_AFORWARD,  MUIA_Selected));
   set(gui->BT_APLAY,             MUIA_Disabled, filter == NULL || !xget(gui->CH_APLAY, MUIA_Selected));
@@ -378,7 +378,7 @@ HOOKPROTONHNONP(GetActiveFilterData, void)
     nnset(gui->CH_ASTATUSTOHAM,      MUIA_Selected,          hasStatusToHamAction(filter));
     nnset(gui->CH_ADELETE,           MUIA_Selected,          hasDeleteAction(filter));
     nnset(gui->CH_ASKIP,             MUIA_Selected,          hasSkipMsgAction(filter));
-    nnset(gui->CH_AABORT,            MUIA_Selected,          hasAbortAction(filter));
+    nnset(gui->CH_ATERMINATE,        MUIA_Selected,          hasTerminateAction(filter));
     nnset(gui->ST_ABOUNCE,           MUIA_String_Contents,   filter->bounceTo);
     nnset(gui->ST_AFORWARD,          MUIA_String_Contents,   filter->forwardTo);
     nnset(gui->ST_ARESPONSE,         MUIA_String_Contents,   filter->replyFile);
@@ -487,7 +487,7 @@ HOOKPROTONHNONP(SetActiveFilterData, void)
     if(GetMUICheck(gui->CH_ASTATUSTOHAM))      setFlag(filter->actions, FA_STATUSTOHAM);
     if(GetMUICheck(gui->CH_ADELETE))           setFlag(filter->actions, FA_DELETE);
     if(GetMUICheck(gui->CH_ASKIP))             setFlag(filter->actions, FA_SKIPMSG);
-    if(GetMUICheck(gui->CH_AABORT))            setFlag(filter->actions, FA_ABORT);
+    if(GetMUICheck(gui->CH_ATERMINATE))        setFlag(filter->actions, FA_TERMINATE);
     GetMUIString(filter->bounceTo,   gui->ST_ABOUNCE, sizeof(filter->bounceTo));
     GetMUIString(filter->forwardTo,  gui->ST_AFORWARD, sizeof(filter->forwardTo));
     GetMUIString(filter->replyFile,  gui->ST_ARESPONSE, sizeof(filter->replyFile));
