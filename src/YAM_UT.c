@@ -3984,8 +3984,8 @@ void LoadLayout(void)
   //
   // 0:  Horizontal weight of left foldertree in main window.
   // 1:  Horizontal weight of right maillistview in main window.
-  // 2:  Vertical weight of top headerlistview in read window
-  // 3:  Vertical weight of bottom texteditor field in read window
+  // 2:  unused
+  // 3:  unused
   // 4:  Horizontal weight of listview group in the glossary window
   // 5:  Horizontal weight of text group in the glossary window
   // 6:  Vertical weight of top right maillistview group in main window.
@@ -3998,8 +3998,8 @@ void LoadLayout(void)
   if((ls = (STRPTR)xget(G->MA->GUI.ST_LAYOUT, MUIA_String_Contents)) == NULL ||
       ls[0] == '\0')
   {
-    //    0  1   2  3   4  5   6  7   8 9   10 11
-    ls = "30 100 25 100 30 100 25 100 5 100 5 100 0&0&";
+    //    0  1   2   3   4  5   6  7   8 9   10 11
+    ls = "30 100 100 100 30 100 25 100 5 100 5 100 0&0&";
 
     D(DBF_UTIL, "using default layout weight factors: '%s'", ls);
   }
@@ -4020,7 +4020,7 @@ void LoadLayout(void)
   ls = endptr;
   G->Weights[2] = strtol(ls, &endptr, 10);
   if(endptr == NULL || endptr == ls)
-    G->Weights[2] = 25;
+    G->Weights[2] = 100;
 
   ls = endptr;
   G->Weights[3] = strtol(ls, &endptr, 10);
@@ -4102,8 +4102,8 @@ void SaveLayout(BOOL permanent)
   //
   // 0:  Horizontal weight of left foldertree in main window.
   // 1:  Horizontal weight of right maillistview in main window.
-  // 2:  Vertical weight of top headerlistview in read window
-  // 3:  Vertical weight of bottom texteditor field in read window
+  // 2:  unused
+  // 3:  unused
   // 4:  Horizontal weight of listview group in the glossary window
   // 5:  Horizontal weight of text group in the glossary window
   // 6:  Vertical weight of top right maillistview group in main window.
@@ -4118,8 +4118,8 @@ void SaveLayout(BOOL permanent)
   if(asprintf(&buf, "%d %d %d %d %d %d %d %d %d %d %d %d %s",
     (int)G->Weights[0],
     (int)G->Weights[1],
-    (int)G->Weights[2],
-    (int)G->Weights[3],
+    100,
+    100,
     (int)G->Weights[4],
     (int)G->Weights[5],
     (int)G->Weights[6],

@@ -4338,8 +4338,16 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL fullCleanup)
     // aswell
     if(rmData->readMailGroup != NULL)
     {
-      G->Weights[2] = xget(rmData->readMailGroup, MUIA_ReadMailGroup_HGVertWeight);
-      G->Weights[3] = xget(rmData->readMailGroup, MUIA_ReadMailGroup_TGVertWeight);
+      if(C->EmbeddedReadPane == TRUE)
+      {
+        G->Weights[8] = xget(rmData->readMailGroup, MUIA_ReadMailGroup_HGVertWeight);
+        G->Weights[9] = xget(rmData->readMailGroup, MUIA_ReadMailGroup_TGVertWeight);
+      }
+      else
+      {
+        G->Weights[10] = xget(rmData->readMailGroup, MUIA_ReadMailGroup_HGVertWeight);
+        G->Weights[11] = xget(rmData->readMailGroup, MUIA_ReadMailGroup_TGVertWeight);
+      }
     }
   }
 

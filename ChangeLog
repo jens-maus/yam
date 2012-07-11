@@ -25,6 +25,9 @@ $URL$
     resources directory. For compatibility the themes are still searched in the
     old location as well.
   * YAM_FI.c: external spam filters will be applied on user request now as well.
+  * YAM_MA.c, YAM_RE.c, YAM_UT.c: set the initial weights of the embedded read
+    pane upon creating it. Furthermore set two unused weight values to their
+    default values.
 
 2012-07-11 Thore Böckelmann <tboeckel@gmx.de>
 

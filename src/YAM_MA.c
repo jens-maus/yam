@@ -3911,6 +3911,9 @@ void MA_SetupEmbeddedReadPane(void)
       {
         G->MA->GUI.MN_EMBEDDEDREADPANE = readPaneObj = ReadMailGroupObject,
                                                          MUIA_ContextMenu, TRUE,
+                                                         MUIA_VertWeight, G->Weights[7],
+                                                         MUIA_ReadMailGroup_HGVertWeight, G->Weights[8],
+                                                         MUIA_ReadMailGroup_TGVertWeight, G->Weights[9],
                                                        End;
 
         if(readPaneObj != NULL)
