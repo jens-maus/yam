@@ -17,6 +17,9 @@ $URL$
     occur in YAM's own list of filters. This finally closes #128 again.
   * resources/certificates, resources/filters: added another directory level to
     build up a structure within the resources directory.
+  * Themes.c, YAM.c, mui/ThemeListGroup.c: moved the themes directory to the
+    resources directory. For compatibility the themes are still searched in the
+    old location as well.
 
 2012-07-11 Thore Böckelmann <tboeckel@gmx.de>
 

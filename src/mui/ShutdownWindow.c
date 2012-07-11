@@ -49,7 +49,7 @@ OVERLOAD(OM_NEW)
 
   ENTER();
 
-  AddPath(logopath, G->ProgDir, "Themes/default/logo", sizeof(logopath));
+  AddPath(logopath, G->ThemesDir, "default/logo", sizeof(logopath));
 
   // create the object
   if((obj = DoSuperNew(cl, obj,

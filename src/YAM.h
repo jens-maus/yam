@@ -180,6 +180,7 @@ struct Global
 
   char                     ProgDir[SIZE_PATH];
   char                     ProgName[SIZE_FILE];
+  char                     ThemesDir[SIZE_PATH];
   char                     PGPPassPhrase[SIZE_DEFAULT];
   char                     MA_MailDir[SIZE_PATH];
   char                     AB_Filename[SIZE_PATHFILE];

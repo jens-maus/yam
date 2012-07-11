@@ -269,10 +269,9 @@ void AllocTheme(struct Theme *theme, const char *themeName)
   theme->version = NULL;
 
   // contruct the path to the themes directory
-  AddPath(theme->directory, G->ProgDir, "Themes", sizeof(theme->directory));
-  AddPart(theme->directory, themeName, sizeof(theme->directory));
+  AddPath(theme->directory, G->ThemesDir, themeName, sizeof(theme->directory));
 
-  D(DBF_THEME, "theme directory: '%s' '%s'", theme->directory, G->ProgDir);
+  D(DBF_THEME, "theme directory: '%s' '%s'", theme->directory, G->ThemesDir);
 
   // construct pathes to config images
   AddPath(dirname, theme->directory, "config", sizeof(dirname));

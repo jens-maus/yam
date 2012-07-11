@@ -196,7 +196,6 @@ DECLARE(Update)
 {
   GETDATA;
   BOOL result = FALSE;
-  char themesDir[SIZE_PATH];
   APTR context;
 
   ENTER();
@@ -204,11 +203,8 @@ DECLARE(Update)
   // clear the NList
   DoMethod(data->NL_THEMELIST, MUIM_NList_Clear);
 
-  // construct the themes directory path
-  AddPath(themesDir, G->ProgDir, "Themes", sizeof(themesDir));
-
   // prepare for an ExamineDir()
-  if((context = ObtainDirContextTags(EX_StringName, (ULONG)themesDir, TAG_DONE)) != NULL)
+  if((context = ObtainDirContextTags(EX_StringName, (ULONG)G->ThemesDir, TAG_DONE)) != NULL)
   {
     struct ExamineData *ed;
     LONG error;
@@ -230,7 +226,7 @@ DECLARE(Update)
 
         // now we check whether this is a drawer which contains a
         // ".theme" file which should be a sign that this is a YAM theme
-        AddPath(theme.directory, themesDir, ed->Name, sizeof(theme.directory));
+        AddPath(theme.directory, G->ThemesDir, ed->Name, sizeof(theme.directory));
         AddPath(filename, theme.directory, ".theme", sizeof(filename));
 
         // parse the .theme file to check wheter this

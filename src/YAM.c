@@ -2727,6 +2727,11 @@ int main(int argc, char **argv)
     D(DBF_STARTUP, "ProgDir.: '%s'", G->ProgDir);
     D(DBF_STARTUP, "ProgName: '%s'", G->ProgName);
 
+    // set up a path to the themes directory
+    strlcpy(G->ThemesDir, "PROGDIR:Resources/Themes", sizeof(G->ThemesDir));
+    if(FileExists(G->ThemesDir) == FALSE)
+      strlcpy(G->ThemesDir, "PROGDIR:Themes", sizeof(G->ThemesDir));
+
     if(args.maildir == NULL)
       strlcpy(G->MA_MailDir, G->ProgDir, sizeof(G->MA_MailDir));
 
