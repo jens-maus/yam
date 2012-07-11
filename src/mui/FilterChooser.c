@@ -64,7 +64,7 @@ OVERLOAD(OM_NEW)
   {
     GETDATA;
 
-    data->searchPath = (char *)GetTagData(ATTR(SearchPath), (IPTR)"PROGDIR:Resources", inittags(msg));
+    data->searchPath = (char *)GetTagData(ATTR(SearchPath), (IPTR)"PROGDIR:Resources/filters", inittags(msg));
 
     // search for available filter descriptions
     DoMethod(obj, METHOD(UpdateFilters));

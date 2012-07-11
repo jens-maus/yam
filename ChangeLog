@@ -15,6 +15,8 @@ $URL$
     resources directory. These files usually define two filters for specific
     header lines to tell spam and non-spam mails apart. The filters will *not*
     occur in YAM's own list of filters. This finally closes #128 again.
+  * resources/certificates, resources/filters: added another directory level to
+    build up a structure within the resources directory.
 
 2012-07-11 Thore Böckelmann <tboeckel@gmx.de>
 

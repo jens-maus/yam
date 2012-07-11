@@ -68,8 +68,8 @@
 #define GET_SOCKETBASE(conn)  struct Library *SocketBase = (conn)->socketBase
 #endif
 
-#define DEFAULT_CAPATH "PROGDIR:Resources"
-#define DEFAULT_CAFILE "PROGDIR:Resources/ca-bundle.crt"
+#define DEFAULT_CAPATH "PROGDIR:Resources/certificates"
+#define DEFAULT_CAFILE "PROGDIR:Resources/certificates/ca-bundle.crt"
 
 /// verify_callback
 // callback function that is called by AmiSSL/OpenSSL for every certification
