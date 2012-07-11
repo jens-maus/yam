@@ -2770,7 +2770,7 @@ void CO_Validate(struct Config *co, BOOL update)
     if(co->SpamTrustExternalFilter == TRUE)
     {
       // now import the filters from the given external description
-      snprintf(externalPath, sizeof(externalPath), "PROGDIR:resources/%s.sfd", co->SpamExternalFilter);
+      snprintf(externalPath, sizeof(externalPath), "PROGDIR:Resources/spamfilters/%s.sfd", co->SpamExternalFilter);
       ImportFilter(externalPath, TRUE);
     }
   }
