@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-07-12 Thore Böckelmann <tboeckel@gmx.de>
+
+  * tcp/ssl.c: renamed the "Certificates" directory to "Resources" to keep all
+    kind of auxiliary files instead of certificates only.
+
 2012-07-11 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/ReadMailGroup.c: corrected the parameter order of the double click hook

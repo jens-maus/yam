@@ -128,7 +128,7 @@ compile_release()
     cp src/YAM.${TARGETEXT} $DEVDIR/YAM
     cp $MODULEPATH/icons/${TARGETEXT}/YAM.info $DEVDIR/
     cd $DEVDIR
-    $LHA ao5 YAM${BUILDV}dev-${TARGET}.lha YAM YAM.info ChangeLog README.txt themes locale certificates >/dev/null 2>&1
+    $LHA ao5 YAM${BUILDV}dev-${TARGET}.lha YAM YAM.info ChangeLog README.txt themes locale resources >/dev/null 2>&1
     $MD5SUM YAM${BUILDV}dev-${TARGET}.lha >YAM${BUILDV}dev-${TARGET}.lha.md5
     rm YAM
     set +x
@@ -160,7 +160,7 @@ compile_debug()
     cp src/YAM.${TARGETEXT}.debug $DEVDIR/YAM.debug
     cp $MODULEPATH/icons/${TARGETEXT}/YAM.info $DEVDIR/YAM.debug.info
     cd $DEVDIR
-    $LHA ao5 YAM${BUILDV}dev-${TARGET}-debug.lha YAM.debug YAM.debug.info ChangeLog README.txt themes locale certificates >/dev/null 2>&1
+    $LHA ao5 YAM${BUILDV}dev-${TARGET}-debug.lha YAM.debug YAM.debug.info ChangeLog README.txt themes locale resources >/dev/null 2>&1
     $MD5SUM YAM${BUILDV}dev-${TARGET}-debug.lha >YAM${BUILDV}dev-${TARGET}-debug.lha.md5
     rm YAM.debug
     set +x
@@ -276,9 +276,9 @@ cp $MODULEPATH/ChangeLog $DEVDIR/
 cp -a $MODULEPATH/themes $DEVDIR/ >/dev/null 2>&1
 find $DEVDIR/themes/ -name ".svn" -exec rm -rf {} \; >/dev/null 2>&1
 
-# copy the certificates from the respository to a local copy
-cp -a $MODULEPATH/certificates $DEVDIR/ >/dev/null 2>&1
-find $DEVDIR/certificates/ -name ".svn" -exec rm -rf {} \; >/dev/null 2>&1
+# copy the resources from the respository to a local copy
+cp -a $MODULEPATH/resources $DEVDIR/ >/dev/null 2>&1
+find $DEVDIR/resources/ -name ".svn" -exec rm -rf {} \; >/dev/null 2>&1
 
 # let us generate all catalogs first
 create_catalogs
@@ -315,7 +315,7 @@ compile_debug AROSarm aros-arm
 rm $DEVDIR/ChangeLog $DEVDIR/README.txt
 rm -rf $DEVDIR/themes
 rm -rf $DEVDIR/locale
-rm -rf $DEVDIR/certificates
+rm -rf $DEVDIR/resources
 rm $DEVDIR/YAM.info
 rm $DEVDIR/YAM.debug.info
 

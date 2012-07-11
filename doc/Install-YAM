@@ -762,13 +762,13 @@
 
 (complete 50)
 
-(set Certificates_dir (tackon YAM_dir "Certificates"))
-(if (not (exists Certificates_dir))
-    (makedir Certificates_dir)
+(set Resources_dir (tackon YAM_dir "Resources"))
+(if (not (exists Resources_dir))
+    (makedir Resources_dir)
 )
 (copyfiles
-    (source "/Certificates/")
-    (dest Certificates_dir)
+    (source "/Resources/")
+    (dest Resources_dir)
     (all)
     (help @copyfiles-help)
 )
