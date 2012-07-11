@@ -207,6 +207,6 @@ void FilterMails(struct Folder *folder, const struct MailList *mlist, const int 
 BOOL FolderIsUsedByFilters(const char *folder);
 void RenameFolderInFilters(const char *oldFolder, const char *newFolder);
 void RemoveFolderFromFilters(const char *folder);
-BOOL ImportFilter(const char *fileName, const BOOL isVolatile);
+BOOL ImportFilter(const char *fileName, const BOOL isVolatile, struct MinList *filterList);
 
 #endif /* YAM_FIND_H */

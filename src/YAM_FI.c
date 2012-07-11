@@ -2639,7 +2639,7 @@ void RemoveFolderFromFilters(const char *folder)
 ///
 /// ImportFilter
 // import filters from Thunderbird's .sfd file
-BOOL ImportFilter(const char *fileName, const BOOL isVolatile)
+BOOL ImportFilter(const char *fileName, const BOOL isVolatile, struct MinList *filterList)
 {
   BOOL success = FALSE;
   FILE *fh;
@@ -2648,18 +2648,12 @@ BOOL ImportFilter(const char *fileName, const BOOL isVolatile)
 
   if((fh = fopen(fileName, "r")) != NULL)
   {
-    struct List *filterList;
     char *buf = NULL;
     size_t size = 0;
     struct FilterNode *filter = NULL;
     char *lastAction = NULL;
 
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
-
-    if(G->CO != NULL)
-      filterList = (struct List *)&CE->filterList;
-    else
-      filterList = (struct List *)&C->filterList;
 
     while(GetLine(&buf, &size, fh) >= 0)
     {
@@ -2688,9 +2682,15 @@ BOOL ImportFilter(const char *fileName, const BOOL isVolatile)
 
             // volatile filters are added at the top
             if(isVolatile == TRUE)
-              AddHead(filterList, (struct Node *)filter);
+            {
+              AddHead((struct List *)filterList, (struct Node *)filter);
+              D(DBF_FILTER, "imported volatile filter '%s'", filter->name);
+            }
             else
-              AddTail(filterList, (struct Node *)filter);
+            {
+              AddTail((struct List *)filterList, (struct Node *)filter);
+              D(DBF_FILTER, "imported filter '%s'", filter->name);
+            }
 
             success = TRUE;
           }
@@ -2700,7 +2700,6 @@ BOOL ImportFilter(const char *fileName, const BOOL isVolatile)
           {
             strlcpy(filter->name, eq, sizeof(filter->name));
             filter->isVolatile = isVolatile;
-            filter->applyOnReq = !isVolatile;
           }
           else
           {
@@ -3012,9 +3011,15 @@ BOOL ImportFilter(const char *fileName, const BOOL isVolatile)
 
       // volatile filters are added at the top
       if(isVolatile == TRUE)
-        AddHead(filterList, (struct Node *)filter);
+      {
+        AddHead((struct List *)filterList, (struct Node *)filter);
+        D(DBF_FILTER, "imported volatile filter '%s'", filter->name);
+      }
       else
-        AddTail(filterList, (struct Node *)filter);
+      {
+        AddTail((struct List *)filterList, (struct Node *)filter);
+        D(DBF_FILTER, "imported filter '%s'", filter->name);
+      }
     }
 
     fclose(fh);

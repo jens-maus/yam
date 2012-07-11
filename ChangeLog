@@ -20,6 +20,7 @@ $URL$
   * Themes.c, YAM.c, mui/ThemeListGroup.c: moved the themes directory to the
     resources directory. For compatibility the themes are still searched in the
     old location as well.
+  * YAM_FI.c: external spam filters will be applied on user request now as well.
 
 2012-07-11 Thore Böckelmann <tboeckel@gmx.de>
 

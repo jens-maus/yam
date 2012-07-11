@@ -260,7 +260,7 @@ HOOKPROTONHNP(ImportFilterFunc, void, Object *obj)
     char path[SIZE_PATHFILE];
 
     AddPath(path, frc->drawer, frc->file, sizeof(path));
-    ImportFilter(path, FALSE);
+    ImportFilter(path, FALSE, &CE->filterList);
   }
 
   LEAVE();
@@ -2771,7 +2771,7 @@ void CO_Validate(struct Config *co, BOOL update)
     {
       // now import the filters from the given external description
       snprintf(externalPath, sizeof(externalPath), "PROGDIR:Resources/spamfilters/%s.sfd", co->SpamExternalFilter);
-      ImportFilter(externalPath, TRUE);
+      ImportFilter(externalPath, TRUE, &co->filterList);
     }
   }
 
