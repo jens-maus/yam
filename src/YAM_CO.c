@@ -2756,7 +2756,7 @@ void CO_Validate(struct Config *co, BOOL update)
     }
 
     // remove previous volatile filters first
-    SafeIterateList(&CE->filterList, curNode, succ)
+    SafeIterateList(&co->filterList, curNode, succ)
     {
       struct FilterNode *filter = (struct FilterNode *)curNode;
 
