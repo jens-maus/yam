@@ -9006,7 +9006,7 @@ Beim Aufbau der SSL-Zertifikatprüfung wurde das Verzeichnis '%s' nicht gefunden.
 \n\
 Bitte stellen Sie sicher, dass der Pfad existiert und die Zertifikat-Bündeldatei enthält, so wie sie von der Installation von YAM bereit gestellt wurde.
 ;
-MSG_CO_ACTION_ABORT_FILTER
+MSG_CO_ACTION_TERMINATE_FILTER
 Filterprozess beenden
 ;
 MSG_HELP_CO_CH_ATERMINATE
