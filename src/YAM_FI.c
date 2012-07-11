@@ -2437,6 +2437,7 @@ struct FilterNode *CreateNewFilter(const int actions)
                                              TAG_DONE)) != NULL)
   {
     filter->actions = actions;
+    filter->isVolatile = FALSE;
     filter->remote = FALSE;
     filter->applyToNew = TRUE;
     filter->applyOnReq = TRUE;
@@ -2638,7 +2639,7 @@ void RemoveFolderFromFilters(const char *folder)
 ///
 /// ImportFilter
 // import filters from Thunderbird's .sfd file
-BOOL ImportFilter(const char *fileName)
+BOOL ImportFilter(const char *fileName, const BOOL isVolatile)
 {
   BOOL success = FALSE;
   FILE *fh;
@@ -2647,12 +2648,18 @@ BOOL ImportFilter(const char *fileName)
 
   if((fh = fopen(fileName, "r")) != NULL)
   {
+    struct List *filterList;
     char *buf = NULL;
     size_t size = 0;
     struct FilterNode *filter = NULL;
     char *lastAction = NULL;
 
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+
+    if(G->CO != NULL)
+      filterList = (struct List *)&CE->filterList;
+    else
+      filterList = (struct List *)&C->filterList;
 
     while(GetLine(&buf, &size, fh) >= 0)
     {
@@ -2673,24 +2680,27 @@ BOOL ImportFilter(const char *fileName)
           // push a previous filter to the configuration
           if(filter != NULL)
           {
-            if(G->CO != NULL)
+            if(G->CO != NULL && isVolatile == FALSE)
             {
               DoMethod(G->CO->GUI.LV_RULES, MUIM_NList_InsertSingle, filter, MUIV_NList_Insert_Bottom);
               set(G->CO->GUI.LV_RULES, MUIA_NList_Active, MUIV_NList_Active_Bottom);
-              AddTail((struct List *)&CE->filterList, (struct Node *)filter);
             }
+
+            // volatile filters are added at the top
+            if(isVolatile == TRUE)
+              AddHead(filterList, (struct Node *)filter);
             else
-            {
-              AddTail((struct List *)&C->filterList, (struct Node *)filter);
-            }
+              AddTail(filterList, (struct Node *)filter);
 
             success = TRUE;
           }
 
           // create a new filter node and remember the name
-          if((filter = CreateNewFilter(FA_TERMINATE)) != NULL)
+          if((filter = CreateNewFilter(0)) != NULL)
           {
             strlcpy(filter->name, eq, sizeof(filter->name));
+            filter->isVolatile = isVolatile;
+            filter->applyOnReq = !isVolatile;
           }
           else
           {
@@ -2729,6 +2739,7 @@ BOOL ImportFilter(const char *fileName)
             else if(stricmp(buf, "delete") == 0)
             {
               setFlag(filter->actions, FA_DELETE);
+              setFlag(filter->actions, FA_TERMINATE);
             }
             else if(stricmp(buf, "stop execution") == 0)
             {
@@ -2755,9 +2766,27 @@ BOOL ImportFilter(const char *fileName)
               // usually only values of 0 and 100 are used, but just to be sure
               // we treat every value greater than 50% as true junk
               if(atoi(value) >= 50)
-                setFlag(filter->actions, FA_STATUSTOSPAM);
+              {
+                struct Folder *folder;
+
+                if((folder = FO_GetFolderByType(FT_SPAM, NULL)) != NULL)
+                {
+                  // move the mail to the spam folder if it exists
+                  strlcpy(filter->moveTo, folder->Name, sizeof(filter->moveTo));
+                  setFlag(filter->actions, FA_MOVE);
+                }
+                else
+                {
+                  // otherwise mark the mail as spam only
+                  setFlag(filter->actions, FA_STATUSTOSPAM);
+                }
+                // and terminate the filter processing
+                setFlag(filter->actions, FA_TERMINATE);
+              }
               else
+              {
                 setFlag(filter->actions, FA_STATUSTOHAM);
+              }
             }
           }
         }
@@ -2967,25 +2996,32 @@ BOOL ImportFilter(const char *fileName)
       }
 	  }
 
+    free(buf);
+
     // free the last remembered action
     free(lastAction);
 
     // push the last created filter to the configuration
     if(filter != NULL)
     {
-      if(G->CO != NULL)
+      if(G->CO != NULL && isVolatile == FALSE)
       {
         DoMethod(G->CO->GUI.LV_RULES, MUIM_NList_InsertSingle, filter, MUIV_NList_Insert_Bottom);
         set(G->CO->GUI.LV_RULES, MUIA_NList_Active, MUIV_NList_Active_Bottom);
-        AddTail((struct List *)&CE->filterList, (struct Node *)filter);
       }
+
+      // volatile filters are added at the top
+      if(isVolatile == TRUE)
+        AddHead(filterList, (struct Node *)filter);
       else
-      {
-        AddTail((struct List *)&C->filterList, (struct Node *)filter);
-      }
+        AddTail(filterList, (struct Node *)filter);
     }
 
     fclose(fh);
+  }
+  else
+  {
+    E(DBF_FILTER, "filter import from '%s' failed", fileName);
   }
 
   RETURN(success);

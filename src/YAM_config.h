@@ -352,6 +352,8 @@ struct CO_GUIData
   Object *PO_POP3_NOTIFY_CMD;
   Object *ST_POP3_NOTIFY_CMD;
   Object *BT_FILTER_IMPORT;
+  Object *CH_SPAM_TRUSTEXTERNALFILTER;
+  Object *CY_SPAM_EXTERNALFILTER;
 };
 
 struct CO_ClassData  /* configuration window */
@@ -524,6 +526,7 @@ struct Config
   BOOL  SpamAddressBookIsWhiteList;
   BOOL  MoveHamToIncoming;
   BOOL  FilterHam;
+  BOOL  SpamTrustExternalFilter;
   BOOL  DisplayAllAltPart;
   BOOL  MDNEnabled;
   BOOL  ConfigIsSaved;
@@ -597,6 +600,7 @@ struct Config
   char ThemeName[SIZE_FILE];
   char UpdateDownloadPath[SIZE_PATH];
   char DefaultSSLCiphers[SIZE_DEFAULT];
+  char SpamExternalFilter[SIZE_FILE];
 };
 
 extern struct Config *C;

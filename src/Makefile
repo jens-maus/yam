@@ -480,6 +480,7 @@ MUIOBJS = \
 	CheckboxRequestWindow.o \
 	CharsetPopupList.o \
 	ConfigPageList.o \
+	FilterChooser.o \
 	FilterList.o \
 	FilterPopupList.o \
 	FolderListtree.o \

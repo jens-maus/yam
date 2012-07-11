@@ -67,6 +67,7 @@
 
 #include "mui/AccountList.h"
 #include "mui/ClassesExtra.h"
+#include "mui/FilterChooser.h"
 #include "mui/FilterList.h"
 #include "mui/FolderRequestListtree.h"
 #include "mui/IdentityList.h"
@@ -962,8 +963,10 @@ HOOKPROTONHNO(ToggleSpamFilterFunc, void, int *arg)
                                                           gui->CH_SPAMMARKONMOVE,
                                                           gui->CH_SPAMMARKASREAD,
                                                           gui->CH_MOVEHAMTOINCOMING,
+                                                          gui->CH_SPAM_TRUSTEXTERNALFILTER,
                                                           NULL);
     set(gui->CH_FILTERHAM, MUIA_Disabled, xget(gui->CH_MOVEHAMTOINCOMING, MUIA_Selected) == FALSE);
+    set(gui->CY_SPAM_EXTERNALFILTER, MUIA_Disabled, xget(gui->CH_SPAM_TRUSTEXTERNALFILTER, MUIA_Selected) == FALSE);
   }
   else
   {
@@ -976,6 +979,8 @@ HOOKPROTONHNO(ToggleSpamFilterFunc, void, int *arg)
                                                          gui->CH_SPAMMARKASREAD,
                                                          gui->CH_MOVEHAMTOINCOMING,
                                                          gui->CH_FILTERHAM,
+                                                         gui->CH_SPAM_TRUSTEXTERNALFILTER,
+                                                         gui->CY_SPAM_EXTERNALFILTER,
                                                          NULL);
   }
 
@@ -2810,6 +2815,12 @@ Object *CO_PageSpam(struct CO_ClassData *data)
                   Child, HSpace(5),
                   Child, MakeCheckGroup(&data->GUI.CH_FILTERHAM, tr(MSG_CO_FILTER_HAM)),
                 End,
+                Child, HGroup,
+                  Child, MakeCheckGroup(&data->GUI.CH_SPAM_TRUSTEXTERNALFILTER, tr(MSG_SPAM_TRUSTHEADERLINES)),
+                  Child, data->GUI.CY_SPAM_EXTERNALFILTER = FilterChooserObject,
+                  End,
+                  Child, HSpace(0),
+                End,
               End,
 
               Child, HVSpace,
@@ -2829,6 +2840,8 @@ Object *CO_PageSpam(struct CO_ClassData *data)
                                                          data->GUI.CH_SPAMMARKASREAD,
                                                          data->GUI.CH_MOVEHAMTOINCOMING,
                                                          data->GUI.CH_FILTERHAM,
+                                                         data->GUI.CH_SPAM_TRUSTEXTERNALFILTER,
+                                                         data->GUI.CY_SPAM_EXTERNALFILTER,
                                                          NULL);
 
     SetHelp(data->GUI.CH_SPAMFILTERENABLED,     MSG_HELP_CH_SPAMFILTERENABLED);
@@ -2847,6 +2860,8 @@ Object *CO_PageSpam(struct CO_ClassData *data)
                                              MUIV_Notify_Application, 3, MUIM_CallHook, &ToggleSpamFilterHook, MUIV_TriggerValue);
     DoMethod(data->GUI.CH_MOVEHAMTOINCOMING, MUIM_Notify, MUIA_Selected, MUIV_EveryTime,
                                              data->GUI.CH_FILTERHAM, 3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
+    DoMethod(data->GUI.CH_SPAM_TRUSTEXTERNALFILTER, MUIM_Notify, MUIA_Selected, MUIV_EveryTime,
+                                                    data->GUI.CY_SPAM_EXTERNALFILTER, 3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
     DoMethod(data->GUI.BT_SPAMRESETTRAININGDATA, MUIM_Notify, MUIA_Pressed,  FALSE,
                                                  MUIV_Notify_Application, 2, MUIM_CallHook, &ResetSpamTrainingDataHook);
     DoMethod(data->GUI.BT_OPTIMIZETRAININGDATA, MUIM_Notify, MUIA_Pressed,  FALSE,

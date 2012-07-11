@@ -54,6 +54,7 @@
 #include "YAM_utilities.h"
 
 #include "mui/ClassesExtra.h"
+#include "mui/FilterChooser.h"
 #include "mui/MailTextEdit.h"
 #include "mui/MainWindowToolbar.h"
 #include "mui/ThemeListGroup.h"
@@ -415,79 +416,86 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
     i = 0;
     IterateList(&co->filterList, curNode)
     {
-      int j;
       struct FilterNode *filter = (struct FilterNode *)curNode;
-      struct Node *curRuleNode;
 
-      fprintf(fh, "FI%02d.Name        = %s\n", i, filter->name);
-      fprintf(fh, "FI%02d.Remote      = %s\n", i, Bool2Txt(filter->remote));
-      fprintf(fh, "FI%02d.ApplyToNew  = %s\n", i, Bool2Txt(filter->applyToNew));
-      fprintf(fh, "FI%02d.ApplyToSent = %s\n", i, Bool2Txt(filter->applyToSent));
-      fprintf(fh, "FI%02d.ApplyOnReq  = %s\n", i, Bool2Txt(filter->applyOnReq));
-
-      // now we do have to iterate through our ruleList
-      j = 0;
-      IterateList(&filter->ruleList, curRuleNode)
+      // don't save volatile filters
+      if(filter->isVolatile == FALSE)
       {
-        struct RuleNode *rule = (struct RuleNode *)curRuleNode;
+        int j;
+        struct Node *curRuleNode;
 
-        // we treat the first rule a bit different for compatibility
-        // reasons.
-        if(j == 0)
+        fprintf(fh, "FI%02d.Name        = %s\n", i, filter->name);
+        fprintf(fh, "FI%02d.Remote      = %s\n", i, Bool2Txt(filter->remote));
+        fprintf(fh, "FI%02d.ApplyToNew  = %s\n", i, Bool2Txt(filter->applyToNew));
+        fprintf(fh, "FI%02d.ApplyToSent = %s\n", i, Bool2Txt(filter->applyToSent));
+        fprintf(fh, "FI%02d.ApplyOnReq  = %s\n", i, Bool2Txt(filter->applyOnReq));
+
+        // now we do have to iterate through our ruleList
+        j = 0;
+        IterateList(&filter->ruleList, curRuleNode)
         {
-          fprintf(fh, "FI%02d.Field       = %d\n", i, rule->searchMode);
-          fprintf(fh, "FI%02d.SubField    = %d\n", i, rule->subSearchMode);
-          fprintf(fh, "FI%02d.CustomField = %s\n", i, rule->customField);
-          fprintf(fh, "FI%02d.Comparison  = %d\n", i, rule->comparison);
-          fprintf(fh, "FI%02d.Match       = %s\n", i, rule->matchPattern);
-          fprintf(fh, "FI%02d.CaseSens    = %s\n", i, Bool2Txt(isFlagSet(rule->flags, SEARCHF_CASE_SENSITIVE)));
-          fprintf(fh, "FI%02d.Substring   = %s\n", i, Bool2Txt(isFlagSet(rule->flags, SEARCHF_SUBSTRING)));
-          fprintf(fh, "FI%02d.DOSPattern  = %s\n", i, Bool2Txt(isFlagSet(rule->flags, SEARCHF_DOS_PATTERN)));
-        }
-        else
-        {
-          // we handle the combine string different as it relates
-          // to the previous one
-          if(j > 1)
-            fprintf(fh, "FI%02d.Combine%d    = %d\n", i, j, rule->combine);
+          struct RuleNode *rule = (struct RuleNode *)curRuleNode;
+
+          // we treat the first rule a bit different for compatibility
+          // reasons.
+          if(j == 0)
+          {
+            fprintf(fh, "FI%02d.Field       = %d\n", i, rule->searchMode);
+            fprintf(fh, "FI%02d.SubField    = %d\n", i, rule->subSearchMode);
+            fprintf(fh, "FI%02d.CustomField = %s\n", i, rule->customField);
+            fprintf(fh, "FI%02d.Comparison  = %d\n", i, rule->comparison);
+            fprintf(fh, "FI%02d.Match       = %s\n", i, rule->matchPattern);
+            fprintf(fh, "FI%02d.CaseSens    = %s\n", i, Bool2Txt(isFlagSet(rule->flags, SEARCHF_CASE_SENSITIVE)));
+            fprintf(fh, "FI%02d.Substring   = %s\n", i, Bool2Txt(isFlagSet(rule->flags, SEARCHF_SUBSTRING)));
+            fprintf(fh, "FI%02d.DOSPattern  = %s\n", i, Bool2Txt(isFlagSet(rule->flags, SEARCHF_DOS_PATTERN)));
+          }
           else
-            fprintf(fh, "FI%02d.Combine     = %d\n", i, rule->combine);
+          {
+            // we handle the combine string different as it relates
+            // to the previous one
+            if(j > 1)
+              fprintf(fh, "FI%02d.Combine%d    = %d\n", i, j, rule->combine);
+            else
+              fprintf(fh, "FI%02d.Combine     = %d\n", i, rule->combine);
 
-          fprintf(fh, "FI%02d.Field%d      = %d\n", i, j+1, rule->searchMode);
-          fprintf(fh, "FI%02d.SubField%d   = %d\n", i, j+1, rule->subSearchMode);
-          fprintf(fh, "FI%02d.CustomField%d= %s\n", i, j+1, rule->customField);
-          fprintf(fh, "FI%02d.Comparison%d = %d\n", i, j+1, rule->comparison);
-          fprintf(fh, "FI%02d.Match%d      = %s\n", i, j+1, rule->matchPattern);
-          fprintf(fh, "FI%02d.CaseSens%d   = %s\n", i, j+1, Bool2Txt(isFlagSet(rule->flags, SEARCHF_CASE_SENSITIVE)));
-          fprintf(fh, "FI%02d.Substring%d  = %s\n", i, j+1, Bool2Txt(isFlagSet(rule->flags, SEARCHF_SUBSTRING)));
-          fprintf(fh, "FI%02d.DOSPattern%d = %s\n", i, j+1, Bool2Txt(isFlagSet(rule->flags, SEARCHF_DOS_PATTERN)));
+            fprintf(fh, "FI%02d.Field%d      = %d\n", i, j+1, rule->searchMode);
+            fprintf(fh, "FI%02d.SubField%d   = %d\n", i, j+1, rule->subSearchMode);
+            fprintf(fh, "FI%02d.CustomField%d= %s\n", i, j+1, rule->customField);
+            fprintf(fh, "FI%02d.Comparison%d = %d\n", i, j+1, rule->comparison);
+            fprintf(fh, "FI%02d.Match%d      = %s\n", i, j+1, rule->matchPattern);
+            fprintf(fh, "FI%02d.CaseSens%d   = %s\n", i, j+1, Bool2Txt(isFlagSet(rule->flags, SEARCHF_CASE_SENSITIVE)));
+            fprintf(fh, "FI%02d.Substring%d  = %s\n", i, j+1, Bool2Txt(isFlagSet(rule->flags, SEARCHF_SUBSTRING)));
+            fprintf(fh, "FI%02d.DOSPattern%d = %s\n", i, j+1, Bool2Txt(isFlagSet(rule->flags, SEARCHF_DOS_PATTERN)));
+          }
+
+          j++;
         }
 
-        j++;
+        fprintf(fh, "FI%02d.Actions     = %d\n", i, filter->actions);
+        fprintf(fh, "FI%02d.BounceTo    = %s\n", i, filter->bounceTo);
+        fprintf(fh, "FI%02d.ForwardTo   = %s\n", i, filter->forwardTo);
+        fprintf(fh, "FI%02d.ReplyFile   = %s\n", i, filter->replyFile);
+        fprintf(fh, "FI%02d.ExecuteCmd  = %s\n", i, filter->executeCmd);
+        fprintf(fh, "FI%02d.PlaySound   = %s\n", i, filter->playSound);
+        fprintf(fh, "FI%02d.MoveTo      = %s\n", i, filter->moveTo);
+
+        i++;
       }
-
-      fprintf(fh, "FI%02d.Actions     = %d\n", i, filter->actions);
-      fprintf(fh, "FI%02d.BounceTo    = %s\n", i, filter->bounceTo);
-      fprintf(fh, "FI%02d.ForwardTo   = %s\n", i, filter->forwardTo);
-      fprintf(fh, "FI%02d.ReplyFile   = %s\n", i, filter->replyFile);
-      fprintf(fh, "FI%02d.ExecuteCmd  = %s\n", i, filter->executeCmd);
-      fprintf(fh, "FI%02d.PlaySound   = %s\n", i, filter->playSound);
-      fprintf(fh, "FI%02d.MoveTo      = %s\n", i, filter->moveTo);
-
-      i++;
     }
 
     fprintf(fh, "\n[Spam filter]\n");
-    fprintf(fh, "SpamFilterEnabled= %s\n", Bool2Txt(co->SpamFilterEnabled));
-    fprintf(fh, "SpamFilterForNew = %s\n", Bool2Txt(co->SpamFilterForNewMail));
-    fprintf(fh, "SpamMarkOnMove   = %s\n", Bool2Txt(co->SpamMarkOnMove));
-    fprintf(fh, "SpamMarkAsRead   = %s\n", Bool2Txt(co->SpamMarkAsRead));
-    fprintf(fh, "SpamABookIsWhite = %s\n", Bool2Txt(co->SpamAddressBookIsWhiteList));
-    fprintf(fh, "SpamProbThreshold= %d\n", co->SpamProbabilityThreshold);
-    fprintf(fh, "SpamFlushInterval= %d\n", co->SpamFlushTrainingDataInterval);
-    fprintf(fh, "SpamFlushThres   = %d\n", co->SpamFlushTrainingDataThreshold);
-    fprintf(fh, "MoveHamToIncoming= %s\n", Bool2Txt(co->MoveHamToIncoming));
-    fprintf(fh, "FilterHam        = %s\n", Bool2Txt(co->FilterHam));
+    fprintf(fh, "SpamFilterEnabled  = %s\n", Bool2Txt(co->SpamFilterEnabled));
+    fprintf(fh, "SpamFilterForNew   = %s\n", Bool2Txt(co->SpamFilterForNewMail));
+    fprintf(fh, "SpamMarkOnMove     = %s\n", Bool2Txt(co->SpamMarkOnMove));
+    fprintf(fh, "SpamMarkAsRead     = %s\n", Bool2Txt(co->SpamMarkAsRead));
+    fprintf(fh, "SpamABookIsWhite   = %s\n", Bool2Txt(co->SpamAddressBookIsWhiteList));
+    fprintf(fh, "SpamProbThreshold  = %d\n", co->SpamProbabilityThreshold);
+    fprintf(fh, "SpamFlushInterval  = %d\n", co->SpamFlushTrainingDataInterval);
+    fprintf(fh, "SpamFlushThres     = %d\n", co->SpamFlushTrainingDataThreshold);
+    fprintf(fh, "MoveHamToIncoming  = %s\n", Bool2Txt(co->MoveHamToIncoming));
+    fprintf(fh, "FilterHam          = %s\n", Bool2Txt(co->FilterHam));
+    fprintf(fh, "TrustExternalFilter= %s\n", Bool2Txt(co->SpamTrustExternalFilter));
+    fprintf(fh, "ExternalFilter     = %s\n", co->SpamExternalFilter);
 
     fprintf(fh, "\n[Read]\n");
     fprintf(fh, "ShowHeader       = %d\n", co->ShowHeader);
@@ -1251,6 +1259,8 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
           else if(stricmp(buf, "SpamFlushThres") == 0)           co->SpamFlushTrainingDataThreshold = atoi(value);
           else if(stricmp(buf, "MoveHamToIncoming") == 0)        co->MoveHamToIncoming = Txt2Bool(value);
           else if(stricmp(buf, "FilterHam") == 0)                co->FilterHam = Txt2Bool(value);
+          else if(stricmp(buf, "TrustExternalFilter") == 0)      co->SpamTrustExternalFilter = Txt2Bool(value);
+          else if(stricmp(buf, "ExternalFilter") == 0)           strlcpy(co->SpamExternalFilter, value, sizeof(co->SpamExternalFilter));
 
 /* Read */
           else if(stricmp(buf, "ShowHeader") == 0)               co->ShowHeader = atoi(value);
@@ -2067,6 +2077,8 @@ void CO_GetConfig(BOOL saveConfig)
       CE->SpamAddressBookIsWhiteList = GetMUICheck(gui->CH_SPAMABOOKISWHITELIST);
       CE->MoveHamToIncoming = GetMUICheck(gui->CH_MOVEHAMTOINCOMING);
       CE->FilterHam = GetMUICheck(gui->CH_FILTERHAM);
+      CE->SpamTrustExternalFilter = GetMUICheck(gui->CH_SPAM_TRUSTEXTERNALFILTER);
+      strlcpy(CE->SpamExternalFilter, (char *)xget(gui->CY_SPAM_EXTERNALFILTER, MUIA_FilterChooser_Filter), sizeof(CE->SpamExternalFilter));
 
       if(C->SpamFilterEnabled == TRUE && CE->SpamFilterEnabled == FALSE)
       {
@@ -2768,7 +2780,12 @@ void CO_SetConfig(void)
       // iterate through our filter list and add it to our
       // MUI List
       IterateList(&CE->filterList, curNode)
-        DoMethod(gui->LV_RULES, MUIM_NList_InsertSingle, curNode, MUIV_NList_Insert_Bottom);
+      {
+        struct FilterNode *filter = (struct FilterNode *)curNode;
+
+        if(filter->isVolatile == FALSE)
+          DoMethod(gui->LV_RULES, MUIM_NList_InsertSingle, filter, MUIV_NList_Insert_Bottom);
+      }
 
       // make sure the first entry is selected per default
       set(gui->LV_RULES, MUIA_NList_Active, MUIV_NList_Active_Top);
@@ -2786,6 +2803,8 @@ void CO_SetConfig(void)
       setcheckmark(gui->CH_SPAMABOOKISWHITELIST, CE->SpamAddressBookIsWhiteList);
       setcheckmark(gui->CH_MOVEHAMTOINCOMING, CE->MoveHamToIncoming);
       setcheckmark(gui->CH_FILTERHAM, CE->FilterHam);
+      setcheckmark(gui->CH_SPAM_TRUSTEXTERNALFILTER, CE->SpamTrustExternalFilter);
+      set(gui->CY_SPAM_EXTERNALFILTER, MUIA_FilterChooser_Filter, CE->SpamExternalFilter);
       snprintf(buf, sizeof(buf), tr(MSG_CO_SPAM_STATISTICS), BayesFilterNumberOfHamClassifiedMails(), BayesFilterNumberOfHamClassifiedWords());
       set(gui->TX_SPAMGOODCOUNT, MUIA_Text_Contents, buf);
       snprintf(buf, sizeof(buf), tr(MSG_CO_SPAM_STATISTICS), BayesFilterNumberOfSpamClassifiedMails(), BayesFilterNumberOfSpamClassifiedWords());

@@ -1748,7 +1748,6 @@ static void InitAfterLogin(void)
     }
   }
 
-
   if(FO_GetFolderByType(FT_DRAFTS, NULL) == NULL)
   {
     if(FO_CreateFolder(FT_DRAFTS, FolderName[FT_DRAFTS], tr(MSG_MA_DRAFTS)) == TRUE)

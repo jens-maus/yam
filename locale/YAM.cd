@@ -7495,3 +7495,6 @@ Import...
 MSG_FILTER_IMPORT_TITLE (2391//)
 Import filter
 ;
+MSG_SPAM_TRUSTHEADERLINES (2392//)
+Trust header lines of this external filter:
+;

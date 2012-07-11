@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.54 (11.7.2012)
+## version $VER: YAM.catalog 7.55 (11.7.2012)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -9019,4 +9019,7 @@ Importieren...
 ;
 MSG_FILTER_IMPORT_TITLE
 Filter importieren
+;
+MSG_SPAM_TRUSTHEADERLINES
+Den Kopfzeilen dieses externen Filters vertrauen:
 ;

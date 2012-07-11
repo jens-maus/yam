@@ -260,7 +260,7 @@ HOOKPROTONHNP(ImportFilterFunc, void, Object *obj)
     char path[SIZE_PATHFILE];
 
     AddPath(path, frc->drawer, frc->file, sizeof(path));
-    ImportFilter(path);
+    ImportFilter(path, FALSE);
   }
 
   LEAVE();
@@ -1561,6 +1561,8 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     co->SpamAddressBookIsWhiteList = TRUE;
     co->MoveHamToIncoming = TRUE;
     co->FilterHam = TRUE;
+    co->SpamTrustExternalFilter = TRUE;
+    strlcpy(co->SpamExternalFilter, "SpamAssassin", sizeof(co->SpamExternalFilter));
     co->SpamProbabilityThreshold = DEFAULT_SPAM_PROBABILITY_THRESHOLD;
     co->SpamFlushTrainingDataInterval = DEFAULT_FLUSH_TRAINING_DATA_INTERVAL;
     co->SpamFlushTrainingDataThreshold = DEFAULT_FLUSH_TRAINING_DATA_THRESHOLD;
@@ -2154,6 +2156,7 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      c1->SpamAddressBookIsWhiteList      == c2->SpamAddressBookIsWhiteList &&
      c1->MoveHamToIncoming               == c2->MoveHamToIncoming &&
      c1->FilterHam                       == c2->FilterHam &&
+     c1->SpamTrustExternalFilter         == c2->SpamTrustExternalFilter &&
      c1->DisplayAllAltPart               == c2->DisplayAllAltPart &&
      c1->MDNEnabled                      == c2->MDNEnabled &&
      c1->AutoClip                        == c2->AutoClip &&
@@ -2235,7 +2238,8 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      strcmp(c1->QuoteChar,           c2->QuoteChar) == 0 &&
      strcmp(c1->AltQuoteChar,        c2->AltQuoteChar) == 0 &&
      strcmp(c1->ThemeName,           c2->ThemeName) == 0 &&
-     strcmp(c1->UpdateDownloadPath,  c2->UpdateDownloadPath) == 0)
+     strcmp(c1->UpdateDownloadPath,  c2->UpdateDownloadPath) == 0 &&
+     strcmp(c1->SpamExternalFilter,  c2->SpamExternalFilter) == 0)
   {
     equal = TRUE;
   }
@@ -2736,6 +2740,9 @@ void CO_Validate(struct Config *co, BOOL update)
 
   if(co->SpamFilterEnabled == TRUE)
   {
+    struct Node *succ;
+    char externalPath[SIZE_PATHFILE];
+
     // limit the spam probability threshold to sensible values
     if(co->SpamProbabilityThreshold < 75)
     {
@@ -2746,6 +2753,25 @@ void CO_Validate(struct Config *co, BOOL update)
     {
       co->SpamProbabilityThreshold = 99;
       saveAtEnd = TRUE;
+    }
+
+    // remove previous volatile filters first
+    SafeIterateList(&CE->filterList, curNode, succ)
+    {
+      struct FilterNode *filter = (struct FilterNode *)curNode;
+
+      if(filter->isVolatile == TRUE)
+      {
+        Remove(curNode);
+        DeleteFilterNode(filter);
+      }
+    }
+
+    if(co->SpamTrustExternalFilter == TRUE)
+    {
+      // now import the filters from the given external description
+      snprintf(externalPath, sizeof(externalPath), "PROGDIR:resources/%s.sfd", co->SpamExternalFilter);
+      ImportFilter(externalPath, TRUE);
     }
   }
 

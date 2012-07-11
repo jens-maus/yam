@@ -150,6 +150,7 @@ struct FilterNode
 {
   struct MinNode  node;                     // required for placing it into struct Config
   int             actions;                  // actions to execute if filter/search matches
+  BOOL            isVolatile;               // filter is a volatile filter inserted by YAM
   BOOL            remote;                   // filter is a remote filter
   BOOL            applyToNew;               // apply filter automatically to new mail
   BOOL            applyOnReq;               // apply filter on user request
@@ -206,6 +207,6 @@ void FilterMails(struct Folder *folder, const struct MailList *mlist, const int 
 BOOL FolderIsUsedByFilters(const char *folder);
 void RenameFolderInFilters(const char *oldFolder, const char *newFolder);
 void RemoveFolderFromFilters(const char *folder);
-BOOL ImportFilter(const char *fileName);
+BOOL ImportFilter(const char *fileName, const BOOL isVolatile);
 
 #endif /* YAM_FIND_H */

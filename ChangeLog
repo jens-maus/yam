@@ -9,6 +9,12 @@ $URL$
 
   * tcp/ssl.c: renamed the "Certificates" directory to "Resources" to keep all
     kind of auxiliary files instead of certificates only.
+  * YAM_CO.c, YAM_COg.c, YAM_COs.c, YAM_FI.c: implemented the "trust header lines
+    of external filter" feature as known from Thunderbird. This lets the user
+    choose an external filter from an number of installed .sfd files in the
+    resources directory. These files usually define two filters for specific
+    header lines to tell spam and non-spam mails apart. The filters will *not*
+    occur in YAM's own list of filters. This finally closes #128 again.
 
 2012-07-11 Thore Böckelmann <tboeckel@gmx.de>
 
