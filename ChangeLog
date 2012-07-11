@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-07-11 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/ReadMailGroup.c: corrected the parameter order of the double click hook
+    function. This closes #333.
+
 2012-07-10 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_FI.c: implemented "abort filter" action for filters. This will cause the
