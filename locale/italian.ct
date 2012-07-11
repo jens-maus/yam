@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.99 (7.07.2012)
+## version $VER: YAM.catalog 7.99 (12.07.2012)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -7,7 +7,7 @@
 ; Compiled with FlexCat 2.9 PPC (AmigaOS4)
 ; $Id$
 ;
-; based on YAM.cd 6078 2012-07-07
+; based on YAM.cd 6095 2012-07-12
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -10655,4 +10655,69 @@ MSG_SSL_CERT_WARNING_SHOWTITLE
 Certificato di %s:%d
 ; Certificate of %s:%d
 ; HOSTNAME, PORT
+;
+MSG_ER_WARN_CAFILE
+Attenzione, il file '%s' del certificato non è stato trovato\n\
+durante il tentativo di connessione SSL.\n\
+\n\
+Per favore assicurati che il certificato esista e che sia correttamente\n\
+aggiornato altrimenti la connessione risulterà non verificabile.
+; While trying to establish a SSL connection the certificate bundle \
+; file '%s' was found to be missing.\n\
+; \n\
+; Please make sure that the file exists and is uptodate or otherwise \
+; each SSL connection will be flagged as unverified.
+; FILEPATH
+;
+MSG_ER_WARN_LOADCAPATH
+Si è verificato un errore durante il tentativo di caricamento\n\
+del file relativo al certificato '%s' oppure nel certificato\n\
+individuale presente nella cartella '%s'\n\
+\n\
+Per favore assicurati di aver inserito un file corretto nella\n\
+cartella di YAM relativa ai certificati.
+; While trying to load the certificate bundle '%s' or individual \
+; certificate files from '%s' an error occurred.\n\
+; \n\
+; Please make sure that no invalid file has been placed in the \
+; certificate folder.
+; FILEPATH, DIRPATH
+;
+MSG_ER_WARN_CAPATH
+Attenzione, la directory '%s' non è stata trovata durante il tentativo\n\
+di impostazione del certificato SSL.\n\
+\n\
+Per favore assicurati che il percorso sia corretto e che contenga un\n\
+corretto certificato come stabilito nel processo di installazione.
+; While trying to setup a SSL certificate verify the directory '%s' \
+; was found to be missing.\n\
+; \n\
+; Please make sure that the path exists and contains the certificate \
+; bundle file as supplied during the installation process of YAM.
+; DIRPATH
+;
+MSG_CO_ACTION_TERMINATE_FILTER
+Termina il processo del filtro
+; Terminate filter process
+;
+MSG_HELP_CO_CH_ATERMINATE
+Termina il processo alla fine del\n\
+procedimento su questo filtro.\n\
+I filtri successivi non verranno\n\
+considerati.
+; Terminate the filter process after this\n\
+; filter. Following filters will not\n\
+; be executed anymore.
+;
+MSG_CO_FILTER_IMPORT
+Importazione in corso...
+; Import...
+;
+MSG_FILTER_IMPORT_TITLE
+Importazione del filtro
+; Import filter
+;
+MSG_SPAM_TRUSTHEADERLINES
+Fidati dell'intestazione di questo filtro esterno:
+; Trust header lines of this external filter:
 ;
