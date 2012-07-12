@@ -141,10 +141,8 @@ void ER_NewError(const char *error, ...)
 
   if(IsMainThread() == TRUE)
   {
-    static char label[SIZE_SMALL];
-
-    snprintf(label, sizeof(label), "\033c%s %%ld/%d", tr(MSG_ErrorReq), G->ER_NumErr);
-    xset(G->ER->GUI.NB_ERROR, MUIA_Numeric_Format, label,
+    snprintf(G->ER->GUI.sliderLabel, sizeof(G->ER->GUI.sliderLabel), "\033c%s %%ld/%d", tr(MSG_ErrorReq), G->ER_NumErr);
+    xset(G->ER->GUI.NB_ERROR, MUIA_Numeric_Format, G->ER->GUI.sliderLabel,
                               MUIA_Numeric_Min,    1,
                               MUIA_Numeric_Max,    G->ER_NumErr,
                               MUIA_Numeric_Value,  G->ER_NumErr);

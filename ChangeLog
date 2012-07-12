@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-07-13 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_ER.c: moved the static label string to the GUI data structure.
+
 2012-07-12 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: update according to the latest changes.

@@ -37,6 +37,7 @@ struct ER_GUIData
    Object *BT_NEXT;
    Object *NB_ERROR;
    Object *BT_PREV;
+   char sliderLabel[SIZE_SMALL];
 };
 
 struct ER_ClassData  /* error window */
