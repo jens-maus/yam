@@ -1434,7 +1434,7 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
               if((tc->UIDLhashTable = InitUIDLhash(tc->msn)) != NULL)
                 uidlOk = TRUE;
               else
-                ER_NewError("Failed to init UIDL hash");
+                ER_NewError(tr(MSG_ER_POP3_UIDLHASH_INIT_FAILED));
             }
             else
               uidlOk = TRUE;

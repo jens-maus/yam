@@ -13,6 +13,7 @@ $URL$
     It will be used in cases a mail does not contain the usual MIME-Version
     header line, for example, to record such error, but to not annoy the user
     too many error messages. This closes #240 again.
+  * tcp/pop3.c: localized a not yet translatable error message.
 
 2012-07-12 Samir Hawamdeh <s.hawamdeh@tin.it>
 
