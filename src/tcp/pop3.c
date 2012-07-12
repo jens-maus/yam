@@ -1414,7 +1414,7 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
 
     // try to open the TCP/IP stack
     if((tc->connection = CreateConnection()) != NULL && ConnectionIsOnline(tc->connection) == TRUE)
-    { 
+    {
       // copy a link to the mailservernode for which we created
       // the connection
       tc->connection->server = tc->msn;

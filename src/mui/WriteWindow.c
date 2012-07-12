@@ -2451,7 +2451,7 @@ DECLARE(DisplayAttachment)
   DoMethod(data->LV_ATTACH, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &attach);
   if(attach != NULL)
   {
-    if(FileExists(attach->FilePath))
+    if(FileExists(attach->FilePath) == TRUE)
       RE_DisplayMIME(attach->FilePath, attach->ContentType);
     else
       ER_NewError(tr(MSG_ER_INVALIDATTFILE), attach->FilePath);

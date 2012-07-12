@@ -159,7 +159,7 @@ BOOL ReceiveHTTPBody(struct TransferContext *tc, const char *filename)
           received = -1; // signal an error!
           break;
         }
-        
+
         // forget the initial value and sum up all further sizes
         if(received == -1)
           received = len;
@@ -188,7 +188,7 @@ BOOL ReceiveHTTPBody(struct TransferContext *tc, const char *filename)
     // zero content is treated as immediate success
     success = TRUE;
   }
-  
+
   RETURN(success);
   return success;
 }
@@ -255,7 +255,7 @@ redirected:
       // create a new transfer window
       if(tc->transferGroup == NULL)
         tc->transferGroup = (Object *)PushMethodOnStackWait(G->App, 6, MUIM_YAMApplication_CreateTransferGroup, CurrentThread(), tc->transferGroupTitle, tc->connection, TRUE, isFlagSet(flags, DLURLF_VISIBLE));
-        
+
       if(tc->transferGroup != NULL)
       {
         PushMethodOnStack(tc->transferGroup, 3, MUIM_Set, MUIA_TransferControlGroup_MailMode, FALSE);
