@@ -783,11 +783,23 @@ DECLARE(UpdateCheck) // ULONG quiet
 ///
 /// DECLARE(ShowError)
 // show an error message and free() the pointer
-// NOTE: the error message must have been allocated by malloc() or similar!
-DECLARE(ShowError) // char *errorMsg
+// NOTE: the message must have been allocated by malloc() or similar!
+DECLARE(ShowError) // char *message
 {
-  ER_NewError(msg->errorMsg);
-  free(msg->errorMsg);
+  ER_NewError(msg->message);
+  free(msg->message);
+
+  return 0;
+}
+
+///
+/// DECLARE(ShowWarning)
+// show a warning message and free() the pointer
+// NOTE: the message must have been allocated by malloc() or similar!
+DECLARE(ShowWarning) // char *message
+{
+  ER_NewWarning(msg->message);
+  free(msg->message);
 
   return 0;
 }

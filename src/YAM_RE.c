@@ -1144,7 +1144,9 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, enum ReadHeaderM
   // some other encoding than plain 7bit ASCII is to be used.
   if(mode == RHM_MAINHEADER && isMIMEconform(rp) == FALSE && rp->EncodingCode != ENC_7BIT)
   {
-    ER_NewError(tr(MSG_ER_NON_MIME_CONFORMANT_MAIL), rp->rmData->readFile);
+    // issue a warning only to not annoy the users
+    // non-MIME-conformant mails seem to become more and more popular :(
+    ER_NewWarning(tr(MSG_ER_NON_MIME_CONFORMANT_MAIL), rp->rmData->readFile);
   }
 
   RETURN(TRUE);

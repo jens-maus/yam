@@ -64,9 +64,9 @@ static struct ER_ClassData *ER_New(void);
  Module: Error window
 ***************************************************************************/
 
-/// ER_NewError
-// Adds a new error message and displays it
-void ER_NewError(const char *error, ...)
+/// ShowMessage
+//
+static void ShowMessage(BOOL isError, const char *message, va_list args)
 {
   int oldNumErr = G->ER_NumErr;
 
@@ -79,21 +79,12 @@ void ER_NewError(const char *error, ...)
       LEAVE();
       return;
     }
-
-    if(SafeOpenWindow(G->ER->GUI.WI) == FALSE)
-    {
-      DisposeModule(&G->ER);
-
-      LEAVE();
-      return;
-    }
   }
 
-  if(error != NULL)
+  if(message != NULL)
   {
     if(IsMainThread() == TRUE)
     {
-      va_list args;
       char buf[SIZE_LARGE];
       char datstr[64];
 
@@ -117,9 +108,7 @@ void ER_NewError(const char *error, ...)
       // get actual date as a string
       DateStamp2String(datstr, sizeof(datstr), NULL, (C->DSListFormat == DSS_DATEBEAT || C->DSListFormat == DSS_RELDATEBEAT) ? DSS_DATEBEAT : DSS_DATETIME, TZC_NONE);
 
-      va_start(args, error);
-      vsnprintf(buf, sizeof(buf), error, args);
-      va_end(args);
+      vsnprintf(buf, sizeof(buf), message, args);
 
       // append the datestring
       snprintf(buf, sizeof(buf), "%s\n\n(%s)", buf, datstr);
@@ -129,13 +118,15 @@ void ER_NewError(const char *error, ...)
     }
     else
     {
-      va_list args;
       char *msg;
 
-      va_start(args, error);
-      if(vasprintf(&msg, error, args) != -1)
-        PushMethodOnStack(G->App, 2, MUIM_YAMApplication_ShowError, msg);
-      va_end(args);
+      if(vasprintf(&msg, message, args) != -1)
+      {
+        if(isError == TRUE)
+          PushMethodOnStack(G->App, 2, MUIM_YAMApplication_ShowError, msg);
+        else
+          PushMethodOnStack(G->App, 2, MUIM_YAMApplication_ShowWarning, msg);
+      }
     }
   }
 
@@ -155,6 +146,44 @@ void ER_NewError(const char *error, ...)
     if(G->MA != NULL)
       set(G->MA->GUI.MI_ERRORS, MUIA_Menuitem_Enabled, TRUE);
   }
+
+  // open the window for errors only, warnings are just recorded
+  if(isError == TRUE && SafeOpenWindow(G->ER->GUI.WI) == FALSE)
+  {
+    DisposeModule(&G->ER);
+  }
+
+  LEAVE();
+}
+
+///
+/// ER_NewError
+// Adds a new error message and displays it
+void ER_NewError(const char *message, ...)
+{
+  va_list args;
+
+  ENTER();
+
+  va_start(args, message);
+  ShowMessage(TRUE, message, args);
+  va_end(args);
+
+  LEAVE();
+}
+
+///
+/// ER_NewWarning
+// Adds a new warning message
+void ER_NewWarning(const char *message, ...)
+{
+  va_list args;
+
+  ENTER();
+
+  va_start(args, message);
+  ShowMessage(FALSE, message, args);
+  va_end(args);
 
   LEAVE();
 }
