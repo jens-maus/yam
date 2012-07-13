@@ -5,12 +5,21 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
-2012-07-14 Thore Böckelmann <tboeckel@gmx.de>
+2012-07-13 Jens Langner <Jens.Langner@light-speed.de>
+
+  * UpdateNotifyWindow.c: fixed an unfreed memory situation where the changelog
+    text was never freed upon diposing the object.
+
+2012-07-13 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_COs.c: added the saving and loading of the size limit for large mails
     again. This closes #335.
 
-2012-07-13 Thore Böckelmann <tboeckel@gmx.de>
+2012-07-12 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: update according to the latest changes.
+
+2012-07-12 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_ER.c: moved the static label string to the GUI data structure.
   * YAM_ER.c, YAM_RE.c: implemented new function ER_NewWarning(). This serves
@@ -19,13 +28,6 @@ $URL$
     header line, for example, to record such error, but to not annoy the user
     with too many error messages. This closes #240 again.
   * tcp/pop3.c: localized a not yet translatable error message.
-
-2012-07-12 Samir Hawamdeh <s.hawamdeh@tin.it>
-
-  * locale/italian.ct: update according to the latest changes.
-
-2012-07-12 Thore Böckelmann <tboeckel@gmx.de>
-
   * tcp/ssl.c: renamed the "Certificates" directory to "Resources" to keep all
     kind of auxiliary files instead of certificates only.
   * YAM_CO.c, YAM_COg.c, YAM_COs.c, YAM_FI.c: implemented the "trust header lines

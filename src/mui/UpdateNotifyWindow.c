@@ -207,8 +207,13 @@ OVERLOAD(OM_DISPOSE)
 
   // remove the notification
   DoMethod(G->App, MUIM_KillNotifyObj, MUIA_Application_Iconified, obj);
+
   // close the downloaded update file
   CloseTempFile(data->tempFile);
+
+  // free the changelog text
+  free(data->changeLogText);
+  data->changeLogText = NULL;
 
   return DoSuperMethodA(cl, obj, msg);
 }
