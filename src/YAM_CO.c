@@ -278,6 +278,9 @@ void ImportExternalSpamFilters(struct Config *co)
   // to move spam mails to it
   if(FO_GetFolderByType(FT_SPAM, NULL) != NULL)
   {
+    struct Node *curNode;
+    struct Node *succ;
+
     // remove previous volatile filters first
     SafeIterateList(&co->filterList, curNode, succ)
     {
@@ -292,6 +295,8 @@ void ImportExternalSpamFilters(struct Config *co)
 
     if(co->SpamTrustExternalFilter == TRUE)
     {
+      char externalPath[SIZE_PATHFILE];
+
       // now import the filters from the given external description
       snprintf(externalPath, sizeof(externalPath), "PROGDIR:Resources/spamfilters/%s.sfd", co->SpamExternalFilter);
       ImportFilter(externalPath, TRUE, &co->filterList);
@@ -2773,9 +2778,6 @@ void CO_Validate(struct Config *co, BOOL update)
 
   if(co->SpamFilterEnabled == TRUE)
   {
-    struct Node *succ;
-    char externalPath[SIZE_PATHFILE];
-
     // limit the spam probability threshold to sensible values
     if(co->SpamProbabilityThreshold < 75)
     {
