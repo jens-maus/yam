@@ -5,14 +5,19 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-07-14 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_COs.c: added the saving and loading of the size limit for large mails
+    again. This closes #335.
+
 2012-07-13 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_ER.c: moved the static label string to the GUI data structure.
-  * YAM_ER.c, YAM_RE.c: implemented new function ER_NewWarning(). This servers
+  * YAM_ER.c, YAM_RE.c: implemented new function ER_NewWarning(). This serves
     exactly the same purpose as ER_NewError() but will not open the error window.
     It will be used in cases a mail does not contain the usual MIME-Version
     header line, for example, to record such error, but to not annoy the user
-    too many error messages. This closes #240 again.
+    with too many error messages. This closes #240 again.
   * tcp/pop3.c: localized a not yet translatable error message.
 
 2012-07-12 Samir Hawamdeh <s.hawamdeh@tin.it>
