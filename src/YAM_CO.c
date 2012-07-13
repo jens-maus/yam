@@ -268,7 +268,40 @@ HOOKPROTONHNP(ImportFilterFunc, void, Object *obj)
 MakeHook(ImportFilterHook, ImportFilterFunc);
 
 ///
+/// ImportExternalSpamFilters
+// import additional spam filter rules
+void ImportExternalSpamFilters(struct Config *co)
+{
+  ENTER();
 
+  // make sure that the spam folder really exists to be able
+  // to move spam mails to it
+  if(FO_GetFolderByType(FT_SPAM, NULL) != NULL)
+  {
+    // remove previous volatile filters first
+    SafeIterateList(&co->filterList, curNode, succ)
+    {
+      struct FilterNode *filter = (struct FilterNode *)curNode;
+
+      if(filter->isVolatile == TRUE)
+      {
+        Remove(curNode);
+        DeleteFilterNode(filter);
+      }
+    }
+
+    if(co->SpamTrustExternalFilter == TRUE)
+    {
+      // now import the filters from the given external description
+      snprintf(externalPath, sizeof(externalPath), "PROGDIR:Resources/spamfilters/%s.sfd", co->SpamExternalFilter);
+      ImportFilter(externalPath, TRUE, &co->filterList);
+    }
+  }
+
+  LEAVE();
+}
+
+///
 /// GhostOutFilter
 //  Enables/disables GUI gadgets in filter form
 void GhostOutFilter(struct CO_GUIData *gui, struct FilterNode *filter)
@@ -2755,24 +2788,7 @@ void CO_Validate(struct Config *co, BOOL update)
       saveAtEnd = TRUE;
     }
 
-    // remove previous volatile filters first
-    SafeIterateList(&co->filterList, curNode, succ)
-    {
-      struct FilterNode *filter = (struct FilterNode *)curNode;
-
-      if(filter->isVolatile == TRUE)
-      {
-        Remove(curNode);
-        DeleteFilterNode(filter);
-      }
-    }
-
-    if(co->SpamTrustExternalFilter == TRUE)
-    {
-      // now import the filters from the given external description
-      snprintf(externalPath, sizeof(externalPath), "PROGDIR:Resources/spamfilters/%s.sfd", co->SpamExternalFilter);
-      ImportFilter(externalPath, TRUE, &co->filterList);
-    }
+    ImportExternalSpamFilters(co);
   }
 
   if(co->StatusChangeDelay < 1000)

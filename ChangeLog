@@ -14,6 +14,8 @@ $URL$
 
   * YAM_COs.c: added the saving and loading of the size limit for large mails
     again. This closes #335.
+  * YAM.c, YAM_CO.c: external spam filters are now imported after loading the
+    folder tree to ensure that the spam folder really exists.
 
 2012-07-12 Samir Hawamdeh <s.hawamdeh@tin.it>
 

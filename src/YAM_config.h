@@ -634,4 +634,6 @@ void CO_Validate(struct Config *co, BOOL update);
 
 void GhostOutFilter(struct CO_GUIData *gui, struct FilterNode *filter);
 
+void ImportExternalSpamFilters(struct Config *co);
+
 #endif /* YAM_CONFIG_H */

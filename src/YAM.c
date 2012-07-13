@@ -1883,6 +1883,11 @@ static void InitAfterLogin(void)
         }
       }
     }
+
+    // now try to import external spam filters
+    // this happened while loading the config already, but has failed
+    // most probably because the folder tree was not loaded at that time
+    ImportExternalSpamFilters(&C);
   }
 
   if(newfolders == TRUE)
