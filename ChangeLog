@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-07-14 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: minor corrections and update to the latest changes.
+
 2012-07-13 Jens Langner <Jens.Langner@light-speed.de>
 
   * UpdateNotifyWindow.c: fixed an unfreed memory situation where the changelog

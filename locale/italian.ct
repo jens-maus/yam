@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.99 (12.07.2012)
+## version $VER: YAM.catalog 7.99 (14.07.2012)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -7,7 +7,7 @@
 ; Compiled with FlexCat 2.9 PPC (AmigaOS4)
 ; $Id$
 ;
-; based on YAM.cd 6095 2012-07-12
+; based on YAM.cd 6109 2012-07-13
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -2118,7 +2118,7 @@ durante il prelievo della nuova posta.
 ; when you get new mail.
 ;
 MSG_HELP_CO_LV_RULES
-Lista dei filtri.
+Lista dei filtri disponibili.
 ; List of filters.
 ;
 MSG_HELP_CO_ST_RNAME
@@ -10710,7 +10710,7 @@ considerati.
 ; be executed anymore.
 ;
 MSG_CO_FILTER_IMPORT
-Importazione in corso...
+Importa...
 ; Import...
 ;
 MSG_FILTER_IMPORT_TITLE
@@ -10720,4 +10720,8 @@ Importazione del filtro
 MSG_SPAM_TRUSTHEADERLINES
 Fidati dell'intestazione di questo filtro esterno:
 ; Trust header lines of this external filter:
+;
+MSG_ER_POP3_UIDLHASH_INIT_FAILED
+Impossibile inizializzare la tabella hash UIDL.
+; Failed to initialized UIDL hash table.
 ;
