@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-07-14 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_FI.c: imported spam filter engines like SpamAssassin are applied to new
+    mails only to allow to filter false negative non-spam mails again without
+    applying the SpamAssassin recognition over and over again.
+
 2012-07-14 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: minor corrections and update to the latest changes.

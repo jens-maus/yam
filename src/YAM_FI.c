@@ -2762,6 +2762,11 @@ BOOL ImportFilter(const char *fileName, const BOOL isVolatile, struct MinList *f
             }
             else if(stricmp(lastAction, "junkscore") == 0)
             {
+              // spam filters are applied to new mails only and not on user request
+              // this allows filters to be applied again when false negatives are to
+              // be filtered again
+              filter->applyOnReq = FALSE;
+
               // usually only values of 0 and 100 are used, but just to be sure
               // we treat every value greater than 50% as true junk
               if(atoi(value) >= 50)
