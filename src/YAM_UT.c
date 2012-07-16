@@ -4021,24 +4021,14 @@ void LoadLayout(void)
   if((ls = (STRPTR)xget(G->MA->GUI.ST_LAYOUT, MUIA_String_Contents)) == NULL ||
       ls[0] == '\0')
   {
-    ls = "MAINFOLDERTREEHORIZ=30 " \
-         "MAINMAILLISTHORIZ=100 " \
-         "MAINMAILLISTVERT=25 " \
-         "GLOSSARYLISTHORIZ=30 " \
-         "GLOSSARYTEXTHORIZ=100 " \
-         "READPANEVERT=100 " \
-         "READPANEHEADERVERT=5 " \
-         "READPANETEXTVERT=100 " \
-         "READWINHEADERVERT=5 " \
-         "READWINTEXTVERT=100 " \
-         "PRESELECTIONWIN=0;0; " \
-         "\n";
+    ls = "\n";
 
     D(DBF_UTIL, "using default layout string '%s'", ls);
   }
   else
     D(DBF_UTIL, "loaded layout string '%s'", ls);
 
+  // old style layout strings start with a number
   if(isdigit(ls[0]) == TRUE)
   {
     LONG v;
