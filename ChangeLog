@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-07-16 Jens Langner <Jens.Langner@light-speed.de>
+
+  * tcp/Connection.c: instead of using printf(), the TCP debug output will now
+    be printed via fprintf() on stderr.
+  * Debug.h: implemented a check for forgotten printf() calls in YAM. Now YAM
+    will throw a compiler warning once it recognizes printf() function calls
+    when being compiled in non-debug mode.
+
 2012-07-16 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_UT.c: reworked the layout weight loading and saving functions to use a

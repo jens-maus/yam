@@ -1595,10 +1595,10 @@ int ReceiveLineFromHost(struct Connection *conn, char *vptr, const int maxlen)
       // by the user
       if(G->TR_Debug == TRUE)
       {
-        printf("SERVER[%04d]: %s", n, vptr);
+        fprintf(stderr, "SERVER[%04d]: %s", n, vptr);
         // add a linefeed in case of an error
         if(n <= 0 || strlen(vptr) == 0)
-          printf("\n");
+          fprintf(stderr, "\n");
       }
 
       //D(DBF_NET, "TCP: received %ld of max %ld bytes", n, maxlen);
@@ -1645,10 +1645,10 @@ int ReceiveFromHost(struct Connection *conn, char *recvdata, const int maxlen)
 
       if(G->TR_Debug == TRUE)
       {
-        printf("SERVER[%04d]: %s", nread, recvdata);
+        fprintf(stderr, "SERVER[%04d]: %s", nread, recvdata);
         // add a linefeed in case of an error
         if(nread <= 0 || strlen(recvdata) == 0)
-          printf("\n");
+          fprintf(stderr, "\n");
       }
 
       //D(DBF_NET, "TCP: received %ld of max %ld bytes", nread, maxlen);
@@ -2038,7 +2038,7 @@ int SendToHost(struct Connection *conn, const char *ptr, const int len, const in
       // perform some debug output on the console if requested
       // by the user
       if(G->TR_Debug == TRUE && ptr != NULL)
-        printf("CLIENT[%04d]: %s", len, ptr);
+        fprintf(stderr, "CLIENT[%04d]: %s", len, ptr);
 
       // we call the WriteBuffered() function to write this characters
       // out to the socket. the provided flag will define if it

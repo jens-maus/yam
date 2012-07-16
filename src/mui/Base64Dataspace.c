@@ -126,7 +126,6 @@ static BOOL DecodeData(const char *base64String, APTR *pdata, LONG *plen, ULONG 
       }
       while(word != NULL);
 
-printf("%s '%s' -> %ld %ld '%s'\n",__FUNCTION__,base64String,len,id,data);
       if(len > 0 && id != 0 && data != NULL)
       {
         char *raw = NULL;
