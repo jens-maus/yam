@@ -4246,7 +4246,6 @@ void SaveLayout(BOOL permanent)
     G->preselectionWindowLayout) != -1)
   {
     setstring(G->MA->GUI.ST_LAYOUT, buf);
-    printf("%s '%s'\n",__FUNCTION__,buf);
 
     DoMethod(G->App, MUIM_Application_Save, MUIV_Application_Save_ENV);
 
