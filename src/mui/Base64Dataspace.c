@@ -44,6 +44,10 @@ struct Data
 };
 */
 
+/* EXPORT
+#define EMPTY_B64DSPACE_STRING "0;0;"
+*/
+
 /* Private Functions */
 /// EncodeData
 // build a base64 encoded string of the data to be added looking like this:
@@ -227,7 +231,7 @@ OVERLOAD(OM_GET)
       if(data->base64String != NULL)
         *store = (IPTR)data->base64String;
       else
-        *store = (IPTR)"0;0;";
+        *store = (IPTR)EMPTY_B64DSPACE_STRING;
 
       return TRUE;
     }
