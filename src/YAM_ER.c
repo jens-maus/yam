@@ -145,12 +145,12 @@ static void ShowMessage(BOOL isError, const char *message, va_list args)
 
     if(G->MA != NULL)
       set(G->MA->GUI.MI_ERRORS, MUIA_Menuitem_Enabled, TRUE);
-  }
 
-  // open the window for errors only, warnings are just recorded
-  if(isError == TRUE && SafeOpenWindow(G->ER->GUI.WI) == FALSE)
-  {
-    DisposeModule(&G->ER);
+    // open the window for errors only, warnings are just recorded
+    if(isError == TRUE && SafeOpenWindow(G->ER->GUI.WI) == FALSE)
+    {
+      DisposeModule(&G->ER);
+    }
   }
 
   LEAVE();

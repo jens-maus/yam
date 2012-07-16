@@ -13,6 +13,8 @@ $URL$
     anything. The old string format is still supporting during the load process.
   * YAM_UT.c, mui/Base64Dataspace.c, mui/PreselectionWindow.c: fixed the
     inconsistent usage of default encoded empty base64 strings.
+  * YAM_ER.c: fixed a crash when trying to open the error window from within a
+    thread.
 
 2012-07-14 Thore Böckelmann <tboeckel@gmx.de>
 
