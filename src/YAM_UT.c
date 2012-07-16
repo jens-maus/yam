@@ -4103,28 +4103,28 @@ void LoadLayout(void)
   {
     struct RDArgs *rdsource;
 
-    // Use this template for parsing the string.
-    // Note the DUMMY option at the end to catch any value which
-    // could not be assigned to any variable.
-    #define LAYOUT_TEMPLATE  "MAINFOLDERTREEHORIZ/K/N " \
-                             "MAINMAILLISTHORIZ/K/N " \
-                             "MAINMAILLISTVERT/K/N " \
-                             "GLOSSARYLISTHORIZ/K/N " \
-                             "GLOSSARYTEXTHORIZ/K/N " \
-                             "READPANEVERT/K/N " \
-                             "READPANEHEADERVERT/K/N " \
-                             "READPANETEXTVERT/K/N " \
-                             "READWINHEADERVERT/K/N " \
-                             "READWINTEXTVERT/K/N " \
-                             "PRESELECTIONWIN/K " \
-                             "DUMMY/F"
-
     D(DBF_UTIL, "parsing ReadArgs() style layout string");
 
     // allocate an additional RDArgs structure as we are going to let ReadArgs()
     // work on our own buffer instead of the command line
     if((rdsource = AllocDosObject(DOS_RDARGS, NULL)) != NULL)
     {
+      // Use this template for parsing the string.
+      // Note the DUMMY option at the end to catch any value which
+      // could not be assigned to any variable.
+      #define LAYOUT_TEMPLATE  "MAINFOLDERTREEHORIZ/K/N " \
+                               "MAINMAILLISTHORIZ/K/N " \
+                               "MAINMAILLISTVERT/K/N " \
+                               "GLOSSARYLISTHORIZ/K/N " \
+                               "GLOSSARYTEXTHORIZ/K/N " \
+                               "READPANEVERT/K/N " \
+                               "READPANEHEADERVERT/K/N " \
+                               "READPANETEXTVERT/K/N " \
+                               "READWINHEADERVERT/K/N " \
+                               "READWINTEXTVERT/K/N " \
+                               "PRESELECTIONWIN/K " \
+                               "DUMMY/M"
+
       struct LayoutArgs
       {
         LONG *mainFolderTreeHoriz;
@@ -4138,7 +4138,7 @@ void LoadLayout(void)
         LONG *readWinHeaderVert;
         LONG *readWinTextVert;
         STRPTR preselectionWin;
-        STRPTR dummy;
+        STRPTR *dummy;
       } args;
       struct RDArgs *rda;
 
@@ -4146,6 +4146,8 @@ void LoadLayout(void)
       rdsource->RDA_Source.CS_Buffer = (STRPTR)ls;
       rdsource->RDA_Source.CS_Length = strlen(ls);
       rdsource->RDA_Source.CS_CurChr = 0;
+
+      memset(&args, 0, sizeof(args));
 
       // now let DOS parse the layout string
       if((rda = ReadArgs(LAYOUT_TEMPLATE, (LONG *)&args, rdsource)) != NULL)
@@ -4185,6 +4187,8 @@ void LoadLayout(void)
 
         FreeArgs(rda);
       }
+      else
+        E(DBF_UTIL, "ReadArgs() of '%s' failed, error %ld\n", ls, IoErr());
 
       FreeDosObject(DOS_RDARGS, rdsource);
     }
@@ -4227,7 +4231,7 @@ void SaveLayout(BOOL permanent)
                     "READPANETEXTVERT=%d " \
                     "READWINHEADERVERT=%d " \
                     "READWINTEXTVERT=%d " \
-                    "PRESELECTIONWIN=%s " \
+                    "PRESELECTIONWIN=\"%s\" " \
                     "\n",
     (int)G->Weights[0],
     (int)G->Weights[1],
@@ -4242,6 +4246,7 @@ void SaveLayout(BOOL permanent)
     G->preselectionWindowLayout) != -1)
   {
     setstring(G->MA->GUI.ST_LAYOUT, buf);
+    printf("%s '%s'\n",__FUNCTION__,buf);
 
     DoMethod(G->App, MUIM_Application_Save, MUIV_Application_Save_ENV);
 
