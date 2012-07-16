@@ -96,6 +96,7 @@
 #include "YAM_utilities.h"
 
 #include "mui/ClassesExtra.h"
+#include "mui/Base64Dataspace.h"
 #include "mui/InfoBar.h"
 #include "mui/MainFolderListtree.h"
 #include "mui/MainMailList.h"
@@ -3996,7 +3997,7 @@ void LoadLayout(void)
   G->Weights[9] = 100;
   G->Weights[10] = 5;
   G->Weights[11] = 100;
-  strlcpy(G->preselectionWindowLayout, "0;0;", sizeof(G->preselectionWindowLayout));
+  strlcpy(G->preselectionWindowLayout, EMPTY_B64DSPACE_STRING, sizeof(G->preselectionWindowLayout));
 
   // Load the application configuration from the ENV: directory.
   DoMethod(G->App, MUIM_Application_Load, MUIV_Application_Load_ENV);
@@ -4040,73 +4041,73 @@ void LoadLayout(void)
 
   if(isdigit(ls[0]) == TRUE)
   {
+    LONG v;
+
     D(DBF_UTIL, "parsing old style layout string");
 
     // lets get the numbers for each weight factor out of the contents
     // of the fake string gadget
-    G->Weights[0] = strtol(ls, &endptr, 10);
-    if(endptr == NULL || endptr == ls)
-      G->Weights[0] = 30;
+    v = strtol(ls, &endptr, 10);
+    if(endptr != NULL && endptr != ls)
+      G->Weights[0] = v;
 
     ls = endptr;
-    G->Weights[1] = strtol(ls, &endptr, 10);
-    if(endptr == NULL || endptr == ls)
-      G->Weights[1] = 100;
+    v = strtol(ls, &endptr, 10);
+    if(endptr != NULL && endptr != ls)
+      G->Weights[1] = v;
 
     ls = endptr;
-    G->Weights[2] = strtol(ls, &endptr, 10);
-    if(endptr == NULL || endptr == ls)
-      G->Weights[2] = 100;
+    v = strtol(ls, &endptr, 10);
+    if(endptr != NULL && endptr != ls)
+      G->Weights[2] = v;
 
     ls = endptr;
-    G->Weights[3] = strtol(ls, &endptr, 10);
-    if(endptr == NULL || endptr == ls)
-      G->Weights[3] = 100;
+    v = strtol(ls, &endptr, 10);
+    if(endptr != NULL && endptr != ls)
+      G->Weights[3] = v;
 
     ls = endptr;
-    G->Weights[4] = strtol(ls, &endptr, 10);
-      if(endptr == NULL || endptr == ls)
-    G->Weights[4] = 30;
+    v = strtol(ls, &endptr, 10);
+    if(endptr != NULL && endptr != ls)
+      G->Weights[4] = v;
 
     ls = endptr;
-    G->Weights[5] = strtol(ls, &endptr, 10);
-    if(endptr == NULL || endptr == ls)
-      G->Weights[5] = 100;
+    v = strtol(ls, &endptr, 10);
+    if(endptr != NULL && endptr != ls)
+      G->Weights[5] = v;
 
     ls = endptr;
-    G->Weights[6] = strtol(ls, &endptr, 10);
-    if(endptr == NULL || endptr == ls)
-      G->Weights[6] = 25;
+    v = strtol(ls, &endptr, 10);
+    if(endptr != NULL && endptr != ls)
+      G->Weights[6] = v;
 
     ls = endptr;
-    G->Weights[7] = strtol(ls, &endptr, 10);
-      if(endptr == NULL || endptr == ls)
-    G->Weights[7] = 100;
+    v = strtol(ls, &endptr, 10);
+    if(endptr != NULL && endptr != ls)
+      G->Weights[7] = v;
 
     ls = endptr;
-    G->Weights[8] = strtol(ls, &endptr, 10);
-    if(endptr == NULL || endptr == ls)
-      G->Weights[8] = 5;
+    v = strtol(ls, &endptr, 10);
+    if(endptr != NULL && endptr != ls)
+      G->Weights[8] = v;
 
     ls = endptr;
-    G->Weights[9] = strtol(ls, &endptr, 10);
-    if(endptr == NULL || endptr == ls)
-      G->Weights[9] = 100;
+    v = strtol(ls, &endptr, 10);
+    if(endptr != NULL && endptr != ls)
+      G->Weights[9] = v;
 
     ls = endptr;
-    G->Weights[10] = strtol(ls, &endptr, 10);
-    if(endptr == NULL || endptr == ls)
-      G->Weights[10] = 5;
+    v = strtol(ls, &endptr, 10);
+    if(endptr != NULL && endptr != ls)
+      G->Weights[10] = v;
 
     ls = endptr;
-    G->Weights[11] = strtol(ls, &endptr, 10);
-    if(endptr == NULL || endptr == ls)
-      G->Weights[11] = 100;
+    v = strtol(ls, &endptr, 10);
+    if(endptr != NULL && endptr != ls)
+      G->Weights[11] = v;
 
     if(endptr != NULL)
       strlcpy(G->preselectionWindowLayout, Trim(endptr), sizeof(G->preselectionWindowLayout));
-    else
-      strlcpy(G->preselectionWindowLayout, "0;0;", sizeof(G->preselectionWindowLayout));
   }
   else
   {
