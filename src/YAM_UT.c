@@ -4112,17 +4112,17 @@ void LoadLayout(void)
       // Use this template for parsing the string.
       // Note the DUMMY option at the end to catch any value which
       // could not be assigned to any variable.
-      #define LAYOUT_TEMPLATE  "MAINFOLDERTREEHORIZ/K/N " \
-                               "MAINMAILLISTHORIZ/K/N " \
-                               "MAINMAILLISTVERT/K/N " \
-                               "GLOSSARYLISTHORIZ/K/N " \
-                               "GLOSSARYTEXTHORIZ/K/N " \
-                               "READPANEVERT/K/N " \
-                               "READPANEHEADERVERT/K/N " \
-                               "READPANETEXTVERT/K/N " \
-                               "READWINHEADERVERT/K/N " \
-                               "READWINTEXTVERT/K/N " \
-                               "PRESELECTIONWIN/K " \
+      #define LAYOUT_TEMPLATE  "MAINFOLDERTREEHORIZ/K/N," \
+                               "MAINMAILLISTHORIZ/K/N," \
+                               "MAINMAILLISTVERT/K/N," \
+                               "GLOSSARYLISTHORIZ/K/N," \
+                               "GLOSSARYTEXTHORIZ/K/N," \
+                               "READPANEVERT/K/N," \
+                               "READPANEHEADERVERT/K/N," \
+                               "READPANETEXTVERT/K/N," \
+                               "READWINHEADERVERT/K/N," \
+                               "READWINTEXTVERT/K/N," \
+                               "PRESELECTIONWIN/K," \
                                "DUMMY/M"
 
       struct LayoutArgs
