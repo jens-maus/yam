@@ -4125,20 +4125,24 @@ void LoadLayout(void)
                                "PRESELECTIONWIN/K," \
                                "DUMMY/M"
 
-      struct LayoutArgs
+      union LayoutArgs
       {
-        LONG *mainFolderTreeHoriz;
-        LONG *mainMailListHoriz;
-        LONG *mainMailListVert;
-        LONG *glossaryListHoriz;
-        LONG *glossaryTextHoriz;
-        LONG *readPaneVert;
-        LONG *readPaneHeaderVert;
-        LONG *readPaneTextVert;
-        LONG *readWinHeaderVert;
-        LONG *readWinTextVert;
-        STRPTR preselectionWin;
-        STRPTR *dummy;
+        LONG array[12];
+        struct
+        {
+          LONG *mainFolderTreeHoriz;
+          LONG *mainMailListHoriz;
+          LONG *mainMailListVert;
+          LONG *glossaryListHoriz;
+          LONG *glossaryTextHoriz;
+          LONG *readPaneVert;
+          LONG *readPaneHeaderVert;
+          LONG *readPaneTextVert;
+          LONG *readWinHeaderVert;
+          LONG *readWinTextVert;
+          STRPTR preselectionWin;
+          STRPTR *dummy;
+        } vars;
       } args;
       struct RDArgs *rda;
 
@@ -4150,40 +4154,40 @@ void LoadLayout(void)
       memset(&args, 0, sizeof(args));
 
       // now let DOS parse the layout string
-      if((rda = ReadArgs(LAYOUT_TEMPLATE, (LONG *)&args, rdsource)) != NULL)
+      if((rda = ReadArgs(LAYOUT_TEMPLATE, args.array, rdsource)) != NULL)
       {
-        if(args.mainFolderTreeHoriz != NULL)
-          G->Weights[0] = args.mainFolderTreeHoriz[0];
+        if(args.vars.mainFolderTreeHoriz != NULL)
+          G->Weights[0] = args.vars.mainFolderTreeHoriz[0];
 
-        if(args.mainMailListHoriz != NULL)
-          G->Weights[1] = args.mainMailListHoriz[0];
+        if(args.vars.mainMailListHoriz != NULL)
+          G->Weights[1] = args.vars.mainMailListHoriz[0];
 
-        if(args.mainMailListVert != NULL)
-          G->Weights[6] = args.mainMailListVert[0];
+        if(args.vars.mainMailListVert != NULL)
+          G->Weights[6] = args.vars.mainMailListVert[0];
 
-        if(args.glossaryListHoriz != NULL)
-          G->Weights[4] = args.glossaryListHoriz[0];
+        if(args.vars.glossaryListHoriz != NULL)
+          G->Weights[4] = args.vars.glossaryListHoriz[0];
 
-        if(args.glossaryTextHoriz != NULL)
-          G->Weights[5] = args.glossaryTextHoriz[0];
+        if(args.vars.glossaryTextHoriz != NULL)
+          G->Weights[5] = args.vars.glossaryTextHoriz[0];
 
-        if(args.readPaneVert != NULL)
-          G->Weights[7] = args.readPaneVert[0];
+        if(args.vars.readPaneVert != NULL)
+          G->Weights[7] = args.vars.readPaneVert[0];
 
-        if(args.readPaneHeaderVert != NULL)
-          G->Weights[8] = args.readPaneHeaderVert[0];
+        if(args.vars.readPaneHeaderVert != NULL)
+          G->Weights[8] = args.vars.readPaneHeaderVert[0];
 
-        if(args.readPaneTextVert != NULL)
-          G->Weights[9] = args.readPaneTextVert[0];
+        if(args.vars.readPaneTextVert != NULL)
+          G->Weights[9] = args.vars.readPaneTextVert[0];
 
-        if(args.readWinHeaderVert != NULL)
-          G->Weights[10] = args.readWinHeaderVert[0];
+        if(args.vars.readWinHeaderVert != NULL)
+          G->Weights[10] = args.vars.readWinHeaderVert[0];
 
-        if(args.readWinTextVert != NULL)
-          G->Weights[11] = args.readWinTextVert[0];
+        if(args.vars.readWinTextVert != NULL)
+          G->Weights[11] = args.vars.readWinTextVert[0];
 
-        if(args.preselectionWin != NULL)
-          strlcpy(G->preselectionWindowLayout, args.preselectionWin, sizeof(G->preselectionWindowLayout));
+        if(args.vars.preselectionWin != NULL)
+          strlcpy(G->preselectionWindowLayout, args.vars.preselectionWin, sizeof(G->preselectionWindowLayout));
 
         FreeArgs(rda);
       }
