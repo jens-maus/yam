@@ -64,11 +64,13 @@ static char *EncodeData(APTR data, LONG len, ULONG id)
 
   if((b64_len = base64encode(&b64_buffer, data, len)) > 0)
   {
-    // our header has a size of 18
-    // base64 encoding will expand each 3 bytes to 4 bytes plus up to 3 padding bytes
-    // plus one byte for the trailing NUL
-    if((b64_buffer = realloc(b64_buffer, 18 + b64_len + 1)) != NULL)
-      snprintf(b64_buffer, 18+b64_len+1, "%08d;%08x;%s", (int)len, (int)id, b64_buffer);
+    char *tmp;
+
+    if(asprintf(&tmp, "%08d;%08x;%s", (int)len, (int)id, b64_buffer) != -1)
+    {
+      free(b64_buffer);
+      b64_buffer = tmp;
+    }
   }
 
   RETURN(b64_buffer);
@@ -124,6 +126,7 @@ static BOOL DecodeData(const char *base64String, APTR *pdata, LONG *plen, ULONG 
       }
       while(word != NULL);
 
+printf("%s '%s' -> %ld %ld '%s'\n",__FUNCTION__,base64String,len,id,data);
       if(len > 0 && id != 0 && data != NULL)
       {
         char *raw = NULL;

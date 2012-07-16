@@ -15,6 +15,8 @@ $URL$
     inconsistent usage of default encoded empty base64 strings.
   * YAM_ER.c: fixed a crash when trying to open the error window from within a
     thread.
+  * mui/Base64Dataspace.c: fixed the completely wrong creation of the final
+    base64 encoded string. The length and ID values were contained twice before.
 
 2012-07-14 Thore Böckelmann <tboeckel@gmx.de>
 
