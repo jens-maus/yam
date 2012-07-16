@@ -289,7 +289,7 @@ OVERLOAD(MUIM_Window_Snapshot)
   if(setDefault == TRUE)
   {
     // set the default layout, which means that NList will calculate the column sizes automatically
-    strlcpy(G->preselectionWindowLayout, "0&0&", sizeof(G->preselectionWindowLayout));
+    strlcpy(G->preselectionWindowLayout, "0;0;", sizeof(G->preselectionWindowLayout));
   }
 
   // make sure the layout is saved

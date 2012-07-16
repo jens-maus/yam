@@ -227,7 +227,7 @@ OVERLOAD(OM_GET)
       if(data->base64String != NULL)
         *store = (IPTR)data->base64String;
       else
-        *store = (IPTR)"0&0&";
+        *store = (IPTR)"0;0;";
 
       return TRUE;
     }

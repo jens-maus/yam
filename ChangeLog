@@ -11,6 +11,8 @@ $URL$
     ReadArgs() compatible string instead of a handcrafted string. This makes it
     possible to add further weight values in the future without breaking
     anything. The old string format is still supporting during the load process.
+  * YAM_UT.c, mui/Base64Dataspace.c, mui/PreselectionWindow.c: fixed the
+    inconsistent usage of default encoded empty base64 strings.
 
 2012-07-14 Thore Böckelmann <tboeckel@gmx.de>
 

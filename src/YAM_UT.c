@@ -3996,7 +3996,7 @@ void LoadLayout(void)
   G->Weights[9] = 100;
   G->Weights[10] = 5;
   G->Weights[11] = 100;
-  strlcpy(G->preselectionWindowLayout, "0&0&", sizeof(G->preselectionWindowLayout));
+  strlcpy(G->preselectionWindowLayout, "0;0;", sizeof(G->preselectionWindowLayout));
 
   // Load the application configuration from the ENV: directory.
   DoMethod(G->App, MUIM_Application_Load, MUIV_Application_Load_ENV);
@@ -4030,7 +4030,7 @@ void LoadLayout(void)
          "READPANETEXTVERT=100 " \
          "READWINHEADERVERT=5 " \
          "READWINTEXTVERT=100 " \
-         "PRESELECTIONWIN=0&0& " \
+         "PRESELECTIONWIN=0;0; " \
          "\n";
 
     D(DBF_UTIL, "using default layout string '%s'", ls);
@@ -4106,7 +4106,7 @@ void LoadLayout(void)
     if(endptr != NULL)
       strlcpy(G->preselectionWindowLayout, Trim(endptr), sizeof(G->preselectionWindowLayout));
     else
-      strlcpy(G->preselectionWindowLayout, "0&0&", sizeof(G->preselectionWindowLayout));
+      strlcpy(G->preselectionWindowLayout, "0;0;", sizeof(G->preselectionWindowLayout));
   }
   else
   {
