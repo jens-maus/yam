@@ -160,7 +160,7 @@ OVERLOAD(OM_NEW)
 
     // try to restore any previously remembered NList layout
     if((ds = Base64DataspaceObject,
-      MUIA_Base64Dataspace_Base64String, G->preselectionWindowLayout,
+      MUIA_Base64Dataspace_Base64String, G->preselectionListLayout,
     End) != NULL)
     {
       DoMethod(data->transferMailList, MUIM_Import, ds);
@@ -274,7 +274,7 @@ OVERLOAD(MUIM_Window_Snapshot)
       // then get the base64 encoded string and remember it
       if((b64 = (char *)xget(ds, MUIA_Base64Dataspace_Base64String)) != NULL)
       {
-        strlcpy(G->preselectionWindowLayout, b64, sizeof(G->preselectionWindowLayout));
+        strlcpy(G->preselectionListLayout, b64, sizeof(G->preselectionListLayout));
         setDefault = FALSE;
       }
 
@@ -289,7 +289,7 @@ OVERLOAD(MUIM_Window_Snapshot)
   if(setDefault == TRUE)
   {
     // set the default layout, which means that NList will calculate the column sizes automatically
-    strlcpy(G->preselectionWindowLayout, EMPTY_B64DSPACE_STRING, sizeof(G->preselectionWindowLayout));
+    strlcpy(G->preselectionListLayout, EMPTY_B64DSPACE_STRING, sizeof(G->preselectionListLayout));
   }
 
   // make sure the layout is saved

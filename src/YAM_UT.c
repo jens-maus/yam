@@ -3997,7 +3997,7 @@ void LoadLayout(void)
   G->Weights[9] = 100;
   G->Weights[10] = 5;
   G->Weights[11] = 100;
-  strlcpy(G->preselectionWindowLayout, EMPTY_B64DSPACE_STRING, sizeof(G->preselectionWindowLayout));
+  strlcpy(G->preselectionListLayout, EMPTY_B64DSPACE_STRING, sizeof(G->preselectionListLayout));
 
   // Load the application configuration from the ENV: directory.
   DoMethod(G->App, MUIM_Application_Load, MUIV_Application_Load_ENV);
@@ -4097,7 +4097,7 @@ void LoadLayout(void)
       G->Weights[11] = v;
 
     if(endptr != NULL)
-      strlcpy(G->preselectionWindowLayout, Trim(endptr), sizeof(G->preselectionWindowLayout));
+      strlcpy(G->preselectionListLayout, Trim(endptr), sizeof(G->preselectionListLayout));
   }
   else
   {
@@ -4122,7 +4122,7 @@ void LoadLayout(void)
                                "READPANETEXTVERT/K/N," \
                                "READWINHEADERVERT/K/N," \
                                "READWINTEXTVERT/K/N," \
-                               "PRESELECTIONWIN/K," \
+                               "PRESELECTIONLIST/K," \
                                "DUMMY/M"
 
       union LayoutArgs
@@ -4140,7 +4140,7 @@ void LoadLayout(void)
           LONG *readPaneTextVert;
           LONG *readWinHeaderVert;
           LONG *readWinTextVert;
-          STRPTR preselectionWin;
+          STRPTR preselectionList;
           STRPTR *dummy;
         } vars;
       } args;
@@ -4186,8 +4186,8 @@ void LoadLayout(void)
         if(args.vars.readWinTextVert != NULL)
           G->Weights[11] = args.vars.readWinTextVert[0];
 
-        if(args.vars.preselectionWin != NULL)
-          strlcpy(G->preselectionWindowLayout, args.vars.preselectionWin, sizeof(G->preselectionWindowLayout));
+        if(args.vars.preselectionList != NULL)
+          strlcpy(G->preselectionListLayout, args.vars.preselectionList, sizeof(G->preselectionListLayout));
 
         FreeArgs(rda);
       }
@@ -4235,7 +4235,7 @@ void SaveLayout(BOOL permanent)
                     "READPANETEXTVERT=%d " \
                     "READWINHEADERVERT=%d " \
                     "READWINTEXTVERT=%d " \
-                    "PRESELECTIONWIN=\"%s\" " \
+                    "PRESELECTIONLIST=\"%s\" " \
                     "\n",
     (int)G->Weights[0],
     (int)G->Weights[1],
@@ -4247,7 +4247,7 @@ void SaveLayout(BOOL permanent)
     (int)G->Weights[9],
     (int)G->Weights[10],
     (int)G->Weights[11],
-    G->preselectionWindowLayout) != -1)
+    G->preselectionListLayout) != -1)
   {
     setstring(G->MA->GUI.ST_LAYOUT, buf);
 
