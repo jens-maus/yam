@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-07-16 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_UT.c: reworked the layout weight loading and saving functions to use a
+    ReadArgs() compatible string instead of a handcrafted string. This makes it
+    possible to add further weight values in the future without breaking
+    anything. The old string format is still supporting during the load process.
+
 2012-07-14 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_FI.c: imported spam filter engines like SpamAssassin are applied to new

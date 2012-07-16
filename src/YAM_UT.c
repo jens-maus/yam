@@ -3985,6 +3985,19 @@ void LoadLayout(void)
 
   ENTER();
 
+  // set some sensible default values first
+  G->Weights[0] = 30;
+  G->Weights[1] = 100;
+  G->Weights[6] = 30;
+  G->Weights[4] = 30;
+  G->Weights[5] = 100;
+  G->Weights[7] = 100;
+  G->Weights[8] = 5;
+  G->Weights[9] = 100;
+  G->Weights[10] = 5;
+  G->Weights[11] = 100;
+  strlcpy(G->preselectionWindowLayout, "0&0&", sizeof(G->preselectionWindowLayout));
+
   // Load the application configuration from the ENV: directory.
   DoMethod(G->App, MUIM_Application_Load, MUIV_Application_Load_ENV);
 
@@ -4007,79 +4020,184 @@ void LoadLayout(void)
   if((ls = (STRPTR)xget(G->MA->GUI.ST_LAYOUT, MUIA_String_Contents)) == NULL ||
       ls[0] == '\0')
   {
-    //    0  1   2   3   4  5   6  7   8 9   10 11
-    ls = "30 100 100 100 30 100 25 100 5 100 5 100 0&0&";
+    ls = "MAINFOLDERTREEHORIZ=30 " \
+         "MAINMAILLISTHORIZ=100 " \
+         "MAINMAILLISTVERT=25 " \
+         "GLOSSARYLISTHORIZ=30 " \
+         "GLOSSARYTEXTHORIZ=100 " \
+         "READPANEVERT=100 " \
+         "READPANEHEADERVERT=5 " \
+         "READPANETEXTVERT=100 " \
+         "READWINHEADERVERT=5 " \
+         "READWINTEXTVERT=100 " \
+         "PRESELECTIONWIN=0&0& " \
+         "\n";
 
-    D(DBF_UTIL, "using default layout weight factors: '%s'", ls);
+    D(DBF_UTIL, "using default layout string '%s'", ls);
   }
   else
-    D(DBF_UTIL, "loaded layout weight factors: '%s'", ls);
+    D(DBF_UTIL, "loaded layout string '%s'", ls);
 
-  // lets get the numbers for each weight factor out of the contents
-  // of the fake string gadget
-  G->Weights[0] = strtol(ls, &endptr, 10);
-  if(endptr == NULL || endptr == ls)
-    G->Weights[0] = 30;
+  if(isdigit(ls[0]) == TRUE)
+  {
+    D(DBF_UTIL, "parsing old style layout string");
 
-  ls = endptr;
-  G->Weights[1] = strtol(ls, &endptr, 10);
-  if(endptr == NULL || endptr == ls)
-    G->Weights[1] = 100;
+    // lets get the numbers for each weight factor out of the contents
+    // of the fake string gadget
+    G->Weights[0] = strtol(ls, &endptr, 10);
+    if(endptr == NULL || endptr == ls)
+      G->Weights[0] = 30;
 
-  ls = endptr;
-  G->Weights[2] = strtol(ls, &endptr, 10);
-  if(endptr == NULL || endptr == ls)
-    G->Weights[2] = 100;
+    ls = endptr;
+    G->Weights[1] = strtol(ls, &endptr, 10);
+    if(endptr == NULL || endptr == ls)
+      G->Weights[1] = 100;
 
-  ls = endptr;
-  G->Weights[3] = strtol(ls, &endptr, 10);
-  if(endptr == NULL || endptr == ls)
-    G->Weights[3] = 100;
+    ls = endptr;
+    G->Weights[2] = strtol(ls, &endptr, 10);
+    if(endptr == NULL || endptr == ls)
+      G->Weights[2] = 100;
 
-  ls = endptr;
-  G->Weights[4] = strtol(ls, &endptr, 10);
-  if(endptr == NULL || endptr == ls)
+    ls = endptr;
+    G->Weights[3] = strtol(ls, &endptr, 10);
+    if(endptr == NULL || endptr == ls)
+      G->Weights[3] = 100;
+
+    ls = endptr;
+    G->Weights[4] = strtol(ls, &endptr, 10);
+      if(endptr == NULL || endptr == ls)
     G->Weights[4] = 30;
 
-  ls = endptr;
-  G->Weights[5] = strtol(ls, &endptr, 10);
-  if(endptr == NULL || endptr == ls)
-    G->Weights[5] = 100;
+    ls = endptr;
+    G->Weights[5] = strtol(ls, &endptr, 10);
+    if(endptr == NULL || endptr == ls)
+      G->Weights[5] = 100;
 
-  ls = endptr;
-  G->Weights[6] = strtol(ls, &endptr, 10);
-  if(endptr == NULL || endptr == ls)
-    G->Weights[6] = 25;
+    ls = endptr;
+    G->Weights[6] = strtol(ls, &endptr, 10);
+    if(endptr == NULL || endptr == ls)
+      G->Weights[6] = 25;
 
-  ls = endptr;
-  G->Weights[7] = strtol(ls, &endptr, 10);
-  if(endptr == NULL || endptr == ls)
+    ls = endptr;
+    G->Weights[7] = strtol(ls, &endptr, 10);
+      if(endptr == NULL || endptr == ls)
     G->Weights[7] = 100;
 
-  ls = endptr;
-  G->Weights[8] = strtol(ls, &endptr, 10);
-  if(endptr == NULL || endptr == ls)
-    G->Weights[8] = 5;
+    ls = endptr;
+    G->Weights[8] = strtol(ls, &endptr, 10);
+    if(endptr == NULL || endptr == ls)
+      G->Weights[8] = 5;
 
-  ls = endptr;
-  G->Weights[9] = strtol(ls, &endptr, 10);
-  if(endptr == NULL || endptr == ls)
-    G->Weights[9] = 100;
+    ls = endptr;
+    G->Weights[9] = strtol(ls, &endptr, 10);
+    if(endptr == NULL || endptr == ls)
+      G->Weights[9] = 100;
 
-  ls = endptr;
-  G->Weights[10] = strtol(ls, &endptr, 10);
-  if(endptr == NULL || endptr == ls)
-    G->Weights[10] = 5;
+    ls = endptr;
+    G->Weights[10] = strtol(ls, &endptr, 10);
+    if(endptr == NULL || endptr == ls)
+      G->Weights[10] = 5;
 
-  ls = endptr;
-  G->Weights[11] = strtol(ls, &endptr, 10);
-  if(endptr == NULL || endptr == ls)
-    G->Weights[11] = 100;
+    ls = endptr;
+    G->Weights[11] = strtol(ls, &endptr, 10);
+    if(endptr == NULL || endptr == ls)
+      G->Weights[11] = 100;
 
-  if(endptr != NULL)
-    strlcpy(G->preselectionWindowLayout, Trim(endptr), sizeof(G->preselectionWindowLayout));
+    if(endptr != NULL)
+      strlcpy(G->preselectionWindowLayout, Trim(endptr), sizeof(G->preselectionWindowLayout));
+    else
+      strlcpy(G->preselectionWindowLayout, "0&0&", sizeof(G->preselectionWindowLayout));
+  }
   else
-    strlcpy(G->preselectionWindowLayout, "0&0&", sizeof(G->preselectionWindowLayout));
+  {
+    struct RDArgs *rdsource;
+
+    // Use this template for parsing the string.
+    // Note the DUMMY option at the end to catch any value which
+    // could not be assigned to any variable.
+    #define LAYOUT_TEMPLATE  "MAINFOLDERTREEHORIZ/K/N " \
+                             "MAINMAILLISTHORIZ/K/N " \
+                             "MAINMAILLISTVERT/K/N " \
+                             "GLOSSARYLISTHORIZ/K/N " \
+                             "GLOSSARYTEXTHORIZ/K/N " \
+                             "READPANEVERT/K/N " \
+                             "READPANEHEADERVERT/K/N " \
+                             "READPANETEXTVERT/K/N " \
+                             "READWINHEADERVERT/K/N " \
+                             "READWINTEXTVERT/K/N " \
+                             "PRESELECTIONWIN/K " \
+                             "DUMMY/F"
+
+    D(DBF_UTIL, "parsing ReadArgs() style layout string");
+
+    // allocate an additional RDArgs structure as we are going to let ReadArgs()
+    // work on our own buffer instead of the command line
+    if((rdsource = AllocDosObject(DOS_RDARGS, NULL)) != NULL)
+    {
+      struct LayoutArgs
+      {
+        LONG *mainFolderTreeHoriz;
+        LONG *mainMailListHoriz;
+        LONG *mainMailListVert;
+        LONG *glossaryListHoriz;
+        LONG *glossaryTextHoriz;
+        LONG *readPaneVert;
+        LONG *readPaneHeaderVert;
+        LONG *readPaneTextVert;
+        LONG *readWinHeaderVert;
+        LONG *readWinTextVert;
+        STRPTR preselectionWin;
+        STRPTR dummy;
+      } args;
+      struct RDArgs *rda;
+
+      // fill in the string to be parsed
+      rdsource->RDA_Source.CS_Buffer = (STRPTR)ls;
+      rdsource->RDA_Source.CS_Length = strlen(ls);
+      rdsource->RDA_Source.CS_CurChr = 0;
+
+      // now let DOS parse the layout string
+      if((rda = ReadArgs(LAYOUT_TEMPLATE, (LONG *)&args, rdsource)) != NULL)
+      {
+        if(args.mainFolderTreeHoriz != NULL)
+          G->Weights[0] = args.mainFolderTreeHoriz[0];
+
+        if(args.mainMailListHoriz != NULL)
+          G->Weights[1] = args.mainMailListHoriz[0];
+
+        if(args.mainMailListVert != NULL)
+          G->Weights[6] = args.mainMailListVert[0];
+
+        if(args.glossaryListHoriz != NULL)
+          G->Weights[4] = args.glossaryListHoriz[0];
+
+        if(args.glossaryTextHoriz != NULL)
+          G->Weights[5] = args.glossaryTextHoriz[0];
+
+        if(args.readPaneVert != NULL)
+          G->Weights[7] = args.readPaneVert[0];
+
+        if(args.readPaneHeaderVert != NULL)
+          G->Weights[8] = args.readPaneHeaderVert[0];
+
+        if(args.readPaneTextVert != NULL)
+          G->Weights[9] = args.readPaneTextVert[0];
+
+        if(args.readWinHeaderVert != NULL)
+          G->Weights[10] = args.readWinHeaderVert[0];
+
+        if(args.readWinTextVert != NULL)
+          G->Weights[11] = args.readWinTextVert[0];
+
+        if(args.preselectionWin != NULL)
+          strlcpy(G->preselectionWindowLayout, args.preselectionWin, sizeof(G->preselectionWindowLayout));
+
+        FreeArgs(rda);
+      }
+
+      FreeDosObject(DOS_RDARGS, rdsource);
+    }
+  }
 
   // lets set the weight factors to the corresponding GUI elements now
   // if they exist
@@ -4106,32 +4224,25 @@ void SaveLayout(BOOL permanent)
 
   ENTER();
 
-  // we encode the different weight factors which are embedded in a dummy string
-  // gadgets:
-  //
-  // 0:  Horizontal weight of left foldertree in main window.
-  // 1:  Horizontal weight of right maillistview in main window.
-  // 2:  unused
-  // 3:  unused
-  // 4:  Horizontal weight of listview group in the glossary window
-  // 5:  Horizontal weight of text group in the glossary window
-  // 6:  Vertical weight of top right maillistview group in main window.
-  // 7:  Vertical weight of bottom right embedded read pane object in the main window.
-  // 8:  Vertical weight of top object (headerlist) of the embedded read pane
-  // 9:  Vertical weight of bottom object (texteditor) of the embedded read pane
-  // 10: Vertical weight of top object (headerlist) in a read window
-  // 11: Vertical weight of bottom object (texteditor) in a read window
-  //
-  // the last item will be the column layout of the preselection window
-
-  if(asprintf(&buf, "%d %d %d %d %d %d %d %d %d %d %d %d %s",
+  // create a ReadArgs() compatible string containing all the weight values
+  // this one must be terminated by LF
+  if(asprintf(&buf, "MAINFOLDERTREEHORIZ=%d " \
+                    "MAINMAILLISTHORIZ=%d " \
+                    "MAINMAILLISTVERT=%d " \
+                    "GLOSSARYLISTHORIZ=%d " \
+                    "GLOSSARYTEXTHORIZ=%d " \
+                    "READPANEVERT=%d " \
+                    "READPANEHEADERVERT=%d " \
+                    "READPANETEXTVERT=%d " \
+                    "READWINHEADERVERT=%d " \
+                    "READWINTEXTVERT=%d " \
+                    "PRESELECTIONWIN=%s " \
+                    "\n",
     (int)G->Weights[0],
     (int)G->Weights[1],
-    100,
-    100,
+    (int)G->Weights[6],
     (int)G->Weights[4],
     (int)G->Weights[5],
-    (int)G->Weights[6],
     (int)G->Weights[7],
     (int)G->Weights[8],
     (int)G->Weights[9],
@@ -4155,13 +4266,13 @@ void SaveLayout(BOOL permanent)
 
       DoMethod(G->App, MUIM_Application_Save, MUIV_Application_Save_ENVARC);
 
-      D(DBF_UTIL, "permanently saved layout weight factors: '%s'", SafeStr(buf));
+      D(DBF_UTIL, "permanently saved layout string '%s'", SafeStr(buf));
 
       // restore the old windowPtr
       SetProcWindow(oldWindowPtr);
     }
     else
-      D(DBF_UTIL, "saved layout weight factors: '%s'", SafeStr(buf));
+      D(DBF_UTIL, "saved layout weight string '%s'", SafeStr(buf));
 
     free(buf);
   }
