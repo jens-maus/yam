@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-07-17 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/GenericRequestWindow.c: enhanced the requester window to let the user
+    navigate through the buttons using the cursor keys.
+
 2012-07-16 Jens Langner <Jens.Langner@light-speed.de>
 
   * tcp/Connection.c: instead of using printf(), the TCP debug output will now

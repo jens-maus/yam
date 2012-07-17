@@ -111,17 +111,17 @@ OVERLOAD(OM_NEW)
     windowWidth = MUIV_Window_Width_MinMax(25);
     sizeGadget = TRUE;
     bodyGroup = HGroup,
-                  GroupFrame,
-                  MUIA_Background, MUII_GroupBack,
-                  Child, NListviewObject,
-                    MUIA_Listview_Input,  FALSE,
-                    MUIA_NListview_NList, NFloattextObject,
-                      NoFrame,
-                      MUIA_Background, MUII_GroupBack,
-                      MUIA_NFloattext_Text, bodyText,
-                    End,
-                  End,
-                End;
+      GroupFrame,
+      MUIA_Background, MUII_GroupBack,
+      Child, NListviewObject,
+        MUIA_Listview_Input,  FALSE,
+        MUIA_NListview_NList, NFloattextObject,
+          NoFrame,
+          MUIA_Background, MUII_GroupBack,
+          MUIA_NFloattext_Text, bodyText,
+        End,
+      End,
+    End;
   }
   else
   {
@@ -129,16 +129,16 @@ OVERLOAD(OM_NEW)
     windowWidth = MUIV_Window_Width_MinMax(0);
     sizeGadget = FALSE;
     bodyGroup = HGroup,
-                  GroupFrame,
-                  MUIA_Background, MUII_GroupBack,
-                  Child, HSpace(0),
-                  Child, TextObject,
-                    InnerSpacing(4, 4),
-                    MUIA_Text_Contents, bodyText,
-                    MUIA_Text_SetMax,   TRUE,
-                  End,
-                  Child, HSpace(0),
-                End;
+      GroupFrame,
+      MUIA_Background, MUII_GroupBack,
+      Child, HSpace(0),
+      Child, TextObject,
+        InnerSpacing(4, 4),
+        MUIA_Text_Contents, bodyText,
+        MUIA_Text_SetMax,   TRUE,
+      End,
+      Child, HSpace(0),
+    End;
   }
 
   if((obj = DoSuperNew(cl, obj,
@@ -153,12 +153,12 @@ OVERLOAD(OM_NEW)
     MUIA_Window_Activate,     TRUE,
     MUIA_Window_NoMenus,      TRUE,
     WindowContents, VGroup,
-       MUIA_Background, MUII_RequesterBack,
-       InnerSpacing(4, 4),
-       Child, bodyGroup,
-       Child, buttonGroup = HGroup,
-         GroupSpacing(0),
-       End,
+      MUIA_Background, MUII_RequesterBack,
+      InnerSpacing(4, 4),
+      Child, bodyGroup,
+      Child, buttonGroup = HGroup,
+        GroupSpacing(0),
+      End,
     End,
 
     TAG_MORE, inittags(msg))) != NULL)
@@ -196,7 +196,7 @@ OVERLOAD(OM_NEW)
 
         if(*token == '*')
         {
-          active=TRUE;
+          active = TRUE;
           token++;
         }
 
@@ -205,15 +205,16 @@ OVERLOAD(OM_NEW)
 
         // create the button object now.
         button = TextObject,
-                   ButtonFrame,
-                   MUIA_CycleChain,    1,
-                   MUIA_Text_Contents, token,
-                   MUIA_Text_PreParse, "\33c",
-                   MUIA_InputMode,     MUIV_InputMode_RelVerify,
-                   MUIA_Background,    MUII_ButtonBack,
-                   ul ? MUIA_Text_HiIndex : TAG_IGNORE, '_',
-                   ul ? MUIA_ControlChar  : TAG_IGNORE, ul ? tolower(*(ul+1)) : 0,
-                 End;
+          ButtonFrame,
+          MUIA_CycleChain,    1,
+          MUIA_Text_Contents, token,
+          MUIA_Text_PreParse, "\33c",
+          MUIA_Text_Copy,     FALSE,
+          MUIA_InputMode,     MUIV_InputMode_RelVerify,
+          MUIA_Background,    MUII_ButtonBack,
+          ul ? MUIA_Text_HiIndex : TAG_IGNORE, '_',
+          ul ? MUIA_ControlChar  : TAG_IGNORE, ul ? tolower(*(ul+1)) : 0,
+        End;
 
         if(button != NULL)
         {
@@ -257,11 +258,11 @@ OVERLOAD(OM_NEW)
             }
           }
 
-          if(i <= 8)
+          if(i < 12)
           {
             // by default we set it to "-capslock f1" so that we can press f1
             // even if the capslock is on.
-            char fstring[13];
+            char fstring[16];
 
             snprintf(fstring, sizeof(fstring), "-capslock f%d", i + 1);
             DoMethod(obj, MUIM_Notify, MUIA_Window_InputEvent, fstring, obj, 2, MUIM_GenericRequestWindow_FinishInput, buttonResult);
@@ -275,13 +276,16 @@ OVERLOAD(OM_NEW)
             active = FALSE;
           }
         }
-
-        // write back what we took.
-        if(next != NULL)
-          *(next-1) = '|';
       }
 
       DoMethod(buttonGroup, MUIM_Group_ExitChange);
+
+      if(numButtons >= 2)
+      {
+        // use the cursor keys to navigate horizontally
+        DoMethod(obj, MUIM_Notify, MUIA_Window_InputEvent, "-repeat left", obj, 3, MUIM_Set, MUIA_Window_ActiveObject, MUIV_Window_ActiveObject_Left);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_InputEvent, "-repeat right", obj, 3, MUIM_Set, MUIA_Window_ActiveObject, MUIV_Window_ActiveObject_Right);
+      }
     }
 
     DoMethod(G->App, OM_ADDMEMBER, obj);
