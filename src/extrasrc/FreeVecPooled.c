@@ -28,10 +28,10 @@
 #include <exec/types.h>
 #include <proto/exec.h>
 
+#include "extrasrc.h"
+
 #define DEBUG_USE_MALLOC_REDEFINE
 #include "Debug.h"
-
-#include "extrasrc.h"
 
 #if defined(NEED_FREEVECPOOLED)
 /// FreeVecPooled

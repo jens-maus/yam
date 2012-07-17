@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-07-17 Jens Langner <Jens.Langner@light-speed.de>
+
+  * Debug.h: fixed build where GCC2 is used so that no _Pragma() call is used to
+    warn that a kprintf()/printf() function is still in use. Now ((void)0) is
+    used instead. Also some header includes have to be moved so that compilation
+    does not break as it did for OS3 and the MOS builds.
+
 2012-07-17 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/GenericRequestWindow.c: enhanced the requester window to let the user

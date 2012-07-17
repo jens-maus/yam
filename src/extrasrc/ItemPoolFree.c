@@ -28,12 +28,12 @@
 #include <exec/types.h>
 #include <proto/exec.h>
 
-#define DEBUG_USE_MALLOC_REDEFINE
-#include "Debug.h"
-
 #include "extrasrc.h"
 
 #include "ItemPool.h"
+
+#define DEBUG_USE_MALLOC_REDEFINE
+#include "Debug.h"
 
 #if defined(NEED_ITEMPOOLFREE)
 /// ItemPoolAlloc
