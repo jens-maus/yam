@@ -123,9 +123,15 @@ static void ShowMessage(BOOL isError, const char *message, va_list args)
       if(vasprintf(&msg, message, args) != -1)
       {
         if(isError == TRUE)
+        {
+          D(DBF_ALWAYS, "pushing error '%s'", msg);
           PushMethodOnStack(G->App, 2, MUIM_YAMApplication_ShowError, msg);
+        }
         else
+        {
+          D(DBF_ALWAYS, "pushing warning '%s'", msg);
           PushMethodOnStack(G->App, 2, MUIM_YAMApplication_ShowWarning, msg);
+        }
       }
     }
   }
