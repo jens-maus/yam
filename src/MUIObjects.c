@@ -525,7 +525,10 @@ void GetMUIString(char *s, Object *o, size_t len)
   if((c = (char *)xget(o, MUIA_String_Contents)) != NULL)
     strlcpy(s, c, len);
   else
+  {
+    E(DBF_GUI, "NULL string contents of object %08lx", o);
     s[0] = '\0';
+  }
 
   LEAVE();
 }
@@ -542,7 +545,10 @@ void GetMUIText(char *s, Object *o, size_t len)
   if((c = (char *)xget(o, MUIA_Text_Contents)) != NULL)
     strlcpy(s, c, len);
   else
+  {
+    E(DBF_GUI, "NULL text contents of object %08lx", o);
     s[0] = '\0';
+  }
 
   LEAVE();
 }
