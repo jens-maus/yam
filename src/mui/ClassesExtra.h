@@ -150,6 +150,12 @@ struct  MUIP_DoDrag { STACKED ULONG MethodID; STACKED LONG touchx; STACKED LONG 
 #ifndef MUIA_DoubleBuffer
 #define MUIA_DoubleBuffer                   0x8042a9c7 /* V20 isg BOOL              */
 #endif
+#ifndef MUIV_Window_ActiveObject_Left
+#define MUIV_Window_ActiveObject_Left  MUIV_Window_ActiveObject_Prev
+#endif
+#ifndef MUIV_Window_ActiveObject_Right
+#define MUIV_Window_ActiveObject_Right  MUIV_Window_ActiveObject_Next
+#endif
 
 enum { IECODE_SPACE = 64,
        IECODE_TAB = 66,

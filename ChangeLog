@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-07-18 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/ClassesExtra.h: added some definitions to fix the broken AROS build.
+
 2012-07-17 Jens Langner <Jens.Langner@light-speed.de>
 
   * Debug.h: fixed build where GCC2 is used so that no _Pragma() call is used to
