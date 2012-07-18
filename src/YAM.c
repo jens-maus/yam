@@ -2073,6 +2073,10 @@ static void InitBeforeLogin(BOOL hidden)
     INITLIB("application.library", 50, 0, &ApplicationBase, "application", 1, &IApplication, FALSE, NULL);
   #endif
 
+  // initialize the thread system of YAM
+  if(InitThreads() == FALSE)
+    Abort(tr(MSG_ERROR_THREADS));
+
   // Lets check for the correct TheBar.mcc version
   CheckMCC(MUIC_TheBar,     26, 9, TRUE, "http://www.sf.net/projects/thebar/");
   CheckMCC(MUIC_TheBarVirt, 26, 9, TRUE, "http://www.sf.net/projects/thebar/");
@@ -2099,10 +2103,6 @@ static void InitBeforeLogin(BOOL hidden)
   // initialize the method stack
   if(InitMethodStack() == FALSE)
     Abort(tr(MSG_ERROR_METHODSTACK));
-
-  // initialize the thread system of YAM
-  if(InitThreads() == FALSE)
-    Abort(tr(MSG_ERROR_THREADS));
 
   // now we search through PROGDIR:Charsets and load all user defined
   // codesets via codesets.library

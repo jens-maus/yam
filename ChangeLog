@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-07-18 Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM.c: moved InitThreads() before the CheckMCC() calls because in case of
+    a missing mcc this function will raise an error via MUI_Request() which
+    in turn will use IsMainThread() and thus needs a working thread interface.
+
 2012-07-18 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/ClassesExtra.h: added some definitions to fix the broken AROS build.
