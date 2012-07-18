@@ -15,6 +15,9 @@ $URL$
   * include/SDI_hook.h: added CROSSCALL1/2 macros to make function calls across
     different processor architectures possible, i.e. emulated 68k code calling
     native PPC code.
+  * tcp/ssl.c: declared the two verification callback functions as crosscall
+    functions as MorphOS has no native AmiSSL and eventually must call native
+    PPC code from the emulated 68k AmiSSL code.
 
 2012-07-17 Jens Langner <Jens.Langner@light-speed.de>
 

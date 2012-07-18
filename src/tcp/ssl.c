@@ -45,6 +45,8 @@
 
 #include <proto/exec.h>
 
+#include "SDI_hook.h"
+
 #include "YAM.h"
 #include "YAM_config.h"
 #include "YAM_error.h"
@@ -74,7 +76,7 @@
 /// verify_callback
 // callback function that is called by AmiSSL/OpenSSL for every certification
 // verification step
-static int verify_callback(int preverify_ok, X509_STORE_CTX *x509_ctx)
+CROSSCALL2(verify_callback, int, int, preverify_ok, X509_STORE_CTX *, x509_ctx)
 {
   struct Connection *conn;
 
@@ -160,7 +162,7 @@ static int verify_callback(int preverify_ok, X509_STORE_CTX *x509_ctx)
 ///
 /// cert_verify_callback
 //
-static int cert_verify_callback(X509_STORE_CTX *x509_ctx, void *parm)
+CROSSCALL2(cert_verify_callback, int, X509_STORE_CTX *, x509_ctx, void *, parm)
 {
   int ok;
 
@@ -719,11 +721,11 @@ BOOL MakeSecureConnection(struct Connection *conn)
 
           // 8) set SSL_VERIFY_PEER so that we later can decide on our own in the verify_callback
           //    function wheter the connection should continue or if it should be terminated right away.
-          SSL_CTX_set_verify(conn->sslCtx, SSL_VERIFY_PEER, verify_callback);
+          SSL_CTX_set_verify(conn->sslCtx, SSL_VERIFY_PEER, ENTRY(verify_callback));
 
           // 9) set the cert_verify_callback as well so that we can supply userdata (struct Connection)
           //    to the verify_callback() func
-          SSL_CTX_set_cert_verify_callback(conn->sslCtx, cert_verify_callback, conn);
+          SSL_CTX_set_cert_verify_callback(conn->sslCtx, ENTRY(cert_verify_callback), conn);
 
           // 10) set the ciphers we want to use and exclude unwanted ones
           if(rc != 0 && (rc = SSL_CTX_set_cipher_list(conn->sslCtx, C->DefaultSSLCiphers)) == 0)
