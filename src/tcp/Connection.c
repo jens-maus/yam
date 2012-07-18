@@ -88,6 +88,10 @@
 #define SHUT_RDWR 2
 #endif
 
+#ifndef __STRPTR
+#define __STRPTR char *
+#endif
+
 // SocketBase must not be shared between tasks, hence we must not use the global
 // SocketBase, but the one tied to the current connection.
 #if defined(__amigaos4__)
