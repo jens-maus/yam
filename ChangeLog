@@ -12,6 +12,9 @@ $URL$
     based functions. Integer based functions are macros now and string based
     functions are true functions now as these require NULL pointer checks which
     integer based function don't need.
+  * include/SDI_hook.h: added CROSSCALL1/2 macros to make function calls across
+    different processor architectures possible, i.e. emulated 68k code calling
+    native PPC code.
 
 2012-07-17 Jens Langner <Jens.Langner@light-speed.de>
 
