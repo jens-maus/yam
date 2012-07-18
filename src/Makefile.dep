@@ -120,7 +120,8 @@ $(OBJDIR)/DockyIcon.o: DockyIcon.c YAM.h include/xpk/xpk.h include/amiga-align.h
   include/interfaces/amissl.h include/inline4/amissl.h mui/ClassesExtra.h \
   YAM_main.h YAM_read.h BayesFilter.h mui/WriteWindow.h DockyIcon.h \
   Locale.h MUIObjects.h Debug.h
-$(OBJDIR)/FileInfo.o: FileInfo.c FileInfo.h extrasrc.h include/SDI_compiler.h \
+$(OBJDIR)/FileInfo.o: FileInfo.c YAM_utilities.h include/SDI_compiler.h \
+  YAM_stringsizes.h YAM_folderconfig.h FileInfo.h extrasrc.h \
   include/SDI_stdarg.h include/SDI_compiler.h Debug.h
 $(OBJDIR)/FolderList.o: FolderList.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h FolderList.h MailList.h \
@@ -4246,8 +4247,9 @@ $(OBJDIR)/$(EXTRADIR)/AllocSysObject.o: extrasrc/AllocSysObject.c extrasrc/Alloc
   include/SDI_compiler.h extrasrc/ItemPool.h include/SDI_compiler.h \
   include/SDI_stdarg.h YAM_utilities.h YAM_stringsizes.h \
   YAM_folderconfig.h Debug.h
-$(OBJDIR)/$(EXTRADIR)/AllocVecPooled.o: extrasrc/AllocVecPooled.c Debug.h extrasrc.h \
-  include/SDI_compiler.h include/SDI_stdarg.h include/SDI_compiler.h
+$(OBJDIR)/$(EXTRADIR)/AllocVecPooled.o: extrasrc/AllocVecPooled.c extrasrc.h \
+  include/SDI_compiler.h include/SDI_stdarg.h include/SDI_compiler.h \
+  Debug.h
 $(OBJDIR)/$(EXTRADIR)/asprintf.o: extrasrc/asprintf.c include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h extrasrc.h
 $(OBJDIR)/$(EXTRADIR)/DoSuperNew.o: extrasrc/DoSuperNew.c include/SDI_compiler.h \
@@ -4256,8 +4258,9 @@ $(OBJDIR)/$(EXTRADIR)/ExamineDir.o: extrasrc/ExamineDir.c extrasrc/ExamineDir.h 
   YAM_stringsizes.h YAM_utilities.h include/SDI_compiler.h \
   YAM_stringsizes.h YAM_folderconfig.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h Debug.h extrasrc.h
-$(OBJDIR)/$(EXTRADIR)/FreeVecPooled.o: extrasrc/FreeVecPooled.c Debug.h extrasrc.h \
-  include/SDI_compiler.h include/SDI_stdarg.h include/SDI_compiler.h
+$(OBJDIR)/$(EXTRADIR)/FreeVecPooled.o: extrasrc/FreeVecPooled.c extrasrc.h \
+  include/SDI_compiler.h include/SDI_stdarg.h include/SDI_compiler.h \
+  Debug.h
 $(OBJDIR)/$(EXTRADIR)/getdelim.o: extrasrc/getdelim.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h Debug.h
 $(OBJDIR)/$(EXTRADIR)/GetHead.o: extrasrc/GetHead.c extrasrc.h include/SDI_compiler.h \
@@ -4268,12 +4271,11 @@ $(OBJDIR)/$(EXTRADIR)/GetSucc.o: extrasrc/GetSucc.c extrasrc.h include/SDI_compi
   include/SDI_stdarg.h include/SDI_compiler.h
 $(OBJDIR)/$(EXTRADIR)/GetTail.o: extrasrc/GetTail.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h
-$(OBJDIR)/$(EXTRADIR)/ItemPoolAlloc.o: extrasrc/ItemPoolAlloc.c Debug.h extrasrc.h \
+$(OBJDIR)/$(EXTRADIR)/ItemPoolAlloc.o: extrasrc/ItemPoolAlloc.c extrasrc.h \
   include/SDI_compiler.h include/SDI_stdarg.h include/SDI_compiler.h \
-  extrasrc/ItemPool.h
-$(OBJDIR)/$(EXTRADIR)/ItemPoolFree.o: extrasrc/ItemPoolFree.c Debug.h extrasrc.h \
-  include/SDI_compiler.h include/SDI_stdarg.h include/SDI_compiler.h \
-  extrasrc/ItemPool.h
+  extrasrc/ItemPool.h Debug.h
+$(OBJDIR)/$(EXTRADIR)/ItemPoolFree.o: extrasrc/ItemPoolFree.c extrasrc.h include/SDI_compiler.h \
+  include/SDI_stdarg.h include/SDI_compiler.h extrasrc/ItemPool.h Debug.h
 $(OBJDIR)/$(EXTRADIR)/memdup.o: extrasrc/memdup.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h
 $(OBJDIR)/$(EXTRADIR)/MoveList.o: extrasrc/MoveList.c extrasrc.h include/SDI_compiler.h \

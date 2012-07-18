@@ -1,3 +1,4 @@
+
 /***************************************************************************
 
  YAM - Yet Another Mailer
@@ -29,6 +30,8 @@
 
 #include <dos/dos.h>
 #include <proto/dos.h>
+
+#include "YAM_utilities.h"
 
 #include "FileInfo.h"
 #include "extrasrc.h"
