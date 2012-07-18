@@ -8,6 +8,10 @@ $URL$
 2012-07-18 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/ClassesExtra.h: added some definitions to fix the broken AROS build.
+  * MUIObjects.c: swapped the implementation of simple integer based and string
+    based functions. Integer based functions are macros now and string based
+    functions are true functions now as these require NULL pointer checks which
+    integer based function don't need.
 
 2012-07-17 Jens Langner <Jens.Langner@light-speed.de>
 

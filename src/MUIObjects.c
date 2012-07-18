@@ -514,43 +514,37 @@ char ShortCut(const char *label)
 }
 
 ///
-/// GetMUIInteger
-//  Returns the numeric value of a MUI string object
-int GetMUIInteger(Object *obj)
+/// GetMUIString
+// copy the contents of a MUI string object to a string
+void GetMUIString(char *s, Object *o, size_t len)
 {
-   return (int)xget(obj,MUIA_String_Integer);
+  char *c;
+
+  ENTER();
+
+  if((c = (char *)xget(o, MUIA_String_Contents)) != NULL)
+    strlcpy(s, c, len);
+  else
+    s[0] = '\0';
+
+  LEAVE();
 }
 
 ///
-/// GetMUICheck
-//  Returns the value of a MUI checkmark object
-BOOL GetMUICheck(Object *obj)
+/// GetMUIText
+// copy the contents of a MUI text object to a string
+void GetMUIText(char *s, Object *o, size_t len)
 {
-   return (BOOL)xget(obj, MUIA_Selected);
-}
+  char *c;
 
-///
-/// GetMUICycle
-//  Returns the value of a MUI cycle object
-int GetMUICycle(Object *obj)
-{
-   return (int)xget(obj, MUIA_Cycle_Active);
-}
+  ENTER();
 
-///
-/// GetMUIRadio
-//  Returns the value of a MUI radio object
-int GetMUIRadio(Object *obj)
-{
-   return (int)xget(obj, MUIA_Radio_Active);
-}
+  if((c = (char *)xget(o, MUIA_Text_Contents)) != NULL)
+    strlcpy(s, c, len);
+  else
+    s[0] = '\0';
 
-///
-/// GetMUINumer
-//  Returns the value of a MUI numeric slider
-int GetMUINumer(Object *obj)
-{
-   return (int)xget(obj, MUIA_Numeric_Value);
+  LEAVE();
 }
 
 ///

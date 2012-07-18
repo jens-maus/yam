@@ -50,14 +50,16 @@ Object * MakeString(int maxlen, const char *label);
 Object * MakeAddressField(Object **string, const char *label, const Object *help, int abmode, int winnr, ULONG flags);
 Object * MakeCharsetPop(Object **string, Object **pop);
 char ShortCut(const char *label);
-BOOL GetMUICheck(Object *obj);
-int GetMUICycle(Object *obj);
-int GetMUIInteger(Object *obj);
-int GetMUINumer(Object *obj);
-int GetMUIRadio(Object *obj);
 
-#define GetMUIString(a, o, l) strlcpy((a), (char *)xget((o), MUIA_String_Contents), (l))
-#define GetMUIText(a, o, l)   strlcpy((a), (char *)xget((o), MUIA_Text_Contents), (l))
+#define GetMUICheck(o)   (BOOL)xget((o), MUIA_Selected)
+#define GetMUICycle(o)   (int)xget((o), MUIA_Cycle_Active)
+#define GetMUIInteger(o) (int)xget((o), MUIA_String_Integer)
+#define GetMUINumer(o)   (int)xget((o), MUIA_Numeric_Value)
+#define GetMUIRadio(o)   (int)xget((o), MUIA_Radio_Active)
+
+void GetMUIString(char *s, Object *o, size_t len);
+void GetMUIText(char *s, Object *o, size_t len);
+
 #define SetHelp(o,str)        set(o, MUIA_ShortHelp, tr(str))
 
 // macros for more easy creation of objects
