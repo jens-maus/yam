@@ -678,7 +678,7 @@ BOOL MakeSecureConnection(struct Connection *conn)
         SSL_library_init();
 
         // 3) We have to feed the random number generator first
-        D(DBF_NET, "Seeding random number generator...");
+        D(DBF_NET, "seeding random number generator");
         snprintf(tmp, sizeof(tmp), "%08lx%08lx%08lx", (unsigned long)time((time_t *)NULL), (unsigned long)FindTask(NULL), (unsigned long)rand());
         RAND_seed(tmp, strlen(tmp));
 
@@ -705,7 +705,7 @@ BOOL MakeSecureConnection(struct Connection *conn)
             // 7) load the certificates (e.g. CA) from either a file or a directory path
             if((rc = SSL_CTX_load_verify_locations(conn->sslCtx, DEFAULT_CAFILE, DEFAULT_CAPATH)) == 0)
             {
-              W(DBF_NET, "Warning: setting default verify locations failed!");
+              W(DBF_NET, "warning: setting default verify locations failed!");
 
               ER_NewError(tr(MSG_ER_WARN_LOADCAPATH), DEFAULT_CAPATH, DEFAULT_CAFILE);
             }
@@ -715,7 +715,7 @@ BOOL MakeSecureConnection(struct Connection *conn)
 
           // 7) if no CA file or path is given we set the default pathes
           if(rc == 0 && (rc = SSL_CTX_set_default_verify_paths(conn->sslCtx)) == 0)
-            E(DBF_NET, "Error: setting default verify locations failed");
+            E(DBF_NET, "error: setting default verify locations failed");
 
           // 8) set SSL_VERIFY_PEER so that we later can decide on our own in the verify_callback
           //    function wheter the connection should continue or if it should be terminated right away.
@@ -730,11 +730,11 @@ BOOL MakeSecureConnection(struct Connection *conn)
             E(DBF_NET, "SSL_CTX_set_cipher_list() error!");
           else
           {
-            D(DBF_NET, "Initializing TLS/SSL session...");
+            D(DBF_NET, "initializing TLS/SSL session");
 
             // 11) check if we are ready for creating the ssl connection
             if((conn->ssl = SSL_new(conn->sslCtx)) == NULL)
-              E(DBF_NET, "can't create a new SSL structure for a connection.");
+              E(DBF_NET, "can't create a new SSL structure for a connection");
             else
             {
               // output some debug information on the
@@ -744,7 +744,7 @@ BOOL MakeSecureConnection(struct Connection *conn)
                 int i = 0;
                 const char *next = NULL;
 
-                D(DBF_NET, "Available SSL ciphers:");
+                D(DBF_NET, "available SSL ciphers:");
                 do
                 {
                   if((next = SSL_get_cipher_list(conn->ssl, i)) != NULL)
@@ -757,6 +757,7 @@ BOOL MakeSecureConnection(struct Connection *conn)
               #endif
 
               // 12) set the socket descriptor to the ssl context
+			  D(DBF_NET, "set socket descriptor %ld for context %08lx", conn->socket, conn->ssl);
               if(SSL_set_fd(conn->ssl, (int)conn->socket) != 1)
                 E(DBF_NET, "SSL_set_fd() error, socket %ld", conn->socket);
               else
@@ -765,6 +766,7 @@ BOOL MakeSecureConnection(struct Connection *conn)
                 int res;
 
                 // 13) establish the ssl connection and take care of non-blocking IO
+				D(DBF_NET, "connect SSL context %08lx", conn->ssl);
                 while(errorState == FALSE && (res = SSL_connect(conn->ssl)) <= 0)
                 {
                   int err = SSL_get_error(conn->ssl, res);
@@ -834,9 +836,10 @@ BOOL MakeSecureConnection(struct Connection *conn)
                   STACK_OF(X509) *chain;
 
                   // 14) now we get the peer certificate chain
+				  D(DBF_NET, "get peer certificate chain");
                   chain = SSL_get_peer_cert_chain(conn->ssl);
                   if(chain == NULL || sk_X509_num(chain) == 0)
-                    E(DBF_NET, "SSL server did not present certificate: %lx", chain);
+                    E(DBF_NET, "SSL server did not present certificate, chain=%08lx", chain);
                   else
                   {
                     struct Certificate *cert;
