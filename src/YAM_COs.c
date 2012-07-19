@@ -2051,6 +2051,7 @@ void CO_GetConfig(BOOL saveConfig)
       // as the user may have changed the order of the filters
       // we have to make sure the order in the NList fits to the
       // exec list order of our filter list
+      i = 0;
       do
       {
         struct FilterNode *filter = NULL;
