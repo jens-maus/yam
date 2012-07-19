@@ -301,8 +301,10 @@ static SAVEDS void ThreadEntry(void)
   {
     struct ThreadMessage *msg;
 
+    // wait for messages to arrive at the thread's message port
     Wait(1 << proc->pr_MsgPort.mp_SigBit);
 
+    // handle all pending messages
     while((msg = (struct ThreadMessage *)GetMsg(&proc->pr_MsgPort)) != NULL)
     {
       switch(msg->action)
@@ -358,6 +360,7 @@ static SAVEDS void ThreadEntry(void)
         break;
       }
 
+      // return the message to the sender
       ReplyMsg((struct Message *)msg);
     }
   }
