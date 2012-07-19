@@ -21,6 +21,10 @@ $URL$
     of all identities was reset back to "no signature" from time to time.
   * YAM_COs.c: use the same algorithmic approach for all lists when having to
     resort them.
+  * YAM_COs.c, YAM_UT.c: added a new function to sort the elements of an Exec
+    list according to their order within in NList object. This makes the update
+    process of a modified configuration lots easier as the algorithmic approach
+    is the exactly same every time.
 
 2012-07-18 Jens Langner <Jens.Langner@light-speed.de>
 

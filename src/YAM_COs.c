@@ -1968,107 +1968,23 @@ void CO_GetConfig(BOOL saveConfig)
 
     case cp_TCPIP:
     {
-      int i;
-
-      // as the user may have changed the order of the POP3 servers
-      // we have to make sure the order in the NList fits to the
-      // exec list order of our POP3 server list
-      i = 0;
-      do
-      {
-        struct MailServerNode *msn = NULL;
-
-        DoMethod(gui->LV_POP3, MUIM_NList_GetEntry, i, &msn);
-        if(msn == NULL)
-          break;
-
-        // for resorting the POP3 list we just have to remove that particular server
-        // and add it to the tail - all other operations like adding/removing should
-        // have been done by others already - so this is just resorting
-        Remove((struct Node *)msn);
-        AddTail((struct List *)&CE->pop3ServerList, (struct Node *)msn);
-
-        i++;
-      }
-      while(TRUE);
-
-      // as the user may have changed the order of the SMTP servers
-      // we have to make sure the order in the NList fits to the
-      // exec list order of our SMTP server list
-      i = 0;
-      do
-      {
-        struct MailServerNode *msn = NULL;
-
-        DoMethod(gui->LV_SMTP, MUIM_NList_GetEntry, i, &msn);
-        if(msn == NULL)
-          break;
-
-        // for resorting the SMTP list we just have to remove that particular server
-        // and add it to the tail - all other operations like adding/removing should
-        // have been done by others already - so this is just resorting
-        Remove((struct Node *)msn);
-        AddTail((struct List *)&CE->smtpServerList, (struct Node *)msn);
-
-        i++;
-      }
-      while(TRUE);
+      // bring NList elements and Exec list elements into sync
+      SortNListToExecList(gui->LV_POP3, &CE->pop3ServerList);
+      SortNListToExecList(gui->LV_SMTP, &CE->smtpServerList);
     }
     break;
 
     case cp_Identities:
     {
-      int i;
-
-      // as the user may have changed the order of the User Identities, so
-      // we have to make sure the order in the NList fits to the
-      // exec list order of our UserIdentity list
-      i = 0;
-      do
-      {
-        struct UserIdentityNode *uin = NULL;
-
-        DoMethod(gui->LV_IDENTITY, MUIM_NList_GetEntry, i, &uin);
-        if(uin == NULL)
-          break;
-
-        // for resorting the UserIdentity list we just have to remove that particular identity
-        // and add it to the tail - all other operations like adding/removing should
-        // have been done by others already - so this is just resorting
-        Remove((struct Node *)uin);
-        AddTail((struct List *)&CE->userIdentityList, (struct Node *)uin);
-
-        i++;
-      }
-      while(TRUE);
+      // bring NList elements and Exec list elements into sync
+      SortNListToExecList(gui->LV_IDENTITY, &CE->userIdentityList);
     }
     break;
 
     case cp_Filters:
     {
-      int i;
-
-      // as the user may have changed the order of the filters
-      // we have to make sure the order in the NList fits to the
-      // exec list order of our filter list
-      i = 0;
-      do
-      {
-        struct FilterNode *filter = NULL;
-
-        DoMethod(gui->LV_RULES, MUIM_NList_GetEntry, i, &filter);
-        if(filter == NULL)
-          break;
-
-        // for resorting the filterlist we just have to remove that particular filter
-        // and add it to the tail - all other operations like adding/removing should
-        // have been done by others already - so this is just resorting
-        Remove((struct Node *)filter);
-        AddTail((struct List *)&CE->filterList, (struct Node *)filter);
-
-        i++;
-      }
-      while(TRUE);
+      // bring NList elements and Exec list elements into sync
+      SortNListToExecList(gui->LV_RULES, &CE->filterList);
     }
     break;
 
@@ -2493,28 +2409,8 @@ void CO_GetConfig(BOOL saveConfig)
 
     case cp_MIME:
     {
-      int i=0;
-
-      // as the user may have changed the order of the list of MIME types
-      // we have to make sure the order in the NList fits to the
-      // exec list order of our MIME type list
-      do
-      {
-        struct MimeTypeNode *mt = NULL;
-
-        DoMethod(gui->LV_MIME, MUIM_NList_GetEntry, i, &mt);
-        if(mt != NULL)
-        {
-          // for resorting the MIME type list we just have to remove that particular type
-          // and add it to the tail - all other operations like adding/removing should
-          // have been done by others already - so this is just resorting
-          Remove((struct Node *)mt);
-          AddTail((struct List *)&CE->mimeTypeList, (struct Node *)mt);
-        }
-        else
-          break;
-      }
-      while(++i);
+      // bring NList elements and Exec list elements into sync
+      SortNListToExecList(gui->LV_MIME, &CE->mimeTypeList);
       GetMUIString(CE->DefaultMimeViewer, gui->ST_DEFVIEWER, sizeof(CE->DefaultMimeViewer));
     }
     break;

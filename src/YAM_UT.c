@@ -5945,6 +5945,40 @@ BOOL CompareLists(const struct List *lh1, const struct List *lh2, BOOL (* compar
 }
 
 ///
+/// SortNListToExecList
+// successively obtains the elements of an NList object and reorders them
+// with in an Exec list accordingly
+void SortNListToExecList(Object *nList, struct MinList *execList)
+{
+  int i;
+
+  ENTER();
+
+  // as the user may have changed the order of the entries in the NList object
+  // we have to make sure the order in the NList fits to the Exec list's order
+  i = 0;
+  do
+  {
+    struct Node *node = NULL;
+
+    DoMethod(nList, MUIM_NList_GetEntry, i, &node);
+    if(node == NULL)
+      break;
+
+    // for resorting the exec list we just have to remove that particular entry
+    // and add it to the tail - all other operations like adding/removing should
+    // have been done by others already - so this is just resorting
+    Remove(node);
+    AddTail((struct List *)execList, node);
+
+    i++;
+  }
+  while(TRUE);
+
+  LEAVE();
+}
+
+///
 /// GetHostName
 // retrieve the hostname of the system YAM is currently running on for things
 // like SMTP authentification and so on
