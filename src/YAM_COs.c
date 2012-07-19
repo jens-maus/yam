@@ -1969,7 +1969,6 @@ void CO_GetConfig(BOOL saveConfig)
     case cp_TCPIP:
     {
       int i;
-      struct MailServerNode *msn;
 
       // as the user may have changed the order of the POP3 servers
       // we have to make sure the order in the NList fits to the
@@ -1977,7 +1976,8 @@ void CO_GetConfig(BOOL saveConfig)
       i = 0;
       do
       {
-        msn = NULL;
+        struct MailServerNode *msn = NULL;
+
         DoMethod(gui->LV_POP3, MUIM_NList_GetEntry, i, &msn);
         if(msn == NULL)
           break;
@@ -1998,7 +1998,8 @@ void CO_GetConfig(BOOL saveConfig)
       i = 0;
       do
       {
-        msn = NULL;
+        struct MailServerNode *msn = NULL;
+
         DoMethod(gui->LV_SMTP, MUIM_NList_GetEntry, i, &msn);
         if(msn == NULL)
           break;
@@ -2018,7 +2019,6 @@ void CO_GetConfig(BOOL saveConfig)
     case cp_Identities:
     {
       int i;
-      struct UserIdentityNode *uin;
 
       // as the user may have changed the order of the User Identities, so
       // we have to make sure the order in the NList fits to the
@@ -2026,7 +2026,8 @@ void CO_GetConfig(BOOL saveConfig)
       i = 0;
       do
       {
-        uin = NULL;
+        struct UserIdentityNode *uin = NULL;
+
         DoMethod(gui->LV_IDENTITY, MUIM_NList_GetEntry, i, &uin);
         if(uin == NULL)
           break;
@@ -2045,7 +2046,7 @@ void CO_GetConfig(BOOL saveConfig)
 
     case cp_Filters:
     {
-      int i=0;
+      int i;
 
       // as the user may have changed the order of the filters
       // we have to make sure the order in the NList fits to the
@@ -2055,18 +2056,18 @@ void CO_GetConfig(BOOL saveConfig)
         struct FilterNode *filter = NULL;
 
         DoMethod(gui->LV_RULES, MUIM_NList_GetEntry, i, &filter);
-        if(filter)
-        {
-          // for resorting the filterlist we just have to remove that particular filter
-          // and add it to the tail - all other operations like adding/removing should
-          // have been done by others already - so this is just resorting
-          Remove((struct Node *)filter);
-          AddTail((struct List *)&CE->filterList, (struct Node *)filter);
-        }
-        else
+        if(filter == NULL)
           break;
+
+        // for resorting the filterlist we just have to remove that particular filter
+        // and add it to the tail - all other operations like adding/removing should
+        // have been done by others already - so this is just resorting
+        Remove((struct Node *)filter);
+        AddTail((struct List *)&CE->filterList, (struct Node *)filter);
+
+        i++;
       }
-      while(++i);
+      while(TRUE);
     }
     break;
 

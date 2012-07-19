@@ -19,6 +19,8 @@ $URL$
     structure and  not to the source configuration. This was not true for the
     signature nodes and was most probably the reason why the signature setting
     of all identities was reset back to "no signature" from time to time.
+  * YAM_COs.c: use the same algorithmic approach for all lists when having to
+    resort them.
 
 2012-07-18 Jens Langner <Jens.Langner@light-speed.de>
 
