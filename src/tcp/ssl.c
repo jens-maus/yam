@@ -82,6 +82,9 @@ CROSSCALL2(verify_callback, int, int, preverify_ok, X509_STORE_CTX *, x509_ctx)
 
   ENTER();
 
+  SHOWVALUE(DBF_NET, preverify_ok);
+  SHOWVLAUE(DBF_NET, x509_ctx);
+
   // if there is no error we do nothing but return
   if(preverify_ok == 0)
   {
@@ -167,6 +170,9 @@ CROSSCALL2(cert_verify_callback, int, X509_STORE_CTX *, x509_ctx, void *, parm)
   int ok;
 
   ENTER();
+
+  SHOWVLAUE(DBF_NET, x509_ctx);
+  SHOWVALUE(DBF_NET, parm);
 
   // Store param (struct Connection) in context for verify_callback()
   ok = X509_STORE_CTX_set_app_data(x509_ctx, parm);
