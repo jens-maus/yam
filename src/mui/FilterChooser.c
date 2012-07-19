@@ -199,8 +199,8 @@ DECLARE(UpdateFilters)
 
       ParsePatternNoCase("#?.sfd", parsedPattern, parsedPatternSize);
 
-      if((context = ObtainDirContextTags(EX_StringName, data->searchPath,
-                                         EX_MatchString, parsedPattern,
+      if((context = ObtainDirContextTags(EX_StringName, (IPTR)data->searchPath,
+                                         EX_MatchString, (IPTR)parsedPattern,
                                          TAG_DONE)) != NULL)
       {
         struct ExamineData *ed;
