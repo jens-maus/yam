@@ -307,7 +307,7 @@ static SAVEDS void ThreadEntry(void)
     // handle all pending messages
     while((msg = (struct ThreadMessage *)GetMsg(&proc->pr_MsgPort)) != NULL)
     {
-      D(DBF_THREAD, "got message %08lx, action %ld, thread %08lx\n", msg, msg->action, msg->thread);
+      D(DBF_THREAD, "got message %08lx, action %ld, thread %08lx", msg, msg->action, msg->thread);
 
       switch(msg->action)
       {
