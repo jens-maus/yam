@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-07-19 Thore Böckelmann <tboeckel@gmx.de>
+
+  * Threads.c: in case a thread is woken up from its Wait() call all pending
+    messages will now be handled instead of just the first one and then
+    immediately falling back into another Wait(). If more than one message has
+    been sent to the thread this may have caused a deadlock before, because the
+    signal that Wait() is waiting for is triggered just once.
+
 2012-07-18 Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM.c: moved InitThreads() before the CheckMCC() calls because in case of

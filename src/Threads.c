@@ -303,7 +303,7 @@ static SAVEDS void ThreadEntry(void)
 
     Wait(1 << proc->pr_MsgPort.mp_SigBit);
 
-    if((msg = (struct ThreadMessage *)GetMsg(&proc->pr_MsgPort)) != NULL)
+    while((msg = (struct ThreadMessage *)GetMsg(&proc->pr_MsgPort)) != NULL)
     {
       switch(msg->action)
       {
@@ -419,11 +419,11 @@ void AbortThread(APTR thread, BOOL waitForTermination)
   }
 
   Signal((struct Task *)proc, 1UL << sig);
-  
+
   if(waitForTermination == TRUE)
   {
     struct Thread *_thread = thread;
-    
+
     // now wait until the thread has finished its work
     do
     {
