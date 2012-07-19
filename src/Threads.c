@@ -294,7 +294,7 @@ static SAVEDS void ThreadEntry(void)
 
   ENTER();
 
-  proc = (struct Process*)FindTask(NULL);
+  proc = (struct Process *)FindTask(NULL);
   D(DBF_THREAD, "thread 0x%08lx '%s' waiting for startup message", proc, SafeStr(proc->pr_Task.tc_Node.ln_Name));
 
   do
@@ -302,11 +302,13 @@ static SAVEDS void ThreadEntry(void)
     struct ThreadMessage *msg;
 
     // wait for messages to arrive at the thread's message port
-    Wait(1 << proc->pr_MsgPort.mp_SigBit);
+    WaitPort(&proc->pr_MsgPort);
 
     // handle all pending messages
     while((msg = (struct ThreadMessage *)GetMsg(&proc->pr_MsgPort)) != NULL)
     {
+      D(DBF_THREAD, "got message %08lx, action %ld, thread %08lx\n", msg, msg->action, msg->thread);
+
       switch(msg->action)
       {
         case TA_Startup:
