@@ -46,6 +46,7 @@ struct Data
 {
   char *searchPath;   // path to search for filter descriptions
   char **filterArray; // names of the available filters
+  int numFilters;     // number of found filters
 };
 */
 
@@ -158,7 +159,16 @@ OVERLOAD(OM_GET)
 
   switch(((struct opGet *)msg)->opg_AttrID)
   {
-    case ATTR(Filter): *store = (IPTR)data->filterArray[xget(obj, MUIA_Cycle_Active)]; return TRUE;
+    case ATTR(Filter):
+    {
+      // return the selected filter's name or an empty string if no filters are available
+      if(data->numFilters != 0)
+        *store = (IPTR)data->filterArray[xget(obj, MUIA_Cycle_Active)];
+      else
+        *store = (IPTR)"";
+
+      return TRUE;
+    }
   }
 
   return DoSuperMethodA(cl, obj, msg);
@@ -178,7 +188,6 @@ static int compareFilters(const void *f1, const void *f2)
 DECLARE(UpdateFilters)
 {
   GETDATA;
-  ULONG numFilters;
 
   ENTER();
 
@@ -186,9 +195,9 @@ DECLARE(UpdateFilters)
   FreeStrArray(data->filterArray);
 
   // count the number of *.sfd files
-  numFilters = FileCount(data->searchPath, "#?.sfd");
+  data->numFilters = FileCount(data->searchPath, "#?.sfd");
 
-  if((data->filterArray = calloc(numFilters+1, sizeof(char *))) != NULL)
+  if((data->filterArray = calloc(data->numFilters+1, sizeof(char *))) != NULL)
   {
     ULONG parsedPatternSize = strlen("#?.sfd") * 2 + 2;
     char *parsedPattern;

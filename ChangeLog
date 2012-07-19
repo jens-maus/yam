@@ -12,6 +12,8 @@ $URL$
     immediately falling back into another Wait(). If more than one message has
     been sent to the thread this may have caused a deadlock before, because the
     signal that Wait() is waiting for is triggered just once.
+  * mui/FilterChooser.c: make sure to always return a valid name pointer, even if
+    no external filter files were found. This closes #337.
 
 2012-07-18 Jens Langner <Jens.Langner@light-speed.de>
 
