@@ -25,6 +25,7 @@ $URL$
     list according to their order within in NList object. This makes the update
     process of a modified configuration lots easier as the algorithmic approach
     is the exactly same every time.
+  * UserIdentity.c: compare signature IDs instead of signature pointers.
 
 2012-07-18 Jens Langner <Jens.Langner@light-speed.de>
 
