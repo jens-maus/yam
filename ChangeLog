@@ -12,8 +12,13 @@ $URL$
     immediately falling back into another Wait(). If more than one message has
     been sent to the thread this may have caused a deadlock before, because the
     signal that Wait() is waiting for is triggered just once.
-  * mui/FilterChooser.c: make sure to always return a valid name pointer, even if
-    no external filter files were found. This closes #337.
+  * mui/FilterChooser.c: make sure to always return a valid name pointer, even
+    if no external filter files were found. This closes #337.
+  * YAM_CO.c: copying the configuration must make sure that all embedded
+    pointers are rally pointing to something within the same configuration
+    structure and  not to the source configuration. This was not true for the
+    signature nodes and was most probably the reason why the signature setting
+    of all identities was reset back to "no signature" from time to time.
 
 2012-07-18 Jens Langner <Jens.Langner@light-speed.de>
 

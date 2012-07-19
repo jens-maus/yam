@@ -1925,6 +1925,29 @@ static BOOL CopyConfigData(struct Config *dco, const struct Config *sco)
     }
   }
 
+  // for copying the signature list we have to do a deep copy of the list
+  NewMinList(&dco->signatureList);
+
+  if(success == TRUE)
+  {
+    IterateList(&sco->signatureList, curNode)
+    {
+      struct SignatureNode *srcNode = (struct SignatureNode *)curNode;
+      struct SignatureNode *dstNode;
+
+      if((dstNode = DuplicateNode(srcNode, sizeof(*srcNode))) != NULL)
+      {
+        AddTail((struct List *)&dco->signatureList, (struct Node *)dstNode);
+      }
+      else
+      {
+        success = FALSE;
+        // bail out, no need to copy further data
+        break;
+      }
+    }
+  }
+
   // for copying the user identity list we have to do a deep copy of the list
   NewMinList(&dco->userIdentityList);
 
@@ -1944,32 +1967,16 @@ static BOOL CopyConfigData(struct Config *dco, const struct Config *sco)
         else
           dstNode->smtpServer = NULL;
 
+        // make sure the signature of the copied node points to an
+        // entry of the copied signature list
+        if(srcNode->signature != NULL)
+          dstNode->signature = FindSignatureByID(&dco->signatureList, srcNode->signature->id);
+        else
+          dstNode->signature = NULL;
+
         dstNode->sentMailList = NULL;
 
         AddTail((struct List *)&dco->userIdentityList, (struct Node *)dstNode);
-      }
-      else
-      {
-        success = FALSE;
-        // bail out, no need to copy further data
-        break;
-      }
-    }
-  }
-
-  // for copying the signature list we have to do a deep copy of the list
-  NewMinList(&dco->signatureList);
-
-  if(success == TRUE)
-  {
-    IterateList(&sco->signatureList, curNode)
-    {
-      struct SignatureNode *srcNode = (struct SignatureNode *)curNode;
-      struct SignatureNode *dstNode;
-
-      if((dstNode = DuplicateNode(srcNode, sizeof(*srcNode))) != NULL)
-      {
-        AddTail((struct List *)&dco->signatureList, (struct Node *)dstNode);
       }
       else
       {
