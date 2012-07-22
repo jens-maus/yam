@@ -400,6 +400,10 @@ static SAVEDS void ThreadEntry(void)
 
           // return the message to the sender
           ReplyMsg((struct Message *)msg);
+
+          // check if we should bail out completely
+          if(done == TRUE)
+            break;
         }
       }
       while(done == FALSE);
