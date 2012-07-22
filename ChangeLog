@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-07-22 Thore Böckelmann <tboeckel@gmx.de>
+
+  * Threads.c: reworked the thread framework to handle the startup message
+    separately and to allocate a separate command message port. This should
+    solve the issues on MorphOS when redirecting the debug output to stdout
+    which could interfere with communication of the C library via pr_MsgPort.
+
 2012-07-19 Thore Böckelmann <tboeckel@gmx.de>
 
   * Threads.c: in case a thread is woken up from its Wait() call all pending

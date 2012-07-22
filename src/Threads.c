@@ -83,6 +83,7 @@ struct Thread
 {
   struct MinNode node;     // to make this a full Exec node
   struct Process *process; // the process pointer as returned by CreateNewProc()
+  struct MsgPort *commandPort;
   struct MsgPort *timerPort;
   struct TimeRequest *timerRequest;
   LONG priority;           // the thread's priority
@@ -159,8 +160,9 @@ static struct TagItem *CloneThreadTags(const struct TagItem *tags)
   while(NextTagItem((APTR)&tstate) != NULL)
     numTags++;
 
-  if((clone = AllocSysObjectTags(ASOT_TAGLIST, ASOTAGS_NumEntries, numTags,
-                                               TAG_DONE)) != NULL)
+  if((clone = AllocSysObjectTags(ASOT_TAGLIST,
+    ASOTAGS_NumEntries, numTags,
+    TAG_DONE)) != NULL)
   {
     struct TagItem *tag;
     struct TagItem *ctag = clone;
@@ -290,85 +292,121 @@ static SAVEDS void ThreadEntry(void)
 {
   struct Process *proc;
   BOOL done = FALSE;
-  struct Thread *thread = NULL;
-
-  ENTER();
+  struct ThreadMessage *msg;
 
   proc = (struct Process *)FindTask(NULL);
-  D(DBF_THREAD, "thread 0x%08lx '%s' waiting for startup message", proc, SafeStr(proc->pr_Task.tc_Node.ln_Name));
 
-  do
+  // wait for the startup message to arrive at the thread's message port
+  WaitPort(&proc->pr_MsgPort);
+  if((msg = (struct ThreadMessage *)GetMsg(&proc->pr_MsgPort)) != NULL && msg->action == TA_Startup)
   {
-    struct ThreadMessage *msg;
+    struct Thread *thread = msg->thread;
+    BOOL initOk = FALSE;
 
-    // wait for messages to arrive at the thread's message port
-    WaitPort(&proc->pr_MsgPort);
+    // we must not use any I/O function ahead of getting the startup message, thus
+    // the ENTER() macro ist called here
+    ENTER();
 
-    // handle all pending messages
-    while((msg = (struct ThreadMessage *)GetMsg(&proc->pr_MsgPort)) != NULL)
+    D(DBF_THREAD, "thread %08lx '%s' got startup message", thread, thread->name);
+
+    if((thread->abortSignal = AllocSignal(-1)) != -1)
     {
-      D(DBF_THREAD, "got message %08lx, action %ld, thread %08lx", msg, msg->action, msg->thread);
-
-      switch(msg->action)
+      if((thread->wakeupSignal = AllocSignal(-1)) != -1)
       {
-        case TA_Startup:
-        {
-          D(DBF_THREAD, "thread '%s' got startup message", msg->thread->name);
-          if((msg->thread->abortSignal = AllocSignal(-1)) != -1)
-          {
-            if((msg->thread->wakeupSignal = AllocSignal(-1)) != -1)
-            {
-              proc->pr_Task.tc_UserData = msg->thread;
-              msg->result = TRUE;
-              thread = msg->thread;
-
-              // change our initial priority of 1 back to 0
-              SetTaskPri((struct Task *)proc, 0);
-            }
-            else
-            {
-              E(DBF_THREAD, "thread '%s' failed to allocate wakeup signal", msg->thread->name);
-              FreeSignal(msg->thread->abortSignal);
-              msg->result = FALSE;
-            }
-          }
-          else
-          {
-            E(DBF_THREAD, "thread '%s' failed to allocate abort signal", msg->thread->name);
-            msg->result = FALSE;
-          }
-        }
-        break;
-
-        case TA_Shutdown:
-        {
-          D(DBF_THREAD, "thread '%s' got shutdown message", msg->thread->name);
-          if(msg->thread->abortSignal != -1)
-            FreeSignal(msg->thread->abortSignal);
-          if(msg->thread->wakeupSignal != -1)
-            FreeSignal(msg->thread->wakeupSignal);
+        // allocate a separate message port to not interfere with standard I/O functions
+        // which use proc->pr_MsgPort
+      	if((thread->commandPort = AllocSysObjectTags(ASOT_PORT, TAG_DONE)) != NULL)
+      	{
+      	  // remember the thread pointer in the task's tc_UserData field
+      	  // this will be used whenever the current thread needs to be obtained
+          proc->pr_Task.tc_UserData = thread;
           msg->result = TRUE;
-          done = TRUE;
-        }
-        break;
+          initOk = TRUE;
 
-        default:
+          // change our initial priority of 1 back to 0
+          SetTaskPri((struct Task *)proc, 0);
+        }
+        else
         {
-          // clear the abort signal before executing the desired action
-          thread->aborted = FALSE;
-          SetSignal(0UL, (1UL << thread->abortSignal) | (1UL << thread->wakeupSignal));
-          msg->result = DoThreadMessage(msg);
+          E(DBF_THREAD, "thread '%s' failed to allocate command port", thread->name);
+          FreeSignal(thread->wakeupSignal);
+          FreeSignal(thread->abortSignal);
+          msg->result = FALSE;
         }
-        break;
       }
-
-      // return the message to the sender
-      ReplyMsg((struct Message *)msg);
+      else
+      {
+        E(DBF_THREAD, "thread '%s' failed to allocate wakeup signal", thread->name);
+        FreeSignal(thread->abortSignal);
+        msg->result = FALSE;
+      }
     }
-  }
-  while(done == FALSE);
+    else
+    {
+      E(DBF_THREAD, "thread '%s' failed to allocate abort signal", thread->name);
+      msg->result = FALSE;
+    }
 
-  LEAVE();
+    // return the message to the sender
+    ReplyMsg((struct Message *)msg);
+
+    if(initOk == TRUE)
+    {
+      do
+      {
+        // wait for messages to arrive at the commnand message port
+        WaitPort(thread->commandPort);
+
+        // handle all pending messages
+        while((msg = (struct ThreadMessage *)GetMsg(thread->commandPort)) != NULL)
+        {
+          D(DBF_THREAD, "got message %08lx, action %ld", msg, msg->action);
+
+          switch(msg->action)
+          {
+            case TA_Shutdown:
+            {
+              D(DBF_THREAD, "thread '%s' got shutdown message", thread->name);
+              // free all allocated resources and bail out of the loop
+              if(thread->commandPort != NULL)
+              {
+                FreeSysObject(ASOT_PORT, thread->commandPort);
+                thread->commandPort = NULL;
+              }
+              if(thread->abortSignal != -1)
+              {
+                FreeSignal(thread->abortSignal);
+                thread->abortSignal = -1;
+              }
+              if(thread->wakeupSignal != -1)
+              {
+                FreeSignal(thread->wakeupSignal);
+                thread->wakeupSignal = -1;
+              }
+              msg->result = TRUE;
+              done = TRUE;
+            }
+            break;
+
+            default:
+            {
+              // clear the abort signal before executing the desired action
+              thread->aborted = FALSE;
+              SetSignal(0UL, (1UL << thread->abortSignal) | (1UL << thread->wakeupSignal));
+              msg->result = DoThreadMessage(msg);
+            }
+            break;
+          }
+
+          // return the message to the sender
+          ReplyMsg((struct Message *)msg);
+        }
+      }
+      while(done == FALSE);
+    }
+
+    LEAVE();
+  }
 }
 
 ///
@@ -511,9 +549,9 @@ static void ShutdownThread(struct ThreadNode *threadNode)
   startupMessage.threadNode = threadNode;
   startupMessage.thread = thread;
 
-  // send out the startup message and wait for a reply
+  // send out the shutdown message and wait for a reply
   D(DBF_THREAD, "sending shutdown message to thread '%s'", thread->name);
-  PutMsg(&thread->process->pr_MsgPort, (struct Message *)&startupMessage);
+  PutMsg(thread->commandPort, (struct Message *)&startupMessage);
   Remove((struct Node *)WaitPort(G->threadPort));
   D(DBF_THREAD, "thread '%s' is dead now", thread->name);
 
@@ -533,15 +571,17 @@ static struct Thread *CreateThread(void)
 
   ENTER();
 
-  if((threadNode = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*threadNode),
-                                                 ASONODE_Min, TRUE,
-                                                 TAG_DONE)) != NULL)
+  if((threadNode = AllocSysObjectTags(ASOT_NODE,
+    ASONODE_Size, sizeof(*threadNode),
+    ASONODE_Min, TRUE,
+    TAG_DONE)) != NULL)
   {
     struct Thread *thread;
 
-    if((thread = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*thread),
-                                               ASONODE_Min, TRUE,
-                                               TAG_DONE)) != NULL)
+    if((thread = AllocSysObjectTags(ASOT_NODE,
+      ASONODE_Size, sizeof(*thread),
+      ASONODE_Min, TRUE,
+      TAG_DONE)) != NULL)
     {
       threadNode->thread = thread;
 
@@ -831,9 +871,10 @@ APTR VARARGS68K DoAction(Object *obj, const enum ThreadAction action, ...)
 
     D(DBF_THREAD, "found idle task '%s'", thread->name);
 
-    if((msg = AllocSysObjectTags(ASOT_MESSAGE, ASOMSG_Size, sizeof(*msg),
-                                               ASOMSG_ReplyPort, (IPTR)G->threadPort,
-                                               TAG_DONE)) != NULL)
+    if((msg = AllocSysObjectTags(ASOT_MESSAGE,
+      ASOMSG_Size, sizeof(*msg),
+      ASOMSG_ReplyPort, (IPTR)G->threadPort,
+      TAG_DONE)) != NULL)
     {
       VA_LIST args;
 
@@ -861,7 +902,7 @@ APTR VARARGS68K DoAction(Object *obj, const enum ThreadAction action, ...)
         }
 
         // send the message to the thread
-        PutMsg(&thread->process->pr_MsgPort, (struct Message *)msg);
+        PutMsg(thread->commandPort, (struct Message *)msg);
 
         // remove the thread from the idle list and put it into the working list
         Remove((struct Node *)threadNode);
@@ -1062,9 +1103,10 @@ BOOL InitThreadTimer(void)
   {
     if((thread->timerPort = AllocSysObjectTags(ASOT_PORT, TAG_DONE)) != NULL)
     {
-      if((thread->timerRequest = AllocSysObjectTags(ASOT_IOREQUEST, ASOIOR_Size, sizeof(*thread->timerRequest),
-                                                                    ASOIOR_ReplyPort, (IPTR)thread->timerPort,
-                                                                    TAG_DONE)) != NULL)
+      if((thread->timerRequest = AllocSysObjectTags(ASOT_IOREQUEST,
+        ASOIOR_Size, sizeof(*thread->timerRequest),
+        ASOIOR_ReplyPort, (IPTR)thread->timerPort,
+        TAG_DONE)) != NULL)
       {
         if(OpenDevice(TIMERNAME, UNIT_VBLANK, (struct IORequest *)thread->timerRequest, 0L) == 0)
         {
