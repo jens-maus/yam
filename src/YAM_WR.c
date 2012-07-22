@@ -2916,6 +2916,8 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
               rcc = AppendRcpt(rcc, &mail->To, email->identity, TRUE);
               for(k=0; k < email->NumSTo; k++)
                 rcc = AppendRcpt(rcc, &email->STo[k], email->identity, TRUE);
+              for(k=0; k < email->NumCC; k++)
+                rcc = AppendRcpt(rcc, &email->CC[k], email->identity, FALSE);
             }
           }
           break;

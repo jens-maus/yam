@@ -11,6 +11,8 @@ $URL$
     separately and to allocate a separate command message port. This should
     solve the issues on MorphOS when redirecting the debug output to stdout
     which could interfere with communication of the C library via pr_MsgPort.
+  * YAM_WR.c: added the missing CC addresses when replying to all recipients.
+    This closes #339.
 
 2012-07-19 Thore Böckelmann <tboeckel@gmx.de>
 
