@@ -397,6 +397,7 @@ void SetupDebug(void)
     _DBPRINTF("** %s date %s (build %s) startup **********************\n", yamversion, yamversiondate, yambuildid);
     _DBPRINTF("Exec version: v%ld.%ld\n", (unsigned long)((struct Library *)SysBase)->lib_Version, (unsigned long)((struct Library *)SysBase)->lib_Revision);
     _DBPRINTF("Initializing runtime debugging:\n");
+    _DBPRINTF("parsing ENV:yamdebug content '%s'\n", s);
 
     // we parse the env variable token-wise
     while(*s)
@@ -542,7 +543,7 @@ void SetupDebug(void)
     // output information on the debugging settings
     _DBPRINTF("** %s build: %s startup **********************\n", yamversion, yambuildid);
     _DBPRINTF("Exec version: v%ld.%ld\n", (unsigned long)((struct Library *)SysBase)->lib_Version, (unsigned long)((struct Library *)SysBase)->lib_Revision);
-    _DBPRINTF("no 'yamdebug' variable found\n");
+    _DBPRINTF("no ENV:yamdebug variable found\n");
   }
 
   _DBPRINTF("set debug classes/flags (env:yamdebug): %08lx/%08lx\n", debug_classes, debug_flags);
