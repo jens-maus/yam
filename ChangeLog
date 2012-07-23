@@ -11,6 +11,7 @@ $URL$
     called functions instead of the calling point.
   * mime/base64.c: added an additional NULL pointer check when comparing a
     codeset's name.
+  * mime/base64.c: fixed a memory leak.
 
 2012-07-22 Thore Böckelmann <tboeckel@gmx.de>
 

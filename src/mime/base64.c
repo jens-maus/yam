@@ -611,6 +611,7 @@ long base64decode_file(FILE *in, FILE *out,
       {
         // it should not happen that we face a shortCount
         // or error
+        free(outBuffer);
         RETURN(-1);
         return -1;
       }
@@ -713,8 +714,8 @@ long base64decode_file(FILE *in, FILE *out,
     // we have to free it now
     if(dptr != outbuffer)
       CodesetsFreeA(dptr, NULL);
-    else
-      free(outbuffer);
+
+    free(outbuffer);
 
     // increase the decodedChars counter
     decodedChars += outLength;
