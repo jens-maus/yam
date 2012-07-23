@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-07-23 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_WR.c: centralized the NULL pointer checks when composing a mail in the
+    called functions instead of the calling point.
+
 2012-07-22 Thore Böckelmann <tboeckel@gmx.de>
 
   * Threads.c: reworked the thread framework to handle the startup message

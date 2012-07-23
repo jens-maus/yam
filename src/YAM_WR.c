@@ -331,15 +331,18 @@ static void HeaderFputs(FILE *fh, const char *s, const char *param, const int of
 //  Outputs a complete header line
 void EmitHeader(FILE *fh, const char *hdr, const char *body)
 {
-  int offset;
-
   ENTER();
 
-  D(DBF_MAIL, "writing header '%s' with content '%s'", hdr, body);
+  D(DBF_MAIL, "writing header '%s' with content '%s'", hdr, SafeStr(body));
 
-  offset = fprintf(fh, "%s: ", hdr);
-  HeaderFputs(fh, body, NULL, offset);
-  fputc('\n', fh);
+  if(body != NULL)
+  {
+    int offset;
+
+    offset = fprintf(fh, "%s: ", hdr);
+    HeaderFputs(fh, body, NULL, offset);
+    fputc('\n', fh);
+  }
 
   LEAVE();
 }
@@ -352,6 +355,8 @@ static void EmitRcptField(FILE *fh, const char *body)
   char *bodycpy;
 
   ENTER();
+
+  D(DBF_MAIL, "writing recipient field with content '%s'", SafeStr(body));
 
   if((bodycpy = strdup(body)) != NULL)
   {
@@ -387,10 +392,14 @@ static void EmitRcptHeader(FILE *fh, const char *hdr, const char *body)
 {
   ENTER();
 
-  fprintf(fh, "%s: ", hdr);
+  D(DBF_MAIL, "writing recipient header '%s' with content '%s'", hdr, SafeStr(body));
+
   if(body != NULL)
+  {
+    fprintf(fh, "%s: ", hdr);
     EmitRcptField(fh, body);
-  fputc('\n', fh);
+    fputc('\n', fh);
+  }
 
   LEAVE();
 }
@@ -741,8 +750,7 @@ static BOOL WR_Bounce(FILE *fh, const struct Compose *comp)
       // should be added to the top of a message
       EmitHeader(fh, "Resent-From", BuildAddress(address, sizeof(address), comp->Identity->address, comp->Identity->realname));
       EmitHeader(fh, "Resent-Date", GetDateTime());
-      if(comp->MailTo != NULL)
-        EmitRcptHeader(fh, "Resent-To", comp->MailTo);
+      EmitRcptHeader(fh, "Resent-To", comp->MailTo);
       NewMessageID(msgID, sizeof(msgID), comp->Identity->smtpServer);
       EmitHeader(fh, "Resent-Message-ID", msgID);
 
@@ -1281,18 +1289,12 @@ BOOL WriteOutMessage(struct Compose *comp)
   // put the From: header entry into the mail
   EmitRcptHeader(fh, "From", BuildAddress(address, sizeof(address), comp->Identity->address, comp->Identity->realname));
 
-  if(comp->ReplyTo != NULL)
-    EmitRcptHeader(fh, "Reply-To", comp->ReplyTo);
-  if(comp->MailTo != NULL)
-    EmitRcptHeader(fh, "To", comp->MailTo);
-  if(comp->MailCC != NULL)
-    EmitRcptHeader(fh, "CC", comp->MailCC);
-  if(comp->MailBCC != NULL)
-    EmitRcptHeader(fh, "BCC", comp->MailBCC);
-  if(comp->MailReplyTo != NULL)
-    EmitRcptHeader(fh, "Mail-Reply-To", comp->MailReplyTo);
-  if(comp->MailFollowupTo != NULL)
-    EmitRcptHeader(fh, "Mail-Followup-To", comp->MailFollowupTo);
+  EmitRcptHeader(fh, "Reply-To", comp->ReplyTo);
+  EmitRcptHeader(fh, "To", comp->MailTo);
+  EmitRcptHeader(fh, "CC", comp->MailCC);
+  EmitRcptHeader(fh, "BCC", comp->MailBCC);
+  EmitRcptHeader(fh, "Mail-Reply-To", comp->MailReplyTo);
+  EmitRcptHeader(fh, "Mail-Followup-To", comp->MailFollowupTo);
 
   // output the current date
   EmitHeader(fh, "Date", GetDateTime());
@@ -1300,10 +1302,8 @@ BOOL WriteOutMessage(struct Compose *comp)
   // output the Message-ID, In-Reply-To and References message headers
   NewMessageID(msgID, sizeof(msgID), comp->Identity->smtpServer);
   EmitHeader(fh, "Message-ID", msgID);
-  if(comp->inReplyToMsgID != NULL)
-    EmitHeader(fh, "In-Reply-To", comp->inReplyToMsgID);
-  if(comp->references != NULL)
-    EmitHeader(fh, "References", comp->references);
+  EmitHeader(fh, "In-Reply-To", comp->inReplyToMsgID);
+  EmitHeader(fh, "References", comp->references);
 
   if(comp->RequestMDN == TRUE)
   {
