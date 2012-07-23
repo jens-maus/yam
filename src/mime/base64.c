@@ -611,7 +611,7 @@ long base64decode_file(FILE *in, FILE *out,
       {
         // it should not happen that we face a shortCount
         // or error
-        free(outBuffer);
+        free(outbuffer);
         RETURN(-1);
         return -1;
       }
