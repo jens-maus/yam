@@ -547,6 +547,7 @@ void SetupDebug(void)
   }
 
   _DBPRINTF("set debug classes/flags (env:yamdebug): %08lx/%08lx\n", debug_classes, debug_flags);
+  _DBPRINTF("set debug files: '%s'\n", debug_files);
   _DBPRINTF("** Normal processing follows ***************************************\n");
 
   SetupDbgMalloc();
