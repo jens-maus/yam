@@ -228,7 +228,7 @@ static int MapTZ(int value, BOOL forward)
   if(forward == TRUE)
   {
     // we can do a direct mapping
-    if(value >= 0 && value < ARRAY_SIZE(tzmap))
+    if(value >= 0 && value < (int)ARRAY_SIZE(tzmap))
       result = tzmap[value].GMTOffset;
   }
   else
@@ -238,7 +238,7 @@ static int MapTZ(int value, BOOL forward)
     {
       int i;
 
-      for(i=0; i < ARRAY_SIZE(tzmap); i++)
+      for(i=0; i < (int)ARRAY_SIZE(tzmap); i++)
       {
         if(tzmap[i].GMTOffset == value)
         {
