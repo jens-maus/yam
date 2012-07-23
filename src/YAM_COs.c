@@ -178,6 +178,9 @@ void String2MUIStyle(const char *string, char *muistr)
 //
 static int MapTZ(int value, BOOL forward)
 {
+  // minus 1000 can NEVER be because there is no
+  // index of minus 1000 or GMT value
+  int result = -1000;
   static const struct
   {
     int CY_TZONE; // the number in the cycle gadget
@@ -219,11 +222,14 @@ static int MapTZ(int value, BOOL forward)
     { 32,  780 }  // GMT+13:00
   };
 
+  ENTER();
+
   // depending on the mode we do a forward/backward mapping
-  if(forward)
+  if(forward == TRUE)
   {
     // we can do a direct mapping
-    if(value >= 0 && value <= 32) return tzmap[value].GMTOffset;
+    if(value >= 0 && value < ARRAY_SIZE(tzmap))
+      result = tzmap[value].GMTOffset;
   }
   else
   {
@@ -231,21 +237,25 @@ static int MapTZ(int value, BOOL forward)
     if(value == 0 || value >= 12 || value <= -12)
     {
       int i;
-      for(i=0; i <= 32; i++)
+
+      for(i=0; i < ARRAY_SIZE(tzmap); i++)
       {
-        if(tzmap[i].GMTOffset == value) return i;
+        if(tzmap[i].GMTOffset == value)
+        {
+          result = i;
+          break;
+        }
       }
     }
     else
     {
       // if we end up here we have probably an old type TimeZone Mapping of YAM 2.3
-      return value-12;
+      result = value-12;
     }
   }
 
-  // minus 1000 can NEVER be because there is no
-  // index of minus 1000 or GMT value
-  return -1000;
+  RETURN(result);
+  return result;
 }
 ///
 /// CO_SaveConfig
