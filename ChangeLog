@@ -12,6 +12,8 @@ $URL$
   * mime/base64.c: added an additional NULL pointer check when comparing a
     codeset's name.
   * mime/base64.c: fixed a memory leak.
+  * mime/base64.c: fixed a NULL pointer access in case the decoding process was
+    aborted early due to invalid characters. This closes #341.
 
 2012-07-22 Thore Böckelmann <tboeckel@gmx.de>
 

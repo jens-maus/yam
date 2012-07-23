@@ -165,6 +165,7 @@ int base64decode(char **out, const char *in, size_t inlen)
     unsigned char *inp = (unsigned char *)in;
     unsigned char *outp = buffer;
 
+SHOWVALUE(DBF_MIME,buffer);
     while(inlen >= 4)
     {
       unsigned char x;
@@ -256,16 +257,11 @@ int base64decode(char **out, const char *in, size_t inlen)
     // base64 decoding aborted. So we return a minus
     // value to signal that short item count (error).
     if(inlen > 0)
-    {
       result = -(outp - buffer);
-      free(buffer);
-      *out = NULL;
-    }
     else
-    {
       result = (outp - buffer);
-      *out = (char *)buffer;
-    }
+
+    *out = (char *)buffer;
   }
   else
     *out = NULL;
@@ -659,60 +655,62 @@ long base64decode_file(FILE *in, FILE *out,
       else
       {
         W(DBF_MIME, "error while trying to convert base64decoded string to local charset!");
-
         dptr = outbuffer;
       }
     }
     else
       dptr = outbuffer;
 
-    // if the user also wants to convert CRLF to LF only,
-    // we do it right now
-    if(convCRLF == TRUE)
+    if(dptr != NULL)
     {
-      long r;
-      char *rc = dptr;
-      char *wc = dptr;
-
-      for(r=0; r < outLength; r++, rc++)
+      // if the user also wants to convert CRLF to LF only,
+      // we do it right now
+      if(convCRLF == TRUE)
       {
-        // check if this is a CRLF
-        if(*rc == '\r' &&
-           outLength-r > 1 && rc[1] == '\n')
-        {
-          // if so, skip the \r
-          continue;
-        }
-        else
-        {
-          // if no CRLF is found, lets copy
-          // the plain character
-          *wc = *rc;
+        long r;
+        char *rc = dptr;
+        char *wc = dptr;
 
-          // increase the write counter
-          wc++;
+        for(r=0; r < outLength; r++, rc++)
+        {
+          // check if this is a CRLF
+          if(*rc == '\r' &&
+             outLength-r > 1 && rc[1] == '\n')
+          {
+            // if so, skip the \r
+            continue;
+          }
+          else
+          {
+            // if no CRLF is found, lets copy
+            // the plain character
+            *wc = *rc;
+
+            // increase the write counter
+            wc++;
+          }
         }
+
+        // make sure we reduce outLength by the
+        // number of "overjumped" chars.
+        outLength -= (rc-wc);
       }
 
-      // make sure we reduce outLength by the
-      // number of "overjumped" chars.
-      outLength -= (rc-wc);
-    }
+      // now that we got the string decoded we write it into
+      // our file
+      if(fwrite(dptr, sizeof(char), (size_t)outLength, out) != (size_t)outLength)
+      {
+        E(DBF_MIME, "error on writing data!");
 
-    // now that we got the string decoded we write it into
-    // our file
-    if(fwrite(dptr, sizeof(char), (size_t)outLength, out) != (size_t)outLength)
-    {
-      E(DBF_MIME, "error on writing data!");
-
-      // an error occurred while writing...
-      RETURN(-1);
-      return -1;
+        // an error occurred while writing...
+        RETURN(-1);
+        return -1;
+      }
     }
 
     // in case the dptr buffer was allocated by codesets.library,
     // we have to free it now
-    if(dptr != outbuffer)
+    if(dptr != outbuffer && dptr != NULL)
       CodesetsFreeA(dptr, NULL);
 
     free(outbuffer);
@@ -732,4 +730,3 @@ long base64decode_file(FILE *in, FILE *out,
 }
 
 ///
-
