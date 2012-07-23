@@ -267,7 +267,7 @@ int base64decode(char **out, const char *in, size_t inlen)
       *out = (char *)buffer;
     }
   }
-  else 
+  else
     *out = NULL;
 
   RETURN(result);
@@ -618,22 +618,24 @@ long base64decode_file(FILE *in, FILE *out,
 
     // in case the user wants us to detect the correct cyrillic codeset
     // we do it now, but just if the source codeset isn't UTF-8
-    if(convCRLF && C->DetectCyrillic &&
-       (srcCodeset == NULL || stricmp(srcCodeset->name, "utf-8") != 0))
+    if(convCRLF == TRUE && C->DetectCyrillic == TRUE)
     {
-      struct codeset *cs = CodesetsFindBest(CSA_Source,         outbuffer,
-                                            CSA_SourceLen,      outLength,
-                                            CSA_CodesetFamily,  CSV_CodesetFamily_Cyrillic,
-                                            TAG_DONE);
+      if(srcCodeset == NULL || (srcCodeset->name != NULL && stricmp(srcCodeset->name, "utf-8") != 0))
+      {
+        struct codeset *cs = CodesetsFindBest(CSA_Source,         outbuffer,
+                                              CSA_SourceLen,      outLength,
+                                              CSA_CodesetFamily,  CSV_CodesetFamily_Cyrillic,
+                                              TAG_DONE);
 
-      if(cs != NULL && cs != srcCodeset)
-        srcCodeset = cs;
+        if(cs != NULL && cs != srcCodeset)
+          srcCodeset = cs;
+      }
     }
 
     // if the caller supplied a source codeset, we have to
     // make sure we convert our outbuffer before writing it out
     // to the file into our local charset
-    if(srcCodeset)
+    if(srcCodeset != NULL)
     {
       ULONG strLen = 0;
 
@@ -665,7 +667,7 @@ long base64decode_file(FILE *in, FILE *out,
 
     // if the user also wants to convert CRLF to LF only,
     // we do it right now
-    if(convCRLF)
+    if(convCRLF == TRUE)
     {
       long r;
       char *rc = dptr;
@@ -721,7 +723,7 @@ long base64decode_file(FILE *in, FILE *out,
   // if there was a problem during
   // the decoding phase we go and warn the user with a
   // return value of -2
-  if(problemDuringDecode)
+  if(problemDuringDecode == TRUE)
     decodedChars = -2;
 
   RETURN(decodedChars);

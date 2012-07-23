@@ -9,6 +9,8 @@ $URL$
 
   * YAM_WR.c: centralized the NULL pointer checks when composing a mail in the
     called functions instead of the calling point.
+  * mime/base64.c: added an additional NULL pointer check when comparing a
+    codeset's name.
 
 2012-07-22 Thore Böckelmann <tboeckel@gmx.de>
 
