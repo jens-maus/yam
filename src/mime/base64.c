@@ -618,7 +618,7 @@ long base64decode_file(FILE *in, FILE *out,
 
     // in case the user wants us to detect the correct cyrillic codeset
     // we do it now, but just if the source codeset isn't UTF-8
-    if(convCRLF == TRUE && C->DetectCyrillic == TRUE)
+    if(C->DetectCyrillic == TRUE)
     {
       if(srcCodeset == NULL || (srcCodeset->name != NULL && stricmp(srcCodeset->name, "utf-8") != 0))
       {
