@@ -565,16 +565,18 @@ static int rfc2047_decode_callback(const char *txt, unsigned int len, const char
 
   // in case the user wants us to detect the correct cyrillic codeset
   // we do it now
-  if(C->DetectCyrillic &&
-     (chset == NULL || stricmp(chset, "utf-8") != 0))
+  if(C->DetectCyrillic == TRUE)
   {
-    struct codeset *cs = CodesetsFindBest(CSA_Source,         txt,
-                                          CSA_SourceLen,      len,
-                                          CSA_CodesetFamily,  CSV_CodesetFamily_Cyrillic,
-                                          TAG_DONE);
+    if(chset == NULL || stricmp(chset, "utf-8") != 0)
+    {
+      struct codeset *cs = CodesetsFindBest(CSA_Source,         txt,
+                                            CSA_SourceLen,      len,
+                                            CSA_CodesetFamily,  CSV_CodesetFamily_Cyrillic,
+                                            TAG_DONE);
 
-    if(cs != NULL)
-      chset = cs->name;
+      if(cs != NULL)
+        chset = cs->name;
+    }
   }
 
   // now we try to get the src codeset from codesets.library
@@ -813,7 +815,7 @@ static int rfc2047_decode_int(const char *text,
           char *etext = Trim(enctext);
           char *dectext = NULL;
           int res;
-          
+
           if((res = base64decode(&dectext, etext, strlen(etext))) > 0)
           {
             free(enctext);

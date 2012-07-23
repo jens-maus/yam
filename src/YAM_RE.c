@@ -1264,23 +1264,24 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, const struct codeset *srcC
         {
           // in case the user wants us to detect the correct cyrillic codeset
           // we do it now
-          if(skipCodesets == FALSE &&
-             C->DetectCyrillic == TRUE && allowAutoDetect == TRUE &&
-             (srcCodeset == NULL || stricmp(srcCodeset->name, "utf-8") != 0))
+          if(skipCodesets == FALSE && C->DetectCyrillic == TRUE && allowAutoDetect == TRUE)
           {
-            struct codeset *cs = CodesetsFindBest(CSA_Source,         buf,
-                                                  CSA_SourceLen,      curlen,
-                                                  CSA_CodesetFamily,  CSV_CodesetFamily_Cyrillic,
-                                                  TAG_DONE);
+            if(srcCodeset == NULL || (srcCodeset->name != NULL && stricmp(srcCodeset->name, "utf-8") != 0))
+            {
+              struct codeset *cs = CodesetsFindBest(CSA_Source,         buf,
+                                                    CSA_SourceLen,      curlen,
+                                                    CSA_CodesetFamily,  CSV_CodesetFamily_Cyrillic,
+                                                    TAG_DONE);
 
-            if(cs != NULL && cs != srcCodeset)
-              srcCodeset = cs;
+              if(cs != NULL && cs != srcCodeset)
+                srcCodeset = cs;
+            }
           }
 
           // if this function was invoked with a source Codeset we have to make sure
           // we convert from the supplied source Codeset to our current local codeset with
           // help of the functions codesets.library provides.
-          if(srcCodeset != NULL && skipCodesets == FALSE)
+          if(skipCodesets == FALSE && srcCodeset != NULL)
           {
             ULONG dstlen = 0;
 

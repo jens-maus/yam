@@ -429,22 +429,24 @@ long uudecode_file(FILE *in, FILE *out, struct codeset *srcCodeset)
 
           // in case the user wants us to detect the correct cyrillic codeset
           // we do it now
-          if(C->DetectCyrillic &&
-             (srcCodeset == NULL || stricmp(srcCodeset->name, "utf-8") != 0))
+          if(C->DetectCyrillic == TRUE)
           {
-            struct codeset *cs = CodesetsFindBest(CSA_Source,         dptr,
-                                                  CSA_SourceLen,      todo,
-                                                  CSA_CodesetFamily,  CSV_CodesetFamily_Cyrillic,
-                                                  TAG_DONE);
+            if(srcCodeset == NULL || (srcCodeset->name != NULL && stricmp(srcCodeset->name, "utf-8") != 0))
+            {
+              struct codeset *cs = CodesetsFindBest(CSA_Source,         dptr,
+                                                    CSA_SourceLen,      todo,
+                                                    CSA_CodesetFamily,  CSV_CodesetFamily_Cyrillic,
+                                                    TAG_DONE);
 
-            if(cs != NULL && cs != srcCodeset)
-              srcCodeset = cs;
+              if(cs != NULL && cs != srcCodeset)
+                srcCodeset = cs;
+            }
           }
 
           // if the caller supplied a source codeset, we have to
           // make sure we convert our outbuffer before writing it out
           // to the file into our local charset
-          if(srcCodeset)
+          if(srcCodeset != NULL)
           {
             ULONG strLen = 0;
 
@@ -561,22 +563,23 @@ long uudecode_file(FILE *in, FILE *out, struct codeset *srcCodeset)
 
     // in case the user wants us to detect the correct cyrillic codeset
     // we do it now
-    if(C->DetectCyrillic &&
-       (srcCodeset == NULL || stricmp(srcCodeset->name, "utf-8") != 0))
-    {
-      struct codeset *cs = CodesetsFindBest(CSA_Source,         dptr,
-                                            CSA_SourceLen,      todo,
-                                            CSA_CodesetFamily,  CSV_CodesetFamily_Cyrillic,
-                                            TAG_DONE);
+    if(C->DetectCyrillic == TRUE)
+      if(srcCodeset == NULL || (srcCodeset->name != NULL && stricmp(srcCodeset->name, "utf-8") != 0))
+      {
+        struct codeset *cs = CodesetsFindBest(CSA_Source,         dptr,
+                                              CSA_SourceLen,      todo,
+                                              CSA_CodesetFamily,  CSV_CodesetFamily_Cyrillic,
+                                              TAG_DONE);
 
-      if(cs != NULL && cs != srcCodeset)
-        srcCodeset = cs;
+        if(cs != NULL && cs != srcCodeset)
+          srcCodeset = cs;
+      }
     }
 
     // if the caller supplied a source codeset, we have to
     // make sure we convert our outbuffer before writing it out
     // to the file into our local charset
-    if(srcCodeset)
+    if(srcCodeset != NULL)
     {
       ULONG strLen = 0;
 
