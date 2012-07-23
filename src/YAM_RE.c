@@ -1412,7 +1412,7 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
           case -2:
           {
             if(quietParsing == FALSE)
-              ER_NewError(tr(MSG_ER_B64DEC_WARN), rp->Nr, rmData->readFile);
+              ER_NewWarning(tr(MSG_ER_B64DEC_WARN), rp->Nr, rmData->readFile);
 
             decodeResult = 1;
           }
@@ -1421,7 +1421,7 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
           default:
           {
             if(quietParsing == FALSE)
-              ER_NewError(tr(MSG_ER_B64DEC_UNEXP), rp->Nr, rmData->readFile);
+              ER_NewWarning(tr(MSG_ER_B64DEC_UNEXP), rp->Nr, rmData->readFile);
           }
           break;
         }
@@ -1451,7 +1451,7 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
           case -2:
           {
             if(quietParsing == FALSE)
-              ER_NewError(tr(MSG_ER_QPDEC_UNEXP), rp->Filename);
+              ER_NewWarning(tr(MSG_ER_QPDEC_UNEXP), rp->Filename);
           }
           break;
 
@@ -1460,7 +1460,7 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
             W(DBF_MAIL, "found an undecodeable qp char sequence. Warning the user.");
 
             if(quietParsing == FALSE)
-              ER_NewError(tr(MSG_ER_QPDEC_WARN), rp->Filename);
+              ER_NewWarning(tr(MSG_ER_QPDEC_WARN), rp->Filename);
 
             decodeResult = 1; // allow to save the resulting file
           }
@@ -1471,7 +1471,7 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
             W(DBF_MAIL, "found an invalid character during decoding. Warning the user.");
 
             if(quietParsing == FALSE)
-              ER_NewError(tr(MSG_ER_QPDEC_CHAR), rp->Filename);
+              ER_NewWarning(tr(MSG_ER_QPDEC_CHAR), rp->Filename);
 
             decodeResult = 1; // allow to save the resulting file
           }
@@ -1480,7 +1480,7 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
           default:
           {
             if(quietParsing == FALSE)
-              ER_NewError(tr(MSG_ER_QPDEC_UNEXP), rp->Filename);
+              ER_NewWarning(tr(MSG_ER_QPDEC_UNEXP), rp->Filename);
           }
           break;
         }

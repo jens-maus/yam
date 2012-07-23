@@ -14,6 +14,8 @@ $URL$
   * mime/base64.c: fixed a memory leak.
   * mime/base64.c: fixed a NULL pointer access in case the decoding process was
     aborted early due to invalid characters. This closes #341.
+  * YAM_RE.c: changed some common and harmless errors from the base64 and
+    quoted-printable decoding process into a warning.
 
 2012-07-22 Thore Böckelmann <tboeckel@gmx.de>
 
