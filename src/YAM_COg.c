@@ -3108,10 +3108,8 @@ Object *CO_PageRead(struct CO_ClassData *data)
                                                                                                                                       NULL);
 
     // setup the MDN stuff
-    DoMethod(data->GUI.CH_MDN_NEVER, MUIM_Notify, MUIA_Selected, TRUE,  MUIV_Notify_Application, 3, MUIM_CallHook, &MDNRequestHook, FALSE);
-    DoMethod(data->GUI.CH_MDN_NEVER, MUIM_Notify, MUIA_Selected, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &MDNRequestHook, TRUE);
-    DoMethod(data->GUI.CH_MDN_ALLOW, MUIM_Notify, MUIA_Selected, TRUE,  MUIV_Notify_Application, 3, MUIM_CallHook, &MDNRequestHook, TRUE);
-    DoMethod(data->GUI.CH_MDN_ALLOW, MUIM_Notify, MUIA_Selected, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &MDNRequestHook, FALSE);
+    DoMethod(data->GUI.CH_MDN_NEVER, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &MDNRequestHook, MUIV_NotTriggerValue);
+    DoMethod(data->GUI.CH_MDN_ALLOW, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &MDNRequestHook, MUIV_TriggerValue);
 
     DoMethod(data->GUI.CH_DELAYEDSTATUS, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, data->GUI.NB_DELAYEDSTATUS, 3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
   }
