@@ -293,7 +293,7 @@ void ImportExternalSpamFilters(struct Config *co)
       }
     }
 
-    if(co->SpamTrustExternalFilter == TRUE)
+    if(co->SpamTrustExternalFilter == TRUE && co->SpamExternalFilter[0] != '\0')
     {
       char externalPath[SIZE_PATHFILE];
 
