@@ -2646,6 +2646,8 @@ BOOL ImportFilter(const char *fileName, const BOOL isVolatile, struct MinList *f
 
   ENTER();
 
+  D(DBF_FILTER, "import filters from file '%s'", fileName);
+
   if((fh = fopen(fileName, "r")) != NULL)
   {
     char *buf = NULL;
