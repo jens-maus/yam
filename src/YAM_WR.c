@@ -1386,7 +1386,7 @@ mimebody:
 /// AppendRcpt()
 //  Appends a recipient address to a string
 static char *AppendRcpt(char *sbuf, const struct Person *pe,
-                        struct UserIdentityNode *uin, const BOOL excludeme)
+                        const struct UserIdentityNode *uin, const BOOL excludeme)
 {
   ENTER();
 
