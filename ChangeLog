@@ -11,6 +11,8 @@ $URL$
     files. The implementation of strcasestr() on certain systems seems to be
     missing this check internally and return a non-NULL pointer even if one of
     the parameters is NULL.
+  * YAM_WR.c: slightly optimized the duplicate person check when adding further
+    recipients.
 
 2012-07-23 Thore Böckelmann <tboeckel@gmx.de>
 
