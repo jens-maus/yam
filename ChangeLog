@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-07-24 Thore Böckelmann <tboeckel@gmx.de>
+
+  * Debug.c: added a NULL pointer check before checking debug modules and debug
+    files. The implementation of strcasestr() on certain systems seems to be
+    missing this check internally and return a non-NULL pointer even if one of
+    the parameters is NULL.
+
 2012-07-23 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_WR.c: centralized the NULL pointer checks when composing a mail in the

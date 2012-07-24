@@ -248,9 +248,9 @@ INLINE BOOL matchDebugSpec(const unsigned long c, const unsigned f,
   {
     match = TRUE;
   }
-  else if(strcasestr(debug_modules, m) != NULL)
+  else if(m != NULL && strcasestr(debug_modules, m) != NULL)
     match = TRUE;
-  else if(strcasestr(debug_files, file) != NULL)
+  else if(file != NULL && strcasestr(debug_files, file) != NULL)
     match = TRUE;
 
   return match;
