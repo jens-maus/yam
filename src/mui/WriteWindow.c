@@ -281,29 +281,29 @@ static enum Encoding WhichEncodingForFile(const char *fname,
       // now that we analyzed the file we have to decide which encoding to take
       if(longlines != 0 || unsafechars != 0 || binarychars != 0)
       {
-        if(unsafechars == 0 && binarychars == 0)
+        BOOL isApplication = (strnicmp(ctype, "application/", 12) == 0);
+
+        if(unsafechars == 0 && binarychars == 0 && isApplication == FALSE)
         {
           // if we are here just because of long lines we have to use quoted-printable
           // encoding or otherwise we have too long lines in our final mail
           encoding = ENC_QP;
         }
-        else if(binarychars == 0 && longlines == 0 && hasServer8bit(msn))
+        else if(binarychars == 0 && longlines == 0 && hasServer8bit(msn) && isApplication == FALSE)
         {
           // if there are no binary chars and no long lines in the file and if
           // our SMTP server support 8bit character we can go and encode it via 8bit
           encoding = ENC_8BIT;
         }
-        else if(total / (unsafechars+binarychars+1) < 16 || strnicmp(ctype, "application/", 12) == 0)
-        {
-          // if we end up here we have a file with just unprintable characters
-          // and we have to decide if we take base64 or quoted-printable.
-          // base64 is more compact if there are many unprintable characters, as
-          // when sending a graphics file or such. see (RFC 1521)
-          encoding = ENC_B64;
-        }
         else
         {
-          encoding = ENC_QP;
+          // if we end up here we have a file with either binary or unsafe characters
+          // or too long lines. Before this could fall back to quoted-printable if the
+          // ratio between unsafe+binary characters and the total number of characters
+          // was below a certain threshold. But since quoted-printable has been excluded
+          // above already it would be false to accept it now. Furthermore a content-type
+          // starting with "application/" will always end up here. See (RFC 1521)
+          encoding = ENC_B64;
         }
       }
     }

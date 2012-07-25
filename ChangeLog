@@ -12,6 +12,13 @@ $URL$
     available for selection. MorphOS uses a local and non-static variable as
     replacement in this case, which of course ceased to live as soon as the
     object's constructor is left. As consequence random memory is accessed.
+  * mui/WriteWindow.c: in case quoted-printable has been excluded as possible
+    encoding for an attachment because of binary or unprinable characters within
+    the attachment file it was possible that it was chosen nevertheless again if
+    the ratio between the number of unsafe and total characters was below a
+    certain threshold. This could have malformed the attachment as the decoding
+    it again would not have produced the same file again. Now base64 is the
+    ultimate encoding if all other encodings have been excluded before.
 
 2012-07-24 Thore Böckelmann <tboeckel@gmx.de>
 
