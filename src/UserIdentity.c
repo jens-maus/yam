@@ -53,7 +53,7 @@
 
 /// CreateNewUserIdentity
 //  Initializes a new UserIdentityNode
-struct UserIdentityNode *CreateNewUserIdentity(void)
+struct UserIdentityNode *CreateNewUserIdentity(const struct Config *co)
 {
   struct UserIdentityNode *uin;
 
@@ -82,7 +82,7 @@ struct UserIdentityNode *CreateNewUserIdentity(void)
     // we get the first valid smtpServer from the list and put that
     // as the default one so that we don't have a NULL pointer in
     // uin->smtpServer
-    IterateList(&C->smtpServerList, curNode)
+    IterateList(&co->smtpServerList, curNode)
     {
       struct MailServerNode *msn = (struct MailServerNode *)curNode;
 
@@ -96,7 +96,7 @@ struct UserIdentityNode *CreateNewUserIdentity(void)
     // we get the first valid signature from the list and put that
     // as the default one. However, putting NULL there would mean
     // no signature
-    uin->signature = GetSignature(&C->signatureList, 0, TRUE);
+    uin->signature = GetSignature(&co->signatureList, 0, TRUE);
 
     // get the name of the first sent folder so that we make
     // that one as the default

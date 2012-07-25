@@ -1582,7 +1582,7 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     FreeUserIdentityList(&co->userIdentityList);
 
     // fill the user identity list with an empty entry
-    AddTail((struct List *)&co->userIdentityList, (struct Node *)CreateNewUserIdentity());
+    AddTail((struct List *)&co->userIdentityList, (struct Node *)CreateNewUserIdentity(co));
   }
 
   if(page == cp_Filters || page == cp_AllPages)

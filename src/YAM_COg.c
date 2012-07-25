@@ -1209,7 +1209,7 @@ HOOKPROTONHNONP(CO_AddIdentity, void)
 
   ENTER();
 
-  if((uin = CreateNewUserIdentity()) != NULL)
+  if((uin = CreateNewUserIdentity(CE)) != NULL)
   {
     if(IsMinListEmpty(&CE->userIdentityList) == FALSE)
       strlcpy(uin->description, tr(MSG_NewEntry), sizeof(uin->description));

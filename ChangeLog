@@ -19,6 +19,10 @@ $URL$
     certain threshold. This could have malformed the attachment as the decoding
     it again would not have produced the same file again. Now base64 is the
     ultimate encoding if all other encodings have been excluded before.
+  * UserIdentity.c: creating a new user identity must know the configuration to
+    take the default SMTP server and default signature from. Otherwise certain
+    code passages might operate on invalid pointers from a no longer existing
+    configration structure.
 
 2012-07-24 Thore Böckelmann <tboeckel@gmx.de>
 
