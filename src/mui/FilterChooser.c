@@ -197,51 +197,62 @@ DECLARE(UpdateFilters)
   // count the number of *.sfd files
   data->numFilters = FileCount(data->searchPath, "#?.sfd");
 
-  if((data->filterArray = calloc(data->numFilters+1, sizeof(char *))) != NULL)
+  // allocate an array at least 2 entries
+  if((data->filterArray = calloc(MAX(2, data->numFilters+1), sizeof(char *))) != NULL)
   {
-    ULONG parsedPatternSize = strlen("#?.sfd") * 2 + 2;
-    char *parsedPattern;
-
-    if((parsedPattern = malloc(parsedPatternSize)) != NULL)
+    // set a single empty entry if no files were found
+    // this works around a bug in MUI4 of MorphOS which uses a non-static
+    // replacement entry on the stack instead otherwise
+    if(data->numFilters == 0)
     {
-      APTR context;
+      data->filterArray[0] = strdup("");
+    }
+    else
+    {
+      ULONG parsedPatternSize = strlen("#?.sfd") * 2 + 2;
+      char *parsedPattern;
 
-      ParsePatternNoCase("#?.sfd", parsedPattern, parsedPatternSize);
-
-      if((context = ObtainDirContextTags(EX_StringName, (IPTR)data->searchPath,
-                                         EX_MatchString, (IPTR)parsedPattern,
-                                         TAG_DONE)) != NULL)
+      if((parsedPattern = malloc(parsedPatternSize)) != NULL)
       {
-        struct ExamineData *ed;
-        ULONG filterIndex = 0;
-        LONG error;
+        APTR context;
 
-        while((ed = ExamineDir(context)) != NULL)
+        ParsePatternNoCase("#?.sfd", parsedPattern, parsedPatternSize);
+
+        if((context = ObtainDirContextTags(EX_StringName, (IPTR)data->searchPath,
+                                           EX_MatchString, (IPTR)parsedPattern,
+                                           TAG_DONE)) != NULL)
         {
-          if((data->filterArray[filterIndex] = strdup(ed->Name)) != NULL)
+          struct ExamineData *ed;
+          ULONG filterIndex = 0;
+          LONG error;
+
+          while((ed = ExamineDir(context)) != NULL)
           {
-            char *p;
+            if((data->filterArray[filterIndex] = strdup(ed->Name)) != NULL)
+            {
+              char *p;
 
-            // strip the .sfd extension
-            if((p = strcasestr(data->filterArray[filterIndex], ".sfd")) != NULL)
-              *p = '\0';
+              // strip the .sfd extension
+              if((p = strcasestr(data->filterArray[filterIndex], ".sfd")) != NULL)
+                *p = '\0';
 
-            filterIndex++;
+              filterIndex++;
+            }
           }
+
+          // sort the list of filters
+          qsort(data->filterArray, filterIndex, sizeof(char *), compareFilters);
+
+          if((error = IoErr()) != ERROR_NO_MORE_ENTRIES)
+          {
+            E(DBF_ALWAYS, "%s failed, error %ld", __FUNCTION__, error);
+         }
+
+          ReleaseDirContext(context);
         }
 
-        // sort the list of filters
-        qsort(data->filterArray, filterIndex, sizeof(char *), compareFilters);
-
-        if((error = IoErr()) != ERROR_NO_MORE_ENTRIES)
-        {
-          E(DBF_ALWAYS, "%s failed, error %ld", __FUNCTION__, error);
-        }
-
-        ReleaseDirContext(context);
+        free(parsedPattern);
       }
-
-      free(parsedPattern);
     }
 
     // update the entry strings and set the active entry

@@ -197,32 +197,43 @@ DECLARE(UpdateIdentities)
   }
 
   // allocate enough space + 1 for NUL termination
-  if((data->identityArray = calloc(numIdentities+1, sizeof(char *))) != NULL)
+  if((data->identityArray = calloc(MAX(2, numIdentities+1), sizeof(char *))) != NULL)
   {
-    int i = 0;
     int active = 0;
 
-    // now we walk through the userIdentityList again
-    // and clone the address string
-    IterateList(&C->userIdentityList, curNode)
+    // set a single empty entry if no active identities were found
+    // this works around a bug in MUI4 of MorphOS which uses a non-static
+    // replacement entry on the stack instead otherwise
+    if(numIdentities == 0)
     {
-      struct UserIdentityNode *uin = (struct UserIdentityNode *)curNode;
+      data->identityArray[0] = strdup("");
+    }
+    else
+    {
+      int i = 0;
 
-      if(uin->active == TRUE)
+      // now we walk through the userIdentityList again
+      // and clone the address string
+      IterateList(&C->userIdentityList, curNode)
       {
-        char address[SIZE_LARGE];
+        struct UserIdentityNode *uin = (struct UserIdentityNode *)curNode;
 
-        // construct the new string via asprintf() so that the necessary
-        // memory is automatically allocated.
-        asprintf(&data->identityArray[i], MUIX_L "%s " MUIX_I "(%s)" MUIX_N, BuildAddress(address, sizeof(address), uin->address, uin->realname), uin->description);
-
-        // remember the active entry
-        if(data->identity != NULL && uin->id == data->identity->id)
+        if(uin->active == TRUE)
         {
-          active = i;
-        }
+          char address[SIZE_LARGE];
 
-        i++;
+          // construct the new string via asprintf() so that the necessary
+          // memory is automatically allocated.
+          asprintf(&data->identityArray[i], MUIX_L "%s " MUIX_I "(%s)" MUIX_N, BuildAddress(address, sizeof(address), uin->address, uin->realname), uin->description);
+
+          // remember the active entry
+          if(data->identity != NULL && uin->id == data->identity->id)
+          {
+            active = i;
+          }
+
+          i++;
+        }
       }
     }
 

@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-07-25 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/FilterChooser.c, mui/IdentityChooser.c, mui/MailServerChooser.c: added
+    a workaround for a bug in MUI4 of MorphOS which occurs when no entries are
+    available for selection. MorphOS uses a local and non-static variable as
+    replacement in this case, which of course ceased to live as soon as the
+    object's constructor is left. As consequence random memory is accessed.
+
 2012-07-24 Thore Böckelmann <tboeckel@gmx.de>
 
   * Debug.c: added a NULL pointer check before checking debug modules and debug

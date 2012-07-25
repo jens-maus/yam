@@ -219,24 +219,34 @@ DECLARE(UpdateMailServers)
     }
 
     // allocate enough space +1 for NUL termination
-    if((data->serverArray = calloc(numServers+1, sizeof(char *))) != NULL)
+    if((data->serverArray = calloc(MAX(2, numServers+1), sizeof(char *))) != NULL)
     {
-      int i;
-
-      // now we walk through the serverList again
-      // and clone the description string
-      i = 0;
-      IterateList(data->serverList, curNode)
+    // set a single empty entry if no active servers were found
+    // this works around a bug in MUI4 of MorphOS which uses a non-static
+    // replacement entry on the stack instead otherwise
+      if(numServers == 0)
       {
-        struct MailServerNode *msn = (struct MailServerNode *)curNode;
+        data->serverArray[0] = strdup("");
+      }
+      else
+      {
+        int i;
 
-        if(isServerActive(msn))
+        // now we walk through the serverList again
+        // and clone the description string
+        i = 0;
+        IterateList(data->serverList, curNode)
         {
-          // construct the new string via asprintf() so that the necessary
-          // memory is automatically allocated.
-          data->serverArray[i] = strdup(msn->description);
+          struct MailServerNode *msn = (struct MailServerNode *)curNode;
 
-          i++;
+          if(isServerActive(msn))
+          {
+            // construct the new string via asprintf() so that the necessary
+            // memory is automatically allocated.
+            data->serverArray[i] = strdup(msn->description);
+
+            i++;
+          }
         }
       }
 
