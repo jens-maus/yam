@@ -42,29 +42,26 @@
 //        module check of ENTER().
 char *strcasestr(const char *haystack, const char *needle)
 {
-  if(haystack != NULL && needle != NULL)
-  {
-    const char *p;
-    const char *startn = NULL;
-    const char *np = NULL;
+  const char *p;
+  const char *startn = NULL;
+  const char *np = NULL;
 
-    for(p = haystack; *p; p++)
+  for(p = haystack; *p; p++)
+  {
+    if(np)
     {
-      if(np)
+      if(toupper(*p) == toupper(*np))
       {
-        if(toupper(*p) == toupper(*np))
-        {
-          if(!*++np)
-            return (char *)startn;
-        }
-        else
-          np = 0;
+        if(!*++np)
+          return (char *)startn;
       }
-      else if(toupper(*p) == toupper(*needle))
-      {
-        np = needle + 1;
-        startn = p;
-      }
+      else
+        np = 0;
+    }
+    else if(toupper(*p) == toupper(*needle))
+    {
+      np = needle + 1;
+      startn = p;
     }
   }
 
