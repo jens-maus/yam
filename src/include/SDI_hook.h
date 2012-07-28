@@ -249,9 +249,9 @@
   #define DISPATCHER(name)  DISPATCHERx(,name)
   #define SDISPATCHER(name) DISPATCHERx(static,name)
   #define CROSSCALL1(name, ret, type1, param1)                               \
-    static STDARGS SAVEDS ret name(type1 param1)
+    static STDARGS SAVEDS ret Gate_##name(type1 param1)
   #define CROSSCALL2(name, ret, type1, param1, type2, param2)                \
-    static STDARGS SAVEDS ret name(type1 param1, type2 param2)
+    static STDARGS SAVEDS ret Gate_##name(type1 param1, type2 param2)
   #define ENTRY(func) (APTR)Gate_##func
 
 #else /* !__MORPHOS__ && !__AROS__*/
