@@ -1,5 +1,5 @@
 ;
-; $VER: Install-YAM 1.24 (5.7.2012) (c) 2000-2011 by YAM Open Source Team
+; $VER: Install-YAM 1.25 (29.7.2012) (c) 2000-2011 by YAM Open Source Team
 ; Language support added by Sönke Tesch/ATO
 ;
 ; $Id$
@@ -17,6 +17,7 @@
 (set #def_lang_polish              $080)
 (set #def_lang_spanish             $100)
 (set #def_lang_turkish             $200)
+(set #def_lang_hungarian           $400)
 ; add more languages here
 ; (set #def_lang_<language name>     bitmask)
 ;
@@ -432,6 +433,7 @@
         (set #cat_name_polish                "polish")
         (set #cat_name_spanish               "spanish")
         (set #cat_name_turkish               "turkish")
+        (set #cat_name_hungarian             "hungarian")
         (set #cat_name_english_british       "english-british")
     )
     ; AmigaOS 3.x and MorphOS use localized locale names
@@ -446,6 +448,7 @@
         (set #cat_name_polish                "polski")
         (set #cat_name_spanish               "español")
         (set #cat_name_turkish               "türkçe")
+        (set #cat_name_hungarian             "magyar")
     )
 )
 

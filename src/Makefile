@@ -698,6 +698,7 @@ CATALOGS = \
 	$(LOCALE)/french.catalog \
 	$(LOCALE)/german.catalog \
 	$(LOCALE)/greek.catalog \
+	$(LOCALE)/hungarian.catalog \
 	$(LOCALE)/italian.catalog \
 	$(LOCALE)/polish.catalog \
 	$(LOCALE)/spanish.catalog \
@@ -706,7 +707,6 @@ CATALOGS = \
 	# $(LOCALE)/bosnian.catalog
 	# $(LOCALE)/danish.catalog
 	# $(LOCALE)/finnish.catalog
-	# $(LOCALE)/hungarian.catalog
 	# $(LOCALE)/norwegian.catalog
 	# $(LOCALE)/portuguese-brazil.catalog
 	# $(LOCALE)/portuguese.catalog
