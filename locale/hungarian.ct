@@ -429,20 +429,10 @@ MSG_LOG_CopyingVerbose
 ; Copied message from '%s' about '%s' from folder '%s' to '%s'
 ; SENDER, SUBJECT, FOLDER, FOLDER
 ;
-MSG_LOG_ConnectPOP
-Belépés a POP3 fiókba: '%s@%s', %ld üzenet várakozik
-;
-; USER_ID, HOST, COUNT
-;
 MSG_LOG_RetrievingVerbose
 Letöltött üzenet: feladó '%s', téma '%s' (%ld byte)
 ; Retrieved message from '%s' about '%s' (%ld bytes)
 ; SENDER, SUBJECT, SIZE
-;
-MSG_LOG_Retrieving
-Letöltve %ld üzenet a '%s@%s' POP3 fiókból
-;
-; COUNT, USER_ID, HOST
 ;
 MSG_LOG_ConnectSMTP
 Kapcsolóva a következõ SMTP szerverhez: '%s'
@@ -753,41 +743,13 @@ MSG_MA_Select
 Kiválaszt
 ; Select
 ;
-MSG_MA_FlushIndices
-Flush indexek
-;
-;
-MSG_MA_MEdit
-Szerkeszt...
-;
-;
 MSG_MA_MDelete
 Töröl
 ; Delete
 ;
-MSG_MA_MMove
-Mozgat...
-;
-;
-MSG_MA_MCopy
-Másol...
-;
-;
 MSG_MA_Save
 Ment...
 ; Save...
-;
-MSG_MA_MReply
-Válasz...
-;
-;
-MSG_MA_MForward
-Továbbít...
-;
-;
-MSG_MA_MBounce
-Visszapattint...
-;
 ;
 MSG_MA_MGetAddress
 Cím mentés...
@@ -1040,10 +1002,6 @@ MSG_CO_CrdTCPIP
 TCP/IP
 ; TCP/IP
 ;
-MSG_CO_CrdNewMail
-új levél
-;
-;
 MSG_CO_CrdFilters
 Szürök
 ; Filters
@@ -1244,10 +1202,6 @@ MSG_CO_DeleteServerMail
 Levél törlése a szerveren
 ; Delete mail _on server
 ;
-MSG_CO_UseAPOP
-Bejelentkezés APOP használatával
-;
-;
 MSG_CO_PSNever
 soha
 ; never
@@ -1276,14 +1230,6 @@ MSG_CO_TWAlways
 mindig mutat
 ; show always
 ;
-MSG_CO_Download
-Letölt
-;
-;
-MSG_CO_AvoidDuplicates
-Duplázás elkerülése
-;
-;
 MSG_CO_TransferWin
 átvitel ablak
 ; _Transfer window
@@ -1296,14 +1242,6 @@ MSG_CO_UpdateStatus
 üzenet állapot frissítés
 ; Update m_essage status
 ;
-MSG_CO_WarnSize1
-Méret kor_lát
-;
-;
-MSG_CO_WarnSize2
-KB
-;
-;
 MSG_CO_AutoOperation
 Automatikus müvelet
 ; Automatic operation
@@ -1315,10 +1253,6 @@ MSG_CO_CheckMail
 MSG_CO_Minutes
 percenként
 ; minutes
-;
-MSG_CO_DownloadLarge
-Nagy üzenetek letöltése
-;
 ;
 MSG_CO_Notification
 értesítés
@@ -1700,18 +1634,6 @@ MSG_CO_EncryptToSelf
 Bekódolás
 ; _Encrypt to self
 ;
-MSG_CO_AnonMail
-Névtelen levél
-;
-;
-MSG_CO_ReMailer
-_Re-Mailer
-;
-;
-MSG_CO_ReMailerLine
-Fejléc mezö
-;
-;
 MSG_CO_Logfiles
 Napló fájlok
 ; Log files
@@ -1747,10 +1669,6 @@ MSG_CO_MarkNew
 MSG_CO_SendStart
 Levél kézbesítés elküldési sorrendben
 ; Send mail in outgoing queue
-;
-MSG_CO_PopStart
-új levél letöltés
-;
 ;
 MSG_CO_CheckDOB
 Születési dátum ellenörzés
@@ -2031,17 +1949,9 @@ MSG_HELP_CO_CH_DELETE
 Letöltés után üzenetek\ntörlése a \nlevelezö szerverröl.
 ; Delete messages from\nmail server after the\ndownload.
 ;
-MSG_HELP_CO_CH_USEAPOP
-Belépés APOP azonosítás használatával,\nhogy a felhasználóneved és jelszavad\nelrejthesd a kíváncsi szemek elöl.\n(nem minden POP3 szerver támogatja)
-;
-;
 MSG_HELP_CO_CH_POPENABLED
 Ellenörzi a fiók tartalmát\núj levelek lekérdezése esetén.
 ; Check this account while\nchecking for new mail.
-;
-MSG_HELP_CO_CH_AVOIDDUP
-Ha nem törlöd le a régi leveleket\na szerverrõl, akkor használd ezt az opciót\naz azonos üzenetek elkerüléséhez.
-;
 ;
 MSG_HELP_CO_CH_TRANSWIN
 Folyamatjelzõ ablak megjelenítése\nlevél letöltés alatt.
@@ -2050,10 +1960,6 @@ Folyamatjelzõ ablak megjelenítése\nlevél letöltés alatt.
 MSG_HELP_CO_CY_MSGSELECT
 Ha bekapcsolod be ezt az opciót, a POP3 postafiókod\ntartalma megjelenik, és kiválogathatod\na letöltendö üzeneteket.
 ; Message pre-selection shows (a part of) the contents of the\nPOP3 mailbox and allows you to select which messages you\nwant to download.
-;
-MSG_HELP_CO_CH_UPDSTAT
-A bejövõ mappában lévõ új üzenetek olvasatlanként lesznek\nmegjelölve új levél letöltése elõtt.
-;
 ;
 MSG_HELP_CO_ST_WARNSIZE
 Ennél nagyobb méretü bejövõ üzenetek\nnagyként lesznek kezelve.
@@ -2367,14 +2273,6 @@ MSG_HELP_CO_CH_ENCSELF
 Bekódolja az új üzeneteket a publikus kulcsokkal,\nígy el tudod olvasni vagy tudod szerkeszteni az elküldött üzeneteket.
 ; Encrypt new messages with your public key,\nso you can still read or edit outgoing messages.
 ;
-MSG_HELP_CO_ST_REMAILER
-A levél-újraküldõ szolgáltatás email címe,\namivel névtelen levelet tudsz küldeni.
-;
-;
-MSG_HELP_CO_ST_FIRSTLINE
-Az újraküldõvel küldött levél\ntetejére beillesztett sor.
-;
-;
 MSG_HELP_CO_ST_LOGFILE
 Az az útvonal, ahová a\nnaplófájlok lesznek mentve.
 ; Path where the log\nfiles will be stored.
@@ -2402,10 +2300,6 @@ Megváltoztatja az új\nüzenetek állapotát olvasatlanra.
 MSG_HELP_CO_CH_SEND
 Elküldi a várakozó üzeneteket.
 ; Send queued messages.
-;
-MSG_HELP_CO_CH_POPSTART
-Ellenörzi, hogy van-e új levél.
-;
 ;
 MSG_HELP_CO_CH_CHECKBD
 Ellenõrzi a címjegyzéket, és figyelmeztet,\nha valakinek születésnapja van.
@@ -2525,11 +2419,6 @@ Bezárja a beállítás\nablakot és a régi beállítások\nmaradnak használatban.
 ;
 ;
 ; Module AB - Routines
-;
-MSG_AB_BirthdayReq
-Ma %s %ld éves!\n\nAkarsz küldeni neki egy üdvözlõlapot?
-;
-; NAME, AGE
 ;
 MSG_AB_BirthdayReminder
 Születésnap figyelemeztetõ
@@ -3401,10 +3290,6 @@ MSG_WR_TitleContents
 Tartalom
 ; Contents
 ;
-MSG_WR_TitleEncoding
-Kód
-;
-;
 MSG_WR_TitleDescription
 Leírás
 ; Description
@@ -3427,10 +3312,6 @@ Kódol
 MSG_WR_SecBoth
 Aláír és kódol
 ; Sign and encrypt
-;
-MSG_WR_SecAnon
-Névtelenül küld
-;
 ;
 MSG_WR_ImpHigh
 Magas
@@ -3797,10 +3678,6 @@ MSG_HELP_WR_BT_DISPLAY
 A beállított MIME megjelenítõt használja\na csatolt fájl megjelenítéséhez.
 ; Use the configured MIME viewer\nto display this attachment.
 ;
-MSG_HELP_WR_RA_ENCODING
-A kiválasztott csatolt fájl kódolásának típusa.\nCsak akkor használd az UUkódolást, ha a címzettnek\nnincsen MIME-kompatibilis levelezõje.
-;
-;
 MSG_HELP_WR_ST_CTYPE
 A kiválasztott csatolt fájl MIME típusa.\nAmikor lehetséges, használj egyet a felbukkanó listából.
 ; MIME type for the selected attachment.\nWhenever possible, use one from the popup list.
@@ -3845,15 +3722,6 @@ MSG_HELP_WR_CY_IMPORTANCE
 Beállítja az üzenet\nfontosságát.
 ; Set the priority\nof this message.
 ;
-MSG_HELP_WR_RA_SIGNATURE
-Melyik aláírást csatolod\naz üzenethez?
-;
-;
-MSG_HELP_WR_RA_SECURITY
-Kiválasztja, hogy milyen biztonsági\nopciókkal legyen a levél elküldve\naláírva, kódolva vagy névtelenül.\nMegpróbálja megkeresni a címzettet\na címjegyzékedben és az ott beállított\nbiztonsági \
-beállításokat alkalmazza.
-;
-;
 MSG_HELP_WR_BT_HOLD
 Átmásolja a létrehozott üzenetet\na kimenõ levelek mappájába\nés beállítja az állapotát félretettre.
 ; Copy the created message to\nthe Outgoing folder and set\nits status to 'hold'.
@@ -3880,11 +3748,6 @@ Csatlakozás a levelezö szerverhez...
 MSG_TR_WaitWelcome
 Csatlakozva. Várakozás üdvözlö üzenetre...
 ; Connected, awaiting welcome message...
-;
-MSG_TR_PopLoginReq
-Légy szíves írd be a POP3 fiókod jelszavát\n%s@%s
-;
-; USER_ID, HOST
 ;
 MSG_TR_PopLogin
 POP3 bejelentkezés
@@ -3934,11 +3797,6 @@ MSG_TR_DeletingServerMail
 Levél törlése a szerveren...
 ; Deleting mail on server...
 ;
-MSG_TR_NewMailReq
-\e8új leveled érkezett!\e2\n\n%3ld üzenet letöltve,\n%3ld szerveren hagyva\n%3ld duplázás kihagyva\n
-;
-; COUNT, COUNT, COUNT, COUNT
-;
 MSG_TR_FilterStats
 \nSzürés kész:\n\n%3ld üzenet ellenörizve,\n%3ld visszapattintva,\n%3ld továbbítva,\n%3ld auto-válaszolva,\n%3ld parancs aktiválva,\n%3ld átmozgatva,\n%3ld törölve
 ; \nFiltering done:\n\n%3ld messages checked,\n%3ld bounced,\n%3ld forwarded,\n%3ld auto-replied,\n%3ld command activated,\n%3ld moved,\n%3ld deleted
@@ -3969,10 +3827,6 @@ MSG_TR_MsgInFile
 üzenetek fájlban
 ; Messages in file %s
 ;
-MSG_TR_MsgOnServer
-üzenetek szerveren
-;
-;
 MSG_TR_Control
 Vezérlés
 ; Control
@@ -3989,10 +3843,6 @@ MSG_TR_Leave
 Hagy
 ; L_eave
 ;
-MSG_TR_Pause
-Szünet
-;
-;
 MSG_TR_Clear
 Tiszta
 ; _Clear
@@ -4004,10 +3854,6 @@ Csak törlés
 MSG_TR_DownloadDelete
 Letöltés és törlés
 ; Do_wnload & delete
-;
-MSG_TR_Resume
-Folytat
-;
 ;
 MSG_TR_Start
 Indít
@@ -4823,10 +4669,6 @@ MSG_RE_FixedFont
 Fix betûtípus?
 ; Fixed font?
 ;
-MSG_CO_UseSMTPAUTH
-SMTP Azonosítás használata
-;
-;
 MSG_CO_SMTPUser
 F_elhasználó név
 ; Us_er name
@@ -4902,10 +4744,6 @@ MSG_CO_SIZEFORMAT04
 MSG_CO_SIZEFORMAT05
 10^-3 pontosság (0.001 GB/MB/KB)
 ; 10^-3 precision (0.001 GB/MB/KB)
-;
-MSG_HELP_CO_CH_USESMTPAUTH
-Válaszd ki, ha azonosítani szeretnéd\nmagadat egy ismeretlen SMTP szerveren.\n(általában ez kívül esik a szolgáltatód tartományán).\nHa bizonytalan vagy, ne kapcsold be ezt az opciót.
-;
 ;
 MSG_HELP_CO_ST_SMTPAUTHUSER
 SMTP azonosítás\nfelhasználó neve.
@@ -5228,14 +5066,6 @@ MSG_HELP_CO_CA_COLURL
 A klikkelhetõ URL\ncímekhez használt szín.
 ; Color used to display\nclickable URL links.
 ;
-MSG_FO_FOLDEREXISTS
-A megadott mappa útvonalán a fájl vagy könyvtár már létezik.\n\nTényleg folytatni akarod?
-;
-;
-MSG_FO_FOLDERMOVE
-Tényleg át akarod mozgatni a mappát másik útvonalra?
-;
-;
 MSG_FO_FOLDERNAMEINVALID
 A megadott mappanév üres vagy már létezik.\nKérlek adj meg egy érvényes mappanevet, mielõtt folytatod.
 ; The specified folder name is empty or already exists.\nPlease enter a valid folder name before you proceed.
@@ -5425,27 +5255,6 @@ MSG_MA_CREQ_UNKNOWN_TITLE
 Ismeretlen fájl található a mappában
 ; Unknown file in folder directory found
 ;
-MSG_CO_SMTPSECURE
-Biztonságos kapcsolat használata:
-;
-;
-MSG_CO_SMTPSECURE_NO
-Nem
-;
-;
-MSG_CO_SMTPSECURE_TLS
-TLSv1
-;
-;
-MSG_CO_SMTPSECURE_SSL
-SSLv3
-;
-;
-MSG_HELP_CO_RA_SMTPSECURE
-Egy TLSv1 vagy SSLv3 biztonságos kapcsolat fog létesülni az SMTP\nszerver és a YAM között a levél küldés idejére.\nHa ezek a gombok halványak maradnak, akkor az AmiSSL támogatás\npillanatnyilag nem \
-elérhetõ.
-;
-;
 MSG_CO_SHOWEMBEDDEDREADPANE
 Mutasd a beillesztett olvasási táblát a fõablakban
 ; Show embedded read _pane in main window
@@ -5554,15 +5363,6 @@ Több
 MSG_CO_Less
 Kevesebb
 ; _Less
-;
-MSG_MA_AUTOSAVEFOUND
-YAM talált egy automatikusan elmentett üzenetet: '%s'\nEz egy elõzõ idõszakban lett létrehozva.\nEzt okozhatta egy levél írás közben keletkezett\nösszeomlás vagy újraindulás.\n\nMit szeretnél tenni \
-ezzel az üzenettel?
-;
-;
-MSG_MA_AUTOSAVEFOUND_TITLE
-Automatikus mentés található
-;
 ;
 MSG_CO_NB_AUTOSAVE
 Automatikus mentési idõ
@@ -5779,14 +5579,6 @@ MSG_CO_TCPIP_SUMMARY
 SMTP és POP3 fiókod beállítása...
 ; Configure your SMTP and POP3 accounts...
 ;
-MSG_CO_NEWMAIL_TITLE
-Új levél beállítások
-;
-;
-MSG_CO_NEWMAIL_SUMMARY
-Hogyan kezeld az érkezõ leveleket...
-;
-;
 MSG_CO_FILTER_TITLE
 Levél szürö beállítások
 ; Mail Filter Settings
@@ -5997,11 +5789,6 @@ MSG_WR_SECURITYREQ_GADS
 *Egyszerû|Aláírt|Kódolt|Aláírt & kódolt|Mégse
 ; *_Plain|_Signed|_Encrypted|S_igned & encrypted|_Cancel
 ;
-MSG_ER_OPENTCPIP
-Nem sikerült megnyitni a TCP/IP kapcsolathoz szükséges bsdsocket.library-t.\n\nKérlek ellenõrizd le, hogy egy megfelelõ TCP/IP stack van-e telepítve és jók-e annak a beállításai, illetve mûködik-e a \
-hálózat.
-;
-;
 MSG_WR_UUCODE
 UUkódolt szöveg
 ; UUencoded text
@@ -6025,10 +5812,6 @@ Változás:
 MSG_UPD_NOTIFICATION_NOUPDATE
 A jövöben ne értesíts új frissítés lehetösége esetén
 ; Do not notify me on updates in future
-;
-MSG_UPD_NOTIFICATION_VISITURL
-Meglátogatandó URL
-;
 ;
 MSG_UPD_NOTIFICATION_CLOSE
 Bezár
@@ -6164,10 +5947,6 @@ MSG_HELP_CO_CONVERTHTML
 Ha egy levél fõ része HTML alapú, a YAM sima\nszöveggé fogja azt a megjelenítés elõtt alakítani.
 ; If the main part of an e-mail is HTML, YAM will\nconvert it to plain text before displaying it.
 ;
-MSG_RE_FOLLOWTHREAD
-Több levelet keres ugyanazon a szálon.\nA YAM-nak további mappa indexeket kell betölteni.\nEz elég idõ és memória igényes feladat lehet.\n\nFolytatni szeretnéd?
-;
-;
 MSG_TR_TRANSFERSTATUS
 %s / %s @ %s/s\n%02ld'%02ld'' fut - %02ld'%02ld'' maradt
 ; %s of %s @ %s/s\n%02ld'%02ld'' running - %02ld'%02ld'' left
@@ -6182,16 +5961,6 @@ MSG_FI_GAUGETEXT
 %%ld  /  %ld üzenet
 ; %%ld of %ld messages
 ; COUNT, COUNT
-;
-MSG_MA_MESSAGEINFO
-\ebJelenlegi üzenet\en\nFeladó: %s <%s>\nCímzett: %s <%s>\nTárgy: %s\nDátum: %s\nFájl név: %s\nMéret: %s
-;
-; NAME, ADDRESS, NAME, ADDRESS, SUBJECT, DATE, FILENAME, SIZE
-;
-MSG_MA_FOLDERINFO
-\ebJelenlegi mappa\en\nNév: %s\nútvonal: %s\nMéret: %s\nüzenetek: %ld (%ld új, %ld olvasatlan)
-;
-; NAME, PATH, SIZE, COUNT, COUNT, COUNT
 ;
 MSG_MA_MIMEPART_INFO
 \ebCsatolmány - MIME rész #%ld\en\nNév: %s\nLeírás: %s\nTartalom típus: %s <%s>\nMéret: ~%s
@@ -6405,10 +6174,6 @@ MSG_CO_SPAM_DELETESPAMFOLDER
 Spam mappa törlése
 ; _Delete Spam folder
 ;
-MSG_CO_SMTPAUTH_METHOD
-Eljárás
-;
-;
 MSG_HELP_CO_CY_SMTPAUTHMETHOD
 Itt választható ki a YAM által használt azonosítási mód.\n'Auto' állásban a YAM a szervertõl függõen választ, és\náltalában ez az ajánlott érték.\nA többi lehetõség kifejezetten csak egyet határoz \
 meg.\nBiztonságosságuk szerint vannak felsorolva. A legfelsõ\na legbiztonságosabb.
@@ -6547,18 +6312,6 @@ MSG_MA_UPDATEINDEX
 Index frissítés
 ; Update index
 ;
-MSG_MA_MSENDALL
-Sorbaállított levél küldése
-;
-;
-MSG_MA_MEXCHANGE
-Levél forgalom
-;
-;
-MSG_MA_MGETMAIL
-új levél érkeztetés
-;
-;
 MSG_MA_MREAD
 Olvas
 ; Read
@@ -6650,14 +6403,6 @@ Mind olvasottra
 MSG_MA_MEDITASNEW
 Szerkesztés újként...
 ; Edit as new...
-;
-MSG_CO_POPACCOUNT
-Fiók név
-;
-;
-MSG_HELP_CO_ST_POPACCOUNT
-Egy tetszõleges név, ami a\nfelhasználó@szolgáltato helyett lesz használva.
-;
 ;
 MSG_RE_SEARCH
 Keresés...
@@ -6843,27 +6588,6 @@ MSG_CO_POP_SERVERPORT
 Szerve_r/Port
 ; Serve_r/Port
 ;
-MSG_CO_POP3SECURE
-Titkosított kapcsolat használata:
-;
-;
-MSG_CO_POP3SECURE_NO
-Nem
-;
-;
-MSG_CO_POP3SECURE_TLS
-TLSv1
-;
-;
-MSG_CO_POP3SECURE_SSL
-SSLv3
-;
-;
-MSG_HELP_CO_RA_POP3SECURE
-Egy TLSv1 vagy SSLv3 biztonságos kapcsolat létesül a POP3\nszerver és YAM között, hogy egy kódolt kapcsolaton keresztül\nmegérkezhessenek a levelek. Ha ez ki van szürkítve, akkor AmiSSL\ntámogatás \
-jelenleg nem elérhetõ.
-;
-;
 MSG_CO_LOOKFEEL_THEMES
 Témák
 ; Themes
@@ -6923,10 +6647,6 @@ Nem ajánlatos ilyen kevés, %ld db kéretlen üzenetként\nminõsített levél esetén e
 MSG_ER_CANNOT_CREATE_SEMAPHORE
 Nem készíthetõ szemafor!
 ; Can't create semaphore.
-;
-MSG_MA_AUTOSAVEFOUND_BUTTONS
-*Mozgat kimenõbe|Sz_erkeszt|Töröl|Elvet
-;
 ;
 MSG_RE_HDR_FROM
 Küldö
