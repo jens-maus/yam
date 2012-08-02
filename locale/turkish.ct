@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.3 (18.05.2012)
+## version $VER: YAM.catalog 7.2 (02.08.2012)
 ## language türkçe
 ## codeset 0
 ## chunk AUTH Alper Sönmez <amithlondestek@gmail.com>
@@ -224,8 +224,8 @@ Derlenme tarihi:
 ; Compilation date:
 ;
 MSG_UserLogin
-Giriþ yapmak için adýnýza týklatýnýz
-; Click your name to login
+Giriþ yapmak için adýnýza týklatýnýz:
+; Click your name to login:
 ;
 MSG_ErrorStartup
 Baþlangýç sürecinde hata
@@ -773,10 +773,6 @@ MSG_MA_Select
 Seç
 ; Select
 ;
-MSG_MA_FlushIndices
-Ýndisleri boþalt
-; Flush indices
-;
 MSG_MA_MDelete
 Sil
 ; Delete
@@ -916,7 +912,7 @@ Lütfen þifreyi tekrarlayýnýz:
 ; Please re-type the password:
 ;
 MSG_CO_ConfirmDelete
-Bu klasördeki tüm iletiler silinecek!\n\
+Bu klasördeki tüm iletiler silinecek.\n\
 Devam etmek istiyor musunuz?
 ; All messages in this folder will be lost.\n\
 ; Do you really want to delete it?
@@ -925,7 +921,7 @@ MSG_CO_InvalidConf
 Geçersiz ayarlama (SMTP/POP3 sunucusu\n\
 ve/veya e-posta adresi bulunamadý).\n\
 \n\
-Lütfen bu alanlarý doldurarak tekrar deneyiniz!
+Lütfen bu alanlarý doldurarak tekrar deneyiniz.
 ; Invalid configuration (missing SMTP/POP3\n\
 ; server name or e-mail address).\n\
 ; \n\
@@ -1085,10 +1081,6 @@ MSG_CO_CrdFirstSteps
 MSG_CO_CrdTCPIP
 TCP/IP
 ; TCP/IP
-;
-MSG_CO_CrdNewMail
-Yeni posta
-; New mail
 ;
 MSG_CO_CrdFilters
 Süzgeçler
@@ -1290,10 +1282,6 @@ MSG_CO_DeleteServerMail
 Sunucudaki postalarý si_l
 ; Delete mail _on server
 ;
-MSG_CO_UseAPOP
-APOP kullanarak _giriþ yap
-; _Log in using APOP
-;
 MSG_CO_PSNever
 hiçbir zaman
 ; never
@@ -1322,10 +1310,6 @@ MSG_CO_TWAlways
 her zaman göster
 ; show always
 ;
-MSG_CO_Download
-indir
-; Download
-;
 MSG_CO_TransferWin
 _Aktarým penceresi
 ; _Transfer window
@@ -1338,14 +1322,6 @@ MSG_CO_UpdateStatus
 Ýleti _durumunu güncelle
 ; Update m_essage status
 ;
-MSG_CO_WarnSize1
-_Boyut sýnýrlamasý
-; Size _limit
-;
-MSG_CO_WarnSize2
-KB
-; KB
-;
 MSG_CO_AutoOperation
 Otomatik uygulama
 ; Automatic operation
@@ -1357,10 +1333,6 @@ Posta kontrolü, her
 MSG_CO_Minutes
 dakikada bir yapýlsýn.
 ; minutes
-;
-MSG_CO_DownloadLarge
-B_üyük iletileri indir
-; _Download large messages
 ;
 MSG_CO_Notification
 Bildirim
@@ -1491,11 +1463,11 @@ imzasýz
 ; no signature
 ;
 MSG_CO_HeaderLayout
-Baþlýk dizilimi
+Baþlýk düzeni
 ; Header layout
 ;
 MSG_CO_BodyLayout
-Ýleti gövdesi dizilimi
+Ýleti gövdesi düzeni
 ; Message body layout
 ;
 MSG_CO_OtherOptions
@@ -1663,7 +1635,7 @@ Alýcý adresini _doðrula
 ; _Verify recipient address
 ;
 MSG_CO_StripSignature
-Ýmzayý _çerçevele
+Ýmzayý al_ma
 ; Stri_p signature
 ;
 MSG_CO_DefSig
@@ -2092,16 +2064,6 @@ iletileri sil.
 ; mail server after the\n\
 ; download.
 ;
-MSG_HELP_CO_CH_USEAPOP
-Ekrana bakanlardan kullanýcý adý ve\n\
-þifrenizi koruyabilmek için APOP\n\
-yetkilendirmesi ile giriþ yap.\n\
-(tüm POP3 sunucularýnca desteklenmez)
-; Log in using APOP authentication\n\
-; to keep your user name and password\n\
-; away from prying eyes.\n\
-; (not supported by all POP3 servers)
-;
 MSG_HELP_CO_CH_POPENABLED
 Yeni posta denetlerken\n\
 bu hesabý kullan.
@@ -2121,12 +2083,6 @@ seçebilmenizi saðlar.
 ; Message pre-selection shows (a part of) the contents of the\n\
 ; POP3 mailbox and allows you to select which messages you\n\
 ; want to download.
-;
-MSG_HELP_CO_CH_UPDSTAT
-Yeni posta indirmeden önce, Gelen klasöründeki\n\
-yeni iletileri 'okunmamýþ' olarak iþaretle.
-; Mark new messages in the Incoming folder\n\
-; as 'unread' before downloading new mail.
 ;
 MSG_HELP_CO_ST_WARNSIZE
 Bundan daha büyük gelen iletiler\n\
@@ -2484,13 +2440,13 @@ için bu deyimleri kullan.
 ; messages from a mailing list.
 ;
 MSG_HELP_CO_CH_QUOTE
-Yanýtlamada asýl ileti\n\
-alýntýlansýn mý?
+Yanýtlarken, yanýtlanan asýl\n\
+ileti alýntýlansýn mý?
 ; Quote the original\n\
 ; message in your reply?
 ;
 MSG_HELP_CO_CH_QUOTEEMPTY
-Boþ satýrlar için alýntý karakteri\n\
+Boþ satýrlar için de alýntý karakteri\n\
 kullanýlsýn mý?
 ; Insert quote character\n\
 ; for empty lines?
@@ -2504,8 +2460,8 @@ gönderileceði kullanýcýya sorulacaktýr.
 ; of the original message differ.
 ;
 MSG_HELP_CO_CH_STRIPSIG
-Asýl iletinin imza kýsmýný\n\
-alýntýlama.
+Alýntýlanan iletinin imza kýsmýný\n\
+almaz.
 ; Avoids quoting the signature\n\
 ; of the original message.
 ;
@@ -2811,8 +2767,8 @@ Doðumgünü hatýrlatýcýsý
 ; Birthday Reminder
 ;
 MSG_AB_HappyBirthday
-Mutlu Yýllar!
-; Happy birthday!
+Mutlu yýllar
+; Happy birthday
 ;
 MSG_AB_PersonAlias
 Takma ad (KÝÞÝ)
@@ -2839,10 +2795,10 @@ Takma ad
 ; Alias
 ;
 MSG_AB_FoundEntry
-Eþleþen girdi bulundu!\n\
+Eþleþen girdi bulundu.\n\
 Takma ad: \eb%s\en\n\
 Ad: \eb%s\en
-; Found matching entry!\n\
+; Found matching entry.\n\
 ; \n\
 ; Alias: \eb%s\en\n\
 ; Name: \eb%s\en
@@ -2869,12 +2825,12 @@ _Sonraki eþleþen|Eþleþeni _düzenle|_Ýptal
 ; _Next hit|_Edit hit|_Cancel
 ;
 MSG_AB_NoneFound
-Eþleþen girdi bulunamadý!
-; No matching entries found!
+Eþleþen girdi bulunamadý.
+; No matching entries found.
 ;
 MSG_AB_Modified
-Adres defteri deðiþtirildi!
-; Address book has been modified!
+Adres defteri deðiþtirildi.
+; Address book has been modified.
 ;
 MSG_AB_ModifiedGads
 *_Kaydet|K_ullan|Deðiþiklikleri _yoksay|_Ýptal
@@ -3777,8 +3733,8 @@ ilet.
 ; Module WR - Procedures
 ;
 MSG_WR_ErrorNoRcpt
-Posta eksik: alýcý yok!
-; Mail is incomplete: no recipient!
+Posta eksik: alýcý yok.
+; Mail is incomplete: no recipient.
 ;
 MSG_WR_NoRcptReqGad
 Alýcýyý daha _sonra ekle|*_Ýptal
@@ -3828,10 +3784,6 @@ Boyut
 MSG_WR_TitleContents
 Ýçerik
 ; Contents
-;
-MSG_WR_TitleEncoding
-Þifre.
-; Enc.
 ;
 MSG_WR_TitleDescription
 Açýklama
@@ -4249,14 +4201,6 @@ MIME göstericisini kullan.
 ; Use the configured MIME viewer\n\
 ; to display this attachment.
 ;
-MSG_HELP_WR_RA_ENCODING
-Seçili ek için kullanýlan þifreleme türü.\n\
-Eðer alýcý MIME uyumlu bir e-posta yazýlýmý\n\
-kullanmýyorsa, UUencode seçeneðini seçiniz.
-; Type of encoding used for the selected attachment.\n\
-; Select UUencode only if the recipient is not using\n\
-; a MIME compliant mailer.
-;
 MSG_HELP_WR_ST_CTYPE
 Seçili ek için MIME türü.\n\
 Mümkün olduðunca popup listesinden birini tercih ediniz.
@@ -4324,24 +4268,6 @@ Bu iletinin\n\
 önceliðini belirle.
 ; Set the priority\n\
 ; of this message.
-;
-MSG_HELP_WR_RA_SIGNATURE
-Bu iletinin sonuna hangi\n\
-imzayý eklemek istersiniz?
-; Which signature do you want\n\
-; to append to this message?
-;
-MSG_HELP_WR_RA_SECURITY
-Ýletinizi, PGP imzalanmýþ veya þifrelenmiþ\n\
-olarak göndermek için bu güvenlik\n\
-seçeneklerinden birini seçin.\n\
-"Varsayýlan" alýcýyý adres defterinde arar\n\
-ve orada belirlenmiþ güvenlik ayarlarýný kullanýr.
-; Select one of these security options to send\n\
-; your message PGP signed or encrypted.\n\
-; "Default" tries to find the recipient\n\
-; in your address book and use the security\n\
-; settings specified there.
 ;
 MSG_HELP_WR_BT_HOLD
 Oluþturulan iletiyi Giden klasörüne\n\
@@ -4576,12 +4502,12 @@ Sürücünün yazma korumalý olmadýðýndan emin olun.
 ; PATH
 ;
 MSG_ER_ErrorNoAlias
-Bu girdiyi betimleyecek bir takma ad yazmalýsýnýz!
-; You must specify an alias to identify this entry!
+Bu girdiyi betimleyecek bir takma ad yazmalýsýnýz.
+; You must specify an alias to identify this entry.
 ;
 MSG_ER_ErrorNoAddress
-Bu girdi için bir adres yazmasýlýnýz!
-; You must specify an address for this entry!
+Bu girdi için bir adres yazmasýlýnýz.
+; You must specify an address for this entry.
 ;
 MSG_ER_ErrorDateFormat
 Geçersiz tarih/saat biçemi.\n\
@@ -4689,12 +4615,12 @@ Dosya bulunuyor ancak okuma sýrasýnda bir hata ile karþýlaþýldý.
 ; FILENAME
 ;
 MSG_ER_MissingDirectory
-Yeni kullanýcý için bir dizin belirtmeniz gerekiyor!
-; You must specify a directory for the new user!
+Yeni kullanýcý için bir dizin belirtmeniz gerekiyor.
+; You must specify a directory for the new user.
 ;
 MSG_ER_MissingName
 Yeni kullanýcý için bir ad yazmanýz gerekiyor.
-; You must specify a name for the new user!
+; You must specify a name for the new user.
 ;
 MSG_ER_NoPublicKeys
 Ortak PGP anahtarý bulunamadý.\n\
@@ -5483,16 +5409,12 @@ Varsayýlan
 ; Default
 ;
 MSG_ER_PGPMultipart
-Çok parçalý PGP iletisi oluþturulurken hata. Þifreleme/imzalama devre dýþý!
-; Error creating multipart PGP message. Encrypting/signing disabled!
+Çok parçalý PGP iletisi oluþturulurken hata. Þifreleme/imzalama devre dýþý.
+; Error creating multipart PGP message. Encrypting/signing disabled.
 ;
 MSG_RE_FixedFont
 Sabit geniþlikli yazýtipi?
 ; Fixed font?
-;
-MSG_CO_UseSMTPAUTH
-SMTP AUT_H  kullan
-; Use SMTP AU_TH
 ;
 MSG_CO_SMTPUser
 Kullanýcý _adý
@@ -5507,7 +5429,7 @@ Alternatif alýntý
 ; Alternative quoted
 ;
 MSG_CO_DoQuote
-Alýn_týlanmýþ ileti
+Ýletiyi alýn_týla
 ; Qu_ote message
 ;
 MSG_EA_SelectPhoto_Title
@@ -5573,16 +5495,6 @@ MSG_CO_SIZEFORMAT04
 MSG_CO_SIZEFORMAT05
 10^-3 doðruluk (0.001 GB/MB/KB)
 ; 10^-3 precision (0.001 GB/MB/KB)
-;
-MSG_HELP_CO_CH_USESMTPAUTH
-Eðer kendinizi yabancý bir SMTP sunucusuna\n\
-tanýtmak istiyorsanýz bunu seçiniz\n\
-(genellikle ISS bölgesinin dýþýndaysa).\n\
-Eðer kuþkuluysanýz bu seçeneði geçerli kýlmayýn.
-; Select if you wish to authenticate\n\
-; yourself to a foreign SMTP server\n\
-; (usually outside your ISP's domain).\n\
-; If in doubt, don't enable this option.
 ;
 MSG_HELP_CO_ST_SMTPAUTHUSER
 Kullanýcý adý\n\
@@ -5713,8 +5625,8 @@ MSG_SEARCHNOTFOUND_MSG
 ; '%s' not found.
 ;
 MSG_WR_ERRORNOSENDER
-Ýleti eksik: gönderen yok!
-; Mail is incomplete: no sender!
+Ýleti eksik: gönderen yok.
+; Mail is incomplete: no sender.
 ;
 MSG_WR_NOSENDERREQGAD
 _Varsayýlan göndereni kullan|*_Ýptal
@@ -5809,8 +5721,8 @@ etmeye çalýþýr.
 ; first five e-mails in the folder.
 ;
 MSG_FO_NOTRECOGNIZED
-Tanýmlanamadý!
-; Couldn't be recognized!
+Tanýmlanamadý.
+; Couldn't be recognized.
 ;
 MSG_FO_MAXAGEFMT
 %ld gün
@@ -5977,18 +5889,6 @@ Týklanabilen URL baðlantýlarýný\n\
 vurgulamak için kullanýlan renk.
 ; Color used to display\n\
 ; clickable URL links.
-;
-MSG_FO_FOLDEREXISTS
-Verilen klasör konumunda bir dizin veya dosya mevcut.\n\
-\n\
-Devam etmek istiyor musunuz?
-; A file or directory with the given folder path already exists.\n\
-; \n\
-; Do you really want to proceed?
-;
-MSG_FO_FOLDERMOVE
-Klasörü gerçekten baþka bir konuma taþýmak istiyor musunuz?
-; Do you really want to move the folder to another path?
 ;
 MSG_FO_FOLDERNAMEINVALID
 Seçilen klasör ismi boþ ya da önceden mevcut .\n\
@@ -6249,32 +6149,6 @@ MSG_MA_CREQ_UNKNOWN_TITLE
 Klasör dizininde bilinmeyen dosya bulundu
 ; Unknown file in folder directory found
 ;
-MSG_CO_SMTPSECURE
-Güvenli baðlantý kullan:
-; Use secure connection:
-;
-MSG_CO_SMTPSECURE_NO
-Hayýr
-; No
-;
-MSG_CO_SMTPSECURE_TLS
-TLSv1 ile
-; with TLSv1
-;
-MSG_CO_SMTPSECURE_SSL
-SSLv3 ile
-; with SSLv3
-;
-MSG_HELP_CO_RA_SMTPSECURE
-E-postalarýn þifrelenmiþ bir baðlantý ile alýnmasýný saðlamak için,\n\
-SMTP sunucusu ve YAM arasýnda TLSv1 veya SSLv3 güvenlikli\n\
-baðlantý kurulacaktýr. Eðer bu radyo düðmeleri gölgeli ise\n\
-AmiSSL desteði kullanýlamýyor demektir.
-; A TLSv1 or SSLv3 secure connection will be established between\n\
-; the SMTP server and YAM to send e-mail through an encrypted connection.\n\
-; If these radio buttons are ghosted, it means AmiSSL support is\n\
-; currently not available.
-;
 MSG_CO_SHOWEMBEDDEDREADPANE
 Ana pencerede gömülmüþ _okuma panosu göster
 ; Show embedded read _pane in main window
@@ -6395,24 +6269,6 @@ _Fazla
 MSG_CO_Less
 _Az
 ; _Less
-;
-MSG_MA_AUTOSAVEFOUND
-YAM daha önceki bir oturumda otomatik\n\
-olarak kaydedilmiþ bir ileti dosyasý buldu: '%s'.\n\
-Bu ileti yazýmý sýrasýnda çakýlma veya\n\
-yeniden baþlatmadan dolayý olmuþ olabilir.\n\
-\n\
-Bu iletiyle ne yapmak istersiniz?
-; YAM has found an autosaved message file '%s'\n\
-; which was created in a previous session.\n\
-; This may be due to a possible crash or reboot\n\
-; while writing a message.\n\
-; \n\
-; What do you want to do with that message?
-;
-MSG_MA_AUTOSAVEFOUND_TITLE
-Otomatik kaydedilmiþ dosya bulundu
-; Autosave file found
 ;
 MSG_CO_NB_AUTOSAVE
 Otomatik kaydetme zaman aralýðý
@@ -6714,14 +6570,6 @@ TCP/IP ayarlarý
 MSG_CO_TCPIP_SUMMARY
 SMTP ve POP3 hesaplarýný ayarlayýn...
 ; Configure your SMTP and POP3 accounts...
-;
-MSG_CO_NEWMAIL_TITLE
-Yeni Posta Ayarlarý
-; New Mail Settings
-;
-MSG_CO_NEWMAIL_SUMMARY
-Gelen posta durumunda nasýl davranýlacaðýný belirler...
-; How to handle and react upon incoming mail...
 ;
 MSG_CO_FILTER_TITLE
 Posta süzme ayarlarý
@@ -7424,10 +7272,6 @@ MSG_CO_SPAM_DELETESPAMFOLDER
 Gereksiz klasörünü sil
 ; _Delete Spam folder
 ;
-MSG_CO_SMTPAUTH_METHOD
-Y_öntem
-; Met_hod
-;
 MSG_HELP_CO_CY_SMTPAUTHMETHOD
 YAM'ýn kullanmasý gereken yetkilendirme yöntemini seçiniz.\n\
 'Otomatik' sunucunun yeteneklerine göre uygun olanlardan\n\
@@ -7696,16 +7540,6 @@ MSG_MA_MEDITASNEW
 Yeni olarak düzenle...
 ; Edit as new...
 ;
-MSG_CO_POPACCOUNT
-Hesa_p adý
-; Account name
-;
-MSG_HELP_CO_ST_POPACCOUNT
-Bu hesap için user@host yerine\n\
-istenen baþka bir ad kullanýlacak.
-; An arbitrary name for this account which\n\
-; will be used instead of user@host.
-;
 MSG_RE_SEARCH
 Ara...
 ; Search...
@@ -7837,7 +7671,7 @@ Benden alýndý bildirimi göndermem istendiðinde...
 ; When I receive a request for a return receipt...
 ;
 MSG_CO_MDN_DISABLED
-_HÝçbir zaman alýndý bildirimi gönderme
+_Hiçbir zaman alýndý bildirimi gönderme
 ; _Never send a return receipt
 ;
 MSG_CO_MDN_ENABLED
@@ -7934,39 +7768,13 @@ yararlanma etkinse bunu iþaretleyiniz\n\
 ; currently active in your time zone\n\
 ; (summer time).
 ;
-MSG_CO_SMTPSERVERPORT
+MSG_CO_SMTP_SERVERPORT
 S_unucu/Port
 ; Ser_ver/Port
 ;
-MSG_CO_POP3SERVERPORT
+MSG_CO_POP_SERVERPORT
 Sunu_cu/Port
 ; Serve_r/Port
-;
-MSG_CO_POP3SECURE
-Güvenli baðlantý kullan:
-; Use secure connection:
-;
-MSG_CO_POP3SECURE_NO
-Hayýr
-; No
-;
-MSG_CO_POP3SECURE_TLS
-TLSv1 ile
-; with TLSv1
-;
-MSG_CO_POP3SECURE_SSL
-SSLv3 ile
-; with SSLv3
-;
-MSG_HELP_CO_RA_POP3SECURE
-E-postalarýn þifrelenmiþ bir baðlantý ile alýnmasýný saðlamak için,\n\
-POP3 sunucusu ve YAM arasýnda TLSv1 veya SSLv3 güvenli\n\
-baðlantýsý kurulacaktýr. Eðer bu radyo düðmeleri gölgeli ise\n\
-AmiSSL desteði kullanýlamýyor demektir.
-; A TLSv1 or SSLv3 secure connection will be established between\n\
-; the POP3 server and YAM to receive e-mail through an encrypted\n\
-; connection. If these radio buttons are ghosted, it means AmiSSL\n\
-; support is currently not available.
 ;
 MSG_CO_LOOKFEEL_THEMES
 Temalar
@@ -8017,8 +7825,8 @@ MSG_ER_USER_UNKNOWN_BUTTON
 ; *_Ok
 ;
 MSG_ER_USER_UNKNOWN_ERROR
-Bilinmeyen kullanýcý '%s'!
-; Unknown user '%s'!
+Bilinmeyen kullanýcý '%s'.
+; Unknown user '%s'.
 ;
 MSG_HELP_CO_CA_COLSIG
 Postanýn imza kýsmý yazdýrýlýrken\n\
@@ -8039,12 +7847,8 @@ Bu özelliði yeniden devre dýþý býrakmak ister misiniz?
 ; Do you want to disable this option again?
 ;
 MSG_ER_CANNOT_CREATE_SEMAPHORE
-Semafor oluþturulamadý!
-; Can't create semaphore!
-;
-MSG_MA_AUTOSAVEFOUND_BUTTONS
-*_Giden'e taþý|_Düzenle|_Sil|_Yoksay
-; *Move to _Outgoing|_Edit|_Delete|_Ignore
+Semafor oluþturulamadý.
+; Can't create semaphore.
 ;
 MSG_RE_HDR_FROM
 Kimden
@@ -8242,7 +8046,7 @@ MSG_CO_FWDMSG
 ; _Forward messages
 ;
 MSG_CO_FWDMSG_INLINE
-satýriçi
+ileti içinde
 ; inlined
 ;
 MSG_HELP_CO_CY_FORWARDMODE
@@ -9043,8 +8847,8 @@ Yerel biçemde doðum günü\n\
 ; (e.g. 19.06.1974 or 19/06/1974).
 ;
 MSG_ERROR_THREADS
-Konu takibi sistemi ilklendirilemedi
-; Can't initialize thread system
+Konu takibi sistemi ilklendirilemedi.
+; Cannot initialize thread system.
 ;
 MSG_ERROR_PLAYSOUND
 '%s' ses dosyasýnýn çalýnmasý sýrasýnda bir hata oluþtu.\n\
@@ -9385,8 +9189,8 @@ Dosya '%s' zaten mevcut.\n\
 ; FILENAME
 ;
 MSG_ER_USER_DIR_MISSING
-Ev dizini '%s' ('%s' kullanýcýsýnýn) mevcut deðil!
-; The home directory '%s' of user '%s' does not exist!
+Ev dizini '%s' ('%s' kullanýcýsýnýn) mevcut deðil.
+; The home directory '%s' of user '%s' does not exist.
 ; PATH, USERNAME
 ;
 MSG_CO_TEXTCOLORS_READ
@@ -9543,10 +9347,10 @@ Kýsým %ld.%ld
 ; PARENTNUMBER PARTNUMER
 ;
 MSG_OPEN_WRITEWINDOWS
-Hala açýk yazma pencereleri var!\n\
+Hala açýk yazma pencereleri var.\n\
 \n\
 Nasýl devam etmek istersiniz?
-; There are still some write windows open!\n\
+; There are still some write windows open.\n\
 ; \n\
 ; How do you want to proceed?
 ;
@@ -9613,7 +9417,7 @@ Dosyayý kaydet
 ; Save file
 ;
 MSG_UPD_NO_UPDATES_FOUND_TITLE
-Yazýlým güncelleþtirilmesi bulunamadý
+Yazýlým güncelleþtirmesi bulunamadý
 ; No software updates available
 ;
 MSG_UPD_NO_UPDATES_FOUND
@@ -9751,7 +9555,7 @@ Posta al
 ; Get mail
 ;
 MSG_WR_SECURITYREQ_GADS
-*_Düz|_Ýmzalý|_Þifreli|Ý_mzalý ve þifreli|Ý_ptal
+*_Yalýn|_Ýmzalý|_Þifreli|Ý_mzalý ve þifreli|Ý_ptal
 ; *_Plain|_Signed|_Encrypted|S_igned & encrypted|_Cancel
 ;
 MSG_HTTP_CONNECTING_TO_SERVER
@@ -9878,7 +9682,7 @@ Yardým dosyasý '%s' bulunamadý.
 ;
 MSG_EA_SEARCH_GRAVATAR
 gra_vatar.com'da ara...
-; Search on g_ravatar.com...
+; Search on gra_vatar.com...
 ;
 MSG_ER_NO_GRAVATAR_FOUND
 Þu adres için Gravatar bulunamadý: '%s'\n\
@@ -9943,4 +9747,822 @@ Durumunu 'Gereksiz deðil' yap
 MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_HAM
 Süzülen postanýn durumunu 'Gereksiz deðil' yapar
 ; Set the status of the filtered mail to 'Not spam'
+;
+MSG_CO_SMTP_ACTIVE
+_Etkin
+; _Active
+;
+MSG_CO_POP_AUTH
+Yetkilendirme
+; Authentification
+;
+MSG_HELP_CO_CY_POPAUTH
+Parola, herhangi bir baðlantý güvenliði\n\
+(TLS veya SSL) kullanýlmadýðýnda, APOP\n\
+þifreleme algoritmasýyla gönderilebilir.
+; When not using any connection security\n\
+; (TLS or SSL) the password can be send\n\
+; using the APOP encryption algorithm instead.\n\
+; (not supported by all POP3 servers)
+;
+MSG_CO_POP_AUTH_PLAIN
+Yalýn Parola
+; Plain Password
+;
+MSG_CO_POP_AUTH_APOP
+Þifrelendirilmiþ Parola (APOP)
+; Encrypted Password (APOP)
+;
+MSG_CO_POP_SECURITY
+Baðlantý Güvenliði
+; Connection Security
+;
+MSG_CO_POP_SECURITY_NONE
+Güvenliksiz
+; No Security
+;
+MSG_CO_POP_SECURITY_TLS
+STARTTLS
+; STARTTLS
+;
+MSG_CO_POP_SECURITY_SSL
+SSL/TLS
+; SSL/TLS
+;
+MSG_HELP_CO_CY_POPSECURE
+Þifrelendirilmiþ bir baðlantý kullanarak e-posta alýmý için\n\
+YAM ile POP3 sunucu arasýnda STARTTLS veya SSL/TLS\n\
+ile þifrelendirilmiþ bir baðlantý kurulacaktýr. Bu çark düðmesinin\n\
+devre dýþý olmasý, AmiSSL desteðinin halen mevcut olmadýðý\n\
+anlamýna gelir.
+; A STARTTLS or SSL/TLS secure connection will be\n\
+; established between the POP3 server and YAM to receive\n\
+; e-mail through an encrypted connection. If this cycle\n\
+; gadget is ghosted, it means AmiSSL support is currently\n\
+; not available.
+;
+MSG_CO_POP_SERVERLIST
+Sunucu Listesi
+; Server List
+;
+MSG_CO_POP_SERVERSETTINGS
+Sunucu Ayarlarý
+; Server Settings
+;
+MSG_CO_POP_SECURITYAUTH
+Güvenlik ve Yetkilendirme
+; Security and Authentification
+;
+MSG_CO_POP_MSGHANDLING
+Ýleti yönetimi
+; Message handling
+;
+MSG_CO_SMTP_SERVERLIST
+Sunucu Listesi
+; Server List
+;
+MSG_CO_SMTP_SERVERSETTINGS
+Sunucu Ayarlarý
+; Server Settings
+;
+MSG_CO_POP_DESC
+Açýklama
+; Description
+;
+MSG_HELP_CO_ST_POPDESC
+Bu sunucu baðlantýsý için, 'kullanýcý@sunucu'\n\
+kalýbýnýn yerine, istendiði þekilde belirlenebilecek\n\
+bir baðlantý adý.
+; An arbitrary description/name for this\n\
+; server connection which will be used instead\n\
+; of user@host.
+;
+MSG_CO_SMTP_DESC
+Açýklama
+; Description
+;
+MSG_HELP_CO_ST_SMTPDESC
+Bu sunucu baðlantýsý için, 'kullanýcý@sunucu'\n\
+kalýbýnýn yerine, istendiði þekilde belirlenebilecek\n\
+bir baðlantý adý.
+; An arbitrary description/name for this\n\
+; server connection which will be used instead\n\
+; of user@host.
+;
+MSG_CO_SMTP_SECURITY
+Baðlantý Güvenliði
+; Connection Security
+;
+MSG_CO_SMTP_SECURITY_NONE
+Güvenliksiz
+; No Security
+;
+MSG_CO_SMTP_SECURITY_TLS
+STARTTLS
+; STARTTLS
+;
+MSG_CO_SMTP_SECURITY_SSL
+SSL/TLS
+; SSL/TLS
+;
+MSG_CO_SMTP_SECURITYAUTH
+Güvenlik ve Yetkilendirme
+; Security and Authentification
+;
+MSG_HELP_CO_CY_SMTPSECURE
+Þifrelendirilmiþ bir baðlantý kullanarak e-posta alýmý için\n\
+YAM ile SMTP sunucu arasýnda STARTTLS veya SSL/TLS\n\
+ile þifrelendirilmiþ bir baðlantý kurulacaktýr. Bu çark düðmesinin\n\
+devre dýþý olmasý, AmiSSL desteðinin halen mevcut olmadýðý\n\
+anlamýna gelir.
+; A STARTTLS or SSL/TLS secure connection will be\n\
+; established between the SMTP server and YAM to receive\n\
+; e-mail through an encrypted connection. If this cycle\n\
+; gadget is ghosted, it means AmiSSL support is currently\n\
+; not available.
+;
+MSG_CO_SMTP_AUTH
+Yetkilendirme
+; Authentification
+;
+MSG_CO_SMTPAUTH_NONE
+Yetkisiz
+; No Authentication
+;
+MSG_CO_SMTP_OPTIONS
+Seçenekler
+; Options
+;
+MSG_CO_CRDIDENTITIES
+Kimlikler
+; Identities
+;
+MSG_CO_IDENTITIES_TITLE
+Kimlik Ayarlarý
+; Identities Settings
+;
+MSG_CO_IDENTITIES_SUMMARY
+E-posta yazýmý için çoklu kimlik yönetimi...
+; Manage multiple identities for composing mails...
+;
+MSG_CO_IDENTITY_LIST
+Kimlikler
+; Identities
+;
+MSG_CO_IDENTITY_SETTINGS
+Genel Ayarlar
+; General Settings
+;
+MSG_CO_IDENTITY_REGISTER_SETTINGS
+Genel Ayarla
+; General Settings
+;
+MSG_CO_IDENTITY_REGISTER_COMPOSE
+E-posta Oluþtur
+; Compose Mail
+;
+MSG_CO_IDENTITY_REGISTER_PGPSEC
+PGP-Güvenliði
+; PGP-Security
+;
+MSG_CO_IDENTITY_NOSIGNATURE
+imzasýz
+; no signature
+;
+MSG_CO_IDENTITY_ABOVEQUOTE
+alýntý üzerinde
+; above quotes
+;
+MSG_CO_IDENTITY_BELOWQUOTE
+alýntý altýnda
+; below quotes
+;
+MSG_CO_IDENTITY_DESCRIPTION
+Açýklama
+; Description
+;
+MSG_CO_IDENTITY_MAILSERVER
+Posta sunucusu (SMTP)
+; Mail server (SMTP)
+;
+MSG_CO_IDENTITY_COMPOSE
+E-posta oluþturma ayarlarý
+; Compose mail settings
+;
+MSG_CO_IDENTITY_CC
+CC: adres
+; CC: address
+;
+MSG_CO_IDENTITY_BCC
+BCC: adres
+; BCC: address
+;
+MSG_CO_IDENTITY_REPLYTO
+Yanýtla: adres
+; Reply-To: address
+;
+MSG_CO_IDENTITY_COMPOSE_OPTIONS
+Seçenekler
+; Options
+;
+MSG_CO_IDENTITY_COMPOSE_SENTFOLDER
+Gönderilen iletileri klasöre koy
+; Store sent mail to folder
+;
+MSG_CO_IDENTITY_COMPOSE_QUOTE
+Yanýtlarken önceki iletileri alýntýla
+; Quote messages when answering
+;
+MSG_CO_IDENTITY_COMPOSE_ANSWER
+Yanýtýmý koy
+; Put my answer
+;
+MSG_CO_IDENTITY_COMPOSE_SIGNATURE
+Ýmzamý koy
+; Put my signature
+;
+MSG_CO_IDENTITY_USESIG_REPLY
+Yanýtlarken imza kullan
+; Use signature when replying
+;
+MSG_CO_IDENTITY_USESIG_FORWARD
+Ýletirken imza kullan
+; Use signature when forwarding
+;
+MSG_CO_IDENTITY_PGPSETTINGS
+PGP-Güvenliði Ayarlarý
+; PGP-Security Settings
+;
+MSG_CO_IDENTITY_USEPGP
+Bu kimlik için PGP kullan
+; Use PGP for this identity
+;
+MSG_CO_IDENTITY_PGPKEY_ID
+PGP anahtar ID'si
+; PGP key ID
+;
+MSG_CO_IDENTITY_PGPKEY_URL
+PGP anahtar URL'si
+; PGP key URL
+;
+MSG_CO_IDENTITY_PGP_OPTIONS
+Ayarlar
+; Options
+;
+MSG_CO_IDENTITY_PGP_SIGN_UNENC
+Þifrelendirilmemiþ postalarý varsayýlan olarak imzala
+; Sign unencrypted mails per default
+;
+MSG_CO_IDENTITY_PGP_SIGN_ENC
+Þifrelendirilmiþ postalarý varsayýlan olarak imzala
+; Sign encrypted mails per default
+;
+MSG_CO_IDENTITY_PGP_ENCRYPTALL
+Tüm postalarý varsayýlan olarak imzala
+; Encrypt all mails per default
+;
+MSG_CO_IDENTITY_PGP_ADDOWN
+Postalarý þifrelerken kiþisel anahtarý ekle
+; Add own key when encrypting mails
+;
+MSG_CO_IDENTITY_PHOTOURL
+Kiþisel fotoðraf URL'si
+; URL to own photo
+;
+MSG_CO_IDENTITY_ADDINFO
+Kiþisel bilgileri ekle
+; Add personal information
+;
+MSG_CO_IDENTITY_REQUESTMDN
+Alýndý bildirimi iste
+; Request a return receipt
+;
+MSG_CO_SERVERNAME
+Sunucu adý
+; Server name
+;
+MSG_HELP_CO_ST_USER
+E-posta sunucusuna ulaþmak için\n\
+kullanýlacak kullanýcý adý.
+; The username for accessing the\n\
+; mail server.
+;
+MSG_FO_MOVEFOLDERTO
+Klasörü\n\
+'%s'\n\
+konumundan\n\
+'%s'\n\
+konumuna gerçekten taþýmak istiyor musunuz?
+; Do you really want to move the folder from\n\
+; '%s'\n\
+; to\n\
+; '%s'?
+; FROM,TO
+;
+MSG_FO_FOLDER_ALREADY_EXISTS
+'%s' adýyla bir dosya veya dizin zaten mevcut\n\
+olduðundan üzerine yazýlacak/silinecek.\n\
+\n\
+Devam etmek istiyor musunuz?
+; A file or directory named '%s' already exists\n\
+; and will be overwritten/deleted.\n\
+; \n\
+; Do you really want to proceed?
+; PATH
+;
+MSG_ER_CANNOT_CREATE_FOLDER
+'%s' dizini oluþturulamadý (%s).
+; Failed to create directory '%s' (%s).
+; PATH, ERROR
+;
+MSG_CO_IdentityActive
+_Etkin
+; _Active
+;
+MSG_MA_FLUSH_ALL_INDICES
+Tüm indisleri boþalt
+; Flush all indices
+;
+MSG_FI_CONDITION
+Durum
+; Condition
+;
+MSG_HELP_CO_CH_IDENTITY_ENABLED
+Seçildiðinde bu kullanýcý kimliði etkinleþtirilmiþ olur.
+; If checked, this user identity is enabled for use.
+;
+MSG_HELP_CO_ST_IDENTITY_DESCRIPTION
+Bu kullanýcý kimliði için\n\
+özel açýklama.
+; A custom description for this\n\
+; user identity.
+;
+MSG_HELP_CO_ST_IDENTITY_REALNAME
+Bu kullanýcý kimliði için\n\
+gerçek ad ("ad soyad").
+; The realname "firstname lastname" for\n\
+; this user identity.
+;
+MSG_HELP_CO_ST_IDENTITY_EMAIL
+Bu kullanýcý kimliði ile iliþkilendirilecek\n\
+e-posta adresi.
+; The e-mail address associated with\n\
+; this user identity.
+;
+MSG_HELP_CO_ST_IDENTITY_ORGANIZATION
+Bu kullanýcý kimliðinin baðlý olduðu\n\
+kurum adý. (isteðe baðlý)
+; Optional name of the organization\n\
+; this user identity belongs to.
+;
+MSG_HELP_CO_CY_IDENTITY_MAILSERVER
+Bu kullanýcý kimliði ile e-posta\n\
+gönderilirken kullanýlacak SMTP\n\
+sunucusunu seçmenizi saðlar.
+; Allows you to select the outgoing SMTP server\n\
+; which will be used when mail is going to be\n\
+; sent using this user identity.
+;
+MSG_HELP_CO_ST_IDENTITY_CC
+Yeni e-posta oluþtururken eklenecek\n\
+varsayýlan CC: alýcýlarý.
+; The default CC: recipients added when\n\
+; composing a new mail.
+;
+MSG_HELP_CO_ST_IDENTITY_BCC
+Yeni e-posta oluþtururken eklenecek\n\
+varsayýlan BCC: alýcýlarý.
+; The default BCC: recipients added when\n\
+; composing a new mail.
+;
+MSG_HELP_CO_ST_IDENTITY_REPLYTO
+Yeni e-posta oluþtururken eklenecek\n\
+varsayýlan Yanýtla: alýcýlarý.
+; The default Reply-To: recipients added when\n\
+; composing a new mail.
+;
+MSG_HELP_CO_ST_IDENTITY_EXTRAHEADER
+Bir giden postaya eklenecek ilave baþlýklar\n\
+için varsayýlaný belirlemenizi saðlar.
+; Allows you to specify the default for putting\n\
+; additional headers to an outgoing mail.
+;
+MSG_HELP_CO_ST_IDENTITY_PHOTOURL
+Ýsteðe baðlý olarak, bu kullanýcý kimliði ile\n\
+iliþkilendirilebilecek fotoðraf URL'si.
+; An optional URL to a photo associated with\n\
+; this user identity.
+;
+MSG_HELP_CO_CH_IDENTITY_SENTFOLDER
+Etkinleþtirildiðinde, gönderilen e-postalar bir\n\
+'Gönderilmiþ' klasöründe saklanacaktýr.\n\
+Aksi takdirde gönderilen posta saklanmayacaktýr.
+; If enabled, sent mail will be stored in a\n\
+; sent mail folder. Otherwise the sent mail\n\
+; will be deleted.
+;
+MSG_HELP_CO_TX_IDENTITY_SENTFOLDER
+Gönderilen e-postalarýn hangi posta klasöründe\n\
+saklanacaðýný belirlemenizi saðlar.
+; Allows to specify which mail folder should\n\
+; be used when storing sent mail.
+;
+MSG_HELP_CO_CH_IDENTITY_QUOTEMAILS
+E-postalarý yanýtlarken veya iletirken\n\
+kaynak metnin alýntýlanmasýný saðlar.
+; When replying or forwarding mails text will\n\
+; be quoted if this option is enabled.
+;
+MSG_HELP_CO_CH_IDENTITY_QUOTEPOS
+Yanýtýnýzýn alýntýnýn üstünde mi, altýnda mý\n\
+olacaðýný belirlemenizi saðlar.
+; Allows to define if your answer should be\n\
+; placed above or below quotes.
+;
+MSG_HELP_CO_CH_IDENTITY_SIGPOS
+Ýmzanýzýn alýntýnýn üstünde mi, altýnda mý\n\
+olacaðýný belirlemenizi saðlar.
+; Allows to define if your signature should\n\
+; appear below or above the quotes.
+;
+MSG_HELP_CO_CH_IDENTITY_SIGREPLY
+Etkinleþtirildiðinde, yanýtlanan postalara\n\
+imza eklenecektir.
+; If enabled, a signature will be added when\n\
+; replying to a mail.
+;
+MSG_HELP_CO_CH_IDENTITY_SIGFORWARD
+Etkinleþtirildiðinde, iletilen postalara\n\
+imza eklenecektir.
+; If enabled, a signature will be added when\n\
+; forwarding a mail.
+;
+MSG_HELP_CO_CH_IDENTITY_ADDINFO
+Etkinleþtirildiðinde, kiþisel bilgi e-postaya\n\
+eklenecektir (X-GönderenBilgisi baþlýðý).\n\
+Bu özellik, adres defterinde bu kullanýcý kimliði\n\
+için ayný e-posta adresi ile bir kayýt yapýlmýþ\n\
+olmasýný gerektirir.
+; If enabled, personal information will be\n\
+; added to the mail (X-SenderInfo header).\n\
+; This requires an addressbook entry with\n\
+; the same email address as this user identity.
+;
+MSG_HELP_CO_CH_IDENTITY_REQUESTMDN
+Etkinleþtirildiðinde, yeni posta oluþtururken\n\
+bir posta düzen bildirimi varsayýlan olarak\n\
+görüntülenecektir.
+; If enabled, a mail disposition notification\n\
+; will be requested per default when composing\n\
+; a mail.
+;
+MSG_HELP_CO_CH_IDENTITY_USEPGP
+Bu kullanýcý kimliði için PGP iþlevini açýp\n\
+kapatabilmeyi saðlar.
+; Allows to enable/disable the PGP functionality\n\
+; for this whole user identity.
+;
+MSG_HELP_CO_ST_IDENTITY_PGPID
+Bu kullanýcý kimliði için kullanýlacak\n\
+PGP-Anahtar ID'sini belirlemenizi saðlar.
+; Allows to specify the PGP-Key ID which should\n\
+; be used for this user identity.
+;
+MSG_HELP_CO_ST_IDENTITY_PGPURL
+Bu kullanýcý kimliði için kullanýlacak ortak\n\
+anahtara ulaþýlacak URL'i belirlemenizi saðlar.
+; Allows to specify an URL where the public key\n\
+; for this user identity can be accessed.
+;
+MSG_HELP_CO_CH_IDENTITY_PGPSIGN_UNENC
+Etkinleþtirildiðinde, düzenlenen tüm þifrelenmemiþ\n\
+e-postalar PGP ile imzalanýr.
+; If enabled, the default is set to PGP sign all\n\
+; unencrypted emails when starting to compose them.
+;
+MSG_HELP_CO_CH_IDENTITY_PGPSIGN_ENC
+Etkinleþtirildiðinde, düzenlenen tüm þifrelenmiþ\n\
+e-postalar PGP ile imzalanýr.
+; If enabled, the default is set to PGP sign all\n\
+; encrypted emails when starting to compose them.
+;
+MSG_HELP_CO_CH_IDENTITY_PGPENC_ALL
+Etkinleþtirildiðinde, düzenlenen tüm\n\
+e-postalar PGP ile þifrelenir.
+; If enabled, the default is set to PGP encrypt all\n\
+; emails when starting to compose them.
+;
+MSG_HELP_CO_CH_IDENTITY_PGPENC_SELF
+Etkinleþtirildiðinde, PGP ile þifrelenen tüm e-postalara\n\
+bu kullanýcý kimliðine ait PGP anahtarý eklenecektir.\n\
+Etkinleþtirilmediðinde, þifrelenmiþ e-postalar bu\n\
+kullanýcý kimliði ile çözülemez.
+; If enabled, all emails being encrypted via PGP\n\
+; will have the PGP key added of this user identity.\n\
+; If disabled, encrypted emails cannot be decrypted\n\
+; by this user identity.
+;
+MSG_HELP_CO_CY_IDENTITY_SIGNATURE
+Bu kullanýcý kimliði ile e-posta düzenlenirken\n\
+kullanýlacak varsayýlan imzanýn seçilmesini\n\
+saðlar.
+; Allows to select the default signature that\n\
+; should be used when composing emails with this\n\
+; user identity.
+;
+MSG_CO_CONFIGWARNING_TITLE
+Ayarlar Uyarýsý
+; Configuration Warning
+;
+MSG_CO_CONFIGWARNING
+Belirli ayarlarda deðiþiklik yaptýnýz.\n\
+Ayarlar penceresini kapattýðýnýzda\n\
+bu deðiþiklikleri kaybedeceksiniz.\n\
+\n\
+Nasýl devam etmek istersiniz?
+; You have modified certain configuration\n\
+; settings and will lose these changes\n\
+; when closing the config window.\n\
+; \n\
+; How do you want to proceed?
+;
+MSG_CO_CONFIGWARNING_BT
+Pencereyi _kapat|*_Vazgeç
+; _Close window|*_Abort
+;
+MSG_CO_CONFIGVERSIONWARNING_TITLE
+Ayarlar Sürüm Uyarýsý
+; Configuration Version Warning
+;
+MSG_CO_CONFIGVERSIONWARNING
+YAM'ýn yüklemeye çalýþtýðý ayar dosyasý\n\
+daha eski bir YAM sürümünde oluþturulmuþ.\n\
+Eðer bu dosyayý yüklemeye devam etmeyi\n\
+seçerseniz, kimi ayarlamalar kaybedilip\n\
+yerlerine varsayýlan deðerler atanabilir.\n\
+\n\
+Nasýl devam etmek istersiniz?
+; The configuration file that YAM tries to\n\
+; load was saved by a newer YAM version.\n\
+; If you continue to load this file some\n\
+; config settings might be lost and set\n\
+; to their default values.\n\
+; \n\
+; How do you want to proceed?
+;
+MSG_CO_CONFIGVERSIONWARNING_BT
+_Devam et|*_Vazgeç
+; _Continue|*_Abort
+;
+MSG_WR_MCCADDRFIELD
+CC adres alaný
+; CC address field
+;
+MSG_WR_MBCCADDRFIELD
+BCC adres alaný
+; BCC address field
+;
+MSG_WR_MREPLYTOADDRFIELD
+'Yanýtla' adres alaný
+; Reply-To address field
+;
+MSG_CO_LISTCOLUMNSETTINGS
+Sütun ayarlarý
+; Column settings
+;
+MSG_CO_LOOKFEEL_MAINWINDOW
+Ana pencere
+; Main window
+;
+MSG_CO_LOOKFEEL_TITLE_THEME
+Tema
+; Theme
+;
+MSG_CO_LOOKFEEL_TITLE_INFO
+Bilgi
+; Information
+;
+MSG_HELP_WR_CY_SIGNATURE
+Þu anda düzenlenen iletide hangi\n\
+imza gösteriminin kullanýlacaðýnýn\n\
+seçilmesini saðlar.
+; Allows to select which signature\n\
+; show be used for the currently\n\
+; composed message.
+;
+MSG_WR_PGPSECURITY
+PGP güvenlik seviyesi
+; PGP security level
+;
+MSG_HELP_WR_CY_SECURITY
+PGP güvenlik seviyesinin seçilebilmesini saðlar.\n\
+Bir iletinin imzalanmasýný, þifrelenmesini veya\n\
+her ikisinin de yapýlmasýný seçebilirsiniz.\n\
+"Varsayýlan" alýcýyý adres defterinizde arar\n\
+ve orada belirlenmiþ ayarlarý kullanýr.
+; Allows to select the PGP security level.\n\
+; You can select if a message should be signed,\n\
+; encrypted or both. "Default" tries to find\n\
+; the recipient in your address book and use\n\
+; the settings defined there.
+;
+MSG_CO_MIMETYPE_TITLE
+MIME türü
+; MIME type
+;
+MSG_CO_DOWNLOAD_LARGE_MAILS1
+
+; _Download messages larger than
+;
+MSG_CO_DOWNLOAD_LARGE_MAILS2
+KB'den daha _büyük iletileri indir.
+; KB
+;
+MSG_MA_DRAFTS
+Taslaklar
+; Drafts
+;
+MSG_CO_SIGNATURE
+Ýmza
+; Signature
+;
+MSG_CO_SIGNATURES
+Ýmzalar
+; Signatures
+;
+MSG_CO_SIGNATURE_DESCRIPTION
+Açýklama
+; Description
+;
+MSG_CO_SIGNATURE_ACTIVE
+_Etkin
+; _Active
+;
+MSG_CO_IDENTITY_SIGNATURE
+Ýmza
+; Signature
+;
+MSG_HELP_CO_LV_SIGNATURE
+Tüm imzalarýn listesi
+; List of all signatures
+;
+MSG_HELP_CO_BT_SIGADD
+Listeye yeni bir imza ekler.
+; Adds a new signature to the list.
+;
+MSG_HELP_CO_BT_SIGDEL
+Seçilen imzayý listeden kaldýrýr.
+; Removes selected signature from list.
+;
+MSG_HELP_CO_BT_SIGUP
+Seçilen imzayý listede bir yukarý taþýr.
+; Moves signature one entry up.
+;
+MSG_HELP_CO_BT_SIGDOWN
+Seçilen imzayý listede bir aþaðý taþýr.
+; Moves signature one entry down.
+;
+MSG_HELP_CO_BT_SIG_ACTIVE
+Seçilen imzayý etkinleþtirir ya da\n\
+devre dýþý býrakýr.
+; Flags the currently selected signature\n\
+; as active or inactive.
+;
+MSG_HELP_CO_ST_SIG_DESC
+Ýmza için bir freetext açýklamasý\n\
+girebilmenizi saðlar.
+; Allows you to enter a freetext\n\
+; description for the signature.
+;
+MSG_HELP_CO_TE_SIGEDIT
+Ýmza metnini düzenleyebilmek için\n\
+kullanýlacak metin düzenleyicisi.
+; Text editor for entering/changing\n\
+; the signature text.
+;
+MSG_CO_MIXED_CONNECTIONS
+Baðlantýlar
+; Connections
+;
+MSG_CO_POP_NOTIFICATION
+Yeni postalar için bildirim
+; Notification for new mails
+;
+MSG_SSL_CERT_WARNING_TITLE
+SSL Sertifikasý Uyarýsý
+; SSL Certificate Warning
+;
+MSG_SSL_CERT_WARNING_BUTTONS
+_Kabul et|_Her zaman kabul et|Sertifikayý _Görüntüle|*_Reddet
+; _Accept|Accept _Permanently|_Show Certificate|*_Reject
+;
+MSG_SSL_CERT_WARNING_INTRO
+'\033b%s:%d\033n' için sunucu sertifikasý onaylanamadý:
+; Error validating server certificate for '\033b%s:%d\033n':
+; HOSTNAME, PORT
+;
+MSG_SSL_CERT_WARNING_UNTRUSTED
+- Sertifika güvenilir bir sahip tarafýndan yayýnlanmamýþ.\n\
+   Sertifikayý el ile onaylamak için parmak izini kullanýn.
+; - The certificate is not issued by a trusted authority. Use the\n\
+;   fingerprint to validate the certificate manually.
+;
+MSG_SSL_CERT_WARNING_IDMISMATCH
+- Sertifika sunucu adý uyumsuz.
+; - The certificate hostname does not match.
+;
+MSG_SSL_CERT_WARNING_NOTYETVALID
+- Sertifika henüz geçerli deðil.
+; - The certificate is not yet valid.
+;
+MSG_SSL_CERT_WARNING_EXPIRED
+- Sertifika zaman aþýmýna uðramýþ.
+; - The certificate has expired.
+;
+MSG_SSL_CERT_WARNING_OTHER
+- Sertifika ile ilgili bilinmeyen bir hata var.
+; - The certificate has an unknown error.
+;
+MSG_SSL_CERT_WARNING_INFO
+Sertifika bilgisi:\n\
+- Sunucu adý: \033b%s\033n\n\
+- Geçerlilik: \033b%s\033n tarihinden, \033b%s\033n tarihine kadar\n\
+- Yayýnlayan: \033b%s\033n\n\
+- Parmak izi: \033b%s\033n
+; Certificate information:\n\
+; - Hostname: \033b%s\033n\n\
+; - Valid: \033b%s\033n until \033b%s\033n\n\
+; - Issuer: \033b%s\033n\n\
+; - Fingerprint: \033b%s\033n
+; HOSTNAME, VALID_FROM, VALID_TO, ISSUER, FINGERPRINT
+;
+MSG_SSL_CERT_WARNING_SHOWTITLE
+'%s:%d' Sertifikasý
+; Certificate of %s:%d
+; HOSTNAME, PORT
+;
+MSG_ER_WARN_CAFILE
+SSL baðlantýsý kurulurken sertifika paketi dosyasý '%s' bulunamadý.\n\
+\n\
+Lütfen dosyanýn varlýðýndan ve güncelliðinden emin olun aksi halde \
+her SSL baðlantýsý 'doðrulanmadý' olarak iþaretlenecektir.
+; While trying to establish a SSL connection the certificate bundle \
+; file '%s' was found to be missing.\n\
+; \n\
+; Please make sure that the file exists and is uptodate or otherwise \
+; each SSL connection will be flagged as unverified.
+; FILEPATH
+;
+MSG_ER_WARN_LOADCAPATH
+Sertifika paketi '%s' veya '%s' dizinindeki kiþisel sertifika \
+dosyalarý yüklenirken bir hata oluþtu.\n\
+\n\
+Lütfen sertifika dizininde geçersiz bir dosya bulunmadýðýndan \
+emin olun.
+; While trying to load the certificate bundle '%s' or individual \
+; certificate files from '%s' an error occurred.\n\
+; \n\
+; Please make sure that no invalid file has been placed in the \
+; certificate folder.
+; FILEPATH, DIRPATH
+;
+MSG_ER_WARN_CAPATH
+Bir SSL sertifikasý onayý kurulmaya çalýþýlýrken '%s' dizinine \
+eriþilemedi.\n\
+\n\
+Lütfen dizinin varlýðýndan ve YAM kurulum sürecinde saðlanan \
+sertifika paket dosyasýný içerdiðinden emin olunuz.
+; While trying to setup a SSL certificate verify the directory '%s' \
+; was found to be missing.\n\
+; \n\
+; Please make sure that the path exists and contains the certificate \
+; bundle file as supplied during the installation process of YAM.
+; DIRPATH
+;
+MSG_CO_ACTION_TERMINATE_FILTER
+Süzme iþlemini iptal et
+; Terminate filter process
+;
+MSG_HELP_CO_CH_ATERMINATE
+Süzme iþlemini durdurur. Takip eden\n\
+süzgeçler uygulanmayacaktýr.
+; Terminate the filter process after this\n\
+; filter. Following filters will not\n\
+; be executed anymore.
+;
+MSG_CO_FILTER_IMPORT
+Ýçe Aktar...
+; Import...
+;
+MSG_FILTER_IMPORT_TITLE
+Süzgeç içe aktar
+; Import filter
+;
+MSG_SPAM_TRUSTHEADERLINES
+Bu harici filtrenin baþlýk satýrlarýna güven:
+; Trust header lines of this external filter:
+;
+MSG_ER_POP3_UIDLHASH_INIT_FAILED
+UIDL hash tablosu ilklendirilemedi.
+; Failed to initialized UIDL hash table.
 ;
