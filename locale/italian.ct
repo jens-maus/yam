@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.99 (14.07.2012)
+## version $VER: YAM.catalog 7.99 (3.08.2012)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -7,7 +7,7 @@
 ; Compiled with FlexCat 2.9 PPC (AmigaOS4)
 ; $Id$
 ;
-; based on YAM.cd 6109 2012-07-13
+; based on YAM.cd 6190 2012-08-03
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -38,10 +38,6 @@ Allegati
 MSG_Options
 Opzioni
 ; Options
-;
-MSG_Add
-_Nuovo
-; _New
 ;
 MSG_Del
 _Elimina
@@ -104,27 +100,27 @@ MSG_NewEntry
 ; - new -
 ;
 MSG_Date
-Data
+data
 ; Date
 ;
 MSG_Sender
-Mittente
+mittente
 ; Sender
 ;
 MSG_Recipient
-Destinatario
+destinatario
 ; Recipient
 ;
 MSG_Subject
-Oggetto
+oggetto
 ; Subject
 ;
 MSG_Size
-Dimensione
+dimensione
 ; Size
 ;
 MSG_Status
-Stato
+stato
 ; Status
 ;
 MSG_FolderList
@@ -1090,10 +1086,6 @@ MSG_CO_CrdSignature
 Firma
 ; Signature
 ;
-MSG_CO_CrdLists
-Liste
-; Lists
-;
 MSG_CO_CrdMIME
 MIME
 ; MIME
@@ -1234,10 +1226,6 @@ MSG_CO_EmailAddress
 Indirizzo _E-Mail
 ; _E-mail address
 ;
-MSG_CO_POPServer
-Ser_ver POP3
-; POP_3 server
-;
 MSG_CO_Password
 _Password
 ; _Password
@@ -1249,10 +1237,6 @@ Fuso _orario
 MSG_CO_SendMail
 Invio posta (SMTP)
 ; Send mail (SMTP)
-;
-MSG_CO_Domain
-Domin_io
-; Do_main
 ;
 MSG_CO_Allow8bit
 Server permette caratteri a _8-Bit
@@ -1310,14 +1294,6 @@ MSG_CO_PreSelect
 _Pre-selezione
 ; _Pre-selection
 ;
-MSG_CO_UpdateStatus
-Aggiorna stato m_essaggio
-; Update m_essage status
-;
-MSG_CO_AutoOperation
-Operazione automatica
-; Automatic operation
-;
 MSG_CO_CheckMail
 Controlla la posta ogni
 ; Check for new mail every
@@ -1325,10 +1301,6 @@ Controlla la posta ogni
 MSG_CO_Minutes
 minuto(i)
 ; minutes
-;
-MSG_CO_Notification
-Notifica
-; Notification
 ;
 MSG_CO_NotiReq
 _Requester
@@ -1518,14 +1490,6 @@ MSG_CO_DefaultViewer
 Visualizzatore prede_finito
 ; De_fault viewer
 ;
-MSG_CO_MessageHeader
-Intestazione dei messaggi
-; Message headers
-;
-MSG_CO_ReplyTo
-Rispon_di a
-; _Reply to
-;
 MSG_CO_Organization
 _Organizzazione
 ; _Organization
@@ -1646,10 +1610,6 @@ MSG_CO_Signature
 Firma
 ; Signature
 ;
-MSG_CO_UseSig
-Usa fi_rme
-; Use s_ignatures
-;
 MSG_CO_EditSig
 mo_difica con editor esterno
 ; _Edit in external editor
@@ -1697,14 +1657,6 @@ dettagliata
 MSG_CO_PGPExe
 Percorso P_GP
 ; P_GP's directory
-;
-MSG_CO_PGPKey
-Chiave PGP _ID
-; Your PGP key _ID
-;
-MSG_CO_EncryptToSelf
-Autod_ecodifica
-; _Encrypt to self
 ;
 MSG_CO_Logfiles
 Log dei File
@@ -1786,10 +1738,6 @@ MSG_CO_Gallery
 Salva _foto in
 ; Save _photos in
 ;
-MSG_CO_MyURL
-UR_L della propria immagine
-; UR_L of your picture
-;
 MSG_CO_AddToAddrbook
 Sal_va indirizzo del mittente
 ; Sa_ve sender's address
@@ -1801,10 +1749,6 @@ Server proxy _HTTP
 MSG_CO_NewGroup
 _Gruppo per nuove voci
 ; _Group for new entries
-;
-MSG_CO_AddInfo
-Aggiungi info _personali
-; _Add personal info
 ;
 MSG_CO_Paths
 Percorsi
@@ -1849,10 +1793,6 @@ o più messaggi sono selezionati
 MSG_CO_Remove
 _Rimuovi messaggi immediatamente
 ; _Remove messages immediately
-;
-MSG_CO_SaveSent
-Salva _messaggi inviati
-; Sa_ve sent messages
 ;
 MSG_CO_XPK
 Impostazioni XPK/LhA
@@ -2004,15 +1944,6 @@ l'indirizzo del server POP3.
 ; The address of the SMTP server to send mail to.\n\
 ; If you leave this field empty, the address of the\n\
 ; POP3 server will be used as fallback.
-;
-MSG_HELP_CO_ST_DOMAIN
-Il nome host del tuo Amiga.\n\
-Modifica questo campo nel\n\
-caso il comando HELLO\n\
-fallisca.
-; The hostname of your computer.\n\
-; Change this field if the HELLO\n\
-; commands fails.
 ;
 MSG_HELP_CO_CH_SMTP8BIT
 Durante le operazioni di trasferimento evita la\n\
@@ -2342,26 +2273,6 @@ con gli allegati di tipo sconosciuto.
 ; Program used to display\n\
 ; attachments of unknown type.
 ;
-MSG_HELP_CO_ST_REPLYTO
-Inserisce l'indirizzo predefinito dove ottenere la\n\
-risposta nel caso venga utilizzato un differente\n\
-indirizzo E-Mail.
-; Should replies to your messages need to be sent by\n\
-; default somewhere else besides (or instead of) your\n\
-; e-mail address, specify those other addresses here.
-;
-MSG_HELP_CO_ST_ORGAN
-Il nome della tua Società o Istituto.
-; The name of your\n\
-; company or institute.
-;
-MSG_HELP_CO_ST_EXTHEADER
-Messaggio di intestazione addizionale\n\
-da inserire all'inizio di ogni nuovo\n\
-messaggio in uscita.
-; Additional message header(s) that will\n\
-; be added to every outgoing message.
-;
 MSG_HELP_CO_ST_HELLOTEXT
 Testo da inserire all'inizio\n\
 di un nuovo messaggio.
@@ -2442,12 +2353,6 @@ messaggi di una Mailing list.
 ; Use these phrases in replies to\n\
 ; messages from a mailing list.
 ;
-MSG_HELP_CO_CH_QUOTE
-Si desidera effettuare la citazione (quoting)\n\
-del messaggio originale nella risposta?
-; Quote the original\n\
-; message in your reply?
-;
 MSG_HELP_CO_CH_QUOTEEMPTY
 Si desidera inserire un carattere\n\
 di citazione per le linee vuote?
@@ -2467,12 +2372,6 @@ Evita la citazione della firma\n\
 del messaggio originale.
 ; Avoids quoting the signature\n\
 ; of the original message.
-;
-MSG_HELP_CO_CY_SIGNAT
-Seleziona la firma\n\
-da modificare.
-; Select the signature\n\
-; you want to edit.
 ;
 MSG_HELP_CO_BT_EDITSIG
 Modifica la tua firma usando\n\
@@ -2539,19 +2438,6 @@ l'eseguibile PGP.
 ; Directory where the PGP\n\
 ; executable can be found.
 ;
-MSG_HELP_CO_ST_MYPGPID
-L'ID della chiave PGP usata per\n\
-firmare e criptare i messaggi.
-; The ID of your PGP key that is used\n\
-; to sign and encrypt messages.
-;
-MSG_HELP_CO_CH_ENCSELF
-Codificando i nuovi messaggi di posta attraverso la tua chiave\n\
-pubblica sarà ancora possibile leggere o modificare i messaggi\n\
-'In uscita'.
-; Encrypt new messages with your public key,\n\
-; so you can still read or edit outgoing messages.
-;
 MSG_HELP_CO_ST_LOGFILE
 Percorso dove il file\n\
 log verrà salvato.
@@ -2611,12 +2497,6 @@ Directory dove salvare le immagini\n\
 dei propri amici/corrispondenti.
 ; Directory to save the pictures\n\
 ; of your correspondents.
-;
-MSG_HELP_CO_ST_PHOTOURL
-L'indirizzo WWW della\n\
-propria immagine/foto.
-; URL address of your\n\
-; portrait image.
 ;
 MSG_HELP_CO_CY_ATAB
 Crea automaticamente una nuova voce nella rubrica per\n\
@@ -2687,12 +2567,6 @@ passare prima per il cestino.\n\
 ; Immediately delete the messages rather\n\
 ; than moving them to the Trash folder.\n\
 ; (Use this with care)
-;
-MSG_HELP_CO_CH_SAVESENT
-Salva i messaggi inoltrati\n\
-nella cartella inviati.
-; Move sent messages to\n\
-; the Sent folder.
 ;
 MSG_HELP_CO_TX_ENCPACK
 Libreria XPK usata per proteggere\n\
@@ -3845,10 +3719,6 @@ MSG_WR_Display
 _Visualizza
 ; D_isplay
 ;
-MSG_WR_Encoding
-Codifica
-; Encoding
-;
 MSG_WR_ContentType
 _Tipo MIME
 ; _MIME type
@@ -3900,10 +3770,6 @@ Import_anza
 MSG_WR_Signature
 Firma
 ; Signature
-;
-MSG_WR_Security
-Sicurezza
-; Security
 ;
 MSG_WR_BounceWT
 Respingi messaggio
@@ -4212,14 +4078,6 @@ Intestazione aggiuntiva che\n\
 verrà aggiunta al messaggio.
 ; Additional headers that should\n\
 ; be added to the message.
-;
-MSG_HELP_WR_ST_FROM
-Contenuti dell'intestazione del campo 'Da'\n\
-(indirizzo E-Mail e nome della persona che\n\
-ha composto questo messaggio).
-; Contents of the 'From:' header\n\
-; (name and address of the person\n\
-; who is writing this message).
 ;
 MSG_HELP_WR_ST_REPLYTO
 Mittente per questo messaggio.
@@ -5090,11 +4948,11 @@ Seleziona directory
 ; Module FO - Window
 ;
 MSG_FO_MessageDate
-Data del messaggio
+data del messaggio
 ; Message date
 ;
 MSG_FO_DateRecvd
-Data di ricezione
+data di ricezione
 ; Date received
 ;
 MSG_FO_FMNormal
@@ -5363,13 +5221,6 @@ MSG_SETTINGS_MUI
 MUI...
 ; MUI...
 ;
-MSG_HELP_FO_ST_MLFROMADDRESS
-Usa l'indirizzo 'Da' al momento\n\
-dell'invio dei nuovi messaggi\n\
-nella lista.
-; Use this 'From:' address when\n\
-; posting new mails to the list.
-;
 MSG_HELP_FO_ST_MLREPLYTOADDRESS
 Usa l'indirizzo 'Rispondi-A' al momento\n\
 dell'invio dei nuovi messaggi nella lista.
@@ -5411,10 +5262,6 @@ MSG_WR_AltQuoted
 Citazione alternativa
 ; Alternative quoted
 ;
-MSG_CO_DoQuote
-_Citazione messaggio
-; Qu_ote message
-;
 MSG_EA_SelectPhoto_Title
 Seleziona un immagine
 ; Select portrait
@@ -5444,10 +5291,6 @@ Nuovo gruppo di cartelle...
 MSG_CO_GENLISTCFG
 Impostazioni generali
 ; General settings
-;
-MSG_CO_FIELDLISTCFG
-Impostazioni dei campi
-; Field settings
 ;
 MSG_CO_SIZEFORMAT
 Dimensione formato
@@ -5611,14 +5454,6 @@ MSG_SEARCHNOTFOUND_MSG
 '%s' non trovato.
 ; '%s' not found.
 ;
-MSG_WR_ERRORNOSENDER
-Messaggio incompleto: nessun mittente.
-; Mail is incomplete: no sender.
-;
-MSG_WR_NOSENDERREQGAD
-_Usa mittente predefinito|*_Annulla
-; _Use default sender|*_Cancel
-;
 MSG_FO_GROUP_CONFDEL
 Questo gruppo contiene sottocartelle che saranno spostate\n\
 nella cartella precedente durante la fase di cancellazione.\n\
@@ -5696,7 +5531,7 @@ Mailing list su questa cartella.
 ; support for this folder.
 ;
 MSG_FO_AUTODETECT
-Rileva _automaticamente
+rileva _automaticamente
 ; Auto_detect
 ;
 MSG_HELP_FO_BT_AUTODETECT
@@ -6339,11 +6174,11 @@ attivi nella finestra principale.
 ; in the main window.
 ;
 MSG_QUICKSEARCH_SO_SUBJECT
-Oggetto
+oggetto
 ; Subject
 ;
 MSG_QUICKSEARCH_SO_SENDER
-Mittente
+mittente
 ; Sender
 ;
 MSG_QUICKSEARCH_SO_SUBJORSENDER
@@ -6640,14 +6475,6 @@ Impostazioni relative alla firma dei messaggi
 MSG_CO_SIGNATURE_SUMMARY
 Configurazione per le firme dei messaggi...
 ; Configure your e-mail signatures...
-;
-MSG_CO_LISTS_TITLE
-Impostazioni relative alla lista della posta
-; Mail Listview Settings
-;
-MSG_CO_LISTS_SUMMARY
-Modifica l'aspetto delle liste della posta...
-; Configure the basic appearance of mail listviews...
 ;
 MSG_CO_SECURITY_TITLE
 Impostazioni di sicurezza
@@ -7740,19 +7567,6 @@ MSG_CO_MDN_OTHER
 In _qualsiasi altro caso:
 ; In all oth_er cases:
 ;
-MSG_CO_REQUESTMDN
-Chiedi sempre una ricevuta di ritor_no
-; Always request a retur_n receipt
-;
-MSG_HELP_CO_CH_REQUESTMDN
-Se selezionato, le opzioni per la ricevuta di\n\
-ritorno nella finestra di scrittura verranno\n\
-sempre attivate in modo predefinito.\n\
-(Usa questa opzione facendo attenzione)
-; If selected, the return receipt option in\n\
-; the Write window will always be enabled\n\
-; by default (Use this with care).
-;
 MSG_HELP_CO_CH_MDN_NEVER
 Se selezionato, non verrà inviata nessuna ricevuta\n\
 di ritorno, anche se esplicitamente richiesta.
@@ -8797,12 +8611,6 @@ MSG_HELP_CO_BT_APLAY
 Prova il campione audio.
 ; Test the sound.
 ;
-MSG_HELP_CO_CH_USESIG
-Si desidera attivare la firma\n\
-predefinita adesso?
-; Do you want to enable\n\
-; signatures by default?
-;
 MSG_HELP_CO_ST_DESCRIPTION
 Una descrizione per questo\n\
 tipo di MIME.
@@ -9453,20 +9261,6 @@ L'anno di nascita deve essere almeno superiore o uguale a 1900.
 ; %%-Y - year without leading zeros (4 digits)\n\
 ; The year number must be greater or equal 1900.
 ; DOBFORMAT
-;
-MSG_CO_PGPURL
-URL su chiave pubblica PGP
-; URL to public PGP key
-;
-MSG_HELP_CO_ST_PGPURL
-E' possibile specificare un URL dove poter\n\
-scaricare la propria chiave PGP.\n\
-L'URL verrà poi inserito in una intestazione\n\
-separata per ogni messaggio di posta.
-; You can specify an URL where your public\n\
-; PGP key can be downloaded from. This URL\n\
-; will then placed into a separate header\n\
-; entry in every mail.
 ;
 MSG_CO_NOTIOS41SYSTEM
 Gestore notifiche di AmigaOS _4.1+ (Ringhio)

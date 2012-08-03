@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-08-03 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: update according to the latest changes.
+
 2012-08-03 Jens Langner <Jens.Langner@light-speed.de>
 
   * locale/hungarian.ct: updated hungarian catalog translation kindle provided by
