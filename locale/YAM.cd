@@ -30,9 +30,6 @@ Attachments
 MSG_Options (3//)
 Options
 ;
-MSG_Add (4//)
-_New
-;
 MSG_Del (5//)
 _Delete
 ;
@@ -819,9 +816,6 @@ Write
 MSG_CO_CrdSignature (307//)
 Signature
 ;
-MSG_CO_CrdLists (308//)
-Lists
-;
 MSG_CO_CrdMIME (309//)
 MIME
 ;
@@ -927,9 +921,6 @@ _Real name
 MSG_CO_EmailAddress (345//)
 _E-mail address
 ;
-MSG_CO_POPServer (346//)
-POP_3 server
-;
 MSG_CO_Password (347//)
 _Password
 ;
@@ -938,9 +929,6 @@ Time _zone
 ;
 MSG_CO_SendMail (350//)
 Send mail (SMTP)
-;
-MSG_CO_Domain (352//)
-Do_main
 ;
 MSG_CO_Allow8bit (353//)
 Server allows _8bit characters
@@ -984,20 +972,11 @@ _Transfer window
 MSG_CO_PreSelect (369//)
 _Pre-selection
 ;
-MSG_CO_UpdateStatus (370//)
-Update m_essage status
-;
-MSG_CO_AutoOperation (373//)
-Automatic operation
-;
 MSG_CO_CheckMail (374//)
 Check for new mail every
 ;
 MSG_CO_Minutes (375//)
 minutes
-;
-MSG_CO_Notification (377//)
-Notification
 ;
 MSG_CO_NotiReq (378//)
 _Requester
@@ -1140,12 +1119,6 @@ File e_xtensions
 MSG_CO_DefaultViewer (428//)
 De_fault viewer
 ;
-MSG_CO_MessageHeader (430//)
-Message headers
-;
-MSG_CO_ReplyTo (431//)
-_Reply to
-;
 MSG_CO_Organization (432//)
 _Organization
 ;
@@ -1236,9 +1209,6 @@ Alt. signature #2
 MSG_CO_Signature (462//)
 Signature
 ;
-MSG_CO_UseSig (463//)
-Use s_ignatures
-;
 MSG_CO_EditSig (464//)
 _Edit in external editor
 ;
@@ -1274,12 +1244,6 @@ verbose
 ;
 MSG_CO_PGPExe (475//)
 P_GP's directory
-;
-MSG_CO_PGPKey (476//)
-Your PGP key _ID
-;
-MSG_CO_EncryptToSelf (477//)
-_Encrypt to self
 ;
 MSG_CO_Logfiles (481//)
 Log files
@@ -1341,9 +1305,6 @@ Personal data exchange
 MSG_CO_Gallery (501//)
 Save _photos in
 ;
-MSG_CO_MyURL (502//)
-UR_L of your picture
-;
 MSG_CO_AddToAddrbook (503//)
 Sa_ve sender's address
 ;
@@ -1352,9 +1313,6 @@ _HTTP proxy server
 ;
 MSG_CO_NewGroup (505//)
 _Group for new entries
-;
-MSG_CO_AddInfo (506//)
-_Add personal info
 ;
 MSG_CO_Paths (507//)
 Paths
@@ -1388,9 +1346,6 @@ or more messages
 ;
 MSG_CO_Remove (517//)
 _Remove messages immediately
-;
-MSG_CO_SaveSent (518//)
-Sa_ve sent messages
 ;
 MSG_CO_XPK (525//)
 XPK/LhA settings
@@ -1504,11 +1459,6 @@ MSG_HELP_CO_ST_SMTPHOST (560//)
 The address of the SMTP server to send mail to.\n\
 If you leave this field empty, the address of the\n\
 POP3 server will be used as fallback.
-;
-MSG_HELP_CO_ST_DOMAIN (561//)
-The hostname of your computer.\n\
-Change this field if the HELO\n\
-commands fails.
 ;
 MSG_HELP_CO_CH_SMTP8BIT (562//)
 Do not convert messages to 7-bit when transferring.\n\
@@ -1725,19 +1675,6 @@ MSG_HELP_CO_ST_DEFVIEWER (620//)
 Program used to display\n\
 attachments of unknown type.
 ;
-MSG_HELP_CO_ST_REPLYTO (622//)
-Should replies to your messages need to be sent by\n\
-default somewhere else besides (or instead of) your\n\
-e-mail address, specify those other addresses here.
-;
-MSG_HELP_CO_ST_ORGAN (623//)
-The name of your\n\
-company or institute.
-;
-MSG_HELP_CO_ST_EXTHEADER (624//)
-Additional message header(s) that will\n\
-be added to every outgoing message.
-;
 MSG_HELP_CO_ST_HELLOTEXT (625//)
 Text to insert at the\n\
 top of a new message.
@@ -1788,10 +1725,6 @@ MSG_HELP_CO_ST_MREPLYTEXT (638//)
 Use these phrases in replies to\n\
 messages from a mailing list.
 ;
-MSG_HELP_CO_CH_QUOTE (639//)
-Quote the original\n\
-message in your reply?
-;
 MSG_HELP_CO_CH_QUOTEEMPTY (641//)
 Insert quote character\n\
 for empty lines?
@@ -1804,10 +1737,6 @@ of the original message differ.
 MSG_HELP_CO_CH_STRIPSIG (643//)
 Avoids quoting the signature\n\
 of the original message.
-;
-MSG_HELP_CO_CY_SIGNAT (644//)
-Select the signature\n\
-you want to edit.
 ;
 MSG_HELP_CO_BT_EDITSIG (645//)
 Modify this signature\n\
@@ -1853,14 +1782,6 @@ MSG_HELP_CO_ST_PGPCMD (655//)
 Directory where the PGP\n\
 executable can be found.
 ;
-MSG_HELP_CO_ST_MYPGPID (656//)
-The ID of your PGP key that is used\n\
-to sign and encrypt messages.
-;
-MSG_HELP_CO_CH_ENCSELF (657//)
-Encrypt new messages with your public key,\n\
-so you can still read or edit outgoing messages.
-;
 MSG_HELP_CO_ST_LOGFILE (660//)
 Path where the log\n\
 files will be stored.
@@ -1900,10 +1821,6 @@ Empty Trash folder.
 MSG_HELP_CO_ST_GALLDIR (671//)
 Directory to save the pictures\n\
 of your correspondents.
-;
-MSG_HELP_CO_ST_PHOTOURL (672//)
-URL address of your\n\
-portrait image.
 ;
 MSG_HELP_CO_CY_ATAB (673//)
 Automatically create an address book entry\n\
@@ -1950,10 +1867,6 @@ MSG_HELP_CO_CH_REMOVE (683//)
 Immediately delete the messages rather\n\
 than moving them to the Trash folder.\n\
 (Use this with care)
-;
-MSG_HELP_CO_CH_SAVESENT (684//)
-Move sent messages to\n\
-the Sent folder.
 ;
 MSG_HELP_CO_TX_ENCPACK (690//)
 XPK library used to protect\n\
@@ -2803,9 +2716,6 @@ _Pack & add...
 MSG_WR_Display (946//)
 D_isplay
 ;
-MSG_WR_Encoding (947//)
-Encoding
-;
 MSG_WR_ContentType (948//)
 _MIME type
 ;
@@ -2844,9 +2754,6 @@ _Importance
 ;
 MSG_WR_Signature (961//)
 Signature
-;
-MSG_WR_Security (962//)
-Security
 ;
 MSG_WR_BounceWT (966//)
 Bounce message
@@ -3073,11 +2980,6 @@ the message to these recipients.
 MSG_HELP_WR_ST_EXTHEADER (1037//)
 Additional headers that should\n\
 be added to the message.
-;
-MSG_HELP_WR_ST_FROM (1038//)
-Contents of the 'From:' header\n\
-(name and address of the person\n\
-who is writing this message).
 ;
 MSG_HELP_WR_ST_REPLYTO (1039//)
 Return address\n\
@@ -3906,10 +3808,6 @@ Users...
 MSG_SETTINGS_MUI (1323//)
 MUI...
 ;
-MSG_HELP_FO_ST_MLFROMADDRESS (1325//)
-Use this 'From:' address when\n\
-posting new mails to the list.
-;
 MSG_HELP_FO_ST_MLREPLYTOADDRESS (1327//)
 Use this 'Reply-To:' address when\n\
 posting new mails to the list.
@@ -3939,9 +3837,6 @@ Pass_word
 MSG_WR_AltQuoted (1342//)
 Alternative quoted
 ;
-MSG_CO_DoQuote (1344//)
-Qu_ote message
-;
 MSG_EA_SelectPhoto_Title (1346//)
 Select portrait
 ;
@@ -3964,9 +3859,6 @@ New folder group...
 ;
 MSG_CO_GENLISTCFG (1358//)
 General settings
-;
-MSG_CO_FIELDLISTCFG (1359//)
-Field settings
 ;
 MSG_CO_SIZEFORMAT (1360//)
 Si_ze format
@@ -4082,12 +3974,6 @@ Search
 ;
 MSG_SEARCHNOTFOUND_MSG (1398//)
 '%s' not found.
-;
-MSG_WR_ERRORNOSENDER (1400//)
-Mail is incomplete: no sender.
-;
-MSG_WR_NOSENDERREQGAD (1401//)
-_Use default sender|*_Cancel
 ;
 MSG_FO_GROUP_CONFDEL (1402//)
 This group contains subfolders, which will\n\
@@ -4774,12 +4660,6 @@ Mail Signature Settings
 ;
 MSG_CO_SIGNATURE_SUMMARY (1634//)
 Configure your e-mail signatures...
-;
-MSG_CO_LISTS_TITLE (1635//)
-Mail Listview Settings
-;
-MSG_CO_LISTS_SUMMARY (1636//)
-Configure the basic appearance of mail listviews...
 ;
 MSG_CO_SECURITY_TITLE (1637//)
 Security Settings
@@ -5545,14 +5425,6 @@ If I'm going to just _delete the message:
 MSG_CO_MDN_OTHER (1877//)
 In all oth_er cases:
 ;
-MSG_CO_REQUESTMDN (1878//)
-Always request a retur_n receipt
-;
-MSG_HELP_CO_CH_REQUESTMDN (1879//)
-If selected, the return receipt option in\n\
-the Write window will always be enabled\n\
-by default (Use this with care).
-;
 MSG_HELP_CO_CH_MDN_NEVER (1880//)
 If selected, no return receipt will be\n\
 sent, even if explicitly requested.
@@ -6217,10 +6089,6 @@ select the file to play.
 MSG_HELP_CO_BT_APLAY (2058//)
 Test the sound.
 ;
-MSG_HELP_CO_CH_USESIG (2059//)
-Do you want to enable\n\
-signatures by default?
-;
 MSG_HELP_CO_ST_DESCRIPTION (2060//)
 A custom description for\n\
 this MIME type.
@@ -6621,15 +6489,6 @@ Date of birth uses a wrong format. The correct format is '%s'.\n\
 %%-Y - year without leading zeros (4 digits)\n\
 The year number must be greater or equal 1900.
 ; DOBFORMAT
-;
-MSG_CO_PGPURL (2144//)
-URL to public PGP key
-;
-MSG_HELP_CO_ST_PGPURL (2145//)
-You can specify an URL where your public\n\
-PGP key can be downloaded from. This URL\n\
-will then placed into a separate header\n\
-entry in every mail.
 ;
 MSG_CO_NOTIOS41SYSTEM (2149//)
 AmigaOS_4.1 notification system

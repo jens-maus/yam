@@ -1,22 +1,8 @@
-## version $VER: YAM.catalog 7.2 (29.07.2012)
-## language magyar
+## version $VER: xxxxx.catalog 7.3 (08.08.2012)
 ## codeset 0
+## language magyar
 ## chunk AUTH Dósa Márton, Miklós Gubucz
-; YAM.cd - YAM 2.7 catalog description file
 ;$Id$
-;
-; Please note that all catalog strings have to carry a proper
-; identifier number in the (X//) string part of the MSG_ identifier
-; field and that those numbers have to be unique and continuous over
-; all different YAM versions. This allows to remove some obsolete
-; strings later on without having to worry about identifier clashes.
-; This however means that if an entry is being deleted here its
-; identifier should NEVER be reused later on. So, if you are going to
-; add new strings here do that always at the bottom of the file
-; and increase the last listed identifier number by one for your
-; new entries. And if you delete an entry NEVER reorder or resort
-; the ID numbers accordingly.
-;
 ;
 ; General
 ;
@@ -35,10 +21,6 @@ Csatolt fájlok
 MSG_Options
 Beállítások
 ; Options
-;
-MSG_Add
-új
-; _New
 ;
 MSG_Del
 Törlés
@@ -878,11 +860,11 @@ Szia!\\\\n
 ;
 MSG_CO_AltRepIntroDef
 
-;
+; 
 ;
 MSG_CO_AltRepPatternDef
 
-;
+; 
 ;
 MSG_CO_ForwardIntroDef
 *** Továbbított üzenet kezdete ***\\\\n\\\\nDátum: %c\\\\nHonnan: %n <%e>\\\\nTárgy: %s\\\\n\\\\n--- A továbbított üzenet az alábbi ---\\\\n\\\\n
@@ -898,15 +880,15 @@ MSG_CO_GreetingsDef
 ;
 MSG_CO_AltRepHelloDef
 
-;
+; 
 ;
 MSG_CO_AltRepByeDef
 
-;
+; 
 ;
 MSG_CO_MLRepHelloDef
 
-;
+; 
 ;
 MSG_CO_MLRepIntroDef
 Ekkor:  %c, %n írta:\\\\n
@@ -1018,10 +1000,6 @@ Irás
 MSG_CO_CrdSignature
 Aláírás
 ; Signature
-;
-MSG_CO_CrdLists
-Listák
-; Lists
 ;
 MSG_CO_CrdMIME
 MIME
@@ -1163,10 +1141,6 @@ MSG_CO_EmailAddress
 _E-mail cím
 ; _E-mail address
 ;
-MSG_CO_POPServer
-POP_3 szerver
-; POP_3 server
-;
 MSG_CO_Password
 Jelszó
 ; _Password
@@ -1178,10 +1152,6 @@ Idözóna
 MSG_CO_SendMail
 Levél küldés (SMTP)
 ; Send mail (SMTP)
-;
-MSG_CO_Domain
-Do_main
-; Do_main
 ;
 MSG_CO_Allow8bit
 A szerver elfogadja a _8bites karaktereket
@@ -1239,14 +1209,6 @@ MSG_CO_PreSelect
 Elözetes kiválasztás
 ; _Pre-selection
 ;
-MSG_CO_UpdateStatus
-üzenet állapot frissítés
-; Update m_essage status
-;
-MSG_CO_AutoOperation
-Automatikus müvelet
-; Automatic operation
-;
 MSG_CO_CheckMail
 új levelek keresése
 ; Check for new mail every
@@ -1254,10 +1216,6 @@ MSG_CO_CheckMail
 MSG_CO_Minutes
 percenként
 ; minutes
-;
-MSG_CO_Notification
-értesítés
-; Notification
 ;
 MSG_CO_NotiReq
 Lekérdezö
@@ -1447,14 +1405,6 @@ MSG_CO_DefaultViewer
 Alapért. nézegetö
 ; De_fault viewer
 ;
-MSG_CO_MessageHeader
-üzenet fejlécek
-; Message headers
-;
-MSG_CO_ReplyTo
-Válasz ide
-; _Reply to
-;
 MSG_CO_Organization
 Szervezés
 ; _Organization
@@ -1575,10 +1525,6 @@ MSG_CO_Signature
 Aláírás
 ; Signature
 ;
-MSG_CO_UseSig
-Aláírás használat
-; Use s_ignatures
-;
 MSG_CO_EditSig
 Szerkesztés külsö prg-vel
 ; _Edit in external editor
@@ -1626,14 +1572,6 @@ Böbeszédü
 MSG_CO_PGPExe
 P_GP mappája
 ; P_GP's directory
-;
-MSG_CO_PGPKey
-PGP kulcs _ID
-; Your PGP key _ID
-;
-MSG_CO_EncryptToSelf
-Bekódolás
-; _Encrypt to self
 ;
 MSG_CO_Logfiles
 Napló fájlok
@@ -1715,10 +1653,6 @@ MSG_CO_Gallery
 Képek mentése ide
 ; Save _photos in
 ;
-MSG_CO_MyURL
-Képeid E_lérhetösége
-; UR_L of your picture
-;
 MSG_CO_AddToAddrbook
 Küldö címének mentése
 ; Sa_ve sender's address
@@ -1730,10 +1664,6 @@ _HTTP proxy szerver
 MSG_CO_NewGroup
 új belépési csoport
 ; _Group for new entries
-;
-MSG_CO_AddInfo
-Személyes infó hozzáadás
-; _Add personal info
 ;
 MSG_CO_Paths
 útvonal
@@ -1778,10 +1708,6 @@ vagy több üzenet törlése esetén
 MSG_CO_Remove
 üzenetek azonnali eltávolítása
 ; _Remove messages immediately
-;
-MSG_CO_SaveSent
-Elküldött üzenetek mentése
-; Sa_ve sent messages
 ;
 MSG_CO_XPK
 XPK/LhA beállítások
@@ -1921,10 +1847,6 @@ Válaszd ki a tartózkodási helyed\naz idözónát.
 MSG_HELP_CO_ST_SMTPHOST
 A levélküldést végzõ SMTP szerver címe.\nHa üresen hagyod ezt a mezõt,\nakkor a POP3 szerver címe lesz használva.
 ; The address of the SMTP server to send mail to.\nIf you leave this field empty, the address of the\nPOP3 server will be used as fallback.
-;
-MSG_HELP_CO_ST_DOMAIN
-A számítógéped neve.\nVáltoztasd meg ha a HELO parancs\nnem müködik.
-; The hostname of your computer.\nChange this field if the HELO\ncommands fails.
 ;
 MSG_HELP_CO_CH_SMTP8BIT
 Do not convert messages to 7-bit when transferring.\nYou should only use this option if you're sure that your SMTP server\nsupports 8-bit transfers, otherwise your messages may get corrupted.
@@ -2142,18 +2064,6 @@ MSG_HELP_CO_ST_DEFVIEWER
 Ismeretlen kiterjesztésü\nfájl esetén használandó program.
 ; Program used to display\nattachments of unknown type.
 ;
-MSG_HELP_CO_ST_REPLYTO
-Add meg az alapértelmezett válaszcímet\nha az különbözik az email címedtõl.
-; Should replies to your messages need to be sent by\ndefault somewhere else besides (or instead of) your\ne-mail address, specify those other addresses here.
-;
-MSG_HELP_CO_ST_ORGAN
-A vállalatod vagy\nintézeted neve.
-; The name of your\ncompany or institute.
-;
-MSG_HELP_CO_ST_EXTHEADER
-Kiegészítõ fejléc ami minden\nkimenö üzenetre rákerül.
-; Additional message header(s) that will\nbe added to every outgoing message.
-;
 MSG_HELP_CO_ST_HELLOTEXT
 Új üzenet elejére illesztendö\nszöveg.
 ; Text to insert at the\ntop of a new message.
@@ -2202,10 +2112,6 @@ MSG_HELP_CO_ST_MREPLYTEXT
 Használd ezeket a szövegeket a\nlevelezölistáról érkezett üzenetek válaszaiban.
 ; Use these phrases in replies to\nmessages from a mailing list.
 ;
-MSG_HELP_CO_CH_QUOTE
-Eredeti üzenet idézése\na válaszban?
-; Quote the original\nmessage in your reply?
-;
 MSG_HELP_CO_CH_QUOTEEMPTY
 Illesszen be az üres sorok\nelé is idézö karaktereket?
 ; Insert quote character\nfor empty lines?
@@ -2217,10 +2123,6 @@ A felhasználó dönti el, hogy a válaszcím\nmi legyen ha a Címzett és a Válaszcím\
 MSG_HELP_CO_CH_STRIPSIG
 Ne legyen az eredeti üzenet\naláírása idézve.
 ; Avoids quoting the signature\nof the original message.
-;
-MSG_HELP_CO_CY_SIGNAT
-Válaszd ki a szerkesztendö\naláírást.
-; Select the signature\nyou want to edit.
 ;
 MSG_HELP_CO_BT_EDITSIG
 Aláírás módosítása külsö\nszerkesztövel.
@@ -2266,14 +2168,6 @@ MSG_HELP_CO_ST_PGPCMD
 Az a mappa, ahol a PGP\nprogram megtalálható.
 ; Directory where the PGP\nexecutable can be found.
 ;
-MSG_HELP_CO_ST_MYPGPID
-A PGP kulcsod ID-je, amivel\naláírod és kódolod az üzeneteket.
-; The ID of your PGP key that is used\nto sign and encrypt messages.
-;
-MSG_HELP_CO_CH_ENCSELF
-Bekódolja az új üzeneteket a publikus kulcsokkal,\nígy el tudod olvasni vagy tudod szerkeszteni az elküldött üzeneteket.
-; Encrypt new messages with your public key,\nso you can still read or edit outgoing messages.
-;
 MSG_HELP_CO_ST_LOGFILE
 Az az útvonal, ahová a\nnaplófájlok lesznek mentve.
 ; Path where the log\nfiles will be stored.
@@ -2318,10 +2212,6 @@ MSG_HELP_CO_ST_GALLDIR
 Az a könyvtár, ahová lemented\na levelezõpartnereid képét.
 ; Directory to save the pictures\nof your correspondents.
 ;
-MSG_HELP_CO_ST_PHOTOURL
-A képed WWW címe.
-; URL address of your\nportrait image.
-;
 MSG_HELP_CO_CY_ATAB
 Automatikusan létrehozzam a feladó címjegyzék\nbejegyzését, amikor elolvasod az üzenetét?
 ; Automatically create an address book entry\nfor the sender when you read his/her message?
@@ -2365,10 +2255,6 @@ Az üzenetek minimális száma, amely\nfelett nyugtázni kell.
 MSG_HELP_CO_CH_REMOVE
 Azonnal törölje az üzeneteket,\nne rakja bele a kukába.\n(óvatosan használd)
 ; Immediately delete the messages rather\nthan moving them to the Trash folder.\n(Use this with care)
-;
-MSG_HELP_CO_CH_SAVESENT
-Az elküldött üzeneteket elmenti\naz Elküldött mappába.
-; Move sent messages to\nthe Sent folder.
 ;
 MSG_HELP_CO_TX_ENCPACK
 XPK library használata a\nmappák védelméhez és tömörítéséhez.
@@ -2781,7 +2667,7 @@ Portré
 ; Portrait
 ;
 MSG_EA_SelectPhoto
-Kiválaszt
+Kiválaszt...
 ; Se_lect...
 ;
 MSG_EA_ReturnAddress
@@ -3291,6 +3177,7 @@ MSG_WR_TitleContents
 Tartalom
 ; Contents
 ;
+;
 MSG_WR_TitleDescription
 Leírás
 ; Description
@@ -3366,10 +3253,6 @@ MSG_WR_Display
 Megjelenít
 ; D_isplay
 ;
-MSG_WR_Encoding
-Kódolás
-; Encoding
-;
 MSG_WR_ContentType
 _MIME típus
 ; _MIME type
@@ -3421,10 +3304,6 @@ Fontosság
 MSG_WR_Signature
 Aláírás
 ; Signature
-;
-MSG_WR_Security
-Biztonság
-; Security
 ;
 MSG_WR_BounceWT
 Visszapattintási üzenet
@@ -3699,10 +3578,6 @@ MSG_HELP_WR_ST_EXTHEADER
 További üzenetfejléc, amely\nhozzá lesz adva az üzenethez.
 ; Additional headers that should\nbe added to the message.
 ;
-MSG_HELP_WR_ST_FROM
-A Feladó fejlécmezõ tartalma\nAnnak a személynek a neve és címe\naki ezt az üzenetet írta.
-; Contents of the 'From:' header\n(name and address of the person\nwho is writing this message).
-;
 MSG_HELP_WR_ST_REPLYTO
 Az üzenet\nválaszcíme.
 ; Return address\nfor this message.
@@ -3825,7 +3700,7 @@ Levél átvitel ide: '%s'
 ; HOST
 ;
 MSG_TR_MsgInFile
-üzenetek fájlban
+üzenetek fájlban %s
 ; Messages in file %s
 ;
 MSG_TR_Control
@@ -4642,10 +4517,6 @@ MSG_SETTINGS_MUI
 MUI...
 ; MUI...
 ;
-MSG_HELP_FO_ST_MLFROMADDRESS
-Ezt a Feladó címet használja\namikor új leveleket küld a listára.
-; Use this 'From:' address when\nposting new mails to the list.
-;
 MSG_HELP_FO_ST_MLREPLYTOADDRESS
 Ezt a Válaszcím: címet használja,\namikor új leveleket küld a listára.
 ; Use this 'Reply-To:' address when\nposting new mails to the list.
@@ -4682,10 +4553,6 @@ MSG_WR_AltQuoted
 Alternatív idézet
 ; Alternative quoted
 ;
-MSG_CO_DoQuote
-Üzenet idézés
-; Qu_ote message
-;
 MSG_EA_SelectPhoto_Title
 Portré kiválasztás
 ; Select portrait
@@ -4713,10 +4580,6 @@ MSG_FOLDER_NEWFOLDERGROUP
 MSG_CO_GENLISTCFG
 Általános beállítások
 ; General settings
-;
-MSG_CO_FIELDLISTCFG
-Mezö beállítások
-; Field settings
 ;
 MSG_CO_SIZEFORMAT
 Méret formátum
@@ -4857,14 +4720,6 @@ Keres
 MSG_SEARCHNOTFOUND_MSG
 '%s' nem található.
 ; '%s' not found.
-;
-MSG_WR_ERRORNOSENDER
-A levél még nem teljes: nincs feladó!
-; Mail is incomplete: no sender.
-;
-MSG_WR_NOSENDERREQGAD
-Alapértelmezett küldö|*Mégse
-; _Use default sender|*_Cancel
 ;
 MSG_FO_GROUP_CONFDEL
 Ez a csoport almappákat tartalmaz,\namelyek a szülömappába kerülnek törlésnél.\n\nTényleg le akarod törölni ezt a csoportot?
@@ -5620,14 +5475,6 @@ MSG_CO_SIGNATURE_SUMMARY
 E-mail aláírás beállítás...
 ; Configure your e-mail signatures...
 ;
-MSG_CO_LISTS_TITLE
-Levél lista beállítások
-; Mail Listview Settings
-;
-MSG_CO_LISTS_SUMMARY
-A levelek lista nézetének beállítása...
-; Configure the basic appearance of mail listviews...
-;
 MSG_CO_SECURITY_TITLE
 Biztonsági beállítások
 ; Security Settings
@@ -6302,7 +6149,7 @@ Keres...
 ; Search...
 ;
 MSG_MA_MFILTER
-Szürö
+Szürö...
 ; Filter...
 ;
 MSG_MA_REMOVEDELETED
@@ -6350,7 +6197,7 @@ Másol...
 ; Copy...
 ;
 MSG_MA_MPRINT
-Nyomtat
+Nyomtat...
 ; Print...
 ;
 MSG_MA_MSAVE
@@ -6529,14 +6376,6 @@ MSG_CO_MDN_OTHER
 Mind_en más esetben:
 ; In all oth_er cases:
 ;
-MSG_CO_REQUESTMDN
-Mindig kérek visszajelzést
-; Always request a retur_n receipt
-;
-MSG_HELP_CO_CH_REQUESTMDN
-Kiválasztása esetén, az írási ablakban\na visszajelzés mindig be lesz állítva\nalapértelmezettként (Óvatosan használd).
-; If selected, the return receipt option in\nthe Write window will always be enabled\nby default (Use this with care).
-;
 MSG_HELP_CO_CH_MDN_NEVER
 Kiválasztása esetén nincs visszajelzés\nkérelem, csak ha külön kéred.
 ; If selected, no return receipt will be\nsent, even if explicitly requested.
@@ -6691,7 +6530,7 @@ Alternatív részek mutatása
 ; Show a_lternative parts
 ;
 MSG_HELP_CO_CH_SHOWALTPARTS
-Kiválasztása esetén, egy levél alternativ MIME része\nrejtve marad ahelyett, hogy a levélhez\ncsatoltan megjelenne.\n
+Kiválasztása esetén, egy levél alternativ MIME része\nrejtve marad ahelyett, hogy a levélhez\ncsatoltan megjelenne.
 ; If enabled, alternative MIME parts of a\n'multipart/alternative' e-mail that\nwould otherwise remain hidden will be\ndisplayed as attachments instead.
 ;
 MSG_US_DIRECTORY_DOESNT_EXIST
@@ -7195,10 +7034,6 @@ MSG_HELP_CO_BT_APLAY
 Hang kipróbálása.
 ; Test the sound.
 ;
-MSG_HELP_CO_CH_USESIG
-Alapértelmezés szerint\nengedélyezed az aláírásokat?
-; Do you want to enable\nsignatures by default?
-;
 MSG_HELP_CO_ST_DESCRIPTION
 Egy egyéni leírás ehhez\na MIME típushoz.
 ; A custom description for\nthis MIME type.
@@ -7439,7 +7274,7 @@ Idegen karakterek képezése ASCII-ra
 ; Map foreign chars to ASCII
 ;
 MSG_HELP_CO_MAPFOREIGNCHARS
-Ha kiválasztásra kerül az át nem\nkonvertálható karakterek leképzésre\nkerülnek ASCII sorozatként.\n
+Ha kiválasztásra kerül az át nem\nkonvertálható karakterek leképzésre\nkerülnek ASCII sorozatként.
 ; If selected, characters that cannot\nbe converted to the read charset\nwill be mapped to looklike ASCII\nsequences.
 ;
 MSG_MA_NAVIGATION
@@ -7548,14 +7383,6 @@ MSG_ER_WRONG_DOB_FORMAT
 Rossz a születési idö formátuma. A helyes formátum: '%s'.\n%%d - nap\n%%m - hónap\n%%y - év (2 jegy)\n%%Y - év (4 jegy)\nAz évszám nagyobb vagy egyenlö kell legyen 1900-al!
 ; Date of birth uses a wrong format. The correct format is '%s'.\n%%d  - day with leading zeros (01-31)\n%%-d - day without leading zeros (1-31)\n%%e  - day with leading spaces ( 1-31)\n%%m  - month with leading zeros (01-12)\n%%-m - month without leading zeros (1-12)\n%%y  - year with leading zeros (00-99, 2 digits)\n%%-y - year without leading zeros (0-99, 2 digits)\n%%Y  - year with leading zeros (4 digits)\n%%-Y - year without leading zeros (4 digits)\nThe year number must be greater or equal 1900.
 ; DOBFORMAT
-;
-MSG_CO_PGPURL
-URL publikus PGP kulcshoz
-; URL to public PGP key
-;
-MSG_HELP_CO_ST_PGPURL
-Beállíthatod a PGP kulcsod elérhetõségének\nletöltési linkjét. Ez a link minden leveledre\negy különálló fejlécre helyezve fog\nrákerülni.
-; You can specify an URL where your public\nPGP key can be downloaded from. This URL\nwill then placed into a separate header\nentry in every mail.
 ;
 MSG_CO_NOTIOS41SYSTEM
 AmigaOS_4.1 figyelmeztetö rendszer
@@ -7961,7 +7788,7 @@ Leírás
 ; Description
 ;
 MSG_HELP_CO_ST_POPDESC
-Egy tetszés szerinti leírás/név lesz használva\na szerverhez kapcsolódáskor a user@host helyett.\n
+Egy tetszés szerinti leírás/név lesz használva\na szerverhez kapcsolódáskor a user@host helyett.
 ; An arbitrary description/name for this\nserver connection which will be used instead\nof user@host.
 ;
 MSG_CO_SMTP_DESC
