@@ -4028,8 +4028,12 @@ DECLARE(ComposeMail) // enum WriteMode mode
               case NMM_FORWARD_INLINE:
               case NMM_BOUNCE:
               {
-                setStatusToForwarded(mail);
-                DisplayStatistics(mail->Folder, FALSE);
+                // don't change the forwarded flag if we are just saving a draft mail
+				if(mode != WRITE_DRAFT)
+				{
+                  setStatusToForwarded(mail);
+                  DisplayStatistics(mail->Folder, FALSE);
+                }
               }
               break;
 

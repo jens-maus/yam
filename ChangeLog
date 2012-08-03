@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-08-03 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/WriteWindow.c: saving a draft mail will not set the "forwarded" flag of
+    forwarded mails as this changes the file name and makes the original mail
+    file inaccessible when eventually saving the outgoing mail. This closes #345.
+
 2012-08-02 Alper Sönmez <amithlondestek@gmail.com>
 
   * locale/turkish.ct: is updated according to the latest changes.
