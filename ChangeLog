@@ -17,6 +17,7 @@ $URL$
   * mui/WriteWindow.c: saving a draft mail will not set the "forwarded" flag of
     forwarded mails as this changes the file name and makes the original mail
     file inaccessible when eventually saving the outgoing mail. This closes #345.
+  * locale/german.ct: updated german translation.
 
 2012-08-02 Alper Sönmez <amithlondestek@gmail.com>
 

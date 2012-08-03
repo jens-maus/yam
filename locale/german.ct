@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.56 (12.7.2012)
+## version $VER: YAM.catalog 7.57 (3.8.2012)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -34,10 +34,6 @@ Anhänge
 MSG_Options
 Optionen
 ; Options
-;
-MSG_Add
-_Neu
-; _New
 ;
 MSG_Del
 L_öschen
@@ -1090,10 +1086,6 @@ MSG_CO_CrdSignature
 Signatur
 ; Signature
 ;
-MSG_CO_CrdLists
-Listen
-; Lists
-;
 MSG_CO_CrdMIME
 MIME
 ; MIME
@@ -1234,10 +1226,6 @@ MSG_CO_EmailAddress
 _E-Mail Adresse
 ; _Email address
 ;
-MSG_CO_POPServer
-POP_3-Server
-; POP_3 server
-;
 MSG_CO_Password
 _Passwort
 ; _Password
@@ -1249,10 +1237,6 @@ _Zeitzone
 MSG_CO_SendMail
 Post versenden (SMTP)
 ; Send mail (SMTP)
-;
-MSG_CO_Domain
-_Domäne
-; Do_main
 ;
 MSG_CO_Allow8bit
 Server erlaubt _8bit Zeichen
@@ -1310,14 +1294,6 @@ MSG_CO_PreSelect
 _Vorauswahl
 ; _Pre-selection
 ;
-MSG_CO_UpdateStatus
-Status a_ktualisieren
-; Update m_essage status
-;
-MSG_CO_AutoOperation
-Automatischer Betrieb
-; Automatic operation
-;
 MSG_CO_CheckMail
 Auf neue Post prüfen alle
 ; Check for new mail every
@@ -1325,10 +1301,6 @@ Auf neue Post prüfen alle
 MSG_CO_Minutes
 Minuten
 ; minutes
-;
-MSG_CO_Notification
-Benachrichtigung
-; Notification
 ;
 MSG_CO_NotiReq
 _Meldung
@@ -1510,14 +1482,6 @@ MSG_CO_DefaultViewer
 S_tandardanzeigeprogramm
 ; De_fault viewer
 ;
-MSG_CO_MessageHeader
-Nachrichtenkopf
-; Message header
-;
-MSG_CO_ReplyTo
-Ant_wortadresse
-; _Reply to
-;
 MSG_CO_Organization
 _Organisation
 ; _Organization
@@ -1690,14 +1654,6 @@ MSG_CO_PGPExe
 _PGP Verzeichnis
 ; P_GP's directory
 ;
-MSG_CO_PGPKey
-_Ihr Schlüssel
-; Your PGP key _ID
-;
-MSG_CO_EncryptToSelf
-_Mit eigenem Schlüssel
-; _Encrypt to self
-;
 MSG_CO_Logfiles
 Protokoll
 ; Log files
@@ -1778,10 +1734,6 @@ MSG_CO_Gallery
 _Fotos speichern in
 ; Save _photos in
 ;
-MSG_CO_MyURL
-_URL Ihres Fotos
-; UR_L of your picture
-;
 MSG_CO_AddToAddrbook
 Abs_enderadresse speichern
 ; Sa_ve sender's address
@@ -1793,10 +1745,6 @@ _HTTP Proxyserver
 MSG_CO_NewGroup
 _Gruppe für neue Einträge
 ; _Group for new entries
-;
-MSG_CO_AddInfo
-_Persönliche Daten hinzufügen
-; _Add personal info
 ;
 MSG_CO_Paths
 Pfade
@@ -1841,10 +1789,6 @@ Nachrichten
 MSG_CO_Remove
 Nachrichten sofort _entfernen
 ; _Remove messages immediately
-;
-MSG_CO_SaveSent
-Versandte _Nachrichten speichern
-; Sa_ve sent messages
 ;
 MSG_CO_XPK
 XPK/LhA Einstellungen
@@ -1998,14 +1942,6 @@ Adresse des POP3-Servers übernommen.
 ; The address of the SMTP server to send mail to.\n\
 ; If you leave this field empty, then the\n\
 ; address of the POP3 server is used.
-;
-MSG_HELP_CO_ST_DOMAIN
-Der Hostname Ihres Computers.\n\
-Ändern Sie dieses Feld, falls\n\
-der HELO-Befehl einen Fehler\n\
-verursacht.
-; The hostname of your Amiga. Change this\n\
-; field if the HELO commands fails.
 ;
 MSG_HELP_CO_CH_SMTP8BIT
 Nachrichten beim Versand nicht in 7-bit umwandeln.\n\
@@ -2316,27 +2252,6 @@ kannten Typs angezeigt werden.
 ; Program used to display\n\
 ; attachments of unknown type
 ;
-MSG_HELP_CO_ST_REPLYTO
-Falls Antworten auf Ihre E-Mails\n\
-zu einer anderen Adresse als die\n\
-Standardadresse gesendet werden\n\
-sollen, können Sie diese Adresse\n\
-hier eingeben.
-; Enter the default return address, if\n\
-; it differs from your email address.
-;
-MSG_HELP_CO_ST_ORGAN
-Der Name Ihrer Firma\n\
-oder Ihres Instituts.
-; The name of your\n\
-; company or institute
-;
-MSG_HELP_CO_ST_EXTHEADER
-Zusätzliche Kopfzeilen, die zu jeder\n\
-versandten Nachricht hinzugefügt werden.
-; Additional message header(s) that will\n\
-; be added to every outgoing message
-;
 MSG_HELP_CO_ST_HELLOTEXT
 Text, welcher am Anfang einer\n\
 neuen Nachricht eingefügt wird.
@@ -2411,12 +2326,6 @@ einer Nachricht aus einer Mailingliste.
 ; Use these texts in replies to\n\
 ; messages from a mailing list.
 ;
-MSG_HELP_CO_CH_QUOTE
-Urprüngliche Nachricht\n\
-in der Antwort zitieren?
-; Quote original\n\
-; message in reply?
-;
 MSG_HELP_CO_CH_QUOTEEMPTY
 Zitatzeichen auch für leere Zeilen verwenden?
 ; Insert quote character(s)\n\
@@ -2436,10 +2345,6 @@ der Signatur der ursprünlichen\n\
 Nachricht.
 ; Don't quote signature\n\
 ; of original message
-;
-MSG_HELP_CO_CY_SIGNAT
-Zu bearbeitende Signatur auswählen.
-; Select signature to edit
 ;
 MSG_HELP_CO_BT_EDITSIG
 Bearbeiten Sie Ihre\n\
@@ -2506,20 +2411,6 @@ das PGP-Programm befindet.
 ; Directory where the PGP\n\
 ; executable can be found
 ;
-MSG_HELP_CO_ST_MYPGPID
-Die ID Ihres PGP-Schlüssels, mit\n\
-welchem Nachrichten signiert bzw.\n\
-verschlüsselt werden.
-; The ID of your PGP key that's\n\
-; used to sign messages
-;
-MSG_HELP_CO_CH_ENCSELF
-Neue Nachrichten auch mit Ihrem öffentlichen\n\
-Schlüssel verschlüsseln, damit versandte Nachrichten\n\
-immer noch gelesen oder geändert werden können.
-; Encrypt new messages with your public key,\n\
-; so you can still read or edit sent messages
-;
 MSG_HELP_CO_ST_LOGFILE
 Pfad für die Protokolldateien.
 ; Path where the log files will be saved
@@ -2572,10 +2463,6 @@ Verzeichnis, in welchem die Fotos\n\
 Ihrer Briefpartner gespeichert werden.
 ; Directory to save the pictures\n\
 ; of your correspondents
-;
-MSG_HELP_CO_ST_PHOTOURL
-URL Adresse Ihres Porträtfotos.
-; WWW address of your portrait image
 ;
 MSG_HELP_CO_CY_ATAB
 Automatisch einen Adressbucheintrag für den\n\
@@ -2643,12 +2530,6 @@ zuerst in den Papierkorb zu verschieben.\n\
 (Dies ist mit Bedacht auszuwählen)
 ; Immediately delete the messages rather\n\
 ; than moving them to the trash folder
-;
-MSG_HELP_CO_CH_SAVESENT
-Nachrichten nach dem Versand\n\
-in das 'Gesendete' Postfach\n\
-verschieben.
-; Save sent messages in the 'Sent' folder
 ;
 MSG_HELP_CO_TX_ENCPACK
 XPK-Bibliothek für die Komprimierung\n\
@@ -3794,10 +3675,6 @@ MSG_WR_Display
 An_zeigen
 ; D_isplay
 ;
-MSG_WR_Encoding
-Kodierung
-; Encoding
-;
 MSG_WR_ContentType
 _MIME-Typ
 ; _MIME type
@@ -3849,10 +3726,6 @@ _Wichtigkeit
 MSG_WR_Signature
 Signatur
 ; Signature
-;
-MSG_WR_Security
-Sicherheit
-; Security
 ;
 MSG_WR_BounceWT
 Nachricht umleiten
@@ -4164,14 +4037,6 @@ Zusätzliche Kopfzeilen, die\n\
 den Nachrichtenkopf ergänzen.
 ; Additional message header(s) that\n\
 ; will be added to the message
-;
-MSG_HELP_WR_ST_FROM
-Inhalt der 'From:' Kopfzeile\n\
-(Name und Adresse der Person,\n\
-die diese Nachricht schreibt).
-; Contents of the 'From:' header\n\
-; (name and address of the person\n\
-; who is writing this letter)
 ;
 MSG_HELP_WR_ST_REPLYTO
 Antwortadresse\n\
@@ -5304,12 +5169,6 @@ MSG_SETTINGS_MUI
 MUI...
 ; MUI...
 ;
-MSG_HELP_FO_ST_MLFROMADDRESS
-Diese Absenderadresse bei neuen Nachrichten\n\
-für diese Liste verwenden.
-; Use this 'From:' address when\n\
-; posting new mails to the list
-;
 MSG_HELP_FO_ST_MLREPLYTOADDRESS
 Diese Antwortadresse bei neuen Nachrichten\n\
 für diese Liste verwenden.
@@ -5351,10 +5210,6 @@ MSG_WR_AltQuoted
 Alternatives Zitat
 ; Alternate quoted
 ;
-MSG_CO_DoQuote
-Nachr_icht zitieren
-; Qu_ote message
-;
 MSG_EA_SelectPhoto_Title
 Porträt auswählen
 ; Select portrait
@@ -5383,10 +5238,6 @@ Neue Postfachgruppe...
 MSG_CO_GENLISTCFG
 Allgemeine Einstellungen
 ; General settings
-;
-MSG_CO_FIELDLISTCFG
-Feldeinstellungen
-; Field settings
 ;
 MSG_CO_SIZEFORMAT
 _Größenangaben
@@ -5537,16 +5388,11 @@ MSG_SEARCHNOTFOUND_MSG
 '%s' nicht gefunden.
 ; '%s' not found.
 ;
-MSG_WR_ERRORNOSENDER
-Die Nachricht ist nicht vollständig: Kein Absender.
-; Mail is incomplete: no sender.
-;
-MSG_WR_NOSENDERREQGAD
-Standardabsender _verwenden|*Abbru_ch
-; _Use default sender|*_Cancel
-;
 MSG_FO_GROUP_CONFDEL
-Diese Gruppe enthält Unterfächer, welche bei\nLöschung in das übergeordnete Fach verschoben werden.\n\nWirklich diese Gruppe löschen?
+Diese Gruppe enthält Unterfächer, welche bei\n\
+Löschung in das übergeordnete Fach verschoben werden.\n\
+\n\
+Wirklich diese Gruppe löschen?
 ; This group contains subfolders, which will\n\
 ; be moved to the parent folder on deletion.\n\
 ; \n\
@@ -6337,12 +6183,6 @@ Nachrichtensignatur Einstellungen
 MSG_CO_SIGNATURE_SUMMARY
 Nachrichtensignaturen konfigurieren...
 ;
-MSG_CO_LISTS_TITLE
-Nachrichtenlisten Einstellungen
-;
-MSG_CO_LISTS_SUMMARY
-Ändern Sie die Nachrichtenauflistungen...
-;
 MSG_CO_SECURITY_TITLE
 Sicherheitseinstellungen
 ;
@@ -7115,14 +6955,6 @@ Wenn ich die Nachricht nur l_ösche:
 MSG_CO_MDN_OTHER
 In allen anderen _Fällen:
 ;
-MSG_CO_REQUESTMDN
-I_mmer eine Empfangsbestätigung anfordern
-;
-MSG_HELP_CO_CH_REQUESTMDN
-Wenn aktiviert, wird die Empfangsbestätigungs-\n\
-Option im Schreibfenster standardmäßig benutzt\n\
-(Verwenden Sie dies mit Bedacht).
-;
 MSG_HELP_CO_CH_MDN_NEVER
 Wenn aktiviert, wird keinerlei Empfangsbestätigung\n\
 versendet. Auch wenn explizit angefordert.
@@ -7805,10 +7637,6 @@ werden soll.
 MSG_HELP_CO_BT_APLAY
 Testet die Tonausgabe.
 ;
-MSG_HELP_CO_CH_USESIG
-Möchten Sie standardmäßig\n\
-Signaturen anschalten?
-;
 MSG_HELP_CO_ST_DESCRIPTION
 Eine eigene Beschreibung\n\
 für diesen MIME-Typen.
@@ -8177,15 +8005,6 @@ Das Geburtstagsdatum ist im falschen Format. Das korrekte Format ist '%s'.\n\
 %%Y  - Jahr mit führenden Nullen (4-stellig)\n\
 %%-Y - Jahr ohne führenden Nullen (4-stellig)\n\
 Die Jahreszahl muss größer oder gleich 1900 sein.
-;
-MSG_CO_PGPURL
-URL des öffentliches PGP-Schlüssels
-;
-MSG_HELP_CO_ST_PGPURL
-Hier können Sie die URL angeben, von der\n\
-Ihr öffentlicher PGP-Schlüssel herunterge-\n\
-laden werden kann. Diese URL wird in einer\n\
-separaten Kopfzeile in jeder Mail angegeben.
 ;
 MSG_CO_NOTIOS41SYSTEM
 AmigaOS_4.1 Systembenachrichtigung
