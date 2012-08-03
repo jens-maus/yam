@@ -1602,10 +1602,6 @@ MSG_CO_Signature
 Signatur
 ; Signature
 ;
-MSG_CO_UseSig
-Si_gnaturen benutzen
-; Use s_ignature
-;
 MSG_CO_EditSig
 Im _externen Editor bearbeiten
 ; _Edit in external editor
