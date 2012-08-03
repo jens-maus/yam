@@ -1,4 +1,4 @@
-## version $VER: xxxxx.catalog 7.3 (08.08.2012)
+## version $VER: YAM.catalog 7.3 (08.08.2012)
 ## codeset 0
 ## language magyar
 ## chunk AUTH Dósa Márton, Miklós Gubucz
@@ -635,7 +635,7 @@ Olvas
 ; Rea_d
 ;
 MSG_MA_TBEdit
-Sz_erkeszt
+Ír
 ; _Edit
 ;
 MSG_MA_TBMove
@@ -647,7 +647,7 @@ Törö_l
 ; De_lete
 ;
 MSG_MA_TBGetAddr
-Címjegyzékbe
+Címtár
 ; Ge_tAdd
 ;
 MSG_MA_TBWrite
@@ -2514,7 +2514,7 @@ Csoport
 ; _Group
 ;
 MSG_AB_TBEdit
-Sz_erkeszt
+Ír
 ; _Edit
 ;
 MSG_AB_TBDelete
@@ -3033,23 +3033,23 @@ Szöveg stílus?
 ; Module RE - Toolbar
 ;
 MSG_RE_TBPrev
-Elözö
+Vissza
 ; _Prev
 ;
 MSG_RE_TBNext
-Következö
+Elõre
 ; _Next
 ;
 MSG_RE_TBPrevTh
-Elözö válasz
+Elözö
 ; Prev_Thr
 ;
 MSG_RE_TBNextTh
-Köv.Válasz
+Követk.
 ; NextT_hr
 ;
 MSG_RE_TBDisplay
-Megjelenít
+Mutat
 ; _Display
 ;
 MSG_RE_TBSave
@@ -3317,7 +3317,7 @@ Visszapattintva ide
 ; Module WR - Toolbar
 ;
 MSG_WR_TBEditor
-Szerkesztö
+Szerk.
 ; Editor
 ;
 MSG_WR_TBInsert
@@ -3333,11 +3333,11 @@ Másol
 ; Copy
 ;
 MSG_WR_TBPaste
-Beilleszt
+Beill.
 ; Paste
 ;
 MSG_WR_TBUndo
-Visszavon
+Mégse
 ; Undo
 ;
 MSG_WR_TBBold
@@ -3349,7 +3349,7 @@ Dölt
 ; Italic
 ;
 MSG_WR_TBUnderlined
-Aláhúzott
+Aláhúz
 ; ULined
 ;
 MSG_WR_TBColored
@@ -6918,19 +6918,19 @@ Töröl
 ; Delete
 ;
 MSG_ER_B64DEC_FILEIO
-Egy fájl I/O hiba keletkezett a '%s' levél %ld MIME részének Base64 dekódolása közben. A dekódolás leállt.\n\nLehet, hogy kevés a szabad lemezterület ahol a dekódolás történik, vagy a forrás fájl nem \
+Egy fájl I/O hiba keletkezett %ld MIME részének Base64 dekódolása közben ennél a levélnél: '%s'. A dekódolás leállt.\n\nLehet, hogy kevés a szabad lemezterület ahol a dekódolás történik, vagy a forrás fájl nem \
 volt elérhetõ.
 ; A file I/O error occurred while trying to Base64 decode MIME part %ld of mail file '%s'. The decoding has been aborted.\n\nThis may be caused by insufficient space on the volume the file was being decoded to, or because the source file wasn't accessible.
 ; PARTNR, MSGFILE
 ;
 MSG_ER_B64DEC_WARN
-Néhány érvénytelen karakter található a '%s' levél %ld MIME részének Base64 dekódolása közben. A létrehozott kimenet érvénytelen adatokat tartalmaz vagy sérült.\n\nLehet, hogy a levél küldõje nem \
+Néhány érvénytelen karakter található %ld MIME részének Base64 dekódolása közben ennél a levélnél: '%s'. A létrehozott kimenet érvénytelen adatokat tartalmaz vagy sérült.\n\nLehet, hogy a levél küldõje nem \
 megfelelõ kódolást végzett vagy a Base64 rész megsérült a kézbesítés közben.
 ; Some invalid characters were found while Base64 decoding MIME part %ld of mail file '%s'. The generated output may therefore contain invalid data or may be corrupted.\n\nThis may be caused by an incorrect encoding done by the sending mail client or because the Base64 part has been malformed during transmission.
 ; PARTNR, MSGFILE
 ;
 MSG_ER_B64DEC_UNEXP
-Egy hiba keletkezett a '%s' levél %ld MIME részének Base64 dekódolása közben. A dekódolás leállt.\n\nNincs dekódolandó adat vagy a YAM nem tudja elérni kódolt adatot.
+Egy hiba keletkezett %ld MIME részének Base64 dekódolása közben ennél a levélnél: '%s'. A dekódolás leállt.\n\nNincs dekódolandó adat vagy a YAM nem tudja elérni kódolt adatot.
 ; An error occurred while trying to Base64 decode MIME part %ld of mail file '%s'. The decoding has been aborted.\n\nEither there's no data to decode or YAM can't access the encoded data.
 ; PARTNR, MSGFILE
 ;
@@ -7380,7 +7380,7 @@ MSG_CO_SPAM_STATISTICS
 ; %ld (%ld words)
 ;
 MSG_ER_WRONG_DOB_FORMAT
-Rossz a születési idö formátuma. A helyes formátum: '%s'.\n%%d - nap\n%%m - hónap\n%%y - év (2 jegy)\n%%Y - év (4 jegy)\nAz évszám nagyobb vagy egyenlö kell legyen 1900-al!
+Rossz a születési idö formátuma. A helyes formátum '%s'.\n%%d  - nap nullával kiegészítve kétjegyûre(01-31)\n%%-d - nap nullával kiegészítés nélkül (1-31)\n%%e  - nap szóközzel kiegészítve kétjegyûre ( 1-31)\n%%m  - hónap nullával kiegészítve kétjegyûre (01-12)\n%%-m - hónap nullával kiegészítés nélkül (1-12)\n%%y  - év nullával kiegészítve (00-99, 2 számjegy)\n%%-y - év kiegészítés nélkül (0-99, 2 számjegy)\n%%Y  - év kiegészítve nullával (4 számjegy)\n%%-Y - év nullával kiegészítés nélkül (4 számjegy)\nAz évszám nagyobb vagy egyenlõ lehet 1900-nál.
 ; Date of birth uses a wrong format. The correct format is '%s'.\n%%d  - day with leading zeros (01-31)\n%%-d - day without leading zeros (1-31)\n%%e  - day with leading spaces ( 1-31)\n%%m  - month with leading zeros (01-12)\n%%-m - month without leading zeros (1-12)\n%%y  - year with leading zeros (00-99, 2 digits)\n%%-y - year without leading zeros (0-99, 2 digits)\n%%Y  - year with leading zeros (4 digits)\n%%-Y - year without leading zeros (4 digits)\nThe year number must be greater or equal 1900.
 ; DOBFORMAT
 ;
