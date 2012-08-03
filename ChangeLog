@@ -18,6 +18,8 @@ $URL$
     forwarded mails as this changes the file name and makes the original mail
     file inaccessible when eventually saving the outgoing mail. This closes #345.
   * locale/german.ct: updated german translation.
+  * YAM_WR.c: exclude the own address when replying to an EMail which has the own
+    address in the CC field.
 
 2012-08-02 Alper Sönmez <amithlondestek@gmail.com>
 
