@@ -96,18 +96,22 @@ struct EMailCacheNode
 /// LoadEMailCache()
 static void LoadEMailCache(const char *name, struct MinList *list)
 {
-  BPTR fh;
+  FILE *fh;
 
   ENTER();
 
   NewMinList(list);
 
-  if((fh = Open(name, MODE_OLDFILE)))
+  if((fh = fopen(name, "r")) != NULL)
   {
     int i = 0;
-    char line[SIZE_REALNAME + SIZE_ADDRESS + 5]; /* should hold "name <addr>\n\0" */
+    char *line = NULL;
+    size_t size = 0;
 
-    while(FGets(fh, line, sizeof(line)) && i++ < 100) // we limit the reading to a maximum of 100 so that this code can't read endlessly
+    setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+
+    // we limit the reading to a maximum of 100 so that this code can't read endlessly
+    while(GetLine(&line, &size, fh) >= 0 && i++ < 100)
     {
       char *addr;
       char *end;
@@ -127,17 +131,8 @@ static void LoadEMailCache(const char *name, struct MinList *list)
           if(addr != line)
           {
             addr[-1] = '\0';
-            // now check if the cached entry contains a comma in the real name and does not start with a quote
-            if(strchr(line, ',') != NULL && line[0] != '"')
-            {
-              // add the quotes around the name
-              snprintf(node->ecn_Person.RealName, sizeof(node->ecn_Person.RealName), "\"%s\"", line);
-            }
-            else
-            {
-              // just copy the real name
-              strlcpy(node->ecn_Person.RealName, line, sizeof(node->ecn_Person.RealName));
-            }
+            // copy the real name
+            strlcpy(node->ecn_Person.RealName, line, sizeof(node->ecn_Person.RealName));
           }
           end[0] = '\0';
           strlcpy(node->ecn_Person.Address, addr+1, sizeof(node->ecn_Person.Address));
@@ -150,7 +145,9 @@ static void LoadEMailCache(const char *name, struct MinList *list)
         D(DBF_STARTUP, "Error with '%s', parsing line: '%s'", name, line);
       }
     }
-    Close(fh);
+
+    fclose(fh);
+    free(line);
   }
   else
   {
@@ -164,14 +161,13 @@ static void LoadEMailCache(const char *name, struct MinList *list)
 /// SaveEMailCache()
 static void SaveEMailCache(const char *name, struct MinList *list)
 {
-  BPTR fh;
+  FILE *fh;
 
   ENTER();
 
-  if((fh = Open(name, MODE_NEWFILE)))
+  if((fh = fopen(name, "w")) != NULL)
   {
     int i;
-    char line[SIZE_REALNAME + SIZE_ADDRESS + 5]; /* should hold "name <addr>\n\0" */
     struct Node *curNode;
 
     i = 0;
@@ -183,31 +179,15 @@ static void SaveEMailCache(const char *name, struct MinList *list)
       if(i >= C->EmailCache)
         break;
 
-      if(entry->RealName[0])
-      {
-        // check wether the real name contains a comma and does not yet start with quote
-        if(strchr(entry->RealName, ',') != NULL && entry->RealName[0] != '"')
-        {
-          // add the necessary quotes
-          snprintf(line, sizeof(line), "\"%s\" <%s>\n", entry->RealName, entry->Address);
-        }
-        else
-        {
-          // no quotes needed
-          snprintf(line, sizeof(line), "%s <%s>\n", entry->RealName, entry->Address);
-        }
-      }
+      if(entry->RealName[0] != '\0')
+        fprintf(fh, "%s <%s>\n", entry->RealName, entry->Address);
       else
-      {
-        snprintf(line, sizeof(line), "<%s>\n", entry->Address);
-      }
-
-      FPuts(fh, line);
+        fprintf(fh, "<%s>\n", entry->Address);
 
       i++;
     }
 
-    Close(fh);
+    fclose(fh);
   }
   else
   {

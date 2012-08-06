@@ -10,6 +10,9 @@ $URL$
   * mui/YAMApplication.c: the EMail cache will be saved upon termination only
     instead of after each modification. This should greatly improve performance
     when adding lots of new addresses.
+  * mui/YAMApplication.c: use standard I/O functions for loading and saving the
+    EMail cache. Furthermore the load/save process will no longer embed the real
+    name in quotes as this is done when adding a new entry.
 
 2012-08-03 Samir Hawamdeh <s.hawamdeh@tin.it>
 
