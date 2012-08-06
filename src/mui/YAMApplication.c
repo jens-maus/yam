@@ -503,6 +503,7 @@ DECLARE(AddToEmailCache) // struct Person *person
         TAG_DONE)) != NULL)
       {
         struct ABEntry *entry = &newnode->ecn_Person;
+        char *p;
 
         // clear the node structure
         memset(newnode, 0, sizeof(*newnode));
@@ -511,7 +512,7 @@ DECLARE(AddToEmailCache) // struct Person *person
         // for the real name we have to check for possible commas without quotes yet
         if(strchr(msg->person->RealName, ',') != NULL && msg->person->RealName[0] != '"')
         {
-          // add the necessary quotes around the real name
+          // add the necessary double quotes around the real name
           snprintf(entry->RealName, sizeof(entry->RealName), "\"%s\"", msg->person->RealName);
         }
         else
@@ -520,6 +521,14 @@ DECLARE(AddToEmailCache) // struct Person *person
           strlcpy(entry->RealName, msg->person->RealName, sizeof(entry->RealName));
         }
         strlcpy(entry->Address, msg->person->Address, sizeof(entry->Address));
+
+        // strip any single quotes from the real name
+        p = entry->RealName;
+        while((p = strchr(p, '\'')) != NULL)
+        {
+          // move all characters one backward including the trailing NUL byte
+          memmove(p, p+1, strlen(p)+1);
+		}
 
         // we always add new items to the top because this is a FILO
         AddHead((struct List *)&data->emailCache, (struct Node *)newnode);

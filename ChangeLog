@@ -13,6 +13,8 @@ $URL$
   * mui/YAMApplication.c: use standard I/O functions for loading and saving the
     EMail cache. Furthermore the load/save process will no longer embed the real
     name in quotes as this is done when adding a new entry.
+  * mui/YAMApplication.c: use double quotes only to quote the real name and
+    remove any single quotes from new entries.
 
 2012-08-03 Samir Hawamdeh <s.hawamdeh@tin.it>
 
