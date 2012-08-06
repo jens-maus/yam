@@ -15,6 +15,9 @@ $URL$
     name in quotes as this is done when adding a new entry.
   * mui/YAMApplication.c: use double quotes only to quote the real name and
     remove any single quotes from new entries.
+  * YAM_MA.c, YAM_UT.c: the vertical weight of the mail list was always set for
+    the wrong group object and hence YAM saved and restored the wrong layout
+    values. This closes #334.
 
 2012-08-03 Samir Hawamdeh <s.hawamdeh@tin.it>
 

@@ -97,11 +97,11 @@ OVERLOAD(MUIM_Window_Snapshot)
     // get the weights according to their GUI elements
     G->Weights[0] = xget(G->MA->GUI.LV_FOLDERS,  MUIA_HorizWeight);
     G->Weights[1] = xget(G->MA->GUI.GR_MAILVIEW, MUIA_HorizWeight);
-    G->Weights[6] = xget(G->MA->GUI.PG_MAILLIST, MUIA_VertWeight);
 
     // if the embedded read pane objects are currently active we save their weight values
     if(C->EmbeddedReadPane == TRUE)
     {
+      G->Weights[6] = xget(G->MA->GUI.GR_MAILLIST, MUIA_VertWeight);
       G->Weights[7] = xget(G->MA->GUI.MN_EMBEDDEDREADPANE, MUIA_VertWeight);
       G->Weights[8] = xget(G->MA->GUI.MN_EMBEDDEDREADPANE, MUIA_ReadMailGroup_HGVertWeight);
       G->Weights[9] = xget(G->MA->GUI.MN_EMBEDDEDREADPANE, MUIA_ReadMailGroup_TGVertWeight);

@@ -3989,7 +3989,7 @@ void LoadLayout(void)
   // set some sensible default values first
   G->Weights[0] = 30;
   G->Weights[1] = 100;
-  G->Weights[6] = 30;
+  G->Weights[6] = 50;
   G->Weights[4] = 30;
   G->Weights[5] = 100;
   G->Weights[7] = 100;
@@ -4202,11 +4202,11 @@ void LoadLayout(void)
   // if they exist
   set(G->MA->GUI.LV_FOLDERS,  MUIA_HorizWeight, G->Weights[0]);
   set(G->MA->GUI.GR_MAILVIEW, MUIA_HorizWeight, G->Weights[1]);
-  set(G->MA->GUI.PG_MAILLIST, MUIA_VertWeight,  G->Weights[6]);
 
   // if the embedded read pane is active we set its weight values
   if(C->EmbeddedReadPane == TRUE)
   {
+    set(G->MA->GUI.GR_MAILLIST, MUIA_VertWeight, G->Weights[6]);
     xset(G->MA->GUI.MN_EMBEDDEDREADPANE, MUIA_VertWeight,                 G->Weights[7],
                                          MUIA_ReadMailGroup_HGVertWeight, G->Weights[8],
                                          MUIA_ReadMailGroup_TGVertWeight, G->Weights[9]);

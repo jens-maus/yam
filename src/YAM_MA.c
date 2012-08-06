@@ -3920,6 +3920,8 @@ void MA_SetupEmbeddedReadPane(void)
         {
           if(DoMethod(mailViewGroup, MUIM_Group_InitChange))
           {
+            set(G->MA->GUI.GR_MAILLIST, MUIA_VertWeight, G->Weights[6]);
+
             DoMethod(mailViewGroup, OM_ADDMEMBER, mailBalanceObj);
             DoMethod(mailViewGroup, OM_ADDMEMBER, readPaneObj);
 
@@ -4242,7 +4244,6 @@ struct MA_ClassData *MA_New(void)
           Child, data->GUI.LV_FOLDERS = NListviewObject,
             MUIA_HelpNode,    "MA00",
             MUIA_CycleChain,  TRUE,
-            MUIA_HorizWeight, 30,
             MUIA_Listview_DragType, MUIV_Listview_DragType_Immediate,
             MUIA_NListview_NList, data->GUI.NL_FOLDERS = MainFolderListtreeObject,
             End,
@@ -4252,13 +4253,12 @@ struct MA_ClassData *MA_New(void)
           End,
           Child, data->GUI.GR_MAILVIEW = VGroup,
             GroupSpacing(0),
-            Child, VGroup,
+            Child, data->GUI.GR_MAILLIST = VGroup,
               GroupSpacing(1),
               Child, data->GUI.GR_QUICKSEARCHBAR = QuickSearchBarObject,
                 MUIA_ShowMe, C->QuickSearchBar,
               End,
               Child, data->GUI.PG_MAILLIST = MainMailListGroupObject,
-                MUIA_VertWeight, 25,
                 MUIA_HelpNode,   "MA01",
               End,
             End,

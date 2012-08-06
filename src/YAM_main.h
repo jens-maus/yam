@@ -324,6 +324,7 @@ struct MA_GUIData
   Object *BL_MAILVIEW;
   Object *MN_EMBEDDEDREADPANE;
   Object *GR_QUICKSEARCHBAR;
+  Object *GR_MAILLIST;
   Object *PG_MAILLIST;
   Object *MI_NAVIG;
   Object *MI_NEXTTHREAD;
