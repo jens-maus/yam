@@ -1,10 +1,10 @@
-## version $VER: YAM.catalog 7.99 (3.08.2012)
+## version $VER: YAM.catalog 7.99 (7.08.2012)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
 ;
 ; italian.ct - YAM 2.7/2.8-dev catalog translation file
-; Compiled with FlexCat 2.9 PPC (AmigaOS4)
+; Compiled with FlexCat 2.10 PPC (AmigaOS4)
 ; $Id$
 ;
 ; based on YAM.cd 6190 2012-08-03
@@ -100,27 +100,27 @@ MSG_NewEntry
 ; - new -
 ;
 MSG_Date
-data
+Data
 ; Date
 ;
 MSG_Sender
-mittente
+Mittente
 ; Sender
 ;
 MSG_Recipient
-destinatario
+Destinatario
 ; Recipient
 ;
 MSG_Subject
-oggetto
+Oggetto
 ; Subject
 ;
 MSG_Size
-dimensione
+Dimensione
 ; Size
 ;
 MSG_Status
-stato
+Stato
 ; Status
 ;
 MSG_FolderList
