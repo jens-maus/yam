@@ -74,8 +74,9 @@
 struct Data
 {
   Object *transferWindow;
-  struct MinList EMailCache;
-  STRPTR EMailCacheName;
+  struct MinList emailCache;
+  BOOL emailCacheModified;
+  char *emailCacheName;
   char compileInfo[SIZE_DEFAULT];
 };
 */
@@ -93,7 +94,7 @@ struct EMailCacheNode
 
 /* Private functions */
 /// LoadEMailCache()
-VOID LoadEMailCache(STRPTR name, struct MinList *list)
+static void LoadEMailCache(const char *name, struct MinList *list)
 {
   BPTR fh;
 
@@ -115,9 +116,10 @@ VOID LoadEMailCache(STRPTR name, struct MinList *list)
       {
         struct EMailCacheNode *node;
 
-       	if((node = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*node),
-       	                                         ASONODE_Min, TRUE,
-       	                                         TAG_DONE)) != NULL)
+       	if((node = AllocSysObjectTags(ASOT_NODE,
+       	  ASONODE_Size, sizeof(*node),
+          ASONODE_Min, TRUE,
+          TAG_DONE)) != NULL)
         {
           // clear the node structure
           memset(node, 0, sizeof(*node));
@@ -160,7 +162,7 @@ VOID LoadEMailCache(STRPTR name, struct MinList *list)
 
 ///
 /// SaveEMailCache()
-VOID SaveEMailCache(STRPTR name, struct MinList *list)
+static void SaveEMailCache(const char *name, struct MinList *list)
 {
   BPTR fh;
 
@@ -376,7 +378,7 @@ DECLARE(FindEmailMatches) // STRPTR matchText, Object *list
       struct Node *curNode;
 
       i = 0;
-      IterateList(&data->EMailCache, curNode)
+      IterateList(&data->emailCache, curNode)
       {
         struct EMailCacheNode *node = (struct EMailCacheNode *)curNode;
         struct ABEntry *entry = &node->ecn_Person;
@@ -429,7 +431,7 @@ DECLARE(FindEmailCacheMatch) // STRPTR matchText
     struct Node *curNode;
 
     i = 0;
-    IterateList(&data->EMailCache, curNode)
+    IterateList(&data->emailCache, curNode)
     {
       struct EMailCacheNode *node = (struct EMailCacheNode *)curNode;
       struct ABEntry *entry = &node->ecn_Person;
@@ -484,7 +486,7 @@ DECLARE(AddToEmailCache) // struct Person *person
     // Ok, it doesn't exists in the AB, now lets check the cache list
     // itself
     i = 0;
-    IterateList(&data->EMailCache, curNode)
+    IterateList(&data->emailCache, curNode)
     {
       struct EMailCacheNode *node = (struct EMailCacheNode *)curNode;
       struct ABEntry *entry = &node->ecn_Person;
@@ -498,7 +500,9 @@ DECLARE(AddToEmailCache) // struct Person *person
          !Stricmp(entry->Address, msg->person->Address))
       {
         Remove((struct Node *)node);
-        AddHead((struct List *)&data->EMailCache, (struct Node *)node);
+        AddHead((struct List *)&data->emailCache, (struct Node *)node);
+        // the cache was modified
+        data->emailCacheModified = TRUE;
         found = TRUE;
         break;
       }
@@ -513,9 +517,10 @@ DECLARE(AddToEmailCache) // struct Person *person
       struct EMailCacheNode *newnode;
 
       // we alloc mem for this new node and add it behind the last node
-      if((newnode = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*newnode),
-                                                  ASONODE_Min, TRUE,
-                                                  TAG_DONE)) != NULL)
+      if((newnode = AllocSysObjectTags(ASOT_NODE,
+        ASONODE_Size, sizeof(*newnode),
+        ASONODE_Min, TRUE,
+        TAG_DONE)) != NULL)
       {
         struct ABEntry *entry = &newnode->ecn_Person;
 
@@ -537,12 +542,11 @@ DECLARE(AddToEmailCache) // struct Person *person
         strlcpy(entry->Address, msg->person->Address, sizeof(entry->Address));
 
         // we always add new items to the top because this is a FILO
-        AddHead((struct List *)&data->EMailCache, (struct Node *)newnode);
+        AddHead((struct List *)&data->emailCache, (struct Node *)newnode);
+        // the cache was modified
+        data->emailCacheModified = TRUE;
       }
     }
-
-    // Now lets save the emailcache file again
-    SaveEMailCache(data->EMailCacheName, &data->EMailCache);
   }
 
   RETURN(0);
@@ -577,8 +581,9 @@ OVERLOAD(OM_NEW)
 
   if(LIB_VERSION_IS_AT_LEAST(IconBase, 44, 0) == TRUE)
   {
-    G->HideIcon = (struct DiskObject *)GetIconTags(filebuf, ICONGETA_FailIfUnavailable, FALSE,
-                                                            TAG_DONE);
+    G->HideIcon = (struct DiskObject *)GetIconTags(filebuf,
+      ICONGETA_FailIfUnavailable, FALSE,
+      TAG_DONE);
   }
   else
   {
@@ -610,7 +615,7 @@ OVERLOAD(OM_NEW)
     struct DateTime dt;
     struct TagItem *tags = inittags(msg), *tag;
 
-    data->EMailCacheName = (STRPTR)EMAILCACHENAME;
+    data->emailCacheName = (STRPTR)EMAILCACHENAME;
 
     // now we generate some static default for our whole application
     dt.dat_Stamp.ds_Days   = yamversiondays;
@@ -634,11 +639,11 @@ OVERLOAD(OM_NEW)
     {
       switch(tag->ti_Tag)
       {
-        case ATTR(EMailCacheName) : data->EMailCacheName = (STRPTR)tag->ti_Data; break;
+        case ATTR(EMailCacheName) : data->emailCacheName = (char *)tag->ti_Data; break;
       }
     }
 
-    LoadEMailCache(data->EMailCacheName, &data->EMailCache);
+    LoadEMailCache(data->emailCacheName, &data->emailCache);
 
     if(GetTagData(ATTR(Hidden), FALSE, inittags(msg)) != FALSE)
       set(obj, MUIA_Application_Iconified, TRUE);
@@ -657,8 +662,12 @@ OVERLOAD(OM_DISPOSE)
   GETDATA;
   struct EMailCacheNode *node;
 
+  // save the email cache if it was modified
+  if(data->emailCacheModified == TRUE)
+    SaveEMailCache(data->emailCacheName, &data->emailCache);
+
   // lets free the EMailCache List ourself in here, to make it a bit cleaner.
-  while((node = (struct EMailCacheNode *)RemHead((struct List *)&data->EMailCache)) != NULL)
+  while((node = (struct EMailCacheNode *)RemHead((struct List *)&data->emailCache)) != NULL)
   {
     FreeSysObject(ASOT_NODE, node);
   }
@@ -1092,13 +1101,14 @@ DECLARE(NewMailAlert) // struct MailServerNode *msn, struct DownloadResult *down
         // We require 53.7+. From this version on proper tag values are used, hence there
         // is no need to distinguish between v1 and v2 interfaces here as we have to do for
         // other application.lib functions.
-        Notify(G->applicationID, APPNOTIFY_Title, (uint32)"YAM",
-                                 APPNOTIFY_PubScreenName, (uint32)"FRONT",
-                                 APPNOTIFY_Text, (uint32)message,
-                                 APPNOTIFY_CloseOnDC, TRUE,
-                                 APPNOTIFY_BackMsg, (uint32)"POPUP",
-                                 APPNOTIFY_ImageFile, (uint32)imagePath,
-                                 TAG_DONE);
+        Notify(G->applicationID,
+          APPNOTIFY_Title, (uint32)"YAM",
+          APPNOTIFY_PubScreenName, (uint32)"FRONT",
+          APPNOTIFY_Text, (uint32)message,
+          APPNOTIFY_CloseOnDC, TRUE,
+          APPNOTIFY_BackMsg, (uint32)"POPUP",
+          APPNOTIFY_ImageFile, (uint32)imagePath,
+          TAG_DONE);
       }
     }
     #endif // __amigaos4__

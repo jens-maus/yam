@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-08-06 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/YAMApplication.c: the EMail cache will be saved upon termination only
+    instead of after each modification. This should greatly improve performance
+    when adding lots of new addresses.
+
 2012-08-03 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: update according to the latest changes.
