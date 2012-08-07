@@ -715,7 +715,7 @@ BOOL MakeSecureConnection(struct Connection *conn)
             {
               W(DBF_NET, "warning: setting default verify locations failed!");
 
-              ER_NewError(tr(MSG_ER_WARN_LOADCAPATH), DEFAULT_CAPATH, DEFAULT_CAFILE);
+              ER_NewError(tr(MSG_ER_WARN_LOADCAPATH), DEFAULT_CAFILE, DEFAULT_CAPATH);
             }
           }
           else

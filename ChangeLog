@@ -8,6 +8,7 @@ $URL$
 2012-08-07 Thore Böckelmann <tboeckel@gmx.de>
 
   * Threads.c: added function to return the name of the current thread.
+  * tcp/ssl.c: corrected the order of file and directory in an error message.
 
 2012-08-06 Samir Hawamdeh <s.hawamdeh@tin.it>
 
