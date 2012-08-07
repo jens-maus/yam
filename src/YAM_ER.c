@@ -135,6 +135,10 @@ static void ShowMessage(BOOL isError, const char *message, va_list args)
       }
     }
   }
+  else if(IsMainThread() == FALSE)
+  {
+    E(DBF_ALWAYS, "NULL error message from thread '%s'", CurrentThreadName());
+  }
 
   if(IsMainThread() == TRUE)
   {
