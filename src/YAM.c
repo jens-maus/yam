@@ -2394,7 +2394,7 @@ static LONG ParseCommandArgs(void)
     nrda.ExtHelp = NULL;
   }
   else
-    E(DBF_STARTUP, "asprintf returned -1");
+    E(DBF_STARTUP, "asprintf() returned -1");
 
   RETURN(result);
   return result;

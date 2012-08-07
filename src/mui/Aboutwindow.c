@@ -62,7 +62,7 @@ OVERLOAD(OM_NEW)
   char *compileInfo;
   Object *bt_okay;
   Object *bt_gopage;
-  Object *infoObject;
+  Object *infoObject = NULL;
 
   // Now we create the about text
   //
@@ -160,53 +160,60 @@ OVERLOAD(OM_NEW)
 
   // use asprintf() function to allocate&set the content of our
   // about text.
-  asprintf(&aboutText, aboutTemplate, tr(MSG_ABOUT_CURRENT_DEVELOPERS),
-                                      tr(MSG_ABOUT_CONTRIBUTORS),
-                                      tr(MSG_ABOUT_LOCALIZATION_CONTRIBUTORS),
-                                      tr(MSG_ABOUT_GPL),
-                                      tr(MSG_ABOUT_3RD_PARTY_SOFTWARE),
-                                      tr(MSG_ABOUT_YAM_NEWS));
-
-  // now we go and try to setup a crawling.mcc object
-  // with the object text. However, if that fails we simply generate
-  // and NFloattext object instead.
-
-  #ifndef MUIC_Crawling
-  #define MUIC_Crawling "Crawling.mcc"
-  #define CrawlingObject MUI_NewObject(MUIC_Crawling
-  #endif
-
-  infoObject = CrawlingObject,
-
-    MUIA_Font,          MUIV_Font_Tiny,
-    MUIA_FixHeightTxt,  "\n\n\n\n\n\n\n\n",
-    MUIA_FixWidthTxt,   aboutText,
-
-    Child, TextObject,
-      MUIA_Font,          MUIV_Font_Tiny,
-      MUIA_Text_PreParse, "\033c",
-      MUIA_Text_Contents, aboutText,
-      MUIA_Text_SetMax,   FALSE,
-      MUIA_Text_Copy,     FALSE,
-    End,
-
-  End;
-
-  // if we weren't able to create a crawling object
-  // we go and create a NFloattextObject instead
-  if(infoObject == NULL)
+  if(asprintf(&aboutText, aboutTemplate,
+    tr(MSG_ABOUT_CURRENT_DEVELOPERS),
+    tr(MSG_ABOUT_CONTRIBUTORS),
+    tr(MSG_ABOUT_LOCALIZATION_CONTRIBUTORS),
+    tr(MSG_ABOUT_GPL),
+    tr(MSG_ABOUT_3RD_PARTY_SOFTWARE),
+    tr(MSG_ABOUT_YAM_NEWS)) != -1)
   {
-    infoObject = NListviewObject,
+    // now we go and try to setup a crawling.mcc object
+    // with the object text. However, if that fails we simply generate
+    // and NFloattext object instead.
 
-      MUIA_NListview_Horiz_ScrollBar, MUIV_NListview_HSB_Off,
-      MUIA_NListview_NList, NFloattextObject,
-        MUIA_Font,            MUIV_Font_Tiny,
-        MUIA_NList_Format,    "P=\033c",
-        MUIA_NList_Input,     FALSE,
-        MUIA_NFloattext_Text, aboutText,
+    #ifndef MUIC_Crawling
+    #define MUIC_Crawling "Crawling.mcc"
+    #define CrawlingObject MUI_NewObject(MUIC_Crawling
+    #endif
+
+    infoObject = CrawlingObject,
+
+      MUIA_Font,          MUIV_Font_Tiny,
+      MUIA_FixHeightTxt,  "\n\n\n\n\n\n\n\n",
+      MUIA_FixWidthTxt,   aboutText,
+
+      Child, TextObject,
+        MUIA_Font,          MUIV_Font_Tiny,
+        MUIA_Text_PreParse, "\033c",
+        MUIA_Text_Contents, aboutText,
+        MUIA_Text_SetMax,   FALSE,
+        MUIA_Text_Copy,     FALSE,
       End,
 
     End;
+
+    // if we weren't able to create a crawling object
+    // we go and create a NFloattextObject instead
+    if(infoObject == NULL)
+    {
+      infoObject = NListviewObject,
+
+        MUIA_NListview_Horiz_ScrollBar, MUIV_NListview_HSB_Off,
+        MUIA_NListview_NList, NFloattextObject,
+          MUIA_Font,            MUIV_Font_Tiny,
+          MUIA_NList_Format,    "P=\033c",
+          MUIA_NList_Input,     FALSE,
+          MUIA_NFloattext_Text, aboutText,
+        End,
+
+      End;
+    }
+  }
+  else
+  {
+    // make sure the pointer is NULL as asprintf() does not guarantee this
+    aboutText = NULL;
   }
 
   // create the main window object

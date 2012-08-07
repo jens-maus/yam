@@ -241,8 +241,6 @@ DECLARE(UpdateMailServers)
 
           if(isServerActive(msn))
           {
-            // construct the new string via asprintf() so that the necessary
-            // memory is automatically allocated.
             data->serverArray[i] = strdup(msn->description);
 
             i++;

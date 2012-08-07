@@ -438,7 +438,8 @@ LONG ParseThemeFile(const char *themeFile, struct Theme *theme)
               if(strchr(value, ':') == NULL)
               {
                 // image filename is relative to the theme directory
-                asprintf(&image, "%s/%s", theme->directory, value);
+                if(asprintf(&image, "%s/%s", theme->directory, value) == -1)
+                  image = NULL;
               }
               else
               {
@@ -446,101 +447,104 @@ LONG ParseThemeFile(const char *themeFile, struct Theme *theme)
                 image = value;
               }
 
-              // config images
-              for(i=CI_FIRST; i < CI_MAX && found == FALSE; i++)
+              if(image != NULL)
               {
-                if(stricmp(id, configImageIDs[i]) == 0)
+                // config images
+                for(i=CI_FIRST; i < CI_MAX && found == FALSE; i++)
                 {
-                  free(theme->configImages[i]);
-                  theme->configImages[i] = strdup(image);
-                  found = TRUE;
-                }
-              }
-
-              // folder images
-              for(i=FI_FIRST; i < FI_MAX && found == FALSE; i++)
-              {
-                if(stricmp(id, folderImageIDs[i]) == 0)
-                {
-                  free(theme->folderImages[i]);
-                  theme->folderImages[i] = strdup(image);
-                  found = TRUE;
-                }
-              }
-
-              // icon images
-              for(i=II_FIRST; i < II_MAX && found == FALSE; i++)
-              {
-                if(stricmp(id, iconImageIDs[i]) == 0)
-                {
-                  free(theme->iconImages[i]);
-                  theme->iconImages[i] = strdup(image);
-                  found = TRUE;
-                }
-              }
-
-              // status images
-              for(i=SI_FIRST; i < SI_MAX && found == FALSE; i++)
-              {
-                if(stricmp(id, statusImageIDs[i]) == 0)
-                {
-                  free(theme->statusImages[i]);
-                  theme->statusImages[i] = strdup(image);
-                  found = TRUE;
-                }
-              }
-
-              // toolbar images
-              for(j=TBIM_FIRST; j < TBIM_MAX && found == FALSE; j++)
-              {
-                // main window toolbar
-                for(i=MWTBI_FIRST; i < MWTBI_NULL; i++)
-                {
-                  if(stricmp(id, tbii[mainWindowToolbarImageIDs[i]][j]) == 0)
+                  if(stricmp(id, configImageIDs[i]) == 0)
                   {
-                    free(theme->mainWindowToolbarImages[j][i]);
-                    theme->mainWindowToolbarImages[j][i] = strdup(image);
+                    free(theme->configImages[i]);
+                    theme->configImages[i] = strdup(image);
                     found = TRUE;
                   }
                 }
 
-                // read window toolbar
-                for(i=RWTBI_FIRST; i < RWTBI_NULL; i++)
+                // folder images
+                for(i=FI_FIRST; i < FI_MAX && found == FALSE; i++)
                 {
-                  if(stricmp(id, tbii[readWindowToolbarImageIDs[i]][j]) == 0)
+                  if(stricmp(id, folderImageIDs[i]) == 0)
                   {
-                    free(theme->readWindowToolbarImages[j][i]);
-                    theme->readWindowToolbarImages[j][i] = strdup(image);
+                    free(theme->folderImages[i]);
+                    theme->folderImages[i] = strdup(image);
                     found = TRUE;
                   }
                 }
 
-                // write window toolbar
-                for(i=WWTBI_FIRST; i < WWTBI_NULL; i++)
+                // icon images
+                for(i=II_FIRST; i < II_MAX && found == FALSE; i++)
                 {
-                  if(stricmp(id, tbii[writeWindowToolbarImageIDs[i]][j]) == 0)
+                  if(stricmp(id, iconImageIDs[i]) == 0)
                   {
-                    free(theme->writeWindowToolbarImages[j][i]);
-                    theme->writeWindowToolbarImages[j][i] = strdup(image);
+                    free(theme->iconImages[i]);
+                    theme->iconImages[i] = strdup(image);
                     found = TRUE;
                   }
                 }
 
-                // addressbook window toolbar
-                for(i=AWTBI_FIRST; i < AWTBI_NULL; i++)
+                // status images
+                for(i=SI_FIRST; i < SI_MAX && found == FALSE; i++)
                 {
-                  if(stricmp(id, tbii[abookWindowToolbarImageIDs[i]][j]) == 0)
+                  if(stricmp(id, statusImageIDs[i]) == 0)
                   {
-                    free(theme->abookWindowToolbarImages[j][i]);
-                    theme->abookWindowToolbarImages[j][i] = strdup(image);
+                    free(theme->statusImages[i]);
+                    theme->statusImages[i] = strdup(image);
                     found = TRUE;
                   }
                 }
+
+                // toolbar images
+                for(j=TBIM_FIRST; j < TBIM_MAX && found == FALSE; j++)
+                {
+                  // main window toolbar
+                  for(i=MWTBI_FIRST; i < MWTBI_NULL; i++)
+                  {
+                    if(stricmp(id, tbii[mainWindowToolbarImageIDs[i]][j]) == 0)
+                    {
+                      free(theme->mainWindowToolbarImages[j][i]);
+                      theme->mainWindowToolbarImages[j][i] = strdup(image);
+                      found = TRUE;
+                    }
+                  }
+
+                  // read window toolbar
+                  for(i=RWTBI_FIRST; i < RWTBI_NULL; i++)
+                  {
+                    if(stricmp(id, tbii[readWindowToolbarImageIDs[i]][j]) == 0)
+                    {
+                      free(theme->readWindowToolbarImages[j][i]);
+                      theme->readWindowToolbarImages[j][i] = strdup(image);
+                      found = TRUE;
+                    }
+                  }
+
+                  // write window toolbar
+                  for(i=WWTBI_FIRST; i < WWTBI_NULL; i++)
+                  {
+                    if(stricmp(id, tbii[writeWindowToolbarImageIDs[i]][j]) == 0)
+                    {
+                      free(theme->writeWindowToolbarImages[j][i]);
+                      theme->writeWindowToolbarImages[j][i] = strdup(image);
+                      found = TRUE;
+                    }
+                  }
+
+                  // addressbook window toolbar
+                  for(i=AWTBI_FIRST; i < AWTBI_NULL; i++)
+                  {
+                    if(stricmp(id, tbii[abookWindowToolbarImageIDs[i]][j]) == 0)
+                    {
+                      free(theme->abookWindowToolbarImages[j][i]);
+                      theme->abookWindowToolbarImages[j][i] = strdup(image);
+                      found = TRUE;
+                    }
+                  }
+                }
+
+                // free the image name if it was constructed from the theme path
+                if(image != value)
+                  free(image);
               }
-
-              // free the image name if it was constructed from the theme path
-              if(image != value)
-                free(image);
             }
 
             if(found == FALSE)

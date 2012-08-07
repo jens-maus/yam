@@ -244,8 +244,6 @@ DECLARE(UpdateSignatures)
 
         if(sn->active == TRUE)
         {
-          // construct the new string via asprintf() so that the necessary
-          // memory is automatically allocated.
           data->signatureArray[i] = strdup(sn->description);
 
           i++;

@@ -175,7 +175,8 @@ OVERLOAD(OM_NEW)
       case ATTR(RemoteFilterMode) : data->remoteFilterMode = tag->ti_Data; break;
       case ATTR(ShowCombineCycle) : data->showCombineCycle = tag->ti_Data; break;
       case ATTR(Position):
-        asprintf(&data->title, "%s %d:", tr(MSG_FI_CONDITION), (int)tag->ti_Data);
+        if(asprintf(&data->title, "%s %d:", tr(MSG_FI_CONDITION), (int)tag->ti_Data) == -1)
+          data->title = NULL;
       break;
     }
   }
@@ -515,7 +516,7 @@ DECLARE(PrepareSearch) // struct Search *search
     match = "";
 
   field = (const char *)xget(data->ST_FIELD, MUIA_String_Contents);
-  
+
   // enable DOS patterns automatically if a pattern file is given
   if(GetMUICycle(data->CY_COMP[pg]) == 4)
     nnset(data->CH_DOSPATTERN[pg], MUIA_Selected, TRUE);

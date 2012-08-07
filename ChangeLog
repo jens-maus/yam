@@ -12,6 +12,7 @@ $URL$
   * locale/german.ct: fixed a typo.
   * YAM_ER.c: reworked the handling of overflowed error messages added some
     debug output in case setting up the final error message fails.
+  * misc: always check the return value of (v)asprintf().
 
 2012-08-06 Samir Hawamdeh <s.hawamdeh@tin.it>
 

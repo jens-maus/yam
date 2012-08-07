@@ -224,15 +224,16 @@ DECLARE(UpdateIdentities)
 
           // construct the new string via asprintf() so that the necessary
           // memory is automatically allocated.
-          asprintf(&data->identityArray[i], MUIX_L "%s " MUIX_I "(%s)" MUIX_N, BuildAddress(address, sizeof(address), uin->address, uin->realname), uin->description);
-
-          // remember the active entry
-          if(data->identity != NULL && uin->id == data->identity->id)
+          if(asprintf(&data->identityArray[i], MUIX_L "%s " MUIX_I "(%s)" MUIX_N, BuildAddress(address, sizeof(address), uin->address, uin->realname), uin->description) != -1)
           {
-            active = i;
-          }
+            // remember the active entry
+            if(data->identity != NULL && uin->id == data->identity->id)
+            {
+              active = i;
+            }
 
-          i++;
+            i++;
+          }
         }
       }
     }
