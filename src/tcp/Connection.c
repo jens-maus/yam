@@ -164,7 +164,7 @@ static struct hostent *DupHostEnt(const struct hostent *hentry)
       for(i=0; hentry->h_aliases[i] != NULL; i++)
         aliascount++;
 
-      if((new_hentry->h_aliases = (__STRPTR *)calloc(1, aliascount * sizeof(char *))) != NULL)
+      if((new_hentry->h_aliases = (void *)calloc(1, aliascount * sizeof(char *))) != NULL)
       {
         for(i=0; hentry->h_aliases[i] != NULL; i++)
           new_hentry->h_aliases[i] = strdup(hentry->h_aliases[i]);
