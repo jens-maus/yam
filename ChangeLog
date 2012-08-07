@@ -9,6 +9,7 @@ $URL$
 
   * Threads.c: added function to return the name of the current thread.
   * tcp/ssl.c: corrected the order of file and directory in an error message.
+  * locale/german.ct: fixed a typo.
 
 2012-08-06 Samir Hawamdeh <s.hawamdeh@tin.it>
 
