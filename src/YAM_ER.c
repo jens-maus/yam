@@ -87,34 +87,36 @@ static void ShowMessage(BOOL isError, const char *message, va_list args)
     {
       char buf[SIZE_LARGE];
       char datstr[64];
-
-      // one more error message
-      G->ER_NumErr++;
-
-      // if the number of error messages exceeds the maximum number then delete
-      // the oldest one and shift the remaining errors down by one
-      if(G->ER_NumErr > MAXERR)
-      {
-        int i;
-
-        G->ER_NumErr = MAXERR;
-
-        free(G->ER_Message[0]);
-
-        for(i = 1; i < G->ER_NumErr; i++)
-          G->ER_Message[i-1] = G->ER_Message[i];
-      }
+      char *final;
 
       // get actual date as a string
       DateStamp2String(datstr, sizeof(datstr), NULL, (C->DSListFormat == DSS_DATEBEAT || C->DSListFormat == DSS_RELDATEBEAT) ? DSS_DATEBEAT : DSS_DATETIME, TZC_NONE);
 
       vsnprintf(buf, sizeof(buf), message, args);
 
-      // append the datestring
-      snprintf(buf, sizeof(buf), "%s\n\n(%s)", buf, datstr);
+      // allocate an own buffer for our error string and append the datestring
+      if(asprintf(&final, "%s\n\n(%s)", buf, datstr) != -1)
+      {
+        if(G->ER_NumErr == MAXERR)
+        {
+          // the number of rembembered error messages exceeds the maximum number
+          // free the oldest message
+          free(G->ER_Message[0]);
+          // shift all other messages down by one
+          memmove(&G->ER_Message[0], &G->ER_Message[1], sizeof(G->ER_Message[0])*(MAXERR-1));
+          G->ER_NumErr = MAXERR-1;
+        }
 
-      // allocate an own buffer for our error string.
-      G->ER_Message[G->ER_NumErr-1] = strdup(buf);
+        // place the new message at the end
+        G->ER_Message[G->ER_NumErr] = final;
+
+        // count one more error message
+        G->ER_NumErr++;
+      }
+      else
+      {
+        E(DBF_ALWAYS, "no free memory for final error message '%s'", buf);
+      }
     }
     else
     {
@@ -132,6 +134,10 @@ static void ShowMessage(BOOL isError, const char *message, va_list args)
           D(DBF_ALWAYS, "pushing warning '%s'", msg);
           PushMethodOnStack(G->App, 2, MUIM_YAMApplication_ShowWarning, msg);
         }
+      }
+      else
+      {
+        E(DBF_ALWAYS, "no free memory to push error message '%s'", message);
       }
     }
   }
@@ -156,7 +162,7 @@ static void ShowMessage(BOOL isError, const char *message, va_list args)
     if(G->MA != NULL)
       set(G->MA->GUI.MI_ERRORS, MUIA_Menuitem_Enabled, TRUE);
 
-    // open the window for errors only, warnings are just recorded
+    // open the window for errors only, warnings are recorded silently
     if(isError == TRUE && SafeOpenWindow(G->ER->GUI.WI) == FALSE)
     {
       DisposeModule(&G->ER);
