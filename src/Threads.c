@@ -960,6 +960,30 @@ APTR CurrentThread(void)
 }
 
 ///
+/// CurrentThreadName
+// get the current thread name
+const char *CurrentThreadName(void)
+{
+  const char *name;
+
+  ENTER();
+
+  if(IsMainThread() == TRUE)
+  {
+    name = "main";
+  }
+  else
+  {
+    struct Thread *thread = ((struct Process *)FindTask(NULL))->pr_Task.tc_UserData;
+
+    name = thread->name;
+  }
+
+  RETURN(name);
+  return name;
+}
+
+///
 /// ThreadAbortSignal
 // get the abort signal of the current thread, this is CTRL-C for the main thread
 LONG ThreadAbortSignal(void)

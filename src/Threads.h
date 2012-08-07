@@ -80,6 +80,7 @@ void PurgeIdleThreads(const BOOL purgeAll);
 APTR VARARGS68K DoAction(Object *obj, const enum ThreadAction action, ...);
 BOOL IsMainThread(void);
 APTR CurrentThread(void);
+const char *CurrentThreadName(void);
 BOOL SleepThread(void);
 void AbortThread(APTR thread, BOOL targetVanished);
 void WakeupThread(APTR thread);
