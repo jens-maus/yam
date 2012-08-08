@@ -2407,9 +2407,6 @@ BOOL DateStamp2String(char *dst, int dstlen, struct DateStamp *date, enum DateSt
   timestr[31] = '\0';
   daystr[31]  = '\0';
 
-  // clear the destination string
-  dst[0] = '\0';
-
   // lets convert the DateStamp now to a string
   if(DateToStr(&dt) != DOSFALSE)
   {
@@ -2489,6 +2486,12 @@ BOOL DateStamp2String(char *dst, int dstlen, struct DateStamp *date, enum DateSt
 
     D(DBF_UTIL, "converted DateStamp %ld/%ld/%ld to string '%s'", date->ds_Days, date->ds_Minute, date->ds_Tick, dst);
   }
+  else
+  {
+    W(DBF_UTIL, "couldn't convert DateStamp %ld/%ld/%ld to string", date->ds_Days, date->ds_Minute, date->ds_Tick);
+    // clear the destination string on failure
+    dst[0] = '\0';
+  }
 
   RETURN(success);
   return success;
@@ -2563,7 +2566,7 @@ long DateStamp2Long(struct DateStamp *date)
   dt.dat_Format  = FORMAT_USA;
   dt.dat_StrDate = datestr;
 
-  if(DateToStr(&dt))
+  if(DateToStr(&dt) != DOSFALSE)
   {
     s = Trim(datestr);
 
@@ -2576,6 +2579,10 @@ long DateStamp2Long(struct DateStamp *date)
     else y += 2000;
 
     res = (100*atoi(&s[3])+atoi(s))*10000+y;
+  }
+  else
+  {
+    W(DBF_UTIL, "couldn't convert DateStamp %ld/%ld/%ld to LONG", date->ds_Days, date->ds_Minute, date->ds_Tick);
   }
 
   RETURN(res);
@@ -2726,7 +2733,13 @@ BOOL String2DateStamp(struct DateStamp *dst, const char *string, enum DateStampT
   }
 
   if(result == FALSE)
+  {
     W(DBF_UTIL, "couldn't convert string '%s' to struct DateStamp", string);
+    // assume 01-Jan-78 00:00:00 on failure
+    dst->ds_Days = 0;
+    dst->ds_Minute = 0;
+    dst->ds_Tick = 0;
+  }
 
   RETURN(result);
   return result;
@@ -2747,6 +2760,13 @@ BOOL String2TimeVal(struct TimeVal *dst, const char *string, enum DateStampType 
   {
     // now we just have to convert the DateStamp to a struct TimeVal
     DateStamp2TimeVal(&ds, dst, TZC_NONE);
+  }
+  else
+  {
+    W(DBF_UTIL, "couln't convert string '%s' to struct TimeVal", string);
+    // assume zero time on failure
+    dst->Seconds = 0;
+    dst->Microseconds = 0;
   }
 
   RETURN(result);
