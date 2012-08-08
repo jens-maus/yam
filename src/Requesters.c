@@ -617,113 +617,120 @@ BOOL CertWarningRequest(struct Connection *conn, struct Certificate *cert)
 
     // convert the format string now to a full string
     // with contents
-    asprintf(&reqtxt, format, conn->server->hostname, conn->server->port, cert->identity, cert->notBefore, cert->notAfter, cert->issuerStr, cert->fingerprint);
-
-    // free the format template right now
-    FreeStrBuf(format);
-
-    // create the window object now
-    win = GenericRequestWindowObject,
-      MUIA_Window_Title,                 tr(MSG_SSL_CERT_WARNING_TITLE),
-      MUIA_Window_RefWindow,             G->MA->GUI.WI,
-      MUIA_GenericRequestWindow_Body,    reqtxt,
-      MUIA_GenericRequestWindow_Buttons, tr(MSG_SSL_CERT_WARNING_BUTTONS),
-    End;
-
-    // lets see if the WindowObject could be created perfectly
-    if(win != NULL)
+    if(asprintf(&reqtxt, format, conn->server->hostname, conn->server->port, cert->identity, cert->notBefore, cert->notAfter, cert->issuerStr, cert->fingerprint) != -1)
     {
-      DoMethod(win, MUIM_Notify, MUIA_GenericRequestWindow_Result, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_Application_ReturnID, REQUESTER_RETURNID);
+      // free the format template right now
+      FreeStrBuf(format);
 
-      set(G->App, MUIA_Application_Sleep, TRUE);
+      // create the window object now
+      win = GenericRequestWindowObject,
+        MUIA_Window_Title,                 tr(MSG_SSL_CERT_WARNING_TITLE),
+        MUIA_Window_RefWindow,             G->MA->GUI.WI,
+        MUIA_GenericRequestWindow_Body,    reqtxt,
+        MUIA_GenericRequestWindow_Buttons, tr(MSG_SSL_CERT_WARNING_BUTTONS),
+      End;
 
-      if(SafeOpenWindow(win) == TRUE)
+      // lets see if the WindowObject could be created perfectly
+      if(win != NULL)
       {
-        ULONG signals = 0;
+        DoMethod(win, MUIM_Notify, MUIA_GenericRequestWindow_Result, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_Application_ReturnID, REQUESTER_RETURNID);
 
-        do
+        set(G->App, MUIA_Application_Sleep, TRUE);
+
+        if(SafeOpenWindow(win) == TRUE)
         {
-          if(DoMethod(G->App, MUIM_Application_NewInput, &signals) == REQUESTER_RETURNID)
+          ULONG signals = 0;
+
+          do
           {
-            int ret = xget(win, MUIA_GenericRequestWindow_Result);
-  
-            if(ret == 0) // user pressed 'Reject'
+            if(DoMethod(G->App, MUIM_Application_NewInput, &signals) == REQUESTER_RETURNID)
             {
-              result = FALSE;
-              break;
-            }
-            else if(ret == 1) // user pressed 'Accept'
-            {
-              result = TRUE;
-              break;
-            }
-            else if(ret == 2) // user pressed 'Accept permanently'
-            {
-              // user wants to accept the SSL certificate permanently so lets
-              // save the fingerprint and the failure bitmask in the config structure
-              // of the MailServerNode
-              strlcpy(conn->server->certFingerprint, cert->fingerprint, sizeof(conn->server->certFingerprint));
-              conn->server->certFailures = failures;
-      
-              // make sure to save the config afterwards
-              CO_SaveConfig(C, G->CO_PrefsFile);
-      
-              // signal NO error
-              result = TRUE;
+              int ret = xget(win, MUIA_GenericRequestWindow_Result);
 
-              break;
-            }
-            else if(ret == 3) // user pressed 'Show Certificate'
-            {
-              BIO* temp_memory_bio = BIO_new(BIO_s_mem());
-              if(temp_memory_bio != NULL)
+              if(ret == 0) // user pressed 'Reject'
               {
-                char *buffer;
-                char *reqtitle;
-
-                X509_print_ex(temp_memory_bio, cert->subject, XN_FLAG_COMPAT, 0);
-                BIO_write(temp_memory_bio, "\0", 1);
-                BIO_get_mem_data(temp_memory_bio, &buffer);
-
-                // create the requester title string
-                asprintf(&reqtitle, tr(MSG_SSL_CERT_WARNING_SHOWTITLE), conn->server->hostname, conn->server->port);
-
-                // open an additional MUI requester now
-                MUI_Request(G->App, win, MUIF_REQ_FLOATTEXT, reqtitle, tr(MSG_OkayReq), (char *)buffer);
-
-                free(reqtitle);
-                BIO_free(temp_memory_bio);
+                result = FALSE;
+                break;
               }
-              else
-                E(DBF_NET, "Failed to allocate temporary memory bio");
+              else if(ret == 1) // user pressed 'Accept'
+              {
+                result = TRUE;
+                break;
+              }
+              else if(ret == 2) // user pressed 'Accept permanently'
+              {
+                // user wants to accept the SSL certificate permanently so lets
+                // save the fingerprint and the failure bitmask in the config structure
+                // of the MailServerNode
+                strlcpy(conn->server->certFingerprint, cert->fingerprint, sizeof(conn->server->certFingerprint));
+                conn->server->certFailures = failures;
+
+                // make sure to save the config afterwards
+                CO_SaveConfig(C, G->CO_PrefsFile);
+
+                // signal NO error
+                result = TRUE;
+
+                break;
+              }
+              else if(ret == 3) // user pressed 'Show Certificate'
+              {
+                BIO* temp_memory_bio = BIO_new(BIO_s_mem());
+                if(temp_memory_bio != NULL)
+                {
+                  char *buffer;
+                  char *reqtitle;
+
+                  X509_print_ex(temp_memory_bio, cert->subject, XN_FLAG_COMPAT, 0);
+                  BIO_write(temp_memory_bio, "\0", 1);
+                  BIO_get_mem_data(temp_memory_bio, &buffer);
+
+                  // create the requester title string
+                  if(asprintf(&reqtitle, tr(MSG_SSL_CERT_WARNING_SHOWTITLE), conn->server->hostname, conn->server->port) != -1)
+                  {
+                    // open an additional MUI requester now
+                    MUI_Request(G->App, win, MUIF_REQ_FLOATTEXT, reqtitle, tr(MSG_OkayReq), (char *)buffer);
+
+                    free(reqtitle);
+                  }
+                  BIO_free(temp_memory_bio);
+                }
+                else
+                  E(DBF_NET, "Failed to allocate temporary memory bio");
+              }
             }
+
+            if(signals != 0)
+              signals = Wait(signals | SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_F);
+
+            // bail out if we receive a CTRL-C
+            if(isFlagSet(signals, SIGBREAKF_CTRL_C))
+              break;
+
+            // show ourselves if we receive a CTRL-F
+            if(isFlagSet(signals, SIGBREAKF_CTRL_F))
+              PopUp();
           }
-
-          if(signals != 0)
-            signals = Wait(signals | SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_F);
-
-          // bail out if we receive a CTRL-C
-          if(isFlagSet(signals, SIGBREAKF_CTRL_C))
-            break;
-
-          // show ourselves if we receive a CTRL-F
-          if(isFlagSet(signals, SIGBREAKF_CTRL_F))
-            PopUp();
+          while(TRUE);
         }
-        while(TRUE);
+
+        // remove & dispose the requester object
+        DoMethod(G->App, OM_REMMEMBER, win);
+        MUI_DisposeObject(win);
+
+        // wake up the application
+        set(G->App, MUIA_Application_Sleep, FALSE);
       }
 
-      // remove & dispose the requester object
-      DoMethod(G->App, OM_REMMEMBER, win);
-      MUI_DisposeObject(win);
-
-      // wake up the application
-      set(G->App, MUIA_Application_Sleep, FALSE);
+      free(reqtxt);
     }
-
-    free(reqtxt);
+    else
+    {
+      // free the format template right now
+      FreeStrBuf(format);
+	}
   }
-  
+
   RETURN(result);
   return result;
 }
