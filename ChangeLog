@@ -9,6 +9,8 @@ $URL$
 
   * YAM_UT.c: make sure that all conversion functions between time and string
     return a resonable result in case the conversion fails.
+  * Debug.h: track (v)asprintf() only if the function returns success as the
+    pointer may be indeterminate upon failure.
 
 2012-08-07 Thore Böckelmann <tboeckel@gmx.de>
 
