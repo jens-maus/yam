@@ -11,6 +11,8 @@ $URL$
     return a resonable result in case the conversion fails.
   * Debug.h: track (v)asprintf() only if the function returns success as the
     pointer may be indeterminate upon failure.
+  * Debug.c: added a fflush() call when printing out the debug messages to a file
+    to ensure that the file really contains the last message in case of crash.
 
 2012-08-07 Thore Böckelmann <tboeckel@gmx.de>
 

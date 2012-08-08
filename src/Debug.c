@@ -198,9 +198,14 @@ static void _DBPRINTF(const char *format, ...)
   va_start(args, format);
 
   if(stdout_output == TRUE)
+  {
     vprintf(format, args);
+  }
   else if(file_output != NULL)
+  {
     vfprintf(file_output, format, args);
+    fflush(file_output);
+  }
   else
   {
     #if defined(__MORPHOS__)
