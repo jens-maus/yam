@@ -112,6 +112,7 @@ static void ShowMessage(BOOL isError, const char *message, va_list args)
 
         // count one more error message
         G->ER_NumErr++;
+        D(DBF_ALWAYS, "added error message #%ld '%s'", G->ER_NumErr, SafeStr(G->ER_Message[G->ER_NumErr-1]));
       }
       else
       {
@@ -157,7 +158,10 @@ static void ShowMessage(BOOL isError, const char *message, va_list args)
     // The slider won't call the hook if the current number didn't change, but we need to
     // to update the error display no matter what, so we have to do this update manually.
     if(oldNumErr == G->ER_NumErr)
+    {
+      D(DBF_ALWAYS, "showing error message #%ld '%s'", G->ER_NumErr, SafeStr(G->ER_Message[G->ER_NumErr-1]));
       set(G->ER->GUI.LV_ERROR, MUIA_NFloattext_Text, G->ER_Message[G->ER_NumErr-1]);
+    }
 
     if(G->MA != NULL)
       set(G->MA->GUI.MI_ERRORS, MUIA_Menuitem_Enabled, TRUE);
@@ -213,6 +217,7 @@ HOOKPROTONHNO(ER_SelectFunc, void, int *arg)
 
   ENTER();
 
+  D(DBF_ALWAYS, "showing error message #%ld '%s'", value, SafeStr(G->ER_Message[value-1]));
   set(G->ER->GUI.BT_NEXT, MUIA_Disabled, value == G->ER_NumErr);
   set(G->ER->GUI.BT_PREV, MUIA_Disabled, value == 1);
   set(G->ER->GUI.LV_ERROR, MUIA_NFloattext_Text, G->ER_Message[value-1]);
