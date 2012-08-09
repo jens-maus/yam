@@ -216,7 +216,7 @@ HOOKPROTONHNO(ER_SelectFunc, void, int *arg)
 
   ENTER();
 
-  SHOWVALUES(DBF_ALWAYS, value);
+  SHOWVALUE(DBF_ALWAYS, value);
 
   if(value >= 1 && value <= G->ER_NumErr)
   {
