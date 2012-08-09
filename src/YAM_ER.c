@@ -60,6 +60,8 @@
 /* local protos */
 static struct ER_ClassData *ER_New(void);
 
+#define SLIDER_FORMAT "\033c%s %%ld/%d"
+
 /***************************************************************************
  Module: Error window
 ***************************************************************************/
@@ -68,8 +70,6 @@ static struct ER_ClassData *ER_New(void);
 //
 static void ShowMessage(BOOL isError, const char *message, va_list args)
 {
-  int oldNumErr = G->ER_NumErr;
-
   ENTER();
 
   if(IsMainThread() == TRUE && G->ER == NULL)
@@ -112,7 +112,7 @@ static void ShowMessage(BOOL isError, const char *message, va_list args)
 
         // count one more error message
         G->ER_NumErr++;
-        D(DBF_ALWAYS, "added error message #%ld '%s'", G->ER_NumErr, SafeStr(G->ER_Message[G->ER_NumErr-1]));
+        D(DBF_ALWAYS, "added %s message #%ld '%s'", isError ? "error" : "warning", G->ER_NumErr, SafeStr(G->ER_Message[G->ER_NumErr-1]));
       }
       else
       {
@@ -138,31 +138,30 @@ static void ShowMessage(BOOL isError, const char *message, va_list args)
       }
       else
       {
-        E(DBF_ALWAYS, "no free memory to push error message '%s'", message);
+        E(DBF_ALWAYS, "no free memory to push %s message '%s'", isError ? "error" : "warning", message);
       }
     }
   }
   else if(IsMainThread() == FALSE)
   {
-    E(DBF_ALWAYS, "NULL error message from thread '%s'", CurrentThreadName());
+    E(DBF_ALWAYS, "NULL %s message from thread '%s'", isError ? "error" : "warning", CurrentThreadName());
   }
 
   if(IsMainThread() == TRUE)
   {
-    snprintf(G->ER->GUI.sliderLabel, sizeof(G->ER->GUI.sliderLabel), "\033c%s %%ld/%d", tr(MSG_ErrorReq), G->ER_NumErr);
-    xset(G->ER->GUI.NB_ERROR, MUIA_Numeric_Format, G->ER->GUI.sliderLabel,
+    // update the numeric button to contain the new number of pending errors
+    snprintf(G->ER->GUI.sliderLabel, sizeof(G->ER->GUI.sliderLabel), SLIDER_FORMAT, tr(MSG_ErrorReq), G->ER_NumErr);
+    // set the numeric button's new limits, but don't trigger any notifications
+    xset(G->ER->GUI.NB_ERROR, MUIA_NoNotify,       TRUE,
                               MUIA_Numeric_Min,    1,
                               MUIA_Numeric_Max,    G->ER_NumErr,
-                              MUIA_Numeric_Value,  G->ER_NumErr);
+                              MUIA_Numeric_Value,  G->ER_NumErr,
+                              MUIA_Numeric_Format, G->ER->GUI.sliderLabel);
+    // show the current message
+    D(DBF_ALWAYS, "showing %s message #%ld '%s'", isError ? "error" : "warning", G->ER_NumErr, SafeStr(G->ER_Message[G->ER_NumErr-1]));
+    set(G->ER->GUI.LV_ERROR, MUIA_NFloattext_Text, G->ER_Message[G->ER_NumErr-1]);
 
-    // The slider won't call the hook if the current number didn't change, but we need to
-    // to update the error display no matter what, so we have to do this update manually.
-    if(oldNumErr == G->ER_NumErr)
-    {
-      D(DBF_ALWAYS, "showing error message #%ld '%s'", G->ER_NumErr, SafeStr(G->ER_Message[G->ER_NumErr-1]));
-      set(G->ER->GUI.LV_ERROR, MUIA_NFloattext_Text, G->ER_Message[G->ER_NumErr-1]);
-    }
-
+    // enable the menu item to open this window as there pending messages now
     if(G->MA != NULL)
       set(G->MA->GUI.MI_ERRORS, MUIA_Menuitem_Enabled, TRUE);
 
@@ -217,10 +216,15 @@ HOOKPROTONHNO(ER_SelectFunc, void, int *arg)
 
   ENTER();
 
-  D(DBF_ALWAYS, "showing error message #%ld '%s'", value, SafeStr(G->ER_Message[value-1]));
-  set(G->ER->GUI.BT_NEXT, MUIA_Disabled, value == G->ER_NumErr);
-  set(G->ER->GUI.BT_PREV, MUIA_Disabled, value == 1);
-  set(G->ER->GUI.LV_ERROR, MUIA_NFloattext_Text, G->ER_Message[value-1]);
+  SHOWVALUES(DBF_ALWAYS, value);
+
+  if(value >= 1 && value <= G->ER_NumErr)
+  {
+    D(DBF_ALWAYS, "showing error message #%ld '%s'", value, SafeStr(G->ER_Message[value-1]));
+    set(G->ER->GUI.BT_NEXT, MUIA_Disabled, value == G->ER_NumErr);
+    set(G->ER->GUI.BT_PREV, MUIA_Disabled, value == 1);
+    set(G->ER->GUI.LV_ERROR, MUIA_NFloattext_Text, G->ER_Message[value-1]);
+  }
 
   LEAVE();
 }
@@ -239,6 +243,9 @@ HOOKPROTONHNO(ER_CloseFunc, void, int *arg)
   {
     int i;
 
+    // clear any currently displayed message before freeing its memory
+    set(G->ER->GUI.LV_ERROR, MUIA_NFloattext_Text, NULL);
+    // now free the memory of all collected messages
     for(i = 0; i < G->ER_NumErr; i++)
     {
       free(G->ER_Message[i]);
@@ -246,6 +253,7 @@ HOOKPROTONHNO(ER_CloseFunc, void, int *arg)
     }
     G->ER_NumErr = 0;
 
+    // disable the menu item to open this window as there are no messages pending anymore
     if(G->MA != NULL)
       set(G->MA->GUI.MI_ERRORS, MUIA_Menuitem_Enabled, FALSE);
   }
@@ -270,6 +278,8 @@ static struct ER_ClassData *ER_New(void)
   {
     APTR bt_close, bt_clear;
 
+    snprintf(data->GUI.sliderLabel, sizeof(data->GUI.sliderLabel), SLIDER_FORMAT, tr(MSG_ErrorReq), 0);
+
     data->GUI.WI = WindowObject,
        MUIA_Window_Title, tr(MSG_ER_ErrorMessages),
        MUIA_Window_ID, MAKE_ID('E','R','R','O'),
@@ -277,17 +287,18 @@ static struct ER_ClassData *ER_New(void)
           Child, HGroup,
              Child, data->GUI.BT_PREV = MakeButton(tr(MSG_ER_PrevError)),
              Child, data->GUI.NB_ERROR = NumericbuttonObject,
-                MUIA_Numeric_Min,   0,
-                MUIA_Numeric_Value, 0,
-                MUIA_Numeric_Format, "Error %%ld/%ld",
-                MUIA_CycleChain, TRUE,
+                MUIA_Numeric_Min,    1,
+                MUIA_Numeric_Max,    1,
+                MUIA_Numeric_Value,  1,
+                MUIA_Numeric_Format, data->GUI.sliderLabel,
+                MUIA_CycleChain,     TRUE,
              End,
              Child, data->GUI.BT_NEXT = MakeButton(tr(MSG_ER_NextError)),
           End,
           Child, NListviewObject,
-             MUIA_Listview_Input,   FALSE,
-             MUIA_CycleChain,       TRUE,
-             MUIA_NListview_NList,  data->GUI.LV_ERROR = NFloattextObject,
+             MUIA_Listview_Input,  FALSE,
+             MUIA_CycleChain,      TRUE,
+             MUIA_NListview_NList, data->GUI.LV_ERROR = NFloattextObject,
                 ReadListFrame,
              End,
           End,

@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-08-09 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_ER.c: don't rely on MUI's notifications to (re)display the current
+    message as it seems MUI4 on MorphOS does not trigger the notification under
+    the same circumstances as MUI3 does anymore.
+
 2012-08-08 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_UT.c: make sure that all conversion functions between time and string
