@@ -2457,10 +2457,11 @@ BOOL DateStamp2String(char *dst, int dstlen, struct DateStamp *date, enum DateSt
       {
         // find the last ':' and strip the string there so
         // that it does not include any seconds
-        char *p = strrchr(timestr, ':');
+        char *first = strchr(timestr, ':');
+        char *last = strrchr(timestr, ':');
 
-        if(p != NULL)
-          *p = '\0';
+        if(first != NULL && last != NULL && last != first)
+          *last = '\0';
 
         strlcpy(dst, timestr, dstlen);
       }

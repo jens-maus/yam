@@ -10,6 +10,8 @@ $URL$
   * YAM_ER.c: don't rely on MUI's notifications to (re)display the current
     message as it seems MUI4 on MorphOS does not trigger the notification under
     the same circumstances as MUI3 does anymore.
+  * YAM_UT.c: when generating a time string respect certain locales which omit
+    the seconds and just print the time as "hh:mm" instead of "hh:mm:ss".
 
 2012-08-08 Thore Böckelmann <tboeckel@gmx.de>
 
