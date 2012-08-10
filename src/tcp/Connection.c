@@ -74,10 +74,12 @@
 #include "YAM_error.h"
 
 #include "MailServers.h"
+#include "MethodStack.h"
 #include "Locale.h"
 #include "Requesters.h"
 #include "Threads.h"
 
+#include "mui/YAMApplication.h"
 #include "tcp/Connection.h"
 #include "tcp/ssl.h"
 
@@ -1137,6 +1139,11 @@ enum ConnectError ConnectToHost(struct Connection *conn, const struct MailServer
               // one more active connection
               ObtainSemaphore(G->connectionSemaphore);
               G->activeConnections++;
+              if(G->activeConnections == 1)
+              {
+                // update the AppIcon to show that there is an active connection now
+                PushMethodOnStack(G->App, 1, MUIM_YAMApplication_UpdateAppIcon);
+              }
               ReleaseSemaphore(G->connectionSemaphore);
 
               // reset the buffer pointers
@@ -1264,6 +1271,11 @@ void DisconnectFromHost(struct Connection *conn)
       // one active connection less
       ObtainSemaphore(G->connectionSemaphore);
       G->activeConnections--;
+      if(G->activeConnections == 0)
+      {
+	    // update the AppIcon to show that there are no active connections anymore
+        PushMethodOnStack(G->App, 1, MUIM_YAMApplication_UpdateAppIcon);
+	  }
       ReleaseSemaphore(G->connectionSemaphore);
     }
   }

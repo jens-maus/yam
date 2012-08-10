@@ -945,9 +945,6 @@ static int ConnectToPOP3(struct TransferContext *tc)
     goto out;
   }
 
-  // update the AppIcon now that the connection was established
-  PushMethodOnStack(G->App, 1, MUIM_YAMApplication_UpdateAppIcon);
-
   // If this connection should be a STLS like connection we have to get the welcome
   // message now and then send the STLS command to start TLS negotiation
   if(hasServerTLS(tc->msn))
@@ -1588,10 +1585,6 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
             PushMethodOnStackWait(G->App, 3, MUIM_YAMApplication_FilterNewMails, tc->msn->downloadedMails, &tc->filterResult);
             PushMethodOnStackWait(G->App, 4, MUIM_YAMApplication_NewMailAlert, tc->msn, &tc->downloadResult, &tc->filterResult, tc->flags);
           }
-          else
-          {
-            PushMethodOnStack(G->App, 1, MUIM_YAMApplication_UpdateAppIcon);
-          }
 
           // forget about the downloaded mails again, but don't free the mails
           LockMailList(tc->msn->downloadedMails);
@@ -1600,8 +1593,6 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
         }
         else
         {
-          // update the AppIcon to get rid of the "transferring" icon
-          PushMethodOnStack(G->App, 1, MUIM_YAMApplication_UpdateAppIcon);
           // signal failure
           success = FALSE;
         }

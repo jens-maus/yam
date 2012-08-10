@@ -4077,9 +4077,10 @@ $(OBJDIR)/$(TCPDIR)/Connection.o: tcp/Connection.c include/proto/amissl.h \
   include/timeval.h YAM_config.h include/libraries/mui.h YAM_read.h \
   YAM_write.h YAM_main.h tcp/pop3.h tcp/smtp.h Logfile.h UpdateCheck.h \
   mui/ConfigPageList.h mui/TransferWindow.h tcp/Connection.h YAM_error.h \
-  MailServers.h Locale.h Requesters.h Threads.h tcp/Connection.h \
-  tcp/ssl.h extrasrc.h include/SDI_stdarg.h include/SDI_compiler.h \
-  Debug.h
+  MailServers.h MethodStack.h Locale.h Requesters.h Threads.h \
+  mui/YAMApplication.h YAM_main.h mui/PreselectionWindow.h \
+  tcp/Connection.h tcp/ssl.h extrasrc.h include/SDI_stdarg.h \
+  include/SDI_compiler.h Debug.h
 $(OBJDIR)/$(TCPDIR)/http.o: tcp/http.c YAM.h include/xpk/xpk.h include/amiga-align.h \
   include/default-align.h YAM_stringsizes.h YAM_userlist.h \
   YAM_utilities.h include/SDI_compiler.h YAM_folderconfig.h BayesFilter.h \

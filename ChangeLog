@@ -13,6 +13,10 @@ $URL$
     considered active only if everything signals success.
   * tcp/smtp.c: call DisconnectFromHost() even if ConnectToHost() has failed
     to be consistent with the other TCP modules.
+  * tcp/all: the ConnectToHost() and DisconnectFromHost() functions now ensure
+    that the "active/inactive" AppIcon is shown depending on the number of
+    active connections instead of having to do this in every single module over
+    and over again.
 
 2012-08-09 Thore Böckelmann <tboeckel@gmx.de>
 

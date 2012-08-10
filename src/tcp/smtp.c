@@ -1586,9 +1586,6 @@ BOOL SendMails(struct UserIdentityNode *uin, enum SendMailMode mode)
               // make sure to shutdown the socket and all possible SSL connection stuff
               DisconnectFromHost(tc->conn);
 
-              // update the AppIcon after closing down the connection
-              PushMethodOnStack(G->App, 1, MUIM_YAMApplication_UpdateAppIcon);
-
               // if we got an error here, let's throw it
               switch(err)
               {

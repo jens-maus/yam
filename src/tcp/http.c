@@ -267,9 +267,6 @@ redirected:
           char *serverHost;
           char *port;
 
-          // update the AppIcon now that the connection was established
-          PushMethodOnStack(G->App, 1, MUIM_YAMApplication_UpdateAppIcon);
-
           // now we build the HTTP request we send out to the HTTP
           // server
           if(noproxy == TRUE)
@@ -377,9 +374,6 @@ redirected:
 
         PushMethodOnStack(G->App, 2, MUIM_YAMApplication_DeleteTransferGroup, tc->transferGroup);
       }
-
-      // update the AppIcon after closing down the connection
-      PushMethodOnStack(G->App, 1, MUIM_YAMApplication_UpdateAppIcon);
     }
 
     DeleteConnection(tc->connection);
