@@ -1192,11 +1192,10 @@ static BOOL DeleteMessage(struct TransferContext *tc, const int number)
 
   ENTER();
 
-  snprintf(msgnum, sizeof(msgnum), "%d", number);
-
   // update the transfer status
   PushMethodOnStack(tc->transferGroup, 3, MUIM_TransferControlGroup_Update, TCG_SETMAX, tr(MSG_TR_DeletingServerMail));
 
+  snprintf(msgnum, sizeof(msgnum), "%d", number);
   if(SendPOP3Command(tc, POPCMD_DELE, msgnum, tr(MSG_ER_BADRESPONSE_POP3)) != NULL)
   {
     tc->downloadResult.deleted++;
@@ -1268,6 +1267,9 @@ static void DownloadMails(struct TransferContext *tc)
     else if(isFlagSet(tnode->tflags, TRF_DELETE))
     {
       D(DBF_NET, "deleting mail with subject '%s' on server", mail->Subject);
+
+      // update the transfer status
+      PushMethodOnStack(tc->transferGroup, 5, MUIM_TransferControlGroup_Next, tnode->index, tnode->position, mail->Size, tr(MSG_TR_DeletingServerMail));
 
       // now we "know" that this mail had existed, don't forget this in case
       // the delete operation fails

@@ -17,6 +17,8 @@ $URL$
     that the "active/inactive" AppIcon is shown depending on the number of
     active connections instead of having to do this in every single module over
     and over again.
+  * tcp/pop3.c: in case a mail is not downloaded but deleted only the progress
+    bar is now updated as well to indicate the overall progress.
 
 2012-08-09 Thore Böckelmann <tboeckel@gmx.de>
 
