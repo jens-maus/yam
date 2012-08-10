@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-08-10 Thore Böckelmann <tboeckel@gmx.de>
+
+  * tcp/Connection.c: even if connecting to a host has finally failed the
+    connection still might have been considered successful and YAM showed the
+    "active" AppIcon as if a transfer was in progress. Now a connection is
+    considered active only if everything signals success.
+
 2012-08-09 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_ER.c: don't rely on MUI's notifications to (re)display the current

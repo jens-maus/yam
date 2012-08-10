@@ -1126,21 +1126,25 @@ enum ConnectError ConnectToHost(struct Connection *conn, const struct MailServer
             if(conn->error == CONNECTERR_NO_ERROR)
               conn->error = CONNECTERR_SUCCESS;
 
-            // now we are properly connected
-            conn->isConnected = TRUE;
+            if(conn->error == CONNECTERR_SUCCESS)
+            {
+              // now we are properly connected
+              conn->isConnected = TRUE;
 
-            // lets save the msn structure for later reference
-            conn->server = (struct MailServerNode *)msn;
+              // save the msn structure for later reference
+              conn->server = (struct MailServerNode *)msn;
 
-            ObtainSemaphore(G->connectionSemaphore);
-            G->activeConnections++;
-            ReleaseSemaphore(G->connectionSemaphore);
+              // one more active connection
+              ObtainSemaphore(G->connectionSemaphore);
+              G->activeConnections++;
+              ReleaseSemaphore(G->connectionSemaphore);
 
-            // reset the buffer pointers
-            conn->receiveCount = 0;
-            conn->receivePtr = conn->receiveBuffer;
-            conn->sendCount = 0;
-            conn->sendPtr = conn->sendBuffer;
+              // reset the buffer pointers
+              conn->receiveCount = 0;
+              conn->receivePtr = conn->receiveBuffer;
+              conn->sendCount = 0;
+              conn->sendPtr = conn->sendBuffer;
+            }
           }
           else
           {
@@ -1200,63 +1204,64 @@ void DisconnectFromHost(struct Connection *conn)
 
   if(conn != NULL)
   {
+    GET_SOCKETBASE(conn);
+
+    D(DBF_NET, "disconnecting TCP/IP session %08lx", conn);
+
+    // shut down the SSL stuff
+    if(conn->ssl != NULL)
+    {
+      int ret;
+
+      // clear any error
+      ERR_clear_error();
+
+      // call SSL_shutdown() to shutdown the SSL connection
+      // but take care of the return values
+      if((ret = SSL_shutdown(conn->ssl)) < 0)
+        E(DBF_NET, "SSL_shutdown (1st time) returned fatal error: %d %d", ret, SSL_get_error(conn->ssl, ret));
+      else if(ret == 0)
+      {
+        D(DBF_NET, "SSL_shutdown (1st time) returned: %d %d", ret, SSL_get_error(conn->ssl, ret));
+
+        // we wait "10 ticks" before issuing the second attempt to shutdown the SSL
+        // channel. NOTE: This is required due to a problem/bug in OpenSSL versions < 0.9.8m which
+        // AmiSSLv3 is based on as the second SSL_shutdown() call should return -1 and signal
+        // that we either have to perform a SSL_read() or SSL_write() again, which it doesn't.
+        Delay(10);
+
+        // According to docs at the OpenSSL website, this means that the shutdown
+        // has not yet finished, and we must call SSL_shutdown again..
+        if((ret = SSL_shutdown(conn->ssl)) <= 0)
+          W(DBF_NET, "SSL_shutdown (2nd time) failed: %d %d", ret, SSL_get_error(conn->ssl, ret));
+        else
+          D(DBF_NET, "SSL_shutdown (2nd time) returned: %d %d", ret, SSL_get_error(conn->ssl, ret));
+      }
+
+      SSL_free(conn->ssl);
+      conn->ssl = NULL;
+    }
+
+    if(conn->sslCtx != NULL)
+    {
+      SSL_CTX_free(conn->sslCtx);
+      conn->sslCtx = NULL;
+    }
+
+    // close the connection
+    shutdown(conn->socket, SHUT_RDWR);
+    CloseSocket(conn->socket);
+    conn->socket = INVALID_SOCKET;
+
+    if(AmiSSLBase != NULL)
+      CleanupAmiSSLA(NULL);
+
     if(conn->isConnected == TRUE)
     {
-      GET_SOCKETBASE(conn);
-
-      D(DBF_NET, "disconnecting TCP/IP session %08lx", conn);
-
-      // shut down the SSL stuff
-      if(conn->ssl != NULL)
-      {
-        int ret;
-
-        // clear any error
-        ERR_clear_error();
-
-        // call SSL_shutdown() to shutdown the SSL connection
-        // but take care of the return values
-        if((ret = SSL_shutdown(conn->ssl)) < 0)
-          E(DBF_NET, "SSL_shutdown (1st time) returned fatal error: %d %d", ret, SSL_get_error(conn->ssl, ret));
-        else if(ret == 0)
-        {
-          D(DBF_NET, "SSL_shutdown (1st time) returned: %d %d", ret, SSL_get_error(conn->ssl, ret));
-
-          // we wait "10 ticks" before issuing the second attempt to shutdown the SSL
-          // channel. NOTE: This is required due to a problem/bug in OpenSSL versions < 0.9.8m which
-          // AmiSSLv3 is based on as the second SSL_shutdown() call should return -1 and signal
-          // that we either have to perform a SSL_read() or SSL_write() again, which it doesn't.
-          Delay(10);
-
-          // According to docs at the OpenSSL website, this means that the shutdown
-          // has not yet finished, and we must call SSL_shutdown again..
-          if((ret = SSL_shutdown(conn->ssl)) <= 0)
-            W(DBF_NET, "SSL_shutdown (2nd time) failed: %d %d", ret, SSL_get_error(conn->ssl, ret));
-          else
-            D(DBF_NET, "SSL_shutdown (2nd time) returned: %d %d", ret, SSL_get_error(conn->ssl, ret));
-        }
-
-        SSL_free(conn->ssl);
-        conn->ssl = NULL;
-      }
-
-      if(conn->sslCtx != NULL)
-      {
-        SSL_CTX_free(conn->sslCtx);
-        conn->sslCtx = NULL;
-      }
-
-      // close the connection
-      shutdown(conn->socket, SHUT_RDWR);
-      CloseSocket(conn->socket);
-      conn->socket = INVALID_SOCKET;
-
-      if(AmiSSLBase != NULL)
-        CleanupAmiSSLA(NULL);
-
       // we are no longer connected
       conn->isConnected = FALSE;
 
+      // one active connection less
       ObtainSemaphore(G->connectionSemaphore);
       G->activeConnections--;
       ReleaseSemaphore(G->connectionSemaphore);
