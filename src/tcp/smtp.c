@@ -1581,10 +1581,10 @@ BOOL SendMails(struct UserIdentityNode *uin, enum SendMailMode mode)
                   else if(err != CONNECTERR_SSLFAILED)
                     err = CONNECTERR_UNKNOWN_ERROR;
                 }
-
-                // make sure to shutdown the socket and all possible SSL connection stuff
-                DisconnectFromHost(tc->conn);
               }
+
+              // make sure to shutdown the socket and all possible SSL connection stuff
+              DisconnectFromHost(tc->conn);
 
               // update the AppIcon after closing down the connection
               PushMethodOnStack(G->App, 1, MUIM_YAMApplication_UpdateAppIcon);

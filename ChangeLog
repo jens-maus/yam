@@ -11,6 +11,8 @@ $URL$
     connection still might have been considered successful and YAM showed the
     "active" AppIcon as if a transfer was in progress. Now a connection is
     considered active only if everything signals success.
+  * tcp/smtp.c: call DisconnectFromHost() even if ConnectToHost() has failed
+    to be consistent with the other TCP modules.
 
 2012-08-09 Thore Böckelmann <tboeckel@gmx.de>
 
