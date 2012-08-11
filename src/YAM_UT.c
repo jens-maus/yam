@@ -1675,14 +1675,14 @@ BOOL DeleteMailDir(const char *dir, BOOL isroot)
         {
           // check for our own special files starting with a "."
           // note that we might have several .uidl#? files
-          if(stricmp(filename, ".config")      == 0 ||
-             stricmp(filename, ".glossary")    == 0 ||
-             stricmp(filename, ".addressbook") == 0 ||
-             stricmp(filename, ".emailcache")  == 0 ||
-             stricmp(filename, ".folders")     == 0 ||
-             stricmp(filename, ".spamdata")    == 0 ||
-             stricmp(filename, ".signature")   == 0 ||
-             strnicmp(filename, ".uidl", 6)    == 0)
+          if(stricmp(filename, ".config")         == 0 ||
+             stricmp(filename, ".glossary")       == 0 ||
+             stricmp(filename, ".addressbook")    == 0 ||
+             stricmp(filename, ".emailcache")     == 0 ||
+             stricmp(filename, ".folders")        == 0 ||
+             stricmp(filename, ".spamdata")       == 0 ||
+             strnicmp(filename, ".signature", 10) == 0 ||
+             strnicmp(filename, ".uidl", 6)       == 0)
           {
             if(DeleteFile(fname) == 0)
             {

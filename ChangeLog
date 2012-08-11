@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-08-11 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_UT.c: respect the new signature file naming scheme when deleting a mail
+    directory.
+
 2012-08-10 Thore Böckelmann <tboeckel@gmx.de>
 
   * tcp/Connection.c: even if connecting to a host has finally failed the
