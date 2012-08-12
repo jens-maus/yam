@@ -1268,8 +1268,8 @@ static void DownloadMails(struct TransferContext *tc)
     {
       D(DBF_NET, "deleting mail with subject '%s' on server", mail->Subject);
 
-      // update the transfer status
-      PushMethodOnStack(tc->transferGroup, 5, MUIM_TransferControlGroup_Next, tnode->index, tnode->position, mail->Size, tr(MSG_TR_DeletingServerMail));
+      // update the transfer status, use a zero mail size
+      PushMethodOnStack(tc->transferGroup, 5, MUIM_TransferControlGroup_Next, tnode->index, tnode->position, 0, tr(MSG_TR_DeletingServerMail));
 
       // now we "know" that this mail had existed, don't forget this in case
       // the delete operation fails
