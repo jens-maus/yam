@@ -12,6 +12,8 @@ $URL$
     file instead of keeping it in separate external files. The old .signature
     files will automatically be embedded and will not be used further on, but
     will be kept for reference.
+  * Signature.c: extended the import/export functions to support all kind of
+    non-ASCII characters by the typical \xHH sequence.
 
 2012-08-12 Thore Böckelmann <tboeckel@gmx.de>
 
