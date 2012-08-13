@@ -39,8 +39,10 @@ struct SignatureNode
 
   int id;                         // unique id for the signature
   BOOL active;                    // is this signature currently active?
+  BOOL useSignatureFile;          // use signature file?
 
   char description[SIZE_LARGE];   // user definable description
+  char filename[SIZE_FILE];       // external signature file
   char *signature;                // signature text
 };
 

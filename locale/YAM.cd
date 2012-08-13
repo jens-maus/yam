@@ -7353,3 +7353,9 @@ Trust header lines of this external filter:
 MSG_ER_POP3_UIDLHASH_INIT_FAILED (2393//)
 Failed to initialized UIDL hash table.
 ;
+MSG_CO_SIGNATURE_TEXT (2394//)
+Signature text
+;
+MSG_CO_APPEND_SIGNATURE_FILE (2395//)
+Append a file as signature instead
+;

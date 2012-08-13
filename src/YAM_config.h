@@ -173,7 +173,11 @@ struct CO_GUIData
   Object *BT_SIGUP;
   Object *BT_SIGDOWN;
   Object *BT_SIGEDIT;
+  Object *GR_SIGEDIT;
   Object *TE_SIGEDIT;
+  Object *CH_SIG_FILE;
+  Object *PO_SIG_FILE;
+  Object *ST_SIG_FILE;
   Object *BT_INSTAG;
   Object *BT_INSENV;
   Object *ST_TAGFILE;

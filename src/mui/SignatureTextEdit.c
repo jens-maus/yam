@@ -92,6 +92,23 @@ OVERLOAD(OM_SET)
   return DoSuperMethodA(cl, obj, msg);
 }
 
+///
+/// OVERLOAD(OM_GET)
+OVERLOAD(OM_GET)
+{
+  GETDATA;
+  IPTR *store = ((struct opGet *)msg)->opg_Storage;
+
+  switch(((struct opGet *)msg)->opg_AttrID)
+  {
+    case ATTR(SignatureNode): *store = (IPTR)data->sigNode; return TRUE;
+  }
+
+  return DoSuperMethodA(cl, obj, msg);
+}
+
+///
+
 /* Private Functions */
 
 /* Public Methods */

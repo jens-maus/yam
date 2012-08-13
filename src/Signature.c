@@ -25,6 +25,7 @@
 
 ***************************************************************************/
 
+#include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -61,9 +62,9 @@ struct SignatureNode *CreateNewSignature(void)
     // initialize all variables as AllocSysObject() does not clear the memory
     memset(sn, 0, sizeof(*sn));
 
-    // now we fill the SignatureNode structure with some sensible
-    // defaults
+    // now we fill the SignatureNode structure with some sensible defaults
     sn->active = TRUE;
+    sn->useSignatureFile = TRUE;
   }
 
   RETURN(sn);
@@ -105,8 +106,9 @@ static BOOL CompareSignatureNodes(const struct Node *n1, const struct Node *n2)
   // compare every single member of the structure
   if(sn1->id != sn2->id ||
      sn1->active != sn2->active ||
+     sn1->useSignatureFile != sn2->useSignatureFile ||
      strcmp(sn1->description, sn2->description) != 0 ||
-//     strcmp(sn1->filename, sn2->filename) != 0)
+     strcmp(sn1->filename, sn2->filename) != 0 ||
      strcmp(sn1->signature != NULL ? sn1->signature : "", sn2->signature != NULL ? sn2->signature : "") != 0)
   {
     // something does not match
@@ -269,7 +271,7 @@ char *ImportSignature(const char *src)
         case 'X':
         {
           // convert \xHH to a character
-          c = (char)strtol(&src[1], &src, 16);
+          c = (char)strtol(&src[1], (char **)&src, 16);
 		}
 		break;
 
@@ -314,52 +316,52 @@ char *ExportSignature(const char *src)
 
   while((c = *src++) != '\0')
   {
-    if(isascii((int)c))
+    // replace non-ASCII characters by well known backslash sequences
+    switch(c)
     {
-      // simple ASCII characters are used unmodified
-      char cat[2] = {c, '\0'};
-
-      StrBufCat(&sig, cat);
-    }
-    else
-    {
-      // replace non-ASCII characters by well known backslash sequences
-      switch(c)
+      case '\n':
       {
-        case '\n':
-        {
-          StrBufCat(&sig, "\\n");
-        }
-        break;
+        StrBufCat(&sig, "\\n");
+      }
+      break;
 
-        case '\r':
-        {
-          StrBufCat(&sig, "\\r");
-        }
-        break;
+      case '\r':
+      {
+        StrBufCat(&sig, "\\r");
+      }
+      break;
 
-        case '\t':
-        {
-          StrBufCat(&sig, "\\t");
-        }
-        break;
+      case '\t':
+      {
+        StrBufCat(&sig, "\\t");
+      }
+      break;
 
-        case '\\':
-        {
-          StrBufCat(&sig, "\\\\");
-        }
-        break;
+      case '\\':
+      {
+        StrBufCat(&sig, "\\\\");
+      }
+      break;
 
-        default:
+      default:
+      {
+        if(isprint((int)c))
+        {
+          // printable ASCII characters are used unmodified
+          char cat[2] = {c, '\0'};
+
+          StrBufCat(&sig, cat);
+        }
+        else
         {
           char xchar[6];
 
           // use the typical \xHH representation
           snprintf(xchar, sizeof(xchar), "\\x%02x", (unsigned int)c);
           StrBufCat(&sig, xchar);
-        }
-        break;
+	    }
       }
+      break;
     }
   }
 
@@ -377,27 +379,25 @@ char *ExportSignature(const char *src)
 
 ///
 /// CreateSignatureFromFile
-// create a new signature node from a signature file
+// create a new signature node using a signature file
 struct SignatureNode *CreateSignatureFromFile(const char *file, const char *description)
 {
   struct SignatureNode *sn = NULL;
   char sigPath[SIZE_PATHFILE];
-  char *sig;
 
   ENTER();
 
-  // read signature text from file
-  if((sig = FileToBuffer(CreateFilename(file, sigPath, sizeof(sigPath)))) != NULL)
+  // check if the signature file exists
+  CreateFilename(file, sigPath, sizeof(sigPath));
+  if(FileExists(sigPath) == TRUE)
   {
+    // create a new signature which uses the file as signature text
     if((sn = CreateNewSignature()) != NULL)
     {
       // default description
       strlcpy(sn->description, description, sizeof(sn->description));
-      sn->signature = sig;
-    }
-    else
-    {
-      free(sig);
+      strlcpy(sn->filename, sigPath, sizeof(sn->filename));
+      sn->useSignatureFile = TRUE;
     }
   }
 

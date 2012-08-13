@@ -375,7 +375,9 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
       fprintf(fh, "SIG%02d.ID          = %08x\n", i, sn->id);
       fprintf(fh, "SIG%02d.Enabled     = %s\n", i, Bool2Txt(sn->active));
       fprintf(fh, "SIG%02d.Description = %s\n", i, sn->description);
-      fprintf(fh, "SIG%02d.Signature   = %s\n", i, sig);
+      fprintf(fh, "SIG%02d.Filename    = %s\n", i, sn->filename);
+      fprintf(fh, "SIG%02d.Signature   = %s\n", i, sig != NULL ? sig : "");
+      fprintf(fh, "SIG%02d.UseSigFile  = %s\n", i, Bool2Txt(sn->useSignatureFile));
 
       free(sig);
 
@@ -1033,14 +1035,9 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
                 if(stricmp(q, "ID") == 0)               sn->id = strtol(value, NULL, 16);
                 else if(stricmp(q, "Enabled") == 0)     sn->active = Txt2Bool(value);
                 else if(stricmp(q, "Description") == 0) strlcpy(sn->description, value, sizeof(sn->description));
-                else if(stricmp(q, "Filename") == 0)
-                {
-                  char sigPath[SIZE_PATHFILE];
-
-                  // import the signature from the given file
-                  sn->signature = FileToBuffer(CreateFilename(value, sigPath, sizeof(sigPath)));
-                }
+                else if(stricmp(q, "Filename") == 0)    CreateFilename(value, sn->filename, sizeof(sn->filename));
                 else if(stricmp(q, "Signature") == 0)   sn->signature = ImportSignature(value2);
+                else if(stricmp(q, "UseSigFile") == 0)  sn->useSignatureFile = Txt2Bool(value);
                 else
                   W(DBF_CONFIG, "unknown '%s' SIG config tag", q);
               }
@@ -2350,8 +2347,17 @@ void CO_GetConfig(void)
 
     case cp_Signature:
     {
+      struct SignatureNode *sn;
+
       GetMUIString(CE->TagsFile, gui->ST_TAGFILE, sizeof(CE->TagsFile));
       GetMUIString(CE->TagsSeparator, gui->ST_TAGSEP, sizeof(CE->TagsSeparator));
+
+      if((sn = (struct SignatureNode *)xget(gui->TE_SIGEDIT, MUIA_SignatureTextEdit_SignatureNode)) != NULL)
+      {
+        sn->useSignatureFile = GetMUICheck(gui->CH_SIG_FILE);
+        GetMUIString(sn->filename, gui->ST_SIG_FILE, sizeof(sn->filename));
+      }
+
       // force a signature change
       // this will copy the signature text to the current signature node
       nnset(gui->TE_SIGEDIT, MUIA_SignatureTextEdit_SignatureNode, NULL);
@@ -3043,4 +3049,3 @@ void CO_SetConfig(void)
   LEAVE();
 }
 ///
-

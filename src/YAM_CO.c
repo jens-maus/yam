@@ -1382,6 +1382,19 @@ HOOKPROTONHNONP(CO_GetSignatureEntry, void)
     nnset(gui->CH_SIG_ACTIVE, MUIA_Selected, sn->active);
     nnset(gui->ST_SIG_DESC, MUIA_String_Contents, sn->description);
     nnset(gui->TE_SIGEDIT, MUIA_SignatureTextEdit_SignatureNode, sn);
+    nnset(gui->CH_SIG_FILE, MUIA_Selected, sn->useSignatureFile);
+    nnset(gui->ST_SIG_FILE, MUIA_String_Contents, sn->filename);
+    // due to a refresh bug in TextEditor.mcc <= 15.39 this will stay unghosted even
+    // if a signature file will be used
+    DoMethod(gui->WI, MUIM_MultiSet, MUIA_Disabled, sn->useSignatureFile == TRUE,
+      gui->BT_SIGEDIT,
+      gui->BT_INSTAG,
+      gui->BT_INSENV,
+      xget(gui->TE_SIGEDIT, MUIA_Revision) >= 40 ? gui->GR_SIGEDIT : NULL,
+      NULL);
+    // switcht the editor to read-only mode instead
+    set(gui->TE_SIGEDIT, MUIA_TextEditor_ReadOnly, sn->useSignatureFile == TRUE && xget(gui->TE_SIGEDIT, MUIA_Revision) < 40);
+    set(gui->PO_SIG_FILE, MUIA_Disabled, sn->useSignatureFile == FALSE);
   }
 
   LEAVE();
@@ -1408,11 +1421,25 @@ HOOKPROTONHNONP(CO_PutSignatureEntry, void)
     {
       sn->active = GetMUICheck(gui->CH_SIG_ACTIVE);
       GetMUIString(sn->description, gui->ST_SIG_DESC, sizeof(sn->description));
+      sn->useSignatureFile = GetMUICheck(gui->CH_SIG_FILE);
+      GetMUIString(sn->filename, gui->ST_SIG_FILE, sizeof(sn->filename));
 
       // if the user hasn't yet entered an own description we generate an
       // own one
       if(sn->description[0] == '\0' || strcmp(sn->description, tr(MSG_NewEntry)) == 0)
         strlcpy(sn->description, tr(MSG_CO_Signature), sizeof(sn->description));
+
+      // due to a refresh bug in TextEditor.mcc <= 15.39 this will stay unghosted even
+      // if a signature file will be used
+      DoMethod(gui->WI, MUIM_MultiSet, MUIA_Disabled, sn->useSignatureFile == TRUE,
+        gui->BT_SIGEDIT,
+        gui->BT_INSTAG,
+        gui->BT_INSENV,
+        xget(gui->TE_SIGEDIT, MUIA_Revision) >= 40 ? gui->GR_SIGEDIT : NULL,
+        NULL);
+      // switcht the editor to read-only mode instead
+      set(gui->TE_SIGEDIT, MUIA_TextEditor_ReadOnly, sn->useSignatureFile == TRUE && xget(gui->TE_SIGEDIT, MUIA_Revision) < 40);
+      set(gui->PO_SIG_FILE, MUIA_Disabled, sn->useSignatureFile == FALSE);
 
       // redraw the list
       DoMethod(gui->LV_SIGNATURE, MUIM_NList_Redraw, p);
@@ -3380,4 +3407,3 @@ static struct CO_ClassData *CO_New(void)
 }
 
 ///
-

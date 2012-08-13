@@ -14,6 +14,12 @@ $URL$
     will be kept for reference.
   * Signature.c: extended the import/export functions to support all kind of
     non-ASCII characters by the typical \xHH sequence.
+  * YAM_CO.c, YAM_COg.c, YAM_COs.c, Signature.c: made the use of manually typed
+    signatures or signature files optional. The default is to use the former
+    signature files, but these can be selected now. Unforturnately TextEditor.mcc
+    up to 15.39 has a redraw bug which prevents a disabled object from displaying
+    an updated text. In this case the editor will be switched to read-only mode
+    instead.
 
 2012-08-12 Thore Böckelmann <tboeckel@gmx.de>
 

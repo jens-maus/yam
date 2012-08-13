@@ -3443,42 +3443,64 @@ void WriteSignature(FILE *out, struct SignatureNode *sn, BOOL separator)
 {
   ENTER();
 
-  if(sn != NULL && sn->signature != NULL)
+  if(sn != NULL)
   {
-    char ch;
-    char *sig = sn->signature;
+    char *sigText;
 
-    if(separator == TRUE)
-      fputs("-- \n", out);
-    else
-      fputs("\n", out);
-
-    while((ch = *sig++) != '\0')
+    if(sn->useSignatureFile == TRUE)
     {
-      if(ch == '%')
-      {
-        if(*sig == 't')
-        {
-          sig++;
-          AddTagline(out);
-          continue;
-        }
+      char sigPath[SIZE_PATHFILE];
 
-        if(*sig == 'e')
-        {
-          sig++;
-          CopyFile(NULL, out, "ENV:SIGNATURE", NULL);
-          continue;
-        }
-
-        ch = '%';
-      }
-      fputc(ch, out);
+      // read the signature text from the specified file
+      sigText = FileToBuffer(CreateFilename(sn->filename, sigPath, sizeof(sigPath)));
     }
+    else
+    {
+      // use the manually typed signature text
+      sigText = sn->signature;
+    }
+
+    if(sigText != NULL)
+    {
+      char ch;
+      char *sigPtr = sigText;
+
+      if(separator == TRUE)
+        fputs("-- \n", out);
+      else
+        fputs("\n", out);
+
+      // parse the signature text and replace the %e and %t placeholders
+      while((ch = *sigPtr++) != '\0')
+      {
+        if(ch == '%')
+        {
+          if(*sigPtr == 't')
+          {
+            sigPtr++;
+            AddTagline(out);
+            continue;
+          }
+
+          if(*sigPtr == 'e')
+          {
+            sigPtr++;
+            CopyFile(NULL, out, "ENV:SIGNATURE", NULL);
+            continue;
+          }
+
+          ch = '%';
+        }
+        fputc(ch, out);
+      }
+    }
+
+    // free the external signature text string again
+    if(sn->useSignatureFile == TRUE)
+      free(sigText);
   }
 
   LEAVE();
 }
 
 ///
-

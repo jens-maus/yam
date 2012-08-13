@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.58 (7.8.2012)
+## version $VER: YAM.catalog 7.59 (13.8.2012)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -8833,4 +8833,10 @@ Den Kopfzeilen dieses externen Filters vertrauen:
 ;
 MSG_ER_POP3_UIDLHASH_INIT_FAILED
 UIDL-Hashtabelle konnte nicht initialisiert werden.
+;
+MSG_CO_SIGNATURE_TEXT
+Signaturtext
+;
+MSG_CO_APPEND_SIGNATURE_FILE
+Stattdessen eine Datei als Signatur anhängen
 ;

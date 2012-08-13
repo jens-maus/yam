@@ -3382,25 +3382,42 @@ Object *CO_PageSignature(struct CO_ClassData *data)
                         Child, Label2(tr(MSG_CO_SIGNATURE_DESCRIPTION)),
                         Child, data->GUI.ST_SIG_DESC = MakeString(SIZE_DEFAULT, tr(MSG_CO_SIGNATURE_DESCRIPTION)),
 
+                        Child, VGroup,
+                          Child, Label2(tr(MSG_CO_SIGNATURE_TEXT)),
+                          Child, VSpace(0),
+                        End,
+                        Child, VGroup,
+                          Child, data->GUI.GR_SIGEDIT = HGroup,
+                            GroupSpacing(0),
+                            Child, data->GUI.TE_SIGEDIT = SignatureTextEditObject,
+                              InputListFrame,
+                              MUIA_CycleChain,            TRUE,
+                              MUIA_TextEditor_FixedFont,  TRUE,
+                              MUIA_TextEditor_ExportHook, MUIV_TextEditor_ExportHook_EMail,
+                              MUIA_TextEditor_Slider,     slider,
+                              MUIA_TextEditor_WrapMode,   MUIV_TextEditor_WrapMode_HardWrap,
+                              MUIA_TextEditor_WrapBorder, C->EdWrapCol,
+                            End,
+                            Child, slider,
+                          End,
+                          Child, data->GUI.BT_SIGEDIT = MakeButton(tr(MSG_CO_EditSig)),
+                          Child, HGroup,
+                            MUIA_Group_SameWidth, TRUE,
+                            Child, data->GUI.BT_INSTAG = MakeButton(tr(MSG_CO_InsertTag)),
+                            Child, data->GUI.BT_INSENV = MakeButton(tr(MSG_CO_InsertENV)),
+                          End,
+                        End,
+
+                        Child, HSpace(1),
+                        Child, MakeCheckGroup(&data->GUI.CH_SIG_FILE, tr(MSG_CO_APPEND_SIGNATURE_FILE)),
+
+                        Child, HSpace(1),
+                        Child, data->GUI.PO_SIG_FILE = PopaslObject,
+                          MUIA_Popasl_Type, ASL_FileRequest,
+                          MUIA_Popstring_String, data->GUI.ST_SIG_FILE = MakeString(SIZE_PATHFILE, tr(MSG_CO_APPEND_SIGNATURE_FILE)),
+                          MUIA_Popstring_Button, PopButton(MUII_PopFile),
+                        End,
                       End,
-                    End,
-                    Child, HGroup,
-                      GroupSpacing(0),
-                      Child, data->GUI.TE_SIGEDIT = SignatureTextEditObject,
-                        InputListFrame,
-                        MUIA_CycleChain,            TRUE,
-                        MUIA_TextEditor_FixedFont,  TRUE,
-                        MUIA_TextEditor_ExportHook, MUIV_TextEditor_ExportHook_EMail,
-                        MUIA_TextEditor_Slider,     slider,
-                        MUIA_TextEditor_WrapMode,   MUIV_TextEditor_WrapMode_HardWrap,
-                        MUIA_TextEditor_WrapBorder, C->EdWrapCol,
-                      End,
-                      Child, slider,
-                    End,
-                    Child, data->GUI.BT_SIGEDIT = MakeButton(tr(MSG_CO_EditSig)),
-                    Child, ColGroup(2),
-                      Child, data->GUI.BT_INSTAG = MakeButton(tr(MSG_CO_InsertTag)),
-                      Child, data->GUI.BT_INSENV = MakeButton(tr(MSG_CO_InsertENV)),
                     End,
                   End,
                 End,
@@ -3455,15 +3472,16 @@ Object *CO_PageSignature(struct CO_ClassData *data)
     // settings in this config page
     DoMethod(data->GUI.CH_SIG_ACTIVE, MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutSignatureEntryHook);
     DoMethod(data->GUI.ST_SIG_DESC,   MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutSignatureEntryHook);
+    DoMethod(data->GUI.CH_SIG_FILE,   MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutSignatureEntryHook);
 
     // some button notifies
-    DoMethod(data->GUI.BT_SIGADD, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_AddSignatureHook);
-    DoMethod(data->GUI.BT_SIGDEL, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_DelSignatureHook);
-    DoMethod(data->GUI.BT_SIGUP,  MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.LV_SIGNATURE, 3, MUIM_NList_Move, MUIV_NList_Move_Selected, MUIV_NList_Move_Previous);
-    DoMethod(data->GUI.BT_SIGDOWN,MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.LV_SIGNATURE, 3, MUIM_NList_Move, MUIV_NList_Move_Selected, MUIV_NList_Move_Next);
-    DoMethod(data->GUI.BT_INSTAG, MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.TE_SIGEDIT, 3, MUIM_TextEditor_InsertText, "%t\n", MUIV_TextEditor_InsertText_Cursor);
-    DoMethod(data->GUI.BT_INSENV, MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.TE_SIGEDIT, 3, MUIM_TextEditor_InsertText, "%e\n", MUIV_TextEditor_InsertText_Cursor);
-    DoMethod(data->GUI.BT_SIGEDIT,MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.TE_SIGEDIT, 1, MUIM_SignatureTextEdit_EditExternally);
+    DoMethod(data->GUI.BT_SIGADD,  MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_AddSignatureHook);
+    DoMethod(data->GUI.BT_SIGDEL,  MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_DelSignatureHook);
+    DoMethod(data->GUI.BT_SIGUP,   MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.LV_SIGNATURE, 3, MUIM_NList_Move, MUIV_NList_Move_Selected, MUIV_NList_Move_Previous);
+    DoMethod(data->GUI.BT_SIGDOWN, MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.LV_SIGNATURE, 3, MUIM_NList_Move, MUIV_NList_Move_Selected, MUIV_NList_Move_Next);
+    DoMethod(data->GUI.BT_INSTAG,  MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.TE_SIGEDIT, 3, MUIM_TextEditor_InsertText, "%t\n", MUIV_TextEditor_InsertText_Cursor);
+    DoMethod(data->GUI.BT_INSENV,  MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.TE_SIGEDIT, 3, MUIM_TextEditor_InsertText, "%e\n", MUIV_TextEditor_InsertText_Cursor);
+    DoMethod(data->GUI.BT_SIGEDIT, MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.TE_SIGEDIT, 1, MUIM_SignatureTextEdit_EditExternally);
   }
 
   RETURN(obj);
@@ -4398,4 +4416,3 @@ Object *CO_PageUpdate(struct CO_ClassData *data)
   return obj;
 }
 ///
-
