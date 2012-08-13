@@ -39,6 +39,7 @@
 
 #include "YAM_utilities.h"
 
+#include "FileInfo.h"
 #include "Signature.h"
 
 #include "Debug.h"
@@ -271,7 +272,19 @@ char *ImportSignature(const char *src)
         case 'X':
         {
           // convert \xHH to a character
-          c = (char)strtol(&src[1], (char **)&src, 16);
+          if(src[1] != '\0' && src[2] != '\0')
+          {
+            // don't use strtol() on the source string directly as it may contain
+            // valid hex characters after the \xHH sequence when then would get
+            // swallowed.
+            char hex[3];
+
+            hex[0] = src[1];
+            hex[1] = src[2];
+            hex[2] = '\0';
+            c = (char)strtol(hex, NULL, 16);
+            src += 3;
+          }
 		}
 		break;
 
@@ -357,7 +370,7 @@ char *ExportSignature(const char *src)
           char xchar[6];
 
           // use the typical \xHH representation
-          snprintf(xchar, sizeof(xchar), "\\x%02x", (unsigned int)c);
+          snprintf(xchar, sizeof(xchar), "\\x%02x", c & 0xff);
           StrBufCat(&sig, xchar);
 	    }
       }

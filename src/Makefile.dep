@@ -421,7 +421,7 @@ $(OBJDIR)/Rexx.o: Rexx.c extrasrc.h include/SDI_compiler.h include/SDI_stdarg.h 
   Timer.h include/timeval.h YAM_error.h Locale.h Rexx.h Debug.h
 $(OBJDIR)/Signature.o: Signature.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM_utilities.h \
-  YAM_stringsizes.h YAM_folderconfig.h Signature.h Debug.h
+  YAM_stringsizes.h YAM_folderconfig.h FileInfo.h Signature.h Debug.h
 $(OBJDIR)/Themes.o: Themes.c YAM.h include/xpk/xpk.h include/amiga-align.h \
   include/default-align.h YAM_stringsizes.h YAM_userlist.h \
   YAM_utilities.h include/SDI_compiler.h YAM_folderconfig.h BayesFilter.h \
