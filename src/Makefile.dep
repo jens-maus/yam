@@ -740,11 +740,11 @@ $(OBJDIR)/YAM_CO.o: YAM_CO.c include/libraries/amisslmaster.h \
   YAM_configGUI.h YAM_error.h YAM_find.h YAM_global.h YAM_mainFolder.h \
   mui/ClassesExtra.h YAM_main.h YAM_read.h BayesFilter.h mui/InfoBar.h \
   include/timeval.h mui/MainFolderListtree.h mui/MainMailListGroup.h \
-  mui/MainWindowToolbar.h mui/MailServerChooser.h mui/MailTextEdit.h \
-  mui/ReadMailGroup.h mui/ReadWindow.h mui/SearchControlGroup.h \
-  mui/SignatureChooser.h mui/WriteWindow.h DockyIcon.h FileInfo.h \
-  Locale.h MimeTypes.h MailServers.h MUIObjects.h Requesters.h \
-  Signature.h UserIdentity.h Debug.h
+  mui/MainWindowToolbar.h mui/MailServerChooser.h mui/ReadMailGroup.h \
+  mui/ReadWindow.h mui/SearchControlGroup.h mui/SignatureChooser.h \
+  mui/SignatureTextEdit.h mui/WriteWindow.h DockyIcon.h FileInfo.h \
+  Locale.h MimeTypes.h MailServers.h MUIObjects.h ParseEmail.h \
+  Requesters.h Signature.h UserIdentity.h Debug.h
 $(OBJDIR)/YAM_COg.o: YAM_COg.c include/mui/BetterString_mcc.h \
   include/mui/NBalance_mcc.h include/mui/NListview_mcc.h \
   include/libraries/mui.h include/mui/NList_mcc.h \
@@ -792,9 +792,9 @@ $(OBJDIR)/YAM_COg.o: YAM_COg.c include/mui/BetterString_mcc.h \
   mui/FilterChooser.h mui/FilterList.h mui/FolderRequestListtree.h \
   mui/IdentityList.h mui/ImageArea.h ImageCache.h \
   include/mui/TheBar_mcc.h HashTable.h mui/MailServerChooser.h \
-  mui/MailTextEdit.h mui/MimeTypeList.h mui/PlaceholderPopupList.h \
-  mui/ScriptList.h mui/SearchControlGroup.h mui/SignatureChooser.h \
-  mui/SignatureList.h mui/ThemeListGroup.h mui/YAMApplication.h \
+  mui/MimeTypeList.h mui/PlaceholderPopupList.h mui/ScriptList.h \
+  mui/SearchControlGroup.h mui/SignatureChooser.h mui/SignatureList.h \
+  mui/SignatureTextEdit.h mui/ThemeListGroup.h mui/YAMApplication.h \
   mui/PreselectionWindow.h FileInfo.h FolderList.h ImageCache.h Locale.h \
   MimeTypes.h MailServers.h MUIObjects.h Requesters.h Signature.h \
   Threads.h UIDL.h UserIdentity.h Debug.h
@@ -835,8 +835,8 @@ $(OBJDIR)/YAM_COs.o: YAM_COs.c include/mui/NList_mcc.h include/libraries/mui.h \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_error.h \
   YAM_find.h YAM_global.h mui/ClassesExtra.h YAM_main.h YAM_read.h \
-  BayesFilter.h mui/FilterChooser.h mui/MailTextEdit.h \
-  mui/MainWindowToolbar.h mui/ThemeListGroup.h FileInfo.h FolderList.h \
+  BayesFilter.h mui/FilterChooser.h mui/MainWindowToolbar.h \
+  mui/SignatureTextEdit.h mui/ThemeListGroup.h FileInfo.h FolderList.h \
   Locale.h MailList.h MailServers.h MimeTypes.h MUIObjects.h Requesters.h \
   Signature.h UserIdentity.h Debug.h
 $(OBJDIR)/YAM_DI.o: YAM_DI.c include/mui/NBalance_mcc.h \
@@ -1607,8 +1607,8 @@ $(OBJDIR)/$(MUIDIR)/Classes.o: mui/Classes.c mui/Classes.h mui/ClassesExtra.h \
   mui/ReadWindowStatusBar.h mui/ReadWindowToolbar.h mui/Recipientstring.h \
   mui/ScriptList.h mui/SearchControlGroup.h mui/Searchwindow.h \
   mui/ShutdownWindow.h mui/SignatureChooser.h mui/SignatureList.h \
-  mui/Splashwindow.h mui/StringRequestWindow.h mui/ThemeList.h \
-  mui/ThemeListGroup.h mui/TransferControlGroup.h \
+  mui/SignatureTextEdit.h mui/Splashwindow.h mui/StringRequestWindow.h \
+  mui/ThemeList.h mui/ThemeListGroup.h mui/TransferControlGroup.h \
   mui/TransferControlList.h mui/TransferMailList.h mui/TransferWindow.h \
   mui/UpdateComponentList.h mui/UpdateNotifyWindow.h mui/UserList.h \
   mui/UserPortraitGroup.h mui/WriteAttachmentList.h mui/WriteWindow.h \
@@ -2623,6 +2623,43 @@ $(OBJDIR)/$(MUIDIR)/SignatureList.o: mui/SignatureList.c mui/SignatureList_cl.h 
   HashTable.h include/SDI_compiler.h extrasrc.h include/SDI_stdarg.h \
   include/SDI_compiler.h mui/SignatureList.h include/mui/NList_mcc.h \
   YAM_utilities.h YAM_folderconfig.h Signature.h Debug.h
+$(OBJDIR)/$(MUIDIR)/SignatureTextEdit.o: mui/SignatureTextEdit.c mui/SignatureTextEdit_cl.h \
+  include/libraries/mui.h mui/ClassesExtra.h YAM_main.h YAM_stringsizes.h \
+  tcp/pop3.h tcp/smtp.h YAM_read.h YAM_write.h YAM_main.h BayesFilter.h \
+  HashTable.h include/SDI_compiler.h extrasrc.h include/SDI_stdarg.h \
+  include/SDI_compiler.h mui/SignatureTextEdit.h \
+  include/mui/TextEditor_mcc.h YAM_config.h YAM_read.h YAM_utilities.h \
+  YAM_folderconfig.h Logfile.h UpdateCheck.h include/timeval.h \
+  mui/ConfigPageList.h mui/TransferWindow.h tcp/Connection.h \
+  include/openssl/ssl.h include/proto/amissl.h include/amissl/amissl.h \
+  include/openssl/e_os2.h include/openssl/opensslconf.h \
+  include/openssl/aes.h include/openssl/asn1.h include/openssl/bio.h \
+  include/openssl/crypto.h include/openssl/stack.h \
+  include/openssl/safestack.h include/openssl/opensslv.h \
+  include/openssl/symhacks.h include/openssl/bn.h \
+  include/openssl/ossl_typ.h include/openssl/asn1_mac.h \
+  include/openssl/asn1t.h include/openssl/blowfish.h \
+  include/openssl/buffer.h include/openssl/cast.h include/openssl/comp.h \
+  include/openssl/conf.h include/openssl/lhash.h \
+  include/openssl/conf_api.h include/openssl/des.h \
+  include/openssl/des_old.h include/openssl/ui_compat.h \
+  include/openssl/ui.h include/openssl/dh.h include/openssl/dsa.h \
+  include/openssl/dso.h include/openssl/ebcdic.h include/openssl/ec.h \
+  include/openssl/err.h include/openssl/evp.h include/openssl/md2.h \
+  include/openssl/md4.h include/openssl/md5.h include/openssl/sha.h \
+  include/openssl/ripemd.h include/openssl/rc4.h include/openssl/rc2.h \
+  include/openssl/rc5.h include/openssl/idea.h include/openssl/mdc2.h \
+  include/openssl/rsa.h include/openssl/objects.h \
+  include/openssl/obj_mac.h include/openssl/hmac.h \
+  include/openssl/krb5_asn.h include/openssl/kssl.h \
+  include/openssl/ocsp.h include/openssl/x509.h \
+  include/openssl/x509_vfy.h include/openssl/pkcs7.h \
+  include/openssl/x509v3.h include/openssl/pem.h include/openssl/pem2.h \
+  include/openssl/pkcs12.h include/openssl/rand.h include/openssl/ssl2.h \
+  include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
+  include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
+  include/interfaces/amissl.h include/inline4/amissl.h mui/MailTextEdit.h \
+  MUIObjects.h ParseEmail.h Signature.h Debug.h
 $(OBJDIR)/$(MUIDIR)/Splashwindow.o: mui/Splashwindow.c mui/Splashwindow_cl.h \
   include/libraries/mui.h mui/ClassesExtra.h YAM_main.h YAM_stringsizes.h \
   tcp/pop3.h tcp/smtp.h YAM_read.h YAM_write.h YAM_main.h BayesFilter.h \

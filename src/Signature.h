@@ -41,7 +41,7 @@ struct SignatureNode
   BOOL active;                    // is this signature currently active?
 
   char description[SIZE_LARGE];   // user definable description
-  char filename[SIZE_FILE];       // filename of the signature file
+  char *signature;                // signature text
 };
 
 // public functions
@@ -51,6 +51,8 @@ BOOL CompareSignatureLists(const struct MinList *sl1, const struct MinList *sl2)
 struct SignatureNode *GetSignature(const struct MinList *signatureList, const unsigned int num, const BOOL activeOnly);
 BOOL IsUniqueSignatureID(const struct MinList *signatureList, const int id);
 struct SignatureNode *FindSignatureByID(const struct MinList *signatureList, const int id);
-struct SignatureNode *FindSignatureByFilename(const struct MinList *signatureList, const char *filename);
+char *ImportSignature(const char *src);
+char *ExportSignature(const char *src);
+struct SignatureNode *CreateSignatureFromFile(const char *file, const char *description);
 
 #endif // SIGNATURE_H

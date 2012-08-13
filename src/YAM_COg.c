@@ -73,13 +73,13 @@
 #include "mui/IdentityList.h"
 #include "mui/ImageArea.h"
 #include "mui/MailServerChooser.h"
-#include "mui/MailTextEdit.h"
 #include "mui/MimeTypeList.h"
 #include "mui/PlaceholderPopupList.h"
 #include "mui/ScriptList.h"
 #include "mui/SearchControlGroup.h"
 #include "mui/SignatureChooser.h"
 #include "mui/SignatureList.h"
+#include "mui/SignatureTextEdit.h"
 #include "mui/ThemeListGroup.h"
 #include "mui/YAMApplication.h"
 
@@ -611,7 +611,7 @@ HOOKPROTONHNONP(UpdateCheckFunc, void)
 
   // get the configuration settings
   if(G->CO->VisiblePage == cp_Update)
-    CO_GetConfig(FALSE);
+    CO_GetConfig();
 
   // now we make sure the C and CE config structure is in sync again
   C->UpdateInterval = CE->UpdateInterval;
@@ -1268,27 +1268,13 @@ HOOKPROTONHNONP(CO_AddSignature, void)
 
   if((sn = CreateNewSignature()) != NULL)
   {
-    int i;
-
     // create new default values
     strlcpy(sn->description, tr(MSG_NewEntry), sizeof(sn->description));
-
-    // make sure to use a unique signature file name
-    i = 1;
-    do
-    {
-      snprintf(sn->filename, sizeof(sn->filename), ".signature%d", i);
-      if(FindSignatureByFilename(&CE->signatureList, sn->filename) == NULL)
-        break;
-
-      i++;
-    }
-    while(TRUE);
 
     // add the new signature to the list
     DoMethod(G->CO->GUI.LV_SIGNATURE, MUIM_NList_InsertSingle, sn, MUIV_NList_Insert_Bottom);
 
-    // add the server to the list
+    // add the signature to the list
     AddTail((struct List *)&CE->signatureList, (struct Node *)sn);
 
     // set the new entry active and make sure that the email gadget will be
@@ -3400,7 +3386,7 @@ Object *CO_PageSignature(struct CO_ClassData *data)
                     End,
                     Child, HGroup,
                       GroupSpacing(0),
-                      Child, data->GUI.TE_SIGEDIT = MailTextEditObject,
+                      Child, data->GUI.TE_SIGEDIT = SignatureTextEditObject,
                         InputListFrame,
                         MUIA_CycleChain,            TRUE,
                         MUIA_TextEditor_FixedFont,  TRUE,
@@ -3477,7 +3463,7 @@ Object *CO_PageSignature(struct CO_ClassData *data)
     DoMethod(data->GUI.BT_SIGDOWN,MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.LV_SIGNATURE, 3, MUIM_NList_Move, MUIV_NList_Move_Selected, MUIV_NList_Move_Next);
     DoMethod(data->GUI.BT_INSTAG, MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.TE_SIGEDIT, 3, MUIM_TextEditor_InsertText, "%t\n", MUIV_TextEditor_InsertText_Cursor);
     DoMethod(data->GUI.BT_INSENV, MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.TE_SIGEDIT, 3, MUIM_TextEditor_InsertText, "%e\n", MUIV_TextEditor_InsertText_Cursor);
-    DoMethod(data->GUI.BT_SIGEDIT,MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_EditSignatHook);
+    DoMethod(data->GUI.BT_SIGEDIT,MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Self, 1, MUIM_SignatureTextEdit_EditExternally);
   }
 
   RETURN(obj);

@@ -3443,57 +3443,37 @@ void WriteSignature(FILE *out, struct SignatureNode *sn, BOOL separator)
 {
   ENTER();
 
-  if(sn != NULL)
+  if(sn != NULL && sn->signature != NULL)
   {
-    char sigPath[SIZE_PATHFILE];
-    char *sigFile;
-    LONG sigSize = 0;
+    char ch;
+    char *sig = sn->signature;
 
-    sigFile = CreateFilename(sn->filename, sigPath, sizeof(sigPath));
+    if(separator == TRUE)
+      fputs("-- \n", out);
+    else
+      fputs("\n", out);
 
-    // check whether the signature file exists and contains at least one character
-    if(ObtainFileInfo(sigFile, FI_SIZE, &sigSize) == TRUE && sigSize > 0)
+    while((ch = *sig++) != '\0')
     {
-      FILE *in;
-
-      // now append the signature file and fill the placeholders
-      if((in = fopen(sigFile, "r")) != NULL)
+      if(ch == '%')
       {
-        int ch;
-
-        setvbuf(in, NULL, _IOFBF, SIZE_FILEBUF);
-
-        if(separator == TRUE)
-          fputs("-- \n", out);
-        else
-          fputs("\n", out);
-
-        while((ch = fgetc(in)) != EOF)
+        if(*sig == 't')
         {
-          if(ch == '%')
-          {
-            ch = fgetc(in);
-
-            if(ch == 't')
-            {
-              AddTagline(out);
-              continue;
-            }
-
-            if(ch == 'e')
-            {
-              CopyFile(NULL, out, "ENV:SIGNATURE", NULL);
-              continue;
-            }
-
-            ungetc(ch, in);
-            ch = '%';
-          }
-          fputc(ch, out);
+          sig++;
+          AddTagline(out);
+          continue;
         }
 
-        fclose(in);
+        if(*sig == 'e')
+        {
+          sig++;
+          CopyFile(NULL, out, "ENV:SIGNATURE", NULL);
+          continue;
+        }
+
+        ch = '%';
       }
+      fputc(ch, out);
     }
   }
 

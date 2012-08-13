@@ -518,6 +518,7 @@ MUIOBJS = \
 	ShutdownWindow.o \
 	SignatureChooser.o \
 	SignatureList.o \
+	SignatureTextEdit.o \
 	Splashwindow.o \
 	StringRequestWindow.o \
 	ThemeList.o \

@@ -74,11 +74,11 @@
 #include "mui/MainMailListGroup.h"
 #include "mui/MainWindowToolbar.h"
 #include "mui/MailServerChooser.h"
-#include "mui/MailTextEdit.h"
 #include "mui/ReadMailGroup.h"
 #include "mui/ReadWindow.h"
 #include "mui/SearchControlGroup.h"
 #include "mui/SignatureChooser.h"
+#include "mui/SignatureTextEdit.h"
 #include "mui/WriteWindow.h"
 
 #include "DockyIcon.h"
@@ -87,6 +87,7 @@
 #include "MimeTypes.h"
 #include "MailServers.h"
 #include "MUIObjects.h"
+#include "ParseEmail.h"
 #include "Requesters.h"
 #include "Signature.h"
 #include "UserIdentity.h"
@@ -1376,35 +1377,11 @@ HOOKPROTONHNONP(CO_GetSignatureEntry, void)
 
   if(sn != NULL)
   {
-    char sigPath[SIZE_PATHFILE];
-
     // all notifies here are nnset() notifies so that we don't trigger any additional
     // notify or otherwise we would run into problems.
-    nnset(gui->CH_SIG_ACTIVE, MUIA_Selected,        sn->active);
-    nnset(gui->ST_SIG_DESC,   MUIA_String_Contents, sn->description);
-
-    // check if we are switching signatures and if so we check if the editor has changed
-    // and in case that is true we ask the user to acknowledge and save the signature
-    if(xget(gui->TE_SIGEDIT, MUIA_TextEditor_HasChanged) == TRUE &&
-       G->CO->previousSignature != NULL)
-    {
-      if(MUI_Request(G->App, G->CO->GUI.WI, MUIF_NONE, NULL, tr(MSG_YesNoReq), tr(MSG_CO_ASK_SAVE_SIGNATURE)) > 0)
-      {
-        // save the modified signature only if the user told us to do so
-        DoMethod(gui->TE_SIGEDIT, MUIM_MailTextEdit_SaveToFile, CreateFilename(G->CO->previousSignature->filename, sigPath, sizeof(sigPath)));
-      }
-    }
-
-    // refresh the texteditor with the actually selected signature
-    if(DoMethod(gui->TE_SIGEDIT, MUIM_MailTextEdit_LoadFromFile, CreateFilename(sn->filename, sigPath, sizeof(sigPath)), MUIF_MailTextEdit_LoadFromFile_UseStyles|MUIF_MailTextEdit_LoadFromFile_UseColors) == FALSE)
-    {
-      W(DBF_CONFIG, "couldn't load signature file '%s' in texteditor", sn->filename);
-
-      DoMethod(gui->TE_SIGEDIT, MUIM_TextEditor_ClearText);
-
-      // remember the last displayed signature node
-      G->CO->previousSignature = sn;
-    }
+    nnset(gui->CH_SIG_ACTIVE, MUIA_Selected, sn->active);
+    nnset(gui->ST_SIG_DESC, MUIA_String_Contents, sn->description);
+    nnset(gui->TE_SIGEDIT, MUIA_SignatureTextEdit_SignatureNode, sn);
   }
 
   LEAVE();
@@ -1430,7 +1407,7 @@ HOOKPROTONHNONP(CO_PutSignatureEntry, void)
     if(sn != NULL)
     {
       sn->active = GetMUICheck(gui->CH_SIG_ACTIVE);
-      GetMUIString(sn->description,  gui->ST_SIG_DESC, sizeof(sn->description));
+      GetMUIString(sn->description, gui->ST_SIG_DESC, sizeof(sn->description));
 
       // if the user hasn't yet entered an own description we generate an
       // own one
@@ -1937,6 +1914,7 @@ static BOOL CopyConfigData(struct Config *dco, const struct Config *sco)
 
       if((dstNode = DuplicateNode(srcNode, sizeof(*srcNode))) != NULL)
       {
+        dstNode->signature = strdup(srcNode->signature);
         AddTail((struct List *)&dco->signatureList, (struct Node *)dstNode);
       }
       else
@@ -2458,71 +2436,20 @@ void CO_Validate(struct Config *co, BOOL update)
   // exist and if we we add these ones as the default ones
   if(IsMinListEmpty(&co->signatureList))
   {
-    char sigPath[SIZE_PATHFILE];
-    char *sigFile;
-    LONG sigSize = 0;
     struct SignatureNode *sn;
 
     // before YAM 2.8 we had three default signatures. We therefore
-    // check for these three files now and see if these are not empty
-    sigFile = CreateFilename(".signature", sigPath, sizeof(sigPath));
-    if(ObtainFileInfo(sigFile, FI_SIZE, &sigSize) == TRUE &&
-       sigSize > 0)
-    {
-      if((sn = CreateNewSignature()) != NULL)
-      {
-        char newSigPath[SIZE_PATHFILE];
-
-        // default description and filename
-        strlcpy(sn->description, tr(MSG_CO_DefSig), sizeof(sn->description));
-        strlcpy(sn->filename, ".signature1", sizeof(sn->filename));
-
-        // rename the .signature file to .signature1
-        Rename(sigFile, CreateFilename(sn->filename, newSigPath, sizeof(newSigPath)));
-
-        AddTail((struct List *)&co->signatureList, (struct Node *)sn);
-      }
-    }
+    // check for these three files now.
+    if((sn = CreateSignatureFromFile(".signature", tr(MSG_CO_DefSig))) != NULL)
+      AddTail((struct List *)&co->signatureList, (struct Node *)sn);
 
     // check for ".altsignature1" file
-    sigFile = CreateFilename(".altsignature1", sigPath, sizeof(sigPath));
-    if(ObtainFileInfo(sigFile, FI_SIZE, &sigSize) == TRUE &&
-       sigSize > 0)
-    {
-      if((sn = CreateNewSignature()) != NULL)
-      {
-        char newSigPath[SIZE_PATHFILE];
-
-        // default description and filename
-        strlcpy(sn->description, tr(MSG_CO_AltSig1), sizeof(sn->description));
-        strlcpy(sn->filename, ".signature2", sizeof(sn->filename));
-
-        // rename the .altsignature1 file to .signature2
-        Rename(sigFile, CreateFilename(sn->filename, newSigPath, sizeof(newSigPath)));
-
-        AddTail((struct List *)&co->signatureList, (struct Node *)sn);
-      }
-    }
+    if((sn = CreateSignatureFromFile(".altsignature1", tr(MSG_CO_AltSig1))) != NULL)
+      AddTail((struct List *)&co->signatureList, (struct Node *)sn);
 
     // check for ".altsignature2" file
-    sigFile = CreateFilename(".altsignature2", sigPath, sizeof(sigPath));
-    if(ObtainFileInfo(sigFile, FI_SIZE, &sigSize) == TRUE &&
-       sigSize > 0)
-    {
-      if((sn = CreateNewSignature()) != NULL)
-      {
-        char newSigPath[SIZE_PATHFILE];
-
-        // default description and filename
-        strlcpy(sn->description, tr(MSG_CO_AltSig2), sizeof(sn->description));
-        strlcpy(sn->filename, ".signature3", sizeof(sn->filename));
-
-        // rename the .altsignature2 file to .signature3
-        Rename(sigFile, CreateFilename(sn->filename, newSigPath, sizeof(newSigPath)));
-
-        AddTail((struct List *)&co->signatureList, (struct Node *)sn);
-      }
-    }
+    if((sn = CreateSignatureFromFile(".altsignature2", tr(MSG_CO_AltSig2))) != NULL)
+      AddTail((struct List *)&co->signatureList, (struct Node *)sn);
 
     saveAtEnd = TRUE;
   }
@@ -3019,51 +2946,6 @@ void CO_Validate(struct Config *co, BOOL update)
 }
 
 ///
-/// CO_EditSignatFunc
-//  Edits the signature file
-HOOKPROTONHNONP(CO_EditSignatFunc, void)
-{
-  struct CO_GUIData *gui = &G->CO->GUI;
-  struct SignatureNode *sn;
-
-  ENTER();
-
-  // get the currently selected signature
-  DoMethod(gui->LV_SIGNATURE, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &sn);
-
-  // check if the currently selected signature is valid
-  // and if the user has configured an external editor at all.
-  if(sn != NULL && CE->Editor[0] != '\0')
-  {
-    char sigPath[SIZE_PATHFILE];
-    char buffer[SIZE_COMMAND+SIZE_PATHFILE];
-
-    // make sure we save any modification first
-    if(xget(gui->TE_SIGEDIT, MUIA_TextEditor_HasChanged) == TRUE)
-    {
-      if(MUI_Request(G->App, G->CO->GUI.WI, MUIF_NONE, NULL, tr(MSG_YesNoReq), tr(MSG_CO_ASK_SAVE_SIGNATURE)) > 0)
-      {
-        // save the modified signature only if the user told us to do so
-        DoMethod(gui->TE_SIGEDIT, MUIM_MailTextEdit_SaveToFile, CreateFilename(sn->filename, sigPath, sizeof(sigPath)));
-      }
-    }
-
-    // launch the external editor and wait until it is
-    // finished...
-    snprintf(buffer, sizeof(buffer), "%s \"%s\"", CE->Editor, GetRealPath(CreateFilename(sn->filename, sigPath, sizeof(sigPath))));
-    LaunchCommand(buffer, FALSE, OUT_NIL);
-
-    // refresh the signature in the internal editor after the
-    // external is finished
-    if(DoMethod(gui->TE_SIGEDIT, MUIM_MailTextEdit_LoadFromFile, CreateFilename(sn->filename, sigPath, sizeof(sigPath)), MUIF_MailTextEdit_LoadFromFile_UseStyles|MUIF_MailTextEdit_LoadFromFile_UseColors) == FALSE)
-      DoMethod(gui->TE_SIGEDIT, MUIM_TextEditor_ClearText);
-  }
-
-  LEAVE();
-}
-MakeHook(CO_EditSignatHook,CO_EditSignatFunc);
-
-///
 /// CO_OpenConfig
 //  Opens a different configuration file
 HOOKPROTONHNONP(CO_OpenConfig, void)
@@ -3106,8 +2988,7 @@ HOOKPROTONHNONP(CO_SaveConfigAs, void)
     if(FileExists(cname) == FALSE ||
        MUI_Request(G->App, G->CO->GUI.WI, MUIF_NONE, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_FILE_OVERWRITE), frc->file) != 0)
     {
-      // the config is really saved
-      CO_GetConfig(TRUE);
+      CO_GetConfig();
       CO_Validate(CE, TRUE);
       CO_NewPrefsFile(cname);
       CO_SaveConfig(CE, cname);
@@ -3180,8 +3061,7 @@ HOOKPROTONHNO(CO_ChangePageFunc, void, int *arg)
 
   if(page >= cp_FirstSteps && page < cp_Max)
   {
-    // the config is not saved yet, but some parts (like the signature) need to be saved nevertheless
-    CO_GetConfig(FALSE);
+    CO_GetConfig();
 
     G->CO->VisiblePage = page;
     G->CO->Visited[page] = TRUE;
@@ -3222,9 +3102,8 @@ HOOKPROTONHNO(CO_CloseFunc, void, int *arg)
   {
     BOOL configsEqual;
 
-    // make sure we have the latest state of the
-    // config in CE
-    CO_GetConfig(arg[0] == 2);
+    // make sure we have the latest state of the config in CE
+    CO_GetConfig();
 
     // now we compare the current config against
     // the temporary config
@@ -3258,20 +3137,9 @@ HOOKPROTONHNO(CO_CloseFunc, void, int *arg)
       // has pressed on 'Save' only.
       if(arg[0] == 2)
       {
-        // save the signature if it has been modified
-        if(xget(G->CO->GUI.TE_SIGEDIT, MUIA_TextEditor_HasChanged) == TRUE)
-        {
-          char sigPath[SIZE_PATHFILE];
-          struct SignatureNode *sn = NULL;
-
-          // get the active entry in the signature list
-          DoMethod(G->CO->GUI.LV_SIGNATURE, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &sn);
-          if(sn != NULL)
-          {
-            // save the modified signature only if the user told us to do so
-            DoMethod(G->CO->GUI.TE_SIGEDIT, MUIM_MailTextEdit_SaveToFile, CreateFilename(sn->filename, sigPath, sizeof(sigPath)));
-          }
-        }
+        // force a signature change
+        // this will copy the signature text to the current signature node
+        nnset(G->CO->GUI.TE_SIGEDIT, MUIA_SignatureTextEdit_SignatureNode, NULL);
 
         CO_SaveConfig(C, G->CO_PrefsFile);
       }

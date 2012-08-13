@@ -55,8 +55,8 @@
 
 #include "mui/ClassesExtra.h"
 #include "mui/FilterChooser.h"
-#include "mui/MailTextEdit.h"
 #include "mui/MainWindowToolbar.h"
+#include "mui/SignatureTextEdit.h"
 #include "mui/ThemeListGroup.h"
 
 #include "BayesFilter.h"
@@ -370,11 +370,14 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
     IterateList(&co->signatureList, curNode)
     {
       struct SignatureNode *sn = (struct SignatureNode *)curNode;
+      char *sig = ExportSignature(sn->signature);
 
       fprintf(fh, "SIG%02d.ID          = %08x\n", i, sn->id);
       fprintf(fh, "SIG%02d.Enabled     = %s\n", i, Bool2Txt(sn->active));
       fprintf(fh, "SIG%02d.Description = %s\n", i, sn->description);
-      fprintf(fh, "SIG%02d.Filename    = %s\n", i, sn->filename);
+      fprintf(fh, "SIG%02d.Signature   = %s\n", i, sig);
+
+      free(sig);
 
       i++;
     }
@@ -899,7 +902,7 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
           else if(stricmp(buf, "DaylightSaving") == 0)  co->DaylightSaving = Txt2Bool(value);
 
 /* TCP/IP */
-          else if(strnicmp(buf,"SMTP", 4) == 0 && isdigit(buf[4]) && isdigit(buf[5]) && strchr(buf, '.') != NULL)
+          else if(strnicmp(buf, "SMTP", 4) == 0 && isdigit(buf[4]) && isdigit(buf[5]) && strchr(buf, '.') != NULL)
           {
             int id = atoi(&buf[4]);
 
@@ -944,7 +947,7 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
             else
               W(DBF_CONFIG, "SMTP id < 0 : %ld", id);
           }
-          else if(strnicmp(buf,"POP", 3) == 0 && isdigit(buf[3]) && isdigit(buf[4]) && strchr(buf, '.') != NULL)
+          else if(strnicmp(buf, "POP", 3) == 0 && isdigit(buf[3]) && isdigit(buf[4]) && strchr(buf, '.') != NULL)
           {
             int id = atoi(&buf[3]);
 
@@ -1030,7 +1033,14 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
                 if(stricmp(q, "ID") == 0)               sn->id = strtol(value, NULL, 16);
                 else if(stricmp(q, "Enabled") == 0)     sn->active = Txt2Bool(value);
                 else if(stricmp(q, "Description") == 0) strlcpy(sn->description, value, sizeof(sn->description));
-                else if(stricmp(q, "Filename") == 0)    strlcpy(sn->filename, value, sizeof(sn->filename));
+                else if(stricmp(q, "Filename") == 0)
+                {
+                  char sigPath[SIZE_PATHFILE];
+
+                  // import the signature from the given file
+                  sn->signature = FileToBuffer(CreateFilename(value, sigPath, sizeof(sigPath)));
+                }
+                else if(stricmp(q, "Signature") == 0)   sn->signature = ImportSignature(value2);
                 else
                   W(DBF_CONFIG, "unknown '%s' SIG config tag", q);
               }
@@ -1947,7 +1957,7 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
 ///
 /// CO_GetConfig
 //  Fills form data of current section with data from configuration structure
-void CO_GetConfig(BOOL saveConfig)
+void CO_GetConfig(void)
 {
   struct CO_GUIData *gui = &G->CO->GUI;
 
@@ -2340,51 +2350,16 @@ void CO_GetConfig(BOOL saveConfig)
 
     case cp_Signature:
     {
-      int i;
-      struct SignatureNode *sn;
-
       GetMUIString(CE->TagsFile, gui->ST_TAGFILE, sizeof(CE->TagsFile));
       GetMUIString(CE->TagsSeparator, gui->ST_TAGSEP, sizeof(CE->TagsSeparator));
-
-      if(xget(gui->TE_SIGEDIT, MUIA_TextEditor_HasChanged) == TRUE && saveConfig == FALSE)
-      {
-        // if the signature was modified but the config should not be saved but just be "used"
-        // then ask the user if the changes to the signature should be made permanent
-        if(MUI_Request(G->App, G->CO->GUI.WI, MUIF_NONE, NULL, tr(MSG_YesNoReq), tr(MSG_CO_ASK_SAVE_SIGNATURE)) > 0)
-        {
-          char sigPath[SIZE_PATHFILE];
-
-          // get the active entry in the signature list
-          sn = NULL;
-          DoMethod(gui->LV_SIGNATURE, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &sn);
-          if(sn != NULL)
-          {
-            // save the modified signature only if the user told us to do so
-            DoMethod(gui->TE_SIGEDIT, MUIM_MailTextEdit_SaveToFile, CreateFilename(sn->filename, sigPath, sizeof(sigPath)));
-          }
-        }
-      }
+      // force a signature change
+      // this will copy the signature text to the current signature node
+      nnset(gui->TE_SIGEDIT, MUIA_SignatureTextEdit_SignatureNode, NULL);
 
       // as the user may have changed the order of the signatures
       // we have to make sure the order in the NList fits to the
       // exec list order of our Signature list
-      i = 0;
-      do
-      {
-        sn = NULL;
-        DoMethod(gui->LV_SIGNATURE, MUIM_NList_GetEntry, i, &sn);
-        if(sn == NULL)
-          break;
-
-        // for resorting the UserIdentity list we just have to remove that particular identity
-        // and add it to the tail - all other operations like adding/removing should
-        // have been done by others already - so this is just resorting
-        Remove((struct Node *)sn);
-        AddTail((struct List *)&CE->signatureList, (struct Node *)sn);
-
-        i++;
-      }
-      while(TRUE);
+      SortNListToExecList(gui->LV_SIGNATURE, &CE->signatureList);
     }
     break;
 

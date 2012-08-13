@@ -82,7 +82,8 @@ void FreeSignatureList(struct MinList *signatureList)
   while((curNode = RemHead((struct List *)signatureList)) != NULL)
   {
     struct SignatureNode *sn = (struct SignatureNode *)curNode;
-D(DBF_ALWAYS, "free: %lx", sn);
+
+    free(sn->signature);
     FreeSysObject(ASOT_NODE, sn);
   }
 
@@ -105,7 +106,8 @@ static BOOL CompareSignatureNodes(const struct Node *n1, const struct Node *n2)
   if(sn1->id != sn2->id ||
      sn1->active != sn2->active ||
      strcmp(sn1->description, sn2->description) != 0 ||
-     strcmp(sn1->filename, sn2->filename) != 0)
+//     strcmp(sn1->filename, sn2->filename) != 0)
+     strcmp(sn1->signature != NULL ? sn1->signature : "", sn2->signature != NULL ? sn2->signature : "") != 0)
   {
     // something does not match
     equal = FALSE;
@@ -219,33 +221,168 @@ struct SignatureNode *FindSignatureByID(const struct MinList *signatureList, con
 }
 
 ///
-/// FindSignatureByFilename
-// find a signature by a given filename
-struct SignatureNode *FindSignatureByFilename(const struct MinList *signatureList, const char *filename)
+/// ImportSignature
+// import a signature text, replace all '\n' by LF
+char *ImportSignature(const char *src)
 {
-  struct SignatureNode *result = NULL;
+  char *sig = NULL;
+  char c;
 
   ENTER();
 
-  if(filename != NULL)
+  while((c = *src++) != '\0')
   {
-    struct Node *curNode;
-
-    IterateList(signatureList, curNode)
+    switch(c)
     {
-      struct SignatureNode *sn = (struct SignatureNode *)curNode;
-
-      // check if we found exactly this filename
-      if(strcmp(filename, sn->filename) == 0)
+      case '\\':
       {
-        result = sn;
-        break;
+        c = *src++;
+        switch(c)
+        {
+          case 'n':
+          {
+            c = '\n';
+          }
+          break;
+
+          case 'r':
+          {
+            c = '\r';
+          }
+          break;
+
+          case 't':
+          {
+            c = '\t';
+          }
+          break;
+
+          case '\\':
+          {
+            c = '\\';
+          }
+          break;
+        }
+
+        if(c != '\0')
+        {
+          char cat[2] = {c, '\0'};
+
+          StrBufCat(&sig, cat);
+        }
       }
+      break;
+
+      default:
+      {
+        char cat[2] = {c, '\0'};
+
+        StrBufCat(&sig, cat);
+      }
+      break;
     }
   }
 
-  RETURN(result);
-  return result;
+  if(sig != NULL)
+  {
+    char *tmp = strdup(sig);
+
+    FreeStrBuf(sig);
+    sig = tmp;
+  }
+
+  RETURN(sig);
+  return sig;
+}
+
+///
+/// ExportSignature
+// export a signature text, replace all special chars like LF by '\n'
+char *ExportSignature(const char *src)
+{
+  char *sig = NULL;
+  char c;
+
+  ENTER();
+
+  while((c = *src++) != '\0')
+  {
+    switch(c)
+    {
+      case '\n':
+      {
+        StrBufCat(&sig, "\\n");
+      }
+      break;
+
+      case '\r':
+      {
+        StrBufCat(&sig, "\\r");
+      }
+      break;
+
+      case '\t':
+      {
+        StrBufCat(&sig, "\\t");
+      }
+      break;
+
+      case '\\':
+      {
+        StrBufCat(&sig, "\\");
+      }
+      break;
+
+      default:
+      {
+        char cat[2] = {c, '\0'};
+
+        StrBufCat(&sig, cat);
+      }
+      break;
+    }
+  }
+
+  if(sig != NULL)
+  {
+    char *tmp = strdup(sig);
+
+    FreeStrBuf(sig);
+    sig = tmp;
+  }
+
+  RETURN(sig);
+  return sig;
+}
+
+///
+/// CreateSignatureFromFile
+// create a new signature node from a signature file
+struct SignatureNode *CreateSignatureFromFile(const char *file, const char *description)
+{
+  struct SignatureNode *sn = NULL;
+  char sigPath[SIZE_PATHFILE];
+  char *sig;
+
+  ENTER();
+
+  // read signature text from file
+  if((sig = FileToBuffer(CreateFilename(file, sigPath, sizeof(sigPath)))) != NULL)
+  {
+    if((sn = CreateNewSignature()) != NULL)
+    {
+      // default description
+      strlcpy(sn->description, description, sizeof(sn->description));
+      sn->signature = sig;
+    }
+    else
+    {
+      free(sig);
+    }
+  }
+
+  RETURN(sn);
+  return sn;
 }
 
 ///

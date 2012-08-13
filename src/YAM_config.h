@@ -607,7 +607,6 @@ extern struct Config *C;
 extern struct Config *CE;
 
 // external hooks
-extern struct Hook CO_EditSignatHook;
 extern struct Hook CO_SwitchSpamFilterHook;
 extern struct Hook CO_GetDefaultPOPHook;
 extern struct Hook CO_GetPOP3EntryHook;

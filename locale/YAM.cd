@@ -5214,13 +5214,6 @@ Could not export address book \"%s\".
 MSG_LOADINGUPDATESTATE (1807//)
 Loading update state data...
 ;
-MSG_CO_ASK_SAVE_SIGNATURE (1808//)
-Changes to the signatures must be saved separately\n\
-from the global configuration or otherwise they\n\
-will be lost.\n\
-\n\
-Do you want to save the signatures now?
-;
 MSG_MA_HIDE (1809//)
 Hide
 ;
