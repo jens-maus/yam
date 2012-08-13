@@ -98,6 +98,7 @@ OVERLOAD(OM_SET)
 /// DECLARE(SetSignatureText)
 DECLARE(SetSignatureText) // const char *sigText
 {
+  GETDATA;
   char *parsedSig;
 
   ENTER();
@@ -105,8 +106,15 @@ DECLARE(SetSignatureText) // const char *sigText
   // refresh outself with the new signature text
   if(msg->sigText != NULL && (parsedSig = ParseEmailText(msg->sigText, FALSE, TRUE, TRUE)) != NULL)
   {
+    BOOL modified;
+
+    if(data->sigNode != NULL && data->sigNode->signature != NULL)
+      modified = (strcmp(msg->sigText, data->sigNode->signature) != 0);
+    else
+      modified = TRUE;
+
 	xset(obj, MUIA_TextEditor_Contents, parsedSig,
-			  MUIA_TextEditor_HasChanged, FALSE);
+			  MUIA_TextEditor_HasChanged, modified);
 
 	free(parsedSig);
   }
