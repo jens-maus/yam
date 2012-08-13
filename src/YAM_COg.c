@@ -3463,7 +3463,7 @@ Object *CO_PageSignature(struct CO_ClassData *data)
     DoMethod(data->GUI.BT_SIGDOWN,MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.LV_SIGNATURE, 3, MUIM_NList_Move, MUIV_NList_Move_Selected, MUIV_NList_Move_Next);
     DoMethod(data->GUI.BT_INSTAG, MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.TE_SIGEDIT, 3, MUIM_TextEditor_InsertText, "%t\n", MUIV_TextEditor_InsertText_Cursor);
     DoMethod(data->GUI.BT_INSENV, MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.TE_SIGEDIT, 3, MUIM_TextEditor_InsertText, "%e\n", MUIV_TextEditor_InsertText_Cursor);
-    DoMethod(data->GUI.BT_SIGEDIT,MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Self, 1, MUIM_SignatureTextEdit_EditExternally);
+    DoMethod(data->GUI.BT_SIGEDIT,MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.TE_SIGEDIT, 1, MUIM_SignatureTextEdit_EditExternally);
   }
 
   RETURN(obj);
