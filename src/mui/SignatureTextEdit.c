@@ -137,9 +137,13 @@ DECLARE(SetSignatureText) // const char *sigText
   }
   else
   {
-	W(DBF_CONFIG, "couldn't load signature '%s' in texteditor", SafeStr(msg->sigText));
+	if(msg->sigText != NULL)
+	{
+	  W(DBF_CONFIG, "couldn't load signature '%s' in texteditor", SafeStr(msg->sigText));
+	}
 
-	DoMethod(obj, MUIM_TextEditor_ClearText);
+	xset(obj, MUIA_TextEditor_Contents, "",
+	          MUIA_TextEditor_HasChanged, FALSE);
   }
 
   LEAVE();
