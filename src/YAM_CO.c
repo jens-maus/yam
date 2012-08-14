@@ -1377,8 +1377,6 @@ HOOKPROTONHNONP(CO_GetSignatureEntry, void)
 
   if(sn != NULL)
   {
-    LONG teRev = xget(gui->TE_SIGEDIT, MUIA_Revision);
-
     // all notifies here are nnset() notifies so that we don't trigger any additional
     // notify or otherwise we would run into problems.
     nnset(gui->CH_SIG_ACTIVE, MUIA_Selected, sn->active);
@@ -1386,24 +1384,11 @@ HOOKPROTONHNONP(CO_GetSignatureEntry, void)
     nnset(gui->TE_SIGEDIT, MUIA_SignatureTextEdit_SignatureNode, sn);
     nnset(gui->CH_SIG_FILE, MUIA_Selected, sn->useSignatureFile);
     nnset(gui->ST_SIG_FILE, MUIA_String_Contents, sn->filename);
-    // due to a refresh bug in TextEditor.mcc <= 15.39 this will stay unghosted even
-    // if a signature file will be used
     DoMethod(gui->WI, MUIM_MultiSet, MUIA_Disabled, sn->useSignatureFile == TRUE,
       gui->BT_SIGEDIT,
       gui->BT_INSTAG,
       gui->BT_INSENV,
-      teRev >= 40 ? gui->GR_SIGEDIT : NULL,
       NULL);
-    // switch the editor to read-only mode instead
-    if(sn->useSignatureFile == TRUE && teRev < 40)
-    {
-      set(gui->TE_SIGEDIT, MUIA_TextEditor_ReadOnly, TRUE);
-    }
-    else
-    {
-      xset(gui->TE_SIGEDIT, MUIA_TextEditor_ReadOnly, FALSE,
-                            MUIA_TextEditor_ActiveObjectOnClick, TRUE);
-	}
     set(gui->PO_SIG_FILE, MUIA_Disabled, sn->useSignatureFile == FALSE);
   }
 
@@ -1429,8 +1414,6 @@ HOOKPROTONHNONP(CO_PutSignatureEntry, void)
     DoMethod(gui->LV_SIGNATURE, MUIM_NList_GetEntry, p, &sn);
     if(sn != NULL)
     {
-      LONG teRev = xget(gui->TE_SIGEDIT, MUIA_Revision);
-
       sn->active = GetMUICheck(gui->CH_SIG_ACTIVE);
       GetMUIString(sn->description, gui->ST_SIG_DESC, sizeof(sn->description));
       sn->useSignatureFile = GetMUICheck(gui->CH_SIG_FILE);
@@ -1441,24 +1424,13 @@ HOOKPROTONHNONP(CO_PutSignatureEntry, void)
       if(sn->description[0] == '\0' || strcmp(sn->description, tr(MSG_NewEntry)) == 0)
         strlcpy(sn->description, tr(MSG_CO_Signature), sizeof(sn->description));
 
-      // due to a refresh bug in TextEditor.mcc <= 15.39 this will stay unghosted even
-      // if a signature file will be used
       DoMethod(gui->WI, MUIM_MultiSet, MUIA_Disabled, sn->useSignatureFile == TRUE,
         gui->BT_SIGEDIT,
         gui->BT_INSTAG,
         gui->BT_INSENV,
-        teRev >= 40 ? gui->GR_SIGEDIT : NULL,
         NULL);
-      // switch the editor to read-only mode instead
-      if(sn->useSignatureFile == TRUE && teRev < 40)
-      {
-        set(gui->TE_SIGEDIT, MUIA_TextEditor_ReadOnly, TRUE);
-      }
-      else
-      {
-        xset(gui->TE_SIGEDIT, MUIA_TextEditor_ReadOnly, FALSE,
-                              MUIA_TextEditor_ActiveObjectOnClick, TRUE);
-	  }
+      set(gui->PO_SIG_FILE, MUIA_Disabled, sn->useSignatureFile == FALSE);
+      set(gui->TE_SIGEDIT, MUIA_SignatureTextEdit_UseSignatureFile, sn->useSignatureFile);
 
       // redraw the list
       DoMethod(gui->LV_SIGNATURE, MUIM_NList_Redraw, p);

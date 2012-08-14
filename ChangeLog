@@ -14,6 +14,8 @@ $URL$
   * YAM_CO.c: switching TE.mcc from read-only mode back to read-write requires
     the "active object on click" attribute to be set again, otherwise it is not
     possible to enter new text later on.
+  * YAM_CO.c, mui/SignatureTextEdit.c: let the editor object itself handle the
+    switching between read-only and edit mode.
 
 2012-08-14 Samir Hawamdeh <s.hawamdeh@tin.it>
 
