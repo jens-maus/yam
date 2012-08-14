@@ -1941,7 +1941,8 @@ static BOOL CopyConfigData(struct Config *dco, const struct Config *sco)
 
       if((dstNode = DuplicateNode(srcNode, sizeof(*srcNode))) != NULL)
       {
-        dstNode->signature = strdup(srcNode->signature);
+        if(srcNode->signature != NULL)
+          dstNode->signature = strdup(srcNode->signature);
         AddTail((struct List *)&dco->signatureList, (struct Node *)dstNode);
       }
       else

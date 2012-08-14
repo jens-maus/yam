@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-08-14 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_CO.c: fixed a NULL pointer access.
+
 2012-08-14 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: minor corrections and update to the latest changes.
