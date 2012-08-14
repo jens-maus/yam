@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-08-14 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: minor corrections and update to the latest changes.
+
 2012-08-13 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_CO.c, YAM_COg.c, YAM_COs.c, Signature.c, mui/SignatureTextEdit.c:

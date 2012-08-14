@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.99 (7.08.2012)
+## version $VER: YAM.catalog 7.99 (14.08.2012)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -7,7 +7,7 @@
 ; Compiled with FlexCat 2.10 PPC (AmigaOS4)
 ; $Id$
 ;
-; based on YAM.cd 6190 2012-08-03
+; based on YAM.cd 6226 2012-08-13
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -52,7 +52,7 @@ Apri...
 ; Open...
 ;
 MSG_Append
-Accoda...
+Aggiungi...
 ; Append...
 ;
 MSG_Save
@@ -292,7 +292,7 @@ Sei sicuro di voler uscire da YAM?
 ; Do you really want to quit YAM?
 ;
 MSG_CTtextplain
-testo normale
+Testo normale
 ; plain text
 ;
 MSG_CTtexthtml
@@ -595,13 +595,13 @@ Filtraggio eseguito:\n\
 ;
 MSG_MA_ExportAppendReq
 Il file di output sembra essere già esistente.\n\
-Si desidera sovrascriverlo o si preferisce\n\
-accodare i messaggi?
+Si desidera sovrascriverlo oppure preferisci\n\
+aggiungere i messaggi?
 ; The output file already exists. Do you want\n\
 ; to overwrite it or append the messages?
 ;
 MSG_MA_ExportAppendOpts
-*_Sovrascrivi|A_ccoda|_Annulla
+*_Sovrascrivi|A_ggiungi|_Annulla
 ; *_Overwrite|_Append|_Cancel
 ;
 MSG_MA_MoveMsg
@@ -3652,35 +3652,35 @@ Descrizione
 ; Module WR - Window
 ;
 MSG_WR_SecNone
-Nessuna
+nessuna
 ; None
 ;
 MSG_WR_SecSign
-Firma
+firma
 ; Sign
 ;
 MSG_WR_SecEncrypt
-Codifica
+codifica
 ; Encrypt
 ;
 MSG_WR_SecBoth
-Firma e codifica
+firma e codifica
 ; Sign and encrypt
 ;
 MSG_WR_ImpHigh
-Alta
+alta
 ; High
 ;
 MSG_WR_ImpNormal
-Normale
+normale
 ; Normal
 ;
 MSG_WR_ImpLow
-Bassa
+bassa
 ; Low
 ;
 MSG_WR_NoSig
-Nessuna
+nessuna
 ; None
 ;
 MSG_WR_DefSig
@@ -4630,23 +4630,23 @@ Inviati
 ; Sent
 ;
 MSG_FI_OtherField
-Altri campi:
+altri campi:
 ; other field:
 ;
 MSG_FI_MessageSize
-Dimensione del messaggio
+dimensione del messaggio
 ; Message size
 ;
 MSG_FI_MessageHeader
-Intestazione del messaggio
+intestazione del messaggio
 ; Message headers
 ;
 MSG_FI_MessageBody
-Corpo del messaggio
+corpo del messaggio
 ; Message body
 ;
 MSG_FI_WholeMessage
-Intero messaggio
+intero messaggio
 ; Whole message
 ;
 MSG_FI_SearchIn
@@ -4672,7 +4672,7 @@ _Ovunque
 ; _everywhere
 ;
 MSG_FI_FindIn
-Cerca in
+Cerca su
 ; Find in
 ;
 MSG_FI_FindWhat
@@ -5238,7 +5238,7 @@ spedizione del messaggio a questa persona.
 ; mail to this person.
 ;
 MSG_WR_SecDefaults
-Predefinita
+predefinita
 ; Default
 ;
 MSG_ER_PGPMultipart
@@ -7069,15 +7069,15 @@ Controlla la _nuova posta verificando potenziali contenuti Spam
 ; Check _new mails for spam content
 ;
 MSG_CO_SPAM_RESETTRAININGDATA
-_Resetta dati di riconoscimento
+_resetta dati di riconoscimento
 ; _Reset training data
 ;
 MSG_CO_SPAM_GOODCOUNT
-Numero di messaggi classificati come "non Spam"
+Numero di messaggi classificati come "non spam"
 ; "Not spam" classified mails
 ;
 MSG_CO_SPAM_BADCOUNT
-Numero di messaggi classificati come "Spam"
+Numero di messaggi classificati come "spam"
 ; "Spam" classified mails
 ;
 MSG_BUSYFLUSHINGSPAMTRAININGDATA
@@ -7128,7 +7128,7 @@ _Resetta dati di riconoscimento
 ; _Reset training data
 ;
 MSG_CO_SPAM_RESETMAILFLAGS
-Resetta lo stato di _Spam per tutti i messaggi
+Resetta lo stato di _spam per tutti i messaggi
 ; Reset _spam state of all mails
 ;
 MSG_CO_SPAM_DELETESPAMFOLDER
@@ -7187,7 +7187,7 @@ e su come configurarli nel proprio client di posta.
 ; available and how to configure them in your e-mail client.
 ;
 MSG_ER_SPAMDIR_EXISTS
-La directory \"Spam\" è già esistente!\n\
+La directory \"spam\" è già esistente!\n\
 \n\
 Si desidera usare la cartella già esistente per\n\
 questa operazione oppure si preferisce disattivare\n\
@@ -7270,18 +7270,6 @@ Impossibile esportare la rubrica \"%s\".
 MSG_LOADINGUPDATESTATE
 Caricamento aggiornamento dati...
 ; Loading update state data...
-;
-MSG_CO_ASK_SAVE_SIGNATURE
-Le modifiche per la firma andrebbero salvate separatamente\n\
-rispetto alle impostazioni globali, questo per evitare che esse\n\
-possano essere inavvertitamente cancellate.\n\
-\n\
-Sei sicuro di voler salvare la firma adesso?
-; Changes to the signatures must be saved separately\n\
-; from the global configuration or otherwise they\n\
-; will be lost.\n\
-; \n\
-; Do you want to save the signatures now?
 ;
 MSG_MA_HIDE
 Iconifica
@@ -8420,11 +8408,11 @@ Percorso
 ;
 MSG_ER_ICONOBJECT_WARNING
 Attenzione, si è verificato un errore durante il tentativo\n\
-di caricamento dell'icona '%s.info' dal Tema '%s'.\n\
+di caricamento dell'icona '%s.info' dal tema '%s'.\n\
 L'icona non apparirà in questa sessione.\n\
 \n\
-Per favore assicurati che la directory del Tema contenga\n\
-tutte le icone necessarie, oppure disattiva questo Tema\n\
+Per favore assicurati che la directory del tema contenga\n\
+tutte le icone necessarie, oppure disattiva questo tema\n\
 in modo da evitare ulteriori avvisi.
 ; An error occurred while trying to load icon \
 ; '%s.info' from theme '%s'. The icon will not be displayed \
@@ -8435,10 +8423,10 @@ in modo da evitare ulteriori avvisi.
 ; further warnings.
 ;
 MSG_ER_THEMEVER_FALLBACK
-Attenzione, l'attuale Tema '%s' attivato si è rivelato\n\
+Attenzione, l'attuale tema '%s' attivato si è rivelato\n\
 incompatibile con questa versione di YAM perciò non è\n\
 stato possibile caricarlo.\n\
-Verrà automaticamente attivato il Tema predefinito.\n\
+Verrà automaticamente attivato il tema predefinito.\n\
 \n\
 Per favore assicurati di aver installato l'ultima versione\n\
 disponibile oppure disattivalo dalle impostazioni di YAM.
@@ -8452,12 +8440,12 @@ disponibile oppure disattivalo dalle impostazioni di YAM.
 ;
 MSG_ER_THEMEVER_IGNORE
 Attenzione, si è verificato un errore durante il tentativo\n\
-di caricamento del Tema predefinito di YAM.\n\
-Il Tema selezionato non sembra essere quello corretto\n\
+di caricamento del tema predefinito di YAM.\n\
+Il tema selezionato non sembra essere quello corretto\n\
 oppure potrebbe trattarsi di una vecchia versione.\n\
 \n\
-Il processo di caricamento del Tema è stato annullato.\n\
-Si consiglia di aggiornare il Tema all'ultima versione\n\
+Il processo di caricamento del tema è stato annullato.\n\
+Si consiglia di aggiornare il tema all'ultima versione\n\
 disponibile.
 ; While trying to load the default theme of YAM, it \
 ; was found to be of an incorrect version.\n\
@@ -8487,9 +8475,9 @@ Attenzione, si è verificato un errore durante il tentativo\n\
 di caricamento del file immagine: '%s'\n\
 dalla directory '%s'.\n\
 \n\
-Per favore assicurati che il tuo Tema contenga tutte le\n\
+Per favore assicurati che il tuo tema contenga tutte le\n\
 immagini necessarie come definito dalle impostazioni\n\
-dell'ultima versione del Tema di YAM.
+dell'ultima versione del tema di YAM.
 ; An error occurred while trying to load the image file \
 ; '%s' from directory '%s'.\n\
 ; \n\
@@ -8498,12 +8486,12 @@ dell'ultima versione del Tema di YAM.
 ; layout.
 ;
 MSG_ER_THEME_FATAL
-Attenzione, YAM non è stato in grado di caricare il Tema\n\
+Attenzione, YAM non è stato in grado di caricare il tema\n\
 predefinito.\n\
 Il caricamento è stato annullato automaticamente!\n\
 \n\
 Per favore assicurati che la directory dove sono residenti\n\
-i Temi risulti leggibile e che contenga il Tema predefinito\n\
+i Temi risulti leggibile e che contenga il tema predefinito\n\
 distribuito con l'archivio finale di YAM.
 ; YAM was unable to load the default theme and aborted \
 ; the theme loading completly.\n\
@@ -8512,12 +8500,12 @@ distribuito con l'archivio finale di YAM.
 ; contains the correct default theme distributed with YAM.
 ;
 MSG_ER_THEME_FALLBACK
-Attenzione, il nuovo Tema selezionato denominato\n\
+Attenzione, il nuovo tema selezionato denominato\n\
 '%s' potrebbe essere inaccessibile o danneggiato.\n\
-Verrà automaticamente attivato il Tema predefinito.\n\
+Verrà automaticamente attivato il tema predefinito.\n\
 \n\
-Per favore assicurati che il Tema selezionato sia\n\
-leggibile e che risulti essere un valido Tema di YAM.
+Per favore assicurati che il tema selezionato sia\n\
+leggibile e che risulti essere un valido tema di YAM.
 ; The currently activated theme '%s' is either \
 ; inaccesible or it is corrupt. The default theme \
 ; was therefore activated as a fallback.\n\
@@ -8530,7 +8518,7 @@ YAM richiede di essere riavviato
 ; YAM restart required
 ;
 MSG_ER_THEME_ACTIVATED
-Attenzione, prima che il Tema selezionato venga applicato\n\
+Attenzione, prima che il tema selezionato venga applicato\n\
 è necessario salvare la propria configurazione e riavviare\n\
 il programma.
 ; Before the selected theme can be applied, you have\n\
@@ -9206,7 +9194,7 @@ Spaziatura fissa?
 ; Fixed font?
 ;
 MSG_CO_SPAM_OPTIMIZE_TRAININGDATA
-_Ottimizza dati di riconoscimento
+_ottimizza dati di riconoscimento
 ; _Optimize training data
 ;
 MSG_HELP_BT_OPTIMIZE_TRAININGDATA
@@ -9652,51 +9640,51 @@ L'output generato potrebbe contenere dati invalidi o corrotti.
 ; MSGFILE
 ;
 MSG_CO_ACTION_SET_STATUS_TO_MARKED
-Imposta lo stato su 'Marcato'
+Imposta lo stato su 'marcato'
 ; Set status to 'Marked'
 ;
 MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_MARKED
-Imposta lo stato del messaggio filtrato su 'Marcato'
+Imposta lo stato del messaggio filtrato su 'marcato'
 ; Set the status of the filtered mail to 'Marked'
 ;
 MSG_CO_ACTION_SET_STATUS_TO_UNMARKED
-Imposta lo stato su 'Non marcato'
+Imposta lo stato su 'non marcato'
 ; Set status to 'Unmarked'
 ;
 MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_UNMARKED
-Imposta lo stato del messaggio filtrato su 'Non marcato'
+Imposta lo stato del messaggio filtrato su 'non marcato'
 ; Set the status of the filtered mail to 'Unmarked'
 ;
 MSG_CO_ACTION_SET_STATUS_TO_READ
-Imposta lo stato su 'Letto'
+Imposta lo stato su 'letto'
 ; Set status to 'Read'
 ;
 MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_READ
-Imposta lo stato del messaggio filtrato su 'Letto'
+Imposta lo stato del messaggio filtrato su 'letto'
 ; Set the status of the filtered mail to 'Read'
 ;
 MSG_CO_ACTION_SET_STATUS_TO_UNREAD
-Imposta lo stato su 'Non letto'
+Imposta lo stato su 'non letto'
 ; Set status to 'Unread'
 ;
 MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_UNREAD
-Imposta lo stato del messaggio filtrato su 'Non letto'
+Imposta lo stato del messaggio filtrato su 'non letto'
 ; Set the status of the filtered mail to 'Unread'
 ;
 MSG_CO_ACTION_SET_STATUS_TO_SPAM
-Imposta lo stato su 'Spam'
+Imposta lo stato su 'spam'
 ; Set status to 'Spam'
 ;
 MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_SPAM
-Imposta lo stato del messaggio filtrato su 'Spam'
+Imposta lo stato del messaggio filtrato su 'spam'
 ; Set the status of the filtered mail to 'Spam'
 ;
 MSG_CO_ACTION_SET_STATUS_TO_HAM
-Imposta lo stato su 'Non spam'
+Imposta lo stato su 'non spam'
 ; Set status to 'Not spam'
 ;
 MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_HAM
-Imposta lo stato del messaggio filtrato su 'Non spam'
+Imposta lo stato del messaggio filtrato su 'non spam'
 ; Set the status of the filtered mail to 'Not spam'
 ;
 MSG_CO_SMTP_ACTIVE
@@ -10512,10 +10500,18 @@ Importazione del filtro
 ; Import filter
 ;
 MSG_SPAM_TRUSTHEADERLINES
-Fidati dell'intestazione di questo filtro esterno:
+Fidati dell'intestazione del filtro esterno:
 ; Trust header lines of this external filter:
 ;
 MSG_ER_POP3_UIDLHASH_INIT_FAILED
 Impossibile inizializzare la tabella hash UIDL.
 ; Failed to initialized UIDL hash table.
+;
+MSG_CO_SIGNATURE_TEXT
+Testo firma
+; Signature text
+;
+MSG_CO_APPEND_SIGNATURE_FILE
+Aggiungi un file al posto della firma
+; Append a file as signature instead
 ;
