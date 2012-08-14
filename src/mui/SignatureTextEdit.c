@@ -83,7 +83,7 @@ OVERLOAD(OM_SET)
         {
           // import the new signature text
           DoMethod(obj, METHOD(SetSignatureText), data->sigNode->signature);
-          // switch read-only/read-write mode
+          // switch read-only/edit mode
           set(obj, ATTR(UseSignatureFile), data->sigNode->useSignatureFile);
         }
 	  }
@@ -93,14 +93,14 @@ OVERLOAD(OM_SET)
 	  {
         if(tag->ti_Data == FALSE)
         {
-          // switch to rea-write mode if no signature file is used
+          // switch to read-write mode if no signature file is used
           SetSuperAttrs(cl, obj, MUIA_TextEditor_ReadOnly, FALSE,
                                  MUIA_TextEditor_ActiveObjectOnClick, TRUE,
                                  TAG_DONE);
 		}
 		else
         {
-          // switch to read-only mode if a signature file is used
+          // switch to edit mode if a signature file is used
           SetSuperAttrs(cl, obj, MUIA_TextEditor_ReadOnly, TRUE,
                                  TAG_DONE);
         }
