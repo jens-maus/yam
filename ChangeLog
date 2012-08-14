@@ -9,6 +9,8 @@ $URL$
 
   * YAM_CO.c: fixed a NULL pointer access.
   * Signature.c: fixed two NULL pointer accesses.
+  * YAM.c: fixed a crash in case YAM had to terminate early due to missing
+    custom classes.
 
 2012-08-14 Samir Hawamdeh <s.hawamdeh@tin.it>
 

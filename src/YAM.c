@@ -2094,7 +2094,7 @@ static void InitBeforeLogin(BOOL hidden)
   CheckMCC(MUIC_NBalance,   15,  12, TRUE, "http://www.sf.net/projects/nlist-classes/");
 
   // Lets check for the correct TextEditor.mcc version
-  CheckMCC(MUIC_TextEditor, 15, 38, TRUE, "http://www.sf.net/projects/texteditor-mcc/");
+  CheckMCC(MUIC_TextEditor, 15, 40, TRUE, "http://www.sf.net/projects/texteditor-mcc/");
 
   // initialize the shared connection semaphore
   if(InitConnections() == FALSE)
@@ -3083,11 +3083,19 @@ void MicroMainLoop(void)
   ULONG threadSig;
   ULONG methodStackSig;
 
+  // !! CAUTION !!
+  // This function might be called upon early termination (i.e. due to missing
+  // stuff) and hence certain structures might not be initialized yet, like the
+  // method stack or the application object. Take care of this!
+
   ENTER();
 
   // prepare all signal bits
-  threadSig      = (1UL << G->threadPort->mp_SigBit);
-  methodStackSig = (1UL << G->methodStack->mp_SigBit);
+  threadSig = (1UL << G->threadPort->mp_SigBit);
+  if(G->methodStack != NULL)
+    methodStackSig = (1UL << G->methodStack->mp_SigBit);
+  else
+    methodStackSig = 0L;
 
   D(DBF_STARTUP, "YAM allocated signals:");
   D(DBF_STARTUP, " threadSig         = %08lx", threadSig);
@@ -3097,11 +3105,13 @@ void MicroMainLoop(void)
   SetSignal(0UL, threadSig|methodStackSig);
 
   // handle the possibly received signals
-  CheckMethodStack();
+  if(G->methodStack != NULL)
+    CheckMethodStack();
   HandleThreads(TRUE);
 
   // let the application handle some stuff
-  DoMethod(G->App, MUIM_Application_NewInput, &signals);
+  if(G->App != NULL)
+    DoMethod(G->App, MUIM_Application_NewInput, &signals);
 
   LEAVE();
 }
