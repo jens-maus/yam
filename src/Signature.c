@@ -229,88 +229,92 @@ struct SignatureNode *FindSignatureByID(const struct MinList *signatureList, con
 char *ImportSignature(const char *src)
 {
   char *sig = NULL;
-  char c;
 
   ENTER();
 
-  while((c = *src++) != '\0')
+  if(src != NULL)
   {
-    if(c == '\\')
+    char c;
+
+    while((c = *src++) != '\0')
     {
-      // peek at the next character and convert it if possible
-      switch(*src)
+      if(c == '\\')
       {
-        case 'n':
+        // peek at the next character and convert it if possible
+        switch(*src)
         {
-          c = '\n';
-          src++;
-        }
-        break;
-
-        case 'r':
-        {
-          c = '\r';
-          src++;
-        }
-        break;
-
-        case 't':
-        {
-          c = '\t';
-          src++;
-        }
-        break;
-
-        case '\\':
-        {
-          c = '\\';
-          src++;
-        }
-        break;
-
-        case 'x':
-        case 'X':
-        {
-          // convert \xHH to a character
-          if(src[1] != '\0' && src[2] != '\0')
+          case 'n':
           {
-            // don't use strtol() on the source string directly as it may contain
-            // valid hex characters after the \xHH sequence when then would get
-            // swallowed.
-            char hex[3];
-
-            hex[0] = src[1];
-            hex[1] = src[2];
-            hex[2] = '\0';
-            c = (char)strtol(hex, NULL, 16);
-            src += 3;
+            c = '\n';
+            src++;
           }
-		}
-		break;
+          break;
 
-		default:
-		{
-          // unsupported backslash sequence, use character "as it is"
-		}
-		break;
+          case 'r':
+          {
+            c = '\r';
+            src++;
+          }
+          break;
+
+          case 't':
+          {
+            c = '\t';
+            src++;
+          }
+          break;
+
+          case '\\':
+          {
+            c = '\\';
+            src++;
+          }
+          break;
+
+          case 'x':
+          case 'X':
+          {
+            // convert \xHH to a character
+            if(src[1] != '\0' && src[2] != '\0')
+            {
+              // don't use strtol() on the source string directly as it may contain
+              // valid hex characters after the \xHH sequence when then would get
+              // swallowed.
+              char hex[3];
+
+              hex[0] = src[1];
+              hex[1] = src[2];
+              hex[2] = '\0';
+              c = (char)strtol(hex, NULL, 16);
+              src += 3;
+            }
+  		  }
+  		  break;
+
+  		  default:
+  		  {
+            // unsupported backslash sequence, use character "as it is"
+  		  }
+  		  break;
+        }
+      }
+
+      if(c != '\0')
+      {
+        // append a plain ASCII character
+        char cat[2] = {c, '\0'};
+
+        StrBufCat(&sig, cat);
       }
     }
 
-    if(c != '\0')
+    if(sig != NULL)
     {
-      // append a plain ASCII character
-      char cat[2] = {c, '\0'};
+      char *tmp = strdup(sig);
 
-      StrBufCat(&sig, cat);
+      FreeStrBuf(sig);
+      sig = tmp;
     }
-  }
-
-  if(sig != NULL)
-  {
-    char *tmp = strdup(sig);
-
-    FreeStrBuf(sig);
-    sig = tmp;
   }
 
   RETURN(sig);
@@ -323,67 +327,71 @@ char *ImportSignature(const char *src)
 char *ExportSignature(const char *src)
 {
   char *sig = NULL;
-  char c;
 
   ENTER();
 
-  while((c = *src++) != '\0')
+  if(src != NULL)
   {
-    // replace non-ASCII characters by well known backslash sequences
-    switch(c)
+    char c;
+
+    while((c = *src++) != '\0')
     {
-      case '\n':
+      // replace non-ASCII characters by well known backslash sequences
+      switch(c)
       {
-        StrBufCat(&sig, "\\n");
-      }
-      break;
-
-      case '\r':
-      {
-        StrBufCat(&sig, "\\r");
-      }
-      break;
-
-      case '\t':
-      {
-        StrBufCat(&sig, "\\t");
-      }
-      break;
-
-      case '\\':
-      {
-        StrBufCat(&sig, "\\\\");
-      }
-      break;
-
-      default:
-      {
-        if(isprint((int)c))
+        case '\n':
         {
-          // printable ASCII characters are used unmodified
-          char cat[2] = {c, '\0'};
-
-          StrBufCat(&sig, cat);
+          StrBufCat(&sig, "\\n");
         }
-        else
+        break;
+
+        case '\r':
         {
-          char xchar[6];
+          StrBufCat(&sig, "\\r");
+        }
+        break;
 
-          // use the typical \xHH representation
-          snprintf(xchar, sizeof(xchar), "\\x%02x", c & 0xff);
-          StrBufCat(&sig, xchar);
-	    }
+        case '\t':
+        {
+          StrBufCat(&sig, "\\t");
+        }
+        break;
+
+        case '\\':
+        {
+          StrBufCat(&sig, "\\\\");
+        }
+        break;
+
+        default:
+        {
+          if(isprint((int)c))
+          {
+            // printable ASCII characters are used unmodified
+            char cat[2] = {c, '\0'};
+
+            StrBufCat(&sig, cat);
+          }
+          else
+          {
+            char xchar[6];
+
+            // use the typical \xHH representation
+            snprintf(xchar, sizeof(xchar), "\\x%02x", c & 0xff);
+            StrBufCat(&sig, xchar);
+  	      }
+        }
+        break;
       }
-      break;
     }
-  }
 
-  if(sig != NULL)
-  {
-    char *tmp = strdup(sig);
+    if(sig != NULL)
+    {
+      char *tmp = strdup(sig);
 
-    FreeStrBuf(sig);
-    sig = tmp;
+      FreeStrBuf(sig);
+      sig = tmp;
+    }
   }
 
   RETURN(sig);

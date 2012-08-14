@@ -8,6 +8,7 @@ $URL$
 2012-08-14 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_CO.c: fixed a NULL pointer access.
+  * Signature.c: fixed two NULL pointer accesses.
 
 2012-08-14 Samir Hawamdeh <s.hawamdeh@tin.it>
 
