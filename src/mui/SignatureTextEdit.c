@@ -93,14 +93,14 @@ OVERLOAD(OM_SET)
 	  {
         if(tag->ti_Data == FALSE)
         {
-          // switch to read-write mode if no signature file is used
+          // switch to edit mode if no signature file is used
           SetSuperAttrs(cl, obj, MUIA_TextEditor_ReadOnly, FALSE,
                                  MUIA_TextEditor_ActiveObjectOnClick, TRUE,
                                  TAG_DONE);
 		}
 		else
         {
-          // switch to edit mode if a signature file is used
+          // switch to read-write mode if a signature file is used
           SetSuperAttrs(cl, obj, MUIA_TextEditor_ReadOnly, TRUE,
                                  TAG_DONE);
         }
