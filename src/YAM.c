@@ -2094,7 +2094,7 @@ static void InitBeforeLogin(BOOL hidden)
   CheckMCC(MUIC_NBalance,   15,  12, TRUE, "http://www.sf.net/projects/nlist-classes/");
 
   // Lets check for the correct TextEditor.mcc version
-  CheckMCC(MUIC_TextEditor, 15, 40, TRUE, "http://www.sf.net/projects/texteditor-mcc/");
+  CheckMCC(MUIC_TextEditor, 15, 39, TRUE, "http://www.sf.net/projects/texteditor-mcc/");
 
   // initialize the shared connection semaphore
   if(InitConnections() == FALSE)
