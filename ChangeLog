@@ -11,6 +11,9 @@ $URL$
   * Signature.c: fixed two NULL pointer accesses.
   * YAM.c: fixed a crash in case YAM had to terminate early due to missing
     custom classes.
+  * YAM_CO.c: switching TE.mcc from read-only mode back to read-write requires
+    the "active object on click" attribute to be set again, otherwise it is not
+    possible to enter new text later on.
 
 2012-08-14 Samir Hawamdeh <s.hawamdeh@tin.it>
 
