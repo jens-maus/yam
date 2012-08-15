@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-08-15 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_WR.c: added a safety NULL check when generating a new message ID.
+
 2012-08-14 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_CO.c: fixed a NULL pointer access.

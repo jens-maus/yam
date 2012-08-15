@@ -108,19 +108,26 @@ static char *GetDateTime(void)
 //  Creates a unique id, used for Message-ID header field
 static void NewMessageID(char *idbuf, const size_t idbufSize, const struct MailServerNode *msn)
 {
-  unsigned int seconds;
-  struct DateStamp ds;
-
   ENTER();
 
-  // lets calculate the seconds
-  DateStamp(&ds);
-  seconds = ds.ds_Days * 24 * 60 * 60 + ds.ds_Minute * 60; // seconds since 1-Jan-78
+  if(msn != NULL)
+  {
+    unsigned int seconds;
+    struct DateStamp ds;
 
-  // Here we try to generate a unique MessageID.
-  // We try to be as much conform to the Recommandations for generating
-  // unique Message IDs as we can: http://www.jwz.org/doc/mid.html
-  snprintf(idbuf, idbufSize, "<%x%x.%x@%s>", seconds, (unsigned int)ds.ds_Tick, (unsigned int)rand(), msn->hostname);
+    // lets calculate the seconds
+    DateStamp(&ds);
+    seconds = ds.ds_Days * 24 * 60 * 60 + ds.ds_Minute * 60; // seconds since 1-Jan-78
+
+    // Here we try to generate a unique MessageID.
+    // We try to be as much conform to the Recommandations for generating
+    // unique Message IDs as we can: http://www.jwz.org/doc/mid.html
+    snprintf(idbuf, idbufSize, "<%x%x.%x@%s>", seconds, (unsigned int)ds.ds_Tick, (unsigned int)rand(), msn->hostname);
+  }
+  else
+  {
+    E(DBF_MAIL, "no SMTP server configured");
+  }
 
   LEAVE();
 }
