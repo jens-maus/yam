@@ -372,6 +372,17 @@ struct MailServerNode *FindMailServer(const struct MinList *mailServerList, cons
     }
   }
 
+  if(result == NULL)
+  {
+    // fall back to the first configured mail server if the requested one could not be found
+    W(DBF_ALWAYS, "mail server with id %08lx not found, using first one", id);
+    result = GetMailServer(mailServerList, 0);
+    if(result == NULL)
+    {
+      E(DBF_ALWAYS, "there is no mail server configured at all!");
+	}
+  }
+
   RETURN(result);
   return result;
 }
