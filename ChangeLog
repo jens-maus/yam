@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-08-15 Jens Langner <Jens.Langner@light-speed.de>
+
+  * src/YAM.c: moved the method stack init¿alization somewhat more up to make sure
+    everything is properly initialized. This should close #342.
+
 2012-08-15 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_WR.c: added a safety NULL check when generating a new message ID.

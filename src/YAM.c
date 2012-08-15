@@ -2073,6 +2073,14 @@ static void InitBeforeLogin(BOOL hidden)
     INITLIB("application.library", 50, 0, &ApplicationBase, "application", 1, &IApplication, FALSE, NULL);
   #endif
 
+  // initialize the shared connection semaphore
+  if(InitConnections() == FALSE)
+    Abort(tr(MSG_ERROR_CONNECTIONS));
+
+  // initialize the method stack
+  if(InitMethodStack() == FALSE)
+    Abort(tr(MSG_ERROR_METHODSTACK));
+
   // initialize the thread system of YAM
   if(InitThreads() == FALSE)
     Abort(tr(MSG_ERROR_THREADS));
@@ -2095,14 +2103,6 @@ static void InitBeforeLogin(BOOL hidden)
 
   // Lets check for the correct TextEditor.mcc version
   CheckMCC(MUIC_TextEditor, 15, 39, TRUE, "http://www.sf.net/projects/texteditor-mcc/");
-
-  // initialize the shared connection semaphore
-  if(InitConnections() == FALSE)
-    Abort(tr(MSG_ERROR_CONNECTIONS));
-
-  // initialize the method stack
-  if(InitMethodStack() == FALSE)
-    Abort(tr(MSG_ERROR_METHODSTACK));
 
   // now we search through PROGDIR:Charsets and load all user defined
   // codesets via codesets.library
