@@ -4053,6 +4053,7 @@ void LoadLayout(void)
   D(DBF_UTIL, "first character '%lc' is %s", ls[0], isdigit(ls[0]) ? "a digit" : "no digit");
 
   // old style layout strings start with a number
+  // do NOT check for TRUE, as isdigit() is documented to return a non-zero value only
   if(isdigit(ls[0]))
   {
     LONG v;
