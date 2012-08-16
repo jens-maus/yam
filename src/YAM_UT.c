@@ -4050,8 +4050,10 @@ void LoadLayout(void)
   else
     D(DBF_UTIL, "loaded layout string '%s'", ls);
 
+  D(DBF_UTIL, "first character '%lc' is %s", ls[0], isdigit(ls[0]) ? "a digit" : "no digit");
+
   // old style layout strings start with a number
-  if(isdigit(ls[0]) == TRUE)
+  if(isdigit(ls[0]))
   {
     LONG v;
 
@@ -4178,6 +4180,8 @@ void LoadLayout(void)
       // now let DOS parse the layout string
       if((rda = ReadArgs(LAYOUT_TEMPLATE, args.array, rdsource)) != NULL)
       {
+        D(DBF_UTIL, "ReadArgs() of '%s' succeeded", ls);
+
         if(args.vars.mainFolderTreeHoriz != NULL)
           G->Weights[0] = args.vars.mainFolderTreeHoriz[0];
 
@@ -4211,10 +4215,13 @@ void LoadLayout(void)
         if(args.vars.preselectionList != NULL)
           strlcpy(G->preselectionListLayout, args.vars.preselectionList, sizeof(G->preselectionListLayout));
 
+        if(args.vars.dummy != NULL)
+          D(DBF_UTIL, "ignored layout parameters '%s'", args.vars.dummy);
+
         FreeArgs(rda);
       }
       else
-        E(DBF_UTIL, "ReadArgs() of '%s' failed, error %ld\n", ls, IoErr());
+        E(DBF_UTIL, "ReadArgs() of '%s' failed, error %ld", ls, IoErr());
 
       FreeDosObject(DOS_RDARGS, rdsource);
     }

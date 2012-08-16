@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-08-16 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_UT.c: slightly changed the recognition of old and new layout strings and
+    added some debug output.
+
 2012-08-15 Jens Langner <Jens.Langner@light-speed.de>
 
   * src/YAM.c: moved the method stack init¿alization somewhat more up to make sure
