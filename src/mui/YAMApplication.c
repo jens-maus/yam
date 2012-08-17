@@ -1019,6 +1019,7 @@ DECLARE(NewMailAlert) // struct MailServerNode *msn, struct DownloadResult *down
   SHOWSTRING(DBF_NET, msg->msn->description);
   SHOWVALUE(DBF_NET, msg->downloadResult->downloaded);
   SHOWVALUE(DBF_NET, msg->filterResult->Spam);
+  SHOWVALUE(DBF_GUI, msg->flags);
 
   // show the statistics only if we downloaded some mails at all,
   // and not all of them were spam mails
