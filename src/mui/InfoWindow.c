@@ -80,6 +80,8 @@ OVERLOAD(OM_NEW)
     }
   }
 
+  D(DBF_GUI, "parent %08lx active %ld parentactive %ld", parent, active, parent != NULL ? xget(parent, MUIA_Window_Activate) : FALSE);
+
   if((obj = DoSuperNew(cl, obj,
 
     MUIA_Window_LeftEdge,  MUIV_Window_LeftEdge_Centered,
