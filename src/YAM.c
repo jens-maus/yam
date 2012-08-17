@@ -1066,11 +1066,6 @@ static void Terminate(void)
   }
   G->ER_NumErr = 0;
 
-  D(DBF_STARTUP, "freeing config...");
-  CO_ClearConfig(C);
-  free(C);
-  C = NULL;
-
   // free our private codesets list
   D(DBF_STARTUP, "freeing private codesets list...");
   if(G->codesetsList != NULL)
@@ -1096,6 +1091,11 @@ static void Terminate(void)
     MUI_DisposeObject(G->App);
     G->App = NULL;
   }
+
+  D(DBF_STARTUP, "freeing config...");
+  CO_ClearConfig(C);
+  free(C);
+  C = NULL;
 
   D(DBF_STARTUP, "unloading/freeing theme images...");
   FreeTheme(&G->theme);

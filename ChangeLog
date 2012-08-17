@@ -9,6 +9,8 @@ $URL$
 
   * YAM_UT.c: slightly changed the recognition of old and new layout strings and
     added some debug output.
+  * YAM.c: defer freeing the global config structure after the main application
+    object has been disposed as this class accesses the config in its destructor.
 
 2012-08-15 Jens Langner <Jens.Langner@light-speed.de>
 
