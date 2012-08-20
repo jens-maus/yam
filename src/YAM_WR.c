@@ -1287,10 +1287,10 @@ BOOL WriteOutMessage(struct Compose *comp)
   // now we add a "X-YAM-Options" header to the mail so
   // that we can identify later certain options we have to set
   // if the same mail is being edited by the user again
-  snprintf(buf, sizeof(buf), "sigfile=%08x,identity=%08x,security=%s%s", comp->Signature != NULL ? comp->Signature->id : 0,
-                                                                         comp->Identity->id,
-                                                                         SecCodes[comp->SelSecurity],
-                                                                         comp->DelSend == TRUE ? ",delsent" : "");
+  snprintf(buf, sizeof(buf), "signature=%08x,identity=%08x,security=%s%s", comp->Signature != NULL ? comp->Signature->id : 0,
+                                                                           comp->Identity != NULL ? comp->Identity->id : 0,
+                                                                           SecCodes[comp->SelSecurity],
+                                                                           comp->DelSend == TRUE ? ",delsent" : "");
   EmitHeader(fh, "X-YAM-Options", buf);
 
   // put the From: header entry into the mail

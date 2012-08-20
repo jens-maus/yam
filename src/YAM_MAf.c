@@ -2613,8 +2613,8 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
             email->DelSend = TRUE;
           }
 
-          // check for the sigfileX flag
-          if((p = strcasestr(value, "sigfile=")) != NULL)
+          // check for the signature flag
+          if((p = strcasestr(value, "signature=")) != NULL)
           {
             char idStr[9] = ""; // the is only 8 chars long + 1 NUL
 
