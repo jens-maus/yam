@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.2 (02.08.2012)
+## version $VER: YAM.catalog 7.2 (20.08.2012)
 ## language türkçe
 ## codeset 0
 ## chunk AUTH Alper Sönmez <amithlondestek@gmail.com>
@@ -38,10 +38,6 @@ Ekler
 MSG_Options
 Seçenekler
 ; Options
-;
-MSG_Add
-_Yeni
-; _New
 ;
 MSG_Del
 _Sil
@@ -1098,10 +1094,6 @@ MSG_CO_CrdSignature
 Ýmza
 ; Signature
 ;
-MSG_CO_CrdLists
-Listeler
-; Lists
-;
 MSG_CO_CrdMIME
 MIME
 ; MIME
@@ -1242,10 +1234,6 @@ MSG_CO_EmailAddress
 E-_Posta adresi
 ; _E-mail address
 ;
-MSG_CO_POPServer
-POP_3 sunucusu
-; POP_3 server
-;
 MSG_CO_Password
 Þi_fre
 ; _Password
@@ -1257,10 +1245,6 @@ Saat _dilimi
 MSG_CO_SendMail
 Posta gönderme (SMTP)
 ; Send mail (SMTP)
-;
-MSG_CO_Domain
-Ala_n adý
-; Do_main
 ;
 MSG_CO_Allow8bit
 Sunucu _8bit karakterlere izin verir
@@ -1318,14 +1302,6 @@ MSG_CO_PreSelect
 _Ön-seçim
 ; _Pre-selection
 ;
-MSG_CO_UpdateStatus
-Ýleti _durumunu güncelle
-; Update m_essage status
-;
-MSG_CO_AutoOperation
-Otomatik uygulama
-; Automatic operation
-;
 MSG_CO_CheckMail
 Posta kontrolü, her
 ; Check for new mail every
@@ -1333,10 +1309,6 @@ Posta kontrolü, her
 MSG_CO_Minutes
 dakikada bir yapýlsýn.
 ; minutes
-;
-MSG_CO_Notification
-Bildirim
-; Notification
 ;
 MSG_CO_NotiReq
 Ý_stemci
@@ -1526,14 +1498,6 @@ MSG_CO_DefaultViewer
 _Varsayýlan görüntüleyici
 ; De_fault viewer
 ;
-MSG_CO_MessageHeader
-Ýleti baþlýklarý
-; Message headers
-;
-MSG_CO_ReplyTo
-_Yanýtla
-; _Reply to
-;
 MSG_CO_Organization
 Kuru_m
 ; _Organization
@@ -1654,10 +1618,6 @@ MSG_CO_Signature
 Ýmza
 ; Signature
 ;
-MSG_CO_UseSig
-Ým_za kullan
-; Use s_ignatures
-;
 MSG_CO_EditSig
 _Harici düzenleyici ile yaz
 ; _Edit in external editor
@@ -1705,14 +1665,6 @@ MSG_CO_LogVerbose
 MSG_CO_PGPExe
 PGP _dizini
 ; P_GP's directory
-;
-MSG_CO_PGPKey
-PGP _þifreniz
-; Your PGP key _ID
-;
-MSG_CO_EncryptToSelf
-K_endine þifrele
-; _Encrypt to self
 ;
 MSG_CO_Logfiles
 Günlük dosyalarý
@@ -1794,10 +1746,6 @@ MSG_CO_Gallery
 _Fotoðraflarý buraya kaydet
 ; Save _photos in
 ;
-MSG_CO_MyURL
-_Resminizin URL'i
-; UR_L of your picture
-;
 MSG_CO_AddToAddrbook
 _Gönderenin adresini kaydet
 ; Sa_ve sender's address
@@ -1809,10 +1757,6 @@ _HTTP Proxy sunucusu
 MSG_CO_NewGroup
 _Yeni girdiler için grup
 ; _Group for new entries
-;
-MSG_CO_AddInfo
-Kiþisel bilgi _ekle
-; _Add personal info
 ;
 MSG_CO_Paths
 Yollar
@@ -1857,10 +1801,6 @@ veya daha fazla mesaj silineceðinde onay penceresi göster
 MSG_CO_Remove
 Ýletileri _hemen sil
 ; _Remove messages immediately
-;
-MSG_CO_SaveSent
-_Gönderilen iletileri kaydet
-; Sa_ve sent messages
 ;
 MSG_CO_XPK
 XPK/LhA ayarlarý
@@ -2014,14 +1954,6 @@ sunucusunun adresi varsayýlan olarak kullanýlacaktýr.
 ; The address of the SMTP server to send mail to.\n\
 ; If you leave this field empty, the address of the\n\
 ; POP3 server will be used as fallback.
-;
-MSG_HELP_CO_ST_DOMAIN
-Sisteminizin "bilgisayar adý" (hostname).\n\
-HELO komutu baþarýsýz olursa bu alaný\n\
-deðiþtiriniz.
-; The hostname of your computer.\n\
-; Change this field if the HELO\n\
-; commands fails.
 ;
 MSG_HELP_CO_CH_SMTP8BIT
 Transfer esnasýnda iletileri 7-bit'e dönüþtürmez.\n\
@@ -2343,26 +2275,6 @@ için kullanýlacak program.
 ; Program used to display\n\
 ; attachments of unknown type.
 ;
-MSG_HELP_CO_ST_REPLYTO
-Ýletilerinize gönderilecek cevaplarýn varsayýlan olarak,\n\
-sizinkinin yanýsýra veya yerine, baþka e-posta adres(ler)ine\n\
-gönderilmesini istiyorsanýz, o adresleri buraya giriniz.
-; Should replies to your messages need to be sent by\n\
-; default somewhere else besides (or instead of) your\n\
-; e-mail address, specify those other addresses here.
-;
-MSG_HELP_CO_ST_ORGAN
-Þirket veya\n\
-kurumunuzun adý.
-; The name of your\n\
-; company or institute.
-;
-MSG_HELP_CO_ST_EXTHEADER
-Her giden iletiye eklenecek\n\
-ilave ileti baþlýklarý.
-; Additional message header(s) that will\n\
-; be added to every outgoing message.
-;
 MSG_HELP_CO_ST_HELLOTEXT
 Yeni iletinin baþýna\n\
 eklenecek metin.
@@ -2439,12 +2351,6 @@ için bu deyimleri kullan.
 ; Use these phrases in replies to\n\
 ; messages from a mailing list.
 ;
-MSG_HELP_CO_CH_QUOTE
-Yanýtlarken, yanýtlanan asýl\n\
-ileti alýntýlansýn mý?
-; Quote the original\n\
-; message in your reply?
-;
 MSG_HELP_CO_CH_QUOTEEMPTY
 Boþ satýrlar için de alýntý karakteri\n\
 kullanýlsýn mý?
@@ -2464,12 +2370,6 @@ Alýntýlanan iletinin imza kýsmýný\n\
 almaz.
 ; Avoids quoting the signature\n\
 ; of the original message.
-;
-MSG_HELP_CO_CY_SIGNAT
-Düzenlemek istediðiniz\n\
-imzayý seçiniz.
-; Select the signature\n\
-; you want to edit.
 ;
 MSG_HELP_CO_BT_EDITSIG
 Bu imzayý harici bir\n\
@@ -2537,18 +2437,6 @@ bulunduðu dizin.
 ; Directory where the PGP\n\
 ; executable can be found.
 ;
-MSG_HELP_CO_ST_MYPGPID
-Ýletileri imzalamak ve þifrelemek için\n\
-kullanýlan PGP anahtarýnýn ID'si.
-; The ID of your PGP key that is used\n\
-; to sign and encrypt messages.
-;
-MSG_HELP_CO_CH_ENCSELF
-Yeni iletilerinizi 'ortak anahtar' (public key) ile þifreler,\n\
-böylece giden iletilerinizi okuyabilir veya düzenleyebilirsiniz.
-; Encrypt new messages with your public key,\n\
-; so you can still read or edit outgoing messages.
-;
 MSG_HELP_CO_ST_LOGFILE
 Günlük dosyalarýnýn\n\
 saklanacaðý yer.
@@ -2606,12 +2494,6 @@ Yazýþtýklarýnýzýn resimlerini\n\
 kaydedeceðiniz konum.
 ; Directory to save the pictures\n\
 ; of your correspondents.
-;
-MSG_HELP_CO_ST_PHOTOURL
-Kullanýcý resminizin\n\
-URL adresi.
-; URL address of your\n\
-; portrait image.
 ;
 MSG_HELP_CO_CY_ATAB
 Ýletisini okuduðunuz her yeni kiþi için,\n\
@@ -2682,12 +2564,6 @@ doðrudan sil.\n\
 ; Immediately delete the messages rather\n\
 ; than moving them to the Trash folder.\n\
 ; (Use this with care)
-;
-MSG_HELP_CO_CH_SAVESENT
-Gönderilen iletileri\n\
-Gönderilen klasörüne taþý.
-; Move sent messages to\n\
-; the Sent folder.
 ;
 MSG_HELP_CO_TX_ENCPACK
 Klasörleri korumak ve sýkýþtýrmak\n\
@@ -3860,10 +3736,6 @@ MSG_WR_Display
 G_örüntüle
 ; D_isplay
 ;
-MSG_WR_Encoding
-Þifreleme
-; Encoding
-;
 MSG_WR_ContentType
 _MIME türü
 ; _MIME type
@@ -3915,10 +3787,6 @@ _Önemlilik
 MSG_WR_Signature
 Ýmza
 ; Signature
-;
-MSG_WR_Security
-Güvenlik
-; Security
 ;
 MSG_WR_BounceWT
 Ýletiyi sektir
@@ -4230,14 +4098,6 @@ MSG_HELP_WR_ST_EXTHEADER
 ek baþlýklar.
 ; Additional headers that should\n\
 ; be added to the message.
-;
-MSG_HELP_WR_ST_FROM
-'Kimden:' baþlýðýnýn içeriði\n\
-(bu iletiyi yazan kiþinin\n\
-adý ve adresi).
-; Contents of the 'From:' header\n\
-; (name and address of the person\n\
-; who is writing this message).
 ;
 MSG_HELP_WR_ST_REPLYTO
 Bu ileti için\n\
@@ -5382,12 +5242,6 @@ MSG_SETTINGS_MUI
 MUI...
 ; MUI...
 ;
-MSG_HELP_FO_ST_MLFROMADDRESS
-Listeye yeni postalar gönderirken\n\
-bu 'Kimden:' adresini kullan.
-; Use this 'From:' address when\n\
-; posting new mails to the list.
-;
 MSG_HELP_FO_ST_MLREPLYTOADDRESS
 Listeye yeni postalar gönderirken\n\
 bu 'Yanýtla:' adresini kullan.
@@ -5428,10 +5282,6 @@ MSG_WR_AltQuoted
 Alternatif alýntý
 ; Alternative quoted
 ;
-MSG_CO_DoQuote
-Ýletiyi alýn_týla
-; Qu_ote message
-;
 MSG_EA_SelectPhoto_Title
 Resim seç
 ; Select portrait
@@ -5461,10 +5311,6 @@ Yeni klasör grubu...
 MSG_CO_GENLISTCFG
 Genel ayarlar
 ; General settings
-;
-MSG_CO_FIELDLISTCFG
-Alan ayarlarý
-; Field settings
 ;
 MSG_CO_SIZEFORMAT
 _Boyut biçemi
@@ -5623,14 +5469,6 @@ Arama
 MSG_SEARCHNOTFOUND_MSG
 '%s' bulunamadý.
 ; '%s' not found.
-;
-MSG_WR_ERRORNOSENDER
-Ýleti eksik: gönderen yok.
-; Mail is incomplete: no sender.
-;
-MSG_WR_NOSENDERREQGAD
-_Varsayýlan göndereni kullan|*_Ýptal
-; _Use default sender|*_Cancel
 ;
 MSG_FO_GROUP_CONFDEL
 Bu grup alt dizinler içeriyor, silindiðinde\n\
@@ -6611,14 +6449,6 @@ MSG_CO_SIGNATURE_SUMMARY
 E-postalarýnýzda kullanacaðýnýz imzalarý ayarlar...
 ; Configure your e-mail signatures...
 ;
-MSG_CO_LISTS_TITLE
-Posta Listegörünümü Ayarlarý
-; Mail Listview Settings
-;
-MSG_CO_LISTS_SUMMARY
-Posta listelerinin temel görünümü ile ilgili ayarlar...
-; Configure the basic appearance of mail listviews...
-;
 MSG_CO_SECURITY_TITLE
 Güvenlik Ayarlarý
 ; Security Settings
@@ -7401,17 +7231,6 @@ MSG_LOADINGUPDATESTATE
 Güncelleme durum bilgisi yükleniyor...
 ; Loading update state data...
 ;
-MSG_CO_ASK_SAVE_SIGNATURE
-Ýmzalardaki deðiþiklikler genel ayarlardan\n\
-ayrý olarak kaydedilmeli, yoksa kaybedilecekler.\n\
-\n\
-Ýmzalarý þimdi kaydetmek istiyor musunuz?
-; Changes to the signatures must be saved separately\n\
-; from the global configuration or otherwise they\n\
-; will be lost.\n\
-; \n\
-; Do you want to save the signatures now?
-;
 MSG_MA_HIDE
 Gizle
 ; Hide
@@ -7693,18 +7512,6 @@ Eðer iletiyi sadece sile_ceksem:
 MSG_CO_MDN_OTHER
 T_üm diðer koþullarda:
 ; In all oth_er cases:
-;
-MSG_CO_REQUESTMDN
-Her zaman bir _alýndý bildirimi iste
-; Always request a retur_n receipt
-;
-MSG_HELP_CO_CH_REQUESTMDN
-Eðer seçilirse, Yazma penceresindeki\n\
-alýndý bildirimi seçeneði varsayýlan olarak\n\
-hep seçili olacaktýr. (Dikkatle kullanýnýz).
-; If selected, the return receipt option in\n\
-; the Write window will always be enabled\n\
-; by default (Use this with care).
 ;
 MSG_HELP_CO_CH_MDN_NEVER
 Eðer seçilirse, karþý taraftan istenmiþ olsa bile\n\
@@ -8696,12 +8503,6 @@ MSG_HELP_CO_BT_APLAY
 Sesi dene.
 ; Test the sound.
 ;
-MSG_HELP_CO_CH_USESIG
-Ýmzalarý varsayýlan olarak\n\
-etkinleþtirmek istiyor musunuz?
-; Do you want to enable\n\
-; signatures by default?
-;
 MSG_HELP_CO_ST_DESCRIPTION
 Bu MIME türü için\n\
 özel açýklama.
@@ -9311,19 +9112,6 @@ Yýl deðeri en az 1900 olabilir.
 ; %%-Y - year without leading zeros (4 digits)\n\
 ; The year number must be greater or equal 1900.
 ; DOBFORMAT
-;
-MSG_CO_PGPURL
-_Açýk PGP anahtarý için URL
-; URL to public PGP key
-;
-MSG_HELP_CO_ST_PGPURL
-Açýk PGP anahtarýnýzýn indirileceði URL'yi\n\
-belirleyebilirsiniz. Bu URL her postaya,\n\
-ayrý bir baþlýk girdisi olarak eklenecektir.
-; You can specify an URL where your public\n\
-; PGP key can be downloaded from. This URL\n\
-; will then placed into a separate header\n\
-; entry in every mail.
 ;
 MSG_CO_NOTIOS41SYSTEM
 AmigaOS_4.1 bildirim sistemi
@@ -10565,4 +10353,12 @@ Bu harici filtrenin baþlýk satýrlarýna güven:
 MSG_ER_POP3_UIDLHASH_INIT_FAILED
 UIDL hash tablosu ilklendirilemedi.
 ; Failed to initialized UIDL hash table.
+;
+MSG_CO_SIGNATURE_TEXT
+Ýmza metni
+; Signature text
+;
+MSG_CO_APPEND_SIGNATURE_FILE
+Ýmza olarak bir dosya ekle
+; Append a file as signature instead
 ;
