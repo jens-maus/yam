@@ -421,6 +421,8 @@ struct Connection *CreateConnection(void)
 
   if((conn = calloc(1, sizeof(*conn))) != NULL)
   {
+    conn->socket = INVALID_SOCKET;
+
     if((conn->receiveBuffer = malloc(C->TRBufferSize)) != NULL)
     {
       if((conn->sendBuffer = malloc(C->TRBufferSize)) != NULL)
@@ -444,8 +446,6 @@ struct Connection *CreateConnection(void)
           if(SocketBaseTagList(tags) == 0)
           {
             D(DBF_NET, "set break mask");
-
-            conn->socket = INVALID_SOCKET;
 
             // set to no error per default
             conn->error = CONNECTERR_NO_ERROR;
@@ -1251,14 +1251,18 @@ void DisconnectFromHost(struct Connection *conn)
 
     if(conn->sslCtx != NULL)
     {
+      // dispose the SSL context
       SSL_CTX_free(conn->sslCtx);
       conn->sslCtx = NULL;
     }
 
-    // close the connection
-    shutdown(conn->socket, SHUT_RDWR);
-    CloseSocket(conn->socket);
-    conn->socket = INVALID_SOCKET;
+    if(conn->socket != INVALID_SOCKET)
+    {
+      // close the connection
+      shutdown(conn->socket, SHUT_RDWR);
+      CloseSocket(conn->socket);
+      conn->socket = INVALID_SOCKET;
+    }
 
     if(AmiSSLBase != NULL)
       CleanupAmiSSLA(NULL);

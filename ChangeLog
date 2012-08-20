@@ -11,6 +11,8 @@ $URL$
   * YAM_WR.c: renamed the "sigfile" option in draft mails to "signature" and made
     sure that no NULL pointer is accessed at any time when writing out mail
     files.
+  * tcp/Connection.c: fixed a possible misreaction of the TCP/IP stack when
+    closing a socket twice.
 
 2012-08-16 Thore Böckelmann <tboeckel@gmx.de>
 
