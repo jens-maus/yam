@@ -2628,7 +2628,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
               D(DBF_MAIL, "findSignatureById: '%08x' %08lx", email->signatureID, email->signature);
             }
 
-            D(DBF_MAIL, "found signature: '%s' %08x %08x", idStr, email->signatureID, email->signature->id);
+            D(DBF_MAIL, "found signature: '%s' %08x %08x", idStr, email->signatureID, email->signature != NULL ? email->signature->id : 0);
           }
 
           // check if the identity is listed and if so this has
@@ -2648,7 +2648,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
               D(DBF_MAIL, "finduinById: '%08x' %08lx", email->identityID, email->identity);
             }
 
-            D(DBF_MAIL, "found identity: '%s' %08x %08x", idStr, email->identityID, email->identity->id);
+            D(DBF_MAIL, "found identity: '%s' %08x %08x", idStr, email->identityID, email->identity != NULL ? email->identity->id : 0);
           }
 
           // check security flags

@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-08-20 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MAf.c: fixed the debug output to avoid NULL pointer accesses.
+
 2012-08-16 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_UT.c: slightly changed the recognition of old and new layout strings and
