@@ -3879,7 +3879,6 @@ DECLARE(ComposeMail) // enum WriteMode mode
      (comp.FH = fopen(newMailFile, "w")) != NULL)
   {
     struct ExtendedMail *email;
-    int stat = (mode == WRITE_HOLD || mode == WRITE_DRAFT) ? SFLAG_HOLD : SFLAG_QUEUED;
 
     setvbuf(comp.FH, NULL, _IOFBF, SIZE_FILEBUF);
 
@@ -3909,7 +3908,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
     if((email = MA_ExamineMail(outfolder, FilePart(newMailFile), C->EmailCache > 0 ? TRUE : FALSE)) != NULL)
     {
-      email->Mail.sflags = stat;
+      email->Mail.sflags = (mode == WRITE_HOLD || mode == WRITE_DRAFT) ? SFLAG_HOLD : SFLAG_QUEUED;
 
       if((newMail = AddMailToFolder(&email->Mail, outfolder)) != NULL)
       {
