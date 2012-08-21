@@ -78,6 +78,7 @@ struct WriteMailData
 
   struct UserIdentityNode *identity;    // ptr to the identity used for composing that mail
 
+  char draftMailFile[SIZE_PATHFILE];    // name of the draft mail file
   char filename[SIZE_PATHFILE];         // filename of tmp text file
   struct DateStamp lastFileChangeTime;  // when was this file touched for the last time
   struct NotifyRequest *notifyRequest;  // file notification request

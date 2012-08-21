@@ -3193,7 +3193,7 @@ BOOL MailExists(const struct Mail *mailptr, struct Folder *folder)
 
     LockMailListShared(folder->messages);
 
-    exists = (FindMailInList(folder->messages, mailptr) != NULL);
+    exists = (FindMailByAddress(folder->messages, mailptr) != NULL);
 
     UnlockMailList(folder->messages);
   }
@@ -3244,6 +3244,19 @@ struct Mail *AddMailToFolder(const struct Mail *mail, struct Folder *folder)
   struct Mail *new;
 
   ENTER();
+
+  if(isDraftsFolder(folder) == TRUE)
+  {
+    struct MailNode *mnode;
+
+    LockMailList(folder->messages);
+    mnode = FindMailByFilename(folder->messages, mail->MailFile);
+    UnlockMailList(folder->messages);
+
+    // remove the previous version from the drafts folder before adding a new one
+    if(mnode != NULL)
+      RemoveMailFromList(mnode->mail, FALSE, FALSE);
+  }
 
   if((new = CloneMail(mail)) != NULL)
   {
@@ -3319,7 +3332,7 @@ void RemoveMailFromList(struct Mail *mail, const BOOL closeWindows, const BOOL c
 
   LockMailList(folder->messages);
 
-  if((mnode = FindMailInList(folder->messages, mail)) != NULL)
+  if((mnode = FindMailByAddress(folder->messages, mail)) != NULL)
   {
     // remove the mail from the folder's mail list
     D(DBF_UTIL, "removing mail with subject '%s' from folder '%s'", mail->Subject, folder->Name);
@@ -3351,7 +3364,7 @@ void RemoveMailFromList(struct Mail *mail, const BOOL closeWindows, const BOOL c
         {
           LockMailList(msn->downloadedMails);
 
-          if((mnode = FindMailInList(msn->downloadedMails, mail)) != NULL)
+          if((mnode = FindMailByAddress(msn->downloadedMails, mail)) != NULL)
           {
             // remove the mail from the list of just downloaded mails,
             // so it will not be filtered anymore when the download

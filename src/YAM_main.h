@@ -177,7 +177,7 @@ enum NewMailMode
   NMM_FORWARD_ATTACH, // forwarding an existing mail, as attachment (menu only)
   NMM_FORWARD_INLINE, // forwarding an existing mail, as inlined text (menu only)
   NMM_BOUNCE,         // bounce an existing mail back to the sender
-  NMM_EDIT,           // edit a mail in the outgoing folder
+  NMM_EDIT,           // edit a mail in the draft/outgoing folder
   NMM_EDITASNEW,      // edit an existing sent/received mail
   NMM_SAVEDEC         // create a decrypted copy of a PGP mail
 };

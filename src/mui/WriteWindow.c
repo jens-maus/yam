@@ -1526,6 +1526,9 @@ OVERLOAD(OM_NEW)
       // users might get informed of an eventually data loss
       DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, obj, 1, METHOD(CancelAction));
 
+      // get a unique filename for the drafts folder
+      MA_NewMailFile(FO_GetFolderByType(FT_DRAFTS, NULL), data->wmData->draftMailFile, sizeof(data->wmData->draftMailFile));
+
       // prepare the temporary filename of that new write window
       snprintf(filename, sizeof(filename), "YAMw%08x-%d.tmp", (unsigned int)FindTask(NULL), data->windowNumber);
       AddPath(data->wmData->filename, C->TempDir, filename, sizeof(data->wmData->filename));
@@ -3862,7 +3865,12 @@ DECLARE(ComposeMail) // enum WriteMode mode
     // continue
 
     default:
-      MA_NewMailFile(outfolder, newMailFile, sizeof(newMailFile));
+    {
+      if(mode == WRITE_DRAFT)
+        strlcpy(newMailFile, data->wmData->draftMailFile, sizeof(newMailFile));
+      else
+        MA_NewMailFile(outfolder, newMailFile, sizeof(newMailFile));
+    }
     break;
   }
 

@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-08-21 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_UT.c, MailLists.c: saving a draft mail several times will now really use
+    the same file again each time instead of creating a new mail each time.
+
 2012-08-20 Alper Sönmez <amithlondestek@gmail.com>
 
   * locale/turkish.ct: is updated according to the latest changes.

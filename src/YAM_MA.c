@@ -490,7 +490,7 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
     snprintf(newFileName, sizeof(newFileName), "%s.%03d,%s", dateFilePart, mcounter, statusFilePart);
 
     // now check if the filename has changed or not
-    if(strcmp(newFileName, mail->MailFile) == 0)
+    if(strcmp(newFileName, mail->MailFile) == 0 || isDraftsFolder(mail->Folder) == TRUE)
     {
       success = TRUE;
       break;

@@ -440,9 +440,9 @@ struct Mail **MailListToMailArray(const struct MailList *mlist)
 }
 
 ///
-/// FindMailInList
+/// FindMailByAddress
 // find a mail in an already locked list and return its MailNode or NULL
-struct MailNode *FindMailInList(const struct MailList *mlist, const struct Mail *mail)
+struct MailNode *FindMailByAddress(const struct MailList *mlist, const struct Mail *mail)
 {
   struct MailNode *foundNode = NULL;
   struct MailNode *mnode;
@@ -452,6 +452,30 @@ struct MailNode *FindMailInList(const struct MailList *mlist, const struct Mail 
   ForEachMailNode(mlist, mnode)
   {
     if(mnode->mail == mail)
+    {
+      foundNode = mnode;
+      break;
+    }
+  }
+
+  RETURN(foundNode);
+  return foundNode;
+}
+
+///
+/// FindMailByFilename
+// find a mail in an already locked list and return its MailNode or NULL
+struct MailNode *FindMailByFilename(const struct MailList *mlist, const char *filename)
+{
+  struct MailNode *foundNode = NULL;
+  struct MailNode *mnode;
+
+  ENTER();
+
+  ForEachMailNode(mlist, mnode)
+  {
+    // compare the names, but exclude the status characters
+    if(strncmp(mnode->mail->MailFile, filename, 17) == 0)
     {
       foundNode = mnode;
       break;
