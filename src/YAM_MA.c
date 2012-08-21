@@ -485,12 +485,13 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
   {
     char newFileName[SIZE_MFILE];
     char newFilePath[SIZE_PATHFILE];
+    LONG ok;
 
     // generate a new filename with the data we have collected
     snprintf(newFileName, sizeof(newFileName), "%s.%03d,%s", dateFilePart, mcounter, statusFilePart);
 
     // now check if the filename has changed or not
-    if(strcmp(newFileName, mail->MailFile) == 0 || isDraftsFolder(mail->Folder) == TRUE)
+    if(strcmp(newFileName, mail->MailFile) == 0)
     {
       success = TRUE;
       break;
@@ -500,7 +501,17 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
     AddPath(newFilePath, mail->Folder->Fullpath, newFileName, sizeof(newFilePath));
 
     // then rename it
-    if(Rename(oldFilePath, newFilePath) != 0)
+    ok = Rename(oldFilePath, newFilePath);
+    if(ok == DOSFALSE)
+    {
+      E(DBF_MAIL, "could not rename '%s' to '%s', error %ld", oldFilePath, newFilePath, IoErr());
+
+      // assume success neverthess for the drafts folder
+      if(isDraftsFolder(mail->Folder) == TRUE)
+        ok = DOSTRUE;
+    }
+
+    if(ok != DOSFALSE)
     {
       struct Node *curNode;
 
