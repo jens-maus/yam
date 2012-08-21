@@ -13,6 +13,9 @@ $URL$
 
   * YAM_UT.c, MailLists.c: saving a draft mail several times will now really use
     the same file again each time instead of creating a new mail each time.
+  * mui/WriteWindow.c: modifying any object within the write window will now
+    declare the mail as "modified" which will be taken into account when saving
+    the mail as draft or closing the window without having the mail sent off.
 
 2012-08-20 Alper Sönmez <amithlondestek@gmail.com>
 

@@ -155,6 +155,7 @@ struct Data
 
   int windowNumber; // the unique window number
   BOOL autoSaved;   // was this mail automatically saved?
+  BOOL mailModified; // was anything modified?
 
   BOOL useFixedFont;   // use a fixed font for displaying the mail
   BOOL useTextColors;  // use Textcolors for displaying the mail
@@ -1516,6 +1517,19 @@ OVERLOAD(OM_NEW)
       SetHelp(data->BT_CANCEL,    MSG_HELP_WR_BT_CANCEL);
       SetHelp(data->PO_CHARSET,   MSG_HELP_WR_PO_CHARSET);
 
+      // declare the mail as modified if any of these objects reports a change
+      DoMethod(data->ST_TO,         MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->ST_CC,         MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->ST_BCC,        MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->ST_REPLYTO,    MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->ST_EXTHEADER,  MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->PO_CHARSET,    MUIM_Notify, MUIA_Text_Contents,   MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->CY_IMPORTANCE, MUIM_Notify, MUIA_Cycle_Active,    MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->CY_SECURITY,   MUIM_Notify, MUIA_Cycle_Active,    MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->CH_DELSEND,    MUIM_Notify, MUIA_Selected,        MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->CH_MDN,        MUIM_Notify, MUIA_Selected,        MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->CH_ADDINFO,    MUIM_Notify, MUIA_Selected,        MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+
       // set main window button notifies
       DoMethod(data->BT_HOLD,       MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(ComposeMail), WRITE_HOLD);
       DoMethod(data->BT_QUEUE,      MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(ComposeMail), WRITE_QUEUE);
@@ -1596,6 +1610,9 @@ OVERLOAD(OM_NEW)
       // we created a new write window, lets
       // go and start the PREWRITE macro
       MA_StartMacro(MACRO_PREWRITE, data->windowNumberStr);
+
+      // the mail is not modified yet
+      data->mailModified = FALSE;
     }
   }
 
@@ -1894,6 +1911,12 @@ OVERLOAD(OM_SET)
 
         // make the superMethod call ignore those tags
         tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
+
+      case ATTR(Modified):
+      {
+        data->mailModified = tag->ti_Data ? TRUE : FALSE;
       }
       break;
     }
@@ -2211,6 +2234,9 @@ DECLARE(UpdateWindowTitle)
 
   set(obj, MUIA_Window_Title, data->windowTitle);
 
+  // the mail is modified
+  data->mailModified = TRUE;
+
   RETURN(0);
   return 0;
 }
@@ -2435,6 +2461,9 @@ DECLARE(DeleteAttachment)
     // delete the temporary file if exists
     if(attach->IsTemp == TRUE)
       DeleteFile(attach->FilePath);
+
+    // the mail is modified
+    data->mailModified = TRUE;
   }
 
   RETURN(0);
@@ -3060,6 +3089,9 @@ DECLARE(AddAttachment) // const char *filename, const char *name, ULONG istemp
       // it active.
       DoMethod(data->LV_ATTACH, MUIM_NList_InsertSingle, &attach, MUIV_NList_Insert_Bottom);
       set(data->LV_ATTACH, MUIA_NList_Active, MUIV_NList_Active_Bottom);
+
+      // the mail is modified
+      data->mailModified = TRUE;
     }
     else
     {
@@ -4274,10 +4306,12 @@ DECLARE(DoAutoSave)
   if(data->wmData->mode != NMM_BOUNCE)
   {
     // do the autosave only if something was modified
-    if(xget(data->TE_EDIT, MUIA_TextEditor_HasChanged) == TRUE)
+    if(data->mailModified == TRUE || xget(data->TE_EDIT, MUIA_TextEditor_HasChanged) == TRUE)
     {
       if(DoMethod(obj, METHOD(ComposeMail), WRITE_DRAFT) == TRUE)
       {
+        // the mail is no longer modified
+        data->mailModified = FALSE;
         // we just saved the mail text, so it is no longer modified
         set(data->TE_EDIT, MUIA_TextEditor_HasChanged, FALSE);
 
@@ -4309,7 +4343,7 @@ DECLARE(CancelAction)
   if(data->wmData->mode != NMM_BOUNCE && data->wmData->quietMode == FALSE)
   {
     // ask the user what to do if the mail text was modified
-    if(xget(data->TE_EDIT, MUIA_TextEditor_HasChanged) == TRUE || data->autoSaved == TRUE)
+    if(data->mailModified == TRUE || xget(data->TE_EDIT, MUIA_TextEditor_HasChanged) == TRUE || data->autoSaved == TRUE)
     {
       switch(MUI_Request(G->App, obj, MUIF_NONE, NULL, tr(MSG_WR_DiscardChangesGad), tr(MSG_WR_DiscardChanges)))
       {
@@ -4440,6 +4474,9 @@ DECLARE(IdentityChanged) // struct UserIdentityNode *uin;
 
   // save a link to the userIdentity in the wmData
   data->wmData->identity = msg->uin;
+
+  // the mail is modified
+  data->mailModified = TRUE;
 
   RETURN(0);
   return 0;
