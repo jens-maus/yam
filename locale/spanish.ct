@@ -873,11 +873,11 @@ Hola,\\\\n
 ;
 MSG_CO_AltRepIntroDef
 
-; 
+;
 ;
 MSG_CO_AltRepPatternDef
 
-; 
+;
 ;
 MSG_CO_ForwardIntroDef
 *** Inicio de mensaje respuesta ***\\\\n\\\\nFecha: %c\\\\nDe: %n <%e>\\\\nAsunto: %s\\\\n\\\\n--- Seguimiento del mensaje reenviado ---\\\\n\\\\n
@@ -893,15 +893,15 @@ Saludos Cordiales
 ;
 MSG_CO_AltRepHelloDef
 
-; 
+;
 ;
 MSG_CO_AltRepByeDef
 
-; 
+;
 ;
 MSG_CO_MLRepHelloDef
 
-; 
+;
 ;
 MSG_CO_MLRepIntroDef
 El %c, %n escribió:\\\\n
@@ -8206,7 +8206,7 @@ Información
 ; Information
 ;
 MSG_HELP_WR_CY_SIGNATURE
-Permite seleccionar que firma\nse mostrará para el mensaje\nrecientemente creado. 
+Permite seleccionar que firma\nse mostrará para el mensaje\nrecientemente creado.
 ; Allows to select which signature\nshow be used for the currently\ncomposed message.
 ;
 MSG_WR_PGPSECURITY
