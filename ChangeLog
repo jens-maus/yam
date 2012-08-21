@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-08-21 Emilio Jimenez <ejim@ono.com>
+
+  * locale/spanish.ct: updated to the latest changes.
+
 2012-08-21 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_UT.c, MailLists.c: saving a draft mail several times will now really use
