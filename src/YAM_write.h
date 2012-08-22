@@ -69,6 +69,7 @@ struct WriteMailData
   struct MinNode  node;                 // required for placing it into struct Global
   Object *        window;               // ptr to the associated window or NULL
 
+  struct Mail *     draftMail;          // ptr to a saved mail in the drafts folder
   struct Mail *     refMail;            // ptr to the original mail this write operation was created from
   struct MailList * refMailList;        // ptr to a list of orginal mails.
   enum NewMailMode  mode;               // the compose mode this write mail operation

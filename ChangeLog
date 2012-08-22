@@ -7,9 +7,9 @@ $URL$
 
 2012-08-22 Thore Böckelmann <tboeckel@gmx.de>
 
-  * mui/WriteWindow.c: now that all objects in the write window are checked for
-    modifications the confirmation requester when cancelling a new mail can be
-    skipped if the mail has been saved to the drafts folder before.
+  * mui/WriteWindow.c: discarding a mail which has been automatically saved to
+    the drafts folder will now immediately delete the mail from the drafts folder
+    as well.
 
 2012-08-21 Emilio Jimenez <ejim@ono.com>
 
