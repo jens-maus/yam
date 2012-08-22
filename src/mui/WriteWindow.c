@@ -4342,8 +4342,8 @@ DECLARE(CancelAction)
 
   if(data->wmData->mode != NMM_BOUNCE && data->wmData->quietMode == FALSE)
   {
-    // ask the user what to do if the mail text was modified
-    if(data->mailModified == TRUE || xget(data->TE_EDIT, MUIA_TextEditor_HasChanged) == TRUE || data->autoSaved == TRUE)
+    // ask the user what to do if the mail text was modified but not yet automatically saved
+    if((data->mailModified == TRUE || xget(data->TE_EDIT, MUIA_TextEditor_HasChanged) == TRUE) && data->autoSaved == FALSE)
     {
       switch(MUI_Request(G->App, obj, MUIF_NONE, NULL, tr(MSG_WR_DiscardChangesGad), tr(MSG_WR_DiscardChanges)))
       {
