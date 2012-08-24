@@ -1883,6 +1883,9 @@ struct WriteMailData *NewWriteMailWindow(struct Mail *mail, const int flags)
       // update the message text
       DoMethod(wmData->window, MUIM_WriteWindow_ReloadText, FALSE);
 
+      // start with an unmodified message
+      set(wmData->window, MUIA_WriteWindow_Modified, FALSE);
+
       // make sure the window is opened
       if(quiet == FALSE)
         SafeOpenWindow(wmData->window);
@@ -2111,6 +2114,9 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
 
       // update the message text
       DoMethod(wmData->window, MUIM_WriteWindow_ReloadText, FALSE);
+
+      // start with an unmodified message
+      set(wmData->window, MUIA_WriteWindow_Modified, FALSE);
 
       // make sure the window is opened
       if(quiet == FALSE)
@@ -2360,6 +2366,9 @@ struct WriteMailData *NewForwardMailWindow(struct MailList *mlist, const int fla
 
       // update the message text
       DoMethod(wmData->window, MUIM_WriteWindow_ReloadText, FALSE);
+
+      // start with an unmodified message
+      set(wmData->window, MUIA_WriteWindow_Modified, FALSE);
 
       // make sure the window is opened
       if(quiet == FALSE)
@@ -3078,6 +3087,9 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
       // update the message text
       DoMethod(wmData->window, MUIM_WriteWindow_ReloadText, FALSE);
 
+      // start with an unmodified message
+      set(wmData->window, MUIA_WriteWindow_Modified, FALSE);
+
       // make sure the window is opened
       if(quiet == FALSE)
         SafeOpenWindow(wmData->window);
@@ -3120,6 +3132,9 @@ struct WriteMailData *NewBounceMailWindow(struct Mail *mail, const int flags)
      (wmData = CreateWriteWindow(NMM_BOUNCE, quiet)) != NULL)
   {
     wmData->refMail = mail;
+
+    // start with an unmodified message
+    set(wmData->window, MUIA_WriteWindow_Modified, FALSE);
 
     // make sure the window is opened
     if(quiet == FALSE)
