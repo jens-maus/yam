@@ -10,6 +10,7 @@ $URL$
   * YAM_WR.c: reset and possible remembered modification which might have
     happened while setting up the write window. This makes it possible to close
     the window immediately again without having to confirm anything.
+  * mui/WriteWindow.c: added some safety checks when saving a draft mail.
 
 2012-08-22 Thore Böckelmann <tboeckel@gmx.de>
 

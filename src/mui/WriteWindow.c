@@ -3895,7 +3895,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
     default:
     {
-      if(mode == WRITE_DRAFT && wmData->draftMail != NULL)
+      if(mode == WRITE_DRAFT && wmData->draftMail != NULL && MailExists(wmData->draftMail, NULL) == TRUE)
         GetMailFile(newMailFile, sizeof(newMailFile), outfolder, wmData->draftMail);
       else
         MA_NewMailFile(outfolder, newMailFile, sizeof(newMailFile));
@@ -4169,7 +4169,8 @@ DECLARE(ComposeMail) // enum WriteMode mode
   else
   {
     // remember the new mail pointer in draft mode
-    wmData->draftMail = newMail;
+    if(newMail != NULL)
+      wmData->draftMail = newMail;
   }
 
   // now we make sure we immediately send out the mail.
