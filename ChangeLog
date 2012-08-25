@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-08-25  Alexandre Balaban <abalaban@free.fr>
+
+  * locale/french.ct: updated according to latest changes.
+
 2012-08-24 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_WR.c: reset and possible remembered modification which might have

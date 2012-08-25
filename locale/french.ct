@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.4 (04.07.2012)
+## version $VER: YAM.catalog 7.4 (25.08.2012)
 ## language français
 ## codeset 111
 ;
@@ -38,10 +38,6 @@ Pièces jointes
 MSG_Options
 Options
 ; Options
-;
-MSG_Add
-_Nouveau
-; _New
 ;
 MSG_Del
 Su_pprimer
@@ -1097,10 +1093,6 @@ MSG_CO_CrdSignature
 Signature
 ; Signature
 ;
-MSG_CO_CrdLists
-Listes
-; Lists
-;
 MSG_CO_CrdMIME
 MIME
 ; MIME
@@ -1241,10 +1233,6 @@ MSG_CO_EmailAddress
 Adresse él_ectronique
 ; _E-mail address
 ;
-MSG_CO_POPServer
-Serveur POP_3
-; POP_3 server
-;
 MSG_CO_Password
 Mo_t de passe
 ; _Password
@@ -1256,10 +1244,6 @@ Fuseau _horaire
 MSG_CO_SendMail
 Envoi (SMTP)
 ; Send mail (SMTP)
-;
-MSG_CO_Domain
-Do_maine
-; Do_main
 ;
 MSG_CO_Allow8bit
 Serveur autorisant les caractères _8 bits
@@ -1317,14 +1301,6 @@ MSG_CO_PreSelect
 _Pré-sélection
 ; _Pre-selection
 ;
-MSG_CO_UpdateStatus
-A_ctualiser le statut
-; Update m_essage status
-;
-MSG_CO_AutoOperation
-Opération automatique
-; Automatic operation
-;
 MSG_CO_CheckMail
 Vérifier les nouveaux messages toutes les
 ; Check for new mail every
@@ -1332,10 +1308,6 @@ Vérifier les nouveaux messages toutes les
 MSG_CO_Minutes
 minutes
 ; minutes
-;
-MSG_CO_Notification
-Notification
-; Notification
 ;
 MSG_CO_NotiReq
 _Requête
@@ -1525,14 +1497,6 @@ MSG_CO_DefaultViewer
 Prog par _défaut
 ; De_fault viewer
 ;
-MSG_CO_MessageHeader
-En-têtes de message
-; Message headers
-;
-MSG_CO_ReplyTo
-Répondre _à
-; _Reply to
-;
 MSG_CO_Organization
 Or_ganisation
 ; _Organization
@@ -1653,10 +1617,6 @@ MSG_CO_Signature
 Signature
 ; Signature
 ;
-MSG_CO_UseSig
-Utiliser les s_ignatures
-; Use s_ignatures
-;
 MSG_CO_EditSig
 Modifier dans éditeur e_xterne
 ; _Edit in external editor
@@ -1704,14 +1664,6 @@ détaillé
 MSG_CO_PGPExe
 Chemin _PGP
 ; P_GP's directory
-;
-MSG_CO_PGPKey
-Votre _ID PGP
-; Your PGP key _ID
-;
-MSG_CO_EncryptToSelf
-avec _clé personnelle
-; _Encrypt to self
 ;
 MSG_CO_Logfiles
 Fichier des évènements
@@ -1793,10 +1745,6 @@ MSG_CO_Gallery
 Placer les _photos dans
 ; Save _photos in
 ;
-MSG_CO_MyURL
-UR_L de votre photo
-; UR_L of your picture
-;
 MSG_CO_AddToAddrbook
 Sau_ver l'adresse de l'expéditeur
 ; Sa_ve sender's address
@@ -1808,10 +1756,6 @@ Serveur proxy _HTTP
 MSG_CO_NewGroup
 _Groupe des nouvelles entrées
 ; _Group for new entries
-;
-MSG_CO_AddInfo
-Ajouter ses _données personnelles
-; _Add personal info
 ;
 MSG_CO_Paths
 Chemins
@@ -1856,10 +1800,6 @@ message(s), ou plus
 MSG_CO_Remove
 Effacer les _messages immédiatement
 ; _Remove messages immediately
-;
-MSG_CO_SaveSent
-Sau_ver les messages envoyés
-; Sa_ve sent messages
 ;
 MSG_CO_XPK
 Réglages XPK/LHA
@@ -2013,13 +1953,6 @@ l'adresse du serveur POP3 qui sera utilisée.
 ; The address of the SMTP server to send mail to.\n\
 ; If you leave this field empty, the address of the\n\
 ; POP3 server will be used as fallback.
-;
-MSG_HELP_CO_ST_DOMAIN
-Nom d'hôte de votre ordinateur. Modifiez ce champ,\n\
-si le signal de bienvenue vous cause un problème.
-; The hostname of your computer.\n\
-; Change this field if the HELO\n\
-; commands fails.
 ;
 MSG_HELP_CO_CH_SMTP8BIT
 Ne converti pas vos messages en 7 bits lors du transfert.\n\
@@ -2339,26 +2272,6 @@ les pièces jointes de types inconnus
 ; Program used to display\n\
 ; attachments of unknown type.
 ;
-MSG_HELP_CO_ST_REPLYTO
-Si les réponses à vos messages doivent envoyées par\n\
-défaut ailleurs en plus (ou à la place) de votre\n\
-adresse électronique, spécifiez ces adresses ici.
-; Should replies to your messages need to be sent by\n\
-; default somewhere else besides (or instead of) your\n\
-; e-mail address, specify those other addresses here.
-;
-MSG_HELP_CO_ST_ORGAN
-Le nom de votre entreprise\n\
-ou de votre organisation
-; The name of your\n\
-; company or institute.
-;
-MSG_HELP_CO_ST_EXTHEADER
-En-tête(s) supplémentaire(s) devant-être\n\
-ajouté(s) à chaque message envoyé
-; Additional message header(s) that will\n\
-; be added to every outgoing message.
-;
 MSG_HELP_CO_ST_HELLOTEXT
 Texte à insérer au début\n\
 de chaque nouveau message
@@ -2438,12 +2351,6 @@ messages de liste de discussions.
 ; Use these phrases in replies to\n\
 ; messages from a mailing list.
 ;
-MSG_HELP_CO_CH_QUOTE
-Cite le message original\n\
-dans la réponse
-; Quote the original\n\
-; message in your reply?
-;
 MSG_HELP_CO_CH_QUOTEEMPTY
 Insère un caractère de citation\n\
 pour les lignes vides
@@ -2463,11 +2370,6 @@ MSG_HELP_CO_CH_STRIPSIG
 du message original.
 ; Avoids quoting the signature\n\
 ; of the original message.
-;
-MSG_HELP_CO_CY_SIGNAT
-Choix de la signature à éditer
-; Select the signature\n\
-; you want to edit.
 ;
 MSG_HELP_CO_BT_EDITSIG
 Modifie cette signature\n\
@@ -2536,19 +2438,6 @@ le programme PGP
 ; Directory where the PGP\n\
 ; executable can be found.
 ;
-MSG_HELP_CO_ST_MYPGPID
-L'ID de votre clé PGP utilisée pour\n\
-signer et crypter les messages
-; The ID of your PGP key that is used\n\
-; to sign and encrypt messages.
-;
-MSG_HELP_CO_CH_ENCSELF
-Crypte les nouveaux messages avec votre clé\n\
-publique, de manière à ce que vous puissiez\n\
-toujours lire ou éditer les messages sortants.
-; Encrypt new messages with your public key,\n\
-; so you can still read or edit outgoing messages.
-;
 MSG_HELP_CO_ST_LOGFILE
 Chemin où sont stockés\n\
 les fichiers d'évènements
@@ -2607,12 +2496,6 @@ Répertoire dans lequel seront sauvées\n\
 les photos de vos correspondants
 ; Directory to save the pictures\n\
 ; of your correspondents.
-;
-MSG_HELP_CO_ST_PHOTOURL
-Adresse URL de\n\
-votre photo.
-; URL address of your\n\
-; portrait image.
 ;
 MSG_HELP_CO_CY_ATAB
 Mettre automatiquement l'adresse de\n\
@@ -2684,12 +2567,6 @@ sans passer par le dossier « Corbeille ».\n\
 ; Immediately delete the messages rather\n\
 ; than moving them to the Trash folder.\n\
 ; (Use this with care)
-;
-MSG_HELP_CO_CH_SAVESENT
-Archive les messages envoyés\n\
-situés dans le dossier « Envoyés »
-; Move sent messages to\n\
-; the Sent folder.
 ;
 MSG_HELP_CO_TX_ENCPACK
 Bibliothèque XPK utilisée pour\n\
@@ -3856,10 +3733,6 @@ MSG_WR_Display
 M_ontrer
 ; D_isplay
 ;
-MSG_WR_Encoding
-Encodage
-; Encoding
-;
 MSG_WR_ContentType
 Type _MIME
 ; _MIME type
@@ -3911,10 +3784,6 @@ _Importance
 MSG_WR_Signature
 Signature
 ; Signature
-;
-MSG_WR_Security
-Sécurité
-; Security
 ;
 MSG_WR_BounceWT
 Détourner
@@ -4226,14 +4095,6 @@ En-têtes supplémentaires qui\n\
 seront ajoutés au message
 ; Additional headers that should\n\
 ; be added to the message.
-;
-MSG_HELP_WR_ST_FROM
-Contenu de l'en-tête « De » (From)\n\
-(Nom et adresse de la personne qui\n\
-a écrit ce message)
-; Contents of the 'From:' header\n\
-; (name and address of the person\n\
-; who is writing this message).
 ;
 MSG_HELP_WR_ST_REPLYTO
 Adresse de réponse\n\
@@ -5380,12 +5241,6 @@ MSG_SETTINGS_MUI
 MUI...
 ; MUI...
 ;
-MSG_HELP_FO_ST_MLFROMADDRESS
-Utilise cette adresse d'expédition pour poster\n\
-un nouveau courrier sur une liste de discussions.
-; Use this 'From:' address when\n\
-; posting new mails to the list.
-;
 MSG_HELP_FO_ST_MLREPLYTOADDRESS
 Utilise cette adresse de réponse pour poster\n\
 un nouveau courrier sur une liste de discussions.
@@ -5427,10 +5282,6 @@ MSG_WR_AltQuoted
 Citation externe
 ; Alternative quoted
 ;
-MSG_CO_DoQuote
-Citer le _message
-; Qu_ote message
-;
 MSG_EA_SelectPhoto_Title
 Choisir un portrait
 ; Select portrait
@@ -5462,10 +5313,6 @@ Nouveau groupe...
 MSG_CO_GENLISTCFG
 Réglages généraux
 ; General settings
-;
-MSG_CO_FIELDLISTCFG
-Réglages des champs
-; Field settings
 ;
 MSG_CO_SIZEFORMAT
 Format de la _taille
@@ -5625,14 +5472,6 @@ Rechercher
 MSG_SEARCHNOTFOUND_MSG
 « %s » non trouvé
 ; '%s' not found.
-;
-MSG_WR_ERRORNOSENDER
-Le message est incomplet : il n'y a pas d'expéditeur.
-; Mail is incomplete: no sender.
-;
-MSG_WR_NOSENDERREQGAD
-_Utiliser l'expéditeur par défaut|*_Annuler
-; _Use default sender|*_Cancel
 ;
 MSG_FO_GROUP_CONFDEL
 Ce groupe contient des sous-dossiers qui seront\n\
@@ -6610,14 +6449,6 @@ MSG_CO_SIGNATURE_SUMMARY
 Pour configurer les signatures de vos courriers...
 ; Configure your e-mail signatures...
 ;
-MSG_CO_LISTS_TITLE
-Réglages des listes
-; Mail Listview Settings
-;
-MSG_CO_LISTS_SUMMARY
-Configure l'apparence des listes de courrier...
-; Configure the basic appearance of mail listviews...
-;
 MSG_CO_SECURITY_TITLE
 Réglages de sécurité
 ; Security Settings
@@ -7410,18 +7241,6 @@ MSG_LOADINGUPDATESTATE
 Chargement de l'état des mises à jour...
 ; Loading update state data...
 ;
-MSG_CO_ASK_SAVE_SIGNATURE
-Les modifications des signatures doivent être\n\
-enregistrées indépendamment de la configuration\n\
-globale, sinon elles seront perdues !\n\
-\n\
-Voulez-vous enregistrer les signatures maintenant ?
-; Changes to the signatures must be saved separately\n\
-; from the global configuration or otherwise they\n\
-; will be lost.\n\
-; \n\
-; Do you want to save the signatures now?
-;
 MSG_MA_HIDE
 Icônifier
 ; Hide
@@ -7702,19 +7521,6 @@ Lorsque je suis sur le point d'efface_r le message sans l'avoir lu
 MSG_CO_MDN_OTHER
 Dans tous les autres _cas
 ; In all oth_er cases:
-;
-MSG_CO_REQUESTMDN
-Toujours de_mander un accusé de réception
-; Always request a retur_n receipt
-;
-MSG_HELP_CO_CH_REQUESTMDN
-Avec cette option, l'option de renvoi des\n\
-accusés de réception de la fenêtre de rédaction\n\
-sera toujours activée par défaut (à utiliser\n\
-avec précaution).
-; If selected, the return receipt option in\n\
-; the Write window will always be enabled\n\
-; by default (Use this with care).
 ;
 MSG_HELP_CO_CH_MDN_NEVER
 Avec cette option, aucun accusé de réception\n\
@@ -8721,12 +8527,6 @@ MSG_HELP_CO_BT_APLAY
 Teste le son.
 ; Test the sound.
 ;
-MSG_HELP_CO_CH_USESIG
-Active l'utilisation des\n\
-signatures par défaut.
-; Do you want to enable\n\
-; signatures by default?
-;
 MSG_HELP_CO_ST_DESCRIPTION
 Une description personnalisée\n\
 pour ce type MIME.
@@ -9334,24 +9134,6 @@ L'année doit être supérieure ou égale à 1900.
 ; %%-Y - year without leading zeros (4 digits)\n\
 ; The year number must be greater or equal 1900.
 ; DOBFORMAT
-;
-MSG_CO_PGPURL
-URL vers la clef PGP publique
-; URL to public PGP key
-;
-MSG_HELP_CO_ST_PGPURL
-Vous pouvez spécifier une URL depuis laquelle\n\
-votre clef PGP publique peut être téléchargée.\n\
-Cette URL sera alors placée dans une entrée de\n\
-l'entête séparée dans chaque message.\n\
-; You can specify an URL where your public\n\
-; PGP key can be downloaded from. This URL\n\
-; will then placed into a separate header\n\
-; entry in every mail.
-; You can specify an URL where your public\n\
-; PGP key can be downloaded from. This URL\n\
-; will then placed into a separate header\n\
-; entry in every mail.
 ;
 MSG_CO_NOTIOS41SYSTEM
 Système de notification AmigaOS 4.1
@@ -10087,7 +9869,6 @@ vers\n\
 ; '%s'\n\
 ; to\n\
 ; '%s'?
-;
 ; FROM,TO
 ;
 MSG_FO_FOLDER_ALREADY_EXISTS
@@ -10099,13 +9880,11 @@ Voulez-vous vraiment poursuivre ?
 ; and will be overwritten/deleted.\n\
 ; \n\
 ; Do you really want to proceed?
-;
 ; PATH
 ;
 MSG_ER_CANNOT_CREATE_FOLDER
 Impossible de créer le répertoire « %s » (%s).
 ; Failed to create directory '%s' (%s).
-;
 ; PATH, ERROR
 ;
 MSG_CO_IdentityActive
@@ -10487,4 +10266,138 @@ Connexions
 MSG_CO_POP_NOTIFICATION
 Notification des nouveaux messages
 ; Notification for new mails
+;
+MSG_SSL_CERT_WARNING_TITLE
+Avertissement Certificat SSL
+; SSL Certificate Warning
+;
+MSG_SSL_CERT_WARNING_BUTTONS
+_Accepter|Accepter _Définitivement|_Montrer Certificat|*_Refuser
+; _Accept|Accept _Permanently|_Show Certificate|*_Reject
+;
+MSG_SSL_CERT_WARNING_INTRO
+Erreur de validation du certificat pour le serveur « \033b%s:%d\033n » :
+; Error validating server certificate for '\033b%s:%d\033n':
+;
+; HOSTNAME, PORT
+;
+MSG_SSL_CERT_WARNING_UNTRUSTED
+- Le certificat n'a pas été émis par une autorité de confiance.\n\
+  Utilisez l'empreinte pour valider le certificat manuellement.
+; - The certificate is not issued by a trusted authority. Use the\n\
+;   fingerprint to validate the certificate manually.
+;
+MSG_SSL_CERT_WARNING_IDMISMATCH
+- Nom d'hôte du certificat ne correspond pas.
+; - The certificate hostname does not match.
+;
+MSG_SSL_CERT_WARNING_NOTYETVALID
+- Le certificat n'est pas encore valide.
+; - The certificate is not yet valid.
+;
+MSG_SSL_CERT_WARNING_EXPIRED
+- Le certificat a expiré.
+; - The certificate has expired.
+;
+MSG_SSL_CERT_WARNING_OTHER
+- Le certificat présente une erreur inconnue.
+; - The certificate has an unknown error.
+;
+MSG_SSL_CERT_WARNING_INFO
+Information sur le certificat:\n\
+- Nom d'hôte : \033b%s\033n,\n\
+- Validité : du \033b%s\033n au \033b%s\033n,\n\
+- Émetteur : \033b%s\033n,\n\
+- Empreinte : \033b%s\033n
+; Certificate information:\n\
+; - Hostname: \033b%s\033n\n\
+; - Valid: \033b%s\033n until \033b%s\033n\n\
+; - Issuer: \033b%s\033n\n\
+; - Fingerprint: \033b%s\033n
+;
+; HOSTNAME, VALID_FROM, VALID_TO, ISSUER, FINGERPRINT
+;
+MSG_SSL_CERT_WARNING_SHOWTITLE
+Certificat de %s:%d
+; Certificate of %s:%d
+;
+; HOSTNAME, PORT
+;
+MSG_ER_WARN_CAFILE
+Lors de l'établissement d'une connexion SSL le certificat bundle \
+« %s » n'a pas été trouvé.\n\
+\n\
+Veuillez vous assurer que ce fichier existe et est à jour, autrement \
+toute connexion SSL sera marquée come non vérifiée.
+; While trying to establish a SSL connection the certificate bundle \
+; file '%s' was found to be missing.\n\
+; \n\
+; Please make sure that the file exists and is uptodate or otherwise \
+; each SSL connection will be flagged as unverified.
+;
+; FILEPATH
+;
+MSG_ER_WARN_LOADCAPATH
+Une erreur est survenue lors du chargement du certificat bundle \
+« %s » ou des fichiers individuels de certificat depuis « %s ».\n\
+\n\
+Veuillez vous assurer qu'aucun fichier invalide n'a été placé dans \
+le répertoire de certificat.
+; While trying to load the certificate bundle '%s' or individual \
+; certificate files from '%s' an error occurred.\n\
+; \n\
+; Please make sure that no invalid file has been placed in the \
+; certificate folder.
+;
+; FILEPATH, DIRPATH
+;
+MSG_ER_WARN_CAPATH
+Lors de la mise en place d'une vérification de certificat SSL, le \
+répertoire « %s » n'a pas été trouvé.\n\
+\n\
+Veuillez vous assurer que ce chemin existe et contient les fichiers \
+de certificat tels que fournis lors du processus d'installation de YAM.
+; While trying to setup a SSL certificate verify the directory '%s' \
+; was found to be missing.\n\
+; \n\
+; Please make sure that the path exists and contains the certificate \
+; bundle file as supplied during the installation process of YAM.
+;
+; DIRPATH
+;
+MSG_CO_ACTION_TERMINATE_FILTER
+Arrêter le processus de filtrage
+; Terminate filter process
+;
+MSG_HELP_CO_CH_ATERMINATE
+Arrête le processus de filtrage après ce\n\
+filtre. Les filtres suivants ne seront\n\
+pas exécutés.
+; Terminate the filter process after this\n\
+; filter. Following filters will not\n\
+; be executed anymore.
+;
+MSG_CO_FILTER_IMPORT
+Importer...
+; Import...
+;
+MSG_FILTER_IMPORT_TITLE
+Import de filtre
+; Import filter
+;
+MSG_SPAM_TRUSTHEADERLINES
+Faire confiance à l'entête de ce filtre externe :
+; Trust header lines of this external filter:
+;
+MSG_ER_POP3_UIDLHASH_INIT_FAILED
+Échec de l'initialisation de la table de hachage UIDL.
+; Failed to initialized UIDL hash table.
+;
+MSG_CO_SIGNATURE_TEXT
+Texte de la signature
+; Signature text
+;
+MSG_CO_APPEND_SIGNATURE_FILE
+Ajouter un fichier en tant que signature
+; Append a file as signature instead
 ;
