@@ -856,7 +856,7 @@ Todos los mensajes de esta carpeta se perderán!\nRealmente quieres borrar?
 ; All messages in this folder will be lost.\nDo you really want to delete it?
 ;
 MSG_CO_InvalidConf
-Configuración no válida (sin nombre del servidor SMTP/POP3\no dirección de correo).\n\nPor favor rellena estos campos e inténtalo otra vez!
+Configuración no válida (sin nombre del servidor SMTP/POP3\no dirección de correo).\n\nPor favor rellena estos campos e inténtalo otra vez.
 ; Invalid configuration (missing SMTP/POP3\nserver name or e-mail address).\n\nPlease fill in these fields and try again.
 ;
 MSG_CO_ImportMIMEReq
@@ -873,11 +873,11 @@ Hola,\\\\n
 ;
 MSG_CO_AltRepIntroDef
 
-;
+; 
 ;
 MSG_CO_AltRepPatternDef
 
-;
+; 
 ;
 MSG_CO_ForwardIntroDef
 *** Inicio de mensaje respuesta ***\\\\n\\\\nFecha: %c\\\\nDe: %n <%e>\\\\nAsunto: %s\\\\n\\\\n--- Seguimiento del mensaje reenviado ---\\\\n\\\\n
@@ -893,15 +893,15 @@ Saludos Cordiales
 ;
 MSG_CO_AltRepHelloDef
 
-;
+; 
 ;
 MSG_CO_AltRepByeDef
 
-;
+; 
 ;
 MSG_CO_MLRepHelloDef
 
-;
+; 
 ;
 MSG_CO_MLRepIntroDef
 El %c, %n escribió:\\\\n
@@ -2376,11 +2376,11 @@ _Próximo|_Editar|_Cancelar
 ; _Next hit|_Edit hit|_Cancel
 ;
 MSG_AB_NoneFound
-No se ha encontrado ninguna coincidencia!
+No se ha encontrado ninguna coincidencia.
 ; No matching entries found.
 ;
 MSG_AB_Modified
-La Agenda de Contactos ha sido modificada!
+La Agenda de Contactos ha sido modificada.
 ; Address book has been modified.
 ;
 MSG_AB_ModifiedGads
@@ -3142,7 +3142,7 @@ Reenviar este\nmensaje.
 ; Module WR - Procedures
 ;
 MSG_WR_ErrorNoRcpt
-Correo incompleto: sin destinatario!
+Correo incompleto: sin destinatario.
 ; Mail is incomplete: no recipient.
 ;
 MSG_WR_NoRcptReqGad
@@ -3804,11 +3804,11 @@ No puedo crear el directorio '%s'.\n\nAsegúrate de que el volúmen no está proteg
 ; PATH
 ;
 MSG_ER_ErrorNoAlias
-Debes especificar un alias para identificar la entrada!
+Debes especificar un alias para identificar la entrada.
 ; You must specify an alias to identify this entry.
 ;
 MSG_ER_ErrorNoAddress
-Debes especificar una dirección para esta entrada!
+Debes especificar una dirección para esta entrada.
 ; You must specify an address for this entry.
 ;
 MSG_ER_ErrorDateFormat
@@ -3873,11 +3873,11 @@ Error de lectura en el archivo de correo: %s.\n\nEl archivo existe, pero hubo un
 ; FILENAME
 ;
 MSG_ER_MissingDirectory
-Debes especificar un directorio para el nuevo usuario!
+Debes especificar un directorio para el nuevo usuario.
 ; You must specify a directory for the new user.
 ;
 MSG_ER_MissingName
-Debes especificar un nombre para el nuevo usuario!
+Debes especificar un nombre para el nuevo usuario.
 ; You must specify a name for the new user.
 ;
 MSG_ER_NoPublicKeys
@@ -4548,7 +4548,7 @@ Por defecto
 ; Default
 ;
 MSG_ER_PGPMultipart
-Error creando un mensaje PGP multiparte. Encriptado/signing no activo!
+Error creando un mensaje PGP multiparte. Encriptado/signing no activo.
 ; Error creating multipart PGP message. Encrypting/signing disabled.
 ;
 MSG_RE_FixedFont
@@ -4806,7 +4806,7 @@ Intenta reunir automáticamente las preferencias de soporte\nútiles ML escaneando
 ; Try to guess automatically the suitable\nML support settings by scanning the\nfirst five e-mails in the folder.
 ;
 MSG_FO_NOTRECOGNIZED
-No puede ser reconocido!
+No puede ser reconocido.
 ; Couldn't be recognized.
 ;
 MSG_FO_MAXAGEFMT
@@ -6481,7 +6481,7 @@ MSG_ER_USER_UNKNOWN_BUTTON
 ; *_Ok
 ;
 MSG_ER_USER_UNKNOWN_ERROR
-Usuario desconocido '%s'!
+Usuario desconocido '%s'.
 ; Unknown user '%s'.
 ;
 MSG_HELP_CO_CA_COLSIG
@@ -6493,7 +6493,7 @@ No es recomendable activar esta opción con tan\npocos como %ld correos clasifica
 ; It is not recommended to enable this feature with as\nfew as %ld mails classified as spam so far, as this\nmay lead to poor performance of the spam filter.\n\nDo you want to disable this option again?
 ;
 MSG_ER_CANNOT_CREATE_SEMAPHORE
-No puedo crear semáforo!
+No puedo crear semáforo.
 ; Can't create semaphore.
 ;
 MSG_RE_HDR_FROM
@@ -7123,7 +7123,7 @@ Fecha de cumpleaños en formato local\n(ej. 19.06.1974 o 19/06/1974).
 ; Date of birth in locale format\n(e.g. 19.06.1974 or 19/06/1974).
 ;
 MSG_ERROR_THREADS
-No puedo inicializar el sistema de temas
+No puedo inicializar el sistema de temas.
 ; Cannot initialize thread system.
 ;
 MSG_ERROR_PLAYSOUND
@@ -7317,7 +7317,7 @@ Archivo '%s' ya existe.\n\nQuieres sobreescribirlo?
 ; FILENAME
 ;
 MSG_ER_USER_DIR_MISSING
-El directorio base '%s' del usuario '%s' no existe!
+El directorio base '%s' del usuario '%s' no existe.
 ; The home directory '%s' of user '%s' does not exist.
 ; PATH, USERNAME
 ;
@@ -7394,8 +7394,7 @@ MSG_CO_SPAM_STATISTICS
 ; %ld (%ld words)
 ;
 MSG_ER_WRONG_DOB_FORMAT
-Utilizas un formato erróneo para la fecha de nacimiento. El formato correcto es '%s'.\n%%d - día con valor nulo (01-31)\n%%-d - día sin valor nulo (1-31)\n%%m - mes con valor nulo (01-12)\n%%-m - mes \
-sin valor nulo (1-12)\n%%y - año con valor nulo (00-99, 2 dígitos)\n%%-y - año sin valor nulo (0-99, 2 dígitos)\n%%Y - año (4 dígitos)\nEl año debe ser mayor o igual a 1900!
+Utilizas un formato erróneo para la fecha de nacimiento. El formato correcto es '%s'.\n%%d - día con valor nulo (01-31)\n%%-d - día sin valor nulo (1-31)\n%%m - mes con valor nulo (01-12)\n%%-m - mes sin valor nulo (1-12)\n%%y - año con valor nulo (00-99, 2 dígitos)\n%%-y - año sin valor nulo (0-99, 2 dígitos)\n%%Y - año (4 dígitos)\nEl año debe ser mayor o igual a 1900.
 ; Date of birth uses a wrong format. The correct format is '%s'.\n%%d  - day with leading zeros (01-31)\n%%-d - day without leading zeros (1-31)\n%%e  - day with leading spaces ( 1-31)\n%%m  - month with leading zeros (01-12)\n%%-m - month without leading zeros (1-12)\n%%y  - year with leading zeros (00-99, 2 digits)\n%%-y - year without leading zeros (0-99, 2 digits)\n%%Y  - year with leading zeros (4 digits)\n%%-Y - year without leading zeros (4 digits)\nThe year number must be greater or equal 1900.
 ; DOBFORMAT
 ;
@@ -7684,7 +7683,7 @@ Buscar en gra_vatar.com...
 ; Search on gra_vatar.com...
 ;
 MSG_ER_NO_GRAVATAR_FOUND
-No se ha encontrado Gravatar para la dirección '%s'.    Quizas esta persona no ha subido todavía su fotografía a gravatar.com
+No se ha encontrado Gravatar para la dirección '%s'.    Quizas esta persona no ha subido todavía su fotografía a gravatar.com.
 ; No Gravatar found for address '%s'.\n\nPerhaps the person has not uploaded a portrait image to gravatar.com yet.
 ; ADDRESS
 ;
@@ -8338,20 +8337,17 @@ Certificado de %s:%d
 ; HOSTNAME, PORT
 ;
 MSG_ER_WARN_CAFILE
-Al tratar de establecer una conexión SSL no se encuentra el certificado '%s' en el paquete de certificados.\n\nPor favor, asegúrese de que el certificado existe y está actualizado o si no cada \
-conexión SSL se marcará como no verificada.
+Al tratar de establecer una conexión SSL no se encuentra el certificado '% s' en el paquete de certificados.\n\nPor favor, asegúrese de que el certificado existe y está actualizado o si no\ncada conexión SSL se marcará como no verificada.
 ; While trying to establish a SSL connection the certificate bundle file '%s' was found to be missing.\n\nPlease make sure that the file exists and is uptodate or otherwise each SSL connection will be flagged as unverified.
 ; FILEPATH
 ;
 MSG_ER_WARN_LOADCAPATH
-Al tratar de cargar el paquete de certificados '%s' o los certificados individuales de '%s' se ha producido un error.\n\nPor favor, asegúrese de que no se ha colocado ningún archivo no válido en la \
-carpeta de certificados.
+Al tratar de cargar el paquete de certificados '% s' o los certificados individuales de '% s' se ha producido un error.\n\nPor favor, asegúrese de que no se ha colocado ningún archivo\nno válido en la carpeta de certificados.
 ; While trying to load the certificate bundle '%s' or individual certificate files from '%s' an error occurred.\n\nPlease make sure that no invalid file has been placed in the certificate folder.
 ; FILEPATH, DIRPATH
 ;
 MSG_ER_WARN_CAPATH
-Al tratar de instalar un certificado SSL se detectó que no se encuentra en el directorio '%s' .\n\nPor favor, asegúrese de que el camino existe y contiene el archivo de paquete de certificado que se \
-suministra durante el proceso de instalación de YAM.
+Al tratar de instalar un certificado SSL se detectó que no se encuentra en el directorio '%s' .\n\nPor favor, asegúrese de que el camino existe y contiene el archivo de paquete de certificado que se \nsuministra durante el proceso de instalación de YAM.
 ; While trying to setup a SSL certificate verify the directory '%s' was found to be missing.\n\nPlease make sure that the path exists and contains the certificate bundle file as supplied during the installation process of YAM.
 ; DIRPATH
 ;
@@ -8360,7 +8356,7 @@ Finalizar proceso de filtrado
 ; Terminate filter process
 ;
 MSG_HELP_CO_CH_ATERMINATE
-Terminar el proceso de filtrado después de este \nfiltro. Los siguientes filtros no \nse ejecutarán.
+Terminar el proceso de filtrado después de este \nfiltro. Los siguientes filtros no\nse ejecutarán.
 ; Terminate the filter process after this\nfilter. Following filters will not\nbe executed anymore.
 ;
 MSG_CO_FILTER_IMPORT

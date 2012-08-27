@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-08-27 Emilio Jimenez <ejim@ono.com>
+
+  * locale/spanish.ct: fixed error in the latest translator file.
+
 2012-08-27 Pär Boberg <pbobbenb@spray.se>
 
   * locale/swedish.ct: updated according to changes.
