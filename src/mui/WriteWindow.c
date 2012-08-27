@@ -3881,7 +3881,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
   {
     case NMM_EDIT:
     {
-      if(wmData->refMail != NULL && MailExists(wmData->refMail, NULL) == TRUE)
+      if(wmData->refMail != NULL && MailExists(wmData->refMail, outfolder) == TRUE)
       {
         GetMailFile(newMailFile, sizeof(newMailFile), outfolder, wmData->refMail);
         break;
@@ -3895,7 +3895,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
     default:
     {
-      if(mode == WRITE_DRAFT && wmData->draftMail != NULL && MailExists(wmData->draftMail, NULL) == TRUE)
+      if(mode == WRITE_DRAFT && wmData->draftMail != NULL && MailExists(wmData->draftMail, outfolder) == TRUE)
         GetMailFile(newMailFile, sizeof(newMailFile), outfolder, wmData->draftMail);
       else
         MA_NewMailFile(outfolder, newMailFile, sizeof(newMailFile));

@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-08-27 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/WriteWindow.c: always obtain the mail file name in respect to the
+    destination folder.
+
 2012-08-25  Alexandre Balaban <abalaban@free.fr>
 
   * locale/french.ct: updated according to latest changes.
