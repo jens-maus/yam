@@ -13,6 +13,8 @@ $URL$
 
   * mui/WriteWindow.c: always obtain the mail file name in respect to the
     destination folder.
+  * mui/WriteWindow.c, YAM_WR.c: saving a draft mail will no longer delete
+    temporary attachment files.
 
 2012-08-25  Alexandre Balaban <abalaban@free.fr>
 

@@ -182,7 +182,7 @@ enum SoftStyleMode
 };
 
 void  EmitHeader(FILE *fh, const char *hdr, const char *body);
-void  FreePartsList(struct WritePart *p);
+void  FreePartsList(struct WritePart *p, BOOL delTemp);
 void  WR_NewMail(enum WriteMode mode, int winnum);
 BOOL  WriteOutMessage(struct Compose *comp);
 void WriteContentTypeAndEncoding(FILE *fh, const struct WritePart *part);

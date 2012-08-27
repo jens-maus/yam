@@ -463,7 +463,7 @@ static BOOL SetDefaultSecurity(struct Compose *comp, const Object *win)
 ///
 /// BuildPartsList
 //  Builds message parts from attachment list
-static struct WritePart *BuildPartsList(struct WriteMailData *wmData)
+static struct WritePart *BuildPartsList(struct WriteMailData *wmData, BOOL delTemp)
 {
   struct WritePart *first;
 
@@ -523,7 +523,7 @@ static struct WritePart *BuildPartsList(struct WriteMailData *wmData)
       if(np == NULL)
       {
         // an error occurred as we couldn't create a new part
-        FreePartsList(first);
+        FreePartsList(first, delTemp);
         first = NULL;
 
         break;
@@ -3863,9 +3863,9 @@ DECLARE(ComposeMail) // enum WriteMode mode
     // export the text of our texteditor to a file
     DoMethod(data->TE_EDIT, MUIM_MailTextEdit_SaveToFile, data->wmData->filename);
 
-    // build the whole mail part list including
-    // the attachments
-    if((comp.FirstPart = BuildPartsList(wmData)) == NULL)
+    // build the whole mail part list including the attachments
+    // but don't delete temporary files when saving a draft mail
+    if((comp.FirstPart = BuildPartsList(wmData, mode != WRITE_DRAFT)) == NULL)
     {
       goto out;
     }
@@ -4140,7 +4140,9 @@ DECLARE(ComposeMail) // enum WriteMode mode
   else
      ER_NewError(tr(MSG_ER_CreateMailError));
 
-  FreePartsList(comp.FirstPart);
+  // free the list of MIME parts but don't delete temporary
+  // files when saving a draft mail
+  FreePartsList(comp.FirstPart, mode != WRITE_DRAFT);
 
   // cleanup certain references if the window is to be closed
   if(mode != WRITE_DRAFT)

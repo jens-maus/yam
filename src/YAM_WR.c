@@ -178,7 +178,7 @@ struct WritePart *NewMIMEpart(struct WriteMailData *wmData)
 ///
 /// FreePartsList
 //  Clears message parts and deletes temporary files
-void FreePartsList(struct WritePart *p)
+void FreePartsList(struct WritePart *p, BOOL delTemp)
 {
   struct WritePart *np;
 
@@ -187,7 +187,7 @@ void FreePartsList(struct WritePart *p)
   for(; p; p = np)
   {
     np = p->Next;
-    if(p->IsTemp == TRUE)
+    if(p->IsTemp == TRUE && delTemp == TRUE)
       DeleteFile(p->Filename);
 
     free(p);
@@ -1251,7 +1251,7 @@ BOOL WriteOutMessage(struct Compose *comp)
           // reuse encoding
           comp->FirstPart->EncType = tpart->EncType;
           // free old parts list
-          FreePartsList(tpart);
+          FreePartsList(tpart, TRUE);
           // the only part is an email message
           comp->FirstPart->ContentType = "message/rfc822";
           // set filename to tempfile

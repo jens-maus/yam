@@ -1547,7 +1547,7 @@ DECLARE(SaveDecryptedMail)
 
         p1->Filename = rmData->firstPart->Next->Filename;
         WriteOutMessage(&comp);
-        FreePartsList(p1);
+        FreePartsList(p1, TRUE);
       }
       fclose(comp.FH);
 

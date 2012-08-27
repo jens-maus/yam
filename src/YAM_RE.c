@@ -3750,7 +3750,7 @@ static void RE_SendMDN(const enum MDNMode mode,
                         clearFlag(uin->smtpServer->flags, MSF_IN_USE);
                     }
                     else
-                      W(DBF_MAIL, "mailServer already in use, can't sen out the message!");
+                      W(DBF_MAIL, "mailServer already in use, cannot send out the message!");
                   }
                   else
                     W(DBF_MAIL, "uin == NULL || uin->smtpServer == NULL");
@@ -3783,7 +3783,7 @@ static void RE_SendMDN(const enum MDNMode mode,
   }
 
   if(p1 != NULL)
-    FreePartsList(p1);
+    FreePartsList(p1, TRUE);
 
   LEAVE();
 }
