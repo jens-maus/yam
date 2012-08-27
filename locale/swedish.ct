@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.11 (08.06.2012)
+## version $VER: YAM.catalog 7.12 (27.08.2012)
 ## language svenska
 ## codeset 0
 ;
@@ -38,10 +38,6 @@ Bilagor
 MSG_Options
 Alternativ
 ; Options
-;
-MSG_Add
-_Nytt
-; _New
 ;
 MSG_Del
 _Radera
@@ -1060,10 +1056,6 @@ MSG_CO_CrdSignature
 Signatur
 ; Signature
 ;
-MSG_CO_CrdLists
-Listor
-; Lists
-;
 MSG_CO_CrdMIME
 MIME
 ; MIME
@@ -1204,10 +1196,6 @@ MSG_CO_EmailAddress
 _E-postadress
 ; _E-mail address
 ;
-MSG_CO_POPServer
-POP_3-server
-; POP_3 server
-;
 MSG_CO_Password
 Lösenord
 ; _Password
@@ -1219,10 +1207,6 @@ Tids_zon
 MSG_CO_SendMail
 Skicka post (SMTP)
 ; Send mail (SMTP)
-;
-MSG_CO_Domain
-Do_män
-; Do_main
 ;
 MSG_CO_Allow8bit
 Servern tillåter _8-bitars tecken
@@ -1280,14 +1264,6 @@ MSG_CO_PreSelect
 V_älj innan
 ; _Pre-selection
 ;
-MSG_CO_UpdateStatus
-Uppdat_era meddelandestatus
-; Update m_essage status
-;
-MSG_CO_AutoOperation
-Hämta automatiskt
-; Automatic operation
-;
 MSG_CO_CheckMail
 Leta efter ny post var
 ; Check for new mail every
@@ -1295,10 +1271,6 @@ Leta efter ny post var
 MSG_CO_Minutes
 minut
 ; minutes
-;
-MSG_CO_Notification
-Meddelande
-; Notification
 ;
 MSG_CO_NotiReq
 Dialogfönste_r
@@ -1488,14 +1460,6 @@ MSG_CO_DefaultViewer
 _Förvald visare
 ; De_fault viewer
 ;
-MSG_CO_MessageHeader
-Meddelandehuvuden
-; Message headers
-;
-MSG_CO_ReplyTo
-Sva_r till
-; _Reply to
-;
 MSG_CO_Organization
 _Organisation
 ; _Organization
@@ -1616,10 +1580,6 @@ MSG_CO_Signature
 Signatur
 ; Signature
 ;
-MSG_CO_UseSig
-Använd s_ignaturer
-; Use s_ignatures
-;
 MSG_CO_EditSig
 R_edigera externt
 ; _Edit in external editor
@@ -1667,14 +1627,6 @@ noggrann
 MSG_CO_PGPExe
 Sökväg till P_GP
 ; P_GP's directory
-;
-MSG_CO_PGPKey
-Din PGP-nyckels _ID
-; Your PGP key _ID
-;
-MSG_CO_EncryptToSelf
-_Kryptera dubbelt
-; _Encrypt to self
 ;
 MSG_CO_Logfiles
 Loggfiler
@@ -1756,10 +1708,6 @@ MSG_CO_Gallery
 Spara _bilder i
 ; Save _photos in
 ;
-MSG_CO_MyURL
-_Webbadress till din bild
-; UR_L of your picture
-;
 MSG_CO_AddToAddrbook
 S_para avsändaradress
 ; Sa_ve sender's address
@@ -1771,10 +1719,6 @@ _HTTP-proxyserver
 MSG_CO_NewGroup
 _Grupp för nya poster
 ; _Group for new entries
-;
-MSG_CO_AddInfo
-_Lägg till personlig information
-; _Add personal info
 ;
 MSG_CO_Paths
 Sökvägar
@@ -1819,10 +1763,6 @@ eller fler meddelanden
 MSG_CO_Remove
 Ta bort me_ddelanden omedelbart
 ; _Remove messages immediately
-;
-MSG_CO_SaveSent
-S_para skickade meddelanden
-; Sa_ve sent messages
 ;
 MSG_CO_XPK
 XPK/LhA-inställningar
@@ -1969,12 +1909,6 @@ Adress till SMTP-servern för att skicka\npost. Om du lämnar detta fält tomt\nanv
 ; The address of the SMTP server to send mail to.\n\
 ; If you leave this field empty, the address of the\n\
 ; POP3 server will be used as fallback.
-;
-MSG_HELP_CO_ST_DOMAIN
-Domännamnet för din dator. Ändra detta\nfält om HELO kommandona inte fungerar.
-; The hostname of your computer.\n\
-; Change this field if the HELO\n\
-; commands fails.
 ;
 MSG_HELP_CO_CH_SMTP8BIT
 Konvertera inte till 7-bitar vid överföring.\nAnvänd detta val bara om din SMTP-server\nklarar 8-bitars överföring, annars kan dina\nmeddelanden bli förstörda.
@@ -2245,22 +2179,6 @@ Program för att visa\nbilagor av okänd typ.
 ; Program used to display\n\
 ; attachments of unknown type.
 ;
-MSG_HELP_CO_ST_REPLYTO
-Skulle svar till dina meddelanden behöva skickas\nsom förval någon annanstans förutom din e-postadress,\nspecifiera dessa andra adresser här.
-; Should replies to your messages need to be sent by\n\
-; default somewhere else besides (or instead of) your\n\
-; e-mail address, specify those other addresses here.
-;
-MSG_HELP_CO_ST_ORGAN
-Namnet på ditt företag\neller organisation.
-; The name of your\n\
-; company or institute.
-;
-MSG_HELP_CO_ST_EXTHEADER
-Extra meddelandehuvud(en)\natt inkludera i alla utgående meddelanden.
-; Additional message header(s) that will\n\
-; be added to every outgoing message.
-;
 MSG_HELP_CO_ST_HELLOTEXT
 Text att infoga i början\nav ett nytt meddelande.
 ; Text to insert at the\n\
@@ -2323,11 +2241,6 @@ Använd dessa fraser i svar\npå meddelanden från sändlistor.
 ; Use these phrases in replies to\n\
 ; messages from a mailing list.
 ;
-MSG_HELP_CO_CH_QUOTE
-Citera orginalmeddelandet i ditt svar?
-; Quote the original\n\
-; message in your reply?
-;
 MSG_HELP_CO_CH_QUOTEEMPTY
 Använd citattecken för\ntomma rader?
 ; Insert quote character\n\
@@ -2343,11 +2256,6 @@ MSG_HELP_CO_CH_STRIPSIG
 Undviker citering av signaturen\ni originalmeddelandet.
 ; Avoids quoting the signature\n\
 ; of the original message.
-;
-MSG_HELP_CO_CY_SIGNAT
-Välj vilken signatur\ndu vill redigera.
-; Select the signature\n\
-; you want to edit.
 ;
 MSG_HELP_CO_BT_EDITSIG
 Ändra denna signatur med\nden externa redigeraren.
@@ -2404,16 +2312,6 @@ Katalog där PGP's\nbinärfil kan hittas.
 ; Directory where the PGP\n\
 ; executable can be found.
 ;
-MSG_HELP_CO_ST_MYPGPID
-ID:et på din PGP-nyckel som används för\natt signera och kryptera meddelanden.
-; The ID of your PGP key that is used\n\
-; to sign and encrypt messages.
-;
-MSG_HELP_CO_CH_ENCSELF
-Kryptera nya meddelanden med din allmänna nyckel,\nså du fortfarande kan läsa eller redigera\nutgående meddelanden.
-; Encrypt new messages with your public key,\n\
-; so you can still read or edit outgoing messages.
-;
 MSG_HELP_CO_ST_LOGFILE
 Sökväg till katalogen där\nloggfilerna kommer att sparas.
 ; Path where the log\n\
@@ -2464,11 +2362,6 @@ MSG_HELP_CO_ST_GALLDIR
 Katalog för att spara bilder\nav de du kommunicerar med.
 ; Directory to save the pictures\n\
 ; of your correspondents.
-;
-MSG_HELP_CO_ST_PHOTOURL
-URL-adress till bilden på dig.
-; URL address of your\n\
-; portrait image.
 ;
 MSG_HELP_CO_CY_ATAB
 Lägg till avsändaren i adressboken\nautomatiskt, när du läser dennes meddelande?
@@ -2526,11 +2419,6 @@ Radera meddelanden med en gång,\nistället för att flytta dem till Papperskorgen.
 ; Immediately delete the messages rather\n\
 ; than moving them to the Trash folder.\n\
 ; (Use this with care)
-;
-MSG_HELP_CO_CH_SAVESENT
-Flytta skickade meddelanden\ntill Skickat mappen.
-; Move sent messages to\n\
-; the Sent folder.
 ;
 MSG_HELP_CO_TX_ENCPACK
 XPK-bibliotek som används för\natt skydda och komprimera mappar.
@@ -2600,7 +2488,7 @@ Födelsedagspåminnelse
 ;
 MSG_AB_HappyBirthday
 Grattis på födelsedagen!
-; Happy birthday.
+; Happy birthday
 ;
 MSG_AB_PersonAlias
 Alias (PERSON)
@@ -3616,10 +3504,6 @@ MSG_WR_Display
 V_isa
 ; D_isplay
 ;
-MSG_WR_Encoding
-Kodning
-; Encoding
-;
 MSG_WR_ContentType
 _MIME-typ
 ; _MIME type
@@ -3671,10 +3555,6 @@ V_ikt
 MSG_WR_Signature
 Signatur
 ; Signature
-;
-MSG_WR_Security
-Säkerhet
-; Security
 ;
 MSG_WR_BounceWT
 Studsa meddelande
@@ -3967,12 +3847,6 @@ MSG_HELP_WR_ST_EXTHEADER
 Extra brevhuvuden\nsom ska läggas till i meddelandet.
 ; Additional headers that should\n\
 ; be added to the message.
-;
-MSG_HELP_WR_ST_FROM
-Innehållet i 'Från:'-fältet i brevhuvudet\n(namn och adress på personen\nsom skriver detta meddelande).
-; Contents of the 'From:' header\n\
-; (name and address of the person\n\
-; who is writing this message).
 ;
 MSG_HELP_WR_ST_REPLYTO
 Svarsadress för\ndetta meddelande.
@@ -5015,11 +4889,6 @@ MSG_SETTINGS_MUI
 MUI...
 ; MUI...
 ;
-MSG_HELP_FO_ST_MLFROMADDRESS
-Använd denna 'Från:' adress vid\npostning av nya brev till listan.
-; Use this 'From:' address when\n\
-; posting new mails to the list.
-;
 MSG_HELP_FO_ST_MLREPLYTOADDRESS
 Använd denna 'Svar till:' adress vid\npostning av nya brev till listan.
 ; Use this 'Reply-To:' address when\n\
@@ -5058,10 +4927,6 @@ MSG_WR_AltQuoted
 Alternativt citerad
 ; Alternative quoted
 ;
-MSG_CO_DoQuote
-Citera _meddelande
-; Qu_ote message
-;
 MSG_EA_SelectPhoto_Title
 Välj porträtt
 ; Select portrait
@@ -5090,10 +4955,6 @@ Ny mapp grupp...
 MSG_CO_GENLISTCFG
 Generella inställningar
 ; General settings
-;
-MSG_CO_FIELDLISTCFG
-Fält inställningar
-; Field settings
 ;
 MSG_CO_SIZEFORMAT
 S_torleks format
@@ -5244,14 +5105,6 @@ Sök
 MSG_SEARCHNOTFOUND_MSG
 '%s' ej hittad.
 ; '%s' not found.
-;
-MSG_WR_ERRORNOSENDER
-Brevet är ofullständigt: ingen avsändare!
-; Mail is incomplete: no sender.
-;
-MSG_WR_NOSENDERREQGAD
-_Använd förinställd avsändare|*A_vbryt
-; _Use default sender|*_Cancel
 ;
 MSG_FO_GROUP_CONFDEL
 Denna grupp innehåller undermappar, som\nflyttas till föräldermappen vid radering.\n\nVill du verkligen radera denna grupp?
@@ -6119,14 +5972,6 @@ MSG_CO_SIGNATURE_SUMMARY
 Konfigurera dina e-post signaturer...
 ; Configure your e-mail signatures...
 ;
-MSG_CO_LISTS_TITLE
-Inställningar brevlistor
-; Mail Listview Settings
-;
-MSG_CO_LISTS_SUMMARY
-Konfigurera basutseendet för brevlistorna...
-; Configure the basic appearance of mail listviews...
-;
 MSG_CO_SECURITY_TITLE
 Inställningar säkerhet
 ; Security Settings
@@ -6837,14 +6682,6 @@ MSG_LOADINGUPDATESTATE
 Laddar tillstånd för uppdateringsdata...
 ; Loading update state data...
 ;
-MSG_CO_ASK_SAVE_SIGNATURE
-Ändringar i signaturerna måste sparas\nseparat från den globala konfigurationen,\nannars går de förlorade!\n\nVill du spara signaturerna nu?
-; Changes to the signatures must be saved separately\n\
-; from the global configuration or otherwise they\n\
-; will be lost.\n\
-; \n\
-; Do you want to save the signatures now?
-;
 MSG_MA_HIDE
 Göm
 ; Hide
@@ -7111,16 +6948,6 @@ Om jag bara ska ra_dera meddelandet:
 MSG_CO_MDN_OTHER
 I _övriga fall:
 ; In all oth_er cases:
-;
-MSG_CO_REQUESTMDN
-Begär alltid ett _mottagningskvitto
-; Always request a retur_n receipt
-;
-MSG_HELP_CO_CH_REQUESTMDN
-Om vald, kommer valet mottagnings-\nkvitto i skrivfönstret att vara aktiverat\nsom förval (Använd med försiktighet).
-; If selected, the return receipt option in\n\
-; the Write window will always be enabled\n\
-; by default (Use this with care).
 ;
 MSG_HELP_CO_CH_MDN_NEVER
 Om vald, kommer inget mottagnings\nkvitto att skickas, även om det tydligt begärs.
@@ -7943,11 +7770,6 @@ MSG_HELP_CO_BT_APLAY
 Testa ljudet.
 ; Test the sound.
 ;
-MSG_HELP_CO_CH_USESIG
-Vill du aktivera\nsignaturer som förval?
-; Do you want to enable\n\
-; signatures by default?
-;
 MSG_HELP_CO_ST_DESCRIPTION
 En egen beskrivning\nför denna MIME-typ.
 ; A custom description for\n\
@@ -8427,17 +8249,6 @@ Födelsedagsdatumet är i fel format. Det korrekta formatet är '%s'.\n%%d - dag me
 ; %%-Y - year without leading zeros (4 digits)\n\
 ; The year number must be greater or equal 1900.
 ; DOBFORMAT
-;
-MSG_CO_PGPURL
-URL till publik PGP-nyckel
-; URL to public PGP key
-;
-MSG_HELP_CO_ST_PGPURL
-Du kan specifiera en URL där din publika\nPGP-nyckel kan laddas ned från. Denna URL\nkommer sedan att placeras i en separat\nhuvudpost i varje brev.
-; You can specify an URL where your public\n\
-; PGP key can be downloaded from. This URL\n\
-; will then placed into a separate header\n\
-; entry in every mail.
 ;
 MSG_CO_NOTIOS41SYSTEM
 AmigaOS_4.1 notifieringssystem
@@ -9527,4 +9338,132 @@ Anslutningar
 MSG_CO_POP_NOTIFICATION
 Meddelande för nya brev
 ; Notification for new mails
+;
+MSG_SSL_CERT_WARNING_TITLE
+SSL certifikat varning
+; SSL Certificate Warning
+;
+MSG_SSL_CERT_WARNING_BUTTONS
+_Acceptera|Acceptera _permanent|Vi_sa certifikat|*_Förkasta
+; _Accept|Accept _Permanently|_Show Certificate|*_Reject
+;
+MSG_SSL_CERT_WARNING_INTRO
+Kunde inte validera server cerifikat för '\033b%s:%d\033n':
+; Error validating server certificate for '\033b%s:%d\033n':
+; HOSTNAME, PORT
+;
+MSG_SSL_CERT_WARNING_UNTRUSTED
+- Certifikatet är inte utfärdat av en betrodd myndighet. Använd\n\
+fingeravtrycket för att validera cerifikatet manuellt.
+; - The certificate is not issued by a trusted authority. Use the\n\
+;   fingerprint to validate the certificate manually.
+;
+MSG_SSL_CERT_WARNING_IDMISMATCH
+- Certifikatets värdnamn stämmer inte överrens.
+; - The certificate hostname does not match.
+;
+MSG_SSL_CERT_WARNING_NOTYETVALID
+- Certifikatet är ännu inte giltigt.
+; - The certificate is not yet valid.
+;
+MSG_SSL_CERT_WARNING_EXPIRED
+- Certifikatets giltighet har löpt ut.
+; - The certificate has expired.
+;
+MSG_SSL_CERT_WARNING_OTHER
+- Certifikatet har ett okänt fel.
+; - The certificate has an unknown error.
+;
+MSG_SSL_CERT_WARNING_INFO
+Certifikatsinformation:\n\
+- Värdnamn: \033b%s\033n\n\
+- Giltigt: \033b%s\033n till \033b%s\033n\n\
+- Utfärdare: \033b%s\033n\n\
+- Fingeravtryck: \033b%s\033n
+; Certificate information:\n\
+; - Hostname: \033b%s\033n\n\
+; - Valid: \033b%s\033n until \033b%s\033n\n\
+; - Issuer: \033b%s\033n\n\
+; - Fingerprint: \033b%s\033n
+; HOSTNAME, VALID_FROM, VALID_TO, ISSUER, FINGERPRINT
+;
+MSG_SSL_CERT_WARNING_SHOWTITLE
+Certifikat för %s:%d
+; Certificate of %s:%d
+; HOSTNAME, PORT
+;
+MSG_ER_WARN_CAFILE
+Vid försök att erhålla en SSL anslutning, så befanns certifikatpaketets fil \
+'%s' att saknas.\n\
+\n\
+Var god kontrollera att filen existerar och är uppdaterad, annars kommer \
+varje SSL anslutning att flaggas som overifierad.
+; While trying to establish a SSL connection the certificate bundle \
+; file '%s' was found to be missing.\n\
+; \n\
+; Please make sure that the file exists and is uptodate or otherwise \
+; each SSL connection will be flagged as unverified.
+; FILEPATH
+;
+MSG_ER_WARN_LOADCAPATH
+Vid försök att ladda certifikatpaktet '%s' eller individuella \
+certifikatfiler från '%s', så uppstod ett fel.\n\
+\n\
+Var god kontrollera att inga ogiltiga filer har placerats i \
+certifikatmappen.
+; While trying to load the certificate bundle '%s' or individual \
+; certificate files from '%s' an error occurred.\n\
+; \n\
+; Please make sure that no invalid file has been placed in the \
+; certificate folder.
+; FILEPATH, DIRPATH
+;
+MSG_ER_WARN_CAPATH
+Vid försök att upprätta SSL certifikatsverifiering, så befanns mappen \
+'%s' saknas.\n\
+\n\
+Var god kontrollera att sökvägen existerar och innehåller certifikats \
+paketfilen som tillhandahölls vid installeringen av YAM.
+; While trying to setup a SSL certificate verify the directory '%s' \
+; was found to be missing.\n\
+; \n\
+; Please make sure that the path exists and contains the certificate \
+; bundle file as supplied during the installation process of YAM.
+; DIRPATH
+;
+MSG_CO_ACTION_TERMINATE_FILTER
+Avsluta filteringsprocess
+; Terminate filter process
+;
+MSG_HELP_CO_CH_ATERMINATE
+Avsluta filtreringsprocess efter detta\n\
+filter. Efterföljande filter kommer\n\
+inte att köras mer.
+; Terminate the filter process after this\n\
+; filter. Following filters will not\n\
+; be executed anymore.
+;
+MSG_CO_FILTER_IMPORT
+Importera...
+; Import...
+;
+MSG_FILTER_IMPORT_TITLE
+Importera filter
+; Import filter
+;
+MSG_SPAM_TRUSTHEADERLINES
+Lita på huvudrader av detta externa filter:
+; Trust header lines of this external filter:
+;
+MSG_ER_POP3_UIDLHASH_INIT_FAILED
+Misslyckades att initiera UIDL hash tabell.
+; Failed to initialized UIDL hash table.
+;
+MSG_CO_SIGNATURE_TEXT
+Signatur text
+; Signature text
+;
+MSG_CO_APPEND_SIGNATURE_FILE
+Lägg till en fil som signatur istället
+; Append a file as signature instead
 ;
