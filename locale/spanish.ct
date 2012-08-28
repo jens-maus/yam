@@ -7394,7 +7394,7 @@ MSG_CO_SPAM_STATISTICS
 ; %ld (%ld words)
 ;
 MSG_ER_WRONG_DOB_FORMAT
-Utilizas un formato erróneo para la fecha de nacimiento. El formato correcto es '%s'.\n%%d - día con valor nulo (01-31)\n%%-d - día sin valor nulo (1-31)\n%%m - mes con valor nulo (01-12)\n%%-m - mes sin valor nulo (1-12)\n%%y - año con valor nulo (00-99, 2 dígitos)\n%%-y - año sin valor nulo (0-99, 2 dígitos)\n%%Y - año (4 dígitos)\nEl año debe ser mayor o igual a 1900.
+Utilizas un formato erróneo para la fecha de nacimiento. El formato correcto es '%s'.\n%%d - día con cero a izquierda (01-31)\n%%-d - día sin cero a izquierda (1-31)\n%%e - día con espacio a izquierda ( 1-31)\n%%m - mes con cero a izquierda (01-12)\n%%-m - mes sin cero a izquierda (1-12)\n%%y - año con ceros a izquierda (00-99, 2 dígitos)\n%%-y - año sin ceros a izquierda  (0-99, 2 dígitos)\n%%Y - año (4 dígitos)\n%%-Y - año sin ceros a izquierda (4 digitos).\nEl año debe ser mayor o igual a 1900.
 ; Date of birth uses a wrong format. The correct format is '%s'.\n%%d  - day with leading zeros (01-31)\n%%-d - day without leading zeros (1-31)\n%%e  - day with leading spaces ( 1-31)\n%%m  - month with leading zeros (01-12)\n%%-m - month without leading zeros (1-12)\n%%y  - year with leading zeros (00-99, 2 digits)\n%%-y - year without leading zeros (0-99, 2 digits)\n%%Y  - year with leading zeros (4 digits)\n%%-Y - year without leading zeros (4 digits)\nThe year number must be greater or equal 1900.
 ; DOBFORMAT
 ;
