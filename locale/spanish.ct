@@ -8337,17 +8337,17 @@ Certificado de %s:%d
 ; HOSTNAME, PORT
 ;
 MSG_ER_WARN_CAFILE
-Al tratar de establecer una conexión SSL no se encuentra el certificado '% s' en el paquete de certificados.\n\nPor favor, asegúrese de que el certificado existe y está actualizado o si no\ncada conexión SSL se marcará como no verificada.
+Al tratar de establecer una conexión SSL no se encuentra el certificado '%s' en el paquete de certificados.\n\nPor favor, asegúrese de que el certificado existe y está actualizado o si no\ncada conexión SSL se marcará como no verificada.
 ; While trying to establish a SSL connection the certificate bundle file '%s' was found to be missing.\n\nPlease make sure that the file exists and is uptodate or otherwise each SSL connection will be flagged as unverified.
 ; FILEPATH
 ;
 MSG_ER_WARN_LOADCAPATH
-Al tratar de cargar el paquete de certificados '% s' o los certificados individuales de '% s' se ha producido un error.\n\nPor favor, asegúrese de que no se ha colocado ningún archivo\nno válido en la carpeta de certificados.
+Al tratar de cargar el paquete de certificados '%s' o los certificados individuales de '%s' se ha producido un error.\n\nPor favor, asegúrese de que no se ha colocado ningún archivo\nno válido en la carpeta de certificados.
 ; While trying to load the certificate bundle '%s' or individual certificate files from '%s' an error occurred.\n\nPlease make sure that no invalid file has been placed in the certificate folder.
 ; FILEPATH, DIRPATH
 ;
 MSG_ER_WARN_CAPATH
-Al tratar de instalar un certificado SSL se detectó que no se encuentra en el directorio '%s' .\n\nPor favor, asegúrese de que el camino existe y contiene el archivo de paquete de certificado que se \nsuministra durante el proceso de instalación de YAM.
+Al tratar de instalar un certificado SSL se detectó que no se encuentra en el directorio '%s'.\n\nPor favor, asegúrese de que el camino existe y contiene el archivo de paquete de certificado que se \nsuministra durante el proceso de instalación de YAM.
 ; While trying to setup a SSL certificate verify the directory '%s' was found to be missing.\n\nPlease make sure that the path exists and contains the certificate bundle file as supplied during the installation process of YAM.
 ; DIRPATH
 ;
