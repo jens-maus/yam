@@ -50,7 +50,8 @@
 /* CLASSDATA
 struct Data
 {
-  char *aboutText;
+  char *aboutText1;
+  char *aboutText2;
 };
 */
 
@@ -71,12 +72,16 @@ OVERLOAD(OM_NEW)
   // locale strings in the YAM.cd file. People should not
   // mess around with the license and other stuff and therefore
   // we keep that text unlocalized.
-  char *aboutText;
-  const char *aboutTemplate =
+  char *aboutText1;
+  char *aboutText2;
+  int aboutResult1;
+  int aboutResult2;
+  const char aboutTemplate1[] =
                           "\033b%s\033n\n\n"
                           "Jens Langner\n"
                           "Thore Boeckelmann\n"
-                          "Frank Weber\n"
+                          "Frank Weber";
+  const char aboutTemplate2[] =
                           "\n"
                           "\033b%s\033n\n\n"
                           "Matthias Rustler\n"
@@ -149,8 +154,10 @@ OVERLOAD(OM_NEW)
                           "http://expat.sourceforge.net/\n\n"
                           "\033bPretty Good Privacy (PGP)\033n\n"
                           "\033iPhil Zimmermann\033n\n\n"
-                          "%s"
-                          "\n\n\n\n\n\n\n\n\n\n";
+                          "%s\n"
+                          "\n"
+                          "\n"
+                          "\n";
 
   ENTER();
 
@@ -160,13 +167,17 @@ OVERLOAD(OM_NEW)
 
   // use asprintf() function to allocate&set the content of our
   // about text.
-  if(asprintf(&aboutText, aboutTemplate,
-    tr(MSG_ABOUT_CURRENT_DEVELOPERS),
+  aboutResult1 = asprintf(&aboutText1, aboutTemplate1,
+    tr(MSG_ABOUT_CURRENT_DEVELOPERS));
+
+  aboutResult2 = asprintf(&aboutText2, aboutTemplate2,
     tr(MSG_ABOUT_CONTRIBUTORS),
     tr(MSG_ABOUT_LOCALIZATION_CONTRIBUTORS),
     tr(MSG_ABOUT_GPL),
     tr(MSG_ABOUT_3RD_PARTY_SOFTWARE),
-    tr(MSG_ABOUT_YAM_NEWS)) != -1)
+    tr(MSG_ABOUT_YAM_NEWS));
+
+  if(aboutResult1 != -1 && aboutResult2 != -1)
   {
     // now we go and try to setup a crawling.mcc object
     // with the object text. However, if that fails we simply generate
@@ -180,13 +191,28 @@ OVERLOAD(OM_NEW)
     infoObject = CrawlingObject,
 
       MUIA_Font,          MUIV_Font_Tiny,
-      MUIA_FixHeightTxt,  "\n\n\n\n\n\n\n\n",
-      MUIA_FixWidthTxt,   aboutText,
+      MUIA_FixHeightTxt,  aboutText1,
 
       Child, TextObject,
         MUIA_Font,          MUIV_Font_Tiny,
         MUIA_Text_PreParse, "\033c",
-        MUIA_Text_Contents, aboutText,
+        MUIA_Text_Contents, aboutText1,
+        MUIA_Text_SetMax,   FALSE,
+        MUIA_Text_Copy,     FALSE,
+      End,
+
+      Child, TextObject,
+        MUIA_Font,          MUIV_Font_Tiny,
+        MUIA_Text_PreParse, "\033c",
+        MUIA_Text_Contents, aboutText2,
+        MUIA_Text_SetMax,   FALSE,
+        MUIA_Text_Copy,     FALSE,
+      End,
+
+      Child, TextObject,
+        MUIA_Font,          MUIV_Font_Tiny,
+        MUIA_Text_PreParse, "\033c",
+        MUIA_Text_Contents, aboutText1,
         MUIA_Text_SetMax,   FALSE,
         MUIA_Text_Copy,     FALSE,
       End,
@@ -197,23 +223,40 @@ OVERLOAD(OM_NEW)
     // we go and create a NFloattextObject instead
     if(infoObject == NULL)
     {
-      infoObject = NListviewObject,
+      char *aboutText;
 
-        MUIA_NListview_Horiz_ScrollBar, MUIV_NListview_HSB_Off,
-        MUIA_NListview_NList, NFloattextObject,
-          MUIA_Font,            MUIV_Font_Tiny,
-          MUIA_NList_Format,    "P=\033c",
-          MUIA_NList_Input,     FALSE,
-          MUIA_NFloattext_Text, aboutText,
-        End,
+      // combine the separated texts into one text
+      if(asprintf(&aboutText, "%s%s", aboutText1, aboutText2) != -1)
+      {
+        infoObject = NListviewObject,
 
-      End;
+          MUIA_NListview_Horiz_ScrollBar, MUIV_NListview_HSB_Off,
+          MUIA_NListview_NList, NFloattextObject,
+            MUIA_Font,            MUIV_Font_Tiny,
+            MUIA_NList_Format,    "P=\033c",
+            MUIA_NList_Input,     FALSE,
+            MUIA_NFloattext_Text, aboutText1,
+          End,
+
+        End;
+
+        free(aboutText1);
+        free(aboutText2);
+        aboutText1 = aboutText;
+        aboutText2 = NULL;
+      }
     }
   }
   else
   {
     // make sure the pointer is NULL as asprintf() does not guarantee this
-    aboutText = NULL;
+    if(aboutResult1 != -1)
+      free(aboutText1);
+    if(aboutResult2 != -1)
+      free(aboutText2);
+
+    aboutText1 = NULL;
+    aboutText2 = NULL;
   }
 
   // create the main window object
@@ -283,7 +326,8 @@ OVERLOAD(OM_NEW)
 
     DoMethod(G->App, OM_ADDMEMBER, obj);
 
-    data->aboutText = aboutText;
+    data->aboutText1 = aboutText1;
+    data->aboutText2 = aboutText2;
 
     DoMethod(obj,       MUIM_Notify, MUIA_Window_CloseRequest, TRUE, MUIV_Notify_Self, 3, MUIM_Set, MUIA_Window_Open, FALSE);
     DoMethod(bt_okay,   MUIM_Notify, MUIA_Pressed, FALSE, obj, 3, MUIM_Set, MUIA_Window_Open, FALSE);
@@ -306,7 +350,8 @@ OVERLOAD(OM_DISPOSE)
 
   ENTER();
 
-  free(data->aboutText);
+  free(data->aboutText1);
+  free(data->aboutText2);
 
   result = DoSuperMethodA(cl, obj, msg);
 
