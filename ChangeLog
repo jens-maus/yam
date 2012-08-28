@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-08-28 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_COg.c: creating a new signature will not use an external signature file
+    by default anymore.
+
 2012-08-27 Emilio Jimenez <ejim@ono.com>
 
   * locale/spanish.ct: fixed error in the latest translator file.

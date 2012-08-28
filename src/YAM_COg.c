@@ -1271,6 +1271,9 @@ HOOKPROTONHNONP(CO_AddSignature, void)
     // create new default values
     strlcpy(sn->description, tr(MSG_NewEntry), sizeof(sn->description));
 
+    // new signatures don't use a file by default
+    sn->useSignatureFile = FALSE;
+
     // add the new signature to the list
     DoMethod(G->CO->GUI.LV_SIGNATURE, MUIM_NList_InsertSingle, sn, MUIV_NList_Insert_Bottom);
 

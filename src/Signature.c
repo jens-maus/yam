@@ -65,6 +65,7 @@ struct SignatureNode *CreateNewSignature(void)
 
     // now we fill the SignatureNode structure with some sensible defaults
     sn->active = TRUE;
+    // default to use a signature file to be compatible with YAM <= 2.7
     sn->useSignatureFile = TRUE;
   }
 
