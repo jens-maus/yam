@@ -152,6 +152,35 @@ void ActivateFolder(const struct Folder *fo)
 }
 
 ///
+/// UpdateAllFolderSettings
+// update all embedded identity and signature pointers of all folders
+void UpdateAllFolderSettings(const struct Config *co)
+{
+  struct FolderNode *fnode;
+
+  ENTER();
+
+  LockFolderListShared(G->folders);
+
+  ForEachFolderNode(G->folders, fnode)
+  {
+    struct Folder *folder = fnode->folder;
+
+    // replace the old identity and signature pointers with current
+    // ones pointing to the new configuration
+    if(folder->MLIdentity != NULL)
+	  folder->MLIdentity = FindUserIdentityByID(&co->userIdentityList, folder->MLIdentity->id);
+
+	if(folder->MLSignature != NULL)
+	  folder->MLSignature = FindSignatureByID(&co->signatureList, folder->MLSignature->id);
+  }
+
+  UnlockFolderList(G->folders);
+
+  LEAVE();
+}
+
+///
 /// FO_GetFolderRexx
 //  Finds a folder by its name, type or position
 struct Folder *FO_GetFolderRexx(const char *arg, int *pos)
@@ -2593,4 +2622,3 @@ static struct FO_ClassData *FO_New(void)
   return data;
 }
 ///
-

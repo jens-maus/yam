@@ -9,6 +9,9 @@ $URL$
 
   * YAM_COg.c: creating a new signature will not use an external signature file
     by default anymore.
+  * YAM_CO.c, YAM_FO.c: changing anything in the configuration will update the
+    user identites and signatures used in the folder settings to ensure that
+    these point to the current configuration.
 
 2012-08-27 Emilio Jimenez <ejim@ono.com>
 

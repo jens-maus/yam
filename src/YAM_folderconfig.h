@@ -33,6 +33,7 @@
 #include "YAM_stringsizes.h"
 
 // forward declarations
+struct Config;
 struct MailList;
 struct UserIdentityList;
 
@@ -244,5 +245,6 @@ void            FO_UpdateTreeStatistics(const struct Folder *folder, const BOOL 
 struct Folder * GetCurrentFolder(void);
 void            SetCurrentFolder(const struct Folder *folder);
 void            ActivateFolder(const struct Folder *fo);
+void            UpdateAllFolderSettings(const struct Config *co);
 
 #endif /* YAM_FOLDERCONFIG_H */

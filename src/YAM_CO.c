@@ -2911,6 +2911,9 @@ void CO_Validate(struct Config *co, BOOL update)
     // make sure the dynamic menus and some menu shortcuts of the main window
     // are properly refreshed.
     MA_SetupDynamicMenus();
+
+    // update the embedded identity and signature pointers of all folders
+    UpdateAllFolderSettings(co);
   }
 
   // if some items have modified the config we do save it again.
