@@ -552,12 +552,13 @@ void LoadUpdateState(void)
 
           if((value = strchr(buf, '=')) != NULL)
           {
-            const char *value2 = "";
-
-            for(value2 = (++value) + 1; isspace(*value); value++);
+            for(++value; isspace(*value); value++)
+              ;
           }
 
-          for(p = buf; *p != '\0' && *p != '=' && !isspace(*p); p++);
+          for(p = buf; *p != '\0' && *p != '=' && !isspace(*p); p++)
+            ;
+
           *p = '\0';
 
           if(*buf != '\0' && value != NULL)

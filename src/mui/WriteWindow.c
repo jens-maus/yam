@@ -734,10 +734,8 @@ OVERLOAD(OM_NEW)
   struct Data *data;
   struct Data *tmpData;
   static const char *rtitles[4] = { NULL, NULL, NULL, NULL };
-  static const char *encoding[3];
   static const char *security[SEC_MAXDUMMY+1];
   static const char *priority[4];
-  static const char *signat[5];
 
   ENTER();
 
@@ -754,10 +752,6 @@ OVERLOAD(OM_NEW)
   rtitles[2] = tr(MSG_Options);
   rtitles[3] = NULL;
 
-  encoding[0] = "Base64/QP";
-  encoding[1] = "UUencode";
-  encoding[2] = NULL;
-
   security[SEC_NONE]    = tr(MSG_WR_SecNone);
   security[SEC_SIGN]    = tr(MSG_WR_SecSign);
   security[SEC_ENCRYPT] = tr(MSG_WR_SecEncrypt);
@@ -769,12 +763,6 @@ OVERLOAD(OM_NEW)
   priority[1] = tr(MSG_WR_ImpNormal);
   priority[2] = tr(MSG_WR_ImpLow);
   priority[3] = NULL;
-
-  signat[0] = tr(MSG_WR_NoSig);
-  signat[1] = tr(MSG_WR_DefSig);
-  signat[2] = tr(MSG_WR_AltSig1);
-  signat[3] = tr(MSG_WR_AltSig2);
-  signat[4] = NULL;
 
   // set some default values
   data->useFixedFont = C->UseFixedFontWrite;

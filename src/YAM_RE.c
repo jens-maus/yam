@@ -2706,7 +2706,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
   // then we generate our final buffer for the message
   if((cmsg = calloc(len=(totsize*3)/2, sizeof(char))) != NULL)
   {
-    int wptr=0, prewptr;
+    int wptr=0;
 
     // if this function wasn't called with QUIET we place a BusyText into the Main Window
     if(mode != RIM_QUIET)
@@ -2757,8 +2757,6 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
           dodisp = FALSE;
         }
       }
-
-      prewptr = wptr;
 
       // if we are in READ mode and other parts than the LETTER part
       // should be displayed in the texteditor as well, we drop a simple separator bar with info.

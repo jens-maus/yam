@@ -415,7 +415,6 @@ static BOOL ReadDBXNode(struct TransferContext *tc, FILE *fh, char *outFileName,
   unsigned char *buf;
   unsigned char *body;
   unsigned int child;
-  int object_marker;
   int entries;
 
   ENTER();
@@ -448,7 +447,6 @@ static BOOL ReadDBXNode(struct TransferContext *tc, FILE *fh, char *outFileName,
     return FALSE;
   }
 
-  object_marker = GetLong(buf, 0);
   child = GetLong(buf, 8);
   entries = buf[17];
   body = &buf[0x18];

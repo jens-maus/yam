@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-09-16 Jens Langner <Jens.Langner@light-speed.de>
+
+  * misc: updated nightly build environment to new GCC 4.7.1 compiler
+    suite for the AmigaOS4 builds and fixed all 'warning: variable XXX set
+    but not used' warnings throughout the YAM code.
+
 2012-08-28 Emilio Jimenez <ejim@ono.com>
 
   * locale/spanish.ct: fixed another error in the latest translator file. 

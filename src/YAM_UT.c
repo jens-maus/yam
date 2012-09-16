@@ -699,7 +699,6 @@ void ReplaceInvalidChars(char *name)
 ssize_t GetLine(char **buffer, size_t *size, FILE *fh)
 {
   ssize_t len;
-  char *result = NULL;
 
   ENTER();
 
@@ -718,8 +717,6 @@ ssize_t GetLine(char **buffer, size_t *size, FILE *fh)
 
       buf[len] = '\0';
     }
-
-    result = *buffer;
   }
   #if defined(DEBUG)
   else

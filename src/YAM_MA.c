@@ -161,7 +161,6 @@ void MA_ChangeSelected(BOOL forceUpdate)
     ULONG numEntries;
     ULONG numSelected = 0;
     BOOL active;
-    BOOL hasattach = FALSE;
     BOOL folderEnabled;
 
     lastMail = mail;
@@ -205,9 +204,7 @@ void MA_ChangeSelected(BOOL forceUpdate)
     if(xget(gui->PG_MAILLIST, MUIA_MainMailListGroup_ActiveList) == LT_MAIN)
       GetCurrentFolder()->LastActive = xget(gui->PG_MAILLIST, MUIA_NList_Active);
 
-    if((active = (mail != NULL)) && isMultiPartMail(mail))
-      hasattach = TRUE;
-
+    active = (mail != NULL);
     SHOWVALUE(DBF_MAIL, active);
 
     // now we have to make sure that all toolbar and menu items are
