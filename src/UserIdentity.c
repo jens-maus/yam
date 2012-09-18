@@ -279,6 +279,12 @@ struct UserIdentityNode *WhichUserIdentity(const struct MinList *userIdentityLis
       break;
   }
 
+  if(result == NULL)
+  {
+    result = GetUserIdentity(userIdentityList, 0, TRUE);
+    E(DBF_MAIL, "found no matching user identity, falling back to default identity '%s'", result != NULL ? result->description : "NULL");
+  }
+
   RETURN(result);
   return result;
 }

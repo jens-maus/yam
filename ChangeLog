@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-09-18 Thore Böckelmann <tboeckel@gmx.de>
+
+  * UserIdentity.c: in case no matching user identity can be found for a given
+    mail YAM will now fall back to the first available and active identity.
+
 2012-09-16 Jens Langner <Jens.Langner@light-speed.de>
 
   * misc: updated nightly build environment to new GCC 4.7.1 compiler
@@ -13,7 +18,7 @@ $URL$
 
 2012-08-28 Emilio Jimenez <ejim@ono.com>
 
-  * locale/spanish.ct: fixed another error in the latest translator file. 
+  * locale/spanish.ct: fixed another error in the latest translator file.
 
 2012-08-28 Thore Böckelmann <tboeckel@gmx.de>
 
