@@ -1559,7 +1559,7 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     // if Locale is present, don't use the timezone from the config
     #if defined(__amigaos4__)
     // favor timezone.library on AmigaOS4
-    if(ITimezone != NULL && GetTimezoneAttrs(NULL, TZA_UTCOffset, &gmtOffset, TAG_DONE) == 1)
+    if(ITimezone != NULL && GetTimezoneAttrs(NULL, TZA_UTCOffsetSTD, &gmtOffset, TAG_DONE) == 1)
       co->TimeZone = -gmtOffset;
     else
     #endif
@@ -2520,7 +2520,7 @@ void CO_Validate(struct Config *co, BOOL update)
   // eventually set locale setting.
   #if defined(__amigaos4__)
   // prefer timezone.library of locale.library on AmigaOS4
-  if(ITimezone != NULL && GetTimezoneAttrs(NULL, TZA_UTCOffset, &gmtOffset, TAG_DONE) == 1)
+  if(ITimezone != NULL && GetTimezoneAttrs(NULL, TZA_UTCOffsetSTD, &gmtOffset, TAG_DONE) == 1)
   {
     gmtOffset = -gmtOffset;
     D(DBF_CONFIG, "got GMT offset %ld from timezone.library", gmtOffset);
