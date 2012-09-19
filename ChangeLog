@@ -9,6 +9,8 @@ $URL$
 
   * YAM_CO.c: added some debug output in case the configured time zone or DST
     settings do not match the system settings.
+  * YAM.c, YAM_CO.c: disabling the DST checkmark object now depends on the
+    availability of timezone.library.
 
 2012-09-18 Thore Böckelmann <tboeckel@gmx.de>
 

@@ -593,26 +593,21 @@ static int GetDST(BOOL update)
 
   #if defined(__amigaos4__)
   // check via timezone.library in case we are compiled for AmigaOS4
-  if((update == FALSE || ADSTdata.method == ADST_TZLIB))
+  if((update == FALSE || ADSTdata.method == ADST_TZLIB) && ITimezone != NULL)
   {
-    if(INITLIB("timezone.library", 52, 1, &TimezoneBase, "main", 1, &ITimezone, TRUE, NULL))
+    BYTE dstSetting = TFLG_UNKNOWN;
+
+    // retrieve the current DST setting
+    if(GetTimezoneAttrs(NULL, TZA_TimeFlag, &dstSetting, TAG_DONE) && dstSetting != TFLG_UNKNOWN)
     {
-      BYTE dstSetting = TFLG_UNKNOWN;
+      if(dstSetting == TFLG_ISDST)
+        result = 2;
+      else
+        result = 1;
 
-      // retrieve the current DST setting
-      if(GetTimezoneAttrs(NULL, TZA_TimeFlag, &dstSetting, TAG_DONE) && dstSetting != TFLG_UNKNOWN)
-      {
-        if(dstSetting == TFLG_ISDST)
-          result = 2;
-        else
-          result = 1;
+      D(DBF_STARTUP, "Found timezone.library with DST flag %s", result == 2 ? "ON" : "OFF");
 
-        D(DBF_STARTUP, "Found timezone.library with DST flag %s", result == 2 ? "ON" : "OFF");
-
-        ADSTdata.method = ADST_TZLIB;
-      }
-
-      CLOSELIB(TimezoneBase, ITimezone);
+      ADSTdata.method = ADST_TZLIB;
     }
   }
 
@@ -1130,6 +1125,7 @@ static void Terminate(void)
   // close all libraries now.
   D(DBF_STARTUP, "closing all opened libraries...");
   #if defined(__amigaos4__)
+  CLOSELIB(TimezoneBase,    ITimezone);
   CLOSELIB(ApplicationBase, IApplication);
   #else
   CLOSELIB(CyberGfxBase,    ICyberGfx);
@@ -2064,13 +2060,15 @@ static void InitBeforeLogin(BOOL hidden)
     }
   }
 
+  #if defined(__amigaos4__)
   // now we try to open the application.library which is part of OS4
   // and will be used to notify YAM of certain events and also manage
   // the docky icon accordingly.
-  #if defined(__amigaos4__)
   // try version 2 first, if that is not available try version 1
   if(INITLIB("application.library", 50, 0, &ApplicationBase, "application", 2, &IApplication, FALSE, NULL) == FALSE)
     INITLIB("application.library", 50, 0, &ApplicationBase, "application", 1, &IApplication, FALSE, NULL);
+
+  INITLIB("timezone.library", 52, 1, &TimezoneBase, "main", 1, &ITimezone, FALSE, NULL);
   #endif
 
   // initialize the shared connection semaphore
@@ -2943,7 +2941,7 @@ int main(int argc, char **argv)
         {
           D(DBF_STARTUP, "received ADST change signal, rereading DST settings");
 
-          // delay our process for one second before we go on so that we give
+          // delay our process for two seconds before we go on so that we give
           // the process like timezone.library time to refresh its data structures
           // to the new DST setting
           Delay(100);
