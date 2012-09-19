@@ -2585,10 +2585,11 @@ void CO_Validate(struct Config *co, BOOL update)
 
   // check if the current configuration is already valid at an absolute
   // minimum.
-  G->CO_Valid = (*firstIdentity->address != '\0' &&
-                 *firstIdentity->realname != '\0' &&
-                 *firstSMTP->hostname != '\0' &&
-                 *firstPOP3->hostname != '\0');
+  G->CO_Valid = (firstIdentity != NULL &&
+                 firstIdentity->address[0] != '\0' &&
+                 firstIdentity->realname[0] != '\0' &&
+                 firstSMTP->hostname[0] != '\0' &&
+                 firstPOP3->hostname[0] != '\0');
 
   // we try to find out the system charset and validate it with the
   // currently configured local charset
