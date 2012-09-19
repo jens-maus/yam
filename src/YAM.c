@@ -598,7 +598,7 @@ static int GetDST(BOOL update)
     BYTE dstSetting = TFLG_UNKNOWN;
 
     // retrieve the current DST setting
-    if(GetTimezoneAttrs(NULL, TZA_TimeFlag, &dstSetting, TAG_DONE) && dstSetting != TFLG_UNKNOWN)
+    if(GetTimezoneAttrs(NULL, TZA_TimeFlag, &dstSetting, TAG_DONE) == 1 && dstSetting != TFLG_UNKNOWN)
     {
       if(dstSetting == TFLG_ISDST)
         result = 2;

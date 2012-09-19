@@ -48,6 +48,7 @@
 
 #if defined(__amigaos4__)
 #include <proto/application.h>
+#include <proto/timezone.h>
 #endif
 
 #include "extrasrc.h"
@@ -1551,13 +1552,23 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
 
   if(page == cp_FirstSteps || page == cp_AllPages)
   {
-    // If Locale is present, don't use the timezone from the config
+    #if defined(__amigaos4__)
+    LONG gmtOffset = 0;
+    #endif
+
+    // if Locale is present, don't use the timezone from the config
+    #if defined(__amigaos4__)
+    // favor timezone.library on AmigaOS4
+    if(ITimezone != NULL && GetTimezoneAttrs(NULL, TZA_UTCOffset, &gmtOffset, TAG_DONE) == 1)
+      co->TimeZone = -gmtOffset;
+    else
+    #endif
     if(G->Locale != NULL)
       co->TimeZone = -G->Locale->loc_GMTOffset;
     else
       co->TimeZone = 0;
 
-     co->DaylightSaving = FALSE;
+    co->DaylightSaving = (G->CO_DST == 2);
   }
 
   if(page == cp_TCPIP || page == cp_AllPages)
@@ -2306,6 +2317,8 @@ void CO_Validate(struct Config *co, BOOL update)
   struct UserIdentityNode *firstIdentity;
   struct Node *curNode;
   Object *refWindow;
+  LONG gmtOffset = 0;
+  BOOL gmtOffsetOk = FALSE;
 
   ENTER();
 
@@ -2505,13 +2518,30 @@ void CO_Validate(struct Config *co, BOOL update)
 
   // now we check whether our timezone setting is coherent to an
   // eventually set locale setting.
+  #if defined(__amigaos4__)
+  // prefer timezone.library of locale.library on AmigaOS4
+  if(ITimezone != NULL && GetTimezoneAttrs(NULL, TZA_UTCOffset, &gmtOffset, TAG_DONE) == 1)
+  {
+    gmtOffset = -gmtOffset;
+    D(DBF_CONFIG, "got GMT offset %ld from timezone.library", gmtOffset);
+    gmtOffsetOk = TRUE;
+  }
+  #endif
+
+  if(gmtOffsetOk == FALSE && G->Locale != NULL)
+  {
+    gmtOffset = -(G->Locale->loc_GMTOffset);
+    D(DBF_CONFIG, "got GMT offset %ld from locale.library", gmtOffset);
+    gmtOffsetOk = TRUE;
+  }
+
   if(co->TimeZoneCheck == TRUE)
   {
-    if(G->Locale != NULL && co->TimeZone != -(G->Locale->loc_GMTOffset))
+    if(gmtOffsetOk == TRUE && co->TimeZone != gmtOffset)
     {
       int res;
 
-      W(DBF_ALWAYS, "mismatching time zone offsets, config %ld vs. locale %ld", co->TimeZone, -(G->Locale->loc_GMTOffset));
+      W(DBF_CONFIG, "mismatching time zone offsets, config %ld vs. system %ld", co->TimeZone, gmtOffset);
       res = MUI_Request(G->App, refWindow, MUIF_NONE,
                         tr(MSG_CO_TIMEZONEWARN_TITLE),
                         tr(MSG_CO_TIMEZONEWARN_BT),
@@ -2521,7 +2551,7 @@ void CO_Validate(struct Config *co, BOOL update)
       // change the timezone and save it immediatly
       if(res == 1)
       {
-        co->TimeZone = -(G->Locale->loc_GMTOffset);
+        co->TimeZone = gmtOffset;
         saveAtEnd = TRUE;
       }
       else if(res == 2)
@@ -2531,7 +2561,7 @@ void CO_Validate(struct Config *co, BOOL update)
       }
     }
   }
-  else if(G->Locale != NULL && co->TimeZone == -(G->Locale->loc_GMTOffset))
+  else if(gmtOffsetOk == TRUE && co->TimeZone == gmtOffset)
   {
     // enable the timezone checking again!
     co->TimeZoneCheck = TRUE;
@@ -2549,7 +2579,7 @@ void CO_Validate(struct Config *co, BOOL update)
     {
       int res;
 
-      W(DBF_ALWAYS, "mismatching DST settings, config %ld vs. DST tool %ld", co->DaylightSaving, (G->CO_DST == 2));
+      W(DBF_CONFIG, "mismatching DST settings, config %ld vs. DST tool %ld", co->DaylightSaving, (G->CO_DST == 2));
       res = MUI_Request(G->App, refWindow, MUIF_NONE,
                         tr(MSG_CO_AUTODSTWARN_TITLE),
                         tr(MSG_CO_AUTODSTWARN_BT),

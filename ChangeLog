@@ -11,6 +11,9 @@ $URL$
     settings do not match the system settings.
   * YAM.c, YAM_CO.c: disabling the DST checkmark object now depends on the
     availability of timezone.library.
+  * YAM.c, YAM_CO.c, YAM_COg.c: favor the time zone information obtained from
+    timezone.library over locale.library on AmigaOS4. If timezone.library is
+    available the manual time zone selection will be inhibited.
 
 2012-09-18 Thore Böckelmann <tboeckel@gmx.de>
 

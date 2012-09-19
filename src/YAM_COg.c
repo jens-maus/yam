@@ -1690,7 +1690,9 @@ Object *CO_PageFirstSteps(struct CO_ClassData *data)
     SetHelp(data->GUI.CH_DSTACTIVE,      MSG_HELP_CO_CH_DSTACTIVE);
 
     #if defined(__amigaos4__)
-    // AmigaOS4 is trusted to do correct DST switching if timezone.library is available
+    // AmigaOS4 is trusted to yield correct time zone information and
+    // to do correct DST switching if timezone.library is available
+    set(data->GUI.CY_TZONE, MUIA_Disabled, ITimezone != NULL);
     set(data->GUI.CH_DSTACTIVE, MUIA_Disabled, ITimezone != NULL);
     #endif
 
