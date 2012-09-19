@@ -2509,10 +2509,13 @@ void CO_Validate(struct Config *co, BOOL update)
   {
     if(G->Locale != NULL && co->TimeZone != -(G->Locale->loc_GMTOffset))
     {
-      int res = MUI_Request(G->App, refWindow, MUIF_NONE,
-                            tr(MSG_CO_TIMEZONEWARN_TITLE),
-                            tr(MSG_CO_TIMEZONEWARN_BT),
-                            tr(MSG_CO_TIMEZONEWARN));
+      int res;
+
+      W(DBF_ALWAYS, "mismatching time zone offsets, config %ld vs. locale %ld", co->TimeZone, -(G->Locale->loc_GMTOffset));
+      res = MUI_Request(G->App, refWindow, MUIF_NONE,
+                        tr(MSG_CO_TIMEZONEWARN_TITLE),
+                        tr(MSG_CO_TIMEZONEWARN_BT),
+                        tr(MSG_CO_TIMEZONEWARN));
 
       // if the user has clicked on Change, we do
       // change the timezone and save it immediatly
@@ -2544,10 +2547,13 @@ void CO_Validate(struct Config *co, BOOL update)
     #if !defined(__amigaos4__)
     if(G->CO_DST > 0 && co->DaylightSaving != (G->CO_DST == 2))
     {
-      int res = MUI_Request(G->App, refWindow, MUIF_NONE,
-                            tr(MSG_CO_AUTODSTWARN_TITLE),
-                            tr(MSG_CO_AUTODSTWARN_BT),
-                            tr(MSG_CO_AUTODSTWARN));
+      int res;
+
+      W(DBF_ALWAYS, "mismatching DST settings, config %ld vs. DST tool %ld", co->DaylightSaving, (G->CO_DST == 2));
+      res = MUI_Request(G->App, refWindow, MUIF_NONE,
+                        tr(MSG_CO_AUTODSTWARN_TITLE),
+                        tr(MSG_CO_AUTODSTWARN_BT),
+                        tr(MSG_CO_AUTODSTWARN));
 
       // if the user has clicked on Change, we do
       // change the DST setting and save it immediatly
