@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-09-20 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c, YAM_CO.c, YAM_COg.c: YAM will now trust any active DST tool and the
+    system time zone information. If trustable informations are found the
+    corresponding objects in the config window will be disabled to avoid any
+    confusion between local (YAM) settings and system settings. If a different
+    time zone is required then use the system prefs to change this.
+
 2012-09-19 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_CO.c: added some debug output in case the configured time zone or DST

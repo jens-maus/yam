@@ -157,6 +157,8 @@ struct Global
   BOOL                     NoImageWarning;
   BOOL                     NoCatalogTranslation;
   BOOL                     DefIconsAvailable;
+  BOOL                     TrustedTimezone;      // can the time zone settings be trusted?
+  BOOL                     TrustedDST;           // can the DST settings be trusted?
 
   struct DateStamp         StartDate;
   struct Users             Users;

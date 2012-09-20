@@ -38,7 +38,6 @@
 #include <mui/TextEditor_mcc.h>
 #if defined(__amigaos4__)
 #include <proto/application.h>
-#include <proto/timezone.h>
 #endif
 #include <proto/dos.h>
 #include <proto/exec.h>
@@ -1689,12 +1688,8 @@ Object *CO_PageFirstSteps(struct CO_ClassData *data)
     SetHelp(data->GUI.CY_TZONE,          MSG_HELP_CO_CY_TZONE);
     SetHelp(data->GUI.CH_DSTACTIVE,      MSG_HELP_CO_CH_DSTACTIVE);
 
-    #if defined(__amigaos4__)
-    // AmigaOS4 is trusted to yield correct time zone information and
-    // to do correct DST switching if timezone.library is available
-    set(data->GUI.CY_TZONE, MUIA_Disabled, ITimezone != NULL);
-    set(data->GUI.CH_DSTACTIVE, MUIA_Disabled, ITimezone != NULL);
-    #endif
+    set(data->GUI.CY_TZONE, MUIA_Disabled, G->TrustedTimezone);
+    set(data->GUI.CH_DSTACTIVE, MUIA_Disabled, G->TrustedDST);
 
     DoMethod(data->GUI.ST_POPHOST0, MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_GetDefaultPOPHook);
     DoMethod(data->GUI.ST_USER0,  MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_GetDefaultPOPHook);

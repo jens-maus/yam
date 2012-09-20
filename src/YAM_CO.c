@@ -1560,13 +1560,22 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     #if defined(__amigaos4__)
     // favor timezone.library on AmigaOS4
     if(ITimezone != NULL && GetTimezoneAttrs(NULL, TZA_UTCOffsetSTD, &gmtOffset, TAG_DONE) == 1)
+    {
       co->TimeZone = -gmtOffset;
+      G->TrustedTimezone = TRUE;
+    }
     else
     #endif
     if(G->Locale != NULL)
+    {
       co->TimeZone = -G->Locale->loc_GMTOffset;
+      G->TrustedTimezone = TRUE;
+    }
     else
+    {
       co->TimeZone = 0;
+      G->TrustedTimezone = FALSE;
+    }
 
     co->DaylightSaving = (G->CO_DST == 2);
   }
@@ -2318,7 +2327,6 @@ void CO_Validate(struct Config *co, BOOL update)
   struct Node *curNode;
   Object *refWindow;
   LONG gmtOffset = 0;
-  BOOL gmtOffsetOk = FALSE;
 
   ENTER();
 
@@ -2516,6 +2524,9 @@ void CO_Validate(struct Config *co, BOOL update)
   // update the write windows in any case
   updateWriteWindows = TRUE;
 
+  // if we successfully got an offset to GMT we can trust the time zone information
+  G->TrustedTimezone = FALSE;
+
   // now we check whether our timezone setting is coherent to an
   // eventually set locale setting.
   #if defined(__amigaos4__)
@@ -2524,20 +2535,20 @@ void CO_Validate(struct Config *co, BOOL update)
   {
     gmtOffset = -gmtOffset;
     D(DBF_CONFIG, "got GMT offset %ld from timezone.library", gmtOffset);
-    gmtOffsetOk = TRUE;
+    G->TrustedTimezone = TRUE;
   }
   #endif
 
-  if(gmtOffsetOk == FALSE && G->Locale != NULL)
+  if(G->TrustedTimezone == FALSE && G->Locale != NULL)
   {
     gmtOffset = -(G->Locale->loc_GMTOffset);
     D(DBF_CONFIG, "got GMT offset %ld from locale.library", gmtOffset);
-    gmtOffsetOk = TRUE;
+    G->TrustedTimezone = TRUE;
   }
 
   if(co->TimeZoneCheck == TRUE)
   {
-    if(gmtOffsetOk == TRUE && co->TimeZone != gmtOffset)
+    if(G->TrustedTimezone == TRUE && co->TimeZone != gmtOffset)
     {
       int res;
 
@@ -2561,7 +2572,7 @@ void CO_Validate(struct Config *co, BOOL update)
       }
     }
   }
-  else if(gmtOffsetOk == TRUE && co->TimeZone == gmtOffset)
+  else if(G->TrustedTimezone == TRUE && co->TimeZone == gmtOffset)
   {
     // enable the timezone checking again!
     co->TimeZoneCheck = TRUE;

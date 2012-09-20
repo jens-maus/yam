@@ -578,7 +578,7 @@ static int GetDST(BOOL update)
 
   ENTER();
 
-  // prepare the NotifyRequest structure
+  // reset the previous DST tool information
   if(update == FALSE)
     memset(&ADSTdata, 0, sizeof(struct ADST_Data));
 
@@ -605,7 +605,7 @@ static int GetDST(BOOL update)
       else
         result = 1;
 
-      D(DBF_STARTUP, "Found timezone.library with DST flag %s", result == 2 ? "ON" : "OFF");
+      D(DBF_STARTUP, "found timezone.library with DST flag %ld", result);
 
       ADSTdata.method = ADST_TZLIB;
     }
@@ -632,7 +632,7 @@ static int GetDST(BOOL update)
         result = 2; // if it is followed by a alphabetic sign we are in DST mode
     }
 
-    D(DBF_STARTUP, "Found '%s' (SetDST) with DST flag: %ld", ADSTfile[ADST_SETDST], result);
+    D(DBF_STARTUP, "found '%s' (SetDST) with DST flag %ld", ADSTfile[ADST_SETDST], result);
 
     ADSTdata.method = ADST_SETDST;
   }
@@ -642,28 +642,28 @@ static int GetDST(BOOL update)
   if((update == FALSE || ADSTdata.method == ADST_FACTS) && result == 0
      && GetVar((STRPTR)&ADSTfile[ADST_FACTS][4], buffer, sizeof(buffer), GVF_BINARY_VAR) > 0)
   {
-    ADSTdata.method = ADST_FACTS;
-
     if(buffer[0] == 0x01)
       result = 2;
     else if(buffer[0] == 0x00)
       result = 1;
 
-    D(DBF_STARTUP, "Found '%s' (FACTS) with DST flag: %ld", ADSTfile[ADST_FACTS], result);
+    D(DBF_STARTUP, "found '%s' (FACTS) with DST flag %ld", ADSTfile[ADST_FACTS], result);
+
+    ADSTdata.method = ADST_FACTS;
   }
 
   // SummerTimeGuard sets the last string to "YES" if DST is actually active
   if((update == FALSE || ADSTdata.method == ADST_SGUARD) && result == 0
      && GetVar((STRPTR)&ADSTfile[ADST_SGUARD][4], buffer, sizeof(buffer), 0) > 3 && (tmp = strrchr(buffer, ':')))
   {
-    ADSTdata.method = ADST_SGUARD;
-
     if(tmp[1] == 'Y')
       result = 2;
     else if(tmp[1] == 'N')
       result = 1;
 
-    D(DBF_STARTUP, "Found '%s' (SGUARD) with DST flag: %ld", ADSTfile[ADST_SGUARD], result);
+    D(DBF_STARTUP, "found '%s' (SGUARD) with DST flag %ld", ADSTfile[ADST_SGUARD], result);
+
+    ADSTdata.method = ADST_SGUARD;
   }
 
   // ixtimezone sets the fifth byte in the IXGMTOFFSET variable to 01 if
@@ -671,24 +671,27 @@ static int GetDST(BOOL update)
   if((update == FALSE || ADSTdata.method == ADST_IXGMT) && result == 0
      && GetVar((STRPTR)&ADSTfile[ADST_IXGMT][4], buffer, sizeof(buffer), GVF_BINARY_VAR) >= 4)
   {
-    ADSTdata.method = ADST_IXGMT;
-
     if(buffer[4] == 0x01)
       result = 2;
     else if(buffer[4] == 0x00)
       result = 1;
 
-    D(DBF_STARTUP, "Found '%s' (IXGMT) with DST flag: %ld", ADSTfile[ADST_IXGMT], result);
+    D(DBF_STARTUP, "found '%s' (IXGMT) with DST flag %ld", ADSTfile[ADST_IXGMT], result);
+
+    ADSTdata.method = ADST_IXGMT;
   }
 
   #endif
 
   if(update == FALSE && result == 0)
   {
-    ADSTdata.method = ADST_NONE;
-
     W(DBF_STARTUP, "didn't find any valid AutoDST facility active!");
+
+    ADSTdata.method = ADST_NONE;
   }
+
+  // the DST setting can be trusted if we found any valid DST tool
+  G->TrustedDST = (ADSTdata.method != ADST_NONE);
 
   // No correctly installed AutoDST tool was found
   // so lets return zero.
