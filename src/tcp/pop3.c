@@ -124,7 +124,8 @@ struct TransferContext
   BOOL useTLS;
   struct DownloadResult downloadResult;
   struct FilterResult filterResult;
-  int numberOfMails;
+  int numberOfMailsTotal;
+  int numberOfMailsSkipped;
   long totalSize;
   LONG firstToPreselect;
   struct TimeVal lastUpdateTime;
@@ -1227,7 +1228,7 @@ static void DownloadMails(struct TransferContext *tc)
       D(DBF_NET, "downloading mail with subject '%s' and size %ld", mail->Subject, mail->Size);
 
       // update the transfer status
-      PushMethodOnStack(tc->transferGroup, 5, MUIM_TransferControlGroup_Next, tnode->index, tnode->position, mail->Size, tr(MSG_TR_Downloading));
+      PushMethodOnStack(tc->transferGroup, 5, MUIM_TransferControlGroup_Next, tnode->index - tc->numberOfMailsSkipped, tnode->position, mail->Size, tr(MSG_TR_Downloading));
 
       if(LoadMessage(tc, inFolder, tnode->index) == TRUE)
       {
@@ -1269,7 +1270,7 @@ static void DownloadMails(struct TransferContext *tc)
       D(DBF_NET, "deleting mail with subject '%s' on server", mail->Subject);
 
       // update the transfer status, use a zero mail size
-      PushMethodOnStack(tc->transferGroup, 5, MUIM_TransferControlGroup_Next, tnode->index, tnode->position, 0, tr(MSG_TR_DeletingServerMail));
+      PushMethodOnStack(tc->transferGroup, 5, MUIM_TransferControlGroup_Next, tnode->index - tc->numberOfMailsSkipped, tnode->position, 0, tr(MSG_TR_DeletingServerMail));
 
       // now we "know" that this mail had existed, don't forget this in case
       // the delete operation fails
@@ -1373,13 +1374,23 @@ static void SumUpMails(struct TransferContext *tc)
 
   ENTER();
 
-  tc->numberOfMails = 0;
+  tc->numberOfMailsTotal = 0;
+  tc->numberOfMailsSkipped = 0;
   tc->totalSize = 0;
 
   // search through our transferList
   ForEachMailTransferNode(tc->transferList, tnode)
   {
-    tc->numberOfMails++;
+    // count the number of mails on the server
+    tc->numberOfMailsTotal++;
+
+    // count the number of mail which are neither transferred nor deleted
+    if(isFlagClear(tnode->tflags, TRF_TRANSFER|TRF_DELETE))
+    {
+      tc->numberOfMailsSkipped++;
+    }
+
+    // sum up the sizes of all mails to be transferred
     if(isFlagSet(tnode->tflags, TRF_TRANSFER))
     {
       tc->totalSize += tnode->mail->Size;
@@ -1533,7 +1544,7 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
                       if(ThreadWasAborted() == FALSE && doDownload == TRUE && ScanMailTransferList(tc->transferList, TRF_TRANSFER|TRF_DELETE, FALSE, NULL) == TRUE)
                       {
                         SumUpMails(tc);
-                        PushMethodOnStack(tc->transferGroup, 3, MUIM_TransferControlGroup_Start, tc->numberOfMails, tc->totalSize);
+                        PushMethodOnStack(tc->transferGroup, 3, MUIM_TransferControlGroup_Start, tc->numberOfMailsTotal - tc->numberOfMailsSkipped, tc->totalSize);
 
                         DownloadMails(tc);
 

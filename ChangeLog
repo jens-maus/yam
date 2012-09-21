@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-09-21 Thore Böckelmann <tboeckel@gmx.de>
+
+  * tcp/pop3.c: the transfer window will no longer show the download statistics
+    based on the total number of mails on the server but only on the number of
+    mails to be actually transferred and/or deleted.
+
 2012-09-20 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.c, YAM_CO.c, YAM_COg.c: YAM will now trust any active DST tool and the
