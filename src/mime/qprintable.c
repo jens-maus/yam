@@ -226,7 +226,7 @@ long qpencode_file(FILE *in, FILE *out)
 /// qpdecode_file()
 // Decodes a whole file using the quoted-printable format defined in
 // RFC 2045 (page 19)
-long qpdecode_file(FILE *in, FILE *out, struct codeset *srcCodeset)
+long qpdecode_file(FILE *in, FILE *out, struct codeset *srcCodeset, BOOL isText)
 {
   unsigned char inbuffer[QPDEC_BUF+1]; // lets use a 4096 byte large input buffer
   unsigned char outbuffer[QPDEC_BUF+1];// to speed things up we use the same amount
@@ -374,7 +374,7 @@ long qpdecode_file(FILE *in, FILE *out, struct codeset *srcCodeset)
 
         // in case the user wants us to detect the correct cyrillic codeset
         // we do it now
-        if(C->DetectCyrillic == TRUE)
+        if(C->DetectCyrillic == TRUE && isText == TRUE)
         {
           if(srcCodeset == NULL || (srcCodeset->name != NULL && stricmp(srcCodeset->name, "utf-8") != 0))
           {
@@ -453,7 +453,7 @@ long qpdecode_file(FILE *in, FILE *out, struct codeset *srcCodeset)
 
     // in case the user wants us to detect the correct cyrillic codeset
     // we do it now
-    if(C->DetectCyrillic == TRUE)
+    if(C->DetectCyrillic == TRUE && isText == TRUE)
     {
       if(srcCodeset == NULL || (srcCodeset->name != NULL && stricmp(srcCodeset->name, "utf-8") != 0))
       {

@@ -28,11 +28,13 @@
 
 ***************************************************************************/
 
+#include <exec/types.h>
+
 // forward declarations
 struct codeset;
 
 // uucode encoding/decoding routines
 long uuencode_file(FILE *in, FILE *out);
-long uudecode_file(FILE *in, FILE *out, struct codeset *srcCodeset);
+long uudecode_file(FILE *in, FILE *out, struct codeset *srcCodeset, BOOL isText);
 
 #endif // UUCODE_H

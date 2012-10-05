@@ -482,7 +482,7 @@ long base64encode_file(FILE *in, FILE *out, BOOL convLF)
 //  to still consider the string decoded (however it should be treated with
 //  care)
 long base64decode_file(FILE *in, FILE *out,
-                       struct codeset *srcCodeset, BOOL convCRLF)
+                       struct codeset *srcCodeset, BOOL isText, BOOL convCRLF)
 {
   char inbuffer[B64DEC_BUF+1];
   char *outbuffer = NULL;
@@ -617,7 +617,7 @@ long base64decode_file(FILE *in, FILE *out,
 
     // in case the user wants us to detect the correct cyrillic codeset
     // we do it now, but just if the source codeset isn't UTF-8
-    if(C->DetectCyrillic == TRUE)
+    if(C->DetectCyrillic == TRUE && isText == TRUE)
     {
       if(srcCodeset == NULL || (srcCodeset->name != NULL && stricmp(srcCodeset->name, "utf-8") != 0))
       {

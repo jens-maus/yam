@@ -28,6 +28,8 @@
 
 ***************************************************************************/
 
+#include <exec/types.h>
+
 // forward declarations
 struct codeset;
 
@@ -39,6 +41,6 @@ int base64encode(char **out, const char *in, size_t inlen);
 int base64decode(char **out, const char *in, size_t inlen);
 long base64encode_file(FILE *in, FILE *out, BOOL convLF);
 long base64decode_file(FILE *in, FILE *out,
-                       struct codeset *srcCodeset, BOOL convCRLF);
+                       struct codeset *srcCodeset, BOOL isText, BOOL convCRLF);
 
 #endif // BASE64_H

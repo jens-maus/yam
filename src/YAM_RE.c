@@ -1359,6 +1359,7 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
   struct codeset *sourceCodeset = NULL;
   struct ReadMailData *rmData = rp->rmData;
   BOOL quietParsing = isAnyFlagSet(rmData->parseFlags, PM_QUIET);
+  BOOL isText;
 
   ENTER();
 
@@ -1386,6 +1387,10 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
   }
 
   SHOWVALUE(DBF_MAIL, rp->EncodingCode);
+
+  isText = rp->ContentType != NULL && strnicmp(rp->ContentType, "text", 4) == 0;
+  SHOWVALUE(DBF_MIME, isText);
+
   // lets check if we got some encoding here and
   // if so we have to decode it immediatly
   switch(rp->EncodingCode)
@@ -1393,7 +1398,7 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
     // process a base64 decoding.
     case ENC_B64:
     {
-      long decoded = base64decode_file(in, out, sourceCodeset, isPrintable(rp));
+      long decoded = base64decode_file(in, out, sourceCodeset, isText, isPrintable(rp));
       D(DBF_MAIL, "base64 decoded %ld bytes of part %ld.", decoded, rp->Nr);
 
       if(decoded > 0)
@@ -1432,7 +1437,7 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
     // process a Quoted-Printable decoding
     case ENC_QP:
     {
-      long decoded = qpdecode_file(in, out, sourceCodeset);
+      long decoded = qpdecode_file(in, out, sourceCodeset, isText);
       D(DBF_MAIL, "quoted-printable decoded %ld chars of part %ld.", decoded, rp->Nr);
 
       if(decoded >= 0)
@@ -1491,7 +1496,7 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
     // process UU-Encoded decoding
     case ENC_UUE:
     {
-      long decoded = uudecode_file(in, out, sourceCodeset);
+      long decoded = uudecode_file(in, out, sourceCodeset, isText);
       D(DBF_MAIL, "UU decoded %ld chars of part %ld.", decoded, rp->Nr);
 
       if(decoded >= 0 &&
@@ -1561,7 +1566,7 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
 
     default:
     {
-      if(sourceCodeset != NULL || C->DetectCyrillic)
+      if(sourceCodeset != NULL || C->DetectCyrillic == TRUE)
       {
         if(RE_ConsumeRestOfPart(in, out, sourceCodeset, NULL, TRUE))
           decodeResult = 1;
@@ -2950,7 +2955,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                   {
                     // now that we are on the correct position, we
                     // call the uudecoding function accordingly.
-                    long decoded = uudecode_file(fh, outfh, NULL); // no translation table
+                    long decoded = uudecode_file(fh, outfh, NULL, FALSE); // no translation table
                     D(DBF_MAIL, "UU decoded %ld chars of part %ld.", decoded, uup->Nr);
 
                     if(decoded >= 0)

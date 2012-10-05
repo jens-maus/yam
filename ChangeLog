@@ -9,6 +9,10 @@ $URL$
 
   * mime/base64.c, mime/qprintable.c, mime/uucode.c: added some debug output
     about the used codeset.
+  * YAM_RE.c, mime/base64.c, mime/qprintable.c, mime/uucode.c: having the
+    option "automatic cyrillic charset detection" active even without the
+    necessitiy to have to use cyrillic characters will no longer screw up
+    encoded non-text attachments. This closes #349.
 
 2012-09-21 Thore Böckelmann <tboeckel@gmx.de>
 

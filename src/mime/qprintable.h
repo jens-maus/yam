@@ -28,12 +28,14 @@
 
 ***************************************************************************/
 
+#include <exec/types.h>
+
 // forward declarations
 struct codeset;
 
 // quoted-printable encoding/decoding routines
 long qpencode_file(FILE *in, FILE *out);
-long qpdecode_file(FILE *in, FILE *out, struct codeset *srcCodeset);
+long qpdecode_file(FILE *in, FILE *out, struct codeset *srcCodeset, BOOL isText);
 
 // macros & static variables
 static const char basis_hex[] = "0123456789ABCDEF";

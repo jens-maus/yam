@@ -220,7 +220,7 @@ long uuencode_file(FILE *in, FILE *out)
 // processing. It also takes respect of eventually existing checksums and
 // tries to validate the UUencoded file to conform to the BSD standard or
 // otherwise return an error/warning by returning negative values.
-long uudecode_file(FILE *in, FILE *out, struct codeset *srcCodeset)
+long uudecode_file(FILE *in, FILE *out, struct codeset *srcCodeset, BOOL isText)
 {
   unsigned char inbuffer[UUDEC_IBUF+1]; // we read out data in ~4500 byte chunks
   unsigned char outbuffer[UUDEC_OBUF+1];// the output buffer
@@ -431,7 +431,7 @@ long uudecode_file(FILE *in, FILE *out, struct codeset *srcCodeset)
 
           // in case the user wants us to detect the correct cyrillic codeset
           // we do it now
-          if(C->DetectCyrillic == TRUE)
+          if(C->DetectCyrillic == TRUE && isText == TRUE)
           {
             if(srcCodeset == NULL || (srcCodeset->name != NULL && stricmp(srcCodeset->name, "utf-8") != 0))
             {
@@ -568,7 +568,7 @@ long uudecode_file(FILE *in, FILE *out, struct codeset *srcCodeset)
 
     // in case the user wants us to detect the correct cyrillic codeset
     // we do it now
-    if(C->DetectCyrillic == TRUE)
+    if(C->DetectCyrillic == TRUE && isText == TRUE)
     {
       if(srcCodeset == NULL || (srcCodeset->name != NULL && stricmp(srcCodeset->name, "utf-8") != 0))
       {
