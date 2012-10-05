@@ -578,7 +578,10 @@ long uudecode_file(FILE *in, FILE *out, struct codeset *srcCodeset)
                                               TAG_DONE);
 
         if(cs != NULL && cs != srcCodeset)
+        {
+          D(DBF_MIME, "using codeset '%s' instead of '%s'", srcCodeset != NULL ? srcCodeset->name : "none", cs->name);
           srcCodeset = cs;
+        }
       }
     }
 
