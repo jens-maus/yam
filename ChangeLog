@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-10-05 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mime/base64.c, mime/qprintable.c, mime/uucode.c: added some debug output
+    about the used codeset.
+
 2012-09-21 Thore Böckelmann <tboeckel@gmx.de>
 
   * tcp/pop3.c: the transfer window will no longer show the download statistics

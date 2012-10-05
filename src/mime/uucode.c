@@ -236,6 +236,8 @@ long uudecode_file(FILE *in, FILE *out, struct codeset *srcCodeset)
 
   ENTER();
 
+  D(DBF_MIME, "codeset '%s'", srcCodeset != NULL ? srcCodeset->name : "none");
+
   // before we start with our decoding we have to search for
   // the starting "begin XXX" line
   do
@@ -439,7 +441,10 @@ long uudecode_file(FILE *in, FILE *out, struct codeset *srcCodeset)
                                                     TAG_DONE);
 
               if(cs != NULL && cs != srcCodeset)
+              {
+                D(DBF_MIME, "using codeset '%s' instead of '%s'", srcCodeset != NULL ? srcCodeset->name : "none", cs->name);
                 srcCodeset = cs;
+              }
             }
           }
 

@@ -165,7 +165,7 @@ int base64decode(char **out, const char *in, size_t inlen)
     unsigned char *inp = (unsigned char *)in;
     unsigned char *outp = buffer;
 
-SHOWVALUE(DBF_MIME,buffer);
+    SHOWVALUE(DBF_MIME,buffer);
     while(inlen >= 4)
     {
       unsigned char x;
@@ -494,6 +494,8 @@ long base64decode_file(FILE *in, FILE *out,
 
   ENTER();
 
+  D(DBF_MIME, "codeset '%s'", srcCodeset != NULL ? srcCodeset->name : "none");
+
   while(eof_reached == FALSE)
   {
     int outLength = 0;
@@ -625,7 +627,10 @@ long base64decode_file(FILE *in, FILE *out,
                                               TAG_DONE);
 
         if(cs != NULL && cs != srcCodeset)
+        {
+          D(DBF_MIME, "using codeset '%s' instead of '%s'", srcCodeset != NULL ? srcCodeset->name : "none", cs->name);
           srcCodeset = cs;
+        }
       }
     }
 

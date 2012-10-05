@@ -245,6 +245,8 @@ long qpdecode_file(FILE *in, FILE *out, struct codeset *srcCodeset)
 
   ENTER();
 
+  D(DBF_MIME, "codeset '%s'", srcCodeset != NULL ? srcCodeset->name : "none");
+
   while(eof_reached == FALSE)
   {
     // do a binary read of ~4096 chunks
@@ -382,7 +384,10 @@ long qpdecode_file(FILE *in, FILE *out, struct codeset *srcCodeset)
                                                   TAG_DONE);
 
             if(cs != NULL && cs != srcCodeset)
+            {
+              D(DBF_MIME, "using codeset '%s' instead of '%s'", srcCodeset != NULL ? srcCodeset->name : "none", cs->name);
               srcCodeset = cs;
+            }
           }
         }
 
