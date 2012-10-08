@@ -102,12 +102,14 @@
 #include "Locale.h"
 #include "Logfile.h"
 #include "MailList.h"
+#include "MailServers.h"
 #include "MethodStack.h"
 #include "Requesters.h"
 #include "Rexx.h"
 #include "Threads.h"
 #include "Timer.h"
 #include "UpdateCheck.h"
+#include "UserIdentity.h"
 
 #include "tcp/Connection.h"
 #include "mui/ClassesExtra.h"
@@ -2222,7 +2224,7 @@ static BOOL SendWaitingMail(const BOOL hideDisplay)
   }
 
   if(sendableMail == TRUE)
-    MA_Send(SENDMAIL_ALL_USER);
+    sendableMail = MA_Send(SENDMAIL_ALL_USER, SENDF_SIGNAL);
 
   RETURN(sendableMail);
   return(sendableMail);
@@ -2610,12 +2612,13 @@ int main(int argc, char **argv)
   for(yamFirst=TRUE;;)
   {
     ULONG signals;
-    ULONG timsig;
-    ULONG adstsig;
-    ULONG rexxsig;
-    ULONG appsig;
-    ULONG applibsig;
-    ULONG threadsig;
+    ULONG timerSig;
+    ULONG adstSig;
+    ULONG rexxSig;
+    ULONG appSig;
+    ULONG applibSig;
+    ULONG threadSig;
+    ULONG wakeupSig;
     ULONG writeWinNotifySig;
     ULONG methodStackSig;
     struct User *user;
@@ -2811,27 +2814,29 @@ int main(int argc, char **argv)
 
     // Now start the NotifyRequest for the AutoDST file
     if(ADSTnotify_start() == TRUE && ADSTdata.nRequest != NULL)
-      adstsig = 1UL << ADSTdata.nRequest->nr_stuff.nr_Signal.nr_SignalNum;
+      adstSig = 1UL << ADSTdata.nRequest->nr_stuff.nr_Signal.nr_SignalNum;
     else
-      adstsig = 0;
+      adstSig = 0;
 
     // prepare all signal bits
-    timsig            = (1UL << G->timerData.port->mp_SigBit);
-    rexxsig           = (1UL << G->RexxHost->port->mp_SigBit);
-    appsig            = (1UL << G->AppPort->mp_SigBit);
-    applibsig         = DockyIconSignal();
+    timerSig          = (1UL << G->timerData.port->mp_SigBit);
+    rexxSig           = (1UL << G->RexxHost->port->mp_SigBit);
+    appSig            = (1UL << G->AppPort->mp_SigBit);
+    applibSig         = DockyIconSignal();
     writeWinNotifySig = (1UL << G->writeWinNotifyPort->mp_SigBit);
-    threadsig         = (1UL << G->threadPort->mp_SigBit);
+    threadSig         = (1UL << G->threadPort->mp_SigBit);
+    wakeupSig         = (1UL << ThreadWakeupSignal());
     methodStackSig    = (1UL << G->methodStack->mp_SigBit);
 
     D(DBF_STARTUP, "YAM allocated signals:");
-    D(DBF_STARTUP, " adstsig           = %08lx", adstsig);
-    D(DBF_STARTUP, " timsig            = %08lx", timsig);
-    D(DBF_STARTUP, " rexxsig           = %08lx", rexxsig);
-    D(DBF_STARTUP, " appsig            = %08lx", appsig);
-    D(DBF_STARTUP, " applibsig         = %08lx", applibsig);
+    D(DBF_STARTUP, " adstSig           = %08lx", adstSig);
+    D(DBF_STARTUP, " timerSig          = %08lx", timerSig);
+    D(DBF_STARTUP, " rexxSig           = %08lx", rexxSig);
+    D(DBF_STARTUP, " appSig            = %08lx", appSig);
+    D(DBF_STARTUP, " applibSig         = %08lx", applibSig);
     D(DBF_STARTUP, " writeWinNotifySig = %08lx", writeWinNotifySig);
-    D(DBF_STARTUP, " threadsig         = %08lx", threadsig);
+    D(DBF_STARTUP, " threadSig         = %08lx", threadSig);
+    D(DBF_STARTUP, " wakeupSig         = %08lx", wakeupSig);
     D(DBF_STARTUP, " methodStackSig    = %08lx", methodStackSig);
 
     // start our maintanance Timer requests for
@@ -2858,7 +2863,7 @@ int main(int argc, char **argv)
     {
       if(signals != 0)
       {
-        signals = Wait(signals | SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_D | SIGBREAKF_CTRL_F | timsig | rexxsig | appsig | applibsig | adstsig | writeWinNotifySig | threadsig | methodStackSig);
+        signals = Wait(signals | SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_D | SIGBREAKF_CTRL_F | timerSig | rexxSig | appSig | applibSig | adstSig | writeWinNotifySig | threadSig | wakeupSig | methodStackSig);
 
         if(isFlagSet(signals, SIGBREAKF_CTRL_C))
         {
@@ -2880,7 +2885,7 @@ int main(int argc, char **argv)
           CheckMethodStack();
 
         // check for a Timer event
-        if(isFlagSet(signals, timsig))
+        if(isFlagSet(signals, timerSig))
         {
           #if defined(DEBUG)
           char dateString[64];
@@ -2895,15 +2900,15 @@ int main(int argc, char **argv)
         }
 
         // check for an Arexx signal
-        if(isFlagSet(signals, rexxsig))
+        if(isFlagSet(signals, rexxSig))
           ARexxDispatch(G->RexxHost);
 
         // check for a AppMessage signal
-        if(isFlagSet(signals, appsig))
+        if(isFlagSet(signals, appSig))
           HandleAppIcon();
 
         #if defined(__amigaos4__)
-        if(isFlagSet(signals, applibsig))
+        if(isFlagSet(signals, applibSig))
         {
           // make sure to break out here in case
           // the Quit or ForceQuit succeeded.
@@ -2916,8 +2921,12 @@ int main(int argc, char **argv)
         #endif // __amigaos4__
 
         // handle thread messages
-        if(isFlagSet(signals, threadsig))
+        if(isFlagSet(signals, threadSig))
           HandleThreads(TRUE);
+
+        // there is nothing to be done for the wakeup signal
+        // but it must be included in the Wait() statement above to be cleared
+        // automatically as soon as it was triggered by a thread
 
         // check for a write window file notification signal
         if(isFlagSet(signals, writeWinNotifySig))
@@ -2940,7 +2949,7 @@ int main(int argc, char **argv)
         }
 
         // check for the AutoDST signal
-        if(adstsig != 0 && isFlagSet(signals, adstsig))
+        if(adstSig != 0 && isFlagSet(signals, adstSig))
         {
           D(DBF_STARTUP, "received ADST change signal, rereading DST settings");
 
@@ -2978,7 +2987,12 @@ int main(int argc, char **argv)
     }
 
     if(C->SendOnQuit == TRUE && args.nocheck == FALSE && ConnectionIsOnline(NULL) == TRUE)
-      SendWaitingMail(FALSE);
+    {
+      if(SendWaitingMail(FALSE) == TRUE)
+      {
+        MiniMainLoop();
+      }
+    }
 
     if(C->CleanupOnQuit == TRUE)
       DoMethod(G->App, MUIM_CallHook, &MA_DeleteOldHook);
@@ -3036,8 +3050,6 @@ void MiniMainLoop(void)
   D(DBF_STARTUP, " methodStackSig    = %08lx", methodStackSig);
   D(DBF_STARTUP, " wakeupSig         = %08lx", wakeupSig);
 
-  SetSignal(0UL, wakeupSig);
-
   // start the event loop
   signals = 0;
   while(DoMethod(G->App, MUIM_Application_NewInput, &signals) == 0)
@@ -3063,10 +3075,30 @@ void MiniMainLoop(void)
 
       if(isFlagSet(signals, wakeupSig))
       {
+        // assume all SMTP threads to be finished first
+        BOOL allFinished = TRUE;
+        struct Node *curNode;
+
         D(DBF_STARTUP, "got wakeup signal");
-        // clear the wakeup signal and bail out
-        SetSignal(0UL, wakeupSig);
-        break;
+
+        IterateList(&C->userIdentityList, curNode)
+        {
+          struct UserIdentityNode *uin = (struct UserIdentityNode *)curNode;
+
+          // check if the SMTP server is still in use because it is still sending mails
+          if(uin->smtpServer != NULL && isFlagSet(uin->smtpServer->flags, MSF_IN_USE))
+          {
+            // at least one server is still in use
+            allFinished = FALSE;
+            break;
+          }
+        }
+
+        // bail out if all SMTP threads have finished
+        if(allFinished == TRUE)
+        {
+          break;
+        }
       }
     }
   }

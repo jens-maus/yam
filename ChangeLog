@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-10-08 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c, tcp/smtp.c: sending mails upon terminating YAM works as expected
+    again since sending mails is done in a thread. The sending thread will no
+    longer be terminated immediately again.
+
 2012-10-05 Thore Böckelmann <tboeckel@gmx.de>
 
   * mime/base64.c, mime/qprintable.c, mime/uucode.c: added some debug output

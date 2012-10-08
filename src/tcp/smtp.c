@@ -1344,7 +1344,7 @@ static int SendMessage(struct TransferContext *tc, struct Mail *mail)
 
 ///
 /// SendMails
-BOOL SendMails(struct UserIdentityNode *uin, enum SendMailMode mode)
+BOOL SendMails(struct UserIdentityNode *uin, enum SendMailMode mode, const ULONG flags)
 {
   BOOL success = FALSE;
   struct TransferContext *tc;
@@ -1678,6 +1678,10 @@ BOOL SendMails(struct UserIdentityNode *uin, enum SendMailMode mode)
 
   // now we are done
   ReleaseSemaphore(G->configSemaphore);
+
+  // wake up the calling thread if this is requested
+  if(isFlagSet(flags, SENDF_SIGNAL))
+    WakeupThread(NULL);
 
   RETURN(success);
   return success;

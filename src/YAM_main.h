@@ -379,7 +379,7 @@ void  MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobo
 void  MA_ExchangeMail(const ULONG receiveFlags);
 BOOL  MA_PopNow(struct MailServerNode *msn, const ULONG flags, struct DownloadResult *dlResult);
 void  MA_RemoveAttach(struct Mail *mail, struct Part **whichParts, BOOL warning);
-BOOL  MA_Send(enum SendMailMode sendpos);
+BOOL  MA_Send(enum SendMailMode mode, ULONG flags);
 void  MA_ChangeMailStatus(struct Mail *mail, int addflags, int clearflags);
 BOOL  MA_UpdateMailFile(struct Mail *mail);
 void  MA_SetSortFlag(void);

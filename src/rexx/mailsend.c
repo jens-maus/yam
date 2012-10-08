@@ -57,7 +57,7 @@ void rx_mailsend(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
 
     case RXIF_ACTION:
     {
-      if(MA_Send(args->all ? SENDMAIL_ALL_AUTO : SENDMAIL_ACTIVE_AUTO) == FALSE)
+      if(MA_Send(args->all ? SENDMAIL_ALL_AUTO : SENDMAIL_ACTIVE_AUTO, SENDF_SIGNAL) == FALSE)
         params->rc = RETURN_WARN;
     }
     break;

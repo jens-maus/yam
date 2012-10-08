@@ -2294,7 +2294,7 @@ void MA_ExchangeMail(const ULONG receiveFlags)
   ENTER();
 
   MA_PopNow(NULL, receiveFlags, NULL);
-  MA_Send(isFlagSet(receiveFlags, RECEIVEF_USER) ? SENDMAIL_ALL_USER : SENDMAIL_ALL_AUTO);
+  MA_Send(isFlagSet(receiveFlags, RECEIVEF_USER) ? SENDMAIL_ALL_USER : SENDMAIL_ALL_AUTO, SENDF_SIGNAL);
 
   LEAVE();
 }
@@ -2409,7 +2409,7 @@ MakeHook(MA_PopNowHook, MA_PopNowFunc);
 /*** Sub-button functions ***/
 /// MA_Send
 //  Sends selected or all messages
-BOOL MA_Send(enum SendMailMode mode)
+BOOL MA_Send(enum SendMailMode mode, ULONG flags)
 {
   BOOL success = FALSE;
   struct MailList *mlist = NULL;
@@ -2532,6 +2532,7 @@ BOOL MA_Send(enum SendMailMode mode)
             // associated mails
             sendMailSuccess = (DoAction(NULL, TA_SendMails, TT_SendMails_UserIdentity, uin,
                                                             TT_SendMails_Mode, mode,
+                                                            TT_SendMails_Flags, flags,
                                                             TAG_DONE) != NULL);
           }
 
@@ -2568,7 +2569,7 @@ HOOKPROTONHNO(MA_SendFunc, void, int *arg)
 {
   ENTER();
 
-  MA_Send(arg[0]);
+  MA_Send(arg[0], SENDF_SIGNAL);
 
   LEAVE();
 }
