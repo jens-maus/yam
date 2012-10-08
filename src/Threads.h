@@ -86,7 +86,7 @@ BOOL SleepThread(void);
 void AbortThread(APTR thread, BOOL targetVanished);
 void WakeupThread(APTR thread);
 LONG ThreadAbortSignal(void);
-LONG ThreadWakeupSignal(void);
+ULONG ThreadWakeupSignal(void);
 LONG ThreadTimerSignal(void);
 BOOL ThreadWasAborted(void);
 const char *ThreadName(void);

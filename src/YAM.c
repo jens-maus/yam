@@ -2825,7 +2825,7 @@ int main(int argc, char **argv)
     applibSig         = DockyIconSignal();
     writeWinNotifySig = (1UL << G->writeWinNotifyPort->mp_SigBit);
     threadSig         = (1UL << G->threadPort->mp_SigBit);
-    wakeupSig         = (1UL << ThreadWakeupSignal());
+    wakeupSig         = ThreadWakeupSignal();
     methodStackSig    = (1UL << G->methodStack->mp_SigBit);
 
     D(DBF_STARTUP, "YAM allocated signals:");
@@ -3035,20 +3035,20 @@ void MiniMainLoop(void)
 {
   ULONG signals;
   ULONG threadSig;
-  ULONG methodStackSig;
   ULONG wakeupSig;
+  ULONG methodStackSig;
 
   ENTER();
 
   // prepare all signal bits
   threadSig      = (1UL << G->threadPort->mp_SigBit);
+  wakeupSig      = ThreadWakeupSignal();
   methodStackSig = (1UL << G->methodStack->mp_SigBit);
-  wakeupSig      = (1UL << ThreadWakeupSignal());
 
   D(DBF_STARTUP, "YAM allocated signals:");
   D(DBF_STARTUP, " threadSig         = %08lx", threadSig);
-  D(DBF_STARTUP, " methodStackSig    = %08lx", methodStackSig);
   D(DBF_STARTUP, " wakeupSig         = %08lx", wakeupSig);
+  D(DBF_STARTUP, " methodStackSig    = %08lx", methodStackSig);
 
   // start the event loop
   signals = 0;
@@ -3056,7 +3056,7 @@ void MiniMainLoop(void)
   {
     if(signals != 0)
     {
-      signals = Wait(signals | SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_F | threadSig | methodStackSig | wakeupSig);
+      signals = Wait(signals | SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_F | threadSig | wakeupSig | methodStackSig);
 
       if(isFlagSet(signals, SIGBREAKF_CTRL_C))
         break;

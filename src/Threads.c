@@ -1014,9 +1014,9 @@ LONG ThreadAbortSignal(void)
 ///
 /// ThreadWakeupSignal
 // get the wakeup signal of the current thread, this is CTRL-E for the main thread
-LONG ThreadWakeupSignal(void)
+ULONG ThreadWakeupSignal(void)
 {
-  ULONG sigBit;
+  ULONG sigMask;
   struct Process *me;
 
   ENTER();
@@ -1025,17 +1025,17 @@ LONG ThreadWakeupSignal(void)
 
   if(me == G->mainThread)
   {
-    sigBit = SIGBREAKB_CTRL_E;
+    sigMask = SIGBREAKF_CTRL_E;
   }
   else
   {
     struct Thread *thread = (struct Thread *)me->pr_Task.tc_UserData;
 
-    sigBit = thread->wakeupSignal;
+    sigMask = (1UL << thread->wakeupSignal);
   }
 
-  RETURN(sigBit);
-  return sigBit;
+  RETURN(sigMask);
+  return sigMask;
 }
 
 ///
