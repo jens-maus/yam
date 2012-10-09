@@ -987,7 +987,7 @@ const char *CurrentThreadName(void)
 ///
 /// ThreadAbortSignal
 // get the abort signal of the current thread, this is CTRL-C for the main thread
-LONG ThreadAbortSignal(void)
+ULONG ThreadAbortSignal(void)
 {
   ULONG sigBit;
   struct Process *me;
@@ -1025,13 +1025,13 @@ ULONG ThreadWakeupSignal(void)
 
   if(me == G->mainThread)
   {
-    sigMask = SIGBREAKB_CTRL_E;
+    sigBit = SIGBREAKB_CTRL_E;
   }
   else
   {
     struct Thread *thread = (struct Thread *)me->pr_Task.tc_UserData;
 
-    sigMask = thread->wakeupSignal;
+    sigBit = thread->wakeupSignal;
   }
 
   RETURN(sigBit);
