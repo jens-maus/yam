@@ -93,7 +93,7 @@ struct Connection
 
   struct MailServerNode *server;    // ptr to server this connection is associated with
 
-  LONG abortSignal;                 // a copy of the thread's abort signal
+  ULONG abortSignal;                // a copy of the thread's abort signal
 
   BOOL connectedFromMainThread;     // who created this connection?
   BOOL isConnected;                 // has ConnectToHost() been called before?

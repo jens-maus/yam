@@ -2825,7 +2825,7 @@ int main(int argc, char **argv)
     applibSig         = DockyIconSignal();
     writeWinNotifySig = (1UL << G->writeWinNotifyPort->mp_SigBit);
     threadSig         = (1UL << G->threadPort->mp_SigBit);
-    wakeupSig         = ThreadWakeupSignal();
+    wakeupSig         = (1UL << ThreadWakeupSignal());
     methodStackSig    = (1UL << G->methodStack->mp_SigBit);
 
     D(DBF_STARTUP, "YAM allocated signals:");
@@ -3042,7 +3042,7 @@ void MiniMainLoop(void)
 
   // prepare all signal bits
   threadSig      = (1UL << G->threadPort->mp_SigBit);
-  wakeupSig      = ThreadWakeupSignal();
+  wakeupSig      = (1UL << ThreadWakeupSignal());
   methodStackSig = (1UL << G->methodStack->mp_SigBit);
 
   D(DBF_STARTUP, "YAM allocated signals:");
