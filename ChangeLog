@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-10-10 Jens Langner <Jens.Langner@light-speed.de>
+
+  * HTML2Mail.l: moved the yy_top_state() use to the end of the html2mail()
+    function and put it into a if(0) clause so that it is definitly not called
+    but the compiler still being pleased about it. This should hopefully 
+    cure the problem reported in ticket #348.
+
 2012-10-10 Thore Böckelmann <tboeckel@gmx.de>
 
   * tcp/pop3.c: if the preselection mode is set to "always, only size" the

@@ -334,13 +334,7 @@ char *html2mail(char *htmlTxt)
       BOOL italic=FALSE;
       BOOL underline=FALSE;
 
-      // this statement is just to make the compiler happy that
-      // we don't use this function at all. But we must not call
-      // yy_top_state() without checking the value of yy_start_stack
-      // first to avoid accessing invalid pointers.
-      if(yy_start_stack != NULL)
-        yy_top_state();
-
+      // lets start looping over yylex()
       while((type = yylex()))
       {
         switch(type)
@@ -622,6 +616,13 @@ char *html2mail(char *htmlTxt)
       }
 
       free(lastHref);
+
+      // the following statement is just to make the compiler happy that
+      // we don't use this function at all. Unfortunatley there is no
+      // option in flex to suppress the definition of yy_top_state(). So
+      // we have to trick the compiler somehow. :)
+      if(0)
+        yy_top_state();
     }
 
     yy_delete_buffer(buffer);
@@ -635,4 +636,3 @@ char *html2mail(char *htmlTxt)
 }
 
 ///
-
