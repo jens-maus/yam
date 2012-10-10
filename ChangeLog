@@ -9,7 +9,7 @@ $URL$
 
   * HTML2Mail.l: moved the yy_top_state() use to the end of the html2mail()
     function and put it into a if(0) clause so that it is definitly not called
-    but the compiler still being pleased about it. This should hopefully 
+    but the compiler still being pleased about it. This should hopefully
     cure the problem reported in ticket #348.
 
 2012-10-10 Thore Böckelmann <tboeckel@gmx.de>
@@ -23,6 +23,8 @@ $URL$
     to be transferred and finally to handle all available mails.
   * HTML2Mail.l: don't call the otherwise unused function yy_top_state() without
     checking the requirements first.
+  * mui/PreselectionWindow.c, tcp/pop3.c: added a progress bar to the preselection
+    window while getting the message details.
 
 2012-10-08 Thore Böckelmann <tboeckel@gmx.de>
 

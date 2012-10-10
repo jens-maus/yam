@@ -671,6 +671,7 @@ static int GetAllMessageDetails(struct TransferContext *tc)
   int success = 1;
   LONG pass;
   BOOL activeMailSet = FALSE;
+  ULONG handledMails = 0;
 
   ENTER();
 
@@ -732,7 +733,13 @@ static int GetAllMessageDetails(struct TransferContext *tc)
       {
         // get the message details only if this has not been done before already
         if(isFlagClear(tnode->tflags, TRF_GOT_DETAILS))
+        {
           GetSingleMessageDetails(tc, tnode, tnode->index-1);
+
+          // update the progress bar
+          handledMails++;
+          PushMethodOnStack(tc->preselectWindow, 3, MUIM_Set, MUIA_PreselectionWindow_Progress, handledMails);
+        }
 
         if((success = CheckAbort(tc)) != 1)
         {
@@ -753,6 +760,9 @@ static int GetAllMessageDetails(struct TransferContext *tc)
 	  D(DBF_NET, "nothing to be done in pass %ld", pass);
 	}
   }
+
+  // hide the progress bar after the scan
+  PushMethodOnStack(tc->preselectWindow, 3, MUIM_Set, MUIA_PreselectionWindow_Progress, 0);
 
   RETURN(success);
   return success;

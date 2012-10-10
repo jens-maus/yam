@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.60 (10.10.2012)
+## version $VER: YAM.catalog 7.61 (10.10.2012)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -8837,4 +8837,7 @@ Signaturtext
 ;
 MSG_CO_APPEND_SIGNATURE_FILE
 Stattdessen eine Datei als Signatur anhängen
+;
+MSG_PRESELECT_GETTING_DETAILS
+Hole Nachrichtendetails (%ld von %%ld)
 ;

@@ -54,7 +54,9 @@
 /* CLASSDATA
 struct Data
 {
+  Object *transferGroup;
   Object *transferMailList;
+  Object *progressBar;
   Object *allButton;
   Object *noneButton;
   Object *leaveButton;
@@ -68,6 +70,8 @@ struct Data
 
   APTR thread;
   struct MailTransferList *mailList;
+
+  char progressText[SIZE_DEFAULT];
 
   ULONG accept;
 };
@@ -87,6 +91,7 @@ OVERLOAD(OM_NEW)
 {
   struct TagItem *tag;
   const char *titleText = "YAM";
+  Object *transferGroup;
   Object *transferMailList;
   Object *allButton;
   Object *noneButton;
@@ -114,10 +119,12 @@ OVERLOAD(OM_NEW)
     MUIA_Window_ID,          MAKE_ID('P','R','E','S'),
     MUIA_Window_CloseGadget, FALSE,
     WindowContents, VGroup,
-      Child, NListviewObject,
-        MUIA_CycleChain, TRUE,
-        MUIA_NListview_NList, transferMailList = TransferMailListObject,
-          MUIA_TransferMailList_SizeLimit, GetTagData(ATTR(SizeLimit), 0, inittags(msg)),
+      Child, transferGroup = VGroup,
+        Child, NListviewObject,
+          MUIA_CycleChain, TRUE,
+          MUIA_NListview_NList, transferMailList = TransferMailListObject,
+            MUIA_TransferMailList_SizeLimit, GetTagData(ATTR(SizeLimit), 0, inittags(msg)),
+          End,
         End,
       End,
       Child, VGroup, GroupFrameT(tr(MSG_TR_Control)),
@@ -145,6 +152,7 @@ OVERLOAD(OM_NEW)
 
     DoMethod(G->App, OM_ADDMEMBER, obj);
 
+    data->transferGroup = transferGroup;
     data->transferMailList = transferMailList;
     data->allButton = allButton;
     data->noneButton = noneButton;
@@ -222,6 +230,49 @@ OVERLOAD(OM_SET)
       case ATTR(ActiveMail):
       {
         DoMethod(data->transferMailList, MUIM_NList_SetActive, tag->ti_Data, MUIV_NList_SetActive_Jump_Center);
+      }
+      break;
+
+      case ATTR(Progress):
+      {
+        if(tag->ti_Data == 0)
+        {
+          // remove and dispose the progress bar
+          if(data->progressBar != NULL)
+          {
+            if(DoMethod(data->transferGroup, MUIM_Group_InitChange))
+            {
+              DoMethod(data->transferGroup, OM_REMMEMBER, data->progressBar);
+              DoMethod(data->transferGroup, MUIM_Group_ExitChange);
+            }
+
+            MUI_DisposeObject(data->progressBar);
+            data->progressBar = NULL;
+          }
+        }
+        else
+        {
+          // create the progress bar if it doesn't exist yet
+          if(data->progressBar == NULL)
+          {
+            snprintf(data->progressText, sizeof(data->progressText), tr(MSG_PRESELECT_GETTING_DETAILS), data->mailList->count);
+            if((data->progressBar = GaugeObject,
+              GaugeFrame,
+              MUIA_Gauge_InfoText, data->progressText,
+              MUIA_Gauge_Horiz, TRUE,
+            End) != NULL)
+            {
+              if(DoMethod(data->transferGroup, MUIM_Group_InitChange))
+              {
+                DoMethod(data->transferGroup, OM_ADDMEMBER, data->progressBar);
+                DoMethod(data->transferGroup, MUIM_Group_ExitChange);
+              }
+            }
+          }
+
+          if(data->progressBar != NULL)
+            set(data->progressBar, MUIA_Gauge_Current, tag->ti_Data);
+        }
       }
       break;
     }
