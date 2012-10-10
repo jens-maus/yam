@@ -799,7 +799,7 @@ $(OBJDIR)/HTML2Mail.o: HTML2Mail.c
 
 svnrev.h: $(TOOLS)/svnrev
 	@echo "  GN $@"
-	@$(TOOLS)/svnrev -o$@ *.c *.h *.l $(MUIDIR)/*.c $(REXXDIR)/*.c $(MIMEDIR)/*.c $(MIMEDIR)/*.h $(TCPDIR)/*.c $(TCPDIR)/*.h $(EXTRADIR)/*.c $(EXTRADIR)/*.h
+	@$(TOOLS)/svnrev -o$@ *.c *.h *.l $(MUIDIR)/*.c $(REXXDIR)/*.c $(MIMEDIR)/*.c $(MIMEDIR)/*.h $(TCPDIR)/*.c $(TCPDIR)/*.h $(EXTRADIR)/*.c $(EXTRADIR)/*.h $(LOCALE)/*.cd $(LOCALE)/*.ct
 
 ## DEPENDENCY GENERATION ##############
 
