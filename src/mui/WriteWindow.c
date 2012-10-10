@@ -3979,27 +3979,18 @@ DECLARE(ComposeMail) // enum WriteMode mode
             }
           }
 
-          if((mode == WRITE_SEND || mode == WRITE_QUEUE) && isDraftsFolder(wmData->refMail->Folder))
-          {
-            // delete the mail from the drafts folder
-            MA_DeleteSingle(wmData->refMail, DELF_AT_ONCE);
-          }
-          else
-          {
-            RemoveMailFromList(wmData->refMail, TRUE, TRUE);
-          }
+          RemoveMailFromList(wmData->refMail, TRUE, TRUE);
           wmData->refMail = newMail;
         }
         else if(wmData->mode == NMM_NEW && wmData->refMail != NULL)
         {
-          // delete the draft mail from the drafts folder if writing the
-          // mail is to be finished and writing the mail was started from scratch
-          if((mode == WRITE_SEND || mode == WRITE_QUEUE) && isDraftsFolder(wmData->refMail->Folder))
-          {
-            // delete the mail from the drafts folder
-            MA_DeleteSingle(wmData->refMail, DELF_AT_ONCE);
-          }
           wmData->refMail = newMail;
+        }
+
+        if((mode == WRITE_SEND || mode == WRITE_QUEUE) && wmData->draftMail != NULL)
+        {
+          // delete the mail from the drafts folder
+          MA_DeleteSingle(wmData->draftMail, DELF_AT_ONCE);
         }
       }
 
@@ -4132,9 +4123,15 @@ DECLARE(ComposeMail) // enum WriteMode mode
   // files when saving a draft mail
   FreePartsList(comp.FirstPart, mode != WRITE_DRAFT);
 
-  // cleanup certain references if the window is to be closed
-  if(mode != WRITE_DRAFT)
+  if(mode == WRITE_DRAFT)
   {
+    // remember the new mail pointer in draft mode
+    if(newMail != NULL)
+      wmData->draftMail = newMail;
+  }
+  else
+  {
+    // cleanup certain references if the window is to be closed
     wmData->refMail = NULL;
 
     if(wmData->refMailList != NULL)
@@ -4155,12 +4152,6 @@ DECLARE(ComposeMail) // enum WriteMode mode
       FreeStrBuf(wmData->references);
       wmData->references = NULL;
     }
-  }
-  else
-  {
-    // remember the new mail pointer in draft mode
-    if(newMail != NULL)
-      wmData->draftMail = newMail;
   }
 
   // now we make sure we immediately send out the mail.
