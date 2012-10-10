@@ -121,7 +121,7 @@ anything      .|[\n\t\r]
 <HREF>{
   "\"".*        { yyless(1); /* eat up quotes */ }
   "\'".*        { yyless(1); /* eat up quotes */ }
-  "href="[^ >]+ { D(DBF_HTML, "%d: href='%s'", YY_START, yytext); return ht_HREF;} 
+  "href="[^ >]+ { D(DBF_HTML, "%d: href='%s'", YY_START, yytext); return ht_HREF;}
   ">".*         { D(DBF_HTML, "%d: >", YY_START); yyless(1); yy_pop_state(); }
   {anything}    { /* do nothing */ }
 }
@@ -335,8 +335,11 @@ char *html2mail(char *htmlTxt)
       BOOL underline=FALSE;
 
       // this statement is just to make the compiler happy that
-      // we don't use this function at all
-      yy_top_state();
+      // we don't use this function at all. But we must not call
+      // yy_top_state() without checking the value of yy_start_stack
+      // first to avoid accessing invalid pointers.
+      if(yy_start_stack != NULL)
+        yy_top_state();
 
       while((type = yylex()))
       {

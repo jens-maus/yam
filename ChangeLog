@@ -14,6 +14,8 @@ $URL$
   * tcp/pop3.c, MailTransferList.c: reworked the mail preselection process to
     first look for mails to be transferred and exceeding the size, then for mails
     to be transferred and finally to handle all available mails.
+  * HTML2Mail.l: don't call the otherwise unused function yy_top_state() without
+    checking the requirements first.
 
 2012-10-08 Thore Böckelmann <tboeckel@gmx.de>
 
