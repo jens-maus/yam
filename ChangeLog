@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-10-10 Thore Böckelmann <tboeckel@gmx.de>
+
+  * tcp/pop3.c: if the preselection mode is set to "always, only size" the
+    preselection process will no longer download the mail subjects.
+
 2012-10-08 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.c, tcp/smtp.c: sending mails upon terminating YAM works as expected

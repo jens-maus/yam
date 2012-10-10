@@ -665,62 +665,73 @@ static int CheckAbort(struct TransferContext *tc)
 static int GetAllMessageDetails(struct TransferContext *tc)
 {
   int success = 1;
-  struct MailTransferNode *tnode;
-  LONG line;
 
   ENTER();
 
-  // start with the first node in the list
-  tnode = FirstMailTransferNode(tc->transferList);
-  line = 0;
-
-  if(tc->firstToPreselect > 0)
+  // check if only the mail sizes are requested or the subjects as well
+  if(tc->msn->preselection == PSM_ALWAYSLARGE)
   {
-    // the first mail to be transferred is not the first in the list,
-    // skip until that index
-    do
-    {
-      tnode = NextMailTransferNode(tnode);
-      line++;
-      if(line == tc->firstToPreselect)
-        break;
-    }
-    while(tnode != NULL);
+    // tell the preselection window to highlight the first mail to be transferred
+    PushMethodOnStackWait(tc->preselectWindow, 3, MUIM_Set, MUIA_PreselectionWindow_ActiveMail, tc->firstToPreselect);
   }
-
-  // tell the preselection window to highlight the first mail to be transferred
-  PushMethodOnStackWait(tc->preselectWindow, 3, MUIM_Set, MUIA_PreselectionWindow_ActiveMail, tc->firstToPreselect);
-
-  // get all message details until the end of the list
-  while(tnode != NULL)
+  else
   {
-    GetSingleMessageDetails(tc, tnode, line);
+    // if mails subjects are requested then get these now
+    struct MailTransferNode *tnode;
+    LONG line;
 
-    tnode = NextMailTransferNode(tnode);
-    line++;
-
-    if((success = CheckAbort(tc)) != 1)
-      break;
-  }
-
-  // get any remaining message details from the beginning of the list if the
-  // transfer has not yet been started or aborted
-  if(success == 1 && tc->firstToPreselect > 0)
-  {
+    // start with the first node in the list
     tnode = FirstMailTransferNode(tc->transferList);
     line = 0;
 
+    if(tc->firstToPreselect > 0)
+    {
+      // the first mail to be transferred is not the first in the list,
+      // skip until that index
+      do
+      {
+        tnode = NextMailTransferNode(tnode);
+        line++;
+        if(line == tc->firstToPreselect)
+          break;
+      }
+      while(tnode != NULL);
+    }
+
+    // tell the preselection window to highlight the first mail to be transferred
+    PushMethodOnStackWait(tc->preselectWindow, 3, MUIM_Set, MUIA_PreselectionWindow_ActiveMail, tc->firstToPreselect);
+
+    // get all message details until the end of the list
     while(tnode != NULL)
     {
       GetSingleMessageDetails(tc, tnode, line);
 
       tnode = NextMailTransferNode(tnode);
       line++;
-      if(line == tc->firstToPreselect)
-        break;
 
       if((success = CheckAbort(tc)) != 1)
         break;
+    }
+
+    // get any remaining message details from the beginning of the list if the
+    // transfer has not yet been started or aborted
+    if(success == 1 && tc->firstToPreselect > 0)
+    {
+      tnode = FirstMailTransferNode(tc->transferList);
+      line = 0;
+
+      while(tnode != NULL)
+      {
+        GetSingleMessageDetails(tc, tnode, line);
+
+        tnode = NextMailTransferNode(tnode);
+        line++;
+        if(line == tc->firstToPreselect)
+          break;
+
+        if((success = CheckAbort(tc)) != 1)
+          break;
+      }
     }
   }
 
