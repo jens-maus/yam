@@ -8839,5 +8839,5 @@ MSG_CO_APPEND_SIGNATURE_FILE
 Stattdessen eine Datei als Signatur anhängen
 ;
 MSG_PRESELECT_GETTING_DETAILS
-Hole Nachrichtendetails (%ld von %%ld)
+Hole Nachrichtendetails (%%ld von %ld)
 ;

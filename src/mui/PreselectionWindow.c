@@ -260,6 +260,7 @@ OVERLOAD(OM_SET)
               GaugeFrame,
               MUIA_Gauge_InfoText, data->progressText,
               MUIA_Gauge_Horiz, TRUE,
+              MUIA_Gauge_Max, data->mailList->count,
             End) != NULL)
             {
               if(DoMethod(data->transferGroup, MUIM_Group_InitChange))

@@ -7359,5 +7359,5 @@ MSG_CO_APPEND_SIGNATURE_FILE (2395//)
 Append a file as signature instead
 ;
 MSG_PRESELECT_GETTING_DETAILS (2396//)
-Getting message details (%ld of %%ld)
+Getting message details (%%ld of %ld)
 ;
