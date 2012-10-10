@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.59 (13.8.2012)
+## version $VER: YAM.catalog 7.60 (10.10.2012)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -531,7 +531,7 @@ Laden
 ; Load
 ;
 MSG_UT_PGPPassReq
-Bitte geben Sie Ihr PGP Passwort ein:
+Bitte geben Sie Ihr PGP-Passwort ein:
 ; Please enter your PGP pass phrase:
 ;
 ;
@@ -2003,10 +2003,8 @@ Eingehende Nachrichten, welche diese Größe\n\
 ; size will be considered as large.
 ;
 MSG_HELP_CO_ST_INTERVAL
-Wie oft wollen Sie auf neue Post prüfen?\n\
-(Geben Sie 0 ein, um diese Funktion auszuschalten)
-; How frequently do you want to check for new mail?\n\
-; (use 0 to disable this feature)
+Wie oft wollen Sie auf neue Post prüfen?
+; How frequently do you want to check for new mail?
 ;
 MSG_HELP_CO_CH_DLLARGE
 Lade große Nachrichten beim automatischen Postholen,\n\

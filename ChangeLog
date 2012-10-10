@@ -9,6 +9,8 @@ $URL$
 
   * tcp/pop3.c: if the preselection mode is set to "always, only size" the
     preselection process will no longer download the mail subjects.
+  * locale/YAM.cd, locale/german.ct: fixed spelling quirk and removed a senseless
+    explanation from a bubble help text.
 
 2012-10-08 Thore Böckelmann <tboeckel@gmx.de>
 
