@@ -63,12 +63,13 @@ struct MailTransferNode
 #define TRF_DELETE            (1<<1)  // delete this node
 #define TRF_PRESELECT         (1<<2)  // include this node in a preselection
 #define TRF_SIZE_EXCEEDED     (1<<3)  // this mail exceeds the automatic download size
+#define TRF_GOT_DETAILS       (1<<4)  // details of this mail have been obtained
 
 void InitMailTransferList(struct MailTransferList *tlist);
 void ClearMailTransferList(struct MailTransferList *tlist);
 struct MailTransferList *CreateMailTransferList(void);
 void DeleteMailTransferList(struct MailTransferList *tlist);
-BOOL ScanMailTransferList(const struct MailTransferList *tlist, const ULONG flags, const BOOL allFlags, LONG *index);
+struct MailTransferNode *ScanMailTransferList(const struct MailTransferList *tlist, const ULONG maskFlags, const ULONG wantedFlags, const BOOL allFlags);
 struct MailTransferNode *CreateMailTransferNode(const struct Mail *mail, const ULONG flags);
 void AddMailTransferNode(struct MailTransferList *tlist, struct MailTransferNode *tnode);
 void RemoveMailTransferNode(struct MailTransferList *tlist, struct MailTransferNode *tnode);

@@ -127,7 +127,6 @@ struct TransferContext
   int numberOfMailsTotal;
   int numberOfMailsSkipped;
   long totalSize;
-  LONG firstToPreselect;
   struct TimeVal lastUpdateTime;
 };
 
@@ -491,7 +490,7 @@ static BOOL GetMessageList(struct TransferContext *tc)
           if(tc->msn->preselection >= PSM_ALWAYS)
             setFlag(tflags, TRF_PRESELECT);
 
-          D(DBF_NET, "mail transfer mode %ld, tflags %08lx (dl large %ld, purge %ld, user %ld, warnsize %ld, size %ld, presel %ld)", mode, tflags, hasServerDownloadLargeMails(tc->msn), hasServerPurge(tc->msn), isFlagSet(tc->flags, RECEIVEF_USER), tc->msn->largeMailSizeLimit*1024, newMail->Size, tc->msn->preselection);
+          D(DBF_NET, "mail transfer mode %2ld, tflags %08lx (dl large %ld, purge %ld, user %ld, warnsize %8ld, size %8ld, presel %ld)", mode, tflags, hasServerDownloadLargeMails(tc->msn), hasServerPurge(tc->msn), isFlagSet(tc->flags, RECEIVEF_USER), tc->msn->largeMailSizeLimit*1024, newMail->Size, tc->msn->preselection);
 
           // allocate a new MailTransferNode and add it to our
           // new transferlist
@@ -539,6 +538,8 @@ static void GetSingleMessageDetails(struct TransferContext *tc, struct MailTrans
   struct Mail *mail = tnode->mail;
 
   ENTER();
+
+  D(DBF_NET, "get details for mail %ld", lline);
 
   if(mail->From.Address[0] == '\0' && tc->connection->abort == FALSE && tc->connection->error == CONNECTERR_NO_ERROR)
   {
@@ -603,6 +604,9 @@ static void GetSingleMessageDetails(struct TransferContext *tc, struct MailTrans
     }
   }
 
+  // now we got the details
+  setFlag(tnode->tflags, TRF_GOT_DETAILS);
+
   if(lline >= 0 && tc->preselectWindow != NULL)
     PushMethodOnStack(tc->preselectWindow, 2, MUIM_PreselectionWindow_RefreshMail, lline);
 
@@ -665,74 +669,89 @@ static int CheckAbort(struct TransferContext *tc)
 static int GetAllMessageDetails(struct TransferContext *tc)
 {
   int success = 1;
+  LONG pass;
+  BOOL activeMailSet = FALSE;
 
   ENTER();
 
-  // check if only the mail sizes are requested or the subjects as well
-  if(tc->msn->preselection == PSM_ALWAYSLARGE)
+  // get the details in 3 passes
+  // 1. start at first to be preselected mail (i.e. size limit exceeded)
+  // 2. start at first to be downloaded mail
+  // 3. start at first available mail
+  for(pass = 0; pass < 3; pass++)
   {
-    // tell the preselection window to highlight the first mail to be transferred
-    PushMethodOnStackWait(tc->preselectWindow, 3, MUIM_Set, MUIA_PreselectionWindow_ActiveMail, tc->firstToPreselect);
-  }
-  else
-  {
-    // if mails subjects are requested then get these now
+    ULONG flags;
     struct MailTransferNode *tnode;
-    LONG line;
 
-    // start with the first node in the list
-    tnode = FirstMailTransferNode(tc->transferList);
-    line = 0;
-
-    if(tc->firstToPreselect > 0)
+    switch(pass)
     {
-      // the first mail to be transferred is not the first in the list,
-      // skip until that index
-      do
+      default:
+      case 0:
       {
-        tnode = NextMailTransferNode(tnode);
-        line++;
-        if(line == tc->firstToPreselect)
-          break;
+        // handle all mails to be transferred and which exceed the size limit
+        flags = TRF_TRANSFER|TRF_SIZE_EXCEEDED;
       }
-      while(tnode != NULL);
+      break;
+
+      case 1:
+      {
+        // handle all mails to be transferred
+        flags = TRF_TRANSFER;
+      }
+      break;
+
+      case 2:
+      {
+        // handle all mails
+        flags = TRF_NONE;
+      }
+      break;
     }
 
-    // tell the preselection window to highlight the first mail to be transferred
-    PushMethodOnStackWait(tc->preselectWindow, 3, MUIM_Set, MUIA_PreselectionWindow_ActiveMail, tc->firstToPreselect);
+    // find a yet unhandled mail with all the given flags
+    tnode = ScanMailTransferList(tc->transferList, flags|TRF_GOT_DETAILS, flags, TRUE);
 
-    // get all message details until the end of the list
-    while(tnode != NULL)
+    // highlight the first to be handled mail if that has not yet been done
+    if(activeMailSet == FALSE && tnode != NULL)
     {
-      GetSingleMessageDetails(tc, tnode, line);
+      // tell the preselection window to highlight the first mail to be transferred
+      PushMethodOnStackWait(tc->preselectWindow, 3, MUIM_Set, MUIA_PreselectionWindow_ActiveMail, tnode->index-1);
+      activeMailSet = TRUE;
 
-      tnode = NextMailTransferNode(tnode);
-      line++;
-
-      if((success = CheckAbort(tc)) != 1)
+      // if only the mail sizes are requested we can bail out here immediately
+      if(tc->msn->preselection == PSM_ALWAYSLARGE)
         break;
     }
 
-    // get any remaining message details from the beginning of the list if the
-    // transfer has not yet been started or aborted
-    if(success == 1 && tc->firstToPreselect > 0)
+    if(tnode != NULL)
     {
-      tnode = FirstMailTransferNode(tc->transferList);
-      line = 0;
+      D(DBF_NET, "pass %ld start at mail %ld", pass, tnode->index-1);
 
-      while(tnode != NULL)
+      // get all message details until the end of the list
+      do
       {
-        GetSingleMessageDetails(tc, tnode, line);
-
-        tnode = NextMailTransferNode(tnode);
-        line++;
-        if(line == tc->firstToPreselect)
-          break;
+        // get the message details only if this has not been done before already
+        if(isFlagClear(tnode->tflags, TRF_GOT_DETAILS))
+          GetSingleMessageDetails(tc, tnode, tnode->index-1);
 
         if((success = CheckAbort(tc)) != 1)
-          break;
-      }
+        {
+          // bail out completely
+          tnode = NULL;
+          pass = 3;
+        }
+        else
+        {
+          // continue with the next mail
+          tnode = NextMailTransferNode(tnode);
+	    }
+	  }
+	  while(tnode != NULL);
     }
+    else
+    {
+	  D(DBF_NET, "nothing to be done in pass %ld", pass);
+	}
   }
 
   RETURN(success);
@@ -1500,7 +1519,7 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
                         FilterDuplicates(tc);
 
                       // check the list of mails if some kind of preselection is required
-                      if(isFlagSet(tc->flags, RECEIVEF_USER) && ScanMailTransferList(tc->transferList, TRF_PRESELECT, TRUE, NULL) == TRUE)
+                      if(isFlagSet(tc->flags, RECEIVEF_USER) && ScanMailTransferList(tc->transferList, TRF_PRESELECT, TRF_PRESELECT, TRUE) != NULL)
                       {
                         // show the preselection window in case user interaction is requested
                         D(DBF_NET, "preselection is required");
@@ -1516,15 +1535,6 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
 
                           if(ThreadWasAborted() == FALSE)
                           {
-                            // scan the list for the first mail to be transferred
-                            tc->firstToPreselect = -1;
-                            // first try to find a to be downloaded mail that exceeds
-                            // the automatic download size limitation
-                            ScanMailTransferList(tc->transferList, TRF_TRANSFER|TRF_SIZE_EXCEEDED, TRUE, &tc->firstToPreselect);
-                            // then fall back to the first mail to be preselected
-                            if(tc->firstToPreselect < 0)
-                              ScanMailTransferList(tc->transferList, TRF_TRANSFER, TRUE, &tc->firstToPreselect);
-
                             if((mustWait = GetAllMessageDetails(tc)) != 0)
                             {
                               if(mustWait == 1)
@@ -1552,7 +1562,7 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
                       }
 
                       // is there anything left to transfer or delete?
-                      if(ThreadWasAborted() == FALSE && doDownload == TRUE && ScanMailTransferList(tc->transferList, TRF_TRANSFER|TRF_DELETE, FALSE, NULL) == TRUE)
+                      if(ThreadWasAborted() == FALSE && doDownload == TRUE && ScanMailTransferList(tc->transferList, TRF_TRANSFER|TRF_DELETE, TRF_NONE, FALSE) != NULL)
                       {
                         SumUpMails(tc);
                         PushMethodOnStack(tc->transferGroup, 3, MUIM_TransferControlGroup_Start, tc->numberOfMailsTotal - tc->numberOfMailsSkipped, tc->totalSize);

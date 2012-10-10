@@ -11,6 +11,9 @@ $URL$
     preselection process will no longer download the mail subjects.
   * locale/YAM.cd, locale/german.ct: fixed spelling quirk and removed a senseless
     explanation from a bubble help text.
+  * tcp/pop3.c, MailTransferList.c: reworked the mail preselection process to
+    first look for mails to be transferred and exceeding the size, then for mails
+    to be transferred and finally to handle all available mails.
 
 2012-10-08 Thore Böckelmann <tboeckel@gmx.de>
 
