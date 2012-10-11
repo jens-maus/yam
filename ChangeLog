@@ -610,10 +610,11 @@ $URL$
 
 2012-07-01 Jens Langner <Jens.Langner@light-speed.de>
 
-  * Requesters.c, mui/YAMApplication.c: created a new YAMMUIRequestA() function which
-    takes the already preparsed requester text and can be called from any thread
-    without having to use PushMethodOnStackWait() directly. Now any thread could
-    directly call MUI_Request() without having to care about locking and reentrantness.
+  * Requesters.c, mui/YAMApplication.c: created a new YAMMUIRequestA() function
+    which takes the already preparsed requester text and can be called from any
+    thread without having to use PushMethodOnStackWait() directly. Now any thread
+    could directly call MUI_Request() without having to care about locking and
+    reentrantness.
 
 2012-07-01 Jens Langner <Jens.Langner@light-speed.de>
 
