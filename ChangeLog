@@ -13,6 +13,11 @@ $URL$
     wrapper function for a function in AmiSSL.library.
   * FolderList.c, MailList.c: fixed possible wrong mail counters in
     MoveMailList() and MoveFolderContents().
+  * YAM_FI.c: a search within a folder will now clone the folder's list of mails
+    before performing the actual search. This makes it possible to download new
+    mails while the search is still in progress. Please note that the search
+    process may slow down the mail download, because it is not yet done in a
+    separate thread. This finally closes #220.
 
 2012-10-10 Jens Langner <Jens.Langner@light-speed.de>
 

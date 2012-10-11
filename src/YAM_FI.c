@@ -1146,49 +1146,53 @@ HOOKPROTONHNONP(FI_SearchFunc, void)
       ForEachFolderNode(flist, fnode)
       {
         struct Folder *folder = fnode->folder;
-        struct MailNode *mnode;
+        struct MailList *folderMessages;
 
-        LockMailListShared(folder->messages);
-
-        ForEachMailNode(folder->messages, mnode)
+        if((folderMessages = CloneMailList(folder->messages)) != NULL)
         {
-          struct Mail *mail = mnode->mail;
+          struct MailNode *mnode;
 
-          if(FI_DoSearch(&search, mail) == TRUE)
+          // no need to lock the cloned list as it is private
+          ForEachMailNode(folderMessages, mnode)
           {
-            DoMethod(lv, MUIM_NList_InsertSingle, mail, MUIV_NList_Insert_Sorted);
-            fndmsg++;
+            struct Mail *mail = mnode->mail;
+
+            if(FI_DoSearch(&search, mail) == TRUE)
+            {
+              DoMethod(lv, MUIM_NList_InsertSingle, mail, MUIV_NList_Insert_Sorted);
+              fndmsg++;
+            }
+
+            // bail out if the search was aborted
+            if(G->FI->Abort != FALSE)
+              break;
+
+            // increase the progress counter
+            progress++;
+
+            // then we update the gauge, but we take also care of not refreshing
+            // it too often or otherwise it slows down the whole search process.
+            if(TimeHasElapsed(&last, 250000) == TRUE)
+            {
+              // update the gauge
+              set(ga, MUIA_Gauge_Current, progress);
+              // let the list show the found mails so far
+              set(lv, MUIA_NList_Quiet, FALSE);
+
+              // handle the possibly received methods and messages
+              CheckMethodStack();
+              HandleThreads(TRUE);
+
+              // signal the application to update now
+              DoMethod(G->App, MUIM_Application_InputBuffered);
+
+              // forbid immediate display again
+              set(lv, MUIA_NList_Quiet, TRUE);
+            }
           }
 
-          // bail out if the search was aborted
-          if(G->FI->Abort != FALSE)
-            break;
-
-          // increase the progress counter
-          progress++;
-
-          // then we update the gauge, but we take also care of not refreshing
-          // it too often or otherwise it slows down the whole search process.
-          if(TimeHasElapsed(&last, 250000) == TRUE)
-          {
-            // update the gauge
-            set(ga, MUIA_Gauge_Current, progress);
-            // let the list show the found mails so far
-            set(lv, MUIA_NList_Quiet, FALSE);
-
-            // handle the possibly received methods and messages
-            CheckMethodStack();
-            HandleThreads(TRUE);
-
-            // signal the application to update now
-            DoMethod(G->App, MUIM_Application_InputBuffered);
-
-            // forbid immediate display again
-            set(lv, MUIA_NList_Quiet, TRUE);
-          }
+          DeleteMailList(folderMessages);
         }
-
-        UnlockMailList(folder->messages);
 
         // bail out if the search was aborted
         if(G->FI->Abort != FALSE)
