@@ -43,6 +43,10 @@
 #undef __NOGLOBALIFACE__
 #undef __NOLIBBASE__
 
+#if defined(__amigaos3__)
+#include <inline/extended_macros.h>
+#endif
+
 #include <proto/exec.h>
 
 #include "SDI_hook.h"
@@ -244,6 +248,16 @@ static int MatchHostname(const char *cn, size_t cnlen, const char *hostname)
 }
 
 ///
+/// GENERAL_NAME_free_wrapper
+// Define a wrapper function for GENERAL_NAME_free.
+// This is a function in AmiSSL.library and hence cannot
+// be used as a function pointer directly.
+static void GENERAL_NAME_free_wrapper(void *names)
+{
+  GENERAL_NAME_free(names);
+}
+
+///
 /// CheckCertificateIdentity
 // Check certificate identity.  Returns zero if identity matches; 1 if
 // identity does not match, or <0 if the certificate had no identity.
@@ -331,16 +345,8 @@ static int CheckCertificateIdentity(const char *hostname, X509 *cert, char **ide
       }
     }
 
-    #warning WORKAROUND: do we have any solution for that?
-    // WORKAROUND: free the 'names' list manually. This is usually done via
-    // "sk_GENERAL_NAME_pop_free(names, GENERAL_NAME_free)". However,
-    // this causes to leave unresolved symbols as GENERAL_NAME_free is
-    // a function in AmiSSL. Thus, we cleanup the list on our own.
-    for(n = 0; n < names->num; n++)
-    {
-      GENERAL_NAME_free(sk_GENERAL_NAME_value(names, n));
-    }
-    sk_GENERAL_NAME_free(names);
+    // free all allocated names
+    sk_GENERAL_NAME_pop_free(names, GENERAL_NAME_free_wrapper);
   }
 
   D(DBF_NET, "found: %d", found);
