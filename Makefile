@@ -48,6 +48,10 @@ cleanall:
 distclean:
 	@$(MAKE) -C src distclean
 
+.PHONY: depend
+depend:
+	@$(MAKE) -C src depend
+
 .PHONY: release
 release:
 	@$(MAKE) -C src release
