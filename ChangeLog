@@ -624,9 +624,9 @@ $URL$
 
 2012-06-25 Jens Langner <Jens.Langner@light-speed.de>
 
-  * tcp/Connection.c: replace use of static char variable to check for valid characters
-    in a hostname by isalnum() as this should be faster and includes 0-9 which were
-    missing in the static character array.
+  * tcp/Connection.c: replace use of static char variable to check for valid
+    characters in a hostname by isalnum() as this should be faster and includes
+    0-9 which were missing in the static character array.
 
 2012-06-24 Jens Langner <Jens.Langner@light-speed.de>
 
