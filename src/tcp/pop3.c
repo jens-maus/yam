@@ -716,7 +716,7 @@ static int GetAllMessageDetails(struct TransferContext *tc)
     if(activeMailSet == FALSE && tnode != NULL)
     {
       // tell the preselection window to highlight the first mail to be transferred
-      PushMethodOnStackWait(tc->preselectWindow, 3, MUIM_Set, MUIA_PreselectionWindow_ActiveMail, tnode->index-1);
+      PushMethodOnStack(tc->preselectWindow, 3, MUIM_Set, MUIA_PreselectionWindow_ActiveMail, tnode->index-1);
       activeMailSet = TRUE;
 
       // if only the mail sizes are requested we can bail out here immediately
