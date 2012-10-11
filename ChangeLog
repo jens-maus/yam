@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-10-11 Thore Böckelmann <tboeckel@gmx.de>
+
+  * include/inline/extended_macros.h: added header with macros missing in
+    inline/macro.h. These macros are required by AmiSSL.
+
 2012-10-10 Jens Langner <Jens.Langner@light-speed.de>
 
   * HTML2Mail.l: moved the yy_top_state() use to the end of the html2mail()
