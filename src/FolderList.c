@@ -310,13 +310,13 @@ void MoveFolderContents(struct Folder *to, struct Folder *from)
   // move over all messages
   MoveMailList(to->messages, from->messages);
 
-  // copy the stats
-  to->Size = from->Size;
-  to->Total = from->Total;
-  to->New = from->New;
-  to->Unread = from->Unread;
-  to->Sent = from->Sent;
-  to->Deleted = from->Deleted;
+  // adjust the stats
+  to->Size += from->Size;
+  to->Total += from->Total;
+  to->New += from->New;
+  to->Unread += from->Unread;
+  to->Sent += from->Sent;
+  to->Deleted += from->Deleted;
 
   // erase the stats of the originating folder
   from->Size = 0;

@@ -184,8 +184,11 @@ void MoveMailList(struct MailList *to, struct MailList *from)
   LockMailList(to);
   LockMailList(from);
 
+  // move all mails over
   MoveList((struct List *)&to->list, (struct List *)&from->list);
-  to->count = from->count;
+  // adjust the counters
+  to->count += from->count;
+  from->count = 0;
 
   UnlockMailList(from);
   UnlockMailList(to);

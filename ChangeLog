@@ -11,6 +11,8 @@ $URL$
     inline/macro.h. These macros are required by AmiSSL.
   * tcp/ssl.c: fixed the warning about sk_GENERAL_NAME_pop_free by using a
     wrapper function for a function in AmiSSL.library.
+  * FolderList.c, MailList.c: fixed possible wrong mail counters in
+    MoveMailList() and MoveFolderContents().
 
 2012-10-10 Jens Langner <Jens.Langner@light-speed.de>
 
