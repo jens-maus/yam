@@ -1,4 +1,4 @@
-==id $Id$
+==id $Id: miami_lib.sfd 1566 2004-03-07 18:50:08Z damato $
 ==base _MiamiBase
 ==basetype struct Library *
 ==libname miami.library

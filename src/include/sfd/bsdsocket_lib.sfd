@@ -1,4 +1,4 @@
-==id $Id$
+==id $Id: bsdsocket_lib.sfd 2409 2006-10-23 15:39:01Z damato $
 * "bsdsocket.library"
 ==base _SocketBase
 ==bias 30

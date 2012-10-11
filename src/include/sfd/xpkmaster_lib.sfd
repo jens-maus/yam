@@ -1,4 +1,4 @@
-==id $Id$
+==id $Id: xpkmaster_lib.sfd 1505 2004-01-18 16:28:05Z damato $
 ==base _XpkBase
 ==basetype struct Library *
 ==libname xpkmaster.library

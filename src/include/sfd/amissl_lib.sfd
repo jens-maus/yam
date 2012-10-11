@@ -1,4 +1,4 @@
-==id $Id$
+==id $Id: amissl_lib.sfd 6044 2012-07-01 19:46:41Z damato $
 * "amissl.library"
 ==base _AmiSSLBase
 ==basetype struct Library *

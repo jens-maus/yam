@@ -1,4 +1,4 @@
-==id $Id$
+==id $Id: genesis_lib.sfd 1510 2004-01-22 21:40:08Z damato $
 ==base _GenesisBase
 ==basetype struct Library *
 ==libname genesis.library

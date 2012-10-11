@@ -1,4 +1,4 @@
-==id $Id$
+==id $Id: openurl_lib.sfd 1505 2004-01-18 16:28:05Z damato $
 ==base _OpenURLBase
 ==basetype struct Library *
 ==libname openurl.library
