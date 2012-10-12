@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-10-12 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: minor corrections and update to the latest changes.
+
 2012-10-11 Thore Böckelmann <tboeckel@gmx.de>
 
   * include/inline/extended_macros.h: added header with macros missing in

@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.99 (14.08.2012)
+## version $VER: YAM.catalog 7.99 (12.10.2012)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -7,7 +7,7 @@
 ; Compiled with FlexCat 2.10 PPC (AmigaOS4)
 ; $Id$
 ;
-; based on YAM.cd 6226 2012-08-13
+; based on YAM.cd 6298 2012-10-11
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -4236,7 +4236,7 @@ Trasferimento posta a '%s'
 ;
 MSG_TR_MsgInFile
 Messaggi nel file %s
-; Messages in file
+; Messages in file %s
 ;
 MSG_TR_Control
 Controlla
@@ -9477,7 +9477,7 @@ Ricevuti %ld nuovi messaggi.
 ; ACCOUNT, COUNT
 ;
 MSG_MA_SEND_AND_GET_MAIL
-Invia e ricevi la posta
+Invia e scarica la posta
 ; Send and get mail
 ;
 MSG_MA_SEND_MAIL
@@ -9485,7 +9485,7 @@ Invia la posta
 ; Send mail
 ;
 MSG_MA_GET_MAIL
-Ricevi la posta
+Scarica la posta
 ; Get mail
 ;
 MSG_WR_SECURITYREQ_GADS
@@ -10514,4 +10514,8 @@ Testo firma
 MSG_CO_APPEND_SIGNATURE_FILE
 Aggiungi un file al posto della firma
 ; Append a file as signature instead
+;
+MSG_PRESELECT_GETTING_DETAILS
+Prelievo dettagli del messaggio (%%ld di %ld)
+; Getting message details (%%ld of %ld)
 ;
