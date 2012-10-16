@@ -76,21 +76,21 @@ void rx_setmail(UNUSED struct RexxHost *host, struct RexxParams *params, enum Re
         // find the mail with the given message id first
         if((mail = FindMailByMsgID(GetCurrentFolder(), strtoul(args->msgid, NULL, 16))) != NULL)
         {
-          int index = 0;
+          int idx = 0;
           struct Mail *nlistMail;
 
           // now find the mail in the GUI
           do
           {
-            DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_GetEntry, index, &nlistMail);
+            DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_GetEntry, idx, &nlistMail);
             if(nlistMail == mail)
             {
-              num = index;
+              num = idx;
               break;
             }
             else
 
-            index++;
+            idx++;
           }
           while(nlistMail != NULL);
         }
