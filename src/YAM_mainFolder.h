@@ -40,8 +40,8 @@ struct Mail
 {
   struct Mail *    Reference;  // pointer to the mail referencing to us
   struct Folder *  Folder;     // pointer to the folder this mail belongs to
-  long             cMsgID;     // compressed message ID
-  long             cIRTMsgID;  // compressed in-return-to message ID
+  unsigned long    cMsgID;     // compressed message ID
+  unsigned long    cIRTMsgID;  // compressed in-return-to message ID
   long             Size;       // the message size in bytes
   unsigned int     mflags;     // internal mail flags (no status flags)
   unsigned int     sflags;     // mail status flags (read/new etc.)
@@ -117,5 +117,6 @@ BOOL  MA_SaveIndex(struct Folder *folder);
 void  MA_RebuildIndexes(void);
 void  MA_UpdateIndexes(void);
 void  MA_UpdateInfoBar(struct Folder *folder);
+struct Mail *FindMailByMsgID(struct Folder *folder, unsigned long msgid);
 
 #endif /* YAM_MAINFOLDER_H */

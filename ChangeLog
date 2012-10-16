@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-10-16 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MAf.c, Rexx.c, rexx/findmail.c, rexx/setmail.c: added new ARexx command
+    FINDMAIL to find a mail in all folders given a MessageID as returned by the
+    MAILINFO command. Additionally SETMAIL now accepts a MessageID to set the
+    active mail. This closes #351.
+
 2012-10-12 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: minor corrections and update to the latest changes.

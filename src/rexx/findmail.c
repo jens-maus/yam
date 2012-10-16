@@ -25,33 +25,35 @@
 
 ***************************************************************************/
 
-#include <clib/alib_protos.h>
-#include <mui/NList_mcc.h>
+#include <string.h>
+
 #include <proto/exec.h>
 
 #include "extrasrc.h"
 
 #include "YAM.h"
-#include "YAM_main.h"
 #include "YAM_mainFolder.h"
 
-#include "mui/ClassesExtra.h"
-#include "mui/MainMailListGroup.h"
-
-#include "MUIObjects.h"
+#include "FolderList.h"
 #include "Rexx.h"
 
 #include "Debug.h"
 
 struct args
 {
-  long *num;
+  struct RexxResult varStem;
   char *msgid;
 };
 
-void rx_setmail(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
+struct results
+{
+  char *folder;
+};
+
+void rx_findmail(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
   struct args *args = params->args;
+  struct results *results = params->results;
 
   ENTER();
 
@@ -60,49 +62,37 @@ void rx_setmail(UNUSED struct RexxHost *host, struct RexxParams *params, enum Re
     case RXIF_INIT:
     {
       params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
+      params->results = AllocVecPooled(G->SharedMemPool, sizeof(*results));
     }
     break;
 
     case RXIF_ACTION:
     {
-      Object *lv = (Object *)xget(G->MA->GUI.PG_MAILLIST, MUIA_MainMailListGroup_MainList);
-      int num = -1;
-      int max = xget(lv, MUIA_NList_Entries);
+      struct FolderNode *fnode;
+      BOOL found = FALSE;
+      unsigned long msgid = strtoul(args->msgid, NULL, 16);
 
-      if(args->msgid != NULL)
+      LockFolderListShared(G->folders);
+
+      ForEachFolderNode(G->folders, fnode)
       {
-        struct Mail *mail;
+        struct Folder *folder = fnode->folder;
 
-        // find the mail with the given message id first
-        if((mail = FindMailByMsgID(GetCurrentFolder(), strtoul(args->msgid, NULL, 16))) != NULL)
+        // make sure the index is loaded
+        // this will also skip group folders
+        if(MA_GetIndex(folder) == TRUE)
         {
-          int index = 0;
-          struct Mail *nlistMail;
-
-          // now find the mail in the GUI
-          do
+          if(FindMailByMsgID(folder, msgid) != NULL)
           {
-            DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_GetEntry, index, &nlistMail);
-            if(nlistMail == mail)
-            {
-              num = index;
-              break;
-            }
-            else
-
-            index++;
+            results->folder = folder->Name;
+            found = TRUE;
           }
-          while(nlistMail != NULL);
         }
       }
-      else
-      {
-        num = *args->num;
-      }
 
-      if(num >= 0 && num < max)
-        DoMethod(lv, MUIM_NList_SetActive, num, MUIV_NList_SetActive_Jump_Center);
-      else
+      UnlockFolderList(G->folders);
+
+      if(found == FALSE)
         params->rc = RETURN_ERROR;
     }
     break;
@@ -111,6 +101,8 @@ void rx_setmail(UNUSED struct RexxHost *host, struct RexxParams *params, enum Re
     {
       if(args != NULL)
         FreeVecPooled(G->SharedMemPool, args);
+      if(results != NULL)
+        FreeVecPooled(G->SharedMemPool, results);
     }
     break;
   }

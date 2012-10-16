@@ -1281,9 +1281,9 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
 /// CompressMsgID
 //  Creates a crc32 checksum of the MsgID, so that it can be used later
 //  for the follow-up algorithms aso.
-static ULONG CompressMsgID(const char *msgid)
+static unsigned long CompressMsgID(const char *msgid)
 {
-  ULONG id = 0;
+  unsigned long id = 0;
 
   ENTER();
 
@@ -1313,6 +1313,43 @@ static ULONG CompressMsgID(const char *msgid)
   RETURN(id);
   return id;
 }
+
+///
+/// FindMailByMsgID
+// find a mail by message-id in the given folder
+// return the index of the mail within the list of message or -1 on failure
+struct Mail *FindMailByMsgID(struct Folder *folder, unsigned long msgid)
+{
+  struct Mail *result = NULL;
+  struct MailNode *mnode;
+  LONG index;
+
+  ENTER();
+
+  LockMailList(folder->messages);
+
+  index = 0;
+  ForEachMailNode(folder->messages, mnode)
+  {
+    struct Mail *mail = mnode->mail;
+
+    // compare the compressed message-ids
+    if(mail->cMsgID == msgid)
+    {
+      // return the mail
+      result = mail;
+      break;
+    }
+
+    index++;
+  }
+
+  UnlockMailList(folder->messages);
+
+  RETURN(result);
+  return result;
+}
+
 ///
 
 /*** Mail header scanning ***/

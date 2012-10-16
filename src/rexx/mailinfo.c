@@ -240,7 +240,7 @@ void rx_mailinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
           DateStamp2String(results->date = optional->date, sizeof(optional->date), &mail->Date, DSS_USDATETIME, TZC_LOCAL);
           results->subject = mail->Subject;
           results->size = &mail->Size;
-          snprintf(results->msgid = optional->msgid, sizeof(optional->msgid), "%lX", mail->cMsgID);
+          snprintf(results->msgid = optional->msgid, sizeof(optional->msgid), "%08lx", mail->cMsgID);
           snprintf(results->flags = optional->flags, sizeof(optional->flags), "%c%c%c%c%c-%c%c%c",
                     isMultiRCPTMail(mail) ? 'M' : '-',
                     isMP_MixedMail(mail)  ? 'A' : '-',

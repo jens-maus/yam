@@ -548,6 +548,7 @@ REXXOBJS = \
 	addrsave.o \
 	appbusy.o \
 	appnobusy.o \
+	findmail.o \
 	flushindexes.o \
 	folderinfo.o \
 	getconfiginfo.o \

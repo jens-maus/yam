@@ -3225,6 +3225,12 @@ $(OBJDIR)/$(REXXDIR)/appnobusy.o: rexx/appnobusy.c include/proto/muimaster.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
   YAM_userlist.h YAM_utilities.h YAM_folderconfig.h BayesFilter.h \
   HashTable.h Themes.h Timer.h include/timeval.h Rexx.h Debug.h
+$(OBJDIR)/$(REXXDIR)/findmail.o: rexx/findmail.c extrasrc.h include/SDI_compiler.h \
+  include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
+  include/amiga-align.h include/default-align.h YAM_stringsizes.h \
+  YAM_userlist.h YAM_utilities.h YAM_folderconfig.h BayesFilter.h \
+  HashTable.h Themes.h Timer.h include/timeval.h YAM_mainFolder.h \
+  FolderList.h Rexx.h Debug.h
 $(OBJDIR)/$(REXXDIR)/flushindexes.o: rexx/flushindexes.c extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
   include/amiga-align.h include/default-align.h YAM_stringsizes.h \
@@ -3703,8 +3709,9 @@ $(OBJDIR)/$(REXXDIR)/setmail.o: rexx/setmail.c include/mui/NList_mcc.h include/l
   include/default-align.h YAM_stringsizes.h YAM_userlist.h \
   YAM_utilities.h YAM_folderconfig.h BayesFilter.h HashTable.h Themes.h \
   Timer.h include/timeval.h YAM_main.h tcp/pop3.h tcp/smtp.h \
-  mui/ClassesExtra.h YAM_main.h YAM_read.h YAM_write.h YAM_main.h \
-  BayesFilter.h mui/MainMailListGroup.h MUIObjects.h Rexx.h Debug.h
+  YAM_mainFolder.h mui/ClassesExtra.h YAM_main.h YAM_read.h YAM_write.h \
+  YAM_main.h BayesFilter.h mui/MainMailListGroup.h MUIObjects.h Rexx.h \
+  Debug.h
 $(OBJDIR)/$(REXXDIR)/setmailfile.o: rexx/setmailfile.c include/mui/NList_mcc.h \
   include/libraries/mui.h extrasrc.h include/SDI_compiler.h \
   include/SDI_stdarg.h include/SDI_compiler.h YAM.h include/xpk/xpk.h \
