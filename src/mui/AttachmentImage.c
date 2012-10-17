@@ -255,7 +255,7 @@ static void LoadImage(struct IClass *cl, Object *obj)
 
   ENTER();
 
-  if(data->mailPart != NULL || data->attachment != NULL)
+  if((data->mailPart != NULL || data->attachment != NULL) && data->maxWidth != 0 && data->maxHeight != 0)
   {
     struct Part *mailPart = data->mailPart;
     struct Attach *attachment = data->attachment;
@@ -282,6 +282,7 @@ static void LoadImage(struct IClass *cl, Object *obj)
     sizeBounds.MinY = 8;
     sizeBounds.MaxX = data->maxWidth;
     sizeBounds.MaxY = data->maxHeight;
+    D(DBF_ALWAYS, "max %ld %ld",data->maxWidth,data->maxHeight);
 
     // only if we have at least icon.library >= v44 and we find deficons
     // we try to identify the file with deficons
@@ -798,15 +799,33 @@ OVERLOAD(OM_SET)
 {
   GETDATA;
   struct TagItem *tags = inittags(msg), *tag;
+  BOOL refresh = FALSE;
 
   while((tag = NextTagItem((APTR)&tags)) != NULL)
   {
     switch(tag->ti_Tag)
     {
-      case ATTR(MaxHeight) : data->maxHeight = (ULONG)tag->ti_Data; break;
-      case ATTR(MaxWidth)  : data->maxWidth  = (ULONG)tag->ti_Data; break;
+      case ATTR(MaxHeight):
+      {
+        if(data->maxHeight == 0)
+          refresh = TRUE;
+        data->maxHeight = (ULONG)tag->ti_Data;
+      }
+      break;
+
+      case ATTR(MaxWidth):
+      {
+        if(data->maxWidth == 0)
+          refresh = TRUE;
+        data->maxWidth = (ULONG)tag->ti_Data;
+      }
+      break;
     }
   }
+
+  // reload the icon image if the maximum dimensions changed from invalid to valid values
+  if(refresh == TRUE)
+    LoadImage(cl, obj);
 
   return DoSuperMethodA(cl, obj, msg);
 }
@@ -820,7 +839,7 @@ OVERLOAD(MUIM_Setup)
 
   ENTER();
 
-  // call the supermethod of the supercall first
+  // call the method of the superclass first
   result = DoSuperMethodA(cl, obj, msg);
 
   if(result != 0 && (data->mailPart != NULL || data->attachment != NULL))

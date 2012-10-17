@@ -21,6 +21,8 @@ $URL$
     icon's dimensions. The height was also used for the width value.
   * mui/AttachmentObject.c: call the superclass' MUIM_Setup method no matter if
     there is a valid attachment or not.
+  * mui/AttachmentImage.c: the icon will now always be scaled correctly and only
+    if the maximum dimensions are valid.
 
 2012-10-16 Thore Böckelmann <tboeckel@gmx.de>
 
