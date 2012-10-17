@@ -270,7 +270,7 @@ static void LoadImage(struct IClass *cl, Object *obj)
     {
       iconFile = mailPart->Filename;
     }
-     else if(attachment != NULL && attachment->FilePath[0] != '\0')
+    else if(attachment != NULL && attachment->FilePath[0] != '\0')
     {
       iconFile = attachment->FilePath;
     }
@@ -315,13 +315,17 @@ static void LoadImage(struct IClass *cl, Object *obj)
       // with icon.library v44+ we can use GetIconTags again.
       if(LIB_VERSION_IS_AT_LEAST(IconBase, 44, 0) == TRUE && contentType != NULL)
       {
-        const char *def;
+        const char *def = NULL;
 
-        // build the defaultname now
+        // build the default name now
         if(strnicmp(contentType, "image", 5) == 0)
+        {
           def = "picture";
+        }
         else if(strnicmp(contentType, "audio", 5) == 0)
+        {
           def = "audio";
+        }
         else if(strnicmp(contentType, "text", 4) == 0)
         {
           if(strlen(contentType) > 5)
@@ -337,29 +341,29 @@ static void LoadImage(struct IClass *cl, Object *obj)
             def = "text";
         }
         else
+        {
+          // try the file name's extension if it exists
+          if(iconFile != NULL)
+          {
+            if((def = strrchr(iconFile, '.')) != NULL)
+              def++;
+          }
+        }
+
+        // fall back to "attach" if nothing else was appropriate
+        if(def == NULL)
           def = "attach";
 
-        // try to retrieve the icon for that type
+        // try to retrieve the icon for that type with an automatic
+        // fallback to the default project icon
         diskObject = (struct DiskObject *)GetIconTags(NULL,
           ICONGETA_GetDefaultName, def,
+          ICONGETA_GetDefaultType, WBPROJECT,
           ICONGETA_Screen,         _screen(obj),
           ICONGETA_SizeBounds,     &sizeBounds,
           TAG_DONE);
 
-        // if we still have not retrieved any icon we
-        // obtain the standard project icon
-        if(diskObject == NULL)
-        {
-          diskObject = (struct DiskObject *)GetIconTags(NULL,
-            ICONGETA_GetDefaultType, WBPROJECT,
-            ICONGETA_Screen,         _screen(obj),
-            ICONGETA_SizeBounds,     &sizeBounds,
-            TAG_DONE);
-
-          D(DBF_GUI, "diskobject for '%s' retrieved from default WBPROJECT type", iconFile);
-        }
-        else
-          D(DBF_GUI, "diskobject for '%s' retrieved from default '%s' type", iconFile, def);
+        D(DBF_GUI, "diskobject for '%s' retrieved from default '%s' type", iconFile, def);
       }
       else
       {
