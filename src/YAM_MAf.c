@@ -1322,13 +1322,11 @@ struct Mail *FindMailByMsgID(struct Folder *folder, unsigned long msgid)
 {
   struct Mail *result = NULL;
   struct MailNode *mnode;
-  LONG index;
 
   ENTER();
 
   LockMailList(folder->messages);
 
-  index = 0;
   ForEachMailNode(folder->messages, mnode)
   {
     struct Mail *mail = mnode->mail;
@@ -1340,8 +1338,6 @@ struct Mail *FindMailByMsgID(struct Folder *folder, unsigned long msgid)
       result = mail;
       break;
     }
-
-    index++;
   }
 
   UnlockMailList(folder->messages);
