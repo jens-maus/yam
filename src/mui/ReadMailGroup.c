@@ -502,6 +502,7 @@ OVERLOAD(OM_NEW)
       End,
       Child, ScrollgroupObject,
         MUIA_Scrollgroup_FreeHoriz, FALSE,
+        MUIA_Scrollgroup_AutoBars, TRUE,
         MUIA_Scrollgroup_Contents, attachmentGroup = AttachmentGroupObject,
         End,
       End,

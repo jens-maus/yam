@@ -23,6 +23,8 @@ $URL$
     there is a valid attachment or not.
   * mui/AttachmentImage.c: the icon will now always be scaled correctly and only
     if the maximum dimensions are valid.
+  * mui/ReadMailGroup.c: automatically hide the scrollbars of the attachment
+    group if they are not required (MUI4.x only).
 
 2012-10-16 Thore Böckelmann <tboeckel@gmx.de>
 
