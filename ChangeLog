@@ -17,7 +17,9 @@ $URL$
     concerned variables in an appropriate union.
   * mui/AttachmentImage.c: try to get a default icon based on the attachment's
     name extension before falling back to the system's default project icon.
-
+  * mui/AttachmentImage.c: fixed an ancient bug when calculating the scaled 
+    icon's dimensions. The height was also used for the width value.
+    
 2012-10-16 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MAf.c, Rexx.c, rexx/findmail.c, rexx/setmail.c: added new ARexx command

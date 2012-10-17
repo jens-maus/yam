@@ -415,8 +415,8 @@ static void LoadImage(struct IClass *cl, Object *obj)
       // get some information about our diskObject like width/height
       GetIconSize(diskObject, drawIconTags, &orgWidth, &orgHeight);
 
+      scaleWidthDiff  = orgWidth - data->maxWidth;
       scaleHeightDiff = orgHeight - data->maxHeight;
-      scaleWidthDiff  = orgHeight - data->maxWidth;
 
       // calculate the scale factors now that we have filled up our source bitmap
       if((scaleHeightDiff > 0 && data->maxHeight > 0) ||
