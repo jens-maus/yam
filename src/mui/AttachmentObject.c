@@ -210,13 +210,13 @@ OVERLOAD(MUIM_Setup)
 
   ENTER();
 
-  result = DoSuperMethodA(cl, obj, msg);
-
-  if((data->mailPart != NULL || data->attachment != NULL) && result != 0)
+  if((result = DoSuperMethodA(cl, obj, msg)) != 0)
   {
-    DoMethod(obj, METHOD(UpdateDescription));
     xset(data->imageObject, MUIA_AttachmentImage_MaxHeight, _font(obj) ? TEXTROWS*_font(obj)->tf_YSize+4 : 0,
                             MUIA_AttachmentImage_MaxWidth,  _font(obj) ? TEXTROWS*_font(obj)->tf_YSize+4 : 0);
+
+    if(data->mailPart != NULL || data->attachment != NULL)
+      DoMethod(obj, METHOD(UpdateDescription));
   }
 
   RETURN(result);
