@@ -13,6 +13,8 @@ $URL$
     parameters but no return value.
   * tcp/ssl.c: use the CROSSCALL1NR macro for the wrapper function, because
     AmiSSL is not native on MorphOS.
+  * mime/md5.c: fixed two type pun warnings of gcc >= 4.5 by putting the
+    concerned variables in an appropriate union.
 
 2012-10-16 Thore Böckelmann <tboeckel@gmx.de>
 

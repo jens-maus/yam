@@ -206,7 +206,7 @@ void md5update(struct MD5Context *ctx, const void *buf, unsigned int len)
   /* Handle any leading odd-sized chunks */
   if(t)
   {
-    unsigned char *p = (unsigned char *)ctx->buffer + t;
+    unsigned char *p = &ctx->buffer.u8[t];
 
     t = 64-t;
     if(len < t)
@@ -215,8 +215,8 @@ void md5update(struct MD5Context *ctx, const void *buf, unsigned int len)
        return;
     }
     memcpy(p, cbuf, t);
-    byteReverse(ctx->buffer, 16);
-    md5transform(ctx->state, (unsigned long *)ctx->buffer);
+    byteReverse(ctx->buffer.u8, 16);
+    md5transform(ctx->state, ctx->buffer.u32);
     cbuf += t;
     len -= t;
   }
@@ -224,15 +224,15 @@ void md5update(struct MD5Context *ctx, const void *buf, unsigned int len)
   /* Process data in 64-byte chunks */
   while(len >= 64)
   {
-    memcpy(ctx->buffer, cbuf, 64);
-    byteReverse(ctx->buffer, 16);
-    md5transform(ctx->state, (unsigned long *)ctx->buffer);
+    memcpy(ctx->buffer.u8, cbuf, 64);
+    byteReverse(ctx->buffer.u8, 16);
+    md5transform(ctx->state, ctx->buffer.u32);
     cbuf += 64;
     len -= 64;
   }
 
   /* Handle any remaining bytes of data. */
-  memcpy(ctx->buffer, cbuf, len);
+  memcpy(ctx->buffer.u8, cbuf, len);
 }
 ///
 /// md5final()
@@ -250,7 +250,7 @@ void md5final(unsigned char digest[16], struct MD5Context *ctx)
 
   /* Set the first char of padding to 0x80.  This is safe since there is
      always at least one byte free */
-  p = ctx->buffer + count;
+  p = &ctx->buffer.u8[count];
   *p++ = 0x80;
 
   /* Bytes of padding needed to make 64 bytes */
@@ -261,24 +261,24 @@ void md5final(unsigned char digest[16], struct MD5Context *ctx)
   {
      /* Two lots of padding:  Pad the first block to 64 bytes */
      memset(p, 0, count);
-     byteReverse(ctx->buffer, 16);
-     md5transform(ctx->state, (unsigned long *)ctx->buffer);
+     byteReverse(ctx->buffer.u8, 16);
+     md5transform(ctx->state, ctx->buffer.u32);
 
      /* Now fill the next block with 56 bytes */
-     memset(ctx->buffer, 0, 56);
+     memset(ctx->buffer.u8, 0, 56);
   }
   else
   {
      /* Pad block to 56 bytes */
      memset(p, 0, count-8);
   }
-  byteReverse(ctx->buffer, 14);
+  byteReverse(ctx->buffer.u8, 14);
 
   /* Append length in bits and transform */
-  ((unsigned long *)ctx->buffer)[ 14 ] = ctx->count[0];
-  ((unsigned long *)ctx->buffer)[ 15 ] = ctx->count[1];
+  ctx->buffer.u32[14] = ctx->count[0];
+  ctx->buffer.u32[15] = ctx->count[1];
 
-  md5transform(ctx->state, (unsigned long *)ctx->buffer);
+  md5transform(ctx->state, ctx->buffer.u32);
   byteReverse((unsigned char *)ctx->state, 4);
   memcpy(digest, ctx->state, 16);
   memset(ctx, 0, sizeof(ctx));    /* In case it's sensitive */

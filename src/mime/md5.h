@@ -35,7 +35,12 @@ struct MD5Context
 {
   unsigned long state[4];
   unsigned long count[2];
-  unsigned char buffer[64];
+  // use a union of char and long here to avoid the type pun warnings of gcc >= 4.5
+  union
+  {
+    unsigned char u8[64];
+    unsigned long u32[16];
+  } buffer;
 };
 
 void md5init(struct MD5Context *ctx);
