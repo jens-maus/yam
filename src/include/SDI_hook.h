@@ -218,7 +218,7 @@
     }                                                                        \
     static const struct SDI_EmulLibEntry Gate_##name = {SDI_TRAP_LIB, 0,     \
     (APTR) Trampoline_##name};                                               \
-    static STDARGS SAVEDS void name(type1 param1, type2 param2)
+    static STDARGS SAVEDS void name(type1 param1)
   #define CROSSCALL2(name, ret, type1, param1, type2, param2)                \
     static STDARGS SAVEDS ret name(type1 param1, type2 param2);              \
     static ret Trampoline_##name(void)                                       \
