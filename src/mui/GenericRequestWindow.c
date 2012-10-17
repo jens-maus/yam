@@ -31,6 +31,7 @@
 #include "GenericRequestWindow_cl.h"
 
 #include <ctype.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include <mui/NFloattext_mcc.h>
