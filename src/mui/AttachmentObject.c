@@ -212,8 +212,8 @@ OVERLOAD(MUIM_Setup)
 
   if((result = DoSuperMethodA(cl, obj, msg)) != 0)
   {
-    xset(data->imageObject, MUIA_AttachmentImage_MaxHeight, _font(obj) ? TEXTROWS*_font(obj)->tf_YSize+4 : 0,
-                            MUIA_AttachmentImage_MaxWidth,  _font(obj) ? TEXTROWS*_font(obj)->tf_YSize+4 : 0);
+    xset(data->imageObject, MUIA_AttachmentImage_MaxHeight, TEXTROWS*_font(obj)->tf_YSize+4,
+                            MUIA_AttachmentImage_MaxWidth,  TEXTROWS*_font(obj)->tf_YSize+4);
 
     if(data->mailPart != NULL || data->attachment != NULL)
       DoMethod(obj, METHOD(UpdateDescription));
