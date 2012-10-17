@@ -4,7 +4,7 @@
 /* Includeheader
 
         Name:           SDI_hook.h
-        Versionstring:  $VER: SDI_hook.h 1.25 (18.07.2012)
+        Versionstring:  $VER: SDI_hook.h 1.26 (17.10.2012)
         Author:         SDI & Jens Langner
         Distribution:   PD
         Project page:   http://www.sf.net/projects/sditools/
@@ -56,6 +56,8 @@
                   These macros are to be used in case i.e. PPC code is to be called
                   from m68k code. The function pointer must be passed with ENTRY().
 
+ 1.26  17.10.12 : added crosscall macros for functions with 1 and 2 parameters but
+                  no return value.
 */
 
 /*
@@ -206,6 +208,17 @@
     static const struct SDI_EmulLibEntry Gate_##name = {SDI_TRAP_LIB, 0,     \
     (APTR) Trampoline_##name};                                               \
     static STDARGS SAVEDS ret name(type1 param1, type2 param2)
+  #define CROSSCALL1NR(name, type1, param1)                                  \
+    static STDARGS SAVEDS void name(type1 param1);                           \
+    static void Trampoline_##name(void)                                      \
+    {                                                                        \
+      ULONG *stk = (ULONG *)REG_A7;                                          \
+      type1 param1 = (type1)stk[1];                                          \
+      name(param1);                                                          \
+    }                                                                        \
+    static const struct SDI_EmulLibEntry Gate_##name = {SDI_TRAP_LIB, 0,     \
+    (APTR) Trampoline_##name};                                               \
+    static STDARGS SAVEDS void name(type1 param1, type2 param2)
   #define CROSSCALL2(name, ret, type1, param1, type2, param2)                \
     static STDARGS SAVEDS ret name(type1 param1, type2 param2);              \
     static ret Trampoline_##name(void)                                       \
@@ -218,6 +231,18 @@
     static const struct SDI_EmulLibEntry Gate_##name = {SDI_TRAP_LIB, 0,     \
     (APTR) Trampoline_##name};                                               \
     static STDARGS SAVEDS ret name(type1 param1, type2 param2)
+  #define CROSSCALL2NR(name, type1, param1, type2, param2)                   \
+    static STDARGS SAVEDS void name(type1 param1, type2 param2);             \
+    static void Trampoline_##name(void)                                      \
+    {                                                                        \
+      ULONG *stk = (ULONG *)REG_A7;                                          \
+      type1 param1 = (type1)stk[1];                                          \
+      type2 param2 = (type2)stk[2];                                          \
+      name(param1, param2);                                                  \
+    }                                                                        \
+    static const struct SDI_EmulLibEntry Gate_##name = {SDI_TRAP_LIB, 0,     \
+    (APTR) Trampoline_##name};                                               \
+    static STDARGS SAVEDS void name(type1 param1, type2 param2)
   #define ENTRY(func) (APTR)&Gate_##func
 
 #elif defined(__AROS__)
@@ -250,8 +275,12 @@
   #define SDISPATCHER(name) DISPATCHERx(static,name)
   #define CROSSCALL1(name, ret, type1, param1)                               \
     static STDARGS SAVEDS ret Gate_##name(type1 param1)
+  #define CROSSCALL1NR(name, type1, param1)                                  \
+    static STDARGS SAVEDS void Gate_##name(type1 param1)
   #define CROSSCALL2(name, ret, type1, param1, type2, param2)                \
     static STDARGS SAVEDS ret Gate_##name(type1 param1, type2 param2)
+  #define CROSSCALL2NR(name, type1, param1, type2, param2)                   \
+    static STDARGS SAVEDS void Gate_##name(type1 param1, type2 param2)
   #define ENTRY(func) (APTR)Gate_##func
 
 #else /* !__MORPHOS__ && !__AROS__*/
@@ -268,8 +297,12 @@
   #define SDISPATCHER(name) static DISPATCHERPROTO(name)
   #define CROSSCALL1(name, ret, type1, param1)                               \
     static STDARGS SAVEDS ret name(type1 param1)
+  #define CROSSCALL1NR(name, type1, param1)                                  \
+    static STDARGS SAVEDS void name(type1 param1)
   #define CROSSCALL2(name, ret, type1, param1, type2, param2)                \
     static STDARGS SAVEDS ret name(type1 param1, type2 param2)
+  #define CROSSCALL2NR(name, type1, param1, type2, param2)                   \
+    static STDARGS SAVEDS void name(type1 param1, type2 param2)
   #define ENTRY(func) (APTR)func
 
 #endif
