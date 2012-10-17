@@ -307,10 +307,18 @@ static void LoadImage(struct IClass *cl, Object *obj)
     {
       char *contentType = NULL;
 
+      // use the supplied attachment file name no matter if the file
+      // itself is available or not
       if(mailPart != NULL)
+      {
+        iconFile = mailPart->Name;
         contentType = mailPart->ContentType;
+      }
       else if(attachment != NULL)
+      {
+        iconFile = attachment->Name;
         contentType = attachment->ContentType;
+      }
 
       // with icon.library v44+ we can use GetIconTags again.
       if(LIB_VERSION_IS_AT_LEAST(IconBase, 44, 0) == TRUE && contentType != NULL)
