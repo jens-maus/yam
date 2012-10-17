@@ -11,6 +11,8 @@ $URL$
     definitions for PPC builds. This fixes the broken MorphOS build.
   * include/SDI_hook.h: added crosscall macros for functions with 1 and 2
     parameters but no return value.
+  * tcp/ssl.c: use the CROSSCALL1NR macro for the wrapper function, because
+    AmiSSL is not native on MorphOS.
 
 2012-10-16 Thore Böckelmann <tboeckel@gmx.de>
 

@@ -254,9 +254,13 @@ static int MatchHostname(const char *cn, size_t cnlen, const char *hostname)
 // Define a wrapper function for GENERAL_NAME_free.
 // This is a function in AmiSSL.library and hence cannot
 // be used as a function pointer directly.
-static void GENERAL_NAME_free_wrapper(void *names)
+CROSSCALL1NR(GENERAL_NAME_free_wrapper, void *, names)
 {
+  ENTER();
+
   GENERAL_NAME_free(names);
+
+  LEAVE();
 }
 
 ///
@@ -348,7 +352,7 @@ static int CheckCertificateIdentity(const char *hostname, X509 *cert, char **ide
     }
 
     // free all allocated names
-    sk_GENERAL_NAME_pop_free(names, GENERAL_NAME_free_wrapper);
+    sk_GENERAL_NAME_pop_free(names, ENTRY(GENERAL_NAME_free_wrapper));
   }
 
   D(DBF_NET, "found: %d", found);
