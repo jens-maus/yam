@@ -45,6 +45,8 @@
 
 #if defined(__amigaos3__)
 #include <inline/extended_macros.h>
+#elif defined(__MORPHOS__)
+#include <ppcinline/extended_macros.h>
 #endif
 
 #include <proto/exec.h>
