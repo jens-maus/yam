@@ -30,6 +30,8 @@
 
 #include "IdentityChooser_cl.h"
 
+#include <string.h>
+
 #include "YAM_config.h"
 #include "YAM_utilities.h"
 

@@ -30,6 +30,8 @@
 
 #include "SignatureTextEdit_cl.h"
 
+#include <string.h>
+
 #include <proto/dos.h>
 #include <mui/TextEditor_mcc.h>
 
