@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.61 (10.10.2012)
+## version $VER: YAM.catalog 7.62 (21.10.2012)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -8471,10 +8471,10 @@ MSG_CO_IDENTITY_PGP_OPTIONS
 Optionen
 ;
 MSG_CO_IDENTITY_PGP_SIGN_UNENC
-unverschlüsselte Nachtichten signieren
+unverschlüsselte Nachrichten signieren
 ;
 MSG_CO_IDENTITY_PGP_SIGN_ENC
-verschlüsselte Nachtichten signieren
+verschlüsselte Nachrichten signieren
 ;
 MSG_CO_IDENTITY_PGP_ENCRYPTALL
 alle Nachrichten verschlüsseln
@@ -8628,7 +8628,7 @@ PGP verschlüsselt.
 MSG_HELP_CO_CH_IDENTITY_PGPENC_SELF
 Falls aktiv, werden alle Nachrichten mit dem PGP-Schlüssel\n\
 dieser Benutzeridentität verschlüsselt.\n\
-Falls inaktiv, können verschlüsselte Nachtichten nicht\n\
+Falls inaktiv, können verschlüsselte Nachrichten nicht\n\
 mit dieser Benutzeridentität entschlüsselt werden.
 ;
 MSG_HELP_CO_CY_IDENTITY_SIGNATURE
