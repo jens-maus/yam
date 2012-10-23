@@ -46,6 +46,7 @@
 #include "YAM_utilities.h"
 #include "YAM_write.h"
 
+#include "Busy.h"
 #include "Locale.h"
 #include "MUIObjects.h"
 
@@ -98,28 +99,36 @@ static void DI_FinishEdit(void)
 static void DI_Save(void)
 {
    FILE *fh;
-   struct Dict *entry;
-   int i;
 
    if((fh = fopen(G->DI_Filename, "w")))
    {
-      setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
+     struct BusyNode *busy;
+     int entries = xget(G->DI->GUI.LV_ENTRIES, MUIA_List_Entries);
+     int i;
 
-      BusyGauge(tr(MSG_BusySavingDI), "", (int)xget(G->DI->GUI.LV_ENTRIES, MUIA_List_Entries));
-      fputs("YDI1 - YAM Dictionary\n", fh);
-      for (i = 0; ;i++)
-      {
-         DoMethod(G->DI->GUI.LV_ENTRIES, MUIM_List_GetEntry, i, &entry);
-         if (!entry) break;
-         fprintf(fh, "@ENTRY %s\n%s@ENDENTRY\n", entry->Alias, entry->Text);
+     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
-         BusySet(i+1);
-      }
-      fclose(fh);
-      G->DI->Modified = FALSE;
-      BusyEnd();
+     busy = BusyBegin(BUSY_PROGRESS);
+     BusyText(busy, tr(MSG_BusySavingDI), "");
+     fputs("YDI1 - YAM Dictionary\n", fh);
+     for (i = 0; ;i++)
+     {
+       struct Dict *entry;
+
+       DoMethod(G->DI->GUI.LV_ENTRIES, MUIM_List_GetEntry, i, &entry);
+       if(entry == NULL)
+         break;
+
+       fprintf(fh, "@ENTRY %s\n%s@ENDENTRY\n", entry->Alias, entry->Text);
+
+       BusyProgress(busy, i+1, entries);
+     }
+     fclose(fh);
+     G->DI->Modified = FALSE;
+     BusyEnd(busy);
    }
-   else ER_NewError(tr(MSG_ER_CantCreateFile), G->DI_Filename);
+   else
+     ER_NewError(tr(MSG_ER_CantCreateFile), G->DI_Filename);
 }
 
 ///
@@ -134,12 +143,14 @@ static int DI_Load(void)
 
   if((fh = fopen(G->DI_Filename, "r")) != NULL)
   {
+    struct BusyNode *busy;
     char *buffer = NULL;
     size_t size = 0;
 
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
-    BusyText(tr(MSG_BusyLoadingDI), "");
+    busy = BusyBegin(BUSY_TEXT);
+    BusyText(busy, tr(MSG_BusyLoadingDI), "");
 
     if(GetLine(&buffer, &size, fh) >= 3 && strncmp(buffer, "YDI", 3) == 0)
     {
@@ -183,7 +194,7 @@ static int DI_Load(void)
     free(buffer);
 
     fclose(fh);
-    BusyEnd();
+    BusyEnd(busy);
   }
 
   RETURN(entries);

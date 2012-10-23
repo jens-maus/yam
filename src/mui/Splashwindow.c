@@ -39,6 +39,7 @@
 #include "YAM_global.h"
 #include "YAM_utilities.h"
 
+#include "Busy.h"
 #include "Locale.h"
 #include "MUIObjects.h"
 
@@ -54,10 +55,12 @@ struct Data
   Object *imageGroup;
   Object *textGroup;
   Object *statusGauge;
-  Object *progressGroup;
   Object *progressGauge;
   BOOL progressGaugeActive;
   struct TimeVal last_gaugemove;
+  APTR lastBusy;
+  char statusInfoText[SIZE_DEFAULT];
+  char progressInfoText[SIZE_DEFAULT];
 };
 */
 
@@ -74,8 +77,8 @@ OVERLOAD(OM_NEW)
   // create the progressGauge first
   if((progressGauge = GaugeObject,
     GaugeFrame,
-    MUIA_Gauge_InfoText, " ",
-    MUIA_Gauge_Horiz,     TRUE,
+    MUIA_Gauge_InfoText, "",
+    MUIA_Gauge_Horiz,    TRUE,
   End) != NULL)
   {
     char logopath[SIZE_PATHFILE];
@@ -84,7 +87,6 @@ OVERLOAD(OM_NEW)
     Object *imageGroup;
     Object *textGroup;
     Object *statusGauge;
-    Object *progressGroup;
 
     compileInfo = (char *)xget(G->App, MUIA_YAMApplication_CompileInfo);
 
@@ -132,12 +134,8 @@ OVERLOAD(OM_NEW)
         End)),
         Child, statusGauge = GaugeObject,
           GaugeFrame,
-          MUIA_Gauge_InfoText, " ",
+          MUIA_Gauge_InfoText, "",
           MUIA_Gauge_Horiz,    TRUE,
-        End,
-        Child, progressGroup = PageGroup,
-          MUIA_Group_ActivePage, 0,
-          Child, HVSpace,
         End,
       End,
 
@@ -151,7 +149,6 @@ OVERLOAD(OM_NEW)
       data->imageGroup    = imageGroup;
       data->textGroup     = textGroup;
       data->statusGauge   = statusGauge;
-      data->progressGroup = progressGroup;
       data->progressGauge = progressGauge;
       data->progressGaugeActive = FALSE;
 
@@ -172,7 +169,7 @@ OVERLOAD(OM_DISPOSE)
 
   // only remove the select and progressGauge if they are not
   // already part of the mainwindow.
-  if(isChildOfGroup(data->windowGroup, data->progressGauge) == FALSE)
+  if(data->progressGaugeActive == FALSE)
     MUI_DisposeObject(data->progressGauge);
 
   return DoSuperMethodA(cl, obj, msg);
@@ -188,88 +185,92 @@ DECLARE(StatusChange) // char *txt, LONG percent
 {
   GETDATA;
 
-  if(msg->txt && msg->percent >= 0)
-  {
-    xset(data->statusGauge, MUIA_Gauge_InfoText, msg->txt,
-                            MUIA_Gauge_Current,  msg->percent);
-  }
-  else if(msg->txt)
-    set(data->statusGauge, MUIA_Gauge_InfoText, msg->txt);
-  else
-    set(data->statusGauge, MUIA_Gauge_Current, msg->percent);
+  ENTER();
 
-  set(data->progressGroup, MUIA_Group_ActivePage, 0);
+  // remember the text in case the progress gauge needs to be shown
+  strlcpy(data->statusInfoText, msg->txt, sizeof(data->statusInfoText));
 
-  // lets remove the progress Gauge from our splashwindow
-  if(data->progressGaugeActive == TRUE &&
-     DoMethod(data->progressGroup, MUIM_Group_InitChange))
-  {
-    DoMethod(data->progressGroup, OM_REMMEMBER, data->progressGauge);
-    data->progressGaugeActive = FALSE;
-
-    DoMethod(data->progressGroup, MUIM_Group_ExitChange);
-  }
+  xset(data->statusGauge,
+    MUIA_Gauge_InfoText, msg->txt,
+    MUIA_Gauge_Current,  msg->percent);
 
   DoMethod(G->App, MUIM_Application_InputBuffered);
 
+  LEAVE();
   return 0;
 }
 
 ///
 /// DECLARE(ProgressChange)
-DECLARE(ProgressChange) // char *txt, LONG percent, LONG max
+DECLARE(ProgressChange) // struct BusyNode *busy
 {
   GETDATA;
-  BOOL updateStatus = FALSE;
 
   ENTER();
 
-  if(msg->txt != NULL)
+  // update the progress bar whenever another busy action is to be shown,
+  // or if the same busy action needs an update and enough time since the last update has passed
+  if(msg->busy != data->lastBusy || TimeHasElapsed(&data->last_gaugemove, 250000) == TRUE)
   {
-    set(data->progressGauge, MUIA_Gauge_InfoText, msg->txt);
-
-    // clear the last gaugemove timeval structure.
-    memset(&data->last_gaugemove, 0, sizeof(struct TimeVal));
-
-    updateStatus = TRUE;
-  }
-
-  // set the maximum value ahead of the current value
-  if(msg->max >= 0)
-  {
-    set(data->progressGauge, MUIA_Gauge_Max, msg->max);
-    updateStatus = TRUE;
-  }
-
-  if(msg->percent >= 0)
-  {
-    // then we update the gauge, but we take also care of not refreshing
-    // it too often or otherwise it slows down the whole update process,
-    // but make sure to display the final status.
-    if(msg->percent == msg->max || TimeHasElapsed(&data->last_gaugemove, 250000) == TRUE)
+    if(msg->busy != NULL)
     {
-      set(data->progressGauge, MUIA_Gauge_Current, msg->percent);
-      updateStatus = TRUE;
+      // we need valid gauge limits to be able to show the gauge
+      if(msg->busy->progressMax > 0 && msg->busy->progressCurrent <= msg->busy->progressMax)
+      {
+        set(data->statusGauge, MUIA_Gauge_InfoText, msg->busy->infoText);
+
+        if(msg->busy != data->lastBusy)
+        {
+          // clear the last gaugemove timeval structure.
+          memset(&data->last_gaugemove, 0, sizeof(data->last_gaugemove));
+        }
+
+        // update the progress bar if we haven't reached 100% yet
+        if(msg->busy->progressCurrent < msg->busy->progressMax)
+        {
+          snprintf(data->progressInfoText, sizeof(data->progressInfoText), "%%ld/%d", msg->busy->progressMax);
+          xset(data->progressGauge,
+            MUIA_Gauge_InfoText, data->progressInfoText,
+            MUIA_Gauge_Max, msg->busy->progressMax,
+            MUIA_Gauge_Current, msg->busy->progressCurrent);
+
+          // add the progress gauge if that has not been done yet
+          if(data->progressGaugeActive == FALSE &&
+             DoMethod(data->windowGroup, MUIM_Group_InitChange))
+          {
+            DoMethod(data->windowGroup, OM_ADDMEMBER, data->progressGauge);
+            data->progressGaugeActive = TRUE;
+
+            DoMethod(data->windowGroup, MUIM_Group_ExitChange);
+          }
+        }
+      }
     }
+
+    if(msg->busy == NULL || msg->busy->progressCurrent >= msg->busy->progressMax)
+    {
+      // 100% reached or the progress bar is no longer needed
+      // remove the progress bar
+      if(data->progressGaugeActive == TRUE &&
+         DoMethod(data->windowGroup, MUIM_Group_InitChange))
+      {
+        DoMethod(data->windowGroup, OM_REMMEMBER, data->progressGauge);
+        data->progressGaugeActive = FALSE;
+
+        // restore the old status text
+        set(data->statusGauge, MUIA_Gauge_InfoText, data->statusInfoText);
+
+        DoMethod(data->windowGroup, MUIM_Group_ExitChange);
+      }
+    }
+
+    // remember the changed busy action
+    data->lastBusy = msg->busy;
   }
 
-  // lets add the progress Gauge to our splashwindow now
-  if(data->progressGaugeActive == FALSE &&
-     DoMethod(data->progressGroup, MUIM_Group_InitChange))
-  {
-    DoMethod(data->progressGroup, OM_ADDMEMBER, data->progressGauge);
-    data->progressGaugeActive = TRUE;
+  DoMethod(G->App, MUIM_Application_InputBuffered);
 
-    DoMethod(data->progressGroup, MUIM_Group_ExitChange);
-
-    set(data->progressGroup, MUIA_Group_ActivePage, 1);
-
-    DoMethod(G->App, MUIM_Application_InputBuffered);
-  }
-  else if(updateStatus == TRUE)
-    DoMethod(G->App, MUIM_Application_InputBuffered);
-
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -281,6 +282,8 @@ DECLARE(SelectUser)
   LONG user = -1;
   Object *selectGroup;
   Object *userGroup;
+
+  ENTER();
 
   // create the selectionGroup manually as we add/remove
   // it manually later on
@@ -298,7 +301,7 @@ DECLARE(SelectUser)
     Child, HVSpace,
   End;
 
-  if(selectGroup)
+  if(selectGroup != NULL)
   {
     // lets add the selectGroup to the window first as MUIA_ShowMe doesn't work
     // correctly
@@ -420,6 +423,7 @@ DECLARE(SelectUser)
 
   DoMethod(G->App, MUIM_Application_InputBuffered);
 
+  RETURN(user);
   return (ULONG)user;
 }
 

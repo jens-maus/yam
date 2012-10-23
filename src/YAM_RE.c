@@ -73,6 +73,7 @@
 #include "tcp/Connection.h"
 #include "tcp/smtp.h"
 
+#include "Busy.h"
 #include "HTML2Mail.h"
 #include "FileInfo.h"
 #include "FolderList.h"
@@ -2558,6 +2559,7 @@ static void RE_LoadMessagePart(struct ReadMailData *rmData, struct Part *part)
 // or for background parsing (for Arexx and stuff)
 BOOL RE_LoadMessage(struct ReadMailData *rmData)
 {
+  struct BusyNode *busy = NULL;
   struct Mail *mail = rmData->mail;
   struct Folder *folder = mail->Folder;
   struct Part *part;
@@ -2566,7 +2568,10 @@ BOOL RE_LoadMessage(struct ReadMailData *rmData)
   ENTER();
 
   if(isAnyFlagSet(rmData->parseFlags, PM_QUIET) == FALSE)
-    BusyText(tr(MSG_BusyReading), "");
+  {
+    busy = BusyBegin(BUSY_TEXT);
+    BusyText(busy, tr(MSG_BusyReading), "");
+  }
 
   // with each new LoadMessage() we set a new uniqueID
   // to our ReadMailData structure (this is required for
@@ -2586,7 +2591,7 @@ BOOL RE_LoadMessage(struct ReadMailData *rmData)
     if(StartUnpack(rmData->readFile, tmpFile, folder) == NULL)
     {
       if(isAnyFlagSet(rmData->parseFlags, PM_QUIET) == FALSE)
-        BusyEnd();
+        BusyEnd(busy);
 
       RETURN(FALSE);
       return FALSE;
@@ -2660,7 +2665,7 @@ BOOL RE_LoadMessage(struct ReadMailData *rmData)
   }
 
   if(isAnyFlagSet(rmData->parseFlags, PM_QUIET) == FALSE)
-    BusyEnd();
+    BusyEnd(busy);
 
   RETURN(result);
   return result;
@@ -2711,11 +2716,15 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
   // then we generate our final buffer for the message
   if((cmsg = calloc(len=(totsize*3)/2, sizeof(char))) != NULL)
   {
+    struct BusyNode *busy = NULL;
     int wptr=0;
 
     // if this function wasn't called with QUIET we place a BusyText into the Main Window
     if(mode != RIM_QUIET)
-      BusyText(tr(MSG_BusyDisplaying), "");
+    {
+      busy = BusyBegin(BUSY_TEXT);
+      BusyText(busy, tr(MSG_BusyDisplaying), "");
+    }
 
     // then we copy the first part (which is the header of the mail
     // into our final buffer because we don't need to preparse it. However, we just
@@ -2844,7 +2853,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                 fclose(fh);
 
                 if(mode != RIM_QUIET)
-                  BusyEnd();
+                  BusyEnd(busy);
 
                 RETURN(NULL);
                 return NULL;
@@ -3254,7 +3263,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
     }
 
     if(mode != RIM_QUIET)
-      BusyEnd();
+      BusyEnd(busy);
   }
 
   RETURN(cmsg);

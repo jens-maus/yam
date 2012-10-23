@@ -192,14 +192,6 @@ struct FileReqCache
 #define hasMultiSelectFlag(v) (isFlagSet((v), REQF_MULTISELECT))
 #define hasDrawersOnlyFlag(v) (isFlagSet((v), REQF_DRAWERSONLY))
 
-// special Macros for the Busy Handling of the InfoBar.
-#define BUSYLEVEL             5
-#define BusyEnd()             Busy("", NULL, 0, 0)
-#define BusySet(c)            Busy(NULL, NULL, c, 0)
-#define BusyText(t, p)        Busy(t, p, 0, 0)
-#define BusyGauge(t, p, max)  Busy(t, p, 0, max)
-#define BusyGaugeInt(t, p, m) Busy(t, p, -1, m)
-
 #ifndef MAX
 #define MAX(a,b)              (((a) > (b)) ? (a) : (b))
 #endif
@@ -258,7 +250,6 @@ void     AddMailToFolderSimple(struct Mail *mail, struct Folder *folder);
 void     AddZombieFile(const char *fileName);
 char *   AllocReqText(const char *s);
 char *   AllocStrBuf(size_t initlen);
-BOOL     Busy(const char *text, const char *parameter, int cur, int max);
 BOOL     CheckPrinter(const Object *win);
 void     ClearFolderMails(struct Folder *folder, BOOL resetstats);
 BOOL     DeleteZombieFiles(BOOL force);

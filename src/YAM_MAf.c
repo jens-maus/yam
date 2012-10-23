@@ -66,6 +66,7 @@
 #include "mime/rfc2047.h"
 
 #include "AppIcon.h"
+#include "Busy.h"
 #include "FileInfo.h"
 #include "FolderList.h"
 #include "Locale.h"
@@ -264,11 +265,13 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
 
     if((fh = fopen(indexFileName, "r")) != NULL)
     {
+      struct BusyNode *busy;
       struct FIndex fi;
 
       setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
-      BusyText(tr(MSG_BusyLoadingIndex), folder->Name);
+      busy = BusyBegin(BUSY_TEXT);
+      BusyText(busy, tr(MSG_BusyLoadingIndex), folder->Name);
       if(fread(&fi, sizeof(fi), 1, fh) != 1)
       {
         E(DBF_FOLDER, "error while loading struct FIndex from .index file");
@@ -416,7 +419,7 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
         error = TRUE;
       }
 
-      BusyEnd();
+      BusyEnd(busy);
       fclose(fh);
     }
     else if(errno != ENOENT)
@@ -487,12 +490,14 @@ BOOL MA_SaveIndex(struct Folder *folder)
 
   if((fh = fopen(indexFileName, "w")) != NULL)
   {
+    struct BusyNode *busy;
     struct FIndex fi;
     struct MailNode *mnode;
 
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
-    BusyText(tr(MSG_BusySavingIndex), folder->Name);
+    busy = BusyBegin(BUSY_TEXT);
+    BusyText(busy, tr(MSG_BusySavingIndex), folder->Name);
 
     // lets prepare the Folder Index struct and write it out
     // we clear it first, so that the reserved field is also 0
@@ -539,7 +544,7 @@ BOOL MA_SaveIndex(struct Folder *folder)
     fclose(fh);
 
     clearFlag(folder->Flags, FOFL_MODIFY);
-    BusyEnd();
+    BusyEnd(busy);
 
     success = TRUE;
   }
@@ -2988,6 +2993,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
     else
     {
       struct MA_GUIData *gui = &G->MA->GUI;
+      struct BusyNode *busy;
       APTR context;
 
       // make sure others notice that an index scanning already
@@ -3017,7 +3023,8 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
         }
       }
 
-      BusyGaugeInt(tr(MSG_BusyScanning), folder->Name, filecount);
+      busy = BusyBegin(BUSY_PROGRESS_ABORT);
+      BusyText(busy, tr(MSG_BusyScanning), folder->Name);
       ClearFolderMails(folder, TRUE);
 
       D(DBF_FOLDER, "Scanning folder: '%s' (path '%s', %ld files)...", folder->Name, folder->Fullpath, filecount);
@@ -3043,7 +3050,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
         while((ed = ExamineDir(context)) != NULL)
         {
           // set the gauge and check the stopButton status as well.
-          if(BusySet(++processedFiles) == FALSE)
+          if(BusyProgress(busy, ++processedFiles, filecount) == FALSE)
           {
             D(DBF_FOLDER, "scan process aborted by user");
             result = FALSE;
@@ -3310,7 +3317,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
 
       D(DBF_FOLDER, "scanning finished %s", result ? "successfully" : "unsuccessfully");
 
-      BusyEnd();
+      BusyEnd(busy);
 
       // make sure others can use this function again
       alreadyScanning = FALSE;

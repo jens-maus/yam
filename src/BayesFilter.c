@@ -44,6 +44,7 @@
 #include "extrasrc.h"
 
 #include "BayesFilter.h"
+#include "Busy.h"
 #include "FileInfo.h"
 #include "Locale.h"
 #include "MethodStack.h"
@@ -1783,10 +1784,15 @@ ULONG BayesFilterNumberOfHamClassifiedWords(void)
 // flush training data to disk
 void BayesFilterFlushTrainingData(void)
 {
+  struct BusyNode *busy;
+
   ENTER();
 
+  busy = BusyBegin(BUSY_TEXT);
+
   ObtainSemaphore(&G->spamFilter.lockSema);
-  BusyText(tr(MSG_BUSYFLUSHINGSPAMTRAININGDATA), "");
+
+  BusyText(busy, tr(MSG_BUSYFLUSHINGSPAMTRAININGDATA), "");
 
   if(C->SpamFlushTrainingDataThreshold > 0 && G->spamFilter.numDirtyingMessages > (ULONG)C->SpamFlushTrainingDataThreshold)
   {
@@ -1794,8 +1800,9 @@ void BayesFilterFlushTrainingData(void)
     G->spamFilter.numDirtyingMessages = 0;
   }
 
-  BusyEnd();
   ReleaseSemaphore(&G->spamFilter.lockSema);
+
+  BusyEnd(busy);
 
   LEAVE();
 }

@@ -51,6 +51,7 @@
 #include "YAM_mainFolder.h"
 
 #include "AppIcon.h"
+#include "Busy.h"
 #include "FileInfo.h"
 #include "Locale.h"
 #include "MailServers.h"
@@ -803,10 +804,33 @@ DECLARE(ShowWarning) // char *message
 }
 
 ///
-/// DECLARE(Busy)
-DECLARE(Busy) // const char *text, const char *parameter, const int cur, const int max
+/// DECLARE(BusyBegin)
+DECLARE(BusyBegin) // ULONG type
 {
-  Busy(msg->text, msg->parameter, msg->cur, msg->max);
+  return (IPTR)BusyBegin(msg->type);
+}
+
+///
+/// DECLARE(BusyText)
+DECLARE(BusyText) // APTR handle, const char *text, const char *param
+{
+  BusyText(msg->handle, msg->text, msg->param);
+
+  return 0;
+}
+
+///
+/// DECLARE(BusyProgress)
+DECLARE(BusyProgress) // APTR handle, int progress, int max
+{
+  return BusyProgress(msg->handle, msg->progress, msg->max);
+}
+
+///
+/// DECLARE(BusyEnd)
+DECLARE(BusyEnd) // APTR handle
+{
+  BusyEnd(msg->handle);
 
   return 0;
 }

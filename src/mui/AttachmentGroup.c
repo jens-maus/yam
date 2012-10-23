@@ -44,6 +44,7 @@
 #include "YAM_config.h"
 #include "YAM_mainFolder.h"
 
+#include "Busy.h"
 #include "Locale.h"
 #include "MUIObjects.h"
 
@@ -495,9 +496,12 @@ DECLARE(SaveAll)
 
     if((frc = ReqFile(ASL_DETACH, _win(obj), tr(MSG_RE_SaveMessage), (REQF_SAVEMODE|REQF_DRAWERSONLY), C->DetachDir, "")) != NULL)
     {
-      BusyText(tr(MSG_BusyDecSaving), "");
+      struct BusyNode *busy;
+
+      busy = BusyBegin(BUSY_TEXT);
+      BusyText(busy, tr(MSG_BusyDecSaving), "");
       RE_SaveAll(data->firstPart->rmData, frc->drawer);
-      BusyEnd();
+      BusyEnd(busy);
     }
   }
 
@@ -510,10 +514,12 @@ DECLARE(SaveAll)
 DECLARE(SaveSelected)
 {
   struct List *childList;
+  struct BusyNode *busy;
 
   ENTER();
 
-  BusyText(tr(MSG_BusyDecSaving), "");
+  busy = BusyBegin(BUSY_TEXT);
+  BusyText(busy, tr(MSG_BusyDecSaving), "");
 
   // iterate through our child list
   if((childList = (struct List *)xget(obj, MUIA_Group_ChildList)) != NULL)
@@ -529,7 +535,7 @@ DECLARE(SaveSelected)
     }
   }
 
-  BusyEnd();
+  BusyEnd(busy);
 
   RETURN(0);
   return 0;

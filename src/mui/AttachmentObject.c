@@ -47,6 +47,7 @@
 #include "YAM_mainFolder.h"
 #include "YAM_write.h"
 
+#include "Busy.h"
 #include "Locale.h"
 #include "MUIObjects.h"
 
@@ -327,8 +328,10 @@ DECLARE(Display)
   if(data->mailPart != NULL)
   {
     BOOL oldDecoded = isDecoded(data->mailPart);
+    struct BusyNode *busy;
 
-    BusyText(tr(MSG_BusyDecDisplaying), "");
+    busy = BusyBegin(BUSY_TEXT);
+    BusyText(busy, tr(MSG_BusyDecDisplaying), "");
 
     // try to decode the message part
     if(RE_DecodePart(data->mailPart) == TRUE)
@@ -349,17 +352,20 @@ DECLARE(Display)
       }
     }
 
-    BusyEnd();
+    BusyEnd(busy);
   }
   else if(data->attachment != NULL)
   {
-    BusyText(tr(MSG_BusyDecDisplaying), "");
+    struct BusyNode *busy;
+
+    busy = BusyBegin(BUSY_TEXT);
+    BusyText(busy, tr(MSG_BusyDecDisplaying), "");
 
     // run our MIME routines for displaying the part
     // to the user
     RE_DisplayMIME(data->attachment->FilePath, data->attachment->ContentType);
 
-    BusyEnd();
+    BusyEnd(busy);
   }
 
   RETURN(0);
@@ -378,8 +384,10 @@ DECLARE(Save)
   if(rp != NULL)
   {
     BOOL oldDecoded = isDecoded(rp);
+    struct BusyNode *busy;
 
-    BusyText(tr(MSG_BusyDecSaving), "");
+    busy = BusyBegin(BUSY_TEXT);
+    BusyText(busy, tr(MSG_BusyDecSaving), "");
 
     // export the mail part only if the decoding succeeded
     if(RE_DecodePart(rp) == TRUE)
@@ -415,15 +423,18 @@ DECLARE(Save)
       }
     }
 
-    BusyEnd();
+    BusyEnd(busy);
   }
   else if(data->attachment != NULL)
   {
-    BusyText(tr(MSG_BusyDecSaving), "");
+    struct BusyNode *busy;
+
+    busy = BusyBegin(BUSY_TEXT);
+    BusyText(busy, tr(MSG_BusyDecSaving), "");
 
     #warning save attachment not yet implemented
 
-    BusyEnd();
+    BusyEnd(busy);
   }
 
   RETURN(0);
@@ -467,15 +478,21 @@ DECLARE(Print)
 
   if(data->mailPart != NULL)
   {
-    BusyText(tr(MSG_BusyDecPrinting), "");
+    struct BusyNode *busy;
+
+    busy = BusyBegin(BUSY_TEXT);
+    BusyText(busy, tr(MSG_BusyDecPrinting), "");
     RE_PrintFile(data->mailPart->Filename, _win(obj));
-    BusyEnd();
+    BusyEnd(busy);
   }
   else if(data->attachment != NULL)
   {
-    BusyText(tr(MSG_BusyDecPrinting), "");
+    struct BusyNode *busy;
+
+    busy = BusyBegin(BUSY_TEXT);
+    BusyText(busy, tr(MSG_BusyDecPrinting), "");
     RE_PrintFile(data->attachment->FilePath, _win(obj));
-    BusyEnd();
+    BusyEnd(busy);
   }
 
   RETURN(0);
@@ -491,6 +508,7 @@ DECLARE(ImageDropped) // char *dropPath
   char *fileName = NULL;
   char filePathBuf[SIZE_PATHFILE];
   BOOL oldDecoded;
+  struct BusyNode *busy;
 
   ENTER();
 
@@ -498,7 +516,8 @@ DECLARE(ImageDropped) // char *dropPath
 
   oldDecoded = isDecoded(data->mailPart);
 
-  BusyText(tr(MSG_BusyDecSaving), "");
+  busy = BusyBegin(BUSY_TEXT);
+  BusyText(busy, tr(MSG_BusyDecSaving), "");
 
   // export the mail part only if the decoding succeeded
   if(RE_DecodePart(data->mailPart) == TRUE)
@@ -589,7 +608,7 @@ DECLARE(ImageDropped) // char *dropPath
   else
     DisplayBeep(_screen(obj));
 
-  BusyEnd();
+  BusyEnd(busy);
 
   #warning drop attachment not yet implemented
 

@@ -31,6 +31,7 @@
 
 #include "YAM.h"
 
+#include "Busy.h"
 #include "Locale.h"
 #include "Rexx.h"
 #include "Threads.h"
@@ -61,7 +62,10 @@ void rx_geturl(UNUSED struct RexxHost *host, struct RexxParams *params, enum Rex
 
     case RXIF_ACTION:
     {
-      BusyText(tr(MSG_TR_Downloading), "");
+      struct BusyNode *busy;
+
+      busy = BusyBegin(BUSY_TEXT);
+      BusyText(busy, tr(MSG_TR_Downloading), "");
 
       if(DoAction(NULL, TA_DownloadURL, TT_DownloadURL_Server, args->url,
                                         TT_DownloadURL_Filename, args->filename,
@@ -75,7 +79,7 @@ void rx_geturl(UNUSED struct RexxHost *host, struct RexxParams *params, enum Rex
         params->rc = RETURN_ERROR;
       }
 
-      BusyEnd();
+      BusyEnd(busy);
     }
     break;
 

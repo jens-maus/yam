@@ -86,6 +86,7 @@
 
 #include "AppIcon.h"
 #include "BayesFilter.h"
+#include "Busy.h"
 #include "FileInfo.h"
 #include "FolderList.h"
 #include "HTML2Mail.h"
@@ -858,6 +859,7 @@ void MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox
   }
   else if((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE)) != NULL)
   {
+    struct BusyNode *busy;
     char selectedStr[SIZE_SMALL];
     struct MailNode *mnode;
     ULONG i;
@@ -866,7 +868,8 @@ void MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox
     selected = mlist->count;
     snprintf(selectedStr, sizeof(selectedStr), "%d", selected);
     set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, TRUE);
-    BusyGaugeInt(tr(MSG_BusyMoving), selectedStr, selected);
+    busy = BusyBegin(BUSY_PROGRESS_ABORT);
+    BusyText(busy, tr(MSG_BusyMoving), selectedStr);
 
     i = 0;
     ForEachMailNode(mlist, mnode)
@@ -874,14 +877,14 @@ void MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox
       if(mnode->mail != NULL)
         MA_MoveCopySingle(mnode->mail, frombox, tobox, flags);
 
-      // if BusySet() returns FALSE, then the user aborted
-      if(BusySet(++i) == FALSE)
+      // if BusyProgress() returns FALSE, then the user aborted
+      if(BusyProgress(busy, ++i, selected) == FALSE)
       {
         selected = i;
         break;
       }
     }
-    BusyEnd();
+    BusyEnd(busy);
     set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, FALSE);
 
     DeleteMailList(mlist);
@@ -1544,10 +1547,12 @@ HOOKPROTONHNONP(MA_RemoveAttachFunc, void)
     // get the list of all selected mails
     if((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE)) != NULL)
     {
+      struct BusyNode *busy;
       int i;
       struct MailNode *mnode;
 
-      BusyGaugeInt(tr(MSG_BusyRemovingAtt), "", mlist->count);
+      busy = BusyBegin(BUSY_PROGRESS_ABORT);
+      BusyText(busy, tr(MSG_BusyRemovingAtt), "");
 
       i = 0;
       ForEachMailNode(mlist, mnode)
@@ -1555,8 +1560,8 @@ HOOKPROTONHNONP(MA_RemoveAttachFunc, void)
         // delete the attachments without further confirmation
         MA_RemoveAttach(mnode->mail, NULL, FALSE);
 
-        // if BusySet() returns FALSE, then the user aborted
-        if(BusySet(++i) == FALSE)
+        // if BusyProgress() returns FALSE, then the user aborted
+        if(BusyProgress(busy, ++i, mlist->count) == FALSE)
           break;
       }
 
@@ -1564,7 +1569,7 @@ HOOKPROTONHNONP(MA_RemoveAttachFunc, void)
 
       MA_ChangeSelected(TRUE);
       DisplayStatistics(NULL, TRUE);
-      BusyEnd();
+      BusyEnd(busy);
 
       // free the mail list again
       DeleteMailList(mlist);
@@ -1590,9 +1595,11 @@ HOOKPROTONHNONP(MA_SaveAttachFunc, void)
 
     if((frc = ReqFile(ASL_DETACH, G->MA->GUI.WI, tr(MSG_RE_SaveMessage), (REQF_SAVEMODE|REQF_DRAWERSONLY), C->DetachDir, "")) != NULL)
     {
+      struct BusyNode *busy;
       struct MailNode *mnode;
 
-      BusyText(tr(MSG_BusyDecSaving), "");
+      busy = BusyBegin(BUSY_TEXT);
+      BusyText(busy, tr(MSG_BusyDecSaving), "");
 
       ForEachMailNode(mlist, mnode)
       {
@@ -1617,7 +1624,7 @@ HOOKPROTONHNONP(MA_SaveAttachFunc, void)
         }
       }
 
-      BusyEnd();
+      BusyEnd(busy);
     }
 
     DeleteMailList(mlist);
@@ -1919,6 +1926,7 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
 
       if(okToDelete == TRUE)
       {
+        struct BusyNode *busy;
         char selectedStr[SIZE_SMALL];
         struct MailNode *mnode;
         ULONG deleted;
@@ -1937,7 +1945,8 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
         set(gui->MI_DELETE, MUIA_Menuitem_Enabled, FALSE);
 
         snprintf(selectedStr, sizeof(selectedStr), "%d", (int)mlist->count);
-        BusyGaugeInt(tr(MSG_BusyDeleting), selectedStr, mlist->count);
+        busy = BusyBegin(BUSY_PROGRESS_ABORT);
+        BusyText(busy, tr(MSG_BusyDeleting), selectedStr);
 
         deleted = 0;
         ForEachMailNode(mlist, mnode)
@@ -1953,12 +1962,12 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
           // call our subroutine with quiet option
           MA_DeleteSingle(mail, delFlags);
 
-          // if BusySet() returns FALSE, then the user aborted
-          if(BusySet(++deleted) == FALSE)
+          // if BusyProgress() returns FALSE, then the user aborted
+          if(BusyProgress(busy, ++deleted, mlist->count) == FALSE)
             break;
         }
 
-        BusyEnd();
+        BusyEnd(busy);
         set(lv, MUIA_NList_Quiet, FALSE);
 
         // modify the toolbar buttons, if the toolbar is visible
@@ -2024,13 +2033,15 @@ void MA_ClassifyMessage(enum BayesClassification bclass)
 
     if((mlist = MA_CreateMarkedList(lv, FALSE)) != NULL)
     {
+      struct BusyNode *busy;
       char selectedStr[SIZE_SMALL];
       struct MailNode *mnode;
       ULONG i;
 
       set(lv, MUIA_NList_Quiet, TRUE);
       snprintf(selectedStr, sizeof(selectedStr), "%d", (int)mlist->count);
-      BusyGaugeInt(tr(MSG_BusyMoving), selectedStr, mlist->count);
+      busy = BusyBegin(BUSY_PROGRESS_ABORT);
+      BusyText(busy, tr(MSG_BusyMoving), selectedStr);
 
       i = 0;
       ForEachMailNode(mlist, mnode)
@@ -2084,11 +2095,11 @@ void MA_ClassifyMessage(enum BayesClassification bclass)
           }
         }
 
-        // if BusySet() returns FALSE, then the user aborted
-        if(BusySet(++i) == FALSE)
+        // if BusyProgress() returns FALSE, then the user aborted
+        if(BusyProgress(busy, ++i, mlist->count) == FALSE)
           break;
       }
-      BusyEnd();
+      BusyEnd(busy);
       set(lv, MUIA_NList_Quiet, FALSE);
 
       DeleteMailList(mlist);
@@ -2651,10 +2662,12 @@ HOOKPROTONHNONP(MA_DeleteOldFunc, void)
   // we need a temporary "to be deleted" list of mails to avoid doubly locking a folder's mail list
   if((toBeDeletedList = CreateMailList()) != NULL)
   {
+    struct BusyNode *busy;
     ULONG f;
     struct FolderNode *fnode;
 
-    BusyGaugeInt(tr(MSG_BusyDeletingOld), "", G->folders->count);
+    busy = BusyBegin(BUSY_PROGRESS_ABORT);
+    BusyText(busy, tr(MSG_BusyDeletingOld), "");
 
     LockFolderListShared(G->folders);
 
@@ -2735,8 +2748,8 @@ HOOKPROTONHNONP(MA_DeleteOldFunc, void)
         DisplayStatistics(folder, FALSE);
       }
 
-      // if BusySet() returns FALSE, then the user aborted
-      if(BusySet(++f) == FALSE)
+      // if BusyProgress() returns FALSE, then the user aborted
+      if(BusyProgress(busy, ++f, G->folders->count) == FALSE)
       {
         // abort the loop
         break;
@@ -2747,9 +2760,9 @@ HOOKPROTONHNONP(MA_DeleteOldFunc, void)
 
     // delete the "to be deleted" list
     DeleteMailList(toBeDeletedList);
-  }
 
-  BusyEnd();
+    BusyEnd(busy);
+  }
 
   // MA_DeleteSingle() does not update the trash folder treeitem if something was deleted from
   // another folder, because it was advised to be quiet. So we must refresh the trash folder
@@ -2784,10 +2797,12 @@ HOOKPROTONHNO(MA_DeleteDeletedFunc, void, int *arg)
 
   if(folder != NULL)
   {
+    struct BusyNode *busy;
     struct MailNode *mnode;
     int i;
 
-    BusyGaugeInt(tr(MSG_BusyEmptyingTrash), "", folder->Total);
+    busy = BusyBegin(BUSY_PROGRESS);
+    BusyText(busy, tr(MSG_BusyEmptyingTrash), "");
 
     LockMailList(folder->messages);
 
@@ -2797,7 +2812,7 @@ HOOKPROTONHNO(MA_DeleteDeletedFunc, void, int *arg)
       struct Mail *mail = mnode->mail;
       char mailfile[SIZE_PATHFILE];
 
-      BusySet(++i);
+      BusyProgress(busy, ++i, folder->Total);
       AppendToLogfile(LF_VERBOSE, 21, tr(MSG_LOG_DeletingVerbose), AddrName(mail->From), mail->Subject, folder->Name);
       GetMailFile(mailfile, sizeof(mailfile), NULL, mail);
       DeleteFile(mailfile);
@@ -2821,7 +2836,7 @@ HOOKPROTONHNO(MA_DeleteDeletedFunc, void, int *arg)
 
     UnlockMailList(folder->messages);
 
-    BusyEnd();
+    BusyEnd(busy);
   }
 
   LEAVE();
@@ -2838,12 +2853,14 @@ HOOKPROTONHNO(MA_DeleteSpamFunc, void, int *arg)
   if(GetCurrentFolder() != NULL && isGroupFolder(GetCurrentFolder()) == FALSE)
   {
     ULONG delFlags;
+    struct BusyNode *busy;
     struct MailList *mlist;
 
     delFlags = (*arg != 0) ? DELF_QUIET|DELF_CLOSE_WINDOWS : DELF_CLOSE_WINDOWS;
 
     // show an interruptable Busy gauge
-    BusyGaugeInt(tr(MSG_MA_BUSYEMPTYINGSPAM), "", GetCurrentFolder()->Total);
+    busy = BusyBegin(BUSY_PROGRESS_ABORT);
+    BusyText(busy, tr(MSG_MA_BUSYEMPTYINGSPAM), "");
 
     // get the complete mail list of the spam folder
     if((mlist = MA_CreateFullList(GetCurrentFolder(), FALSE)) != NULL)
@@ -2856,8 +2873,8 @@ HOOKPROTONHNO(MA_DeleteSpamFunc, void, int *arg)
       {
         struct Mail *mail = mnode->mail;
 
-        // if BusySet() returns FALSE, then the user aborted
-        if(BusySet(++i) == FALSE)
+        // if BusyProgress() returns FALSE, then the user aborted
+        if(BusyProgress(busy, ++i, mlist->count) == FALSE)
           break;
 
         if(mail != NULL)
@@ -2882,7 +2899,7 @@ HOOKPROTONHNO(MA_DeleteSpamFunc, void, int *arg)
       DeleteMailList(mlist);
     }
 
-    BusyEnd();
+    BusyEnd(busy);
   }
 
   LEAVE();
@@ -3312,10 +3329,13 @@ BOOL MA_StartMacro(const enum Macro num, const char *param)
     // or arexx script
     if(C->RX[num].IsAmigaDOS == TRUE)
     {
+      struct BusyNode *busy;
+
       // now execute the command
-      BusyText(tr(MSG_MA_EXECUTINGCMD), "");
+      busy = BusyBegin(BUSY_TEXT);
+      BusyText(busy, tr(MSG_MA_EXECUTINGCMD), "");
       LaunchCommand(command, C->RX[num].WaitTerm == FALSE, C->RX[num].UseConsole ? OUT_STDOUT : OUT_NIL);
-      BusyEnd();
+      BusyEnd(busy);
 
       result = TRUE;
     }
@@ -3342,10 +3362,12 @@ BOOL MA_StartMacro(const enum Macro num, const char *param)
           SHOWVALUE(DBF_REXX, C->RX[num].WaitTerm);
           if(C->RX[num].WaitTerm == TRUE)
           {
+            struct BusyNode *busy;
             struct RexxMsg *rm;
             BOOL waiting = TRUE;
 
-            BusyText(tr(MSG_MA_EXECUTINGCMD), "");
+            busy = BusyBegin(BUSY_TEXT);
+            BusyText(busy, tr(MSG_MA_EXECUTINGCMD), "");
             do
             {
               WaitPort(G->RexxHost->port);
@@ -3386,7 +3408,7 @@ BOOL MA_StartMacro(const enum Macro num, const char *param)
               }
             }
             while(waiting);
-            BusyEnd();
+            BusyEnd(busy);
           }
 
           result = TRUE;

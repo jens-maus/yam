@@ -102,10 +102,10 @@
 #include "mui/MainMailList.h"
 #include "mui/MainMailListGroup.h"
 #include "mui/ReadMailGroup.h"
-#include "mui/Splashwindow.h"
 #include "mui/YAMApplication.h"
 
 #include "AppIcon.h"
+#include "Busy.h"
 #include "FileInfo.h"
 #include "FolderList.h"
 #include "Locale.h"
@@ -3205,12 +3205,14 @@ void DisplayMailList(struct Folder *fo, Object *lv)
 {
   struct Mail **array;
   int lastActive;
+  struct BusyNode *busy;
 
   ENTER();
 
   lastActive = fo->LastActive;
 
-  BusyText(tr(MSG_BusyDisplayingList), "");
+  busy = BusyBegin(BUSY_TEXT);
+  BusyText(busy, tr(MSG_BusyDisplayingList), "");
 
   // we convert the mail list of the folder
   // to a temporary array because that allows us
@@ -3226,7 +3228,7 @@ void DisplayMailList(struct Folder *fo, Object *lv)
     free(array);
   }
 
-  BusyEnd();
+  BusyEnd(busy);
 
   // Now we have to recover the LastActive or otherwise it will be -1 later
   fo->LastActive = lastActive;
@@ -4516,6 +4518,7 @@ LONG PGPCommand(const char *progname, const char *options, const int flags)
 {
   LONG error;
   char command[SIZE_LARGE];
+  struct BusyNode *busy;
 
   ENTER();
 
@@ -4525,9 +4528,10 @@ LONG PGPCommand(const char *progname, const char *options, const int flags)
   strlcat(command, " >" PGPLOGFILE " ", sizeof(command));
   strlcat(command, options, sizeof(command));
 
-  BusyText(tr(MSG_BusyPGPrunning), "");
+  busy = BusyBegin(BUSY_TEXT);
+  BusyText(busy, tr(MSG_BusyPGPrunning), "");
   error = LaunchCommand(command, FALSE, OUT_NIL);
-  BusyEnd();
+  BusyEnd(busy);
 
   if(error > 0 && !hasNoErrorsFlag(flags))
     ER_NewError(tr(MSG_ER_PGPreturnsError), command, PGPLOGFILE);
@@ -4541,97 +4545,6 @@ LONG PGPCommand(const char *progname, const char *options, const int flags)
 
   RETURN(error);
   return error;
-}
-///
-/// Busy
-//  Displays busy message
-//  returns FALSE if the user pressed the stop button on an eventually active
-//  BusyGauge. The calling method is therefore suggested to take actions to
-//  stop its processing.
-BOOL Busy(const char *text, const char *parameter, int cur, int max)
-{
-  BOOL result = TRUE;
-
-  ENTER();
-
-  if(IsMainThread() == TRUE)
-  {
-    // we can have different busy levels (defined BUSYLEVEL)
-    static char infotext[BUSYLEVEL][SIZE_DEFAULT];
-
-    if(text != NULL)
-    {
-      if(text[0] != '\0')
-      {
-        snprintf(infotext[BusyLevel], sizeof(infotext[BusyLevel]), text, parameter);
-
-        if(max > 0)
-        {
-          // initialize the InfoBar gauge and also make sure it
-          // shows a stop gadget in case cur < 0
-          if(G->MA != NULL)
-            DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_ShowGauge, infotext[BusyLevel], cur, max);
-
-          // check if we are in startup phase so that we also
-          // update the gauge elements of the About window
-          if(G->InStartupPhase == TRUE)
-          {
-            static char progressText[SIZE_DEFAULT];
-
-            snprintf(progressText, sizeof(progressText), "%%ld/%d", max);
-
-            DoMethod(G->SplashWinObject, MUIM_Splashwindow_StatusChange, infotext[BusyLevel], -1);
-            DoMethod(G->SplashWinObject, MUIM_Splashwindow_ProgressChange, progressText, cur, max);
-          }
-        }
-        else
-        {
-          // initialize the InfoBar infotext
-          if(G->MA != NULL)
-            DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_ShowInfoText, infotext[BusyLevel]);
-        }
-
-        if(BusyLevel < BUSYLEVEL-1)
-          BusyLevel++;
-        else
-          E(DBF_UTIL, "Error: reached highest BusyLevel!!!");
-      }
-      else
-      {
-        if(BusyLevel != 0)
-          BusyLevel--;
-
-        if(G->MA != NULL)
-        {
-          if(BusyLevel <= 0)
-            DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_HideBars);
-          else
-            DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_ShowInfoText, infotext[BusyLevel-1]);
-        }
-      }
-    }
-    else
-    {
-      // If the text is NULL we just have to set the Gauge of the infoBar to the current
-      // level
-      if(BusyLevel > 0)
-      {
-        if(G->MA != NULL)
-          result = DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_ShowGauge, NULL, cur, max);
-
-        if(G->InStartupPhase == TRUE)
-          DoMethod(G->SplashWinObject, MUIM_Splashwindow_ProgressChange, NULL, cur, -1);
-      }
-    }
-  }
-  else
-  {
-    // called from a thread, push a method on the stack
-    PushMethodOnStack(G->App, 5, MUIM_YAMApplication_Busy, text, parameter, cur, max);
-  }
-
-  RETURN(result);
-  return result;
 }
 
 ///

@@ -82,6 +82,7 @@
 #include "mui/SignatureTextEdit.h"
 #include "mui/WriteWindow.h"
 
+#include "Busy.h"
 #include "DockyIcon.h"
 #include "FileInfo.h"
 #include "Locale.h"
@@ -3255,9 +3256,12 @@ MakeStaticHook(CO_CloseHook, CO_CloseFunc);
 //  Opens configuration window
 HOOKPROTONHNONP(CO_OpenFunc, void)
 {
+  struct BusyNode *busy;
+
   ENTER();
 
-  BusyText(tr(MSG_BUSY_OPENINGCONFIG), "");
+  busy = BusyBegin(BUSY_TEXT);
+  BusyText(busy, tr(MSG_BUSY_OPENINGCONFIG), "");
 
   // check if there isn't already a configuration
   // open
@@ -3299,7 +3303,7 @@ HOOKPROTONHNONP(CO_OpenFunc, void)
     DisplayBeep(NULL);
   }
 
-  BusyEnd();
+  BusyEnd(busy);
 
   LEAVE();
 }

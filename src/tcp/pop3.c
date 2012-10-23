@@ -46,6 +46,7 @@
 #include "YAM_stringsizes.h"
 
 #include "AppIcon.h"
+#include "Busy.h"
 #include "FolderList.h"
 #include "Locale.h"
 #include "Logfile.h"
@@ -128,6 +129,7 @@ struct TransferContext
   int numberOfMailsSkipped;
   long totalSize;
   struct TimeVal lastUpdateTime;
+  struct BusyNode *busy;
 };
 
 /// ApplyRemoteFilters
@@ -929,7 +931,8 @@ static int ConnectToPOP3(struct TransferContext *tc)
 
   PushMethodOnStack(tc->transferGroup, 2, MUIM_TransferControlGroup_ShowStatus, tr(MSG_TR_Connecting));
 
-  BusyText(tr(MSG_TR_MailTransferFrom), tc->msn->description);
+  tc->busy = BusyBegin(BUSY_TEXT);
+  BusyText(tc->busy, tr(MSG_TR_MailTransferFrom), tc->msn->description);
 
   // now we start our connection to the POP3 server
   if((err = ConnectToHost(tc->connection, tc->msn)) != CONNECTERR_SUCCESS)
@@ -1135,7 +1138,8 @@ static void DisconnectFromPOP3(struct TransferContext *tc)
 
   DisconnectFromHost(tc->connection);
 
-  BusyEnd();
+  BusyEnd(tc->busy);
+  tc->busy = NULL;
 
   LEAVE();
 }

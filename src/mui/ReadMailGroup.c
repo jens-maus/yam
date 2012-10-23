@@ -50,6 +50,7 @@
 #include "YAM_mainFolder.h"
 #include "YAM_read.h"
 
+#include "Busy.h"
 #include "HTML2Mail.h"
 #include "FileInfo.h"
 #include "Locale.h"
@@ -940,9 +941,11 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
   // load the message now
   if(RE_LoadMessage(rmData) == TRUE)
   {
+    struct BusyNode *busy;
     char *cmsg;
 
-    BusyText(tr(MSG_BusyDisplaying), "");
+    busy = BusyBegin(BUSY_TEXT);
+    BusyText(busy, tr(MSG_BusyDisplaying), "");
 
     // now read in the Mail in a temporary buffer
     if((cmsg = RE_ReadInMessage(rmData, RIM_READ)) != NULL)
@@ -1076,7 +1079,7 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
       ER_NewError(tr(MSG_ER_ErrorReadMailfile), mailfile);
     }
 
-    BusyEnd();
+    BusyEnd(busy);
   }
   else
   {
@@ -1630,7 +1633,10 @@ DECLARE(SaveMailRequest)
                            tr(MSG_RE_SaveGad),
                            tr(MSG_Cancel), ATTREQ_SAVE|ATTREQ_MULTI, rmData)) != NULL)
   {
-    BusyText(tr(MSG_BusyDecSaving), "");
+    struct BusyNode *busy;
+
+    busy = BusyBegin(BUSY_TEXT);
+    BusyText(busy, tr(MSG_BusyDecSaving), "");
 
     for(; part; part = part->NextSelected)
     {
@@ -1667,7 +1673,7 @@ DECLARE(SaveMailRequest)
       }
     }
 
-    BusyEnd();
+    BusyEnd(busy);
   }
 
   RETURN(0);
@@ -1690,7 +1696,10 @@ DECLARE(PrintMailRequest)
                            tr(MSG_RE_PrintGad),
                            tr(MSG_Cancel), ATTREQ_PRINT|ATTREQ_MULTI, rmData)) != NULL)
   {
-    BusyText(tr(MSG_BusyDecPrinting), "");
+    struct BusyNode *busy;
+
+    busy = BusyBegin(BUSY_TEXT);
+    BusyText(busy, tr(MSG_BusyDecPrinting), "");
 
     for(; part; part = part->NextSelected)
     {
@@ -1719,7 +1728,7 @@ DECLARE(PrintMailRequest)
       }
     }
 
-    BusyEnd();
+    BusyEnd(busy);
   }
 
   RETURN(0);
@@ -1741,7 +1750,10 @@ DECLARE(DisplayMailRequest)
                            tr(MSG_RE_DisplayGad),
                            tr(MSG_Cancel), ATTREQ_DISP|ATTREQ_MULTI, rmData)) != NULL)
   {
-    BusyText(tr(MSG_BusyDecDisplaying), "");
+    struct BusyNode *busy;
+
+    busy = BusyBegin(BUSY_TEXT);
+    BusyText(busy, tr(MSG_BusyDecDisplaying), "");
 
     for(; part; part = part->NextSelected)
     {
@@ -1760,7 +1772,7 @@ DECLARE(DisplayMailRequest)
       }
     }
 
-    BusyEnd();
+    BusyEnd(busy);
   }
 
   RETURN(0);

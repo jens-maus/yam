@@ -32,6 +32,7 @@
 
 #include "YAM.h"
 
+#include "Busy.h"
 #include "Rexx.h"
 
 #include "Debug.h"
@@ -57,17 +58,20 @@ void rx_appbusy(UNUSED struct RexxHost *host, struct RexxParams *params, enum Re
 
     case RXIF_ACTION:
     {
-      // we don't make a text a requirement. If the user hasn`t supplied
-      // a text for the busytext we simply use a empty string.
+      params->rc = IsMinListEmpty(&G->busyList) ? 0 : 1;
+
+      if(G->rexxBusyHandle == NULL)
+        G->rexxBusyHandle = BusyBegin(BUSY_TEXT);
+
+      // we don't make a text a requirement. If the user hasn't supplied
+      // a text for the busytext we simply use an empty string.
       if(args->text != NULL)
-        BusyText(args->text, "");
+        BusyText(G->rexxBusyHandle, args->text, "");
       else
-        BusyText(" ", "");
+        BusyText(G->rexxBusyHandle, " ", "");
 
-      if(BusyLevel == 1)
+      if(G->rexxBusyHandle != NULL)
         nnset(G->App, MUIA_Application_Sleep, TRUE);
-
-      params->rc = BusyLevel ? 1 : 0;
     }
     break;
 

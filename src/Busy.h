@@ -1,3 +1,6 @@
+#ifndef BUSY_H
+#define BUSY_H 1
+
 /***************************************************************************
 
  YAM - Yet Another Mailer
@@ -25,59 +28,25 @@
 
 ***************************************************************************/
 
-#include <proto/exec.h>
-#include <proto/muimaster.h>
+#include <exec/nodes.h>
 
-#include "extrasrc.h"
-
-#include "YAM.h"
-
-#include "Busy.h"
-#include "Rexx.h"
-
-#include "Debug.h"
-
-struct args
+struct BusyNode
 {
-  long dummy;
+  struct MinNode node;         // to be linked in an Exec MinList
+  ULONG type;                  // busy type, see below
+  ULONG progressCurrent;       // current progress (progress bars only)
+  ULONG progressMax;           // maximum progress (progress bars only)
+  char infoText[SIZE_DEFAULT]; // the information text to be shown
 };
 
-void rx_appnobusy(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
-{
-  struct args *args = params->args;
+#define BUSY_TEXT             1 // a simple information text only
+#define BUSY_PROGRESS         2 // a busy bar with progress gauge
+#define BUSY_PROGRESS_ABORT   3 // a busy bar with progress gauge and an abort button
 
-  ENTER();
+struct BusyNode *BusyBegin(ULONG type);
+void BusyText(struct BusyNode *busy, const char *text, const char *param);
+BOOL BusyProgress(struct BusyNode *busy, int progress, int max);
+void BusyEnd(struct BusyNode *busy);
+void BusyCleanup(void);
 
-  switch(action)
-  {
-    case RXIF_INIT:
-    {
-      params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
-    }
-    break;
-
-    case RXIF_ACTION:
-    {
-      BusyEnd(G->rexxBusyHandle);
-      G->rexxBusyHandle = NULL;
-
-      if(IsMinListEmpty(&G->busyList) == TRUE)
-      {
-        nnset(G->App, MUIA_Application_Sleep, FALSE);
-        params->rc = 0;
-      }
-      else
-        params->rc = 1;
-    }
-    break;
-
-    case RXIF_FREE:
-    {
-      if(args != NULL)
-        FreeVecPooled(G->SharedMemPool, args);
-    }
-    break;
-  }
-
-  LEAVE();
-}
+#endif /* BUSY_H */

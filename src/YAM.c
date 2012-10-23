@@ -94,6 +94,7 @@
 #include "AppIcon.h"
 #include "AVLTree.h"
 #include "BayesFilter.h"
+#include "Busy.h"
 #include "DockyIcon.h"
 #include "FileInfo.h"
 #include "MUIObjects.h"
@@ -1126,6 +1127,9 @@ static void Terminate(void)
     AmiSSLBase = NULL;
   }
   CLOSELIB(AmiSSLMasterBase, IAmiSSLMaster);
+
+  D(DBF_STARTUP, "cleaning up busy actions...");
+  BusyCleanup();
 
   // close all libraries now.
   D(DBF_STARTUP, "closing all opened libraries...");
@@ -2635,6 +2639,7 @@ int main(int argc, char **argv)
     NewMinList(&G->readMailDataList);
     NewMinList(&G->writeMailDataList);
     NewMinList(&G->zombieFileList);
+    NewMinList(&G->busyList);
 
     if((C = calloc(1, sizeof(struct Config))) == NULL)
     {

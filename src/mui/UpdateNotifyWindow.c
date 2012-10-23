@@ -45,6 +45,7 @@
 #include "YAM_configFile.h"
 #include "YAM_utilities.h"
 
+#include "Busy.h"
 #include "FileInfo.h"
 #include "Locale.h"
 #include "MUIObjects.h"
@@ -68,6 +69,7 @@ struct Data
   char *changeLogText;
   char windowTitle[SIZE_DEFAULT];
   struct TempFile *tempFile;
+  struct BusyNode *busy;
   BOOL quiet;
   BOOL updateSuccess;
 };
@@ -274,7 +276,8 @@ OVERLOAD(MUIM_ThreadFinished)
 
   DoMethod(obj, METHOD(ParseUpdateFile));
 
-  BusyEnd();
+  BusyEnd(data->busy);
+  data->busy = NULL;
 
   LEAVE();
   return 0;
@@ -296,7 +299,8 @@ DECLARE(CheckForUpdates) // ULONG quiet
   {
     D(DBF_UPDATE, "send update request '%s' (%ld)", request, strlen(request));
 
-    BusyText(tr(MSG_BusyGettingVerInfo), "");
+    data->busy = BusyBegin(BUSY_TEXT);
+    BusyText(data->busy, tr(MSG_BusyGettingVerInfo), "");
 
     // now we send a specific request via DownloadURL() to our update server
     DoAction(obj, TA_DownloadURL, TT_DownloadURL_Server, C->UpdateServer,

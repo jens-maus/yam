@@ -59,6 +59,7 @@
 #include "YAM_glossarydisplay.h"
 #include "YAM_mainFolder.h"
 
+#include "Busy.h"
 #include "FileInfo.h"
 #include "FolderList.h"
 #include "Locale.h"
@@ -3588,10 +3589,12 @@ DECLARE(SetupFromOldMail) // struct ReadMailData *rmData
        stricmp(part->ContentType, "application/pgp-signature"))
     {
       struct Attach attach;
+      struct BusyNode *busy;
 
       memset(&attach, 0, sizeof(struct Attach));
 
-      BusyText(tr(MSG_BusyDecSaving), "");
+      busy = BusyBegin(BUSY_TEXT);
+      BusyText(busy, tr(MSG_BusyDecSaving), "");
 
       RE_DecodePart(part);
 
@@ -3608,7 +3611,7 @@ DECLARE(SetupFromOldMail) // struct ReadMailData *rmData
 
       DoMethod(data->LV_ATTACH, MUIM_NList_InsertSingle, &attach, MUIV_NList_Insert_Bottom);
 
-      BusyEnd();
+      BusyEnd(busy);
     }
   }
 

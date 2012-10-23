@@ -38,6 +38,7 @@
 #include "YAM_config.h"
 #include "YAM_mainFolder.h"
 
+#include "Busy.h"
 #include "Locale.h"
 #include "MUIObjects.h"
 
@@ -148,11 +149,13 @@ OVERLOAD(MUIM_DragDrop)
   }
   else if(xget(d->obj, MUIA_AttachmentImage_MailPart) != 0)
   {
+    struct BusyNode *busy;
     char tempFile[SIZE_FILE];
     struct Attach attach;
     struct Part *mailPart = (struct Part *)xget(d->obj, MUIA_AttachmentImage_MailPart);
 
-    BusyText(tr(MSG_BusyDecSaving), "");
+    busy = BusyBegin(BUSY_TEXT);
+    BusyText(busy, tr(MSG_BusyDecSaving), "");
 
     // make sure the mail part is properly decoded before we add it
     RE_DecodePart(mailPart);
@@ -182,7 +185,7 @@ OVERLOAD(MUIM_DragDrop)
     else
       DisplayBeep(_screen(obj));
 
-    BusyEnd();
+    BusyEnd(busy);
     result = 0;
   }
   else

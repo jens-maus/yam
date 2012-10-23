@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-10-23 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_UT.c, misc: reworked the complete busy bar management to support an
+    unlimited amount of busy bars. This is required since YAM now allows an
+    arbitrary amount of parallel mail downloads each of which has its own
+    busy bar. Furthermore this fixes the issue that sometimes an information
+    text of a no longer active busy action was still visible.
+
 2012-10-17 Thore Böckelmann <tboeckel@gmx.de>
 
   * tcp/ssl.c, include/ppcinline/extended_macros.h: added extended macro

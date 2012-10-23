@@ -38,6 +38,7 @@
 #include "YAM_find.h"
 #include "YAM_mainFolder.h"
 
+#include "Busy.h"
 #include "Locale.h"
 #include "Logfile.h"
 #include "MailList.h"
@@ -1419,12 +1420,15 @@ BOOL SendMails(struct UserIdentityNode *uin, enum SendMailMode mode, const ULONG
             D(DBF_NET, "clone sent mail filters");
             if((sentMailFilters = CloneFilterList(APPLY_SENT)) != NULL)
             {
+              struct BusyNode *busy;
               enum ConnectError err;
 
               PushMethodOnStack(tc->transferGroup, 3, MUIM_TransferControlGroup_Start, transferList->count, totalSize);
 
               PushMethodOnStack(tc->transferGroup, 2, MUIM_TransferControlGroup_ShowStatus, tr(MSG_TR_Connecting));
-              BusyText(tr(MSG_TR_MailTransferTo), msn->hostname);
+
+              busy = BusyBegin(BUSY_TEXT);
+              BusyText(busy, tr(MSG_TR_MailTransferTo), msn->hostname);
 
               D(DBF_NET, "connecting to host '%s' port %ld", msn->hostname, msn->port);
               if((err = ConnectToHost(tc->conn, tc->msn)) == CONNECTERR_SUCCESS)
@@ -1646,7 +1650,7 @@ BOOL SendMails(struct UserIdentityNode *uin, enum SendMailMode mode, const ULONG
                 break;
               }
 
-              BusyEnd();
+              BusyEnd(busy);
 
               DeleteFilterList(sentMailFilters);
             }

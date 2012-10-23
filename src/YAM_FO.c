@@ -64,6 +64,7 @@
 #include "mui/Recipientstring.h"
 #include "mui/SignatureChooser.h"
 
+#include "Busy.h"
 #include "FileInfo.h"
 #include "FolderList.h"
 #include "ImageCache.h"
@@ -1294,13 +1295,15 @@ static BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
 {
   BOOL success = TRUE;
   char totalStr[SIZE_SMALL];
+  struct BusyNode *busy;
   struct MailNode *mnode;
   ULONG i;
 
   ENTER();
 
+  busy = BusyBegin(BUSY_PROGRESS_ABORT);
   snprintf(totalStr, sizeof(totalStr), "%d", fo->Total);
-  BusyGauge(tr(MSG_BusyMoving), totalStr, fo->Total);
+  BusyText(busy, tr(MSG_BusyMoving), totalStr);
 
   LockMailListShared(fo->messages);
 
@@ -1311,7 +1314,7 @@ static BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
     char srcbuf[SIZE_PATHFILE];
     char dstbuf[SIZE_PATHFILE];
 
-    if(BusySet(++i) == FALSE)
+    if(BusyProgress(busy, ++i, fo->Total) == FALSE)
     {
       success = FALSE;
       break;
@@ -1365,7 +1368,7 @@ static BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
     }
   }
 
-  BusyEnd();
+  BusyEnd(busy);
 
   RETURN(success);
   return success;
@@ -2050,23 +2053,25 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
 
         if(folder.Mode != oldmode)
         {
+          struct BusyNode *busy;
           struct MailNode *mnode;
           ULONG i;
 
-          BusyGauge(tr(MSG_BusyUncompressingFO), "", folder.Total);
+          busy = BusyBegin(BUSY_PROGRESS);
+          BusyText(busy, tr(MSG_BusyUncompressingFO), "");
 
           LockMailListShared(folder.messages);
 
           i = 0;
           ForEachMailNode(folder.messages, mnode)
           {
-            BusySet(++i);
+            BusyProgress(busy, ++i, folder.Total);
             RepackMailFile(mnode->mail, folder.Mode, folder.Password);
           }
 
           UnlockMailList(folder.messages);
 
-          BusyEnd();
+          BusyEnd(busy);
 
           oldfolder->Mode = newmode;
         }

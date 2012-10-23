@@ -47,6 +47,7 @@
 #include "YAM_utilities.h"
 
 #include "BoyerMooreSearch.h"
+#include "Busy.h"
 #include "Locale.h"
 #include "MailList.h"
 #include "MUIObjects.h"
@@ -675,6 +676,7 @@ DECLARE(ProcessSearch)
     char *searchString = (char *)xget(data->ST_SEARCHSTRING, MUIA_String_Contents);
     struct TimeVal curTimeUTC;
     struct BoyerMooreContext *bmContext;
+    struct BusyNode *busy;
 
     // get the current time in UTC
     GetSysTimeUTC(&curTimeUTC);
@@ -698,7 +700,8 @@ DECLARE(ProcessSearch)
     // current folder querying different criterias of a mail
     LockMailListShared(curFolder->messages);
 
-    BusyText(tr(MSG_BUSY_SEARCHINGFOLDER), curFolder->Name);
+    busy = BusyBegin(BUSY_TEXT);
+    BusyText(busy, tr(MSG_BUSY_SEARCHINGFOLDER), curFolder->Name);
 
     ForEachMailNode(curFolder->messages, mnode)
     {
@@ -713,7 +716,7 @@ DECLARE(ProcessSearch)
       if(data->abortSearch == TRUE)
         break;
     }
-    BusyEnd();
+    BusyEnd(busy);
 
     UnlockMailList(curFolder->messages);
 

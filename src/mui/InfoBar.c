@@ -37,6 +37,7 @@
 #include "YAM_config.h"
 #include "YAM_utilities.h"
 
+#include "Busy.h"
 #include "MUIObjects.h"
 
 #include "mui/ImageArea.h"
@@ -55,9 +56,10 @@ struct Data
   Object *GA_LABEL;
   Object *BT_STOP;
   Object *actualImage;
+  struct BusyNode *lastBusy;
   BOOL stopButtonPressed;
   struct TimeVal last_gaugemove;
-  char infoText[SIZE_SMALL];
+  char gaugeInfoText[SIZE_SMALL];
   char folderInfo[SIZE_DEFAULT / 2];
 };
 */
@@ -290,96 +292,89 @@ DECLARE(SetFolder) // struct Folder *newFolder
 }
 
 ///
-/// DECLARE(ShowGauge)
-// activates the gauge in the InfoBar with the passed text and percentage
-// and also returns the current stop 'X' button status so that the calling
-// function may aborts its operation.
-DECLARE(ShowGauge) // STRPTR gaugeText, LONG perc, LONG max
+/// DECLARE(ShowBusyBar)
+// show a busy bar with either a simple info text or a progress gauge
+DECLARE(ShowBusyBar) // struct BusyNode *busy
 {
   GETDATA;
-  BOOL result = TRUE;
+  BOOL goOn = TRUE;
 
   ENTER();
 
-  if(msg->gaugeText != NULL)
+  // first of all give the application the chance to clear its event loop
+  DoMethod(G->App, MUIM_Application_InputBuffered);
+
+  // update the busy bar whenever another busy action is to be shown,
+  // or if the same busy action needs an update and enough time since the last update has passed
+  if(msg->busy != data->lastBusy || TimeHasElapsed(&data->last_gaugemove, 250000) == TRUE)
   {
-    nnset(data->GA_LABEL, MUIA_Text_Contents, msg->gaugeText);
+    if(msg->busy != NULL)
+    {
+      switch(msg->busy->type)
+      {
+        case BUSY_TEXT:
+        {
+          set(data->TX_INFO, MUIA_Text_Contents, msg->busy->infoText);
+          set(data->GA_GROUP, MUIA_Group_ActivePage, 2);
+        }
+	    break;
 
-    snprintf(data->infoText, sizeof(data->infoText), "%%ld/%d", (unsigned int)msg->max);
+        case BUSY_PROGRESS:
+        {
+          // we need valid gauge limits to be able to show the gauge
+          if(msg->busy->progressMax > 0 && msg->busy->progressCurrent <= msg->busy->progressMax)
+          {
+            set(data->GA_LABEL, MUIA_Text_Contents, msg->busy->infoText);
 
-    xset(data->GA_INFO, MUIA_Gauge_InfoText,  data->infoText,
-                        MUIA_Gauge_Max,       msg->max,
-                        MUIA_Gauge_Current,   msg->perc > 0 ? msg->perc : 0);
+            snprintf(data->gaugeInfoText, sizeof(data->gaugeInfoText), "%%ld/%d", msg->busy->progressMax);
 
-    // make sure the stop button is shown or hiden, dependent
-    // on msg->perc
-    set(data->BT_STOP, MUIA_ShowMe, msg->perc == -1);
-    data->stopButtonPressed = FALSE;
+            xset(data->GA_INFO,
+                   MUIA_Gauge_InfoText,  data->gaugeInfoText,
+                   MUIA_Gauge_Max,       msg->busy->progressMax,
+                   MUIA_Gauge_Current,   msg->busy->progressCurrent);
+            set(data->BT_STOP, MUIA_ShowMe, FALSE);
+            data->stopButtonPressed = FALSE;
 
-    set(data->GA_GROUP, MUIA_Group_ActivePage, 1);
+            set(data->GA_GROUP, MUIA_Group_ActivePage, 1);
+          }
+        }
+        break;
+
+        case BUSY_PROGRESS_ABORT:
+        {
+          // we need valid gauge limits to be able to show the gauge
+          if(msg->busy->progressMax > 0 && msg->busy->progressCurrent <= msg->busy->progressMax)
+          {
+            set(data->GA_LABEL, MUIA_Text_Contents, msg->busy->infoText);
+
+            snprintf(data->gaugeInfoText, sizeof(data->gaugeInfoText), "%%ld/%d", msg->busy->progressMax);
+
+            xset(data->GA_INFO,
+                   MUIA_Gauge_InfoText,  data->gaugeInfoText,
+                   MUIA_Gauge_Max,       msg->busy->progressMax,
+                   MUIA_Gauge_Current,   msg->busy->progressCurrent);
+            set(data->BT_STOP, MUIA_ShowMe, TRUE);
+            set(data->GA_GROUP, MUIA_Group_ActivePage, 1);
+
+            goOn = (data->stopButtonPressed == FALSE);
+          }
+        }
+        break;
+      }
+    }
+    else
+    {
+      // hide the busy bar
+      set(data->GA_GROUP, MUIA_Group_ActivePage, 0);
+      set(data->GA_LABEL, MUIA_Text_Contents, NULL);
+	}
+
+    // remember the changed busy action
+    data->lastBusy = msg->busy;
   }
-  else
-  {
-    // then we update the gauge, but we take also care of not refreshing
-    // it too often or otherwise it slows down the whole search process.
-    if(TimeHasElapsed(&data->last_gaugemove, 250000) == TRUE)
-      set(data->GA_INFO, MUIA_Gauge_Current, msg->perc);
 
-    // give the application the chance to clear its event loop
-    DoMethod(G->App, MUIM_Application_InputBuffered);
-
-    // in case the stopButton was pressed we return FALSE
-    result = (data->stopButtonPressed == FALSE);
-
-    set(data->GA_GROUP, MUIA_Group_ActivePage, 1);
-  }
-
-  RETURN(result);
-  return result;
-}
-
-///
-/// DECLARE(ShowInfoText)
-// activates the gauge in the InfoBar with the passed text and percentage
-DECLARE(ShowInfoText) // STRPTR infoText
-{
-  GETDATA;
-
-  ENTER();
-
-  nnset(data->GA_GROUP, MUIA_Group_ActivePage, 2);
-  // setting a NULL text is ok, according to the AutoDocs
-  nnset(data->TX_INFO, MUIA_Text_Contents, msg->infoText);
-
-/*
-  if(msg->infoText != NULL)
-  {
-    nnset(data->TX_INFO, MUIA_Text_Contents, msg->infoText);
-  }
-  else
-  {
-    nnset(data->TX_INFO, MUIA_Text_Contents, "");
-  }
-*/
-
-  RETURN(TRUE);
-  return TRUE;
-}
-
-///
-/// DECLARE(HideBars)
-// activates the gauge in the InfoBar with the passed text and percentage
-DECLARE(HideBars)
-{
-  GETDATA;
-
-  ENTER();
-
-  set(data->GA_GROUP, MUIA_Group_ActivePage, 0);
-  set(data->GA_LABEL, MUIA_Text_Contents, " ");
-
-  RETURN(TRUE);
-  return TRUE;
+  RETURN(goOn);
+  return goOn;
 }
 
 ///

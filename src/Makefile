@@ -654,6 +654,7 @@ YAMOBJS = \
 	AVLTree.o \
 	BayesFilter.o \
 	BoyerMooreSearch.o \
+	Busy.o \
 	DockyIcon.o \
 	FileInfo.o \
 	FolderList.o \

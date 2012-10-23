@@ -78,6 +78,7 @@
 #include "mime/base64.h"
 
 #include "AVLTree.h"
+#include "Busy.h"
 #include "Locale.h"
 #include "Logfile.h"
 #include "MUIObjects.h"
@@ -2514,12 +2515,15 @@ MakeStaticHook(AB_ImportXMLABookHook, AB_ImportXMLABookFunc);
 /*** AB_SaveABookFunc - Saves address book using the default name ***/
 HOOKPROTONHNONP(AB_SaveABookFunc, void)
 {
+  struct BusyNode *busy;
+
   ENTER();
 
-  Busy(tr(MSG_BusySavingAB), G->AB_Filename, 0, 0);
+  busy = BusyBegin(BUSY_TEXT);
+  BusyText(busy, tr(MSG_BusySavingAB), G->AB_Filename);
   AB_SaveTree(G->AB_Filename);
   G->AB->Modified = FALSE;
-  BusyEnd();
+  BusyEnd(busy);
 
   LEAVE();
 }
@@ -2699,9 +2703,12 @@ HOOKPROTONHNONP(AB_PrintABookFunc, void)
 
       if((prt = fopen("PRT:", "w")) != NULL)
       {
+        struct BusyNode *busy;
+
         setvbuf(prt, NULL, _IOFBF, SIZE_FILEBUF);
 
-        Busy(tr(MSG_BusyPrintingAB), "", 0, 0);
+        busy = BusyBegin(BUSY_TEXT);
+        BusyText(busy, tr(MSG_BusyPrintingAB), "");
         fprintf(prt, "%s\n", G->AB_Filename);
 
         if(mode == 2)
@@ -2710,7 +2717,7 @@ HOOKPROTONHNONP(AB_PrintABookFunc, void)
           fputs("------------------------------------------------------------------------\n", prt);
         }
         AB_PrintLevel(MUIV_NListtree_GetEntry_ListNode_Root, prt, mode);
-        BusyEnd();
+        BusyEnd(busy);
 
         // before we close the file
         // handle we check the error state

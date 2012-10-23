@@ -69,6 +69,7 @@
 
 #include "BayesFilter.h"
 #include "BoyerMooreSearch.h"
+#include "Busy.h"
 #include "FolderList.h"
 #include "Locale.h"
 #include "Logfile.h"
@@ -1959,6 +1960,7 @@ void FilterMails(struct Folder *folder, const struct MailList *mlist, const int 
 
   if((filterList = CloneFilterList(mode)) != NULL)
   {
+    struct BusyNode *busy;
     struct Folder *spamfolder = FO_GetFolderByType(FT_SPAM, NULL);
     struct MailNode *mnode;
     ULONG m;
@@ -1972,13 +1974,14 @@ void FilterMails(struct Folder *folder, const struct MailList *mlist, const int 
 
     LockMailList(mlist);
 
+    busy = BusyBegin(BUSY_PROGRESS_ABORT);
     // we use another Busy Gauge information if this is
     // a spam classification session. And we build an interruptable
     // Gauge which will report back if the user pressed the stop button
     if(mode != APPLY_SPAM)
-      BusyGaugeInt(tr(MSG_BusyFiltering), "", mlist->count);
+      BusyText(busy, tr(MSG_BusyFiltering), "");
     else
-      BusyGaugeInt(tr(MSG_FI_BUSYCHECKSPAM), "", mlist->count);
+      BusyText(busy, tr(MSG_FI_BUSYCHECKSPAM), "");
 
     MA_StartMacro(MACRO_PREFILTER, NULL);
 
@@ -2053,7 +2056,7 @@ void FilterMails(struct Folder *folder, const struct MailList *mlist, const int 
 
         // we update the busy gauge and
         // see if we have to exit/abort in case it returns FALSE
-        if(BusySet(++m) == FALSE)
+        if(BusyProgress(busy, ++m, mlist->count) == FALSE)
           break;
 
         // check if some mails were deleted, moved or recognized as spam
@@ -2079,7 +2082,7 @@ void FilterMails(struct Folder *folder, const struct MailList *mlist, const int 
 
     MA_StartMacro(MACRO_POSTFILTER, NULL);
 
-    BusyEnd();
+    BusyEnd(busy);
 
     set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, FALSE);
     G->AppIconQuiet = FALSE;
