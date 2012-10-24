@@ -1265,14 +1265,14 @@ BOOL WriteOutMessage(struct Compose *comp)
           DisplayBeep(NULL);
           // just restore old parts list and switch off security
           comp->FirstPart = tpart;
-          comp->Security = 0;
+          comp->Security = SEC_NONE;
           // we'll most likely get more errors further down :(
         }
       }
       else
       {
         ER_NewError(tr(MSG_ER_PGPMultipart));
-        comp->Security = 0;
+        comp->Security = SEC_NONE;
       }
 
       fclose(tfh);
@@ -1280,7 +1280,7 @@ BOOL WriteOutMessage(struct Compose *comp)
     else
     {
       ER_NewError(tr(MSG_ER_PGPMultipart));
-      comp->Security = 0;
+      comp->Security = SEC_NONE;
     }
   }
 
