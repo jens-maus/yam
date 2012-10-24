@@ -4766,9 +4766,6 @@ Monthly
 MSG_CO_SEARCHFORUPDATES (1667//)
 Check for up_dates
 ;
-MSG_CO_SEARCHFORUPDATESINFO (1668//)
-You will be notified as soon as updates are available.
-;
 MSG_CO_SEARCHNOW (1669//)
 Check _now
 ;
@@ -7360,4 +7357,10 @@ Append a file as signature instead
 ;
 MSG_PRESELECT_GETTING_DETAILS (2396//)
 Getting message details (%%ld of %ld)
+;
+MSG_CO_UPDATES_INFO_MANUAL (2397//)
+You will have to check for updates manually.
+;
+MSG_CO_UPDATES_INFO_AUTO (2398//)
+You will be notified as soon as updates are available.
 ;

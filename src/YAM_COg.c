@@ -602,6 +602,23 @@ HOOKPROTONHNO(CO_PlaySoundFunc, void, int *arg)
   LEAVE();
 }
 MakeStaticHook(CO_PlaySoundHook,CO_PlaySoundFunc);
+
+///
+/// UpdateInfoHook
+// update the information text about the update check
+HOOKPROTONHNO(UpdateInfoFunc, void, ULONG *interval)
+{
+  ENTER();
+
+  if(interval[0] == 0)
+    set(G->CO->GUI.TX_UPDATEINFO, MUIA_Text_Contents, tr(MSG_CO_UPDATES_INFO_MANUAL));
+  else
+    set(G->CO->GUI.TX_UPDATEINFO, MUIA_Text_Contents, tr(MSG_CO_UPDATES_INFO_AUTO));
+
+  LEAVE();
+}
+MakeStaticHook(UpdateInfoHook, UpdateInfoFunc);
+
 ///
 /// UpdateCheckHook
 // initiates an interactive update check
@@ -4382,9 +4399,8 @@ Object *CO_PageUpdate(struct CO_ClassData *data)
                   Child, data->GUI.CY_UPDATEINTERVAL = MakeCycle(updateInterval, tr(MSG_CO_SEARCHFORUPDATES)),
                   Child, data->GUI.BT_UPDATENOW = MakeButton(tr(MSG_CO_SEARCHNOW)),
                 End,
-                Child, TextObject,
-                  MUIA_Text_Contents, tr(MSG_CO_SEARCHFORUPDATESINFO),
-                  MUIA_Font,          MUIV_Font_Tiny,
+                Child, data->GUI.TX_UPDATEINFO = TextObject,
+                  MUIA_Font, MUIV_Font_Tiny,
                 End,
                 Child, VSpace(10),
                 Child, ColGroup(2),
@@ -4394,7 +4410,6 @@ Object *CO_PageUpdate(struct CO_ClassData *data)
                   End,
                   Child, HSpace(1),
                   Child, data->GUI.TX_UPDATEDATE = TextObject,
-                    MUIA_Text_Contents, "",
                   End,
                 End,
               End,
@@ -4411,7 +4426,8 @@ Object *CO_PageUpdate(struct CO_ClassData *data)
     SetHelp(data->GUI.CY_UPDATEINTERVAL, MSG_HELP_CH_UPDATECHECK);
     SetHelp(data->GUI.BT_UPDATENOW,      MSG_HELP_CO_BT_UPDATENOW);
 
-    DoMethod(data->GUI.BT_UPDATENOW,   MUIM_Notify, MUIA_Pressed,  FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &UpdateCheckHook);
+    DoMethod(data->GUI.CY_UPDATEINTERVAL, MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &UpdateInfoHook, MUIV_TriggerValue);
+    DoMethod(data->GUI.BT_UPDATENOW,      MUIM_Notify, MUIA_Pressed,      FALSE,          MUIV_Notify_Application, 2, MUIM_CallHook, &UpdateCheckHook);
   }
 
   RETURN(obj);

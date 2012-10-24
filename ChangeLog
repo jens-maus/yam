@@ -10,6 +10,8 @@ $URL$
   * mui/WriteWindow.c: the signature chooser must collect the available
     signatures before the identity chooser is updated and will set the active
     identity's signature in the signature chooser.
+  * YAM_COg.c: changing the update interval to "never" will change the info
+    text accoringly.
 
 2012-10-23 Thore Böckelmann <tboeckel@gmx.de>
 

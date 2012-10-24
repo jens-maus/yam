@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.62 (21.10.2012)
+## version $VER: YAM.catalog 7.63 (24.10.2012)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -6285,9 +6285,6 @@ monatlich
 MSG_CO_SEARCHFORUPDATES
 Nach _Updates suchen:
 ;
-MSG_CO_SEARCHFORUPDATESINFO
-Sie werden benachrichtigt, sobald Updates verfügbar sind.
-;
 MSG_CO_SEARCHNOW
 _Jetzt suchen
 ;
@@ -8840,4 +8837,10 @@ Stattdessen eine Datei als Signatur anhängen
 ;
 MSG_PRESELECT_GETTING_DETAILS
 Hole Nachrichtendetails (%%ld von %ld)
+;
+MSG_CO_UPDATES_INFO_MANUAL
+Sie müssen selbst auf verfügbare Updates prüfen.
+;
+MSG_CO_UPDATES_INFO_AUTO
+Sie werden benachrichtigt, sobald Updates verfügbar sind.
 ;
