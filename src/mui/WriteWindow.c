@@ -1488,14 +1488,14 @@ OVERLOAD(OM_NEW)
         if(C->ShowRcptFieldReplyTo == FALSE)
           DoMethod(obj, METHOD(HideRecipientObject), MUIV_WriteWindow_RcptType_ReplyTo);
 
-        // make sure update the IdentityChooser status via the identitychanged method
+        // update the available signatures first
+        DoMethod(obj, METHOD(UpdateSignatures));
+        // make sure update the IdentityChooser state
         DoMethod(obj, METHOD(IdentityChanged), uin);
 
-        // if we only have one identitiy we hide the identitychooser object
+        // if we only have one identity we hide the identitychooser object
         if(xget(data->CY_FROM, MUIA_IdentityChooser_NumIdentities) < 2)
           DoMethod(obj, METHOD(HideRecipientObject), MUIV_WriteWindow_RcptType_From);
-
-        DoMethod(obj, METHOD(UpdateSignatures));
       }
 
       // set some help text
