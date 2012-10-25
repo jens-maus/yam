@@ -10,6 +10,7 @@ $URL$
   * mui/InfoBar.c: clear the progress info label when showing a normal text info.
   * mui/PassphraseRequestWindow.c: when entering the PGP passphrase the usually
     hidden characters can be switched to become visible.
+  * YAM_RE.c: fixed a possible memory leak when parsing a mail.
 
 2012-10-24 Thore Böckelmann <tboeckel@gmx.de>
 

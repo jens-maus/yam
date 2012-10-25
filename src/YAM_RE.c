@@ -2849,6 +2849,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                 E(DBF_MAIL, "ERROR occurred while reading at pos %ld of '%s'", ftell(fh), part->Filename);
 
                 // cleanup and return NULL
+                free(cmsg);
                 free(msg);
                 fclose(fh);
 
