@@ -967,27 +967,6 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
         {
           // make sure the attachmentGroup is removed
           HideAttachmentGroup(data);
-
-          // if this mail was/is a multipart mail but no part was
-          // actually added to our attachment group we can remove the
-          // multipart flag at all
-          if(isMP_MixedMail(mail))
-          {
-            // clear the multipart/mixed flag
-            clearFlag(mail->mflags, MFLAG_MP_MIXED);
-
-            // update the status bar of an eventually existing read window.
-            if(rmData->readWindow != NULL)
-              DoMethod(rmData->readWindow, MUIM_ReadWindow_UpdateStatusBar);
-
-            // if the mail is no virtual mail we can also
-            // refresh the maillist depending information
-            if(!isVirtualMail(mail))
-            {
-              setFlag(mail->Folder->Flags, FOFL_MODIFY);  // flag folder as modified
-              DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_RedrawMail, mail);
-            }
-          }
         }
       }
       else

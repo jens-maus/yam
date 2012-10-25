@@ -13,6 +13,10 @@ $URL$
   * YAM_RE.c: fixed a possible memory leak when parsing a mail.
   * StrBuf.c, misc: separated the dynamic string buffer functions into an own
     module.
+  * mui/ReadMailGroup.c: if adding any part to the attachment group of a
+    multipart mail fails for whatever reason the multipart flag is no longer
+    permanently removed from the mail. This ensures that the multipart flag is
+    correctly kept even if just something went wrong in MUI's layout process.
 
 2012-10-24 Thore Böckelmann <tboeckel@gmx.de>
 
