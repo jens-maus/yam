@@ -938,7 +938,7 @@ static BOOL WR_ComposeReport(FILE *fh, const struct Compose *comp, const char *b
 ///
 /// WR_ComposePGP
 //  Creates a signed and/or encrypted PGP/MIME message
-static BOOL WR_ComposePGP(FILE *fh, const struct Compose *comp, char *boundary)
+static BOOL WR_ComposePGP(FILE *fh, const struct Compose *comp, const char *boundary)
 {
   enum Security sec = comp->Security;
   BOOL success = FALSE;
