@@ -945,7 +945,8 @@ static BOOL WR_ComposePGP(FILE *fh, const struct Compose *comp, char *boundary)
   struct WritePart pgppart;
   char *ids = AllocStrBuf(SIZE_DEFAULT);
   char pgpfile[SIZE_PATHFILE];
-  struct TempFile *tf2;
+  struct TempFile *tf1 = NULL;
+  struct TempFile *tf2 = NULL;
 
   ENTER();
 
@@ -972,28 +973,22 @@ static BOOL WR_ComposePGP(FILE *fh, const struct Compose *comp, char *boundary)
     }
   }
 
-  if((tf2 = OpenTempFile(NULL)) != NULL)
+  if((tf1 = OpenTempFile("w")) != NULL)
   {
-    struct TempFile *tf;
-
-    if((tf = OpenTempFile("w")) != NULL)
+    if((tf2 = OpenTempFile(NULL)) != NULL)
     {
        struct WritePart *firstpart = comp->FirstPart;
 
-       WriteContentTypeAndEncoding(tf->FP, firstpart);
-       fputc('\n', tf->FP);
+       WriteContentTypeAndEncoding(tf1->FP, firstpart);
+       fputc('\n', tf1->FP);
 
-       if(EncodePart(tf->FP, firstpart) == FALSE)
-       {
-         CloseTempFile(tf);
-         CloseTempFile(tf2);
+       if(EncodePart(tf1->FP, firstpart) == FALSE)
          goto out;
-       }
 
-       fclose(tf->FP);
-       tf->FP = NULL;
-       ConvertCRLF(tf->Filename, tf2->Filename, TRUE);
-       CloseTempFile(tf);
+       fclose(tf1->FP);
+       tf1->FP = NULL;
+       ConvertCRLF(tf1->Filename, tf2->Filename, TRUE);
+       CloseTempFile(tf1);
 
        snprintf(pgpfile, sizeof(pgpfile), "%s.asc", tf2->Filename);
 
@@ -1017,10 +1012,7 @@ static BOOL WR_ComposePGP(FILE *fh, const struct Compose *comp, char *boundary)
            fputc('\n', fh);
 
            if(EncodePart(fh, firstpart) == FALSE)
-           {
-             CloseTempFile(tf2);
              goto out;
-           }
 
            fprintf(fh, "\n"
                        "--%s\n"
@@ -1110,13 +1102,9 @@ static BOOL WR_ComposePGP(FILE *fh, const struct Compose *comp, char *boundary)
       if(success == TRUE)
       {
         if(EncodePart(fh, &pgppart) == FALSE)
-        {
-          CloseTempFile(tf2);
           goto out;
-        }
       }
     }
-    CloseTempFile(tf2);
   }
 
   if(pgpfile[0] != '\0')
@@ -1128,6 +1116,8 @@ static BOOL WR_ComposePGP(FILE *fh, const struct Compose *comp, char *boundary)
               boundary);
 
 out:
+  CloseTempFile(tf1);
+  CloseTempFile(tf2);
   FreeStrBuf(ids);
   PGPClearPassPhrase(!success);
 
