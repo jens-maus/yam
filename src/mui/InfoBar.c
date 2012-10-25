@@ -315,6 +315,7 @@ DECLARE(ShowBusyBar) // struct BusyNode *busy
         case BUSY_TEXT:
         {
           set(data->TX_INFO, MUIA_Text_Contents, msg->busy->infoText);
+          set(data->GA_LABEL, MUIA_Text_Contents, NULL);
           set(data->GA_GROUP, MUIA_Group_ActivePage, 2);
         }
 	    break;

@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-10-25 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/InfoBar.c: clear the progress info label when showing a normal text info.
+
 2012-10-24 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/WriteWindow.c: the signature chooser must collect the available
