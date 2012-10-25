@@ -41,6 +41,7 @@
 
 #include "FileInfo.h"
 #include "Signature.h"
+#include "StrBuf.h"
 
 #include "Debug.h"
 

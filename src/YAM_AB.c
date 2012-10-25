@@ -79,11 +79,12 @@
 
 #include "AVLTree.h"
 #include "Busy.h"
+#include "FileInfo.h"
 #include "Locale.h"
 #include "Logfile.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
-#include "FileInfo.h"
+#include "StrBuf.h"
 
 #include "Debug.h"
 

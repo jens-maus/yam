@@ -42,6 +42,7 @@
 
 #include "MUIObjects.h"
 #include "Rexx.h"
+#include "StrBuf.h"
 
 #include "Debug.h"
 

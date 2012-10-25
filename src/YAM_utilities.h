@@ -220,7 +220,6 @@ struct FileReqCache
 
 // function macros
 #define DisposeModulePush(m)  DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &DisposeModuleHook, m)
-#define FreeStrBuf(str)       ((str != NULL) ? free(((char *)(str))-sizeof(size_t)) : (void)0)
 #define isSpace(c)            ((BOOL)(G->Locale ? (IsSpace(G->Locale, (ULONG)(c)) != 0) : (isspace((c)) != 0)))
 #define isGraph(c)            ((BOOL)(G->Locale ? (IsGraph(G->Locale, (ULONG)(c)) != 0) : (isgraph((c)) != 0)))
 #define isAlNum(c)            ((BOOL)(G->Locale ? (IsAlNum(G->Locale, (ULONG)(c)) != 0) : (isalnum((c)) != 0)))
@@ -249,7 +248,6 @@ struct Mail *AddMailToFolder(const struct Mail *mail, struct Folder *folder);
 void     AddMailToFolderSimple(struct Mail *mail, struct Folder *folder);
 void     AddZombieFile(const char *fileName);
 char *   AllocReqText(const char *s);
-char *   AllocStrBuf(size_t initlen);
 BOOL     CheckPrinter(const Object *win);
 void     ClearFolderMails(struct Folder *folder, BOOL resetstats);
 BOOL     DeleteZombieFiles(BOOL force);
@@ -326,8 +324,6 @@ BOOL     SafeOpenWindow(Object *obj);
 void     SaveLayout(BOOL permanent);
 void     SimpleWordWrap(const char *filename, int wrapsize);
 char *   StartUnpack(const char *file, char *newfile, const struct Folder *folder);
-size_t   StrBufCat(char **strbuf, const char *source);
-size_t   StrBufCpy(char **strbuf, const char *source);
 char *   AppendToBuffer(char *buf, int *wptr, int *len, const char *add);
 char *   StripUnderscore(const char *label);
 void     ReplaceInvalidChars(char *name);

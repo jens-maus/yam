@@ -49,6 +49,7 @@
 #include "Busy.h"
 #include "Locale.h"
 #include "MUIObjects.h"
+#include "StrBuf.h"
 
 #include "mui/ClassesExtra.h"
 #include "mui/MailTextEdit.h"

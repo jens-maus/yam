@@ -64,6 +64,7 @@
 #include "Logfile.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
+#include "StrBuf.h"
 
 #include "Debug.h"
 
@@ -493,7 +494,7 @@ HOOKPROTONHNO(EA_Okay, void, int *arg)
           // or warn the user accordingly.
           if(G->PGPVersion == 0)
           {
-            if(MUI_Request(G->App, G->AB != NULL ? G->AB->GUI.WI : NULL, MUIF_NONE, 
+            if(MUI_Request(G->App, G->AB != NULL ? G->AB->GUI.WI : NULL, MUIF_NONE,
                            tr(MSG_AB_INVALIDSECURITY_TITLE),
                            tr(MSG_AB_INVALIDSECURITY_GADS),
                            tr(MSG_AB_INVALIDSECURITY)) != 0)

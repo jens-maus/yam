@@ -56,6 +56,7 @@
 #include "MailTransferList.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
+#include "StrBuf.h"
 #include "Threads.h"
 #include "UIDL.h"
 

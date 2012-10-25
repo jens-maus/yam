@@ -62,6 +62,7 @@
 #include "Locale.h"
 #include "MailServers.h"
 #include "Requesters.h"
+#include "StrBuf.h"
 
 #include "tcp/Connection.h"
 #include "tcp/ssl.h"

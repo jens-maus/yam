@@ -85,6 +85,7 @@
 #include "MUIObjects.h"
 #include "ParseEmail.h"
 #include "Requesters.h"
+#include "StrBuf.h"
 #include "Threads.h"
 #include "UserIdentity.h"
 

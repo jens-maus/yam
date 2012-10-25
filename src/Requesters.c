@@ -65,6 +65,7 @@
 #include "MethodStack.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
+#include "StrBuf.h"
 #include "Threads.h"
 
 #include "tcp/Connection.h"

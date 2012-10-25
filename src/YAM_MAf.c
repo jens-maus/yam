@@ -75,6 +75,7 @@
 #include "Requesters.h"
 #include "Rexx.h"
 #include "Signature.h"
+#include "StrBuf.h"
 #include "UserIdentity.h"
 
 #include "Debug.h"

@@ -675,6 +675,7 @@ YAMOBJS = \
 	Requesters.o \
 	Rexx.o \
 	Signature.o \
+	StrBuf.o \
 	Themes.o \
 	Threads.o \
 	Timer.o \

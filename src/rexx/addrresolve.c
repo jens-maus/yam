@@ -42,6 +42,7 @@
 #include "mui/Recipientstring.h"
 
 #include "Rexx.h"
+#include "StrBuf.h"
 
 #include "Debug.h"
 

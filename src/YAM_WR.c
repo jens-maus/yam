@@ -68,6 +68,7 @@
 #include "MUIObjects.h"
 #include "Requesters.h"
 #include "Signature.h"
+#include "StrBuf.h"
 #include "UserIdentity.h"
 
 #include "Debug.h"

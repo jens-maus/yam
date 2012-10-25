@@ -11,6 +11,8 @@ $URL$
   * mui/PassphraseRequestWindow.c: when entering the PGP passphrase the usually
     hidden characters can be switched to become visible.
   * YAM_RE.c: fixed a possible memory leak when parsing a mail.
+  * StrBuf.c, misc: separated the dynamic string buffer functions into an own
+    module.
 
 2012-10-24 Thore Böckelmann <tboeckel@gmx.de>
 

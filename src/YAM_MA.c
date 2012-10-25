@@ -100,6 +100,7 @@
 #include "MUIObjects.h"
 #include "Requesters.h"
 #include "Rexx.h"
+#include "StrBuf.h"
 #include "Threads.h"
 #include "UserIdentity.h"
 
