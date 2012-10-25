@@ -61,6 +61,7 @@ OVERLOAD(OM_NEW)
   char *stringContents = (char *)"";
   Object *stringObj = NULL;
   Object *rememberObj = NULL;
+  Object *showCharsObj = NULL;
   Object *yesButton = NULL;
   Object *noButton = NULL;
   ULONG maxLength = SIZE_DEFAULT;
@@ -108,6 +109,11 @@ OVERLOAD(OM_NEW)
         Child, LLabel(tr(MSG_UT_PGPPassReq)),
         Child, stringObj = MakePassString(""),
         Child, HGroup,
+          Child, showCharsObj = MakeCheck(tr(MSG_PGPPASS_SHOW_CHARS)),
+          Child, Label2(tr(MSG_PGPPASS_SHOW_CHARS)),
+          Child, HSpace(0),
+        End,
+        Child, HGroup,
           Child, rememberObj = MakeCheck(tr(MSG_CO_PGPPASSINTERVAL1)),
           Child, Label2(pgprem),
           Child, HSpace(0),
@@ -132,6 +138,7 @@ OVERLOAD(OM_NEW)
     data->result = 0;
 
     DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, obj, 2, MUIM_PassphraseRequestWindow_FinishInput, 0);
+    DoMethod(showCharsObj, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, stringObj, 3, MUIM_Set, MUIA_String_Secret, MUIV_NotTriggerValue);
     DoMethod(yesButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_PassphraseRequestWindow_FinishInput, 1);
     DoMethod(noButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_PassphraseRequestWindow_FinishInput, 0);
     DoMethod(stringObj, MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, obj, 2, MUIM_PassphraseRequestWindow_FinishInput, 1);

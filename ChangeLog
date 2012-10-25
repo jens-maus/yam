@@ -8,6 +8,8 @@ $URL$
 2012-10-25 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/InfoBar.c: clear the progress info label when showing a normal text info.
+  * mui/PassphraseRequestWindow.c: when entering the PGP passphrase the usually
+    hidden characters can be switched to become visible.
 
 2012-10-24 Thore Böckelmann <tboeckel@gmx.de>
 

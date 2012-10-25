@@ -7364,3 +7364,6 @@ You will have to check for updates manually.
 MSG_CO_UPDATES_INFO_AUTO (2398//)
 You will be notified as soon as updates are available.
 ;
+MSG_PGPPASS_SHOW_CHARS (2399//)
+Show characters
+;
