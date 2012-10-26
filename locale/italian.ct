@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.99 (12.10.2012)
+## version $VER: YAM.catalog 7.99 (26.10.2012)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -7,7 +7,7 @@
 ; Compiled with FlexCat 2.10 PPC (AmigaOS4)
 ; $Id$
 ;
-; based on YAM.cd 6298 2012-10-11
+; based on YAM.cd 6339 2012-10-25
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -2562,7 +2562,7 @@ della finestra di visualizzazione della conferma.
 ;
 MSG_HELP_CO_CH_REMOVE
 Elimina completamente i messaggi non facendoli\n\
-passare prima per il cestino.\n\
+passare per il cestino.\n\
 (Usa questa opzione prestando molta attenzione)
 ; Immediately delete the messages rather\n\
 ; than moving them to the Trash folder.\n\
@@ -6628,10 +6628,6 @@ MSG_CO_SEARCHFORUPDATES
 Ricerca a_ggiornamenti:
 ; Check for up_dates
 ;
-MSG_CO_SEARCHFORUPDATESINFO
-Si verrà avvertiti nel caso si renda disponibile un nuovo aggiornamento.
-; You will be notified as soon as updates are available.
-;
 MSG_CO_SEARCHNOW
 cerca a_desso
 ; Check _now
@@ -6715,7 +6711,7 @@ _Descrizione
 ; D_escription
 ;
 MSG_CTapplicationgz
-Archivio GNU zip
+Archivio Zip GNU
 ; GNU zip archive
 ;
 MSG_CTapplicationhqx
@@ -10508,7 +10504,7 @@ Impossibile inizializzare la tabella hash UIDL.
 ; Failed to initialized UIDL hash table.
 ;
 MSG_CO_SIGNATURE_TEXT
-Testo firma
+Testo della firma
 ; Signature text
 ;
 MSG_CO_APPEND_SIGNATURE_FILE
@@ -10518,4 +10514,16 @@ Aggiungi un file al posto della firma
 MSG_PRESELECT_GETTING_DETAILS
 Prelievo dettagli del messaggio (%%ld di %ld)
 ; Getting message details (%%ld of %ld)
+;
+MSG_CO_UPDATES_INFO_MANUAL
+Si dovrà verificare manualmente la presenza di nuovi aggiornamenti.
+; You will have to check for updates manually.
+;
+MSG_CO_UPDATES_INFO_AUTO
+Si verrà avvertiti nel caso si renda disponibile un nuovo aggiornamento.
+; You will be notified as soon as updates are available.
+;
+MSG_PGPPASS_SHOW_CHARS
+Mostra caratteri
+; Show characters
 ;
