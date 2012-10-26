@@ -22,6 +22,10 @@ $URL$
   * YAM_WR.c: fixed the generation of PGP encrypted/signed mails. The text to be
     signed/encrypted must not include any header lines, because the check/decrypt
     process will not include them either.
+  * mui/ReadMailGroup.c: manually checking a PGP signature will no longer
+    incorrectly operate on the full raw mail file, but on the already parsed and
+    decoded mail parts. This finally makes it possible again to successfully
+    verify PGP signed mails.
 
 2012-10-26 Samir Hawamdeh <s.hawamdeh@tin.it>
 

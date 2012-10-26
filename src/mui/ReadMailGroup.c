@@ -1379,19 +1379,42 @@ DECLARE(CheckPGPSignature) // ULONG forceRequester
   {
     if(hasPGPSOldFlag(rmData) || hasPGPSMimeFlag(rmData))
     {
-      char mailfile[SIZE_PATHFILE];
-      char fullfile[SIZE_PATHFILE];
+      char options[SIZE_LARGE];
+      int error;
+      struct Part *part;
+      struct Part *letterPart = NULL;
+      struct Part *pgpPart = NULL;
 
-      GetMailFile(mailfile, sizeof(mailfile), NULL, rmData->mail);
-      if(StartUnpack(mailfile, fullfile, rmData->mail->Folder) != NULL)
+      // find the letter part
+      part = rmData->firstPart;
+      do
       {
-        char options[SIZE_LARGE];
-        int error;
+        if(part->Nr == rmData->letterPartNum)
+        {
+          letterPart = part;
+          break;
+        }
+        part = part->Next;
+      }
+      while(part != NULL);
 
-        snprintf(options, sizeof(options), (G->PGPVersion == 5) ? "%s -o %s +batchmode=1 +force +language=us" : "%s %s +bat +f +lang=en", fullfile, "T:PGP.tmp");
+      // find the signature part
+      part = rmData->firstPart;
+      do
+      {
+        if(stricmp(part->ContentType, "application/pgp-signature") == 0)
+        {
+          pgpPart = part;
+          break;
+        }
+        part = part->Next;
+      }
+      while(part != NULL);
+
+      if(letterPart != NULL && pgpPart != NULL)
+      {
+        snprintf(options, sizeof(options), (G->PGPVersion == 5) ? "%s -o %s +batchmode=1 +force +language=us" : "%s %s +bat +f +lang=en", pgpPart->Filename, letterPart->Filename);
         error = PGPCommand((G->PGPVersion == 5) ? "pgpv": "pgp", options, KEEPLOG);
-        FinishUnpack(fullfile);
-        DeleteFile("T:PGP.tmp");
         if(error > 0)
           setFlag(rmData->signedFlags, PGPS_BADSIG);
 
@@ -1401,20 +1424,20 @@ DECLARE(CheckPGPSignature) // ULONG forceRequester
           RE_GetSigFromLog(rmData, NULL);
           result = TRUE;
         }
-      }
 
-      if(result == TRUE && (hasPGPSBadSigFlag(rmData) || msg->forceRequester == TRUE))
-      {
-        char buffer[SIZE_LARGE];
-
-        strlcpy(buffer, hasPGPSBadSigFlag(rmData) ? tr(MSG_RE_BadSig) : tr(MSG_RE_GoodSig), sizeof(buffer));
-        if(hasPGPSAddressFlag(rmData))
+        if(result == TRUE && (hasPGPSBadSigFlag(rmData) || msg->forceRequester == TRUE))
         {
-          strlcat(buffer, tr(MSG_RE_SigFrom), sizeof(buffer));
-          strlcat(buffer, rmData->sigAuthor, sizeof(buffer));
-        }
+          char buffer[SIZE_LARGE];
 
-        MUI_Request(G->App, _win(obj), MUIF_NONE, tr(MSG_RE_SigCheck), tr(MSG_OkayReq), buffer);
+          strlcpy(buffer, hasPGPSBadSigFlag(rmData) ? tr(MSG_RE_BadSig) : tr(MSG_RE_GoodSig), sizeof(buffer));
+          if(hasPGPSAddressFlag(rmData))
+          {
+            strlcat(buffer, tr(MSG_RE_SigFrom), sizeof(buffer));
+            strlcat(buffer, rmData->sigAuthor, sizeof(buffer));
+          }
+
+          MUI_Request(G->App, _win(obj), MUIF_NONE, tr(MSG_RE_SigCheck), tr(MSG_OkayReq), buffer);
+        }
       }
     }
   }
