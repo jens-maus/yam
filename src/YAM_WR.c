@@ -946,8 +946,7 @@ static BOOL WR_ComposePGP(FILE *fh, const struct Compose *comp, const char *boun
   struct WritePart pgppart;
   char *ids = AllocStrBuf(SIZE_DEFAULT);
   char pgpfile[SIZE_PATHFILE];
-  struct TempFile *tf1 = NULL;
-  struct TempFile *tf2 = NULL;
+  struct TempFile *tf;
 
   ENTER();
 
@@ -974,136 +973,129 @@ static BOOL WR_ComposePGP(FILE *fh, const struct Compose *comp, const char *boun
     }
   }
 
-  if((tf1 = OpenTempFile("w")) != NULL)
+  if((tf = OpenTempFile("w")) != NULL)
   {
-    if((tf2 = OpenTempFile(NULL)) != NULL)
+    struct WritePart *firstpart = comp->FirstPart;
+
+    if(EncodePart(tf->FP, firstpart) == FALSE)
+      goto out;
+
+    fclose(tf->FP);
+    tf->FP = NULL;
+
+    snprintf(pgpfile, sizeof(pgpfile), "%s.asc", tf->Filename);
+
+    if(sec == SEC_SIGN || sec == SEC_BOTH)
+      PGPGetPassPhrase();
+
+    switch(sec)
     {
-       struct WritePart *firstpart = comp->FirstPart;
-
-       WriteContentTypeAndEncoding(tf1->FP, firstpart);
-       fputc('\n', tf1->FP);
-
-       if(EncodePart(tf1->FP, firstpart) == FALSE)
-         goto out;
-
-       fclose(tf1->FP);
-       tf1->FP = NULL;
-       ConvertCRLF(tf1->Filename, tf2->Filename, TRUE);
-
-       snprintf(pgpfile, sizeof(pgpfile), "%s.asc", tf2->Filename);
-
-       if(sec == SEC_SIGN || sec == SEC_BOTH)
-         PGPGetPassPhrase();
-
-       switch(sec)
-       {
-         case SEC_SIGN:
-         {
-           char options[SIZE_LARGE];
-
-           fprintf(fh, "Content-type: multipart/signed; boundary=\"%s\"; micalg=pgp-md5; protocol=\"application/pgp-signature\"\n"
-                       "\n"
-                       "%s\n"
-                       "--%s\n",
-                       boundary,
-                       MIMEwarn,
-                       boundary);
-           WriteContentTypeAndEncoding(fh, firstpart);
-           fputc('\n', fh);
-
-           if(EncodePart(fh, firstpart) == FALSE)
-             goto out;
-
-           fprintf(fh, "\n"
-                       "--%s\n"
-                       "Content-Type: application/pgp-signature\n"
-                       "\n",
-                       boundary);
-
-           snprintf(options, sizeof(options), (G->PGPVersion == 5) ? "-ab %s +batchmode=1 +force" : "-sab %s +bat +f", tf2->Filename);
-
-           if(comp->Identity->pgpKeyID[0] != '\0')
-           {
-             strlcat(options, " -u ", sizeof(options));
-             strlcat(options, comp->Identity->pgpKeyID, sizeof(options));
-           }
-
-           if(PGPCommand((G->PGPVersion == 5) ? "pgps" : "pgp", options, 0) == 0)
-             success = TRUE;
-         }
-         break;
-
-         case SEC_ENCRYPT:
-         {
-           char options[SIZE_LARGE];
-
-           fprintf(fh, "Content-type: multipart/encrypted; boundary=\"%s\"; protocol=\"application/pgp-encrypted\"\n"
-                       "\n"
-                       "%s\n"
-                       "--%s\n",
-                       boundary,
-                       MIMEwarn,
-                       boundary);
-           fprintf(fh, "Content-Type: application/pgp-encrypted\n\nVersion: 1\n"
-                       "\n"
-                       "%s\n"
-                       "--%s\n"
-                       "Content-Type: application/octet-stream\n"
-                       "\n",
-                       PGPwarn,
-                       boundary);
-
-           snprintf(options, sizeof(options), (G->PGPVersion == 5) ? "-a %s %s +batchmode=1 +force" : "-ea %s %s +bat +f", tf2->Filename, ids);
-           if(PGPCommand((G->PGPVersion == 5) ? "pgpe" : "pgp", options, 0) == 0)
-             success = TRUE;
-         }
-         break;
-
-         case SEC_BOTH:
-         {
-           char options[SIZE_LARGE];
-
-           fprintf(fh, "Content-type: multipart/encrypted; boundary=\"%s\"; protocol=\"application/pgp-encrypted\"\n"
-                       "\n"
-                       "%s\n"
-                       "--%s\n",
-                       boundary,
-                       MIMEwarn,
-                       boundary);
-           fprintf(fh, "Content-Type: application/pgp-encrypted\n"
-                       "\n"
-                       "Version: 1\n"
-                       "\n"
-                       "%s\n"
-                       "--%s\n"
-                       "Content-Type: application/octet-stream\n"
-                       "\n",
-                       PGPwarn,
-                       boundary);
-
-           snprintf(options, sizeof(options), (G->PGPVersion == 5) ? "-a %s %s +batchmode=1 +force -s" : "-sea %s %s +bat +f", tf2->Filename, ids);
-
-           if(comp->Identity->pgpKeyID[0] != '\0')
-           {
-             strlcat(options, " -u ", sizeof(options));
-             strlcat(options, comp->Identity->pgpKeyID, sizeof(options));
-           }
-
-           if(PGPCommand((G->PGPVersion == 5) ? "pgpe" : "pgp", options, 0) == 0)
-             success = TRUE;
-         }
-         break;
-
-         default:
-           // nothing
-         break;
-      }
-
-      if(success == TRUE)
+      case SEC_SIGN:
       {
-        if(EncodePart(fh, &pgppart) == FALSE)
+        char options[SIZE_LARGE];
+
+        fprintf(fh, "Content-type: multipart/signed; boundary=\"%s\"; micalg=pgp-md5; protocol=\"application/pgp-signature\"\n"
+                    "\n"
+                    "%s\n"
+                    "--%s\n",
+                    boundary,
+                    MIMEwarn,
+                    boundary);
+        WriteContentTypeAndEncoding(fh, firstpart);
+        fputc('\n', fh);
+
+        if(EncodePart(fh, firstpart) == FALSE)
           goto out;
+
+        fprintf(fh, "\n"
+                    "--%s\n"
+                    "Content-Type: application/pgp-signature\n"
+                    "\n",
+                    boundary);
+
+        snprintf(options, sizeof(options), (G->PGPVersion == 5) ? "-ab %s +batchmode=1 +force" : "-sab %s +bat +f", tf->Filename);
+
+        if(comp->Identity->pgpKeyID[0] != '\0')
+        {
+          strlcat(options, " -u ", sizeof(options));
+          strlcat(options, comp->Identity->pgpKeyID, sizeof(options));
+        }
+
+        if(PGPCommand((G->PGPVersion == 5) ? "pgps" : "pgp", options, 0) == 0)
+          success = TRUE;
       }
+      break;
+
+      case SEC_ENCRYPT:
+      {
+        char options[SIZE_LARGE];
+
+        fprintf(fh, "Content-type: multipart/encrypted; boundary=\"%s\"; protocol=\"application/pgp-encrypted\"\n"
+                    "\n"
+                    "%s\n"
+                    "--%s\n",
+                    boundary,
+                    MIMEwarn,
+                    boundary);
+        fprintf(fh, "Content-Type: application/pgp-encrypted\n\nVersion: 1\n"
+                    "\n"
+                    "%s\n"
+                    "--%s\n"
+                    "Content-Type: application/octet-stream\n"
+                    "\n",
+                    PGPwarn,
+                    boundary);
+
+        snprintf(options, sizeof(options), (G->PGPVersion == 5) ? "-a %s %s +batchmode=1 +force" : "-ea %s %s +bat +f", tf->Filename, ids);
+        if(PGPCommand((G->PGPVersion == 5) ? "pgpe" : "pgp", options, 0) == 0)
+          success = TRUE;
+      }
+      break;
+
+      case SEC_BOTH:
+      {
+        char options[SIZE_LARGE];
+
+        fprintf(fh, "Content-type: multipart/encrypted; boundary=\"%s\"; protocol=\"application/pgp-encrypted\"\n"
+                    "\n"
+                    "%s\n"
+                    "--%s\n",
+                    boundary,
+                    MIMEwarn,
+                    boundary);
+        fprintf(fh, "Content-Type: application/pgp-encrypted\n"
+                    "\n"
+                    "Version: 1\n"
+                    "\n"
+                    "%s\n"
+                    "--%s\n"
+                    "Content-Type: application/octet-stream\n"
+                    "\n",
+                    PGPwarn,
+                    boundary);
+
+        snprintf(options, sizeof(options), (G->PGPVersion == 5) ? "-a %s %s +batchmode=1 +force -s" : "-sea %s %s +bat +f", tf->Filename, ids);
+
+        if(comp->Identity->pgpKeyID[0] != '\0')
+        {
+          strlcat(options, " -u ", sizeof(options));
+          strlcat(options, comp->Identity->pgpKeyID, sizeof(options));
+        }
+
+        if(PGPCommand((G->PGPVersion == 5) ? "pgpe" : "pgp", options, 0) == 0)
+          success = TRUE;
+      }
+      break;
+
+      default:
+        // nothing
+      break;
+    }
+
+    if(success == TRUE)
+    {
+      if(EncodePart(fh, &pgppart) == FALSE)
+        goto out;
     }
   }
 
@@ -1116,8 +1108,7 @@ static BOOL WR_ComposePGP(FILE *fh, const struct Compose *comp, const char *boun
               boundary);
 
 out:
-  CloseTempFile(tf1);
-  CloseTempFile(tf2);
+  CloseTempFile(tf);
   FreeStrBuf(ids);
   PGPClearPassPhrase(!success);
 

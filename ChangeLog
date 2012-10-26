@@ -19,6 +19,9 @@ $URL$
   * YAM_RE.c: don't transform line ends to CR+LF when checking PGP signatures.
   * YAM_UT.c: added new function AppendFile() to append the contents of one file
     to another one.
+  * YAM_WR.c: fixed the generation of PGP encrypted/signed mails. The text to be
+    signed/encrypted must not include any header lines, because the check/decrypt
+    process will not include them either.
 
 2012-10-26 Samir Hawamdeh <s.hawamdeh@tin.it>
 
