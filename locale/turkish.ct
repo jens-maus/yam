@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.2 (20.08.2012)
+## version $VER: YAM.catalog 7.2 (25.10.2012)
 ## language türkçe
 ## codeset 0
 ## chunk AUTH Alper Sönmez <amithlondestek@gmail.com>
@@ -6244,7 +6244,7 @@ postalar için bir arama kriteri olarak kullanýlacaktýr.
 ; criterion to display mail in this folder.
 ;
 MSG_HELP_QUICKSEARCH_SEARCHOPTIONPOPUP
-Burada saðdaki metinin\n\
+Buradan saðdaki metnin\n\
 postalarda aranacaðý yeri seçin.
 ; Select here where the string at the right\n\
 ; should be searched in the mail.
@@ -6597,10 +6597,6 @@ Aylýk
 MSG_CO_SEARCHFORUPDATES
 _Güncellemeleri kontrol et
 ; Check for up_dates
-;
-MSG_CO_SEARCHFORUPDATESINFO
-Yeni güncellemeler bulunduðunda haberdar edileceksiniz.
-; You will be notified as soon as updates are available.
 ;
 MSG_CO_SEARCHNOW
 _Þimdi kontol et
@@ -10361,4 +10357,20 @@ MSG_CO_SIGNATURE_TEXT
 MSG_CO_APPEND_SIGNATURE_FILE
 Ýmza olarak bir dosya ekle
 ; Append a file as signature instead
+;
+MSG_PRESELECT_GETTING_DETAILS
+Ýleti detaylarý alýnýyor [%%ld (%ld)]
+; Getting message details (%%ld of %ld)
+;
+MSG_CO_UPDATES_INFO_MANUAL
+Güncellemeleri el ile kontrol etmeniz gerekecek.
+; You will have to check for updates manually.
+;
+MSG_CO_UPDATES_INFO_AUTO
+Yeni güncelleme bulunduðunda haberdar edileceksiniz.
+; You will be notified as soon as updates are available.
+;
+MSG_PGPPASS_SHOW_CHARS
+Harfleri göster
+; Show characters
 ;

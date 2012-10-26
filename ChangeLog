@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-10-26 Alper Sönmez <amithlondestek@gmail.com>
+
+ * locale/turkish.ct: update to the latest changes.
+
 2012-10-25 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/InfoBar.c: clear the progress info label when showing a normal text info.
