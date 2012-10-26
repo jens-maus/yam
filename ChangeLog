@@ -17,6 +17,8 @@ $URL$
     All PGP commands will use this mode to ensure the required log file is
     correctly generated.
   * YAM_RE.c: don't transform line ends to CR+LF when checking PGP signatures.
+  * YAM_UT.c: added new function AppendFile() to append the contents of one file
+    to another one.
 
 2012-10-26 Samir Hawamdeh <s.hawamdeh@tin.it>
 

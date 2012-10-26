@@ -713,6 +713,7 @@ BOOL CopyFile(const char *dest, FILE *destfh, const char *sour, FILE *sourfh)
   RETURN(success);
   return success;
 }
+
 ///
 /// MoveFile
 //  Moves a file (also from one partition to another)
@@ -738,6 +739,59 @@ BOOL MoveFile(const char *oldfile, const char *newfile)
   RETURN(success);
   return success;
 }
+
+///
+/// AppendFile
+//  Append a file to another one
+BOOL AppendFile(const char *dst, const char *src)
+{
+  BOOL success = FALSE;
+  char *buf;
+
+  ENTER();
+
+  // allocate a dynamic buffer instead of placing it on the stack
+  if((buf = malloc(SIZE_FILEBUF)) != NULL)
+  {
+    FILE *dstFH;
+    FILE *srcFH;
+
+    dstFH = fopen(dst, "a");
+    srcFH = fopen(src, "r");
+
+    if(dstFH != NULL && srcFH != NULL)
+    {
+      int len;
+
+      setvbuf(dstFH, NULL, _IOFBF, SIZE_FILEBUF);
+      setvbuf(srcFH, NULL, _IOFBF, SIZE_FILEBUF);
+
+      while((len = fread(buf, 1, SIZE_FILEBUF, srcFH)) > 0)
+      {
+        if(fwrite(buf, 1, len, dstFH) != (size_t)len)
+          break;
+      }
+
+      // if we arrived here because this was the eof of the sourcefile
+      // and non of the two filehandles are in error state we can set
+      // success to TRUE.
+      if(feof(srcFH) && !ferror(srcFH) && !ferror(dstFH))
+        success = TRUE;
+    }
+
+    if(dstFH != NULL)
+      fclose(dstFH);
+
+    if(srcFH != NULL)
+      fclose(srcFH);
+
+    free(buf);
+  }
+
+  RETURN(success);
+  return success;
+}
+
 ///
 /// ConvertCRLF
 //  Converts line breaks from LF to CRLF or vice versa
