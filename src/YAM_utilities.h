@@ -104,7 +104,8 @@ enum OutputDefType
 {
   OUT_STDOUT=0,
   OUT_NIL,
-  OUT_CONSOLE
+  OUT_CONSOLE,
+  OUT_REDIRECT
 };
 
 enum SizeFormat

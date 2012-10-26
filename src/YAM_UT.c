@@ -4412,7 +4412,7 @@ LONG PGPCommand(const char *progname, const char *options, const int flags)
 
   busy = BusyBegin(BUSY_TEXT);
   BusyText(busy, tr(MSG_BusyPGPrunning), "");
-  error = LaunchCommand(command, LAUNCHF_IGNORE_RC, OUT_NIL);
+  error = LaunchCommand(command, LAUNCHF_IGNORE_RC, OUT_REDIRECT);
   BusyEnd(busy);
 
   if(error > 0 && !hasNoErrorsFlag(flags))
@@ -5040,6 +5040,16 @@ static LONG SyncLaunchCommand(const char *cmd, ULONG flags, enum OutputDefType o
       in = Open("CON:20/20/600/100/YAM thread/AUTO/CLOSE/WAIT/INACTIVE", MODE_NEWFILE);
       #endif
       out = ZERO;
+    }
+    break;
+
+    case OUT_REDIRECT:
+    {
+      in = Open("NIL:", MODE_OLDFILE);
+      out = ZERO;
+      #if defined(__amigaos4__)
+      err = ErrorOutput();
+      #endif
     }
     break;
   }

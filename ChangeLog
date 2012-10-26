@@ -13,6 +13,9 @@ $URL$
     instead of a single boolean value for an asynchronous launch. For PGP
     commands the return code can be ignored as PGP seems to terminate with a
     return code of 1 even on success.
+  * YAM_UT.c: added new output mode for commands which use explicit redirection.
+    All PGP commands will use this mode to ensure the required log file is
+    correctly generated.
 
 2012-10-26 Samir Hawamdeh <s.hawamdeh@tin.it>
 
