@@ -605,6 +605,7 @@ void RE_GetSigFromLog(struct ReadMailData *rmData, char *decrFor)
   {
     char *buf = NULL;
     size_t buflen = 0;
+    D(DBF_UTIL, "log file '%s' opened", PGPLOGFILE);
 
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
@@ -627,10 +628,17 @@ void RE_GetSigFromLog(struct ReadMailData *rmData, char *decrFor)
 
       if(sigDone == FALSE)
       {
+        SHOWSTRING(DBF_UTIL, buf);
         if(strnicmp(buf, "good signature", 14) == 0)
+        {
+          D(DBF_UTIL, "found good signature");
+          // forget anything about a previous bad signature
+          clearFlag(rmData->signedFlags, PGPS_BADSIG);
           sigDone = TRUE;
+        }
         else if(strnicmp(buf, "bad signature", 13) == 0 || strcasestr(buf, "unknown keyid") != NULL)
         {
+          D(DBF_UTIL, "found bad signature");
           setFlag(rmData->signedFlags, PGPS_BADSIG);
           sigDone = TRUE;
         }
@@ -645,7 +653,14 @@ void RE_GetSigFromLog(struct ReadMailData *rmData, char *decrFor)
           }
 
           if(RE_GetAddressFromLog(buf, rmData->sigAuthor) == TRUE)
+          {
+            D(DBF_UTIL, "got address '%s' from PGP log", rmData->sigAuthor);
             setFlag(rmData->signedFlags, PGPS_ADDRESS);
+          }
+          else
+          {
+            clearFlag(rmData->signedFlags, PGPS_ADDRESS);
+          }
 
           break;
         }
@@ -2344,27 +2359,19 @@ static void RE_HandleSignedMessage(struct Part *frp)
   {
     if(G->PGPVersion != 0 && (rp[1] = rp[0]->Next) != NULL)
     {
-      struct TempFile *tf;
+      int error;
+      char options[SIZE_LARGE];
 
-      if((tf = OpenTempFile(NULL)) != NULL)
-      {
-        int error;
-        char options[SIZE_LARGE];
+      // flag the mail as having a PGP signature within the MIME encoding
+      setFlag(frp->rmData->signedFlags, PGPS_MIME);
 
-        // flag the mail as having a PGP signature within the MIME encoding
-        setFlag(frp->rmData->signedFlags, PGPS_MIME);
+      snprintf(options, sizeof(options), (G->PGPVersion == 5) ? "%s -o %s +batchmode=1 +force +language=us" : "%s %s +bat +f +lang=en", rp[1]->Filename, rp[0]->Filename);
+      error = PGPCommand((G->PGPVersion == 5) ? "pgpv": "pgp", options, NOERRORS|KEEPLOG);
+      if(error > 0)
+        setFlag(frp->rmData->signedFlags, PGPS_BADSIG);
 
-        ConvertCRLF(rp[0]->Filename, tf->Filename, TRUE);
-        snprintf(options, sizeof(options), (G->PGPVersion == 5) ? "%s -o %s +batchmode=1 +force +language=us" : "%s %s +bat +f +lang=en", rp[1]->Filename, tf->Filename);
-        error = PGPCommand((G->PGPVersion == 5) ? "pgpv": "pgp", options, NOERRORS|KEEPLOG);
-        if(error > 0)
-          setFlag(frp->rmData->signedFlags, PGPS_BADSIG);
-
-        if(error >= 0)
-          RE_GetSigFromLog(frp->rmData, NULL);
-
-        CloseTempFile(tf);
-      }
+      if(error >= 0)
+        RE_GetSigFromLog(frp->rmData, NULL);
     }
     RE_DecodePart(rp[0]);
   }
