@@ -1388,7 +1388,7 @@ DECLARE(CheckPGPSignature) // ULONG forceRequester
         char options[SIZE_LARGE];
         int error;
 
-        snprintf(options, sizeof(options), (G->PGPVersion == 5) ? "%s -o %s +batchmode=1 +force +language=us" : "%s -o %s +bat +f +lang=en", fullfile, "T:PGP.tmp");
+        snprintf(options, sizeof(options), (G->PGPVersion == 5) ? "%s -o %s +batchmode=1 +force +language=us" : "%s %s +bat +f +lang=en", fullfile, "T:PGP.tmp");
         error = PGPCommand((G->PGPVersion == 5) ? "pgpv": "pgp", options, KEEPLOG);
         FinishUnpack(fullfile);
         DeleteFile("T:PGP.tmp");

@@ -8,6 +8,7 @@ $URL$
 2012-10-26 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_WR.c: don't close a temporary file twice.
+  * mui/ReadMailGroup.c: removed an invalid option from a PGP2 command sequence.
 
 2012-10-26 Samir Hawamdeh <s.hawamdeh@tin.it>
 
