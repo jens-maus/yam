@@ -5064,7 +5064,7 @@ static LONG SyncLaunchCommand(const char *cmd, ULONG flags, enum OutputDefType o
     TAG_DONE);
 
   // enforce success if this is requested
-  if(result > RETURN_OK && isFlagSet(flags, LAUCHF_IGNORE_RC))
+  if(result > RETURN_OK && isFlagSet(flags, LAUNCHF_IGNORE_RC))
   {
     W(DBF_UTIL, "ignoring return code %ld", result);
     result = RETURN_OK;
