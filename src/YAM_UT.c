@@ -5118,7 +5118,7 @@ LONG LaunchCommand(const char *cmd, ULONG flags, enum OutputDefType outdef)
   if(isFlagSet(flags, LAUNCHF_ASYNC))
   {
     // make sure we don't recurse
-    CLEAR_FLAG(flags, LAUNCHF_ASYNC);
+    clearFlag(flags, LAUNCHF_ASYNC);
 
     // the sub thread's standard I/O channel are different from the main
     // thread's, so we let the subthread open a new console window instead.
