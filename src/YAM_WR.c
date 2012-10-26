@@ -989,7 +989,6 @@ static BOOL WR_ComposePGP(FILE *fh, const struct Compose *comp, const char *boun
        fclose(tf1->FP);
        tf1->FP = NULL;
        ConvertCRLF(tf1->Filename, tf2->Filename, TRUE);
-       CloseTempFile(tf1);
 
        snprintf(pgpfile, sizeof(pgpfile), "%s.asc", tf2->Filename);
 
