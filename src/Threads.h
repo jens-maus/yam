@@ -49,7 +49,8 @@ enum ThreadAction
 #define TT_Priority                                0xf001 // priority of the thread
 
 #define TT_LaunchCommand_Command     (TAG_STRING | (TAG_USER + 1))
-#define TT_LaunchCommand_Output                    (TAG_USER + 2)
+#define TT_LaunchCommand_Flags                     (TAG_USER + 2)
+#define TT_LaunchCommand_Output                    (TAG_USER + 3)
 
 #define TT_SendMails_UserIdentity                  (TAG_USER + 1)
 #define TT_SendMails_Mode                          (TAG_USER + 2)

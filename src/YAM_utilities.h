@@ -96,6 +96,10 @@ enum ReqFileType
   ASL_MAX
 };
 
+// LaunchCommand
+#define LAUNCHF_ASYNC     (1<<0) // launch command asynchronously
+#define LAUNCHF_IGNORE_RC (1<<1) // ignore the shell return code
+
 enum OutputDefType
 {
   OUT_STDOUT=0,
@@ -289,7 +293,7 @@ char *   Encrypt(const char *source);
 void     GetPubScreenName(const struct Screen *screen, char *pubName, ULONG pubNameSize);
 BOOL     TimeHasElapsed(struct TimeVal *last, ULONG micros);
 char *   GetRealPath(const char *path);
-LONG     LaunchCommand(const char *cmd, BOOL asynch, enum OutputDefType outdef);
+LONG     LaunchCommand(const char *cmd, ULONG flags, enum OutputDefType outdef);
 char *   BuildAddress(char *buffer, size_t buflen, const char *address, const char *name);
 void     ExtractAddress(const char *line, struct Person *pe);
 char *   FileToBuffer(const char *file);

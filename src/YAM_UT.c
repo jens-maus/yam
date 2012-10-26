@@ -4412,7 +4412,7 @@ LONG PGPCommand(const char *progname, const char *options, const int flags)
 
   busy = BusyBegin(BUSY_TEXT);
   BusyText(busy, tr(MSG_BusyPGPrunning), "");
-  error = LaunchCommand(command, FALSE, OUT_NIL);
+  error = LaunchCommand(command, LAUNCHF_IGNORE_RC, OUT_NIL);
   BusyEnd(busy);
 
   if(error > 0 && !hasNoErrorsFlag(flags))
@@ -4999,7 +4999,7 @@ char *GetRealPath(const char *path)
 ///
 /// SyncLaunchCommand
 // synchronously launch a DOS command
-static LONG SyncLaunchCommand(const char *cmd, enum OutputDefType outdef)
+static LONG SyncLaunchCommand(const char *cmd, ULONG flags, enum OutputDefType outdef)
 {
   LONG result = RETURN_FAIL;
   BPTR path;
@@ -5049,18 +5049,28 @@ static LONG SyncLaunchCommand(const char *cmd, enum OutputDefType outdef)
   // is done by SystemTags/CreateNewProc itself.
   path = ObtainSearchPath();
 
-  if((result = SystemTags(cmd, SYS_Input,    in,
-                               SYS_Output,   out,
-                               #if defined(__amigaos4__)
-                               SYS_Error,    err,
-                               NP_Child,     TRUE,
-                               #endif
-                               SYS_Asynch,   FALSE,
-                               NP_Name,      "YAM launch command thread",
-                               NP_Path,      path,
-                               NP_StackSize, C->StackSize,
-                               NP_WindowPtr, -1,           // show no requesters at all
-                               TAG_DONE)) != RETURN_OK)
+  result = SystemTags(cmd,
+    SYS_Input,    in,
+    SYS_Output,   out,
+    #if defined(__amigaos4__)
+    SYS_Error,    err,
+    NP_Child,     TRUE,
+    #endif
+    SYS_Asynch,   FALSE,
+    NP_Name,      "YAM launch command thread",
+    NP_Path,      path,
+    NP_StackSize, C->StackSize,
+    NP_WindowPtr, -1,           // show no requesters at all
+    TAG_DONE);
+
+  // enforce success if this is requested
+  if(result > RETURN_OK && isFlagSet(flags, LAUCHF_IGNORE_RC))
+  {
+    W(DBF_UTIL, "ignoring return code %ld", result);
+    result = RETURN_OK;
+  }
+
+  if(result != RETURN_OK)
   {
     LONG error = IoErr();
     char fault[SIZE_LARGE];
@@ -5099,14 +5109,17 @@ static LONG SyncLaunchCommand(const char *cmd, enum OutputDefType outdef)
 ///
 /// LaunchCommand
 //  Executes a DOS command in a separate thread
-LONG LaunchCommand(const char *cmd, BOOL asynch, enum OutputDefType outdef)
+LONG LaunchCommand(const char *cmd, ULONG flags, enum OutputDefType outdef)
 {
   LONG result = RETURN_FAIL;
 
   ENTER();
 
-  if(asynch == TRUE)
+  if(isFlagSet(flags, LAUNCHF_ASYNC))
   {
+    // make sure we don't recurse
+    CLEAR_FLAG(flags, LAUNCHF_ASYNC);
+
     // the sub thread's standard I/O channel are different from the main
     // thread's, so we let the subthread open a new console window instead.
     if(outdef == OUT_STDOUT)
@@ -5114,11 +5127,12 @@ LONG LaunchCommand(const char *cmd, BOOL asynch, enum OutputDefType outdef)
 
     // let the thread framework do the dirty work
     result = (DoAction(NULL, TA_LaunchCommand, TT_LaunchCommand_Command, cmd,
+                                               TT_LaunchCommand_Flags, flags,
                                                TT_LaunchCommand_Output, outdef,
                                                TAG_DONE) != NULL);
   }
   else
-    result = SyncLaunchCommand(cmd, outdef);
+    result = SyncLaunchCommand(cmd, flags, outdef);
 
   RETURN(result);
   return result;

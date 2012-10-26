@@ -3335,7 +3335,7 @@ BOOL MA_StartMacro(const enum Macro num, const char *param)
       // now execute the command
       busy = BusyBegin(BUSY_TEXT);
       BusyText(busy, tr(MSG_MA_EXECUTINGCMD), "");
-      LaunchCommand(command, C->RX[num].WaitTerm == FALSE, C->RX[num].UseConsole ? OUT_STDOUT : OUT_NIL);
+      LaunchCommand(command, C->RX[num].WaitTerm ? 0 : LAUCHF_ASYNC, C->RX[num].UseConsole ? OUT_STDOUT : OUT_NIL);
       BusyEnd(busy);
 
       result = TRUE;

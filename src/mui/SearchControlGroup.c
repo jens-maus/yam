@@ -92,7 +92,7 @@ DECLARE(EditFile) // int n
     char buffer[SIZE_COMMAND+SIZE_PATHFILE];
 
     snprintf(buffer, sizeof(buffer), "%s \"%s\"", C->Editor, GetRealPath((char *)xget(data->ST_MATCH[msg->n], MUIA_String_Contents)));
-    LaunchCommand(buffer, TRUE, OUT_NIL);
+    LaunchCommand(buffer, LAUNCHF_ASYNC, OUT_NIL);
   }
 
   return 0;

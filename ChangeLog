@@ -9,6 +9,10 @@ $URL$
 
   * YAM_WR.c: don't close a temporary file twice.
   * mui/ReadMailGroup.c: removed an invalid option from a PGP2 command sequence.
+  * YAM_UT.c, misc: changed the LaunchCommand() function to take some flags
+    instead of a single boolean value for an asynchronous launch. For PGP
+    commands the return code can be ignored as PGP seems to terminate with a
+    return code of 1 even on success.
 
 2012-10-26 Samir Hawamdeh <s.hawamdeh@tin.it>
 

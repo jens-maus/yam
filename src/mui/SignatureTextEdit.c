@@ -188,7 +188,7 @@ DECLARE(EditExternally)
     // launch the external editor and wait until it is
     // finished...
     snprintf(editor, sizeof(editor), "%s \"T:tempsignature\"", C->Editor);
-    LaunchCommand(editor, FALSE, OUT_NIL);
+    LaunchCommand(editor, 0, OUT_NIL);
 
     // refresh the signature in the internal editor after the external is finished
     if((buffer = FileToBuffer("T:tempsignature")) != NULL)

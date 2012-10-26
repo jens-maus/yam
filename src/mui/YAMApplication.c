@@ -1128,7 +1128,7 @@ DECLARE(NewMailAlert) // struct MailServerNode *msn, struct DownloadResult *down
     #endif // __amigaos4__
 
     if(msg->msn->notifyByCommand == TRUE)
-      LaunchCommand(msg->msn->notifyCommand, FALSE, OUT_STDOUT);
+      LaunchCommand(msg->msn->notifyCommand, 0, OUT_STDOUT);
 
     if(msg->msn->notifyBySound == TRUE)
       PlaySound(msg->msn->notifySound);

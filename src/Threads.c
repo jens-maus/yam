@@ -226,7 +226,7 @@ static LONG DoThreadMessage(struct ThreadMessage *msg)
     case TA_LaunchCommand:
     {
       result = LaunchCommand((const char *)GetTagData(TT_LaunchCommand_Command, (IPTR)NULL, msg->actionTags),
-                             FALSE,
+                             GetTagData(TT_LaunchCommand_Flags, 0, msg->actionTags),
                              GetTagData(TT_LaunchCommand_Output, OUT_NIL, msg->actionTags));
     }
     break;

@@ -1835,7 +1835,7 @@ BOOL ExecuteFilterAction(const struct FilterNode *filter, struct Mail *mail, str
 
     GetMailFile(mailfile, sizeof(mailfile), NULL, mail);
     snprintf(buf, sizeof(buf), "%s \"%s\"", filter->executeCmd, mailfile);
-    LaunchCommand(buf, FALSE, OUT_STDOUT);
+    LaunchCommand(buf, 0, OUT_STDOUT);
     if(result != NULL)
       result->Executed++;
   }

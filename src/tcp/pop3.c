@@ -148,7 +148,7 @@ static void ApplyRemoteFilters(const struct MinList *filterList, struct MailTran
     if(DoFilterSearch(filter, tnode->mail) == TRUE)
     {
       if(hasExecuteAction(filter) && filter->executeCmd[0] != '\0')
-         LaunchCommand(filter->executeCmd, FALSE, OUT_STDOUT);
+         LaunchCommand(filter->executeCmd, 0, OUT_STDOUT);
 
       if(hasPlaySoundAction(filter) && filter->playSound[0] != '\0')
          PlaySound(filter->playSound);
