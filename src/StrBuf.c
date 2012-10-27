@@ -33,133 +33,202 @@
 #include "StrBuf.h"
 #include "Debug.h"
 
-/// AllocStrBuf
-//  Allocates a dynamic buffer
-char *AllocStrBuf(size_t initlen)
+struct StrBuf
 {
-  size_t *strbuf; // size_t because we store the length in the first area
+  size_t size;    // the allocated memory size for the string
+  size_t length;  // the current string length
+  char string[0]; // the string itsefl
+};
+
+/// AllocStrBufInternal
+// allocates a dynamic buffer
+static struct StrBuf *AllocStrBufInternal(size_t size)
+{
+  struct StrBuf *strbuf;
 
   ENTER();
 
-  if((strbuf = calloc(initlen+sizeof(size_t), sizeof(char))) != NULL)
+  if((strbuf = malloc(sizeof(struct StrBuf) + size)) != NULL)
   {
-    *strbuf = initlen;
-    strbuf++;
+    strbuf->size = size;
+    strbuf->length = 0;
+    strbuf->string[0] = '\0';
   }
 
   RETURN(strbuf);
-  return (char *)strbuf;
+  return strbuf;
+}
+
+///
+/// AllocStrBuf
+//  Allocates a dynamic buffer
+char *AllocStrBuf(size_t initsize)
+{
+  char *result = NULL;
+  struct StrBuf *strbuf;
+
+  ENTER();
+
+  if((strbuf = AllocStrBufInternal(initsize)) != NULL)
+  {
+    result = &strbuf->string[0];
+  }
+
+  RETURN(result);
+  return result;
 }
 
 ///
 /// StrBufCpy
 //  Fills a dynamic buffer and returns the length of the string
-size_t StrBufCpy(char **strbuf, const char *source)
+size_t StrBufCpy(char **buf, const char *source)
 {
-  size_t reqlen = (source != NULL) ? strlen(source) : 0;
+  size_t reqsize;
+  struct StrBuf *strbuf;
 
   ENTER();
 
+  if(source != NULL)
+    reqsize = strlen(source);
+  else
+    reqsize = 0;
+
   // if our strbuf is NULL we have to allocate a new buffer
-  if(*strbuf == NULL)
-    *strbuf = AllocStrBuf(reqlen+1);
+  if(*buf == NULL)
+  {
+    if((strbuf = AllocStrBufInternal(reqsize+1)) != NULL)
+      *buf = &strbuf->string[0];
+    else
+      reqsize = 0;
+  }
   else
   {
-    size_t oldlen = ((size_t *)*strbuf)[-1];
-    size_t newlen;
+    size_t oldsize;
+    size_t newsize;
+
+    strbuf = (struct StrBuf *)(*buf - sizeof(struct StrBuf));
+    oldsize = strbuf->size;
+    newsize = oldsize;
 
     // make sure we allocate in SIZE_DEFAULT chunks
-    for(newlen = oldlen; newlen <= reqlen; newlen += SIZE_DEFAULT)
-      ;
+    while(newsize <= reqsize)
+      newsize += SIZE_DEFAULT;
 
     // if we have to change the size do it now
-    if(newlen > oldlen)
+    if(newsize > oldsize)
     {
-      char *newstrbuf;
+      struct StrBuf *newstrbuf;
 
       // allocate a new buffer and replace the old one with it
-      if((newstrbuf = AllocStrBuf(newlen+1)) != NULL)
+      if((newstrbuf = AllocStrBufInternal(newsize+1)) != NULL)
       {
-        FreeStrBuf(*strbuf);
-        *strbuf = newstrbuf;
+        free(strbuf);
+        strbuf = newstrbuf;
+        *buf = &strbuf->string[0];
       }
       else
       {
-      	reqlen = 0;
+      	reqsize = 0;
       }
     }
   }
 
   // do a string copy into the new buffer
-  if(reqlen > 0)
-    reqlen = strlcpy(*strbuf, source, ((size_t *)*strbuf)[-1]);
+  if(reqsize > 0)
+  {
+    reqsize = strlcpy(strbuf->string, source, strbuf->size);
+    strbuf->length = reqsize;
+  }
 
-  RETURN(reqlen);
-  return reqlen;
+  RETURN(reqsize);
+  return reqsize;
 }
 
 ///
 /// StrBufCat
 //  String concatenation using a dynamic buffer and return the length of the string
-size_t StrBufCat(char **strbuf, const char *source)
+size_t StrBufCat(char **buf, const char *source)
 {
-  size_t reqlen = (source != NULL) ? strlen(source) : 0;
+  size_t reqsize;
+  struct StrBuf *strbuf;
 
   ENTER();
 
+  if(source != NULL)
+    reqsize = strlen(source);
+  else
+    reqsize = 0;
+
   // if our strbuf is NULL we have to allocate a new buffer
-  if(*strbuf == NULL)
-    *strbuf = AllocStrBuf(reqlen+1);
+  if(*buf == NULL)
+  {
+    if((strbuf = AllocStrBufInternal(reqsize+1)) != NULL)
+      *buf = &strbuf->string[0];
+    else
+      reqsize = 0;
+  }
   else
   {
-    size_t oldlen = ((size_t *)*strbuf)[-1];
-    size_t newlen;
+    size_t oldsize;
+    size_t newsize;
 
-    // increase reqlen by the content length of
+    strbuf = (struct StrBuf *)(*buf - sizeof(struct StrBuf));
+    oldsize = strbuf->size;
+    newsize = oldsize;
+
+    // increase required size by the content length of
     // the old strbuf
-    reqlen += strlen(*strbuf);
+    reqsize += strbuf->length;
 
     // make sure we allocate in SIZE_DEFAULT chunks
-    for(newlen = oldlen; newlen <= reqlen; newlen += SIZE_DEFAULT)
-      ;
+    while(newsize <= reqsize)
+      newsize += SIZE_DEFAULT;
 
     // if we have to change the size do it now
-    if(newlen > oldlen)
+    if(newsize > oldsize)
     {
-      char *newstrbuf;
+      struct StrBuf *newstrbuf;
 
-      // allocate a new buffer, copy the old contents to it and replace the old one with it
-      if((newstrbuf = AllocStrBuf(newlen+1)) != NULL)
+      // allocate a new buffer and replace the old one with it
+      if((newstrbuf = AllocStrBufInternal(newsize+1)) != NULL)
       {
-        memmove(newstrbuf, *strbuf, oldlen);
-        FreeStrBuf(*strbuf);
-        *strbuf = newstrbuf;
+        newstrbuf->length = strbuf->length;
+        memmove(newstrbuf->string, strbuf->string, strbuf->length+1);
+        free(strbuf);
+        strbuf = newstrbuf;
+        *buf = &strbuf->string[0];
       }
       else
       {
-      	reqlen = 0;
+      	reqsize = 0;
       }
     }
   }
 
   // do a string concatenation into the new buffer
-  if(reqlen > 0)
-    reqlen = strlcat(*strbuf, source, ((size_t *)*strbuf)[-1]);
+  if(reqsize > 0)
+  {
+    // use strlcpy() instead of strlcat() because we keep track of the current string length
+    reqsize = strlcpy(&strbuf->string[strbuf->length], source, strbuf->size - strbuf->length);
+    strbuf->length += reqsize;
+  }
 
-  RETURN(reqlen);
-  return reqlen;
+  RETURN(reqsize);
+  return reqsize;
 }
 
 ///
 /// FreeStrBuf
 // free a dynamic string buffer
-void FreeStrBuf(char *str)
+void FreeStrBuf(char *buf)
 {
   ENTER();
 
-  if(str != NULL)
+  if(buf != NULL)
   {
-	free(((char *)(str))-sizeof(size_t));
+	struct StrBuf *strbuf = (struct StrBuf *)(buf - sizeof(struct StrBuf));
+
+	free(strbuf);
   }
 
   LEAVE();

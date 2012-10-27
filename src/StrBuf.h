@@ -30,9 +30,9 @@
 
 #include <exec/nodes.h>
 
-char * AllocStrBuf(size_t initlen);
-size_t StrBufCat(char **strbuf, const char *source);
-size_t StrBufCpy(char **strbuf, const char *source);
-void FreeStrBuf(char *strbuf);
+char * AllocStrBuf(size_t initsize);
+size_t StrBufCat(char **buf, const char *source);
+size_t StrBufCpy(char **buf, const char *source);
+void FreeStrBuf(char *buf);
 
 #endif /* STRBUF_H */

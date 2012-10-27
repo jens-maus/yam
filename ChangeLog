@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-10-27 Thore Böckelmann <tboeckel@gmx.de>
+
+  * StrBuf.c: reworked the string buffer functions to carry the allocation size
+    and the current string length.
+
 2012-10-26 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_WR.c: don't close a temporary file twice.
