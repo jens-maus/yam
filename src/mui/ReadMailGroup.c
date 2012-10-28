@@ -965,38 +965,12 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
         }
         else
         {
-#if 0
-          struct Part *rp;
-          ULONG validParts;
-#endif
-
           // make sure the attachmentGroup is hidden
           HideAttachmentGroup(data);
 
-#warning there is something fishy going on here
-#if 0
-/*
-This code is meant to remove the multipart/mixed flag from mails which falsely claim to be
-multipart mails but consist of a single part only.
-However, from time to time this code decides to remove the multipart/mixed flag as it cannot
-find valid mail parts. This happens when switching between mails with and without attachments
-very quickly and then falsely removes the flag even for valid mails.
-*/
-          // now we iterate through our message part list and
-          // count the number of valid parts
-          validParts = 0;
-          for(rp = rmData->firstPart; rp != NULL; rp = rp->Next)
-          {
-            if(rp->Nr > PART_RAW && rp->Nr != rp->rmData->letterPartNum && (C->DisplayAllAltPart ||
-               (isAlternativePart(rp) == FALSE || rp->Parent == NULL || rp->Parent->MainAltPart == rp)))
-            {
-              validParts++;
-            }
-          }
-
           // if this mail was/is a multipart mail but no valid part was
           // found we can remove the multipart flag again
-          if(isMP_MixedMail(mail) && validParts == 0)
+          if(isMP_MixedMail(mail))
           {
             // clear the multipart/mixed flag
             clearFlag(mail->mflags, MFLAG_MP_MIXED);
@@ -1014,7 +988,6 @@ very quickly and then falsely removes the flag even for valid mails.
               DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_RedrawMail, mail);
             }
           }
-#endif
         }
       }
       else

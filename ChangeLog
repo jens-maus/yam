@@ -8,7 +8,8 @@ $URL$
 2012-10-28 Thore Böckelmann <tboeckel@gmx.de>
 
   * InfoBar.c: don't use MUIM_Application_InputBuffered and a timed update
-    unless it is absolutely necessary (i.e. for abortable progress bars).
+    unless it is absolutely necessary (i.e. for abortable progress bars). This
+    closes #352.
 
 2012-10-27 Thore Böckelmann <tboeckel@gmx.de>
 
