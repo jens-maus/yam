@@ -164,7 +164,6 @@ OVERLOAD(OM_NEW)
           Child, gauge = GaugeObject,
             GaugeFrame,
             MUIA_Gauge_Horiz,    TRUE,
-            MUIA_Gauge_InfoText, "",
           End,
           Child, stopButton = TextObject,
             ButtonFrame,
@@ -301,26 +300,23 @@ DECLARE(ShowBusyBar) // struct BusyNode *busy
 
   ENTER();
 
-  // first of all give the application the chance to clear its event loop
-  DoMethod(G->App, MUIM_Application_InputBuffered);
-
-  // update the busy bar whenever another busy action is to be shown,
-  // or if the same busy action needs an update and enough time since the last update has passed
-  if(msg->busy != data->lastBusy || TimeHasElapsed(&data->last_gaugemove, 250000) == TRUE)
+  if(msg->busy != NULL)
   {
-    if(msg->busy != NULL)
+    switch(msg->busy->type)
     {
-      switch(msg->busy->type)
+      case BUSY_TEXT:
       {
-        case BUSY_TEXT:
-        {
-          set(data->TX_INFO, MUIA_Text_Contents, msg->busy->infoText);
-          set(data->GA_LABEL, MUIA_Text_Contents, NULL);
-          set(data->GA_GROUP, MUIA_Group_ActivePage, 2);
-        }
-	    break;
+        set(data->TX_INFO, MUIA_Text_Contents, msg->busy->infoText);
+        set(data->GA_LABEL, MUIA_Text_Contents, NULL);
+        set(data->GA_GROUP, MUIA_Group_ActivePage, 2);
+      }
+      break;
 
-        case BUSY_PROGRESS:
+      case BUSY_PROGRESS:
+      {
+        // update the busy bar whenever another busy action is to be shown,
+        // or if the same busy action needs an update and enough time since the last update has passed
+        if(msg->busy != data->lastBusy || TimeHasElapsed(&data->last_gaugemove, 250000) == TRUE)
         {
           // we need valid gauge limits to be able to show the gauge
           if(msg->busy->progressMax > 0 && msg->busy->progressCurrent <= msg->busy->progressMax)
@@ -339,9 +335,14 @@ DECLARE(ShowBusyBar) // struct BusyNode *busy
             set(data->GA_GROUP, MUIA_Group_ActivePage, 1);
           }
         }
-        break;
+      }
+      break;
 
-        case BUSY_PROGRESS_ABORT:
+      case BUSY_PROGRESS_ABORT:
+      {
+        // update the busy bar whenever another busy action is to be shown,
+        // or if the same busy action needs an update and enough time since the last update has passed
+        if(msg->busy != data->lastBusy || TimeHasElapsed(&data->last_gaugemove, 250000) == TRUE)
         {
           // we need valid gauge limits to be able to show the gauge
           if(msg->busy->progressMax > 0 && msg->busy->progressCurrent <= msg->busy->progressMax)
@@ -357,22 +358,25 @@ DECLARE(ShowBusyBar) // struct BusyNode *busy
             set(data->BT_STOP, MUIA_ShowMe, TRUE);
             set(data->GA_GROUP, MUIA_Group_ActivePage, 1);
 
+            // give the application the chance to clear its event loop
+            DoMethod(G->App, MUIM_Application_InputBuffered);
+
             goOn = (data->stopButtonPressed == FALSE);
           }
         }
-        break;
       }
+      break;
     }
-    else
-    {
-      // hide the busy bar
-      set(data->GA_GROUP, MUIA_Group_ActivePage, 0);
-      set(data->GA_LABEL, MUIA_Text_Contents, NULL);
-	}
-
-    // remember the changed busy action
-    data->lastBusy = msg->busy;
   }
+  else
+  {
+    // hide the busy bar
+    set(data->GA_GROUP, MUIA_Group_ActivePage, 0);
+    set(data->GA_LABEL, MUIA_Text_Contents, NULL);
+  }
+
+  // remember the changed busy action
+  data->lastBusy = msg->busy;
 
   RETURN(goOn);
   return goOn;
