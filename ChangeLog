@@ -10,6 +10,9 @@ $URL$
   * InfoBar.c: don't use MUIM_Application_InputBuffered and a timed update
     unless it is absolutely necessary (i.e. for abortable progress bars). This
     closes #352.
+  * YAM_UT.c: reworked the command output redirection to redirect the output of
+    PGP to NIL: as it seems to use stderr for the general output. This closes #4
+    again.
 
 2012-10-27 Thore Böckelmann <tboeckel@gmx.de>
 

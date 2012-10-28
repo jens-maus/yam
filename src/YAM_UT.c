@@ -5057,10 +5057,11 @@ static LONG SyncLaunchCommand(const char *cmd, ULONG flags, enum OutputDefType o
 {
   LONG result = RETURN_FAIL;
   BPTR path;
-  BPTR in = ZERO;
-  BPTR out = ZERO;
+  BPTR in;
+  BPTR out;
   #if defined(__amigaos4__)
-  BPTR err = ZERO;
+  BPTR err;
+  BOOL closeErr;
   #endif
 
   ENTER();
@@ -5068,12 +5069,14 @@ static LONG SyncLaunchCommand(const char *cmd, ULONG flags, enum OutputDefType o
 
   switch(outdef)
   {
+    default:
     case OUT_STDOUT:
     {
       in = Input();
       out = Output();
       #if defined(__amigaos4__)
       err = ErrorOutput();
+      closeErr = FALSE;
       #endif
     }
     break;
@@ -5082,6 +5085,10 @@ static LONG SyncLaunchCommand(const char *cmd, ULONG flags, enum OutputDefType o
     {
       in = Open("NIL:", MODE_OLDFILE);
       out = Open("NIL:", MODE_NEWFILE);
+      #if defined(__amigaos4__)
+      err = Open("NIL:", MODE_NEWFILE);
+      closeErr = TRUE;
+      #endif
     }
     break;
 
@@ -5094,6 +5101,10 @@ static LONG SyncLaunchCommand(const char *cmd, ULONG flags, enum OutputDefType o
       in = Open("CON:20/20/600/100/YAM thread/AUTO/CLOSE/WAIT/INACTIVE", MODE_NEWFILE);
       #endif
       out = ZERO;
+      #if defined(__amigaos4__)
+      err = ErrorOutput();
+      closeErr = FALSE;
+      #endif
     }
     break;
 
@@ -5102,7 +5113,8 @@ static LONG SyncLaunchCommand(const char *cmd, ULONG flags, enum OutputDefType o
       in = Open("NIL:", MODE_OLDFILE);
       out = ZERO;
       #if defined(__amigaos4__)
-      err = ErrorOutput();
+      err = Open("NIL:", MODE_NEWFILE);
+      closeErr = TRUE;
       #endif
     }
     break;
@@ -5164,6 +5176,11 @@ static LONG SyncLaunchCommand(const char *cmd, ULONG flags, enum OutputDefType o
       Close(out);
     if(in != ZERO)
       Close(in);
+    #if defined(__amigaos4__)
+    // DOS will not close the error stream for us if we opened it ourself
+    if(err != ZERO && closeErr == TRUE)
+      Close(err);
+    #endif
   }
 
   RETURN(result);
