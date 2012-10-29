@@ -7364,7 +7364,7 @@ You will be notified as soon as updates are available.
 MSG_PGPPASS_SHOW_CHARS (2399//)
 Show characters
 ;
-MSG_CANNOT_CREATE_CUSTOM_CLASS (2400////)
+MSG_CANNOT_CREATE_CUSTOM_CLASS (2400//)
 Failed to create custom class '%s'\n\
 as subclass of '%s'.
 ; CLASS,SUPERCLASS
