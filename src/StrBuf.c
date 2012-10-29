@@ -26,6 +26,7 @@
 ***************************************************************************/
 
 #include <string.h>
+#include <stdio.h>
 
 #include "YAM_stringsizes.h"
 
@@ -38,6 +39,10 @@ struct StrBuf
   size_t length;  // the current string length
   char string[0]; // the string itsefl
 };
+
+// some macros to make the conversion between (char *) and (struct StrBuf *) easier
+#define STR_TO_STRBUF(ptr)    (struct StrBuf *)(((size_t)(ptr)) - sizeof(struct StrBuf))
+#define STRBUF_TO_STR(strbuf) (&(strbuf)->string[0])
 
 /// AllocStrBufInternal
 // allocates a dynamic buffer
@@ -70,7 +75,7 @@ char *AllocStrBuf(size_t initsize)
 
   if((strbuf = AllocStrBufInternal(initsize)) != NULL)
   {
-    result = &strbuf->string[0];
+    result = STRBUF_TO_STR(strbuf);
   }
 
   RETURN(result);
@@ -96,7 +101,7 @@ size_t StrBufCpy(char **buf, const char *source)
   if(*buf == NULL)
   {
     if((strbuf = AllocStrBufInternal(reqsize+1)) != NULL)
-      *buf = &strbuf->string[0];
+      *buf = STRBUF_TO_STR(strbuf);
     else
       reqsize = 0;
   }
@@ -105,7 +110,7 @@ size_t StrBufCpy(char **buf, const char *source)
     size_t oldsize;
     size_t newsize;
 
-    strbuf = (struct StrBuf *)(*buf - sizeof(struct StrBuf));
+    strbuf = STR_TO_STRBUF(*buf);
     oldsize = strbuf->size;
     newsize = oldsize;
 
@@ -123,7 +128,7 @@ size_t StrBufCpy(char **buf, const char *source)
       {
         free(strbuf);
         strbuf = newstrbuf;
-        *buf = &strbuf->string[0];
+        *buf = STRBUF_TO_STR(strbuf);
       }
       else
       {
@@ -135,8 +140,10 @@ size_t StrBufCpy(char **buf, const char *source)
   // do a string copy into the new buffer
   if(reqsize > 0)
   {
-    reqsize = strlcpy(strbuf->string, source, strbuf->size);
-    strbuf->length = reqsize;
+    size_t copied;
+
+    copied = strlcpy(strbuf->string, source, strbuf->size);
+    strbuf->length = copied;
   }
 
   RETURN(reqsize);
@@ -148,30 +155,33 @@ size_t StrBufCpy(char **buf, const char *source)
 //  String concatenation using a dynamic buffer and return the length of the string
 size_t StrBufCat(char **buf, const char *source)
 {
+  size_t srcsize;
   size_t reqsize;
   struct StrBuf *strbuf;
 
   ENTER();
 
   if(source != NULL)
-    reqsize = strlen(source);
+    srcsize = strlen(source);
   else
-    reqsize = 0;
+    srcsize = 0;
+
+  reqsize = srcsize;
 
   // if our strbuf is NULL we have to allocate a new buffer
   if(*buf == NULL)
   {
     if((strbuf = AllocStrBufInternal(reqsize+1)) != NULL)
-      *buf = &strbuf->string[0];
+      *buf = STRBUF_TO_STR(strbuf);
     else
-      reqsize = 0;
+      srcsize = 0;
   }
   else
   {
     size_t oldsize;
     size_t newsize;
 
-    strbuf = (struct StrBuf *)(*buf - sizeof(struct StrBuf));
+    strbuf = strbuf = STR_TO_STRBUF(*buf);
     oldsize = strbuf->size;
     newsize = oldsize;
 
@@ -195,7 +205,7 @@ size_t StrBufCat(char **buf, const char *source)
         memmove(newstrbuf->string, strbuf->string, strbuf->length+1);
         free(strbuf);
         strbuf = newstrbuf;
-        *buf = &strbuf->string[0];
+        *buf = STRBUF_TO_STR(strbuf);
       }
       else
       {
@@ -205,11 +215,13 @@ size_t StrBufCat(char **buf, const char *source)
   }
 
   // do a string concatenation into the new buffer
-  if(reqsize > 0)
+  if(srcsize > 0)
   {
+    size_t copied;
+
     // use strlcpy() instead of strlcat() because we keep track of the current string length
-    reqsize = strlcpy(&strbuf->string[strbuf->length], source, strbuf->size - strbuf->length);
-    strbuf->length += reqsize;
+    copied = strlcpy(&strbuf->string[strbuf->length], source, strbuf->size - strbuf->length);
+    strbuf->length += copied;
   }
 
   RETURN(reqsize);
@@ -227,7 +239,7 @@ size_t StrBufLength(char *buf)
 
   if(buf != NULL)
   {
-    struct StrBuf *strbuf = (struct StrBuf *)(*buf - sizeof(struct StrBuf));
+    struct StrBuf *strbuf = STR_TO_STRBUF(buf);
 
     length = strbuf->length;
   }
@@ -245,7 +257,7 @@ void FreeStrBuf(char *buf)
 
   if(buf != NULL)
   {
-	struct StrBuf *strbuf = (struct StrBuf *)(buf - sizeof(struct StrBuf));
+	struct StrBuf *strbuf = STR_TO_STRBUF(buf);
 
 	free(strbuf);
   }
