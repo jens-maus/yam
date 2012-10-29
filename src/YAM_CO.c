@@ -2592,6 +2592,7 @@ void CO_Validate(struct Config *co, BOOL update)
       W(DBF_CONFIG, "mismatching DST settings, config %ld vs. DST tool %ld", co->DaylightSaving, (G->CO_DST == 2));
       if(G->TrustedDST == FALSE)
       {
+        D(DBF_CONFIG, "asking user for confirmation about DST setting");
         res = MUI_Request(G->App, refWindow, MUIF_NONE,
                           tr(MSG_CO_AUTODSTWARN_TITLE),
                           tr(MSG_CO_AUTODSTWARN_BT),
@@ -2600,6 +2601,7 @@ void CO_Validate(struct Config *co, BOOL update)
       else
       {
         // fake "Change" click if we have a trustable DST setting
+        D(DBF_CONFIG, "using trusable DST setting");
         res = 1;
 	  }
 
