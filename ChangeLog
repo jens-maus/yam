@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-10-29 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_CO.c: reworked the DST check once more to ask the user for confirmation
+    about a mismatching DST setting only if there is no trustable DST tool found
+    to be active.
+
 2012-10-28 Thore Böckelmann <tboeckel@gmx.de>
 
   * InfoBar.c: don't use MUIM_Application_InputBuffered and a timed update
