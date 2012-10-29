@@ -2884,7 +2884,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
               D(DBF_MAIL, "converting HTMLized part #%ld to plain-text", part->Nr);
 
               // convert all HTML stuff to plain text
-              if((converted = html2mail(msg+1)) != NULL)
+              if((converted = html2mail(&msg[1])) != NULL)
               {
                 // free the old HTMLized message
                 FreeStrBuf(msg);
@@ -2899,7 +2899,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
             else
             {
               // nothing serious happened so let's continue
-              rptr = msg+1;
+              rptr = &msg[1];
             }
 
             // parse the message string
