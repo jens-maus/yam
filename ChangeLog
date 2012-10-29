@@ -10,6 +10,12 @@ $URL$
   * YAM_CO.c: reworked the DST check once more to ask the user for confirmation
     about a mismatching DST setting only if there is no trustable DST tool found
     to be active.
+  * YAM_CO.c: reworked the time zone check in the same way as the DST setting
+    check. If the current setting is not matching the system setting and a
+    trustable time zone or DST source is found then the mismatching setting will
+    silently adapted to the system setting. Otherwise the user will be asked for
+    confirmation. This should mute YAM on DST changes if appropriate tools are
+    active.
 
 2012-10-28 Thore Böckelmann <tboeckel@gmx.de>
 

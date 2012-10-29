@@ -2549,15 +2549,25 @@ void CO_Validate(struct Config *co, BOOL update)
 
   if(co->TimeZoneCheck == TRUE)
   {
-    if(G->TrustedTimezone == TRUE && co->TimeZone != gmtOffset)
+    if(co->TimeZone != gmtOffset)
     {
       int res;
 
       W(DBF_CONFIG, "mismatching time zone offsets, config %ld vs. system %ld", co->TimeZone, gmtOffset);
-      res = MUI_Request(G->App, refWindow, MUIF_NONE,
-                        tr(MSG_CO_TIMEZONEWARN_TITLE),
-                        tr(MSG_CO_TIMEZONEWARN_BT),
-                        tr(MSG_CO_TIMEZONEWARN));
+      if(G->TrustedTimezone == FALSE)
+      {
+        D(DBF_CONFIG, "asking user for confirmation about time zone setting");
+        res = MUI_Request(G->App, refWindow, MUIF_NONE,
+                          tr(MSG_CO_TIMEZONEWARN_TITLE),
+                          tr(MSG_CO_TIMEZONEWARN_BT),
+                          tr(MSG_CO_TIMEZONEWARN));
+      }
+      else
+      {
+        // fake "Change" click if we have a trustable time zone setting
+        D(DBF_CONFIG, "using trusable time zone setting");
+        res = 1;
+	  }
 
       // if the user has clicked on Change, we do
       // change the timezone and save it immediatly
@@ -2573,9 +2583,9 @@ void CO_Validate(struct Config *co, BOOL update)
       }
     }
   }
-  else if(G->TrustedTimezone == TRUE && co->TimeZone == gmtOffset)
+  else if(co->TimeZone == gmtOffset)
   {
-    // enable the timezone checking again!
+    // enable the time zone checking again!
     co->TimeZoneCheck = TRUE;
     saveAtEnd = TRUE;
   }
