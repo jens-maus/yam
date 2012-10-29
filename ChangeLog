@@ -16,6 +16,8 @@ $URL$
     silently adapted to the system setting. Otherwise the user will be asked for
     confirmation. This should mute YAM on DST changes if appropriate tools are
     active.
+  * StrBuf.c: added function StrBufLength() to return the length of the string
+    without having to iterate over the string.
 
 2012-10-28 Thore Böckelmann <tboeckel@gmx.de>
 

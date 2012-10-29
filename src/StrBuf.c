@@ -218,6 +218,26 @@ size_t StrBufCat(char **buf, const char *source)
 }
 
 ///
+/// StrBufLength
+// return the current length of a dynamic string buffer without calculation
+size_t StrBufLength(char *buf)
+{
+  size_t length = 0;
+
+  ENTER();
+
+  if(buf != NULL)
+  {
+    struct StrBuf *strbuf = (struct StrBuf *)(*buf - sizeof(struct StrBuf));
+
+    length = strbuf->length;
+  }
+
+  RETURN(length);
+  return length;
+}
+
+///
 /// FreeStrBuf
 // free a dynamic string buffer
 void FreeStrBuf(char *buf)

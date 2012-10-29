@@ -33,6 +33,7 @@
 char * AllocStrBuf(size_t initsize);
 size_t StrBufCat(char **buf, const char *source);
 size_t StrBufCpy(char **buf, const char *source);
+size_t StrBufLength(char *buf);
 void FreeStrBuf(char *buf);
 
 #endif /* STRBUF_H */
