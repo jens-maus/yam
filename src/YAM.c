@@ -696,8 +696,7 @@ static int GetDST(BOOL update)
   // the DST setting can be trusted if we found any valid DST tool
   G->TrustedDST = (ADSTdata.method != ADST_NONE);
 
-  // No correctly installed AutoDST tool was found
-  // so lets return zero.
+  // return the found DST setting
   RETURN(result);
   return result;
 }
