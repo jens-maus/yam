@@ -2890,7 +2890,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                 FreeStrBuf(msg);
 
                 // overwrite the old values
-                nread = strlen(converted);
+                nread = StrBufLength(converted);
                 msg = converted;
               }
 

@@ -1962,7 +1962,7 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
 
         if((cmsg = RE_ReadInMessage(rmData, RIM_EDIT)) != NULL)
         {
-          int msglen = strlen(cmsg);
+          size_t msglen = StrBufLength(cmsg);
 
           // we check whether cmsg contains any text and if so we
           // write out the whole text to our temporary file.
@@ -3015,7 +3015,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
             else if((cmsg = RE_ReadInMessage(rmData, RIM_QUOTE)) != NULL)
             {
               // make sure we quote the text in question.
-              QuoteText(out, cmsg, strlen(cmsg), C->EdWrapMode != EWM_OFF ? C->EdWrapCol-2 : 1024);
+              QuoteText(out, cmsg, StrBufLength(cmsg), C->EdWrapMode != EWM_OFF ? C->EdWrapCol-2 : 1024);
 
               FreeStrBuf(cmsg);
             }
