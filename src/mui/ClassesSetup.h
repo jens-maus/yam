@@ -28,7 +28,7 @@
 #ifndef CLASSES_CLASSES_SETUP_H
 #define CLASSES_CLASSES_SETUP_H
 
-BOOL YAM_SetupClasses(void);
+BOOL YAM_SetupClasses(const char **failClass, const char **failSuperClass);
 void YAM_CleanupClasses(void);
 
 #endif /* CLASSES_CLASSES_SETUP_H */

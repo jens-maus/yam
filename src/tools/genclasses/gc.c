@@ -1051,12 +1051,15 @@ void gen_supportroutines( FILE *fp )
   fprintf(fp, "\n");
 
   fprintf(fp, "%s%s%s", arg_storm ? "/// " : "", arg_storm ? bn : "", arg_storm ? "_SetupClasses()\n" : "");
-  fprintf(fp, "BOOL %s_SetupClasses(void)\n", bn);
+  fprintf(fp, "BOOL %s_SetupClasses(const char **failClass, const char **failSuperClass)\n", bn);
   fprintf(fp, "{\n");
   fprintf(fp, "  BOOL success = TRUE;\n");
   fprintf(fp, "  unsigned int i;\n");
   fprintf(fp, "\n");
   fprintf(fp, "  ENTER();\n");
+  fprintf(fp, "\n");
+  fprintf(fp, "  *failClass = NULL;\n");
+  fprintf(fp, "  *failSuperClass = NULL;\n");
   fprintf(fp, "\n");
   fprintf(fp, "  memset(%sClasses, 0, sizeof(%sClasses));\n", bn, bn);
   fprintf(fp, "  for (i = 0; i < NUMBEROFCLASSES; i++)\n");
@@ -1077,6 +1080,8 @@ void gen_supportroutines( FILE *fp )
   fprintf(fp, "      if(superMCC == NULL)\n");
   fprintf(fp, "      {\n");
   fprintf(fp, "        E(DBF_STARTUP, \"superclass '%%s' of class '%%s' not yet created!\", MCCInfo[i].SuperClass, MCCInfo[i].Name);\n");
+  fprintf(fp, "        *failClass = MCCInfo[i].Name;\n");
+  fprintf(fp, "        *failSuperClass = MCCInfo[i].SuperClass;\n");
   fprintf(fp, "        success = FALSE;\n");
   fprintf(fp, "        break;\n");
   fprintf(fp, "      }\n");
@@ -1092,6 +1097,8 @@ void gen_supportroutines( FILE *fp )
   fprintf(fp, "    if(%sClasses[i] == NULL)\n", bn);
   fprintf(fp, "    {\n");
   fprintf(fp, "      E(DBF_STARTUP, \"failed to create class '%%s' as subclass of '%%s'\", MCCInfo[i].Name, MCCInfo[i].SuperClass);\n");
+  fprintf(fp, "      *failClass = MCCInfo[i].Name;\n");
+  fprintf(fp, "      *failSuperClass = MCCInfo[i].SuperClass;\n");
   fprintf(fp, "      success = FALSE;\n");
   fprintf(fp, "      break;\n");
   fprintf(fp, "    }\n");

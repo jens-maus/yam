@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.64 (25.10.2012)
+## version $VER: YAM.catalog 7.65 (29.10.2012)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -257,10 +257,6 @@ Lade Adressbuch...
 MSG_InitLibs
 Initialisiere Bibliotheken und Klassen...
 ; Initializing libraries and classes...
-;
-MSG_ErrorClasses
-Kann MUI-Klassen nicht erzeugen
-; Can't create MUI custom classes
 ;
 MSG_ErrorAslStruct
 Kann ASL-Struktur nicht allozieren
@@ -8847,3 +8843,6 @@ Sie werden benachrichtigt, sobald Updates verfügbar sind.
 MSG_PGPPASS_SHOW_CHARS
 Zeichen zeigen
 ;
+MSG_CANNOT_CREATE_CUSTOM_CLASS
+Fehler beim Erstellen der Klasse '%s'\n\
+als Unterklasse von '%s'.

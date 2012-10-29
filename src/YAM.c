@@ -2004,6 +2004,8 @@ static void InitBeforeLogin(BOOL hidden)
 {
   char var;
   int i;
+  const char *failSuperClass;
+  const char *failClass;
 
   ENTER();
 
@@ -2125,10 +2127,10 @@ static void InitBeforeLogin(BOOL hidden)
   G->DefIconsAvailable = (FindPort((APTR)"DEFICONS") != NULL || FindPort((APTR)"AMBIENT") != NULL);
   Permit();
 
-  // Initialise and Setup our own MUI custom classes before we go on
+  // initialize our own MUI custom classes before we go on
   D(DBF_STARTUP, "setup internal MUI classes...");
-  if(YAM_SetupClasses() == FALSE)
-    Abort(tr(MSG_ErrorClasses));
+  if(YAM_SetupClasses(&failClass, &failSuperClass) == FALSE)
+    Abort(tr(MSG_CANNOT_CREATE_CUSTOM_CLASS), failClass, failSuperClass);
 
   G->SingleTask = TRUE;
   // let us check if there is a "MultipleYAM" env variable and if
