@@ -2884,14 +2884,15 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
               D(DBF_MAIL, "converting HTMLized part #%ld to plain-text", part->Nr);
 
               // convert all HTML stuff to plain text
-              converted = html2mail(msg+1);
+              if((converted = html2mail(msg+1)) != NULL)
+              {
+                // free the old HTMLized message
+                free(msg);
 
-              // free the old HTMLized message
-              free(msg);
-
-              // overwrite the old values
-              nread = strlen(converted);
-              msg = converted;
+                // overwrite the old values
+                nread = strlen(converted);
+                msg = converted;
+              }
 
               rptr = msg;
             }

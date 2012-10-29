@@ -18,7 +18,8 @@ $URL$
     active.
   * StrBuf.c: added function StrBufLength() to return the length of the string
     without having to iterate over the string.
-
+  * YAM_RE.c: fixed a potential NULL pointer access.
+  
 2012-10-28 Thore Böckelmann <tboeckel@gmx.de>
 
   * InfoBar.c: don't use MUIM_Application_InputBuffered and a timed update
