@@ -445,25 +445,30 @@ static BOOL FI_SearchPatternInBody(const struct Search *search, const struct Mai
 
   if((rmData = AllocPrivateRMData(mail, PM_TEXTS|PM_QUIET)) != NULL)
   {
-    char *rptr, *ptr, *cmsg;
+    char *cmsg;
 
-    rptr = cmsg = RE_ReadInMessage(rmData, RIM_QUIET);
-
-    while(*rptr != '\0' && found == FALSE && (G->FI != NULL ? !G->FI->Abort : TRUE))
+    if((cmsg = RE_ReadInMessage(rmData, RIM_QUIET)) != NULL)
     {
-      for(ptr = rptr; *ptr && *ptr != '\n'; ptr++);
+      char *rptr = cmsg;
+      char *ptr;
 
-      *ptr = 0;
-      if(FI_MatchString(search, rptr) == TRUE)
-        found = TRUE;
+      while(*rptr != '\0' && found == FALSE && (G->FI != NULL ? !G->FI->Abort : TRUE))
+      {
+        for(ptr = rptr; *ptr && *ptr != '\n'; ptr++);
 
-      rptr = ++ptr;
+        *ptr = 0;
+        if(FI_MatchString(search, rptr) == TRUE)
+          found = TRUE;
+
+        rptr = ++ptr;
+      }
+
+      if(G->FI != NULL && G->FI->Abort != FALSE)
+        D(DBF_FILTER, "search was aborted");
+
+      free(cmsg);
     }
-
-    if(G->FI != NULL && G->FI->Abort != FALSE)
-      D(DBF_FILTER, "search was aborted");
-
-    free(cmsg);
+    
     FreePrivateRMData(rmData);
   }
 
