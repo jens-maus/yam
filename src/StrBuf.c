@@ -25,7 +25,6 @@
 
 ***************************************************************************/
 
-#include <stdlib.h>
 #include <string.h>
 
 #include "YAM_stringsizes.h"

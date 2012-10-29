@@ -28,7 +28,7 @@
 
 ***************************************************************************/
 
-#include <exec/nodes.h>
+#include <stdlib.h>
 
 char * AllocStrBuf(size_t initsize);
 size_t StrBufCat(char **buf, const char *source);
