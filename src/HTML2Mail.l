@@ -531,10 +531,10 @@ char *html2mail(char *htmlTxt)
           case ht_SZLIG:
           case ht_YUML:
           {
-            char tmp[] = " \0";
+            char tmp[2];
 
             tmp[0] = type;
-
+            tmp[1] = '\0';
             StrBufCat(&cmsg, tmp);
           }
           break;
@@ -570,7 +570,7 @@ char *html2mail(char *htmlTxt)
           case ht_YACUTE:
           case ht_THORN:
           {
-            char tmp[] = " \0";
+            char tmp[2];
 
             // check if the first char is lowercase
             // and if so we have to add 32 to our current
@@ -579,7 +579,7 @@ char *html2mail(char *htmlTxt)
               tmp[0] = type + 32;
             else
               tmp[0] = type;
-
+            tmp[1] = '\0';
             StrBufCat(&cmsg, tmp);
           }
           break;
@@ -594,9 +594,10 @@ char *html2mail(char *htmlTxt)
 
             if(c >= 32 && c <= 255)
             {
-              char tmp[] = " \0";
+              char tmp[2];
 
               tmp[0] = c;
+              tmp[1] = '\0';
               StrBufCat(&cmsg, tmp);
             }
             else
