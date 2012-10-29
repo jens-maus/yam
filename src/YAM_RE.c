@@ -2691,8 +2691,8 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
   struct Part *last;
   struct Part *part;
   struct Part *uup = NULL;
-  char *cmsg;
-  int totsize, len;
+  char *cmsg = NULL;
+  int totsize;
 
   ENTER();
 
@@ -2722,10 +2722,9 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
   }
 
   // then we generate our final buffer for the message
-  if((cmsg = calloc(len=(totsize*3)/2, sizeof(char))) != NULL)
+  if((cmsg = AllocStrBuf((totsize*3)/2+1)) != NULL)
   {
     struct BusyNode *busy = NULL;
-    int wptr=0;
 
     // if this function wasn't called with QUIET we place a BusyText into the Main Window
     if(mode != RIM_QUIET)
@@ -2750,13 +2749,13 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
         setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
         while(getline(&buf, &buflen, fh) > 0)
-          cmsg = AppendToBuffer(cmsg, &wptr, &len, buf);
+          StrBufCat(&cmsg, buf);
 
         fclose(fh);
 
         free(buf);
 
-        cmsg = AppendToBuffer(cmsg, &wptr, &len, "\n");
+        StrBufCat(&cmsg, "\n");
       }
     }
 
@@ -2804,7 +2803,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                                                                            DescribeCT(part->ContentType),
                                                                            part->ContentType);
 
-          cmsg = AppendToBuffer(cmsg, &wptr, &len, buffer);
+          StrBufCat(&cmsg, buffer);
 
           // append the description for non-EMail attachments only
           if(part->Description[0] != '\0' && stricmp(part->ContentType, "message/rfc822") != 0)
@@ -2813,7 +2812,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
             buffer[0] = '\0';
 
           strlcat(buffer, "\033[s:2]\n", sizeof(buffer));
-          cmsg = AppendToBuffer(cmsg, &wptr, &len, buffer);
+          StrBufCat(&cmsg, buffer);
         }
       }
 
@@ -2834,7 +2833,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
 
           setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
-          if((msg = calloc((size_t)(part->Size+3), sizeof(char))) != NULL)
+          if((msg = AllocStrBuf(part->Size+3)) != NULL)
           {
             char *ptr;
             char *rptr;
@@ -2842,8 +2841,9 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
             int nread;
             BOOL signatureFound = FALSE;
 
-            *msg = '\n';
+            msg[0] = '\n';
             nread = fread(msg+1, 1, (size_t)(part->Size), fh);
+            msg[part->Size+1] = '\0';
 
             // lets check if an error or short item count occurred
             if(nread == 0 || nread != part->Size)
@@ -2857,8 +2857,8 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                 E(DBF_MAIL, "ERROR occurred while reading at pos %ld of '%s'", ftell(fh), part->Filename);
 
                 // cleanup and return NULL
-                free(cmsg);
-                free(msg);
+                FreeStrBuf(cmsg);
+                FreeStrBuf(msg);
                 fclose(fh);
 
                 if(mode != RIM_QUIET)
@@ -2887,7 +2887,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
               if((converted = html2mail(msg+1)) != NULL)
               {
                 // free the old HTMLized message
-                free(msg);
+                FreeStrBuf(msg);
 
                 // overwrite the old values
                 nread = strlen(converted);
@@ -2897,7 +2897,10 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
               rptr = msg;
             }
             else
-              rptr = msg+1; // nothing serious happened so lets continue...
+            {
+              // nothing serious happened so let's continue
+              rptr = msg+1;
+            }
 
             // parse the message string
             while(*rptr != '\0')
@@ -3155,7 +3158,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                     {
                       rptr = buf;
                       D(DBF_MAIL, "%s", buf);
-                      cmsg = AppendToBuffer(cmsg, &wptr, &len, buf);
+                      StrBufCat(&cmsg, buf);
                     }
 
                     free(buf);
@@ -3186,20 +3189,20 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                   if(C->SigSepLine == SST_BAR) // show seperator bar
                   {
                     if(rmData->useTextcolors == FALSE)
-                      cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033[s:2]");
+                      StrBufCat(&cmsg, "\033[s:2]");
                     else
-                      cmsg = AppendToBuffer(cmsg, &wptr, &len, rptr);
+                      StrBufCat(&cmsg, rptr);
                   }
                   else if(C->SigSepLine == SST_SKIP) // skip signature
                     break;
                   else if(C->SigSepLine == SST_DASH || // show "-- "
                           (C->SigSepLine == SST_BLANK && rmData->useTextcolors))
                   {
-                    cmsg = AppendToBuffer(cmsg, &wptr, &len, rptr);
+                    StrBufCat(&cmsg, rptr);
                   }
 
                   if(newlineAtEnd)
-                    cmsg = AppendToBuffer(cmsg, &wptr, &len, "\n");
+                    StrBufCat(&cmsg, "\n");
                 }
                 else if(mode == RIM_QUOTE && C->StripSignature)
                 {
@@ -3216,16 +3219,16 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                   // our signature stripping in forwarded mails from
                   // stripping at the wrong position.
                   if(newlineAtEnd)
-                    cmsg = AppendToBuffer(cmsg, &wptr, &len, "--\n");
+                    StrBufCat(&cmsg, "--\n");
                   else
-                    cmsg = AppendToBuffer(cmsg, &wptr, &len, "--");
+                    StrBufCat(&cmsg, "--");
                 }
                 else
                 {
                   if(newlineAtEnd)
-                    cmsg = AppendToBuffer(cmsg, &wptr, &len, "-- \n");
+                    StrBufCat(&cmsg, "-- \n");
                   else
-                    cmsg = AppendToBuffer(cmsg, &wptr, &len, "-- ");
+                    StrBufCat(&cmsg, "-- ");
                 }
 
                 signatureFound = TRUE;
@@ -3234,10 +3237,10 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
               {
                 rmData->hasPGPKey = TRUE;
 
-                cmsg = AppendToBuffer(cmsg, &wptr, &len, rptr);
+                StrBufCat(&cmsg, rptr);
 
                 if(newlineAtEnd)
-                  cmsg = AppendToBuffer(cmsg, &wptr, &len, "\n");
+                  StrBufCat(&cmsg, "\n");
               }
               else if(strncmp(rptr, "-----BEGIN PGP SIGNED MESSAGE", 29) == 0)
               {
@@ -3255,16 +3258,16 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
               }
 /* other */   else
               {
-                cmsg = AppendToBuffer(cmsg, &wptr, &len, rptr);
+                StrBufCat(&cmsg, rptr);
 
                 if(newlineAtEnd)
-                  cmsg = AppendToBuffer(cmsg, &wptr, &len, "\n");
+                  StrBufCat(&cmsg, "\n");
               }
 
               rptr = eolptr+1;
             }
 
-            free(msg);
+            FreeStrBuf(msg);
           }
 
           fclose(fh);

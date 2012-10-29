@@ -47,8 +47,10 @@
 
     #include <proto/exec.h>
 
-    #include "HTML2Mail.h"
     #include "YAM_utilities.h"
+
+    #include "HTML2Mail.h"
+    #include "StrBuf.h"
 
     #include "Debug.h"
 
@@ -324,9 +326,7 @@ char *html2mail(char *htmlTxt)
   // lets prepare the htmlTxt for the lexer
   if((buffer = yy_scan_string(htmlTxt)))
   {
-    int len, wptr=0;
-
-    if((cmsg = calloc(len=(strlen(htmlTxt)*3)/2+1, sizeof(char))))
+    if((cmsg = AllocStrBuf((strlen(htmlTxt)*3)/2+1)) != NULL)
     {
       enum htmlTagType type;
       char *lastHref = NULL;
@@ -345,89 +345,89 @@ char *html2mail(char *htmlTxt)
           case ht_DD:
           case ht_DL:
           case ht_UL:
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, "\n");
+            StrBufCat(&cmsg, "\n");
           break;
 
           case ht_LI:
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, "- ");
+            StrBufCat(&cmsg, "- ");
           break;
 
           case ht_LI_END:
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, "\n");
+            StrBufCat(&cmsg, "\n");
           break;
 
           case ht_LI_IN:
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, "\n- ");
+            StrBufCat(&cmsg, "\n- ");
           break;
 
           case ht_DT:
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, "\n  ");
+            StrBufCat(&cmsg, "\n  ");
           break;
 
           case ht_PRE:
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, "\n\n");
+            StrBufCat(&cmsg, "\n\n");
           break;
 
           case ht_HR:
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, "\n---------------------------------------------------------------------------\n");
+            StrBufCat(&cmsg, "\n---------------------------------------------------------------------------\n");
           break;
 
           case ht_BOLD:
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033b");
+            StrBufCat(&cmsg, "\033b");
             bold = TRUE;
           break;
 
           case ht_ITALIC:
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033i");
+            StrBufCat(&cmsg, "\033i");
             italic = TRUE;
           break;
 
           case ht_UNDERLINE:
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033u");
+            StrBufCat(&cmsg, "\033u");
             underline = TRUE;
           break;
 
           case ht_BOLD_END:
           {
             bold = FALSE;
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033n");
+            StrBufCat(&cmsg, "\033n");
             if(italic)
-              cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033i");
+              StrBufCat(&cmsg, "\033i");
             if(underline)
-              cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033u");
+              StrBufCat(&cmsg, "\033u");
           }
           break;
 
           case ht_ITALIC_END:
           {
             italic = FALSE;
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033n");
+            StrBufCat(&cmsg, "\033n");
             if(bold)
-              cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033b");
+              StrBufCat(&cmsg, "\033b");
             if(underline)
-              cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033u");
+              StrBufCat(&cmsg, "\033u");
           }
           break;
 
           case ht_UNDERLINE_END:
           {
             underline = FALSE;
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033n");
+            StrBufCat(&cmsg, "\033n");
             if(bold)
-              cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033b");
+              StrBufCat(&cmsg, "\033b");
             if(italic)
-              cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033i");
+              StrBufCat(&cmsg, "\033i");
           }
           break;
 
           case ht_TITLE:
           case ht_HIGHLIGHT:
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033b\033i");
+            StrBufCat(&cmsg, "\033b\033i");
           break;
 
           case ht_TITLE_END:
           case ht_HIGHLIGHT_END:
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033n\n");
+            StrBufCat(&cmsg, "\033n\n");
           break;
 
           case ht_HREF:
@@ -441,9 +441,9 @@ char *html2mail(char *htmlTxt)
           {
             if(lastHref != NULL)
             {
-              cmsg = AppendToBuffer(cmsg, &wptr, &len, " <");
-              cmsg = AppendToBuffer(cmsg, &wptr, &len, lastHref);
-              cmsg = AppendToBuffer(cmsg, &wptr, &len, "> ");
+              StrBufCat(&cmsg, " <");
+              StrBufCat(&cmsg, lastHref);
+              StrBufCat(&cmsg, "> ");
 
               free(lastHref);
               lastHref = NULL;
@@ -452,7 +452,7 @@ char *html2mail(char *htmlTxt)
           break;
 
           case ht_SPACE:
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, " ");
+            StrBufCat(&cmsg, " ");
           break;
 
           case ht_STYLE:
@@ -535,7 +535,7 @@ char *html2mail(char *htmlTxt)
 
             tmp[0] = type;
 
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, tmp);
+            StrBufCat(&cmsg, tmp);
           }
           break;
 
@@ -580,12 +580,12 @@ char *html2mail(char *htmlTxt)
             else
               tmp[0] = type;
 
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, tmp);
+            StrBufCat(&cmsg, tmp);
           }
           break;
 
           case ht_TRADE:
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, "(tm)");
+            StrBufCat(&cmsg, "(tm)");
           break;
 
           case ht_ASCII_CHAR:
@@ -597,7 +597,7 @@ char *html2mail(char *htmlTxt)
               char tmp[] = " \0";
 
               tmp[0] = c;
-              cmsg = AppendToBuffer(cmsg, &wptr, &len, tmp);
+              StrBufCat(&cmsg, tmp);
             }
             else
               D(DBF_HTML, "found HTML ASCII char out of bounds: '%s'", yytext);
@@ -606,11 +606,11 @@ char *html2mail(char *htmlTxt)
 
           case ht_UNKNOWN_CHAR:
             D(DBF_HTML, "unknown HTML char: '%s'", yytext);
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, "?");
+            StrBufCat(&cmsg, "?");
           break;
 
           case ht_NORMALTEXT:
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
+            StrBufCat(&cmsg, yytext);
           break;
         }
       }

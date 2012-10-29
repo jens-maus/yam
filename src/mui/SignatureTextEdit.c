@@ -41,6 +41,7 @@
 #include "MUIObjects.h"
 #include "ParseEmail.h"
 #include "Signature.h"
+#include "StrBuf.h"
 
 #include "Debug.h"
 
@@ -141,7 +142,7 @@ DECLARE(SetSignatureText) // const char *sigText
 
   ENTER();
 
-  // refresh outself with the new signature text
+  // refresh ourself with the new signature text
   if(msg->sigText != NULL && (parsedSig = ParseEmailText(msg->sigText, FALSE, TRUE, TRUE)) != NULL)
   {
     BOOL modified;
@@ -154,7 +155,7 @@ DECLARE(SetSignatureText) // const char *sigText
 	xset(obj, MUIA_TextEditor_Contents, parsedSig,
 			  MUIA_TextEditor_HasChanged, modified);
 
-	free(parsedSig);
+	FreeStrBuf(parsedSig);
   }
   else
   {

@@ -2949,7 +2949,7 @@ DECLARE(StyleOptionsChanged)
         // set the new text and preserve the changed status
         set(data->TE_EDIT, MUIA_TextEditor_Contents, parsedText);
 
-        free(parsedText);
+        FreeStrBuf(parsedText);
       }
 
       FreeVec(orgtext); // use FreeVec() because TextEditor.mcc uses AllocVec()

@@ -41,11 +41,11 @@
 %{
     #include <string.h>
 
-    #include "YAM_utilities.h"
     #include "YAM_config.h"
     #include "YAM_read.h"
 
     #include "ParseEmail.h"
+    #include "StrBuf.h"
 
     #include "Debug.h"
 
@@ -193,13 +193,12 @@ char *ParseEmailText(const char *mailTxt, const BOOL handleSigDash,
                      const BOOL useStyles, const BOOL useColors)
 {
   char *cmsg = NULL;
-  int len, wptr=0;
   YY_BUFFER_STATE buffer;
   enum tokenType type;
 
   ENTER();
 
-  if(!mailTxt)
+  if(mailTxt == NULL)
   {
     RETURN(NULL);
     return NULL;
@@ -208,7 +207,7 @@ char *ParseEmailText(const char *mailTxt, const BOOL handleSigDash,
   // lets prepare the mailTxt for the lexer
   if((buffer = yy_scan_string(mailTxt)))
   {
-    if((cmsg = calloc(len=(strlen(mailTxt)*3)/2+1, sizeof(char))))
+    if((cmsg = AllocStrBuf((strlen(mailTxt)*3)/2+1)) != NULL)
     {
       BOOL centerActivated = FALSE;
       BOOL signatureFound = FALSE;
@@ -232,12 +231,12 @@ char *ParseEmailText(const char *mailTxt, const BOOL handleSigDash,
           {
             if(useColors)
             {
-              cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033p[12]");
-              cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
-              cmsg = AppendToBuffer(cmsg, &wptr, &len, defaultPen);
+              StrBufCat(&cmsg, "\033p[12]");
+              StrBufCat(&cmsg, yytext);
+              StrBufCat(&cmsg, defaultPen);
             }
             else
-              cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
+              StrBufCat(&cmsg, yytext);
           }
           break;
 
@@ -246,11 +245,11 @@ char *ParseEmailText(const char *mailTxt, const BOOL handleSigDash,
             // we only allow that obsolete <tsb> stuff to work within signatures
             if(signatureFound)
             {
-              cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033c\033[s:18]");
+              StrBufCat(&cmsg, "\033c\033[s:18]");
               centerActivated = TRUE;
             }
             else
-              cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
+              StrBufCat(&cmsg, yytext);
           }
           break;
 
@@ -259,11 +258,11 @@ char *ParseEmailText(const char *mailTxt, const BOOL handleSigDash,
             // we only allow that obsolete <sb> stuff to work within signatures
             if(signatureFound)
             {
-              cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033c\033[s:2]");
+              StrBufCat(&cmsg, "\033c\033[s:2]");
               centerActivated = TRUE;
             }
             else
-              cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
+              StrBufCat(&cmsg, yytext);
           }
           break;
 
@@ -278,16 +277,16 @@ char *ParseEmailText(const char *mailTxt, const BOOL handleSigDash,
                 char *q;
 
                 *p++ = '\0';
-                cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
+                StrBufCat(&cmsg, yytext);
 
                 q = p;
                 if((q = strchr(p, '*')))
                 {
                   *q++ = '\0';
 
-                  cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033b*");
-                  cmsg = AppendToBuffer(cmsg, &wptr, &len, p);
-                  cmsg = AppendToBuffer(cmsg, &wptr, &len, "*\033n");
+                  StrBufCat(&cmsg, "\033b*");
+                  StrBufCat(&cmsg, p);
+                  StrBufCat(&cmsg, "*\033n");
 
                   if(*q != '\0')
                     yyunput(*q, yytext);
@@ -299,7 +298,7 @@ char *ParseEmailText(const char *mailTxt, const BOOL handleSigDash,
                 W(DBF_MAIL, "couldn't find starting '*'");
             }
             else
-              cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
+              StrBufCat(&cmsg, yytext);
           }
           break;
 
@@ -314,16 +313,16 @@ char *ParseEmailText(const char *mailTxt, const BOOL handleSigDash,
                 char *q;
 
                 *p++ = '\0';
-                cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
+                StrBufCat(&cmsg, yytext);
 
                 q = p;
                 if((q = strchr(p, '/')))
                 {
                   *q++ = '\0';
 
-                  cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033i/");
-                  cmsg = AppendToBuffer(cmsg, &wptr, &len, p);
-                  cmsg = AppendToBuffer(cmsg, &wptr, &len, "/\033n");
+                  StrBufCat(&cmsg, "\033i/");
+                  StrBufCat(&cmsg, p);
+                  StrBufCat(&cmsg, "/\033n");
 
                   if(*q != '\0')
                     yyunput(*q, yytext);
@@ -335,7 +334,7 @@ char *ParseEmailText(const char *mailTxt, const BOOL handleSigDash,
                 W(DBF_MAIL, "couldn't find starting '/'");
             }
             else
-              cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
+              StrBufCat(&cmsg, yytext);
           }
           break;
 
@@ -350,16 +349,16 @@ char *ParseEmailText(const char *mailTxt, const BOOL handleSigDash,
                 char *q;
 
                 *p++ = '\0';
-                cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
+                StrBufCat(&cmsg, yytext);
 
                 q = p;
                 if((q = strchr(p, '_')))
                 {
                   *q++ = '\0';
 
-                  cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033u_");
-                  cmsg = AppendToBuffer(cmsg, &wptr, &len, p);
-                  cmsg = AppendToBuffer(cmsg, &wptr, &len, "_\033n");
+                  StrBufCat(&cmsg, "\033u_");
+                  StrBufCat(&cmsg, p);
+                  StrBufCat(&cmsg, "_\033n");
 
                   if(*q != '\0')
                     yyunput(*q, yytext);
@@ -371,7 +370,7 @@ char *ParseEmailText(const char *mailTxt, const BOOL handleSigDash,
                 W(DBF_MAIL, "couldn't find starting '_'");
             }
             else
-              cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
+              StrBufCat(&cmsg, yytext);
           }
           break;
 
@@ -386,17 +385,17 @@ char *ParseEmailText(const char *mailTxt, const BOOL handleSigDash,
                 char *q;
 
                 *p++ = '\0';
-                cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
+                StrBufCat(&cmsg, yytext);
 
                 q = p;
                 if((q = strchr(p, '#')))
                 {
                   *q++ = '\0';
 
-                  cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033p[7]#");
-                  cmsg = AppendToBuffer(cmsg, &wptr, &len, p);
-                  cmsg = AppendToBuffer(cmsg, &wptr, &len, "#");
-                  cmsg = AppendToBuffer(cmsg, &wptr, &len, defaultPen);
+                  StrBufCat(&cmsg, "\033p[7]#");
+                  StrBufCat(&cmsg, p);
+                  StrBufCat(&cmsg, "#");
+                  StrBufCat(&cmsg, defaultPen);
 
                   if(*q != '\0')
                     yyunput(*q, yytext);
@@ -408,7 +407,7 @@ char *ParseEmailText(const char *mailTxt, const BOOL handleSigDash,
                 W(DBF_MAIL, "couldn't find starting '#'");
             }
             else
-              cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
+              StrBufCat(&cmsg, yytext);
           }
           break;
 
@@ -436,12 +435,12 @@ char *ParseEmailText(const char *mailTxt, const BOOL handleSigDash,
                 else if(quotelevel%4 == 0)
                   defaultPen = "\033p[11]";
 
-                cmsg = AppendToBuffer(cmsg, &wptr, &len, defaultPen);
+                StrBufCat(&cmsg, defaultPen);
               }
 
               *ptr = '\0'; // temporary set the > to a null byte so that we can append to our buffer
-              cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
-              cmsg = AppendToBuffer(cmsg, &wptr, &len, ">");
+              StrBufCat(&cmsg, yytext);
+              StrBufCat(&cmsg, ">");
               yytext = ++ptr;
             }
           }
@@ -467,18 +466,18 @@ char *ParseEmailText(const char *mailTxt, const BOOL handleSigDash,
               case SST_DASH:
               {
                 if(useColors)
-                  cmsg = AppendToBuffer(cmsg, &wptr, &len, defaultPen);
+                  StrBufCat(&cmsg, defaultPen);
 
-                cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
+                StrBufCat(&cmsg, yytext);
               }
               break;
 
               case SST_BAR:
-                cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033[s:2]\n");
+                StrBufCat(&cmsg, "\033[s:2]\n");
               break;
 
               case SST_BLANK:
-                cmsg = AppendToBuffer(cmsg, &wptr, &len, "\n");
+                StrBufCat(&cmsg, "\n");
               break;
 
               case SST_SKIP:
@@ -487,7 +486,7 @@ char *ParseEmailText(const char *mailTxt, const BOOL handleSigDash,
             }
 
             if(useColors)
-              cmsg = AppendToBuffer(cmsg, &wptr, &len, defaultPen);
+              StrBufCat(&cmsg, defaultPen);
 
             // mark the signature as 'found' so that we
             // can show text somewhat in another color and
@@ -508,18 +507,18 @@ char *ParseEmailText(const char *mailTxt, const BOOL handleSigDash,
               defaultPen = "\033p[0]";
 
               if(useColors)
-                cmsg = AppendToBuffer(cmsg, &wptr, &len, defaultPen);
+                StrBufCat(&cmsg, defaultPen);
 
               signatureFound = FALSE;
             }
 
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
+            StrBufCat(&cmsg, yytext);
           }
           break;
 
           case tNEXTPART:
           {
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
+            StrBufCat(&cmsg, yytext);
 
             // we reset the signature state
             // as we are running into text of a new part
@@ -529,11 +528,11 @@ char *ParseEmailText(const char *mailTxt, const BOOL handleSigDash,
 
           case tNEWLINE:
           {
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
+            StrBufCat(&cmsg, yytext);
 
             if(centerActivated)
             {
-              cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033l");
+              StrBufCat(&cmsg, "\033l");
               centerActivated = FALSE;
             }
 
@@ -544,13 +543,13 @@ char *ParseEmailText(const char *mailTxt, const BOOL handleSigDash,
               defaultPen = "\033p[13]";
 
               if(useColors)
-                cmsg = AppendToBuffer(cmsg, &wptr, &len, defaultPen);
+                StrBufCat(&cmsg, defaultPen);
             }
           }
           break;
 
           default:
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
+            StrBufCat(&cmsg, yytext);
           break;
         }
       }
@@ -558,7 +557,7 @@ char *ParseEmailText(const char *mailTxt, const BOOL handleSigDash,
       // we have to end the text with a color clearing ESC sequence
       // in case the signature was active at last
       if(signatureFound && useColors)
-        cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033p[0]");
+        StrBufCat(&cmsg, "\033p[0]");
     }
 
     yy_delete_buffer(buffer);

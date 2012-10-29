@@ -20,7 +20,9 @@ $URL$
     without having to iterate over the string.
   * YAM_RE.c: fixed a potential NULL pointer access.
   * YAM_FI.c: fixed a potential NULL pointer access.
-  
+  * YAM_RE.c, YAM_UT.c, HTML2Mail.l, ParseEmail.l: replaced the AppendToBuffer()
+    function with the dynamic string functions as both do exactly the same.
+
 2012-10-28 Thore Böckelmann <tboeckel@gmx.de>
 
   * InfoBar.c: don't use MUIM_Application_InputBuffered and a timed update

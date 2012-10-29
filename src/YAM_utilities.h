@@ -330,7 +330,6 @@ BOOL     SafeOpenWindow(Object *obj);
 void     SaveLayout(BOOL permanent);
 void     SimpleWordWrap(const char *filename, int wrapsize);
 char *   StartUnpack(const char *file, char *newfile, const struct Folder *folder);
-char *   AppendToBuffer(char *buf, int *wptr, int *len, const char *add);
 char *   StripUnderscore(const char *label);
 void     ReplaceInvalidChars(char *name);
 char *   SWSSearch(const char *str1, const char*str2);

@@ -43,6 +43,7 @@
 #include "MUIObjects.h"
 #include "ParseEmail.h"
 #include "Requesters.h"
+#include "StrBuf.h"
 
 #include "Debug.h"
 
@@ -301,7 +302,7 @@ DECLARE(LoadFromFile) // const char *file, ULONG flags
       xset(obj, MUIA_TextEditor_Contents,   parsedText,
                 MUIA_TextEditor_HasChanged, isFlagSet(msg->flags, MUIF_MailTextEdit_LoadFromFile_SetChanged));
 
-      free(parsedText);
+      FreeStrBuf(parsedText);
 
       result = TRUE;
     }

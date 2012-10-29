@@ -1515,7 +1515,7 @@ void MA_RemoveAttach(struct Mail *mail, struct Part **whichParts, BOOL warning)
           }
         }
 
-        free(cmsg);
+        FreeStrBuf(cmsg);
       }
 
       FreePrivateRMData(rmData);
@@ -1615,7 +1615,7 @@ HOOKPROTONHNONP(MA_SaveAttachFunc, void)
             struct Part *part;
 
             // free the message again as we don't need its content here.
-            free(cmsg);
+            FreeStrBuf(cmsg);
 
             if((part = rmData->firstPart->Next) != NULL && part->Next != NULL)
               RE_SaveAll(rmData, frc->drawer);
@@ -1668,7 +1668,8 @@ HOOKPROTONHNO(MA_SavePrintFunc, void, int *arg)
             if((tf = OpenTempFile("w")) != NULL)
             {
               fputs(cmsg, tf->FP);
-              fclose(tf->FP); tf->FP = NULL;
+              fclose(tf->FP);
+              tf->FP = NULL;
 
               if(doprint == TRUE)
               {
@@ -1689,7 +1690,7 @@ HOOKPROTONHNO(MA_SavePrintFunc, void, int *arg)
               CloseTempFile(tf);
             }
 
-            free(cmsg);
+            FreeStrBuf(cmsg);
           }
 
           FreePrivateRMData(rmData);

@@ -48,6 +48,7 @@
 #include "FileInfo.h"
 #include "Locale.h"
 #include "MethodStack.h"
+#include "StrBuf.h"
 
 #include "Debug.h"
 
@@ -1631,6 +1632,7 @@ static void tokenizeMail(struct Tokenizer *t,
     {
       // first tokenize all texts
       tokenizerTokenize(t, rptr);
+      FreeStrBuf(rptr);
 
       if(isMultiPartMail(mail))
       {
@@ -1646,8 +1648,6 @@ static void tokenizeMail(struct Tokenizer *t,
             tokenizerTokenizeAttachment(t, part->ContentType, part->Filename);
         }
       }
-
-      free(rptr);
     }
 
     FreePrivateRMData(rmData);

@@ -1973,7 +1973,7 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
             BOOL reuseReplyToAddress = TRUE;
 
             // free our temp text now
-            free(cmsg);
+            FreeStrBuf(cmsg);
 
             // set the In-Reply-To / References message header references, if they exist
             if(email->inReplyToMsgID != NULL)
@@ -2075,7 +2075,7 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
             E(DBF_MAIL, "Error while writing cmsg to out FH");
 
             // an error occurred while trying to write the text to out
-            free(cmsg);
+            FreeStrBuf(cmsg);
             FreePrivateRMData(rmData);
             fclose(out);
             MA_FreeEMailStruct(email);
@@ -2302,7 +2302,7 @@ struct WriteMailData *NewForwardMailWindow(struct MailList *mlist, const int fla
                 // output the readin message text immediately to
                 // our out filehandle
                 fputs(cmsg, out);
-                free(cmsg);
+                FreeStrBuf(cmsg);
 
                 InsertIntroText(out, C->ForwardFinish, &etd);
 
@@ -3017,7 +3017,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
               // make sure we quote the text in question.
               QuoteText(out, cmsg, strlen(cmsg), C->EdWrapMode != EWM_OFF ? C->EdWrapCol-2 : 1024);
 
-              free(cmsg);
+              FreeStrBuf(cmsg);
             }
 
             FreePrivateRMData(rmData);

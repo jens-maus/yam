@@ -412,42 +412,6 @@ char *MyStrChr(const char *s, const char c)
 }
 
 ///
-/// AppendToBuffer
-//  Appends a string to a dynamic-length buffer
-char *AppendToBuffer(char *buf, int *wptr, int *len, const char *add)
-{
-  int nlen;
-  int npos;
-
-  ENTER();
-
-  nlen = *len;
-  npos = (*wptr)+strlen(add);
-
-  while(npos >= nlen-1)
-    nlen = (nlen*3)/2;
-
-  if(nlen != *len)
-  {
-    // allocate a new buffer and adapt the buffer size information
-    buf = realloc(buf, nlen);
-    *len = nlen;
-  }
-
-  if(buf != NULL)
-  {
-    // it is save to call strcpy() instead of strlcpy(), because we just
-    // made sure to have space for at least the complete <add> string
-    strcpy(&buf[*wptr], add);
-    // finally update the "end of string" information
-    *wptr = npos;
-  }
-
-  RETURN(buf);
-  return buf;
-}
-
-///
 /// Decrypt
 //  Decrypts passwords
 char *Decrypt(const char *source)

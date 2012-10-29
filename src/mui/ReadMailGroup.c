@@ -998,8 +998,8 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
         DoMethod(obj, MUIM_ReadMailGroup_UpdateHeaderDisplay, msg->flags);
 
       // before we can put the message body into the TextEditor, we have to preparse the text and
-      // try to set some styles, as we don`t use the buggy ImportHooks of TextEditor anymore and are anyway
-      // more powerful this way.
+      // try to set some styles, as we don't use the buggy import hooks of TextEditor anymore and
+      // are more powerful this way.
       if(rmData->useTextstyles == TRUE || rmData->useTextcolors == TRUE)
         body = ParseEmailText(cmsg, TRUE, rmData->useTextstyles, rmData->useTextcolors);
       else
@@ -1010,9 +1010,9 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
 
       // free the parsed text afterwards as the texteditor has copied it anyway.
       if(rmData->useTextstyles == TRUE || rmData->useTextcolors == TRUE)
-        free(body);
+        FreeStrBuf(body);
 
-      free(cmsg);
+      FreeStrBuf(cmsg);
 
       // start the macro
       if(rmData->readWindow != NULL)

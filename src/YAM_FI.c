@@ -77,6 +77,7 @@
 #include "MethodStack.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
+#include "StrBuf.h"
 #include "Threads.h"
 
 #include "Debug.h"
@@ -466,9 +467,9 @@ static BOOL FI_SearchPatternInBody(const struct Search *search, const struct Mai
       if(G->FI != NULL && G->FI->Abort != FALSE)
         D(DBF_FILTER, "search was aborted");
 
-      free(cmsg);
+      FreeStrBuf(cmsg);
     }
-    
+
     FreePrivateRMData(rmData);
   }
 
