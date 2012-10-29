@@ -22,6 +22,7 @@ $URL$
   * YAM_FI.c: fixed a potential NULL pointer access.
   * YAM_RE.c, YAM_UT.c, HTML2Mail.l, ParseEmail.l: replaced the AppendToBuffer()
     function with the dynamic string functions as both do exactly the same.
+  * YAM_AB.c: fixed a memory leak when parsing recipient lists.
 
 2012-10-28 Thore Böckelmann <tboeckel@gmx.de>
 

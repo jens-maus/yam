@@ -856,7 +856,7 @@ BOOL AB_LoadTree(const char *fname, BOOL append, BOOL sorted)
           }
           else if(strncmp(buffer, "@LIST", 5) == 0)
           {
-            char *members;
+            char *members = NULL;
 
             addr.Type = AET_LIST;
 
@@ -870,7 +870,6 @@ BOOL AB_LoadTree(const char *fname, BOOL append, BOOL sorted)
             }
             GetLine(&buffer, &size, fh);
             strlcpy(addr.Comment , Trim(buffer), sizeof(addr.Comment));
-            members = AllocStrBuf(SIZE_DEFAULT);
             while(GetLine(&buffer, &size, fh) >= 0)
             {
               if(strcmp(buffer, "@ENDLIST") == 0)
@@ -883,12 +882,14 @@ BOOL AB_LoadTree(const char *fname, BOOL append, BOOL sorted)
               StrBufCat(&members, "\n");
             }
 
-            if((addr.Members = strdup(members)) != NULL)
+            // the string will be duplicated in the listtree's constructor
+            // hence it is safe to free it here again
+            if(members != NULL)
             {
-              FreeStrBuf(members);
+              addr.Members = members;
               DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, addr.Alias, &addr, parent[nested], sorted ?  MUIV_NListtree_Insert_PrevNode_Sorted : MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE);
-              free(addr.Members);
             }
+            FreeStrBuf(members);
           }
           else if(strncmp(buffer, "@GROUP", 6) == 0)
           {
