@@ -5246,7 +5246,7 @@ BOOL GotoURL(const char *url, const BOOL newWindow)
       wentToURL = MA_StartMacro(MACRO_URL, newurl);
     }
     else
-   {
+    {
       #if defined(__amigaos4__)
       // try URL: device at first
       if(wentToURL == FALSE)
