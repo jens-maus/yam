@@ -35,6 +35,7 @@
 #include <proto/muimaster.h>
 #include <mui/Crawling_mcc.h>
 #include <mui/NFloattext_mcc.h>
+#include <mui/Urltext_mcc.h>
 
 #include "YAM.h"
 #include "YAM_global.h"
@@ -55,6 +56,35 @@ struct Data
   char *aboutText2;
 };
 */
+
+#define YAM_URL "http://www.yam.ch/"
+
+/* Private Functions */
+/// UrlObject
+// create a clickable object to go to YAM's homepage
+static Object *UrlObject(void)
+{
+  Object *obj;
+
+  ENTER();
+
+  // try Urltext.mcc first
+  if((obj = UrltextObject,
+    MUIA_Urltext_Url, YAM_URL,
+    End) == NULL)
+  {
+    // fall back to a simple text object
+    obj = TextObject,
+      MUIA_Text_Contents, "\033c\033u\0335" YAM_URL "\033n",
+      MUIA_InputMode, MUIV_InputMode_RelVerify,
+    End;
+  }
+
+  RETURN(obj);
+  return obj;
+}
+
+///
 
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
@@ -78,13 +108,15 @@ OVERLOAD(OM_NEW)
   int aboutResult1;
   int aboutResult2;
   const char aboutTemplate1[] =
-                          "\033b%s\033n\n\n"
+                          "\033b%s\033n\n" // current developers
+                          "\n"
                           "Jens Langner\n"
                           "Thore Boeckelmann\n"
                           "Frank Weber";
   const char aboutTemplate2[] =
                           "\n"
-                          "\033b%s\033n\n\n"
+                          "\033b%s\033n\n" // contributors
+                          "\n"
                           "Matthias Rustler\n"
                           "Gunther Nikl\n"
                           "Alexey Ivanov\n"
@@ -98,7 +130,8 @@ OVERLOAD(OM_NEW)
                           "Giles Burdett\n"
                           "Olaf Barthel\n"
                           "\n"
-                          "\033b%s\033n\n\n"
+                          "\033b%s\033n\n" // translators
+                          "\n"
                           "Alexandre Balaban (french)\n"
                           "Par Boberg (swedish)\n"
                           "Luca Longone (italian)\n"
@@ -110,52 +143,70 @@ OVERLOAD(OM_NEW)
                           "Emilio Jimenez (spanish)\n"
                           "Alper Sonmez (turkish)\n"
                           "\n"
-                          "%s\n"
+                          "%s\n" // GPL
                           "\n"
-                          "%s\n"
+                          "%s\n" // 3rd party software
                           "\n"
                           "\033bMagic User Interface\033n\n"
                           "\033iStefan Stuntz\033n\n"
-                          "http://www.sasg.com/\n\n"
+                          "http://www.sasg.com/\n"
+                          "\n"
                           "\033bTextEditor.mcc\033n\n"
                           "\033iTextEditor.mcc Open Source Team\033n\n"
-                          "http://www.sf.net/projects/texteditor-mcc/\n\n"
+                          "http://www.sf.net/projects/texteditor-mcc/\n"
+                          "\n"
                           "\033bBetterString.mcc\033n\n"
                           "\033iBetterString.mcc Open Source Team\033n\n"
-                          "http://www.sf.net/projects/bstring-mcc/\n\n"
+                          "http://www.sf.net/projects/bstring-mcc/\n"
+                          "\n"
                           "\033bTheBar.mcc\033n\n"
                           "\033iTheBar.mcc Open Source Team\033n\n"
-                          "http://www.sf.net/projects/thebar/\n\n"
+                          "http://www.sf.net/projects/thebar/\n"
+                          "\n"
                           "\033bNList MCC classes\033n\n"
                           "\033iNList Open Source Team\033n\n"
-                          "http://www.sf.net/projects/nlist-classes/\n\n"
+                          "http://www.sf.net/projects/nlist-classes/\n"
+                          "\n"
+                          "\033bUrltext.mcc\033n\n"
+                          "\033iAlfonso Ranieri\033n\n"
+                          "http://digilander.libero.it/asoft/\n"
+                          "\n"
                           "\033bcodesets.library\033n\n"
                           "\033icodesets.library Open Source Team\033n\n"
-                          "http://www.sf.net/projects/codesetslib/\n\n"
+                          "http://www.sf.net/projects/codesetslib/\n"
+                          "\n"
                           "\033bxpkmaster.library\033n\n"
                           "\033iDirk Stoecker\033n\n"
-                          "http://www.dstoecker.de/xpkmaster.html\n\n"
+                          "http://www.dstoecker.de/xpkmaster.html\n"
+                          "\n"
                           "\033bamissl.library\033n\n"
                           "\033iAndrija Antonijevic, Stefan Burstroem\033n\n"
-                          "http://www.heightanxiety.com/AmiSSL/\n\n"
+                          "http://www.heightanxiety.com/AmiSSL/\n"
+                          "\n"
                           "\033bopenurl.library\033n\n"
                           "\033iOpenURL Open Source Team\033n\n"
-                          "http://www.sf.net/projects/openurllib/\n\n"
+                          "http://www.sf.net/projects/openurllib/\n"
+                          "\n"
                           "\033bSetDST\033n\n"
                           "\033iStefan Falke\033n\n"
-                          "http://www.sfxsoft.de/setdst.html\n\n"
+                          "http://www.sfxsoft.de/setdst.html\n"
+                          "\n"
                           "\033bFlexCat\033n\n"
                           "\033iFlexCat Open Source Team\033n\n"
-                          "http://www.sf.net/projects/flexcat/\n\n"
+                          "http://www.sf.net/projects/flexcat/\n"
+                          "\n"
                           "\033bflex: The Fast Lexical Analyzer\033n\n"
                           "\033iflex Open Source Team\033n\n"
-                          "http://flex.sourceforge.net/\n\n"
+                          "http://flex.sourceforge.net/\n"
+                          "\n"
                           "\033bexpat XML Parser library\033n\n"
                           "\033iexpat Open Source Team\033n\n"
-                          "http://expat.sourceforge.net/\n\n"
+                          "http://expat.sourceforge.net/\n"
+                          "\n"
                           "\033bPretty Good Privacy (PGP)\033n\n"
-                          "\033iPhil Zimmermann\033n\n\n"
-                          "%s\n"
+                          "\033iPhil Zimmermann\033n\n"
+                          "\n"
+                          "%s\n" // YAM news
                           "\n"
                           "\n"
                           "\n";
@@ -277,10 +328,7 @@ OVERLOAD(OM_NEW)
         Child, CLabel(tr(MSG_YAMINFO)),
         Child, CLabel(yamfullcopyright),
         Child, ColGroup(2),
-          Child, bt_gopage = TextObject,
-            MUIA_Text_Contents, "\033c\033u\0335http://www.yam.ch/\033n",
-            MUIA_InputMode,     MUIV_InputMode_RelVerify,
-          End,
+          Child, bt_gopage = UrlObject(),
         End,
         Child, RectangleObject,
           MUIA_Rectangle_HBar, TRUE,
@@ -357,16 +405,15 @@ OVERLOAD(OM_DISPOSE)
 
 ///
 
-/* Private Functions */
-
 /* Public Methods */
 /// DECLARE(GotoSupportPage)
 // open a browser and go to the YAM support page
+// used if Urltext.mcc is not available
 DECLARE(GotoSupportPage)
 {
   ENTER();
 
-  GotoURL("http://www.yam.ch/", FALSE);
+  GotoURL(YAM_URL, FALSE);
 
   LEAVE();
   return 0;
