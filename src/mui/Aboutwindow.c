@@ -75,7 +75,8 @@ static Object *UrlObject(void)
   {
     // fall back to a simple text object
     obj = TextObject,
-      MUIA_Text_Contents, "\033c\033u\0335" YAM_URL "\033n",
+      MUIA_Text_PreParse, "\033c\033u\0335",
+      MUIA_Text_Contents, YAM_URL,
       MUIA_InputMode, MUIV_InputMode_RelVerify,
     End;
   }
