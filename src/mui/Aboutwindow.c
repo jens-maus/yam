@@ -33,6 +33,7 @@
 
 #include <stdlib.h>
 #include <proto/muimaster.h>
+#include <mui/Crawling_mcc.h>
 #include <mui/NFloattext_mcc.h>
 
 #include "YAM.h"
@@ -182,11 +183,6 @@ OVERLOAD(OM_NEW)
     // now we go and try to setup a crawling.mcc object
     // with the object text. However, if that fails we simply generate
     // and NFloattext object instead.
-
-    #ifndef MUIC_Crawling
-    #define MUIC_Crawling "Crawling.mcc"
-    #define CrawlingObject MUI_NewObject(MUIC_Crawling
-    #endif
 
     infoObject = CrawlingObject,
 
