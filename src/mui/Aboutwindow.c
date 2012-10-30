@@ -57,7 +57,7 @@ struct Data
 };
 */
 
-#define YAM_URL "http://www.yam.ch/"
+#define YAM_URL "http://yam.ch/"
 
 /* Private Functions */
 /// UrlObject
