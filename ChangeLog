@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-10-30 Thore Böckelmann <tboeckel@gmx.de>
+  
+  * YAM.c: slightly enhanced the debug output of the MCC version check.
+  
 2012-10-29 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_CO.c: reworked the DST check once more to ask the user for confirmation

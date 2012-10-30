@@ -326,7 +326,7 @@ static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, con
 
       if(VERSION_IS_AT_LEAST(ver, rev, minver, minrev) == TRUE)
       {
-        D(DBF_STARTUP, "%s v%ld.%ld found through MUIA_Version/Revision", name, ver, rev);
+        D(DBF_STARTUP, "found %s v%ld.%ld through MUIA_Version/Revision", name, ver, rev);
 
         success = TRUE;
         break;
@@ -358,6 +358,8 @@ static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, con
         ULONG rev = base->lib_Revision;
         UWORD openCnt = base->lib_OpenCnt;
 
+        D(DBF_STARTUP, "successfully opened '%s' as library, found v%ld.%ld, open count %ld", name, ver, rev, openCnt);
+        
         // close the library immediately as we don't require any more
         // information from it
         CloseLibrary(base);
@@ -368,8 +370,6 @@ static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, con
         // and don't have any MUIA_Version/Revision attributes.
         if(VERSION_IS_AT_LEAST(ver, rev, minver, minrev) == TRUE)
         {
-          D(DBF_STARTUP, "%s v%ld.%ld found through OpenLibrary()", name, ver, rev);
-
           success = TRUE;
           break;
         }
@@ -412,6 +412,7 @@ static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, con
         {
           struct Library *result;
 
+          D(DBF_STARTUP, "trying to flush '%s'", name);
           Forbid();
           if((result = (struct Library *)FindName(&((struct ExecBase *)SysBase)->LibList, name)) != NULL)
             RemLibrary(result);
@@ -420,7 +421,7 @@ static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, con
         }
         else
         {
-          E(DBF_STARTUP, "%s: couldn't find minimum required version.", name);
+          E(DBF_STARTUP, "couldn't find minimum required v%ld.%ld of '%s'", minver, minrev, name);
 
           // We're out of luck - open count is 0, we've tried to flush
           // and still haven't got the version we want
