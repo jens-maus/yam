@@ -5233,52 +5233,55 @@ BOOL GotoURL(const char *url, const BOOL newWindow)
 
   ENTER();
 
-  // The ARexx macro to open a URL is only possible after the startup phase
-  // and if a script has been configured for this purpose.
-  if(G != NULL && G->InStartupPhase == FALSE && C->RX[MACRO_URL].Script[0] != '\0')
+  if(url != NULL)
   {
-    char newurl[SIZE_LARGE];
-
-    snprintf(newurl, sizeof(newurl), "\"%s\"", url);
-    D(DBF_UTIL, "trying script '%s' to open URL '%s'", C->RX[MACRO_URL].Script, url);
-    wentToURL = MA_StartMacro(MACRO_URL, newurl);
-  }
-  else
-  {
-    #if defined(__amigaos4__)
-    // try URL: device at first
-    if(wentToURL == FALSE)
+    // The ARexx macro to open a URL is only possible after the startup phase
+    // and if a script has been configured for this purpose.
+    if(G != NULL && G->InStartupPhase == FALSE && C->RX[MACRO_URL].Script[0] != '\0')
     {
       char newurl[SIZE_LARGE];
-      APTR oldWinPtr;
-      BPTR urlFH;
 
-      snprintf(newurl, sizeof(newurl), "URL:%s", url);
-
-      // disable requesters
-      oldWinPtr = SetProcWindow((APTR)-1);
-
-      D(DBF_UTIL, "trying URL: device to open URL '%s'", url);
-      if((urlFH = Open(newurl, MODE_OLDFILE)) != ZERO)
-      {
-        Close(urlFH);
-        wentToURL = TRUE;
-      }
-
-      // enable requesters again
-      SetProcWindow(oldWinPtr);
+      snprintf(newurl, sizeof(newurl), "\"%s\"", url);
+      D(DBF_UTIL, "trying script '%s' to open URL '%s'", C->RX[MACRO_URL].Script, url);
+      wentToURL = MA_StartMacro(MACRO_URL, newurl);
     }
-    #endif
+    else
+   {
+      #if defined(__amigaos4__)
+      // try URL: device at first
+      if(wentToURL == FALSE)
+      {
+        char newurl[SIZE_LARGE];
+        APTR oldWinPtr;
+        BPTR urlFH;
 
-    if(wentToURL == FALSE && OpenURLBase != NULL)
-    {
-      // open the URL in a defined web browser and
-      // let the user decide himself if he wants to see
-      // it popping up in a new window or not (via OpenURL
-      // prefs)
-      D(DBF_UTIL, "trying openurl.library to open URL '%s'", url);
-      wentToURL = URL_Open((STRPTR)url, URL_NewWindow, newWindow,
-                                        TAG_DONE);
+        snprintf(newurl, sizeof(newurl), "URL:%s", url);
+
+        // disable requesters
+        oldWinPtr = SetProcWindow((APTR)-1);
+
+        D(DBF_UTIL, "trying URL: device to open URL '%s'", url);
+        if((urlFH = Open(newurl, MODE_OLDFILE)) != ZERO)
+        {
+          Close(urlFH);
+          wentToURL = TRUE;
+        }
+
+        // enable requesters again
+        SetProcWindow(oldWinPtr);
+      }
+      #endif
+
+      if(wentToURL == FALSE && OpenURLBase != NULL)
+      {
+        // open the URL in a defined web browser and
+        // let the user decide himself if he wants to see
+        // it popping up in a new window or not (via OpenURL
+        // prefs)
+        D(DBF_UTIL, "trying openurl.library to open URL '%s'", url);
+        wentToURL = URL_Open((STRPTR)url, URL_NewWindow, newWindow,
+                                          TAG_DONE);
+      }
     }
   }
 
