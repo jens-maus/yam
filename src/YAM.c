@@ -298,7 +298,10 @@ static BOOL InitLib(const char *libname,
 ///
 /// CheckMCC
 //  Checks if a certain version of a MCC is available
-static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, const char *url)
+static BOOL CheckMCC(const char *name,
+                     ULONG minver, ULONG minrev, 
+                     ULONG maxver, ULONG maxrev, 
+                     BOOL req, const char *url)
 {
   BOOL success = FALSE;
   BOOL flush = TRUE;
@@ -324,12 +327,24 @@ static BOOL CheckMCC(const char *name, ULONG minver, ULONG minrev, BOOL req, con
       MUI_DisposeObject(obj);
       obj = NULL;
 
+      D(DBF_STARTUP, "found %s v%ld.%ld through MUIA_Version/Revision", name, ver, rev);
+
+      // check that the minimum required version/revision is matched
       if(VERSION_IS_AT_LEAST(ver, rev, minver, minrev) == TRUE)
       {
-        D(DBF_STARTUP, "found %s v%ld.%ld through MUIA_Version/Revision", name, ver, rev);
+        D(DBF_STARTUP, "found %s to be >= v%ld.%ld", name, minver, minrev);
 
-        success = TRUE;
-        break;
+        // check that the maximum version/revision is not exceeded
+        if(maxver > 0 &&
+           VERSION_IS_LOWER(ver, rev, maxver, maxrev) == FALSE)
+        {
+          W(DBF_STARTUP, "found %s to be >= v%ld.%ld (max)", name, maxver, maxrev);
+        }
+        else
+        {
+          success = TRUE;
+          break;
+        }
       }
     }
 
@@ -2094,24 +2109,27 @@ static void InitBeforeLogin(BOOL hidden)
   if(InitThreads() == FALSE)
     Abort(tr(MSG_ERROR_THREADS));
 
-  // Lets check for the correct TheBar.mcc version
-  CheckMCC(MUIC_TheBar,     26, 9, TRUE, "http://www.sf.net/projects/thebar/");
-  CheckMCC(MUIC_TheBarVirt, 26, 9, TRUE, "http://www.sf.net/projects/thebar/");
-  CheckMCC(MUIC_TheButton,  26, 9, TRUE, "http://www.sf.net/projects/thebar/");
-
-  // Lets check for the correct BetterString.mcc version
-  CheckMCC(MUIC_BetterString, 11, 22, TRUE, "http://www.sf.net/projects/bstring-mcc/");
-
-  // we also make sure the user uses the latest brand of all other NList classes, such as
-  // NListview, NFloattext etc.
-  CheckMCC(MUIC_NList,      20, 131, TRUE, "http://www.sf.net/projects/nlist-classes/");
-  CheckMCC(MUIC_NListview,  19,  86, TRUE, "http://www.sf.net/projects/nlist-classes/");
-  CheckMCC(MUIC_NFloattext, 19,  67, TRUE, "http://www.sf.net/projects/nlist-classes/");
-  CheckMCC(MUIC_NListtree,  18,  38, TRUE, "http://www.sf.net/projects/nlist-classes/");
-  CheckMCC(MUIC_NBalance,   15,  12, TRUE, "http://www.sf.net/projects/nlist-classes/");
-
-  // Lets check for the correct TextEditor.mcc version
-  CheckMCC(MUIC_TextEditor, 15, 39, TRUE, "http://www.sf.net/projects/texteditor-mcc/");
+  // Check that the user has all the required third party mcc classes installed or
+  // abort otherwise.
+  // 
+  // Note: In addition to checking for a minimum required version we also check for
+  //       certain classes (e.g. betterstring.mcc) that the version is within a certain
+  //       range as on MorphOS there unfortunately exist fake classes which cause severe
+  //       problems when used with YAM. It's unclear why the MOS developers do that instead
+  //       of actively contributing to the classes they tend to call broken. In the end
+  //       this causes the MUI version of MorphOS to be borked, thus this workaround!
+  //
+  //       customclass      minv minr maxv maxr  mand  url 
+  CheckMCC(MUIC_TheBar,       26,  10,   0,   0, TRUE, "http://sf.net/projects/thebar/");
+  CheckMCC(MUIC_TheBarVirt,   26,  10,   0,   0, TRUE, "http://sf.net/projects/thebar/");
+  CheckMCC(MUIC_TheButton,    26,  10,   0,   0, TRUE, "http://sf.net/projects/thebar/");
+  CheckMCC(MUIC_BetterString, 11,  23,  30,   0, TRUE, "http://sf.net/projects/bstring-mcc/");
+  CheckMCC(MUIC_NList,        20, 132,   0,   0, TRUE, "http://sf.net/projects/nlist-classes/");
+  CheckMCC(MUIC_NListview,    19,  87,   0,   0, TRUE, "http://sf.net/projects/nlist-classes/");
+  CheckMCC(MUIC_NFloattext,   19,  68,   0,   0, TRUE, "http://sf.net/projects/nlist-classes/");
+  CheckMCC(MUIC_NListtree,    18,  39,   0,   0, TRUE, "http://sf.net/projects/nlist-classes/");
+  CheckMCC(MUIC_NBalance,     15,  13,   0,   0, TRUE, "http://sf.net/projects/nlist-classes/");
+  CheckMCC(MUIC_TextEditor,   15,  39,   0,   0, TRUE, "http://sf.net/projects/texteditor-mcc/");
 
   // now we search through PROGDIR:Charsets and load all user defined
   // codesets via codesets.library

@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-10-31 Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM.c, YAM_utilities.h: In addition to checking for a minimum required version
+    we also check for certain classes (e.g. betterstring.mcc) that the version is
+    within a certain range as on MorphOS there unfortunately exist fake classes which
+    cause severe problems when used with YAM. It's unclear why the MOS developers do
+    that instead of actively contributing to the classes they tend to call broken.
+    In the end this causes the MUI version of MorphOS to be borked, thus this
+    workaround!
+
 2012-10-30 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.c: slightly enhanced the debug output of the MCC version check.

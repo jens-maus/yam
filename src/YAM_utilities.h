@@ -207,6 +207,7 @@ struct FileReqCache
 #define ARRAY_SIZE(x)         (sizeof(x[0]) ? sizeof(x)/sizeof(x[0]) : 0)
 
 #define VERSION_IS_AT_LEAST(ver, rev, minver, minrev) (((ver) > (minver)) || ((ver) == (minver) && (rev) == (minrev)) || ((ver) == (minver) && (rev) > (minrev)))
+#define VERSION_IS_LOWER(ver, rev, maxver, maxrev) ((ver) < (maxver) || ((ver) == (maxver) && (rev) < (maxrev)))
 #define LIB_VERSION_IS_AT_LEAST(lib, minver, minrev)  VERSION_IS_AT_LEAST(((struct Library *)(lib))->lib_Version, ((struct Library *)(lib))->lib_Revision, minver, minrev)
 
 // special flag macros
