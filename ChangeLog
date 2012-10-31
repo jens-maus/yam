@@ -7,6 +7,9 @@ $URL$
 
 2012-10-31 Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM.c: added some additional check to CheckMCC() which tries to create a
+    custom class of the mcc that is being checked. That will enforce that the actual
+    mcc is a real mcc which can be subclassed and not just a fake or broken mcc.
   * YAM.c, YAM_utilities.h: In addition to checking for a minimum required version
     we also check for certain classes (e.g. betterstring.mcc) that the version is
     within a certain range as on MorphOS there unfortunately exist fake classes which

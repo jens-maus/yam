@@ -313,9 +313,12 @@ static BOOL CheckMCC(const char *name,
 
   gotoURLPossible = GotoURLPossible();
 
-  for(;;)
+  // lets go any try to find out if the
+  // mcc is there and in the right condition to be used.
+  do
   {
     Object *obj;
+    struct MUI_CustomClass *subclass;
 
     // First we attempt to acquire the version and revision through MUI via
     // creating an object of the mcc
@@ -341,17 +344,28 @@ static BOOL CheckMCC(const char *name,
           W(DBF_STARTUP, "found %s to be >= v%ld.%ld (max)", name, maxver, maxrev);
         }
         else
-        {
-          success = TRUE;
-          break;
-        }
+          success = TRUE; // success, the mcc meets our requirements
       }
+    }
+
+    // now we try out if we can subclass the mcc as otherwise this might be a fake
+    // or broken mcc which needs to be reinstalled by the user.
+    if((subclass = MUI_CreateCustomClass(NULL, name, NULL, 0, NULL)) != NULL)
+    {
+      D(DBF_STARTUP, "successfully created test custom class of '%s'", name);
+      MUI_DeleteCustomClass(subclass);
+      subclass = NULL;
+    }
+    else
+    {
+      W(DBF_STARTUP, "couldn't create test custom class of '%s'", name);
+      success = FALSE;
     }
 
     // if we end up here the version of the .mcc couldn't either be retrieved
     // by creating a MUI object of it (e.g. because it requires more mandatory
-    // attribute to create the object) or because the version didn't match
-    // with the minimum version required.
+    // attribute to create the object) or because the version didn't meet
+    // our requirements.
     //
     // So what we do now is to try to open the .mcc as a normal library and
     // see if the version of the library base of it matches.
@@ -488,6 +502,7 @@ static BOOL CheckMCC(const char *name,
       }
     }
   }
+  while(success == FALSE);
 
   if(success == FALSE && req == TRUE)
     exit(RETURN_ERROR); // Ugly
