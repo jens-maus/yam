@@ -294,6 +294,21 @@ struct RexxMsg *SendRexxCommand(struct RexxHost *host, char *buff, BPTR fh)
 
   ENTER();
 
+  #if defined(__MORPHOS__)
+  // on MorphOS we have the special situation that per default there exists no
+  // working rexxsyslib.library as the MorphOS developers have never implemented
+  // it. Nevertheless they have chosen to install a fake/wrapper library which
+  // comes with a v50 version and will only popup a warning requester which
+  // gives the impression that the application doesn't have a properly implemented
+  // ARexx implementation as it never states the word "MorphOS". Thus, we go and
+  // identify this situation and warn the user ourselve to make that more clear.
+  if(((struct Library *)(RexxSysBase))->lib_Version == 50 &&
+     ((struct Library *)(RexxSysBase))->lib_Revision <= 4)
+  {
+    ER_NewError(tr(MSG_ER_MORPHOS_REXX_WARNING));
+  }
+  #endif
+
   D(DBF_REXX, "executing ARexx script: '%s'", buff);
 
   // only RexxSysBase v45+ seems to support properly quoted
