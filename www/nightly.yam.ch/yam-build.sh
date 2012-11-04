@@ -29,10 +29,10 @@
 #
 
 # User definable variables
-VERSION="1.0"                        # the version of the tool
+VERSION="1.1"                        # the version of the tool
 SVN=/usr/bin/svn                     # path to the subversion tool
 SVNROOT="file:///home/svn/yam/trunk"
-MODULE=yamos                         # the main module to checkout
+MODULE=yam                           # the main module to checkout
 CHECKOUTDIR=/usr/local/amiga/yam-build   # directory where to checkout to
 MAKE="make -j1"                      # path to GNU make tool
 LHA=lha                              # path to lha archive tool
@@ -274,9 +274,6 @@ cp $MODULEPATH/ChangeLog $DEVDIR/
 
 # copy the resources from the respository to a local copy
 cp -a $MODULEPATH/resources $DEVDIR/ >/dev/null 2>&1
-
-# copy the themes from the respository to a local copy
-cp -a $MODULEPATH/themes $DEVDIR/resources/ >/dev/null 2>&1
 
 # delete Subversion's database files
 find $DEVDIR/resources/ -name ".svn" -exec rm -rf {} \; >/dev/null 2>&1
