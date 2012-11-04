@@ -227,7 +227,7 @@ DECLARE(ProgressChange) // struct BusyNode *busy
         // update the progress bar if we haven't reached 100% yet
         if(msg->busy->progressCurrent < msg->busy->progressMax)
         {
-          snprintf(data->progressInfoText, sizeof(data->progressInfoText), "%%ld/%d", msg->busy->progressMax);
+          snprintf(data->progressInfoText, sizeof(data->progressInfoText), "%%ld/%ld", msg->busy->progressMax);
           xset(data->progressGauge,
             MUIA_Gauge_InfoText, data->progressInfoText,
             MUIA_Gauge_Max, msg->busy->progressMax,
