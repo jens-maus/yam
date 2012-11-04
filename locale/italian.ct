@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.99 (26.10.2012)
+## version $VER: YAM.catalog 7.99 (4.11.2012)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -7,7 +7,7 @@
 ; Compiled with FlexCat 2.10 PPC (AmigaOS4)
 ; $Id$
 ;
-; based on YAM.cd 6339 2012-10-25
+; based on YAM.cd 6392 2012-11-04
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -260,10 +260,6 @@ Caricamento della rubrica...
 MSG_InitLibs
 Inizializzazione delle librerie e delle classi...
 ; Initializing libraries and classes...
-;
-MSG_ErrorClasses
-Impossibile creare le classi MUI interne
-; Can't create MUI custom classes
 ;
 MSG_ErrorAslStruct
 Impossibile allocare la struttura ASL
@@ -6403,7 +6399,7 @@ Si consiglia di scaricare l'ultima versione da\n\
 ;
 MSG_ER_MCC_IN_USE
 Impossibile aprire la classe MUI '%s' v%lu.%lu.\n\
-%lu.%lu è correntemente in uso da un'altra applicazione.\n\
+%lu.%lu è correntemente usata da un'altra applicazione.\n\
 \n\
 Vai all'indirizzo '%s'.\n\
 Una volta installata la versione richiesta, chiudi tutti i programmi\n\
@@ -10526,4 +10522,32 @@ Si verrà avvertiti nel caso si renda disponibile un nuovo aggiornamento.
 MSG_PGPPASS_SHOW_CHARS
 Mostra caratteri
 ; Show characters
+;
+MSG_CANNOT_CREATE_CUSTOM_CLASS
+Impossibile creare la classe '%s'\n\
+come sottoclasse di '%s'.
+; Failed to create custom class '%s'\n\
+; as subclass of '%s'.
+; CLASS,SUPERCLASS
+;
+MSG_ER_MORPHOS_REXX_WARNING
+YAM ha rilevato nel sistema l'utilizzo della versione nativa\n\
+di 'rexxsyslib.library' per MorphOS, ma questa libreria non\n\
+ha una corretta implementazione di ARexx.\n\
+\n\
+Per risolvere il problema ed ottenere un'implementazione\n\
+funzionanante si consiglia di prelevare la vecchia versione\n\
+della 'rexxsyslib.library' da AmigaOS 3.1-3.9 (SYS:Libs) ed\n\
+installarla in SYS:Libs su MorphOS, dopodichè rinominare\n\
+il vecchio file 'rexxsyslib.library' residente in MOSSYS:Libs.\n\
+Infine riavviare il computer.
+; YAM has identified that you are running a version of the \
+; 'rexxsyslib.library' in your MorphOS system that is known \
+; to not have a working ARexx implementation.\n\
+; \n\
+; To solve this situation and get ARexx running with YAM \
+; you should install a copy of the 'rexxsyslib.library' \
+; from an AmigaOS 3.1-3.9 installation to SYS:Libs, rename \
+; the 'rexxsyslib.library' in MOSSYS:Libs and reboot your \
+; system.
 ;
