@@ -7376,7 +7376,7 @@ to not have a working ARexx implementation.\n\
 \n\
 To solve this situation and get ARexx running with YAM \
 you should install a copy of the 'rexxsyslib.library' \
-from an AmigaOS 3.1-3.9 installation to SYS:Libs, rename \
-the 'rexxsyslib.library' in MOSSYS:Libs and reboot your \
+from an AmigaOS 3.1-3.9 installation to 'SYS:Libs', rename \
+the 'rexxsyslib.library' in 'MOSSYS:Libs' and reboot your \
 system.
 ;

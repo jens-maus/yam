@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-11-05 Thore Böckelmann <tboeckel@gmx.de>
+
+  * locale/german.ct: updated german translation.
+
 2012-11-04 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: update to the latest changes.
@@ -18,7 +22,7 @@ $URL$
     user in case this version is found to be present. In addition, instructions
     are then given in how to fix the problem installing a 68k version of
     that library from an AmigaOS 3.1-3.9 installation.
-  
+
 2012-10-31 Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM.c: added some additional check to CheckMCC() which tries to create a
