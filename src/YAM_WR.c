@@ -1935,9 +1935,9 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
 
     if((out = fopen(wmData->filename, "w")) != NULL)
     {
-      char *sbuf = NULL;
       struct ReadMailData *rmData;
       struct ExtendedMail *email;
+      char *p;
 
       setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
 
@@ -1971,6 +1971,7 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
             int i;
             char address[SIZE_LARGE];
             BOOL reuseReplyToAddress = TRUE;
+            char *sbuf = NULL;
 
             // free our temp text now
             FreeStrBuf(cmsg);
@@ -2021,7 +2022,6 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
                 D(DBF_MAIL, "adding ReplyTo recipient '%s'", email->SReplyTo[i].Address);
                 sbuf = AppendRcpt(sbuf, &email->SReplyTo[i], email->identity, FALSE);
               }
-
               set(wmData->window, MUIA_WriteWindow_ReplyTo, sbuf);
             }
 
@@ -2033,11 +2033,10 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
               D(DBF_MAIL, "adding To recipient '%s'", email->STo[i].Address);
               sbuf = AppendRcpt(sbuf, &email->STo[i], email->identity, FALSE);
             }
-
             set(wmData->window, MUIA_WriteWindow_To, sbuf);
 
             // add all "CC:" recipients of the mail
-            sbuf[0] = '\0';
+            ResetStrBuf(sbuf);
             for(i=0; i < email->NumCC; i++)
             {
               D(DBF_MAIL, "adding CC recipient '%s'", email->CC[i].Address);
@@ -2046,7 +2045,7 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
             set(wmData->window, MUIA_WriteWindow_CC, sbuf);
 
             // add all "BCC:" recipients of the mail
-            sbuf[0] = '\0';
+            ResetStrBuf(sbuf);
             for(i=0; i < email->NumBCC; i++)
             {
               D(DBF_MAIL, "adding BCC recipient '%s'", email->BCC[i].Address);
@@ -2103,9 +2102,8 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
       if(quiet == FALSE)
         SafeOpenWindow(wmData->window);
 
-      sbuf = (STRPTR)xget(wmData->window, MUIA_WriteWindow_To);
-      set(wmData->window, MUIA_WriteWindow_ActiveObject, *sbuf ? MUIV_WriteWindow_ActiveObject_TextEditor :
-                                                                 MUIV_WriteWindow_ActiveObject_To);
+      p = (char *)xget(wmData->window, MUIA_WriteWindow_To);
+      set(wmData->window, MUIA_WriteWindow_ActiveObject, p[0] != '\0' ? MUIV_WriteWindow_ActiveObject_TextEditor : MUIV_WriteWindow_ActiveObject_To);
 
       if(C->LaunchAlways == TRUE && quiet == FALSE)
         DoMethod(wmData->window, MUIM_WriteWindow_LaunchEditor);

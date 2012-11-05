@@ -31,6 +31,7 @@
 #include <stdlib.h>
 
 char * AllocStrBuf(size_t initsize);
+void ResetStrBuf(char *buf);
 size_t StrBufCat(char **buf, const char *source);
 size_t StrBufCpy(char **buf, const char *source);
 size_t StrBufLength(char *buf);

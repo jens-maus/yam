@@ -83,6 +83,24 @@ char *AllocStrBuf(size_t initsize)
 }
 
 ///
+/// ResetStrBuf
+//  Reset a dynamic string
+void ResetStrBuf(char *buf)
+{
+  ENTER();
+
+  if(buf != NULL)
+  {
+  	struct StrBuf *strbuf = STR_TO_STRBUF(buf);
+
+    strbuf->length = 0;
+    strbuf->string[0] = '\0';
+  }
+
+  LEAVE();
+}
+
+///
 /// StrBufCpy
 //  Fills a dynamic buffer and returns the length of the string
 size_t StrBufCpy(char **buf, const char *source)
