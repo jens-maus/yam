@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.9 (18.05.2012)
+## version $VER: YAM.catalog 7.10 (7.11.2012)
 ## language czech
 ## codeset 5
 ;
@@ -38,10 +38,6 @@ Pøílohy
 MSG_Options
 Mo¾nosti
 ; Options
-;
-MSG_Add
-Pøid_at
-; _New
 ;
 MSG_Del
 Odeb_rat
@@ -262,10 +258,6 @@ Naèítání seznamu kontaktù...
 MSG_InitLibs
 Inicializace knihoven a tøíd...
 ; Initializing libraries and classes...
-;
-MSG_ErrorClasses
-Nelze vytvoøit externí tøídy MUI
-; Can't create MUI custom classes
 ;
 MSG_ErrorAslStruct
 Nelze alokovat strukturu ASL
@@ -773,10 +765,6 @@ MSG_MA_Select
 Vybrat
 ; Select
 ;
-MSG_MA_FlushIndices
-Vyprázdnit indexy
-; Flush indices
-;
 MSG_MA_MDelete
 Smazat
 ; Delete
@@ -844,8 +832,7 @@ Sma¾e vybrané zprávy.
 ; Delete selected message(s).
 ;
 MSG_HELP_MA_BT_GETADDRESS
-Ulo¾í adresu odesílatele\n\
-do seznamu kontaktù.
+Ulo¾í adresu odesílatele do seznamu kontaktù.
 ; Save sender's address\n\
 ; in your address book.
 ;
@@ -859,14 +846,12 @@ Odpovìï na vybranou zprávu.
 ; selected message(s).
 ;
 MSG_HELP_MA_BT_FORWARD
-Pøeposlání vybraných zpráv\n\
-dal¹ím pøíjemcùm.
+Pøeposlání vybraných zpráv dal¹ím pøíjemcùm.
 ; Forward the selected message(s)\n\
 ; to another recipient.
 ;
 MSG_HELP_MA_BT_POPNOW
-Stáhnutí nových zpráv\n\
-z po¹tovního serveru.
+Stáhnutí nových zpráv z po¹tovního serveru.
 ; Connect to the mail server\n\
 ; and download new messages.
 ;
@@ -1085,10 +1070,6 @@ MSG_CO_CrdTCPIP
 TCP/IP
 ; TCP/IP
 ;
-MSG_CO_CrdNewMail
-Nová po¹ta
-; New mail
-;
 MSG_CO_CrdFilters
 Filtrování po¹ty
 ; Filters
@@ -1104,10 +1085,6 @@ Psaní zpráv
 MSG_CO_CrdSignature
 Podpis
 ; Signature
-;
-MSG_CO_CrdLists
-Seznamy
-; Lists
 ;
 MSG_CO_CrdMIME
 Pøílohy
@@ -1249,10 +1226,6 @@ MSG_CO_EmailAddress
 _E-mail
 ; _E-mail address
 ;
-MSG_CO_POPServer
-Server POP_3
-; POP_3 server
-;
 MSG_CO_Password
 _Heslo
 ; _Password
@@ -1265,16 +1238,12 @@ MSG_CO_SendMail
 Odesílání po¹ty (SMTP)
 ; Send mail (SMTP)
 ;
-MSG_CO_Domain
-Do_ména
-; Do_main
-;
 MSG_CO_Allow8bit
 Poslat text zprávy _8bitovì
 ; Server allows _8bit characters
 ;
 MSG_CO_ReceiveMail
-Pøíjem po¹ty (POP3)
+Stahování po¹ty (POP3)
 ; Receive mail (POP3)
 ;
 MSG_CO_POPUserID
@@ -1288,10 +1257,6 @@ A_ktivní
 MSG_CO_DeleteServerMail
 Smazat p_o¹tu ze serveru
 ; Delete mail _on server
-;
-MSG_CO_UseAPOP
-Pøih_lásit se pomocí APOP
-; _Log in using APOP
 ;
 MSG_CO_PSNever
 nikdy
@@ -1321,10 +1286,6 @@ MSG_CO_TWAlways
 zobrazit
 ; show always
 ;
-MSG_CO_Download
-Stahování po¹ty
-; Download
-;
 MSG_CO_TransferWin
 Prùbìh _stahování
 ; _Transfer window
@@ -1333,22 +1294,6 @@ MSG_CO_PreSelect
 Okno pro vý_bìr
 ; _Pre-selection
 ;
-MSG_CO_UpdateStatus
-Aktual_izovat stav zpráv
-; Update m_essage status
-;
-MSG_CO_WarnSize1
-Maximá_lní velikost
-; Size _limit
-;
-MSG_CO_WarnSize2
-KB
-; KB
-;
-MSG_CO_AutoOperation
-Automatické operace
-; Automatic operation
-;
 MSG_CO_CheckMail
 Stahovat po¹tu ka¾dých
 ; Check for new mail every
@@ -1356,14 +1301,6 @@ Stahovat po¹tu ka¾dých
 MSG_CO_Minutes
 min.
 ; minutes
-;
-MSG_CO_DownloadLarge
-S_tahovat velké zprávy
-; _Download large messages
-;
-MSG_CO_Notification
-Upozornìní na novou po¹tu
-; Notification
 ;
 MSG_CO_NotiReq
 Dialo_gové okno
@@ -1553,14 +1490,6 @@ MSG_CO_DefaultViewer
 _Výchozí prohlí¾eè
 ; De_fault viewer
 ;
-MSG_CO_MessageHeader
-Hlavièka zprávy
-; Message headers
-;
-MSG_CO_ReplyTo
-Zpáteèní ad_resa
-; _Reply to
-;
 MSG_CO_Organization
 Název _organizace
 ; _Organization
@@ -1681,10 +1610,6 @@ MSG_CO_Signature
 Podpis
 ; Signature
 ;
-MSG_CO_UseSig
-Pou¾ít podp_is
-; Use s_ignatures
-;
 MSG_CO_EditSig
 Upravit v externím _editoru
 ; _Edit in external editor
@@ -1732,14 +1657,6 @@ Podrobný
 MSG_CO_PGPExe
 Adresáø P_GP
 ; P_GP's directory
-;
-MSG_CO_PGPKey
-_Klíè PGP
-; Your PGP key _ID
-;
-MSG_CO_EncryptToSelf
-Za¹ifrovat na s_ebe
-; _Encrypt to self
 ;
 MSG_CO_Logfiles
 Záznam o èinnosti
@@ -1821,10 +1738,6 @@ MSG_CO_Gallery
 F_otografie kontaktù
 ; Save _photos in
 ;
-MSG_CO_MyURL
-Odkaz na _fotografii
-; UR_L of your picture
-;
 MSG_CO_AddToAddrbook
 Ulo¾i_t adresu odesílatele
 ; Sa_ve sender's address
@@ -1836,10 +1749,6 @@ _HTTP proxy server
 MSG_CO_NewGroup
 S_kupina pro nové kontakty
 ; _Group for new entries
-;
-MSG_CO_AddInfo
-Pøilo¾it osobní úd_aje
-; _Add personal info
 ;
 MSG_CO_Paths
 Definice cest
@@ -1884,10 +1793,6 @@ nebo více zpráv
 MSG_CO_Remove
 Smazat zp_rávy bez pøesunutí do ko¹e
 ; _Remove messages immediately
-;
-MSG_CO_SaveSent
-Ulo¾it odeslané zprá_vy
-; Sa_ve sent messages
 ;
 MSG_CO_XPK
 Komprese a ¹ifrování dat
@@ -2039,13 +1944,6 @@ pro stahování po¹ty.
 ; If you leave this field empty, the address of the\n\
 ; POP3 server will be used as fallback.
 ;
-MSG_HELP_CO_ST_DOMAIN
-Hostitelské jméno poèítaèe. Zkuste zmìnit v pøípadì,\n\
-¾e dochází k chybám pøi provádìní pøíkazu HELO.
-; The hostname of your computer.\n\
-; Change this field if the HELO\n\
-; commands fails.
-;
 MSG_HELP_CO_CH_SMTP8BIT
 Pøi odesílání vypne konverzi textu zprávy (pøevod\n\
 textu do ASCII). Pou¾ijte pouze tehdy, pokud víte,\n\
@@ -2084,14 +1982,6 @@ Po stáhnutí sma¾e zprávy ze serveru.
 ; mail server after the\n\
 ; download.
 ;
-MSG_HELP_CO_CH_USEAPOP
-Umo¾ní bezpeènìj¹í pøihlá¹ení k serveru pomocí\n\
-protokolu APOP.
-; Log in using APOP authentication\n\
-; to keep your user name and password\n\
-; away from prying eyes.\n\
-; (not supported by all POP3 servers)
-;
 MSG_HELP_CO_CH_POPENABLED
 Aktivuje vybranou polo¾ku, tj. program zaène\n\
 z tohoto serveru v zadaném intervalu stahovat\n\
@@ -2111,12 +2001,6 @@ vybrat ty zprávy, které chcete stáhnout.
 ; POP3 mailbox and allows you to select which messages you\n\
 ; want to download.
 ;
-MSG_HELP_CO_CH_UPDSTAT
-Pøed stáhnutím nové po¹ty oznaèí nové zprávy\n\
-ve slo¾ce 'Doruèené' jako nepøeètené.
-; Mark new messages in the Incoming folder\n\
-; as 'unread' before downloading new mail.
-;
 MSG_HELP_CO_ST_WARNSIZE
 Zprávy, jejich¾ velikost pøesahuje definovaný\n\
 limit, budou pova¾ovány za 'velké'.
@@ -2124,10 +2008,8 @@ limit, budou pova¾ovány za 'velké'.
 ; will be considered as 'large'.
 ;
 MSG_HELP_CO_ST_INTERVAL
-Definuje interval stahování po¹ty.\n\
-Funkci vypnete zadáním hodnoty 0.
-; How often do you want YAM to automatically check for new mail?\n\
-; Use '0' if you don't want YAM to do this.
+Definuje interval stahování po¹ty.
+; How often do you want YAM to automatically check for new mail?
 ;
 MSG_HELP_CO_CH_DLLARGE
 Pøi automatickém vybírání nové po¹ty program\n\
@@ -2364,24 +2246,6 @@ souboru.
 ; Program used to display\n\
 ; attachments of unknown type.
 ;
-MSG_HELP_CO_ST_REPLYTO
-Chcete-li dostávat odpovìdi na jinou adresu ne¾ tu,\n\
-ze které pí¹ete, zadejte ji zde.
-; Should replies to your messages need to be sent by\n\
-; default somewhere else besides (or instead of) your\n\
-; e-mail address, specify those other addresses here.
-;
-MSG_HELP_CO_ST_ORGAN
-Definuje název firmy nebo organizace.
-; The name of your\n\
-; company or institute.
-;
-MSG_HELP_CO_ST_EXTHEADER
-Definuje va¹i vlastní èást hlavièky, která bude\n\
-pøidána ke ka¾dé odchozí zprávì.
-; Additional message header(s) that will\n\
-; be added to every outgoing message.
-;
 MSG_HELP_CO_ST_HELLOTEXT
 Definuje text pøidaný na zaèátek nové zprávy.
 ; Text to insert at the\n\
@@ -2455,11 +2319,6 @@ seznamu.
 ; Use these phrases in replies to\n\
 ; messages from a mailing list.
 ;
-MSG_HELP_CO_CH_QUOTE
-Chcete v odpovìdi odsadit pùvodní text zprávy?
-; Quote the original\n\
-; message in your reply?
-;
 MSG_HELP_CO_CH_QUOTEEMPTY
 Chcete v odpovìdi odsadit i prázdné øádky?
 ; Insert quote character\n\
@@ -2476,11 +2335,6 @@ MSG_HELP_CO_CH_STRIPSIG
 Z odpovìdi odstraní podpis pùvodního odesílatele.
 ; Avoids quoting the signature\n\
 ; of the original message.
-;
-MSG_HELP_CO_CY_SIGNAT
-Vyberte podpis, který chcete upravit.
-; Select the signature\n\
-; you want to edit.
 ;
 MSG_HELP_CO_BT_EDITSIG
 Umo¾ní upravit podpis v externím editoru.
@@ -2541,19 +2395,6 @@ Zde vyberte cestu k programu PGP.
 ; Directory where the PGP\n\
 ; executable can be found.
 ;
-MSG_HELP_CO_ST_MYPGPID
-Definuje èíslo va¹eho klíèe PGP, pomocí kterého\n\
-budou podepisovány a ¹ifrovány zprávy.
-; The ID of your PGP key that is used\n\
-; to sign and encrypt messages.
-;
-MSG_HELP_CO_CH_ENCSELF
-Za¹ifruje nové zprávy va¹ím vlastním veøejným\n\
-klíèem, tj. i nadále budete moci odeslané zprávy\n\
-èíst a upravovat.
-; Encrypt new messages with your public key,\n\
-; so you can still read or edit outgoing messages.
-;
 MSG_HELP_CO_ST_LOGFILE
 Definuje cestu k záznamovým souborùm.
 ; Path where the log\n\
@@ -2607,11 +2448,6 @@ Definuje cestu k souborùm s fotografií tìch lidí\n\
 ze seznamu kontaktù, kteøí ji zveøejòují.
 ; Directory to save the pictures\n\
 ; of your correspondents.
-;
-MSG_HELP_CO_ST_PHOTOURL
-Definuje odkaz na va¹i vlastní fotografii.
-; URL address of your\n\
-; portrait image.
 ;
 MSG_HELP_CO_CY_ATAB
 Automaticky ulo¾í e-mail odesílatele pøeètené\n\
@@ -2676,11 +2512,6 @@ Pou¾ívejte s rozmyslem!
 ; Immediately delete the messages rather\n\
 ; than moving them to the Trash folder.\n\
 ; (Use this with care)
-;
-MSG_HELP_CO_CH_SAVESENT
-Ulo¾í odeslané zprávy do slo¾ky 'Odeslané'.
-; Move sent messages to\n\
-; the Sent folder.
 ;
 MSG_HELP_CO_TX_ENCPACK
 Definuje knihovnu systému XPK, pomocí které YAM\n\
@@ -2760,7 +2591,7 @@ Pøipomínka narozenin
 ;
 MSG_AB_HappyBirthday
 V¹echno nejlep¹í k narozeninám!
-; Happy birthday.
+; Happy birthday
 ;
 MSG_AB_PersonAlias
 Alias (osoba)
@@ -3765,10 +3596,6 @@ MSG_WR_TitleContents
 Druh souboru
 ; Contents
 ;
-MSG_WR_TitleEncoding
-Kódování
-; Enc.
-;
 MSG_WR_TitleDescription
 Popis
 ; Description
@@ -3777,7 +3604,7 @@ Popis
 ; Module WR - Window
 ;
 MSG_WR_SecNone
-®ádné
+---
 ; None
 ;
 MSG_WR_SecSign
@@ -3844,10 +3671,6 @@ MSG_WR_Display
 Zobraz_it
 ; D_isplay
 ;
-MSG_WR_Encoding
-Kódování
-; Encoding
-;
 MSG_WR_ContentType
 Typ _MIME
 ; _MIME type
@@ -3889,7 +3712,7 @@ Potv_rdit doruèení
 ; _Return receipt
 ;
 MSG_WR_AddInfo
-_Pøidat osobní údaje
+Pøilo¾it osobní úd_aje
 ; Add _personal info
 ;
 MSG_WR_Importance
@@ -3899,10 +3722,6 @@ Dùle¾_itost
 MSG_WR_Signature
 Podpis
 ; Signature
-;
-MSG_WR_Security
-Zabezpeèení
-; Security
 ;
 MSG_WR_BounceWT
 Pøedání zprávy beze zmìny
@@ -4184,14 +4003,6 @@ definovaným prohlí¾eèem.
 ; Use the configured MIME viewer\n\
 ; to display this attachment.
 ;
-MSG_HELP_WR_RA_ENCODING
-Definuje metodu kódování pøená¹eného souboru.\n\
-UUencode pou¾ijte pouze tehdy, pokud má pøíjemce\n\
-hodnì zastaralý po¹tovní program.
-; Type of encoding used for the selected attachment.\n\
-; Select UUencode only if the recipient is not using\n\
-; a MIME compliant mailer.
-;
 MSG_HELP_WR_ST_CTYPE
 Definuje typ MIME vybrané pøílohy. Pokud je to\n\
 mo¾né, pou¾ijte nìkterý z typù ze seznamu.
@@ -4221,13 +4032,6 @@ k té standardní.
 ; Additional headers that should\n\
 ; be added to the message.
 ;
-MSG_HELP_WR_ST_FROM
-Zobrazí informace o odesílateli zprávy (adresa\n\
-a jméno osoby).
-; Contents of the 'From:' header\n\
-; (name and address of the person\n\
-; who is writing this message).
-;
 MSG_HELP_WR_ST_REPLYTO
 Definuje zpáteèní adresu pro danou zprávu.
 ; Return address\n\
@@ -4253,24 +4057,6 @@ MSG_HELP_WR_CY_IMPORTANCE
 Nastaví prioritu zprávy.
 ; Set the priority\n\
 ; of this message.
-;
-MSG_HELP_WR_RA_SIGNATURE
-Zde urèíte který z nabízených podpisù pou¾ít.
-; Which signature do you want\n\
-; to append to this message?
-;
-MSG_HELP_WR_RA_SECURITY
-Definuje zpùsob zabezpeèení. Pomocí systému PGP\n\
-lze zprávu podepsat nebo za¹ifrovat, pøíp. i obojí.\n\
-\n\
-'Výchozí' znamená, ¾e se program pokusí najít\n\
-adresáta v seznamu kontaktù a následnì pou¾ít\n\
-tam definovaný zpùsob zabezpeèení.
-; Select one of these security options to send\n\
-; your message PGP signed or encrypted.\n\
-; "Default" tries to find the recipient\n\
-; in your address book and use the security\n\
-; settings specified there.
 ;
 MSG_HELP_WR_BT_HOLD
 Zkopíruje vytvoøenou zprávu do slo¾ky 'K odeslání'\n\
@@ -4401,7 +4187,7 @@ Odesílání po¹ty pøes %s
 ;
 MSG_TR_MsgInFile
 Zprávy v souboru %s
-; Messages in file
+; Messages in file %s
 ;
 MSG_TR_Control
 Pøehled mo¾ností
@@ -4432,7 +4218,7 @@ S_táhnout a smazat
 ; Do_wnload & delete
 ;
 MSG_TR_Start
-Prové_st
+_Spustit
 ; _Start
 ;
 MSG_TR_Status
@@ -5366,13 +5152,8 @@ MSG_SETTINGS_MUI
 Konfigurace MUI...
 ; MUI...
 ;
-MSG_HELP_FO_ST_MLFROMADDRESS
-Urèuje adresu odesílatele pro rozesílací seznam.
-; Use this 'From:' address when\n\
-; posting new mails to the list.
-;
 MSG_HELP_FO_ST_MLREPLYTOADDRESS
-Urèuje adresu pro odpovìdi do rozesílacího seznamu.
+Urèuje zpáteèní adresu pro rozesílací seznam.
 ; Use this 'Reply-To:' address when\n\
 ; posting new mails to the list.
 ;
@@ -5399,10 +5180,6 @@ MSG_RE_FixedFont
 Fixní písmo?
 ; Fixed font?
 ;
-MSG_CO_UseSMTPAUTH
-Pou¾ít SMTP AU_TH
-; Use SMTP AU_TH
-;
 MSG_CO_SMTPUser
 U¾i_vatel
 ; Us_er name
@@ -5414,10 +5191,6 @@ He_slo
 MSG_WR_AltQuoted
 Jinak odsazený text
 ; Alternative quoted
-;
-MSG_CO_DoQuote
-Odsad_it zprávy
-; Qu_ote message
 ;
 MSG_EA_SelectPhoto_Title
 Vyberte fotografii
@@ -5449,10 +5222,6 @@ MSG_CO_GENLISTCFG
 Obecné mo¾nosti
 ; General settings
 ;
-MSG_CO_FIELDLISTCFG
-Mo¾nosti pole
-; Field settings
-;
 MSG_CO_SIZEFORMAT
 Záp_is velikosti
 ; Si_ze format
@@ -5481,16 +5250,6 @@ Pøesnost na setiny (0,01 GB/MB/KB)
 MSG_CO_SIZEFORMAT05
 Pøesnost na tisíciny (0,001 GB/MB/KB)
 ; 10^-3 precision (0.001 GB/MB/KB)
-;
-MSG_HELP_CO_CH_USESMTPAUTH
-Umo¾ní ovìøené pøihlá¹ení k po¹tovnímu serveru.\n\
-Typickým pøíkladem je posílání zpráv pøes server,\n\
-který není umístìn v síti va¹eho poskytovatele\n\
-pøipojení k internetu.
-; Select if you wish to authenticate\n\
-; yourself to a foreign SMTP server\n\
-; (usually outside your ISP's domain).\n\
-; If in doubt, don't enable this option.
 ;
 MSG_HELP_CO_ST_SMTPAUTHUSER
 Definuje u¾ivatelské jméno pro ovìøení SMTP AUTH.
@@ -5618,14 +5377,6 @@ MSG_SEARCHNOTFOUND_MSG
 Text '%s' nelze najít.
 ; '%s' not found.
 ;
-MSG_WR_ERRORNOSENDER
-Zpráva není úplná: Vyberte adresu odesílatele.
-; Mail is incomplete: no sender.
-;
-MSG_WR_NOSENDERREQGAD
-_Pou¾ít výchozí|*_Zru¹it
-; _Use default sender|*_Cancel
-;
 MSG_FO_GROUP_CONFDEL
 Vybraná skupina obsahuje dal¹í slo¾ky. Ty se\n\
 po smazání pøesunou o stupeò vý¹e do nadøazené\n\
@@ -5739,13 +5490,13 @@ Funkci vypnete zadáním hodnoty 0.
 ; Select 0 to disable this feature.
 ;
 MSG_HELP_CO_ST_SMTPPORT
-Definuje port pro po¹tovní server (SMTP).\n\
+Definuje port serveru pro odesílání po¹ty (SMTP).\n\
 Výchozí: 25
 ; Port used by the SMTP server\n\
 ; (default: 25).
 ;
 MSG_HELP_CO_ST_POPPORT
-Definuje port pro po¹tovní server (POP3).\n\
+Definuje port serveru pro stahování po¹ty (POP3).\n\
 Výchozí: 110
 ; Port used by the POP3 server\n\
 ; (default: 110).
@@ -5882,19 +5633,6 @@ MSG_HELP_CO_CA_COLURL
 Definuje barvu pro odkazy uvedené v textu.
 ; Color used to display\n\
 ; clickable URL links.
-;
-MSG_FO_FOLDEREXISTS
-V zadané cestì ji¾ existuje soubor nebo adresáø\n\
-se stejným názvem.\n\
-\n\
-Opravdu chcete pokraèovat?
-; A file or directory with the given folder path already exists.\n\
-; \n\
-; Do you really want to proceed?
-;
-MSG_FO_FOLDERMOVE
-Opravdu chcete pøesunout slo¾ku jinam?
-; Do you really want to move the folder to another path?
 ;
 MSG_FO_FOLDERNAMEINVALID
 Prázdný øetìzec nebo název ji¾ existující slo¾ky\n\
@@ -6153,33 +5891,6 @@ MSG_MA_CREQ_UNKNOWN_TITLE
 Neznámý soubor ve slo¾ce
 ; Unknown file in folder directory found
 ;
-MSG_CO_SMTPSECURE
-Pou¾ít zabezpeèení:
-; Use secure connection:
-;
-MSG_CO_SMTPSECURE_NO
-Ne
-; No
-;
-MSG_CO_SMTPSECURE_TLS
-Pomocí TLSv1
-; with TLSv1
-;
-MSG_CO_SMTPSECURE_SSL
-Pomocí SSLv3
-; with SSLv3
-;
-MSG_HELP_CO_RA_SMTPSECURE
-Umo¾òuje nastavit zpùsob a druh protokolu zabezpeèení\n\
-pøenosu dat mezi programem YAM a serverem pro odesílání\n\
-po¹ty, tzv. SMTP.\n\
-Jsou-li nabízené mo¾nosti neaktivní, zkontrolujte, zda\n\
-je správnì nainstalován balík AmiSSL.
-; A TLSv1 or SSLv3 secure connection will be established between\n\
-; the SMTP server and YAM to send e-mail through an encrypted connection.\n\
-; If these radio buttons are ghosted, it means AmiSSL support is\n\
-; currently not available.
-;
 MSG_CO_SHOWEMBEDDEDREADPANE
 Z_obrazit v hlavním oknì pole s textem zprávy
 ; Show embedded read _pane in main window
@@ -6299,24 +6010,6 @@ Pøid_at
 MSG_CO_Less
 Odeb_rat
 ; _Less
-;
-MSG_MA_AUTOSAVEFOUND
-Byl nalezen soubor '%s'.\n\
-Jde o automaticky ulo¾enou zprávu z døívìj¹ka. Jeden\n\
-z dùvodù tohoto pøípadu mù¾e být zatuhnutí programu\n\
-pøi posledním spu¹tìní anebo nenadálý restart poèítaèe.\n\
-\n\
-Co chcete udìlat s touto zprávou?
-; YAM has found an autosaved message file '%s'\n\
-; which was created in a previous session.\n\
-; This may be due to a possible crash or reboot\n\
-; while writing a message.\n\
-; \n\
-; What do you want to do with that message?
-;
-MSG_MA_AUTOSAVEFOUND_TITLE
-Automaticky ulo¾ená zpráva
-; Autosave file found
 ;
 MSG_CO_NB_AUTOSAVE
 Interval ukládání
@@ -6611,16 +6304,8 @@ Nastavení TCP/IP
 ; TCP/IP Settings
 ;
 MSG_CO_TCPIP_SUMMARY
-Konfigurace úètù pro pøíjem a serveru pro odesílání po¹ty...
+Konfigurace serverù pro stahování a odesílání po¹ty...
 ; Configure your SMTP and POP3 accounts...
-;
-MSG_CO_NEWMAIL_TITLE
-Nová po¹ta
-; New Mail Settings
-;
-MSG_CO_NEWMAIL_SUMMARY
-Definuje zpùsob zpracování doruèené po¹ty...
-; How to handle and react upon incoming mail...
 ;
 MSG_CO_FILTER_TITLE
 Filtrování po¹ty
@@ -6661,14 +6346,6 @@ Podpis ve zprávì
 MSG_CO_SIGNATURE_SUMMARY
 Konfigurace textu na konci zprávy...
 ; Configure your e-mail signatures...
-;
-MSG_CO_LISTS_TITLE
-Mo¾nosti seznamù
-; Mail Listview Settings
-;
-MSG_CO_LISTS_SUMMARY
-Konfigurace vzhledu a chování seznamù...
-; Configure the basic appearance of mail listviews...
 ;
 MSG_CO_SECURITY_TITLE
 Mo¾nosti zabezpeèení
@@ -6818,10 +6495,6 @@ Ka¾dý mìsíc
 MSG_CO_SEARCHFORUPDATES
 Interval sle_dování
 ; Check for up_dates
-;
-MSG_CO_SEARCHFORUPDATESINFO
-Upozornìní na novinky a aktualizace týkající se programu YAM.
-; You will be notified as soon as updates are available.
 ;
 MSG_CO_SEARCHNOW
 _Vyhledat aktualizace
@@ -7314,16 +6987,12 @@ MSG_CO_SPAM_DELETESPAMFOLDER
 S_mazat slo¾ku 'Spam'
 ; _Delete Spam folder
 ;
-MSG_CO_SMTPAUTH_METHOD
-M_etoda
-; Met_hod
-;
 MSG_HELP_CO_CY_SMTPAUTHMETHOD
-Urèuje metodu autorizace pøi komunikaci s po¹tovním\n\
-serverem. 'Automaticky' znamená výbìr autorizace dle\n\
-mo¾ností serveru, ostatní mo¾nosti pak lze pou¾ít\n\
-dle konkrétní situace. Jsou seøazeny od nejlep¹í\n\
-po nejhor¹í.
+Urèuje metodu ovìøení identity pøi komunikaci\n\
+s po¹tovním serverem. 'Automaticky' znamená výbìr\n\
+metody dle mo¾ností serveru, ostatní mo¾nosti\n\
+pak lze pou¾ít dle konkrétní situace. Jsou seøazeny\n\
+od nejlep¹í po nejhor¹í.
 ; Select here the authentication method YAM should use.\n\
 ; 'Auto' lets YAM pick one automatically depending on\n\
 ; the server's capabilities and is the recommended value.\n\
@@ -7353,7 +7022,7 @@ PLAIN
 ;
 MSG_CO_ER_SMTPAUTH
 Po¹tovní server '%s' nepodporuje vybranou metodu \
-autorizace (SMTP-AUTH).\n\
+ovìøení identity (SMTP-AUTH).\n\
 \n\
 Zjistìte poskytované metody autorizace a jak je nastavit \
 ve svém po¹tovním klientovi.
@@ -7445,17 +7114,6 @@ Seznam kontaktù \"%s\" nelze vyexportovat.
 MSG_LOADINGUPDATESTATE
 Aktualizace stavových dat...
 ; Loading update state data...
-;
-MSG_CO_ASK_SAVE_SIGNATURE
-Zmìnu podpisu je nutné ulo¾it pomocí urèeného\n\
-tlaèítka, jinak o v¹echny úpravy pøijdete.\n\
-\n\
-Chcete ulo¾it upravený podpis?
-; Changes to the signatures must be saved separately\n\
-; from the global configuration or otherwise they\n\
-; will be lost.\n\
-; \n\
-; Do you want to save the signatures now?
 ;
 MSG_MA_HIDE
 Skrýt
@@ -7584,16 +7242,6 @@ V¹e pøeètené
 MSG_MA_MEDITASNEW
 Nová dle vybrané...
 ; Edit as new...
-;
-MSG_CO_POPACCOUNT
-Název úètu
-; Account name
-;
-MSG_HELP_CO_ST_POPACCOUNT
-Zde zadejte název úètu podle svého gusta. Výchozí\n\
-název je ve tvaru u¾ivatel@server.
-; An arbitrary name for this account which\n\
-; will be used instead of user@host.
 ;
 MSG_RE_SEARCH
 Najít...
@@ -7741,16 +7389,6 @@ MSG_CO_MDN_OTHER
 V ostatních pøípad_ech:
 ; In all oth_er cases:
 ;
-MSG_CO_REQUESTMDN
-Pøi posílá_ní zpráv vy¾adovat potvrzení o doruèení
-; Always request a retur_n receipt
-;
-MSG_HELP_CO_CH_REQUESTMDN
-Aktivuje polo¾ku 'Potvrdit doruèení' v menu.
-; If selected, the return receipt option in\n\
-; the Write window will always be enabled\n\
-; by default (Use this with care).
-;
 MSG_HELP_CO_CH_MDN_NEVER
 Zamezí posílání potvrzení o doruèení.
 ; If selected, no return receipt will be\n\
@@ -7809,40 +7447,13 @@ Tuto funkci zapnìte v období letního èasu.
 ; currently active in your time zone\n\
 ; (summer time).
 ;
-MSG_CO_SMTPSERVERPORT
+MSG_CO_SMTP_SERVERPORT
 Ser_ver/Port
 ; Ser_ver/Port
 ;
-MSG_CO_POP3SERVERPORT
+MSG_CO_POP_SERVERPORT
 Serve_r/Port
 ; Serve_r/Port
-;
-MSG_CO_POP3SECURE
-Zapnout zabezpeèení:
-; Use secure connection:
-;
-MSG_CO_POP3SECURE_NO
-Ne
-; No
-;
-MSG_CO_POP3SECURE_TLS
-Pomocí TLSv1
-; with TLSv1
-;
-MSG_CO_POP3SECURE_SSL
-Pomocí SSLv3
-; with SSLv3
-;
-MSG_HELP_CO_RA_POP3SECURE
-Umo¾ní navázat zabezpeèené spojení mezi po¹tovním\n\
-serverem a programem YAM. To znamená, ¾e komunikace\n\
-je ¹ifrovaná a va¹e data v bezpeèí pøed nenechavci.\n\
-Jsou-li tato tlaèítka neaktivní, nemáte v poèítaèi\n\
-nainstalovaný balík AmiSSL.
-; A TLSv1 or SSLv3 secure connection will be established between\n\
-; the POP3 server and YAM to receive e-mail through an encrypted\n\
-; connection. If these radio buttons are ghosted, it means AmiSSL\n\
-; support is currently not available.
 ;
 MSG_CO_LOOKFEEL_THEMES
 Témata vzhledu
@@ -7918,10 +7529,6 @@ Nechcete tuto funkci prozatím vypnout?
 MSG_ER_CANNOT_CREATE_SEMAPHORE
 Nelze vytvoøit semafor.
 ; Can't create semaphore.
-;
-MSG_MA_AUTOSAVEFOUND_BUTTONS
-*K _odeslání|_Upravit|_Smazat|_Ignorovat
-; *Move to _Outgoing|_Edit|_Delete|_Ignore
 ;
 MSG_RE_HDR_FROM
 Od
@@ -8176,11 +7783,11 @@ Co si pøejete udìlat?
 ; How do you want to proceed?
 ;
 MSG_CONFIG_MODIFIED_GAD
-*_Ulo¾it|_Ukonèit|_Zru¹it
+*_Ulo¾it|U_konèit|_Zru¹it
 ; *_Save now|_Quit without saving|_Cancel
 ;
 MSG_ABOOK_MODIFIED_GAD
-*_Ulo¾it|_Ukonèit|_Zru¹it
+*_Ulo¾it|U_konèit|_Zru¹it
 ; *_Save now|_Quit without saving|_Cancel
 ;
 MSG_HELP_CO_BT_MIMEIMPORT
@@ -8747,11 +8354,6 @@ po¾adovaný zvuk.
 MSG_HELP_CO_BT_APLAY
 Umo¾ní vyzkou¹et vybraný zvuk.
 ; Test the sound.
-;
-MSG_HELP_CO_CH_USESIG
-Aktivuje pøikládání podpisu ke zprávì.
-; Do you want to enable\n\
-; signatures by default?
 ;
 MSG_HELP_CO_ST_DESCRIPTION
 Zde máte mo¾nost pøidat vlastní popis vybraného\n\
@@ -9330,31 +8932,28 @@ MSG_CO_SPAM_STATISTICS
 ; %ld (%ld words)
 ;
 MSG_ER_WRONG_DOB_FORMAT
-Formát data narození je neplatný. Pou¾ijte tento: '%s'.\
-%%d - den\n\
-%%m - mìsíc\n\
-%%y - rok (2 èíslice)\n\
+Formát data narození je neplatný. Pou¾ijte tento: '%s'.\n\
+%%d - den (01-31)\n\
+%%-d - den bez nuly pøed èíslem (1-31)\n\
+%%e - den s mezerou pøed jednomístným èíslem ( 1-31)\n\
+%%m - mìsíc (01-12)\n\
+%%-m - mìsíc bez nuly pøed èíslem (1-12)\n\
+%%y - rok (00-99, 2 èíslice)\n\
+%%-y - rok bez nuly pøed èíslem (0-99, 2 èíslice)\n\
 %%Y - rok (4 èíslice)\n\
 Rok narození musí být vìt¹í nebo roven 1900.
 ; Date of birth uses a wrong format. The correct format is '%s'.\n\
-; %%d - day\n\
-; %%m - month\n\
-; %%y - year (2 digits)\n\
-; %%Y - year (4 digits)\n\
+; %%d  - day with leading zeros (01-31)\n\
+; %%-d - day without leading zeros (1-31)\n\
+; %%e  - day with leading spaces ( 1-31)\n\
+; %%m  - month with leading zeros (01-12)\n\
+; %%-m - month without leading zeros (1-12)\n\
+; %%y  - year with leading zeros (00-99, 2 digits)\n\
+; %%-y - year without leading zeros (0-99, 2 digits)\n\
+; %%Y  - year with leading zeros (4 digits)\n\
+; %%-Y - year without leading zeros (4 digits)\n\
 ; The year number must be greater or equal 1900.
 ; DOBFORMAT
-;
-MSG_CO_PGPURL
-Veøejný klíè PGP
-; URL to public PGP key
-;
-MSG_HELP_CO_ST_PGPURL
-Definuje odkaz na vá¹ veøejný klíè PGP. Tato adresa\n\
-bude vlo¾ena do hlavièky ka¾dé odesílané zprávy.
-; You can specify an URL where your public\n\
-; PGP key can be downloaded from. This URL\n\
-; will then placed into a separate header\n\
-; entry in every mail.
 ;
 MSG_CO_NOTIOS41SYSTEM
 Zapnout upozornìní dle AmigaOS_4.1
@@ -9386,7 +8985,7 @@ Co si pøejete udìlat?
 ; How do you want to proceed?
 ;
 MSG_OPEN_WRITEWINDOWS_GAD
-*_Ulo¾it|_Ukonèit|_Zru¹it
+*_Ulo¾it|U_konèit|_Zru¹it
 ; *_Save now|_Quit without saving|_Cancel
 ;
 MSG_MA_MFORWARD_ATTACH
@@ -9599,7 +9198,7 @@ MSG_HTTP_WAITING_FOR_ANSWER
 ; Waiting for server's answer...
 ;
 MSG_HTTP_RECEIVING_DATA
-Pøíjem dat...
+Stahování dat...
 ; Receiving data...
 ;
 MSG_HTTP_DISCONNECTING_FROM_SERVER
@@ -9708,7 +9307,7 @@ Soubor s nápovìdou ('%s') není k dispozici.
 ; FILE
 ;
 MSG_EA_SEARCH_GRAVATAR
-Vyhledávání na gra_vatar.com...
+Vyhledat na gra_vatar.com...
 ; Search on gra_vatar.com...
 ;
 MSG_ER_NO_GRAVATAR_FOUND
@@ -9774,4 +9373,846 @@ Zmìnit stav na 'není spam'
 MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_HAM
 Zru¹í oznaèení filtrovaných zpráv jako spam.
 ; Set the status of the filtered mail to 'Not spam'
+;
+MSG_CO_SMTP_ACTIVE
+_Aktivní
+; _Active
+;
+MSG_CO_POP_AUTH
+Ovìøení identity
+; Authentification
+;
+MSG_HELP_CO_CY_POPAUTH
+Pokud nepou¾íváte ¾ádný ze zpùsobù zabezpeèení\n\
+pøenosu (TLS nebo SSL), lze nastavit ¹ifrování\n\
+metodou APOP.\n\
+Pozn.: Tuto funkci ov¹em nepodporují v¹echny servery.
+; When not using any connection security\n\
+; (TLS or SSL) the password can be send\n\
+; using the APOP encryption algorithm instead.\n\
+; (not supported by all POP3 servers)
+;
+MSG_CO_POP_AUTH_PLAIN
+Prosté heslo
+; Plain Password
+;
+MSG_CO_POP_AUTH_APOP
+©ifrované heslo (APOP)
+; Encrypted Password (APOP)
+;
+MSG_CO_POP_SECURITY
+Zabezpeèení spojení
+; Connection Security
+;
+MSG_CO_POP_SECURITY_NONE
+Bez zabezpeèení
+; No Security
+;
+MSG_CO_POP_SECURITY_TLS
+STARTTLS
+; STARTTLS
+;
+MSG_CO_POP_SECURITY_SSL
+SSL/TLS
+; SSL/TLS
+;
+MSG_HELP_CO_CY_POPSECURE
+Zajistí navázání zabezpeèeného spojení mezi po¹tovním\n\
+serverem a programem YAM. Tímto zpùsobem je zaruèeno,\n\
+¾e va¹i komunikaci nebude nikdo odposlouchávat.\n\
+Není-li toto tlaèítko aktivní, pravdìpodobnì jste je¹tì\n\
+nenainstalovali balík AmiSSL.
+; A STARTTLS or SSL/TLS secure connection will be\n\
+; established between the POP3 server and YAM to receive\n\
+; e-mail through an encrypted connection. If this cycle\n\
+; gadget is ghosted, it means AmiSSL support is currently\n\
+; not available.
+;
+MSG_CO_POP_SERVERLIST
+Seznam serverù
+; Server List
+;
+MSG_CO_POP_SERVERSETTINGS
+Nastavení serveru
+; Server Settings
+;
+MSG_CO_POP_SECURITYAUTH
+Zabezpeèení a ovìøení identity
+; Security and Authentification
+;
+MSG_CO_POP_MSGHANDLING
+Zpracování po¹ty
+; Message handling
+;
+MSG_CO_SMTP_SERVERLIST
+Seznam serverù
+; Server List
+;
+MSG_CO_SMTP_SERVERSETTINGS
+Nastavení serveru
+; Server Settings
+;
+MSG_CO_POP_DESC
+Popis
+; Description
+;
+MSG_HELP_CO_ST_POPDESC
+Umo¾òuje zadat vlastní popis po¹tovního serveru.\n\
+Tímto zpùsobem si mù¾ete zjednodu¹it orientaci,\n\
+pou¾íváte-li více serverù.
+; An arbitrary description/name for this\n\
+; server connection which will be used instead\n\
+; of user@host.
+;
+MSG_CO_SMTP_DESC
+Popis
+; Description
+;
+MSG_HELP_CO_ST_SMTPDESC
+Umo¾òuje zadat vlastní popis po¹tovního serveru.\n\
+Tímto zpùsobem si mù¾ete zjednodu¹it orientaci,\n\
+pou¾íváte-li více serverù.
+; An arbitrary description/name for this\n\
+; server connection which will be used instead\n\
+; of user@host.
+;
+MSG_CO_SMTP_SECURITY
+Zabezpeèení spojení
+; Connection Security
+;
+MSG_CO_SMTP_SECURITY_NONE
+Bez zabezpeèení
+; No Security
+;
+MSG_CO_SMTP_SECURITY_TLS
+STARTTLS
+; STARTTLS
+;
+MSG_CO_SMTP_SECURITY_SSL
+SSL/TLS
+; SSL/TLS
+;
+MSG_CO_SMTP_SECURITYAUTH
+Zabezpeèení a ovìøení identity
+; Security and Authentification
+;
+MSG_HELP_CO_CY_SMTPSECURE
+Zajistí navázání zabezpeèeného spojení mezi po¹tovním\n\
+serverem a programem YAM. Tímto zpùsobem je zaruèeno,\n\
+¾e va¹i komunikaci nebude nikdo odposlouchávat.\n\
+Není-li toto tlaèítko aktivní, pravdìpodobnì jste je¹tì\n\
+nenainstalovali balík AmiSSL.
+; A STARTTLS or SSL/TLS secure connection will be\n\
+; established between the SMTP server and YAM to receive\n\
+; e-mail through an encrypted connection. If this cycle\n\
+; gadget is ghosted, it means AmiSSL support is currently\n\
+; not available.
+;
+MSG_CO_SMTP_AUTH
+Ovìøení identity
+; Authentification
+;
+MSG_CO_SMTPAUTH_NONE
+Bez ovìøení
+; No Authentication
+;
+MSG_CO_SMTP_OPTIONS
+Dal¹í mo¾nosti
+; Options
+;
+MSG_CO_CRDIDENTITIES
+Identity
+; Identities
+;
+MSG_CO_IDENTITIES_TITLE
+U¾ivatelské identity
+; Identities Settings
+;
+MSG_CO_IDENTITIES_SUMMARY
+Správa u¾ivatelských profilù...
+; Manage multiple identities for composing mails...
+;
+MSG_CO_IDENTITY_LIST
+Identity
+; Identities
+;
+MSG_CO_IDENTITY_SETTINGS
+Obecné
+; General Settings
+;
+MSG_CO_IDENTITY_REGISTER_SETTINGS
+Obecné mo¾nosti
+; General Settings
+;
+MSG_CO_IDENTITY_REGISTER_COMPOSE
+Psaní zprávy
+; Compose Mail
+;
+MSG_CO_IDENTITY_REGISTER_PGPSEC
+Systém PGP
+; PGP-Security
+;
+MSG_CO_IDENTITY_NOSIGNATURE
+bez podpisu
+; no signature
+;
+MSG_CO_IDENTITY_ABOVEQUOTE
+nad textem
+; above quotes
+;
+MSG_CO_IDENTITY_BELOWQUOTE
+pod textem
+; below quotes
+;
+MSG_CO_IDENTITY_DESCRIPTION
+Popis
+; Description
+;
+MSG_CO_IDENTITY_MAILSERVER
+Po¹tovní server (SMTP)
+; Mail server (SMTP)
+;
+MSG_CO_IDENTITY_COMPOSE
+Mo¾nosti pøi psaní nové zprávy
+; Compose mail settings
+;
+MSG_CO_IDENTITY_CC
+Standardní kopie pro
+; CC: address
+;
+MSG_CO_IDENTITY_BCC
+Skrytá kopie pro
+; BCC: address
+;
+MSG_CO_IDENTITY_REPLYTO
+Zpáteèní adresa
+; Reply-To: address
+;
+MSG_CO_IDENTITY_COMPOSE_OPTIONS
+Dal¹í mo¾nosti
+; Options
+;
+MSG_CO_IDENTITY_COMPOSE_SENTFOLDER
+Odeslanou po¹tu ulo¾it do slo¾ky
+; Store sent mail to folder
+;
+MSG_CO_IDENTITY_COMPOSE_QUOTE
+Do odpovìdi pøidat i text pùvodní zprávy
+; Quote messages when answering
+;
+MSG_CO_IDENTITY_COMPOSE_ANSWER
+Odpovìï umístit
+; Put my answer
+;
+MSG_CO_IDENTITY_COMPOSE_SIGNATURE
+Podpis umístit
+; Put my signature
+;
+MSG_CO_IDENTITY_USESIG_REPLY
+Pøipojit podpis k odpovìdím
+; Use signature when replying
+;
+MSG_CO_IDENTITY_USESIG_FORWARD
+Pøipojit podpis k pøeposílaným
+; Use signature when forwarding
+;
+MSG_CO_IDENTITY_PGPSETTINGS
+Mo¾nosti zabezpeèení systémem PGP
+; PGP-Security Settings
+;
+MSG_CO_IDENTITY_USEPGP
+Pou¾ít PGP pro vybranou identitu
+; Use PGP for this identity
+;
+MSG_CO_IDENTITY_PGPKEY_ID
+Identifikátor klíèe
+; PGP key ID
+;
+MSG_CO_IDENTITY_PGPKEY_URL
+Odkaz na klíè
+; PGP key URL
+;
+MSG_CO_IDENTITY_PGP_OPTIONS
+Dal¹í mo¾nosti
+; Options
+;
+MSG_CO_IDENTITY_PGP_SIGN_UNENC
+Podepsat ne¹ifrované zprávy
+; Sign unencrypted mails per default
+;
+MSG_CO_IDENTITY_PGP_SIGN_ENC
+Podepsat ¹ifrované zprávy
+; Sign encrypted mails per default
+;
+MSG_CO_IDENTITY_PGP_ENCRYPTALL
+©ifrovat v¹echny zprávy
+; Encrypt all mails per default
+;
+MSG_CO_IDENTITY_PGP_ADDOWN
+Pøi ¹ifrování pøidat i vlastní klíè
+; Add own key when encrypting mails
+;
+MSG_CO_IDENTITY_PHOTOURL
+Odkaz na vlastní fotku
+; URL to own photo
+;
+MSG_CO_IDENTITY_ADDINFO
+Pøipojit i osobní informace
+; Add personal information
+;
+MSG_CO_IDENTITY_REQUESTMDN
+Po¾ádat o potvrzení odpovìdi
+; Request a return receipt
+;
+MSG_CO_SERVERNAME
+Adresa serveru
+; Server name
+;
+MSG_HELP_CO_ST_USER
+U¾ivatelské jméno je jeden z údajù po¾adovaných\n\
+po¹tovním serverem.
+; The username for accessing the\n\
+; mail server.
+;
+MSG_FO_MOVEFOLDERTO
+Opravdu chcete pøesunout vybranou slo¾ku\n\
+z '%s'\n\
+do\n\
+'%s'?
+; Do you really want to move the folder from\n\
+; '%s'\n\
+; to\n\
+; '%s'?
+; FROM,TO
+;
+MSG_FO_FOLDER_ALREADY_EXISTS
+Soubor nebo adresáø '%s' ji¾ existuje.\n\
+\n\
+Opravdu ho chcete pøepsat?
+; A file or directory named '%s' already exists\n\
+; and will be overwritten/deleted.\n\
+; \n\
+; Do you really want to proceed?
+; PATH
+;
+MSG_ER_CANNOT_CREATE_FOLDER
+Chyba pøi vytváøení adresáøe '%s' (%s).
+; Failed to create directory '%s' (%s).
+; PATH, ERROR
+;
+MSG_CO_IdentityActive
+_Aktivní
+; _Active
+;
+MSG_MA_FLUSH_ALL_INDICES
+Vyprázdnit indexy
+; Flush all indices
+;
+MSG_FI_CONDITION
+Podmínka
+; Condition
+;
+MSG_HELP_CO_CH_IDENTITY_ENABLED
+Urèuje, zda je vybraná identita povolená.
+; If checked, this user identity is enabled for use.
+;
+MSG_HELP_CO_ST_IDENTITY_DESCRIPTION
+Popis vybrané identity.
+; A custom description for this\n\
+; user identity.
+;
+MSG_HELP_CO_ST_IDENTITY_REALNAME
+Skuteèné jméno u¾ivatele (Jan Novák).
+; The realname "firstname lastname" for\n\
+; this user identity.
+;
+MSG_HELP_CO_ST_IDENTITY_EMAIL
+Elektronická adresa u¾ivatele.
+; The e-mail address associated with\n\
+; this user identity.
+;
+MSG_HELP_CO_ST_IDENTITY_ORGANIZATION
+Volitelná polo¾ka s názvem firmy nebo organizace,\n\
+která se nìjak týká vybrané osoby.
+; Optional name of the organization\n\
+; this user identity belongs to.
+;
+MSG_HELP_CO_CY_IDENTITY_MAILSERVER
+Definuje server pro odesílání po¹ty (SMTP), který\n\
+bude svázán s vybranou identitou.
+; Allows you to select the outgoing SMTP server\n\
+; which will be used when mail is going to be\n\
+; sent using this user identity.
+;
+MSG_HELP_CO_ST_IDENTITY_CC
+Urèuje osoby, které budou uvedeny v kopii ka¾dé\n\
+nové zprávy.
+; The default CC: recipients added when\n\
+; composing a new mail.
+;
+MSG_HELP_CO_ST_IDENTITY_BCC
+Urèuje osoby, které budou uvedeny ve skryté kopii\n\
+ka¾dé nové zprávy.
+; The default BCC: recipients added when\n\
+; composing a new mail.
+;
+MSG_HELP_CO_ST_IDENTITY_REPLYTO
+Urèuje osoby, které budou uvedeny v poli zpáteèní\n\
+adresa ka¾dé nové zprávy.
+; The default Reply-To: recipients added when\n\
+; composing a new mail.
+;
+MSG_HELP_CO_ST_IDENTITY_EXTRAHEADER
+Definuje roz¹íøení hlavièky odesílaných zpráv.
+; Allows you to specify the default for putting\n\
+; additional headers to an outgoing mail.
+;
+MSG_HELP_CO_ST_IDENTITY_PHOTOURL
+Definuje odkaz na fotografii daného u¾ivatele.
+; An optional URL to a photo associated with\n\
+; this user identity.
+;
+MSG_HELP_CO_CH_IDENTITY_SENTFOLDER
+Urèuje, zda bude odchozí po¹ta ukládána nebo ne.
+; If enabled, sent mail will be stored in a\n\
+; sent mail folder. Otherwise the sent mail\n\
+; will be deleted.
+;
+MSG_HELP_CO_TX_IDENTITY_SENTFOLDER
+Definuje slo¾ku pro ukládání odchozí po¹ty.
+; Allows to specify which mail folder should\n\
+; be used when storing sent mail.
+;
+MSG_HELP_CO_CH_IDENTITY_QUOTEMAILS
+Urèuje, zda bude k odpovìdi (nebo pøi pøeposílání)\n\
+pøilo¾ena i pøedchozí zpráva.
+; When replying or forwarding mails text will\n\
+; be quoted if this option is enabled.
+;
+MSG_HELP_CO_CH_IDENTITY_QUOTEPOS
+Definuje umístìní odpovìdi vùèi citovanému textu.\n\
+Mù¾e být nad nebo pod takovým textem.
+; Allows to define if your answer should be\n\
+; placed above or below quotes.
+;
+MSG_HELP_CO_CH_IDENTITY_SIGPOS
+Definuje umístìní podpisu vùèi citovanému textu.\n\
+Mù¾e být nad nebo pod takovým textem.
+; Allows to define if your signature should\n\
+; appear below or above the quotes.
+;
+MSG_HELP_CO_CH_IDENTITY_SIGREPLY
+Povolí pøilo¾ení podpisu k odpovìdi.
+; If enabled, a signature will be added when\n\
+; replying to a mail.
+;
+MSG_HELP_CO_CH_IDENTITY_SIGFORWARD
+Povolí pøilo¾ení podpisu k pøeposílané zprávì.
+; If enabled, a signature will be added when\n\
+; forwarding a mail.
+;
+MSG_HELP_CO_CH_IDENTITY_ADDINFO
+Povolí pøilo¾ení osobních informací do hlavièky\n\
+zprávy (X-SenderInfo). Tato funkce vy¾aduje, aby\n\
+e-mail v seznamu kontaktù odpovídal vybranému\n\
+profilu.
+; If enabled, personal information will be\n\
+; added to the mail (X-SenderInfo header).\n\
+; This requires an addressbook entry with\n\
+; the same email address as this user identity.
+;
+MSG_HELP_CO_CH_IDENTITY_REQUESTMDN
+Povolí automatické zasílání ¾ádosti o potvrzení\n\
+doruèení.
+; If enabled, a mail disposition notification\n\
+; will be requested per default when composing\n\
+; a mail.
+;
+MSG_HELP_CO_CH_IDENTITY_USEPGP
+Povolí pou¾ití systému PGP v rámci vybraného profilu.
+; Allows to enable/disable the PGP functionality\n\
+; for this whole user identity.
+;
+MSG_HELP_CO_ST_IDENTITY_PGPID
+Urèuje klíè systému PGP, který chcete pou¾ívat\n\
+pro vybraný profil.
+; Allows to specify the PGP-Key ID which should\n\
+; be used for this user identity.
+;
+MSG_HELP_CO_ST_IDENTITY_PGPURL
+Urèuje adresu k veøejnému klíèi systému PGP.
+; Allows to specify an URL where the public key\n\
+; for this user identity can be accessed.
+;
+MSG_HELP_CO_CH_IDENTITY_PGPSIGN_UNENC
+Povolí automatické podepisování v¹ech ne¹ifrovaných\n\
+zpráv systémem PGP.
+; If enabled, the default is set to PGP sign all\n\
+; unencrypted emails when starting to compose them.
+;
+MSG_HELP_CO_CH_IDENTITY_PGPSIGN_ENC
+Povolí automatické podepisování v¹ech ¹ifrovaných\n\
+zpráv systémem PGP.
+; If enabled, the default is set to PGP sign all\n\
+; encrypted emails when starting to compose them.
+;
+MSG_HELP_CO_CH_IDENTITY_PGPENC_ALL
+Povolí automatické ¹ifrování v¹ech zpráv systémem PGP.
+; If enabled, the default is set to PGP encrypt all\n\
+; emails when starting to compose them.
+;
+MSG_HELP_CO_CH_IDENTITY_PGPENC_SELF
+Pøilo¾ení vlastního klíèe znamená, ¾e ¹ifrovanou\n\
+zprávu si mù¾ete po odeslání pøeèíst i vy sami.\n\
+Pokud klíè není pøilo¾en, zprávu de¹ifruje pouze\n\
+její pøíjemce.
+; If enabled, all emails being encrypted via PGP\n\
+; will have the PGP key added of this user identity.\n\
+; If disabled, encrypted emails cannot be decrypted\n\
+; by this user identity.
+;
+MSG_HELP_CO_CY_IDENTITY_SIGNATURE
+Umo¾òuje definovat výchozí podpis pro vybraný profil.
+; Allows to select the default signature that\n\
+; should be used when composing emails with this\n\
+; user identity.
+;
+MSG_CO_CONFIGWARNING_TITLE
+Upozornìní na konfiguraci
+; Configuration Warning
+;
+MSG_CO_CONFIGWARNING
+Upravili jste nastavení programu a nyní chcete\n\
+bez ulo¾ení zavøít konfiguraèní okno.\n\
+\n\
+Opravdu chcete pøijít o v¹echny provedené zmìny?
+; You have modified certain configuration\n\
+; settings and will lose these changes\n\
+; when closing the config window.\n\
+; \n\
+; How do you want to proceed?
+;
+MSG_CO_CONFIGWARNING_BT
+_Zavøít|*Pø_eru¹it
+; _Close window|*_Abort
+;
+MSG_CO_CONFIGVERSIONWARNING_TITLE
+Upozornìní na verzi konfigurace
+; Configuration Version Warning
+;
+MSG_CO_CONFIGVERSIONWARNING
+Konfiguraèní soubor byl vytvoøen novìj¹í verzí\n\
+programu YAM. Budete-li pokraèovat v naèítání,\n\
+je mo¾né, ¾e pøijdete o nìkterá nastavení.\n\
+\n\
+Co si pøejete udìlat?
+; The configuration file that YAM tries to\n\
+; load was saved by a newer YAM version.\n\
+; If you continue to load this file some\n\
+; config settings might be lost and set\n\
+; to their default values.\n\
+; \n\
+; How do you want to proceed?
+;
+MSG_CO_CONFIGVERSIONWARNING_BT
+_Pokraèovat|*Pø_eru¹it
+; _Continue|*_Abort
+;
+MSG_WR_MCCADDRFIELD
+Standardní kopie
+; CC address field
+;
+MSG_WR_MBCCADDRFIELD
+Slepá kopie
+; BCC address field
+;
+MSG_WR_MREPLYTOADDRFIELD
+Zpáteèní adresa
+; Reply-To address field
+;
+MSG_CO_LISTCOLUMNSETTINGS
+Nastavení sloupcù
+; Column settings
+;
+MSG_CO_LOOKFEEL_MAINWINDOW
+Hlavní okno
+; Main window
+;
+MSG_CO_LOOKFEEL_TITLE_THEME
+Téma
+; Theme
+;
+MSG_CO_LOOKFEEL_TITLE_INFO
+Informace
+; Information
+;
+MSG_HELP_WR_CY_SIGNATURE
+Zde urèíte který z nabízených podpisù pou¾ít.
+; Allows to select which signature\n\
+; show be used for the currently\n\
+; composed message.
+;
+MSG_WR_PGPSECURITY
+Systém PGP
+; PGP security level
+;
+MSG_HELP_WR_CY_SECURITY
+Definuje úroveò zabezpeèení. Pomocí systému PGP\n\
+lze zprávu podepsat nebo za¹ifrovat, pøíp. obojí.\n\
+\n\
+'Výchozí' znamená, ¾e se program pokusí najít\n\
+adresáta v seznamu kontaktù a následnì pou¾ít\n\
+tam definovaný zpùsob zabezpeèení.
+; Allows to select the PGP security level.\n\
+; You can select if a message should be signed,\n\
+; encrypted or both. "Default" tries to find\n\
+; the recipient in your address book and use\n\
+; the settings defined there.
+;
+MSG_CO_MIMETYPE_TITLE
+MIME
+; MIME type
+;
+MSG_CO_DOWNLOAD_LARGE_MAILS1
+_Stáhnout zprávy vìt¹í ne¾
+; _Download messages larger than
+;
+MSG_CO_DOWNLOAD_LARGE_MAILS2
+KB
+; KB
+;
+MSG_MA_DRAFTS
+Koncepty
+; Drafts
+;
+MSG_CO_SIGNATURE
+Podpis
+; Signature
+;
+MSG_CO_SIGNATURES
+Podpisy
+; Signatures
+;
+MSG_CO_SIGNATURE_DESCRIPTION
+Popis
+; Description
+;
+MSG_CO_SIGNATURE_ACTIVE
+_Aktivní
+; _Active
+;
+MSG_CO_IDENTITY_SIGNATURE
+Podpis
+; Signature
+;
+MSG_HELP_CO_LV_SIGNATURE
+Seznam v¹ech podpisù
+; List of all signatures
+;
+MSG_HELP_CO_BT_SIGADD
+Do seznamu pøidá nový podpis.
+; Adds a new signature to the list.
+;
+MSG_HELP_CO_BT_SIGDEL
+Ze seznamu odebere vybraný podpis.
+; Removes selected signature from list.
+;
+MSG_HELP_CO_BT_SIGUP
+Pøesune vybraný podpis od øádek vý¹.
+; Moves signature one entry up.
+;
+MSG_HELP_CO_BT_SIGDOWN
+Pøesune vybraný podpis od øádek ní¾.
+; Moves signature one entry down.
+;
+MSG_HELP_CO_BT_SIG_ACTIVE
+Urèuje, zda je vybraný podpis povolený.
+; Flags the currently selected signature\n\
+; as active or inactive.
+;
+MSG_HELP_CO_ST_SIG_DESC
+Struènì definuje vybraný podpis.
+; Allows you to enter a freetext\n\
+; description for the signature.
+;
+MSG_HELP_CO_TE_SIGEDIT
+Definuje textový editor k úpravì podpisu.
+; Text editor for entering/changing\n\
+; the signature text.
+;
+MSG_CO_MIXED_CONNECTIONS
+Pøenos dat
+; Connections
+;
+MSG_CO_POP_NOTIFICATION
+Upozornìní na novou po¹tu
+; Notification for new mails
+;
+MSG_SSL_CERT_WARNING_TITLE
+Upozornìní na certifikát
+; SSL Certificate Warning
+;
+MSG_SSL_CERT_WARNING_BUTTONS
+_Pøijmout doèasnì|Pøijmout _trvale|_Zobrazit certifikát|*_Odmítnout
+; _Accept|Accept _Permanently|_Show Certificate|*_Reject
+;
+MSG_SSL_CERT_WARNING_INTRO
+Chyba pøi ovìøování certifikátu serveru '\033b%s:%d\033n':
+; Error validating server certificate for '\033b%s:%d\033n':
+; HOSTNAME, PORT
+;
+MSG_SSL_CERT_WARNING_UNTRUSTED
+- Certifikát nevystavila ¾ádná z ovìøených spoleèností,\n\
+  tzv. certifikaèních autorit. Zkontrolujte sami pravost\n\
+	otisku.
+; - The certificate is not issued by a trusted authority. Use the\n\
+;   fingerprint to validate the certificate manually.
+;
+MSG_SSL_CERT_WARNING_IDMISMATCH
+- Skuteèný název serveru neodpovídá názvu serveru v certifikátu.
+; - The certificate hostname does not match.
+;
+MSG_SSL_CERT_WARNING_NOTYETVALID
+- Certifikát je¹tì nenabyl platnosti.
+; - The certificate is not yet valid.
+;
+MSG_SSL_CERT_WARNING_EXPIRED
+- Certifikát ji¾ pozbyl platnosti.
+; - The certificate has expired.
+;
+MSG_SSL_CERT_WARNING_OTHER
+- Certifikát obsahuje (neznámou) chybu.
+; - The certificate has an unknown error.
+;
+MSG_SSL_CERT_WARNING_INFO
+Informace o certifikátu:\n\
+- Server: \033b%s\033n\n\
+- Platnost: od \033b%s\033n do \033b%s\033n\n\
+- Vydal: \033b%s\033n\n\
+- Otisk: \033b%s\033n
+; Certificate information:\n\
+; - Hostname: \033b%s\033n\n\
+; - Valid: \033b%s\033n until \033b%s\033n\n\
+; - Issuer: \033b%s\033n\n\
+; - Fingerprint: \033b%s\033n
+; HOSTNAME, VALID_FROM, VALID_TO, ISSUER, FINGERPRINT
+;
+MSG_SSL_CERT_WARNING_SHOWTITLE
+Certifikát pro %s:%d
+; Certificate of %s:%d
+; HOSTNAME, PORT
+;
+MSG_ER_WARN_CAFILE
+Nelze najít soubor s balíèkem certifikátù '%s'.\n\
+\n\
+Doplòte prosím tento soubor, jinak nelze ovìøit zabezpeèení spojení.
+; While trying to establish a SSL connection the certificate bundle \
+; file '%s' was found to be missing.\n\
+; \n\
+; Please make sure that the file exists and is uptodate or otherwise \
+; each SSL connection will be flagged as unverified.
+; FILEPATH
+;
+MSG_ER_WARN_LOADCAPATH
+Chyba pøi naèítání souboru s balíèkem certifikátù '%s' nebo nìkterého \
+ze samostatných certifikátù v adresáøi '%s'.\n\
+\n\
+Zkontrolujte prosím, zda nejsou v adresáøi s certifikáty neplatné \
+nebo neznámé soubory.
+; While trying to load the certificate bundle '%s' or individual \
+; certificate files from '%s' an error occurred.\n\
+; \n\
+; Please make sure that no invalid file has been placed in the \
+; certificate folder.
+; FILEPATH, DIRPATH
+;
+MSG_ER_WARN_CAPATH
+Nelze najít adresáø '%s', ve kterém jsou ulo¾eny soubory s certifikáty.\n\
+\n\
+Zkontrolujte prosím, zda adresáø s certifikáty existuje a zároveò \
+jestli obsahuje soubor s balíèkem certifikátù dodávaný s programem YAM.
+; While trying to setup a SSL certificate verify the directory '%s' \
+; was found to be missing.\n\
+; \n\
+; Please make sure that the path exists and contains the certificate \
+; bundle file as supplied during the installation process of YAM.
+; DIRPATH
+;
+MSG_CO_ACTION_TERMINATE_FILTER
+Ukonèit filtrování
+; Terminate filter process
+;
+MSG_HELP_CO_CH_ATERMINATE
+Po dokonèení vybraného filtru ukonèí filtrování\n\
+po¹ty. Dal¹í ji¾ nebudou spu¹tìny.
+; Terminate the filter process after this\n\
+; filter. Following filters will not\n\
+; be executed anymore.
+;
+MSG_CO_FILTER_IMPORT
+Importovat...
+; Import...
+;
+MSG_FILTER_IMPORT_TITLE
+Importovat filtr
+; Import filter
+;
+MSG_SPAM_TRUSTHEADERLINES
+Dùvìøovat hodnocení tohoto externího filtru:
+; Trust header lines of this external filter:
+;
+MSG_ER_POP3_UIDLHASH_INIT_FAILED
+Chyba pøi inicializaci tabulky UIDL.
+; Failed to initialized UIDL hash table.
+;
+MSG_CO_SIGNATURE_TEXT
+Text podpisu
+; Signature text
+;
+MSG_CO_APPEND_SIGNATURE_FILE
+Pøipojit soubor namísto textu
+; Append a file as signature instead
+;
+MSG_PRESELECT_GETTING_DETAILS
+Naèítání informací o zprávách (%%ld of %ld)
+; Getting message details (%%ld of %ld)
+;
+MSG_CO_UPDATES_INFO_MANUAL
+Novinky a aktualizace si zji¹»uje u¾ivatel sám.
+; You will have to check for updates manually.
+;
+MSG_CO_UPDATES_INFO_AUTO
+Upozornìní na novinky a aktualizace se objeví automaticky.
+; You will be notified as soon as updates are available.
+;
+MSG_PGPPASS_SHOW_CHARS
+Zobrazit znaky
+; Show characters
+;
+MSG_CANNOT_CREATE_CUSTOM_CLASS
+Chyba pøi vytváøení tøídy '%s'\n\
+v rámci supertøídy '%s'.
+; Failed to create custom class '%s'\n\
+; as subclass of '%s'.
+; CLASS,SUPERCLASS
+;
+MSG_ER_MORPHOS_REXX_WARNING
+YAM nalezl ve va¹em systému MorphOS variantu knihovny \
+'rexxsyslib.library', která nefunguje správnì. S touto \
+knihovnou není mo¾né vyu¾ít arexxové skripty.\n\
+\n\
+Situaci vyøe¹íte napø. zkopírováním funkèní verze této \
+knihovny z instalaèního média AmigaOS 3.1-3.9 do 'SYS:Libs'. \
+Následnì je potøeba je¹tì pøejmenovat zmínìnou vadnou \
+knihovnu, kterou naleznete v adresáøi 'MOSSYS:Libs', a \
+nakonec restartovat systém.
+; YAM has identified that you are running a version of the \
+; 'rexxsyslib.library' in your MorphOS system that is known \
+; to not have a working ARexx implementation.\n\
+; \n\
+; To solve this situation and get ARexx running with YAM \
+; you should install a copy of the 'rexxsyslib.library' \
+; from an AmigaOS 3.1-3.9 installation to 'SYS:Libs', rename \
+; the 'rexxsyslib.library' in 'MOSSYS:Libs' and reboot your \
+; system.
 ;

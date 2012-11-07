@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-11-07 Vit Sindlar <sindlarv at centrum dot cz>
+
+  * locale/czech.ct: updated Czech translation.
+
 2012-11-07 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MAf.c, rexx/findmail.c, rexx/mailinfo.c, rexx/setmail.c: reworked the
