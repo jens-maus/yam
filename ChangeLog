@@ -19,6 +19,8 @@ $URL$
     via the FINDMAIL and SETMAIL commands for performance reasons. Possible
     collisions will be resolved by comparing the full MessageID in case the CRC
     matches.
+  * YAM_FO.c: saving the folder tree will now strip the user's mail directory
+    name from the folder's path if it is contained.
 
 2012-11-05 Thore Böckelmann <tboeckel@gmx.de>
 

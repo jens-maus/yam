@@ -1089,13 +1089,37 @@ static BOOL FO_SaveSubTree(FILE *fh, struct MUI_NListtree_TreeNode *subtree)
 
       if(isGroupFolder(fo))
       {
-        fprintf(fh, "@GROUP %s\n%d\n", fo->Name, isFlagSet(tn->tn_Flags, TNF_OPEN));
+        fprintf(fh, "@GROUP %s\n"
+                    "%d\n",
+                    fo->Name, isFlagSet(tn->tn_Flags, TNF_OPEN));
 
         // Now we recursively save this subtree first
         success = FO_SaveSubTree(fh, tn);
       }
       else
-        fprintf(fh, "@FOLDER %s\n%s\n@ENDFOLDER\n", fo->Name, fo->Path);
+      {
+        if(G->MA_MailDir[0] != '\0' && strnicmp(fo->Path, G->MA_MailDir, strlen(G->MA_MailDir)) == 0)
+        {
+          // strip the user's mail directory from the folder path
+          char *path = &fo->Path[strlen(G->MA_MailDir)];
+
+          if(*path == '/')
+            path++;
+
+          fprintf(fh, "@FOLDER %s\n"
+                      "%s\n"
+                      "@ENDFOLDER\n",
+                      fo->Name, path);
+        }
+        else
+        {
+          // save the folder path as it is
+          fprintf(fh, "@FOLDER %s\n"
+                      "%s\n"
+                      "@ENDFOLDER\n",
+                      fo->Name, fo->Path);
+        }
+      }
 
       tn_root = tn;
     }
