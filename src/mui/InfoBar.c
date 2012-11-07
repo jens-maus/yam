@@ -348,8 +348,7 @@ DECLARE(ShowBusyBar) // struct BusyNode *busy
           {
             set(data->GA_LABEL, MUIA_Text_Contents, msg->busy->infoText);
 
-            snprintf(data->gaugeInfoText, sizeof(data->gaugeInfoText), "%%ld/%d", msg->busy->progressMax);
-
+            snprintf(data->gaugeInfoText, sizeof(data->gaugeInfoText), "%%ld/%ld", msg->busy->progressMax);
             xset(data->GA_INFO,
                    MUIA_Gauge_InfoText,  data->gaugeInfoText,
                    MUIA_Gauge_Max,       msg->busy->progressMax,
