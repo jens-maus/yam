@@ -745,6 +745,25 @@ BOOL FO_CreateFolder(enum FolderType type, const char * const path, const char *
 }
 
 ///
+/// StripMailDir
+// strip the user's mail directory from a path if it is contained
+static const char *StripMailDir(const char *path)
+{
+  ENTER();
+
+  if(G->MA_MailDir[0] != '\0' && strnicmp(path, G->MA_MailDir, strlen(G->MA_MailDir)) == 0)
+  {
+    // strip the user's mail directory from the folder path
+    path = &path[strlen(G->MA_MailDir)];
+    if(*path == '/')
+      path++;
+  }
+
+  RETURN(path);
+  return path;
+}
+
+///
 /// FO_LoadTree
 //  Loads folder list from a file
 BOOL FO_LoadTree(void)
@@ -789,8 +808,9 @@ BOOL FO_LoadTree(void)
             fo->Sort[1] = 3;
             fo->LastActive = -1;
             strlcpy(fo->Name, Trim(&buffer[8]), sizeof(fo->Name));
+
             GetLine(&buffer, &size, fh);
-            strlcpy(fo->Path, Trim(buffer), sizeof(fo->Path));
+            strlcpy(fo->Path, StripMailDir(Trim(buffer)), sizeof(fo->Path));
 
             // set up the full path to the folder
             if(strchr(fo->Path, ':') != NULL)
@@ -1098,27 +1118,10 @@ static BOOL FO_SaveSubTree(FILE *fh, struct MUI_NListtree_TreeNode *subtree)
       }
       else
       {
-        if(G->MA_MailDir[0] != '\0' && strnicmp(fo->Path, G->MA_MailDir, strlen(G->MA_MailDir)) == 0)
-        {
-          // strip the user's mail directory from the folder path
-          char *path = &fo->Path[strlen(G->MA_MailDir)];
-
-          if(*path == '/')
-            path++;
-
-          fprintf(fh, "@FOLDER %s\n"
-                      "%s\n"
-                      "@ENDFOLDER\n",
-                      fo->Name, path);
-        }
-        else
-        {
-          // save the folder path as it is
-          fprintf(fh, "@FOLDER %s\n"
-                      "%s\n"
-                      "@ENDFOLDER\n",
-                      fo->Name, fo->Path);
-        }
+        fprintf(fh, "@FOLDER %s\n"
+                    "%s\n"
+                    "@ENDFOLDER\n",
+                    fo->Name, StripMailDir(fo->Path));
       }
 
       tn_root = tn;

@@ -21,6 +21,8 @@ $URL$
     matches.
   * YAM_FO.c: saving the folder tree will now strip the user's mail directory
     name from the folder's path if it is contained.
+  * YAM_FO.c: strip the user's mail directory upon loading the folder tree as
+    well.
 
 2012-11-05 Thore Böckelmann <tboeckel@gmx.de>
 
