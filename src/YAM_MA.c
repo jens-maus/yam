@@ -4251,7 +4251,7 @@ struct MA_ClassData *MA_New(void)
 
     data->GUI.WI = MainWindowObject,
       MUIA_Window_Title, data->WinTitle,
-      MUIA_HelpNode, "MA_W",
+      MUIA_HelpNode, "Windows#Mainwindow",
       MUIA_Window_ID, MAKE_ID('M','A','I','N'),
       MUIA_Window_Menustrip, data->GUI.MS_MAIN,
       WindowContents, data->GUI.GR_MAIN = VGroup,

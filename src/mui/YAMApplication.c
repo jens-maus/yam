@@ -596,7 +596,7 @@ OVERLOAD(OM_NEW)
     MUIA_Application_Description,    tr(MSG_APP_DESCRIPTION),
     MUIA_Application_UseRexx,        FALSE,
     MUIA_Application_UsedClasses,    Classes,
-    MUIA_Application_HelpFile,       "YAM.guide",
+    MUIA_Application_HelpFile,       "http://yam.ch/wiki/Documentation",
     MUIA_Application_DiskObject,     G->HideIcon,
 
     TAG_MORE, inittags(msg))) != NULL)
@@ -747,20 +747,31 @@ OVERLOAD(MUIM_Application_ShowHelp)
   char *helpFile = ((struct MUIP_Application_ShowHelp *)msg)->name;
   ULONG result = 0;
 
-  if(helpFile == NULL)
-    helpFile = (char *)xget(obj, MUIA_Application_HelpFile);
+  ENTER();
 
-  // check if the help file exists
-  if(helpFile != NULL && FileExists(helpFile) == FALSE)
+  // as we use the ShowHelp method to construct the correct URL to
+  // our online documentation we don't call DoSuperMethod() here but
+  // do all on ourselve.
+  if(helpFile != NULL)
   {
-     ER_NewError(tr(MSG_ER_HELP_FILE_DOES_NOT_EXIST), helpFile);
+    // construct the URL from the HelpFile and the HelpNode
+    char *url = NULL;
+    char *helpNode = ((struct MUIP_Application_ShowHelp *)msg)->node;
+
+    if(helpNode != NULL)
+      asprintf(&url, "%s/%s", helpFile, helpNode);
+    else
+      asprintf(&url, "%s", helpFile);
+
+    D(DBF_GUI, "opening help url: '%s'", url);
+    GotoURL(url, FALSE);
+
+    free(url);
   }
   else
-  {
-    // let MUI handle it
-    result = DoSuperMethodA(cl, obj, msg);
-  }
+    W(DBF_GUI, "HelpFile is NULL");
 
+  RETURN(result);
   return result;
 }
 

@@ -5,6 +5,21 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-11-07 Jens Langner <Jens.Langner@light-speed.de>
+
+  * mui/YAMApplication.c: changed the MUIM_Application_ShowHelp method to
+    open an URL rather than opening the amigaguide based documentation file
+    because the guide is largely outdated and will most probably be never
+    be updated to the recent versions of YAM. Rather than using amigaguide
+    YAM will start using a web-based documentation wiki which has certainly
+    a higher probability of being updated in the future. Thus, pressing HELP
+    will now open a URL starting with "http://yam.ch/wiki/Documentation"
+    where in future we will see the whole amigaguide documentation be ported
+    and even available in multiple languages. Please note that we are going
+    to change the MUIA_HelpNode attributes throughout the YAM sources with
+    relative links to this URL. Thus, this change refs #306 and will be closed
+    as soon as all HelpNodes in the YAM sources have been adapted.
+
 2012-11-07 Vit Sindlar <sindlarv at centrum dot cz>
 
   * locale/czech.ct: updated Czech translation.
