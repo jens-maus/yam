@@ -1323,13 +1323,15 @@ static unsigned long CompressMsgID(const char *msgid)
 ///
 /// FindMailByMsgID
 // find a mail by message-id in the given folder
-// return the index of the mail within the list of message or -1 on failure
-struct Mail *FindMailByMsgID(struct Folder *folder, unsigned long msgid)
+struct Mail *FindMailByMsgID(struct Folder *folder, const char *msgid)
 {
   struct Mail *result = NULL;
   struct MailNode *mnode;
+  unsigned long msgidCRC;
 
   ENTER();
+
+  msgidCRC = CompressMsgID(msgid);
 
   LockMailList(folder->messages);
 
@@ -1337,12 +1339,25 @@ struct Mail *FindMailByMsgID(struct Folder *folder, unsigned long msgid)
   {
     struct Mail *mail = mnode->mail;
 
-    // compare the compressed message-ids
-    if(mail->cMsgID == msgid)
+    // compare the compressed message-ids only for speed reasons
+    if(mail->cMsgID == msgidCRC)
     {
-      // return the mail
-      result = mail;
-      break;
+      // now go into detail and check if the full message-id matches
+      struct ExtendedMail *email;
+
+      if((email = MA_ExamineMail(folder, mail->MailFile, TRUE)) != NULL)
+      {
+        if(strcmp(email->messageID, msgid) == 0)
+        {
+          // return the mail
+          result = mail;
+        }
+
+        MA_FreeEMailStruct(email);
+      }
+
+      if(result != NULL)
+        break;
     }
   }
 

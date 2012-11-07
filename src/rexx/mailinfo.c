@@ -83,7 +83,7 @@ struct optional
   char flags[SIZE_SMALL];
   char filename[SIZE_PATHFILE];
   char date[64];
-  char msgid[9];
+  char *msgid;
 };
 
 void rx_mailinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
@@ -240,7 +240,7 @@ void rx_mailinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
           DateStamp2String(results->date = optional->date, sizeof(optional->date), &mail->Date, DSS_USDATETIME, TZC_LOCAL);
           results->subject = mail->Subject;
           results->size = &mail->Size;
-          snprintf(results->msgid = optional->msgid, sizeof(optional->msgid), "%08lx", mail->cMsgID);
+          results->msgid = strdup(email->messageID);
           snprintf(results->flags = optional->flags, sizeof(optional->flags), "%c%c%c%c%c-%c%c%c",
                     isMultiRCPTMail(mail) ? 'M' : '-',
                     isMP_MixedMail(mail)  ? 'A' : '-',
@@ -330,6 +330,7 @@ void rx_mailinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
           }
           free(results->resenttoall);
         }
+        free(results->msgid);
         FreeVecPooled(G->SharedMemPool, results);
       }
       if(optional != NULL)

@@ -117,6 +117,6 @@ BOOL  MA_SaveIndex(struct Folder *folder);
 void  MA_RebuildIndexes(void);
 void  MA_UpdateIndexes(void);
 void  MA_UpdateInfoBar(struct Folder *folder);
-struct Mail *FindMailByMsgID(struct Folder *folder, unsigned long msgid);
+struct Mail *FindMailByMsgID(struct Folder *folder, const char *msgid);
 
 #endif /* YAM_MAINFOLDER_H */

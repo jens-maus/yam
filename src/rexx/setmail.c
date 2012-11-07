@@ -76,7 +76,7 @@ void rx_setmail(UNUSED struct RexxHost *host, struct RexxParams *params, enum Re
         struct Mail *mail;
 
         // find the mail with the given message id first
-        if((mail = FindMailByMsgID(GetCurrentFolder(), strtoul(args->msgid, NULL, 16))) != NULL)
+        if((mail = FindMailByMsgID(GetCurrentFolder(), args->msgid)) != NULL)
         {
           int idx = 0;
           struct Mail *nlistMail;

@@ -70,7 +70,6 @@ void rx_findmail(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
     {
       struct FolderNode *fnode;
       BOOL found = FALSE;
-      unsigned long msgid = strtoul(args->msgid, NULL, 16);
 
       LockFolderListShared(G->folders);
 
@@ -82,10 +81,11 @@ void rx_findmail(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
         // this will also skip group folders
         if(MA_GetIndex(folder) == TRUE)
         {
-          if(FindMailByMsgID(folder, msgid) != NULL)
+          if(FindMailByMsgID(folder, args->msgid) != NULL)
           {
             results->folder = folder->Name;
             found = TRUE;
+            break;
           }
         }
       }

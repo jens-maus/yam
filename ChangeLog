@@ -5,6 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-11-07 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MAf.c, rexx/findmail.c, rexx/mailinfo.c, rexx/setmail.c: reworked the
+    MessageID handling to avoid possible false positives when searching for a
+    mail by a given (compressed) MessageID. Now the MAILINFO command returns
+    the full MessageID header line of a mail instead of the internally used CRC
+    checksum. However, this CRC will still be used when searching for a mail
+    via the FINDMAIL and SETMAIL commands for performance reasons. Possible
+    collisions will be resolved by comparing the full MessageID in case the CRC
+    matches.
+
 2012-11-05 Thore Böckelmann <tboeckel@gmx.de>
 
   * locale/german.ct: updated german translation.
