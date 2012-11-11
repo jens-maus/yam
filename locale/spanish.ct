@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.24 (22.08.2012)
+## version $VER: YAM.catalog 7.25 (11.11.2012)
 ## codeset 0
 ## language español
 ## chunk AUTH Emilio Jimenez
@@ -1862,8 +1862,7 @@ La dirección del servidor SMTP donde se enviará el correo.\nSi lo dejas en blanc
 ; The address of the SMTP server to send mail to.\nIf you leave this field empty, the address of the\nPOP3 server will be used as fallback.
 ;
 MSG_HELP_CO_CH_SMTP8BIT
-No convertir mensajes a 7-bit durante la transferencia.\nSólo deberías usar esta opción si estas seguro de que tu servidor SMTP\nsoporta transferencias de 8-bit transfers, sino tus mensajes pueden \
-quedar deteriorados.
+No convertir mensajes a 7-bit durante la transferencia.\nSólo deberías usar esta opción si estas seguro de que tu servidor SMTP\nsoporta transferencias de 8-bit transfers, sino tus mensajes pueden quedar deteriorados.
 ; Do not convert messages to 7-bit when transferring.\nYou should only use this option if you're sure that your SMTP server\nsupports 8-bit transfers, otherwise your messages may get corrupted.
 ;
 MSG_HELP_CO_LV_POP3
@@ -2363,8 +2362,7 @@ Buscar contacto
 ; Find Entry
 ;
 MSG_AB_FindEntryReq
-Este módulo busca el texto indicado, en los campos alias, nombre, dirección de correo\ndescripción, dirección, ciudad o país. Por favor introduce\nlos patrones de búsqueda (soportado caracteres \
-especiales de AmigaDOS):
+Este módulo busca el texto indicado, en los campos alias, nombre, dirección de correo\ndescripción, dirección, ciudad o país. Por favor introduce\nlos patrones de búsqueda (soportado caracteres especiales de AmigaDOS):
 ; This module finds a given text in the alias, name, address,\ndescription, street, city or country fields. Please enter\nthe search pattern (AmigaDOS wildchars are supported):
 ;
 MSG_AB_StartSearch
@@ -5080,8 +5078,7 @@ Durante el decodificado UUcode del archivo '%s' no se pudo encontrar el tag requ
 ; FILENAME, TAG
 ;
 MSG_ER_UUDEC_CHECKSUM
-Durante el decodificado UUcode del archivo '%s' se encontraron algunas sumas de comprobación no válidas,\npor lo que el resultado puede estar dañado.\n\nEl mensaje está incompleto o se generó con un \
-codificador UUcode defectuoso.
+Durante el decodificado UUcode del archivo '%s' se encontraron algunas sumas de comprobación no válidas,\npor lo que el resultado puede estar dañado.\n\nEl mensaje está incompleto o se generó con un codificador UUcode defectuoso.
 ; During the UUcode decoding of file '%s' some checksums were found invalid, so \nthat the resulting file might be corrupt.\n\nEither the message is truncated or it was generated with a faulty UUcode encoder.
 ; FILENAME
 ;
@@ -5109,8 +5106,7 @@ MSG_MA_YESNOTOALL
 ; *_Yes|Y_es to all|_No|N_o to all
 ;
 MSG_ER_CONVERTMFILE
-Ocurrió un error mientras intentaba actualizar el archivo '%s' en la carpeta '%s' al formato de correo actual.\n\nPor favor comprueba que el directorio de la carpeta tiene suficiente espacio y no está \
-protegido contra escritura.
+Ocurrió un error mientras intentaba actualizar el archivo '%s' en la carpeta '%s' al formato de correo actual.\n\nPor favor comprueba que el directorio de la carpeta tiene suficiente espacio y no está protegido contra escritura.
 ; An error occurred while trying to upgrade file '%s' in folder '%s' to the current mail format.\n\nPlease check that the folder directory has enough space and is not write protected.
 ; FILENAME, FOLDER
 ;
@@ -5379,8 +5375,7 @@ Importar mensajes
 ; Import messages
 ;
 MSG_ER_MESSAGEIMPORT
-Ocurrió un error mientras intentaba importar un correo desde el archivo '%s'.\n\nPor favor comprueba que el earchivo es legible y contiene correo usando la norma RFC822  y formato soportado por YAM. \
-Los formatos soportados actuales son 'MBOX', 'DBX' (Outlook Express) o archivos de correo planos RFC822. Lee la documentación para más información.
+Ocurrió un error mientras intentaba importar un correo desde el archivo '%s'.\n\nPor favor comprueba que el earchivo es legible y contiene correo usando la norma RFC822  y formato soportado por YAM. Los formatos soportados actuales son 'MBOX', 'DBX' (Outlook Express) o archivos de correo planos RFC822. Lee la documentación para más información.
 ; An error occurred while trying to import mail from file '%s'.\n\nPlease check that the file is readable and contains RFC822 compliant e-mails using a format supported by YAM. The currently supported formats are 'MBOX', 'DBX' (Outlook Express) or plain RFC822 mail files. Read the documentation for more information.
 ; FILENAME
 ;
@@ -5430,8 +5425,7 @@ No puedo abrir la clase personalizada MUI requerida '%s' v%lu.%lu.\n\nActualment
 ; MCC_NAME, MCC_VERSION, MCC_REVISION, MCC_URL
 ;
 MSG_ER_MCC_IN_USE
-No puedo abrir la clase personalizada de MUI '%s' v%lu.%lu.\n\n%lu.%lu está siendo utilizada por otra aplicación.\n\nPor favor visita '%s',\ndescarga la versión más reciente y asegúrate\n de tenerlo \
-correctamente instalado. Entonces cierra\ntodos los programas MUI y asegúrate que se liberan las clases antiguas\nde la memoria e inténtalo otra vez.
+No puedo abrir la clase personalizada de MUI '%s' v%lu.%lu.\n\n%lu.%lu está siendo utilizada por otra aplicación.\n\nPor favor visita '%s',\ndescarga la versión más reciente y asegúrate\n de tenerlo correctamente instalado. Entonces cierra\ntodos los programas MUI y asegúrate que se liberan las clases antiguas\nde la memoria e inténtalo otra vez.
 ; Couldn't open required MUI custom class '%s' v%lu.%lu.\n\n%lu.%lu is currently in use by other applications.\n\nPlease visit '%s',\ndownload the most recent version and make\nsure you have it correctly installed. Then close\nall MUI programs and make sure the old class\nis flushed from memory and try again.
 ; MCC_NAME, MCC_VERSION, MCC_REVISION, MCC_VERSION, MCC_REVISION, MCC_URL
 ;
@@ -5556,8 +5550,7 @@ AmiSSL no disponible
 ; AmiSSL not available
 ;
 MSG_CO_AMISSLWARN
-AmiSSL parece no estar disponible.\nTodas las conexiones seguras (SSL/TLS) no están disponibles\nhasta que AmiSSL se encuentre instalado correctamente.\n\nPor favor verifica que al menos AmiSSL \
-v%lu.%lu está\ninstalado correctamente y entonces reinicia YAM.
+AmiSSL parece no estar disponible.\nTodas las conexiones seguras (SSL/TLS) no están disponibles\nhasta que AmiSSL se encuentre instalado correctamente.\n\nPor favor verifica que al menos AmiSSL v%lu.%lu está\ninstalado correctamente y entonces reinicia YAM.
 ; AmiSSL was found to be unavailable. Therefore,\nall secure connections (SSL/TLS) are disabled\nuntil AmiSSL is found to be installed correctly.\n\nPlease verify that at least AmiSSL v%lu.%lu is\ncorrectly installed and then restart YAM.
 ; AMISSL_VERSION, AMISSL_REVISION
 ;
@@ -5790,8 +5783,7 @@ Localizar Contactos en la lista de mensajes
 ; _Address book lookup in message list
 ;
 MSG_HELP_CO_CH_ABOOKLOOKUP
-Localiza direcciones de remitente/destinatario de la lista de mensajes\nbuscando en la agenda de contactos y muestra\nel nombre real en vez de la dirección.\n\nPor favor ten en cuenta que esta opción \
-consume bastante tiempo de\nproceso y puede ralentizar el mostrado de la lista.\nEsto es especialmente idóneo para una gran cantidad de\ncontactos en la agenda.
+Localiza direcciones de remitente/destinatario de la lista de mensajes\nbuscando en la agenda de contactos y muestra\nel nombre real en vez de la dirección.\n\nPor favor ten en cuenta que esta opción consume bastante tiempo de\nproceso y puede ralentizar el mostrado de la lista.\nEsto es especialmente idóneo para una gran cantidad de\ncontactos en la agenda.
 ; Resolve sender/recipient addresses in the message\nlist by looking them up in the address book and show\nthe real name instead.\n\nPlease note that this is a quite time consuming job\nand may bring down the performance of the list display.\nThis is especially true for a large amount of address\nbook entries.
 ;
 MSG_TR_MESSAGEGAUGE
@@ -6035,8 +6027,7 @@ _Borrar carpeta Spam
 ; _Delete Spam folder
 ;
 MSG_HELP_CO_CY_SMTPAUTHMETHOD
-Selecciona el método de autenticación que YAM deberá usar.\n'Auto' permite a YAM escoger uno automáticamente dependiendo de\nla capacidad del servidor y es el valor recomendado.\nLas otras te permiten\n\
- seleccionar una explícitamente. Estan listadas\npor orden de seguridad, de mayor a menor.
+Selecciona el método de autenticación que YAM deberá usar.\n'Auto' permite a YAM escoger uno automáticamente dependiendo de\nla capacidad del servidor y es el valor recomendado.\nLas otras te permiten\n\seleccionar una explícitamente. Estan listadas\npor orden de seguridad, de mayor a menor.
 ; Select here the authentication method YAM should use.\n'Auto' lets YAM pick one automatically depending on\nthe server's capabilities and is the recommended value.\nThe others let you explicitly select one. They are\nlisted in order according to how safe they are, with the\nsafest at the top.
 ;
 MSG_CO_SMTPAUTH_AUTO
@@ -6060,8 +6051,7 @@ PLANO
 ; PLAIN
 ;
 MSG_CO_ER_SMTPAUTH
-El servidor SMTP '%s' no parece soportar el método de autenticación seleccionado.\n\nPor favor consulta con tu proveedor qué métodos de autenticación están disponibles y cómo configurarlos en tu \
-administrador de correo.
+El servidor SMTP '%s' no parece soportar el método de autenticación seleccionado.\n\nPor favor consulta con tu proveedor qué métodos de autenticación están disponibles y cómo configurarlos en tu administrador de correo.
 ; The SMTP server '%s' doesn't seem to support the selected SMTP-AUTH method.\n\nPlease ask your provider which authentication methods are available and how to configure them in your e-mail client.
 ;
 MSG_ER_SPAMDIR_EXISTS
@@ -6521,8 +6511,7 @@ MSG_CO_MIMECMD_PUBSCREEN
 ; %p  Name of YAM's public screen
 ;
 MSG_ER_ZOMBIE_FILES_EXIST
-No puedo borrar archivos temporales.\n\nEstos archivos deben estar siendo utilizados por otras apliaciones.\nPor favor asegúrate que has cerrado todas las aplicaciones\nque puedes haber utilizado con \
-YAM, como visualizadores\nMIME (ej. MultiView).
+No puedo borrar archivos temporales.\n\nEstos archivos deben estar siendo utilizados por otras apliaciones.\nPor favor asegúrate que has cerrado todas las aplicaciones\nque puedes haber utilizado con YAM, como visualizadores\nMIME (ej. MultiView).
 ; Couldn't delete all temporary files during cleanup.\n\nThese files might be locked by other applications.\nPlease make sure that you have closed all aplications\nwhich you may have used from within YAM, like MIME\nviewers (e.g. MultiView).
 ;
 MSG_ER_ZOMBIE_FILES_EXIST_BT
@@ -6711,8 +6700,7 @@ Advertencia de Seguridad
 ; Security warning
 ;
 MSG_AB_INVALIDSECURITY
-Esta entrada de la agenda de contactos está definida para mensajes firmados y/o encriptados,\npero la instalación PGP requerida no se encuentra.\n\nQuieres restaurar los valores por ddefecto en\n\
-preferencias de seguridad para esta entrada?
+Esta entrada de la agenda de contactos está definida para mensajes firmados y/o encriptados,\npero la instalación PGP requerida no se encuentra.\n\nQuieres restaurar los valores por ddefecto en\n\preferencias de seguridad para esta entrada?
 ; This address book entry was set to default to\neither signed and/or encrypted messages, but the\nrequired PGP installation couldn't be found.\n\nDo you want to reset the default security\nsetting for this entry?
 ;
 MSG_AB_INVALIDSECURITY_GADS
@@ -6724,8 +6712,7 @@ Advertencia de Seguridad
 ; Security warning
 ;
 MSG_WR_INVALIDSECURITY
-Las preferencias de seguridad de la agenda de contactos para el destinatario\n\n'%s'\n\nestá definida para mensajes firmados y/o encriptados,\npero la instalación PGP requerida no se encuentra.\n\n\
-El mensaje no será firmado ni encriptado.
+Las preferencias de seguridad de la agenda de contactos para el destinatario\n\n'%s'\n\nestá definida para mensajes firmados y/o encriptados,\npero la instalación PGP requerida no se encuentra.\n\n\El mensaje no será firmado ni encriptado.
 ; The address book security setting for recipient\n\n'%s'\n\nis set to signed and/or encrypted messages,\nbut the required PGP installation wasn't found.\n\nThe message will be neither signed or encrypted.
 ; RECIPIENT
 ;
@@ -6828,8 +6815,7 @@ Ocurrió un error mientras intentaba guardar el archivo anexo '%s' en la carpeta 
 ; FILENAME, FOLDER
 ;
 MSG_ER_INDEX_CORRUPTED
-El archivo anexo '%s' en la carpeta '%s' está corrupto en la posición %d junto al archivo de información del correo '%s' (MoreBytes: 0x%x).\n\nLa carpeta fue marcada como 'no cargada' y se requiere \
-una actualización del anexo para solucionar el problema.
+El archivo anexo '%s' en la carpeta '%s' está corrupto en la posición %d junto al archivo de información del correo '%s' (MoreBytes: 0x%x).\n\nLa carpeta fue marcada como 'no cargada' y se requiere una actualización del anexo para solucionar el problema.
 ; Index file '%s' in folder '%s' is corrupt at position %d near the information about mail file '%s' (MoreBytes: 0x%x).\n\nThe folder was flagged as 'unloaded' and an index update was initiated or is required to solve the problem.
 ; FILENAME, FOLDER, POSITION, MAILFILE, MOREBYTES
 ;
@@ -6924,20 +6910,17 @@ Borrar
 ; Delete
 ;
 MSG_ER_B64DEC_FILEIO
-Ocurrió un error de E/S mientras intentaba decodificar (Base64) un MIME %ld del correo '%s'. El decodificado ha sido abortado.\n\nEsto puede ser a causa de espacio insuficiente en el volúmen donde \
-estaba siendo decodificado, o porque no se pudo acceder al archivo origen.
+Ocurrió un error de E/S mientras intentaba decodificar (Base64) un MIME %ld del correo '%s'. El decodificado ha sido abortado.\n\nEsto puede ser a causa de espacio insuficiente en el volúmen donde estaba siendo decodificado, o porque no se pudo acceder al archivo origen.
 ; A file I/O error occurred while trying to Base64 decode MIME part %ld of mail file '%s'. The decoding has been aborted.\n\nThis may be caused by insufficient space on the volume the file was being decoded to, or because the source file wasn't accessible.
 ; PARTNR, MSGFILE
 ;
 MSG_ER_B64DEC_WARN
-Se encontraron algunos caractéres no válidos mientras decodificaba (Base64) un MIME %ld del correo '%s'.Por lo tanto la salida generada puede contener información no válida o puede estar dañada.\n\n\
-Esto puede ser a causa de una codificación incorrecta por el cliente de correo de origen o porque ha sido deteriorada durante la transmisión.
+Se encontraron algunos caractéres no válidos mientras decodificaba (Base64) un MIME %ld del correo '%s'.Por lo tanto la salida generada puede contener información no válida o puede estar dañada.\n\n\Esto puede ser a causa de una codificación incorrecta por el cliente de correo de origen o porque ha sido deteriorada durante la transmisión.
 ; Some invalid characters were found while Base64 decoding MIME part %ld of mail file '%s'. The generated output may therefore contain invalid data or may be corrupted.\n\nThis may be caused by an incorrect encoding done by the sending mail client or because the Base64 part has been malformed during transmission.
 ; PARTNR, MSGFILE
 ;
 MSG_ER_B64DEC_UNEXP
-Ocurrió un error mientras intentaba decodificar (Base64) un MIME %ld del correo '%s'. El decodificado ha sido abortado.\n\nO no hay datos que decodificar o YAM no puede acceder a la información \
-codificada.
+Ocurrió un error mientras intentaba decodificar (Base64) un MIME %ld del correo '%s'. El decodificado ha sido abortado.\n\nO no hay datos que decodificar o YAM no puede acceder a la información codificada.
 ; An error occurred while trying to Base64 decode MIME part %ld of mail file '%s'. The decoding has been aborted.\n\nEither there's no data to decode or YAM can't access the encoded data.
 ; PARTNR, MSGFILE
 ;
@@ -6955,38 +6938,31 @@ Ruta
 ; Path
 ;
 MSG_ER_ICONOBJECT_WARNING
-Ocurrió un error mientras intentaba cargar el icono '%s.info' del tema '%s'. El icono no se mostrará durante esta sesión.\n\nPor favor asegúrate que el directorio de tu tema contiene todos los iconos \
-necesarios, o desactiva el tema para evitar futuras advertencias.
+Ocurrió un error mientras intentaba cargar el icono '%s.info' del tema '%s'. El icono no se mostrará durante esta sesión.\n\nPor favor asegúrate que el directorio de tu tema contiene todos los iconos necesarios, o desactiva el tema para evitar futuras advertencias.
 ; An error occurred while trying to load icon '%s.info' from theme '%s'. The icon will not be displayed during this session.\n\nPlease make sure that your theme directory contains all the necessary icons, or disable the theme to avoid further warnings.
 ;
 MSG_ER_THEMEVER_FALLBACK
-El tema actualmente seleccionado '%s' parece ser una versión incompatible y no fue cargado. Se seleccionó el tema por defecto.\n\nPor favor asegúrate actualizar el tema a una versión compatible o \
-desactivalo en la configuración.
+El tema actualmente seleccionado '%s' parece ser una versión incompatible y no fue cargado. Se seleccionó el tema por defecto.\n\nPor favor asegúrate actualizar el tema a una versión compatible o desactivalo en la configuración.
 ; The currently activated theme '%s' was found to be of an incompatible version and wasn't loaded. The default theme was therefore activated as a fallback.\n\nPlease make sure to update the theme to a compatible version or disable it in the configuration.
 ;
 MSG_ER_THEMEVER_IGNORE
-Se encontró una versión incorrecta, mientras intentaba cargar el tema por defecto de YAM.\n\nEl proceso de carga del tema ha sido abortado y tienes que actualizar el tema por defecto a una versión \
-compatible.
+Se encontró una versión incorrecta, mientras intentaba cargar el tema por defecto de YAM.\n\nEl proceso de carga del tema ha sido abortado y tienes que actualizar el tema por defecto a una versión compatible.
 ; While trying to load the default theme of YAM, it was found to be of an incorrect version.\n\nThe theme loading process was aborted and you are adviced to upgrade the default theme to a compatible version.
 ;
 MSG_ER_DATATYPE_ERROR
-Ocurrió un error mientras intentaba cargar un archivo imagen '%s' via datatypes.\n\nPor favor asegúrate de que el archivo existe y que tienes los datatypes del sistema correctamente definidos (ej. una \
-imagen se muestra con el MultiView).
+Ocurrió un error mientras intentaba cargar un archivo imagen '%s' via datatypes.\n\nPor favor asegúrate de que el archivo existe y que tienes los datatypes del sistema correctamente definidos (ej. una imagen se muestra con el MultiView).
 ; An error occurred while trying to load the image file '%s' via datatypes.\n\nPlease make sure that the file exists and that you have your datatypes system correctly set up (e.g. that the image displays properly with MultiView).
 ;
 MSG_ER_IMAGEOBJECT_WARNING
-Ocurrió un error mientras intentaba cargar un archivo de imagen '%s' del directorio '%s'.\n\nPor favor asegúrate que el tema contiene todas las imágenes necesarias como se define en la última versión \
-del layout.
+Ocurrió un error mientras intentaba cargar un archivo de imagen '%s' del directorio '%s'.\n\nPor favor asegúrate que el tema contiene todas las imágenes necesarias como se define en la última versión del layout.
 ; An error occurred while trying to load the image file '%s' from directory '%s'.\n\nPlease make sure that your theme contains all the necessary images as defined in the latest theme version layout.
 ;
 MSG_ER_THEME_FATAL
-YAM no puede cargar el tema por defecto y abortó la carga de temas completamente.\n\nPor favor asegúrate de que el directorio de temas es accesible y que contiene el tema por defecto distribuído con \
-YAM.
+YAM no puede cargar el tema por defecto y abortó la carga de temas completamente.\n\nPor favor asegúrate de que el directorio de temas es accesible y que contiene el tema por defecto distribuído con YAM.
 ; YAM was unable to load the default theme and aborted the theme loading completly.\n\nPlease make sure that your themes directory is readable and contains the correct default theme distributed with YAM.
 ;
 MSG_ER_THEME_FALLBACK
-El tema activado actual '%s' es inaccesible o está dañado. Por lo tanto el tema por defecto ha sido activado.\n\nPor favor asegúrate de que el tema seleccionado es accesible y es un tema válido para \
-YAM.
+El tema activado actual '%s' es inaccesible o está dañado. Por lo tanto el tema por defecto ha sido activado.\n\nPor favor asegúrate de que el tema seleccionado es accesible y es un tema válido para YAM.
 ; The currently activated theme '%s' is either inaccesible or it is corrupt. The default theme was therefore activated as a fallback.\n\nPlease make sure your selected theme is readable and a valid YAM theme.
 ;
 MSG_ER_THEME_ACTIVATED_TITLE
@@ -7010,8 +6986,7 @@ MSG_HELP_EA_BT_REMOVEPHOTO
 ; 'Forget' this picture (the\nfile on disk will remain).
 ;
 MSG_HELP_CO_TX_DEFAULTCHARSET
-Usa el botón emergente para seleccionar el juego de caracteres\nque quieres utilizar por defecto en YAM. Deberá coincidir con el\njuego de caractéres del sistema, o de lo contrario,\naparecerá una \
-ventana de petición consultando que\nquieres hacer.
+Usa el botón emergente para seleccionar el juego de caracteres\nque quieres utilizar por defecto en YAM. Deberá coincidir con el\njuego de caractéres del sistema, o de lo contrario,\naparecerá una ventana de petición consultando que\nquieres hacer.
 ; Use the popup button to select the character set\nyou would like YAM to use by default. This should\nmatch the system's default charset, otherwise a\nrequester will appear asking how do you want to\nproceed.
 ;
 MSG_HELP_CO_CH_NOTISOUND
@@ -7098,8 +7073,7 @@ Filtrado realizado:\n\n%3ld mensaje(s) comprobado(s),\n%3ld reenviado(s),\n%3ld 
 ; COUNT, COUNT, COUNT, COUNT, COUNT
 ;
 MSG_TR_FILTER_STATS_SPAM
-\nFiltrado realizado:\n\n%3ld mensaje(s) comprobado(s),\n%3ld remitido(s),\n%3ld reenviado(s),\n%3ld auto-contestado(s),\n%3ld comando(s) activado(s),\n%3ld movido(s),\n%3ld borrado(s),\n\
-%3ld clasificado(s) como spam
+\nFiltrado realizado:\n\n%3ld mensaje(s) comprobado(s),\n%3ld remitido(s),\n%3ld reenviado(s),\n%3ld auto-contestado(s),\n%3ld comando(s) activado(s),\n%3ld movido(s),\n%3ld borrado(s),\n\%3ld clasificado(s) como spam
 ; \nFiltering done:\n\n%3ld messages checked,\n%3ld bounced,\n%3ld forwarded,\n%3ld auto-replied,\n%3ld command activated,\n%3ld moved,\n%3ld deleted,\n%3ld classified as spam
 ; COUNT, COUNT, COUNT, COUNT, COUNT, COUNT, COUNT, COUNT
 ;
@@ -7108,8 +7082,7 @@ Advertencia cambio de archivo
 ; Filechange warning
 ;
 MSG_FCHANGE_WARN
-Mientras has editado el texto del mensaje\nde la ventana de escritura %ld en un editor externo,\nel texto en el editor interno ha\nsido modificado también.\n\nQuiere realmente utilizar el texto\n\
-del editor externo obviando los cambios\nrealizados en el editor interno?
+Mientras has editado el texto del mensaje\nde la ventana de escritura %ld en un editor externo,\nel texto en el editor interno ha\nsido modificado también.\n\nQuiere realmente utilizar el texto\n\del editor externo obviando los cambios\nrealizados en el editor interno?
 ; While you have edited the message text\nof write window %ld in an external editor,\nthe text in the internal text editor has\nalso been altered.\n\nDo you really want to use the text of\nthe external editor dropping the changes\ndone in the internal editor?
 ; NUMBER
 ;
@@ -7127,8 +7100,7 @@ No puedo inicializar el sistema de temas.
 ; Cannot initialize thread system.
 ;
 MSG_ERROR_PLAYSOUND
-Ocurrió un error mientras intentaba reproducir\nel archivo de sonido '%s'.\n\nEsto puede ser debido a un archivo de sonido dañado\no no soportado o porque tu datatype de\nsonido no está funcionando \
-correctamente.
+Ocurrió un error mientras intentaba reproducir\nel archivo de sonido '%s'.\n\nEsto puede ser debido a un archivo de sonido dañado\no no soportado o porque tu datatype de\nsonido no está funcionando correctamente.
 ; An error occurred while trying to play the sound file '%s'.\n\nThis could be either due to a broken or unsupported sound file or because your sound datatype is not properly working.
 ; FILE
 ;
@@ -7155,14 +7127,12 @@ No puedo conectar con la dirección '%s' de la cuenta '%s'.\n\nEl servidor de cor
 ; HOST, ACCOUNT
 ;
 MSG_ER_CONNECTERR_NO_SOCKET_POP3
-No puedo conectar con la dirección '%s' de la cuenta '%s'.\n\nYAM no pudo establecer una conexión socket con el servidor de correo. Por favor asegúrate que tu pila TCP/IP está activa y funcionando \
-correctamente.
+No puedo conectar con la dirección '%s' de la cuenta '%s'.\n\nYAM no pudo establecer una conexión socket con el servidor de correo. Por favor asegúrate que tu pila TCP/IP está activa y funcionando correctamente.
 ; Couldn't connect to host '%s' of account '%s'.\n\nYAM wasn't able to establish a socket connection to the mail server. Please make sure that your TCP/IP stack is online and working properly.
 ; HOST, ACCOUNT
 ;
 MSG_ER_CONNECTERR_NO_NONBLOCKIO_POP3
-No puedo conecar con el host '%s' de la cuenta '%s'.\n\nYAM no pudo establecer una conexión asíncrona I/O con el servidor de correo. Por favor asegúrate de que la pila TCP/IP puede establecer \
-conexionex asíncronas I/O.
+No puedo conecar con el host '%s' de la cuenta '%s'.\n\nYAM no pudo establecer una conexión asíncrona I/O con el servidor de correo. Por favor asegúrate de que la pila TCP/IP puede establecer conexiones asíncronas I/O.
 ; Couldn't connect to host '%s' of account '%s'.\n\nYAM wasn't able to establish a non-blocking I/O connection to the mail server. Please make sure that your TCP/IP stack can establish non-blocking I/O connections.
 ; HOST, ACCOUNT
 ;
@@ -7242,8 +7212,7 @@ Servidor SMTP desconocido '%s'.\n\nTCP/IP está apagado o la dirección del servid
 ; HOST
 ;
 MSG_ER_NO8BITMIME_SMTP
-El servidor SMTP '%s' devolvió que no soporta transferencia de correo en 8bit ya que tiene activada la opción de utilizar transferencia 8bit.\n\nPor favor desactive esta opción en sus preferencias \
-TCP/IP\ny reedite el mensaje antes de intentar enviarlo otra vez,\nde lo contrario el mensaje puede quedar deteriorado.
+El servidor SMTP '%s' devolvió que no soporta transferencia de correo en 8bit ya que tiene activada la opción de utilizar transferencia 8bit.\n\nPor favor desactive esta opción en sus preferencias TCP/IP\ny reedite el mensaje antes de intentar enviarlo otra vez,\nde lo contrario el mensaje puede quedar deteriorado.
 ; The SMTP server '%s' reported that it doesn't support 8bit mail transfers while you have the 'Allow8bit' option enabled.\n\nPlease disable this option in your TCP/IP preferences\nand re-edit the e-mail before trying to send it again,\notherwise the e-mail may be malformed.
 ;
 MSG_CO_FOLDERDBLCLICK
@@ -7494,8 +7463,7 @@ Aviso YAM
 ; YAM warning
 ;
 MSG_THREAD_EXIT_WARNING
-Mientras trataba de limpiar YAM se han encontrado temas aún en ejecución\n. Por favor asegúrese de cerrar todos los temas\nexistentes (p.ej. visores MIME, etc.) iniciados\ndesde YAM.\n\nQuiere volver \
-a intentarlo para quitar YAM o ignorar los temas\nen ejecución (podrían acabar en posteriores fallos del sistema)?
+Mientras trataba de limpiar YAM se han encontrado temas aún en ejecución\n. Por favor asegúrese de cerrar todos los temas\nexistentes (p.ej. visores MIME, etc.) iniciados\ndesde YAM.\n\nQuiere volver a intentarlo para quitar YAM o ignorar los temas\nen ejecución (podrían acabar en posteriores fallos del sistema)?
 ; While trying to cleanup YAM still running sub threads\nhave been found. Please make sure to close all still\nexisting sub threads (e.g. MIME viewers, etc.) you may\nhave initiated from YAM.\n\nDo you want to retry to quit YAM or ignore the still\nrunning sub thread (which could end up in later crashes)?
 ;
 MSG_THREAD_EXIT_WARNING_BT
@@ -7777,8 +7745,7 @@ SSL/TLS
 ; SSL/TLS
 ;
 MSG_HELP_CO_CY_POPSECURE
-Se establecerá una conexión segura STARTTLS o SSL/TLS\nentre el servidor POP3 y YAM para recibir correo a través de una conexión ecriptada.\nSi este selector está sombreado, significa que el soporte \
-AmiSSL\nactualmente no está disponible.
+Se establecerá una conexión segura STARTTLS o SSL/TLS\nentre el servidor POP3 y YAM para recibir correo a través de una conexión ecriptada.\nSi este selector está sombreado, significa que el soporte AmiSSL\nactualmente no está disponible.
 ; A STARTTLS or SSL/TLS secure connection will be\nestablished between the POP3 server and YAM to receive\ne-mail through an encrypted connection. If this cycle\ngadget is ghosted, it means AmiSSL support is currently\nnot available.
 ;
 MSG_CO_POP_SERVERLIST
@@ -7842,8 +7809,7 @@ Seguridad y Autentificación
 ; Security and Authentification
 ;
 MSG_HELP_CO_CY_SMTPSECURE
-Se establecerá una conexión segura STARTTLS o SSL/TLS\nentre el servidor POP3 y YAM para recibir correo a través de una conexión ecriptada.\nSi este selector está sombreado, significa que el soporte \
-AmiSSL\nactualmente no está disponible.
+Se establecerá una conexión segura STARTTLS o SSL/TLS\nentre el servidor POP3 y YAM para recibir correo a través de una conexión ecriptada.\nSi este selector está sombreado, significa que el soporte AmiSSL\nactualmente no está disponible.
 ; A STARTTLS or SSL/TLS secure connection will be\nestablished between the SMTP server and YAM to receive\ne-mail through an encrypted connection. If this cycle\ngadget is ghosted, it means AmiSSL support is currently\nnot available.
 ;
 MSG_CO_SMTP_AUTH
@@ -8110,8 +8076,7 @@ Si está activado, la firma se añadirá al\n reenviar un mensaje.
 ; If enabled, a signature will be added when\nforwarding a mail.
 ;
 MSG_HELP_CO_CH_IDENTITY_ADDINFO
-Si está activo, la información personal será\nañadida al correo (cabecera X-SenderInfo).\nEsto requiere una entrada en la agenda de contactos con\nla misma dirección de correo electrónico de esta \
-identidad de usuario.
+Si está activo, la información personal será\nañadida al correo (cabecera X-SenderInfo).\nEsto requiere una entrada en la agenda de contactos con\nla misma dirección de correo electrónico de esta identidad de usuario.
 ; If enabled, personal information will be\nadded to the mail (X-SenderInfo header).\nThis requires an addressbook entry with\nthe same email address as this user identity.
 ;
 MSG_HELP_CO_CH_IDENTITY_REQUESTMDN
@@ -8143,8 +8108,7 @@ Si está activo, el valor predeterminado para PGP es encriptar\ntodos los mensaje
 ; If enabled, the default is set to PGP encrypt all\nemails when starting to compose them.
 ;
 MSG_HELP_CO_CH_IDENTITY_PGPENC_SELF
-Si está activo, todos los mensajes que se encriptan a través de PGP\nse le añadirán la clave PGP de esta identidad de usuario.\n Si no está activo, los mensajes encriptados no pueden ser\n\
-desencriptados por esta identidad de usuario.
+Si está activo, todos los mensajes que se encriptan a través de PGP\nse le añadirán la clave PGP de esta identidad de usuario.\n Si no está activo, los mensajes encriptados no pueden ser\n\desencriptados por esta identidad de usuario.
 ; If enabled, all emails being encrypted via PGP\nwill have the PGP key added of this user identity.\nIf disabled, encrypted emails cannot be decrypted\nby this user identity.
 ;
 MSG_HELP_CO_CY_IDENTITY_SIGNATURE
@@ -8168,8 +8132,7 @@ Advertencia de la versión de Configuración
 ; Configuration Version Warning
 ;
 MSG_CO_CONFIGVERSIONWARNING
-El archivo de configuración que YAM trata de\n cargar fue salvado por una versión más reciente de YAM.\nSi continua cargando este archivo algunos ajustes\nde configuración se pueden perder y se \
-establezcan\n sus valores por defecto.\n\nCómo desea proceder?
+El archivo de configuración que YAM trata de\n cargar fue salvado por una versión más reciente de YAM.\nSi continua cargando este archivo algunos ajustes\nde configuración se pueden perder y se establezcan\n sus valores por defecto.\n\nCómo desea proceder?
 ; The configuration file that YAM tries to\nload was saved by a newer YAM version.\nIf you continue to load this file some\nconfig settings might be lost and set\nto their default values.\n\nHow do you want to proceed?
 ;
 MSG_CO_CONFIGVERSIONWARNING_BT
@@ -8213,8 +8176,7 @@ Nivel de seguridad PGP
 ; PGP security level
 ;
 MSG_HELP_WR_CY_SECURITY
-Permite seleccionar el nivel de seguridad de PGP.\nSe puede seleccionar si un mensaje debe ser firmado,\nencriptado o ambas cosas. "Por defecto" trata de encontrar\nel receptor en la agenda de \
-contactos y utilizar\nlas preferencias definidas allí.
+Permite seleccionar el nivel de seguridad de PGP.\nSe puede seleccionar si un mensaje debe ser firmado,\nencriptado o ambas cosas. "Por defecto" trata de encontrar\nel receptor en la agenda de contactos y utilizar\nlas preferencias definidas allí.
 ; Allows to select the PGP security level.\nYou can select if a message should be signed,\nencrypted or both. "Default" tries to find\nthe recipient in your address book and use\nthe settings defined there.
 ;
 MSG_CO_MIMETYPE_TITLE
@@ -8383,3 +8345,27 @@ MSG_CO_APPEND_SIGNATURE_FILE
 Adjuntar archivo como firma
 ; Append a file as signature instead
 ;
+MSG_PRESELECT_GETTING_DETAILS
+Obteniendo detalles del mensaje (%%ld de %ld)
+; Getting message details (%%ld of %ld)
+;
+MSG_CO_UPDATES_INFO_MANUAL
+Tendrá que comprobar manualmente las actualizaciones.
+; You will have to check for updates manually.
+;
+MSG_CO_UPDATES_INFO_AUTO
+Se le notificará tan pronto estén disponibles las actualizaciones.
+; You will be notified as soon as updates are available.
+;
+MSG_PGPPASS_SHOW_CHARS
+Mostrar caracteres
+; Show characters
+;
+MSG_CANNOT_CREATE_CUSTOM_CLASS
+Error al crear clase personalizada de '%s'\ncomo subclase de '%s'.
+; Failed to create custom class '%s'\nas subclass of '%s'.
+; CLASS,SUPERCLASS
+;
+MSG_ER_MORPHOS_REXX_WARNING
+YAM ha identificado que está ejecutando una versión de la 'rexxsyslib.library' en su sistema MorphOS que se sabe que no funciona ARexx.\n\nPara resolver esta situación y conseguir que ARexx corra con YAM usted debe instalar una copia de la 'rexxsyslib.library' desde 'SYS:Libs' de una instalación de AmigaOS 3.1-3.9, Cambie el nombre 'rexxsyslib.library' en MOSSYS:Libs" y reinicie el sistema.
+; YAM has identified that you are running a version of the 'rexxsyslib.library' in your MorphOS system that is known to not have a working ARexx implementation.\n\nTo solve this situation and get ARexx running with YAM you should install a copy of the 'rexxsyslib.library' from an AmigaOS 3.1-3.9 installation to 'SYS:Libs', rename the 'rexxsyslib.library' in 'MOSSYS:Libs' and reboot your system.
