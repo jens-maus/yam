@@ -35,6 +35,7 @@
 #include <proto/dos.h>
 #include <proto/muimaster.h>
 #include <libraries/gadtools.h>
+#include <libraries/iffparse.h>
 #include <mui/NBalance_mcc.h>
 #include <mui/NList_mcc.h>
 #include <mui/NListview_mcc.h>
