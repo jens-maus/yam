@@ -219,6 +219,7 @@ DECLARE(UpdateFilters)
         ParsePatternNoCase("#?.sfd", parsedPattern, parsedPatternSize);
 
         if((context = ObtainDirContextTags(EX_StringName, (IPTR)data->searchPath,
+                                           EX_DataFields, EXF_TYPE|EXF_NAME,
                                            EX_MatchString, (IPTR)parsedPattern,
                                            TAG_DONE)) != NULL)
         {
@@ -228,7 +229,7 @@ DECLARE(UpdateFilters)
 
           while((ed = ExamineDir(context)) != NULL)
           {
-            if((data->filterArray[filterIndex] = strdup(ed->Name)) != NULL)
+            if(EXD_IS_FILE(ed) && (data->filterArray[filterIndex] = strdup(ed->Name)) != NULL)
             {
               char *p;
 

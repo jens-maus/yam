@@ -3045,7 +3045,9 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
 
       D(DBF_FOLDER, "Scanning folder: '%s' (path '%s', %ld files)...", folder->Name, folder->Fullpath, filecount);
 
-      if((context = ObtainDirContextTags(EX_StringName, (IPTR)folder->Fullpath, TAG_DONE)) != NULL)
+      if((context = ObtainDirContextTags(EX_StringName, (IPTR)folder->Fullpath,
+                                         EX_DataFields, EXF_TYPE|EXF_NAME|EXF_SIZE,
+                                         TAG_DONE)) != NULL)
       {
         struct ExamineData *ed;
         LONG error;

@@ -9,6 +9,8 @@ $URL$
 
   * extrasrc/ExamineDir.c: only return the data fields which are requested
     via EX_DataFields.
+  * YAM_MAf.c, YAM_UT.c, mui/FilterChooser.c, mui/ThemeListGroup.c: make use
+    of EX_DataFields in the ObtainDirContext() call.
 
 2012-11-11 Emilio Jimenez <ejim@ono.com>
 

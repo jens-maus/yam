@@ -204,7 +204,9 @@ DECLARE(Update)
   DoMethod(data->NL_THEMELIST, MUIM_NList_Clear);
 
   // prepare for an ExamineDir()
-  if((context = ObtainDirContextTags(EX_StringName, (ULONG)G->ThemesDir, TAG_DONE)) != NULL)
+  if((context = ObtainDirContextTags(EX_StringName, (ULONG)G->ThemesDir,
+                                     EX_DataFields, EXF_TYPE|EXF_NAME,
+                                     TAG_DONE)) != NULL)
   {
     struct ExamineData *ed;
     LONG error;

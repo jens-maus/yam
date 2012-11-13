@@ -1547,8 +1547,9 @@ BOOL DeleteMailDir(const char *dir, BOOL isroot)
 
   ENTER();
 
-  if((context = ObtainDirContextTags(EX_StringName,   (ULONG)dir,
-                                    EX_DoCurrentDir, TRUE,
+  if((context = ObtainDirContextTags(EX_StringName, (ULONG)dir,
+                                     EX_DataFields, EXF_TYPE|EXF_NAME,
+                                     EX_DoCurrentDir, TRUE,
                                      TAG_DONE)) != NULL)
   {
     struct ExamineData *ed;
@@ -1687,11 +1688,13 @@ LONG FileCount(const char *directory, const char *pattern)
     #if defined(__amigaos4__)
     // dos.library before 52.17 has a small bug and needs a hook for the matching process
     if((context = ObtainDirContextTags(EX_StringName,  (ULONG)directory,
+                                       EX_DataFields, EXF_TYPE|EXF_NAME,
                                        EX_MatchString, (ULONG)parsedPattern,
                                        EX_MatchFunc,   LIB_VERSION_IS_AT_LEAST(DOSBase, 52, 17) ? NULL : &ExamineDirMatchHook,
                                        TAG_DONE)) != NULL)
     #else
     if((context = ObtainDirContextTags(EX_StringName,  (ULONG)directory,
+                                       EX_DataFields, EXF_TYPE|EXF_NAME,
                                        EX_MatchString, (ULONG)parsedPattern,
                                        TAG_DONE)) != NULL)
     #endif
@@ -1701,8 +1704,9 @@ LONG FileCount(const char *directory, const char *pattern)
 
       while((ed = ExamineDir(context)) != NULL)
       {
-        // count the entries
-        result++;
+        // count the number of files
+        if(EXD_IS_FILE(ed))
+          result++;
       }
 
       if((error = IoErr()) != ERROR_NO_MORE_ENTRIES)
