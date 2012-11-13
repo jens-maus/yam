@@ -100,7 +100,7 @@ APTR ObtainDirContext(struct TagItem *tags)
             else
               ctx->restoreOldCD = FALSE;
 
-            ctx->dataFields = GetTagData(EX_DataFields, 0xffffffff, tags);
+            ctx->dataFields = GetTagData(EX_DataFields, EXF_ALL, tags);
             SHOWVALUE(DBF_FOLDER, ctx->dataFields);
 
             // we have no information obtained yet
@@ -210,15 +210,20 @@ struct ExamineData *ExamineDir(APTR context)
 
     // copy over the data we might be interested in
     ed->Name = isFlagSet(ctx->dataFields, EXF_NAME) ? ctx->eaData->ed_Name : NULL;
-    ed->FileSize = ctx->eaData->ed_Size;
+    ed->FileSize = isFlagSet(ctx->dataFields, EXF_SIZE) ? ctx->eaData->ed_Size : -1;
 
     // convert the ExAll() type to ExamineDir() style
-    if(EAD_IS_FILE(ctx->eaData))
-      ed->Type = FSO_TYPE_FILE;
-    else if(EAD_IS_DRAWER(ctx->eaData))
-      ed->Type = FSO_TYPE_DIRECTORY;
-    else if(EAD_IS_SOFTLINK(ctx->eaData))
-      ed->Type = FSO_TYPE_SOFTLINK;
+    if(isFlagSet(ctx->dataFields, EXF_TYPE))
+    {
+      if(EAD_IS_FILE(ctx->eaData))
+        ed->Type = FSO_TYPE_FILE;
+      else if(EAD_IS_DRAWER(ctx->eaData))
+        ed->Type = FSO_TYPE_DIRECTORY;
+      else if(EAD_IS_SOFTLINK(ctx->eaData))
+        ed->Type = FSO_TYPE_SOFTLINK;
+    }
+    else
+      ed->Type = FSO_TYPE_MASK-1;
 
     SHOWVALUE(DBF_FOLDER, ed->Type);
     SHOWVALUE(DBF_FOLDER, ed->FileSize);

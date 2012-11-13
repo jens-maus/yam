@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-11-13 Thore Böckelmann <tboeckel@gmx.de>
+
+  * extrasrc/ExamineDir.c: only return the data fields which are requested
+    via EX_DataFields.
+
 2012-11-11 Emilio Jimenez <ejim@ono.com>
 
   * locale/spanish.ct: update to the latest changes.

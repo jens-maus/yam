@@ -63,5 +63,8 @@ struct ExamineData
 #define EX_DoCurrentDir              (EX_Dummy+4)
 
 #define EXF_NAME                     (1<<0)
+#define EXF_TYPE                     (1<<1)
+#define EXF_SIZE                     (1<<2)
+#define EXF_ALL                      (0xffffffff)   // all of the above
 
 #endif /* EXAMINEDIR_H */
