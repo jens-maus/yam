@@ -3937,6 +3937,7 @@ void MA_SetupEmbeddedReadPane(void)
       // the user want to have the embedded read pane added to the main
       // window, so lets do it now and create the object
       G->MA->GUI.BL_MAILVIEW = mailBalanceObj = NBalanceObject,
+                                                  MUIA_ObjectID, MAKE_ID('B','0','0','2'),
                                                   MUIA_Balance_Quiet, TRUE,
                                                 End;
 
@@ -4282,6 +4283,7 @@ struct MA_ClassData *MA_New(void)
             End,
           End,
           Child, NBalanceObject,
+            MUIA_ObjectID, MAKE_ID('B','0','0','1'),
             MUIA_Balance_Quiet, TRUE,
           End,
           Child, data->GUI.GR_MAILVIEW = VGroup,

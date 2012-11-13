@@ -487,6 +487,7 @@ OVERLOAD(OM_NEW)
     // create a balance object we can use between our texteditor
     // and the attachment display
     balanceObjectBottom = NBalanceObject,
+      MUIA_ObjectID, MAKE_ID('B','0','0','3'),
       MUIA_Balance_Quiet, TRUE,
     End;
 
@@ -536,6 +537,7 @@ OVERLOAD(OM_NEW)
               End,
             End,
             Child, balanceObjectTop = NBalanceObject,
+              MUIA_ObjectID, MAKE_ID('B','0','0','4'),
               MUIA_ShowMe, rmData->headerMode != HM_NOHEADER,
               MUIA_Balance_Quiet, TRUE,
             End,

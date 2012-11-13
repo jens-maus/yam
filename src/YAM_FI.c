@@ -3119,127 +3119,126 @@ static struct FI_ClassData *FI_New(void)
     Object *bt_none;
 
     data->GUI.WI = WindowObject,
-       MUIA_Window_Title, tr(MSG_FI_FindMessages),
-       MUIA_HelpNode, "FI_W",
-       MUIA_Window_ID, MAKE_ID('F','I','N','D'),
-       WindowContents, VGroup,
-          Child, HGroup,
-             GroupSpacing(0),
-             MUIA_VertWeight, 1,
-             Child, VGroup, GroupFrameT(tr(MSG_FI_FindIn)),
-                MUIA_HorizWeight, 1,
-                Child, NListviewObject,
-                   MUIA_CycleChain, 1,
-                   MUIA_NListview_NList, data->GUI.LV_FOLDERS = FolderRequestListtreeObject,
-                      InputListFrame,
-                      MUIA_NList_AutoVisible, TRUE,
-                      MUIA_NList_AdjustWidth, TRUE,
-                      MUIA_NListtree_MultiSelect, TRUE,
-                   End,
-                End,
-                Child, HGroup,
-                  Child, bt_all = MakeButton(tr(MSG_FI_AllFolders)),
-                  Child, bt_none = MakeButton(tr(MSG_FI_NOFOLDERS)),
-                End,
-             End,
-             Child, NBalanceObject,
-                MUIA_Balance_Quiet, TRUE,
-             End,
-             Child, VGroup, GroupFrameT(tr(MSG_FI_FindWhat)),
-                MUIA_HorizWeight, 10,
-                Child, VSpace(0),
-                Child, data->GUI.GR_SEARCH = SearchControlGroupObject,
-                  MUIA_SearchControlGroup_RemoteFilterMode, FALSE,
-                End,
-                Child, ColGroup(2),
-                   Child, po_fromrule = PopobjectObject,
-                      MUIA_Popstring_Button, MakeButton(tr(MSG_FI_UseFilter)),
-                      MUIA_Popobject_ObjStrHook, &SearchOptFromFilterPopupHook,
-                      MUIA_Popobject_StrObjHook, &InitFilterPopupListHook,
-                      MUIA_Popobject_WindowHook, &PO_WindowHook,
-                      MUIA_Popobject_Object, lv_fromrule = NListviewObject,
-                         MUIA_NListview_NList, FilterPopupListObject,
-                         End,
-                      End,
-                   End,
-                   Child, bt_torule = MakeButton(tr(MSG_FI_AddAsFilter)),
-                End,
-                Child, VSpace(0),
-             End,
+      MUIA_Window_Title, tr(MSG_FI_FindMessages),
+      MUIA_HelpNode, "FI_W",
+      MUIA_Window_ID, MAKE_ID('F','I','N','D'),
+      WindowContents, VGroup,
+        Child, HGroup,
+          GroupSpacing(0),
+          MUIA_VertWeight, 1,
+          Child, VGroup, GroupFrameT(tr(MSG_FI_FindIn)),
+            MUIA_HorizWeight, 1,
+            Child, NListviewObject,
+              MUIA_CycleChain, 1,
+              MUIA_NListview_NList, data->GUI.LV_FOLDERS = FolderRequestListtreeObject,
+                InputListFrame,
+                MUIA_NList_AutoVisible, TRUE,
+                MUIA_NList_AdjustWidth, TRUE,
+                MUIA_NListtree_MultiSelect, TRUE,
+              End,
+            End,
+            Child, HGroup,
+              Child, bt_all = MakeButton(tr(MSG_FI_AllFolders)),
+              Child, bt_none = MakeButton(tr(MSG_FI_NOFOLDERS)),
+            End,
           End,
           Child, NBalanceObject,
-             MUIA_Balance_Quiet, TRUE,
+            MUIA_ObjectID, MAKE_ID('B','0','0','5'),
+            MUIA_Balance_Quiet, TRUE,
           End,
-          Child, VGroup, GroupFrameT(tr(MSG_FI_Results)),
-             MUIA_VertWeight, 100,
-             Child, NListviewObject,
-                MUIA_CycleChain, TRUE,
-                MUIA_NListview_NList, data->GUI.LV_MAILS = MainMailListObject,
-                   //MUIA_ObjectID,       MAKE_ID('N','L','0','3'),
-                   MUIA_ContextMenu,    NULL,
-                   MUIA_NList_Format,   "COL=8 W=-1 MIW=-1 PCS=C BAR, COL=1 W=35 PCS=R BAR, COL=3 W=55 PCS=R BAR, COL=4 W=-1 MIW=-1 BAR, COL=7 W=-1 MIW=-1 BAR, COL=5 W=10 MIW=-1 P=\33r BAR",
-                   //MUIA_NList_Format,   "COL=8 W=-1 BAR, COL=1 W=-1 BAR, COL=3 W=-1 BAR, COL=4 W=-1 BAR, COL=7 W=-1 BAR, COL=5 W=-1 P=\33r BAR",
-                   //MUIA_NList_Exports,  MUIV_NList_Exports_ColWidth|MUIV_NList_Exports_ColOrder,
-                   //MUIA_NList_Imports,  MUIV_NList_Imports_ColWidth|MUIV_NList_Imports_ColOrder,
-                   MUIA_MainMailList_HandleDoubleClick, FALSE,
+          Child, VGroup, GroupFrameT(tr(MSG_FI_FindWhat)),
+            MUIA_HorizWeight, 10,
+            Child, VSpace(0),
+            Child, data->GUI.GR_SEARCH = SearchControlGroupObject,
+              MUIA_SearchControlGroup_RemoteFilterMode, FALSE,
+            End,
+            Child, ColGroup(2),
+              Child, po_fromrule = PopobjectObject,
+                MUIA_Popstring_Button, MakeButton(tr(MSG_FI_UseFilter)),
+                MUIA_Popobject_ObjStrHook, &SearchOptFromFilterPopupHook,
+                MUIA_Popobject_StrObjHook, &InitFilterPopupListHook,
+                MUIA_Popobject_WindowHook, &PO_WindowHook,
+                MUIA_Popobject_Object, lv_fromrule = NListviewObject,
+                  MUIA_NListview_NList, FilterPopupListObject,
+                  End,
                 End,
-             End,
+              End,
+              Child, bt_torule = MakeButton(tr(MSG_FI_AddAsFilter)),
+            End,
+            Child, VSpace(0),
           End,
-          Child, data->GUI.GR_PAGE = PageGroup,
-             Child, HGroup,
-                Child, data->GUI.BT_SEARCH = MakeButton(tr(MSG_FI_StartSearch)),
-                Child, data->GUI.BT_SELECTACTIVE = MakeButton(tr(MSG_FI_SELECTACTIVE)),
-                Child, data->GUI.BT_SELECT = MakeButton(tr(MSG_FI_SelectMatched)),
-                Child, data->GUI.BT_READ = MakeButton(tr(MSG_FI_ReadMessage)),
-             End,
-             Child, HGroup,
-                Child, data->GUI.GA_PROGRESS = GaugeObject,
-                   MUIA_HorizWeight, 200,
-                   GaugeFrame,
-                   MUIA_Gauge_Horiz,TRUE,
-                End,
-                Child, bt_abort = MakeButton(tr(MSG_FI_Abort)),
-             End,
+        End,
+        Child, NBalanceObject,
+          MUIA_ObjectID, MAKE_ID('B','0','0','6'),
+          MUIA_Balance_Quiet, TRUE,
+        End,
+        Child, VGroup, GroupFrameT(tr(MSG_FI_Results)),
+          MUIA_VertWeight, 100,
+          Child, NListviewObject,
+            MUIA_CycleChain, TRUE,
+            MUIA_NListview_NList, data->GUI.LV_MAILS = MainMailListObject,
+              //MUIA_ObjectID,       MAKE_ID('N','L','0','3'),
+              MUIA_ContextMenu,    NULL,
+              MUIA_NList_Format,   "COL=8 W=-1 MIW=-1 PCS=C BAR, COL=1 W=35 PCS=R BAR, COL=3 W=55 PCS=R BAR, COL=4 W=-1 MIW=-1 BAR, COL=7 W=-1 MIW=-1 BAR, COL=5 W=10 MIW=-1 P=\33r BAR",
+              MUIA_MainMailList_HandleDoubleClick, FALSE,
+            End,
           End,
-       End,
+        End,
+        Child, data->GUI.GR_PAGE = PageGroup,
+          Child, HGroup,
+            Child, data->GUI.BT_SEARCH = MakeButton(tr(MSG_FI_StartSearch)),
+            Child, data->GUI.BT_SELECTACTIVE = MakeButton(tr(MSG_FI_SELECTACTIVE)),
+            Child, data->GUI.BT_SELECT = MakeButton(tr(MSG_FI_SelectMatched)),
+            Child, data->GUI.BT_READ = MakeButton(tr(MSG_FI_ReadMessage)),
+          End,
+          Child, HGroup,
+            Child, data->GUI.GA_PROGRESS = GaugeObject,
+              MUIA_HorizWeight, 200,
+              GaugeFrame,
+              MUIA_Gauge_Horiz,TRUE,
+            End,
+            Child, bt_abort = MakeButton(tr(MSG_FI_Abort)),
+          End,
+        End,
+      End,
     End;
 
     if(data->GUI.WI != NULL)
     {
-       set(data->GUI.BT_SELECTACTIVE, MUIA_Disabled, TRUE);
-       set(data->GUI.BT_SELECT,       MUIA_Disabled, TRUE);
-       set(data->GUI.BT_READ,         MUIA_Disabled, TRUE);
+      set(data->GUI.BT_SELECTACTIVE, MUIA_Disabled, TRUE);
+      set(data->GUI.BT_SELECT,       MUIA_Disabled, TRUE);
+      set(data->GUI.BT_READ,         MUIA_Disabled, TRUE);
 
-       xset(data->GUI.WI, MUIA_Window_ActiveObject,  xget(data->GUI.GR_SEARCH, MUIA_SearchControlGroup_ActiveObject),
-                          MUIA_Window_DefaultObject, data->GUI.LV_MAILS);
+      xset(data->GUI.WI, MUIA_Window_ActiveObject,  xget(data->GUI.GR_SEARCH, MUIA_SearchControlGroup_ActiveObject),
+                         MUIA_Window_DefaultObject, data->GUI.LV_MAILS);
 
-       SetHelp(data->GUI.LV_FOLDERS,       MSG_HELP_FI_LV_FOLDERS);
-       SetHelp(bt_all,                     MSG_HELP_FI_BT_ALL);
-       SetHelp(bt_none,                    MSG_HELP_FI_BT_NONE);
-       SetHelp(po_fromrule,                MSG_HELP_FI_PO_FROMRULE);
-       SetHelp(bt_torule,                  MSG_HELP_FI_BT_TORULE);
-       SetHelp(data->GUI.BT_SEARCH,        MSG_HELP_FI_BT_SEARCH);
-       SetHelp(data->GUI.BT_SELECTACTIVE,  MSG_HELP_FI_BT_SELECTACTIVE);
-       SetHelp(data->GUI.BT_SELECT,        MSG_HELP_FI_BT_SELECT);
-       SetHelp(data->GUI.BT_READ,          MSG_HELP_FI_BT_READ);
-       SetHelp(bt_abort,                   MSG_HELP_FI_BT_ABORT);
+      SetHelp(data->GUI.LV_FOLDERS,       MSG_HELP_FI_LV_FOLDERS);
+      SetHelp(bt_all,                     MSG_HELP_FI_BT_ALL);
+      SetHelp(bt_none,                    MSG_HELP_FI_BT_NONE);
+      SetHelp(po_fromrule,                MSG_HELP_FI_PO_FROMRULE);
+      SetHelp(bt_torule,                  MSG_HELP_FI_BT_TORULE);
+      SetHelp(data->GUI.BT_SEARCH,        MSG_HELP_FI_BT_SEARCH);
+      SetHelp(data->GUI.BT_SELECTACTIVE,  MSG_HELP_FI_BT_SELECTACTIVE);
+      SetHelp(data->GUI.BT_SELECT,        MSG_HELP_FI_BT_SELECT);
+      SetHelp(data->GUI.BT_READ,          MSG_HELP_FI_BT_READ);
+      SetHelp(bt_abort,                   MSG_HELP_FI_BT_ABORT);
 
-       DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
+      DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
 
-       DoMethod(bt_abort,                 MUIM_Notify, MUIA_Pressed,              FALSE,          MUIV_Notify_Application, 3, MUIM_WriteLong, TRUE, &(data->Abort));
-       DoMethod(lv_fromrule,              MUIM_Notify, MUIA_Listview_DoubleClick, TRUE,           po_fromrule            , 2, MUIM_Popstring_Close, TRUE);
-       DoMethod(bt_all,                   MUIM_Notify, MUIA_Pressed,              FALSE,          data->GUI.LV_FOLDERS   , 5, MUIM_NListtree_Select, MUIV_NListtree_Select_All, MUIV_NListtree_Select_On, MUIF_NONE, NULL);
-       DoMethod(bt_none,                  MUIM_Notify, MUIA_Pressed,              FALSE,          data->GUI.LV_FOLDERS   , 5, MUIM_NListtree_Select, MUIV_NListtree_Select_All, MUIV_NListtree_Select_Off, MUIF_NONE, NULL);
-       DoMethod(bt_torule,                MUIM_Notify, MUIA_Pressed,              FALSE,          MUIV_Notify_Application, 2, MUIM_CallHook, &CreateFilterFromSearchHook);
-       DoMethod(data->GUI.BT_SEARCH,      MUIM_Notify, MUIA_Pressed,              FALSE,          MUIV_Notify_Application, 2, MUIM_CallHook, &FI_SearchHook);
-       DoMethod(data->GUI.BT_SELECT,      MUIM_Notify, MUIA_Pressed,              FALSE,          MUIV_Notify_Application, 2, MUIM_CallHook, &FI_SelectHook);
-       DoMethod(data->GUI.BT_SELECTACTIVE,MUIM_Notify, MUIA_Pressed,              FALSE,          MUIV_Notify_Application, 2, MUIM_CallHook, &FI_SwitchHook);
-       DoMethod(data->GUI.LV_MAILS,       MUIM_Notify, MUIA_NList_DoubleClick,    MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &FI_ReadHook);
-       DoMethod(data->GUI.BT_READ,        MUIM_Notify, MUIA_Pressed,              FALSE,          MUIV_Notify_Application, 2, MUIM_CallHook, &FI_ReadHook);
-       DoMethod(data->GUI.WI,             MUIM_Notify, MUIA_Window_CloseRequest,  TRUE,           MUIV_Notify_Application, 2, MUIM_CallHook, &FI_CloseHook);
+      DoMethod(bt_abort,                 MUIM_Notify, MUIA_Pressed,              FALSE,          MUIV_Notify_Application, 3, MUIM_WriteLong, TRUE, &(data->Abort));
+      DoMethod(lv_fromrule,              MUIM_Notify, MUIA_Listview_DoubleClick, TRUE,           po_fromrule            , 2, MUIM_Popstring_Close, TRUE);
+      DoMethod(bt_all,                   MUIM_Notify, MUIA_Pressed,              FALSE,          data->GUI.LV_FOLDERS   , 5, MUIM_NListtree_Select, MUIV_NListtree_Select_All, MUIV_NListtree_Select_On, MUIF_NONE, NULL);
+      DoMethod(bt_none,                  MUIM_Notify, MUIA_Pressed,              FALSE,          data->GUI.LV_FOLDERS   , 5, MUIM_NListtree_Select, MUIV_NListtree_Select_All, MUIV_NListtree_Select_Off, MUIF_NONE, NULL);
+      DoMethod(bt_torule,                MUIM_Notify, MUIA_Pressed,              FALSE,          MUIV_Notify_Application, 2, MUIM_CallHook, &CreateFilterFromSearchHook);
+      DoMethod(data->GUI.BT_SEARCH,      MUIM_Notify, MUIA_Pressed,              FALSE,          MUIV_Notify_Application, 2, MUIM_CallHook, &FI_SearchHook);
+      DoMethod(data->GUI.BT_SELECT,      MUIM_Notify, MUIA_Pressed,              FALSE,          MUIV_Notify_Application, 2, MUIM_CallHook, &FI_SelectHook);
+      DoMethod(data->GUI.BT_SELECTACTIVE,MUIM_Notify, MUIA_Pressed,              FALSE,          MUIV_Notify_Application, 2, MUIM_CallHook, &FI_SwitchHook);
+      DoMethod(data->GUI.LV_MAILS,       MUIM_Notify, MUIA_NList_DoubleClick,    MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &FI_ReadHook);
+      DoMethod(data->GUI.BT_READ,        MUIM_Notify, MUIA_Pressed,              FALSE,          MUIV_Notify_Application, 2, MUIM_CallHook, &FI_ReadHook);
+      DoMethod(data->GUI.WI,             MUIM_Notify, MUIA_Window_CloseRequest,  TRUE,           MUIV_Notify_Application, 2, MUIM_CallHook, &FI_CloseHook);
 
-       // Lets have the Listview sorted by Reverse Date by default
-       set(data->GUI.LV_MAILS, MUIA_NList_SortType, (4 | MUIV_NList_SortTypeAdd_2Values));
+      // Lets have the Listview sorted by Reverse Date by default
+      set(data->GUI.LV_MAILS, MUIA_NList_SortType, (4 | MUIV_NList_SortTypeAdd_2Values));
     }
     else
     {
