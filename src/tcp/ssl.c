@@ -103,7 +103,7 @@ CROSSCALL2(verify_callback, int, int, preverify_ok, X509_STORE_CTX *, x509_ctx)
       int depth = X509_STORE_CTX_get_error_depth(x509_ctx);
       int failures = 0;
 
-      W(DBF_NET, "ssl: verify callback @ %d => %d:'%s'", depth, err, X509_verify_cert_error_string(err));
+      W(DBF_NET, "ssl: verify callback @ %ld => %ld:'%s'", depth, err, X509_verify_cert_error_string(err));
 
       // map the specific X509 error codes to general failures
       // we cna query later on when checking the certificate chain later again
@@ -155,7 +155,7 @@ CROSSCALL2(verify_callback, int, int, preverify_ok, X509_STORE_CTX *, x509_ctx)
 
       // set the connection-wise sslCertFailure bitmask
       setFlag(conn->sslCertFailures, failures);
-      D(DBF_NET, "ssl: verify failures |= %d => %d", failures, conn->sslCertFailures);
+      D(DBF_NET, "ssl: verify failures |= %ld => %ld", failures, conn->sslCertFailures);
 
       // make sure we return 1 (success) so that
       // the verification process continues and collects more failures
@@ -336,7 +336,7 @@ static int CheckCertificateIdentity(const char *hostname, X509 *cert, char **ide
             *pos = '\0';
           }
           else
-            E(DBF_NET, "unexpected ip addr length %d", nm->d.iPAddress->length);
+            E(DBF_NET, "unexpected ip addr length %ld", nm->d.iPAddress->length);
 
           D(DBF_NET, "GEN_IPADD: '%s'", ipaddr);
 
@@ -347,7 +347,7 @@ static int CheckCertificateIdentity(const char *hostname, X509 *cert, char **ide
         break;
 
         default:
-          D(DBF_NET, "unknown/unsupported GEN type %d", nm->type);
+          D(DBF_NET, "unknown/unsupported GEN type %ld", nm->type);
         break;
       }
     }
@@ -356,7 +356,7 @@ static int CheckCertificateIdentity(const char *hostname, X509 *cert, char **ide
     sk_GENERAL_NAME_pop_free(names, ENTRY(GENERAL_NAME_free_wrapper));
   }
 
-  D(DBF_NET, "found: %d", found);
+  D(DBF_NET, "found: %ld", found);
 
   // Check against the commonName if no DNS alt. names were found,
   // as per RFC3280.
@@ -525,7 +525,7 @@ static struct Certificate *MakeCertificateChain(STACK_OF(X509) *chain)
 
   ENTER();
 
-  D(DBF_NET, "Certificate chain depth: %d", count);
+  D(DBF_NET, "Certificate chain depth: %ld", count);
 
   for(n = 0; n < count; n++)
   {
@@ -891,7 +891,7 @@ BOOL MakeSecureConnection(struct Connection *conn)
                         if(cipher != NULL)
                           D(DBF_NET, "%s connection using %s", SSL_CIPHER_get_version(cipher), SSL_get_cipher(conn->ssl));
 
-                        D(DBF_NET, "Certificate verify result: %d", SSL_get_verify_result(conn->ssl));
+                        D(DBF_NET, "Certificate verify result: %ld", SSL_get_verify_result(conn->ssl));
 
                         if((server_cert = SSL_get_peer_certificate(conn->ssl)) == NULL)
                           E(DBF_NET, "SSL_get_peer_certificate() error!");
