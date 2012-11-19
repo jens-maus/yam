@@ -640,7 +640,7 @@ static int CheckAbort(struct TransferContext *tc)
     // check for abortion
     if(success == 1 && isFlagSet(signals, tc->abortMask))
     {
-      D(DBF_THREAD, "get message details aborted");
+      D(DBF_NET, "get message details aborted");
       tc->connection->abort = TRUE;
       success = 0;
     }
@@ -1193,7 +1193,7 @@ static BOOL LoadMessage(struct TransferContext *tc, struct Folder *inFolder, con
           mail->sflags = SFLAG_NEW;
           MA_UpdateMailFile(mail);
 
-          D(DBF_THREAD, "adding mail to downloaded list");
+          D(DBF_NET, "adding mail to downloaded list");
           // add the mail to the list of downloaded mails
           LockMailList(tc->msn->downloadedMails);
           AddNewMailNode(tc->msn->downloadedMails, mail);
@@ -1371,7 +1371,7 @@ static BOOL WaitForPreselection(struct TransferContext *tc)
     if(isFlagSet(signals, tc->abortMask))
     {
       // we were aborted
-      D(DBF_THREAD, "preselection aborted");
+      D(DBF_NET, "preselection aborted");
       tc->connection->abort = TRUE;
       break;
     }
@@ -1615,7 +1615,7 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
             DeleteFilterList(tc->remoteFilters);
         }
         else
-          E(DBF_THREAD, "could not clone remote filters");
+          E(DBF_NET, "could not clone remote filters");
 
         // perform the finalizing actions only if we haven't been aborted externally
         if(ThreadWasAborted() == FALSE)
@@ -1628,7 +1628,7 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
           AppendToLogfile(LF_ALL, 30, tr(MSG_LOG_RETRIEVED_POP3), tc->downloadResult.downloaded, msn->description);
 
           // we only apply the filters if we downloaded something, or it's wasted
-          D(DBF_THREAD, "filter %ld downloaded mails", tc->downloadResult.downloaded);
+          D(DBF_NET, "filter %ld downloaded mails", tc->downloadResult.downloaded);
           if(tc->downloadResult.downloaded > 0)
           {
             PushMethodOnStackWait(G->App, 3, MUIM_YAMApplication_FilterNewMails, tc->msn->downloadedMails, &tc->filterResult);
