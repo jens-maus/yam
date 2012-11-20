@@ -299,8 +299,8 @@ static BOOL InitLib(const char *libname,
 /// CheckMCC
 //  Checks if a certain version of a MCC is available
 static BOOL CheckMCC(const char *name,
-                     ULONG minver, ULONG minrev, 
-                     ULONG maxver, ULONG maxrev, 
+                     ULONG minver, ULONG minrev,
+                     ULONG maxver, ULONG maxrev,
                      BOOL req, const char *url)
 {
   BOOL success = FALSE;
@@ -388,7 +388,7 @@ static BOOL CheckMCC(const char *name,
         UWORD openCnt = base->lib_OpenCnt;
 
         D(DBF_STARTUP, "successfully opened '%s' as library, found v%ld.%ld, open count %ld", name, ver, rev, openCnt);
-        
+
         // close the library immediately as we don't require any more
         // information from it
         CloseLibrary(base);
@@ -2126,7 +2126,7 @@ static void InitBeforeLogin(BOOL hidden)
 
   // Check that the user has all the required third party mcc classes installed or
   // abort otherwise.
-  // 
+  //
   // Note: In addition to checking for a minimum required version we also check for
   //       certain classes (e.g. betterstring.mcc) that the version is within a certain
   //       range as on MorphOS there unfortunately exist fake classes which cause severe
@@ -2134,7 +2134,7 @@ static void InitBeforeLogin(BOOL hidden)
   //       of actively contributing to the classes they tend to call broken. In the end
   //       this causes the MUI version of MorphOS to be borked, thus this workaround!
   //
-  //       customclass      minv minr maxv maxr  mand  url 
+  //       customclass      minv minr maxv maxr  mand  url
   CheckMCC(MUIC_TheBar,       26,  10,   0,   0, TRUE, "http://sf.net/projects/thebar/");
   CheckMCC(MUIC_TheBarVirt,   26,  10,   0,   0, TRUE, "http://sf.net/projects/thebar/");
   CheckMCC(MUIC_TheButton,    26,  10,   0,   0, TRUE, "http://sf.net/projects/thebar/");
@@ -2674,7 +2674,8 @@ int main(int argc, char **argv)
     NewMinList(&G->readMailDataList);
     NewMinList(&G->writeMailDataList);
     NewMinList(&G->zombieFileList);
-    NewMinList(&G->busyList);
+    NewMinList(&G->normalBusyList);
+    NewMinList(&G->arexxBusyList);
 
     if((C = calloc(1, sizeof(struct Config))) == NULL)
     {

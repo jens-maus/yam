@@ -39,9 +39,10 @@ struct BusyNode
   char infoText[SIZE_DEFAULT]; // the information text to be shown
 };
 
-#define BUSY_TEXT             1 // a simple information text only
-#define BUSY_PROGRESS         2 // a busy bar with progress gauge
-#define BUSY_PROGRESS_ABORT   3 // a busy bar with progress gauge and an abort button
+#define BUSY_TEXT             1 // a simple information text only, normal usage
+#define BUSY_PROGRESS         2 // a busy bar with progress gauge, normal usage
+#define BUSY_PROGRESS_ABORT   3 // a busy bar with progress gauge and an abort button, normal usage
+#define BUSY_AREXX            4 // a simple information text only, ARexx usage
 
 struct BusyNode *BusyBegin(ULONG type);
 void BusyText(struct BusyNode *busy, const char *text, const char *param);

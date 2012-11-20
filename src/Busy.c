@@ -59,11 +59,14 @@ struct BusyNode *BusyBegin(ULONG type)
       ASONODE_Min, TRUE,
       TAG_DONE)) != NULL)
     {
-	  memset(busy, 0, sizeof(*busy));
-	  busy->type = type;
+      memset(busy, 0, sizeof(*busy));
+      busy->type = type;
 
-	  AddTail((struct List *)&G->busyList, (struct Node *)busy);
-	}
+      if(type == BUSY_AREXX)
+        AddTail((struct List *)&G->arexxBusyList, (struct Node *)busy);
+      else
+        AddTail((struct List *)&G->normalBusyList, (struct Node *)busy);
+    }
   }
   else
   {
@@ -167,14 +170,18 @@ void BusyEnd(struct BusyNode *busy)
   {
     if(IsMainThread() == TRUE)
     {
-      struct BusyNode *last;
+      struct BusyNode *last = NULL;
 
       // remove this node from the list
       Remove((struct Node *)busy);
 
-      // try to show the last busy action in the list or hide the
-      // busy bar otherwise
-      last = (struct BusyNode *)GetTail((struct List *)&G->busyList);
+      // Try to show the last busy action in the list or hide the busy bar otherwise.
+      // If the just ended action was initiated by ARexx we prefer that list over the
+      // normal list.
+      if(busy->type == BUSY_AREXX)
+        last = (struct BusyNode *)GetTail((struct List *)&G->arexxBusyList);
+      if(busy == NULL)
+        last = (struct BusyNode *)GetTail((struct List *)&G->normalBusyList);
       BusyShow(last);
 
       FreeSysObject(ASOT_NODE, busy);
@@ -198,11 +205,18 @@ void BusyCleanup(void)
 
   ENTER();
 
-  while((node = RemHead((struct List *)&G->busyList)) != NULL)
+  while((node = RemHead((struct List *)&G->normalBusyList)) != NULL)
   {
     struct BusyNode *busy = (struct BusyNode *)node;
 
-    W(DBF_STARTUP, "freeing pending busy action %08lx, type %ld, text '%s'", busy, busy->type, busy->infoText);
+    W(DBF_STARTUP, "freeing pending normal busy action %08lx, type %ld, text '%s'", busy, busy->type, busy->infoText);
+    FreeSysObject(ASOT_NODE, busy);
+  }
+  while((node = RemHead((struct List *)&G->arexxBusyList)) != NULL)
+  {
+    struct BusyNode *busy = (struct BusyNode *)node;
+
+    W(DBF_STARTUP, "freeing pending ARexx busy action %08lx, type %ld, text '%s'", busy, busy->type, busy->infoText);
     FreeSysObject(ASOT_NODE, busy);
   }
 

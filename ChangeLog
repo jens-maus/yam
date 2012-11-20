@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-11-20 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c, Busy.c, rexx/appbusy.c, rexx/appnobusy.c: splitted off a separate
+    list for busy actions initiated by ARexx scripts. This is necessary to keep
+    old scripts working, which cannot take into account that there can be other
+    busy actions active now in parallel to the one initiated by the script. The
+    separate list is only required to satisfy the needs of such scripts. This
+    closes #354.
+
 2012-11-13 Thore Böckelmann <tboeckel@gmx.de>
 
   * extrasrc/ExamineDir.c: only return the data fields which are requested

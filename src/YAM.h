@@ -165,11 +165,11 @@ struct Global
   struct MinList           readMailDataList;
   struct MinList           writeMailDataList;
   struct MinList           zombieFileList;
-  struct MinList           busyList;             // list of active busy actions
+  struct MinList           normalBusyList;       // list of active busy actions, normal usage
+  struct MinList           arexxBusyList;        // list of active busy actions, ARexx usage
   struct Theme             theme;
   struct TokenAnalyzer     spamFilter;
   struct Timers            timerData;
-  APTR                     rexxBusyHandle;       // Busy handle for ARexx commands APPBUSY/APPNOBUSY
 
   // the data for our thread implementation
   struct MsgPort         * threadPort;

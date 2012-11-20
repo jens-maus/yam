@@ -58,10 +58,12 @@ void rx_appnobusy(UNUSED struct RexxHost *host, struct RexxParams *params, enum 
 
     case RXIF_ACTION:
     {
-      BusyEnd(G->rexxBusyHandle);
-      G->rexxBusyHandle = NULL;
+      struct BusyNode *busy = (struct BusyNode *)GetTail((struct List *)&G->arexxBusyList);
 
-      if(IsMinListEmpty(&G->busyList) == TRUE)
+      BusyEnd(busy);
+
+      // return 0 if this was the last active ARexx busy action, 1 otherwise
+      if(IsMinListEmpty(&G->arexxBusyList) == TRUE)
       {
         nnset(G->App, MUIA_Application_Sleep, FALSE);
         params->rc = 0;

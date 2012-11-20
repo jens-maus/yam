@@ -58,19 +58,22 @@ void rx_appbusy(UNUSED struct RexxHost *host, struct RexxParams *params, enum Re
 
     case RXIF_ACTION:
     {
-      params->rc = IsMinListEmpty(&G->busyList) ? 0 : 1;
+      struct BusyNode *busy;
 
-      if(G->rexxBusyHandle == NULL)
-        G->rexxBusyHandle = BusyBegin(BUSY_TEXT);
+      // return 0 if YAM was idle, 1 otherwise
+      params->rc = IsMinListEmpty(&G->arexxBusyList) ? 0 : 1;
+
+      busy = BusyBegin(BUSY_AREXX);
 
       // we don't make a text a requirement. If the user hasn't supplied
       // a text for the busytext we simply use an empty string.
       if(args->text != NULL)
-        BusyText(G->rexxBusyHandle, args->text, "");
+        BusyText(busy, args->text, "");
       else
-        BusyText(G->rexxBusyHandle, " ", "");
+        BusyText(busy, " ", "");
 
-      if(G->rexxBusyHandle != NULL)
+      // put YAM to sleep only once
+      if(params->rc == 0)
         nnset(G->App, MUIA_Application_Sleep, TRUE);
     }
     break;
