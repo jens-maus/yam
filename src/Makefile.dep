@@ -1317,8 +1317,9 @@ $(OBJDIR)/$(MUIDIR)/Aboutwindow.o: mui/Aboutwindow.c mui/Aboutwindow_cl.h \
   HashTable.h include/SDI_compiler.h extrasrc.h include/SDI_stdarg.h \
   include/SDI_compiler.h mui/Aboutwindow.h include/proto/muimaster.h \
   include/interfaces/muimaster.h include/inline4/muimaster.h \
-  include/mui/NFloattext_mcc.h include/mui/NListview_mcc.h \
-  include/mui/NList_mcc.h YAM.h include/xpk/xpk.h include/amiga-align.h \
+  include/mui/Crawling_mcc.h include/mui/NFloattext_mcc.h \
+  include/mui/NListview_mcc.h include/mui/NList_mcc.h \
+  include/mui/Urltext_mcc.h YAM.h include/xpk/xpk.h include/amiga-align.h \
   include/default-align.h YAM_userlist.h YAM_utilities.h \
   YAM_folderconfig.h BayesFilter.h Themes.h Timer.h include/timeval.h \
   YAM_global.h YAM_stringsizes.h Locale.h MUIObjects.h mui/ImageArea.h \
@@ -1916,7 +1917,7 @@ $(OBJDIR)/$(MUIDIR)/InfoBar.o: mui/InfoBar.c mui/InfoBar_cl.h include/libraries/
   include/openssl/ssl3.h include/openssl/tls1.h include/openssl/ssl23.h \
   include/openssl/tmdiff.h include/openssl/txt_db.h include/amissl/tags.h \
   include/interfaces/amissl.h include/inline4/amissl.h YAM_utilities.h \
-  Busy.h MUIObjects.h mui/ImageArea.h ImageCache.h \
+  Busy.h MUIObjects.h StrBuf.h mui/ImageArea.h ImageCache.h \
   include/mui/TheBar_mcc.h mui/FolderListtree.h YAM_folderconfig.h \
   Debug.h
 $(OBJDIR)/$(MUIDIR)/InfoWindow.o: mui/InfoWindow.c mui/InfoWindow_cl.h \
