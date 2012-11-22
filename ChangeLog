@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-11-22 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/InfoBar.c: use dynamic string buffer functions to set up the info
+    string.
+
 2012-11-20 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.c, Busy.c, rexx/appbusy.c, rexx/appnobusy.c: splitted off a separate

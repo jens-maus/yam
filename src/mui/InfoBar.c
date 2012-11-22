@@ -30,7 +30,6 @@
 
 #include "InfoBar_cl.h"
 
-#include <string.h>
 #include <proto/muimaster.h>
 
 #include "YAM.h"
@@ -39,6 +38,7 @@
 
 #include "Busy.h"
 #include "MUIObjects.h"
+#include "StrBuf.h"
 
 #include "mui/ImageArea.h"
 #include "mui/FolderListtree.h"
@@ -74,11 +74,9 @@ struct Data
 static void GetFolderInfo(struct Data *data, struct Folder *folder)
 {
   char *src;
+  char *info = NULL;
 
   ENTER();
-
-  // clear the bar text first
-  data->folderInfo[0] = '\0';
 
   // Lets create the label of the AppIcon now
   for(src = C->InfoBarText; *src; src++)
@@ -89,7 +87,7 @@ static void GetFolderInfo(struct Data *data, struct Folder *folder)
     {
       switch(*++src)
       {
-        case '%': strlcpy(dst, "%", sizeof(dst)); break;
+        case '%': dst[0] = '%'; dst[1] = '\0'; break;
         case 'n': snprintf(dst, sizeof(dst), "%d", folder->New);     break;
         case 'u': snprintf(dst, sizeof(dst), "%d", folder->Unread);  break;
         case 't': snprintf(dst, sizeof(dst), "%d", folder->Total);   break;
@@ -98,10 +96,22 @@ static void GetFolderInfo(struct Data *data, struct Folder *folder)
       }
     }
     else
-      snprintf(dst, sizeof(dst), "%c", *src);
+    {
+      dst[0] = *src;
+      dst[1] = '\0';
+    }
 
-    strlcat(data->folderInfo, dst, sizeof(data->folderInfo));
+    StrBufCat(&info, dst);
   }
+
+  if(info != NULL)
+  {
+    strlcpy(data->folderInfo, info, sizeof(data->folderInfo));
+    FreeStrBuf(info);
+  }
+  else
+    data->folderInfo[0] = '\0';
+
 
   LEAVE();
 }
