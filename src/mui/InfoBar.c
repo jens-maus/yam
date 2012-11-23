@@ -163,6 +163,8 @@ OVERLOAD(OM_NEW)
         MUIA_HorizDisappear, 1,
         MUIA_Text_SetMax,   FALSE,
         MUIA_Text_PreParse, "\033r",
+        MUIA_Text_Copy,     FALSE,
+        MUIA_Text_Contents, " ",
       End,
 
       Child, statusGroup = PageGroup,
@@ -174,20 +176,24 @@ OVERLOAD(OM_NEW)
           Child, gauge = GaugeObject,
             GaugeFrame,
             MUIA_Gauge_Horiz,    TRUE,
+            MUIA_Gauge_InfoText, " ",
           End,
           Child, stopButton = TextObject,
             ButtonFrame,
             MUIA_CycleChain,     TRUE,
             MUIA_Font,           MUIV_Font_Tiny,
-            MUIA_Text_Contents,  "\033bX",
             MUIA_InputMode,      MUIV_InputMode_RelVerify,
             MUIA_Background,     MUII_ButtonBack,
             MUIA_Text_SetMax,    TRUE,
+            MUIA_Text_Copy,      FALSE,
+            MUIA_Text_Contents,  "\033bX",
           End,
         End,
         Child, infoText = TextObject,
           MUIA_Text_SetMax,   FALSE,
           MUIA_Text_PreParse, "\033r",
+          MUIA_Text_Copy,     FALSE,
+          MUIA_Text_Contents, " ",
         End,
       End,
     End,
@@ -317,7 +323,7 @@ DECLARE(ShowBusyBar) // struct BusyNode *busy
       case BUSY_TEXT:
       {
         set(data->TX_INFO, MUIA_Text_Contents, msg->busy->infoText);
-        set(data->GA_LABEL, MUIA_Text_Contents, NULL);
+        set(data->GA_LABEL, MUIA_Text_Contents, " ");
         set(data->GA_GROUP, MUIA_Group_ActivePage, 2);
       }
       break;
@@ -380,7 +386,7 @@ DECLARE(ShowBusyBar) // struct BusyNode *busy
   {
     // hide the busy bar
     set(data->GA_GROUP, MUIA_Group_ActivePage, 0);
-    set(data->GA_LABEL, MUIA_Text_Contents, NULL);
+    set(data->GA_LABEL, MUIA_Text_Contents, " ");
   }
 
   // remember the changed busy action

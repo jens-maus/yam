@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-11-23 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/InfoBar.c: set an initial text for all text related items to enforce
+    a standard dimension even if no sensible text is to be displayed. This
+    avoids a relayout which happens whenever has to make use of the progress
+    bar right after opening the main window.
+
 2012-11-22 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/InfoBar.c: use dynamic string buffer functions to set up the info
