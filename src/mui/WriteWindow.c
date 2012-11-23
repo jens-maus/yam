@@ -1121,6 +1121,7 @@ OVERLOAD(OM_NEW)
                           Child, data->TX_POSI = TextObject,
                             MUIA_Weight,        0,
                             MUIA_Text_Contents, "000 \n000 ",
+                            MUIA_Text_Copy,     FALSE,
                             MUIA_Background,    MUII_RegisterBack,
                             MUIA_Frame,         MUIV_Frame_None,
                             MUIA_Font,          MUIV_Font_Tiny,

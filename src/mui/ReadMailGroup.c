@@ -501,6 +501,7 @@ OVERLOAD(OM_NEW)
           MUIA_Text_SetMax,   TRUE,
           MUIA_Text_Contents, tr(MSG_MA_ATTACHMENTS),
           MUIA_Text_PreParse, "\033b",
+          MUIA_Text_Copy,     FALSE,
         End,
         Child, VSpace(0),
       End,

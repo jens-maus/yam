@@ -60,6 +60,7 @@ struct Data
   Object *BT_ACTIVATE;
   Object *TX_AUTHOR;
   Object *TX_URL;
+  char themeName[SIZE_DEFAULT];
 };
 */
 
@@ -107,6 +108,7 @@ OVERLOAD(OM_NEW)
 
             Child, themeTextObject = TextObject,
               MUIA_Text_PreParse, "\033b\033c",
+              MUIA_Text_Copy,     FALSE,
             End,
 
             Child, RectangleObject,
@@ -117,9 +119,10 @@ OVERLOAD(OM_NEW)
             Child, HGroup,
               Child, HSpace(0),
               Child, TextObject,
-                MUIA_Text_Contents, tr(MSG_CO_THEME_PREVIEW),
                 MUIA_Font,          MUIV_Font_Tiny,
                 MUIA_HorizWeight,   0,
+                MUIA_Text_Contents, tr(MSG_CO_THEME_PREVIEW),
+                MUIA_Text_Copy,     FALSE,
               End,
               Child, HSpace(0),
             End,
@@ -154,6 +157,7 @@ OVERLOAD(OM_NEW)
                 TextFrame,
                 MUIA_Background,  MUII_TextBack,
                 MUIA_Text_SetMin, TRUE,
+                MUIA_Text_Copy,   FALSE,
               End,
 
               Child, Label2(tr(MSG_CO_THEME_URL)),
@@ -161,6 +165,7 @@ OVERLOAD(OM_NEW)
                 TextFrame,
                 MUIA_Background,  MUII_TextBack,
                 MUIA_Text_SetMin, TRUE,
+                MUIA_Text_Copy,   FALSE,
               End,
             End,
 
@@ -307,8 +312,6 @@ DECLARE(SelectionChanged)
   DoMethod(data->NL_THEMELIST, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &theme);
   if(theme != NULL)
   {
-    char buf[SIZE_DEFAULT];
-
     if(DoMethod(data->GR_PREVIEW, MUIM_Group_InitChange))
     {
       char filename[SIZE_PATHFILE];
@@ -326,8 +329,8 @@ DECLARE(SelectionChanged)
       DoMethod(data->GR_PREVIEW, MUIM_Group_ExitChange);
     }
 
-    snprintf(buf, sizeof(buf), "%s - %s", theme->name, theme->version);
-    set(data->TX_THEMELABEL, MUIA_Text_Contents, buf);
+    snprintf(data->themeName, sizeof(data->themeName), "%s - %s", theme->name, theme->version);
+    set(data->TX_THEMELABEL, MUIA_Text_Contents, data->themeName);
     set(data->TX_AUTHOR, MUIA_Text_Contents, theme->author);
     set(data->TX_URL, MUIA_Text_Contents, theme->url);
   }

@@ -70,6 +70,7 @@ struct Data
   struct TimeVal last_statusupdate;
   BOOL abortSearch;
   BOOL searchInProgress;
+  char statusText[SIZE_DEFAULT];
 };
 */
 
@@ -389,7 +390,8 @@ OVERLOAD(OM_NEW)
       Child, statusText = TextObject,
         MUIA_Font,          MUIV_Font_Tiny,
         MUIA_Text_PreParse, "\033c",
-        MUIA_Text_Contents,  " ",
+        MUIA_Text_Contents, " ",
+        MUIA_Text_Copy,     FALSE,
       End,
     End,
 
@@ -430,6 +432,7 @@ OVERLOAD(OM_NEW)
         MUIA_InputMode,      MUIV_InputMode_RelVerify,
         MUIA_Background,     MUII_ButtonBack,
         MUIA_Text_SetMax,    TRUE,
+        MUIA_Text_Copy,      FALSE,
       End,
     End,
 
@@ -841,16 +844,15 @@ DECLARE(UpdateStats) // ULONG force
 
   if(doUpdate == TRUE)
   {
-    char statusText[SIZE_DEFAULT];
     ULONG numEntries = xget(G->MA->GUI.PG_MAILLIST, MUIA_NList_Entries);
     struct Folder *curFolder = GetCurrentFolder();
 
-    snprintf(statusText, sizeof(statusText), tr(MSG_QUICKSEARCH_SHOWNMSGS), numEntries, curFolder->Total);
+    snprintf(data->statusText, sizeof(data->statusText), tr(MSG_QUICKSEARCH_SHOWNMSGS), numEntries, curFolder->Total);
 
     // if the list is quiet then leave that state
     if(data->searchInProgress == TRUE)
       set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, FALSE);
-    set(data->TX_STATUSTEXT, MUIA_Text_Contents, statusText);
+    set(data->TX_STATUSTEXT, MUIA_Text_Contents, data->statusText);
     // and restore the previous state if we changed it
     if(data->searchInProgress == TRUE)
       set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, TRUE);

@@ -11,6 +11,8 @@ $URL$
     a standard dimension even if no sensible text is to be displayed. This
     avoids a relayout which happens whenever has to make use of the progress
     bar right after opening the main window.
+  * misc: avoid copying of strings if only constant and non-vanishing strings are
+    used.
 
 2012-11-22 Thore Böckelmann <tboeckel@gmx.de>
 

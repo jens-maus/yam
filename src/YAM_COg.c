@@ -108,10 +108,12 @@
               Child, TextObject,                      \
                 MUIA_Text_PreParse, "\033b",          \
                 MUIA_Text_Contents, (title),          \
+                MUIA_Text_Copy,     FALSE,            \
                 MUIA_Weight,        100,              \
               End,                                    \
               Child, TextObject,                      \
                 MUIA_Text_Contents, (summary),        \
+                MUIA_Text_Copy,     FALSE,            \
                 MUIA_Font,          MUIV_Font_Tiny,   \
                 MUIA_Weight,        100,              \
               End,                                    \
@@ -2287,6 +2289,7 @@ Object *CO_PageIdentities(struct CO_ClassData *data)
                           Child, data->GUI.PO_IDENTITY_SENTFOLDER = PopobjectObject,
                             MUIA_Popstring_String, data->GUI.TX_IDENTITY_SENTFOLDER = TextObject,
                               TextFrame,
+                              MUIA_Text_Copy, FALSE,
                             End,
                             MUIA_Popstring_Button, bt_sentfolder = PopButton(MUII_PopUp),
                             MUIA_Popobject_StrObjHook, &PO_Text2ListHook,
@@ -2631,6 +2634,7 @@ Object *CO_PageFilters(struct CO_ClassData *data)
                             Child, data->GUI.PO_MOVETO = PopobjectObject,
                                 MUIA_Popstring_String, data->GUI.TX_MOVETO = TextObject,
                                    TextFrame,
+                                   MUIA_Text_Copy, FALSE,
                                 End,
                                 MUIA_Popstring_Button,bt_moveto = PopButton(MUII_PopUp),
                                 MUIA_Popobject_StrObjHook, &PO_Text2ListHook,
@@ -4401,12 +4405,14 @@ Object *CO_PageUpdate(struct CO_ClassData *data)
                 End,
                 Child, data->GUI.TX_UPDATEINFO = TextObject,
                   MUIA_Font, MUIV_Font_Tiny,
+                  MUIA_Text_Copy, FALSE,
                 End,
                 Child, VSpace(10),
                 Child, ColGroup(2),
                   Child, LLabel1(tr(MSG_CO_LASTSEARCH)),
                   Child, data->GUI.TX_UPDATESTATUS = TextObject,
                     MUIA_Text_Contents, tr(MSG_CO_LASTSTATUS_NOCHECK),
+                    MUIA_Text_Copy, FALSE,
                   End,
                   Child, HSpace(1),
                   Child, data->GUI.TX_UPDATEDATE = TextObject,
