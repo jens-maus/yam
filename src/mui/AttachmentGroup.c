@@ -323,10 +323,10 @@ OVERLOAD(MUIM_ContextMenuBuild)
 
   data->contextMenu = MenustripObject,
     Child, MenuObjectT(data->menuTitle),
-      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_SAVEALL), MUIA_UserData, AMEN_SAVEALL, End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_SAVESEL), MUIA_UserData, AMEN_SAVESEL, End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_DELETEALL), MUIA_UserData, AMEN_DELETEALL, End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_DELETESEL), MUIA_UserData, AMEN_DELETESEL, End,
+      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_SAVEALL),   MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, AMEN_SAVEALL, End,
+      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_SAVESEL),   MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, AMEN_SAVESEL, End,
+      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_DELETEALL), MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, AMEN_DELETEALL, End,
+      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_DELETESEL), MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, AMEN_DELETESEL, End,
     End,
   End;
 

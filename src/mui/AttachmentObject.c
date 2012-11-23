@@ -249,15 +249,15 @@ OVERLOAD(MUIM_ContextMenuBuild)
 
     data->contextMenu = MenustripObject,
       Child, MenuObjectT(data->menuTitle),
-        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_DISPLAY), MUIA_UserData, AMEN_DISPLAY, End,
-        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_SAVEAS),  MUIA_UserData, AMEN_SAVEAS,  End,
-        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_DELETE),  MUIA_UserData, AMEN_DELETE,  End,
-        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_PRINT),   MUIA_UserData, AMEN_PRINT,   MUIA_Menuitem_Enabled, isPrintable(data->mailPart), End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_DISPLAY),   MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, AMEN_DISPLAY, End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_SAVEAS),    MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, AMEN_SAVEAS,  End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_DELETE),    MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, AMEN_DELETE,  End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_PRINT),     MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, AMEN_PRINT,   MUIA_Menuitem_Enabled, isPrintable(data->mailPart), End,
         Child, MenuBarLabel,
-        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_SAVEALL), MUIA_UserData, AMEN_SAVEALL, End,
-        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_SAVESEL), MUIA_UserData, AMEN_SAVESEL, End,
-        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_DELETEALL), MUIA_UserData, AMEN_DELETEALL, End,
-        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_DELETESEL), MUIA_UserData, AMEN_DELETESEL, End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_SAVEALL),   MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, AMEN_SAVEALL, End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_SAVESEL),   MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, AMEN_SAVESEL, End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_DELETEALL), MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, AMEN_DELETEALL, End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_DELETESEL), MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, AMEN_DELETESEL, End,
       End,
     End;
   }

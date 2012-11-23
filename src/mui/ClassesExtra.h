@@ -76,28 +76,31 @@
 #define MUIF_NONE                    0
 #endif
 
-#define MenuChild										MUIA_Family_Child
-#define Menuitem(t,s,e,c,u)					MenuitemObject, 										\
-                                      MUIA_Menuitem_Title,					(t),\
-                                      MUIA_Menuitem_Shortcut,				(s),\
-                                      MUIA_Menuitem_Enabled,				(e),\
+#define MenuChild					MUIA_Family_Child
+#define Menuitem(t,s,e,c,u)			MenuitemObject,\
+                                      MUIA_Menuitem_Title,			(t),\
+                                      MUIA_Menuitem_CopyStrings,	FALSE,\
+                                      MUIA_Menuitem_Shortcut,		(s),\
+                                      MUIA_Menuitem_Enabled,		(e),\
                                       MUIA_Menuitem_CommandString,	(c),\
-                                      MUIA_UserData,								(u),\
+                                      MUIA_UserData,				(u),\
                                     End
 
-#define MenuitemCheck(t,s,e,c,g,x,u)	MenuitemObject,											\
-                                        MUIA_Menuitem_Checkit,			 TRUE,\
-                                        MUIA_Menuitem_Title,					(t),\
-                                        MUIA_Menuitem_Shortcut,				(s),\
-                                        MUIA_Menuitem_Checked,				(c),\
-                                        MUIA_Menuitem_Toggle,					(g),\
-                                        MUIA_Menuitem_Exclude,				(x),\
-                                        MUIA_Menuitem_Enabled,				(e),\
-                                        MUIA_UserData,								(u),\
+#define MenuitemCheck(t,s,e,c,g,x,u)	MenuitemObject,\
+                                        MUIA_Menuitem_Checkit,		 TRUE,\
+                                        MUIA_Menuitem_Title,		(t),\
+                                        MUIA_Menuitem_CopyStrings,	FALSE,\
+                                        MUIA_Menuitem_Shortcut,		(s),\
+                                        MUIA_Menuitem_Checked,		(c),\
+                                        MUIA_Menuitem_Toggle,		(g),\
+                                        MUIA_Menuitem_Exclude,		(x),\
+                                        MUIA_Menuitem_Enabled,		(e),\
+                                        MUIA_UserData,				(u),\
                                       End
 
-#define MenuBarLabel								MenuitemObject,											\
-                                      MUIA_Menuitem_Title,  NM_BARLABEL,\
+#define MenuBarLabel				MenuitemObject,\
+                                      MUIA_Menuitem_Title,			NM_BARLABEL,\
+                                      MUIA_Menuitem_CopyStrings,	FALSE,\
                                     End
 
 
@@ -145,16 +148,22 @@ struct  MUIP_DoDrag { STACKED ULONG MethodID; STACKED LONG touchx; STACKED LONG 
 #define MUIO_Label_Tiny          (1<<13)
 #endif
 #ifndef MUIA_Scrollgroup_AutoBars
-#define MUIA_Scrollgroup_AutoBars           0x8042f50e /* V20 isg BOOL              */
+#define MUIA_Scrollgroup_AutoBars           0x8042f50eUL /* V20 isg BOOL              */
 #endif
 #ifndef MUIA_DoubleBuffer
-#define MUIA_DoubleBuffer                   0x8042a9c7 /* V20 isg BOOL              */
+#define MUIA_DoubleBuffer                   0x8042a9c7UL /* V20 isg BOOL              */
 #endif
 #ifndef MUIV_Window_ActiveObject_Left
 #define MUIV_Window_ActiveObject_Left  MUIV_Window_ActiveObject_Prev
 #endif
 #ifndef MUIV_Window_ActiveObject_Right
 #define MUIV_Window_ActiveObject_Right  MUIV_Window_ActiveObject_Next
+#endif
+#ifndef MUIA_Menu_CopyStrings
+#define MUIA_Menu_CopyStrings               0x8042dbe2UL /* V20 i.. BOOL              */
+#endif
+#ifndef MUIA_Menuitem_CopyStrings
+#define MUIA_Menuitem_CopyStrings           0x8042dc1bUL /* V20 i.. BOOL              */
 #endif
 
 enum { IECODE_SPACE = 64,
