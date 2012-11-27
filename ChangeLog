@@ -8,6 +8,7 @@ $URL$
 2012-11-27 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_global.c: raised the global stack size to 128K.
+  * Threads.c: raised the thread stack size to 16K.
 
 2012-11-23 Thore Böckelmann <tboeckel@gmx.de>
 
