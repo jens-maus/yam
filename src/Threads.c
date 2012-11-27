@@ -89,7 +89,7 @@ struct Thread
   LONG priority;           // the thread's priority
   LONG abortSignal;        // an allocated signal to abort the thread
   LONG wakeupSignal;       // an allocated signal to wakeup a sleeping thread
-  char name[SIZE_LARGE];   // the thread's name
+  char name[SIZE_DEFAULT]; // the thread's name
   BOOL working;            // are we currently working?
   BOOL aborted;            // have we been aborted?
   BOOL timerRunning;       // is the timer running?
