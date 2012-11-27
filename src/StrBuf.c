@@ -199,7 +199,7 @@ size_t StrBufCat(char **buf, const char *source)
     size_t oldsize;
     size_t newsize;
 
-    strbuf = strbuf = STR_TO_STRBUF(*buf);
+    strbuf = STR_TO_STRBUF(*buf);
     oldsize = strbuf->size;
     newsize = oldsize;
 
