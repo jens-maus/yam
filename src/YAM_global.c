@@ -35,7 +35,7 @@
 
 // define for specifying the minimum stack size in bytes
 // YAM requests upon startup
-#define MIN_STACKSIZE 65536
+#define MIN_STACKSIZE 131072
 
 // stack cookie for shell v45+
 static const char USED_VAR yam_stack_size[] = "$STACK:" STR(MIN_STACKSIZE) "\n";

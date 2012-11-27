@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-11-27 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_global.c: raised the global stack size to 128K.
+
 2012-11-23 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/InfoBar.c: set an initial text for all text related items to enforce
