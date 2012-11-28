@@ -75,7 +75,7 @@
 
 #include "Debug.h"
 
-#define MIN_THREADS       4
+#define MIN_THREADS       2
 
 struct ThreadMessage;
 
