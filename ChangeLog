@@ -9,6 +9,7 @@ $URL$
 
   * YAM_global.c, Threads.c: use one global constant for all stack sizes (64K).
   * Threads.c: reduced the minimum number of idle threads to 2.
+  * Threads.c: don't fail if the initial idle threads could not be created.
 
 2012-11-27 Thore Böckelmann <tboeckel@gmx.de>
 

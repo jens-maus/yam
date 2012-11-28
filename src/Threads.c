@@ -707,7 +707,7 @@ BOOL InitThreads(void)
     {
       if(CreateThread() == NULL)
       {
-        result = FALSE;
+        // just bail out, but don't fail if the initial idle threads could not be created
         break;
       }
     }
