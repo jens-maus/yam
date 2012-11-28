@@ -596,7 +596,7 @@ static struct Thread *CreateThread(void)
       snprintf(thread->name, sizeof(thread->name), "YAM thread [%d]", (int)G->threadCounter+1);
 
       if((thread->process = CreateNewProcTags(NP_Entry,       ThreadEntry, // entry function
-                                              NP_StackSize,   16384,       // stack size
+                                              NP_StackSize,   SIZE_STACK,  // stack size
                                               NP_Name,        thread->name,
                                               NP_Priority,    1,
                                               NP_Input,       Input(),

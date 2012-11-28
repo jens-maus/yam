@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-11-28 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_global.c, Threads.c: use one global constant for all stack sizes (64K).
+
 2012-11-27 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_global.c: raised the global stack size to 128K.
