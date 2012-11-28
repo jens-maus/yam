@@ -918,9 +918,16 @@ APTR VARARGS68K DoAction(Object *obj, const enum ThreadAction action, ...)
         success = thread;
       }
       else
+      {
         FreeSysObject(ASOT_MESSAGE, msg);
+        E(DBF_THREAD, "failed to clone action tags for action %ld", action);
+      }
     }
+    else
+      E(DBF_THREAD, "failed to allocate command message for action %ld", action);
   }
+  else
+    E(DBF_THREAD, "failed to create new thread for action %ld", action);
 
   RETURN(success);
   return success;
