@@ -51,7 +51,8 @@
 struct Data
 {
   Object *slider;
-  LONG    colorMap[16];
+  LONG pens[7];
+  LONG colorMap[16];
 
   struct MUI_EventHandlerNode ehnode;
 
@@ -148,13 +149,25 @@ OVERLOAD(MUIM_Setup)
     DoMethod(_win(obj), MUIM_Window_AddEventHandler, &data->ehnode);
     data->eventHandlerAdded = TRUE;
 
-    data->colorMap[6] = MUI_ObtainPen(muiRenderInfo(obj), &C->ColoredText, 0);
-    data->colorMap[7] = MUI_ObtainPen(muiRenderInfo(obj), &C->Color1stLevel, 0);
-    data->colorMap[8] = MUI_ObtainPen(muiRenderInfo(obj), &C->Color2ndLevel, 0);
-    data->colorMap[9] = MUI_ObtainPen(muiRenderInfo(obj), &C->Color3rdLevel, 0);
-    data->colorMap[10] = MUI_ObtainPen(muiRenderInfo(obj), &C->Color4thLevel, 0);
-    data->colorMap[11] = MUI_ObtainPen(muiRenderInfo(obj), &C->ColorURL, 0);
-    data->colorMap[12] = MUI_ObtainPen(muiRenderInfo(obj), &C->ColorSignature, 0);
+    // allocate all pens
+    data->pens[0] = MUI_ObtainPen(muiRenderInfo(obj), &C->ColoredText, 0);
+    data->pens[1] = MUI_ObtainPen(muiRenderInfo(obj), &C->Color1stLevel, 0);
+    data->pens[2] = MUI_ObtainPen(muiRenderInfo(obj), &C->Color2ndLevel, 0);
+    data->pens[3] = MUI_ObtainPen(muiRenderInfo(obj), &C->Color3rdLevel, 0);
+    data->pens[4] = MUI_ObtainPen(muiRenderInfo(obj), &C->Color4thLevel, 0);
+    data->pens[5] = MUI_ObtainPen(muiRenderInfo(obj), &C->ColorURL, 0);
+    data->pens[6] = MUI_ObtainPen(muiRenderInfo(obj), &C->ColorSignature, 0);
+
+    // fill the colormap, all pens allocated by MUI_ObtainPen() must be converted
+    // to true pens by the MUIPEN() macro as all versions of TextEditor.mcc up to
+    // 15.39 did not do this. Applying MUIPEN() twice causes no harm.
+    data->colorMap[ 6] = MUIPEN(data->pens[0]);
+    data->colorMap[ 7] = MUIPEN(data->pens[1]);
+    data->colorMap[ 8] = MUIPEN(data->pens[2]);
+    data->colorMap[ 9] = MUIPEN(data->pens[3]);
+    data->colorMap[10] = MUIPEN(data->pens[4]);
+    data->colorMap[11] = MUIPEN(data->pens[5]);
+    data->colorMap[12] = MUIPEN(data->pens[6]);
 
     // set the colormap
     set(obj, MUIA_TextEditor_ColorMap, data->colorMap);
@@ -185,13 +198,10 @@ OVERLOAD(MUIM_Cleanup)
   set(obj, MUIA_TextEditor_ColorMap, NULL);
 
   // release all pens of our own colorMap
-  for(i=6; i <= 12; i++)
+  for(i = 0; i <= ARRAY_SIZE(pens); i++)
   {
-    if(data->colorMap[i] >= 0)
-    {
-      MUI_ReleasePen(muiRenderInfo(obj), data->colorMap[i]);
-      data->colorMap[i] = -1;
-    }
+    MUI_ReleasePen(muiRenderInfo(obj), data->pens[i]);
+    data->pens[i] = -1;
   }
 
   result = DoSuperMethodA(cl, obj, msg);
