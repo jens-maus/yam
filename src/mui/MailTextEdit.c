@@ -184,7 +184,7 @@ OVERLOAD(MUIM_Cleanup)
 {
   GETDATA;
   IPTR result;
-  int i;
+  size_t i;
 
   ENTER();
 
@@ -198,7 +198,7 @@ OVERLOAD(MUIM_Cleanup)
   set(obj, MUIA_TextEditor_ColorMap, NULL);
 
   // release all pens of our own colorMap
-  for(i = 0; i <= ARRAY_SIZE(data->pens); i++)
+  for(i = 0; i < ARRAY_SIZE(data->pens); i++)
   {
     MUI_ReleasePen(muiRenderInfo(obj), data->pens[i]);
     data->pens[i] = -1;
