@@ -10,6 +10,8 @@ $URL$
   * mui/MailTextEdit.c: pen numbers obtained by MUI_ObtainPen must be converted
     by MUIPEN() before they can be used for graphic function calls. Unfortunately
     all versions of TextEditor.mcc <= 15.39 don't do this internally.
+  * mui/InfoBar.c: slightly reverted the last change to the info bar as this
+    seems to make MUI on MorphOS to go crazy.
 
 2012-11-28 Thore Böckelmann <tboeckel@gmx.de>
 

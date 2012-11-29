@@ -164,7 +164,6 @@ OVERLOAD(OM_NEW)
         MUIA_Text_SetMax,   FALSE,
         MUIA_Text_PreParse, "\033r",
         MUIA_Text_Copy,     FALSE,
-        MUIA_Text_Contents, " ",
       End,
 
       Child, statusGroup = PageGroup,
@@ -186,14 +185,14 @@ OVERLOAD(OM_NEW)
             MUIA_Background,     MUII_ButtonBack,
             MUIA_Text_SetMax,    TRUE,
             MUIA_Text_Copy,      FALSE,
-            MUIA_Text_Contents,  "\033bX",
+            MUIA_Text_PreParse,  "\033b",
+            MUIA_Text_Contents,  "X",
           End,
         End,
         Child, infoText = TextObject,
           MUIA_Text_SetMax,   FALSE,
           MUIA_Text_PreParse, "\033r",
           MUIA_Text_Copy,     FALSE,
-          MUIA_Text_Contents, " ",
         End,
       End,
     End,
@@ -323,7 +322,7 @@ DECLARE(ShowBusyBar) // struct BusyNode *busy
       case BUSY_TEXT:
       {
         set(data->TX_INFO, MUIA_Text_Contents, msg->busy->infoText);
-        set(data->GA_LABEL, MUIA_Text_Contents, " ");
+        set(data->GA_LABEL, MUIA_Text_Contents, NULL);
         set(data->GA_GROUP, MUIA_Group_ActivePage, 2);
       }
       break;
@@ -386,7 +385,7 @@ DECLARE(ShowBusyBar) // struct BusyNode *busy
   {
     // hide the busy bar
     set(data->GA_GROUP, MUIA_Group_ActivePage, 0);
-    set(data->GA_LABEL, MUIA_Text_Contents, " ");
+    set(data->GA_LABEL, MUIA_Text_Contents, NULL);
   }
 
   // remember the changed busy action
