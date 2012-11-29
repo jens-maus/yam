@@ -12,6 +12,7 @@ $URL$
     all versions of TextEditor.mcc <= 15.39 don't do this internally.
   * mui/InfoBar.c: slightly reverted the last change to the info bar as this
     seems to make MUI on MorphOS to go crazy.
+  * resources/themes/empty: added the "empty" theme as official theme.
 
 2012-11-28 Thore Böckelmann <tboeckel@gmx.de>
 
