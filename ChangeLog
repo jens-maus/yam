@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-11-30 Jens Langner <Jens.Langner@light-speed.de>
+
+  * mui/InfoBar.c: added missing string.h include as stricmp() is defined there.
+    This should fix the broken AROS builds.
+
 2012-11-29 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/MailTextEdit.c: pen numbers obtained by MUI_ObtainPen must be converted

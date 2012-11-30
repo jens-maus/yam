@@ -30,6 +30,8 @@
 
 #include "InfoBar_cl.h"
 
+#include <string.h>
+
 #include <proto/muimaster.h>
 
 #include "YAM.h"
