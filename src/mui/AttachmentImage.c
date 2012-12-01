@@ -290,7 +290,7 @@ static void LoadImage(struct IClass *cl, Object *obj)
     {
       D(DBF_GUI, "retrieving diskObject via DEFICONS for '%s'", iconFile);
 
-      diskObject = (struct DiskObject *)GetIconTags(iconFile,
+      diskObject = GetIconTags(iconFile,
         ICONGETA_FailIfUnavailable, FALSE,
         ICONGETA_Screen,            _screen(obj),
         ICONGETA_SizeBounds,        &sizeBounds,
@@ -365,7 +365,7 @@ static void LoadImage(struct IClass *cl, Object *obj)
 
         // try to retrieve the icon for that type with an automatic
         // fallback to the default project icon
-        diskObject = (struct DiskObject *)GetIconTags(NULL,
+        diskObject = GetIconTags(NULL,
           ICONGETA_GetDefaultName, def,
           ICONGETA_GetDefaultType, WBPROJECT,
           ICONGETA_Screen,         _screen(obj),

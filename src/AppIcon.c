@@ -204,12 +204,13 @@ void UpdateAppIcon(void)
 
       // add the AppIcon accordingly. Here we use v44+ tags, however older
       // workbench versions should perfectly ignore them.
-      G->AppIcon = AddAppIcon(0, 0, apptit, G->AppPort, 0, dobj, WBAPPICONA_SupportsOpen,       TRUE,
-                                                                 WBAPPICONA_SupportsSnapshot,   TRUE,
-                                                                 WBAPPICONA_SupportsUnSnapshot, TRUE,
-                                                                 WBAPPICONA_SupportsEmptyTrash, TRUE,
-                                                                 WBAPPICONA_PropagatePosition,  TRUE,
-                                                                 TAG_DONE);
+      G->AppIcon = AddAppIcon(0, 0, apptit, G->AppPort, 0, dobj,
+        WBAPPICONA_SupportsOpen,       TRUE,
+        WBAPPICONA_SupportsSnapshot,   TRUE,
+        WBAPPICONA_SupportsUnSnapshot, TRUE,
+        WBAPPICONA_SupportsEmptyTrash, TRUE,
+        WBAPPICONA_PropagatePosition,  TRUE,
+        TAG_DONE);
       SHOWVALUE(DBF_GUI, G->AppIcon);
     }
 

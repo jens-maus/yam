@@ -571,7 +571,7 @@ OVERLOAD(OM_NEW)
 
   if(LIB_VERSION_IS_AT_LEAST(IconBase, 44, 0) == TRUE)
   {
-    G->HideIcon = (struct DiskObject *)GetIconTags(filebuf,
+    G->HideIcon = GetIconTags(filebuf,
       ICONGETA_FailIfUnavailable, FALSE,
       TAG_DONE);
   }
