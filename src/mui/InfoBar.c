@@ -386,8 +386,8 @@ DECLARE(ShowBusyBar) // struct BusyNode *busy
   else
   {
     // hide the busy bar
-    set(data->GA_GROUP, MUIA_Group_ActivePage, 0);
     set(data->GA_LABEL, MUIA_Text_Contents, NULL);
+    set(data->GA_GROUP, MUIA_Group_ActivePage, 0);
   }
 
   // remember the changed busy action
