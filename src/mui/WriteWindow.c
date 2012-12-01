@@ -3729,13 +3729,25 @@ DECLARE(ComposeMail) // enum WriteMode mode
   if(wmData->mode != NMM_BOUNCE && mode != WRITE_DRAFT && wmData->quietMode == FALSE && C->WarnSubject == TRUE &&
      (comp.Subject == NULL || comp.Subject[0] == '\0'))
   {
+    char subject[SIZE_SUBJECT];
+
     if(winOpen == TRUE)
       set(data->RG_PAGE, MUIA_Group_ActivePage, 0);
 
     set(obj, MUIA_Window_ActiveObject, data->ST_SUBJECT);
 
-    if(MUI_Request(G->App, obj, MUIF_NONE, NULL, tr(MSG_WR_OKAYCANCELREQ), tr(MSG_WR_NOSUBJECTREQ)) == 0)
+    subject[0] = '\0';
+    if(StringRequest(subject, sizeof(subject), NULL, tr(MSG_WR_NOSUBJECTREQ), tr(MSG_Okay), NULL, tr(MSG_Cancel), FALSE, obj) <= 0)
+    {
       goto out;
+    }
+    else
+    {
+      // copy the entered subject back to string object
+      // this time we don't care whether a subject was entered or not
+      set(data->ST_SUBJECT, MUIA_String_Contents, subject);
+      comp.Subject = (char *)xget(data->ST_SUBJECT, MUIA_String_Contents);
+    }
   }
 
   comp.Mode = wmData->mode;
