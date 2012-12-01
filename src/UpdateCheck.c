@@ -597,7 +597,7 @@ void SaveUpdateState(void)
   // the YAM executable is the same for all users, hence we need no per user state file
   if((fh = fopen("PROGDIR:.updatestate", "w")) != NULL)
   {
-    char buf[SIZE_LARGE];
+    char buf[SIZE_DEFAULT];
 
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
