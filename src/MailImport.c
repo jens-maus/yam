@@ -866,6 +866,8 @@ static void ProcessImport(struct TransferContext *tc, const char *importFile, st
           {
             setvbuf(ifh, NULL, _IOFBF, SIZE_FILEBUF);
 
+            D(DBF_IMPORT, "import mails from MBOX or plain file '%s'", importFile);
+
             // iterate through our importList and seek to
             // each position/address of a mail
             ForEachMailTransferNode(tc->importList, tnode)
@@ -1023,6 +1025,8 @@ static void ProcessImport(struct TransferContext *tc, const char *importFile, st
           {
             setvbuf(ifh, NULL, _IOFBF, SIZE_FILEBUF);
 
+            D(DBF_IMPORT, "import mails from DBX file '%s'", importFile);
+
             // iterate through our importList and seek to
             // each position/address of a mail
             ForEachMailTransferNode(tc->importList, tnode)
@@ -1133,6 +1137,8 @@ BOOL ImportMails(const char *importFile, struct Folder *folder, const ULONG flag
 
   ENTER();
 
+  D(DBF_IMPORT, "import mails from file '%s' to folder '%s', flags %08lx", importFile, folder->Name, flags);
+
   if((tc = calloc(1, sizeof(*tc))) != NULL)
   {
     if((tc->format = DetectMBoxFormat(importFile)) != IMF_UNKNOWN)
@@ -1176,6 +1182,8 @@ BOOL ImportMails(const char *importFile, struct Folder *folder, const ULONG flag
             // otherwise we perform the import no matter what
             doImport = TRUE;
           }
+
+          SHOWVALUE(DBF_IMPORT, doImport);
 
           if(doImport == TRUE)
             ProcessImport(tc, importFile, folder, flags);
