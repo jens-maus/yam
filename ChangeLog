@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-12-02 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_AB.c: when trying to load the .addressbook file YAM will show an error
+    message only if the file exists but could not be opened.
+
 2012-12-01 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/WriteWindow.c: in case no subject was entered when sending a mail the

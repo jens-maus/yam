@@ -960,7 +960,11 @@ BOOL AB_LoadTree(const char *fname, BOOL append, BOOL sorted)
     free(buffer);
   }
   else
-    ER_NewError(tr(MSG_ER_ADDRBOOKLOAD), fname);
+  {
+    // show an error message only if the .addressbook file exists but could not be opened
+    if(FileExists(fname) == TRUE)
+      ER_NewError(tr(MSG_ER_ADDRBOOKLOAD), fname);
+  }
 
   RETURN(result);
   return result;
