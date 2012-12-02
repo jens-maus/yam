@@ -701,7 +701,7 @@ static void BuildImportList(struct TransferContext *tc, const char *importFile)
 ///
 /// DetectMBoxFormat
 // detect the format of a selected file to be imported
-enum ImportFormat DetectMBoxFormat(const char *importFile)
+static enum ImportFormat DetectMBoxFormat(const char *importFile)
 {
   enum ImportFormat format = IMF_UNKNOWN;
   FILE *fh;
