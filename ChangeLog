@@ -15,6 +15,9 @@ $URL$
     as this would change the active object. This is quite annoying if one was
     still typing the subject and YAM suddently activates the mail editor. This
     closes #360.
+  * YAM.c: moved the initial DST check to a place where timezone.library is
+    already opened, otherwise the AmigaOS4 build is not able to detect a
+    trustable DST facility.
 
 2012-12-02 Thore Böckelmann <tboeckel@gmx.de>
 

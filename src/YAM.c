@@ -2112,6 +2112,9 @@ static void InitBeforeLogin(BOOL hidden)
   INITLIB("timezone.library", 52, 1, &TimezoneBase, "main", 1, &ITimezone, FALSE, NULL);
   #endif
 
+  // check the timezone/DST settings
+  G->CO_DST = GetDST(FALSE);
+
   // initialize the shared connection semaphore
   if(InitConnections() == FALSE)
     Abort(tr(MSG_ERROR_CONNECTIONS));
@@ -2786,7 +2789,6 @@ int main(int argc, char **argv)
       strlcpy(G->MA_MailDir, G->ProgDir, sizeof(G->MA_MailDir));
 
     G->TR_Debug = args.debug ? TRUE : FALSE;
-    G->CO_DST = GetDST(FALSE);
     G->NoImageWarning = args.noImgWarning ? TRUE : FALSE;
     G->NoCatalogTranslation = args.noCatalog ? TRUE : FALSE;
 
