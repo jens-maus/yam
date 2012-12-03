@@ -2988,7 +2988,10 @@ DECLARE(SaveTextAs)
   ENTER();
 
   if(xget(obj, MUIA_Window_Open) == TRUE)
-    set(data->RG_PAGE, MUIA_Group_ActivePage, 0);
+  {
+    // don't trigger notifications as this will change the active object
+    nnset(data->RG_PAGE, MUIA_Group_ActivePage, 0);
+  }
 
   if((frc = ReqFile(ASL_ATTACH, obj, tr(MSG_WR_SaveTextAs), REQF_SAVEMODE, C->AttachDir, "")))
   {
@@ -3319,7 +3322,10 @@ DECLARE(LaunchEditor)
 
     // Workaround for a MUI bug
     if(xget(obj, MUIA_Window_Open) == TRUE)
-      set(data->RG_PAGE, MUIA_Group_ActivePage, 0);
+    {
+      // don't trigger notifications as this will change the active object
+      nnset(data->RG_PAGE, MUIA_Group_ActivePage, 0);
+    }
 
     DoMethod(data->TE_EDIT, MUIM_MailTextEdit_SaveToFile, data->wmData->filename);
     // remember the modification date of the file
@@ -3685,7 +3691,10 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
   // Workaround for a MUI bug
   if(winOpen == TRUE)
-    set(data->RG_PAGE, MUIA_Group_ActivePage, xget(data->RG_PAGE, MUIA_Group_ActivePage));
+  {
+    // don't trigger notifications as this will change the active object
+    nnset(data->RG_PAGE, MUIA_Group_ActivePage, xget(data->RG_PAGE, MUIA_Group_ActivePage));
+  }
 
   // clear some variables we fill up later on
   memset(&comp, 0, sizeof(struct Compose));
@@ -3700,7 +3709,10 @@ DECLARE(ComposeMail) // enum WriteMode mode
     ER_NewError(tr(MSG_ER_AliasNotFound), (STRPTR)xget(data->ST_TO, MUIA_String_Contents));
 
     if(winOpen == TRUE)
-      set(data->RG_PAGE, MUIA_Group_ActivePage, 0);
+    {
+      // don't trigger notifications as this will change the active object
+      nnset(data->RG_PAGE, MUIA_Group_ActivePage, 0);
+    }
 
     set(obj, MUIA_Window_ActiveObject, data->ST_TO);
 
@@ -3710,7 +3722,10 @@ DECLARE(ComposeMail) // enum WriteMode mode
   {
     // set the TO Field active and go back
     if(winOpen == TRUE)
-      set(data->RG_PAGE, MUIA_Group_ActivePage, 0);
+    {
+      // don't trigger notifications as this will change the active object
+      nnset(data->RG_PAGE, MUIA_Group_ActivePage, 0);
+    }
 
     set(obj, MUIA_Window_ActiveObject, data->ST_TO);
 
@@ -3732,7 +3747,10 @@ DECLARE(ComposeMail) // enum WriteMode mode
     char subject[SIZE_SUBJECT];
 
     if(winOpen == TRUE)
-      set(data->RG_PAGE, MUIA_Group_ActivePage, 0);
+    {
+      // don't trigger notifications as this will change the active object
+      nnset(data->RG_PAGE, MUIA_Group_ActivePage, 0);
+    }
 
     set(obj, MUIA_Window_ActiveObject, data->ST_SUBJECT);
 
@@ -3763,7 +3781,10 @@ DECLARE(ComposeMail) // enum WriteMode mode
       ER_NewError(tr(MSG_ER_AliasNotFound), (STRPTR)xget(data->ST_CC, MUIA_String_Contents));
 
       if(winOpen == TRUE)
-        set(data->RG_PAGE, MUIA_Group_ActivePage, 2);
+      {
+        // don't trigger notifications as this will change the active object
+        nnset(data->RG_PAGE, MUIA_Group_ActivePage, 0);
+      }
 
       set(obj, MUIA_Window_ActiveObject, data->ST_CC);
 
@@ -3779,7 +3800,10 @@ DECLARE(ComposeMail) // enum WriteMode mode
       ER_NewError(tr(MSG_ER_AliasNotFound), (STRPTR)xget(data->ST_BCC, MUIA_String_Contents));
 
       if(winOpen == TRUE)
-        set(data->RG_PAGE, MUIA_Group_ActivePage, 2);
+      {
+        // don't trigger notifications as this will change the active object
+        nnset(data->RG_PAGE, MUIA_Group_ActivePage, 0);
+      }
 
       set(obj, MUIA_Window_ActiveObject, data->ST_BCC);
 
@@ -3795,7 +3819,10 @@ DECLARE(ComposeMail) // enum WriteMode mode
       ER_NewError(tr(MSG_ER_AliasNotFound), (STRPTR)xget(data->ST_REPLYTO, MUIA_String_Contents));
 
       if(winOpen == TRUE)
-        set(data->RG_PAGE, MUIA_Group_ActivePage, 2);
+      {
+        // don't trigger notifications as this will change the active object
+        nnset(data->RG_PAGE, MUIA_Group_ActivePage, 0);
+      }
 
       set(obj, MUIA_Window_ActiveObject, data->ST_REPLYTO);
 
