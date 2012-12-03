@@ -149,6 +149,7 @@ OVERLOAD(OM_NEW)
         MUIA_Font,           MUIV_Font_Big,
         MUIA_Text_SetMax,    FALSE,
         MUIA_Text_PreParse,  "\033b",
+        MUIA_Text_Copy,      FALSE,
       End,
       Child, folderInfoStr = TextObject,
         MUIA_HorizWeight,    100,
@@ -156,6 +157,7 @@ OVERLOAD(OM_NEW)
         MUIA_Font,           MUIV_Font_Tiny,
         MUIA_Text_SetMax,    FALSE,
         MUIA_Text_PreParse,  "\033l",
+        MUIA_Text_Copy,      FALSE,
       End,
     End,
 
@@ -386,6 +388,7 @@ DECLARE(ShowBusyBar) // struct BusyNode *busy
   else
   {
     // hide the busy bar
+    set(data->TX_INFO, MUIA_Text_Contents, NULL);
     set(data->GA_LABEL, MUIA_Text_Contents, NULL);
     set(data->GA_GROUP, MUIA_Group_ActivePage, 0);
   }
