@@ -840,7 +840,8 @@ static void ProcessImport(struct TransferContext *tc, const char *importFile, st
     }
   }
 
-  if((conn = CreateConnection()) != NULL)
+  // no socket required
+  if((conn = CreateConnection(FALSE)) != NULL)
   {
     snprintf(tc->transferGroupTitle, sizeof(tc->transferGroupTitle), tr(MSG_TR_MsgInFile), importFile);
 

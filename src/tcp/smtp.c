@@ -1364,7 +1364,7 @@ BOOL SendMails(struct UserIdentityNode *uin, enum SendMailMode mode, const ULONG
     tc->msn = msn;
 
     // try to open the TCP/IP stack
-    if((tc->conn = CreateConnection()) != NULL && ConnectionIsOnline(tc->conn) == TRUE)
+    if((tc->conn = CreateConnection(TRUE)) != NULL && ConnectionIsOnline(tc->conn) == TRUE)
     {
       struct MailTransferList *transferList;
 

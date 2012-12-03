@@ -205,7 +205,7 @@ BOOL DownloadURL(const char *server, const char *request, const char *filename, 
 
   if((tc = calloc(1, sizeof(*tc))) != NULL)
   {
-    if((tc->connection = CreateConnection()) != NULL && ConnectionIsOnline(tc->connection) == TRUE)
+    if((tc->connection = CreateConnection(TRUE)) != NULL && ConnectionIsOnline(tc->connection) == TRUE)
     {
       BOOL noproxy = (C->ProxyServer[0] == '\0');
       char *path;

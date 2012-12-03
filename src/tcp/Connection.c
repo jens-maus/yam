@@ -412,7 +412,7 @@ static void SetSocketOpts(struct Connection *conn)
 ///
 /// CreateConnection
 // create a connection structure
-struct Connection *CreateConnection(void)
+struct Connection *CreateConnection(const BOOL needSocket)
 {
   struct Connection *result = NULL;
   struct Connection *conn;
@@ -421,51 +421,75 @@ struct Connection *CreateConnection(void)
 
   if((conn = calloc(1, sizeof(*conn))) != NULL)
   {
+    LONG abortSignal = ThreadAbortSignal();
+    BOOL socketOk = FALSE;
+
     conn->socket = INVALID_SOCKET;
 
-    if((conn->receiveBuffer = malloc(C->TRBufferSize)) != NULL)
+    if(needSocket == TRUE)
     {
-      if((conn->sendBuffer = malloc(C->TRBufferSize)) != NULL)
+      if((conn->receiveBuffer = malloc(C->TRBufferSize)) != NULL)
       {
-        // each connection gets its own SocketBase, this is required for threads
-        if((conn->socketBase = OpenLibrary("bsdsocket.library", 2L)) != NULL &&
-           GETINTERFACE("main", 1, conn->socketIFace, conn->socketBase))
+        if((conn->sendBuffer = malloc(C->TRBufferSize)) != NULL)
         {
-          LONG abortSignal = ThreadAbortSignal();
-          struct TagItem tags[] =
+          // each connection gets its own SocketBase, this is required for threads
+          if((conn->socketBase = OpenLibrary("bsdsocket.library", 2L)) != NULL &&
+             GETINTERFACE("main", 1, conn->socketIFace, conn->socketBase))
           {
-            { SBTM_SETVAL(SBTC_BREAKMASK), (1UL << abortSignal) },
-            { TAG_END,                     0                    }
-          };
-          GET_SOCKETBASE(conn);
+            struct TagItem tags[] =
+            {
+              { SBTM_SETVAL(SBTC_BREAKMASK), (1UL << abortSignal) },
+              { TAG_END,                     0                    }
+            };
+            GET_SOCKETBASE(conn);
 
-          D(DBF_NET, "got socket interface");
+            D(DBF_NET, "got socket interface");
 
-          // tell the stack to react on which break signals
-          // by default we can be aborted by the standard break signal
-          if(SocketBaseTagList(tags) == 0)
-          {
-            D(DBF_NET, "set break mask");
+            // tell the stack to react on which break signals
+            // by default we can be aborted by the standard break signal
+            if(SocketBaseTagList(tags) == 0)
+            {
+              D(DBF_NET, "set break mask");
 
-            // set to no error per default
-            conn->error = CONNECTERR_NO_ERROR;
+              conn->receivePtr = conn->receiveBuffer;
+              conn->sendPtr = conn->sendBuffer;
 
-            conn->receivePtr = conn->receiveBuffer;
-            conn->sendPtr = conn->sendBuffer;
+              // remember the buffer sizes in case this is
+              // modified as long as this connection exists
+              conn->receiveBufferSize = C->TRBufferSize;
+              conn->sendBufferSize = C->TRBufferSize;
 
-            // remember the buffer sizes in case this is
-            // modified as long as this connection exists
-            conn->receiveBufferSize = C->TRBufferSize;
-            conn->sendBufferSize = C->TRBufferSize;
-
-            conn->abortSignal = abortSignal;
-
-            conn->connectedFromMainThread = IsMainThread();
-
-            result = conn;
+              socketOk = TRUE;
+            }
+            else
+              E(DBF_NET, "failed to set break mask");
           }
+          else
+            E(DBF_NET, "failed open bsdsocket.library");
         }
+        else
+          E(DBF_NET, "failed to allocate send buffer (%ld bytes)", C->TRBufferSize);
       }
+      else
+        E(DBF_NET, "failed to allocate receive buffer (%ld bytes)", C->TRBufferSize);
+    }
+    else
+    {
+      // no socket required
+      // fake a successful socket
+      socketOk = TRUE;
+    }
+
+    if(socketOk == TRUE)
+    {
+      // set to no error per default
+      conn->error = CONNECTERR_NO_ERROR;
+
+      conn->abortSignal = abortSignal;
+
+      conn->connectedFromMainThread = IsMainThread();
+
+      result = conn;
     }
   }
 
@@ -656,7 +680,7 @@ BOOL ConnectionIsOnline(struct Connection *conn)
 
   if(conn == NULL)
   {
-    conn = CreateConnection();
+    conn = CreateConnection(TRUE);
     deleteConnection = TRUE;
   }
 

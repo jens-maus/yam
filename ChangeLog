@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-12-03 Thore Böckelmann <tboeckel@gmx.de>
+
+  * tcp/Connection.c: connections can new be created without opening a socket in
+    case just a connection structure is required but no network access will
+    happen, i.e. when importing mails. Thanks to Steffen Gutmann for the hint.
+
 2012-12-02 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_AB.c: when trying to load the .addressbook file YAM will show an error

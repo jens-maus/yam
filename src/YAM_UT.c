@@ -5892,7 +5892,7 @@ int GetHostName(char *name, size_t namelen)
 
   // we create a temporary connection structure
   // which is required to call GetFQDN()
-  if((conn = CreateConnection()) != NULL)
+  if((conn = CreateConnection(TRUE)) != NULL)
   {
     // call GetFQDN() to get a full qualified domain name (either valid hostname or
     // [x.x.x.x] encoded string with IP.

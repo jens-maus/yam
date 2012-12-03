@@ -76,7 +76,8 @@ BOOL ExportMails(const char *fname, struct MailList *mlist, const ULONG flags)
 
   if((tc = calloc(1, sizeof(*tc))) != NULL)
   {
-    if((tc->connection = CreateConnection()) != NULL)
+    // no socket required
+    if((tc->connection = CreateConnection(FALSE)) != NULL)
     {
       snprintf(tc->transferGroupTitle, sizeof(tc->transferGroupTitle), tr(MSG_TR_MailTransferTo), fname);
 

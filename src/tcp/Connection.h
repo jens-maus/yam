@@ -119,7 +119,7 @@ struct SocketOptions
 // public functions
 BOOL InitConnections(void);
 void CleanupConnections(void);
-struct Connection *CreateConnection(void);
+struct Connection *CreateConnection(const BOOL needSocket);
 void DeleteConnection(struct Connection *conn);
 BOOL ConnectionIsOnline(struct Connection *conn);
 enum ConnectError ConnectToHost(struct Connection *conn, const struct MailServerNode *server);
