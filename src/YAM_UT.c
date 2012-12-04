@@ -239,10 +239,14 @@ static BPTR ObtainSearchPath(void)
 
   ENTER();
 
-  #if !defined(__MORPHOS__)
   if(WorkbenchBase != NULL && LIB_VERSION_IS_AT_LEAST(WorkbenchBase, 44, 0) == TRUE)
-    WorkbenchControl(NULL, WBCTRLA_DuplicateSearchPath, &path, TAG_DONE);
-  #endif
+  {
+    if(WorkbenchControl(NULL, WBCTRLA_DuplicateSearchPath, &path, TAG_DONE) == FALSE)
+    {
+      // eliminate any possibly modified path pointer again if the call failed
+      path = ZERO;
+	}
+  }
 
   #if !defined(__amigaos4__)
   // if we couldn't obtain a duplicate copy of the workbench search
@@ -276,13 +280,11 @@ static void ReleaseSearchPath(BPTR path)
 
   if(path != ZERO)
   {
-    #if !defined(__MORPHOS__)
     if(WorkbenchBase != NULL && LIB_VERSION_IS_AT_LEAST(WorkbenchBase, 44, 0) == TRUE)
     {
-      if(WorkbenchControl(NULL, WBCTRLA_FreeSearchPath, path, TAG_DONE))
+      if(WorkbenchControl(NULL, WBCTRLA_FreeSearchPath, path, TAG_DONE) != FALSE)
         path = ZERO;
     }
-    #endif
 
     #if !defined(__amigaos4__)
     if(path != ZERO)
