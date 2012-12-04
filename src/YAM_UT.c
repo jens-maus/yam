@@ -245,7 +245,7 @@ static BPTR ObtainSearchPath(void)
     {
       // eliminate any possibly modified path pointer again if the call failed
       path = ZERO;
-	}
+    }
   }
 
   #if !defined(__amigaos4__)
