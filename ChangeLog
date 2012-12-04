@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-12-04 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_COg.c: slightly relayouted the Read and Write config pages to make a bit
+    more clearer that the font settings' check marks do not belong to other
+    neighbouring objects, i.e. the pen settings on the Read page.
+
 2012-12-03 Thore Böckelmann <tboeckel@gmx.de>
 
   * tcp/Connection.c: connections can new be created without opening a socket in
