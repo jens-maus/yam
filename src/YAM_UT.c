@@ -261,7 +261,25 @@ static BPTR ObtainSearchPath(void)
     {
       struct CommandLineInterface *cli;
 
-      if((cli = Cli()) != NULL)
+      // check if we have our own CLI structure
+      cli = Cli();
+      if(cli == NULL)
+      {
+        // no own CLI structure, most probably we were started from Workbench
+        struct Process *wb;
+
+        // find the Workbench process
+        Forbid();
+        wb = (struct Process *)FindTask("Workbench");
+        Permit();
+        if(wb != NULL)
+        {
+          // use the Workbench's CLI structure
+          cli = BADDR(wb->pr_CLI);
+        }
+      }
+
+      if(cli != NULL)
         path = MKBADDR(CopyPathList(BADDR(cli->cli_CommandDir)));
     }
   }
