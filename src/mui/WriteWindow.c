@@ -3689,13 +3689,6 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
   ENTER();
 
-  // Workaround for a MUI bug
-  if(winOpen == TRUE)
-  {
-    // don't trigger notifications as this will change the active object
-    nnset(data->RG_PAGE, MUIA_Group_ActivePage, xget(data->RG_PAGE, MUIA_Group_ActivePage));
-  }
-
   // clear some variables we fill up later on
   memset(&comp, 0, sizeof(struct Compose));
 
