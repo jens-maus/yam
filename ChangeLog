@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-12-04 Jens Langner <Jens.Langner@light-speed.de>
+
+  * tcp/Connection.c: fixed DupHostEnt() function by using memdup() instead of
+    strdup() to clone the h_addr_list of a struct hostent. This closes #359.
+
 2012-12-04 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_COg.c: slightly relayouted the Read and Write config pages to make a bit

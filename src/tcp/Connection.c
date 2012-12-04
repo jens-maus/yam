@@ -153,7 +153,8 @@ static struct hostent *DupHostEnt(const struct hostent *hentry)
 
   ENTER();
 
-  if((new_hentry = calloc(1, sizeof(*new_hentry))) != NULL)
+  if(hentry != NULL &&
+     (new_hentry = calloc(1, sizeof(*new_hentry))) != NULL)
   {
     if(hentry->h_name != NULL)
       new_hentry->h_name = strdup(hentry->h_name);
@@ -166,7 +167,7 @@ static struct hostent *DupHostEnt(const struct hostent *hentry)
       for(i=0; hentry->h_aliases[i] != NULL; i++)
         aliascount++;
 
-      if((new_hentry->h_aliases = (void *)calloc(1, aliascount * sizeof(char *))) != NULL)
+      if((new_hentry->h_aliases = calloc(1, aliascount * sizeof(char *))) != NULL)
       {
         for(i=0; hentry->h_aliases[i] != NULL; i++)
           new_hentry->h_aliases[i] = strdup(hentry->h_aliases[i]);
@@ -181,13 +182,13 @@ static struct hostent *DupHostEnt(const struct hostent *hentry)
       int i;
       int addrcount = 1;
 
-      for(i=0; hentry->h_addr_list[i] != 0; i++)
+      for(i=0; hentry->h_addr_list[i] != NULL; i++)
         addrcount++;
 
-      if((new_hentry->h_addr_list = (signed char **)calloc(1, addrcount * sizeof(char *))) != NULL)
+      if((new_hentry->h_addr_list = calloc(1, addrcount * sizeof(char *))) != NULL)
       {
         for(i=0; hentry->h_addr_list[i] != NULL; i++)
-          new_hentry->h_addr_list[i] = (signed char *)strdup((char *)hentry->h_addr_list[i]);
+          new_hentry->h_addr_list[i] = memdup(hentry->h_addr_list[i], (size_t)hentry->h_length);
       }
     }
   }
@@ -221,6 +222,7 @@ static void FreeHostEnt(struct hostent *hentry)
     if(hentry->h_addr_list != NULL)
     {
       int i;
+
       for(i=0; hentry->h_addr_list[i] != NULL; i++)
         free(hentry->h_addr_list[i]);
 
