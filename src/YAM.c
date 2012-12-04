@@ -676,14 +676,25 @@ static int GetDST(BOOL update)
   if((update == FALSE || ADSTdata.method == ADST_FACTS) && result == 0
      && GetVar((STRPTR)&ADSTfile[ADST_FACTS][4], buffer, sizeof(buffer), GVF_BINARY_VAR) > 0)
   {
-    if(buffer[0] == 0x01)
-      result = 2;
-    else if(buffer[0] == 0x00)
-      result = 1;
+    struct MsgPort *port;
 
-    D(DBF_STARTUP, "found '%s' (FACTS) with DST flag %ld", ADSTfile[ADST_FACTS], result);
+    // make sure FACTS is actually running and we did not just find an old remaining ENV variable
+    Forbid();
+    port = FindPort("FACTS");
+    Permit();
+    SHOWVALUE(DBF_STARTUP, port);
 
-    ADSTdata.method = ADST_FACTS;
+    if(port != NULL)
+    {
+      if(buffer[0] == 0x01)
+        result = 2;
+      else if(buffer[0] == 0x00)
+        result = 1;
+
+      D(DBF_STARTUP, "found '%s' (FACTS) with DST flag %ld", ADSTfile[ADST_FACTS], result);
+
+      ADSTdata.method = ADST_FACTS;
+    }
   }
 
   // SummerTimeGuard sets the last string to "YES" if DST is actually active
