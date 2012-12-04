@@ -255,33 +255,33 @@ static BPTR ObtainSearchPath(void)
   if(path == ZERO)
   {
     struct Task *me = FindTask(NULL);
+    struct CommandLineInterface *cli = NULL;
 
     // make sure we are a process, otherwise we are not allowed to call Cli()
     if(me->tc_Node.ln_Type == NT_PROCESS)
     {
-      struct CommandLineInterface *cli;
-
-      // check if we have our own CLI structure
       cli = Cli();
-      if(cli == NULL)
-      {
-        // no own CLI structure, most probably we were started from Workbench
-        struct Process *wb;
-
-        // find the Workbench process
-        Forbid();
-        wb = (struct Process *)FindTask("Workbench");
-        Permit();
-        if(wb != NULL)
-        {
-          // use the Workbench's CLI structure
-          cli = BADDR(wb->pr_CLI);
-        }
-      }
-
-      if(cli != NULL)
-        path = MKBADDR(CopyPathList(BADDR(cli->cli_CommandDir)));
     }
+
+    // check if we obtained a CLI structure yet
+    if(cli == NULL)
+    {
+      // no own CLI structure, most probably we were started from Workbench
+      struct Process *wb;
+
+      // find the Workbench process
+      Forbid();
+      wb = (struct Process *)FindTask("Workbench");
+      Permit();
+      if(wb != NULL)
+      {
+        // use the Workbench's CLI structure
+        cli = BADDR(wb->pr_CLI);
+      }
+    }
+
+    if(cli != NULL)
+      path = MKBADDR(CopyPathList(BADDR(cli->cli_CommandDir)));
   }
   #endif
 
