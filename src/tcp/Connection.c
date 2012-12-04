@@ -167,7 +167,7 @@ static struct hostent *DupHostEnt(const struct hostent *hentry)
       for(i=0; hentry->h_aliases[i] != NULL; i++)
         aliascount++;
 
-      if((new_hentry->h_aliases = calloc(1, aliascount * sizeof(char *))) != NULL)
+      if((new_hentry->h_aliases = calloc(aliascount, sizeof(char *))) != NULL)
       {
         for(i=0; hentry->h_aliases[i] != NULL; i++)
           new_hentry->h_aliases[i] = strdup(hentry->h_aliases[i]);
@@ -177,7 +177,7 @@ static struct hostent *DupHostEnt(const struct hostent *hentry)
     new_hentry->h_addrtype = hentry->h_addrtype;
     new_hentry->h_length = hentry->h_length;
 
-    if(hentry->h_addr_list)
+    if(hentry->h_addr_list != NULL)
     {
       int i;
       int addrcount = 1;
@@ -185,7 +185,7 @@ static struct hostent *DupHostEnt(const struct hostent *hentry)
       for(i=0; hentry->h_addr_list[i] != NULL; i++)
         addrcount++;
 
-      if((new_hentry->h_addr_list = calloc(1, addrcount * sizeof(char *))) != NULL)
+      if((new_hentry->h_addr_list = calloc(addrcount, sizeof(char *))) != NULL)
       {
         for(i=0; hentry->h_addr_list[i] != NULL; i++)
           new_hentry->h_addr_list[i] = memdup(hentry->h_addr_list[i], (size_t)hentry->h_length);
