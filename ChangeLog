@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-12-06 Pär Boberg <pbobbenb@spray.se>
+
+  * locale/swedish.ct: updated according to changes.
+
 2012-12-06 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/WriteWindow.c: reworked the mail part encoding selection once more to

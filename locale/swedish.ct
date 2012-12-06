@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.12 (27.08.2012)
+## version $VER: YAM.catalog 7.13 (06.12.2012)
 ## language svenska
 ## codeset 0
 ;
@@ -258,10 +258,6 @@ Laddar adressbok...
 MSG_InitLibs
 Initierar bibliotek och klasser...
 ; Initializing libraries and classes...
-;
-MSG_ErrorClasses
-Kan inte skapa MUI-klasser
-; Can't create MUI custom classes
 ;
 MSG_ErrorAslStruct
 Kan inte allokera ASL filväljare
@@ -1966,8 +1962,7 @@ Inkommande meddelanden större\nän detta, betraktas som 'stora'.
 ;
 MSG_HELP_CO_ST_INTERVAL
 Hur ofta vill du att YAM automatiskt ska kolla\nefter ny post?\nAnvänd '0' om du inte vill att YAM ska göra detta.
-; How often do you want YAM to automatically check for new mail?\n\
-; Use '0' if you don't want YAM to do this.
+; How often do you want YAM to automatically check for new mail?
 ;
 MSG_HELP_CO_CH_DLLARGE
 Vid automatisk kontroll av ny post,\nhämta stora meddelanden, även om de är\nstörre än den angivna storleks-\nbegränsningen ovan.
@@ -6109,10 +6104,6 @@ MSG_CO_SEARCHFORUPDATES
 Kolla efter _uppdateringar
 ; Check for up_dates
 ;
-MSG_CO_SEARCHFORUPDATESINFO
-Du blir meddelad så snart en uppdatering är tillgänglig.
-; You will be notified as soon as updates are available.
-;
 MSG_CO_SEARCHNOW
 Kolla _nu
 ; Check _now
@@ -9466,4 +9457,47 @@ Signatur text
 MSG_CO_APPEND_SIGNATURE_FILE
 Lägg till en fil som signatur istället
 ; Append a file as signature instead
+;
+MSG_PRESELECT_GETTING_DETAILS
+Hämtar meddelandedetaljer (%%ld av %ld)
+; Getting message details (%%ld of %ld)
+;
+MSG_CO_UPDATES_INFO_MANUAL
+Du får kolla efter uppdateringar manuellt.
+; You will have to check for updates manually.
+;
+MSG_CO_UPDATES_INFO_AUTO
+Du blir meddelad så snart uppdateringar finns tillgängliga.
+; You will be notified as soon as updates are available.
+;
+MSG_PGPPASS_SHOW_CHARS
+Visa tecken
+; Show characters
+;
+MSG_CANNOT_CREATE_CUSTOM_CLASS
+Misslyckades skapa specialklass '%s'\n\
+som underklass till '%s'.
+; Failed to create custom class '%s'\n\
+; as subclass of '%s'.
+; CLASS,SUPERCLASS
+;
+MSG_ER_MORPHOS_REXX_WARNING
+YAM har identifierat att du kör en version av \
+'rexxsyslib.library' i ditt MorphOS system som \
+är känd för att inte ha en fungerade ARexx implementering.\n\
+\n\
+För att ordna denna situation och få ARexx att fungera \
+med YAM, så bör du installera en kopia av \
+'rexxsyslib.library' från en AmigaOS 3.1-3.9 installation \
+till 'SYS:Libs', sedan döpa om 'rexxsyslib.library' i \
+'MOSSYS:Libs' och starta om ditt system.
+; YAM has identified that you are running a version of the \
+; 'rexxsyslib.library' in your MorphOS system that is known \
+; to not have a working ARexx implementation.\n\
+; \n\
+; To solve this situation and get ARexx running with YAM \
+; you should install a copy of the 'rexxsyslib.library' \
+; from an AmigaOS 3.1-3.9 installation to 'SYS:Libs', rename \
+; the 'rexxsyslib.library' in 'MOSSYS:Libs' and reboot your \
+; system.
 ;
