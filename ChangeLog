@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-12-06 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/WriteWindow.c: reworked the mail part encoding selection once more to
+    still use base64 as last resort, but to prefer quoted-printable and 8bit
+    encoding if possible.
+
 2012-12-04 Jens Langner <Jens.Langner@light-speed.de>
 
   * tcp/Connection.c: fixed DupHostEnt() function by using memdup() instead of

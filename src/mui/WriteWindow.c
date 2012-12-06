@@ -222,6 +222,7 @@ static enum Encoding WhichEncodingForFile(const char *fname,
                                           const char *ctype,
                                           const struct MailServerNode *msn)
 {
+  // default to base64 encoding, as this is able to transport anything
   enum Encoding encoding = ENC_B64;
 
   ENTER();
@@ -238,7 +239,6 @@ static enum Encoding WhichEncodingForFile(const char *fname,
       int c;
       int linesize = 0;
       int total = 0;
-      int unsafechars = 0;
       int binarychars = 0;
       int longlines = 0;
 
@@ -265,13 +265,11 @@ static enum Encoding WhichEncodingForFile(const char *fname,
 
           linesize = 0;
         }
-        else if (c > 127)
-          ++unsafechars; // count the number of unprintable >7bit characters
         else if (c < 32 && c != '\t')
           ++binarychars; // count the number of chars used in binaries.
 
         // if we successfully scanned 4000 bytes out of the file and found enough
-        // data we break out here. we have to at least find some longlines or
+        // data we break out here. We have to at least find some longlines or
         // we have to scan the whole part.
         if(total > 4000 && longlines > 0)
           break;
@@ -286,26 +284,26 @@ static enum Encoding WhichEncodingForFile(const char *fname,
       {
         BOOL isApplication = (strnicmp(ctype, "application/", 12) == 0);
 
-        if(unsafechars == 0 && binarychars == 0 && isApplication == FALSE)
+        if(binarychars == 0 && isApplication == FALSE)
         {
-          // if we are here just because of long lines we have to use quoted-printable
-          // encoding or otherwise we have too long lines in our final mail
-          encoding = ENC_QP;
-        }
-        else if(binarychars == 0 && longlines == 0 && hasServer8bit(msn) && isApplication == FALSE)
-        {
-          // if there are no binary chars and no long lines in the file and if
-          // our SMTP server support 8bit character we can go and encode it via 8bit
-          encoding = ENC_8BIT;
+          // no binary characters and no binary attachment so far
+          if(longlines == 0 && hasServer8bit(msn))
+          {
+            // if there are no long lines in the file and our SMTP server supports 8bit
+            // characters we can go and encode it via 8bit
+            encoding = ENC_8BIT;
+          }
+          else
+          {
+            // otherwise we choose quoted-printable, either because of long lines or
+            // because of non-7bit ASCII characters
+            encoding = ENC_QP;
+          }
         }
         else
         {
-          // if we end up here we have a file with either binary or unsafe characters
-          // or too long lines. Before this could fall back to quoted-printable if the
-          // ratio between unsafe+binary characters and the total number of characters
-          // was below a certain threshold. But since quoted-printable has been excluded
-          // above already it would be false to accept it now. Furthermore a content-type
-          // starting with "application/" will always end up here. See (RFC 1521)
+          // if we end up here we have a file with either binary characters or the part
+          // to be encoded is a binary attachment.
           encoding = ENC_B64;
         }
       }
