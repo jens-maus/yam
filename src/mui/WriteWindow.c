@@ -239,6 +239,7 @@ static enum Encoding WhichEncodingForFile(const char *fname,
       int c;
       int linesize = 0;
       int total = 0;
+      int unsafechars = 0;
       int binarychars = 0;
       int longlines = 0;
 
@@ -265,6 +266,8 @@ static enum Encoding WhichEncodingForFile(const char *fname,
 
           linesize = 0;
         }
+        else if (c > 127)
+          ++unsafechars; // count the number of non 7bit ASCII chars
         else if (c < 32 && c != '\t')
           ++binarychars; // count the number of chars used in binaries.
 
@@ -280,24 +283,24 @@ static enum Encoding WhichEncodingForFile(const char *fname,
       D(DBF_MIME, "EncodingTest [%s] t:%ld l:%ld b:%ld", fname, total, longlines, binarychars);
 
       // now that we analyzed the file we have to decide which encoding to take
-      if(longlines != 0 || binarychars != 0)
+      if(longlines != 0 || unsafechars != 0 || binarychars != 0)
       {
         BOOL isApplication = (strnicmp(ctype, "application/", 12) == 0);
 
         if(binarychars == 0 && isApplication == FALSE)
         {
           // no binary characters and no binary attachment so far
-          if(longlines == 0 && hasServer8bit(msn))
+          if(longlines != 0 || unsafechars != 0 || hasServer8bit(msn) == FALSE)
           {
-            // if there are no long lines in the file and our SMTP server supports 8bit
-            // characters we can go and encode it via 8bit
-            encoding = ENC_8BIT;
+            // use quoted-printable if there are either long lines or
+            // non-7bit ASCII characters or if the SMTP server does not
+            // support 7bit characters
+            encoding = ENC_QP;
           }
           else
           {
-            // otherwise we choose quoted-printable, either because of long lines or
-            // because of non-7bit ASCII characters
-            encoding = ENC_QP;
+            // otherwise use 8bit encoding
+            encoding = ENC_8BIT;
           }
         }
         else
