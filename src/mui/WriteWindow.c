@@ -277,10 +277,10 @@ static enum Encoding WhichEncodingForFile(const char *fname,
 
       fclose(fh);
 
-      D(DBF_MIME, "EncodingTest [%s] t:%ld l:%ld u:%ld b:%ld", fname, total, longlines, unsafechars, binarychars);
+      D(DBF_MIME, "EncodingTest [%s] t:%ld l:%ld b:%ld", fname, total, longlines, binarychars);
 
       // now that we analyzed the file we have to decide which encoding to take
-      if(longlines != 0 || unsafechars != 0 || binarychars != 0)
+      if(longlines != 0 || binarychars != 0)
       {
         BOOL isApplication = (strnicmp(ctype, "application/", 12) == 0);
 
