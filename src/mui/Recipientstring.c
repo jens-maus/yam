@@ -651,7 +651,8 @@ OVERLOAD(MUIM_HandleEvent)
   {
     D(DBF_GUI, "event muikey %ld code %02lx", ((struct MUIP_HandleEvent *)msg)->muikey, ((struct MUIP_HandleEvent *)msg)->imsg->Code);
 
-    if(imsg->Class == IDCMP_RAWKEY)
+    // don't react on key release events
+    if(imsg->Class == IDCMP_RAWKEY && isFlagClear(imsg->Code, IECODE_UP_PREFIX))
     {
       switch(imsg->Code)
       {
