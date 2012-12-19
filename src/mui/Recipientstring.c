@@ -768,12 +768,7 @@ OVERLOAD(MUIM_HandleEvent)
             }
             else if(ConvertKey(imsg) == ',')
             {
-              // call NormalizeSelection() to make sure that
-              // no ' >> ' marks are kept when the user wants to continue
-              // with either the next/prev or by simply pressing left/right
-              // to finish the selection.
-              NormalizeSelection(obj, TRUE);
-
+              // just close the match window without using any possible matches
               closeMatchWin = TRUE;
             }
           }
