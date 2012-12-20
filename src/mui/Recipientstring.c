@@ -660,34 +660,40 @@ OVERLOAD(MUIM_HandleEvent)
         {
           if(data->ResolveOnCR == TRUE)
           {
-            // only if we successfully resolved the string we move on to the next object.
-            if(DoMethod(obj, METHOD(Resolve), isAnyFlagSet(imsg->Qualifier, (IEQUALIFIER_RSHIFT | IEQUALIFIER_LSHIFT)) ? MUIF_Recipientstring_Resolve_NoFullName : MUIF_NONE))
+            BOOL matchListWasOpen = xget(data->Matchwindow, MUIA_Window_Open);
+
+            if(matchListWasOpen == TRUE)
             {
-              BOOL matchListWasOpen = xget(data->Matchwindow, MUIA_Window_Open);
-
-              set(data->Matchwindow, MUIA_Window_Open, FALSE);
-              set(_win(obj), MUIA_Window_ActiveObject, obj);
-
-              // If the MUIA_String_AdvanceOnCR is TRUE we have to set the next object active in the window
-              // we have to check this within our instance data because Betterstring.mcc is buggy and doesn't
-              // return MUIA_String_AdvanceOnCR within a get().
-              // We skip the advance to the next object if the matchlist was open, because
-              // if the user pressed Enter/Return with an open matchlist (s)he usually just
-              // wanted to add the selected recipient instead of advancing to the subject
-              // line.
-              if(data->AdvanceOnCR == TRUE &&
-                 (matchListWasOpen == FALSE || data->MultipleRecipients == FALSE))
+              // only if we successfully resolved the string we move on to the next object.
+              if(DoMethod(obj, METHOD(Resolve), isAnyFlagSet(imsg->Qualifier, (IEQUALIFIER_RSHIFT | IEQUALIFIER_LSHIFT)) ? MUIF_Recipientstring_Resolve_NoFullName : MUIF_NONE))
               {
-                set(_win(obj), MUIA_Window_ActiveObject, MUIV_Window_ActiveObject_Next);
+                set(data->Matchwindow, MUIA_Window_Open, FALSE);
+                set(_win(obj), MUIA_Window_ActiveObject, obj);
+
+                // If the MUIA_String_AdvanceOnCR is TRUE we have to set the next object active in the window
+                // we have to check this within our instance data because Betterstring.mcc is buggy and doesn't
+                // return MUIA_String_AdvanceOnCR within a get().
+                // We skip the advance to the next object if the matchlist was open, because
+                // if the user pressed Enter/Return with an open matchlist (s)he usually just
+                // wanted to add the selected recipient instead of advancing to the subject
+                // line.
+                if(data->AdvanceOnCR == TRUE && data->MultipleRecipients == FALSE)
+                {
+                  set(_win(obj), MUIA_Window_ActiveObject, MUIV_Window_ActiveObject_Next);
+                }
+                else
+                {
+                  // add a separator as more recipients may be wanted
+                  DoMethod(obj, MUIM_BetterString_Insert, ", ", MUIV_BetterString_Insert_EndOfString);
+                }
               }
               else
-              {
-                // add a separator as more recipients may be wanted
-                DoMethod(obj, MUIM_BetterString_Insert, ", ", MUIV_BetterString_Insert_EndOfString);
-              }
+                DisplayBeep(_screen(obj));
             }
-            else
-              DisplayBeep(_screen(obj));
+            else if(data->AdvanceOnCR == TRUE)
+            {
+              set(_win(obj), MUIA_Window_ActiveObject, MUIV_Window_ActiveObject_Next);
+            }
 
             result = MUI_EventHandlerRC_Eat;
           }
@@ -787,39 +793,20 @@ OVERLOAD(MUIM_HandleEvent)
                (abentry = (struct CustomABEntry *)DoMethod(data->Matchwindow, MUIM_AddressmatchPopup_Open, cur_rcpt)) != NULL)
             {
               ULONG pos = xget(obj, MUIA_String_BufferPos);
+              struct ABEntry *matchEntry = abentry->MatchEntry;
 
-              // check if the returned entry matches some part of the name (i.e. the last
-              // name), but not right from the start of the name
-              if(abentry->MatchField == 1 && abentry->RealNameMatchPart > 0)
+              if(matchEntry != NULL)
               {
-                struct ABEntry *matchEntry = abentry->MatchEntry;
+                // always insert " >> name <address>" if a match is found
+                char address[SIZE_LARGE];
 
-                if(matchEntry != NULL)
-                {
-                  // insert " >> name <address>"
-                  char address[SIZE_LARGE];
+                strlcpy(address, " >> ", sizeof(address));
+                BuildAddress(&address[4], sizeof(address)-4, matchEntry->Address, data->NoFullName ? NULL : matchEntry->RealName);
 
-                  strlcpy(address, " >> ", sizeof(address));
-                  BuildAddress(&address[4], sizeof(address)-4, matchEntry->Address, data->NoFullName ? NULL : matchEntry->RealName);
-
-                  DoMethod(obj, MUIM_BetterString_Insert, address, pos);
-
-                  xset(obj, MUIA_String_BufferPos, pos,
-                            MUIA_BetterString_SelectSize, strlen(address));
-                }
-              }
-              else
-              {
-                // insert the matching string
-                char *new_address = UnquoteString(abentry->MatchString, TRUE);
-                ULONG start = DoMethod(obj, METHOD(RecipientStart));
-
-                DoMethod(obj, MUIM_BetterString_Insert, &new_address[pos - start], pos);
+                DoMethod(obj, MUIM_BetterString_Insert, address, pos);
 
                 xset(obj, MUIA_String_BufferPos, pos,
-                          MUIA_BetterString_SelectSize, strlen(new_address) - (pos - start));
-
-                free(new_address);
+                          MUIA_BetterString_SelectSize, strlen(address));
               }
             }
           }
@@ -828,6 +815,14 @@ OVERLOAD(MUIM_HandleEvent)
             // close the match window if it is open
             if(xget(data->Matchwindow, MUIA_Window_Open) == TRUE)
               set(data->Matchwindow, MUIA_Window_Open, FALSE);
+
+            // add a separator as more recipients may be wanted if the cursor
+            // is moved to the right. The string has been resolved already at
+            // this point.
+            if(imsg->Code == IECODE_RIGHT)
+            {
+              DoMethod(obj, MUIM_BetterString_Insert, ", ", MUIV_BetterString_Insert_EndOfString);
+            }
           }
         }
         break;

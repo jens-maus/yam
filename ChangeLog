@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-12-20 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/RecipientString.c: alias expansion will always add the " >> " markers
+    before the possible expanded string and pressing the right cursor key will
+    take the current recipient as it is and add a comma at the end. Furthermore
+    the entered addresses will be resolved only if the address match window is
+    currently open. This closes #357.
+
 2012-12-06 Pär Boberg <pbobbenb@spray.se>
 
   * locale/swedish.ct: updated according to changes.
