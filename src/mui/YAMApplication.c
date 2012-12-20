@@ -752,6 +752,12 @@ OVERLOAD(MUIM_Application_ShowHelp)
   // as we use the ShowHelp method to construct the correct URL to
   // our online documentation we don't call DoSuperMethod() here but
   // do all on ourselve.
+
+  // if helpFile is NULL we use the global one
+  if(helpFile == NULL)
+    helpFile = (char *)xget(obj, MUIA_Application_HelpFile);
+
+  // check that helpFile is definitly not null
   if(helpFile != NULL)
   {
     // construct the URL from the HelpFile and the HelpNode

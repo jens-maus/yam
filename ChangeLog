@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-12-20 Jens Langner <Jens.Langner@light-speed.de>
+
+  * mui/YAMApplication.c: if helpFile is NULL we use the default help path instead
+    of ignoring the help requests completely.
+
 2012-12-20 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/RecipientString.c: alias expansion will always add the " >> " markers
