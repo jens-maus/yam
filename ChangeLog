@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-12-21 Jens Langner <Jens.Langner@light-speed.de>
+
+  * mui/WriteWindow.c: prevent the autosave mechanism from closing the matchwindows
+    of recipientstring objects. Otherwise the windows are closed and the string
+    are being resolved when a user enters data in one of the recipientstring objects
+    and the autosave mechanism is fired.
+
 2012-12-20 Jens Langner <Jens.Langner@light-speed.de>
 
   * mui/YAMApplication.c: if helpFile is NULL we use the default help path instead

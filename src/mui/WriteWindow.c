@@ -4337,19 +4337,31 @@ DECLARE(DoAutoSave)
     // do the autosave only if something was modified
     if(data->mailModified == TRUE || xget(data->TE_EDIT, MUIA_TextEditor_HasChanged) == TRUE)
     {
-      if(DoMethod(obj, METHOD(ComposeMail), WRITE_DRAFT) == TRUE)
+      // prevent the autosave from happening when one of the match windows of
+      // the recipientstring objects are open or otherwise they are intermediately
+      // closed and resolved as soon as the autosave happens.
+      if(xget(data->ST_TO, MUIA_Recipientstring_MatchwindowOpen) == FALSE &&
+         xget(data->ST_CC, MUIA_Recipientstring_MatchwindowOpen) == FALSE &&
+         xget(data->ST_BCC, MUIA_Recipientstring_MatchwindowOpen) == FALSE &&
+         xget(data->ST_REPLYTO, MUIA_Recipientstring_MatchwindowOpen) == FALSE)
       {
-        // the mail is no longer modified
-        data->mailModified = FALSE;
-        // we just saved the mail text, so it is no longer modified
-        set(data->TE_EDIT, MUIA_TextEditor_HasChanged, FALSE);
+        if(DoMethod(obj, METHOD(ComposeMail), WRITE_DRAFT) == TRUE)
+        {
+          // the mail is no longer modified
+          data->mailModified = FALSE;
+        
+          // we just saved the mail text, so it is no longer modified
+          set(data->TE_EDIT, MUIA_TextEditor_HasChanged, FALSE);
 
-        // we must remember if the mail was automatically saved, since the editor object cannot
-        // tell about changes anymore if they don't happen from now on.
-        data->autoSaved = TRUE;
+          // we must remember if the mail was automatically saved, since the editor object cannot
+          // tell about changes anymore if they don't happen from now on.
+          data->autoSaved = TRUE;
 
-        D(DBF_MAIL, "saved mail text of write window #%d", data->windowNumber);
+          D(DBF_MAIL, "saved mail text of write window #%d", data->windowNumber);
+        }
       }
+      else
+        W(DBF_MAIL, "match window of recipientstring open, rejected autosave of write window #%d", data->windowNumber);
     }
     else
       D(DBF_MAIL, "no changes found in editor, no need to save an autosave file");
