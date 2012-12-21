@@ -349,6 +349,7 @@ OVERLOAD(OM_GET)
   {
     case ATTR(Popup): *store = FALSE ; return TRUE;
     case ATTR(NoFullName): *store = data->NoFullName; return TRUE;
+    case ATTR(MatchwindowOpen): *store = data->Matchwindow != NULL ? xget(data->Matchwindow, MUIA_Window_Open) : FALSE; return TRUE;
 
     // we also return foreign attributes
     case MUIA_String_AdvanceOnCR: *store = data->AdvanceOnCR; return TRUE;
