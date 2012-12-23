@@ -9,6 +9,8 @@ $URL$
 
   * YAM_CO.c: changed the default path for the gallery directory from
     "PROGDIR:Gallery" to "PROGDIR:Resources/Gallery".
+  * doc/Install, tools/mkrelease.sh: adapted the mkrelease and Installer scripts
+    to correctly respect the new "resources" directory.
 
 2012-12-21 Jens Langner <Jens.Langner@light-speed.de>
 
