@@ -1,4 +1,4 @@
-; YAM.cd - YAM 2.7 catalog description file
+; YAM.cd - YAM 2.8 catalog description file
 ; $Id$
 ;
 ; Please note that all catalog strings have to carry a proper
@@ -13,7 +13,7 @@
 ; new entries. And if you delete an entry NEVER reorder or resort
 ; the ID numbers accordingly.
 ;
-#version 7
+#version 8
 #language english
 ;
 ; General
@@ -2682,18 +2682,6 @@ Normal
 MSG_WR_ImpLow (936//)
 Low
 ;
-MSG_WR_NoSig (937//)
-None
-;
-MSG_WR_DefSig (938//)
-Default
-;
-MSG_WR_AltSig1 (939//)
-Alt. #1
-;
-MSG_WR_AltSig2 (940//)
-Alt. #2
-;
 MSG_WR_WriteWT (941//)
 Write message
 ;
@@ -3939,9 +3927,6 @@ Warn when there's an empty su_bject line
 MSG_HELP_CO_CH_WARNSUBJECT (1387//)
 Would you like to be warned if you\n\
 leave the subject line blank?
-;
-MSG_WR_OKAYCANCELREQ (1388//)
-*_Ok|_Cancel
 ;
 MSG_WR_NOSUBJECTREQ (1389//)
 The subject is missing, continue anyway?
@@ -6722,10 +6707,6 @@ Contents
 ;
 MSG_MA_HELP_AREXX (2216//)
 ARexx interface
-;
-MSG_ER_HELP_FILE_DOES_NOT_EXIST (2217//)
-The help file '%s' does not exist.
-; FILE
 ;
 MSG_EA_SEARCH_GRAVATAR (2218//)
 Search on gra_vatar.com...

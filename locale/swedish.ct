@@ -1,9 +1,9 @@
-## version $VER: YAM.catalog 7.13 (06.12.2012)
+## version $VER: YAM.catalog 8.1 (23.12.2012)
 ## language svenska
 ## codeset 0
 ;
 ## chunk AUTH Pär Boberg
-; YAM.cd - YAM 2.7 catalog description file
+; YAM.cd - YAM 2.8 catalog description file
 ; $Id$
 ;
 ; Please note that all catalog strings have to carry a proper
@@ -18,7 +18,7 @@
 ; new entries. And if you delete an entry NEVER reorder or resort
 ; the ID numbers accordingly.
 ;
-;#version 7
+;#version 8
 ;#language english
 ;
 ; General
@@ -3459,22 +3459,6 @@ MSG_WR_ImpLow
 Låg
 ; Low
 ;
-MSG_WR_NoSig
-Ingen
-; None
-;
-MSG_WR_DefSig
-Förvald
-; Default
-;
-MSG_WR_AltSig1
-Alt. #1
-; Alt. #1
-;
-MSG_WR_AltSig2
-Alt. #2
-; Alt. #2
-;
 MSG_WR_WriteWT
 Skriv meddelande
 ; Write message
@@ -5059,10 +5043,6 @@ MSG_HELP_CO_CH_WARNSUBJECT
 Vill du bli varnad om\ninget ärende är satt?
 ; Would you like to be warned if you\n\
 ; leave the subject line blank?
-;
-MSG_WR_OKAYCANCELREQ
-*_Ok|A_vbryt
-; *_Ok|_Cancel
 ;
 MSG_WR_NOSUBJECTREQ
 Inget ärende är satt, forsätt ändå?
@@ -8560,11 +8540,6 @@ Innehåll
 MSG_MA_HELP_AREXX
 ARexx gränssnitt
 ; ARexx interface
-;
-MSG_ER_HELP_FILE_DOES_NOT_EXIST
-Hjälpfilen '%s' finns inte.
-; The help file '%s' does not exist.
-; FILE
 ;
 MSG_EA_SEARCH_GRAVATAR
 Sök på gra_vatar.com...

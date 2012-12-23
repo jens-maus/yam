@@ -1,13 +1,10 @@
-## version $VER: YAM.catalog 7.99 (4.11.2012)
+## version $VER: YAM.catalog 8.1 (23.12.2012)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
 ;
-; italian.ct - YAM 2.7/2.8-dev catalog translation file
-; Compiled with FlexCat 2.10 PPC (AmigaOS4)
+; italian.ct - YAM 2.8 catalog translation file
 ; $Id$
-;
-; based on YAM.cd 6392 2012-11-04
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -3675,22 +3672,6 @@ MSG_WR_ImpLow
 bassa
 ; Low
 ;
-MSG_WR_NoSig
-nessuna
-; None
-;
-MSG_WR_DefSig
-Predefinita
-; Default
-;
-MSG_WR_AltSig1
-Alt. #1
-; Alt. #1
-;
-MSG_WR_AltSig2
-Alt. #2
-; Alt. #2
-;
 MSG_WR_WriteWT
 Componi un messaggio
 ; Write message
@@ -5407,10 +5388,6 @@ Si desidera essere avvisati nel caso sia\n\
 lasciata vuota la linea dell'oggetto?
 ; Would you like to be warned if you\n\
 ; leave the subject line blank?
-;
-MSG_WR_OKAYCANCELREQ
-*Ok|Annulla
-; *_Ok|_Cancel
 ;
 MSG_WR_NOSUBJECTREQ
 L'oggetto è inesistente, continuare lo stesso?
@@ -9603,11 +9580,6 @@ Guida in linea
 MSG_MA_HELP_AREXX
 Interfaccia ARexx
 ; ARexx interface
-;
-MSG_ER_HELP_FILE_DOES_NOT_EXIST
-Il file '%s' inerente alla guida in linea è inesistente.
-; The help file '%s' does not exist.
-; FILE
 ;
 MSG_EA_SEARCH_GRAVATAR
 Ricerca su _gravatar.com...

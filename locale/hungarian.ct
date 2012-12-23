@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.3 (08.08.2012)
+## version $VER: YAM.catalog 8.1 (23.12.2012)
 ## codeset 0
 ## language magyar
 ## chunk AUTH Dósa Márton, Miklós Gubucz
@@ -241,10 +241,6 @@ Címjegyzék betöltése...
 MSG_InitLibs
 librarie-k és osztályok beállítása...
 ; Initializing libraries and classes...
-;
-MSG_ErrorClasses
-Nem hozható létre MUI custom classes
-; Can't create MUI custom classes
 ;
 MSG_ErrorAslStruct
 Nem található ASL szerkezet
@@ -3213,22 +3209,6 @@ MSG_WR_ImpLow
 Alacsony
 ; Low
 ;
-MSG_WR_NoSig
-Nincs
-; None
-;
-MSG_WR_DefSig
-Alapértelmezett
-; Default
-;
-MSG_WR_AltSig1
-Alt. #1
-; Alt. #1
-;
-MSG_WR_AltSig2
-Alt. #2
-; Alt. #2
-;
 MSG_WR_WriteWT
 Üzenet írás
 ; Write message
@@ -4681,10 +4661,6 @@ MSG_HELP_CO_CH_WARNSUBJECT
 Szeretnéd, hogy figyelmeztessen ha\na tárgy sor üresen marad?
 ; Would you like to be warned if you\nleave the subject line blank?
 ;
-MSG_WR_OKAYCANCELREQ
-*_Ok|Mégse
-; *_Ok|_Cancel
-;
 MSG_WR_NOSUBJECTREQ
 Nincs tárgy. Folytatod?
 ; The subject is missing, continue anyway?
@@ -5601,10 +5577,6 @@ MSG_CO_SEARCHFORUPDATES
 Frissítés keresése
 ; Check for up_dates
 ;
-MSG_CO_SEARCHFORUPDATESINFO
-értesítést kapsz elérhetö frissítés esetén.
-; You will be notified as soon as updates are available.
-;
 MSG_CO_SEARCHNOW
 Keresés most
 ; Check _now
@@ -6119,10 +6091,6 @@ Nem exportálható a címjegyzék: \"%s\".
 MSG_LOADINGUPDATESTATE
 Frissítési állapot adatok letöltése...
 ; Loading update state data...
-;
-MSG_CO_ASK_SAVE_SIGNATURE
-Az aláírásban végzett változtatásokat az általános\nbeállításoktól függetlenül külön kell elmenteni mert\nmáskülönben elvesznek.\n\nEl akarod most menteni az aláírást?
-; Changes to the signatures must be saved separately\nfrom the global configuration or otherwise they\nwill be lost.\n\nDo you want to save the signatures now?
 ;
 MSG_MA_HIDE
 Rejt
@@ -7650,11 +7618,6 @@ Tartalom
 MSG_MA_HELP_AREXX
 ARexx interfész
 ; ARexx interface
-;
-MSG_ER_HELP_FILE_DOES_NOT_EXIST
-'%s' súgó fájl nem létezik.
-; The help file '%s' does not exist.
-; FILE
 ;
 MSG_EA_SEARCH_GRAVATAR
 Keresés gra_vatar.com oldalon...

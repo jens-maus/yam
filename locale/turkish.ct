@@ -1,9 +1,9 @@
-## version $VER: YAM.catalog 7.2 (25.10.2012)
+## version $VER: YAM.catalog 8.1 (23.12.2012)
 ## language türkçe
 ## codeset 0
 ## chunk AUTH Alper Sönmez <amithlondestek@gmail.com>
 ;
-; YAM.cd - YAM 2.7 catalog description file
+; YAM.cd - YAM 2.8 catalog description file
 ; $Id$
 ;
 ; Please note that all catalog strings have to carry a proper
@@ -18,7 +18,7 @@
 ; new entries. And if you delete an entry NEVER reorder or resort
 ; the ID numbers accordingly.
 ;
-;#version 7
+;#version 8
 ;#language english
 ;
 ; General
@@ -258,10 +258,6 @@ Address defteri yükleniyor...
 MSG_InitLibs
 Kütüphane ve sýnýflar baþlatýlýyor...
 ; Initializing libraries and classes...
-;
-MSG_ErrorClasses
-MCC'ler oluþturulamadý
-; Can't create MUI custom classes
 ;
 MSG_ErrorAslStruct
 ASL yapýsý tahsis edilemedi
@@ -3696,22 +3692,6 @@ MSG_WR_ImpLow
 Düþük
 ; Low
 ;
-MSG_WR_NoSig
-Hiçbiri
-; None
-;
-MSG_WR_DefSig
-Varsayýlan
-; Default
-;
-MSG_WR_AltSig1
-Alt. #1
-; Alt. #1
-;
-MSG_WR_AltSig2
-Alt. #2
-; Alt. #2
-;
 MSG_WR_WriteWT
 Ýleti yaz
 ; Write message
@@ -5427,10 +5407,6 @@ Konu alanýný boþ býraktýðýnýzda\n\
 uyarý almak istiyor musunuz?
 ; Would you like to be warned if you\n\
 ; leave the subject line blank?
-;
-MSG_WR_OKAYCANCELREQ
-*_Tamam|_Ýptal
-; *_Ok|_Cancel
 ;
 MSG_WR_NOSUBJECTREQ
 Bu iletinin bir konusu yok, devam etmek istiyor musunuz?
@@ -9458,11 +9434,6 @@ MSG_MA_HELP_CONTENTS
 MSG_MA_HELP_AREXX
 ARexx arayüzü
 ; ARexx interface
-;
-MSG_ER_HELP_FILE_DOES_NOT_EXIST
-Yardým dosyasý '%s' bulunamadý.
-; The help file '%s' does not exist.
-; FILE
 ;
 MSG_EA_SEARCH_GRAVATAR
 gra_vatar.com'da ara...

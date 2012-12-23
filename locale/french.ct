@@ -1,9 +1,9 @@
-## version $VER: YAM.catalog 7.4 (25.08.2012)
+## version $VER: YAM.catalog 8.1 (23.12.2012)
 ## language français
 ## codeset 111
 ;
 ## chunk AUTH Alexandre Balaban/ATO-fr
-; YAM.cd - YAM 2.7 catalog description file
+; YAM.cd - YAM 2.8 catalog description file
 ; $Id$
 ;
 ; Please note that all catalog strings have to carry a proper
@@ -18,7 +18,7 @@
 ; new entries. And if you delete an entry NEVER reorder or resort
 ; the ID numbers accordingly.
 ;
-;#version 7
+;#version 8
 ;#language english
 ;
 ; General
@@ -258,10 +258,6 @@ Chargement du carnet d'adresses...
 MSG_InitLibs
 Initialisation des bibliothèques et classes...
 ; Initializing libraries and classes...
-;
-MSG_ErrorClasses
-Impossible de créer les classes MUI
-; Can't create MUI custom classes
 ;
 MSG_ErrorAslStruct
 Impossible de trouver la structure ASL
@@ -3693,22 +3689,6 @@ MSG_WR_ImpLow
 Basse
 ; Low
 ;
-MSG_WR_NoSig
-Aucune
-; None
-;
-MSG_WR_DefSig
-Standard
-; Default
-;
-MSG_WR_AltSig1
-Alt. #1
-; Alt. #1
-;
-MSG_WR_AltSig2
-Alt. #2
-; Alt. #2
-;
 MSG_WR_WriteWT
 Écrire un message
 ; Write message
@@ -5432,10 +5412,6 @@ la ligne du sujet sans contenu ?
 ; Would you like to be warned if you\n\
 ; leave the subject line blank?
 ;
-MSG_WR_OKAYCANCELREQ
-*Ok|Annuler
-; *_Ok|_Cancel
-;
 MSG_WR_NOSUBJECTREQ
 Il n'y a pas de sujet, poursuivre malgré tout ?
 ; The subject is missing, continue anyway?
@@ -6599,10 +6575,6 @@ Mensuelle
 MSG_CO_SEARCHFORUPDATES
 Recherche de _mises à jour
 ; Check for up_dates
-;
-MSG_CO_SEARCHFORUPDATESINFO
-Vous serez notifié dès que des mises à jour sont disponibles.
-; You will be notified as soon as updates are available.
 ;
 MSG_CO_SEARCHNOW
 Vérifier mai_ntenant
@@ -9486,11 +9458,6 @@ Contenu
 MSG_MA_HELP_AREXX
 Interface ARexx
 ; ARexx interface
-;
-MSG_ER_HELP_FILE_DOES_NOT_EXIST
-Le fichier d'aide « %s » n'existe pas.
-; The help file '%s' does not exist.
-; FILE
 ;
 MSG_EA_SEARCH_GRAVATAR
 Rechercher sur gra_vatar.com...

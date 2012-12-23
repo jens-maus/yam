@@ -1,8 +1,8 @@
-## version $VER: YAM.catalog 7.25 (11.11.2012)
+## version $VER: YAM.catalog 8.1 (23.12.2012)
 ## codeset 0
 ## language español
 ## chunk AUTH Emilio Jimenez
-; YAM.cd - YAM 2.7 catalog description file
+; YAM.cd - YAM 2.8 catalog description file
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -254,10 +254,6 @@ Cargando Agenda de Contactos...
 MSG_InitLibs
 Inicializando librerias y clases...
 ; Initializing libraries and classes...
-;
-MSG_ErrorClasses
-No puedo crear clases personalizadas MUI
-; Can't create MUI custom classes
 ;
 MSG_ErrorAslStruct
 No puedo localizar estructura ASL
@@ -3225,22 +3221,6 @@ MSG_WR_ImpLow
 Baja
 ; Low
 ;
-MSG_WR_NoSig
-Nada
-; None
-;
-MSG_WR_DefSig
-Por defecto
-; Default
-;
-MSG_WR_AltSig1
-Alt. #1
-; Alt. #1
-;
-MSG_WR_AltSig2
-Alt. #2
-; Alt. #2
-;
 MSG_WR_WriteWT
 Escribir mensaje
 ; Write message
@@ -4693,10 +4673,6 @@ MSG_HELP_CO_CH_WARNSUBJECT
 Quieres que se te avise si\ndejas el asunto en blanco?
 ; Would you like to be warned if you\nleave the subject line blank?
 ;
-MSG_WR_OKAYCANCELREQ
-*_Sí|_Cancelar
-; *_Ok|_Cancel
-;
 MSG_WR_NOSUBJECTREQ
 No se encuentra el asunto, continuar de todos modos?
 ; The subject is missing, continue anyway?
@@ -5609,10 +5585,6 @@ Mensualmente
 MSG_CO_SEARCHFORUPDATES
 Buscar actualizaciones
 ; Check for up_dates
-;
-MSG_CO_SEARCHFORUPDATESINFO
-Se notificará tan pronto como las actualizaciones estén disponibles.
-; You will be notified as soon as updates are available.
 ;
 MSG_CO_SEARCHNOW
 _Comprobar ahora
@@ -7640,11 +7612,6 @@ Contenido
 MSG_MA_HELP_AREXX
 Interfaz ARexx
 ; ARexx interface
-;
-MSG_ER_HELP_FILE_DOES_NOT_EXIST
-El archivo de ayuda '%s' no existe.
-; The help file '%s' does not exist.
-; FILE
 ;
 MSG_EA_SEARCH_GRAVATAR
 Buscar en gra_vatar.com...

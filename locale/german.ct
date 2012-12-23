@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.66 (05.11.2012)
+## version $VER: YAM.catalog 8.1 (23.12.2012)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -3625,22 +3625,6 @@ MSG_WR_ImpLow
 Niedrig
 ; Low
 ;
-MSG_WR_NoSig
-Keine
-; None
-;
-MSG_WR_DefSig
-Standard
-; Default
-;
-MSG_WR_AltSig1
-Alt. #1
-; Alt. #1
-;
-MSG_WR_AltSig2
-Alt. #2
-; Alt. #2
-;
 MSG_WR_WriteWT
 Nachricht schreiben
 ; Write message
@@ -5336,10 +5320,6 @@ MSG_HELP_CO_CH_WARNSUBJECT
 Soll bei leerer Betreff-\nzeile gewarnt werden?
 ; Would you like to be warned if you\n\
 ; leave the subject line blank?
-;
-MSG_WR_OKAYCANCELREQ
-*_Ok|_Abbrechen
-; *_Ok|_Cancel
 ;
 MSG_WR_NOSUBJECTREQ
 Kein Betreff gesetzt, trotzdem fortfahren?
@@ -8220,9 +8200,6 @@ Inhalt
 ;
 MSG_MA_HELP_AREXX
 ARexx-Schnittstelle
-;
-MSG_ER_HELP_FILE_DOES_NOT_EXIST
-Die Hilfedatei '%s' existiert nicht.
 ;
 MSG_EA_SEARCH_GRAVATAR
 Auf gra_vatar.com suchen...
