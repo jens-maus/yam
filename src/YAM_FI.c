@@ -3120,7 +3120,7 @@ static struct FI_ClassData *FI_New(void)
 
     data->GUI.WI = WindowObject,
       MUIA_Window_Title, tr(MSG_FI_FindMessages),
-      MUIA_HelpNode, "FI_W",
+      MUIA_HelpNode, "Windows#Searchwindow",
       MUIA_Window_ID, MAKE_ID('F','I','N','D'),
       WindowContents, VGroup,
         Child, HGroup,

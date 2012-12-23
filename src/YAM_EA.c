@@ -831,7 +831,7 @@ static struct EA_ClassData *EA_New(int winnum, int type)
 
     data->GUI.WI = WindowObject,
        MUIA_Window_Title, "",
-       MUIA_HelpNode, "EA_W",
+       MUIA_HelpNode, "Windows#AddressbookEnteringaddresses",
        MUIA_Window_ID, MAKE_ID('E','D','A','D'),
        WindowContents, VGroup,
           Child, group,

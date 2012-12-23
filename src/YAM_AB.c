@@ -3131,7 +3131,7 @@ struct AB_ClassData *AB_New(void)
     };
 
     data->GUI.WI = WindowObject,
-       MUIA_HelpNode,"AB_W",
+       MUIA_HelpNode, "Windows#Addressbook",
        MUIA_Window_Menustrip, MenustripObject,
           MenuChild, MenuObject,
              MUIA_Menu_Title, tr(MSG_CO_CrdABook),
@@ -3195,13 +3195,13 @@ struct AB_ClassData *AB_New(void)
        WindowContents, VGroup,
           Child, hasHideToolBarFlag(C->HideGUIElements) ?
              (HGroup,
-                MUIA_HelpNode, "AB_B",
+                MUIA_HelpNode, "Windows#AddressbookToolbar",
                 Child, data->GUI.BT_TO  = MakeButton("_To:"),
                 Child, data->GUI.BT_CC  = MakeButton("_CC:"),
                 Child, data->GUI.BT_BCC = MakeButton("_BCC:"),
              End) :
              (HGroup, GroupSpacing(0),
-                MUIA_HelpNode, "AB_B",
+                MUIA_HelpNode, "Windows#AddressbookToolbar",
                 Child, VGroup,
                    MUIA_Weight, 10,
                    MUIA_Group_VertSpacing, 0,

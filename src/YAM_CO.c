@@ -3374,7 +3374,7 @@ static struct CO_ClassData *CO_New(void)
 
     data->GUI.WI = WindowObject,
        MUIA_Window_Title, tr(MSG_MA_MConfig),
-       MUIA_HelpNode,"CO_W",
+       MUIA_HelpNode, "Configuration",
        MUIA_Window_Menustrip, MenustripObject,
           MenuChild, MenuObject,
              MUIA_Menu_Title, tr(MSG_MA_Project),

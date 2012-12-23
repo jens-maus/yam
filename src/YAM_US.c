@@ -690,7 +690,7 @@ static struct US_ClassData *US_New(BOOL supervisor)
     data->Supervisor = supervisor;
     data->GUI.WI = WindowObject,
        MUIA_Window_Title, tr(MSG_MA_MUsers),
-       MUIA_HelpNode, "US_W",
+       MUIA_HelpNode, "Windows#MultipleUsers",
        MUIA_Window_ID, MAKE_ID('U','S','E','R'),
        WindowContents, VGroup,
           Child, NListviewObject,

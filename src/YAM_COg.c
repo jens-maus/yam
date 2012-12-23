@@ -1655,7 +1655,7 @@ Object *CO_PageFirstSteps(struct CO_ClassData *data)
   tzone[33] = NULL;
 
   obj = VGroup,
-          MUIA_HelpNode, "CO00",
+          MUIA_HelpNode, "Configuration#FirstSteps",
 
           ConfigPageHeaderObject("config_firststep_big", G->theme.configImages[CI_FIRSTSTEPBIG], tr(MSG_CO_FIRSTSTEPS_TITLE), tr(MSG_CO_FIRSTSTEPS_SUMMARY)),
 
@@ -1766,7 +1766,7 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
   rtitles[2] = NULL;
 
   obj = VGroup,
-          MUIA_HelpNode, "CO01",
+          MUIA_HelpNode, "Configuration#TCPIP",
 
           ConfigPageHeaderObject("config_network_big", G->theme.configImages[CI_NETWORKBIG], tr(MSG_CO_TCPIP_TITLE), tr(MSG_CO_TCPIP_SUMMARY)),
 
@@ -2171,7 +2171,7 @@ Object *CO_PageIdentities(struct CO_ClassData *data)
   ENTER();
 
   obj = VGroup,
-          MUIA_HelpNode, "CO17",
+          MUIA_HelpNode, "Configuration#Identities",
 
           ConfigPageHeaderObject("config_identities_big", G->theme.configImages[CI_IDENTITIESBIG], tr(MSG_CO_IDENTITIES_TITLE), tr(MSG_CO_IDENTITIES_SUMMARY)),
 
@@ -2512,7 +2512,7 @@ Object *CO_PageFilters(struct CO_ClassData *data)
    rtitles[3] = NULL;
 
    if((grp = VGroup,
-         MUIA_HelpNode, "CO03",
+         MUIA_HelpNode, "Configuration#Filters",
 
          ConfigPageHeaderObject("config_filters_big", G->theme.configImages[CI_FILTERSBIG], tr(MSG_CO_FILTER_TITLE), tr(MSG_CO_FILTER_SUMMARY)),
 
@@ -2770,7 +2770,7 @@ Object *CO_PageSpam(struct CO_ClassData *data)
   ENTER();
 
   obj = VGroup,
-          MUIA_HelpNode, "CO17",
+          MUIA_HelpNode, "Configuration#Spam",
 
           ConfigPageHeaderObject("config_spam_big", G->theme.configImages[CI_SPAMBIG], tr(MSG_CO_SPAMFILTER_TITLE), tr(MSG_CO_SPAMFILTER_SUMMARY)),
 
@@ -2916,7 +2916,7 @@ Object *CO_PageRead(struct CO_ClassData *data)
   ENTER();
 
   obj = VGroup,
-          MUIA_HelpNode, "CO04",
+          MUIA_HelpNode, "Configuration#Read",
 
           ConfigPageHeaderObject("config_read_big", G->theme.configImages[CI_READBIG], tr(MSG_CO_READ_TITLE), tr(MSG_CO_READ_SUMMARY)),
 
@@ -3144,7 +3144,7 @@ Object *CO_PageWrite(struct CO_ClassData *data)
   ENTER();
 
   obj = VGroup,
-          MUIA_HelpNode, "CO05",
+          MUIA_HelpNode, "Configuration#Write",
 
           ConfigPageHeaderObject("config_write_big", G->theme.configImages[CI_WRITEBIG], tr(MSG_CO_WRITE_TITLE), tr(MSG_CO_WRITE_SUMMARY)),
 
@@ -3268,7 +3268,7 @@ Object *CO_PageReplyForward(struct CO_ClassData *data)
   ENTER();
 
   obj = VGroup,
-          MUIA_HelpNode, "CO06",
+          MUIA_HelpNode, "Configuration#ReplyForward",
 
           ConfigPageHeaderObject("config_answer_big", G->theme.configImages[CI_ANSWERBIG], tr(MSG_CO_REPLY_TITLE), tr(MSG_CO_REPLY_SUMMARY)),
 
@@ -3351,7 +3351,7 @@ Object *CO_PageSignature(struct CO_ClassData *data)
   ENTER();
 
   obj = VGroup,
-          MUIA_HelpNode, "CO07",
+          MUIA_HelpNode, "Configuration#Signature",
 
           ConfigPageHeaderObject("config_signature_big", G->theme.configImages[CI_SIGNATUREBIG], tr(MSG_CO_SIGNATURE_TITLE), tr(MSG_CO_SIGNATURE_SUMMARY)),
 
@@ -3529,7 +3529,7 @@ Object *CO_PageSecurity(struct CO_ClassData *data)
   logfmode[3] = NULL;
 
   obj = VGroup,
-          MUIA_HelpNode, "CO09",
+          MUIA_HelpNode, "Configuration#Security",
 
           ConfigPageHeaderObject("config_security_big", G->theme.configImages[CI_SECURITYBIG], tr(MSG_CO_SECURITY_TITLE), tr(MSG_CO_SECURITY_SUMMARY)),
 
@@ -3616,7 +3616,7 @@ Object *CO_PageStartupQuit(struct CO_ClassData *data)
 {
    Object *grp;
    if ((grp = VGroup,
-         MUIA_HelpNode, "CO10",
+         MUIA_HelpNode, "Configuration#StartQuit",
 
          ConfigPageHeaderObject("config_start_big", G->theme.configImages[CI_STARTBIG], tr(MSG_CO_STARTUP_TITLE), tr(MSG_CO_STARTUP_SUMMARY)),
 
@@ -3668,7 +3668,7 @@ Object *CO_PageMIME(struct CO_ClassData *data)
   ENTER();
 
   obj = VGroup,
-          MUIA_HelpNode, "CO11",
+          MUIA_HelpNode, "Configuration#MIME",
 
           ConfigPageHeaderObject("config_mime_big", G->theme.configImages[CI_MIMEBIG], tr(MSG_CO_MIME_TITLE), tr(MSG_CO_MIME_SUMMARY)),
 
@@ -3811,7 +3811,7 @@ Object *CO_PageAddressBook(struct CO_ClassData *data)
    atab[5] = NULL;
 
    if ((grp = VGroup,
-         MUIA_HelpNode, "CO12",
+         MUIA_HelpNode, "Configuration#Addressbook",
 
          ConfigPageHeaderObject("config_abook_big", G->theme.configImages[CI_ABOOKBIG], tr(MSG_CO_ABOOK_TITLE), tr(MSG_CO_ABOOK_SUMMARY)),
 
@@ -3885,7 +3885,7 @@ Object *CO_PageScripts(struct CO_ClassData *data)
    };
 
    if ((grp = VGroup,
-         MUIA_HelpNode, "CO13",
+         MUIA_HelpNode, "Configuration#Scripts",
 
          ConfigPageHeaderObject("config_scripts_big", G->theme.configImages[CI_SCRIPTSBIG], tr(MSG_CO_SCRIPTS_TITLE), tr(MSG_CO_SCRIPTS_SUMMARY)),
 
@@ -3977,7 +3977,7 @@ Object *CO_PageMixed(struct CO_ClassData *data)
   trwopt[3] = NULL;
 
   obj = VGroup,
-          MUIA_HelpNode, "CO14",
+          MUIA_HelpNode, "Configuration#Miscellaneous",
 
           ConfigPageHeaderObject("config_misc_big", G->theme.configImages[CI_MISCBIG], tr(MSG_CO_MIXED_TITLE), tr(MSG_CO_MIXED_SUMMARY)),
 
@@ -4193,7 +4193,7 @@ Object *CO_PageLookFeel(struct CO_ClassData *data)
   folderf[5] = NULL;
 
   obj = VGroup,
-          MUIA_HelpNode, "CO15",
+          MUIA_HelpNode, "Configuration#LookFeel",
 
           ConfigPageHeaderObject("config_lookfeel_big", G->theme.configImages[CI_LOOKFEELBIG], tr(MSG_CO_LOOKFEEL_TITLE), tr(MSG_CO_LOOKFEEL_SUMMARY)),
 
@@ -4391,7 +4391,7 @@ Object *CO_PageUpdate(struct CO_ClassData *data)
   updateInterval[4] = NULL;
 
   obj = VGroup,
-          MUIA_HelpNode, "CO16",
+          MUIA_HelpNode, "Configuration#Updates",
 
           ConfigPageHeaderObject("config_update_big", G->theme.configImages[CI_UPDATEBIG], tr(MSG_CO_UPDATE_TITLE), tr(MSG_CO_UPDATE_SUMMARY)),
 

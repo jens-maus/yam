@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-12-23 Jens Langner <Jens.Langner@light-speed.de>
+
+  * misc: adapted all MUIA_HelpNode attributes throughout the YAM sources to match the
+    appropriate URLs used for the online documentation. This closes #306.
+  * locale, mui/Aboutwindow.c: bumped all locale translations which are uptodate to
+    version 8 so that they are accepted by the upcoming 2.8 release. Also updated the
+    information shown in the Aboutwindow to the latest state of affairs.
+
 2012-12-22 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_CO.c: changed the default path for the gallery directory from

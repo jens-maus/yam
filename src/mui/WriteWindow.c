@@ -869,7 +869,7 @@ OVERLOAD(OM_NEW)
 
       if((obj = DoSuperNew(cl, obj,
         MUIA_Window_Title, tr(MSG_WR_BounceWT),
-        MUIA_HelpNode, "WR_W",
+        MUIA_HelpNode, "Windows#Writewindow",
         MUIA_Window_ID, MAKE_ID('W','R','I','B'),
         MUIA_Window_AppWindow, FALSE,
         MUIA_Window_Menustrip, menuStripObject,
@@ -1072,7 +1072,7 @@ OVERLOAD(OM_NEW)
         obj = DoSuperNew(cl, obj,
 
           MUIA_Window_Title, "",
-          MUIA_HelpNode, "WR_W",
+          MUIA_HelpNode, "Windows#Writewindow",
           MUIA_Window_ID, MAKE_ID('W','R','W', data->windowNumber),
           MUIA_Window_AppWindow, TRUE,
           MUIA_Window_Menustrip, menuStripObject,
@@ -1082,7 +1082,7 @@ OVERLOAD(OM_NEW)
 
               // Message
               Child, VGroup,
-                MUIA_HelpNode, "WR00",
+                MUIA_HelpNode, "Windows#WritewindowMessagesheet",
 
                 Child, data->GR_HEADER = ColGroup(2),
 
@@ -1146,7 +1146,7 @@ OVERLOAD(OM_NEW)
                 End),
 
                 Child, HGroup,
-                  MUIA_HelpNode, "EDIT",
+                  MUIA_HelpNode, "Windows#WritewindowInternaleditor",
                   MUIA_Group_Spacing, 0,
                   Child, data->TE_EDIT = MailTextEditObject,
                     InputListFrame,
@@ -1165,7 +1165,7 @@ OVERLOAD(OM_NEW)
 
               // Attachments
               Child, VGroup,
-                MUIA_HelpNode, "WR01",
+                MUIA_HelpNode, "Windows#WritewindowAttachmentsheet",
                 Child, NListviewObject,
                   MUIA_CycleChain, TRUE,
                   MUIA_NListview_NList, data->LV_ATTACH = WriteAttachmentListObject,
@@ -1196,7 +1196,7 @@ OVERLOAD(OM_NEW)
 
               // Options
               Child, VGroup,
-                MUIA_HelpNode, "WR02",
+                MUIA_HelpNode, "Windows#WritewindowOptionssheet",
                 Child, ColGroup(2),
                   GroupFrameT(tr(MSG_Options)),
 

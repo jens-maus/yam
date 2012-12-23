@@ -184,7 +184,7 @@ OVERLOAD(OM_NEW)
   if((obj = DoSuperNew(cl, obj,
 
     MUIA_Group_Horiz, FALSE,
-    MUIA_HelpNode,     "FI_K",
+    MUIA_HelpNode, "Windows#SearchwindowSearchcriteria",
       Child, data->RT_TITLE = HBarT(data->title), End,
       Child, data->CY_COMBINE = MakeCycle(bcrit, ""),
       Child, HGroup,

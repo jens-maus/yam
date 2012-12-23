@@ -2521,7 +2521,7 @@ static struct FO_ClassData *FO_New(void)
 
     data->GUI.WI = WindowObject,
        MUIA_Window_Title, tr(MSG_FO_EditFolder),
-       MUIA_HelpNode,  "FO_W",
+       MUIA_HelpNode,  "Windows#Foldersettings",
        MUIA_Window_ID, MAKE_ID('F','O','L','D'),
        MUIA_Window_LeftEdge, MUIV_Window_LeftEdge_Centered,
        MUIA_Window_TopEdge,  MUIV_Window_TopEdge_Centered,
