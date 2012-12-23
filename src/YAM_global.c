@@ -112,7 +112,7 @@ static const char USED_VAR yam_stack_size[] = "$STACK:" STR(SIZE_STACK) "\n";
 #define __YAM           "YAM"
 #define __YAM_VERSION   "2.8"
 #ifndef __YAM_DEVEL
-#define __YAM_DEVEL     "-dev"
+#define __YAM_DEVEL     ""
 #endif
 #ifndef __YAM_BUILDID
 #define __YAM_BUILDID   0

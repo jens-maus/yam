@@ -1,5 +1,5 @@
 ;
-; $VER: Install-YAM 1.26 (23.12.2012) (c) 2000-2012 by YAM Open Source Team
+; $VER: Install-YAM 1.27 (23.12.2012) (c) 2000-2012 by YAM Open Source Team
 ; Language support added by Sönke Tesch/ATO
 ;
 ; $Id$
@@ -12,40 +12,31 @@
 (set #def_lang_czech               $004)
 (set #def_lang_italian             $008)
 (set #def_lang_french              $010)
-(set #def_lang_greek               $020)
-(set #def_lang_dutch               $040)
-(set #def_lang_polish              $080)
-(set #def_lang_spanish             $100)
-(set #def_lang_turkish             $200)
-(set #def_lang_hungarian           $400)
+;(set #def_lang_greek               $020)
+;(set #def_lang_dutch               $040)
+;(set #def_lang_polish              $080)
+(set #def_lang_spanish             $020)
+(set #def_lang_turkish             $040)
+(set #def_lang_hungarian           $080)
 ; add more languages here
 ; (set #def_lang_<language name>     bitmask)
 ;
 ; accents of languages should be appended at the end rather than somewhere in the middle,
 ; because only AmigaOS 4.x can handle them.
-(set #def_lang_english_british     $800)
+(set #def_lang_english_british     $100)
 ; add more accents of languages here
 ; (set #def_lang_<language name>     bitmask)
-
-(set #def_doc_english              $00)
-(set #def_doc_german               $01)
-(set #def_doc_french               $02)
-(set #def_doc_spanish              $04)
-; add more languages here
-; (set #def_doc_<language name>       bitmask)
 ; ///
 
 ;----------------------------------------------------------------------------
 ;/// ***** English
 (set #def_cat_lang #def_lang_english)
-(set #def_doc_lang #def_doc_english)
 (set #acknowledgeOS (cat "Please acknowledge the automatic\n"
                          "detection of your operating system:"))
 (set #YAM_dir  (cat "Please select a directory for YAM\n"
                     "(NO extra drawer will be created!)"))
 (set #lang_catalog (cat "Which catalog file do you want to install?\n"
                         "(English language is built-in)"))
-(set #lang_manual "Select language for online AmigaGuide help")
 (set #ask_charsets "Do you want to install the character set files required by codesets.library?")
 (set #no_way_back_warning (cat "WARNING!!\n"
                                "(if you want to update an existing YAM 2.4 installation)\n"
@@ -76,14 +67,12 @@
 (if (= @language "deutsch")
     (
         (set #def_cat_lang #def_lang_german)
-        (set #def_doc_lang #def_doc_german)
         (set #acknowledgeOS (cat "Bitte bestätigen Sie die automatische\n"
                                  "Ermittlung Ihres Betriebssystems:"))
         (set #YAM_dir  (cat "Wählen Sie ein Verzeichnis für YAM\n"
                             "(es wird KEIN eigenes Verzeichnis erstellt!)"))
         (set #lang_catalog (cat "Welche catalog-Datei wollen Sie installieren?\n"
                                 "(Englisch ist eingebaut)"))
-        (set #lang_manual "Wählen Sie eine Sprache für die Online-AmigaGuide-Hilfe")
         (set #ask_charsets "Wollen Sie die von der codesets.library benötigten Zeichensatzdateien installieren?")
         (set #no_way_back_warning (cat "WARNUNG!!\n"
                                        "(falls Sie eine bestehende Installation von YAM 2.4 updaten wollen)\n"
@@ -114,15 +103,13 @@
 ; /// ***** Polish
 (if (= @language "polski")
     (
-        (set #def_cat_lang #def_lang_polish)
-        (set #def_doc_lang #def_doc_english)
+        (set #def_cat_lang #def_lang_english)
         (set #acknowledgeOS (cat "Prosze potwierdzic automatycznie\n"
                                  "wykryty system operacyjny:"))
         (set #YAM_dir  (cat "Prosze wybrac katalog dla programu YAM\n"
                             "(NIE zostanie utworzony dodatkowy podkatalog!)"))
         (set #lang_catalog (cat "Ktore pliki lokalizacyjne chcesz zainstalowac?\n"
                                 "(jezyk angielski jest wbudowany)"))
-        (set #lang_manual "Wybierz jezyk pliku pomocy AmigaGuide")
         (set #ask_charsets "Czy chcesz zainstalowac wymagane przez codesets.library pliki zestawow znakow?")
         (set #no_way_back_warning (cat "OSTRZEZENIE!!\n"
                                        "(jesli chcesz uaktualnic istniejaca instalacje programu YAM 2.4)\n"
@@ -154,7 +141,6 @@
 (if (= @language "svenska")
     (
         (set #def_cat_lang #def_lang_swedish)
-        (set #def_doc_lang #def_doc_english)
         (set #acknowledgeOS (cat "Var god bekräfta den automatiska\n"
                                  "detekteringen av ditt operativsystem:"))
         (set #YAM_dir  (cat "Välj katalog att installera YAM i\n"
@@ -162,7 +148,6 @@
         (set #lang_catalog (cat "Vilka språkkataloger vill du installera?\n"
                                 "(Engelska är inbyggt)"))
         (set #ask_charsets "Vill du installera de teckenset som krävs av codesets.library?")
-        (set #lang_manual "Välj språk för den AmigaGuide-baserade hjälpen")
         (set #no_way_back_warning (cat  "VARNING!!\n"
                                        "(om du vill uppdatera en existerande YAM 2.4 installation)\n"
                                        "\n"
@@ -193,14 +178,12 @@
 (if (= @language "français")
     (
         (set #def_cat_lang #def_lang_french)
-        (set #def_doc_lang #def_doc_french)
         (set #acknowledgeOS (cat "Veuillez confirmer la détection\n"
                                  "automatique de votre système d'exploitation :"))
         (set #YAM_dir  (cat "Veuillez sélectionner un répertoire pour YAM\n"
                             "(AUCUN nouveau tiroir ne sera créé !)"))
         (set #lang_catalog (cat "Quel catalogue voulez-vous installer ?\n"
                                 "(L'anglais est déjà incorporé)"))
-        (set #lang_manual "Sélectionnez la langue de l'aide en ligne AmigaGuide")
         (set #ask_charsets "Voulez-vous installer les fichiers de jeux de caractères requis par codesets.library ?")
         (set #no_way_back_warning (cat "ATTENTION !!\n"
                                        "(si vous voulez mettre à jour une installation existante de YAM 2.4)\n"
@@ -232,12 +215,10 @@
 (if (= @language "czech")
     (
         (set #def_cat_lang #def_lang_czech)
-        (set #def_doc_lang #def_doc_english)
         (set #YAM_dir  (cat "Vyberte prosím cílovı adresáø pro YAM\n"
                             "(Instalátor ¾ádnı adresáø nevytvoøí!)"))
         (set #lang_catalog (cat "Které z pøekladù chcete nainstalovat?\n"
                                 "(Angliètinu pou¾ívá program internì.)"))
-        (set #lang_manual "Vyberte pøeklad nápovìdy k programu")
         (set #ask_charsets "Chcete nainstalovat dodateèná kódování pro knihovnu codesets.library?")
         (set #no_way_back_warning (cat "UPOZORNÌNÍ!\n"
                                        "(Platí pro pøípad, ¾e chcete pøejít z verze 2.4.)\n"
@@ -269,14 +250,12 @@
 (if (= @language "italiano")
     (
         (set #def_cat_lang #def_lang_italian)
-        (set #def_doc_lang #def_doc_english)
         (set #acknowledgeOS (cat "Per favore istruisci il sistema ad auto-rilevare\n"
                          "i file necessari per il sistema operativo in uso:"))
         (set #YAM_dir  (cat "Per favore seleziona una directory per YAM\n"
                             "(Non verrà creata nessuna cartella extra!)"))
         (set #lang_catalog (cat "Quale catalogo di lingua si desidera installare?\n"
                                 "(La lingua inglese è quella predefinita)"))
-        (set #lang_manual "Seleziona la lingua da installare per la guida in linea (file AmigaGuide)")
         (set #ask_charsets "Si desidera installare i file del set di caratteri richiesti dalla codesets.library?")
         (set #no_way_back_warning (cat "ATTENZIONE!!\n"
                                        "(Nel caso si desideri aggiornare il programma da una precedente installazione di YAM 2.4.)\n"
@@ -307,13 +286,11 @@
 ;/// ***** Greek
 (if (= @language "greek")
     (
-        (set #def_cat_lang #def_lang_greek)
-        (set #def_doc_lang #def_doc_english)
+        (set #def_cat_lang #def_lang_english)
         (set #YAM_dir  (cat "Ğáñáêáëş åğéëİîôå İíá êáôÜëïãï ãéá ôï YAM.\n"
                             "(ÄÅÍ èá äçìéïõñãçèåß åğéğëİïí öÜêåëïò)"))
         (set #lang_catalog (cat "Ğïéü áñ÷åßï êáôáëüãïõ èİëåôå íá åãêáôáóôŞóåôå;\n"
                                 "(Ç áããëéêŞ ãëşóóá åßíáé åíóùìáôïìİíç)"))
-        (set #lang_manual "Åğéëİîôå ãëşóóá ãéá ôçí on-line âïŞèåéá AmigaGuide.")
         (set #ask_charsets "Èİëåôå íá åãêáôáóôŞóåôå ôá áñ÷åßá êùäéêïğïßçóçò ÷áñáêôŞñùí ğïõ áğáéôåßôáé áğü ôçí codesets.library;")
         (set #no_way_back_warning (cat "ĞÑÏÓÏ×Ç !!!\n"
                                        "(åÜí èİëåôå íá áíáâáèìßóåôå ìéá Şäç õğÜñ÷ïõóá åãêáôÜóôáóç ôïõ YAM 2.4)\n"
@@ -343,14 +320,12 @@
 (if (= @language "español")
     (
         (set #def_cat_lang #def_lang_spanish)
-        (set #def_doc_lang #def_doc_spanish)
         (set #acknowledgeOS (cat "Por favor confirme la detección\n"
                                  "automática de su sistema operativo:"))
         (set #YAM_dir  (cat "Por favor seleccione un directorio para YAM\n"
                             "(NO se creará un cajón extra!)"))
         (set #lang_catalog (cat "Qué catálogo desea instalar?\n"
                                 "(Inglés está por defecto)"))
-        (set #lang_manual "Seleccione lengua para la ayuda en línea AmigaGuide")
         (set #no_way_back_warning (cat "ATENCION!!\n"
                                        "(si quiere actualizar la versión existente\n"
                                        "de YAM 2.4)\n"
@@ -486,10 +461,9 @@
                      "Czech"
                      "Italiano"
                      "Français"
-                     "ÅëëçíéêÜ"
-                     "Nederlands"
-                     "Polski"
                      "Español"
+                     "Türkçe"
+                     "Magyar"
                      "English (british)"
             )
             (default #def_cat_lang)
@@ -505,30 +479,15 @@
                      "Czech"
                      "Italiano"
                      "Français"
-                     "ÅëëçíéêÜ"
-                     "Nederlands"
-                     "Polski"
                      "Español"
+                     "Türkçe"
+                     "Magyar"
             )
             (default #def_cat_lang)
         )
     )
 )
 
-(complete 20)
-
-(set doc_lang
-    (askchoice
-        (prompt #lang_manual)
-        (help @askchoice-help)
-        (choices "English"
-                 "Deutsch (von YAM 2.4)"
-                 "Français"
-                 "Español"
-        )
-        (default #def_doc_lang)
-    )
-)
 ; ///
 ; /// Here we go!
 (complete 30)
@@ -688,46 +647,46 @@
         )
 
         ; greek catalog file
-        (if (bitand catalog_lang #def_lang_greek)
-            (
-                (makedir (tackon Cat_dir #cat_name_greek))
+        ;(if (bitand catalog_lang #def_lang_greek)
+        ;    (
+        ;        (makedir (tackon Cat_dir #cat_name_greek))
 
-                (copyfiles
-                    (source "/Catalogs/greek")
-                    (choices "YAM.catalog")
-                    (dest (tackon Cat_dir #cat_name_greek))
-                    (help @copyfiles-help)
-                )
-            )
-        )
+        ;        (copyfiles
+        ;            (source "/Catalogs/greek")
+        ;            (choices "YAM.catalog")
+        ;            (dest (tackon Cat_dir #cat_name_greek))
+        ;            (help @copyfiles-help)
+        ;        )
+        ;    )
+        ;)
 
         ; dutch catalog file
-        (if (bitand catalog_lang #def_lang_dutch)
-            (
-                (makedir (tackon Cat_dir #cat_name_dutch))
+        ;(if (bitand catalog_lang #def_lang_dutch)
+        ;    (
+        ;        (makedir (tackon Cat_dir #cat_name_dutch))
 
-                (copyfiles
-                    (source "/Catalogs/dutch")
-                    (choices "YAM.catalog")
-                    (dest (tackon Cat_dir #cat_name_dutch))
-                    (help @copyfiles-help)
-                )
-            )
-        )
+        ;        (copyfiles
+        ;            (source "/Catalogs/dutch")
+        ;            (choices "YAM.catalog")
+        ;            (dest (tackon Cat_dir #cat_name_dutch))
+        ;            (help @copyfiles-help)
+        ;        )
+        ;    )
+        ;)
 
         ; polish catalog file
-        (if (bitand catalog_lang #def_lang_polish)
-            (
-                (makedir (tackon Cat_dir #cat_name_polish))
+        ;(if (bitand catalog_lang #def_lang_polish)
+        ;    (
+        ;        (makedir (tackon Cat_dir #cat_name_polish))
 
-                (copyfiles
-                    (source "/Catalogs/polish")
-                    (choices "YAM.catalog")
-                    (dest (tackon Cat_dir #cat_name_polish))
-                    (help @copyfiles-help)
-                )
-            )
-        )
+        ;        (copyfiles
+        ;            (source "/Catalogs/polish")
+        ;            (choices "YAM.catalog")
+        ;            (dest (tackon Cat_dir #cat_name_polish))
+        ;            (help @copyfiles-help)
+        ;        )
+        ;    )
+        ;)
 
         ; spanish catalog file
         (if (bitand catalog_lang #def_lang_spanish)
@@ -738,6 +697,34 @@
                     (source "/Catalogs/spanish")
                     (choices "YAM.catalog")
                     (dest (tackon Cat_dir #cat_name_spanish))
+                    (help @copyfiles-help)
+                )
+            )
+        )
+
+        ; turkish catalog file
+        (if (bitand catalog_lang #def_lang_turkish)
+            (
+                (makedir (tackon Cat_dir #cat_name_turkish))
+
+                (copyfiles
+                    (source "/Catalogs/turkish")
+                    (choices "YAM.catalog")
+                    (dest (tackon Cat_dir #cat_name_turkish))
+                    (help @copyfiles-help)
+                )
+            )
+        )
+
+        ; hungarian catalog file
+        (if (bitand catalog_lang #def_lang_hungarian)
+            (
+                (makedir (tackon Cat_dir #cat_name_hungarian))
+
+                (copyfiles
+                    (source "/Catalogs/hungarian")
+                    (choices "YAM.catalog")
+                    (dest (tackon Cat_dir #cat_name_hungarian))
                     (help @copyfiles-help)
                 )
             )
@@ -785,10 +772,10 @@
 (if (not (exists Themes_dir))
     (makedir Themes_dir)
 )
-(if (not (exists (tackon YAM_dir "Themes.info")))
+(if (not (exists (tackon Resources_dir "Themes.info")))
     (copyfiles
         (source "/Resources/Themes.info")
-        (dest YAM_dir)
+        (dest Resources_dir)
         (infos)
         (noposition)
         (help @copyfiles-help)
@@ -868,59 +855,6 @@
         (infos)
         (noposition)
         (help @copyfiles-help)
-    )
-)
-
-; copy the selected guide to the main installation directory
-(if (= doc_lang #def_doc_english)
-    (
-        (copyfiles
-            (source "/Docs/YAM_english.guide")
-            (dest YAM_dir)
-            (newname "YAM.guide")
-            (infos)
-            (noposition)
-            (help @copyfiles-help)
-        )
-    )
-)
-
-(if (= doc_lang #def_doc_german)
-    (
-        (copyfiles
-            (source "/Docs/YAM_german.guide")
-            (dest YAM_dir)
-            (newname "YAM.guide")
-            (infos)
-            (noposition)
-            (help @copyfiles-help)
-        )
-    )
-)
-
-(if (= doc_lang #def_doc_french)
-    (
-        (copyfiles
-            (source "/Docs/YAM_french.guide")
-            (dest YAM_dir)
-            (newname "YAM.guide")
-            (infos)
-            (noposition)
-            (help @copyfiles-help)
-        )
-    )
-)
-
-(if (= doc_lang #def_doc_spanish)
-    (
-        (copyfiles
-            (source "/Docs/YAM_spanish.guide")
-            (dest YAM_dir)
-            (newname "YAM.guide")
-            (infos)
-            (noposition)
-            (help @copyfiles-help)
-        )
     )
 )
 
