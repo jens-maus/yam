@@ -49,7 +49,7 @@ mkdir -p release
 echo "  MK catalogs"
 make catalogs
 
-#make OS=$1 DEBUG= DEVFLAGS= clean
+make OS=$1 DEBUG= DEVFLAGS= clean
 make OS=$1 DEBUG= DEVFLAGS= all
 rm -rf "release/$yamsys"
 mkdir -p "release/$yamsys"
@@ -118,7 +118,7 @@ lha -ao5q ../YAM$yamarcver-$yamsys.lha *
 cd ../../
 
 echo "  MK $yamsys-debug"
-#make OS=$1 DEVFLAGS= clean
+make OS=$1 DEVFLAGS= clean
 make OS=$1 DEVFLAGS= all
 cp ../doc/README.debug "release/"
 cp YAM.$1.debug "release/YAM.debug"
