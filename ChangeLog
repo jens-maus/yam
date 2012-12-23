@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+#### YAM 2.8 RELEASE ####################################################
+
+2012-12-24 Jens Langner <Jens.Langner@light-speed.de>
+
+  * misc: final YAM 2.8 release preparations.
+
 2012-12-23 Jens Langner <Jens.Langner@light-speed.de>
 
   * misc: adapted all MUIA_HelpNode attributes throughout the YAM sources to match the
