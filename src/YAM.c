@@ -2092,7 +2092,7 @@ static void InitBeforeLogin(BOOL hidden)
   INITLIB("openurl.library",        1, 0, &OpenURLBase,   "main", 1, &IOpenURL,   FALSE, NULL);
 
   // try to open the mandatory codesets.library
-  INITLIB("codesets.library",       6, 8, &CodesetsBase,  "main", 1, &ICodesets,  TRUE, "http://www.sf.net/projects/codesetslib/");
+  INITLIB("codesets.library",       6, 14, &CodesetsBase,  "main", 1, &ICodesets,  TRUE, "http://sf.net/p/codesetslib/");
 
   // try to open expat.library for our XML import stuff
   INITLIB("expat.library", XML_MAJOR_VERSION, 0, &ExpatBase, "main", 1, &IExpat, FALSE, NULL);
@@ -2149,16 +2149,16 @@ static void InitBeforeLogin(BOOL hidden)
   //       this causes the MUI version of MorphOS to be borked, thus this workaround!
   //
   //       customclass      minv minr maxv maxr  mand  url
-  CheckMCC(MUIC_TheBar,       26,  10,   0,   0, TRUE, "http://sf.net/projects/thebar/");
-  CheckMCC(MUIC_TheBarVirt,   26,  10,   0,   0, TRUE, "http://sf.net/projects/thebar/");
-  CheckMCC(MUIC_TheButton,    26,  10,   0,   0, TRUE, "http://sf.net/projects/thebar/");
-  CheckMCC(MUIC_BetterString, 11,  23,  30,   0, TRUE, "http://sf.net/projects/bstring-mcc/");
-  CheckMCC(MUIC_NList,        20, 132,   0,   0, TRUE, "http://sf.net/projects/nlist-classes/");
-  CheckMCC(MUIC_NListview,    19,  87,   0,   0, TRUE, "http://sf.net/projects/nlist-classes/");
-  CheckMCC(MUIC_NFloattext,   19,  68,   0,   0, TRUE, "http://sf.net/projects/nlist-classes/");
-  CheckMCC(MUIC_NListtree,    18,  39,   0,   0, TRUE, "http://sf.net/projects/nlist-classes/");
-  CheckMCC(MUIC_NBalance,     15,  13,   0,   0, TRUE, "http://sf.net/projects/nlist-classes/");
-  CheckMCC(MUIC_TextEditor,   15,  39,   0,   0, TRUE, "http://sf.net/projects/texteditor-mcc/");
+  CheckMCC(MUIC_TheBar,       26,  11,   0,   0, TRUE, "http://sf.net/p/thebar/");
+  CheckMCC(MUIC_TheBarVirt,   26,  11,   0,   0, TRUE, "http://sf.net/p/thebar/");
+  CheckMCC(MUIC_TheButton,    26,  11,   0,   0, TRUE, "http://sf.net/p/thebar/");
+  CheckMCC(MUIC_BetterString, 11,  24,  30,   0, TRUE, "http://sf.net/p/bstring-mcc/");
+  CheckMCC(MUIC_NList,        20, 134,   0,   0, TRUE, "http://sf.net/p/nlist-classes/");
+  CheckMCC(MUIC_NListview,    19,  89,   0,   0, TRUE, "http://sf.net/p/nlist-classes/");
+  CheckMCC(MUIC_NFloattext,   19,  70,   0,   0, TRUE, "http://sf.net/p/nlist-classes/");
+  CheckMCC(MUIC_NListtree,    18,  41,   0,   0, TRUE, "http://sf.net/p/nlist-classes/");
+  CheckMCC(MUIC_NBalance,     15,  15,   0,   0, TRUE, "http://sf.net/p/nlist-classes/");
+  CheckMCC(MUIC_TextEditor,   15,  40,   0,   0, TRUE, "http://sf.net/p/texteditor-mcc/");
 
   // now we search through PROGDIR:Charsets and load all user defined
   // codesets via codesets.library
