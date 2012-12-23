@@ -1742,7 +1742,7 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
 
   if(page == cp_AddressBook || page == cp_AllPages)
   {
-    AddPath(co->GalleryDir, G->ProgDir, "Gallery", sizeof(co->GalleryDir));
+    AddPath(co->GalleryDir, G->ProgDir, "Resources/Gallery", sizeof(co->GalleryDir));
     strlcpy(co->NewAddrGroup, "NEW", sizeof(co->NewAddrGroup));
     co->AddToAddrbook = 0;
     co->AddrbookCols = 1+2+4;

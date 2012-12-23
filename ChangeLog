@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-12-22 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_CO.c: changed the default path for the gallery directory from
+    "PROGDIR:Gallery" to "PROGDIR:Resources/Gallery".
+
 2012-12-21 Jens Langner <Jens.Langner@light-speed.de>
 
   * mui/WriteWindow.c: prevent the autosave mechanism from closing the matchwindows
