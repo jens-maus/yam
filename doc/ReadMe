@@ -1,14 +1,14 @@
-Short:        YAM 2.7 - MUI-based E-mail client
+Short:        YAM 2.8 - MUI-based E-mail client
 Author:       YAM Open Source Team (http://yam.ch/)
 Uploader:     Jens Langner <Jens.Langner@light-speed.de>
 Type:         comm/yam
-Version:      2.7
-Replaces:     comm/yam/YAM26*
+Version:      2.8
+Replaces:     comm/yam/YAM28*
 Requires:     AmigaOS 3.0+, MorphOS or AROS, MUI 3.8+, 68020+/PPC604e+
 Architecture: ppc-amigaos >= 4.0.5; m68k-amigaos >= 3.0; ppc-morphos >= 1.4.2; i386-aros; ppc-aros; x86_64-aros
 
 ---------------------------------------------------------------------------
-                           YAM - Version 2.7
+                           YAM - Version 2.8
 ---------------------------------------------------------------------------
 
 About YAM
@@ -57,78 +57,66 @@ What's new
 Here's a  list (in  alphabetical order)  of the  brave developers  who have
 contributed   to    this   release    since   the   last    official   one:
 
-              Frank Weber
               Jens Langner
               Thore Boeckelmann
 
 And here's a  PARTIAL list of the  changes in this version  with respect to
-the previous official update:
+the previous official 2.7 update:
 
-- updated translations for czech, french, german, greek, italian, swedish
-  and spanish language.
-- updated amigaguide documentation for spanish.
+- updated translations for czech, french, german, italian, swedish, spanish,
+  turkish and english-british language.
+- integration of online documentation system and removal of obsolete
+  amigaguides, see http://docs.yam.ch/
 - general performance improvements and general bug fixing.
-- when text in a read window is selected and the user presses "reply",
-  the reply will only contain the selected text rather than all.
-- the column width of the preselection window can now be saved with
-  MUI's own snapshot functionality.
-- closing YAM while a write window is open is possible now. However, a
-  confirmation requester is now presented to the user.
-- YAM will now recognize incompatible mail file formats when importing.
-- added a direct menu item to the amiga guide documentation of YAM.
-- completely removed the anonymous mailing feature as there aren't any
-  anon remailer services anymore that are not abused for junk mail.
-- changed YAM to have the SPAM folder available by default. Everyone should
-  use a SPAM filter nowadays.
-- the online check feature in YAM can now accept multiple interfaces by
-  using a comma separated list of interface names.
-- implemented an additional ARexx command to let YAM restart itself.
-- the crop attachment requester can now be suppressed by a hidden config
-  option.
-- statistics on new/unread mails will now also be shown for folder groups.
-- When using the "Check for Update" menu item YAM will now directly respond
-  instead of always keeping itself silent.
-- a potential "mailto:" in front of an email address will now be automatically
-  stripped.
-- the way mails are forwarded (either inlined or as attachment) can now be
-  chosen from the various menus in YAM.
-- implemented option to suppress the final mail filter requester.
-- implemented possibility to automatically run a script before and after
-  YAM starts or is finished with mail filtering operations.
-- multiple files can now be selected when try to import mails.
-- the preselection window functionality can now be set for each account
-  separately.
-- changed the remote filter to be applicable on a per-POP3 account basis.
-- when moving a mail graphically from one folder to another and that folder
-  is within a closed node, the listtree will now automatically open that node.
-- completly reworked the functionaliyt which converts html mails to plain text.
-  Now soft styles (bold/italic, etc.) are shown and the conversion should show
-  much prettier results.
-- in case a folder is renamed mail filters will be automatically adapt to that
-  change.
-- changed all folder list displays to show a hierarchical listtree rather than
-  a plain list. This should make the whole folder display more intuitive.
-- reworked/fixed the recipientstring in the write window to be somewhat more
-  intuitive in showing actual found hits.
-- to save memory indexes of custom folders will now be automatically expunged
-  in case they haven't been access for certain minutes.
-- changed birthday reminder to be non-blocking and to be able to snapshot the
-  position and size of it. Furthermore, YAM will now rememeber if the reminder
-  was already shown and don't popup the same requester again at the same day
-  if it is restarted.
-- significantly improved performance of string searches (to search for mails)
-  by implementation of Boyer/Moore Search algorithms.
-- finally YAMs' internals are fully multithreaded. That means many things
-  within YAM are now changed to work without blocking the GUI interface.
-  This includes the TCP/IP routines which are now running in separate
-  threads/processes rather than blocking the main GUI during a mail transfer.
-  Furthermore, this was a mandatory thing for being able to implement
-  IMAP support in the somewhat near future.
+- moved CC and BCC as well as Reply-To: address field from separate
+  "Options" tab to the first page of the write window and made it
+  user-configurable.
+- integrated a multi-identity system which allows to define an unlimited
+  number of identities and link SMTP servers to each identity so that
+  different settings per identity are possible (including different
+  signatures).
+- implemented unlimited signature support through new multi-identity
+  system integrated in YAM.
+- multiple and unlimited SMTP-Server support. Now users can define any
+  number of SMTP servers and link them to the new identity management
+  system.
+- implemented new "Drafts" folder system to allow to put autosave files
+  as well as storing mails on hold into a separate folder commonly used
+  in other mail clients.
+- YAM will now trust certain external SPAM filter engines (e.ġ.
+  Spamassassin) when retrieving external emails and trying to identify
+  SPAM. Own external spam filter rules can now be configured in
+  PROGDIR:Resources/Spamfilters if necessary.
+- Added full SSL certificate authentication support. If connecting to an
+  SSL secured mail server (POP3/SMTP) YAM will now verify the certificate
+  and compare it against official certificate chains. If a certificate is
+  identified to be not trustable a warning will be presented to the user
+- autosave mails now contain receivers and sender information so that
+  upon recovering those mails the full entered information is presented
+  again.
+- Full support for the new "Mail-Followup-To:" and "Mail-Reply-To:" header
+  fields which are commonly used for mailing lists.
+- Sent mails can now be replied as well.
+- implemented own mail download intervals per POP3 server along with
+  individual mail size limits per POP3 server.
+- implemented new arexx command to search for messages via message ID.
+- added a string gadget to the "no subject warning requester" so that
+  a missing subject can be immediately be added.
+- improved Daylight Saving recognition and removed irritating DST switching
+  warnings for systems known to behave correctly when DST are switched.
+- large restructuring of the configuration GUI to match new identity and
+  multiple SMTP feature. In addition, things belonging to the Look&Feel
+  of the GUI had been moved to the corresponding config item.
+- fixed certain PGP related problems causing signature check failures.
+- fixed a bunch of problems related to the autocompletion features in
+  the recipient string objects of the write window.
 - lots of other improvement we don't remember right now (keep in mind:
-  more than 2 years of development was put into YAM 2.7!) :)
+  one year of development was put into YAM 2.8!) :)
 
 If  you want  to have  a more  detailed technical  information on  what was
 actually  changed, please  have a  look at  the included  'ChangeLog' file.
+You can also consult the official YAM homepage for more information on the
+changes done with YAM 2.8 (e.g. see http://yam.ch/milestone/YAM%202.8)
 
 What is still missing?
 ----------------------
@@ -140,7 +128,10 @@ What is still missing?
 - lots of documentation! As with the translation, the documentation largely
   lags behind. Again, if you are a native speaker (even for English) and if
   you are interested in updating/writing YAM's documentation then please
-  contact us.
+  contact us. Now that with YAM 2.8+ we have switch to a pure online-based
+  documentation system people are welcome updating the online documentation
+  which can be found at http://docs.yam.ch/ and is based on a public wiki
+  engine.
 - now that YAM 2.5+ comes with a new themes management, users are free to
   create own themes in a fashion that allow them to exchange them with
   other users. So go and create your own themes and submit them via
@@ -180,6 +171,7 @@ resources cover your daily YAM needs:
 
    http://yam.ch/          - Official Support Homepage
    http://download.yam.ch/ - Direct path to the download page
+   http://docs.yam.ch/     - Online documentation system
    http://faq.yam.ch/      - Online Frequently Asked Questions (FAQ)
    http://bugs.yam.ch/     - Bugtracker and Feature Requests
    http://forum.yam.ch/    - Web-based online forum

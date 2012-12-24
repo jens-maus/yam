@@ -170,7 +170,7 @@ $URL$
     be updated to the recent versions of YAM. Rather than using amigaguide
     YAM will start using a web-based documentation wiki which has certainly
     a higher probability of being updated in the future. Thus, pressing HELP
-    will now open a URL starting with "http://yam.ch/wiki/Documentation"
+    will now open a URL starting with "http://docs.yam.ch"
     where in future we will see the whole amigaguide documentation be ported
     and even available in multiple languages. Please note that we are going
     to change the MUIA_HelpNode attributes throughout the YAM sources with
