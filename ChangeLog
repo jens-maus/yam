@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-12-24 Alper Sönmez <amithlondestek@gmail.com>
+
+ * locale/turkish.ct: update to the latest changes.
+
 2012-12-24 Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_global.c: bumped version to 2.9 and readded "-dev" to the development marker.
