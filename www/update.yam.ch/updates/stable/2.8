@@ -1,0 +1,190 @@
+VERSION: 2.8
+BUILDID:
+BUILDDATE: 24.12.2012
+URL: ppc-amigaos http://downloads.sf.net/yam/YAM28-AmigaOS4.lha
+URL: m68k-amigaos http://downloads.sf.net/yam/YAM28-AmigaOS3.lha
+URL: ppc-morphos http://downloads.sf.net/yam/YAM28-MorphOS.lha
+URL: i386-aros http://downloads.sf.net/yam/YAM28-AROS-i386.lha
+URL: ppc-aros http://downloads.sf.net/yam/YAM28-AROS-ppc.lha
+URL: x86_64-aros http://downloads.sf.net/yam/YAM28-AROS-x86_64.lha
+CHANGES:
+---------------------------------------------------------------------------
+                           YAM - Version 2.8
+---------------------------------------------------------------------------
+
+About YAM
+---------
+YAM (Yet Another Mailer) lets you send and receive electronic mail (e-mail)
+over the Internet and maintain archives  of messages in your computer via a
+graphical  user interface.  The idea  came to  the original  author (Marcel
+Beck)  back in  1995  when  he first  tried  using  e-mail. The  programmes
+available at the time were either powerful but complicated to configure, or
+else  used a  too  limiting user  interface. The  goal,  therefore, was  to
+program a  cross between AdMail and  AirMail, with a few  ideas coming from
+Pegasus Mail.
+
+While  earlier  versions  of  YAM were  developed  closed  source,  today's
+versions are developed  by an independent open source  community. Since the
+year 2000 a group of mixed developers maintain YAM and release new versions
+from time  to time.  While these  versions are all  targeted for  the Amiga
+platform,  versions of  different AmigaOS  incarnations are  supplied. This
+includes native  PowerPC ports to  modern Amiga platforms like  AmigaOS4 or
+MorphOS.
+
+
+Before you start the installation
+---------------------------------
+YAM 2.5+ not only uses newer  configuration files, the files  used to store
+separate emails are named differently  as well. Therefore, before you start
+the  installation  script to  overwrite  your  existing installation,  it's
+strongly recommended that you create a backup of your old YAM installation,
+including all folders  and configuration files. Afterwards  you can install
+the update into your old YAM directory  if you wish. On  start-up, YAM 2.5+
+will automatically convert  your old  configuration files  to the  new 2.5+
+format,  and after  being  started,  YAM will  rename  your  old emails  as
+necessary,  always under  your control.  It  is also  recommended that  you
+re-save your  configuration as  soon as  possible in  order to  update your
+.config  file to  the new  format, which  will reveal  all the  new options
+available.
+
+In addition,  please note  that since  YAM 2.5 no  YAM: assign  is required
+anymore. That means, you may even install it in a new location and start it
+right  away from  there  without  having to  touch  your old  installation.
+Afterwards you  may manually import  the mails from your  old installation.
+
+
+What's new
+----------
+Here's a  list (in  alphabetical order)  of the  brave developers  who have
+contributed   to    this   release    since   the   last    official   one:
+
+              Jens Langner
+              Thore Boeckelmann
+
+And here's a  PARTIAL list of the  changes in this version  with respect to
+the previous official 2.7 update:
+
+- updated translations for czech, french, german, italian, swedish, spanish,
+  turkish and english-british language.
+- integration of online documentation system and removal of obsolete
+  amigaguides, see http://docs.yam.ch/
+- general performance improvements and general bug fixing.
+- moved CC and BCC as well as Reply-To: address field from separate
+  "Options" tab to the first page of the write window and made it
+  user-configurable.
+- integrated a multi-identity system which allows to define an unlimited
+  number of identities and link SMTP servers to each identity so that
+  different settings per identity are possible (including different
+  signatures).
+- implemented unlimited signature support through new multi-identity
+  system integrated in YAM.
+- multiple and unlimited SMTP-Server support. Now users can define any
+  number of SMTP servers and link them to the new identity management
+  system.
+- implemented new "Drafts" folder system to allow to put autosave files
+  as well as storing mails on hold into a separate folder commonly used
+  in other mail clients.
+- All Themes, Certificates, user configurable Spamfilters and the Gallery
+  directory are now per default stored in a PROGDIR:Resources sub directory
+  to not clutter the PROGDIR: directory too much. In future more and more
+  user configurable setting directories will move there, too.
+- YAM will now trust certain external SPAM filter engines (e.ġ.
+  Spamassassin) when retrieving external emails and trying to identify
+  SPAM. Own external spam filter rules can now be configured in
+  PROGDIR:Resources/Spamfilters if necessary.
+- Added full SSL certificate authentication support. If connecting to an
+  SSL secured mail server (POP3/SMTP) YAM will now verify the certificate
+  and compare it against official certificate chains. If a certificate is
+  identified to be not trustable a warning will be presented to the user
+- autosave mails now contain receivers and sender information so that
+  upon recovering those mails the full entered information is presented
+  again.
+- Full support for the new "Mail-Followup-To:" and "Mail-Reply-To:" header
+  fields which are commonly used for mailing lists.
+- Sent mails can now be replied as well.
+- implemented own mail download intervals per POP3 server along with
+  individual mail size limits per POP3 server.
+- implemented new arexx command to search for messages via message ID.
+- added a string gadget to the "no subject warning requester" so that
+  a missing subject can be immediately be added.
+- improved Daylight Saving recognition and removed irritating DST switching
+  warnings for systems known to behave correctly when DST are switched.
+- large restructuring of the configuration GUI to match new identity and
+  multiple SMTP feature. In addition, things belonging to the Look&Feel
+  of the GUI had been moved to the corresponding config item.
+- fixed certain PGP related problems causing signature check failures.
+- fixed a bunch of problems related to the autocompletion features in
+  the recipient string objects of the write window.
+- lots of other improvement we don't remember right now (keep in mind:
+  one year of development was put into YAM 2.8!) :)
+
+If  you want  to have  a more  detailed technical  information on  what was
+actually  changed, please  have a  look at  the included  'ChangeLog' file.
+You can also consult the official YAM homepage for more information on the
+changes done with YAM 2.8 (e.g. see http://yam.ch/milestone/YAM%202.8)
+
+What is still missing?
+----------------------
+- lots of translators! YAM 2.4 featured lots of different languages, but
+  due to the large amount of changed texts these catalogs are completely
+  outdated. Especially support for such common languages as Danish,
+  Finnish, etc. is currently missing. If you are a native speaker
+  of a language that YAM does not offer (anymore), then please contact us.
+  See http://yam.ch/wiki/Localization for more information.
+- lots of documentation! As with the translation, the documentation largely
+  lags behind. Again, if you are a native speaker (even for English) and if
+  you are interested in updating/writing YAM's documentation then please
+  contact us. Now that with YAM 2.8+ we have switch to a pure online-based
+  documentation system people are welcome updating the online documentation
+  which can be found at http://docs.yam.ch/ and is based on a public wiki
+  engine.
+- now that YAM 2.5+ comes with a new themes management, users are free to
+  create own themes in a fashion that allow them to exchange them with
+  other users. So go and create your own themes and submit them via
+  AmiNET&Co! :)
+
+Source code
+-----------
+Due to lack of time and motivation, Marcel Beck stopped working on YAM back
+in 2000, but the sources were released under the GNU General Public License
+at SourceForge.net. If you want to  help developing this program further or
+perhaps you are considering a port  to a different operating system, please
+consider joining the YAM Open Source team  instead of doing it on your own.
+Our  home page  is  at http://yam.ch/  from which  you  can obtain  all
+necessary  information   to  contact  us.   We  want  to  hear   from  you!
+
+Donations
+---------
+If you  like the development of  YAM and you  want to give our  open source
+developers an additional motivation to continue  to update YAM in future or
+if you simply want to say "Thanks", the YAM project accepts money donations
+via PayPal.  All the  donations during  a release  cycle are  collected and
+divided by considering  the activity of each developer during  the time the
+development lasted. This way we hope  to attract more developers in future,
+which   in   turn  should   give   you   a   new  version   more   quickly.
+
+   http://yam.ch/wiki/Donations
+
+So in  case you  want to support  our efforts to  develop a  modern up2date
+e-mail client  for modern AmigaOS-based  systems, please consult  the above
+URL for more information on how to donate to us.
+
+
+Online resources
+----------------
+As  YAM is  an  open  source development  effort,  we  have several  online
+resources cover your daily YAM needs:
+
+   http://yam.ch/          - Official Support Homepage
+   http://download.yam.ch/ - Direct path to the download page
+   http://docs.yam.ch/     - Online documentation system
+   http://faq.yam.ch/      - Online Frequently Asked Questions (FAQ)
+   http://bugs.yam.ch/     - Bugtracker and Feature Requests
+   http://forum.yam.ch/    - Web-based online forum
+
+   For Developers:
+
+   http://nightly.yam.ch/  - Access to automatic nightly developer
+                             snapshots
+   http://svn.yam.ch/      - Web-based source code SVN access
+   http://stats.yam.ch/    - Daily updated development statistics

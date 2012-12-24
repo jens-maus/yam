@@ -1,6 +1,6 @@
-ppc-amigaos: 2.7
-m68k-amigaos: 2.7
-ppc-morphos: 2.7
-i386-aros: 2.7
-ppc-aros: 2.7
-x86_64-aros: 2.7
+ppc-amigaos: 2.8
+m68k-amigaos: 2.8
+ppc-morphos: 2.8
+i386-aros: 2.8
+ppc-aros: 2.8
+x86_64-aros: 2.8

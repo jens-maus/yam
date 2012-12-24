@@ -1,0 +1,114 @@
+VERSION: 2.8-dev
+BUILDID: 20121222
+BUILDDATE: 22.12.2012
+URL: m68k-amigaos http://nightly.yam.ch/2012-12-22-dev/YAM28dev-AmigaOS3.lha
+URL: ppc-amigaos http://nightly.yam.ch/2012-12-22-dev/YAM28dev-AmigaOS4.lha
+URL: ppc-morphos http://nightly.yam.ch/2012-12-22-dev/YAM28dev-MorphOS.lha
+URL: i386-aros http://nightly.yam.ch/2012-12-22-dev/YAM28dev-AROSi386.lha
+URL: ppc-aros http://nightly.yam.ch/2012-12-22-dev/YAM28dev-AROSppc.lha
+URL: x86_64-aros http://nightly.yam.ch/2012-12-22-dev/YAM28dev-AROSx86_64.lha
+URL: arm-aros http://nightly.yam.ch/2012-12-22-dev/YAM28dev-AROSarm.lha
+CHANGES:
+---------------------------
+YAM Open Source - ChangeLog
+---------------------------
+
+$Id: ChangeLog 6461 2012-12-21 14:10:35Z damato $
+$URL: file:///home/svn/yam/trunk/ChangeLog $
+
+2012-12-21 Jens Langner <Jens.Langner@light-speed.de>
+
+  * mui/WriteWindow.c: prevent the autosave mechanism from closing the matchwindows
+    of recipientstring objects. Otherwise the windows are closed and the string
+    are being resolved when a user enters data in one of the recipientstring objects
+    and the autosave mechanism is fired.
+
+2012-12-20 Jens Langner <Jens.Langner@light-speed.de>
+
+  * mui/YAMApplication.c: if helpFile is NULL we use the default help path instead
+    of ignoring the help requests completely.
+
+2012-12-20 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/RecipientString.c: alias expansion will always add the " >> " markers
+    before the possible expanded string and pressing the right cursor key will
+    take the current recipient as it is and add a comma at the end. Furthermore
+    the entered addresses will be resolved only if the address match window is
+    currently open. This closes #357.
+
+2012-12-06 Pär Boberg <pbobbenb@spray.se>
+
+  * locale/swedish.ct: updated according to changes.
+
+2012-12-06 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/WriteWindow.c: reworked the mail part encoding selection once more to
+    still use base64 as last resort, but to prefer quoted-printable and 8bit
+    encoding if possible.
+
+2012-12-04 Jens Langner <Jens.Langner@light-speed.de>
+
+  * tcp/Connection.c: fixed DupHostEnt() function by using memdup() instead of
+    strdup() to clone the h_addr_list of a struct hostent. This closes #359.
+
+2012-12-04 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_COg.c: slightly relayouted the Read and Write config pages to make a bit
+    more clearer that the font settings' check marks do not belong to other
+    neighbouring objects, i.e. the pen settings on the Read page.
+  * YAM.c: make sure that FACTS is actually running when checking for it as a
+    trustable DST tool.
+  * YAM_UT.c: use WBCTRLA_DuplicateSearchPath on MorphOS as well. According to
+    the latest Ambient sources this is implemented in MorphOS 3.1.
+  * YAM_UT.c: in case neither workbench.lib V44+ is available nor YAM was started
+    from a shell to have a valid CommandLineInterface structure the CLI structure
+    of the Workbench will be cloned now to obtain the global search path. This
+    mostly probably applies to AmigaOS 3.1 only.
+  * mui/WriteWindow.c: removed yet another no-op page switch was formerly done to
+    workaround a MUI bug. But since page switching is not required at all when
+    saving the mail for sending or as draft this should cause no harm.
+
+2012-12-03 Thore Böckelmann <tboeckel@gmx.de>
+
+  * tcp/Connection.c: connections can new be created without opening a socket in
+    case just a connection structure is required but no network access will
+    happen, i.e. when importing mails. Thanks to Steffen Gutmann for the hint.
+  * mui/WriteWindow.c: don't trigger any notifications when setting the write
+    window's active page while saving the mail to the Drafts or Outgoing folder
+    as this would change the active object. This is quite annoying if one was
+    still typing the subject and YAM suddently activates the mail editor. This
+    closes #360.
+  * YAM.c: moved the initial DST check to a place where timezone.library is
+    already opened, otherwise the AmigaOS4 build is not able to detect a
+    trustable DST facility.
+
+2012-12-02 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_AB.c: when trying to load the .addressbook file YAM will show an error
+    message only if the file exists but could not be opened.
+
+2012-12-01 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/WriteWindow.c: in case no subject was entered when sending a mail the
+    user will now gets presented a requester with a second chance to enter the
+    subject. This closes #355.
+
+2012-11-30 Jens Langner <Jens.Langner@light-speed.de>
+
+  * mui/InfoBar.c: added missing string.h include as stricmp() is defined there.
+    This should fix the broken AROS builds.
+
+2012-11-29 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/MailTextEdit.c: pen numbers obtained by MUI_ObtainPen must be converted
+    by MUIPEN() before they can be used for graphic function calls. Unfortunately
+    all versions of TextEditor.mcc <= 15.39 don't do this internally.
+  * mui/InfoBar.c: slightly reverted the last change to the info bar as this
+    seems to make MUI on MorphOS to go crazy.
+  * resources/themes/empty: added the "empty" theme as official theme.
+
+2012-11-28 Thore Böckelmann <tboeckel@gmx.de>
+
+
+
+THIS IS JUST A 100 LINE STRIPPED VERSION OF THE CHANGELOG
