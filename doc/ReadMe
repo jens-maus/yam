@@ -83,6 +83,10 @@ the previous official 2.7 update:
 - implemented new "Drafts" folder system to allow to put autosave files
   as well as storing mails on hold into a separate folder commonly used
   in other mail clients.
+- All Themes, Certificates, user configurable Spamfilters and the Gallery
+  directory are now per default stored in a PROGDIR:Resources sub directory
+  to not clutter the PROGDIR: directory too much. In future more and more
+  user configurable setting directories will move there, too.
 - YAM will now trust certain external SPAM filter engines (e.ġ.
   Spamassassin) when retrieving external emails and trying to identify
   SPAM. Own external spam filter rules can now be configured in
@@ -125,6 +129,7 @@ What is still missing?
   outdated. Especially support for such common languages as Danish,
   Finnish, etc. is currently missing. If you are a native speaker
   of a language that YAM does not offer (anymore), then please contact us.
+  See http://yam.ch/wiki/Localization for more information.
 - lots of documentation! As with the translation, the documentation largely
   lags behind. Again, if you are a native speaker (even for English) and if
   you are interested in updating/writing YAM's documentation then please
