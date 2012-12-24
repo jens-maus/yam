@@ -820,10 +820,10 @@
 (if (not (exists Gallery_dir))
     (makedir Gallery_dir)
 )
-(if (not (exists (tackon YAM_dir "Gallery.info")))
+(if (not (exists (tackon Resources_dir "Gallery.info")))
     (copyfiles
         (source "/Resources/Gallery.info")
-        (dest YAM_dir)
+        (dest Resources_dir)
         (infos)
         (noposition)
         (help @copyfiles-help)
