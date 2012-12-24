@@ -891,7 +891,7 @@ release:
 	@sh $(TOOLS)/mkrelease.sh aros-i386
 	@sh $(TOOLS)/mkrelease.sh aros-ppc
 	@sh $(TOOLS)/mkrelease.sh aros-x86_64
-	@sh $(TOOLS)/mkrelease.sh aros-arm
+	#@sh $(TOOLS)/mkrelease.sh aros-arm
 
 ## DEPENDENCY INCLUDE #################
 
