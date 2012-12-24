@@ -3,7 +3,7 @@ Author:       YAM Open Source Team (http://yam.ch/)
 Uploader:     Jens Langner <Jens.Langner@light-speed.de>
 Type:         comm/yam
 Version:      2.8
-Replaces:     comm/yam/YAM28*
+Replaces:     comm/yam/YAM27*
 Requires:     AmigaOS 3.0+, MorphOS or AROS, MUI 3.8+, 68020+/PPC604e+
 Architecture: ppc-amigaos >= 4.0.5; m68k-amigaos >= 3.0; ppc-morphos >= 1.4.2; i386-aros; ppc-aros; x86_64-aros
 
