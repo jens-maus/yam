@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-12-24 Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_global.c: bumped version to 2.9 and readded "-dev" to the development marker.
+    Thus, development trunk is open for further changes! ;)
+
 #### YAM 2.8 RELEASE ####################################################
 
 2012-12-24 Jens Langner <Jens.Langner@light-speed.de>
