@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.1 (24.12.2012)
+## version $VER: YAM.catalog 8.2 (27.12.2012)
 ## language türkçe
 ## codeset 0
 ## chunk AUTH Alper Sönmez <amithlondestek@gmail.com>
@@ -18,7 +18,7 @@
 ; new entries. And if you delete an entry NEVER reorder or resort
 ; the ID numbers accordingly.
 ;
-;#version 7
+;#version 8
 ;#language english
 ;
 ; General
@@ -6575,7 +6575,7 @@ _Güncellemeleri kontrol et
 ; Check for up_dates
 ;
 MSG_CO_SEARCHNOW
-_Þimdi kontol et
+_Þimdi kontrol et
 ; Check _now
 ;
 MSG_CO_LASTSEARCH
@@ -10353,7 +10353,7 @@ alt-sýnýfý olarak oluþturulamadý.
 ; CLASS,SUPERCLASS
 ;
 MSG_ER_MORPHOS_REXX_WARNING
-YAM MorphOS sisteminizde, çalýþmayan bir ARexx \
+YAM, MorphOS sisteminizde çalýþmayan bir ARexx \
 uygulamasý olduðu bilinen bir 'rexxsyslib.library' sürümünü \
 kullandýðýnýzý tespit etti.\n\
 \n\

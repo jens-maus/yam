@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-12-27 Alper Sönmez <amithlondestek@gmail.com>
+
+ * locale/turkish.ct: Some spell corrections and fixes.
+
 2012-12-26 Jens Langner <Jens.Langner@light-speed.de>
 
   * Makefile, Makefile.dep: reworked dependency generation to not generate a static
