@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-12-31 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: fixed some typos.
+
 2012-12-31 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/WriteWindow.c: sort dynamically added objects using MUIM_Group_Sort

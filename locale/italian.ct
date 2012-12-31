@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.1 (23.12.2012)
+## version $VER: YAM.catalog 8.1 (31.12.2012)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -540,12 +540,12 @@ Per favore digita una password per sbloccarla:
 ;
 MSG_MA_ReplyReq
 Il messaggio selezionato ha destinatari multipli.\n\
-Si desidera inviare una risposta a...
+Si desidera inviare la risposta al/ai...
 ; The selected message has multiple recipients.\n\
 ; You want to send the reply to the...
 ;
 MSG_MA_ReplyReqOpt
-*_mittente|mittente e _tutti i destinatari|_destinatari|_Annulla
+*_Mittente|Mittente e _tutti i destinatari|_Destinatari|_Annulla
 ; *_sender|sender and _all recipients|_recipients|_Cancel
 ;
 MSG_MA_CompareReq
