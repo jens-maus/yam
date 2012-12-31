@@ -5,16 +5,23 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2012-12-31 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/WriteWindow.c: sort dynamically added objects using MUIM_Group_Sort
+    instead of MUIM_Group_MoveMember as this method seems to be broken in MUI
+    3.8. This closes #363.
+
 2012-12-27 Alper Sönmez <amithlondestek@gmail.com>
 
  * locale/turkish.ct: Some spell corrections and fixes.
 
 2012-12-26 Jens Langner <Jens.Langner@light-speed.de>
 
-  * Makefile, Makefile.dep: reworked dependency generation to not generate a static
-    'Makefile.dep' file for all supported platforms but to perform an auto dependency
-    checkin on the fly instead. This makes the manual regeneration of the Makefile.dep
-    file obsolete and should improve dependency checking significantly.
+  * Makefile, Makefile.dep: reworked dependency generation to not generate a
+    static 'Makefile.dep' file for all supported platforms but to perform an
+    auto dependency checkin on the fly instead. This makes the manual
+    regeneration of the Makefile.dep file obsolete and should improve
+    dependency checking significantly.
 
 2012-12-24 Alper Sönmez <amithlondestek@gmail.com>
 

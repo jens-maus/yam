@@ -93,7 +93,10 @@
 struct Data
 {
   Object *RG_PAGE;
+  Object *LB_TO;
   Object *ST_TO;
+  Object *GR_TO;
+  Object *LB_SUBJECT;
   Object *ST_SUBJECT;
   Object *TX_POSI;
   Object *TE_EDIT;
@@ -875,8 +878,8 @@ OVERLOAD(OM_NEW)
         MUIA_Window_Menustrip, menuStripObject,
         WindowContents, VGroup,
           Child, ColGroup(2),
-            Child, Label2(tr(MSG_WR_BounceTo)),
-            Child, MakeAddressField(&data->ST_TO, tr(MSG_WR_BounceTo), MSG_HELP_WR_ST_TO, ABM_TO, data->windowNumber, AFF_ALLOW_MULTI|AFF_EXTERNAL_SHORTCUTS),
+            Child, data->LB_TO = Label2(tr(MSG_WR_BounceTo)),
+            Child, data->GR_TO = MakeAddressField(&data->ST_TO, tr(MSG_WR_BounceTo), MSG_HELP_WR_ST_TO, ABM_TO, data->windowNumber, AFF_ALLOW_MULTI|AFF_EXTERNAL_SHORTCUTS),
           End,
           Child, ColGroup(4),
             Child, data->BT_SEND   = MakeButton(tr(MSG_WR_SENDNOW)),
@@ -1091,8 +1094,8 @@ OVERLOAD(OM_NEW)
                     MUIA_ControlChar, ShortCut(tr(MSG_WR_From)),
                   End,
 
-                  Child, Label(tr(MSG_WR_To)),
-                  Child, MakeAddressField(&data->ST_TO, tr(MSG_WR_To), MSG_HELP_WR_ST_TO, ABM_TO, data->windowNumber, AFF_ALLOW_MULTI|AFF_EXTERNAL_SHORTCUTS),
+                  Child, data->LB_TO = Label(tr(MSG_WR_To)),
+                  Child, data->GR_TO = MakeAddressField(&data->ST_TO, tr(MSG_WR_To), MSG_HELP_WR_ST_TO, ABM_TO, data->windowNumber, AFF_ALLOW_MULTI|AFF_EXTERNAL_SHORTCUTS),
 
                   Child, data->LB_CC = Label("_CC"),
                   Child, data->GR_CC = MakeAddressField(&data->ST_CC, tr(MSG_WR_CopyTo), MSG_HELP_WR_ST_CC, ABM_CC, data->windowNumber, AFF_ALLOW_MULTI|AFF_EXTERNAL_SHORTCUTS),
@@ -1103,7 +1106,7 @@ OVERLOAD(OM_NEW)
                   Child, data->LB_REPLYTO = Label(tr(MSG_WR_ReplyTo)),
                   Child, data->GR_REPLYTO = MakeAddressField(&data->ST_REPLYTO, tr(MSG_WR_ReplyTo), MSG_HELP_WR_ST_REPLYTO, ABM_REPLYTO, data->windowNumber, AFF_ALLOW_MULTI|AFF_EXTERNAL_SHORTCUTS),
 
-                  Child, Label(tr(MSG_WR_Subject)),
+                  Child, data->LB_SUBJECT = Label(tr(MSG_WR_Subject)),
                   Child, data->ST_SUBJECT = BetterStringObject,
                     StringFrame,
                     MUIA_BetterString_NoShortcuts, TRUE,
@@ -4349,7 +4352,7 @@ DECLARE(DoAutoSave)
         {
           // the mail is no longer modified
           data->mailModified = FALSE;
-        
+
           // we just saved the mail text, so it is no longer modified
           set(data->TE_EDIT, MUIA_TextEditor_HasChanged, FALSE);
 
@@ -4541,42 +4544,58 @@ DECLARE(HideRecipientObject) // enum RcptType rtype
     {
       case MUIV_WriteWindow_RcptType_From:
       {
-        DoMethod(data->GR_HEADER, OM_REMMEMBER, data->LB_FROM);
-        DoMethod(data->GR_HEADER, OM_REMMEMBER, data->CY_FROM);
-        data->fromRcptHidden = TRUE;
+        // we only remove it if it is already shown
+        if(data->fromRcptHidden == FALSE)
+        {
+          DoMethod(data->GR_HEADER, OM_REMMEMBER, data->LB_FROM);
+          DoMethod(data->GR_HEADER, OM_REMMEMBER, data->CY_FROM);
+          data->fromRcptHidden = TRUE;
+        }
       }
       break;
 
       case MUIV_WriteWindow_RcptType_CC:
       {
-        DoMethod(data->GR_HEADER, OM_REMMEMBER, data->LB_CC);
-        DoMethod(data->GR_HEADER, OM_REMMEMBER, data->GR_CC);
-        data->ccRcptHidden = TRUE;
+        // we only remove it if it is already shown
+        if(data->ccRcptHidden == FALSE)
+        {
+          DoMethod(data->GR_HEADER, OM_REMMEMBER, data->LB_CC);
+          DoMethod(data->GR_HEADER, OM_REMMEMBER, data->GR_CC);
+          data->ccRcptHidden = TRUE;
 
-        // make sure to set the menuitem object state correctly
-        nnset(data->MN_CC, MUIA_Menuitem_Checked, FALSE);
+          // make sure to set the menuitem object state correctly
+          nnset(data->MN_CC, MUIA_Menuitem_Checked, FALSE);
+        }
       }
       break;
 
       case MUIV_WriteWindow_RcptType_BCC:
       {
-        DoMethod(data->GR_HEADER, OM_REMMEMBER, data->LB_BCC);
-        DoMethod(data->GR_HEADER, OM_REMMEMBER, data->GR_BCC);
-        data->bccRcptHidden = TRUE;
+        // we only remove it if it is already shown
+        if(data->bccRcptHidden == FALSE)
+        {
+          DoMethod(data->GR_HEADER, OM_REMMEMBER, data->LB_BCC);
+          DoMethod(data->GR_HEADER, OM_REMMEMBER, data->GR_BCC);
+          data->bccRcptHidden = TRUE;
 
-        // make sure to set the menuitem object state correctly
-        nnset(data->MN_BCC, MUIA_Menuitem_Checked, FALSE);
+          // make sure to set the menuitem object state correctly
+          nnset(data->MN_BCC, MUIA_Menuitem_Checked, FALSE);
+        }
       }
       break;
 
       case MUIV_WriteWindow_RcptType_ReplyTo:
       {
-        DoMethod(data->GR_HEADER, OM_REMMEMBER, data->LB_REPLYTO);
-        DoMethod(data->GR_HEADER, OM_REMMEMBER, data->GR_REPLYTO);
-        data->replyToRcptHidden = TRUE;
+        // we only remove it if it is already shown
+        if(data->replyToRcptHidden == FALSE)
+        {
+          DoMethod(data->GR_HEADER, OM_REMMEMBER, data->LB_REPLYTO);
+          DoMethod(data->GR_HEADER, OM_REMMEMBER, data->GR_REPLYTO);
+          data->replyToRcptHidden = TRUE;
 
-        // make sure to set the menuitem object state correctly
-        nnset(data->MN_REPLYTO, MUIA_Menuitem_Checked, FALSE);
+          // make sure to set the menuitem object state correctly
+          nnset(data->MN_REPLYTO, MUIA_Menuitem_Checked, FALSE);
+        }
       }
       break;
 
@@ -4598,11 +4617,13 @@ DECLARE(HideRecipientObject) // enum RcptType rtype
 DECLARE(ShowRecipientObject) // enum RcptType rtype
 {
   GETDATA;
+
   ENTER();
 
   if(DoMethod(data->GR_HEADER, MUIM_Group_InitChange))
   {
-    int objPosition = 2; // 0 = first object in group, 2 because To: is always shown
+    Object *objs[14];
+    int objcnt;
 
     switch(msg->rtype)
     {
@@ -4614,9 +4635,6 @@ DECLARE(ShowRecipientObject) // enum RcptType rtype
           DoMethod(data->GR_HEADER, OM_ADDMEMBER, data->LB_FROM);
           DoMethod(data->GR_HEADER, OM_ADDMEMBER, data->CY_FROM);
 
-          objPosition -= 2; // -2 because To: is always shown but we place in front
-          DoMethod(data->GR_HEADER, MUIM_Group_MoveMember, data->LB_FROM, objPosition);
-          DoMethod(data->GR_HEADER, MUIM_Group_MoveMember, data->CY_FROM, objPosition+1);
           data->fromRcptHidden = FALSE;
         }
       }
@@ -4630,11 +4648,6 @@ DECLARE(ShowRecipientObject) // enum RcptType rtype
           DoMethod(data->GR_HEADER, OM_ADDMEMBER, data->LB_CC);
           DoMethod(data->GR_HEADER, OM_ADDMEMBER, data->GR_CC);
 
-          if(data->fromRcptHidden == FALSE)
-            objPosition += 2;
-
-          DoMethod(data->GR_HEADER, MUIM_Group_MoveMember, data->LB_CC, objPosition);
-          DoMethod(data->GR_HEADER, MUIM_Group_MoveMember, data->GR_CC, objPosition+1);
           data->ccRcptHidden = FALSE;
 
           // make sure to set the menuitem object state correctly
@@ -4651,13 +4664,6 @@ DECLARE(ShowRecipientObject) // enum RcptType rtype
           DoMethod(data->GR_HEADER, OM_ADDMEMBER, data->LB_BCC);
           DoMethod(data->GR_HEADER, OM_ADDMEMBER, data->GR_BCC);
 
-          if(data->fromRcptHidden == FALSE)
-            objPosition += 2;
-          if(data->ccRcptHidden == FALSE)
-            objPosition += 2;
-
-          DoMethod(data->GR_HEADER, MUIM_Group_MoveMember, data->LB_BCC, objPosition);
-          DoMethod(data->GR_HEADER, MUIM_Group_MoveMember, data->GR_BCC, objPosition+1);
           data->bccRcptHidden = FALSE;
 
           // make sure to set the menuitem object state correctly
@@ -4674,15 +4680,6 @@ DECLARE(ShowRecipientObject) // enum RcptType rtype
           DoMethod(data->GR_HEADER, OM_ADDMEMBER, data->LB_REPLYTO);
           DoMethod(data->GR_HEADER, OM_ADDMEMBER, data->GR_REPLYTO);
 
-          if(data->fromRcptHidden == FALSE)
-            objPosition += 2;
-          if(data->ccRcptHidden == FALSE)
-            objPosition += 2;
-          if(data->bccRcptHidden == FALSE)
-            objPosition += 2;
-
-          DoMethod(data->GR_HEADER, MUIM_Group_MoveMember, data->LB_REPLYTO, objPosition);
-          DoMethod(data->GR_HEADER, MUIM_Group_MoveMember, data->GR_REPLYTO, objPosition+1);
           data->replyToRcptHidden = FALSE;
 
           // make sure to set the menuitem object state correctly
@@ -4695,6 +4692,40 @@ DECLARE(ShowRecipientObject) // enum RcptType rtype
         // do nothing
       break;
     }
+
+    // set up the parameters for MUIM_Group_Sort as MUIM_Group_MoveMember
+    // seems to be broken in MUI 3.8
+    objs[0] = (Object *)MUIM_Group_Sort;
+
+    objcnt = 1;
+    if(data->fromRcptHidden == FALSE)
+    {
+      objs[objcnt++] = data->LB_FROM;
+      objs[objcnt++] = data->CY_FROM;
+    }
+    objs[objcnt++] = data->LB_TO;
+    objs[objcnt++] = data->GR_TO;
+    if(data->ccRcptHidden == FALSE)
+    {
+      objs[objcnt++] = data->LB_CC;
+      objs[objcnt++] = data->GR_CC;
+    }
+    if(data->bccRcptHidden == FALSE)
+    {
+      objs[objcnt++] = data->LB_BCC;
+      objs[objcnt++] = data->GR_BCC;
+    }
+    if(data->replyToRcptHidden == FALSE)
+    {
+      objs[objcnt++] = data->LB_REPLYTO;
+      objs[objcnt++] = data->GR_REPLYTO;
+    }
+    objs[objcnt++] = data->LB_SUBJECT;
+    objs[objcnt++] = data->ST_SUBJECT;
+
+    objs[objcnt] = NULL;
+
+    DoMethodA(data->GR_HEADER, (Msg)objs);
 
     DoMethod(data->GR_HEADER, MUIM_Group_ExitChange);
   }
