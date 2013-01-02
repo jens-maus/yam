@@ -3928,6 +3928,12 @@ DECLARE(ComposeMail) // enum WriteMode mode
         GetMailFile(newMailFile, sizeof(newMailFile), outfolder, wmData->refMail);
         break;
       }
+      else if(mode == WRITE_HOLD && wmData->draftMail != NULL && MailExists(wmData->draftMail, outfolder) == TRUE)
+      {
+        // reuse the mail file in the drafts folder
+        GetMailFile(newMailFile, sizeof(newMailFile), outfolder, wmData->draftMail);
+        break;
+      }
     }
     // continue
 
@@ -4041,11 +4047,17 @@ DECLARE(ComposeMail) // enum WriteMode mode
           wmData->refMail = newMail;
         }
 
-        if((mode == WRITE_SEND || mode == WRITE_QUEUE) && wmData->draftMail != NULL)
+        if(wmData->draftMail != NULL)
         {
-          // delete the mail from the drafts folder
-          MA_DeleteSingle(wmData->draftMail, DELF_AT_ONCE);
-        }
+          if(mode == WRITE_SEND || mode == WRITE_QUEUE)
+          {
+            // delete the mail from the drafts folder
+            MA_DeleteSingle(wmData->draftMail, DELF_AT_ONCE);
+          }
+
+          // remember the new mail as draft mail if we had a draft mail pointer before
+		  wmData->draftMail = newMail;
+		}
       }
 
       // cleanup the email structure
@@ -4152,7 +4164,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
       case NMM_BOUNCE:
       {
-        if(wmData->refMail)
+        if(wmData->refMail != NULL)
           AppendToLogfile(LF_ALL, 13, tr(MSG_LOG_Bouncing), AddrName(wmData->refMail->From), wmData->refMail->Subject, AddrName(newMail->To));
         else
           AppendToLogfile(LF_ALL, 13, tr(MSG_LOG_Bouncing), "<unknown>", "<unknown>", AddrName(newMail->To));
@@ -4177,16 +4189,11 @@ DECLARE(ComposeMail) // enum WriteMode mode
   // files when saving a draft mail
   FreePartsList(comp.FirstPart, mode != WRITE_DRAFT);
 
-  if(mode == WRITE_DRAFT)
-  {
-    // remember the new mail pointer in draft mode
-    if(newMail != NULL)
-      wmData->draftMail = newMail;
-  }
-  else
+  if(mode != WRITE_DRAFT)
   {
     // cleanup certain references if the window is to be closed
     wmData->refMail = NULL;
+    wmData->draftMail = NULL;
 
     if(wmData->refMailList != NULL)
     {

@@ -11,6 +11,9 @@ $URL$
     be hidden although it should have remained visible.
   * YAM_UT.c, misc: fixed several wrong comparisons of IoErr()==0 being treated
     as an error.
+  * mui/WriteWindow.c, YAM_WR.c: editing a mail in the drafts folder and putting
+    it on hold again will no longer create an invisible duplicate mail file. This
+    fixes the recently discussed issue on the YAM mailing list.
 
 2012-12-31 Samir Hawamdeh <s.hawamdeh@tin.it>
 

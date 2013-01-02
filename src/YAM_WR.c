@@ -1774,9 +1774,13 @@ struct WriteMailData *NewWriteMailWindow(struct Mail *mail, const int flags)
 
       setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
 
-      wmData->refMail = mail;
+      // set either the draft or the reference mail pointer accordingly
+      if(isDraftsFolder(mail->Folder))
+        wmData->draftMail = mail;
+      else
+        wmData->refMail = mail;
 
-      if(wmData->refMail != NULL)
+      if(mail != NULL)
       {
         struct ExtendedMail *email;
 
@@ -1941,7 +1945,11 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
 
       setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
 
-      wmData->refMail = mail;
+      // set either the draft or the reference mail pointer accordingly
+      if(isDraftsFolder(mail->Folder))
+        wmData->draftMail = mail;
+      else
+        wmData->refMail = mail;
 
       if((email = MA_ExamineMail(folder, mail->MailFile, TRUE)) == NULL)
       {
