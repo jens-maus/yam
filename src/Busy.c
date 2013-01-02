@@ -180,7 +180,8 @@ void BusyEnd(struct BusyNode *busy)
       // normal list.
       if(busy->type == BUSY_AREXX)
         last = (struct BusyNode *)GetTail((struct List *)&G->arexxBusyList);
-      if(busy == NULL)
+      // fall back to the normal busy actions if there is no further ARexx busy operation
+      if(last == NULL)
         last = (struct BusyNode *)GetTail((struct List *)&G->normalBusyList);
       BusyShow(last);
 
