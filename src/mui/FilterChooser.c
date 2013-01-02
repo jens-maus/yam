@@ -244,7 +244,8 @@ DECLARE(UpdateFilters)
           // sort the list of filters
           qsort(data->filterArray, filterIndex, sizeof(char *), compareFilters);
 
-          if((error = IoErr()) != ERROR_NO_MORE_ENTRIES)
+          error = IoErr();
+          if(error != 0 && error != ERROR_NO_MORE_ENTRIES)
           {
             E(DBF_ALWAYS, "%s failed, error %ld", __FUNCTION__, error);
          }

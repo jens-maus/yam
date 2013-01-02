@@ -9,6 +9,8 @@ $URL$
 
   * Busy.c: fixed a typo in the busy bar handling which caused the busy bar to
     be hidden although it should have remained visible.
+  * YAM_UT.c, misc: fixed several wrong comparisons of IoErr()==0 being treated
+    as an error.
 
 2012-12-31 Samir Hawamdeh <s.hawamdeh@tin.it>
 

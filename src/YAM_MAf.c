@@ -3322,7 +3322,8 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
           }
         }
 
-        if((error = IoErr()) != ERROR_NO_MORE_ENTRIES)
+        error = IoErr();
+        if(error != 0 && error != ERROR_NO_MORE_ENTRIES)
           E(DBF_FOLDER, "ExamineDir() failed, error %ld", error);
 
         ReleaseDirContext(context);

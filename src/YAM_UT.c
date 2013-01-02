@@ -1632,7 +1632,8 @@ BOOL DeleteMailDir(const char *dir, BOOL isroot)
     {
       LONG error;
 
-      if((error = IoErr()) != ERROR_NO_MORE_ENTRIES)
+      error = IoErr();
+      if(error != 0 && error != ERROR_NO_MORE_ENTRIES)
         E(DBF_FOLDER, "ExamineDir() failed, error %ld", error);
     }
 
@@ -1707,13 +1708,13 @@ LONG FileCount(const char *directory, const char *pattern)
 
     #if defined(__amigaos4__)
     // dos.library before 52.17 has a small bug and needs a hook for the matching process
-    if((context = ObtainDirContextTags(EX_StringName,  (ULONG)directory,
+    if((context = ObtainDirContextTags(EX_StringName, (ULONG)directory,
                                        EX_DataFields, EXF_TYPE|EXF_NAME,
                                        EX_MatchString, (ULONG)parsedPattern,
-                                       EX_MatchFunc,   LIB_VERSION_IS_AT_LEAST(DOSBase, 52, 17) ? NULL : &ExamineDirMatchHook,
+                                       EX_MatchFunc, LIB_VERSION_IS_AT_LEAST(DOSBase, 52, 17) ? NULL : &ExamineDirMatchHook,
                                        TAG_DONE)) != NULL)
     #else
-    if((context = ObtainDirContextTags(EX_StringName,  (ULONG)directory,
+    if((context = ObtainDirContextTags(EX_StringName, (ULONG)directory,
                                        EX_DataFields, EXF_TYPE|EXF_NAME,
                                        EX_MatchString, (ULONG)parsedPattern,
                                        TAG_DONE)) != NULL)
@@ -1729,7 +1730,8 @@ LONG FileCount(const char *directory, const char *pattern)
           result++;
       }
 
-      if((error = IoErr()) != ERROR_NO_MORE_ENTRIES)
+      error = IoErr();
+      if(error != 0 && error != ERROR_NO_MORE_ENTRIES)
       {
         E(DBF_ALWAYS, "FileCount() failed, error %ld", error);
         result = -1;

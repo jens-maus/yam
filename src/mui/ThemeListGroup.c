@@ -258,7 +258,8 @@ DECLARE(Update)
         W(DBF_CONFIG, "unknown file '%s' in themes directory ignored", ed->Name);
     }
 
-    if((error = IoErr()) != ERROR_NO_MORE_ENTRIES)
+    error = IoErr();
+    if(error != 0 && error != ERROR_NO_MORE_ENTRIES)
       E(DBF_CONFIG, "ExamineDir() failed, error %ld", error);
 
     // now we have to check which item we should set active
