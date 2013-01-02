@@ -3928,12 +3928,6 @@ DECLARE(ComposeMail) // enum WriteMode mode
         GetMailFile(newMailFile, sizeof(newMailFile), outfolder, wmData->refMail);
         break;
       }
-      else if(mode == WRITE_HOLD && wmData->draftMail != NULL && MailExists(wmData->draftMail, outfolder) == TRUE)
-      {
-        // reuse the mail file in the drafts folder
-        GetMailFile(newMailFile, sizeof(newMailFile), outfolder, wmData->draftMail);
-        break;
-      }
     }
     // continue
 
@@ -3943,7 +3937,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
     default:
     {
-      if(mode == WRITE_DRAFT && wmData->draftMail != NULL && MailExists(wmData->draftMail, outfolder) == TRUE)
+      if(isDraftsFolder(outfolder) && wmData->draftMail != NULL && MailExists(wmData->draftMail, outfolder) == TRUE)
         GetMailFile(newMailFile, sizeof(newMailFile), outfolder, wmData->draftMail);
       else
         MA_NewMailFile(outfolder, newMailFile, sizeof(newMailFile));
@@ -4047,7 +4041,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
           wmData->refMail = newMail;
         }
 
-        if(wmData->draftMail != NULL)
+        if(wmData->draftMail != NULL || mode == WRITE_DRAFT)
         {
           if(mode == WRITE_SEND || mode == WRITE_QUEUE)
           {
