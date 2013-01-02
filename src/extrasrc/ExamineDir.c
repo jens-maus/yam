@@ -235,6 +235,12 @@ struct ExamineData *ExamineDir(APTR context)
 
   if(ctx->eaData == NULL && ctx->more == 0)
   {
+    // turn the error number of the last ExAll() call into "no more entries"
+    // if there was no error and no further files to be handled as this is
+    // how ExamineDir() is documented to react in this situation
+    if(ctx->exAllError == 0)
+      ctx->exAllError = ERROR_NO_MORE_ENTRIES;
+
     // restore the error number of the last ExAll() call
     SetIoErr(ctx->exAllError);
   }
