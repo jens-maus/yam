@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-01-02 Jens Langner <Jens.Langner@light-speed.de>
+
+  * all: bumped the copyright year in all our source and header files to match
+    the new year.
+  
 2013-01-01 Thore Böckelmann <tboeckel@gmx.de>
 
   * Busy.c: fixed a typo in the busy bar handling which caused the busy bar to
