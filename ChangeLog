@@ -14,6 +14,11 @@ $URL$
     mail as modified.
   * mui/WriteWindow.c: added some more objects to trigger a "mail is modified"
     action.
+  * mui/Recipientstring.c: don't try to normalize the string unless it is really
+    necessary as this might trigger resolving actions which in turn cause the
+    contents to be treated as modified even if they were not modified at all. All
+    in all this might have declared a mail being edited as modified even if
+    nothing was changed.
 
 2013-01-02 Jens Langner <Jens.Langner@light-speed.de>
 

@@ -175,15 +175,15 @@ static char *rcptok(char *s, BOOL *quote)
 /// NormalizeSelection()
 // normalized/clears the selection and removes eventually existing
 // ' >> ' marks.
-static void NormalizeSelection(Object *obj, BOOL clear)
+static void NormalizeSelection(Object *obj)
 {
-  LONG start = DoMethod(obj, METHOD(RecipientStart));
   char *rcp = (char *)xget(obj, MUIA_String_Contents);
 
   ENTER();
 
   if(rcp != NULL && rcp[0] != '\0')
   {
+    LONG start = DoMethod(obj, METHOD(RecipientStart));
     LONG rcpSize;
     LONG marksSize = 0;
     char *p;
@@ -198,10 +198,10 @@ static void NormalizeSelection(Object *obj, BOOL clear)
       marksSize = (LONG)(p + 4 - rcp);
       rcp = strdup(p + 4);
     }
-    else if(clear)
-      rcp = strdup(rcp);
     else
+    {
       rcp = NULL;
+    }
 
     if(rcp != NULL)
     {
@@ -550,7 +550,7 @@ OVERLOAD(MUIM_GoInactive)
   // call NormalizeSelection() to make sure that
   // no ' >> ' marks are kept when the gadget is going
   // into inactive state.
-  NormalizeSelection(obj, TRUE);
+  NormalizeSelection(obj);
 
   // only if the matchwindow is not active we can close it on a inactive state of
   // this object
@@ -775,7 +775,7 @@ OVERLOAD(MUIM_HandleEvent)
               // no ' >> ' marks are kept when the user wants to continue
               // with either the next/prev or by simply pressing left/right
               // to finish the selection.
-              NormalizeSelection(obj, FALSE);
+              NormalizeSelection(obj;
 
               closeMatchWin = TRUE;
             }
