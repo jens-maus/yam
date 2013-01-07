@@ -5,11 +5,19 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-01-07 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_WR.c: rearranged the code a bit to guarantee that resetting the modified
+    state of a to be edited mail is really done as the last action, because
+    setting the active object (i.e. the TO string) and resolving the address will
+    cause a notification on the (possibly) modified content and hence mark the
+    mail as modified.
+
 2013-01-02 Jens Langner <Jens.Langner@light-speed.de>
 
   * all: bumped the copyright year in all our source and header files to match
     the new year.
-  
+
 2013-01-01 Thore Böckelmann <tboeckel@gmx.de>
 
   * Busy.c: fixed a typo in the busy bar handling which caused the busy bar to

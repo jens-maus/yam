@@ -1868,12 +1868,12 @@ struct WriteMailData *NewWriteMailWindow(struct Mail *mail, const int flags)
       // update the message text
       DoMethod(wmData->window, MUIM_WriteWindow_ReloadText, FALSE);
 
-      // start with an unmodified message
-      set(wmData->window, MUIA_WriteWindow_Modified, FALSE);
-
       // make sure the window is opened
       if(quiet == FALSE)
         SafeOpenWindow(wmData->window);
+
+      // start with an unmodified message
+      set(wmData->window, MUIA_WriteWindow_Modified, FALSE);
 
       if(C->LaunchAlways == TRUE && quiet == FALSE)
         DoMethod(wmData->window, MUIM_WriteWindow_LaunchEditor);
@@ -2103,15 +2103,15 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
       // update the message text
       DoMethod(wmData->window, MUIM_WriteWindow_ReloadText, FALSE);
 
-      // start with an unmodified message
-      set(wmData->window, MUIA_WriteWindow_Modified, FALSE);
-
       // make sure the window is opened
       if(quiet == FALSE)
         SafeOpenWindow(wmData->window);
 
       p = (char *)xget(wmData->window, MUIA_WriteWindow_To);
       set(wmData->window, MUIA_WriteWindow_ActiveObject, p[0] != '\0' ? MUIV_WriteWindow_ActiveObject_TextEditor : MUIV_WriteWindow_ActiveObject_To);
+
+      // start with an unmodified message
+      set(wmData->window, MUIA_WriteWindow_Modified, FALSE);
 
       if(C->LaunchAlways == TRUE && quiet == FALSE)
         DoMethod(wmData->window, MUIM_WriteWindow_LaunchEditor);
@@ -2354,15 +2354,15 @@ struct WriteMailData *NewForwardMailWindow(struct MailList *mlist, const int fla
       // update the message text
       DoMethod(wmData->window, MUIM_WriteWindow_ReloadText, FALSE);
 
-      // start with an unmodified message
-      set(wmData->window, MUIA_WriteWindow_Modified, FALSE);
-
       // make sure the window is opened
       if(quiet == FALSE)
         SafeOpenWindow(wmData->window);
 
       // set the active object of the window
       set(wmData->window, MUIA_WriteWindow_ActiveObject, MUIV_WriteWindow_ActiveObject_To);
+
+      // start with an unmodified message
+      set(wmData->window, MUIA_WriteWindow_Modified, FALSE);
 
       if(C->LaunchAlways == TRUE && quiet == FALSE)
         DoMethod(wmData->window, MUIM_WriteWindow_LaunchEditor);
@@ -3074,15 +3074,15 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
       // update the message text
       DoMethod(wmData->window, MUIM_WriteWindow_ReloadText, FALSE);
 
-      // start with an unmodified message
-      set(wmData->window, MUIA_WriteWindow_Modified, FALSE);
-
       // make sure the window is opened
       if(quiet == FALSE)
         SafeOpenWindow(wmData->window);
 
       // set the active object of the window
       set(wmData->window, MUIA_WriteWindow_ActiveObject, MUIV_WriteWindow_ActiveObject_TextEditor);
+
+      // start with an unmodified message
+      set(wmData->window, MUIA_WriteWindow_Modified, FALSE);
 
       if(C->LaunchAlways == TRUE && quiet == FALSE)
         DoMethod(wmData->window, MUIM_WriteWindow_LaunchEditor);
@@ -3120,15 +3120,15 @@ struct WriteMailData *NewBounceMailWindow(struct Mail *mail, const int flags)
   {
     wmData->refMail = mail;
 
-    // start with an unmodified message
-    set(wmData->window, MUIA_WriteWindow_Modified, FALSE);
-
     // make sure the window is opened
     if(quiet == FALSE)
       SafeOpenWindow(wmData->window);
 
     // set the active object of the window
     set(wmData->window, MUIA_WriteWindow_ActiveObject, MUIV_WriteWindow_ActiveObject_To);
+
+    // start with an unmodified message
+    set(wmData->window, MUIA_WriteWindow_Modified, FALSE);
   }
 
   RETURN(wmData);
