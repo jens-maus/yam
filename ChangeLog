@@ -12,6 +12,8 @@ $URL$
     setting the active object (i.e. the TO string) and resolving the address will
     cause a notification on the (possibly) modified content and hence mark the
     mail as modified.
+  * mui/WriteWindow.c: added some more objects to trigger a "mail is modified"
+    action.
 
 2013-01-02 Jens Langner <Jens.Langner@light-speed.de>
 

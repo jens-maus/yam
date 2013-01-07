@@ -1531,6 +1531,8 @@ OVERLOAD(OM_NEW)
       DoMethod(data->ST_BCC,        MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
       DoMethod(data->ST_REPLYTO,    MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
       DoMethod(data->ST_EXTHEADER,  MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->ST_CTYPE,      MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->ST_DESC,       MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
       DoMethod(data->PO_CHARSET,    MUIM_Notify, MUIA_Text_Contents,   MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
       DoMethod(data->CY_IMPORTANCE, MUIM_Notify, MUIA_Cycle_Active,    MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
       DoMethod(data->CY_SECURITY,   MUIM_Notify, MUIA_Cycle_Active,    MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
