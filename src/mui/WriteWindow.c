@@ -4625,7 +4625,10 @@ DECLARE(ShowRecipientObject) // enum RcptType rtype
 
   if(DoMethod(data->GR_HEADER, MUIM_Group_InitChange))
   {
-    Object *objs[14];
+    struct {
+      ULONG MethodID;
+      Object *objs[14];
+    } sortMsg;
     int objcnt;
 
     switch(msg->rtype)
@@ -4698,37 +4701,39 @@ DECLARE(ShowRecipientObject) // enum RcptType rtype
 
     // set up the parameters for MUIM_Group_Sort as MUIM_Group_MoveMember
     // seems to be broken in MUI 3.8
-    objs[0] = (Object *)MUIM_Group_Sort;
+    sortMsg.MethodID = MUIM_Group_Sort;
 
-    objcnt = 1;
+    objcnt = 0;
     if(data->fromRcptHidden == FALSE)
     {
-      objs[objcnt++] = data->LB_FROM;
-      objs[objcnt++] = data->CY_FROM;
+      sortMsg.objs[objcnt] = data->LB_FROM; objcnt++;
+      sortMsg.objs[objcnt] = data->CY_FROM; objcnt++;
     }
-    objs[objcnt++] = data->LB_TO;
-    objs[objcnt++] = data->GR_TO;
+    sortMsg.objs[objcnt] = data->LB_TO; objcnt++;
+    sortMsg.objs[objcnt] = data->GR_TO; objcnt++;
     if(data->ccRcptHidden == FALSE)
     {
-      objs[objcnt++] = data->LB_CC;
-      objs[objcnt++] = data->GR_CC;
+      sortMsg.objs[objcnt] = data->LB_CC; objcnt++;
+      sortMsg.objs[objcnt] = data->GR_CC; objcnt++;
     }
     if(data->bccRcptHidden == FALSE)
     {
-      objs[objcnt++] = data->LB_BCC;
-      objs[objcnt++] = data->GR_BCC;
+      sortMsg.objs[objcnt] = data->LB_BCC; objcnt++;
+      sortMsg.objs[objcnt] = data->GR_BCC; objcnt++;
     }
     if(data->replyToRcptHidden == FALSE)
     {
-      objs[objcnt++] = data->LB_REPLYTO;
-      objs[objcnt++] = data->GR_REPLYTO;
+      sortMsg.objs[objcnt] = data->LB_REPLYTO; objcnt++;
+      sortMsg.objs[objcnt] = data->GR_REPLYTO; objcnt++;
     }
-    objs[objcnt++] = data->LB_SUBJECT;
-    objs[objcnt++] = data->ST_SUBJECT;
+    sortMsg.objs[objcnt] = data->LB_SUBJECT; objcnt++;
+    sortMsg.objs[objcnt] = data->ST_SUBJECT; objcnt++;
 
-    objs[objcnt] = NULL;
+    // terminate the array
+    sortMsg.objs[objcnt] = NULL;
 
-    DoMethodA(data->GR_HEADER, (Msg)objs);
+    // sort the objects
+    DoMethodA(data->GR_HEADER, (Msg)&sortMsg);
 
     DoMethod(data->GR_HEADER, MUIM_Group_ExitChange);
   }
