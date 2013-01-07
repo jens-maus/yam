@@ -775,7 +775,7 @@ OVERLOAD(MUIM_HandleEvent)
               // no ' >> ' marks are kept when the user wants to continue
               // with either the next/prev or by simply pressing left/right
               // to finish the selection.
-              NormalizeSelection(obj;
+              NormalizeSelection(obj);
 
               closeMatchWin = TRUE;
             }
