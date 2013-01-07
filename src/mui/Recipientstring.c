@@ -178,55 +178,61 @@ static char *rcptok(char *s, BOOL *quote)
 static void NormalizeSelection(Object *obj, BOOL clear)
 {
   LONG start = DoMethod(obj, METHOD(RecipientStart));
-  LONG rcpSize;
-  LONG marksSize = 0;
-  char *rcp = (char *)xget(obj, MUIA_String_Contents) + start;
-  char *p;
+  char *rcp = (char *)xget(obj, MUIA_String_Contents);
 
   ENTER();
 
-  // Skip the " >> " marks if they have been inserted before.
-  // Also remember how many chars have been skipped, as the
-  // complete current recipient will be replaced later.
-  if((p = strstr(rcp, " >> ")) != NULL)
+  if(rcp != NULL && rcp[0] != '\0')
   {
-    marksSize = (LONG)(p + 4 - rcp);
-    rcp = strdup(p + 4);
-  }
-  else if(clear)
-    rcp = strdup(rcp);
-  else
-    rcp = NULL;
+    LONG rcpSize;
+    LONG marksSize = 0;
+    char *p;
 
-  if(rcp != NULL)
-  {
-    // calculate the length of the current recipient
-    if((p = strchr(rcp, ',')) != NULL)
-      rcpSize = (LONG)(p - rcp);
+    rcp += start;
+
+    // Skip the " >> " marks if they have been inserted before.
+    // Also remember how many chars have been skipped, as the
+    // complete current recipient will be replaced later.
+    if((p = strstr(rcp, " >> ")) != NULL)
+    {
+      marksSize = (LONG)(p + 4 - rcp);
+      rcp = strdup(p + 4);
+    }
+    else if(clear)
+      rcp = strdup(rcp);
     else
-      rcpSize = strlen(rcp);
+      rcp = NULL;
 
-    // NUL-terminate this recipient
-    rcp[rcpSize] = '\0';
+    if(rcp != NULL)
+    {
+      // calculate the length of the current recipient
+      if((p = strchr(rcp, ',')) != NULL)
+        rcpSize = (LONG)(p - rcp);
+      else
+        rcpSize = strlen(rcp);
 
-    // stop betterstring from sending out notifications
-    set(obj, MUIA_BetterString_NoNotify, TRUE);
+      // NUL-terminate this recipient
+      rcp[rcpSize] = '\0';
 
-    // remove the current recipient from the string, including the " >> " marks
-    // and everything typed so far
-    xset(obj, MUIA_String_BufferPos, start,
-              MUIA_BetterString_SelectSize, rcpSize + marksSize);
+      // stop betterstring from sending out notifications
+      set(obj, MUIA_BetterString_NoNotify, TRUE);
 
-    DoMethod(obj, MUIM_BetterString_ClearSelected);
+      // remove the current recipient from the string, including the " >> " marks
+      // and everything typed so far
+      xset(obj, MUIA_String_BufferPos, start,
+                MUIA_BetterString_SelectSize, rcpSize + marksSize);
 
-    // now insert the correct recipient again
-    DoMethod(obj, MUIM_BetterString_Insert, rcp, start);
+      DoMethod(obj, MUIM_BetterString_ClearSelected);
 
-    // turn notifications back on and trigger one
-    // immediately since Insert() was called.
-    set(obj, MUIA_BetterString_NoNotify, FALSE);
+      // now insert the correct recipient again
+      DoMethod(obj, MUIM_BetterString_Insert, rcp, start);
 
-    free(rcp);
+      // turn notifications back on and trigger one
+      // immediately since Insert() was called.
+      set(obj, MUIA_BetterString_NoNotify, FALSE);
+
+      free(rcp);
+    }
   }
 
   LEAVE();
