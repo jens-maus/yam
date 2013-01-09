@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-01-09 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/WriteWindow.c: check the recipient to be non-empty when setting CC, BCC
+    or ReplyTo recipients and show the corresponding hidden objects only if they
+    need to be visible.
+
 2013-01-07 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_WR.c: rearranged the code a bit to guarantee that resetting the modified

@@ -1785,8 +1785,11 @@ OVERLOAD(OM_SET)
 
       case ATTR(CC):
       {
-        setstring(data->ST_CC, tag->ti_Data);
-        DoMethod(obj, METHOD(ShowRecipientObject), MUIV_WriteWindow_RcptType_CC);
+        char *str = (char *)tag->ti_Data;
+
+        setstring(data->ST_CC, str);
+        if(str != NULL && str[0] != '\0')
+          DoMethod(obj, METHOD(ShowRecipientObject), MUIV_WriteWindow_RcptType_CC);
 
         // make the superMethod call ignore those tags
         tag->ti_Tag = TAG_IGNORE;
@@ -1795,8 +1798,11 @@ OVERLOAD(OM_SET)
 
       case ATTR(BCC):
       {
-        setstring(data->ST_BCC, tag->ti_Data);
-        DoMethod(obj, METHOD(ShowRecipientObject), MUIV_WriteWindow_RcptType_BCC);
+        char *str = (char *)tag->ti_Data;
+
+        setstring(data->ST_BCC, str);
+        if(str != NULL && str[0] != '\0')
+          DoMethod(obj, METHOD(ShowRecipientObject), MUIV_WriteWindow_RcptType_BCC);
 
         // make the superMethod call ignore those tags
         tag->ti_Tag = TAG_IGNORE;
@@ -1805,8 +1811,11 @@ OVERLOAD(OM_SET)
 
       case ATTR(ReplyTo):
       {
-        setstring(data->ST_REPLYTO, tag->ti_Data);
-        DoMethod(obj, METHOD(ShowRecipientObject), MUIV_WriteWindow_RcptType_ReplyTo);
+        char *str = (char *)tag->ti_Data;
+
+        setstring(data->ST_REPLYTO, str);
+        if(str != NULL && str[0] != '\0')
+          DoMethod(obj, METHOD(ShowRecipientObject), MUIV_WriteWindow_RcptType_ReplyTo);
 
         // make the superMethod call ignore those tags
         tag->ti_Tag = TAG_IGNORE;
