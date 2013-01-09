@@ -86,18 +86,18 @@ OVERLOAD(OM_NEW)
     { TB_MAIN_DELETE,   TB_MAIN_DELETE,   tr(MSG_MA_TBDelete),  tr(MSG_HELP_MA_BT_DELETE),      0, 0, NULL, NULL },
     { TB_MAIN_GETADDR,  TB_MAIN_GETADDR,  tr(MSG_MA_TBGetAddr), tr(MSG_HELP_MA_BT_GETADDRESS),  0, 0, NULL, NULL },
 
-    { MUIV_TheBar_BarSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
+    { MUIV_TheBar_ButtonSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
 
     { TB_MAIN_NEWMAIL,  TB_MAIN_NEWMAIL,  tr(MSG_MA_TBWrite),   tr(MSG_HELP_MA_BT_WRITE),       0, 0, NULL, NULL },
     { TB_MAIN_REPLY,    TB_MAIN_REPLY,    tr(MSG_MA_TBReply),   tr(MSG_HELP_MA_BT_REPLY),       0, 0, NULL, NULL },
     { TB_MAIN_FORWARD,  TB_MAIN_FORWARD,  tr(MSG_MA_TBForward), tr(MSG_HELP_MA_BT_FORWARD),     0, 0, NULL, NULL },
 
-    { MUIV_TheBar_BarSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
+    { MUIV_TheBar_ButtonSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
 
     { TB_MAIN_GETMAIL,  TB_MAIN_GETMAIL,  tr(MSG_MA_TBGetMail), tr(MSG_HELP_MA_BT_POPNOW),      0, 0, NULL, NULL },
     { TB_MAIN_SENDALL,  TB_MAIN_SENDALL,  tr(MSG_MA_TBSendAll), tr(MSG_HELP_MA_BT_SENDALL),     0, 0, NULL, NULL },
 
-    { MUIV_TheBar_BarSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
+    { MUIV_TheBar_ButtonSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
 
     // the "Spam" button is disabled by default
     // the "not Spam" button is hidden by default
@@ -116,18 +116,18 @@ OVERLOAD(OM_NEW)
     { TB_MAIN_DELETE,   TB_MAIN_DELETE,   NULL,                 NULL,                           0, 0, NULL, NULL },
     { TB_MAIN_GETADDR,  TB_MAIN_GETADDR,  NULL,                 NULL,                           0, 0, NULL, NULL },
 
-    { MUIV_TheBar_BarSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
+    { MUIV_TheBar_ButtonSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
 
     { TB_MAIN_NEWMAIL,  TB_MAIN_NEWMAIL,  NULL,                 NULL,                           0, 0, NULL, NULL },
     { TB_MAIN_REPLY,    TB_MAIN_REPLY,    NULL,                 NULL,                           0, 0, NULL, NULL },
     { TB_MAIN_FORWARD,  TB_MAIN_FORWARD,  NULL,                 NULL,                           0, 0, NULL, NULL },
 
-    { MUIV_TheBar_BarSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
+    { MUIV_TheBar_ButtonSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
 
     { TB_MAIN_GETMAIL,  TB_MAIN_GETMAIL,  NULL,                 NULL,                           0, 0, NULL, NULL },
     { TB_MAIN_SENDALL,  TB_MAIN_SENDALL,  NULL,                 NULL,                           0, 0, NULL, NULL },
 
-    { MUIV_TheBar_BarSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
+    { MUIV_TheBar_ButtonSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
 
     // the "Spam" button is disabled by default
     // the "not Spam" button is hidden by default

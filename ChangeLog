@@ -10,6 +10,10 @@ $URL$
   * mui/WriteWindow.c: check the recipient to be non-empty when setting CC, BCC
     or ReplyTo recipients and show the corresponding hidden objects only if they
     need to be visible.
+  * mui/#?Toolbar.c: replaced all bar spacers by button spacers. This allows the
+    user to choose whether a bar or a simple space will be displayed and the
+    spacer's size can be configured as well. All in all this gives the user much
+    more flexibility for the tool bars.
 
 2013-01-07 Thore Böckelmann <tboeckel@gmx.de>
 

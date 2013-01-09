@@ -88,20 +88,20 @@ OVERLOAD(OM_NEW)
       { TB_READ_PREVTHREAD, TB_READ_PREVTHREAD, tr(MSG_RE_TBPrevTh),  tr(MSG_HELP_RE_BT_QUESTION),    0, 0, NULL, NULL },
       { TB_READ_NEXTTHREAD, TB_READ_NEXTTHREAD, tr(MSG_RE_TBNextTh),  tr(MSG_HELP_RE_BT_ANSWER),      0, 0, NULL, NULL },
 
-      { MUIV_TheBar_BarSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
+      { MUIV_TheBar_ButtonSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
 
       { TB_READ_DISPLAY,    TB_READ_DISPLAY,    tr(MSG_RE_TBDisplay), tr(MSG_HELP_RE_BT_DISPLAY),     0, 0, NULL, NULL },
       { TB_READ_SAVE,       TB_READ_SAVE,       tr(MSG_RE_TBSave),    tr(MSG_HELP_RE_BT_EXPORT),      0, 0, NULL, NULL },
       { TB_READ_PRINT,      TB_READ_PRINT,      tr(MSG_RE_TBPrint),   tr(MSG_HELP_RE_BT_PRINT),       0, 0, NULL, NULL },
 
-      { MUIV_TheBar_BarSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
+      { MUIV_TheBar_ButtonSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
 
       { TB_READ_DELETE,     TB_READ_DELETE,     tr(MSG_RE_TBDelete),  tr(MSG_HELP_RE_BT_DELETE),      0, 0, NULL, NULL },
       { TB_READ_MOVE,       TB_READ_MOVE,       tr(MSG_RE_TBMove),    tr(MSG_HELP_RE_BT_MOVE),        0, 0, NULL, NULL },
       { TB_READ_REPLY,      TB_READ_REPLY,      tr(MSG_RE_TBReply),   tr(MSG_HELP_RE_BT_REPLY),       0, 0, NULL, NULL },
       { TB_READ_FORWARD,    TB_READ_FORWARD,    tr(MSG_RE_TBForward), tr(MSG_HELP_RE_BT_FORWARD),     0, 0, NULL, NULL },
 
-      { MUIV_TheBar_BarSpacer, TB_READ_NUM+1,  NULL, NULL, 0, 0, NULL, NULL },
+      { MUIV_TheBar_ButtonSpacer, TB_READ_NUM+1,  NULL, NULL, 0, 0, NULL, NULL },
 
       // the "Spam" button is disabled by default
       // the "not Spam" button is hidden by default
@@ -115,20 +115,20 @@ OVERLOAD(OM_NEW)
       { TB_READ_PREVTHREAD, TB_READ_PREVTHREAD, NULL,                 NULL,                           0, 0, NULL, NULL },
       { TB_READ_NEXTTHREAD, TB_READ_NEXTTHREAD, NULL,                 NULL,                           0, 0, NULL, NULL },
 
-      { MUIV_TheBar_BarSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
+      { MUIV_TheBar_ButtonSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
 
       { TB_READ_DISPLAY,    TB_READ_DISPLAY,    NULL,                 NULL,                           0, 0, NULL, NULL },
       { TB_READ_SAVE,       TB_READ_SAVE,       NULL,                 NULL,                           0, 0, NULL, NULL },
       { TB_READ_PRINT,      TB_READ_PRINT,      NULL,                 NULL,                           0, 0, NULL, NULL },
 
-      { MUIV_TheBar_BarSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
+      { MUIV_TheBar_ButtonSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
 
       { TB_READ_DELETE,     TB_READ_DELETE,     NULL,                 NULL,                           0, 0, NULL, NULL },
       { TB_READ_MOVE,       TB_READ_MOVE,       NULL,                 NULL,                           0, 0, NULL, NULL },
       { TB_READ_REPLY,      TB_READ_REPLY,      NULL,                 NULL,                           0, 0, NULL, NULL },
       { TB_READ_FORWARD,    TB_READ_FORWARD,    NULL,                 NULL,                           0, 0, NULL, NULL },
 
-      { MUIV_TheBar_BarSpacer, TB_READ_NUM+1,  NULL, NULL, 0, 0, NULL, NULL },
+      { MUIV_TheBar_ButtonSpacer, TB_READ_NUM+1,  NULL, NULL, 0, 0, NULL, NULL },
 
       // the "Spam" button is disabled by default
       // the "not Spam" button is hidden by default

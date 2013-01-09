@@ -78,7 +78,7 @@ OVERLOAD(OM_NEW)
       { TB_ABOOK_SAVE,      TB_ABOOK_SAVE,      tr(MSG_AB_TBSave),      tr(MSG_HELP_AB_BT_SAVE),      0, 0, NULL, NULL },
       { TB_ABOOK_FIND,      TB_ABOOK_FIND,      tr(MSG_AB_TBFind),      tr(MSG_HELP_AB_BT_SEARCH),    0, 0, NULL, NULL },
 
-      { MUIV_TheBar_BarSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
+      { MUIV_TheBar_ButtonSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
 
       { TB_ABOOK_NEWUSER,   TB_ABOOK_NEWUSER,   tr(MSG_AB_TBNewUser),   tr(MSG_HELP_AB_BT_ADDUSER),   0, 0, NULL, NULL },
       { TB_ABOOK_NEWLIST,   TB_ABOOK_NEWLIST,   tr(MSG_AB_TBNewList),   tr(MSG_HELP_AB_BT_ADDMLIST),  0, 0, NULL, NULL },
@@ -87,7 +87,7 @@ OVERLOAD(OM_NEW)
       { TB_ABOOK_DELETE,    TB_ABOOK_DELETE,    tr(MSG_AB_TBDelete),    tr(MSG_HELP_AB_BT_DELETE),    0, 0, NULL, NULL },
       { TB_ABOOK_PRINT,     TB_ABOOK_PRINT,     tr(MSG_AB_TBPrint),     tr(MSG_HELP_AB_BT_PRINT),     0, 0, NULL, NULL },
 
-      { MUIV_TheBar_BarSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
+      { MUIV_TheBar_ButtonSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
 
       { TB_ABOOK_OPENTREE,  TB_ABOOK_OPENTREE,  tr(MSG_AB_TBOpenTree),  tr(MSG_HELP_AB_BT_OPEN),      0, 0, NULL, NULL },
       { TB_ABOOK_CLOSETREE, TB_ABOOK_CLOSETREE, tr(MSG_AB_TBCloseTree), tr(MSG_HELP_AB_BT_CLOSE),     0, 0, NULL, NULL },
@@ -97,7 +97,7 @@ OVERLOAD(OM_NEW)
       { TB_ABOOK_SAVE,      TB_ABOOK_SAVE,      NULL,                   NULL,                         0, 0, NULL, NULL },
       { TB_ABOOK_FIND,      TB_ABOOK_FIND,      NULL,                   NULL,                         0, 0, NULL, NULL },
 
-      { MUIV_TheBar_BarSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
+      { MUIV_TheBar_ButtonSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
 
       { TB_ABOOK_NEWUSER,   TB_ABOOK_NEWUSER,   NULL,                   NULL,                         0, 0, NULL, NULL },
       { TB_ABOOK_NEWLIST,   TB_ABOOK_NEWLIST,   NULL,                   NULL,                         0, 0, NULL, NULL },
@@ -106,7 +106,7 @@ OVERLOAD(OM_NEW)
       { TB_ABOOK_DELETE,    TB_ABOOK_DELETE,    NULL,                   NULL,                         0, 0, NULL, NULL },
       { TB_ABOOK_PRINT,     TB_ABOOK_PRINT,     NULL,                   NULL,                         0, 0, NULL, NULL },
 
-      { MUIV_TheBar_BarSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
+      { MUIV_TheBar_ButtonSpacer, -1,  NULL, NULL, 0, 0, NULL, NULL },
 
       { TB_ABOOK_OPENTREE,  TB_ABOOK_OPENTREE,  NULL,                   NULL,                         0, 0, NULL, NULL },
       { TB_ABOOK_CLOSETREE, TB_ABOOK_CLOSETREE, NULL,                   NULL,                         0, 0, NULL, NULL },
