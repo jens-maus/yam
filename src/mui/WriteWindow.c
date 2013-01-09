@@ -4634,9 +4634,13 @@ DECLARE(ShowRecipientObject) // enum RcptType rtype
 
   if(DoMethod(data->GR_HEADER, MUIM_Group_InitChange))
   {
-    struct {
-      ULONG MethodID;
-      Object *objs[14];
+    // use a union for the message to avoid type pun warnings of gcc 4+
+    union {
+      struct _Msg generic;
+      struct {
+        ULONG MethodID;
+        Object *objs[14];
+      } sort;
     } sortMsg;
     int objcnt;
 
@@ -4710,39 +4714,39 @@ DECLARE(ShowRecipientObject) // enum RcptType rtype
 
     // set up the parameters for MUIM_Group_Sort as MUIM_Group_MoveMember
     // seems to be broken in MUI 3.8
-    sortMsg.MethodID = MUIM_Group_Sort;
+    sortMsg.sort.MethodID = MUIM_Group_Sort;
 
     objcnt = 0;
     if(data->fromRcptHidden == FALSE)
     {
-      sortMsg.objs[objcnt] = data->LB_FROM; objcnt++;
-      sortMsg.objs[objcnt] = data->CY_FROM; objcnt++;
+      sortMsg.sort.objs[objcnt] = data->LB_FROM; objcnt++;
+      sortMsg.sort.objs[objcnt] = data->CY_FROM; objcnt++;
     }
-    sortMsg.objs[objcnt] = data->LB_TO; objcnt++;
-    sortMsg.objs[objcnt] = data->GR_TO; objcnt++;
+    sortMsg.sort.objs[objcnt] = data->LB_TO; objcnt++;
+    sortMsg.sort.objs[objcnt] = data->GR_TO; objcnt++;
     if(data->ccRcptHidden == FALSE)
     {
-      sortMsg.objs[objcnt] = data->LB_CC; objcnt++;
-      sortMsg.objs[objcnt] = data->GR_CC; objcnt++;
+      sortMsg.sort.objs[objcnt] = data->LB_CC; objcnt++;
+      sortMsg.sort.objs[objcnt] = data->GR_CC; objcnt++;
     }
     if(data->bccRcptHidden == FALSE)
     {
-      sortMsg.objs[objcnt] = data->LB_BCC; objcnt++;
-      sortMsg.objs[objcnt] = data->GR_BCC; objcnt++;
+      sortMsg.sort.objs[objcnt] = data->LB_BCC; objcnt++;
+      sortMsg.sort.objs[objcnt] = data->GR_BCC; objcnt++;
     }
     if(data->replyToRcptHidden == FALSE)
     {
-      sortMsg.objs[objcnt] = data->LB_REPLYTO; objcnt++;
-      sortMsg.objs[objcnt] = data->GR_REPLYTO; objcnt++;
+      sortMsg.sort.objs[objcnt] = data->LB_REPLYTO; objcnt++;
+      sortMsg.sort.objs[objcnt] = data->GR_REPLYTO; objcnt++;
     }
-    sortMsg.objs[objcnt] = data->LB_SUBJECT; objcnt++;
-    sortMsg.objs[objcnt] = data->ST_SUBJECT; objcnt++;
+    sortMsg.sort.objs[objcnt] = data->LB_SUBJECT; objcnt++;
+    sortMsg.sort.objs[objcnt] = data->ST_SUBJECT; objcnt++;
 
     // terminate the array
-    sortMsg.objs[objcnt] = NULL;
+    sortMsg.sort.objs[objcnt] = NULL;
 
     // sort the objects
-    DoMethodA(data->GR_HEADER, (Msg)&sortMsg);
+    DoMethodA(data->GR_HEADER, &sortMsg.generic);
 
     DoMethod(data->GR_HEADER, MUIM_Group_ExitChange);
   }
