@@ -1775,7 +1775,7 @@ struct WriteMailData *NewWriteMailWindow(struct Mail *mail, const int flags)
       setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
 
       // set either the draft or the reference mail pointer accordingly
-      if(isDraftsFolder(mail->Folder))
+      if(mail != NULL && isDraftsFolder(mail->Folder))
         wmData->draftMail = mail;
       else
         wmData->refMail = mail;

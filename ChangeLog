@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-01-11 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_WR.c: fixed a NULL pointer access when creating a new mail. This closes
+    #369.
+
 2013-01-09 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/WriteWindow.c: check the recipient to be non-empty when setting CC, BCC
