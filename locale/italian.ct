@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.1 (31.12.2012)
+## version $VER: YAM.catalog 8.1 (12.01.2013)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -4915,7 +4915,7 @@ esistente sul disco.
 ; already existing directory.
 ;
 MSG_FO_NewFolderGads
-*_Interne predef.|_Come correnti|Directory _esistente|_Annulla
+*_Interne predef.|_Quelle _correnti|Directory _esistente|_Annulla
 ; *_Internal defaults|_Like current|_Existing directory|_Cancel
 ;
 MSG_FO_SelectDir
@@ -6147,11 +6147,11 @@ attivi nella finestra principale.
 ; in the main window.
 ;
 MSG_QUICKSEARCH_SO_SUBJECT
-oggetto
+Oggetto
 ; Subject
 ;
 MSG_QUICKSEARCH_SO_SENDER
-mittente
+Mittente
 ; Sender
 ;
 MSG_QUICKSEARCH_SO_SUBJORSENDER
@@ -8121,13 +8121,11 @@ Trovato file messaggio non valido
 ;
 MSG_MA_INVALIDMFILE
 Il file '%s' nella cartella '%s'\n\
-non sembra contenere un valido\n\
-formato tipico dei messaggi o\n\
-potrebbe essere danneggiato.\n\
+non sembra contenere un formato valido tipico dei messaggi\n\
+di posta oppure potrebbe essere danneggiato.\n\
 \n\
-Per favore assicurati che il file sia\n\
-leggibile e/o che sia un valido file\n\
-di messaggio.
+Per favore assicurati che il file sia leggibile e/o che sia un valido\n\
+messaggio di posta.
 ; File '%s' in folder '%s'\n\
 ; doesn't seem to have a valid mail format\n\
 ; or may be corrupted.\n\

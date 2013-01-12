@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-01-12 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: fixed some more typos.
+
 2013-01-11 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_WR.c: fixed a NULL pointer access when creating a new mail. This closes
