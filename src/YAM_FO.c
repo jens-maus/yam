@@ -445,8 +445,18 @@ BOOL FO_LoadConfig(struct Folder *fo)
           else if(stricmp(buf, "MLSignatureID") == 0)  fo->MLSignature = FindSignatureByID(&C->signatureList, strtol(value, NULL, 16));
           else if(stricmp(buf, "WriteIntro") == 0)     strlcpy(fo->WriteIntro, value, sizeof(fo->WriteIntro));
           else if(stricmp(buf, "WriteGreetings") == 0) strlcpy(fo->WriteGreetings, value, sizeof(fo->WriteGreetings));
-          // obsolete config parameters (we just read them)
+          // obsolete config parameters, convert these to the current stuff and features
           else if(stricmp(buf, "MLFromAddr") == 0)     fo->MLIdentity = FindUserIdentityByAddress(&C->userIdentityList, value);
+          else if(stricmp(buf, "MLSignature") == 0)
+          {
+            int num = atoi(value);
+
+            // zero means no signature, all other values are converted the (n-1)-th signature in the signature list
+            if(num <= 0)
+              fo->MLSignature = NULL;
+            else
+              fo->MLSignature = GetSignature(&C->signatureList, num-1, TRUE);
+          }
         }
       }
 

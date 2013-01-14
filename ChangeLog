@@ -13,6 +13,8 @@ $URL$
     description or by its mail address.
     The command template is "IDENTITY/K,ADDRESS/K".
     This closes #371.
+  * YAM_FO.c: implemented updating the fixed signature number of a folder with
+    mailing list support to the new signature handling. This closes #372.
 
 2013-01-12 Samir Hawamdeh <s.hawamdeh@tin.it>
 
