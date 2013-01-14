@@ -346,6 +346,36 @@ struct UserIdentityNode *FindUserIdentityByID(const struct MinList *userIdentity
 }
 
 ///
+/// FindUserIdentityByDescription
+// find a user identity by its description
+struct UserIdentityNode *FindUserIdentityByDescription(const struct MinList *userIdentityList, const char *description)
+{
+  struct UserIdentityNode *result = NULL;
+
+  ENTER();
+
+  if(description != NULL)
+  {
+    struct Node *curNode;
+
+    IterateList(userIdentityList, curNode)
+    {
+      struct UserIdentityNode *uin = (struct UserIdentityNode *)curNode;
+
+      // check if we found exactly this description
+      if(strcasestr(description, uin->description) != NULL)
+      {
+        result = uin;
+        break;
+      }
+    }
+  }
+
+  RETURN(result);
+  return result;
+}
+
+///
 /// FindUserIdentityByAddress
 // find a user identity by a given address
 struct UserIdentityNode *FindUserIdentityByAddress(const struct MinList *userIdentityList, const char *address)

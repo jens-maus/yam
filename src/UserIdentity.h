@@ -89,6 +89,7 @@ struct UserIdentityNode *GetUserIdentity(const struct MinList *userIdentityList,
 struct UserIdentityNode *WhichUserIdentity(const struct MinList *userIdentityList, const struct ExtendedMail *email);
 BOOL IsUniqueUserIdentityID(const struct MinList *userIdentityList, const int id);
 struct UserIdentityNode *FindUserIdentityByID(const struct MinList *userIdentityList, const int id);
+struct UserIdentityNode *FindUserIdentityByDescription(const struct MinList *userIdentityList, const char *description);
 struct UserIdentityNode *FindUserIdentityByAddress(const struct MinList *userIdentityList, const char *address);
 
 #endif // USERIDENTITY_H

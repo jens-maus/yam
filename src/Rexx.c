@@ -157,6 +157,7 @@ struct rxs_command rxs_commandlist[] =
   { "WRITECC", "ADDRESS/A/M,ADD/S", NULL, rx_writecc },
   { "WRITEEDITOR", "COMMAND/A", "RESULT", rx_writeeditor },
   { "WRITEFROM", "ADDRESS/A", NULL, rx_writefrom },
+  { "WRITEIDENTITY", "IDENTITY/K,ADDRESS/K", NULL, rx_writeidentity },
   { "WRITELETTER", "FILE/A,NOSIG/S", NULL, rx_writeletter },
   { "WRITEMAILTO", "ADDRESS/A/M", NULL, rx_writemailto },
   { "WRITEOPTIONS", "DELETE/S,RECEIPT/S,NOTIF/S,ADDINFO/S,IMPORTANCE/N,SIG/N,SECURITY/N", NULL, rx_writeoptions },

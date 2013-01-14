@@ -611,6 +611,7 @@ REXXOBJS = \
 	writecc.o \
 	writeeditor.o \
 	writefrom.o \
+	writeidentity.o \
 	writeletter.o \
 	writemailto.o \
 	writeoptions.o \

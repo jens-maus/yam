@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-01-14 Thore Böckelmann <tboeckel@gmx.de>
+
+  * Rexx.c, UserIdentities.c, rexx/writeidentity.c: added the ARexx command
+    WRITEIDENTITY to let a script choose the user identity to be used when
+    composing a new mail via ARexx. The identity can be chosen either by its
+    description or by its mail address.
+    The command template is "IDENTITY/K,ADDRESS/K".
+    This closes #371.
+
 2013-01-12 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: fixed some more typos.

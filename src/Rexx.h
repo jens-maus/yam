@@ -155,6 +155,7 @@ void rx_writebcc(struct RexxHost *, struct RexxParams *, enum RexxAction, struct
 void rx_writecc(struct RexxHost *, struct RexxParams *, enum RexxAction, struct RexxMsg *);
 void rx_writeeditor(struct RexxHost *, struct RexxParams *, enum RexxAction, struct RexxMsg *);
 void rx_writefrom(struct RexxHost *, struct RexxParams *, enum RexxAction, struct RexxMsg *);
+void rx_writeidentity(struct RexxHost *, struct RexxParams *, enum RexxAction, struct RexxMsg *);
 void rx_writeletter(struct RexxHost *, struct RexxParams *, enum RexxAction, struct RexxMsg *);
 void rx_writemailto(struct RexxHost *, struct RexxParams *, enum RexxAction, struct RexxMsg *);
 void rx_writeoptions(struct RexxHost *, struct RexxParams *, enum RexxAction, struct RexxMsg *);
