@@ -1314,9 +1314,10 @@ void AddZombieFile(const char *fileName)
   {
     struct ZombieFile *zombie;
 
-    if((zombie = (struct ZombieFile *)AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*zombie),
-                                                                    ASONODE_Min, TRUE,
-                                                                    TAG_DONE)) != NULL)
+    if((zombie = (struct ZombieFile *)AllocSysObjectTags(ASOT_NODE,
+      ASONODE_Size, sizeof(*zombie),
+      ASONODE_Min, TRUE,
+      TAG_DONE)) != NULL)
     {
       if((zombie->fileName = strdup(fileName)) != NULL)
       {
@@ -1328,7 +1329,7 @@ void AddZombieFile(const char *fileName)
         RestartTimer(TIMER_DELETEZOMBIEFILES, 5 * 60, 0);
       }
       else
-        free(zombie);
+        FreeSysObject(ASOT_NODE, zombie);
     }
   }
 

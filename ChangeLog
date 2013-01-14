@@ -15,6 +15,7 @@ $URL$
     This closes #371.
   * YAM_FO.c: implemented updating the fixed signature number of a folder with
     mailing list support to the new signature handling. This closes #372.
+  * YAM_UT.c: fixed a wrong free() call where FreeSysObject() must be used.
 
 2013-01-12 Samir Hawamdeh <s.hawamdeh@tin.it>
 
