@@ -3726,7 +3726,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
     goto out;
   }
-  else if(mode != WRITE_DRAFT && addr[0] == '\0' && wmData->quietMode == FALSE)
+  else if(mode != WRITE_DRAFT && addr != NULL && addr[0] == '\0' && wmData->quietMode == FALSE)
   {
     // set the TO Field active and go back
     if(winOpen == TRUE)
@@ -3744,7 +3744,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
     else
       goto out;
   }
-  else
+  else if(addr != NULL && addr[0] != '\0')
     comp.MailTo = addr; // To: address
 
   // get the content of the Subject: String gadget and check if it is empty or not.
@@ -3798,7 +3798,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
       goto out;
     }
-    else if(addr[0] != '\0')
+    else if(addr != NULL && addr[0] != '\0')
       comp.MailCC = addr;
 
     // then we check the BCC string gadget
@@ -3817,7 +3817,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
       goto out;
     }
-    else if(addr[0] != '\0')
+    else if(addr != NULL && addr[0] != '\0')
       comp.MailBCC = addr;
 
     // then we check the ReplyTo string gadget
@@ -3836,7 +3836,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
       goto out;
     }
-    else if(addr[0] != '\0')
+    else if(addr != NULL && addr[0] != '\0')
       comp.ReplyTo = addr;
 
     // now we search all To:,CC: and BCC: addresses and try to match them
