@@ -845,7 +845,7 @@ BOOL FI_DoSearch(struct Search *search, const struct Mail *mail)
   else
   {
     searchString = search->Match;
-    E(DBF_FILTER, "performing simple string search for '%s'", searchString);
+    D(DBF_FILTER, "performing simple string search for '%s'", searchString);
   }
   #endif // DEBUG
 
