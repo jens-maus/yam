@@ -92,7 +92,7 @@ struct rxs_command rxs_commandlist[] =
   { "ADDRFIND", "PATTERN/A,NAMEONLY/S,EMAILONLY/S", "ALIAS/M", rx_addrfind },
   { "ADDRGOTO", "ALIAS/A", NULL, rx_addrgoto },
   { "ADDRINFO", "ALIAS/A", "TYPE,NAME,EMAIL,PGP,HOMEPAGE,STREET,CITY,COUNTRY,PHONE,COMMENT,BIRTHDATE/N,IMAGE,MEMBERS/M", rx_addrinfo },
-  { "ADDRLOAD", "FILENAME/A", NULL, rx_addrload },
+  { "ADDRLOAD", "FILENAME/A,OPEN/S", NULL, rx_addrload },
   { "ADDRNEW", "TYPE,ALIAS,NAME,EMAIL", "ALIAS", rx_addrnew },
   { "ADDRRESOLVE", "ALIAS/A", "RECPT", rx_addrresolve },
   { "ADDRSAVE", "FILENAME", NULL, rx_addrsave },

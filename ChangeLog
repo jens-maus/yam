@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-01-15 Thore Böckelmann <tboeckel@gmx.de>
+
+  * rexx/addrload.c: extended the ADDRLOAD command to take a second parameter
+    OPEN/S to immediately open then address book window after the address book
+    file has been loaded successfully. This closes #88.
+
 2013-01-14 Thore Böckelmann <tboeckel@gmx.de>
 
   * Rexx.c, UserIdentities.c, rexx/writeidentity.c: added the ARexx command

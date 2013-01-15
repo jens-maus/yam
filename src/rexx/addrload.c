@@ -25,6 +25,7 @@
 
 ***************************************************************************/
 
+#include <clib/alib_protos.h>
 #include <proto/exec.h>
 
 #include "extrasrc.h"
@@ -40,6 +41,7 @@
 struct args
 {
   char *filename;
+  long open;
 };
 
 void rx_addrload(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
@@ -58,7 +60,15 @@ void rx_addrload(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
 
     case RXIF_ACTION:
     {
-      if(!AB_LoadTree(args->filename, FALSE, FALSE))
+      if(AB_LoadTree(args->filename, FALSE, FALSE) == TRUE)
+      {
+	    if(args->open != 0)
+	    {
+		  PopUp();
+		  DoMethod(G->App, MUIM_CallHook, &AB_OpenHook, ABM_EDIT);
+		}
+	  }
+	  else
         params->rc = RETURN_ERROR;
     }
     break;
