@@ -5060,7 +5060,7 @@ PERSON
      searching it for the named person.  If found, any information
      missing from the address book entry (Name, e-mail address and
      homepage) will be made good and the picture downloaded and saved
-     in the gallery. 
+     in the gallery.
 
 
 
@@ -6221,14 +6221,17 @@ ADDRLOAD
      AddrLoad -- Load an address book from disk.  (V2.0)
 
 @{b}TEMPLATE@{ub}
-     FILENAME/A
+     FILENAME/A,OPEN/S
 
 @{b}FUNCTION@{ub}
      Loads the specified address book from disk, replacing the
-     current address book in RAM.
+     current address book in RAM. If requested the address book
+     window will be opened immediately after the address book
+     file has been loaded successfully.
 
 @{b}INPUTS@{ub}
      FILENAME/A   - address book to be loaded
+     OPEN/S       - open the address book window
 
 @{b}RETURNS@{ub}
      RC is set to 10 if the filename cannot be opened.
@@ -11095,7 +11098,7 @@ Credits
       Johan Banis
       Mariusz Danilewicz
       Emilio Jimenez
-      
+
    Third party software contributors
 
       Stefan Stuntz                  (MUI)
