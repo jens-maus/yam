@@ -216,7 +216,7 @@ static void MA_ValidateStatus(struct Folder *folder)
   {
     struct MailNode *mnode;
 
-    D(DBF_FOLDER, "Validating status of new msgs in folder %s", folder->Name);
+    D(DBF_FOLDER, "validating status of new messages in folder '%s'", folder->Name);
 
     LockMailListShared(folder->messages);
 
@@ -227,11 +227,20 @@ static void MA_ValidateStatus(struct Folder *folder)
       if(hasStatusNew(mail))
       {
         if(drafts == TRUE || outgoing == TRUE)
+        {
+          D(DBF_FOLDER, "set status 'queued' of mail with subject '%s'", mail->Subject);
           setStatusToQueued(mail);
+	    }
         else if(sent == TRUE)
+        {
+          D(DBF_FOLDER, "set status 'sent' of mail with subject '%s'", mail->Subject);
           setStatusToSent(mail);
+	    }
         else
+        {
+          D(DBF_FOLDER, "set status 'unread' of mail with subject '%s'", mail->Subject);
           setStatusToUnread(mail);
+	    }
       }
     }
 

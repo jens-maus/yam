@@ -92,6 +92,11 @@ struct Data
   ULONG scaledHeight;
   ULONG maxWidth;
   ULONG maxHeight;
+
+  #if defined(__amigaos4__)
+  #else
+  struct List *wbDrawerList;
+  #endif
 };
 */
 
@@ -108,6 +113,7 @@ struct SelectionMsg
 
   BOOL finish;
 };
+
 ///
 /// SelectionHook
 #if !defined(__amigaos4__)
@@ -145,6 +151,7 @@ HOOKPROTONO(SelectionFunc, ULONG, struct IconSelectMsg *ism)
 }
 MakeStaticHook(SelectionHook, SelectionFunc);
 #endif
+
 ///
 /// FindWriteWindow
 // find an open write window which matches a given one
@@ -171,6 +178,129 @@ static BOOL FindWriteWindow(struct Window *win)
   RETURN(found);
   return found;
 }
+
+///
+/// IsWBWindowMsg
+struct IsWBWindowMsg
+{
+  struct Window *window;
+  LONG mx;
+  LONG my;
+
+  BOOL found;
+};
+
+///
+/// IsWBWindowHook
+#if !defined(__amigaos4__)
+HOOKPROTONO(IsWBWindowFunc, ULONG, struct IconSelectMsg *ism)
+{
+  struct IsWBWindowMsg *msg = (struct IsWBWindowMsg *)hook->h_Data;
+  struct Window *wnd = ism->ism_DrawerWindow;
+
+  SHOWVALUE(DBF_ALWAYS, ism->ism_DrawerWindow);
+  SHOWVALUE(DBF_ALWAYS, ism->ism_ParentWindow);
+  SHOWVALUE(DBF_ALWAYS, msg->window);
+
+/*
+  if(wnd == NULL)
+    return ISMACTION_Stop;
+
+  if(msg->window != wnd)
+    return ISMACTION_Stop;
+
+  if((ism->ism_Left + wnd->LeftEdge <= msg->mx) && (msg->mx <= wnd->LeftEdge + ism->ism_Left + ism->ism_Width - 1) &&
+     (ism->ism_Top + wnd->TopEdge <= msg->my) && (msg->my <= wnd->TopEdge + ism->ism_Top + ism->ism_Height - 1))
+  {
+    if(ism->ism_Type == WBDRAWER || ism->ism_Type == WBDISK)
+      msg->found = TRUE;
+
+    return ISMACTION_Stop;
+  }
+*/
+
+  return ISMACTION_Ignore;
+}
+MakeStaticHook(IsWBWindowHook, IsWBWindowFunc);
+#endif
+
+///
+/// IsWorkbenchWindow
+static BOOL IsWorkbenchWindow(struct Data *data, struct Window *win, LONG mx, LONG my)
+{
+  BOOL isWBWindow = FALSE;
+  struct Screen *wbscreen;
+
+  ENTER();
+
+  if((wbscreen = LockPubScreen("Workbench")) != NULL)
+  {
+    if(wbscreen == win->WScreen)
+    {
+#if defined(__amigaos4__)
+      ULONG which;
+      ULONG type = ~0;
+
+      struct TagItem ti[] =
+      {
+        { WBOBJA_Type, (ULONG)&type },
+        { TAG_DONE,    FALSE        }
+      };
+
+      // Note that we use WhichWorkbenchObjectA() and not WhichWorkbenchObject()
+      // because the latter wasn't implemented in workbench.library < 51.9
+      which = WhichWorkbenchObjectA(NULL, mx, my, ti);
+      if(which == WBO_ICON || which == WBO_DRAWER)
+      {
+        if(type == WBDRAWER || type == WBDISK)
+        {
+          isWBWindow = TRUE;
+        }
+      }
+#else // __amigaos4__
+      // this stuff only works with Workbench v45+
+      if(data->wbDrawerList != NULL)
+      {
+        struct Hook hook;
+        struct IsWBWindowMsg wbMsg;
+        struct Node *n;
+
+        wbMsg.window = win;
+        wbMsg.mx = mx;
+        wbMsg.my = my;
+        wbMsg.found = FALSE;
+
+        // initialise the hook with our data
+        InitHook(&hook, IsWBWindowHook, &wbMsg);
+
+        IterateList(data->wbDrawerList, n)
+        {
+          ChangeWorkbenchSelectionA(n->ln_Name, &hook, NULL);
+
+          if(wbMsg.found == TRUE)
+          {
+            isWBWindow = TRUE;
+            D(DBF_ALWAYS, "found window '%s'", n->ln_Name);
+            break;
+          }
+          else
+          {
+            D(DBF_ALWAYS, "skip window '%s'", n->ln_Name);
+          }
+        }
+      }
+#endif // __amigaos4__
+    }
+    else
+      W(DBF_GUI, "YAM is not running on workbench, skipping drop operation");
+
+    UnlockPubScreen(NULL, wbscreen);
+  }
+
+  RETURN(isWBWindow);
+  return isWBWindow;
+}
+
 ///
 /// UnloadImage
 // unload and free all memory of a formerly loaded image
@@ -762,6 +892,7 @@ OVERLOAD(OM_NEW)
   RETURN((IPTR)obj);
   return (IPTR)obj;
 }
+
 ///
 /// OVERLOAD(OM_DISPOSE)
 OVERLOAD(OM_DISPOSE)
@@ -862,6 +993,7 @@ OVERLOAD(MUIM_Setup)
   RETURN(result);
   return result;
 }
+
 ///
 /// OVERLOAD(MUIM_Cleanup)
 OVERLOAD(MUIM_Cleanup)
@@ -885,6 +1017,7 @@ OVERLOAD(MUIM_Cleanup)
   RETURN(result);
   return result;
 }
+
 ///
 /// OVERLOAD(MUIM_AskMinMax)
 OVERLOAD(MUIM_AskMinMax)
@@ -907,6 +1040,7 @@ OVERLOAD(MUIM_AskMinMax)
 
   return 0;
 }
+
 ///
 /// OVERLOAD(MUIM_Draw)
 OVERLOAD(MUIM_Draw)
@@ -1007,131 +1141,180 @@ OVERLOAD(MUIM_Draw)
   RETURN(0);
   return 0;
 }
+
 ///
 /// OVERLOAD(MUIM_HandleEvent)
 OVERLOAD(MUIM_HandleEvent)
 {
   GETDATA;
   struct IntuiMessage *imsg = ((struct MUIP_HandleEvent *)msg)->imsg;
+  ULONG result = 0;
 
   ENTER();
 
-  if(imsg == NULL)
+  if(imsg != NULL)
   {
-    RETURN(0);
-    return 0;
-  }
-
-  if(imsg->Class == IDCMP_MOUSEBUTTONS)
-  {
-    if(!(_isinobject(obj, imsg->MouseX, imsg->MouseY)))
+    switch(imsg->Class)
     {
-      data->selectSecs = 0;
-      data->selectMicros = 0;
-
-      RETURN(0);
-      return 0;
-    }
-
-    // in case the image is selected
-    if(imsg->Code == SELECTDOWN)
-    {
-      // check if this has been a double click at the image
-      if(DoubleClick(data->selectSecs, data->selectMicros, imsg->Seconds, imsg->Micros))
+      case IDCMP_MOUSEBUTTONS:
       {
-        xset(obj, MUIA_AttachmentImage_DoubleClick, TRUE,
-                  MUIA_Selected, TRUE);
-      }
-      else
-      {
-        BOOL lastState = xget(obj, MUIA_Selected);
-
-        // only clear the selection if the user hasn't used
-        // the SHIFT key to select multiple items.
-        if(isAnyFlagSet(imsg->Qualifier, IEQUALIFIER_RSHIFT|IEQUALIFIER_LSHIFT) == FALSE)
-          DoMethod(data->attachmentGroup, MUIM_AttachmentGroup_ClearSelection);
-
-        // invert the selection state
-        set(obj, MUIA_Selected, !lastState);
-      }
-
-      // save the seconds/micros for the next handleEvent call
-      data->selectSecs = imsg->Seconds;
-      data->selectMicros = imsg->Micros;
-
-      if(LIB_VERSION_IS_AT_LEAST(WorkbenchBase, 45, 0) == TRUE && data->eventHandlerAdded == TRUE)
-      {
-        DoMethod(_win(obj), MUIM_Window_RemEventHandler, &data->ehnode);
-        data->ehnode.ehn_Events |= IDCMP_MOUSEMOVE;
-        DoMethod(_win(obj), MUIM_Window_AddEventHandler, &data->ehnode);
-      }
-
-      RETURN(MUI_EventHandlerRC_Eat);
-      return MUI_EventHandlerRC_Eat;
-    }
-
-    // in case the image is unselected by the user
-    if(imsg->Code == SELECTUP)
-    {
-      if(LIB_VERSION_IS_AT_LEAST(WorkbenchBase, 45, 0) == TRUE)
-      {
-        DoMethod(_win(obj), MUIM_Window_RemEventHandler, &data->ehnode);
-        data->ehnode.ehn_Events &= ~IDCMP_MOUSEMOVE;
-        DoMethod(_win(obj), MUIM_Window_AddEventHandler, &data->ehnode);
-      }
-
-      RETURN(MUI_EventHandlerRC_Eat);
-      return MUI_EventHandlerRC_Eat;
-    }
-
-  }
-
-  // in case this event is a mouse move we signal a dragging event, but only
-  // if it starts within our object region.
-  if(imsg->Class == IDCMP_MOUSEMOVE &&
-     _isinobject(obj, imsg->MouseX, imsg->MouseY))
-  {
-    DoMethod(obj, MUIM_DoDrag, imsg->MouseX - _mleft(obj), imsg->MouseY - _mtop(obj));
-  }
-
-  if(imsg->Class == IDCMP_RAWKEY)
-  {
-    switch(imsg->Code)
-    {
-      case IECODE_RETURN:
-      {
-        if(obj == (Object *)xget(_win(obj), MUIA_Window_ActiveObject))
+        if(!(_isinobject(obj, imsg->MouseX, imsg->MouseY)))
         {
-          set(obj, MUIA_AttachmentImage_DoubleClick, TRUE);
+          data->selectSecs = 0;
+          data->selectMicros = 0;
+        }
+        // in case the image is selected
+        else if(imsg->Code == SELECTDOWN)
+        {
+          // check if this has been a double click at the image
+          if(DoubleClick(data->selectSecs, data->selectMicros, imsg->Seconds, imsg->Micros))
+          {
+            xset(obj, MUIA_AttachmentImage_DoubleClick, TRUE,
+                      MUIA_Selected, TRUE);
+          }
+          else
+          {
+            BOOL lastState = xget(obj, MUIA_Selected);
 
-          RETURN(MUI_EventHandlerRC_Eat);
-          return MUI_EventHandlerRC_Eat;
+            // only clear the selection if the user hasn't used
+            // the SHIFT key to select multiple items.
+            if(isAnyFlagSet(imsg->Qualifier, IEQUALIFIER_RSHIFT|IEQUALIFIER_LSHIFT) == FALSE)
+              DoMethod(data->attachmentGroup, MUIM_AttachmentGroup_ClearSelection);
+
+            // invert the selection state
+            set(obj, MUIA_Selected, !lastState);
+          }
+
+          // save the seconds/micros for the next handleEvent call
+          data->selectSecs = imsg->Seconds;
+          data->selectMicros = imsg->Micros;
+
+          if(LIB_VERSION_IS_AT_LEAST(WorkbenchBase, 45, 0) == TRUE && data->eventHandlerAdded == TRUE)
+          {
+            DoMethod(_win(obj), MUIM_Window_RemEventHandler, &data->ehnode);
+            data->ehnode.ehn_Events |= IDCMP_MOUSEMOVE;
+            DoMethod(_win(obj), MUIM_Window_AddEventHandler, &data->ehnode);
+          }
+
+          result = MUI_EventHandlerRC_Eat;
+        }
+        // in case the image is unselected by the user
+        else if(imsg->Code == SELECTUP)
+        {
+          if(LIB_VERSION_IS_AT_LEAST(WorkbenchBase, 45, 0) == TRUE)
+          {
+            DoMethod(_win(obj), MUIM_Window_RemEventHandler, &data->ehnode);
+            data->ehnode.ehn_Events &= ~IDCMP_MOUSEMOVE;
+            DoMethod(_win(obj), MUIM_Window_AddEventHandler, &data->ehnode);
+          }
+
+          result = MUI_EventHandlerRC_Eat;
         }
       }
       break;
 
-      case IECODE_SPACE:
+      case IDCMP_MOUSEMOVE:
       {
-        if(obj == (Object *)xget(_win(obj), MUIA_Window_ActiveObject))
+        // in case this event is a mouse move we signal a dragging event, but only
+        // if it starts within our object region.
+        if(_isinobject(obj, imsg->MouseX, imsg->MouseY))
         {
-          BOOL lastState = xget(obj, MUIA_Selected);
+          #if !defined(__amigaos4__)
+          BOOL freeDrawerList;
 
-          // only clear the selection if the user hasn't used
-          // the SHIFT key to select multiple items.
-          if(isAnyFlagSet(imsg->Qualifier, IEQUALIFIER_RSHIFT|IEQUALIFIER_LSHIFT) == FALSE)
-            DoMethod(data->attachmentGroup, MUIM_AttachmentGroup_ClearSelection);
+          // this requires workbench.library V45+
+          if(LIB_VERSION_IS_AT_LEAST(WorkbenchBase, 45, 0) == TRUE)
+          {
+            freeDrawerList = WorkbenchControl(NULL,
+              WBCTRLA_GetOpenDrawerList, &data->wbDrawerList,
+              TAG_DONE);
+          }
+          else
+          {
+		    freeDrawerList = FALSE;
+		  }
 
-          set(obj, MUIA_Selected, !lastState);
+          // forget any possibly changed pointer in case the call above failed
+          if(freeDrawerList == FALSE)
+            data->wbDrawerList = NULL;
+          #endif
 
-          RETURN(MUI_EventHandlerRC_Eat);
-          return MUI_EventHandlerRC_Eat;
+          DoMethod(obj, MUIM_DoDrag, imsg->MouseX - _mleft(obj), imsg->MouseY - _mtop(obj));
+
+          #if !defined(__amigaos4__)
+          if(freeDrawerList != FALSE)
+          {
+            // free the obtained list again
+            WorkbenchControl(NULL, WBCTRLA_FreeOpenDrawerList, data->wbDrawerList, TAG_DONE);
+            data->wbDrawerList = NULL;
+          }
+          #endif
+        }
+      }
+      break;
+
+      case IDCMP_RAWKEY:
+      {
+        switch(imsg->Code)
+        {
+          case IECODE_RETURN:
+          {
+            if(obj == (Object *)xget(_win(obj), MUIA_Window_ActiveObject))
+            {
+              set(obj, MUIA_AttachmentImage_DoubleClick, TRUE);
+              result = MUI_EventHandlerRC_Eat;
+            }
+          }
+          break;
+
+          case IECODE_SPACE:
+          {
+            if(obj == (Object *)xget(_win(obj), MUIA_Window_ActiveObject))
+            {
+              BOOL lastState = xget(obj, MUIA_Selected);
+
+              // only clear the selection if the user hasn't used
+              // the SHIFT key to select multiple items.
+              if(isAnyFlagSet(imsg->Qualifier, IEQUALIFIER_RSHIFT|IEQUALIFIER_LSHIFT) == FALSE)
+                DoMethod(data->attachmentGroup, MUIM_AttachmentGroup_ClearSelection);
+
+              set(obj, MUIA_Selected, !lastState);
+              result = MUI_EventHandlerRC_Eat;
+            }
+          }
+          break;
         }
       }
       break;
     }
   }
 
-  RETURN(0);
+  RETURN(result);
+  return result;
+}
+
+///
+/// OVERLOAD(MUIM_DragEvent)
+OVERLOAD(MUIM_DragEvent)
+{
+  GETDATA;
+  struct MUIP_DragEvent *de = (struct MUIP_DragEvent *)msg;
+
+  ENTER();
+
+/*
+  if(de->objwindow != NULL && de->obj == NULL)
+  {
+    if(IsWorkbenchWindow(data, de->objwindow, de->imsg->MouseX, de->imsg->MouseY) == TRUE)
+    {
+      de->mouseptrtype = 0;//POINTERTYPE_Normal;
+      setFlag(de->flags, MUIF_DRAGEVENT_FOREIGNDROP);
+      setFlag(de->flags, MUIF_DRAGEVENT_MOUSECHANGED);
+    }
+  }
+*/
+
+  LEAVE();
   return 0;
 }
 
@@ -1210,85 +1393,73 @@ OVERLOAD(MUIM_DeleteDragImage)
           }
 #else // __amigaos4__
           // this stuff only works with Workbench v45+
-          if(LIB_VERSION_IS_AT_LEAST(WorkbenchBase, 45, 0) == TRUE)
+          if(data->wbDrawerList != NULL)
           {
-            struct List *path_list;
+            struct Hook hook;
+            struct SelectionMsg selMsg;
+            struct Node *n;
 
-            if(WorkbenchControl(NULL, WBCTRLA_GetOpenDrawerList, &path_list, TAG_DONE))
+            selMsg.layer = layer;
+            selMsg.mx = _screen(obj)->MouseX;
+            selMsg.my = _screen(obj)->MouseY;
+            selMsg.destName = NULL;
+            selMsg.finish = FALSE;
+
+            // initialise the selection hook with our data
+            InitHook(&hook, SelectionHook, &selMsg);
+
+            IterateList(data->wbDrawerList, n)
             {
-              struct Hook hook;
-              struct SelectionMsg selMsg;
-              struct Node *n;
-
-              selMsg.layer = layer;
-              selMsg.mx = _screen(obj)->MouseX;
-              selMsg.my = _screen(obj)->MouseY;
-              selMsg.destName = NULL;
-              selMsg.finish = FALSE;
-
-              // initialise the selection hook with our data
-              InitHook(&hook, SelectionHook, &selMsg);
-
-              IterateList(path_list, n)
+              if((selMsg.drawer = strdup(n->ln_Name)) != NULL)
               {
-                if((selMsg.drawer = strdup(n->ln_Name)) != NULL)
+                ChangeWorkbenchSelectionA(selMsg.drawer, &hook, NULL);
+
+                if(selMsg.finish == TRUE)
                 {
-                  ChangeWorkbenchSelectionA(selMsg.drawer, &hook, NULL);
-
-                  if(selMsg.finish == TRUE)
+                  if(selMsg.destName == NULL)
                   {
-                    if(selMsg.destName == NULL)
-                    {
-                      data->dropPath = selMsg.drawer;
-                      // don't free the path
-                      selMsg.drawer = NULL;
-                    }
-                    else
-                    {
-                      int len = strlen(selMsg.destName) + strlen(selMsg.drawer) + 10;
-
-                      if((data->dropPath = malloc(len)) != NULL)
-                        AddPath(data->dropPath, selMsg.drawer, selMsg.destName, len);
-
-                      free(selMsg.destName);
-                    }
+                    data->dropPath = selMsg.drawer;
+                    // don't free the path
+                    selMsg.drawer = NULL;
                   }
+                  else
+                  {
+                    int len = strlen(selMsg.destName) + strlen(selMsg.drawer) + 10;
 
-                  free(selMsg.drawer);
+                    if((data->dropPath = malloc(len)) != NULL)
+                      AddPath(data->dropPath, selMsg.drawer, selMsg.destName, len);
 
-                  if(selMsg.finish == TRUE)
-                    break;
+                    free(selMsg.destName);
+                  }
                 }
+
+                free(selMsg.drawer);
+
+                if(selMsg.finish == TRUE)
+                  break;
               }
+            }
 
-              WorkbenchControl(NULL, WBCTRLA_FreeOpenDrawerList, path_list, TAG_DONE);
+            if(selMsg.finish == FALSE)
+            {
+              selMsg.drawer = NULL;
 
-              if(selMsg.finish == FALSE)
-              {
-                selMsg.drawer = NULL;
+              ChangeWorkbenchSelectionA(NULL, &hook, NULL);
 
-                ChangeWorkbenchSelectionA(NULL, &hook, NULL);
+              if(selMsg.finish == TRUE && selMsg.destName != NULL)
+                data->dropPath = selMsg.destName;
+            }
 
-                if(selMsg.finish == TRUE && selMsg.destName != NULL)
-                  data->dropPath = selMsg.destName;
-              }
-
-              // signal other listening for the DropPath that we
-              // found out where to icon has dropped at exactly.
-              if(data->dropPath != NULL)
-              {
-                D(DBF_GUI, "found dropPath: [%s]", data->dropPath);
-                DoMethod(_app(obj), MUIM_Application_PushMethod, obj, 3, MUIM_Set, MUIA_AttachmentImage_DropPath, data->dropPath);
-              }
-              else
-              {
-                W(DBF_GUI, "couldn't find drop point of attachment image");
-                DisplayBeep(_screen(obj));
-              }
+            // signal other listening for the DropPath that we
+            // found out where to icon has dropped at exactly.
+            if(data->dropPath != NULL)
+            {
+              D(DBF_GUI, "found dropPath: [%s]", data->dropPath);
+              DoMethod(_app(obj), MUIM_Application_PushMethod, obj, 3, MUIM_Set, MUIA_AttachmentImage_DropPath, data->dropPath);
             }
             else
             {
-              W(DBF_GUI, "WorkbenchControl(WBCTRLA_GetOpenDrawerList) failed");
+              W(DBF_GUI, "couldn't find drop point of attachment image");
               DisplayBeep(_screen(obj));
             }
           }
@@ -1380,4 +1551,3 @@ OVERLOAD(MUIM_DeleteShortHelp)
 ///
 
 /* Public Methods */
-
