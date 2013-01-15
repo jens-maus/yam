@@ -3156,7 +3156,6 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
 
                     while(getline(&buf, &buflen, tf->FP) > 0)
                     {
-                      rptr = buf;
                       D(DBF_MAIL, "%s", buf);
                       StrBufCat(&cmsg, buf);
                     }
