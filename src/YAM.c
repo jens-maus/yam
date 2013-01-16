@@ -1984,8 +1984,14 @@ static void InitAfterLogin(void)
       // if the user wishs to make sure all "new" mail is flagged as
       // read upon start we go through our folders and make sure they show
       // no "new" mail, even if their .index file is not fully loaded
-      if(C->UpdateNewMail == TRUE && folder->LoadedMode == LM_FLUSHED)
-        folder->New = 0;
+      if(C->UpdateNewMail == TRUE && folder->LoadedMode == LM_FLUSHED &&
+         folder->New > 0)
+      {
+        // to perform this operation we simply call MA_GetIndex() as that
+        // takes care via MA_ValidateStatus() that the status of new mail
+        // is cleared upon starting YAM
+        MA_GetIndex(folder);
+      }
     }
 
     // update the folder's image

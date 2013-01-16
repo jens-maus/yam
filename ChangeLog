@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-01-16 Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM.c, YAM_MAf.c: when having the option active that new mail will be changed
+    to unread upon restarting YAM, all mails of folders known to carry new mail
+    (upon checking the index meta data) will now be changed to unread by forcing
+    a full index load via MA_GetIndex(). This partly addresses and refs #367.
+
 2013-01-15 Thore Böckelmann <tboeckel@gmx.de>
 
   * rexx/addrload.c: extended the ADDRLOAD command to take a second parameter

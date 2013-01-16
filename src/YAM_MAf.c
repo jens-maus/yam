@@ -201,50 +201,50 @@ BOOL MA_PromptFolderPassword(struct Folder *fo, APTR win)
 //  Avoids invalid status values
 static void MA_ValidateStatus(struct Folder *folder)
 {
-  BOOL drafts;
-  BOOL outgoing;
-  BOOL sent;
-
   ENTER();
 
-  drafts = isDraftsFolder(folder);
-  outgoing = isOutgoingFolder(folder);
-  sent = isSentFolder(folder);
-
-  // mark new mails as unread during the startup phase only, but not upon reloading a folder index
-  if(drafts == TRUE || outgoing == TRUE || sent == TRUE || (C->UpdateNewMail == TRUE && G->InStartupPhase == TRUE))
+  // the whole job only makes sense if there are new mails at all
+  if(folder->New > 0)
   {
-    struct MailNode *mnode;
+    BOOL drafts = isDraftsFolder(folder);
+    BOOL outgoing = isOutgoingFolder(folder);
+    BOOL sent = isSentFolder(folder);
 
-    D(DBF_FOLDER, "validating status of new messages in folder '%s'", folder->Name);
-
-    LockMailListShared(folder->messages);
-
-    ForEachMailNode(folder->messages, mnode)
+    // mark new mails as unread during the startup phase only, but not upon reloading a folder index
+    if(drafts == TRUE || outgoing == TRUE || sent == TRUE || (C->UpdateNewMail == TRUE && G->InStartupPhase == TRUE))
     {
-      struct Mail *mail = mnode->mail;
+      struct MailNode *mnode;
 
-      if(hasStatusNew(mail))
+      D(DBF_FOLDER, "validating status of new messages in folder '%s'", folder->Name);
+
+      LockMailListShared(folder->messages);
+
+      ForEachMailNode(folder->messages, mnode)
       {
-        if(drafts == TRUE || outgoing == TRUE)
-        {
-          D(DBF_FOLDER, "set status 'queued' of mail with subject '%s'", mail->Subject);
-          setStatusToQueued(mail);
-	    }
-        else if(sent == TRUE)
-        {
-          D(DBF_FOLDER, "set status 'sent' of mail with subject '%s'", mail->Subject);
-          setStatusToSent(mail);
-	    }
-        else
-        {
-          D(DBF_FOLDER, "set status 'unread' of mail with subject '%s'", mail->Subject);
-          setStatusToUnread(mail);
-	    }
-      }
-    }
+        struct Mail *mail = mnode->mail;
 
-    UnlockMailList(folder->messages);
+        if(hasStatusNew(mail))
+        {
+          if(drafts == TRUE || outgoing == TRUE)
+          {
+            D(DBF_FOLDER, "set status 'queued' of mail with subject '%s'", mail->Subject);
+            setStatusToQueued(mail);
+	        }
+          else if(sent == TRUE)
+          {
+            D(DBF_FOLDER, "set status 'sent' of mail with subject '%s'", mail->Subject);
+            setStatusToSent(mail);
+	        }
+          else
+          {
+            D(DBF_FOLDER, "set status 'unread' of mail with subject '%s'", mail->Subject);
+            setStatusToUnread(mail);
+	        }
+        }
+      }
+
+      UnlockMailList(folder->messages);
+    }
   }
 
   LEAVE();
