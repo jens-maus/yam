@@ -92,8 +92,6 @@ struct Data
   Object *MI_TOUNMARKED;
   Object *MI_TOUNREAD;
   Object *MI_TOREAD;
-  Object *MI_TOHOLD;
-  Object *MI_TOQUEUED;
   Object *MI_TOSPAM;
   Object *MI_TOHAM;
   Object *MI_SEARCH;
@@ -117,7 +115,7 @@ enum
   RMEN_SAVEADDR,RMEN_CHSUBJ,RMEN_PREV,RMEN_NEXT,RMEN_URPREV,RMEN_URNEXT,RMEN_PREVTH,
   RMEN_NEXTTH,RMEN_EXTKEY,RMEN_CHKSIG,RMEN_SAVEDEC,RMEN_HNONE,RMEN_HSHORT,RMEN_HFULL,
   RMEN_SNONE,RMEN_SDATA,RMEN_SFULL,RMEN_WRAPH,RMEN_TSTYLE,RMEN_FFONT,RMEN_SIMAGE,RMEN_TOMARKED,
-  RMEN_TOUNMARKED,RMEN_TOUNREAD,RMEN_TOREAD,RMEN_TOHOLD,RMEN_TOQUEUED,RMEN_TOSPAM,RMEN_TOHAM,
+  RMEN_TOUNMARKED,RMEN_TOUNREAD,RMEN_TOREAD,RMEN_TOSPAM,RMEN_TOHAM,
   RMEN_SEARCH,RMEN_SEARCHAGAIN,RMEN_EDIT_COPY,RMEN_EDIT_SALL,RMEN_EDIT_SNONE,RMEN_TCOLOR
 };
 
@@ -260,8 +258,6 @@ OVERLOAD(OM_NEW)
   //  .   Set status to 'unmarked' (RMEN_TOUNMARKED)
   //  [   Set status to 'unread' (RMEN_TOUNREAD)
   //  ]   Set status to 'read' (RMEN_TOREAD)
-  //  {   Set status to 'hold' (RMEN_TOHOLD)
-  //  }   Set status to 'queued' (RMEN_TOQUEUED)
   //
   // InputEvent shortcuts:
   //
@@ -316,10 +312,8 @@ OVERLOAD(OM_NEW)
         MUIA_Menuitem_CopyStrings, FALSE,
         MenuChild, data->MI_TOMARKED = Menuitem(tr(MSG_MA_TOMARKED), ",", TRUE, FALSE, RMEN_TOMARKED),
         MenuChild, data->MI_TOUNMARKED = Menuitem(tr(MSG_MA_TOUNMARKED), ".", TRUE, FALSE, RMEN_TOUNMARKED),
-        MenuChild, data->MI_TOUNREAD = Menuitem(tr(MSG_MA_TOUNREAD), "[", TRUE, FALSE, RMEN_TOUNREAD),
         MenuChild, data->MI_TOREAD = Menuitem(tr(MSG_MA_TOREAD), "]", TRUE, FALSE, RMEN_TOREAD),
-        MenuChild, data->MI_TOHOLD = Menuitem(tr(MSG_MA_TOHOLD), "{", TRUE, FALSE, RMEN_TOHOLD),
-        MenuChild, data->MI_TOQUEUED = Menuitem(tr(MSG_MA_TOQUEUED), "}", TRUE, FALSE, RMEN_TOQUEUED),
+        MenuChild, data->MI_TOUNREAD = Menuitem(tr(MSG_MA_TOUNREAD), "[", TRUE, FALSE, RMEN_TOUNREAD),
       End,
       MenuChild, data->MI_CHSUBJ = Menuitem(tr(MSG_MA_ChangeSubj), NULL, TRUE, FALSE, RMEN_CHSUBJ),
     End,
@@ -446,8 +440,6 @@ OVERLOAD(OM_NEW)
 
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_TOUNREAD,       obj, 3, MUIM_ReadWindow_SetStatusTo, SFLAG_NONE, SFLAG_NEW|SFLAG_READ);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_TOREAD,         obj, 3, MUIM_ReadWindow_SetStatusTo, SFLAG_READ, SFLAG_NEW);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_TOHOLD,         obj, 3, MUIM_ReadWindow_SetStatusTo, SFLAG_HOLD|SFLAG_READ, SFLAG_QUEUED|SFLAG_ERROR);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_TOQUEUED,       obj, 3, MUIM_ReadWindow_SetStatusTo, SFLAG_QUEUED|SFLAG_READ, SFLAG_SENT|SFLAG_HOLD|SFLAG_ERROR);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_TOMARKED,       obj, 3, MUIM_ReadWindow_SetStatusTo, SFLAG_MARKED, SFLAG_NONE);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_TOUNMARKED,     obj, 3, MUIM_ReadWindow_SetStatusTo, SFLAG_NONE, SFLAG_MARKED);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_TOSPAM,         obj, 2, MUIM_ReadWindow_ClassifyMessage, BC_SPAM);
@@ -629,7 +621,7 @@ DECLARE(ReadMail) // struct Mail *mail
 
   // change the menu item title of the
   // Edit item so that we either display "Edit" or "Edit as New"
-  if(isRealMail == TRUE && isOutgoingFolder(folder))
+  if(isRealMail == TRUE && isDraftsFolder(folder))
     set(data->MI_EDIT, MUIA_Menuitem_Title, tr(MSG_MA_MEDIT));
   else
     set(data->MI_EDIT, MUIA_Menuitem_Title, tr(MSG_MA_MEDITASNEW));
@@ -659,13 +651,6 @@ DECLARE(ReadMail) // struct Mail *mail
   DoMethod(obj, MUIM_MultiSet, MUIA_Menuitem_Enabled, isRealMail && !isSentMail, data->MI_TOREAD,
                                                                                  data->MI_TOUNREAD,
                                                                                  NULL);
-
-  // Enable if:
-  //  * the mail is a real (non-virtual) mail
-  //  * is in the "Outgoing" Folder
-  DoMethod(obj, MUIM_MultiSet, MUIA_Menuitem_Enabled, isRealMail && isOutgoingFolder(folder), data->MI_TOHOLD,
-                                                                                              data->MI_TOQUEUED,
-                                                                                              NULL);
 
   if(data->windowToolbar != NULL)
   {
@@ -1625,7 +1610,7 @@ DECLARE(UpdateSpamControls)
     if(data->MI_TOHAM == NULL || isChildOfFamily(data->MI_STATUS, data->MI_TOHAM) == FALSE)
     {
       if((data->MI_TOHAM = Menuitem(tr(MSG_MA_TONOTSPAM), NULL, TRUE, FALSE, RMEN_TOHAM)) != NULL)
-        DoMethod(data->MI_STATUS, MUIM_Family_Insert, data->MI_TOHAM, data->MI_TOQUEUED);
+        DoMethod(data->MI_STATUS, MUIM_Family_Insert, data->MI_TOHAM, data->MI_TOUNREAD);
     }
     if(data->MI_TOHAM != NULL)
       set(data->MI_TOHAM, MUIA_Menuitem_Enabled, isSpamMail);
@@ -1633,7 +1618,7 @@ DECLARE(UpdateSpamControls)
     if(data->MI_TOSPAM == NULL || isChildOfFamily(data->MI_STATUS, data->MI_TOSPAM) == FALSE)
     {
       if((data->MI_TOSPAM = Menuitem(tr(MSG_MA_TOSPAM), NULL, TRUE, FALSE, RMEN_TOSPAM)) != NULL)
-        DoMethod(data->MI_STATUS, MUIM_Family_Insert, data->MI_TOSPAM, data->MI_TOQUEUED);
+        DoMethod(data->MI_STATUS, MUIM_Family_Insert, data->MI_TOSPAM, data->MI_TOUNREAD);
     }
     if(data->MI_TOSPAM != NULL)
       set(data->MI_TOSPAM, MUIA_Menuitem_Enabled, !isSpamMail);

@@ -628,7 +628,6 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
       DoMethod(obj, MUIM_NList_GetEntry, res.entry, &mail);
       if(mail != NULL)
       {
-        BOOL isOutBox = isOutgoingFolder(fo);
         BOOL isSentMail = isSentMailFolder(fo);
         BOOL hasattach = FALSE;
         ULONG numSelected = 0;
@@ -656,7 +655,7 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
         data->context_menu = MenustripObject,
           MenuChild, MenuObjectT(data->context_menu_title),
             MenuChild, Menuitem(tr(MSG_MA_MREAD), NULL, TRUE, FALSE, MMEN_READ),
-            MenuChild, Menuitem(isOutBox ? tr(MSG_MA_MEDIT) : tr(MSG_MA_MEDITASNEW), NULL, TRUE, FALSE, MMEN_EDIT),
+            MenuChild, Menuitem(isDraftsFolder(fo) ? tr(MSG_MA_MEDIT) : tr(MSG_MA_MEDITASNEW), NULL, TRUE, FALSE, MMEN_EDIT),
             MenuChild, Menuitem(tr(MSG_MA_MMOVE), NULL, TRUE, FALSE, MMEN_MOVE),
             MenuChild, Menuitem(tr(MSG_MA_MCOPY), NULL, TRUE, FALSE, MMEN_COPY),
             MenuChild, Menuitem(tr(MSG_MA_MDelete), NULL, TRUE, FALSE, MMEN_DELETE),
@@ -696,15 +695,13 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
               MenuChild, Menuitem(tr(MSG_MA_TOMARKED), NULL, numSelected >= 2 || !hasStatusMarked(mail), FALSE, MMEN_TOMARKED),
               MenuChild, Menuitem(tr(MSG_MA_TOUNMARKED), NULL, numSelected >= 2 ||  hasStatusMarked(mail), FALSE, MMEN_TOUNMARKED),
               MenuChild, Menuitem(tr(MSG_MA_TOREAD), NULL, !isSentMail && (numSelected >= 2 || hasStatusNew(mail) || hasStatusUnread(mail)), FALSE, MMEN_TOREAD),
-              MenuChild, Menuitem(tr(MSG_MA_TOUNREAD), NULL, !isSentMail && (numSelected >= 2 || hasStatusRead(mail)), FALSE, MMEN_TOUNREAD),
-              MenuChild, Menuitem(tr(MSG_MA_TOHOLD), NULL, isOutBox && !hasStatusHold(mail), FALSE, MMEN_TOHOLD),
-              MenuChild, afterThis = Menuitem(tr(MSG_MA_TOQUEUED), NULL, isOutBox && !hasStatusQueued(mail), FALSE, MMEN_TOQUEUED),
+              MenuChild, afterThis = Menuitem(tr(MSG_MA_TOUNREAD), NULL, !isSentMail && (numSelected >= 2 || hasStatusRead(mail)), FALSE, MMEN_TOUNREAD),
               MenuChild, MenuBarLabel,
               MenuChild, Menuitem(tr(MSG_MA_ALLTOREAD), NULL, !isSentMail,  FALSE, MMEN_ALLTOREAD),
             End,
             MenuChild, Menuitem(tr(MSG_MA_ChangeSubj), NULL, TRUE, FALSE, MMEN_CHSUBJ),
             MenuChild, MenuBarLabel,
-            MenuChild, Menuitem(tr(MSG_MA_MSend), NULL, isOutBox, FALSE, MMEN_SEND),
+            MenuChild, Menuitem(tr(MSG_MA_MSend), NULL, isOutgoingFolder(fo), FALSE, MMEN_SEND),
           End,
         End;
 
@@ -770,8 +767,6 @@ OVERLOAD(MUIM_ContextMenuChoice)
     case MMEN_CHSUBJ:         DoMethod(G->App, MUIM_CallHook, &MA_ChangeSubjectHook); break;
     case MMEN_TOUNREAD:       DoMethod(G->App, MUIM_CallHook, &MA_SetStatusToHook, SFLAG_NONE,              SFLAG_NEW|SFLAG_READ);              break;
     case MMEN_TOREAD:         DoMethod(G->App, MUIM_CallHook, &MA_SetStatusToHook, SFLAG_READ,              SFLAG_NEW);                         break;
-    case MMEN_TOHOLD:         DoMethod(G->App, MUIM_CallHook, &MA_SetStatusToHook, SFLAG_HOLD|SFLAG_READ,   SFLAG_QUEUED|SFLAG_ERROR);          break;
-    case MMEN_TOQUEUED:       DoMethod(G->App, MUIM_CallHook, &MA_SetStatusToHook, SFLAG_QUEUED|SFLAG_READ, SFLAG_SENT|SFLAG_HOLD|SFLAG_ERROR); break;
     case MMEN_TOMARKED:       DoMethod(G->App, MUIM_CallHook, &MA_SetStatusToHook, SFLAG_MARKED,            SFLAG_NONE);                        break;
     case MMEN_TOUNMARKED:     DoMethod(G->App, MUIM_CallHook, &MA_SetStatusToHook, SFLAG_NONE,              SFLAG_MARKED);                      break;
     case MMEN_ALLTOREAD:      DoMethod(G->App, MUIM_CallHook, &MA_SetAllStatusToHook, SFLAG_READ, SFLAG_NEW);                         break;
@@ -881,11 +876,11 @@ DECLARE(DoubleClicked) // LONG entryNum
   {
     struct Folder *folder = GetCurrentFolder();
 
-    // A double click in the outgoing folder should popup a write
+    // A double click in the drafts folder should popup a write
     // window instead.
-    if(folder != NULL && (isOutgoingFolder(folder) || isDraftsFolder(folder)))
+    if(folder != NULL && (isDraftsFolder(folder)))
     {
-      // in case the folder is the "outgoing" folder
+      // in case the folder is the "drafts" folder
       // we edit the mail instead.
       DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook, NMM_EDIT, 0);
     }

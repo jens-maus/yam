@@ -230,7 +230,7 @@ void MA_ChangeSelected(BOOL forceUpdate)
 
     // change the menu item title of the
     // Edit item so that we either display "Edit" or "Edit as New"
-    if(isOutgoingFolder(GetCurrentFolder()))
+    if(isDraftsFolder(GetCurrentFolder()))
       set(gui->MI_EDIT, MUIA_Menuitem_Title, tr(MSG_MA_MEDIT));
     else
       set(gui->MI_EDIT, MUIA_Menuitem_Title, tr(MSG_MA_MEDITASNEW));
@@ -275,8 +275,6 @@ void MA_ChangeSelected(BOOL forceUpdate)
     //  * > 0 mails selected
     DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && isOutgoingFolder(GetCurrentFolder()) && (active || numSelected > 0),
                                                            gui->MI_SEND,
-                                                           gui->MI_TOHOLD,
-                                                           gui->MI_TOQUEUED,
                                                            NULL);
 
     // Enable if:
@@ -3743,7 +3741,6 @@ void MA_SetupDynamicMenus(void)
     DoMethod(G->MA->GUI.MS_MAIN, MUIM_Family_Insert, G->MA->GUI.MN_REXX, G->MA->GUI.MN_SETTINGS);
   }
 
-
   // dynamic Folder/Check menu items
   if(G->MA->GUI.MI_CSINGLE != NULL)
   {
@@ -3818,7 +3815,7 @@ void MA_SetupDynamicMenus(void)
       G->MA->GUI.MI_TOHAM = Menuitem(tr(MSG_MA_TONOTSPAM), NULL, TRUE, FALSE, MMEN_TOHAM);
 
       if(G->MA->GUI.MI_TOHAM != NULL)
-        DoMethod(G->MA->GUI.MI_STATUS, MUIM_Family_Insert, G->MA->GUI.MI_TOHAM, G->MA->GUI.MI_TOQUEUED);
+        DoMethod(G->MA->GUI.MI_STATUS, MUIM_Family_Insert, G->MA->GUI.MI_TOHAM, G->MA->GUI.MI_TOUNREAD);
     }
 
     if(G->MA->GUI.MI_TOSPAM == NULL || isChildOfFamily(G->MA->GUI.MI_STATUS, G->MA->GUI.MI_TOSPAM) == FALSE)
@@ -3826,7 +3823,7 @@ void MA_SetupDynamicMenus(void)
       G->MA->GUI.MI_TOSPAM = Menuitem(tr(MSG_MA_TOSPAM), NULL, TRUE, FALSE, MMEN_TOSPAM);
 
       if(G->MA->GUI.MI_TOSPAM != NULL)
-        DoMethod(G->MA->GUI.MI_STATUS, MUIM_Family_Insert, G->MA->GUI.MI_TOSPAM, G->MA->GUI.MI_TOQUEUED);
+        DoMethod(G->MA->GUI.MI_STATUS, MUIM_Family_Insert, G->MA->GUI.MI_TOSPAM, G->MA->GUI.MI_TOUNREAD);
     }
   }
   else
@@ -4132,8 +4129,6 @@ struct MA_ClassData *MA_New(void)
     //  .   Set status to unmarked (MMEN_TOUNMARKED)
     //  [   Set status to unread (MMEN_TOUNREAD)
     //  ]   Set status to read (MMEN_TOREAD)
-    //  {   Set status to hold (MMEN_TOHOLD)
-    //  }   Set status to queued (MMEN_TOQUEUED)
     //  #   Set all mails to read (MMEN_ALLTOREAD)
     //  *   Configuration (MMEN_CONFIG)
     //  _   Execute script (MMEN_SCRIPT)
@@ -4239,8 +4234,6 @@ struct MA_ClassData *MA_New(void)
           MenuChild, data->GUI.MI_TOUNMARKED = Menuitem(tr(MSG_MA_TOUNMARKED), ".", TRUE, FALSE, MMEN_TOUNMARKED),
           MenuChild, data->GUI.MI_TOREAD = Menuitem(tr(MSG_MA_TOREAD), "]", TRUE, FALSE, MMEN_TOREAD),
           MenuChild, data->GUI.MI_TOUNREAD = Menuitem(tr(MSG_MA_TOUNREAD), "[", TRUE, FALSE, MMEN_TOUNREAD),
-          MenuChild, data->GUI.MI_TOHOLD = Menuitem(tr(MSG_MA_TOHOLD), "{", TRUE, FALSE, MMEN_TOHOLD),
-          MenuChild, data->GUI.MI_TOQUEUED = Menuitem(tr(MSG_MA_TOQUEUED), "}", TRUE, FALSE, MMEN_TOQUEUED),
           MenuChild, MenuBarLabel,
           MenuChild, data->GUI.MI_ALLTOREAD = Menuitem(tr(MSG_MA_ALLTOREAD), "#", TRUE, FALSE, MMEN_ALLTOREAD),
         End,
@@ -4391,8 +4384,6 @@ struct MA_ClassData *MA_New(void)
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SEND,           MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_SendHook, SENDMAIL_ACTIVE_USER);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_TOUNREAD,       MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_SetStatusToHook, SFLAG_NONE,              SFLAG_NEW|SFLAG_READ);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_TOREAD,         MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_SetStatusToHook, SFLAG_READ,              SFLAG_NEW);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_TOHOLD,         MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_SetStatusToHook, SFLAG_HOLD|SFLAG_READ,   SFLAG_QUEUED|SFLAG_ERROR);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_TOQUEUED,       MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_SetStatusToHook, SFLAG_QUEUED|SFLAG_READ, SFLAG_SENT|SFLAG_HOLD|SFLAG_ERROR);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_TOMARKED,       MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_SetStatusToHook, SFLAG_MARKED, SFLAG_NONE);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_TOUNMARKED,     MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_SetStatusToHook, SFLAG_NONE,   SFLAG_MARKED);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_ALLTOREAD,      MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_SetAllStatusToHook, SFLAG_READ, SFLAG_NEW);

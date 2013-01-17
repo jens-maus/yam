@@ -1933,7 +1933,7 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
 
   // check if necessary settings fror writing are OK and open new window
   if(CO_IsValid() == TRUE &&
-     (wmData = CreateWriteWindow(isOutgoingFolder(folder) || isDraftsFolder(folder) ? NMM_EDIT : NMM_EDITASNEW, quiet)) != NULL)
+     (wmData = CreateWriteWindow(isDraftsFolder(folder) ? NMM_EDIT : NMM_EDITASNEW, quiet)) != NULL)
   {
     FILE *out;
 

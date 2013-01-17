@@ -5228,12 +5228,6 @@ Unread
 MSG_MA_TOREAD (1823//)
 Read
 ;
-MSG_MA_TOHOLD (1824//)
-Hold
-;
-MSG_MA_TOQUEUED (1825//)
-Queued
-;
 MSG_PROJECT_MABOUT (1826//)
 About...
 ;

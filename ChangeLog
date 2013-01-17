@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-01-17 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MA.c, YAM_WR.c, mui/MainMailList.c, mui/ReadWindow.c: swapped the
+    edit menu item titles for the Drafts and Outgoing folders. Mails in
+    drafts can be edited directly and mails in Outgoing can only be edited
+    "as new" like in any other folder. This partly addresses and refs #375.
+
 2013-01-16 Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM.c, YAM_MAf.c: when having the option active that new mail will be changed

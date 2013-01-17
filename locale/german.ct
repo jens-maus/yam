@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.1 (23.12.2012)
+## version $VER: YAM.catalog 8.2 (17.01.2013)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -6744,12 +6744,6 @@ Ungelesen
 ;
 MSG_MA_TOREAD
 Gelesen
-;
-MSG_MA_TOHOLD
-Gehalten
-;
-MSG_MA_TOQUEUED
-In Warteschlange
 ;
 MSG_PROJECT_MABOUT
 Über...
