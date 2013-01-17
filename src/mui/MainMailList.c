@@ -103,12 +103,8 @@ static int MailCompare(struct Mail *entry1, struct Mail *entry2, LONG column)
       status2 += !hasStatusRead(entry2) ? 256 : 0;
       status1 += !hasStatusError(entry1) ? 256 : 0;
       status2 += !hasStatusError(entry2) ? 256 : 0;
-      status1 += hasStatusHold(entry1) ? 128 : 0;
-      status2 += hasStatusHold(entry2) ? 128 : 0;
       status1 += hasStatusReplied(entry1) ? 64 : 0;
       status2 += hasStatusReplied(entry2) ? 64 : 0;
-      status1 += hasStatusQueued(entry1) ? 64 : 0;
-      status2 += hasStatusQueued(entry2) ? 64 : 0;
       status1 += hasStatusForwarded(entry1) ? 32 : 0;
       status2 += hasStatusForwarded(entry2) ? 32 : 0;
       status1 += hasStatusSent(entry1) ? 32 : 0;
@@ -408,10 +404,8 @@ OVERLOAD(MUIM_NList_Display)
         // first we check which main status this mail has
         // and put the leftmost mail icon accordingly.
         if(hasStatusError(mail) || isPartialMail(mail)) strlcat(data->statusBuffer, SI_STR(SI_ERROR), sizeof(data->statusBuffer));
-        else if(hasStatusQueued(mail))  strlcat(data->statusBuffer, SI_STR(SI_WAITSEND), sizeof(data->statusBuffer));
         else if(hasStatusSent(mail))    strlcat(data->statusBuffer, SI_STR(SI_SENT), sizeof(data->statusBuffer));
         else if(hasStatusNew(mail))     strlcat(data->statusBuffer, SI_STR(SI_NEW), sizeof(data->statusBuffer));
-        else if(hasStatusHold(mail))    strlcat(data->statusBuffer, SI_STR(SI_HOLD), sizeof(data->statusBuffer));
         else if(hasStatusRead(mail))    strlcat(data->statusBuffer, SI_STR(SI_OLD), sizeof(data->statusBuffer));
         else                            strlcat(data->statusBuffer, SI_STR(SI_UNREAD), sizeof(data->statusBuffer));
 
@@ -438,8 +432,7 @@ OVERLOAD(MUIM_NList_Display)
           char *addr = NULL;
 
           if(((isCustomMixedFolder(mail->Folder) || isTrashFolder(mail->Folder) || isSpamFolder(mail->Folder)) &&
-              (hasStatusSent(mail) || hasStatusQueued(mail) || hasStatusHold(mail) ||
-               hasStatusError(mail))) || (searchWinHook && isSentMailFolder(mail->Folder)))
+              (hasStatusSent(mail) || hasStatusError(mail))) || (searchWinHook && isSentMailFolder(mail->Folder)))
           {
             pe = &mail->To;
 

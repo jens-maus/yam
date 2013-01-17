@@ -2259,7 +2259,7 @@ static BOOL SendWaitingMail(const BOOL hideDisplay)
 
     ForEachMailNode(fo->messages, mnode)
     {
-      if(!hasStatusHold(mnode->mail) && !hasStatusError(mnode->mail))
+      if(!hasStatusError(mnode->mail))
       {
         sendableMail = TRUE;
         break;

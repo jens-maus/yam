@@ -206,12 +206,10 @@ static void MA_ValidateStatus(struct Folder *folder)
   // the whole job only makes sense if there are new mails at all
   if(folder->New > 0)
   {
-    BOOL drafts = isDraftsFolder(folder);
-    BOOL outgoing = isOutgoingFolder(folder);
     BOOL sent = isSentFolder(folder);
 
     // mark new mails as unread during the startup phase only, but not upon reloading a folder index
-    if(drafts == TRUE || outgoing == TRUE || sent == TRUE || (C->UpdateNewMail == TRUE && G->InStartupPhase == TRUE))
+    if(sent == TRUE || (C->UpdateNewMail == TRUE && G->InStartupPhase == TRUE))
     {
       struct MailNode *mnode;
 
@@ -225,21 +223,16 @@ static void MA_ValidateStatus(struct Folder *folder)
 
         if(hasStatusNew(mail))
         {
-          if(drafts == TRUE || outgoing == TRUE)
-          {
-            D(DBF_FOLDER, "set status 'queued' of mail with subject '%s'", mail->Subject);
-            setStatusToQueued(mail);
-	        }
-          else if(sent == TRUE)
+          if(sent == TRUE)
           {
             D(DBF_FOLDER, "set status 'sent' of mail with subject '%s'", mail->Subject);
             setStatusToSent(mail);
-	        }
+          }
           else
           {
             D(DBF_FOLDER, "set status 'unread' of mail with subject '%s'", mail->Subject);
             setStatusToUnread(mail);
-	        }
+          }
         }
       }
 
@@ -1128,12 +1121,10 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
 
       case 'W':
         *statusPartPtr++ = SCHAR_READ;
-        *statusPartPtr++ = SCHAR_QUEUED;
       break;
 
       case 'H':
         *statusPartPtr++ = SCHAR_READ;
-        *statusPartPtr++ = SCHAR_HOLD;
       break;
 
       case 'O':
@@ -2894,14 +2885,6 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
               setFlag(mail->sflags, SFLAG_NEW);
             break;
 
-            case SCHAR_QUEUED:
-              setFlag(mail->sflags, SFLAG_QUEUED);
-            break;
-
-            case SCHAR_HOLD:
-              setFlag(mail->sflags, SFLAG_HOLD);
-            break;
-
             case SCHAR_SENT:
               setFlag(mail->sflags, SFLAG_SENT);
             break;
@@ -3295,7 +3278,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
                   {
                     // only if it is _not_ a "waitforsend" and "hold" message we can take the fib_Date
                     // as the fallback
-                    if(!hasStatusQueued(newMail) && !hasStatusHold(newMail))
+                    if(isDraftsFolder(folder) == FALSE && isOutgoingFolder(folder) == FALSE)
                     {
                       char mailfile[SIZE_PATHFILE];
                       struct DateStamp ds;

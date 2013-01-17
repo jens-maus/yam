@@ -3990,8 +3990,6 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
     if((email = MA_ExamineMail(outfolder, FilePart(newMailFile), C->EmailCache > 0 ? TRUE : FALSE)) != NULL)
     {
-      email->Mail.sflags = (mode == WRITE_HOLD || mode == WRITE_DRAFT) ? SFLAG_HOLD : SFLAG_QUEUED;
-
       if((newMail = AddMailToFolder(&email->Mail, outfolder)) != NULL)
       {
         // Now we have to check whether we have to add the To & CC addresses

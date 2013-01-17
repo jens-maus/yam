@@ -136,9 +136,9 @@ void rx_mailinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
 
           if(hasStatusError(mail))
             results->status = "E"; // Error status
-          else if(hasStatusQueued(mail))
+          else if(isOutgoingFolder(mail->Folder))
             results->status = "W"; // Queued (WaitForSend) status
-          else if(hasStatusHold(mail))
+          else if(isDraftsFolder(mail->Folder))
             results->status = "H"; // Hold status
           else if(hasStatusSent(mail))
             results->status = "S"; // Sent status

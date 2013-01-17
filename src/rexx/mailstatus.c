@@ -81,14 +81,14 @@ void rx_mailstatus(UNUSED struct RexxHost *host, struct RexxParams *params, enum
 
         case 'H': // hold
         {
-          MA_SetStatusTo(SFLAG_HOLD|SFLAG_READ, SFLAG_QUEUED|SFLAG_ERROR, FALSE);
+          // hold state no longer exists, keep for compatibility reasons
         }
         break;
 
         case 'Q': // queued
         case 'W': // wait to be sent
         {
-          MA_SetStatusTo(SFLAG_QUEUED|SFLAG_READ, SFLAG_SENT|SFLAG_HOLD|SFLAG_ERROR, FALSE);
+          // queued state no longer exists, keep for compatibility reasons
         }
         break;
 

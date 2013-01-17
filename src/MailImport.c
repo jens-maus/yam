@@ -970,7 +970,7 @@ static void ProcessImport(struct TransferContext *tc, const char *importFile, st
                 // define the default status flags depending on the
                 // folder
                 if(ftype == FT_OUTGOING)
-                  status = SFLAG_QUEUED | SFLAG_READ;
+                  status = SFLAG_READ;
                 else if(ftype == FT_SENT || ftype == FT_CUSTOMSENT)
                   status = SFLAG_SENT | SFLAG_READ;
                 else
@@ -989,8 +989,8 @@ static void ProcessImport(struct TransferContext *tc, const char *importFile, st
               // set the status flags now
               setFlag(mail->sflags, status | xstatus);
 
-              // depending on the Status we have to set the transDate or not
-              if(!hasStatusQueued(mail) && !hasStatusHold(mail))
+              // depending on the folder type we have to set the transDate or not
+              if(ftype != FT_DRAFTS && ftype != FT_OUTGOING)
                 GetSysTimeUTC(&mail->transDate);
 
               // add the mail to the folderlist now
@@ -1072,7 +1072,7 @@ static void ProcessImport(struct TransferContext *tc, const char *importFile, st
                 // define the default status flags depending on the
                 // folder
                 if(ftype == FT_OUTGOING)
-                  stat = SFLAG_QUEUED | SFLAG_READ;
+                  stat = SFLAG_READ;
                 else if(ftype == FT_SENT || ftype == FT_CUSTOMSENT)
                   stat = SFLAG_SENT | SFLAG_READ;
                 else
@@ -1081,8 +1081,8 @@ static void ProcessImport(struct TransferContext *tc, const char *importFile, st
                 setFlag(mail->sflags, stat);
               }
 
-              // depending on the Status we have to set the transDate or not
-              if(!hasStatusQueued(mail) && !hasStatusHold(mail))
+              // depending on the folder type we have to set the transDate or not
+              if(ftype != FT_DRAFTS && ftype != FT_OUTGOING)
                 GetSysTimeUTC(&mail->transDate);
 
               // add the mail to the folderlist now

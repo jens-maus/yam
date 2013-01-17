@@ -91,9 +91,9 @@ void rx_getmailinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enu
         {
           if(hasStatusError(mail))
             results->value = (char *)"E"; // Error status
-          else if(hasStatusQueued(mail))
+          else if(isOutgoingFolder(mail->Folder))
             results->value = (char *)"W"; // Queued (WaitForSend) status
-          else if(hasStatusHold(mail))
+          else if(isDraftsFolder(mail->Folder))
             results->value = (char *)"H"; // Hold status
           else if(hasStatusSent(mail))
             results->value = (char *)"S"; // Sent status

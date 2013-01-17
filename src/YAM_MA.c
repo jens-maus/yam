@@ -462,8 +462,6 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
   if(hasStatusReplied(mail))    *ptr++ = SCHAR_REPLIED;
   if(hasStatusForwarded(mail))  *ptr++ = SCHAR_FORWARDED;
   if(hasStatusNew(mail))        *ptr++ = SCHAR_NEW;
-  if(hasStatusQueued(mail))     *ptr++ = SCHAR_QUEUED;
-  if(hasStatusHold(mail))       *ptr++ = SCHAR_HOLD;
   if(hasStatusSent(mail))       *ptr++ = SCHAR_SENT;
   if(hasStatusDeleted(mail))    *ptr++ = SCHAR_DELETED;
   if(hasStatusMarked(mail))     *ptr++ = SCHAR_MARKED;
@@ -792,11 +790,6 @@ static struct Mail *MA_MoveCopySingle(struct Mail *mail, struct Folder *from, st
       if(to == GetCurrentFolder())
         DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_InsertSingle, newMail, MUIV_NList_Insert_Sorted);
 
-      // check the status flags and set the mail statues to queued if the mail was copied into
-      // the outgoing folder
-      if(isOutgoingFolder(to) && hasStatusSent(newMail))
-        setStatusToQueued(newMail);
-
       if(C->SpamFilterEnabled == TRUE && C->SpamMarkOnMove == TRUE)
       {
         // if we are moving a non-spam mail to the spam folder then this one will be marked as spam
@@ -977,9 +970,6 @@ char *MA_ToXStatusHeader(struct Mail *mail)
 
   if(hasStatusDeleted(mail))
     *ptr++ = 'D';
-
-  if(hasStatusHold(mail))
-    *ptr++ = 'T';
 
   if(hasStatusUserSpam(mail))
     *ptr++ = 'X';

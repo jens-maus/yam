@@ -3743,8 +3743,6 @@ static void RE_SendMDN(const enum MDNMode mode,
 
                   if((mdnMail = AddMailToFolder(&email->Mail, outfolder)) != NULL)
                   {
-                    setStatusToQueued(mdnMail);
-
                     // refresh the folder statistics before the transfer
                     DisplayStatistics(outfolder, TRUE);
 

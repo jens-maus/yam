@@ -1386,20 +1386,16 @@ BOOL SendMails(struct UserIdentityNode *uin, enum SendMailMode mode, const ULONG
         ForEachMailNode(uin->sentMailList, mnode)
         {
           struct Mail *mail = mnode->mail;
+          struct MailTransferNode *tnode;
 
-          if(hasStatusQueued(mail) || hasStatusError(mail))
+          if((tnode = CreateMailTransferNode(mail, TRF_TRANSFER)) != NULL)
           {
-            struct MailTransferNode *tnode;
+            AddMailTransferNode(transferList, tnode);
 
-            if((tnode = CreateMailTransferNode(mail, TRF_TRANSFER)) != NULL)
-            {
-              AddMailTransferNode(transferList, tnode);
-
-              // let the duplicated mail reference to its origin
-              tnode->mail->Reference = mail;
-              tnode->index = transferList->count;
-              totalSize += mail->Size;
-            }
+            // let the duplicated mail reference to its origin
+            tnode->mail->Reference = mail;
+            tnode->index = transferList->count;
+            totalSize += mail->Size;
           }
         }
 

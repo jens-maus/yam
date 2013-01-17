@@ -11,6 +11,8 @@ $URL$
     edit menu item titles for the Drafts and Outgoing folders. Mails in
     drafts can be edited directly and mails in Outgoing can only be edited
     "as new" like in any other folder. This partly addresses and refs #375.
+  * misc: removed all references to the old HOLD and QUEUED states. These
+    states are now implied by a mail's folder (Drafts or Outgoing).
 
 2013-01-16 Jens Langner <Jens.Langner@light-speed.de>
 

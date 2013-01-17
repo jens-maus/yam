@@ -956,7 +956,7 @@ BOOL FI_DoSearch(struct Search *search, const struct Mail *mail)
         break;
 
         case 'W':
-          found = hasStatusQueued(mail);
+          // queued state no longer exists, keep for compatibility reasons
         break;
 
         case 'E':
@@ -964,7 +964,7 @@ BOOL FI_DoSearch(struct Search *search, const struct Mail *mail)
         break;
 
         case 'H':
-          found = hasStatusHold(mail);
+          // hold state no longer exists, keep for compatibility reasons
         break;
 
         case 'S':
