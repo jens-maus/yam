@@ -42,7 +42,7 @@
 
 struct args
 {
-  long hold;
+  long draft;
 };
 
 void rx_writequeue(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
@@ -64,7 +64,7 @@ void rx_writequeue(UNUSED struct RexxHost *host, struct RexxParams *params, enum
       struct WriteMailData *wmData = G->ActiveRexxWMData;
 
       if(wmData != NULL && wmData->window != NULL)
-        DoMethod(wmData->window, MUIM_WriteWindow_ComposeMail, args->hold ? WRITE_HOLD : WRITE_QUEUE);
+        DoMethod(wmData->window, MUIM_WriteWindow_ComposeMail, args->draft ? WRITE_HOLD : WRITE_QUEUE);
       else
         params->rc = RETURN_ERROR;
     }
