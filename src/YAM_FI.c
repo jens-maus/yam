@@ -956,7 +956,7 @@ BOOL FI_DoSearch(struct Search *search, const struct Mail *mail)
         break;
 
         case 'W':
-          // queued state no longer exists, keep for compatibility reasons
+          found = isOutgoingFolder(mail->folder);
         break;
 
         case 'E':
@@ -964,7 +964,7 @@ BOOL FI_DoSearch(struct Search *search, const struct Mail *mail)
         break;
 
         case 'H':
-          // hold state no longer exists, keep for compatibility reasons
+          found = isDraftsFolder(mail->folder);
         break;
 
         case 'S':
@@ -1721,13 +1721,13 @@ struct MinList *CloneFilterList(enum ApplyFilterMode mode)
 
           if((rule->search = calloc(1, sizeof(*rule->search))) != NULL)
           {
-            int stat;
+            size_t stat;
 
             // we check the status field first and if we find a match
             // we can immediatly break up here because we don't need to prepare the search
             if(rule->searchMode == SM_STATUS)
             {
-              for(stat=0; stat <= (int)sizeof(mailStatusCycleMap) - 1; stat++)
+              for(stat=0; stat < ARRAY_SIZE(mailStatusCycleMap); stat++)
               {
                 if(rule->matchPattern[0] == mailStatusCycleMap[stat])
                   break;
