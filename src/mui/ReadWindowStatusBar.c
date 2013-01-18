@@ -363,6 +363,10 @@ DECLARE(Update) // struct Mail *mail
     // StatusGroup 0 (main mail status)
     if((hasStatusError(mail) || isPartialMail(mail)) && data->statusImage[SI_ERROR] != NULL)
       DoMethod(obj, OM_ADDMEMBER, data->statusImage[SI_ERROR]);
+    else if(isOutgoingFolder(mail->Folder) && data->statusImage[SI_WAITSEND] != NULL)
+      DoMethod(obj, OM_ADDMEMBER, data->statusImage[SI_WAITSEND]);
+    else if(isDraftsFolder(mail->Folder) && data->statusImage[SI_HOLD] != NULL)
+      DoMethod(obj, OM_ADDMEMBER, data->statusImage[SI_HOLD]);
     else if(hasStatusSent(mail) && data->statusImage[SI_SENT] != NULL)
       DoMethod(obj, OM_ADDMEMBER, data->statusImage[SI_SENT]);
     else if(hasStatusNew(mail) && data->statusImage[SI_NEW] != NULL)

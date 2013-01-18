@@ -404,10 +404,12 @@ OVERLOAD(MUIM_NList_Display)
         // first we check which main status this mail has
         // and put the leftmost mail icon accordingly.
         if(hasStatusError(mail) || isPartialMail(mail)) strlcat(data->statusBuffer, SI_STR(SI_ERROR), sizeof(data->statusBuffer));
-        else if(hasStatusSent(mail))    strlcat(data->statusBuffer, SI_STR(SI_SENT), sizeof(data->statusBuffer));
-        else if(hasStatusNew(mail))     strlcat(data->statusBuffer, SI_STR(SI_NEW), sizeof(data->statusBuffer));
-        else if(hasStatusRead(mail))    strlcat(data->statusBuffer, SI_STR(SI_OLD), sizeof(data->statusBuffer));
-        else                            strlcat(data->statusBuffer, SI_STR(SI_UNREAD), sizeof(data->statusBuffer));
+        else if(isOutgoingFolder(mail->Folder)) strlcat(data->statusBuffer, SI_STR(SI_WAITSEND), sizeof(data->statusBuffer));
+        else if(isDraftsFolder(mail->Folder))   strlcat(data->statusBuffer, SI_STR(SI_HOLD), sizeof(data->statusBuffer));
+        else if(hasStatusSent(mail))            strlcat(data->statusBuffer, SI_STR(SI_SENT), sizeof(data->statusBuffer));
+        else if(hasStatusNew(mail))             strlcat(data->statusBuffer, SI_STR(SI_NEW), sizeof(data->statusBuffer));
+        else if(hasStatusRead(mail))            strlcat(data->statusBuffer, SI_STR(SI_OLD), sizeof(data->statusBuffer));
+        else                                    strlcat(data->statusBuffer, SI_STR(SI_UNREAD), sizeof(data->statusBuffer));
 
         // then we add the 2. level if icons with the additional mail information
         // like importance, signed/crypted, report and attachment information
