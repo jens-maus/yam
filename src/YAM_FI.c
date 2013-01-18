@@ -956,7 +956,7 @@ BOOL FI_DoSearch(struct Search *search, const struct Mail *mail)
         break;
 
         case 'W':
-          found = isOutgoingFolder(mail->folder);
+          found = isOutgoingFolder(mail->Folder);
         break;
 
         case 'E':
@@ -964,7 +964,7 @@ BOOL FI_DoSearch(struct Search *search, const struct Mail *mail)
         break;
 
         case 'H':
-          found = isDraftsFolder(mail->folder);
+          found = isDraftsFolder(mail->Folder);
         break;
 
         case 'S':
