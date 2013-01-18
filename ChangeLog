@@ -14,8 +14,16 @@ $URL$
   * Rexx.c, rexx/writequeue.c: renamed the HOLD option of the WRITEQUEUE command
     to DRAFT. However, HOLD is kept as an alternative for compatibility with old
     scripts.
+  * mui/WriteWindow.c: renamed the "Hold" button/menu item to "Save as draft" as
+    this is what these objects really do. Furthermore the write window is no
+    longer closed in this situation, because saving a mail as draft means that
+    the mail is not yet finished and the user might want to continue to work on
+    it immediately. Finally the Cancel button has been removed as canceling the
+    edit action can be done by closing the window or choosing "Close" from the
+    menu or by pressing the window close key (usually ESC). This finally closes
+    #375.
 
-2013-01-17 Thore Böckelmann <tboeckel@gmx.de>
+2013-0W1-17 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MA.c, YAM_WR.c, mui/MainMailList.c, mui/ReadWindow.c: swapped the
     edit menu item titles for the Drafts and Outgoing folders. Mails in

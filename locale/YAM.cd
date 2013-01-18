@@ -2985,11 +2985,6 @@ MSG_HELP_WR_CY_IMPORTANCE (1044//)
 Set the priority\n\
 of this message.
 ;
-MSG_HELP_WR_BT_HOLD (1047//)
-Copy the created message to\n\
-the Outgoing folder and set\n\
-its status to 'hold'.
-;
 MSG_HELP_WR_BT_QUEUE (1048//)
 Copy the created message to\n\
 the Outgoing folder.
@@ -2998,10 +2993,6 @@ MSG_HELP_WR_BT_SEND (1049//)
 Copy the created message to\n\
 the Outgoing folder and send\n\
 it immediately.
-;
-MSG_HELP_WR_BT_CANCEL (1050//)
-Discard the\n\
-created message.
 ;
 ;
 ; Module TR - Procedures
@@ -5590,23 +5581,11 @@ _Send now
 MSG_WR_SENDLATER (1948//)
 Send _later
 ;
-MSG_WR_HOLD (1949//)
-_Hold
-;
-MSG_WR_CANCEL (1950//)
-Cancel
-;
 MSG_WR_MSENDNOW (1951//)
 Send now
 ;
 MSG_WR_MSENDLATER (1952//)
 Send later
-;
-MSG_WR_MHOLD (1953//)
-Hold
-;
-MSG_WR_MCANCEL (1954//)
-Cancel
 ;
 MSG_ER_CONNECTIONBROKEN (1955//)
 Connection with server '%s' was interrupted \
@@ -7354,4 +7333,17 @@ you should install a copy of the 'rexxsyslib.library' \
 from an AmigaOS 3.1-3.9 installation to 'SYS:Libs', rename \
 the 'rexxsyslib.library' in 'MOSSYS:Libs' and reboot your \
 system.
+;
+MSG_WR_SAVEASDRAFT (2402//)
+Save as draft
+;
+MSG_HELP_WR_BT_SAVEASDRAFT (2403//)
+Saves the message to\n\
+the 'Drafts' folder.
+;
+MSG_WR_MSAVEASDRAFT (2404//)
+Save as draft
+;
+MSG_WR_MCLOSE (2405//)
+Close
 ;
