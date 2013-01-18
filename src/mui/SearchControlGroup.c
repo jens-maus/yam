@@ -601,9 +601,9 @@ DECLARE(GetFromRule) // struct RuleNode *rule
     nnset(data->ST_MATCH[g], MUIA_String_Contents, rule->matchPattern);
   else
   {
-    int i;
+    size_t i;
 
-    for(i=0; i <= 8; i++)
+    for(i=0; i < ARRAY_SIZE(mailStatusCycleMap); i++)
     {
       if(*rule->matchPattern == mailStatusCycleMap[i])
       {
