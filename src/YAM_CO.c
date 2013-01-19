@@ -1877,6 +1877,9 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
 
     // default SSL ciphers to use
     strlcpy(co->DefaultSSLCiphers, "ALL:!LOW:!SSLv2:!EXP:!aNULL:@STRENGTH", sizeof(co->DefaultSSLCiphers));
+
+    // default MachineFQDN is empty which means we try to identify it during runtime
+    co->MachineFQDN[0] = '\0';
   }
 
   LEAVE();

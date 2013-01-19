@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-01-19 Jens Langner <Jens.Langner@light-speed.de>
+
+  * tcp/Connection.c, YAM_COs.c, misc: modified GetFQDN() to ensure the hostname
+    returned by gethostname() also contains the domain name or otherwise the IP
+    is returned as a literal [X.X.X.X] string as defined by RFC2821. Furthermore,
+    to allow users to specify an own FQDN a new "MachineFQDN" hidden option was
+    added to the configuration. When specified this machine name is used instead
+    of trying to find out an own valid FQDN via various sophisticated methods.
+    This fixes and closes #368.
+
 2013-01-18 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/MainMailList.c, mui/ReadWindowStatusBar.c: readded the status icons for

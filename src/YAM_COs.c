@@ -740,6 +740,7 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
     DateStamp2String(buf, sizeof(buf), &co->BirthdayCheckTime, DSS_SHORTTIME, TZC_NONE);
     fprintf(fh, "BirthdayCheckTime        = %s\n", buf);
     fprintf(fh, "DefaultSSLCiphers        = %s\n", co->DefaultSSLCiphers);
+    fprintf(fh, "MachineFQDN              = %s\n", co->MachineFQDN);
 
     // analyze if we really didn't meet an error during the
     // numerous write operations
@@ -1639,6 +1640,7 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
           else if(stricmp(buf, "ConfirmRemoveAttachments") == 0) co->ConfirmRemoveAttachments = Txt2Bool(value);
           else if(stricmp(buf, "BirthdayCheckTime") == 0)        String2DateStamp(&co->BirthdayCheckTime, value, DSS_TIME, TZC_NONE);
           else if(stricmp(buf, "DefaultSSLCiphers") == 0)        strlcpy(co->DefaultSSLCiphers, value, sizeof(co->DefaultSSLCiphers));
+          else if(stricmp(buf, "MachineFQDN") == 0)              strlcpy(co->MachineFQDN, value, sizeof(co->MachineFQDN));
 
 /* Obsolete options (previous YAM version write them, we just read them) */
           else if(version < LATEST_CFG_VERSION)

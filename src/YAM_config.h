@@ -606,6 +606,7 @@ struct Config
   char UpdateDownloadPath[SIZE_PATH];
   char DefaultSSLCiphers[SIZE_DEFAULT];
   char SpamExternalFilter[SIZE_FILE];
+  char MachineFQDN[SIZE_DEFAULT];
 };
 
 extern struct Config *C;
