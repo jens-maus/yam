@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-01-20 Emilio Jimenez <ejim@ono.com>
+
+  * locale/spanish.ct: update to the latest changes.
+
 2013-01-19 Jens Langner <Jens.Langner@light-speed.de>
 
   * tcp/Connection.c, YAM_COs.c, misc: modified GetFQDN() to ensure the hostname
