@@ -1241,16 +1241,13 @@ HOOKPROTONHNONP(CO_PutIdentityEntry, void)
     DoMethod(gui->LV_IDENTITY, MUIM_NList_GetEntry, p, &uin);
     if(uin != NULL)
     {
-      struct Node *curNode;
-      int posMailServer;
-      int posSignature;
-      int i;
-
       uin->active = GetMUICheck(gui->CH_IDENTITY_ENABLED);
       GetMUIString(uin->description,  gui->ST_IDENTITY_DESCRIPTION, sizeof(uin->description));
       GetMUIString(uin->realname,     gui->ST_IDENTITY_REALNAME,    sizeof(uin->realname));
       GetMUIString(uin->address,      gui->ST_IDENTITY_EMAIL,       sizeof(uin->address));
       GetMUIString(uin->organization, gui->ST_IDENTITY_ORGANIZATION,sizeof(uin->organization));
+      uin->smtpServer = (struct MailServerNode *)xget(gui->CY_IDENTITY_MAILSERVER, MUIA_MailServerChooser_MailServer);
+      uin->signature = (struct SignatureNode *)xget(gui->CY_IDENTITY_SIGNATURE, MUIA_SignatureChooser_Signature);
       GetMUIString(uin->mailCC,       gui->ST_IDENTITY_CC,          sizeof(uin->mailCC));
       GetMUIString(uin->mailBCC,      gui->ST_IDENTITY_BCC,         sizeof(uin->mailBCC));
       GetMUIString(uin->mailReplyTo,  gui->ST_IDENTITY_REPLYTO,     sizeof(uin->mailReplyTo));
@@ -1294,49 +1291,6 @@ HOOKPROTONHNONP(CO_PutIdentityEntry, void)
       // account name is still present we go and set an automatic generated one
       if(uin->description[0] == '\0' || strcmp(uin->description, tr(MSG_NewEntry)) == 0)
         strlcpy(uin->description, uin->address, sizeof(uin->description));
-
-      // now we iterate through the SMTP server list and match
-      posMailServer = GetMUICycle(gui->CY_IDENTITY_MAILSERVER);
-      i = 0;
-      IterateList(&CE->smtpServerList, curNode)
-      {
-        struct MailServerNode *msn = (struct MailServerNode *)curNode;
-
-        if(isServerActive(msn))
-        {
-          if(i == posMailServer)
-          {
-            uin->smtpServer = msn;
-            break;
-          }
-
-          i++;
-        }
-      }
-
-      // now we iterate through the Signature list and match
-      posSignature = GetMUICycle(gui->CY_IDENTITY_SIGNATURE);
-      if(posSignature > 0)
-      {
-        i = 1;
-        IterateList(&CE->signatureList, curNode)
-        {
-          struct SignatureNode *sn = (struct SignatureNode *)curNode;
-
-          if(sn->active == TRUE)
-          {
-            if(i == posSignature)
-            {
-              uin->signature = sn;
-              break;
-            }
-
-            i++;
-          }
-        }
-      }
-      else
-        uin->signature = NULL;
 
       // redraw the list
       DoMethod(gui->LV_IDENTITY, MUIM_NList_Redraw, p);

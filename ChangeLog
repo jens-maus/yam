@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-01-21 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_CO.c: simplified getting the SMTP server and signature nodes.
+
 2013-01-20 Emilio Jimenez <ejim@ono.com>
 
   * locale/spanish.ct: update to the latest changes.
