@@ -125,6 +125,8 @@ struct Data
   Object *ST_REPLYTO;
   Object *GR_REPLYTO;
   Object *MN_REPLYTO;
+  Object *LB_FROM_OVERRIDE;
+  Object *ST_FROM_OVERRIDE;
   Object *ST_EXTHEADER;
   Object *CH_DELSEND;
   Object *CH_MDN;
@@ -165,10 +167,11 @@ struct Data
   BOOL useTextColors;  // use Textcolors for displaying the mail
   BOOL useTextStyles;  // use Textstyles for displaying the mail
 
-  BOOL fromRcptHidden;     // TRUE if From: recipient field is hidden
-  BOOL ccRcptHidden;       // TRUE if CC: recipient field is hidden
-  BOOL bccRcptHidden;      // TRUE if BCC: recipient field is hidden
-  BOOL replyToRcptHidden;  // TRUE if Reply-To: recipient field is hidden
+  BOOL fromRcptHidden;         // TRUE if From: identity chooser is hidden
+  BOOL fromOverrideRcptHidden; // TRUE if From: recipient field is hidden
+  BOOL ccRcptHidden;           // TRUE if CC: recipient field is hidden
+  BOOL bccRcptHidden;          // TRUE if BCC: recipient field is hidden
+  BOOL replyToRcptHidden;      // TRUE if Reply-To: recipient field is hidden
 
   char cursorPos[SIZE_SMALL];
   char windowTitle[SIZE_SUBJECT+1]; // string for the title text of the window
@@ -179,11 +182,12 @@ struct Data
 /* EXPORT
 enum RcptType
 {
-  MUIV_WriteWindow_RcptType_To = 0,
+  MUIV_WriteWindow_RcptType_From = 0,
+  MUIV_WriteWindow_RcptType_FromOverride,
+  MUIV_WriteWindow_RcptType_To,
   MUIV_WriteWindow_RcptType_CC,
   MUIV_WriteWindow_RcptType_BCC,
   MUIV_WriteWindow_RcptType_ReplyTo,
-  MUIV_WriteWindow_RcptType_From
 };
 
 enum ActiveObject
@@ -1092,6 +1096,9 @@ OVERLOAD(OM_NEW)
                     MUIA_ControlChar, ShortCut(tr(MSG_WR_From)),
                   End,
 
+                  Child, data->LB_FROM_OVERRIDE = HSpace(-1),
+                  Child, data->ST_FROM_OVERRIDE = MakeAddressField(&data->ST_FROM_OVERRIDE, NULL, NULL, ABM_FROM, data->windowNumber, AFF_NOFULLNAME|AFF_EXTERNAL_SHORTCUTS),
+
                   Child, data->LB_TO = Label(tr(MSG_WR_To)),
                   Child, data->GR_TO = MakeAddressField(&data->ST_TO, tr(MSG_WR_To), MSG_HELP_WR_ST_TO, ABM_TO, data->windowNumber, AFF_ALLOW_MULTI|AFF_EXTERNAL_SHORTCUTS),
 
@@ -1497,6 +1504,8 @@ OVERLOAD(OM_NEW)
 
         // hide optional recipient string object depending on their
         // defaults
+        if(C->OverrideFromAddress == FALSE)
+          DoMethod(obj, METHOD(HideRecipientObject), MUIV_WriteWindow_RcptType_FromOverride);
         if(C->ShowRcptFieldCC == FALSE)
           DoMethod(obj, METHOD(HideRecipientObject), MUIV_WriteWindow_RcptType_CC);
         if(C->ShowRcptFieldBCC == FALSE)
@@ -1522,19 +1531,20 @@ OVERLOAD(OM_NEW)
       SetHelp(data->PO_CHARSET,     MSG_HELP_WR_PO_CHARSET);
 
       // declare the mail as modified if any of these objects reports a change
-      DoMethod(data->ST_TO,         MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
-      DoMethod(data->ST_CC,         MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
-      DoMethod(data->ST_BCC,        MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
-      DoMethod(data->ST_REPLYTO,    MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
-      DoMethod(data->ST_EXTHEADER,  MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
-      DoMethod(data->ST_CTYPE,      MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
-      DoMethod(data->ST_DESC,       MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
-      DoMethod(data->PO_CHARSET,    MUIM_Notify, MUIA_Text_Contents,   MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
-      DoMethod(data->CY_IMPORTANCE, MUIM_Notify, MUIA_Cycle_Active,    MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
-      DoMethod(data->CY_SECURITY,   MUIM_Notify, MUIA_Cycle_Active,    MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
-      DoMethod(data->CH_DELSEND,    MUIM_Notify, MUIA_Selected,        MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
-      DoMethod(data->CH_MDN,        MUIM_Notify, MUIA_Selected,        MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
-      DoMethod(data->CH_ADDINFO,    MUIM_Notify, MUIA_Selected,        MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->ST_FROM_OVERRIDE, MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->ST_TO,            MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->ST_CC,            MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->ST_BCC,           MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->ST_REPLYTO,       MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->ST_EXTHEADER,     MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->ST_CTYPE,         MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->ST_DESC,          MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->PO_CHARSET,       MUIM_Notify, MUIA_Text_Contents,   MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->CY_IMPORTANCE,    MUIM_Notify, MUIA_Cycle_Active,    MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->CY_SECURITY,      MUIM_Notify, MUIA_Cycle_Active,    MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->CH_DELSEND,       MUIM_Notify, MUIA_Selected,        MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->CH_MDN,           MUIM_Notify, MUIA_Selected,        MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->CH_ADDINFO,       MUIM_Notify, MUIA_Selected,        MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
 
       // set main window button notifies
       DoMethod(data->BT_SAVEASDRAFT, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(ComposeMail), WRITE_DRAFT);
@@ -1680,6 +1690,12 @@ OVERLOAD(OM_DISPOSE)
   {
     MUI_DisposeObject(data->LB_FROM);
     MUI_DisposeObject(data->CY_FROM);
+  }
+
+  if(data->fromOverrideRcptHidden == TRUE)
+  {
+    MUI_DisposeObject(data->LB_FROM_OVERRIDE);
+    MUI_DisposeObject(data->ST_FROM_OVERRIDE);
   }
 
   if(data->ccRcptHidden == TRUE)
@@ -3198,6 +3214,22 @@ DECLARE(AddRecipient) // enum RcptType type, char *recipient
 
   switch(msg->type)
   {
+    case MUIV_WriteWindow_RcptType_From:
+    {
+      struct UserIdentityNode *uin;
+
+      // try to match the identity by search through our user identities
+      if((uin = FindUserIdentityByAddress(&C->userIdentityList, msg->recipient)) != NULL)
+        set(data->CY_FROM, MUIA_IdentityChooser_Identity, uin);
+      else
+        DisplayBeep(NULL);
+    }
+    break;
+
+    case MUIV_WriteWindow_RcptType_FromOverride:
+      DoMethod(data->ST_FROM_OVERRIDE, MUIM_Recipientstring_AddRecipient, msg->recipient);
+    break;
+
     case MUIV_WriteWindow_RcptType_To:
       DoMethod(data->ST_TO, MUIM_Recipientstring_AddRecipient, msg->recipient);
     break;
@@ -3215,18 +3247,6 @@ DECLARE(AddRecipient) // enum RcptType type, char *recipient
     case MUIV_WriteWindow_RcptType_ReplyTo:
       DoMethod(data->ST_REPLYTO, MUIM_Recipientstring_AddRecipient, msg->recipient);
       DoMethod(obj, METHOD(ShowRecipientObject), MUIV_WriteWindow_RcptType_ReplyTo);
-    break;
-
-    case MUIV_WriteWindow_RcptType_From:
-    {
-      struct UserIdentityNode *uin;
-
-      // try to match the identity by search through our user identities
-      if((uin = FindUserIdentityByAddress(&C->userIdentityList, msg->recipient)) != NULL)
-        set(data->CY_FROM, MUIA_IdentityChooser_Identity, uin);
-      else
-        DisplayBeep(NULL);
-    }
     break;
   }
 
@@ -3248,25 +3268,6 @@ DECLARE(InsertAddresses) // enum RcptType type, char **addr, ULONG add
 
   switch(msg->type)
   {
-    case MUIV_WriteWindow_RcptType_To:
-      str = data->ST_TO;
-    break;
-
-    case MUIV_WriteWindow_RcptType_CC:
-      str = data->ST_CC;
-      DoMethod(obj, METHOD(ShowRecipientObject), MUIV_WriteWindow_RcptType_CC);
-    break;
-
-    case MUIV_WriteWindow_RcptType_BCC:
-      str = data->ST_BCC;
-      DoMethod(obj, METHOD(ShowRecipientObject), MUIV_WriteWindow_RcptType_BCC);
-    break;
-
-    case MUIV_WriteWindow_RcptType_ReplyTo:
-      str = data->ST_REPLYTO;
-      DoMethod(obj, METHOD(ShowRecipientObject), MUIV_WriteWindow_RcptType_ReplyTo);
-    break;
-
     case MUIV_WriteWindow_RcptType_From:
     {
       struct UserIdentityNode *uin;
@@ -3290,6 +3291,29 @@ DECLARE(InsertAddresses) // enum RcptType type, char **addr, ULONG add
       if(uin == NULL)
         DisplayBeep(NULL);
     }
+    break;
+
+    case MUIV_WriteWindow_RcptType_FromOverride:
+      str = data->ST_FROM_OVERRIDE;
+    break;
+
+    case MUIV_WriteWindow_RcptType_To:
+      str = data->ST_TO;
+    break;
+
+    case MUIV_WriteWindow_RcptType_CC:
+      str = data->ST_CC;
+      DoMethod(obj, METHOD(ShowRecipientObject), MUIV_WriteWindow_RcptType_CC);
+    break;
+
+    case MUIV_WriteWindow_RcptType_BCC:
+      str = data->ST_BCC;
+      DoMethod(obj, METHOD(ShowRecipientObject), MUIV_WriteWindow_RcptType_BCC);
+    break;
+
+    case MUIV_WriteWindow_RcptType_ReplyTo:
+      str = data->ST_REPLYTO;
+      DoMethod(obj, METHOD(ShowRecipientObject), MUIV_WriteWindow_RcptType_ReplyTo);
     break;
   }
 
@@ -3704,6 +3728,8 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
   // first we check all input values and fill up
   // the struct Compose structure
+
+  comp.FromOverride = (char *)xget(data->ST_FROM_OVERRIDE, MUIA_String_Contents);
 
   // get the contents of the TO: String gadget and check if it is valid
   addr = (char *)DoMethod(data->ST_TO, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValid);
@@ -4519,6 +4545,7 @@ DECLARE(IdentityChanged) // struct UserIdentityNode *uin;
   set(data->ST_CC, MUIA_Recipientstring_ActiveIdentity, msg->uin);
   set(data->ST_BCC, MUIA_Recipientstring_ActiveIdentity, msg->uin);
   set(data->ST_REPLYTO, MUIA_Recipientstring_ActiveIdentity, msg->uin);
+  setstring(data->ST_FROM_OVERRIDE, msg->uin->address);
 
   // check if we have to show the CC/BCC/ReplyTo string objects
   // in case we filled in sensible information
@@ -4561,6 +4588,18 @@ DECLARE(HideRecipientObject) // enum RcptType rtype
           DoMethod(data->GR_HEADER, OM_REMMEMBER, data->LB_FROM);
           DoMethod(data->GR_HEADER, OM_REMMEMBER, data->CY_FROM);
           data->fromRcptHidden = TRUE;
+        }
+      }
+      break;
+
+      case MUIV_WriteWindow_RcptType_FromOverride:
+      {
+        // we only remove it if it is already shown
+        if(data->fromOverrideRcptHidden == FALSE)
+        {
+          DoMethod(data->GR_HEADER, OM_REMMEMBER, data->LB_FROM_OVERRIDE);
+          DoMethod(data->GR_HEADER, OM_REMMEMBER, data->ST_FROM_OVERRIDE);
+          data->fromOverrideRcptHidden = TRUE;
         }
       }
       break;
@@ -4635,7 +4674,7 @@ DECLARE(ShowRecipientObject) // enum RcptType rtype
   {
     struct {
       ULONG MethodID;
-      Object *objs[14];
+      Object *objs[16];
     } sortMsg;
     int objcnt;
 
@@ -4650,6 +4689,19 @@ DECLARE(ShowRecipientObject) // enum RcptType rtype
           DoMethod(data->GR_HEADER, OM_ADDMEMBER, data->CY_FROM);
 
           data->fromRcptHidden = FALSE;
+        }
+      }
+      break;
+
+      case MUIV_WriteWindow_RcptType_FromOverride:
+      {
+        // we only show it if it is already hidden
+        if(data->fromOverrideRcptHidden == TRUE)
+        {
+          DoMethod(data->GR_HEADER, OM_ADDMEMBER, data->LB_FROM_OVERRIDE);
+          DoMethod(data->GR_HEADER, OM_ADDMEMBER, data->ST_FROM_OVERRIDE);
+
+          data->fromOverrideRcptHidden = FALSE;
         }
       }
       break;
@@ -4717,6 +4769,11 @@ DECLARE(ShowRecipientObject) // enum RcptType rtype
       sortMsg.objs[objcnt] = data->LB_FROM; objcnt++;
       sortMsg.objs[objcnt] = data->CY_FROM; objcnt++;
     }
+    if(data->fromOverrideRcptHidden == FALSE)
+    {
+      sortMsg.objs[objcnt] = data->LB_FROM_OVERRIDE; objcnt++;
+      sortMsg.objs[objcnt] = data->ST_FROM_OVERRIDE; objcnt++;
+    }
     sortMsg.objs[objcnt] = data->LB_TO; objcnt++;
     sortMsg.objs[objcnt] = data->GR_TO; objcnt++;
     if(data->ccRcptHidden == FALSE)
@@ -4764,6 +4821,10 @@ DECLARE(MenuToggleRecipientObject) // enum RcptType rtype
   {
     case MUIV_WriteWindow_RcptType_From:
       show = (data->fromRcptHidden == TRUE);
+    break;
+
+    case MUIV_WriteWindow_RcptType_FromOverride:
+      show = (data->fromOverrideRcptHidden == TRUE);
     break;
 
     case MUIV_WriteWindow_RcptType_CC:

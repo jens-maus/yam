@@ -147,6 +147,7 @@ struct WritePart
 struct Compose
 {
   FILE *                    FH;             // ptr to file handle of mail
+  char *                    FromOverride;   // overridden From: address
   char *                    MailTo;         // array of To: addresses
   char *                    MailCC;         // array of CC: addresses
   char *                    MailBCC;        // array of BCC: addresses

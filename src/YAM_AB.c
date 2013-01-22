@@ -753,6 +753,7 @@ HOOKPROTONHNO(AB_FromAddrBook, BOOL, ULONG *arg)
 
       switch(arg[0])
       {
+        case ABM_FROM:    type = MUIV_WriteWindow_RcptType_FromOverride; break;
         case ABM_TO:      type = MUIV_WriteWindow_RcptType_To; break;
         case ABM_CC:      type = MUIV_WriteWindow_RcptType_CC; break;
         case ABM_BCC:     type = MUIV_WriteWindow_RcptType_BCC; break;
@@ -3018,6 +3019,7 @@ HOOKPROTONHNO(AB_OpenFunc, void, LONG *arg)
 
   switch((ab->Mode = arg[0]))
   {
+    case ABM_FROM:    md = "(From)";    break;
     case ABM_TO:      md = "(To)";      break;
     case ABM_CC:      md = "(CC)";      break;
     case ABM_BCC:     md = "(BCC)";     break;

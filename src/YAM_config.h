@@ -544,6 +544,7 @@ struct Config
   BOOL  ShowRcptFieldCC;
   BOOL  ShowRcptFieldBCC;
   BOOL  ShowRcptFieldReplyTo;
+  BOOL  OverrideFromAddress;
 
   struct MUI_PenSpec   ColoredText;
   struct MUI_PenSpec   Color1stLevel;

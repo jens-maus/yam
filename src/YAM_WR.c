@@ -1275,7 +1275,10 @@ BOOL WriteOutMessage(struct Compose *comp)
   EmitHeader(fh, "X-YAM-Options", buf);
 
   // put the From: header entry into the mail
-  EmitRcptHeader(fh, "From", BuildAddress(address, sizeof(address), comp->Identity->address, comp->Identity->realname));
+  if(comp->FromOverride != NULL && strcmp(comp->FromOverride, comp->Identity->address) != 0)
+    EmitRcptHeader(fh, "From", BuildAddress(address, sizeof(address), comp->FromOverride, comp->Identity->realname));
+  else
+    EmitRcptHeader(fh, "From", BuildAddress(address, sizeof(address), comp->Identity->address, comp->Identity->realname));
 
   EmitRcptHeader(fh, "Reply-To", comp->ReplyTo);
   EmitRcptHeader(fh, "To", comp->MailTo);

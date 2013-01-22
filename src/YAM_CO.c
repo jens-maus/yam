@@ -2185,6 +2185,7 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      c1->GlobalMailThreads               == c2->GlobalMailThreads &&
      c1->ShowFilterStats                 == c2->ShowFilterStats &&
      c1->ConfirmRemoveAttachments        == c2->ConfirmRemoveAttachments &&
+     c1->OverrideFromAddress             == c2->OverrideFromAddress &&
 
      c1->SocketOptions.SendBuffer        == c2->SocketOptions.SendBuffer &&
      c1->SocketOptions.RecvBuffer        == c2->SocketOptions.RecvBuffer &&

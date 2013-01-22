@@ -8,8 +8,16 @@ $URL$
 2013-01-22 Thore Böckelmann <tboeckel@gmx.de>
 
   * tcp/smtp.c: moving a sent mail to another folder by an "apply to sent mails"
-    filter will now update the Outgoing folder's stats to show the correct number
-    of available mails. This closes #378.
+    filter will now update the Outgoing folder's stats to show the correct
+    number of available mails. This closes #378.
+  * WriteWindow.c, YAM_WR.c, YAM_CO.c: added a new option in the hidden section
+    of the configuration. Setting the option "OverrideFromAddress" to "Y" will
+    add a recipient string object below the identity chooser in the write
+    window. The contents default to the chosen identity's address but can be
+    modified freely. This makes it possible to use a different From: address
+    than the one configured in the identity while still using all other settings
+    like the SMTP server. Please note that such mails might be rejected by the
+    SMTP server. This finally closes #321.
 
 2013-01-21 Thore Böckelmann <tboeckel@gmx.de>
 
