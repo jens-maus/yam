@@ -349,7 +349,8 @@ Object *MakeAddressField(Object **string, const char *label, const void *help, i
 
   End))
   {
-    SetHelp(*string,help);
+    if(help != NULL)
+      SetHelp(*string, help);
     SetHelp(bt_adr, MSG_HELP_WR_BT_ADR);
 
     if(abmode == ABM_CONFIG)
@@ -506,7 +507,7 @@ char ShortCut(const char *label)
 
   ENTER();
 
-  if((ptr = strchr(label, '_')) != NULL)
+  if(label != NULL && (ptr = strchr(label, '_')) != NULL)
     scut = (char)ToLower((ULONG)(*++ptr));
 
   RETURN(scut);
