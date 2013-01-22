@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.2 (17.01.2013)
+## version $VER: YAM.catalog 8.3 (22.01.2013)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -4055,12 +4055,6 @@ sie sofort.
 ; Copy the created message to\n\
 ; the outgoing mail folder\n\
 ; and send it immediately
-;
-MSG_HELP_WR_BT_CANCEL
-Verwirft die erstellte Nachricht.
-; Discard the\n\
-; created message
-;
 ;
 ; Module TR - Procedures
 ;
