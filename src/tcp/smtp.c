@@ -1522,10 +1522,11 @@ BOOL SendMails(struct UserIdentityNode *uin, enum SendMailMode mode, const ULONG
                       // 1 means we filter the mails and then copy/move the mail to the send folder
                       case 1:
                       {
+                        struct Folder *outfolder = FO_GetFolderByType(FT_OUTGOING, NULL);
+
                         setStatusToSent(mail->Reference);
                         if(PushMethodOnStackWait(G->App, 3, MUIM_YAMApplication_FilterMail, sentMailFilters, mail->Reference) == TRUE)
                         {
-                          struct Folder *outfolder = FO_GetFolderByType(FT_OUTGOING, NULL);
                           struct Folder *sentfolder;
 
                           // depending on the sentfolder settings in the user identity we
@@ -1537,6 +1538,11 @@ BOOL SendMails(struct UserIdentityNode *uin, enum SendMailMode mode, const ULONG
                           // the filter process did not move the mail, hence we do it now
                           PushMethodOnStackWait(G->App, 5, MUIM_YAMApplication_MoveCopyMail, mail->Reference, outfolder, sentfolder, MVCPF_CLOSE_WINDOWS);
                         }
+                        else
+                        {
+						  // update the Outgoing folder's stats as the mail just got (re)moved
+						  PushMethodOnStack(G->App, 3, MUIM_YAMApplication_DisplayStatistics, outfolder, TRUE);
+						}
                       }
                       break;
 

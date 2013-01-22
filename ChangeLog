@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-01-22 Thore Böckelmann <tboeckel@gmx.de>
+
+  * tcp/smtp.c: moving a sent mail to another folder by an "apply to sent mails"
+    filter will now update the Outgoing folder's stats to show the correct number
+    of available mails. This closes #378.
+
 2013-01-21 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_CO.c: simplified getting the SMTP server and signature nodes.
