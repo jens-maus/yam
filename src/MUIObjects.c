@@ -323,7 +323,7 @@ Object *MakePGPKeyList(Object **st, BOOL secret, const char *label)
 ///
 /// MakeAddressField
 //  Creates a recipient field
-Object *MakeAddressField(Object **string, const char *label, const Object *help, int abmode, int winnr, ULONG flags)
+Object *MakeAddressField(Object **string, const char *label, const void *help, int abmode, int winnr, ULONG flags)
 {
   Object *obj;
   Object *bt_adr;
