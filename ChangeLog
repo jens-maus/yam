@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-01-23 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/FolderRequestListtree.c: the folder listtree will make an already
+    selected folder entry visible during MUIM_Show.
+
 2013-01-22 Thore Böckelmann <tboeckel@gmx.de>
 
   * tcp/smtp.c: moving a sent mail to another folder by an "apply to sent mails"

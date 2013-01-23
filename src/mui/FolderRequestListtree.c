@@ -139,6 +139,23 @@ OVERLOAD(OM_DISPOSE)
 }
 
 ///
+/// OVERLOAD(MUIM_Show)
+OVERLOAD(MUIM_Show)
+{
+  IPTR result;
+
+  ENTER();
+
+  result = DoSuperMethodA(cl, obj, msg);
+
+  // jump the the active folder
+  DoMethod(obj, MUIM_NList_Jump, MUIV_NList_Jump_Active_Center);
+
+  RETURN(result);
+  return result;
+}
+
+///
 /// OVERLOAD(MUIM_NListtree_Insert)
 OVERLOAD(MUIM_NListtree_Insert)
 {
