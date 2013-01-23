@@ -65,15 +65,21 @@ static struct StrBuf *AllocStrBufInternal(size_t size)
 
 ///
 /// AllocStrBuf
-//  Allocates a dynamic buffer
+//  Allocates a dynamic buffer with a given initial size
 char *AllocStrBuf(size_t initsize)
 {
   char *result = NULL;
   struct StrBuf *strbuf;
+  size_t size;
 
   ENTER();
 
-  if((strbuf = AllocStrBufInternal(initsize)) != NULL)
+  // make sure we allocate in SIZE_DEFAULT chunks
+  size = 0;
+  while(size <= initsize)
+    size += SIZE_DEFAULT;
+
+  if((strbuf = AllocStrBufInternal(size)) != NULL)
   {
     result = STRBUF_TO_STR(strbuf);
   }
