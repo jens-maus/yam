@@ -2833,7 +2833,8 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
 
           setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
-          if((msg = AllocStrBuf(part->Size+3)) != NULL)
+          // allocate memory for the complete part plus and trailing NUL byte
+          if((msg = AllocStrBuf(part->Size+1)) != NULL)
           {
             char *ptr;
             char *rptr;
@@ -2841,9 +2842,8 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
             int nread;
             BOOL signatureFound = FALSE;
 
-            msg[0] = '\n';
-            nread = fread(msg+1, 1, (size_t)(part->Size), fh);
-            msg[part->Size+1] = '\0';
+            // read the part into a dynamic string
+            nread = StrBufRead(&msg, fh, part->Size);
 
             // lets check if an error or short item count occurred
             if(nread == 0 || nread != part->Size)
@@ -2884,24 +2884,18 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
               D(DBF_MAIL, "converting HTMLized part #%ld to plain-text", part->Nr);
 
               // convert all HTML stuff to plain text
-              if((converted = html2mail(&msg[1])) != NULL)
+              if((converted = html2mail(msg)) != NULL)
               {
-                // free the old HTMLized message
+                // free the old HTML text
                 FreeStrBuf(msg);
 
                 // overwrite the old values
                 nread = StrBufLength(converted);
                 msg = converted;
               }
-
-              rptr = msg;
-            }
-            else
-            {
-              // nothing serious happened so let's continue
-              rptr = &msg[1];
             }
 
+            rptr = msg;
             // parse the message string
             while(*rptr != '\0')
             {
@@ -2973,7 +2967,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                   // then let us seek to the position where we found the starting
                   // "begin" indicator
                   if(old_pos >= 0 &&
-                     fseek(fh, rptr-msg-1, SEEK_SET) == 0)
+                     fseek(fh, rptr-msg, SEEK_SET) == 0)
                   {
                     // now that we are on the correct position, we
                     // call the uudecoding function accordingly.

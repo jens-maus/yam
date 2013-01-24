@@ -9,6 +9,11 @@ $URL$
 
   * StrBuf.c: implemented a function to read the contents of a file into a
     dynamic string buffer and to keep track of the read string length.
+  * YAM_RE.c: use the new function to read complete mail part files. Additionally
+    an odd artificial line feed character at the beginnging of the buffer has
+    been eliminated as it servered no obvious purpose. The only situation this
+    change might have an influence on are UUencoded attachment. If you encounter
+    malformed UUencoded attachments due to this change then please stand up.
 
 2013-01-23 Thore Böckelmann <tboeckel@gmx.de>
 
