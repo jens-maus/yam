@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-01-24 Thore Böckelmann <tboeckel@gmx.de>
+
+  * StrBuf.c: implemented a function to read the contents of a file into a
+    dynamic string buffer and to keep track of the read string length.
+
 2013-01-23 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/FolderRequestListtree.c: the folder listtree will make an already

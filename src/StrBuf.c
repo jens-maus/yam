@@ -273,6 +273,59 @@ size_t StrBufLength(char *buf)
 }
 
 ///
+/// StrBufRead
+// read the given amount of bytes from a file and place them in the dynamic string
+size_t StrBufRead(char **buf, FILE *fh, size_t size)
+{
+  size_t nread = 0;
+  struct StrBuf *strbuf;
+
+  ENTER();
+
+  if(*buf == NULL)
+  {
+    if((strbuf = AllocStrBufInternal(size+1)) != NULL)
+      *buf = STRBUF_TO_STR(strbuf);
+    else
+      size = 0;
+  }
+  else
+  {
+	strbuf = STR_TO_STRBUF(*buf);
+
+    // make sure the string buffer is large enough to keep the
+    // requested amount of characters
+    if(strbuf->size < size+1)
+    {
+      struct StrBuf *newstrbuf;
+
+      // allocate a new buffer and replace the old one with it
+	  if((newstrbuf = AllocStrBufInternal(size+1)) != NULL)
+	  {
+	    free(strbuf);
+	    strbuf = newstrbuf;
+	    *buf = STRBUF_TO_STR(strbuf);
+	  }
+	  else
+	  {
+	    size = 0;
+	  }
+	}
+  }
+
+  if(size != 0)
+  {
+    // finally read the characters from the file and NUL terminate the string
+    nread = fread(strbuf->string, 1, size, fh);
+    strbuf->length = size;
+    strbuf->string[size] = '\0';
+  }
+
+  RETURN(nread);
+  return nread;
+}
+
+///
 /// FreeStrBuf
 // free a dynamic string buffer
 void FreeStrBuf(char *buf)
