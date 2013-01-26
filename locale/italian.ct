@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.1 (12.01.2013)
+## version $VER: YAM.catalog 8.2 (26.01.2013)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -4085,13 +4085,6 @@ questo messaggio.
 ; Set the priority\n\
 ; of this message.
 ;
-MSG_HELP_WR_BT_HOLD
-Copia il messaggio creato nella cartella In uscita\n\
-ed imposta il suo stato come 'In sospeso'.
-; Copy the created message to\n\
-; the Outgoing folder and set\n\
-; its status to 'hold'.
-;
 MSG_HELP_WR_BT_QUEUE
 Copia il messaggio creato nella\n\
 cartella In uscita.
@@ -4104,11 +4097,6 @@ In uscita e lo spedisce immediatamente.
 ; Copy the created message to\n\
 ; the Outgoing folder and send\n\
 ; it immediately.
-;
-MSG_HELP_WR_BT_CANCEL
-Annulla il messaggio creato.
-; Discard the\n\
-; created message.
 ;
 ; Module TR - Procedures
 ;
@@ -4915,7 +4903,7 @@ esistente sul disco.
 ; already existing directory.
 ;
 MSG_FO_NewFolderGads
-*_Interne predef.|_Quelle _correnti|Directory _esistente|_Annulla
+*_Interne predef.|_Come _correnti|Directory _esistente|_Annulla
 ; *_Internal defaults|_Like current|_Existing directory|_Cancel
 ;
 MSG_FO_SelectDir
@@ -4925,11 +4913,11 @@ Seleziona directory
 ; Module FO - Window
 ;
 MSG_FO_MessageDate
-data del messaggio
+Data del messaggio
 ; Message date
 ;
 MSG_FO_DateRecvd
-data di ricezione
+Data di ricezione
 ; Date received
 ;
 MSG_FO_FMNormal
@@ -7288,14 +7276,6 @@ MSG_MA_TOREAD
 Letto
 ; Read
 ;
-MSG_MA_TOHOLD
-In sospeso
-; Hold
-;
-MSG_MA_TOQUEUED
-In attesa
-; Queued
-;
 MSG_PROJECT_MABOUT
 Informazioni su YAM...
 ; About...
@@ -7819,14 +7799,6 @@ MSG_WR_SENDLATER
 Invia _successivamente
 ; Send _later
 ;
-MSG_WR_HOLD
-In s_ospeso
-; _Hold
-;
-MSG_WR_CANCEL
-Annulla
-; Cancel
-;
 MSG_WR_MSENDNOW
 Invia adesso
 ; Send now
@@ -7834,14 +7806,6 @@ Invia adesso
 MSG_WR_MSENDLATER
 Invia successivamente
 ; Send later
-;
-MSG_WR_MHOLD
-In sospeso
-; Hold
-;
-MSG_WR_MCANCEL
-Annulla
-; Cancel
 ;
 MSG_ER_CONNECTIONBROKEN
 La connessione con il server '%s' è stata\n\
@@ -10278,7 +10242,7 @@ KB
 ; KB
 ;
 MSG_MA_DRAFTS
-Incompleti
+Bozze
 ; Drafts
 ;
 MSG_CO_SIGNATURE
@@ -10520,4 +10484,22 @@ Infine riavviare il computer.
 ; from an AmigaOS 3.1-3.9 installation to SYS:Libs, rename \
 ; the 'rexxsyslib.library' in MOSSYS:Libs and reboot your \
 ; system.
+;
+MSG_WR_SAVEASDRAFT
+Salva come bozza
+; Save as draft
+;
+MSG_HELP_WR_BT_SAVEASDRAFT
+Salva il messaggio nella\n\
+cartella Bozze.
+; Saves the message to\n\
+; the 'Drafts' folder.
+;
+MSG_WR_MSAVEASDRAFT
+Salva come bozza
+; Save as draft
+;
+MSG_WR_MCLOSE
+Chiudi
+; Close
 ;
