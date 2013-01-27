@@ -406,3 +406,26 @@ struct UserIdentityNode *FindUserIdentityByAddress(const struct MinList *userIde
 }
 
 ///
+/// NumberOfUserIdentities
+// count the number of active user identities
+ULONG NumberOfUserIdentities(const struct MinList *userIdentityList)
+{
+  ULONG count = 0;
+  struct Node *curNode;
+
+  ENTER();
+
+  IterateList(userIdentityList, curNode)
+  {
+    struct UserIdentityNode *uin = (struct UserIdentityNode *)curNode;
+
+    // count active identites only
+    if(uin->active == TRUE)
+      count++;
+  }
+
+  RETURN(count);
+  return count;
+}
+
+///

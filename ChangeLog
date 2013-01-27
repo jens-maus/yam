@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-01-27 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/WriteWindow.c: make sure that a "From:" label is shown even if there is
+    only one active identity configured and the OverrideFromAddress feature is
+    enabled.
+
 2013-01-26 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: update italian catalog.
@@ -13,11 +19,12 @@ $URL$
 
   * StrBuf.c: implemented a function to read the contents of a file into a
     dynamic string buffer and to keep track of the read string length.
-  * YAM_RE.c: use the new function to read complete mail part files. Additionally
-    an odd artificial line feed character at the beginnging of the buffer has
-    been eliminated as it servered no obvious purpose. The only situation this
-    change might have an influence on are UUencoded attachment. If you encounter
-    malformed UUencoded attachments due to this change then please stand up.
+  * YAM_RE.c: use the new function to read complete mail part files.
+    Additionally  an odd artificial line feed character at the beginnging of
+    the buffer has been eliminated as it servered no obvious purpose. The only
+    situation this change might have an influence on are UUencoded attachment.
+    If you encounter malformed UUencoded attachments due to this change then
+    please stand up.
 
 2013-01-23 Thore Böckelmann <tboeckel@gmx.de>
 

@@ -91,5 +91,6 @@ BOOL IsUniqueUserIdentityID(const struct MinList *userIdentityList, const int id
 struct UserIdentityNode *FindUserIdentityByID(const struct MinList *userIdentityList, const int id);
 struct UserIdentityNode *FindUserIdentityByDescription(const struct MinList *userIdentityList, const char *description);
 struct UserIdentityNode *FindUserIdentityByAddress(const struct MinList *userIdentityList, const char *address);
+ULONG NumberOfUserIdentities(const struct MinList *userIdentityList);
 
 #endif // USERIDENTITY_H
