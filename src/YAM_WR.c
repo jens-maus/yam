@@ -2022,6 +2022,7 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
             // ExamineMail found out for us or the one we have overwritten
             // due to the MLSupport
             set(wmData->window, MUIA_WriteWindow_Identity, email->identity);
+            set(wmData->window, MUIA_WriteWindow_From, mail->From.Address);
 
             if(reuseReplyToAddress == TRUE)
             {

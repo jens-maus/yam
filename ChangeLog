@@ -10,6 +10,9 @@ $URL$
   * mui/WriteWindow.c: make sure that a "From:" label is shown even if there is
     only one active identity configured and the OverrideFromAddress feature is
     enabled.
+  * mui/WriteWindow.c, YAM_WR.c: editing a draft mail again with the a modified
+    From: address and the OverrideFromAddress feature being active now correctly
+    restores the modified From: address. This closes #380.
 
 2013-01-26 Samir Hawamdeh <s.hawamdeh@tin.it>
 

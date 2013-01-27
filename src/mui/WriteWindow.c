@@ -1790,6 +1790,15 @@ OVERLOAD(OM_SET)
       }
       break;
 
+      case ATTR(From):
+      {
+        setstring(data->ST_FROM_OVERRIDE, tag->ti_Data);
+
+        // make the superMethod call ignore those tags
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
+
       case ATTR(To):
       {
         setstring(data->ST_TO, tag->ti_Data);
