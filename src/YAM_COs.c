@@ -488,7 +488,7 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
         }
 
         fprintf(fh, "FI%02d.Actions     = %d\n", i, filter->actions);
-        fprintf(fh, "FI%02d.BounceTo    = %s\n", i, filter->bounceTo);
+        fprintf(fh, "FI%02d.RedirectTo  = %s\n", i, filter->redirectTo);
         fprintf(fh, "FI%02d.ForwardTo   = %s\n", i, filter->forwardTo);
         fprintf(fh, "FI%02d.ReplyFile   = %s\n", i, filter->replyFile);
         fprintf(fh, "FI%02d.ExecuteCmd  = %s\n", i, filter->executeCmd);
@@ -1160,7 +1160,8 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
               else if(stricmp(q, "ApplyToSent") == 0)            lastFilter->applyToSent = Txt2Bool(value);
               else if(stricmp(q, "ApplyOnReq") == 0)             lastFilter->applyOnReq = Txt2Bool(value);
               else if(stricmp(q, "Actions") == 0)                lastFilter->actions = atoi(value);
-              else if(stricmp(q, "BounceTo") == 0)               strlcpy(lastFilter->bounceTo, value, sizeof(lastFilter->bounceTo));
+              else if(stricmp(q, "RedirectTo") == 0 || stricmp(q, "BounceTo") == 0)
+                strlcpy(lastFilter->redirectTo, value, sizeof(lastFilter->redirectTo));
               else if(stricmp(q, "ForwardTo") == 0)              strlcpy(lastFilter->forwardTo, value, sizeof(lastFilter->forwardTo));
               else if(stricmp(q, "ReplyFile") == 0)              strlcpy(lastFilter->replyFile, value, sizeof(lastFilter->replyFile));
               else if(stricmp(q, "ExecuteCmd") == 0)             strlcpy(lastFilter->executeCmd, value, sizeof(lastFilter->executeCmd));

@@ -47,7 +47,7 @@ struct args
 struct results
 {
   long *checked;
-  long *bounced;
+  long *redirected;
   long *forwarded;
   long *replied;
   long *executed;
@@ -84,7 +84,7 @@ void rx_mailfilter(UNUSED struct RexxHost *host, struct RexxParams *params, enum
       DoMethod(G->App, MUIM_CallHook, &ApplyFiltersHook, args->all ? APPLY_RX_ALL : APPLY_RX, 0, &optional->filterResult);
 
       results->checked = &optional->filterResult.Checked;
-      results->bounced = &optional->filterResult.Bounced;
+      results->redirected = &optional->filterResult.Redirected;
       results->forwarded = &optional->filterResult.Forwarded;
       results->replied = &optional->filterResult.Replied;
       results->executed = &optional->filterResult.Executed;

@@ -351,10 +351,6 @@ MSG_LOG_Replying (125//)
 Replied message from '%s' about '%s'
 ; SENDER, SUBJECT
 ;
-MSG_LOG_Bouncing (126//)
-Bounced message from '%s' about '%s' to '%s'
-; SENDER, SUBJECT, RECIPIENT
-;
 MSG_LOG_Forwarding (127//)
 Forwarded message from '%s' about '%s' to '%s'
 ; SENDER, SUBJECT, RECIPIENT
@@ -1014,9 +1010,6 @@ Apply to sent _mail
 MSG_CO_ApplyOnReq (391//)
 Apply on _request
 ;
-MSG_CO_ActionBounce (392//)
-_Bounce
-;
 MSG_CO_ActionForward (393//)
 _Forward
 ;
@@ -1544,14 +1537,6 @@ the filter function manually.
 MSG_HELP_CO_CY_COMBINE (586//)
 How to combine the rules\n\
 for this filter.
-;
-MSG_HELP_CO_CH_ABOUNCE (587//)
-Bounce matching messages\n\
-to another person.
-;
-MSG_HELP_CO_ST_ABOUNCE (588//)
-E-mail address(es) that should\n\
-get the bounced messages.
 ;
 MSG_HELP_CO_CH_AFORWARD (589//)
 Forward matching messages\n\
@@ -2739,15 +2724,6 @@ _Importance
 MSG_WR_Signature (961//)
 Signature
 ;
-MSG_WR_BounceWT (966//)
-Bounce message
-;
-MSG_WR_BounceTo (967//)
-Bounce _to
-;
-;
-; Module WR - Toolbar
-;
 MSG_WR_TBEditor (968//8)
 Editor
 ;
@@ -3044,7 +3020,7 @@ MSG_TR_FilterStats (1070//)
 Filtering done:\n\
 \n\
 %3ld messages checked,\n\
-%3ld bounced,\n\
+%3ld redirected,\n\
 %3ld forwarded,\n\
 %3ld auto-replied,\n\
 %3ld command activated,\n\
@@ -5249,9 +5225,6 @@ Reply...
 MSG_MA_MFORWARD (1836//)
 Forward...
 ;
-MSG_MA_MBOUNCE (1837//)
-Bounce...
-;
 MSG_MA_MSAVEADDRESS (1838//)
 Save address...
 ;
@@ -6094,7 +6067,7 @@ MSG_TR_FILTER_STATS_SPAM (2072//)
 Filtering done:\n\
 \n\
 %3ld messages checked,\n\
-%3ld bounced,\n\
+%3ld redirected,\n\
 %3ld forwarded,\n\
 %3ld auto-replied,\n\
 %3ld command activated,\n\
@@ -7346,4 +7319,37 @@ Save as draft
 ;
 MSG_WR_MCLOSE (2405//)
 Close
+;
+MSG_LOG_REDIRECT (2406//)
+Redirected message from '%s' about '%s' to '%s'
+; SENDER, SUBJECT, RECIPIENT
+;
+MSG_CO_ACTIONREDIRECT (2407//)
+_Redirect
+;
+MSG_HELP_CO_CH_AREDIRECT (2408//)
+Redirect matching messages\n\
+to another person.
+;
+MSG_HELP_CO_ST_AREDIRECT (2409//)
+E-mail address(es) that should\n\
+get the redirected messages.
+;
+MSG_MA_MREDIRECT (2410//)
+Redirect...
+;
+MSG_WR_REDIRECT_FROM (2411//)
+Resent-_From
+;
+MSG_WR_REDIRECT_TO (2412//)
+Resent-_To
+;
+MSG_WR_REDIRECT_CC (2413//)
+Resent-_CC
+;
+MSG_WR_REDIRECT_BCC (2414//)
+Resent-_BCC
+;
+MSG_WR_REDIRECT_TITLE (2415//)
+Redirect message(s)
 ;

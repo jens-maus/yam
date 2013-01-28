@@ -1983,6 +1983,24 @@ void MA_FreeEMailStruct(struct ExtendedMail *email)
       email->NumResentTo = 0;
     }
 
+    if(email->ResentCC != NULL)
+    {
+      ASSERT(email->NumResentCC > 0);
+
+      free(email->ResentCC);
+      email->ResentCC = NULL;
+      email->NumResentCC = 0;
+    }
+
+    if(email->ResentBCC != NULL)
+    {
+      ASSERT(email->NumResentBCC > 0);
+
+      free(email->ResentBCC);
+      email->ResentBCC = NULL;
+      email->NumResentBCC = 0;
+    }
+
     if(email->FollowUpTo != NULL)
     {
       ASSERT(email->NumFollowUpTo > 0);
@@ -2552,6 +2570,20 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
           email->NumResentTo = MA_GetRecipients(value, &(email->ResentTo));
 
         D(DBF_MIME, "'Resent-To:' recipients: %ld", email->NumResentTo);
+      }
+      else if(stricmp(field, "resent-cc") == 0)
+      {
+        if(email->NumResentCC == 0)
+          email->NumResentCC = MA_GetRecipients(value, &(email->ResentCC));
+
+        D(DBF_MIME, "'Resent-CC:' recipients: %ld", email->NumResentCC);
+      }
+      else if(stricmp(field, "resent-bcc") == 0)
+      {
+        if(email->NumResentBCC == 0)
+          email->NumResentBCC = MA_GetRecipients(value, &(email->ResentBCC));
+
+        D(DBF_MIME, "'Resent-BCC:' recipients: %ld", email->NumResentBCC);
       }
       else if(stricmp(field, "mail-followup-to") == 0)
       {

@@ -732,9 +732,10 @@ static char *WR_GetPGPIds(const char *source, char *ids)
 }
 
 ///
-/// WR_Bounce
-//  Bounce message: inserts resent-headers while copying the message
-static BOOL WR_Bounce(FILE *fh, const struct Compose *comp)
+/// WR_Redirect
+//  Redirect message: inserts resent-headers while keeping From+To and all
+//  other things (including the body) of a message intact
+static BOOL WR_Redirect(FILE *fh, const struct Compose *comp)
 {
   BOOL result = FALSE;
 
@@ -757,10 +758,13 @@ static BOOL WR_Bounce(FILE *fh, const struct Compose *comp)
       // by RFC2822 section 3.6.6. The RFC defined that these headers
       // should be added to the top of a message
       EmitHeader(fh, "Resent-From", BuildAddress(address, sizeof(address), comp->Identity->address, comp->Identity->realname));
-      EmitHeader(fh, "Resent-Date", GetDateTime());
       EmitRcptHeader(fh, "Resent-To", comp->MailTo);
+      EmitRcptHeader(fh, "Resent-CC", comp->MailCC);
+      EmitRcptHeader(fh, "Resent-BCC", comp->MailBCC);
+      EmitHeader(fh, "Resent-Date", GetDateTime());
       NewMessageID(msgID, sizeof(msgID), comp->Identity->smtpServer);
       EmitHeader(fh, "Resent-Message-ID", msgID);
+      EmitHeader(fh, "Resent-User-Agent", yamuseragent);  
 
       // now we copy the rest of the message
       // directly from the file handlers
@@ -1171,12 +1175,14 @@ BOOL WriteOutMessage(struct Compose *comp)
 
   ENTER();
 
-  if(comp->Mode == NMM_BOUNCE)
+  if(comp->Mode == NMM_REDIRECT)
   {
     if(comp->DelSend == TRUE)
-      EmitHeader(fh, "X-YAM-Options", "delsent");
+      EmitHeader(fh, "X-YAM-Options", "delsent,redirect");
+    else
+      EmitHeader(fh, "X-YAM-Options", "redirect");
 
-    success = WR_Bounce(fh, comp);
+    success = WR_Redirect(fh, comp);
 
     RETURN(success);
     return success;
@@ -3109,9 +3115,9 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
 }
 
 ///
-/// NewBounceMailWindow()
-//  Bounces a message
-struct WriteMailData *NewBounceMailWindow(struct Mail *mail, const int flags)
+/// NewRedirectMailWindow()
+//  Redirect message(s) to another recipient
+struct WriteMailData *NewRedirectMailWindow(struct MailList *mlist, const int flags)
 {
   BOOL quiet = hasQuietFlag(flags);
   struct WriteMailData *wmData = NULL;
@@ -3120,9 +3126,11 @@ struct WriteMailData *NewBounceMailWindow(struct Mail *mail, const int flags)
 
   // check if necessary settings fror writing are OK and open new window
   if(CO_IsValid() == TRUE &&
-     (wmData = CreateWriteWindow(NMM_BOUNCE, quiet)) != NULL)
+     (wmData = CreateWriteWindow(NMM_REDIRECT, quiet)) != NULL)
   {
-    wmData->refMail = mail;
+    // make sure the write window know of the
+    // operation and knows which mails to process
+    wmData->refMailList = CloneMailList(mlist);
 
     // make sure the window is opened
     if(quiet == FALSE)

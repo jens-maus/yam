@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.3 (22.01.2013)
+## version $VER: YAM.catalog 8.4 (29.01.2013)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -460,11 +460,6 @@ MSG_LOG_Replying
 Nachricht von '%s' über '%s' beantwortet
 ; Replied message from '%s' about '%s'
 ; SENDER, SUBJECT
-;
-MSG_LOG_Bouncing
-Nachricht von '%s' über '%s' umgeleitet an '%s'
-; Bounced message from '%s' about '%s' to '%s'
-; SENDER, SUBJECT, RECIPIENT
 ;
 MSG_LOG_Forwarding
 Nachricht von '%s' über '%s' weitergeleitet an '%s'
@@ -1350,9 +1345,6 @@ MSG_CO_ApplyOnReq
 Auf An_frage anwenden
 ; Apply on _request
 ;
-MSG_CO_ActionBounce
-_Umleiten
-;
 MSG_CO_ActionForward
 _Weiterleiten
 ;
@@ -2060,18 +2052,6 @@ Wie sollen die zwei Suchkriterien\n\
 für diesen Filter verknüpft werden?
 ; How to combine the two\n\
 ; search keys for this filter
-;
-MSG_HELP_CO_CH_ABOUNCE
-Leitet passende Nachrichten\n\
-an eine andere Person um.
-; Bounce matching messages\n\
-; to another person
-;
-MSG_HELP_CO_ST_ABOUNCE
-E-Mail-Adresse der Person, die\n\
-die umgeleitete Nachricht erhält.
-; Email address of the person who\n\
-; gets the bounced messages
 ;
 MSG_HELP_CO_CH_AFORWARD
 Leitet passende Nachrichten\n\
@@ -3535,9 +3515,6 @@ weiterleiten.
 ; Forward this\n\
 ; message
 ;
-;
-; Module WR - Procedures
-;
 MSG_WR_ErrorNoRcpt
 Nachricht ist unvollständig: Kein Empfänger.
 ; Mail is incomplete: no recipient.
@@ -3700,15 +3677,6 @@ _Wichtigkeit
 MSG_WR_Signature
 Signatur
 ; Signature
-;
-MSG_WR_BounceWT
-Nachricht umleiten
-; Bounce message
-;
-MSG_WR_BounceTo
-_Umleiten an
-; Bounce _to
-;
 ;
 ; Module WR - Toolbar
 ;
@@ -6761,9 +6729,6 @@ Antworten...
 MSG_MA_MFORWARD
 Weiterleiten...
 ;
-MSG_MA_MBOUNCE
-Umleiten...
-;
 MSG_MA_MSAVEADDRESS
 Adresse speichern...
 ;
@@ -8815,4 +8780,36 @@ Als Entwurf speichern
 ;
 MSG_WR_MCLOSE
 Schließen
+;
+MSG_LOG_REDIRECT
+Nachricht von '%s' über '%s' umgeleitet an '%s'
+;
+MSG_CO_ACTIONREDIRECT
+_Umleiten
+;
+MSG_HELP_CO_CH_AREDIRECT
+Leitet passende Nachrichten\n\
+an eine andere Person um.
+;
+MSG_HELP_CO_ST_AREDIRECT
+E-Mail-Adresse der Person, die\n\
+die umgeleitete Nachricht erhält.
+;
+MSG_MA_MREDIRECT
+Umleiten...
+;
+MSG_WR_REDIRECT_FROM
+Umleiten _von
+;
+MSG_WR_REDIRECT_TO
+Umleiten _an
+;
+MSG_WR_REDIRECT_CC
+Umleiten _CC
+;
+MSG_WR_REDIRECT_BCC
+Umleiten _BCC
+;
+MSG_WR_REDIRECT_TITLE
+Nachricht(en) umleiten
 ;

@@ -328,7 +328,7 @@ void GhostOutFilter(struct CO_GUIData *gui, struct FilterNode *filter)
   set(gui->CH_APPLYNEW,          MUIA_Disabled, filter == NULL || isremote);
   set(gui->CH_APPLYREQ,          MUIA_Disabled, filter == NULL || isremote);
   set(gui->CH_APPLYSENT,         MUIA_Disabled, filter == NULL || isremote);
-  set(gui->CH_ABOUNCE,           MUIA_Disabled, filter == NULL || isremote);
+  set(gui->CH_AREDIRECT,         MUIA_Disabled, filter == NULL || isremote);
   set(gui->CH_AFORWARD,          MUIA_Disabled, filter == NULL || isremote);
   set(gui->CH_ARESPONSE,         MUIA_Disabled, filter == NULL || isremote);
   set(gui->CH_AEXECUTE,          MUIA_Disabled, filter == NULL);
@@ -343,7 +343,7 @@ void GhostOutFilter(struct CO_GUIData *gui, struct FilterNode *filter)
   set(gui->CH_ADELETE,           MUIA_Disabled, filter == NULL);
   set(gui->CH_ASKIP,             MUIA_Disabled, filter == NULL || !isremote);
   set(gui->CH_ATERMINATE,        MUIA_Disabled, filter == NULL);
-  set(gui->ST_ABOUNCE,           MUIA_Disabled, filter == NULL || isremote || !xget(gui->CH_ABOUNCE,   MUIA_Selected));
+  set(gui->ST_AREDIRECT,         MUIA_Disabled, filter == NULL || isremote || !xget(gui->CH_AREDIRECT, MUIA_Selected));
   set(gui->ST_AFORWARD,          MUIA_Disabled, filter == NULL || isremote || !xget(gui->CH_AFORWARD,  MUIA_Selected));
   set(gui->BT_APLAY,             MUIA_Disabled, filter == NULL || !xget(gui->CH_APLAY, MUIA_Selected));
   set(gui->PO_MOVETO,            MUIA_Disabled, filter == NULL || !xget(gui->CH_AMOVE, MUIA_Selected));
@@ -405,7 +405,7 @@ HOOKPROTONHNONP(GetActiveFilterData, void)
     nnset(gui->CH_APPLYNEW,          MUIA_Selected,          filter->applyToNew);
     nnset(gui->CH_APPLYSENT,         MUIA_Selected,          filter->applyToSent);
     nnset(gui->CH_APPLYREQ,          MUIA_Selected,          filter->applyOnReq);
-    nnset(gui->CH_ABOUNCE,           MUIA_Selected,          hasBounceAction(filter));
+    nnset(gui->CH_AREDIRECT,         MUIA_Selected,          hasRedirectAction(filter));
     nnset(gui->CH_AFORWARD,          MUIA_Selected,          hasForwardAction(filter));
     nnset(gui->CH_ARESPONSE,         MUIA_Selected,          hasReplyAction(filter));
     nnset(gui->CH_AEXECUTE,          MUIA_Selected,          hasExecuteAction(filter));
@@ -420,7 +420,7 @@ HOOKPROTONHNONP(GetActiveFilterData, void)
     nnset(gui->CH_ADELETE,           MUIA_Selected,          hasDeleteAction(filter));
     nnset(gui->CH_ASKIP,             MUIA_Selected,          hasSkipMsgAction(filter));
     nnset(gui->CH_ATERMINATE,        MUIA_Selected,          hasTerminateAction(filter));
-    nnset(gui->ST_ABOUNCE,           MUIA_String_Contents,   filter->bounceTo);
+    nnset(gui->ST_AREDIRECT,         MUIA_String_Contents,   filter->redirectTo);
     nnset(gui->ST_AFORWARD,          MUIA_String_Contents,   filter->forwardTo);
     nnset(gui->ST_ARESPONSE,         MUIA_String_Contents,   filter->replyFile);
     nnset(gui->ST_AEXECUTE,          MUIA_String_Contents,   filter->executeCmd);
@@ -514,7 +514,7 @@ HOOKPROTONHNONP(SetActiveFilterData, void)
     filter->applyToSent = GetMUICheck(gui->CH_APPLYSENT);
     filter->applyOnReq  = GetMUICheck(gui->CH_APPLYREQ);
     filter->actions = 0;
-    if(GetMUICheck(gui->CH_ABOUNCE))           setFlag(filter->actions, FA_BOUNCE);
+    if(GetMUICheck(gui->CH_AREDIRECT))         setFlag(filter->actions, FA_REDIRECT);
     if(GetMUICheck(gui->CH_AFORWARD))          setFlag(filter->actions, FA_FORWARD);
     if(GetMUICheck(gui->CH_ARESPONSE))         setFlag(filter->actions, FA_REPLY);
     if(GetMUICheck(gui->CH_AEXECUTE))          setFlag(filter->actions, FA_EXECUTE);
@@ -529,7 +529,7 @@ HOOKPROTONHNONP(SetActiveFilterData, void)
     if(GetMUICheck(gui->CH_ADELETE))           setFlag(filter->actions, FA_DELETE);
     if(GetMUICheck(gui->CH_ASKIP))             setFlag(filter->actions, FA_SKIPMSG);
     if(GetMUICheck(gui->CH_ATERMINATE))        setFlag(filter->actions, FA_TERMINATE);
-    GetMUIString(filter->bounceTo,   gui->ST_ABOUNCE, sizeof(filter->bounceTo));
+    GetMUIString(filter->redirectTo, gui->ST_AREDIRECT, sizeof(filter->redirectTo));
     GetMUIString(filter->forwardTo,  gui->ST_AFORWARD, sizeof(filter->forwardTo));
     GetMUIString(filter->replyFile,  gui->ST_ARESPONSE, sizeof(filter->replyFile));
     GetMUIString(filter->executeCmd, gui->ST_AEXECUTE, sizeof(filter->executeCmd));
@@ -1579,7 +1579,7 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
   if(page == cp_Read || page == cp_AllPages)
   {
     co->ShowHeader = 1;
-    strlcpy(co->ShortHeaders, "(From|To|Cc|BCC|Date|Subject)", sizeof(co->ShortHeaders));
+    strlcpy(co->ShortHeaders, "(From|To|Cc|BCC|Date|Subject|Resent-#?)", sizeof(co->ShortHeaders));
     co->ShowSenderInfo = 2;
     strlcpy(co->ColoredText.buf, "m6", sizeof(co->ColoredText.buf));
     strlcpy(co->Color1stLevel.buf, "m0", sizeof(co->Color1stLevel.buf));

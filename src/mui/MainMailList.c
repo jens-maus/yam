@@ -674,7 +674,7 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
               MenuChild, Menuitem(tr(MSG_MA_MFORWARD_ATTACH), NULL, TRUE, FALSE, MMEN_FORWARD_ATTACH),
               MenuChild, Menuitem(tr(MSG_MA_MFORWARD_INLINE), NULL, TRUE, FALSE, MMEN_FORWARD_INLINE),
             End,
-            MenuChild, Menuitem(tr(MSG_MA_MBOUNCE), NULL, TRUE, FALSE, MMEN_BOUNCE),
+            MenuChild, Menuitem(tr(MSG_MA_MREDIRECT), NULL, TRUE, FALSE, MMEN_REDIRECT),
             MenuChild, MenuBarLabel,
             MenuChild, Menuitem(tr(MSG_MA_MSAVEADDRESS), NULL, TRUE, FALSE, MMEN_SAVEADDR),
             MenuChild, MenuitemObject,
@@ -757,7 +757,7 @@ OVERLOAD(MUIM_ContextMenuChoice)
     case MMEN_REPLY:          DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook, NMM_REPLY,          0); break;
     case MMEN_FORWARD_ATTACH: DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook, NMM_FORWARD_ATTACH, 0); break;
     case MMEN_FORWARD_INLINE: DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook, NMM_FORWARD_INLINE, 0); break;
-    case MMEN_BOUNCE:         DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook, NMM_BOUNCE,         0); break;
+    case MMEN_REDIRECT:       DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook, NMM_REDIRECT,       0); break;
     case MMEN_SEND:           DoMethod(G->App, MUIM_CallHook, &MA_SendHook, SENDMAIL_ACTIVE_USER); break;
     case MMEN_CHSUBJ:         DoMethod(G->App, MUIM_CallHook, &MA_ChangeSubjectHook); break;
     case MMEN_TOUNREAD:       DoMethod(G->App, MUIM_CallHook, &MA_SetStatusToHook, SFLAG_NONE,              SFLAG_NEW|SFLAG_READ);              break;

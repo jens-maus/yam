@@ -1080,7 +1080,7 @@ DECLARE(NewMailAlert) // struct MailServerNode *msn, struct DownloadResult *down
         // include the number of spam classified mails
         snprintf(&buffer[strlen(buffer)], sizeof(buffer)-strlen(buffer), tr(MSG_TR_FILTER_STATS_SPAM),
                                                                          msg->filterResult->Checked,
-                                                                         msg->filterResult->Bounced,
+                                                                         msg->filterResult->Redirected,
                                                                          msg->filterResult->Forwarded,
                                                                          msg->filterResult->Replied,
                                                                          msg->filterResult->Executed,
@@ -1092,7 +1092,7 @@ DECLARE(NewMailAlert) // struct MailServerNode *msn, struct DownloadResult *down
       {
         snprintf(&buffer[strlen(buffer)], sizeof(buffer)-strlen(buffer), tr(MSG_TR_FilterStats),
                                                                          msg->filterResult->Checked,
-                                                                         msg->filterResult->Bounced,
+                                                                         msg->filterResult->Redirected,
                                                                          msg->filterResult->Forwarded,
                                                                          msg->filterResult->Replied,
                                                                          msg->filterResult->Executed,

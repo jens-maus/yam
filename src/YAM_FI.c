@@ -1770,18 +1770,27 @@ BOOL ExecuteFilterAction(const struct FilterNode *filter, struct Mail *mail, str
 
   ENTER();
 
-  // Bounce Action
-  if(hasBounceAction(filter) && filter->remote == FALSE && *filter->bounceTo)
+  // Redirect Action
+  if(hasRedirectAction(filter) && filter->remote == FALSE && *filter->redirectTo)
   {
-    struct WriteMailData *wmData;
+    struct MailList *mlist;
 
-    if((wmData = NewBounceMailWindow(mail, NEWF_QUIET)) != NULL)
+    if((mlist = CreateMailList()) != NULL)
     {
-      set(wmData->window, MUIA_WriteWindow_To, filter->bounceTo);
-      DoMethod(wmData->window, MUIM_WriteWindow_ComposeMail, WRITE_QUEUE);
+      struct WriteMailData *wmData;
 
-      if(result != NULL)
-        result->Bounced++;
+      AddNewMailNode(mlist, mail);
+
+      if((wmData = NewRedirectMailWindow(mlist, NEWF_QUIET)) != NULL)
+      {
+        set(wmData->window, MUIA_WriteWindow_To, filter->redirectTo);
+        DoMethod(wmData->window, MUIM_WriteWindow_ComposeMail, WRITE_QUEUE);
+
+        if(result != NULL)
+          result->Redirected++;
+      }
+
+      DeleteMailList(mlist);
     }
   }
 
@@ -2406,7 +2415,7 @@ static BOOL CompareFilterNodes(const struct Node *n1, const struct Node *n2)
      fn1->applyOnReq      != fn2->applyOnReq ||
      fn1->applyToSent     != fn2->applyToSent ||
      strcmp(fn1->name,       fn2->name) != 0 ||
-     strcmp(fn1->bounceTo,   fn2->bounceTo) != 0 ||
+     strcmp(fn1->redirectTo, fn2->redirectTo) != 0 ||
      strcmp(fn1->forwardTo,  fn2->forwardTo) != 0 ||
      strcmp(fn1->replyFile,  fn2->replyFile) != 0 ||
      strcmp(fn1->executeCmd, fn2->executeCmd) != 0 ||
@@ -2456,7 +2465,7 @@ struct FilterNode *CreateNewFilter(const int actions)
     filter->applyOnReq = TRUE;
     filter->applyToSent = FALSE;
     strlcpy(filter->name, tr(MSG_NewEntry), sizeof(filter->name));
-    filter->bounceTo[0] = '\0';
+    filter->redirectTo[0] = '\0';
     filter->forwardTo[0] = '\0';
     filter->replyFile[0] = '\0';
     filter->executeCmd[0] = '\0';

@@ -66,6 +66,8 @@ struct ExtendedMail
   struct Person *          CC;             // ptr to an array of all "CC:" recipients
   struct Person *          BCC;            // ptr to an array of all "BCC:" recipients
   struct Person *          ResentTo;       // ptr to an array of "Resent-To:" recipients
+  struct Person *          ResentCC;       // ptr to an array of "Resent-CC:" recipients
+  struct Person *          ResentBCC;      // ptr to an array of "Resent-BCC:" recipients
   struct Person *          FollowUpTo;     // ptr to an array of "Mail-Followup-To:" recipients
   struct Person *          MailReplyTo;    // ptr to an array of "Mail-Reply-To:" recipients
   char *                   extraHeaders;   // YAM internal headers (X-YAM-Header-...)
@@ -79,6 +81,8 @@ struct ExtendedMail
   int                      NumCC;          // number of recipients in CC
   int                      NumBCC;         // number of recipients in BCC
   int                      NumResentTo;    // number of recipients in ResentTo
+  int                      NumResentCC;    // number of recipients in ResentCC
+  int                      NumResentBCC;   // number of recipients in ResentBCC
   int                      NumFollowUpTo;  // number of recipients in FollowUpTo
   int                      NumMailReplyTo; // number of recipients in MailReplyTo
   int                      Security;

@@ -172,7 +172,7 @@ enum NewMailMode
   NMM_FORWARD,        // forwarding an existing mail, automatic mode detection (toolbar only)
   NMM_FORWARD_ATTACH, // forwarding an existing mail, as attachment (menu only)
   NMM_FORWARD_INLINE, // forwarding an existing mail, as inlined text (menu only)
-  NMM_BOUNCE,         // bounce an existing mail back to the sender
+  NMM_REDIRECT,       // redirect an existing mail to another recipient
   NMM_EDIT,           // edit a mail in the draft/outgoing folder
   NMM_EDITASNEW,      // edit an existing sent/received mail
   NMM_SAVEDEC         // create a decrypted copy of a PGP mail
@@ -234,7 +234,7 @@ enum
   MMEN_INDEX,MMEN_FLUSH,MMEN_IMPORT,MMEN_EXPORT,MMEN_GETMAIL,MMEN_GET1MAIL,MMEN_SENDMAIL,MMEN_EXMAIL,
   MMEN_READ,MMEN_EDIT,MMEN_MOVE,MMEN_COPY,MMEN_DELETE,MMEN_PRINT,MMEN_SAVE,MMEN_DETACH,MMEN_DELETEATT,
   MMEN_EXPMSG,MMEN_NEXTTH,MMEN_PREVTH,MMEN_NEW,MMEN_REPLY,MMEN_FORWARD_ATTACH,MMEN_FORWARD_INLINE,
-  MMEN_BOUNCE,MMEN_SAVEADDR,MMEN_TOUNREAD,MMEN_TOREAD,MMEN_TOMARKED,
+  MMEN_REDIRECT,MMEN_SAVEADDR,MMEN_TOUNREAD,MMEN_TOREAD,MMEN_TOMARKED,
   MMEN_TOUNMARKED,MMEN_ALLTOREAD,MMEN_TOSPAM,MMEN_TOHAM,MMEN_CHSUBJ,MMEN_SEND,MMEN_ABOOK,MMEN_CONFIG,
   MMEN_USER,MMEN_MUI,MMEN_SCRIPT,MMEN_MACRO,MMEN_HELP_CONTENTS=MMEN_MACRO+MAXRX_MENU,MMEN_HELP_AREXX,
   MMEN_POPHOST
@@ -289,7 +289,7 @@ struct MA_GUIData
   Object *MI_FORWARD;
   Object *MI_FORWARD_ATTACH;
   Object *MI_FORWARD_INLINE;
-  Object *MI_BOUNCE;
+  Object *MI_REDIRECT;
   Object *MI_GETADDRESS;
   Object *MI_STATUS;
   Object *MI_TOREAD;

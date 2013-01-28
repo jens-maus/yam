@@ -837,11 +837,11 @@ OVERLOAD(OM_NEW)
     // set user identity node
     uin = data->wmData->identity;
 
-    // if this write window is processed in NMM_BOUNCE mode we create
+    // if this write window is processed in NMM_REDIRECT mode we create
     // a slightly different graphical interface and hide all other things
-    if(data->wmData->mode == NMM_BOUNCE)
+    if(data->wmData->mode == NMM_REDIRECT)
     {
-      // create a minimal menu strip for the bounce window which just consists
+      // create a minimal menu strip for the redirect window which just consists
       // of the standard editing operations and shortcuts for the 4 buttons
       // in this window. Without this menu strip copying and pasteing would be
       // impossible, as the BetterString objects do NOT handle key presses
@@ -873,24 +873,51 @@ OVERLOAD(OM_NEW)
         End,
       End;
 
-      if((obj = DoSuperNew(cl, obj,
-        MUIA_Window_Title, tr(MSG_WR_BounceWT),
-        MUIA_HelpNode, "Windows#Writewindow",
-        MUIA_Window_ID, MAKE_ID('W','R','I','B'),
-        MUIA_Window_AppWindow, FALSE,
-        MUIA_Window_Menustrip, menuStripObject,
-        WindowContents, VGroup,
-          Child, ColGroup(2),
-            Child, data->LB_TO = Label2(tr(MSG_WR_BounceTo)),
-            Child, data->GR_TO = MakeAddressField(&data->ST_TO, tr(MSG_WR_BounceTo), MSG_HELP_WR_ST_TO, ABM_TO, data->windowNumber, AFF_ALLOW_MULTI|AFF_EXTERNAL_SHORTCUTS),
+      if(menuStripObject != NULL)
+      {
+        obj = DoSuperNew(cl, obj,
+          MUIA_Window_Title, tr(MSG_WR_REDIRECT_TITLE),
+          MUIA_HelpNode, "Windows#Writewindow",
+          MUIA_Window_ID, MAKE_ID('W','R','I','B'),
+          MUIA_Window_AppWindow, FALSE,
+          MUIA_Window_Menustrip, menuStripObject,
+          WindowContents, VGroup,
+
+            Child, data->GR_HEADER = ColGroup(2),
+              Child, data->LB_FROM = Label(tr(MSG_WR_REDIRECT_FROM)),
+              Child, data->CY_FROM = IdentityChooserObject,
+                MUIA_ControlChar, ShortCut(tr(MSG_WR_REDIRECT_FROM)),
+              End,
+
+              Child, data->GR_FROM_OVERRIDE = HGroup,
+                MUIA_Group_PageMode, TRUE,
+                MUIA_HorizWeight, 0,
+                Child, HSpace(-1),
+                Child, Label(tr(MSG_WR_From)),
+              End,
+              Child, data->ST_FROM_OVERRIDE = MakeAddressField(&data->ST_FROM_OVERRIDE, NULL, NULL, ABM_FROM, data->windowNumber, AFF_EXTERNAL_SHORTCUTS),
+
+              Child, data->LB_TO = Label(tr(MSG_WR_REDIRECT_TO)),
+              Child, data->GR_TO = MakeAddressField(&data->ST_TO, tr(MSG_WR_REDIRECT_TO), MSG_HELP_WR_ST_TO, ABM_TO, data->windowNumber, AFF_ALLOW_MULTI|AFF_EXTERNAL_SHORTCUTS),
+
+              Child, data->LB_CC = Label(tr(MSG_WR_REDIRECT_CC)),
+              Child, data->GR_CC = MakeAddressField(&data->ST_CC, tr(MSG_WR_REDIRECT_CC), MSG_HELP_WR_ST_CC, ABM_CC, data->windowNumber, AFF_ALLOW_MULTI|AFF_EXTERNAL_SHORTCUTS),
+
+              Child, data->LB_BCC = Label(tr(MSG_WR_REDIRECT_BCC)),
+              Child, data->GR_BCC = MakeAddressField(&data->ST_BCC, tr(MSG_WR_REDIRECT_BCC), MSG_HELP_WR_ST_BCC, ABM_BCC, data->windowNumber, AFF_ALLOW_MULTI|AFF_EXTERNAL_SHORTCUTS),
+            End,
+
+            Child, ColGroup(3),
+              Child, data->BT_SEND        = MakeButton(tr(MSG_WR_SENDNOW)),
+              Child, data->BT_QUEUE       = MakeButton(tr(MSG_WR_SENDLATER)),
+              Child, data->BT_SAVEASDRAFT = MakeButton(tr(MSG_WR_SAVEASDRAFT)),
+            End,
+
           End,
-          Child, ColGroup(4),
-            Child, data->BT_SEND        = MakeButton(tr(MSG_WR_SENDNOW)),
-            Child, data->BT_QUEUE       = MakeButton(tr(MSG_WR_SENDLATER)),
-            Child, data->BT_SAVEASDRAFT = MakeButton(tr(MSG_WR_SAVEASDRAFT)),
-          End,
-        End,
-      TAG_MORE, inittags(msg))) != NULL)
+          TAG_MORE, inittags(msg));
+      }
+
+      if(obj != NULL)
       {
         DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SENDNOW,     obj, 2, METHOD(ComposeMail), WRITE_SEND);
         DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_QUEUE,       obj, 2, METHOD(ComposeMail), WRITE_QUEUE);
@@ -1102,7 +1129,7 @@ OVERLOAD(OM_NEW)
                     Child, HSpace(-1),
                     Child, Label(tr(MSG_WR_From)),
                   End,
-                  Child, data->ST_FROM_OVERRIDE = MakeAddressField(&data->ST_FROM_OVERRIDE, NULL, NULL, ABM_FROM, data->windowNumber, AFF_NOFULLNAME|AFF_EXTERNAL_SHORTCUTS),
+                  Child, data->ST_FROM_OVERRIDE = MakeAddressField(&data->ST_FROM_OVERRIDE, NULL, NULL, ABM_FROM, data->windowNumber, AFF_EXTERNAL_SHORTCUTS),
 
                   Child, data->LB_TO = Label(tr(MSG_WR_To)),
                   Child, data->GR_TO = MakeAddressField(&data->ST_TO, tr(MSG_WR_To), MSG_HELP_WR_ST_TO, ABM_TO, data->windowNumber, AFF_ALLOW_MULTI|AFF_EXTERNAL_SHORTCUTS),
@@ -1258,7 +1285,7 @@ OVERLOAD(OM_NEW)
             End,
 
             // Buttons
-            Child, ColGroup(4),
+            Child, ColGroup(3),
               Child, data->BT_SEND        = MakeButton(tr(MSG_WR_SENDNOW)),
               Child, data->BT_QUEUE       = MakeButton(tr(MSG_WR_SENDLATER)),
               Child, data->BT_SAVEASDRAFT = MakeButton(tr(MSG_WR_SAVEASDRAFT)),
@@ -1292,8 +1319,8 @@ OVERLOAD(OM_NEW)
       DoMethod(G->App, OM_ADDMEMBER, obj);
 
       // set notifies and default options in case this
-      // write window is not in BOUNCE mode
-      if(data->wmData->mode != NMM_BOUNCE)
+      // write window is not in REDIRECT mode
+      if(data->wmData->mode != NMM_REDIRECT)
       {
         // prepare a first initial window title string
         snprintf(data->windowTitle, sizeof(data->windowTitle), "[%d] %s: ", data->windowNumber+1, tr(MSG_WR_WriteWT));
@@ -1501,16 +1528,11 @@ OVERLOAD(OM_NEW)
         DoMethod(data->CY_SECURITY,   MUIM_Notify, MUIA_Cycle_Active,      4,              menuStripObject,         4, MUIM_SetUData, WMEN_SECUR4, MUIA_Menuitem_Checked, TRUE);
         DoMethod(obj,                 MUIM_Notify, MUIA_Window_MenuAction, WMEN_SECUR4,    data->CY_SECURITY,       3, MUIM_Set,      MUIA_Cycle_Active, 4);
 
-        // set notify for identity cycle gadget
-        DoMethod(data->CY_FROM, MUIM_Notify, MUIA_IdentityChooser_Identity, MUIV_EveryTime, obj, 2, METHOD(IdentityChanged), MUIV_TriggerValue);
-
         // set notify for signature cycle gadget
         DoMethod(data->CY_SIGNATURE, MUIM_Notify, MUIA_SignatureChooser_Signature, MUIV_EveryTime, obj, 1, METHOD(SignatureChanged));
 
         // hide optional recipient string object depending on their
         // defaults
-        if(C->OverrideFromAddress == FALSE)
-          DoMethod(obj, METHOD(HideRecipientObject), MUIV_WriteWindow_RcptType_FromOverride);
         if(C->ShowRcptFieldCC == FALSE)
           DoMethod(obj, METHOD(HideRecipientObject), MUIV_WriteWindow_RcptType_CC);
         if(C->ShowRcptFieldBCC == FALSE)
@@ -1520,13 +1542,22 @@ OVERLOAD(OM_NEW)
 
         // update the available signatures first
         DoMethod(obj, METHOD(UpdateSignatures));
-        // make sure update the IdentityChooser state
-        DoMethod(obj, METHOD(IdentityChanged), uin);
-
-        // if we only have one identity we hide the identitychooser object
-        if(xget(data->CY_FROM, MUIA_IdentityChooser_NumIdentities) < 2)
-          DoMethod(obj, METHOD(HideRecipientObject), MUIV_WriteWindow_RcptType_From);
       }
+
+      // hide the override from address gadget also
+      // in redirect mode
+      if(C->OverrideFromAddress == FALSE)
+        DoMethod(obj, METHOD(HideRecipientObject), MUIV_WriteWindow_RcptType_FromOverride);
+
+      // set notify for identity cycle gadget
+      DoMethod(data->CY_FROM, MUIM_Notify, MUIA_IdentityChooser_Identity, MUIV_EveryTime, obj, 2, METHOD(IdentityChanged), MUIV_TriggerValue);
+
+      // make sure update the IdentityChooser state
+      DoMethod(obj, METHOD(IdentityChanged), uin);
+
+      // if we only have one identity we hide the identitychooser object
+      if(xget(data->CY_FROM, MUIA_IdentityChooser_NumIdentities) < 2)
+        DoMethod(obj, METHOD(HideRecipientObject), MUIV_WriteWindow_RcptType_From);
 
       // set some help text
       SetHelp(data->ST_TO,          MSG_HELP_WR_ST_TO);
@@ -1568,10 +1599,10 @@ OVERLOAD(OM_NEW)
       data->wmData->charset = G->writeCharset;
 
       // Finally set up the notifications for external changes to the file being edited
-      // if this is not a bounce window. We let the UserData point to this object to be
+      // if this is not a redirect window. We let the UserData point to this object to be
       // able to invoke a method from the main loop. However, we only do this for write
-      // windows which are not opened in bounce mode
-      if(data->wmData->mode != NMM_BOUNCE)
+      // windows which are not opened in redirect mode
+      if(data->wmData->mode != NMM_REDIRECT)
       {
         #if defined(__amigaos4__)
         data->wmData->notifyRequest = AllocDosObjectTags(DOS_NOTIFYREQUEST, ADO_NotifyName,     data->wmData->filename,
@@ -1598,9 +1629,9 @@ OVERLOAD(OM_NEW)
       // place our data in the node and add it to the writeMailDataList
       AddTail((struct List *)&(G->writeMailDataList), (struct Node *)data->wmData);
 
-      if(data->wmData->mode != NMM_BOUNCE)
+      if(data->wmData->mode != NMM_REDIRECT)
       {
-        // finally set up the notifications for external changes to the file being edited if this is not a bounce window
+        // finally set up the notifications for external changes to the file being edited if this is not a redirect window
         if((data->notifyPort = AllocSysObjectTags(ASOT_PORT, TAG_DONE)) != NULL)
         {
           #if defined(__amigaos4__)
@@ -1649,7 +1680,7 @@ OVERLOAD(OM_DISPOSE)
 
   ENTER();
 
-  if(data->wmData->mode != NMM_BOUNCE)
+  if(data->wmData->mode != NMM_REDIRECT)
   {
     int i;
 
@@ -3722,9 +3753,9 @@ DECLARE(IsEditorActive)
 DECLARE(ComposeMail) // enum WriteMode mode
 {
   GETDATA;
-  char newMailFile[SIZE_PATHFILE];
   struct Compose comp;
-  struct Mail *newMail = NULL;
+  struct MailList *newMailList = NULL;
+  struct MailList *refMailList = NULL;
   char *addr;
   int numAttachments = 0;
   struct Folder *outfolder;
@@ -3743,7 +3774,10 @@ DECLARE(ComposeMail) // enum WriteMode mode
   // first we check all input values and fill up
   // the struct Compose structure
 
-  comp.FromOverride = (char *)xget(data->ST_FROM_OVERRIDE, MUIA_String_Contents);
+  // retrieve the From: address override but only
+  // if the user has enabled the Rcpt gadget
+  if(data->fromOverrideRcptHidden == FALSE)
+    comp.FromOverride = (char *)xget(data->ST_FROM_OVERRIDE, MUIA_String_Contents);
 
   // get the contents of the TO: String gadget and check if it is valid
   addr = (char *)DoMethod(data->ST_TO, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValid);
@@ -3784,7 +3818,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
   // get the content of the Subject: String gadget and check if it is empty or not.
   comp.Subject = (char *)xget(data->ST_SUBJECT, MUIA_String_Contents);
-  if(wmData->mode != NMM_BOUNCE && mode != WRITE_DRAFT && wmData->quietMode == FALSE && C->WarnSubject == TRUE &&
+  if(wmData->mode != NMM_REDIRECT && mode != WRITE_DRAFT && wmData->quietMode == FALSE && C->WarnSubject == TRUE &&
      (comp.Subject == NULL || comp.Subject[0] == '\0'))
   {
     char subject[SIZE_SUBJECT];
@@ -3811,50 +3845,48 @@ DECLARE(ComposeMail) // enum WriteMode mode
     }
   }
 
-  comp.Mode = wmData->mode;
-  comp.refMail = wmData->refMail;
-  comp.Identity = wmData->identity;
-
-  if(wmData->mode != NMM_BOUNCE)
+  // then we check the CC string gadget
+  addr = (char *)DoMethod(data->ST_CC, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValid);
+  if(mode != WRITE_DRAFT && addr == NULL)
   {
-    // then we check the CC string gadget
-    addr = (char *)DoMethod(data->ST_CC, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValid);
-    if(mode != WRITE_DRAFT && addr == NULL)
+    ER_NewError(tr(MSG_ER_AliasNotFound), (STRPTR)xget(data->ST_CC, MUIA_String_Contents));
+
+    if(winOpen == TRUE)
     {
-      ER_NewError(tr(MSG_ER_AliasNotFound), (STRPTR)xget(data->ST_CC, MUIA_String_Contents));
-
-      if(winOpen == TRUE)
-      {
-        // don't trigger notifications as this will change the active object
-        nnset(data->RG_PAGE, MUIA_Group_ActivePage, 0);
-      }
-
-      set(obj, MUIA_Window_ActiveObject, data->ST_CC);
-
-      goto out;
+      // don't trigger notifications as this will change the active object
+      nnset(data->RG_PAGE, MUIA_Group_ActivePage, 0);
     }
-    else if(addr != NULL && addr[0] != '\0')
-      comp.MailCC = addr;
 
-    // then we check the BCC string gadget
-    addr = (char *)DoMethod(data->ST_BCC, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValid);
-    if(mode != WRITE_DRAFT && addr == NULL)
+    set(obj, MUIA_Window_ActiveObject, data->ST_CC);
+
+    goto out;
+  }
+  else if(addr != NULL && addr[0] != '\0')
+    comp.MailCC = addr;
+
+  // then we check the BCC string gadget
+  addr = (char *)DoMethod(data->ST_BCC, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValid);
+  if(mode != WRITE_DRAFT && addr == NULL)
+  {
+    ER_NewError(tr(MSG_ER_AliasNotFound), (STRPTR)xget(data->ST_BCC, MUIA_String_Contents));
+
+    if(winOpen == TRUE)
     {
-      ER_NewError(tr(MSG_ER_AliasNotFound), (STRPTR)xget(data->ST_BCC, MUIA_String_Contents));
-
-      if(winOpen == TRUE)
-      {
-        // don't trigger notifications as this will change the active object
-        nnset(data->RG_PAGE, MUIA_Group_ActivePage, 0);
-      }
-
-      set(obj, MUIA_Window_ActiveObject, data->ST_BCC);
-
-      goto out;
+      // don't trigger notifications as this will change the active object
+      nnset(data->RG_PAGE, MUIA_Group_ActivePage, 0);
     }
-    else if(addr != NULL && addr[0] != '\0')
-      comp.MailBCC = addr;
 
+    set(obj, MUIA_Window_ActiveObject, data->ST_BCC);
+
+    goto out;
+  }
+  else if(addr != NULL && addr[0] != '\0')
+    comp.MailBCC = addr;
+
+  // from here on a mail redirect window/operation doesn't need to take care
+  // of reply-to, attachments checking, etc.
+  if(wmData->mode != NMM_REDIRECT)
+  {
     // then we check the ReplyTo string gadget
     addr = (char *)DoMethod(data->ST_REPLYTO, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValid);
     if(mode != WRITE_DRAFT && addr == NULL)
@@ -3961,267 +3993,296 @@ DECLARE(ComposeMail) // enum WriteMode mode
   else if(mode != WRITE_DRAFT)
     MA_StartMacro(MACRO_POSTWRITE, data->windowNumberStr);
 
+  comp.Mode = wmData->mode;
+  comp.Identity = wmData->identity;
   outfolder = FO_GetFolderByType(mode == WRITE_HOLD || mode == WRITE_DRAFT ? FT_DRAFTS : FT_OUTGOING, NULL);
 
-  // now we check how the new mail file should be named
-  // or created off.
-  switch(wmData->mode)
+  ////////////////////////////////
+  // now we have checked that all input data is actually present
+  // and valid (e.g. GUI gadgets, etc.) so we check if this write window was
+  // created with referencing any mails or if this is a new mail write window
+  if((newMailList = CreateMailList()) != NULL)
   {
-    case NMM_EDIT:
+    struct MailNode *mnode;
+    int cntRefMail = -1;
+
+    // check if this write window has some associated
+    // referenced mail
+    if(wmData->refMailList != NULL)
+      refMailList = CloneMailList(wmData->refMailList);
+    else if((refMailList = CreateMailList()) != NULL)
+      AddNewMailNode(refMailList, wmData->refMail);
+    else
+      goto out;
+
+    // now iterate through the local refMailList
+    ForEachMailNode(refMailList, mnode)
     {
-      if(wmData->refMail != NULL && MailExists(wmData->refMail, outfolder) == TRUE)
+      struct Mail *refMail = mnode->mail;
+      struct Mail *newMail = NULL;
+      char newMailFile[SIZE_PATHFILE] = "";
+
+      // lets count the number of reference
+      // mail we processed already
+      cntRefMail++;
+ 
+      // now we check how the new mail file should be named
+      // or created. As we iterate through all refMailList
+      // nodes we only generate a new file for the mail redirecting
+      // mode. All other modes can't have multiple output files
+      if(cntRefMail == 0 || wmData->mode == NMM_REDIRECT)
       {
-        GetMailFile(newMailFile, sizeof(newMailFile), outfolder, wmData->refMail);
+        switch(wmData->mode)
+        {
+          case NMM_EDIT:
+          {
+            if(refMail != NULL && MailExists(refMail, outfolder) == TRUE)
+            {
+              GetMailFile(newMailFile, sizeof(newMailFile), outfolder, refMail);
+              break;
+            }
+          }
+          // continue
+
+          case NMM_EDITASNEW:
+            wmData->mode = NMM_NEW;
+          // continue
+
+          default:
+          {
+            if(isDraftsFolder(outfolder) && wmData->draftMail != NULL && MailExists(wmData->draftMail, outfolder) == TRUE)
+              GetMailFile(newMailFile, sizeof(newMailFile), outfolder, wmData->draftMail);
+            else
+              MA_NewMailFile(outfolder, newMailFile, sizeof(newMailFile));
+          }
+          break;
+        }
+      }
+
+      // now open the new mail file for write operations
+      if(newMailFile[0] != '\0' &&
+         (comp.FH = fopen(newMailFile, "w")) != NULL)
+      {
+        struct ExtendedMail *email = NULL;
+
+        // change file buffer settings
+        setvbuf(comp.FH, NULL, _IOFBF, SIZE_FILEBUF);
+
+        // Write out the message to our file and check that everything worked out fine.
+        // Set a busy mouse pointer during this operation, since encoding large attachments
+        // might take quite a long time.
+        set(obj, MUIA_Window_Sleep, TRUE);
+        comp.refMail = refMail;
+        success = WriteOutMessage(&comp);
+        set(obj, MUIA_Window_Sleep, FALSE);
+
+        // close the file handle immediately
+        fclose(comp.FH);
+        comp.FH = NULL;
+
+        // if the WriteOut operation didn't work 
+        // as expected stop here
+        if(success == FALSE)
+        {
+          DeleteFile(newMailFile);
+          goto out;
+        }
+
+        // stop any pending file notification.
+        if(wmData->fileNotifyActive == TRUE)
+        {
+          EndNotify(wmData->notifyRequest);
+          wmData->fileNotifyActive = FALSE;
+        }
+
+        if((email = MA_ExamineMail(outfolder, FilePart(newMailFile), C->EmailCache > 0 ? TRUE : FALSE)) != NULL)
+        {
+          if((newMail = AddMailToFolder(&email->Mail, outfolder)) != NULL)
+          {
+            // Now we have to check whether we have to add the To & CC addresses
+            // to the emailCache
+            if(C->EmailCache > 0)
+            {
+              DoMethod(_app(obj), MUIM_YAMApplication_AddToEmailCache, &newMail->To);
+
+              // if this mail has more than one recipient we have to add the others too
+              if(isMultiRCPTMail(newMail))
+              {
+                int j;
+
+                for(j = 0; j < email->NumSTo; j++)
+                  DoMethod(_app(obj), MUIM_YAMApplication_AddToEmailCache, &email->STo[j]);
+
+                for(j = 0; j < email->NumCC; j++)
+                  DoMethod(_app(obj), MUIM_YAMApplication_AddToEmailCache, &email->CC[j]);
+
+                for(j = 0; j < email->NumBCC; j++)
+                  DoMethod(_app(obj), MUIM_YAMApplication_AddToEmailCache, &email->BCC[j]);
+              }
+            }
+
+            if(GetCurrentFolder() == outfolder)
+              DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_InsertSingle, newMail, MUIV_NList_Insert_Sorted);
+
+            MA_UpdateMailFile(newMail);
+
+            // if this write operation was an edit mode
+            // we have to check all existing readmail objects for
+            // references and update them accordingly.
+            if(wmData->mode == NMM_EDIT && refMail != NULL)
+            {
+              struct Node *curNode;
+
+              // now we search through our existing readMailData
+              // objects and see some of them are pointing to the old mail
+              // and if so we signal them to display the new revised mail instead
+              IterateList(&G->readMailDataList, curNode)
+              {
+                struct ReadMailData *rmData = (struct ReadMailData *)curNode;
+
+                if(rmData->mail == refMail)
+                {
+                  if(rmData->readWindow != NULL)
+                    DoMethod(rmData->readWindow, MUIM_ReadWindow_ReadMail, newMail);
+                  else if(rmData->readMailGroup != NULL)
+                    DoMethod(rmData->readMailGroup, MUIM_ReadMailGroup_ReadMail, newMail);
+                }
+              }
+
+              RemoveMailFromList(refMail, TRUE, TRUE);
+              refMail = newMail;
+            }
+            else if(wmData->mode == NMM_NEW && refMail != NULL)
+              refMail = newMail;
+
+            if(wmData->draftMail != NULL || mode == WRITE_DRAFT)
+            {
+              if(mode == WRITE_SEND || mode == WRITE_QUEUE)
+              {
+                // delete the mail from the drafts folder
+                MA_DeleteSingle(wmData->draftMail, DELF_AT_ONCE);
+              }
+
+              // remember the new mail as draft mail if we had a draft mail pointer before
+	  	        wmData->draftMail = newMail;
+	  	      }
+
+            // add the new mail to our newMailList if
+            // we later have to sent it
+            AddNewMailNode(newMailList, newMail);
+          }
+
+          // cleanup the email structure
+          MA_FreeEMailStruct(email);
+        }
+      }
+      else
+      {
+        ER_NewError(tr(MSG_ER_CreateMailError));
+        goto out;
+      }
+ 
+      // now we make sure the Disposition Notification is respected
+      // and the status of the referenced mail updated accordingly.
+      if(wmData->mode != NMM_NEW)
+      {
+        if(refMail != NULL && !isVirtualMail(refMail) && refMail->Folder != NULL &&
+           !isOutgoingFolder(refMail->Folder) && !isDraftsFolder(refMail->Folder) && !isSentFolder(refMail->Folder))
+        {
+          // process MDN notifications
+          if(hasStatusNew(refMail) || !hasStatusRead(refMail))
+            RE_ProcessMDN(MDN_MODE_DISPLAY, refMail, FALSE, wmData->quietMode, obj);
+
+          switch(wmData->mode)
+          {
+            case NMM_REPLY:
+            {
+              setStatusToReplied(refMail);
+              DisplayStatistics(refMail->Folder, FALSE);
+            }
+            break;
+
+            case NMM_FORWARD:
+            case NMM_FORWARD_ATTACH:
+            case NMM_FORWARD_INLINE:
+            case NMM_REDIRECT:
+            {
+              // don't change the forwarded flag if we are just saving a draft mail
+              if(mode != WRITE_DRAFT)
+              {
+                setStatusToForwarded(refMail);
+                DisplayStatistics(refMail->Folder, FALSE);
+              }
+            }
+            break;
+
+            default:
+              // nothing
+            break;
+          }
+        }
+      }
+
+      // if requested we make sure we also
+      // output a log entry about the write operation
+      switch(wmData->mode)
+      {
+        case NMM_NEW:
+        case NMM_EDITASNEW:
+        {
+          if(newMail != NULL)
+            AppendToLogfile(LF_ALL, 10, tr(MSG_LOG_Creating), AddrName(newMail->To), newMail->Subject, numAttachments);
+        }
+        break;
+
+        case NMM_REPLY:
+        {
+          if(refMail != NULL)
+            AppendToLogfile(LF_ALL, 11, tr(MSG_LOG_Replying), AddrName(refMail->From), refMail->Subject);
+          else
+            AppendToLogfile(LF_ALL, 11, tr(MSG_LOG_Replying), "<unknown>", "<unknown>");
+        }
+        break;
+
+        case NMM_FORWARD:
+        case NMM_FORWARD_ATTACH:
+        case NMM_FORWARD_INLINE:
+        {
+          if(newMail != NULL)
+          {
+            if(refMail != NULL)
+              AppendToLogfile(LF_ALL, 12, tr(MSG_LOG_Forwarding), AddrName(refMail->From), refMail->Subject, AddrName(newMail->To));
+            else
+              AppendToLogfile(LF_ALL, 12, tr(MSG_LOG_Forwarding), "<unknown>", "<unknown>", AddrName(newMail->To));
+          }
+        }
+        break;
+
+        case NMM_REDIRECT:
+        {
+          if(newMail != NULL)
+          {
+            if(refMail != NULL)
+              AppendToLogfile(LF_ALL, 13, tr(MSG_LOG_REDIRECT), AddrName(refMail->From), refMail->Subject, AddrName(newMail->To));
+            else
+              AppendToLogfile(LF_ALL, 13, tr(MSG_LOG_REDIRECT), "<unknown>", "<unknown>", AddrName(newMail->To));
+          }
+        }
+        break;
+
+        case NMM_EDIT:
+        {
+          if(newMail != NULL)
+            AppendToLogfile(LF_ALL, 14, tr(MSG_LOG_Editing), AddrName(newMail->From), AddrName(newMail->To), newMail->Subject);
+        }
+        break;
+
+        case NMM_SAVEDEC:
+          // not used
         break;
       }
     }
-    // continue
-
-    case NMM_EDITASNEW:
-      wmData->mode = NMM_NEW;
-    // continue
-
-    default:
-    {
-      if(isDraftsFolder(outfolder) && wmData->draftMail != NULL && MailExists(wmData->draftMail, outfolder) == TRUE)
-        GetMailFile(newMailFile, sizeof(newMailFile), outfolder, wmData->draftMail);
-      else
-        MA_NewMailFile(outfolder, newMailFile, sizeof(newMailFile));
-    }
-    break;
   }
-
-  // now open the new mail file for write operations
-  if(newMailFile[0] != '\0' &&
-     (comp.FH = fopen(newMailFile, "w")) != NULL)
-  {
-    struct ExtendedMail *email;
-
-    setvbuf(comp.FH, NULL, _IOFBF, SIZE_FILEBUF);
-
-    // Write out the message to our file and check that everything worked out fine.
-    // Set a busy mouse pointer during this operation, since encoding large attachments
-    // might take quite a long time.
-    set(obj, MUIA_Window_Sleep, TRUE);
-    success = WriteOutMessage(&comp);
-    set(obj, MUIA_Window_Sleep, FALSE);
-
-    fclose(comp.FH);
-    comp.FH = NULL;
-
-    if(success == FALSE)
-    {
-      DeleteFile(newMailFile);
-
-      goto out;
-    }
-
-    // stop any pending file notification.
-    if(wmData->fileNotifyActive == TRUE)
-    {
-      EndNotify(wmData->notifyRequest);
-      wmData->fileNotifyActive = FALSE;
-    }
-
-    if((email = MA_ExamineMail(outfolder, FilePart(newMailFile), C->EmailCache > 0 ? TRUE : FALSE)) != NULL)
-    {
-      if((newMail = AddMailToFolder(&email->Mail, outfolder)) != NULL)
-      {
-        // Now we have to check whether we have to add the To & CC addresses
-        // to the emailCache
-        if(C->EmailCache > 0)
-        {
-          DoMethod(_app(obj), MUIM_YAMApplication_AddToEmailCache, &newMail->To);
-
-          // if this mail has more than one recipient we have to add the others too
-          if(isMultiRCPTMail(newMail))
-          {
-            int j;
-
-            for(j = 0; j < email->NumSTo; j++)
-              DoMethod(_app(obj), MUIM_YAMApplication_AddToEmailCache, &email->STo[j]);
-
-            for(j = 0; j < email->NumCC; j++)
-              DoMethod(_app(obj), MUIM_YAMApplication_AddToEmailCache, &email->CC[j]);
-
-            for(j = 0; j < email->NumBCC; j++)
-              DoMethod(_app(obj), MUIM_YAMApplication_AddToEmailCache, &email->BCC[j]);
-          }
-        }
-
-        if(GetCurrentFolder() == outfolder)
-          DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_InsertSingle, newMail, MUIV_NList_Insert_Sorted);
-
-        MA_UpdateMailFile(newMail);
-
-        // if this write operation was an edit mode
-        // we have to check all existing readmail objects for
-        // references and update them accordingly.
-        if(wmData->mode == NMM_EDIT && wmData->refMail != NULL)
-        {
-          struct Node *curNode;
-
-          // now we search through our existing readMailData
-          // objects and see some of them are pointing to the old mail
-          // and if so we signal them to display the new revised mail instead
-          IterateList(&G->readMailDataList, curNode)
-          {
-            struct ReadMailData *rmData = (struct ReadMailData *)curNode;
-
-            if(rmData->mail == wmData->refMail)
-            {
-              if(rmData->readWindow != NULL)
-                DoMethod(rmData->readWindow, MUIM_ReadWindow_ReadMail, newMail);
-              else if(rmData->readMailGroup != NULL)
-                DoMethod(rmData->readMailGroup, MUIM_ReadMailGroup_ReadMail, newMail);
-            }
-          }
-
-          RemoveMailFromList(wmData->refMail, TRUE, TRUE);
-          wmData->refMail = newMail;
-        }
-        else if(wmData->mode == NMM_NEW && wmData->refMail != NULL)
-        {
-          wmData->refMail = newMail;
-        }
-
-        if(wmData->draftMail != NULL || mode == WRITE_DRAFT)
-        {
-          if(mode == WRITE_SEND || mode == WRITE_QUEUE)
-          {
-            // delete the mail from the drafts folder
-            MA_DeleteSingle(wmData->draftMail, DELF_AT_ONCE);
-          }
-
-          // remember the new mail as draft mail if we had a draft mail pointer before
-		  wmData->draftMail = newMail;
-		}
-      }
-
-      // cleanup the email structure
-      MA_FreeEMailStruct(email);
-    }
-
-    if(wmData->mode != NMM_NEW)
-    {
-      struct MailList *mlist;
-
-      if(wmData->refMailList != NULL)
-      {
-        mlist = CloneMailList(wmData->refMailList);
-      }
-      else if(wmData->refMail != NULL)
-      {
-        if((mlist = CreateMailList()) != NULL)
-          AddNewMailNode(mlist, wmData->refMail);
-      }
-      else
-        mlist = NULL;
-
-      if(mlist != NULL)
-      {
-        struct MailNode *mnode;
-
-        ForEachMailNode(mlist, mnode)
-        {
-          struct Mail *mail = mnode->mail;
-
-          if(mail != NULL && !isVirtualMail(mail) && mail->Folder != NULL &&
-             !isOutgoingFolder(mail->Folder) && !isDraftsFolder(mail->Folder) && !isSentFolder(mail->Folder))
-          {
-            // process MDN notifications
-            if(hasStatusNew(mail) || !hasStatusRead(mail))
-              RE_ProcessMDN(MDN_MODE_DISPLAY, mail, FALSE, wmData->quietMode, obj);
-
-            switch(wmData->mode)
-            {
-              case NMM_REPLY:
-              {
-                setStatusToReplied(mail);
-                DisplayStatistics(mail->Folder, FALSE);
-              }
-              break;
-
-              case NMM_FORWARD:
-              case NMM_FORWARD_ATTACH:
-              case NMM_FORWARD_INLINE:
-              case NMM_BOUNCE:
-              {
-                // don't change the forwarded flag if we are just saving a draft mail
-				if(mode != WRITE_DRAFT)
-				{
-                  setStatusToForwarded(mail);
-                  DisplayStatistics(mail->Folder, FALSE);
-                }
-              }
-              break;
-
-              default:
-                // nothing
-              break;
-            }
-          }
-        }
-
-        DeleteMailList(mlist);
-      }
-    }
-
-    // if requested we make sure we also
-    // output a log entry about the write operation
-    switch(wmData->mode)
-    {
-      case NMM_NEW:
-      case NMM_EDITASNEW:
-        AppendToLogfile(LF_ALL, 10, tr(MSG_LOG_Creating), AddrName(newMail->To), newMail->Subject, numAttachments);
-      break;
-
-      case NMM_REPLY:
-      {
-        struct MailNode *mnode = FirstMailNode(wmData->refMailList);
-
-        if(mnode != NULL)
-          AppendToLogfile(LF_ALL, 11, tr(MSG_LOG_Replying), AddrName(mnode->mail->From), mnode->mail->Subject);
-        else
-          AppendToLogfile(LF_ALL, 11, tr(MSG_LOG_Replying), "<unknown>", "<unknown>");
-      }
-      break;
-
-      case NMM_FORWARD:
-      case NMM_FORWARD_ATTACH:
-      case NMM_FORWARD_INLINE:
-      {
-        struct MailNode *mnode = FirstMailNode(wmData->refMailList);
-
-        if(mnode != NULL)
-          AppendToLogfile(LF_ALL, 12, tr(MSG_LOG_Forwarding), AddrName(mnode->mail->From), mnode->mail->Subject, AddrName(newMail->To));
-        else
-          AppendToLogfile(LF_ALL, 12, tr(MSG_LOG_Forwarding), "<unknown>", "<unknown>", AddrName(newMail->To));
-      }
-      break;
-
-      case NMM_BOUNCE:
-      {
-        if(wmData->refMail != NULL)
-          AppendToLogfile(LF_ALL, 13, tr(MSG_LOG_Bouncing), AddrName(wmData->refMail->From), wmData->refMail->Subject, AddrName(newMail->To));
-        else
-          AppendToLogfile(LF_ALL, 13, tr(MSG_LOG_Bouncing), "<unknown>", "<unknown>", AddrName(newMail->To));
-      }
-      break;
-
-      case NMM_EDIT:
-      {
-        AppendToLogfile(LF_ALL, 14, tr(MSG_LOG_Editing), AddrName(newMail->From), AddrName(newMail->To), newMail->Subject);
-      }
-      break;
-
-      case NMM_SAVEDEC:
-        // not used
-      break;
-    }
-  }
-  else
-     ER_NewError(tr(MSG_ER_CreateMailError));
 
   // free the list of MIME parts but don't delete temporary
   // files when saving a draft mail
@@ -4266,34 +4327,32 @@ DECLARE(ComposeMail) // enum WriteMode mode
   }
 
   // now we make sure we immediately send out the mail.
-  if(mode == WRITE_SEND && newMail != NULL)
+  if(mode == WRITE_SEND && newMailList != NULL)
   {
     struct UserIdentityNode *uin = wmData->identity;
 
-    if((uin->sentMailList = CreateMailList()) != NULL)
+    if((uin->sentMailList = CloneMailList(newMailList)) != NULL)
     {
       BOOL mailSent = FALSE;
 
-      if(AddNewMailNode(uin->sentMailList, newMail) != NULL)
+      // close the write window now
+      set(obj, MUIA_Window_Open, FALSE);
+
+      if(uin->smtpServer != NULL)
       {
-        set(obj, MUIA_Window_Open, FALSE);
-
-        if(uin->smtpServer != NULL)
+        if(hasServerInUse(uin->smtpServer) == FALSE)
         {
-          if(hasServerInUse(uin->smtpServer) == FALSE)
-          {
-            // mark the server as "in use"
-            setFlag(uin->smtpServer->flags, MSF_IN_USE);
+          // mark the server as "in use"
+          setFlag(uin->smtpServer->flags, MSF_IN_USE);
 
-            mailSent = (DoAction(NULL, TA_SendMails, TT_SendMails_UserIdentity, uin,
-                                                     TT_SendMails_Mode, SENDMAIL_ACTIVE_USER,
-                                                     TAG_DONE) != NULL);
-            if(mailSent == FALSE)
-              clearFlag(uin->smtpServer->flags, MSF_IN_USE);
-          }
-          else
-            W(DBF_MAIL, "SMTP server '%s' in use, couldn't sent out mail", uin->smtpServer->description);
+          mailSent = (DoAction(NULL, TA_SendMails, TT_SendMails_UserIdentity, uin,
+                                                   TT_SendMails_Mode, SENDMAIL_ACTIVE_USER,
+                                                   TAG_DONE) != NULL);
+          if(mailSent == FALSE)
+            clearFlag(uin->smtpServer->flags, MSF_IN_USE);
         }
+        else
+          W(DBF_MAIL, "SMTP server '%s' in use, couldn't sent out mail", uin->smtpServer->description);
       }
 
       if(mailSent == FALSE)
@@ -4316,6 +4375,13 @@ DECLARE(ComposeMail) // enum WriteMode mode
   success = TRUE;
 
 out:
+  if(newMailList != NULL)
+    DeleteMailList(newMailList);
+
+  if(refMailList != NULL)
+    DeleteMailList(refMailList);
+    
+  // free the compose structure
   FreeCompose(&comp);
 
   RETURN(success);
@@ -4392,7 +4458,7 @@ DECLARE(DoAutoSave)
 
   ENTER();
 
-  if(data->wmData->mode != NMM_BOUNCE)
+  if(data->wmData->mode != NMM_REDIRECT)
   {
     // do the autosave only if something was modified
     if(data->mailModified == TRUE || xget(data->TE_EDIT, MUIA_TextEditor_HasChanged) == TRUE)
@@ -4435,7 +4501,7 @@ DECLARE(CancelAction)
 
   ENTER();
 
-  if(data->wmData->mode != NMM_BOUNCE && data->wmData->quietMode == FALSE)
+  if(data->wmData->mode != NMM_REDIRECT && data->wmData->quietMode == FALSE)
   {
     // ask the user what to do if the mail text was modified but not yet automatically saved
     if(data->mailModified == TRUE || xget(data->TE_EDIT, MUIA_TextEditor_HasChanged) == TRUE || data->autoSaved == TRUE)
@@ -4547,30 +4613,35 @@ DECLARE(IdentityChanged) // struct UserIdentityNode *uin;
   // in the write window according to the settings in the user identity.
 
   // first we update things in the write window GUI
-  set(data->CY_SIGNATURE, MUIA_SignatureChooser_Signature, msg->uin->signature);
-  set(data->ST_CC, MUIA_String_Contents, msg->uin->mailCC);
-  set(data->ST_BCC, MUIA_String_Contents, msg->uin->mailBCC);
-  set(data->ST_REPLYTO, MUIA_String_Contents, msg->uin->mailReplyTo);
-  set(data->ST_EXTHEADER, MUIA_String_Contents, msg->uin->extraHeaders);
-  set(data->CH_DELSEND, MUIA_Selected, msg->uin->saveSentMail == FALSE);
-  set(data->CH_ADDINFO, MUIA_Selected, msg->uin->addPersonalInfo);
-  set(data->CH_MDN, MUIA_Selected, msg->uin->requestMDN);
   set(data->ST_TO, MUIA_Recipientstring_ActiveIdentity, msg->uin);
-  set(data->ST_CC, MUIA_Recipientstring_ActiveIdentity, msg->uin);
-  set(data->ST_BCC, MUIA_Recipientstring_ActiveIdentity, msg->uin);
-  set(data->ST_REPLYTO, MUIA_Recipientstring_ActiveIdentity, msg->uin);
-  setstring(data->ST_FROM_OVERRIDE, msg->uin->address);
+  xset(data->ST_CC, MUIA_String_Contents, msg->uin->mailCC,
+                    MUIA_Recipientstring_ActiveIdentity, msg->uin);
+  xset(data->ST_BCC, MUIA_String_Contents, msg->uin->mailBCC, 
+                     MUIA_Recipientstring_ActiveIdentity, msg->uin);
+ 
+  // just go on in non redirection mode
+  if(data->wmData->mode != NMM_REDIRECT)
+  {
+    set(data->CY_SIGNATURE, MUIA_SignatureChooser_Signature, msg->uin->signature);
+    set(data->ST_REPLYTO, MUIA_String_Contents, msg->uin->mailReplyTo);
+    set(data->ST_EXTHEADER, MUIA_String_Contents, msg->uin->extraHeaders);
+    set(data->CH_DELSEND, MUIA_Selected, msg->uin->saveSentMail == FALSE);
+    set(data->CH_ADDINFO, MUIA_Selected, msg->uin->addPersonalInfo);
+    set(data->CH_MDN, MUIA_Selected, msg->uin->requestMDN);
+    set(data->ST_REPLYTO, MUIA_Recipientstring_ActiveIdentity, msg->uin);
+    setstring(data->ST_FROM_OVERRIDE, msg->uin->address);
 
-  // check if we have to show the CC/BCC/ReplyTo string objects
-  // in case we filled in sensible information
-  if(msg->uin->mailCC[0] != '\0')
-    DoMethod(obj, METHOD(ShowRecipientObject), MUIV_WriteWindow_RcptType_CC);
+    // check if we have to show the CC/BCC/ReplyTo string objects
+    // in case we filled in sensible information
+    if(msg->uin->mailCC[0] != '\0')
+      DoMethod(obj, METHOD(ShowRecipientObject), MUIV_WriteWindow_RcptType_CC);
 
-  if(msg->uin->mailBCC[0] != '\0')
-    DoMethod(obj, METHOD(ShowRecipientObject), MUIV_WriteWindow_RcptType_BCC);
+    if(msg->uin->mailBCC[0] != '\0')
+      DoMethod(obj, METHOD(ShowRecipientObject), MUIV_WriteWindow_RcptType_BCC);
 
-  if(msg->uin->mailReplyTo[0] != '\0')
-    DoMethod(obj, METHOD(ShowRecipientObject), MUIV_WriteWindow_RcptType_ReplyTo);
+    if(msg->uin->mailReplyTo[0] != '\0')
+      DoMethod(obj, METHOD(ShowRecipientObject), MUIV_WriteWindow_RcptType_ReplyTo);
+  }
 
   // save a link to the userIdentity in the wmData
   data->wmData->identity = msg->uin;
@@ -4783,30 +4854,40 @@ DECLARE(ShowRecipientObject) // enum RcptType rtype
       sortMsg.objs[objcnt] = data->LB_FROM; objcnt++;
       sortMsg.objs[objcnt] = data->CY_FROM; objcnt++;
     }
+
     if(data->fromOverrideRcptHidden == FALSE)
     {
       sortMsg.objs[objcnt] = data->GR_FROM_OVERRIDE; objcnt++;
       sortMsg.objs[objcnt] = data->ST_FROM_OVERRIDE; objcnt++;
     }
+
     sortMsg.objs[objcnt] = data->LB_TO; objcnt++;
     sortMsg.objs[objcnt] = data->GR_TO; objcnt++;
+
     if(data->ccRcptHidden == FALSE)
     {
       sortMsg.objs[objcnt] = data->LB_CC; objcnt++;
       sortMsg.objs[objcnt] = data->GR_CC; objcnt++;
     }
+
     if(data->bccRcptHidden == FALSE)
     {
       sortMsg.objs[objcnt] = data->LB_BCC; objcnt++;
       sortMsg.objs[objcnt] = data->GR_BCC; objcnt++;
     }
-    if(data->replyToRcptHidden == FALSE)
+
+    // all the other objects are just part of a normal write
+    // window and not a redirecting window
+    if(data->wmData->mode != NMM_REDIRECT)
     {
-      sortMsg.objs[objcnt] = data->LB_REPLYTO; objcnt++;
-      sortMsg.objs[objcnt] = data->GR_REPLYTO; objcnt++;
+      if(data->replyToRcptHidden == FALSE)
+      {
+        sortMsg.objs[objcnt] = data->LB_REPLYTO; objcnt++;
+        sortMsg.objs[objcnt] = data->GR_REPLYTO; objcnt++;
+      }
+      sortMsg.objs[objcnt] = data->LB_SUBJECT; objcnt++;
+      sortMsg.objs[objcnt] = data->ST_SUBJECT; objcnt++;
     }
-    sortMsg.objs[objcnt] = data->LB_SUBJECT; objcnt++;
-    sortMsg.objs[objcnt] = data->ST_SUBJECT; objcnt++;
 
     // terminate the array
     sortMsg.objs[objcnt] = NULL;

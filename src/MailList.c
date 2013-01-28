@@ -206,8 +206,10 @@ struct MailNode *AddNewMailNode(struct MailList *mlist, const struct Mail *mail)
 
   ENTER();
 
-  // we only accept existing mails
-  if(mail != NULL && mlist != NULL)
+  // we only accept existing mlists. However we accept
+  // NULL mail pointers so that empty nodes can be generated and
+  // filled later.
+  if(mlist != NULL)
   {
     if((mnode = ItemPoolAlloc(G->mailNodeItemPool)) != NULL)
     {

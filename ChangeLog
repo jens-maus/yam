@@ -5,6 +5,20 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-01-29 Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_WR.c, mui/WriteWindow.c, misc: renamed the 'Bounce' mail functionality
+    for redirecting emails to alternative recipients to 'Redirect' as that
+    better reflects the purpose of this functionality and should not confuse
+    users anymore. Also adapted the functionality to add all well-known
+    Resent-#? headers to redirected emails. This should adapt YAM to be somehwat
+    more RFC compliant. Furthermore, a Resent-CC and Resent-BCC can now be
+    specified. In addition, YAM will now allow to bounce to multiple emails in
+    one operation. That means, a user can now select more than one mail in the
+    mail listview and when a redirect operation is performed YAM will redirect
+    all of these mails in one run. This change should perfectly fix, fulfill and
+    closes #362.
+
 2013-01-28 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/Recipientstring.c: when pressing the right cursor key don't add a comma

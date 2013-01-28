@@ -84,7 +84,7 @@ struct Data
   Object *MI_FORWARD;
   Object *MI_FORWARD_ATTACH;
   Object *MI_FORWARD_INLINE;
-  Object *MI_BOUNCE;
+  Object *MI_REDIRECT;
   Object *MI_NEXTTHREAD;
   Object *MI_PREVTHREAD;
   Object *MI_STATUS;
@@ -111,7 +111,7 @@ struct Data
 enum
 {
   RMEN_EDIT=501,RMEN_MOVE,RMEN_COPY,RMEN_DELETE,RMEN_PRINT,RMEN_SAVE,RMEN_DISPLAY,RMEN_DETACH,
-  RMEN_DELETEATT,RMEN_NEW,RMEN_REPLY,RMEN_FORWARD_ATTACH,RMEN_FORWARD_INLINE,RMEN_BOUNCE,
+  RMEN_DELETEATT,RMEN_NEW,RMEN_REPLY,RMEN_FORWARD_ATTACH,RMEN_FORWARD_INLINE,RMEN_REDIRECT,
   RMEN_SAVEADDR,RMEN_CHSUBJ,RMEN_PREV,RMEN_NEXT,RMEN_URPREV,RMEN_URNEXT,RMEN_PREVTH,
   RMEN_NEXTTH,RMEN_EXTKEY,RMEN_CHKSIG,RMEN_SAVEDEC,RMEN_HNONE,RMEN_HSHORT,RMEN_HFULL,
   RMEN_SNONE,RMEN_SDATA,RMEN_SFULL,RMEN_WRAPH,RMEN_TSTYLE,RMEN_FFONT,RMEN_SIMAGE,RMEN_TOMARKED,
@@ -228,7 +228,7 @@ OVERLOAD(OM_NEW)
   // shortcuts:
   //
   //  A   Select all text (RMEN_EDIT_SALL)
-  //  B   Bounce mail (RMEN_BOUNCE)
+  //  B   Redirect mail (RMEN_REDIRECT)
   //  C   Copy selected text (RMEN_EDIT_COPY)
   //  D   Display mail part (RMEN_DISPLAY)
   //  E   Edit mail in Editor (RMEN_EDIT)
@@ -301,7 +301,7 @@ OVERLOAD(OM_NEW)
         MenuChild, data->MI_FORWARD_ATTACH = Menuitem(tr(MSG_MA_MFORWARD_ATTACH), NULL, TRUE, FALSE, RMEN_FORWARD_ATTACH),
         MenuChild, data->MI_FORWARD_INLINE = Menuitem(tr(MSG_MA_MFORWARD_INLINE), NULL, TRUE, FALSE, RMEN_FORWARD_INLINE),
       End,
-      MenuChild, data->MI_BOUNCE = Menuitem(tr(MSG_MA_MBOUNCE), "B", TRUE, FALSE, RMEN_BOUNCE),
+      MenuChild, data->MI_REDIRECT = Menuitem(tr(MSG_MA_MREDIRECT), "B", TRUE, FALSE, RMEN_REDIRECT),
       MenuChild, MenuBarLabel,
       MenuChild, data->MI_SEARCH = Menuitem(tr(MSG_RE_SEARCH), "F", TRUE, FALSE, RMEN_SEARCH),
       MenuChild, data->MI_SEARCHAGAIN = Menuitem(tr(MSG_RE_SEARCH_AGAIN), "G", TRUE, FALSE, RMEN_SEARCHAGAIN),
@@ -433,7 +433,7 @@ OVERLOAD(OM_NEW)
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_REPLY,          obj, 3, MUIM_ReadWindow_NewMail, NMM_REPLY, 0);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_FORWARD_ATTACH, obj, 3, MUIM_ReadWindow_NewMail, NMM_FORWARD_ATTACH, 0);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_FORWARD_INLINE, obj, 3, MUIM_ReadWindow_NewMail, NMM_FORWARD_INLINE, 0);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_BOUNCE,         obj, 3, MUIM_ReadWindow_NewMail, NMM_BOUNCE, 0);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_REDIRECT,       obj, 3, MUIM_ReadWindow_NewMail, NMM_REDIRECT, 0);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SAVEADDR,       obj, 1, MUIM_ReadWindow_GrabSenderAddress);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SEARCH,         data->readMailGroup, 2, MUIM_ReadMailGroup_Search, MUIF_NONE);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SEARCHAGAIN,    data->readMailGroup, 2, MUIM_ReadMailGroup_Search, MUIF_ReadMailGroup_Search_Again);
@@ -635,7 +635,7 @@ DECLARE(ReadMail) // struct Mail *mail
   set(data->MI_CHSUBJ,    MUIA_Menuitem_Enabled, isRealMail && !inSpamFolder);
   set(data->MI_NAVIG,     MUIA_Menu_Enabled,     isRealMail);
   set(data->MI_REPLY,     MUIA_Menuitem_Enabled, !inSpamFolder && !hasStatusSpam(mail));
-  set(data->MI_BOUNCE,    MUIA_Menuitem_Enabled, !isSentMail);
+  set(data->MI_REDIRECT,  MUIA_Menuitem_Enabled, !isSentMail);
   set(data->MI_NEXTTHREAD,MUIA_Menuitem_Enabled, nextMailAvailable);
   set(data->MI_PREVTHREAD,MUIA_Menuitem_Enabled, prevMailAvailable);
 
@@ -767,8 +767,17 @@ DECLARE(NewMail) // enum NewMailMode mode, ULONG qualifier
         NewEditMailWindow(mail, flags);
       break;
 
-      case NMM_BOUNCE:
-        NewBounceMailWindow(mail, flags);
+      case NMM_REDIRECT:
+      {
+        struct MailList *mlist;
+
+        if((mlist = CreateMailList()) != NULL)
+        {
+          AddNewMailNode(mlist, mail);
+          NewRedirectMailWindow(mlist, flags);
+          DeleteMailList(mlist);
+        }
+      }
       break;
 
       case NMM_FORWARD:

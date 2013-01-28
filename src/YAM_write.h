@@ -191,7 +191,7 @@ const char *EncodingName(const enum Encoding encoding);
 BOOL EncodePart(FILE *ofh, const struct WritePart *part);
 
 struct WriteMailData *NewWriteMailWindow(struct Mail *mail, const int flags);
-struct WriteMailData *NewBounceMailWindow(struct Mail *mail, const int flags);
+struct WriteMailData *NewRedirectMailWindow(struct MailList *mlist, const int flags);
 struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags);
 struct WriteMailData *NewForwardMailWindow(struct MailList *mlist, const int flags);
 struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags, const char *replytxt);

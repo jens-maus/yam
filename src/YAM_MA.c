@@ -266,7 +266,7 @@ void MA_ChangeSelected(BOOL forceUpdate)
                                                            gui->MI_TOREAD,
                                                            gui->MI_TOUNREAD,
                                                            gui->MI_ALLTOREAD,
-                                                           gui->MI_BOUNCE,
+                                                           gui->MI_REDIRECT,
                                                            NULL);
 
     // Enable if:
@@ -1720,12 +1720,16 @@ struct WriteMailData *NewMessage(enum NewMailMode mode, const int flags)
     }
     break;
 
-    case NMM_BOUNCE:
+    case NMM_REDIRECT:
     {
-      struct Mail *mail;
+      struct MailList *mlist;
 
-      if((mail = MA_GetActiveMail(NULL, NULL, NULL)) != NULL)
-        wmData = NewBounceMailWindow(mail, flags);
+      if((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE)) != NULL)
+      {
+        wmData = NewRedirectMailWindow(mlist, flags);
+
+        DeleteMailList(mlist);
+      }
     }
     break;
 
@@ -1822,10 +1826,10 @@ enum NewMailMode CheckNewMailQualifier(const enum NewMailMode mode, const ULONG 
   if(mode == NMM_FORWARD)
   {
     // if the user pressed LSHIFT or RSHIFT while pressing
-    // the 'forward' toolbar we do a BOUNCE message action
+    // the 'forward' toolbar we do a REDIRECT message action
     // instead.
     if(isAnyFlagSet(qualifier, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT)))
-      newMode = NMM_BOUNCE;
+      newMode = NMM_REDIRECT;
     else
     {
       // flag the forward message action to not
@@ -4207,7 +4211,7 @@ struct MA_ClassData *MA_New(void)
           MenuChild, data->GUI.MI_FORWARD_ATTACH = Menuitem(tr(MSG_MA_MFORWARD_ATTACH), NULL, TRUE, FALSE, MMEN_FORWARD_ATTACH),
           MenuChild, data->GUI.MI_FORWARD_INLINE = Menuitem(tr(MSG_MA_MFORWARD_INLINE), NULL, TRUE, FALSE, MMEN_FORWARD_INLINE),
         End,
-        MenuChild, data->GUI.MI_BOUNCE = Menuitem(tr(MSG_MA_MBOUNCE), NULL, TRUE, FALSE, MMEN_BOUNCE),
+        MenuChild, data->GUI.MI_REDIRECT = Menuitem(tr(MSG_MA_MREDIRECT), NULL, TRUE, FALSE, MMEN_REDIRECT),
         MenuChild, MenuBarLabel,
         MenuChild, data->GUI.MI_GETADDRESS = Menuitem(tr(MSG_MA_MSAVEADDRESS), "J", TRUE, FALSE, MMEN_SAVEADDR),
         MenuChild, data->GUI.MI_SELECT = MenuitemObject,
@@ -4368,7 +4372,7 @@ struct MA_ClassData *MA_New(void)
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_REPLY,          MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_NewMessageHook, NMM_REPLY, 0);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_FORWARD_ATTACH, MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_NewMessageHook, NMM_FORWARD_ATTACH, 0);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_FORWARD_INLINE, MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_NewMessageHook, NMM_FORWARD_INLINE, 0);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_BOUNCE,         MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_NewMessageHook, NMM_BOUNCE, 0);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_REDIRECT,       MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_NewMessageHook, NMM_REDIRECT, 0);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SAVEADDR,       MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_GetAddressHook);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_CHSUBJ,         MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_ChangeSubjectHook);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SEND,           MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_SendHook, SENDMAIL_ACTIVE_USER);

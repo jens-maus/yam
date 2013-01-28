@@ -1172,7 +1172,20 @@ static int SendMessage(struct TransferContext *tc, struct Mail *mail)
             if(SendSMTPCommand(tc, SMTP_RCPT, buf, tr(MSG_ER_BADRESPONSE_SMTP)) == NULL)
               rcptok = FALSE;
           }
+        }
 
+        // Add "Resent-CC:" recipients first
+        if(email->NumResentCC > 0)
+        {
+          for(j=0; j < email->NumResentCC; j++)
+          {
+            snprintf(buf, buflen, "TO:<%s>", email->ResentCC[j].Address);
+            if(SendSMTPCommand(tc, SMTP_RCPT, buf, tr(MSG_ER_BADRESPONSE_SMTP)) == NULL)
+              rcptok = FALSE;
+          }
+        }
+        else
+        {
           // add the 'Cc:' recipients
           for(j=0; j < email->NumCC && rcptok; j++)
           {
@@ -1180,7 +1193,20 @@ static int SendMessage(struct TransferContext *tc, struct Mail *mail)
             if(SendSMTPCommand(tc, SMTP_RCPT, buf, tr(MSG_ER_BADRESPONSE_SMTP)) == NULL)
               rcptok = FALSE;
           }
+        }
 
+        // Add "Resent-BCC" recipients first
+        if(email->NumResentBCC > 0)
+        {
+          for(j=0; j < email->NumResentBCC; j++)
+          {
+            snprintf(buf, buflen, "TO:<%s>", email->ResentBCC[j].Address);
+            if(SendSMTPCommand(tc, SMTP_RCPT, buf, tr(MSG_ER_BADRESPONSE_SMTP)) == NULL)
+              rcptok = FALSE;
+          }
+        }
+        else
+        {
           // add the 'BCC:' recipients
           for(j=0; j < email->NumBCC && rcptok; j++)
           {
@@ -1227,8 +1253,16 @@ static int SendMessage(struct TransferContext *tc, struct Mail *mail)
                 }
                 else if(isspace(*buf) == FALSE) // headerlines don't start with a space
                 {
-                  // headerlines with bcc or x-yam- will be skipped by us.
-                  lineskip = (strnicmp(buf, "bcc", 3) == 0 || strnicmp(buf, "x-yam-", 6) == 0);
+                  // we make sure we don't send out BCC:, Resent-BCC: and X-YAM-#? headerlines
+                  // because these lines should never be seen by others.
+                  if(strnicmp(buf, "bcc", 3) == 0 ||
+                     strnicmp(buf, "x-yam-", 6) == 0 ||
+                     strnicmp(buf, "resent-bcc", 10) == 0)
+                  {
+                    lineskip = TRUE;
+                  }
+                  else
+                    lineskip = FALSE;
                 }
               }
 

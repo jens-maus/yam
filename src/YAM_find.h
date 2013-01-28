@@ -70,7 +70,7 @@ enum Comparison       { CP_EQUAL=0, CP_NOTEQUAL, CP_LOWER, CP_GREATER, CP_INPUT 
 
 // lets define all the filter->actions flags and
 // define some flag macros for them
-#define FA_BOUNCE           (1<<0)
+#define FA_REDIRECT         (1<<0)
 #define FA_FORWARD          (1<<1)
 #define FA_REPLY            (1<<2)
 #define FA_EXECUTE          (1<<3)
@@ -85,7 +85,7 @@ enum Comparison       { CP_EQUAL=0, CP_NOTEQUAL, CP_LOWER, CP_GREATER, CP_INPUT 
 #define FA_STATUSTOSPAM     (1<<12)
 #define FA_STATUSTOHAM      (1<<13)
 #define FA_TERMINATE        (1<<14)
-#define hasBounceAction(filter)           (isFlagSet((filter)->actions, FA_BOUNCE))
+#define hasRedirectAction(filter)         (isFlagSet((filter)->actions, FA_REDIRECT))
 #define hasForwardAction(filter)          (isFlagSet((filter)->actions, FA_FORWARD))
 #define hasReplyAction(filter)            (isFlagSet((filter)->actions, FA_REPLY))
 #define hasExecuteAction(filter)          (isFlagSet((filter)->actions, FA_EXECUTE))
@@ -156,7 +156,7 @@ struct FilterNode
   BOOL            applyOnReq;               // apply filter on user request
   BOOL            applyToSent;              // apply filter automatically on sent mail
   char            name[SIZE_NAME];          // user definable filter name
-  char            bounceTo[SIZE_ADDRESS];   // bounce action: address to bounce the mail to
+  char            redirectTo[SIZE_ADDRESS]; // redirect action: address to redirect the mail to
   char            forwardTo[SIZE_ADDRESS];  // forward action: address to forward the mail to
   char            replyFile[SIZE_PATHFILE]; // path to a file to use as the reply text
   char            executeCmd[SIZE_COMMAND]; // command string for execute action
@@ -168,7 +168,7 @@ struct FilterNode
 struct FilterResult
 {
   long Checked;
-  long Bounced;
+  long Redirected;
   long Forwarded;
   long Replied;
   long Executed;

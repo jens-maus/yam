@@ -111,8 +111,8 @@ struct CO_GUIData
   Object *CH_APPLYNEW;
   Object *CH_APPLYREQ;
   Object *CH_APPLYSENT;
-  Object *CH_ABOUNCE;
-  Object *ST_ABOUNCE;
+  Object *CH_AREDIRECT;
+  Object *ST_AREDIRECT;
   Object *CH_AFORWARD;
   Object *ST_AFORWARD;
   Object *CH_ARESPONSE;
