@@ -826,7 +826,7 @@ OVERLOAD(MUIM_HandleEvent)
             // add a separator as more recipients may be wanted if the cursor
             // is moved to the right. The string has been resolved already at
             // this point.
-            if(imsg->Code == IECODE_RIGHT)
+            if(imsg->Code == IECODE_RIGHT && data->MultipleRecipients == TRUE)
             {
               DoMethod(obj, MUIM_BetterString_Insert, ", ", MUIV_BetterString_Insert_EndOfString);
             }

@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-01-28 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/Recipientstring.c: when pressing the right cursor key don't add a comma
+    after the current recipient if only single recipients are allowed. This fixes
+    this issue reported by Lee Hemenway on the YAM mailing list.
+
 2013-01-27 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/WriteWindow.c: make sure that a "From:" label is shown even if there is
