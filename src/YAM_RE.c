@@ -2836,10 +2836,10 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
           // allocate memory for the complete part plus and trailing NUL byte
           if((msg = AllocStrBuf(part->Size+1)) != NULL)
           {
+            int nread;
             char *ptr;
             char *rptr;
-            char *eolptr;
-            int nread;
+            char *endptr;
             BOOL signatureFound = FALSE;
 
             // read the part into a dynamic string
@@ -2896,14 +2896,18 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
             }
 
             rptr = msg;
+            endptr = msg+nread+1;
             // parse the message string
-            while(*rptr != '\0')
+            // make sure we don't read beyond the buffer's limits
+            // as we will modify the buffer contents inbetween
+            while(rptr < endptr && *rptr != '\0')
             {
+              char *eolptr;
               BOOL newlineAtEnd;
 
               // lets get the first real line of the data and make sure to strip all
               // NUL bytes because otherwise we are not able to show the text.
-              for(eolptr = rptr; *eolptr != '\n' && eolptr < msg+nread+1; eolptr++)
+              for(eolptr = rptr; *eolptr != '\n' && eolptr < endptr; eolptr++)
               {
                 // strip null bytes that are in between the start and end of stream
                 // here we simply exchange it by a space
@@ -3194,7 +3198,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                     StrBufCat(&cmsg, rptr);
                   }
 
-                  if(newlineAtEnd)
+                  if(newlineAtEnd == TRUE)
                     StrBufCat(&cmsg, "\n");
                 }
                 else if(mode == RIM_QUOTE && C->StripSignature)
@@ -3211,14 +3215,14 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                   // just leaving the plain "--". This should prevent
                   // our signature stripping in forwarded mails from
                   // stripping at the wrong position.
-                  if(newlineAtEnd)
+                  if(newlineAtEnd == TRUE)
                     StrBufCat(&cmsg, "--\n");
                   else
                     StrBufCat(&cmsg, "--");
                 }
                 else
                 {
-                  if(newlineAtEnd)
+                  if(newlineAtEnd == TRUE)
                     StrBufCat(&cmsg, "-- \n");
                   else
                     StrBufCat(&cmsg, "-- ");
@@ -3232,7 +3236,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
 
                 StrBufCat(&cmsg, rptr);
 
-                if(newlineAtEnd)
+                if(newlineAtEnd == TRUE)
                   StrBufCat(&cmsg, "\n");
               }
               else if(strncmp(rptr, "-----BEGIN PGP SIGNED MESSAGE", 29) == 0)
@@ -3245,7 +3249,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                   setFlag(rmData->mail->mflags, MFLAG_MP_SIGNED);
 
                   // flag folder as modified
-                  if(rmData->mail->Folder)
+                  if(rmData->mail->Folder != NULL)
                     setFlag(rmData->mail->Folder->Flags, FOFL_MODIFY);
                 }
               }
@@ -3253,7 +3257,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
               {
                 StrBufCat(&cmsg, rptr);
 
-                if(newlineAtEnd)
+                if(newlineAtEnd == TRUE)
                   StrBufCat(&cmsg, "\n");
               }
 

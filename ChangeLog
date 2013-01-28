@@ -8,8 +8,11 @@ $URL$
 2013-01-28 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/Recipientstring.c: when pressing the right cursor key don't add a comma
-    after the current recipient if only single recipients are allowed. This fixes
-    this issue reported by Lee Hemenway on the YAM mailing list.
+    after the current recipient if only single recipients are allowed. This
+    fixes this issue reported by Lee Hemenway on the YAM mailing list.
+  * YAM_RE.c: fixed a long standing bug which could trash memory while parsing
+    a mail, because the parsing process could run beyond the buffer's limits and
+    the buffer contents are modified during the parsing.
 
 2013-01-27 Thore Böckelmann <tboeckel@gmx.de>
 
