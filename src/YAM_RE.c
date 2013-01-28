@@ -2839,7 +2839,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
             int nread;
             char *ptr;
             char *rptr;
-            char *endptr;
+            char *msgend;
             BOOL signatureFound = FALSE;
 
             // read the part into a dynamic string
@@ -2896,18 +2896,18 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
             }
 
             rptr = msg;
-            endptr = msg+nread+1;
+            msgend = msg+nread+1;
             // parse the message string
             // make sure we don't read beyond the buffer's limits
             // as we will modify the buffer contents inbetween
-            while(rptr < endptr && *rptr != '\0')
+            while(rptr < msgend && *rptr != '\0')
             {
               char *eolptr;
               BOOL newlineAtEnd;
 
               // lets get the first real line of the data and make sure to strip all
               // NUL bytes because otherwise we are not able to show the text.
-              for(eolptr = rptr; *eolptr != '\n' && eolptr < endptr; eolptr++)
+              for(eolptr = rptr; *eolptr != '\n' && eolptr < msgend; eolptr++)
               {
                 // strip null bytes that are in between the start and end of stream
                 // here we simply exchange it by a space
