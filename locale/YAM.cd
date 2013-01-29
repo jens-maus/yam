@@ -3152,11 +3152,6 @@ MSG_ER_ErrorARexxScript (1112//)
 Couldn't send ARexx command '%s'. Make sure that the script exists.
 ; REXX_COMMAND
 ;
-MSG_ER_CreateMailError (1116//)
-Couldn't create mail file.\n\
-\n\
-Reason: invalid folder directory or insufficient disk space.
-;
 MSG_ER_CantOpenFile (1122//)
 Couldn't read from file '%s'.\n\
 \n\
@@ -7352,4 +7347,10 @@ Resent-_BCC
 ;
 MSG_WR_REDIRECT_TITLE (2415//)
 Redirect message(s)
+;
+MSG_ER_CANNOT_CREATE_MAIL_FILE (2416//)
+Could not create mail file '%s'.\n\
+\n\
+Reason: invalid folder directory or insufficient disk space.
+; FILE
 ;

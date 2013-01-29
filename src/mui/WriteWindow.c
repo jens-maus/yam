@@ -4179,7 +4179,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
       }
       else
       {
-        ER_NewError(tr(MSG_ER_CreateMailError));
+        ER_NewError(tr(MSG_ER_CANNOT_CREATE_MAIL_FILE), newMailFile);
         goto out;
       }
 

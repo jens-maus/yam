@@ -1617,8 +1617,10 @@ DECLARE(SaveDecryptedMail)
 
         MA_FreeEMailStruct(email);
       }
-      else
-        ER_NewError(tr(MSG_ER_CreateMailError));
+    }
+    else
+    {
+      ER_NewError(tr(MSG_ER_CANNOT_CREATE_MAIL_FILE), mfilePath);
     }
   }
 

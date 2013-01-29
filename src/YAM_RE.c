@@ -3788,7 +3788,9 @@ static void RE_SendMDN(const enum MDNMode mode,
               }
             }
             else
-              ER_NewError(tr(MSG_ER_CreateMailError));
+            {
+              ER_NewError(tr(MSG_ER_CANNOT_CREATE_MAIL_FILE), mfilePath);
+            }
 
             FreeStrBuf(comp.MailTo);
             CloseTempFile(tf3);

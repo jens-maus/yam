@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.4 (29.01.2013)
+## version $VER: YAM.catalog 8.5 (29.01.2013)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -4274,14 +4274,6 @@ MSG_ER_ErrorARexxScript
 Kann ARexx-Befehl '%s' nicht senden. Versichern Sie sich, dass das Skript existiert.
 ; Couldn't send ARexx command '%s'. Make sure that the script exists.
 ; REXX_COMMAND
-;
-MSG_ER_CreateMailError
-Kann Maildatei nicht erstellen.\n\
-\n\
-Grund: ungültiges Postfachverzeichnis oder Festplattenspeicher erschöpft.
-; Couldn't create mail file.\n\
-; \n\
-; Reason: invalid folder directory or unsufficient disk space.
 ;
 MSG_ER_CantOpenFile
 Kann Datei '%s' nicht öffnen.\n\
@@ -8812,4 +8804,9 @@ Umleiten _BCC
 ;
 MSG_WR_REDIRECT_TITLE
 Nachricht(en) umleiten
+;
+MSG_ER_CANNOT_CREATE_MAIL_FILE
+Kann Maildatei '%s' nicht erstellen.\n\
+\n\
+Grund: ungültiges Postfachverzeichnis oder Festplattenspeicher erschöpft.
 ;

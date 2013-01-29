@@ -17,6 +17,8 @@ $URL$
   * YAM_COg.c: don't create objects which are not available on certain systems,
     i.e. the DockyIcon and AmigaOS 4.1 system notification checkmarks. These will
     be created by the AmigaOS4 build only.
+  * YAM_RE.c, mui/ReadMailGroup.c, mui/WriteWindow.c: extended the "cannot open
+    mail file" error message by the guilty file name.
 
 2013-01-29 Samir Hawamdeh <s.hawamdeh@tin.it>
 
