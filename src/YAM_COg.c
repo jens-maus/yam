@@ -1903,12 +1903,14 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
                         Child, HSpace(0),
                       End,
 
+                      #if defined(__amigaos4__)
                       Child, HSpace(1),
                       Child, HGroup,
                         Child, data->GUI.CH_POP3_NOTIFY_OS41SYSTEM = MakeCheck(tr(MSG_CO_NOTIOS41SYSTEM)),
                         Child, LLabel(tr(MSG_CO_NOTIOS41SYSTEM)),
                         Child, HSpace(0),
                       End,
+                      #endif // __amigaos4__
 
                       Child, HSpace(1),
                       Child, HGroup,
@@ -2084,7 +2086,9 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
     SetHelp(data->GUI.CH_POP3_NOTIFY_CMD,        MSG_HELP_CO_CH_NOTICMD);
     SetHelp(data->GUI.ST_POP3_NOTIFY_CMD,        MSG_HELP_CO_ST_NOTICMD);
     SetHelp(data->GUI.ST_POP3_NOTIFY_SOUND,      MSG_HELP_CO_ST_NOTISOUND);
+    #if defined(__amigaos4__)
     SetHelp(data->GUI.CH_POP3_NOTIFY_OS41SYSTEM, MSG_HELP_CO_CH_NOTIOS41SYSTEM);
+    #endif // __amigaos4__
 
     // connect POP3 related stuff to the corresponding Hooks
     DoMethod(data->GUI.LV_POP3,                   MUIM_Notify, MUIA_NList_Active    , MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_GetPOP3EntryHook);
@@ -2109,7 +2113,9 @@ Object *CO_PageTCPIP(struct CO_ClassData *data)
     DoMethod(data->GUI.BT_POPDOWN,                MUIM_Notify, MUIA_Pressed         , FALSE, data->GUI.LV_POP3, 3, MUIM_NList_Move, MUIV_NList_Move_Selected, MUIV_NList_Move_Next);
     DoMethod(data->GUI.CY_POPSECURE,              MUIM_Notify, MUIA_Cycle_Active,     MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
     DoMethod(data->GUI.CH_POP3_NOTIFY_REQ,        MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
+    #if defined(__amigaos4__)
     DoMethod(data->GUI.CH_POP3_NOTIFY_OS41SYSTEM, MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
+    #endif // __amigaos4__
     DoMethod(data->GUI.CH_POP3_NOTIFY_CMD,        MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
     DoMethod(data->GUI.ST_POP3_NOTIFY_CMD,        MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
     DoMethod(data->GUI.CH_POP3_NOTIFY_SOUND,      MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_PutPOP3EntryHook);
@@ -4067,7 +4073,9 @@ Object *CO_PageMixed(struct CO_ClassData *data)
 
                   End,
                 End,
-                Child, MakeCheckGroup(&data->GUI.CH_DOCKYICON, tr(MSG_CO_DOCKYICON)),
+                #if defined(__amigaos4__)
+                Child, MakeCheckGroup(&data->GUI.t, tr(MSG_CO_DOCKYICON)),
+                #endif
                 Child, MakeCheckGroup(&data->GUI.CH_CLGADGET, tr(MSG_CO_CloseGadget)),
               End,
 
@@ -4119,7 +4127,9 @@ Object *CO_PageMixed(struct CO_ClassData *data)
     SetHelp(data->GUI.ST_APPX,           MSG_HELP_CO_ST_APP);
     SetHelp(data->GUI.ST_APPY,           MSG_HELP_CO_ST_APP);
     SetHelp(data->GUI.CH_APPICONPOS,     MSG_HELP_CO_ST_APP);
+    #if defined(__amigaos4__)
     SetHelp(data->GUI.CH_DOCKYICON,      MSG_HELP_CO_CH_DOCKYICON);
+    #endif // __amigaos4__
     SetHelp(data->GUI.CH_CLGADGET,       MSG_HELP_CO_CH_CLGADGET);
     SetHelp(data->GUI.CH_CONFIRM,        MSG_HELP_CO_CH_CONFIRM);
     SetHelp(data->GUI.NB_CONFIRMDEL,     MSG_HELP_CO_NB_CONFIRMDEL);
@@ -4140,9 +4150,7 @@ Object *CO_PageMixed(struct CO_ClassData *data)
 
     #if defined(__amigaos4__)
     set(data->GUI.CH_DOCKYICON, MUIA_Disabled, G->applicationID == 0);
-    #else
-    set(data->GUI.CH_DOCKYICON, MUIA_Disabled, TRUE);
-    #endif
+    #endif // __amigaos4__
 
     // disable the XPK popups if xpkmaster.library is not available
     if(XpkBase == NULL)

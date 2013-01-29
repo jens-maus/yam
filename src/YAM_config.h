@@ -259,7 +259,9 @@ struct CO_GUIData
   Object *BT_LESS;
   Object *CH_QUICKSEARCHBAR;
   Object *CH_WBAPPICON;
+  #if defined(__amigaos4__)
   Object *CH_DOCKYICON;
+  #endif // __amigaos4__
   Object *TX_DEFCHARSET_READ;
   Object *TX_DEFCHARSET_WRITE;
   Object *CY_UPDATEINTERVAL;
@@ -348,7 +350,9 @@ struct CO_GUIData
   Object *TX_IDENTITY_SENTFOLDER;
   Object *LV_IDENTITY_SENTFOLDER;
   Object *CH_POP3_NOTIFY_REQ;
+  #if defined(__amigaos4__)
   Object *CH_POP3_NOTIFY_OS41SYSTEM;
+  #endif // __amigaos4__
   Object *CH_POP3_NOTIFY_SOUND;
   Object *PO_POP3_NOTIFY_SOUND;
   Object *ST_POP3_NOTIFY_SOUND;

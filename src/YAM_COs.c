@@ -2440,7 +2440,7 @@ void CO_GetConfig(void)
       GetMUIString(CE->DetachDir, gui->ST_DETACHDIR, sizeof(CE->DetachDir));
       GetMUIString(CE->AttachDir, gui->ST_ATTACHDIR, sizeof(CE->AttachDir));
       GetMUIString(CE->UpdateDownloadPath, gui->ST_UPDATEDOWNLOADPATH, sizeof(CE->UpdateDownloadPath));
-      CE->WBAppIcon         = GetMUICheck  (gui->CH_WBAPPICON);
+      CE->WBAppIcon         = GetMUICheck(gui->CH_WBAPPICON);
       CE->IconPositionX     = GetMUIInteger(gui->ST_APPX);
       CE->IconPositionY     = GetMUIInteger(gui->ST_APPY);
 
@@ -2451,15 +2451,17 @@ void CO_GetConfig(void)
       }
 
       GetMUIString(CE->AppIconText, gui->ST_APPICON, sizeof(CE->AppIconText));
-      CE->DockyIcon         = GetMUICheck  (gui->CH_DOCKYICON);
-      CE->IconifyOnQuit     = GetMUICheck  (gui->CH_CLGADGET);
-      CE->Confirm           = GetMUICheck  (gui->CH_CONFIRM);
-      CE->ConfirmDelete     = GetMUINumer  (gui->NB_CONFIRMDEL);
-      CE->RemoveAtOnce      = GetMUICheck  (gui->CH_REMOVE);
+      #if defined(__amigaos4__)
+      CE->DockyIcon         = GetMUICheck(gui->CH_DOCKYICON);
+      #endif // __amigaos4__
+      CE->IconifyOnQuit     = GetMUICheck(gui->CH_CLGADGET);
+      CE->Confirm           = GetMUICheck(gui->CH_CONFIRM);
+      CE->ConfirmDelete     = GetMUINumer(gui->NB_CONFIRMDEL);
+      CE->RemoveAtOnce      = GetMUICheck(gui->CH_REMOVE);
       GetMUIText(CE->XPKPack, gui->TX_PACKER, sizeof(CE->XPKPack));
       GetMUIText(CE->XPKPackEncrypt, gui->TX_ENCPACK, sizeof(CE->XPKPackEncrypt));
-      CE->XPKPackEff        = GetMUINumer  (gui->NB_PACKER);
-      CE->XPKPackEncryptEff = GetMUINumer  (gui->NB_ENCPACK);
+      CE->XPKPackEff        = GetMUINumer(gui->NB_PACKER);
+      CE->XPKPackEncryptEff = GetMUINumer(gui->NB_ENCPACK);
       GetMUIString(CE->PackerCommand, gui->ST_ARCHIVER, sizeof(CE->PackerCommand));
       CE->TransferWindow = GetMUICycle  (gui->CY_TRANSWIN);
     }
@@ -2939,7 +2941,9 @@ void CO_SetConfig(void)
       set(gui->ST_APPY, MUIA_String_Integer, abs(CE->IconPositionY));
       setcheckmark(gui->CH_APPICONPOS, CE->IconPositionX >= 0 && CE->IconPositionY >= 0);
       setstring(gui->ST_APPICON, CE->AppIconText);
+      #if defined(__amigaos4__)
       setcheckmark(gui->CH_DOCKYICON, CE->DockyIcon);
+      #endif // __amigaos4__
       setcheckmark(gui->CH_CLGADGET, CE->IconifyOnQuit);
       setcheckmark(gui->CH_CONFIRM, CE->Confirm);
 

@@ -14,6 +14,9 @@ $URL$
     a mail consistent to writing a new mail or editing a draft mail.
   * mui/WriteWindow.c: fixed a potential object pointer mix up in case the
     OverrideFromAddress feature was enabled.
+  * YAM_COg.c: don't create objects which are not available on certain systems,
+    i.e. the DockyIcon and AmigaOS 4.1 system notification checkmarks. These will
+    be created by the AmigaOS4 build only.
 
 2013-01-29 Samir Hawamdeh <s.hawamdeh@tin.it>
 

@@ -640,7 +640,9 @@ HOOKPROTONHNONP(CO_GetPOP3Entry, void)
     nnset(gui->CH_DELETE,                 MUIA_Selected,        hasServerPurge(msn));
     nnset(gui->CY_PRESELECTION,           MUIA_Cycle_Active,    msn->preselection);
     nnset(gui->CH_POP3_NOTIFY_REQ,        MUIA_Selected,        msn->notifyByRequester);
+    #if defined(__amigaos4__)
     nnset(gui->CH_POP3_NOTIFY_OS41SYSTEM, MUIA_Selected,        msn->notifyByOS41System);
+    #endif // __amigaos4__
     nnset(gui->CH_POP3_NOTIFY_SOUND,      MUIA_Selected,        msn->notifyBySound);
     nnset(gui->CH_POP3_NOTIFY_CMD,        MUIA_Selected,        msn->notifyByCommand);
     nnset(gui->ST_POP3_NOTIFY_SOUND,      MUIA_String_Contents, msn->notifySound);
@@ -651,8 +653,6 @@ HOOKPROTONHNONP(CO_GetPOP3Entry, void)
 
     #if defined(__amigaos4__)
     set(gui->CH_POP3_NOTIFY_OS41SYSTEM, MUIA_Disabled, G->applicationID == 0 || LIB_VERSION_IS_AT_LEAST(ApplicationBase, 53, 2) == FALSE);
-    #else // __amigaos4__
-    set(gui->CH_POP3_NOTIFY_OS41SYSTEM, MUIA_Disabled, TRUE);
     #endif // __amigaos4__
 
     set(gui->PO_POP3_NOTIFY_SOUND, MUIA_Disabled, msn == NULL || msn->notifyBySound == FALSE);
@@ -802,7 +802,9 @@ HOOKPROTONHNONP(CO_PutPOP3Entry, void)
       msn->port = GetMUIInteger(gui->ST_POPPORT);
 
       msn->notifyByRequester = GetMUICheck(gui->CH_POP3_NOTIFY_REQ);
+      #if defined(__amigaos4__)
       msn->notifyByOS41System = GetMUICheck(gui->CH_POP3_NOTIFY_OS41SYSTEM);
+      #endif // __amigaos4__
       msn->notifyBySound = GetMUICheck(gui->CH_POP3_NOTIFY_SOUND);
       msn->notifyByCommand = GetMUICheck(gui->CH_POP3_NOTIFY_CMD);
       GetMUIString(msn->notifySound, gui->ST_POP3_NOTIFY_SOUND, sizeof(msn->notifySound));
@@ -810,8 +812,6 @@ HOOKPROTONHNONP(CO_PutPOP3Entry, void)
 
       #if defined(__amigaos4__)
       set(gui->CH_POP3_NOTIFY_OS41SYSTEM, MUIA_Disabled, G->applicationID == 0 || LIB_VERSION_IS_AT_LEAST(ApplicationBase, 53, 2) == FALSE);
-      #else // __amigaos4__
-      set(gui->CH_POP3_NOTIFY_OS41SYSTEM, MUIA_Disabled, TRUE);
       #endif // __amigaos4__
 
       set(gui->PO_POP3_NOTIFY_SOUND, MUIA_Disabled, msn == NULL || msn->notifyBySound == FALSE);
