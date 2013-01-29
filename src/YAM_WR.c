@@ -764,7 +764,7 @@ static BOOL WR_Redirect(FILE *fh, const struct Compose *comp)
       EmitHeader(fh, "Resent-Date", GetDateTime());
       NewMessageID(msgID, sizeof(msgID), comp->Identity->smtpServer);
       EmitHeader(fh, "Resent-Message-ID", msgID);
-      EmitHeader(fh, "Resent-User-Agent", yamuseragent);  
+      EmitHeader(fh, "Resent-User-Agent", yamuseragent);
 
       // now we copy the rest of the message
       // directly from the file handlers
@@ -1919,9 +1919,9 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
     return wmData;
   }
 
-  // check if the mail in question resists in the outgoing
+  // check if the mail in question resists in the drafts
   // folder
-  if(isOutgoingFolder(folder) || isDraftsFolder(folder))
+  if(isDraftsFolder(folder))
   {
     // search through our WriteMailDataList
     struct Node *curNode;

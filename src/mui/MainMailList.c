@@ -873,7 +873,7 @@ DECLARE(DoubleClicked) // LONG entryNum
 
     // A double click in the drafts folder should popup a write
     // window instead.
-    if(folder != NULL && (isDraftsFolder(folder)))
+    if(folder != NULL && isDraftsFolder(folder))
     {
       // in case the folder is the "drafts" folder
       // we edit the mail instead.
@@ -886,7 +886,7 @@ DECLARE(DoubleClicked) // LONG entryNum
     }
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
