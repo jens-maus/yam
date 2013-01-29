@@ -9,6 +9,9 @@ $URL$
 
   * mui/WriteWindow.c: respect the OverrideFromAddress feature when redirecting
     mails as well.
+  * mui/WriteWindow.c: canceling the redirection of a mail now also checks for
+    possible changes and asks the user for confirmation. This makes redirecting
+    a mail consistent to writing a new mail or editing a draft mail.
 
 2013-01-29 Samir Hawamdeh <s.hawamdeh@tin.it>
 

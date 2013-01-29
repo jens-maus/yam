@@ -4501,10 +4501,12 @@ DECLARE(CancelAction)
 
   ENTER();
 
-  if(data->wmData->mode != NMM_REDIRECT && data->wmData->quietMode == FALSE)
+  if(data->wmData->quietMode == FALSE)
   {
     // ask the user what to do if the mail text was modified but not yet automatically saved
-    if(data->mailModified == TRUE || xget(data->TE_EDIT, MUIA_TextEditor_HasChanged) == TRUE || data->autoSaved == TRUE)
+    if(data->mailModified == TRUE ||
+       data->autoSaved == TRUE ||
+       (data->wmData->mode != NMM_REDIRECT && xget(data->TE_EDIT, MUIA_TextEditor_HasChanged) == TRUE))
     {
       switch(MUI_Request(G->App, obj, MUIF_NONE, NULL, tr(MSG_WR_DiscardChangesGad), tr(MSG_WR_DiscardChanges)))
       {
@@ -4526,7 +4528,6 @@ DECLARE(CancelAction)
         case 2:
         {
           // discard
-
           // remove a previously saved draft mail from the drafts folder
           if(data->wmData->draftMail != NULL)
             MA_DeleteSingle(data->wmData->draftMail, DELF_AT_ONCE);
