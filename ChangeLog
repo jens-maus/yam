@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-01-29 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/WriteWindow.c: respect the OverrideFromAddress feature when redirecting
+    mails as well.
+
 2013-01-29 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: update to the latest changes.

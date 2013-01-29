@@ -4025,7 +4025,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
       // lets count the number of reference
       // mail we processed already
       cntRefMail++;
- 
+
       // now we check how the new mail file should be named
       // or created. As we iterate through all refMailList
       // nodes we only generate a new file for the mail redirecting
@@ -4080,7 +4080,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
         fclose(comp.FH);
         comp.FH = NULL;
 
-        // if the WriteOut operation didn't work 
+        // if the WriteOut operation didn't work
         // as expected stop here
         if(success == FALSE)
         {
@@ -4181,7 +4181,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
         ER_NewError(tr(MSG_ER_CreateMailError));
         goto out;
       }
- 
+
       // now we make sure the Disposition Notification is respected
       // and the status of the referenced mail updated accordingly.
       if(wmData->mode != NMM_NEW)
@@ -4380,7 +4380,7 @@ out:
 
   if(refMailList != NULL)
     DeleteMailList(refMailList);
-    
+
   // free the compose structure
   FreeCompose(&comp);
 
@@ -4613,12 +4613,13 @@ DECLARE(IdentityChanged) // struct UserIdentityNode *uin;
   // in the write window according to the settings in the user identity.
 
   // first we update things in the write window GUI
+  setstring(data->ST_FROM_OVERRIDE, msg->uin->address);
   set(data->ST_TO, MUIA_Recipientstring_ActiveIdentity, msg->uin);
   xset(data->ST_CC, MUIA_String_Contents, msg->uin->mailCC,
                     MUIA_Recipientstring_ActiveIdentity, msg->uin);
-  xset(data->ST_BCC, MUIA_String_Contents, msg->uin->mailBCC, 
+  xset(data->ST_BCC, MUIA_String_Contents, msg->uin->mailBCC,
                      MUIA_Recipientstring_ActiveIdentity, msg->uin);
- 
+
   // just go on in non redirection mode
   if(data->wmData->mode != NMM_REDIRECT)
   {
@@ -4629,7 +4630,6 @@ DECLARE(IdentityChanged) // struct UserIdentityNode *uin;
     set(data->CH_ADDINFO, MUIA_Selected, msg->uin->addPersonalInfo);
     set(data->CH_MDN, MUIA_Selected, msg->uin->requestMDN);
     set(data->ST_REPLYTO, MUIA_Recipientstring_ActiveIdentity, msg->uin);
-    setstring(data->ST_FROM_OVERRIDE, msg->uin->address);
 
     // check if we have to show the CC/BCC/ReplyTo string objects
     // in case we filled in sensible information
