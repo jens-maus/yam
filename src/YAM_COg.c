@@ -4074,7 +4074,7 @@ Object *CO_PageMixed(struct CO_ClassData *data)
                   End,
                 End,
                 #if defined(__amigaos4__)
-                Child, MakeCheckGroup(&data->GUI.t, tr(MSG_CO_DOCKYICON)),
+                Child, MakeCheckGroup(&data->GUI.CH_DOCKYICON, tr(MSG_CO_DOCKYICON)),
                 #endif
                 Child, MakeCheckGroup(&data->GUI.CH_CLGADGET, tr(MSG_CO_CloseGadget)),
               End,
