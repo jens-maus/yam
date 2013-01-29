@@ -12,6 +12,8 @@ $URL$
   * mui/WriteWindow.c: canceling the redirection of a mail now also checks for
     possible changes and asks the user for confirmation. This makes redirecting
     a mail consistent to writing a new mail or editing a draft mail.
+  * mui/WriteWindow.c: fixed a potential object pointer mix up in case the
+    OverrideFromAddress feature was enabled.
 
 2013-01-29 Samir Hawamdeh <s.hawamdeh@tin.it>
 

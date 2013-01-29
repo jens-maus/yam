@@ -125,8 +125,9 @@ struct Data
   Object *ST_REPLYTO;
   Object *GR_REPLYTO;
   Object *MN_REPLYTO;
-  Object *GR_FROM_OVERRIDE;
+  Object *LB_FROM_OVERRIDE;
   Object *ST_FROM_OVERRIDE;
+  Object *GR_FROM_OVERRIDE;
   Object *ST_EXTHEADER;
   Object *CH_DELSEND;
   Object *CH_MDN;
@@ -889,13 +890,13 @@ OVERLOAD(OM_NEW)
                 MUIA_ControlChar, ShortCut(tr(MSG_WR_REDIRECT_FROM)),
               End,
 
-              Child, data->GR_FROM_OVERRIDE = HGroup,
+              Child, data->LB_FROM_OVERRIDE = HGroup,
                 MUIA_Group_PageMode, TRUE,
                 MUIA_HorizWeight, 0,
                 Child, HSpace(-1),
                 Child, Label(tr(MSG_WR_From)),
               End,
-              Child, data->ST_FROM_OVERRIDE = MakeAddressField(&data->ST_FROM_OVERRIDE, NULL, NULL, ABM_FROM, data->windowNumber, AFF_EXTERNAL_SHORTCUTS),
+              Child, data->GR_FROM_OVERRIDE = MakeAddressField(&data->ST_FROM_OVERRIDE, NULL, NULL, ABM_FROM, data->windowNumber, AFF_EXTERNAL_SHORTCUTS),
 
               Child, data->LB_TO = Label(tr(MSG_WR_REDIRECT_TO)),
               Child, data->GR_TO = MakeAddressField(&data->ST_TO, tr(MSG_WR_REDIRECT_TO), MSG_HELP_WR_ST_TO, ABM_TO, data->windowNumber, AFF_ALLOW_MULTI|AFF_EXTERNAL_SHORTCUTS),
@@ -1123,13 +1124,13 @@ OVERLOAD(OM_NEW)
                     MUIA_ControlChar, ShortCut(tr(MSG_WR_From)),
                   End,
 
-                  Child, data->GR_FROM_OVERRIDE = HGroup,
+                  Child, data->LB_FROM_OVERRIDE = HGroup,
                     MUIA_Group_PageMode, TRUE,
                     MUIA_HorizWeight, 0,
                     Child, HSpace(-1),
                     Child, Label(tr(MSG_WR_From)),
                   End,
-                  Child, data->ST_FROM_OVERRIDE = MakeAddressField(&data->ST_FROM_OVERRIDE, NULL, NULL, ABM_FROM, data->windowNumber, AFF_EXTERNAL_SHORTCUTS),
+                  Child, data->GR_FROM_OVERRIDE = MakeAddressField(&data->ST_FROM_OVERRIDE, NULL, NULL, ABM_FROM, data->windowNumber, AFF_EXTERNAL_SHORTCUTS),
 
                   Child, data->LB_TO = Label(tr(MSG_WR_To)),
                   Child, data->GR_TO = MakeAddressField(&data->ST_TO, tr(MSG_WR_To), MSG_HELP_WR_ST_TO, ABM_TO, data->windowNumber, AFF_ALLOW_MULTI|AFF_EXTERNAL_SHORTCUTS),
@@ -1730,8 +1731,8 @@ OVERLOAD(OM_DISPOSE)
 
   if(data->fromOverrideRcptHidden == TRUE)
   {
+    MUI_DisposeObject(data->LB_FROM_OVERRIDE);
     MUI_DisposeObject(data->GR_FROM_OVERRIDE);
-    MUI_DisposeObject(data->ST_FROM_OVERRIDE);
   }
 
   if(data->ccRcptHidden == TRUE)
@@ -4683,8 +4684,8 @@ DECLARE(HideRecipientObject) // enum RcptType rtype
         // we only remove it if it is already shown
         if(data->fromOverrideRcptHidden == FALSE)
         {
+          DoMethod(data->GR_HEADER, OM_REMMEMBER, data->LB_FROM_OVERRIDE);
           DoMethod(data->GR_HEADER, OM_REMMEMBER, data->GR_FROM_OVERRIDE);
-          DoMethod(data->GR_HEADER, OM_REMMEMBER, data->ST_FROM_OVERRIDE);
           data->fromOverrideRcptHidden = TRUE;
         }
       }
@@ -4784,8 +4785,8 @@ DECLARE(ShowRecipientObject) // enum RcptType rtype
         // we only show it if it is already hidden
         if(data->fromOverrideRcptHidden == TRUE)
         {
+          DoMethod(data->GR_HEADER, OM_ADDMEMBER, data->LB_FROM_OVERRIDE);
           DoMethod(data->GR_HEADER, OM_ADDMEMBER, data->GR_FROM_OVERRIDE);
-          DoMethod(data->GR_HEADER, OM_ADDMEMBER, data->ST_FROM_OVERRIDE);
 
           data->fromOverrideRcptHidden = FALSE;
         }
@@ -4858,8 +4859,8 @@ DECLARE(ShowRecipientObject) // enum RcptType rtype
 
     if(data->fromOverrideRcptHidden == FALSE)
     {
+      sortMsg.objs[objcnt] = data->LB_FROM_OVERRIDE; objcnt++;
       sortMsg.objs[objcnt] = data->GR_FROM_OVERRIDE; objcnt++;
-      sortMsg.objs[objcnt] = data->ST_FROM_OVERRIDE; objcnt++;
     }
 
     sortMsg.objs[objcnt] = data->LB_TO; objcnt++;
@@ -4898,7 +4899,7 @@ DECLARE(ShowRecipientObject) // enum RcptType rtype
 
     // make sure to show only one "From:" label
     if(data->fromOverrideRcptHidden == FALSE)
-      set(data->GR_FROM_OVERRIDE, MUIA_Group_ActivePage, (NumberOfUserIdentities(&C->userIdentityList) == 1) ? 1 : 0);
+      set(data->LB_FROM_OVERRIDE, MUIA_Group_ActivePage, (NumberOfUserIdentities(&C->userIdentityList) == 1) ? 1 : 0);
 
     DoMethod(data->GR_HEADER, MUIM_Group_ExitChange);
   }
