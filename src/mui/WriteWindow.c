@@ -4021,11 +4021,14 @@ DECLARE(ComposeMail) // enum WriteMode mode
     {
       struct Mail *refMail = mnode->mail;
       struct Mail *newMail = NULL;
-      char newMailFile[SIZE_PATHFILE] = "";
+      char newMailFile[SIZE_PATHFILE];
 
-      // lets count the number of reference
-      // mail we processed already
+      // count the number of reference
+      // mails we processed already
       cntRefMail++;
+
+      // forget the previous file name
+      newMailFile[0] = '\0';
 
       // now we check how the new mail file should be named
       // or created. As we iterate through all refMailList
@@ -4060,127 +4063,129 @@ DECLARE(ComposeMail) // enum WriteMode mode
         }
       }
 
-      // now open the new mail file for write operations
-      if(newMailFile[0] != '\0' &&
-         (comp.FH = fopen(newMailFile, "w")) != NULL)
+      if(newMailFile[0] != '\0')
       {
-        struct ExtendedMail *email = NULL;
-
-        // change file buffer settings
-        setvbuf(comp.FH, NULL, _IOFBF, SIZE_FILEBUF);
-
-        // Write out the message to our file and check that everything worked out fine.
-        // Set a busy mouse pointer during this operation, since encoding large attachments
-        // might take quite a long time.
-        set(obj, MUIA_Window_Sleep, TRUE);
-        comp.refMail = refMail;
-        success = WriteOutMessage(&comp);
-        set(obj, MUIA_Window_Sleep, FALSE);
-
-        // close the file handle immediately
-        fclose(comp.FH);
-        comp.FH = NULL;
-
-        // if the WriteOut operation didn't work
-        // as expected stop here
-        if(success == FALSE)
+        // now open the new mail file for write operations
+        if((comp.FH = fopen(newMailFile, "w")) != NULL)
         {
-          DeleteFile(newMailFile);
-          goto out;
-        }
+          struct ExtendedMail *email = NULL;
 
-        // stop any pending file notification.
-        if(wmData->fileNotifyActive == TRUE)
-        {
-          EndNotify(wmData->notifyRequest);
-          wmData->fileNotifyActive = FALSE;
-        }
+          // change file buffer settings
+          setvbuf(comp.FH, NULL, _IOFBF, SIZE_FILEBUF);
 
-        if((email = MA_ExamineMail(outfolder, FilePart(newMailFile), C->EmailCache > 0 ? TRUE : FALSE)) != NULL)
-        {
-          if((newMail = AddMailToFolder(&email->Mail, outfolder)) != NULL)
+          // Write out the message to our file and check that everything worked out fine.
+          // Set a busy mouse pointer during this operation, since encoding large attachments
+          // might take quite a long time.
+          set(obj, MUIA_Window_Sleep, TRUE);
+          comp.refMail = refMail;
+          success = WriteOutMessage(&comp);
+          set(obj, MUIA_Window_Sleep, FALSE);
+
+          // close the file handle immediately
+          fclose(comp.FH);
+          comp.FH = NULL;
+
+          // if the WriteOut operation didn't work
+          // as expected stop here
+          if(success == FALSE)
           {
-            // Now we have to check whether we have to add the To & CC addresses
-            // to the emailCache
-            if(C->EmailCache > 0)
+            DeleteFile(newMailFile);
+            goto out;
+          }
+
+          // stop any pending file notification.
+          if(wmData->fileNotifyActive == TRUE)
+          {
+            EndNotify(wmData->notifyRequest);
+            wmData->fileNotifyActive = FALSE;
+          }
+
+          if((email = MA_ExamineMail(outfolder, FilePart(newMailFile), C->EmailCache > 0 ? TRUE : FALSE)) != NULL)
+          {
+            if((newMail = AddMailToFolder(&email->Mail, outfolder)) != NULL)
             {
-              DoMethod(_app(obj), MUIM_YAMApplication_AddToEmailCache, &newMail->To);
-
-              // if this mail has more than one recipient we have to add the others too
-              if(isMultiRCPTMail(newMail))
+              // Now we have to check whether we have to add the To & CC addresses
+              // to the emailCache
+              if(C->EmailCache > 0)
               {
-                int j;
+                DoMethod(_app(obj), MUIM_YAMApplication_AddToEmailCache, &newMail->To);
 
-                for(j = 0; j < email->NumSTo; j++)
-                  DoMethod(_app(obj), MUIM_YAMApplication_AddToEmailCache, &email->STo[j]);
-
-                for(j = 0; j < email->NumCC; j++)
-                  DoMethod(_app(obj), MUIM_YAMApplication_AddToEmailCache, &email->CC[j]);
-
-                for(j = 0; j < email->NumBCC; j++)
-                  DoMethod(_app(obj), MUIM_YAMApplication_AddToEmailCache, &email->BCC[j]);
-              }
-            }
-
-            if(GetCurrentFolder() == outfolder)
-              DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_InsertSingle, newMail, MUIV_NList_Insert_Sorted);
-
-            MA_UpdateMailFile(newMail);
-
-            // if this write operation was an edit mode
-            // we have to check all existing readmail objects for
-            // references and update them accordingly.
-            if(wmData->mode == NMM_EDIT && refMail != NULL)
-            {
-              struct Node *curNode;
-
-              // now we search through our existing readMailData
-              // objects and see some of them are pointing to the old mail
-              // and if so we signal them to display the new revised mail instead
-              IterateList(&G->readMailDataList, curNode)
-              {
-                struct ReadMailData *rmData = (struct ReadMailData *)curNode;
-
-                if(rmData->mail == refMail)
+                // if this mail has more than one recipient we have to add the others too
+                if(isMultiRCPTMail(newMail))
                 {
-                  if(rmData->readWindow != NULL)
-                    DoMethod(rmData->readWindow, MUIM_ReadWindow_ReadMail, newMail);
-                  else if(rmData->readMailGroup != NULL)
-                    DoMethod(rmData->readMailGroup, MUIM_ReadMailGroup_ReadMail, newMail);
+                  int j;
+
+                  for(j = 0; j < email->NumSTo; j++)
+                    DoMethod(_app(obj), MUIM_YAMApplication_AddToEmailCache, &email->STo[j]);
+
+                  for(j = 0; j < email->NumCC; j++)
+                    DoMethod(_app(obj), MUIM_YAMApplication_AddToEmailCache, &email->CC[j]);
+
+                  for(j = 0; j < email->NumBCC; j++)
+                    DoMethod(_app(obj), MUIM_YAMApplication_AddToEmailCache, &email->BCC[j]);
                 }
               }
 
-              RemoveMailFromList(refMail, TRUE, TRUE);
-              refMail = newMail;
-            }
-            else if(wmData->mode == NMM_NEW && refMail != NULL)
-              refMail = newMail;
+              if(GetCurrentFolder() == outfolder)
+                DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_InsertSingle, newMail, MUIV_NList_Insert_Sorted);
 
-            if(wmData->draftMail != NULL || mode == WRITE_DRAFT)
-            {
-              if(mode == WRITE_SEND || mode == WRITE_QUEUE)
+              MA_UpdateMailFile(newMail);
+
+              // if this write operation was an edit mode
+              // we have to check all existing readmail objects for
+              // references and update them accordingly.
+              if(wmData->mode == NMM_EDIT && refMail != NULL)
               {
-                // delete the mail from the drafts folder
-                MA_DeleteSingle(wmData->draftMail, DELF_AT_ONCE);
+                struct Node *curNode;
+
+                // now we search through our existing readMailData
+                // objects and see some of them are pointing to the old mail
+                // and if so we signal them to display the new revised mail instead
+                IterateList(&G->readMailDataList, curNode)
+                {
+                  struct ReadMailData *rmData = (struct ReadMailData *)curNode;
+
+                  if(rmData->mail == refMail)
+                  {
+                    if(rmData->readWindow != NULL)
+                      DoMethod(rmData->readWindow, MUIM_ReadWindow_ReadMail, newMail);
+                    else if(rmData->readMailGroup != NULL)
+                      DoMethod(rmData->readMailGroup, MUIM_ReadMailGroup_ReadMail, newMail);
+                  }
+                }
+
+                RemoveMailFromList(refMail, TRUE, TRUE);
+                refMail = newMail;
               }
+              else if(wmData->mode == NMM_NEW && refMail != NULL)
+                refMail = newMail;
 
-              // remember the new mail as draft mail if we had a draft mail pointer before
-	  	        wmData->draftMail = newMail;
-	  	      }
+              if(wmData->draftMail != NULL || mode == WRITE_DRAFT)
+              {
+                if(mode == WRITE_SEND || mode == WRITE_QUEUE)
+                {
+                  // delete the mail from the drafts folder
+                  MA_DeleteSingle(wmData->draftMail, DELF_AT_ONCE);
+                }
 
-            // add the new mail to our newMailList if
-            // we later have to sent it
-            AddNewMailNode(newMailList, newMail);
+                // remember the new mail as draft mail if we had a draft mail pointer before
+	    	        wmData->draftMail = newMail;
+	    	      }
+
+              // add the new mail to our newMailList if
+              // we later have to sent it
+              AddNewMailNode(newMailList, newMail);
+            }
+
+            // cleanup the email structure
+            MA_FreeEMailStruct(email);
           }
-
-          // cleanup the email structure
-          MA_FreeEMailStruct(email);
         }
-      }
-      else
-      {
-        ER_NewError(tr(MSG_ER_CANNOT_CREATE_MAIL_FILE), newMailFile);
-        goto out;
+        else
+        {
+          ER_NewError(tr(MSG_ER_CANNOT_CREATE_MAIL_FILE), newMailFile);
+          goto out;
+        }
       }
 
       // now we make sure the Disposition Notification is respected

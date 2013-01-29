@@ -19,6 +19,8 @@ $URL$
     be created by the AmigaOS4 build only.
   * YAM_RE.c, mui/ReadMailGroup.c, mui/WriteWindow.c: extended the "cannot open
     mail file" error message by the guilty file name.
+  * mui/WriteWindow.c: when replying to several mails at the same time no mail
+    file was generated due to the latest redirection changes.
 
 2013-01-29 Samir Hawamdeh <s.hawamdeh@tin.it>
 
