@@ -1,9 +1,9 @@
-## version $VER: YAM.catalog 8.2 (26.01.2013)
+## version $VER: YAM.catalog 8.3 (29.01.2013)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
 ;
-; italian.ct - YAM 2.8 catalog translation file
+; italian.ct - YAM 2.8p1 catalog translation file
 ; $Id$
 ;
 ; Please note that all catalog strings have to carry a proper
@@ -461,9 +461,9 @@ Risposto al messaggio di '%s' relativo a '%s'
 ; Replied message from '%s' about '%s'
 ; SENDER, SUBJECT
 ;
-MSG_LOG_Bouncing
-Respinto il messaggio di '%s' relativo a '%s' in '%s'
-; Bounced message from '%s' about '%s' to '%s'
+MSG_LOG_REDIRECT
+Redirezionato il messaggio di '%s' relativo a '%s' in '%s'
+; Redirected message from '%s' about '%s' to '%s'
 ; SENDER, SUBJECT, RECIPIENT
 ;
 MSG_LOG_Forwarding
@@ -1347,10 +1347,6 @@ MSG_CO_ApplyOnReq
 Applica su _richiesta
 ; Apply on _request
 ;
-MSG_CO_ActionBounce
-_Respingi
-; _Bounce
-;
 MSG_CO_ActionForward
 _Inoltra
 ; _Forward
@@ -2076,18 +2072,6 @@ Come combinare le regole di\n\
 ricerca per questo filtro.
 ; How to combine the rules\n\
 ; for this filter.
-;
-MSG_HELP_CO_CH_ABOUNCE
-Respinge i messaggi filtrati\n\
-ad un'altra persona.
-; Bounce matching messages\n\
-; to another person.
-;
-MSG_HELP_CO_ST_ABOUNCE
-Indirizzo(i) di posta della persona che dovrebbe\n\
-ottenere il messaggio respinto.
-; E-mail address(es) that should\n\
-; get the bounced messages.
 ;
 MSG_HELP_CO_CH_AFORWARD
 Inoltra i messaggi filtrati\n\
@@ -3748,14 +3732,6 @@ MSG_WR_Signature
 Firma
 ; Signature
 ;
-MSG_WR_BounceWT
-Respingi messaggio
-; Bounce message
-;
-MSG_WR_BounceTo
-Respingi _verso
-; Bounce _to
-;
 ; Module WR - Toolbar
 ;
 MSG_WR_TBEditor
@@ -4171,7 +4147,7 @@ Filtraggio eseguito su:\n\
 ; Filtering done:\n\
 ; \n\
 ; %3ld messages checked,\n\
-; %3ld bounced,\n\
+; %3ld redirected,\n\
 ; %3ld forwarded,\n\
 ; %3ld auto-replied,\n\
 ; %3ld command activated,\n\
@@ -7316,10 +7292,6 @@ MSG_MA_MFORWARD
 Inoltra...
 ; Forward...
 ;
-MSG_MA_MBOUNCE
-Respingi...
-; Bounce...
-;
 MSG_MA_MSAVEADDRESS
 Salva indirizzo...
 ; Save address...
@@ -8622,7 +8594,7 @@ MSG_TR_FILTER_STATS_SPAM
 Filtraggio eseguito:\n\
 \n\
 %3ld messaggi verificati,\n\
-%3ld messaggi respinti,\n\
+%3ld messaggi redirezionati,\n\
 %3ld messaggi inoltrati,\n\
 %3ld messaggi di risposta automatica,\n\
 %3ld messaggi comando attivati,\n\
@@ -8633,7 +8605,7 @@ Filtraggio eseguito:\n\
 ; Filtering done:\n\
 ; \n\
 ; %3ld messages checked,\n\
-; %3ld bounced,\n\
+; %3ld redirected,\n\
 ; %3ld forwarded,\n\
 ; %3ld auto-replied,\n\
 ; %3ld command activated,\n\
@@ -10502,4 +10474,44 @@ Salva come bozza
 MSG_WR_MCLOSE
 Chiudi
 ; Close
+;
+MSG_CO_ACTIONREDIRECT
+_Redireziona
+; _Redirect
+;
+MSG_HELP_CO_CH_AREDIRECT
+Redireziona i messaggi corrispondenti\n\
+ad un'altra persona.
+; Redirect matching messages\n\
+; to another person.
+;
+MSG_HELP_CO_ST_AREDIRECT
+Indirizzi di posta che dovrebbero\n\
+ricevere i messaggi redirezionati.
+; E-mail address(es) that should\n\
+; get the redirected messages.
+;
+MSG_MA_MREDIRECT
+Redirezionamento...
+; Redirect...
+;
+MSG_WR_REDIRECT_FROM
+Reinvio-_From
+; Resent-_From
+;
+MSG_WR_REDIRECT_TO
+Reinvio-_To
+; Resent-_To
+;
+MSG_WR_REDIRECT_CC
+Reinvio-_CC
+; Resent-_CC
+;
+MSG_WR_REDIRECT_BCC
+Reinvio-_BCC
+; Resent-_BCC
+;
+MSG_WR_REDIRECT_TITLE
+Redirezione messaggio
+; Redirect message(s)
 ;

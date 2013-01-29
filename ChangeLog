@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-01-29 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: update to the latest changes.
+
 2013-01-29 Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_WR.c, mui/WriteWindow.c, misc: renamed the 'Bounce' mail functionality
