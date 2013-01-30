@@ -4324,15 +4324,6 @@ Assicurati che lo script sia esistente.
 ; Couldn't send ARexx command '%s'. Make sure that the script exists.
 ; REXX_COMMAND
 ;
-MSG_ER_CreateMailError
-Impossibile creare il file della posta.\n\
-\n\
-Motivo: directory della cartella errata\n\
-o spazio su disco insufficiente.
-; Couldn't create mail file.\n\
-; \n\
-; Reason: invalid folder directory or insufficient disk space.
-;
 MSG_ER_CantOpenFile
 Impossibile leggere dal file '%s'.\n\
 \n\
@@ -10496,11 +10487,11 @@ Redirezionamento...
 ; Redirect...
 ;
 MSG_WR_REDIRECT_FROM
-Reinvio-_From
+Reinvio-_Da
 ; Resent-_From
 ;
 MSG_WR_REDIRECT_TO
-Reinvio-_To
+Reinvio-_A
 ; Resent-_To
 ;
 MSG_WR_REDIRECT_CC
@@ -10514,4 +10505,14 @@ Reinvio-_BCC
 MSG_WR_REDIRECT_TITLE
 Redirezione messaggio
 ; Redirect message(s)
+;
+MSG_ER_CANNOT_CREATE_MAIL_FILE
+Impossibile creare il file di posta '%s'.\n\
+\n\
+Motivo: directory della cartella errata o spazio\n\
+su disco insufficiente.
+; Could not create mail file '%s'.\n\
+; \n\
+; Reason: invalid folder directory or insufficient disk space.
+; FILE
 ;
