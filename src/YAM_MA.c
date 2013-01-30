@@ -1356,6 +1356,11 @@ void MA_RemoveAttach(struct Mail *mail, struct Part **whichParts, BOOL warning)
                   // we keep the letter part in any case
                   D(DBF_MAIL, "keeping letter part '%s'", part->Filename);
                 }
+                else if(isAlternativePart(part))
+                {
+                  // don't delete alternative parts
+                  D(DBF_MAIL, "keeping alternative part '%s'", part->Filename);
+                }
                 else if(stricmp(part->ContentType, "text/deleted") == 0)
                 {
                   // don't delete the replacement part of already deleted parts
