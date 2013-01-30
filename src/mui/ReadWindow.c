@@ -737,6 +737,20 @@ DECLARE(ReadMail) // struct Mail *mail
 }
 
 ///
+/// DECLARE(RereadMail)
+DECLARE(RereadMail) // struct Mail *mail, ULONG flags
+{
+  GETDATA;
+
+  ENTER();
+
+  DoMethod(data->readMailGroup, MUIM_ReadMailGroup_ReadMail, msg->mail, msg->flags);
+
+  LEAVE();
+  return 0;
+}
+
+///
 /// DECLARE(NewMail)
 DECLARE(NewMail) // enum NewMailMode mode, ULONG qualifier
 {

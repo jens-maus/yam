@@ -17,6 +17,8 @@ $URL$
     much to loose except the modified addresses. This refs #383.
   * mui/AttachmentObject.c: disable the "Delete" context menu items for already
     deleted parts.
+  * mui/ReadWindow.c: added new method to reread a mail with certain flags, just
+    like it is possible for the embedded read pane.
 
 2013-01-29 Thore Böckelmann <tboeckel@gmx.de>
 
