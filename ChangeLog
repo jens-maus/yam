@@ -9,6 +9,12 @@ $URL$
 
   * YAM_MA.c: keep as many information of already decoded parts as possible when
     deleting attachments from a mail.
+  * mui/WriteWindow.c: as a temporary workaround for future changes the write
+    window will not allow to save the mail to the Drafts folder when it is in
+    redirecting mode. This is necessary as there is currently no way edit yet
+    unsent but redirected mails in the Drafts folder. Furthermore redirected
+    mails have been excluded from the autosave process anyway as there is not
+    much to loose except the modified addresses. This refs #383.
 
 2013-01-29 Thore Böckelmann <tboeckel@gmx.de>
 

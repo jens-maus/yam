@@ -855,7 +855,7 @@ OVERLOAD(OM_NEW)
           MUIA_Menu_CopyStrings, FALSE,
           MenuChild, Menuitem(tr(MSG_WR_MSENDNOW), "S", TRUE, FALSE, WMEN_SENDNOW),
           MenuChild, Menuitem(tr(MSG_WR_MSENDLATER), "L", TRUE, FALSE, WMEN_QUEUE),
-          MenuChild, Menuitem(tr(MSG_WR_MSAVEASDRAFT), "H", TRUE, FALSE, WMEN_SAVEASDRAFT),
+        //MenuChild, Menuitem(tr(MSG_WR_MSAVEASDRAFT), "H", TRUE, FALSE, WMEN_SAVEASDRAFT),
           MenuChild, Menuitem(tr(MSG_WR_MCLOSE), "W", TRUE, FALSE, WMEN_CLOSE),
         End,
         MenuChild, MenuObject,
@@ -908,10 +908,10 @@ OVERLOAD(OM_NEW)
               Child, data->GR_BCC = MakeAddressField(&data->ST_BCC, tr(MSG_WR_REDIRECT_BCC), MSG_HELP_WR_ST_BCC, ABM_BCC, data->windowNumber, AFF_ALLOW_MULTI|AFF_EXTERNAL_SHORTCUTS),
             End,
 
-            Child, ColGroup(3),
+            Child, ColGroup(2),
               Child, data->BT_SEND        = MakeButton(tr(MSG_WR_SENDNOW)),
               Child, data->BT_QUEUE       = MakeButton(tr(MSG_WR_SENDLATER)),
-              Child, data->BT_SAVEASDRAFT = MakeButton(tr(MSG_WR_SAVEASDRAFT)),
+            //Child, data->BT_SAVEASDRAFT = MakeButton(tr(MSG_WR_SAVEASDRAFT)),
             End,
 
           End,
@@ -4464,6 +4464,9 @@ DECLARE(DoAutoSave)
 
   ENTER();
 
+  // Redirected mails are never saved automatically.
+  // There is not much to loose as the window lets
+  // the user enter new addresses only anyway.
   if(data->wmData->mode != NMM_REDIRECT)
   {
     // do the autosave only if something was modified
