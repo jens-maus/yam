@@ -1356,6 +1356,11 @@ void MA_RemoveAttach(struct Mail *mail, struct Part **whichParts, BOOL warning)
                   // we keep the letter part in any case
                   D(DBF_MAIL, "keeping letter part '%s'", part->Filename);
                 }
+                else if(stricmp(part->ContentType, "text/deleted") == 0)
+                {
+                  // don't delete the replacement part of already deleted parts
+                  D(DBF_MAIL, "keeping deleted part '%s'", part->Filename);
+                }
                 else if(whichParts == NULL)
                 {
                   // a NULL list indicates that all attachments are to be deleted
@@ -1494,7 +1499,7 @@ void MA_RemoveAttach(struct Mail *mail, struct Part **whichParts, BOOL warning)
               // make sure to refresh the mail of this window as we do not
               // have any attachments anymore
               if(rmData2->readWindow != NULL)
-                DoMethod(rmData2->readWindow, MUIM_ReadWindow_ReadMail, mail);
+                DoMethod(rmData2->readWindow, MUIM_ReadWindow_RereadMail, mail, MUIF_ReadMailGroup_ReadMail_UpdateOnly);
               else if(rmData2->readMailGroup != NULL)
                 DoMethod(rmData2->readMailGroup, MUIM_ReadMailGroup_ReadMail, mail, MUIF_ReadMailGroup_ReadMail_UpdateOnly);
             }

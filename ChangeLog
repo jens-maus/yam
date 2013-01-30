@@ -19,6 +19,9 @@ $URL$
     deleted parts.
   * mui/ReadWindow.c: added new method to reread a mail with certain flags, just
     like it is possible for the embedded read pane.
+  * YAM_MA.c: don't delete already deleted parts when cropping attachments.
+    Furthermore with the separate read window the mail is reread using the new
+    method.
 
 2013-01-29 Thore Böckelmann <tboeckel@gmx.de>
 
