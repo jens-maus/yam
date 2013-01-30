@@ -15,6 +15,8 @@ $URL$
     unsent but redirected mails in the Drafts folder. Furthermore redirected
     mails have been excluded from the autosave process anyway as there is not
     much to loose except the modified addresses. This refs #383.
+  * mui/AttachmentObject.c: disable the "Delete" context menu items for already
+    deleted parts.
 
 2013-01-29 Thore Böckelmann <tboeckel@gmx.de>
 
