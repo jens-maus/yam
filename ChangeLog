@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-01-30 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MA.c: keep as many information of already decoded parts as possible when
+    deleting attachments from a mail.
+
 2013-01-29 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/WriteWindow.c: respect the OverrideFromAddress feature when redirecting
