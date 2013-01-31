@@ -871,18 +871,23 @@ void MA_UpdateIndexes(void)
 //  Changes to another folder
 void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
 {
+  struct Folder *current;
+
   ENTER();
 
-  if(GetCurrentFolder() != NULL)
+  if((current = GetCurrentFolder()) != NULL)
   {
     BOOL folderChanged = TRUE;
 
     if(folder == NULL)
-      folder = GetCurrentFolder();
-    else if(GetCurrentFolder() == folder)
+      folder = current;
+    else if(folder == current)
       folderChanged = FALSE;
     else if(set_active == TRUE)
+    {
       ActivateFolder(folder);
+      current = folder;
+    }
 
     if(folderChanged == TRUE)
     {
@@ -917,7 +922,7 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
         // folder the main mail list will get updated accordingly.
         MA_ChangeSelected(TRUE);
       }
-      else if(GetCurrentFolder() == folder) // check again for the current folder
+      else if(folder == current) // check again for the current folder
       {
         BOOL jumped;
 
