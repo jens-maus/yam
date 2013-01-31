@@ -1399,7 +1399,7 @@ void MA_RemoveAttach(struct Mail *mail, struct Part **whichParts, BOOL warning)
                     // keep as much as information as possible from the original part
                     memset(&writePart, 0, sizeof(writePart));
                     writePart.ContentType = part->ContentType;
-                    writePart.Filename = (part->CParFileName != NULL) ? part->CParFileName : part->Filename;
+                    writePart.Filename = part->Filename;
                     writePart.Description = part->CParDesc;
                     writePart.Name = part->CParName;
                     writePart.charset = G->writeCharset;
