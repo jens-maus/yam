@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-01-31 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MA.c: fixed a possible invalid filename of a to be kept part when
+    cropping attachments.
+
 2013-01-30 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MA.c: keep as many information of already decoded parts as possible when
