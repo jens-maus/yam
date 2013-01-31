@@ -50,7 +50,6 @@ struct Data
 {
   Object *mainListviewObjects[2];
   Object *mainListObjects[2];
-  struct Folder *lastActiveFolder;
   struct Mail *lastActiveMail;
   ULONG activeList;
 };
