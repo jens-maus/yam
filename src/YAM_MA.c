@@ -1488,12 +1488,14 @@ void MA_RemoveAttach(struct Mail *mail, struct Part **whichParts, BOOL warning)
             if(keptParts == 0)
               clearFlag(mail->mflags, MFLAG_MP_MIXED);
 
-            // flag folder as modified
+            // flag the mail's folder as modified
             setFlag(mail->Folder->Flags, FOFL_MODIFY);
-            DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_RedrawMail, mail);
 
+            if(mail->Folder == GetCurrentFolder())
+              DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_RedrawMail, mail);
+
+            // replace the old mail file by the new one
             DeleteFile(fname);
-
             if(mail->Folder->Mode > FM_SIMPLE)
               DoPack(tfname, fname, mail->Folder);
             else
