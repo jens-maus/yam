@@ -259,7 +259,7 @@ OVERLOAD(MUIM_ContextMenuBuild)
       Child, MenuObjectT(data->menuTitle),
         Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_DISPLAY),   MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, AMEN_DISPLAY, End,
         Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_SAVEAS),    MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, AMEN_SAVEAS,  End,
-        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_DELETE),    MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, AMEN_DELETE,  MUIA_Menuitem_Enabled, isDeleted == FALSE, End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_DELETE),    MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, AMEN_DELETE,  MUIA_Menuitem_Enabled, isDeleted == FALSE && !isAlternativePart(data->mailPart), End,
         Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_PRINT),     MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, AMEN_PRINT,   MUIA_Menuitem_Enabled, data->mailPart != NULL && isPrintable(data->mailPart), End,
         Child, MenuBarLabel,
         Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_SAVEALL),   MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, AMEN_SAVEALL, End,

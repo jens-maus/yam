@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-02-01 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/AttachmentObject.c: disable the "Delete" context menu item for
+    alternative mail parts.
+
 2013-01-31 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MA.c: fixed a possible invalid filename of a to be kept part when
