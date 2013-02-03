@@ -3932,10 +3932,10 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
     // if we found that a configued mailing list matches
     // we go and set Mail-Reply-To: and Mail-Followup-To:
-    if(mlFolder != NULL)
+    if(mlFolder != NULL && wmData->identity != NULL)
     {
       char address[SIZE_ADDRESS];
-      comp.MailReplyTo = strdup(BuildAddress(address, sizeof(address), comp.Identity->address, comp.Identity->realname));
+      comp.MailReplyTo = strdup(BuildAddress(address, sizeof(address), wmData->identity->address, wmData->identity->realname));
       comp.MailFollowupTo = strdup(mlFolder->MLAddress);
     }
 

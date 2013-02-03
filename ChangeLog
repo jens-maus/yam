@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-02-03 Jens Langner <Jens.Langner@light-speed.de>
+
+  * mui/WriteWindow.c: fixed a NULL-pointer use when replying in a mailing list
+    folder where YAM tries to add the Mail-Followup­To and Mail-Reply-To mail
+    headers.
+
 2013-02-01 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/AttachmentObject.c: disable the "Delete" context menu item for
