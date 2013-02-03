@@ -281,6 +281,8 @@ OVERLOAD(MUIM_ContextMenuChoice)
   GETDATA;
   struct MUIP_ContextMenuChoice *m = (struct MUIP_ContextMenuChoice *)msg;
 
+  ENTER();
+
   switch(xget(m->item, MUIA_UserData))
   {
     case AMEN_DISPLAY:
@@ -319,6 +321,7 @@ OVERLOAD(MUIM_ContextMenuChoice)
       return DoSuperMethodA(cl, obj, msg);
   }
 
+  LEAVE();
   return 0;
 }
 
