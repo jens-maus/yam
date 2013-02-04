@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-02-04 Thore Böckelmann <tboeckel@gmx.de>
+
+  * extrasrc/NewReadArgs.c: fixed a buffer overrun when parsing ToolTypes strings
+    which required additional quotes. The former code did not respect the
+    terminating NUL byte in the allocation size.
+
 2013-02-03 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: some corrections about previews changes.

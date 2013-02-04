@@ -140,7 +140,7 @@ STATIC LONG IsArg(CONST_STRPTR template, STRPTR keyword)
 
 /****************************************************************************/
 
-LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
+LONG NewReadArgs(struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
 {
   #ifdef ICONGETA_RemapIcon
   static const struct TagItem icontags[] =
@@ -160,12 +160,12 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
   nrdargs->WinFH      = 0;
   nrdargs->Pool       = NULL;
 
-  if((nrdargs->RDArgs = (struct RDArgs *)AllocDosObject(DOS_RDARGS, NULL)))
+  if((nrdargs->RDArgs = (struct RDArgs *)AllocDosObject(DOS_RDARGS, NULL)) != NULL)
   {
     APTR pool = NULL;
     STRPTR ToolWindow = nrdargs->Window;
 
-    if(WBStartup)
+    if(WBStartup != NULL)
     {
       struct WBArg *wbarg;
       STRPTR *Args;
@@ -177,7 +177,7 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
       LONG FArgNum = -1L;
       LONG MultiArg = -1L;
 
-      if(!(ptr = nrdargs->Template))
+      if((ptr = nrdargs->Template) == NULL)
       {
         RETURN(ERROR_BAD_TEMPLATE);
         return(ERROR_BAD_TEMPLATE);
@@ -246,9 +246,9 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
               STRPTR dst;
               LONG len = strlen(buf) + 2L;
 
-              if((Args[FArgNum] = dst = AllocVecPooled(pool, len)))
+              if((Args[FArgNum] = dst = AllocVecPooled(pool, len+1)) != NULL)
               {
-                snprintf(dst, len, "\"%s\"", buf);
+                snprintf(dst, len+1, "\"%s\"", buf);
 
                 ArgLen[FArgNum] = len;
               }
@@ -281,13 +281,13 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
         #endif
           GetDiskObject((char *)wbarg->wa_Name);
 
-        if(dobj)
+        if(dobj != NULL)
         {
           if(dobj->do_ToolTypes && (dobj->do_Type == WBTOOL || dobj->do_Type == WBPROJECT))
           {
             STRPTR *tarray = (STRPTR *)dobj->do_ToolTypes;
 
-            while(*tarray)
+            while(*tarray != NULL)
             {
               if(**tarray != '(')
               {
@@ -306,8 +306,11 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
 
                   if( ArgLen[i] == 0L || (i-FileArgs) != MultiArg )
                   {
-                    if((Args[i] = dst = AllocVecPooled(pool, (len = strlen(src))+2L)))
+                    len = strlen(src);
+                    if((Args[i] = dst = AllocVecPooled(pool, len+3)) != NULL)
                     {
+                      BOOL quotes = FALSE;
+
                       /*- copy arg -*/
                       while(*src)
                       {
@@ -315,9 +318,14 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
                         {
                           *dst++ = Args[i][len+1] = '"';
                           len+=2;
+                          quotes = TRUE;
                         }
                       }
 
+                      if(quotes == TRUE)
+                        *dst++ = '"';
+
+                      *dst = '\0';
                       ArgLen[i] = len;
                     }
                     else
@@ -332,7 +340,7 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
                       ;
 
                     len = strlen( src ) + 1 + ArgLen[i];
-                    if( (dst = AllocVecPooled(pool, len+2)) )
+                    if((dst = AllocVecPooled(pool, len+2)) != NULL)
                     {
                       BOOL quotes = FALSE;
                       UBYTE c;
@@ -353,8 +361,9 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
                         *dst++ = c;
 
                       if(quotes)
-                        *dst = '"';
+                        *dst++ = '"';
 
+                      *dst = '\0';
                       ArgLen[i] = len;
                     }
                   }
@@ -364,7 +373,7 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
                 {
                   if((i = strlen(src)-7) > 0)
                   {
-                    if((ToolWindow = nrdargs->ToolWindow = AllocVecPooled(pool, i+1)))
+                    if((ToolWindow = nrdargs->ToolWindow = AllocVecPooled(pool, i+1)) != NULL)
                       strlcpy(ToolWindow, &src[7], i+1);
                   }
                   else
@@ -432,10 +441,12 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
     nrdargs->RDArgs->RDA_ExtHelp = nrdargs->ExtHelp;
     if((nrdargs->FreeArgs = ReadArgs(nrdargs->Template, (APTR)nrdargs->Parameters, nrdargs->RDArgs)) == NULL)
     {
-      E(DBF_STARTUP, "ReadArgs() error");
+      LONG error = IoErr();
 
-      RETURN(IoErr());
-      return(IoErr());
+      E(DBF_STARTUP, "ReadArgs() failed, IoErr()=%ld", error);
+
+      RETURN(error);
+      return error;
     }
 
     if(SetSignal(0, SIGBREAKF_CTRL_C) & SIGBREAKF_CTRL_C)
@@ -452,7 +463,7 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
     if(ToolWindow && WBStartup)
     {
       D(DBF_STARTUP, "WINDOW has been defined");
-      if((nrdargs->WinFH = Open(ToolWindow, MODE_READWRITE)))
+      if((nrdargs->WinFH = Open(ToolWindow, MODE_READWRITE)) != (BPTR)NULL)
       {
         D(DBF_STARTUP, "Opened WINDOW=%s", ToolWindow);
         nrdargs->OldInput = SelectInput(nrdargs->WinFH);
@@ -460,8 +471,12 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
       }
       else
       {
-        RETURN(IoErr());
-        return(IoErr());
+        LONG error = IoErr();
+
+        E(DBF_STARTUP, "Opening WINDOW=%s failed, IoErr()=%ld", ToolWindow, error);
+
+        RETURN(error);
+        return error;
       }
     }
 
