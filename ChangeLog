@@ -10,6 +10,8 @@ $URL$
   * extrasrc/NewReadArgs.c: fixed a buffer overrun when parsing ToolTypes strings
     which required additional quotes. The former code did not respect the
     terminating NUL byte in the allocation size.
+  * mui/ReadWindowStatusBar.c: fixed two possible NULL pointer accesses for
+    attached "virtual" mails. This closes #384.
 
 2013-02-03 Samir Hawamdeh <s.hawamdeh@tin.it>
 
