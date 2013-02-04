@@ -2389,6 +2389,71 @@ struct WriteMailData *NewForwardMailWindow(struct MailList *mlist, const int fla
 }
 
 ///
+/// FindMLIdentity
+// check the given folder for mailing list support and return an appropriate user identity
+static BOOL FindMLIdentity(struct Folder *folder, struct ExtendedMail *email, char **mlistTo, char **mlistReplyTo)
+{
+  BOOL result = FALSE;
+
+  ENTER();
+
+  if(folder->MLSupport == TRUE && folder->MLPattern[0] != '\0')
+  {
+    int k;
+
+    // first, search in all To: addresses for the
+    // mailing list address
+    for(k=0; k < email->NumSTo+1; k++)
+    {
+      struct Person *person;
+
+      if(k == 0)
+        person = &email->Mail.To;
+      else
+        person = &email->STo[k-1];
+
+      if(MatchNoCase(person->Address, folder->MLPattern) == TRUE ||
+         MatchNoCase(person->RealName, folder->MLPattern) == TRUE)
+      {
+        result = TRUE;
+        break;
+      }
+    }
+
+    // second, search in all CC: addresses for the
+    // mailing list address
+    if(result == FALSE)
+    {
+      for(k=0; k < email->NumCC; k++)
+      {
+        struct Person *person = &email->CC[k];
+
+        if(MatchNoCase(person->Address, folder->MLPattern) == TRUE ||
+           MatchNoCase(person->RealName, folder->MLPattern) == TRUE)
+        {
+          result = TRUE;
+          break;
+        }
+      }
+    }
+
+    if(result == TRUE)
+    {
+      *mlistTo = folder->MLAddress[0] != '\0' ? folder->MLAddress : NULL;
+
+      if(folder->MLIdentity != NULL)
+        email->identity = folder->MLIdentity;
+
+      if(folder->MLReplyToAddress[0] != '\0')
+        *mlistReplyTo = folder->MLReplyToAddress;
+    }
+  }
+
+  RETURN(result);
+  return result;
+}
+
+///
 /// NewReplyMailWindow()
 //  Creates a reply to a list of messages
 struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags, const char *replytxt)
@@ -2541,57 +2606,10 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
             {
               struct Folder *curFolder = fnode->folder;
 
-              if(curFolder != NULL && curFolder->MLSupport == TRUE &&
-                 curFolder->MLPattern[0] != '\0')
+              if(FindMLIdentity(curFolder, email, &mlistTo, &mlistReplyTo) == TRUE)
               {
-                // first, search in all To: addresses for the
-                // mailing list address
-                for(k=0; k < email->NumSTo+1; k++)
-                {
-                  struct Person *person;
-
-                  if(k == 0)
-                    person = &mail->To;
-                  else
-                    person = &email->STo[k-1];
-
-                  if(MatchNoCase(person->Address, curFolder->MLPattern) == TRUE ||
-                     MatchNoCase(person->RealName, curFolder->MLPattern) == TRUE)
-                  {
-                    foundMLFolder = TRUE;
-                    break;
-                  }
-                }
-
-                // second, search in all CC: addresses for the
-                // mailing list address
-                if(foundMLFolder == FALSE)
-                {
-                  for(k=0; k < email->NumCC; k++)
-                  {
-                    struct Person *person = &email->CC[k];
-
-                    if(MatchNoCase(person->Address, curFolder->MLPattern) == TRUE ||
-                       MatchNoCase(person->RealName, curFolder->MLPattern) == TRUE)
-                    {
-                      foundMLFolder = TRUE;
-                      break;
-                    }
-                  }
-                }
-
-                if(foundMLFolder == TRUE)
-                {
-                  mlistTo = curFolder->MLAddress[0] != '\0' ? curFolder->MLAddress : NULL;
-
-                  if(curFolder->MLIdentity != NULL)
-                    email->identity = curFolder->MLIdentity;
-
-                  if(curFolder->MLReplyToAddress[0] != '\0')
-                    mlistReplyTo = curFolder->MLReplyToAddress;
-
-                  break;
-                }
+                foundMLFolder = TRUE;
+                break;
               }
             }
 
@@ -2601,54 +2619,9 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
           {
             foundSentFolder = TRUE;
           }
-          else if(folder->MLSupport == TRUE && folder->MLPattern[0] != '\0')
+          else
           {
-            // first, search in all To: addresses for the
-            // mailing list address
-            for(k=0; k < email->NumSTo+1; k++)
-            {
-              struct Person *person;
-
-              if(k == 0)
-                person = &mail->To;
-              else
-                person = &email->STo[k-1];
-
-              if(MatchNoCase(person->Address, folder->MLPattern) == TRUE ||
-                 MatchNoCase(person->RealName, folder->MLPattern) == TRUE)
-              {
-                foundMLFolder = TRUE;
-                break;
-              }
-            }
-
-            // second, search in all CC: addresses for the
-            // mailing list address
-            if(foundMLFolder == FALSE)
-            {
-              for(k=0; k < email->NumCC; k++)
-              {
-                struct Person *person = &email->CC[k];
-
-                if(MatchNoCase(person->Address, folder->MLPattern) == TRUE ||
-                   MatchNoCase(person->RealName, folder->MLPattern) == TRUE)
-                {
-                  foundMLFolder = TRUE;
-                  break;
-                }
-              }
-            }
-
-            if(foundMLFolder == TRUE)
-            {
-              mlistTo = folder->MLAddress[0] != '\0' ? folder->MLAddress : NULL;
-
-              if(folder->MLIdentity != NULL)
-                email->identity = folder->MLIdentity;
-
-              if(folder->MLReplyToAddress[0] != '\0')
-                mlistReplyTo = folder->MLReplyToAddress;
-            }
+            foundMLFolder = FindMLIdentity(folder, email, &mlistTo, &mlistReplyTo);
           }
         }
 

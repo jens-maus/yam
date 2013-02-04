@@ -12,6 +12,8 @@ $URL$
     terminating NUL byte in the allocation size.
   * mui/ReadWindowStatusBar.c: fixed two possible NULL pointer accesses for
     attached "virtual" mails. This closes #384.
+  * YAM_WR.c: moved the duplicate code to find a suitable mailing list folder to
+    a separate function.
 
 2013-02-03 Samir Hawamdeh <s.hawamdeh@tin.it>
 
