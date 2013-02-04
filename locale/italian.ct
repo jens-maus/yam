@@ -10483,27 +10483,27 @@ ricevere i messaggi redirezionati.
 ; get the redirected messages.
 ;
 MSG_MA_MREDIRECT
-Redirezionamento...
+Redireziona...
 ; Redirect...
 ;
 MSG_WR_REDIRECT_FROM
-Reinvio-_Da
+Reinvia-_Da
 ; Resent-_From
 ;
 MSG_WR_REDIRECT_TO
-Reinvio-_A
+Reinvia-_A
 ; Resent-_To
 ;
 MSG_WR_REDIRECT_CC
-Reinvio-_CC
+Reinvia-_CC
 ; Resent-_CC
 ;
 MSG_WR_REDIRECT_BCC
-Reinvio-_BCC
+Reinvia-_BCC
 ; Resent-_BCC
 ;
 MSG_WR_REDIRECT_TITLE
-Redirezione messaggio
+Redirezione messaggi
 ; Redirect message(s)
 ;
 MSG_ER_CANNOT_CREATE_MAIL_FILE
