@@ -1,10 +1,10 @@
-## version $VER: YAM.catalog 8.1 (23.12.2012)
+## version $VER: YAM.catalog 8.1 (04.02.2013)
 ## language français
 ## codeset 111
 ;
 ## chunk AUTH Alexandre Balaban/ATO-fr
 ; YAM.cd - YAM 2.8 catalog description file
-; $Id$
+; based on YAM.cd 6554 2013-01-29 12:39:56Z
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -461,11 +461,6 @@ MSG_LOG_Replying
 Répondu au message de « %s » sur « %s »
 ; Replied message from '%s' about '%s'
 ; SENDER, SUBJECT
-;
-MSG_LOG_Bouncing
-Message de « %s » sur « %s » détourné vers « %s »
-; Bounced message from '%s' about '%s' to '%s'
-; SENDER, SUBJECT, RECIPIENT
 ;
 MSG_LOG_Forwarding
 Message de « %s » sur « %s » retransmis à « %s »
@@ -1357,10 +1352,6 @@ MSG_CO_ApplyOnReq
 Appliquer sur _demande
 ; Apply on _request
 ;
-MSG_CO_ActionBounce
-_Détourner
-; _Bounce
-;
 MSG_CO_ActionForward
 Re_transmettre
 ; _Forward
@@ -2019,8 +2010,7 @@ comme « gros ».
 MSG_HELP_CO_ST_INTERVAL
 Fréquence à laquelle vous voulez que YAM vérifie les nouveaux messages.\n\
 Utilisez 0 si vous ne voulez pas que YAM fasse cela.
-; How often do you want YAM to automatically check for new mail?\n\
-; Use '0' if you don't want YAM to do this.
+; How often do you want YAM to automatically check for new mail?
 ;
 MSG_HELP_CO_CH_DLLARGE
 Télécharge les gros messages lors de la réception automatique,\n\
@@ -2080,18 +2070,6 @@ Comment sont combinés les\n\
 critères de ce filtre
 ; How to combine the rules\n\
 ; for this filter.
-;
-MSG_HELP_CO_CH_ABOUNCE
-Détourne les messages correspondant\n\
-vers une autre personne
-; Bounce matching messages\n\
-; to another person.
-;
-MSG_HELP_CO_ST_ABOUNCE
-Adresse(s) électronique(s) devant\n\
-recevoir le message détourné
-; E-mail address(es) that should\n\
-; get the bounced messages.
 ;
 MSG_HELP_CO_CH_AFORWARD
 Retransmet les messages correspondant\n\
@@ -3765,17 +3743,6 @@ MSG_WR_Signature
 Signature
 ; Signature
 ;
-MSG_WR_BounceWT
-Détourner
-; Bounce message
-;
-MSG_WR_BounceTo
-Dé_tourner vers
-; Bounce _to
-;
-;
-; Module WR - Toolbar
-;
 MSG_WR_TBEditor
 Éditeur
 ; Editor
@@ -4106,14 +4073,6 @@ Donne une priorité\n\
 ; Set the priority\n\
 ; of this message.
 ;
-MSG_HELP_WR_BT_HOLD
-Place le message créé dans\n\
-le dossier « En attente » et\n\
-passe son statut à « bloqué »
-; Copy the created message to\n\
-; the Outgoing folder and set\n\
-; its status to 'hold'.
-;
 MSG_HELP_WR_BT_QUEUE
 Place ce message dans\n\
 le dossier « En attente »
@@ -4127,12 +4086,6 @@ et l'envoie immédiatement
 ; Copy the created message to\n\
 ; the Outgoing folder and send\n\
 ; it immediately.
-;
-MSG_HELP_WR_BT_CANCEL
-Annule la création\n\
-de ce message
-; Discard the\n\
-; created message.
 ;
 ;
 ; Module TR - Procedures
@@ -4208,7 +4161,7 @@ Filtrage terminé :\n\
 ; Filtering done:\n\
 ; \n\
 ; %3ld messages checked,\n\
-; %3ld bounced,\n\
+; %3ld redirected,\n\
 ; %3ld forwarded,\n\
 ; %3ld auto-replied,\n\
 ; %3ld command activated,\n\
@@ -4385,14 +4338,6 @@ MSG_ER_ErrorARexxScript
 Impossible d'exécuter la commande ARexx « %s ». Vérifiez l'existance du script.
 ; Couldn't send ARexx command '%s'. Make sure that the script exists.
 ; REXX_COMMAND
-;
-MSG_ER_CreateMailError
-Impossible de créer le fichier du message !\n\
-\n\
-Raison : chemin ou répertoire invalide, ou espace disque insuffisant.
-; Couldn't create mail file.\n\
-; \n\
-; Reason: invalid folder directory or insufficient disk space.
 ;
 MSG_ER_CantOpenFile
 Impossible de lire le fichier « %s ».\n\
@@ -7261,14 +7206,6 @@ MSG_MA_TOREAD
 Lu
 ; Read
 ;
-MSG_MA_TOHOLD
-Bloqué
-; Hold
-;
-MSG_MA_TOQUEUED
-En Attente
-; Queued
-;
 MSG_PROJECT_MABOUT
 À propos...
 ; About...
@@ -7308,10 +7245,6 @@ Répondre...
 MSG_MA_MFORWARD
 Retransmettre...
 ; Forward...
-;
-MSG_MA_MBOUNCE
-Détourner...
-; Bounce...
 ;
 MSG_MA_MSAVEADDRESS
 Enregistrer l'adresse...
@@ -7790,14 +7723,6 @@ MSG_WR_SENDLATER
 Envoyer p_lus tard
 ; Send _later
 ;
-MSG_WR_HOLD
-_Bloquer
-; _Hold
-;
-MSG_WR_CANCEL
-_Annuler
-; Cancel
-;
 MSG_WR_MSENDNOW
 Envoyer maintenant
 ; Send now
@@ -7805,14 +7730,6 @@ Envoyer maintenant
 MSG_WR_MSENDLATER
 Envoyer plus tard
 ; Send later
-;
-MSG_WR_MHOLD
-Bloquer
-; Hold
-;
-MSG_WR_MCANCEL
-Annuler
-; Cancel
 ;
 MSG_ER_CONNECTIONBROKEN
 La connexion avec le serveur « %s » a été interrompue \
@@ -8599,7 +8516,7 @@ Filtrage terminé :\n\
 ; Filtering done:\n\
 ; \n\
 ; %3ld messages checked,\n\
-; %3ld bounced,\n\
+; %3ld redirected,\n\
 ; %3ld forwarded,\n\
 ; %3ld auto-replied,\n\
 ; %3ld command activated,\n\
@@ -9089,10 +9006,15 @@ MSG_CO_SPAM_STATISTICS
 MSG_ER_WRONG_DOB_FORMAT
 La date de naissance spécifiée utilise un mauvais format.\n\
 Le format correct est « %s ».\n\
-%%d - jour\n\
-%%m - mois\n\
-%%y - année (deux chiffres)\n\
-%%Y - année (quatre chiffres)\n\
+%%d  - jour avec zéro initial (01-31)\n\
+%%-d - jour sans zéro initial (1-31)\n\
+%%e  - jour avec espace initial ( 1-31)\n\
+%%m  - mois avec zéro initial (01-12)\n\
+%%-m - mois sans zéro initial (1-12)\n\
+%%y  - année avec zéro initial (00-99, deux chiffres)\n\
+%%-y - année sans zéro initial (0-99, deux chiffres)\n\
+%%Y  - année avec zéro initial (quatre chiffres)\n\
+%%-Y - année sans zéro initial (quatre chiffres)\n\
 L'année doit être supérieure ou égale à 1900.
 ; Date of birth uses a wrong format. The correct format is '%s'.\n\
 ; %%d  - day with leading zeros (01-31)\n\
@@ -10245,7 +10167,6 @@ _Accepter|Accepter _Définitivement|_Montrer Certificat|*_Refuser
 MSG_SSL_CERT_WARNING_INTRO
 Erreur de validation du certificat pour le serveur « \033b%s:%d\033n » :
 ; Error validating server certificate for '\033b%s:%d\033n':
-;
 ; HOSTNAME, PORT
 ;
 MSG_SSL_CERT_WARNING_UNTRUSTED
@@ -10281,13 +10202,11 @@ Information sur le certificat:\n\
 ; - Valid: \033b%s\033n until \033b%s\033n\n\
 ; - Issuer: \033b%s\033n\n\
 ; - Fingerprint: \033b%s\033n
-;
 ; HOSTNAME, VALID_FROM, VALID_TO, ISSUER, FINGERPRINT
 ;
 MSG_SSL_CERT_WARNING_SHOWTITLE
 Certificat de %s:%d
 ; Certificate of %s:%d
-;
 ; HOSTNAME, PORT
 ;
 MSG_ER_WARN_CAFILE
@@ -10301,7 +10220,6 @@ toute connexion SSL sera marquée come non vérifiée.
 ; \n\
 ; Please make sure that the file exists and is uptodate or otherwise \
 ; each SSL connection will be flagged as unverified.
-;
 ; FILEPATH
 ;
 MSG_ER_WARN_LOADCAPATH
@@ -10315,7 +10233,6 @@ le répertoire de certificat.
 ; \n\
 ; Please make sure that no invalid file has been placed in the \
 ; certificate folder.
-;
 ; FILEPATH, DIRPATH
 ;
 MSG_ER_WARN_CAPATH
@@ -10329,7 +10246,6 @@ de certificat tels que fournis lors du processus d'installation de YAM.
 ; \n\
 ; Please make sure that the path exists and contains the certificate \
 ; bundle file as supplied during the installation process of YAM.
-;
 ; DIRPATH
 ;
 MSG_CO_ACTION_TERMINATE_FILTER
@@ -10367,4 +10283,122 @@ Texte de la signature
 MSG_CO_APPEND_SIGNATURE_FILE
 Ajouter un fichier en tant que signature
 ; Append a file as signature instead
+;
+MSG_PRESELECT_GETTING_DETAILS
+Obtention des détails du message (%%ld of %ld)
+; Getting message details (%%ld of %ld)
+;
+MSG_CO_UPDATES_INFO_MANUAL
+Vous devrez chercher les mises à jour manuellement.
+; You will have to check for updates manually.
+;
+MSG_CO_UPDATES_INFO_AUTO
+Vous serez notifié dès que les mises à jour sont disponibles.
+; You will be notified as soon as updates are available.
+;
+MSG_PGPPASS_SHOW_CHARS
+Afficher les caractères
+; Show characters
+;
+MSG_CANNOT_CREATE_CUSTOM_CLASS
+Impossible de créer la classe « %s »\n\
+en tant que sous classe de « %s ».
+; Failed to create custom class '%s'\n\
+; as subclass of '%s'.
+;
+; CLASS,SUPERCLASS
+;
+MSG_ER_MORPHOS_REXX_WARNING
+YAM a détecté que vous faites tourner sur votre système \
+MorphOS une version de la « rexxsyslib.library » qui est \
+connue pour ne pas avoir une implémentation ARexx fonctionnelle.\n\
+\n\
+Pour résoudre cette situation et faire fonctionner ARexx avec \
+YAM, vous devez installer une copie de la « rexxsyslib.library » \
+d'une installation d'AmigaOS 3.1-3.9 dans « SYS:Libs », renommer \
+la « rexxsyslib.library » dans « MOSSYS:Libs » et redémarrer votre \
+système.
+; YAM has identified that you are running a version of the \
+; 'rexxsyslib.library' in your MorphOS system that is known \
+; to not have a working ARexx implementation.\n\
+; \n\
+; To solve this situation and get ARexx running with YAM \
+; you should install a copy of the 'rexxsyslib.library' \
+; from an AmigaOS 3.1-3.9 installation to 'SYS:Libs', rename \
+; the 'rexxsyslib.library' in 'MOSSYS:Libs' and reboot your \
+; system.
+;
+MSG_WR_SAVEASDRAFT
+Enregistrer comme brouillon
+; Save as draft
+;
+MSG_HELP_WR_BT_SAVEASDRAFT
+Enregistre le message dans\n\
+le dossier « Brouillons ».
+; Saves the message to\n\
+; the 'Drafts' folder.
+;
+MSG_WR_MSAVEASDRAFT
+Enregistrer comme brouillon
+; Save as draft
+;
+MSG_WR_MCLOSE
+Fermer
+; Close
+;
+MSG_LOG_REDIRECT
+Message de « %s » à propos de « %s » redirigé vers « %s »
+; Redirected message from '%s' about '%s' to '%s'
+;
+; SENDER, SUBJECT, RECIPIENT
+;
+MSG_CO_ACTIONREDIRECT
+_Rediriger
+; _Redirect
+;
+MSG_HELP_CO_CH_AREDIRECT
+Redirige les messages correspondants\n\
+vers une autre personne.
+; Redirect matching messages\n\
+; to another person.
+;
+MSG_HELP_CO_ST_AREDIRECT
+Adresses e-mail qui doivent\n\
+recevoir les messages redirigés.
+; E-mail address(es) that should\n\
+; get the redirected messages.
+;
+MSG_MA_MREDIRECT
+Redirige...
+; Redirect...
+;
+MSG_WR_REDIRECT_FROM
+Renvoyé-_De
+; Resent-_From
+;
+MSG_WR_REDIRECT_TO
+Renvoyé-_À
+; Resent-_To
+;
+MSG_WR_REDIRECT_CC
+Renvoyé-_CC
+; Resent-_CC
+;
+MSG_WR_REDIRECT_BCC
+Renvoyé-_BCC
+; Resent-_BCC
+;
+MSG_WR_REDIRECT_TITLE
+Redirige les messages
+; Redirect message(s)
+;
+MSG_ER_CANNOT_CREATE_MAIL_FILE
+Impossible de créer le fichier de message « %s ».\n\
+\n\
+Cause : répertoire de dossier invalide ou espace disque insuffisant.
+; Could not create mail file '%s'.\n\
+; \n\
+; Reason: invalid folder directory or insufficient disk space.
+;
+; FILE
 ;
