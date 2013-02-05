@@ -246,7 +246,13 @@ OVERLOAD(OM_SET)
       {
         // if the object should be hidden we clean it up also
         if(tag->ti_Data == FALSE)
-          DoMethod(obj, MUIM_AttachmentGroup_Clear);
+        {
+          if(DoMethod(obj, MUIM_Group_InitChange))
+          {
+            DoMethod(obj, METHOD(Clear));
+            DoMethod(obj, MUIM_Group_ExitChange);
+          }
+        }
       }
       break;
     }
@@ -381,7 +387,7 @@ OVERLOAD(MUIM_HandleEvent)
     if((imsg->Code == SELECTDOWN || imsg->Code == SELECTUP) &&
        _isinobject(obj, imsg->MouseX, imsg->MouseY))
     {
-      DoMethod(obj, MUIM_AttachmentGroup_ClearSelection);
+      DoMethod(obj, METHOD(ClearSelection));
 
       result = MUI_EventHandlerRC_Eat;
     }
@@ -401,25 +407,16 @@ DECLARE(Clear)
 {
   GETDATA;
   struct List *childList = (struct List *)xget(obj, MUIA_Group_ChildList);
+  Object *cstate = (Object *)childList->lh_Head;
+  Object *child;
 
   ENTER();
 
   // iterate through our child list and remove all attachment objects
-  if(childList != NULL)
+  while((child = NextObject(&cstate)) != NULL)
   {
-    if(DoMethod(obj, MUIM_Group_InitChange))
-    {
-      Object *cstate = (Object *)childList->lh_Head;
-      Object *child;
-
-      while((child = NextObject(&cstate)) != NULL)
-      {
-        DoMethod(obj, OM_REMMEMBER, child);
-        MUI_DisposeObject(child);
-      }
-
-      DoMethod(obj, MUIM_Group_ExitChange);
-    }
+    DoMethod(obj, OM_REMMEMBER, child);
+    MUI_DisposeObject(child);
   }
 
   data->firstPart = NULL;
@@ -437,14 +434,14 @@ DECLARE(Refresh) // struct Part *firstPart
 
   ENTER();
 
-  // before we are going to add some new childs we have to clean
-  // out all old children
-  DoMethod(obj, MUIM_AttachmentGroup_Clear);
-
   // prepare the group for any change
   if(DoMethod(obj, MUIM_Group_InitChange))
   {
     struct Part *rp;
+
+    // before we are going to add some new childs we have to clean
+    // out all old children
+    DoMethod(obj, METHOD(Clear));
 
     // now we iterate through our message part list and
     // generate an own attachment image for each attachment

@@ -13,6 +13,8 @@ $URL$
   * YAM_MAf.c: reworked the mail header parsing to accept initial header lines
     without content. The content may now start on the next to be parsed line.
     This closes #385.
+  * mui/AttachmentGroup.c: eliminated one refresh cycle when having to clear and
+    repopulate the attachment group.
 
 2013-02-04  Alexandre Balaban <abalaban@free.fr>
 
