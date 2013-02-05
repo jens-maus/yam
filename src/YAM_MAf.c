@@ -1738,10 +1738,9 @@ BOOL MA_ReadHeader(const char *mailFile, FILE *fh, struct MinList *headerList, e
           // from there to our previous header.
           for(ptr = buffer; *ptr && isspace(*ptr); ptr++);
 
-          // we want to preserve the last space so that this headerline
-          // is correctly connected
-          if(ptr != buffer)
-            *(--ptr) = ' ';
+          // insert a space in case we are extending a previously parsed content
+          if(StrBufLength(hdrNode->content) != 0)
+            StrBufCat(&hdrNode->content, " ");
 
           // now concatenate this new headerstring to our previous one
           StrBufCat(&hdrNode->content, ptr);
@@ -1823,7 +1822,7 @@ BOOL MA_ReadHeader(const char *mailFile, FILE *fh, struct MinList *headerList, e
 
           if(ptr != NULL && *ptr != '\0')
           {
-            *ptr = '\0';
+            *ptr++ = '\0';
 
             // use our StrBufCpy() function to copy the name of the header
             // into our ->name element
@@ -1831,11 +1830,12 @@ BOOL MA_ReadHeader(const char *mailFile, FILE *fh, struct MinList *headerList, e
             {
               // now we copy also the rest of buffer into the contents
               // of the headerNode
-              if(StrBufCpy(&hdrNode->content, Trim(ptr+1)) > 0)
-              {
-                // everything seemed to work fine, so lets continue
-                continue;
-              }
+              // NOTE: this might be an empty string in case the contents
+              // start on the next line. Thus we must not check the return
+              // value to indicate that something has been copied.
+              StrBufCpy(&hdrNode->content, Trim(ptr));
+              // everything seemed to work fine, so lets continue
+              continue;
             }
           }
 

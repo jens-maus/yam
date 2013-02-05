@@ -10,6 +10,9 @@ $URL$
   * YAM_COs.c, YAM_FI.c: creating a new filter while parsing the configuration
     will now default to a DOSPattern comparison even for the implicit first rule
     just like for the single additional rules.
+  * YAM_MAf.c: reworked the mail header parsing to accept initial header lines
+    without content. The content may now start on the next to be parsed line.
+    This closes #385.
 
 2013-02-04  Alexandre Balaban <abalaban@free.fr>
 
