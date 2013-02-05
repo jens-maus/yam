@@ -15,6 +15,9 @@ $URL$
     This closes #385.
   * mui/AttachmentGroup.c: eliminated one refresh cycle when having to clear and
     repopulate the attachment group.
+  * mui/ReadMailGroup.c: force a relayout of the attachment group's surrounding
+    scrollgroup when it is visible already. This ensures that the automatic
+    scrollbars are updated correctly.
 
 2013-02-04  Alexandre Balaban <abalaban@free.fr>
 

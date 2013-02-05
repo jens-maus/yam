@@ -106,46 +106,49 @@
 
 // some private (mostly undocumented) MUI stuff...
 #ifndef MUIM_GoActive
-#define MUIM_GoActive                0x8042491aUL /* V8  */
+#define MUIM_GoActive                       0x8042491aUL /* V8  */
 #endif
 #ifndef MUIM_GoInactive
-#define MUIM_GoInactive              0x80422c0cUL /* V8  */
+#define MUIM_GoInactive                     0x80422c0cUL /* V8  */
 #endif
 #ifndef MUIA_Window_DisableKeys
-#define MUIA_Window_DisableKeys      0x80424c36UL /* V15 isg ULONG    */
+#define MUIA_Window_DisableKeys             0x80424c36UL /* V15 isg ULONG    */
 #endif
 #ifndef MUIA_Application_UsedClasses
-#define MUIA_Application_UsedClasses 0x8042e9a7UL /* V20 isg STRPTR * */
+#define MUIA_Application_UsedClasses        0x8042e9a7UL /* V20 isg STRPTR * */
 #endif
 #ifndef MUIA_String_Popup
-#define MUIA_String_Popup            0x80420d71UL /* V9  i.. Object * */
+#define MUIA_String_Popup                   0x80420d71UL /* V9  i.. Object * */
 #endif
 #ifndef MUIA_List_CursorType
-#define MUIA_List_CursorType         0x8042c53eUL /* V4  is. LONG     */
+#define MUIA_List_CursorType                0x8042c53eUL /* V4  is. LONG     */
 #endif
 #ifndef MUIV_List_CursorType_Bar
-#define MUIV_List_CursorType_Bar 		 1
+#define MUIV_List_CursorType_Bar 		    1
 #endif
 #ifndef MUIA_Text_HiIndex
-#define MUIA_Text_HiIndex            0x804214f5UL /* V11 i.. LONG     */
+#define MUIA_Text_HiIndex                   0x804214f5UL /* V11 i.. LONG     */
 #endif
 #ifndef MUIM_DeleteDragImage
-#define MUIM_DeleteDragImage 				 0x80423037UL
+#define MUIM_DeleteDragImage 				0x80423037UL
 #endif
 #ifndef MUIM_Group_MoveMember
-#define MUIM_Group_MoveMember				 0x8042ff4eUL /* V16 */
+#define MUIM_Group_MoveMember				0x8042ff4eUL /* V16 */
+#endif
+#ifndef MUIM_Group_ExitChange2
+#define MUIM_Group_ExitChange2              0x8042e541 /* private */ /* V12 */
 #endif
 #if (MUIMASTER_VMIN < 18)
 #ifndef MUIM_DoDrag
-#define MUIM_DoDrag 0x804216bbUL /* private */ /* V18 */
-struct  MUIP_DoDrag { STACKED ULONG MethodID; STACKED LONG touchx; STACKED LONG touchy; STACKED ULONG flags; }; /* private */
+#define MUIM_DoDrag                         0x804216bbUL /* private */ /* V18 */
+struct  MUIP_DoDrag                         { STACKED ULONG MethodID; STACKED LONG touchx; STACKED LONG touchy; STACKED ULONG flags; }; /* private */
 #endif
 #endif
 #ifndef MUIA_Text_Copy
 #define MUIA_Text_Copy                      0x80427727UL /* V20 i.. BOOL              */
 #endif
 #ifndef MUIO_Label_Tiny
-#define MUIO_Label_Tiny          (1<<13)
+#define MUIO_Label_Tiny                     (1<<13)
 #endif
 #ifndef MUIA_Scrollgroup_AutoBars
 #define MUIA_Scrollgroup_AutoBars           0x8042f50eUL /* V20 isg BOOL              */
@@ -154,10 +157,10 @@ struct  MUIP_DoDrag { STACKED ULONG MethodID; STACKED LONG touchx; STACKED LONG 
 #define MUIA_DoubleBuffer                   0x8042a9c7UL /* V20 isg BOOL              */
 #endif
 #ifndef MUIV_Window_ActiveObject_Left
-#define MUIV_Window_ActiveObject_Left  MUIV_Window_ActiveObject_Prev
+#define MUIV_Window_ActiveObject_Left       MUIV_Window_ActiveObject_Prev
 #endif
 #ifndef MUIV_Window_ActiveObject_Right
-#define MUIV_Window_ActiveObject_Right  MUIV_Window_ActiveObject_Next
+#define MUIV_Window_ActiveObject_Right      MUIV_Window_ActiveObject_Next
 #endif
 #ifndef MUIA_Menu_CopyStrings
 #define MUIA_Menu_CopyStrings               0x8042dbe2UL /* V20 i.. BOOL              */

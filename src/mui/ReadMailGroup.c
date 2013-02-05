@@ -272,7 +272,12 @@ static BOOL ShowAttachmentGroup(struct Data *data)
   }
   else
   {
-    // an attachment group existed already so signal success
+    // force a relayout of the scrollgroup, otherwise the scrollbars of the
+    // attachment group might not be refreshed correctly
+    if(DoMethod(data->scrolledAttachmentGroup, MUIM_Group_InitChange))
+      DoMethod(data->scrolledAttachmentGroup, MUIM_Group_ExitChange2, TRUE);
+
+    // an attachment group already existed so signal success
     success = TRUE;
   }
 
