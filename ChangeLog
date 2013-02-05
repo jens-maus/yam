@@ -18,6 +18,9 @@ $URL$
   * mui/ReadMailGroup.c: force a relayout of the attachment group's surrounding
     scrollgroup when it is visible already. This ensures that the automatic
     scrollbars are updated correctly.
+  * mui/ObjectList.c: implemented a workaround for the broken MUIM_Group_Sort
+    method of MUI 3.8. The spacing object is now correctly moved to the bottom
+    again.
 
 2013-02-04  Alexandre Balaban <abalaban@free.fr>
 

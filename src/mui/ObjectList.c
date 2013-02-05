@@ -46,7 +46,6 @@ struct Data
 {
   Object *virtgroup;
   Object *spacer;
-  Object *dummy;
   ULONG itemCount;
   BOOL disposeRemovedItems;
 };
@@ -58,7 +57,6 @@ OVERLOAD(OM_NEW)
 {
   Object *virtgroup = NULL;
   Object *spacer = NULL;
-  Object *dummy = NULL;
 
   ENTER();
 
@@ -66,7 +64,6 @@ OVERLOAD(OM_NEW)
 
     MUIA_Scrollgroup_FreeHoriz, FALSE,
     MUIA_Scrollgroup_Contents, virtgroup = VGroupV,
-      Child, dummy = VSpace(1),
       Child, spacer = HVSpace,
     End,
 
@@ -76,7 +73,6 @@ OVERLOAD(OM_NEW)
 
     data->virtgroup = virtgroup;
     data->spacer = spacer;
-    data->dummy = dummy;
     data->itemCount = 0;
     data->disposeRemovedItems = GetTagData(ATTR(DisposeRemovedItems), TRUE, inittags(msg)) ? TRUE : FALSE;
   }
@@ -154,8 +150,6 @@ OVERLOAD(OM_GET)
         // thus we have to take the longer way forward...
         while((current = NextObject(&cstate)) != NULL)
         {
-          if(current == data->dummy)
-            continue;
           if(current == data->spacer)
             break;
 
@@ -248,26 +242,71 @@ DECLARE(AddItem) // Object *item
 
   ENTER();
 
-  if(msg->item != NULL && DoMethod(data->virtgroup, MUIM_Group_InitChange))
+  if(msg->item != NULL)
   {
-    // now add the new item and move the spacer item behind to the last position
-    DoMethod(data->virtgroup, OM_ADDMEMBER, msg->item);
-    DoMethod(data->virtgroup, MUIM_Group_MoveMember, data->spacer, -1);
-    DoMethod(data->virtgroup, MUIM_Group_ExitChange);
+    struct SortMsg {
+      ULONG MethodID;
+      Object *objs[0];
+    } *sortMsg;
 
-    // tell the item to which list it belongs
-    set(msg->item, MUIA_ObjectListitem_ObjectList, obj);
+    // allocate a message for MUIM_Group_Sort to carry:
+    // - all old items
+    // - the new item
+    // - the bottom spacer
+    // - the terminating NULL entry
+    // as MUIM_Group_MoveMember seems to be broken in MUI 3.8
+    if((sortMsg = malloc(sizeof(*sortMsg) + (data->itemCount+3)*sizeof(Object *))) != NULL)
+    {
+      if(DoMethod(data->virtgroup, MUIM_Group_InitChange))
+      {
+        struct List *childList;
+        Object *cstate;
+        Object *item;
+        LONG idx;
 
-    // make sure the new item is visible
-    set(data->virtgroup, MUIA_Virtgroup_Top, _mtop(msg->item));
+        // add the new item
+        DoMethod(data->virtgroup, OM_ADDMEMBER, msg->item);
 
-    data->itemCount++;
-    // trigger possible notifications
-    xset(obj, ATTR(ItemAdded), msg->item,
-              ATTR(ItemsChanged), TRUE,
-              ATTR(ItemCount), data->itemCount);
+        // set up the parameters for MUIM_Group_Sort
+        sortMsg->MethodID = MUIM_Group_Sort;
 
-    result = TRUE;
+        // iterate over all child objects and put them into the sort message
+        childList = (struct List *)xget(data->virtgroup, MUIA_Group_ChildList);
+        cstate = (Object *)GetHead(childList);
+        idx = 0;
+        while((item = NextObject(&cstate)) != NULL)
+        {
+          if(item == data->spacer)
+            continue;
+
+          sortMsg->objs[idx++] = item;
+        }
+        // place the spacer below all objects
+        sortMsg->objs[idx++] = data->spacer;
+        // terminate the array
+        sortMsg->objs[idx] = NULL;
+
+        // sort the group's objects
+        DoMethodA(data->virtgroup, (Msg)sortMsg);
+        DoMethod(data->virtgroup, MUIM_Group_ExitChange);
+      }
+
+      free(sortMsg);
+
+      // tell the item to which list it belongs
+      set(msg->item, MUIA_ObjectListitem_ObjectList, obj);
+
+      // make sure the new item is visible
+      set(data->virtgroup, MUIA_Virtgroup_Top, _mtop(msg->item));
+
+      data->itemCount++;
+      // trigger possible notifications
+      xset(obj, ATTR(ItemAdded), msg->item,
+                ATTR(ItemsChanged), TRUE,
+                ATTR(ItemCount), data->itemCount);
+
+      result = TRUE;
+    }
   }
 
   RETURN(result);
@@ -328,13 +367,6 @@ DECLARE(IterateItems) // void **state
       *msg->state = (Object *)GetHead(childList);
     }
 
-    // iterate over the items, but skip the dummy object
-    do
-    {
-      item = NextObject((Object **)msg->state);
-    }
-    while(item == data->dummy);
-
     if(item == data->spacer)
       item = NULL;
   }
@@ -360,7 +392,7 @@ DECLARE(ItemAt) // ULONG index
 
     while((item = NextObject(&cstate)) != NULL)
     {
-      if(item == data->spacer || item == data->dummy)
+      if(item == data->spacer)
         continue;
 
       if(idx == msg->index)
