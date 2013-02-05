@@ -1265,7 +1265,7 @@ HOOKPROTONHNONP(CreateFilterFromSearch, void)
   {
     struct FilterNode *filter;
 
-    if((filter = CreateNewFilter(FA_TERMINATE)) != NULL)
+    if((filter = CreateNewFilter(FA_TERMINATE, 0)) != NULL)
     {
       struct RuleNode *rule;
 
@@ -2448,15 +2448,16 @@ BOOL CompareFilterLists(const struct MinList *fl1, const struct MinList *fl2)
 ///
 /// CreateNewFilter
 //  Initializes a new filter
-struct FilterNode *CreateNewFilter(const int actions)
+struct FilterNode *CreateNewFilter(const int actions, const int ruleFlags)
 {
   struct FilterNode *filter;
 
   ENTER();
 
-  if((filter = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*filter),
-                                             ASONODE_Min, TRUE,
-                                             TAG_DONE)) != NULL)
+  if((filter = AllocSysObjectTags(ASOT_NODE,
+    ASONODE_Size, sizeof(*filter),
+    ASONODE_Min, TRUE,
+    TAG_DONE)) != NULL)
   {
     filter->actions = actions;
     filter->isVolatile = FALSE;
@@ -2477,7 +2478,7 @@ struct FilterNode *CreateNewFilter(const int actions)
 
     // and fill in the first rule as a filter can't have less than 1 rule
     // anyway
-    if(CreateNewRule(filter, 0) == NULL)
+    if(CreateNewRule(filter, ruleFlags) == NULL)
     {
       // creating the default rule failed, so we let this operation fail, too
       FreeSysObject(ASOT_NODE, filter);
@@ -2720,7 +2721,7 @@ BOOL ImportFilter(const char *fileName, const BOOL isVolatile, struct MinList *f
           }
 
           // create a new filter node and remember the name
-          if((filter = CreateNewFilter(0)) != NULL)
+          if((filter = CreateNewFilter(0, 0)) != NULL)
           {
             strlcpy(filter->name, eq, sizeof(filter->name));
             filter->isVolatile = isVolatile;
