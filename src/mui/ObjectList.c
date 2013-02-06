@@ -244,54 +244,23 @@ DECLARE(AddItem) // Object *item
 
   if(msg->item != NULL)
   {
-    struct SortMsg {
-      ULONG MethodID;
-      Object *objs[0];
-    } *sortMsg;
-
-    // allocate a message for MUIM_Group_Sort to carry:
-    // - all old items
-    // - the new item
-    // - the bottom spacer
-    // - the terminating NULL entry
-    // as MUIM_Group_MoveMember seems to be broken in MUI 3.8
-    if((sortMsg = malloc(sizeof(*sortMsg) + (data->itemCount+3)*sizeof(Object *))) != NULL)
+    if(DoMethod(data->virtgroup, MUIM_Group_InitChange))
     {
-      if(DoMethod(data->virtgroup, MUIM_Group_InitChange))
-      {
-        struct List *childList;
-        Object *cstate;
-        Object *item;
-        LONG idx;
+      // we must ensure that the spacer object is always the last object
+      // in the group. As MUIM_Group_MoveMember is broken in MUI 3.8 we
+      // simply remove the spacer before adding the new object and readd
+      // it again afterwards. This effectively gives the same result
+      // without the overhead of setting up a MUIM_Group_Sort message for
+      // an aribitrary number of already existing objects.
 
-        // add the new item
-        DoMethod(data->virtgroup, OM_ADDMEMBER, msg->item);
+      // remove the spacer item
+      DoMethod(data->virtgroup, OM_REMMEMBER, data->spacer);
+      // add the new item
+      DoMethod(data->virtgroup, OM_ADDMEMBER, msg->item);
+      // add the spacer item again
+      DoMethod(data->virtgroup, OM_ADDMEMBER, data->spacer);
 
-        // set up the parameters for MUIM_Group_Sort
-        sortMsg->MethodID = MUIM_Group_Sort;
-
-        // iterate over all child objects and put them into the sort message
-        childList = (struct List *)xget(data->virtgroup, MUIA_Group_ChildList);
-        cstate = (Object *)GetHead(childList);
-        idx = 0;
-        while((item = NextObject(&cstate)) != NULL)
-        {
-          if(item == data->spacer)
-            continue;
-
-          sortMsg->objs[idx++] = item;
-        }
-        // place the spacer below all objects
-        sortMsg->objs[idx++] = data->spacer;
-        // terminate the array
-        sortMsg->objs[idx] = NULL;
-
-        // sort the group's objects
-        DoMethodA(data->virtgroup, (Msg)sortMsg);
-        DoMethod(data->virtgroup, MUIM_Group_ExitChange);
-      }
-
-      free(sortMsg);
+      DoMethod(data->virtgroup, MUIM_Group_ExitChange);
 
       // tell the item to which list it belongs
       set(msg->item, MUIA_ObjectListitem_ObjectList, obj);
