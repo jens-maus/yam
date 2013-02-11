@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-02-11 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/IdentityChooser.c: use centered text for the user identity choose when
+    running under MUI 3.8, because Cycle.mui of MUI 3.8 doesn't like left aligned
+    text and will print the text over the cycle image.
+
 2013-02-05 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_COs.c, YAM_FI.c: creating a new filter while parsing the configuration

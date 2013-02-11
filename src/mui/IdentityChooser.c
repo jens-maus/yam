@@ -32,6 +32,8 @@
 
 #include <string.h>
 
+#include <proto/muimaster.h>
+
 #include "YAM_config.h"
 #include "YAM_utilities.h"
 
@@ -212,6 +214,8 @@ DECLARE(UpdateIdentities)
     }
     else
     {
+      // MUI 3.8 doesn't like left aligned text in a cycle object
+      const char *preparse = LIB_VERSION_IS_AT_LEAST(MUIMasterBase, 20, 0) ? MUIX_L : "";
       int i = 0;
 
       // now we walk through the userIdentityList again
@@ -226,7 +230,7 @@ DECLARE(UpdateIdentities)
 
           // construct the new string via asprintf() so that the necessary
           // memory is automatically allocated.
-          if(asprintf(&data->identityArray[i], MUIX_L "%s " MUIX_I "(%s)" MUIX_N, BuildAddress(address, sizeof(address), uin->address, uin->realname), uin->description) != -1)
+          if(asprintf(&data->identityArray[i], "%s%s " MUIX_I "(%s)" MUIX_N, preparse, BuildAddress(address, sizeof(address), uin->address, uin->realname), uin->description) != -1)
           {
             // remember the active entry
             if(data->identity != NULL && uin->id == data->identity->id)
