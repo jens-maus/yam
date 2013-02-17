@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-02-17 Emilio Jimenez <ejim@ono.com>
+
+  * locale/spanish.ct: update to the latest changes.
+
+
 2013-02-11 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/IdentityChooser.c: use centered text for the user identity choose when

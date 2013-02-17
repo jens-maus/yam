@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.1 (23.12.2012)
+## version $VER: YAM.catalog 8.2 (17.02.2013)
 ## codeset 0
 ## language español
 ## chunk AUTH Emilio Jimenez
@@ -455,11 +455,6 @@ MSG_LOG_Replying
 Mensaje contestado de '%s' sobre '%s'
 ; Replied message from '%s' about '%s'
 ; SENDER, SUBJECT
-;
-MSG_LOG_Bouncing
-Mensaje remitido de '%s' sobre '%s' para '%s'
-; Bounced message from '%s' about '%s' to '%s'
-; SENDER, SUBJECT, RECIPIENT
 ;
 MSG_LOG_Forwarding
 Mensaje reenviado de '%s' sobre '%s' para '%s'
@@ -1278,10 +1273,6 @@ MSG_CO_ApplyOnReq
 Aplicar a _petición
 ; Apply on _request
 ;
-MSG_CO_ActionBounce
-Remitir
-; _Bounce
-;
 MSG_CO_ActionForward
 _Reenviar
 ; _Forward
@@ -1898,7 +1889,7 @@ Mensajes entrantes mayores que esto\nse considerarán como 'grandes'.
 ; Incoming messages bigger than this\nwill be considered as 'large'.
 ;
 MSG_HELP_CO_ST_INTERVAL
-Con qué frecuencia quieres que YAM compruebe automáticamente el buzón de correo?\nUsa '0' si no quieres que YAM haga esto.
+Con qué frecuencia quieres que YAM compruebe automáticamente el buzón de correo?
 ; How often do you want YAM to automatically check for new mail?\nUse '0' if you don't want YAM to do this.
 ;
 MSG_HELP_CO_CH_DLLARGE
@@ -1944,14 +1935,6 @@ Aplica este filtro cuando utilices\nla función de filtro manualmente.
 MSG_HELP_CO_CY_COMBINE
 Cómo combinar las reglas\npara este filtro.
 ; How to combine the rules\nfor this filter.
-;
-MSG_HELP_CO_CH_ABOUNCE
-Remitir mensajes coincidentes\na otra persona.
-; Bounce matching messages\nto another person.
-;
-MSG_HELP_CO_ST_ABOUNCE
-Dirección(es) de correo que deberían\nrecibir los mensajes remitidos.
-; E-mail address(es) that should\nget the bounced messages.
 ;
 MSG_HELP_CO_CH_AFORWARD
 Reenviar mensajes coincidentes\na otra persona.
@@ -3297,14 +3280,6 @@ MSG_WR_Signature
 Firma
 ; Signature
 ;
-MSG_WR_BounceWT
-Remitir mensaje
-; Bounce message
-;
-MSG_WR_BounceTo
-Remitir a
-; Bounce _to
-;
 ;
 ; Module WR - Toolbar
 ;
@@ -3803,10 +3778,6 @@ MSG_ER_ErrorARexxScript
 No puedo enviar comando ARexx '%s'. Asegúrate de que existe el script.
 ; Couldn't send ARexx command '%s'. Make sure that the script exists.
 ; REXX_COMMAND
-;
-MSG_ER_CreateMailError
-No puedo crear archivo de correo.\n\nMotivo: directorio de carpeta no válido o espacio insuficiente en disco.
-; Couldn't create mail file.\n\nReason: invalid folder directory or insufficient disk space.
 ;
 MSG_ER_CantOpenFile
 No puedo leer archivo '%s'.\n\nEl archivo parece que no existe.
@@ -5991,7 +5962,7 @@ _Borrar carpeta Spam
 ; _Delete Spam folder
 ;
 MSG_HELP_CO_CY_SMTPAUTHMETHOD
-Selecciona el método de autenticación que YAM deberá usar.\n'Auto' permite a YAM escoger uno automáticamente dependiendo de\nla capacidad del servidor y es el valor recomendado.\nLas otras te permiten\n\seleccionar una explícitamente. Estan listadas\npor orden de seguridad, de mayor a menor.
+Selecciona el método de autenticación que YAM deberá usar.\n 'Auto' permite a YAM escoger uno automáticamente dependiendo de\nla capacidad del servidor y es el valor recomendado.\nLas otras te permiten\nseleccionar una explícitamente. Estan listadas\npor orden de seguridad, de mayor a menor.
 ; Select here the authentication method YAM should use.\n'Auto' lets YAM pick one automatically depending on\nthe server's capabilities and is the recommended value.\nThe others let you explicitly select one. They are\nlisted in order according to how safe they are, with the\nsafest at the top.
 ;
 MSG_CO_SMTPAUTH_AUTO
@@ -6173,10 +6144,6 @@ Responder...
 MSG_MA_MFORWARD
 Reenviar...
 ; Forward...
-;
-MSG_MA_MBOUNCE
-Remitir...
-; Bounce...
 ;
 MSG_MA_MSAVEADDRESS
 Salvar dirección...
@@ -6640,7 +6607,7 @@ Advertencia de Seguridad
 ; Security warning
 ;
 MSG_AB_INVALIDSECURITY
-Esta entrada de la agenda de contactos está definida para mensajes firmados y/o encriptados,\npero la instalación PGP requerida no se encuentra.\n\nQuieres restaurar los valores por ddefecto en\n\preferencias de seguridad para esta entrada?
+Esta entrada de la agenda de contactos está definida para mensajes firmados y/o encriptados,\npero la instalación PGP requerida no se encuentra.\n\nQuieres restaurar los valores por defecto en\npreferencias de seguridad para esta entrada?
 ; This address book entry was set to default to\neither signed and/or encrypted messages, but the\nrequired PGP installation couldn't be found.\n\nDo you want to reset the default security\nsetting for this entry?
 ;
 MSG_AB_INVALIDSECURITY_GADS
@@ -6652,7 +6619,7 @@ Advertencia de Seguridad
 ; Security warning
 ;
 MSG_WR_INVALIDSECURITY
-Las preferencias de seguridad de la agenda de contactos para el destinatario\n\n'%s'\n\nestá definida para mensajes firmados y/o encriptados,\npero la instalación PGP requerida no se encuentra.\n\n\El mensaje no será firmado ni encriptado.
+Las preferencias de seguridad de la agenda de contactos para el destinatario\n\n'%s'\n\nestá definida para mensajes firmados y/o encriptados,\npero la instalación PGP requerida no se encuentra.\n\nEl mensaje no será firmado ni encriptado.
 ; The address book security setting for recipient\n\n'%s'\n\nis set to signed and/or encrypted messages,\nbut the required PGP installation wasn't found.\n\nThe message will be neither signed or encrypted.
 ; RECIPIENT
 ;
@@ -6855,7 +6822,7 @@ Ocurrió un error de E/S mientras intentaba decodificar (Base64) un MIME %ld del 
 ; PARTNR, MSGFILE
 ;
 MSG_ER_B64DEC_WARN
-Se encontraron algunos caractéres no válidos mientras decodificaba (Base64) un MIME %ld del correo '%s'.Por lo tanto la salida generada puede contener información no válida o puede estar dañada.\n\n\Esto puede ser a causa de una codificación incorrecta por el cliente de correo de origen o porque ha sido deteriorada durante la transmisión.
+Se encontraron algunos caractéres no válidos mientras decodificaba (Base64) un MIME %ld del correo '%s'.Por lo tanto la salida generada puede contener información no válida o puede estar dañada.\n\nEsto puede ser a causa de una codificación incorrecta por el cliente de correo de origen o porque ha sido deteriorada durante la transmisión.
 ; Some invalid characters were found while Base64 decoding MIME part %ld of mail file '%s'. The generated output may therefore contain invalid data or may be corrupted.\n\nThis may be caused by an incorrect encoding done by the sending mail client or because the Base64 part has been malformed during transmission.
 ; PARTNR, MSGFILE
 ;
@@ -7013,7 +6980,7 @@ Filtrado realizado:\n\n%3ld mensaje(s) comprobado(s),\n%3ld reenviado(s),\n%3ld 
 ; COUNT, COUNT, COUNT, COUNT, COUNT
 ;
 MSG_TR_FILTER_STATS_SPAM
-\nFiltrado realizado:\n\n%3ld mensaje(s) comprobado(s),\n%3ld remitido(s),\n%3ld reenviado(s),\n%3ld auto-contestado(s),\n%3ld comando(s) activado(s),\n%3ld movido(s),\n%3ld borrado(s),\n\%3ld clasificado(s) como spam
+\nFiltrado realizado:\n\n%3ld mensaje(s) comprobado(s),\n%3ld remitido(s),\n%3ld reenviado(s),\n%3ld auto-contestado(s),\n%3ld comando(s) activado(s),\n%3ld movido(s),\n%3ld borrado(s),\n%3ld clasificado(s) como spam
 ; \nFiltering done:\n\n%3ld messages checked,\n%3ld bounced,\n%3ld forwarded,\n%3ld auto-replied,\n%3ld command activated,\n%3ld moved,\n%3ld deleted,\n%3ld classified as spam
 ; COUNT, COUNT, COUNT, COUNT, COUNT, COUNT, COUNT, COUNT
 ;
@@ -7022,7 +6989,7 @@ Advertencia cambio de archivo
 ; Filechange warning
 ;
 MSG_FCHANGE_WARN
-Mientras has editado el texto del mensaje\nde la ventana de escritura %ld en un editor externo,\nel texto en el editor interno ha\nsido modificado también.\n\nQuiere realmente utilizar el texto\n\del editor externo obviando los cambios\nrealizados en el editor interno?
+Mientras has editado el texto del mensaje\nde la ventana de escritura %ld en un editor externo,\nel texto en el editor interno ha\nsido modificado también.\n\nQuiere realmente utilizar el texto\ndel editor externo obviando los cambios\nrealizados en el editor interno?
 ; While you have edited the message text\nof write window %ld in an external editor,\nthe text in the internal text editor has\nalso been altered.\n\nDo you really want to use the text of\nthe external editor dropping the changes\ndone in the internal editor?
 ; NUMBER
 ;
@@ -8043,7 +8010,7 @@ Si está activo, el valor predeterminado para PGP es encriptar\ntodos los mensaje
 ; If enabled, the default is set to PGP encrypt all\nemails when starting to compose them.
 ;
 MSG_HELP_CO_CH_IDENTITY_PGPENC_SELF
-Si está activo, todos los mensajes que se encriptan a través de PGP\nse le añadirán la clave PGP de esta identidad de usuario.\n Si no está activo, los mensajes encriptados no pueden ser\n\desencriptados por esta identidad de usuario.
+Si está activo, todos los mensajes que se encriptan a través de PGP\nse le añadirán la clave PGP de esta identidad de usuario.\n Si no está activo, los mensajes encriptados no pueden ser\ndesencriptados por esta identidad de usuario.
 ; If enabled, all emails being encrypted via PGP\nwill have the PGP key added of this user identity.\nIf disabled, encrypted emails cannot be decrypted\nby this user identity.
 ;
 MSG_HELP_CO_CY_IDENTITY_SIGNATURE
@@ -8302,7 +8269,7 @@ Error al crear clase personalizada de '%s'\ncomo subclase de '%s'.
 ; CLASS,SUPERCLASS
 ;
 MSG_ER_MORPHOS_REXX_WARNING
-YAM ha identificado que está ejecutando una versión de la 'rexxsyslib.library' en su sistema MorphOS que se sabe que no funciona ARexx.\n\nPara resolver esta situación y conseguir que ARexx corra con YAM usted debe instalar una copia de la 'rexxsyslib.library' desde 'SYS:Libs' de una instalación de AmigaOS 3.1-3.9, Cambie el nombre 'rexxsyslib.library' en MOSSYS:Libs" y reinicie el sistema.
+YAM ha identificado que está ejecutando una versión de la 'rexxsyslib.library' en su sistema MorphOS que se sabe que no funciona ARexx.\n\nPara resolver esta situación y conseguir que ARexx corra con YAM\nusted debe instalar una copia de la 'rexxsyslib.library' desde 'SYS:Libs' de una instalación de AmigaOS 3.1-3.9,\nrenombre 'rexxsyslib.library' en MOSSYS:Libs" y reinicie el sistema.
 ; YAM has identified that you are running a version of the 'rexxsyslib.library' in your MorphOS system that is known to not have a working ARexx implementation.\n\nTo solve this situation and get ARexx running with YAM you should install a copy of the 'rexxsyslib.library' from an AmigaOS 3.1-3.9 installation to 'SYS:Libs', rename the 'rexxsyslib.library' in 'MOSSYS:Libs' and reboot your system.
 ;
 MSG_WR_SAVEASDRAFT
@@ -8311,8 +8278,7 @@ Salvar como borrador
 ;
 MSG_HELP_WR_BT_SAVEASDRAFT
 Salvar el mensaje en\nla carpeta 'Borradores'.
-;Saves the message to\n\
-;the 'Drafts' folder.
+;Saves the message to\nthe 'Drafts' folder.
 ;
 MSG_WR_MSAVEASDRAFT
 Salvar como borrador
@@ -8322,3 +8288,49 @@ MSG_WR_MCLOSE
 Cerrar
 ;Close
 ;	
+MSG_LOG_REDIRECT
+Mensaje redirigido desde '%s' sobre '%s' a '%s'
+;Redirected message from '%s' about '%s' to '%s'
+; SENDER, SUBJECT, RECIPIENT
+;
+MSG_CO_ACTIONREDIRECT
+_Redirigir
+;_Redirect
+;
+MSG_HELP_CO_CH_AREDIRECT
+Redirigir mensajes coincidentes\na otra persona.
+;Redirect matching messages\n\to another person.
+;
+MSG_HELP_CO_ST_AREDIRECT
+Direccion(es) de correo que podrían\nrecibir los mensajes redirigidos.
+;E-mail address(es) that should\n\get the redirected messages.
+;
+MSG_MA_MREDIRECT
+Redirigir...
+;Redirect...
+;
+MSG_WR_REDIRECT_FROM
+Reenviado-_Desde
+;Resent-_From
+;
+MSG_WR_REDIRECT_TO
+Reenviado-_A
+;Resent-_To
+;
+MSG_WR_REDIRECT_CC
+Reenviado-_CC
+;Resent-_CC
+;
+MSG_WR_REDIRECT_BCC
+Reenviado-CC_O
+;Resent-_BCC
+;
+MSG_WR_REDIRECT_TITLE
+Redirigir mensaje(s)
+;Redirect message(s)
+;
+MSG_ER_CANNOT_CREATE_MAIL_FILE
+No puedo crear archivo de correo '%s'.\n\nMotivo: Directorio incorrecto o espacio insuficiente en disco.
+;Could not create mail file '%s'.\n\nReason: invalid folder directory or insufficient disk space.
+; FILE
+;
