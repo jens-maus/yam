@@ -5,10 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-02-18 Thore Böckelmann <tboeckel@gmx.de>
+
+  * extrasrc/NewReadArgs.c: slightly deobfuscated the argument string allocation
+    and added some more NULL pointer checks.
+
 2013-02-17 Emilio Jimenez <ejim@ono.com>
 
   * locale/spanish.ct: update to the latest changes.
-
 
 2013-02-11 Thore Böckelmann <tboeckel@gmx.de>
 

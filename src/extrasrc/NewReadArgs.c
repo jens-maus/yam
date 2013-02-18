@@ -195,7 +195,7 @@ LONG NewReadArgs(struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
           MaxArgs++;
       }
 
-      D(DBF_STARTUP, "Args: %ld", MaxArgs);
+      D(DBF_STARTUP, "maximum number of args %ld", MaxArgs);
       ptr = nrdargs->Template;
 
       /*- how many file args? -*/
@@ -397,7 +397,8 @@ LONG NewReadArgs(struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
 
       if(num > 0)
       {
-        nrdargs->RDArgs->RDA_Source.CS_Length = (num+=MaxArgs);
+        num += MaxArgs;
+        nrdargs->RDArgs->RDA_Source.CS_Length = num;
         nrdargs->RDArgs->RDA_Source.CS_Buffer = calloc(1, num+1);
         ptr = (char *)nrdargs->RDArgs->RDA_Source.CS_Buffer;
 
@@ -418,23 +419,25 @@ LONG NewReadArgs(struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
             }
           }
         }
-        else
-        {
-          RETURN(ERROR_NO_FREE_STORE);
-          return(ERROR_NO_FREE_STORE);
-        }
-
-        // make sure to terminal the string correctly
-        strlcat(ptr, "\n", num+1);
       }
       else
       {
         nrdargs->RDArgs->RDA_Source.CS_Length = 1;
-        nrdargs->RDArgs->RDA_Source.CS_Buffer = malloc(2);
-        strlcpy((char *)nrdargs->RDArgs->RDA_Source.CS_Buffer, "\n", 2);
+        nrdargs->RDArgs->RDA_Source.CS_Buffer = calloc(1, 2);
       }
 
-      D(DBF_STARTUP, "CS_Buffer[%d]: '%s'", num, nrdargs->RDArgs->RDA_Source.CS_Buffer);
+      if(nrdargs->RDArgs->RDA_Source.CS_Buffer != NULL)
+      {
+        // make sure to terminate the string correctly
+        strlcat(nrdargs->RDArgs->RDA_Source.CS_Buffer, "\n", nrdargs->RDArgs->RDA_Source.CS_Length+1);
+        D(DBF_STARTUP, "CS_Buffer[%d]: '%s'", num, nrdargs->RDArgs->RDA_Source.CS_Buffer);
+      }
+      else
+      {
+	    E(DBF_STARTUP, "allocating RDA_Source.CS_Buffer(%ld) failed", nrdargs->RDArgs->RDA_Source.CS_Length);
+        RETURN(ERROR_NO_FREE_STORE);
+        return ERROR_NO_FREE_STORE;
+	  }
     }
 
     /*- call ReadArgs() -*/
