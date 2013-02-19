@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-02-19 Thore Böckelmann <tboeckel@gmx.de>
+
+  * resources/themes/MagicWB: corrected the size of some toolbar images.
+    TheBar.mcc requires that normal and disabled images have exactly the same
+    size, otherwise memory will be trashed. This closes #386.
+
 2013-02-18 Thore Böckelmann <tboeckel@gmx.de>
 
   * extrasrc/NewReadArgs.c: slightly deobfuscated the argument string allocation
