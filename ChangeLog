@@ -10,6 +10,8 @@ $URL$
   * resources/themes/MagicWB: corrected the size of some toolbar images.
     TheBar.mcc requires that normal and disabled images have exactly the same
     size, otherwise memory will be trashed. This closes #386.
+  * resources/themes/MagicWB reduced: copied some missing ghosted images over
+    from the normal MagicWB theme.
 
 2013-02-18 Thore Böckelmann <tboeckel@gmx.de>
 
