@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-02-24 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/WriteWindow.c: repeatedly saving a mail in the Drafts folder will make
+    the new mail the active one in case the to be saved mail was the active one
+    before. This closes #388.
+
 2013-02-19 Thore Böckelmann <tboeckel@gmx.de>
 
   * resources/themes/MagicWB: corrected the size of some toolbar images.

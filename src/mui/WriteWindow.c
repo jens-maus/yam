@@ -4102,6 +4102,30 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
           if((email = MA_ExamineMail(outfolder, FilePart(newMailFile), C->EmailCache > 0 ? TRUE : FALSE)) != NULL)
           {
+            ULONG activeFlag = 0;
+
+            if(mode == WRITE_DRAFT)
+            {
+              struct MailNode *mnode;
+
+              LockMailList(outfolder->messages);
+              mnode = FindMailByFilename(outfolder->messages, FilePart(newMailFile));
+              UnlockMailList(outfolder->messages);
+
+              // remove the previous version from the drafts folder before adding a new one
+              if(mnode != NULL)
+              {
+                // check if we are going to remove the currently active mail
+                struct Mail *oldActiveMail = NULL;
+
+                DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &oldActiveMail);
+                if(mnode->mail == oldActiveMail)
+                  activeFlag = MUIV_NList_Insert_Active;
+
+                RemoveMailFromList(mnode->mail, FALSE, FALSE);
+              }
+            }
+
             if((newMail = AddMailToFolder(&email->Mail, outfolder)) != NULL)
             {
               // Now we have to check whether we have to add the To & CC addresses
@@ -4127,7 +4151,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
               }
 
               if(GetCurrentFolder() == outfolder)
-                DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_InsertSingle, newMail, MUIV_NList_Insert_Sorted);
+                DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_InsertSingle, newMail, MUIV_NList_Insert_Sorted | activeFlag);
 
               MA_UpdateMailFile(newMail);
 
@@ -4169,8 +4193,8 @@ DECLARE(ComposeMail) // enum WriteMode mode
                 }
 
                 // remember the new mail as draft mail if we had a draft mail pointer before
-	    	        wmData->draftMail = newMail;
-	    	      }
+                wmData->draftMail = newMail;
+              }
 
               // add the new mail to our newMailList if
               // we later have to sent it

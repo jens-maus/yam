@@ -3171,19 +3171,6 @@ struct Mail *AddMailToFolder(const struct Mail *mail, struct Folder *folder)
 
   ENTER();
 
-  if(isDraftsFolder(folder) == TRUE)
-  {
-    struct MailNode *mnode;
-
-    LockMailList(folder->messages);
-    mnode = FindMailByFilename(folder->messages, mail->MailFile);
-    UnlockMailList(folder->messages);
-
-    // remove the previous version from the drafts folder before adding a new one
-    if(mnode != NULL)
-      RemoveMailFromList(mnode->mail, FALSE, FALSE);
-  }
-
   if((new = CloneMail(mail)) != NULL)
   {
     // add the cloned message to the folder
