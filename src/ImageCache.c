@@ -76,7 +76,7 @@ static BOOL LoadImage(struct ImageCacheNode *node)
 
   ENTER();
 
-  if(FileExists(node->filename))
+  if(FileExists(node->filename) == TRUE)
   {
     Object *o;
     APTR oldWindowPtr;
@@ -132,7 +132,7 @@ static BOOL LoadImage(struct ImageCacheNode *node)
       }
     }
     else
-      E(DBF_IMAGE, "wasn't able to load specified image '%s'. error: %ld", node->filename, IoErr());
+      E(DBF_IMAGE, "wasn't able to load specified image '%s', error: %ld", node->filename, IoErr());
   }
   else if(G->NoImageWarning == FALSE)
     W(DBF_IMAGE, "specified image '%s' doesn't exist.", node->filename);
@@ -383,7 +383,7 @@ struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const s
     {
       // remap the image
       // this cannot fail for NULL screens
-      if(RemapImage(node, scr))
+      if(RemapImage(node, scr) == TRUE)
       {
         // check if the image is to be displayed on a new screen
         if(scr != NULL && node->dt_obj != NULL)
@@ -474,13 +474,14 @@ struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const s
             node->pixelArray = NULL;
           }
 
-          // get the image bitmap and mask for transparency display of the image
-          GetDTAttrs(node->dt_obj, PDTA_DestBitMap, &node->bitmap,
-                                   PDTA_MaskPlane,  &node->mask,
-                                   TAG_DONE);
-
+          // get the image bitmap
+          GetDTAttrs(node->dt_obj, PDTA_DestBitMap, &node->bitmap, TAG_DONE);
           if(node->bitmap == NULL)
             GetDTAttrs(node->dt_obj, PDTA_BitMap, &node->bitmap, TAG_DONE);
+
+          // get the mask plane for transparency display of the image if it exists
+          if(node->masking == mskHasMask)
+	        GetDTAttrs(node->dt_obj, PDTA_MaskPlane, &node->mask, TAG_DONE);
 
           if(node->mask == NULL)
             D(DBF_IMAGE, "no maskplane bitmask found for image '%s'", id);
