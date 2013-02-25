@@ -10,6 +10,7 @@ $URL$
   * mui/WriteWindow.c: repeatedly saving a mail in the Drafts folder will make
     the new mail the active one in case the to be saved mail was the active one
     before. This closes #388.
+  * mui/WriteWindow.c: attachments can be renamed now.
 
 2013-02-19 Thore Böckelmann <tboeckel@gmx.de>
 

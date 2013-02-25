@@ -105,6 +105,7 @@ struct Data
   Object *BT_ADD;
   Object *BT_ADDPACK;
   Object *BT_DEL;
+  Object *BT_RENAME;
   Object *BT_DISPLAY;
   Object *RA_ENCODING;
   Object *CY_CTYPE;
@@ -729,7 +730,7 @@ HOOKPROTONHNO(AppMessageFunc, LONG, ULONG *arg)
     }
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 MakeStaticHook(AppMessageHook, AppMessageFunc);
@@ -1213,10 +1214,11 @@ OVERLOAD(OM_NEW)
                   End,
                 End,
 
-                Child, ColGroup(4),
+                Child, ColGroup(5),
                   Child, data->BT_ADD     = MakeButton(tr(MSG_WR_Add)),
                   Child, data->BT_ADDPACK = MakeButton(tr(MSG_WR_AddPack)),
                   Child, data->BT_DEL     = MakeButton(tr(MSG_Del)),
+                  Child, data->BT_RENAME  = MakeButton(tr(MSG_WR_RENAME)),
                   Child, data->BT_DISPLAY = MakeButton(tr(MSG_WR_Display)),
                 End,
 
@@ -1353,6 +1355,7 @@ OVERLOAD(OM_NEW)
         DoMethod(G->App, MUIM_MultiSet,  MUIA_Disabled, TRUE, data->ST_CTYPE,
                                                               data->ST_DESC,
                                                               data->BT_DEL,
+                                                              data->BT_RENAME,
                                                               data->BT_DISPLAY,
                                                               NULL);
 
@@ -1491,6 +1494,7 @@ OVERLOAD(OM_NEW)
         DoMethod(data->BT_ADD,       MUIM_Notify, MUIA_Pressed,            FALSE,          obj, 2, METHOD(RequestAttachment), C->AttachDir);
         DoMethod(data->BT_ADDPACK,   MUIM_Notify, MUIA_Pressed,            FALSE,          obj, 1, METHOD(AddArchive));
         DoMethod(data->BT_DEL,       MUIM_Notify, MUIA_Pressed,            FALSE,          obj, 1, METHOD(DeleteAttachment));
+        DoMethod(data->BT_RENAME,    MUIM_Notify, MUIA_Pressed,            FALSE,          obj, 1, METHOD(RenameAttachment));
         DoMethod(data->BT_DISPLAY,   MUIM_Notify, MUIA_Pressed,            FALSE,          obj, 1, METHOD(DisplayAttachment));
         DoMethod(data->LV_ATTACH,    MUIM_Notify, MUIA_NList_DoubleClick,  MUIV_EveryTime, obj, 1, METHOD(DisplayAttachment));
         DoMethod(data->LV_ATTACH,    MUIM_Notify, MUIA_NList_Active,       MUIV_EveryTime, obj, 1, METHOD(GetAttachmentEntry));
@@ -2143,7 +2147,7 @@ DECLARE(EditActionPerformed) // enum EditAction action
     }
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -2183,7 +2187,7 @@ DECLARE(RequestAttachment) // STRPTR drawer
     }
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -2216,7 +2220,7 @@ DECLARE(AddClipboard)
       CloseTempFile(tf);
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -2257,7 +2261,7 @@ DECLARE(AddPGPKey)
   else
     DisplayBeep(NULL);
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -2273,7 +2277,7 @@ DECLARE(UpdateCursorPos)
                                                                      xget(data->TE_EDIT, MUIA_TextEditor_CursorX)+1);
   set(data->TX_POSI, MUIA_Text_Contents, data->cursorPos);
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -2310,7 +2314,7 @@ DECLARE(UpdateWindowTitle)
   // the mail is modified
   data->mailModified = TRUE;
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -2539,7 +2543,42 @@ DECLARE(DeleteAttachment)
     data->mailModified = TRUE;
   }
 
-  RETURN(0);
+  LEAVE();
+  return 0;
+}
+
+///
+/// DECLARE(RenameAttachment)
+// Renames a file from the attachment list
+DECLARE(RenameAttachment)
+{
+  GETDATA;
+  struct Attach *attach = NULL;
+
+  ENTER();
+
+  // first we get the active entry
+  DoMethod(data->LV_ATTACH, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &attach);
+  if(attach != NULL)
+  {
+    char newName[SIZE_FILE];
+
+    strlcpy(newName, attach->Name, sizeof(newName));
+    if(StringRequest(newName, sizeof(newName), tr(MSG_WR_RENAME_ATTACHMENT), tr(MSG_WR_ENTER_NEW_NAME), tr(MSG_Okay), NULL, tr(MSG_Cancel), FALSE, obj))
+    {
+      if(strcmp(attach->Name, newName) != 0)
+      {
+        strlcpy(attach->Name, newName, sizeof(attach->Name));
+
+        DoMethod(data->LV_ATTACH, MUIM_NList_Redraw, MUIV_NList_Redraw_Active);
+
+        // the mail is modified
+        data->mailModified = TRUE;
+      }
+    }
+  }
+
+  LEAVE();
   return 0;
 }
 
@@ -2562,7 +2601,7 @@ DECLARE(DisplayAttachment)
       ER_NewError(tr(MSG_ER_INVALIDATTFILE), attach->FilePath);
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -2588,7 +2627,7 @@ DECLARE(GetAttachmentEntry)
     nnset(data->ST_DESC, MUIA_String_Contents, attach->Description);
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -2610,7 +2649,7 @@ DECLARE(PutAttachmentEntry)
     DoMethod(data->LV_ATTACH, MUIM_NList_Redraw, MUIV_NList_Redraw_Active);
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -2685,7 +2724,7 @@ DECLARE(SignatureChanged)
     CloseTempFile(tfin);
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -2980,7 +3019,7 @@ DECLARE(SetSoftStyle) // enum SoftStyleMode ssm, ULONG origin
     FreeVec(txt);
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -3044,7 +3083,7 @@ DECLARE(StyleOptionsChanged)
       E(DBF_GUI, "couldn't export text from TE_EDIT");
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 ///
@@ -3081,7 +3120,7 @@ DECLARE(SaveTextAs)
     }
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -3246,7 +3285,7 @@ DECLARE(AddSignature)
   // accordingly to the set signature
   nnset(data->CY_SIGNATURE, MUIA_SignatureChooser_Signature, signature);
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -3296,7 +3335,7 @@ DECLARE(AddRecipient) // enum RcptType type, char *recipient
     break;
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -3376,7 +3415,7 @@ DECLARE(InsertAddresses) // enum RcptType type, char **addr, ULONG add
     while(*(msg->addr) != NULL);
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -3430,7 +3469,7 @@ DECLARE(LaunchEditor)
       W(DBF_UTIL, "file notification [%s] of write window %ld failed!", wmData->filename, data->windowNumber);
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -3466,7 +3505,7 @@ DECLARE(EditorCmd) // enum TransformMode cmd
       }
       else
       {
-        RETURN(0);
+        LEAVE();
         return 0;
       }
     }
@@ -3527,7 +3566,7 @@ DECLARE(EditorCmd) // enum TransformMode cmd
       }
       else
       {
-        RETURN(0);
+        LEAVE();
         return 0;
       }
     }
@@ -3545,7 +3584,7 @@ DECLARE(EditorCmd) // enum TransformMode cmd
     free(text);
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -3588,7 +3627,7 @@ DECLARE(Search) // ULONG flags
       DoMethod(data->WI_SEARCH, MUIM_Searchwindow_Open, data->TE_EDIT);
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -3602,7 +3641,7 @@ DECLARE(InsertText) // char *text
 
   DoMethod(data->TE_EDIT, MUIM_TextEditor_InsertText, msg->text, MUIV_TextEditor_InsertText_Cursor);
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -3716,7 +3755,7 @@ DECLARE(SetupFromOldMail) // struct ReadMailData *rmData
     }
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -4475,7 +4514,7 @@ DECLARE(DroppedFile) // STRPTR fileName
   else
     DoMethod(obj, METHOD(AddAttachment), msg->fileName, NULL, FALSE);
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -4520,7 +4559,7 @@ DECLARE(DoAutoSave)
       D(DBF_MAIL, "no changes found in editor, no need to save an autosave file");
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -4577,7 +4616,7 @@ DECLARE(CancelAction)
   if(discard == TRUE)
     DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &CloseWriteWindowHook, data->wmData);
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -4630,7 +4669,7 @@ DECLARE(MailFileModified)
     }
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -4683,7 +4722,7 @@ DECLARE(IdentityChanged) // struct UserIdentityNode *uin;
   // the mail is modified
   data->mailModified = TRUE;
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -4776,7 +4815,7 @@ DECLARE(HideRecipientObject) // enum RcptType rtype
     DoMethod(data->GR_HEADER, MUIM_Group_ExitChange);
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -4936,7 +4975,7 @@ DECLARE(ShowRecipientObject) // enum RcptType rtype
     DoMethod(data->GR_HEADER, MUIM_Group_ExitChange);
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -5039,7 +5078,7 @@ DECLARE(MenuToggleRecipientObject) // enum RcptType rtype
   if(saveConfig == TRUE)
     CO_SaveConfig(C, G->CO_PrefsFile);
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 

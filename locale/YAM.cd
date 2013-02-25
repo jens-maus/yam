@@ -7354,3 +7354,12 @@ Could not create mail file '%s'.\n\
 Reason: invalid folder directory or insufficient disk space.
 ; FILE
 ;
+MSG_WR_RENAME (2417//)
+Rename
+;
+MSG_WR_RENAME_ATTACHMENT (2418//)
+Rename attachment
+;
+MSG_WR_ENTER_NEW_NAME (2419//)
+Enter new attachment name:
+;

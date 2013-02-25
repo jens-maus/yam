@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.5 (29.01.2013)
+## version $VER: YAM.catalog 8.6 (25.02.2013)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -8809,4 +8809,13 @@ MSG_ER_CANNOT_CREATE_MAIL_FILE
 Kann Maildatei '%s' nicht erstellen.\n\
 \n\
 Grund: ungültiges Postfachverzeichnis oder Festplattenspeicher erschöpft.
+;
+MSG_WR_RENAME
+Umbenennen
+;
+MSG_WR_RENAME_ATTACHMENT
+Anhang umbenennen
+;
+MSG_WR_ENTER_NEW_NAME
+Geben Sie den neuen Namen ein:
 ;
