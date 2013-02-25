@@ -8811,7 +8811,7 @@ Kann Maildatei '%s' nicht erstellen.\n\
 Grund: ungültiges Postfachverzeichnis oder Festplattenspeicher erschöpft.
 ;
 MSG_WR_RENAME
-Umbenennen
+_Umbenennen
 ;
 MSG_WR_RENAME_ATTACHMENT
 Anhang umbenennen
