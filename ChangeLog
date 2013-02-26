@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-02-26 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/Splashwindow.c: removed some unused variables.
+
 2013-02-25 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/WriteWindow.c: repeatedly saving a mail in the Drafts folder will make

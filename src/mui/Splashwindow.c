@@ -52,8 +52,6 @@
 struct Data
 {
   Object *windowGroup;
-  Object *imageGroup;
-  Object *textGroup;
   Object *statusGauge;
   Object *progressGauge;
   BOOL progressGaugeActive;
@@ -84,8 +82,6 @@ OVERLOAD(OM_NEW)
     char logopath[SIZE_PATHFILE];
     char *compileInfo;
     Object *windowGroup;
-    Object *imageGroup;
-    Object *textGroup;
     Object *statusGauge;
 
     compileInfo = (char *)xget(G->App, MUIA_YAMApplication_CompileInfo);
@@ -104,13 +100,13 @@ OVERLOAD(OM_NEW)
       MUIA_Window_DefaultObject,  NULL,
       WindowContents, windowGroup = VGroup,
         MUIA_Background, MUII_GroupBack,
-        Child, imageGroup = HGroup,
+        Child, HGroup,
           MUIA_Group_Spacing, 0,
           Child, HSpace(0),
           Child, MakeImageObject("logo", logopath),
           Child, HSpace(0),
         End,
-        Child, textGroup = HCenter((VGroup,
+        Child, HCenter((VGroup,
           Child, CLabel(tr(MSG_YAMINFO)),
           Child, CLabel(yamfullcopyright),
           Child, TextObject,
@@ -146,8 +142,6 @@ OVERLOAD(OM_NEW)
       DoMethod(G->App, OM_ADDMEMBER, obj);
 
       data->windowGroup   = windowGroup;
-      data->imageGroup    = imageGroup;
-      data->textGroup     = textGroup;
       data->statusGauge   = statusGauge;
       data->progressGauge = progressGauge;
       data->progressGaugeActive = FALSE;
