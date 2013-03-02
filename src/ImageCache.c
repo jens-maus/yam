@@ -161,8 +161,11 @@ static BOOL RemapImage(struct ImageCacheNode *node, const struct Screen *scr)
                                          TAG_DONE);
 
     // either the remap must succeed or we just reset the screen
-    if(DoMethod(node->dt_obj, DTM_PROCLAYOUT, NULL, 1) != 0 || scr == NULL)
+    if(DoMethod(node->dt_obj, DTM_PROCLAYOUT, NULL, node->initialLayout) != 0 || scr == NULL)
+    {
       success = TRUE;
+      node->initialLayout = FALSE;
+    }
   }
   else
   {
@@ -200,6 +203,7 @@ static struct ImageCacheNode *CreateImageCacheNode(const char *id, const char *f
       D(DBF_IMAGE, "image '%s' NOT found in cache, creating new node", id);
 
       // create a new node in the cache
+      node->initialLayout = TRUE;
       node->delayedDispose = FALSE;
       if((node->id = strdup(id)) != NULL)
       {

@@ -8,6 +8,7 @@ $URL$
 2013-03-02 Thore Böckelmann <tboeckel@gmx.de>
 
   * ImageCache.c: remap an image to a specific screen only once.
+  * ImageCache.c: remember if DTM_PROCLAYOUT was called more than once.
 
 2013-02-26 Thore Böckelmann <tboeckel@gmx.de>
 
