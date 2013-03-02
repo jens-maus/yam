@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-03-02 Thore Böckelmann <tboeckel@gmx.de>
+
+  * ImageCache.c: remap an image to a specific screen only once.
+
 2013-02-26 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/Splashwindow.c: removed some unused variables.

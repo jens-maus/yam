@@ -151,7 +151,7 @@ static BOOL RemapImage(struct ImageCacheNode *node, const struct Screen *scr)
   ENTER();
 
   // remapping only works if the DT object exists
-  if(node->dt_obj != NULL)
+  if(node->dt_obj != NULL && node->screen != scr)
   {
     // first set the new screen
     SetDTAttrs(node->dt_obj, NULL, NULL, PDTA_UseFriendBitMap, TRUE,
