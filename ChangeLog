@@ -13,6 +13,10 @@ $URL$
     information but it also requires the user to wait until the details of all
     new mails have been received. Otherwise it might happen that some mails will
     be received although they should be filtered out. This closes #390.
+  * tcp/pop3.c: having active remote filters will now override the account's
+    preselection setting and automatically open the preselection window to ensure
+    that YAM really receives all the message details on which the filters might
+    be working on to do their job.
 
 2013-03-02 Thore Böckelmann <tboeckel@gmx.de>
 

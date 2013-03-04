@@ -1521,6 +1521,7 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
                     // there are messages on the server
                     if(GetMessageList(tc) == TRUE)
                     {
+                      BOOL doPreselect;
                       BOOL doDownload;
 
                       // if the user wants to avoid to receive the same message from the
@@ -1530,6 +1531,13 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
 
                       // check the list of mails if some kind of preselection is required
                       if(isFlagSet(tc->flags, RECEIVEF_USER) && ScanMailTransferList(tc->transferList, TRF_PRESELECT, TRF_PRESELECT, TRUE) != NULL)
+                        doPreselect = TRUE;
+                      else if(hasServerApplyRemoteFilters(tc->msn) == TRUE && IsMinListEmpty(tc->remoteFilters) == FALSE)
+                        doPreselect = TRUE;
+                      else
+                        doPreselect = FALSE;
+
+                      if(doPreselect == TRUE)
                       {
                         // show the preselection window in case user interaction is requested
                         D(DBF_NET, "preselection is required");
