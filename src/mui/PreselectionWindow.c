@@ -117,7 +117,7 @@ OVERLOAD(OM_NEW)
 
     MUIA_Window_Title,       titleText,
     MUIA_Window_ID,          MAKE_ID('P','R','E','S'),
-    MUIA_Window_CloseGadget, FALSE,
+    MUIA_Window_CloseGadget, TRUE,
     WindowContents, VGroup,
       Child, transferGroup = VGroup,
         Child, NListviewObject,
@@ -201,6 +201,7 @@ OVERLOAD(OM_NEW)
     set(data->deleteOnlyButton, MUIA_Disabled, mode == PRESELWINMODE_IMPORT);
     set(data->downloadDeleteButton, MUIA_Disabled, mode == PRESELWINMODE_IMPORT);
 
+    DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, MUIV_Notify_Self, 2, METHOD(Accept), FALSE);
     DoMethod(data->startButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(Accept), TRUE);
     DoMethod(data->quitButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(Accept), FALSE);
     DoMethod(data->deleteOnlyButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(ChangeFlags), TRF_DELETE);

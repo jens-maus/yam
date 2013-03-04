@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-03-04 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/PreselectionWindow.c: the preselection window now has a close button.
+
 2013-03-02 Thore Böckelmann <tboeckel@gmx.de>
 
   * ImageCache.c: remap an image to a specific screen only once.
