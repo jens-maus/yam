@@ -135,13 +135,13 @@ struct TransferContext
 
 /// ApplyRemoteFilters
 //  Applies remote filters to a message
-static void ApplyRemoteFilters(const struct MinList *filterList, struct MailTransferNode *tnode)
+static void ApplyRemoteFilters(struct TransferContext *tc, struct MailTransferNode *tnode)
 {
   struct Node *curNode;
 
   ENTER();
 
-  IterateList(filterList, curNode)
+  IterateList(tc->remoteFilters, curNode)
   {
     struct FilterNode *filter = (struct FilterNode *)curNode;
 
@@ -592,8 +592,14 @@ static void GetSingleMessageDetails(struct TransferContext *tc, struct MailTrans
           // own one by using the MsgID.
           if(lline == -1)
             tnode->uidl = strdup(email->messageID);
-          else if(lline == -2 && hasServerApplyRemoteFilters(tc->msn) == TRUE)
-            ApplyRemoteFilters(tc->remoteFilters, tnode);
+
+          // apply possible remote filters
+          if(hasServerApplyRemoteFilters(tc->msn) == TRUE && IsMinListEmpty(tc->remoteFilters) == FALSE)
+          {
+            PushMethodOnStack(tc->transferGroup, 2, MUIM_TransferControlGroup_ShowStatus, tr(MSG_TR_ApplyFilters));
+
+            ApplyRemoteFilters(tc, tnode);
+          }
 
           MA_FreeEMailStruct(email);
         }
@@ -1516,17 +1522,6 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
                     if(GetMessageList(tc) == TRUE)
                     {
                       BOOL doDownload;
-
-                      // apply possible remote filters
-                      if(hasServerApplyRemoteFilters(tc->msn) == TRUE && IsMinListEmpty(tc->remoteFilters) == FALSE)
-                      {
-                        struct MailTransferNode *tnode;
-
-                        PushMethodOnStack(tc->transferGroup, 2, MUIM_TransferControlGroup_ShowStatus, tr(MSG_TR_ApplyFilters));
-
-                        ForEachMailTransferNode(tc->transferList, tnode)
-                          GetSingleMessageDetails(tc, tnode, -2);
-                      }
 
                       // if the user wants to avoid to receive the same message from the
                       // POP3 server again we have to analyze the UIDL of it

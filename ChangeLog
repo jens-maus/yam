@@ -8,6 +8,11 @@ $URL$
 2013-03-04 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/PreselectionWindow.c: the preselection window now has a close button.
+  * tcp/pop3.c: remote filters are now applied when getting the single message
+    details. This makes it possible to let the filters check all available
+    information but it also requires the user to wait until the details of all
+    new mails have been received. Otherwise it might happen that some mails will
+    be received although they should be filtered out. This closes #390.
 
 2013-03-02 Thore Böckelmann <tboeckel@gmx.de>
 
