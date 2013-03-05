@@ -256,24 +256,14 @@ static struct ImageCacheNode *CreateImageCacheNode(const char *id, const char *f
 }
 
 ///
-/// DeleteImageCacheNode
-// create a new cache node
-static enum HashTableOperator DeleteImageCacheNode(UNUSED struct HashTable *table, struct HashEntryHeader *entry, UNUSED ULONG number, UNUSED void *arg)
+/// DeleteImage
+static void DeleteImage(struct ImageCacheNode *node)
 {
-  struct ImageCacheNode *node = (struct ImageCacheNode *)entry;
-
   ENTER();
-
-  D(DBF_STARTUP, "disposing image cache node (0x%08lx) '%s'", node, node->id);
-
-  #if defined(DEBUG)
-  if(node->openCount > 0)
-    W(DBF_STARTUP, "  openCount of image cache node still %ld!!!", node->openCount);
-  #endif
 
   if(node->dt_obj != NULL)
   {
-    D(DBF_STARTUP, "  disposing dtobject 0x%08lx of node 0x%08lx", node->dt_obj, node);
+    D(DBF_STARTUP, " isposing dtobject 0x%08lx of node 0x%08lx", node->dt_obj, node);
     DisposeDTObject(node->dt_obj);
     node->dt_obj = NULL;
   }
@@ -288,6 +278,27 @@ static enum HashTableOperator DeleteImageCacheNode(UNUSED struct HashTable *tabl
     FreeVecPooled(G->SharedMemPool, node->pixelArray);
     node->pixelArray = NULL;
   }
+
+  LEAVE();
+}
+
+///
+/// DeleteImageCacheNode
+// delete a cache node
+static enum HashTableOperator DeleteImageCacheNode(UNUSED struct HashTable *table, struct HashEntryHeader *entry, UNUSED ULONG number, UNUSED void *arg)
+{
+  struct ImageCacheNode *node = (struct ImageCacheNode *)entry;
+
+  ENTER();
+
+  D(DBF_STARTUP, "disposing image cache node (0x%08lx) '%s'", node, node->id);
+
+  #if defined(DEBUG)
+  if(node->openCount > 0)
+    W(DBF_STARTUP, "  openCount of image cache node still %ld!!!", node->openCount);
+  #endif
+
+  DeleteImage(node);
 
   RETURN(htoNext);
   return htoNext;
@@ -535,21 +546,7 @@ void ReleaseImage(const char *id, BOOL dispose)
       {
         D(DBF_IMAGE, "removing image '%s' from cache", node->id);
 
-        // free all the data
-        if(node->dt_obj != NULL)
-        {
-          DisposeDTObject(node->dt_obj);
-          node->dt_obj = NULL;
-        }
-
-        free(node->filename);
-        node->filename = NULL;
-
-        if(node->pixelArray != NULL)
-        {
-          FreeVecPooled(G->SharedMemPool, node->pixelArray);
-          node->pixelArray = NULL;
-        }
+        DeleteImage(node);
         // node->id will be freed by HashTableRawRemove()
 
         // remove the image from the cache
@@ -565,7 +562,7 @@ void ReleaseImage(const char *id, BOOL dispose)
       {
         node->delayedDispose = TRUE;
 
-        D(DBF_IMAGE, "  flagged as delayedDispose");
+        D(DBF_IMAGE, "flagged as delayedDispose");
       }
     }
   }
