@@ -741,6 +741,8 @@ void LoadTheme(struct Theme *theme, const char *themeName)
     {
       if(ObtainImage(configImageIDs[i], image, NULL) == NULL)
         W(DBF_THEME, "couldn't obtain image '%s' of theme '%s'", image, theme->directory);
+      else
+        ReleaseImage(configImageIDs[i], FALSE);
     }
   }
 
@@ -752,6 +754,8 @@ void LoadTheme(struct Theme *theme, const char *themeName)
     {
       if(ObtainImage(folderImageIDs[i], image, NULL) == NULL)
         W(DBF_THEME, "couldn't obtain image '%s' of theme '%s'", image, theme->directory);
+      else
+        ReleaseImage(folderImageIDs[i], FALSE);
     }
   }
 
@@ -763,6 +767,8 @@ void LoadTheme(struct Theme *theme, const char *themeName)
     {
       if(ObtainImage(statusImageIDs[i], image, NULL) == NULL)
         W(DBF_THEME, "couldn't obtain image '%s' of theme '%s'", image, theme->directory);
+      else
+        ReleaseImage(statusImageIDs[i], FALSE);
     }
   }
 

@@ -8,6 +8,8 @@ $URL$
 2013-03-05 Thore Böckelmann <tboeckel@gmx.de>
 
   * ImageCache.c: obtain the mask plane for single transparent colors as well.
+  * Themes.c: immediately release obtained images after the initial availibility
+    check to let their use counter drop to zero again.
 
 2013-03-04 Thore Böckelmann <tboeckel@gmx.de>
 
