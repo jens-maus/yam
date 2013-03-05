@@ -10,6 +10,7 @@ $URL$
   * ImageCache.c: obtain the mask plane for single transparent colors as well.
   * Themes.c: immediately release obtained images after the initial availibility
     check to let their use counter drop to zero again.
+  * ImageCache.c: don't try to remap images to NULL screens.
 
 2013-03-04 Thore Böckelmann <tboeckel@gmx.de>
 

@@ -92,10 +92,14 @@ static BOOL LoadImage(struct ImageCacheNode *node)
     // color to a color mapped screen (16/24/32 bit -> 8 bit). Keeping the source bitmap may
     // take a little bit more memory, but this is unavoidable if we don't want to reload the
     // images from disk again and again all the time.
-    o = NewDTObject((char *)node->filename, DTA_GroupID,          GID_PICTURE,
-                                            DTA_SourceType,       DTST_FILE,
-                                            PDTA_DestMode,        PMODE_V43,
-                                            TAG_DONE);
+    o = NewDTObject((char *)node->filename,
+      DTA_GroupID,          GID_PICTURE,
+      DTA_SourceType,       DTST_FILE,
+      PDTA_DestMode,        PMODE_V43,
+      PDTA_UseFriendBitMap, TRUE,
+      PDTA_Remap, TRUE,
+      OBP_Precision, PRECISION_EXACT,
+      TAG_DONE);
 
     // restore window pointer.
     SetProcWindow(oldWindowPtr);
@@ -112,8 +116,7 @@ static BOOL LoadImage(struct ImageCacheNode *node)
       // We do this now already, because getting the BMHD after the remap process seems
       // to result in wrong depth information which causes wrong display of color mapped
       // images.
-      GetDTAttrs(o, PDTA_BitMapHeader, &bmhd,
-                    TAG_DONE);
+      GetDTAttrs(o, PDTA_BitMapHeader, &bmhd, TAG_DONE);
 
       if(bmhd != NULL)
       {
@@ -151,17 +154,13 @@ static BOOL RemapImage(struct ImageCacheNode *node, const struct Screen *scr)
   ENTER();
 
   // remapping only works if the DT object exists
-  if(node->dt_obj != NULL && node->screen != scr)
+  if(node->dt_obj != NULL && scr != NULL)
   {
     // first set the new screen
-    SetDTAttrs(node->dt_obj, NULL, NULL, PDTA_UseFriendBitMap, TRUE,
-                                         PDTA_Remap, TRUE,
-                                         PDTA_Screen, scr,
-                                         OBP_Precision, PRECISION_EXACT,
-                                         TAG_DONE);
+    SetDTAttrs(node->dt_obj, NULL, NULL, PDTA_Screen, scr, TAG_DONE);
 
     // either the remap must succeed or we just reset the screen
-    if(DoMethod(node->dt_obj, DTM_PROCLAYOUT, NULL, node->initialLayout) != 0 || scr == NULL)
+    if(DoMethod(node->dt_obj, DTM_PROCLAYOUT, NULL, node->initialLayout) != 0)
     {
       success = TRUE;
       node->initialLayout = FALSE;
@@ -275,7 +274,6 @@ static enum HashTableOperator DeleteImageCacheNode(UNUSED struct HashTable *tabl
   if(node->dt_obj != NULL)
   {
     D(DBF_STARTUP, "  disposing dtobject 0x%08lx of node 0x%08lx", node->dt_obj, node);
-    RemapImage(node, NULL);
     DisposeDTObject(node->dt_obj);
     node->dt_obj = NULL;
   }
@@ -533,13 +531,6 @@ void ReleaseImage(const char *id, BOOL dispose)
 
     if(node->openCount == 0)
     {
-      if(node->dt_obj != NULL)
-      {
-        // clear the DT object's screen pointer
-        // this always succeeds, hence no need to check the result
-        RemapImage(node, NULL);
-      }
-
       if(dispose == TRUE || node->delayedDispose == TRUE)
       {
         D(DBF_IMAGE, "removing image '%s' from cache", node->id);
