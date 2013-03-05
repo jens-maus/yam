@@ -484,7 +484,7 @@ struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const s
             GetDTAttrs(node->dt_obj, PDTA_BitMap, &node->bitmap, TAG_DONE);
 
           // get the mask plane for transparency display of the image if it exists
-          if(node->masking == mskHasMask)
+          if(node->masking == mskHasMask || node->masking == mskHasTransparentColor)
 	        GetDTAttrs(node->dt_obj, PDTA_MaskPlane, &node->mask, TAG_DONE);
 
           if(node->mask == NULL)
