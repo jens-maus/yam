@@ -11,6 +11,9 @@ $URL$
   * Themes.c: immediately release obtained images after the initial availibility
     check to let their use counter drop to zero again.
   * ImageCache.c: don't try to remap images to NULL screens.
+  * YAM_UT.c, mui/WriteWindow.c: added a special function to replace an already
+    existing mail in the drafts folder which makes it a lot easier to keep the
+    currently active mail active.
 
 2013-03-04 Thore Böckelmann <tboeckel@gmx.de>
 

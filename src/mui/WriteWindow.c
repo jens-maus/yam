@@ -4141,31 +4141,14 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
           if((email = MA_ExamineMail(outfolder, FilePart(newMailFile), C->EmailCache > 0 ? TRUE : FALSE)) != NULL)
           {
-            ULONG activeFlag = 0;
+            struct Mail *replacedMail = NULL;
 
             if(mode == WRITE_DRAFT)
-            {
-              struct MailNode *mnode;
+              newMail = ReplaceMailInFolder(FilePart(newMailFile), &email->Mail, outfolder, &replacedMail);
+            else
+              newMail = AddMailToFolder(&email->Mail, outfolder);
 
-              LockMailList(outfolder->messages);
-              mnode = FindMailByFilename(outfolder->messages, FilePart(newMailFile));
-              UnlockMailList(outfolder->messages);
-
-              // remove the previous version from the drafts folder before adding a new one
-              if(mnode != NULL)
-              {
-                // check if we are going to remove the currently active mail
-                struct Mail *oldActiveMail = NULL;
-
-                DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &oldActiveMail);
-                if(mnode->mail == oldActiveMail)
-                  activeFlag = MUIV_NList_Insert_Active;
-
-                RemoveMailFromList(mnode->mail, FALSE, FALSE);
-              }
-            }
-
-            if((newMail = AddMailToFolder(&email->Mail, outfolder)) != NULL)
+            if(newMail != NULL)
             {
               // Now we have to check whether we have to add the To & CC addresses
               // to the emailCache
@@ -4190,7 +4173,27 @@ DECLARE(ComposeMail) // enum WriteMode mode
               }
 
               if(GetCurrentFolder() == outfolder)
-                DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_InsertSingle, newMail, MUIV_NList_Insert_Sorted | activeFlag);
+              {
+                if(replacedMail != NULL)
+                {
+                  // find the old mail, replace it and resort the list
+                  LONG pos = MUIV_NList_GetPos_Start;
+
+                  DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_GetPos, replacedMail, &pos);
+
+                  set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, TRUE);
+                  DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_ReplaceSingle, newMail, pos, NOWRAP, ALIGN_LEFT);
+                  DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_Sort);
+                  set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, FALSE);
+
+                  // free the replaced mail
+                  FreeMail(replacedMail);
+                }
+                else
+                {
+                  DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_InsertSingle, newMail, MUIV_NList_Insert_Sorted);
+                }
+              }
 
               MA_UpdateMailFile(newMail);
 

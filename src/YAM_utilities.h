@@ -252,6 +252,7 @@ extern struct Hook    ExamineDirMatchHook;
 // all the utility prototypes
 struct Mail *AddMailToFolder(const struct Mail *mail, struct Folder *folder);
 void     AddMailToFolderSimple(struct Mail *mail, struct Folder *folder);
+struct Mail *ReplaceMailInFolder(const char *mailFile, const struct Mail *mail, struct Folder *folder, struct Mail **replacedMail);
 void     AddZombieFile(const char *fileName);
 char *   AllocReqText(const char *s);
 BOOL     CheckPrinter(const Object *win);

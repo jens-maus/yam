@@ -3344,6 +3344,66 @@ void RemoveMailFromList(struct Mail *mail, const BOOL closeWindows, const BOOL c
 }
 
 ///
+/// ReplaceMailInFolder
+// replace a mail in a folder by a new one
+struct Mail *ReplaceMailInFolder(const char *mailFile, const struct Mail *mail, struct Folder *folder, struct Mail **replacedMail)
+{
+  struct Mail *addedMail;
+
+  ENTER();
+
+  *replacedMail = NULL;
+
+  if((addedMail = CloneMail(mail)) != NULL)
+  {
+    struct MailNode *mnode;
+
+    LockMailList(folder->messages);
+
+    if((mnode = FindMailByFilename(folder->messages, mailFile)) != NULL)
+    {
+  	  // remove the old mail's stats from the folder stats
+  	  folder->Size -= mnode->mail->Size;
+
+      if(hasStatusNew(mnode->mail))
+        folder->New--;
+
+      if(!hasStatusRead(mnode->mail))
+        folder->Unread--;
+
+      addedMail->Folder = folder;
+
+      // addd the new mail's stats to the folder stats
+      folder->Size += addedMail->Size;
+
+      if(hasStatusNew(addedMail))
+        folder->New++;
+
+      if(!hasStatusRead(addedMail))
+        folder->Unread++;
+
+      // remember the replaced mail
+      *replacedMail = mnode->mail;
+
+      // replace the mail in the list
+      mnode->mail = addedMail;
+    }
+    else
+    {
+      AddMailToFolderSimple(addedMail, folder);
+    }
+
+    UnlockMailList(folder->messages);
+
+    // expire the folder's index as we just added a new message
+    MA_ExpireIndex(folder);
+  }
+
+  RETURN(addedMail);
+  return addedMail;
+}
+
+///
 /// ClearFolderMails
 //  Removes all messages from a folder
 void ClearFolderMails(struct Folder *folder, BOOL resetstats)
