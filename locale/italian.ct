@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.3 (29.01.2013)
+## version $VER: YAM.catalog 8.3 (6.03.2013)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -3681,7 +3681,7 @@ _Visualizza
 ; D_isplay
 ;
 MSG_WR_ContentType
-_Tipo MIME
+_Tipo di MIME
 ; _MIME type
 ;
 MSG_WR_Description
@@ -4880,11 +4880,11 @@ Seleziona directory
 ; Module FO - Window
 ;
 MSG_FO_MessageDate
-Data del messaggio
+data del messaggio
 ; Message date
 ;
 MSG_FO_DateRecvd
-Data di ricezione
+data di ricezione
 ; Date received
 ;
 MSG_FO_FMNormal
@@ -5533,7 +5533,7 @@ Importa visualizzatori e tipi MIME
 ; Import MIME viewers & types
 ;
 MSG_ER_TRANSFERMAIL
-Impossibile trasferire la posta '%s' verso la cartella '%s'.\n\
+Impossibile spostare il messaggio '%s' verso la cartella '%s'.\n\
 \n\
 Il file protrebbe essere inesistente oppure non è stato\n\
 possibile copiarlo per qualche altra ragione.
@@ -10507,7 +10507,7 @@ Redirezione messaggi
 ; Redirect message(s)
 ;
 MSG_ER_CANNOT_CREATE_MAIL_FILE
-Impossibile creare il file di posta '%s'.\n\
+Impossibile creare il messaggio di posta '%s'.\n\
 \n\
 Motivo: directory della cartella errata o spazio\n\
 su disco insufficiente.
@@ -10515,4 +10515,16 @@ su disco insufficiente.
 ; \n\
 ; Reason: invalid folder directory or insufficient disk space.
 ; FILE
+;
+MSG_WR_RENAME
+_Rinomina
+; _Rename
+;
+MSG_WR_RENAME_ATTACHMENT
+Rinomina allegato
+; Rename attachment
+;
+MSG_WR_ENTER_NEW_NAME
+Inserisci un nome per il nuovo allegato:
+; Enter new attachment name:
 ;

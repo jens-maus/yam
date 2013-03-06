@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-03-06 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: update to the latest changes.
+
 2013-03-05 Thore Böckelmann <tboeckel@gmx.de>
 
   * ImageCache.c: obtain the mask plane for single transparent colors as well.
