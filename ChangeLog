@@ -5,9 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-03-06 Pär Boberg <pbobbenb@spray.se>
+
+  * locale/swedish.ct: updated to the latest changes.
+
 2013-03-06 Samir Hawamdeh <s.hawamdeh@tin.it>
 
-  * locale/italian.ct: update to the latest changes.
+  *  locale/italian.ct: update to the latest changes.
 
 2013-03-05 Thore Böckelmann <tboeckel@gmx.de>
 

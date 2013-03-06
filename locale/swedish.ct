@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.1 (23.12.2012)
+## version $VER: YAM.catalog 8.2 (06.03.2013)
 ## language svenska
 ## codeset 0
 ;
@@ -460,11 +460,6 @@ MSG_LOG_Replying
 Svarade på meddelande från '%s' om '%s'
 ; Replied message from '%s' about '%s'
 ; SENDER, SUBJECT
-;
-MSG_LOG_Bouncing
-Studsade meddelande från '%s' om '%s' till '%s'
-; Bounced message from '%s' about '%s' to '%s'
-; SENDER, SUBJECT, RECIPIENT
 ;
 MSG_LOG_Forwarding
 Vidarebefordrade meddelande från '%s' om '%s' till '%s'
@@ -1320,10 +1315,6 @@ MSG_CO_ApplyOnReq
 App_licera vid begäran
 ; Apply on _request
 ;
-MSG_CO_ActionBounce
-St_udsa
-; _Bounce
-;
 MSG_CO_ActionForward
 Vidarebe_fordra
 ; _Forward
@@ -2015,16 +2006,6 @@ MSG_HELP_CO_CY_COMBINE
 Hur sökreglerna skall\nkombineras för detta filter.
 ; How to combine the rules\n\
 ; for this filter.
-;
-MSG_HELP_CO_CH_ABOUNCE
-Studsa matchande meddelanden\ntill en annan person.
-; Bounce matching messages\n\
-; to another person.
-;
-MSG_HELP_CO_ST_ABOUNCE
-E-postadress(er) som skall få\nde studsade meddelandena.
-; E-mail address(es) that should\n\
-; get the bounced messages.
 ;
 MSG_HELP_CO_CH_AFORWARD
 Vidarebefordra matchande\nmeddelanden till en annan person.
@@ -3535,17 +3516,6 @@ MSG_WR_Signature
 Signatur
 ; Signature
 ;
-MSG_WR_BounceWT
-Studsa meddelande
-; Bounce message
-;
-MSG_WR_BounceTo
-Studsa _till
-; Bounce _to
-;
-;
-; Module WR - Toolbar
-;
 MSG_WR_TBEditor
 Redig.
 ; Editor
@@ -3852,12 +3822,6 @@ Sätt prioriteten för\ndetta meddelande.
 ; Set the priority\n\
 ; of this message.
 ;
-MSG_HELP_WR_BT_HOLD
-Kopiera det skapta meddelandet till Utkorgen\noch sätt dess status till 'Håll kvar'.
-; Copy the created message to\n\
-; the Outgoing folder and set\n\
-; its status to 'hold'.
-;
 MSG_HELP_WR_BT_QUEUE
 Kopiera det skapta meddelandet till Utkorgen.
 ; Copy the created message to\n\
@@ -3868,11 +3832,6 @@ Kopiera det skapta meddelandet till Utkorgen\noch skicka iväg det omedelbart.
 ; Copy the created message to\n\
 ; the Outgoing folder and send\n\
 ; it immediately.
-;
-MSG_HELP_WR_BT_CANCEL
-Kasta det skapta meddelandet.
-; Discard the\n\
-; created message.
 ;
 ;
 ; Module TR - Procedures
@@ -3939,7 +3898,7 @@ MSG_TR_FilterStats
 ; Filtering done:\n\
 ; \n\
 ; %3ld messages checked,\n\
-; %3ld bounced,\n\
+; %3ld redirected,\n\
 ; %3ld forwarded,\n\
 ; %3ld auto-replied,\n\
 ; %3ld command activated,\n\
@@ -4101,12 +4060,6 @@ MSG_ER_ErrorARexxScript
 Kunde inte utföra ARexxkommandot '%s'. Kontrollera att skriptet existerar.
 ; Couldn't send ARexx command '%s'. Make sure that the script exists.
 ; REXX_COMMAND
-;
-MSG_ER_CreateMailError
-Kunde inte skapa brevfil.\n\nSökvägen kan vara felaktig eller så kan disken vara full.
-; Couldn't create mail file.\n\
-; \n\
-; Reason: invalid folder directory or insufficient disk space.
 ;
 MSG_ER_CantOpenFile
 Kunde inte läsa filen '%s'.\n\nFilen verkar inte existera.
@@ -6701,14 +6654,6 @@ MSG_MA_TOREAD
 Läst
 ; Read
 ;
-MSG_MA_TOHOLD
-Håll kvar
-; Hold
-;
-MSG_MA_TOQUEUED
-I kö
-; Queued
-;
 MSG_PROJECT_MABOUT
 Om...
 ; About...
@@ -6748,10 +6693,6 @@ Svara...
 MSG_MA_MFORWARD
 Vidarebefordra...
 ; Forward...
-;
-MSG_MA_MBOUNCE
-Studsa...
-; Bounce...
 ;
 MSG_MA_MSAVEADDRESS
 Spara adress...
@@ -7176,14 +7117,6 @@ MSG_WR_SENDLATER
 Skicka s_enare
 ; Send _later
 ;
-MSG_WR_HOLD
-_Håll kvar
-; _Hold
-;
-MSG_WR_CANCEL
-Avbryt
-; Cancel
-;
 MSG_WR_MSENDNOW
 Skicka nu
 ; Send now
@@ -7191,14 +7124,6 @@ Skicka nu
 MSG_WR_MSENDLATER
 Skicka senare
 ; Send later
-;
-MSG_WR_MHOLD
-Håll kvar
-; Hold
-;
-MSG_WR_MCANCEL
-Avbryt
-; Cancel
 ;
 MSG_ER_CONNECTIONBROKEN
 Anslutningen mot servern '%s' avbröts vid försök att skicka kommandot '%s'.\n\nDetta kan bero på att servern tappade anslutningen.
@@ -7815,7 +7740,7 @@ MSG_TR_FILTER_STATS_SPAM
 ; Filtering done:\n\
 ; \n\
 ; %3ld messages checked,\n\
-; %3ld bounced,\n\
+; %3ld redirected,\n\
 ; %3ld forwarded,\n\
 ; %3ld auto-replied,\n\
 ; %3ld command activated,\n\
@@ -9475,4 +9400,88 @@ till 'SYS:Libs', sedan döpa om 'rexxsyslib.library' i \
 ; from an AmigaOS 3.1-3.9 installation to 'SYS:Libs', rename \
 ; the 'rexxsyslib.library' in 'MOSSYS:Libs' and reboot your \
 ; system.
+;
+MSG_WR_SAVEASDRAFT
+Spara som utkast
+; Save as draft
+;
+MSG_HELP_WR_BT_SAVEASDRAFT
+Sparar meddelandet till\n\
+mappen 'Utkast'.
+; Saves the message to\n\
+; the 'Drafts' folder.
+;
+MSG_WR_MSAVEASDRAFT
+Spara som utkast
+; Save as draft
+;
+MSG_WR_MCLOSE
+Stäng
+; Close
+;
+MSG_LOG_REDIRECT
+Omdirigera meddelande från '%s' om '%s' till '%s'
+; Redirected message from '%s' about '%s' to '%s'
+; SENDER, SUBJECT, RECIPIENT
+;
+MSG_CO_ACTIONREDIRECT
+_Omdirigera
+; _Redirect
+;
+MSG_HELP_CO_CH_AREDIRECT
+Omdirigera matchande meddelanden\n\
+till en annan person.
+; Redirect matching messages\n\
+; to another person.
+;
+MSG_HELP_CO_ST_AREDIRECT
+E-post adress(er) som ska mottaga\n\
+de omdirigerade meddelandena.
+; E-mail address(es) that should\n\
+; get the redirected messages.
+;
+MSG_MA_MREDIRECT
+Omdirigera...
+; Redirect...
+;
+MSG_WR_REDIRECT_FROM
+Återsänt _Från
+; Resent-_From
+;
+MSG_WR_REDIRECT_TO
+Återsänt _Till
+; Resent-_To
+;
+MSG_WR_REDIRECT_CC
+Återsänt _CC
+; Resent-_CC
+;
+MSG_WR_REDIRECT_BCC
+Återsänt _BCC
+; Resent-_BCC
+;
+MSG_WR_REDIRECT_TITLE
+Omdirigera meddelande(n)
+; Redirect message(s)
+;
+MSG_ER_CANNOT_CREATE_MAIL_FILE
+Kunde inte skapa brevfil '%s'.\n\
+\n\
+Orsak: ogiltig mapp katalog eller för lite diskutrymme.
+; Could not create mail file '%s'.\n\
+; \n\
+; Reason: invalid folder directory or insufficient disk space.
+; FILE
+;
+MSG_WR_RENAME
+_Döp om
+; _Rename
+;
+MSG_WR_RENAME_ATTACHMENT
+Döp om bilaga
+; Rename attachment
+;
+MSG_WR_ENTER_NEW_NAME
+Skriv in nytt namn för bilaga:
+; Enter new attachment name:
 ;
