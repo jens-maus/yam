@@ -88,7 +88,9 @@ static BOOL LoadImage(struct ImageCacheNode *node)
 
     D(DBF_IMAGE, "loading image '%s'", node->filename);
 
-    picture = LoadPicture(node->filename, TAG_DONE);
+    picture = LoadPicture(node->filename,
+      GGFX_UseMask, TRUE,
+      TAG_DONE);
 
     // restore window pointer.
     SetProcWindow(oldWindowPtr);
@@ -97,16 +99,24 @@ static BOOL LoadImage(struct ImageCacheNode *node)
     {
       D(DBF_IMAGE, "loaded image '%s' (0x%08lx)", node->filename, picture);
 
-      node->guigfxPicture = picture;
+      if(AddPicture(G->imageCachePenShareMap, picture) != NULL)
+      {
+        node->guigfxPicture = picture;
 
-      // obtain some information about the image
-      GetPictureAttrs(picture,
-        PICATTR_Width, &node->width,
-        PICATTR_Height, &node->height,
-        PICATTR_PixelFormat, &node->pixelFormat,
-        TAG_DONE);
+        // obtain some information about the image
+        GetPictureAttrs(picture,
+          PICATTR_Width, &node->width,
+          PICATTR_Height, &node->height,
+          PICATTR_PixelFormat, &node->pixelFormat,
+          TAG_DONE);
 
-      result = TRUE;
+        result = TRUE;
+      }
+      else
+      {
+	    E(DBF_IMAGE, "AddPicture('%s') failed", node->filename);
+	    DeletePicture(picture);
+	  }
     }
     else
       E(DBF_IMAGE, "wasn't able to load specified image '%s', error: %ld", node->filename, IoErr());
@@ -282,7 +292,12 @@ BOOL ImageCacheSetup(void)
   #endif
 
   if((G->imageCacheHashTable = HashTableNew(HashTableGetDefaultStringOps(), NULL, sizeof(struct ImageCacheNode), 128)) != NULL)
-    result = TRUE;
+  {
+    if((G->imageCachePenShareMap = CreatePenShareMap(TAG_DONE)) != NULL)
+    {
+      result = TRUE;
+    }
+  }
 
   RETURN(result);
   return result;
@@ -298,6 +313,13 @@ void ImageCacheCleanup(void)
   {
     HashTableEnumerate(G->imageCacheHashTable, DeleteImageCacheNode, NULL);
     HashTableDestroy(G->imageCacheHashTable);
+    G->imageCacheHashTable = NULL;
+  }
+
+  if(G->imageCachePenShareMap != NULL)
+  {
+    DeletePenShareMap(G->imageCachePenShareMap);
+    G->imageCachePenShareMap = NULL;
   }
 
   #if defined(__amigaos3__)

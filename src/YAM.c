@@ -2184,6 +2184,9 @@ static void InitBeforeLogin(BOOL hidden)
   if((startupSemaphore = CreateStartupSemaphore()) == NULL)
     Abort(tr(MSG_ER_CANNOT_CREATE_SEMAPHORE));
 
+  // setup our ImageCache
+  ImageCacheSetup();
+
   // try to find out if DefIcons is running or not by querying
   // the Port of DefIcons. Alternatively the Ambient desktop
   // should provide the same functionallity.
@@ -2818,9 +2821,6 @@ int main(int argc, char **argv)
     G->TR_Debug = args.debug ? TRUE : FALSE;
     G->NoImageWarning = args.noImgWarning ? TRUE : FALSE;
     G->NoCatalogTranslation = args.noCatalog ? TRUE : FALSE;
-
-    // setup our ImageCache
-    ImageCacheSetup();
 
     if(yamFirst == TRUE)
     {

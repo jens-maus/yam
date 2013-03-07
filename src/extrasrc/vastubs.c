@@ -223,10 +223,14 @@ ULONG URL_Open(STRPTR url, Tag tag1, ...)
 #endif
 
 #include <proto/guigfx.h>
-APTR LoadPicture(STRPTR filename, ...)
-{ return LoadPictureA(filename, (struct TagItem *)(&filename+1)); }
+APTR AddPicture(APTR psm, APTR pic, ...)
+{ return AddPictureA(psm, pic, (struct TagItem *)(&pic+1)); }
+APTR CreatePenShareMap(Tag tag1, ...)
+{ return CreatePenShareMapA((struct TagItem *)&tag1); }
 ULONG GetPictureAttrs(APTR pic, ...)
 { return GetPictureAttrsA(pic, (struct TagItem *)(&pic+1)); }
+APTR LoadPicture(STRPTR filename, ...)
+{ return LoadPictureA(filename, (struct TagItem *)(&filename+1)); }
 
 #else
   #warning "NEED_VASTUBS missing or compilation unnecessary"
