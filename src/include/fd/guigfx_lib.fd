@@ -1,0 +1,34 @@
+*
+*   guigfx_lib.fd    © TEK neoscientists
+*   v9.00
+*
+##base _GuiGFXBase
+##bias 30
+MakePictureA(array,width,height,tags)(a0,d0,d1,a1)
+LoadPictureA(filename,tags)(a0,a1)
+ReadPictureA(rastport,colormap,x,y,width,height,tags)(a0,a1,d0,d1,d2,d3,a2)
+ClonePictureA(pic,tags)(a0,a1)
+DeletePicture(pic)(a0)
+UpdatePicture(pic)(a0)
+AddPictureA(psm,pic,tags)(a0,a1,a2)
+AddPaletteA(psm,palette,tags)(a0,a1,a2)
+AddPixelArrayA(psm,array,width,height,tags)(a0,a1,d0,d1,a2)
+RemColorHandle(colorhandle)(a0)
+CreatePenShareMapA(tags)(a0)
+DeletePenShareMap(psm)(a0)
+ObtainDrawHandleA(psm,rastport,cm,tags)(a0,a1,a2,a3)
+ReleaseDrawHandle(drawhandle)(a0)
+DrawPictureA(drawhandle,pic,x,y,tags)(a0,a1,d0,d1,a2)
+MapPaletteA(drawhandle,palette,pentab,tags)(a0,a1,a2,a3)
+MapPenA(drawhandle,rgb,tags)(a0,a1,a2)
+CreatePictureBitMapA(drawhandle,pic,tags)(a0,a1,a2)
+DoPictureMethodA(pic,method,arguments)(a0,d0,a1)
+GetPictureAttrsA(pic,tags)(a0,a1)
+LockPictureA(pic,mode,args)(a0,d0,a1)
+UnLockPicture(pic,mode)(a0,d0)
+IsPictureA(filename,tags)(a0,a1)
+CreateDirectDrawHandleA(drawhandle,sw,sh,dw,dh,tags)(a0,d0,d1,d2,d3,a1)
+DeleteDirectDrawHandle(ddh)(a0)
+DirectDrawTrueColorA(ddh,array,x,y,tags)(a0,a1,d0,d1,a2)
+CreatePictureMaskA(pic,mask,maskwidth,tags)(a0,a1,d0,a2)
+##end
