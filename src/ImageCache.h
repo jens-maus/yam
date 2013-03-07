@@ -63,6 +63,8 @@ struct ImageCacheNode
 
   BOOL initialLayout;          // did we call DTM_PROCLAYOUT before already?
   BOOL delayedDispose;         // do we wish to remove the image from the cache if openCount reaches zero?
+
+  APTR guigfxPicture;
 };
 
 // the prototypes for our public available functions

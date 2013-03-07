@@ -29,6 +29,7 @@
 #include <string.h>
 
 #include <datatypes/pictureclass.h>
+#include <guigfx/guigfx.h>
 
 #include <clib/alib_protos.h>
 
@@ -38,6 +39,7 @@
 #include <proto/intuition.h>
 #include <proto/graphics.h>
 #include <proto/muimaster.h>
+#include <proto/guigfx.h>
 
 #if !defined(__amigaos4__)
 #include <proto/cybergraphics.h>
@@ -78,61 +80,33 @@ static BOOL LoadImage(struct ImageCacheNode *node)
 
   if(FileExists(node->filename) == TRUE)
   {
-    Object *o;
     APTR oldWindowPtr;
+    APTR picture;
 
     // tell DOS not to bother us with requesters
     oldWindowPtr = SetProcWindow((APTR)-1);
 
     D(DBF_IMAGE, "loading image '%s'", node->filename);
 
-    // The source bitmap of the image must *NOT* be freed automatically by datatypes.library,
-    // because we need the bitmap to be able to remap the image to another screen, if required.
-    // This is very important if the depth of the screen ever changes, especially from hi/true
-    // color to a color mapped screen (16/24/32 bit -> 8 bit). Keeping the source bitmap may
-    // take a little bit more memory, but this is unavoidable if we don't want to reload the
-    // images from disk again and again all the time.
-    o = NewDTObject((char *)node->filename,
-      DTA_GroupID,          GID_PICTURE,
-      DTA_SourceType,       DTST_FILE,
-      PDTA_DestMode,        PMODE_V43,
-      PDTA_UseFriendBitMap, TRUE,
-      PDTA_Remap, TRUE,
-      OBP_Precision, PRECISION_EXACT,
-      TAG_DONE);
+    picture = LoadPicture(node->filename, TAG_DONE);
 
     // restore window pointer.
     SetProcWindow(oldWindowPtr);
 
-    // do all the setup/layout stuff that's necessary to get a bitmap from the dto
-    // note that when using V43 datatypes, this might not be a real "struct BitMap *"
-    if(o != NULL)
+    if(picture != NULL)
     {
-      struct BitMapHeader *bmhd = NULL;
+      D(DBF_IMAGE, "loaded image '%s' (0x%08lx)", node->filename, picture);
 
-      D(DBF_IMAGE, "loaded image '%s' (0x%08lx)", node->filename, o);
+      node->guigfxPicture = picture;
 
-      // Now we retrieve the bitmap header to get the width/height of the loaded object.
-      // We do this now already, because getting the BMHD after the remap process seems
-      // to result in wrong depth information which causes wrong display of color mapped
-      // images.
-      GetDTAttrs(o, PDTA_BitMapHeader, &bmhd, TAG_DONE);
+      // obtain some information about the image
+      GetPictureAttrs(picture,
+        PICATTR_Width, &node->width,
+        PICATTR_Height, &node->height,
+        PICATTR_PixelFormat, &node->pixelFormat,
+        TAG_DONE);
 
-      if(bmhd != NULL)
-      {
-        node->dt_obj = o;
-        node->width = bmhd->bmh_Width;
-        node->height = bmhd->bmh_Height;
-        node->depth = bmhd->bmh_Depth;
-        node->masking = bmhd->bmh_Masking;
-
-        result = TRUE;
-      }
-      else
-      {
-        E(DBF_IMAGE, "wasn't able to get BitMapHeader of image '%s'", node->filename);
-        DisposeDTObject(o);
-      }
+      result = TRUE;
     }
     else
       E(DBF_IMAGE, "wasn't able to load specified image '%s', error: %ld", node->filename, IoErr());
@@ -231,12 +205,6 @@ static struct ImageCacheNode *CreateImageCacheNode(const char *id, const char *f
       if(success == FALSE)
       {
         // upon failure remove the node again
-        if(node->dt_obj != NULL)
-        {
-          DisposeDTObject(node->dt_obj);
-          node->dt_obj = NULL;
-        }
-
         free(node->filename);
         node->filename = NULL;
 
@@ -261,23 +229,17 @@ static void DeleteImage(struct ImageCacheNode *node)
 {
   ENTER();
 
-  if(node->dt_obj != NULL)
+  if(node->guigfxPicture != NULL)
   {
-    D(DBF_STARTUP, " isposing dtobject 0x%08lx of node 0x%08lx", node->dt_obj, node);
-    DisposeDTObject(node->dt_obj);
-    node->dt_obj = NULL;
+    D(DBF_STARTUP, "deleting picture 0x%08lx of node 0x%08lx", node->guigfxPicture, node);
+    DeletePicture(node->guigfxPicture);
+    node->guigfxPicture = NULL;
   }
 
   // node->id will be free()'ed by the hash table functions! We MUST NOT free it here,
   // because this item may be addressed further on while iterating through the list.
   free(node->filename);
   node->filename = NULL;
-
-  if(node->pixelArray != NULL)
-  {
-    FreeVecPooled(G->SharedMemPool, node->pixelArray);
-    node->pixelArray = NULL;
-  }
 
   LEAVE();
 }

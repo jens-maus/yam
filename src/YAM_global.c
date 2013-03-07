@@ -179,6 +179,8 @@ struct Library* CodesetsBase      = NULL;
 struct Library* CyberGfxBase      = NULL;
 #endif
 struct Library* ExpatBase         = NULL;
+struct Library* RenderBase        = NULL;
+struct Library* GuiGFXBase        = NULL;
 #if !defined(__NEWLIB__)
 struct Library* UtilityBase       = NULL;
 #endif
@@ -215,6 +217,8 @@ struct CodesetsIFace*     ICodesets     = NULL;
 struct CyberGfxIFace*     ICyberGfx     = NULL;
 #endif
 struct ExpatIFace*        IExpat        = NULL;
+struct RenderIFace*       IRender       = NULL;
+struct GuiGFXIFace*       IGuiGFX       = NULL;
 struct ApplicationIFace*  IApplication  = NULL;
 struct TimezoneIFace*     ITimezone     = NULL;
 #if !defined(__NEWLIB__)

@@ -50,7 +50,9 @@
 #include <proto/diskfont.h>
 #include <proto/dos.h>
 #include <proto/exec.h>
+#include <proto/expat.h>
 #include <proto/graphics.h>
+#include <proto/guigfx.h>
 #include <proto/icon.h>
 #include <proto/iffparse.h>
 #include <proto/intuition.h>
@@ -59,13 +61,13 @@
 #include <proto/locale.h>
 #include <proto/muimaster.h>
 #include <proto/openurl.h>
+#include <proto/render.h>
 #include <proto/rexxsyslib.h>
 #include <proto/timer.h>
 #include <proto/utility.h>
 #include <proto/wb.h>
 #include <proto/xadmaster.h>
 #include <proto/xpkmaster.h>
-#include <proto/expat.h>
 
 #if defined(__amigaos4__)
 #include <proto/application.h>
@@ -1180,6 +1182,8 @@ static void Terminate(void)
   #else
   CLOSELIB(CyberGfxBase,    ICyberGfx);
   #endif
+  CLOSELIB(GuiGFXBase,      IGuiGFX);
+  CLOSELIB(RenderBase,      IRender);
   CLOSELIB(ExpatBase,       IExpat);
   CLOSELIB(OpenURLBase,     IOpenURL);
   CLOSELIB(CodesetsBase,    ICodesets);
@@ -2102,6 +2106,12 @@ static void InitBeforeLogin(BOOL hidden)
 
   // try to open expat.library for our XML import stuff
   INITLIB("expat.library", XML_MAJOR_VERSION, 0, &ExpatBase, "main", 1, &IExpat, FALSE, NULL);
+
+  // try to open the mandatory render.library for our image stuff
+  INITLIB("render.library", 40, 0, &RenderBase, "main", 1, &IRender, TRUE, NULL);
+
+  // try to open the mandatory guigfx.library for our image stuff
+  INITLIB("guigfx.library", 20, 0, &GuiGFXBase, "main", 1, &IGuiGFX, TRUE, NULL);
 
   // we check for the amisslmaster.library v3 accordingly
   if(INITLIB("amisslmaster.library", AMISSLMASTER_MIN_VERSION, 5, &AmiSSLMasterBase, "main", 1, &IAmiSSLMaster, FALSE, NULL))
