@@ -9,6 +9,7 @@ $URL$
 
   * MailTransferList.c: lock the list while scanning the mail for matching
     flags.
+  * mui/TransferMailList.c: added some NULL checks to fix #390 again.
 
 2013-03-06 Pär Boberg <pbobbenb@spray.se>
 

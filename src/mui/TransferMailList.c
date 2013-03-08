@@ -239,9 +239,8 @@ OVERLOAD(MUIM_NList_Display)
 
   if(entry != NULL)
   {
-    struct Mail *mail = entry->mail;
-    struct Person *pe = &mail->From;
     GETDATA;
+    struct Mail *mail;
 
     // status icon display
     data->statusBuffer[0] = '\0';
@@ -255,28 +254,48 @@ OVERLOAD(MUIM_NList_Display)
     snprintf(data->indexBuffer, sizeof(data->indexBuffer), "%d", entry->index);
     ndm->strings[1] = data->indexBuffer;
 
-    // size display
-    if(data->sizeLimit > 0 && mail->Size >= data->sizeLimit)
+    if((mail = entry->mail) != NULL)
     {
-      strlcpy(data->sizeBuffer, MUIX_PH, sizeof(data->sizeBuffer));
-      FormatSize(mail->Size, &data->sizeBuffer[strlen(data->sizeBuffer)], sizeof(data->sizeBuffer)-strlen(data->sizeBuffer), SF_AUTO);
+      struct Person *pe = &mail->From;
+
+      // size display
+      if(data->sizeLimit > 0 && mail->Size >= data->sizeLimit)
+      {
+        strlcpy(data->sizeBuffer, MUIX_PH, sizeof(data->sizeBuffer));
+        FormatSize(mail->Size, &data->sizeBuffer[strlen(data->sizeBuffer)], sizeof(data->sizeBuffer)-strlen(data->sizeBuffer), SF_AUTO);
+      }
+      else
+        FormatSize(mail->Size, data->sizeBuffer, sizeof(data->sizeBuffer), SF_AUTO);
+      ndm->strings[2] = data->sizeBuffer;
+
+      // from address display
+      strlcpy(data->fromBuffer, AddrName(*pe), sizeof(data->fromBuffer));
+      ndm->strings[3] = data->fromBuffer;
+
+      // mail subject display
+      ndm->strings[4] = mail->Subject;
+
+      // display date
+      data->dateBuffer[0] = '\0';
+      if(mail->Date.ds_Days != 0)
+        DateStamp2String(data->dateBuffer, sizeof(data->dateBuffer), &mail->Date, (C->DSListFormat == DSS_DATEBEAT || C->DSListFormat == DSS_RELDATEBEAT) ? DSS_DATEBEAT : DSS_DATETIME, TZC_LOCAL);
+      ndm->strings[5] = data->dateBuffer;
     }
     else
-      FormatSize(mail->Size, data->sizeBuffer, sizeof(data->sizeBuffer), SF_AUTO);
-    ndm->strings[2] = data->sizeBuffer;
+    {
+      data->sizeBuffer[0] = '\0';
+      ndm->strings[2] = data->sizeBuffer;
 
-    // from address display
-    strlcpy(data->fromBuffer, AddrName(*pe), sizeof(data->fromBuffer));
-    ndm->strings[3] = data->fromBuffer;
+      data->fromBuffer[0] = '\0';
+      ndm->strings[3] = data->fromBuffer;
 
-    // mail subject display
-    ndm->strings[4] = mail->Subject;
+      // reuse the same string again, this is no problem
+      // as we just have to show an empty string
+      ndm->strings[4] = data->fromBuffer;
 
-    // display date
-    data->dateBuffer[0] = '\0';
-    if(mail->Date.ds_Days != 0)
-      DateStamp2String(data->dateBuffer, sizeof(data->dateBuffer), &mail->Date, (C->DSListFormat == DSS_DATEBEAT || C->DSListFormat == DSS_RELDATEBEAT) ? DSS_DATEBEAT : DSS_DATETIME, TZC_LOCAL);
-    ndm->strings[5] = data->dateBuffer;
+      data->dateBuffer[0] = '\0';
+      ndm->strings[5] = data->dateBuffer;
+    }
   }
   else
   {
