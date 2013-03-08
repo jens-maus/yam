@@ -148,6 +148,8 @@ struct MailTransferNode *ScanMailTransferList(const struct MailTransferList *tli
 
   ENTER();
 
+  LockMailTransferList(tlist);
+
   ForEachMailTransferNode(tlist, tnode)
   {
     // check if either at least one flag matches or if all flags match
@@ -158,6 +160,8 @@ struct MailTransferNode *ScanMailTransferList(const struct MailTransferList *tli
       break;
     }
   }
+
+  UnlockMailTransferList(tlist);
 
   RETURN(result);
   return result;
