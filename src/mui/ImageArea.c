@@ -219,6 +219,9 @@ static void Image_Layout(struct Data *data)
   {
     ULONG hasMask;
 
+    // do some artifical memory tracking as the bitmap will be freed with FreeBitMap() again
+    MEMTRACK("CreatePictureBitMap", data->bitmap, data->scaledWidth);
+
     GetPictureAttrs(data->imageNode.guigfxPicture, PICATTR_AlphaPresent, &hasMask, TAG_DONE);
     if(hasMask)
     {
