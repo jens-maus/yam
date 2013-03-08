@@ -40,9 +40,12 @@
 #include <proto/cybergraphics.h>
 #endif
 
+#include <guigfx/guigfx.h>
+
 #include <proto/datatypes.h>
 #include <proto/icon.h>
 #include <proto/graphics.h>
+#include <proto/guigfx.h>
 
 #include "YAM.h"
 
@@ -60,16 +63,13 @@ struct Data
 
   struct ImageCacheNode imageNode;
 
-  struct BitMap *scaledBitMap;
-  struct BitMap *scaledBitMask;
-
-  APTR scaledPixelArray;
-  ULONG scaledBytesPerRow;
-
   ULONG scaledWidth;
   ULONG scaledHeight;
   ULONG maxWidth;
   ULONG maxHeight;
+
+  struct BitMap *bitmap;
+  PLANEPTR mask;
 
   BOOL noMinHeight;
   BOOL free_horiz;
@@ -79,6 +79,8 @@ struct Data
   BOOL setup;
 
   int label_height;
+
+  APTR drawHandle;
 };
 */
 
@@ -99,51 +101,11 @@ struct Data
 */
 
 /* Defines */
-/// WritePixelArrayAlpha
-#if defined(__MORPHOS__)
-  #ifndef WritePixelArrayAlpha
-    #define WritePixelArrayAlpha(__p0, __p1, __p2, __p3, __p4, __p5, __p6, __p7, __p8, __p9) \
-      LP10(216, ULONG , WritePixelArrayAlpha, \
-        APTR , __p0, a0, \
-        UWORD , __p1, d0, \
-        UWORD , __p2, d1, \
-        UWORD , __p3, d2, \
-        struct RastPort *, __p4, a1, \
-        UWORD , __p5, d3, \
-        UWORD , __p6, d4, \
-        UWORD , __p7, d5, \
-        UWORD , __p8, d6, \
-        ULONG , __p9, d7, \
-        , CYBERGRAPHICS_BASE_NAME, 0, 0, 0, 0, 0, 0)
-  #endif
-#elif !defined(__amigaos4__)
-  #ifndef WritePixelArrayAlpha
-    #if defined(__SASC)
-      ULONG WritePixelArrayAlpha(APTR, UWORD, UWORD, UWORD, struct RastPort *, UWORD, UWORD, UWORD, UWORD, ULONG);
-      #pragma libcall CyberGfxBase WritePixelArrayAlpha d8 76543921080A
-    #else
-      #define WritePixelArrayAlpha(__p0, __p1, __p2, __p3, __p4, __p5, __p6, __p7, __p8, __p9) \
-        LP10(216, ULONG , WritePixelArrayAlpha, \
-          APTR , __p0, a0, \
-          UWORD , __p1, d0, \
-          UWORD , __p2, d1, \
-          UWORD , __p3, d2, \
-          struct RastPort *, __p4, a1, \
-          UWORD , __p5, d3, \
-          UWORD , __p6, d4, \
-          UWORD , __p7, d5, \
-          UWORD , __p8, d6, \
-          ULONG , __p9, d7, \
-          , CYBERGRAPHICS_BASE_NAME)
-    #endif
-  #endif
-#endif
-///
 
 /* Private Functions */
 /// Image_Load
 // loads an image via our datatype methods
-static BOOL Image_Load(struct Data *data, Object *obj)
+static BOOL Image_Load(struct Data *data)
 {
   ENTER();
 
@@ -153,12 +115,11 @@ static BOOL Image_Load(struct Data *data, Object *obj)
   {
     struct ImageCacheNode *node;
 
-    if((node = ObtainImage(data->id, data->filename, _screen(obj))) != NULL)
+    if((node = ObtainImage(data->id, data->filename)) != NULL)
     {
       memcpy(&data->imageNode, node, sizeof(data->imageNode));
 
-      if(node->dt_obj != NULL)
-        data->imageLoaded = TRUE;
+      data->imageLoaded = TRUE;
     }
   }
 
@@ -193,216 +154,100 @@ static void Image_Unload(struct Data *data)
 // scale the image to the given size
 static void Image_Scale(struct Data *data)
 {
+  ULONG oldWidth = data->imageNode.width;
+  ULONG oldHeight = data->imageNode.height;
+  LONG scaleHeightDiff = oldHeight - data->maxHeight;
+  LONG scaleWidthDiff  = oldWidth - data->maxWidth;
+
   ENTER();
 
-  if(data->scaledBitMap != NULL)
+  // make sure to scale down the image if maxHeight/maxWidth is specified
+
+  if((scaleHeightDiff > 0 && data->maxHeight > 0) ||
+     (scaleWidthDiff > 0 && data->maxWidth > 0))
   {
-    FreeBitMap(data->scaledBitMap);
-    data->scaledBitMap = NULL;
-  }
+    ULONG newWidth;
+    ULONG newHeight;
+    double scaleFactor;
 
-  if(data->scaledBitMask != NULL)
-  {
-    FreeBitMap(data->scaledBitMask);
-    data->scaledBitMask = NULL;
-  }
-
-  if(data->scaledPixelArray != NULL)
-  {
-    FreeVecPooled(G->SharedMemPool, data->scaledPixelArray);
-    data->scaledPixelArray = NULL;
-  }
-
-  data->scaledWidth = 0;
-  data->scaledHeight = 0;
-
-  // check if correctly obtained the header and if it is valid
-  if(data->imageNode.bitmap != NULL && data->imageNode.depth > 0)
-  {
-    // make sure to scale down the image if maxHeight/maxWidth is specified
-    ULONG oldWidth = data->imageNode.width;
-    ULONG oldHeight = data->imageNode.height;
-    LONG scaleHeightDiff = oldHeight - data->maxHeight;
-    LONG scaleWidthDiff  = oldWidth - data->maxWidth;
-
-    if((scaleHeightDiff > 0 && data->maxHeight > 0) ||
-       (scaleWidthDiff > 0 && data->maxWidth > 0))
+    // make sure we are scaling proportional
+    if(scaleHeightDiff > scaleWidthDiff)
     {
-      ULONG newWidth;
-      ULONG newHeight;
-      BOOL wasScaled = FALSE;
-      double scaleFactor;
-
-      // make sure we are scaling proportional
-      if(scaleHeightDiff > scaleWidthDiff)
-      {
-        scaleFactor = (double)oldWidth / (double)oldHeight;
-        newWidth = scaleFactor * data->maxHeight;
-        // force a width of a least one pixel
-        if(newWidth < 1)
-          newWidth = 1;
-        newHeight = data->maxHeight;
-      }
-      else
-      {
-        scaleFactor = (double)oldHeight / (double)oldWidth;
-        newWidth = data->maxWidth;
-        newHeight = scaleFactor * data->maxWidth;
-        // force a height of a least one pixel
-        if(newHeight < 1)
-          newHeight = 1;
-      }
-
-      // in case we have image data with an alpha channel embedded we
-      // have to use the PDTM_SCALE method of picture.datatype v45
-      if(data->imageNode.pixelArray != NULL)
-      {
-        BOOL result;
-
-        result = DoMethod(data->imageNode.dt_obj, PDTM_SCALE, newWidth, newHeight, 0);
-        #if defined(__MORPHOS__)
-        // MorphOS < v2.0 may return an invalid value for the PDTM_SCALE method
-        // so ignore it
-        result = TRUE;
-        #endif
-        if(result == TRUE)
-        {
-          data->scaledBytesPerRow = newWidth * data->imageNode.bytesPerPixel;
-          SHOWVALUE(DBF_IMAGE, data->scaledBytesPerRow);
-          SHOWVALUE(DBF_IMAGE, data->imageNode.pixelFormat);
-
-          if((data->scaledPixelArray = AllocVecPooled(G->SharedMemPool, data->scaledBytesPerRow * newHeight)) != NULL)
-          {
-            // perform a PDTM_READPIXELARRAY operation
-            // for writing the image data of the image in our pixelArray
-            result = DoMethod(data->imageNode.dt_obj, PDTM_READPIXELARRAY, data->scaledPixelArray, data->imageNode.pixelFormat, data->scaledBytesPerRow,
-                                                                           0, 0, newWidth, newHeight);
-
-            #if defined(__MORPHOS__)
-            // MorphOS < v2.0 doesn't return a valid value for the PDTM_READPIXELARRAY method
-            // so ignore it
-            result = TRUE;
-            #endif
-
-            if(result == FALSE)
-            {
-              W(DBF_IMAGE, "PDTM_READPIXELARRAY on image '%s' with depth %ld failed after PDTM_SCALE!", data->imageNode.id, data->imageNode.depth);
-
-              FreeVecPooled(G->SharedMemPool, data->scaledPixelArray);
-              data->scaledPixelArray = NULL;
-            }
-            else
-            {
-              data->scaledWidth  = newWidth;
-              data->scaledHeight = newHeight;
-
-              D(DBF_IMAGE, "Scaled pixelarray in ImageArea (w/h) from %ld/%ld to %ld/%ld", data->imageNode.width,
-                                                                                           data->imageNode.height,
-                                                                                           data->scaledWidth,
-                                                                                           data->scaledHeight);
-
-            }
-          }
-
-          // rescale the image to its original size
-          DoMethod(data->imageNode.dt_obj, PDTM_SCALE, data->imageNode.width, data->imageNode.height, 0);
-
-          wasScaled = TRUE;
-        }
-        else
-          W(DBF_IMAGE, "PDTM_SCALE method on image '%s' returned an error! picture.datatype >= v45?", data->imageNode.id);
-      }
-
-      // check if we generated a scaled interpretation or not
-      if(wasScaled == FALSE)
-      {
-        // now we can allocate the new bitmap and scale it
-        // if required. But we use BitMapScale() for all operations
-        if((data->scaledBitMap = AllocBitMap(newWidth, newHeight, data->imageNode.depth, BMF_CLEAR|BMF_MINPLANES, data->imageNode.bitmap)) != NULL)
-        {
-          struct BitScaleArgs args;
-
-          args.bsa_SrcBitMap = data->imageNode.bitmap;
-          args.bsa_DestBitMap = data->scaledBitMap;
-          args.bsa_Flags = 0;
-
-          args.bsa_SrcY = 0;
-          args.bsa_DestY = 0;
-
-          args.bsa_SrcWidth = oldWidth;
-          args.bsa_SrcHeight = oldHeight;
-
-          args.bsa_XSrcFactor = oldWidth;
-          args.bsa_XDestFactor = newWidth;
-
-          args.bsa_YSrcFactor = oldHeight;
-          args.bsa_YDestFactor = newHeight;
-
-          args.bsa_SrcX = 0;
-          args.bsa_DestX = 0;
-
-          // scale the image now with the arguments set
-          BitMapScale(&args);
-
-          // read out the scaled values
-          data->scaledWidth  = args.bsa_DestWidth;
-          data->scaledHeight = args.bsa_DestHeight;
-
-          D(DBF_IMAGE, "Scaled image in ImageArea (w/h) from %ld/%ld to %ld/%ld", data->imageNode.width,
-                                                                                  data->imageNode.height,
-                                                                                  data->scaledWidth,
-                                                                                  data->scaledHeight);
-        }
-
-        // now we can allocate the new bitmap for our scale mask
-        if(data->imageNode.mask != NULL &&
-           (data->scaledBitMask = AllocBitMap(newWidth, newHeight, 1L, BMF_CLEAR|BMF_MINPLANES, NULL)) != NULL)
-        {
-          struct BitScaleArgs args;
-          struct BitMap bm;
-
-          InitBitMap(&bm, 1L, oldWidth, oldHeight);
-          bm.Planes[0] = data->imageNode.mask;
-
-          args.bsa_SrcBitMap = &bm;
-          args.bsa_DestBitMap = data->scaledBitMask;
-          args.bsa_Flags = 0;
-
-          args.bsa_SrcY = 0;
-          args.bsa_DestY = 0;
-
-          args.bsa_SrcWidth = oldWidth;
-          args.bsa_SrcHeight = oldHeight;
-
-          args.bsa_XSrcFactor = oldWidth;
-          args.bsa_XDestFactor = newWidth;
-
-          args.bsa_YSrcFactor = oldHeight;
-          args.bsa_YDestFactor = newHeight;
-
-          args.bsa_SrcX = 0;
-          args.bsa_DestX = 0;
-
-          // scale the image now with the arguments set
-          BitMapScale(&args);
-
-          D(DBF_IMAGE, "Scaled transparency mask of image");
-        }
-        else
-        {
-          D(DBF_IMAGE, "no bitmask for image available, skipped scaling of bitmask");
-          data->scaledBitMask = NULL;
-        }
-      }
+      scaleFactor = (double)oldWidth / (double)oldHeight;
+      newWidth = scaleFactor * data->maxHeight;
+      // force a width of a least one pixel
+      if(newWidth < 1)
+        newWidth = 1;
+      newHeight = data->maxHeight;
     }
     else
     {
-      D(DBF_IMAGE, "no image scaling required for image '%s'", data->imageNode.id);
-
-      data->scaledBitMap = NULL;
-      data->scaledBitMask = NULL;
-      data->scaledPixelArray = NULL;
+      scaleFactor = (double)oldHeight / (double)oldWidth;
+      newWidth = data->maxWidth;
+      newHeight = scaleFactor * data->maxWidth;
+      // force a height of a least one pixel
+      if(newHeight < 1)
+        newHeight = 1;
     }
+
+    data->scaledWidth  = newWidth;
+    data->scaledHeight = newHeight;
+  }
+  else
+  {
+    data->scaledWidth  = oldWidth;
+    data->scaledHeight = oldHeight;
+  }
+
+  LEAVE();
+}
+
+///
+/// Image_Layout
+// scale the image to the given size
+static void Image_Layout(struct Data *data)
+{
+  ENTER();
+
+  D(DBF_IMAGE, "scale image '%s' %08lx %3ldx%3ld -> %3ldx%3ld", data->id, data->imageNode.guigfxPicture, data->imageNode.width, data->imageNode.height, data->scaledWidth, data->scaledHeight);
+  if((data->bitmap = CreatePictureBitMap(data->drawHandle, data->imageNode.guigfxPicture,
+    GGFX_DestWidth, data->scaledWidth,
+    GGFX_DestHeight, data->scaledHeight,
+    GGFX_SourceWidth, data->imageNode.width,
+    GGFX_SourceHeight, data->imageNode.height,
+    TAG_DONE)) != NULL)
+  {
+    ULONG hasMask;
+
+    GetPictureAttrs(data->imageNode.guigfxPicture, PICATTR_AlphaPresent, &hasMask, TAG_DONE);
+    if(hasMask)
+    {
+      ULONG maskWidth = (data->scaledWidth + 15) & ~0x0f;
+      PLANEPTR mask;
+
+      if((mask = AllocRaster(maskWidth, data->scaledHeight)) != NULL)
+      {
+        if(CreatePictureMask(data->imageNode.guigfxPicture, mask, maskWidth >> 3,
+		    GGFX_Ratio, 0x80,
+    	    GGFX_DestWidth, data->scaledWidth,
+    	    GGFX_DestHeight, data->scaledHeight,
+    	    GGFX_SourceWidth, data->imageNode.width,
+    	    GGFX_SourceHeight, data->imageNode.height,
+    	    TAG_DONE))
+        {
+          data->mask = mask;
+        }
+        else
+        {
+          E(DBF_IMAGE, "CreatePictureMask() failed for image '%s'", data->id);
+          FreeRaster(mask, maskWidth, data->scaledHeight);
+        }
+      }
+	}
+  }
+  else
+  {
+    E(DBF_IMAGE, "CreatePictureBitMap() failed for image '%s'", data->id);
   }
 
   LEAVE();
@@ -505,7 +350,7 @@ OVERLOAD(OM_GET)
       {
         struct ImageCacheNode *icnode;
 
-        if((icnode = ObtainImage(data->id, data->filename, NULL)) != NULL)
+        if((icnode = ObtainImage(data->id, data->filename)) != NULL)
         {
           *store = icnode->width;
 
@@ -533,7 +378,7 @@ OVERLOAD(OM_GET)
       {
         struct ImageCacheNode *icnode;
 
-        if((icnode = ObtainImage(data->id, data->filename, NULL)) != NULL)
+        if((icnode = ObtainImage(data->id, data->filename)) != NULL)
         {
           *store = icnode->height;
 
@@ -638,9 +483,9 @@ OVERLOAD(OM_SET)
 
   if(relayout == TRUE &&
      data->setup == TRUE &&
-     Image_Load(data, obj) == TRUE)
+     Image_Load(data) == TRUE)
   {
-    Image_Scale(data);
+  //Image_Scale(data);
   }
 
   result = DoSuperMethodA(cl, obj, msg);
@@ -660,11 +505,65 @@ OVERLOAD(MUIM_Setup)
 
   if((result = DoSuperMethodA(cl, obj, msg)))
   {
-    if(Image_Load(data, obj) == TRUE)
-      Image_Scale(data);
-
     data->setup = TRUE;
+    Image_Load(data);
+    Image_Scale(data);
   }
+
+  RETURN(result);
+  return result;
+}
+
+///
+/// OVERLOAD(MUIM_Show)
+OVERLOAD(MUIM_Show)
+{
+  GETDATA;
+  IPTR result;
+
+  ENTER();
+
+  if((result = DoSuperMethodA(cl, obj, msg)))
+  {
+    if((data->drawHandle = ObtainDrawHandle(G->imageCachePenShareMap, _rp(obj), _screen(obj)->ViewPort.ColorMap, TAG_DONE)) != NULL)
+    {
+      SHOWVALUE(DBF_IMAGE, data->drawHandle);
+      Image_Layout(data);
+    }
+  }
+
+  RETURN(result);
+  return result;
+}
+
+///
+/// OVERLOAD(MUIM_Hide)
+OVERLOAD(MUIM_Hide)
+{
+  GETDATA;
+  ULONG result;
+
+  ENTER();
+
+  if(data->drawHandle != NULL)
+  {
+    ReleaseDrawHandle(data->drawHandle);
+    data->drawHandle = NULL;
+  }
+
+  if(data->bitmap != NULL)
+  {
+    FreeBitMap(data->bitmap);
+    data->bitmap = NULL;
+  }
+
+  if(data->mask != NULL)
+  {
+    FreeRaster(data->mask, (data->scaledWidth + 15) & ~0x0f, data->scaledHeight);
+    data->mask = NULL;
+  }
+
+  result = DoSuperMethodA(cl, obj, msg);
 
   RETURN(result);
   return result;
@@ -678,25 +577,6 @@ OVERLOAD(MUIM_Cleanup)
   ULONG result;
 
   ENTER();
-
-  // now it should be fine to free the allocated bitmap
-  if(data->scaledBitMap != NULL)
-  {
-    FreeBitMap(data->scaledBitMap);
-    data->scaledBitMap = NULL;
-  }
-
-  if(data->scaledBitMask != NULL)
-  {
-    FreeBitMap(data->scaledBitMask);
-    data->scaledBitMask = NULL;
-  }
-
-  if(data->scaledPixelArray != NULL)
-  {
-    FreeVecPooled(G->SharedMemPool, data->scaledPixelArray);
-    data->scaledPixelArray = NULL;
-  }
 
   Image_Unload(data);
 
@@ -725,17 +605,8 @@ OVERLOAD(MUIM_AskMinMax)
 
   if(data->imageLoaded == TRUE)
   {
-    if(data->scaledBitMap != NULL ||
-       data->scaledPixelArray != NULL)
-    {
-      minwidth  = data->scaledWidth;
-      minheight = data->scaledHeight;
-    }
-    else
-    {
-      minwidth  = data->imageNode.width;
-      minheight = data->imageNode.height;
-    }
+    minwidth  = data->scaledWidth;
+    minheight = data->scaledHeight;
   }
   else if(data->altText != NULL && data->altText[0] != '\0')
   {
@@ -817,250 +688,38 @@ OVERLOAD(MUIM_Draw)
 
     // in case we successfully have an imageNode object
     // we blit the image on our rastport
+    D(DBF_IMAGE, "draw image '%s' loaded %ld bitmap %08lx mask %08lx", data->id, data->imageLoaded, data->bitmap, data->mask);
     if(data->imageLoaded == TRUE)
     {
-      if(data->scaledBitMap != NULL)
+      if(data->bitmap != NULL)
       {
-        ULONG width = MIN(data->scaledWidth, (ULONG)_mwidth(obj));
-        ULONG height = MIN(data->scaledHeight, (ULONG)_mheight(obj));
-
-        #if defined(__amigaos4__)
-        if(data->scaledBitMask != NULL)
+        if(data->mask != NULL)
         {
-          D(DBF_IMAGE, "drawing scaled/masked bitmap image '%s' (%s)", data->id, data->filename);
-          BltBitMapTags(BLITA_Source,     data->scaledBitMap,
-                        BLITA_Dest,       rp,
-                        BLITA_SrcType,    BLITT_BITMAP,
-                        BLITA_DestType,   BLITT_RASTPORT,
-                        BLITA_DestX,      _mleft(obj) + (_mwidth(obj) - width) / 2,
-                        BLITA_DestY,      _mtop(obj) + (_mheight(obj) - data->label_height - height) / 2,
-                        BLITA_Width,      width,
-                        BLITA_Height,     height,
-                        BLITA_Minterm,    (ABC|ABNC|ANBC),
-                        BLITA_MaskPlane,  data->scaledBitMask->Planes[0],
-                        TAG_DONE);
-        }
-        else
-        {
-          D(DBF_IMAGE, "drawing scaled bitmap image '%s' (%s)", data->id, data->filename);
-          BltBitMapTags(BLITA_Source,     data->scaledBitMap,
-                        BLITA_Dest,       rp,
-                        BLITA_SrcType,    BLITT_BITMAP,
-                        BLITA_DestType,   BLITT_RASTPORT,
-                        BLITA_DestX,      _mleft(obj) + (_mwidth(obj) - width) / 2,
-                        BLITA_DestY,      _mtop(obj) + (_mheight(obj) - data->label_height - height) / 2,
-                        BLITA_Width,      width,
-                        BLITA_Height,     height,
-                        BLITA_Minterm,    (ABC|ABNC),
-                        TAG_DONE);
-        }
-        #else
-        if(data->scaledBitMask != NULL)
-        {
-          D(DBF_IMAGE, "drawing scaled/masked bitmap image '%s' (%s)", data->id, data->filename);
-          // we use an own BltMaskBitMapRastPort() implemenation to also support
-          // interleaved images.
-          MyBltMaskBitMapRastPort(data->scaledBitMap,
-                                  0,
-                                  0,
-                                  rp,
-                                  _mleft(obj) + (_mwidth(obj) - width) / 2,
-                                  _mtop(obj) + (_mheight(obj) - data->label_height - height) / 2,
-                                  width,
-                                  height,
-                                  (ABC|ABNC|ANBC),
-                                  data->scaledBitMask->Planes[0]);
-        }
-        else
-        {
-          D(DBF_IMAGE, "drawing scaled bitmap image '%s' (%s)", data->id, data->filename);
-          BltBitMapRastPort(data->scaledBitMap,
+          BltMaskBitMapRastPort(data->bitmap,
                             0,
                             0,
                             rp,
-                            _mleft(obj) + (_mwidth(obj) - width) / 2,
-                            _mtop(obj) + (_mheight(obj) - data->label_height - height) / 2,
-                            width,
-                            height,
+                            _mleft(obj) + (_mwidth(obj) - data->scaledWidth) / 2,
+                            _mtop(obj) + (_mheight(obj) - data->label_height - data->scaledHeight) / 2,
+                            data->scaledWidth,
+                            data->scaledHeight,
+                            (ABC|ABNC|ANBC),
+                            data->mask);
+        }
+        else
+        {
+          BltBitMapRastPort(data->bitmap,
+                            0,
+                            0,
+                            rp,
+                            _mleft(obj) + (_mwidth(obj) - data->scaledWidth) / 2,
+                            _mtop(obj) + (_mheight(obj) - data->label_height - data->scaledHeight) / 2,
+                            data->scaledWidth,
+                            data->scaledHeight,
                             (ABC|ABNC));
         }
-        #endif
 
-        rel_y += height;
-      }
-      else if(data->scaledPixelArray != NULL)
-      {
-        ULONG width = MIN(data->scaledWidth, (ULONG)_mwidth(obj));
-        ULONG height = MIN(data->scaledHeight, (ULONG)_mheight(obj));
-
-        #if defined(__amigaos4__)
-        D(DBF_IMAGE, "drawing scaled (A)RGB image '%s' (%s)", data->id, data->filename);
-        BltBitMapTags(BLITA_Source,         data->scaledPixelArray,
-                      BLITA_Dest,           rp,
-                      BLITA_SrcType,        (data->imageNode.pixelFormat == PBPAFMT_ARGB) ? BLITT_ARGB32 : BLITT_RGB24,
-                      BLITA_DestType,       BLITT_RASTPORT,
-                      BLITA_DestX,          _mleft(obj) + (_mwidth(obj) - width) / 2,
-                      BLITA_DestY,          _mtop(obj) + (_mheight(obj) - data->label_height - height) / 2,
-                      BLITA_Width,          width,
-                      BLITA_Height,         height,
-                      BLITA_SrcBytesPerRow, data->scaledBytesPerRow,
-                      BLITA_UseSrcAlpha,    TRUE,
-                      TAG_DONE);
-        #else
-        // this also works for OS3, because we only have valid pixel data if
-        // cybergraphics.library and picture.datatype are able to handle the
-        // alpha channel correctly.
-        if(data->imageNode.pixelFormat == PBPAFMT_ARGB)
-        {
-          D(DBF_IMAGE, "drawing scaled ARGB image '%s' (%s)", data->id, data->filename);
-          WritePixelArrayAlpha(data->scaledPixelArray,
-                               0,
-                               0,
-                               data->scaledBytesPerRow,
-                               rp,
-                               _mleft(obj) + (_mwidth(obj) - width) / 2,
-                               _mtop(obj) + (_mheight(obj) - data->label_height - height) / 2,
-                               width,
-                               height,
-                               0xffffffff);
-        }
-        else
-        {
-          D(DBF_IMAGE, "drawing scaled RGB image '%s' (%s)", data->id, data->filename);
-          WritePixelArray(data->scaledPixelArray,
-                          0,
-                          0,
-                          data->scaledBytesPerRow,
-                          rp,
-                          _mleft(obj) + (_mwidth(obj) - width) / 2,
-                          _mtop(obj) + (_mheight(obj) - data->label_height - height) / 2,
-                          width,
-                          height,
-                          RECTFMT_RGB);
-        }
-        #endif
-
-        rel_y += height;
-      }
-      else
-      {
-        // blit the (A)RGB data if we retrieved them successfully.
-        if(data->imageNode.pixelArray != NULL)
-        {
-          #if defined(__amigaos4__)
-          D(DBF_IMAGE, "drawing (A)RGB image '%s' (%s)", data->id, data->filename);
-          BltBitMapTags(BLITA_Source,         data->imageNode.pixelArray,
-                        BLITA_Dest,           rp,
-                        BLITA_SrcType,        (data->imageNode.pixelFormat == PBPAFMT_ARGB) ? BLITT_ARGB32 : BLITT_RGB24,
-                        BLITA_DestType,       BLITT_RASTPORT,
-                        BLITA_DestX,          _mleft(obj) + (_mwidth(obj) - data->imageNode.width) / 2,
-                        BLITA_DestY,          _mtop(obj) + (_mheight(obj) - data->label_height - data->imageNode.height) / 2,
-                        BLITA_Width,          data->imageNode.width,
-                        BLITA_Height,         data->imageNode.height,
-                        BLITA_SrcBytesPerRow, data->imageNode.bytesPerRow,
-                        BLITA_UseSrcAlpha,    TRUE,
-                        TAG_DONE);
-          #else
-          // this also works for OS3, because we only have valid pixel data if
-          // cybergraphics.library and picture.datatype are able to handle the
-          // alpha channel correctly.
-          if(data->imageNode.pixelFormat == PBPAFMT_ARGB)
-          {
-            D(DBF_IMAGE, "drawing ARGB image '%s' (%s)", data->id, data->filename);
-            WritePixelArrayAlpha(data->imageNode.pixelArray,
-                                 0,
-                                 0,
-                                 data->imageNode.bytesPerRow,
-                                 rp,
-                                 _mleft(obj) + (_mwidth(obj) - data->imageNode.width) / 2,
-                                 _mtop(obj) + (_mheight(obj) - data->label_height - data->imageNode.height) / 2,
-                                 data->imageNode.width,
-                                 data->imageNode.height,
-                                 0xffffffff);
-          }
-          else
-          {
-            D(DBF_IMAGE, "drawing RGB image '%s' (%s)", data->id, data->filename);
-            WritePixelArray(data->imageNode.pixelArray,
-                            0,
-                            0,
-                            data->imageNode.bytesPerRow,
-                            rp,
-                            _mleft(obj) + (_mwidth(obj) - data->imageNode.width) / 2,
-                            _mtop(obj) + (_mheight(obj) - data->label_height - data->imageNode.height) / 2,
-                            data->imageNode.width,
-                            data->imageNode.height,
-                            RECTFMT_RGB);
-          }
-          #endif
-        }
-        // blit the bitmap if we retrieved it successfully.
-        else if(data->imageNode.bitmap != NULL)
-        {
-          #if defined(__amigaos4__)
-          if(data->imageNode.mask != NULL)
-          {
-            D(DBF_IMAGE, "drawing masked bitmap image '%s' (%s)", data->id, data->filename);
-            BltBitMapTags(BLITA_Source,     data->imageNode.bitmap,
-                          BLITA_Dest,       rp,
-                          BLITA_SrcType,    BLITT_BITMAP,
-                          BLITA_DestType,   BLITT_RASTPORT,
-                          BLITA_DestX,      _mleft(obj) + (_mwidth(obj) - data->imageNode.width)/2,
-                          BLITA_DestY,      _mtop(obj)  + (_mheight(obj) - data->label_height - data->imageNode.height)/2,
-                          BLITA_Width,      data->imageNode.width,
-                          BLITA_Height,     data->imageNode.height,
-                          BLITA_Minterm,    (ABC|ABNC|ANBC),
-                          BLITA_MaskPlane,  data->imageNode.mask,
-                          TAG_DONE);
-          }
-          else
-          {
-            D(DBF_IMAGE, "drawing bitmap image '%s' (%s)", data->id, data->filename);
-            BltBitMapTags(BLITA_Source,     data->imageNode.bitmap,
-                          BLITA_Dest,       rp,
-                          BLITA_SrcType,    BLITT_BITMAP,
-                          BLITA_DestType,   BLITT_RASTPORT,
-                          BLITA_DestX,      _mleft(obj) + (_mwidth(obj) - data->imageNode.width)/2,
-                          BLITA_DestY,      _mtop(obj)  + (_mheight(obj) - data->label_height - data->imageNode.height)/2,
-                          BLITA_Width,      data->imageNode.width,
-                          BLITA_Height,     data->imageNode.height,
-                          BLITA_Minterm,    (ABC|ABNC),
-                          TAG_DONE);
-          }
-          #else
-          if(data->imageNode.mask != NULL)
-          {
-            D(DBF_IMAGE, "drawing masked bitmap image '%s' (%s)", data->id, data->filename);
-            // we use an own BltMaskBitMapRastPort() implemenation to also support
-            // interleaved images.
-            MyBltMaskBitMapRastPort(data->imageNode.bitmap,
-                                    0,
-                                    0,
-                                    rp,
-                                    _mleft(obj) + (_mwidth(obj) - data->imageNode.width)/2,
-                                    _mtop(obj) + (_mheight(obj) - data->label_height - data->imageNode.height)/2,
-                                    data->imageNode.width,
-                                    data->imageNode.height,
-                                    (ABC|ABNC|ANBC),
-                                    data->imageNode.mask);
-          }
-          else
-          {
-            D(DBF_IMAGE, "drawing bitmap image '%s' (%s)", data->id, data->filename);
-            BltBitMapRastPort(data->imageNode.bitmap,
-                              0,
-                              0,
-                              rp,
-                              _mleft(obj) + (_mwidth(obj) - data->imageNode.width)/2,
-                              _mtop(obj) + (_mheight(obj) - data->label_height - data->imageNode.height)/2,
-                              data->imageNode.width,
-                              data->imageNode.height,
-                              (ABC|ABNC));
-          }
-          #endif
-        }
-
-        rel_y += data->imageNode.height;
+        rel_y += data->scaledHeight;
       }
     }
     else if(data->altText != NULL && data->altText[0] != '\0')

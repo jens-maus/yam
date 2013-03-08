@@ -227,10 +227,16 @@ APTR AddPicture(APTR psm, APTR pic, ...)
 { return AddPictureA(psm, pic, (struct TagItem *)(&pic+1)); }
 APTR CreatePenShareMap(Tag tag1, ...)
 { return CreatePenShareMapA((struct TagItem *)&tag1); }
+struct BitMap *CreatePictureBitMap(APTR drawhandle, APTR pic, ...)
+{ return CreatePictureBitMapA(drawhandle, pic, (struct TagItem *)(&pic+1)); }
+BOOL CreatePictureMask(APTR pic, UBYTE *array, UWORD arraywidth, ...)
+{ return CreatePictureMaskA(pic, array, arraywidth, (struct TagItem *)(&arraywidth+1)); }
 ULONG GetPictureAttrs(APTR pic, ...)
 { return GetPictureAttrsA(pic, (struct TagItem *)(&pic+1)); }
 APTR LoadPicture(STRPTR filename, ...)
 { return LoadPictureA(filename, (struct TagItem *)(&filename+1)); }
+APTR ObtainDrawHandle(APTR psm, struct RastPort *rp, struct ColorMap *cm, ...)
+{ return ObtainDrawHandleA(psm, rp, cm, (struct TagItem *)(&cm+1)); }
 
 #else
   #warning "NEED_VASTUBS missing or compilation unnecessary"

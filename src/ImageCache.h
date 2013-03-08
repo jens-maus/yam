@@ -70,7 +70,7 @@ struct ImageCacheNode
 // the prototypes for our public available functions
 BOOL ImageCacheSetup(void);
 void ImageCacheCleanup(void);
-struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const struct Screen *scr);
+struct ImageCacheNode *ObtainImage(const char *id, const char *filename);
 void ReleaseImage(const char *id, BOOL dispose);
 BOOL IsImageInCache(const char *id);
 

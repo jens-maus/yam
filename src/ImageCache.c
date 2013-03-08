@@ -337,7 +337,7 @@ void ImageCacheCleanup(void)
 /// ObtainImage
 // for receiveing the imagenode object or loading it
 // immediately.
-struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const struct Screen *scr)
+struct ImageCacheNode *ObtainImage(const char *id, const char *filename)
 {
   struct ImageCacheNode *node;
 
@@ -369,134 +369,11 @@ struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const s
     }
   }
 
-  // do a remapping of the image if necessary
-  if(node != NULL && scr != NULL)
-  {
-    D(DBF_IMAGE, "setting up image '%s' for screen 0x%08lx", id, scr);
-
-    // we found a previously loaded node in the cache
-    // now we need to remap it to the screen, if not yet done
-    if(node->screen != scr)
-    {
-      // remap the image
-      // this cannot fail for NULL screens
-      if(RemapImage(node, scr) == TRUE)
-      {
-        // check if the image is to be displayed on a new screen
-        if(scr != NULL && node->dt_obj != NULL)
-        {
-          node->bitmap = NULL;
-
-          // if we are asked to display a hi/truecolor image on a CLUT screen, then we
-          // let datatypes.library do the dirty dithering work
-          if(node->depth > 8 && GetBitMapAttr(scr->RastPort.BitMap, BMA_DEPTH) <= 8)
-            node->depth = 8;
-
-          #if defined(__amigaos4__) || defined(__MORPHOS__) || defined(__AROS__)
-          // OS4 and MorphOS can handle the alpha channel correctly
-          if(node->pixelArray == NULL)
-          #else
-          // for OS3 we check for CGX V45+ and picture.datatype V46+
-          // older versions cannot handle the alpha channel correctly
-          if(CyberGfxBase != NULL && LIB_VERSION_IS_AT_LEAST(CyberGfxBase, 45, 0) == TRUE &&
-             PictureDTBase != NULL && LIB_VERSION_IS_AT_LEAST(PictureDTBase, 46, 0) == TRUE &&
-             node->pixelArray == NULL)
-          #endif
-          {
-            BOOL hasAlphaChannel = FALSE;
-
-            // the datatypes system tells us about the alpha channel either
-            // by setting the correct masking type or by the PDTA_AlphaChannel
-            // attribute.
-            if(node->masking == mskHasAlpha)
-              hasAlphaChannel = TRUE;
-            else
-            {
-              ULONG alphaChannel = 0;
-
-              GetDTAttrs(node->dt_obj, PDTA_AlphaChannel, &alphaChannel, TAG_DONE);
-              if(alphaChannel != 0)
-                hasAlphaChannel = TRUE;
-            }
-
-            D(DBF_IMAGE, "image '%s' has %ld bit depth and %s alpha channel (%ld)", node->id, node->depth, (hasAlphaChannel == TRUE) ? "AN" : "NO", node->masking);
-
-            // check if the bitmap may have alpha channel data or not.
-            if(node->depth > 8 && node->masking != mskHasTransparentColor)
-            {
-              node->bytesPerPixel = (hasAlphaChannel == TRUE) ? 4 : 3;
-              node->bytesPerRow = node->width * node->bytesPerPixel;
-              node->pixelFormat = (hasAlphaChannel == TRUE) ? PBPAFMT_ARGB : PBPAFMT_RGB;
-
-              if((node->pixelArray = AllocVecPooled(G->SharedMemPool, node->bytesPerRow * node->height)) != NULL)
-              {
-                BOOL result;
-
-                // perform a PDTM_READPIXELARRAY operation
-                // for writing the image data of the image in our pixelArray
-                result = DoMethod(node->dt_obj, PDTM_READPIXELARRAY, node->pixelArray, node->pixelFormat, node->bytesPerRow,
-                                                                     0, 0, node->width, node->height);
-                #if defined(__MORPHOS__)
-                // MorphOS < v2.0 doesn't return a valid value for the PDTM_READPIXELARRAY method
-                // so ignore it
-                result = TRUE;
-                #endif
-
-                if(result == FALSE)
-                {
-                  W(DBF_IMAGE, "PDTM_READPIXELARRAY on image '%s' failed!", node->id);
-
-                  FreeVecPooled(G->SharedMemPool, node->pixelArray);
-                  node->pixelArray = NULL;
-                }
-                else
-                  D(DBF_IMAGE, "PDTM_READPIXELARRAY on image '%s' succeeded", node->id);
-              }
-            }
-            else
-              D(DBF_IMAGE, "PDTM_READPIXELARRAY not required - no alpha data in image '%s'", node->id);
-          }
-
-          // get the normal bitmaps supplied by datatypes.library if either this is
-          // an 8bit image or we could not get the hi/truecolor pixel data
-          #if defined(__amigaos4__) || defined(__MORPHOS__) || defined(__AROS__)
-          if(node->pixelArray == NULL)
-          #else
-          if(node->pixelArray == NULL || CyberGfxBase == NULL)
-          #endif
-          {
-            node->bytesPerPixel = 1;
-            node->bytesPerRow = node->width;
-            node->pixelFormat = PBPAFMT_LUT8;
-            node->pixelArray = NULL;
-          }
-
-          // get the image bitmap
-          GetDTAttrs(node->dt_obj, PDTA_DestBitMap, &node->bitmap, TAG_DONE);
-          if(node->bitmap == NULL)
-            GetDTAttrs(node->dt_obj, PDTA_BitMap, &node->bitmap, TAG_DONE);
-
-          // get the mask plane for transparency display of the image if it exists
-          if(node->masking == mskHasMask || node->masking == mskHasTransparentColor)
-	        GetDTAttrs(node->dt_obj, PDTA_MaskPlane, &node->mask, TAG_DONE);
-
-          if(node->mask == NULL)
-            D(DBF_IMAGE, "no maskplane bitmask found for image '%s'", id);
-        }
-      }
-      else
-      {
-        D(DBF_IMAGE, "couldn't remap image '%s' to screen 0x%08lx", id, scr);
-
-        // let this call fail if we cannot remap the image
-        node = NULL;
-      }
-    }
-  }
-
-  // increase the counter if everything went fine
   if(node != NULL)
+  {
+    // increase the counter if everything went fine
     node->openCount++;
+  }
 
   RETURN(node);
   return node;
