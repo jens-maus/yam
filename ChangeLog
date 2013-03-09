@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-03-09 Jens Langner <Jens.Langner@light-speed.de>
+
+  * extrasrc/tzcode: added sources of zoneinfo sources for common functions
+    like localtime(), mktime(), etc. These sources are under public domain and
+    were taken from tzcode2013a.tar.gz (http://www.iana.org/time-zones).
+    This refs #10.
+
 2013-03-08 Thore Böckelmann <tboeckel@gmx.de>
 
   * MailTransferList.c: lock the list while scanning the mail for matching
