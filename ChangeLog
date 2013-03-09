@@ -7,6 +7,10 @@ $URL$
 
 2013-03-09 Jens Langner <Jens.Langner@light-speed.de>
 
+  * extrasrc/tzcode, lib/*/libtz.a: added Makefile to the new zoneinfo functions
+    and adapted them to be compiled for all Amiga platforms. However, they still
+    need to be adapted to work as expected. Added first versions of libtz.a for
+    all supported platforms in the lib path. This refs #10.
   * extrasrc/tzcode: added sources of zoneinfo sources for common functions
     like localtime(), mktime(), etc. These sources are under public domain and
     were taken from tzcode2013a.tar.gz (http://www.iana.org/time-zones).
