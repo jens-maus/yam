@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-03-10 Jens Langner <Jens.Langner@light-speed.de>
+
+  * resources/zoneinfo, tools/tzdata: added raw source files of the tzdata2013a
+    zoneinfo archive taken from iana.org and added a new mktzdata.sh shell
+    script to generate zoneinfo binary files in the newly created "zoneinfo"
+    directory in the resources path of YAM. This will allow to use these files
+    with our new zoneinfo query functions in libtz.a. This refs #10.
+
 2013-03-09 Jens Langner <Jens.Langner@light-speed.de>
 
   * extrasrc/tzcode, lib/*/libtz.a: added Makefile to the new zoneinfo functions
