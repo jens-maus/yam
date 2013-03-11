@@ -71,16 +71,16 @@
 ** Nested includes
 */
 
-#include "sys/types.h"	/* for time_t */
-#include "stdio.h"
-#include "errno.h"
-#include "string.h"
-#include "limits.h"	/* for CHAR_BIT et al. */
-#include "time.h"
-#include "stdlib.h"
+#include <sys/types.h>	/* for time_t */
+#include <stdio.h>
+#include <errno.h>
+#include <string.h>
+#include <limits.h>	/* for CHAR_BIT et al. */
+#include <time.h>
+#include <stdlib.h>
 
 #if HAVE_GETTEXT
-#include "libintl.h"
+#include <libintl.h>
 #endif /* HAVE_GETTEXT */
 
 #if HAVE_SYS_WAIT_H
@@ -95,7 +95,7 @@
 #endif /* !defined WEXITSTATUS */
 
 #if HAVE_UNISTD_H
-#include "unistd.h"	/* for F_OK, R_OK, and other POSIX goodness */
+#include <unistd.h>	/* for F_OK, R_OK, and other POSIX goodness */
 #endif /* HAVE_UNISTD_H */
 
 #ifndef F_OK
@@ -121,7 +121,7 @@
 #endif /* !defined HAVE_STDINT_H */
 
 #if HAVE_STDINT_H
-#include "stdint.h"
+#include <stdint.h>
 #endif /* !HAVE_STDINT_H */
 
 #ifndef INT_FAST64_MAX
@@ -146,6 +146,10 @@ typedef long		int_fast64_t;
 #ifndef INT64_MAX
 #define INT64_MAX 0x7fffffffffffffffLL
 #endif /* !defined INT64_MAX */
+#ifndef LLONG_MAX
+// required for clib2
+#define LLONG_MAX 0x7fffffffffffffffLL
+#endif /* !defined LLONG_MAX */
 
 #if 2 < __GNUC__ || (__GNUC__ == 2 && 96 <= __GNUC_MINOR__)
 # define ATTRIBUTE_PURE __attribute__ ((__pure__))
@@ -264,6 +268,11 @@ const char *	scheck(const char * string, const char * format);
 char *asctime_r(struct tm const *, char *);
 char *ctime_r(time_t const *, char *);
 #endif /* HAVE_INCOMPATIBLE_CTIME_R */
+
+#ifndef tzset
+// clib2 does not define this one
+void tzset(void);
+#endif
 
 #ifndef YEARSPERREPEAT
 #define YEARSPERREPEAT		400	/* years before a Gregorian repeat */

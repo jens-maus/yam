@@ -12,8 +12,8 @@
 
 #include "private.h"
 #include "tzfile.h"
-#include "fcntl.h"
-#include "float.h"	/* for FLT_MAX and DBL_MAX */
+#include <fcntl.h>
+#include <float.h>	/* for FLT_MAX and DBL_MAX */
 
 #ifndef TZ_ABBR_MAX_LEN
 #define TZ_ABBR_MAX_LEN	16
@@ -275,7 +275,7 @@ settzname(void)
 		register const struct ttinfo * const	ttisp = &sp->ttis[i];
 
 		tzname[ttisp->tt_isdst] = &sp->chars[ttisp->tt_abbrind];
-	}	
+	}
 	for (i = 0; i < sp->timecnt; ++i) {
 		register const struct ttinfo * const	ttisp =
 							&sp->ttis[
