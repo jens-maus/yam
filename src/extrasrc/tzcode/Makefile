@@ -21,7 +21,7 @@
 # YAM Official Support Site :  http://www.yam.ch
 # YAM OpenSource project    :  http://sourceforge.net/projects/yamos/
 #
-# $Id: Makefile 6510 2013-01-14 08:06:33Z thboeckel $
+# $Id$
 #
 #***************************************************************************/
 
