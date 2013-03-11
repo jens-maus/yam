@@ -153,7 +153,7 @@ WARN     = -W -Wall -Wwrite-strings -Wpointer-arith -Wsign-compare #-Wunreachabl
 OPTFLAGS = -O3 -fomit-frame-pointer -fno-strict-aliasing
 DEBUG    = -DDEBUG -fno-omit-frame-pointer #-O0
 DEBUGSYM = -g -gstabs
-CFLAGS   = -I. -I./include $(CPU) $(WARN) $(OPTFLAGS) $(DEBUG) $(DEBUGSYM) -DHAVE_STDINT_H
+CFLAGS   = -I. -I./include $(CPU) $(WARN) $(OPTFLAGS) $(DEBUG) $(DEBUGSYM) -DHAVE_STDINT_H -DSTD_INSPIRED
 LDFLAGS  = $(CPU) $(DEBUGSYM)
 LDLIBS   = -L$(LIB) -lm
 
@@ -219,7 +219,7 @@ ifeq ($(OS), mos)
   CPU     = -mcpu=powerpc
   CFLAGS  += -noixemul -I./include/netinclude
   LDFLAGS += -noixemul
-  LDLIBS  += 
+  LDLIBS  +=
   GCCVER  = 2
 
 else
@@ -238,7 +238,7 @@ ifeq ($(OS), aros-i386)
   # Compiler/Linker flags
   OPTFLAGS = -O2 -fomit-frame-pointer
   CFLAGS += -Wno-pointer-sign -DNO_INLINE_STDARG -D__BSD_VISIBLE=1
-  LDLIBS += 
+  LDLIBS +=
 
 else
 ifeq ($(OS), aros-ppc)
@@ -256,7 +256,7 @@ ifeq ($(OS), aros-ppc)
   # Compiler/Linker flags
   OPTFLAGS = -O2 -fomit-frame-pointer
   CFLAGS += -Wno-pointer-sign -DNO_INLINE_STDARG -D__BSD_VISIBLE=1
-  LDLIBS += 
+  LDLIBS +=
 
 else
 ifeq ($(OS), aros-x86_64)
@@ -274,7 +274,7 @@ ifeq ($(OS), aros-x86_64)
   # Compiler/Linker flags
   OPTFLAGS = -O2 -fomit-frame-pointer
   CFLAGS += -Wno-pointer-sign -DNO_INLINE_STDARG -D__BSD_VISIBLE=1 -DINT_FAST64_MAX
-  LDLIBS += 
+  LDLIBS +=
 
 else
 ifeq ($(OS), aros-arm)
@@ -292,7 +292,7 @@ ifeq ($(OS), aros-arm)
   # Compiler/Linker flags
   OPTFLAGS = -O2 -fomit-frame-pointer
   CFLAGS += -Wno-pointer-sign -DNO_INLINE_STDARG -D__BSD_VISIBLE=1
-  LDLIBS += 
+  LDLIBS +=
 
 endif
 endif
