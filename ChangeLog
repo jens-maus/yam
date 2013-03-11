@@ -5,6 +5,31 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-03-10 Jens Langner <Jens.Langner@light-speed.de>
+
+  * resources/zoneinfo, tools/tzdata: added raw source files of the tzdata2013a
+    zoneinfo archive taken from iana.org and added a new mktzdata.sh shell
+    script to generate zoneinfo binary files in the newly created "zoneinfo"
+    directory in the resources path of YAM. This will allow to use these files
+    with our new zoneinfo query functions in libtz.a. This refs #10.
+
+2013-03-09 Jens Langner <Jens.Langner@light-speed.de>
+
+  * extrasrc/tzcode, lib/*/libtz.a: added Makefile to the new zoneinfo functions
+    and adapted them to be compiled for all Amiga platforms. However, they still
+    need to be adapted to work as expected. Added first versions of libtz.a for
+    all supported platforms in the lib path. This refs #10.
+  * extrasrc/tzcode: added sources of zoneinfo sources for common functions
+    like localtime(), mktime(), etc. These sources are under public domain and
+    were taken from tzcode2013a.tar.gz (http://www.iana.org/time-zones).
+    This refs #10.
+
+2013-03-08 Thore Böckelmann <tboeckel@gmx.de>
+
+  * MailTransferList.c: lock the list while scanning the mail for matching
+    flags.
+  * mui/TransferMailList.c: added some NULL checks to fix #390 again.
+
 2013-03-06 Pär Boberg <pbobbenb@spray.se>
 
   * locale/swedish.ct: updated to the latest changes.
