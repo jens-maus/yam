@@ -243,7 +243,7 @@ void rx_mailinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
           results->subject = mail->Subject;
           results->size = &mail->Size;
           results->msgid = strdup(email->messageID);
-          snprintf(results->flags = optional->flags, sizeof(optional->flags), "%c%c%c%c%c-%c%c%c",
+          snprintf(optional->flags, sizeof(optional->flags), "%c%c%c%c%c-%c%c%c",
                     isMultiRCPTMail(mail) ? 'M' : '-',
                     isMP_MixedMail(mail)  ? 'A' : '-',
                     isMP_ReportMail(mail) ? 'R' : '-',
@@ -253,6 +253,7 @@ void rx_mailinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
                     vf ? vf+'0' : '-',
                     hasStatusMarked(mail) ? 'M' : '-'
                  );
+          results->flags = optional->flags;
 
           MA_FreeEMailStruct(email);
         }
