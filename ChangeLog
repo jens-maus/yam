@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-03-12 Thore Böckelmann <tboeckel@gmx.de>
+
+  * rexx/mailinfo.c: added some NULL pointer checks. This refs #393.
+
 2013-03-10 Jens Langner <Jens.Langner@light-speed.de>
 
   * resources/zoneinfo, tools/tzdata: added raw source files of the tzdata2013a

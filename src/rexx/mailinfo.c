@@ -115,7 +115,8 @@ void rx_mailinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
 
         optional->active = args->index[0];
         DoMethod(lv, MUIM_NList_GetEntry, optional->active, &mail);
-        folder = mail->Folder;
+        if(mail != NULL)
+          folder = mail->Folder;
       }
       else
         mail = MA_GetActiveMail(NULL, &folder, (APTR)&optional->active);
@@ -136,9 +137,9 @@ void rx_mailinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
 
           if(hasStatusError(mail))
             results->status = "E"; // Error status
-          else if(isOutgoingFolder(mail->Folder))
+          else if(mail->Folder != NULL && isOutgoingFolder(mail->Folder))
             results->status = "W"; // Queued (WaitForSend) status
-          else if(isDraftsFolder(mail->Folder))
+          else if(mail->Folder != NULL && isDraftsFolder(mail->Folder))
             results->status = "H"; // Hold status
           else if(hasStatusSent(mail))
             results->status = "S"; // Sent status
@@ -237,7 +238,8 @@ void rx_mailinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
           else
             params->rc = RETURN_ERROR;
 
-          DateStamp2String(results->date = optional->date, sizeof(optional->date), &mail->Date, DSS_USDATETIME, TZC_LOCAL);
+          DateStamp2String(optional->date, sizeof(optional->date), &mail->Date, DSS_USDATETIME, TZC_LOCAL);
+          results->date = optional->date;
           results->subject = mail->Subject;
           results->size = &mail->Size;
           results->msgid = strdup(email->messageID);
