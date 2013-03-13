@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-03-13 Thore Böckelmann <tboeckel@gmx.de>
+
+  * rexx/mailread.c: remember the ARexx RMData pointer on success only.
+
 2013-03-12 Thore Böckelmann <tboeckel@gmx.de>
 
   * rexx/mailinfo.c: added some NULL pointer checks. This refs #393.

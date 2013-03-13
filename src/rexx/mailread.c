@@ -87,8 +87,6 @@ void rx_mailread(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
 
           if((rmData = CreateReadWindow(TRUE)) != NULL)
           {
-            G->ActiveRexxRMData = rmData;
-
             if(args->quiet == FALSE)
               SafeOpenWindow(rmData->readWindow);
 
