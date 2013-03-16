@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-03-16 Jens Langner <Jens.Langner@light-speed.de>
+
+  * resources/zoneinfo, tools/tzdata: updated tzdata/tzcode environment to the
+    latest version (2013b) released by iana.org.
+  * resources/zoneinfo: removed iso3166.tab file as we won't require it in our
+    own upcoming YAM interface.
+
 2013-03-13 Thore Böckelmann <tboeckel@gmx.de>
 
   * rexx/mailread.c: remember the ARexx RMData pointer on success only.
