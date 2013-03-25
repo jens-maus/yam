@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.2 (27.12.2012)
+## version $VER: YAM.catalog 8.3 (25.03.2013)
 ## language türkçe
 ## codeset 0
 ## chunk AUTH Alper Sönmez <amithlondestek@gmail.com>
@@ -461,11 +461,6 @@ MSG_LOG_Replying
 '%s'den gelen, '%s' konulu ileti yanýtlandý
 ; Replied message from '%s' about '%s'
 ; SENDER, SUBJECT
-;
-MSG_LOG_Bouncing
-'%s'den gelen, '%s' konulu ileti, '%s'ye sektirildi
-; Bounced message from '%s' about '%s' to '%s'
-; SENDER, SUBJECT, RECIPIENT
 ;
 MSG_LOG_Forwarding
 '%s'den gelen, '%s' konulu ileti '%s'ye iletildi
@@ -1358,10 +1353,6 @@ MSG_CO_ApplyOnReq
 Ýs_tenildiðinde uygula
 ; Apply on _request
 ;
-MSG_CO_ActionBounce
-Sekti_r
-; _Bounce
-;
 MSG_CO_ActionForward
 Ýle_t
 ; _Forward
@@ -2083,18 +2074,6 @@ Bu süzgeç için kurallarýn\n\
 birleþtirilme þekli.
 ; How to combine the rules\n\
 ; for this filter.
-;
-MSG_HELP_CO_CH_ABOUNCE
-Eþleþen iletileri baþka\n\
-bir alýcýya sektir.
-; Bounce matching messages\n\
-; to another person.
-;
-MSG_HELP_CO_ST_ABOUNCE
-Sektirilen iletileri alacak\n\
-e-posta adres(ler)i.
-; E-mail address(es) that should\n\
-; get the bounced messages.
 ;
 MSG_HELP_CO_CH_AFORWARD
 Eþleþen iletileri baþka\n\
@@ -3768,14 +3747,6 @@ MSG_WR_Signature
 Ýmza
 ; Signature
 ;
-MSG_WR_BounceWT
-Ýletiyi sektir
-; Bounce message
-;
-MSG_WR_BounceTo
-Kime sektir
-; Bounce _to
-;
 ;
 ; Module WR - Toolbar
 ;
@@ -4109,13 +4080,6 @@ Bu iletinin\n\
 ; Set the priority\n\
 ; of this message.
 ;
-MSG_HELP_WR_BT_HOLD
-Oluþturulan iletiyi Giden klasörüne\n\
-koy ve durumunu 'bekliyor' yap.
-; Copy the created message to\n\
-; the Outgoing folder and set\n\
-; its status to 'hold'.
-;
 MSG_HELP_WR_BT_QUEUE
 Oluþturulan iletiyi\n\
 Giden klasörüne koy.
@@ -4129,12 +4093,6 @@ ve acilen gönder.
 ; Copy the created message to\n\
 ; the Outgoing folder and send\n\
 ; it immediately.
-;
-MSG_HELP_WR_BT_CANCEL
-Oluþturulan iletiyi\n\
-yoksay.
-; Discard the\n\
-; created message.
 ;
 ;
 ; Module TR - Procedures
@@ -4385,14 +4343,6 @@ MSG_ER_ErrorARexxScript
 ARexx komutu '%s' gönderilemedi. Betiðin varlýðýný kontrol ediniz.
 ; Couldn't send ARexx command '%s'. Make sure that the script exists.
 ; REXX_COMMAND
-;
-MSG_ER_CreateMailError
-Posta dosyasý oluþturulamadý.\n\
-\n\
-Neden: geçersiz klasör dizine veya yetersiz disk alaný.
-; Couldn't create mail file.\n\
-; \n\
-; Reason: invalid folder directory or insufficient disk space.
 ;
 MSG_ER_CantOpenFile
 '%s' dosyasýndan okunamadý.\n\
@@ -7251,14 +7201,6 @@ MSG_MA_TOREAD
 Okunmuþ
 ; Read
 ;
-MSG_MA_TOHOLD
-Bekleyen
-; Hold
-;
-MSG_MA_TOQUEUED
-Sýraya alýnmýþ
-; Queued
-;
 MSG_PROJECT_MABOUT
 Hakkýnda...
 ; About...
@@ -7298,10 +7240,6 @@ Yanýtla...
 MSG_MA_MFORWARD
 Ýlet...
 ; Forward...
-;
-MSG_MA_MBOUNCE
-Sektir...
-; Bounce...
 ;
 MSG_MA_MSAVEADDRESS
 Adresi kaydet...
@@ -7773,14 +7711,6 @@ MSG_WR_SENDLATER
 S_onra gönder
 ; Send _later
 ;
-MSG_WR_HOLD
-_Beklet
-; _Hold
-;
-MSG_WR_CANCEL
-Ýptal
-; Cancel
-;
 MSG_WR_MSENDNOW
 Þimdi gönder
 ; Send now
@@ -7788,14 +7718,6 @@ MSG_WR_MSENDNOW
 MSG_WR_MSENDLATER
 Sonra gönder
 ; Send later
-;
-MSG_WR_MHOLD
-Beklet
-; Hold
-;
-MSG_WR_MCANCEL
-Ýptal
-; Cancel
 ;
 MSG_ER_CONNECTIONBROKEN
 '%s' sunucusu ile baðlantý, \
@@ -9669,7 +9591,7 @@ Genel Ayarlar
 ; General Settings
 ;
 MSG_CO_IDENTITY_REGISTER_SETTINGS
-Genel Ayarla
+Genel Ayarlar
 ; General Settings
 ;
 MSG_CO_IDENTITY_REGISTER_COMPOSE
@@ -10372,4 +10294,88 @@ yeniden baþlatmalýsýnýz.
 ; from an AmigaOS 3.1-3.9 installation to 'SYS:Libs', rename \
 ; the 'rexxsyslib.library' in 'MOSSYS:Libs' and reboot your \
 ; system.
+;
+MSG_WR_SAVEASDRAFT
+Taslak olarak kaydet
+; Save as draft
+;
+MSG_HELP_WR_BT_SAVEASDRAFT
+Ýletiyi 'Taslaklar' klasörüne\n\
+kaydeder.
+; Saves the message to\n\
+; the 'Drafts' folder.
+;
+MSG_WR_MSAVEASDRAFT
+Taslak olarak kaydet
+; Save as draft
+;
+MSG_WR_MCLOSE
+Kapat
+; Close
+;
+MSG_LOG_REDIRECT
+'%s'dan gelen, '%s' baþlýklý ileti, '%s' alýcýsýna yönlendirildi.
+; Redirected message from '%s' about '%s' to '%s'
+; SENDER, SUBJECT, RECIPIENT
+;
+MSG_CO_ACTIONREDIRECT
+_Yönlendir
+; _Redirect
+;
+MSG_HELP_CO_CH_AREDIRECT
+Eþleþen iletileri bir baþka\n\
+kiþiye yönlendirir.
+; Redirect matching messages\n\
+; to another person.
+;
+MSG_HELP_CO_ST_AREDIRECT
+Yönlendirilen iletileri alacak\n\
+e-posta adresleri.
+; E-mail address(es) that should\n\
+; get the redirected messages.
+;
+MSG_MA_MREDIRECT
+Yönlendir...
+; Redirect...
+;
+MSG_WR_REDIRECT_FROM
+Yönlendir-_Gönderen
+; Resent-_From
+;
+MSG_WR_REDIRECT_TO
+Yönlendir-_Kime
+; Resent-_To
+;
+MSG_WR_REDIRECT_CC
+Yönlendir-_CC
+; Resent-_CC
+;
+MSG_WR_REDIRECT_BCC
+Yönlendir-_BCC
+; Resent-_BCC
+;
+MSG_WR_REDIRECT_TITLE
+Ýleti yönlendir
+; Redirect message(s)
+;
+MSG_ER_CANNOT_CREATE_MAIL_FILE
+'%s' e-posta dosyasý oluþturulamadý.\n\
+\n\
+Neden: geçersiz klasör dizini veya yetersiz disk alaný.
+; Could not create mail file '%s'.\n\
+; \n\
+; Reason: invalid folder directory or insufficient disk space.
+; FILE
+;
+MSG_WR_RENAME
+_Yeniden adlandýr
+; _Rename
+;
+MSG_WR_RENAME_ATTACHMENT
+Eki yeniden adlandýr
+; Rename attachment
+;
+MSG_WR_ENTER_NEW_NAME
+Yeni ek adýný girin:
+; Enter new attachment name:
 ;

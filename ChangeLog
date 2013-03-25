@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-03-25 Alper Sönmez <amithlondestek@gmail.com>
+
+ * locale/turkish.ct: update to the latest changes.
+
 2013-03-16 Jens Langner <Jens.Langner@light-speed.de>
 
   * resources/zoneinfo, tools/tzdata: updated tzdata/tzcode environment to the
