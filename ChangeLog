@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-03-25 Jens Langner <Jens.Langner@light-speed.de>
+
+  * resources/certificates: updated ca-bundle.crt using latest version available
+    at http://curl.haxx.se/ca/
+
 2013-03-25 Alper Sönmez <amithlondestek@gmail.com>
 
  * locale/turkish.ct: update to the latest changes.
