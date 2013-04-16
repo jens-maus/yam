@@ -1780,7 +1780,6 @@ HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
   Object *lv = G->MA->GUI.NL_FOLDERS;
 
   ENTER();
-  fprintf(stderr, "%s %08lx %08lx '%s'\n",__FUNCTION__,folder,folder->Treenode,folder->Name);
 
   switch(folder->Type)
   {
