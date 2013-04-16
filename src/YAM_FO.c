@@ -1604,12 +1604,11 @@ HOOKPROTONHNONP(FO_NewFolderGroupFunc, void)
 
   ENTER();
 
-  memset(&folder, 0, sizeof(struct Folder));
+  memset(&folder, 0, sizeof(folder));
   folder.Type = FT_GROUP;
 
   if(StringRequest(folder.Name, SIZE_NAME, tr(MSG_FO_NEWFGROUP), tr(MSG_FO_NEWFGROUPREQ), tr(MSG_Okay), NULL, tr(MSG_Cancel), FALSE, G->MA->GUI.WI) != 0)
   {
-    LONG tnflags = TNF_LIST | TNF_OPEN;
     struct FolderNode *fnode;
 
     LockFolderList(G->folders);
@@ -1618,7 +1617,8 @@ HOOKPROTONHNONP(FO_NewFolderGroupFunc, void)
 
     if(fnode != NULL)
     {
-      DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, folder.Name, fnode, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags);
+      // insert the new folder node and remember its treenode pointer
+      fnode->folder->Treenode = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, folder.Name, fnode, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, TNF_LIST | TNF_OPEN);
 
       FO_SaveTree();
     }
@@ -1780,6 +1780,7 @@ HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
   Object *lv = G->MA->GUI.NL_FOLDERS;
 
   ENTER();
+  fprintf(stderr, "%s %08lx %08lx '%s'\n",__FUNCTION__,folder,folder->Treenode,folder->Name);
 
   switch(folder->Type)
   {
