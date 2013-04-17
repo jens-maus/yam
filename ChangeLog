@@ -7,9 +7,10 @@ $URL$
 
 2013-04-17 Thore Böckelmann <tboeckel@gmx.de>
 
-  * mui/FilterChooser.c, mui/IdentityChooser.c, mui/SignatureChooser.c: added a
-    dummy cycle entry for the AROS build. Otherwise the config window will refuse
-    to open, because Zune's cycle class requires a valid entries pointer.
+  * mui/FilterChooser.c, mui/IdentityChooser.c, mui/MailServerChooser.c,
+    mui/SignatureChooser.c: added a dummy cycle entry for the AROS build.
+    Otherwise the config window will refuse to open, because Zune's cycle
+    class requires a valid entries pointer during object creation.
 
 2013-04-16 Thore Böckelmann <tboeckel@gmx.de>
 

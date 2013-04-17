@@ -54,12 +54,20 @@ struct Data
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
+  #if defined(__AROS__)
+  // Zune must be provided a valid MUIA_Cycle_Entries pointer
+  static const char *dummy[] = { "", NULL };
+  #endif
+
   ENTER();
 
   if((obj = DoSuperNew(cl, obj,
 
     MUIA_CycleChain,    TRUE,
     MUIA_Font,          MUIV_Font_Button,
+    #if defined(__AROS__)
+    MUIA_Cycle_Entries, dummy,
+    #endif
 
     TAG_MORE, inittags(msg))) != NULL)
   {
