@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-04-24 Thore Böckelmann <tboeckel@gmx.de>
+
+  * locale/greek.ct: updated greek translation kindly provided by Antonis
+    Iliakis.
+
 2013-04-17 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/FilterChooser.c, mui/IdentityChooser.c, mui/MailServerChooser.c,

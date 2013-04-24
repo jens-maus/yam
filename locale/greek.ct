@@ -1,8 +1,9 @@
-## version $VER: yam.catalog 7.5 (18.05.2012)
+## version $VER: yam.catalog 8.0 (26.12.2012)
 ## language greek
 ## codeset 10
 ## chunk AUTH Antonis Iliakis
 ;
+; YAM.cd - YAM 2.8 catalog description file
 ; $Id$
 ;
 ; Please note that all catalog strings have to carry a proper
@@ -35,10 +36,6 @@ MSG_Attachments
 MSG_Options
 Επιλογές
 ; Options
-;
-MSG_Add
-_Νέο
-; _New
 ;
 MSG_Del
 _Διαγραφή
@@ -87,10 +84,6 @@ _Ακύρωση
 MSG_OkayReq
 *_Εντάξει
 ; *_Ok
-;
-;MSG_OkayCancelReq
-;*_Εντάξει|_Ακύρωση
-; *_Ok|_Cancel
 ;
 MSG_YesNoReq
 *_Ναι|_Οχι
@@ -225,7 +218,7 @@ MSG_CompilationDate
 ; Compilation date:
 ;
 MSG_UserLogin
-Κάντε κλίκ στο όνομά σας για να εισέρθετε
+Κάντε κλικ στο όνομά σας για να εισέρθετε
 ; Click your name to login
 ;
 MSG_ErrorStartup
@@ -263,10 +256,6 @@ MSG_LoadingABook
 MSG_InitLibs
 Προετοιμασία βιβλιοθηκών και κλάσεων...
 ; Initializing libraries and classes...
-;
-MSG_ErrorClasses
-Αδυναμία δημιουργίας ειδικών κλάσεων MUI
-; Can't create MUI custom classes
 ;
 MSG_ErrorAslStruct
 Αδυναμία κατανομής δομής ASL
@@ -434,20 +423,10 @@ MSG_LOG_CopyingVerbose
 ; Copied message from '%s' about '%s' from folder '%s' to '%s'
 ; SENDER, SUBJECT, FOLDER, FOLDER
 ;
-;MSG_LOG_ConnectPOP
-;Συνδεδεμένος με τον POP3 λογαριασμό '%s@%s': %ld μηνύματα περιμένουν
-; Logged in on POP3 account '%s@%s': %ld messages waiting
-; USER_ID, HOST, COUNT
-;
 MSG_LOG_RetrievingVerbose
 Ανακτήθηκε μήνυμα από '%s' με θέμα '%s' (%ld bytes)
 ; Retrieved message from '%s' about '%s' (%ld bytes)
 ; SENDER, SUBJECT, SIZE
-;
-;MSG_LOG_Retrieving
-;Ανακτήθηκαν %ld μηνύματα από τον POP3 λογαριασμό '%s@%s'
-; Retrieved %ld message(s) from POP3 account '%s@%s'
-; COUNT, USER_ID, HOST
 ;
 MSG_LOG_ConnectSMTP
 Συνδέθηκε στον SMTP διακομιστή '%s'
@@ -460,7 +439,7 @@ MSG_LOG_SendingVerbose
 ; RECIPIENT, SUBJECT, SIZE
 ;
 MSG_LOG_Sending
-Εστάλθηκαν %ld μηνύματα χρησιμοποιώντας τον SMTP διακομιστή '%s'
+Εστάλησαν %ld μηνύματα χρησιμοποιώντας τον SMTP διακομιστή '%s'
 ; Sent %ld message(s) using SMTP server '%s'
 ; COUNT, HOST
 ;
@@ -478,11 +457,6 @@ MSG_LOG_Replying
 Απαντήθηκε μήνυμα από '%s' με θέμα '%s'
 ; Replied message from '%s' about '%s'
 ; SENDER, SUBJECT
-;
-MSG_LOG_Bouncing
-Επιστράφηκε μήνυμα από '%s' με θέμα '%s' προς '%s'
-; Bounced message from '%s' about '%s' to '%s'
-; SENDER, SUBJECT, RECIPIENT
 ;
 MSG_LOG_Forwarding
 Προωθήθηκε μήνυμα από '%s' με θέμα '%s' προς '%s'
@@ -582,7 +556,7 @@ MSG_MA_ConfirmReq
 ; Confirmation Request
 ;
 MSG_MA_FilterStats
-Το φιλτράρισμα έγινε:\n\n%3ld μηνύματα ελέγχθηκαν,\n%3ld προωθήθηκαν,\n%3ld αρχειοθετήθηκαν,\n%3ld διεγράφηκαν
+Το φιλτράρισμα έγινε:\n\n%3ld μηνύματα ελέγχθηκαν,\n%3ld προωθήθηκαν,\n%3ld αρχειοθετήθηκαν,\n%3ld διαγράφηκαν
 ; Filtering done:\n\n%3ld messages checked,\n%3ld forwarded,\n%3ld archived,\n%3ld deleted
 ; COUNT, COUNT, COUNT, COUNT
 ;
@@ -627,11 +601,11 @@ MSG_MA_TitleStatus
 ; Status
 ;
 MSG_MA_Scripts
-Σενάρια
+Δέσμες εντολών
 ; Scripts
 ;
 MSG_MA_ExecuteScript
-Εκτέλεση σεναρίου...
+Εκτέλεση δέσμης εντολών...
 ; Execute script...
 ;
 MSG_MA_CheckSingle
@@ -758,41 +732,13 @@ MSG_MA_Select
 Επιλογή
 ; Select
 ;
-MSG_MA_FlushIndices
-Εκκαθάριση δεικτών
-; Flush indices
-;
-;MSG_MA_MEdit
-;Επεξεργασία...
-; Edit...
-;
 MSG_MA_MDelete
 Διαγραφή
 ; Delete
 ;
-;MSG_MA_MMove
-;Μετακίνηση...
-; Move...
-;
-;MSG_MA_MCopy
-;Αντιγραφή...
-; Copy...
-;
 MSG_MA_Save
 Αποθήκευση...
 ; Save...
-;
-;MSG_MA_MReply
-;Απάντηση...
-; Reply...
-;
-;MSG_MA_MForward
-;Προώθηση...
-; Forward...
-;
-;MSG_MA_MBounce
-;Επιστροφή...
-; Bounce...
 ;
 MSG_MA_MGetAddress
 Αποθήκευση διεύθυνσης...
@@ -1045,10 +991,6 @@ MSG_CO_CrdTCPIP
 TCP/IP
 ; TCP/IP
 ;
-MSG_CO_CrdNewMail
-Νέα αλληλογραφία
-; New mail
-;
 MSG_CO_CrdFilters
 Φίλτρα
 ; Filters
@@ -1064,10 +1006,6 @@ MSG_CO_CrdWrite
 MSG_CO_CrdSignature
 Υπογραφή
 ; Signature
-;
-MSG_CO_CrdLists
-Λίστες
-; Lists
 ;
 MSG_CO_CrdMIME
 MIME
@@ -1209,10 +1147,6 @@ MSG_CO_EmailAddress
 Διεύθυνση E-mail
 ; _E-mail address
 ;
-MSG_CO_POPServer
-Διακομιστής POP3
-; POP_3 server
-;
 MSG_CO_Password
 Κωδικός
 ; _Password
@@ -1224,10 +1158,6 @@ MSG_CO_TimeZone
 MSG_CO_SendMail
 Αποστολή αλληλογραφίας (SMTP)
 ; Send mail (SMTP)
-;
-MSG_CO_Domain
-Τομέας
-; Do_main
 ;
 MSG_CO_Allow8bit
 Ο διακομιστής επιτρέπει 8bit χαρακτήρες
@@ -1248,10 +1178,6 @@ MSG_CO_POPActive
 MSG_CO_DeleteServerMail
 Διαγραφή αλληλογραφίας στον διακομιστή
 ; Delete mail _on server
-;
-MSG_CO_UseAPOP
-Σύνδεση με χρήση APOP
-; _Log in using APOP
 ;
 MSG_CO_PSNever
 ποτέ
@@ -1281,14 +1207,6 @@ MSG_CO_TWAlways
 πάντα εμφάνιση
 ; show always
 ;
-MSG_CO_Download
-Λήψη
-; Download
-;
-;MSG_CO_AvoidDuplicates
-;Αποφυγή διπλότυπων
-; _Avoid duplicates
-;
 MSG_CO_TransferWin
 Παράθυρο μεταφοράς
 ; _Transfer window
@@ -1297,22 +1215,6 @@ MSG_CO_PreSelect
 Προεπιλογή
 ; _Pre-selection
 ;
-MSG_CO_UpdateStatus
-Ενημέρωση κατάστασης μηνύματος
-; Update m_essage status
-;
-MSG_CO_WarnSize1
-Όριο μεγέθους
-; Size _limit
-;
-MSG_CO_WarnSize2
-KB
-; KB
-;
-MSG_CO_AutoOperation
-Αυτόματη λειτουργία
-; Automatic operation
-;
 MSG_CO_CheckMail
 Έλεγχος για νέα αλληλογραφία κάθε
 ; Check for new mail every
@@ -1320,14 +1222,6 @@ MSG_CO_CheckMail
 MSG_CO_Minutes
 λεπτά
 ; minutes
-;
-MSG_CO_DownloadLarge
-Λήψη μεγάλων μηνυμάτων
-; _Download large messages
-;
-MSG_CO_Notification
-Ειδοποίηση
-; Notification
 ;
 MSG_CO_NotiReq
 Παράθυρο αιτήματος
@@ -1380,10 +1274,6 @@ MSG_CO_ApplyToSent
 MSG_CO_ApplyOnReq
 Εφαρμογή κατόπιν αιτήσεως
 ; Apply on _request
-;
-MSG_CO_ActionBounce
-Επιστροφή
-; _Bounce
 ;
 MSG_CO_ActionForward
 Προώθηση
@@ -1466,11 +1356,11 @@ MSG_CO_OtherOptions
 ; Other options
 ;
 MSG_CO_WrapHeader
-Αναδύπλωση κεφαλίδων
+Αναδίπλωση κεφαλίδων
 ; _Wrap headers
 ;
 MSG_CO_OldQuotes
-Παλιές παρεθέσεις
+Παλιές παραθέσεις
 ; Old quotes
 ;
 MSG_CO_Header
@@ -1517,14 +1407,6 @@ MSG_CO_DefaultViewer
 Προεπιλεγμένο αρχείο προβολής
 ; De_fault viewer
 ;
-MSG_CO_MessageHeader
-Μήνυμα κεφαλίδων
-; Message headers
-;
-MSG_CO_ReplyTo
-Απάντηση προς
-; _Reply to
-;
 MSG_CO_Organization
 Οργάνωση
 ; _Organization
@@ -1550,7 +1432,7 @@ MSG_CO_Editor
 ; Editor
 ;
 MSG_CO_WordWrap
-Αναδύπλωση λέξης
+Αναδίπλωση λέξης
 ; _Word-wrap
 ;
 MSG_CO_EWOff
@@ -1645,10 +1527,6 @@ MSG_CO_Signature
 Υπογραφή
 ; Signature
 ;
-MSG_CO_UseSig
-Χρήση υπογραφών
-; Use s_ignatures
-;
 MSG_CO_EditSig
 Επεξεργασία με εξωτερικό κειμενογράφο
 ; _Edit in external editor
@@ -1697,26 +1575,6 @@ MSG_CO_PGPExe
 Κατάλογος PGP
 ; P_GP's directory
 ;
-MSG_CO_PGPKey
-Ταυτότητα κλειδιού PGP
-; Your PGP key _ID
-;
-MSG_CO_EncryptToSelf
-Προσωπική κρυπτογράφηση
-; _Encrypt to self
-;
-;MSG_CO_AnonMail
-;Ανώνυμη αλληλογραφία
-; Anonymous mail
-;
-;MSG_CO_ReMailer
-;Αναταχυδρομητής
-; _Re-Mailer
-;
-;MSG_CO_ReMailerLine
-;Πεδίο κεφαλίδας
-; _Header field
-;
 MSG_CO_Logfiles
 Αρχεία καταγραφής
 ; Log files
@@ -1753,10 +1611,6 @@ MSG_CO_SendStart
 Αποστολή αλληλογραφίας στην ουρά εξερχομένων
 ; Send mail in outgoing queue
 ;
-;MSG_CO_PopStart
-;Λήψη νέας αλληλογραφίας
-; Download new mail
-;
 MSG_CO_CheckDOB
 Έλεγχος ημερομηνιών γέννησης
 ; Check birthdates
@@ -1770,7 +1624,7 @@ MSG_CO_DeleteOld
 ; Delete old mail
 ;
 MSG_CO_RemoveDel
-Αφαίρεση διεγραμμένης αλληλογραφίας
+Αφαίρεση διαγραμμένης αλληλογραφίας
 ; Remove deleted mail
 ;
 MSG_CO_ATABnever
@@ -1801,10 +1655,6 @@ MSG_CO_Gallery
 Αποθήκευση φωτογραφιών σε
 ; Save _photos in
 ;
-MSG_CO_MyURL
-URL της εικόνας σας
-; UR_L of your picture
-;
 MSG_CO_AddToAddrbook
 Αποθήκευση διεύθυνσης αποστολέα
 ; Sa_ve sender's address
@@ -1816,10 +1666,6 @@ MSG_CO_ProxyServer
 MSG_CO_NewGroup
 Ομάδα για νέες καταχωρήσεις
 ; _Group for new entries
-;
-MSG_CO_AddInfo
-Προσθήκη προσωπικής πληροφορίας
-; _Add personal info
 ;
 MSG_CO_Paths
 Διαδρομές
@@ -1846,7 +1692,7 @@ MSG_CO_PositionX
 ; Position _X
 ;
 MSG_CO_CloseGadget
-Κλείσιμο παραθύρου για εικονοποίηση
+Κλείσιμο παραθύρου για ελαχιστοποίηση
 ; Close _gadget iconifies program
 ;
 MSG_CO_SaveDelete
@@ -1865,10 +1711,6 @@ MSG_CO_Remove
 Άμεση αφαίρεση μηνυμάτων
 ; _Remove messages immediately
 ;
-MSG_CO_SaveSent
-Αποθήκευση απεσταλμένων μηνυμάτων
-; Sa_ve sent messages
-;
 MSG_CO_XPK
 Επιλογές XPK/LhA
 ; XPK/LhA settings
@@ -1886,7 +1728,7 @@ MSG_CO_Archiver
 ; Archi_ver
 ;
 MSG_CO_ScriptMenu
-Καταχώρηση μενού 'Σεναρίων' %ld
+Καταχώρηση μενού 'Δέσμης εντολών' %ld
 ; 'Scripts' menu entry %ld
 ; COUNT
 ;
@@ -1919,11 +1761,11 @@ MSG_CO_ScriptPostSendMail
 ; After sending mail
 ;
 MSG_CO_ScriptReadMsg
-Ενώ διαβάζοντας ενα μήνυμα
+Ενώ διαβάζοντας ένα μήνυμα
 ; When reading a message
 ;
 MSG_CO_ScriptPreWriteMsg
-Πρίν την σύνταξη μηνύματος
+Πριν την σύνταξη μηνύματος
 ; Before writing a message
 ;
 MSG_CO_ScriptPostWriteMsg
@@ -1935,7 +1777,7 @@ MSG_CO_ScriptClickURL
 ; When double-clicking an URL
 ;
 MSG_CO_Script
-Σενάριο
+Δέσμη εντολών
 ; Sc_ript
 ;
 MSG_CO_OpenConsole
@@ -2008,10 +1850,6 @@ MSG_HELP_CO_ST_SMTPHOST
 Η διεύθυνση του διακομιστή SMTP για να στέλνετε αλληλογραφία.\nΕάν το αφήσετε κενό, η διεύθυνση του διακομιστή\nPOP3 θα χρησιμοποιηθεί αντί αυτής.
 ; The address of the SMTP server to send mail to.\nIf you leave this field empty, the address of the\nPOP3 server will be used as fallback.
 ;
-MSG_HELP_CO_ST_DOMAIN
-Το όνομα του υπολογιστή σας.\nΑλλάξτε αυτό το πεδίο εάν η εντολές\nHELO αποτύχουν.
-; The hostname of your computer.\nChange this field if the HELO\ncommands fails.
-;
 MSG_HELP_CO_CH_SMTP8BIT
 Μην μετατρέπετε τα μηνύματα σε 7-bit κατά την μεταφορά.\nΧρησιμοποιήστε την επιλογή μόνο εάν είστε σίγουρος ότι ο διακομιστής σας SMTP\nυποστηρίζει μεταφορά 8-bit, αλλιώς τα μηνύματα μπορεί να αλλοιωθούν.
 ; Do not convert messages to 7-bit when transferring.\nYou should only use this option if you're sure that your SMTP server\nsupports 8-bit transfers, otherwise your messages may get corrupted.
@@ -2036,29 +1874,17 @@ MSG_HELP_CO_CH_DELETE
 Διαγραφή μηνυμάτων από τον\nδιακομιστή αλληλογραφίας μετά\nτην λήψη.
 ; Delete messages from\nmail server after the\ndownload.
 ;
-MSG_HELP_CO_CH_USEAPOP
-Σύνδεση με χρήση ταυτοποίησης APOP\nγια να κρατήσετε το όνομα και κωδικό χρήστη\nμακριά από ανεπιθύμητους\n(δεν υποστηρίζεται από όλους τους διακομιστές POP3).
-; Log in using APOP authentication\nto keep your user name and password\naway from prying eyes.\n(not supported by all POP3 servers)
-;
 MSG_HELP_CO_CH_POPENABLED
 Κάντε έλεγχο του λογαριασμού ενώ\nγίνεται έλεγχος για νέα αλληλογραφία.
 ; Check this account while\nchecking for new mail.
-;
-;MSG_HELP_CO_CH_AVOIDDUP
-;Εάν δεν κάνετε διαγραφή παλιάς αλληλογραφίας\nστον διακομιστή, επιλέξτε αυτή την επιλογή για να\nαποφύγετε τα διπλότυπα μηνύματα.
-; If you don't delete old mail\non the server, use this option\nto avoid duplicate messages.
 ;
 MSG_HELP_CO_CH_TRANSWIN
 Εμφάνιση παραθύρου προόδου κατά\nτην μεταφορά αλληλογραφίας.
 ; Show a progress window\nduring mail transfers.
 ;
 MSG_HELP_CO_CY_MSGSELECT
-Η προεπιλογή μηνύματος δείχνει (μερικά από) τα περιέχομενα του\nγραμματοκιβωτίου POP3 και σας επιτρέπει να επιλέξετε ποιά μηνύματα\nθέλετε να κάνετε λήψη.
+Η προεπιλογή μηνύματος δείχνει (μερικά από) τα περιεχόμενα του\nγραμματοκιβωτίου POP3 και σας επιτρέπει να επιλέξετε ποιά μηνύματα\nθέλετε να κάνετε λήψη.
 ; Message pre-selection shows (a part of) the contents of the\nPOP3 mailbox and allows you to select which messages you\nwant to download.
-;
-MSG_HELP_CO_CH_UPDSTAT
-Σημαδέψτε τα νέα μηνύματα στον φάκελο εισερχόμενα\nως 'μη αναγνωσμένα' πριν την λήψη νέας αλληλογραφίας.
-; Mark new messages in the Incoming folder\nas 'unread' before downloading new mail.
 ;
 MSG_HELP_CO_ST_WARNSIZE
 Εισερχόμενα μηνύματα μεγαλύτερα από αυτό\nθα θεωρηθούν ως 'μεγάλα'.
@@ -2111,14 +1937,6 @@ MSG_HELP_CO_CH_APPLYREQ
 MSG_HELP_CO_CY_COMBINE
 Πως να συγκρίνετε τους όρους\nγια αυτό το φίλτρο.
 ; How to combine the rules\nfor this filter.
-;
-MSG_HELP_CO_CH_ABOUNCE
-Επιστροφή μηνυμάτων που ταιριάζουν\nσε άλλο άτομο.
-; Bounce matching messages\nto another person.
-;
-MSG_HELP_CO_ST_ABOUNCE
-Διευθύνσεις E-mail που θα πρέπει\nνα εντάξουν τα επιστρεφόμενα μηνύματα.
-; E-mail address(es) that should\nget the bounced messages.
 ;
 MSG_HELP_CO_CH_AFORWARD
 Προώθηση μηνυμάτων που ταιριάζουν\nσε άλλο άτομο.
@@ -2221,7 +2039,7 @@ MSG_HELP_CO_ST_CTYPE
 ; Enter a new MIME type or select one\nusing the popup button at the right.
 ;
 MSG_HELP_CO_ST_COMMAND
-Διαδρομή και προαιρετικές παραμέτρους της\nεντολής αρχείου προβολέα. Κάντε κλίκ στο κουμπί\nγια να δείτε ποιές μεταβλητητές υποστηρίζονται.
+Διαδρομή και προαιρετικές παραμέτρους της\nεντολής αρχείου προβολέα. Κάντε κλικ στο κουμπί\nγια να δείτε ποιές μεταβλητές υποστηρίζονται.
 ; Path and optional arguments of\nthe viewer command. Click the popup\nbutton to see the list of supported\nvariables.
 ;
 MSG_HELP_CO_BT_MADD
@@ -2240,18 +2058,6 @@ MSG_HELP_CO_ST_DEFVIEWER
 Πρόγραμμα για την χρήση εμφάνισης\nσυνημμένων άγνωστου τύπου.
 ; Program used to display\nattachments of unknown type.
 ;
-MSG_HELP_CO_ST_REPLYTO
-Αν θέλετε οι απαντήσεις των μηνυμάτων σας να στέλνονται\nπροκαθορισμένα κάπου αλλού επιπλεόν (ή αντί) της διεύθυνσης\ne-mail σας, καθορίστε αυτές τις διευθύνσεις εδώ.
-; Should replies to your messages need to be sent by\ndefault somewhere else besides (or instead of) your\ne-mail address, specify those other addresses here.
-;
-MSG_HELP_CO_ST_ORGAN
-Η ονομασία της εταιρίας\nή του ινστιτούτου σας.
-; The name of your\ncompany or institute.
-;
-MSG_HELP_CO_ST_EXTHEADER
-Πρόσθετο μήνυμα κεφαλίδας που θα\nπροστεθεί σε κάθε εξερχόμενο μήνυμα.
-; Additional message header(s) that will\nbe added to every outgoing message.
-;
 MSG_HELP_CO_ST_HELLOTEXT
 Κείμενο που θα εισάγετε στην\nκορυφή ενός νέου μηνύματος.
 ; Text to insert at the\ntop of a new message.
@@ -2261,7 +2067,7 @@ MSG_HELP_CO_ST_BYETEXT
 ; Text to add at the\nbottom of a new message.
 ;
 MSG_HELP_CO_ST_EDWRAP
-Κείμενο μηνύματος αναδύπλωσης λέξης\nσε αυτή την στήλη.
+Κείμενο μηνύματος αναδίπλωσης λέξης\nσε αυτή την στήλη.
 ; Word-wrap message text\nat this column.
 ;
 MSG_HELP_CO_CY_EDWRAP
@@ -2277,7 +2083,7 @@ MSG_HELP_CO_ST_EDITOR
 ; Filename of your\nfavorite text editor.
 ;
 MSG_HELP_CO_ST_FWDSTART
-Κείμενο που θα χρησιμοποιείται για την εισαγωγή ενός προωθημένου μηνύματος.\nΚάντε κλίκ στο κουμπί δεξιά για να δείτε τις μεταβλητές που μπορείτε να χρησιμοποιήσετε.
+Κείμενο που θα χρησιμοποιείται για την εισαγωγή ενός προωθημένου μηνύματος.\nΚάντε κλικ στο κουμπί δεξιά για να δείτε τις μεταβλητές που μπορείτε να χρησιμοποιήσετε.
 ; Text used to introduce a forwarded message.\nClick the popup button at the right to see\nthe variables you can use.
 ;
 MSG_HELP_CO_ST_FWDEND
@@ -2285,7 +2091,7 @@ MSG_HELP_CO_ST_FWDEND
 ; Text to add at the end\nof a forwarded message.
 ;
 MSG_HELP_CO_ST_REPLYTEXT
-Προκαθορισμένες φράσεις που θα χρησιμοποιηθούν ως απαντήσεις\nστα μηνύματα. Χρησιμοποιήστε το κουμπί στα δεξία να δείτε τις υποστηριζόμενες μεταβλητές.
+Προκαθορισμένες φράσεις που θα χρησιμοποιηθούν ως απαντήσεις\nστα μηνύματα. Χρησιμοποιήστε το κουμπί στα δεξιά για να δείτε τις υποστηριζόμενες μεταβλητές.
 ; Default phrases used in replies to messages. Use the\npopup button at the right to see the supported variables.
 ;
 MSG_HELP_CO_ST_AREPLYTEXT
@@ -2300,25 +2106,17 @@ MSG_HELP_CO_ST_MREPLYTEXT
 Κάντε χρήση αυτών των φράσεων για την απάντηση\nτων μηνυμάτων από την λίστα αλληλογραφίας.
 ; Use these phrases in replies to\nmessages from a mailing list.
 ;
-MSG_HELP_CO_CH_QUOTE
-Θέλετε να παραθέσετε το αρχικό\nμήνυμα στην απάντησή σας;
-; Quote the original\nmessage in your reply?
-;
 MSG_HELP_CO_CH_QUOTEEMPTY
 Θέλετε να εισάγετε χαρακτήρα παράθεσης\nγια κενές γραμμές;
 ; Insert quote character\nfor empty lines?
 ;
 MSG_HELP_CO_CH_COMPADDR
-Εάν επιλεχτεί, θα ερωτηθήτε που θέλετε να στείλετε την\nαπάντησή σας όταν οι διευθύνσεις 'Από:' και 'Απάντηση-Προς:'\nτου αρχικού μηνύματος διαφέρουν.
+Εάν επιλεχτεί, θα ερωτηθείτε που θέλετε να στείλετε την\nαπάντησή σας όταν οι διευθύνσεις 'Από:' και 'Απάντηση-Προς:'\nτου αρχικού μηνύματος διαφέρουν.
 ; If checked, you will be asked where to send your\nreply when the 'From:' and 'Reply-To:' addresses\nof the original message differ.
 ;
 MSG_HELP_CO_CH_STRIPSIG
 Αποφεύγει την παράθεση της υπογραφής\nτου αρχικού μηνύματος.
 ; Avoids quoting the signature\nof the original message.
-;
-MSG_HELP_CO_CY_SIGNAT
-Επιλέξτε την υπογραφή που\nθέλετε να επεξεργαστείτε.
-; Select the signature\nyou want to edit.
 ;
 MSG_HELP_CO_BT_EDITSIG
 Τροποποιήστε αυτή την υπογραφή\nχρησιμοποιώντας εξωτερικό κειμενογράφο.
@@ -2364,22 +2162,6 @@ MSG_HELP_CO_ST_PGPCMD
 Κατάλογος που μπορεί να βρεθεί\nτο εκτελέσιμο αρχείο PGP.
 ; Directory where the PGP\nexecutable can be found.
 ;
-MSG_HELP_CO_ST_MYPGPID
-Η ταυτότητα του κλειδιού PGP που χρησιμοποιήται\nγια την υπογραφή και κρυπτογράφηση των μηνυμάτων.
-; The ID of your PGP key that is used\nto sign and encrypt messages.
-;
-MSG_HELP_CO_CH_ENCSELF
-Κρυπτογράφηση νέων μηνυμάτων με το δημόσιο κλειδί σας,\nώστε να μπορείτε ακόμα να διαβάσετε ή να επεξεργαστείτε εξερχόμενα μηνύματα.
-; Encrypt new messages with your public key,\nso you can still read or edit outgoing messages.
-;
-;MSG_HELP_CO_ST_REMAILER
-;Διεύθυνση E-mail της υπηρεσίας αναταχυδρόμησης που θα\nχρησιμοποιηθεί για την αποστολή ανώνυμης αλληλογραφίας.
-; E-mail address of the remailer service\nused to send anonymous mail.
-;
-;MSG_HELP_CO_ST_FIRSTLINE
-;Αυτόματη εισαγωγή αυτής της γραμμής στην κορυφή\nόλων των μηνυμάτων που εστάλθηκαν μέσω της αναταχυδρόμησης.
-; Automatically insert this line at the top\nof all messages sent through the remailer.
-;
 MSG_HELP_CO_ST_LOGFILE
 Διαδρομή που θα αποθηκευτούν\nτα αρχεία καταγραφής.
 ; Path where the log\nfiles will be stored.
@@ -2408,12 +2190,8 @@ MSG_HELP_CO_CH_SEND
 Αποστολή μηνυμάτων στην ουρά.
 ; Send queued messages.
 ;
-;MSG_HELP_CO_CH_POPSTART
-;Έλεγχος για αλληλογραφία.
-; Check for mail.
-;
 MSG_HELP_CO_CH_CHECKBD
-Έλεγχος του βιβλίου διευθύνσεων και άνοιγμα μιας\nυπενθύμισης εάν είναι τα γενέθλεια κάποιας επαφής.
+Έλεγχος του βιβλίου διευθύνσεων και άνοιγμα μιας\nυπενθύμισης εάν είναι τα γενέθλια κάποιας επαφής.
 ; Check the address book and open a\nreminder if it's a person's birthday.
 ;
 MSG_HELP_CO_CH_DELETEOLD
@@ -2427,10 +2205,6 @@ MSG_HELP_CO_CH_REMOVEDEL
 MSG_HELP_CO_ST_GALLDIR
 Κατάλογος για την αποθήκευση των φωτογραφιών\nτων ανταποκριτών σας.
 ; Directory to save the pictures\nof your correspondents.
-;
-MSG_HELP_CO_ST_PHOTOURL
-Διεύθυνση URL της\nεικόνας του προφίλ σας.
-; URL address of your\nportrait image.
 ;
 MSG_HELP_CO_CY_ATAB
 Αυτόματη δημιουργία μιας καταχώρησης στο βιβλίο διευθύνσεων\nγια τον αποστολέα όταν διαβάσετε το μήνυμά του/της;
@@ -2461,7 +2235,7 @@ MSG_HELP_CO_ST_APP
 ; Try to put the AppIcon\nexactly at these coordinates.
 ;
 MSG_HELP_CO_CH_CLGADGET
-Θέλετε το YAM να κάνει εικονοποίηση όταν\nπατήσετε το κουμπί κλεισίματος παραθύρου;
+Θέλετε το YAM να κάνει ελαχιστοποίηση όταν\nπατήσετε το κουμπί κλεισίματος παραθύρου;
 ; Do you want YAM to iconify when\nyou hit the close gadget?
 ;
 MSG_HELP_CO_CH_CONFIRM
@@ -2475,10 +2249,6 @@ MSG_HELP_CO_NB_CONFIRMDEL
 MSG_HELP_CO_CH_REMOVE
 Άμεση διαγραφή των μηνυμάτων παρά την\nμετακίνησή τους στον κάδο.\n(Χρησιμοποιήστε το με προσοχή)
 ; Immediately delete the messages rather\nthan moving them to the Trash folder.\n(Use this with care)
-;
-MSG_HELP_CO_CH_SAVESENT
-Μετακινήστε τα απεσταλμένα μηνύματα\nστον φάκελο απεσταλμένα.
-; Move sent messages to\nthe Sent folder.
 ;
 MSG_HELP_CO_TX_ENCPACK
 Χρήση της βιβλιοθήκης XPK για την προστασία\nκαι την συμπίεση των φακέλων.
@@ -2497,23 +2267,23 @@ MSG_HELP_CO_ST_ARCHIVER
 ; Command and options used to\ncreate archived attachments.
 ;
 MSG_HELP_CO_ST_RXNAME
-Περιγραφή του σεναρίου\nστο μενού 'Σενάρια'.
+Περιγραφή της δέσμης εντολών\nστο μενού 'Δέσμη εντολών'.
 ; Description of the script\nin the 'Scripts' menu.
 ;
 MSG_HELP_CO_ST_SCRIPT
-Όνομα αρχείου του σεναρίου.
+Όνομα αρχείου της δέσμης εντολών.
 ; Filename of the script.
 ;
 MSG_HELP_CO_CY_ISADOS
-Τύπος του σεναρίου.\n(ARexx ή AmigaDOS).
+Τύπος της δέσμης εντολών.\n(ARexx ή AmigaDOS).
 ; Type of the script\n(ARexx or AmigaDOS).
 ;
 MSG_HELP_CO_CH_CONSOLE
-Άνοιγμα ενός παραθύρου κονσόλας για την αποδοχή\nεισαγωγής και εξαγωγής από το σενάριο.
+Άνοιγμα ενός παραθύρου κονσόλας για την αποδοχή\nεισαγωγής και εξαγωγής από την δέσμη εντολών.
 ; Open a console window to allow input\nand output from the script.
 ;
 MSG_HELP_CO_CH_WAITTERM
-Μην τρέξετε το σενάριο\nασύγχρονα, αλλά περιμένετε\nμέχρι να τελειώσει.
+Μην τρέξετε την δέσμη εντολών\nασύγχρονα, αλλά περιμένετε\nμέχρι να τελειώσει.
 ; Do not run the script\nasynchronously but wait\nfor it to complete.
 ;
 MSG_HELP_CO_BT_SAVE
@@ -2530,11 +2300,6 @@ MSG_HELP_CO_BT_CANCEL
 ;
 ;
 ; Module AB - Routines
-;
-;MSG_AB_BirthdayReq
-;Σήμερα, ο/η %s γίνεται %ld χρονών.\n\nΘέλετε να στείλετε μια ευχετήρια κάρτα;
-; Today, %s reaches age %ld.\n\nDo you want to send a greetings card?
-; NAME, AGE
 ;
 MSG_AB_BirthdayReminder
 Υπενθύμιση Γενεθλίων
@@ -2578,7 +2343,7 @@ MSG_AB_FindEntry
 ; Find Entry
 ;
 MSG_AB_FindEntryReq
-Αυτή η ενότητα βρίσκει ένα κείμενο από τα πεδία ψευδώνυμο, όνομα,\nδιεύθυνση, οδός, πόλη ή χώρα. Παρακαλώ είσαγετε το\nμοτίβο αναζήτησης (υποστηρίζονται οι χαρακτήρες μπαλαντέρ του AmigaDOS):
+Αυτή η ενότητα βρίσκει ένα κείμενο από τα πεδία ψευδώνυμο, όνομα,\nδιεύθυνση, οδός, πόλη ή χώρα. Παρακαλώ εισάγετε το\nμοτίβο αναζήτησης (υποστηρίζονται οι χαρακτήρες μπαλαντέρ του AmigaDOS):
 ; This module finds a given text in the alias, name, address,\ndescription, street, city or country fields. Please enter\nthe search pattern (AmigaDOS wildchars are supported):
 ;
 MSG_AB_StartSearch
@@ -2939,7 +2704,7 @@ MSG_HELP_EA_ST_PGPKEY
 ; Hexadecimal ID of this\nperson's public PGP key.
 ;
 MSG_HELP_EA_ST_HOMEPAGE
-URL της ιστοσελίδας αυτής της επαφής.\nΚάντε κλίκ το κουμπί στα δεξιά για να\nφορτώσετε την σελίδα στον περιηγητή σας.
+URL της ιστοσελίδας αυτής της επαφής.\nΚάντε κλικ το κουμπί στα δεξιά για να\nφορτώσετε την σελίδα στον περιηγητή σας.
 ; URL of the homepage of this person.\nClick the button at the right side\nto load the page into your browser.
 ;
 MSG_HELP_EA_ST_STREET
@@ -3006,7 +2771,7 @@ MSG_HELP_EA_BT_CANCEL
 ; Module RE - Procedures
 ;
 MSG_RE_MDNReq
-Ο αποστολέας αυτού του μηνύματος ζητάει\μια απόδειξη αναφοράς επιστροφής.\n\nΤι θέλετε να κάνετε;
+Ο αποστολέας αυτού του μηνύματος ζητάει\nμια απόδειξη αναφοράς επιστροφής.\n\nΤι θέλετε να κάνετε;
 ; The sender of this message requests\na return receipt.\n\nWhat do you want to do?
 ;
 MSG_RE_SaveMessage
@@ -3118,7 +2883,7 @@ MSG_RE_MDNdisplay
 ; The message\n%s\nhas been displayed.\nThis is no guarantee that the content has been read or understood.\n
 ;
 MSG_RE_MDNdeleted
-Το μήνυμα\n%s\nέχει διαγραφτεί%s.\nΟ παραλήπτης μπορεί ή όχι να έχει δεί το μήνυμα. Ο παραλήπτης μπορεί\nνα \"ξεδιαγράψει"\ το μήνυμα αργότερα και να το διαβάσει.\n
+Το μήνυμα\n%s\nέχει διαγραφτεί%s.\nΟ παραλήπτης μπορεί ή όχι να έχει δει το μήνυμα. Ο παραλήπτης μπορεί\nνα \"ξεδιαγράψει"\ το μήνυμα αργότερα και να το διαβάσει.\n
 ; The message\n%s\nhas been deleted%s.\nThe recipient may or may not have seen the message. The recipient\nmay \"undelete\" the message at a later time and read the message.\n
 ;
 MSG_RE_MDNunknown
@@ -3406,10 +3171,6 @@ MSG_WR_TitleContents
 Περιεχόμενα
 ; Contents
 ;
-MSG_WR_TitleEncoding
-Κωδ.
-; Enc.
-;
 MSG_WR_TitleDescription
 Περιγραφή
 ; Description
@@ -3433,10 +3194,6 @@ MSG_WR_SecBoth
 Σημείο και κωδικοποίηση
 ; Sign and encrypt
 ;
-;MSG_WR_SecAnon
-;Αποστολή ως ανώνυμο
-; Send anonymously
-;
 MSG_WR_ImpHigh
 Υψηλή
 ; High
@@ -3448,22 +3205,6 @@ MSG_WR_ImpNormal
 MSG_WR_ImpLow
 Χαμηλή
 ; Low
-;
-MSG_WR_NoSig
-Καμία
-; None
-;
-MSG_WR_DefSig
-Προκαθορισμένη
-; Default
-;
-MSG_WR_AltSig1
-Εναλ. #1
-; Alt. #1
-;
-MSG_WR_AltSig2
-Εναλ. #2
-; Alt. #2
 ;
 MSG_WR_WriteWT
 Σύνταξη μηνύματος
@@ -3488,10 +3229,6 @@ _Συμπίεση & προσθήκη...
 MSG_WR_Display
 Εμ_φάνιση
 ; D_isplay
-;
-MSG_WR_Encoding
-Κωδικοποίηση
-; Encoding
 ;
 MSG_WR_ContentType
 Τύπος _MIME
@@ -3544,18 +3281,6 @@ MSG_WR_Importance
 MSG_WR_Signature
 Υπογραφή
 ; Signature
-;
-MSG_WR_Security
-Ασφάλεια
-; Security
-;
-MSG_WR_BounceWT
-Μήνυμα επιστροφής
-; Bounce message
-;
-MSG_WR_BounceTo
-Επιστροφή προς
-; Bounce _to
 ;
 ;
 ; Module WR - Toolbar
@@ -3802,10 +3527,6 @@ MSG_HELP_WR_BT_DISPLAY
 Χρησιμοποιήστε το επιλεγμένο αρχείο προβολέα MIME\nγια να εμφανίσετε αυτό το συνημμένο.
 ; Use the configured MIME viewer\nto display this attachment.
 ;
-MSG_HELP_WR_RA_ENCODING
-Τύπος κωδικοποίησης που χρησιμοποιήθηκε στο επιλεγμένο συνημμένο.\nΕπιλέξτε UUencode μόνο εάν ο παραλήπτης δεν χρησιμοποιεί κάποιο συμβατό MIME ταχυδρομείο.
-; Type of encoding used for the selected attachment.\nSelect UUencode only if the recipient is not using\na MIME compliant mailer.
-;
 MSG_HELP_WR_ST_CTYPE
 Τύπος MIME για το επιλεγμένο συνημμένο.\nΌποτε είναι δυνατό, χρησιμοποιήστε ένα από την λίστα.
 ; MIME type for the selected attachment.\nWhenever possible, use one from the popup list.
@@ -3815,20 +3536,16 @@ MSG_HELP_WR_ST_DESC
 ; Optional description for\nthe selected attachment.
 ;
 MSG_HELP_WR_ST_CC
-Αποστείλτε μια κοινοποίηση (Κοιν) του\nμηνύματος σε αυτούς τους παραλήπτες.
+Αποστείλατε μια κοινοποίηση (Κοιν) του\nμηνύματος σε αυτούς τους παραλήπτες.
 ; Send a carbon copy (CC) of the\nmessage to these recipients.
 ;
 MSG_HELP_WR_ST_BCC
-Αποστείλτε ένα ακριβές αντίγραφο (Ακρ.Αντ.) του\nμηνύματος σε αυτούς τους παραλήπτες.
+Αποστείλατε ένα ακριβές αντίγραφο (Ακρ.Αντ.) του\nμηνύματος σε αυτούς τους παραλήπτες.
 ; Send a blind carbon copy of\nthe message to these recipients.
 ;
 MSG_HELP_WR_ST_EXTHEADER
 Επιπλέον κεφαλίδες που θα\nπροστεθούν στο μήνυμα.
 ; Additional headers that should\nbe added to the message.
-;
-MSG_HELP_WR_ST_FROM
-Περιεχόμενα της κεφαλίδας 'Από:'\n(όνομα και διεύθυνση της επαφής\nπου γράφει αυτό το μήνυμα).
-; Contents of the 'From:' header\n(name and address of the person\nwho is writing this message).
 ;
 MSG_HELP_WR_ST_REPLYTO
 Διεύθυνση επιστροφής\nγια αυτό το μήνυμα.
@@ -3850,18 +3567,6 @@ MSG_HELP_WR_CY_IMPORTANCE
 Ορίστε την προτεραιότητα\nαυτού του μηνύματος.
 ; Set the priority\nof this message.
 ;
-MSG_HELP_WR_RA_SIGNATURE
-Ποιά υπογραφή θέλετε να\nεπισυνάψετε σε αυτό το μήνυμα;
-; Which signature do you want\nto append to this message?
-;
-MSG_HELP_WR_RA_SECURITY
-Επιλέξτε μία από αυτές τις επιλογές ασφαλείας για να\nστείλετε το PGP μήνυμά σας υπογεγγραμένο, κωδικοποιημένο\nή ανώνυμο. Το "Προκαθορισμένο"\nπροσπαθεί να βρεί τον παραλήπτη στο βιβλίο διευθύνσεων και να χρησιμοποιήσει\nτις ρυθμίσεις ασφαλείας από εκεί.
-; Select one of these security options to send\nyour message PGP signed, encrypted\nor anonymously. "Default" tries to find\nthe recipient in your address book and use\nthe security settings specified there.
-;
-MSG_HELP_WR_BT_HOLD
-Αντιγράψτε το δημιουργημένο μήνυμα\nστο φάκελο εξερχομένων και ορίστε την\nκατάστασή του σε 'αναμονή'.
-; Copy the created message to\nthe Outgoing folder and set\nits status to 'hold'.
-;
 MSG_HELP_WR_BT_QUEUE
 Αντιγράψτε το δημιουργημένο μήνυμα\nστο φάκελο εξερχομένων.
 ; Copy the created message to\nthe Outgoing folder.
@@ -3869,10 +3574,6 @@ MSG_HELP_WR_BT_QUEUE
 MSG_HELP_WR_BT_SEND
 Αντιγράψτε το δημιουργημένο μήνυμα\nστο φάκελο εξερχομένων και στείλτε\nτο αμέσως.
 ; Copy the created message to\nthe Outgoing folder and send\nit immediately.
-;
-MSG_HELP_WR_BT_CANCEL
-Απορρίψτε το\nδημιουργημένο μήνυμα.
-; Discard the\ncreated message.
 ;
 ;
 ; Module TR - Procedures
@@ -3882,13 +3583,8 @@ MSG_TR_Connecting
 ; Connecting to mail server...
 ;
 MSG_TR_WaitWelcome
-Έγινε σύνδεση, αναμένωντας το μήνυμα υποδοχής...
+Έγινε σύνδεση, αναμένοντας το μήνυμα υποδοχής...
 ; Connected, awaiting welcome message...
-;
-;MSG_TR_PopLoginReq
-;Παρακαλώ εισάγετε τον POP3 κωδικό για τον λογαριασμό\n%s@%s
-; Please enter POP3 password for account\n%s@%s
-; USER_ID, HOST
 ;
 MSG_TR_PopLogin
 POP3 σύνδεση
@@ -3938,11 +3634,6 @@ MSG_TR_DeletingServerMail
 Διαγραφή αλληλογραφίας από τον διακομιστή...
 ; Deleting mail on server...
 ;
-;MSG_TR_NewMailReq
-;\e8Έχετε νεά αλληλογραφία!\e2\n\n%3ld μηνύματα λήφθηκαν,\n%3ld έμειναν στον διακομιστή\n%3ld διπλότυπα παραλήφτηκαν\n
-; \e8You have new mail!\e2\n\n%3ld messages downloaded,\n%3ld left on server\n%3ld duplicates skipped\n
-; COUNT, COUNT, COUNT, COUNT
-;
 MSG_TR_FilterStats
 \nΤο φιλτράρισμα έγινε:\n\n%3ld μηνύματα ελέγχθηκαν,\n%3ld επέστρεψαν,\n%3ld προωθήθηκαν,\n%3ld αυτό-απαντήθηκαν,\n%3ld ενεργοποιηθήκαν με εντολή,\n%3ld μετακινήθηκαν,\n%3ld διαγράφτηκαν
 ; \nFiltering done:\n\n%3ld messages checked,\n%3ld bounced,\n%3ld forwarded,\n%3ld auto-replied,\n%3ld command activated,\n%3ld moved,\n%3ld deleted
@@ -3973,10 +3664,6 @@ MSG_TR_MsgInFile
 Μηνύματα στο αρχείο %s
 ; Messages in file
 ;
-;MSG_TR_MsgOnServer
-;Μηνύματα στον διακομιστή
-; Messages on server
-;
 MSG_TR_Control
 Έλεγχος
 ; Control
@@ -3993,10 +3680,6 @@ MSG_TR_Leave
 Άφησε
 ; L_eave
 ;
-;MSG_TR_Pause
-;Παύση
-; _Pause
-;
 MSG_TR_Clear
 Καθάρισμα
 ; _Clear
@@ -4008,10 +3691,6 @@ MSG_TR_DeleteOnly
 MSG_TR_DownloadDelete
 Λήψη & διαγραφή
 ; Do_wnload & delete
-;
-;MSG_TR_Resume
-;Συνέχιση
-; _Resume
 ;
 MSG_TR_Start
 Εκκίνηση
@@ -4043,7 +3722,7 @@ MSG_ER_ErrorMessages
 ; Error messages
 ;
 MSG_ER_PrevError
-_Πρηγούμενο σφάλμα
+_Προηγούμενο σφάλμα
 ; _Previous error
 ;
 MSG_ER_NextError
@@ -4072,7 +3751,7 @@ MSG_ER_CantCreateDir
 ; PATH
 ;
 MSG_ER_ErrorNoAlias
-Πρέπει να καθορίσετε ένα ψευδώνυμο για αναγνώρηση αυτής της καταχώρησης!
+Πρέπει να καθορίσετε ένα ψευδώνυμο για αναγνώριση αυτής της καταχώρησης!
 ; You must specify an alias to identify this entry!
 ;
 MSG_ER_ErrorNoAddress
@@ -4094,17 +3773,13 @@ MSG_ER_CantCreateTempfile
 ; Couldn't create temporary file.\n\nReason: out of memory or invalid path specified in the configuration.
 ;
 MSG_ER_ErrorConsole
-Αδυναμία ανοίγματος παραθύρου κονσόλας για το σενάριο.
+Αδυναμία ανοίγματος παραθύρου κονσόλας για την δέσμη εντολών.
 ; Couldn't open console window for script.
 ;
 MSG_ER_ErrorARexxScript
-Αδυναμία αποστολής εντολής ARexx '%s'. Βεβαιωθείτε ότι το σενάριο υπάρχει.
+Αδυναμία αποστολής εντολής ARexx '%s'. Βεβαιωθείτε ότι η δέσμη εντολών υπάρχει.
 ; Couldn't send ARexx command '%s'. Make sure that the script exists.
 ; REXX_COMMAND
-;
-MSG_ER_CreateMailError
-Αδυναμία δημιουργίας αρχείου αλληλογραφίας.\n\nΑιτία: Λανθασμένος κατάλογος φακέλου ή ανεπαρκής χώρος στον δίσκο.
-; Couldn't create mail file.\n\nReason: invalid folder directory or insufficient disk space.
 ;
 MSG_ER_CantOpenFile
 Αδυναμία ανάγνωσης από το αρχείο '%s'.\n\nΤο αρχείο φαίνεται να μην υπάρχει.
@@ -4149,7 +3824,7 @@ MSG_ER_MissingName
 ; You must specify a name for the new user!
 ;
 MSG_ER_NoPublicKeys
-Δεν βρέθηκαν κοινά κλειδιά PGP.\n\nΒεβαιωθείτε ότι το PGP είναι εγκατεστημένο και να έχουν γίνει οι απαραταίτητες ρυθμίσεις στο YAM.
+Δεν βρέθηκαν κοινά κλειδιά PGP.\n\nΒεβαιωθείτε ότι το PGP είναι εγκατεστημένο και να έχουν γίνει οι απαραίτητες ρυθμίσεις στο YAM.
 ; No public PGP keys found.\n\nMake sure that PGP is installed and the required settings are made in the configuration of YAM.
 ;
 MSG_ER_PGPreturnsError
@@ -4384,7 +4059,7 @@ MSG_HELP_FI_BT_READ
 ; Display the current message\nfrom the list above.
 ;
 MSG_HELP_FI_BT_ABORT
-Διεκόψτε την αναζήτηση.
+Διακόψτε την αναζήτηση.
 ; Stop searching.
 ;
 MSG_HELP_FI_CY_MODE
@@ -4392,7 +4067,7 @@ MSG_HELP_FI_CY_MODE
 ; Field or message part that\nshould match the pattern.
 ;
 MSG_HELP_FI_ST_FIELD
-Το όνομα της κεφαλίδας που\θα κάνετε αναζήτηση.
+Το όνομα της κεφαλίδας που\nθα κάνετε αναζήτηση.
 ; Name of the header\nto search in.
 ;
 MSG_HELP_FI_RA_ADRMODE
@@ -4465,7 +4140,7 @@ MSG_US_GlobalDict
 ; Use global _glossary
 ;
 MSG_US_CopyConfig
-Αντιγραφή ρυθμίσεων του τρέχωντος χρήστη
+Αντιγραφή ρυθμίσεων του τρέχοντος χρήστη
 ; C_opy configuration from current user
 ;
 MSG_US_Password
@@ -4527,7 +4202,7 @@ MSG_HELP_US_BT_DEL
 ; Module FO - Routines
 ;
 MSG_FO_NewFolderReq
-Τι ρυθμίσεις θέλετε να χρησιμοποιήσετε για το νέο φάκελο;\nΕπιλέξτε 'Υπάρχων κατάλογο' εάν θέλετε να ξανα-χρησιμοποιήσετε\nέναν ήδη υπάρχων κατάλογο.
+Τι ρυθμίσεις θέλετε να χρησιμοποιήσετε για το νέο φάκελο;\nΕπιλέξτε 'Υπάρχων κατάλογο' εάν θέλετε να επαναχρησιμοποιήσετε\nέναν ήδη υπάρχων κατάλογο.
 ; What settings do you want to use for the new folder?\nSelect 'Existing directory' if you want to re-use an\nalready existing directory.
 ;
 MSG_FO_NewFolderGads
@@ -4633,7 +4308,7 @@ MSG_HELP_FO_CY_FTYPE
 ; Type of folder\n(in/out/both).
 ;
 MSG_HELP_FO_CY_FMODE
-Οι φακέλοι μπορούν να προστατευτούν με\nκωδικό ή να συμπιεστούν με χρήση XPK.
+Οι φάκελοι μπορούν να προστατευτούν με\nκωδικό ή να συμπιεστούν με χρήση XPK.
 ; Folders can be password protected\nand/or compressed using XPK.
 ;
 MSG_HELP_FO_CY_SORT0
@@ -4757,11 +4432,11 @@ MSG_BusyDecDisplaying
 ; ADDED AFTER 13-MAR-1999
 ;
 MSG_CTapplicationadosscript
-Σενάριο AmigaDOS
+Δέσμη εντολών AmigaDOS
 ; AmigaDOS script
 ;
 MSG_CTapplicationrexx
-Σενάριο Rexx
+Δέσμη εντολών Rexx
 ; Rexx script
 ;
 ;
@@ -4799,10 +4474,6 @@ MSG_SETTINGS_MUI
 MUI...
 ; MUI...
 ;
-MSG_HELP_FO_ST_MLFROMADDRESS
-Χρησιμοποιήστε αυτή την διεύθυνση 'Από:'\nόταν καταχωρείτε νέα αλληλογραφία στη λίστα.
-; Use this 'From:' address when\nposting new mails to the list.
-;
 MSG_HELP_FO_ST_MLREPLYTOADDRESS
 Χρησιμοποιήστε αυτή την διεύθυνση 'Απάντηση-Προς:'\nόταν καταχωρείτε νέα αλληλογραφία στη λίστα.
 ; Use this 'Reply-To:' address when\nposting new mails to the list.
@@ -4827,10 +4498,6 @@ MSG_RE_FixedFont
 Σταθερή γραμματοσειρά;
 ; Fixed font?
 ;
-MSG_CO_UseSMTPAUTH
-Χρήση SMTP AUTH
-; Use SMTP AU_TH
-;
 MSG_CO_SMTPUser
 Όνομα χρήστη
 ; Us_er name
@@ -4842,10 +4509,6 @@ MSG_CO_SMTPPass
 MSG_WR_AltQuoted
 Εναλλακτική παράθεση
 ; Alternative quoted
-;
-MSG_CO_DoQuote
-Παράθεση μηνύματος
-; Qu_ote message
 ;
 MSG_EA_SelectPhoto_Title
 Επιλογή εικόνας
@@ -4875,10 +4538,6 @@ MSG_CO_GENLISTCFG
 Γενικές ρυθμίσεις
 ; General settings
 ;
-MSG_CO_FIELDLISTCFG
-Ρυθμίσεις πεδίου
-; Field settings
-;
 MSG_CO_SIZEFORMAT
 Μορφή μεγέθους
 ; Si_ze format
@@ -4906,10 +4565,6 @@ MSG_CO_SIZEFORMAT04
 MSG_CO_SIZEFORMAT05
 Ακρίβεια 10^-3 (0.001 GB/MB/KB)
 ; 10^-3 precision (0.001 GB/MB/KB)
-;
-MSG_HELP_CO_CH_USESMTPAUTH
-Επιλέξτε εάν θέλετε να πιστοποιήσετε τον\nεαυτό σας με έναν ξένο διακομιστή SMTP\n(συνήθως εκτός του τομέα ISP σας).\nΕάν δεν είστε σίγουροι, μην το ενεργοποιήσετε.
-; Select if you wish to authenticate\nyourself to a foreign SMTP server\n(usually outside your ISP's domain).\nIf in doubt, don't enable this option.
 ;
 MSG_HELP_CO_ST_SMTPAUTHUSER
 Όνομα χρήστη του\nχρήστη SMTP AUTH.
@@ -4940,7 +4595,7 @@ MSG_CO_TOTALMSGS
 ; %t  Total messages
 ;
 MSG_CO_DELMSGS
-%d  Διεγραμμένα μηνύματα
+%d  Διαγραμμένα μηνύματα
 ; %d  Deleted messages
 ;
 MSG_CO_SENTMSGS
@@ -4964,7 +4619,7 @@ MSG_CO_CONTEXTMENU
 ; Context menu
 ;
 MSG_HELP_CO_CONTEXTMENU
-Εμφάνιση μενού όταν κάνετε κλίκ\nμε το δεξί κουμπί του ποντικιού στην λίστα;
+Εμφάνιση μενού όταν κάνετε κλικ\nμε το δεξί κουμπί του ποντικιού στην λίστα;
 ; Show a popup menu when clicking\nthe right mouse button on this list?
 ;
 MSG_CO_INFOBAR
@@ -4982,10 +4637,6 @@ MSG_CO_WARNSUBJECT
 MSG_HELP_CO_CH_WARNSUBJECT
 Θέλετε να προειδοποιήστε όταν αφήνετε\nτην γραμμή θέματος κενή;
 ; Would you like to be warned if you\nleave the subject line blank?
-;
-MSG_WR_OKAYCANCELREQ
-*_Εντάξει|_Ακύρωση
-; *_Ok|_Cancel
 ;
 MSG_WR_NOSUBJECTREQ
 Το θέμα απουσιάζει, συνέχεια παρ' όλα αυτά;
@@ -5023,24 +4674,12 @@ MSG_SEARCHNOTFOUND_MSG
 '%s' δεν βρέθηκε.
 ; '%s' not found.
 ;
-MSG_WR_ERRORNOSENDER
-Η αλληλογραφία είναι ελλειπής: δεν υπάρχει αποστολέας!
-; Mail is incomplete: no sender!
-;
-MSG_WR_NOSENDERREQGAD
-_Χρήση προκαθορισμένου αποστολέα|*_Ακύρωση
-; _Use default sender|*_Cancel
-;
 MSG_FO_GROUP_CONFDEL
 Αυτή η ομάδα περιέχει υποφακέλους, που θα\nμεταφερθούν στον γονικό φάκελο κατά την διαγραφή.\n\nΘέλετε σίγουρα να διαγράψετε αυτή την ομάδα;
 ; This group contains subfolders, which will\nbe moved to the parent folder on deletion.\n\nDo you really want to delete this group?
 ;
 MSG_FOLDER_NONSEL
 (καμία επιλογή)
-; (none selected)
-;
-;MSG_MAIL_NONSEL
-;(καμία επιλογή)
 ; (none selected)
 ;
 MSG_FO_NEWFGROUP
@@ -5122,7 +4761,7 @@ MSG_CO_NB_EMAILCACHEFMT
 ; %ld address(es)
 ;
 MSG_HELP_CO_NB_EMAILCACHE
-Το μέγεθος cache των πιο πρόσφατων χρησιμοποιημένων\nαποστολέων που δεν υπάρχουν ακόμα στο βιβλίο διευθύνσεων.\nΕπιλέξτε 0 για επενεργοποίηση.
+Το μέγεθος cache των πιο πρόσφατων χρησιμοποιημένων\nαποστολέων που δεν υπάρχουν ακόμα στο βιβλίο διευθύνσεων.\nΕπιλέξτε 0 για απενεργοποίηση.
 ; Cache size for the most recently used\nrecipients not yet in the address book.\nSelect 0 to disable this feature.
 ;
 MSG_HELP_CO_ST_SMTPPORT
@@ -5189,7 +4828,7 @@ MSG_RETRY_QUIT_GAD
 ; Try again|Quit
 ;
 MSG_ER_NOAUTHUSERPASS
-Δεν καθορίστηκε όνομα χρήστη ή κωδικός για την σύνδεση\nμε SMTP AUTH που προσπάθησε να καταρτήσει το YAM.\nΠαρακαλώ ελέγξτε τις ρυθμίσεις.
+Δεν καθορίστηκε όνομα χρήστη ή κωδικός για την σύνδεση\nμε SMTP AUTH που προσπάθησε να καταρτίσει το YAM.\nΠαρακαλώ ελέγξτε τις ρυθμίσεις.
 ; No user name or password was specified for the SMTP AUTH connection YAM was trying to establish. Please check your configuration.
 ;
 MSG_CO_APPICON_LABEL
@@ -5235,14 +4874,6 @@ MSG_CO_URLCOLOR
 MSG_HELP_CO_CA_COLURL
 Χρώμα για την εμφάνιση\nτης σύνδεσης URL.
 ; Color used to display\nclickable URL links.
-;
-MSG_FO_FOLDEREXISTS
-Ένα αρχείο ή κατάλογος για την δεδομένη διαδρομή φακέλου υπάρχει ήδη.\n\nΘέλετε σίγουρα να προχωρήσετε;
-; A file or directory with the given folder path already exists.\n\nDo you really want to proceed?
-;
-MSG_FO_FOLDERMOVE
-Θέλετε σίγουρα να μετακινήσετε τον φάκελο σε άλλη διαδρομή;
-; Do you really want to move the folder to another path?
 ;
 MSG_FO_FOLDERNAMEINVALID
 Το προσδιορισμένο όνομα φακέλου είναι άδειο ή υπάρχει ήδη.\nΠαρακαλώ εισάγετε ένα έγκυρο όνομα φακέλου πριν προχωρήσετε.
@@ -5344,41 +4975,41 @@ MSG_FO_Greetings
 ; C_losing phrase
 ;
 MSG_ER_SOCKETOPTION
-Αδυναμία ορισμού επιλογής υποδοχής '%s'.\n\nΕίτε η επιλογή δεν υποστηρίζεται από το TCP/IP που χρησιμοποιήτε, ή έχει καθοριστεί λανθασμένα στις ρυθμίσεις.
+Αδυναμία ορισμού επιλογής υποδοχής '%s'.\n\nΕίτε η επιλογή δεν υποστηρίζεται από το TCP/IP που χρησιμοποιείτε, ή έχει καθοριστεί λανθασμένα στις ρυθμίσεις.
 ; Couldn't set socket option '%s'.\n\nEither this option is not supported by the TCP/IP stack your are using, or it is specified wrong in your configuration.
 ; OPTIONNAME
 ;
 MSG_ER_B64FILEENCODE
-Ένα απρόσμενο σφάλμα συνέβει κατά την προσπάθεια κωδικοποίησης του αρχείου '%s' με την ρουτίνα κωδικοποίησης αρχείου Base64.
+Ένα απρόσμενο σφάλμα συνέβη κατά την προσπάθεια κωδικοποίησης του αρχείου '%s' με την ρουτίνα κωδικοποίησης αρχείου Base64.
 ; An unexpected error occurred while trying to encode file '%s' with the Base64 file encoding routines.
 ; FILENAME
 ;
 MSG_ER_QPFILEENCODE
-Ένα απρόσμενο σφάλμα συνέβει κατά την προσπάθεια κωδικοποίησης του αρχείου '%s' με την ρουτίνα κωδικοποίησης αρχείου Quoted-Printable (QP).
+Ένα απρόσμενο σφάλμα συνέβη κατά την προσπάθεια κωδικοποίησης του αρχείου '%s' με την ρουτίνα κωδικοποίησης αρχείου Ορισμένο-ως-Εκτυπώσιμο (QP).
 ; An unexpected error occurred while trying to encode file '%s' with the Quoted-Printable (QP) file encoding routines.
 ; FILENAME
 ;
 MSG_ER_UUFILEENCODE
-Ένα απρόσμενο σφάλμα συνέβει κατά την προσπάθεια κωδικοποίησης του αρχείου '%s' με την ρουτίνα κωδικοποίησης αρχείου UUcode.
+Ένα απρόσμενο σφάλμα συνέβη κατά την προσπάθεια κωδικοποίησης του αρχείου '%s' με την ρουτίνα κωδικοποίησης αρχείου UUcode.
 ; An unexpected error occurred while trying to encode file '%s' with the UUcode file encoding routines.
 ; FILENAME
 ;
 MSG_ER_QPDEC_FILEIO
-Ένα σφάλμα εισόδου/εξόδου συνέβει κατά την αποκωδικοποίηση Quoted-Printable (QP) του κωδικοποιημένου αρχείου '%s'.
+Ένα σφάλμα εισόδου/εξόδου συνέβη κατά την αποκωδικοποίηση Ορισμένο-ως-Εκτυπώσιμο (QP) του κωδικοποιημένου αρχείου '%s'.
 ; An input/output error occurred during decoding of the Quoted-Printable (QP) encoded file '%s'.
 ;
 MSG_ER_QPDEC_UNEXP
-Ένα απρόσμενο σφάλμα συνέβει κατά την προσπάθεια αποκωδικοποίησης του αρχείου '%s' με την ρουτίνα αποκωδικοποίησης αρχείου Quoted-Printable (QP).
+Ένα απρόσμενο σφάλμα συνέβη κατά την προσπάθεια αποκωδικοποίησης του αρχείου '%s' με την ρουτίνα αποκωδικοποίησης αρχείου Ορισμένο-ως-Εκτυπώσιμο (QP).
 ; An unexpected error occurred while trying to decode file '%s' with the Quoted-Printable (QP) file decoding routines.
 ; FILENAME
 ;
 MSG_ER_QPDEC_WARN
-Κατά την αποκωδικοποίηση Quoted-Printable (QP) του αρχείου '%s' εντοπίστηκε μερική κατεστραμένη ακολουθία ελέγχου και παρέμεινε κωδικοποιημένη κατά την έξοδο.
+Κατά την αποκωδικοποίηση Ορισμένο-ως-Εκτυπώσιμο (QP) του αρχείου '%s' εντοπίστηκε μερική κατεστραμμένη ακολουθία ελέγχου και παρέμεινε κωδικοποιημένη κατά την έξοδο.
 ; During the Quoted-Printable (QP) decoding of file '%s' some broken control sequences were detected and kept undecoded in the output.
 ; FILENAME
 ;
 MSG_ER_QPDEC_CHAR
-Κατά την αποκωδικοποίηση Quoted-Printable (QP) του αρχείου '%s' βρέθηκαν μερικοί απαγορευμένοι χαρακτήρες και συνεπώς αφαιρέθηκαν κατά την έξοδο.
+Κατά την αποκωδικοποίηση Ορισμένο-ως-Εκτυπώσιμο (QP) του αρχείου '%s' βρέθηκαν μερικοί απαγορευμένοι χαρακτήρες και συνεπώς αφαιρέθηκαν κατά την έξοδο.
 ; During the Quoted-Printable (QP) decoding of file '%s' some forbidden characters were found and therefore removed in the output.
 ; FILENAME
 ;
@@ -5402,7 +5033,7 @@ MSG_FI_StatMarked
 ; Marked
 ;
 MSG_MA_CREQUEST_OLDFILE
-Το αρχείο '%s' στο φάκελο '%s' χρησιμοποιεί μια απαρχαιομένη μορφή αλληλογραφίας\nπου υποστηρίζεται μόνο από παλιότερες εκδόσεις του YAM.\n\nΘέλετε να μετατρέψετε αυτό το αρχείο στη νέα μορφή;
+Το αρχείο '%s' στο φάκελο '%s' χρησιμοποιεί μια απαρχαιωμένη μορφή αλληλογραφίας\nπου υποστηρίζεται μόνο από παλιότερες εκδόσεις του YAM.\n\nΘέλετε να μετατρέψετε αυτό το αρχείο στη νέα μορφή;
 ; File '%s' in folder '%s' uses an obsolete mail format\nonly supported by older YAM versions.\n\nDo you want to convert this file to the new format?
 ; FILENAME, FOLDER
 ;
@@ -5416,12 +5047,12 @@ MSG_MA_YESNOTOALL
 ; *_Yes|Y_es to all|_No|N_o to all
 ;
 MSG_ER_CONVERTMFILE
-Ένα σφάλμα συνέβει κατά την προσπάθεια ενημέρωσης του αρχείου '%s' στον φάκελο '%s' στην τρέχουσα μορφή αλληλογραφίας.\n\nΕλέγξτε αν ο κατάλογος φακέλου έχει αρκετό χώρο ή είναι μη προστατευμένος από εγγραφή.
+Ένα σφάλμα συνέβη κατά την προσπάθεια ενημέρωσης του αρχείου '%s' στον φάκελο '%s' στην τρέχουσα μορφή αλληλογραφίας.\n\nΕλέγξτε αν ο κατάλογος φακέλου έχει αρκετό χώρο ή είναι μη προστατευμένος από εγγραφή.
 ; An error occurred while trying to upgrade file '%s' in folder '%s' to the current mail format.\n\nPlease check that the folder directory has enough space and is not write protected.
 ; FILENAME, FOLDER
 ;
 MSG_ER_XPKUSAGE
-Ένα σφάλμα συνέβει κατά την προσπάθεια συμπίεσης/αποσυμπίεσης του αρχείου '%s' με XPK.\n\nΠαρακαλώ ελέγξτε την εγκατάσταση του XPK και τις σχετικές ρυθμίσεις.
+Ένα σφάλμα συνέβη κατά την προσπάθεια συμπίεσης/αποσυμπίεσης του αρχείου '%s' με XPK.\n\nΠαρακαλώ ελέγξτε την εγκατάσταση του XPK και τις σχετικές ρυθμίσεις.
 ; An error occurred while trying to compress/uncompress file '%s' with XPK.\n\nPlease check your XPK installation and the relevant settings in the configuration.
 ; FILENAME
 ;
@@ -5433,32 +5064,12 @@ MSG_MA_CREQ_UNKNOWN_TITLE
 Βρέθηκε άγνωστο αρχείο στον κατάλογο φακέλου
 ; Unknown file in folder directory found
 ;
-MSG_CO_SMTPSECURE
-Χρήση ασφαλής σύνδεσης:
-; Use secure connection:
-;
-MSG_CO_SMTPSECURE_NO
-Όχι
-; No
-;
-MSG_CO_SMTPSECURE_TLS
-με TLSv1
-; with TLSv1
-;
-MSG_CO_SMTPSECURE_SSL
-με SSLv3
-; with SSLv3
-;
-MSG_HELP_CO_RA_SMTPSECURE
-Μια ασφαλής σύνδεση TLSv1 ή SSLv3 θα ιδρυθεί ανάμεσα στον διακομιστή SMTP\nκαι στο YAM για την αποστολή αλληλογραφίας μέσω μιας κρυπτογραφημένης σύνδεσης.\nΕάν αυτά τα κουμπιά είναι απενεργοποιημένα, σημαίνει ότι η υποστήριξη\nAmiSSL δεν είναι προς το παρόν διαθέσιμη.
-; A TLSv1 or SSLv3 secure connection will be established between\nthe SMTP server and YAM to send e-mail through an encrypted connection.\nIf these radio buttons are ghosted, it means AmiSSL support is\ncurrently not available.
-;
 MSG_CO_SHOWEMBEDDEDREADPANE
-Εμφάνιση ενσωματομένου παραθύρου ανάγνωσης στο κύριο παράθυρο
+Εμφάνιση ενσωματωμένου παραθύρου ανάγνωσης στο κύριο παράθυρο
 ; Show embedded read _pane in main window
 ;
 MSG_HELP_CO_CH_EMBEDDEDREADPANE
-Εμφάνιση ενσωματομένου παραθύρου ανάγνωσης\nκατευθείαν στο κύριο παράθυρο.
+Εμφάνιση ενσωματωμένου παραθύρου ανάγνωσης\nκατευθείαν στο κύριο παράθυρο.
 ; Shows an embedded read pane\ndirectly in the main window.
 ;
 MSG_CO_SETSTATUSDELAYED1
@@ -5562,14 +5173,6 @@ MSG_CO_Less
 Λιγότερα
 ; _Less
 ;
-MSG_MA_AUTOSAVEFOUND
-Βρέθηκε ένα αρχείο μηνύματος αυτόματης αποθήκευσης '%s'\nπου δημιουργήθηκε σε προηγούμενη συνεδρία.\nΑυτό πιθανόν έγινε από κάποιο κόλλημα ή επανεκκίνηση\nενώ γράφατε ένα μήνυμα.\n
-; YAM has found an autosaved message file '%s'\nwhich was created in a previous session.\nThis may be due to a possible crash or reboot\nwhile writing a message.\n
-;
-MSG_MA_AUTOSAVEFOUND_TITLE
-Βρέθηκε αρχείο αυτόματης αποθήκευσης
-; Autosave file found
-;
 MSG_CO_NB_AUTOSAVE
 Διάστημα αυτόματης αποθήκευσης
 ; Autosave interval
@@ -5582,20 +5185,8 @@ MSG_HELP_CO_NB_AUTOSAVE
 Πόσο συχνά θέλετε το YAM να γράφει στον δίσκο ένα αντίγραφο\nασφαλείας της αλληλογραφίας που γράφετε αυτή τη στιγμή.\nΕπιλέξτε 0 για απενεργοποίηση.
 ; How often YAM should write to disk a backup\nof the e-mail you are currently composing.\nSelect 0 to disable this feature.
 ;
-;MSG_ER_GENESISUSER_TITLE
-;Άγνωστος λογαριασμός χρήστη Genesis/AmiTCP!
-; Unknown Genesis/AmiTCP user account!
-;
-;MSG_ER_GENESISUSER
-;Το YAM αναγνώρισε ότι χρησιμοποιείτε Genesis/AmiTCP, αλλά\nδεν μπορεί να βρεί κάποιον λογαριασμό χρήστη YAM που αντιστοιχεί στον\nτρέχοντα καθολικό ενεργό λογιαριασμό που έχετε ρυθμίσει\nστο Genesis (%s).\nΒεβαιωθείτε ότι το όνομα χρήστη του Genesis και του YAM\nείναι συγχρονησμένα, αλλιώς η αυτόματη είσοδος δεν θα δουλεύει σωστά.
-; YAM has identified that you are using Genesis/AmiTCP, but\ncould not find a YAM user account which corresponds to\nthe currently active global account you have configured\nin Genesis (%s).\nPlease make sure that your Genesis user name and the YAM user name\nare in sync, otherwise the auto-login feature will not work\ncorrectly.
-;
-;MSG_ER_CONTINUEEXIT
-;*_Συνέχεια|Έξοδος
-; *_Continue|Exit
-;
 MSG_ER_MOVEFOLDERDIR
-Ένα σφάλμα συνέβει κατά την προσπάθεια μετακίνησης των περιεχομένων του φακέλου '%s' στον κατάλογο '%s'.\n\nΑυτό πιθανό να έγινε από μη επαρκή χώρο στο δίσκο ή μη έγκυρη ή μη εγγράψιμη διαδρομή προορισμού.
+Ένα σφάλμα συνέβη κατά την προσπάθεια μετακίνησης των περιεχομένων του φακέλου '%s' στον κατάλογο '%s'.\n\nΑυτό πιθανό να έγινε από μη επαρκή χώρο στο δίσκο ή μη έγκυρη ή μη εγγράψιμη διαδρομή προορισμού.
 ; An error occurred while trying to move the contents of folder '%s' to directory '%s'.\n\nThis may be due to insufficient space or an invalid or not writable destination path.
 ;
 MSG_CO_QUICKSEARCHBAR
@@ -5725,7 +5316,7 @@ MSG_MA_MessageImport
 ; Import messages
 ;
 MSG_ER_MESSAGEIMPORT
-Ένα σφάλμα συνέβει κατά την προσπάθεια εισαγωγής αλληλογραφίας από το αρχείο '%s'.\n\nΠαρακαλώ ελέγξτε ότι το αρχείο είναι προσπελάσιμο και περιέχει συμβατές αλληλογραφίες RFC822 από το YAM. Οι τρέχουσες μορφές που υποστηρίζονται είναι 'MBOX', 'DBX' (Outlook Express) ή τα απλά αρχεία μηνύματος RFC822. Διαβάστε τις οδηγίες για περισσότερες πληροφορίες.
+Ένα σφάλμα συνέβη κατά την προσπάθεια εισαγωγής αλληλογραφίας από το αρχείο '%s'.\n\nΠαρακαλώ ελέγξτε ότι το αρχείο είναι προσπελάσιμο και περιέχει συμβατές αλληλογραφίες RFC822 από το YAM. Οι τρέχουσες μορφές που υποστηρίζονται είναι 'MBOX', 'DBX' (Outlook Express) ή τα απλά αρχεία μηνύματος RFC822. Διαβάστε τις οδηγίες για περισσότερες πληροφορίες.
 ; An error occurred while trying to import mail from file '%s'.\n\nPlease check that the file is readable and contains RFC822 compliant e-mails using a format supported by YAM. The currently supported formats are 'MBOX', 'DBX' (Outlook Express) or plain RFC822 mail files. Read the documentation for more information.
 ; FILENAME
 ;
@@ -5795,14 +5386,6 @@ MSG_CO_TCPIP_SUMMARY
 Ρύθμιση των λογαριασμών σας SMTP και POP3...
 ; Configure your SMTP and POP3 accounts...
 ;
-MSG_CO_NEWMAIL_TITLE
-Ρυθμίσεις Νέας Αλληλογραφίας
-; New Mail Settings
-;
-MSG_CO_NEWMAIL_SUMMARY
-Πώς θέλετε να χειριστεί και να αντιδράσει το πρόγραμμα στην εισερχόμενη αλληλογραφία...
-; How to handle and react upon incoming mail...
-;
 MSG_CO_FILTER_TITLE
 Ρυθμίσεις Φίλτρων Αλληλογραφίας
 ; Mail Filter Settings
@@ -5843,14 +5426,6 @@ MSG_CO_SIGNATURE_SUMMARY
 Διαμορφώστε τις υπογραφές της αλληλογραφίας σας...
 ; Configure your e-mail signatures...
 ;
-MSG_CO_LISTS_TITLE
-Ρυθμίσεις Εμφάνισης Λίστας Αλληλογραφίας
-; Mail Listview Settings
-;
-MSG_CO_LISTS_SUMMARY
-Διαμορφώστε την βασική εμφάνιση της λίστας αλληλογραφίας...
-; Configure the basic appearance of mail listviews...
-;
 MSG_CO_SECURITY_TITLE
 Ρυθμίσεις Ασφαλείας
 ; Security Settings
@@ -5884,11 +5459,11 @@ MSG_CO_ABOOK_SUMMARY
 ; Configure address book related options...
 ;
 MSG_CO_SCRIPTS_TITLE
-Ρυθμίσεις Σεναρίων
+Ρυθμίσεις Δέσμης Εντολών
 ; Scripts Settings
 ;
 MSG_CO_SCRIPTS_SUMMARY
-Διαμορφώστε τα βοηθητικά σενάριά σας...
+Διαμορφώστε τις βοηθητικές σας δέσμες εντολών...
 ; Configure your helper scripts...
 ;
 MSG_CO_MIXED_TITLE
@@ -5976,10 +5551,6 @@ MSG_CO_SEARCHFORUPDATES
 Ελέγξτε για ενημερώσεις
 ; Check for up_dates
 ;
-MSG_CO_SEARCHFORUPDATESINFO
-Θα ειδοποιηθείτε όταν υπάρχουν διαθέσιμες ενημερώσεις.
-; You will be notified as soon as updates are available.
-;
 MSG_CO_SEARCHNOW
 Έλεγχος τώρα
 ; Check _now
@@ -6009,12 +5580,8 @@ MSG_WR_SECURITYREQ
 ; The recipients of the e-mail have different\ndefault mail security settings.\n\nWhat type of security do you want to use?
 ;
 MSG_WR_SECURITYREQ_GADS
-*_Απλή|_Υπογγεγραμένη|_Κωδικοποιημένη|Υ_πογ. & Κωδ.|Α_νώνυμη|Α_κύρωση
+*_Απλή|_Υπογεγραμμένη|_Κωδικοποιημένη|Υ_πογ. & Κωδ.|Α_νώνυμη|Α_κύρωση
 ; *_Plain|_Signed|_Encrypted|S_igned & encrypted|_Anonymous|_Cancel
-;
-;MSG_ER_OPENTCPIP
-;Αδυναμία ανοίγματος της διεπαφής bsdsocket.library που απαιτείται για τις συνδέσεις TCP/IP.\n\nΠαρακαλώ βεβαιωθείτε ότι έχετε ένα συμβατό και σωστά εγκατεστημένο TCP/IP, και ότι η διεπαφή σύνδεσης τρέχει κανονικά.
-; Couldn't open bsdsocket.library interface required for TCP/IP connections.\n\nPlease make sure that you have a compatible and correctly configured TCP/IP stack installed, and that your network interface is up and running.
 ;
 MSG_WR_UUCODE
 κείμενο UUencoded
@@ -6039,10 +5606,6 @@ MSG_UPD_NOTIFICATION_CHANGES
 MSG_UPD_NOTIFICATION_NOUPDATE
 Να μην ειδοποιούμαι για ενημερώσεις στο μέλλον
 ; Do not notify me on updates in future
-;
-;MSG_UPD_NOTIFICATION_VISITURL
-;Επίσκεψη URL
-; Visit URL
 ;
 MSG_UPD_NOTIFICATION_CLOSE
 Κλείσιμο
@@ -6129,15 +5692,15 @@ MSG_CTapplicationbz2
 ; BZIP2 archive
 ;
 MSG_CO_DETECT_CYRILLIC
-Αυτόματη ανίχνευση κυριλικών χαρακτήρων
+Αυτόματη ανίχνευση κυριλλικών χαρακτήρων
 ; Auto-detect c_yrillic charsets
 ;
 MSG_HELP_CO_DETECT_CYRILLIC
-Προσπαθήστε να χρησιμοποιήστε την επιλογή αυτόματης ανίχνευσης\nτης codesets.library για την αυτόματη ταυτοποίηση της\nκυριλικής κωδικοποίησης\n(μόνο σχετικό σε χρήστες με κυριλικά).
+Προσπαθήστε να χρησιμοποιήστε την επιλογή αυτόματης ανίχνευσης\nτης codesets.library για την αυτόματη ταυτοποίηση της\nκυριλλικής κωδικοποίησης\n(μόνο σχετικό σε χρήστες με κυριλλικά).
 ; Try to use the auto-detect feature\nof codesets.library to automatically\nidentify the correct cyrillic codeset\n(only relevant for cyrillic users).
 ;
 MSG_WR_ErrorNotEnoughUndoMem
-Το διεγραμμένο κείμενο ήταν πολύ μεγάλο για\nτην είσοδό του στην μνήμη αναίρεσης.\n\nΣυνεπώς, η μνήμη αναίρεσης χάθηκε.
+Το διαγραμμένο κείμενο ήταν πολύ μεγάλο για\nτην είσοδό του στην μνήμη αναίρεσης.\n\nΣυνεπώς, η μνήμη αναίρεσης χάθηκε.
 ; The erased text was too large to be\nput into the undo buffer.\n\nTherefore, the undo buffer is lost.
 ;
 MSG_RE_HEADERDISPLAY
@@ -6153,7 +5716,7 @@ MSG_ER_ADDFILEERROR
 ; File '%s' couldn't be added as an attachment to the current e-mail.\n\nPlease make sure that the file is accessible and that is not read protected.
 ;
 MSG_ER_PACKERROR
-Ένα σφάλμα συνέβει κατά την προσπάθεια δημιουργίας ενός αρχείου συμπίεσης από τα επιλεγμένα αρχεία.\n\nΠαρακαλώ βεβαιωθείτε ότι είναι προσπελάσιμα και μη προστατευμένα από ανάγνωση.
+Ένα σφάλμα συνέβη κατά την προσπάθεια δημιουργίας ενός αρχείου συμπίεσης από τα επιλεγμένα αρχεία.\n\nΠαρακαλώ βεβαιωθείτε ότι είναι προσπελάσιμα και μη προστατευμένα από ανάγνωση.
 ; An error occurred while trying to create an archive out of the selected files.\n\nPlease make sure that all files are accessible and not read protected.
 ;
 MSG_CO_ABOOKLOOKUP
@@ -6177,10 +5740,6 @@ MSG_HELP_CO_CONVERTHTML
 Εάν το κύριο μέρος της αλληλογραφίας είναι HTML, το YAM θα\nτο μετατρέψει σε απλό κείμενο πριν το εμφανίσει.
 ; If the main part of an e-mail is HTML, YAM will\nconvert it to plain text before displaying it.
 ;
-;MSG_RE_FOLLOWTHREAD
-;Για αναζήτηση σε περισσότερες αλληλογραφίες του ίδιου νήματος,\nτο YAM πρέπει να φορτώσει επιπλέον δείκτες φακέλου. Αυτό μπορεί\nνα είναι μια χρονοβόρα διαδικασία και να καταναλώσει πολύ μνήμη.\n\nΠως θέλετε να συνεχίσετε;
-; In order to search for more mails of the same thread,\nYAM has to load additional folder indices. This may be\nquite time and memory consuming.\n\nDo you want to continue?
-;
 MSG_TR_TRANSFERSTATUS
 %s από %s @ %s/s\n%02ld'%02ld'' εκτελούνται - %02ld'%02ld'' απομένουν
 ; %s of %s @ %s/s\n%02ld'%02ld'' running - %02ld'%02ld'' left
@@ -6195,16 +5754,6 @@ MSG_FI_GAUGETEXT
 %%ld από %ld μηνύματα
 ; %%ld of %ld messages
 ; COUNT, COUNT
-;
-;MSG_MA_MESSAGEINFO
-;\ebΤρέχων μήνυμα\en\nΑπό: %s <%s>\nΠρος: %s <%s>\nΘέμα: %s\nΗμερομηνία: %s\nΑρχείο: %s\nΜέγεθος: %s
-; \ebCurrent message\en\nFrom: %s <%s>\nTo: %s <%s>\nSubject: %s\nDate: %s\nFilename: %s\nSize: %s
-; NAME, ADDRESS, NAME, ADDRESS, SUBJECT, DATE, FILENAME, SIZE
-;
-;MSG_MA_FOLDERINFO
-;\ebΤρέχων φάκελος\en\nΌνομα: %s\nΔιαδρομή: %s\nΜέγεθος: %s\nΜηνύματα: %ld (%ld νέα, %ld μη αναγνωσμένα)
-; \ebCurrent folder\en\nName: %s\nPath: %s\nSize: %s\nMessages: %ld (%ld new, %ld unread)
-; NAME, PATH, SIZE, COUNT, COUNT, COUNT
 ;
 MSG_MA_MIMEPART_INFO
 \ebΣυνημμένο - Μέρος MIME #%ld\en\nΌνομα: %s\nΠεριγραφή: %s\nΤύπος Περιεχομένων: %s <%s>\nΜέγεθος: ~%s
@@ -6236,7 +5785,7 @@ MSG_CO_GR_REPLYFORWARD
 ; Reply/Forward
 ;
 MSG_CO_GR_SCRIPTS
-Σενάρια
+Δέσμες εντολών
 ; Scripts
 ;
 MSG_CO_GR_STARTUPQUIT
@@ -6272,7 +5821,7 @@ MSG_CO_MIMECMD_PARAMETER
 ; %s  Full path of file
 ;
 MSG_ER_CANTOPENASL
-Ένα σφάλμα συνέβει κατά την προσπάθεια ανοίγματος μιας αίτησης ASL.\n\nΠαρακαλώ βεβαιωθείτε ότι η ρύθμιση ASL είναι έγκυρη και ότι έχετε αρκετή μνήμη ελεύθερη.
+Ένα σφάλμα συνέβη κατά την προσπάθεια ανοίγματος μιας αίτησης ASL.\n\nΠαρακαλώ βεβαιωθείτε ότι η ρύθμιση ASL είναι έγκυρη και ότι έχετε αρκετή μνήμη ελεύθερη.
 ; An error occurred while trying to open an ASL requester.\n\nPlease make sure that your ASL setup is valid and that you have enough memory left.
 ;
 MSG_MA_CONFIRMDELETION
@@ -6317,7 +5866,7 @@ MSG_HELP_RE_BT_SPAM
 ; Mark message as spam.
 ;
 MSG_HELP_RE_BT_NOTSPAM
-Σημεδέψτε το μήνυμα ως μη ανεπιθύμητο.
+Σημαδέψτε το μήνυμα ως μη ανεπιθύμητο.
 ; Mark message as not spam.
 ;
 MSG_LOG_MAILISSPAM
@@ -6379,11 +5928,11 @@ MSG_BUSYFLUSHINGSPAMTRAININGDATA
 ; Flushing spam training data...
 ;
 MSG_CO_SPAM_MARKONMOVE
-Σημαδέψτε τα μηνύματα ως ανεπιθύμητα όταν μετακινούνται στην φάκελο ανεπιθύμητα
+Σημαδέψτε τα μηνύματα ως ανεπιθύμητα όταν μετακινούνται στον φάκελο ανεπιθύμητα
 ; Mark mails as spam when _moved to the Spam folder
 ;
 MSG_CO_SPAM_ADDRESSBOOKISWHITELIST
-Το βιβλίο διευθύνσεων είναι άσπρη λίστα
+Το βιβλίο διευθύνσεων είναι στην άσπρη λίστα
 ; Address book is _white list
 ;
 MSG_CO_SPAM_RECOGNITION
@@ -6399,7 +5948,7 @@ MSG_CO_SPAM_RESETTRAININGDATAASK
 ; Do you really want to reset the spam filter's\ntraining data?\n\nThe spam filter must be trained again afterwards.
 ;
 MSG_TR_CHECKUIDL
-Γίνεται έλεγχος του UIDLs για την αποφυγή διπλότυπων...
+Γίνεται έλεγχος των UIDL για την αποφυγή διπλότυπων...
 ; Checking UIDLs to avoid duplicates...
 ;
 MSG_CO_SPAM_DISABLEFILTERASK
@@ -6418,12 +5967,8 @@ MSG_CO_SPAM_DELETESPAMFOLDER
 Διαγραφή φακέλου ανεπιθύμητης αλληλογραφίας
 ; _Delete Spam folder
 ;
-MSG_CO_SMTPAUTH_METHOD
-Μέθοδος
-; Met_hod
-;
 MSG_HELP_CO_CY_SMTPAUTHMETHOD
-Επιλέξτε εδώ την μέθοδο ταυτοποίησης που θα χρησιμοποιήσει το YAM.\nΗ 'Αυτόματη' θα πάρει μια αυτόματα σύμφωνα με τις ικανότητες του διακομιστή\nκαι είναι η προτεινόμενη τιμή.\nΟι άλλες θα σας αφήσουν να επιλέξετε μια ρητά. Είναι απαριθμησμένες σε σειρά σχετικά\nμε το πόσο ασφαλές είναι, με την ασφαλέστερη πρώτη.
+Επιλέξτε εδώ την μέθοδο ταυτοποίησης που θα χρησιμοποιήσει το YAM.\nΗ 'Αυτόματη' θα πάρει μια αυτόματα σύμφωνα με τις ικανότητες του διακομιστή\nκαι είναι η προτεινόμενη τιμή.\nΟι άλλες θα σας αφήσουν να επιλέξετε μια ρητά. Είναι απαριθμημένες σε σειρά σχετικά\nμε το πόσο ασφαλές είναι, με την ασφαλέστερη πρώτη.
 ; Select here the authentication method YAM should use.\n'Auto' lets YAM pick one automatically depending on\nthe server's capabilities and is the recommended value.\nThe others let you explicitly select one. They are\nlisted in order according to how safe they are, with the\nsafest at the top.
 ;
 MSG_CO_SMTPAUTH_AUTO
@@ -6518,10 +6063,6 @@ MSG_LOADINGUPDATESTATE
 Γίνεται φόρτωση ενημέρωσης δεδομένων κατάστασης...
 ; Loading update state data...
 ;
-MSG_CO_ASK_SAVE_SIGNATURE
-Αλλαγές στις υπογραφές πρέπει να αποθηκευτούν ξεχωριστά\nαπό την καθολική ρύθμιση, αλλιώς θα χαθούν.\n\nΘέλετε να αποθηκεύσετε τις υπογραφές τώρα;
-; Changes to the signatures must be saved separately\nfrom the global configuration or otherwise they\nwill be lost.\n\nDo you want to save the signatures now?
-;
 MSG_MA_HIDE
 Απόκρυψη
 ; Hide
@@ -6558,18 +6099,6 @@ MSG_MA_UPDATEINDEX
 Ενημέρωση ευρετηρίου
 ; Update index
 ;
-;MSG_MA_MSENDALL
-;Αποστολή μηνυμάτων από την ουρά
-; Send queued mail
-;
-;MSG_MA_MEXCHANGE
-;Ανταλλαγή μηνυμάτων
-; Exchange mail
-;
-;MSG_MA_MGETMAIL
-;Λήψη νέου μηνύματος
-; Get new mail
-;
 MSG_MA_MREAD
 Άναγνωση
 ; Read
@@ -6581,14 +6110,6 @@ MSG_MA_TOUNREAD
 MSG_MA_TOREAD
 Ανάγνωση
 ; Read
-;
-MSG_MA_TOHOLD
-Αναμονή
-; Hold
-;
-MSG_MA_TOQUEUED
-Σε ουρά
-; Queued
 ;
 MSG_PROJECT_MABOUT
 Σχετικά...
@@ -6630,10 +6151,6 @@ MSG_MA_MFORWARD
 Προώθηση...
 ; Forward...
 ;
-MSG_MA_MBOUNCE
-Επιστροφή...
-; Bounce...
-;
 MSG_MA_MSAVEADDRESS
 Αποθήκευση διεύθυνσης...
 ; Save address...
@@ -6661,14 +6178,6 @@ MSG_MA_ALLTOREAD
 MSG_MA_MEDITASNEW
 Επεξεργασία ως νέο...
 ; Edit as new...
-;
-MSG_CO_POPACCOUNT
-Όνομα λογαριασμού
-; Account name
-;
-MSG_HELP_CO_ST_POPACCOUNT
-Ένα οποιοδήποτε όνομα για αυτό τον λογαριασμό που\nθα χρησιμοποιηθεί αντί του user@host.
-; An arbitrary name for this account which\nwill be used instead of user@host.
 ;
 MSG_RE_SEARCH
 Αναζήτηση...
@@ -6794,14 +6303,6 @@ MSG_CO_MDN_OTHER
 Σε όλες τις άλλες περιπτώσεις:
 ; In all oth_er cases:
 ;
-MSG_CO_REQUESTMDN
-Πάντα αίτηση για αναφορά επιστροφής
-; Always request a retur_n receipt
-;
-MSG_HELP_CO_CH_REQUESTMDN
-Εάν επιλεχτεί, η επιλογή αναφορά επιστροφής στο\nπαράθυρο σύνταξης θα είναι πάντοτε ενεργοποιημένη\nπροεπιλεγμένα (χρησιμοποιήστε το με προσοχή).
-; If selected, the return receipt option in\nthe Write window will always be enabled\nby default (Use this with care).
-;
 MSG_HELP_CO_CH_MDN_NEVER
 Εάν επιλεχτεί, δεν θα αποσταλεί καμιά αναφορά\nεπιστροφής, ακόμα κι αν ζητηθεί.
 ; If selected, no return receipt will be\nsent, even if explicitly requested.
@@ -6827,15 +6328,15 @@ MSG_HELP_CO_CY_MDN_OTHER
 ; What to do with a return receipt request\nwhen none of the above rules applies.
 ;
 MSG_CO_LOOKFEEL_TITLE
-Εμφάνιση & Αίσθηση
+Εμφάνιση & Εντύπωση
 ; Look & Feel
 ;
 MSG_CO_LOOKFEEL_SUMMARY
-Διαμορφώστε την γενική εμφάνιση & αίσθηση του YAM...
+Διαμορφώστε την γενική εμφάνιση & εντύπωση του YAM...
 ; Configure the general Look & Feel of YAM...
 ;
 MSG_CO_CRDLOOKFEEL
-Εμφάνιση & Αίσθηση
+Εμφάνιση & Εντύπωση
 ; Look & Feel
 ;
 MSG_CO_DSTACTIVE
@@ -6845,34 +6346,6 @@ MSG_CO_DSTACTIVE
 MSG_HELP_CO_CH_DSTACTIVE
 Ενεργοποιήστε αυτό εάν η θερινή ώρα είναι\nενεργοποιημένη ήδη στην ζώνη ώρας σας (θερινή ώρα).
 ; Enable this if daylight saving time is\ncurrently active in your time zone\n(summer time).
-;
-MSG_CO_SMTPSERVERPORT
-Διακομιστής/Θύρα
-; Ser_ver/Port
-;
-MSG_CO_POP3SERVERPORT
-Διακομιστής/Θύρα
-; Serve_r/Port
-;
-MSG_CO_POP3SECURE
-Χρήση σύνδεσης ασφαλείας:
-; Use secure connection:
-;
-MSG_CO_POP3SECURE_NO
-Όχι
-; No
-;
-MSG_CO_POP3SECURE_TLS
-με TLSv1
-; with TLSv1
-;
-MSG_CO_POP3SECURE_SSL
-με SSLv3
-; with SSLv3
-;
-MSG_HELP_CO_RA_POP3SECURE
-Θα πραγματοποιηθεί μια ασφαλής σύνδεση TLSv1 ή SSLv3 ανάμεσα\nστον διακομιστή POP3 και YAM για την λήψη αλληλογραφίας μέσω μιας\nκρυπτογραφημένης σύνδεσης. Εάν τα κουμπιά αυτά είναι ανενεργά, σημαίνει ότι η υποστήριξη AmiSSL\nδεν είναι διαθέσιμη αυτή τη στιγμή.
-; A TLSv1 or SSLv3 secure connection will be established between\nthe POP3 server and YAM to receive e-mail through an encrypted\nconnection. If these radio buttons are ghosted, it means AmiSSL\nsupport is currently not available.
 ;
 MSG_CO_LOOKFEEL_THEMES
 Θέματα
@@ -6899,7 +6372,7 @@ MSG_CO_RELDATETIME
 ; Rela_tive date output
 ;
 MSG_HELP_CO_CH_RELDATETIME
-Εάν επιλεχτεί, οι στήλες με ημερομηνία θα\nχρησιμοποιήσουν μια σχετική έξοδο (π.χ. 'Σήμερα ή\n'Χθές') αντί της πλήρης ημερομηνίας εαν είναι δυνατόν.
+Εάν επιλεχτεί, οι στήλες με ημερομηνία θα\nχρησιμοποιήσουν μια σχετική έξοδο (π.χ. 'Σήμερα ή\n'Χθές') αντί της πλήρης ημερομηνίας εάν είναι δυνατόν.
 ; If selected, columns with date information\nwill use a relative output (e.g. 'Today' or\n'Yesterday') instead of the full date if possible.
 ;
 MSG_FOLDER_SNAPSHOT_TREE
@@ -6927,16 +6400,12 @@ MSG_HELP_CO_CA_COLSIG
 ; The color that should be used to\nprint the signature of a mail.
 ;
 MSG_ER_SPAM_NOT_ENOUGH_CLASSIFIED_MAILS
-Δεν συνιστάται να ενεργοποιήσετε αυτή την επιλογή με τόσα\nλίγα σαν τα %ld μηνύματα που κατατάχθηκαν ως ανεπιθύματα, διότι αυτό\nθα οδηγήσει σε κακή απόδοση του φίλτρου ανεπιθύμητης αλληλογραφίας.\n\nΘέλετε να απενεργοποιήσετε αυτή την επιλογή ξανά;
+Δεν συνιστάται να ενεργοποιήσετε αυτή την επιλογή με τόσα\nλίγα σαν τα %ld μηνύματα που κατατάχθηκαν ως ανεπιθύμητα, διότι αυτό\nθα οδηγήσει σε κακή απόδοση του φίλτρου ανεπιθύμητης αλληλογραφίας.\n\nΘέλετε να απενεργοποιήσετε αυτή την επιλογή ξανά;
 ; It is not recommended to enable this feature with as\nfew as %ld mails classified as spam so far, as this\nmay lead to poor performance of the spam filter.\n\nDo you want to disable this option again?
 ;
 MSG_ER_CANNOT_CREATE_SEMAPHORE
 Αδύνατη η δημιουργία συστήματος οπτικής σηματοδοσίας!
 ; Can't create semaphore!
-;
-MSG_MA_AUTOSAVEFOUND_BUTTONS
-*_Μετακίνηση στα εξερχόμενα|_Επεξεργασία|_Διαγραφή|_Παράβλεψη
-; *Move to _Outgoing|_Edit|_Delete|_Ignore
 ;
 MSG_RE_HDR_FROM
 Από
@@ -6987,7 +6456,7 @@ MSG_US_DIRECTORY_DOESNT_EXIST
 ; Mail directory '%s' for user '%s' does not exist.\n\nDo you want to create it now?
 ;
 MSG_HELP_CO_BT_APPICONGETPOS
-Κάντε κλίκ για να πάρετε την\nτρέχουσα θέση του AppIcon.
+Κάντε κλικ για να πάρετε την\nτρέχουσα θέση του AppIcon.
 ; Click to get the current\nposition of the AppIcon.
 ;
 MSG_CO_MOVE_HAM_TO_INCOMING
@@ -7050,14 +6519,6 @@ MSG_WR_SENDLATER
 Αποστολή αργότερα
 ; Send _later
 ;
-MSG_WR_HOLD
-Αναμονή
-; _Hold
-;
-MSG_WR_CANCEL
-Ακύρωση
-; Cancel
-;
 MSG_WR_MSENDNOW
 Αποστολή τώρα
 ; Send now
@@ -7065,14 +6526,6 @@ MSG_WR_MSENDNOW
 MSG_WR_MSENDLATER
 Αποστολή αργότερα
 ; Send later
-;
-MSG_WR_MHOLD
-Αναμονή
-; Hold
-;
-MSG_WR_MCANCEL
-Ακύρωση
-; Cancel
 ;
 MSG_ER_CONNECTIONBROKEN
 Η σύνδεση με τον διακομιστή '%s' διεκόπη κατά την προσπάθεια αποστολής της εντολής '%s'.\n\nΑυτό μπορεί να οφείλεται σε μια αποτυχημένη σύνδεση από τον διακομιστή.
@@ -7100,11 +6553,11 @@ MSG_CO_FWDMSG_ATTACH
 ; as attachments
 ;
 MSG_CO_FWDMSG_INLINE
-ενσωματομένα
+ενσωματωμένα
 ; inlined
 ;
 MSG_HELP_CO_CY_FORWARDMODE
-Επιλέξτε εδώ τον προεπιλεγμένο τρόπο που θα\nπροωθούνται τα μηνύματα. Είτε ένα μήνυμα μπορεί\nνα προωθηθεί ως ένα συνημμένο ή το\nκείμενο του μηνύματος μπορεί να ενσωματοθεί\nστο νέο μήνυμα.
+Επιλέξτε εδώ τον προεπιλεγμένο τρόπο που θα\nπροωθούνται τα μηνύματα. Είτε ένα μήνυμα μπορεί\nνα προωθηθεί ως ένα συνημμένο ή το\nκείμενο του μηνύματος μπορεί να ενσωματωθεί\nστο νέο μήνυμα.
 ; Select here the way messages should be\nforwarded by default. Either a message\ncan be forwarded as an attachment or the\nmessage text can be put inlined to the\nnew message.
 ;
 MSG_ABOUT_CURRENT_DEVELOPERS
@@ -7177,7 +6630,7 @@ MSG_WR_INVALIDSECURITY_GADS
 ; *_Ok|_Cancel
 ;
 MSG_ER_FILEENCODE
-Ένα σφάλμα συνέβει κατά την προσπάθεια κωδικοποίησης του αρχείου '%s'.\n\nΒεβαιωθείτε ότι το αρχείο υπάρχει και είναι αναγνώσιμο, και προσπαθήστε να συντάξετε ξανά το μήνυμα.
+Ένα σφάλμα συνέβη κατά την προσπάθεια κωδικοποίησης του αρχείου '%s'.\n\nΒεβαιωθείτε ότι το αρχείο υπάρχει και είναι αναγνώσιμο, και προσπαθήστε να συντάξετε ξανά το μήνυμα.
 ; An unexpected error occurred while trying to encode file '%s'.\n\nPlease make sure that the file exists and is readable, then try to compose the message again.
 ; FILENAME
 ;
@@ -7192,7 +6645,7 @@ MSG_ER_INVALIDATTFILE
 ; FILENAME
 ;
 MSG_ER_PRINTER_OFFLINE
-Ο εκτυπωτής φαίνεται είναι είναι απενεργοποιημένος ή απασχολημένος.\n\nΕλέγξτε τον εκτυπωτή ή προσπαθήστε αργότερα.
+Ο εκτυπωτής φαίνεται να είναι απενεργοποιημένος ή απασχολημένος.\n\nΕλέγξτε τον εκτυπωτή ή προσπαθήστε αργότερα.
 ; The printer seems to be offline or busy.\n\nPlease check the printer or try again later.
 ;
 MSG_ER_PRINTER_OFFLINE_GADS
@@ -7208,7 +6661,7 @@ MSG_ER_PRINTER_NOPAPER_GADS
 ; *_Retry|_Ignore|_Cancel
 ;
 MSG_ER_PRINTER_FAILED
-Ένα σφάλμα επιστράφηκε κατά την\nαποστολή δεδομένων στον εκτυπωτή.\n\nΕλέγξτε τον εκτυπωτή και προσπαθήστε ξανά εαν\nτον έγγραφο δεν εκτυπώθηκε σωστά.
+Ένα σφάλμα επιστράφηκε κατά την\nαποστολή δεδομένων στον εκτυπωτή.\n\nΕλέγξτε τον εκτυπωτή και προσπαθήστε ξανά εάν\nτον έγγραφο δεν εκτυπώθηκε σωστά.
 ; An error was returned while\nsending data to the printer.\n\nPlease check your printer and try again if\nyour document wasn't printed properly.
 ;
 MSG_MA_EDIT
@@ -7261,12 +6714,12 @@ MSG_MA_INVALIDMFILE_BT
 ; *_Retry|_Ignore|Ignore _All|_Delete|_Cancel
 ;
 MSG_ER_CANNOT_READ_INDEX
-Ένα σφάλμα συνέβει κατά την προσπάθεια ανάγνωσης ευρετηρίου του αρχείου '%s' του φακέλου '%s'.\n\nΕλέγξτε ότι μπορείτε να διαβάσετε τα περιεχόμενα του αρχείου και ότι οι ρυθμίσεις δικαιωμάτων είναι σωστές.
+Ένα σφάλμα συνέβη κατά την προσπάθεια ανάγνωσης ευρετηρίου του αρχείου '%s' του φακέλου '%s'.\n\nΕλέγξτε ότι μπορείτε να διαβάσετε τα περιεχόμενα του αρχείου και ότι οι ρυθμίσεις δικαιωμάτων είναι σωστές.
 ; An error occurred while trying to read the index file '%s' of folder '%s'.\n\nPlease check that you can read the contents of the file and that the permission settings are correct.
 ; FILENAME, FOLDER
 ;
 MSG_ER_CANNOT_WRITE_INDEX
-Ένα σφάλμα συνέβει κατά την προσπάθεια εγγραφής ευρετηρίου του αρχείου '%s' στο φάκελο '%s'.\n\nΕλέγξτε ότι μπορείτε να γράψετε στον κατάλογο που υποτίθεται ότι θα αποθηκευτεί το αρχείο.
+Ένα σφάλμα συνέβη κατά την προσπάθεια εγγραφής ευρετηρίου του αρχείου '%s' στο φάκελο '%s'.\n\nΕλέγξτε ότι μπορείτε να γράψετε στον κατάλογο που υποτίθεται ότι θα αποθηκευτεί το αρχείο.
 ; An error occurred while trying to write the index file '%s' in folder '%s'.\n\nPlease check that you can write to the directory where the file is supposed to be stored.
 ; FILENAME, FOLDER
 ;
@@ -7334,8 +6787,8 @@ MSG_FI_DATE_FIELD
 ; \ebDate\en
 ;
 MSG_FO_TO_PATTERN
-Μοτίβο (Προς:/CC:)
-; _Pattern (To:/CC:)
+Μοτίβο (Προς:)
+; _Pattern (To:)
 ;
 MSG_FO_TO_ADDRESS
 Διεύθυνση προορισμού (Προς:)
@@ -7366,7 +6819,7 @@ MSG_WR_DELETE
 ; Delete
 ;
 MSG_ER_B64DEC_FILEIO
-Ένα σφάλμα αρχείου Ι/Ο συνέβει κατά την προσπάθεια αποκωδικοποίησης Base64 μέρους του MIME %ld του αρχείου αλληλογραφίας '%s'. Η αποκωδικοποίηση ματαιώθηκε.\n\nΑυτό μπορεί να προκλήθηκε από μη επαρκή χώρο στο δίσκο του τόμου που αποκωδικοποιήθηκε το αρχείο, ή επειδή το πηγαίο αρχείο δεν ήταν προσπελάσιμο.
+Ένα σφάλμα αρχείου Ι/Ο συνέβη κατά την προσπάθεια αποκωδικοποίησης Base64 μέρους του MIME %ld του αρχείου αλληλογραφίας '%s'. Η αποκωδικοποίηση ματαιώθηκε.\n\nΑυτό μπορεί να προκλήθηκε από μη επαρκή χώρο στο δίσκο του τόμου που αποκωδικοποιήθηκε το αρχείο, ή επειδή το πηγαίο αρχείο δεν ήταν προσπελάσιμο.
 ; A file I/O error occurred while trying to Base64 decode MIME part %ld of mail file '%s'. The decoding has been aborted.\n\nThis may be caused by insufficient space on the volume the file was being decoded to, or because the source file wasn't accessible.
 ; PARTNR, MSGFILE
 ;
@@ -7376,7 +6829,7 @@ MSG_ER_B64DEC_WARN
 ; PARTNR, MSGFILE
 ;
 MSG_ER_B64DEC_UNEXP
-Ένα σφάλμα συνέβει κατά την προσπάθεια αποκωδικοποίησης Base64 μέρους του ΜΙΜΕ %ld του αρχείου αλληλογραφίας '%s'. Η αποκωδικοποίηση ματαιώθηκε.\n\nΕίτε δεν υπάρχουν δεδομένα προς αποκωδικοποίηση ή το ΥΑΜ δεν μπορεί να έχει πρόσβαση στα κωδικοποιημένα δεδομένα.
+Ένα σφάλμα συνέβη κατά την προσπάθεια αποκωδικοποίησης Base64 μέρους του ΜΙΜΕ %ld του αρχείου αλληλογραφίας '%s'. Η αποκωδικοποίηση ματαιώθηκε.\n\nΕίτε δεν υπάρχουν δεδομένα προς αποκωδικοποίηση ή το ΥΑΜ δεν μπορεί να έχει πρόσβαση στα κωδικοποιημένα δεδομένα.
 ; An error occurred while trying to Base64 decode MIME part %ld of mail file '%s'. The decoding has been aborted.\n\nEither there's no data to decode or YAM can't access the encoded data.
 ; PARTNR, MSGFILE
 ;
@@ -7394,11 +6847,11 @@ MSG_CO_SCRIPTPATH
 ; Path
 ;
 MSG_ER_ICONOBJECT_WARNING
-Ένα σφάλμα συνέβει κατά την προσπάθεια φόρτωσης του εικονιδίου '%s.info' του θέματος '%s'. Το εικονίδιο δεν θα εμφανιστεί σε αυτή την συνεδρία.\n\nΒεβαιωθείτε ότι ο κατάλογος θεμάτων περιέχει όλα τα απαραίτητα εικονίδια, ή απενεργοποιήστε το θέμα για την αποφυγή περαιτέρω προειδοποιήσεων.
+Ένα σφάλμα συνέβη κατά την προσπάθεια φόρτωσης του εικονιδίου '%s.info' του θέματος '%s'. Το εικονίδιο δεν θα εμφανιστεί σε αυτή την συνεδρία.\n\nΒεβαιωθείτε ότι ο κατάλογος θεμάτων περιέχει όλα τα απαραίτητα εικονίδια, ή απενεργοποιήστε το θέμα για την αποφυγή περαιτέρω προειδοποιήσεων.
 ; An error occurred while trying to load icon '%s.info' from theme '%s'. The icon will not be displayed during this session.\n\nPlease make sure that your theme directory contains all the necessary icons, or disable the theme to avoid further warnings.
 ;
 MSG_ER_THEMEVER_FALLBACK
-Το τρέχων ενεργό θέμα '%s' βρέθηκε να είναι μια ασύμβατη έκδοση και δεν φορτώθηκε. Το προεπιλεγμένο θέμα ενεργοποιήθηκε αντί αυτού.\n\nΒεβαιωθείτε να ενημερώσετε το θέμα σε μια συμβατή έκδοση ή απενεργοποιήστέ το στις ρυθμίσεις.
+Το τρέχων ενεργό θέμα '%s' βρέθηκε να είναι μια ασύμβατη έκδοση και δεν φορτώθηκε. Το προεπιλεγμένο θέμα ενεργοποιήθηκε αντί αυτού.\n\nΒεβαιωθείτε να ενημερώσετε το θέμα σε μια συμβατή έκδοση ή απενεργοποιήστε το στις ρυθμίσεις.
 ; The currently activated theme '%s' was found to be of an incompatible version and wasn't loaded. The default theme was therefore activated as a fallback.\n\nPlease make sure to update the theme to a compatible version or disable it in the configuration.
 ;
 MSG_ER_THEMEVER_IGNORE
@@ -7406,11 +6859,11 @@ MSG_ER_THEMEVER_IGNORE
 ; While trying to load the default theme of YAM, it was found to be of an incorrect version.\n\nThe theme loading process was aborted and you are adviced to upgrade the default theme to a compatible version.
 ;
 MSG_ER_DATATYPE_ERROR
-Ένα σφάλμα συνέβει κατά την προσπάθεια φόρτωσης του αρχείου εικόνας '%s' μέσω των datatypes.\n\nΒεβαιωθείτε ότι το αρχείο υπάρχει και ότι έχετε ρυθμίσει σωστά τα datatypes του συστήματος (π.χ. αν η εικόνα εμφανίζεται σωστά με το MultiView).
+Ένα σφάλμα συνέβη κατά την προσπάθεια φόρτωσης του αρχείου εικόνας '%s' μέσω των datatypes.\n\nΒεβαιωθείτε ότι το αρχείο υπάρχει και ότι έχετε ρυθμίσει σωστά τα datatypes του συστήματος (π.χ. αν η εικόνα εμφανίζεται σωστά με το MultiView).
 ; An error occurred while trying to load the image file '%s' via datatypes.\n\nPlease make sure that the file exists and that you have your datatypes system correctly set up (e.g. that the image displays properly with MultiView).
 ;
 MSG_ER_IMAGEOBJECT_WARNING
-Ένα σφάλμα συνέβει κατά την προσπάθεια φόρτωσης του αρχείου εικόνας '%s' από τον κατάλογο '%s'.\n\nΒεβαιωθείτε ότι το θέμα περιέχει όλες τις απαραίτητες εικόνες όπως ορίστηκαν στην τελευταία έκδοση θέματος.
+Ένα σφάλμα συνέβη κατά την προσπάθεια φόρτωσης του αρχείου εικόνας '%s' από τον κατάλογο '%s'.\n\nΒεβαιωθείτε ότι το θέμα περιέχει όλες τις απαραίτητες εικόνες όπως ορίστηκαν στην τελευταία έκδοση θέματος.
 ; An error occurred while trying to load the image file '%s' from directory '%s'.\n\nPlease make sure that your theme contains all the necessary images as defined in the latest theme version layout.
 ;
 MSG_ER_THEME_FATAL
@@ -7442,7 +6895,7 @@ MSG_HELP_EA_BT_REMOVEPHOTO
 ; 'Forget' this picture (the\nfile on disk will remain).
 ;
 MSG_HELP_CO_TX_DEFAULTCHARSET
-Χρησιμοποιήστε το κουμπί για να επιλέξετε το σετ χαρακτήρα\nπου θέλετε να χρησιμοποιήσει το YAM ως προεπιλεγμένο. Αυτό θα\nταιριάξει με προκαθοριμένο σετ χαρακτήρων του συστήματος, αλλιώς\nένα αίτημα θα εμφανιστεί ρωτώντας πως θέλετε να προχωρήσετε.
+Χρησιμοποιήστε το κουμπί για να επιλέξετε το σετ χαρακτήρα\nπου θέλετε να χρησιμοποιήσει το YAM ως προεπιλεγμένο. Αυτό θα\nταιριάξει με προκαθορισμένο σετ χαρακτήρων του συστήματος, αλλιώς\nένα αίτημα θα εμφανιστεί ρωτώντας πως θέλετε να προχωρήσετε.
 ; Use the popup button to select the character set\nyou would like YAM to use by default. This should\nmatch the system's default charset, otherwise a\nrequester will appear asking how do you want to\nproceed.
 ;
 MSG_HELP_CO_CH_NOTISOUND
@@ -7477,16 +6930,12 @@ MSG_HELP_CO_BT_APLAY
 Δοκιμάστε τον ήχο.
 ; Test the sound.
 ;
-MSG_HELP_CO_CH_USESIG
-Θέλετε να ενεργοποιήσετε τις\nυπογραφές ως προεπιλεγμένες;
-; Do you want to enable\nsignatures by default?
-;
 MSG_HELP_CO_ST_DESCRIPTION
 Μια προσαρμοσμένη περιγραφή για\nαυτό τον τύπο MIME.
 ; A custom description for\nthis MIME type.
 ;
 MSG_HELP_CO_LV_REXX
-Λίστα με σενάρια.
+Λίστα με δέσμες εντολών.
 ; List of scripts.
 ;
 MSG_HELP_CO_BT_UPDATENOW
@@ -7506,7 +6955,7 @@ MSG_CO_UPDATE_NEVER
 ; Never
 ;
 MSG_MA_EXECUTESCRIPT_TITLE
-Επιλέξτε σενάριο για εκτέλεση
+Επιλέξτε δέσμη εντολών για εκτέλεση
 ; Select script to execute
 ;
 MSG_HELP_FI_BT_NONE
@@ -7533,36 +6982,16 @@ MSG_MA_FILTER_STATS_SPAM
 ; COUNT, COUNT, COUNT, COUNT, COUNT
 ;
 MSG_TR_FILTER_STATS_SPAM
-\nΤο φιλτράρισμα έγινε:\n\n%3ld μηνύματα ελέγχηκαν,\n%3ld επιστράφηκαν,\n%3ld προωθήθηκαν,\n%3ld αυτο-απαντήθηκαν,\n%3ld ενεργοποιήθηκαν με εντολή,\n%3ld μετακινήθηκαν,\n%3ld διαγράφηκαν,\n%3ld ορίστηκαν ως ανεπιθύμητα
+\nΤο φιλτράρισμα έγινε:\n\n%3ld μηνύματα ελέγχθηκαν,\n%3ld επιστράφηκαν,\n%3ld προωθήθηκαν,\n%3ld αυτο-απαντήθηκαν,\n%3ld ενεργοποιήθηκαν με εντολή,\n%3ld μετακινήθηκαν,\n%3ld διαγράφηκαν,\n%3ld ορίστηκαν ως ανεπιθύμητα
 ; \nFiltering done:\n\n%3ld messages checked,\n%3ld bounced,\n%3ld forwarded,\n%3ld auto-replied,\n%3ld command activated,\n%3ld moved,\n%3ld deleted,\n%3ld classified as spam
 ; COUNT, COUNT, COUNT, COUNT, COUNT, COUNT, COUNT, COUNT
-;
-;MSG_CO_EXCHANGE_MAIL
-;Ανταλλαγή αλληλογραφίας
-; Exchange mail
-;
-;MSG_CO_EXCHANGE_ORDER
-;Ανταλλαγή σειράς
-; Exchange order
-;
-;MSG_CO_EXCHANGE_ORDER_GET_FIRST
-;λήψη μηνύματος πρώτα, μετά αποστολή
-; get mail first, then send mail
-;
-;MSG_CO_EXCHANGE_ORDER_SEND_FIRST
-;αποστολή μηνύματος πρώτα, μετά λήψη
-; send mail first, then get mail
-;
-;MSG_HELP_CO_CY_EXCHANGE_ORDER
-;Η σειρά της ανταλλαγής αλληλογραφίας.
-; The order of the mail exchange.
 ;
 MSG_FCHANGE_WARN_TITLE
 Προειδοποίηση αλλαγής αρχείου
 ; Filechange warning
 ;
 MSG_FCHANGE_WARN
-Ενώ έχετε επεξεργαστεί το κείμενο του μηνύματος\nτου παραθύρου σύνταξης %ld σε έναν εξωτερικό κειμενογράφο,\nτο κείμενο στον εσωτερικό κειμενογράφο έχει\nυποστεί αλλαγές.\n\nΘέλετε σίγουρα να χρησιμοποιήσετε το κείμενο από τον\nεξωτερικό κειμενογράφο, αποθέτωντας τις αλλαγές που έγιναν\nστον εσωτερικό;
+Ενώ έχετε επεξεργαστεί το κείμενο του μηνύματος\nτου παραθύρου σύνταξης %ld σε έναν εξωτερικό κειμενογράφο,\nτο κείμενο στον εσωτερικό κειμενογράφο έχει\nυποστεί αλλαγές.\n\nΘέλετε σίγουρα να χρησιμοποιήσετε το κείμενο από τον\nεξωτερικό κειμενογράφο, αποθέτοντας τις αλλαγές που έγιναν\nστον εσωτερικό;
 ; While you have edited the message text\nof write window %ld in an external editor,\nthe text in the internal text editor has\nalso been altered.\n\nDo you really want to use the text of\nthe external editor dropping the changes\ndone in the internal editor?
 ; NUMBER
 ;
@@ -7580,7 +7009,7 @@ MSG_ERROR_THREADS
 ; Can't initialize thread system
 ;
 MSG_ERROR_PLAYSOUND
-Ένα σφάλμα συνέβει κατά την προσπάθεια αναπαραγωγής\nτου αρχείου ήχου '%s'.\n\nΑυτό οφείλεται είτε σε ένα μη υποστηριζόμενο\nαρχείο ήχου ή επειδή ο τύπος δεδομένων ήχου δε δουλεύει σωστά.
+Ένα σφάλμα συνέβη κατά την προσπάθεια αναπαραγωγής\nτου αρχείου ήχου '%s'.\n\nΑυτό οφείλεται είτε σε ένα μη υποστηριζόμενο\nαρχείο ήχου ή επειδή ο τύπος δεδομένων ήχου δε δουλεύει σωστά.
 ; An error occurred while trying to play\nthe sound file '%s'.\n\nThis could be either due to a broken or\nunsupported sound file or because your\nsound datatype is not properly working.
 ; FILE
 ;
@@ -7696,7 +7125,7 @@ MSG_ER_NO8BITMIME_SMTP
 ; The SMTP server '%s' reported that it doesn't support 8bit mail transfers while you have the 'Allow8bit' option enabled.\n\nPlease disable this option in your TCP/IP preferences\nand re-edit the e-mail before trying to send it again,\notherwise the e-mail may be malformed.
 ;
 MSG_CO_FOLDERDBLCLICK
-Διπλό κλίκ στον φάκελο ανοίγει τις ρυθμίσεις φακέλου
+Διπλό κλικ στον φάκελο ανοίγει τις ρυθμίσεις φακέλου
 ; Double click on folder opens folder settings
 ;
 MSG_MA_ATTACHMENT_DELETE
@@ -7712,7 +7141,7 @@ MSG_MA_DELETESELECTEDREQUEST
 ; The following attachments will be\ndeleted:\n%s\nDo you really want to proceed?
 ;
 MSG_LOG_DELETEDATT
-Διεγραμμένα συνημμένα του μηνύματος '%s' στον φάκελο '%s'
+Διαγραμμένα συνημμένα του μηνύματος '%s' στον φάκελο '%s'
 ; Deleted attachment(s) of message '%s' in folder '%s'
 ; MAILFILE, FOLDER
 ;
@@ -7831,7 +7260,7 @@ MSG_CO_SPAM_OPTIMIZE_TRAININGDATA
 ; _Optimize training data
 ;
 MSG_HELP_BT_OPTIMIZE_TRAININGDATA
-Αφαιρεί πολύ σπάνιες λέξεις από τα δεδομένα\nκατάρτισης για την βελτίωση της φόρτωσης των δεδομένων\nκατάρτησης και για την αύξηση ταχύτητας επεξεργασίας ανεπιθύμητων μηνυμάτων.
+Αφαιρεί πολύ σπάνιες λέξεις από τα δεδομένα\nκατάρτισης για την βελτίωση της φόρτωσης των δεδομένων\nκατάρτισης και για την αύξηση ταχύτητας επεξεργασίας ανεπιθύμητων μηνυμάτων.
 ; Removes very infrequent words from the training\ndata to speed up loading of training data and\nincrease processing speed of spam mails.
 ;
 MSG_CO_SPAM_OPTIMIZE_TRAININGDATA_ASK
@@ -7865,20 +7294,8 @@ MSG_ER_WRONG_DOB_FORMAT
 ; %%Y  - year with leading zeros (4 digits)\n\
 ; %%-Y - year without leading zeros (4 digits)\n\
 ; The year number must be greater or equal 1900.
+;
 ; DOBFORMAT
-;
-MSG_CO_PGPURL
-URL προς κοινό κλειδί PGP
-; URL to public PGP key
-;
-MSG_HELP_CO_ST_PGPURL
-Μπορείτε να προσδιορίσετε ένα URL όπου μπορεί να γίνει\nλήψη του κοινού κλειδιού PGP. Αυτό το URL\nθα τοποθετηθεί σε μια ξεχωριστή κεφαλίδα\nσε κάθε μήνυμα.
-; You can specify an URL where your public\nPGP key can be downloaded from. This URL\nwill then placed into a separate header\nentry in every mail.
-;
-;MSG_TR_NEW_MAIL_NOTIFY
-;Λήφθηκαν %ld νέα μηνύματα!
-; Received %ld new mails!
-; COUNT
 ;
 MSG_CO_NOTIOS41SYSTEM
 Σύστημα προειδοποίησης AmigaOS 4.1
@@ -7887,15 +7304,6 @@ MSG_CO_NOTIOS41SYSTEM
 MSG_HELP_CO_CH_NOTIOS41SYSTEM
 Εάν επιλεχτεί, το YAM θα χρησιμοποιήσει το σύστημα\nπροειδοποίησης του AmigaOS4.1 για την ειδοποίηση του\nχρήστη σχετικά με νέα ληφθέντα μηνύματα.\nΑυτό απαιτεί τουλάχιστον την application.library V53.2.
 ; If checked, YAM will use AmigaOS4.1's notification\nsystem to notify the user about new received mails.\nThis requires at least application.library V53.2.
-;
-;MSG_NO_OPENURL_LIB
-;Η openurl.library δεν είναι εγκατεστημένη στο σύστημά σας.\n\Συνεπώς το YAM δε μπορεί να ανοίξει την ζητούμενη τοποθεσία.\n\Παρακαλώ τρέξτε τον περιηγητή σας και εισάγετε την παρακάτω διεύθυνση:\n\'%s'
-;openurl.library not installed on your system.\n\
-;Thus YAM is not able to open the requested link itself.\n\
-;\n\
-;Please launch your internet browser yourself and enter this link:\n\
-;'%s'
-; URL
 ;
 MSG_USERNAME_FALLBACK
 Δρακουμέλ
@@ -7921,12 +7329,8 @@ MSG_MA_MFORWARD_ATTACH
 ; as attachment
 ;
 MSG_MA_MFORWARD_INLINE
-ενσωματομένο
+ενσωματωμένο
 ; inlined
-;
-;MSG_CO_FWDMSG_ATTACH
-;ως συνημμένο
-; as attachment
 ;
 MSG_CO_ScriptPreFilterMail
 Πριν το φιλτράρισμα
@@ -7957,7 +7361,7 @@ MSG_AB_BirthdayReqBody
 ; DATE, NAME, AGE
 ;
 MSG_ER_AREXX_EXECUTION_ERROR
-Η εκτέλεση της εντολής ARexx '%s' απέτυχε (κωδικός σφάλματος %ld).\n\Παρακαλώ βεβαιωθείτε ότι το αρχείο ARexx είναι προσβάσιμο και έγκυρο.
+Η εκτέλεση της εντολής ARexx '%s' απέτυχε (κωδικός σφάλματος %ld).\n\Παρακαλώ βεβαιωθείτε ότι το αρχείο ARexx είναι προσπελάσιμο και έγκυρο.
 ; Execution of the ARexx command '%s' failed (error code %ld).\n\
 ; Please make sure that the file is accessible and is a valid ARexx script.
 ; COMMANDNAME, ERRORCODE
@@ -7993,7 +7397,7 @@ MSG_THREAD_EXIT_WARNING_TITLE
 ; YAM warning
 ;
 MSG_THREAD_EXIT_WARNING
-Βρέθηκαν υπο-νήματα που ακόμα εκτελούνται κατά την προσπάθεια καθαρισμού του YAM.\n\Παρακαλώ κλείστε όλα τα τυχόν υπο-νήματα (π.χ. προβολές ΜΙΜΕ, κτλ)\n\που πιθανόν να έχετε διενεργήσει από το YAM.\n\\n\Θέλετε να ξαναδοκιμάσετε να εγκαταλήψετε το YAM\n\ή να αγνοήσετε τα ήδη ενεργά υπό-νήματα (που μπορεί να προκαλέσουν σφάλματα αργότερα);
+Βρέθηκαν υπο-νήματα που ακόμα εκτελούνται κατά την προσπάθεια καθαρισμού του YAM.\n\Παρακαλώ κλείστε όλα τα τυχόν υπο-νήματα (π.χ. προβολές ΜΙΜΕ, κτλ)\n\που πιθανόν να έχετε διενεργήσει από το YAM.\n\\n\Θέλετε να ξαναδοκιμάσετε να εγκαταλείψετε το YAM\n\ή να αγνοήσετε τα ήδη ενεργά υπό-νήματα (που μπορεί να προκαλέσουν σφάλματα αργότερα);
 ; While trying to cleanup YAM still running sub threads\n\
 ; have been found. Please make sure to close all still\n\
 ; existing sub threads (e.g. MIME viewers, etc.) you may\n\
@@ -8024,7 +7428,7 @@ MSG_ERROR_CONNECTIONS
 ; Cannot initialize connections.
 ;
 MSG_LOG_CONNECT_POP3
-Είσοδος στον POP3 λογιαριασμό '%s': %ld μηνύματα περιμένουν
+Είσοδος στον POP3 λογαριασμό '%s': %ld μηνύματα περιμένουν
 ; Logged in on POP3 account '%s': %ld messages waiting
 ; ACCOUNT, COUNT
 ;
@@ -8081,7 +7485,7 @@ MSG_POP3_NEW_MAIL_NOTIFY_OS4_MANY
 ; ACCOUNT, COUNT
 ;
 MSG_MA_SEND_AND_GET_MAIL
-Αποστολή και λήψη μυνήματος
+Αποστολή και λήψη μηνύματος
 ; Send and get mail
 ;
 MSG_MA_SEND_MAIL
@@ -8091,10 +7495,6 @@ MSG_MA_SEND_MAIL
 MSG_MA_GET_MAIL
 Λήψη μηνύματος
 ; Get mail
-;
-;MSG_WR_SECURITYREQ_GADS
-;*_Απλό|_Υπογεγραμμένο|_Κρυπτογραφημένο|Υπο_γεγρ. & κρυπογρ.|Ακύ_ρωση
-; *_Plain|_Signed|_Encrypted|S_igned & encrypted|_Cancel
 ;
 MSG_HTTP_CONNECTING_TO_SERVER
 Σύνδεση στον διακομιστή...
@@ -8135,7 +7535,7 @@ MSG_CO_DOWNLOAD_ON_STARTUP
 ; Check for new mail on startup
 ;
 MSG_HELP_CO_CH_DOWNLOAD_ON_STARTUP
-Έλεγχος του λογιαριασμού για νέα μηνύματα αυτόματα\n\κάθε φορά που γίνεται εκκίνηση του YAM.
+Έλεγχος του λογαριασμού για νέα μηνύματα αυτόματα\n\κάθε φορά που γίνεται εκκίνηση του YAM.
 ; Check this account for new mail on every\n\
 ; startup of YAM automatically.
 ;
@@ -8198,11 +7598,6 @@ MSG_MA_HELP_CONTENTS
 MSG_MA_HELP_AREXX
 Περιβάλλον ARexx
 ; ARexx interface
-;
-MSG_ER_HELP_FILE_DOES_NOT_EXIST
-Το αρχείο βοήθειας '%s' δεν υπάρχει.
-; The help file '%s' does not exist.
-; FILE
 ;
 MSG_EA_SEARCH_GRAVATAR
 Αναζήτηση στο gra_vatar.com...
@@ -8268,4 +7663,884 @@ MSG_CO_ACTION_SET_STATUS_TO_HAM
 MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_HAM
 Ορισμός κατάστασης του φιλτραρισμένου μηνύματος σε 'Μη ενοχλ. αλληλογραφία'
 ; Set the status of the filtered mail to 'Not spam'
+;
+MSG_CO_SMTP_SERVERPORT
+Δια_κομιστής/Θύρα
+; Ser_ver/Port
+;
+MSG_CO_POP_SERVERPORT
+Διακο_μιστής/Θύρα
+; Serve_r/Port
+;
+MSG_CO_SMTP_ACTIVE
+_Ενεργό
+; _Active
+;
+MSG_CO_POP_AUTH
+Πιστοποίηση
+; Authentification
+;
+MSG_HELP_CO_CY_POPAUTH
+Όταν δεν χρησιμοποιείται οποιαδήποτε ασφαλή σύνδεση (TLS\n\
+ή SSL) ο κωδικός μπορεί να αποσταλεί χρησιμοποιώντας τον\n\
+αλγόριθμο κωδικοποίησης του APOP\n\
+(δεν υποστηρίζεται από όλους τους διακομιστές POP3).
+; When not using any connection security\n\
+; (TLS or SSL) the password can be send\n\
+; using the APOP encryption algorithm instead.\n\
+; (not supported by all POP3 servers)
+;
+MSG_CO_POP_AUTH_PLAIN
+Απλός κωδικός
+; Plain Password
+;
+MSG_CO_POP_AUTH_APOP
+Κωδικοποιημένος κωδικός (APOP)
+; Encrypted Password (APOP)
+;
+MSG_CO_POP_SECURITY
+Ασφάλεια σύνδεσης
+; Connection Security
+;
+MSG_CO_POP_SECURITY_NONE
+Χωρίς ασφάλεια
+; No Security
+;
+MSG_CO_POP_SECURITY_TLS
+STARTTLS
+; STARTTLS
+;
+MSG_CO_POP_SECURITY_SSL
+SSL/TLS
+; SSL/TLS
+;
+MSG_HELP_CO_CY_POPSECURE
+Μια ασφαλής σύνδεση SSL/TLS θα πραγματοποιηθεί μεταξύ\n\
+του διακομιστή POP3 και του YAM για την λήψη αλληλογραφίας\n\
+μεταξύ μιας κωδικοποιημένης σύνδεσης. Αν αυτή η επιλογή δεν\n\
+είναι ορατή, σημαίνει ότι η υποστήριξη AmiSSL δεν είναι\n\
+διαθέσιμη.
+; A STARTTLS or SSL/TLS secure connection will be\n\
+; established between the POP3 server and YAM to receive\n\
+; e-mail through an encrypted connection. If this cycle\n\
+; gadget is ghosted, it means AmiSSL support is currently\n\
+; not available.
+;
+MSG_CO_POP_SERVERLIST
+Λίστα διακομιστή
+; Server List
+;
+MSG_CO_POP_SERVERSETTINGS
+Ρυθμίσεις διακομιστή
+; Server Settings
+;
+MSG_CO_POP_SECURITYAUTH
+Ασφάλεια και πιστοποίηση
+; Security and Authentification
+;
+MSG_CO_POP_MSGHANDLING
+Χειρισμός μηνύματος
+; Message handling
+;
+MSG_CO_SMTP_SERVERLIST
+Λίστα διακομιστή
+; Server List
+;
+MSG_CO_SMTP_SERVERSETTINGS
+Ρυθμίσεις διακομιστή
+; Server Settings
+;
+MSG_CO_POP_DESC
+Περιγραφή
+; Description
+;
+MSG_HELP_CO_ST_POPDESC
+Μια περιγραφή/όνομα για αυτή την σύνδεση\n\
+διακομιστή που θα χρησιμοποιηθεί αντί του\n\
+user@host.
+; An arbitrary description/name for this\n\
+; server connection which will be used instead\n\
+; of user@host.
+;
+MSG_CO_SMTP_DESC
+Περιγραφή
+; Description
+;
+MSG_HELP_CO_ST_SMTPDESC
+Μια περιγραφή/όνομα για αυτή την σύνδεση\n\
+διακομιστή που θα χρησιμοποιηθεί αντί του\n\
+user@host.
+; An arbitrary description/name for this\n\
+; server connection which will be used instead\n\
+; of user@host.
+;
+MSG_CO_SMTP_SECURITY
+Ασφάλεια σύνδεσης
+; Connection Security
+;
+MSG_CO_SMTP_SECURITY_NONE
+Χωρίς ασφάλεια
+; No Security
+;
+MSG_CO_SMTP_SECURITY_TLS
+STARTTLS
+; STARTTLS
+;
+MSG_CO_SMTP_SECURITY_SSL
+SSL/TLS
+; SSL/TLS
+;
+MSG_CO_SMTP_SECURITYAUTH
+Ασφάλεια και πιστοποίηση
+; Security and Authentification
+;
+MSG_HELP_CO_CY_SMTPSECURE
+Μια STARTTLS ή SSL/TLS ασφαλής σύνδεση θα πραγματοποιηθεί\n\
+μεταξύ του διακομιστή SMTP και του YAM για την λήψη\n\
+αλληλογραφίας μεταξύ μιας κωδικοποιημένης σύνδεσης. Αν αυτή\n\
+η επιλογή είναι ανενεργή, σημαίνει ότι η υποστήριξη AmiSSL\n\
+είναι προσωρινά μη διαθέσιμη.
+; A STARTTLS or SSL/TLS secure connection will be\n\
+; established between the SMTP server and YAM to receive\n\
+; e-mail through an encrypted connection. If this cycle\n\
+; gadget is ghosted, it means AmiSSL support is currently\n\
+; not available.
+;
+MSG_CO_SMTP_AUTH
+Πιστοποίηση
+; Authentification
+;
+MSG_CO_SMTPAUTH_NONE
+Χωρίς πιστοποίηση
+; No Authentication
+;
+MSG_CO_SMTP_OPTIONS
+Επιλογές
+; Options
+;
+MSG_CO_CRDIDENTITIES
+Ταυτότητες
+; Identities
+;
+MSG_CO_IDENTITIES_TITLE
+Ρυθμίσεις ταυτοτήτων
+; Identities Settings
+;
+MSG_CO_IDENTITIES_SUMMARY
+Διαχείριση πολλαπλών ταυτοτήτων για την δημιουργία αλληλογραφίας...
+; Manage multiple identities for composing mails...
+;
+MSG_CO_IDENTITY_LIST
+Ταυτότητες
+; Identities
+;
+MSG_CO_IDENTITY_SETTINGS
+Γενικές ρυθμίσεις
+; General Settings
+;
+MSG_CO_IDENTITY_REGISTER_SETTINGS
+Γενικές ρυθμίσεις
+; General Settings
+;
+MSG_CO_IDENTITY_REGISTER_COMPOSE
+Δημιουργία αλληλογραφίας
+; Compose Mail
+;
+MSG_CO_IDENTITY_REGISTER_PGPSEC
+Ασφάλεια PGP
+; PGP-Security
+;
+MSG_CO_IDENTITY_NOSIGNATURE
+χωρίς υπογραφή
+; no signature
+;
+MSG_CO_IDENTITY_ABOVEQUOTE
+πάνω από παραθέσεις
+; above quotes
+;
+MSG_CO_IDENTITY_BELOWQUOTE
+κάτω από παραθέσεις
+; below quotes
+;
+MSG_CO_IDENTITY_DESCRIPTION
+Περιγραφή
+; Description
+;
+MSG_CO_IDENTITY_MAILSERVER
+Διακομιστής αλληλογραφίας (SMTP)
+; Mail server (SMTP)
+;
+MSG_CO_IDENTITY_COMPOSE
+Ρυθμίσεις δημιουργίας αλληλογραφίας
+; Compose mail settings
+;
+MSG_CO_IDENTITY_CC
+Κοινοποίηση: διεύθυνση
+; CC: address
+;
+MSG_CO_IDENTITY_BCC
+Ακρ. Αντ.: διεύθυνση
+; BCC: address
+;
+MSG_CO_IDENTITY_REPLYTO
+Απάντηση-Προς: διεύθυνση
+; Reply-To: address
+;
+MSG_CO_IDENTITY_COMPOSE_OPTIONS
+Επιλογές
+; Options
+;
+MSG_CO_IDENTITY_COMPOSE_SENTFOLDER
+Αποθήκευση απεσταλμένης αλληλογραφίας στον φάκελο
+; Store sent mail to folder
+;
+MSG_CO_IDENTITY_COMPOSE_QUOTE
+Παράθεση μηνυμάτων κατά την απάντηση
+; Quote messages when answering
+;
+MSG_CO_IDENTITY_COMPOSE_ANSWER
+Τοποθέτηση απάντησής μου
+; Put my answer
+;
+MSG_CO_IDENTITY_COMPOSE_SIGNATURE
+Τοποθέτηση υπογραφής μου
+; Put my signature
+;
+MSG_CO_IDENTITY_USESIG_REPLY
+Χρήση υπογραφής κατά την απάντηση
+; Use signature when replying
+;
+MSG_CO_IDENTITY_USESIG_FORWARD
+Χρήση υπογραφής κατά την προώθηση
+; Use signature when forwarding
+;
+MSG_CO_IDENTITY_PGPSETTINGS
+Ρυθμίσεις ασφαλείας PGP
+; PGP-Security Settings
+;
+MSG_CO_IDENTITY_USEPGP
+Χρήση PGP για αυτή την ταυτότητα
+; Use PGP for this identity
+;
+MSG_CO_IDENTITY_PGPKEY_ID
+ID κλειδί PGP
+; PGP key ID
+;
+MSG_CO_IDENTITY_PGPKEY_URL
+URL κλειδί PGP
+; PGP key URL
+;
+MSG_CO_IDENTITY_PGP_OPTIONS
+Επιλογές
+; Options
+;
+MSG_CO_IDENTITY_PGP_SIGN_UNENC
+Υπογραφή μη κρυπτογραφημένης αλληλογραφίας ως προεπιλογή
+; Sign unencrypted mails per default
+;
+MSG_CO_IDENTITY_PGP_SIGN_ENC
+Υπογραφή κρυπτογραφημένης αλληλογραφίας ως προεπιλογή
+; Sign encrypted mails per default
+;
+MSG_CO_IDENTITY_PGP_ENCRYPTALL
+Κρυπτογράφηση όλης της αλληλογραφίας ως προεπιλογή
+; Encrypt all mails per default
+;
+MSG_CO_IDENTITY_PGP_ADDOWN
+Προσθήκη δικού σας κλειδιού κατά την αποκρυπτογράφηση αλληλογραφίας
+; Add own key when encrypting mails
+;
+MSG_CO_IDENTITY_PHOTOURL
+URL φωτογραφίας μου
+; URL to own photo
+;
+MSG_CO_IDENTITY_ADDINFO
+Προσθήκη προσωπικής πληροφορίας
+; Add personal information
+;
+MSG_CO_IDENTITY_REQUESTMDN
+Απαίτηση μιας απόδειξης επιστροφής
+; Request a return receipt
+;
+MSG_CO_SERVERNAME
+Όνομα διακομιστή
+; Server name
+;
+MSG_HELP_CO_ST_USER
+Το όνομα χρήστη για την πρόσβαση στον\n\
+διακομιστή αλληλογραφίας.
+; The username for accessing the\n\
+; mail server.
+;
+MSG_FO_MOVEFOLDERTO
+Σίγουρα θέλετε να μετακινήσετε τον φάκελο από\n\
+'%s'\n\
+προς\n\
+'%s';
+; Do you really want to move the folder from\n\
+; '%s'\n\
+; to\n\
+; '%s'?
+; FROM,TO
+;
+MSG_FO_FOLDER_ALREADY_EXISTS
+Ένα αρχείο ή κατάλογος με το όνομα '%s' υπάρχει ήδη\n\
+και θα επανεγγραφεί/διαγραφεί.\n\
+\n\
+Σίγουρα θέλετε να προχωρήσετε;
+; A file or directory named '%s' already exists\n\
+; and will be overwritten/deleted.\n\
+; \n\
+; Do you really want to proceed?
+; PATH
+;
+MSG_ER_CANNOT_CREATE_FOLDER
+Αποτυχία δημιουργίας του καταλόγου '%s' (%s).
+; Failed to create directory '%s' (%s).
+; PATH, ERROR
+;
+MSG_CO_IdentityActive
+_Ενεργή
+; _Active
+;
+MSG_MA_FLUSH_ALL_INDICES
+Ανανέωση όλων των δεικτών
+; Flush all indices
+;
+MSG_FI_CONDITION
+Κατάσταση
+; Condition
+;
+MSG_HELP_CO_CH_IDENTITY_ENABLED
+Αν επιλεχτεί, αυτή η ταυτότητα χρήστη θα ενεργοποιηθεί για χρήση.
+; If checked, this user identity is enabled for use.
+;
+MSG_HELP_CO_ST_IDENTITY_DESCRIPTION
+Μια τροποποιημένη περιγραφή για\n\
+αυτή την ταυτότητα χρήστη.
+; A custom description for this\n\
+; user identity.
+;
+MSG_HELP_CO_ST_IDENTITY_REALNAME
+Το πραγματικό όνομα (όνομα και επίθετο) για\n\
+αυτή την ταυτότητα χρήστη.
+; The realname "firstname lastname" for\n\
+; this user identity.
+;
+MSG_HELP_CO_ST_IDENTITY_EMAIL
+Οι διευθύνσεις αλληλογραφίας που συνδέονται\n\
+με αυτή την ταυτότητα χρήστη.
+; The e-mail address associated with\n\
+; this user identity.
+;
+MSG_HELP_CO_ST_IDENTITY_ORGANIZATION
+Προαιρετικό όνομα της οργάνωσης που ανήκει\n\
+αυτή η ταυτότητα χρήστη.
+; Optional name of the organization\n\
+; this user identity belongs to.
+;
+MSG_HELP_CO_CY_IDENTITY_MAILSERVER
+Επιτρέπει να επιλέξετε τον διακομιστή εξερχομένων SMTP\n\
+που θα χρησιμοποιηθεί κατά την αποστολή αλληλογραφίας\n\
+χρησιμοποιώντας αυτή την ταυτότητα χρήστη.
+; Allows you to select the outgoing SMTP server\n\
+; which will be used when mail is going to be\n\
+; sent using this user identity.
+;
+MSG_HELP_CO_ST_IDENTITY_CC
+Οι προεπιλεγμένοι παραλήπτες Κοινοποίηση: που προστέθηκαν\n\
+κατά την δημιουργία μιας καινούργιας αλληλογραφίας.
+; The default CC: recipients added when\n\
+; composing a new mail.
+;
+MSG_HELP_CO_ST_IDENTITY_BCC
+Οι προεπιλεγμένοι παραλήπτες Ακριβές Αντίγραφο: που προστέθηκαν\n\
+κατά την δημιουργία μιας καινούργιας αλληλογραφίας.
+; The default BCC: recipients added when\n\
+; composing a new mail.
+;
+MSG_HELP_CO_ST_IDENTITY_REPLYTO
+Οι προεπιλεγμένοι παραλήπτες Απάντηση-Προς: που προστέθηκαν\n\
+κατά την δημιουργίας μιας καινούργιας αλληλογραφίας.
+; The default Reply-To: recipients added when\n\
+; composing a new mail.
+;
+MSG_HELP_CO_ST_IDENTITY_EXTRAHEADER
+Επιτρέπει να καθορίσετε την προεπιλογή για την τοποθέτηση\n\
+επιπλέον επικεφαλίδων σε μια εξερχόμενη αλληλογραφία.
+; Allows you to specify the default for putting\n\
+; additional headers to an outgoing mail.
+;
+MSG_HELP_CO_ST_IDENTITY_PHOTOURL
+Μια προαιρετική URL σε μια φωτογραφία που σχετίζεται\n\
+με αυτή την ταυτότητα χρήστη.
+; An optional URL to a photo associated with\n\
+; this user identity.
+;
+MSG_HELP_CO_CH_IDENTITY_SENTFOLDER
+Αν ενεργοποιηθεί, η απεσταλμένη αλληλογραφία θα\n\
+αποθηκεύεται σε έναν φάκελο. Αλλιώς η απεσταλμένη\n\
+αλληλογραφίας θα διαγράφεται.
+; If enabled, sent mail will be stored in a\n\
+; sent mail folder. Otherwise the sent mail\n\
+; will be deleted.
+;
+MSG_HELP_CO_TX_IDENTITY_SENTFOLDER
+Επιτρέπει να καθορίστε ποιός φάκελος αλληλογραφίας\n\
+θα χρησιμοποιείται κατά την αποθήκευση απεσταλμένης\n\
+αλληλογραφίας.
+; Allows to specify which mail folder should\n\
+; be used when storing sent mail.
+;
+MSG_HELP_CO_CH_IDENTITY_QUOTEMAILS
+Κατά την απάντηση ή προώθηση αλληλογραφίας, το κείμενο\n\
+θα μπαίνει σε παράθεση αν αυτή η επιλογή είναι ενεργή.
+; When replying or forwarding mails text will\n\
+; be quoted if this option is enabled.
+;
+MSG_HELP_CO_CH_IDENTITY_QUOTEPOS
+Επιτρέπει να ορίσετε εάν η απάντησή σας θα πρέπει\n\
+να τοποθετείται πάνω ή κάτω από τις παραθέσεις.
+; Allows to define if your answer should be\n\
+; placed above or below quotes.
+;
+MSG_HELP_CO_CH_IDENTITY_SIGPOS
+Επιτρέπει να ορίσετε εάν η υπογραφή σας θα πρέπει\n\
+να τοποθετείται πάνω ή κάτω από τις παραθέσεις.
+; Allows to define if your signature should\n\
+; appear below or above the quotes.
+;
+MSG_HELP_CO_CH_IDENTITY_SIGREPLY
+Αν ενεργοποιηθεί, μια υπογραφή θα προστεθεί κατά\n\
+την απάντηση σε μια αλληλογραφία.
+; If enabled, a signature will be added when\n\
+; replying to a mail.
+;
+MSG_HELP_CO_CH_IDENTITY_SIGFORWARD
+Αν ενεργοποιηθεί, μια υπογραφή θα προστεθεί κατά\n\
+την προώθηση μιας αλληλογραφίας.
+; If enabled, a signature will be added when\n\
+; forwarding a mail.
+;
+MSG_HELP_CO_CH_IDENTITY_ADDINFO
+Αν ενεργοποιηθεί, θα προστεθούν προσωπικές πληροφορίες\n\
+στην αλληλογραφία (επικεφαλίδα X-SenderInfo). Αυτό\n\
+απαιτεί μια καταχώρηση στο βιβλίο διευθύνσεων με την\n\
+ίδια διεύθυνση αλληλογραφίας με αυτή της ταυτότητας χρήστη.
+; If enabled, personal information will be\n\
+; added to the mail (X-SenderInfo header).\n\
+; This requires an addressbook entry with\n\
+; the same email address as this user identity.
+;
+MSG_HELP_CO_CH_IDENTITY_REQUESTMDN
+Αν ενεργοποιηθεί, μια ειδοποίηση αλληλογραφίας\n\
+θα σας ζητηθεί ως προεπιλογή κατά την δημιουργία\n\
+μιας αλληλογραφίας.
+; If enabled, a mail disposition notification\n\
+; will be requested per default when composing\n\
+; a mail.
+;
+MSG_HELP_CO_CH_IDENTITY_USEPGP
+Επιτρέπει την ενεργοποίηση/απενεργοποίηση της\n\
+λειτουργικότητας PGP για όλη την ταυτότητα χρήστη.
+; Allows to enable/disable the PGP functionality\n\
+; for this whole user identity.
+;
+MSG_HELP_CO_ST_IDENTITY_PGPID
+Επιτρέπει να καθορίσετε το ID κλειδί PGP που θα\n\
+χρησιμοποιηθεί για αυτή την ταυτότητα χρήστη.
+; Allows to specify the PGP-Key ID which should\n\
+; be used for this user identity.
+;
+MSG_HELP_CO_ST_IDENTITY_PGPURL
+Επιτρέπει να καθορίσετε ένα URL που το κοινό κλειδί\n\
+μπορεί να έχει πρόσβαση για αυτή την ταυτότητα χρήστη.
+; Allows to specify an URL where the public key\n\
+; for this user identity can be accessed.
+;
+MSG_HELP_CO_CH_IDENTITY_PGPSIGN_UNENC
+Αν επιλεχτεί, η προεπιλογή PGP ορίζεται σε υπογραφή\n\
+όλων των μη κρυπτογραφημένων μηνυμάτων κατά την έναρξη\n\
+δημιουργίας τους.
+; If enabled, the default is set to PGP sign all\n\
+; unencrypted emails when starting to compose them.
+;
+MSG_HELP_CO_CH_IDENTITY_PGPSIGN_ENC
+Αν ενεργοποιηθεί, η προεπιλογή PGP ορίζεται σε υπογραφή\n\
+όλων των κρυπτογραφημένων μηνυμάτων κατά την έναρξη\n\
+δημιουργίας τους.
+; If enabled, the default is set to PGP sign all\n\
+; encrypted emails when starting to compose them.
+;
+MSG_HELP_CO_CH_IDENTITY_PGPENC_ALL
+Αν ενεργοποιηθεί, η προεπιλογή PGP ορίζεται σε κρυπτογράφηση\n\
+όλων των μηνυμάτων κατά την έναρξη δημιουργίας τους.
+; If enabled, the default is set to PGP encrypt all\n\
+; emails when starting to compose them.
+;
+MSG_HELP_CO_CH_IDENTITY_PGPENC_SELF
+Αν ενεργοποιηθεί, όλα τα μηνύματα που κρυπτογραφήθηκαν με\n\
+PGP θα έχουν το κλειδί PGP που προστέθηκε από αυτή την\n\
+ταυτότητα χρήστη. Αν απενεργοποιηθεί, τα κρυπτογραφημένα\n\
+μηνύματα δε θα μπορούν να αποκρυπτογραφηθούν από αυτή την\n\
+ταυτότητα χρήστη.
+; If enabled, all emails being encrypted via PGP\n\
+; will have the PGP key added of this user identity.\n\
+; If disabled, encrypted emails cannot be decrypted\n\
+; by this user identity.
+;
+MSG_HELP_CO_CY_IDENTITY_SIGNATURE
+Επιτρέπει την επιλογή της προεπιλεγμένης υπογραφής που\n\
+θα χρησιμοποιηθεί κατά την δημιουργία αλληλογραφίας με\n\
+αυτή την ταυτότητα χρήστη.
+; Allows to select the default signature that\n\
+; should be used when composing emails with this\n\
+; user identity.
+;
+MSG_CO_CONFIGWARNING_TITLE
+Προειδοποίηση ρύθμισης
+; Configuration Warning
+;
+MSG_CO_CONFIGWARNING
+Έχετε τροποποιήσει ορισμένες επιλογές\n\
+ρυθμίσεων και θα χάσετε αυτές τις αλλαγές\n\
+όταν κλείσετε το παράθυρο ρύθμισης.\n\
+\n\
+Πώς θέλετε να προχωρήσετε;
+; You have modified certain configuration\n\
+; settings and will lose these changes\n\
+; when closing the config window.\n\
+; \n\
+; How do you want to proceed?
+;
+MSG_CO_CONFIGWARNING_BT
+_Κλείσιμο παραθύρου|*_Ματαίωση
+; _Close window|*_Abort
+;
+MSG_CO_CONFIGVERSIONWARNING_TITLE
+Προειδοποίηση έκδοσης ρύθμισης
+; Configuration Version Warning
+;
+MSG_CO_CONFIGVERSIONWARNING
+Το αρχείο ρύθμισης που προσπαθεί το ΥΑΜ να\n\
+φορτώσει, έχει αποθηκευτεί με μια νεότερη\n\
+έκδοση του ΥΑΜ. Αν συνεχίσετε να φορτώσετε\n\
+αυτό το αρχείο, μερικές ρυθμίσεις μπορεί να\n\
+χαθούν και να οριστούν στις προεπιλεγμένες.\n\
+\n\
+Πώς θέλετε να προχωρήσετε;
+; The configuration file that YAM tries to\n\
+; load was saved by a newer YAM version.\n\
+; If you continue to load this file some\n\
+; config settings might be lost and set\n\
+; to their default values.\n\
+; \n\
+; How do you want to proceed?
+;
+MSG_CO_CONFIGVERSIONWARNING_BT
+_Συνέχιση|*_Ματαίωση
+; _Continue|*_Abort
+;
+MSG_WR_MCCADDRFIELD
+Πεδίο διεύθυνσης κοινοποίησης
+; CC address field
+;
+MSG_WR_MBCCADDRFIELD
+Πεδίο διεύθυνσης ακριβές αντίγραφου
+; BCC address field
+;
+MSG_WR_MREPLYTOADDRFIELD
+Πεδίο διεύθυνσης απάντηση-προς
+; Reply-To address field
+;
+MSG_CO_LISTCOLUMNSETTINGS
+Ρυθμίσεις στήλης
+; Column settings
+;
+MSG_CO_LOOKFEEL_MAINWINDOW
+Κεντρικό παράθυρο
+; Main window
+;
+MSG_CO_LOOKFEEL_TITLE_THEME
+Θέμα
+; Theme
+;
+MSG_CO_LOOKFEEL_TITLE_INFO
+Πληροφορίες
+; Information
+;
+MSG_HELP_WR_CY_SIGNATURE
+Επιτρέπει να επιλέξετε ποιά υπογραφή\n\
+θα εμφανιστεί για το τρέχων μήνυμα.
+; Allows to select which signature\n\
+; show be used for the currently\n\
+; composed message.
+;
+MSG_WR_PGPSECURITY
+Επίπεδο ασφαλείας PGP
+; PGP security level
+;
+MSG_HELP_WR_CY_SECURITY
+Επιτρέπει να επιλέξετε το επίπεδο ασφαλείας PGP.\n\
+Μπορείτε να επιλέξετε αν κάποιο μήνυμα θα υπογραφτεί,\n\
+κωδικοποιηθεί ή και τα δυο. Η "Προεπιλογή" προσπαθεί\n\
+να βρεί τον παραλήπτη στο βιβλίο διευθύνσεών σας και\n\
+να κάνει χρήση των ρυθμίσεων από εκεί.
+; Allows to select the PGP security level.\n\
+; You can select if a message should be signed,\n\
+; encrypted or both. "Default" tries to find\n\
+; the recipient in your address book and use\n\
+; the settings defined there.
+;
+MSG_CO_MIMETYPE_TITLE
+Τύπος ΜΙΜΕ
+; MIME type
+;
+MSG_CO_DOWNLOAD_LARGE_MAILS1
+_Λήψη μηνυμάτων μεγαλύτερα από
+; _Download messages larger than
+;
+MSG_CO_DOWNLOAD_LARGE_MAILS2
+ΚΒ
+; KB
+;
+MSG_MA_DRAFTS
+Πρόχειρα
+; Drafts
+;
+MSG_CO_SIGNATURE
+Υπογραφή
+; Signature
+;
+MSG_CO_SIGNATURES
+Υπογραφές
+; Signatures
+;
+MSG_CO_SIGNATURE_DESCRIPTION
+Περιγραφή
+; Description
+;
+MSG_CO_SIGNATURE_ACTIVE
+_Ενεργή
+; _Active
+;
+MSG_CO_IDENTITY_SIGNATURE
+Υπογραφή
+; Signature
+;
+MSG_HELP_CO_LV_SIGNATURE
+Λίστα όλων των υπογραφών
+; List of all signatures
+;
+MSG_HELP_CO_BT_SIGADD
+Προσθήκη μια νέας υπογραφής στην λίστα.
+; Adds a new signature to the list.
+;
+MSG_HELP_CO_BT_SIGDEL
+Αφαίρεση επιλεγμένης υπογραφής από την λίστα.
+; Removes selected signature from list.
+;
+MSG_HELP_CO_BT_SIGUP
+Μετακίνηση υπογραφής μια καταχώρηση επάνω.
+; Moves signature one entry up.
+;
+MSG_HELP_CO_BT_SIGDOWN
+Μετακίνηση υπογραφής μια καταχώρηση κάτω.
+; Moves signature one entry down.
+;
+MSG_HELP_CO_BT_SIG_ACTIVE
+Αποθήκευση της τρέχουσας επιλεγμένης\n\
+υπογραφής ως ενεργή ή ανενεργή.
+; Flags the currently selected signature\n\
+; as active or inactive.
+;
+MSG_HELP_CO_ST_SIG_DESC
+Επιτρέπει να εισάγετε ένα κείμενο\n\
+περιγραφής για την υπογραφή.
+; Allows you to enter a freetext\n\
+; description for the signature.
+;
+MSG_HELP_CO_TE_SIGEDIT
+Ο επεξεργαστής κειμένου για την εισαγωγή\n\
+ή αλλαγή του κειμένου υπογραφής.
+; Text editor for entering/changing\n\
+; the signature text.
+;
+MSG_CO_MIXED_CONNECTIONS
+Συνδέσεις
+; Connections
+;
+MSG_CO_POP_NOTIFICATION
+Ειδοποίηση για νέα αλληλογραφία
+; Notification for new mails
+;
+MSG_SSL_CERT_WARNING_TITLE
+Προειδοποίηση πιστοποιητικού SSL
+; SSL Certificate Warning
+;
+MSG_SSL_CERT_WARNING_BUTTONS
+_Αποδοχή|_Μόνιμη αποδοχή|_Προβολή πιστοποιητικού|*Από_ρριψη
+; _Accept|Accept _Permanently|_Show Certificate|*_Reject
+;
+MSG_SSL_CERT_WARNING_INTRO
+Σφάλμα επαλήθευσης πιστοποιητικού διακομιστή για '\033b%s:%d\033n':
+; Error validating server certificate for '\033b%s:%d\033n':
+; HOSTNAME, PORT
+;
+MSG_SSL_CERT_WARNING_UNTRUSTED
+- Το πιστοποιητικό δεν έχει εκδοθεί από μια αξιόπιστη πηγή. Κάντε χρήση\n\
+  του αποτυπώματος για την επαλήθευση του πιστοποιητικού χειροκίνητα.
+; - The certificate is not issued by a trusted authority. Use the\n\
+;   fingerprint to validate the certificate manually.
+;
+MSG_SSL_CERT_WARNING_IDMISMATCH
+- Ο εξυπηρετητής του πιστοποιητικού δεν ταιριάζει.
+; - The certificate hostname does not match.
+;
+MSG_SSL_CERT_WARNING_NOTYETVALID
+- Το πιστοποιητικό δεν είναι ακόμα έγκυρο.
+; - The certificate is not yet valid.
+;
+MSG_SSL_CERT_WARNING_EXPIRED
+- Το πιστοποιητικό έχει λήξει.
+; - The certificate has expired.
+;
+MSG_SSL_CERT_WARNING_OTHER
+- Το πιστοποιητικό έχει ένα άγνωστο σφάλμα.
+; - The certificate has an unknown error.
+;
+MSG_SSL_CERT_WARNING_INFO
+Πληροφορίες πιστοποιητικού:\n\
+- Εξυπηρετητής: \033b%s\033n\n\
+- Έγκυρο: \033b%s\033n μέχρι \033b%s\033n\n\
+- Εκδότης: \033b%s\033n\n\
+- Αποτύπωμα: \033b%s\033n
+; Certificate information:\n\
+; - Hostname: \033b%s\033n\n\
+; - Valid: \033b%s\033n until \033b%s\033n\n\
+; - Issuer: \033b%s\033n\n\
+; - Fingerprint: \033b%s\033n
+; HOSTNAME, VALID_FROM, VALID_TO, ISSUER, FINGERPRINT
+;
+MSG_SSL_CERT_WARNING_SHOWTITLE
+Πιστοποιητικό του %s:%d
+; Certificate of %s:%d
+; HOSTNAME, PORT
+;
+MSG_ER_WARN_CAFILE
+Κατά την προσπάθεια ίδρυσης μιας σύνδεσης SSL το αρχείο πιστοποιητικού \
+'%s' βρέθηκε να λείπει.\n\
+\n\
+Παρακαλώ βεβαιωθείτε ότι το αρχείο υπάρχει και είναι ενημερωμένο ή αλλιώς \
+κάθε σύνδεση SSL θα αποθηκευτεί ως μη επαληθευμένη.
+; While trying to establish a SSL connection the certificate bundle \
+; file '%s' was found to be missing.\n\
+; \n\
+; Please make sure that the file exists and is uptodate or otherwise \
+; each SSL connection will be flagged as unverified.
+; FILEPATH
+;
+MSG_ER_WARN_LOADCAPATH
+Κατά την προσπάθεια φόρτωσης του πιστοποιητικού '%s' ή ξεχωριστών \
+αρχείων πιστοποιητικών από '%s' παρουσιάστηκε ένα σφάλμα.\n\
+\n\
+Παρακαλώ βεβαιωθείτε ότι δεν έχει τοποθετηθεί κάποιο μη έγκυρο αρχείο \
+στον φάκελο πιστοποιητικών.
+; While trying to load the certificate bundle '%s' or individual \
+; certificate files from '%s' an error occurred.\n\
+; \n\
+; Please make sure that no invalid file has been placed in the \
+; certificate folder.
+; FILEPATH, DIRPATH
+;
+MSG_ER_WARN_CAPATH
+Κατά την προσπάθεια εγκατάστασης ενός πιστοποιητικού επαλήθευσης SSL \
+ο κατάλογος '%s' βρέθηκε να λείπει.\n\
+\n\
+Παρακαλώ βεβαιωθείτε ότι η διαδρομή υπάρχει και περιέχει το αρχείο \
+πιστοποιητικών όπως προμηθεύτηκε κατά την εγκατάσταση του ΥΑΜ.
+; While trying to setup a SSL certificate verify the directory '%s' \
+; was found to be missing.\n\
+; \n\
+; Please make sure that the path exists and contains the certificate \
+; bundle file as supplied during the installation process of YAM.
+; DIRPATH
+;
+MSG_CO_ACTION_TERMINATE_FILTER
+Τερματισμός φίλτρου διεργασίας
+; Terminate filter process
+;
+MSG_HELP_CO_CH_ATERMINATE
+Τερματισμός της διεργασίας φίλτρου μετά από αυτό\n\
+το φίλτρο. Τα επόμενα φίλτρα δεν θα εκτελεστούν.
+; Terminate the filter process after this\n\
+; filter. Following filters will not\n\
+; be executed anymore.
+;
+MSG_CO_FILTER_IMPORT
+Εισαγωγή...
+; Import...
+;
+MSG_FILTER_IMPORT_TITLE
+Εισαγωγή φίλτρου
+; Import filter
+;
+MSG_SPAM_TRUSTHEADERLINES
+Αξιόπιστες γραμμές επικεφαλίδας του εξωτερικού φίλτρου:
+; Trust header lines of this external filter:
+;
+MSG_ER_POP3_UIDLHASH_INIT_FAILED
+Αποτυχία αρχικοποίησης του πίνακα UIDL.
+; Failed to initialized UIDL hash table.
+;
+MSG_CO_SIGNATURE_TEXT
+Κείμενο υπογραφής
+; Signature text
+;
+MSG_CO_APPEND_SIGNATURE_FILE
+Επισύναψη ενός αρχείου αντί μιας υπογραφής
+; Append a file as signature instead
+;
+MSG_PRESELECT_GETTING_DETAILS
+Γίνεται λήψη πληροφοριών μηνύματος (%%ld από %ld)
+; Getting message details (%%ld of %ld)
+;
+MSG_CO_UPDATES_INFO_MANUAL
+Θα πρέπει να ελέγξετε για ενημερώσεις χειροκίνητα.
+; You will have to check for updates manually.
+;
+MSG_CO_UPDATES_INFO_AUTO
+Θα λάβετε ειδοποίηση αμέσως μόλις υπάρξουν νέες ενημερώσεις.
+; You will be notified as soon as updates are available.
+;
+MSG_PGPPASS_SHOW_CHARS
+Προβολή χαρακτήρων
+; Show characters
+;
+MSG_CANNOT_CREATE_CUSTOM_CLASS
+Αποτυχία δημιουργίας custom class '%s'\n\
+ως subclass της '%s'.
+; Failed to create custom class '%s'\n\
+; as subclass of '%s'.
+; CLASS,SUPERCLASS
+;
+MSG_ER_MORPHOS_REXX_WARNING
+Το ΥΑΜ αναγνώρισε ότι τρέχετε μια έκδοση της 'rexxsyslib.library' \
+στο σύστημα MorphOS που είναι γνωστό ότι δεν περιέχει μια υλοποίηση \
+ARexx σε λειτουργία.\n\
+\n\
+Για να λύσετε αυτό το πρόβλημα και να κάνετε το ARexx να τρέξει \
+με το ΥΑΜ θα πρέπει να εγκαταστήσετε ένα αντίγραφο της \
+'rexxsyslib.library' από μια εγκατάσταση AmigaOS 3.1-3.9 στο \
+'SYS:Libs', να μετονομάσετε το 'rexxsyslib.library' στο \
+'MOSSYS:Libs' και να επανεκκινήσετε τον υπολογιστή σας.
+; YAM has identified that you are running a version of the \
+; 'rexxsyslib.library' in your MorphOS system that is known \
+; to not have a working ARexx implementation.\n\
+; \n\
+; To solve this situation and get ARexx running with YAM \
+; you should install a copy of the 'rexxsyslib.library' \
+; from an AmigaOS 3.1-3.9 installation to 'SYS:Libs', rename \
+; the 'rexxsyslib.library' in 'MOSSYS:Libs' and reboot your \
+; system.
 ;

@@ -1,5 +1,5 @@
 ;
-; $VER: Install-YAM 1.27 (23.12.2012) (c) 2000-2012 by YAM Open Source Team
+; $VER: Install-YAM 1.28 (24.4.2013) (c) 2000-2013 by YAM Open Source Team
 ; Language support added by Sφnke Tesch/ATO
 ;
 ; $Id$
@@ -12,18 +12,18 @@
 (set #def_lang_czech               $004)
 (set #def_lang_italian             $008)
 (set #def_lang_french              $010)
-;(set #def_lang_greek               $020)
-;(set #def_lang_dutch               $040)
-;(set #def_lang_polish              $080)
-(set #def_lang_spanish             $020)
-(set #def_lang_turkish             $040)
-(set #def_lang_hungarian           $080)
+(set #def_lang_greek               $020)
+(set #def_lang_spanish             $040)
+(set #def_lang_turkish             $080)
+(set #def_lang_hungarian           $100)
+;(set #def_lang_dutch               $200)
+;(set #def_lang_polish              $400)
 ; add more languages here
 ; (set #def_lang_<language name>     bitmask)
 ;
 ; accents of languages should be appended at the end rather than somewhere in the middle,
 ; because only AmigaOS 4.x can handle them.
-(set #def_lang_english_british     $100)
+(set #def_lang_english_british     $200)
 ; add more accents of languages here
 ; (set #def_lang_<language name>     bitmask)
 ; ///
@@ -286,12 +286,14 @@
 ;/// ***** Greek
 (if (= @language "greek")
     (
-        (set #def_cat_lang #def_lang_english)
+        (set #def_cat_lang #def_lang_greek)
+        (set #acknowledgeOS (cat "Παρακαλώ αναγνωρίστε την αυτόματη ανίχνευση\n"
+        	                 "του λειτουργικού σας συστήματος:"))
         (set #YAM_dir  (cat "Παρακαλώ επιλέξτε ένα κατάλογο για το YAM.\n"
                             "(ΔΕΝ θα δημιουργηθεί επιπλέον φάκελος)"))
         (set #lang_catalog (cat "Ποιό αρχείο καταλόγου θέλετε να εγκαταστήσετε;\n"
                                 "(Η αγγλική γλώσσα είναι ενσωματομένη)"))
-        (set #ask_charsets "Θέλετε να εγκαταστήσετε τα αρχεία κωδικοποίησης χαρακτήρων που απαιτείται από την codesets.library;")
+        (set #ask_charsets "Θέλετε να εγκαταστήσετε τα αρχεία κωδικοποίησης χαρακτήρων που απαιτείται από την codesets.library;"
         (set #no_way_back_warning (cat "ΠΡΟΣΟΧΗ !!!\n"
                                        "(εάν θέλετε να αναβαθμίσετε μια ήδη υπάρχουσα εγκατάσταση του YAM 2.4)\n"
                                        "\n"
@@ -461,6 +463,7 @@
                      "Czech"
                      "Italiano"
                      "Franηais"
+                     "Ελληνικά"
                      "Espaρol"
                      "Tόrkηe"
                      "Magyar"
@@ -479,6 +482,7 @@
                      "Czech"
                      "Italiano"
                      "Franηais"
+                     "Ελληνικά"
                      "Espaρol"
                      "Tόrkηe"
                      "Magyar"
@@ -647,18 +651,18 @@
         )
 
         ; greek catalog file
-        ;(if (bitand catalog_lang #def_lang_greek)
-        ;    (
-        ;        (makedir (tackon Cat_dir #cat_name_greek))
+        (if (bitand catalog_lang #def_lang_greek)
+            (
+                (makedir (tackon Cat_dir #cat_name_greek))
 
-        ;        (copyfiles
-        ;            (source "/Catalogs/greek")
-        ;            (choices "YAM.catalog")
-        ;            (dest (tackon Cat_dir #cat_name_greek))
-        ;            (help @copyfiles-help)
-        ;        )
-        ;    )
-        ;)
+                (copyfiles
+                    (source "/Catalogs/greek")
+                    (choices "YAM.catalog")
+                    (dest (tackon Cat_dir #cat_name_greek))
+                    (help @copyfiles-help)
+                )
+            )
+        )
 
         ; dutch catalog file
         ;(if (bitand catalog_lang #def_lang_dutch)
