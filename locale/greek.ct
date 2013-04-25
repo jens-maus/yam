@@ -1,4 +1,4 @@
-## version $VER: yam.catalog 8.0 (26.12.2012)
+## version $VER: yam.catalog 8.1 (25.4.2013)
 ## language greek
 ## codeset 10
 ## chunk AUTH Antonis Iliakis
@@ -2007,7 +2007,7 @@ MSG_HELP_CO_CY_HEADER
 ; Which message headers do you want YAM\nto display by default in the Read window?
 ;
 MSG_HELP_CO_ST_HEADERS
-Καθορίστε ένα μοτίβο AmigaDOS για να\nεπιλέξετε τις κεφαλίδες σε ΕΠΙΛΕΓΜΕΝΗ μορφή.\nΗ προκαθορισμένη είναι (Από|Προς|Κοιν|Ακρ.Αντ|Ημερ|Θέμα).
+Καθορίστε ένα μοτίβο AmigaDOS για να\nεπιλέξετε τις κεφαλίδες σε ΕΠΙΛΕΓΜΕΝΗ μορφή.\nΗ προκαθορισμένη είναι (Από|Προς|Κοιν|Λευκή Κοιν|Ημερ|Θέμα).
 ; Specify an AmigaDOS pattern to\nchoose the headers in SELECTED format.\nDefault is (From|To|Cc|BCC|Date|Subject).
 ;
 MSG_HELP_CO_CY_SENDERINFO
@@ -2579,7 +2579,7 @@ MSG_HELP_AB_BT_CC
 ; Set secondary recipient(s)\nfor a new message.
 ;
 MSG_HELP_AB_BT_BCC
-Ορίστε ακριβές αντίγραφο παραλήπτη\nγια ένα νέο μήνυμα.
+Ορίστε λευκή κοινοποίηση παραλήπτη\nγια ένα νέο μήνυμα.
 ; Set blind copy recipient(s)\nfor a new message.
 ;
 ;
@@ -3239,11 +3239,11 @@ _Περιγραφή
 ; D_escription
 ;
 MSG_WR_CopyTo
-Κοινοποίη_ση προς (Κοιν)
+Αντίγρα_φα προς (Κοιν)
 ; C_opies to (CC)
 ;
 MSG_WR_BlindCopyTo
-Ακρι_βές αντίγραφο προς (Ακρ.αντ.)
+Κρυφά αντί_γραφα προς (Λευκή Κοιν)
 ; Hidde_n copies to (BCC)
 ;
 MSG_WR_From
@@ -3536,11 +3536,11 @@ MSG_HELP_WR_ST_DESC
 ; Optional description for\nthe selected attachment.
 ;
 MSG_HELP_WR_ST_CC
-Αποστείλατε μια κοινοποίηση (Κοιν) του\nμηνύματος σε αυτούς τους παραλήπτες.
+Αποστείλατε ένα αντίγραφο (Κοιν) του\nμηνύματος σε αυτούς τους παραλήπτες.
 ; Send a carbon copy (CC) of the\nmessage to these recipients.
 ;
 MSG_HELP_WR_ST_BCC
-Αποστείλατε ένα ακριβές αντίγραφο (Ακρ.Αντ.) του\nμηνύματος σε αυτούς τους παραλήπτες.
+Αποστείλατε ένα κρυφό αντίγραφο (Λευκή Κοιν) του\nμηνύματος σε αυτούς τους παραλήπτες.
 ; Send a blind carbon copy of\nthe message to these recipients.
 ;
 MSG_HELP_WR_ST_EXTHEADER
@@ -5356,7 +5356,7 @@ MSG_ER_LIB_URL
 ; LIBRARY_NAME, LIBRARY_VERSION, LIBRARY_REVISION, LIBRARY_URL
 ;
 MSG_ER_NO_MCC
-Αδυναμία ανοίγματος της απαιτούμενης ειδικής κλάσης MUI '%s' v%lu.%lu.\n\nΠαρακαλώ επισκεφτείτε την διεύθυνση'%s',\nκάντε λήψη της πιο πρόσφατης έκδοσης και βεβαιωθείτε\nότι την έχετε εγκαταστήσει σωστά.
+Αδυναμία ανοίγματος της απαιτούμενης ειδικής κλάσης MUI '%s' v%lu.%lu.\n\nΠαρακαλώ επισκεφτείτε την διεύθυνση '%s',\nκάντε λήψη της πιο πρόσφατης έκδοσης και βεβαιωθείτε\nότι την έχετε εγκαταστήσει σωστά.
 ; Couldn't open required MUI custom class '%s' v%lu.%lu.\n\nPlease visit '%s',\ndownload the most recent version and make\nsure you have it correctly installed.
 ; MCC_NAME, MCC_VERSION, MCC_REVISION, MCC_URL
 ;
@@ -6112,7 +6112,7 @@ MSG_MA_TOREAD
 ; Read
 ;
 MSG_PROJECT_MABOUT
-Σχετικά...
+Περί...
 ; About...
 ;
 MSG_MA_MEDIT
@@ -6288,7 +6288,7 @@ MSG_CO_MDN_ENABLED
 ; Allow _return receipts for some messages
 ;
 MSG_CO_MDN_NORECIPIENT
-Εάν δεν υπάρχω στο Προς: ή Κοιν: του μηνύματος:
+Αν δεν υπάρχω στο Προς: ή Κοιν: του μηνύματος:
 ; If I'm not in the _To: or Cc: of the message:
 ;
 MSG_CO_MDN_NODOMAIN
@@ -7879,7 +7879,7 @@ MSG_CO_IDENTITY_CC
 ; CC: address
 ;
 MSG_CO_IDENTITY_BCC
-Ακρ. Αντ.: διεύθυνση
+Λευκή Κοινοποίηση: διεύθυνση
 ; BCC: address
 ;
 MSG_CO_IDENTITY_REPLYTO
@@ -8048,13 +8048,13 @@ MSG_HELP_CO_CY_IDENTITY_MAILSERVER
 ; sent using this user identity.
 ;
 MSG_HELP_CO_ST_IDENTITY_CC
-Οι προεπιλεγμένοι παραλήπτες Κοινοποίηση: που προστέθηκαν\n\
+Οι προεπιλεγμένοι παραλήπτες "Κοινοποίηση:" που προστέθηκαν\n\
 κατά την δημιουργία μιας καινούργιας αλληλογραφίας.
 ; The default CC: recipients added when\n\
 ; composing a new mail.
 ;
 MSG_HELP_CO_ST_IDENTITY_BCC
-Οι προεπιλεγμένοι παραλήπτες Ακριβές Αντίγραφο: που προστέθηκαν\n\
+Οι προεπιλεγμένοι παραλήπτες "Λευκή Κοινοποίηση:" που προστέθηκαν\n\
 κατά την δημιουργία μιας καινούργιας αλληλογραφίας.
 ; The default BCC: recipients added when\n\
 ; composing a new mail.
@@ -8246,7 +8246,7 @@ MSG_WR_MCCADDRFIELD
 ; CC address field
 ;
 MSG_WR_MBCCADDRFIELD
-Πεδίο διεύθυνσης ακριβές αντίγραφου
+Πεδίο διεύθυνσης λευκής κοινοποίησης
 ; BCC address field
 ;
 MSG_WR_MREPLYTOADDRFIELD
@@ -8543,4 +8543,88 @@ ARexx σε λειτουργία.\n\
 ; from an AmigaOS 3.1-3.9 installation to 'SYS:Libs', rename \
 ; the 'rexxsyslib.library' in 'MOSSYS:Libs' and reboot your \
 ; system.
+;
+MSG_WR_SAVEASDRAFT
+Αποθήκευση ως πρόχειρο
+; Save as draft
+;
+MSG_HELP_WR_BT_SAVEASDRAFT
+Αποθήκευση μηνύματος στο\n\
+φάκελο 'Πρόχειρα'.
+; Saves the message to\n\
+; the 'Drafts' folder.
+;
+MSG_WR_MSAVEASDRAFT
+Αποθήκευση ως πρόχειρο
+; Save as draft
+;
+MSG_WR_MCLOSE
+Κλείσιμο
+; Close
+;
+MSG_LOG_REDIRECT
+Ανακατεύθυνση μηνύματος από '%s' με θέμα '%s' προς '%s'
+; Redirected message from '%s' about '%s' to '%s'
+; SENDER, SUBJECT, RECIPIENT
+;
+MSG_CO_ACTIONREDIRECT
+_Ανακατεύθυνση
+; _Redirect
+;
+MSG_HELP_CO_CH_AREDIRECT
+Ανακατεύθυνση μηνυμάτων που\n\
+ταιριάζουν σε άλλο άτομο.
+; Redirect matching messages\n\
+; to another person.
+;
+MSG_HELP_CO_ST_AREDIRECT
+Οι διευθύνσεις e-mail που θα πρέπει\n\
+να κάνουν λήψη τα μηνύματα ανακατεύθυνσης.
+; E-mail address(es) that should\n\
+; get the redirected messages.
+;
+MSG_MA_MREDIRECT
+Γίνεται ανακατεύθυνση...
+; Redirect...
+;
+MSG_WR_REDIRECT_FROM
+Επαναποστολή-_Από
+; Resent-_From
+;
+MSG_WR_REDIRECT_TO
+Επαναποστολή-_Προς
+; Resent-_To
+;
+MSG_WR_REDIRECT_CC
+Επαναποστολή-_Κοιν.
+; Resent-_CC
+;
+MSG_WR_REDIRECT_BCC
+Επαναποστολή-_Λευκή Κοιν.
+; Resent-_BCC
+;
+MSG_WR_REDIRECT_TITLE
+Ανακατευθημένα μηνύματα
+; Redirect message(s)
+;
+MSG_ER_CANNOT_CREATE_MAIL_FILE
+Αδυναμία δημιουργίας του αρχείου αλληλογραφίας '%s'.\n\
+\n\
+Αιτία: άκυρη διαδρομή φακέλου ή μη επαρκής ελεύθερος χώρος στο δίσκο.
+; Could not create mail file '%s'.\n\
+; \n\
+; Reason: invalid folder directory or insufficient disk space.
+; FILE
+;
+MSG_WR_RENAME
+_Μετονομασία
+; _Rename
+;
+MSG_WR_RENAME_ATTACHMENT
+Μετονομασία επισύναψης
+; Rename attachment
+;
+MSG_WR_ENTER_NEW_NAME
+Εισάγετε νέο όνομα επισύναψης:
+; Enter new attachment name:
 ;
