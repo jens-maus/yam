@@ -5,11 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-05-01 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_stringsizes.h: increased the size of the MsgID to 256 characters as the
+    former limit of 80 characters was definitely too small for certain mails.
+
 2013-04-25 Jens Langner <Jens.Langner@light-speed.de>
 
   * resources/zoneinfo, tools/tzdata: updated tzdata/tzcode environment to the
     latest version (2013c) released by iana.org.
- 
+
 2013-04-25 Thore Böckelmann <tboeckel@gmx.de>
 
   * locale/greek.ct: updated greek translation kindly provided by Antonis

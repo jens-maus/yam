@@ -34,7 +34,7 @@
 #define SIZE_HOST         80
 #define SIZE_REALNAME     40
 #define SIZE_SUBJECT     200
-#define SIZE_MSGID        80
+#define SIZE_MSGID       256
 #define SIZE_MFILE        30
 #define SIZE_COMMAND     120
 #define SIZE_CTYPE        40
