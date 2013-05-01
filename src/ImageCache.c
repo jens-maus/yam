@@ -263,7 +263,7 @@ static void DeleteImage(struct ImageCacheNode *node)
 
   if(node->dt_obj != NULL)
   {
-    D(DBF_STARTUP, " isposing dtobject 0x%08lx of node 0x%08lx", node->dt_obj, node);
+    D(DBF_STARTUP, "disposing dtobject 0x%08lx of node 0x%08lx", node->dt_obj, node);
     DisposeDTObject(node->dt_obj);
     node->dt_obj = NULL;
   }
