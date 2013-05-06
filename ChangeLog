@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-05-06 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c: bumped all the third-party .mcc classes minimum required version to
+    the latest released versions because they all fix important issues YAM might
+    be affected from.
+
 2013-05-01 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_stringsizes.h: increased the size of the MsgID to 256 characters as the
