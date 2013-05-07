@@ -128,6 +128,7 @@ static void NewMessageID(char *idbuf, const size_t idbufSize, const struct MailS
   else
   {
     E(DBF_MAIL, "no SMTP server configured");
+    idbuf[0] = '\0';
   }
 
   LEAVE();

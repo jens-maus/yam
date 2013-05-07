@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-05-07 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_WR.c: make sure the MsgID string is correctly terminated in the rare case
+    when there is no server configured.
+
 2013-05-06 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.c: bumped all the third-party .mcc classes minimum required version to
