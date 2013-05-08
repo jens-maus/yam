@@ -1303,10 +1303,15 @@ static unsigned long CompressMsgID(const char *msgid)
   // with -1
   if(msgid != NULL && msgid[0] != '\0')
   {
-    char *end = strchr(msgid, '>'); // find end of msgid
+    char *end;
     size_t len;
 
-    if(end != NULL)
+    // skip the leading angle bracket (see RFC 4130)
+    if(msgid[0] == '<')
+      msgid++;
+
+    // find the trailing angle bracket and skip it (see RFC 4130)
+    if((end = strchr(msgid, '>')) != NULL)
       len = end-msgid+1;
     else
     {
