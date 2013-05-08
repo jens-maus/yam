@@ -1722,6 +1722,8 @@ BOOL MA_ReadHeader(const char *mailFile, FILE *fh, struct MinList *headerList, e
     BOOL finished = FALSE;
     struct HeaderNode *hdrNode = NULL;
 
+    D(DBF_MIME, "reading header lines of mail file '%s'", mailFile);
+
     // clear the headerList first
     NewMinList(headerList);
 
