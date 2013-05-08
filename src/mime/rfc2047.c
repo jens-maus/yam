@@ -640,8 +640,10 @@ static int rfc2047_decode_callback(const char *txt, unsigned int len, const char
         else
           W(DBF_MIME, "couldn't convert src str via CodesetsConvertStr(), codesets '%s' -> '%s'!", SafeStr(srcCodeset->name), SafeStr(G->readCharset->name));
       }
-      else
+      #if defined(DEBUG)
+      else if(stricmp(chset, "us-ascii") != 0)
         W(DBF_MIME, "couldn't find charset '%s' in codesets.library!", chset);
+      #endif
     }
   }
 
