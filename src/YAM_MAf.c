@@ -2129,6 +2129,9 @@ static BOOL MA_ScanDate(struct Mail *mail, const char *date)
     s = (char *)date;
   }
 
+  // ensure a valid time zone string in case the parsing process fails to find one
+  tzone[0] = '\0';
+
   // skip leading spaces
   while(*s && isspace(*s))
     s++;

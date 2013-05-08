@@ -9,6 +9,8 @@ $URL$
 
   * YAM_MAf.c: skip the leading angle bracket of a Message-Id string as suggested
     by RFC 4130 when calculating the CRC value.
+  * YAM_MAf.c: fixed a possible uninitialized time zone string in case parsing
+    a date string fails for any reason.
 
 2013-05-07 Thore Böckelmann <tboeckel@gmx.de>
 
