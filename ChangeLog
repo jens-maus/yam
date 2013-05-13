@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-05-13 Vit Sindlar <sindlarv at centrum dot cz>
+
+  * locale/czech.ct: updated Czech translation.
+
 2013-05-13 Thore Böckelmann <tboeckel@gmx.de>
 
   * themes/MagicWB reduced, themes/Mason old, themes/NewIcons: fixed the

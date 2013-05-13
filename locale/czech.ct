@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.1 (23.12.2012)
+## version $VER: YAM.catalog 8.2 (13.5.2013)
 ## language czech
 ## codeset 5
 ;
@@ -18,7 +18,7 @@
 ; new entries. And if you delete an entry NEVER reorder or resort
 ; the ID numbers accordingly.
 ;
-;#version 7
+;#version 8
 ;#language english
 ;
 ; General
@@ -461,11 +461,6 @@ MSG_LOG_Replying
 Odeslána odpovìï na zprávu od '%s'; pøedmìt '%s'
 ; Replied message from '%s' about '%s'
 ; SENDER, SUBJECT
-;
-MSG_LOG_Bouncing
-Beze zmìny pøedána zpráva od '%s'; pøedmìt '%s', urèená pro '%s'
-; Bounced message from '%s' about '%s' to '%s'
-; SENDER, SUBJECT, RECIPIENT
 ;
 MSG_LOG_Forwarding
 Pøeposlána zpráva od '%s'; pøedmìt '%s', urèená pro '%s'
@@ -1354,10 +1349,6 @@ MSG_CO_ApplyOnReq
 Apli_kovat na po¾ádání
 ; Apply on _request
 ;
-MSG_CO_ActionBounce
-Pøedat _beze zmìny
-; _Bounce
-;
 MSG_CO_ActionForward
 Pø_eposlat
 ; _Forward
@@ -2065,18 +2056,6 @@ MSG_HELP_CO_CY_COMBINE
 Definuje zpùsob kombinování pravidel filtrování.
 ; How to combine the rules\n\
 ; for this filter.
-;
-MSG_HELP_CO_CH_ABOUNCE
-Zprávy vyhovující definovaným kritériím pøedá\n\
-beze zmìny urèené osobì.
-; Bounce matching messages\n\
-; to another person.
-;
-MSG_HELP_CO_ST_ABOUNCE
-Definuje adresu osoby, které mají být beze zmìny\n\
-pøedány odpovídající zprávy.
-; E-mail address(es) that should\n\
-; get the bounced messages.
 ;
 MSG_HELP_CO_CH_AFORWARD
 Zprávy vyhovující definovaným kritériím pøepo¹le\n\
@@ -3334,7 +3313,7 @@ MSG_RE_SelectAddressAdd
 ; Module RE - Hooks
 ;
 MSG_RE_Original
-èistý formát
+v¹e vèetnì hlavièek
 ; Raw format
 ;
 MSG_RE_AllTexts
@@ -3707,17 +3686,6 @@ MSG_WR_Signature
 Podpis
 ; Signature
 ;
-MSG_WR_BounceWT
-Pøedání zprávy beze zmìny
-; Bounce message
-;
-MSG_WR_BounceTo
-_Komu
-; Bounce _to
-;
-;
-; Module WR - Toolbar
-;
 MSG_WR_TBEditor
 Editor
 ; Editor
@@ -4042,13 +4010,6 @@ Nastaví prioritu zprávy.
 ; Set the priority\n\
 ; of this message.
 ;
-MSG_HELP_WR_BT_HOLD
-Zkopíruje vytvoøenou zprávu do slo¾ky 'K odeslání'\n\
-a zmìní její stav na odlo¾ená.
-; Copy the created message to\n\
-; the Outgoing folder and set\n\
-; its status to 'hold'.
-;
 MSG_HELP_WR_BT_QUEUE
 Zkopíruje vytvoøenou zprávu do slo¾ky 'K odeslání'.
 ; Copy the created message to\n\
@@ -4060,11 +4021,6 @@ a ihned ji ode¹le.
 ; Copy the created message to\n\
 ; the Outgoing folder and send\n\
 ; it immediately.
-;
-MSG_HELP_WR_BT_CANCEL
-Sma¾e rozepsanou zprávu a zavøe okno.
-; Discard the\n\
-; created message.
 ;
 ;
 ; Module TR - Procedures
@@ -4130,7 +4086,7 @@ MSG_TR_FilterStats
 \euVýsledky filtrování zpráv\en\n\
 \n\
 Poèet zpracovaných: %3ld\n\
-Poèet pøedaných beze zmìny: %3ld\n\
+Poèet pøesmìrovaných: %3ld\n\
 Poèet pøeposlaných: %3ld\n\
 Poèet autom. zodpovìzených: %3ld\n\
 Poèet vykonaných pøíkazù: %3ld\n\
@@ -4140,7 +4096,7 @@ Poèet smazaných: %3ld
 ; Filtering done:\n\
 ; \n\
 ; %3ld messages checked,\n\
-; %3ld bounced,\n\
+; %3ld redirected,\n\
 ; %3ld forwarded,\n\
 ; %3ld auto-replied,\n\
 ; %3ld command activated,\n\
@@ -4313,14 +4269,6 @@ MSG_ER_ErrorARexxScript
 Chyba pøi spu¹tìní pøíkazu '%s'. Zkontrolujte, zda zadaný skript existuje.
 ; Couldn't send ARexx command '%s'. Make sure that the script exists.
 ; REXX_COMMAND
-;
-MSG_ER_CreateMailError
-Nelze vytvoøit soubor se zprávou.\n\
-\n\
-Dùvod: Neplatná slo¾ka nebo nedostatek volného místa na disku.
-; Couldn't create mail file.\n\
-; \n\
-; Reason: invalid folder directory or insufficient disk space.
 ;
 MSG_ER_CantOpenFile
 Nelze èíst ze souboru '%s'.\n\
@@ -6757,7 +6705,7 @@ PGP :: Zadání hesla
 ; PGP passphrase request
 ;
 MSG_CO_GR_REPLYFORWARD
-Odpovìï a pøedání
+Odpovìdi a pøeposílání
 ; Reply/Forward
 ;
 MSG_CO_GR_SCRIPTS
@@ -7132,7 +7080,7 @@ Aktualizovat index
 ; Update index
 ;
 MSG_MA_MREAD
-Pøeèíst
+Pøeèíst...
 ; Read
 ;
 MSG_MA_TOUNREAD
@@ -7142,14 +7090,6 @@ Nepøeètená
 MSG_MA_TOREAD
 Pøeètená
 ; Read
-;
-MSG_MA_TOHOLD
-Odlo¾ená
-; Hold
-;
-MSG_MA_TOQUEUED
-Ve frontì
-; Queued
 ;
 MSG_PROJECT_MABOUT
 O programu...
@@ -7188,12 +7128,8 @@ Odpovìdìt...
 ; Reply...
 ;
 MSG_MA_MFORWARD
-Pøeposlat...
+Pøeposlat
 ; Forward...
-;
-MSG_MA_MBOUNCE
-Pøedat beze zmìny...
-; Bounce...
 ;
 MSG_MA_MSAVEADDRESS
 Ulo¾it adresu...
@@ -7652,14 +7588,6 @@ MSG_WR_SENDLATER
 Pos_lat pozdìji
 ; Send _later
 ;
-MSG_WR_HOLD
-_Odlo¾it
-; _Hold
-;
-MSG_WR_CANCEL
-Zru¹it
-; Cancel
-;
 MSG_WR_MSENDNOW
 Odeslat
 ; Send now
@@ -7667,14 +7595,6 @@ Odeslat
 MSG_WR_MSENDLATER
 Odeslat pozdìji
 ; Send later
-;
-MSG_WR_MHOLD
-Odlo¾it
-; Hold
-;
-MSG_WR_MCANCEL
-Zru¹it
-; Cancel
 ;
 MSG_ER_CONNECTIONBROKEN
 Spojení se serverem '%s' bylo pøeru¹eno pøi posílání \
@@ -8423,7 +8343,7 @@ MSG_TR_FILTER_STATS_SPAM
 \euVýsledky filtrování zpráv\en\n\
 \n\
 Poèet zpracovaných: %3ld\n\
-Poèet pøedaných beze zmìny: %3ld\n\
+Poèet pøesmìrovaných: %3ld\n\
 Poèet pøeposlaných: %3ld\n\
 Poèet autom. zodpovìzených: %3ld\n\
 Poèet spu¹tìných pøíkazù: %3ld\n\
@@ -8434,7 +8354,7 @@ Poèet nevy¾ádaných: %3ld
 ; Filtering done:\n\
 ; \n\
 ; %3ld messages checked,\n\
-; %3ld bounced,\n\
+; %3ld redirected,\n\
 ; %3ld forwarded,\n\
 ; %3ld auto-replied,\n\
 ; %3ld command activated,\n\
@@ -8921,6 +8841,7 @@ Formát data narození je neplatný. Pou¾ijte tento: '%s'.\n\
 %%y - rok (00-99, 2 èíslice)\n\
 %%-y - rok bez nuly pøed èíslem (0-99, 2 èíslice)\n\
 %%Y - rok (4 èíslice)\n\
+%%-Y - rok bez nuly pøed èíslem (4 èíslice)\n\
 Rok narození musí být vìt¹í nebo roven 1900.
 ; Date of birth uses a wrong format. The correct format is '%s'.\n\
 ; %%d  - day with leading zeros (01-31)\n\
@@ -8952,7 +8873,7 @@ Jan Novák
 ; John Doe
 ;
 MSG_RE_DEFAULT_MIMEPART_NAME
-pøíloha, èást %ld.%ld
+èást %ld.%ld
 ; Part %ld.%ld
 ; PARENTNUMBER PARTNUMER
 ;
@@ -9898,7 +9819,7 @@ Standardní kopie
 ; CC address field
 ;
 MSG_WR_MBCCADDRFIELD
-Slepá kopie
+Skrytá kopie
 ; BCC address field
 ;
 MSG_WR_MREPLYTOADDRFIELD
@@ -10190,4 +10111,87 @@ nakonec restartovat systém.
 ; from an AmigaOS 3.1-3.9 installation to 'SYS:Libs', rename \
 ; the 'rexxsyslib.library' in 'MOSSYS:Libs' and reboot your \
 ; system.
+;
+MSG_WR_SAVEASDRAFT
+Ulo¾it jako koncept
+; Save as draft
+;
+MSG_HELP_WR_BT_SAVEASDRAFT
+Ulo¾í rozepsanou zprávu do slo¾ky 'Koncepty'.
+; Saves the message to\n\
+; the 'Drafts' folder.
+;
+MSG_WR_MSAVEASDRAFT
+Ulo¾it jako koncept
+; Save as draft
+;
+MSG_WR_MCLOSE
+Zavøít
+; Close
+;
+MSG_LOG_REDIRECT
+Pøesmìrována zpráva od '%s'; pøedmìt '%s', urèená pro '%s'
+; Redirected message from '%s' about '%s' to '%s'
+; SENDER, SUBJECT, RECIPIENT
+;
+MSG_CO_ACTIONREDIRECT
+Pøesmì_rovat
+; _Redirect
+;
+MSG_HELP_CO_CH_AREDIRECT
+Zprávy vyhovující definovaným kritériím\n\
+pøesmìruje urèené osobì.
+; Redirect matching messages\n\
+; to another person.
+;
+MSG_HELP_CO_ST_AREDIRECT
+Definuje adresu osoby, které mají být\n\
+pøesmìrovány odpovídající zprávy.
+; E-mail address(es) that should\n\
+; get the redirected messages.
+;
+MSG_MA_MREDIRECT
+Pøesmìrovat...
+; Redirect...
+;
+MSG_WR_REDIRECT_FROM
+_Pøesmìrovat-Od
+; Resent-_From
+;
+MSG_WR_REDIRECT_TO
+Pø_esmìrovat-Komu
+; Resent-_To
+;
+MSG_WR_REDIRECT_CC
+Pøe_smìrovat-Kopie
+; Resent-_CC
+;
+MSG_WR_REDIRECT_BCC
+Pøes_mìrovat-Skrytá
+; Resent-_BCC
+;
+MSG_WR_REDIRECT_TITLE
+Pøesmìrovat zprávy
+; Redirect message(s)
+;
+MSG_ER_CANNOT_CREATE_MAIL_FILE
+Nelze vytvoøit soubor se zprávou '%s'.\n\
+\n\
+Dùvod: Neplatná slo¾ka nebo nedostatek volného místa na disku.
+; Could not create mail file '%s'.\n\
+; \n\
+; Reason: invalid folder directory or insufficient disk space.
+; FILE
+;
+MSG_WR_RENAME
+Pø_ejmenovat
+; _Rename
+;
+MSG_WR_RENAME_ATTACHMENT
+Pøejmenovat pøílohu
+; Rename attachment
+;
+MSG_WR_ENTER_NEW_NAME
+Zadejte nový název pøílohy:
+; Enter new attachment name:
 ;
