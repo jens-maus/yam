@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-05-13 Thore Böckelmann <tboeckel@gmx.de>
+
+  * themes/MagicWB reduced, themes/Mason old, themes/NewIcons: fixed the
+    dimensions of some toolbar button images to avoid warnings from TheBar.mcc.
+    This closes #397.
+
 2013-05-08 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MAf.c: skip the leading angle bracket of a Message-Id string as suggested
