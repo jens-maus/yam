@@ -2,7 +2,7 @@ YTH2 - YAM Theme
 Name                = MagicWB theme (reduced colors)
 Author              = Images by Pavel Narozny - Recompiled by Alper Sönmez
 URL                 = http://www.yam.ch/
-Version             = 2.1 (14.02.2013)
+Version             = 2.2 (13.05.2013)
 IgnoreMissingImages = N
 ; Image file substitutions
 ; <image id> = <file path>

@@ -2,7 +2,7 @@ YTH2 - YAM Theme
 Name                = NewIcons theme
 Author              = Images by Philip A. Vedovatti / Recompiled by Alper Sönmez
 URL                 = http://www.yam.ch/
-Version             = 2.0 (11.05.2012)
+Version             = 2.1 (13.05.2013)
 IgnoreMissingImages = Y
 ; Image file substitutions
 ; <image id> = <file path>
