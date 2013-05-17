@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-05-17 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mime/rfc2047.c: changed the class of a debug statement.
+
 2013-05-13 Vit Sindlar <sindlarv at centrum dot cz>
 
   * locale/czech.ct: updated Czech translation.

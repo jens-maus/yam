@@ -711,7 +711,7 @@ static int rfc2047_decode_int(const char *text,
   char *encoding;
   char *enctext;
 
-  while(text && *text)
+  while(text != 0 && *text != '\0')
   {
     p=text;
 
@@ -734,7 +734,8 @@ static int rfc2047_decode_int(const char *text,
       if(text > p && !had_last_word)
       {
         rc = (*func)(p, (unsigned int)(text-p), 0, 0, arg);
-        if(rc) return (rc);
+        if(rc != 0)
+          return rc;
       }
 
       continue;
@@ -825,7 +826,7 @@ static int rfc2047_decode_int(const char *text,
           }
           else
           {
-            W(DBF_NET, "base64 decoding returned: %d '%s'", res, enctext);
+            W(DBF_MIME, "base64 decoding returned: %d '%s'", res, enctext);
 
             result = -3; // signal an base64 decoding error.
             unknown_enc = 1;
@@ -843,7 +844,8 @@ static int rfc2047_decode_int(const char *text,
         break;
       }
     }
-    else unknown_enc = 1;
+    else
+      unknown_enc = 1;
 
     // if no error occurred we are going to call the callback function
     if(unknown_enc == 1)
@@ -868,7 +870,8 @@ static int rfc2047_decode_int(const char *text,
     free(enctext);
     free(chset);
     free(encoding);
-    if(rc) return rc;
+    if(rc != 0)
+      return rc;
 
     // Ignore blanks between enc words
     had_last_word=1;
@@ -878,4 +881,3 @@ static int rfc2047_decode_int(const char *text,
 }
 
 ///
-
