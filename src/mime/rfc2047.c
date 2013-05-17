@@ -757,7 +757,6 @@ static int rfc2047_decode_int(const char *text,
     {
       free(encoding);
       free(chset);
-
       return -1;
     }
 
@@ -804,7 +803,8 @@ static int rfc2047_decode_int(const char *text,
             }
 
             c = *q++;
-            if(c == '_') c = ' ';
+            if(c == '_')
+              c = ' ';
             *r++ = c ;
           }
           *r=0;
@@ -827,8 +827,7 @@ static int rfc2047_decode_int(const char *text,
           else
           {
             W(DBF_MIME, "base64 decoding returned: %d '%s'", res, enctext);
-
-            result = -3; // signal an base64 decoding error.
+            result = -3; // signal a base64 decoding error to caller
             unknown_enc = 1;
           }
         }
@@ -838,7 +837,7 @@ static int rfc2047_decode_int(const char *text,
         {
           // if we end up here the probabilty that we have a rfc2047 compliant
           // string with an unknown encoding is somehow high.
-          result = -2; // signal unknown encoding to caller
+          result = -2; // signal an unknown encoding to caller
           unknown_enc = 1;
         }
         break;
@@ -859,7 +858,7 @@ static int rfc2047_decode_int(const char *text,
       // The ABNF given in RFC 2047 for encoded-words is:
       //   encoded-word := "=?" charset "?" encoding "?" encoded-text "?="
       // This specification changes this ABNF to:
-      //   encoded-word := "=?" charset ["*" language] "?" encoding "?" encoded-
+      //   encoded-word := "=?" charset ["*" language] "?" encoding "?" encoded-text "?="
       if((lang = strrchr(chset, '*')))
         *lang++ = '\0';
 
