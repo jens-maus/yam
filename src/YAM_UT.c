@@ -1973,8 +1973,7 @@ void ExtractAddress(const char *line, struct Person *pe)
     char *realname = NULL;
 
     // skip leading whitespaces
-    while(isspace(*p))
-      p++;
+    p = TrimStart(p);
 
     // we first try to extract the email address part of the line in case
     // the email is in < > brackets (see RFC2822)
