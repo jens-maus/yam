@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-05-24 Thore Böckelmann <tboeckel@gmx.de>
+
+  * locale/greek.ct: updated greek translation kindly provided by Antonis
+    Iliakis.
+
 2013-05-17 Thore Böckelmann <tboeckel@gmx.de>
 
   * mime/rfc2047.c: changed the class of a debug statement.

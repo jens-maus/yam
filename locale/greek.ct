@@ -1,4 +1,4 @@
-## version $VER: yam.catalog 8.1 (25.4.2013)
+## version $VER: yam.catalog 8.2 (24.5.2013)
 ## language greek
 ## codeset 10
 ## chunk AUTH Antonis Iliakis
@@ -2302,7 +2302,7 @@ MSG_HELP_CO_BT_CANCEL
 ; Module AB - Routines
 ;
 MSG_AB_BirthdayReminder
-Υπενθύμιση Γενεθλίων
+Υπενθύμιση γενεθλίων
 ; Birthday Reminder
 ;
 MSG_AB_HappyBirthday
@@ -7354,7 +7354,9 @@ MSG_CTapplicationpgpsig
 ; PGP signature
 ;
 MSG_AB_BirthdayReqBody
-Σήμερα, στις %s, %s έφτασαν τα %ld χρόνια.\n\\n\Θέλετε να στείλετε μια ευχετήρια κάρτα;
+Σήμερα, στις %s, ο/η %s έγινε %ld χρονών.\n\
+\n\
+Θέλετε να στείλετε μια ευχετήρια κάρτα;
 ; Today, on %s, %s reaches age %ld.\n\
 ; \n\
 ; Do you want to send a greetings card?
@@ -7367,7 +7369,7 @@ MSG_ER_AREXX_EXECUTION_ERROR
 ; COMMANDNAME, ERRORCODE
 ;
 MSG_BIRTHDAYREQUEST_DONTSHOWAGAIN
-Να μην εμφανιστεί αυτό το μήνυμα ξανά σήμερα.
+Να μην εμφανιστεί ξανά αυτό το μήνυμα σήμερα.
 ; Do not show this requester today again.
 ;
 MSG_RE_SAVE_FILE
