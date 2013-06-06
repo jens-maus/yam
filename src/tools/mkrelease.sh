@@ -41,8 +41,8 @@ case $1 in
 esac
 echo "  MK $yamsys release"
 
-yamver="2.8"
-yamarcver="28"
+yamver="2.8p1"
+yamarcver="28p1"
 
 mkdir -p release
 
