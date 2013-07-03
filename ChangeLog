@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-07-03 Thore Böckelmann <tboeckel@gmx.de>
+
+  * doc/Install-YAM: the YAM.cd file will now always be copied.
+
 2013-06-06 Thore Böckelmann <tboeckel@gmx.de>
 
   * doc/Install-YAM: added missing closing brace in greek translation.

@@ -1,5 +1,5 @@
 ;
-; $VER: Install-YAM 1.29 (6.6.2013) (c) 2000-2013 by YAM Open Source Team
+; $VER: Install-YAM 1.30 (3.7.2013) (c) 2000-2013 by YAM Open Source Team
 ; Language support added by Sönke Tesch/ATO
 ;
 ; $Id$
@@ -569,15 +569,13 @@
             )
         )
 
-        ; copy the YAM.cd file for people wanting to translate
-        (if (not (exists (tackon Cat_dir "YAM.cd")))
-            (copyfiles
-                (source "/Catalogs/YAM.cd")
-                (dest Cat_dir)
-                (infos)
-                (noposition)
-                (help @copyfiles-help)
-            )
+        ; always copy the YAM.cd file for people wanting to translate
+        (copyfiles
+            (source "/Catalogs/YAM.cd")
+            (dest Cat_dir)
+            (infos)
+            (noposition)
+            (help @copyfiles-help)
         )
 
         ; german catalog file
