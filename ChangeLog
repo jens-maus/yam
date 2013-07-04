@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-07-04 Thore Böckelmann <tboeckel@gmx.de>
+
+  * doc/Install-YAM: added a workaround for a bug in the YAM 2.8 release archive.
+    "Resources/Themes/MagicWB reduced/config" should be a directory, but is an
+    empty file which of course cannot be replaced by a directory of the same name.
+    Hence the script will check for the existance of this file first and delete it
+    in case it exists before copying over the theme directories.
+
 2013-07-03 Thore Böckelmann <tboeckel@gmx.de>
 
   * doc/Install-YAM: the YAM.cd file will now always be copied.

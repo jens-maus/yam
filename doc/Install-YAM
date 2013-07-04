@@ -1,5 +1,5 @@
 ;
-; $VER: Install-YAM 1.30 (3.7.2013) (c) 2000-2013 by YAM Open Source Team
+; $VER: Install-YAM 1.31 (4.7.2013) (c) 2000-2013 by YAM Open Source Team
 ; Language support added by Sönke Tesch/ATO
 ;
 ; $Id$
@@ -783,6 +783,17 @@
         (help @copyfiles-help)
     )
 )
+; workaround for a bug in the YAM 2.8 installation archive
+; "Resources/Themes/MagicWB reduced/config" should be a directory, but is an empty file
+; which of course cannot be replaced by a directory of the same name. Hence we are going
+; to remove this entry in case it exists and is a files.
+(if (= 1 (exists (tackon Themes_dir "MagicWB reduced/config")))
+    (delete
+        (tackon Themes_dir "MagicWB reduced/config")
+        (optional force)
+    )
+)
+; now really copy all the themes
 (copyfiles
     (source "/Resources/Themes/")
     (dest Themes_dir)
