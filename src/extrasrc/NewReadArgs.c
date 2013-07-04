@@ -429,15 +429,15 @@ LONG NewReadArgs(struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
       if(nrdargs->RDArgs->RDA_Source.CS_Buffer != NULL)
       {
         // make sure to terminate the string correctly
-        strlcat(nrdargs->RDArgs->RDA_Source.CS_Buffer, "\n", nrdargs->RDArgs->RDA_Source.CS_Length+1);
+        strlcat((char *)nrdargs->RDArgs->RDA_Source.CS_Buffer, "\n", nrdargs->RDArgs->RDA_Source.CS_Length+1);
         D(DBF_STARTUP, "CS_Buffer[%d]: '%s'", num, nrdargs->RDArgs->RDA_Source.CS_Buffer);
       }
       else
       {
-	    E(DBF_STARTUP, "allocating RDA_Source.CS_Buffer(%ld) failed", nrdargs->RDArgs->RDA_Source.CS_Length);
+        E(DBF_STARTUP, "allocating RDA_Source.CS_Buffer(%ld) failed", nrdargs->RDArgs->RDA_Source.CS_Length);
         RETURN(ERROR_NO_FREE_STORE);
         return ERROR_NO_FREE_STORE;
-	  }
+      }
     }
 
     /*- call ReadArgs() -*/
