@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-07-05 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_FI.c: fixed a possible out of range array access.
+
 2013-07-04 Thore Böckelmann <tboeckel@gmx.de>
 
   * doc/Install-YAM: added a workaround for a bug in the YAM 2.8 release archive.

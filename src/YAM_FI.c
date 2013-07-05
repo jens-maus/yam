@@ -1732,10 +1732,12 @@ struct MinList *CloneFilterList(enum ApplyFilterMode mode)
                 if(rule->matchPattern[0] == mailStatusCycleMap[stat])
                   break;
               }
+              if(stat == ARRAY_SIZE(mailStatusCycleMap))
+                stat--;
             }
             else
             {
-              stat = sizeof(mailStatusCycleMap);
+              stat = ARRAY_SIZE(mailStatusCycleMap)-1;
             }
 
             FI_PrepareSearch(rule->search,
