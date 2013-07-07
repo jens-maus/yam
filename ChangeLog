@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+#### YAM 2.8p1 RELEASE ##################################################
+
+2013-07-07 Jens Langner <Jens.Langner@light-speed.de>
+
+  * misc: final YAM 2.8p1 release preparations.
+
 2013-07-05 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_FI.c: fixed a possible out of range array access.

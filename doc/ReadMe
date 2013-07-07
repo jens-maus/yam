@@ -1,14 +1,14 @@
-Short:        YAM 2.8 - MUI-based E-mail client
+Short:        YAM 2.8p1 - MUI-based E-mail client
 Author:       YAM Open Source Team (http://yam.ch/)
 Uploader:     Jens Langner <Jens.Langner@light-speed.de>
 Type:         comm/yam
-Version:      2.8
-Replaces:     comm/yam/YAM27*
+Version:      2.8p1
+Replaces:     comm/yam/YAM28*
 Requires:     AmigaOS 3.0+, MorphOS or AROS, MUI 3.8+, 68020+/PPC604e+
 Architecture: ppc-amigaos >= 4.0.5; m68k-amigaos >= 3.0; ppc-morphos >= 1.4.2; i386-aros; ppc-aros; x86_64-aros
 
 ---------------------------------------------------------------------------
-                           YAM - Version 2.8
+                          YAM - Version 2.8p1
 ---------------------------------------------------------------------------
 
 About YAM
@@ -61,66 +61,76 @@ contributed   to    this   release    since   the   last    official   one:
               Thore Boeckelmann
 
 And here's a  PARTIAL list of the  changes in this version  with respect to
-the previous official 2.7 update:
+the previous official 2.8 update:
 
-- updated translations for czech, french, german, italian, swedish, spanish,
-  turkish and english-british language.
-- integration of online documentation system and removal of obsolete
-  amigaguides, see http://docs.yam.ch/
-- general performance improvements and general bug fixing.
-- moved CC and BCC as well as Reply-To: address field from separate
-  "Options" tab to the first page of the write window and made it
-  user-configurable.
-- integrated a multi-identity system which allows to define an unlimited
-  number of identities and link SMTP servers to each identity so that
-  different settings per identity are possible (including different
-  signatures).
-- implemented unlimited signature support through new multi-identity
-  system integrated in YAM.
-- multiple and unlimited SMTP-Server support. Now users can define any
-  number of SMTP servers and link them to the new identity management
-  system.
-- implemented new "Drafts" folder system to allow to put autosave files
-  as well as storing mails on hold into a separate folder commonly used
-  in other mail clients.
-- All Themes, Certificates, user configurable Spamfilters and the Gallery
-  directory are now per default stored in a PROGDIR:Resources sub directory
-  to not clutter the PROGDIR: directory too much. In future more and more
-  user configurable setting directories will move there, too.
-- YAM will now trust certain external SPAM filter engines (e.ġ.
-  Spamassassin) when retrieving external emails and trying to identify
-  SPAM. Own external spam filter rules can now be configured in
-  PROGDIR:Resources/Spamfilters if necessary.
-- Added full SSL certificate authentication support. If connecting to an
-  SSL secured mail server (POP3/SMTP) YAM will now verify the certificate
-  and compare it against official certificate chains. If a certificate is
-  identified to be not trustable a warning will be presented to the user
-- autosave mails now contain receivers and sender information so that
-  upon recovering those mails the full entered information is presented
-  again.
-- Full support for the new "Mail-Followup-To:" and "Mail-Reply-To:" header
-  fields which are commonly used for mailing lists.
-- Sent mails can now be replied as well.
-- implemented own mail download intervals per POP3 server along with
-  individual mail size limits per POP3 server.
-- implemented new arexx command to search for messages via message ID.
-- added a string gadget to the "no subject warning requester" so that
-  a missing subject can be immediately be added.
-- improved Daylight Saving recognition and removed irritating DST switching
-  warnings for systems known to behave correctly when DST are switched.
-- large restructuring of the configuration GUI to match new identity and
-  multiple SMTP feature. In addition, things belonging to the Look&Feel
-  of the GUI had been moved to the corresponding config item.
-- fixed certain PGP related problems causing signature check failures.
-- fixed a bunch of problems related to the autocompletion features in
-  the recipient string objects of the write window.
-- lots of other improvement we don't remember right now (keep in mind:
-  one year of development was put into YAM 2.8!) :)
+- updated translations for czech, greek, swedish, french, spanish, italian,
+  turkish language.
+- fixed an issue related to BetterString.mcc which cause YAM to crash.
+- extended the ADDRLOAD command to take a second parameter OPEN/S to
+  immediately open then address book window after the address book file
+  has been loaded successfully.
+- added a new option in the hidden section of the configuration. Setting the
+  option "OverrideFromAddress" to "Y" will add a recipient string object
+  below the identity chooser in the write window. The contents default to
+  the chosen identity's address but can be modified freely. This makes it
+  possible to use a different From: address than the one configured in the
+  identity while still using all other settings like the SMTP server.
+- renamed the 'Bounce' mail functionality for redirecting emails to alternative
+  recipients to 'Redirect' as that better reflects the purpose of this
+  functionality and should not confuse users anymore. Also adapted the
+  functionality to add all well-known Resent-#? headers to redirected emails.
+  This should adapt YAM to be somehwat more RFC compliant. Furthermore, a
+  Resent-CC and Resent-BCC can now be specified. In addition, YAM will now
+  allow to bounce to multiple emails in one operation. That means, a user
+  can now select more than one mail in the mail listview and when a redirect
+  operation is performed YAM will redirect all of these mails in one run.
+- fixed bug where hidden Cc, BCC or Reply-To string gadgets could have ended
+  up at wrong positions when hiding/showing them dynamically in the write
+  window.
+- fixed a bug where 'new' mail was never changed to 'unread' status if it was
+  moved to a subfolder. Now the index of all folders carrying 'new' mail will
+  be loaded and the status adapted accordingly.
+- fixed a problem where under certain setups the automatically chosen full
+  qualified domain name (FQDN) was unluckily chosen and thus mail sending being
+  rejected when using YAM. Now YAM should use a better mechanism and even let
+  you override the FQDN using a new hidden 'MachineFQDN' option.
+- fixed a crash where it could have happened that YAM accessed an invalid
+  memory location when creating a new mail.
+- added a new 'WRITEIDENTITY' ARexx command to let a script choose the user
+  identity to be used when composing a new mail via ARexx.
+- fixed a bug where the signature settings of a folder got lost when updating
+  from YAM versions <= 2.7 to 2.8
+- fixed a crash when entering certain text in the CC string gadget of a write
+  window.
+- fixed some problems with the new Drafts folder managment where emails could
+  end up duplicated. In addition, the 'Hold' button has been renamed to 'Save
+  to Drafts' to better differentate between the operations.
+- fixed a bug where the number of mails in the outgoing folder was not correctly
+  set when a mail was moved by mail filter operation.
+- fixed a bug where the From: address was not properly restored when the hidden
+  "OverrideFromAddress" option had been used.
+- fixed a bug where keeping the write window open for a while could suddenly
+  crash YAM.
+- fixed some crashes related to virtual email display (e.g. opening .eml
+  attachments).
+- fixed a bug in the mail header parsing routines where a header line starting
+  with a newline cause problems.
+- fixed a memory trashing problem where toolbar images of different sizes cause
+  some memory leaks within TheButton.mcc.
+- fixed a bug where resaving a mail in the drafts folder caused the mail
+  active/inactive state to get messed up.
+- modified remote filters to be applied when getting the single message details.
+  This makes it possible to let the filters check all available information but
+  it also requires the user to wait until the details of all new mails have been
+  received. Otherwise it could have happened that some mails were not received
+  although they should be filtered out.
+- fixed a crash bug when deleting a folder group.
+- fixed some incorrect dimensions of certain theme images.
 
 If  you want  to have  a more  detailed technical  information on  what was
 actually  changed, please  have a  look at  the included  'ChangeLog' file.
 You can also consult the official YAM homepage for more information on the
-changes done with YAM 2.8 (e.g. see http://yam.ch/milestone/YAM%202.8)
+changes done with YAM 2.8p1 (e.g. see http://yam.ch/milestone/YAM%202.8p1)
 
 What is still missing?
 ----------------------
