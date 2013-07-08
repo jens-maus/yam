@@ -231,8 +231,9 @@ char *ParseEmailText(const char *mailTxt, const BOOL handleSigDash,
           {
             if(useColors)
             {
-              StrBufCat(&cmsg, "\033p[12]");
+              StrBufCat(&cmsg, "\033p[12]\033u");
               StrBufCat(&cmsg, yytext);
+              StrBufCat(&cmsg, "\033n");
               StrBufCat(&cmsg, defaultPen);
             }
             else

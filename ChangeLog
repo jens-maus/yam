@@ -13,6 +13,8 @@ $URL$
   * mui/AttachmentList.c: the single items of the list can now be activated
     immediately by pressing their number on the keyboard. "0" will be mapped to
     the 10th attachment. This closes #62.
+  * ParseEmail.l: all kinds of links (http(s), ftp, etc) will now be underlined
+    as well. This closes #72.
 
 #### YAM 2.8p1 RELEASE ##################################################
 
