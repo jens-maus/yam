@@ -209,7 +209,7 @@ DECLARE(Relayout)
   {
     BOOL showbar = TRUE;
 
-    switch(C->InfoBar)
+    switch(C->InfoBarPos)
     {
       case IB_POS_TOP:
       {

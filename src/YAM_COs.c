@@ -669,7 +669,7 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
 
     fprintf(fh, "\n[Look&Feel]\n");
     fprintf(fh, "Theme             = %s\n", co->ThemeName);
-    fprintf(fh, "InfoBar           = %d\n", co->InfoBar);
+    fprintf(fh, "InfoBarPos        = %d\n", co->InfoBarPos);
     fprintf(fh, "InfoBarText       = %s\n", co->InfoBarText);
     fprintf(fh, "QuickSearchBarPos = %d\n", co->QuickSearchBarPos);
     fprintf(fh, "EmbeddedReadPane  = %s\n", Bool2Txt(co->EmbeddedReadPane));
@@ -1528,7 +1528,7 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
 
 /* Look&Feel */
           else if(stricmp(buf, "Theme") == 0)                    strlcpy(co->ThemeName, value, sizeof(co->ThemeName));
-          else if(stricmp(buf, "InfoBar") == 0)                  co->InfoBar = atoi(value);
+          else if(stricmp(buf, "InfoBarPos") == 0)               co->InfoBarPos = atoi(value);
           else if(stricmp(buf, "InfoBarText") == 0)              strlcpy(co->InfoBarText, value, sizeof(co->InfoBarText));
           else if(stricmp(buf, "QuickSearchBarPos") == 0)        co->QuickSearchBarPos = atoi(value);
           else if(stricmp(buf, "EmbeddedReadPane") == 0)         co->EmbeddedReadPane = Txt2Bool(value);
@@ -1727,6 +1727,7 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
             else if(stricmp(buf, "NotifySound") == 0)              { strlcpy(globalPOP3NotifySound, value, sizeof(globalPOP3NotifySound)); foundGlobalPOP3Options = TRUE; }
             else if(stricmp(buf, "NotifyCommand") == 0)            { strlcpy(globalPOP3NotifyCommand, value, sizeof(globalPOP3NotifyCommand)); foundGlobalPOP3Options = TRUE; }
             else if(stricmp(buf, "QuickSearchBar") == 0)           co->QuickSearchBarPos = Txt2Bool(value) ? QSB_POS_TOP : QSB_POS_OFF;
+            else if(stricmp(buf, "InfoBar") == 0)                  { int v = atoi(value)+1; co->InfoBarPos = (v == 3) ? IB_POS_OFF : v; }
             else if(strnicmp(buf, "Folder", 6) == 0 && oldfolders != NULL)
             {
               if(ofo == NULL)
@@ -2486,7 +2487,7 @@ void CO_GetConfig(void)
     {
       int i;
 
-      CE->InfoBar = GetMUICycle(gui->CY_INFOBAR);
+      CE->InfoBarPos = GetMUICycle(gui->CY_INFOBARPOS);
       GetMUIString(CE->InfoBarText, gui->ST_INFOBARTXT, sizeof(CE->InfoBarText));
       CE->QuickSearchBarPos = GetMUICycle(gui->CY_QUICKSEARCHBARPOS);
       CE->EmbeddedReadPane = GetMUICheck  (gui->CH_EMBEDDEDREADPANE);
@@ -2979,13 +2980,13 @@ void CO_SetConfig(void)
 
     case cp_LookFeel:
     {
-      setcycle(gui->CY_INFOBAR, CE->InfoBar);
+      setcycle(gui->CY_INFOBARPOS, CE->InfoBarPos);
       setstring(gui->ST_INFOBARTXT, CE->InfoBarText);
       setcycle(gui->CY_QUICKSEARCHBARPOS, CE->QuickSearchBarPos);
       setcheckmark(gui->CH_EMBEDDEDREADPANE, CE->EmbeddedReadPane);
       setcycle(gui->CY_SIZE, CE->SizeFormat);
 
-      set(gui->PO_INFOBARTXT, MUIA_Disabled, CE->InfoBar == IB_POS_OFF);
+      set(gui->PO_INFOBARTXT, MUIA_Disabled, CE->InfoBarPos == IB_POS_OFF);
 
       // update the themeslist and set the current one
       // as active

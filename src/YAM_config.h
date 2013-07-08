@@ -242,7 +242,7 @@ struct CO_GUIData
   Object *ST_APPICON;
   Object *CH_FCNTMENU;
   Object *CH_MCNTMENU;
-  Object *CY_INFOBAR;
+  Object *CY_INFOBARPOS;
   Object *PO_INFOBARTXT;
   Object *ST_INFOBARTXT;
   Object *CH_WARNSUBJECT;
@@ -408,15 +408,15 @@ enum FolderInfoMode
 
 enum InfoBarPos
 {
-  IB_POS_TOP=0,
+  IB_POS_OFF = 0,
+  IB_POS_TOP,
   IB_POS_CENTER,
   IB_POS_BOTTOM,
-  IB_POS_OFF
 };
 
 enum QuickSearchBarPos
 {
-  QSB_POS_OFF=0,
+  QSB_POS_OFF = 0,
   QSB_POS_TOP,
   QSB_POS_BOTTOM,
 };
@@ -481,7 +481,7 @@ struct Config
   enum  TransferWindowMode TransferWindow;
   enum  FolderInfoMode     FolderInfoMode;
   enum  ForwardMode        ForwardMode;
-  enum  InfoBarPos         InfoBar;
+  enum  InfoBarPos         InfoBarPos;
   enum  QuickSearchBarPos  QuickSearchBarPos;
   enum  WrapMode           EdWrapMode;
 

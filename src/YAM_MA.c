@@ -4219,7 +4219,7 @@ struct MA_ClassData *MA_New(void)
           End,
         End,
         Child, data->GUI.IB_INFOBAR = InfoBarObject,
-          MUIA_ShowMe, (C->InfoBar != IB_POS_OFF),
+          MUIA_ShowMe, (C->InfoBarPos != IB_POS_OFF),
         End,
         Child, data->GUI.GR_BOTTOM = HGroup,
           GroupSpacing(0),

@@ -4188,10 +4188,10 @@ Object *CO_PageLookFeel(struct CO_ClassData *data)
   sizef[4] = tr(MSG_CO_SIZEFORMAT05);
   sizef[5] = NULL;
 
-  infob[0] = tr(MSG_CO_INFOBARPOS01);
-  infob[1] = tr(MSG_CO_INFOBARPOS02);
-  infob[2] = tr(MSG_CO_INFOBARPOS03);
-  infob[3] = tr(MSG_CO_INFOBARPOS04);
+  infob[0] = tr(MSG_CO_INFOBARPOS04);
+  infob[1] = tr(MSG_CO_INFOBARPOS01);
+  infob[2] = tr(MSG_CO_INFOBARPOS02);
+  infob[3] = tr(MSG_CO_INFOBARPOS03);
   infob[4] = NULL;
 
   qsearchb[0] = tr(MSG_CO_QUICKSEARCHBARPOS01);
@@ -4325,7 +4325,7 @@ Object *CO_PageLookFeel(struct CO_ClassData *data)
                 // InfoBar settings
                 Child, ColGroup(2), GroupFrameT(tr(MSG_CO_INFOBAR)),
                   Child, Label1(tr(MSG_CO_INFOBARPOS)),
-                  Child, data->GUI.CY_INFOBAR = MakeCycle(infob, tr(MSG_CO_INFOBARPOS)),
+                  Child, data->GUI.CY_INFOBARPOS = MakeCycle(infob, tr(MSG_CO_INFOBARPOS)),
 
                   Child, Label2(tr(MSG_CO_FOLDERLABEL)),
                   Child, data->GUI.PO_INFOBARTXT = MakeVarPop(&data->GUI.ST_INFOBARTXT, &popButton, PHM_MAILSTATS, SIZE_DEFAULT, tr(MSG_CO_FOLDERLABEL)),
@@ -4373,7 +4373,7 @@ Object *CO_PageLookFeel(struct CO_ClassData *data)
 
   if(obj != NULL)
   {
-    SetHelp(data->GUI.CY_INFOBAR,           MSG_HELP_CO_CH_INFOBAR);
+    SetHelp(data->GUI.CY_INFOBARPOS,        MSG_HELP_CO_CH_INFOBAR);
     SetHelp(data->GUI.ST_INFOBARTXT,        MSG_HELP_CO_ST_INFOBARTXT);
     SetHelp(data->GUI.CY_QUICKSEARCHBARPOS, MSG_HELP_CO_CH_QUICKSEARCHBAR);
     SetHelp(data->GUI.CH_EMBEDDEDREADPANE,  MSG_HELP_CO_CH_EMBEDDEDREADPANE);
@@ -4386,7 +4386,7 @@ Object *CO_PageLookFeel(struct CO_ClassData *data)
     SetHelp(data->GUI.CH_MCNTMENU,          MSG_HELP_CO_CONTEXTMENU);
     SetHelp(data->GUI.CY_FOLDERINFO,        MSG_HELP_CO_CY_FOLDERINFO);
 
-    DoMethod(data->GUI.CY_INFOBAR, MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &InfoBarPosHook, MUIV_TriggerValue);
+    DoMethod(data->GUI.CY_INFOBARPOS, MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &InfoBarPosHook, MUIV_TriggerValue);
   }
 
   RETURN(obj);

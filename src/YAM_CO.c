@@ -1750,7 +1750,7 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
   if(page == cp_LookFeel || page == cp_AllPages)
   {
     strlcpy(co->ThemeName, "default", sizeof(co->ThemeName));
-    co->InfoBar = IB_POS_CENTER;
+    co->InfoBarPos = IB_POS_CENTER;
     strlcpy(co->InfoBarText, tr(MSG_CO_InfoBarDef), sizeof(co->InfoBarText));
     co->QuickSearchBarPos = QSB_POS_TOP;
     co->EmbeddedReadPane = TRUE;
@@ -2117,7 +2117,7 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      c1->TransferWindow                  == c2->TransferWindow &&
      c1->FolderInfoMode                  == c2->FolderInfoMode &&
      c1->ForwardMode                     == c2->ForwardMode &&
-     c1->InfoBar                         == c2->InfoBar &&
+     c1->InfoBarPos                      == c2->InfoBarPos &&
      c1->QuickSearchBarPos               == c2->QuickSearchBarPos &&
      c1->DaylightSaving                  == c2->DaylightSaving &&
      c1->DisplayAllTexts                 == c2->DisplayAllTexts &&
