@@ -4386,14 +4386,6 @@ An error occurred while trying to move the contents of folder \
 This may be due to insufficient space or an invalid or not writable \
 destination path.
 ;
-MSG_CO_QUICKSEARCHBAR (1574//)
-Show search _bar in main window
-;
-MSG_HELP_CO_CH_QUICKSEARCHBAR (1575//)
-If checked, a search bar will appear\n\
-in the main window to let you find\n\
-certain e-mails more quickly.
-;
 MSG_FI_SELECTACTIVE (1576//)
 Select this m_atch
 ;
@@ -7369,4 +7361,22 @@ Skip encrypted mails
 MSG_HELP_FI_CH_SKIP_ENCRYPTED (2421//)
 Skip encrypted mails (i.e. PGP)\n\
 during the search.
+;
+MSG_CO_QUICKSEARCHBAR (2422//)
+Quick search bar
+;
+MSG_HELP_CO_CH_QUICKSEARCHBAR (2423//)
+Here you can select the position of the quick search bar.
+;
+MSG_CO_QUICKSEARCHBARPOS (2424//)
+Posi_tion
+;
+MSG_CO_QUICKSEARCHBARPOS01 (2425//)
+Disabled
+;
+MSG_CO_QUICKSEARCHBARPOS02 (2426//)
+Top
+;
+MSG_CO_QUICKSEARCHBARPOS03 (2427//)
+Bottom
 ;

@@ -257,7 +257,6 @@ struct CO_GUIData
   Object *BT_FILTERDOWN;
   Object *BT_MORE;
   Object *BT_LESS;
-  Object *CH_QUICKSEARCHBAR;
   Object *CH_WBAPPICON;
   #if defined(__amigaos4__)
   Object *CH_DOCKYICON;
@@ -363,6 +362,7 @@ struct CO_GUIData
   Object *BT_FILTER_IMPORT;
   Object *CH_SPAM_TRUSTEXTERNALFILTER;
   Object *CY_SPAM_EXTERNALFILTER;
+  Object *CY_QUICKSEARCHBARPOS;
 };
 
 struct CO_ClassData  /* configuration window */
@@ -413,6 +413,14 @@ enum InfoBarPos
   IB_POS_BOTTOM,
   IB_POS_OFF
 };
+
+enum QuickSearchBarPos
+{
+  QSB_POS_OFF=0,
+  QSB_POS_TOP,
+  QSB_POS_BOTTOM,
+};
+
 enum WrapMode
 {
   EWM_OFF=0,   // no word wrapping at all
@@ -474,6 +482,7 @@ struct Config
   enum  FolderInfoMode     FolderInfoMode;
   enum  ForwardMode        ForwardMode;
   enum  InfoBarPos         InfoBar;
+  enum  QuickSearchBarPos  QuickSearchBarPos;
   enum  WrapMode           EdWrapMode;
 
   BOOL  DaylightSaving;
@@ -519,7 +528,6 @@ struct Config
   BOOL  EmbeddedReadPane;
   BOOL  StatusChangeDelayOn;
   BOOL  SysCharsetCheck;
-  BOOL  QuickSearchBar;
   BOOL  WBAppIcon;
   BOOL  DockyIcon;
   BOOL  AmiSSLCheck;

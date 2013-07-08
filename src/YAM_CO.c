@@ -73,6 +73,7 @@
 #include "mui/InfoBar.h"
 #include "mui/MainFolderListtree.h"
 #include "mui/MainMailListGroup.h"
+#include "mui/MainWindow.h"
 #include "mui/MainWindowToolbar.h"
 #include "mui/MailServerChooser.h"
 #include "mui/ReadMailGroup.h"
@@ -1751,8 +1752,8 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     strlcpy(co->ThemeName, "default", sizeof(co->ThemeName));
     co->InfoBar = IB_POS_CENTER;
     strlcpy(co->InfoBarText, tr(MSG_CO_InfoBarDef), sizeof(co->InfoBarText));
+    co->QuickSearchBarPos = QSB_POS_TOP;
     co->EmbeddedReadPane = TRUE;
-    co->QuickSearchBar = TRUE;
     co->SizeFormat = SF_MIXED;
     co->FolderCols = (FCOL_NAME | FCOL_TOTAL);
     co->MessageCols = (MCOL_STATUS | MCOL_SENDER | MCOL_SUBJECT | MCOL_DATE | MCOL_SIZE);
@@ -2117,6 +2118,7 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      c1->FolderInfoMode                  == c2->FolderInfoMode &&
      c1->ForwardMode                     == c2->ForwardMode &&
      c1->InfoBar                         == c2->InfoBar &&
+     c1->QuickSearchBarPos               == c2->QuickSearchBarPos &&
      c1->DaylightSaving                  == c2->DaylightSaving &&
      c1->DisplayAllTexts                 == c2->DisplayAllTexts &&
      c1->FixedFontEdit                   == c2->FixedFontEdit &&
@@ -2160,7 +2162,6 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      c1->EmbeddedReadPane                == c2->EmbeddedReadPane &&
      c1->StatusChangeDelayOn             == c2->StatusChangeDelayOn &&
      c1->SysCharsetCheck                 == c2->SysCharsetCheck &&
-     c1->QuickSearchBar                  == c2->QuickSearchBar &&
      c1->WBAppIcon                       == c2->WBAppIcon &&
      c1->DockyIcon                       == c2->DockyIcon &&
      c1->AmiSSLCheck                     == c2->AmiSSLCheck &&
@@ -2867,15 +2868,11 @@ void CO_Validate(struct Config *co, BOOL update)
       set(G->MA->GUI.PG_MAILLIST,MUIA_NList_Quiet,     TRUE);
       set(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Quiet, TRUE);
 
-      // Now we reorder the Maingroup accordingly to the InfoBar setting
-      MA_SortWindow();
+      // Now we reorder the Maingroup accordingly to the InfoBar/QuickSearchBar setting
+      DoMethod(G->MA->GUI.WI, MUIM_MainWindow_Relayout);
 
       // Now we update the InfoBar because the text could have been changed
       DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_SetFolder, GetCurrentFolder());
-
-      // we signal the mainwindow that it may check whether to include the
-      // quicksearchbar or not
-      MA_SetupQuickSearchBar();
 
       // we signal the mainwindow that it may check whether to include the
       // embedded read pane part or not

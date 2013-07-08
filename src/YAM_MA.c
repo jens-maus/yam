@@ -3629,7 +3629,7 @@ HOOKPROTONHNO(MA_EditActionFunc, void, int *arg)
 
   // check if the quicksearchbar (if enabled) reacts on our
   // edit action
-  if(C->QuickSearchBar == TRUE)
+  if(C->QuickSearchBarPos != QSB_POS_OFF)
     matched = DoMethod(gui->GR_QUICKSEARCHBAR, MUIM_QuickSearchBar_DoEditAction, action);
 
   // if we have an active embedded read pane we
@@ -3871,7 +3871,7 @@ void MA_SetupDynamicMenus(void)
     }
   }
 
-  if(C->QuickSearchBar == TRUE || C->EmbeddedReadPane == TRUE)
+  if(C->QuickSearchBarPos != QSB_POS_OFF || C->EmbeddedReadPane == TRUE)
   {
     if(G->MA->GUI.MN_EDIT == NULL || isChildOfFamily(G->MA->GUI.MS_MAIN, G->MA->GUI.MN_EDIT) == FALSE)
     {
@@ -3993,80 +3993,6 @@ void MA_SetupEmbeddedReadPane(void)
 
   LEAVE();
 }
-///
-/// MA_SetupQuickSearchBar
-//  Updates/Setup the quicksearchbar part in the main window
-void MA_SetupQuickSearchBar(void)
-{
-  ENTER();
-
-  // if the quickSearchBar is enabled by the user we
-  // make sure we show it
-  DoMethod(G->MA->GUI.GR_QUICKSEARCHBAR, MUIM_QuickSearchBar_Clear);
-  set(G->MA->GUI.GR_QUICKSEARCHBAR, MUIA_ShowMe, C->QuickSearchBar);
-
-  LEAVE();
-}
-
-///
-/// MA_SortWindow
-//  Resorts the main window group accordingly to the InfoBar setting
-void MA_SortWindow(void)
-{
-  ENTER();
-
-  if(DoMethod(G->MA->GUI.GR_MAIN, MUIM_Group_InitChange))
-  {
-    BOOL showbar = TRUE;
-
-    switch(C->InfoBar)
-    {
-      case IB_POS_TOP:
-      {
-        DoMethod(G->MA->GUI.GR_MAIN, MUIM_Group_Sort, G->MA->GUI.IB_INFOBAR,
-                                                      G->MA->GUI.GR_TOP,
-                                                      G->MA->GUI.GR_HIDDEN,
-                                                      G->MA->GUI.GR_BOTTOM,
-                                                      NULL);
-      }
-      break;
-
-      case IB_POS_CENTER:
-      {
-        DoMethod(G->MA->GUI.GR_MAIN, MUIM_Group_Sort, G->MA->GUI.GR_TOP,
-                                                      G->MA->GUI.GR_HIDDEN,
-                                                      G->MA->GUI.IB_INFOBAR,
-                                                      G->MA->GUI.GR_BOTTOM,
-                                                      NULL);
-      }
-      break;
-
-      case IB_POS_BOTTOM:
-      {
-        DoMethod(G->MA->GUI.GR_MAIN, MUIM_Group_Sort, G->MA->GUI.GR_TOP,
-                                                      G->MA->GUI.GR_HIDDEN,
-                                                      G->MA->GUI.GR_BOTTOM,
-                                                      G->MA->GUI.IB_INFOBAR,
-                                                      NULL);
-      }
-      break;
-
-      default:
-      {
-        showbar = FALSE;
-      }
-    }
-
-    // Here we can do a MUIA_ShowMe, TRUE because SortWindow is encapsulated
-    // in a InitChange/ExitChange..
-    set(G->MA->GUI.IB_INFOBAR, MUIA_ShowMe, showbar);
-
-    DoMethod(G->MA->GUI.GR_MAIN, MUIM_Group_ExitChange);
-  }
-
-  LEAVE();
-}
-
 ///
 /// MA_New
 //  Creates main window
@@ -4293,7 +4219,7 @@ struct MA_ClassData *MA_New(void)
           End,
         End,
         Child, data->GUI.IB_INFOBAR = InfoBarObject,
-          MUIA_ShowMe,  (C->InfoBar != IB_POS_OFF),
+          MUIA_ShowMe, (C->InfoBar != IB_POS_OFF),
         End,
         Child, data->GUI.GR_BOTTOM = HGroup,
           GroupSpacing(0),
@@ -4313,7 +4239,7 @@ struct MA_ClassData *MA_New(void)
             Child, data->GUI.GR_MAILLIST = VGroup,
               GroupSpacing(1),
               Child, data->GUI.GR_QUICKSEARCHBAR = QuickSearchBarObject,
-                MUIA_ShowMe, C->QuickSearchBar,
+                MUIA_ShowMe, (C->QuickSearchBarPos != QSB_POS_OFF),
               End,
               Child, data->GUI.PG_MAILLIST = MainMailListGroupObject,
                 MUIA_HelpNode, "Windows#MainwindowMessagelist",

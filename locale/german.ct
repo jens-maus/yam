@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.7 (05.07.2013)
+## version $VER: YAM.catalog 8.8 (08.07.2013)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -5872,14 +5872,6 @@ Dies kann an zu wenig Speicherplatz, einem falschen Verzeichnis \
 liegen oder aber daran, dass ein Schreiben in das Verzeichnis nicht \
 möglich ist.
 ;
-MSG_CO_QUICKSEARCHBAR
-Suchleiste im Hauptfenster
-;
-MSG_HELP_CO_CH_QUICKSEARCHBAR
-Wenn ausgewählt erscheint im Hauptfenster eine\n\
-Suchleiste, die es Ihnen erlaubt schnell\n\
-nach E-Mails zu suchen.
-;
 MSG_FI_SELECTACTIVE
 Markierte auswählen
 ;
@@ -8825,4 +8817,22 @@ Verschlüsselte Nachrichten ignorieren
 MSG_HELP_FI_CH_SKIP_ENCRYPTED
 Verschlüsselte Nachrichten (z.B. PGP)\n\
 werden bei der Suche ignoriert.
+;
+MSG_CO_QUICKSEARCHBAR
+Schnellsuchleiste
+;
+MSG_HELP_CO_CH_QUICKSEARCHBAR
+Hier kann die Position der Schnellsuchleiste festgelegt werden.
+;
+MSG_CO_QUICKSEARCHBARPOS
+Posi_tion
+;
+MSG_CO_QUICKSEARCHBARPOS01
+Abgeschaltet
+;
+MSG_CO_QUICKSEARCHBARPOS02
+Oben
+;
+MSG_CO_QUICKSEARCHBARPOS03
+Unten
 ;

@@ -905,7 +905,7 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
                                MUIA_NList_Active, MUIV_NList_Active_Off);
 
         // set the quickbar as disabled as well and abort a search still in progress
-        if(C->QuickSearchBar == TRUE)
+        if(C->QuickSearchBarPos != QSB_POS_OFF)
         {
           set(gui->GR_QUICKSEARCHBAR, MUIA_Disabled, TRUE);
           DoMethod(gui->GR_QUICKSEARCHBAR, MUIM_QuickSearchBar_AbortSearch);
@@ -939,7 +939,7 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
         // In case the main window has an quicksearchbar, we have to
         // clear it as well before changing the folder. We also abort
         // a search still being in progress.
-        if(C->QuickSearchBar == TRUE)
+        if(C->QuickSearchBarPos != QSB_POS_OFF)
         {
           DoMethod(gui->GR_QUICKSEARCHBAR, MUIM_QuickSearchBar_AbortSearch);
           DoMethod(gui->GR_QUICKSEARCHBAR, MUIM_QuickSearchBar_Clear);
@@ -3065,9 +3065,9 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
         xset(gui->PG_MAILLIST, MUIA_Disabled, TRUE);
         DoMethod(gui->PG_MAILLIST, MUIM_NList_Clear);
 
-        // and now we also make sure an eventually enabled preview pane
-        // is disabled as well.
-        if(C->QuickSearchBar == TRUE)
+        // and now we also make sure an eventually enabled quicksearch bar
+        // is enabled again as well.
+        if(C->QuickSearchBarPos != QSB_POS_OFF)
           set(gui->GR_QUICKSEARCHBAR, MUIA_Disabled, TRUE);
 
         // also set an embedded read pane as disabled.

@@ -115,6 +115,7 @@
 #include "tcp/Connection.h"
 #include "mui/ClassesExtra.h"
 #include "mui/ClassesSetup.h"
+#include "mui/MainWindow.h"
 #include "mui/Splashwindow.h"
 #include "mui/ShutdownWindow.h"
 #include "mui/WriteWindow.h"
@@ -1747,10 +1748,8 @@ static void InitAfterLogin(void)
   // make sure the GUI objects for the embedded read pane are created
   MA_SetupEmbeddedReadPane();
 
-  // Now we have to check on which position we should display the InfoBar and if it's not
-  // center or off we have to resort the main group
-  if(C->InfoBar != IB_POS_CENTER && C->InfoBar != IB_POS_OFF)
-    MA_SortWindow();
+  // place the info and quicksearch bars at the configured positions
+  DoMethod(G->MA->GUI.WI, MUIM_MainWindow_Relayout);
 
   // load the main window GUI layout from the ENV: variable
   LoadLayout();

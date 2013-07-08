@@ -40,6 +40,7 @@
 
 #include "mui/Aboutwindow.h"
 #include "mui/MainMailListGroup.h"
+#include "mui/QuickSearchBar.h"
 #include "mui/ReadMailGroup.h"
 
 #include "Debug.h"
@@ -192,6 +193,103 @@ DECLARE(ShowErrors)
   ENTER();
 
   ER_NewError(NULL);
+
+  LEAVE();
+  return 0;
+}
+
+///
+/// DECLARE(Relayout)
+// relayout the main window after a configuration change
+DECLARE(Relayout)
+{
+  ENTER();
+
+  if(DoMethod(G->MA->GUI.GR_MAIN, MUIM_Group_InitChange))
+  {
+    BOOL showbar = TRUE;
+
+    switch(C->InfoBar)
+    {
+      case IB_POS_TOP:
+      {
+        DoMethod(G->MA->GUI.GR_MAIN, MUIM_Group_Sort, G->MA->GUI.IB_INFOBAR,
+                                                      G->MA->GUI.GR_TOP,
+                                                      G->MA->GUI.GR_HIDDEN,
+                                                      G->MA->GUI.GR_BOTTOM,
+                                                      NULL);
+      }
+      break;
+
+      case IB_POS_CENTER:
+      {
+        DoMethod(G->MA->GUI.GR_MAIN, MUIM_Group_Sort, G->MA->GUI.GR_TOP,
+                                                      G->MA->GUI.GR_HIDDEN,
+                                                      G->MA->GUI.IB_INFOBAR,
+                                                      G->MA->GUI.GR_BOTTOM,
+                                                      NULL);
+      }
+      break;
+
+      case IB_POS_BOTTOM:
+      {
+        DoMethod(G->MA->GUI.GR_MAIN, MUIM_Group_Sort, G->MA->GUI.GR_TOP,
+                                                      G->MA->GUI.GR_HIDDEN,
+                                                      G->MA->GUI.GR_BOTTOM,
+                                                      G->MA->GUI.IB_INFOBAR,
+                                                      NULL);
+      }
+      break;
+
+      default:
+      {
+        showbar = FALSE;
+      }
+    }
+
+    // Here we can do a MUIA_ShowMe, TRUE because SortWindow is encapsulated
+    // in a InitChange/ExitChange..
+    set(G->MA->GUI.IB_INFOBAR, MUIA_ShowMe, showbar);
+
+    DoMethod(G->MA->GUI.GR_MAIN, MUIM_Group_ExitChange);
+  }
+
+  if(DoMethod(G->MA->GUI.GR_MAILLIST, MUIM_Group_InitChange))
+  {
+    BOOL showbar = TRUE;
+
+    switch(C->QuickSearchBarPos)
+    {
+      case QSB_POS_TOP:
+      {
+        DoMethod(G->MA->GUI.GR_MAILLIST, MUIM_Group_Sort, G->MA->GUI.GR_QUICKSEARCHBAR,
+                                                          G->MA->GUI.PG_MAILLIST,
+                                                          NULL);
+	  }
+	  break;
+
+      case QSB_POS_BOTTOM:
+      {
+        DoMethod(G->MA->GUI.GR_MAILLIST, MUIM_Group_Sort, G->MA->GUI.PG_MAILLIST,
+                                                          G->MA->GUI.GR_QUICKSEARCHBAR,
+                                                          NULL);
+	  }
+	  break;
+
+      default:
+      {
+        showbar = FALSE;
+	  }
+	  break;
+    }
+
+    // if the quickSearchBar is enabled by the user we
+    // make sure we show it
+    DoMethod(G->MA->GUI.GR_QUICKSEARCHBAR, MUIM_QuickSearchBar_Clear);
+    set(G->MA->GUI.GR_QUICKSEARCHBAR, MUIA_ShowMe, showbar);
+
+    DoMethod(G->MA->GUI.GR_MAILLIST, MUIM_Group_ExitChange);
+  }
 
   LEAVE();
   return 0;

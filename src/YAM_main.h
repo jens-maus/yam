@@ -368,7 +368,6 @@ struct Mail *MA_GetActiveMail(struct Folder *forcefolder, struct Folder **folder
 void  MA_GetAddress(struct MailList *mlist);
 BOOL MA_ImportMessages(const char *fname, const ULONG flags);
 struct MA_ClassData *MA_New(void);
-void  MA_SortWindow(void);
 void  MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox, const ULONG flags);
 void  MA_ExchangeMail(const ULONG receiveFlags);
 BOOL  MA_PopNow(struct MailServerNode *msn, const ULONG flags, struct DownloadResult *dlResult);
@@ -385,7 +384,6 @@ char *MA_ToXStatusHeader(struct Mail *mail);
 unsigned int MA_FromStatusHeader(char *statusflags);
 unsigned int MA_FromXStatusHeader(char *xstatusflags);
 void  MA_SetupEmbeddedReadPane(void);
-void  MA_SetupQuickSearchBar(void);
 char *MA_GetRealSubject(char *sub);
 void  MA_ChangeSelected(BOOL forceUpdate);
 

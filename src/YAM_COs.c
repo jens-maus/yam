@@ -668,12 +668,12 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
     fprintf(fh, "TransferWindow   = %d\n", co->TransferWindow);
 
     fprintf(fh, "\n[Look&Feel]\n");
-    fprintf(fh, "Theme            = %s\n", co->ThemeName);
-    fprintf(fh, "InfoBar          = %d\n", co->InfoBar);
-    fprintf(fh, "InfoBarText      = %s\n", co->InfoBarText);
-    fprintf(fh, "QuickSearchBar   = %s\n", Bool2Txt(co->QuickSearchBar));
-    fprintf(fh, "EmbeddedReadPane = %s\n", Bool2Txt(co->EmbeddedReadPane));
-    fprintf(fh, "SizeFormat       = %d\n", co->SizeFormat);
+    fprintf(fh, "Theme             = %s\n", co->ThemeName);
+    fprintf(fh, "InfoBar           = %d\n", co->InfoBar);
+    fprintf(fh, "InfoBarText       = %s\n", co->InfoBarText);
+    fprintf(fh, "QuickSearchBarPos = %d\n", co->QuickSearchBarPos);
+    fprintf(fh, "EmbeddedReadPane  = %s\n", Bool2Txt(co->EmbeddedReadPane));
+    fprintf(fh, "SizeFormat        = %d\n", co->SizeFormat);
 
     fprintf(fh, "\n[Update]\n");
     fprintf(fh, "UpdateInterval     = %d\n", co->UpdateInterval);
@@ -1530,7 +1530,7 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
           else if(stricmp(buf, "Theme") == 0)                    strlcpy(co->ThemeName, value, sizeof(co->ThemeName));
           else if(stricmp(buf, "InfoBar") == 0)                  co->InfoBar = atoi(value);
           else if(stricmp(buf, "InfoBarText") == 0)              strlcpy(co->InfoBarText, value, sizeof(co->InfoBarText));
-          else if(stricmp(buf, "QuickSearchBar") == 0)           co->QuickSearchBar = Txt2Bool(value);
+          else if(stricmp(buf, "QuickSearchBarPos") == 0)        co->QuickSearchBarPos = atoi(value);
           else if(stricmp(buf, "EmbeddedReadPane") == 0)         co->EmbeddedReadPane = Txt2Bool(value);
           else if(stricmp(buf, "SizeFormat") == 0)               co->SizeFormat = atoi(value);
 
@@ -1726,6 +1726,7 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
             else if(stricmp(buf, "NotifyType") == 0)               { globalPOP3NotifyType = atoi(value); foundGlobalPOP3Options = TRUE; }
             else if(stricmp(buf, "NotifySound") == 0)              { strlcpy(globalPOP3NotifySound, value, sizeof(globalPOP3NotifySound)); foundGlobalPOP3Options = TRUE; }
             else if(stricmp(buf, "NotifyCommand") == 0)            { strlcpy(globalPOP3NotifyCommand, value, sizeof(globalPOP3NotifyCommand)); foundGlobalPOP3Options = TRUE; }
+            else if(stricmp(buf, "QuickSearchBar") == 0)           co->QuickSearchBarPos = Txt2Bool(value) ? QSB_POS_TOP : QSB_POS_OFF;
             else if(strnicmp(buf, "Folder", 6) == 0 && oldfolders != NULL)
             {
               if(ofo == NULL)
@@ -2487,7 +2488,7 @@ void CO_GetConfig(void)
 
       CE->InfoBar = GetMUICycle(gui->CY_INFOBAR);
       GetMUIString(CE->InfoBarText, gui->ST_INFOBARTXT, sizeof(CE->InfoBarText));
-      CE->QuickSearchBar = GetMUICheck(gui->CH_QUICKSEARCHBAR);
+      CE->QuickSearchBarPos = GetMUICycle(gui->CY_QUICKSEARCHBARPOS);
       CE->EmbeddedReadPane = GetMUICheck  (gui->CH_EMBEDDEDREADPANE);
       CE->SizeFormat = GetMUICycle(gui->CY_SIZE);
 
@@ -2980,7 +2981,7 @@ void CO_SetConfig(void)
     {
       setcycle(gui->CY_INFOBAR, CE->InfoBar);
       setstring(gui->ST_INFOBARTXT, CE->InfoBarText);
-      setcheckmark(gui->CH_QUICKSEARCHBAR, CE->QuickSearchBar);
+      setcycle(gui->CY_QUICKSEARCHBARPOS, CE->QuickSearchBarPos);
       setcheckmark(gui->CH_EMBEDDEDREADPANE, CE->EmbeddedReadPane);
       setcycle(gui->CY_SIZE, CE->SizeFormat);
 

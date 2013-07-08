@@ -4170,6 +4170,7 @@ Object *CO_PageLookFeel(struct CO_ClassData *data)
   static const char *rtitles[3];
   static const char *sizef[6];
   static const char *infob[5];
+  static const char *qsearchb[4];
   static const char *folderf[6];
   Object *obj;
   Object *popButton;
@@ -4192,6 +4193,11 @@ Object *CO_PageLookFeel(struct CO_ClassData *data)
   infob[2] = tr(MSG_CO_INFOBARPOS03);
   infob[3] = tr(MSG_CO_INFOBARPOS04);
   infob[4] = NULL;
+
+  qsearchb[0] = tr(MSG_CO_QUICKSEARCHBARPOS01);
+  qsearchb[1] = tr(MSG_CO_QUICKSEARCHBARPOS02);
+  qsearchb[2] = tr(MSG_CO_QUICKSEARCHBARPOS03);
+  qsearchb[3] = NULL;
 
   folderf[0] = tr(MSG_CO_FOLDERINFO01);
   folderf[1] = tr(MSG_CO_FOLDERINFO02);
@@ -4325,6 +4331,12 @@ Object *CO_PageLookFeel(struct CO_ClassData *data)
                   Child, data->GUI.PO_INFOBARTXT = MakeVarPop(&data->GUI.ST_INFOBARTXT, &popButton, PHM_MAILSTATS, SIZE_DEFAULT, tr(MSG_CO_FOLDERLABEL)),
                 End,
 
+                // QuicksearchBar settings
+                Child, ColGroup(2), GroupFrameT(tr(MSG_CO_QUICKSEARCHBAR)),
+                  Child, Label1(tr(MSG_CO_QUICKSEARCHBARPOS)),
+                  Child, data->GUI.CY_QUICKSEARCHBARPOS = MakeCycle(qsearchb, tr(MSG_CO_QUICKSEARCHBARPOS)),
+                End,
+
                 Child, ColGroup(2),
                   GroupFrameT(tr(MSG_CO_GENLISTCFG)),
 
@@ -4333,9 +4345,6 @@ Object *CO_PageLookFeel(struct CO_ClassData *data)
 
                   Child, HSpace(1),
                   Child, MakeCheckGroup(&data->GUI.CH_EMBEDDEDREADPANE, tr(MSG_CO_SHOWEMBEDDEDREADPANE)),
-
-                  Child, HSpace(1),
-                  Child, MakeCheckGroup(&data->GUI.CH_QUICKSEARCHBAR, tr(MSG_CO_QUICKSEARCHBAR)),
 
                   Child, HSpace(1),
                   Child, MakeCheckGroup(&data->GUI.CH_FIXFLIST, tr(MSG_CO_FixedFontList)),
@@ -4364,18 +4373,18 @@ Object *CO_PageLookFeel(struct CO_ClassData *data)
 
   if(obj != NULL)
   {
-    SetHelp(data->GUI.CH_QUICKSEARCHBAR,   MSG_HELP_CO_CH_QUICKSEARCHBAR);
-    SetHelp(data->GUI.CY_INFOBAR,          MSG_HELP_CO_CH_INFOBAR);
-    SetHelp(data->GUI.ST_INFOBARTXT,       MSG_HELP_CO_ST_INFOBARTXT);
-    SetHelp(data->GUI.CH_EMBEDDEDREADPANE, MSG_HELP_CO_CH_EMBEDDEDREADPANE);
-    SetHelp(data->GUI.CY_SIZE,             MSG_HELP_CO_CY_SIZE);
-    SetHelp(data->GUI.CH_FIXFLIST,         MSG_HELP_CO_CH_FIXFLIST);
-    SetHelp(data->GUI.CH_BEAT,             MSG_HELP_CO_CH_BEAT);
-    SetHelp(data->GUI.CH_RELDATETIME,      MSG_HELP_CO_CH_RELDATETIME);
-    SetHelp(data->GUI.CH_ABOOKLOOKUP,      MSG_HELP_CO_CH_ABOOKLOOKUP);
-    SetHelp(data->GUI.CH_FCNTMENU,         MSG_HELP_CO_CONTEXTMENU);
-    SetHelp(data->GUI.CH_MCNTMENU,         MSG_HELP_CO_CONTEXTMENU);
-    SetHelp(data->GUI.CY_FOLDERINFO,       MSG_HELP_CO_CY_FOLDERINFO);
+    SetHelp(data->GUI.CY_INFOBAR,           MSG_HELP_CO_CH_INFOBAR);
+    SetHelp(data->GUI.ST_INFOBARTXT,        MSG_HELP_CO_ST_INFOBARTXT);
+    SetHelp(data->GUI.CY_QUICKSEARCHBARPOS, MSG_HELP_CO_CH_QUICKSEARCHBAR);
+    SetHelp(data->GUI.CH_EMBEDDEDREADPANE,  MSG_HELP_CO_CH_EMBEDDEDREADPANE);
+    SetHelp(data->GUI.CY_SIZE,              MSG_HELP_CO_CY_SIZE);
+    SetHelp(data->GUI.CH_FIXFLIST,          MSG_HELP_CO_CH_FIXFLIST);
+    SetHelp(data->GUI.CH_BEAT,              MSG_HELP_CO_CH_BEAT);
+    SetHelp(data->GUI.CH_RELDATETIME,       MSG_HELP_CO_CH_RELDATETIME);
+    SetHelp(data->GUI.CH_ABOOKLOOKUP,       MSG_HELP_CO_CH_ABOOKLOOKUP);
+    SetHelp(data->GUI.CH_FCNTMENU,          MSG_HELP_CO_CONTEXTMENU);
+    SetHelp(data->GUI.CH_MCNTMENU,          MSG_HELP_CO_CONTEXTMENU);
+    SetHelp(data->GUI.CY_FOLDERINFO,        MSG_HELP_CO_CY_FOLDERINFO);
 
     DoMethod(data->GUI.CY_INFOBAR, MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &InfoBarPosHook, MUIV_TriggerValue);
   }

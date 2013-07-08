@@ -25,6 +25,9 @@ $URL$
   * YAM_FI.c, YAM_COs.c, mui/SearchControlGroup.c: PGP encrypted mails can now be
     excluded from a search to let in run unattended without the need to enter a
     password. This closes #35.
+  * YAM_CO.c, mui/MainWindow.c: the position of the quick search bar is now
+    configurable and allows the user to place the bar below the main mail list.
+    This closes #18.
 
 #### YAM 2.8p1 RELEASE ##################################################
 
