@@ -322,9 +322,15 @@ BOOL ImageCacheSetup(void)
   if((G->imageCacheHashTable = HashTableNew(HashTableGetDefaultStringOps(), NULL, sizeof(struct ImageCacheNode), 128)) != NULL)
     result = TRUE;
 
+  // obtain the Workbench screen pointer
+  // it is safe to call UnlockPubScreen() with a NULL screen pointer
+  G->workbenchScreen = LockPubScreen("Workbench");
+  UnlockPubScreen(NULL, G->workbenchScreen);
+
   RETURN(result);
   return result;
 }
+
 ///
 /// ImageCacheCleanup
 // for cleaning up the image cache
@@ -542,6 +548,21 @@ void ReleaseImage(const char *id, BOOL dispose)
 
     if(node->openCount == 0)
     {
+      if(node->screen != NULL && node->screen != G->workbenchScreen)
+      {
+        // enforce a disposing in case the image was remapped to a colormapped screen
+        // picture.datatypes seems to keep a pointer to the screen even if that was set to
+        // NULL before. This pointer will then later be accessed although the screen most
+        // probably does not exist anymore and hence causes crashes. The Workbench screen
+        // is considered to be safe as it is closed *very* rarely, if at all. See ticket
+        // #389 for details.
+        if(dispose == FALSE && GetBitMapAttr(node->screen->RastPort.BitMap, BMA_DEPTH) <= 8)
+        {
+          D(DBF_IMAGE, "enforcing dispose due to colormapped screen");
+          dispose = TRUE;
+        }
+	  }
+
       if(dispose == TRUE || node->delayedDispose == TRUE)
       {
         D(DBF_IMAGE, "removing image '%s' from cache", node->id);

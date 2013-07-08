@@ -28,6 +28,11 @@ $URL$
   * YAM_CO.c, mui/MainWindow.c: the position of the quick search bar is now
     configurable and allows the user to place the bar below the main mail list.
     This closes #18.
+  * ImageCache.c: enforce disposing of all images if YAM is running on an 8 bit
+    screen (excluding the Workbench) as soon as the image is no longer used. This
+    works around a bug in picture.datatype which seems to keep a pointer to the
+    screen the image was remapped to and accesses it later even if the screen no
+    longer exists. This closes #389.
 
 #### YAM 2.8p1 RELEASE ##################################################
 
