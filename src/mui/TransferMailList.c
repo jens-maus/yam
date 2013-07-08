@@ -58,6 +58,7 @@ struct Data
   char indexBuffer[SIZE_SMALL];
   char statusBuffer[SIZE_DEFAULT];
   char fromBuffer[SIZE_DEFAULT];
+  char toBuffer[SIZE_DEFAULT];
   char sizeBuffer[SIZE_SMALL];
   char dateBuffer[64];
   LONG sizeLimit;
@@ -256,8 +257,6 @@ OVERLOAD(MUIM_NList_Display)
 
     if((mail = entry->mail) != NULL)
     {
-      struct Person *pe = &mail->From;
-
       // size display
       if(data->sizeLimit > 0 && mail->Size >= data->sizeLimit)
       {
@@ -269,17 +268,21 @@ OVERLOAD(MUIM_NList_Display)
       ndm->strings[2] = data->sizeBuffer;
 
       // from address display
-      strlcpy(data->fromBuffer, AddrName(*pe), sizeof(data->fromBuffer));
+      strlcpy(data->fromBuffer, AddrName(mail->From), sizeof(data->fromBuffer));
       ndm->strings[3] = data->fromBuffer;
 
+      // to address display
+      strlcpy(data->toBuffer, AddrName(mail->To), sizeof(data->toBuffer));
+      ndm->strings[4] = data->toBuffer;
+
       // mail subject display
-      ndm->strings[4] = mail->Subject;
+      ndm->strings[5] = mail->Subject;
 
       // display date
       data->dateBuffer[0] = '\0';
       if(mail->Date.ds_Days != 0)
         DateStamp2String(data->dateBuffer, sizeof(data->dateBuffer), &mail->Date, (C->DSListFormat == DSS_DATEBEAT || C->DSListFormat == DSS_RELDATEBEAT) ? DSS_DATEBEAT : DSS_DATETIME, TZC_LOCAL);
-      ndm->strings[5] = data->dateBuffer;
+      ndm->strings[6] = data->dateBuffer;
     }
     else
     {
@@ -292,9 +295,10 @@ OVERLOAD(MUIM_NList_Display)
       // reuse the same string again, this is no problem
       // as we just have to show an empty string
       ndm->strings[4] = data->fromBuffer;
+      ndm->strings[5] = data->fromBuffer;
 
       data->dateBuffer[0] = '\0';
-      ndm->strings[5] = data->dateBuffer;
+      ndm->strings[6] = data->dateBuffer;
     }
   }
   else
@@ -303,8 +307,9 @@ OVERLOAD(MUIM_NList_Display)
     ndm->strings[1] = (STRPTR)tr(MSG_PRESELECT_INDEX);
     ndm->strings[2] = (STRPTR)tr(MSG_Size);
     ndm->strings[3] = (STRPTR)tr(MSG_From);
-    ndm->strings[4] = (STRPTR)tr(MSG_Subject);
-    ndm->strings[5] = (STRPTR)tr(MSG_Date);
+    ndm->strings[4] = (STRPTR)tr(MSG_To);
+    ndm->strings[5] = (STRPTR)tr(MSG_Subject);
+    ndm->strings[6] = (STRPTR)tr(MSG_Date);
   }
 
   LEAVE();

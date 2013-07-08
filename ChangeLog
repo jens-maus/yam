@@ -15,6 +15,8 @@ $URL$
     the 10th attachment. This closes #62.
   * ParseEmail.l: all kinds of links (http(s), ftp, etc) will now be underlined
     as well. This closes #72.
+  * TransferMaillist.c: the mail preselection list now shows the contents of the
+    To: header line to let users spot unwanted mails easier.
 
 #### YAM 2.8p1 RELEASE ##################################################
 
