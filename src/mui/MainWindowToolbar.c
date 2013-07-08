@@ -40,6 +40,7 @@
 #include "YAM_mainFolder.h"
 
 #include "Locale.h"
+#include "MailServers.h"
 #include "Themes.h"
 
 #include "mui/MainWindowToolbar.h"
@@ -208,6 +209,40 @@ OVERLOAD(OM_NEW)
 ///
 
 /* Public Methods */
+/// DECLARE(UpdateServerControls)
+DECLARE(UpdateServerControls)
+{
+  struct Node *curNode;
+  LONG activePOP3Servers = 0;
+  LONG activeSMTPServers = 0;
+
+  ENTER();
+
+  // check if we have at least one active POP3/SMTP server
+  IterateList(&C->pop3ServerList, curNode)
+  {
+    struct MailServerNode *msn = (struct MailServerNode *)curNode;
+
+    if(isServerActive(msn) == TRUE)
+      activePOP3Servers++;
+  }
+  IterateList(&C->smtpServerList, curNode)
+  {
+    struct MailServerNode *msn = (struct MailServerNode *)curNode;
+
+    if(isServerActive(msn) == TRUE)
+      activeSMTPServers++;
+  }
+
+  // set the disabled state of the corresponding toolbar buttons
+  DoMethod(G->MA->GUI.TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_GETMAIL, MUIA_TheBar_Attr_Disabled, activePOP3Servers == 0);
+  DoMethod(G->MA->GUI.TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_SENDALL, MUIA_TheBar_Attr_Disabled, activeSMTPServers == 0);
+
+  LEAVE();
+  return 0;
+}
+
+///
 /// DECLARE(UpdateSpamControls)
 DECLARE(UpdateSpamControls)
 {
@@ -283,7 +318,7 @@ DECLARE(UpdateSpamControls)
   DoMethod(obj, MUIM_TheBar_SetAttr, TB_MAIN_SPAM, MUIA_TheBar_Attr_Disabled, spamDisabled);
   DoMethod(obj, MUIM_TheBar_SetAttr, TB_MAIN_HAM,  MUIA_TheBar_Attr_Disabled, hamDisabled);
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 

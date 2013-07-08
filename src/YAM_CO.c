@@ -2817,6 +2817,8 @@ void CO_Validate(struct Config *co, BOOL update)
 
     if(G->CO->Visited[cp_TCPIP] == TRUE || G->CO->UpdateAll == TRUE)
     {
+      DoMethod(G->MA->GUI.TO_TOOLBAR, MUIM_MainWindowToolbar_UpdateServerControls);
+
       // requeue the timerequest for the POP3 servers
       RestartPOP3Timers();
     }
