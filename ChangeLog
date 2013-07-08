@@ -22,6 +22,9 @@ $URL$
   * YAM_CO.c, mui/MainWindowToolbar.c: the Get and Send toolbar buttons will now
     be disabled in case there is no active POP3 or SMTP server available. This
     closes #261.
+  * YAM_FI.c, YAM_COs.c, mui/SearchControlGroup.c: PGP encrypted mails can now be
+    excluded from a search to let in run unattended without the need to enter a
+    password. This closes #35.
 
 #### YAM 2.8p1 RELEASE ##################################################
 

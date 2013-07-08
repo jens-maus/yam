@@ -111,6 +111,7 @@ struct SearchPatternNode
 #define SEARCHF_CASE_SENSITIVE      (1<<0) // perform a case sensitive seatch
 #define SEARCHF_SUBSTRING           (1<<1) // search for a substring instead of a complete string
 #define SEARCHF_DOS_PATTERN         (1<<2) // use AmigaDOS pattern matching
+#define SEARCHF_SKIP_ENCRYPTED      (1<<3) // skip encrypted mails (i.e. PGP)
 
 struct Search
 {

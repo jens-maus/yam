@@ -65,6 +65,7 @@ struct Data
   Object *CH_CASESENS[5];
   Object *CH_SUBSTR[5];
   Object *CH_DOSPATTERN[5];
+  Object *CH_SKIPENCRYPTED[5];
   Object *CY_COMBINE;
   Object *RT_TITLE;
 
@@ -264,6 +265,7 @@ OVERLOAD(OM_NEW)
           End,
           Child, MakeCheckGroup((Object **)&data->CH_CASESENS[4], tr(MSG_FI_CaseSensitive)),
           Child, MakeCheckGroup((Object **)&data->CH_DOSPATTERN[4], tr(MSG_FI_DOS_PATTERN)),
+          Child, MakeCheckGroup((Object **)&data->CH_SKIPENCRYPTED[4], tr(MSG_FI_SKIP_ENCRYPTED)),
           Child, HVSpace,
         End,
       End,
@@ -346,6 +348,12 @@ OVERLOAD(OM_NEW)
         SetHelp(data->CH_DOSPATTERN[i], MSG_HELP_FI_CH_DOS_PATTERN);
       }
 
+      if(data->CH_SKIPENCRYPTED[i] != NULL)
+      {
+        DoMethod(data->CH_SKIPENCRYPTED[i], MUIM_Notify, MUIA_Selected, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+        SetHelp(data->CH_SKIPENCRYPTED[i], MSG_HELP_FI_CH_SKIP_ENCRYPTED);
+      }
+
       if(data->BT_EDIT[i] != NULL)
         DoMethod(data->BT_EDIT[i], MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(EditFile), i);
     }
@@ -386,8 +394,8 @@ OVERLOAD(OM_DISPOSE)
 OVERLOAD(OM_SET)
 {
   GETDATA;
-
   struct TagItem *tags = inittags(msg), *tag;
+
   while((tag = NextTagItem((APTR)&tags)) != NULL)
   {
     switch(tag->ti_Tag)
@@ -439,6 +447,8 @@ OVERLOAD(OM_SET)
             set(data->CH_SUBSTR[i], MUIA_Disabled, disabled || oper == 4 || (i < 2 && oper > 1));
           if(data->CH_DOSPATTERN[i] != NULL)
             set(data->CH_DOSPATTERN[i], MUIA_Disabled, disabled);
+          if(data->CH_SKIPENCRYPTED[i] != NULL)
+            set(data->CH_SKIPENCRYPTED[i], MUIA_Disabled, disabled || mode == SM_HEADER);
           if(data->BT_FILE[i] != NULL)
             set(data->BT_FILE[i], MUIA_Disabled, disabled || oper != 4);
           if(data->BT_EDIT[i] != NULL)
@@ -495,6 +505,9 @@ DECLARE(Clear)
 
     if(data->CH_DOSPATTERN[m] != NULL)
       nnset(data->CH_DOSPATTERN[m], MUIA_Selected, FALSE);
+
+    if(data->CH_SKIPENCRYPTED[m] != NULL)
+      nnset(data->CH_SKIPENCRYPTED[m], MUIA_Selected, FALSE);
   }
 
   return 0;
@@ -528,6 +541,8 @@ DECLARE(PrepareSearch) // struct Search *search
     setFlag(flags, SEARCHF_SUBSTRING);
   if(GetMUICheck(data->CH_DOSPATTERN[pg]) == TRUE)
     setFlag(flags, SEARCHF_DOS_PATTERN);
+  if(GetMUICheck(data->CH_SKIPENCRYPTED[pg]) == TRUE)
+    setFlag(flags, SEARCHF_SKIP_ENCRYPTED);
 
   FI_PrepareSearch(msg->search,
                    GetMUICycle(data->CY_MODE[data->remoteFilterMode]),
@@ -573,6 +588,9 @@ DECLARE(SetToRule) // struct RuleNode *rule
 
   if(data->CH_DOSPATTERN[g] != NULL && GetMUICheck(data->CH_DOSPATTERN[g]) == TRUE)
     setFlag(rule->flags, SEARCHF_DOS_PATTERN);
+
+  if(data->CH_SKIPENCRYPTED[g] != NULL && GetMUICheck(data->CH_SKIPENCRYPTED[g]) == TRUE)
+    setFlag(rule->flags, SEARCHF_SKIP_ENCRYPTED);
 
   // enable DOS patterns automatically if a pattern file is given
   if(rule->comparison == 4)
@@ -621,6 +639,9 @@ DECLARE(GetFromRule) // struct RuleNode *rule
 
   if(data->CH_DOSPATTERN[g] != NULL)
     nnset(data->CH_DOSPATTERN[g], MUIA_Selected, isFlagSet(rule->flags, SEARCHF_DOS_PATTERN));
+
+  if(data->CH_SKIPENCRYPTED[g] != NULL)
+    nnset(data->CH_SKIPENCRYPTED[g], MUIA_Selected, isFlagSet(rule->flags, SEARCHF_SKIP_ENCRYPTED));
 
   return 0;
 }

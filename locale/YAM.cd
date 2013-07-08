@@ -7363,3 +7363,10 @@ Rename attachment
 MSG_WR_ENTER_NEW_NAME (2419//)
 Enter new attachment name:
 ;
+MSG_FI_SKIP_ENCRYPTED (2420//)
+Skip encrypted mails
+;
+MSG_HELP_FI_CH_SKIP_ENCRYPTED (2421//)
+Skip encrypted mails (i.e. PGP)\n\
+during the search.
+;

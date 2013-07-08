@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.6 (25.02.2013)
+## version $VER: YAM.catalog 8.7 (05.07.2013)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -8818,4 +8818,11 @@ Anhang umbenennen
 ;
 MSG_WR_ENTER_NEW_NAME
 Geben Sie den neuen Namen ein:
+;
+MSG_FI_SKIP_ENCRYPTED
+Verschlüsselte Nachrichten ignorieren
+;
+MSG_HELP_FI_CH_SKIP_ENCRYPTED
+Verschlüsselte Nachrichten (z.B. PGP)\n\
+werden bei der Suche ignoriert.
 ;

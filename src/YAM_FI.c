@@ -895,43 +895,57 @@ BOOL FI_DoSearch(struct Search *search, const struct Mail *mail)
 
     case SM_BODY:
     {
-      enum Comparison oldCompare = search->Compare;
+      if(isFlagClear(search->flags, SEARCHF_SKIP_ENCRYPTED) || isMP_CryptedMail(mail) == FALSE)
+      {
+        enum Comparison oldCompare = search->Compare;
 
-      // always perform a matching search
-      search->Compare = CP_EQUAL;
-      found = FI_SearchPatternInBody(search, mail);
-      search->Compare = oldCompare;
+        // always perform a matching search
+        search->Compare = CP_EQUAL;
+        found = FI_SearchPatternInBody(search, mail);
+        search->Compare = oldCompare;
 
-      // invert the result in case a non-matching search was requested
-      if(oldCompare == CP_NOTEQUAL)
-        found = !found;
+        // invert the result in case a non-matching search was requested
+        if(oldCompare == CP_NOTEQUAL)
+          found = !found;
 
-      if(found == TRUE)
-        D(DBF_FILTER, "  BODY: search for '%s' matched", searchString);
+        if(found == TRUE)
+          D(DBF_FILTER, "  BODY: search for '%s' matched", searchString);
+        else
+          D(DBF_FILTER, "  BODY: search for '%s' NOT matched", searchString);
+      }
       else
-        D(DBF_FILTER, "  BODY: search for '%s' NOT matched", searchString);
+      {
+        D(DBF_FILTER, "  BODY: skip encrypted mail");
+	  }
     }
     break;
 
     case SM_WHOLE:
     {
-      enum Comparison oldCompare = search->Compare;
+      if(isFlagClear(search->flags, SEARCHF_SKIP_ENCRYPTED) || isMP_CryptedMail(mail) == FALSE)
+      {
+        enum Comparison oldCompare = search->Compare;
 
-      // always perform a matching search
-      search->Compare = CP_EQUAL;
-      found = FI_SearchPatternInHeader(search, mail);
-      if(found == FALSE)
-        found = FI_SearchPatternInBody(search, mail);
-      search->Compare = oldCompare;
+        // always perform a matching search
+        search->Compare = CP_EQUAL;
+        found = FI_SearchPatternInHeader(search, mail);
+        if(found == FALSE)
+          found = FI_SearchPatternInBody(search, mail);
+        search->Compare = oldCompare;
 
-      // invert the result in case a non-matching search was requested
-      if(oldCompare == CP_NOTEQUAL)
-        found = !found;
+        // invert the result in case a non-matching search was requested
+        if(oldCompare == CP_NOTEQUAL)
+          found = !found;
 
-      if(found == TRUE)
-        D(DBF_FILTER, "  WHOLE: search for '%s' matched", searchString);
+        if(found == TRUE)
+          D(DBF_FILTER, "  WHOLE: search for '%s' matched", searchString);
+        else
+          D(DBF_FILTER, "  WHOLE: search for '%s' NOT matched", searchString);
+      }
       else
-        D(DBF_FILTER, "  WHOLE: search for '%s' NOT matched", searchString);
+      {
+        D(DBF_FILTER, "  WHOLE: skip encrypted mail");
+      }
     }
     break;
 
