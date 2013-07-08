@@ -33,6 +33,8 @@ $URL$
     works around a bug in picture.datatype which seems to keep a pointer to the
     screen the image was remapped to and accesses it later even if the screen no
     longer exists. This closes #389.
+  * mui/FolderRequestTree.c: moved the folder tree population into a separate
+    method to be able to use it for later tree updates.
 
 #### YAM 2.8p1 RELEASE ##################################################
 

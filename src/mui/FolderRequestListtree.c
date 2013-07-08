@@ -50,6 +50,8 @@ struct Data
 {
   Object *userImage[SIZE_DEFAULT];
   int userImageIndex[SIZE_DEFAULT];
+  struct Folder *prevFolder;
+  struct Folder *excludeFolder;
 };
 */
 
@@ -66,44 +68,12 @@ OVERLOAD(OM_NEW)
 
     TAG_MORE, inittags(msg))) != NULL)
   {
-    struct Folder *prevFolder;
-    struct Folder *excludeFolder;
-    struct FolderNode *fnode;
+    GETDATA;
 
-    prevFolder = (struct Folder *)GetTagData(ATTR(Folder), (IPTR)NULL, inittags(msg));
-    excludeFolder = (struct Folder *)GetTagData(ATTR(Exclude), (IPTR)NULL, inittags(msg));
+    data->prevFolder = (struct Folder *)GetTagData(ATTR(Folder), (IPTR)NULL, inittags(msg));
+    data->excludeFolder = (struct Folder *)GetTagData(ATTR(Exclude), (IPTR)NULL, inittags(msg));
 
-    LockFolderListShared(G->folders);
-
-    ForEachFolderNode(G->folders, fnode)
-    {
-      struct Folder *folder = fnode->folder;
-      ULONG tnflags = MUIF_NONE;
-      struct MUI_NListtree_TreeNode *tn_parent;
-
-      if(folder != excludeFolder)
-      {
-        if(isGroupFolder(folder))
-          tnflags = TNF_LIST|TNF_OPEN;
-
-        // set the previously selected folder as active
-        if(folder == prevFolder)
-          setFlag(tnflags, MUIV_NListtree_Insert_Flag_Active);
-
-        // we first have to get the parent folder treenode
-        if(folder->parent != NULL &&
-           (tn_parent = (struct MUI_NListtree_TreeNode *)DoMethod(obj, MUIM_NListtree_FindUserData, MUIV_NListtree_FindUserData_ListNode_Root, folder->parent, MUIF_NONE)) != NULL)
-        {
-          DoMethod(obj, MUIM_NListtree_Insert, fnode->folder->Name, fnode, tn_parent, MUIV_NListtree_Insert_PrevNode_Tail, tnflags);
-        }
-        else
-        {
-          DoMethod(obj, MUIM_NListtree_Insert, fnode->folder->Name, fnode, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags);
-        }
-      }
-    }
-
-    UnlockFolderList(G->folders);
+    DoMethod(obj, METHOD(RefreshTree));
   }
 
   RETURN((IPTR)obj);
@@ -199,6 +169,57 @@ OVERLOAD(MUIM_NListtree_Insert)
 
   RETURN(tn);
   return (IPTR)tn;
+}
+
+///
+/// DECLARE(RefreshTree)
+DECLARE(RefreshTree)
+{
+  GETDATA;
+  struct FolderNode *fnode;
+
+  ENTER();
+
+  // clear the tree first
+  set(obj, MUIA_NListtree_Quiet, TRUE);
+  DoMethod(obj, MUIM_NListtree_Clear);
+
+  LockFolderListShared(G->folders);
+
+  ForEachFolderNode(G->folders, fnode)
+  {
+    struct Folder *folder = fnode->folder;
+    ULONG tnflags = MUIF_NONE;
+    struct MUI_NListtree_TreeNode *tn_parent;
+
+    if(folder != data->excludeFolder)
+    {
+      if(isGroupFolder(folder))
+        tnflags = TNF_LIST|TNF_OPEN;
+
+      // set the previously selected folder as active
+      if(folder == data->prevFolder)
+        setFlag(tnflags, MUIV_NListtree_Insert_Flag_Active);
+
+      // we first have to get the parent folder treenode
+      if(folder->parent != NULL &&
+         (tn_parent = (struct MUI_NListtree_TreeNode *)DoMethod(obj, MUIM_NListtree_FindUserData, MUIV_NListtree_FindUserData_ListNode_Root, folder->parent, MUIF_NONE)) != NULL)
+      {
+        DoMethod(obj, MUIM_NListtree_Insert, fnode->folder->Name, fnode, tn_parent, MUIV_NListtree_Insert_PrevNode_Tail, tnflags);
+      }
+      else
+      {
+        DoMethod(obj, MUIM_NListtree_Insert, fnode->folder->Name, fnode, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags);
+      }
+    }
+  }
+
+  UnlockFolderList(G->folders);
+
+  set(obj, MUIA_NListtree_Quiet, FALSE);
+
+  LEAVE();
+  return 0;
 }
 
 ///
