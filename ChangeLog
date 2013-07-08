@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-07-09 Alper Sönmez <amithlondestek@gmail.com>
+
+ * locale/turkish.ct: update to the latest changes.
+
 2013-07-08 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/HeaderList.c: the time and date information from the Date: header line
