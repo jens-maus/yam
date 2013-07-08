@@ -17,6 +17,8 @@ $URL$
     as well. This closes #72.
   * TransferMaillist.c: the mail preselection list now shows the contents of the
     To: header line to let users spot unwanted mails easier.
+  * YAM_MA.c: mails dragged out of the spam folder will now be marked as non-spam
+    in case the "mark on move" option is enabled. This closes #103.
 
 #### YAM 2.8p1 RELEASE ##################################################
 
