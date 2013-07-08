@@ -10,6 +10,9 @@ $URL$
   * mui/HeaderList.c: the time and date information from the Date: header line
     will now be converted to local time if the usual "short" headers are shown.
     For full header display it will be shown as it is. This closes #45.
+  * mui/AttachmentList.c: the single items of the list can now be activated
+    immediately by pressing their number on the keyboard. "0" will be mapped to
+    the 10th attachment. This closes #62.
 
 #### YAM 2.8p1 RELEASE ##################################################
 

@@ -44,6 +44,7 @@ struct Data
 {
   char numberBuffer[SIZE_SMALL];
   char sizeBuffer[SIZE_SMALL];
+  struct MUI_EventHandlerNode eh;
 };
 */
 
@@ -65,6 +66,73 @@ OVERLOAD(OM_NEW)
 
   RETURN((IPTR)obj);
   return (IPTR)obj;
+}
+
+///
+/// OVERLOAD(MUIM_Setup)
+OVERLOAD(MUIM_Setup)
+{
+  GETDATA;
+  IPTR result;
+
+  ENTER();
+
+  if((result = DoSuperMethodA(cl, obj, msg)))
+  {
+    data->eh.ehn_Class  = cl;
+    data->eh.ehn_Object = obj;
+    data->eh.ehn_Events = IDCMP_VANILLAKEY;
+    data->eh.ehn_Flags  = MUI_EHF_GUIMODE;
+    data->eh.ehn_Priority = -1;
+
+    if(_win(obj) != NULL)
+      DoMethod(_win(obj), MUIM_Window_AddEventHandler, &data->eh);
+  }
+
+  RETURN(result);
+  return result;
+}
+
+///
+/// OVERLOAD(MUIM_Cleanup)
+OVERLOAD(MUIM_Cleanup)
+{
+  GETDATA;
+  IPTR result;
+
+  ENTER();
+
+  if(_win(obj) != NULL)
+    DoMethod(_win(obj), MUIM_Window_RemEventHandler, &data->eh);
+
+  result = DoSuperMethodA(cl, obj, msg);
+
+  RETURN(result);
+  return result;
+}
+
+///
+/// OVERLOAD(MUIM_HandleEvent)
+OVERLOAD(MUIM_HandleEvent)
+{
+  struct MUIP_HandleEvent *mhe = (struct MUIP_HandleEvent *)msg;
+  IPTR result = 0;
+
+  if(mhe->imsg->Class == IDCMP_VANILLAKEY)
+  {
+    if(mhe->imsg->Code == '0')
+    {
+      // treat zero as ten
+      set(obj, MUIA_NList_Active, 10);
+    }
+    else if(mhe->imsg->Code >= '1' && mhe->imsg->Code <= '9')
+    {
+      set(obj, MUIA_NList_Active, mhe->imsg->Code - '0');
+    }
+  }
+
+  RETURN(result);
+  return result;
 }
 
 ///
