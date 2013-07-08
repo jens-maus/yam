@@ -46,6 +46,7 @@
 struct Data
 {
   struct ReadMailData *rmData;
+  char dateBuffer[64];
 };
 */
 
@@ -124,6 +125,7 @@ OVERLOAD(MUIM_NList_Display)
 {
   struct MUIP_NList_Display *ndm = (struct MUIP_NList_Display *)msg;
   struct HeaderNode *hdrNode = (struct HeaderNode *)ndm->entry;
+  GETDATA;
 
   ENTER();
 
@@ -145,7 +147,15 @@ OVERLOAD(MUIM_NList_Display)
       ndm->strings[0] = hdrNode->name;
 
     // set the content of the header line
-    ndm->strings[1] = hdrNode->content;
+    if(stricmp("Date", hdrNode->name) == 0 && data->rmData->headerMode == HM_SHORTHEADER)
+    {
+      // some special treatment of the Date: header line in "short" mode
+      // always show the date/time converted to local time
+      DateStamp2String(data->dateBuffer, sizeof(data->dateBuffer), &data->rmData->mail->Date, C->DSListFormat, TZC_LOCAL);
+      ndm->strings[1] = data->dateBuffer;
+    }
+    else
+      ndm->strings[1] = hdrNode->content;
   }
 
   LEAVE();

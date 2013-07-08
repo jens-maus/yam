@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-07-08 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/HeaderList.c: the time and date information from the Date: header line
+    will now be converted to local time if the usual "short" headers are shown.
+    For full header display it will be shown as it is. This closes #45.
+
 #### YAM 2.8p1 RELEASE ##################################################
 
 2013-07-07 Jens Langner <Jens.Langner@light-speed.de>
