@@ -347,7 +347,7 @@ struct UserIdentityNode *FindUserIdentityByID(const struct MinList *userIdentity
 
 ///
 /// FindUserIdentityByDescription
-// find a user identity by its description
+// find an active user identity by its description
 struct UserIdentityNode *FindUserIdentityByDescription(const struct MinList *userIdentityList, const char *description)
 {
   struct UserIdentityNode *result = NULL;
@@ -362,8 +362,8 @@ struct UserIdentityNode *FindUserIdentityByDescription(const struct MinList *use
     {
       struct UserIdentityNode *uin = (struct UserIdentityNode *)curNode;
 
-      // check if we found exactly this description
-      if(strcasestr(description, uin->description) != NULL)
+      // check if the identity is active and if the description matches
+      if(uin->active == TRUE && strcasestr(description, uin->description) != NULL)
       {
         result = uin;
         break;
@@ -377,7 +377,7 @@ struct UserIdentityNode *FindUserIdentityByDescription(const struct MinList *use
 
 ///
 /// FindUserIdentityByAddress
-// find a user identity by a given address
+// find an active user identity by a given address
 struct UserIdentityNode *FindUserIdentityByAddress(const struct MinList *userIdentityList, const char *address)
 {
   struct UserIdentityNode *result = NULL;
@@ -392,8 +392,8 @@ struct UserIdentityNode *FindUserIdentityByAddress(const struct MinList *userIde
     {
       struct UserIdentityNode *uin = (struct UserIdentityNode *)curNode;
 
-      // check if we found exactly this address
-      if(strcasestr(address, uin->address) != NULL)
+      // check if the identity is active and if the address matches
+      if(uin->active == TRUE && strcasestr(address, uin->address) != NULL)
       {
         result = uin;
         break;

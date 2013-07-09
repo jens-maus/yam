@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-07-09 Thore Böckelmann <tboeckel@gmx.de>
+
+  * UserIdentity.c: searching user identities by address or ID will now correctly
+    respect the identity's active state and return active identities only. In
+    case a mail references an inactive user identity YAM will silently fall back
+    to the next best matching identity. This closes #401.
+
 2013-07-09 Alper Sönmez <amithlondestek@gmail.com>
 
  * locale/turkish.ct: update to the latest changes.
