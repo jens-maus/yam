@@ -214,7 +214,7 @@ DECLARE(FinishInput) // ULONG result
   // trigger possible notifications
   set(obj, ATTR(Result), msg->result);
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 

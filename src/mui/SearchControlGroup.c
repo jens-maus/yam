@@ -691,7 +691,7 @@ DECLARE(Update)
 
   set(obj, ATTR(Modified), TRUE);
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 

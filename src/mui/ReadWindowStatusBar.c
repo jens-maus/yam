@@ -426,7 +426,7 @@ DECLARE(Update) // struct Mail *mail
     DoMethod(obj, MUIM_Group_ExitChange);
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 ///

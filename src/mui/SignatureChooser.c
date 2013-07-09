@@ -263,7 +263,7 @@ DECLARE(UpdateSignatures)
     }
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 

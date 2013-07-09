@@ -629,7 +629,7 @@ OVERLOAD(MUIM_DragDrop)
       InsertAddress(obj, "", mail->From.RealName, mail->From.Address);
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 ///
@@ -641,7 +641,7 @@ OVERLOAD(MUIM_Popstring_Open)
 
   set(obj, MUIA_Recipientstring_Popup, TRUE);
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 ///
@@ -1111,7 +1111,7 @@ DECLARE(AddRecipient) // STRPTR address
   xset(obj, MUIA_String_BufferPos, -1,
             MUIA_BetterString_NoNotify, FALSE);
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 ///
@@ -1239,7 +1239,7 @@ DECLARE(ReplaceSelected) // char *address
   // make sure to turn notifications back on
   set(obj, MUIA_BetterString_NoNotify, FALSE);
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 ///

@@ -1004,7 +1004,7 @@ OVERLOAD(MUIM_Draw)
     }
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 ///

@@ -406,7 +406,7 @@ DECLARE(FinishInput) // const char *alias, ULONG writeMail
     }
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 

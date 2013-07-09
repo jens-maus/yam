@@ -361,7 +361,7 @@ OVERLOAD(MUIM_NListtree_DropType)
   else
     *dt->Type = MUIV_NListtree_DropType_None;
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 

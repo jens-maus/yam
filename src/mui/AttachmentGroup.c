@@ -104,7 +104,7 @@ HOOKPROTONH(LayoutFunc, ULONG, UNUSED Object *obj, struct MUI_LayoutMsg *lm)
       lm->lm_MinMax.MaxWidth  = MUI_MAXMAX;
       lm->lm_MinMax.MaxHeight = MUI_MAXMAX;
 
-      RETURN(0);
+      LEAVE();
       return 0;
     }
     break;
@@ -421,7 +421,7 @@ DECLARE(Clear)
 
   data->firstPart = NULL;
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -502,7 +502,7 @@ DECLARE(SaveAll)
     }
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -534,7 +534,7 @@ DECLARE(SaveSelected)
 
   BusyEnd(busy);
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -552,7 +552,7 @@ DECLARE(DeleteAll)
     MA_RemoveAttach(data->firstPart->rmData->mail, NULL, C->ConfirmRemoveAttachments);
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -599,7 +599,7 @@ DECLARE(DeleteSelected)
     }
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -623,7 +623,7 @@ DECLARE(ClearSelection)
     }
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 

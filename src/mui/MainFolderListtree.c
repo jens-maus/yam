@@ -218,7 +218,7 @@ OVERLOAD(MUIM_DragDrop)
     }
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -267,7 +267,7 @@ OVERLOAD(MUIM_NListtree_DropType)
   else
     *dt->Type = MUIV_NListtree_DropType_None;
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -356,7 +356,7 @@ OVERLOAD(MUIM_NListtree_Move)
     UnlockFolderList(G->folders);
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 

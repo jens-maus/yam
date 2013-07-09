@@ -794,7 +794,7 @@ OVERLOAD(MUIM_AskMinMax)
   else
     mi->MaxWidth += minwidth;
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -1117,7 +1117,7 @@ OVERLOAD(MUIM_Draw)
     }
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 

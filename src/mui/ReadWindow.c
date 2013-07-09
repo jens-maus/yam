@@ -845,7 +845,7 @@ DECLARE(NewMail) // enum NewMailMode mode, ULONG qualifier
     }
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -914,7 +914,7 @@ DECLARE(MoveMailRequest)
     }
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -971,7 +971,7 @@ DECLARE(CopyMailRequest)
     }
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -1035,7 +1035,7 @@ DECLARE(DeleteMailRequest) // ULONG qualifier
       AppendToLogfile(LF_NORMAL, 22, tr(MSG_LOG_Moving), 1, folder->Name, delfolder->Name);
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -1198,7 +1198,7 @@ DECLARE(ClassifyMessage) // enum BayesClassification class
     }
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -1242,7 +1242,7 @@ DECLARE(SetStatusTo) // int addflags, int clearflags
   DoMethod(data->statusBar, MUIM_ReadWindowStatusBar_Update, mail);
   DisplayStatistics(NULL, TRUE);
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 ///
@@ -1518,7 +1518,7 @@ DECLARE(ChangeHeaderMode) // enum HeaderMode hmode
   // forward this method to the readMailGroup, it will update itself if necessary
   DoMethod(data->readMailGroup, MUIM_ReadMailGroup_ChangeHeaderMode, msg->hmode);
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -1534,7 +1534,7 @@ DECLARE(ChangeSenderInfoMode) // enum SInfoMode simode
   // forward this method to the readMailGroup, it will update itself if necessary
   DoMethod(data->readMailGroup, MUIM_ReadMailGroup_ChangeSenderInfoMode, msg->simode);
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -1598,7 +1598,7 @@ DECLARE(StyleOptionsChanged)
                                   MUIF_ReadMailGroup_ReadMail_UpdateOnly);
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 ///
@@ -1669,7 +1669,7 @@ DECLARE(UpdateSpamControls)
   if(data->windowToolbar != NULL)
     DoMethod(data->windowToolbar, MUIM_ReadWindowToolbar_UpdateSpamControls, mail);
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -1693,7 +1693,7 @@ DECLARE(UpdateMenuShortcuts)
     set(data->MI_FORWARD_INLINE, MUIA_Menuitem_Shortcut, "W");
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 

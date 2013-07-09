@@ -264,7 +264,7 @@ DECLARE(UpdateIdentities)
   // save number of identities
   data->numIdentities = numIdentities;
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 

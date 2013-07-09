@@ -187,7 +187,7 @@ DECLARE(FinishInput) // ULONG result
   // trigger possible notifications
   set(obj, MUIA_PassphraseRequestWindow_Result, msg->result);
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 

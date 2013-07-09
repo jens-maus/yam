@@ -921,7 +921,7 @@ DECLARE(Clear) // ULONG flags
 
   data->hasContent = FALSE;
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -1345,7 +1345,7 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
   // enable the headerList again
   set(data->headerList, MUIA_NList_Quiet, FALSE);
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -1714,7 +1714,7 @@ DECLARE(SaveMailRequest)
     BusyEnd(busy);
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -1769,7 +1769,7 @@ DECLARE(PrintMailRequest)
     BusyEnd(busy);
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -1813,7 +1813,7 @@ DECLARE(DisplayMailRequest)
     BusyEnd(busy);
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -1840,7 +1840,7 @@ DECLARE(DeleteMail)
     rmData->mail = NULL;
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -1858,7 +1858,7 @@ DECLARE(DeleteAttachmentsRequest)
   // remove the attchments now
   MA_RemoveAttach(mail, NULL, C->ConfirmRemoveAttachments);
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -1880,7 +1880,7 @@ DECLARE(HeaderListDoubleClicked)
 
   DoMethod(obj, MUIM_ReadMailGroup_UpdateHeaderDisplay, MUIF_ReadMailGroup_ReadMail_UpdateOnly);
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -1907,7 +1907,7 @@ DECLARE(Search) // int flags
       DoMethod(data->searchWindow, MUIM_Searchwindow_Open, data->mailTextObject);
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 ///
@@ -1926,7 +1926,7 @@ DECLARE(ChangeHeaderMode) // enum HeaderMode hmode
     DoMethod(obj, MUIM_ReadMailGroup_UpdateHeaderDisplay, MUIF_ReadMailGroup_ReadMail_UpdateOnly);
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 ///
@@ -1945,7 +1945,7 @@ DECLARE(ChangeSenderInfoMode) // enum SInfoMode simode
     DoMethod(obj, MUIM_ReadMailGroup_UpdateHeaderDisplay, MUIF_ReadMailGroup_ReadMail_UpdateOnly);
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 ///
