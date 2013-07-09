@@ -69,6 +69,7 @@
 #include "mui/ClassesExtra.h"
 #include "mui/FilterChooser.h"
 #include "mui/FilterList.h"
+#include "mui/FilterRuleList.h"
 #include "mui/FolderRequestListtree.h"
 #include "mui/IdentityList.h"
 #include "mui/ImageArea.h"
@@ -2579,15 +2580,7 @@ Object *CO_PageFilters(struct CO_ClassData *data)
                          Child, HVSpace,
                       End,
                       Child, data->GUI.GR_RGROUP = VGroup,
-                         Child, ScrollgroupObject,
-                            GroupSpacing(3),
-                            MUIA_Weight, 100,
-                            MUIA_Scrollgroup_FreeHoriz, FALSE,
-                            MUIA_Scrollgroup_FreeVert,  TRUE,
-                            MUIA_Scrollgroup_Contents,  data->GUI.GR_SGROUP = VirtgroupObject,
-                              Child, SearchControlGroupObject, // we need a minimum of one dummy control group
-                              End,
-                            End,
+                         Child, data->GUI.GR_SGROUP = FilterRuleListObject,
                          End,
                          Child, RectangleObject,
                             MUIA_Weight, 1,

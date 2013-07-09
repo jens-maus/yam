@@ -487,6 +487,7 @@ MUIOBJS = \
 	FilterChooser.o \
 	FilterList.o \
 	FilterPopupList.o \
+	FilterRuleList.o \
 	FolderListtree.o \
 	FolderRequestListtree.o \
 	FolderRequestWindow.o \

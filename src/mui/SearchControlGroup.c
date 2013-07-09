@@ -23,7 +23,7 @@
 
  $Id$
 
- Superclass:  MUIC_Group
+ Superclass:  MUIC_ObjectListitem
  Description: Provides some GUI elements for filter/search controls
 
 ***************************************************************************/

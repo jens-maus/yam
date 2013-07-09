@@ -76,6 +76,7 @@
 #include "mui/MainWindow.h"
 #include "mui/MainWindowToolbar.h"
 #include "mui/MailServerChooser.h"
+#include "mui/ObjectList.h"
 #include "mui/ReadMailGroup.h"
 #include "mui/ReadWindow.h"
 #include "mui/SearchControlGroup.h"
@@ -175,15 +176,7 @@ HOOKPROTONHNONP(AddNewRuleToList, void)
                                  MUIV_Notify_Application, 2, MUIM_CallHook, &SetActiveFilterDataHook);
 
         // add it to our searchGroupList
-        if(DoMethod(gui->GR_RGROUP, MUIM_Group_InitChange)) // required for a proper refresh
-        {
-          if(DoMethod(gui->GR_SGROUP, MUIM_Group_InitChange))
-          {
-            DoMethod(gui->GR_SGROUP, OM_ADDMEMBER, newSearchGroup);
-            DoMethod(gui->GR_SGROUP, MUIM_Group_ExitChange);
-          }
-          DoMethod(gui->GR_RGROUP, MUIM_Group_ExitChange); // required for a proper refresh
-        }
+        DoMethod(gui->GR_SGROUP, MUIM_ObjectList_AddItem, newSearchGroup);
 
         GhostOutFilter(gui, filter);
       }
@@ -216,33 +209,10 @@ HOOKPROTONHNONP(RemoveLastRule, void)
 
     if(rule != NULL)
     {
-      struct List *childList;
-
       DeleteRuleNode(rule);
 
       // Remove the GUI elements as well
-      if((childList = (struct List *)xget(gui->GR_SGROUP, MUIA_Group_ChildList)))
-      {
-        Object *cstate = (Object *)GetHead(childList);
-        Object *child;
-        Object *lastChild = NULL;
-
-        while((child = NextObject(&cstate)) != NULL)
-          lastChild = child;
-
-        if(lastChild != NULL)
-        {
-          // remove the searchGroup
-          DoMethod(gui->GR_SGROUP, MUIM_Group_InitChange);
-          DoMethod(gui->GR_SGROUP, OM_REMMEMBER, lastChild);
-          DoMethod(gui->GR_SGROUP, MUIM_Group_ExitChange);
-
-          // Dipose the object
-          MUI_DisposeObject(lastChild);
-
-          GhostOutFilter(gui, filter);
-        }
-      }
+      DoMethod(gui->GR_SGROUP, MUIM_ObjectList_RemoveItem, xget(gui->GR_SGROUP, MUIA_ObjectList_LastItem));
     }
   }
 
@@ -317,8 +287,7 @@ void GhostOutFilter(struct CO_GUIData *gui, struct FilterNode *filter)
 {
   BOOL isremote;
   LONG pos = MUIV_NList_GetPos_Start;
-  int numRules = 0;
-  struct List *childList;
+  int numRules;
 
   ENTER();
 
@@ -358,17 +327,7 @@ void GhostOutFilter(struct CO_GUIData *gui, struct FilterNode *filter)
   set(gui->BT_FILTERDOWN, MUIA_Disabled, filter == NULL || pos+1 == (LONG)xget(gui->LV_RULES, MUIA_NList_Entries));
 
   // we have to find out how many rules the filter has
-  if((childList = (struct List *)xget(gui->GR_SGROUP, MUIA_Group_ChildList)) != NULL)
-  {
-    Object *cstate = (Object *)GetHead(childList);
-    Object *child;
-
-    while((child = NextObject(&cstate)) != NULL)
-    {
-      set(child, MUIA_Disabled, filter == NULL);
-      numRules++;
-    }
-  }
+  numRules = xget(gui->GR_SGROUP, MUIA_ObjectList_ItemCount);
 
   set(gui->BT_MORE, MUIA_Disabled, filter == NULL);
   set(gui->BT_LESS, MUIA_Disabled, filter == NULL || numRules <= 1);
@@ -401,6 +360,9 @@ HOOKPROTONHNONP(GetActiveFilterData, void)
   // values of this filter
   if(filter != NULL)
   {
+    ULONG i;
+    struct Node *curNode;
+
     nnset(gui->ST_RNAME,             MUIA_String_Contents,   filter->name);
     nnset(gui->CH_REMOTE,            MUIA_Selected,          filter->remote);
     nnset(gui->CH_APPLYNEW,          MUIA_Selected,          filter->applyToNew);
@@ -430,56 +392,30 @@ HOOKPROTONHNONP(GetActiveFilterData, void)
 
     // before we actually set our rule options we have to clear out
     // all previous existing group childs
-    if(DoMethod(gui->GR_RGROUP, MUIM_Group_InitChange)) // required for proper refresh
+    DoMethod(gui->GR_SGROUP, MUIM_ObjectList_Clear);
+    // Now we should have a clean SGROUP and can populate with new SearchControlGroup objects
+    i = 0;
+    IterateList(&filter->ruleList, curNode)
     {
-      if(DoMethod(gui->GR_SGROUP, MUIM_Group_InitChange))
-      {
-        struct List *childList;
+      Object *newSearchGroup = SearchControlGroupObject,
+                                 MUIA_SearchControlGroup_RemoteFilterMode, filter->remote,
+                                 MUIA_SearchControlGroup_ShowCombineCycle, i > 0,
+                                 MUIA_SearchControlGroup_Position, i+1,
+                               End;
 
-        if((childList = (struct List *)xget(gui->GR_SGROUP, MUIA_Group_ChildList)) != NULL)
-        {
-          int i;
-          struct Node *curNode;
-          Object *cstate = (Object *)GetHead(childList);
-          Object *child;
+      if(newSearchGroup == NULL)
+        break;
 
-          while((child = NextObject(&cstate)) != NULL)
-          {
-            // remove that child
-            DoMethod(gui->GR_SGROUP, OM_REMMEMBER, child);
-            MUI_DisposeObject(child);
-          }
+      // fill the new search group with some content
+      DoMethod(newSearchGroup, MUIM_SearchControlGroup_GetFromRule, curNode);
 
-          // Now we should have a clean SGROUP and can populate with new SearchControlGroup
-          // objects
-          i = 0;
-          IterateList(&filter->ruleList, curNode)
-          {
-            Object *newSearchGroup = SearchControlGroupObject,
-                                       MUIA_SearchControlGroup_RemoteFilterMode, filter->remote,
-                                       MUIA_SearchControlGroup_ShowCombineCycle, i > 0,
-                                       MUIA_SearchControlGroup_Position, i+1,
-                                     End;
+      // set some notifies
+      DoMethod(newSearchGroup, MUIM_Notify, MUIA_SearchControlGroup_Modified, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &SetActiveFilterDataHook);
 
-            if(newSearchGroup == NULL)
-              break;
+      // add it to our searchGroupList
+      DoMethod(gui->GR_SGROUP, MUIM_ObjectList_AddItem, newSearchGroup);
 
-            // fill the new search group with some content
-            DoMethod(newSearchGroup, MUIM_SearchControlGroup_GetFromRule, curNode);
-
-            // set some notifies
-            DoMethod(newSearchGroup, MUIM_Notify, MUIA_SearchControlGroup_Modified, MUIV_EveryTime,
-                                     MUIV_Notify_Application, 2, MUIM_CallHook, &SetActiveFilterDataHook);
-
-            // add it to our searchGroupList
-            DoMethod(gui->GR_SGROUP, OM_ADDMEMBER, newSearchGroup);
-
-            i++;
-          }
-        }
-        DoMethod(gui->GR_SGROUP, MUIM_Group_ExitChange);
-      }
-      DoMethod(gui->GR_RGROUP, MUIM_Group_ExitChange); // required for proper refresh
+      i++;
     }
   }
 
@@ -506,7 +442,9 @@ HOOKPROTONHNONP(SetActiveFilterData, void)
   // values of this filter
   if(filter != NULL)
   {
-    struct List *childList;
+    Object *ruleItem;
+    Object *ruleState;
+    int i;
     int rm = GetMUICheck(gui->CH_REMOTE);
 
     GetMUIString(filter->name, gui->ST_RNAME, sizeof(filter->name));
@@ -538,26 +476,20 @@ HOOKPROTONHNONP(SetActiveFilterData, void)
     GetMUIText(filter->moveTo, gui->TX_MOVETO, sizeof(filter->moveTo));
 
     // make sure to update all rule settings
-    if((childList = (struct List *)xget(gui->GR_SGROUP, MUIA_Group_ChildList)) != NULL)
+    ruleState = NULL;
+    i = 0;
+    while((ruleItem = (Object *)DoMethod(gui->GR_SGROUP, MUIM_ObjectList_IterateItems, &ruleState)) != NULL)
     {
-      Object *cstate = (Object *)GetHead(childList);
-      Object *child;
-      int i=0;
+      struct RuleNode *rule;
 
-      // iterate through the childList and update the rule structures
-      while((child = NextObject(&cstate)) != NULL)
-      {
-        struct RuleNode *rule;
+      // get the rule out of the ruleList or create a new one
+      while((rule = GetFilterRule(filter, i)) == NULL)
+        CreateNewRule(filter, 0);
 
-        // get the rule out of the ruleList or create a new one
-        while((rule = GetFilterRule(filter, i)) == NULL)
-          CreateNewRule(filter, 0);
+      // set the rule settings
+      DoMethod(ruleItem, MUIM_SearchControlGroup_SetToRule, rule);
 
-        // set the rule settings
-        DoMethod(child, MUIM_SearchControlGroup_SetToRule, rule);
-
-        ++i;
-      }
+      ++i;
     }
 
     GhostOutFilter(gui, filter);
@@ -574,17 +506,13 @@ MakeHook(SetActiveFilterDataHook, SetActiveFilterData);
 HOOKPROTONHNO(CO_RemoteToggleFunc, void, int *arg)
 {
   BOOL rm = *arg;
-  struct List *childList = (struct List *)xget(G->CO->GUI.GR_SGROUP, MUIA_Group_ChildList);
+  Object *ruleItem;
+  Object *ruleState;
 
-  if(childList != NULL)
+  ruleState = NULL;
+  while((ruleItem = (Object *)DoMethod(G->CO->GUI.GR_SGROUP, MUIM_ObjectList_IterateItems, &ruleState)) != NULL)
   {
-    Object *cstate = (Object *)GetHead(childList);
-    Object *child;
-
-    while((child = NextObject(&cstate)) != NULL)
-    {
-      set(child, MUIA_SearchControlGroup_RemoteFilterMode, rm);
-    }
+    set(ruleItem, MUIA_SearchControlGroup_RemoteFilterMode, rm);
   }
 
   SetActiveFilterData();
