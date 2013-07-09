@@ -391,7 +391,7 @@ DECLARE(FindEmailMatches) // STRPTR matchText, Object *list
     }
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
@@ -539,7 +539,7 @@ DECLARE(AddToEmailCache) // struct Person *person
     }
   }
 
-  RETURN(0);
+  LEAVE();
   return 0;
 }
 
