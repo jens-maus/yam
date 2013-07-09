@@ -11,6 +11,10 @@ $URL$
     respect the identity's active state and return active identities only. In
     case a mail references an inactive user identity YAM will silently fall back
     to the next best matching identity. This closes #401.
+  * YAM_CO.c, YAM_COg.c, mui/FilterRuleList.c, mui/SearchControlGroup.c: turned
+    the search control group object into a subclass of ObjectListItem to be able
+    to put it under control of the ObjectList class. This partly refs #78 and
+    also partly refs #79.
 
 2013-07-09 Alper Sönmez <amithlondestek@gmail.com>
 

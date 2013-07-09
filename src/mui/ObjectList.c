@@ -63,6 +63,7 @@ OVERLOAD(OM_NEW)
   if((obj = DoSuperNew(cl, obj,
 
     MUIA_Scrollgroup_FreeHoriz, FALSE,
+    MUIA_Scrollgroup_FreeVert, TRUE,
     MUIA_Scrollgroup_Contents, virtgroup = VGroupV,
       Child, spacer = HVSpace,
     End,
@@ -336,6 +337,7 @@ DECLARE(IterateItems) // void **state
       *msg->state = (Object *)GetHead(childList);
     }
 
+    item = NextObject(*msg->state);
     if(item == data->spacer)
       item = NULL;
   }
@@ -373,6 +375,34 @@ DECLARE(ItemAt) // ULONG index
 
   RETURN((IPTR)item);
   return (IPTR)item;
+}
+
+///
+/// DECLARE(Clear)
+DECLARE(Clear)
+{
+  GETDATA;
+  Object *item = NULL;
+
+  ENTER();
+
+  if(data->itemCount > 0)
+  {
+    struct List *childList = (struct List *)xget(data->virtgroup, MUIA_Group_ChildList);
+    Object *cstate = (Object *)GetHead(childList);
+
+    while((item = NextObject(&cstate)) != NULL)
+    {
+      // don't dispose the spacer item
+      if(item == data->spacer)
+        continue;
+
+      DoMethod(obj, METHOD(RemoveItem), item);
+    }
+  }
+
+  LEAVE();
+  return 0;
 }
 
 ///
