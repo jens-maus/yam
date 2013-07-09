@@ -290,32 +290,6 @@ struct UserIdentityNode *WhichUserIdentity(const struct MinList *userIdentityLis
 }
 
 ///
-/// IsUniqueUserIdentityID
-// check if the ID is unique within the list of servers
-BOOL IsUniqueUserIdentityID(const struct MinList *userIdentityList, const int id)
-{
-  BOOL isUnique = TRUE;
-  struct Node *curNode;
-
-  ENTER();
-
-  IterateList(userIdentityList, curNode)
-  {
-    struct UserIdentityNode *uin = (struct UserIdentityNode *)curNode;
-
-    if(uin->id == id)
-    {
-      // we found exactly this ID, this is bad
-      isUnique = FALSE;
-      break;
-    }
-  }
-
-  RETURN(isUnique);
-  return isUnique;
-}
-
-///
 /// FindUserIdentityByID
 // find a user identity by a given ID
 struct UserIdentityNode *FindUserIdentityByID(const struct MinList *userIdentityList, const int id)

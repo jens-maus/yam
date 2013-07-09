@@ -2421,7 +2421,7 @@ void CO_Validate(struct Config *co, BOOL update)
         if(id == 0)
           continue;
       }
-      while(IsUniqueUserIdentityID(&co->userIdentityList, id) == FALSE);
+      while(FindUserIdentityByID(&co->userIdentityList, id) != NULL);
 
       uin->id = id;
 
