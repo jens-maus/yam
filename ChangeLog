@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-07-10 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MAf.c: while doing a deep examination of a mail YAM will no longer use
+    the first matching address as the mail's user identity but collect all
+    possibly matching identities at first, because the header lines can appear
+    in arbitrary order and hence it is unpredictable which header line eventually
+    produces the used identity. After scanning all headers the identity will be
+    chosen in a predicatable way which prefers the "receiving" addresses. This
+    closes #402.
+
 2013-07-09 Thore Böckelmann <tboeckel@gmx.de>
 
   * UserIdentity.c: searching user identities by address or ID will now correctly
