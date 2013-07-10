@@ -247,8 +247,7 @@ DECLARE(Relayout)
       }
     }
 
-    // Here we can do a MUIA_ShowMe, TRUE because SortWindow is encapsulated
-    // in a InitChange/ExitChange..
+    // if the InfoBar is enabled by the user we make sure we show it
     set(G->MA->GUI.IB_INFOBAR, MUIA_ShowMe, showbar);
 
     DoMethod(G->MA->GUI.GR_MAIN, MUIM_Group_ExitChange);
@@ -283,9 +282,7 @@ DECLARE(Relayout)
 	  break;
     }
 
-    // if the quickSearchBar is enabled by the user we
-    // make sure we show it
-    DoMethod(G->MA->GUI.GR_QUICKSEARCHBAR, MUIM_QuickSearchBar_Clear);
+    // if the QuickSearchBar is enabled by the user we make sure we show it
     set(G->MA->GUI.GR_QUICKSEARCHBAR, MUIA_ShowMe, showbar);
 
     DoMethod(G->MA->GUI.GR_MAILLIST, MUIM_Group_ExitChange);
