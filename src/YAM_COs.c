@@ -489,13 +489,13 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
           j++;
         }
 
-        fprintf(fh, "FI%02d.Actions       = %d\n", i, filter->actions);
-        fprintf(fh, "FI%02d.RedirectTo    = %s\n", i, filter->redirectTo);
-        fprintf(fh, "FI%02d.ForwardTo     = %s\n", i, filter->forwardTo);
-        fprintf(fh, "FI%02d.ReplyFile     = %s\n", i, filter->replyFile);
-        fprintf(fh, "FI%02d.ExecuteCmd    = %s\n", i, filter->executeCmd);
-        fprintf(fh, "FI%02d.PlaySound     = %s\n", i, filter->playSound);
-        fprintf(fh, "FI%02d.MoveTo        = %s\n", i, filter->moveTo);
+        fprintf(fh, "FI%02d.Actions        = %d\n", i, filter->actions);
+        fprintf(fh, "FI%02d.RedirectTo     = %s\n", i, filter->redirectTo);
+        fprintf(fh, "FI%02d.ForwardTo      = %s\n", i, filter->forwardTo);
+        fprintf(fh, "FI%02d.ReplyFile      = %s\n", i, filter->replyFile);
+        fprintf(fh, "FI%02d.ExecuteCmd     = %s\n", i, filter->executeCmd);
+        fprintf(fh, "FI%02d.PlaySound      = %s\n", i, filter->playSound);
+        fprintf(fh, "FI%02d.MoveTo         = %s\n", i, filter->moveTo);
 
         i++;
       }
