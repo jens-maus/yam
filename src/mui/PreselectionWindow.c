@@ -230,7 +230,10 @@ OVERLOAD(OM_SET)
     {
       case ATTR(ActiveMail):
       {
-        DoMethod(data->transferMailList, MUIM_NList_SetActive, tag->ti_Data, MUIV_NList_SetActive_Jump_Center);
+        struct MailTransferNode *tnode = (struct MailTransferNode *)tag->ti_Data;
+
+        if(tnode != NULL)
+          DoMethod(data->transferMailList, MUIM_NList_SetActive, tnode->index-1, MUIV_NList_SetActive_Jump_Center);
       }
       break;
 

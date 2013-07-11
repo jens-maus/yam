@@ -13,6 +13,8 @@ $URL$
     preselection window. This makes unattended remote filters possible again as
     it was possible in YAM 2.8. Please note that the remote filters will be
     applied to "new" (= not yet downloaded or known) mails only.
+  * tcp/pop3.c, mui/PreselectionWindow.c: correctly highlight the first to be
+    downloaded mail also if remote filters are active.
 
 2013-07-10 Thore Böckelmann <tboeckel@gmx.de>
 
@@ -39,7 +41,7 @@ $URL$
 
 2013-07-09 Alper Sönmez <amithlondestek@gmail.com>
 
- * locale/turkish.ct: update to the latest changes.
+  * locale/turkish.ct: update to the latest changes.
 
 2013-07-08 Thore Böckelmann <tboeckel@gmx.de>
 

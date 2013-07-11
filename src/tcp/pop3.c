@@ -123,6 +123,7 @@ struct TransferContext
   struct UIDLhash *UIDLhashTable;   // for maintaining all UIDLs
   struct MinList *remoteFilters;
   struct MailTransferList *transferList;
+  struct MailTransferNode *firstPreselect;
   BOOL useTLS;
   struct DownloadResult downloadResult;
   struct FilterResult filterResult;
@@ -684,7 +685,6 @@ static int GetAllMessageDetails(struct TransferContext *tc, BOOL remoteFilters)
 {
   int success = 1;
   LONG pass;
-  BOOL activeMailSet = FALSE;
   ULONG handledMails = 0;
 
   ENTER();
@@ -734,12 +734,10 @@ static int GetAllMessageDetails(struct TransferContext *tc, BOOL remoteFilters)
     // find a yet unhandled mail with all the given flags
     tnode = ScanMailTransferList(tc->transferList, flags|TRF_GOT_DETAILS, flags, TRUE);
 
-    // highlight the first to be handled mail if that has not yet been done
-    if(activeMailSet == FALSE && tnode != NULL && tc->preselectWindow != NULL)
+    if(tc->firstPreselect == NULL && tnode != NULL)
     {
-      // tell the preselection window to highlight the first mail to be transferred
-      PushMethodOnStack(tc->preselectWindow, 3, MUIM_Set, MUIA_PreselectionWindow_ActiveMail, tnode->index-1);
-      activeMailSet = TRUE;
+      // remember this mail as the one to be highlighted
+      tc->firstPreselect = tnode;
 
       // if only the mail sizes are requested we can bail out here immediately
       if(tc->msn->preselection == PSM_ALWAYSLARGE)
@@ -1569,10 +1567,11 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
 
                         snprintf(tc->windowTitle, sizeof(tc->windowTitle), tr(MSG_TR_MailTransferFrom), tc->msn->description);
 
-                        if((tc->preselectWindow = (Object *)PushMethodOnStackWait(G->App, 6, MUIM_YAMApplication_CreatePreselectionWindow, CurrentThread(), tc->windowTitle, tc->msn->largeMailSizeLimit, PRESELWINMODE_DOWNLOAD, tc->transferList)) != NULL)
+                        if((tc->preselectWindow = (Object *)PushMethodOnStackWait(G->App, 7, MUIM_YAMApplication_CreatePreselectionWindow, CurrentThread(), tc->windowTitle, tc->msn->largeMailSizeLimit, PRESELWINMODE_DOWNLOAD, tc->transferList)) != NULL)
                         {
                           int mustWait;
 
+                          PushMethodOnStack(tc->preselectWindow, 3, MUIM_Set, MUIA_PreselectionWindow_ActiveMail, tc->firstPreselect);
                           PushMethodOnStack(tc->transferGroup, 2, MUIM_TransferControlGroup_ShowStatus, tr(MSG_TR_WAIT_FOR_PRESELECTION));
 
                           if(ThreadWasAborted() == FALSE)
