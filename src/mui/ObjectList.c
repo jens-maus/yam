@@ -48,6 +48,7 @@ struct Data
   Object *spacer;
   ULONG itemCount;
   BOOL disposeRemovedItems;
+  ULONG quiet;
 };
 */
 
@@ -76,6 +77,7 @@ OVERLOAD(OM_NEW)
     data->spacer = spacer;
     data->itemCount = 0;
     data->disposeRemovedItems = GetTagData(ATTR(DisposeRemovedItems), TRUE, inittags(msg)) ? TRUE : FALSE;
+    data->quiet = 0;
   }
 
   RETURN((IPTR)obj);
@@ -97,6 +99,26 @@ OVERLOAD(OM_SET)
       case ATTR(DisposeRemovedItems):
       {
         data->disposeRemovedItems = (tag->ti_Data) ? TRUE : FALSE;
+      }
+      break;
+
+      case ATTR(Quiet):
+      {
+        if(tag->ti_Data)
+        {
+          data->quiet++;
+		}
+		else
+		{
+          if(data->quiet > 0)
+          {
+            data->quiet--;
+            if(data->quiet == 0)
+            {
+              set(obj, ATTR(ItemCount), data->itemCount);
+            }
+          }
+		}
       }
       break;
     }
@@ -266,14 +288,17 @@ DECLARE(AddItem) // Object *item
       // tell the item to which list it belongs
       set(msg->item, MUIA_ObjectListitem_ObjectList, obj);
 
-      // make sure the new item is visible
-      set(data->virtgroup, MUIA_Virtgroup_Top, _mtop(msg->item));
-
       data->itemCount++;
-      // trigger possible notifications
-      xset(obj, ATTR(ItemAdded), msg->item,
-                ATTR(ItemsChanged), TRUE,
-                ATTR(ItemCount), data->itemCount);
+      if(data->quiet == 0)
+      {
+        // make sure the new item is visible
+        set(data->virtgroup, MUIA_Virtgroup_Top, _mtop(msg->item));
+
+        // trigger possible notifications
+        xset(obj, ATTR(ItemAdded), msg->item,
+                  ATTR(ItemsChanged), TRUE,
+                  ATTR(ItemCount), data->itemCount);
+      }
 
       result = TRUE;
     }
@@ -301,14 +326,18 @@ DECLARE(RemoveItem) // Object *item
     DoMethod(data->virtgroup, MUIM_Group_ExitChange);
 
     data->itemCount--;
-    // trigger possible notifications
-    xset(obj, ATTR(ItemRemoved), msg->item,
-              ATTR(ItemsChanged), TRUE,
-              ATTR(ItemCount), data->itemCount);
+
+    if(data->quiet == 0)
+    {
+      // trigger possible notifications
+      xset(obj, ATTR(ItemRemoved), msg->item,
+                ATTR(ItemsChanged), TRUE,
+                ATTR(ItemCount), data->itemCount);
+    }
 
     if(data->disposeRemovedItems == TRUE)
     {
-      // dispose this object, but don't do it right now
+      // dispose this item, but don't do it right now
       DoMethod(G->App, MUIM_Application_PushMethod, msg->item, 1, OM_DISPOSE);
     }
 
@@ -337,7 +366,7 @@ DECLARE(IterateItems) // void **state
       *msg->state = (Object *)GetHead(childList);
     }
 
-    item = NextObject(*msg->state);
+    item = NextObject(msg->state);
     if(item == data->spacer)
       item = NULL;
   }
@@ -382,22 +411,45 @@ DECLARE(ItemAt) // ULONG index
 DECLARE(Clear)
 {
   GETDATA;
-  Object *item = NULL;
 
   ENTER();
 
   if(data->itemCount > 0)
   {
-    struct List *childList = (struct List *)xget(data->virtgroup, MUIA_Group_ChildList);
-    Object *cstate = (Object *)GetHead(childList);
-
-    while((item = NextObject(&cstate)) != NULL)
+    if(DoMethod(data->virtgroup, MUIM_Group_InitChange))
     {
-      // don't dispose the spacer item
-      if(item == data->spacer)
-        continue;
+      struct List *childList = (struct List *)xget(data->virtgroup, MUIA_Group_ChildList);
+      Object *cstate = (Object *)GetHead(childList);
+      Object *item;
 
-      DoMethod(obj, METHOD(RemoveItem), item);
+      while((item = NextObject(&cstate)) != NULL)
+      {
+        // don't dispose the spacer item
+        if(item == data->spacer)
+          continue;
+
+        // tell the item that it belongs to no list anymore
+        set(item, MUIA_ObjectListitem_ObjectList, NULL);
+
+        DoMethod(data->virtgroup, OM_REMMEMBER, item);
+
+        if(data->disposeRemovedItems == TRUE)
+        {
+          // dispose this item, but don't do it right now
+          DoMethod(G->App, MUIM_Application_PushMethod, item, 1, OM_DISPOSE);
+        }
+      }
+
+      DoMethod(data->virtgroup, MUIM_Group_ExitChange);
+
+      data->itemCount = 0;
+
+      if(data->quiet == 0)
+      {
+        // trigger possible notifications
+        xset(obj, ATTR(ItemsChanged), TRUE,
+                  ATTR(ItemCount), 0);
+      }
     }
   }
 
