@@ -685,9 +685,12 @@ static int GetAllMessageDetails(struct TransferContext *tc, BOOL remoteFilters)
 {
   int success = 1;
   LONG pass;
-  ULONG handledMails = 0;
+  ULONG handledMails;
 
   ENTER();
+
+  // count the number of mails for which we got the details in a previous call already
+  handledMails = CountMailTransferNodes(tc->transferList, TRF_GOT_DETAILS);
 
   // get the details in 3 passes
   // 1. start at first to be preselected mail (i.e. size limit exceeded)

@@ -255,6 +255,30 @@ void DeleteMailTransferNode(struct MailTransferNode *tnode)
 }
 
 ///
+/// CountMailTransferNodes
+// count the number of nodes with specific flags set
+ULONG CountMailTransferNodes(const struct MailTransferList *tlist, const ULONG flags)
+{
+  ULONG count = 0;
+  struct MailTransferNode *tnode;
+
+  ENTER();
+
+  LockMailTransferList(tlist);
+
+  ForEachMailTransferNode(tlist, tnode)
+  {
+    if(isAnyFlagSet(tnode->tflags, flags))
+      count++;
+  }
+
+  UnlockMailTransferList(tlist);
+
+  RETURN(count);
+  return count;
+}
+
+///
 
 #if defined(DEBUG)
 static LONG transferLocks = 0;

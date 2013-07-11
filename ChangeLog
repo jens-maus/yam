@@ -15,6 +15,9 @@ $URL$
     applied to "new" (= not yet downloaded or known) mails only.
   * tcp/pop3.c, mui/PreselectionWindow.c: correctly highlight the first to be
     downloaded mail also if remote filters are active.
+  * tcp/pop3.c, MailTransferList.c: correctly respect the number of mail for
+    which the details have been obtained already while applying the remote
+    filters when obtaining the details for the remaining mails.
 
 2013-07-10 Thore Böckelmann <tboeckel@gmx.de>
 

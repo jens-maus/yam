@@ -75,7 +75,7 @@ struct MailTransferNode *CreateMailTransferNode(const struct Mail *mail, const U
 void AddMailTransferNode(struct MailTransferList *tlist, struct MailTransferNode *tnode);
 void RemoveMailTransferNode(struct MailTransferList *tlist, struct MailTransferNode *tnode);
 void DeleteMailTransferNode(struct MailTransferNode *tnode);
-
+ULONG CountMailTransferNodes(const struct MailTransferList *tlist, const ULONG flags);
 
 // check if a mail list is empty
 #define IsMailTransferListEmpty(tlist)                    IsMinListEmpty(&(tlist)->list)
