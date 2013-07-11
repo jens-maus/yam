@@ -58,12 +58,13 @@ struct MailTransferNode
 };
 
 // flag values for the transfer node's flag field
-#define TRF_NONE              (0)
-#define TRF_TRANSFER          (1<<0)  // transfer this node
-#define TRF_DELETE            (1<<1)  // delete this node
-#define TRF_PRESELECT         (1<<2)  // include this node in a preselection
-#define TRF_SIZE_EXCEEDED     (1<<3)  // this mail exceeds the automatic download size
-#define TRF_GOT_DETAILS       (1<<4)  // details of this mail have been obtained
+#define TRF_NONE                  (0)
+#define TRF_TRANSFER              (1<<0)  // transfer this node
+#define TRF_DELETE                (1<<1)  // delete this node
+#define TRF_PRESELECT             (1<<2)  // include this node in a preselection
+#define TRF_SIZE_EXCEEDED         (1<<3)  // this mail exceeds the automatic download size
+#define TRF_GOT_DETAILS           (1<<4)  // details of this mail have been obtained
+#define TRF_REMOTE_FILTER_APPLIED (1<<5)  // the remote filters have been applied for this mail already
 
 void InitMailTransferList(struct MailTransferList *tlist);
 void ClearMailTransferList(struct MailTransferList *tlist);

@@ -141,6 +141,7 @@ static void ApplyRemoteFilters(struct TransferContext *tc, struct MailTransferNo
 
   ENTER();
 
+  D(DBF_NET, "apply remote filters, from='%s', to='%s', subject='%s'", tnode->mail->From.Address, tnode->mail->To.Address, tnode->mail->Subject);
   IterateList(tc->remoteFilters, curNode)
   {
     struct FilterNode *filter = (struct FilterNode *)curNode;
@@ -168,6 +169,9 @@ static void ApplyRemoteFilters(struct TransferContext *tc, struct MailTransferNo
     }
   }
 
+  // remember that the remote filters have been applied for this mail already
+  setFlag(tnode->tflags, TRF_REMOTE_FILTER_APPLIED);
+
   LEAVE();
 }
 
@@ -186,7 +190,7 @@ static char *SendPOP3Command(struct TransferContext *tc, const enum POPCommand c
   else
     snprintf(tc->pop3Buffer, sizeof(tc->pop3Buffer), "%s %s\r\n", POPcmd[command], parmtext);
 
-  D(DBF_NET, "TCP: POP3 cmd '%s' with param '%s'", POPcmd[command], (command == POPCMD_PASS) ? "XXX" : SafeStr(parmtext));
+  D(DBF_NET, "send POP3 cmd '%s' with param '%s'", POPcmd[command], (command == POPCMD_PASS) ? "XXX" : SafeStr(parmtext));
 
   // send the pop command to the server and see if it was received somehow
   // and for a connect we don't send something or the server will get
@@ -494,7 +498,7 @@ static BOOL GetMessageList(struct TransferContext *tc)
     {
       // we get the "scan listing" as long as we haven't received a a
       // finishing octet
-      while(tc->connection->error == CONNECTERR_NO_ERROR && strncmp(tc->pop3Buffer, ".\r\n", 3) != 0)
+      while(tc->connection->abort == FALSE && tc->connection->error == CONNECTERR_NO_ERROR && strncmp(tc->pop3Buffer, ".\r\n", 3) != 0)
       {
         int serverIndex;
         int size;
@@ -540,7 +544,7 @@ static BOOL GetMessageList(struct TransferContext *tc)
           if(tc->msn->preselection >= PSM_ALWAYS)
             setFlag(tflags, TRF_PRESELECT);
 
-          D(DBF_NET, "mail transfer mode %2ld, tflags %08lx (dl large %ld, purge %ld, user %ld, warnsize %8ld, size %8ld, presel %ld)", mode, tflags, hasServerDownloadLargeMails(tc->msn), hasServerPurge(tc->msn), isFlagSet(tc->flags, RECEIVEF_USER), tc->msn->largeMailSizeLimit*1024, newMail->Size, tc->msn->preselection);
+          D(DBF_NET, "mail %6ld, transfer mode %2ld, tflags %08lx (dl large %ld, purge %ld, user %ld, warnsize %8ld, size %8ld, presel %ld)", serverIndex, mode, tflags, hasServerDownloadLargeMails(tc->msn), hasServerPurge(tc->msn), isFlagSet(tc->flags, RECEIVEF_USER), tc->msn->largeMailSizeLimit*1024, newMail->Size, tc->msn->preselection);
 
           // allocate a new MailTransferNode and add it to our
           // new transferlist
@@ -559,13 +563,6 @@ static BOOL GetMessageList(struct TransferContext *tc)
           }
         }
 
-        // check for early aborts
-        if(CheckAbort(tc) != 1)
-        {
-          success = FALSE;
-          break;
-        }
-
         // now read the next Line
         if(ReceiveLineFromHost(tc->connection, tc->pop3Buffer, sizeof(tc->pop3Buffer)) <= 0)
         {
@@ -573,6 +570,10 @@ static BOOL GetMessageList(struct TransferContext *tc)
           break;
         }
       }
+
+      // check for abortion another time to set the correct return code
+      if(tc->connection->abort == TRUE || tc->connection->error != CONNECTERR_NO_ERROR)
+        success = FALSE;
     }
     else
       success = FALSE;
@@ -648,12 +649,8 @@ static void GetSingleMessageDetails(struct TransferContext *tc, struct MailTrans
             tnode->uidl = strdup(email->messageID);
 
           // apply possible remote filters
-          if(hasServerApplyRemoteFilters(tc->msn) == TRUE && IsMinListEmpty(tc->remoteFilters) == FALSE)
-          {
-            PushMethodOnStack(tc->transferGroup, 2, MUIM_TransferControlGroup_ShowStatus, tr(MSG_TR_ApplyFilters));
-
+          if(isFlagClear(tnode->tflags, TRF_REMOTE_FILTER_APPLIED) && hasServerApplyRemoteFilters(tc->msn) == TRUE && IsMinListEmpty(tc->remoteFilters) == FALSE)
             ApplyRemoteFilters(tc, tnode);
-          }
 
           MA_FreeEMailStruct(email);
         }
@@ -683,7 +680,7 @@ static void GetSingleMessageDetails(struct TransferContext *tc, struct MailTrans
 // 0: transmission failed or preselection was aborted
 // 1: all details have been obtained, wait for the user to finish the preselection
 // 2: preselection was aborted early by pressing "Start"
-static int GetAllMessageDetails(struct TransferContext *tc)
+static int GetAllMessageDetails(struct TransferContext *tc, BOOL remoteFilters)
 {
   int success = 1;
   LONG pass;
@@ -701,36 +698,44 @@ static int GetAllMessageDetails(struct TransferContext *tc)
     ULONG flags;
     struct MailTransferNode *tnode;
 
-    switch(pass)
+    if(remoteFilters == TRUE)
     {
-      default:
-      case 0:
+      // only handle mails to be transferred if remote filters are to be applied
+      flags = TRF_TRANSFER;
+    }
+    else
+    {
+      switch(pass)
       {
-        // handle all mails to be transferred and which exceed the size limit
-        flags = TRF_TRANSFER|TRF_SIZE_EXCEEDED;
-      }
-      break;
+        default:
+        case 0:
+        {
+          // handle all mails to be transferred and which exceed the size limit
+          flags = TRF_TRANSFER|TRF_SIZE_EXCEEDED;
+        }
+        break;
 
-      case 1:
-      {
-        // handle all mails to be transferred
-        flags = TRF_TRANSFER;
-      }
-      break;
+        case 1:
+        {
+          // handle all mails to be transferred
+          flags = TRF_TRANSFER;
+        }
+        break;
 
-      case 2:
-      {
-        // handle all mails
-        flags = TRF_NONE;
+        case 2:
+        {
+          // handle all mails
+          flags = TRF_NONE;
+        }
+        break;
       }
-      break;
     }
 
     // find a yet unhandled mail with all the given flags
     tnode = ScanMailTransferList(tc->transferList, flags|TRF_GOT_DETAILS, flags, TRUE);
 
     // highlight the first to be handled mail if that has not yet been done
-    if(activeMailSet == FALSE && tnode != NULL)
+    if(activeMailSet == FALSE && tnode != NULL && tc->preselectWindow != NULL)
     {
       // tell the preselection window to highlight the first mail to be transferred
       PushMethodOnStack(tc->preselectWindow, 3, MUIM_Set, MUIA_PreselectionWindow_ActiveMail, tnode->index-1);
@@ -755,7 +760,8 @@ static int GetAllMessageDetails(struct TransferContext *tc)
 
           // update the progress bar
           handledMails++;
-          PushMethodOnStack(tc->preselectWindow, 3, MUIM_Set, MUIA_PreselectionWindow_Progress, handledMails);
+          if(tc->preselectWindow != NULL)
+            PushMethodOnStack(tc->preselectWindow, 3, MUIM_Set, MUIA_PreselectionWindow_Progress, handledMails);
         }
 
         if((success = CheckAbort(tc)) != 1)
@@ -776,6 +782,10 @@ static int GetAllMessageDetails(struct TransferContext *tc)
     {
 	  D(DBF_NET, "nothing to be done in pass %ld", pass);
 	}
+
+    // bail out after the first pass if remote filters are to be applied
+	if(remoteFilters == TRUE)
+	  break;
   }
 
   // hide the progress bar after the scan
@@ -1529,18 +1539,24 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
                     // there are messages on the server
                     if(GetMessageList(tc) == TRUE)
                     {
+                      BOOL goOn = TRUE;
                       BOOL doPreselect;
                       BOOL doDownload;
 
                       // if the user wants to avoid to receive the same message from the
                       // POP3 server again we have to analyze the UIDL of it
-                      if(hasServerAvoidDuplicates(tc->msn) == TRUE)
-                        FilterDuplicates(tc);
+                      if(goOn == TRUE && hasServerAvoidDuplicates(tc->msn) == TRUE)
+                        goOn = FilterDuplicates(tc);
+
+                      // receive all message details to be able to apply the remote filters
+                      if(goOn == TRUE && hasServerApplyRemoteFilters(tc->msn) == TRUE && IsMinListEmpty(tc->remoteFilters) == FALSE)
+                      {
+                        PushMethodOnStack(tc->transferGroup, 2, MUIM_TransferControlGroup_ShowStatus, tr(MSG_TR_ApplyFilters));
+                        goOn = GetAllMessageDetails(tc, TRUE);
+                      }
 
                       // check the list of mails if some kind of preselection is required
-                      if(isFlagSet(tc->flags, RECEIVEF_USER) && ScanMailTransferList(tc->transferList, TRF_PRESELECT, TRF_PRESELECT, TRUE) != NULL)
-                        doPreselect = TRUE;
-                      else if(hasServerApplyRemoteFilters(tc->msn) == TRUE && IsMinListEmpty(tc->remoteFilters) == FALSE)
+                      if(goOn == TRUE && isFlagSet(tc->flags, RECEIVEF_USER) && ScanMailTransferList(tc->transferList, TRF_PRESELECT, TRF_PRESELECT, TRUE) != NULL)
                         doPreselect = TRUE;
                       else
                         doPreselect = FALSE;
@@ -1561,7 +1577,7 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
 
                           if(ThreadWasAborted() == FALSE)
                           {
-                            if((mustWait = GetAllMessageDetails(tc)) != 0)
+                            if((mustWait = GetAllMessageDetails(tc, FALSE)) != 0)
                             {
                               if(mustWait == 1)
                               {
@@ -1584,7 +1600,7 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
                       else
                       {
                         D(DBF_NET, "no preselection required");
-                        doDownload = TRUE;
+                        doDownload = goOn;
                       }
 
                       // is there anything left to transfer or delete?

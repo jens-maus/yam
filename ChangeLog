@@ -9,6 +9,10 @@ $URL$
 
   * tcp/pop3.c: fixed a possible crash if the transfer is aborted while receiving
     the list of available mails and preselection is required afterwards.
+  * tcp/pop3.c: remote filters are applied again without enforcing opening the
+    preselection window. This makes unattended remote filters possible again as
+    it was possible in YAM 2.8. Please note that the remote filters will be
+    applied to "new" (= not yet downloaded or known) mails only.
 
 2013-07-10 Thore Böckelmann <tboeckel@gmx.de>
 
