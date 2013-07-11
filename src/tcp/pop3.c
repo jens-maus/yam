@@ -427,6 +427,53 @@ static int ReceiveToFile(struct TransferContext *tc, FILE *fh, const char *filen
 }
 
 ///
+/// CheckAbort
+// check for an abortion while obtaining the message details
+static int CheckAbort(struct TransferContext *tc)
+{
+  int success = 1;
+
+  ENTER();
+
+  // check for transmission errors
+  if(tc->connection->abort == TRUE || tc->connection->error != CONNECTERR_NO_ERROR)
+  {
+    D(DBF_NET, "get message details aborted");
+    success = 0;
+  }
+  else
+  {
+    ULONG signals;
+
+    // check for pending signals and clear them
+    signals = SetSignal(0UL, tc->abortMask|tc->wakeupMask);
+
+    // check for abortion
+    if(success == 1 && isFlagSet(signals, tc->abortMask))
+    {
+      D(DBF_NET, "get message details aborted");
+      tc->connection->abort = TRUE;
+      success = 0;
+    }
+
+    // check for an early reaction from the user in the preselection window
+    if(success == 1 && isFlagSet(signals, tc->wakeupMask) && tc->preselectWindow != NULL)
+    {
+      ULONG result = FALSE;
+
+      PushMethodOnStackWait(tc->preselectWindow, 3, OM_GET, MUIA_PreselectionWindow_Result, &result);
+      if(result == TRUE)
+        success = 2;
+      else
+        success = 0;
+    }
+  }
+
+  RETURN(success);
+  return success;
+}
+
+///
 /// GetMessageList
 //  Collects messages waiting on a POP3 server
 static BOOL GetMessageList(struct TransferContext *tc)
@@ -510,6 +557,13 @@ static BOOL GetMessageList(struct TransferContext *tc)
             success = FALSE;
             break;
           }
+        }
+
+        // check for early aborts
+        if(CheckAbort(tc) != 1)
+        {
+          success = FALSE;
+          break;
         }
 
         // now read the next Line
@@ -620,52 +674,6 @@ static void GetSingleMessageDetails(struct TransferContext *tc, struct MailTrans
     PushMethodOnStack(tc->preselectWindow, 2, MUIM_PreselectionWindow_RefreshMail, lline);
 
   LEAVE();
-}
-
-///
-/// CheckAbort
-// check for an abortion while obtaining the message details
-static int CheckAbort(struct TransferContext *tc)
-{
-  int success = 1;
-
-  ENTER();
-
-  // check for transmission errors
-  if(tc->connection->abort == TRUE || tc->connection->error != CONNECTERR_NO_ERROR)
-  {
-    success = 0;
-  }
-  else
-  {
-    ULONG signals;
-
-    // check for pending signals and clear them
-    signals = SetSignal(0UL, tc->abortMask|tc->wakeupMask);
-
-    // check for abortion
-    if(success == 1 && isFlagSet(signals, tc->abortMask))
-    {
-      D(DBF_NET, "get message details aborted");
-      tc->connection->abort = TRUE;
-      success = 0;
-    }
-
-    // check for an early reaction from the user in the preselection window
-    if(success == 1 && isFlagSet(signals, tc->wakeupMask))
-    {
-      ULONG result = FALSE;
-
-      PushMethodOnStackWait(tc->preselectWindow, 3, OM_GET, MUIA_PreselectionWindow_Result, &result);
-      if(result == TRUE)
-        success = 2;
-      else
-        success = 0;
-    }
-  }
-
-  RETURN(success);
-  return success;
 }
 
 ///

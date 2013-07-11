@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-07-11 Thore Böckelmann <tboeckel@gmx.de>
+
+  * tcp/pop3.c: fixed a possible crash if the transfer is aborted while receiving
+    the list of available mails and preselection is required afterwards.
+
 2013-07-10 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MAf.c: while doing a deep examination of a mail YAM will no longer use
