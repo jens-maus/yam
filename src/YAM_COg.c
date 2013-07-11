@@ -2585,15 +2585,6 @@ Object *CO_PageFilters(struct CO_ClassData *data)
                          Child, RectangleObject,
                             MUIA_Weight, 1,
                          End,
-                         Child, RectangleObject,
-                           MUIA_Rectangle_HBar, TRUE,
-                           MUIA_FixHeight,      4,
-                         End,
-                         Child, HGroup,
-                            Child, data->GUI.BT_MORE = MakeButton(tr(MSG_CO_More)),
-                            Child, HVSpace,
-                            Child, data->GUI.BT_LESS = MakeButton(tr(MSG_CO_Less)),
-                         End,
                       End,
                       Child, VGroup,
                          Child, ColGroup(3),
@@ -2696,8 +2687,6 @@ Object *CO_PageFilters(struct CO_ClassData *data)
       SetHelp(data->GUI.CH_ATERMINATE,        MSG_HELP_CO_CH_ATERMINATE);
       SetHelp(data->GUI.BT_RADD,              MSG_HELP_CO_BT_RADD);
       SetHelp(data->GUI.BT_RDEL,              MSG_HELP_CO_BT_RDEL);
-      SetHelp(data->GUI.BT_MORE,              MSG_HELP_CO_BT_MORE);
-      SetHelp(data->GUI.BT_LESS,              MSG_HELP_CO_BT_LESS);
       SetHelp(data->GUI.BT_FILTERUP,          MSG_HELP_CO_BT_FILTERUP);
       SetHelp(data->GUI.BT_FILTERDOWN,        MSG_HELP_CO_BT_FILTERDOWN);
 
@@ -2751,8 +2740,6 @@ Object *CO_PageFilters(struct CO_ClassData *data)
       DoMethod(data->GUI.CH_ASTATUSTOUNREAD   ,MUIM_Notify, MUIA_Selected             ,TRUE           ,data->GUI.CH_ASTATUSTOREAD     ,3 ,MUIM_Set               ,MUIA_Selected              ,FALSE);
       DoMethod(data->GUI.CH_ASTATUSTOSPAM     ,MUIM_Notify, MUIA_Selected             ,TRUE           ,data->GUI.CH_ASTATUSTOHAM      ,3 ,MUIM_Set               ,MUIA_Selected              ,FALSE);
       DoMethod(data->GUI.CH_ASTATUSTOHAM      ,MUIM_Notify, MUIA_Selected             ,TRUE           ,data->GUI.CH_ASTATUSTOSPAM     ,3 ,MUIM_Set               ,MUIA_Selected              ,FALSE);
-      DoMethod(data->GUI.BT_MORE              ,MUIM_Notify, MUIA_Pressed              ,FALSE          ,MUIV_Notify_Application        ,2 ,MUIM_CallHook          ,&AddNewRuleToListHook);
-      DoMethod(data->GUI.BT_LESS              ,MUIM_Notify, MUIA_Pressed              ,FALSE          ,MUIV_Notify_Application        ,2 ,MUIM_CallHook          ,&RemoveLastRuleHook);
       DoMethod(data->GUI.BT_FILTER_IMPORT     ,MUIM_Notify, MUIA_Pressed              ,FALSE          ,MUIV_Notify_Application        ,2 ,MUIM_CallHook          ,&ImportFilterHook);
    }
 

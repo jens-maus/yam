@@ -18,6 +18,10 @@ $URL$
   * tcp/pop3.c, MailTransferList.c: correctly respect the number of mail for
     which the details have been obtained already while applying the remote
     filters when obtaining the details for the remaining mails.
+  * YAM_CO.c, mui/FilterRuleList.c, mui/SearchControlGroup.c: the single filter
+    rules can now be removed from any position instead of the last rule only.
+    For this each rule item got the typical "+" and "-" buttons for adding and
+    removing. This closes #78 and closes #79.
 
 2013-07-10 Thore Böckelmann <tboeckel@gmx.de>
 

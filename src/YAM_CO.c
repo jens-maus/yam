@@ -172,8 +172,7 @@ HOOKPROTONHNONP(AddNewRuleToList, void)
         DoMethod(newSearchGroup, MUIM_SearchControlGroup_GetFromRule, rule);
 
         // set some notifies
-        DoMethod(newSearchGroup, MUIM_Notify, MUIA_SearchControlGroup_Modified, MUIV_EveryTime,
-                                 MUIV_Notify_Application, 2, MUIM_CallHook, &SetActiveFilterDataHook);
+        DoMethod(newSearchGroup, MUIM_Notify, MUIA_SearchControlGroup_Modified, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &SetActiveFilterDataHook);
 
         // add it to our searchGroupList
         DoMethod(gui->GR_SGROUP, MUIM_ObjectList_AddItem, newSearchGroup);
@@ -210,9 +209,6 @@ HOOKPROTONHNONP(RemoveLastRule, void)
     if(rule != NULL)
     {
       DeleteRuleNode(rule);
-
-      // Remove the GUI elements as well
-      DoMethod(gui->GR_SGROUP, MUIM_ObjectList_RemoveItem, xget(gui->GR_SGROUP, MUIA_ObjectList_LastItem));
     }
   }
 
@@ -329,9 +325,6 @@ void GhostOutFilter(struct CO_GUIData *gui, struct FilterNode *filter)
   // we have to find out how many rules the filter has
   numRules = xget(gui->GR_SGROUP, MUIA_ObjectList_ItemCount);
 
-  set(gui->BT_MORE, MUIA_Disabled, filter == NULL);
-  set(gui->BT_LESS, MUIA_Disabled, filter == NULL || numRules <= 1);
-
   // These three "disables" must be done in another context, because the Popasl object will en/disable
   // the pop button itself as long as the requester is open. After that this hook is called but the object
   // has not yet enabled the pop button again, so we might get wrong visible results. Not a very nice
@@ -390,9 +383,12 @@ HOOKPROTONHNONP(GetActiveFilterData, void)
     nnset(gui->ST_APLAY,             MUIA_String_Contents,   filter->playSound);
     nnset(gui->TX_MOVETO,            MUIA_Text_Contents,     filter->moveTo);
 
+    set(gui->GR_SGROUP, MUIA_ObjectList_Quiet, TRUE);
+
     // before we actually set our rule options we have to clear out
     // all previous existing group childs
     DoMethod(gui->GR_SGROUP, MUIM_ObjectList_Clear);
+
     // Now we should have a clean SGROUP and can populate with new SearchControlGroup objects
     i = 0;
     IterateList(&filter->ruleList, curNode)
@@ -417,6 +413,7 @@ HOOKPROTONHNONP(GetActiveFilterData, void)
 
       i++;
     }
+    set(gui->GR_SGROUP, MUIA_ObjectList_Quiet, FALSE);
   }
 
   GhostOutFilter(gui, filter);

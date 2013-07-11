@@ -30,6 +30,8 @@
 
 #include "FilterRuleList_cl.h"
 
+#include "YAM_config.h"
+
 #include "mui/ObjectList.h"
 #include "mui/SearchControlGroup.h"
 
@@ -55,6 +57,9 @@ OVERLOAD(OM_NEW)
     {
       DoMethod(obj, MUIM_ObjectList_AddItem, dummy);
     }
+
+    DoMethod(obj, MUIM_Notify, MUIA_ObjectList_ItemCount, MUIV_EveryTime, MUIV_Notify_Self, 2, METHOD(UpdateRules), MUIV_TriggerValue);
+    DoMethod(obj, MUIM_Notify, MUIA_ObjectList_ItemRemoved, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &RemoveLastRuleHook);
   }
 
   RETURN((IPTR)obj);
@@ -73,6 +78,24 @@ OVERLOAD(MUIM_ObjectList_CreateItem)
 
   RETURN((IPTR)item);
   return (IPTR)item;
+}
+
+///
+/// DECLARE(UpdateRules)
+DECLARE(UpdateRules) // ULONG numItems
+{
+  Object *ruleState = NULL;
+  Object *ruleItem;
+
+  ENTER();
+
+  while((ruleItem = (Object *)DoMethod(obj, MUIM_ObjectList_IterateItems, &ruleState)) != NULL)
+  {
+    set(ruleItem, MUIA_SearchControlGroup_RemoveForbidden, msg->numItems < 2);
+  }
+
+  LEAVE();
+  return 0;
 }
 
 ///

@@ -47,6 +47,8 @@
 #include "Locale.h"
 #include "MUIObjects.h"
 
+#include "mui/ObjectListitem.h"
+
 #include "Debug.h"
 
 /* CLASSDATA
@@ -68,7 +70,8 @@ struct Data
   Object *CH_SKIPENCRYPTED[5];
   Object *CY_COMBINE;
   Object *RT_TITLE;
-
+  Object *BT_ADDRULE;
+  Object *BT_REMRULE;
   Object *activeObject;
 
   char *title;
@@ -173,8 +176,8 @@ OVERLOAD(OM_NEW)
   {
     switch(tag->ti_Tag)
     {
-      case ATTR(RemoteFilterMode) : data->remoteFilterMode = tag->ti_Data; break;
-      case ATTR(ShowCombineCycle) : data->showCombineCycle = tag->ti_Data; break;
+      case ATTR(RemoteFilterMode): data->remoteFilterMode = tag->ti_Data; break;
+      case ATTR(ShowCombineCycle): data->showCombineCycle = tag->ti_Data; break;
       case ATTR(Position):
         if(asprintf(&data->title, "%s %d:", tr(MSG_FI_CONDITION), (int)tag->ti_Data) == -1)
           data->title = NULL;
@@ -186,7 +189,16 @@ OVERLOAD(OM_NEW)
 
     MUIA_Group_Horiz, FALSE,
     MUIA_HelpNode, "Windows#SearchwindowSearchcriteria",
-      Child, data->RT_TITLE = HBarT(data->title), End,
+      Child, data->RT_TITLE = HGroup,
+        Child, HBarT(data->title),
+        End,
+        Child, HGroup,
+          MUIA_Weight, 0,
+          MUIA_Group_SameWidth, TRUE,
+          Child, data->BT_ADDRULE = MakeButton("+"),
+          Child, data->BT_REMRULE = MakeButton("-"),
+        End,
+      End,
       Child, data->CY_COMBINE = MakeCycle(bcrit, ""),
       Child, HGroup,
         Child, Label1(tr(MSG_FI_SearchIn)),
@@ -305,7 +317,11 @@ OVERLOAD(OM_NEW)
     SetHelp(data->ST_FIELD,   MSG_HELP_FI_ST_FIELD);
     SetHelp(data->RA_ADRMODE, MSG_HELP_FI_RA_ADRMODE);
     SetHelp(data->CY_STATUS,  MSG_HELP_FI_CY_STATUS);
+    SetHelp(data->BT_ADDRULE, MSG_HELP_CO_BT_MORE);
+    SetHelp(data->BT_REMRULE, MSG_HELP_CO_BT_LESS);
 
+    DoMethod(data->BT_ADDRULE, MUIM_Notify, MUIA_Pressed,         FALSE,          obj, 1, METHOD(AddRule));
+    DoMethod(data->BT_REMRULE, MUIM_Notify, MUIA_Pressed,         FALSE,          obj, 1, METHOD(RemRule));
     DoMethod(data->CY_MODE[0], MUIM_Notify, MUIA_Cycle_Active,    MUIV_EveryTime, obj, 1, METHOD(Update));
     DoMethod(data->CY_MODE[1], MUIM_Notify, MUIA_Cycle_Active,    MUIV_EveryTime, obj, 1, METHOD(Update));
     DoMethod(data->CY_COMBINE, MUIM_Notify, MUIA_Cycle_Active,    MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
@@ -419,6 +435,12 @@ OVERLOAD(OM_SET)
         }
       }
       break;
+
+      case ATTR(RemoveForbidden):
+      {
+        set(data->BT_REMRULE, MUIA_Disabled, tag->ti_Data);
+	  }
+	  break;
 
       // Overload some global attributes as well
       case MUIA_Disabled:
@@ -615,6 +637,8 @@ DECLARE(GetFromRule) // struct RuleNode *rule
   nnset(data->PG_SRCHOPT,                       MUIA_Group_ActivePage,  g);
   nnset(data->CY_COMP[g],                       MUIA_Cycle_Active,      rule->comparison);
 
+  set(data->ST_FIELD, MUIA_ShowMe, rule->searchMode == 6);
+
   if(g != 3) // Page 3 (Status) has no ST_MATCH
     nnset(data->ST_MATCH[g], MUIA_String_Contents, rule->matchPattern);
   else
@@ -690,6 +714,31 @@ DECLARE(Update)
   }
 
   set(obj, ATTR(Modified), TRUE);
+
+  LEAVE();
+  return 0;
+}
+
+///
+/// DECLARE(AddRule)
+DECLARE(AddRule)
+{
+  ENTER();
+
+  DoMethod(obj, MUIM_CallHook, &AddNewRuleToListHook);
+
+  LEAVE();
+  return 0;
+}
+
+///
+/// DECLARE(RemRule)
+DECLARE(RemRule)
+{
+  ENTER();
+
+  DoMethod(obj, MUIM_ObjectListitem_Remove);
+  DoMethod(obj, MUIM_CallHook, &RemoveLastRuleHook);
 
   LEAVE();
   return 0;

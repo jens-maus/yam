@@ -440,11 +440,11 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
         int j;
         struct Node *curRuleNode;
 
-        fprintf(fh, "FI%02d.Name          = %s\n", i, filter->name);
-        fprintf(fh, "FI%02d.Remote        = %s\n", i, Bool2Txt(filter->remote));
-        fprintf(fh, "FI%02d.ApplyToNew    = %s\n", i, Bool2Txt(filter->applyToNew));
-        fprintf(fh, "FI%02d.ApplyToSent   = %s\n", i, Bool2Txt(filter->applyToSent));
-        fprintf(fh, "FI%02d.ApplyOnReq    = %s\n", i, Bool2Txt(filter->applyOnReq));
+        fprintf(fh, "FI%02d.Name           = %s\n", i, filter->name);
+        fprintf(fh, "FI%02d.Remote         = %s\n", i, Bool2Txt(filter->remote));
+        fprintf(fh, "FI%02d.ApplyToNew     = %s\n", i, Bool2Txt(filter->applyToNew));
+        fprintf(fh, "FI%02d.ApplyToSent    = %s\n", i, Bool2Txt(filter->applyToSent));
+        fprintf(fh, "FI%02d.ApplyOnReq     = %s\n", i, Bool2Txt(filter->applyOnReq));
 
         // now we do have to iterate through our ruleList
         j = 0;
@@ -456,15 +456,15 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
           // reasons.
           if(j == 0)
           {
-            fprintf(fh, "FI%02d.Field         = %d\n", i, rule->searchMode);
-            fprintf(fh, "FI%02d.SubField      = %d\n", i, rule->subSearchMode);
-            fprintf(fh, "FI%02d.CustomField   = %s\n", i, rule->customField);
-            fprintf(fh, "FI%02d.Comparison    = %d\n", i, rule->comparison);
-            fprintf(fh, "FI%02d.Match         = %s\n", i, rule->matchPattern);
-            fprintf(fh, "FI%02d.CaseSens      = %s\n", i, Bool2Txt(isFlagSet(rule->flags, SEARCHF_CASE_SENSITIVE)));
-            fprintf(fh, "FI%02d.Substring     = %s\n", i, Bool2Txt(isFlagSet(rule->flags, SEARCHF_SUBSTRING)));
-            fprintf(fh, "FI%02d.DOSPattern    = %s\n", i, Bool2Txt(isFlagSet(rule->flags, SEARCHF_DOS_PATTERN)));
-            fprintf(fh, "FI%02d.SkipEncrypted = %s\n", i, Bool2Txt(isFlagSet(rule->flags, SEARCHF_SKIP_ENCRYPTED)));
+            fprintf(fh, "FI%02d.Field          = %d\n", i, rule->searchMode);
+            fprintf(fh, "FI%02d.SubField       = %d\n", i, rule->subSearchMode);
+            fprintf(fh, "FI%02d.CustomField    = %s\n", i, rule->customField);
+            fprintf(fh, "FI%02d.Comparison     = %d\n", i, rule->comparison);
+            fprintf(fh, "FI%02d.Match          = %s\n", i, rule->matchPattern);
+            fprintf(fh, "FI%02d.CaseSens       = %s\n", i, Bool2Txt(isFlagSet(rule->flags, SEARCHF_CASE_SENSITIVE)));
+            fprintf(fh, "FI%02d.Substring      = %s\n", i, Bool2Txt(isFlagSet(rule->flags, SEARCHF_SUBSTRING)));
+            fprintf(fh, "FI%02d.DOSPattern     = %s\n", i, Bool2Txt(isFlagSet(rule->flags, SEARCHF_DOS_PATTERN)));
+            fprintf(fh, "FI%02d.SkipEncrypted  = %s\n", i, Bool2Txt(isFlagSet(rule->flags, SEARCHF_SKIP_ENCRYPTED)));
           }
           else
           {
@@ -473,7 +473,7 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
             if(j > 1)
               fprintf(fh, "FI%02d.Combine%d       = %d\n", i, j, rule->combine);
             else
-              fprintf(fh, "FI%02d.Combine         = %d\n", i, rule->combine);
+              fprintf(fh, "FI%02d.Combine        = %d\n", i, rule->combine);
 
             fprintf(fh, "FI%02d.Field%d         = %d\n", i, j+1, rule->searchMode);
             fprintf(fh, "FI%02d.SubField%d      = %d\n", i, j+1, rule->subSearchMode);

@@ -255,8 +255,6 @@ struct CO_GUIData
   Object *NB_DELAYEDSTATUS;
   Object *BT_FILTERUP;
   Object *BT_FILTERDOWN;
-  Object *BT_MORE;
-  Object *BT_LESS;
   Object *CH_WBAPPICON;
   #if defined(__amigaos4__)
   Object *CH_DOCKYICON;
