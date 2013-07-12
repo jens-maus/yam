@@ -9,6 +9,8 @@ $URL$
 
   * tcp/pop3.c: don't abort obtaining the message details early if remote filters
     are to be applied and preselection is set to "sizes only".
+  * tcp/pop3.c: make sure the first to be downloaded mail is always set as the
+    active one in the preselection window.
 
 2013-07-11 Thore Böckelmann <tboeckel@gmx.de>
 

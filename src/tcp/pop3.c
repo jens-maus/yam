@@ -742,6 +742,10 @@ static int GetAllMessageDetails(struct TransferContext *tc, BOOL remoteFilters)
       // remember this mail as the one to be highlighted
       tc->firstPreselect = tnode;
 
+      // immediately highlight the mail if the preselection window is opened
+      if(tc->preselectWindow != NULL)
+        PushMethodOnStack(tc->preselectWindow, 3, MUIM_Set, MUIA_PreselectionWindow_ActiveMail, tnode);
+
       // if only the mail sizes are requested for preselection and no remote filters
       // are to be applied we can bail out here immediately
       if(remoteFilters == FALSE && tc->msn->preselection == PSM_ALWAYSLARGE)
