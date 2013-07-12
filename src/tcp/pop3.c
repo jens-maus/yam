@@ -742,8 +742,9 @@ static int GetAllMessageDetails(struct TransferContext *tc, BOOL remoteFilters)
       // remember this mail as the one to be highlighted
       tc->firstPreselect = tnode;
 
-      // if only the mail sizes are requested we can bail out here immediately
-      if(tc->msn->preselection == PSM_ALWAYSLARGE)
+      // if only the mail sizes are requested for preselection and no remote filters
+      // are to be applied we can bail out here immediately
+      if(remoteFilters == FALSE && tc->msn->preselection == PSM_ALWAYSLARGE)
         break;
     }
 
