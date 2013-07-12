@@ -81,7 +81,7 @@ OVERLOAD(MUIM_Setup)
   {
     data->eh.ehn_Class  = cl;
     data->eh.ehn_Object = obj;
-    data->eh.ehn_Events = IDCMP_VANILLAKEY;
+    data->eh.ehn_Events = IDCMP_RAWKEY;
     data->eh.ehn_Flags  = MUI_EHF_GUIMODE;
     data->eh.ehn_Priority = -1;
 
@@ -118,16 +118,12 @@ OVERLOAD(MUIM_HandleEvent)
   struct MUIP_HandleEvent *mhe = (struct MUIP_HandleEvent *)msg;
   IPTR result = 0;
 
-  if(mhe->imsg->Class == IDCMP_VANILLAKEY)
+  if(mhe->imsg->Class == IDCMP_RAWKEY)
   {
-    if(mhe->imsg->Code == '0')
+    if(mhe->imsg->Code >= 1 && mhe->imsg->Code <= 10)
     {
-      // treat zero as ten
-      set(obj, MUIA_NList_Active, 10);
-    }
-    else if(mhe->imsg->Code >= '1' && mhe->imsg->Code <= '9')
-    {
-      set(obj, MUIA_NList_Active, mhe->imsg->Code - '0');
+      set(obj, MUIA_NList_Active, mhe->imsg->Code);
+      result = MUI_EventHandlerRC_Eat;
     }
   }
 

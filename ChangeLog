@@ -18,6 +18,8 @@ $URL$
     be met (XOR). This change was necessary, because the old combination model
     had several logical flaws when different combinations were used within
     one filter.
+  * mui/AttachmentList.c: changed the keyboard handle to raw keys to be able to
+    detect other key presses as well.
 
 2013-07-11 Thore Böckelmann <tboeckel@gmx.de>
 
