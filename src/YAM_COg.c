@@ -2510,13 +2510,19 @@ Object *CO_PageIdentities(struct CO_ClassData *data)
 Object *CO_PageFilters(struct CO_ClassData *data)
 {
    static const char *rtitles[4];
+   static const char *conditions[4];
    Object *grp;
    Object *bt_moveto;
 
-   rtitles[0] = tr(MSG_Options);
-   rtitles[1] = tr(MSG_CO_Comparison);
-   rtitles[2] = tr(MSG_CO_Action);
+   rtitles[0] = tr(MSG_CO_FILTER_REGISTER_SETTINGS);
+   rtitles[1] = tr(MSG_CO_FILTER_REGISTER_CONDITIONS);
+   rtitles[2] = tr(MSG_CO_FILTER_REGISTER_ACTIONS);
    rtitles[3] = NULL;
+
+   conditions[0] = tr(MSG_CO_CONDITION_ALL);
+   conditions[1] = tr(MSG_CO_CONDITION_MIN_ONE);
+   conditions[2] = tr(MSG_CO_CONDITION_MAX_ONE);
+   conditions[3] = NULL;
 
    if((grp = VGroup,
          MUIA_HelpNode, "Configuration#Filters",
@@ -2531,7 +2537,7 @@ Object *CO_PageFilters(struct CO_ClassData *data)
               Child, HGroup,
                    GroupSpacing(0),
                    Child, VGroup,
-                      MUIA_Weight, 70,
+                      MUIA_HorizWeight, 40,
                       Child, NListviewObject,
                          MUIA_CycleChain, TRUE,
                          MUIA_NListview_NList, data->GUI.LV_RULES = FilterListObject,
@@ -2579,11 +2585,9 @@ Object *CO_PageFilters(struct CO_ClassData *data)
                          Child, HVSpace,
                          Child, HVSpace,
                       End,
-                      Child, data->GUI.GR_RGROUP = VGroup,
+                      Child, VGroup,
+                         Child, data->GUI.CY_FILTER_COMBINE = MakeCycle(conditions, ""),
                          Child, data->GUI.GR_SGROUP = FilterRuleListObject,
-                         End,
-                         Child, RectangleObject,
-                            MUIA_Weight, 1,
                          End,
                       End,
                       Child, VGroup,
@@ -2705,6 +2709,7 @@ Object *CO_PageFilters(struct CO_ClassData *data)
       DoMethod(data->GUI.CH_APPLYREQ          ,MUIM_Notify, MUIA_Selected             ,MUIV_EveryTime ,MUIV_Notify_Application        ,2 ,MUIM_CallHook          ,&SetActiveFilterDataHook);
       DoMethod(data->GUI.CH_APPLYSENT         ,MUIM_Notify, MUIA_Selected             ,MUIV_EveryTime ,MUIV_Notify_Application        ,2 ,MUIM_CallHook          ,&SetActiveFilterDataHook);
       DoMethod(data->GUI.CH_APPLYNEW          ,MUIM_Notify, MUIA_Selected             ,MUIV_EveryTime ,MUIV_Notify_Application        ,2 ,MUIM_CallHook          ,&SetActiveFilterDataHook);
+      DoMethod(data->GUI.CY_FILTER_COMBINE    ,MUIM_Notify, MUIA_Cycle_Active         , MUIV_EveryTime ,MUIV_Notify_Application       ,2 ,MUIM_CallHook          ,&SetActiveFilterDataHook);
       DoMethod(data->GUI.CH_AREDIRECT         ,MUIM_Notify, MUIA_Selected             ,MUIV_EveryTime ,MUIV_Notify_Application        ,2 ,MUIM_CallHook          ,&SetActiveFilterDataHook);
       DoMethod(data->GUI.CH_AFORWARD          ,MUIM_Notify, MUIA_Selected             ,MUIV_EveryTime ,MUIV_Notify_Application        ,2 ,MUIM_CallHook          ,&SetActiveFilterDataHook);
       DoMethod(data->GUI.CH_ARESPONSE         ,MUIM_Notify, MUIA_Selected             ,MUIV_EveryTime ,MUIV_Notify_Application        ,2 ,MUIM_CallHook          ,&SetActiveFilterDataHook);

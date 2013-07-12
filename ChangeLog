@@ -11,6 +11,13 @@ $URL$
     are to be applied and preselection is set to "sizes only".
   * tcp/pop3.c: make sure the first to be downloaded mail is always set as the
     active one in the preselection window.
+  * YAM_CO.c, YAM_FI.c, mui/SearchControlGroup.c: reworked the filter settings to
+    be easier to understand. The single conditions are no longer combined
+    individually but globally. That means that either all conditions must be met
+    (AND), at least one condition must be met (OR) or exactly one condition must
+    be met (XOR). This change was necessary, because the old combination model
+    had several logical flaws when different combinations were used within
+    one filter.
 
 2013-07-11 Thore Böckelmann <tboeckel@gmx.de>
 

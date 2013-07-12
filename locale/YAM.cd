@@ -983,21 +983,6 @@ Co_mmand
 MSG_CO_Name (381//)
 N_ame
 ;
-MSG_CO_CTAnd (383//)
-and
-;
-MSG_CO_CTOr (384//)
-or
-;
-MSG_CO_CTXor (385//)
-exclusive or
-;
-MSG_CO_Comparison (386//)
-Comparison
-;
-MSG_CO_Action (387//)
-Action
-;
 MSG_CO_Remote (388//)
 Remote _filter
 ;
@@ -1533,10 +1518,6 @@ Apply this filter to sent messages.
 MSG_HELP_CO_CH_APPLYREQ (585//)
 Apply this filter when you use\n\
 the filter function manually.
-;
-MSG_HELP_CO_CY_COMBINE (586//)
-How to combine the rules\n\
-for this filter.
 ;
 MSG_HELP_CO_CH_AFORWARD (589//)
 Forward matching messages\n\
@@ -7379,4 +7360,22 @@ Top
 ;
 MSG_CO_QUICKSEARCHBARPOS03 (2427//)
 Bottom
+;
+MSG_CO_FILTER_REGISTER_SETTINGS (2428//)
+General
+;
+MSG_CO_FILTER_REGISTER_CONDITIONS (2429//)
+Conditions
+;
+MSG_CO_FILTER_REGISTER_ACTIONS (2430//)
+Actions
+;
+MSG_CO_CONDITION_ALL (2431//)
+all conditions must be met
+;
+MSG_CO_CONDITION_MIN_ONE (2432//)
+at least one condition must be met
+;
+MSG_CO_CONDITION_MAX_ONE (2433//)
+exactly one condition must be met
 ;

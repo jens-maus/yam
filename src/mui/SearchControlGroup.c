@@ -68,15 +68,12 @@ struct Data
   Object *CH_SUBSTR[5];
   Object *CH_DOSPATTERN[5];
   Object *CH_SKIPENCRYPTED[5];
-  Object *CY_COMBINE;
   Object *RT_TITLE;
   Object *BT_ADDRULE;
   Object *BT_REMRULE;
   Object *activeObject;
 
-  char *title;
   BOOL remoteFilterMode;
-  BOOL showCombineCycle;
 };
 */
 
@@ -112,10 +109,10 @@ OVERLOAD(OM_NEW)
   static const char *compopt[14];
   static const char *statopt[11];
   static const char *amode[3];
-  static const char *bcrit[5];
   struct Data *data;
   struct Data *tmpData;
   struct TagItem *tags = inittags(msg), *tag;
+  BOOL singleRule = FALSE;
 
   amode[0] = tr(MSG_Address);
   amode[1] = tr(MSG_Name);
@@ -156,11 +153,6 @@ OVERLOAD(OM_NEW)
   fldopt[0][11]=                 tr(MSG_Status);
   fldopt[0][12]= fldopt[1][9] = fldopt[1][10] = fldopt[1][11] = fldopt[1][12] = NULL;
 
-  bcrit[0] = tr(MSG_CO_CTOr);
-  bcrit[1] = tr(MSG_CO_CTAnd);
-  bcrit[2] = tr(MSG_CO_CTXor);
-  bcrit[3] = NULL;
-
   ENTER();
 
   // generate a temporary struct Data to which we store our data and
@@ -177,11 +169,7 @@ OVERLOAD(OM_NEW)
     switch(tag->ti_Tag)
     {
       case ATTR(RemoteFilterMode): data->remoteFilterMode = tag->ti_Data; break;
-      case ATTR(ShowCombineCycle): data->showCombineCycle = tag->ti_Data; break;
-      case ATTR(Position):
-        if(asprintf(&data->title, "%s %d:", tr(MSG_FI_CONDITION), (int)tag->ti_Data) == -1)
-          data->title = NULL;
-      break;
+      case ATTR(SingleRule)      : singleRule = tag->ti_Data; break;
     }
   }
 
@@ -190,16 +178,18 @@ OVERLOAD(OM_NEW)
     MUIA_Group_Horiz, FALSE,
     MUIA_HelpNode, "Windows#SearchwindowSearchcriteria",
       Child, data->RT_TITLE = HGroup,
-        Child, HBarT(data->title),
+        Child, RectangleObject,
+          MUIA_Rectangle_HBar, TRUE,
+          MUIA_FixHeight, 4,
         End,
         Child, HGroup,
           MUIA_Weight, 0,
+          MUIA_Group_Spacing, 1,
           MUIA_Group_SameWidth, TRUE,
           Child, data->BT_ADDRULE = MakeButton("+"),
           Child, data->BT_REMRULE = MakeButton("-"),
         End,
       End,
-      Child, data->CY_COMBINE = MakeCycle(bcrit, ""),
       Child, HGroup,
         Child, Label1(tr(MSG_FI_SearchIn)),
         Child, data->PG_MODE = PageGroup,
@@ -286,23 +276,12 @@ OVERLOAD(OM_NEW)
   {
     int i;
 
-    if((data = (struct Data *)INST_DATA(cl, obj)) == NULL)
-    {
-      if(tmpData->title != NULL)
-        free(tmpData->title);
-
-      RETURN(0);
-      return 0;
-    }
+    data = (struct Data *)INST_DATA(cl, obj);
 
     // copy back the data stored in our temporarly struct Data
     memcpy(data, tmpData, sizeof(struct Data));
 
-    // make sure to show/hide the title
-    set(data->RT_TITLE, MUIA_ShowMe, data->title != NULL);
-
-    // depending on the combinCycle mode we either show or hide it
-    set(data->CY_COMBINE, MUIA_ShowMe, data->showCombineCycle);
+    set(data->RT_TITLE, MUIA_ShowMe, singleRule == FALSE);
 
     // set the cyclechain
     set(data->RA_ADRMODE, MUIA_CycleChain, TRUE);
@@ -313,7 +292,6 @@ OVERLOAD(OM_NEW)
     // set help text
     SetHelp(data->CY_MODE[0], MSG_HELP_FI_CY_MODE);
     SetHelp(data->CY_MODE[1], MSG_HELP_FI_CY_MODE);
-    SetHelp(data->CY_COMBINE, MSG_HELP_CO_CY_COMBINE);
     SetHelp(data->ST_FIELD,   MSG_HELP_FI_ST_FIELD);
     SetHelp(data->RA_ADRMODE, MSG_HELP_FI_RA_ADRMODE);
     SetHelp(data->CY_STATUS,  MSG_HELP_FI_CY_STATUS);
@@ -324,7 +302,6 @@ OVERLOAD(OM_NEW)
     DoMethod(data->BT_REMRULE, MUIM_Notify, MUIA_Pressed,         FALSE,          obj, 1, METHOD(RemRule));
     DoMethod(data->CY_MODE[0], MUIM_Notify, MUIA_Cycle_Active,    MUIV_EveryTime, obj, 1, METHOD(Update));
     DoMethod(data->CY_MODE[1], MUIM_Notify, MUIA_Cycle_Active,    MUIV_EveryTime, obj, 1, METHOD(Update));
-    DoMethod(data->CY_COMBINE, MUIM_Notify, MUIA_Cycle_Active,    MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
     DoMethod(data->RA_ADRMODE, MUIM_Notify, MUIA_Radio_Active,    MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
     DoMethod(data->ST_FIELD,   MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
     DoMethod(data->CY_STATUS,  MUIM_Notify, MUIA_Cycle_Active,    MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
@@ -383,26 +360,6 @@ OVERLOAD(OM_NEW)
 
   RETURN((IPTR)obj);
   return (IPTR)obj;
-}
-
-///
-/// OVERLOAD(OM_DISPOSE)
-OVERLOAD(OM_DISPOSE)
-{
-  GETDATA;
-  ULONG result;
-
-  ENTER();
-
-  // free the title string
-  if(data->title != NULL)
-    free(data->title);
-
-  // signal the super class to dispose as well
-  result = DoSuperMethodA(cl, obj, msg);
-
-  RETURN(result);
-  return result;
 }
 
 ///
@@ -588,7 +545,7 @@ DECLARE(SetToRule) // struct RuleNode *rule
   struct RuleNode *rule = msg->rule;
 
   rule->searchMode = GetMUICycle(data->CY_MODE[data->remoteFilterMode]);
-  rule->combine = GetMUICycle(data->CY_COMBINE)+1;
+//  rule->combine = GetMUICycle(data->CY_COMBINE)+1;
   rule->subSearchMode = GetMUIRadio(data->RA_ADRMODE);
   GetMUIString(rule->customField, data->ST_FIELD, sizeof(rule->customField));
   rule->comparison = GetMUICycle(data->CY_COMP[g]);
@@ -631,7 +588,7 @@ DECLARE(GetFromRule) // struct RuleNode *rule
   int g = Mode2Group[rule->searchMode];
 
   nnset(data->CY_MODE[data->remoteFilterMode],  MUIA_Cycle_Active,      rule->searchMode);
-  nnset(data->CY_COMBINE,                       MUIA_Cycle_Active,      rule->combine>0 ? rule->combine-1 : 0);
+//  nnset(data->CY_COMBINE,                       MUIA_Cycle_Active,      rule->combine>0 ? rule->combine-1 : 0);
   nnset(data->RA_ADRMODE,                       MUIA_Radio_Active,      rule->subSearchMode);
   nnset(data->ST_FIELD,                         MUIA_String_Contents,   rule->customField);
   nnset(data->PG_SRCHOPT,                       MUIA_Group_ActivePage,  g);

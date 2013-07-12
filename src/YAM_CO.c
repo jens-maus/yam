@@ -154,16 +154,10 @@ HOOKPROTONHNONP(AddNewRuleToList, void)
     if((rule = CreateNewRule(filter, 0)) != NULL)
     {
       Object *newSearchGroup;
-      int numRules;
-
-      // count number of rules already in filter
-      numRules = CountNodes(&filter->ruleList);
 
       // add a new GUI element for that particular rule
       newSearchGroup = SearchControlGroupObject,
                          MUIA_SearchControlGroup_RemoteFilterMode, filter->remote,
-                         MUIA_SearchControlGroup_ShowCombineCycle, TRUE,
-                         MUIA_SearchControlGroup_Position,         numRules,
                        End;
 
       if(newSearchGroup != NULL)
@@ -353,7 +347,6 @@ HOOKPROTONHNONP(GetActiveFilterData, void)
   // values of this filter
   if(filter != NULL)
   {
-    ULONG i;
     struct Node *curNode;
 
     nnset(gui->ST_RNAME,             MUIA_String_Contents,   filter->name);
@@ -361,6 +354,7 @@ HOOKPROTONHNONP(GetActiveFilterData, void)
     nnset(gui->CH_APPLYNEW,          MUIA_Selected,          filter->applyToNew);
     nnset(gui->CH_APPLYSENT,         MUIA_Selected,          filter->applyToSent);
     nnset(gui->CH_APPLYREQ,          MUIA_Selected,          filter->applyOnReq);
+    nnset(gui->CY_FILTER_COMBINE,    MUIA_Cycle_Active,      filter->combine);
     nnset(gui->CH_AREDIRECT,         MUIA_Selected,          hasRedirectAction(filter));
     nnset(gui->CH_AFORWARD,          MUIA_Selected,          hasForwardAction(filter));
     nnset(gui->CH_ARESPONSE,         MUIA_Selected,          hasReplyAction(filter));
@@ -390,13 +384,10 @@ HOOKPROTONHNONP(GetActiveFilterData, void)
     DoMethod(gui->GR_SGROUP, MUIM_ObjectList_Clear);
 
     // Now we should have a clean SGROUP and can populate with new SearchControlGroup objects
-    i = 0;
     IterateList(&filter->ruleList, curNode)
     {
       Object *newSearchGroup = SearchControlGroupObject,
                                  MUIA_SearchControlGroup_RemoteFilterMode, filter->remote,
-                                 MUIA_SearchControlGroup_ShowCombineCycle, i > 0,
-                                 MUIA_SearchControlGroup_Position, i+1,
                                End;
 
       if(newSearchGroup == NULL)
@@ -410,8 +401,6 @@ HOOKPROTONHNONP(GetActiveFilterData, void)
 
       // add it to our searchGroupList
       DoMethod(gui->GR_SGROUP, MUIM_ObjectList_AddItem, newSearchGroup);
-
-      i++;
     }
     set(gui->GR_SGROUP, MUIA_ObjectList_Quiet, FALSE);
   }
@@ -449,6 +438,7 @@ HOOKPROTONHNONP(SetActiveFilterData, void)
     filter->applyToNew  = GetMUICheck(gui->CH_APPLYNEW);
     filter->applyToSent = GetMUICheck(gui->CH_APPLYSENT);
     filter->applyOnReq  = GetMUICheck(gui->CH_APPLYREQ);
+    filter->combine = GetMUICycle(gui->CY_FILTER_COMBINE);
     filter->actions = 0;
     if(GetMUICheck(gui->CH_AREDIRECT))         setFlag(filter->actions, FA_REDIRECT);
     if(GetMUICheck(gui->CH_AFORWARD))          setFlag(filter->actions, FA_FORWARD);

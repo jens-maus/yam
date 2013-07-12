@@ -64,7 +64,7 @@ enum ApplyFilterMode  { APPLY_USER, APPLY_AUTO, APPLY_SENT, APPLY_REMOTE, APPLY_
 enum FastSearch       { FS_NONE=0, FS_FROM, FS_TO, FS_CC, FS_REPLYTO, FS_SUBJECT, FS_DATE, FS_SIZE };
 enum SearchMode       { SM_FROM=0, SM_TO, SM_CC, SM_REPLYTO, SM_SUBJECT, SM_DATE, SM_HEADLINE,
                         SM_SIZE, SM_HEADER, SM_BODY, SM_WHOLE, SM_STATUS, SM_SPAM };
-enum CombineMode      { CB_NONE=0, CB_OR, CB_AND, CB_XOR };
+enum CombineMode      { CB_ALL=0, CB_AT_LEAST_ONE, CB_EXACTLY_ONE };
 enum SubSearchMode    { SSM_ADDRESS=0, SSM_NAME };
 enum Comparison       { CP_EQUAL=0, CP_NOTEQUAL, CP_LOWER, CP_GREATER, CP_INPUT };
 
@@ -136,7 +136,6 @@ struct RuleNode
 {
   struct MinNode      node;                       // required for placing it into struct FilterNode;
   struct Search     * search;                     // ptr to our search structure or NULL if not ready yet
-  enum CombineMode    combine;                    // combine value defining which combine operation is used (i.e. AND/OR/XOR)
   enum SearchMode     searchMode;                 // the destination of the search (i.e. FROM/TO/CC/REPLYTO etc..)
   enum SubSearchMode  subSearchMode;              // the sub mode for the search (i.e. Adress/Name for email adresses etc.)
   enum Comparison     comparison;                 // comparison mode to use for our query (i.e. >, <, <>, IN)
@@ -149,21 +148,22 @@ struct RuleNode
 // containing actions and stuff to apply
 struct FilterNode
 {
-  struct MinNode  node;                     // required for placing it into struct Config
-  int             actions;                  // actions to execute if filter/search matches
-  BOOL            isVolatile;               // filter is a volatile filter inserted by YAM
-  BOOL            remote;                   // filter is a remote filter
-  BOOL            applyToNew;               // apply filter automatically to new mail
-  BOOL            applyOnReq;               // apply filter on user request
-  BOOL            applyToSent;              // apply filter automatically on sent mail
-  char            name[SIZE_NAME];          // user definable filter name
-  char            redirectTo[SIZE_ADDRESS]; // redirect action: address to redirect the mail to
-  char            forwardTo[SIZE_ADDRESS];  // forward action: address to forward the mail to
-  char            replyFile[SIZE_PATHFILE]; // path to a file to use as the reply text
-  char            executeCmd[SIZE_COMMAND]; // command string for execute action
-  char            playSound[SIZE_PATHFILE]; // path to sound file for sound notification action
-  char            moveTo[SIZE_NAME];        // folder name for move mail action
-  struct MinList  ruleList;                 // list of all rules that filter evaluates.
+  struct MinNode   node;                     // required for placing it into struct Config
+  enum CombineMode combine;                  // how are the rules to be met?
+  int              actions;                  // actions to execute if conditions are met
+  BOOL             isVolatile;               // filter is a volatile filter inserted by YAM
+  BOOL             remote;                   // filter is a remote filter
+  BOOL             applyToNew;               // apply filter automatically to new mail
+  BOOL             applyOnReq;               // apply filter on user request
+  BOOL             applyToSent;              // apply filter automatically on sent mail
+  char             name[SIZE_NAME];          // user definable filter name
+  char             redirectTo[SIZE_ADDRESS]; // redirect action: address to redirect the mail to
+  char             forwardTo[SIZE_ADDRESS];  // forward action: address to forward the mail to
+  char             replyFile[SIZE_PATHFILE]; // path to a file to use as the reply text
+  char             executeCmd[SIZE_COMMAND]; // command string for execute action
+  char             playSound[SIZE_PATHFILE]; // path to sound file for sound notification action
+  char             moveTo[SIZE_NAME];        // folder name for move mail action
+  struct MinList   ruleList;                 // list of all rules that filter evaluates.
 };
 
 struct FilterResult

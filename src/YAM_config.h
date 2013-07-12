@@ -103,7 +103,6 @@ struct CO_GUIData
   Object *BT_RDEL;
   Object *ST_RNAME;
   Object *CH_REMOTE;
-  Object *GR_RGROUP;
   Object *GR_SGROUP;
   Object *PO_MOVETO;
   Object *TX_MOVETO;
@@ -361,6 +360,7 @@ struct CO_GUIData
   Object *CH_SPAM_TRUSTEXTERNALFILTER;
   Object *CY_SPAM_EXTERNALFILTER;
   Object *CY_QUICKSEARCHBARPOS;
+  Object *CY_FILTER_COMBINE;
 };
 
 struct CO_ClassData  /* configuration window */

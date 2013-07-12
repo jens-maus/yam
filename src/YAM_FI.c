@@ -1027,13 +1027,17 @@ BOOL FI_DoSearch(struct Search *search, const struct Mail *mail)
 //  Does a complex search with combined criterias based on the rules of a filter
 BOOL DoFilterSearch(const struct FilterNode *filter, const struct Mail *mail)
 {
-  BOOL lastCond = FALSE;
-  int ruleIndex = 0;
+  ULONG numRules;
+  ULONG matchedRules;
+  BOOL result;
   struct Node *curNode;
 
   ENTER();
 
   D(DBF_FILTER, "checking rules of filter '%s' for mail '%s'...", filter->name, mail->Subject);
+
+  numRules = 0;
+  matchedRules = 0;
 
   // we have to iterate through our ruleList and depending on the combine
   // operation we evaluate if the filter hits any mail criteria or not.
@@ -1041,52 +1045,46 @@ BOOL DoFilterSearch(const struct FilterNode *filter, const struct Mail *mail)
   {
     struct RuleNode *rule = (struct RuleNode *)curNode;
 
+    numRules++;
+
     if(rule->search != NULL)
     {
-      BOOL actCond = FI_DoSearch(rule->search, mail);
-
-      if(ruleIndex == 0)
-      {
-        // there is nothing to combine for the first rule of a filter
-        lastCond = actCond;
-      }
-      else
-      {
-        // if this isn't the first rule we do a compare
-        switch(rule->combine)
-        {
-          case CB_OR:
-          {
-            lastCond = (actCond || lastCond);
-          }
-          break;
-
-          case CB_AND:
-          {
-            lastCond = (actCond && lastCond);
-          }
-          break;
-
-          case CB_XOR:
-          {
-            lastCond = (actCond+lastCond) % 2;
-          }
-          break;
-
-          case CB_NONE:
-          {
-            lastCond = actCond;
-          }
-          break;
-        }
-      }
+      if(FI_DoSearch(rule->search, mail) == TRUE)
+        matchedRules++;
     }
-
-    ruleIndex++;
   }
 
-  RETURN(lastCond);
-  return lastCond;
+  // finally check how any rules really did match and how many we did expect to match
+  switch(filter->combine)
+  {
+    case CB_ALL:
+    {
+      result = (matchedRules == numRules);
+    }
+    break;
+
+    case CB_AT_LEAST_ONE:
+    {
+      result = (matchedRules >= 1);
+    }
+    break;
+
+    case CB_EXACTLY_ONE:
+    {
+      result = (matchedRules == 1);
+    }
+    break;
+
+    default:
+    {
+      // this cannot happen
+      result = FALSE;
+    }
+    break;
+  }
+
+  RETURN(result);
+  return result;
 }
 
 ///
@@ -2384,8 +2382,7 @@ static BOOL CompareRuleNodes(const struct Node *n1, const struct Node *n2)
   ENTER();
 
   // compare every single member of the structure
-  if(rn1->combine           != rn2->combine ||
-     rn1->searchMode        != rn2->searchMode ||
+  if(rn1->searchMode        != rn2->searchMode ||
      rn1->subSearchMode     != rn2->subSearchMode ||
      rn1->comparison        != rn2->comparison ||
      rn1->flags             != rn2->flags ||
@@ -2425,7 +2422,8 @@ static BOOL CompareFilterNodes(const struct Node *n1, const struct Node *n2)
   ENTER();
 
    // compare every single member of the structure
-  if(fn1->actions         != fn2->actions ||
+  if(fn1->combine         != fn2->combine ||
+     fn1->actions         != fn2->actions ||
      fn1->remote          != fn2->remote ||
      fn1->applyToNew      != fn2->applyToNew ||
      fn1->applyOnReq      != fn2->applyOnReq ||
@@ -2476,6 +2474,7 @@ struct FilterNode *CreateNewFilter(const int actions, const int ruleFlags)
     TAG_DONE)) != NULL)
   {
     filter->actions = actions;
+    filter->combine = CB_AT_LEAST_ONE;
     filter->isVolatile = FALSE;
     filter->remote = FALSE;
     filter->applyToNew = TRUE;
@@ -2544,7 +2543,6 @@ struct RuleNode *CreateNewRule(struct FilterNode *filter, const int flags)
   {
     // set the default search mode (plain string search or DOS patterns)
     rule->search = NULL;
-    rule->combine = CB_OR;
     rule->searchMode = SM_FROM;
     rule->subSearchMode = SSM_ADDRESS;
     rule->comparison = CP_EQUAL;
@@ -2852,9 +2850,9 @@ BOOL ImportFilter(const char *fileName, const BOOL isVolatile, struct MinList *f
 
             // transform the combination into rule combinations
             if(strnicmp(value, "and", 3) == 0)
-              rule->combine = CB_AND;
+              filter->combine = CB_ALL;
             else if(strnicmp(value, "or", 2) == 0)
-              rule->combine = CB_OR;
+              filter->combine = CB_AT_LEAST_ONE;
 
             p = strchr(value, '(');
             q = strchr(value, ')');
@@ -3177,6 +3175,7 @@ static struct FI_ClassData *FI_New(void)
             Child, VSpace(0),
             Child, data->GUI.GR_SEARCH = SearchControlGroupObject,
               MUIA_SearchControlGroup_RemoteFilterMode, FALSE,
+              MUIA_SearchControlGroup_SingleRule, TRUE,
             End,
             Child, ColGroup(2),
               Child, po_fromrule = PopobjectObject,

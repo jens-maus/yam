@@ -445,6 +445,7 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
         fprintf(fh, "FI%02d.ApplyToNew     = %s\n", i, Bool2Txt(filter->applyToNew));
         fprintf(fh, "FI%02d.ApplyToSent    = %s\n", i, Bool2Txt(filter->applyToSent));
         fprintf(fh, "FI%02d.ApplyOnReq     = %s\n", i, Bool2Txt(filter->applyOnReq));
+        fprintf(fh, "FI%02d.Combine        = %d\n", i, filter->combine);
 
         // now we do have to iterate through our ruleList
         j = 0;
@@ -452,39 +453,15 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
         {
           struct RuleNode *rule = (struct RuleNode *)curRuleNode;
 
-          // we treat the first rule a bit different for compatibility
-          // reasons.
-          if(j == 0)
-          {
-            fprintf(fh, "FI%02d.Field          = %d\n", i, rule->searchMode);
-            fprintf(fh, "FI%02d.SubField       = %d\n", i, rule->subSearchMode);
-            fprintf(fh, "FI%02d.CustomField    = %s\n", i, rule->customField);
-            fprintf(fh, "FI%02d.Comparison     = %d\n", i, rule->comparison);
-            fprintf(fh, "FI%02d.Match          = %s\n", i, rule->matchPattern);
-            fprintf(fh, "FI%02d.CaseSens       = %s\n", i, Bool2Txt(isFlagSet(rule->flags, SEARCHF_CASE_SENSITIVE)));
-            fprintf(fh, "FI%02d.Substring      = %s\n", i, Bool2Txt(isFlagSet(rule->flags, SEARCHF_SUBSTRING)));
-            fprintf(fh, "FI%02d.DOSPattern     = %s\n", i, Bool2Txt(isFlagSet(rule->flags, SEARCHF_DOS_PATTERN)));
-            fprintf(fh, "FI%02d.SkipEncrypted  = %s\n", i, Bool2Txt(isFlagSet(rule->flags, SEARCHF_SKIP_ENCRYPTED)));
-          }
-          else
-          {
-            // we handle the combine string different as it relates
-            // to the previous one
-            if(j > 1)
-              fprintf(fh, "FI%02d.Combine%d       = %d\n", i, j, rule->combine);
-            else
-              fprintf(fh, "FI%02d.Combine        = %d\n", i, rule->combine);
-
-            fprintf(fh, "FI%02d.Field%d         = %d\n", i, j+1, rule->searchMode);
-            fprintf(fh, "FI%02d.SubField%d      = %d\n", i, j+1, rule->subSearchMode);
-            fprintf(fh, "FI%02d.CustomField%d   = %s\n", i, j+1, rule->customField);
-            fprintf(fh, "FI%02d.Comparison%d    = %d\n", i, j+1, rule->comparison);
-            fprintf(fh, "FI%02d.Match%d         = %s\n", i, j+1, rule->matchPattern);
-            fprintf(fh, "FI%02d.CaseSens%d      = %s\n", i, j+1, Bool2Txt(isFlagSet(rule->flags, SEARCHF_CASE_SENSITIVE)));
-            fprintf(fh, "FI%02d.Substring%d     = %s\n", i, j+1, Bool2Txt(isFlagSet(rule->flags, SEARCHF_SUBSTRING)));
-            fprintf(fh, "FI%02d.DOSPattern%d    = %s\n", i, j+1, Bool2Txt(isFlagSet(rule->flags, SEARCHF_DOS_PATTERN)));
-            fprintf(fh, "FI%02d.SkipEncrypted%d = %s\n", i, j+1, Bool2Txt(isFlagSet(rule->flags, SEARCHF_SKIP_ENCRYPTED)));
-          }
+          fprintf(fh, "FI%02d.Field%d         = %d\n", i, j, rule->searchMode);
+          fprintf(fh, "FI%02d.SubField%d      = %d\n", i, j, rule->subSearchMode);
+          fprintf(fh, "FI%02d.CustomField%d   = %s\n", i, j, rule->customField);
+          fprintf(fh, "FI%02d.Comparison%d    = %d\n", i, j, rule->comparison);
+          fprintf(fh, "FI%02d.Match%d         = %s\n", i, j, rule->matchPattern);
+          fprintf(fh, "FI%02d.CaseSens%d      = %s\n", i, j, Bool2Txt(isFlagSet(rule->flags, SEARCHF_CASE_SENSITIVE)));
+          fprintf(fh, "FI%02d.Substring%d     = %s\n", i, j, Bool2Txt(isFlagSet(rule->flags, SEARCHF_SUBSTRING)));
+          fprintf(fh, "FI%02d.DOSPattern%d    = %s\n", i, j, Bool2Txt(isFlagSet(rule->flags, SEARCHF_DOS_PATTERN)));
+          fprintf(fh, "FI%02d.SkipEncrypted%d = %s\n", i, j, Bool2Txt(isFlagSet(rule->flags, SEARCHF_SKIP_ENCRYPTED)));
 
           j++;
         }
@@ -502,49 +479,49 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
     }
 
     fprintf(fh, "\n[Spam filter]\n");
-    fprintf(fh, "SpamFilterEnabled  = %s\n", Bool2Txt(co->SpamFilterEnabled));
-    fprintf(fh, "SpamFilterForNew   = %s\n", Bool2Txt(co->SpamFilterForNewMail));
-    fprintf(fh, "SpamMarkOnMove     = %s\n", Bool2Txt(co->SpamMarkOnMove));
-    fprintf(fh, "SpamMarkAsRead     = %s\n", Bool2Txt(co->SpamMarkAsRead));
-    fprintf(fh, "SpamABookIsWhite   = %s\n", Bool2Txt(co->SpamAddressBookIsWhiteList));
-    fprintf(fh, "SpamProbThreshold  = %d\n", co->SpamProbabilityThreshold);
-    fprintf(fh, "SpamFlushInterval  = %d\n", co->SpamFlushTrainingDataInterval);
-    fprintf(fh, "SpamFlushThres     = %d\n", co->SpamFlushTrainingDataThreshold);
-    fprintf(fh, "MoveHamToIncoming  = %s\n", Bool2Txt(co->MoveHamToIncoming));
-    fprintf(fh, "FilterHam          = %s\n", Bool2Txt(co->FilterHam));
-    fprintf(fh, "TrustExternalFilter= %s\n", Bool2Txt(co->SpamTrustExternalFilter));
-    fprintf(fh, "ExternalFilter     = %s\n", co->SpamExternalFilter);
+    fprintf(fh, "SpamFilterEnabled   = %s\n", Bool2Txt(co->SpamFilterEnabled));
+    fprintf(fh, "SpamFilterForNew    = %s\n", Bool2Txt(co->SpamFilterForNewMail));
+    fprintf(fh, "SpamMarkOnMove      = %s\n", Bool2Txt(co->SpamMarkOnMove));
+    fprintf(fh, "SpamMarkAsRead      = %s\n", Bool2Txt(co->SpamMarkAsRead));
+    fprintf(fh, "SpamABookIsWhite    = %s\n", Bool2Txt(co->SpamAddressBookIsWhiteList));
+    fprintf(fh, "SpamProbThreshold   = %d\n", co->SpamProbabilityThreshold);
+    fprintf(fh, "SpamFlushInterval   = %d\n", co->SpamFlushTrainingDataInterval);
+    fprintf(fh, "SpamFlushThres      = %d\n", co->SpamFlushTrainingDataThreshold);
+    fprintf(fh, "MoveHamToIncoming   = %s\n", Bool2Txt(co->MoveHamToIncoming));
+    fprintf(fh, "FilterHam           = %s\n", Bool2Txt(co->FilterHam));
+    fprintf(fh, "TrustExternalFilter = %s\n", Bool2Txt(co->SpamTrustExternalFilter));
+    fprintf(fh, "ExternalFilter      = %s\n", co->SpamExternalFilter);
 
     fprintf(fh, "\n[Read]\n");
-    fprintf(fh, "ShowHeader       = %d\n", co->ShowHeader);
-    fprintf(fh, "ShortHeaders     = %s\n", co->ShortHeaders);
-    fprintf(fh, "ShowSenderInfo   = %d\n", co->ShowSenderInfo);
-    fprintf(fh, "WrapHeader       = %s\n", Bool2Txt(co->WrapHeader));
-    fprintf(fh, "SigSepLine       = %d\n", co->SigSepLine);
-    fprintf(fh, "ColorSignature   = %s\n", co->ColorSignature.buf);
-    fprintf(fh, "ColoredText      = %s\n", co->ColoredText.buf);
-    fprintf(fh, "Color1stLevel    = %s\n", co->Color1stLevel.buf);
-    fprintf(fh, "Color2ndLevel    = %s\n", co->Color2ndLevel.buf);
-    fprintf(fh, "Color3rdLevel    = %s\n", co->Color3rdLevel.buf);
-    fprintf(fh, "Color4thLevel    = %s\n", co->Color4thLevel.buf);
-    fprintf(fh, "ColorURL         = %s\n", co->ColorURL.buf);
-    fprintf(fh, "DisplayAllTexts  = %s\n", Bool2Txt(co->DisplayAllTexts));
-    fprintf(fh, "FixedFontEdit    = %s\n", Bool2Txt(co->FixedFontEdit));
-    fprintf(fh, "UseTextStyles    = %s\n", Bool2Txt(co->UseTextStylesRead));
-    fprintf(fh, "TextColorsRead   = %s\n", Bool2Txt(co->UseTextColorsRead));
-    fprintf(fh, "DisplayAllAltPart= %s\n", Bool2Txt(co->DisplayAllAltPart));
-    fprintf(fh, "MDNEnabled       = %s\n", Bool2Txt(co->MDNEnabled));
-    fprintf(fh, "MDN_NoRecipient  = %d\n", co->MDN_NoRecipient);
-    fprintf(fh, "MDN_NoDomain     = %d\n", co->MDN_NoDomain);
-    fprintf(fh, "MDN_OnDelete     = %d\n", co->MDN_OnDelete);
-    fprintf(fh, "MDN_Other        = %d\n", co->MDN_Other);
-    fprintf(fh, "MultipleWindows  = %s\n", Bool2Txt(co->MultipleReadWindows));
-    fprintf(fh, "StatusChangeDelay= %d\n", co->StatusChangeDelayOn ? co->StatusChangeDelay : -co->StatusChangeDelay);
-    fprintf(fh, "ConvertHTML      = %s\n", Bool2Txt(co->ConvertHTML));
-    fprintf(fh, "LocalCharset     = %s\n", co->DefaultReadCharset);
-    fprintf(fh, "DetectCyrillic   = %s\n", Bool2Txt(co->DetectCyrillic));
-    fprintf(fh, "MapForeignChars  = %s\n", Bool2Txt(co->MapForeignChars));
-    fprintf(fh, "GlobalMailThreads= %s\n", Bool2Txt(co->GlobalMailThreads));
+    fprintf(fh, "ShowHeader        = %d\n", co->ShowHeader);
+    fprintf(fh, "ShortHeaders      = %s\n", co->ShortHeaders);
+    fprintf(fh, "ShowSenderInfo    = %d\n", co->ShowSenderInfo);
+    fprintf(fh, "WrapHeader        = %s\n", Bool2Txt(co->WrapHeader));
+    fprintf(fh, "SigSepLine        = %d\n", co->SigSepLine);
+    fprintf(fh, "ColorSignature    = %s\n", co->ColorSignature.buf);
+    fprintf(fh, "ColoredText       = %s\n", co->ColoredText.buf);
+    fprintf(fh, "Color1stLevel     = %s\n", co->Color1stLevel.buf);
+    fprintf(fh, "Color2ndLevel     = %s\n", co->Color2ndLevel.buf);
+    fprintf(fh, "Color3rdLevel     = %s\n", co->Color3rdLevel.buf);
+    fprintf(fh, "Color4thLevel     = %s\n", co->Color4thLevel.buf);
+    fprintf(fh, "ColorURL          = %s\n", co->ColorURL.buf);
+    fprintf(fh, "DisplayAllTexts   = %s\n", Bool2Txt(co->DisplayAllTexts));
+    fprintf(fh, "FixedFontEdit     = %s\n", Bool2Txt(co->FixedFontEdit));
+    fprintf(fh, "UseTextStyles     = %s\n", Bool2Txt(co->UseTextStylesRead));
+    fprintf(fh, "TextColorsRead    = %s\n", Bool2Txt(co->UseTextColorsRead));
+    fprintf(fh, "DisplayAllAltPart = %s\n", Bool2Txt(co->DisplayAllAltPart));
+    fprintf(fh, "MDNEnabled        = %s\n", Bool2Txt(co->MDNEnabled));
+    fprintf(fh, "MDN_NoRecipient   = %d\n", co->MDN_NoRecipient);
+    fprintf(fh, "MDN_NoDomain      = %d\n", co->MDN_NoDomain);
+    fprintf(fh, "MDN_OnDelete      = %d\n", co->MDN_OnDelete);
+    fprintf(fh, "MDN_Other         = %d\n", co->MDN_Other);
+    fprintf(fh, "MultipleWindows   = %s\n", Bool2Txt(co->MultipleReadWindows));
+    fprintf(fh, "StatusChangeDelay = %d\n", co->StatusChangeDelayOn ? co->StatusChangeDelay : -co->StatusChangeDelay);
+    fprintf(fh, "ConvertHTML       = %s\n", Bool2Txt(co->ConvertHTML));
+    fprintf(fh, "LocalCharset      = %s\n", co->DefaultReadCharset);
+    fprintf(fh, "DetectCyrillic    = %s\n", Bool2Txt(co->DetectCyrillic));
+    fprintf(fh, "MapForeignChars   = %s\n", Bool2Txt(co->MapForeignChars));
+    fprintf(fh, "GlobalMailThreads = %s\n", Bool2Txt(co->GlobalMailThreads));
 
     fprintf(fh, "\n[Write]\n");
     fprintf(fh, "NewIntro             = %s\n", co->NewIntro);
@@ -585,15 +562,15 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
     fprintf(fh, "StripSignature   = %s\n", Bool2Txt(co->StripSignature));
 
     fprintf(fh, "\n[Lists]\n");
-    fprintf(fh, "FolderCols       = %d\n", co->FolderCols);
-    fprintf(fh, "MessageCols      = %d\n", co->MessageCols);
-    fprintf(fh, "FixedFontList    = %s\n", Bool2Txt(co->FixedFontList));
-    fprintf(fh, "DateTimeFormat   = %d\n", co->DSListFormat);
-    fprintf(fh, "ABookLookup      = %s\n", Bool2Txt(co->ABookLookup));
-    fprintf(fh, "FolderCntMenu    = %s\n", Bool2Txt(co->FolderCntMenu));
-    fprintf(fh, "MessageCntMenu   = %s\n", Bool2Txt(co->MessageCntMenu));
-    fprintf(fh, "FolderInfoMode   = %d\n", co->FolderInfoMode);
-    fprintf(fh, "FolderDoubleClick= %s\n", Bool2Txt(co->FolderDoubleClick));
+    fprintf(fh, "FolderCols        = %d\n", co->FolderCols);
+    fprintf(fh, "MessageCols       = %d\n", co->MessageCols);
+    fprintf(fh, "FixedFontList     = %s\n", Bool2Txt(co->FixedFontList));
+    fprintf(fh, "DateTimeFormat    = %d\n", co->DSListFormat);
+    fprintf(fh, "ABookLookup       = %s\n", Bool2Txt(co->ABookLookup));
+    fprintf(fh, "FolderCntMenu     = %s\n", Bool2Txt(co->FolderCntMenu));
+    fprintf(fh, "MessageCntMenu    = %s\n", Bool2Txt(co->MessageCntMenu));
+    fprintf(fh, "FolderInfoMode    = %d\n", co->FolderInfoMode);
+    fprintf(fh, "FolderDoubleClick = %s\n", Bool2Txt(co->FolderDoubleClick));
 
     fprintf(fh, "\n[Security]\n");
     fprintf(fh, "PGPCmdPath       = %s\n", co->PGPCmdPath);
@@ -642,12 +619,12 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
     for(i = 0; i < MAXRX; i++)
     {
       if(i < 10)
-        fprintf(fh, "Rexx%02d.Name      = %s\n", i, co->RX[i].Name);
+        fprintf(fh, "Rexx%02d.Name       = %s\n", i, co->RX[i].Name);
 
-      fprintf(fh, "Rexx%02d.Script    = %s\n", i, co->RX[i].Script);
-      fprintf(fh, "Rexx%02d.IsAmigaDOS= %s\n", i, Bool2Txt(co->RX[i].IsAmigaDOS));
-      fprintf(fh, "Rexx%02d.UseConsole= %s\n", i, Bool2Txt(co->RX[i].UseConsole));
-      fprintf(fh, "Rexx%02d.WaitTerm  = %s\n", i, Bool2Txt(co->RX[i].WaitTerm));
+      fprintf(fh, "Rexx%02d.Script     = %s\n", i, co->RX[i].Script);
+      fprintf(fh, "Rexx%02d.IsAmigaDOS = %s\n", i, Bool2Txt(co->RX[i].IsAmigaDOS));
+      fprintf(fh, "Rexx%02d.UseConsole = %s\n", i, Bool2Txt(co->RX[i].UseConsole));
+      fprintf(fh, "Rexx%02d.WaitTerm   = %s\n", i, Bool2Txt(co->RX[i].WaitTerm));
     }
 
     fprintf(fh, "\n[Mixed]\n");
@@ -1162,6 +1139,7 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
               else if(stricmp(q, "ApplyToSent") == 0)            lastFilter->applyToSent = Txt2Bool(value);
               else if(stricmp(q, "ApplyOnReq") == 0)             lastFilter->applyOnReq = Txt2Bool(value);
               else if(stricmp(q, "Actions") == 0)                lastFilter->actions = atoi(value);
+              else if(stricmp(q, "Combine") == 0)                lastFilter->combine = atoi(value);
               else if(stricmp(q, "RedirectTo") == 0 || stricmp(q, "BounceTo") == 0)
                 strlcpy(lastFilter->redirectTo, value, sizeof(lastFilter->redirectTo));
               else if(stricmp(q, "ForwardTo") == 0)              strlcpy(lastFilter->forwardTo, value, sizeof(lastFilter->forwardTo));
@@ -1269,16 +1247,17 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
                   else
                     clearFlag(rule->flags, SEARCHF_SKIP_ENCRYPTED);
                 }
-                else if(strnicmp(q, "Combine", 7) == 0 && atoi(value) > CB_NONE)
+                else if(strnicmp(q, "Combine", 7) == 0)
                 {
-                  int n = atoi(q+7);
-
-                  // here we use n and not n-1 on purpose because the combine line
-                  // refers always to the next one.
-                  while((rule = GetFilterRule(lastFilter, n>0 ? n : 1)) == NULL)
-                    CreateNewRule(lastFilter, SEARCHF_DOS_PATTERN);
-
-                  rule->combine = atoi(value);
+                  // this is an old per-rule combine value
+                  // we just propagate this to the filter
+                  switch(atoi(value))
+                  {
+                    case 1: lastFilter->combine = CB_AT_LEAST_ONE; break;
+                    default:
+                    case 2: lastFilter->combine = CB_ALL; break;
+                    case 3: lastFilter->combine = CB_EXACTLY_ONE; break;
+                  }
                 }
               }
             }
