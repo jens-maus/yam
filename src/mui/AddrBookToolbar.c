@@ -188,7 +188,7 @@ DECLARE(UpdateControls)
   DoMethod(obj, MUIM_TheBar_SetAttr, TB_ABOOK_EDIT,   MUIA_TheBar_Attr_Disabled, disabled);
   DoMethod(obj, MUIM_TheBar_SetAttr, TB_ABOOK_DELETE, MUIA_TheBar_Attr_Disabled, disabled);
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 

@@ -158,7 +158,7 @@ OVERLOAD(MUIM_NList_Display)
       ndm->strings[1] = hdrNode->content;
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 

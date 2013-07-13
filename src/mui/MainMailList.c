@@ -569,7 +569,7 @@ OVERLOAD(MUIM_NList_Display)
     }
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -852,7 +852,7 @@ OVERLOAD(MUIM_DeleteShortHelp)
 
   free(dsh->help);
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -886,7 +886,7 @@ DECLARE(DoubleClicked) // LONG entryNum
     }
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -933,7 +933,7 @@ DECLARE(MakeFormat)
   // set the new NList_Format to our object
   set(obj, MUIA_NList_Format, format);
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 

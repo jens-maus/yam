@@ -410,7 +410,7 @@ DECLARE(StopProcess)
 
   data->stopButtonPressed = TRUE;
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 

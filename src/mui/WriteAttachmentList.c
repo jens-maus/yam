@@ -226,7 +226,7 @@ OVERLOAD(MUIM_NList_Destruct)
   FinishUnpack(attach->FilePath);
   free(attach);
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -257,7 +257,7 @@ OVERLOAD(MUIM_NList_Display)
     ndm->strings[3] = (STRPTR)tr(MSG_WR_TitleDescription);
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 

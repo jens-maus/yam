@@ -261,7 +261,7 @@ DECLARE(UpdateMailServers)
     }
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 

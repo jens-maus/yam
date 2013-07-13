@@ -82,7 +82,7 @@ OVERLOAD(MUIM_NList_Destruct)
 
   free(entry);
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -134,7 +134,7 @@ OVERLOAD(MUIM_NList_Display)
     ndm->strings[3] = (char *)tr(MSG_UPD_NOTIFICATION_URL);
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 

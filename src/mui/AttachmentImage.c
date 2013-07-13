@@ -892,6 +892,8 @@ OVERLOAD(MUIM_AskMinMax)
   GETDATA;
   struct MUI_MinMax *mi;
 
+  ENTER();
+
   // call the supermethod first
   DoSuperMethodA(cl, obj, msg);
 
@@ -905,6 +907,7 @@ OVERLOAD(MUIM_AskMinMax)
   mi->DefHeight += data->scaledHeight;
   mi->MaxHeight += data->scaledHeight;
 
+  RETURN(0);
   return 0;
 }
 ///
@@ -1004,7 +1007,7 @@ OVERLOAD(MUIM_Draw)
     }
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 ///
@@ -1373,7 +1376,7 @@ OVERLOAD(MUIM_DeleteShortHelp)
 
   free(dsh->help);
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 

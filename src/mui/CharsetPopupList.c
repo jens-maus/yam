@@ -105,7 +105,7 @@ OVERLOAD(MUIM_NList_Display)
     ndm->strings[1] = (char *)"";
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 

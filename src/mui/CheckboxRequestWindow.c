@@ -214,7 +214,7 @@ DECLARE(FinishInput) // ULONG result
   // trigger possible notifications
   set(obj, ATTR(Result), msg->result);
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -231,7 +231,7 @@ DECLARE(ToggleFlag) // ULONG state, ULONG mask
   else
     clearFlag(data->flags, msg->mask);
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 

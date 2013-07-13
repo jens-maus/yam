@@ -282,7 +282,7 @@ OVERLOAD(MUIM_ThreadFinished)
   BusyEnd(data->busy);
   data->busy = NULL;
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -317,7 +317,7 @@ DECLARE(CheckForUpdates) // ULONG quiet
     data->quiet = msg->quiet;
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -335,7 +335,7 @@ DECLARE(Clear)
   free(data->changeLogText);
   data->changeLogText = NULL;
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -380,7 +380,7 @@ DECLARE(Select) // ULONG num
     }
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -395,7 +395,7 @@ DECLARE(AddComponent) // struct UpdateComponent *comp
   D(DBF_UPDATE, "added '%s' as a new updateable component", msg->comp->name);
   DoMethod(data->componentList, MUIM_NList_InsertSingle, msg->comp, MUIV_NList_Insert_Sorted);
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -465,7 +465,7 @@ DECLARE(Download)
     }
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -507,7 +507,7 @@ DECLARE(Close)
   // now close the window for real.
   set(obj, MUIA_Window_Open, FALSE);
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -525,7 +525,7 @@ DECLARE(ParseUpdateFile)
   if(data->updateSuccess == TRUE)
     ParseUpdateFile(data->tempFile->Filename, data->quiet);
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 

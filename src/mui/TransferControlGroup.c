@@ -329,7 +329,7 @@ DECLARE(Reset)
                        MUIA_Gauge_Max,      100,
                        MUIA_Gauge_Current,  0);
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -354,7 +354,7 @@ DECLARE(Abort)
     AbortThread(data->thread, FALSE);
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -369,7 +369,7 @@ DECLARE(ShowStatus) // const char *status
 
   set(data->TX_STATUS, MUIA_Text_Contents, msg->status);
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -401,7 +401,7 @@ DECLARE(Start) // int numberOfMails, ULONG totalSize
                        MUIA_Gauge_Max,      data->Msgs_Tot,
                        MUIA_Gauge_Current,  0);
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -431,7 +431,7 @@ DECLARE(Finish)
 
   data->started = FALSE;
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -459,7 +459,7 @@ DECLARE(Next) // int index, int listpos, ULONG size, const char *status
     DoUpdateStats(data, 0, msg->status);
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -477,7 +477,7 @@ DECLARE(Update) // int size_incr, const char *status
   if(data->started == TRUE)
     DoUpdateStats(data, msg->size_incr, msg->status);
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 

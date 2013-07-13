@@ -218,7 +218,7 @@ OVERLOAD(MUIM_DragDrop)
     }
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -267,7 +267,7 @@ OVERLOAD(MUIM_NListtree_DropType)
   else
     *dt->Type = MUIV_NListtree_DropType_None;
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -356,7 +356,7 @@ OVERLOAD(MUIM_NListtree_Move)
     UnlockFolderList(G->folders);
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -582,7 +582,7 @@ DECLARE(MakeFormat)
   // set the new NList_Format to our object
   set(obj, MUIA_NList_Format, format);
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -596,7 +596,7 @@ DECLARE(EditFolder)
   if(C->FolderDoubleClick == TRUE && GetCurrentFolder() != NULL && isGroupFolder(GetCurrentFolder()) == FALSE)
     DoMethod(G->App, MUIM_CallHook, &FO_EditFolderHook);
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -618,7 +618,7 @@ DECLARE(ChangeFolder) // struct MUI_NListtree_TreeNode *treenode
     MA_ChangeFolder(NULL, FALSE);
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 

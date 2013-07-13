@@ -98,7 +98,7 @@ OVERLOAD(MUIM_NList_Display)
     ndm->strings[5] = (char *)tr(MSG_CO_Filter_UType);
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 

@@ -391,7 +391,7 @@ DECLARE(FindEmailMatches) // STRPTR matchText, Object *list
     }
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -539,7 +539,7 @@ DECLARE(AddToEmailCache) // struct Person *person
     }
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -785,6 +785,8 @@ OVERLOAD(MUIM_Application_ShowHelp)
 /// DECLARE(UpdateCheck)
 DECLARE(UpdateCheck) // ULONG quiet
 {
+  ENTER();
+
   // stop a possibly running timer
   // the update check will reinitiate it if necessary
   StopTimer(TIMER_UPDATECHECK);
@@ -793,6 +795,7 @@ DECLARE(UpdateCheck) // ULONG quiet
   // elements accordingly.
   CheckForUpdates(msg->quiet);
 
+  RETURN(0);
   return 0;
 }
 
@@ -802,9 +805,12 @@ DECLARE(UpdateCheck) // ULONG quiet
 // NOTE: the message must have been allocated by malloc() or similar!
 DECLARE(ShowError) // char *message
 {
+  ENTER();
+
   ER_NewError(msg->message);
   free(msg->message);
 
+  RETURN(0);
   return 0;
 }
 
@@ -814,9 +820,12 @@ DECLARE(ShowError) // char *message
 // NOTE: the message must have been allocated by malloc() or similar!
 DECLARE(ShowWarning) // char *message
 {
+  ENTER();
+
   ER_NewWarning(msg->message);
   free(msg->message);
 
+  RETURN(0);
   return 0;
 }
 
@@ -831,8 +840,11 @@ DECLARE(BusyBegin) // ULONG type
 /// DECLARE(BusyText)
 DECLARE(BusyText) // APTR handle, const char *text, const char *param
 {
+  ENTER();
+
   BusyText(msg->handle, msg->text, msg->param);
 
+  RETURN(0);
   return 0;
 }
 
@@ -847,8 +859,11 @@ DECLARE(BusyProgress) // APTR handle, int progress, int max
 /// DECLARE(BusyEnd)
 DECLARE(BusyEnd) // APTR handle
 {
+  ENTER();
+
   BusyEnd(msg->handle);
 
+  RETURN(0);
   return 0;
 }
 
@@ -857,9 +872,12 @@ DECLARE(BusyEnd) // APTR handle
 // NOTE: the log message must have been allocated by malloc() or similar!
 DECLARE(AppendToLogfile) // const int mode, const int id, char *logMessage
 {
+  ENTER();
+
   AppendToLogfile((enum LFMode)msg->mode, msg->id, msg->logMessage);
   free(msg->logMessage);
 
+  RETURN(0);
   return 0;
 }
 
@@ -867,8 +885,11 @@ DECLARE(AppendToLogfile) // const int mode, const int id, char *logMessage
 /// DECLARE(ChangeFolder)
 DECLARE(ChangeFolder) // struct Folder *folder, ULONG setActive
 {
+  ENTER();
+
   MA_ChangeFolder(msg->folder, msg->setActive);
 
+  RETURN(0);
   return 0;
 }
 
@@ -876,8 +897,11 @@ DECLARE(ChangeFolder) // struct Folder *folder, ULONG setActive
 /// DECLARE(DisplayStatistics)
 DECLARE(DisplayStatistics) // struct Folder *folder, ULONG updateAppIcon
 {
+  ENTER();
+
   DisplayStatistics(msg->folder, msg->updateAppIcon);
 
+  RETURN(0);
   return 0;
 }
 
@@ -963,7 +987,7 @@ DECLARE(DeleteTransferGroup) // Object *transferGroup
     }
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -973,9 +997,12 @@ DECLARE(ShowTransferWindow)
 {
   GETDATA;
 
+  ENTER();
+
   if(data->transferWindow != NULL && xget(data->transferWindow, MUIA_Window_Open) == FALSE)
     SafeOpenWindow(data->transferWindow);
 
+  RETURN(0);
   return 0;
 }
 
@@ -983,8 +1010,11 @@ DECLARE(ShowTransferWindow)
 /// DECLARE(SetStatusTo)
 DECLARE(SetStatusTo) // struct Mail *mail, int addflags, int clearflags
 {
+  ENTER();
+
   MA_ChangeMailStatus(msg->mail, msg->addflags, msg->clearflags);
 
+  RETURN(0);
   return 0;
 }
 
@@ -999,8 +1029,11 @@ DECLARE(StartMacro) // enum Macro num, const char *param
 /// DECLARE(MoveCopyMail)
 DECLARE(MoveCopyMail) // struct Mail *mail, struct Folder *frombox, struct Folder *tobox, ULONG flags
 {
+  ENTER();
+
   MA_MoveCopy(msg->mail, msg->frombox, msg->tobox, msg->flags);
 
+  RETURN(0);
   return 0;
 }
 
@@ -1008,8 +1041,11 @@ DECLARE(MoveCopyMail) // struct Mail *mail, struct Folder *frombox, struct Folde
 /// DECLARE(DeleteMail)
 DECLARE(DeleteMail) // struct Mail *mail, ULONG flags
 {
+  ENTER();
+
   MA_DeleteSingle(msg->mail, msg->flags);
 
+  RETURN(0);
   return 0;
 }
 
@@ -1024,6 +1060,8 @@ DECLARE(FilterMail) // const struct MinList *filterList, struct Mail *mail
 /// DECLARE(FilterNewMails)
 DECLARE(FilterNewMails) // const struct MailList *mailList, struct FilterResult *filterResult
 {
+  ENTER();
+
   FilterMails(FO_GetFolderByType(FT_INCOMING, NULL), msg->mailList, APPLY_AUTO, msg->filterResult);
 
   // Now we jump to the first new mail we received if the number of messages has changed
@@ -1038,6 +1076,7 @@ DECLARE(FilterNewMails) // const struct MailList *mailList, struct FilterResult 
   else
     UpdateAppIcon();
 
+  RETURN(0);
   return 0;
 }
 
@@ -1045,8 +1084,11 @@ DECLARE(FilterNewMails) // const struct MailList *mailList, struct FilterResult 
 /// DECLARE(UpdateAppIcon)
 DECLARE(UpdateAppIcon)
 {
+  ENTER();
+
   UpdateAppIcon();
 
+  RETURN(0);
   return 0;
 }
 
@@ -1151,7 +1193,7 @@ DECLARE(NewMailAlert) // struct MailServerNode *msn, struct DownloadResult *down
       PlaySound(msg->msn->notifySound);
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -1159,9 +1201,12 @@ DECLARE(NewMailAlert) // struct MailServerNode *msn, struct DownloadResult *down
 /// DECLARE(ChangeSelected)
 DECLARE(ChangeSelected) // const struct Folder *folder, const ULONG forceUpdate
 {
+  ENTER();
+
   if(msg->folder == GetCurrentFolder())
     MA_ChangeSelected(msg->forceUpdate);
 
+  RETURN(0);
   return 0;
 }
 
@@ -1234,7 +1279,7 @@ DECLARE(DisposeWindow) // Object *window
     MUI_DisposeObject(msg->window);
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -1244,9 +1289,12 @@ DECLARE(DisposeWindow) // Object *window
 // NOTE: the error message must have been allocated by malloc() or similar!
 DECLARE(GotoURL) // char *url, ULONG newWindow
 {
+  ENTER();
+
   GotoURL(msg->url, (BOOL)msg->newWindow);
   free(msg->url);
 
+  RETURN(0);
   return 0;
 }
 
@@ -1259,7 +1307,7 @@ DECLARE(PopUp)
   if(G->MA != NULL && G->MA->GUI.WI != NULL)
     PopUp();
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -1268,8 +1316,11 @@ DECLARE(PopUp)
 // hide ourself
 DECLARE(Iconify)
 {
+  ENTER();
+
   MA_UpdateIndexes();
 
+  RETURN(0);
   return 0;
 }
 

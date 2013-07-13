@@ -190,7 +190,7 @@ DECLARE(StatusChange) // char *txt, LONG percent
 
   DoMethod(G->App, MUIM_Application_InputBuffered);
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -264,7 +264,7 @@ DECLARE(ProgressChange) // struct BusyNode *busy
 
   DoMethod(G->App, MUIM_Application_InputBuffered);
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 

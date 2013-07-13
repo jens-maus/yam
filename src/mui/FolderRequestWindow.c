@@ -218,7 +218,7 @@ DECLARE(FinishInput) // ULONG result
   // trigger possible notifications
   set(obj, MUIA_FolderRequestWindow_Result, msg->result);
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 

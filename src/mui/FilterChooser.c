@@ -269,7 +269,7 @@ DECLARE(UpdateFilters)
     nnset(obj, MUIA_Cycle_Entries, data->filterArray);
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 

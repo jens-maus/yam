@@ -416,7 +416,7 @@ DECLARE(GotoSupportPage)
 
   GotoURL(YAM_URL, FALSE);
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 

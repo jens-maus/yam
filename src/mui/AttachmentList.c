@@ -188,7 +188,7 @@ OVERLOAD(MUIM_NList_Display)
     ndm->strings[3] = (STRPTR)tr(MSG_Size);
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 

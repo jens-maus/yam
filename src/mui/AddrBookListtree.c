@@ -191,7 +191,7 @@ OVERLOAD(MUIM_NListtree_Destruct)
     free(entry);
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -297,7 +297,7 @@ OVERLOAD(MUIM_NListtree_Display)
     ndm->Array[10] = (STRPTR)tr(MSG_AB_TitleHomepage);
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -361,7 +361,7 @@ OVERLOAD(MUIM_NListtree_DropType)
   else
     *dt->Type = MUIV_NListtree_DropType_None;
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 

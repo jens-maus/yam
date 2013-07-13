@@ -88,6 +88,8 @@ DECLARE(EditFile) // int n
 {
   GETDATA;
 
+  ENTER();
+
   if(*C->Editor)
   {
     char buffer[SIZE_COMMAND+SIZE_PATHFILE];
@@ -96,6 +98,7 @@ DECLARE(EditFile) // int n
     LaunchCommand(buffer, LAUNCHF_ASYNC, OUT_NIL);
   }
 
+  RETURN(0);
   return 0;
 }
 
@@ -368,6 +371,9 @@ OVERLOAD(OM_SET)
 {
   GETDATA;
   struct TagItem *tags = inittags(msg), *tag;
+  ULONG ret = 0;
+
+  ENTER();
 
   while((tag = NextTagItem((APTR)&tags)) != NULL)
   {
@@ -434,13 +440,17 @@ OVERLOAD(OM_SET)
             set(data->BT_EDIT[i], MUIA_Disabled, disabled || oper != 4);
         }
 
+        RETURN(0);
         return 0;
       }
       break;
     }
   }
 
-  return DoSuperMethodA(cl, obj, msg);
+  ret = DoSuperMethodA(cl, obj, msg);
+
+  RETURN(ret);
+  return ret;
 }
 ///
 /// OVERLOAD(OM_GET)
@@ -466,6 +476,8 @@ DECLARE(Clear)
   GETDATA;
   int m;
 
+  ENTER();
+
   for(m = 0; m < 5; m++)
   {
     // reset all GUI elements due to the new active filter
@@ -489,6 +501,7 @@ DECLARE(Clear)
       nnset(data->CH_SKIPENCRYPTED[m], MUIA_Selected, FALSE);
   }
 
+  RETURN(0);
   return 0;
 }
 
@@ -501,6 +514,8 @@ DECLARE(PrepareSearch) // struct Search *search
   const char *match;
   const char *field;
   int flags;
+
+  ENTER();
 
   if(pg != 3) // Page 3 (Status) has no ST_MATCH
     match = (const char *)xget(data->ST_MATCH[pg], MUIA_String_Contents);
@@ -532,6 +547,7 @@ DECLARE(PrepareSearch) // struct Search *search
                    field,
                    flags);
 
+  RETURN(0);
   return 0;
 }
 
@@ -543,6 +559,8 @@ DECLARE(SetToRule) // struct RuleNode *rule
   GETDATA;
   int g = xget(data->PG_SRCHOPT, MUIA_Group_ActivePage);
   struct RuleNode *rule = msg->rule;
+
+  ENTER();
 
   rule->searchMode = GetMUICycle(data->CY_MODE[data->remoteFilterMode]);
 //  rule->combine = GetMUICycle(data->CY_COMBINE)+1;
@@ -575,6 +593,7 @@ DECLARE(SetToRule) // struct RuleNode *rule
   if(rule->comparison == 4)
     setFlag(rule->flags, SEARCHF_DOS_PATTERN);
 
+  RETURN(0);
   return 0;
 }
 
@@ -586,6 +605,8 @@ DECLARE(GetFromRule) // struct RuleNode *rule
   GETDATA;
   struct RuleNode *rule = msg->rule;
   int g = Mode2Group[rule->searchMode];
+
+  ENTER();
 
   nnset(data->CY_MODE[data->remoteFilterMode],  MUIA_Cycle_Active,      rule->searchMode);
 //  nnset(data->CY_COMBINE,                       MUIA_Cycle_Active,      rule->combine>0 ? rule->combine-1 : 0);
@@ -624,6 +645,7 @@ DECLARE(GetFromRule) // struct RuleNode *rule
   if(data->CH_SKIPENCRYPTED[g] != NULL)
     nnset(data->CH_SKIPENCRYPTED[g], MUIA_Selected, isFlagSet(rule->flags, SEARCHF_SKIP_ENCRYPTED));
 
+  RETURN(0);
   return 0;
 }
 
@@ -672,7 +694,7 @@ DECLARE(Update)
 
   set(obj, ATTR(Modified), TRUE);
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -684,7 +706,7 @@ DECLARE(AddRule)
 
   DoMethod(obj, MUIM_CallHook, &AddNewRuleToListHook);
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -697,7 +719,7 @@ DECLARE(RemRule)
   DoMethod(obj, MUIM_ObjectListitem_Remove);
   DoMethod(obj, MUIM_CallHook, &RemoveLastRuleHook);
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 

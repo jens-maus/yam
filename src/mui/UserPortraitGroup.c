@@ -190,7 +190,7 @@ DECLARE(SetPortrait) // char *portraitName
     }
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -210,7 +210,7 @@ DECLARE(SelectPortrait)
     DoMethod(obj, METHOD(SetPortrait), NULL);
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -238,7 +238,7 @@ DECLARE(RemovePortrait)
     set(data->removeButton, MUIA_Disabled, TRUE);
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -326,7 +326,7 @@ DECLARE(CheckGravatar)
     }
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -360,7 +360,7 @@ OVERLOAD(MUIM_ThreadFinished)
   // forget about the thread
   data->thread = NULL;
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -381,7 +381,7 @@ DECLARE(Clear)
                          MUIA_ImageArea_Filename, NULL);
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 

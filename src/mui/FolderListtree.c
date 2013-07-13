@@ -287,7 +287,7 @@ OVERLOAD(MUIM_DeleteShortHelp)
 
   free(dsh->help);
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -386,7 +386,7 @@ OVERLOAD(MUIM_NListtree_Display)
     ndm->Array[4] = (STRPTR)tr(MSG_Size);
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 

@@ -238,7 +238,7 @@ DECLARE(UpdateServerControls)
   DoMethod(G->MA->GUI.TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_GETMAIL, MUIA_TheBar_Attr_Disabled, activePOP3Servers == 0);
   DoMethod(G->MA->GUI.TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_SENDALL, MUIA_TheBar_Attr_Disabled, activeSMTPServers == 0);
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -318,7 +318,7 @@ DECLARE(UpdateSpamControls)
   DoMethod(obj, MUIM_TheBar_SetAttr, TB_MAIN_SPAM, MUIA_TheBar_Attr_Disabled, spamDisabled);
   DoMethod(obj, MUIM_TheBar_SetAttr, TB_MAIN_HAM,  MUIA_TheBar_Attr_Disabled, hamDisabled);
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 

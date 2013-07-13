@@ -168,7 +168,7 @@ DECLARE(SetSignatureText) // const char *sigText
 	          MUIA_TextEditor_HasChanged, FALSE);
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -203,7 +203,7 @@ DECLARE(EditExternally)
       AddZombieFile("T:tempsignature");
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 

@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-07-14 Jens Langner <Jens.Langner@light-speed.de>
+
+  * misc: reverted revision 6684 and 6685 and made sure that always RETURN(0) is
+    used rather than LEAVE() for functions where the return value is always 0. This
+    should be more consistent and provide more valueable information for debugging
+    YAM.
+
 2013-07-12 Thore Böckelmann <tboeckel@gmx.de>
 
   * tcp/pop3.c: don't abort obtaining the message details early if remote filters

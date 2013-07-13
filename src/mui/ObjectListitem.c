@@ -151,7 +151,7 @@ DECLARE(Remove)
   else
     E(DBF_GUI, "MUIM_ObjectListItem_Remove() called for orphaned object item %08lx", obj);
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 

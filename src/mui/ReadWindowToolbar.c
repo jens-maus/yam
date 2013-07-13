@@ -223,10 +223,9 @@ DECLARE(InitNotify) // Object *readWindow, Object *readMailGroup
   DoMethod(obj, MUIM_TheBar_Notify, TB_READ_SPAM,       MUIA_Pressed, FALSE, readWindow, 2, MUIM_ReadWindow_ClassifyMessage, BC_SPAM);
   DoMethod(obj, MUIM_TheBar_Notify, TB_READ_HAM,        MUIA_Pressed, FALSE, readWindow, 2, MUIM_ReadWindow_ClassifyMessage, BC_HAM);
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
-
 ///
 /// DECLARE(UpdateSpamControls)
 // update the "Spam" and "not Spam" buttons
@@ -277,9 +276,8 @@ DECLARE(UpdateSpamControls) // struct Mail *mail
   DoMethod(obj, MUIM_TheBar_SetAttr, TB_READ_SPAM,  MUIA_TheBar_Attr_Disabled, disableSpam);
   DoMethod(obj, MUIM_TheBar_SetAttr, TB_READ_HAM,   MUIA_TheBar_Attr_Hide,     hideHam);
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
-
 ///
 

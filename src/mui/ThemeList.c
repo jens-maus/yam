@@ -88,7 +88,7 @@ OVERLOAD(MUIM_NList_Destruct)
   FreeTheme(theme);
   free(theme);
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -126,7 +126,7 @@ OVERLOAD(MUIM_NList_Display)
       ndm->preparses[0] = (char *)"\033b";
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 

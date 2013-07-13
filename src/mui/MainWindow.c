@@ -136,7 +136,7 @@ DECLARE(DisposeSubWindow) // Object *win
   DoMethod(G->App, OM_REMMEMBER, msg->win);
   MUI_DisposeObject(msg->win);
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -160,7 +160,7 @@ DECLARE(ShowAbout)
 
   SafeOpenWindow(data->aboutWindow);
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -181,7 +181,7 @@ DECLARE(CloseAbout)
     data->aboutWindow = NULL;
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -194,7 +194,7 @@ DECLARE(ShowErrors)
 
   ER_NewError(NULL);
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -288,7 +288,7 @@ DECLARE(Relayout)
     DoMethod(G->MA->GUI.GR_MAILLIST, MUIM_Group_ExitChange);
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 

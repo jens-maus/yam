@@ -568,7 +568,7 @@ DECLARE(SearchContentChanged) // char *content, ULONG force
     }
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -610,7 +610,7 @@ DECLARE(SearchOptionChanged) // int activeSearchOption
     DoMethod(obj, MUIM_QuickSearchBar_ProcessSearch);
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -640,7 +640,7 @@ DECLARE(ViewOptionChanged) // int activeCycle
     DoMethod(obj, MUIM_QuickSearchBar_ProcessSearch);
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -655,7 +655,7 @@ DECLARE(AbortSearch)
   // signal the search process to abort
   data->abortSearch = TRUE;
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -755,7 +755,7 @@ DECLARE(ProcessSearch)
   else
     E(DBF_ALL, "curFolder->Type == FT_GROUP ?????");
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -818,7 +818,7 @@ DECLARE(Clear)
   // make sure our objects are not disabled
   set(obj, MUIA_Disabled, FALSE);
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -858,7 +858,7 @@ DECLARE(UpdateStats) // ULONG force
       set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, TRUE);
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 

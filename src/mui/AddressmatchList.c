@@ -90,7 +90,7 @@ OVERLOAD(MUIM_NList_Destruct)
 
   free(abEntry);
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -117,7 +117,7 @@ OVERLOAD(MUIM_NList_Display)
 
   ndm->strings[entry->MatchField] = data->matchField;
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 

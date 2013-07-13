@@ -336,7 +336,7 @@ DECLARE(SelectionChanged)
     set(data->TX_URL, MUIA_Text_Contents, theme->url);
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -377,7 +377,7 @@ DECLARE(ActivateTheme)
       W(DBF_THEME, "theme '%s' is already the currently active one!", themeName);
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 

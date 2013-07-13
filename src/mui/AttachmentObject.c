@@ -321,7 +321,7 @@ OVERLOAD(MUIM_ContextMenuChoice)
       return DoSuperMethodA(cl, obj, msg);
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -380,7 +380,7 @@ DECLARE(Display)
     BusyEnd(busy);
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -449,7 +449,7 @@ DECLARE(Save)
     BusyEnd(busy);
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -476,7 +476,7 @@ DECLARE(Delete)
     #warning delete attachment not yet implemented
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -507,7 +507,7 @@ DECLARE(Print)
     BusyEnd(busy);
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -624,7 +624,7 @@ DECLARE(ImageDropped) // char *dropPath
 
   #warning drop attachment not yet implemented
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -684,7 +684,7 @@ DECLARE(UpdateDescription)
 
   set(data->textObject, MUIA_Text_Contents, data->descriptionBuffer);
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 

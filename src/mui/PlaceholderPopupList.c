@@ -193,7 +193,7 @@ OVERLOAD(MUIM_NList_Display)
     ndm->strings[1] = data->description;
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -267,7 +267,7 @@ DECLARE(SetScriptEntry) // enum Macro macro
   if(data->entries[0] != NULL)
     DoMethod(obj, MUIM_NList_Insert, data->entries, 1, MUIV_NList_Insert_Bottom, MUIF_NONE);
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 

@@ -228,7 +228,7 @@ DECLARE(ChangeWindow)
               MUIA_Window_Width,      _width(data->String));
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -386,7 +386,7 @@ DECLARE(ActiveChange) // LONG active
     }
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -407,7 +407,7 @@ DECLARE(AddRecipient)
   // close the window
   set(obj, MUIA_Window_Open, FALSE);
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 

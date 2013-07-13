@@ -67,7 +67,7 @@ OVERLOAD(MUIM_NList_Display)
     ndm->strings[0] = entry->name;
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -88,7 +88,7 @@ DECLARE(Popup)
     DoMethod(obj, MUIM_NList_InsertSingle, node, MUIV_NList_Insert_Bottom);
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 

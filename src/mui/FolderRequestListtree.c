@@ -218,7 +218,7 @@ DECLARE(RefreshTree)
 
   set(obj, MUIA_NListtree_Quiet, FALSE);
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 

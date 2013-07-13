@@ -312,7 +312,7 @@ OVERLOAD(MUIM_NList_Display)
     ndm->strings[6] = (STRPTR)tr(MSG_Date);
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 

@@ -94,7 +94,7 @@ DECLARE(UpdateRules) // ULONG numItems
     set(ruleItem, MUIA_SearchControlGroup_RemoveForbidden, msg->numItems < 2);
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 

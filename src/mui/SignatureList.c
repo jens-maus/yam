@@ -83,7 +83,7 @@ OVERLOAD(MUIM_NList_Display)
     ndm->strings[0] = data->displayBuffer;
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 

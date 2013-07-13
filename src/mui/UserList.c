@@ -85,7 +85,7 @@ OVERLOAD(MUIM_NList_Destruct)
 
   free(user);
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -112,7 +112,7 @@ OVERLOAD(MUIM_NList_Display)
     ndm->strings[1] = (char *)tr(MSG_US_TitleMailDir);
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 

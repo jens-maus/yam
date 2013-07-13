@@ -231,7 +231,7 @@ DECLARE(FinishInput) // ULONG result
   if(data->thread != NULL)
     WakeupThread(data->thread);
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 

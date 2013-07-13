@@ -148,7 +148,7 @@ DECLARE(Open) // Object *texteditor
             MUIA_Window_RefWindow,    data->ParentWindow,
             MUIA_Window_Open,         TRUE);
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -168,7 +168,7 @@ DECLARE(Close)
     data->CloseNotifyAdded = FALSE;
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -213,7 +213,7 @@ DECLARE(Search) // ULONG flags
     }
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -234,7 +234,7 @@ DECLARE(ToggleCaseSensitivity)
 
   data->CaseSensitive = !data->CaseSensitive;
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 

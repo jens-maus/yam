@@ -116,7 +116,7 @@ OVERLOAD(MUIM_NList_Display)
     ndm->strings[0] = entry->ContentType;
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 

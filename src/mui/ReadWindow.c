@@ -746,7 +746,7 @@ DECLARE(RereadMail) // struct Mail *mail, ULONG flags
 
   DoMethod(data->readMailGroup, MUIM_ReadMailGroup_ReadMail, msg->mail, msg->flags);
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -845,7 +845,7 @@ DECLARE(NewMail) // enum NewMailMode mode, ULONG qualifier
     }
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -914,7 +914,7 @@ DECLARE(MoveMailRequest)
     }
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -971,7 +971,7 @@ DECLARE(CopyMailRequest)
     }
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -1035,7 +1035,7 @@ DECLARE(DeleteMailRequest) // ULONG qualifier
       AppendToLogfile(LF_NORMAL, 22, tr(MSG_LOG_Moving), 1, folder->Name, delfolder->Name);
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -1198,7 +1198,7 @@ DECLARE(ClassifyMessage) // enum BayesClassification class
     }
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -1210,6 +1210,8 @@ DECLARE(GrabSenderAddress)
   GETDATA;
   struct ReadMailData *rmData = (struct ReadMailData *)xget(data->readMailGroup, MUIA_ReadMailGroup_ReadMailData);
   struct Mail *mail = rmData->mail;
+
+  ENTER();
 
   if(MailExists(mail, mail->Folder) == TRUE)
   {
@@ -1223,6 +1225,7 @@ DECLARE(GrabSenderAddress)
     }
   }
 
+  RETURN(0);
   return 0;
 }
 
@@ -1242,7 +1245,7 @@ DECLARE(SetStatusTo) // int addflags, int clearflags
   DoMethod(data->statusBar, MUIM_ReadWindowStatusBar_Update, mail);
   DisplayStatistics(NULL, TRUE);
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 ///
@@ -1254,6 +1257,8 @@ DECLARE(ChangeSubjectRequest)
   struct ReadMailData *rmData = (struct ReadMailData *)xget(data->readMailGroup, MUIA_ReadMailGroup_ReadMailData);
   struct Mail *mail = rmData->mail;
   struct Folder *folder = mail->Folder;
+
+  ENTER();
 
   if(MailExists(mail, folder))
   {
@@ -1279,6 +1284,7 @@ DECLARE(ChangeSubjectRequest)
     }
   }
 
+  RETURN(0);
   return 0;
 }
 
@@ -1448,7 +1454,7 @@ DECLARE(SwitchMail) // LONG direction, ULONG qualifier
   if(found == FALSE)
     DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &CloseReadWindowHook, rmData);
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -1502,7 +1508,7 @@ DECLARE(FollowThread) // LONG direction
     DisplayBeep(_screen(obj));
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -1518,7 +1524,7 @@ DECLARE(ChangeHeaderMode) // enum HeaderMode hmode
   // forward this method to the readMailGroup, it will update itself if necessary
   DoMethod(data->readMailGroup, MUIM_ReadMailGroup_ChangeHeaderMode, msg->hmode);
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -1534,7 +1540,7 @@ DECLARE(ChangeSenderInfoMode) // enum SInfoMode simode
   // forward this method to the readMailGroup, it will update itself if necessary
   DoMethod(data->readMailGroup, MUIM_ReadMailGroup_ChangeSenderInfoMode, msg->simode);
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -1598,7 +1604,7 @@ DECLARE(StyleOptionsChanged)
                                   MUIF_ReadMailGroup_ReadMail_UpdateOnly);
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 ///
@@ -1608,10 +1614,13 @@ DECLARE(UpdateStatusBar)
   GETDATA;
   struct ReadMailData *rmData = (struct ReadMailData *)xget(data->readMailGroup, MUIA_ReadMailGroup_ReadMailData);
 
+  ENTER();
+
   // Update the status bar
   if(rmData->mail != NULL)
     DoMethod(data->statusBar, MUIM_ReadWindowStatusBar_Update, rmData->mail);
 
+  RETURN(0);
   return 0;
 }
 ///
@@ -1669,7 +1678,7 @@ DECLARE(UpdateSpamControls)
   if(data->windowToolbar != NULL)
     DoMethod(data->windowToolbar, MUIM_ReadWindowToolbar_UpdateSpamControls, mail);
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -1693,7 +1702,7 @@ DECLARE(UpdateMenuShortcuts)
     set(data->MI_FORWARD_INLINE, MUIA_Menuitem_Shortcut, "W");
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 

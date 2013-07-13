@@ -206,6 +206,8 @@ OVERLOAD(MUIM_AskMinMax)
 {
   struct MUI_MinMax *mi;
 
+  ENTER();
+
   // call the supermethod first
   DoSuperMethodA(cl, obj, msg);
 
@@ -214,6 +216,7 @@ OVERLOAD(MUIM_AskMinMax)
   mi->MaxWidth += MUI_MAXMAX;
   mi->MaxHeight += MUI_MAXMAX;
 
+  RETURN(0);
   return 0;
 }
 
@@ -236,7 +239,7 @@ OVERLOAD(MUIM_Group_Sort)
     DoMethod(data->virtgroup, MUIM_Group_ExitChange);
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
@@ -453,7 +456,7 @@ DECLARE(Clear)
     }
   }
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 

@@ -198,7 +198,7 @@ OVERLOAD(MUIM_GoActive)
   // superclass but forward it to the activeList object itself
   set(_win(obj), MUIA_Window_ActiveObject, data->mainListviewObjects[data->activeList]);
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 ///
@@ -412,7 +412,7 @@ DECLARE(SwitchToList) // enum MainListType type
 
   DoMethod(data->mainListObjects[LT_QUICKVIEW], MUIM_NList_Clear);
 
-  LEAVE();
+  RETURN(0);
   return 0;
 }
 
