@@ -277,7 +277,6 @@ void GhostOutFilter(struct CO_GUIData *gui, struct FilterNode *filter)
 {
   BOOL isremote;
   LONG pos = MUIV_NList_GetPos_Start;
-  int numRules;
 
   ENTER();
 
@@ -315,9 +314,6 @@ void GhostOutFilter(struct CO_GUIData *gui, struct FilterNode *filter)
 
   set(gui->BT_FILTERUP,   MUIA_Disabled, filter == NULL || pos == 0);
   set(gui->BT_FILTERDOWN, MUIA_Disabled, filter == NULL || pos+1 == (LONG)xget(gui->LV_RULES, MUIA_NList_Entries));
-
-  // we have to find out how many rules the filter has
-  numRules = xget(gui->GR_SGROUP, MUIA_ObjectList_ItemCount);
 
   // These three "disables" must be done in another context, because the Popasl object will en/disable
   // the pop button itself as long as the requester is open. After that this hook is called but the object

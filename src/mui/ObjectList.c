@@ -369,7 +369,7 @@ DECLARE(IterateItems) // void **state
       *msg->state = (Object *)GetHead(childList);
     }
 
-    item = NextObject(msg->state);
+    item = NextObject((Object **)msg->state);
     if(item == data->spacer)
       item = NULL;
   }

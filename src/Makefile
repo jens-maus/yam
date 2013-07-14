@@ -835,7 +835,7 @@ $(MUIDIR)/Classes.crc: $(GENCLASSES)/GenClasses $(MUIDIR)/ClassesExtra.h Locale.
 	@echo "  GN GenClasses"
 	@$(GENCLASSES)/GenClasses mui -bYAM -gpl -storm -iClassesExtra.h,ClassesSetup.h -qdl
 
-.NOTPARALLEL: $(GENCLASSES)/GenClasses
+#.NOTPARALLEL: $(GENCLASSES)/GenClasses
 $(GENCLASSES)/GenClasses: $(GENCLASSES)/gc.c $(GENCLASSES)/gc.h \
 	$(GENCLASSES)/lists.c $(GENCLASSES)/lists.h \
 	$(GENCLASSES)/crc32.c $(GENCLASSES)/crc32.h
