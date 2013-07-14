@@ -7,6 +7,8 @@ $URL$
 
 2013-07-14 Jens Langner <Jens.Langner@light-speed.de>
 
+  * mui/Aboutwindow.c: added information/credits about use of the public timezone
+    database from IANA.
   * resources/zoneinfo, tools/tzdata, extrasrc/tzcode: updated tzdata/tzcode
     environment to the latest version (2013d) released by iana.org.
   * misc: reverted revision 6684 and 6685 and made sure that always RETURN(0) is
