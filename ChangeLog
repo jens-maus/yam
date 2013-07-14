@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-07-14 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: update to the latest changes.
+
 2013-07-14 Jens Langner <Jens.Langner@light-speed.de>
 
   * misc: reverted revision 6684 and 6685 and made sure that always RETURN(0) is
@@ -257,7 +261,7 @@ $URL$
 
 2013-03-06 Samir Hawamdeh <s.hawamdeh@tin.it>
 
-  *  locale/italian.ct: update to the latest changes.
+  * locale/italian.ct: update to the latest changes.
 
 2013-03-05 Thore Böckelmann <tboeckel@gmx.de>
 

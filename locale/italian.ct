@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.3 (6.03.2013)
+## version $VER: YAM.catalog 8.4 (13.07.2013)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -1311,26 +1311,6 @@ MSG_CO_Name
 No_me
 ; N_ame
 ;
-MSG_CO_CTAnd
-and
-; and
-;
-MSG_CO_CTOr
-or
-; or
-;
-MSG_CO_CTXor
-or esclusivo
-; exclusive or
-;
-MSG_CO_Comparison
-Comparazione
-; Comparison
-;
-MSG_CO_Action
-Azione
-; Action
-;
 MSG_CO_Remote
 _Filtro remoto
 ; Remote _filter
@@ -2066,12 +2046,6 @@ Applica questo filtro al momento dell'attivazione\n\
 manuale della funzione 'Filtra'.
 ; Apply this filter when you use\n\
 ; the filter function manually.
-;
-MSG_HELP_CO_CY_COMBINE
-Come combinare le regole di\n\
-ricerca per questo filtro.
-; How to combine the rules\n\
-; for this filter.
 ;
 MSG_HELP_CO_CH_AFORWARD
 Inoltra i messaggi filtrati\n\
@@ -6078,18 +6052,6 @@ da un non valido o non scrivibile percorso di destinazione.
 ; \n\
 ; This may be due to insufficient space or an invalid or not writable \
 ; destination path.
-;
-MSG_CO_QUICKSEARCHBAR
-Mostra _barra di ricerca nella finestra principale
-; Show search _bar in main window
-;
-MSG_HELP_CO_CH_QUICKSEARCHBAR
-Attivando questa opzione sarà possibile aggiungere una barra\n\
-di ricerca rapida incorporata nella finestra principale di YAM in\n\
-modo da permettere una più veloce ricerca dei messaggi.
-; If checked, a search bar will appear\n\
-; in the main window to let you find\n\
-; certain e-mails more quickly.
 ;
 MSG_FI_SELECTACTIVE
 Seleziona co_rrispondenze attive
@@ -10527,4 +10489,62 @@ Rinomina allegato
 MSG_WR_ENTER_NEW_NAME
 Inserisci un nome per il nuovo allegato:
 ; Enter new attachment name:
+;
+MSG_FI_SKIP_ENCRYPTED
+Salta messaggi criptati
+; Skip encrypted mails
+;
+MSG_HELP_FI_CH_SKIP_ENCRYPTED
+Salta messaggi criptati (ad esempio PGP)\n\
+durante la ricerca.
+; Skip encrypted mails (i.e. PGP)\n\
+; during the search.
+;
+MSG_CO_QUICKSEARCHBAR
+Barra di ricerca rapida
+; Quick search bar
+;
+MSG_HELP_CO_CH_QUICKSEARCHBAR
+Qui puoi selezionare la posizione della barra di ricerca rapida.
+; Here you can select the position of the quick search bar.
+;
+MSG_CO_QUICKSEARCHBARPOS
+Posi_zione
+; Posi_tion
+;
+MSG_CO_QUICKSEARCHBARPOS01
+Disattivata
+; Disabled
+;
+MSG_CO_QUICKSEARCHBARPOS02
+In alto
+; Top
+;
+MSG_CO_QUICKSEARCHBARPOS03
+In basso
+; Bottom
+;
+MSG_CO_FILTER_REGISTER_SETTINGS
+Generale
+; General
+;
+MSG_CO_FILTER_REGISTER_CONDITIONS
+Condizioni
+; Conditions
+;
+MSG_CO_FILTER_REGISTER_ACTIONS
+Azioni
+; Actions
+;
+MSG_CO_CONDITION_ALL
+tutte le condizioni devono essere soddisfatte
+; all conditions must be met
+;
+MSG_CO_CONDITION_MIN_ONE
+almeno una condizione deve essere soddisfatta
+; at least one condition must be met
+;
+MSG_CO_CONDITION_MAX_ONE
+una singola condizione deve essere soddisfatta
+; exactly one condition must be met
 ;
