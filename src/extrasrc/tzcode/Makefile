@@ -153,7 +153,7 @@ WARN     = -W -Wall -Wwrite-strings -Wpointer-arith -Wsign-compare #-Wunreachabl
 OPTFLAGS = -O3 -fomit-frame-pointer -fno-strict-aliasing
 DEBUG    = -DDEBUG -fno-omit-frame-pointer #-O0
 DEBUGSYM = -g -gstabs
-CFLAGS   = -I. -I./include $(CPU) $(WARN) $(OPTFLAGS) $(DEBUG) $(DEBUGSYM) -DHAVE_STDINT_H -DSTD_INSPIRED
+CFLAGS   = -I. -I./include $(CPU) $(WARN) $(OPTFLAGS) $(DEBUG) $(DEBUGSYM) -DSTD_INSPIRED -Dtime_tz=float
 LDFLAGS  = $(CPU) $(DEBUGSYM)
 LDLIBS   = -L$(LIB) -lm
 
@@ -175,7 +175,7 @@ ifeq ($(OS), os4)
   CRT      = newlib
   CPU      = -mcpu=powerpc -mstrict-align
   WARN     += -Wdeclaration-after-statement -Wdisabled-optimization -Wshadow
-  CFLAGS   += -mcrt=$(CRT) -Wa,-mregnames
+  CFLAGS   += -mcrt=$(CRT) -Wa,-mregnames -DHAVE_INTTYPES_H=1
   LDFLAGS  += -mcrt=$(CRT)
   CDUP     = ../
   CDTHIS   = ./
@@ -196,7 +196,7 @@ ifeq ($(OS), os3)
 
   # Compiler/Linker flags
   CPU	    = -m68020-60 -msoft-float
-  CFLAGS  += -I./include/netinclude -DNO_INLINE_STDARG -D__amigaos3__ -Wno-sign-compare
+  CFLAGS  += -I./include/netinclude -DNO_INLINE_STDARG -D__amigaos3__ -Wno-sign-compare -DHAVE_INTTYPES_H=1 -DHAVE_SYS_WAIT_H=0
   LDFLAGS += -noixemul
   LDLIBS  +=
   GCCVER  = 2
@@ -217,7 +217,7 @@ ifeq ($(OS), mos)
 
   # Compiler/Linker flags
   CPU     = -mcpu=powerpc
-  CFLAGS  += -noixemul -I./include/netinclude
+  CFLAGS  += -noixemul -I./include/netinclude -DHAVE_INTTYPES_H=1
   LDFLAGS += -noixemul
   LDLIBS  +=
   GCCVER  = 2
@@ -237,7 +237,7 @@ ifeq ($(OS), aros-i386)
 
   # Compiler/Linker flags
   OPTFLAGS = -O2 -fomit-frame-pointer
-  CFLAGS += -Wno-pointer-sign -DNO_INLINE_STDARG -D__BSD_VISIBLE=1
+  CFLAGS += -Wno-pointer-sign -DNO_INLINE_STDARG -D__BSD_VISIBLE=1 -DINT_FAST32_MAX=2147483647L -DINTMAX_MAX=9223372036854775807LL -DUINTMAX_MAX=18446744073709551615ULL -DINT64_MAX=9223372036854775807LL -DINT_FAST32_MIN=-2147483647L-1 -DPRIdMAX=\"ld\" -DPRIuMAX=\"lu\"
   LDLIBS +=
 
 else
@@ -255,7 +255,7 @@ ifeq ($(OS), aros-ppc)
 
   # Compiler/Linker flags
   OPTFLAGS = -O2 -fomit-frame-pointer
-  CFLAGS += -Wno-pointer-sign -DNO_INLINE_STDARG -D__BSD_VISIBLE=1
+  CFLAGS += -Wno-pointer-sign -DNO_INLINE_STDARG -D__BSD_VISIBLE=1 -DINT_FAST32_MAX=2147483647L -DINTMAX_MAX=9223372036854775807LL -DUINTMAX_MAX=18446744073709551615ULL -DINT64_MAX=9223372036854775807LL -DINT_FAST32_MIN=-2147483647L-1 -DPRIdMAX=\"lld\" -DPRIuMAX=\"llu\"
   LDLIBS +=
 
 else
@@ -273,7 +273,7 @@ ifeq ($(OS), aros-x86_64)
 
   # Compiler/Linker flags
   OPTFLAGS = -O2 -fomit-frame-pointer
-  CFLAGS += -Wno-pointer-sign -DNO_INLINE_STDARG -D__BSD_VISIBLE=1 -DINT_FAST64_MAX
+  CFLAGS += -Wno-pointer-sign -DNO_INLINE_STDARG -D__BSD_VISIBLE=1 -DINT_FAST32_MAX=2147483647L -DINTMAX_MAX=9223372036854775807LL -DUINTMAX_MAX=18446744073709551615ULL -DINT_FAST64_MAX=9223372036854775807LL -DINT64_MAX=9223372036854775807LL -DINT_FAST32_MIN=-2147483647L-1 -DPRIdMAX=\"ld\" -DPRIuMAX=\"lu\"
   LDLIBS +=
 
 else
@@ -291,7 +291,7 @@ ifeq ($(OS), aros-arm)
 
   # Compiler/Linker flags
   OPTFLAGS = -O2 -fomit-frame-pointer
-  CFLAGS += -Wno-pointer-sign -DNO_INLINE_STDARG -D__BSD_VISIBLE=1
+  CFLAGS += -Wno-pointer-sign -DNO_INLINE_STDARG -D__BSD_VISIBLE=1 -DINT_FAST32_MAX=2147483647L -DINTMAX_MAX=9223372036854775807LL -DUINTMAX_MAX=18446744073709551615ULL -DINT64_MAX=9223372036854775807LL -DINT_FAST32_MIN=-2147483647L-1 -DPRIdMAX=\"lld\" -DPRIuMAX=\"llu\"
   LDLIBS +=
 
 endif
