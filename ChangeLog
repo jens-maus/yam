@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-07-15 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MA.c, YAM_RE.c: printing a mail will now include a list of attachments.
+    Additionally the printout will no longer contain a plain copy of all header
+    lines, but a stripped down version of subject sender, receiver and date. This
+    closes #100.
+
 2013-07-14 Jens Langner <Jens.Langner@light-speed.de>
 
   * mui/Aboutwindow.c: added information/credits about use of the public timezone

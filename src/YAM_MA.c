@@ -1666,7 +1666,7 @@ HOOKPROTONHNO(MA_SavePrintFunc, void, int *arg)
       {
         struct ReadMailData *rmData;
 
-        if((rmData = AllocPrivateRMData(mnode->mail, PM_TEXTS)) != NULL)
+        if((rmData = AllocPrivateRMData(mnode->mail, PM_ALL)) != NULL)
         {
           char *cmsg;
 

@@ -2742,24 +2742,35 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
     // respect of the headerList
     if(mode == RIM_PRINT)
     {
-      FILE *fh;
+      char headerLine[SIZE_LARGE];
+      char addressStr[SIZE_DEFAULT];
+      char dateStr[64];
 
-      if((fh = fopen(first->Filename, "r")) != NULL)
+      // use bold italics for the header
+      StrBufCat(&cmsg, "\033[1m\033[3m");
+
+      snprintf(headerLine, sizeof(headerLine), "%s: %s\n", tr(MSG_RE_HDR_SUBJECT), rmData->mail->Subject);
+      StrBufCat(&cmsg, headerLine);
+
+      BuildAddress(addressStr, sizeof(addressStr), rmData->mail->From.Address, rmData->mail->From.RealName);
+      if(addressStr[0] != '\0')
       {
-        size_t buflen = 0;
-        char *buf = NULL;
-
-        setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
-
-        while(getline(&buf, &buflen, fh) > 0)
-          StrBufCat(&cmsg, buf);
-
-        fclose(fh);
-
-        free(buf);
-
-        StrBufCat(&cmsg, "\n");
+        snprintf(headerLine, sizeof(headerLine), "%s: %s\n", tr(MSG_RE_HDR_FROM), addressStr);
+        StrBufCat(&cmsg, headerLine);
       }
+
+      BuildAddress(addressStr, sizeof(addressStr), rmData->mail->To.Address, rmData->mail->To.RealName);
+      if(addressStr[0] != '\0')
+      {
+        snprintf(headerLine, sizeof(headerLine), "%s: %s\n", tr(MSG_RE_HDR_TO), addressStr);
+        StrBufCat(&cmsg, headerLine);
+      }
+
+      DateStamp2String(dateStr, sizeof(dateStr), &rmData->mail->Date, C->DSListFormat, TZC_LOCAL);
+      snprintf(headerLine, sizeof(headerLine), "%s: %s\n", tr(MSG_RE_HDR_DATE), dateStr);
+      StrBufCat(&cmsg, headerLine);
+
+      StrBufCat(&cmsg, "\033[21m\033[23m\n");
     }
 
     // Now we check every part of the message if it will be displayed in the
@@ -3271,6 +3282,42 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
           }
 
           fclose(fh);
+        }
+      }
+    }
+
+    if(mode == RIM_PRINT && isMP_MixedMail(rmData->mail))
+    {
+      // add a list of all attachments in printing mode
+      StrBufCat(&cmsg, "\n");
+      StrBufCat(&cmsg, "================================================================================\n");
+      StrBufCat(&cmsg, "Anhänge:\n");
+      for(part = rmData->firstPart; part != NULL; part = part->Next)
+      {
+        if(part->Nr > PART_RAW && part->Nr != part->rmData->letterPartNum && (C->DisplayAllAltPart == TRUE ||
+           (isAlternativePart(part) == FALSE || part->Parent == NULL || part->Parent->MainAltPart == part)))
+        {
+          char *name;
+
+          name = part->CParDesc;
+          if(name == NULL || name[0] == '\0')
+          {
+            name = part->CParFileName;
+            if(name == NULL || name[0] == '\0')
+            {
+              name = part->CParName;
+            }
+          }
+
+          if(name != NULL && name[0] != '\0')
+          {
+            char sizeStr[SIZE_DEFAULT];
+            char attachLine[SIZE_LARGE];
+
+            FormatSize(part->Size, sizeStr, sizeof(sizeStr), SF_AUTO);
+            snprintf(attachLine, sizeof(attachLine), "%-70s%10s\n", name, sizeStr);
+            StrBufCat(&cmsg, attachLine);
+          }
         }
       }
     }
