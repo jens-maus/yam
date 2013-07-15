@@ -3291,7 +3291,9 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
       // add a list of all attachments in printing mode
       StrBufCat(&cmsg, "\n");
       StrBufCat(&cmsg, "================================================================================\n");
-      StrBufCat(&cmsg, "Anhänge:\n");
+      StrBufCat(&cmsg, tr(MSG_Attachments));
+      StrBufCat(&cmsg, ":\n");
+
       for(part = rmData->firstPart; part != NULL; part = part->Next)
       {
         if(part->Nr > PART_RAW && part->Nr != part->rmData->letterPartNum && (C->DisplayAllAltPart == TRUE ||
