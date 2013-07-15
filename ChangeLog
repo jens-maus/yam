@@ -11,6 +11,9 @@ $URL$
     Additionally the printout will no longer contain a plain copy of all header
     lines, but a stripped down version of subject sender, receiver and date. This
     closes #100.
+  * YAM_FO.c, mui/MainFolderListttree.c: adding, removing or moving a folder
+    within the main folder tree will now automatically update the folder tree in
+    the search window. This closes #291.
 
 2013-07-14 Jens Langner <Jens.Langner@light-speed.de>
 

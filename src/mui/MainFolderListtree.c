@@ -48,6 +48,7 @@
 #include "MUIObjects.h"
 #include "Themes.h"
 
+#include "mui/FolderRequestListtree.h"
 #include "mui/ImageArea.h"
 #include "mui/MainFolderListtree.h"
 #include "mui/MainMailListGroup.h"
@@ -311,6 +312,10 @@ OVERLOAD(MUIM_NListtree_Insert)
         LockFolderList(G->folders);
         MoveFolderNode(G->folders, thisFNode, prevFNode);
         UnlockFolderList(G->folders);
+
+        // refresh a possibly existing folder tree in the search window
+        if(G->FI != NULL)
+          DoMethod(G->FI->GUI.LV_FOLDERS, MUIM_FolderRequestListtree_RefreshTree);
       }
     }
   }
@@ -354,6 +359,10 @@ OVERLOAD(MUIM_NListtree_Move)
     LockFolderList(G->folders);
     MoveFolderNode(G->folders, thisFNode, prevFNode);
     UnlockFolderList(G->folders);
+
+    // refresh a possibly existing folder tree in the search window
+    if(G->FI != NULL)
+      DoMethod(G->FI->GUI.LV_FOLDERS, MUIM_FolderRequestListtree_RefreshTree);
   }
 
   RETURN(0);

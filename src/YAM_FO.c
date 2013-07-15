@@ -58,6 +58,7 @@
 #include "YAM_utilities.h"
 
 #include "mui/ClassesExtra.h"
+#include "mui/FolderRequestListtree.h"
 #include "mui/IdentityChooser.h"
 #include "mui/ImageArea.h"
 #include "mui/MainFolderListtree.h"
@@ -1877,6 +1878,10 @@ HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
 
     // update the statistics in case the just deleted folder contained new or unread mail
     DisplayStatistics(NULL, TRUE);
+
+    // refresh a possibly existing folder tree in the search window
+    if(G->FI != NULL)
+      DoMethod(G->FI->GUI.LV_FOLDERS, MUIM_FolderRequestListtree_RefreshTree);
   }
   else
     D(DBF_FOLDER, "keeping folder '%s'", GetCurrentFolder()->Name);
@@ -1985,6 +1990,10 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
     // as well.
     if(nameChanged == TRUE && FolderIsUsedByFilters(oldfolder->Name) == TRUE)
       RenameFolderInFilters(oldfolder->Name, folder.Name);
+
+    // refresh a possibly existing folder tree in the search window
+    if(nameChanged == TRUE && G->FI != NULL)
+      DoMethod(G->FI->GUI.LV_FOLDERS, MUIM_FolderRequestListtree_RefreshTree);
 
     // copy the new Folder name
     strlcpy(oldfolder->Name, folder.Name, sizeof(oldfolder->Name));
@@ -2207,6 +2216,9 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
                 set(lv, MUIA_MainFolderListtree_ReorderFolderList, FALSE);
 
                 success = TRUE;
+
+                // No need to refresh a possibly existing folder tree in the search window here.
+                // This has been done by the MUIM_NListtree_Insert method above already.
               }
             }
           }
