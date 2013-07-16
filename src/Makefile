@@ -202,7 +202,7 @@ DEBUG    = -DDEBUG -fno-omit-frame-pointer #-O0
 DEBUGSYM = -g -gstabs
 CFLAGS   = -I. -I./include $(CPU) $(WARN) $(OPTFLAGS) $(DEBUG) $(DEBUGSYM)
 LDFLAGS  = $(CPU) $(DEBUGSYM)
-LDLIBS   = -L$(LIB) -lm
+LDLIBS   = -L$(LIB) -lm -ltz
 
 # different options per target OS
 ifeq ($(OS), os4)

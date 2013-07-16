@@ -2166,6 +2166,27 @@ time_t GetDateStamp(void)
   return seconds;
 }
 ///
+///
+enum DST GetDSTinfo(int year, int month, int day)
+{
+  struct tm a = {};
+  struct tm b;
+  a.tm_isdst = -1;
+  a.tm_mday = day;
+  a.tm_mon  = month - 1;
+  a.tm_year = year - 1900;
+  b = a;
+  a.tm_hour = 23;
+  a.tm_min = 59;
+  mktime(&a);
+  mktime(&b);
+
+  if      (a.tm_isdst  && b.tm_isdst)  return DST_ON;
+  else if (!a.tm_isdst && !b.tm_isdst) return DST_OFF;
+  else if (a.tm_isdst  && !b.tm_isdst) return DST_OFFTOON;
+  else                                 return DST_ONTOOFF;
+}
+///
 /// DateStampUTC
 //  gets the current system time in UTC
 void DateStampUTC(struct DateStamp *ds)

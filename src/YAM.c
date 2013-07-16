@@ -127,6 +127,8 @@
  Module: Root
 ***************************************************************************/
 
+extern char *tzname[2];
+
 struct Global *G = NULL;
 
 struct Args
@@ -2130,6 +2132,14 @@ static void InitBeforeLogin(BOOL hidden)
 
   // check the timezone/DST settings
   G->CO_DST = GetDST(FALSE);
+
+  tzset();
+  W(DBF_ALWAYS, "tzname: '%s' '%s'", tzname[0], tzname[1]);
+  W(DBF_ALWAYS, "DST1: %d", GetDSTinfo(2012, 3, 24)); // should return 0
+  W(DBF_ALWAYS, "DST2: %d", GetDSTinfo(2012, 3, 25)); // should return 2
+  W(DBF_ALWAYS, "DST3: %d", GetDSTinfo(2012, 3, 26)); // should return 1
+  W(DBF_ALWAYS, "DST4: %d", GetDSTinfo(2012, 5, 22)); // should return 1
+  W(DBF_ALWAYS, "tzname: '%s' '%s'", tzname[0], tzname[1]);
 
   // initialize the shared connection semaphore
   if(InitConnections() == FALSE)
