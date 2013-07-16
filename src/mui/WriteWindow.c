@@ -2619,6 +2619,7 @@ DECLARE(GetAttachmentEntry)
   DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, attach ? FALSE : TRUE, data->ST_CTYPE,
                                                                         data->ST_DESC,
                                                                         data->BT_DEL,
+                                                                        data->BT_RENAME,
                                                                         data->BT_DISPLAY, NULL);
 
   if(attach != NULL)

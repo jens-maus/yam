@@ -9,6 +9,8 @@ $URL$
 
   * YAM_AB.c, mui/AddrBookListtree.c: moved the AB_MakeFormat() function into a
     method of the listtree class.
+  * mui/WriteWindow.c: correctly change the state of the Rename button. This
+    somehow got lost.
 
 2013-07-15 Thore Böckelmann <tboeckel@gmx.de>
 
