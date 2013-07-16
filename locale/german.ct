@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.10 (12.07.2013)
+## version $VER: YAM.catalog 8.11 (16.07.2013)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -8827,4 +8827,22 @@ mindestens eine Bedingung muss erfüllt sein
 ;
 MSG_CO_CONDITION_MAX_ONE
 genau eine Bedingung muss erfüllt sein
+;
+MSG_WR_CMENU_TITLE
+Anhänge
+;
+MSG_WR_CMENU_ADD_ATTACHMENT
+Datei(en) hinzufügen...
+;
+MSG_WR_CMENU_ADD_ARCHIVE_ATTACHMENT
+Komprimiert hinzufügen...
+;
+MSG_WR_CMENU_DELETE_ATTACHMENT
+Löschen
+;
+MSG_WR_CMENU_RENAME_ATTACHMENT
+Umbenennen...
+;
+MSG_WR_CMENU_DISPLAY_ATTACHMENT
+Anzeigen
 ;

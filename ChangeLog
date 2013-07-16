@@ -11,6 +11,10 @@ $URL$
     method of the listtree class.
   * mui/WriteWindow.c: correctly change the state of the Rename button. This
     somehow got lost.
+  * mui/WriteWindow.c, mui/WriteAttachmentList.c: the write window now features a
+    small clone of the attachment list on the first page. A context menu allows
+    to perform the same actions as for the big list on the second page. This
+    closes #311.
 
 2013-07-15 Thore Böckelmann <tboeckel@gmx.de>
 

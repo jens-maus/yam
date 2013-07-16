@@ -40,6 +40,7 @@
 #include <libraries/gadtools.h>
 #include <libraries/iffparse.h>
 #include <mui/BetterString_mcc.h>
+#include <mui/NBalance_mcc.h>
 #include <mui/NList_mcc.h>
 #include <mui/NListview_mcc.h>
 #include <mui/TextEditor_mcc.h>
@@ -102,6 +103,8 @@ struct Data
   Object *TE_EDIT;
   Object *TO_TOOLBAR;
   Object *LV_ATTACH;
+  Object *GR_ATTACH_TINY;
+  Object *LV_ATTACH_TINY;
   Object *BT_ADD;
   Object *BT_ADDPACK;
   Object *BT_DEL;
@@ -1118,41 +1121,61 @@ OVERLOAD(OM_NEW)
               Child, VGroup,
                 MUIA_HelpNode, "Windows#WritewindowMessagesheet",
 
-                Child, data->GR_HEADER = ColGroup(2),
+                Child, HGroup,
+                  GroupSpacing(0),
+                  Child, HGroup,
+                    MUIA_HorizWeight, 75,
 
-                  Child, data->LB_FROM = Label(tr(MSG_WR_From)),
-                  Child, data->CY_FROM = IdentityChooserObject,
-                    MUIA_ControlChar, ShortCut(tr(MSG_WR_From)),
+                    Child, data->GR_HEADER = ColGroup(2),
+                      Child, data->LB_FROM = Label(tr(MSG_WR_From)),
+                      Child, data->CY_FROM = IdentityChooserObject,
+                        MUIA_ControlChar, ShortCut(tr(MSG_WR_From)),
+                      End,
+
+                      Child, data->LB_FROM_OVERRIDE = HGroup,
+                        MUIA_Group_PageMode, TRUE,
+                        MUIA_HorizWeight, 0,
+                        Child, HSpace(-1),
+                        Child, Label(tr(MSG_WR_From)),
+                      End,
+                      Child, data->GR_FROM_OVERRIDE = MakeAddressField(&data->ST_FROM_OVERRIDE, NULL, NULL, ABM_FROM, data->windowNumber, AFF_EXTERNAL_SHORTCUTS),
+
+                      Child, data->LB_TO = Label(tr(MSG_WR_To)),
+                      Child, data->GR_TO = MakeAddressField(&data->ST_TO, tr(MSG_WR_To), MSG_HELP_WR_ST_TO, ABM_TO, data->windowNumber, AFF_ALLOW_MULTI|AFF_EXTERNAL_SHORTCUTS),
+
+                      Child, data->LB_CC = Label("_CC"),
+                      Child, data->GR_CC = MakeAddressField(&data->ST_CC, tr(MSG_WR_CopyTo), MSG_HELP_WR_ST_CC, ABM_CC, data->windowNumber, AFF_ALLOW_MULTI|AFF_EXTERNAL_SHORTCUTS),
+
+                      Child, data->LB_BCC = Label("_BCC"),
+                      Child, data->GR_BCC = MakeAddressField(&data->ST_BCC, tr(MSG_WR_BlindCopyTo), MSG_HELP_WR_ST_BCC, ABM_BCC, data->windowNumber, AFF_ALLOW_MULTI|AFF_EXTERNAL_SHORTCUTS),
+
+                      Child, data->LB_REPLYTO = Label(tr(MSG_WR_ReplyTo)),
+                      Child, data->GR_REPLYTO = MakeAddressField(&data->ST_REPLYTO, tr(MSG_WR_ReplyTo), MSG_HELP_WR_ST_REPLYTO, ABM_REPLYTO, data->windowNumber, AFF_ALLOW_MULTI|AFF_EXTERNAL_SHORTCUTS),
+
+                      Child, data->LB_SUBJECT = Label(tr(MSG_WR_Subject)),
+                      Child, data->ST_SUBJECT = BetterStringObject,
+                        StringFrame,
+                        MUIA_BetterString_NoShortcuts, TRUE,
+                        MUIA_String_MaxLen,            SIZE_SUBJECT,
+                        MUIA_String_AdvanceOnCR,       TRUE,
+                        MUIA_ControlChar,              ShortCut(tr(MSG_WR_Subject)),
+                        MUIA_CycleChain,               TRUE,
+                      End,
+                    End,
                   End,
-
-                  Child, data->LB_FROM_OVERRIDE = HGroup,
-                    MUIA_Group_PageMode, TRUE,
-                    MUIA_HorizWeight, 0,
-                    Child, HSpace(-1),
-                    Child, Label(tr(MSG_WR_From)),
-                  End,
-                  Child, data->GR_FROM_OVERRIDE = MakeAddressField(&data->ST_FROM_OVERRIDE, NULL, NULL, ABM_FROM, data->windowNumber, AFF_EXTERNAL_SHORTCUTS),
-
-                  Child, data->LB_TO = Label(tr(MSG_WR_To)),
-                  Child, data->GR_TO = MakeAddressField(&data->ST_TO, tr(MSG_WR_To), MSG_HELP_WR_ST_TO, ABM_TO, data->windowNumber, AFF_ALLOW_MULTI|AFF_EXTERNAL_SHORTCUTS),
-
-                  Child, data->LB_CC = Label("_CC"),
-                  Child, data->GR_CC = MakeAddressField(&data->ST_CC, tr(MSG_WR_CopyTo), MSG_HELP_WR_ST_CC, ABM_CC, data->windowNumber, AFF_ALLOW_MULTI|AFF_EXTERNAL_SHORTCUTS),
-
-                  Child, data->LB_BCC = Label("_BCC"),
-                  Child, data->GR_BCC = MakeAddressField(&data->ST_BCC, tr(MSG_WR_BlindCopyTo), MSG_HELP_WR_ST_BCC, ABM_BCC, data->windowNumber, AFF_ALLOW_MULTI|AFF_EXTERNAL_SHORTCUTS),
-
-                  Child, data->LB_REPLYTO = Label(tr(MSG_WR_ReplyTo)),
-                  Child, data->GR_REPLYTO = MakeAddressField(&data->ST_REPLYTO, tr(MSG_WR_ReplyTo), MSG_HELP_WR_ST_REPLYTO, ABM_REPLYTO, data->windowNumber, AFF_ALLOW_MULTI|AFF_EXTERNAL_SHORTCUTS),
-
-                  Child, data->LB_SUBJECT = Label(tr(MSG_WR_Subject)),
-                  Child, data->ST_SUBJECT = BetterStringObject,
-                    StringFrame,
-                    MUIA_BetterString_NoShortcuts, TRUE,
-                    MUIA_String_MaxLen,            SIZE_SUBJECT,
-                    MUIA_String_AdvanceOnCR,       TRUE,
-                    MUIA_ControlChar,              ShortCut(tr(MSG_WR_Subject)),
-                    MUIA_CycleChain,               TRUE,
+                  Child, data->GR_ATTACH_TINY = HGroup,
+                    GroupSpacing(0),
+                    MUIA_ShowMe, FALSE,
+                    MUIA_HorizWeight, 25,
+                    Child, NBalanceObject,
+                      MUIA_Balance_Quiet, TRUE,
+                    End,
+                    Child, NListviewObject,
+                      MUIA_CycleChain, TRUE,
+                      MUIA_NListview_NList, data->LV_ATTACH_TINY = WriteAttachmentListObject,
+                        MUIA_WriteAttachmentList_Tiny, TRUE,
+                      End,
+                    End,
                   End,
                 End,
 
@@ -1360,21 +1383,22 @@ OVERLOAD(OM_NEW)
                                                               NULL);
 
         // set the help elements of our GUI gadgets
-        SetHelp(data->ST_SUBJECT,   MSG_HELP_WR_ST_SUBJECT);
-        SetHelp(data->BT_ADD,       MSG_HELP_WR_BT_ADD);
-        SetHelp(data->BT_ADDPACK,   MSG_HELP_WR_BT_ADDPACK);
-        SetHelp(data->BT_DEL,       MSG_HELP_WR_BT_DEL);
-        SetHelp(data->BT_DISPLAY,   MSG_HELP_WR_BT_DISPLAY);
-        SetHelp(data->ST_CTYPE,     MSG_HELP_WR_ST_CTYPE);
-        SetHelp(data->ST_DESC,      MSG_HELP_WR_ST_DESC);
-        SetHelp(data->ST_EXTHEADER, MSG_HELP_WR_ST_EXTHEADER);
-        SetHelp(data->CH_DELSEND,   MSG_HELP_WR_CH_DELSEND);
-        SetHelp(data->CH_MDN,       MSG_HELP_WR_CH_RECEIPT);
-        SetHelp(data->CH_ADDINFO,   MSG_HELP_WR_CH_ADDINFO);
-        SetHelp(data->CY_IMPORTANCE,MSG_HELP_WR_CY_IMPORTANCE);
-        SetHelp(data->CY_SIGNATURE, MSG_HELP_WR_CY_SIGNATURE);
-        SetHelp(data->CY_SECURITY,  MSG_HELP_WR_CY_SECURITY);
-        SetHelp(data->LV_ATTACH,    MSG_HELP_WR_LV_ATTACH);
+        SetHelp(data->ST_SUBJECT,     MSG_HELP_WR_ST_SUBJECT);
+        SetHelp(data->BT_ADD,         MSG_HELP_WR_BT_ADD);
+        SetHelp(data->BT_ADDPACK,     MSG_HELP_WR_BT_ADDPACK);
+        SetHelp(data->BT_DEL,         MSG_HELP_WR_BT_DEL);
+        SetHelp(data->BT_DISPLAY,     MSG_HELP_WR_BT_DISPLAY);
+        SetHelp(data->ST_CTYPE,       MSG_HELP_WR_ST_CTYPE);
+        SetHelp(data->ST_DESC,        MSG_HELP_WR_ST_DESC);
+        SetHelp(data->ST_EXTHEADER,   MSG_HELP_WR_ST_EXTHEADER);
+        SetHelp(data->CH_DELSEND,     MSG_HELP_WR_CH_DELSEND);
+        SetHelp(data->CH_MDN,         MSG_HELP_WR_CH_RECEIPT);
+        SetHelp(data->CH_ADDINFO,     MSG_HELP_WR_CH_ADDINFO);
+        SetHelp(data->CY_IMPORTANCE,  MSG_HELP_WR_CY_IMPORTANCE);
+        SetHelp(data->CY_SIGNATURE,   MSG_HELP_WR_CY_SIGNATURE);
+        SetHelp(data->CY_SECURITY,    MSG_HELP_WR_CY_SECURITY);
+        SetHelp(data->LV_ATTACH,      MSG_HELP_WR_LV_ATTACH);
+        SetHelp(data->LV_ATTACH_TINY, MSG_HELP_WR_LV_ATTACH);
 
         // set the menuitem notifies
         DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_NEW,         data->TE_EDIT, 1, MUIM_TextEditor_ClearText);
@@ -1482,36 +1506,38 @@ OVERLOAD(OM_NEW)
         DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen,           11,              data->MI_COLORED,   3, MUIM_NoNotifySet, MUIA_Menuitem_Checked, FALSE);
         DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen,           12,              data->MI_COLORED,   3, MUIM_NoNotifySet, MUIA_Menuitem_Checked, FALSE);
 
-        DoMethod(data->MI_BOLD,      MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, obj, 3, METHOD(SetSoftStyle), SSM_BOLD, ORIGIN_MENU);
-        DoMethod(data->MI_ITALIC,    MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, obj, 3, METHOD(SetSoftStyle), SSM_ITALIC, ORIGIN_MENU);
-        DoMethod(data->MI_UNDERLINE, MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, obj, 3, METHOD(SetSoftStyle), SSM_UNDERLINE, ORIGIN_MENU);
-        DoMethod(data->MI_COLORED,   MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, obj, 3, METHOD(SetSoftStyle), SSM_COLOR, ORIGIN_MENU);
+        DoMethod(data->MI_BOLD,        MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, obj, 3, METHOD(SetSoftStyle), SSM_BOLD, ORIGIN_MENU);
+        DoMethod(data->MI_ITALIC,      MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, obj, 3, METHOD(SetSoftStyle), SSM_ITALIC, ORIGIN_MENU);
+        DoMethod(data->MI_UNDERLINE,   MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, obj, 3, METHOD(SetSoftStyle), SSM_UNDERLINE, ORIGIN_MENU);
+        DoMethod(data->MI_COLORED,     MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, obj, 3, METHOD(SetSoftStyle), SSM_COLOR, ORIGIN_MENU);
 
-        DoMethod(data->RG_PAGE,      MUIM_Notify, MUIA_Group_ActivePage,   0, MUIV_Notify_Window, 3, MUIM_Set, MUIA_Window_ActiveObject, data->TE_EDIT);
-        DoMethod(data->RG_PAGE,      MUIM_Notify, MUIA_Group_ActivePage,   1, MUIV_Notify_Window, 3, MUIM_Set, MUIA_Window_ActiveObject, data->LV_ATTACH);
-        DoMethod(data->ST_SUBJECT,   MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, MUIV_Notify_Window, 3, MUIM_Set, MUIA_Window_ActiveObject, data->TE_EDIT);
-        DoMethod(data->ST_SUBJECT,   MUIM_Notify, MUIA_String_Contents,    MUIV_EveryTime, obj, 1, METHOD(UpdateWindowTitle));
-        DoMethod(data->BT_ADD,       MUIM_Notify, MUIA_Pressed,            FALSE,          obj, 2, METHOD(RequestAttachment), C->AttachDir);
-        DoMethod(data->BT_ADDPACK,   MUIM_Notify, MUIA_Pressed,            FALSE,          obj, 1, METHOD(AddArchive));
-        DoMethod(data->BT_DEL,       MUIM_Notify, MUIA_Pressed,            FALSE,          obj, 1, METHOD(DeleteAttachment));
-        DoMethod(data->BT_RENAME,    MUIM_Notify, MUIA_Pressed,            FALSE,          obj, 1, METHOD(RenameAttachment));
-        DoMethod(data->BT_DISPLAY,   MUIM_Notify, MUIA_Pressed,            FALSE,          obj, 1, METHOD(DisplayAttachment));
-        DoMethod(data->LV_ATTACH,    MUIM_Notify, MUIA_NList_DoubleClick,  MUIV_EveryTime, obj, 1, METHOD(DisplayAttachment));
-        DoMethod(data->LV_ATTACH,    MUIM_Notify, MUIA_NList_Active,       MUIV_EveryTime, obj, 1, METHOD(GetAttachmentEntry));
-        DoMethod(data->ST_CTYPE,     MUIM_Notify, MUIA_String_Contents,    MUIV_EveryTime, obj, 1, METHOD(PutAttachmentEntry));
-        DoMethod(data->ST_DESC,      MUIM_Notify, MUIA_String_Contents,    MUIV_EveryTime, obj, 1, METHOD(PutAttachmentEntry));
-        DoMethod(data->CH_DELSEND,   MUIM_Notify, MUIA_Selected,           MUIV_EveryTime, data->MI_DELSEND,        3, MUIM_Set,      MUIA_Menuitem_Checked, MUIV_TriggerValue);
-        DoMethod(data->CH_MDN,       MUIM_Notify, MUIA_Selected,           MUIV_EveryTime, data->MI_MDN,            3, MUIM_Set,      MUIA_Menuitem_Checked, MUIV_TriggerValue);
-        DoMethod(data->CH_ADDINFO,   MUIM_Notify, MUIA_Selected,           MUIV_EveryTime, data->MI_ADDINFO,        3, MUIM_Set,      MUIA_Menuitem_Checked, MUIV_TriggerValue);
-        DoMethod(data->MI_AUTOSPELL, MUIM_Notify, MUIA_Menuitem_Checked,   MUIV_EveryTime, data->TE_EDIT,           3, MUIM_Set,      MUIA_TextEditor_TypeAndSpell, MUIV_TriggerValue);
-        DoMethod(data->MI_AUTOWRAP,  MUIM_Notify, MUIA_Menuitem_Checked,   TRUE,           data->TE_EDIT,           3, MUIM_Set,      MUIA_TextEditor_WrapBorder, C->EdWrapCol);
-        DoMethod(data->MI_AUTOWRAP,  MUIM_Notify, MUIA_Menuitem_Checked,   FALSE,          data->TE_EDIT,           3, MUIM_Set,      MUIA_TextEditor_WrapBorder, 0);
-        DoMethod(data->MI_DELSEND,   MUIM_Notify, MUIA_Menuitem_Checked,   MUIV_EveryTime, data->CH_DELSEND,        3, MUIM_Set,      MUIA_Selected, MUIV_TriggerValue);
-        DoMethod(data->MI_MDN,       MUIM_Notify, MUIA_Menuitem_Checked,   MUIV_EveryTime, data->CH_MDN,            3, MUIM_Set,      MUIA_Selected, MUIV_TriggerValue);
-        DoMethod(data->MI_ADDINFO,   MUIM_Notify, MUIA_Menuitem_Checked,   MUIV_EveryTime, data->CH_ADDINFO,        3, MUIM_Set,      MUIA_Selected, MUIV_TriggerValue);
-        DoMethod(data->MI_FFONT,     MUIM_Notify, MUIA_Menuitem_Checked,   MUIV_EveryTime, obj, 1, METHOD(StyleOptionsChanged));
-        DoMethod(data->MI_TCOLOR,    MUIM_Notify, MUIA_Menuitem_Checked,   MUIV_EveryTime, obj, 1, METHOD(StyleOptionsChanged));
-        DoMethod(data->MI_TSTYLE,    MUIM_Notify, MUIA_Menuitem_Checked,   MUIV_EveryTime, obj, 1, METHOD(StyleOptionsChanged));
+        DoMethod(data->RG_PAGE,        MUIM_Notify, MUIA_Group_ActivePage,   0, MUIV_Notify_Window, 3, MUIM_Set, MUIA_Window_ActiveObject, data->TE_EDIT);
+        DoMethod(data->RG_PAGE,        MUIM_Notify, MUIA_Group_ActivePage,   1, MUIV_Notify_Window, 3, MUIM_Set, MUIA_Window_ActiveObject, data->LV_ATTACH);
+        DoMethod(data->ST_SUBJECT,     MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, MUIV_Notify_Window, 3, MUIM_Set, MUIA_Window_ActiveObject, data->TE_EDIT);
+        DoMethod(data->ST_SUBJECT,     MUIM_Notify, MUIA_String_Contents,    MUIV_EveryTime, obj, 1, METHOD(UpdateWindowTitle));
+        DoMethod(data->BT_ADD,         MUIM_Notify, MUIA_Pressed,            FALSE,          obj, 2, METHOD(RequestAttachment), C->AttachDir);
+        DoMethod(data->BT_ADDPACK,     MUIM_Notify, MUIA_Pressed,            FALSE,          obj, 1, METHOD(AddArchive));
+        DoMethod(data->BT_DEL,         MUIM_Notify, MUIA_Pressed,            FALSE,          obj, 1, METHOD(DeleteAttachment));
+        DoMethod(data->BT_RENAME,      MUIM_Notify, MUIA_Pressed,            FALSE,          obj, 1, METHOD(RenameAttachment));
+        DoMethod(data->BT_DISPLAY,     MUIM_Notify, MUIA_Pressed,            FALSE,          obj, 1, METHOD(DisplayAttachment));
+        DoMethod(data->LV_ATTACH,      MUIM_Notify, MUIA_NList_DoubleClick,  MUIV_EveryTime, obj, 1, METHOD(DisplayAttachment));
+        DoMethod(data->LV_ATTACH,      MUIM_Notify, MUIA_NList_Active,       MUIV_EveryTime, obj, 1, METHOD(GetAttachmentEntry));
+        DoMethod(data->LV_ATTACH_TINY, MUIM_Notify, MUIA_NList_DoubleClick,  MUIV_EveryTime, obj, 1, METHOD(DisplayAttachment));
+        DoMethod(data->LV_ATTACH_TINY, MUIM_Notify, MUIA_NList_Active,       MUIV_EveryTime, obj, 1, METHOD(GetAttachmentEntry));
+        DoMethod(data->ST_CTYPE,       MUIM_Notify, MUIA_String_Contents,    MUIV_EveryTime, obj, 1, METHOD(PutAttachmentEntry));
+        DoMethod(data->ST_DESC,        MUIM_Notify, MUIA_String_Contents,    MUIV_EveryTime, obj, 1, METHOD(PutAttachmentEntry));
+        DoMethod(data->CH_DELSEND,     MUIM_Notify, MUIA_Selected,           MUIV_EveryTime, data->MI_DELSEND,        3, MUIM_Set,      MUIA_Menuitem_Checked, MUIV_TriggerValue);
+        DoMethod(data->CH_MDN,         MUIM_Notify, MUIA_Selected,           MUIV_EveryTime, data->MI_MDN,            3, MUIM_Set,      MUIA_Menuitem_Checked, MUIV_TriggerValue);
+        DoMethod(data->CH_ADDINFO,     MUIM_Notify, MUIA_Selected,           MUIV_EveryTime, data->MI_ADDINFO,        3, MUIM_Set,      MUIA_Menuitem_Checked, MUIV_TriggerValue);
+        DoMethod(data->MI_AUTOSPELL,   MUIM_Notify, MUIA_Menuitem_Checked,   MUIV_EveryTime, data->TE_EDIT,           3, MUIM_Set,      MUIA_TextEditor_TypeAndSpell, MUIV_TriggerValue);
+        DoMethod(data->MI_AUTOWRAP,    MUIM_Notify, MUIA_Menuitem_Checked,   TRUE,           data->TE_EDIT,           3, MUIM_Set,      MUIA_TextEditor_WrapBorder, C->EdWrapCol);
+        DoMethod(data->MI_AUTOWRAP,    MUIM_Notify, MUIA_Menuitem_Checked,   FALSE,          data->TE_EDIT,           3, MUIM_Set,      MUIA_TextEditor_WrapBorder, 0);
+        DoMethod(data->MI_DELSEND,     MUIM_Notify, MUIA_Menuitem_Checked,   MUIV_EveryTime, data->CH_DELSEND,        3, MUIM_Set,      MUIA_Selected, MUIV_TriggerValue);
+        DoMethod(data->MI_MDN,         MUIM_Notify, MUIA_Menuitem_Checked,   MUIV_EveryTime, data->CH_MDN,            3, MUIM_Set,      MUIA_Selected, MUIV_TriggerValue);
+        DoMethod(data->MI_ADDINFO,     MUIM_Notify, MUIA_Menuitem_Checked,   MUIV_EveryTime, data->CH_ADDINFO,        3, MUIM_Set,      MUIA_Selected, MUIV_TriggerValue);
+        DoMethod(data->MI_FFONT,       MUIM_Notify, MUIA_Menuitem_Checked,   MUIV_EveryTime, obj, 1, METHOD(StyleOptionsChanged));
+        DoMethod(data->MI_TCOLOR,      MUIM_Notify, MUIA_Menuitem_Checked,   MUIV_EveryTime, obj, 1, METHOD(StyleOptionsChanged));
+        DoMethod(data->MI_TSTYLE,      MUIM_Notify, MUIA_Menuitem_Checked,   MUIV_EveryTime, obj, 1, METHOD(StyleOptionsChanged));
 
         // set the notifies for the importance cycle gadget
         DoMethod(data->CY_IMPORTANCE, MUIM_Notify, MUIA_Cycle_Active,      0,              menuStripObject,         4, MUIM_SetUData, WMEN_IMPORT0, MUIA_Menuitem_Checked, TRUE);
@@ -1535,6 +1561,10 @@ OVERLOAD(OM_NEW)
 
         // set notify for signature cycle gadget
         DoMethod(data->CY_SIGNATURE, MUIM_Notify, MUIA_SignatureChooser_Signature, MUIV_EveryTime, obj, 1, METHOD(SignatureChanged));
+
+        // tell the two attachment list which other object is to be kept in sync
+        set(data->LV_ATTACH,      MUIA_WriteAttachmentList_SyncList, data->LV_ATTACH_TINY);
+        set(data->LV_ATTACH_TINY, MUIA_WriteAttachmentList_SyncList, data->LV_ATTACH);
 
         // hide optional recipient string object depending on their
         // defaults
@@ -2048,7 +2078,7 @@ DECLARE(EditActionPerformed) // enum EditAction action
         {
           DoMethod(actObj, MUIM_BetterString_DoAction, MUIV_BetterString_DoAction_Copy);
         }
-        else if(actObj == data->LV_ATTACH)
+        else if(actObj == data->LV_ATTACH || actObj == data->LV_ATTACH_TINY)
         {
           DoMethod(actObj, MUIM_NList_CopyToClip, MUIV_NList_CopyToClip_Active, 0, NULL, NULL);
         }
@@ -3205,6 +3235,7 @@ DECLARE(AddAttachment) // const char *filename, const char *name, ULONG istemp
       // it active.
       DoMethod(data->LV_ATTACH, MUIM_NList_InsertSingle, &attach, MUIV_NList_Insert_Bottom);
       set(data->LV_ATTACH, MUIA_NList_Active, MUIV_NList_Active_Bottom);
+      set(data->GR_ATTACH_TINY, MUIA_ShowMe, TRUE);
 
       // the mail is modified
       data->mailModified = TRUE;

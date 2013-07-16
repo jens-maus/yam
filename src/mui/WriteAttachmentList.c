@@ -44,36 +44,95 @@
 
 #include "mui/AttachmentImage.h"
 #include "mui/MainMailListGroup.h"
+#include "mui/WriteWindow.h"
 
 #include "Debug.h"
 
 /* CLASSDATA
 struct Data
 {
+  Object *contextMenu;
+  Object *syncList;
   char sizeBuffer[SIZE_SMALL];
+  BOOL tiny;
+  BOOL syncing;
 };
 */
+
+enum
+{
+  CMN_ADD=10,
+  CMN_ADDPACK,
+  CMN_DELETE,
+  CMN_RENAME,
+  CMN_DISPLAY,
+};
 
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
+  BOOL tiny;
+
   ENTER();
 
-  obj = DoSuperNew(cl, obj,
+  tiny = (BOOL)GetTagData(ATTR(Tiny), FALSE, inittags(msg));
+
+  if((obj = DoSuperNew(cl, obj,
 
     InputListFrame,
     MUIA_NList_ActiveObjectOnClick,  TRUE,
     MUIA_NList_DefaultObjectOnClick, FALSE,
     MUIA_NList_DragType,             MUIV_NList_DragType_Immediate,
     MUIA_NList_DragSortable,         TRUE,
-    MUIA_NList_Format,               "D=8 BAR,P=\033r D=8 BAR,D=8 BAR,",
-    MUIA_NList_Title,                TRUE,
+    MUIA_NList_Format,               (tiny == FALSE) ? "D=8 BAR,P=\033r D=8 BAR,D=8 BAR," : "PCS=R,P=\033r",
+    MUIA_NList_Title,                (tiny == FALSE),
+    MUIA_ContextMenu,                MUIV_NList_ContextMenu_Always,
 
-    TAG_MORE, inittags(msg));
+    TAG_MORE, inittags(msg))) != NULL)
+  {
+    GETDATA;
+
+    data->tiny = tiny;
+  }
 
   RETURN((IPTR)obj);
   return (IPTR)obj;
+}
+
+///
+/// OVERLOAD(OM_DISPOSE)
+OVERLOAD(OM_DISPOSE)
+{
+  GETDATA;
+
+  if(data->contextMenu != NULL)
+    MUI_DisposeObject(data->contextMenu);
+
+  return DoSuperMethodA(cl, obj, msg);
+}
+
+///
+/// OVERLOAD(OM_SET)
+OVERLOAD(OM_SET)
+{
+  GETDATA;
+  struct TagItem *tags = inittags(msg), *tag;
+
+  while((tag = NextTagItem((APTR)&tags)) != NULL)
+  {
+    switch(tag->ti_Tag)
+    {
+      case ATTR(SyncList):
+      {
+        data->syncList = (Object *)tag->ti_Data;
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
+    }
+  }
+
+  return DoSuperMethodA(cl, obj, msg);
 }
 
 ///
@@ -199,6 +258,84 @@ OVERLOAD(MUIM_DragDrop)
 }
 
 ///
+/// OVERLOAD(MUIM_NList_ContextMenuBuild)
+OVERLOAD(MUIM_NList_ContextMenuBuild)
+{
+  GETDATA;
+  struct MUIP_NList_ContextMenuBuild *m = (struct MUIP_NList_ContextMenuBuild *)msg;
+
+  ENTER();
+
+  // dispose the old context_menu if it still exists
+  if(data->contextMenu)
+  {
+    MUI_DisposeObject(data->contextMenu);
+    data->contextMenu = NULL;
+  }
+
+  if(!m->ontop)
+  {
+    struct Attach *attach = NULL;
+
+    DoMethod(obj, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &attach);
+
+    // We create the ContextMenu now
+    data->contextMenu = MenustripObject,
+      Child, MenuObjectT(tr(MSG_WR_CMENU_TITLE)),
+        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_CMENU_ADD_ATTACHMENT),         MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, CMN_ADD,     End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_CMENU_ADD_ARCHIVE_ATTACHMENT), MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, CMN_ADDPACK, End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_CMENU_DELETE_ATTACHMENT),      MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, CMN_DELETE,  MUIA_Menuitem_Enabled, attach != NULL, End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_CMENU_RENAME_ATTACHMENT),      MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, CMN_RENAME,  MUIA_Menuitem_Enabled, attach != NULL, End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_CMENU_DISPLAY_ATTACHMENT),     MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, CMN_DISPLAY, MUIA_Menuitem_Enabled, attach != NULL, End,
+      End,
+    End;
+  }
+
+  RETURN((IPTR)data->contextMenu);
+  return (IPTR)data->contextMenu;
+}
+
+///
+/// OVERLOAD(MUIM_ContextMenuChoice)
+OVERLOAD(MUIM_ContextMenuChoice)
+{
+  struct MUIP_ContextMenuChoice *m = (struct MUIP_ContextMenuChoice *)msg;
+  ULONG result = 0;
+
+  ENTER();
+
+  switch(xget(m->item, MUIA_UserData))
+  {
+    case CMN_ADD:
+      DoMethod(_win(obj), MUIM_WriteWindow_RequestAttachment, C->AttachDir);
+    break;
+
+    case CMN_ADDPACK:
+      DoMethod(_win(obj), MUIM_WriteWindow_AddArchive);
+    break;
+
+    case CMN_DELETE:
+      DoMethod(_win(obj), MUIM_WriteWindow_DeleteAttachment);
+    break;
+
+    case CMN_RENAME:
+      DoMethod(_win(obj), MUIM_WriteWindow_RenameAttachment);
+    break;
+
+    case CMN_DISPLAY:
+      DoMethod(_win(obj), MUIM_WriteWindow_DisplayAttachment);
+    break;
+
+    default:
+      result = DoSuperMethodA(cl, obj, (Msg)msg);
+    break;
+  }
+
+  RETURN(result);
+  return result;
+}
+
+///
 /// OVERLOAD(MUIM_NList_Construct)
 OVERLOAD(MUIM_NList_Construct)
 {
@@ -236,25 +373,30 @@ OVERLOAD(MUIM_NList_Display)
 {
   struct MUIP_NList_Display *ndm = (struct MUIP_NList_Display *)msg;
   struct Attach *entry = (struct Attach *)ndm->entry;
+  GETDATA;
 
   ENTER();
 
   if(entry != NULL)
   {
-    GETDATA;
-
     FormatSize(entry->Size, data->sizeBuffer, sizeof(data->sizeBuffer), SF_AUTO);
     ndm->strings[0] = entry->Name;
     ndm->strings[1] = data->sizeBuffer;
-    ndm->strings[2] = (STRPTR)DescribeCT(entry->ContentType);
-    ndm->strings[3] = entry->Description;
+    if(data->tiny == FALSE)
+    {
+      ndm->strings[2] = (STRPTR)DescribeCT(entry->ContentType);
+      ndm->strings[3] = entry->Description;
+    }
   }
   else
   {
     ndm->strings[0] = (STRPTR)tr(MSG_WR_TitleFile);
     ndm->strings[1] = (STRPTR)tr(MSG_WR_TitleSize);
-    ndm->strings[2] = (STRPTR)tr(MSG_WR_TitleContents);
-    ndm->strings[3] = (STRPTR)tr(MSG_WR_TitleDescription);
+    if(data->tiny == FALSE)
+    {
+      ndm->strings[2] = (STRPTR)tr(MSG_WR_TitleContents);
+      ndm->strings[3] = (STRPTR)tr(MSG_WR_TitleDescription);
+    }
   }
 
   RETURN(0);
@@ -262,8 +404,108 @@ OVERLOAD(MUIM_NList_Display)
 }
 
 ///
+/// OVERLOAD(MUIM_NList_Insert)
+OVERLOAD(MUIM_NList_Insert)
+{
+  ULONG rc;
+  GETDATA;
+
+  ENTER();
+
+  rc = DoSuperMethodA(cl, obj, msg);
+  if(rc != (ULONG)NULL && data->syncing == FALSE && data->syncList != NULL)
+    DoMethod(data->syncList, METHOD(Sync), obj);
+
+  RETURN(rc);
+  return rc;
+}
+
+///
+/// OVERLOAD(MUIM_NList_InsertSingle)
+OVERLOAD(MUIM_NList_InsertSingle)
+{
+  ULONG rc;
+  GETDATA;
+
+  ENTER();
+
+  rc = DoSuperMethodA(cl, obj, msg);
+  if(rc != (ULONG)NULL && data->syncing == FALSE && data->syncList != NULL)
+    DoMethod(data->syncList, METHOD(Sync), obj);
+
+  RETURN(rc);
+  return rc;
+}
+
+///
+/// OVERLOAD(MUIM_NList_Remove)
+OVERLOAD(MUIM_NList_Remove)
+{
+  ULONG rc;
+  GETDATA;
+
+  ENTER();
+
+  rc = DoSuperMethodA(cl, obj, msg);
+  if(rc != FALSE && data->syncing == FALSE && data->syncList != NULL)
+    DoMethod(data->syncList, METHOD(Sync), obj);
+
+  RETURN(rc);
+  return rc;
+}
+
+///
+/// OVERLOAD(MUIM_NList_Move)
+OVERLOAD(MUIM_NList_Move)
+{
+  ULONG rc;
+  GETDATA;
+
+  ENTER();
+
+  rc = DoSuperMethodA(cl, obj, msg);
+  if(rc != FALSE && data->syncing == FALSE && data->syncList != NULL)
+    DoMethod(data->syncList, METHOD(Sync), obj);
+
+  RETURN(rc);
+  return rc;
+}
+
+///
 
 /* Private Functions */
 
 /* Public Methods */
+/// DECLARE(Sync)
+// get ourselves in sync with the sync list object
+DECLARE(Sync) // Object *source
+{
+  GETDATA;
+  ULONG i;
+  struct Attach *attach;
 
+  ENTER();
+
+  data->syncing = TRUE;
+  set(obj, MUIA_NList_Quiet, TRUE);
+
+  DoMethod(obj, MUIM_NList_Clear);
+  i = 0;
+  do
+  {
+    if((attach = (struct Attach *)DoMethod(msg->source, MUIM_NList_GetEntry, i, NULL)) != NULL)
+    {
+      DoMethod(obj, MUIM_NList_InsertSingle, attach, MUIV_NList_Insert_Bottom);
+      i++;
+    }
+  }
+  while(attach != NULL);
+
+  set(obj, MUIA_NList_Quiet, FALSE);
+  data->syncing = FALSE;
+
+  RETURN(0);
+  return 0;
+}
+
+///
