@@ -69,7 +69,6 @@ struct Data
   struct DiskObject *diskObject;
   struct DiskObject *drawDiskObject;
   struct Part *mailPart;
-  struct Attach *attachment;
 
   struct BitMap *normalBitMap;
   struct BitMap *selectedBitMap;
@@ -255,10 +254,9 @@ static void LoadImage(struct IClass *cl, Object *obj)
 
   ENTER();
 
-  if((data->mailPart != NULL || data->attachment != NULL) && data->maxWidth != 0 && data->maxHeight != 0)
+  if(data->mailPart != NULL && data->maxWidth != 0 && data->maxHeight != 0)
   {
     struct Part *mailPart = data->mailPart;
-    struct Attach *attachment = data->attachment;
     char *iconFile = NULL;
     struct DiskObject *diskObject = NULL;
     struct Rectangle sizeBounds;
@@ -266,13 +264,9 @@ static void LoadImage(struct IClass *cl, Object *obj)
     // we first make sure we have freed everything
     UnloadImage(data);
 
-    if(mailPart != NULL && isDecoded(mailPart) == TRUE && mailPart->Filename[0] != '\0')
+    if(isDecoded(mailPart) == TRUE && mailPart->Filename[0] != '\0')
     {
       iconFile = mailPart->Filename;
-    }
-    else if(attachment != NULL && attachment->FilePath[0] != '\0')
-    {
-      iconFile = attachment->FilePath;
     }
 
     // Set up the minimum and maximum sizes for the icons to take the dirty work
@@ -306,42 +300,31 @@ static void LoadImage(struct IClass *cl, Object *obj)
     // and load a default icon for a specific ContentType
     if(diskObject == NULL)
     {
-      char *contentType = NULL;
-
       // use the supplied attachment file name no matter if the file
       // itself is available or not
-      if(mailPart != NULL)
-      {
-        iconFile = mailPart->Name;
-        contentType = mailPart->ContentType;
-      }
-      else if(attachment != NULL)
-      {
-        iconFile = attachment->Name;
-        contentType = attachment->ContentType;
-      }
+      iconFile = mailPart->Name;
 
       // with icon.library v44+ we can use GetIconTags again.
-      if(LIB_VERSION_IS_AT_LEAST(IconBase, 44, 0) == TRUE && contentType != NULL)
+      if(LIB_VERSION_IS_AT_LEAST(IconBase, 44, 0) == TRUE && mailPart->ContentType != NULL)
       {
         const char *def = NULL;
 
         // build the default name now
-        if(strnicmp(contentType, "image", 5) == 0)
+        if(strnicmp(mailPart->ContentType, "image", 5) == 0)
         {
           def = "picture";
         }
-        else if(strnicmp(contentType, "audio", 5) == 0)
+        else if(strnicmp(mailPart->ContentType, "audio", 5) == 0)
         {
           def = "audio";
         }
-        else if(strnicmp(contentType, "text", 4) == 0)
+        else if(strnicmp(mailPart->ContentType, "text", 4) == 0)
         {
-          if(strlen(contentType) > 5)
+          if(strlen(mailPart->ContentType) > 5)
           {
-            if(strnicmp((contentType)+5, "html", 4) == 0)
+            if(strnicmp((mailPart->ContentType)+5, "html", 4) == 0)
               def = "html";
-            else if(strnicmp((contentType)+5, "plain", 5) == 0)
+            else if(strnicmp((mailPart->ContentType)+5, "plain", 5) == 0)
               def = "ascii";
             else
               def = "text";
@@ -751,7 +734,6 @@ OVERLOAD(OM_NEW)
       switch(tag->ti_Tag)
       {
         case ATTR(MailPart)  : data->mailPart = (struct Part *)tag->ti_Data; break;
-        case ATTR(Attachment): data->attachment = (struct Attach *)tag->ti_Data; break;
         case ATTR(MaxHeight) : data->maxHeight = (ULONG)tag->ti_Data; break;
         case ATTR(MaxWidth)  : data->maxWidth  = (ULONG)tag->ti_Data; break;
         case ATTR(Group)     : data->attachmentGroup = (Object *)tag->ti_Data; break;
@@ -786,7 +768,6 @@ OVERLOAD(OM_GET)
     case ATTR(DoubleClick) : *store = 1; return TRUE;
     case ATTR(DropPath)    : *store = (ULONG)data->dropPath;   return TRUE;
     case ATTR(MailPart)    : *store = (ULONG)data->mailPart;   return TRUE;
-    case ATTR(Attachment)  : *store = (ULONG)data->attachment; return TRUE;
     case ATTR(DiskObject)  : *store = (ULONG)data->diskObject; return TRUE;
   }
 
@@ -842,7 +823,7 @@ OVERLOAD(MUIM_Setup)
   // call the method of the superclass first
   result = DoSuperMethodA(cl, obj, msg);
 
-  if(result != 0 && (data->mailPart != NULL || data->attachment != NULL))
+  if(result != 0 && data->mailPart != NULL)
   {
     // make sure to load/reload the attachment image
     LoadImage(cl, obj);
@@ -1337,24 +1318,6 @@ OVERLOAD(MUIM_CreateShortHelp)
                                                       mp->Description,
                                                       DescribeCT(mp->ContentType),
                                                       mp->ContentType,
-                                                      sizestr) == -1)
-    {
-      shortHelp = NULL;
-    }
-  }
-  else if(data->attachment != NULL)
-  {
-    struct Attach *att = data->attachment;
-    char sizestr[SIZE_DEFAULT];
-
-    FormatSize(att->Size, sizestr, sizeof(sizestr), SF_AUTO);
-
-    #warning use different string
-    if(asprintf(&shortHelp, tr(MSG_MA_MIMEPART_INFO), 0,
-                                                      att->Name,
-                                                      att->Description,
-                                                      DescribeCT(att->ContentType),
-                                                      att->ContentType,
                                                       sizestr) == -1)
     {
       shortHelp = NULL;

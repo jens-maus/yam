@@ -64,7 +64,6 @@ struct Data
   Object *textObject;
   Object *attGroupObject;
   struct Part *mailPart;
-  struct Attach *attachment;
   char menuTitle[SIZE_DEFAULT];
   char descriptionBuffer[SIZE_PATH + SIZE_DEFAULT * 2];
 };
@@ -95,7 +94,6 @@ OVERLOAD(OM_NEW)
   Object *textObject;
   Object *attGroupObject = NULL;
   struct Part *mailPart = NULL;
-  struct Attach *attachment = NULL;
   struct TagItem *tags = inittags(msg);
   struct TagItem *tag;
 
@@ -107,7 +105,6 @@ OVERLOAD(OM_NEW)
     switch(tag->ti_Tag)
     {
       case ATTR(MailPart):   mailPart = (struct Part *)tag->ti_Data; break;
-      case ATTR(Attachment): attachment = (struct Attach *)tag->ti_Data; break;
       case ATTR(Group):      attGroupObject = (Object *)tag->ti_Data; break;
     }
   }
@@ -120,7 +117,6 @@ OVERLOAD(OM_NEW)
     Child, imageObject = AttachmentImageObject,
       MUIA_CycleChain,                 TRUE,
       MUIA_AttachmentImage_MailPart,   mailPart,
-      MUIA_AttachmentImage_Attachment, attachment,
       MUIA_AttachmentImage_Group,      attGroupObject,
     End,
     Child, textObject = TextObject,
@@ -135,7 +131,6 @@ OVERLOAD(OM_NEW)
     data->imageObject = imageObject;
     data->textObject = textObject;
     data->mailPart = mailPart;
-    data->attachment = attachment;
     data->attGroupObject = attGroupObject;
 
     // connect some notifies which we might be interested in
@@ -172,7 +167,6 @@ OVERLOAD(OM_GET)
   {
     case ATTR(ImageObject) : *store = (ULONG)data->imageObject; return TRUE;
     case ATTR(MailPart)    : *store = (ULONG)data->mailPart;    return TRUE;
-    case ATTR(Attachment)  : *store = (ULONG)data->attachment;  return TRUE;
     case MUIA_Selected: *store = xget(data->imageObject, MUIA_Selected); return TRUE;
   }
 
@@ -217,7 +211,7 @@ OVERLOAD(MUIM_Setup)
     xset(data->imageObject, MUIA_AttachmentImage_MaxHeight, TEXTROWS*_font(obj)->tf_YSize+4,
                             MUIA_AttachmentImage_MaxWidth,  TEXTROWS*_font(obj)->tf_YSize+4);
 
-    if(data->mailPart != NULL || data->attachment != NULL)
+    if(data->mailPart != NULL)
       DoMethod(obj, METHOD(UpdateDescription));
   }
 
@@ -240,27 +234,19 @@ OVERLOAD(MUIM_ContextMenuBuild)
     data->contextMenu = NULL;
   }
 
-  if(data->mailPart != NULL || data->attachment != NULL)
+  if(data->mailPart != NULL)
   {
     BOOL isDeleted;
 
-    if(data->mailPart != NULL)
-    {
-      snprintf(data->menuTitle, sizeof(data->menuTitle), tr(MSG_MA_MIMEPART_MENU), data->mailPart->Nr);
-      isDeleted = (data->mailPart->ContentType != NULL && stricmp(data->mailPart->ContentType, "text/deleted") == 0);
-    }
-    else
-    {
-      snprintf(data->menuTitle, sizeof(data->menuTitle), "Attachment '%s'", data->attachment->Name);
-      isDeleted = FALSE;
-    }
+    snprintf(data->menuTitle, sizeof(data->menuTitle), tr(MSG_MA_MIMEPART_MENU), data->mailPart->Nr);
+    isDeleted = (data->mailPart->ContentType != NULL && stricmp(data->mailPart->ContentType, "text/deleted") == 0);
 
     data->contextMenu = MenustripObject,
       Child, MenuObjectT(data->menuTitle),
         Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_DISPLAY),   MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, AMEN_DISPLAY, End,
         Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_SAVEAS),    MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, AMEN_SAVEAS,  End,
         Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_DELETE),    MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, AMEN_DELETE,  MUIA_Menuitem_Enabled, isDeleted == FALSE && !isAlternativePart(data->mailPart), End,
-        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_PRINT),     MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, AMEN_PRINT,   MUIA_Menuitem_Enabled, data->mailPart != NULL && isPrintable(data->mailPart), End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_PRINT),     MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, AMEN_PRINT,   MUIA_Menuitem_Enabled, isPrintable(data->mailPart), End,
         Child, MenuBarLabel,
         Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_SAVEALL),   MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, AMEN_SAVEALL, End,
         Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_ATTACHMENT_SAVESEL),   MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, AMEN_SAVESEL, End,
@@ -366,19 +352,6 @@ DECLARE(Display)
 
     BusyEnd(busy);
   }
-  else if(data->attachment != NULL)
-  {
-    struct BusyNode *busy;
-
-    busy = BusyBegin(BUSY_TEXT);
-    BusyText(busy, tr(MSG_BusyDecDisplaying), "");
-
-    // run our MIME routines for displaying the part
-    // to the user
-    RE_DisplayMIME(data->attachment->FilePath, data->attachment->ContentType);
-
-    BusyEnd(busy);
-  }
 
   RETURN(0);
   return 0;
@@ -437,17 +410,6 @@ DECLARE(Save)
 
     BusyEnd(busy);
   }
-  else if(data->attachment != NULL)
-  {
-    struct BusyNode *busy;
-
-    busy = BusyBegin(BUSY_TEXT);
-    BusyText(busy, tr(MSG_BusyDecSaving), "");
-
-    #warning save attachment not yet implemented
-
-    BusyEnd(busy);
-  }
 
   RETURN(0);
   return 0;
@@ -471,10 +433,6 @@ DECLARE(Delete)
 
     MA_RemoveAttach(data->mailPart->rmData->mail, parts, C->ConfirmRemoveAttachments);
   }
-  else if(data->attachment != NULL)
-  {
-    #warning delete attachment not yet implemented
-  }
 
   RETURN(0);
   return 0;
@@ -495,15 +453,6 @@ DECLARE(Print)
     busy = BusyBegin(BUSY_TEXT);
     BusyText(busy, tr(MSG_BusyDecPrinting), "");
     RE_PrintFile(data->mailPart->Filename, _win(obj));
-    BusyEnd(busy);
-  }
-  else if(data->attachment != NULL)
-  {
-    struct BusyNode *busy;
-
-    busy = BusyBegin(BUSY_TEXT);
-    BusyText(busy, tr(MSG_BusyDecPrinting), "");
-    RE_PrintFile(data->attachment->FilePath, _win(obj));
     BusyEnd(busy);
   }
 
@@ -622,8 +571,6 @@ DECLARE(ImageDropped) // char *dropPath
 
   BusyEnd(busy);
 
-  #warning drop attachment not yet implemented
-
   RETURN(0);
   return 0;
 }
@@ -633,56 +580,40 @@ DECLARE(ImageDropped) // char *dropPath
 DECLARE(UpdateDescription)
 {
   GETDATA;
-  char *name = NULL;
-  char *description = NULL;
-  char *contentType = NULL;
-  LONG size = 0;
-  char sizeBuffer[SIZE_DEFAULT];
-  char *p;
 
   ENTER();
 
   if(data->mailPart != NULL)
   {
-    name = data->mailPart->Name;
-    description = data->mailPart->Description;
-    contentType = data->mailPart->ContentType;
-    size = data->mailPart->Size;
+    char sizeBuffer[SIZE_DEFAULT];
+    char *p;
+
+    // first line: the attachment name (filename or description)
+    //             italic style in case it is an alternative part
+    p = data->mailPart->Name[0] != '\0' ? data->mailPart->Name : data->mailPart->Description;
+    if(isAlternativePart(data->mailPart))
+      snprintf(data->descriptionBuffer, sizeof(data->descriptionBuffer), MUIX_I "%s" MUIX_N "\n", p);
+    else
+      snprintf(data->descriptionBuffer, sizeof(data->descriptionBuffer), "%s\n", p);
+
+    // second line: the attachment size
+    if(isDecoded(data->mailPart))
+    {
+      FormatSize(data->mailPart->Size, sizeBuffer, sizeof(sizeBuffer), SF_AUTO);
+    }
+    else
+    {
+      sizeBuffer[0] = '~';
+      FormatSize(data->mailPart->Size, &sizeBuffer[1], sizeof(sizeBuffer)-1, SF_AUTO);
+    }
+    strlcat(data->descriptionBuffer, sizeBuffer, sizeof(data->descriptionBuffer));
+    strlcat(data->descriptionBuffer, "\n", sizeof(data->descriptionBuffer));
+
+    // third line: the attachment description
+    strlcat(data->descriptionBuffer, DescribeCT(data->mailPart->ContentType), sizeof(data->descriptionBuffer));
+
+    set(data->textObject, MUIA_Text_Contents, data->descriptionBuffer);
   }
-  else if(data->attachment != NULL)
-  {
-    name = data->attachment->Name;
-    description = data->attachment->Description;
-    contentType = data->attachment->ContentType;
-    size = data->attachment->Size;
-  }
-
-  // first line: the attachment name (filename or description)
-  //             italic style in case it is an alternative part
-  p = name[0] != '\0' ? name : description;
-
-  if(data->mailPart != NULL && isAlternativePart(data->mailPart))
-    snprintf(data->descriptionBuffer, sizeof(data->descriptionBuffer), MUIX_I "%s" MUIX_N "\n", p);
-  else
-    snprintf(data->descriptionBuffer, sizeof(data->descriptionBuffer), "%s\n", p);
-
-  // second line: the attachment size
-  if(data->attachment != NULL || (data->mailPart != NULL && isDecoded(data->mailPart)))
-  {
-    FormatSize(size, sizeBuffer, sizeof(sizeBuffer), SF_AUTO);
-  }
-  else
-  {
-    sizeBuffer[0] = '~';
-    FormatSize(size, &sizeBuffer[1], sizeof(sizeBuffer)-1, SF_AUTO);
-  }
-  strlcat(data->descriptionBuffer, sizeBuffer, sizeof(data->descriptionBuffer));
-  strlcat(data->descriptionBuffer, "\n", sizeof(data->descriptionBuffer));
-
-  // third line: the attachment description
-  strlcat(data->descriptionBuffer, DescribeCT(contentType), sizeof(data->descriptionBuffer));
-
-  set(data->textObject, MUIA_Text_Contents, data->descriptionBuffer);
 
   RETURN(0);
   return 0;
