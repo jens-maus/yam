@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-07-16 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_AB.c, mui/AddrBookListtree.c: moved the AB_MakeFormat() function into a
+    method of the listtree class.
+
 2013-07-15 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MA.c, YAM_RE.c: printing a mail will now include a list of attachments.

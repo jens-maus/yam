@@ -3079,37 +3079,6 @@ HOOKPROTONHNONP(AB_Close, void)
 MakeStaticHook(AB_CloseHook, AB_Close);
 
 ///
-/// AB_MakeABFormat
-//  Creates format definition for address book listview
-void AB_MakeABFormat(APTR lv)
-{
-  int i;
-  char format[SIZE_LARGE];
-  BOOL first = TRUE;
-
-  *format = '\0';
-
-  for(i = 0; i < ABCOLNUM; i++)
-  {
-    if(C->AddrbookCols & (1<<i))
-    {
-      int p;
-
-      if(first)
-        first = FALSE;
-      else
-        strlcat(format, " BAR,", sizeof(format));
-
-      p = strlen(format);
-
-      snprintf(&format[p], sizeof(format)-p, "COL=%d W=-1", i);
-    }
-  }
-
-  set(lv, MUIA_NListtree_Format, format);
-}
-
-///
 
 /// AB_New
 //  Creates address book window
@@ -3230,7 +3199,6 @@ struct AB_ClassData *AB_New(void)
     // If we successfully created the WindowObject
     if(data->GUI.WI != NULL)
     {
-      AB_MakeABFormat(data->GUI.LV_ADDRESSES);
       DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
       set(data->GUI.WI, MUIA_Window_DefaultObject, data->GUI.LV_ADDRESSES);
       DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, TRUE, data->GUI.BT_TO,

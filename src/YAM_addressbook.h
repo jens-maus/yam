@@ -100,7 +100,6 @@ BOOL   AB_ExpandBD(const long date, char *dateStr, const size_t dateStrSize);
 int    AB_FindEntry(const char *pattern, enum AddressbookFind mode, char **result);
 APTR   AB_GotoEntry(const char *alias);
 BOOL   AB_LoadTree(const char *fname, BOOL append, BOOL sorted);
-void   AB_MakeABFormat(APTR lv);
 struct AB_ClassData *AB_New(void);
 BOOL   AB_SaveTree(const char *fname);
 int    AB_SearchEntry(const char *text, int mode, struct ABEntry **ab);

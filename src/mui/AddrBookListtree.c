@@ -101,6 +101,8 @@ OVERLOAD(OM_NEW)
       data->listImage = MakeImageObject("status_group", G->theme.statusImages[SI_GROUP]);
       DoMethod(obj, MUIM_NList_UseImage, data->listImage, 0, MUIF_NONE);
 
+      DoMethod(obj, METHOD(MakeFormat));
+
       data->avlTree = avlTree;
     }
     else
@@ -380,6 +382,42 @@ DECLARE(FindPerson) // struct Person *person
 
   RETURN(result);
   return (IPTR)result;
+}
+
+///
+/// DECLARE(MakeFormat)
+//  Creates format definition for address book listtree
+DECLARE(MakeFormat)
+{
+  int i;
+  char format[SIZE_LARGE];
+  BOOL first = TRUE;
+
+  ENTER();
+
+  format[0] = '\0';
+
+  for(i = 0; i < ABCOLNUM; i++)
+  {
+    if(isFlagSet(C->AddrbookCols, (1<<i)))
+    {
+      int p;
+
+      if(first)
+        first = FALSE;
+      else
+        strlcat(format, " BAR,", sizeof(format));
+
+      p = strlen(format);
+
+      snprintf(&format[p], sizeof(format)-p, "COL=%d W=-1", i);
+    }
+  }
+
+  set(obj, MUIA_NListtree_Format, format);
+
+  RETURN(0);
+  return 0;
 }
 
 ///
