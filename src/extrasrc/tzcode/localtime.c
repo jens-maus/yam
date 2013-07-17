@@ -1962,8 +1962,9 @@ time1(struct tm *const tmp,
 	return WRONG;
 }
 
+#define mktime my_mktime
 time_t
-mktime(struct tm *const tmp)
+my_mktime(struct tm *const tmp)
 {
   printf("JOOOOOOOOO\n");
 	tzset();
