@@ -32,6 +32,7 @@
 
 #include <string.h>
 
+#include <proto/dos.h>
 #include <proto/muimaster.h>
 #include <mui/NList_mcc.h>
 #include <mui/NListtree_mcc.h>
@@ -55,10 +56,26 @@
 struct Data
 {
   Object *listImage;
+  ULONG sortBy;
+  BOOL modified;
   struct AVL_Tree *avlTree;        // the address book as an AVL tree
   char dateStr[SIZE_SMALL];
   char aliasStr[SIZE_DEFAULT];
 };
+*/
+
+/* EXPORT
+#define MUIV_AddrBookListtree_SortBy_Alias      0
+#define MUIV_AddrBookListtree_SortBy_FirstName  1
+#define MUIV_AddrBookListtree_SortBy_Coment     2
+#define MUIV_AddrBookListtree_SortBy_Address    3
+#define MUIV_AddrBookListtree_SortBy_Street     4
+#define MUIV_AddrBookListtree_SortBy_City       5
+#define MUIV_AddrBookListtree_SortBy_Country    6
+#define MUIV_AddrBookListtree_SortBy_Phone      7
+#define MUIV_AddrBookListtree_SortBy_Birthday   8
+#define MUIV_AddrBookListtree_SortBy_PGPId      9
+#define MUIV_AddrBookListtree_SortBy_LastName  10 // artificial column generated from the Name column
 */
 
 /* Private Functions */
@@ -90,6 +107,7 @@ OVERLOAD(OM_NEW)
       MUIA_NListtree_DragDropSort,     TRUE,
       MUIA_NListtree_Title,            TRUE,
       MUIA_NListtree_EmptyNodes,       TRUE,
+      MUIA_NList_TitleClick,           TRUE,
       MUIA_NList_DefaultObjectOnClick, FALSE,
       MUIA_Font,                       C->FixedFontList ? MUIV_NList_Font_Fixed : MUIV_NList_Font,
 
@@ -102,6 +120,8 @@ OVERLOAD(OM_NEW)
       DoMethod(obj, MUIM_NList_UseImage, data->listImage, 0, MUIF_NONE);
 
       DoMethod(obj, METHOD(MakeFormat));
+
+      DoMethod(obj, MUIM_Notify, MUIA_NList_TitleClick, MUIV_EveryTime, MUIV_Notify_Self, 2, METHOD(SortBy), MUIV_TriggerValue);
 
       data->avlTree = avlTree;
     }
@@ -133,6 +153,35 @@ OVERLOAD(OM_DISPOSE)
   data->avlTree = NULL;
 
   return DoSuperMethodA(cl, obj, msg);
+}
+
+///
+/// OVERLOAD(OM_SET)
+OVERLOAD(OM_SET)
+{
+  GETDATA;
+  struct TagItem *tags, *tag;
+  IPTR result;
+
+  ENTER();
+
+  tags = inittags(msg);
+  while((tag = NextTagItem((APTR)&tags)) != NULL)
+  {
+    switch(tag->ti_Tag)
+    {
+      case ATTR(Modified):
+      {
+        data->modified = (tag->ti_Data != 0) ? TRUE : FALSE;
+      }
+      break;
+    }
+  }
+
+  result = DoSuperMethodA(cl, obj, msg);
+
+  RETURN(result);
+  return result;
 }
 
 ///
@@ -201,38 +250,88 @@ OVERLOAD(MUIM_NListtree_Destruct)
 /// OVERLOAD(MUIM_NListtree_Compare)
 OVERLOAD(MUIM_NListtree_Compare)
 {
+  GETDATA;
   struct MUIP_NListtree_Compare *ncm = (struct MUIP_NListtree_Compare *)msg;
   struct ABEntry *ab1 = (struct ABEntry *)ncm->TreeNode1->tn_User;
   struct ABEntry *ab2 = (struct ABEntry *)ncm->TreeNode2->tn_User;
-  char *n1, *n2;
-  int cmp = 0;
+  LONG cmp;
 
-  switch(G->AB->SortBy)
+  ENTER();
+
+  switch(data->sortBy)
   {
-    case 1:
+    default:
+    case MUIV_AddrBookListtree_SortBy_Alias:
+    {
+      cmp = 0;
+    }
+    break;
+
+    case MUIV_AddrBookListtree_SortBy_FirstName:
+    {
+      cmp = Stricmp(ab1->RealName, ab2->RealName);
+    }
+    break;
+
+    case MUIV_AddrBookListtree_SortBy_Coment:
+    {
+      cmp = Stricmp(ab1->Comment, ab2->Comment);
+    }
+    break;
+
+    case MUIV_AddrBookListtree_SortBy_Street:
+    {
+      cmp = Stricmp(ab1->Street, ab2->Street);
+    }
+    break;
+
+    case MUIV_AddrBookListtree_SortBy_City:
+    {
+      cmp = Stricmp(ab1->City, ab2->City);
+    }
+    break;
+
+    case MUIV_AddrBookListtree_SortBy_Country:
+    {
+      cmp = Stricmp(ab1->Country, ab2->Country);
+    }
+    break;
+
+    case MUIV_AddrBookListtree_SortBy_Phone:
+    {
+      cmp = Stricmp(ab1->Phone, ab2->Phone);
+    }
+    break;
+
+    case MUIV_AddrBookListtree_SortBy_Birthday:
+    {
+      cmp = ab1->BirthDay - ab2->BirthDay;
+    }
+    break;
+
+    case MUIV_AddrBookListtree_SortBy_PGPId:
+    {
+      cmp = Stricmp(ab1->PGPId, ab2->PGPId);
+    }
+    break;
+
+    case MUIV_AddrBookListtree_SortBy_LastName:
+    {
+      char *n1, *n2;
+
       if((n1 = strrchr(ab1->RealName,' ')) == NULL)
         n1 = ab1->RealName;
       if((n2 = strrchr(ab2->RealName,' ')) == NULL)
         n2 = ab2->RealName;
       cmp = Stricmp(n1, n2);
-    break;
-
-    case 2:
-      cmp = Stricmp(ab1->RealName, ab2->RealName);
-    break;
-
-    case 3:
-      cmp = Stricmp(ab1->Comment, ab2->Comment);
-    break;
-
-    case 4:
-      cmp = Stricmp(ab1->Address, ab2->Address);
+    }
     break;
   }
 
   if(cmp == 0)
     cmp = Stricmp(ab1->Alias, ab2->Alias);
 
+  RETURN(cmp);
   return cmp;
 }
 
@@ -362,6 +461,22 @@ OVERLOAD(MUIM_NListtree_DropType)
   }
   else
     *dt->Type = MUIV_NListtree_DropType_None;
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(SortBy)
+DECLARE(SortBy) // ULONG sortBy;
+{
+  GETDATA;
+
+  ENTER();
+
+  data->sortBy = msg->sortBy;
+  DoMethod(obj, MUIM_NListtree_Sort, MUIV_NListtree_Sort_ListNode_Root, MUIV_NListtree_Sort_Flag_RecursiveAll);
+  data->modified = TRUE;
 
   RETURN(0);
   return 0;

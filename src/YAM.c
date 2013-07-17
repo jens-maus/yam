@@ -115,6 +115,7 @@
 #include "tcp/Connection.h"
 #include "mui/ClassesExtra.h"
 #include "mui/ClassesSetup.h"
+#include "mui/AddrBookListtree.h"
 #include "mui/MainWindow.h"
 #include "mui/Splashwindow.h"
 #include "mui/ShutdownWindow.h"
@@ -1412,7 +1413,7 @@ BOOL StayInProg(void)
 
   ENTER();
 
-  if(stayIn == FALSE && G->AB->Modified == TRUE)
+  if(stayIn == FALSE && xget(G->AB->GUI.LV_ADDRESSES, MUIA_AddrBookListtree_Modified) == TRUE)
   {
     int result;
 

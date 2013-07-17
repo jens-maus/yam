@@ -74,9 +74,7 @@ struct AB_GUIData
 struct AB_ClassData  /* address book window */
 {
   struct AB_GUIData    GUI;
-  int                  SortBy;
   enum AddressbookMode Mode;
-  BOOL                 Modified;
   char                 WTitle[SIZE_DEFAULT];
   Object               *parentStringGadget; // in case ABM_CONFIG is used.
   int                  winNumber;           // related write window number

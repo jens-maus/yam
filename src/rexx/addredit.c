@@ -39,6 +39,7 @@
 #include "YAM_addressbookEntry.h"
 
 #include "mui/ClassesExtra.h"
+#include "mui/AddrBookListtree.h"
 
 #include "MUIObjects.h"
 #include "Rexx.h"
@@ -148,7 +149,7 @@ void rx_addredit(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
         }
 
         DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Redraw, MUIV_NListtree_Redraw_Active, MUIF_NONE);
-        G->AB->Modified = TRUE;
+        set(G->AB->GUI.LV_ADDRESSES, MUIA_AddrBookListtree_Modified, TRUE);
       }
       else
         params->rc = RETURN_ERROR;

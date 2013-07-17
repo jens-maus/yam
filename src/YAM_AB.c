@@ -122,7 +122,6 @@ struct XMLUserData
   struct ABEntry entry;
   XML_Char xmlData[SIZE_LARGE];
   size_t xmlDataSize;
-  BOOL sorted;
 };
 
 /***************************************************************************
@@ -799,7 +798,6 @@ BOOL AB_LoadTree(const char *fname, BOOL append, BOOL sorted)
       {
         int version = buffer[3] - '0';
 
-        G->AB->Modified = append;
         if(append == FALSE)
           DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Clear, NULL, 0);
 
@@ -853,7 +851,7 @@ BOOL AB_LoadTree(const char *fname, BOOL append, BOOL sorted)
             }
             while(GetLine(&buffer, &size, fh) >= 0);
 
-            DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, addr.Alias[0] ? addr.Alias : addr.RealName, &addr, parent[nested], sorted ?  MUIV_NListtree_Insert_PrevNode_Sorted : MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE);
+            DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, addr.Alias[0] ? addr.Alias : addr.RealName, &addr, parent[nested], MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE);
           }
           else if(strncmp(buffer, "@LIST", 5) == 0)
           {
@@ -888,7 +886,7 @@ BOOL AB_LoadTree(const char *fname, BOOL append, BOOL sorted)
             if(members != NULL)
             {
               addr.Members = members;
-              DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, addr.Alias, &addr, parent[nested], sorted ?  MUIV_NListtree_Insert_PrevNode_Sorted : MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE);
+              DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, addr.Alias, &addr, parent[nested], MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE);
             }
             FreeStrBuf(members);
           }
@@ -918,7 +916,6 @@ BOOL AB_LoadTree(const char *fname, BOOL append, BOOL sorted)
         // Addressbook file.
         if(MUI_Request(G->App, G->AB->GUI.WI, MUIF_NONE, NULL, tr(MSG_AB_NOYAMADDRBOOK_GADS), tr(MSG_AB_NOYAMADDRBOOK), fname))
         {
-          G->AB->Modified = append;
           if(append == FALSE)
             DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Clear, NULL, 0);
 
@@ -945,7 +942,7 @@ BOOL AB_LoadTree(const char *fname, BOOL append, BOOL sorted)
                  *p2 = '\0';
             }
             strlcpy(addr.Alias, p, sizeof(addr.Alias));
-            DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, addr.Alias, &addr, parent[nested], sorted ?  MUIV_NListtree_Insert_PrevNode_Sorted : MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE);
+            DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, addr.Alias, &addr, parent[nested], MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE);
           }
         }
 
@@ -965,6 +962,16 @@ BOOL AB_LoadTree(const char *fname, BOOL append, BOOL sorted)
     // show an error message only if the .addressbook file exists but could not be opened
     if(FileExists(fname) == TRUE)
       ER_NewError(tr(MSG_ER_ADDRBOOKLOAD), fname);
+  }
+
+  if(result == TRUE)
+  {
+    // sort the tree first, because this will set the "modified" flag
+    if(sorted == TRUE)
+      DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_AddrBookListtree_SortBy, MUIV_AddrBookListtree_SortBy_Alias);
+
+    // now remember the "modified" state
+    set(G->AB->GUI.LV_ADDRESSES, MUIA_AddrBookListtree_Modified, append);
   }
 
   RETURN(result);
@@ -1079,7 +1086,6 @@ static BOOL AB_ImportTreeLDIF(const char *fname, BOOL append, BOOL sorted)
 
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
-    G->AB->Modified = append;
     if(append == FALSE)
       DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Clear, NULL, 0);
 
@@ -1098,7 +1104,7 @@ static BOOL AB_ImportTreeLDIF(const char *fname, BOOL append, BOOL sorted)
             EA_SetDefaultAlias(&addr);
 
           // put it into the tree
-          DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, addr.Alias[0] ? addr.Alias : addr.RealName, &addr, MUIV_NListtree_Insert_ListNode_Root, sorted ?  MUIV_NListtree_Insert_PrevNode_Sorted : MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE);
+          DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, addr.Alias[0] ? addr.Alias : addr.RealName, &addr, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE);
           result = TRUE;
         }
       }
@@ -1261,6 +1267,16 @@ static BOOL AB_ImportTreeLDIF(const char *fname, BOOL append, BOOL sorted)
   }
   else
      ER_NewError(tr(MSG_ER_ADDRBOOKIMPORT), fname);
+
+  if(result == TRUE)
+  {
+    // sort the tree first, because this will set the "modified" flag
+    if(sorted == TRUE)
+      DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_AddrBookListtree_SortBy, MUIV_AddrBookListtree_SortBy_Alias);
+
+    // now remember the "modified" state
+    set(G->AB->GUI.LV_ADDRESSES, MUIA_AddrBookListtree_Modified, append);
+  }
 
   RETURN(result);
   return result;
@@ -1647,7 +1663,7 @@ static void XMLEndHandler(void *userData, const XML_Char *name)
         EA_SetDefaultAlias(entry);
 
       // put it into the tree
-      DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, entry->Alias[0] ? entry->Alias : entry->RealName, entry, MUIV_NListtree_Insert_ListNode_Root, xmlUserData->sorted ?  MUIV_NListtree_Insert_PrevNode_Sorted : MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE);
+      DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, entry->Alias[0] ? entry->Alias : entry->RealName, entry, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE);
     }
   }
 
@@ -1690,7 +1706,6 @@ static BOOL AB_ImportTreeXML(const char *fname, BOOL append, BOOL sorted)
 
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
-    G->AB->Modified = append;
     if(append == FALSE)
       DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Clear, NULL, 0);
 
@@ -1707,7 +1722,6 @@ static BOOL AB_ImportTreeXML(const char *fname, BOOL append, BOOL sorted)
 
       xmlUserData.section = xs_Unknown;
       xmlUserData.dataType = xd_Unknown;
-      xmlUserData.sorted = sorted;
 
       XML_SetElementHandler(parser, XMLStartHandler, XMLEndHandler);
       XML_SetCharacterDataHandler(parser, XMLCharacterDataHandler);
@@ -1744,6 +1758,16 @@ static BOOL AB_ImportTreeXML(const char *fname, BOOL append, BOOL sorted)
   }
   else
      ER_NewError(tr(MSG_ER_ADDRBOOKIMPORT), fname);
+
+  if(result == TRUE)
+  {
+    // sort the tree first, because this will set the "modified" flag
+    if(sorted == TRUE)
+      DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_AddrBookListtree_SortBy, MUIV_AddrBookListtree_SortBy_Alias);
+
+    // now remember the "modified" state
+    set(G->AB->GUI.LV_ADDRESSES, MUIA_AddrBookListtree_Modified, append);
+  }
 
   RETURN(result);
   return result;
@@ -1857,7 +1881,6 @@ static BOOL AB_ImportTreeTabCSV(const char *fname, BOOL append, BOOL sorted, cha
 
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
-    G->AB->Modified = append;
     if(append == FALSE)
       DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Clear, NULL, 0);
 
@@ -2033,7 +2056,7 @@ static BOOL AB_ImportTreeTabCSV(const char *fname, BOOL append, BOOL sorted, cha
         if(addr.Alias[0] == '\0')
           EA_SetDefaultAlias(&addr);
 
-        DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, addr.Alias[0] ? addr.Alias : addr.RealName, &addr, MUIV_NListtree_Insert_ListNode_Root, sorted ?  MUIV_NListtree_Insert_PrevNode_Sorted : MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE);
+        DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, addr.Alias[0] ? addr.Alias : addr.RealName, &addr, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE);
       }
 
       result = TRUE;
@@ -2047,6 +2070,16 @@ static BOOL AB_ImportTreeTabCSV(const char *fname, BOOL append, BOOL sorted, cha
   }
   else
     ER_NewError(tr(MSG_ER_ADDRBOOKIMPORT), fname);
+
+  if(result == TRUE)
+  {
+    // sort the tree first, because this will set the "modified" flag
+    if(sorted == TRUE)
+      DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_AddrBookListtree_SortBy, MUIV_AddrBookListtree_SortBy_Alias);
+
+    // now remember the "modified" state
+    set(G->AB->GUI.LV_ADDRESSES, MUIA_AddrBookListtree_Modified, append);
+  }
 
   RETURN(result);
   return result;
@@ -2307,29 +2340,6 @@ HOOKPROTONHNONP(AB_DoubleClick, void)
 MakeStaticHook(AB_DoubleClickHook, AB_DoubleClick);
 
 ///
-/// AB_Sort
-/*** AB_Sort - Sorts the address book ***/
-HOOKPROTONHNO(AB_Sort, void, int *arg)
-{
-  char fname[SIZE_PATHFILE];
-
-  ENTER();
-
-  AddPath(fname, C->TempDir, ".addressbook.tmp", sizeof(fname));
-
-  if(AB_SaveTree(fname) == TRUE)
-  {
-    G->AB->SortBy = *arg;
-    AB_LoadTree(fname, FALSE, TRUE);
-    DeleteFile(fname);
-    G->AB->Modified = TRUE;
-  }
-
-  LEAVE();
-}
-MakeStaticHook(AB_SortHook, AB_Sort);
-
-///
 /// AB_NewABookFunc
 /*** AB_NewABookFunc - Clears entire address book ***/
 HOOKPROTONHNONP(AB_NewABookFunc, void)
@@ -2337,7 +2347,7 @@ HOOKPROTONHNONP(AB_NewABookFunc, void)
   ENTER();
 
   DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Remove, MUIV_NListtree_Remove_ListNode_Root, MUIV_NListtree_Remove_TreeNode_All, MUIF_NONE);
-  G->AB->Modified = FALSE;
+  set(G->AB->GUI.LV_ADDRESSES, MUIA_AddrBookListtree_Modified, FALSE);
 
   LEAVE();
 }
@@ -2529,7 +2539,7 @@ HOOKPROTONHNONP(AB_SaveABookFunc, void)
   busy = BusyBegin(BUSY_TEXT);
   BusyText(busy, tr(MSG_BusySavingAB), G->AB_Filename);
   AB_SaveTree(G->AB_Filename);
-  G->AB->Modified = FALSE;
+  set(G->AB->GUI.LV_ADDRESSES, MUIA_AddrBookListtree_Modified, FALSE);
   BusyEnd(busy);
 
   LEAVE();
@@ -2814,7 +2824,7 @@ HOOKPROTONHNONP(AB_DeleteFunc, void)
   ENTER();
 
   DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Remove, NULL, MUIV_NListtree_Remove_TreeNode_Active, MUIF_NONE);
-  G->AB->Modified = TRUE;
+  set(G->AB->GUI.LV_ADDRESSES, MUIA_AddrBookListtree_Modified, TRUE);
 
   LEAVE();
 }
@@ -3031,7 +3041,7 @@ HOOKPROTONHNO(AB_OpenFunc, void, LONG *arg)
   }
 
   ab->winNumber = (*md != '\0' ? arg[1] : -1);
-  ab->Modified = FALSE;
+  set(G->AB->GUI.LV_ADDRESSES, MUIA_AddrBookListtree_Modified, FALSE);
 
   // enable/disable the To/CC/BCC buttons depending on whether there is an active entry or not
   nodeActive = ((struct MUI_NListtree_TreeNode *)xget(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active) != NULL);
@@ -3060,7 +3070,7 @@ HOOKPROTONHNONP(AB_Close, void)
 
   ENTER();
 
-  if(G->AB->Modified)
+  if(xget(G->AB->GUI.LV_ADDRESSES, MUIA_AddrBookListtree_Modified) == TRUE)
   {
     switch(MUI_Request(G->App, G->AB->GUI.WI, MUIF_NONE, NULL, tr(MSG_AB_ModifiedGads), tr(MSG_AB_Modified)))
     {
@@ -3230,11 +3240,11 @@ struct AB_ClassData *AB_New(void)
       DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_DELETE     , MUIV_Notify_Application, 2, MUIM_CallHook, &AB_DeleteHook);
       DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_PRINTE     , MUIV_Notify_Application, 2, MUIM_CallHook, &AB_PrintHook);
       DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_FIND       , MUIV_Notify_Application, 2, MUIM_CallHook, &AB_FindHook);
-      DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_SORTALIAS  , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_SortHook, 0);
-      DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_SORTLNAME  , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_SortHook, 1);
-      DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_SORTFNAME  , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_SortHook, 2);
-      DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_SORTDESC   , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_SortHook, 3);
-      DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_SORTADDR   , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_SortHook, 4);
+      DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_SORTALIAS  , data->GUI.LV_ADDRESSES,  2, MUIM_AddrBookListtree_SortBy, MUIV_AddrBookListtree_SortBy_Alias);
+      DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_SORTLNAME  , data->GUI.LV_ADDRESSES,  2, MUIM_AddrBookListtree_SortBy, MUIV_AddrBookListtree_SortBy_LastName);
+      DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_SORTFNAME  , data->GUI.LV_ADDRESSES,  2, MUIM_AddrBookListtree_SortBy, MUIV_AddrBookListtree_SortBy_FirstName);
+      DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_SORTDESC   , data->GUI.LV_ADDRESSES,  2, MUIM_AddrBookListtree_SortBy, MUIV_AddrBookListtree_SortBy_Coment);
+      DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_SORTADDR   , data->GUI.LV_ADDRESSES,  2, MUIM_AddrBookListtree_SortBy, MUIV_AddrBookListtree_SortBy_Address);
       DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_FOLD       , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_FoldUnfoldHook, TRUE);
       DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_UNFOLD     , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_FoldUnfoldHook, FALSE);
       DoMethod(data->GUI.LV_ADDRESSES  , MUIM_Notify, MUIA_NListtree_Active,      MUIV_EveryTime  , MUIV_Notify_Application, 2, MUIM_CallHook, &AB_ActiveChangeHook);

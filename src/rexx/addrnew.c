@@ -40,6 +40,8 @@
 #include "Logfile.h"
 #include "Rexx.h"
 
+#include "mui/AddrBookListtree.h"
+
 #include "Debug.h"
 
 struct args
@@ -105,7 +107,7 @@ void rx_addrnew(UNUSED struct RexxHost *host, struct RexxParams *params, enum Re
         EA_FixAlias(&addr, FALSE);
         results->alias = addr.Alias;
         EA_InsertBelowActive(&addr, addr.Type == AET_GROUP ? TNF_LIST : 0);
-        G->AB->Modified = TRUE;
+        set(G->AB->GUI.LV_ADDRESSES, MUIA_AddrBookListtree_Modified, TRUE);
         AppendToLogfile(LF_VERBOSE, 71, tr(MSG_LOG_NewAddress), addr.Alias);
       }
     }

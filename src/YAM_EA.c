@@ -57,6 +57,7 @@
 
 #include "mui/ClassesExtra.h"
 #include "mui/AddrBookEntryList.h"
+#include "mui/AddrBookListtree.h"
 #include "mui/Recipientstring.h"
 #include "mui/UserPortraitGroup.h"
 
@@ -457,7 +458,7 @@ HOOKPROTONHNO(EA_Okay, void, int *arg)
     }
   }
 
-  G->AB->Modified = TRUE;
+  set(G->AB->GUI.LV_ADDRESSES, MUIA_AddrBookListtree_Modified, TRUE);
   if(old == TRUE)
     addr = G->EA[winnum]->ABEntry;
   else
