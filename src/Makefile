@@ -532,6 +532,8 @@ MUIOBJS = \
 	TransferControlList.o \
 	TransferMailList.o \
 	TransferWindow.o \
+	TZoneContinentChooser.o \
+	TZoneLocationChooser.o \
 	UpdateComponentList.o \
 	UpdateNotifyWindow.o \
 	UserList.o \

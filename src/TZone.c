@@ -236,9 +236,6 @@ char **BuildContinentEntries(void)
 
   ENTER();
 
-  // free any previous array first
-  free(G->tzoneContinentEntries);
-
   // count the continents
   count = CountNodes(&G->tzoneContinentList);
   if((entries = calloc(count+1, sizeof(char *))) != NULL)
@@ -254,8 +251,6 @@ char **BuildContinentEntries(void)
     }
   }
 
-  G->tzoneContinentEntries = entries;
-
   RETURN(entries);
   return entries;
 }
@@ -270,9 +265,6 @@ char **BuildLocationEntries(int contNumber)
   struct TZoneContinent *cont;
 
   ENTER();
-
-  // free any previous array first
-  free(G->tzoneLocationEntries);
 
   i = 0;
   for(cont = (struct TZoneContinent *)GetHead((struct List *)&G->tzoneContinentList);
@@ -301,8 +293,6 @@ char **BuildLocationEntries(int contNumber)
     }
   }
 
-  G->tzoneLocationEntries = entries;
-
   RETURN(entries);
   return entries;
 }
@@ -329,9 +319,6 @@ void TZoneCleanup(void)
     free(cont->name);
     FreeSysObject(ASOT_NODE, cont);
   }
-
-  free(G->tzoneContinentEntries);
-  free(G->tzoneLocationEntries);
 
   LEAVE();
 }

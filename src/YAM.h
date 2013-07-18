@@ -127,8 +127,6 @@ struct Global
   APTR                     mailNodeItemPool;     // item pool for struct MailNode
   APTR                     avlNodeItemPool;      // item pool for struct AVL_Node
   struct Screen *          workbenchScreen;
-  char **                  tzoneContinentEntries;
-  char **                  tzoneLocationEntries;
 
   #if defined(__amigaos4__)
   struct MsgPort *         AppLibPort;

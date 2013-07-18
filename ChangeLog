@@ -10,6 +10,8 @@ $URL$
   * YAM.c, TZone.c: implemented some functions to parse the zone.tab located in
     the resources/zoneinfo directory and to setup certain structures for future
     use.
+  * mui/TZoneContinentChooser.c, mui/TZoneLocationChooser.c: added two new
+    classes to choose the continent and location of a specific time zone.
 
 2013-07-17 Thore Böckelmann <tboeckel@gmx.de>
 
