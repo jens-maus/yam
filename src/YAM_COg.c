@@ -82,6 +82,8 @@
 #include "mui/SignatureList.h"
 #include "mui/SignatureTextEdit.h"
 #include "mui/ThemeListGroup.h"
+#include "mui/TZoneContinentChooser.h"
+#include "mui/TZoneLocationChooser.h"
 #include "mui/YAMApplication.h"
 
 #include "BayesFilter.h"
@@ -95,6 +97,7 @@
 #include "Requesters.h"
 #include "Signature.h"
 #include "Threads.h"
+#include "TZone.h"
 #include "UIDL.h"
 #include "UserIdentity.h"
 
@@ -1690,6 +1693,14 @@ Object *CO_PageFirstSteps(struct CO_ClassData *data)
 
                 Child, HSpace(1),
                 Child, MakeCheckGroup(&data->GUI.CH_DSTACTIVE, tr(MSG_CO_DSTACTIVE)),
+
+                Child, HSpace(1),
+                Child, HGroup,
+                  Child, data->GUI.CY_TZONE_CONTINENT = TZoneContinentChooserObject,
+                  End,
+                  Child, data->GUI.CY_TZONE_LOCATION = TZoneLocationChooserObject,
+                  End,
+                End,
               End,
 
               Child, HVSpace,
@@ -1710,10 +1721,13 @@ Object *CO_PageFirstSteps(struct CO_ClassData *data)
 
     set(data->GUI.CY_TZONE, MUIA_Disabled, G->TrustedTimezone);
     set(data->GUI.CH_DSTACTIVE, MUIA_Disabled, G->TrustedDST);
+    set(data->GUI.CY_TZONE_CONTINENT, MUIA_Cycle_Entries, BuildContinentEntries());
+    set(data->GUI.CY_TZONE_LOCATION, MUIA_Cycle_Entries, BuildLocationEntries(0));
 
     DoMethod(data->GUI.ST_POPHOST0, MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_GetDefaultPOPHook);
     DoMethod(data->GUI.ST_USER0,  MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_GetDefaultPOPHook);
     DoMethod(data->GUI.ST_PASSWD0,  MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_GetDefaultPOPHook);
+    DoMethod(data->GUI.CY_TZONE_CONTINENT, MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, data->GUI.CY_TZONE_LOCATION, 3, MUIM_Set, MUIA_TZoneLocationChooser_Continent, MUIV_TriggerValue);
   }
 
   RETURN(obj);

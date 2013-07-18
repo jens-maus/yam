@@ -361,6 +361,8 @@ struct CO_GUIData
   Object *CY_SPAM_EXTERNALFILTER;
   Object *CY_QUICKSEARCHBARPOS;
   Object *CY_FILTER_COMBINE;
+  Object *CY_TZONE_CONTINENT;
+  Object *CY_TZONE_LOCATION;
 };
 
 struct CO_ClassData  /* configuration window */
