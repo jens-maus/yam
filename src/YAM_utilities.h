@@ -294,6 +294,7 @@ BOOL     DoPack(const char *file, const char *newfile, const struct Folder *fold
 void *   DuplicateNode(const void *node, const size_t size);
 int      CountNodes(const struct MinList *list);
 void     SortNListToExecList(Object *nList, struct MinList *execList);
+void     SortExecList(struct List *lh, int (* compare)(const struct Node *, const struct Node *));
 BOOL     DumpClipboard(FILE *out);
 char *   Encrypt(const char *source);
 void     GetPubScreenName(const struct Screen *screen, char *pubName, ULONG pubNameSize);

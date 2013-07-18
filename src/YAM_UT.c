@@ -5971,6 +5971,102 @@ void SortNListToExecList(Object *nList, struct MinList *execList)
 }
 
 ///
+/// SortExecList
+// sort an Exec list using merge sort
+void SortExecList(struct List *lh, int (* compare)(const struct Node *, const struct Node *))
+{
+  struct List list[2], *from, *to;
+  size_t insize;
+
+  from = &list[0];
+  to = &list[1];
+  NewList(from);
+  NewList(to);
+
+  MoveList(from, lh);
+
+  insize = 1;
+
+  while(TRUE)
+  {
+    size_t nmerges, psize, qsize, i;
+    struct Node *p, *q, *e;
+
+    NewList(to);
+    p = GetHead(from);
+    nmerges = 0;
+
+    while(p->ln_Succ != NULL)
+    {
+      nmerges++;
+      q = p;
+      psize = 0;
+      for(i = 0; i < insize; i++)
+      {
+        if(q->ln_Succ != NULL && q->ln_Succ->ln_Succ == NULL)
+          break;
+
+        q = q->ln_Succ;
+        psize++;
+      }
+
+      qsize = insize;
+
+      while(psize > 0 || (qsize > 0 && q->ln_Succ != NULL))
+      {
+        if(psize == 0)
+        {
+          e = q;
+          q = q->ln_Succ;
+          qsize--;
+        }
+        else if(qsize == 0 || q->ln_Succ == NULL)
+        {
+          e = p;
+          p = p->ln_Succ;
+          psize--;
+        }
+        else if(compare(p, q) <= 0)
+        {
+          e = p;
+          p = p->ln_Succ;
+          psize--;
+        }
+        else
+        {
+          e = q;
+          q = q->ln_Succ;
+          qsize--;
+        }
+
+        Remove(e);
+        AddTail(to, e);
+      }
+
+      p = q;
+    }
+
+    if(nmerges <= 1)
+    {
+      break;
+    }
+    else
+    {
+      struct List *tmp;
+
+      tmp = from;
+      from = to;
+      to = tmp;
+
+      NewList(to);
+
+      insize *= 2;
+    }
+  }
+
+  MoveList(lh, to);
+}
+
 /// GetHostName
 // retrieve the hostname of the system YAM is currently running on for things
 // like SMTP authentification and so on
