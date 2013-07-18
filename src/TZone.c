@@ -61,7 +61,7 @@ static void addLocation(const char *contName, const char *locName)
     }
   }
 
-  // create a new continent if it was not found
+  // create a new continent node if it was not found
   if(found == NULL)
   {
     if((cont = AllocSysObjectTags(ASOT_NODE,
@@ -83,6 +83,7 @@ static void addLocation(const char *contName, const char *locName)
   {
     struct TZoneLocation *loc;
 
+    // create a new location node
     if((loc = AllocSysObjectTags(ASOT_NODE,
       ASONODE_Size, sizeof(*loc),
       ASONODE_Min, TRUE,
@@ -91,6 +92,8 @@ static void addLocation(const char *contName, const char *locName)
       loc->name = strdup(locName);
 
       AddTail((struct List *)&found->locationList, (struct Node *)loc);
+      // count the number of locations
+      found->numLocations++;
     }
   }
 
@@ -238,7 +241,7 @@ char **BuildContinentEntries(void)
 
   // count the continents
   count = CountNodes(&G->tzoneContinentList);
-  if((entries = malloc((count+1) * sizeof(char *))) != NULL)
+  if((entries = calloc(count+1, sizeof(char *))) != NULL)
   {
     char **ptr = entries;
 
@@ -249,9 +252,6 @@ char **BuildContinentEntries(void)
     {
       *ptr++ = cont->name;
     }
-
-    // terminate the array with a NULL entry
-    *ptr = NULL;
   }
 
   G->tzoneContinentEntries = entries;
@@ -286,7 +286,7 @@ char **BuildLocationEntries(int contNumber)
 
   if(cont != NULL)
   {
-    if((entries = malloc((cont->numLocations+1) * sizeof(char *))) != NULL)
+    if((entries = calloc(cont->numLocations+1, sizeof(char *))) != NULL)
     {
       char **ptr = entries;
       struct TZoneLocation *loc;
@@ -298,9 +298,6 @@ char **BuildLocationEntries(int contNumber)
       {
         *ptr++ = loc->name;
       }
-
-      // terminate the array with a NULL entry
-      *ptr = NULL;
     }
   }
 
