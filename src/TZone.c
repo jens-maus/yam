@@ -281,6 +281,7 @@ char **BuildLocationEntries(int contNumber)
   {
     if(i == contNumber)
       break;
+    i++;
   }
 
   if(cont != NULL)
