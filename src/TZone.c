@@ -210,7 +210,14 @@ void ParseZoneTabFile(void)
 
           D(DBF_TZONE, "found contintent '%s', city or state '%s'", SafeStr(continent), SafeStr(cityOrState));
           if(cityOrState != NULL)
+          {
+            // convert all underscores to spaces
+            p = cityOrState;
+            while((p = strchr(p, '_')) != NULL)
+              *p++ = ' ';
+
             addLocation(continent, cityOrState);
+          }
 		}
 	  }
     }
