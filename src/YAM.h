@@ -67,6 +67,7 @@ struct codesetList;
 struct HashTable;
 struct NotifyRequest;
 struct Process;
+struct TZoneInfo;
 
 /**************************************************************************/
 
@@ -126,6 +127,8 @@ struct Global
   APTR                     mailNodeItemPool;     // item pool for struct MailNode
   APTR                     avlNodeItemPool;      // item pool for struct AVL_Node
   struct Screen *          workbenchScreen;
+  char **                  tzoneContinentEntries;
+  char **                  tzoneLocationEntries;
 
   #if defined(__amigaos4__)
   struct MsgPort *         AppLibPort;
@@ -168,6 +171,7 @@ struct Global
   struct MinList           zombieFileList;
   struct MinList           normalBusyList;       // list of active busy actions, normal usage
   struct MinList           arexxBusyList;        // list of active busy actions, ARexx usage
+  struct MinList           tzoneContinentList;   // parsed stuff from zone.tab file
   struct Theme             theme;
   struct TokenAnalyzer     spamFilter;
   struct Timers            timerData;

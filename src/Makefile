@@ -685,6 +685,7 @@ YAMOBJS = \
 	Themes.o \
 	Threads.o \
 	Timer.o \
+	TZone.o \
 	UIDL.o \
 	UpdateCheck.o \
 	UserIdentity.o \

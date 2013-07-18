@@ -109,6 +109,7 @@
 #include "Rexx.h"
 #include "Threads.h"
 #include "Timer.h"
+#include "TZone.h"
 #include "UpdateCheck.h"
 #include "UserIdentity.h"
 
@@ -1175,6 +1176,9 @@ static void Terminate(void)
 
   D(DBF_STARTUP, "cleaning up busy actions...");
   BusyCleanup();
+
+  D(DBF_STARTUP, "cleaning up tzone stuff...");
+  TZoneCleanup();
 
   // close all libraries now.
   D(DBF_STARTUP, "closing all opened libraries...");
@@ -2706,6 +2710,7 @@ int main(int argc, char **argv)
     NewMinList(&G->zombieFileList);
     NewMinList(&G->normalBusyList);
     NewMinList(&G->arexxBusyList);
+    NewMinList(&G->tzoneContinentList);
 
     if((C = calloc(1, sizeof(struct Config))) == NULL)
     {
@@ -2821,6 +2826,9 @@ int main(int argc, char **argv)
 
     // setup our ImageCache
     ImageCacheSetup();
+
+    // initialize our tzone handling
+    ParseZoneTabFile();
 
     if(yamFirst == TRUE)
     {

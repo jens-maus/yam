@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-07-18 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c, TZone.c: implemented some functions to parse the zone.tab located in
+    the resources/zoneinfo directory and to setup certain structures for future
+    use.
+
 2013-07-17 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_AB.c, mui/AddrBookListtree.c, misc: made the address book listtree title
