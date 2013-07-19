@@ -50,6 +50,7 @@ char **BuildContinentEntries(void);
 char **BuildLocationEntries(ULONG continent);
 char *BuildTZoneName(char *name, size_t nameSize, ULONG continent, ULONG location);
 BOOL ParseTZoneName(const char *tzone, ULONG *continent, ULONG *location);
+const char *GuessTZone(LONG gmtOffset);
 struct TZoneContinent *FindContinent(const char *continent);
 struct TZoneLocation *FindLocation(struct TZoneContinent *continent, const char *location);
 void TZoneCleanup(void);

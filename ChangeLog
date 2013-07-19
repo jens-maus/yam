@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-07-19 Thore Böckelmann <tboeckel@gmx.de>
+
+  * TZone.c: implemented GuessTZone() to derive a valid time zone name from an
+    offset to GMT.
+
 2013-07-18 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.c, TZone.c: implemented some functions to parse the zone.tab located in
