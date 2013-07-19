@@ -1721,8 +1721,6 @@ Object *CO_PageFirstSteps(struct CO_ClassData *data)
 
     set(data->GUI.CY_TZONE, MUIA_Disabled, G->TrustedTimezone);
     set(data->GUI.CH_DSTACTIVE, MUIA_Disabled, G->TrustedDST);
-    set(data->GUI.CY_TZONE_CONTINENT, MUIA_Cycle_Entries, BuildContinentEntries());
-    set(data->GUI.CY_TZONE_LOCATION, MUIA_Cycle_Entries, BuildLocationEntries(0));
 
     DoMethod(data->GUI.ST_POPHOST0, MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_GetDefaultPOPHook);
     DoMethod(data->GUI.ST_USER0,  MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_GetDefaultPOPHook);
