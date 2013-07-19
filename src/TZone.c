@@ -230,6 +230,10 @@ void ParseZoneTabFile(void)
     // sort all locations
     sortLocations();
   }
+  else
+  {
+    E(DBF_TZONE, "failed to open file '%s'", filename);
+  }
 
   LEAVE();
 }
@@ -239,24 +243,26 @@ void ParseZoneTabFile(void)
 // set up an array of strings to be used with a Cycle object
 char **BuildContinentEntries(void)
 {
-  char **entries;
+  char **entries = NULL;
   size_t count;
 
   ENTER();
 
   // count the continents
-  count = CountNodes(&G->tzoneContinentList);
-  if((entries = calloc(count+1, sizeof(char *))) != NULL)
+  if((count = CountNodes(&G->tzoneContinentList)) != 0)
   {
-    struct Node *curNode;
-    char **ptr = entries;
-
-    // copy all continent names
-    IterateList(&G->tzoneContinentList, curNode)
+    if((entries = calloc(count+1, sizeof(char *))) != NULL)
     {
-      struct TZoneContinent *cont = (struct TZoneContinent *)curNode;
+      struct Node *curNode;
+      char **ptr = entries;
 
-      *ptr++ = cont->name;
+      // copy all continent names
+      IterateList(&G->tzoneContinentList, curNode)
+      {
+        struct TZoneContinent *cont = (struct TZoneContinent *)curNode;
+
+        *ptr++ = cont->name;
+      }
     }
   }
 
@@ -276,7 +282,7 @@ char **BuildLocationEntries(ULONG continent)
 
   if((cont = (struct TZoneContinent *)GetNthNode(&G->tzoneContinentList, continent)) != NULL)
   {
-    if((entries = calloc(cont->numLocations+1, sizeof(char *))) != NULL)
+    if(cont->numLocations != 0 && (entries = calloc(cont->numLocations+1, sizeof(char *))) != NULL)
     {
       char **ptr = entries;
       struct Node *curNode;
