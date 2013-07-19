@@ -6073,25 +6073,25 @@ void SortExecList(struct MinList *lh, int (* compare)(const struct MinNode *, co
 struct MinNode *GetNthNode(const struct MinList *list, ULONG n)
 {
   struct MinNode *result = NULL;
-  struct Node *curNnode;
+  struct Node *curNode;
   ULONG nn;
 
   ENTER();
 
-  nn = NULL;
+  nn = 0;
   IterateList(list, curNode)
   {
     if(nn == n)
     {
-      node = (struct MinNode *)curNode;
+      result = (struct MinNode *)curNode;
       break;
     }
 
     nn++;
   }
 
-  RETURN(node);
-  return node;
+  RETURN(result);
+  return result;
 }
 
 ///
