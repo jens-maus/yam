@@ -1216,14 +1216,11 @@ tzset(void)
 {
 	register const char *	name;
 
-  name = "Europe/Berlin";
-
-printf("TZ: '%s'\n", name);
-	//name = getenv("TZ");
-	//if (name == NULL) {
-	//	tzsetwall();
-	//	return;
-	//}
+	name = getenv("TZ");
+	if (name == NULL) {
+		tzsetwall();
+		return;
+	}
 
 	if (lcl_is_set > 0 && strcmp(lcl_TZname, name) == 0)
 		return;
@@ -1966,7 +1963,6 @@ time1(struct tm *const tmp,
 time_t
 my_mktime(struct tm *const tmp)
 {
-  printf("JOOOOOOOOO\n");
 	tzset();
 	return time1(tmp, localsub, 0L);
 }
