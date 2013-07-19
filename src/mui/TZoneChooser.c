@@ -23,12 +23,12 @@
 
  $Id$
 
- Superclass:  MUIC_Cycle
- Description: Cycle object to choose a time zone location
+ Superclass:  MUIC_Group
+ Description: Group of two cycle object to choose a time zone
 
 ***************************************************************************/
 
-#include "TZoneLocationChooser_cl.h"
+#include "TZoneChooser_cl.h"
 
 #include <stdlib.h>
 
@@ -37,13 +37,17 @@
 #include "MUIObjects.h"
 #include "TZone.h"
 
+#include "mui/TZoneContinentChooser.h"
+#include "mui/TZoneLocationChooser.h"
+
 #include "Debug.h"
 
 /* CLASSDATA
 struct Data
 {
-  char **locationArray;               // names of the different ls that can be selected
-  ULONG continent;
+  Object *continents;
+  Object *locations;
+  char tzone[64];
 };
 */
 
@@ -51,49 +55,29 @@ struct Data
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
-  char **locationArray;
-  ULONG continent;
+  Object *continents;
+  Object *locations;
 
   ENTER();
 
-  continent = GetTagData(ATTR(Continent), 0, inittags(msg));
-  locationArray = BuildLocationEntries(continent);
-
   if((obj = DoSuperNew(cl, obj,
 
-    MUIA_CycleChain,    TRUE,
-    MUIA_Font,          MUIV_Font_Button,
-    MUIA_Cycle_Entries, locationArray,
+    MUIA_Group_Horiz, TRUE,
+    Child, continents = TZoneContinentChooserObject, End,
+    Child, locations = TZoneLocationChooserObject, End,
 
     TAG_MORE, inittags(msg))) != NULL)
   {
     GETDATA;
 
-    data->locationArray = locationArray;
-    data->continent = continent;
+    data->continents = continents;
+    data->locations = locations;
+
+    DoMethod(continents, MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, locations, 3, MUIM_Set, MUIA_TZoneLocationChooser_Continent, MUIV_TriggerValue);
   }
 
   RETURN((IPTR)obj);
   return (IPTR)obj;
-}
-
-///
-/// OVERLOAD(OM_DISPOSE)
-OVERLOAD(OM_DISPOSE)
-{
-  GETDATA;
-  ULONG result;
-
-  ENTER();
-
-  // free the string array
-  free(data->locationArray);
-
-  // signal the super class to dispose as well
-  result = DoSuperMethodA(cl, obj, msg);
-
-  RETURN(result);
-  return result;
 }
 
 ///
@@ -107,15 +91,44 @@ OVERLOAD(OM_SET)
   {
     switch(tag->ti_Tag)
     {
-      case ATTR(Continent):
+      case ATTR(TZone):
       {
-        if(tag->ti_Data != data->continent)
+        char *tzone = (char *)tag->ti_Data;
+
+        if(tzone != NULL)
         {
-          data->continent = tag->ti_Data;
-          DoMethod(obj, METHOD(UpdateLocations));
-		}
+          ULONG continent;
+          ULONG location;
+
+          if(ParseTZoneName(tzone, &continent, &location) == TRUE)
+          {
+            // set the active cycle entries with notifications enabled,
+            // this will automatically set the correct array of locations
+            set(data->continents, MUIA_Cycle_Active, continent);
+            set(data->locations, MUIA_Cycle_Active, location);
+          }
+        }
       }
       break;
+    }
+  }
+
+  return DoSuperMethodA(cl, obj, msg);
+}
+
+///
+/// OVERLOAD(OM_GET)
+OVERLOAD(OM_GET)
+{
+  GETDATA;
+  IPTR *store = ((struct opGet *)msg)->opg_Storage;
+
+  switch(((struct opGet *)msg)->opg_AttrID)
+  {
+    case ATTR(TZone):
+    {
+      *store = (IPTR)BuildTZoneName(data->tzone, sizeof(data->tzone), xget(data->continents, MUIA_Cycle_Active), xget(data->continents, MUIA_Cycle_Active));
+      return TRUE;
     }
   }
 
@@ -127,22 +140,3 @@ OVERLOAD(OM_SET)
 /* Private Functions */
 
 /* Public Methods */
-/// DECLARE(UpdateLocations)
-// updates the str array containing all locations of a continent
-DECLARE(UpdateLocations)
-{
-  GETDATA;
-
-  ENTER();
-
-  set(obj, MUIA_Cycle_Entries, NULL);
-  free(data->locationArray);
-
-  data->locationArray = BuildLocationEntries(data->continent);
-  set(obj, MUIA_Cycle_Entries, data->locationArray);
-
-  RETURN(0);
-  return 0;
-}
-
-///

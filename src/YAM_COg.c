@@ -82,8 +82,7 @@
 #include "mui/SignatureList.h"
 #include "mui/SignatureTextEdit.h"
 #include "mui/ThemeListGroup.h"
-#include "mui/TZoneContinentChooser.h"
-#include "mui/TZoneLocationChooser.h"
+#include "mui/TZoneChooser.h"
 #include "mui/YAMApplication.h"
 
 #include "BayesFilter.h"
@@ -1695,11 +1694,7 @@ Object *CO_PageFirstSteps(struct CO_ClassData *data)
                 Child, MakeCheckGroup(&data->GUI.CH_DSTACTIVE, tr(MSG_CO_DSTACTIVE)),
 
                 Child, HSpace(1),
-                Child, HGroup,
-                  Child, data->GUI.CY_TZONE_CONTINENT = TZoneContinentChooserObject,
-                  End,
-                  Child, data->GUI.CY_TZONE_LOCATION = TZoneLocationChooserObject,
-                  End,
+                Child, data->GUI.GR_TZONE = TZoneChooserObject,
                 End,
               End,
 
@@ -1725,7 +1720,6 @@ Object *CO_PageFirstSteps(struct CO_ClassData *data)
     DoMethod(data->GUI.ST_POPHOST0, MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_GetDefaultPOPHook);
     DoMethod(data->GUI.ST_USER0,  MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_GetDefaultPOPHook);
     DoMethod(data->GUI.ST_PASSWD0,  MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_GetDefaultPOPHook);
-    DoMethod(data->GUI.CY_TZONE_CONTINENT, MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, data->GUI.CY_TZONE_LOCATION, 3, MUIM_Set, MUIA_TZoneLocationChooser_Continent, MUIV_TriggerValue);
   }
 
   RETURN(obj);

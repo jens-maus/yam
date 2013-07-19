@@ -93,37 +93,6 @@ OVERLOAD(OM_DISPOSE)
 }
 
 ///
-/// OVERLOAD(OM_SET)
-OVERLOAD(OM_SET)
-{
-  GETDATA;
-  struct TagItem *tags = inittags(msg), *tag;
-
-  while((tag = NextTagItem((APTR)&tags)) != NULL)
-  {
-    switch(tag->ti_Tag)
-    {
-    }
-  }
-
-  return DoSuperMethodA(cl, obj, msg);
-}
-
-///
-/// OVERLOAD(OM_GET)
-OVERLOAD(OM_GET)
-{
-  GETDATA;
-  IPTR *store = ((struct opGet *)msg)->opg_Storage;
-
-  switch(((struct opGet *)msg)->opg_AttrID)
-  {
-  }
-
-  return DoSuperMethodA(cl, obj, msg);
-}
-
-///
 
 /* Private Functions */
 

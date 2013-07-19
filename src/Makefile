@@ -532,6 +532,7 @@ MUIOBJS = \
 	TransferControlList.o \
 	TransferMailList.o \
 	TransferWindow.o \
+	TZoneChooser.o \
 	TZoneContinentChooser.o \
 	TZoneLocationChooser.o \
 	UpdateComponentList.o \
