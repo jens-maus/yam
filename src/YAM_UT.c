@@ -6072,16 +6072,20 @@ void SortExecList(struct MinList *lh, int (* compare)(const struct MinNode *, co
 // get the n-th node of a list
 struct MinNode *GetNthNode(const struct MinList *list, ULONG n)
 {
-  struct MinNode *node;
+  struct MinNode *result = NULL;
+  struct Node *curNnode;
   ULONG nn;
 
   ENTER();
 
   nn = NULL;
-  IterateList(list, node)
+  IterateList(list, curNode)
   {
     if(nn == n)
+    {
+      node = (struct MinNode *)curNode;
       break;
+    }
 
     nn++;
   }
