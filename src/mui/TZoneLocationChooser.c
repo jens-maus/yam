@@ -72,6 +72,10 @@ OVERLOAD(OM_NEW)
     data->locationArray = locationArray;
     data->continent = continent;
   }
+  else
+  {
+    free(locationArray);
+  }
 
   RETURN((IPTR)obj);
   return (IPTR)obj;
