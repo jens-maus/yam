@@ -1324,9 +1324,9 @@ void DisconnectFromHost(struct Connection *conn)
       G->activeConnections--;
       if(G->activeConnections == 0)
       {
-	    // update the AppIcon to show that there are no active connections anymore
+        // update the AppIcon to show that there are no active connections anymore
         PushMethodOnStack(G->App, 1, MUIM_YAMApplication_UpdateAppIcon);
-	  }
+      }
       ReleaseSemaphore(G->connectionSemaphore);
     }
   }

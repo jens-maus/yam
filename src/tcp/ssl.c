@@ -778,7 +778,7 @@ BOOL MakeSecureConnection(struct Connection *conn)
               #endif
 
               // 12) set the socket descriptor to the ssl context
-			  D(DBF_NET, "set socket descriptor %ld for context %08lx", conn->socket, conn->ssl);
+              D(DBF_NET, "set socket descriptor %ld for context %08lx", conn->socket, conn->ssl);
               if(SSL_set_fd(conn->ssl, (int)conn->socket) != 1)
                 E(DBF_NET, "SSL_set_fd() error, socket %ld", conn->socket);
               else
@@ -787,7 +787,7 @@ BOOL MakeSecureConnection(struct Connection *conn)
                 int res;
 
                 // 13) establish the ssl connection and take care of non-blocking IO
-				D(DBF_NET, "connect SSL context %08lx", conn->ssl);
+                D(DBF_NET, "connect SSL context %08lx", conn->ssl);
                 while(errorState == FALSE && (res = SSL_connect(conn->ssl)) <= 0)
                 {
                   int err = SSL_get_error(conn->ssl, res);
@@ -857,7 +857,7 @@ BOOL MakeSecureConnection(struct Connection *conn)
                   STACK_OF(X509) *chain;
 
                   // 14) now we get the peer certificate chain
-				  D(DBF_NET, "get peer certificate chain");
+                  D(DBF_NET, "get peer certificate chain");
                   chain = SSL_get_peer_cert_chain(conn->ssl);
                   if(chain == NULL || sk_X509_num(chain) == 0)
                     E(DBF_NET, "SSL server did not present certificate, chain=%08lx", chain);

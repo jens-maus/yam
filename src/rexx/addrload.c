@@ -62,13 +62,13 @@ void rx_addrload(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
     {
       if(AB_LoadTree(args->filename, FALSE, FALSE) == TRUE)
       {
-	    if(args->open != 0)
-	    {
-		  PopUp();
-		  DoMethod(G->App, MUIM_CallHook, &AB_OpenHook, ABM_EDIT);
-		}
-	  }
-	  else
+        if(args->open != 0)
+        {
+          PopUp();
+          DoMethod(G->App, MUIM_CallHook, &AB_OpenHook, ABM_EDIT);
+        }
+      }
+      else
         params->rc = RETURN_ERROR;
     }
     break;

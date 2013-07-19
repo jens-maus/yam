@@ -153,7 +153,7 @@ static BOOL FI_MatchString(const struct Search *search, const char *string)
         else
           match = (BOOL)(Stricmp(string, search->Match) == 0);
         D(DBF_FILTER, "did string comparison of '%s' against '%s', result %ld", search->Match, string, match);
-	  }
+      }
 
       // check for non-matching search
       if(search->Compare == CP_NOTEQUAL)
@@ -801,7 +801,7 @@ BOOL FI_PrepareSearch(struct Search *search, const enum SearchMode mode,
       {
         // do an exact string match
         // there is nothing to prepare here
-	  }
+      }
     }
   }
 
@@ -916,7 +916,7 @@ BOOL FI_DoSearch(struct Search *search, const struct Mail *mail)
       else
       {
         D(DBF_FILTER, "  BODY: skip encrypted mail");
-	  }
+      }
     }
     break;
 
@@ -2899,7 +2899,7 @@ BOOL ImportFilter(const char *fileName, const BOOL isVolatile, struct MinList *f
                       if((t = strchr(s+1, '"')) != NULL)
                       {
                         *t = '\0';
-		                    rule->searchMode = SM_HEADLINE;
+                        rule->searchMode = SM_HEADLINE;
                         strlcpy(rule->customField, s+1, sizeof(rule->customField));
                       }
                     }
@@ -3027,7 +3027,7 @@ BOOL ImportFilter(const char *fileName, const BOOL isVolatile, struct MinList *f
           D(DBF_FILTER, "skipping keyword '%s' value '%s'", buf, value);
         }
       }
-	  }
+    }
 
     free(buf);
 

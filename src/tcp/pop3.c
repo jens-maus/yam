@@ -780,18 +780,18 @@ static int GetAllMessageDetails(struct TransferContext *tc, BOOL remoteFilters)
         {
           // continue with the next mail
           tnode = NextMailTransferNode(tnode);
-	    }
-	  }
-	  while(tnode != NULL);
+        }
+      }
+      while(tnode != NULL);
     }
     else
     {
-	  D(DBF_NET, "nothing to be done in pass %ld", pass);
-	}
+      D(DBF_NET, "nothing to be done in pass %ld", pass);
+    }
 
     // bail out after the first pass if remote filters are to be applied
-	if(remoteFilters == TRUE)
-	  break;
+    if(remoteFilters == TRUE)
+      break;
   }
 
   // hide the progress bar after the scan

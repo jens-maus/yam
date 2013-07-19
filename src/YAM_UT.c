@@ -3383,8 +3383,8 @@ struct Mail *ReplaceMailInFolder(const char *mailFile, const struct Mail *mail, 
 
     if((mnode = FindMailByFilename(folder->messages, mailFile)) != NULL)
     {
-  	  // remove the old mail's stats from the folder stats
-  	  folder->Size -= mnode->mail->Size;
+      // remove the old mail's stats from the folder stats
+      folder->Size -= mnode->mail->Size;
 
       if(hasStatusNew(mnode->mail))
         folder->New--;

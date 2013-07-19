@@ -729,7 +729,7 @@ BOOL CertWarningRequest(struct Connection *conn, struct Certificate *cert)
     {
       // free the format template right now
       FreeStrBuf(format);
-	}
+    }
   }
 
   RETURN(result);

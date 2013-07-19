@@ -97,7 +97,7 @@ void ResetStrBuf(char *buf)
 
   if(buf != NULL)
   {
-  	struct StrBuf *strbuf = STR_TO_STRBUF(buf);
+    struct StrBuf *strbuf = STR_TO_STRBUF(buf);
 
     strbuf->length = 0;
     strbuf->string[0] = '\0';
@@ -156,7 +156,7 @@ size_t StrBufCpy(char **buf, const char *source)
       }
       else
       {
-      	reqsize = 0;
+        reqsize = 0;
       }
     }
   }
@@ -233,7 +233,7 @@ size_t StrBufCat(char **buf, const char *source)
       }
       else
       {
-      	reqsize = 0;
+        reqsize = 0;
       }
     }
   }
@@ -291,7 +291,7 @@ size_t StrBufRead(char **buf, FILE *fh, size_t size)
   }
   else
   {
-	strbuf = STR_TO_STRBUF(*buf);
+    strbuf = STR_TO_STRBUF(*buf);
 
     // make sure the string buffer is large enough to keep the
     // requested amount of characters
@@ -300,17 +300,17 @@ size_t StrBufRead(char **buf, FILE *fh, size_t size)
       struct StrBuf *newstrbuf;
 
       // allocate a new buffer and replace the old one with it
-	  if((newstrbuf = AllocStrBufInternal(size+1)) != NULL)
-	  {
-	    free(strbuf);
-	    strbuf = newstrbuf;
-	    *buf = STRBUF_TO_STR(strbuf);
-	  }
-	  else
-	  {
-	    size = 0;
-	  }
-	}
+      if((newstrbuf = AllocStrBufInternal(size+1)) != NULL)
+      {
+        free(strbuf);
+        strbuf = newstrbuf;
+        *buf = STRBUF_TO_STR(strbuf);
+      }
+      else
+      {
+        size = 0;
+      }
+    }
   }
 
   if(size != 0)
@@ -334,9 +334,9 @@ void FreeStrBuf(char *buf)
 
   if(buf != NULL)
   {
-	struct StrBuf *strbuf = STR_TO_STRBUF(buf);
+    struct StrBuf *strbuf = STR_TO_STRBUF(buf);
 
-	free(strbuf);
+    free(strbuf);
   }
 
   LEAVE();

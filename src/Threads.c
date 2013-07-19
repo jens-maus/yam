@@ -316,10 +316,10 @@ static SAVEDS void ThreadEntry(void)
       {
         // allocate a separate message port to not interfere with standard I/O functions
         // which use proc->pr_MsgPort
-      	if((thread->commandPort = AllocSysObjectTags(ASOT_PORT, TAG_DONE)) != NULL)
-      	{
-      	  // remember the thread pointer in the task's tc_UserData field
-      	  // this will be used whenever the current thread needs to be obtained
+        if((thread->commandPort = AllocSysObjectTags(ASOT_PORT, TAG_DONE)) != NULL)
+        {
+          // remember the thread pointer in the task's tc_UserData field
+          // this will be used whenever the current thread needs to be obtained
           proc->pr_Task.tc_UserData = thread;
           msg->result = TRUE;
           initOk = TRUE;

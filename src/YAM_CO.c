@@ -2438,7 +2438,7 @@ void CO_Validate(struct Config *co, BOOL update)
         // fake "Change" click if we have a trustable time zone setting
         D(DBF_CONFIG, "using trusable time zone setting");
         res = 1;
-	  }
+      }
 
       // if the user has clicked on Change, we do
       // change the timezone and save it immediatly
@@ -2484,7 +2484,7 @@ void CO_Validate(struct Config *co, BOOL update)
         // fake "Change" click if we have a trustable DST setting
         D(DBF_CONFIG, "using trusable DST setting");
         res = 1;
-	  }
+      }
 
       // if the user has clicked on Change, we do
       // change the DST setting and save it immediatly

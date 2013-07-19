@@ -387,7 +387,7 @@ BOOL CreateTRequest(struct TRequest *timer, UNUSED const int id, UNUSED struct M
 
   if(G->timerData.timer[0].tr != NULL)
   {
-	// clone the first global request
+    // clone the first global request
     timer->tr = AllocSysObjectTags(ASOT_IOREQUEST,
       ASOIOR_Size,      sizeof(struct TimeRequest),
       ASOIOR_Duplicate, (IPTR)G->timerData.timer[0].tr,
@@ -395,7 +395,7 @@ BOOL CreateTRequest(struct TRequest *timer, UNUSED const int id, UNUSED struct M
   }
   else
   {
-	// create a new request
+    // create a new request
     timer->tr = AllocSysObjectTags(ASOT_IOREQUEST,
       ASOIOR_Size,      sizeof(struct TimeRequest),
       ASOIOR_ReplyPort, (IPTR)G->timerData.port,
@@ -515,7 +515,7 @@ void CleanupTimers(void)
     // and then we delete the IO requests
     for(tid = TIMER_WRINDEX + 1; tid < TIMER_NUM; tid++)
     {
-	  DeleteTRequest(&G->timerData.timer[tid]);
+      DeleteTRequest(&G->timerData.timer[tid]);
     }
 
     DeleteTRequest(&G->timerData.timer[0]);

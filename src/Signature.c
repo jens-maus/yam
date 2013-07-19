@@ -290,14 +290,14 @@ char *ImportSignature(const char *src)
               c = (char)strtol(hex, NULL, 16);
               src += 3;
             }
-  		  }
-  		  break;
+          }
+          break;
 
-  		  default:
-  		  {
+          default:
+          {
             // unsupported backslash sequence, use character "as it is"
-  		  }
-  		  break;
+          }
+          break;
         }
       }
 
@@ -381,7 +381,7 @@ char *ExportSignature(const char *src)
             // use the typical \xHH representation
             snprintf(xchar, sizeof(xchar), "\\x%02x", c & 0xff);
             StrBufCat(&sig, xchar);
-  	      }
+          }
         }
         break;
       }

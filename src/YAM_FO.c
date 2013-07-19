@@ -171,10 +171,10 @@ void UpdateAllFolderSettings(const struct Config *co)
     // replace the old identity and signature pointers with current
     // ones pointing to the new configuration
     if(folder->MLIdentity != NULL)
-	  folder->MLIdentity = FindUserIdentityByID(&co->userIdentityList, folder->MLIdentity->id);
+      folder->MLIdentity = FindUserIdentityByID(&co->userIdentityList, folder->MLIdentity->id);
 
-	if(folder->MLSignature != NULL)
-	  folder->MLSignature = FindSignatureByID(&co->signatureList, folder->MLSignature->id);
+    if(folder->MLSignature != NULL)
+      folder->MLSignature = FindSignatureByID(&co->signatureList, folder->MLSignature->id);
   }
 
   UnlockFolderList(G->folders);

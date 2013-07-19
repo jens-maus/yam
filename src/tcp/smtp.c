@@ -1574,9 +1574,9 @@ BOOL SendMails(struct UserIdentityNode *uin, enum SendMailMode mode, const ULONG
                         }
                         else
                         {
-						  // update the Outgoing folder's stats as the mail just got (re)moved
-						  PushMethodOnStack(G->App, 3, MUIM_YAMApplication_DisplayStatistics, outfolder, TRUE);
-						}
+                          // update the Outgoing folder's stats as the mail just got (re)moved
+                          PushMethodOnStack(G->App, 3, MUIM_YAMApplication_DisplayStatistics, outfolder, TRUE);
+                        }
                       }
                       break;
 
