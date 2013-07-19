@@ -295,6 +295,7 @@ void *   DuplicateNode(const void *node, const size_t size);
 int      CountNodes(const struct MinList *list);
 void     SortNListToExecList(Object *nList, struct MinList *execList);
 void     SortExecList(struct List *lh, int (* compare)(const struct Node *, const struct Node *));
+struct Node *GetNthNode(const struct List *list, ULONG n);
 BOOL     DumpClipboard(FILE *out);
 char *   Encrypt(const char *source);
 void     GetPubScreenName(const struct Screen *screen, char *pubName, ULONG pubNameSize);

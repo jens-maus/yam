@@ -6067,6 +6067,31 @@ void SortExecList(struct List *lh, int (* compare)(const struct Node *, const st
   MoveList(lh, to);
 }
 
+///
+/// GetNthNode
+// get the n-th node of a list
+struct Node *GetNthNode(const struct List *list, ULONG n)
+{
+  struct Node *node;
+  ULONG nn;
+
+  ENTER();
+
+  for(nn = 0, node = GetHead(list);
+      node != NULL;
+      node = GetSucc(node))
+  {
+    if(nn = n)
+      break;
+
+    nn++;
+  }
+
+  RETURN(node);
+  return node;
+}
+
+///
 /// GetHostName
 // retrieve the hostname of the system YAM is currently running on for things
 // like SMTP authentification and so on
