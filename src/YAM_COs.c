@@ -58,6 +58,7 @@
 #include "mui/MainWindowToolbar.h"
 #include "mui/SignatureTextEdit.h"
 #include "mui/ThemeListGroup.h"
+#include "mui/TZoneChooser.h"
 
 #include "BayesFilter.h"
 #include "FileInfo.h"
@@ -71,6 +72,7 @@
 #include "Requesters.h"
 #include "Signature.h"
 #include "UserIdentity.h"
+#include "TZone.h"
 
 #include "Debug.h"
 
@@ -2577,6 +2579,7 @@ void CO_SetConfig(void)
 
       setcycle(gui->CY_TZONE, MapTZ(CE->TimeZone, FALSE));
       setcheckmark(gui->CH_DSTACTIVE, CE->DaylightSaving);
+      set(gui->GR_TZONE, MUIA_TZoneChooser_TZone, GuessTZone(CE->TimeZone));
 
       // try to get the mailer server structure of the first POP3 server
       if((msn = GetMailServer(&CE->pop3ServerList, 0)) != NULL)
