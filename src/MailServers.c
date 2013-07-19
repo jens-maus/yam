@@ -302,24 +302,11 @@ BOOL CompareMailServerLists(const struct MinList *msl1, const struct MinList *ms
 // return the num-th server from the list of servers
 struct MailServerNode *GetMailServer(const struct MinList *mailServerList, const unsigned int num)
 {
-  struct MailServerNode *result = NULL;
-  unsigned int count = 0;
-  struct Node *curNode;
+  struct MailServerNode *result;
 
   ENTER();
 
-  IterateList(mailServerList, curNode)
-  {
-    struct MailServerNode *msn = (struct MailServerNode *)curNode;
-
-    if(count == num)
-    {
-      result = msn;
-      break;
-    }
-
-    count++;
-  }
+  result = (struct MailServerNode *)GetNthNode(mailServerList, num);
 
   RETURN(result);
   return result;

@@ -2567,23 +2567,13 @@ struct RuleNode *CreateNewRule(struct FilterNode *filter, const int flags)
 //  return a pointer to the rule depending on the position in the ruleList
 struct RuleNode *GetFilterRule(struct FilterNode *filter, int pos)
 {
-  struct RuleNode *rule = NULL;
-  struct Node *curNode;
-  int i = 0;
+  struct RuleNode *rule;
 
   ENTER();
 
   // we do have to iterate through the ruleList of the filter
   // and count for rule at position 'pos'
-  IterateList(&filter->ruleList, curNode)
-  {
-    if(i == pos)
-    {
-      rule = (struct RuleNode *)curNode;
-      break;
-    }
-    i++;
-  }
+  rule = (struct RuleNode *)GetNthNode(&filter->ruleList, pos);
 
   RETURN(rule);
   return rule;
