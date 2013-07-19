@@ -47,7 +47,11 @@ struct TZoneContinent
 
 void ParseZoneTabFile(void);
 char **BuildContinentEntries(void);
-char **BuildLocationEntries(int contNumber);
+char **BuildLocationEntries(ULONG continent);
+char *BuildTZoneName(char *name, size_t nameSize, ULONG continent, ULONG location);
+BOOL ParseTZoneName(const char *tzone, ULONG *continent, ULONG *location);
+struct TZoneContinent *FindContinent(const char *continent);
+struct TZoneLocation *FindLocation(struct TZoneContinent *continent, const char *location);
 void TZoneCleanup(void);
 
 #endif /* TZONE_H */
