@@ -5880,10 +5880,10 @@ void *DuplicateNode(const void *node, const size_t size)
 ///
 /// CountNodes
 //  returns the number of nodes currently in a struct List
-int CountNodes(const struct MinList *list)
+ULONG CountNodes(const struct MinList *list)
 {
   struct Node *curNode;
-  int result = 0;
+  ULONG result = 0;
 
   ENTER();
 

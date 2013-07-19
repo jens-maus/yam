@@ -292,7 +292,7 @@ void     DisplayStatistics(struct Folder *fo, BOOL updateAppIcon);
 void     DisposeModule(void *modptr);
 BOOL     DoPack(const char *file, const char *newfile, const struct Folder *folder);
 void *   DuplicateNode(const void *node, const size_t size);
-int      CountNodes(const struct MinList *list);
+ULONG    CountNodes(const struct MinList *list);
 void     SortNListToExecList(Object *nList, struct MinList *execList);
 void     SortExecList(struct List *lh, int (* compare)(const struct Node *, const struct Node *));
 struct Node *GetNthNode(const struct List *list, ULONG n);
