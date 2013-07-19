@@ -5973,7 +5973,7 @@ void SortNListToExecList(Object *nList, struct MinList *execList)
 ///
 /// SortExecList
 // sort an Exec list using merge sort
-void SortExecList(struct List *lh, int (* compare)(const struct Node *, const struct Node *))
+void SortExecList(struct MinList *lh, int (* compare)(const struct MinNode *, const struct MinNode *))
 {
   struct List list[2], *from, *to;
   size_t insize;
@@ -5983,7 +5983,7 @@ void SortExecList(struct List *lh, int (* compare)(const struct Node *, const st
   NewList(from);
   NewList(to);
 
-  MoveList(from, lh);
+  MoveList(from, (struct List *)lh);
 
   insize = 1;
 
@@ -6026,7 +6026,7 @@ void SortExecList(struct List *lh, int (* compare)(const struct Node *, const st
           p = p->ln_Succ;
           psize--;
         }
-        else if(compare(p, q) <= 0)
+        else if(compare((const struct MinNode *)p, (const struct MinNode *)q) <= 0)
         {
           e = p;
           p = p->ln_Succ;
@@ -6064,24 +6064,23 @@ void SortExecList(struct List *lh, int (* compare)(const struct Node *, const st
     }
   }
 
-  MoveList(lh, to);
+  MoveList((struct List *)lh, to);
 }
 
 ///
 /// GetNthNode
 // get the n-th node of a list
-struct Node *GetNthNode(const struct List *list, ULONG n)
+struct MinNode *GetNthNode(const struct MinList *list, ULONG n)
 {
-  struct Node *node;
+  struct MinNode *node;
   ULONG nn;
 
   ENTER();
 
-  for(nn = 0, node = GetHead(list);
-      node != NULL;
-      node = GetSucc(node))
+  nn = NULL;
+  IterateList(list, node)
   {
-    if(nn = n)
+    if(nn == n)
       break;
 
     nn++;
