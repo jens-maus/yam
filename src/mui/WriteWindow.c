@@ -107,7 +107,7 @@ struct Data
   Object *LV_ATTACH_TINY;
   Object *BT_ADD;
   Object *BT_ADDPACK;
-  Object *BT_DEL;
+  Object *BT_REMOVE;
   Object *BT_RENAME;
   Object *BT_DISPLAY;
   Object *RA_ENCODING;
@@ -1240,7 +1240,7 @@ OVERLOAD(OM_NEW)
                 Child, ColGroup(5),
                   Child, data->BT_ADD     = MakeButton(tr(MSG_WR_Add)),
                   Child, data->BT_ADDPACK = MakeButton(tr(MSG_WR_AddPack)),
-                  Child, data->BT_DEL     = MakeButton(tr(MSG_Del)),
+                  Child, data->BT_REMOVE  = MakeButton(tr(MSG_WR_REMOVE)),
                   Child, data->BT_RENAME  = MakeButton(tr(MSG_WR_RENAME)),
                   Child, data->BT_DISPLAY = MakeButton(tr(MSG_WR_Display)),
                 End,
@@ -1377,7 +1377,7 @@ OVERLOAD(OM_NEW)
         // disable certain GUI elements per default
         DoMethod(G->App, MUIM_MultiSet,  MUIA_Disabled, TRUE, data->ST_CTYPE,
                                                               data->ST_DESC,
-                                                              data->BT_DEL,
+                                                              data->BT_REMOVE,
                                                               data->BT_RENAME,
                                                               data->BT_DISPLAY,
                                                               NULL);
@@ -1386,7 +1386,7 @@ OVERLOAD(OM_NEW)
         SetHelp(data->ST_SUBJECT,     MSG_HELP_WR_ST_SUBJECT);
         SetHelp(data->BT_ADD,         MSG_HELP_WR_BT_ADD);
         SetHelp(data->BT_ADDPACK,     MSG_HELP_WR_BT_ADDPACK);
-        SetHelp(data->BT_DEL,         MSG_HELP_WR_BT_DEL);
+        SetHelp(data->BT_REMOVE,      MSG_HELP_WR_BT_REMOVE);
         SetHelp(data->BT_DISPLAY,     MSG_HELP_WR_BT_DISPLAY);
         SetHelp(data->ST_CTYPE,       MSG_HELP_WR_ST_CTYPE);
         SetHelp(data->ST_DESC,        MSG_HELP_WR_ST_DESC);
@@ -1517,7 +1517,7 @@ OVERLOAD(OM_NEW)
         DoMethod(data->ST_SUBJECT,     MUIM_Notify, MUIA_String_Contents,    MUIV_EveryTime, obj, 1, METHOD(UpdateWindowTitle));
         DoMethod(data->BT_ADD,         MUIM_Notify, MUIA_Pressed,            FALSE,          obj, 2, METHOD(RequestAttachment), C->AttachDir);
         DoMethod(data->BT_ADDPACK,     MUIM_Notify, MUIA_Pressed,            FALSE,          obj, 1, METHOD(AddArchive));
-        DoMethod(data->BT_DEL,         MUIM_Notify, MUIA_Pressed,            FALSE,          obj, 1, METHOD(DeleteAttachment));
+        DoMethod(data->BT_REMOVE,      MUIM_Notify, MUIA_Pressed,            FALSE,          obj, 1, METHOD(RemoveAttachment));
         DoMethod(data->BT_RENAME,      MUIM_Notify, MUIA_Pressed,            FALSE,          obj, 1, METHOD(RenameAttachment));
         DoMethod(data->BT_DISPLAY,     MUIM_Notify, MUIA_Pressed,            FALSE,          obj, 1, METHOD(DisplayAttachment));
         DoMethod(data->LV_ATTACH,      MUIM_Notify, MUIA_NList_DoubleClick,  MUIV_EveryTime, obj, 1, METHOD(DisplayAttachment));
@@ -2549,9 +2549,9 @@ DECLARE(AddArchive)
 }
 
 ///
-/// DECLARE(DeleteAttachment)
+/// DECLARE(RemoveAttachment)
 // Deletes a file from the attachment list and the belonging temporary file
-DECLARE(DeleteAttachment)
+DECLARE(RemoveAttachment)
 {
   GETDATA;
   struct Attach *attach = NULL;
@@ -2648,7 +2648,7 @@ DECLARE(GetAttachmentEntry)
   DoMethod(data->LV_ATTACH, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &attach);
   DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, attach ? FALSE : TRUE, data->ST_CTYPE,
                                                                         data->ST_DESC,
-                                                                        data->BT_DEL,
+                                                                        data->BT_REMOVE,
                                                                         data->BT_RENAME,
                                                                         data->BT_DISPLAY, NULL);
 

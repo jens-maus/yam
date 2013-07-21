@@ -3944,7 +3944,7 @@ archív a pøilo¾í ke zprávì.
 ; or more files and add it to\n\
 ; the list as an attachment.
 ;
-MSG_HELP_WR_BT_DEL
+MSG_HELP_WR_BT_REMOVE
 Sma¾e vybranou pøílohu.
 ; Remove the selected\n\
 ; attachment from the list.

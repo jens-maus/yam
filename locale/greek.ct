@@ -3519,7 +3519,7 @@ MSG_HELP_WR_BT_ADDPACK
 Δημιουργήστε ένα συμπιεσμένο αρχείο με ένα\nή περισσότερα αρχεία και εισάγετέ το\nστη λίστα ως ένα συνημμένο.
 ; Create an archive with one\nor more files and add it to\nthe list as an attachment.
 ;
-MSG_HELP_WR_BT_DEL
+MSG_HELP_WR_BT_REMOVE
 Αφαιρέστε το επιλεγμένο\nσυνημμένο από την λίστα.
 ; Remove the selected\nattachment from the list.
 ;

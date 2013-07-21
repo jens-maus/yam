@@ -3040,7 +3040,7 @@ Maak een archief met één of\n\
 meer bestanden en voeg het toe\n\
 aan de lijst van bijlagen.
 ;
-MSG_HELP_WR_BT_DEL
+MSG_HELP_WR_BT_REMOVE
 Verwijder de geselecteerde\n\
 bijlage uit de lijst.
 ;

@@ -3762,7 +3762,7 @@ Skapa ett arkiv med en eller\nflera filer och lägg till det i\nlistan som en bil
 ; or more files and add it to\n\
 ; the list as an attachment.
 ;
-MSG_HELP_WR_BT_DEL
+MSG_HELP_WR_BT_REMOVE
 Ta bort vald bilaga från listan.
 ; Remove the selected\n\
 ; attachment from the list.

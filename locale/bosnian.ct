@@ -4573,7 +4573,7 @@ Napravi arhiv od raznih\nfileova i unesi ga na\nlistu dodataka
 ; several files and add it\n\
 ; as attachment to the list
 ;
-MSG_HELP_WR_BT_DEL
+MSG_HELP_WR_BT_REMOVE
 Izbrisi oznaceni dodatak\nsa spiska
 ; Remove selected attachment\n\
 ; from the list

@@ -4603,7 +4603,7 @@ Kreira arhivu od nekoliko\nfajlova i dodaje je u listu\npridodatih fajlova
 ; several files and add it\n\
 ; as attachment to the list
 ;
-MSG_HELP_WR_BT_DEL
+MSG_HELP_WR_BT_REMOVE
 Uklanja odabrani pridodati\nfajl iz liste
 ; Remove selected attachment\n\
 ; from the list

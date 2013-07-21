@@ -3911,7 +3911,7 @@ zur Anhangliste hinzu.
 ; several files and add it to\n\
 ; the list as an attachment
 ;
-MSG_HELP_WR_BT_DEL
+MSG_HELP_WR_BT_REMOVE
 Ausgewählte Anhänge von\n\
 der Liste entfernen.
 ; Remove the selected\n\
@@ -8837,12 +8837,18 @@ Datei(en) hinzufügen...
 MSG_WR_CMENU_ADD_ARCHIVE_ATTACHMENT
 Komprimiert hinzufügen...
 ;
-MSG_WR_CMENU_DELETE_ATTACHMENT
-Löschen
+MSG_WR_CMENU_REMOVE_ATTACHMENT
+Entfernen
 ;
 MSG_WR_CMENU_RENAME_ATTACHMENT
 Umbenennen...
 ;
 MSG_WR_CMENU_DISPLAY_ATTACHMENT
 Anzeigen
+;
+MSG_WR_TITLEATTACHMENT
+Anhang
+;
+MSG_WR_REMOVE
+_Entfernen
 ;

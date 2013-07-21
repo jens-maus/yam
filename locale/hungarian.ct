@@ -3530,7 +3530,7 @@ MSG_HELP_WR_BT_ADDPACK
 Létrehoz egy archívumot\ntöbb fájlból, és csatolt\nfájlként hozzáadja a listához.
 ; Create an archive with one\nor more files and add it to\nthe list as an attachment.
 ;
-MSG_HELP_WR_BT_DEL
+MSG_HELP_WR_BT_REMOVE
 Eltávolítja a kijelölt csatolt\nfájlokat a listából.
 ; Remove the selected\nattachment from the list.
 ;

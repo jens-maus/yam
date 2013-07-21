@@ -3394,7 +3394,7 @@ Criar um arquivo a partir de\n\
 vários outros e adicioná-lo\n\
 como anexo à lista
 ;
-MSG_HELP_WR_BT_DEL
+MSG_HELP_WR_BT_REMOVE
 Remover da lista o anexo selecionado
 ;
 MSG_HELP_WR_BT_DISPLAY

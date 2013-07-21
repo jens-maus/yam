@@ -3517,7 +3517,7 @@ MSG_HELP_WR_BT_ADDPACK
 Crea un paquete con uno\no más archivos y los añade\na la lista de anexos.
 ; Create an archive with one\nor more files and add it to\nthe list as an attachment.
 ;
-MSG_HELP_WR_BT_DEL
+MSG_HELP_WR_BT_REMOVE
 Borra el anexo\nseleccionado de la lista.
 ; Remove the selected\nattachment from the list.
 ;

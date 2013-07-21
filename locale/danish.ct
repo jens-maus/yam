@@ -4874,7 +4874,7 @@ til listen som bilag.
 ; several files and add it to\n\
 ; the list as an attachment
 ;
-MSG_HELP_WR_BT_DEL
+MSG_HELP_WR_BT_REMOVE
 Fjerner det markerede\n\
 bilag fra listen.
 ; Remove the selected\n\

@@ -2894,7 +2894,7 @@ Create an archive with one\n\
 or more files and add it to\n\
 the list as an attachment.
 ;
-MSG_HELP_WR_BT_DEL (1030//)
+MSG_HELP_WR_BT_REMOVE (1030//)
 Remove the selected\n\
 attachment from the list.
 ;
@@ -7388,12 +7388,18 @@ Add file(s)...
 MSG_WR_CMENU_ADD_ARCHIVE_ATTACHMENT (2436//)
 Pack & add...
 ;
-MSG_WR_CMENU_DELETE_ATTACHMENT (2437//)
-Delete
+MSG_WR_CMENU_REMOVE_ATTACHMENT (2437//)
+Remove
 ;
 MSG_WR_CMENU_RENAME_ATTACHMENT (2438//)
 Rename...
 ;
 MSG_WR_CMENU_DISPLAY_ATTACHMENT (2439//)
 Display
+;
+MSG_WR_TITLEATTACHMENT (2440//)
+Attachment
+;
+MSG_WR_REMOVE (2441//)
+Re_move
 ;

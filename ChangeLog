@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-07-21 Jens Langner <Jens.Langner@light-speed.de>
+
+  * mui/WriteWindow.c: the new tiny attachment list will now also have a 
+    title row to make things more intuitive and clear.
+  * mui/WriteWindow.c: renamed the "Delete Attachment" phrase to "Remove
+    Attachment" as this better explains what this operation is actually doing.
+
 2013-07-19 Thore Böckelmann <tboeckel@gmx.de>
 
   * TZone.c: implemented GuessTZone() to derive a valid time zone name from an

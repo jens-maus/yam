@@ -3431,7 +3431,7 @@ MSG_HELP_WR_BT_ADDPACK
 Cria um arquivo com vários ficheiros\n\
 e adiciona-o como anexo à lista de anexos.
 ;
-MSG_HELP_WR_BT_DEL
+MSG_HELP_WR_BT_REMOVE
 Apaga o anexo seleccionado da lista.
 ;
 MSG_HELP_WR_BT_DISPLAY

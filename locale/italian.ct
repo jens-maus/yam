@@ -3963,7 +3963,7 @@ alla lista.
 ; or more files and add it to\n\
 ; the list as an attachment.
 ;
-MSG_HELP_WR_BT_DEL
+MSG_HELP_WR_BT_REMOVE
 Rimuove l'allegato selezionato\n\
 dalla lista.
 ; Remove the selected\n\

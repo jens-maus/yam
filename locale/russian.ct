@@ -4835,7 +4835,7 @@ MSG_HELP_WR_BT_ADDPACK
 ;several files and add it
 ;as attachment to the list
 ;
-MSG_HELP_WR_BT_DEL
+MSG_HELP_WR_BT_REMOVE
 Удалить аттач из списка.
 ;Remove selected attachment
 ;from the list

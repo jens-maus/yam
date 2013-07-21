@@ -63,7 +63,7 @@ enum
 {
   CMN_ADD=10,
   CMN_ADDPACK,
-  CMN_DELETE,
+  CMN_REMOVE,
   CMN_RENAME,
   CMN_DISPLAY,
 };
@@ -86,7 +86,7 @@ OVERLOAD(OM_NEW)
     MUIA_NList_DragType,             MUIV_NList_DragType_Immediate,
     MUIA_NList_DragSortable,         TRUE,
     MUIA_NList_Format,               (tiny == FALSE) ? "D=8 BAR,P=\033r D=8 BAR,D=8 BAR," : "PCS=R,P=\033r",
-    MUIA_NList_Title,                (tiny == FALSE),
+    MUIA_NList_Title,                TRUE,
     MUIA_ContextMenu,                MUIV_NList_ContextMenu_Always,
 
     TAG_MORE, inittags(msg))) != NULL)
@@ -284,7 +284,7 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
       Child, MenuObjectT(tr(MSG_WR_CMENU_TITLE)),
         Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_CMENU_ADD_ATTACHMENT),         MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, CMN_ADD,     End,
         Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_CMENU_ADD_ARCHIVE_ATTACHMENT), MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, CMN_ADDPACK, End,
-        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_CMENU_DELETE_ATTACHMENT),      MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, CMN_DELETE,  MUIA_Menuitem_Enabled, attach != NULL, End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_CMENU_REMOVE_ATTACHMENT),      MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, CMN_REMOVE,  MUIA_Menuitem_Enabled, attach != NULL, End,
         Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_CMENU_RENAME_ATTACHMENT),      MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, CMN_RENAME,  MUIA_Menuitem_Enabled, attach != NULL, End,
         Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_WR_CMENU_DISPLAY_ATTACHMENT),     MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, CMN_DISPLAY, MUIA_Menuitem_Enabled, attach != NULL, End,
       End,
@@ -314,8 +314,8 @@ OVERLOAD(MUIM_ContextMenuChoice)
       DoMethod(_win(obj), MUIM_WriteWindow_AddArchive);
     break;
 
-    case CMN_DELETE:
-      DoMethod(_win(obj), MUIM_WriteWindow_DeleteAttachment);
+    case CMN_REMOVE:
+      DoMethod(_win(obj), MUIM_WriteWindow_RemoveAttachment);
     break;
 
     case CMN_RENAME:
@@ -390,10 +390,15 @@ OVERLOAD(MUIM_NList_Display)
   }
   else
   {
-    ndm->strings[0] = (STRPTR)tr(MSG_WR_TitleFile);
-    ndm->strings[1] = (STRPTR)tr(MSG_WR_TitleSize);
-    if(data->tiny == FALSE)
+    if(data->tiny == TRUE)
     {
+      ndm->strings[0] = (STRPTR)tr(MSG_WR_TITLEATTACHMENT);
+      ndm->strings[1] = (STRPTR)tr(MSG_WR_TitleSize);
+    }
+    else
+    {
+      ndm->strings[0] = (STRPTR)tr(MSG_WR_TitleFile);
+      ndm->strings[1] = (STRPTR)tr(MSG_WR_TitleSize);
       ndm->strings[2] = (STRPTR)tr(MSG_WR_TitleContents);
       ndm->strings[3] = (STRPTR)tr(MSG_WR_TitleDescription);
     }

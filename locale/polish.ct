@@ -4229,7 +4229,7 @@ za³±cznik do listy.
 ; or more files and add it to\n\
 ; the list as an attachment.
 ;
-MSG_HELP_WR_BT_DEL
+MSG_HELP_WR_BT_REMOVE
 Usuwa wybrany za³±cznik\n\
 z listy.
 ; Remove the selected\n\

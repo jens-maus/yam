@@ -4297,7 +4297,7 @@ MSG_HELP_WR_BT_ADDPACK
 Tee useista tiedostoista\npaketti ja lis‰‰ se\nliitetiedostoksi
 ; Create an archive from\nseveral files and add it\nas attachment to the list
 ;
-MSG_HELP_WR_BT_DEL
+MSG_HELP_WR_BT_REMOVE
 Poista valittu\nliitetiedosto
 ; Remove selected attachment\nfrom the list
 ;

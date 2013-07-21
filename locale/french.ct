@@ -4001,7 +4001,7 @@ ou plusieurs fichiers et l'ajoute\n\
 ; or more files and add it to\n\
 ; the list as an attachment.
 ;
-MSG_HELP_WR_BT_DEL
+MSG_HELP_WR_BT_REMOVE
 Supprime la pièce jointe\n\
 sélectionnée de la liste
 ; Remove the selected\n\

@@ -4644,7 +4644,7 @@ v seznam kot prilogo
 ; several files and add it to\n\
 ; the list as an attachment
 ;
-MSG_HELP_WR_BT_DEL
+MSG_HELP_WR_BT_REMOVE
 Odstrani izbrano prilogo s seznama
 ; Remove the selected attachment from the list
 ;
