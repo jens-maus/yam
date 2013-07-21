@@ -7,6 +7,8 @@ $URL$
 
 2013-07-21 Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_COg.c, SearchControlGroup.c: minor layout change to the new filter
+    conditions setup user interface. 
   * extrasrc/tzcode, extrasrc.h: modified the build of our timezone library to
     start all standard functions with tz_XXXX() so that we can use them. In
     addition, YAM will now automatically call these tz_XXXX() functions if

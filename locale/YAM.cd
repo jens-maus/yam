@@ -7371,13 +7371,13 @@ MSG_CO_FILTER_REGISTER_ACTIONS (2430//)
 Actions
 ;
 MSG_CO_CONDITION_ALL (2431//)
-all conditions must be met
+all
 ;
 MSG_CO_CONDITION_MIN_ONE (2432//)
-at least one condition must be met
+one or more
 ;
 MSG_CO_CONDITION_MAX_ONE (2433//)
-exactly one condition must be met
+only one
 ;
 MSG_WR_CMENU_TITLE (2434//)
 Attachments
@@ -7402,4 +7402,10 @@ Attachment
 ;
 MSG_WR_REMOVE (2441//)
 Re_move
+;
+MSG_CO_CONDITION_PREPHRASE (2442//)
+If
+;
+MSG_CO_CONDITION_POSTPHRASE (2443//)
+of the following conditions are met:
 ;

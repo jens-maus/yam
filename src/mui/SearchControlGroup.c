@@ -68,7 +68,7 @@ struct Data
   Object *CH_SUBSTR[5];
   Object *CH_DOSPATTERN[5];
   Object *CH_SKIPENCRYPTED[5];
-  Object *RT_TITLE;
+  Object *RT_BUTTONS;
   Object *BT_ADDRULE;
   Object *BT_REMRULE;
   Object *activeObject;
@@ -180,20 +180,7 @@ OVERLOAD(OM_NEW)
 
     MUIA_Group_Horiz, FALSE,
     MUIA_HelpNode, "Windows#SearchwindowSearchcriteria",
-      Child, data->RT_TITLE = HGroup,
-        Child, RectangleObject,
-          MUIA_Rectangle_HBar, TRUE,
-          MUIA_FixHeight, 4,
-        End,
-        Child, HGroup,
-          MUIA_Weight, 0,
-          MUIA_Group_Spacing, 1,
-          MUIA_Group_SameWidth, TRUE,
-          Child, data->BT_ADDRULE = MakeButton("+"),
-          Child, data->BT_REMRULE = MakeButton("-"),
-        End,
-      End,
-      Child, HGroup,
+     Child, HGroup,
         Child, Label1(tr(MSG_FI_SearchIn)),
         Child, data->PG_MODE = PageGroup,
           MUIA_Group_ActivePage, data->remoteFilterMode,
@@ -274,7 +261,20 @@ OVERLOAD(OM_NEW)
           Child, HVSpace,
         End,
       End,
-
+      Child, data->RT_BUTTONS = HGroup,
+        Child, RectangleObject,
+          MUIA_Rectangle_HBar, TRUE,
+          MUIA_FixHeight, 4,
+        End,
+        Child, HGroup,
+          MUIA_Weight, 0,
+          MUIA_Group_Spacing, 1,
+          MUIA_Group_SameWidth, TRUE,
+          Child, data->BT_ADDRULE = MakeButton(MUIX_B "+" MUIX_N),
+          Child, data->BT_REMRULE = MakeButton(MUIX_B "-" MUIX_N),
+        End,
+      End,
+ 
     TAG_MORE, inittags(msg))) != NULL)
   {
     int i;
@@ -284,7 +284,13 @@ OVERLOAD(OM_NEW)
     // copy back the data stored in our temporarly struct Data
     memcpy(data, tmpData, sizeof(struct Data));
 
-    set(data->RT_TITLE, MUIA_ShowMe, singleRule == FALSE);
+    // if this isn't a single rule we show the +/- buttons
+    set(data->RT_BUTTONS, MUIA_ShowMe, singleRule == FALSE);
+    if(singleRule == FALSE)
+    {
+      xset(obj, MUIA_Frame, MUIV_Frame_Group,
+                MUIA_Background, MUII_GroupBack);
+    }
 
     // set the cyclechain
     set(data->RA_ADRMODE, MUIA_CycleChain, TRUE);

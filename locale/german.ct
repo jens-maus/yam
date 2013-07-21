@@ -8820,13 +8820,13 @@ MSG_CO_FILTER_REGISTER_ACTIONS
 Aktionen
 ;
 MSG_CO_CONDITION_ALL
-alle Bedingungen müssen erfüllt sein
+aller
 ;
 MSG_CO_CONDITION_MIN_ONE
-mindestens eine Bedingung muss erfüllt sein
+einer oder mehrerer
 ;
 MSG_CO_CONDITION_MAX_ONE
-genau eine Bedingung muss erfüllt sein
+genau einer
 ;
 MSG_WR_CMENU_TITLE
 Anhänge
@@ -8851,4 +8851,10 @@ Anhang
 ;
 MSG_WR_REMOVE
 _Entfernen
+;
+MSG_CO_CONDITION_PREPHRASE
+Bei Erfüllen
+;
+MSG_CO_CONDITION_POSTPHRASE
+der folgenden Bedingungen:
 ;
