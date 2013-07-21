@@ -236,7 +236,7 @@ extern char *	asctime_r(struct tm const *, char *);
 ** typical platforms.
 */
 #ifdef time_tz
-static time_t sys_time(time_t *x) { return time(x); }
+//static time_t sys_time(time_t *x) { return time(x); }
 
 # undef  ctime
 # define ctime tz_ctime
@@ -258,6 +258,14 @@ static time_t sys_time(time_t *x) { return time(x); }
 # define time tz_time
 # undef  time_t
 # define time_t tz_time_t
+# undef  tzset
+# define tzset tz_tzset
+# undef  strftime
+# define strftime tz_strftime
+# undef  asctime
+# define asctime tz_asctime
+# undef  asctime_r
+# define asctime_r tz_asctime_r
 
 typedef time_tz time_t;
 
@@ -269,7 +277,13 @@ struct tm *gmtime_r(time_t const *restrict, struct tm *restrict);
 struct tm *localtime(time_t const *);
 struct tm *localtime_r(time_t const *restrict, struct tm *restrict);
 time_t mktime(struct tm *);
+void tzset(void);
+size_t strftime(char * const s, const size_t maxsize, const char *const format,
+	 const struct tm *const t);
+char *asctime_r(register const struct tm *timeptr, char *buf);
+char *asctime(register const struct tm *timeptr);
 
+/*
 static time_t
 time(time_t *p)
 {
@@ -278,6 +292,7 @@ time(time_t *p)
 		*p = r;
 	return r;
 }
+*/
 #endif
 
 /*
@@ -377,11 +392,6 @@ const char *	scheck(const char * string, const char * format);
 char *asctime_r(struct tm const *, char *);
 char *ctime_r(time_t const *, char *);
 #endif /* HAVE_INCOMPATIBLE_CTIME_R */
-
-#ifndef tzset
-// clib2 does not define this one
-void tzset(void);
-#endif
 
 #ifndef YEARSPERREPEAT
 #define YEARSPERREPEAT		400	/* years before a Gregorian repeat */

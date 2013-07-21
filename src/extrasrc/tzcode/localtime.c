@@ -1959,9 +1959,8 @@ time1(struct tm *const tmp,
 	return WRONG;
 }
 
-#define mktime my_mktime
 time_t
-my_mktime(struct tm *const tmp)
+mktime(struct tm *const tmp)
 {
 	tzset();
 	return time1(tmp, localsub, 0L);

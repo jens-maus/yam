@@ -2167,7 +2167,6 @@ time_t GetDateStamp(void)
 }
 ///
 ///
-#define mktime my_mktime
 enum DST GetDSTinfo(int year, int month, int day)
 {
   struct tm a = {};

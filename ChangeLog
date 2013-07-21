@@ -7,6 +7,10 @@ $URL$
 
 2013-07-21 Jens Langner <Jens.Langner@light-speed.de>
 
+  * extrasrc/tzcode, extrasrc.h: modified the build of our timezone library to
+    start all standard functions with tz_XXXX() so that we can use them. In
+    addition, YAM will now automatically call these tz_XXXX() functions if
+    NEED_TZLIB is specified in extrasrc.h
   * mui/WriteWindow.c: the new tiny attachment list will now also have a 
     title row to make things more intuitive and clear.
   * mui/WriteWindow.c: renamed the "Delete Attachment" phrase to "Remove

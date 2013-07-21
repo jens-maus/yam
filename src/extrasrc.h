@@ -80,6 +80,7 @@ struct Node;
 #define NEED_VASTUBS
 #define NEED_CHANGEFILEPOSITION
 #define NEED_STRCASESTR
+#define NEED_TZLIB
 #endif // __amigaos3__
 
 /*
@@ -92,6 +93,7 @@ struct Node;
 #define NEED_MEMDUP
 #define NEED_STCGFE
 #define NEED_STRCASESTR
+#define NEED_TZLIB
 #endif // __amigaos4__
 
 /*
@@ -114,6 +116,7 @@ struct Node;
 #define NEED_MEMDUP
 #define NEED_VASPRINTF
 #define NEED_CHANGEFILEPOSITION
+#define NEED_TZLIB
 #endif // __MORPHOS__
 
 /*
@@ -137,6 +140,7 @@ struct Node;
 #define NEED_VASPRINTF
 #define NEED_VASTUBS
 #define NEED_CHANGEFILEPOSITION
+#define NEED_TZLIB
 #endif // __AROS__
 
 /*
@@ -289,6 +293,47 @@ void NewFreeArgs(struct NewRDArgs *);
 
 #if defined(NEED_STRCASESTR)
 char *strcasestr(const char *haystack, const char *needle);
+#endif
+
+#if defined(NEED_TZLIB)
+# undef  ctime
+# define ctime tz_ctime
+# undef  ctime_r
+# define ctime_r tz_ctime_r
+# undef  difftime
+# define difftime tz_difftime
+# undef  gmtime
+# define gmtime tz_gmtime
+# undef  gmtime_r
+# define gmtime_r tz_gmtime_r
+# undef  localtime
+# define localtime tz_localtime
+# undef  localtime_r
+# define localtime_r tz_localtime_r
+# undef  mktime
+# define mktime tz_mktime
+# undef  tzset
+# define tzset tz_tzset
+# undef  strftime
+# define strftime tz_strftime
+# undef  asctime
+# define asctime tz_asctime
+# undef  asctime_r
+# define asctime_r tz_asctime_r
+
+char *ctime(time_t const *);
+char *ctime_r(time_t const *, char *);
+double difftime(time_t, time_t);
+struct tm *gmtime(time_t const *);
+struct tm *gmtime_r(time_t const *, struct tm *);
+struct tm *localtime(time_t const *);
+struct tm *localtime_r(time_t const *, struct tm *);
+time_t mktime(struct tm *);
+void tzset(void);
+size_t strftime(char * const s, const size_t maxsize, const char *const format,
+   const struct tm *const t);
+char *asctime_r(register const struct tm *timeptr, char *buf);
+char *asctime(register const struct tm *timeptr);
 #endif
 
 /*
