@@ -7,6 +7,10 @@ $URL$
 
 2013-07-21 Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_AB.c, AddrBookListtree.c, Recipientstring.c, MailTextEdit.c: changed the
+    AddressbookListtree to multiselect mode. Now multiple entries can be selected
+    and drag&drop to the write window or any recipientstring gadget. YAM will
+    take care to extract the correct entries based on the listtree hierarchy.
   * YAM_COg.c, SearchControlGroup.c: minor layout change to the new filter
     conditions setup user interface. 
   * extrasrc/tzcode, extrasrc.h: modified the build of our timezone library to

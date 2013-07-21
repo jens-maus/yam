@@ -705,21 +705,81 @@ char *AB_CompleteAlias(const char *text)
 }
 
 ///
+/// AB_InsertAddressTreeNode (rec)
+static void AB_InsertAddressTreeNode(Object *writeWindow, enum RcptType type, struct MUI_NListtree_TreeNode *tn)
+{
+  struct ABEntry *ab = (struct ABEntry *)(tn->tn_User);
+
+  ENTER();
+
+  switch(ab->Type)
+  {
+    case AET_USER:
+    {
+      // insert the address
+      DoMethod(writeWindow, MUIM_WriteWindow_AddRecipient, type, ab->Alias ? ab->Alias : ab->RealName);
+    }
+    break;
+
+    case AET_LIST:
+    {
+      char *ptr;
+
+      for(ptr = ab->Members; *ptr != '\0'; ptr++)
+      {
+        char *nptr;
+
+        if((nptr = strchr(ptr, '\n')) != NULL)
+          *nptr = '\0';
+        else
+          break;
+
+        // insert the address
+        DoMethod(writeWindow, MUIM_WriteWindow_AddRecipient, type, ptr);
+
+        *nptr = '\n';
+        ptr = nptr;
+      }
+    }
+    break;
+
+    case AET_GROUP:
+    {
+      if(isFlagSet(tn->tn_Flags, TNF_LIST))
+      {
+        ULONG pos = MUIV_NListtree_GetEntry_Position_Head;
+
+        do
+        {
+          tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, tn, pos, MUIV_NListtree_GetEntry_Flag_SameLevel);
+          if(tn == NULL)
+            break;
+
+          AB_InsertAddressTreeNode(writeWindow, type, tn);
+
+          pos = MUIV_NListtree_GetEntry_Position_Next;
+        }
+        while(TRUE);
+      }
+    }
+    break;
+  }
+
+  LEAVE();
+}
+
+///
 /// AB_FromAddrBook
 /*** AB_FromAddrBook - Inserts an address book entry into a recipient string ***/
 HOOKPROTONHNO(AB_FromAddrBook, BOOL, ULONG *arg)
 {
-  struct MUI_NListtree_TreeNode *active;
   BOOL result = FALSE;
 
   ENTER();
 
-  if(arg[0] != ABM_NONE &&
-     (active = (struct MUI_NListtree_TreeNode *)xget(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active)) != NULL &&
-     isFlagClear(active->tn_Flags, TNF_LIST))
+  if(arg[0] != ABM_NONE)
   {
     Object *writeWindow = NULL;
-    struct ABEntry *addr = (struct ABEntry *)(active->tn_User);
 
     if(G->AB->winNumber == -1)
     {
@@ -747,20 +807,36 @@ HOOKPROTONHNO(AB_FromAddrBook, BOOL, ULONG *arg)
     }
 
     if(writeWindow != NULL)
-    {
+    { 
+      enum AddressbookMode abm = (enum AddressbookMode)arg[0];
       enum RcptType type = MUIV_WriteWindow_RcptType_To;
+      struct MUI_NListtree_TreeNode *tn = (struct MUI_NListtree_TreeNode *)MUIV_NListtree_NextSelected_Start;
 
-      switch(arg[0])
+      switch(abm)
       {
         case ABM_FROM:    type = MUIV_WriteWindow_RcptType_FromOverride; break;
         case ABM_TO:      type = MUIV_WriteWindow_RcptType_To; break;
         case ABM_CC:      type = MUIV_WriteWindow_RcptType_CC; break;
         case ABM_BCC:     type = MUIV_WriteWindow_RcptType_BCC; break;
         case ABM_REPLYTO: type = MUIV_WriteWindow_RcptType_ReplyTo; break;
+
+        case ABM_NONE:
+        case ABM_EDIT:
+        case ABM_CONFIG:
+          // nothing
+        break;
       }
 
-      DoMethod(writeWindow, MUIM_WriteWindow_AddRecipient, type, addr->Alias ? addr->Alias : addr->RealName);
-
+      do
+      {
+        DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_NextSelected, &tn);
+        if(tn == (struct MUI_NListtree_TreeNode *)MUIV_NListtree_NextSelected_End || tn == NULL)
+          break;
+        else
+          AB_InsertAddressTreeNode(writeWindow, type, tn);
+      }
+      while(TRUE);
+ 
       result = TRUE;
     }
   }
@@ -2256,28 +2332,16 @@ MakeHook(AB_EditHook, AB_EditFunc);
 HOOKPROTONHNONP(AB_ActiveChange, void)
 {
   struct AB_GUIData *gui = &G->AB->GUI;
-  struct MUI_NListtree_TreeNode *active;
   BOOL disabled;
 
   ENTER();
 
-  if((active = (struct MUI_NListtree_TreeNode *)xget(gui->LV_ADDRESSES, MUIA_NListtree_Active)) != NULL)
-  {
-    // disable the buttons for groups only
-    struct ABEntry *addr = (struct ABEntry *)active->tn_User;
-
-    disabled = (addr->Type == AET_GROUP);
-  }
-  else
-  {
-    // no active entry
-    disabled = TRUE;
-  }
-
+  disabled = ((struct MUI_NListtree_TreeNode *)xget(gui->LV_ADDRESSES, MUIA_NListtree_Active) == NULL);
   DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, disabled, gui->BT_TO,
                                                            gui->BT_CC,
                                                            gui->BT_BCC,
                                                            NULL);
+
   DoMethod(gui->TB_TOOLBAR, MUIM_AddrBookToolbar_UpdateControls);
 
   LEAVE();
@@ -2346,7 +2410,7 @@ HOOKPROTONHNONP(AB_NewABookFunc, void)
 {
   ENTER();
 
-  DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Remove, MUIV_NListtree_Remove_ListNode_Root, MUIV_NListtree_Remove_TreeNode_All, MUIF_NONE);
+  DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Clear, NULL, MUIF_NONE);
   set(G->AB->GUI.LV_ADDRESSES, MUIA_AddrBookListtree_Modified, FALSE);
 
   LEAVE();
@@ -2823,7 +2887,9 @@ HOOKPROTONHNONP(AB_DeleteFunc, void)
 {
   ENTER();
 
-  DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Remove, NULL, MUIV_NListtree_Remove_TreeNode_Active, MUIF_NONE);
+  DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Remove, MUIV_NListtree_Remove_ListNode_Root, 
+                                    MUIV_NListtree_Remove_TreeNode_Selected, MUIF_NONE);
+
   set(G->AB->GUI.LV_ADDRESSES, MUIA_AddrBookListtree_Modified, TRUE);
 
   LEAVE();

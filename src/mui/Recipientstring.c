@@ -239,7 +239,7 @@ static void NormalizeSelection(Object *obj)
 }
 
 ///
-/// InsertAddress
+/// InsertAddress()
 //  Adds a new recipient to a recipient field
 static void InsertAddress(Object *obj, const char *alias, const char *name, const char *address)
 {
@@ -273,10 +273,74 @@ static void InsertAddress(Object *obj, const char *alias, const char *name, cons
 
     DoMethod(obj, METHOD(AddRecipient), fullName);
   }
+
+  LEAVE();
 }
 
 ///
+/// InsertAddressTreeNode() rec
+static void InsertAddressTreeNode(Object *obj, Object *addrObj, struct MUI_NListtree_TreeNode *tn)
+{
+  struct ABEntry *ab = (struct ABEntry *)(tn->tn_User);
 
+  ENTER();
+
+  switch(ab->Type)
+  {
+    case AET_USER:
+    {
+      // insert the address
+      InsertAddress(obj, "", ab->RealName, ab->Address);
+    }
+    break;
+
+    case AET_LIST:
+    {
+      char *ptr;
+
+      for(ptr = ab->Members; *ptr != '\0'; ptr++)
+      {
+        char *nptr;
+
+        if((nptr = strchr(ptr, '\n')) != NULL)
+          *nptr = '\0';
+        else
+          break;
+      
+        InsertAddress(obj, ptr, "", "");
+
+        *nptr = '\n';
+        ptr = nptr;
+      }
+    }
+    break;
+
+    case AET_GROUP:
+    {
+      if(isFlagSet(tn->tn_Flags, TNF_LIST))
+      {
+        ULONG pos = MUIV_NListtree_GetEntry_Position_Head;
+
+        do
+        {
+          tn = (struct MUI_NListtree_TreeNode *)DoMethod(addrObj, MUIM_NListtree_GetEntry, tn, pos, MUIV_NListtree_GetEntry_Flag_SameLevel);
+          if(tn == NULL)
+            break;
+
+          InsertAddressTreeNode(obj, addrObj, tn);
+
+          pos = MUIV_NListtree_GetEntry_Position_Next;
+        }
+        while(TRUE);
+      }
+    }
+    break;
+  }
+  
+  LEAVE();
+}
+
+///
 
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
@@ -580,24 +644,16 @@ OVERLOAD(MUIM_GoInactive)
 OVERLOAD(MUIM_DragQuery)
 {
   struct MUIP_DragQuery *d = (struct MUIP_DragQuery *)msg;
-  IPTR result = MUIV_DragQuery_Refuse;
+  IPTR result;
 
   ENTER();
 
   if(d->obj == G->AB->GUI.LV_ADDRESSES)
-  {
-    struct MUI_NListtree_TreeNode *active;
-
-    if((active = (struct MUI_NListtree_TreeNode *)xget(d->obj, MUIA_NListtree_Active)) != NULL)
-    {
-      if(isFlagClear(active->tn_Flags, TNF_LIST))
-        result = MUIV_DragQuery_Accept;
-    }
-  }
-  else if(DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_IsMailList, d->obj) == TRUE)
-  {
     result = MUIV_DragQuery_Accept;
-  }
+  else if(DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_IsMailList, d->obj) == TRUE)
+    result = MUIV_DragQuery_Accept;
+  else
+    result = DoSuperMethodA(cl, obj, msg);
 
   RETURN(result);
   return result;
@@ -607,15 +663,25 @@ OVERLOAD(MUIM_DragQuery)
 OVERLOAD(MUIM_DragDrop)
 {
   struct MUIP_DragQuery *d = (struct MUIP_DragQuery *)msg;
+  IPTR result;
 
   ENTER();
 
   if(d->obj == G->AB->GUI.LV_ADDRESSES)
   {
-    struct MUI_NListtree_TreeNode *active = (struct MUI_NListtree_TreeNode *)xget(d->obj, MUIA_NListtree_Active);
-    struct ABEntry *addr = (struct ABEntry *)(active->tn_User);
+    struct MUI_NListtree_TreeNode *tn = (struct MUI_NListtree_TreeNode *)MUIV_NListtree_NextSelected_Start;
 
-    InsertAddress(obj, addr->Alias, addr->RealName, "");
+    do
+    {
+      DoMethod(d->obj, MUIM_NListtree_NextSelected, &tn);
+      if(tn == (struct MUI_NListtree_TreeNode *)MUIV_NListtree_NextSelected_End || tn == NULL)
+        break;
+      else
+        InsertAddressTreeNode(obj, d->obj, tn);
+    }
+    while(TRUE);
+
+    result = 0;
   }
   else if(DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_IsMailList, d->obj) == TRUE)
   {
@@ -627,10 +693,14 @@ OVERLOAD(MUIM_DragDrop)
       InsertAddress(obj, "", mail->To.RealName,   mail->To.Address);
     else
       InsertAddress(obj, "", mail->From.RealName, mail->From.Address);
-  }
 
-  RETURN(0);
-  return 0;
+    result = 0;
+  }
+  else
+    result = DoSuperMethodA(cl, obj, msg);
+
+  RETURN(result);
+  return result;
 }
 ///
 /// OVERLOAD(MUIM_Popstring_Open)

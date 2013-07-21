@@ -66,6 +66,84 @@ struct Data
 #define MUIF_MailTextEdit_LoadFromFile_UseColors  (1<<2)
 */
 
+/* Private Function */
+/// InsertAddressTreeNode() rec
+static void InsertAddressTreeNode(Object *obj, Object *addrObj, struct MUI_NListtree_TreeNode *tn, int i)
+{
+  struct ABEntry *ab = (struct ABEntry *)(tn->tn_User);
+  char address[SIZE_LARGE];
+
+  ENTER();
+
+  switch(ab->Type)
+  {
+    case AET_USER:
+    {
+      // build the address by using the real name and mail address
+      BuildAddress(address, sizeof(address), ab->Address, ab->RealName);
+
+      // if we have already inserted an address before we have to seperate them via ", "
+      if(i > 0)
+        DoMethod(obj, MUIM_TextEditor_InsertText, ", ", MUIV_TextEditor_InsertText_Cursor);
+
+      // insert the address
+      DoMethod(obj, MUIM_TextEditor_InsertText, address, MUIV_TextEditor_InsertText_Cursor);
+    }
+    break;
+
+    case AET_LIST:
+    {
+      char *ptr;
+
+      for(ptr = ab->Members; *ptr != '\0'; ptr++, i++)
+      {
+        char *nptr;
+
+        if((nptr = strchr(ptr, '\n')) != NULL)
+          *nptr = '\0';
+        else
+          break;
+
+        // if we have already inserted an address before we have to seperate them via ", "
+        if(i > 0)
+          DoMethod(obj, MUIM_TextEditor_InsertText, ", ", MUIV_TextEditor_InsertText_Cursor);
+
+        // insert the address
+        DoMethod(obj, MUIM_TextEditor_InsertText, ptr, MUIV_TextEditor_InsertText_Cursor);
+ 
+        *nptr = '\n';
+        ptr = nptr;
+      }
+    }
+    break;
+
+    case AET_GROUP:
+    {
+      if(isFlagSet(tn->tn_Flags, TNF_LIST))
+      {
+        ULONG pos = MUIV_NListtree_GetEntry_Position_Head;
+        do
+        {
+          tn = (struct MUI_NListtree_TreeNode *)DoMethod(addrObj, MUIM_NListtree_GetEntry, tn, pos, MUIV_NListtree_GetEntry_Flag_SameLevel);
+          if(tn == NULL)
+            break;
+
+          InsertAddressTreeNode(obj, addrObj, tn, i);
+
+          pos = MUIV_NListtree_GetEntry_Position_Next;
+          i++;
+        }
+        while(TRUE);
+      }
+    }
+    break;
+  }
+
+  LEAVE();
+}
+
+///
+
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
@@ -96,35 +174,57 @@ OVERLOAD(OM_NEW)
 OVERLOAD(MUIM_DragQuery)
 {
   struct MUIP_DragDrop *drop_msg = (struct MUIP_DragDrop *)msg;
+  IPTR result;
 
-  return (ULONG)(drop_msg->obj == G->AB->GUI.LV_ADDRESSES);
+  ENTER();
+
+  // only allow drag&drop operations into a writeable texteditor
+  // object
+  if(xget(obj, MUIA_TextEditor_ReadOnly) == FALSE &&
+     (drop_msg->obj == G->AB->GUI.LV_ADDRESSES))
+  {
+    result = MUIV_DragQuery_Accept;
+  }
+  else
+    result = DoSuperMethodA(cl, obj, msg);
+
+  RETURN(result);
+  return result;
 }
 
 ///
 /// OVERLOAD(MUIM_DragDrop)
 OVERLOAD(MUIM_DragDrop)
 {
-  struct MUIP_DragDrop *drop_msg = (struct MUIP_DragDrop *)msg;
+  struct MUIP_DragDrop *d = (struct MUIP_DragDrop *)msg;
+  IPTR result;
 
-  if(drop_msg->obj == G->AB->GUI.LV_ADDRESSES)
+  ENTER();
+
+  if(d->obj == G->AB->GUI.LV_ADDRESSES)
   {
-    struct MUI_NListtree_TreeNode *tn;
+    struct MUI_NListtree_TreeNode *tn = (struct MUI_NListtree_TreeNode *)MUIV_NListtree_NextSelected_Start;
+    int i=0;
 
-    if((tn = (struct MUI_NListtree_TreeNode *)xget(drop_msg->obj, MUIA_NListtree_Active)))
+    do
     {
-      struct ABEntry *ab = (struct ABEntry *)(tn->tn_User);
+      DoMethod(d->obj, MUIM_NListtree_NextSelected, &tn);
+      if(tn == (struct MUI_NListtree_TreeNode *)MUIV_NListtree_NextSelected_End || tn == NULL)
+        break;
+      else
+        InsertAddressTreeNode(obj, d->obj, tn, i);
 
-      if(ab->Type != AET_GROUP)
-      {
-        char address[SIZE_LARGE];
-
-        BuildAddress(address, sizeof(address), ab->Address, ab->RealName);
-        DoMethod(obj, MUIM_TextEditor_InsertText, address, MUIV_TextEditor_InsertText_Cursor);
-      }
+      i++;
     }
-  }
+    while(TRUE);
 
-  return DoSuperMethodA(cl, obj, msg);
+    result = 0;
+  }
+  else
+    result = DoSuperMethodA(cl, obj, msg);
+
+  RETURN(result);
+  return result;
 }
 
 ///

@@ -107,7 +107,11 @@ OVERLOAD(OM_NEW)
       MUIA_NListtree_DragDropSort,     TRUE,
       MUIA_NListtree_Title,            TRUE,
       MUIA_NListtree_EmptyNodes,       TRUE,
+      MUIA_NListtree_MultiSelect,      MUIV_NListtree_MultiSelect_Default,
+      MUIA_NList_AutoVisible,          TRUE,
       MUIA_NList_TitleClick,           TRUE,
+      MUIA_NList_TitleClick2,          TRUE,
+      MUIA_NList_TitleSeparator,       TRUE,
       MUIA_NList_DefaultObjectOnClick, FALSE,
       MUIA_Font,                       C->FixedFontList ? MUIV_NList_Font_Fixed : MUIV_NList_Font,
 
@@ -254,13 +258,12 @@ OVERLOAD(MUIM_NListtree_Compare)
   struct MUIP_NListtree_Compare *ncm = (struct MUIP_NListtree_Compare *)msg;
   struct ABEntry *ab1 = (struct ABEntry *)ncm->TreeNode1->tn_User;
   struct ABEntry *ab2 = (struct ABEntry *)ncm->TreeNode2->tn_User;
-  LONG cmp;
+  LONG cmp = 0;
 
   ENTER();
 
   switch(data->sortBy)
   {
-    default:
     case MUIV_AddrBookListtree_SortBy_Alias:
     {
       cmp = 0;
