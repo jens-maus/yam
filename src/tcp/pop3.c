@@ -138,15 +138,13 @@ struct TransferContext
 //  Applies remote filters to a message
 static void ApplyRemoteFilters(struct TransferContext *tc, struct MailTransferNode *tnode)
 {
-  struct Node *curNode;
+  struct FilterNode *filter;
 
   ENTER();
 
   D(DBF_NET, "apply remote filters, from='%s', to='%s', subject='%s'", tnode->mail->From.Address, tnode->mail->To.Address, tnode->mail->Subject);
-  IterateList(tc->remoteFilters, curNode)
+  IterateList(tc->remoteFilters, struct FilterNode *, filter)
   {
-    struct FilterNode *filter = (struct FilterNode *)curNode;
-
     if(DoFilterSearch(filter, tnode->mail) == TRUE)
     {
       if(hasExecuteAction(filter) && filter->executeCmd[0] != '\0')

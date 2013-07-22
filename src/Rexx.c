@@ -509,13 +509,11 @@ static char *CreateVAR(struct MinList *stemList)
   if(IsMinListEmpty(stemList) == FALSE)
   {
     long size = 0;
-    struct Node *curNode;
+    struct StemNode *stemNode;
 
     // count the length of all variable names
-    IterateList(stemList, curNode)
+    IterateList(stemList, struct StemNode *, stemNode)
     {
-      struct StemNode *stemNode = (struct StemNode *)curNode;
-
       size += strlen(stemNode->value) + 1;
     }
 
@@ -526,10 +524,8 @@ static char *CreateVAR(struct MinList *stemList)
     {
       var[0] = '\0';
 
-      IterateList(stemList, curNode)
+      IterateList(stemList, struct StemNode *, stemNode)
       {
-        struct StemNode *stemNode = (struct StemNode *)curNode;
-
         // append an additional space except for the first variable
         if(var[0] != '\0')
            strlcat(var, " ", size);
@@ -855,12 +851,10 @@ void DoRXCommand(struct RexxHost *host, struct RexxMsg *rexxmsg)
         if(params.rc == 0 && varStem->stem != NULL)
         {
           // STEM
-          struct Node *curNode;
+          struct StemNode *stemNode;
 
-          IterateList(&stemList, curNode)
+          IterateList(&stemList, struct StemNode *, stemNode)
           {
-            struct StemNode *stemNode = (struct StemNode *)curNode;
-
             params.rc |= SetRexxVar(REXXMSG(rexxmsg), stemNode->name, stemNode->value, strlen(stemNode->value));
           }
 

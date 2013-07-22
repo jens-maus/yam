@@ -789,13 +789,11 @@ OVERLOAD(OM_NEW)
   i = 0;
   do
   {
-    struct Node *curNode;
+    struct WriteMailData *wmData;
     BOOL found = FALSE;
 
-    IterateList(&G->writeMailDataList, curNode)
+    IterateList(&G->writeMailDataList, struct WriteMailData *, wmData)
     {
-      struct WriteMailData *wmData = (struct WriteMailData *)curNode;
-
       if(wmData->window != NULL &&
          xget(wmData->window, MUIA_WriteWindow_Num) == i)
       {
@@ -3272,7 +3270,7 @@ DECLARE(InsertAttachment) // struct Attach *attach
 DECLARE(AddSignature)
 {
   GETDATA;
-  struct Node *curNode;
+  struct SignatureNode *sn;
   struct SignatureNode *signature = NULL;
 
   ENTER();
@@ -3280,9 +3278,9 @@ DECLARE(AddSignature)
   // now we iterate through the signatureList
   // for picking the signature from the currently
   // selected identity
-  IterateList(&C->signatureList, curNode)
+  IterateList(&C->signatureList, struct SignatureNode *, sn)
   {
-    if(curNode == (struct Node *)data->wmData->identity->signature)
+    if(sn == data->wmData->identity->signature)
     {
       signature = data->wmData->identity->signature;
       break;
@@ -4234,15 +4232,13 @@ DECLARE(ComposeMail) // enum WriteMode mode
               // references and update them accordingly.
               if(wmData->mode == NMM_EDIT && refMail != NULL)
               {
-                struct Node *curNode;
+                struct ReadMailData *rmData;
 
                 // now we search through our existing readMailData
                 // objects and see some of them are pointing to the old mail
                 // and if so we signal them to display the new revised mail instead
-                IterateList(&G->readMailDataList, curNode)
+                IterateList(&G->readMailDataList, struct ReadMailData *, rmData)
                 {
-                  struct ReadMailData *rmData = (struct ReadMailData *)curNode;
-
                   if(rmData->mail == refMail)
                   {
                     if(rmData->readWindow != NULL)
@@ -5125,9 +5121,9 @@ DECLARE(UpdateSignatures)
   GETDATA;
   int i;
   struct SignatureNode *activeSig = data->wmData->identity->signature;
+  struct SignatureNode *sn;
   int activeSigIndex = 0;
   Object *item;
-  struct Node *curNode;
 
   ENTER();
 
@@ -5160,10 +5156,8 @@ DECLARE(UpdateSignatures)
 
   // add the first 7 signatures from the config
   i = 1;
-  IterateList(&C->signatureList, curNode)
+  IterateList(&C->signatureList, struct SignatureNode *, sn)
   {
-    struct SignatureNode *sn = (struct SignatureNode *)curNode;
-
     if(sn->active == TRUE)
     {
       if(i < MAXSIG_MENU)

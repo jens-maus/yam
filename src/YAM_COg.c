@@ -264,12 +264,10 @@ HOOKPROTONH(PO_MimeTypeListOpenFunc, BOOL, Object *listview, Object *str)
     // string isn't the one in the YAM config window.
     if(G->CO == NULL || str != G->CO->GUI.ST_CTYPE)
     {
-      struct Node *curNode;
+      struct MimeTypeNode *mt;
 
-      IterateList(&C->mimeTypeList, curNode)
+      IterateList(&C->mimeTypeList, struct MimeTypeNode *, mt)
       {
-        struct MimeTypeNode *mt = (struct MimeTypeNode *)curNode;
-
         DoMethod(list, MUIM_List_InsertSingle, mt->ContentType, MUIV_List_Insert_Sorted);
       }
     }
@@ -282,12 +280,10 @@ HOOKPROTONH(PO_MimeTypeListOpenFunc, BOOL, Object *listview, Object *str)
 
       if(G->CO == NULL || str != G->CO->GUI.ST_CTYPE)
       {
-        struct Node *curNode;
+        struct MimeTypeNode *mt;
 
-        IterateList(&C->mimeTypeList, curNode)
+        IterateList(&C->mimeTypeList, struct MimeTypeNode *, mt)
         {
-          struct MimeTypeNode *mt = (struct MimeTypeNode *)curNode;
-
           if(stricmp(mt->ContentType, IntMimeTypeArray[i].ContentType) == 0)
           {
             duplicateFound = TRUE;
@@ -476,7 +472,7 @@ HOOKPROTONHNONP(ImportMimeTypesFunc, void)
         while(getline(&buf, &buflen, fh) > 0)
         {
           struct MimeTypeNode *mt = NULL;
-          struct Node *curNode;
+          struct MimeTypeNode *mtNode;
           char *ctype = buf;
           const char *ext = "";
           const char *command = "";
@@ -539,10 +535,8 @@ HOOKPROTONHNONP(ImportMimeTypesFunc, void)
           }
 
           // now we try to find the content-type in our mimeTypeList
-          IterateList(&C->mimeTypeList, curNode)
+          IterateList(&C->mimeTypeList, struct MimeTypeNode *, mtNode)
           {
-            struct MimeTypeNode *mtNode = (struct MimeTypeNode *)curNode;
-
             if(stricmp(mtNode->ContentType, ctype) == 0)
             {
               mt = mtNode;
@@ -1447,11 +1441,10 @@ static Object *MakeXPKPop(Object **text, BOOL encrypt)
     }
     else
     {
-      struct Node *curNode;
+      struct xpkPackerNode *xpkNode;
 
-      IterateList(G->xpkPackerList, curNode)
+      IterateList(G->xpkPackerList, struct xpkPackerNode *, xpkNode)
       {
-        struct xpkPackerNode *xpkNode = (struct xpkPackerNode *)curNode;
         BOOL suits = TRUE;
 
         D(DBF_XPK, "XPK lib '%s' has flags %08lx", xpkNode->info.xpi_Name, xpkNode->info.xpi_Flags);

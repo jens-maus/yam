@@ -145,14 +145,12 @@ struct SignatureNode *GetSignature(const struct MinList *signatureList,
 {
   struct SignatureNode *result = NULL;
   unsigned int count = 0;
-  struct Node *curNode;
+  struct SignatureNode *sn;
 
   ENTER();
 
-  IterateList(signatureList, curNode)
+  IterateList(signatureList, struct SignatureNode *, sn)
   {
-    struct SignatureNode *sn = (struct SignatureNode *)curNode;
-
     if(activeOnly == FALSE || sn->active == TRUE)
     {
       if(count == num)
@@ -175,14 +173,12 @@ struct SignatureNode *GetSignature(const struct MinList *signatureList,
 BOOL IsUniqueSignatureID(const struct MinList *signatureList, const int id)
 {
   BOOL isUnique = TRUE;
-  struct Node *curNode;
+  struct SignatureNode *sn;
 
   ENTER();
 
-  IterateList(signatureList, curNode)
+  IterateList(signatureList, struct SignatureNode *, sn)
   {
-    struct SignatureNode *sn = (struct SignatureNode *)curNode;
-
     if(sn->id == id)
     {
       // we found exactly this ID, this is bad
@@ -206,12 +202,10 @@ struct SignatureNode *FindSignatureByID(const struct MinList *signatureList, con
 
   if(id > 0)
   {
-    struct Node *curNode;
+    struct SignatureNode *sn;
 
-    IterateList(signatureList, curNode)
+    IterateList(signatureList, struct SignatureNode *, sn)
     {
-      struct SignatureNode *sn = (struct SignatureNode *)curNode;
-
       // check if we found exactly this ID
       if(id == sn->id)
       {

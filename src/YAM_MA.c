@@ -508,7 +508,7 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
 
     if(ok != DOSFALSE)
     {
-      struct Node *curNode;
+      struct ReadMailData *rmData;
 
       D(DBF_MAIL, "renamed '%s' to '%s'", oldFilePath, newFilePath);
 
@@ -519,10 +519,8 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
       // they contain the mail we have changed the status, so
       // that we can update the filename in the read window structure
       // aswell
-      IterateList(&G->readMailDataList, curNode)
+      IterateList(&G->readMailDataList, struct ReadMailData *, rmData)
       {
-        struct ReadMailData *rmData = (struct ReadMailData *)curNode;
-
         if(rmData->mail == mail && strcmp(rmData->readFile, oldFilePath) == 0)
           strlcpy(rmData->readFile, newFilePath, sizeof(rmData->readFile));
       }
@@ -1200,13 +1198,10 @@ HOOKPROTONHNONP(MA_ReadMessage, void)
   if((mail = MA_GetActiveMail(NULL, NULL, NULL)) != NULL)
   {
     struct ReadMailData *rmData;
-    struct Node *curNode;
 
     // Check if this mail is already in a readwindow
-    IterateList(&G->readMailDataList, curNode)
+    IterateList(&G->readMailDataList, struct ReadMailData *, rmData)
     {
-      rmData = (struct ReadMailData *)curNode;
-
       // check if the active mail is already open in another read
       // window, and if so we just bring it to the front.
       if(rmData != G->ActiveRexxRMData &&
@@ -2380,13 +2375,9 @@ BOOL MA_PopNow(struct MailServerNode *msn, const ULONG flags, struct DownloadRes
 
   if(msn == NULL)
   {
-    struct Node *curNode;
-
     success = TRUE;
-    IterateList(&C->pop3ServerList, curNode)
+    IterateList(&C->pop3ServerList, struct MailServerNode *, msn)
     {
-      msn = (struct MailServerNode *)curNode;
-
       // fetch mails from active servers only
       if(isServerActive(msn) == TRUE)
       {
@@ -2465,15 +2456,14 @@ BOOL MA_Send(enum SendMailMode mode, ULONG flags)
 
   if(mlist != NULL)
   {
-    struct Node *curNode;
+    struct WriteMailData *wmData;
 
     // Now check if any mail currently being edited is contained in the list of
     // mails to be sent. This may happen if a mail has been put on hold before
     // and is edited again now. If the user hits the "Send" button in this moment
     // the currently edited mail should not be sent.
-    IterateList(&G->writeMailDataList, curNode)
+    IterateList(&G->writeMailDataList, struct WriteMailData *, wmData)
     {
-      struct WriteMailData *wmData = (struct WriteMailData *)curNode;
       struct MailNode *mnode;
 
       ForEachMailNode(mlist, mnode)
@@ -2494,11 +2484,12 @@ BOOL MA_Send(enum SendMailMode mode, ULONG flags)
     // and then create a subgroup of mlist with them.
     if(mlist->count != 0)
     {
-      struct Node *nextNode;
+      struct MailNode *mnode;
+      struct MailNode *succ;
+      struct UserIdentityNode *uin;
 
-      SafeIterateList(mlist, curNode, nextNode)
+      SafeIterateList(mlist, struct MailNode *, mnode, succ)
       {
-        struct MailNode *mnode = (struct MailNode *)curNode;
         struct Mail *mail = mnode->mail;
         struct ExtendedMail *email;
 
@@ -2540,9 +2531,8 @@ BOOL MA_Send(enum SendMailMode mode, ULONG flags)
       // now we walk through our user identities and if
       // they have a non empty sentMailList we start the mail transfer
       success = TRUE;
-      IterateList(&C->userIdentityList, curNode)
+      IterateList(&C->userIdentityList, struct UserIdentityNode *, uin)
       {
-        struct UserIdentityNode *uin = (struct UserIdentityNode *)curNode;
         BOOL sendMailSuccess = FALSE;
 
         if(uin->sentMailList != NULL && IsMailListEmpty(uin->sentMailList) == FALSE)
@@ -3773,13 +3763,12 @@ void MA_SetupDynamicMenus(void)
   if(G->MA->GUI.MI_CSINGLE != NULL)
   {
     int i;
-    struct Node *curNode;
+    struct MailServerNode *msn;
 
     // we iterate through our mail server list and ouput the POP3 servers in it
     i = 0;
-    IterateList(&C->pop3ServerList, curNode)
+    IterateList(&C->pop3ServerList, struct MailServerNode *, msn)
     {
-      struct MailServerNode *msn = (struct MailServerNode *)curNode;
       Object *newObj;
 
       newObj = Menuitem(msn->description, NULL, TRUE, FALSE, MMEN_POPHOST+i);

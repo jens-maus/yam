@@ -169,12 +169,11 @@ static void SaveEMailCache(const char *name, struct MinList *list)
   if((fh = fopen(name, "w")) != NULL)
   {
     int i;
-    struct Node *curNode;
+    struct EMailCacheNode *node;
 
     i = 0;
-    IterateList(list, curNode)
+    IterateList(list, struct EMailCacheNode *, node)
     {
-      struct EMailCacheNode *node = (struct EMailCacheNode *)curNode;
       struct ABEntry *entry = &node->ecn_Person;
 
       if(i >= C->EmailCache)
@@ -356,12 +355,11 @@ DECLARE(FindEmailMatches) // STRPTR matchText, Object *list
     {
       int i;
       LONG tl = strlen(msg->matchText);
-      struct Node *curNode;
+      struct EMailCacheNode *node;
 
       i = 0;
-      IterateList(&data->emailCache, curNode)
+      IterateList(&data->emailCache, struct EMailCacheNode *, node)
       {
-        struct EMailCacheNode *node = (struct EMailCacheNode *)curNode;
         struct ABEntry *entry = &node->ecn_Person;
         struct CustomABEntry e = { -1, -1, NULL, NULL };
 
@@ -409,12 +407,11 @@ DECLARE(FindEmailCacheMatch) // STRPTR matchText
   {
     int i, matches = 0;
     LONG tl = strlen(msg->matchText);
-    struct Node *curNode;
+    struct EMailCacheNode *node;
 
     i = 0;
-    IterateList(&data->emailCache, curNode)
+    IterateList(&data->emailCache, struct EMailCacheNode *, node)
     {
-      struct EMailCacheNode *node = (struct EMailCacheNode *)curNode;
       struct ABEntry *entry = &node->ecn_Person;
 
       if(i >= C->EmailCache)
@@ -462,14 +459,13 @@ DECLARE(AddToEmailCache) // struct Person *person
   {
     int i;
     BOOL found = FALSE;
-    struct Node *curNode;
+    struct EMailCacheNode *node;
 
     // Ok, it doesn't exists in the AB, now lets check the cache list
     // itself
     i = 0;
-    IterateList(&data->emailCache, curNode)
+    IterateList(&data->emailCache, struct EMailCacheNode *, node)
     {
-      struct EMailCacheNode *node = (struct EMailCacheNode *)curNode;
       struct ABEntry *entry = &node->ecn_Person;
 
       if(i >= C->EmailCache)

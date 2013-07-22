@@ -2100,12 +2100,11 @@ const char *DescribeCT(const char *ct)
     ret = tr(MSG_CTunknown);
   else
   {
-    struct Node *curNode;
+    struct MimeTypeNode *mt;
 
     // first we search through the users' own MIME type list
-    IterateList(&C->mimeTypeList, curNode)
+    IterateList(&C->mimeTypeList, struct MimeTypeNode *, mt)
     {
-      struct MimeTypeNode *mt = (struct MimeTypeNode *)curNode;
       char *type;
 
       // find the type right after the '/' delimiter
@@ -3887,12 +3886,10 @@ void FinishUnpack(const char *file)
   stcgfe(ext, file);
   if(strcmp(ext, "unp") == 0)
   {
-    struct Node *curNode;
+    struct ReadMailData *rmData;
 
-    IterateList(&G->readMailDataList, curNode)
+    IterateList(&G->readMailDataList, struct ReadMailData *, rmData)
     {
-      struct ReadMailData *rmData = (struct ReadMailData *)curNode;
-
       // check if the file is still in use and if so we quit immediately
       // leaving the file untouched.
       if(stricmp(file, rmData->readFile) == 0)
@@ -4921,14 +4918,12 @@ const char *IdentifyFile(const char *fname)
   // now we try to identify the file by the extension first
   if(ext[0] != '\0')
   {
-    struct Node *curNode;
+    struct MimeTypeNode *curType;
 
     D(DBF_MIME, "identifying file by extension (mimeTypeList)");
     // identify by the user specified mime types
-    IterateList(&C->mimeTypeList, curNode)
+    IterateList(&C->mimeTypeList, struct MimeTypeNode *, curType)
     {
-      struct MimeTypeNode *curType = (struct MimeTypeNode *)curNode;
-
       if(curType->Extension[0] != '\0' &&
          MatchExtension(ext, curType->Extension))
       {
@@ -5714,13 +5709,11 @@ void GetPubScreenName(const struct Screen *screen, char *pubName, ULONG pubNameS
     // first get the list of all public screens
     if((pubScreenList = LockPubScreenList()) != NULL)
     {
-      struct Node *curNode;
+      struct PubScreenNode *psn;
 
       // then iterate through this list
-      IterateList(pubScreenList, curNode)
+      IterateList(pubScreenList, struct PubScreenNode *, psn)
       {
-        struct PubScreenNode *psn = (struct PubScreenNode *)curNode;
-
         // check if we found the given screen
         if(psn->psn_Screen == screen)
         {
@@ -5881,12 +5874,12 @@ void *DuplicateNode(const void *node, const size_t size)
 //  returns the number of nodes currently in a struct List
 ULONG CountNodes(const struct MinList *list)
 {
-  struct Node *curNode;
+  struct MinNode *curNode;
   ULONG result = 0;
 
   ENTER();
 
-  IterateList(list, curNode)
+  IterateList(list, struct MinNode *, curNode)
     result++;
 
   RETURN(result);
@@ -6072,17 +6065,17 @@ void SortExecList(struct MinList *lh, int (* compare)(const struct MinNode *, co
 struct MinNode *GetNthNode(const struct MinList *list, ULONG n)
 {
   struct MinNode *result = NULL;
-  struct Node *curNode;
+  struct MinNode *curNode;
   ULONG nn;
 
   ENTER();
 
   nn = 0;
-  IterateList(list, curNode)
+  IterateList(list, struct MinNode *, curNode)
   {
     if(nn == n)
     {
-      result = (struct MinNode *)curNode;
+      result = curNode;
       break;
     }
 

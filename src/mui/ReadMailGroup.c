@@ -1117,7 +1117,6 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
   struct Person *from = &rmData->mail->From;
   struct ABEntry *ab = NULL;
   struct ABEntry abtmpl;
-  struct Node *curNode;
   BOOL foundIdentity;
   BOOL dispheader;
   int hits;
@@ -1140,11 +1139,11 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
   // be the headerPart
   if(dispheader == TRUE && rmData->firstPart != NULL && rmData->firstPart->headerList != NULL)
   {
-    // Now we process the read headers to set all flags accordingly
-    IterateList(rmData->firstPart->headerList, curNode)
-    {
-      struct HeaderNode *hdrNode = (struct HeaderNode *)curNode;
+    struct HeaderNode *hdrNode;
 
+    // Now we process the read headers to set all flags accordingly
+    IterateList(rmData->firstPart->headerList, struct HeaderNode *, hdrNode)
+    {
       // now we use MatchNoCase() to find out if we should include that headerNode
       // in our headerList or not
       if(rmData->headerMode == HM_SHORTHEADER)

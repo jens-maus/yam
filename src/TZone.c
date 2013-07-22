@@ -45,15 +45,13 @@
 static void addLocation(const char *contName, const char *locName)
 {
   struct TZoneContinent *found = NULL;
-  struct Node *curNode;
+  struct TZoneContinent *cont;
 
   ENTER();
 
   // search for the continent first
-  IterateList(&G->tzoneContinentList, curNode)
+  IterateList(&G->tzoneContinentList, struct TZoneContinent *, cont)
   {
-    struct TZoneContinent *cont = (struct TZoneContinent *)curNode;
-
     if(strcmp(cont->name, contName) == 0)
     {
       found = cont;
@@ -121,7 +119,7 @@ static int compareLocations(const struct MinNode *n1, const struct MinNode *n2)
 // sort all locations alphabetically
 static void sortLocations(void)
 {
-  struct Node *curNode;
+  struct TZoneContinent *cont;
 
   ENTER();
 
@@ -129,10 +127,8 @@ static void sortLocations(void)
   SortExecList(&G->tzoneContinentList, compareContinents);
 
   // then sort the locations of each continent
-  IterateList(&G->tzoneContinentList, curNode)
+  IterateList(&G->tzoneContinentList, struct TZoneContinent *, cont)
   {
-    struct TZoneContinent *cont = (struct TZoneContinent *)curNode;
-
     SortExecList(&cont->locationList, compareLocations);
   }
 
@@ -253,14 +249,12 @@ char **BuildContinentEntries(void)
   {
     if((entries = calloc(count+1, sizeof(char *))) != NULL)
     {
-      struct Node *curNode;
+      struct TZoneContinent *cont;
       char **ptr = entries;
 
       // copy all continent names
-      IterateList(&G->tzoneContinentList, curNode)
+      IterateList(&G->tzoneContinentList, struct TZoneContinent *, cont)
       {
-        struct TZoneContinent *cont = (struct TZoneContinent *)curNode;
-
         *ptr++ = cont->name;
       }
     }
@@ -285,13 +279,11 @@ char **BuildLocationEntries(ULONG continent)
     if(cont->numLocations != 0 && (entries = calloc(cont->numLocations+1, sizeof(char *))) != NULL)
     {
       char **ptr = entries;
-      struct Node *curNode;
+      struct TZoneLocation *loc;
 
       // copy all location names
-      IterateList(&cont->locationList, curNode)
+      IterateList(&cont->locationList, struct TZoneLocation *, loc)
       {
-        struct TZoneLocation *loc = (struct TZoneLocation *)curNode;
-
         *ptr++ = loc->name;
       }
     }
@@ -340,14 +332,12 @@ char *BuildTZoneName(char *name, size_t nameSize, ULONG continent, ULONG locatio
 static struct TZoneContinent *findContinent(const char *continent, ULONG *index)
 {
   struct TZoneContinent *result = NULL;
-  struct Node *curNode;
+  struct TZoneContinent *cont;
   ULONG i;
 
   i = 0;
-  IterateList(&G->tzoneContinentList, curNode)
+  IterateList(&G->tzoneContinentList, struct TZoneContinent *, cont)
   {
-    struct TZoneContinent *cont = (struct TZoneContinent *)curNode;
-
     if(strcmp(cont->name, continent) == 0)
     {
       result = cont;
@@ -368,14 +358,12 @@ static struct TZoneContinent *findContinent(const char *continent, ULONG *index)
 static struct TZoneLocation *findLocation(struct TZoneContinent *continent, const char *location, ULONG *index)
 {
   struct TZoneLocation *result = NULL;
-  struct Node *curNode;
+  struct TZoneLocation *loc;
   ULONG i;
 
   i = 0;
-  IterateList(&continent->locationList, curNode)
+  IterateList(&continent->locationList, struct TZoneLocation *, loc)
   {
-    struct TZoneLocation *loc = (struct TZoneLocation *)curNode;
-
     if(strcmp(loc->name, location) == 0)
     {
      result = loc;

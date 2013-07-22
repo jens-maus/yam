@@ -390,7 +390,7 @@ static void tokenizerTokenizeAttachment(struct Tokenizer *t,
 static void tokenizerTokenizeHeaders(struct Tokenizer *t,
                                      const struct Part *part)
 {
-  struct Node *curNode;
+  struct HeaderNode *hdr;
   char *contentType;
   char *charSet;
 
@@ -399,9 +399,8 @@ static void tokenizerTokenizeHeaders(struct Tokenizer *t,
   contentType = (part->ContentType != NULL) ? strdup(part->ContentType) : NULL;
   charSet = (part->CParCSet != NULL) ? strdup(part->CParCSet) : NULL;
 
-  IterateList(part->headerList, curNode)
+  IterateList(part->headerList, struct HeaderNode *, hdr)
   {
-    struct HeaderNode *hdr = (struct HeaderNode *)curNode;
     char *name;
 
     if((name = strdup(hdr->name)) != NULL)

@@ -64,7 +64,7 @@ struct UserIdentityNode *CreateNewUserIdentity(const struct Config *co)
                                           TAG_DONE)) != NULL)
   {
     struct Folder *sentFolder;
-    struct Node *curNode;
+    struct MailServerNode *msn;
 
     // initialize all variables as AllocSysObject() does not clear the memory
     memset(uin, 0, sizeof(*uin));
@@ -82,10 +82,8 @@ struct UserIdentityNode *CreateNewUserIdentity(const struct Config *co)
     // we get the first valid smtpServer from the list and put that
     // as the default one so that we don't have a NULL pointer in
     // uin->smtpServer
-    IterateList(&co->smtpServerList, curNode)
+    IterateList(&co->smtpServerList, struct MailServerNode *, msn)
     {
-      struct MailServerNode *msn = (struct MailServerNode *)curNode;
-
       if(isServerActive(msn))
       {
         uin->smtpServer = msn;
@@ -202,15 +200,13 @@ struct UserIdentityNode *GetUserIdentity(const struct MinList *userIdentityList,
                                          const unsigned int num, const BOOL activeOnly)
 {
   struct UserIdentityNode *result = NULL;
+  struct UserIdentityNode *uin;
   unsigned int count = 0;
-  struct Node *curNode;
 
   ENTER();
 
-  IterateList(userIdentityList, curNode)
+  IterateList(userIdentityList, struct UserIdentityNode *, uin)
   {
-    struct UserIdentityNode *uin = (struct UserIdentityNode *)curNode;
-
     if(activeOnly == FALSE || uin->active == TRUE)
     {
       if(count == num)
@@ -233,7 +229,7 @@ struct UserIdentityNode *GetUserIdentity(const struct MinList *userIdentityList,
 struct UserIdentityNode *WhichUserIdentity(const struct MinList *userIdentityList, const struct ExtendedMail *email)
 {
   struct UserIdentityNode *result = NULL;
-  struct Node *curNode;
+  struct UserIdentityNode *uin;
 
   ENTER();
 
@@ -241,9 +237,8 @@ struct UserIdentityNode *WhichUserIdentity(const struct MinList *userIdentityLis
   // to a certain mail (thus, which mail was received by which user identity)
   // here we simply browse through all potential recipient addresses of
   // the email and compare it to the current user identity
-  IterateList(userIdentityList, curNode)
+  IterateList(userIdentityList, struct UserIdentityNode *, uin)
   {
-    struct UserIdentityNode *uin = (struct UserIdentityNode *)curNode;
     int i;
 
     // search all To: addresses
@@ -300,12 +295,10 @@ struct UserIdentityNode *FindUserIdentityByID(const struct MinList *userIdentity
 
   if(id > 0)
   {
-    struct Node *curNode;
+    struct UserIdentityNode *uin;
 
-    IterateList(userIdentityList, curNode)
+    IterateList(userIdentityList, struct UserIdentityNode *, uin)
     {
-      struct UserIdentityNode *uin = (struct UserIdentityNode *)curNode;
-
       // check if we found exactly this ID
       if(id == uin->id)
       {
@@ -330,12 +323,10 @@ struct UserIdentityNode *FindUserIdentityByDescription(const struct MinList *use
 
   if(description != NULL)
   {
-    struct Node *curNode;
+    struct UserIdentityNode *uin;
 
-    IterateList(userIdentityList, curNode)
+    IterateList(userIdentityList, struct UserIdentityNode *, uin)
     {
-      struct UserIdentityNode *uin = (struct UserIdentityNode *)curNode;
-
       // check if the identity is active and if the description matches
       if(uin->active == TRUE && strcasestr(description, uin->description) != NULL)
       {
@@ -360,12 +351,10 @@ struct UserIdentityNode *FindUserIdentityByAddress(const struct MinList *userIde
 
   if(address != NULL)
   {
-    struct Node *curNode;
+    struct UserIdentityNode *uin;
 
-    IterateList(userIdentityList, curNode)
+    IterateList(userIdentityList, struct UserIdentityNode *, uin)
     {
-      struct UserIdentityNode *uin = (struct UserIdentityNode *)curNode;
-
       // check if the identity is active and if the address matches
       if(uin->active == TRUE && strcasestr(address, uin->address) != NULL)
       {
@@ -385,14 +374,12 @@ struct UserIdentityNode *FindUserIdentityByAddress(const struct MinList *userIde
 ULONG NumberOfUserIdentities(const struct MinList *userIdentityList)
 {
   ULONG count = 0;
-  struct Node *curNode;
+  struct UserIdentityNode *uin;
 
   ENTER();
 
-  IterateList(userIdentityList, curNode)
+  IterateList(userIdentityList, struct UserIdentityNode *, uin)
   {
-    struct UserIdentityNode *uin = (struct UserIdentityNode *)curNode;
-
     // count active identites only
     if(uin->active == TRUE)
       count++;

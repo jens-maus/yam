@@ -191,13 +191,11 @@ OVERLOAD(OM_NEW)
   // current ReadMailData list and check which number we can give this window
   do
   {
-    struct Node *curNode;
+    struct ReadMailData *rmData;
     BOOL found = FALSE;
 
-    IterateList(&G->readMailDataList, curNode)
+    IterateList(&G->readMailDataList, struct ReadMailData *,rmData)
     {
-      struct ReadMailData *rmData = (struct ReadMailData *)curNode;
-
       if(rmData->readWindow != NULL &&
          xget(rmData->readWindow, MUIA_ReadWindow_Num) == i)
       {

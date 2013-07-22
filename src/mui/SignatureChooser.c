@@ -140,12 +140,10 @@ OVERLOAD(OM_SET)
           if(newSignature != NULL)
           {
             int i = 1;
-            struct Node *curNode;
+            struct SignatureNode *sn;
 
-            IterateList(data->signatureList, curNode)
+            IterateList(data->signatureList, struct SignatureNode *, sn)
             {
-              struct SignatureNode *sn = (struct SignatureNode *)curNode;
-
               if(sn->id == newSignature->id)
               {
                 j = i;
@@ -221,15 +219,13 @@ DECLARE(UpdateSignatures)
 
   if(data->signatureList != NULL)
   {
-    struct Node *curNode;
+    struct SignatureNode *sn;
     int numSignatures = 0;
 
     // first we find out how many entries the signature list
     // has
-    IterateList(data->signatureList, curNode)
+    IterateList(data->signatureList, struct SignatureNode *, sn)
     {
-      struct SignatureNode *sn = (struct SignatureNode *)curNode;
-
       if(sn->active == TRUE)
         numSignatures++;
     }
@@ -246,10 +242,8 @@ DECLARE(UpdateSignatures)
       // now we walk through the signatureList again
       // and clone the address string
       i = 1;
-      IterateList(data->signatureList, curNode)
+      IterateList(data->signatureList, struct SignatureNode *, sn)
       {
-        struct SignatureNode *sn = (struct SignatureNode *)curNode;
-
         if(sn->active == TRUE)
         {
           data->signatureArray[i] = strdup(sn->description);

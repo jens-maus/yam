@@ -789,14 +789,12 @@ HOOKPROTONHNO(AB_FromAddrBook, BOOL, ULONG *arg)
     }
     else
     {
-      struct Node *curNode;
+      struct WriteMailData *wmData;
 
       // find the write window object by iterating through the
       // global write window list and identify it via its window number
-      IterateList(&G->writeMailDataList, curNode)
+      IterateList(&G->writeMailDataList, struct WriteMailData *, wmData)
       {
-        struct WriteMailData *wmData = (struct WriteMailData *)curNode;
-
         if(wmData->window != NULL &&
            (int)xget(wmData->window, MUIA_WriteWindow_Num) == G->AB->winNumber)
         {
@@ -807,7 +805,7 @@ HOOKPROTONHNO(AB_FromAddrBook, BOOL, ULONG *arg)
     }
 
     if(writeWindow != NULL)
-    { 
+    {
       enum AddressbookMode abm = (enum AddressbookMode)arg[0];
       enum RcptType type = MUIV_WriteWindow_RcptType_To;
       struct MUI_NListtree_TreeNode *tn = (struct MUI_NListtree_TreeNode *)MUIV_NListtree_NextSelected_Start;
@@ -836,7 +834,7 @@ HOOKPROTONHNO(AB_FromAddrBook, BOOL, ULONG *arg)
           AB_InsertAddressTreeNode(writeWindow, type, tn);
       }
       while(TRUE);
- 
+
       result = TRUE;
     }
   }
@@ -2887,7 +2885,7 @@ HOOKPROTONHNONP(AB_DeleteFunc, void)
 {
   ENTER();
 
-  DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Remove, MUIV_NListtree_Remove_ListNode_Root, 
+  DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Remove, MUIV_NListtree_Remove_ListNode_Root,
                                     MUIV_NListtree_Remove_TreeNode_Selected, MUIF_NONE);
 
   set(G->AB->GUI.LV_ADDRESSES, MUIA_AddrBookListtree_Modified, TRUE);

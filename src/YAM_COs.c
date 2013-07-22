@@ -279,7 +279,11 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
   {
     int i;
     char buf[SIZE_LARGE];
-    struct Node *curNode;
+    struct MailServerNode *msn;
+    struct SignatureNode *sn;
+    struct UserIdentityNode *uin;
+    struct FilterNode *filter;
+    struct MimeTypeNode *mtNode;
 
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
@@ -305,10 +309,8 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
 
     // we iterate through our mail server list and ouput the SMTP servers in it
     i = 0;
-    IterateList(&co->smtpServerList, curNode)
+    IterateList(&co->smtpServerList, struct MailServerNode *, msn)
     {
-      struct MailServerNode *msn = (struct MailServerNode *)curNode;
-
       fprintf(fh, "SMTP%02d.ID                = %08x\n", i, msn->id);
       fprintf(fh, "SMTP%02d.Enabled           = %s\n", i, Bool2Txt(isServerActive(msn)));
       fprintf(fh, "SMTP%02d.Description       = %s\n", i, msn->description);
@@ -328,10 +330,8 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
 
     // we iterate through our mail server list and ouput the POP3 servers in it
     i = 0;
-    IterateList(&co->pop3ServerList, curNode)
+    IterateList(&co->pop3ServerList, struct MailServerNode *, msn)
     {
-      struct MailServerNode *msn = (struct MailServerNode *)curNode;
-
       fprintf(fh, "POP%02d.ID                     = %08x\n", i, msn->id);
       fprintf(fh, "POP%02d.Enabled                = %s\n", i, Bool2Txt(isServerActive(msn)));
       fprintf(fh, "POP%02d.Description            = %s\n", i, msn->description);
@@ -369,9 +369,8 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
     // we iterate through our signature list and output
     // the data of each signature here
     i = 0;
-    IterateList(&co->signatureList, curNode)
+    IterateList(&co->signatureList, struct SignatureNode *, sn)
     {
-      struct SignatureNode *sn = (struct SignatureNode *)curNode;
       char *sig = ExportSignature(sn->signature);
 
       fprintf(fh, "SIG%02d.ID          = %08x\n", i, sn->id);
@@ -390,10 +389,8 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
 
     // we iterate through our mail server list and ouput the POP3 servers in it
     i = 0;
-    IterateList(&co->userIdentityList, curNode)
+    IterateList(&co->userIdentityList, struct UserIdentityNode *, uin)
     {
-      struct UserIdentityNode *uin = (struct UserIdentityNode *)curNode;
-
       fprintf(fh, "ID%02d.ID                 = %08x\n", i, uin->id);
       fprintf(fh, "ID%02d.Enabled            = %s\n", i, Bool2Txt(uin->active));
       fprintf(fh, "ID%02d.Description        = %s\n", i, uin->description);
@@ -432,15 +429,13 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
     // we iterate through our filter list and save out the whole filter
     // configuration accordingly.
     i = 0;
-    IterateList(&co->filterList, curNode)
+    IterateList(&co->filterList, struct FilterNode *, filter)
     {
-      struct FilterNode *filter = (struct FilterNode *)curNode;
-
       // don't save volatile filters
       if(filter->isVolatile == FALSE)
       {
         int j;
-        struct Node *curRuleNode;
+        struct RuleNode *rule;
 
         fprintf(fh, "FI%02d.Name           = %s\n", i, filter->name);
         fprintf(fh, "FI%02d.Remote         = %s\n", i, Bool2Txt(filter->remote));
@@ -451,10 +446,8 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
 
         // now we do have to iterate through our ruleList
         j = 0;
-        IterateList(&filter->ruleList, curRuleNode)
+        IterateList(&filter->ruleList, struct RuleNode *, rule)
         {
-          struct RuleNode *rule = (struct RuleNode *)curRuleNode;
-
           fprintf(fh, "FI%02d.Field%d         = %d\n", i, j, rule->searchMode);
           fprintf(fh, "FI%02d.SubField%d      = %d\n", i, j, rule->subSearchMode);
           fprintf(fh, "FI%02d.CustomField%d   = %s\n", i, j, rule->customField);
@@ -598,10 +591,8 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
     fprintf(fh, "MV00.Command     = %s\n", C->DefaultMimeViewer);
 
     i = 1;
-    IterateList(&C->mimeTypeList, curNode)
+    IterateList(&C->mimeTypeList, struct MimeTypeNode *, mtNode)
     {
-      struct MimeTypeNode *mtNode = (struct MimeTypeNode *)curNode;
-
       fprintf(fh, "MV%02d.ContentType = %s\n", i, mtNode->ContentType);
       fprintf(fh, "MV%02d.Extension   = %s\n", i, mtNode->Extension);
       fprintf(fh, "MV%02d.Command     = %s\n", i, mtNode->Command);
@@ -1101,7 +1092,7 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
               if(lastFilter != NULL && lastFilterID != curFilterID)
               {
                 int i;
-                struct Node *curNode;
+                struct FilterNode *filter;
 
                 // reset the lastFilter
                 lastFilter = NULL;
@@ -1110,11 +1101,11 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
                 // try to get the filter with that particular filter ID out of our
                 // filterList
                 i = 0;
-                IterateList(&co->filterList, curNode)
+                IterateList(&co->filterList, struct FilterNode *, filter)
                 {
                   if(i == curFilterID)
                   {
-                    lastFilter = (struct FilterNode *)curNode;
+                    lastFilter = filter;
                     lastFilterID = i;
                     break;
                   }
@@ -1406,7 +1397,7 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
               if(lastType != NULL && lastTypeID != curTypeID)
               {
                 int i;
-                struct Node *curNode;
+                struct MimeTypeNode *mime;
 
                 // reset the lastType
                 lastType = NULL;
@@ -1415,11 +1406,11 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
                 // try to get the mimeType with that particular filter ID out of our
                 // filterList
                 i = 0;
-                IterateList(&co->mimeTypeList, curNode)
+                IterateList(&co->mimeTypeList, struct MimeTypeNode *, mime)
                 {
                   if(i == curTypeID)
                   {
-                    lastType = (struct MimeTypeNode *)curNode;
+                    lastType = mime;
                     lastTypeID = i;
                     break;
                   }
@@ -1866,12 +1857,10 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
           // Propagate the old global POP3 options to each POP3 account.
           // The old options will vanish as soon as the configuration is saved, thus this
           // will happen only once.
-          struct Node *curNode;
+          struct MailServerNode *msn;
 
-          IterateList(&co->pop3ServerList, curNode)
+          IterateList(&co->pop3ServerList, struct MailServerNode *, msn)
           {
-            struct MailServerNode *msn = (struct MailServerNode *)curNode;
-
             // apply only the found old settings and exclude the non-found ones
             if(globalPOP3AvoidDuplicates != -1)
             {
@@ -2606,17 +2595,13 @@ void CO_SetConfig(void)
 
       // we iterate through our mail server list and make sure to populate
       // out NList object correctly.
-      IterateList(&CE->pop3ServerList, curNode)
+      IterateList(&CE->pop3ServerList, struct MailServerNode *, msn)
       {
-        msn = (struct MailServerNode *)curNode;
-
         DoMethod(gui->LV_POP3, MUIM_NList_InsertSingle, msn, MUIV_NList_Insert_Bottom);
         numPOP++;
       }
-      IterateList(&CE->smtpServerList, curNode)
+      IterateList(&CE->smtpServerList, struct MailServerNode *, msn)
       {
-        msn = (struct MailServerNode *)curNode;
-
         DoMethod(gui->LV_SMTP, MUIM_NList_InsertSingle, msn, MUIV_NList_Insert_Bottom);
         numSMTP++;
       }
@@ -2645,10 +2630,8 @@ void CO_SetConfig(void)
 
       // we iterate through our user identity list and make sure to populate
       // out NList object correctly.
-      IterateList(&CE->userIdentityList, curNode)
+      IterateList(&CE->userIdentityList, struct UserIdentityNode *, uin)
       {
-        uin = (struct UserIdentityNode *)curNode;
-
         // if the description is empty we use the mail address instead
         if(uin->description[0] == '\0')
           strlcpy(uin->description, uin->address, sizeof(uin->description));
@@ -2668,17 +2651,15 @@ void CO_SetConfig(void)
 
     case cp_Filters:
     {
-      struct Node *curNode;
+      struct FilterNode *filter;
 
       // clear the filter list first
       DoMethod(gui->LV_RULES, MUIM_NList_Clear);
 
       // iterate through our filter list and add it to our
       // MUI List
-      IterateList(&CE->filterList, curNode)
+      IterateList(&CE->filterList, struct FilterNode *, filter)
       {
-        struct FilterNode *filter = (struct FilterNode *)curNode;
-
         if(filter->isVolatile == FALSE)
           DoMethod(gui->LV_RULES, MUIM_NList_InsertSingle, filter, MUIV_NList_Insert_Bottom);
       }
@@ -2820,10 +2801,8 @@ void CO_SetConfig(void)
 
       // we iterate through our user identity list and make sure to populate
       // out NList object correctly.
-      IterateList(&CE->signatureList, curNode)
+      IterateList(&CE->signatureList, struct SignatureNode *, sn)
       {
-        sn = (struct SignatureNode *)curNode;
-
         // if the description is empty we use the mail address instead
         if(sn->description[0] == '\0')
           snprintf(sn->description, sizeof(sn->description), "%s %d", tr(MSG_CO_SIGNATURE), numSignatures+1);
@@ -2876,7 +2855,7 @@ void CO_SetConfig(void)
 
     case cp_MIME:
     {
-      struct Node *curNode;
+      struct MimeTypeNode *mime;
 
       // clear the filter list first
       set(gui->LV_MIME, MUIA_NList_Quiet, TRUE);
@@ -2884,8 +2863,8 @@ void CO_SetConfig(void)
 
       // iterate through our filter list and add it to our
       // MUI List
-      IterateList(&CE->mimeTypeList, curNode)
-        DoMethod(gui->LV_MIME, MUIM_NList_InsertSingle, curNode, MUIV_NList_Insert_Bottom);
+      IterateList(&CE->mimeTypeList, struct MimeTypeNode *, mime)
+        DoMethod(gui->LV_MIME, MUIM_NList_InsertSingle, mime, MUIV_NList_Insert_Bottom);
 
       // sort the list after inserting all entries
       DoMethod(gui->LV_MIME, MUIM_NList_Sort);

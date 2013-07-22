@@ -1464,14 +1464,12 @@ static BOOL MA_DetectUUE(FILE *fh)
 static struct HeaderNode *FindHeader(struct MinList *headerList, const char *name)
 {
   struct HeaderNode *result = NULL;
-  struct Node *node;
+  struct HeaderNode *hdrNode;
 
   ENTER();
 
-  IterateList(headerList, node)
+  IterateList(headerList, struct HeaderNode *, hdrNode)
   {
-    struct HeaderNode *hdrNode = (struct HeaderNode *)node;
-
     // compare the names
     if(stricmp(hdrNode->name, name) == 0)
     {
@@ -2342,8 +2340,8 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
     BOOL foundReplyTo = FALSE;
     char *ptr;
     char dateFilePart[12+1];
-    struct Node *curNode;
     LONG size;
+    struct HeaderNode *hdrNode;
     struct UserIdentityNode *fromUIN = NULL;
     struct UserIdentityNode *toUIN = NULL;
     struct UserIdentityNode *replyToUIN = NULL;
@@ -2354,9 +2352,8 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
     // The identities found within this loop must not be used immediately
     // for the mail's identity pointer as the single header lines might
     // appear in arbitrary order.
-    IterateList(&headerList, curNode)
+    IterateList(&headerList, struct HeaderNode *, hdrNode)
     {
-      struct HeaderNode *hdrNode = (struct HeaderNode *)curNode;
       char *field = hdrNode->name;
       char *value = hdrNode->content;
 

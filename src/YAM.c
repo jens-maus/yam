@@ -1366,7 +1366,8 @@ void PopUp(void)
   if(G->InStartupPhase == FALSE)
   {
     Object *window = G->MA->GUI.WI;
-    struct Node *curNode;
+    struct ReadMailData *rmData;
+    struct WriteMailData *wmData;
 
     // avoid MUIA_Window_Open's side effect of activating the window if it was already open
     if(xget(window, MUIA_Window_Open) == FALSE)
@@ -1377,10 +1378,8 @@ void PopUp(void)
 
     // Now we check if there is any read window open and bring it also
     // to the front
-    IterateList(&G->readMailDataList, curNode)
+    IterateList(&G->readMailDataList, struct ReadMailData *, rmData)
     {
-      struct ReadMailData *rmData = (struct ReadMailData *)curNode;
-
       if(rmData->readWindow != NULL)
       {
         DoMethod(rmData->readWindow, MUIM_Window_ToFront);
@@ -1390,10 +1389,8 @@ void PopUp(void)
 
     // Now we check if there is any write window open and bring it also
     // to the front
-    IterateList(&G->writeMailDataList, curNode)
+    IterateList(&G->writeMailDataList, struct WriteMailData *, wmData)
     {
-      struct WriteMailData *wmData = (struct WriteMailData *)curNode;
-
       if(wmData->window != NULL)
       {
         DoMethod(wmData->window, MUIM_Window_ToFront);
@@ -1480,13 +1477,11 @@ BOOL StayInProg(void)
   if(stayIn == FALSE)
   {
     // search through our WriteDataList
-    struct Node *curNode;
+    struct WriteMailData *wmData;
     BOOL saveMails = FALSE;
 
-    IterateList(&G->writeMailDataList, curNode)
+    IterateList(&G->writeMailDataList, struct WriteMailData *, wmData)
     {
-      struct WriteMailData *wmData = (struct WriteMailData *)curNode;
-
       if(wmData->window != NULL)
       {
         int result;
@@ -1520,15 +1515,14 @@ BOOL StayInProg(void)
 
     if(saveMails == TRUE)
     {
-      struct Node *nextNode;
+      struct WriteMailData *wmData;
+      struct WriteMailData *succ;
 
       // put the mails of all still opened write windows on hold
-      for(curNode = GetHead((struct List *)&G->writeMailDataList); curNode != NULL; curNode = nextNode)
+      // we must use SafeIterateList() here, because composing the final mail
+      // will close the window and hence modify the list we are iterating over
+      SafeIterateList(&G->writeMailDataList, struct WriteMailData *, wmData, succ)
       {
-        struct WriteMailData *wmData = (struct WriteMailData *)curNode;
-
-        nextNode = GetSucc(curNode);
-
         if(wmData->window != NULL)
           DoMethod(wmData->window, MUIM_WriteWindow_ComposeMail, WRITE_QUEUE);
       }
@@ -3155,14 +3149,12 @@ void MiniMainLoop(void)
       {
         // assume all SMTP threads to be finished first
         BOOL allFinished = TRUE;
-        struct Node *curNode;
+        struct UserIdentityNode *uin;
 
         D(DBF_STARTUP, "got wakeup signal");
 
-        IterateList(&C->userIdentityList, curNode)
+        IterateList(&C->userIdentityList, struct UserIdentityNode *, uin)
         {
-          struct UserIdentityNode *uin = (struct UserIdentityNode *)curNode;
-
           // check if the SMTP server is still in use because it is still sending mails
           if(uin->smtpServer != NULL && isFlagSet(uin->smtpServer->flags, MSF_IN_USE))
           {

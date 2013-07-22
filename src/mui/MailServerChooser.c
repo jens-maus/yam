@@ -138,12 +138,10 @@ OVERLOAD(OM_SET)
           if(newServer != NULL)
           {
             int i = 0;
-            struct Node *curNode;
+            struct MailServerNode *msn;
 
-            IterateList(data->serverList, curNode)
+            IterateList(data->serverList, struct MailServerNode *, msn)
             {
-              struct MailServerNode *msn = (struct MailServerNode *)curNode;
-
               if(msn->id == newServer->id)
               {
                 j = i;
@@ -214,14 +212,12 @@ DECLARE(UpdateMailServers)
 
   if(data->serverList != NULL)
   {
-    struct Node *curNode;
+    struct MailServerNode *msn;
     int numServers = 0;
 
     // first we find out how many entries the server list has
-    IterateList(data->serverList, curNode)
+    IterateList(data->serverList, struct MailServerNode *, msn)
     {
-      struct MailServerNode *msn = (struct MailServerNode *)curNode;
-
       if(isServerActive(msn))
         numServers++;
     }
@@ -243,10 +239,8 @@ DECLARE(UpdateMailServers)
         // now we walk through the serverList again
         // and clone the description string
         i = 0;
-        IterateList(data->serverList, curNode)
+        IterateList(data->serverList, struct MailServerNode *, msn)
         {
-          struct MailServerNode *msn = (struct MailServerNode *)curNode;
-
           if(isServerActive(msn))
           {
             data->serverArray[i] = strdup(msn->description);

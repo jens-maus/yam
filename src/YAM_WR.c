@@ -1925,12 +1925,10 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
   if(isDraftsFolder(folder))
   {
     // search through our WriteMailDataList
-    struct Node *curNode;
+    struct WriteMailData *lwmData;
 
-    IterateList(&G->writeMailDataList, curNode)
+    IterateList(&G->writeMailDataList, struct WriteMailData *, lwmData)
     {
-      struct WriteMailData *lwmData = (struct WriteMailData *)curNode;
-
       if(lwmData->window != NULL && lwmData->refMail == mail)
       {
         DoMethod(lwmData->window, MUIM_Window_ToFront);
@@ -3252,14 +3250,12 @@ BOOL CleanupWriteMailData(struct WriteMailData *wmData)
 BOOL SetWriteMailDataMailRef(const struct Mail *search, const struct Mail *newRef)
 {
   BOOL result = FALSE;
-  struct Node *curNode;
+  struct WriteMailData *wmData;
 
   ENTER();
 
-  IterateList(&G->writeMailDataList, curNode)
+  IterateList(&G->writeMailDataList, struct WriteMailData *, wmData)
   {
-    struct WriteMailData *wmData = (struct WriteMailData *)curNode;
-
     if(wmData->refMail == search)
     {
       wmData->refMail = (struct Mail *)newRef;

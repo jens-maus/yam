@@ -123,13 +123,11 @@ static BOOL FI_MatchString(const struct Search *search, const char *string)
     {
       if(isFlagSet(search->flags, SEARCHF_DOS_PATTERN))
       {
-        struct Node *curNode;
+        struct SearchPatternNode *patternNode;
 
         // match the string against all patterns in the list
-        IterateList(&search->patternList, curNode)
+        IterateList(&search->patternList, struct SearchPatternNode *, patternNode)
         {
-          struct SearchPatternNode *patternNode = (struct SearchPatternNode *)curNode;
-
           if(isFlagSet(search->flags, SEARCHF_CASE_SENSITIVE))
             match = (BOOL)MatchPattern(patternNode->pattern, (STRPTR)string);
           else
@@ -506,7 +504,7 @@ static BOOL FI_SearchPatternInHeader(const struct Search *search, const struct M
         if(MA_ReadHeader(mailfile, fh, headerList, RHM_MAINHEADER) == TRUE)
         {
           int searchLen = 0;
-          struct Node *curNode;
+          struct HeaderNode *hdrNode;
 
           // prepare the search length ahead of the iteration
           if(search->Field[0] != '\0')
@@ -521,10 +519,8 @@ static BOOL FI_SearchPatternInHeader(const struct Search *search, const struct M
               searchLen = strlen(search->Field);
           }
 
-          IterateList(headerList, curNode)
+          IterateList(headerList, struct HeaderNode *, hdrNode)
           {
-            struct HeaderNode *hdrNode = (struct HeaderNode *)curNode;
-
             // if the field is explicitly specified we search for it or
             // otherwise skip our search
             if(search->Field[0] != '\0')
@@ -1030,7 +1026,7 @@ BOOL DoFilterSearch(const struct FilterNode *filter, const struct Mail *mail)
   ULONG numRules;
   ULONG matchedRules;
   BOOL result;
-  struct Node *curNode;
+  struct RuleNode *rule;
 
   ENTER();
 
@@ -1041,10 +1037,8 @@ BOOL DoFilterSearch(const struct FilterNode *filter, const struct Mail *mail)
 
   // we have to iterate through our ruleList and depending on the combine
   // operation we evaluate if the filter hits any mail criteria or not.
-  IterateList(&filter->ruleList, curNode)
+  IterateList(&filter->ruleList, struct RuleNode *, rule)
   {
-    struct RuleNode *rule = (struct RuleNode *)curNode;
-
     numRules++;
 
     if(rule->search != NULL)
@@ -1505,15 +1499,13 @@ MakeStaticHook(FI_CloseHook, FI_Close);
 BOOL FI_FilterSingleMail(const struct MinList *filterList, struct Mail *mail, int *matches, struct FilterResult *result)
 {
   BOOL success = TRUE;
-  struct Node *curNode;
+  struct FilterNode *filter;
   int match = 0;
 
   ENTER();
 
-  IterateList(filterList, curNode)
+  IterateList(filterList, struct FilterNode *, filter)
   {
-    struct FilterNode *filter = (struct FilterNode *)curNode;
-
     if(DoFilterSearch(filter, mail) == TRUE)
     {
       match++;
@@ -1573,13 +1565,12 @@ struct FilterNode *CloneFilterNode(struct FilterNode *filter)
 
   if((clonedFilter = DuplicateNode(filter, sizeof(*filter))) != NULL)
   {
-    struct Node *node;
+    struct RuleNode *rule;
 
     // clone the filter's rules
     NewMinList(&clonedFilter->ruleList);
-    IterateList(&filter->ruleList, node)
+    IterateList(&filter->ruleList, struct RuleNode *, rule)
     {
-      struct RuleNode *rule = (struct RuleNode *)node;
       struct RuleNode *clonedRule;
 
       if((clonedRule = DuplicateNode(rule, sizeof(*rule))) != NULL)
@@ -1662,11 +1653,10 @@ struct MinList *CloneFilterList(enum ApplyFilterMode mode)
   if((clonedList = AllocSysObjectTags(ASOT_LIST, ASOLIST_Min, TRUE,
                                                  TAG_DONE)) != NULL)
   {
-    struct Node *node;
+    struct FilterNode *filter;
 
-    IterateList(&C->filterList, node)
+    IterateList(&C->filterList, struct FilterNode *, filter)
     {
-      struct FilterNode *filter = (struct FilterNode *)node;
       BOOL include;
 
       // check if the filter needs to be included in the cloned list
@@ -1720,17 +1710,14 @@ struct MinList *CloneFilterList(enum ApplyFilterMode mode)
     {
       // now that we have cloned the filter list we go ahead and prepare the
       // search data for each rule
-      struct Node *filterNode;
+      struct FilterNode *filter;
 
-      IterateList(clonedList, filterNode)
+      IterateList(clonedList, struct FilterNode *, filter)
       {
-        struct FilterNode *filter = (struct FilterNode *)filterNode;
-        struct Node *ruleNode;
+        struct RuleNode *rule;
 
-        IterateList(&filter->ruleList, ruleNode)
+        IterateList(&filter->ruleList, struct RuleNode *, rule)
         {
-          struct RuleNode *rule = (struct RuleNode *)ruleNode;
-
           if((rule->search = calloc(1, sizeof(*rule->search))) != NULL)
           {
             size_t stat;
@@ -2250,7 +2237,7 @@ MakeHook(ApplyFiltersHook, ApplyFiltersFunc);
 BOOL CopyFilterData(struct FilterNode *dstFilter, struct FilterNode *srcFilter)
 {
   BOOL success = TRUE;
-  struct Node *curNode;
+  struct RuleNode *rule;
 
   ENTER();
 
@@ -2262,9 +2249,8 @@ BOOL CopyFilterData(struct FilterNode *dstFilter, struct FilterNode *srcFilter)
   // then iterate through our ruleList and copy it as well
   NewMinList(&dstFilter->ruleList);
 
-  IterateList(&srcFilter->ruleList, curNode)
+  IterateList(&srcFilter->ruleList, struct RuleNode *, rule)
   {
-    struct RuleNode *rule = (struct RuleNode *)curNode;
     struct RuleNode *newRule;
 
     // do a raw copy of the rule contents first
@@ -2319,7 +2305,7 @@ BOOL CopyFilterData(struct FilterNode *dstFilter, struct FilterNode *srcFilter)
 static BOOL CopySearchData(struct Search *dstSearch, struct Search *srcSearch)
 {
   BOOL success = TRUE;
-  struct Node *curNode;
+  struct SearchPatternNode *srcNode;
 
   ENTER();
 
@@ -2331,9 +2317,8 @@ static BOOL CopySearchData(struct Search *dstSearch, struct Search *srcSearch)
   // now we have to copy the patternList as well
   NewMinList(&dstSearch->patternList);
 
-  IterateList(&srcSearch->patternList, curNode)
+  IterateList(&srcSearch->patternList, struct SearchPatternNode *, srcNode)
   {
-    struct SearchPatternNode *srcNode = (struct SearchPatternNode *)curNode;
     struct SearchPatternNode *dstNode;
 
     if((dstNode = DuplicateNode(srcNode, sizeof(*srcNode))) != NULL)
@@ -2584,17 +2569,15 @@ struct RuleNode *GetFilterRule(struct FilterNode *filter, int pos)
 // check if the folder is used by any filter as "move to" folder
 BOOL FolderIsUsedByFilters(const char *folder)
 {
-  struct Node *fNode;
+  struct FilterNode *filter;
   BOOL folderIsUsed = FALSE;
 
   ENTER();
 
   // iterate over all filters and replace any occurence of
   // the old folder name by the new one
-  IterateList(&C->filterList, fNode)
+  IterateList(&C->filterList, struct FilterNode *, filter)
   {
-    struct FilterNode *filter = (struct FilterNode *)fNode;
-
     if(hasMoveAction(filter) == TRUE && stricmp(filter->moveTo, folder) == 0)
     {
       folderIsUsed = TRUE;
@@ -2611,16 +2594,14 @@ BOOL FolderIsUsedByFilters(const char *folder)
 // modify the destination folder of all filters
 void RenameFolderInFilters(const char *oldFolder, const char *newFolder)
 {
-  struct Node *fNode;
+  struct FilterNode *filter;
 
   ENTER();
 
   // iterate over all filters and replace any occurence of
   // the old folder name by the new one
-  IterateList(&C->filterList, fNode)
+  IterateList(&C->filterList, struct FilterNode *, filter)
   {
-    struct FilterNode *filter = (struct FilterNode *)fNode;
-
     if(hasMoveAction(filter) == TRUE && stricmp(filter->moveTo, oldFolder) == 0)
     {
       D(DBF_FILTER, "changing MoveTo folder of filer '%s' to '%s'", filter->name, newFolder);
@@ -2639,16 +2620,14 @@ void RenameFolderInFilters(const char *oldFolder, const char *newFolder)
 // remove a folder from a filter in case it is its "move to" folder
 void RemoveFolderFromFilters(const char *folder)
 {
-  struct Node *fNode;
+  struct FilterNode *filter;
 
   ENTER();
 
   // iterate over all filters and replace any occurence of
   // the old folder name by the new one
-  IterateList(&C->filterList, fNode)
+  IterateList(&C->filterList, struct FilterNode *, filter)
   {
-    struct FilterNode *filter = (struct FilterNode *)fNode;
-
     if(hasMoveAction(filter) == TRUE && stricmp(filter->moveTo, folder) == 0)
     {
       D(DBF_FILTER, "removing MoveTo folder '%s' of filer '%s'", folder, filter->name);

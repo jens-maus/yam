@@ -128,12 +128,10 @@ OVERLOAD(OM_SET)
           // find the new identity and set it as active entry
           if(newIdentity != NULL)
           {
-            struct Node *curNode;
+            struct UserIdentityNode *uin;
 
-            IterateList(&C->userIdentityList, curNode)
+            IterateList(&C->userIdentityList, struct UserIdentityNode *, uin)
             {
-              struct UserIdentityNode *uin = (struct UserIdentityNode *)curNode;
-
               if(uin->id == newIdentity->id)
                 break;
               else if(uin->active == TRUE)
@@ -189,7 +187,7 @@ OVERLOAD(OM_GET)
 DECLARE(UpdateIdentities)
 {
   GETDATA;
-  struct Node *curNode;
+  struct UserIdentityNode *uin;
   int numIdentities = 0;
 
   ENTER();
@@ -200,10 +198,8 @@ DECLARE(UpdateIdentities)
 
   // first we find out how many entries the user identity list
   // has
-  IterateList(&C->userIdentityList, curNode)
+  IterateList(&C->userIdentityList, struct UserIdentityNode *, uin)
   {
-    struct UserIdentityNode *uin = (struct UserIdentityNode *)curNode;
-
     if(uin->active == TRUE)
       numIdentities++;
   }
@@ -228,10 +224,8 @@ DECLARE(UpdateIdentities)
 
       // now we walk through the userIdentityList again
       // and clone the address string
-      IterateList(&C->userIdentityList, curNode)
+      IterateList(&C->userIdentityList, struct UserIdentityNode *, uin)
       {
-        struct UserIdentityNode *uin = (struct UserIdentityNode *)curNode;
-
         if(uin->active == TRUE)
         {
           char address[SIZE_LARGE];

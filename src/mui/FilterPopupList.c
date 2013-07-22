@@ -83,7 +83,7 @@ DECLARE(Popup)
   DoMethod(obj, MUIM_List_Clear);
 
   // add all available filters
-  IterateList(&C->filterList, node)
+  IterateList(&C->filterList, struct Node *, node)
   {
     DoMethod(obj, MUIM_NList_InsertSingle, node, MUIV_NList_Insert_Bottom);
   }

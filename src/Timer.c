@@ -558,15 +558,13 @@ static void TimerDispatcher(const enum Timer tid)
     case TIMER_WRINDEX:
     {
       BOOL updateIndex = TRUE;
-      struct Node *curNode;
+      struct WriteMailData *wmData;
 
       D(DBF_TIMER, "timer[%ld]: TIMER_WRINDEX fired @ %s", tid, dateString);
 
       // only write the indexes if no Editor is actually in use
-      IterateList(&G->writeMailDataList, curNode)
+      IterateList(&G->writeMailDataList, struct WriteMailData *, wmData)
       {
-        struct WriteMailData *wmData = (struct WriteMailData *)curNode;
-
         if(wmData->window != NULL)
         {
           if(DoMethod(wmData->window, MUIM_WriteWindow_IsEditorActive) == TRUE)
@@ -592,14 +590,12 @@ static void TimerDispatcher(const enum Timer tid)
     // of the currently used editors.
     case TIMER_AUTOSAVE:
     {
-      struct Node *curNode;
+      struct WriteMailData *wmData;
 
       D(DBF_TIMER, "timer[%ld]: TIMER_AUTOSAVE fired @ %s", tid, dateString);
 
-      IterateList(&G->writeMailDataList, curNode)
+      IterateList(&G->writeMailDataList, struct WriteMailData *, wmData)
       {
-        struct WriteMailData *wmData = (struct WriteMailData *)curNode;
-
         if(wmData->window != NULL)
           DoMethod(wmData->window, MUIM_WriteWindow_DoAutoSave);
       }
@@ -761,7 +757,7 @@ BOOL ProcessTimerEvent(void)
   while((timeReq = (struct TimeRequest *)GetMsg(G->timerData.port)) != NULL)
   {
     enum Timer tid;
-    struct Node *curNode;
+    struct MailServerNode *msn;
 
     for(tid=0; tid < TIMER_NUM; tid++)
     {
@@ -789,9 +785,8 @@ BOOL ProcessTimerEvent(void)
     // continue to check the POP3 timers
     ObtainSemaphoreShared(G->configSemaphore);
 
-    IterateList(&C->pop3ServerList, curNode)
+    IterateList(&C->pop3ServerList, struct MailServerNode *, msn)
     {
-      struct MailServerNode *msn = (struct MailServerNode *)curNode;
       struct TRequest *timer = &msn->downloadTimer;
 
       if(timeReq == timer->tr)
@@ -868,16 +863,14 @@ BOOL ProcessTimerEvent(void)
 // prepare the timers of all POP3 servers
 void PreparePOP3Timers(void)
 {
-  struct Node *curNode;
+  struct MailServerNode *msn;
 
   ENTER();
 
   ObtainSemaphoreShared(G->configSemaphore);
 
-  IterateList(&C->pop3ServerList, curNode)
+  IterateList(&C->pop3ServerList, struct MailServerNode *, msn)
   {
-    struct MailServerNode *msn = (struct MailServerNode *)curNode;
-
     PrepareTRequest(&msn->downloadTimer, msn->downloadInterval*60, 0);
   }
 
@@ -891,16 +884,14 @@ void PreparePOP3Timers(void)
 // start the timers of all active POP3 servers
 void StartPOP3Timers(void)
 {
-  struct Node *curNode;
+  struct MailServerNode *msn;
 
   ENTER();
 
   ObtainSemaphoreShared(G->configSemaphore);
 
-  IterateList(&C->pop3ServerList, curNode)
+  IterateList(&C->pop3ServerList, struct MailServerNode *, msn)
   {
-    struct MailServerNode *msn = (struct MailServerNode *)curNode;
-
     if(isServerActive(msn) && hasServerDownloadPeriodically(msn))
       StartTRequest(&msn->downloadTimer);
   }
@@ -915,16 +906,14 @@ void StartPOP3Timers(void)
 // stop the timers of all active POP3 servers
 void StopPOP3Timers(void)
 {
-  struct Node *curNode;
+  struct MailServerNode *msn;
 
   ENTER();
 
   ObtainSemaphoreShared(G->configSemaphore);
 
-  IterateList(&C->pop3ServerList, curNode)
+  IterateList(&C->pop3ServerList, struct MailServerNode *, msn)
   {
-    struct MailServerNode *msn = (struct MailServerNode *)curNode;
-
     StopTRequest(&msn->downloadTimer);
   }
 
@@ -938,16 +927,14 @@ void StopPOP3Timers(void)
 // restart the timers of all active POP3 servers
 void RestartPOP3Timers(void)
 {
-  struct Node *curNode;
+  struct MailServerNode *msn;
 
   ENTER();
 
   ObtainSemaphoreShared(G->configSemaphore);
 
-  IterateList(&C->pop3ServerList, curNode)
+  IterateList(&C->pop3ServerList, struct MailServerNode *, msn)
   {
-    struct MailServerNode *msn = (struct MailServerNode *)curNode;
-
     StopTRequest(&msn->downloadTimer);
     PrepareTRequest(&msn->downloadTimer, msn->downloadInterval*60, 0);
     if(isServerActive(msn) && hasServerDownloadPeriodically(msn))

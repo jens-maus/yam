@@ -1105,12 +1105,10 @@ static ULONG DbgMallocCount;
 static struct DbgMallocNode *findDbgMallocNode(const void *ptr)
 {
   struct DbgMallocNode *result = NULL;
-  struct Node *curNode;
+  struct DbgMallocNode *dmn;
 
-  IterateList(&DbgMallocList[ptr2hash(ptr)], curNode)
+  IterateList(&DbgMallocList[ptr2hash(ptr)], struct DbgMallocNode *, dmn)
   {
-    struct DbgMallocNode *dmn = (struct DbgMallocNode *)curNode;
-
     if(dmn->memory == ptr)
     {
       result = dmn;
@@ -1287,12 +1285,10 @@ void DumpDbgMalloc(void)
     D(DBF_ALWAYS, "%ld memory areas tracked", DbgMallocCount);
     for(i = 0; i < ARRAY_SIZE(DbgMallocList); i++)
     {
-      struct Node *curNode;
+      struct DbgMallocNode *dmn;;
 
-      IterateList(&DbgMallocList[i], curNode)
+      IterateList(&DbgMallocList[i], struct DbgMallocNode *, dmn)
       {
-        struct DbgMallocNode *dmn = (struct DbgMallocNode *)curNode;
-
         _DPRINTF(DBC_MTRACK, DBF_ALWAYS, NULL, dmn->file, dmn->line, "memarea 0x%08lx, size/type %ld, func (%s)", dmn->memory, dmn->size, dmn->func);
       }
     }

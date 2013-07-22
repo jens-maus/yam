@@ -111,12 +111,10 @@ void rx_mailwrite(UNUSED struct RexxHost *host, struct RexxParams *params, enum 
       else
       {
         BOOL found = FALSE;
-        struct Node *curNode;
+        struct WriteMailData *wmData;
 
-        IterateList(&G->writeMailDataList, curNode)
+        IterateList(&G->writeMailDataList, struct WriteMailData *, wmData)
         {
-          struct WriteMailData *wmData = (struct WriteMailData *)curNode;
-
           if(wmData->window != NULL)
           {
             if(winNumber == (int)xget(wmData->window, MUIA_WriteWindow_Num))

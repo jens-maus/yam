@@ -243,17 +243,15 @@ void ImportExternalSpamFilters(struct Config *co)
   // to move spam mails to it
   if(FO_GetFolderByType(FT_SPAM, NULL) != NULL)
   {
-    struct Node *curNode;
-    struct Node *succ;
+    struct FilterNode *filter;
+    struct FilterNode *succ;
 
     // remove previous volatile filters first
-    SafeIterateList(&co->filterList, curNode, succ)
+    SafeIterateList(&co->filterList, struct FilterNode *, filter, succ)
     {
-      struct FilterNode *filter = (struct FilterNode *)curNode;
-
       if(filter->isVolatile == TRUE)
       {
-        Remove(curNode);
+        Remove((struct Node *)filter);
         DeleteFilterNode(filter);
       }
     }
@@ -344,7 +342,7 @@ HOOKPROTONHNONP(GetActiveFilterData, void)
   // values of this filter
   if(filter != NULL)
   {
-    struct Node *curNode;
+    struct RuleNode *rule;
 
     nnset(gui->ST_RNAME,             MUIA_String_Contents,   filter->name);
     nnset(gui->CH_REMOTE,            MUIA_Selected,          filter->remote);
@@ -381,7 +379,7 @@ HOOKPROTONHNONP(GetActiveFilterData, void)
     DoMethod(gui->GR_SGROUP, MUIM_ObjectList_Clear);
 
     // Now we should have a clean SGROUP and can populate with new SearchControlGroup objects
-    IterateList(&filter->ruleList, curNode)
+    IterateList(&filter->ruleList, struct RuleNode *, rule)
     {
       Object *newSearchGroup = SearchControlGroupObject,
                                  MUIA_SearchControlGroup_RemoteFilterMode, filter->remote,
@@ -391,7 +389,7 @@ HOOKPROTONHNONP(GetActiveFilterData, void)
         break;
 
       // fill the new search group with some content
-      DoMethod(newSearchGroup, MUIM_SearchControlGroup_GetFromRule, curNode);
+      DoMethod(newSearchGroup, MUIM_SearchControlGroup_GetFromRule, rule);
 
       // set some notifies
       DoMethod(newSearchGroup, MUIM_Notify, MUIA_SearchControlGroup_Modified, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &SetActiveFilterDataHook);
@@ -1073,44 +1071,22 @@ HOOKPROTONHNONP(CO_GetIdentityEntry, void)
     // the SMTP server list and match the ids
     if(uin->smtpServer != NULL)
     {
-      struct Node *curNode;
-      int i = 0;
+      struct MailServerNode *msn;
 
-      IterateList(&CE->smtpServerList, curNode)
-      {
-        struct MailServerNode *msn = (struct MailServerNode *)curNode;
-
-        // we match the ids because the pointers may be different
-        if(msn->id == uin->smtpServer->id)
-        {
-          nnset(gui->CY_IDENTITY_MAILSERVER, MUIA_MailServerChooser_MailServer, msn);
-          break;
-        }
-        else if(isServerActive(msn))
-          i++;
-      }
+      // we match the ids because the pointers may be different
+      if((msn = FindMailServer(&CE->smtpServerList, uin->smtpServer->id)) != NULL)
+        nnset(gui->CY_IDENTITY_MAILSERVER, MUIA_MailServerChooser_MailServer, msn);
     }
 
     // we have to set the correct signature in the GUI so we browse through
     // the signature list and match the ids
     if(uin->signature != NULL)
     {
-      struct Node *curNode;
-      int i = 1;
+      struct SignatureNode *sn;
 
-      IterateList(&CE->signatureList, curNode)
-      {
-        struct SignatureNode *sn = (struct SignatureNode *)curNode;
-
-        // we match the ids because the pointers may be different
-        if(sn->id == uin->signature->id)
-        {
-          nnset(gui->CY_IDENTITY_SIGNATURE, MUIA_SignatureChooser_Signature, sn);
-          break;
-        }
-        else if(sn->active == TRUE)
-          i++;
-      }
+      // we match the ids because the pointers may be different
+      if((sn = FindSignatureByID(&CE->signatureList, uin->signature->id)) != NULL)
+        nnset(gui->CY_IDENTITY_SIGNATURE, MUIA_SignatureChooser_Signature, sn);
     }
     else
       nnset(gui->CY_IDENTITY_SIGNATURE, MUIA_SignatureChooser_Signature, NULL);
@@ -1758,7 +1734,6 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
 static BOOL CopyConfigData(struct Config *dco, const struct Config *sco)
 {
   BOOL success = TRUE;
-  struct Node *curNode;
 
   ENTER();
   SHOWVALUE(DBF_CONFIG, sco);
@@ -1770,44 +1745,52 @@ static BOOL CopyConfigData(struct Config *dco, const struct Config *sco)
   // then we have to do a deep copy and allocate separate memory for our copy
   NewMinList(&dco->pop3ServerList);
 
-  IterateList(&sco->pop3ServerList, curNode)
+  if(success == TRUE)
   {
-    struct MailServerNode *srcNode = (struct MailServerNode *)curNode;
-    struct MailServerNode *dstNode;
+    struct MailServerNode *srcNode;
 
-    // clone the server but give the clone its own private data
-    if((dstNode = CloneMailServer(srcNode)) != NULL)
+    IterateList(&sco->pop3ServerList, struct MailServerNode *, srcNode)
     {
-      AddTail((struct List *)&dco->pop3ServerList, (struct Node *)dstNode);
-    }
-    else
-    {
-      success = FALSE;
+      struct MailServerNode *dstNode;
 
-      // bail out, no need to copy further data
-      break;
+      // clone the server but give the clone its own private data
+      if((dstNode = CloneMailServer(srcNode)) != NULL)
+      {
+        AddTail((struct List *)&dco->pop3ServerList, (struct Node *)dstNode);
+      }
+      else
+      {
+        success = FALSE;
+
+        // bail out, no need to copy further data
+        break;
+      }
     }
   }
 
   // then we have to do a deep copy and allocate separate memory for our copy
   NewMinList(&dco->smtpServerList);
 
-  IterateList(&sco->smtpServerList, curNode)
+  if(success == TRUE)
   {
-    struct MailServerNode *srcNode = (struct MailServerNode *)curNode;
-    struct MailServerNode *dstNode;
+    struct MailServerNode *srcNode;
 
-    // clone the server but give the clone its own private data
-    if((dstNode = CloneMailServer(srcNode)) != NULL)
+    IterateList(&sco->smtpServerList, struct MailServerNode *, srcNode)
     {
-      AddTail((struct List *)&dco->smtpServerList, (struct Node *)dstNode);
-    }
-    else
-    {
-      success = FALSE;
+      struct MailServerNode *dstNode;
 
-      // bail out, no need to copy further data
-      break;
+      // clone the server but give the clone its own private data
+      if((dstNode = CloneMailServer(srcNode)) != NULL)
+      {
+        AddTail((struct List *)&dco->smtpServerList, (struct Node *)dstNode);
+      }
+      else
+      {
+        success = FALSE;
+
+        // bail out, no need to copy further data
+        break;
+      }
     }
   }
 
@@ -1816,9 +1799,10 @@ static BOOL CopyConfigData(struct Config *dco, const struct Config *sco)
 
   if(success == TRUE)
   {
-    IterateList(&sco->signatureList, curNode)
+    struct SignatureNode *srcNode;
+
+    IterateList(&sco->signatureList, struct SignatureNode *, srcNode)
     {
-      struct SignatureNode *srcNode = (struct SignatureNode *)curNode;
       struct SignatureNode *dstNode;
 
       if((dstNode = DuplicateNode(srcNode, sizeof(*srcNode))) != NULL)
@@ -1841,9 +1825,10 @@ static BOOL CopyConfigData(struct Config *dco, const struct Config *sco)
 
   if(success == TRUE)
   {
-    IterateList(&sco->userIdentityList, curNode)
+    struct UserIdentityNode *srcNode;
+
+    IterateList(&sco->userIdentityList, struct UserIdentityNode *, srcNode)
     {
-      struct UserIdentityNode *srcNode = (struct UserIdentityNode *)curNode;
       struct UserIdentityNode *dstNode;
 
       if((dstNode = DuplicateNode(srcNode, sizeof(*srcNode))) != NULL)
@@ -1880,9 +1865,10 @@ static BOOL CopyConfigData(struct Config *dco, const struct Config *sco)
 
   if(success == TRUE)
   {
-    IterateList(&sco->mimeTypeList, curNode)
+    struct MimeTypeNode *srcNode;
+
+    IterateList(&sco->mimeTypeList, struct MimeTypeNode *, srcNode)
     {
-      struct MimeTypeNode *srcNode = (struct MimeTypeNode *)curNode;
       struct MimeTypeNode *dstNode;
 
       if((dstNode = DuplicateNode(srcNode, sizeof(*srcNode))) != NULL)
@@ -1901,14 +1887,16 @@ static BOOL CopyConfigData(struct Config *dco, const struct Config *sco)
 
   if(success == TRUE)
   {
-    IterateList(&sco->filterList, curNode)
+    struct FilterNode *srcFilter;
+
+    IterateList(&sco->filterList, struct FilterNode *, srcFilter)
     {
-      struct FilterNode *srcFilter = (struct FilterNode *)curNode;
       struct FilterNode *dstFilter;
 
-      if((dstFilter = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*dstFilter),
-                                                    ASONODE_Min, TRUE,
-                                                    TAG_DONE)) != NULL)
+      if((dstFilter = AllocSysObjectTags(ASOT_NODE,
+        ASONODE_Size, sizeof(*dstFilter),
+        ASONODE_Min, TRUE,
+        TAG_DONE)) != NULL)
       {
         if(CopyFilterData(dstFilter, srcFilter) == FALSE)
         {
@@ -2196,8 +2184,10 @@ void CO_Validate(struct Config *co, BOOL update)
   struct MailServerNode *firstPOP3;
   struct MailServerNode *firstSMTP;
   struct UserIdentityNode *firstIdentity;
-  struct Node *curNode;
   Object *refWindow;
+  struct MailServerNode *msn;
+  struct UserIdentityNode *uin;
+  struct SignatureNode *sn;
   LONG gmtOffset = 0;
 
   ENTER();
@@ -2223,10 +2213,8 @@ void CO_Validate(struct Config *co, BOOL update)
   {
     // now we walk through our POP3 server list and check and fix certains
     // things in it
-    IterateList(&co->pop3ServerList, curNode)
+    IterateList(&co->pop3ServerList, struct MailServerNode *, msn)
     {
-      struct MailServerNode *msn = (struct MailServerNode *)curNode;
-
       if(msn->hostname[0] == '\0')
         strlcpy(msn->hostname, firstSMTP->hostname, sizeof(msn->hostname));
 
@@ -2245,10 +2233,8 @@ void CO_Validate(struct Config *co, BOOL update)
 
     // now we walk through our SMTP server list and check and fix certains
     // things in it
-    IterateList(&co->smtpServerList, curNode)
+    IterateList(&co->smtpServerList, struct MailServerNode *, msn)
     {
-      struct MailServerNode *msn = (struct MailServerNode *)curNode;
-
       if(msn->hostname[0] == '\0')
         strlcpy(msn->hostname, firstPOP3->hostname, sizeof(msn->hostname));
 
@@ -2261,10 +2247,8 @@ void CO_Validate(struct Config *co, BOOL update)
   }
 
   // check all servers for valid and unique IDs
-  IterateList(&co->pop3ServerList, curNode)
+  IterateList(&co->pop3ServerList, struct MailServerNode *, msn)
   {
-    struct MailServerNode *msn = (struct MailServerNode *)curNode;
-
     // check for a valid and unique ID, this is independend of the server type
     if(msn->id == 0)
     {
@@ -2288,10 +2272,8 @@ void CO_Validate(struct Config *co, BOOL update)
   }
 
   // check all servers for valid and unique IDs
-  IterateList(&co->smtpServerList, curNode)
+  IterateList(&co->smtpServerList, struct MailServerNode *, msn)
   {
-    struct MailServerNode *msn = (struct MailServerNode *)curNode;
-
     // check for a valid and unique ID, this is independend of the server type
     if(msn->id == 0)
     {
@@ -2315,10 +2297,8 @@ void CO_Validate(struct Config *co, BOOL update)
   }
 
   // check all identities for valid and unique IDs
-  IterateList(&co->userIdentityList, curNode)
+  IterateList(&co->userIdentityList, struct UserIdentityNode *, uin)
   {
-    struct UserIdentityNode *uin = (struct UserIdentityNode *)curNode;
-
     // check for a valid and unique ID
     if(uin->id == 0)
     {
@@ -2367,10 +2347,8 @@ void CO_Validate(struct Config *co, BOOL update)
   }
 
   // check all signatures for valid and unique IDs
-  IterateList(&co->signatureList, curNode)
+  IterateList(&co->signatureList, struct SignatureNode *, sn)
   {
-    struct SignatureNode *sn = (struct SignatureNode *)curNode;
-
     // check for a valid and unique ID
     if(sn->id == 0)
     {
@@ -2858,10 +2836,10 @@ void CO_Validate(struct Config *co, BOOL update)
   // update possibly open read windows
   if(updateReadWindows == TRUE || updateHeaderMode == TRUE || updateSenderInfo == TRUE || updateMenuShortcuts == TRUE)
   {
-    IterateList(&G->readMailDataList, curNode)
-    {
-      struct ReadMailData *rmData = (struct ReadMailData *)curNode;
+    struct ReadMailData *rmData;
 
+    IterateList(&G->readMailDataList, struct ReadMailData *, rmData)
+    {
       if(rmData->mail != NULL)
       {
         // we use PushMethod for the case the read window modifies we list we are currently walking through
@@ -2890,10 +2868,10 @@ void CO_Validate(struct Config *co, BOOL update)
   // update possibly open write windows
   if(updateWriteWindows == TRUE)
   {
-    IterateList(&G->writeMailDataList, curNode)
-    {
-      struct WriteMailData *wmData = (struct WriteMailData *)curNode;
+    struct WriteMailData *wmData;
 
+    IterateList(&G->writeMailDataList, struct WriteMailData *, wmData)
+    {
       DoMethod(wmData->window, MUIM_WriteWindow_UpdateIdentities);
       DoMethod(wmData->window, MUIM_WriteWindow_UpdateSignatures);
     }

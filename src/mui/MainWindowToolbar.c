@@ -212,24 +212,20 @@ OVERLOAD(OM_NEW)
 /// DECLARE(UpdateServerControls)
 DECLARE(UpdateServerControls)
 {
-  struct Node *curNode;
+  struct MailServerNode *msn;
   LONG activePOP3Servers = 0;
   LONG activeSMTPServers = 0;
 
   ENTER();
 
   // check if we have at least one active POP3/SMTP server
-  IterateList(&C->pop3ServerList, curNode)
+  IterateList(&C->pop3ServerList, struct MailServerNode *, msn)
   {
-    struct MailServerNode *msn = (struct MailServerNode *)curNode;
-
     if(isServerActive(msn) == TRUE)
       activePOP3Servers++;
   }
-  IterateList(&C->smtpServerList, curNode)
+  IterateList(&C->smtpServerList, struct MailServerNode *, msn)
   {
-    struct MailServerNode *msn = (struct MailServerNode *)curNode;
-
     if(isServerActive(msn) == TRUE)
       activeSMTPServers++;
   }

@@ -120,12 +120,10 @@ void rx_mailread(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
         // number
         BOOL found = FALSE;
         int winnr = *args->window;
-        struct Node *curNode;
+        struct ReadMailData *rmData;
 
-        IterateList(&G->readMailDataList, curNode)
+        IterateList(&G->readMailDataList, struct ReadMailData *, rmData)
         {
-          struct ReadMailData *rmData = (struct ReadMailData *)curNode;
-
           if(rmData->readWindow != NULL &&
              (int)xget(rmData->readWindow, MUIA_ReadWindow_Num) == winnr)
           {

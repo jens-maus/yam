@@ -318,14 +318,12 @@ struct MailServerNode *GetMailServer(const struct MinList *mailServerList, const
 BOOL IsUniqueMailServerID(const struct MinList *mailServerList, const int id)
 {
   BOOL isUnique = TRUE;
-  struct Node *curNode;
+  struct MailServerNode *msn;
 
   ENTER();
 
-  IterateList(mailServerList, curNode)
+  IterateList(mailServerList, struct MailServerNode *, msn)
   {
-    struct MailServerNode *msn = (struct MailServerNode *)curNode;
-
     if(msn->id == id)
     {
       // we found exactly this ID, this is bad
@@ -344,14 +342,12 @@ BOOL IsUniqueMailServerID(const struct MinList *mailServerList, const int id)
 struct MailServerNode *FindMailServer(const struct MinList *mailServerList, const int id)
 {
   struct MailServerNode *result = NULL;
-  struct Node *curNode;
+  struct MailServerNode *msn;
 
   ENTER();
 
-  IterateList(mailServerList, curNode)
+  IterateList(mailServerList, struct MailServerNode *, msn)
   {
-    struct MailServerNode *msn = (struct MailServerNode *)curNode;
-
     if(msn->id == id)
     {
       result = msn;
