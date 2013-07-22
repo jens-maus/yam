@@ -200,6 +200,8 @@ OVERLOAD(OM_GET)
   IPTR *store = ((struct opGet *)msg)->opg_Storage;
   IPTR result = FALSE;
 
+  ENTER();
+
   switch(((struct opGet *)msg)->opg_AttrID)
   {
     case ATTR(Modified): *store = (ULONG)data->modified; result = TRUE; break;
