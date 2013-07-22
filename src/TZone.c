@@ -62,8 +62,6 @@ static void addLocation(const char *contName, const char *locName)
   // create a new continent node if it was not found
   if(found == NULL)
   {
-    struct TZoneContinent *cont;
-
     if((cont = AllocSysObjectTags(ASOT_NODE,
       ASONODE_Size, sizeof(*cont),
       ASONODE_Min, TRUE,

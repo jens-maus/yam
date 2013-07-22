@@ -1515,7 +1515,6 @@ BOOL StayInProg(void)
 
     if(saveMails == TRUE)
     {
-      struct WriteMailData *wmData;
       struct WriteMailData *succ;
 
       // put the mails of all still opened write windows on hold

@@ -2328,8 +2328,6 @@ void CO_Validate(struct Config *co, BOOL update)
   // exist and if we we add these ones as the default ones
   if(IsMinListEmpty(&co->signatureList))
   {
-    struct SignatureNode *sn;
-
     // before YAM 2.8 we had three default signatures. We therefore
     // check for these three files now.
     if((sn = CreateSignatureFromFile(".signature", tr(MSG_CO_DefSig))) != NULL)
@@ -2689,9 +2687,7 @@ void CO_Validate(struct Config *co, BOOL update)
     {
       case cp_FirstSteps:
       {
-        struct MailServerNode *msn = GetMailServer(&co->pop3ServerList, 0);
-
-        if(msn != NULL)
+        if((msn = GetMailServer(&co->pop3ServerList, 0)) != NULL)
         {
           setstring(G->CO->GUI.ST_POPHOST0, msn->hostname);
           setstring(G->CO->GUI.ST_USER0, msn->username);

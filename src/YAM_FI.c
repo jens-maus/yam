@@ -1710,8 +1710,6 @@ struct MinList *CloneFilterList(enum ApplyFilterMode mode)
     {
       // now that we have cloned the filter list we go ahead and prepare the
       // search data for each rule
-      struct FilterNode *filter;
-
       IterateList(clonedList, struct FilterNode *, filter)
       {
         struct RuleNode *rule;

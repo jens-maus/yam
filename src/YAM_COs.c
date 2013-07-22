@@ -2584,7 +2584,6 @@ void CO_SetConfig(void)
     {
       int numPOP = 0;
       int numSMTP = 0;
-      struct Node *curNode;
       struct MailServerNode *msn;
 
       // clear the lists first
@@ -2621,7 +2620,6 @@ void CO_SetConfig(void)
     case cp_Identities:
     {
       int numIdentities = 0;
-      struct Node *curNode;
       struct UserIdentityNode *uin;
 
       // clear the lists first
@@ -2789,7 +2787,6 @@ void CO_SetConfig(void)
     case cp_Signature:
     {
       int numSignatures = 0;
-      struct Node *curNode;
       struct SignatureNode *sn;
 
       setstring(gui->ST_TAGFILE, CE->TagsFile);

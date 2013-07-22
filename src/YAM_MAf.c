@@ -2788,7 +2788,6 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
     // from a possible Sender: line
     if(foundFrom == FALSE)
     {
-      struct HeaderNode *hdrNode;
       D(DBF_MIME, "no From: header");
 
       if((hdrNode = FindHeader(&headerList, "sender")) != NULL)

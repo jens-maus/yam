@@ -2497,8 +2497,6 @@ BOOL MA_Send(enum SendMailMode mode, ULONG flags)
         // eventually stores the identityID in the email structure
         if((email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)) != NULL)
         {
-          struct UserIdentityNode *uin;
-
           // make sure the identity exists
           if((uin = email->identity) != NULL)
           {
