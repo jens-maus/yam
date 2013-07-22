@@ -2409,7 +2409,7 @@ HOOKPROTONHNONP(AB_NewABookFunc, void)
   ENTER();
 
   DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Clear, NULL, MUIF_NONE);
-  set(G->AB->GUI.LV_ADDRESSES, MUIA_AddrBookListtree_Modified, FALSE);
+  set(G->AB->GUI.LV_ADDRESSES, MUIA_AddrBookListtree_Modified, TRUE);
 
   LEAVE();
 }

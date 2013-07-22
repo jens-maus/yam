@@ -7,6 +7,9 @@ $URL$
 
 2013-07-22 Jens Langner <Jens.Langner@light-speed.de>
 
+  * AddrBookListtree.c, YAM_AB.c: fixed the addressbook to warn the user about
+    a changed addressbook again. The whole OM_GET method for the modified flag
+    was missing and thus always returned false.
   * YAM_COs.c, YAM_MAf.c, YAM_FI.c, TZone.c, YAM_CO.c, YAM_MA.c, YAM.c: fixed
     some compiler warnings about shadowed variables.
 

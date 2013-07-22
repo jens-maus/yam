@@ -177,6 +177,9 @@ OVERLOAD(OM_SET)
       case ATTR(Modified):
       {
         data->modified = (tag->ti_Data != 0) ? TRUE : FALSE;
+
+        // make the superMethod call ignore those tags
+        tag->ti_Tag = TAG_IGNORE;
       }
       break;
     }
@@ -189,6 +192,28 @@ OVERLOAD(OM_SET)
 }
 
 ///
+/// OVERLOAD(OM_GET)
+// get some stuff of our instance data
+OVERLOAD(OM_GET)
+{
+  GETDATA;
+  IPTR *store = ((struct opGet *)msg)->opg_Storage;
+  IPTR result = FALSE;
+
+  switch(((struct opGet *)msg)->opg_AttrID)
+  {
+    case ATTR(Modified): *store = (ULONG)data->modified; result = TRUE; break;
+  }
+
+  if(result == FALSE)
+    result = DoSuperMethodA(cl, obj, msg);
+
+  RETURN(result);
+  return result;
+}
+
+///
+
 /// OVERLOAD(MUIM_NListtree_Construct)
 OVERLOAD(MUIM_NListtree_Construct)
 {
