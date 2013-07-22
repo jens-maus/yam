@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.4 (13.07.2013)
+## version $VER: YAM.catalog 8.4 (22.07.2013)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -2119,8 +2119,8 @@ Aggiunge un nuovo filtro.
 ; Add a new filter.
 ;
 MSG_HELP_CO_BT_RDEL
-Rimuove il filtro selezionato\n\
-dalla lista.
+Rimuove dalla lista\n\
+il filtro selezionato.
 ; Remove the selected filter\n\
 ; from the list.
 ;
@@ -8435,13 +8435,13 @@ da questo filtro.
 ;
 MSG_HELP_CO_BT_FILTERUP
 Sposta questo filtro in\n\
-alto sulla lista.
+alto nella lista.
 ; Move this filter\n\
 ; up in the list.
 ;
 MSG_HELP_CO_BT_FILTERDOWN
 Sposta questo filtro in\n\
-basso nella  lista
+basso nella lista
 ; Move this filter\n\
 ; down in the list.
 ;
@@ -10175,7 +10175,7 @@ Firma
 ; Signature
 ;
 MSG_CO_SIGNATURES
-Lista Firme
+Lista firme
 ; Signatures
 ;
 MSG_CO_SIGNATURE_DESCRIPTION
@@ -10187,15 +10187,15 @@ _Attiva
 ; _Active
 ;
 MSG_CO_IDENTITY_SIGNATURE
-_Firma
-; _ Signature
+Firma
+; Signature
 ;
 MSG_HELP_CO_LV_SIGNATURE
 Lista completa di tutte le firme
-; _ List of all signatures
+; List of all signatures
 ;
 MSG_HELP_CO_BT_SIGADD
-Aggiunge alla lista una nuova firma.
+Aggiunge una nuova firma alla lista.
 ; Adds a new signature to the list.
 ;
 MSG_HELP_CO_BT_SIGDEL
@@ -10537,14 +10537,54 @@ Azioni
 ; Actions
 ;
 MSG_CO_CONDITION_ALL
-tutte le condizioni devono essere soddisfatte
-; all conditions must be met
+ognuna
+; all
 ;
 MSG_CO_CONDITION_MIN_ONE
-almeno una condizione deve essere soddisfatta
-; at least one condition must be met
+una o più
+; one or more
 ;
 MSG_CO_CONDITION_MAX_ONE
-una singola condizione deve essere soddisfatta
-; exactly one condition must be met
+solo una
+; only one
+;
+MSG_WR_CMENU_TITLE
+Allegati
+; Attachments
+;
+MSG_WR_CMENU_ADD_ATTACHMENT
+Aggiungi file...
+; Add file(s)...
+;
+MSG_WR_CMENU_ADD_ARCHIVE_ATTACHMENT
+Archivia & aggiungi...
+; Pack & add...
+;
+MSG_WR_CMENU_REMOVE_ATTACHMENT
+Rimuovi
+; Remove
+;
+MSG_WR_CMENU_RENAME_ATTACHMENT
+Rinomina...
+; Rename...
+;
+MSG_WR_CMENU_DISPLAY_ATTACHMENT
+Mostra
+; Display
+;
+MSG_WR_TITLEATTACHMENT
+Allegato
+; Attachment
+;
+MSG_WR_REMOVE
+Ri_muovi
+; Re_move
+;
+MSG_CO_CONDITION_PREPHRASE
+Se
+; If
+;
+MSG_CO_CONDITION_POSTPHRASE
+delle seguenti condizioni sono soddisfatte:
+; of the following conditions are met:
 ;

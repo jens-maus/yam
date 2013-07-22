@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-07-22 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: update to the latest changes.
+
 2013-07-21 Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_AB.c, AddrBookListtree.c, Recipientstring.c, MailTextEdit.c: changed the
