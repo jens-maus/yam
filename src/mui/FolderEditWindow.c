@@ -82,7 +82,6 @@ struct Data
   Object *ST_HELLOTEXT;
   Object *ST_BYETEXT;
   struct Folder *folder;
-  BOOL folderValid;
 };
 */
 
@@ -332,7 +331,7 @@ OVERLOAD(OM_SET)
       {
         // make the folder name object the active one upon opening the
         // window in case the folder to be edited is a new one
-        if(tag->ti_Data != FALSE && data->folderValid == FALSE)
+        if(tag->ti_Data != FALSE && data->folder != NULL)
           set(obj, MUIA_Window_ActiveObject, data->ST_FNAME);
       }
       break;
@@ -518,7 +517,7 @@ DECLARE(MLAutoDetect)
 
   ENTER();
 
-  if(data->folderValid == TRUE)
+  if(data->folder != NULL)
   {
     LockMailListShared(data->folder->messages);
 
