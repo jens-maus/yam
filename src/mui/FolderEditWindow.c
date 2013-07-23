@@ -275,6 +275,7 @@ OVERLOAD(OM_NEW)
     SetHelp(ST_HELLOTEXT,    MSG_HELP_FO_ST_HELLOTEXT   );
     SetHelp(ST_BYETEXT,      MSG_HELP_FO_ST_BYETEXT     );
 
+    #warning closing the window does not erase the global pointer yet
     DoMethod(BT_OKAY,       MUIM_Notify, MUIA_Pressed,             FALSE, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
     DoMethod(BT_CANCEL,     MUIM_Notify, MUIA_Pressed,             FALSE, MUIV_Notify_Application, 2, MUIM_YAMApplication_DisposeWindow, obj);
     DoMethod(BT_AUTODETECT, MUIM_Notify, MUIA_Pressed,             FALSE, MUIV_Notify_Application, 1, METHOD(MLAutoDetect));
@@ -291,15 +292,12 @@ OVERLOAD(OM_NEW)
 /// OVERLOAD(OM_GET)
 OVERLOAD(OM_GET)
 {
+  GETDATA;
   IPTR *store = ((struct opGet *)msg)->opg_Storage;
 
   switch(((struct opGet *)msg)->opg_AttrID)
   {
-    case ATTR(Folder):
-    {
-      DoMethod(obj, METHOD(GUIToFolder), store);
-      return TRUE;
-    }
+    case ATTR(Folder): *store = (IPTR)data->folder; return TRUE;
   }
 
   return DoSuperMethodA(cl, obj, msg);
@@ -319,10 +317,6 @@ OVERLOAD(OM_SET)
       case ATTR(Folder):
       {
         data->folder = (struct Folder *)tag->ti_Data;
-
-        if(data->folder != NULL)
-          DoMethod(obj, METHOD(FolderToGUI), data->folder);
-
         tag->ti_Tag = TAG_IGNORE;
       }
       break;
