@@ -325,7 +325,7 @@ OVERLOAD(OM_SET)
       {
         // make the folder name object the active one upon opening the
         // window in case the folder to be edited is a new one
-        if(tag->ti_Data != FALSE && data->folder != NULL)
+        if(tag->ti_Data != FALSE && data->folder == NULL)
           set(obj, MUIA_Window_ActiveObject, data->ST_FNAME);
       }
       break;
