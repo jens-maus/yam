@@ -290,7 +290,7 @@ OVERLOAD(OM_NEW)
       DoMethod(BT_AUTODETECT, MUIM_Notify, MUIA_Pressed,             FALSE, MUIV_Notify_Application, 1, METHOD(MLAutoDetect));
       DoMethod(obj,           MUIM_Notify, MUIA_Window_CloseRequest, TRUE,  MUIV_Notify_Application, 2, MUIM_YAMApplication_DisposeWindow, obj);
 
-      DoMethod(CH_MLSUPPORT, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, obj, 2, METHOD(MLSupportUpdate), MUIV_TriggerValue);
+      DoMethod(CH_MLSUPPORT, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, obj, 2, METHOD(MLSupportUpdate), MUIV_NotTriggerValue);
     }
   }
   else
@@ -357,6 +357,7 @@ OVERLOAD(OM_SET)
         {
           memcpy(data->folder, folder, sizeof(*data->folder));
           data->folderValid = TRUE;
+          DoMethod(obj, METHOD(GUIUpdate));
         }
         else
         {
@@ -373,6 +374,82 @@ OVERLOAD(OM_SET)
 ///
 
 /* Public Methods */
+/// DECLARE(GUIUpdate)
+DECLARE(GUIUpdate)
+{
+  GETDATA;
+  struct Folder *folder = data->folder;
+  BOOL isdefault = isDefaultFolder(folder);
+  static const int type2cycle[9] = { FT_CUSTOM, FT_CUSTOM, FT_INCOMING, FT_INCOMING, FT_OUTGOING, -1, FT_INCOMING, FT_OUTGOING, FT_CUSTOM };
+  int i;
+
+  ENTER();
+
+  set(data->ST_FNAME,  MUIA_String_Contents, folder->Name);
+  set(data->ST_FPATH,  MUIA_String_Contents, folder->Path);
+  set(data->NM_MAXAGE, MUIA_Numeric_Value,   folder->MaxAge);
+
+  xset(data->CH_EXPIREUNREAD, MUIA_Selected, folder->ExpireUnread,
+                              MUIA_Disabled, isTrashFolder(folder) || isSpamFolder(folder) || folder->MaxAge == 0);
+
+  xset(data->CY_FTYPE, MUIA_Cycle_Active, type2cycle[folder->Type],
+                       MUIA_Disabled,     isdefault);
+
+  xset(data->CY_FMODE, MUIA_Cycle_Active, folder->Mode,
+                       MUIA_Disabled,     isdefault);
+
+  for(i = 0; i < 2; i++)
+  {
+    set(data->CY_SORT[i], MUIA_Cycle_Active, (folder->Sort[i] < 0 ? -folder->Sort[i] : folder->Sort[i])-1);
+    set(data->CH_REVERSE[i], MUIA_Selected, folder->Sort[i] < 0);
+  }
+
+  set(data->CH_STATS,       MUIA_Selected, folder->Stats);
+  set(data->BT_AUTODETECT,  MUIA_Disabled, !folder->MLSupport || isdefault);
+  set(data->ST_HELLOTEXT,   MUIA_String_Contents, folder->WriteIntro);
+  set(data->ST_BYETEXT,     MUIA_String_Contents, folder->WriteGreetings);
+
+  // for ML-Support
+  xset(data->CH_MLSUPPORT,
+       MUIA_Selected, isdefault ? FALSE : folder->MLSupport,
+       MUIA_Disabled, isdefault);
+
+  xset(data->ST_MLADDRESS,
+       MUIA_String_Contents, folder->MLAddress,
+       MUIA_Disabled, !folder->MLSupport || isdefault);
+
+  xset(data->ST_MLPATTERN,
+       MUIA_String_Contents, folder->MLPattern,
+       MUIA_Disabled, !folder->MLSupport || isdefault);
+
+  xset(data->ST_MLREPLYTOADDRESS,
+       MUIA_String_Contents, folder->MLReplyToAddress,
+       MUIA_Disabled, !folder->MLSupport || isdefault);
+
+  xset(data->CY_MLSIGNATURE,
+       MUIA_SignatureChooser_Signature, folder->MLSignature,
+       MUIA_Disabled, !folder->MLSupport || isdefault);
+
+  xset(data->CY_MLIDENTITY,
+       MUIA_IdentityChooser_Identity, folder->MLIdentity,
+       MUIA_Disabled, !folder->MLSupport || isdefault);
+
+  if(!isTrashFolder(folder) && !isSpamFolder(folder))
+  {
+    // disable the "also unread" check mark whenever the max age is set to 0 days,
+    // but only for folders other than the Trash and Spam folders
+    DoMethod(data->NM_MAXAGE, MUIM_Notify, MUIA_Numeric_Value, MUIV_EveryTime, data->CH_EXPIREUNREAD, 3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
+  }
+
+  // we make sure the window is at the front if it is already open
+  if(xget(obj, MUIA_Window_Open) == TRUE)
+    DoMethod(obj, MUIM_Window_ToFront);
+
+  RETURN(0);
+  return 0;
+}
+
+///
 /// DECLARE(MLSupportUpdate)
 DECLARE(MLSupportUpdate) // ULONG disabled
 {
