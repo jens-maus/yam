@@ -46,6 +46,7 @@
 #include "FolderList.h"
 #include "Locale.h"
 #include "MUIObjects.h"
+#include "Requesters.h"
 #include "Themes.h"
 
 #include "mui/FolderRequestListtree.h"
