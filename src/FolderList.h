@@ -33,6 +33,8 @@
 #include <exec/types.h>
 #include <proto/exec.h>
 
+#include "YAM_folderconfig.h"
+
 // forward declarations
 struct SignalSemaphore;
 struct Folder;
@@ -61,6 +63,7 @@ void DeleteFolderNode(struct FolderNode *fnode);
 void MoveFolderNode(struct FolderList *flist, struct FolderNode *fnode, struct FolderNode *afterThis);
 struct FolderNode *TakeFolderNode(struct FolderList *flist);
 struct Folder *AllocFolder();
+void InitFolder(struct Folder *folder, enum FolderType type);
 void FreeFolder(struct Folder *folder);
 void MoveFolderContents(struct Folder *to, struct Folder *from);
 

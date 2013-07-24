@@ -288,6 +288,26 @@ struct Folder *AllocFolder(void)
 }
 
 ///
+/// InitFolder
+// set certain default values for a folder
+void InitFolder(struct Folder *folder, enum FolderType type)
+{
+  struct MailList *messages = folder->messages;
+
+  ENTER();
+
+  memset(folder, 0, sizeof(*folder));
+  folder->Sort[0] = 1;
+  folder->Sort[1] = 3;
+  folder->Type = type;
+  folder->LastActive = -1;
+  // preserve the message list
+  folder->messages = messages;
+
+  LEAVE();
+}
+
+///
 /// FreeFolder
 // free a folder structure
 void FreeFolder(struct Folder *folder)

@@ -998,9 +998,6 @@ static void Terminate(void)
     CleanupWriteMailData(wmData);
   }
 
-  if(G->FO != NULL)
-    DisposeModule(&G->FO);
-
   if(G->FI != NULL)
     DisposeModule(&G->FI);
 

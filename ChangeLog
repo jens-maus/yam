@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-07-24 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_FO.c, mui/FolderEditWindow.c: moved all stuff related to editing folder
+    settings to a separate class to make further maintainance easier. All hooks
+    except one have been converted to proper methods.
+
 2013-07-22 Jens Langner <Jens.Langner@light-speed.de>
 
   * AddrBookListtree.c, YAM_AB.c: fixed the addressbook to warn the user about
@@ -24,12 +30,12 @@ $URL$
     and drag&drop to the write window or any recipientstring gadget. YAM will
     take care to extract the correct entries based on the listtree hierarchy.
   * YAM_COg.c, SearchControlGroup.c: minor layout change to the new filter
-    conditions setup user interface. 
+    conditions setup user interface.
   * extrasrc/tzcode, extrasrc.h: modified the build of our timezone library to
     start all standard functions with tz_XXXX() so that we can use them. In
     addition, YAM will now automatically call these tz_XXXX() functions if
     NEED_TZLIB is specified in extrasrc.h
-  * mui/WriteWindow.c: the new tiny attachment list will now also have a 
+  * mui/WriteWindow.c: the new tiny attachment list will now also have a
     title row to make things more intuitive and clear.
   * mui/WriteWindow.c: renamed the "Delete Attachment" phrase to "Remove
     Attachment" as this better explains what this operation is actually doing.

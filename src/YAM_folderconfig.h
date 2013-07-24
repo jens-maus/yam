@@ -241,6 +241,9 @@ BOOL            FO_SaveTree(void);
 void            FO_SetFolderImage(struct Folder *folder);
 void            FO_UpdateStatistics(struct Folder *folder);
 void            FO_UpdateTreeStatistics(const struct Folder *folder, const BOOL redraw);
+BOOL            FO_LoadFolderImage(struct Folder *folder);
+void            FO_UnloadFolderImage(struct Folder *folder);
+BOOL            FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo);
 
 struct Folder * GetCurrentFolder(void);
 void            SetCurrentFolder(const struct Folder *folder);

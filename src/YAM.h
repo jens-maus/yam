@@ -91,6 +91,7 @@ struct Global
   Object *                 ReadToolbarCacheObject;
   Object *                 WriteToolbarCacheObject;
   Object *                 AbookToolbarCacheObject;
+  Object *                 FolderEditWinObject;
   char *                   ER_Message[MAXERR];
   struct DiskObject *      HideIcon;
   struct AppIcon *         AppIcon;
@@ -106,7 +107,6 @@ struct Global
   struct EA_ClassData *    EA[MAXEA];
   struct ER_ClassData *    ER;
   struct FI_ClassData *    FI;
-  struct FO_ClassData *    FO;
   struct DI_ClassData *    DI;
   struct US_ClassData *    US;
   struct ReadMailData *    ActiveRexxRMData;

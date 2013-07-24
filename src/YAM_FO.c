@@ -58,6 +58,7 @@
 #include "YAM_utilities.h"
 
 #include "mui/ClassesExtra.h"
+#include "mui/FolderEditWindow.h"
 #include "mui/FolderRequestListtree.h"
 #include "mui/IdentityChooser.h"
 #include "mui/ImageArea.h"
@@ -77,9 +78,6 @@
 #include "UserIdentity.h"
 
 #include "Debug.h"
-
-/* local protos */
-static struct FO_ClassData *FO_New(void);
 
 // According to the folder types we define the corresponding
 // default folder names. Please note that order and length IS important here.
@@ -554,7 +552,7 @@ BOOL FO_SaveConfig(struct Folder *fo)
 ///
 /// FO_LoadFolderImage
 //  Loads the images for the folder that should be displayed in the NListtree
-static BOOL FO_LoadFolderImage(struct Folder *folder)
+BOOL FO_LoadFolderImage(struct Folder *folder)
 {
   BOOL success = FALSE;
 
@@ -604,7 +602,7 @@ static BOOL FO_LoadFolderImage(struct Folder *folder)
 ///
 /// FO_UnloadFolderImage
 // unloads an image used by a folder
-static void FO_UnloadFolderImage(struct Folder *folder)
+void FO_UnloadFolderImage(struct Folder *folder)
 {
   ENTER();
 
@@ -643,10 +641,7 @@ struct Folder *FO_NewFolder(enum FolderType type, const char *path, const char *
 
   if((folder = AllocFolder()) != NULL)
   {
-    folder->Sort[0] = 1;
-    folder->Sort[1] = 3;
-    folder->Type = type;
-    folder->LastActive = -1;
+    InitFolder(folder, type);
 
     // set the standard icon images, or none for a custom folder
     switch(type)
@@ -1329,7 +1324,7 @@ void FO_UpdateTreeStatistics(const struct Folder *folder, const BOOL redraw)
 ///
 /// FO_MoveFolderDir
 //  Moves a folder to a new directory
-static BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
+BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
 {
   BOOL success = TRUE;
   char totalStr[SIZE_SMALL];
@@ -1413,190 +1408,6 @@ static BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
 }
 
 ///
-/// FO_EnterPassword
-//  Sets password for a protected folder
-static BOOL FO_EnterPassword(struct Folder *fo)
-{
-  BOOL result = FALSE;
-
-  ENTER();
-
-  do
-  {
-    char passwd[SIZE_PASSWORD];
-    char passwd2[SIZE_PASSWORD];
-
-    passwd[0] = '\0';
-    passwd2[0] = '\0';
-
-    if(StringRequest(passwd, SIZE_PASSWORD, tr(MSG_Folder), tr(MSG_CO_ChangeFolderPass), tr(MSG_Okay), NULL, tr(MSG_Cancel), TRUE, G->FO->GUI.WI) == 0)
-      break;
-
-    if(passwd[0] != '\0' && StringRequest(passwd2, SIZE_PASSWORD, tr(MSG_Folder), tr(MSG_CO_RetypePass), tr(MSG_Okay), NULL, tr(MSG_Cancel), TRUE, G->FO->GUI.WI) == 0)
-      break;
-
-    if(Stricmp(passwd, passwd2) == 0)
-    {
-      strlcpy(fo->Password, passwd, sizeof(fo->Password));
-      result = TRUE;
-      break;
-    }
-    else
-      DisplayBeep(NULL);
-  }
-  while(TRUE);
-
-  RETURN(result);
-  return result;
-}
-
-///
-/// FO_GetFolder
-//  Fills form with data from folder structure
-static void FO_GetFolder(struct Folder *folder)
-{
-  struct FO_GUIData *gui = &G->FO->GUI;
-  BOOL isdefault = isDefaultFolder(folder);
-  static const int type2cycle[9] = { FT_CUSTOM, FT_CUSTOM, FT_INCOMING, FT_INCOMING, FT_OUTGOING, -1, FT_INCOMING, FT_OUTGOING, FT_CUSTOM };
-  int i;
-
-  ENTER();
-
-  set(gui->ST_FNAME,  MUIA_String_Contents, folder->Name);
-  set(gui->ST_FPATH,  MUIA_String_Contents, folder->Path);
-  set(gui->NM_MAXAGE, MUIA_Numeric_Value,   folder->MaxAge);
-
-  xset(gui->CH_EXPIREUNREAD, MUIA_Selected, folder->ExpireUnread,
-                             MUIA_Disabled, isTrashFolder(folder) || isSpamFolder(folder) || folder->MaxAge == 0);
-
-  xset(gui->CY_FTYPE,  MUIA_Cycle_Active, type2cycle[folder->Type],
-                       MUIA_Disabled,     isdefault);
-
-  xset(gui->CY_FMODE,  MUIA_Cycle_Active, folder->Mode,
-                       MUIA_Disabled,     isdefault);
-
-  for(i = 0; i < 2; i++)
-  {
-    set(gui->CY_SORT[i], MUIA_Cycle_Active, (folder->Sort[i] < 0 ? -folder->Sort[i] : folder->Sort[i])-1);
-    set(gui->CH_REVERSE[i], MUIA_Selected, folder->Sort[i] < 0);
-  }
-
-  set(gui->CH_STATS,       MUIA_Selected, folder->Stats);
-  set(gui->BT_AUTODETECT,  MUIA_Disabled, !folder->MLSupport || isdefault);
-  set(gui->ST_HELLOTEXT,   MUIA_String_Contents, folder->WriteIntro);
-  set(gui->ST_BYETEXT,     MUIA_String_Contents, folder->WriteGreetings);
-
-  // for ML-Support
-  xset(gui->CH_MLSUPPORT,
-       MUIA_Selected, isdefault ? FALSE : folder->MLSupport,
-       MUIA_Disabled, isdefault);
-
-  xset(gui->ST_MLADDRESS,
-       MUIA_String_Contents, folder->MLAddress,
-       MUIA_Disabled, !folder->MLSupport || isdefault);
-
-  xset(gui->ST_MLPATTERN,
-       MUIA_String_Contents, folder->MLPattern,
-       MUIA_Disabled, !folder->MLSupport || isdefault);
-
-  xset(gui->ST_MLREPLYTOADDRESS,
-       MUIA_String_Contents, folder->MLReplyToAddress,
-       MUIA_Disabled, !folder->MLSupport || isdefault);
-
-  xset(gui->CY_MLSIGNATURE,
-       MUIA_SignatureChooser_Signature, folder->MLSignature,
-       MUIA_Disabled, !folder->MLSupport || isdefault);
-
-  xset(gui->CY_MLIDENTITY,
-       MUIA_IdentityChooser_Identity, folder->MLIdentity,
-       MUIA_Disabled, !folder->MLSupport || isdefault);
-
-  if(!isTrashFolder(folder) && !isSpamFolder(folder))
-  {
-    // disable the "also unread" check mark whenever the max age is set to 0 days,
-    // but only for folders other than the Trash and Spam folders
-    DoMethod(G->FO->GUI.NM_MAXAGE, MUIM_Notify, MUIA_Numeric_Value, MUIV_EveryTime, G->FO->GUI.CH_EXPIREUNREAD, 3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
-  }
-
-  // we make sure the window is at the front if it
-  // is already open
-  if(xget(G->FO->GUI.WI, MUIA_Window_Open) == TRUE)
-    DoMethod(G->FO->GUI.WI, MUIM_Window_ToFront);
-
-  LEAVE();
-}
-
-///
-/// FO_PutFolder
-//  Updates folder structure with form data
-static void FO_PutFolder(struct Folder *folder)
-{
-  static const int cycle2type[3] = { FT_CUSTOM, FT_CUSTOMSENT, FT_CUSTOMMIXED };
-  struct FO_GUIData *gui;
-  int i;
-
-  ENTER();
-
-  gui = &G->FO->GUI;
-
-  GetMUIString(folder->Name, gui->ST_FNAME, sizeof(folder->Name));
-  GetMUIString(folder->Path, gui->ST_FPATH, sizeof(folder->Path));
-
-  // we have to correct the folder path because we shouldn't allow a last / in the
-  // path
-  if(folder->Path[strlen(folder->Path) - 1] == '/')
-    folder->Path[strlen(folder->Path) - 1] = '\0';
-
-  // set up the full path to the folder
-  if(strchr(folder->Path, ':') != NULL)
-  {
-    // the path is an absolute path already
-    strlcpy(folder->Fullpath, folder->Path, sizeof(folder->Fullpath));
-  }
-  else
-  {
-    // concatenate the default mail dir and the folder's relative path to an absolute path
-    strlcpy(folder->Fullpath, G->MA_MailDir, sizeof(folder->Fullpath));
-    AddPart(folder->Fullpath, folder->Path, sizeof(folder->Fullpath));
-  }
-
-  folder->MaxAge = GetMUINumer(gui->NM_MAXAGE);
-  if(!isDefaultFolder(folder))
-  {
-    folder->Type = cycle2type[GetMUICycle(gui->CY_FTYPE)];
-    folder->Mode = GetMUICycle(gui->CY_FMODE);
-  }
-
-  for(i = 0; i < 2; i++)
-  {
-    folder->Sort[i] = GetMUICycle(gui->CY_SORT[i]) + 1;
-    if (GetMUICheck(gui->CH_REVERSE[i]))
-      folder->Sort[i] = -folder->Sort[i];
-  }
-
-  folder->ExpireUnread = GetMUICheck(gui->CH_EXPIREUNREAD);
-  folder->Stats = GetMUICheck(gui->CH_STATS);
-  folder->MLSupport = GetMUICheck(gui->CH_MLSUPPORT);
-
-  GetMUIString(folder->WriteIntro, gui->ST_HELLOTEXT, sizeof(folder->WriteIntro));
-  GetMUIString(folder->WriteGreetings, gui->ST_BYETEXT, sizeof(folder->WriteGreetings));
-
-  GetMUIString(folder->MLPattern, gui->ST_MLPATTERN, sizeof(folder->MLPattern));
-
-  // resolve the addresses first, in case someone entered an alias
-  DoMethod(gui->ST_MLADDRESS, MUIM_Recipientstring_Resolve, MUIF_NONE);
-  DoMethod(gui->ST_MLREPLYTOADDRESS, MUIM_Recipientstring_Resolve, MUIF_NONE);
-
-  GetMUIString(folder->MLAddress, gui->ST_MLADDRESS, sizeof(folder->MLAddress));
-  GetMUIString(folder->MLReplyToAddress, gui->ST_MLREPLYTOADDRESS, sizeof(folder->MLReplyToAddress));
-
-  folder->MLSignature = (struct SignatureNode *)xget(gui->CY_MLSIGNATURE, MUIA_SignatureChooser_Signature);
-  folder->MLIdentity = (struct UserIdentityNode *)xget(gui->CY_MLIDENTITY, MUIA_IdentityChooser_Identity);
-
-  LEAVE();
-}
-
-///
 /// FO_NewFolderGroupFunc
 //  Creates a new separator
 HOOKPROTONHNONP(FO_NewFolderGroupFunc, void)
@@ -1644,11 +1455,7 @@ HOOKPROTONHNONP(FO_NewFolderFunc, void)
   mode = MUI_Request(G->App, G->MA->GUI.WI, MUIF_NONE, tr(MSG_MA_NewFolder), tr(MSG_FO_NewFolderGads), tr(MSG_FO_NewFolderReq));
 
   // reset the folder struct and set some default values.
-  memset(&folder, 0, sizeof(struct Folder));
-  folder.Sort[0] = 1;
-  folder.Sort[1] = 3;
-  folder.Type = FT_CUSTOM;
-  folder.ImageIndex = -1;
+  InitFolder(&folder, FT_CUSTOM);
 
   switch (mode)
   {
@@ -1707,25 +1514,24 @@ HOOKPROTONHNONP(FO_NewFolderFunc, void)
     }
   }
 
-  if(G->FO == NULL)
+  if(G->FolderEditWinObject == NULL)
   {
-    if((G->FO = FO_New()) == NULL)
+    Object *folderEditWin;
+
+    if((folderEditWin = FolderEditWindowObject, End) != NULL)
     {
-      LEAVE();
-      return;
-    }
-    if(SafeOpenWindow(G->FO->GUI.WI) == FALSE)
-    {
-      DisposeModulePush(&G->FO);
-      LEAVE();
-      return;
+      if(SafeOpenWindow(folderEditWin) == TRUE)
+        G->FolderEditWinObject = folderEditWin;
+      else
+        MUI_DisposeObject(folderEditWin);
     }
   }
 
-  // there is no "old" folder which could be edited, just the new one
-  G->FO->EditFolder = NULL;
-  FO_GetFolder(&folder);
-  set(G->FO->GUI.WI, MUIA_Window_ActiveObject, G->FO->GUI.ST_FNAME);
+  if(G->FolderEditWinObject != NULL)
+  {
+    // there is no "old" folder which could be edited, just the new one
+    set(G->FolderEditWinObject, MUIA_FolderEditWindow_Folder, NULL);
+  }
 
   LEAVE();
 }
@@ -1736,34 +1542,36 @@ MakeHook(FO_NewFolderHook, FO_NewFolderFunc);
 //  Opens folder window to edit the settings of the active folder
 HOOKPROTONHNONP(FO_EditFolderFunc, void)
 {
+  struct Folder *folder;
+
   ENTER();
 
-  if(isGroupFolder(GetCurrentFolder()))
+  folder = GetCurrentFolder();
+
+  if(isGroupFolder(folder))
   {
-    if(StringRequest(GetCurrentFolder()->Name, SIZE_NAME, tr(MSG_FO_EDIT_FGROUP), tr(MSG_FO_EDIT_FGROUPREQ), tr(MSG_Okay), NULL, tr(MSG_Cancel), FALSE, G->MA->GUI.WI))
+    if(StringRequest(folder->Name, SIZE_NAME, tr(MSG_FO_EDIT_FGROUP), tr(MSG_FO_EDIT_FGROUPREQ), tr(MSG_Okay), NULL, tr(MSG_Cancel), FALSE, G->MA->GUI.WI))
       DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, MUIV_NListtree_Redraw_Active, MUIF_NONE);
   }
   else
   {
-    if(G->FO == NULL)
+    if(G->FolderEditWinObject == NULL)
     {
-      if((G->FO = FO_New()) == NULL)
-      {
-        LEAVE();
-        return;
-      }
+      Object *folderEditWin;
 
-      if(SafeOpenWindow(G->FO->GUI.WI) == FALSE)
+      if((folderEditWin = FolderEditWindowObject, End) != NULL)
       {
-        DisposeModulePush(&G->FO);
-
-        LEAVE();
-        return;
+        if(SafeOpenWindow(folderEditWin) == TRUE)
+          G->FolderEditWinObject = folderEditWin;
+        else
+          MUI_DisposeObject(folderEditWin);
       }
     }
 
-    G->FO->EditFolder = GetCurrentFolder();
-    FO_GetFolder(GetCurrentFolder());
+    if(G->FolderEditWinObject != NULL)
+    {
+      set(G->FolderEditWinObject, MUIA_FolderEditWindow_Folder, folder);
+    }
   }
 
   LEAVE();
@@ -1891,388 +1699,6 @@ HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
 MakeHook(FO_DeleteFolderHook, FO_DeleteFolderFunc);
 
 ///
-/// FO_CloseFunc
-//  Closes folder configuration window
-HOOKPROTONHNONP(FO_CloseFunc, void)
-{
-  ENTER();
-
-  DisposeModulePush(&G->FO);
-
-  LEAVE();
-}
-MakeStaticHook(FO_CloseHook, FO_CloseFunc);
-
-///
-/// CompareFolders
-// compare two folder structures for differences
-static BOOL CompareFolders(const struct Folder *fo1, const struct Folder *fo2)
-{
-  BOOL equal = TRUE;
-
-  ENTER();
-
-  if(strcmp(fo1->Name,             fo2->Name) != 0 ||
-     stricmp(fo1->Path,            fo2->Path) != 0 ||
-     stricmp(fo1->Fullpath,        fo2->Fullpath) != 0 ||
-     strcmp(fo1->Password,         fo2->Password) != 0 ||
-     strcmp(fo1->WriteIntro,       fo2->WriteIntro) != 0 ||
-     strcmp(fo1->WriteIntro,       fo2->WriteIntro) != 0 ||
-     strcmp(fo1->WriteGreetings,   fo2->WriteGreetings) != 0 ||
-     strcmp(fo1->MLReplyToAddress, fo2->MLReplyToAddress) != 0 ||
-     strcmp(fo1->MLAddress,        fo2->MLAddress) != 0 ||
-     strcmp(fo1->MLPattern,        fo2->MLPattern) != 0 ||
-     (fo1->MLIdentity != NULL ? fo1->MLIdentity->id : -1) != (fo2->MLIdentity != NULL ? fo2->MLIdentity->id : -1) ||
-     fo1->Mode                  != fo2->Mode ||
-     fo1->Type                  != fo2->Type ||
-     (fo1->MLSignature != NULL ? fo1->MLSignature->id : -1) != (fo2->MLSignature != NULL ? fo2->MLSignature->id : -1) ||
-     fo1->Sort[0]               != fo2->Sort[0] ||
-     fo1->Sort[1]               != fo2->Sort[1] ||
-     fo1->MaxAge                != fo2->MaxAge ||
-     fo1->ExpireUnread          != fo2->ExpireUnread ||
-     fo1->Stats                 != fo2->Stats ||
-     fo1->MLSupport             != fo2->MLSupport)
-  {
-    equal = FALSE;
-  }
-
-  RETURN(equal);
-  return equal;
-}
-
-///
-/// FO_SaveFunc
-//  Saves modified folder configuration
-HOOKPROTONHNONP(FO_SaveFunc, void)
-{
-  struct FO_GUIData *gui = &G->FO->GUI;
-  APTR lv = G->MA->GUI.NL_FOLDERS;
-  struct Folder folder;
-  struct Folder *oldfolder = G->FO->EditFolder;
-  BOOL success = FALSE;
-  BOOL isNewFolder;
-
-  ENTER();
-
-  D(DBF_FOLDER, "oldfolder=%08lx '%s'", oldfolder, oldfolder != NULL ? SafeStr(oldfolder->Name) : SafeStr(NULL));
-  // if this is a edit folder request we separate here.
-  if(oldfolder != NULL)
-  {
-    BOOL nameChanged;
-
-    isNewFolder = FALSE;
-    memcpy(&folder, oldfolder, sizeof(folder));
-    FO_PutFolder(&folder);
-
-    // check if something has changed and if not we exit here immediately
-    if(CompareFolders(&folder, oldfolder) == TRUE)
-    {
-      DisposeModulePush(&G->FO);
-
-      LEAVE();
-      return;
-    }
-
-    nameChanged = (stricmp(oldfolder->Name, folder.Name) != 0);
-
-    // lets first check for a valid folder name
-    // if the foldername is empty or it was changed and the new name already exists it's invalid
-    if(folder.Name[0] == '\0' || (nameChanged == TRUE && FO_GetFolderByName(folder.Name, NULL) != NULL))
-    {
-      MUI_Request(G->App, G->FO->GUI.WI, MUIF_NONE, NULL, tr(MSG_OkayReq), tr(MSG_FO_FOLDERNAMEINVALID));
-
-      LEAVE();
-      return;
-    }
-
-    // check if the filter name has changed and if it is part of
-    // an active filter and if so rename it in the filter definition
-    // as well.
-    if(nameChanged == TRUE && FolderIsUsedByFilters(oldfolder->Name) == TRUE)
-      RenameFolderInFilters(oldfolder->Name, folder.Name);
-
-    // refresh a possibly existing folder tree in the search window
-    if(nameChanged == TRUE && G->FI != NULL)
-      DoMethod(G->FI->GUI.LV_FOLDERS, MUIM_FolderRequestListtree_RefreshTree);
-
-    // copy the new Folder name
-    strlcpy(oldfolder->Name, folder.Name, sizeof(oldfolder->Name));
-
-    SHOWSTRING(DBF_FOLDER, oldfolder->Path);
-    SHOWSTRING(DBF_FOLDER, oldfolder->Fullpath);
-    SHOWSTRING(DBF_FOLDER, folder.Path);
-    SHOWSTRING(DBF_FOLDER, folder.Fullpath);
-
-    // if the folderpath string has changed
-    if(stricmp(oldfolder->Path, folder.Path) != 0)
-    {
-      // check if the full pathes are different
-      if(stricmp(oldfolder->Fullpath, folder.Fullpath) != 0)
-      {
-        int result;
-
-        // ask the user whether to perform the move or not
-        result = MUI_Request(G->App, G->FO->GUI.WI, MUIF_NONE, NULL, tr(MSG_YesNoReq), tr(MSG_FO_MOVEFOLDERTO), oldfolder->Fullpath, folder.Fullpath);
-        if(result == 1)
-        {
-          // first unload the old folder image to make it moveable/deletable
-          FO_UnloadFolderImage(oldfolder);
-
-          if(Rename(oldfolder->Fullpath, folder.Fullpath) == FALSE)
-          {
-            if(!(CreateDirectory(folder.Fullpath) && FO_MoveFolderDir(&folder, oldfolder)))
-            {
-              ER_NewError(tr(MSG_ER_MOVEFOLDERDIR), folder.Name, folder.Fullpath);
-
-              LEAVE();
-              return;
-            }
-          }
-
-          // now reload the image from the new path
-          if(FO_LoadFolderImage(&folder) == TRUE)
-          {
-            // remember the newly obtained image pointer
-            oldfolder->imageObject = folder.imageObject;
-          }
-        }
-        else
-        {
-          LEAVE();
-          return;
-        }
-      }
-
-      strlcpy(oldfolder->Path, folder.Path, sizeof(oldfolder->Path));
-      strlcpy(oldfolder->Fullpath, folder.Fullpath, sizeof(oldfolder->Fullpath));
-    }
-
-    strlcpy(oldfolder->WriteIntro,       folder.WriteIntro, sizeof(oldfolder->WriteIntro));
-    strlcpy(oldfolder->WriteGreetings,   folder.WriteGreetings, sizeof(oldfolder->WriteGreetings));
-    strlcpy(oldfolder->MLReplyToAddress, folder.MLReplyToAddress, sizeof(oldfolder->MLReplyToAddress));
-    strlcpy(oldfolder->MLAddress,        folder.MLAddress, sizeof(oldfolder->MLAddress));
-    strlcpy(oldfolder->MLPattern,        folder.MLPattern, sizeof(oldfolder->MLPattern));
-    oldfolder->MLIdentity   = folder.MLIdentity;
-    oldfolder->MLSignature  = folder.MLSignature;
-    oldfolder->Sort[0]      = folder.Sort[0];
-    oldfolder->Sort[1]      = folder.Sort[1];
-    oldfolder->MaxAge       = folder.MaxAge;
-    oldfolder->ExpireUnread = folder.ExpireUnread;
-    oldfolder->Stats        = folder.Stats;
-    oldfolder->MLSupport    = folder.MLSupport;
-
-    if(xget(gui->CY_FTYPE, MUIA_Disabled) == FALSE)
-    {
-      enum FolderMode oldmode = oldfolder->Mode;
-      enum FolderMode newmode = folder.Mode;
-      BOOL changed = TRUE;
-
-      if(oldmode == newmode || (newmode > FM_SIMPLE && XpkBase == NULL))
-      {
-        changed = FALSE;
-      }
-      else if(!isProtectedFolder(&folder) && isProtectedFolder(oldfolder) &&
-              oldfolder->LoadedMode != LM_VALID)
-      {
-        if((changed = MA_PromptFolderPassword(&folder, gui->WI)) == FALSE)
-        {
-          LEAVE();
-          return;
-        }
-      }
-      else if(isProtectedFolder(&folder) && !isProtectedFolder(oldfolder))
-      {
-        if((changed = FO_EnterPassword(&folder)) == FALSE)
-        {
-          LEAVE();
-          return;
-        }
-      }
-
-      if(isProtectedFolder(&folder) && isProtectedFolder(oldfolder))
-         strlcpy(folder.Password, oldfolder->Password, sizeof(folder.Password));
-
-      if(changed == TRUE)
-      {
-        if(!isProtectedFolder(&folder))
-          folder.Password[0] = '\0';
-
-        if(folder.Mode != oldmode)
-        {
-          struct BusyNode *busy;
-          struct MailNode *mnode;
-          ULONG i;
-
-          busy = BusyBegin(BUSY_PROGRESS);
-          BusyText(busy, tr(MSG_BusyUncompressingFO), "");
-
-          LockMailListShared(folder.messages);
-
-          i = 0;
-          ForEachMailNode(folder.messages, mnode)
-          {
-            BusyProgress(busy, ++i, folder.Total);
-            RepackMailFile(mnode->mail, folder.Mode, folder.Password);
-          }
-
-          UnlockMailList(folder.messages);
-
-          BusyEnd(busy);
-
-          oldfolder->Mode = newmode;
-        }
-
-        strlcpy(oldfolder->Password, folder.Password, sizeof(oldfolder->Password));
-      }
-      oldfolder->Type = folder.Type;
-    }
-
-    if(FO_SaveConfig(&folder) == TRUE)
-      success = TRUE;
-  }
-  else // if not then a new folder should be generated
-  {
-    int result;
-
-    D(DBF_FOLDER, "new folder");
-    isNewFolder = TRUE;
-    memset(&folder, 0, sizeof(struct Folder));
-    folder.ImageIndex = -1;
-
-    if((folder.messages = CreateMailList()) != NULL)
-    {
-      FO_PutFolder(&folder);
-      D(DBF_FOLDER, "new folder '%s'", folder.Name);
-
-      // lets first check for a valid folder name
-      // if the foldername is empty or the new name already exists it's invalid
-      if(folder.Name[0] == '\0' || FO_GetFolderByName(folder.Name, NULL) != NULL)
-      {
-        MUI_Request(G->App, G->FO->GUI.WI, MUIF_NONE, NULL, tr(MSG_OkayReq), tr(MSG_FO_FOLDERNAMEINVALID));
-
-        LEAVE();
-        return;
-      }
-
-      // lets check if entered folder path is valid or not
-      if(folder.Path[0] == '\0')
-      {
-        MUI_Request(G->App, G->FO->GUI.WI, MUIF_NONE, NULL, tr(MSG_OkayReq), tr(MSG_FO_FOLDERPATHINVALID));
-
-        LEAVE();
-        return;
-      }
-      else if(FileExists(folder.Fullpath) == TRUE) // check if the combined full path already exists
-      {
-        result = MUI_Request(G->App, G->FO->GUI.WI, MUIF_NONE, NULL, tr(MSG_YesNoReq), tr(MSG_FO_FOLDER_ALREADY_EXISTS), folder.Fullpath);
-      }
-      else
-        result = TRUE;
-
-      // only if the user want to proceed we go on.
-      if(result == TRUE)
-      {
-        if(isProtectedFolder(&folder) && FO_EnterPassword(&folder) == FALSE)
-        {
-          LEAVE();
-          return;
-        }
-
-        if(CreateDirectory(folder.Fullpath) == TRUE)
-        {
-          if(FO_SaveConfig(&folder) == TRUE)
-          {
-            // allocate memory for the new folder
-            if((oldfolder = memdup(&folder, sizeof(folder))) != NULL)
-            {
-              struct FolderNode *fnode;
-
-              // finally add the new folder to the global list
-              LockFolderList(G->folders);
-              fnode = AddNewFolderNode(G->folders, oldfolder);
-              UnlockFolderList(G->folders);
-
-              if(fnode != NULL)
-              {
-                struct Folder *prevFolder;
-
-                // allow the listtree to reorder our folder list
-                set(lv, MUIA_MainFolderListtree_ReorderFolderList, TRUE);
-
-                prevFolder = GetCurrentFolder();
-                if(isGroupFolder(prevFolder))
-                {
-                  // add the folder to the end of the current folder group
-                  DoMethod(lv, MUIM_NListtree_Insert, oldfolder->Name, fnode, prevFolder->Treenode, MUIV_NListtree_Insert_PrevNode_Tail, MUIV_NListtree_Insert_Flag_Active);
-                }
-                else
-                {
-                  // add the folder after the current folder
-                  DoMethod(lv, MUIM_NListtree_Insert, oldfolder->Name, fnode, MUIV_NListtree_Insert_ListNode_Active, MUIV_NListtree_Insert_PrevNode_Active, MUIV_NListtree_Insert_Flag_Active);
-                }
-
-                // the MainFolderListtree class has catched the insert operation and
-                // move the new folder node within the folder list to the correct position.
-                set(lv, MUIA_MainFolderListtree_ReorderFolderList, FALSE);
-
-                success = TRUE;
-
-                // No need to refresh a possibly existing folder tree in the search window here.
-                // This has been done by the MUIM_NListtree_Insert method above already.
-              }
-            }
-          }
-        }
-        else
-        {
-          LONG error = IoErr();
-          char faultStr[256];
-
-          Fault(error, NULL, faultStr, sizeof(faultStr));
-          ER_NewError(tr(MSG_ER_CANNOT_CREATE_FOLDER), folder.Fullpath, faultStr);
-
-          LEAVE();
-          return;
-        }
-      }
-      else
-      {
-        LEAVE();
-        return;
-      }
-    }
-    else
-    {
-      LEAVE();
-      return;
-    }
-  }
-
-  set(gui->WI, MUIA_Window_Open, FALSE);
-
-  if(success == TRUE)
-  {
-    MA_SetSortFlag();
-    DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_Redraw, MUIV_NList_Redraw_Title);
-    DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_Sort);
-    MA_ChangeFolder(FO_GetFolderByName(folder.Name, NULL), FALSE);
-
-    // Save the folder tree only if we just created a new folder, otherwise
-    // a temporarily modified open/close state of folder groups will be saved
-    // as well, even if the user didn't want this.
-    if(isNewFolder == TRUE)
-      FO_SaveTree();
-
-    DisplayStatistics(oldfolder, TRUE);
-  }
-
-  DisposeModulePush(&G->FO);
-
-  LEAVE();
-}
-MakeStaticHook(FO_SaveHook, FO_SaveFunc);
-
-///
 /// FO_SetOrderFunc
 //  Saves or resets folder order
 HOOKPROTONHNO(FO_SetOrderFunc, void, enum SetOrder *arg)
@@ -2335,344 +1761,5 @@ HOOKPROTONHNO(FO_SetOrderFunc, void, enum SetOrder *arg)
   LEAVE();
 }
 MakeHook(FO_SetOrderHook, FO_SetOrderFunc);
-///
-/// FO_MLAutoDetectFunc
-//  Tries to autodetect the Mailinglist support parameters
-HOOKPROTONHNONP(FO_MLAutoDetectFunc, void)
-{
-  struct Folder *folder;
 
-  ENTER();
-
-  if((folder = G->FO->EditFolder) != NULL)
-  {
-    LockMailListShared(folder->messages);
-
-    if(IsMailListEmpty(folder->messages) == FALSE)
-    {
-      #define SCANMSGS  5
-      struct MailNode *mnode;
-      char *toPattern;
-      char *toAddress;
-      char *res=NULL;
-      const char *notRecog;
-      BOOL takePattern = TRUE;
-      BOOL takeAddress = TRUE;
-      int i;
-      BOOL success;
-
-      mnode = FirstMailNode(folder->messages);
-      toPattern = mnode->mail->To.Address;
-      toAddress = mnode->mail->To.Address;
-
-      i = 0;
-      success = TRUE;
-      ForEachMailNode(folder->messages, mnode)
-      {
-        // skip the first mail as this has already been processed before
-        if(i > 0)
-        {
-          struct Mail *mail = mnode->mail;
-          char *result;
-
-          D(DBF_FOLDER, "SWS: [%s] [%s]", toPattern, mail->To.Address);
-
-          // Analyze the toAdress through the Smith&Waterman algorithm
-          if(takePattern == TRUE && (result = SWSSearch(toPattern, mail->To.Address)) != NULL)
-          {
-            free(res);
-
-            if((res = strdup(result)) == NULL)
-            {
-              success = FALSE;
-              break;
-            }
-
-            toPattern = res;
-
-            // If we reached a #? pattern then we break here
-            if(strcmp(toPattern, "#?") == 0)
-              takePattern = FALSE;
-          }
-
-          // Lets check if the toAddress kept the same and then we can use
-          // it for the TOADDRESS string gadget
-          if(takeAddress == TRUE && stricmp(toAddress, mail->To.Address) != 0)
-            takeAddress = FALSE;
-        }
-
-        if(++i > SCANMSGS)
-          break;
-      }
-
-      UnlockMailList(folder->messages);
-
-      if(success == TRUE)
-      {
-        // lets make a pattern out of the found SWS string
-        if(takePattern == TRUE)
-        {
-          if(strlen(toPattern) >= 2 && !(toPattern[0] == '#' && toPattern[1] == '?'))
-          {
-            if(res != NULL)
-              res = realloc(res, strlen(res)+3);
-            else if((res = malloc(strlen(toPattern)+3)) != NULL)
-              strlcpy(res, toPattern, strlen(toPattern));
-
-            if(res != NULL)
-            {
-              // move the actual string to the back and copy the wildcard in front of it.
-              memmove(&res[2], res, strlen(res)+1);
-              res[0] = '#';
-              res[1] = '?';
-
-              toPattern = res;
-            }
-            else
-              success = FALSE;
-          }
-
-          if(success == TRUE && strlen(toPattern) >= 2 && !(toPattern[strlen(toPattern)-2] == '#' && toPattern[strlen(toPattern)-1] == '?'))
-          {
-            if(res != NULL)
-              res = realloc(res, strlen(res)+3);
-            else if((res = malloc(strlen(toPattern)+3)) != NULL)
-              strlcpy(res, toPattern, strlen(toPattern));
-
-            if(res != NULL)
-            {
-              // and now copy also the wildcard at the back of the string
-              strcat(res, "#?");
-
-              toPattern = res;
-            }
-            else
-              success = FALSE;
-          }
-        }
-
-        if(success == TRUE)
-        {
-          D(DBF_FOLDER, "ML-Pattern: [%s]", toPattern);
-
-          // Now we set the new pattern & address values to the string gadgets
-          notRecog = tr(MSG_FO_NOTRECOGNIZED);
-          setstring(G->FO->GUI.ST_MLPATTERN, takePattern && toPattern[0] ? toPattern : notRecog);
-          setstring(G->FO->GUI.ST_MLADDRESS, takeAddress ? toAddress : notRecog);
-        }
-      }
-
-      // lets free all resources now
-      free(res);
-
-      SWSSearch(NULL, NULL);
-    }
-  }
-
-  LEAVE();
-}
-MakeStaticHook(FO_MLAutoDetectHook, FO_MLAutoDetectFunc);
-
-///
-/// FolderPathFunc
-// set the user's mail directory path as default path instead of YAM's directory
-HOOKPROTONHNO(FolderPathFunc, LONG, struct TagItem *tags)
-{
-  struct TagItem *tag;
-
-  ENTER();
-
-  // search for an already existing drawer tag item
-  if((tag = FindTagItem(ASLFR_InitialDrawer, tags)) != NULL)
-  {
-    // set the initial drawer to the user's mail directory
-    tag->ti_Data = (ULONG)G->MA_MailDir;
-  }
-  else
-  {
-    // MUI allows us to add up to 15 own tags
-    // add the tag for the initial drawer
-    tags->ti_Tag = ASLFR_InitialDrawer;
-    tags->ti_Data = (ULONG)G->MA_MailDir;
-    tags++;
-    // terminate the list
-    tags->ti_Tag = TAG_DONE;
-  }
-
-  RETURN(TRUE);
-  return TRUE;
-}
-MakeStaticHook(FolderPathHook, FolderPathFunc);
-
-///
-
-/// FO_New
-//  Creates folder configuration window
-static struct FO_ClassData *FO_New(void)
-{
-  struct FO_ClassData *data;
-
-  ENTER();
-
-  if((data = calloc(1, sizeof(struct FO_ClassData))) != NULL)
-  {
-    static const char *ftypes[4];
-    static const char *fmodes[5];
-    static const char *sortopt[8];
-
-    ftypes[0]  = tr(MSG_FO_FTRcvdMail);
-    ftypes[1]  = tr(MSG_FO_FTSentMail);
-    ftypes[2]  = tr(MSG_FO_FTBothMail);
-    ftypes[3]  = NULL;
-
-    fmodes[0]  = tr(MSG_FO_FMNormal);
-    fmodes[1]  = tr(MSG_FO_FMSimple);
-    // compression and encryption are only available if XPK is available
-    fmodes[2]  = (XpkBase != NULL) ? tr(MSG_FO_FMPack) : NULL;
-    fmodes[3]  = (XpkBase != NULL) ? tr(MSG_FO_FMEncPack) : NULL;
-    fmodes[4]  = NULL;
-
-    sortopt[0] = tr(MSG_FO_MessageDate);
-    sortopt[1] = tr(MSG_FO_DateRecvd);
-    sortopt[2] = tr(MSG_Sender);
-    sortopt[3] = tr(MSG_Recipient);
-    sortopt[4] = tr(MSG_Subject);
-    sortopt[5] = tr(MSG_Size);
-    sortopt[6] = tr(MSG_Status);
-    sortopt[7] = NULL;
-
-    data->GUI.WI = WindowObject,
-       MUIA_Window_Title, tr(MSG_FO_EditFolder),
-       MUIA_HelpNode,  "Windows#Foldersettings",
-       MUIA_Window_ID, MAKE_ID('F','O','L','D'),
-       MUIA_Window_LeftEdge, MUIV_Window_LeftEdge_Centered,
-       MUIA_Window_TopEdge,  MUIV_Window_TopEdge_Centered,
-       WindowContents, VGroup,
-          Child, ColGroup(2), GroupFrameT(tr(MSG_FO_Properties)),
-             Child, Label2(tr(MSG_CO_Name)),
-             Child, data->GUI.ST_FNAME = MakeString(SIZE_NAME,tr(MSG_CO_Name)),
-             Child, Label2(tr(MSG_Path)),
-             Child, PopaslObject,
-                MUIA_Popasl_Type, ASL_FileRequest,
-                MUIA_Popasl_StartHook, &FolderPathHook,
-                MUIA_Popstring_String, data->GUI.ST_FPATH = MakeString(SIZE_PATH, ""),
-                MUIA_Popstring_Button, PopButton(MUII_PopDrawer),
-                ASLFR_DrawersOnly, TRUE,
-             End,
-             Child, Label2(tr(MSG_FO_MaxAge)),
-             Child, HGroup,
-                Child, data->GUI.NM_MAXAGE = NumericbuttonObject,
-                  MUIA_CycleChain,      1,
-                  MUIA_Numeric_Min,     0,
-                  MUIA_Numeric_Max,     730,
-                  MUIA_Numeric_Format,  tr(MSG_FO_MAXAGEFMT),
-                End,
-                Child, data->GUI.CH_EXPIREUNREAD = MakeCheck(tr(MSG_FO_EXPIREUNREAD)),
-                Child, LLabel1(tr(MSG_FO_EXPIREUNREAD)),
-                Child, HSpace(0),
-             End,
-             Child, Label1(tr(MSG_FO_FolderType)),
-             Child, data->GUI.CY_FTYPE = MakeCycle(ftypes,tr(MSG_FO_FolderType)),
-             Child, Label1(tr(MSG_FO_FolderMode)),
-             Child, data->GUI.CY_FMODE = MakeCycle(fmodes,tr(MSG_FO_FolderMode)),
-             Child, Label1(tr(MSG_FO_SortBy)),
-             Child, HGroup,
-                Child, data->GUI.CY_SORT[0] = MakeCycle(sortopt,tr(MSG_FO_SortBy)),
-                Child, data->GUI.CH_REVERSE[0] = MakeCheck(tr(MSG_FO_Reverse)),
-                Child, LLabel1(tr(MSG_FO_Reverse)),
-            End,
-             Child, Label1(tr(MSG_FO_ThenBy)),
-             Child, HGroup,
-                Child, data->GUI.CY_SORT[1] = MakeCycle(sortopt,tr(MSG_FO_ThenBy)),
-                Child, data->GUI.CH_REVERSE[1] = MakeCheck(tr(MSG_FO_Reverse)),
-                Child, LLabel1(tr(MSG_FO_Reverse)),
-             End,
-             Child, Label2(tr(MSG_FO_Welcome)),
-             Child, data->GUI.ST_HELLOTEXT = MakeString(SIZE_INTRO,tr(MSG_FO_Welcome)),
-             Child, Label2(tr(MSG_FO_Greetings)),
-             Child, data->GUI.ST_BYETEXT = MakeString(SIZE_INTRO,tr(MSG_FO_Greetings)),
-             Child, Label1(tr(MSG_FO_DSTATS)),
-             Child, HGroup,
-                Child, data->GUI.CH_STATS = MakeCheck(tr(MSG_FO_DSTATS)),
-                Child, HSpace(0),
-             End,
-          End,
-          Child, ColGroup(2), GroupFrameT(tr(MSG_FO_MLSupport)),
-             Child, Label2(tr(MSG_FO_MLSUPPORT)),
-             Child, HGroup,
-                Child, data->GUI.CH_MLSUPPORT = MakeCheck(tr(MSG_FO_MLSUPPORT)),
-                Child, HVSpace,
-                Child, data->GUI.BT_AUTODETECT = MakeButton(tr(MSG_FO_AUTODETECT)),
-             End,
-             Child, Label2(tr(MSG_FO_TO_PATTERN)),
-             Child, data->GUI.ST_MLPATTERN = MakeString(SIZE_PATTERN,tr(MSG_FO_TO_PATTERN)),
-             Child, Label2(tr(MSG_FO_TO_ADDRESS)),
-             Child, MakeAddressField(&data->GUI.ST_MLADDRESS, tr(MSG_FO_TO_ADDRESS), MSG_HELP_FO_ST_MLADDRESS, ABM_CONFIG, -1, AFF_ALLOW_MULTI),
-             Child, Label2(tr(MSG_FO_FROM_ADDRESS)),
-             Child, data->GUI.CY_MLIDENTITY = IdentityChooserObject,
-               MUIA_ControlChar, ShortCut(tr(MSG_FO_FROM_ADDRESS)),
-               End,
-             Child, Label2(tr(MSG_FO_REPLYTO_ADDRESS)),
-             Child, MakeAddressField(&data->GUI.ST_MLREPLYTOADDRESS, tr(MSG_FO_REPLYTO_ADDRESS), MSG_HELP_FO_ST_MLREPLYTOADDRESS, ABM_CONFIG, -1, AFF_ALLOW_MULTI),
-             Child, Label1(tr(MSG_WR_Signature)),
-             Child, data->GUI.CY_MLSIGNATURE = SignatureChooserObject,
-               MUIA_ControlChar, ShortCut(tr(MSG_WR_Signature)),
-             End,
-          End,
-          Child, ColGroup(3),
-             Child, data->GUI.BT_OKAY = MakeButton(tr(MSG_Okay)),
-             Child, HSpace(0),
-             Child, data->GUI.BT_CANCEL = MakeButton(tr(MSG_Cancel)),
-          End,
-       End,
-    End;
-
-    if(data->GUI.WI != NULL)
-    {
-      DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
-
-      set(data->GUI.ST_FPATH, MUIA_String_Reject, " \";#?*|()[]<>");
-      set(data->GUI.CH_STATS, MUIA_Disabled, C->WBAppIcon == FALSE && C->DockyIcon == FALSE);
-
-      SetHelp(data->GUI.ST_FNAME,            MSG_HELP_FO_ST_FNAME            );
-      SetHelp(data->GUI.ST_FPATH,            MSG_HELP_FO_TX_FPATH            );
-      SetHelp(data->GUI.NM_MAXAGE,           MSG_HELP_FO_ST_MAXAGE           );
-      SetHelp(data->GUI.CY_FMODE,            MSG_HELP_FO_CY_FMODE            );
-      SetHelp(data->GUI.CY_FTYPE,            MSG_HELP_FO_CY_FTYPE            );
-      SetHelp(data->GUI.CY_SORT[0],          MSG_HELP_FO_CY_SORT0            );
-      SetHelp(data->GUI.CY_SORT[1],          MSG_HELP_FO_CY_SORT1            );
-      SetHelp(data->GUI.CH_REVERSE[0],       MSG_HELP_FO_CH_REVERSE          );
-      SetHelp(data->GUI.CH_REVERSE[1],       MSG_HELP_FO_CH_REVERSE          );
-      SetHelp(data->GUI.ST_MLPATTERN,        MSG_HELP_FO_ST_MLPATTERN        );
-      SetHelp(data->GUI.CY_MLSIGNATURE,      MSG_HELP_FO_CY_MLSIGNATURE      );
-      SetHelp(data->GUI.CH_STATS,            MSG_HELP_FO_CH_STATS            );
-      SetHelp(data->GUI.CH_EXPIREUNREAD,     MSG_HELP_FO_CH_EXPIREUNREAD     );
-      SetHelp(data->GUI.CH_MLSUPPORT,        MSG_HELP_FO_CH_MLSUPPORT        );
-      SetHelp(data->GUI.BT_AUTODETECT,       MSG_HELP_FO_BT_AUTODETECT       );
-      SetHelp(data->GUI.ST_HELLOTEXT,        MSG_HELP_FO_ST_HELLOTEXT        );
-      SetHelp(data->GUI.ST_BYETEXT,          MSG_HELP_FO_ST_BYETEXT          );
-
-      DoMethod(data->GUI.BT_OKAY,        MUIM_Notify, MUIA_Pressed,            FALSE,  MUIV_Notify_Application, 2,  MUIM_CallHook,  &FO_SaveHook);
-      DoMethod(data->GUI.BT_CANCEL,      MUIM_Notify, MUIA_Pressed,            FALSE,  MUIV_Notify_Application, 2,  MUIM_CallHook,  &FO_CloseHook);
-      DoMethod(data->GUI.BT_AUTODETECT,  MUIM_Notify, MUIA_Pressed,            FALSE,  MUIV_Notify_Application, 2,  MUIM_CallHook,  &FO_MLAutoDetectHook);
-      DoMethod(data->GUI.WI,             MUIM_Notify, MUIA_Window_CloseRequest,TRUE,   MUIV_Notify_Application, 2,  MUIM_CallHook,  &FO_CloseHook);
-
-      // Now we connect the TriggerValues of the MLSUPPORT Checkbox
-      DoMethod(data->GUI.CH_MLSUPPORT,   MUIM_Notify, MUIA_Selected, MUIV_EveryTime,  data->GUI.BT_AUTODETECT,       3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
-      DoMethod(data->GUI.CH_MLSUPPORT,   MUIM_Notify, MUIA_Selected, MUIV_EveryTime,  data->GUI.ST_MLPATTERN,        3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
-      DoMethod(data->GUI.CH_MLSUPPORT,   MUIM_Notify, MUIA_Selected, MUIV_EveryTime,  data->GUI.ST_MLADDRESS,        3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
-      DoMethod(data->GUI.CH_MLSUPPORT,   MUIM_Notify, MUIA_Selected, MUIV_EveryTime,  data->GUI.CY_MLIDENTITY,       3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
-      DoMethod(data->GUI.CH_MLSUPPORT,   MUIM_Notify, MUIA_Selected, MUIV_EveryTime,  data->GUI.ST_MLREPLYTOADDRESS, 3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
-      DoMethod(data->GUI.CH_MLSUPPORT,   MUIM_Notify, MUIA_Selected, MUIV_EveryTime,  data->GUI.CY_MLSIGNATURE,      3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
-    }
-    else
-    {
-      free(data);
-      data = NULL;
-    }
-  }
-
-  RETURN(data);
-  return data;
-}
 ///
