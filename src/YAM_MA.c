@@ -4274,8 +4274,8 @@ struct MA_ClassData *MA_New(void)
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_NEWFG,          MUIV_Notify_Application, 2, MUIM_CallHook,             &FO_NewFolderGroupHook);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDITF,          MUIV_Notify_Application, 2, MUIM_CallHook,             &FO_EditFolderHook);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_DELETEF,        MUIV_Notify_Application, 2, MUIM_CallHook,             &FO_DeleteFolderHook);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_OSAVE,          data->GUI.NL_FOLDERS,    2, MUIM_CallHook,             MUIM_MainFolderListtree_SetOrder, MUIV_MainFolderListtree_SetOrder_Save);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_ORESET,         data->GUI.NL_FOLDERS,    2, MUIM_CallHook,             MUIM_MainFolderListtree_SetOrder, MUIV_MainFolderListtree_SetOrder_Reset);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_OSAVE,          data->GUI.NL_FOLDERS,    2, MUIM_MainFolderListtree_SetOrder, MUIV_MainFolderListtree_SetOrder_Save);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_ORESET,         data->GUI.NL_FOLDERS,    2, MUIM_MainFolderListtree_SetOrder, MUIV_MainFolderListtree_SetOrder_Reset);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SELALL,         data->GUI.PG_MAILLIST,   4, MUIM_NList_Select,         MUIV_NList_Select_All, MUIV_NList_Select_On, NULL);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SELNONE,        data->GUI.PG_MAILLIST,   4, MUIM_NList_Select,         MUIV_NList_Select_All, MUIV_NList_Select_Off, NULL);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SELTOGG,        data->GUI.PG_MAILLIST,   4, MUIM_NList_Select,         MUIV_NList_Select_All, MUIV_NList_Select_Toggle, NULL);
