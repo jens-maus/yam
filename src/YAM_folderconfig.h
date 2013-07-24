@@ -218,7 +218,6 @@ struct Folder
 };
 
 extern struct Hook FO_EditFolderHook;
-extern struct Hook FO_NewFolderGroupHook;
 extern struct Hook FO_NewFolderHook;
 
 BOOL            FO_CreateFolder(enum FolderType type, const char * const path, const char *name);

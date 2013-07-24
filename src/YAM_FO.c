@@ -1408,38 +1408,6 @@ BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
 }
 
 ///
-/// FO_NewFolderGroupFunc
-//  Creates a new separator
-HOOKPROTONHNONP(FO_NewFolderGroupFunc, void)
-{
-  struct Folder folder;
-
-  ENTER();
-
-  InitFolder(&folder, FT_GROUP);
-
-  if(StringRequest(folder.Name, SIZE_NAME, tr(MSG_FO_NEWFGROUP), tr(MSG_FO_NEWFGROUPREQ), tr(MSG_Okay), NULL, tr(MSG_Cancel), FALSE, G->MA->GUI.WI) != 0)
-  {
-    struct FolderNode *fnode;
-
-    LockFolderList(G->folders);
-    fnode = AddNewFolderNode(G->folders, memdup(&folder, sizeof(folder)));
-    UnlockFolderList(G->folders);
-
-    if(fnode != NULL)
-    {
-      // insert the new folder node and remember its treenode pointer
-      fnode->folder->Treenode = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, folder.Name, fnode, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, TNF_LIST | TNF_OPEN);
-
-      FO_SaveTree();
-    }
-  }
-
-  LEAVE();
-}
-MakeHook(FO_NewFolderGroupHook, FO_NewFolderGroupFunc);
-
-///
 /// FO_NewFolderFunc
 //  Creates a new folder
 HOOKPROTONHNONP(FO_NewFolderFunc, void)

@@ -540,7 +540,7 @@ OVERLOAD(MUIM_ContextMenuChoice)
     case CMN_DELETEF:   { DoMethod(obj, MUIM_MainFolderListtree_DeleteFolder);          } break;
     case CMN_INDEX:     { DoMethod(G->App, MUIM_CallHook, &MA_RescanIndexHook);         } break;
     case CMN_NEWF:      { DoMethod(G->App, MUIM_CallHook, &FO_NewFolderHook);           } break;
-    case CMN_NEWFG:     { DoMethod(G->App, MUIM_CallHook, &FO_NewFolderGroupHook);      } break;
+    case CMN_NEWFG:     { DoMethod(obj, MUIM_MainFolderListtree_NewFolderGroup);        } break;
     case CMN_SNAPS:     { DoMethod(obj, MUIM_MainFolderListtree_SetOrder, MUIV_MainFolderListtree_SetOrder_Save);  } break;
     case CMN_RELOAD:    { DoMethod(obj, MUIM_MainFolderListtree_SetOrder, MUIV_MainFolderListtree_SetOrder_Reset); } break;
     case CMN_EMPTYTRASH:{ DoMethod(G->App, MUIM_CallHook, &MA_DeleteDeletedHook, FALSE);} break;
@@ -633,6 +633,38 @@ DECLARE(ChangeFolder) // struct MUI_NListtree_TreeNode *treenode
 
     SetCurrentFolder(fnode->folder);
     MA_ChangeFolder(NULL, FALSE);
+  }
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(NewFolderGroup)
+//  Creates a new separator
+DECLARE(NewFolderGroup)
+{
+  struct Folder folder;
+
+  ENTER();
+
+  InitFolder(&folder, FT_GROUP);
+
+  if(StringRequest(folder.Name, SIZE_NAME, tr(MSG_FO_NEWFGROUP), tr(MSG_FO_NEWFGROUPREQ), tr(MSG_Okay), NULL, tr(MSG_Cancel), FALSE, G->MA->GUI.WI) != 0)
+  {
+    struct FolderNode *fnode;
+
+    LockFolderList(G->folders);
+    fnode = AddNewFolderNode(G->folders, memdup(&folder, sizeof(folder)));
+    UnlockFolderList(G->folders);
+
+    if(fnode != NULL)
+    {
+      // insert the new folder node and remember its treenode pointer
+      fnode->folder->Treenode = (struct MUI_NListtree_TreeNode *)DoMethod(obj, MUIM_NListtree_Insert, folder.Name, fnode, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, TNF_LIST | TNF_OPEN);
+
+      FO_SaveTree();
+    }
   }
 
   RETURN(0);

@@ -4271,7 +4271,7 @@ struct MA_ClassData *MA_New(void)
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT_SALL,      MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_EditActionHook, EA_SELECTALL);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT_SNONE,     MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_EditActionHook, EA_SELECTNONE);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_NEWF,           MUIV_Notify_Application, 2, MUIM_CallHook,             &FO_NewFolderHook);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_NEWFG,          MUIV_Notify_Application, 2, MUIM_CallHook,             &FO_NewFolderGroupHook);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_NEWFG,          data->GUI.NL_FOLDERS,    1, MUIM_MainFolderListtree_NewFolderGroup);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDITF,          MUIV_Notify_Application, 2, MUIM_CallHook,             &FO_EditFolderHook);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_DELETEF,        data->GUI.NL_FOLDERS,    1, MUIM_MainFolderListtree_DeleteFolder);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_OSAVE,          data->GUI.NL_FOLDERS,    2, MUIM_MainFolderListtree_SetOrder, MUIV_MainFolderListtree_SetOrder_Save);
