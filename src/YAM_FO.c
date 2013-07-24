@@ -1435,7 +1435,7 @@ HOOKPROTONHNONP(FO_NewFolderFunc, void)
 
       if(isGroupFolder(&folder))
       {
-        FO_NewFolderGroupFunc();
+        DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_MainFolderListtree_NewFolderGroup);
         LEAVE();
         return;
       }
