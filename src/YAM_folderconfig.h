@@ -217,7 +217,6 @@ struct Folder
   BOOL              MLSupport;
 };
 
-extern struct Hook FO_DeleteFolderHook;
 extern struct Hook FO_EditFolderHook;
 extern struct Hook FO_NewFolderGroupHook;
 extern struct Hook FO_NewFolderHook;

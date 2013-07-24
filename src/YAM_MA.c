@@ -3590,7 +3590,7 @@ HOOKPROTONHNO(MA_DelKeyFunc, void, int *arg)
 
   if(actobj == G->MA->GUI.LV_FOLDERS || actobj == G->MA->GUI.NL_FOLDERS)
   {
-    CallHookPkt(&FO_DeleteFolderHook, 0, 0);
+    DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_MainFolderListtree_DeleteFolder);
   }
   else if(actobj == G->MA->GUI.PG_MAILLIST ||
           actobj == (Object *)xget(G->MA->GUI.PG_MAILLIST, MUIA_MainMailListGroup_ActiveListObject) ||
@@ -4273,7 +4273,7 @@ struct MA_ClassData *MA_New(void)
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_NEWF,           MUIV_Notify_Application, 2, MUIM_CallHook,             &FO_NewFolderHook);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_NEWFG,          MUIV_Notify_Application, 2, MUIM_CallHook,             &FO_NewFolderGroupHook);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDITF,          MUIV_Notify_Application, 2, MUIM_CallHook,             &FO_EditFolderHook);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_DELETEF,        MUIV_Notify_Application, 2, MUIM_CallHook,             &FO_DeleteFolderHook);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_DELETEF,        data->GUI.NL_FOLDERS,    1, MUIM_MainFolderListtree_DeleteFolder);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_OSAVE,          data->GUI.NL_FOLDERS,    2, MUIM_MainFolderListtree_SetOrder, MUIV_MainFolderListtree_SetOrder_Save);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_ORESET,         data->GUI.NL_FOLDERS,    2, MUIM_MainFolderListtree_SetOrder, MUIV_MainFolderListtree_SetOrder_Reset);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SELALL,         data->GUI.PG_MAILLIST,   4, MUIM_NList_Select,         MUIV_NList_Select_All, MUIV_NList_Select_On, NULL);
