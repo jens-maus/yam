@@ -3979,16 +3979,9 @@ void DisposeModule(void *modptr)
   {
     Object *window = (*module)->GUI.WI;
 
-    D(DBF_GUI, "removing window from app: %08lx", window);
-
-    // close the window
-    set(window, MUIA_Window_Open, FALSE);
-
-    // remove the window from our app
-    DoMethod(G->App, OM_REMMEMBER, window);
-
-    // dispose the window object
-    MUI_DisposeObject(window);
+    D(DBF_GUI, "removing window %08lx", window);
+    // remove the window from our app and dispose it
+    DoMethod(G->App, MUIM_YAMApplication_DisposeWindow, window);
 
     free(*module);
     *module = NULL;
