@@ -107,9 +107,6 @@ extern const char* const FolderName[FT_NUM];
                                   isSentFolder(folder)       || \
                                   isCustomSentFolder(folder))
 
-// SetOrder enum
-enum SetOrder   { SO_SAVE=0, SO_RESET };
-
 // LoadedMode enum (if folder index is valid/flushed or unloaded)
 enum LoadedMode { LM_UNLOAD=0,  // invalid/unloaded
                   LM_FLUSHED,   // flushed
@@ -224,7 +221,6 @@ extern struct Hook FO_DeleteFolderHook;
 extern struct Hook FO_EditFolderHook;
 extern struct Hook FO_NewFolderGroupHook;
 extern struct Hook FO_NewFolderHook;
-extern struct Hook FO_SetOrderHook;
 
 BOOL            FO_CreateFolder(enum FolderType type, const char * const path, const char *name);
 BOOL            FO_FreeFolder(struct Folder *folder);

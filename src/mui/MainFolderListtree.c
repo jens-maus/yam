@@ -64,6 +64,14 @@ struct Data
 };
 */
 
+/* EXPORT
+enum SetOrder
+{
+  MUIV_MainFolderListtree_SetOrder_Save=0,
+  MUIV_MainFolderListtree_SetOrder_Reset
+};
+*/
+
 enum
 {
   CMN_EDITF=10,
@@ -533,8 +541,8 @@ OVERLOAD(MUIM_ContextMenuChoice)
     case CMN_INDEX:     { DoMethod(G->App, MUIM_CallHook, &MA_RescanIndexHook);         } break;
     case CMN_NEWF:      { DoMethod(G->App, MUIM_CallHook, &FO_NewFolderHook);           } break;
     case CMN_NEWFG:     { DoMethod(G->App, MUIM_CallHook, &FO_NewFolderGroupHook);      } break;
-    case CMN_SNAPS:     { DoMethod(G->App, MUIM_CallHook, &FO_SetOrderHook, SO_SAVE);   } break;
-    case CMN_RELOAD:    { DoMethod(G->App, MUIM_CallHook, &FO_SetOrderHook, SO_RESET);  } break;
+    case CMN_SNAPS:     { DoMethod(obj, MUIM_MainFolderListtree_SetOrder, MUIV_MainFolderListtree_SetOrder_Save);  } break;
+    case CMN_RELOAD:    { DoMethod(obj, MUIM_MainFolderListtree_SetOrder, MUIV_MainFolderListtree_SetOrder_Reset); } break;
     case CMN_EMPTYTRASH:{ DoMethod(G->App, MUIM_CallHook, &MA_DeleteDeletedHook, FALSE);} break;
     case CMN_EMPTYSPAM: { DoMethod(G->App, MUIM_CallHook, &MA_DeleteSpamHook, FALSE);   } break;
     case CMN_ALLTOREAD: { DoMethod(G->App, MUIM_CallHook, &MA_SetAllStatusToHook, SFLAG_READ, SFLAG_NEW); } break;
@@ -625,6 +633,70 @@ DECLARE(ChangeFolder) // struct MUI_NListtree_TreeNode *treenode
 
     SetCurrentFolder(fnode->folder);
     MA_ChangeFolder(NULL, FALSE);
+  }
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(SetOrder)
+//  Saves or resets folder order
+DECLARE(SetOrder) // enum SetOrder order
+{
+  ENTER();
+
+  switch(msg->order)
+  {
+    case MUIV_MainFolderListtree_SetOrder_Save:
+    {
+      FO_SaveTree();
+    }
+    break;
+
+    case MUIV_MainFolderListtree_SetOrder_Reset:
+    {
+      struct FolderNode *fnode;
+
+      // before we reset/reload the foldertree we have to
+      // make sure everything is freed correctly.
+      LockFolderList(G->folders);
+
+      while((fnode = TakeFolderNode(G->folders)) != NULL)
+      {
+        struct Folder *folder = fnode->folder;
+
+        if(folder == NULL)
+          break;
+
+        // we do not have to call FreeFolder manually, because the
+        // destructor of the Listtree will do this for us. But we
+        // have to free the FImage of the folder if it exists
+        if(folder->imageObject != NULL)
+        {
+          // we make sure that the NList also doesn't use the image in future anymore
+          DoMethod(obj, MUIM_NList_UseImage, NULL, folder->ImageIndex, MUIF_NONE);
+
+          // and last, but not least we free the BC object here, so that this Object is also gone
+          MUI_DisposeObject(folder->imageObject);
+          // let's set it to NULL so that the destructor doesn't do the work again.
+          folder->imageObject = NULL;
+        }
+
+        // free this folder
+        FO_FreeFolder(folder);
+        // and free its node
+        DeleteFolderNode(fnode);
+      }
+
+      // all folder nodes have been freed, now initialize the list again
+      InitFolderList(G->folders);
+
+      UnlockFolderList(G->folders);
+
+      FO_LoadTree();
+    }
+    break;
   }
 
   RETURN(0);
