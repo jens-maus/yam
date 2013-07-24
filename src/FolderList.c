@@ -297,12 +297,15 @@ void InitFolder(struct Folder *folder, enum FolderType type)
   ENTER();
 
   memset(folder, 0, sizeof(*folder));
-  folder->Sort[0] = 1;
-  folder->Sort[1] = 3;
   folder->Type = type;
-  folder->LastActive = -1;
-  // preserve the message list
-  folder->messages = messages;
+  if(type != FT_GROUP)
+  {
+    folder->Sort[0] = 1;
+    folder->Sort[1] = 3;
+    folder->LastActive = -1;
+    // preserve the message list
+    folder->messages = messages;
+  }
 
   LEAVE();
 }

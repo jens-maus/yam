@@ -1416,8 +1416,7 @@ HOOKPROTONHNONP(FO_NewFolderGroupFunc, void)
 
   ENTER();
 
-  memset(&folder, 0, sizeof(folder));
-  folder.Type = FT_GROUP;
+  InitFolder(&folder, FT_GROUP);
 
   if(StringRequest(folder.Name, SIZE_NAME, tr(MSG_FO_NEWFGROUP), tr(MSG_FO_NEWFGROUPREQ), tr(MSG_Okay), NULL, tr(MSG_Cancel), FALSE, G->MA->GUI.WI) != 0)
   {
