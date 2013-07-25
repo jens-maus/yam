@@ -91,7 +91,6 @@ struct Global
   Object *                 ReadToolbarCacheObject;
   Object *                 WriteToolbarCacheObject;
   Object *                 AbookToolbarCacheObject;
-  Object *                 FolderEditWinObject;
   char *                   ER_Message[MAXERR];
   struct DiskObject *      HideIcon;
   struct AppIcon *         AppIcon;

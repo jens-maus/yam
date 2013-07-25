@@ -61,7 +61,6 @@
 #include "Signature.h"
 #include "UserIdentity.h"
 
-//#include "mui/FolderEditWindow.h"
 #include "mui/FolderRequestListtree.h"
 #include "mui/IdentityChooser.h"
 #include "mui/MainFolderListtree.h"
@@ -261,7 +260,7 @@ static BOOL SaveOldFolder(struct IClass *cl, Object *obj)
         LONG result;
 
         // ask the user whether to perform the move or not
-        result = MUI_Request(_app(obj), G->FolderEditWinObject, MUIF_NONE, NULL, tr(MSG_YesNoReq), tr(MSG_FO_MOVEFOLDERTO), data->folder->Fullpath, folder.Fullpath);
+        result = MUI_Request(_app(obj), obj, MUIF_NONE, NULL, tr(MSG_YesNoReq), tr(MSG_FO_MOVEFOLDERTO), data->folder->Fullpath, folder.Fullpath);
         if(result == 1)
         {
           // first unload the old folder image to make it moveable/deletable
@@ -320,7 +319,7 @@ static BOOL SaveOldFolder(struct IClass *cl, Object *obj)
       else if(!isProtectedFolder(&folder) && isProtectedFolder(data->folder) &&
               data->folder->LoadedMode != LM_VALID)
       {
-        if((changed = MA_PromptFolderPassword(&folder, G->FolderEditWinObject)) == FALSE)
+        if((changed = MA_PromptFolderPassword(&folder, obj)) == FALSE)
           goto out;
       }
       else if(isProtectedFolder(&folder) && !isProtectedFolder(data->folder))
@@ -407,7 +406,7 @@ static BOOL SaveNewFolder(struct IClass *cl, Object *obj)
     // - the new name already exists
     if(folder.Name[0] == '\0' || FO_GetFolderByName(folder.Name, NULL) != NULL)
     {
-      MUI_Request(_app(obj), G->FolderEditWinObject, MUIF_NONE, NULL, tr(MSG_OkayReq), tr(MSG_FO_FOLDERNAMEINVALID));
+      MUI_Request(_app(obj), obj, MUIF_NONE, NULL, tr(MSG_OkayReq), tr(MSG_FO_FOLDERNAMEINVALID));
       result = 0;
     }
     else
@@ -418,12 +417,12 @@ static BOOL SaveNewFolder(struct IClass *cl, Object *obj)
       // lets check if entered folder path is valid or not
       if(folder.Path[0] == '\0')
       {
-        MUI_Request(_app(obj), G->FolderEditWinObject, MUIF_NONE, NULL, tr(MSG_OkayReq), tr(MSG_FO_FOLDERPATHINVALID));
+        MUI_Request(_app(obj), obj, MUIF_NONE, NULL, tr(MSG_OkayReq), tr(MSG_FO_FOLDERPATHINVALID));
         result = 0;
       }
       else if(FileExists(folder.Fullpath) == TRUE) // check if the combined full path already exists
       {
-        result = MUI_Request(_app(obj), G->FolderEditWinObject, MUIF_NONE, NULL, tr(MSG_YesNoReq), tr(MSG_FO_FOLDER_ALREADY_EXISTS), folder.Fullpath);
+        result = MUI_Request(_app(obj), obj, MUIF_NONE, NULL, tr(MSG_YesNoReq), tr(MSG_FO_FOLDER_ALREADY_EXISTS), folder.Fullpath);
       }
       else
       {
@@ -687,8 +686,8 @@ OVERLOAD(OM_NEW)
     SetHelp(ST_HELLOTEXT,    MSG_HELP_FO_ST_HELLOTEXT   );
     SetHelp(ST_BYETEXT,      MSG_HELP_FO_ST_BYETEXT     );
 
-    DoMethod(BT_CANCEL, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 5, MUIM_Application_PushMethod, G->App, 2, MUIM_YAMApplication_DisposeWindow, obj);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, MUIV_Notify_Application, 5, MUIM_Application_PushMethod, G->App, 2, MUIM_YAMApplication_DisposeWindow, obj);
+    DoMethod(BT_CANCEL, MUIM_Notify, MUIA_Pressed, FALSE, obj, 3, MUIM_Set, ATTR(DisposeMe), TRUE);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, obj, 3, MUIM_Set, ATTR(DisposeMe), TRUE);
 
     DoMethod(BT_AUTODETECT, MUIM_Notify, MUIA_Pressed, FALSE, obj, 1, METHOD(MLAutoDetect));
     DoMethod(BT_OKAY, MUIM_Notify, MUIA_Pressed, FALSE, obj, 1, METHOD(SaveFolder));
@@ -698,23 +697,6 @@ OVERLOAD(OM_NEW)
 
   RETURN((IPTR)obj);
   return (IPTR)obj;
-}
-
-///
-/// OVERLOAD(OM_DISPOSE)
-OVERLOAD(OM_DISPOSE)
-{
-  IPTR result;
-
-  ENTER();
-
-  // erase to global pointer
-  G->FolderEditWinObject = NULL;
-
-  result = DoSuperMethodA(cl, obj, msg);
-
-  RETURN(result);
-  return result;
 }
 
 ///
@@ -1088,8 +1070,8 @@ DECLARE(SaveFolder)
 
     DisplayStatistics(data->folder, TRUE);
 
-    // close and dispose ourselves
-    DoMethod(_app(obj), MUIM_Application_PushMethod, _app(obj), 2, MUIM_YAMApplication_DisposeWindow, obj);
+    // ask for disposing
+    set(obj, ATTR(DisposeMe), TRUE);
   }
 
   RETURN(0);

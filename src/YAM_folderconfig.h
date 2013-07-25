@@ -217,9 +217,6 @@ struct Folder
   BOOL              MLSupport;
 };
 
-extern struct Hook FO_EditFolderHook;
-extern struct Hook FO_NewFolderHook;
-
 BOOL            FO_CreateFolder(enum FolderType type, const char * const path, const char *name);
 BOOL            FO_FreeFolder(struct Folder *folder);
 struct Folder * FO_GetFolderByName(const char *name, int *pos);

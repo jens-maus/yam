@@ -49,20 +49,27 @@
 #include "Requesters.h"
 #include "Themes.h"
 
+#include "mui/FolderEditWindow.h"
 #include "mui/FolderRequestListtree.h"
 #include "mui/ImageArea.h"
-#include "mui/MainFolderListtree.h"
 #include "mui/MainMailListGroup.h"
+#include "mui/YAMApplication.h"
 
 #include "Debug.h"
 
 /* CLASSDATA
 struct Data
 {
-  Object *context_menu;
+  Object *contextMenu;
+  Object *folderEditWindow;
+  struct Folder newFolder;
   BOOL draggingMails;
   BOOL reorderFolderList;
 };
+*/
+
+/* INCLUDE
+#include "YAM_folderconfig.h"
 */
 
 /* EXPORT
@@ -115,7 +122,7 @@ OVERLOAD(OM_NEW)
 
     TAG_MORE, inittags(msg))) != NULL)
   {
-    DoMethod(obj, MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime, MUIV_Notify_Self, 1, METHOD(EditFolder));
+    DoMethod(obj, MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime, MUIV_Notify_Self, 2, METHOD(EditFolder), TRUE);
     //DoMethod(obj, MUIM_Notify, MUIA_NList_TitleClick,    MUIV_EveryTime, MUIV_Notify_Self, 3, MUIM_NList_Sort2,          MUIV_TriggerValue,MUIV_NList_SortTypeAdd_2Values);
     //DoMethod(obj, MUIM_Notify, MUIA_NList_SortType,      MUIV_EveryTime, MUIV_Notify_Self, 3, MUIM_Set,                  MUIA_NList_TitleMark,MUIV_TriggerValue);
     DoMethod(obj, MUIM_Notify, MUIA_NListtree_Active, MUIV_EveryTime, MUIV_Notify_Self, 2, METHOD(ChangeFolder), MUIV_TriggerValue);
@@ -135,8 +142,11 @@ OVERLOAD(OM_DISPOSE)
   ENTER();
 
   // make sure that our context menus are also disposed
-  if(data->context_menu != NULL)
-    MUI_DisposeObject(data->context_menu);
+  if(data->contextMenu != NULL)
+    MUI_DisposeObject(data->contextMenu);
+
+  // dispose a possibly still opened folder edit window
+  DoMethod(obj, METHOD(DeleteFolderEditWindow));
 
   // dispose ourself
   result = DoSuperMethodA(cl, obj, msg);
@@ -387,7 +397,6 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
   struct MUI_NListtree_TestPos_Result r;
   struct MUI_NListtree_TreeNode *tn;
   struct Folder *folder = NULL;
-  struct MA_GUIData *gui = &G->MA->GUI;
   Object *lastItem;
   BOOL disable_delete = FALSE;
   BOOL disable_edit = FALSE;
@@ -397,17 +406,17 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
 
   ENTER();
 
-  // dispose the old context_menu if it still exists
-  if(data->context_menu)
+  // dispose the old contextMenu if it still exists
+  if(data->contextMenu)
   {
-    MUI_DisposeObject(data->context_menu);
-    data->context_menu = NULL;
+    MUI_DisposeObject(data->contextMenu);
+    data->contextMenu = NULL;
   }
 
   // if this was a RMB click on the titlebar we create our own special menu
   if(m->ontop)
   {
-    data->context_menu = MenustripObject,
+    data->contextMenu = MenustripObject,
       Child, MenuObjectT(tr(MSG_MA_CTX_FOLDERLIST)),
         Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_Folder), MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, 1, MUIA_Menuitem_Enabled, FALSE, MUIA_Menuitem_Checked, TRUE, MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
         Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_Total),  MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, 2, MUIA_Menuitem_Checked, hasFColTotal(C->FolderCols), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
@@ -422,12 +431,12 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
       End,
     End;
 
-    RETURN((IPTR)data->context_menu);
-    return (IPTR)data->context_menu;
+    RETURN((IPTR)data->contextMenu);
+    return (IPTR)data->contextMenu;
   }
 
   // Now lets find out which entry is under the mouse pointer
-  DoMethod(gui->NL_FOLDERS, MUIM_NListtree_TestPos, m->mx, m->my, &r);
+  DoMethod(obj, MUIM_NListtree_TestPos, m->mx, m->my, &r);
 
   tn = r.tpr_TreeNode;
 
@@ -444,8 +453,8 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
     folder = ((struct FolderNode *)tn->tn_User)->folder;
 
     // Set this Treenode as activ
-    if(tn != (struct MUI_NListtree_TreeNode *)xget(gui->NL_FOLDERS, MUIA_NListtree_Active))
-      set(gui->NL_FOLDERS, MUIA_NListtree_Active, tn);
+    if(tn != (struct MUI_NListtree_TreeNode *)xget(obj, MUIA_NListtree_Active))
+      set(obj, MUIA_NListtree_Active, tn);
 
     // Now we have to set the disabled flag if this is not a custom folder
     if(isDefaultFolder(folder) && !isGroupFolder(folder))
@@ -463,7 +472,7 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
   }
 
   // We create the ContextMenu now
-  data->context_menu = MenustripObject,
+  data->contextMenu = MenustripObject,
     Child, MenuObjectT(folder ? FolderName(folder) : tr(MSG_FOLDER_NONSEL)),
       Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_FOLDER_NEWFOLDER),            MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, CMN_NEWF,   End,
       Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_FOLDER_NEWFOLDERGROUP),       MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, CMN_NEWFG,  End,
@@ -490,7 +499,7 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
     if(isTrashFolder(folder) &&
        (newItem = Menuitem(tr(MSG_MA_REMOVEDELETED), NULL, TRUE, FALSE, CMN_EMPTYTRASH)) != NULL)
     {
-      DoMethod(data->context_menu, MUIM_Family_Insert, newItem, lastItem);
+      DoMethod(data->contextMenu, MUIM_Family_Insert, newItem, lastItem);
       lastItem = newItem;
     }
 
@@ -498,13 +507,13 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
     if(C->SpamFilterEnabled &&
        (newItem = Menuitem(tr(MSG_MA_REMOVESPAM), NULL, !isGroupFolder(folder), FALSE, CMN_EMPTYSPAM)) != NULL)
     {
-      DoMethod(data->context_menu, MUIM_Family_Insert, newItem, lastItem);
+      DoMethod(data->contextMenu, MUIM_Family_Insert, newItem, lastItem);
       lastItem = newItem;
     }
   }
 
-  RETURN((IPTR)data->context_menu);
-  return (IPTR)data->context_menu;
+  RETURN((IPTR)data->contextMenu);
+  return (IPTR)data->contextMenu;
 }
 
 ///
@@ -537,17 +546,17 @@ OVERLOAD(MUIM_ContextMenuChoice)
     break;
 
     // or other item out of the FolderListContextMenu
-    case CMN_EDITF:     { DoMethod(G->App, MUIM_CallHook, &FO_EditFolderHook);          } break;
-    case CMN_DELETEF:   { DoMethod(obj, MUIM_MainFolderListtree_DeleteFolder);          } break;
-    case CMN_INDEX:     { DoMethod(G->App, MUIM_CallHook, &MA_RescanIndexHook);         } break;
-    case CMN_NEWF:      { DoMethod(G->App, MUIM_CallHook, &FO_NewFolderHook);           } break;
-    case CMN_NEWFG:     { DoMethod(obj, MUIM_MainFolderListtree_NewFolderGroup);        } break;
-    case CMN_SNAPS:     { DoMethod(obj, MUIM_MainFolderListtree_SetOrder, MUIV_MainFolderListtree_SetOrder_Save);  } break;
-    case CMN_RELOAD:    { DoMethod(obj, MUIM_MainFolderListtree_SetOrder, MUIV_MainFolderListtree_SetOrder_Reset); } break;
-    case CMN_EMPTYTRASH:{ DoMethod(G->App, MUIM_CallHook, &MA_DeleteDeletedHook, FALSE);} break;
-    case CMN_EMPTYSPAM: { DoMethod(G->App, MUIM_CallHook, &MA_DeleteSpamHook, FALSE);   } break;
-    case CMN_ALLTOREAD: { DoMethod(G->App, MUIM_CallHook, &MA_SetAllStatusToHook, SFLAG_READ, SFLAG_NEW); } break;
-    case CMN_SEARCH:    { DoMethod(G->App, MUIM_CallHook, &FI_OpenHook, GetCurrentFolder()); } break;
+    case CMN_EDITF:     { DoMethod(obj, METHOD(EditFolder), FALSE);                     } break;
+    case CMN_DELETEF:   { DoMethod(obj, METHOD(DeleteFolder));                          } break;
+    case CMN_INDEX:     { DoMethod(_app(obj), MUIM_CallHook, &MA_RescanIndexHook);         } break;
+    case CMN_NEWF:      { DoMethod(obj, METHOD(NewFolder));                             } break;
+    case CMN_NEWFG:     { DoMethod(obj, METHOD(NewFolderGroup));                        } break;
+    case CMN_SNAPS:     { DoMethod(obj, METHOD(SetOrder), MUIV_MainFolderListtree_SetOrder_Save);  } break;
+    case CMN_RELOAD:    { DoMethod(obj, METHOD(SetOrder), MUIV_MainFolderListtree_SetOrder_Reset); } break;
+    case CMN_EMPTYTRASH:{ DoMethod(_app(obj), MUIM_CallHook, &MA_DeleteDeletedHook, FALSE);} break;
+    case CMN_EMPTYSPAM: { DoMethod(_app(obj), MUIM_CallHook, &MA_DeleteSpamHook, FALSE);   } break;
+    case CMN_ALLTOREAD: { DoMethod(_app(obj), MUIM_CallHook, &MA_SetAllStatusToHook, SFLAG_READ, SFLAG_NEW); } break;
+    case CMN_SEARCH:    { DoMethod(_app(obj), MUIM_CallHook, &FI_OpenHook, GetCurrentFolder()); } break;
 
     default:
       result = DoSuperMethodA(cl, obj, (Msg)msg);
@@ -561,7 +570,7 @@ OVERLOAD(MUIM_ContextMenuChoice)
 
 /* Public Methods */
 /// DECLARE(MakeFormat)
-//  Creates format definition for folder listtree
+// creates format definition for folder listtree
 DECLARE(MakeFormat)
 {
   static const int defwidth[FOCOLNUM] = { 100,0,0,0,0 };
@@ -605,20 +614,6 @@ DECLARE(MakeFormat)
 }
 
 ///
-/// DECLARE(EditFolder)
-// edit the double clicked folder
-DECLARE(EditFolder)
-{
-  ENTER();
-
-  if(C->FolderDoubleClick == TRUE && GetCurrentFolder() != NULL && isGroupFolder(GetCurrentFolder()) == FALSE)
-    DoMethod(G->App, MUIM_CallHook, &FO_EditFolderHook);
-
-  RETURN(0);
-  return 0;
-}
-
-///
 /// DECLARE(ChangeFolder)
 // set the clicked folder as the current one
 DECLARE(ChangeFolder) // struct MUI_NListtree_TreeNode *treenode
@@ -642,7 +637,7 @@ DECLARE(ChangeFolder) // struct MUI_NListtree_TreeNode *treenode
 
 ///
 /// DECLARE(NewFolderGroup)
-//  Creates a new separator
+// creates a new folder group
 DECLARE(NewFolderGroup)
 {
   struct Folder folder;
@@ -651,7 +646,7 @@ DECLARE(NewFolderGroup)
 
   InitFolder(&folder, FT_GROUP);
 
-  if(StringRequest(folder.Name, SIZE_NAME, tr(MSG_FO_NEWFGROUP), tr(MSG_FO_NEWFGROUPREQ), tr(MSG_Okay), NULL, tr(MSG_Cancel), FALSE, G->MA->GUI.WI) != 0)
+  if(StringRequest(folder.Name, SIZE_NAME, tr(MSG_FO_NEWFGROUP), tr(MSG_FO_NEWFGROUPREQ), tr(MSG_Okay), NULL, tr(MSG_Cancel), FALSE, _win(obj)) != 0)
   {
     struct FolderNode *fnode;
 
@@ -673,8 +668,183 @@ DECLARE(NewFolderGroup)
 }
 
 ///
+/// DECLARE(NewFolder)
+// creates a new folder
+DECLARE(NewFolder)
+{
+  GETDATA;
+  int mode;
+  BOOL openEditWindow = TRUE;
+
+  ENTER();
+
+  // call MUI_Request() first
+  mode = MUI_Request(_app(obj), _win(obj), MUIF_NONE, tr(MSG_MA_NewFolder), tr(MSG_FO_NewFolderGads), tr(MSG_FO_NewFolderReq));
+
+  // reset the folder struct and set some default values
+  InitFolder(&data->newFolder, FT_CUSTOM);
+
+  switch (mode)
+  {
+    case 1: break;
+    case 2:
+    {
+      // as the user decided to use the settings from the current folder, wie copy
+      // the current one to our new one.
+      memcpy(&data->newFolder, GetCurrentFolder(), sizeof(data->newFolder));
+
+      if(isGroupFolder(&data->newFolder))
+      {
+        DoMethod(obj, MUIM_MainFolderListtree_NewFolderGroup);
+        openEditWindow = FALSE;
+      }
+      else
+      {
+        if(isIncomingFolder(&data->newFolder) || isTrashFolder(&data->newFolder))
+          data->newFolder.Type = FT_CUSTOM;
+        else if(isOutgoingFolder(&data->newFolder) || isSentFolder(&data->newFolder))
+          data->newFolder.Type = FT_CUSTOMSENT;
+
+        // now that we have the correct folder type, we set some default values for the new
+        // folder
+        data->newFolder.Path[0]     = '\0';
+        data->newFolder.Name[0]     = '\0';
+        data->newFolder.imageObject = NULL;
+        // erase the message list which might have been copied from the current folder
+        data->newFolder.messages    = NULL;
+        // no image for the folder by default
+        data->newFolder.ImageIndex  = -1;
+      }
+    }
+    break;
+
+    case 3:
+    {
+      struct FileReqCache *frc;
+
+      if((frc = ReqFile(ASL_FOLDER, _win(obj), tr(MSG_FO_SelectDir), REQF_DRAWERSONLY, G->MA_MailDir, "")) != NULL)
+      {
+        strlcpy(data->newFolder.Path, frc->drawer, sizeof(data->newFolder.Path));
+
+        FO_LoadConfig(&data->newFolder);
+      }
+      else
+      {
+        openEditWindow = FALSE;
+      }
+    }
+    break;
+
+    default:
+    {
+      openEditWindow = FALSE;
+    }
+  }
+
+  if(openEditWindow == TRUE)
+  {
+    // there is no "old" folder which could be edited, just the new one
+    DoMethod(obj, METHOD(CreateFolderEditWindow), NULL);
+  }
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(EditFolder)
+//  Opens folder window to edit the settings of the active folder
+DECLARE(EditFolder) // ULONG wasDoubleClick
+{
+  ENTER();
+
+  // respect the configuration about editing on double click
+  if(msg->wasDoubleClick == FALSE || C->FolderDoubleClick == TRUE)
+  {
+    struct Folder *folder = GetCurrentFolder();
+
+    if(isGroupFolder(folder))
+    {
+      // don't edit folder groups on double click
+      // a double click is used to fold/unfold the group
+      if(msg->wasDoubleClick == FALSE)
+      {
+        if(StringRequest(folder->Name, SIZE_NAME, tr(MSG_FO_EDIT_FGROUP), tr(MSG_FO_EDIT_FGROUPREQ), tr(MSG_Okay), NULL, tr(MSG_Cancel), FALSE, _win(obj)))
+          DoMethod(obj, MUIM_NListtree_Redraw, MUIV_NListtree_Redraw_Active, MUIF_NONE);
+      }
+    }
+    else
+    {
+      DoMethod(obj, METHOD(CreateFolderEditWindow), folder);
+    }
+  }
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(CreateFolderEditWindow)
+// create and open a new folder edit window if it does exist yet
+DECLARE(CreateFolderEditWindow) // struct Folder *folder
+{
+  GETDATA;
+
+  ENTER();
+
+  if(data->folderEditWindow == NULL)
+  {
+    Object *folderEditWindow;
+
+    if((folderEditWindow = FolderEditWindowObject, End) != NULL)
+    {
+      if(SafeOpenWindow(folderEditWindow) == TRUE)
+      {
+        data->folderEditWindow = folderEditWindow;
+        // dispose the folder edit window whenever it asks for it
+        DoMethod(folderEditWindow, MUIM_Notify, MUIA_FolderEditWindow_DisposeMe, MUIV_EveryTime, obj, 1, METHOD(DeleteFolderEditWindow));
+      }
+      else
+      {
+        // the folder edit window adds itself to the application, hence it is not
+        // enough to just dispose the object
+        DoMethod(_app(obj), MUIM_YAMApplication_DisposeWindow, folderEditWindow);
+      }
+    }
+  }
+
+  if(data->folderEditWindow != NULL)
+  {
+    // edit the given folder, might be NULL in case of a new folder
+    set(data->folderEditWindow, MUIA_FolderEditWindow_Folder, msg->folder);
+  }
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(DeleteFolderEditWindow)
+// dispose the folder edit window
+DECLARE(DeleteFolderEditWindow)
+{
+  GETDATA;
+
+  ENTER();
+
+  if(data->folderEditWindow != NULL)
+  {
+    DoMethod(_app(obj), MUIM_YAMApplication_DisposeWindow, data->folderEditWindow);
+    data->folderEditWindow = NULL;
+  }
+
+  RETURN(0);
+  return 0;
+}
+
+///
 /// DECLARE(DeleteFolder)
-//  Removes the active folder
+// removes the active folder
 DECLARE(DeleteFolder)
 {
   struct Folder *folder = GetCurrentFolder();
@@ -689,7 +859,7 @@ DECLARE(DeleteFolder)
     case FT_CUSTOMSENT:
     case FT_CUSTOMMIXED:
     {
-      if(MUI_Request(G->App, G->MA->GUI.WI, MUIF_NONE, NULL, tr(MSG_YesNoReq2), tr(MSG_CO_ConfirmDelete)) != 0)
+      if(MUI_Request(_app(obj), _win(obj), MUIF_NONE, NULL, tr(MSG_YesNoReq2), tr(MSG_CO_ConfirmDelete)) != 0)
       {
         // check if the folder that is about to be deleted is part
         // of an active filter and if so remove it from it
@@ -725,7 +895,7 @@ DECLARE(DeleteFolder)
       if((tn_sub = (struct MUI_NListtree_TreeNode *)DoMethod(obj, MUIM_NListtree_GetEntry, tn_group, MUIV_NListtree_GetEntry_Position_Head, MUIF_NONE)) != NULL)
       {
         // Now we popup a requester and if this requester is confirmed we move the subentries to the parent node.
-        if(MUI_Request(G->App, G->MA->GUI.WI, MUIF_NONE, NULL, tr(MSG_YesNoReq2), tr(MSG_FO_GROUP_CONFDEL)))
+        if(MUI_Request(_app(obj), _win(obj), MUIF_NONE, NULL, tr(MSG_YesNoReq2), tr(MSG_FO_GROUP_CONFDEL)))
         {
           struct MUI_NListtree_TreeNode *tn_sub_next = tn_sub;
 
@@ -793,7 +963,7 @@ DECLARE(DeleteFolder)
 
 ///
 /// DECLARE(SetOrder)
-//  Saves or resets folder order
+// saves or resets folder order
 DECLARE(SetOrder) // enum SetOrder order
 {
   ENTER();
