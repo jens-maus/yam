@@ -153,7 +153,7 @@ WARN     = -W -Wall -Wwrite-strings -Wpointer-arith -Wsign-compare #-Wunreachabl
 OPTFLAGS = -O3 -fomit-frame-pointer -fno-strict-aliasing
 DEBUG    = -DDEBUG -fno-omit-frame-pointer #-O0
 DEBUGSYM = -g -gstabs
-CFLAGS   = -I. -I./include $(CPU) $(WARN) $(OPTFLAGS) $(DEBUG) $(DEBUGSYM) -DTZDIR=\"PROGDIR:Resources/zoneinfo\" -Dtime_tz="int_fast64_t"
+CFLAGS   = -I. -I./include $(CPU) $(WARN) $(OPTFLAGS) $(DEBUG) $(DEBUGSYM) -DTZDIR=\"PROGDIR:Resources/zoneinfo\" -DTZDEFAULT=\"Europe/Berlin\" -DALL_STATE -Dtime_tz="int_fast64_t"
 LDFLAGS  = $(CPU) $(DEBUGSYM)
 LDLIBS   = -L$(LIB) -lm
 
@@ -331,7 +331,7 @@ $(OBJDIR)/%.o: %.c
 # for linking the target
 $(TDIR)/$(TARGET): $(addprefix $(OBJDIR)/,$(OBJS))
 	@echo "  AR $@"
-	@$(AR) -cq $@ $(addprefix $(OBJDIR)/,$(OBJS))
+	@$(AR) -cr $@ $(addprefix $(OBJDIR)/,$(OBJS))
 
 # cleanup target
 .PHONY: clean

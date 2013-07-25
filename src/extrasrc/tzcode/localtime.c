@@ -1216,7 +1216,7 @@ tzset(void)
 {
 	register const char *	name;
 
-	name = getenv("TZ");
+	name = getenv("YAMTZ");
 	if (name == NULL) {
 		tzsetwall();
 		return;
