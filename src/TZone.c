@@ -52,7 +52,7 @@ static void addLocation(const char *contName, const char *locName)
   // search for the continent first
   IterateList(&G->tzoneContinentList, struct TZoneContinent *, cont)
   {
-    if(strcmp(cont->name, contName) == 0)
+    if(strcasecmp(cont->name, contName) == 0)
     {
       found = cont;
       break;
@@ -218,7 +218,9 @@ void ParseZoneTabFile(void)
       }
     }
 
-    free(buf);
+    if(buf != NULL)
+      free(buf);
+
     fclose(fh);
 
     // sort all locations
@@ -331,12 +333,21 @@ static struct TZoneContinent *findContinent(const char *continent, ULONG *index)
 {
   struct TZoneContinent *result = NULL;
   struct TZoneContinent *cont;
+  char *contStr;
+  char *p;
   ULONG i;
+
+  ENTER();
+
+  // convert all underscores to spaces
+  p = contStr = strdup(continent);
+  while((p = strchr(p, '_')) != NULL)
+    *p++ = ' ';
 
   i = 0;
   IterateList(&G->tzoneContinentList, struct TZoneContinent *, cont)
   {
-    if(strcmp(cont->name, continent) == 0)
+    if(strcasecmp(cont->name, contStr) == 0)
     {
       result = cont;
       *index = i;
@@ -345,6 +356,8 @@ static struct TZoneContinent *findContinent(const char *continent, ULONG *index)
 
     i++;
   }
+
+  free(contStr);
 
   RETURN(result);
   return result;
@@ -357,20 +370,31 @@ static struct TZoneLocation *findLocation(struct TZoneContinent *continent, cons
 {
   struct TZoneLocation *result = NULL;
   struct TZoneLocation *loc;
+  char *locStr;
+  char *p;
   ULONG i;
+
+  ENTER();
+
+  // convert all underscores to spaces
+  p = locStr = strdup(location);
+  while((p = strchr(p, '_')) != NULL)
+    *p++ = ' ';
 
   i = 0;
   IterateList(&continent->locationList, struct TZoneLocation *, loc)
   {
-    if(strcmp(loc->name, location) == 0)
+    if(strcasecmp(loc->name, locStr) == 0)
     {
-     result = loc;
-     *index = i;
+      result = loc;
+      *index = i;
       break;
     }
 
     i++;
   }
+
+  free(locStr);
 
   RETURN(result);
   return result;

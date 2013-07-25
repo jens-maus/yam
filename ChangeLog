@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-07-26 Jens Langner <Jens.Langner@light-speed.de>
+
+  * TZone.c, YAM_CO.c, YAM.c, YAM_COs.c, YAM_config.h: YAM will now try to
+    identify the location by guessing it using the GMT offset the system is
+    returning if "TimeZone" is not set. It will now set the YAMTZ env variable
+    which libtz will query.
+
 2013-07-25 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MA.c, mui/MainWindow.c: implemented the EditAction hook as a proper

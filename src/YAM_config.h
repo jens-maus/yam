@@ -619,6 +619,7 @@ struct Config
   char DefaultSSLCiphers[SIZE_DEFAULT];
   char SpamExternalFilter[SIZE_FILE];
   char MachineFQDN[SIZE_DEFAULT];
+  char Location[SIZE_DEFAULT];
 };
 
 extern struct Config *C;
