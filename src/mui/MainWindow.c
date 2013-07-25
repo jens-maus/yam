@@ -293,3 +293,27 @@ DECLARE(Relayout)
 }
 
 ///
+/// DECLARE(DoEditAction)
+// delegate an edit action (i.e. cut/copy/paste, etc) to certain subobjects
+DECLARE(DoEditAction) // enum EditAction action
+{
+  BOOL matched = FALSE;
+
+  ENTER();
+
+  // check if the quicksearchbar (if enabled) reacts on our
+  // edit action
+  if(C->QuickSearchBarPos != QSB_POS_OFF)
+    matched = DoMethod(G->MA->GUI.GR_QUICKSEARCHBAR, MUIM_QuickSearchBar_DoEditAction, msg->action);
+
+  // if we have an active embedded read pane we
+  // have to forward the request to the readmail group object
+  // first and see if it matches
+  if(matched == FALSE && C->EmbeddedReadPane == TRUE)
+    matched = DoMethod(G->MA->GUI.MN_EMBEDDEDREADPANE, MUIM_ReadMailGroup_DoEditAction, msg->action, TRUE);
+
+  RETURN(0);
+  return 0;
+}
+
+///

@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-07-25 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MA.c, mui/MainWindow.c: implemented the EditAction hook as a proper
+    method.
+
 2013-07-24 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_FO.c, mui/FolderEditWindow.c: moved all stuff related to editing folder

@@ -3605,32 +3605,6 @@ HOOKPROTONHNO(MA_DelKeyFunc, void, int *arg)
 MakeStaticHook(MA_DelKeyHook, MA_DelKeyFunc);
 
 ///
-/// MA_EditAction
-//  User pressed an item of the edit submenu (cut/copy/paste, etc)
-HOOKPROTONHNO(MA_EditActionFunc, void, int *arg)
-{
-  enum EditAction action = arg[0];
-  struct MA_GUIData *gui = &G->MA->GUI;
-  BOOL matched = FALSE;
-
-  ENTER();
-
-  // check if the quicksearchbar (if enabled) reacts on our
-  // edit action
-  if(C->QuickSearchBarPos != QSB_POS_OFF)
-    matched = DoMethod(gui->GR_QUICKSEARCHBAR, MUIM_QuickSearchBar_DoEditAction, action);
-
-  // if we have an active embedded read pane we
-  // have to forward the request to the readmail group object
-  // first and see if it matches
-  if(matched == FALSE && C->EmbeddedReadPane == TRUE)
-    matched = DoMethod(gui->MN_EMBEDDEDREADPANE, MUIM_ReadMailGroup_DoEditAction, action, TRUE);
-
-  LEAVE();
-}
-MakeStaticHook(MA_EditActionHook, MA_EditActionFunc);
-
-///
 /// FollowThreadHook
 //  Hook that is called to find the next/prev message in a thread and change to it
 HOOKPROTONHNO(FollowThreadFunc, void, int *arg)
@@ -4262,14 +4236,14 @@ struct MA_ClassData *MA_New(void)
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_LOGIN,          MUIV_Notify_Application, 2, MUIM_Application_ReturnID, ID_RESTART);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_HIDE,           MUIV_Notify_Application, 3, MUIM_Set,                  MUIA_Application_Iconified, TRUE);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_QUIT,           MUIV_Notify_Application, 2, MUIM_Application_ReturnID, MUIV_Application_ReturnID_Quit);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT_UNDO,      MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_EditActionHook, EA_UNDO);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT_REDO,      MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_EditActionHook, EA_REDO);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT_CUT,       MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_EditActionHook, EA_CUT);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT_COPY,      MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_EditActionHook, EA_COPY);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT_PASTE,     MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_EditActionHook, EA_PASTE);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT_DELETE,    MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_EditActionHook, EA_DELETE);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT_SALL,      MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_EditActionHook, EA_SELECTALL);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT_SNONE,     MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_EditActionHook, EA_SELECTNONE);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT_UNDO,      MUIV_Notify_Self,        2, MUIM_MainWindow_DoEditAction, EA_UNDO);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT_REDO,      MUIV_Notify_Self,        2, MUIM_MainWindow_DoEditAction, EA_REDO);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT_CUT,       MUIV_Notify_Self,        2, MUIM_MainWindow_DoEditAction, EA_CUT);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT_COPY,      MUIV_Notify_Self,        2, MUIM_MainWindow_DoEditAction, EA_COPY);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT_PASTE,     MUIV_Notify_Self,        2, MUIM_MainWindow_DoEditAction, EA_PASTE);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT_DELETE,    MUIV_Notify_Self,        2, MUIM_MainWindow_DoEditAction, EA_DELETE);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT_SALL,      MUIV_Notify_Self,        2, MUIM_MainWindow_DoEditAction, EA_SELECTALL);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT_SNONE,     MUIV_Notify_Self,        2, MUIM_MainWindow_DoEditAction, EA_SELECTNONE);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_NEWF,           data->GUI.NL_FOLDERS,    1, MUIM_MainFolderListtree_NewFolder);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_NEWFG,          data->GUI.NL_FOLDERS,    1, MUIM_MainFolderListtree_NewFolderGroup);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDITF,          data->GUI.NL_FOLDERS,    2, MUIM_MainFolderListtree_EditFolder, FALSE);
