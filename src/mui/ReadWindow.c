@@ -60,6 +60,7 @@
 #include "mui/ReadMailGroup.h"
 #include "mui/ReadWindowStatusBar.h"
 #include "mui/ReadWindowToolbar.h"
+#include "mui/YAMApplication.h"
 
 #include "Debug.h"
 
@@ -142,29 +143,6 @@ INLINE LONG SelectMessage(struct Mail *mail)
   return pos;
 }
 
-///
-
-/* Hooks */
-/// CloseReadWindowHook()
-//  Hook that will be called as soon as a read window is closed
-HOOKPROTONHNO(CloseReadWindowFunc, void, struct ReadMailData **arg)
-{
-  struct ReadMailData *rmData = *arg;
-
-  ENTER();
-
-  // only if this is not a close operation because the application
-  // is getting iconified we really cleanup our readmail data
-  if(rmData == G->ActiveRexxRMData ||
-     xget(G->App, MUIA_Application_Iconified) == FALSE)
-  {
-    // calls the CleanupReadMailData to clean everything else up
-    CleanupReadMailData(rmData, TRUE);
-  }
-
-  LEAVE();
-}
-MakeStaticHook(CloseReadWindowHook, CloseReadWindowFunc);
 ///
 
 /* Overloaded Methods */
@@ -488,11 +466,11 @@ OVERLOAD(OM_NEW)
     // so that we get informed if the window is closed and therefore can be
     // disposed
     // However, please note that because we do kill the window upon closing it
-    // we have to use MUIM_Application_PushMethod instead of calling the CloseReadWindowHook
-    // directly
+    // we have to use MUIM_Application_PushMethod instead of calling the
+    // CleanupReadMailData method directly
     DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE,
                   MUIV_Notify_Application, 6,
-                    MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &CloseReadWindowHook, rmData);
+                    MUIM_Application_PushMethod, G->App, 2, MUIM_YAMApplication_CleanupReadMailData, rmData);
   }
   else
     obj = NULL;
@@ -905,8 +883,8 @@ DECLARE(MoveMailRequest)
 
       // make sure the read window is closed in case there is no further
       // mail for deletion in this direction
-      if(closeAfter)
-        DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &CloseReadWindowHook, rmData);
+      if(closeAfter == TRUE)
+        DoMethod(G->App, MUIM_Application_PushMethod, G->App, 2, MUIM_YAMApplication_CleanupReadMailData, rmData);
 
       AppendToLogfile(LF_NORMAL, 22, tr(MSG_LOG_Moving), 1, srcfolder->Name, dstfolder->Name);
     }
@@ -1025,7 +1003,7 @@ DECLARE(DeleteMailRequest) // ULONG qualifier
     // make sure the read window is closed in case there is no further
     // mail for deletion in this direction
     if(closeAfter == TRUE)
-      DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &CloseReadWindowHook, rmData);
+      DoMethod(G->App, MUIM_Application_PushMethod, G->App, 2, MUIM_YAMApplication_CleanupReadMailData, rmData);
 
     if(delatonce || isSpamFolder(folder))
       AppendToLogfile(LF_NORMAL, 20, tr(MSG_LOG_Deleting), 1, folder->Name);
@@ -1097,7 +1075,7 @@ DECLARE(ClassifyMessage) // enum BayesClassification class
       // make sure the read window is closed in case there is no further
       // mail for deletion in this direction
       if(closeAfter == TRUE)
-        DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &CloseReadWindowHook, rmData);
+        DoMethod(G->App, MUIM_Application_PushMethod, G->App, 2, MUIM_YAMApplication_CleanupReadMailData, rmData);
       else
       {
         // only update the menu/toolbar if we are already in the spam folder
@@ -1173,7 +1151,7 @@ DECLARE(ClassifyMessage) // enum BayesClassification class
         // make sure the read window is closed in case there is no further
         // mail for deletion in this direction
         if(closeAfter == TRUE)
-          DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &CloseReadWindowHook, rmData);
+          DoMethod(G->App, MUIM_Application_PushMethod, G->App, 2, MUIM_YAMApplication_CleanupReadMailData, rmData);
         else
         {
           // only update the menu/toolbar if we are already in the incoming folder
@@ -1450,7 +1428,7 @@ DECLARE(SwitchMail) // LONG direction, ULONG qualifier
   // we can close the window accordingly. This signals a user that he/she
   // reached the end of the mail list
   if(found == FALSE)
-    DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &CloseReadWindowHook, rmData);
+    DoMethod(G->App, MUIM_Application_PushMethod, G->App, 2, MUIM_YAMApplication_CleanupReadMailData, rmData);
 
   RETURN(0);
   return 0;

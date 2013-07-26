@@ -14,6 +14,8 @@ $URL$
   * mui/TZoneChooser.c: implemented MUIA_TZoneChooser_GMTOffset to obtain the GMT
     offset of the currently set location.
   * mui/WriteWindow.c: converted the AppMessage hook into a method.
+  * mui/ReadWindow.c, mui/WriteWindow.c, mui/YAMApplication.c: converted two hooks
+    into methods.
 
 2013-07-26 Jens Langner <Jens.Langner@light-speed.de>
 

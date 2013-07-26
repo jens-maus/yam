@@ -670,30 +670,6 @@ static void FreeCompose(struct Compose *comp)
 
 ///
 
-/* Hooks */
-/// CloseWriteWindowHook
-//  Hook that will be called as soon as a write window is closed
-HOOKPROTONHNO(CloseWriteWindowFunc, void, struct WriteMailData **arg)
-{
-  struct WriteMailData *wmData = arg[0];
-
-  ENTER();
-
-  // only if this is not a close operation because the application
-  // is getting iconified we really cleanup our readmail data
-  if(wmData == G->ActiveRexxWMData ||
-     xget(G->App, MUIA_Application_Iconified) == FALSE)
-  {
-    // calls the CleanupWriteMailData to clean everything else up
-    CleanupWriteMailData(wmData);
-  }
-
-  LEAVE();
-}
-MakeStaticHook(CloseWriteWindowHook, CloseWriteWindowFunc);
-
-///
-
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
@@ -4418,9 +4394,9 @@ DECLARE(ComposeMail) // enum WriteMode mode
   }
 
   // make sure to dispose the window data by calling
-  // CloseWriteWindowHook() as soon as this method is finished
+  // CleanupWriteMailData method as soon as this method is finished
   if(mode != WRITE_DRAFT)
-    DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &CloseWriteWindowHook, data->wmData);
+    DoMethod(G->App, MUIM_Application_PushMethod, G->App, 2, MUIM_YAMApplication_CleanupWriteMailData, wmData);
 
   // update the statistics of the outgoing folder
   DisplayStatistics(outfolder, TRUE);
@@ -4596,10 +4572,10 @@ DECLARE(CancelAction)
 
   // check if we have to close/discard the window
   // However, please note that because we do kill the window upon closing it
-  // we have to use MUIM_Application_PushMethod instead of calling the CloseWriteWindowHook
-  // directly
+  // we have to use MUIM_Application_PushMethod instead of calling the
+  // CleanupWriteMailData method directly
   if(discard == TRUE)
-    DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &CloseWriteWindowHook, data->wmData);
+    DoMethod(G->App, MUIM_Application_PushMethod, G->App, 2, MUIM_YAMApplication_CleanupWriteMailData, data->wmData);
 
   RETURN(0);
   return 0;

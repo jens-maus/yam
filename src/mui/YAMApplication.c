@@ -1354,3 +1354,41 @@ DECLARE(CertWarningRequest) // struct Connection *conn, struct Certificate *cert
 }
 
 ///
+/// DECLARE(CleanupReadMailData)
+// free the ReadMailData structure of a recently closed read window
+DECLARE(CleanupReadMailData) // struct ReadMailData *rmData
+{
+  ENTER();
+
+  // only if this is not a close operation because the application
+  // is getting iconified we really cleanup our readmail data
+  if(msg->rmData == G->ActiveRexxRMData || xget(obj, MUIA_Application_Iconified) == FALSE)
+  {
+    // calls the CleanupReadMailData to clean everything else up
+    CleanupReadMailData(msg->rmData, TRUE);
+  }
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(CleanupWriteMailData)
+// free the WriteMailData structure of a recently closed write window
+DECLARE(CleanupWriteMailData) // struct WriteMailData *wmData
+{
+  ENTER();
+
+  // only if this is not a close operation because the application
+  // is getting iconified we really cleanup our writemail data
+  if(msg->wmData == G->ActiveRexxWMData || xget(obj, MUIA_Application_Iconified) == FALSE)
+  {
+    // calls the CleanupWriteMailData to clean everything else up
+    CleanupWriteMailData(msg->wmData);
+  }
+
+  RETURN(0);
+  return 0;
+}
+
+///
