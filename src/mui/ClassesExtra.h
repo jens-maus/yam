@@ -111,6 +111,10 @@
 #ifndef MUIM_GoInactive
 #define MUIM_GoInactive                     0x80422c0cUL /* V8  */
 #endif
+#ifndef MUIM_Layout
+#define MUIM_Layout                         0x8042845b /* V4  */
+struct  MUIP_Layout                         { ULONG MethodID; LONG left; LONG top; LONG width; LONG height; ULONG flags; };
+#endif
 #ifndef MUIA_Window_DisableKeys
 #define MUIA_Window_DisableKeys             0x80424c36UL /* V15 isg ULONG    */
 #endif
