@@ -693,52 +693,6 @@ HOOKPROTONHNO(CloseWriteWindowFunc, void, struct WriteMailData **arg)
 MakeStaticHook(CloseWriteWindowHook, CloseWriteWindowFunc);
 
 ///
-/// AppMessageHook
-// Hook to catch the MUIA_AppMessage from a workbench icon drop operation
-// Note, that this must be a hook or otherwise the "struct AppMessage"
-// is not valid anymore at the time this function is executed.
-HOOKPROTONHNO(AppMessageFunc, LONG, ULONG *arg)
-{
-  // manage the AppMessage
-  struct AppMessage *amsg = (struct AppMessage *)arg[0];
-  Object *writeWindow = (Object *)arg[1];
-
-  ENTER();
-
-  if(amsg != NULL && writeWindow != NULL)
-  {
-    int i;
-
-    // let's walk through all arguments in the appMessage
-    for(i=0; i < amsg->am_NumArgs; i++)
-    {
-      struct WBArg *wa = &amsg->am_ArgList[i];
-      char buf[SIZE_PATHFILE];
-
-      NameFromLock(wa->wa_Lock, buf, sizeof(buf));
-
-      if(wa->wa_Name != NULL && strlen(wa->wa_Name) > 0)
-      {
-        AddPart(buf, (char *)wa->wa_Name, sizeof(buf));
-
-        // call WR_App to let it put in the text of the file
-        // to the write window
-        DoMethod(writeWindow, METHOD(DroppedFile), buf);
-      }
-      else
-      {
-        // open the usual requester, but let it point to the dropped drawer
-        DoMethod(writeWindow, METHOD(RequestAttachment), buf);
-      }
-    }
-  }
-
-  RETURN(0);
-  return 0;
-}
-MakeStaticHook(AppMessageHook, AppMessageFunc);
-
-///
 
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
@@ -1442,7 +1396,7 @@ OVERLOAD(OM_NEW)
 
         // catch MUIA_AppMessage with a hook so that we get notified
         // as soon as the user drops a WB icon on the pagegroup object
-        DoMethod(data->RG_PAGE, MUIM_Notify, MUIA_AppMessage, MUIV_EveryTime, MUIV_Notify_Application, 4, MUIM_CallHook, &AppMessageHook, MUIV_TriggerValue, obj);
+        DoMethod(data->RG_PAGE, MUIM_Notify, MUIA_AppMessage, MUIV_EveryTime, obj, 2, METHOD(HandleAppMessage), MUIV_TriggerValue);
 
         // set some notifications on the toolbar
         // in case it was generated
@@ -5225,6 +5179,48 @@ DECLARE(UpdateIdentities)
   ENTER();
 
   DoMethod(data->CY_FROM, MUIM_IdentityChooser_UpdateIdentities);
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(HandleAppMessage)
+// Hook to catch the MUIA_AppMessage from a workbench icon drop operation
+// Note, that this must be a hook or otherwise the "struct AppMessage"
+// is not valid anymore at the time this function is executed.
+DECLARE(HandleAppMessage) // struct AppMessage *appmsg
+{
+
+  ENTER();
+
+  if(msg->appmsg != NULL)
+  {
+    int i;
+
+    // let's walk through all arguments in the appMessage
+    for(i=0; i < msg->appmsg->am_NumArgs; i++)
+    {
+      struct WBArg *wa = &msg->appmsg->am_ArgList[i];
+      char buf[SIZE_PATHFILE];
+
+      NameFromLock(wa->wa_Lock, buf, sizeof(buf));
+
+      if(wa->wa_Name != NULL && strlen(wa->wa_Name) > 0)
+      {
+        AddPart(buf, (char *)wa->wa_Name, sizeof(buf));
+
+        // call WR_App to let it put in the text of the file
+        // to the write window
+        DoMethod(obj, METHOD(DroppedFile), buf);
+      }
+      else
+      {
+        // open the usual requester, but let it point to the dropped drawer
+        DoMethod(obj, METHOD(RequestAttachment), buf);
+      }
+    }
+  }
 
   RETURN(0);
   return 0;

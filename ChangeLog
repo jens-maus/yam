@@ -13,6 +13,7 @@ $URL$
     on a continent.
   * mui/TZoneChooser.c: implemented MUIA_TZoneChooser_GMTOffset to obtain the GMT
     offset of the currently set location.
+  * mui/WriteWindow.c: converted the AppMessage hook into a method.
 
 2013-07-26 Jens Langner <Jens.Langner@light-speed.de>
 
