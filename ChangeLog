@@ -11,6 +11,8 @@ $URL$
     comparing and setting configurations.
   * mui/TZoneChooser.c: fixed usage of the wrong object when getting the location
     on a continent.
+  * mui/TZoneChooser.c: implemented MUIA_TZoneChooser_GMTOffset to obtain the GMT
+    offset of the currently set location.
 
 2013-07-26 Jens Langner <Jens.Langner@light-speed.de>
 
