@@ -34,7 +34,6 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 
 #include <clib/alib_protos.h>
 #include <dos/datetime.h>
@@ -484,7 +483,7 @@ BOOL AB_ExpandBD(const long date, char *dateStr, const size_t dateStrSize)
   }
   else
   {
-    struct tm tm;
+    struct TM tm;
     STRPTR dateFormat;
 
     tm.tm_mday = day;

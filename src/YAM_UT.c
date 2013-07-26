@@ -2168,8 +2168,8 @@ time_t GetDateStamp(void)
 ///
 enum DST GetDSTinfo(int year, int month, int day)
 {
-  struct tm a = {};
-  struct tm b;
+  struct TMm a = {};
+  struct TM b;
   a.tm_isdst = -1;
   a.tm_mday = day;
   a.tm_mon  = month - 1;

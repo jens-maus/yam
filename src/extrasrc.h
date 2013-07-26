@@ -80,6 +80,7 @@ struct Node;
 #define NEED_VASTUBS
 #define NEED_CHANGEFILEPOSITION
 #define NEED_STRCASESTR
+#define NEED_GLIBC_TM
 #define NEED_TZLIB
 #endif // __amigaos3__
 
@@ -295,6 +296,27 @@ void NewFreeArgs(struct NewRDArgs *);
 char *strcasestr(const char *haystack, const char *needle);
 #endif
 
+#if defined(NEED_GLIBC_TM)
+struct glibc_tm
+{
+  int  tm_sec;
+  int  tm_min;
+  int  tm_hour;
+  int  tm_mday;
+  int  tm_mon;
+  int  tm_year;
+  int  tm_wday;
+  int  tm_yday;
+  int  tm_isdst;
+  long tm_gmtoff;
+  const char *tm_zone;
+};
+#define TM glibc_tm
+#else
+#include <time.h>
+#define TM tm
+#endif
+
 #if defined(NEED_TZLIB)
 # undef  ctime
 # define ctime tz_ctime
@@ -324,16 +346,16 @@ char *strcasestr(const char *haystack, const char *needle);
 char *ctime(time_t const *);
 char *ctime_r(time_t const *, char *);
 double difftime(time_t, time_t);
-struct tm *gmtime(time_t const *);
-struct tm *gmtime_r(time_t const *, struct tm *);
-struct tm *localtime(time_t const *);
-struct tm *localtime_r(time_t const *, struct tm *);
-time_t mktime(struct tm *);
+struct TM *gmtime(time_t const *);
+struct TM *gmtime_r(time_t const *, struct TM *);
+struct TM *localtime(time_t const *);
+struct TM *localtime_r(time_t const *, struct TM *);
+time_t mktime(struct TM *);
 void tzset(void);
 size_t strftime(char * const s, const size_t maxsize, const char *const format,
-   const struct tm *const t);
-char *asctime_r(register const struct tm *timeptr, char *buf);
-char *asctime(register const struct tm *timeptr);
+   const struct TM *const t);
+char *asctime_r(register const struct TM *timeptr, char *buf);
+char *asctime(register const struct TM *timeptr);
 #endif
 
 /*
