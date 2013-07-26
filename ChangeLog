@@ -9,6 +9,8 @@ $URL$
 
   * YAM_CO.c, YAM_COs.c: correctly respect the new time zone location during
     comparing and setting configurations.
+  * mui/TZoneChooser.c: fixed usage of the wrong object when getting the location
+    on a continent.
 
 2013-07-26 Jens Langner <Jens.Langner@light-speed.de>
 

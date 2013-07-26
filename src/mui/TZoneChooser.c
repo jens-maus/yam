@@ -127,7 +127,7 @@ OVERLOAD(OM_GET)
   {
     case ATTR(TZone):
     {
-      *store = (IPTR)BuildTZoneName(data->tzone, sizeof(data->tzone), xget(data->continents, MUIA_Cycle_Active), xget(data->continents, MUIA_Cycle_Active));
+      *store = (IPTR)BuildTZoneName(data->tzone, sizeof(data->tzone), xget(data->continents, MUIA_Cycle_Active), xget(data->locations, MUIA_Cycle_Active));
       return TRUE;
     }
   }
