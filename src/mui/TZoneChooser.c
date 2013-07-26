@@ -37,6 +37,7 @@
 #include "extrasrc.h"
 
 #include "YAM_config.h"
+#include "YAM_utilities.h"
 
 #include "MUIObjects.h"
 #include "TZone.h"
@@ -154,10 +155,38 @@ OVERLOAD(OM_GET)
       // Additionally we must respect the current DST state to obtain
       // an GMT offset which complies to the system.
       mktime(&tm);
-      if(tm.tm_isdst)
+      if(tm.tm_isdst != 0)
         *store = (tm.tm_gmtoff - 3600) / 60;
       else
         *store = tm.tm_gmtoff / 60;
+
+      // reset the location to the former value
+      if(resetTZ == TRUE)
+      {
+        setenv("YAMTZ", C->Location, 1);
+        tzset();
+      }
+
+      return TRUE;
+    }
+
+    case ATTR(DSTState):
+    {
+      BOOL resetTZ = FALSE;
+      struct TM tm;
+
+      BuildTZoneName(data->tzone, sizeof(data->tzone), xget(data->continents, MUIA_Cycle_Active), xget(data->locations, MUIA_Cycle_Active));
+
+      // check if our objects are representing a different location than the current configuration
+      if(strcasecmp(data->tzone, C->Location) != 0)
+      {
+        setenv("YAMTZ", data->tzone, 1);
+        tzset();
+        resetTZ = TRUE;
+      }
+
+      mktime(&tm);
+      *store = (tm.tm_isdst != 0) ? DST_ON : DST_OFF;
 
       // reset the location to the former value
       if(resetTZ == TRUE)
