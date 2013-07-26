@@ -35,8 +35,6 @@
 #include <proto/graphics.h>
 #include <proto/muimaster.h>
 
-#include "SDI_hook.h"
-
 #include "YAM.h"
 #include "YAM_mainFolder.h"
 
