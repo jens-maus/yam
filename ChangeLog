@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-07-26 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_CO.c, YAM_COs.c: correctly respect the new time zone location during
+    comparing and setting configurations.
+
 2013-07-26 Jens Langner <Jens.Langner@light-speed.de>
 
   * TZone.c, YAM_CO.c, YAM.c, YAM_COs.c, YAM_config.h: YAM will now try to

@@ -2109,6 +2109,7 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      CompareMimeTypeLists(&c1->mimeTypeList, &c2->mimeTypeList) &&
      CompareRxHooks((const struct RxHook *)c1->RX, (const struct RxHook *)c2->RX) &&
 
+     strcmp(c1->Location,            c2->Location) == 0 &&
      strcmp(c1->ColoredText.buf,     c2->ColoredText.buf) == 0 &&
      strcmp(c1->Color1stLevel.buf,   c2->Color1stLevel.buf) == 0 &&
      strcmp(c1->Color2ndLevel.buf,   c2->Color2ndLevel.buf) == 0 &&

@@ -1971,6 +1971,7 @@ void CO_GetConfig(void)
         GetMUIString(uin->address, gui->ST_EMAIL, sizeof(uin->address));
       }
 
+      strlcpy(CE->Location, (char *)xget(gui->GR_TZONE, MUIA_TZoneChooser_TZone), sizeof(CE->Location));
       CE->TimeZone = MapTZ(GetMUICycle(gui->CY_TZONE), TRUE);
       CE->DaylightSaving = GetMUICheck(gui->CH_DSTACTIVE);
     }
