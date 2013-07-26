@@ -302,6 +302,7 @@ char *BuildTZoneName(char *name, size_t nameSize, ULONG continent, ULONG locatio
 
   ENTER();
 
+  D(DBF_TZONE, "continent index %ld, location index %ld", continent, location);
   name[0] = '\0';
 
   if((cont = (struct TZoneContinent *)GetNthNode(&G->tzoneContinentList, continent)) != NULL)
@@ -321,6 +322,8 @@ char *BuildTZoneName(char *name, size_t nameSize, ULONG continent, ULONG locatio
         *p++ = '_';
     }
   }
+
+  D(DBF_TZONE, "built tzone name '%s'", name);
 
   RETURN(name);
   return name;
@@ -410,6 +413,7 @@ BOOL ParseTZoneName(const char *tzone, ULONG *continent, ULONG *location)
 
   ENTER();
 
+  D(DBF_TZONE, "parse tzone name '%s'", tzone);
   if((tmp = strdup(tzone)) != NULL)
   {
     char *p;
@@ -421,12 +425,14 @@ BOOL ParseTZoneName(const char *tzone, ULONG *continent, ULONG *location)
       // split the two parts
       *p++ = '\0';
 
+      D(DBF_TZONE, "continent '%s', location '%s'", tmp, p);
       if((cont = findContinent(tmp, continent)) != NULL)
       {
         struct TZoneLocation *loc;
 
         if((loc = findLocation(cont, p, location)) != NULL)
         {
+          D(DBF_TZONE, "continent index %ld, location index %ld", *continent, *location);
           result = TRUE;
         }
         else
