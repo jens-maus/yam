@@ -332,7 +332,7 @@ char *BuildTZoneName(char *name, size_t nameSize, ULONG continent, ULONG locatio
 ///
 /// FindContinent
 // find a continent by name
-static struct TZoneContinent *findContinent(const char *continent, ULONG *index)
+static struct TZoneContinent *findContinent(const char *continent, ULONG *cindex)
 {
   struct TZoneContinent *result = NULL;
   struct TZoneContinent *cont;
@@ -353,7 +353,7 @@ static struct TZoneContinent *findContinent(const char *continent, ULONG *index)
     if(strcasecmp(cont->name, contStr) == 0)
     {
       result = cont;
-      *index = i;
+      *cindex = i;
       break;
     }
 
@@ -369,7 +369,7 @@ static struct TZoneContinent *findContinent(const char *continent, ULONG *index)
 ///
 /// FindLocation
 // find a location on a continent by name
-static struct TZoneLocation *findLocation(struct TZoneContinent *continent, const char *location, ULONG *index)
+static struct TZoneLocation *findLocation(struct TZoneContinent *continent, const char *location, ULONG *lindex)
 {
   struct TZoneLocation *result = NULL;
   struct TZoneLocation *loc;
@@ -390,7 +390,7 @@ static struct TZoneLocation *findLocation(struct TZoneContinent *continent, cons
     if(strcasecmp(loc->name, locStr) == 0)
     {
       result = loc;
-      *index = i;
+      *lindex = i;
       break;
     }
 
