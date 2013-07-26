@@ -269,6 +269,22 @@ extern char *	asctime_r(struct tm const *, char *);
 
 typedef time_tz time_t;
 
+struct glibc_tm
+{
+  int  tm_sec;
+  int  tm_min;
+  int  tm_hour;
+  int  tm_mday;
+  int  tm_mon;
+  int  tm_year;
+  int  tm_wday;
+  int  tm_yday;
+  int  tm_isdst;
+  long tm_gmtoff;
+  const char *tm_zone;
+};
+#define tm glibc_tm
+
 char *ctime(time_t const *);
 char *ctime_r(time_t const *, char *);
 double difftime(time_t, time_t);
