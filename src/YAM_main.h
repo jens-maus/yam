@@ -354,7 +354,6 @@ extern struct Hook MA_DeleteOldHook;
 extern struct Hook MA_RescanIndexHook;
 extern struct Hook MA_SendHook;
 extern struct Hook PO_WindowHook;
-extern struct Hook MA_FolderKeyHook;
 extern struct Hook MA_PopNowHook;
 
 void  MA_ChangeSubject(struct Mail *mail, char *subj);

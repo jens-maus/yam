@@ -3530,52 +3530,6 @@ HOOKPROTONH(PO_Window, void, Object *pop, Object *win)
 MakeHook(PO_WindowHook, PO_Window);
 
 ///
-/// MA_FolderKeyFunc
-//  If the user pressed 1,2,...,9,0 we jump to folder 1-10
-HOOKPROTONHNO(MA_FolderKeyFunc, void, int *idx)
-{
-  ENTER();
-
-  // we make sure that the quicksearchbar is NOT active
-  // or otherwise we steal it the focus while the user
-  // tried to enter some numbers there
-  if(xget(G->MA->GUI.GR_QUICKSEARCHBAR, MUIA_QuickSearchBar_SearchStringIsActive) == FALSE)
-  {
-    struct MUI_NListtree_TreeNode *tn = NULL;
-    int count = idx[0];
-    int i;
-
-    // pressing '0' means 10th folder
-    if(count == 0)
-      count = 10;
-
-    // we get the first entry and if it's a LIST we have to get the next one
-    // and so on, until we have a real entry for that key or we set nothing active
-    for(i=count; i <= count; i++)
-    {
-      tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i-1, MUIF_NONE);
-      if(tn == NULL)
-      {
-        LEAVE();
-        return;
-      }
-
-      if(isFlagSet(tn->tn_Flags, TNF_LIST))
-        count++;
-    }
-
-    // Force that the list is open at this entry
-    DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Open, MUIV_NListtree_Open_ListNode_Parent, tn, MUIF_NONE);
-
-    // Now set this treenode activ
-    set(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Active, tn);
-  }
-
-  LEAVE();
-}
-MakeHook(MA_FolderKeyHook, MA_FolderKeyFunc);
-
-///
 /// MA_DelKey
 //  User pressed DEL key
 HOOKPROTONHNO(MA_DelKeyFunc, void, int *arg)
@@ -4311,15 +4265,6 @@ struct MA_ClassData *MA_New(void)
       DoMethod(data->GUI.WI,            MUIM_Notify, MUIA_Window_InputEvent,    "-capslock shift del",  MUIV_Notify_Application,  3, MUIM_CallHook,             &MA_DelKeyHook, TRUE);
       DoMethod(data->GUI.WI,            MUIM_Notify, MUIA_Window_InputEvent,    "-repeat -capslock alt left",   MUIV_Notify_Application,  3, MUIM_CallHook,             &FollowThreadHook, -1);
       DoMethod(data->GUI.WI,            MUIM_Notify, MUIA_Window_InputEvent,    "-repeat -capslock alt right",  MUIV_Notify_Application,  3, MUIM_CallHook,             &FollowThreadHook, +1);
-
-      // define notifies for ShortcutFolderKeys
-      for(i = 0; i < 10; i++)
-      {
-        char key[] = "-repeat 0";
-
-        key[8] = '0' + i;
-        DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_InputEvent, key, MUIV_Notify_Application, 3, MUIM_CallHook, &MA_FolderKeyHook, i);
-      }
 
       // define shortcut for "Forward" item
       if(C->ForwardMode == FWM_ATTACH)

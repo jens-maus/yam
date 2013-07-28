@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-07-28 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MA.c, mui/MainFolderListtree.c: converted the folder key hook into a
+    proper method.
+
 2013-07-26 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_CO.c, YAM_COs.c: correctly respect the new time zone location during

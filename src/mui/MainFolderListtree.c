@@ -65,6 +65,7 @@ struct Data
   struct Folder newFolder;
   BOOL draggingMails;
   BOOL reorderFolderList;
+  struct MUI_EventHandlerNode eh;
 };
 */
 
@@ -177,6 +178,93 @@ OVERLOAD(OM_SET)
   }
 
   return DoSuperMethodA(cl, obj, msg);
+}
+
+///
+/// OVERLOAD(MUIM_Setup)
+OVERLOAD(MUIM_Setup)
+{
+  GETDATA;
+  IPTR result;
+
+  ENTER();
+
+  if((result = DoSuperMethodA(cl, obj, msg)))
+  {
+    data->eh.ehn_Class  = cl;
+    data->eh.ehn_Object = obj;
+    data->eh.ehn_Events = IDCMP_RAWKEY;
+    data->eh.ehn_Flags  = MUI_EHF_GUIMODE;
+    data->eh.ehn_Priority = -1;
+
+    if(_win(obj) != NULL)
+      DoMethod(_win(obj), MUIM_Window_AddEventHandler, &data->eh);
+  }
+
+  RETURN(result);
+  return result;
+}
+
+///
+/// OVERLOAD(MUIM_Cleanup)
+OVERLOAD(MUIM_Cleanup)
+{
+  GETDATA;
+  IPTR result;
+
+  ENTER();
+
+  if(_win(obj) != NULL)
+    DoMethod(_win(obj), MUIM_Window_RemEventHandler, &data->eh);
+
+  result = DoSuperMethodA(cl, obj, msg);
+
+  RETURN(result);
+  return result;
+}
+
+///
+/// OVERLOAD(MUIM_HandleEvent)
+OVERLOAD(MUIM_HandleEvent)
+{
+  struct MUIP_HandleEvent *mhe = (struct MUIP_HandleEvent *)msg;
+  IPTR result = 0;
+
+  if(mhe->imsg->Class == IDCMP_RAWKEY)
+  {
+    if(mhe->imsg->Code >= 1 && mhe->imsg->Code <= 10)
+    {
+      struct MUI_NListtree_TreeNode *tn = NULL;
+      int count = mhe->imsg->Code;
+      int i;
+
+      // we get the first entry and if it's a LIST we have to get the next one
+      // and so on, until we have a real entry for that key or we set nothing active
+      for(i=count; i <= count; i++)
+      {
+        tn = (struct MUI_NListtree_TreeNode *)DoMethod(obj, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i-1, MUIF_NONE);
+        if(tn == NULL)
+          break;
+
+        if(isFlagSet(tn->tn_Flags, TNF_LIST))
+          count++;
+      }
+
+      if(tn != NULL)
+      {
+        // force that the list is open at this entry
+        DoMethod(obj, MUIM_NListtree_Open, MUIV_NListtree_Open_ListNode_Parent, tn, MUIF_NONE);
+        // now set this treenode active
+        set(obj, MUIA_NListtree_Active, tn);
+      }
+
+      // eat the key press in any case
+      result = MUI_EventHandlerRC_Eat;
+    }
+  }
+
+  RETURN(result);
+  return result;
 }
 
 ///
