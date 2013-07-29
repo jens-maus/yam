@@ -25,6 +25,7 @@
 
 ***************************************************************************/
 
+#include <clib/alib_protos.h>
 #include <proto/exec.h>
 #include <proto/utility.h>
 
@@ -36,6 +37,8 @@
 
 #include "MUIObjects.h"
 #include "Rexx.h"
+
+#include "mui/AddrBookListtree.h"
 
 #include "Debug.h"
 
@@ -65,12 +68,12 @@ void rx_addrdelete(UNUSED struct RexxHost *host, struct RexxParams *params, enum
       if(!args->alias)
       {
         if(xget(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active) != MUIV_NListtree_Active_Off)
-          CallHookPkt(&AB_DeleteHook, 0, 0);
+          DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_AddrBookListtree_DeleteEntry);
         else
           params->rc = RETURN_WARN;
       }
       else if(AB_GotoEntry(args->alias))
-        CallHookPkt(&AB_DeleteHook, 0, 0);
+        DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_AddrBookListtree_DeleteEntry);
       else
         params->rc = RETURN_WARN;
     }

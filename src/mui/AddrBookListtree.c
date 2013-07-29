@@ -582,3 +582,17 @@ DECLARE(FoldTree) // ULONG unfold
 }
 
 ///
+/// DECLARE(DeleteEntry)
+// deletes selected address book entry
+DECLARE(DeleteEntry)
+{
+  ENTER();
+
+  DoMethod(obj, MUIM_NListtree_Remove, MUIV_NListtree_Remove_ListNode_Root, MUIV_NListtree_Remove_TreeNode_Selected, MUIF_NONE);
+  set(obj, MUIA_AddrBookListtree_Modified, TRUE);
+
+  RETURN(0);
+  return 0;
+}
+
+///

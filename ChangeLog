@@ -9,6 +9,8 @@ $URL$
 
   * YAM_AB.c, mui/AddrBookListtree.c, mui/AddrBookToolbar.c: converted the tree
     (un)fold hook into a proper method.
+  * YAM_AB.c, mui/AddrBookListtree.c: converted the delete hook into a proper
+    method.
 
 2013-07-28 Thore Böckelmann <tboeckel@gmx.de>
 

@@ -80,7 +80,6 @@ struct AB_ClassData  /* address book window */
   int                  winNumber;           // related write window number
 };
 
-extern struct Hook AB_DeleteHook;
 extern struct Hook AB_LV_DspFuncHook;
 extern struct Hook AB_OpenHook;
 extern struct Hook AB_SaveABookHook;

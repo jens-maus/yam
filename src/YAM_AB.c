@@ -2879,22 +2879,6 @@ HOOKPROTONHNO(AB_AddEntryFunc, void, int *arg)
 MakeHook(AB_AddEntryHook, AB_AddEntryFunc);
 
 ///
-/// AB_DeleteFunc
-/*** AB_DeleteFunc - Deletes selected address book entry ***/
-HOOKPROTONHNONP(AB_DeleteFunc, void)
-{
-  ENTER();
-
-  DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Remove, MUIV_NListtree_Remove_ListNode_Root,
-                                    MUIV_NListtree_Remove_TreeNode_Selected, MUIF_NONE);
-
-  set(G->AB->GUI.LV_ADDRESSES, MUIA_AddrBookListtree_Modified, TRUE);
-
-  LEAVE();
-}
-MakeHook(AB_DeleteHook, AB_DeleteFunc);
-
-///
 /// AB_DuplicateFunc
 /*** AB_DuplicateFunc - Duplicates selected address book entry ***/
 HOOKPROTONHNONP(AB_DuplicateFunc, void)
@@ -3283,7 +3267,7 @@ struct AB_ClassData *AB_New(void)
       DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_NEWGROUP   , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_AddEntryHook, AET_GROUP);
       DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_EDIT       , MUIV_Notify_Application, 2, MUIM_CallHook, &AB_EditHook);
       DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_DUPLICATE  , MUIV_Notify_Application, 2, MUIM_CallHook, &AB_DuplicateHook);
-      DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_DELETE     , MUIV_Notify_Application, 2, MUIM_CallHook, &AB_DeleteHook);
+      DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_DELETE     , data->GUI.LV_ADDRESSES,  1, MUIM_AddrBookListtree_DeleteEntry);
       DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_PRINTE     , MUIV_Notify_Application, 2, MUIM_CallHook, &AB_PrintHook);
       DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_FIND       , MUIV_Notify_Application, 2, MUIM_CallHook, &AB_FindHook);
       DoMethod(data->GUI.WI            , MUIM_Notify, MUIA_Window_MenuAction    , AMEN_SORTALIAS  , data->GUI.LV_ADDRESSES,  2, MUIM_AddrBookListtree_SortBy, MUIV_AddrBookListtree_SortBy_Alias);
@@ -3298,7 +3282,7 @@ struct AB_ClassData *AB_New(void)
       DoMethod(data->GUI.BT_TO         , MUIM_Notify, MUIA_Pressed              , FALSE           , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_FromAddrBookHook, ABM_TO);
       DoMethod(data->GUI.BT_CC         , MUIM_Notify, MUIA_Pressed              , FALSE           , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_FromAddrBookHook, ABM_CC);
       DoMethod(data->GUI.BT_BCC        , MUIM_Notify, MUIA_Pressed              , FALSE           , MUIV_Notify_Application, 3, MUIM_CallHook, &AB_FromAddrBookHook, ABM_BCC);
-      DoMethod(data->GUI.WI,MUIM_Notify, MUIA_Window_InputEvent   ,"-capslock del", MUIV_Notify_Application  ,2,MUIM_CallHook       ,&AB_DeleteHook);
+      DoMethod(data->GUI.WI,MUIM_Notify, MUIA_Window_InputEvent   ,"-capslock del", data->GUI.LV_ADDRESSES, 1, MUIM_AddrBookListtree_DeleteEntry);
       DoMethod(data->GUI.WI,MUIM_Notify, MUIA_Window_CloseRequest ,TRUE         , MUIV_Notify_Application           ,2,MUIM_CallHook       ,&AB_CloseHook);
 
       DoMethod(data->GUI.TB_TOOLBAR, MUIM_TheBar_Notify, TB_ABOOK_SAVE,      MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &AB_SaveABookHook);
@@ -3307,10 +3291,10 @@ struct AB_ClassData *AB_New(void)
       DoMethod(data->GUI.TB_TOOLBAR, MUIM_TheBar_Notify, TB_ABOOK_NEWLIST,   MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &AB_AddEntryHook, AET_LIST);
       DoMethod(data->GUI.TB_TOOLBAR, MUIM_TheBar_Notify, TB_ABOOK_NEWGROUP,  MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &AB_AddEntryHook, AET_GROUP);
       DoMethod(data->GUI.TB_TOOLBAR, MUIM_TheBar_Notify, TB_ABOOK_EDIT,      MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &AB_EditHook);
-      DoMethod(data->GUI.TB_TOOLBAR, MUIM_TheBar_Notify, TB_ABOOK_DELETE,    MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &AB_DeleteHook);
+      DoMethod(data->GUI.TB_TOOLBAR, MUIM_TheBar_Notify, TB_ABOOK_DELETE,    MUIA_Pressed, FALSE, data->GUI.LV_ADDRESSES,  1, MUIM_AddrBookListtree_DeleteEntry);
       DoMethod(data->GUI.TB_TOOLBAR, MUIM_TheBar_Notify, TB_ABOOK_PRINT,     MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &AB_PrintHook);
-      DoMethod(data->GUI.TB_TOOLBAR, MUIM_TheBar_Notify, TB_ABOOK_OPENTREE,  MUIA_Pressed, FALSE, data->GUI.LV_ADDRESSES, 2, MUIM_AddrBookListtree_FoldTree, TRUE);
-      DoMethod(data->GUI.TB_TOOLBAR, MUIM_TheBar_Notify, TB_ABOOK_CLOSETREE, MUIA_Pressed, FALSE, data->GUI.LV_ADDRESSES, 2, MUIM_AddrBookListtree_FoldTree, FALSE);
+      DoMethod(data->GUI.TB_TOOLBAR, MUIM_TheBar_Notify, TB_ABOOK_OPENTREE,  MUIA_Pressed, FALSE, data->GUI.LV_ADDRESSES,  2, MUIM_AddrBookListtree_FoldTree, TRUE);
+      DoMethod(data->GUI.TB_TOOLBAR, MUIM_TheBar_Notify, TB_ABOOK_CLOSETREE, MUIA_Pressed, FALSE, data->GUI.LV_ADDRESSES,  2, MUIM_AddrBookListtree_FoldTree, FALSE);
     }
     else
     {
