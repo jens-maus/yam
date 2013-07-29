@@ -497,6 +497,8 @@ OVERLOAD(MUIM_NListtree_DropType)
 }
 
 ///
+
+/* Public Methods */
 /// DECLARE(SortBy)
 DECLARE(SortBy) // ULONG sortBy;
 {
@@ -513,8 +515,6 @@ DECLARE(SortBy) // ULONG sortBy;
 }
 
 ///
-
-/* Public Methods */
 /// DECLARE(FindPerson)
 DECLARE(FindPerson) // struct Person *person
 {
@@ -560,6 +560,22 @@ DECLARE(MakeFormat)
   }
 
   set(obj, MUIA_NListtree_Format, format);
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(FoldTree)
+// (un)fold the complete tree
+DECLARE(FoldTree) // ULONG unfold
+{
+  ENTER();
+
+  if(msg->unfold == TRUE)
+    DoMethod(obj, MUIM_NListtree_Open, MUIV_NListtree_Open_ListNode_Root, MUIV_NListtree_Open_TreeNode_All, MUIF_NONE);
+  else
+    DoMethod(obj, MUIM_NListtree_Close, MUIV_NListtree_Close_ListNode_Root, MUIV_NListtree_Close_TreeNode_All, MUIF_NONE);
 
   RETURN(0);
   return 0;

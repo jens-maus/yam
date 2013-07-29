@@ -88,7 +88,6 @@ extern struct Hook AB_FindHook;
 extern struct Hook AB_AddEntryHook;
 extern struct Hook AB_EditHook;
 extern struct Hook AB_PrintHook;
-extern struct Hook AB_FoldUnfoldHook;
 
 void   AB_CheckBirthdates(BOOL check);
 char * AB_CompleteAlias(const char *text);
