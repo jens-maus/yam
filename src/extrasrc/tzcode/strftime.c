@@ -127,7 +127,9 @@ strftime(char * const s, const size_t maxsize, const char *const format,
 	char *	p;
 	int	warn;
 
+#ifndef TZSET_ARG
 	tzset();
+#endif
 #ifdef LOCALE_HOME
 	localebuf.mon[0] = 0;
 #endif /* defined LOCALE_HOME */

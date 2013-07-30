@@ -293,7 +293,11 @@ struct tm *gmtime_r(time_t const *restrict, struct tm *restrict);
 struct tm *localtime(time_t const *);
 struct tm *localtime_r(time_t const *restrict, struct tm *restrict);
 time_t mktime(struct tm *);
+#ifndef TZSET_ARG
 void tzset(void);
+#else
+void tzset(const char * name);
+#endif
 size_t strftime(char * const s, const size_t maxsize, const char *const format,
 	 const struct tm *const t);
 char *asctime_r(register const struct tm *timeptr, char *buf);

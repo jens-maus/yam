@@ -351,7 +351,7 @@ struct TM *gmtime_r(time_t const *, struct TM *);
 struct TM *localtime(time_t const *);
 struct TM *localtime_r(time_t const *, struct TM *);
 time_t mktime(struct TM *);
-void tzset(void);
+void tzset(const char * name);
 size_t strftime(char * const s, const size_t maxsize, const char *const format,
    const struct TM *const t);
 char *asctime_r(register const struct TM *timeptr, char *buf);

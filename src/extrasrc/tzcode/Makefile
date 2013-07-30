@@ -153,7 +153,7 @@ WARN     = -W -Wall -Wwrite-strings -Wpointer-arith -Wsign-compare #-Wunreachabl
 OPTFLAGS = -O3 -fomit-frame-pointer -fno-strict-aliasing
 DEBUG    = -DDEBUG -fno-omit-frame-pointer #-O0
 DEBUGSYM = -g -gstabs
-CFLAGS   = -I. -I./include $(CPU) $(WARN) $(OPTFLAGS) $(DEBUG) $(DEBUGSYM) -DTZDIR=\"PROGDIR:Resources/zoneinfo\" -DTZDEFAULT=\"Europe/Berlin\" -DALL_STATE -Dtime_tz="int_fast64_t" -DTM_GMTOFF="tm_gmtoff" -DTM_ZONE="tm_zone"
+CFLAGS   = -I. -I./include $(CPU) $(WARN) $(OPTFLAGS) $(DEBUG) $(DEBUGSYM) -DTZDIR=\"PROGDIR:Resources/zoneinfo\" -DTZDEFAULT=\"Europe/Berlin\" -DALL_STATE -Dtime_tz="int_fast64_t" -DTM_GMTOFF="tm_gmtoff" -DTM_ZONE="tm_zone" -DTZSET_ARG
 LDFLAGS  = $(CPU) $(DEBUGSYM)
 LDLIBS   = -L$(LIB) -lm
 

@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-07-30 Jens Langner <Jens.Langner@light-speed.de>
+
+  * TZone.c, libtz.a: modified tzset() of our own libtz.a lib to take an
+    additional argument rather than reading the timezone via an external ENV
+    variable. This was required since setenv() in MorphOS seem to not link
+    correctly and the individual setenv() implementations vary quite
+    significantly throughout the different c libraries. Now tzset() is called
+    with an additional argument which should be more clean and even faster
+    than having to read and external env variable on each call of mktime()&co.
+
 2013-07-30 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_AB.c, mui/AddrBookListtree.c, mui/AddrBookToolbar.c: converted the tree

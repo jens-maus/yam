@@ -197,8 +197,8 @@ static struct state	gmtmem;
 #endif /* !defined TZ_STRLEN_MAX */
 
 static char		lcl_TZname[TZ_STRLEN_MAX + 1];
-static int		lcl_is_set;
-static int		gmt_is_set;
+static int		lcl_is_set = 0;
+static int		gmt_is_set = 0;
 
 char *			tzname[2] = {
 	wildabbr,
@@ -1183,6 +1183,7 @@ gmtload(struct state *const sp)
 		(void) tzparse(gmt, sp, TRUE);
 }
 
+#ifndef TZSET_ARG
 #ifndef STD_INSPIRED
 /*
 ** A non-static declaration of tzsetwall in a system header file
@@ -1210,18 +1211,25 @@ tzsetwall(void)
 		gmtload(lclptr);
 	settzname();
 }
+#endif
 
+#ifndef TZSET_ARG
 void
 tzset(void)
+#else
+void
+tzset(const char * name)
+#endif
 {
+#ifndef TZSET_ARG
 	register const char *	name;
 
-	name = getenv("YAMTZ");
+	name = getenv("TZ");
 	if (name == NULL) {
 		tzsetwall();
 		return;
 	}
-
+#endif
 	if (lcl_is_set > 0 && strcmp(lcl_TZname, name) == 0)
 		return;
 	lcl_is_set = strlen(name) < sizeof lcl_TZname;
@@ -1352,7 +1360,9 @@ localsub(const time_t *const timep, const int_fast32_t offset,
 struct tm *
 localtime(const time_t *const timep)
 {
+#ifndef TZSET_ARG
 	tzset();
+#endif
 	return localsub(timep, 0L, &tm);
 }
 
@@ -1962,7 +1972,9 @@ time1(struct tm *const tmp,
 time_t
 mktime(struct tm *const tmp)
 {
+#ifndef TZSET_ARG
 	tzset();
+#endif
 	return time1(tmp, localsub, 0L);
 }
 
@@ -2047,7 +2059,9 @@ leapcorr(time_t *timep)
 time_t
 time2posix(time_t t)
 {
+#ifndef TZSET_ARG
 	tzset();
+#endif
 	return t - leapcorr(&t);
 }
 
@@ -2057,7 +2071,9 @@ posix2time(time_t t)
 	time_t	x;
 	time_t	y;
 
+#ifndef TZSET_ARG
 	tzset();
+#endif
 	/*
 	** For a positive leap second hit, the result
 	** is not unique. For a negative leap second

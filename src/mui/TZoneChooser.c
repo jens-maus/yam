@@ -32,6 +32,7 @@
 
 #include <stdlib.h>
 
+#include <proto/dos.h>
 #include <proto/muimaster.h>
 
 #include "extrasrc.h"
@@ -146,8 +147,7 @@ OVERLOAD(OM_GET)
       // check if our objects are representing a different location than the current configuration
       if(strcasecmp(data->tzone, C->Location) != 0)
       {
-        setenv("YAMTZ", data->tzone, 1);
-        tzset();
+        tzset(data->tzone);
         resetTZ = TRUE;
       }
 
@@ -160,12 +160,11 @@ OVERLOAD(OM_GET)
       else
         *store = tm.tm_gmtoff / 60;
 
+      D(DBF_TZONE, "GMT offset of '%s': %d", data->tzone, *store);
+
       // reset the location to the former value
       if(resetTZ == TRUE)
-      {
-        setenv("YAMTZ", C->Location, 1);
-        tzset();
-      }
+        tzset(C->Location);
 
       return TRUE;
     }
@@ -180,20 +179,18 @@ OVERLOAD(OM_GET)
       // check if our objects are representing a different location than the current configuration
       if(strcasecmp(data->tzone, C->Location) != 0)
       {
-        setenv("YAMTZ", data->tzone, 1);
-        tzset();
+        tzset(data->tzone);
         resetTZ = TRUE;
       }
 
       mktime(&tm);
       *store = (tm.tm_isdst != 0) ? DST_ON : DST_OFF;
 
+      D(DBF_TZONE, "DST state of '%s': %d", data->tzone, *store);
+
       // reset the location to the former value
       if(resetTZ == TRUE)
-      {
-        setenv("YAMTZ", C->Location, 1);
-        tzset();
-      }
+        tzset(C->Location);
 
       return TRUE;
     }

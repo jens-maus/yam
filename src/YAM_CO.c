@@ -2493,12 +2493,10 @@ void CO_Validate(struct Config *co, BOOL update)
   if(co->Location[0] == '\0')
     strlcpy(co->Location, GuessTZone(co->TimeZone), sizeof(co->Location));
 
-  // now we have to make sure we set the ENV:YAMTZ environment variable
-  // correctly and that we call tzset() so that the env variable is re-read
-  // by libtz
-  setenv("YAMTZ", co->Location, 1);
-  tzset();
+  // now we have to make sure we set the Location in our own libtz correctly
+  tzset(co->Location);
 
+  // some debug information/output
   D(DBF_TZONE, "tzname: '%s' '%s'", tzname[0], tzname[1]);
   D(DBF_TZONE, "DST1: %d", GetDSTinfo(2012, 3, 24)); // should return 0
   D(DBF_TZONE, "DST2: %d", GetDSTinfo(2012, 3, 25)); // should return 2
