@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-07-31 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_AB.c, mui/AddrBookListtree.c: converted some more hooks into proper
+    methods.
+
 2013-07-30 Jens Langner <Jens.Langner@light-speed.de>
 
   * TZone.c, libtz.a: modified tzset() of our own libtz.a lib to take an

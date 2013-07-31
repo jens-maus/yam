@@ -85,7 +85,6 @@ extern struct Hook AB_OpenHook;
 extern struct Hook AB_SaveABookHook;
 extern struct Hook AB_FindHook;
 extern struct Hook AB_AddEntryHook;
-extern struct Hook AB_EditHook;
 extern struct Hook AB_PrintHook;
 
 void   AB_CheckBirthdates(BOOL check);

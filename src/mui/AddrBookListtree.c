@@ -61,6 +61,7 @@ struct Data
   struct AVL_Tree *avlTree;        // the address book as an AVL tree
   char dateStr[SIZE_SMALL];
   char aliasStr[SIZE_DEFAULT];
+  struct MUI_EventHandlerNode eh;
 };
 */
 
@@ -215,7 +216,71 @@ OVERLOAD(OM_GET)
 }
 
 ///
+/// OVERLOAD(MUIM_Setup)
+OVERLOAD(MUIM_Setup)
+{
+  GETDATA;
+  IPTR result;
 
+  ENTER();
+
+  if((result = DoSuperMethodA(cl, obj, msg)))
+  {
+    data->eh.ehn_Class  = cl;
+    data->eh.ehn_Object = obj;
+    data->eh.ehn_Events = IDCMP_RAWKEY;
+    data->eh.ehn_Flags  = MUI_EHF_GUIMODE;
+    data->eh.ehn_Priority = -1;
+
+    if(_win(obj) != NULL)
+      DoMethod(_win(obj), MUIM_Window_AddEventHandler, &data->eh);
+  }
+
+  RETURN(result);
+  return result;
+}
+
+///
+/// OVERLOAD(MUIM_Cleanup)
+OVERLOAD(MUIM_Cleanup)
+{
+  GETDATA;
+  IPTR result;
+
+  ENTER();
+
+  if(_win(obj) != NULL)
+    DoMethod(_win(obj), MUIM_Window_RemEventHandler, &data->eh);
+
+  result = DoSuperMethodA(cl, obj, msg);
+
+  RETURN(result);
+  return result;
+}
+
+///
+/// OVERLOAD(MUIM_HandleEvent)
+OVERLOAD(MUIM_HandleEvent)
+{
+  struct MUIP_HandleEvent *mhe = (struct MUIP_HandleEvent *)msg;
+  IPTR result = 0;
+
+  if(mhe->imsg->Class == IDCMP_RAWKEY)
+  {
+    // check for DEL key without CAPS LOCK
+    if(mhe->imsg->Code == 0x46 && isFlagClear(mhe->imsg->Qualifier, IEQUALIFIER_CAPSLOCK))
+    {
+      DoMethod(obj, METHOD(DeleteEntry));
+      // eat the key press in any case
+      result = MUI_EventHandlerRC_Eat;
+    }
+  }
+
+  RETURN(result);
+  return result;
+}
+
+///
 /// OVERLOAD(MUIM_NListtree_Construct)
 OVERLOAD(MUIM_NListtree_Construct)
 {
@@ -582,8 +647,30 @@ DECLARE(FoldTree) // ULONG unfold
 }
 
 ///
+/// DECLARE(EditEntry)
+// edit the selected address book entry
+DECLARE(EditEntry)
+{
+  struct MUI_NListtree_TreeNode *tn;
+
+  ENTER();
+
+  if((tn = (struct MUI_NListtree_TreeNode *)xget(obj, MUIA_NListtree_Active)) != NULL)
+  {
+    struct ABEntry *ab = (struct ABEntry *)(tn->tn_User);
+    int winnum;
+
+    if((winnum = EA_Init(ab->Type, ab)) >= 0)
+      EA_Setup(winnum, ab);
+  }
+
+  RETURN(0);
+  return 0;
+}
+
+///
 /// DECLARE(DeleteEntry)
-// deletes selected address book entry
+// delete the selected address book entry
 DECLARE(DeleteEntry)
 {
   ENTER();
