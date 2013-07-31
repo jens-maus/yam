@@ -80,12 +80,8 @@ struct AB_ClassData  /* address book window */
   int                  winNumber;           // related write window number
 };
 
-extern struct Hook AB_LV_DspFuncHook;
 extern struct Hook AB_OpenHook;
 extern struct Hook AB_SaveABookHook;
-extern struct Hook AB_FindHook;
-extern struct Hook AB_AddEntryHook;
-extern struct Hook AB_PrintHook;
 
 void   AB_CheckBirthdates(BOOL check);
 char * AB_CompleteAlias(const char *text);

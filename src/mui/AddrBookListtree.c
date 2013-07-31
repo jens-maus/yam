@@ -30,6 +30,7 @@
 
 #include "AddrBookListtree_cl.h"
 
+#include <ctype.h>
 #include <string.h>
 
 #include <proto/dos.h>
@@ -46,6 +47,7 @@
 #include "Locale.h"
 #include "MailList.h"
 #include "MUIObjects.h"
+#include "Requesters.h"
 
 #include "mui/ImageArea.h"
 #include "mui/MainMailListGroup.h"
@@ -61,6 +63,7 @@ struct Data
   struct AVL_Tree *avlTree;        // the address book as an AVL tree
   char dateStr[SIZE_SMALL];
   char aliasStr[SIZE_DEFAULT];
+  char pattern[SIZE_PATTERN+1];
   struct MUI_EventHandlerNode eh;
 };
 */
@@ -647,6 +650,33 @@ DECLARE(FoldTree) // ULONG unfold
 }
 
 ///
+/// DECLARE(ClearTree)
+// clears entire address book
+DECLARE(ClearTree)
+{
+  ENTER();
+
+  DoMethod(obj, MUIM_NListtree_Clear, NULL, MUIF_NONE);
+  set(obj, MUIA_AddrBookListtree_Modified, TRUE);
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(AddEntry)
+// add a new entry to the address book
+DECLARE(AddEntry) // ULONG type
+{
+  ENTER();
+
+  EA_Init(msg->type, NULL);
+
+  RETURN(0);
+  return 0;
+}
+
+///
 /// DECLARE(EditEntry)
 // edit the selected address book entry
 DECLARE(EditEntry)
@@ -662,6 +692,68 @@ DECLARE(EditEntry)
 
     if((winnum = EA_Init(ab->Type, ab)) >= 0)
       EA_Setup(winnum, ab);
+  }
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(DuplicateEntry)
+// duplicate the selected address book entry
+DECLARE(DuplicateEntry)
+{
+  struct MUI_NListtree_TreeNode *tn;
+
+  ENTER();
+
+  if((tn = (struct MUI_NListtree_TreeNode *)xget(obj, MUIA_NListtree_Active)) != NULL)
+  {
+    struct ABEntry *ab = (struct ABEntry *)(tn->tn_User);
+    int winnum;
+
+    if((winnum = EA_Init(ab->Type, NULL)) >= 0)
+    {
+      char buf[SIZE_NAME];
+      int len;
+
+      EA_Setup(winnum, ab);
+      strlcpy(buf, ab->Alias, sizeof(buf));
+      if((len = strlen(buf)) > 0)
+      {
+        if(isdigit(buf[len - 1]))
+          buf[len - 1]++;
+        else if(len < SIZE_NAME - 1)
+          strlcat(buf, "2", sizeof(buf));
+        else
+          buf[len - 1] = '2';
+
+        setstring(G->EA[winnum]->GUI.ST_ALIAS, buf);
+      }
+    }
+  }
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(FindEntry)
+// searches address book
+DECLARE(FindEntry)
+{
+  GETDATA;
+
+  ENTER();
+
+  if(StringRequest(data->pattern, SIZE_PATTERN, tr(MSG_AB_FindEntry), tr(MSG_AB_FindEntryReq), tr(MSG_AB_StartSearch), NULL, tr(MSG_Cancel), FALSE, _win(obj)) != 0)
+  {
+    char searchPattern[SIZE_PATTERN+5];
+
+    snprintf(searchPattern, sizeof(searchPattern), "#?%s#?", data->pattern);
+
+    if(AB_FindEntry(searchPattern, ABF_USER, NULL) == 0)
+      MUI_Request(_app(obj), _win(obj), MUIF_NONE, tr(MSG_AB_FindEntry), tr(MSG_OkayReq), tr(MSG_AB_NoneFound));
   }
 
   RETURN(0);
