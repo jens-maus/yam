@@ -219,7 +219,7 @@ HOOKPROTONH(TextEditDoubleClickFunc, BOOL, Object *obj, struct ClickMessage *cli
 
             // don't invoke the GotoURL command right here in there hook, as the
             // execution may take lots of time
-            PushMethodOnStack(G->App, 3, MUIM_YAMApplication_GotoURL, url, newWindow);
+            PushMethodOnStack(_app(obj), 3, MUIM_YAMApplication_GotoURL, url, newWindow);
 
             // don't free the URL string in this context
             url = NULL;
@@ -831,11 +831,11 @@ OVERLOAD(MUIM_ContextMenuChoice)
 
   switch(xget(m->item, MUIA_UserData))
   {
-    case RMEN_REPLY:          DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook, NMM_REPLY, 0); break;
-    case RMEN_FORWARD_ATTACH: DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook, NMM_FORWARD_ATTACH, 0); break;
-    case RMEN_FORWARD_INLINE: DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook, NMM_FORWARD_INLINE, 0); break;
-    case RMEN_MOVE:           DoMethod(G->App, MUIM_CallHook, &MA_MoveMessageHook); break;
-    case RMEN_COPY:           DoMethod(G->App, MUIM_CallHook, &MA_CopyMessageHook); break;
+    case RMEN_REPLY:          DoMethod(_app(obj), MUIM_CallHook, &MA_NewMessageHook, NMM_REPLY, 0); break;
+    case RMEN_FORWARD_ATTACH: DoMethod(_app(obj), MUIM_CallHook, &MA_NewMessageHook, NMM_FORWARD_ATTACH, 0); break;
+    case RMEN_FORWARD_INLINE: DoMethod(_app(obj), MUIM_CallHook, &MA_NewMessageHook, NMM_FORWARD_INLINE, 0); break;
+    case RMEN_MOVE:           DoMethod(_app(obj), MUIM_CallHook, &MA_MoveMessageHook); break;
+    case RMEN_COPY:           DoMethod(_app(obj), MUIM_CallHook, &MA_CopyMessageHook); break;
     case RMEN_DISPLAY:        DoMethod(obj, MUIM_ReadMailGroup_DisplayMailRequest); break;
     case RMEN_SAVE:           DoMethod(obj, MUIM_ReadMailGroup_SaveMailRequest); break;
     case RMEN_PRINT:          DoMethod(obj, MUIM_ReadMailGroup_PrintMailRequest); break;
@@ -1420,7 +1420,7 @@ DECLARE(CheckPGPSignature) // ULONG forceRequester
             strlcat(buffer, rmData->sigAuthor, sizeof(buffer));
           }
 
-          MUI_Request(G->App, _win(obj), MUIF_NONE, tr(MSG_RE_SigCheck), tr(MSG_OkayReq), buffer);
+          MUI_Request(_app(obj), _win(obj), MUIF_NONE, tr(MSG_RE_SigCheck), tr(MSG_OkayReq), buffer);
         }
       }
     }
@@ -1562,9 +1562,9 @@ DECLARE(SaveDecryptedMail)
   if(folder == NULL)
     return 0;
 
-  if((choice = MUI_Request(G->App, rmData->readWindow, MUIF_NONE, tr(MSG_RE_SaveDecrypted),
-                                                                  tr(MSG_RE_SaveDecGads),
-                                                                  tr(MSG_RE_SaveDecReq))) != 0)
+  if((choice = MUI_Request(_app(obj), rmData->readWindow, MUIF_NONE, tr(MSG_RE_SaveDecrypted),
+                                                                     tr(MSG_RE_SaveDecGads),
+                                                                     tr(MSG_RE_SaveDecReq))) != 0)
   {
     struct Compose comp;
     char mfilePath[SIZE_PATHFILE];

@@ -286,7 +286,7 @@ DECLARE(CheckGravatar)
     doDownload = TRUE;
     while(FileExists(imagePath) == TRUE)
     {
-      if(MUI_Request(G->App, _win(obj), MUIF_NONE, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_FILE_OVERWRITE), imagePath) == 0)
+      if(MUI_Request(_app(obj), _win(obj), MUIF_NONE, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_FILE_OVERWRITE), imagePath) == 0)
       {
         struct FileReqCache *frc;
 

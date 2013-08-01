@@ -402,10 +402,10 @@ static BOOL SetDefaultSecurity(struct Compose *comp, const Object *win)
               char address[SIZE_LARGE];
 
               // warn the user about this exeptional situation
-              if(MUI_Request(G->App, win, MUIF_NONE, tr(MSG_WR_INVALIDSECURITY_TITLE),
-                                                     tr(MSG_WR_INVALIDSECURITY_GADS),
-                                                     tr(MSG_WR_INVALIDSECURITY),
-                                                     BuildAddress(address, sizeof(address), ab->Address, ab->RealName)) != 0)
+              if(MUI_Request(_app(win), win, MUIF_NONE, tr(MSG_WR_INVALIDSECURITY_TITLE),
+                                                        tr(MSG_WR_INVALIDSECURITY_GADS),
+                                                        tr(MSG_WR_INVALIDSECURITY),
+                                                        BuildAddress(address, sizeof(address), ab->Address, ab->RealName)) != 0)
               {
                 currsec = SEC_NONE;
               }
@@ -433,8 +433,8 @@ static BOOL SetDefaultSecurity(struct Compose *comp, const Object *win)
           else
           {
             // conflict: two addresses have different defaults
-            int res = MUI_Request(G->App, win, MUIF_NONE, NULL, tr(MSG_WR_SECURITYREQ_GADS),
-                                                                tr(MSG_WR_SECURITYREQ));
+            int res = MUI_Request(_app(win), win, MUIF_NONE, NULL, tr(MSG_WR_SECURITYREQ_GADS),
+                                                                   tr(MSG_WR_SECURITYREQ));
 
             switch(res)
             {
@@ -1303,12 +1303,12 @@ OVERLOAD(OM_NEW)
         set(data->CY_IMPORTANCE, MUIA_Cycle_Active, TRUE);
 
         // disable certain GUI elements per default
-        DoMethod(G->App, MUIM_MultiSet,  MUIA_Disabled, TRUE, data->ST_CTYPE,
-                                                              data->ST_DESC,
-                                                              data->BT_REMOVE,
-                                                              data->BT_RENAME,
-                                                              data->BT_DISPLAY,
-                                                              NULL);
+        DoMethod(_app(obj), MUIM_MultiSet,  MUIA_Disabled, TRUE, data->ST_CTYPE,
+                                                                 data->ST_DESC,
+                                                                 data->BT_REMOVE,
+                                                                 data->BT_RENAME,
+                                                                 data->BT_DISPLAY,
+                                                                 NULL);
 
         // set the help elements of our GUI gadgets
         SetHelp(data->ST_SUBJECT,     MSG_HELP_WR_ST_SUBJECT);
@@ -2574,11 +2574,11 @@ DECLARE(GetAttachmentEntry)
   ENTER();
 
   DoMethod(data->LV_ATTACH, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &attach);
-  DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, attach ? FALSE : TRUE, data->ST_CTYPE,
-                                                                        data->ST_DESC,
-                                                                        data->BT_REMOVE,
-                                                                        data->BT_RENAME,
-                                                                        data->BT_DISPLAY, NULL);
+  DoMethod(_app(obj), MUIM_MultiSet, MUIA_Disabled, attach ? FALSE : TRUE, data->ST_CTYPE,
+                                                                           data->ST_DESC,
+                                                                           data->BT_REMOVE,
+                                                                           data->BT_RENAME,
+                                                                           data->BT_DISPLAY, NULL);
 
   if(attach != NULL)
   {
@@ -3070,7 +3070,7 @@ DECLARE(SaveTextAs)
     AddPath(filename, frc->drawer, frc->file, sizeof(filename));
 
     if(FileExists(filename) == FALSE ||
-       MUI_Request(G->App, obj, MUIF_NONE, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_FILE_OVERWRITE), frc->file) != 0)
+       MUI_Request(_app(obj), obj, MUIF_NONE, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_FILE_OVERWRITE), frc->file) != 0)
     {
       DoMethod(data->TE_EDIT, MUIM_MailTextEdit_SaveToFile, data->wmData->filename);
 
@@ -3806,7 +3806,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
     set(obj, MUIA_Window_ActiveObject, data->ST_TO);
 
-    if(MUI_Request(G->App, obj, MUIF_NONE, NULL, tr(MSG_WR_NoRcptReqGad), tr(MSG_WR_ErrorNoRcpt)) != 0)
+    if(MUI_Request(_app(obj), obj, MUIF_NONE, NULL, tr(MSG_WR_NoRcptReqGad), tr(MSG_WR_ErrorNoRcpt)) != 0)
     {
       mode = WRITE_HOLD;
     }
@@ -4396,7 +4396,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
   // make sure to dispose the window data by calling
   // CleanupWriteMailData method as soon as this method is finished
   if(mode != WRITE_DRAFT)
-    DoMethod(G->App, MUIM_Application_PushMethod, G->App, 2, MUIM_YAMApplication_CleanupWriteMailData, wmData);
+    DoMethod(_app(obj), MUIM_Application_PushMethod, _app(obj), 2, MUIM_YAMApplication_CleanupWriteMailData, wmData);
 
   // update the statistics of the outgoing folder
   DisplayStatistics(outfolder, TRUE);
@@ -4541,7 +4541,7 @@ DECLARE(CancelAction)
        data->autoSaved == TRUE ||
        (data->wmData->mode != NMM_REDIRECT && xget(data->TE_EDIT, MUIA_TextEditor_HasChanged) == TRUE))
     {
-      switch(MUI_Request(G->App, obj, MUIF_NONE, NULL, tr(MSG_WR_DiscardChangesGad), tr(MSG_WR_DiscardChanges)))
+      switch(MUI_Request(_app(obj), obj, MUIF_NONE, NULL, tr(MSG_WR_DiscardChangesGad), tr(MSG_WR_DiscardChanges)))
       {
         case 0:
         {
@@ -4575,7 +4575,7 @@ DECLARE(CancelAction)
   // we have to use MUIM_Application_PushMethod instead of calling the
   // CleanupWriteMailData method directly
   if(discard == TRUE)
-    DoMethod(G->App, MUIM_Application_PushMethod, G->App, 2, MUIM_YAMApplication_CleanupWriteMailData, data->wmData);
+    DoMethod(_app(obj), MUIM_Application_PushMethod, _app(obj), 2, MUIM_YAMApplication_CleanupWriteMailData, data->wmData);
 
   RETURN(0);
   return 0;
@@ -4610,9 +4610,9 @@ DECLARE(MailFileModified)
       {
         // warn the user that both the tempfile and the content of the TextEditor.mcc
         // changed.
-        if(MUI_Request(G->App, obj, MUIF_NONE, tr(MSG_FCHANGE_WARN_TITLE),
-                                               tr(MSG_YesNoReq),
-                                               tr(MSG_FCHANGE_WARN), data->windowNumber+1) == 0)
+        if(MUI_Request(_app(obj), obj, MUIF_NONE, tr(MSG_FCHANGE_WARN_TITLE),
+                                                  tr(MSG_YesNoReq),
+                                                  tr(MSG_FCHANGE_WARN), data->windowNumber+1) == 0)
         {
           // cancel / keep old text
           keep = TRUE;

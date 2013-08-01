@@ -254,8 +254,8 @@ OVERLOAD(OM_SET)
                     MUIA_Window_DefaultObject, data->componentList);
 
           // we also make sure the application in uniconified.
-          if(xget(G->App, MUIA_Application_Iconified))
-            set(G->App, MUIA_Application_Iconified, FALSE);
+          if(xget(_app(obj), MUIA_Application_Iconified))
+            set(_app(obj), MUIA_Application_Iconified, FALSE);
         }
       }
       break;
@@ -430,7 +430,7 @@ DECLARE(Download)
 
           if(FileExists(path) == TRUE)
           {
-            if(MUI_Request(G->App, obj, MUIF_NONE, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_FILE_OVERWRITE), path) == 0)
+            if(MUI_Request(_app(obj), obj, MUIF_NONE, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_FILE_OVERWRITE), path) == 0)
             {
               // user chose not to overwrite the existing file, let him choose another one
             }

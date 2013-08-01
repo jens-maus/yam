@@ -969,7 +969,7 @@ DECLARE(DeleteTransferGroup) // Object *transferGroup
       // we are about to remove the last group, just dispose the window instead
       D(DBF_GUI, "closing transfer window");
       set(data->transferWindow, MUIA_Window_Open, FALSE);
-      DoMethod(G->App, OM_REMMEMBER, data->transferWindow);
+      DoMethod(obj, OM_REMMEMBER, data->transferWindow);
       MUI_DisposeObject(data->transferWindow);
       data->transferWindow = NULL;
 
@@ -1109,7 +1109,7 @@ DECLARE(NewMailAlert) // struct MailServerNode *msn, struct DownloadResult *down
       char buffer[SIZE_LARGE];
 
       // make sure the application isn't iconified
-      if(xget(G->App, MUIA_Application_Iconified) == TRUE)
+      if(xget(obj, MUIA_Application_Iconified) == TRUE)
         PopUp();
 
       snprintf(buffer, sizeof(buffer), tr(MSG_POP3_NEW_MAIL_NOTIFY_REQ), msg->msn->description, msg->downloadResult->downloaded, msg->downloadResult->onServer-msg->downloadResult->deleted, msg->downloadResult->dupeSkipped);
@@ -1271,7 +1271,7 @@ DECLARE(DisposeWindow) // Object *window
 
   if(msg->window != NULL)
   {
-    DoMethod(G->App, OM_REMMEMBER, msg->window);
+    DoMethod(obj, OM_REMMEMBER, msg->window);
     MUI_DisposeObject(msg->window);
   }
 

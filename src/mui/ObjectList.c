@@ -341,7 +341,7 @@ DECLARE(RemoveItem) // Object *item
     if(data->disposeRemovedItems == TRUE)
     {
       // dispose this item, but don't do it right now
-      DoMethod(G->App, MUIM_Application_PushMethod, msg->item, 1, OM_DISPOSE);
+      DoMethod(_app(obj), MUIM_Application_PushMethod, msg->item, 1, OM_DISPOSE);
     }
 
     result = TRUE;
@@ -439,7 +439,7 @@ DECLARE(Clear)
         if(data->disposeRemovedItems == TRUE)
         {
           // dispose this item, but don't do it right now
-          DoMethod(G->App, MUIM_Application_PushMethod, item, 1, OM_DISPOSE);
+          DoMethod(_app(obj), MUIM_Application_PushMethod, item, 1, OM_DISPOSE);
         }
       }
 

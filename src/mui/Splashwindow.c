@@ -188,7 +188,7 @@ DECLARE(StatusChange) // char *txt, LONG percent
     MUIA_Gauge_InfoText, msg->txt,
     MUIA_Gauge_Current,  msg->percent);
 
-  DoMethod(G->App, MUIM_Application_InputBuffered);
+  DoMethod(_app(obj), MUIM_Application_InputBuffered);
 
   RETURN(0);
   return 0;
@@ -262,7 +262,7 @@ DECLARE(ProgressChange) // struct BusyNode *busy
     data->lastBusy = msg->busy;
   }
 
-  DoMethod(G->App, MUIM_Application_InputBuffered);
+  DoMethod(_app(obj), MUIM_Application_InputBuffered);
 
   RETURN(0);
   return 0;
@@ -335,13 +335,13 @@ DECLARE(SelectUser)
 
       // make sure the window is open and not iconified
       wasOpen = xget(obj, MUIA_Window_Open);
-      wasIconified = xget(G->App, MUIA_Application_Iconified);
+      wasIconified = xget(_app(obj), MUIA_Application_Iconified);
 
       if(wasOpen == FALSE)
         set(obj, MUIA_Window_Open, TRUE);
 
       if(wasIconified)
-        set(G->App, MUIA_Application_Iconified, FALSE);
+        set(_app(obj), MUIA_Application_Iconified, FALSE);
 
       // we add the esc key to the input event of the requester and if we receive it we close the requester by safely
       // exiting with the last button
@@ -360,7 +360,7 @@ DECLARE(SelectUser)
       do
       {
         static ULONG signals=0;
-        LONG ret = DoMethod(G->App, MUIM_Application_NewInput, &signals)-ID_LOGIN;
+        LONG ret = DoMethod(_app(obj), MUIM_Application_NewInput, &signals)-ID_LOGIN;
 
         // bail out if a button was hit
         if(ret >= 0 && ret < G->Users.Num)
@@ -397,7 +397,7 @@ DECLARE(SelectUser)
         set(obj, MUIA_Window_Open, FALSE);
 
       if(wasIconified == TRUE)
-        set(G->App, MUIA_Application_Iconified, TRUE);
+        set(_app(obj), MUIA_Application_Iconified, TRUE);
 
       if(DoMethod(userGroup, MUIM_Group_InitChange))
       {
@@ -416,7 +416,7 @@ DECLARE(SelectUser)
     }
   }
 
-  DoMethod(G->App, MUIM_Application_InputBuffered);
+  DoMethod(_app(obj), MUIM_Application_InputBuffered);
 
   RETURN(user);
   return (ULONG)user;
@@ -478,13 +478,13 @@ DECLARE(PasswordRequest) // struct User *user
 
     // make sure the window is open and not iconified
     wasOpen = xget(obj, MUIA_Window_Open);
-    wasIconified = xget(G->App, MUIA_Application_Iconified);
+    wasIconified = xget(_app(obj), MUIA_Application_Iconified);
 
     if(wasOpen == FALSE)
       set(obj, MUIA_Window_Open, TRUE);
 
     if(wasIconified == TRUE)
-      set(G->App, MUIA_Application_Iconified, FALSE);
+      set(_app(obj), MUIA_Application_Iconified, FALSE);
 
     // make sure the window is at the front
     DoMethod(obj, MUIM_Window_ToFront);
@@ -499,7 +499,7 @@ DECLARE(PasswordRequest) // struct User *user
     do
     {
       static ULONG signals=0;
-      ret = DoMethod(G->App, MUIM_Application_NewInput, &signals)-ID_LOGIN;
+      ret = DoMethod(_app(obj), MUIM_Application_NewInput, &signals)-ID_LOGIN;
 
       // if the returnID is 1 then we check the password against the supplied
       // password
@@ -539,7 +539,7 @@ DECLARE(PasswordRequest) // struct User *user
       set(obj, MUIA_Window_Open, FALSE);
 
     if(wasIconified == TRUE)
-      set(G->App, MUIA_Application_Iconified, TRUE);
+      set(_app(obj), MUIA_Application_Iconified, TRUE);
 
     // remove the passwordRequest again
     if(DoMethod(data->windowGroup, MUIM_Group_InitChange))
@@ -551,7 +551,7 @@ DECLARE(PasswordRequest) // struct User *user
     }
   }
 
-  DoMethod(G->App, MUIM_Application_InputBuffered);
+  DoMethod(_app(obj), MUIM_Application_InputBuffered);
 
   return result;
 }

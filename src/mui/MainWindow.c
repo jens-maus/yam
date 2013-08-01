@@ -133,7 +133,7 @@ DECLARE(DisposeSubWindow) // Object *win
   D(DBF_GUI, "Dispose subwindow: %08lx", msg->win);
 
   set(msg->win, MUIA_Window_Open, FALSE);
-  DoMethod(G->App, OM_REMMEMBER, msg->win);
+  DoMethod(_app(obj), OM_REMMEMBER, msg->win);
   MUI_DisposeObject(msg->win);
 
   RETURN(0);
@@ -155,7 +155,7 @@ DECLARE(ShowAbout)
     data->aboutWindow = AboutwindowObject, End;
 
     if(data->aboutWindow != NULL)
-      DoMethod(data->aboutWindow, MUIM_Notify, MUIA_Window_Open, FALSE, MUIV_Notify_Application, 4, MUIM_Application_PushMethod, G->App, 1, MUIM_MainWindow_CloseAbout);
+      DoMethod(data->aboutWindow, MUIM_Notify, MUIA_Window_Open, FALSE, MUIV_Notify_Application, 4, MUIM_Application_PushMethod, _app(obj), 1, MUIM_MainWindow_CloseAbout);
   }
 
   SafeOpenWindow(data->aboutWindow);
@@ -176,7 +176,7 @@ DECLARE(CloseAbout)
   // close the about window object
   if(data->aboutWindow != NULL)
   {
-    DoMethod(G->App, OM_REMMEMBER, data->aboutWindow);
+    DoMethod(_app(obj), OM_REMMEMBER, data->aboutWindow);
     MUI_DisposeObject(data->aboutWindow);
     data->aboutWindow = NULL;
   }

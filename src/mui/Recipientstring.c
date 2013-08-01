@@ -306,7 +306,7 @@ static void InsertAddressTreeNode(Object *obj, Object *addrObj, struct MUI_NList
           *nptr = '\0';
         else
           break;
-      
+
         InsertAddress(obj, ptr, "", "");
 
         *nptr = '\n';
@@ -336,7 +336,7 @@ static void InsertAddressTreeNode(Object *obj, Object *addrObj, struct MUI_NList
     }
     break;
   }
-  
+
   LEAVE();
 }
 
@@ -1095,7 +1095,7 @@ DECLARE(Resolve) // ULONG flags
           res = FALSE;
         }
       }
-      else if(withcache == TRUE && (entry = (struct ABEntry *)DoMethod(G->App, MUIM_YAMApplication_FindEmailCacheMatch, s)) != NULL)
+      else if(withcache == TRUE && (entry = (struct ABEntry *)DoMethod(_app(obj), MUIM_YAMApplication_FindEmailCacheMatch, s)) != NULL)
       {
         D(DBF_GUI, "\temail cache Hit '%s' <%s>", entry->RealName, entry->Address);
         if(withrealname == TRUE && entry->RealName[0] != '\0')

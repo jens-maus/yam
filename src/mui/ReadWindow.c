@@ -470,7 +470,7 @@ OVERLOAD(OM_NEW)
     // CleanupReadMailData method directly
     DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE,
                   MUIV_Notify_Application, 6,
-                    MUIM_Application_PushMethod, G->App, 2, MUIM_YAMApplication_CleanupReadMailData, rmData);
+                    MUIM_Application_PushMethod, _app(obj), 2, MUIM_YAMApplication_CleanupReadMailData, rmData);
   }
   else
     obj = NULL;
@@ -884,7 +884,7 @@ DECLARE(MoveMailRequest)
       // make sure the read window is closed in case there is no further
       // mail for deletion in this direction
       if(closeAfter == TRUE)
-        DoMethod(G->App, MUIM_Application_PushMethod, G->App, 2, MUIM_YAMApplication_CleanupReadMailData, rmData);
+        DoMethod(_app(obj), MUIM_Application_PushMethod, _app(obj), 2, MUIM_YAMApplication_CleanupReadMailData, rmData);
 
       AppendToLogfile(LF_NORMAL, 22, tr(MSG_LOG_Moving), 1, srcfolder->Name, dstfolder->Name);
     }
@@ -1003,7 +1003,7 @@ DECLARE(DeleteMailRequest) // ULONG qualifier
     // make sure the read window is closed in case there is no further
     // mail for deletion in this direction
     if(closeAfter == TRUE)
-      DoMethod(G->App, MUIM_Application_PushMethod, G->App, 2, MUIM_YAMApplication_CleanupReadMailData, rmData);
+      DoMethod(_app(obj), MUIM_Application_PushMethod, _app(obj), 2, MUIM_YAMApplication_CleanupReadMailData, rmData);
 
     if(delatonce || isSpamFolder(folder))
       AppendToLogfile(LF_NORMAL, 20, tr(MSG_LOG_Deleting), 1, folder->Name);
@@ -1075,7 +1075,7 @@ DECLARE(ClassifyMessage) // enum BayesClassification class
       // make sure the read window is closed in case there is no further
       // mail for deletion in this direction
       if(closeAfter == TRUE)
-        DoMethod(G->App, MUIM_Application_PushMethod, G->App, 2, MUIM_YAMApplication_CleanupReadMailData, rmData);
+        DoMethod(_app(obj), MUIM_Application_PushMethod, _app(obj), 2, MUIM_YAMApplication_CleanupReadMailData, rmData);
       else
       {
         // only update the menu/toolbar if we are already in the spam folder
@@ -1151,7 +1151,7 @@ DECLARE(ClassifyMessage) // enum BayesClassification class
         // make sure the read window is closed in case there is no further
         // mail for deletion in this direction
         if(closeAfter == TRUE)
-          DoMethod(G->App, MUIM_Application_PushMethod, G->App, 2, MUIM_YAMApplication_CleanupReadMailData, rmData);
+          DoMethod(_app(obj), MUIM_Application_PushMethod, _app(obj), 2, MUIM_YAMApplication_CleanupReadMailData, rmData);
         else
         {
           // only update the menu/toolbar if we are already in the incoming folder
@@ -1367,9 +1367,9 @@ DECLARE(SwitchMail) // LONG direction, ULONG qualifier
             {
               if(fo != folder)
               {
-                if(MUI_Request(G->App, obj, MUIF_NONE, tr(MSG_MA_ConfirmReq),
-                                                       tr(MSG_YesNoReq),
-                                                       tr(MSG_RE_MoveNextFolderReq), fo->Name) == 0)
+                if(MUI_Request(_app(obj), obj, MUIF_NONE, tr(MSG_MA_ConfirmReq),
+                                                          tr(MSG_YesNoReq),
+                                                          tr(MSG_RE_MoveNextFolderReq), fo->Name) == 0)
                 {
                   abortJump = TRUE;
                   break;
@@ -1428,7 +1428,7 @@ DECLARE(SwitchMail) // LONG direction, ULONG qualifier
   // we can close the window accordingly. This signals a user that he/she
   // reached the end of the mail list
   if(found == FALSE)
-    DoMethod(G->App, MUIM_Application_PushMethod, G->App, 2, MUIM_YAMApplication_CleanupReadMailData, rmData);
+    DoMethod(_app(obj), MUIM_Application_PushMethod, _app(obj), 2, MUIM_YAMApplication_CleanupReadMailData, rmData);
 
   RETURN(0);
   return 0;

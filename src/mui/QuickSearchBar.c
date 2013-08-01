@@ -715,7 +715,7 @@ DECLARE(ProcessSearch)
       if(MatchMail(curMail, viewOption, searchOption, bmContext, &curTimeUTC) == TRUE)
         DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_AddMailToList, LT_QUICKVIEW, curMail);
 
-      DoMethod(G->App, MUIM_Application_InputBuffered);
+      DoMethod(_app(obj), MUIM_Application_InputBuffered);
 
       if(data->abortSearch == TRUE)
         break;

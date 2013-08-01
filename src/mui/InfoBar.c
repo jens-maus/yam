@@ -376,7 +376,7 @@ DECLARE(ShowBusyBar) // struct BusyNode *busy
             set(data->GA_GROUP, MUIA_Group_ActivePage, 1);
 
             // give the application the chance to clear its event loop
-            DoMethod(G->App, MUIM_Application_InputBuffered);
+            DoMethod(_app(obj), MUIM_Application_InputBuffered);
 
             goOn = (data->stopButtonPressed == FALSE);
           }

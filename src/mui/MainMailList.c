@@ -751,31 +751,31 @@ OVERLOAD(MUIM_ContextMenuChoice)
     break;
 
     // or other item out of the MailListContextMenu
-    case MMEN_READ:           DoMethod(G->App, MUIM_CallHook, &MA_ReadMessageHook); break;
-    case MMEN_EDIT:           DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook, NMM_EDIT,           0); break;
-    case MMEN_NEW:            DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook, NMM_NEW,            0); break;
-    case MMEN_REPLY:          DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook, NMM_REPLY,          0); break;
-    case MMEN_FORWARD_ATTACH: DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook, NMM_FORWARD_ATTACH, 0); break;
-    case MMEN_FORWARD_INLINE: DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook, NMM_FORWARD_INLINE, 0); break;
-    case MMEN_REDIRECT:       DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook, NMM_REDIRECT,       0); break;
-    case MMEN_SEND:           DoMethod(G->App, MUIM_CallHook, &MA_SendHook, SENDMAIL_ACTIVE_USER); break;
-    case MMEN_CHSUBJ:         DoMethod(G->App, MUIM_CallHook, &MA_ChangeSubjectHook); break;
-    case MMEN_TOUNREAD:       DoMethod(G->App, MUIM_CallHook, &MA_SetStatusToHook, SFLAG_NONE,              SFLAG_NEW|SFLAG_READ);              break;
-    case MMEN_TOREAD:         DoMethod(G->App, MUIM_CallHook, &MA_SetStatusToHook, SFLAG_READ,              SFLAG_NEW);                         break;
-    case MMEN_TOMARKED:       DoMethod(G->App, MUIM_CallHook, &MA_SetStatusToHook, SFLAG_MARKED,            SFLAG_NONE);                        break;
-    case MMEN_TOUNMARKED:     DoMethod(G->App, MUIM_CallHook, &MA_SetStatusToHook, SFLAG_NONE,              SFLAG_MARKED);                      break;
-    case MMEN_ALLTOREAD:      DoMethod(G->App, MUIM_CallHook, &MA_SetAllStatusToHook, SFLAG_READ, SFLAG_NEW);                         break;
-    case MMEN_TOSPAM:         DoMethod(G->App, MUIM_CallHook, &MA_ClassifyMessageHook, BC_SPAM); break;
-    case MMEN_TOHAM:          DoMethod(G->App, MUIM_CallHook, &MA_ClassifyMessageHook, BC_HAM); break;
-    case MMEN_SAVEADDR:       DoMethod(G->App, MUIM_CallHook, &MA_GetAddressHook); break;
-    case MMEN_MOVE:           DoMethod(G->App, MUIM_CallHook, &MA_MoveMessageHook); break;
-    case MMEN_COPY:           DoMethod(G->App, MUIM_CallHook, &MA_CopyMessageHook); break;
-    case MMEN_DELETE:         DoMethod(G->App, MUIM_CallHook, &MA_DeleteMessageHook,  0); break;
-    case MMEN_PRINT:          DoMethod(G->App, MUIM_CallHook, &MA_SavePrintHook, TRUE); break;
-    case MMEN_SAVE:           DoMethod(G->App, MUIM_CallHook, &MA_SavePrintHook, FALSE); break;
-    case MMEN_DETACH:         DoMethod(G->App, MUIM_CallHook, &MA_SaveAttachHook); break;
-    case MMEN_DELETEATT:      DoMethod(G->App, MUIM_CallHook, &MA_RemoveAttachHook); break;
-    case MMEN_EXPMSG:         DoMethod(G->App, MUIM_CallHook, &MA_ExportMessagesHook, FALSE); break;
+    case MMEN_READ:           DoMethod(_app(obj), MUIM_CallHook, &MA_ReadMessageHook); break;
+    case MMEN_EDIT:           DoMethod(_app(obj), MUIM_CallHook, &MA_NewMessageHook, NMM_EDIT,           0); break;
+    case MMEN_NEW:            DoMethod(_app(obj), MUIM_CallHook, &MA_NewMessageHook, NMM_NEW,            0); break;
+    case MMEN_REPLY:          DoMethod(_app(obj), MUIM_CallHook, &MA_NewMessageHook, NMM_REPLY,          0); break;
+    case MMEN_FORWARD_ATTACH: DoMethod(_app(obj), MUIM_CallHook, &MA_NewMessageHook, NMM_FORWARD_ATTACH, 0); break;
+    case MMEN_FORWARD_INLINE: DoMethod(_app(obj), MUIM_CallHook, &MA_NewMessageHook, NMM_FORWARD_INLINE, 0); break;
+    case MMEN_REDIRECT:       DoMethod(_app(obj), MUIM_CallHook, &MA_NewMessageHook, NMM_REDIRECT,       0); break;
+    case MMEN_SEND:           DoMethod(_app(obj), MUIM_CallHook, &MA_SendHook, SENDMAIL_ACTIVE_USER); break;
+    case MMEN_CHSUBJ:         DoMethod(_app(obj), MUIM_CallHook, &MA_ChangeSubjectHook); break;
+    case MMEN_TOUNREAD:       DoMethod(_app(obj), MUIM_CallHook, &MA_SetStatusToHook, SFLAG_NONE,              SFLAG_NEW|SFLAG_READ);              break;
+    case MMEN_TOREAD:         DoMethod(_app(obj), MUIM_CallHook, &MA_SetStatusToHook, SFLAG_READ,              SFLAG_NEW);                         break;
+    case MMEN_TOMARKED:       DoMethod(_app(obj), MUIM_CallHook, &MA_SetStatusToHook, SFLAG_MARKED,            SFLAG_NONE);                        break;
+    case MMEN_TOUNMARKED:     DoMethod(_app(obj), MUIM_CallHook, &MA_SetStatusToHook, SFLAG_NONE,              SFLAG_MARKED);                      break;
+    case MMEN_ALLTOREAD:      DoMethod(_app(obj), MUIM_CallHook, &MA_SetAllStatusToHook, SFLAG_READ, SFLAG_NEW);                         break;
+    case MMEN_TOSPAM:         DoMethod(_app(obj), MUIM_CallHook, &MA_ClassifyMessageHook, BC_SPAM); break;
+    case MMEN_TOHAM:          DoMethod(_app(obj), MUIM_CallHook, &MA_ClassifyMessageHook, BC_HAM); break;
+    case MMEN_SAVEADDR:       DoMethod(_app(obj), MUIM_CallHook, &MA_GetAddressHook); break;
+    case MMEN_MOVE:           DoMethod(_app(obj), MUIM_CallHook, &MA_MoveMessageHook); break;
+    case MMEN_COPY:           DoMethod(_app(obj), MUIM_CallHook, &MA_CopyMessageHook); break;
+    case MMEN_DELETE:         DoMethod(_app(obj), MUIM_CallHook, &MA_DeleteMessageHook,  0); break;
+    case MMEN_PRINT:          DoMethod(_app(obj), MUIM_CallHook, &MA_SavePrintHook, TRUE); break;
+    case MMEN_SAVE:           DoMethod(_app(obj), MUIM_CallHook, &MA_SavePrintHook, FALSE); break;
+    case MMEN_DETACH:         DoMethod(_app(obj), MUIM_CallHook, &MA_SaveAttachHook); break;
+    case MMEN_DELETEATT:      DoMethod(_app(obj), MUIM_CallHook, &MA_RemoveAttachHook); break;
+    case MMEN_EXPMSG:         DoMethod(_app(obj), MUIM_CallHook, &MA_ExportMessagesHook, FALSE); break;
     case MMEN_SELALL:         DoMethod(obj, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_On,     NULL); break;
     case MMEN_SELNONE:        DoMethod(obj, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Off,    NULL); break;
     case MMEN_SELTOGG:        DoMethod(obj, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Toggle, NULL); break;
@@ -877,12 +877,12 @@ DECLARE(DoubleClicked) // LONG entryNum
     {
       // in case the folder is the "drafts" folder
       // we edit the mail instead.
-      DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook, NMM_EDIT, 0);
+      DoMethod(_app(obj), MUIM_CallHook, &MA_NewMessageHook, NMM_EDIT, 0);
     }
     else
     {
       // if not, then we open a read window instead
-      DoMethod(G->App, MUIM_CallHook, &MA_ReadMessageHook);
+      DoMethod(_app(obj), MUIM_CallHook, &MA_ReadMessageHook);
     }
   }
 
