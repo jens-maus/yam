@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.11 (16.07.2013)
+## version $VER: YAM.catalog 8.12 (01.08.2013)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -1104,106 +1104,6 @@ _Benutzen
 MSG_CO_Cancel
 _Abbrechen
 ; _Cancel
-;
-MSG_CO_TZoneM12
-(GMT-12:00) Kwajalein Inseln (IDLW)
-; (GMT-12:00) Kwajalein Islands (IDLW)
-;
-MSG_CO_TZoneM11
-(GMT-11:00) Midway Inseln, Samoa (NT)
-; (GMT-11:00) Midway Islands, Samoa (NT)
-;
-MSG_CO_TZoneM10
-(GMT-10:00) Honolulu, Tahiti (HST)
-; (GMT-10:00) Honolulu, Tahiti (HST)
-;
-MSG_CO_TZoneM9
-(GMT-09:00) Anchorage (AKST)
-; (GMT-09:00) Anchorage (AKST)
-;
-MSG_CO_TZoneM8
-(GMT-08:00) Los Angeles, San Francisco (PST)
-; (GMT-08:00) Los Angeles, San Francisco (PST)
-;
-MSG_CO_TZoneM7
-(GMT-07:00) Calgary, Denver, Phoenix (MST)
-; (GMT-07:00) Calgary, Denver, Phoenix (MST)
-;
-MSG_CO_TZoneM6
-(GMT-06:00) Chicago, Dallas, Mexiko Stadt (CST)
-; (GMT-06:00) Chicago, Dallas, Mexico City (CST)
-;
-MSG_CO_TZoneM5
-(GMT-05:00) Lima, Miami, Montreal, New York (EST)
-; (GMT-05:00) Lima, Miami, Montreal, New York (EST)
-;
-MSG_CO_TZoneM4
-(GMT-04:00) Caracas, Santiago, Thule (AST)
-; (GMT-04:00) Caracas, Santiago, Thule (AST)
-;
-MSG_CO_TZoneM3
-(GMT-03:00) Buenos Aires, Rio de Janeiro (BRT)
-; (GMT-03:00) Buenos Aires, Rio de Janeiro (BRT)
-;
-MSG_CO_TZoneM2
-(GMT-02:00) Ostbrasilien (FNT)
-; (GMT-02:00) Brazil East (FNT)
-;
-MSG_CO_TZoneM1
-(GMT-01:00) Azoren (WAT)
-; (GMT-01:00) Azores (WAT)
-;
-MSG_CO_TZone0
-(GMT 00:00) Dublin, Lissabon, London (GMT/UTC)
-; (GMT 00:00) Dublin, Lisbon, London (GMT/UTC)
-;
-MSG_CO_TZone1
-(GMT+01:00) Berlin, Paris, Madrid, Oslo (CET)
-; (GMT+01:00) Berlin, Paris, Madrid, Oslo (CET)
-;
-MSG_CO_TZone2
-(GMT+02:00) Athen, Kairo, Helsinki (EET)
-; (GMT+02:00) Athens, Cairo, Helsinki (EET)
-;
-MSG_CO_TZone3
-(GMT+03:00) Bagdad, Kuwait, Moskau, Nairobi (EEST)
-; (GMT+03:00) Baghdad, Kuwait, Moscow, Nairobi (EEST)
-;
-MSG_CO_TZone4
-(GMT+04:00) Dubai, Port Louis, Victoria (ZP4)
-; (GMT+04:00) Dubai, Port Louis, Victoria (ZP4)
-;
-MSG_CO_TZone5
-(GMT+05:00) Islamabad, Karachi (ZP5)
-; (GMT+05:00) Islamabad, Karachi (ZP5)
-;
-MSG_CO_TZone6
-(GMT+06:00) Alma-Ata, Dhaka, Taschkent (ZP6)
-; (GMT+06:00) Alma-Ata, Dhaka, Tashkent (ZP6)
-;
-MSG_CO_TZone7
-(GMT+07:00) Bangkok, Hanoi, Phnom Penh
-; (GMT+07:00) Bangkok, Hanoi, Phnom Penh
-;
-MSG_CO_TZone8
-(GMT+08:00) Hong Kong, Shanghai, Singapur (WST)
-; (GMT+08:00) Hong Kong, Shanghai, Singapore (WST)
-;
-MSG_CO_TZone9
-(GMT+09:00) Osaka, Seoul, Tokio (JST)
-; (GMT+09:00) Osaka, Seoul, Tokyo (JST)
-;
-MSG_CO_TZone10
-(GMT+10:00) Melbourne, Sydney, Wladiwostok (GST)
-; (GMT+10:00) Melbourne, Sydney, Vladivostok (GST)
-;
-MSG_CO_TZone11
-(GMT+11:00) Neukaledonien (AEDT)
-; (GMT+11:00) New Caldonia (AEDT)
-;
-MSG_CO_TZone12
-(GMT+12:00) Auckland, Wellington (IDLE)
-; (GMT+12:00) Auckland, Wellington (IDLE)
 ;
 MSG_CO_MinConfig
 Minimale Konfiguration
@@ -5574,38 +5474,6 @@ in dieser Liste verwenden.
 MSG_CTapplicationpdf
 PDF Dokument
 ; PDF document
-;
-MSG_CO_TZoneM330
-(GMT-03:30) Neufundland (NFT)
-; (GMT-03:30) Newfoundland (NFT)
-;
-MSG_CO_TZone330
-(GMT+03:30) Teheran (IT)
-; (GMT+03:30) Teheran (IT)
-;
-MSG_CO_TZone430
-(GMT+04:30) Kabul
-; (GMT+04:30) Kabul
-;
-MSG_CO_TZone530
-(GMT+05:30) Chennai, Kalkutta, Mumbai, Neu-Delhi (IST)
-; (GMT+05:30) Chennai, Kolkata, Mumbai, New-Delhi (IST)
-;
-MSG_CO_TZone545
-(GMT+05:45) Katmandu
-; (GMT+05:45) Katmandu
-;
-MSG_CO_TZone630
-(GMT+06:30) Rangun (NST)
-; (GMT+06:30) Rangun (NST)
-;
-MSG_CO_TZone930
-(GMT+09:30) Adelaide, Darwin (ACST)
-; (GMT+09:30) Adelaide, Darwin (ACST)
-;
-MSG_CO_TZone13
-(GMT+13:00) Nuku'alofa (NZDT)
-; (GMT+13:00) Nuku'alofa (NZDT)
 ;
 MSG_HELP_CO_ST_INFOBARTXT
 Text der in der Statusleiste angezeigt\n\
