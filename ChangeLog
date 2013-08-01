@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-08-01 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/ReadWindowStatusBar.c: reverted the recent hook replacement, because
+    Zune on AROS does not support the MUIM_Layout method in a compatible way.
+
 2013-07-31 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_AB.c, mui/AddrBookListtree.c: converted some more hooks into proper
