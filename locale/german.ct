@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.12 (01.08.2013)
+## version $VER: YAM.catalog 8.13 (01.08.2013)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -8725,4 +8725,11 @@ Bei Erfüllen
 ;
 MSG_CO_CONDITION_POSTPHRASE
 der folgenden Bedingungen:
+;
+MSG_CO_FALLBACK_TZONE
+Europe/Berlin
+;
+MSG_HELP_CO_GR_TZONE
+Hier können Sie Ihren derzeitigen Aufenthaltsort\n\
+bzw. Zeitzone einstellen.
 ;
