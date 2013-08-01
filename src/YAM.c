@@ -69,7 +69,6 @@
 
 #if defined(__amigaos4__)
 #include <proto/application.h>
-#include <proto/timezone.h>
 #endif
 
 #if !defined(__amigaos4__)
@@ -158,15 +157,6 @@ static BPTR olddirlock = (BPTR)-1; /* -1 is an unset indicator */
 static void Abort(const char *message, ...);
 
 /**************************************************************************/
-
-// AutoDST related variables
-enum ADSTmethod { ADST_NONE=0, ADST_TZLIB, ADST_SETDST, ADST_FACTS, ADST_SGUARD, ADST_IXGMT };
-static const char *const ADSTfile[] = { "", "ENV:TZONE", "ENV:TZONE", "ENV:FACTS/DST", "ENV:SUMMERTIME", "ENV:IXGMTOFFSET" };
-static struct ADST_Data
-{
-  struct NotifyRequest *nRequest;
-  enum ADSTmethod method;
-} ADSTdata;
 
 // Semaphore related suff
 static struct StartupSemaphore
@@ -516,238 +506,6 @@ static BOOL CheckMCC(const char *name,
 
 ///
 
-/*** Auto-DST management routines ***/
-/// ADSTnotify_start
-//  AutoDST Notify start function
-static BOOL ADSTnotify_start(void)
-{
-  BOOL result = FALSE;
-
-  ENTER();
-
-  if(ADSTdata.method != ADST_NONE)
-  {
-    // prepare the NotifyRequest structure
-    BYTE signalAlloc;
-
-    if((signalAlloc = AllocSignal(-1)) >= 0)
-    {
-      #if defined(__amigaos4__)
-      // we don't use NotifyVar() here on purpose but a direct file notification on ENV:TZONE.
-      // This is because timezone.library has a slight problem because of first setting the environment
-      // variable and then its internal data structures and the hook of NotifyVar() is executed in the
-      // context of timezone.lib which in fact might also cause inexpected results in our code.
-
-      ADSTdata.nRequest = AllocDosObjectTags(DOS_NOTIFYREQUEST, ADO_NotifyName,         ADSTfile[ADSTdata.method],
-                                                                ADO_NotifyMethod,       NRF_SEND_SIGNAL,
-                                                                ADO_NotifySignalNumber, (uint8)signalAlloc,
-                                                                ADO_NotifyTask,         FindTask(NULL),
-                                                                TAG_DONE);
-      #else
-      if((ADSTdata.nRequest = AllocVecPooled(G->SharedMemPool, sizeof(*ADSTdata.nRequest))) != NULL)
-      {
-        // no need to clear the allocation manually, because the pool is set to MEMF_CLEAR
-        ADSTdata.nRequest->nr_Name  = (STRPTR)ADSTfile[ADSTdata.method];
-        ADSTdata.nRequest->nr_Flags = NRF_SEND_SIGNAL;
-        ADSTdata.nRequest->nr_stuff.nr_Signal.nr_Task      = FindTask(NULL);
-        ADSTdata.nRequest->nr_stuff.nr_Signal.nr_SignalNum = signalAlloc;
-      }
-      #endif
-
-      if(ADSTdata.nRequest != NULL)
-        result = (StartNotify(ADSTdata.nRequest) != 0);
-
-      #if defined(DEBUG)
-      if(result == TRUE)
-        D(DBF_STARTUP, "initialised ADST notify request on file '%s'", ADSTfile[ADSTdata.method]);
-      else
-        W(DBF_STARTUP, "couldn't initialise ADST notify for file '%s'", ADSTfile[ADSTdata.method]);
-      #endif
-    }
-    else
-    {
-      W(DBF_STARTUP, "couldn't allocate a signal for ADST notification");
-      memset(&ADSTdata, 0, sizeof(struct ADST_Data));
-    }
-  }
-
-  RETURN(result);
-  return result;
-}
-
-///
-/// ADSTnotify_stop
-//  AutoDST Notify stop function
-static void ADSTnotify_stop(void)
-{
-  ENTER();
-
-  if(ADSTdata.nRequest != NULL)
-  {
-    EndNotify(ADSTdata.nRequest);
-    FreeSignal((LONG)ADSTdata.nRequest->nr_stuff.nr_Signal.nr_SignalNum);
-
-    #if defined(__amigaos4__)
-    FreeDosObject(DOS_NOTIFYREQUEST, ADSTdata.nRequest);
-    #else
-    FreeVecPooled(G->SharedMemPool, ADSTdata.nRequest);
-    #endif
-
-    ADSTdata.nRequest = NULL;
-  }
-
-  LEAVE();
-}
-
-///
-/// GetDST
-//  Checks if daylight saving time is active
-//  return 0 if no DST system was found
-//         1 if no DST is set
-//         2 if DST is set (summertime)
-static int GetDST(BOOL update)
-{
-  #if !defined(__amigaos4__)
-  char buffer[50];
-  char *tmp;
-  #endif
-  int result = 0;
-
-  ENTER();
-
-  // reset the previous DST tool information
-  if(update == FALSE)
-    memset(&ADSTdata, 0, sizeof(struct ADST_Data));
-
-  // lets check the DaylightSaving stuff now
-  // we check in the following order:
-  //
-  // 1. timezone.library (AmigaOS4 only)
-  // 2. SetDST (ENV:TZONE)
-  // 3. FACTS (ENV:FACTS/DST)
-  // 4. SummertimeGuard (ENV:SUMMERTIME)
-  // 5. ixemul (ENV:IXGMTOFFSET)
-
-  #if defined(__amigaos4__)
-  // check via timezone.library in case we are compiled for AmigaOS4
-  if((update == FALSE || ADSTdata.method == ADST_TZLIB) && ITimezone != NULL)
-  {
-    BYTE dstSetting = TFLG_UNKNOWN;
-
-    // retrieve the current DST setting
-    if(GetTimezoneAttrs(NULL, TZA_TimeFlag, &dstSetting, TAG_DONE) == 1 && dstSetting != TFLG_UNKNOWN)
-    {
-      if(dstSetting == TFLG_ISDST)
-        result = 2;
-      else
-        result = 1;
-
-      D(DBF_STARTUP, "found timezone.library with DST flag %ld", result);
-
-      ADSTdata.method = ADST_TZLIB;
-    }
-  }
-
-  #else
-
-  // SetDST saves the DST settings in the TZONE env-variable which
-  // is a bit more complex than the others, so we need to do some advance parsing
-  if((update == FALSE || ADSTdata.method == ADST_SETDST) && result == 0
-     && GetVar((STRPTR)&ADSTfile[ADST_SETDST][4], buffer, sizeof(buffer), 0) >= 3)
-  {
-    int i;
-
-    for(i=0; buffer[i]; i++)
-    {
-      if(result == 0)
-      {
-        // if we found the time difference in the TZONE variable we at least found a correct TZONE file
-        if(buffer[i] >= '0' && buffer[i] <= '9')
-          result = 1;
-      }
-      else if(isalpha(buffer[i]))
-        result = 2; // if it is followed by a alphabetic sign we are in DST mode
-    }
-
-    D(DBF_STARTUP, "found '%s' (SetDST) with DST flag %ld", ADSTfile[ADST_SETDST], result);
-
-    ADSTdata.method = ADST_SETDST;
-  }
-
-  // FACTS saves the DST information in a ENV:FACTS/DST env variable which will be
-  // Hex 00 or 01 to indicate the DST value.
-  if((update == FALSE || ADSTdata.method == ADST_FACTS) && result == 0
-     && GetVar((STRPTR)&ADSTfile[ADST_FACTS][4], buffer, sizeof(buffer), GVF_BINARY_VAR) > 0)
-  {
-    struct MsgPort *port;
-
-    // make sure FACTS is actually running and we did not just find an old remaining ENV variable
-    Forbid();
-    port = FindPort("FACTS");
-    Permit();
-    SHOWVALUE(DBF_STARTUP, port);
-
-    if(port != NULL)
-    {
-      if(buffer[0] == 0x01)
-        result = 2;
-      else if(buffer[0] == 0x00)
-        result = 1;
-
-      D(DBF_STARTUP, "found '%s' (FACTS) with DST flag %ld", ADSTfile[ADST_FACTS], result);
-
-      ADSTdata.method = ADST_FACTS;
-    }
-  }
-
-  // SummerTimeGuard sets the last string to "YES" if DST is actually active
-  if((update == FALSE || ADSTdata.method == ADST_SGUARD) && result == 0
-     && GetVar((STRPTR)&ADSTfile[ADST_SGUARD][4], buffer, sizeof(buffer), 0) > 3 && (tmp = strrchr(buffer, ':')))
-  {
-    if(tmp[1] == 'Y')
-      result = 2;
-    else if(tmp[1] == 'N')
-      result = 1;
-
-    D(DBF_STARTUP, "found '%s' (SGUARD) with DST flag %ld", ADSTfile[ADST_SGUARD], result);
-
-    ADSTdata.method = ADST_SGUARD;
-  }
-
-  // ixtimezone sets the fifth byte in the IXGMTOFFSET variable to 01 if
-  // DST is actually active.
-  if((update == FALSE || ADSTdata.method == ADST_IXGMT) && result == 0
-     && GetVar((STRPTR)&ADSTfile[ADST_IXGMT][4], buffer, sizeof(buffer), GVF_BINARY_VAR) >= 4)
-  {
-    if(buffer[4] == 0x01)
-      result = 2;
-    else if(buffer[4] == 0x00)
-      result = 1;
-
-    D(DBF_STARTUP, "found '%s' (IXGMT) with DST flag %ld", ADSTfile[ADST_IXGMT], result);
-
-    ADSTdata.method = ADST_IXGMT;
-  }
-
-  #endif
-
-  if(update == FALSE && result == 0)
-  {
-    W(DBF_STARTUP, "didn't find any valid AutoDST facility active!");
-
-    ADSTdata.method = ADST_NONE;
-  }
-
-  // the DST setting can be trusted if we found any valid DST tool
-  G->TrustedDST = (ADSTdata.method != ADST_NONE);
-
-  // return the found DST setting
-  RETURN(result);
-  return result;
-}
-
-///
-
 /*** XPK Packer initialization routines ***/
 /// InitXPKPackerList
 // initializes the internal XPK PackerList
@@ -1059,10 +817,6 @@ static void Terminate(void)
   D(DBF_STARTUP, "freeing timer resources...");
   CleanupTimers();
 
-  // stop the AutoDST notify
-  D(DBF_STARTUP, "stoping ADSTnotify...");
-  ADSTnotify_stop();
-
   // check if we have an allocated NewMailSound_Obj and dispose it.
   D(DBF_STARTUP, "freeing sound object...");
   if(G->SoundDTObj != NULL)
@@ -1180,7 +934,6 @@ static void Terminate(void)
   // close all libraries now.
   D(DBF_STARTUP, "closing all opened libraries...");
   #if defined(__amigaos4__)
-  CLOSELIB(TimezoneBase,    ITimezone);
   CLOSELIB(ApplicationBase, IApplication);
   #else
   CLOSELIB(CyberGfxBase,    ICyberGfx);
@@ -2121,12 +1874,7 @@ static void InitBeforeLogin(BOOL hidden)
   // try version 2 first, if that is not available try version 1
   if(INITLIB("application.library", 50, 0, &ApplicationBase, "application", 2, &IApplication, FALSE, NULL) == FALSE)
     INITLIB("application.library", 50, 0, &ApplicationBase, "application", 1, &IApplication, FALSE, NULL);
-
-  INITLIB("timezone.library", 52, 1, &TimezoneBase, "main", 1, &ITimezone, FALSE, NULL);
   #endif
-
-  // check the timezone/DST settings
-  G->CO_DST = GetDST(FALSE);
 
   // initialize the shared connection semaphore
   if(InitConnections() == FALSE)
@@ -2668,7 +2416,6 @@ int main(int argc, char **argv)
   {
     ULONG signals;
     ULONG timerSig;
-    ULONG adstSig;
     ULONG rexxSig;
     ULONG appSig;
     ULONG applibSig;
@@ -2872,12 +2619,6 @@ int main(int argc, char **argv)
     AppendToLogfile(LF_NORMAL, 1, tr(MSG_LOG_LoggedIn), user->Name);
     AppendToLogfile(LF_VERBOSE, 2, tr(MSG_LOG_LoggedInVerbose), user->Name, G->CO_PrefsFile, G->MA_MailDir);
 
-    // Now start the NotifyRequest for the AutoDST file
-    if(ADSTnotify_start() == TRUE && ADSTdata.nRequest != NULL)
-      adstSig = 1UL << ADSTdata.nRequest->nr_stuff.nr_Signal.nr_SignalNum;
-    else
-      adstSig = 0;
-
     // prepare all signal bits
     timerSig          = (1UL << G->timerData.port->mp_SigBit);
     rexxSig           = (1UL << G->RexxHost->port->mp_SigBit);
@@ -2889,7 +2630,6 @@ int main(int argc, char **argv)
     methodStackSig    = (1UL << G->methodStack->mp_SigBit);
 
     D(DBF_STARTUP, "YAM allocated signals:");
-    D(DBF_STARTUP, " adstSig           = %08lx", adstSig);
     D(DBF_STARTUP, " timerSig          = %08lx", timerSig);
     D(DBF_STARTUP, " rexxSig           = %08lx", rexxSig);
     D(DBF_STARTUP, " appSig            = %08lx", appSig);
@@ -2923,7 +2663,7 @@ int main(int argc, char **argv)
     {
       if(signals != 0)
       {
-        signals = Wait(signals | SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_D | SIGBREAKF_CTRL_F | timerSig | rexxSig | appSig | applibSig | adstSig | writeWinNotifySig | threadSig | wakeupSig | methodStackSig);
+        signals = Wait(signals | SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_D | SIGBREAKF_CTRL_F | timerSig | rexxSig | appSig | applibSig | writeWinNotifySig | threadSig | wakeupSig | methodStackSig);
 
         if(isFlagSet(signals, SIGBREAKF_CTRL_C))
         {
@@ -3005,42 +2745,6 @@ int main(int argc, char **argv)
             }
 
             ReplyMsg((struct Message *)msg);
-          }
-        }
-
-        // check for the AutoDST signal
-        if(adstSig != 0 && isFlagSet(signals, adstSig))
-        {
-          D(DBF_STARTUP, "received ADST change signal, rereading DST settings");
-
-          // delay our process for two seconds before we go on so that we give
-          // the process like timezone.library time to refresh its data structures
-          // to the new DST setting
-          Delay(100);
-
-          // check the current DST settings of the OS
-          G->CO_DST = GetDST(TRUE);
-
-          // check if the DST settings changed
-          if(C->AutoDSTCheck == TRUE)
-          {
-            if(C->DaylightSaving != (G->CO_DST == 2))
-            {
-              // also set the dst settings in the configuration
-              C->DaylightSaving = (G->CO_DST == 2);
-
-              // make sure to save the configuration
-              CO_SaveConfig(C, G->CO_PrefsFile);
-
-              D(DBF_STARTUP, "set config DST setting to %s", C->DaylightSaving == TRUE ? "ON" : "OFF");
-            }
-          }
-          else if(G->CO_DST > 0 && C->DaylightSaving == (G->CO_DST == 2))
-          {
-            C->AutoDSTCheck = TRUE;
-
-            // make sure to save the configuration
-            CO_SaveConfig(C, G->CO_PrefsFile);
           }
         }
       }

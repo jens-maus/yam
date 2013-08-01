@@ -5,6 +5,20 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-08-01 Jens Langner <Jens.Langner@light-speed.de>
+
+  * TZone.c, misc: first large overhaul of the management of timezones and
+    where YAM is getting the GMT offset and daylight saving time (DST)
+    information from. Previously, YAM was trying to get both from the system
+    itself which only worked reliably for AmigaOS4. In addition, it was
+    trying to use all kind of third-party tools like SetDST, FACTS, etc.
+    for other systems which also made things way to complicated. Now with
+    this change YAM is finally using an own timezone database and
+    functionality based on the official tzdata/tzcode library from IANA.org
+    This should make timezone and DST guessing much more reliable and
+    less cumbersome. In addition, this new functionality will finally fix
+    certain flaws. Thus, this refs #10.
+
 2013-08-01 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/ReadWindowStatusBar.c: reverted the recent hook replacement, because

@@ -280,7 +280,7 @@ void     TimeVal2DateStamp(const struct TimeVal *tv, struct DateStamp *ds, enum 
 void     DateStamp2TimeVal(const struct DateStamp *ds, struct TimeVal *tv, enum TZConvert tzc);
 BOOL     TimeVal2String(char *dst, int dstlen, const struct TimeVal *tv, enum DateStampType mode, enum TZConvert tzc);
 BOOL     DateStamp2String(char *dst, int dstlen,  struct DateStamp *date, enum DateStampType mode, enum TZConvert tzc);
-BOOL     DateStamp2RFCString(char *dst, const int dstlen, const struct DateStamp *date, const int timeZone, const BOOL convert);
+BOOL     DateStamp2RFCString(char *dst, const int dstlen, const struct DateStamp *date, const int gmtOffset, const char *tzAbbr, const BOOL convert);
 long     DateStamp2Long(struct DateStamp *date);
 BOOL     String2DateStamp(struct DateStamp *dst, const char *string, enum DateStampType mode, enum TZConvert tzc);
 BOOL     String2TimeVal(struct TimeVal *dst, const char *string, enum DateStampType mode, enum TZConvert tzc);

@@ -61,8 +61,6 @@ struct CO_GUIData
   Object *ST_POPHOST0;
   Object *ST_USER0;
   Object *ST_PASSWD0;
-  Object *CY_TZONE;
-  Object *CH_DSTACTIVE;
   Object *ST_SMTPHOST;
   Object *ST_SMTPPORT;
   Object *CH_SMTP8BIT;
@@ -437,7 +435,6 @@ struct Config
   struct MinList userIdentityList; // list of user identities
   struct MinList signatureList;    // list of signatures
 
-  int   TimeZone;
   int   ShowHeader;
   int   ShowSenderInfo;
   int   EdWrapCol;
@@ -484,7 +481,6 @@ struct Config
   enum  QuickSearchBarPos  QuickSearchBarPos;
   enum  WrapMode           EdWrapMode;
 
-  BOOL  DaylightSaving;
   BOOL  DisplayAllTexts;
   BOOL  FixedFontEdit;
   BOOL  MultipleReadWindows;
@@ -530,8 +526,6 @@ struct Config
   BOOL  WBAppIcon;
   BOOL  DockyIcon;
   BOOL  AmiSSLCheck;
-  BOOL  TimeZoneCheck;
-  BOOL  AutoDSTCheck;
   BOOL  DetectCyrillic;
   BOOL  ABookLookup;
   BOOL  ConvertHTML;

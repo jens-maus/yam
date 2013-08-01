@@ -7347,7 +7347,8 @@ MSG_CO_QUICKSEARCHBAR (2422//)
 Quick search bar
 ;
 MSG_HELP_CO_CH_QUICKSEARCHBAR (2423//)
-Here you can select the position of the quick search bar.
+Here you can select the position of\n\
+the quick search bar.
 ;
 MSG_CO_QUICKSEARCHBARPOS (2424//)
 Posi_tion
@@ -7408,4 +7409,10 @@ If
 ;
 MSG_CO_CONDITION_POSTPHRASE (2443//)
 of the following conditions are met:
+;
+MSG_CO_FALLBACK_TZONE (2444//)
+America/New_York
+;
+MSG_HELP_CO_GR_TZONE (2445//)
+Here you can set your current location/time zone.
 ;

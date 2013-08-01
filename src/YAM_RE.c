@@ -3623,7 +3623,7 @@ static void RE_SendMDN(const enum MDNMode mode,
     p1->Filename = tf1->Filename;
 
     // generate the first lines of our MDN
-    DateStamp2RFCString(date, sizeof(date), &mail->Date, mail->tzone, TRUE);
+    DateStamp2RFCString(date, sizeof(date), &mail->Date, mail->gmtOffset, mail->tzAbbr, TRUE);
     snprintf(disp, sizeof(disp), "%s%s", autoAction ? "automatic-action/" : "manual-action/",
                                          autoSend ? "MDN-sent-automatically; " : "MDN-sent-manually; ");
 

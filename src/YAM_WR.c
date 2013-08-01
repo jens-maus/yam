@@ -80,7 +80,8 @@ struct ExpandTextData
   const char *     OS_Address;   // Address of original sender
   const char *     OM_Subject;   // Subject of original message
   struct DateStamp OM_Date;      // Date of original message
-  int              OM_TimeZone;  // Timezone of original message
+  int              OM_gmtOffset; // GMT offset original message
+  const char *     OM_tzAbbr;    // timeZone Abbreviation of original message
   const char *     OM_MessageID; // Message-ID of original message
   const char *     R_Name;       // Realname of person we reply/forward to
   const char *     R_Address;    // Address of person we reply/forward to
@@ -98,7 +99,7 @@ static char *GetDateTime(void)
 
   ENTER();
 
-  DateStamp2RFCString(dt, sizeof(dt), NULL, C->TimeZone + (C->DaylightSaving ? 60 : 0), FALSE);
+  DateStamp2RFCString(dt, sizeof(dt), NULL, G->gmtOffset, G->tzAbbr, FALSE);
 
   RETURN(dt);
   return dt;
@@ -1530,10 +1531,14 @@ static char *ExpandText(const char *src, struct ExpandTextData *etd)
 
         case 'z':
         {
-          char tzone[6];
+          char tzone[SIZE_SMALL];
+          int convertedGmtOffset = (etd->OM_gmtOffset/60)*100 + (etd->OM_gmtOffset%60);
 
-          int convertedTimeZone = (etd->OM_TimeZone/60)*100 + (etd->OM_TimeZone%60);
-          snprintf(tzone, sizeof(tzone), "%+05d", convertedTimeZone);
+          if(etd->OM_tzAbbr != NULL && etd->OM_tzAbbr[0] != '\0')
+            snprintf(tzone, sizeof(tzone), "%+05d (%s)", convertedGmtOffset, etd->OM_tzAbbr);
+          else
+            snprintf(tzone, sizeof(tzone), "%+05d", convertedGmtOffset);
+
           StrBufCat(&dst, tzone);
         }
         break;
@@ -1551,7 +1556,7 @@ static char *ExpandText(const char *src, struct ExpandTextData *etd)
         {
           char datstr[64];
 
-          DateStamp2RFCString(datstr, sizeof(datstr), &etd->OM_Date, etd->OM_TimeZone, FALSE);
+          DateStamp2RFCString(datstr, sizeof(datstr), &etd->OM_Date, etd->OM_gmtOffset, etd->OM_tzAbbr, FALSE);
           StrBufCat(&dst, datstr);
         }
         break;
@@ -1672,7 +1677,8 @@ static void SetupExpandTextData(struct ExpandTextData *etd, const struct Mail *m
   etd->OS_Name     = (mail != NULL) ? ((mail->From.RealName[0] != '\0') ? mail->From.RealName : mail->From.Address) : "";
   etd->OS_Address  = (mail != NULL) ? mail->From.Address : "";
   etd->OM_Subject  = (mail != NULL) ? mail->Subject : "";
-  etd->OM_TimeZone = (mail != NULL) ? mail->tzone : C->TimeZone;
+  etd->OM_gmtOffset= (mail != NULL) ? mail->gmtOffset : G->gmtOffset;
+  etd->OM_tzAbbr   = (mail != NULL) ? mail->tzAbbr : G->tzAbbr;
   etd->R_Name      = "";
   etd->R_Address   = "";
 
@@ -1685,11 +1691,11 @@ static void SetupExpandTextData(struct ExpandTextData *etd, const struct Mail *m
     // later on
     memcpy(&etd->OM_Date, &mail->Date, sizeof(struct DateStamp));
 
-    if(mail->tzone != 0)
+    if(mail->gmtOffset != 0)
     {
       struct DateStamp *date = &etd->OM_Date;
 
-      date->ds_Minute += mail->tzone;
+      date->ds_Minute += mail->gmtOffset;
 
       // we need to check the datestamp variable that it is still in it's borders
       // after adjustment

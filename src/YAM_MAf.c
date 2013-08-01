@@ -2248,11 +2248,15 @@ static BOOL MA_ScanDate(struct Mail *mail, const char *date)
   {
     struct DateStamp *ds = &dt.dat_Stamp;
 
-    // save the timezone
-    mail->tzone = TZtoMinutes(tzone);
+    // save the gmt offset
+    mail->gmtOffset = TZtoMinutes(tzone);
+
+    // save the tzone abbreviation
+    #warning have to implement tzAbbr saving here
+    //strlcpy(mail->tzAbbr, tzone, sizeof(mail->tzAbbr));
 
     // bring the date in relation to UTC
-    ds->ds_Minute -= mail->tzone;
+    ds->ds_Minute -= mail->gmtOffset;
 
     // we need to check the datestamp variable that it is still in it's borders
     // after the UTC correction
@@ -3002,7 +3006,8 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
       }
 
       // set the timeZone to our local one
-      mail->tzone = C->TimeZone;
+      mail->gmtOffset = G->gmtOffset;
+      strlcpy(mail->tzAbbr, G->tzAbbr, sizeof(mail->tzAbbr));
     }
 
     // lets calculate the mailSize out of the FileSize() function

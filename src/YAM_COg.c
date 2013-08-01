@@ -1611,44 +1611,8 @@ static Object *MakeStaticCheck(void)
 Object *CO_PageFirstSteps(struct CO_ClassData *data)
 {
   Object *obj;
-  static const char *tzone[34];
 
   ENTER();
-
-  tzone[ 0] = tr(MSG_CO_TZoneM12);
-  tzone[ 1] = tr(MSG_CO_TZoneM11);
-  tzone[ 2] = tr(MSG_CO_TZoneM10);
-  tzone[ 3] = tr(MSG_CO_TZoneM9);
-  tzone[ 4] = tr(MSG_CO_TZoneM8);
-  tzone[ 5] = tr(MSG_CO_TZoneM7);
-  tzone[ 6] = tr(MSG_CO_TZoneM6);
-  tzone[ 7] = tr(MSG_CO_TZoneM5);
-  tzone[ 8] = tr(MSG_CO_TZoneM4);
-  tzone[ 9] = tr(MSG_CO_TZoneM330);
-  tzone[10] = tr(MSG_CO_TZoneM3);
-  tzone[11] = tr(MSG_CO_TZoneM2);
-  tzone[12] = tr(MSG_CO_TZoneM1);
-  tzone[13] = tr(MSG_CO_TZone0);
-  tzone[14] = tr(MSG_CO_TZone1);
-  tzone[15] = tr(MSG_CO_TZone2);
-  tzone[16] = tr(MSG_CO_TZone3);
-  tzone[17] = tr(MSG_CO_TZone330);
-  tzone[18] = tr(MSG_CO_TZone4);
-  tzone[19] = tr(MSG_CO_TZone430);
-  tzone[20] = tr(MSG_CO_TZone5);
-  tzone[21] = tr(MSG_CO_TZone530);
-  tzone[22] = tr(MSG_CO_TZone545);
-  tzone[23] = tr(MSG_CO_TZone6);
-  tzone[24] = tr(MSG_CO_TZone630);
-  tzone[25] = tr(MSG_CO_TZone7);
-  tzone[26] = tr(MSG_CO_TZone8);
-  tzone[27] = tr(MSG_CO_TZone9);
-  tzone[28] = tr(MSG_CO_TZone930);
-  tzone[29] = tr(MSG_CO_TZone10);
-  tzone[30] = tr(MSG_CO_TZone11);
-  tzone[31] = tr(MSG_CO_TZone12);
-  tzone[32] = tr(MSG_CO_TZone13);
-  tzone[33] = NULL;
 
   obj = VGroup,
           MUIA_HelpNode, "Configuration#FirstSteps",
@@ -1681,12 +1645,6 @@ Object *CO_PageFirstSteps(struct CO_ClassData *data)
 
               Child, ColGroup(2), GroupFrameT(tr(MSG_CO_SYSTEMSETTINGS)),
                 Child, Label2(tr(MSG_CO_TimeZone)),
-                Child, data->GUI.CY_TZONE = MakeCycle(tzone,tr(MSG_CO_TimeZone)),
-
-                Child, HSpace(1),
-                Child, MakeCheckGroup(&data->GUI.CH_DSTACTIVE, tr(MSG_CO_DSTACTIVE)),
-
-                Child, HSpace(1),
                 Child, data->GUI.GR_TZONE = TZoneChooserObject,
                 End,
               End,
@@ -1704,11 +1662,7 @@ Object *CO_PageFirstSteps(struct CO_ClassData *data)
     SetHelp(data->GUI.ST_POPHOST0,       MSG_HELP_CO_ST_POPHOST);
     SetHelp(data->GUI.ST_USER0,          MSG_HELP_CO_ST_USER);
     SetHelp(data->GUI.ST_PASSWD0,        MSG_HELP_CO_ST_PASSWD);
-    SetHelp(data->GUI.CY_TZONE,          MSG_HELP_CO_CY_TZONE);
-    SetHelp(data->GUI.CH_DSTACTIVE,      MSG_HELP_CO_CH_DSTACTIVE);
-
-    set(data->GUI.CY_TZONE, MUIA_Disabled, G->TrustedTimezone);
-    set(data->GUI.CH_DSTACTIVE, MUIA_Disabled, G->TrustedDST);
+    SetHelp(data->GUI.GR_TZONE,          MSG_HELP_CO_GR_TZONE);
 
     DoMethod(data->GUI.ST_POPHOST0, MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_GetDefaultPOPHook);
     DoMethod(data->GUI.ST_USER0,  MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_GetDefaultPOPHook);

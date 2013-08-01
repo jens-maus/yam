@@ -48,7 +48,6 @@
 
 #if defined(__amigaos4__)
 #include <proto/application.h>
-#include <proto/timezone.h>
 #endif
 
 #include "extrasrc.h"
@@ -1399,32 +1398,19 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
 
   if(page == cp_FirstSteps || page == cp_AllPages)
   {
-    #if defined(__amigaos4__)
-    LONG gmtOffset = 0;
-    #endif
-
-    // if Locale is present, don't use the timezone from the config
-    #if defined(__amigaos4__)
-    // favor timezone.library on AmigaOS4
-    if(ITimezone != NULL && GetTimezoneAttrs(NULL, TZA_UTCOffsetSTD, &gmtOffset, TAG_DONE) == 1)
-    {
-      co->TimeZone = -gmtOffset;
-      G->TrustedTimezone = TRUE;
-    }
-    else
-    #endif
+    // check if the Location is setup correctly and if not
+    // we use GuessTZone() to actually get an almost matching Location
+    // definition or we set the Location to a default in the catalog
     if(G->Locale != NULL)
     {
-      co->TimeZone = -G->Locale->loc_GMTOffset;
-      G->TrustedTimezone = TRUE;
+      LONG gmtOffset = -(G->Locale->loc_GMTOffset);
+
+      D(DBF_CONFIG, "got GMT offset %ld from locale.library", gmtOffset);
+
+      strlcpy(co->Location, GuessTZone(gmtOffset), sizeof(co->Location));
     }
     else
-    {
-      co->TimeZone = 0;
-      G->TrustedTimezone = FALSE;
-    }
-
-    co->DaylightSaving = (G->CO_DST == 2);
+      strlcpy(co->Location, tr(MSG_CO_FALLBACK_TZONE), sizeof(co->Location));
   }
 
   if(page == cp_TCPIP || page == cp_AllPages)
@@ -1684,8 +1670,6 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     strlcpy(co->DefaultWriteCharset, "ISO-8859-1", sizeof(co->DefaultWriteCharset));
     co->SysCharsetCheck = TRUE;
     co->AmiSSLCheck = TRUE;
-    co->TimeZoneCheck = TRUE;
-    co->AutoDSTCheck = TRUE;
     co->PrintMethod = PRINTMETHOD_RAW;
     co->StackSize = 40000;
     co->AutoColumnResize = TRUE;
@@ -1974,8 +1958,7 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
   // we do a deep compare here, but start the compare by comparing our normal
   // plain variables as this will be the faster compare than the compares
   // of our nested structures/lists, etc.
-  if(c1->TimeZone                        == c2->TimeZone &&
-     c1->ShowHeader                      == c2->ShowHeader &&
+  if(c1->ShowHeader                      == c2->ShowHeader &&
      c1->ShowSenderInfo                  == c2->ShowSenderInfo &&
      c1->EdWrapCol                       == c2->EdWrapCol &&
      c1->EdWrapMode                      == c2->EdWrapMode &&
@@ -2022,7 +2005,6 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      c1->ForwardMode                     == c2->ForwardMode &&
      c1->InfoBarPos                      == c2->InfoBarPos &&
      c1->QuickSearchBarPos               == c2->QuickSearchBarPos &&
-     c1->DaylightSaving                  == c2->DaylightSaving &&
      c1->DisplayAllTexts                 == c2->DisplayAllTexts &&
      c1->FixedFontEdit                   == c2->FixedFontEdit &&
      c1->MultipleReadWindows             == c2->MultipleReadWindows &&
@@ -2068,8 +2050,6 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      c1->WBAppIcon                       == c2->WBAppIcon &&
      c1->DockyIcon                       == c2->DockyIcon &&
      c1->AmiSSLCheck                     == c2->AmiSSLCheck &&
-     c1->TimeZoneCheck                   == c2->TimeZoneCheck &&
-     c1->AutoDSTCheck                    == c2->AutoDSTCheck &&
      c1->DetectCyrillic                  == c2->DetectCyrillic &&
      c1->ABookLookup                     == c2->ABookLookup &&
      c1->ConvertHTML                     == c2->ConvertHTML &&
@@ -2192,7 +2172,7 @@ void CO_Validate(struct Config *co, BOOL update)
   struct MailServerNode *msn;
   struct UserIdentityNode *uin;
   struct SignatureNode *sn;
-  LONG gmtOffset = 0;
+  struct TM tm;
 
   ENTER();
 
@@ -2376,133 +2356,46 @@ void CO_Validate(struct Config *co, BOOL update)
   // update the write windows in any case
   updateWriteWindows = TRUE;
 
-  // if we successfully got an offset to GMT we can trust the time zone information
-  G->TrustedTimezone = FALSE;
-
-  // now we check whether our timezone setting is coherent to an
-  // eventually set locale setting.
-  #if defined(__amigaos4__)
-  // prefer timezone.library of locale.library on AmigaOS4
-  if(ITimezone != NULL && GetTimezoneAttrs(NULL, TZA_UTCOffsetSTD, &gmtOffset, TAG_DONE) == 1)
-  {
-    gmtOffset = -gmtOffset;
-    D(DBF_CONFIG, "got GMT offset %ld from timezone.library", gmtOffset);
-    G->TrustedTimezone = TRUE;
-  }
-  #endif
-
-  if(G->TrustedTimezone == FALSE && G->Locale != NULL)
-  {
-    gmtOffset = -(G->Locale->loc_GMTOffset);
-    D(DBF_CONFIG, "got GMT offset %ld from locale.library", gmtOffset);
-    G->TrustedTimezone = TRUE;
-  }
-
-  if(co->TimeZoneCheck == TRUE)
-  {
-    if(co->TimeZone != gmtOffset)
-    {
-      int res;
-
-      W(DBF_CONFIG, "mismatching time zone offsets, config %ld vs. system %ld", co->TimeZone, gmtOffset);
-      if(G->TrustedTimezone == FALSE)
-      {
-        D(DBF_CONFIG, "asking user for confirmation about time zone setting");
-        res = MUI_Request(G->App, refWindow, MUIF_NONE,
-                          tr(MSG_CO_TIMEZONEWARN_TITLE),
-                          tr(MSG_CO_TIMEZONEWARN_BT),
-                          tr(MSG_CO_TIMEZONEWARN));
-      }
-      else
-      {
-        // fake "Change" click if we have a trustable time zone setting
-        D(DBF_CONFIG, "using trusable time zone setting");
-        res = 1;
-      }
-
-      // if the user has clicked on Change, we do
-      // change the timezone and save it immediatly
-      if(res == 1)
-      {
-        co->TimeZone = gmtOffset;
-        saveAtEnd = TRUE;
-      }
-      else if(res == 2)
-      {
-        co->TimeZoneCheck = FALSE;
-        saveAtEnd = TRUE;
-      }
-    }
-  }
-  else if(co->TimeZone == gmtOffset)
-  {
-    // enable the time zone checking again!
-    co->TimeZoneCheck = TRUE;
-    saveAtEnd = TRUE;
-  }
-
-  // we also check the DST (Daylight Saving settings) in case
-  // we have a AutoDST tool running.
-  if(co->AutoDSTCheck == TRUE)
-  {
-    // check if we found an AutoDST tool or not.
-    if(G->CO_DST > 0 && co->DaylightSaving != (G->CO_DST == 2))
-    {
-      int res;
-
-      W(DBF_CONFIG, "mismatching DST settings, config %ld vs. DST tool %ld", co->DaylightSaving, (G->CO_DST == 2));
-      if(G->TrustedDST == FALSE)
-      {
-        D(DBF_CONFIG, "asking user for confirmation about DST setting");
-        res = MUI_Request(G->App, refWindow, MUIF_NONE,
-                          tr(MSG_CO_AUTODSTWARN_TITLE),
-                          tr(MSG_CO_AUTODSTWARN_BT),
-                          tr(MSG_CO_AUTODSTWARN));
-      }
-      else
-      {
-        // fake "Change" click if we have a trustable DST setting
-        D(DBF_CONFIG, "using trusable DST setting");
-        res = 1;
-      }
-
-      // if the user has clicked on Change, we do
-      // change the DST setting and save it immediatly
-      if(res == 1)
-      {
-        co->DaylightSaving = (G->CO_DST == 2);
-        saveAtEnd = TRUE;
-      }
-      else if(res == 2)
-      {
-        co->AutoDSTCheck = FALSE;
-        saveAtEnd = TRUE;
-      }
-    }
-  }
-  else if(G->CO_DST > 0 && co->DaylightSaving == (G->CO_DST == 2))
-  {
-    // enable the autodst checking again!
-    co->AutoDSTCheck = TRUE;
-    saveAtEnd = TRUE;
-  }
-
   // check if the Location is setup correctly and if not
   // we use GuessTZone() to actually get an almost matching Location
-  // definition
+  // definition or we set the Location to a default in the catalog
   if(co->Location[0] == '\0')
-    strlcpy(co->Location, GuessTZone(co->TimeZone), sizeof(co->Location));
+  {
+    if(G->Locale != NULL)
+    {
+      LONG gmtOffset = -(G->Locale->loc_GMTOffset);
+
+      D(DBF_CONFIG, "got GMT offset %ld from locale.library", gmtOffset);
+
+      strlcpy(co->Location, GuessTZone(gmtOffset), sizeof(co->Location));
+    }
+    else
+      strlcpy(co->Location, tr(MSG_CO_FALLBACK_TZONE), sizeof(co->Location));
+  }
 
   // now we have to make sure we set the Location in our own libtz correctly
   tzset(co->Location);
 
+  // now we obtain the gmtOffset of the location we just set to libtz
+  mktime(&tm);
+  if(tm.tm_isdst != 0)
+  {
+    G->gmtOffset = (tm.tm_gmtoff - 3600) / 60;
+    strlcpy(G->tzAbbr, tzname[1], sizeof(G->tzAbbr));
+  }
+  else
+  {
+    G->gmtOffset = tm.tm_gmtoff / 60;
+    strlcpy(G->tzAbbr, tzname[0], sizeof(G->tzAbbr));
+  }
+
   // some debug information/output
-  D(DBF_TZONE, "tzname: '%s' '%s'", tzname[0], tzname[1]);
+  D(DBF_TZONE, "Current GMT offset: %d", G->gmtOffset);
+  D(DBF_TZONE, "Current TimeZone abbreviation: '%s' (%s/%s)", G->tzAbbr, tzname[0], tzname[1]);
   D(DBF_TZONE, "DST1: %d", GetDSTinfo(2012, 3, 24)); // should return 0
   D(DBF_TZONE, "DST2: %d", GetDSTinfo(2012, 3, 25)); // should return 2
   D(DBF_TZONE, "DST3: %d", GetDSTinfo(2012, 3, 26)); // should return 1
   D(DBF_TZONE, "DST4: %d", GetDSTinfo(2012, 5, 22)); // should return 1
-  D(DBF_TZONE, "tzname: '%s' '%s'", tzname[0], tzname[1]);
 
   // check if PGP is available or not.
   G->PGPVersion = CO_DetectPGP(co);

@@ -134,7 +134,6 @@ struct Global
   LONG                     Weights[12];
 
   int                      PGPVersion;
-  int                      CO_DST;
   int                      ER_NumErr;
   int                      currentAppIcon;
   int                      activeConnections;
@@ -142,6 +141,7 @@ struct Global
   int                      LastIconID;
   #endif
   time_t                   LastPGPUsage;
+  int                      gmtOffset;           // the current offset to GMT (+/-)
 
   #if defined(__amigaos4__)
   uint32                   applicationID;
@@ -158,8 +158,6 @@ struct Global
   BOOL                     NoImageWarning;
   BOOL                     NoCatalogTranslation;
   BOOL                     DefIconsAvailable;
-  BOOL                     TrustedTimezone;      // can the time zone settings be trusted?
-  BOOL                     TrustedDST;           // can the DST settings be trusted?
 
   struct DateStamp         StartDate;
   struct Users             Users;
@@ -193,6 +191,7 @@ struct Global
   char                     CO_PrefsFile[SIZE_PATHFILE];
   char                     DI_Filename[SIZE_PATHFILE];
   char                     preselectionListLayout[SIZE_LARGE];
+  char                     tzAbbr[SIZE_SMALL];  // Abbreviation string (e.g. CEST/CET) of timezone
 };
 
 extern struct Global *G;

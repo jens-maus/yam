@@ -2218,9 +2218,9 @@ void TimeValTZConvert(struct TimeVal *tv, enum TZConvert tzc)
   ENTER();
 
   if(tzc == TZC_LOCAL)
-    tv->Seconds += (C->TimeZone + C->DaylightSaving * 60) * 60;
+    tv->Seconds += (G->gmtOffset * 60);
   else if(tzc == TZC_UTC)
-    tv->Seconds -= (C->TimeZone + C->DaylightSaving * 60) * 60;
+    tv->Seconds -= (G->gmtOffset * 60);
 
   LEAVE();
 }
@@ -2234,9 +2234,9 @@ void DateStampTZConvert(struct DateStamp *ds, enum TZConvert tzc)
 
   // convert the DateStamp from local -> UTC or visa-versa
   if(tzc == TZC_LOCAL)
-    ds->ds_Minute += (C->TimeZone + C->DaylightSaving * 60);
+    ds->ds_Minute += G->gmtOffset;
   else if(tzc == TZC_UTC)
-    ds->ds_Minute -= (C->TimeZone + C->DaylightSaving * 60);
+    ds->ds_Minute -= G->gmtOffset;
 
   // we need to check the datestamp variable that it is still in it's borders
   // after the UTC correction
@@ -2416,7 +2416,7 @@ BOOL DateStamp2String(char *dst, int dstlen, struct DateStamp *date, enum DateSt
       case DSS_RELDATEBEAT:
       {
         // calculate the beat time
-        unsigned int beat = (((date->ds_Minute-C->TimeZone+(C->DaylightSaving?0:60)+1440)%1440)*1000)/1440;
+        unsigned int beat = (((date->ds_Minute - G->gmtOffset + 1440) % 1440) * 1000)/1440;
 
         if(mode == DSS_DATEBEAT || mode == DSS_RELDATEBEAT)
           snprintf(dst, dstlen, "%s @%03d", datestr, beat);
@@ -2443,12 +2443,13 @@ BOOL DateStamp2String(char *dst, int dstlen, struct DateStamp *date, enum DateSt
 }
 ///
 /// DateStamp2RFCString
-BOOL DateStamp2RFCString(char *dst, const int dstlen, const struct DateStamp *date, const int timeZone, const BOOL convert)
+BOOL DateStamp2RFCString(char *dst, const int dstlen, const struct DateStamp *date, 
+                         const int gmtOffset, const char *tzAbbr, const BOOL convert)
 {
   struct DateStamp datestamp;
   struct ClockData cd;
   time_t seconds;
-  int convertedTimeZone = (timeZone/60)*100 + (timeZone%60);
+  int convertedGmtOffset = (gmtOffset/60)*100 + (gmtOffset%60);
 
   ENTER();
 
@@ -2459,10 +2460,10 @@ BOOL DateStamp2RFCString(char *dst, const int dstlen, const struct DateStamp *da
     memcpy(&datestamp, date, sizeof(struct DateStamp));
 
   // if the user wants to convert the datestamp we have to make sure we
-  // substract/add the timeZone
-  if(convert && timeZone != 0)
+  // substract/add the gmtOffset
+  if(convert && gmtOffset != 0)
   {
-    datestamp.ds_Minute += timeZone;
+    datestamp.ds_Minute += gmtOffset;
 
     // we need to check the datestamp variable that it is still in it's borders
     // after adjustment
@@ -2477,14 +2478,29 @@ BOOL DateStamp2RFCString(char *dst, const int dstlen, const struct DateStamp *da
   Amiga2Date(seconds, &cd);
 
   // use snprintf to format the RFC2822 conforming datetime string.
-  snprintf(dst, dstlen, "%s, %02d %s %d %02d:%02d:%02d %+05d", wdays[cd.wday],
-                                                               cd.mday,
-                                                               months[cd.month-1],
-                                                               cd.year,
-                                                               cd.hour,
-                                                               cd.min,
-                                                               cd.sec,
-                                                               convertedTimeZone);
+  if(tzAbbr != NULL && tzAbbr[0] != '\0')
+  {
+    snprintf(dst, dstlen, "%s, %02d %s %d %02d:%02d:%02d %+05d (%s)", wdays[cd.wday],
+                                                                      cd.mday,
+                                                                      months[cd.month-1],
+                                                                      cd.year,
+                                                                      cd.hour,
+                                                                      cd.min,
+                                                                      cd.sec,
+                                                                      convertedGmtOffset,
+                                                                      tzAbbr);
+  }
+  else
+  {
+    snprintf(dst, dstlen, "%s, %02d %s %d %02d:%02d:%02d %+05d", wdays[cd.wday],
+                                                                 cd.mday,
+                                                                 months[cd.month-1],
+                                                                 cd.year,
+                                                                 cd.hour,
+                                                                 cd.min,
+                                                                 cd.sec,
+                                                                 convertedGmtOffset);
+  }
 
   RETURN(TRUE);
   return TRUE;
@@ -2891,6 +2907,8 @@ int TZtoMinutes(const char *tzone)
     * and search for the timezone abbreviation
     */
 
+   D(DBF_TZONE, "TZtoMinutes: '%s'", tzone);
+
    // check if the timezone definition starts with a + or -
    if(tzone[0] == '+' || tzone[0] == '-')
    {
@@ -2938,18 +2956,18 @@ int TZtoMinutes(const char *tzone)
           if(strnicmp(time_zone_table[i].TZname, tzone, strlen(time_zone_table[i].TZname)) == 0)
           {
             tzcorr = time_zone_table[i].TZcorr;
-            D(DBF_UTIL, "TZtoMinutes: found abbreviation '%s' (%ld)", time_zone_table[i].TZname, tzcorr);
+            D(DBF_TZONE, "TZtoMinutes: found abbreviation '%s' (%ld)", time_zone_table[i].TZname, tzcorr);
             break;
           }
         }
 
         if(tzcorr == -1)
-          W(DBF_UTIL, "TZtoMinutes: abbreviation '%s' NOT found!", tzone);
+          W(DBF_TZONE, "TZtoMinutes: abbreviation '%s' NOT found!", tzone);
       }
    }
 
    if(tzcorr == -1)
-     W(DBF_UTIL, "couldn't parse timezone from '%s'", tzone);
+     W(DBF_TZONE, "couldn't parse timezone from '%s'", tzone);
 
    return tzcorr == -1 ? 0 : (tzcorr/100)*60 + (tzcorr%100);
 }
