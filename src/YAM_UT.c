@@ -3361,7 +3361,7 @@ void RemoveMailFromList(struct Mail *mail, const BOOL closeWindows, const BOOL c
         // MUIA_Window_CloseRequest itself. A simple set(win, MUIA_Window_Open, FALSE) would
         // visibly close the window, but it would not invoke the associated hook which gets
         // invoked when you close the window by clicking on the close gadget.
-        DoMethod(G->App, MUIM_Application_PushMethod, rmData->readWindow, 3, MUIM_Set, MUIA_Window_CloseRequest, TRUE);
+        DoMethod(_app(rmData->readWindow), MUIM_Application_PushMethod, rmData->readWindow, 3, MUIM_Set, MUIA_Window_CloseRequest, TRUE);
       }
       else
       {
@@ -3963,12 +3963,12 @@ BOOL SafeOpenWindow(Object *obj)
     set(obj, MUIA_Window_Open, TRUE);
 
     D(DBF_GUI, "window with title '%s' is %s", (char *)xget(obj, MUIA_Window_Title), xget(obj, MUIA_Window_Open) == TRUE ? "open" : "not open");
-    D(DBF_GUI, "YAM is %s", xget(G->App, MUIA_Application_Iconified) == TRUE ? "iconified" : "not iconified");
+    D(DBF_GUI, "YAM is %s", xget(_app(obj), MUIA_Application_Iconified) == TRUE ? "iconified" : "not iconified");
 
     // now we check whether the window was successfully
     // opened or the application is in iconify state
     if(xget(obj, MUIA_Window_Open) == TRUE ||
-       xget(G->App, MUIA_Application_Iconified) == TRUE)
+       xget(_app(obj), MUIA_Application_Iconified) == TRUE)
     {
       success = TRUE;
     }
@@ -3999,7 +3999,7 @@ void DisposeModule(void *modptr)
 
     D(DBF_GUI, "removing window %08lx", window);
     // remove the window from our app and dispose it
-    DoMethod(G->App, MUIM_YAMApplication_DisposeWindow, window);
+    DoMethod(_app(window), MUIM_YAMApplication_DisposeWindow, window);
 
     free(*module);
     *module = NULL;

@@ -690,7 +690,7 @@ BOOL CertWarningRequest(struct Connection *conn, struct Certificate *cert)
                   if(asprintf(&reqtitle, tr(MSG_SSL_CERT_WARNING_SHOWTITLE), conn->server->hostname, conn->server->port) != -1)
                   {
                     // open an additional MUI requester now
-                    MUI_Request(G->App, win, MUIF_REQ_FLOATTEXT, reqtitle, tr(MSG_OkayReq), (char *)buffer);
+                    MUI_Request(_app(win), win, MUIF_REQ_FLOATTEXT, reqtitle, tr(MSG_OkayReq), (char *)buffer);
 
                     free(reqtitle);
                   }
