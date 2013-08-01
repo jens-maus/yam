@@ -1144,7 +1144,7 @@ HOOKPROTONHNONP(CO_DelPOP3, void)
   if(msn != NULL &&
      xget(gui->LV_POP3, MUIA_NList_Entries) > 1)
   {
-    DoMethod(gui->LV_POP3, MUIM_NList_Remove, xget(gui->LV_POP3, MUIA_NList_Active));
+    DoMethod(gui->LV_POP3, MUIM_NList_Remove, MUIV_NList_Remove_Active);
 
     // remove it from the internal mail server list as well.
     Remove((struct Node *)msn);
@@ -1204,7 +1204,7 @@ HOOKPROTONHNONP(CO_DelSMTP, void)
   if(msn != NULL &&
      xget(gui->LV_SMTP, MUIA_NList_Entries) > 1)
   {
-    DoMethod(gui->LV_SMTP, MUIM_NList_Remove, xget(gui->LV_SMTP, MUIA_NList_Active));
+    DoMethod(gui->LV_SMTP, MUIM_NList_Remove, MUIV_NList_Remove_Active);
 
     // remove it from the internal mail server list as well.
     Remove((struct Node *)msn);
@@ -1261,7 +1261,7 @@ HOOKPROTONHNONP(CO_DelIdentity, void)
   if(uin != NULL &&
      xget(gui->LV_IDENTITY, MUIA_NList_Entries) > 1)
   {
-    DoMethod(gui->LV_IDENTITY, MUIM_NList_Remove, xget(gui->LV_IDENTITY, MUIA_NList_Active));
+    DoMethod(gui->LV_IDENTITY, MUIM_NList_Remove, MUIV_NList_Remove_Active);
 
     // remove it from the internal user identity list as well.
     Remove((struct Node *)uin);
@@ -1322,7 +1322,7 @@ HOOKPROTONHNONP(CO_DelSignature, void)
   if(sn != NULL &&
      xget(gui->LV_SIGNATURE, MUIA_NList_Entries) > 1)
   {
-    DoMethod(gui->LV_SIGNATURE, MUIM_NList_Remove, xget(gui->LV_SIGNATURE, MUIA_NList_Active));
+    DoMethod(gui->LV_SIGNATURE, MUIM_NList_Remove, MUIV_NList_Remove_Active);
 
     // remove it from the internal user identity list as well.
     Remove((struct Node *)sn);
