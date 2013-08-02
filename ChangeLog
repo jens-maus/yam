@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-08-02 Jens Langner <Jens.Langner@light-speed.de>
+
+  * locale/YAM.cd: removed all obsolete catalog strings not required anymore.
+
 2013-08-01 Jens Langner <Jens.Langner@light-speed.de>
 
   * TZone.c, misc: first large overhaul of the management of timezones and

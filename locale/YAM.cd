@@ -30,9 +30,6 @@ Attachments
 MSG_Options (3//)
 Options
 ;
-MSG_Del (5//)
-_Delete
-;
 MSG_New (6//)
 New
 ;
@@ -1350,10 +1347,6 @@ SMTP server will be used as fallback.
 MSG_HELP_CO_ST_PASSWD (557//)
 Password to access\n\
 the POP3 server.
-;
-MSG_HELP_CO_CY_TZONE (558//)
-Select the time zone of\n\
-your current location.
 ;
 MSG_HELP_CO_ST_SMTPHOST (560//)
 The address of the SMTP server to send mail to.\n\
@@ -4244,12 +4237,6 @@ U
 MSG_CTunknown (1550//)
 unknown
 ;
-MSG_CO_More (1551//)
-_More
-;
-MSG_CO_Less (1552//)
-_Less
-;
 MSG_CO_NB_AUTOSAVE (1566//)
 Autosave interval
 ;
@@ -4540,31 +4527,6 @@ MSG_CO_AMISSLWARN_BT (1654//)
 ;
 MSG_BUSY_OPENINGCONFIG (1655//)
 Opening configuration...
-;
-MSG_CO_TIMEZONEWARN_TITLE (1656//)
-Time zone setting warning
-;
-MSG_CO_TIMEZONEWARN (1657//)
-The time zone setting in YAM doesn't match\n\
-the system's default time zone.\n\
-\n\
-How do you want to proceed?
-;
-MSG_CO_TIMEZONEWARN_BT (1658//)
-*_Change|Ignore _always|_Ignore
-;
-MSG_CO_AUTODSTWARN_TITLE (1659//)
-AutoDST warning
-;
-MSG_CO_AUTODSTWARN (1660//)
-YAM has found an AutoDST tool active and\n\
-it is reporting a Daylight Saving Time\n\
-different to what is configured in YAM.\n\
-\n\
-How do you want to proceed?
-;
-MSG_CO_AUTODSTWARN_BT (1661//)
-*_Change|Ignore _always|_Ignore
 ;
 MSG_MA_UPDATECHECK (1662//)
 Check for updates
@@ -5256,14 +5218,6 @@ Configure the general Look & Feel of YAM...
 ;
 MSG_CO_CRDLOOKFEEL (1888//)
 Look & Feel
-;
-MSG_CO_DSTACTIVE (1889//)
-D_aylight Saving Time (DST) is active
-;
-MSG_HELP_CO_CH_DSTACTIVE (1890//)
-Enable this if daylight saving time is\n\
-currently active in your time zone\n\
-(summer time).
 ;
 MSG_CO_SMTP_SERVERPORT (1891//)
 Ser_ver/Port
@@ -6813,9 +6767,6 @@ _Active
 ;
 MSG_MA_FLUSH_ALL_INDICES (2310//)
 Flush all indices
-;
-MSG_FI_CONDITION (2311//)
-Condition
 ;
 MSG_HELP_CO_CH_IDENTITY_ENABLED (2312//)
 If checked, this user identity is enabled for use.
