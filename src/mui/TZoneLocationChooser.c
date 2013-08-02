@@ -106,6 +106,9 @@ OVERLOAD(OM_SET)
 {
   GETDATA;
   struct TagItem *tags = inittags(msg), *tag;
+  ULONG result = FALSE;
+
+  ENTER();
 
   while((tag = NextTagItem((APTR)&tags)) != NULL)
   {
@@ -117,13 +120,19 @@ OVERLOAD(OM_SET)
         {
           data->continent = tag->ti_Data;
           DoMethod(obj, METHOD(UpdateLocations));
-		}
+		    }
+
+        // make the superMethod call ignore those tags
+        tag->ti_Tag = TAG_IGNORE;
       }
       break;
     }
   }
 
-  return DoSuperMethodA(cl, obj, msg);
+  result = DoSuperMethodA(cl, obj, msg);
+  
+  RETURN(result);
+  return result;
 }
 
 ///
@@ -140,7 +149,9 @@ DECLARE(UpdateLocations)
   ENTER();
 
   set(obj, MUIA_Cycle_Entries, NULL);
-  free(data->locationArray);
+
+  if(data->locationArray != NULL)
+    free(data->locationArray);
 
   data->locationArray = BuildLocationEntries(data->continent);
   set(obj, MUIA_Cycle_Entries, data->locationArray);

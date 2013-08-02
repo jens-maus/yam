@@ -2198,6 +2198,41 @@ void DateStampUTC(struct DateStamp *ds)
   LEAVE();
 }
 ///
+/// DateStamp2tm
+// converts a struct DateStamp to a struct tm
+BOOL DateStamp2tm(const struct DateStamp *ds, struct TM *tm)
+{
+  struct DateStamp dsnow;
+  struct ClockData cd;
+  BOOL result = FALSE;
+
+  ENTER();
+
+  if(tm != NULL)
+  {
+    // if this argument is not set we get the actual time
+    if(ds == NULL)
+      ds = DateStamp(&dsnow);
+
+    // convert DateStamp to ClockData
+    Amiga2Date((ds->ds_Days*24*60*60 + ds->ds_Minute*60 + ds->ds_Tick/TICKS_PER_SECOND), &cd);
+
+    // convert ClockData to struct tm
+    tm->tm_isdst = -1; // set to -1 so that mktime() will set it
+    tm->tm_mday = cd.mday;
+    tm->tm_mon = cd.month - 1;
+    tm->tm_year = cd.year - 1900;
+    tm->tm_hour = cd.hour;
+    tm->tm_min = cd.min;
+    tm->tm_sec = cd.sec;
+    
+    result = TRUE;
+  }
+
+  RETURN(result);
+  return result;
+}
+///
 /// GetSysTimeUTC
 //  gets the actual system time in UTC
 void GetSysTimeUTC(struct TimeVal *tv)

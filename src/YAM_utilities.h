@@ -43,6 +43,8 @@
 #include "YAM_stringsizes.h"
 #include "YAM_folderconfig.h"
 
+#include "extrasrc.h"
+
 // forward declarations
 struct ReadMailData;
 struct Mail;
@@ -273,6 +275,7 @@ char *   CreateFilename(const char * const file, char *fullPath, const size_t fu
 BOOL     CreateDirectory(const char *dir);
 int      TZtoMinutes(const char *tzone);
 void     DateStampUTC(struct DateStamp *ds);
+BOOL     DateStamp2tm(const struct DateStamp *ds, struct TM *tm);
 void     GetSysTimeUTC(struct TimeVal *tv);
 void     TimeValTZConvert(struct TimeVal *tv, enum TZConvert tzc);
 void     DateStampTZConvert(struct DateStamp *ds, enum TZConvert tzc);

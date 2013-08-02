@@ -40,6 +40,7 @@
 #include "YAM_config.h"
 #include "YAM_utilities.h"
 
+#include "Locale.h"
 #include "MUIObjects.h"
 #include "TZone.h"
 
@@ -53,7 +54,10 @@ struct Data
 {
   Object *continents;
   Object *locations;
-  char tzone[64];
+  Object *infoLabel;
+
+  char tzone[SIZE_DEFAULT];
+  char labelText[SIZE_LARGE];
 };
 */
 
@@ -63,14 +67,18 @@ OVERLOAD(OM_NEW)
 {
   Object *continents;
   Object *locations;
+  Object *infoLabel;
 
   ENTER();
 
   if((obj = DoSuperNew(cl, obj,
 
-    MUIA_Group_Horiz, TRUE,
-    Child, continents = TZoneContinentChooserObject, End,
-    Child, locations = TZoneLocationChooserObject, End,
+    MUIA_Group_Horiz, FALSE,
+    Child, HGroup,
+      Child, continents = TZoneContinentChooserObject, End,
+      Child, locations = TZoneLocationChooserObject, End,
+    End,
+    Child, infoLabel = LLabel(NULL),
 
     TAG_MORE, inittags(msg))) != NULL)
   {
@@ -78,8 +86,11 @@ OVERLOAD(OM_NEW)
 
     data->continents = continents;
     data->locations = locations;
+    data->infoLabel = infoLabel;
 
     DoMethod(continents, MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, locations, 3, MUIM_Set, MUIA_TZoneLocationChooser_Continent, MUIV_TriggerValue);
+    DoMethod(continents, MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, obj, 1, METHOD(UpdateInfoLabel));
+    DoMethod(locations, MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, obj, 1, METHOD(UpdateInfoLabel));
   }
 
   RETURN((IPTR)obj);
@@ -92,6 +103,9 @@ OVERLOAD(OM_SET)
 {
   GETDATA;
   struct TagItem *tags = inittags(msg), *tag;
+  ULONG result;
+
+  ENTER();
 
   while((tag = NextTagItem((APTR)&tags)) != NULL)
   {
@@ -114,12 +128,18 @@ OVERLOAD(OM_SET)
             set(data->locations, MUIA_Cycle_Active, location);
           }
         }
+
+        // make the superMethod call ignore those tags
+        tag->ti_Tag = TAG_IGNORE;
       }
       break;
     }
   }
 
-  return DoSuperMethodA(cl, obj, msg);
+  result = DoSuperMethodA(cl, obj, msg);
+
+  RETURN(result);
+  return result;
 }
 
 ///
@@ -128,75 +148,26 @@ OVERLOAD(OM_GET)
 {
   GETDATA;
   IPTR *store = ((struct opGet *)msg)->opg_Storage;
+  ULONG result = FALSE;
+
+  ENTER();
 
   switch(((struct opGet *)msg)->opg_AttrID)
   {
     case ATTR(TZone):
     {
       *store = (IPTR)BuildTZoneName(data->tzone, sizeof(data->tzone), xget(data->continents, MUIA_Cycle_Active), xget(data->locations, MUIA_Cycle_Active));
-      return TRUE;
+
+      result = TRUE;
     }
-
-    case ATTR(GMTOffset):
-    {
-      BOOL resetTZ = FALSE;
-      struct TM tm;
-
-      BuildTZoneName(data->tzone, sizeof(data->tzone), xget(data->continents, MUIA_Cycle_Active), xget(data->locations, MUIA_Cycle_Active));
-
-      // check if our objects are representing a different location than the current configuration
-      if(strcasecmp(data->tzone, C->Location) != 0)
-      {
-        tzset(data->tzone);
-        resetTZ = TRUE;
-      }
-
-      // mktime() returns the GMT offset in seconds instead of minutes.
-      // Additionally we must respect the current DST state to obtain
-      // an GMT offset which complies to the system.
-      mktime(&tm);
-      if(tm.tm_isdst != 0)
-        *store = (tm.tm_gmtoff - 3600) / 60;
-      else
-        *store = tm.tm_gmtoff / 60;
-
-      D(DBF_TZONE, "GMT offset of '%s': %d", data->tzone, *store);
-
-      // reset the location to the former value
-      if(resetTZ == TRUE)
-        tzset(C->Location);
-
-      return TRUE;
-    }
-
-    case ATTR(DSTState):
-    {
-      BOOL resetTZ = FALSE;
-      struct TM tm;
-
-      BuildTZoneName(data->tzone, sizeof(data->tzone), xget(data->continents, MUIA_Cycle_Active), xget(data->locations, MUIA_Cycle_Active));
-
-      // check if our objects are representing a different location than the current configuration
-      if(strcasecmp(data->tzone, C->Location) != 0)
-      {
-        tzset(data->tzone);
-        resetTZ = TRUE;
-      }
-
-      mktime(&tm);
-      *store = (tm.tm_isdst != 0) ? DST_ON : DST_OFF;
-
-      D(DBF_TZONE, "DST state of '%s': %d", data->tzone, *store);
-
-      // reset the location to the former value
-      if(resetTZ == TRUE)
-        tzset(C->Location);
-
-      return TRUE;
-    }
+    break;
   }
 
-  return DoSuperMethodA(cl, obj, msg);
+  if(result == FALSE)
+    result = DoSuperMethodA(cl, obj, msg);
+
+  RETURN(result);
+  return result;
 }
 
 ///
@@ -204,4 +175,58 @@ OVERLOAD(OM_GET)
 /* Private Functions */
 
 /* Public Methods */
+/// DECLARE(UpdateInfoLabel)
+DECLARE(UpdateInfoLabel)
+{
+  GETDATA;
+  struct TM tm;
+  BOOL resetTZ = FALSE;
+  char tzAbbr[SIZE_SMALL];
+  int gmtOffset;
+  int convertedGmtOffset;
 
+  ENTER();
+
+  // now we query some information on the timezone which we will display
+  // below the cycle gadgets
+  BuildTZoneName(data->tzone, sizeof(data->tzone), xget(data->continents, MUIA_Cycle_Active), xget(data->locations, MUIA_Cycle_Active));
+
+  // get the current date/time in struct tm format
+  DateStamp2tm(NULL, &tm);
+ 
+  // check if our objects are representing a different location than the current configuration
+  if(strcasecmp(data->tzone, C->Location) != 0)
+  {
+    tzset(data->tzone);
+    resetTZ = TRUE;
+  }
+ 
+  // call mktime() so that struct tm will be set correctly.
+  mktime(&tm);
+
+  // copy the timezone abbreviation string and the
+  // gmtoffset
+  strlcpy(tzAbbr, tm.tm_zone, sizeof(tzAbbr));
+  gmtOffset = tm.tm_gmtoff / 60;
+
+  // reset the location to the former value
+  if(resetTZ == TRUE)
+    tzset(C->Location);
+
+  // convert the GMT offset to a human readable value
+  convertedGmtOffset = (gmtOffset/60)*100 + (gmtOffset%60);
+
+  // lets prepare the infotext we want to show to the user
+  snprintf(data->labelText, sizeof(data->labelText), "%s %+05d (%s)\n%s", tr(MSG_CO_TZONE_GMTOFFSET),
+                                                                          convertedGmtOffset, 
+                                                                          tzAbbr,
+                                                                          tr(MSG_CO_TZONE_NEXTDSTSWITCH));
+
+  // set the labeltext
+  set(data->infoLabel, MUIA_Text_Contents, data->labelText);
+
+  RETURN(0);
+  return 0;
+}
+
+///

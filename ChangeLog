@@ -7,6 +7,12 @@ $URL$
 
 2013-08-02 Jens Langner <Jens.Langner@light-speed.de>
 
+  * mui/TZoneChooser.c, YAM_UT.c: added a labelInfo text to the TZoneChooser
+    class which will be displayed in the YAM configuration for information
+    purposes. In addition, a DateStamp2tm() function is now correctly converting
+    a struct DateStamp to struct tm and prepare it for being used with mktime().
+    This should fix the previously incorrect timezone/DST calculation occurring
+    since we introduced our own libtz functionality.
   * locale/YAM.cd: removed all obsolete catalog strings not required anymore.
 
 2013-08-01 Jens Langner <Jens.Langner@light-speed.de>

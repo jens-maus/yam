@@ -7272,3 +7272,9 @@ America/New_York
 MSG_HELP_CO_GR_TZONE (2445//)
 Here you can set your current location/time zone.
 ;
+MSG_CO_TZONE_GMTOFFSET (2446//)
+Current GMT offset:
+;
+MSG_CO_TZONE_NEXTDSTSWITCH (2447//)
+Next DST switch:
+;

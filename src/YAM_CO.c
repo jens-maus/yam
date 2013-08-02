@@ -102,8 +102,6 @@
 extern struct Library *AmiSSLBase;
 extern struct Library *AmiSSLMasterBase;
 
-extern char *tzname[2];
-
 struct Config *C = NULL;
 struct Config *CE = NULL;
 
@@ -2376,22 +2374,20 @@ void CO_Validate(struct Config *co, BOOL update)
   // now we have to make sure we set the Location in our own libtz correctly
   tzset(co->Location);
 
-  // now we obtain the gmtOffset of the location we just set to libtz
+  // get the current date/time in struct tm format
+  DateStamp2tm(NULL, &tm);
+
+  // call mktime() so that struct tm will be set correctly.
   mktime(&tm);
-  if(tm.tm_isdst != 0)
-  {
-    G->gmtOffset = (tm.tm_gmtoff - 3600) / 60;
-    strlcpy(G->tzAbbr, tzname[1], sizeof(G->tzAbbr));
-  }
-  else
-  {
-    G->gmtOffset = tm.tm_gmtoff / 60;
-    strlcpy(G->tzAbbr, tzname[0], sizeof(G->tzAbbr));
-  }
+
+  // copy the timezone abbreviation string and the
+  // gmtoffset
+  strlcpy(G->tzAbbr, tm.tm_zone, sizeof(G->tzAbbr));
+  G->gmtOffset = tm.tm_gmtoff / 60;
 
   // some debug information/output
   D(DBF_TZONE, "Current GMT offset: %d", G->gmtOffset);
-  D(DBF_TZONE, "Current TimeZone abbreviation: '%s' (%s/%s)", G->tzAbbr, tzname[0], tzname[1]);
+  D(DBF_TZONE, "Current TimeZone abbreviation: '%s'", G->tzAbbr);
   D(DBF_TZONE, "DST1: %d", GetDSTinfo(2012, 3, 24)); // should return 0
   D(DBF_TZONE, "DST2: %d", GetDSTinfo(2012, 3, 25)); // should return 2
   D(DBF_TZONE, "DST3: %d", GetDSTinfo(2012, 3, 26)); // should return 1
