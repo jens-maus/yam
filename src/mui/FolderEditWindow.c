@@ -138,8 +138,8 @@ static BOOL CompareFolders(const struct Folder *fo1, const struct Folder *fo2)
   ENTER();
 
   if(strcmp(fo1->Name,             fo2->Name) != 0 ||
-     stricmp(fo1->Path,            fo2->Path) != 0 ||
-     stricmp(fo1->Fullpath,        fo2->Fullpath) != 0 ||
+     strcasecmp(fo1->Path,         fo2->Path) != 0 ||
+     strcasecmp(fo1->Fullpath,     fo2->Fullpath) != 0 ||
      strcmp(fo1->Password,         fo2->Password) != 0 ||
      strcmp(fo1->WriteIntro,       fo2->WriteIntro) != 0 ||
      strcmp(fo1->WriteIntro,       fo2->WriteIntro) != 0 ||
@@ -188,7 +188,7 @@ static BOOL EnterPassword(Object *obj, struct Folder *fo)
     if(passwd[0] != '\0' && StringRequest(passwd2, SIZE_PASSWORD, tr(MSG_Folder), tr(MSG_CO_RetypePass), tr(MSG_Okay), NULL, tr(MSG_Cancel), TRUE, obj) == 0)
       break;
 
-    if(Stricmp(passwd, passwd2) == 0)
+    if(strcasecmp(passwd, passwd2) == 0)
     {
       strlcpy(fo->Password, passwd, sizeof(fo->Password));
       result = TRUE;
@@ -221,7 +221,7 @@ static BOOL SaveOldFolder(struct IClass *cl, Object *obj)
   if(CompareFolders(&folder, data->folder) == FALSE)
   {
     BOOL nameChanged;
-    nameChanged = (stricmp(data->folder->Name, folder.Name) != 0);
+    nameChanged = (strcasecmp(data->folder->Name, folder.Name) != 0);
 
     // first check for a valid folder name
     // it is invalid if:
@@ -252,10 +252,10 @@ static BOOL SaveOldFolder(struct IClass *cl, Object *obj)
     SHOWSTRING(DBF_FOLDER, folder.Fullpath);
 
     // if the folderpath string has changed
-    if(stricmp(data->folder->Path, folder.Path) != 0)
+    if(strcasecmp(data->folder->Path, folder.Path) != 0)
     {
       // check if the full pathes are different
-      if(stricmp(data->folder->Fullpath, folder.Fullpath) != 0)
+      if(strcasecmp(data->folder->Fullpath, folder.Fullpath) != 0)
       {
         LONG result;
 
@@ -957,7 +957,7 @@ DECLARE(MLAutoDetect)
 
           // Lets check if the toAddress kept the same and then we can use
           // it for the TOADDRESS string gadget
-          if(takeAddress == TRUE && stricmp(toAddress, mail->To.Address) != 0)
+          if(takeAddress == TRUE && strcasecmp(toAddress, mail->To.Address) != 0)
             takeAddress = FALSE;
         }
 
