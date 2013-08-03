@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-08-03 Thore Böckelmann <tboeckel@gmx.de>
+
+  * locale/german.ct: updated german translation.
+
 2013-08-02 Jens Langner <Jens.Langner@light-speed.de>
 
   * mui/TZoneChooser.c, YAM_UT.c: added a labelInfo text to the TZoneChooser

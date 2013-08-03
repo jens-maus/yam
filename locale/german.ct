@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.13 (01.08.2013)
+## version $VER: YAM.catalog 8.14 (03.08.2013)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -34,10 +34,6 @@ Anhänge
 MSG_Options
 Optionen
 ; Options
-;
-MSG_Del
-L_öschen
-; _Delete
 ;
 MSG_New
 Neu
@@ -1792,12 +1788,6 @@ Passwort für den Zugriff\n\
 auf den POP3-Server.
 ; Password to access\n\
 ; the mail server
-;
-MSG_HELP_CO_CY_TZONE
-Wählen Sie die Zeitzone\n\
-Ihres momentanen Standortes.
-; Select the timezone of\n\
-; your current location
 ;
 MSG_HELP_CO_ST_SMTPHOST
 Die Adresse des SMTP-Servers für den Postversand.\n\
@@ -5688,12 +5678,6 @@ U
 MSG_CTunknown
 unbekannt
 ;
-MSG_CO_More
-_Hinzufügen
-;
-MSG_CO_Less
-_Entfernen
-;
 MSG_CO_NB_AUTOSAVE
 Sicherungskopieinterval
 ;
@@ -5997,31 +5981,6 @@ MSG_CO_AMISSLWARN_BT
 ;
 MSG_BUSY_OPENINGCONFIG
 Öffne Konfiguration...
-;
-MSG_CO_TIMEZONEWARN_TITLE
-Zeitzonen Warnung
-;
-MSG_CO_TIMEZONEWARN
-Die Zeitzonen Einstellung in YAM stimmt nicht\n\
-mit der des Systems überein.\n\
-\n\
-Wie möchten Sie fortfahren?
-;
-MSG_CO_TIMEZONEWARN_BT
-*_Anpassen|_Dauerhaft Ignorieren|_Ignorieren
-;
-MSG_CO_AUTODSTWARN_TITLE
-AutoDST Warnung
-;
-MSG_CO_AUTODSTWARN
-YAM hat ein aktives AutoDST Tool gefunden und\n\
-dieses meldet eine unterschiedliche Sommerzeit\n\
-Einstellung als YAM selber.\n\
-\n\
-Wie möchten Sie fortfahren?
-;
-MSG_CO_AUTODSTWARN_BT
-*_Anpassen|_Dauerhaft Ignorieren|_Ignorieren
 ;
 MSG_MA_UPDATECHECK
 Nach Updates suchen
@@ -6721,13 +6680,6 @@ Konfigurieren Sie das Look & Feel von YAM...
 ;
 MSG_CO_CRDLOOKFEEL
 Look & Feel
-;
-MSG_CO_DSTACTIVE
-_Sommerzeit (DST) ist aktiv
-;
-MSG_HELP_CO_CH_DSTACTIVE
-Aktivieren Sie diese Einstellung, falls momentan\n\
-die Sommerzeit (DST) in Ihrer Zeitzone gilt.
 ;
 MSG_CO_SMTP_SERVERPORT
 Ser_ver/Port
@@ -8249,9 +8201,6 @@ _Aktiv
 MSG_MA_FLUSH_ALL_INDICES
 Alle Indizes freigeben
 ;
-MSG_FI_CONDITION
-Bedingung
-;
 MSG_HELP_CO_CH_IDENTITY_ENABLED
 Ermöglicht die Verwendung dieser Benutzeridentität.
 ;
@@ -8732,4 +8681,10 @@ Europe/Berlin
 MSG_HELP_CO_GR_TZONE
 Hier können Sie Ihren derzeitigen Aufenthaltsort\n\
 bzw. Zeitzone einstellen.
+;
+MSG_CO_TZONE_GMTOFFSET
+Aktuelle GMT-Differenz:
+;
+MSG_CO_TZONE_NEXTDSTSWITCH
+Nächster DST-Wechsel:
 ;
