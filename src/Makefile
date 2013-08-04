@@ -535,6 +535,7 @@ MUIOBJS = \
 	TransferWindow.o \
 	TZoneChooser.o \
 	TZoneContinentChooser.o \
+	TZoneInfoBar.o \
 	TZoneLocationChooser.o \
 	UpdateComponentList.o \
 	UpdateNotifyWindow.o \

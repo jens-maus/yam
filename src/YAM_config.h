@@ -360,6 +360,7 @@ struct CO_GUIData
   Object *CY_QUICKSEARCHBARPOS;
   Object *CY_FILTER_COMBINE;
   Object *GR_TZONE;
+  Object *TX_TZONE;
 };
 
 struct CO_ClassData  /* configuration window */

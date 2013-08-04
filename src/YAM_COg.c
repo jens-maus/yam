@@ -83,6 +83,7 @@
 #include "mui/SignatureTextEdit.h"
 #include "mui/ThemeListGroup.h"
 #include "mui/TZoneChooser.h"
+#include "mui/TZoneInfoBar.h"
 #include "mui/YAMApplication.h"
 
 #include "BayesFilter.h"
@@ -1647,6 +1648,9 @@ Object *CO_PageFirstSteps(struct CO_ClassData *data)
                 Child, Label2(tr(MSG_CO_TimeZone)),
                 Child, data->GUI.GR_TZONE = TZoneChooserObject,
                 End,
+                Child, HSpace(-1),
+                Child, data->GUI.TX_TZONE = TZoneInfoBarObject,
+                End,
               End,
 
               Child, HVSpace,
@@ -1665,8 +1669,9 @@ Object *CO_PageFirstSteps(struct CO_ClassData *data)
     SetHelp(data->GUI.GR_TZONE,          MSG_HELP_CO_GR_TZONE);
 
     DoMethod(data->GUI.ST_POPHOST0, MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_GetDefaultPOPHook);
-    DoMethod(data->GUI.ST_USER0,  MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_GetDefaultPOPHook);
-    DoMethod(data->GUI.ST_PASSWD0,  MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_GetDefaultPOPHook);
+    DoMethod(data->GUI.ST_USER0, MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_GetDefaultPOPHook);
+    DoMethod(data->GUI.ST_PASSWD0, MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_GetDefaultPOPHook);
+    DoMethod(data->GUI.GR_TZONE, MUIM_Notify, MUIA_TZoneChooser_TZone, MUIV_EveryTime, data->GUI.TX_TZONE, 3, MUIM_Set, MUIA_TZoneInfoBar_TZone, MUIV_TriggerValue);
   }
 
   RETURN(obj);

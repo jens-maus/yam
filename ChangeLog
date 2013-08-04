@@ -9,6 +9,11 @@ $URL$
 
   * locale/italian.ct: update to the latest changes.
 
+2013-08-04 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/TZoneChooser.c, mui/TZoneInfoBar.c, YAM_COg.c: split off the time zone
+    info label from the time zone chooser to make the maintainance easier.
+
 2013-08-03 Thore Böckelmann <tboeckel@gmx.de>
 
   * locale/german.ct: updated german translation.

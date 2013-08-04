@@ -120,7 +120,7 @@ OVERLOAD(OM_SET)
         {
           data->continent = tag->ti_Data;
           DoMethod(obj, METHOD(UpdateLocations));
-		    }
+        }
 
         // make the superMethod call ignore those tags
         tag->ti_Tag = TAG_IGNORE;
@@ -130,7 +130,7 @@ OVERLOAD(OM_SET)
   }
 
   result = DoSuperMethodA(cl, obj, msg);
-  
+
   RETURN(result);
   return result;
 }

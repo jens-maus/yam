@@ -30,17 +30,12 @@
 
 #include "TZoneChooser_cl.h"
 
-#include <stdlib.h>
+#include <string.h>
 
-#include <proto/dos.h>
 #include <proto/muimaster.h>
 
 #include "extrasrc.h"
 
-#include "YAM_config.h"
-#include "YAM_utilities.h"
-
-#include "Locale.h"
 #include "MUIObjects.h"
 #include "TZone.h"
 
@@ -54,10 +49,11 @@ struct Data
 {
   Object *continents;
   Object *locations;
-  Object *infoLabel;
+  ULONG continent;
+  ULONG location;
+  BOOL selfSet;
 
   char tzone[SIZE_DEFAULT];
-  char labelText[SIZE_LARGE];
 };
 */
 
@@ -67,18 +63,14 @@ OVERLOAD(OM_NEW)
 {
   Object *continents;
   Object *locations;
-  Object *infoLabel;
 
   ENTER();
 
   if((obj = DoSuperNew(cl, obj,
 
-    MUIA_Group_Horiz, FALSE,
-    Child, HGroup,
-      Child, continents = TZoneContinentChooserObject, End,
-      Child, locations = TZoneLocationChooserObject, End,
-    End,
-    Child, infoLabel = LLabel(NULL),
+    MUIA_Group_Horiz, TRUE,
+    Child, continents = TZoneContinentChooserObject, End,
+    Child, locations = TZoneLocationChooserObject, End,
 
     TAG_MORE, inittags(msg))) != NULL)
   {
@@ -86,11 +78,9 @@ OVERLOAD(OM_NEW)
 
     data->continents = continents;
     data->locations = locations;
-    data->infoLabel = infoLabel;
 
-    DoMethod(continents, MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, locations, 3, MUIM_Set, MUIA_TZoneLocationChooser_Continent, MUIV_TriggerValue);
-    DoMethod(continents, MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, obj, 1, METHOD(UpdateInfoLabel));
-    DoMethod(locations, MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, obj, 1, METHOD(UpdateInfoLabel));
+    DoMethod(continents, MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, obj, 3, METHOD(BuildTZoneName), continents, MUIV_TriggerValue);
+    DoMethod(locations, MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, obj, 3, METHOD(BuildTZoneName), locations, MUIV_TriggerValue);
   }
 
   RETURN((IPTR)obj);
@@ -113,24 +103,29 @@ OVERLOAD(OM_SET)
     {
       case ATTR(TZone):
       {
-        char *tzone = (char *)tag->ti_Data;
-
-        if(tzone != NULL)
+        if(data->selfSet == FALSE)
         {
-          ULONG continent;
-          ULONG location;
+          char *tzone = (char *)tag->ti_Data;
 
-          if(ParseTZoneName(tzone, &continent, &location) == TRUE)
+          if(tzone != NULL)
           {
-            // set the active cycle entries with notifications enabled,
-            // this will automatically set the correct array of locations
-            set(data->continents, MUIA_Cycle_Active, continent);
-            set(data->locations, MUIA_Cycle_Active, location);
+            ULONG continent;
+            ULONG location;
+
+            if(ParseTZoneName(tzone, &continent, &location) == TRUE)
+            {
+              nnset(data->continents, MUIA_Cycle_Active, continent);
+              nnset(data->locations, MUIA_TZoneLocationChooser_Continent, continent);
+              nnset(data->locations, MUIA_Cycle_Active, location);
+
+              strlcpy(data->tzone, tzone, sizeof(data->tzone));
+              data->continent = continent;
+              data->location = location;
+            }
           }
         }
 
-        // make the superMethod call ignore those tags
-        tag->ti_Tag = TAG_IGNORE;
+        // don't set the tag value to TAG_IGNORE to allow notifications to work
       }
       break;
     }
@@ -156,8 +151,7 @@ OVERLOAD(OM_GET)
   {
     case ATTR(TZone):
     {
-      *store = (IPTR)BuildTZoneName(data->tzone, sizeof(data->tzone), xget(data->continents, MUIA_Cycle_Active), xget(data->locations, MUIA_Cycle_Active));
-
+      *store = (IPTR)data->tzone;
       result = TRUE;
     }
     break;
@@ -175,55 +169,32 @@ OVERLOAD(OM_GET)
 /* Private Functions */
 
 /* Public Methods */
-/// DECLARE(UpdateInfoLabel)
-DECLARE(UpdateInfoLabel)
+/// DECLARE(BuildTZoneName)
+DECLARE(BuildTZoneName) // Object *origin, ULONG entry
 {
   GETDATA;
-  struct TM tm;
-  BOOL resetTZ = FALSE;
-  char tzAbbr[SIZE_SMALL];
-  int gmtOffset;
-  int convertedGmtOffset;
 
   ENTER();
 
-  // now we query some information on the timezone which we will display
-  // below the cycle gadgets
-  BuildTZoneName(data->tzone, sizeof(data->tzone), xget(data->continents, MUIA_Cycle_Active), xget(data->locations, MUIA_Cycle_Active));
-
-  // get the current date/time in struct tm format
-  DateStamp2tm(NULL, &tm);
- 
-  // check if our objects are representing a different location than the current configuration
-  if(strcasecmp(data->tzone, C->Location) != 0)
+  if(msg->origin == data->continents)
   {
-    tzset(data->tzone);
-    resetTZ = TRUE;
+    data->continent = msg->entry;
+    data->location = 0;
+    nnset(data->locations, MUIA_TZoneLocationChooser_Continent, msg->entry);
   }
- 
-  // call mktime() so that struct tm will be set correctly.
-  mktime(&tm);
+  else if(msg->origin == data->locations)
+  {
+    data->location = msg->entry;
+  }
 
-  // copy the timezone abbreviation string and the
-  // gmtoffset
-  strlcpy(tzAbbr, tm.tm_zone, sizeof(tzAbbr));
-  gmtOffset = tm.tm_gmtoff / 60;
+  // rebuild the time zone name
+  BuildTZoneName(data->tzone, sizeof(data->tzone), data->continent, data->location);
 
-  // reset the location to the former value
-  if(resetTZ == TRUE)
-    tzset(C->Location);
-
-  // convert the GMT offset to a human readable value
-  convertedGmtOffset = (gmtOffset/60)*100 + (gmtOffset%60);
-
-  // lets prepare the infotext we want to show to the user
-  snprintf(data->labelText, sizeof(data->labelText), "%s %+05d (%s)\n%s", tr(MSG_CO_TZONE_GMTOFFSET),
-                                                                          convertedGmtOffset, 
-                                                                          tzAbbr,
-                                                                          tr(MSG_CO_TZONE_NEXTDSTSWITCH));
-
-  // set the labeltext
-  set(data->infoLabel, MUIA_Text_Contents, data->labelText);
+  // don't do a recursive set() of the new time zone name,
+  // but trigger notifications
+  data->selfSet = TRUE;
+  set(obj, ATTR(TZone), data->tzone);
+  data->selfSet = FALSE;
 
   RETURN(0);
   return 0;
