@@ -2168,8 +2168,10 @@ time_t GetDateStamp(void)
 ///
 enum DST GetDSTinfo(int year, int month, int day)
 {
-  struct TM a = {};
+  struct TM a;
   struct TM b;
+
+  memset(&a, 0, sizeof(a));
   a.tm_isdst = -1;
   a.tm_mday = day;
   a.tm_mon  = month - 1;
@@ -2202,14 +2204,15 @@ void DateStampUTC(struct DateStamp *ds)
 // converts a struct DateStamp to a struct tm
 BOOL DateStamp2tm(const struct DateStamp *ds, struct TM *tm)
 {
-  struct DateStamp dsnow;
-  struct ClockData cd;
   BOOL result = FALSE;
 
   ENTER();
 
   if(tm != NULL)
   {
+    struct DateStamp dsnow;
+    struct ClockData cd;
+
     // if this argument is not set we get the actual time
     if(ds == NULL)
       ds = DateStamp(&dsnow);
@@ -2218,6 +2221,7 @@ BOOL DateStamp2tm(const struct DateStamp *ds, struct TM *tm)
     Amiga2Date((ds->ds_Days*24*60*60 + ds->ds_Minute*60 + ds->ds_Tick/TICKS_PER_SECOND), &cd);
 
     // convert ClockData to struct tm
+    memset(tm, 0, sizeof(*tm));
     tm->tm_isdst = -1; // set to -1 so that mktime() will set it
     tm->tm_mday = cd.mday;
     tm->tm_mon = cd.month - 1;
@@ -2225,7 +2229,7 @@ BOOL DateStamp2tm(const struct DateStamp *ds, struct TM *tm)
     tm->tm_hour = cd.hour;
     tm->tm_min = cd.min;
     tm->tm_sec = cd.sec;
-    
+
     result = TRUE;
   }
 
@@ -2478,7 +2482,7 @@ BOOL DateStamp2String(char *dst, int dstlen, struct DateStamp *date, enum DateSt
 }
 ///
 /// DateStamp2RFCString
-BOOL DateStamp2RFCString(char *dst, const int dstlen, const struct DateStamp *date, 
+BOOL DateStamp2RFCString(char *dst, const int dstlen, const struct DateStamp *date,
                          const int gmtOffset, const char *tzAbbr, const BOOL convert)
 {
   struct DateStamp datestamp;
