@@ -2386,8 +2386,9 @@ void CO_Validate(struct Config *co, BOOL update)
   G->gmtOffset = tm.tm_gmtoff / 60;
 
   // some debug information/output
-  D(DBF_TZONE, "Current GMT offset: %d", G->gmtOffset);
+  D(DBF_TZONE, "Current TimeZone: '%s'", co->Location);
   D(DBF_TZONE, "Current TimeZone abbreviation: '%s'", G->tzAbbr);
+  D(DBF_TZONE, "Current GMT offset: %d", G->gmtOffset);
   D(DBF_TZONE, "DST1: %d", GetDSTinfo(2012, 3, 24)); // should return 0
   D(DBF_TZONE, "DST2: %d", GetDSTinfo(2012, 3, 25)); // should return 2
   D(DBF_TZONE, "DST3: %d", GetDSTinfo(2012, 3, 26)); // should return 1
