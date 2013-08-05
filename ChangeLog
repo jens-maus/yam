@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-08-05 Jens Langner <Jens.Langner@light-speed.de>
+
+  * mui/TZoneInfoBar.c: fixed problem where tm.tm_zone was not copied while it 
+    was still valid. Thus, the InfoBar always displayed obsolete and incorrect
+    timezone abbreviation information.
+
 2013-08-04 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: update to the latest changes.

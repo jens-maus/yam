@@ -93,6 +93,7 @@ OVERLOAD(OM_SET)
           BOOL resetTZ = FALSE;
           int gmtOffset;
           int convertedGmtOffset;
+          char tzabbr[SIZE_SMALL];
 
           // get the current date/time in struct tm format
           DateStamp2tm(NULL, &tm);
@@ -107,7 +108,9 @@ OVERLOAD(OM_SET)
           // call mktime() so that struct tm will be set correctly.
           mktime(&tm);
 
+          // copy all info or otherwise it gets lost
           gmtOffset = tm.tm_gmtoff / 60;
+          strlcpy(tzabbr, tm.tm_zone, sizeof(tzabbr));
 
           // reset the location to the former value
           if(resetTZ == TRUE)
@@ -119,11 +122,10 @@ OVERLOAD(OM_SET)
           // prepare the info text we want to show to the user
           snprintf(data->infoText, sizeof(data->infoText), "%s %+05d (%s)\n%s %s", tr(MSG_CO_TZONE_GMTOFFSET),
                                                                                    convertedGmtOffset,
-                                                                                   tm.tm_zone,
+                                                                                   tzabbr,
                                                                                    tr(MSG_CO_TZONE_NEXTDSTSWITCH),
                                                                                    "");
 
-          //fprintf(stderr, "new info '%s'\n",data->infoText);
           // set the info text
           set(obj, MUIA_Text_Contents, data->infoText);
         }
