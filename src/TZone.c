@@ -460,7 +460,7 @@ BOOL ParseTZoneName(const char *tzone, ULONG *continent, ULONG *location)
 ///
 /// GuessTZone
 // guess the time zone based on the GMT offset
-const char *GuessTZone(LONG gmtOffset)
+const char *GuessTZone(const int gmtOffset)
 {
   const char *tzone;
 
@@ -469,202 +469,136 @@ const char *GuessTZone(LONG gmtOffset)
   switch(gmtOffset)
   {
     case -720: // GMT-12:00
-    {
       tzone = "Pacific/Kwajalein";
-    }
     break;
 
     case -660: // GMT-11:00
-    {
       tzone = "Pacific/Midway";
-    }
     break;
 
     case -600: // GMT-10:00
-    {
       tzone = "Pacific/Honolulu";
-    }
     break;
 
     case -540: // GMT-09:00
-    {
       tzone = "America/Anchorage";
-    }
     break;
 
     case -480: // GMT-08:00
-    {
       tzone = "America/Los_Angeles";
-    }
     break;
 
     case -420: // GMT-07:00
-    {
       tzone = "America/Denver";
-    }
     break;
 
     case -360: // GMT-06:00
-    {
       tzone = "America/Chicago";
-    }
     break;
 
     case -300: // GMT-05:00
-    {
       tzone = "America/New_York";
-    }
     break;
 
     case -240: // GMT-04:00
-    {
       tzone = "America/Caracas";
-    }
     break;
 
     case -210: // GMT-03:30
-    {
       tzone = "America/St_Johns";
-    }
     break;
 
     case -180: // GMT-03:00
-    {
       tzone = "America/Argentina/Buenos_Aires";
-    }
     break;
 
     case -120: // GMT-02:00
-    {
       tzone = "America/Fortaleza";
-    }
     break;
 
     case  -60: // GMT-01:00
-    {
       tzone = "Atlantic/Azores";
-    }
     break;
 
     default:
     case    0: // GMT 00:00
-    {
       tzone = "Europe/London";
-    }
     break;
 
     case   60: // GMT+01:00
-    {
       tzone = "Europe/Berlin";
-    }
     break;
 
     case  120: // GMT+02:00
-    {
       tzone = "Europe/Helsinki";
-    }
     break;
 
     case  180: // GMT+03:00
-    {
       tzone = "Europe/Moscow";
-    }
     break;
 
     case  210: // GMT+03:30
-    {
       tzone = "Asia/Tehran";
-    }
     break;
 
     case  240: // GMT+04:00
-    {
       tzone = "Asia/Dubai";
-    }
     break;
 
     case  270: // GMT+04:30
-    {
       tzone = "Asia/Kabul";
-    }
     break;
 
     case  300: // GMT+05:00
-    {
       tzone = "Asia/Karachi";
-    }
     break;
 
     case  330: // GMT+05:30
-    {
       tzone = "Asia/Kolkata";
-    }
     break;
 
     case  345: // GMT+05:45
-    {
       tzone = "Asia/Kathmandu";
-    }
     break;
 
     case  360: // GMT+06:00
-    {
       tzone = "Asia/Tashkent";
-    }
     break;
 
     case  390: // GMT+06:30
-    {
       tzone = "Asia/Rangoon";
-    }
     break;
 
     case  420: // GMT+07:00
-    {
       tzone = "Asia/Bangkok";
-    }
     break;
 
     case  480: // GMT+08:00
-    {
       tzone = "Asia/Singapore";
-    }
     break;
 
     case  540: // GMT+09:00
-    {
       tzone = "Asia/Tokyo";
-    }
     break;
 
     case  570: // GMT+09:30
-    {
       tzone = "Australia/Adelaide";
-    }
     break;
 
     case  600: // GMT+10:00
-    {
       tzone = "Australia/Sydney";
-    }
     break;
 
     case  660: // GMT+11:00
-    {
       tzone = "Pacific/Noumea";
-    }
     break;
 
     case  720: // GMT+12:00
-    {
       tzone = "Pacific/Auckland";
-    }
     break;
 
     case  780: // GMT+13:00
-    {
       tzone = "Pacific/Tongatapu";
-    }
     break;
   }
 
