@@ -33,6 +33,7 @@
 #include "extrasrc.h"
 
 #include "YAM.h"
+#include "YAM_config.h"
 #include "YAM_global.h"
 #include "YAM_utilities.h"
 
@@ -630,6 +631,125 @@ void TZoneCleanup(void)
   }
 
   LEAVE();
+}
+
+///
+/// FindNextDSTSwitch()
+time_t FindNextDSTSwitch(const char *tzone, struct DateStamp *ds)
+{
+  time_t result = 0;
+  struct TM newtm;
+  struct TM lasttm;
+  time_t now;
+  time_t newt;
+  int curdst=-1;
+  time_t startt;
+  time_t maxdiff;
+  time_t step;
+  int iter=0;
+
+  ENTER();
+
+  // during the next lines we try to mimic the behaviour of the zdump
+  // tool provided by the tzcode package of iana.org. This tool allows
+  // to output information on a timezone and we are interested when
+  // the next DST switch will actually happen.
+
+  // the user wants us to return information based on 
+  // another timezone than the default one.
+  if(tzone != NULL)
+    tzset(tzone);
+
+  // get current time
+  time(&now);
+
+  #define SECSPERMINUTE (60)
+  #define SECSPERHOUR   (60*SECSPERMINUTE)
+  #define SECSPERDAY    (24*SECSPERHOUR)
+
+  // in the outer loop we iterate per DAY with a maximum of
+  // one year
+  startt = now;
+  maxdiff = (365/2+2)*SECSPERDAY;
+  step = SECSPERDAY;
+
+  for(newt=startt; maxdiff == 0 || abs(newt - startt) < maxdiff; newt += step)
+  {
+    if(localtime_r(&newt, &newtm) != NULL)
+    {
+      #if defined(DEBUG)
+      char gmtimestr[SIZE_DEFAULT];
+      char lctimestr[SIZE_DEFAULT];
+      struct TM gmtm;
+
+      gmtime_r(&newt, &gmtm);
+      strftime(lctimestr, sizeof(lctimestr), "%a, %d %b %Y %T %z", &newtm);
+      strftime(gmtimestr, sizeof(gmtimestr), "%a, %d %b %Y %T %z", &gmtm);
+
+      D(DBF_TZONE, "%ld: %s UTC = %s %s isdst=%d gmtoff=%ld", newt, gmtimestr, lctimestr, newtm.tm_zone, newtm.tm_isdst, newtm.tm_gmtoff);
+      #endif
+
+      if(curdst < 0)
+        curdst = newtm.tm_isdst;
+      else
+      {
+        if(newtm.tm_isdst != curdst)
+        {
+          D(DBF_TZONE, "%d. iteration result: %s", iter+1, gmtimestr);
+
+          if(iter == 0)
+          {
+            // now we seem to have found the day when the DST change happened.
+            // in the next interation loop we now search backward in 1 hour steps
+            step = -(1*SECSPERHOUR);
+          }
+          else if(iter == 1)
+          {
+            // now we seem to have found the time of dst switch within 1 hours
+            // so lets iterate 10-minute wise from here
+            step = 10*SECSPERMINUTE;
+          }
+          else if(iter == 2)
+          {
+            // now we seem to have found the time of dst switch within 10 minutes
+            // so lets iterate 3-minute wise from here
+            step = -(3*SECSPERMINUTE);
+          }
+          else if(iter == 3)
+          {
+            // now we seem to have found the time of dst switch within 3 minutes
+            // so lets iterate second-wise from here
+            step = 1;
+          }
+          else
+          {
+            // lets convert the final switch time to a struct DateStamp now
+            if(ds != NULL)
+              tm2DateStamp(&lasttm, ds);
+  
+            result = startt;
+            break;
+          }
+
+          startt = newt;
+          maxdiff = 0; // maxdiff = 0 means run forever
+          curdst = newtm.tm_isdst;
+          iter++;
+        }
+
+        memcpy(&lasttm, &newtm, sizeof(lasttm)); 
+      }
+    }
+    else
+      break;
+  }
+
+  // set back the orginal timezone used
+  if(tzone != NULL)
+    tzset(C->Location);
+
+  RETURN(result);
+  return result;
 }
 
 ///

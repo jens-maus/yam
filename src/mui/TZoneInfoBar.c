@@ -31,6 +31,7 @@
 #include "TZoneInfoBar_cl.h"
 
 #include <stdlib.h>
+#include <limits.h>
 
 #include <proto/muimaster.h>
 
@@ -94,6 +95,8 @@ OVERLOAD(OM_SET)
           int gmtOffset;
           int convertedGmtOffset;
           char tzabbr[SIZE_SMALL];
+          char nextDSTstr[SIZE_DEFAULT];
+          struct DateStamp ds;
 
           // get the current date/time in struct tm format
           DateStamp2tm(NULL, &tm);
@@ -112,6 +115,9 @@ OVERLOAD(OM_SET)
           gmtOffset = tm.tm_gmtoff / 60;
           strlcpy(tzabbr, tm.tm_zone, sizeof(tzabbr));
 
+          // lets get the datestamp of the next scheduled DST switch
+          FindNextDSTSwitch(NULL, &ds);
+
           // reset the location to the former value
           if(resetTZ == TRUE)
             tzset(C->Location);
@@ -119,12 +125,15 @@ OVERLOAD(OM_SET)
           // convert the GMT offset to a human readable value
           convertedGmtOffset = (gmtOffset/60)*100 + (gmtOffset%60);
 
+          // create the rfc time string for the next DST switch
+          DateStamp2RFCString(nextDSTstr, sizeof(nextDSTstr), &ds, INT_MIN, NULL, FALSE);
+
           // prepare the info text we want to show to the user
           snprintf(data->infoText, sizeof(data->infoText), "%s %+05d (%s)\n%s %s", tr(MSG_CO_TZONE_GMTOFFSET),
                                                                                    convertedGmtOffset,
                                                                                    tzabbr,
                                                                                    tr(MSG_CO_TZONE_NEXTDSTSWITCH),
-                                                                                   "");
+                                                                                   nextDSTstr);
 
           // set the info text
           set(obj, MUIA_Text_Contents, data->infoText);

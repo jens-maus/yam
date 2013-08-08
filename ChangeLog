@@ -5,6 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-08-08 Jens Langner <Jens.Langner@light-speed.de>
+
+  * mui/TZoneInfoBar.c, YAM_UT.c, TZone.c: implemented a FindNextDSTSwitch()
+    function that tries to store the datestamp of the next DST switch in
+    the supplied function argument. This function will be used to show
+    the datetime of the next DST switch in the config window but also to
+    supply that datetime later to a timer which we start to actually notify
+    YAM of an upcoming DST switch.
+  * extrasrc/tzcode: changed time_t datatype to use "long" so that the localtime()
+    function actually starts working as expected.
+
 2013-08-08 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_FO.c: take the result of (re)compressing a mail during a move operation

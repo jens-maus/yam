@@ -181,8 +181,8 @@ static int		tzparse(const char * name, struct state * sp,
 				int lastditch);
 
 #ifdef ALL_STATE
-static struct state *	lclptr;
-static struct state *	gmtptr;
+static struct state *	lclptr = NULL;
+static struct state *	gmtptr = NULL;
 #endif /* defined ALL_STATE */
 
 #ifndef ALL_STATE

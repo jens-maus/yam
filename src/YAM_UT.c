@@ -30,6 +30,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
 
 #if defined(__AROS__)
 #include <sys/types.h>
@@ -2148,10 +2149,10 @@ const char *DescribeCT(const char *ct)
 ///
 /// GetDateStamp
 //  Get number of seconds since 1/1-1978
-time_t GetDateStamp(void)
+ULONG GetDateStamp(void)
 {
   struct DateStamp ds;
-  time_t seconds;
+  ULONG seconds;
 
   ENTER();
 
@@ -2229,6 +2230,61 @@ BOOL DateStamp2tm(const struct DateStamp *ds, struct TM *tm)
     tm->tm_hour = cd.hour;
     tm->tm_min = cd.min;
     tm->tm_sec = cd.sec;
+
+    result = TRUE;
+  }
+
+  RETURN(result);
+  return result;
+}
+///
+/// tm2DateStamp
+// converts a struct tm to struct DateStamp
+BOOL tm2DateStamp(const struct TM *tm, struct DateStamp *ds)
+{
+  BOOL result = FALSE;
+
+  ENTER();
+
+  if(ds != NULL)
+  {
+    struct TM tmnow;
+    struct ClockData cd;
+    ULONG seconds;
+
+    // if this argument is not set we get the actual time
+    if(tm == NULL)
+    {
+      time_t now;
+      time(&now);
+      tm = localtime_r(&now, &tmnow);
+    }
+
+    // convert struct tm to ClockData
+    memset(&cd, 0, sizeof(cd));
+    cd.mday = tm->tm_mday;
+    cd.month = tm->tm_mon + 1;
+    cd.year = tm->tm_year + 1900;
+    cd.hour = tm->tm_hour;
+    cd.min = tm->tm_min;
+    cd.sec = tm->tm_sec;
+
+    // convert ClockData to number of seconds sinc 1/1/1978
+    seconds = Date2Amiga(&cd);
+    D(DBF_TZONE, "seconds: %ld", seconds);
+
+    // now convert the number of seconds to struct DateStamp
+    ds->ds_Days   = seconds / 86400;       // calculate the days since 1.1.1978
+    ds->ds_Minute = (seconds % 86400) / 60;
+    ds->ds_Tick   = (seconds % 60) * TICKS_PER_SECOND;
+
+    #if defined(DEBUG)
+    {
+      char bufStr[64];
+      DateStamp2String(bufStr, sizeof(bufStr), ds, DSS_DATETIME, TZC_NONE);
+      D(DBF_TZONE, "%s", bufStr);
+    }
+    #endif
 
     result = TRUE;
   }
@@ -2487,8 +2543,7 @@ BOOL DateStamp2RFCString(char *dst, const int dstlen, const struct DateStamp *da
 {
   struct DateStamp datestamp;
   struct ClockData cd;
-  time_t seconds;
-  int convertedGmtOffset = (gmtOffset/60)*100 + (gmtOffset%60);
+  ULONG seconds;
 
   ENTER();
 
@@ -2519,26 +2574,57 @@ BOOL DateStamp2RFCString(char *dst, const int dstlen, const struct DateStamp *da
   // use snprintf to format the RFC2822 conforming datetime string.
   if(tzAbbr != NULL && tzAbbr[0] != '\0')
   {
-    snprintf(dst, dstlen, "%s, %02d %s %d %02d:%02d:%02d %+05d (%s)", wdays[cd.wday],
-                                                                      cd.mday,
-                                                                      months[cd.month-1],
-                                                                      cd.year,
-                                                                      cd.hour,
-                                                                      cd.min,
-                                                                      cd.sec,
-                                                                      convertedGmtOffset,
-                                                                      tzAbbr);
+    if(gmtOffset > INT_MIN)
+    {
+      int convertedGmtOffset = (gmtOffset/60)*100 + (gmtOffset%60);
+
+      snprintf(dst, dstlen, "%s, %02d %s %d %02d:%02d:%02d %+05d (%s)", wdays[cd.wday],
+                                                                        cd.mday,
+                                                                        months[cd.month-1],
+                                                                        cd.year,
+                                                                        cd.hour,
+                                                                        cd.min,
+                                                                        cd.sec,
+                                                                        convertedGmtOffset,
+                                                                        tzAbbr);
+    }
+    else
+    {
+      snprintf(dst, dstlen, "%s, %02d %s %d %02d:%02d:%02d (%s)", wdays[cd.wday],
+                                                                  cd.mday,
+                                                                  months[cd.month-1],
+                                                                  cd.year,
+                                                                  cd.hour,
+                                                                  cd.min,
+                                                                  cd.sec,
+                                                                  tzAbbr);
+    }
   }
   else
   {
-    snprintf(dst, dstlen, "%s, %02d %s %d %02d:%02d:%02d %+05d", wdays[cd.wday],
-                                                                 cd.mday,
-                                                                 months[cd.month-1],
-                                                                 cd.year,
-                                                                 cd.hour,
-                                                                 cd.min,
-                                                                 cd.sec,
-                                                                 convertedGmtOffset);
+    if(gmtOffset > INT_MIN)
+    {
+      int convertedGmtOffset = (gmtOffset/60)*100 + (gmtOffset%60);
+
+      snprintf(dst, dstlen, "%s, %02d %s %d %02d:%02d:%02d %+05d", wdays[cd.wday],
+                                                                   cd.mday,
+                                                                   months[cd.month-1],
+                                                                   cd.year,
+                                                                   cd.hour,
+                                                                   cd.min,
+                                                                   cd.sec,
+                                                                   convertedGmtOffset);
+    }
+    else
+    {
+      snprintf(dst, dstlen, "%s, %02d %s %d %02d:%02d:%02d", wdays[cd.wday],
+                                                             cd.mday,
+                                                             months[cd.month-1],
+                                                             cd.year,
+                                                             cd.hour,
+                                                             cd.min,
+                                                             cd.sec);
+    }
   }
 
   RETURN(TRUE);

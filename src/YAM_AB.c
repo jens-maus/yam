@@ -593,10 +593,10 @@ void AB_CheckBirthdates(BOOL check)
 
   #if defined(DEBUG)
   {
-  char dateString[64];
+    char dateString[64];
 
-  DateStamp2String(dateString, sizeof(dateString), &nextDS, DSS_DATETIME, TZC_NONE);
-  D(DBF_TIMER, "next birthday check @ %s", dateString);
+    DateStamp2String(dateString, sizeof(dateString), &nextDS, DSS_DATETIME, TZC_NONE);
+    D(DBF_TIMER, "next birthday check @ %s", dateString);
   }
   #endif
   RestartTimer(TIMER_CHECKBIRTHDAYS, nextTV.Seconds, nextTV.Microseconds);
