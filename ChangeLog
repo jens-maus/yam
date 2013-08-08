@@ -5,9 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-08-08 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_FO.c: take the result of (re)compressing a mail during a move operation
+    from one folder to another one correctly into account.
+
 2013-08-05 Jens Langner <Jens.Langner@light-speed.de>
 
-  * mui/TZoneInfoBar.c: fixed problem where tm.tm_zone was not copied while it 
+  * mui/TZoneInfoBar.c: fixed problem where tm.tm_zone was not copied while it
     was still valid. Thus, the InfoBar always displayed obsolete and incorrect
     timezone abbreviation information.
 

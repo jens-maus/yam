@@ -3805,7 +3805,7 @@ BOOL RepackMailFile(struct Mail *mail, enum FolderMode dstMode, const char *pass
   if((srcMode == dstMode && srcMode <= FM_SIMPLE) ||
      (srcMode <= FM_SIMPLE && dstMode <= FM_SIMPLE))
   {
-    // the FolderModes are the same so lets do nothing
+    // the FolderModes are the same so there is nothing to do
     success = TRUE;
 
     D(DBF_UTIL, "repack not required.");
@@ -3817,7 +3817,7 @@ BOOL RepackMailFile(struct Mail *mail, enum FolderMode dstMode, const char *pass
       D(DBF_UTIL, "uncompressing");
 
       // if we end up here the source folder is a compressed folder so we
-      // have to just uncompress the file
+      // just have to uncompress the file
       if(UncompressMailFile(srcbuf, dstbuf, folder->Password) &&
          DeleteFile(srcbuf) != 0)
       {

@@ -1351,7 +1351,9 @@ BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
     GetMailFile(srcbuf, sizeof(srcbuf), oldfo, mail);
 
     if(MoveFile(srcbuf, dstbuf) == TRUE)
-      RepackMailFile(mail, fo->Mode, fo->Password);
+    {
+      success = RepackMailFile(mail, fo->Mode, fo->Password);
+    }
     else
     {
       W(DBF_FOLDER, "failed to move file '%s' to '%s'", srcbuf, dstbuf);
