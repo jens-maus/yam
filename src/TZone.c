@@ -655,7 +655,7 @@ time_t FindNextDSTSwitch(const char *tzone, struct DateStamp *ds)
   // to output information on a timezone and we are interested when
   // the next DST switch will actually happen.
 
-  // the user wants us to return information based on 
+  // the user wants us to return information based on
   // another timezone than the default one.
   if(tzone != NULL)
     tzset(tzone);
@@ -673,7 +673,7 @@ time_t FindNextDSTSwitch(const char *tzone, struct DateStamp *ds)
   maxdiff = (365/2+2)*SECSPERDAY;
   step = SECSPERDAY;
 
-  for(newt=startt; maxdiff == 0 || abs(newt - startt) < maxdiff; newt += step)
+  for(newt=startt; maxdiff == 0 || (time_t)abs(newt - startt) < maxdiff; newt += step)
   {
     if(localtime_r(&newt, &newtm) != NULL)
     {
@@ -726,7 +726,7 @@ time_t FindNextDSTSwitch(const char *tzone, struct DateStamp *ds)
             // lets convert the final switch time to a struct DateStamp now
             if(ds != NULL)
               tm2DateStamp(&lasttm, ds);
-  
+
             result = startt;
             break;
           }
@@ -737,7 +737,7 @@ time_t FindNextDSTSwitch(const char *tzone, struct DateStamp *ds)
           iter++;
         }
 
-        memcpy(&lasttm, &newtm, sizeof(lasttm)); 
+        memcpy(&lasttm, &newtm, sizeof(lasttm));
       }
     }
     else
