@@ -99,6 +99,9 @@ OVERLOAD(OM_SET)
           char nextDSTstr[SIZE_DEFAULT];
           struct DateStamp ds;
           time_t dstSwitchTime;
+          ULONG continent = 0;
+          ULONG location = 0;
+          char *tzComment = NULL;
 
           // get the current date/time in struct tm format
           DateStamp2tm(NULL, &tm);
@@ -133,12 +136,18 @@ OVERLOAD(OM_SET)
           else
             strlcpy(nextDSTstr, tr(MSG_CO_TZONE_NODSTSWITCH), sizeof(nextDSTstr));
 
+          // get the location comment
+          ParseTZoneName(tzone, &continent, &location, &tzComment);
+
           // prepare the info text we want to show to the user
-          snprintf(data->infoText, sizeof(data->infoText), "%s %+05d (%s)\n%s %s", tr(MSG_CO_TZONE_GMTOFFSET),
-                                                                                   convertedGmtOffset,
-                                                                                   tzabbr,
-                                                                                   tr(MSG_CO_TZONE_NEXTDSTSWITCH),
-                                                                                   nextDSTstr);
+          snprintf(data->infoText, sizeof(data->infoText), 
+                                   "%s %s\n%s %+05d (%s)\n%s %s", tr(MSG_CO_TZONE_DESCRIPTION),
+                                                                  tzComment != NULL ? tzComment : tr(MSG_CO_TZONE_DESCRIPTION_NA),
+                                                                  tr(MSG_CO_TZONE_GMTOFFSET),
+                                                                  convertedGmtOffset,
+                                                                  tzabbr,
+                                                                  tr(MSG_CO_TZONE_NEXTDSTSWITCH),
+                                                                  nextDSTstr);
 
           // set the info text
           set(obj, MUIA_Text_Contents, data->infoText);

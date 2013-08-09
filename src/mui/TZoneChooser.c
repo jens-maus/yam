@@ -112,7 +112,7 @@ OVERLOAD(OM_SET)
             ULONG continent;
             ULONG location;
 
-            if(ParseTZoneName(tzone, &continent, &location) == TRUE)
+            if(ParseTZoneName(tzone, &continent, &location, NULL) == TRUE)
             {
               nnset(data->continents, MUIA_Cycle_Active, continent);
               nnset(data->locations, MUIA_TZoneLocationChooser_Continent, continent);

@@ -7281,3 +7281,9 @@ Next DST switch:
 MSG_CO_TZONE_NODSTSWITCH (2448//)
 no daylight saving
 ;
+MSG_CO_TZONE_DESCRIPTION (2449//)
+Description:
+;
+MSG_CO_TZONE_DESCRIPTION_NA (2450//)
+n/a
+;

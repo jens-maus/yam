@@ -35,6 +35,7 @@ struct TZoneLocation
 {
   struct MinNode node;
   char *name;
+  char *comment;
 };
 
 struct TZoneContinent
@@ -49,7 +50,7 @@ void ParseZoneTabFile(void);
 char **BuildContinentEntries(void);
 char **BuildLocationEntries(ULONG continent);
 char *BuildTZoneName(char *name, size_t nameSize, ULONG continent, ULONG location);
-BOOL ParseTZoneName(const char *tzone, ULONG *continent, ULONG *location);
+BOOL ParseTZoneName(const char *tzone, ULONG *continent, ULONG *location, char **comment);
 const char *GuessTZone(const int gmtOffset);
 struct TZoneContinent *FindContinent(const char *continent);
 struct TZoneLocation *FindLocation(struct TZoneContinent *continent, const char *location);

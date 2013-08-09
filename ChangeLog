@@ -7,6 +7,10 @@ $URL$
 
 2013-08-09 Jens Langner <Jens.Langner@light-speed.de>
 
+  * mui/TZoneInfoBar.c, TZone.c: added description information of a selected
+    timezone in the info bar. Now the parsed comments data of zone.tab will
+    be displayed beside the cycle gadgets and information on GMT offset and
+    next DST switch.
   * mui/TZoneInfoBar.c: for time zones with no DST switching a proper text will
     now be displayed rather than an incorrect time of DST switching.
   * mui/TZoneInfoBar.c: remember the current timezone display so that we prevent

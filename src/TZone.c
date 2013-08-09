@@ -43,7 +43,7 @@
 
 /// addLocation
 // add a new location and a new continent if necessary
-static void addLocation(const char *contName, const char *locName)
+static void addLocation(const char *contName, const char *locName, const char *locComment)
 {
   struct TZoneContinent *found = NULL;
   struct TZoneContinent *cont;
@@ -89,6 +89,11 @@ static void addLocation(const char *contName, const char *locName)
       TAG_DONE)) != NULL)
     {
       loc->name = strdup(locName);
+
+      if(locComment != NULL)
+        loc->comment = strdup(locComment);
+      else
+        loc->comment = NULL;
 
       AddTail((struct List *)&found->locationList, (struct Node *)loc);
       // count the number of locations
@@ -163,8 +168,8 @@ void ParseZoneTabFile(void)
         #if defined(DEBUG)
         char *code = buf;
         char *coordinates = NULL;
-        char *comments = NULL;
         #endif
+        char *comments = NULL;
         char *tz = NULL;
 
         if((p = strpbrk(p, " \t")) != NULL)
@@ -182,9 +187,7 @@ void ParseZoneTabFile(void)
             if((p = strpbrk(p, " \t")) != NULL)
             {
               *p++ = '\0';
-              #if defined(DEBUG)
               comments = p;
-              #endif
             }
           }
         }
@@ -213,7 +216,7 @@ void ParseZoneTabFile(void)
             while((p = strchr(p, '_')) != NULL)
               *p++ = ' ';
 
-            addLocation(continent, cityOrState);
+            addLocation(continent, cityOrState, comments);
           }
         }
       }
@@ -407,7 +410,7 @@ static struct TZoneLocation *findLocation(struct TZoneContinent *continent, cons
 ///
 /// ParseTZoneName
 // parse a time zone name into continent and location index with the respective lists
-BOOL ParseTZoneName(const char *tzone, ULONG *continent, ULONG *location)
+BOOL ParseTZoneName(const char *tzone, ULONG *continent, ULONG *location, char **comment)
 {
   BOOL result = FALSE;
   char *tmp;
@@ -433,6 +436,9 @@ BOOL ParseTZoneName(const char *tzone, ULONG *continent, ULONG *location)
 
         if((loc = findLocation(cont, p, location)) != NULL)
         {
+          if(comment != NULL)
+            *comment = loc->comment;
+
           D(DBF_TZONE, "continent index %ld, location index %ld", *continent, *location);
           result = TRUE;
         }
@@ -623,6 +629,9 @@ void TZoneCleanup(void)
     while((loc = (struct TZoneLocation *)RemHead((struct List *)&cont->locationList)) != NULL)
     {
       free(loc->name);
+      if(loc->comment)
+        free(loc->comment);
+
       FreeSysObject(ASOT_NODE, loc);
     }
 
