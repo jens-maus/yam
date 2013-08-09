@@ -98,6 +98,7 @@ OVERLOAD(OM_SET)
           char tzabbr[SIZE_SMALL];
           char nextDSTstr[SIZE_DEFAULT];
           struct DateStamp ds;
+          time_t dstSwitchTime;
 
           // get the current date/time in struct tm format
           DateStamp2tm(NULL, &tm);
@@ -117,7 +118,7 @@ OVERLOAD(OM_SET)
           strlcpy(tzabbr, tm.tm_zone, sizeof(tzabbr));
 
           // lets get the datestamp of the next scheduled DST switch
-          FindNextDSTSwitch(NULL, &ds);
+          dstSwitchTime = FindNextDSTSwitch(NULL, &ds);
 
           // reset the location to the former value
           if(resetTZ == TRUE)
@@ -127,7 +128,10 @@ OVERLOAD(OM_SET)
           convertedGmtOffset = (gmtOffset/60)*100 + (gmtOffset%60);
 
           // create the rfc time string for the next DST switch
-          DateStamp2RFCString(nextDSTstr, sizeof(nextDSTstr), &ds, INT_MIN, NULL, FALSE);
+          if(dstSwitchTime > 0)
+            DateStamp2RFCString(nextDSTstr, sizeof(nextDSTstr), &ds, INT_MIN, NULL, FALSE);
+          else
+            strlcpy(nextDSTstr, tr(MSG_CO_TZONE_NODSTSWITCH), sizeof(nextDSTstr));
 
           // prepare the info text we want to show to the user
           snprintf(data->infoText, sizeof(data->infoText), "%s %+05d (%s)\n%s %s", tr(MSG_CO_TZONE_GMTOFFSET),

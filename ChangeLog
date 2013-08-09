@@ -7,6 +7,8 @@ $URL$
 
 2013-08-09 Jens Langner <Jens.Langner@light-speed.de>
 
+  * mui/TZoneInfoBar.c: for time zones with no DST switching a proper text will
+    now be displayed rather than an incorrect time of DST switching.
   * mui/TZoneInfoBar.c: remember the current timezone display so that we prevent
     calling the time consuming FindNextDSTSwitch() function twice.
 

@@ -7278,3 +7278,6 @@ Current GMT offset:
 MSG_CO_TZONE_NEXTDSTSWITCH (2447//)
 Next DST switch:
 ;
+MSG_CO_TZONE_NODSTSWITCH (2448//)
+no daylight saving
+;
