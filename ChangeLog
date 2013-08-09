@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-08-09 Jens Langner <Jens.Langner@light-speed.de>
+
+  * mui/TZoneInfoBar.c: remember the current timezone display so that we prevent
+    calling the time consuming FindNextDSTSwitch() function twice.
+
 2013-08-08 Jens Langner <Jens.Langner@light-speed.de>
 
   * mui/TZoneInfoBar.c, YAM_UT.c, TZone.c: implemented a FindNextDSTSwitch()

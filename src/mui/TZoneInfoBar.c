@@ -49,6 +49,7 @@
 struct Data
 {
   char infoText[SIZE_LARGE];
+  char currentTZone[SIZE_DEFAULT];
 };
 */
 
@@ -88,7 +89,7 @@ OVERLOAD(OM_SET)
       {
         char *tzone = (char *)tag->ti_Data;
 
-        if(tzone != NULL)
+        if(tzone != NULL && strcmp(tzone, data->currentTZone) != 0)
         {
           struct TM tm;
           BOOL resetTZ = FALSE;
@@ -137,6 +138,9 @@ OVERLOAD(OM_SET)
 
           // set the info text
           set(obj, MUIA_Text_Contents, data->infoText);
+
+          // remember the timezone
+          strlcpy(data->currentTZone, tzone, sizeof(data->currentTZone));
         }
 
         // make the superMethod call ignore those tags
