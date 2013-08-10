@@ -222,8 +222,7 @@ void ParseZoneTabFile(void)
       }
     }
 
-    if(buf != NULL)
-      free(buf);
+    free(buf);
 
     fclose(fh);
 
@@ -339,32 +338,35 @@ char *BuildTZoneName(char *name, size_t nameSize, ULONG continent, ULONG locatio
 static struct TZoneContinent *findContinent(const char *continent, ULONG *cindex)
 {
   struct TZoneContinent *result = NULL;
-  struct TZoneContinent *cont;
   char *contStr;
-  char *p;
-  ULONG i;
 
   ENTER();
 
   // convert all underscores to spaces
-  p = contStr = strdup(continent);
-  while((p = strchr(p, '_')) != NULL)
-    *p++ = ' ';
-
-  i = 0;
-  IterateList(&G->tzoneContinentList, struct TZoneContinent *, cont)
+  if((contStr = strdup(continent)) != NULL)
   {
-    if(strcasecmp(cont->name, contStr) == 0)
+    char *p = contStr;
+    struct TZoneContinent *cont;
+    ULONG i;
+
+    while((p = strchr(p, '_')) != NULL)
+      *p++ = ' ';
+
+    i = 0;
+    IterateList(&G->tzoneContinentList, struct TZoneContinent *, cont)
     {
-      result = cont;
-      *cindex = i;
-      break;
+      if(strcasecmp(cont->name, contStr) == 0)
+      {
+        result = cont;
+        *cindex = i;
+        break;
+      }
+
+      i++;
     }
 
-    i++;
+    free(contStr);
   }
-
-  free(contStr);
 
   RETURN(result);
   return result;
@@ -376,32 +378,35 @@ static struct TZoneContinent *findContinent(const char *continent, ULONG *cindex
 static struct TZoneLocation *findLocation(struct TZoneContinent *continent, const char *location, ULONG *lindex)
 {
   struct TZoneLocation *result = NULL;
-  struct TZoneLocation *loc;
   char *locStr;
-  char *p;
-  ULONG i;
 
   ENTER();
 
   // convert all underscores to spaces
-  p = locStr = strdup(location);
-  while((p = strchr(p, '_')) != NULL)
-    *p++ = ' ';
-
-  i = 0;
-  IterateList(&continent->locationList, struct TZoneLocation *, loc)
+  if((locStr = strdup(location)) != NULL)
   {
-    if(strcasecmp(loc->name, locStr) == 0)
+    char *p = locStr;
+    struct TZoneLocation *loc;
+    ULONG i;
+
+    while((p = strchr(p, '_')) != NULL)
+      *p++ = ' ';
+
+    i = 0;
+    IterateList(&continent->locationList, struct TZoneLocation *, loc)
     {
-      result = loc;
-      *lindex = i;
-      break;
+      if(strcasecmp(loc->name, locStr) == 0)
+      {
+        result = loc;
+        *lindex = i;
+        break;
+      }
+
+      i++;
     }
 
-    i++;
+    free(locStr);
   }
-
-  free(locStr);
 
   RETURN(result);
   return result;
@@ -629,8 +634,7 @@ void TZoneCleanup(void)
     while((loc = (struct TZoneLocation *)RemHead((struct List *)&cont->locationList)) != NULL)
     {
       free(loc->name);
-      if(loc->comment)
-        free(loc->comment);
+      free(loc->comment);
 
       FreeSysObject(ASOT_NODE, loc);
     }
