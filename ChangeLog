@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-08-10 Thore Böckelmann <tboeckel@gmx.de>
+
+  * locale/german.ct: updated german translation.
+
 2013-08-09 Jens Langner <Jens.Langner@light-speed.de>
 
   * mui/TZoneInfoBar.c, TZone.c: added description information of a selected

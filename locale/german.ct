@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.14 (03.08.2013)
+## version $VER: YAM.catalog 8.15 (10.08.2013)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -8680,11 +8680,20 @@ Europe/Berlin
 ;
 MSG_HELP_CO_GR_TZONE
 Hier können Sie Ihren derzeitigen Aufenthaltsort\n\
-bzw. Zeitzone einstellen.
+bzw. Ihre Zeitzone einstellen.
 ;
 MSG_CO_TZONE_GMTOFFSET
 Aktuelle GMT-Differenz:
 ;
 MSG_CO_TZONE_NEXTDSTSWITCH
-Nächster DST-Wechsel:
+Nächster Sommerzeitwechsel:
+;
+MSG_CO_TZONE_NODSTSWITCH
+kein Sommerzeitwechsel
+;
+MSG_CO_TZONE_DESCRIPTION
+Beschreibung:
+;
+MSG_CO_TZONE_DESCRIPTION_NA
+keine
 ;
