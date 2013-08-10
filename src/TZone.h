@@ -54,7 +54,8 @@ BOOL ParseTZoneName(const char *tzone, ULONG *continent, ULONG *location, char *
 const char *GuessTZone(const int gmtOffset);
 struct TZoneContinent *FindContinent(const char *continent);
 struct TZoneLocation *FindLocation(struct TZoneContinent *continent, const char *location);
-time_t FindNextDSTSwitch(const char *tzone, struct DateStamp *ds);
+time_t FindNextDSTSwitch(const char *tzone, struct TimeVal *tv);
+void SetTZone(const char *location);
 void TZoneCleanup(void);
 
 #endif /* TZONE_H */

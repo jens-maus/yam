@@ -97,14 +97,14 @@ OVERLOAD(OM_SET)
           int convertedGmtOffset;
           char tzabbr[SIZE_SMALL];
           char nextDSTstr[SIZE_DEFAULT];
-          struct DateStamp ds;
+          struct TimeVal tv;
           time_t dstSwitchTime;
           ULONG continent = 0;
           ULONG location = 0;
           char *tzComment = NULL;
 
           // get the current date/time in struct tm format
-          DateStamp2tm(NULL, &tm);
+          TimeVal2tm(NULL, &tm);
 
           // check if we have to handle a different location than the one in the current configuration
           if(strcasecmp(tzone, C->Location) != 0)
@@ -121,7 +121,7 @@ OVERLOAD(OM_SET)
           strlcpy(tzabbr, tm.tm_zone, sizeof(tzabbr));
 
           // lets get the datestamp of the next scheduled DST switch
-          dstSwitchTime = FindNextDSTSwitch(NULL, &ds);
+          dstSwitchTime = FindNextDSTSwitch(NULL, &tv);
 
           // reset the location to the former value
           if(resetTZ == TRUE)
@@ -132,7 +132,12 @@ OVERLOAD(OM_SET)
 
           // create the rfc time string for the next DST switch
           if(dstSwitchTime > 0)
+          {
+            struct DateStamp ds;
+
+            TimeVal2DateStamp(&tv, &ds, TZC_NONE);
             DateStamp2RFCString(nextDSTstr, sizeof(nextDSTstr), &ds, INT_MIN, NULL, FALSE);
+          }
           else
             strlcpy(nextDSTstr, tr(MSG_CO_TZONE_NODSTSWITCH), sizeof(nextDSTstr));
 

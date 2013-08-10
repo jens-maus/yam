@@ -2641,10 +2641,10 @@ int main(int argc, char **argv)
 
     // start our maintanance Timer requests for
     // different purposes (writeindexes/autosave)
-    PrepareTimer(TIMER_WRINDEX,   C->WriteIndexes, 0);
-    PrepareTimer(TIMER_AUTOSAVE,  C->AutoSave, 0);
-    PrepareTimer(TIMER_SPAMFLUSHTRAININGDATA, C->SpamFlushTrainingDataInterval, 0);
-    PrepareTimer(TIMER_PURGEIDLETHREADS, 60, 0);
+    PrepareTimer(TIMER_WRINDEX, C->WriteIndexes, 0, FALSE);
+    PrepareTimer(TIMER_AUTOSAVE, C->AutoSave, 0, FALSE);
+    PrepareTimer(TIMER_SPAMFLUSHTRAININGDATA, C->SpamFlushTrainingDataInterval, 0, FALSE);
+    PrepareTimer(TIMER_PURGEIDLETHREADS, 60, 0, FALSE);
     StartTimer(TIMER_WRINDEX);
     StartTimer(TIMER_AUTOSAVE);
     StartTimer(TIMER_SPAMFLUSHTRAININGDATA);

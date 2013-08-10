@@ -648,7 +648,7 @@ void TZoneCleanup(void)
 
 ///
 /// FindNextDSTSwitch()
-time_t FindNextDSTSwitch(const char *tzone, struct DateStamp *ds)
+time_t FindNextDSTSwitch(const char *tzone, struct TimeVal *tv)
 {
   time_t result = 0;
   struct TM newtm;
@@ -736,9 +736,15 @@ time_t FindNextDSTSwitch(const char *tzone, struct DateStamp *ds)
           }
           else
           {
-            // lets convert the final switch time to a struct DateStamp now
-            if(ds != NULL)
-              tm2DateStamp(&lasttm, ds);
+            // lets convert the final switch time to a struct TimeVal now
+            if(tv != NULL)
+            {
+              tm2TimeVal(&lasttm, tv);
+
+              // lasttm points to the second before the actual DST switch,
+              // so lets set it +1
+              tv->Seconds += 1;
+            }
 
             result = startt;
             break;
@@ -766,3 +772,57 @@ time_t FindNextDSTSwitch(const char *tzone, struct DateStamp *ds)
 }
 
 ///
+/// SetTZone
+// function that sets a new location string "Europe/Berlin" as the new default
+// and updates all global information accordingly.
+void SetTZone(const char *location)
+{
+  struct TM tm;
+
+  ENTER();
+
+  // set the new location
+  tzset(location);
+
+  // get the current date/time in struct tm format
+  TimeVal2tm(NULL, &tm);
+
+  // call mktime() so that struct tm will be set correctly.
+  mktime(&tm);
+ 
+  // copy the timezone abbreviation string and the
+  // gmtoffset to our global structure
+  strlcpy(G->tzAbbr, tm.tm_zone, sizeof(G->tzAbbr));
+  G->gmtOffset = tm.tm_gmtoff / 60;
+
+  // some debug information/output
+  D(DBF_TZONE, "New TimeZone: '%s'", location);
+  D(DBF_TZONE, "New TimeZone abbreviation: '%s'", G->tzAbbr);
+  D(DBF_TZONE, "New GMT offset: %d", G->gmtOffset);
+
+  // find out when the next DST switch will happen and
+  // save it in the global config accordingly.
+  if(FindNextDSTSwitch(location, &G->nextDSTSwitch) <= 0)
+  {
+    memset(&G->nextDSTSwitch, 0, sizeof(G->nextDSTSwitch));
+    D(DBF_TZONE, "No DST switch");
+
+    StopTimer(TIMER_DSTSWITCH);
+  }
+  else
+  {
+    #if defined(DEBUG)
+    char nextDSTstr[SIZE_DEFAULT];
+    struct DateStamp ds;
+
+    TimeVal2DateStamp(&G->nextDSTSwitch, &ds, TZC_NONE);
+    DateStamp2RFCString(nextDSTstr, sizeof(nextDSTstr), &ds, G->gmtOffset, G->tzAbbr, FALSE);
+    D(DBF_TZONE, "Next DST switch @ %s", nextDSTstr);
+    #endif
+
+    // make sure the update the DSTSWITCH Timer accordingly
+    RestartTimer(TIMER_DSTSWITCH, G->nextDSTSwitch.Seconds, G->nextDSTSwitch.Microseconds, TRUE);
+  }
+
+  LEAVE();
+}

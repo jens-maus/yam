@@ -275,8 +275,8 @@ char *   CreateFilename(const char * const file, char *fullPath, const size_t fu
 BOOL     CreateDirectory(const char *dir);
 int      TZtoMinutes(const char *tzone);
 void     DateStampUTC(struct DateStamp *ds);
-BOOL     DateStamp2tm(const struct DateStamp *ds, struct TM *tm);
-BOOL     tm2DateStamp(const struct TM *tm, struct DateStamp *ds);
+BOOL     TimeVal2tm(const struct TimeVal *tv, struct TM *tm);
+BOOL     tm2TimeVal(const struct TM *tm, struct TimeVal *tv);
 void     GetSysTimeUTC(struct TimeVal *tv);
 void     TimeValTZConvert(struct TimeVal *tv, enum TZConvert tzc);
 void     DateStampTZConvert(struct DateStamp *ds, enum TZConvert tzc);

@@ -1327,7 +1327,7 @@ void AddZombieFile(const char *fileName)
         D(DBF_UTIL, "added file '%s' to the zombie list", fileName);
 
         // trigger the retry mechanism in 5 minutes
-        RestartTimer(TIMER_DELETEZOMBIEFILES, 5 * 60, 0);
+        RestartTimer(TIMER_DELETEZOMBIEFILES, 5 * 60, 0, FALSE);
       }
       else
         FreeSysObject(ASOT_NODE, zombie);
@@ -2201,9 +2201,9 @@ void DateStampUTC(struct DateStamp *ds)
   LEAVE();
 }
 ///
-/// DateStamp2tm
-// converts a struct DateStamp to a struct tm
-BOOL DateStamp2tm(const struct DateStamp *ds, struct TM *tm)
+/// TimeVal2tm
+// converts a struct TimeVal to a struct tm
+BOOL TimeVal2tm(const struct TimeVal *tv, struct TM *tm)
 {
   BOOL result = FALSE;
 
@@ -2211,15 +2211,18 @@ BOOL DateStamp2tm(const struct DateStamp *ds, struct TM *tm)
 
   if(tm != NULL)
   {
-    struct DateStamp dsnow;
+    struct TimeVal tvnow;
     struct ClockData cd;
 
-    // if this argument is not set we get the actual time
-    if(ds == NULL)
-      ds = DateStamp(&dsnow);
+    // if this argument is not set we get the current time
+    if(tv == NULL)
+    {
+      GetSysTime(&TIMEVAL(tvnow));
+      tv = &tvnow;
+    }
 
-    // convert DateStamp to ClockData
-    Amiga2Date((ds->ds_Days*24*60*60 + ds->ds_Minute*60 + ds->ds_Tick/TICKS_PER_SECOND), &cd);
+    // convert TimeVal to ClockData (
+    Amiga2Date(tv->Seconds + (tv->Microseconds / 1000000), &cd);
 
     // convert ClockData to struct tm
     memset(tm, 0, sizeof(*tm));
@@ -2238,15 +2241,15 @@ BOOL DateStamp2tm(const struct DateStamp *ds, struct TM *tm)
   return result;
 }
 ///
-/// tm2DateStamp
-// converts a struct tm to struct DateStamp
-BOOL tm2DateStamp(const struct TM *tm, struct DateStamp *ds)
+/// tm2TimeVal
+// converts a struct tm to struct TimeVal
+BOOL tm2TimeVal(const struct TM *tm, struct TimeVal *tv)
 {
   BOOL result = FALSE;
 
   ENTER();
 
-  if(ds != NULL)
+  if(tv != NULL)
   {
     struct TM tmnow;
     struct ClockData cd;
@@ -2269,19 +2272,19 @@ BOOL tm2DateStamp(const struct TM *tm, struct DateStamp *ds)
     cd.min = tm->tm_min;
     cd.sec = tm->tm_sec;
 
-    // convert ClockData to number of seconds sinc 1/1/1978
+    // convert ClockData to number of seconds since 1/1/1978
     seconds = Date2Amiga(&cd);
     D(DBF_TZONE, "seconds: %ld", seconds);
 
-    // now convert the number of seconds to struct DateStamp
-    ds->ds_Days   = seconds / 86400;       // calculate the days since 1.1.1978
-    ds->ds_Minute = (seconds % 86400) / 60;
-    ds->ds_Tick   = (seconds % 60) * TICKS_PER_SECOND;
+    // now convert the number of seconds to struct TimeVal which is rather
+    // easy
+    tv->Seconds = seconds; // seconds since 1/1/1978
+    tv->Microseconds = 0; // Date2Amiga() has only seconds precision
 
     #if defined(DEBUG)
     {
       char bufStr[64];
-      DateStamp2String(bufStr, sizeof(bufStr), ds, DSS_DATETIME, TZC_NONE);
+      TimeVal2String(bufStr, sizeof(bufStr), tv, DSS_DATETIME, TZC_NONE);
       D(DBF_TZONE, "%s", bufStr);
     }
     #endif
@@ -2398,9 +2401,9 @@ BOOL TimeVal2String(char *dst, int dstlen, const struct TimeVal *tv, enum DateSt
   BOOL result;
   struct DateStamp ds;
 
-  // convert the timeval into a datestamp
   ENTER();
 
+  // convert the timeval into a datestamp
   TimeVal2DateStamp(tv, &ds, TZC_NONE);
 
   // then call the DateStamp2String() function to get the real string

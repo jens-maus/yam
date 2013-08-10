@@ -49,6 +49,7 @@
 #include "MUIObjects.h"
 #include "Threads.h"
 #include "Timer.h"
+#include "TZone.h"
 
 #include "mui/ClassesExtra.h"
 #include "mui/QuickSearchBar.h"
@@ -61,7 +62,7 @@
 /*** Timer processing function ***/
 /// PrepareTRequest
 // prepare a single time request
-static void PrepareTRequest(struct TRequest *timer, const int seconds, const int micros)
+static void PrepareTRequest(struct TRequest *timer, const ULONG seconds, const ULONG micros, BOOL absoluteTime)
 {
   ENTER();
 
@@ -80,6 +81,7 @@ static void PrepareTRequest(struct TRequest *timer, const int seconds, const int
 
       // flag the timer to be prepared to get fired later on
       timer->isPrepared = TRUE;
+      timer->isAbsolute = absoluteTime;
     }
     #if defined(DEBUG)
     else
@@ -107,11 +109,11 @@ static void PrepareTRequest(struct TRequest *timer, const int seconds, const int
 ///
 /// PrepareTimer
 //  prepares a timer for being started with StartTimer() later on
-void PrepareTimer(const enum Timer tid, const int seconds, const int micros)
+void PrepareTimer(const enum Timer tid, const ULONG seconds, const ULONG micros, BOOL absoluteTime)
 {
   ENTER();
 
-  PrepareTRequest(&G->timerData.timer[tid], seconds, micros);
+  PrepareTRequest(&G->timerData.timer[tid], seconds, micros, absoluteTime);
 
   LEAVE();
 }
@@ -128,27 +130,58 @@ static void StartTRequest(struct TRequest *timer)
     if(timer->isRunning == FALSE && timer->isPrepared == TRUE)
     {
       #if defined(DEBUG)
-      char dateString[64];
-
-      DateStamp2String(dateString, sizeof(dateString), NULL, DSS_DATETIME, TZC_NONE);
-
-      if(timer->id != -1)
-      {
-        D(DBF_TIMER, "timer[%ld]: started @ %s to finish in %ld'%ld secs",
-          timer->id, dateString, timer->tr->Time.Seconds, timer->tr->Time.Microseconds);
-      }
-      else if(timer->pop3Server != NULL)
-      {
-        D(DBF_TIMER, "timer[%s]: started @ %s to finish in %ld'%ld secs",
-          timer->pop3Server->description, dateString, timer->tr->Time.Seconds, timer->tr->Time.Microseconds);
-      }
+      char dateStrStarted[64];
+      char dateStrFinish[64];
+      struct TimeVal tvTmp;
+      struct TimeVal tvTimer;
       #endif
 
+      // we have to check wheter our TRequest carries an absolute or relative
+      // time information and act upon
+      if(timer->isAbsolute == TRUE)
+      {
+        struct TimeVal tsNow;
+
+        // get current time
+        GetSysTime(&TIMEVAL(tsNow));
+
+        // convert the time information in the trequest to relative time
+        // since this is what timer.device supports only
+        SubTime(&TIMEVAL(timer->tr->Time), &TIMEVAL(tsNow));
+      }
+
+      #if defined(DEBUG)
+      memcpy(&tvTimer, &timer->tr->Time, sizeof(tvTimer));
+      #endif
+ 
       // fire the timer by doing a SendIO()
       SendIO(&timer->tr->Request);
 
-      // remember the start time
+      // remember the timer start time
       GetSysTime(TIMEVAL(&timer->startTime));
+
+      #if defined(DEBUG)
+      memcpy(&tvTmp, &timer->startTime, sizeof(tvTmp));
+
+      // get the current date/time in a str
+      TimeVal2String(dateStrStarted, sizeof(dateStrStarted), &tvTmp, DSS_DATETIME, TZC_NONE);
+
+      // get the date/time when the timer finishes in a str
+      AddTime(&tvTmp, &tvTimer);
+      TimeVal2String(dateStrFinish, sizeof(dateStrFinish), &tvTmp, DSS_DATETIME, TZC_NONE);
+
+      if(timer->id != -1)
+      {
+        D(DBF_TIMER, "timer[%ld]: started @ %s to finish in %ld'%ld secs (%s)",
+          timer->id, dateStrStarted, tvTimer.Seconds, tvTimer.Microseconds, dateStrFinish);
+      }
+      else if(timer->pop3Server != NULL)
+      {
+        D(DBF_TIMER, "timer[%s]: started @ %s to finish in %ld'%ld secs (%s)",
+          timer->pop3Server->description, dateStrStarted, tvTimer.Seconds, tvTimer.Microseconds,
+          dateStrFinish);
+      }
+      #endif
 
       // signal that our timer is running
       timer->isRunning = TRUE;
@@ -364,12 +397,12 @@ void ResumeTimer(const enum Timer tid)
 //  is first stopped via AbortIO() and then issues a new one. Please note that
 //  this function may NOT be called from the eventloop because CheckIO and friends
 //  are not defined to work there.
-void RestartTimer(const enum Timer tid, const int seconds, const int micros)
+void RestartTimer(const enum Timer tid, const ULONG seconds, const ULONG micros, BOOL absoluteTime)
 {
   ENTER();
 
   StopTimer(tid);
-  PrepareTimer(tid, seconds, micros);
+  PrepareTimer(tid, seconds, micros, absoluteTime);
   StartTimer(tid);
 
   LEAVE();
@@ -581,7 +614,7 @@ static void TimerDispatcher(const enum Timer tid)
         D(DBF_TIMER, "Editor object of a write window is active, skipping update index operation");
 
       // prepare the timer to get fired again
-      PrepareTimer(tid, C->WriteIndexes, 0);
+      PrepareTimer(tid, C->WriteIndexes, 0, FALSE);
     }
     break;
 
@@ -601,7 +634,7 @@ static void TimerDispatcher(const enum Timer tid)
       }
 
       // prepare the timer to get fired again
-      PrepareTimer(tid, C->AutoSave, 0);
+      PrepareTimer(tid, C->AutoSave, 0, FALSE);
     }
     break;
 
@@ -682,7 +715,7 @@ static void TimerDispatcher(const enum Timer tid)
       DoMethod(G->App, MUIM_YAMApplication_UpdateCheck, TRUE);
 
       // prepare the timer to get fired again
-      PrepareTimer(tid, C->UpdateInterval, 0);
+      PrepareTimer(tid, C->UpdateInterval, 0, FALSE);
     }
     break;
 
@@ -693,7 +726,7 @@ static void TimerDispatcher(const enum Timer tid)
 
       DoAction(NULL, TA_FlushSpamTrainingData, TAG_DONE);
 
-      PrepareTimer(tid, C->SpamFlushTrainingDataInterval, 0);
+      PrepareTimer(tid, C->SpamFlushTrainingDataInterval, 0, FALSE);
     }
     break;
 
@@ -707,7 +740,7 @@ static void TimerDispatcher(const enum Timer tid)
       if(DeleteZombieFiles(FALSE) == FALSE)
       {
         // trigger the retry mechanism in 5 minutes
-        PrepareTimer(TIMER_DELETEZOMBIEFILES, 5 * 60, 0);
+        PrepareTimer(TIMER_DELETEZOMBIEFILES, 5 * 60, 0, FALSE);
       }
     }
     break;
@@ -729,7 +762,18 @@ static void TimerDispatcher(const enum Timer tid)
       PurgeIdleThreads(FALSE);
 
       // restart the timer
-      PrepareTimer(TIMER_PURGEIDLETHREADS, 60, 0);
+      PrepareTimer(TIMER_PURGEIDLETHREADS, 60, 0, FALSE);
+    }
+    break;
+
+    // DST switch was recognized, so lets update gmtOffset&co
+    case TIMER_DSTSWITCH:
+    {
+      D(DBF_TIMER, "timer[%ld]: TIMER_DSTSWITCH fired @ %s", tid, dateString);
+
+      // now we have to make sure to update all tzone relative
+      // information - this will also restart the timer
+      SetTZone(C->Location);
     }
     break;
 
@@ -803,7 +847,7 @@ BOOL ProcessTimerEvent(void)
         processed = TRUE;
 
         // preparestart the server's timer again
-        PrepareTRequest(timer, msn->downloadInterval*60, 0);
+        PrepareTRequest(timer, msn->downloadInterval*60, 0, FALSE);
         StartTRequest(timer);
 
         // break out of the loop
@@ -839,6 +883,9 @@ BOOL ProcessTimerEvent(void)
 
     if(G->timerData.timer[TIMER_PURGEIDLETHREADS].isPrepared == TRUE)
       StartTimer(TIMER_PURGEIDLETHREADS);
+
+    if(G->timerData.timer[TIMER_DSTSWITCH].isPrepared == TRUE)
+      StartTimer(TIMER_DSTSWITCH);
   }
   else
     W(DBF_TIMER, "timer event received but no timer was processed!!!");
@@ -871,7 +918,7 @@ void PreparePOP3Timers(void)
 
   IterateList(&C->pop3ServerList, struct MailServerNode *, msn)
   {
-    PrepareTRequest(&msn->downloadTimer, msn->downloadInterval*60, 0);
+    PrepareTRequest(&msn->downloadTimer, msn->downloadInterval*60, 0, FALSE);
   }
 
   ReleaseSemaphore(G->configSemaphore);
@@ -936,7 +983,7 @@ void RestartPOP3Timers(void)
   IterateList(&C->pop3ServerList, struct MailServerNode *, msn)
   {
     StopTRequest(&msn->downloadTimer);
-    PrepareTRequest(&msn->downloadTimer, msn->downloadInterval*60, 0);
+    PrepareTRequest(&msn->downloadTimer, msn->downloadInterval*60, 0, FALSE);
     if(isServerActive(msn) && hasServerDownloadPeriodically(msn))
       StartTRequest(&msn->downloadTimer);
   }

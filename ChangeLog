@@ -5,6 +5,22 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-08-10 Jens Langner <Jens.Langner@light-speed.de>
+
+  * Timer.c, TZone.c: implemented a new TIMER_DSTSWITCH timer which takes
+    care that upon fired SetTZone() is called again so that TZ/DST information
+    is refreshed accordingly. For this to happen the PrepareTimer() and
+    RestartTimer() interfaces had to be changed so that an absolute time can
+    now also be specified so that StartTimer() now automatically calculcates
+    the diff time and starts the timer accordingly.
+  * TZone.c, YAM_CO.c: implemented SetTZone() function which does all the mess
+    of setting a new timezone location as the default and then querying the
+    tz abbreviation and gmt offset as well as finding the time when the
+    next DST switch happens.
+  * YAM_UT.c: replaced all tm2DateStamp/DateStamp2tm function with functions
+    tm2TimeVal/TimeVal2tm as that is actually what we need for setting up a
+    timer event for the DST switch recognition.
+
 2013-08-10 Thore Böckelmann <tboeckel@gmx.de>
 
   * locale/german.ct: updated german translation.

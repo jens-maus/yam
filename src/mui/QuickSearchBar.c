@@ -542,7 +542,7 @@ DECLARE(SearchContentChanged) // char *content, ULONG force
 
       // now we issue a RestartTimer() command to schedule
       // the actual search in about 400ms from now on
-      RestartTimer(TIMER_PROCESSQUICKSEARCH, 0, msg->force ? 1 : 500000);
+      RestartTimer(TIMER_PROCESSQUICKSEARCH, 0, msg->force ? 1 : 500000, FALSE);
     }
   }
   else
@@ -564,7 +564,7 @@ DECLARE(SearchContentChanged) // char *content, ULONG force
     else
     {
       // otherwise we issue a quicksearch start as well
-      RestartTimer(TIMER_PROCESSQUICKSEARCH, 0, 500000);
+      RestartTimer(TIMER_PROCESSQUICKSEARCH, 0, 500000, FALSE);
     }
   }
 

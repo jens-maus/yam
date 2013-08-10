@@ -189,7 +189,7 @@ void MA_ChangeSelected(BOOL forceUpdate)
       // selected more than one mail at a time which then should clear the
       // readpane as it might have been disabled.
       if(numSelected == 1)
-        RestartTimer(TIMER_READPANEUPDATE, 0, C->EmbeddedMailDelay*1000);
+        RestartTimer(TIMER_READPANEUPDATE, 0, C->EmbeddedMailDelay*1000, FALSE);
       else
       {
         // make sure an already existing readpaneupdate timer is canceled in advance.

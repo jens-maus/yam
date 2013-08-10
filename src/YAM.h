@@ -160,6 +160,7 @@ struct Global
   BOOL                     DefIconsAvailable;
 
   struct DateStamp         StartDate;
+  struct TimeVal           nextDSTSwitch;        // date/time of next DST switch
   struct Users             Users;
   struct MinList           readMailDataList;
   struct MinList           writeMailDataList;

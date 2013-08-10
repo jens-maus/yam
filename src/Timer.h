@@ -45,6 +45,7 @@ enum Timer
   TIMER_DELETEZOMBIEFILES,
   TIMER_CHECKBIRTHDAYS,
   TIMER_PURGEIDLETHREADS,
+  TIMER_DSTSWITCH,
   TIMER_NUM
 };
 
@@ -57,6 +58,7 @@ struct TRequest
   BOOL isRunning;                     // if the request is currenty active/running
   BOOL isPrepared;                    // if the request is prepared to get fired
   BOOL isPaused;                      // if the request is currently paused
+  BOOL isAbsolute;                    // if the request carries an absolute TimeVal rather than relative
   #if defined(DEBUG)
   int id;                             // an ID of the list above or -1 for a POP3 timer, debug only
   struct MailServerNode *pop3Server;  // a back pointer to a POP3 server, debug only
@@ -69,12 +71,12 @@ struct Timers
   struct TRequest timer[TIMER_NUM];
 };
 
-void PrepareTimer(const enum Timer tid, const int seconds, const int micros);
+void PrepareTimer(const enum Timer tid, const ULONG seconds, const ULONG micros, BOOL absoluteTime);
 void StartTimer(const enum Timer tid);
 void StopTimer(const enum Timer tid);
 void PauseTimer(const enum Timer tid);
 void ResumeTimer(const enum Timer tid);
-void RestartTimer(const enum Timer tid, const int seconds, const int micros);
+void RestartTimer(const enum Timer tid, const ULONG seconds, const ULONG micros, BOOL absoluteTime);
 
 void PreparePOP3Timers(void);
 void StartPOP3Timers(void);

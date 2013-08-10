@@ -588,9 +588,6 @@ void AB_CheckBirthdates(BOOL check)
     DateStamp2TimeVal(&nextDS, &nextTV, TZC_NONE);
   }
 
-  // calculate the remaining time until the next check
-  SubTime(TIMEVAL(&nextTV), TIMEVAL(&nowTV));
-
   #if defined(DEBUG)
   {
     char dateString[64];
@@ -599,7 +596,8 @@ void AB_CheckBirthdates(BOOL check)
     D(DBF_TIMER, "next birthday check @ %s", dateString);
   }
   #endif
-  RestartTimer(TIMER_CHECKBIRTHDAYS, nextTV.Seconds, nextTV.Microseconds);
+
+  RestartTimer(TIMER_CHECKBIRTHDAYS, nextTV.Seconds, nextTV.Microseconds, TRUE);
 
   LEAVE();
 }

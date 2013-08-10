@@ -2170,7 +2170,6 @@ void CO_Validate(struct Config *co, BOOL update)
   struct MailServerNode *msn;
   struct UserIdentityNode *uin;
   struct SignatureNode *sn;
-  struct TM tm;
 
   ENTER();
 
@@ -2371,24 +2370,9 @@ void CO_Validate(struct Config *co, BOOL update)
       strlcpy(co->Location, tr(MSG_CO_FALLBACK_TZONE), sizeof(co->Location));
   }
 
-  // now we have to make sure we set the Location in our own libtz correctly
-  tzset(co->Location);
+  // now we have to make sure we set the Location global now
+  SetTZone(co->Location);
 
-  // get the current date/time in struct tm format
-  DateStamp2tm(NULL, &tm);
-
-  // call mktime() so that struct tm will be set correctly.
-  mktime(&tm);
-
-  // copy the timezone abbreviation string and the
-  // gmtoffset
-  strlcpy(G->tzAbbr, tm.tm_zone, sizeof(G->tzAbbr));
-  G->gmtOffset = tm.tm_gmtoff / 60;
-
-  // some debug information/output
-  D(DBF_TZONE, "Current TimeZone: '%s'", co->Location);
-  D(DBF_TZONE, "Current TimeZone abbreviation: '%s'", G->tzAbbr);
-  D(DBF_TZONE, "Current GMT offset: %d", G->gmtOffset);
   D(DBF_TZONE, "DST1: %d", GetDSTinfo(2012, 3, 24)); // should return 0
   D(DBF_TZONE, "DST2: %d", GetDSTinfo(2012, 3, 25)); // should return 2
   D(DBF_TZONE, "DST3: %d", GetDSTinfo(2012, 3, 26)); // should return 1
@@ -2645,7 +2629,7 @@ void CO_Validate(struct Config *co, BOOL update)
     if(G->CO->Visited[cp_Write] == TRUE || G->CO->UpdateAll == TRUE)
     {
       // requeue the timerequest for the AutoSave interval
-      RestartTimer(TIMER_AUTOSAVE, co->AutoSave, 0);
+      RestartTimer(TIMER_AUTOSAVE, co->AutoSave, 0, FALSE);
     }
 
     if(G->CO->Visited[cp_ReplyForward] == TRUE || G->CO->UpdateAll == TRUE)

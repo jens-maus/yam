@@ -109,14 +109,14 @@ void InitUpdateCheck(const BOOL initial)
 
       // instead of calling CheckForUpdates() directly, we issue
       // a timer to timeout in 1 milliseconds
-      RestartTimer(TIMER_UPDATECHECK, 0, 1);
+      RestartTimer(TIMER_UPDATECHECK, 0, 1, FALSE);
     }
     else
     {
       // we now (re)issue the next update check with the same update
       // interval as our previous one.
       D(DBF_UPDATE, "update-check is due to be processed in %ld seconds.", nextCheck.Seconds - now.Seconds);
-      RestartTimer(TIMER_UPDATECHECK, nextCheck.Seconds - now.Seconds, 0);
+      RestartTimer(TIMER_UPDATECHECK, nextCheck.Seconds - now.Seconds, 0, FALSE);
     }
   }
   else
