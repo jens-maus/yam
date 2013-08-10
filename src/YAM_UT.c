@@ -2166,29 +2166,6 @@ ULONG GetDateStamp(void)
   return seconds;
 }
 ///
-///
-enum DST GetDSTinfo(int year, int month, int day)
-{
-  struct TM a;
-  struct TM b;
-
-  memset(&a, 0, sizeof(a));
-  a.tm_isdst = -1;
-  a.tm_mday = day;
-  a.tm_mon  = month - 1;
-  a.tm_year = year - 1900;
-  b = a;
-  a.tm_hour = 23;
-  a.tm_min = 59;
-  mktime(&a);
-  mktime(&b);
-
-  if      (a.tm_isdst  && b.tm_isdst)  return DST_ON;
-  else if (!a.tm_isdst && !b.tm_isdst) return DST_OFF;
-  else if (a.tm_isdst  && !b.tm_isdst) return DST_OFFTOON;
-  else                                 return DST_ONTOOFF;
-}
-///
 /// DateStampUTC
 //  gets the current system time in UTC
 void DateStampUTC(struct DateStamp *ds)
@@ -2315,10 +2292,30 @@ void TimeValTZConvert(struct TimeVal *tv, enum TZConvert tzc)
 {
   ENTER();
 
-  if(tzc == TZC_LOCAL)
-    tv->Seconds += (G->gmtOffset * 60);
-  else if(tzc == TZC_UTC)
-    tv->Seconds -= (G->gmtOffset * 60);
+  // to actually convert absolutely correct we have to first identify the
+  // gmt offset that were effective at the time embedded in DateStamp
+  // because in the past a different gmt offset might have been in place
+  if(tzc != TZC_NONE)
+  {
+    struct TM tm;
+    time_t timet;
+
+    // time_t is defined to start from 1/1/1970 00:00:00 UTC while
+    // struct TimeVal starts from 1/1/1978 00:00:00 relative to the local timezone.
+    //
+    // Here 252460800 corresponds to the number of seconds between 1/1/1970 to 1/1/1978
+    // based on the UTC (see http://www.epochconverter.com)
+    timet = tv->Seconds + (tv->Microseconds / 1000000) + 252460800;
+
+    // call localtime_r() so that we get information about the gmt offset
+    // being effective at the time the DateStamp was active
+    localtime_r(&timet, &tm);
+
+    if(tzc == TZC_LOCAL)
+      tv->Seconds += tm.tm_gmtoff;
+    else
+      tv->Seconds -= tm.tm_gmtoff;
+  }
 
   LEAVE();
 }
@@ -2330,23 +2327,47 @@ void DateStampTZConvert(struct DateStamp *ds, enum TZConvert tzc)
 {
   ENTER();
 
-  // convert the DateStamp from local -> UTC or visa-versa
-  if(tzc == TZC_LOCAL)
-    ds->ds_Minute += G->gmtOffset;
-  else if(tzc == TZC_UTC)
-    ds->ds_Minute -= G->gmtOffset;
+  // to actually convert absolutely correct we have to first identify the
+  // gmt offset that were effective at the time embedded in DateStamp
+  // because in the past a different gmt offset might have been in place
+  if(tzc != TZC_NONE)
+  {
+    struct TM tm;
+    time_t timet;
+    int gmtOffset;
 
-  // we need to check the datestamp variable that it is still in it's borders
-  // after the UTC correction
-  while(ds->ds_Minute < 0)
-  {
-    ds->ds_Minute += 1440;
-    ds->ds_Days--;
-  }
-  while(ds->ds_Minute >= 1440)
-  {
-    ds->ds_Minute -= 1440;
-    ds->ds_Days++;
+    // time_t is defined to start from 1/1/1970 00:00:00 UTC while
+    // struct DateStamp starts from 1/1/1978 00:00:00 relative to the local timezone.
+    //
+    // Here 252460800 corresponds to the number of seconds between 1/1/1970 to 1/1/1978
+    // based on the UTC (see http://www.epochconverter.com)
+    timet = (ds->ds_Days * 24 * 60 + ds->ds_Minute) * 60 + ds->ds_Tick / TICKS_PER_SECOND + 252460800;
+
+    // call localtime_r() so that we get information about the gmt offset
+    // being effective at the time the DateStamp was active
+    localtime_r(&timet, &tm);
+
+    // get the gmt offset in minutes
+    gmtOffset = tm.tm_gmtoff / 60;
+
+    // convert the DateStamp from local -> UTC or visa-versa
+    if(tzc == TZC_LOCAL)
+      ds->ds_Minute += gmtOffset;
+    else
+      ds->ds_Minute -= gmtOffset;
+
+    // we need to check the datestamp variable that it is still in it's borders
+    // after the UTC correction
+    while(ds->ds_Minute < 0)
+    {
+      ds->ds_Minute += 1440;
+      ds->ds_Days--;
+    }
+    while(ds->ds_Minute >= 1440)
+    {
+      ds->ds_Minute -= 1440;
+      ds->ds_Days++;
+    }
   }
 
   LEAVE();

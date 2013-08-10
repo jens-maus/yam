@@ -7,6 +7,12 @@ $URL$
 
 2013-08-10 Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_UT.c: now that we have finally the infrafracture to identify which gmt
+    offset was effecitive at a certain date+time (even DST) the TZConvert()
+    functions have been changed now to actually take care of that and not
+    simply convert DateStamp/TimeVal values according to the currently
+    effective gmt offset. This finally fixes a long standing flaw in the
+    display of time values in the main mail list and closes #10.
   * Timer.c, TZone.c: implemented a new TIMER_DSTSWITCH timer which takes
     care that upon fired SetTZone() is called again so that TZ/DST information
     is refreshed accordingly. For this to happen the PrepareTimer() and

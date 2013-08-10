@@ -2373,11 +2373,6 @@ void CO_Validate(struct Config *co, BOOL update)
   // now we have to make sure we set the Location global now
   SetTZone(co->Location);
 
-  D(DBF_TZONE, "DST1: %d", GetDSTinfo(2012, 3, 24)); // should return 0
-  D(DBF_TZONE, "DST2: %d", GetDSTinfo(2012, 3, 25)); // should return 2
-  D(DBF_TZONE, "DST3: %d", GetDSTinfo(2012, 3, 26)); // should return 1
-  D(DBF_TZONE, "DST4: %d", GetDSTinfo(2012, 5, 22)); // should return 1
-
   // check if PGP is available or not.
   G->PGPVersion = CO_DetectPGP(co);
 
@@ -2595,6 +2590,13 @@ void CO_Validate(struct Config *co, BOOL update)
         // nothing
       }
       break;
+    }
+
+    if(G->CO->Visited[cp_FirstSteps] == TRUE || G->CO->UpdateAll == TRUE)
+    {
+      // make sure to redraw the main mail list in case the user
+      // changed the timezone
+      DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_Redraw, MUIV_NList_Redraw_All);
     }
 
     if(G->CO->Visited[cp_TCPIP] == TRUE || G->CO->UpdateAll == TRUE)

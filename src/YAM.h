@@ -141,7 +141,7 @@ struct Global
   int                      LastIconID;
   #endif
   time_t                   LastPGPUsage;
-  int                      gmtOffset;           // the current offset to GMT (+/-)
+  int                      gmtOffset;           // the current offset to GMT in min (+/-)
 
   #if defined(__amigaos4__)
   uint32                   applicationID;

@@ -120,8 +120,6 @@ enum SizeFormat
   SF_AUTO       // format automatically via C->SizeFormat
 };
 
-enum DST { DST_OFF, DST_ON, DST_OFFTOON, DST_ONTOOFF };
-
 struct Person
 {
   char Address[SIZE_ADDRESS];
@@ -314,7 +312,6 @@ char *   AddPath(char *dst, const char *src, const char *add, const size_t size)
 void     FinishUnpack(const char *file);
 void     FormatSize(LONG size, char *buffer, int buflen, enum SizeFormat forcedPrecision);
 ULONG    GetDateStamp(void);
-enum DST GetDSTinfo(int year, int month, int day);
 ssize_t  GetLine(char **buffer, size_t *size, FILE *fh);
 void     GetMailFile(char *string, const size_t stringSize, const struct Folder *folder, const struct Mail *mail);
 ULONG    GetSimpleID(void);
