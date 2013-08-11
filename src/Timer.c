@@ -143,11 +143,11 @@ static void StartTRequest(struct TRequest *timer)
         struct TimeVal tsNow;
 
         // get current time
-        GetSysTime(&TIMEVAL(tsNow));
+        GetSysTime(TIMEVAL(&tsNow));
 
         // convert the time information in the trequest to relative time
         // since this is what timer.device supports only
-        SubTime(&TIMEVAL(timer->tr->Time), &TIMEVAL(tsNow));
+        SubTime(TIMEVAL(&timer->tr->Time), TIMEVAL(&tsNow));
       }
 
       #if defined(DEBUG)
