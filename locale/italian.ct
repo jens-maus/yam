@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.41 (4.08.2013)
+## version $VER: YAM.catalog 8.42 (11.08.2013)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -5162,7 +5162,7 @@ MSG_CO_SENTMSGS
 ; %s  Sent messages
 ;
 MSG_FO_DSTATS
-_Statistiche AppIcon
+Statistic_he AppIcon
 ; App_Icon stats
 ;
 MSG_HELP_FO_CH_STATS
@@ -7964,15 +7964,15 @@ _Pattern (A:/CC:)
 ; _Pattern (To:/CC:)
 ;
 MSG_FO_TO_ADDRESS
-Indirizzo di destinazione (_A:)
+Indirizzo di destina_zione (A:)
 ; Destination address (_To:)
 ;
 MSG_FO_FROM_ADDRESS
-Indirizzo del mittente (_Da:)
+Indirizzo del mitte_nte (Da:)
 ; Sender address (_From:)
 ;
 MSG_FO_REPLYTO_ADDRESS
-Indirizzo di _risposta (Rispondi-A:)
+Indirizzo di ri_sposta (Rispondi-A:)
 ; _Reply address (Reply-To:)
 ;
 MSG_RETRY_HOMEPAGE_QUIT_GAD
@@ -10403,4 +10403,16 @@ Attuale offset GMT:
 MSG_CO_TZONE_NEXTDSTSWITCH
 Prossimo passaggio DST:
 ; Next DST switch:
+;
+MSG_CO_TZONE_NODSTSWITCH
+Nessun salvataggio DST
+; no daylight saving
+;
+MSG_CO_TZONE_DESCRIPTION
+Descrizione:
+; Description:
+;
+MSG_CO_TZONE_DESCRIPTION_NA
+n/d
+; n/a
 ;

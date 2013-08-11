@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-08-11 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: fixed some shorcuts and updated to the latest changes.
+
 2013-08-10 Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_UT.c: now that we have finally the infrafracture to identify which gmt
