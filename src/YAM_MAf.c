@@ -29,6 +29,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <limits.h>
 
 #include <clib/alib_protos.h>
 #include <clib/macros.h>
@@ -2102,10 +2103,11 @@ static BOOL MA_ScanDate(struct Mail *mail, const char *date)
   int hour = 0;
   int min = 0;
   int sec = 0;
+  int gmtOffset = INT_MIN; // INT_MIN means not set
   char *s;
   char tdate[SIZE_SMALL];
   char ttime[SIZE_SMALL];
-  char tzone[SIZE_SMALL];
+  char tzAbbr[SIZE_SMALL];
   struct DateTime dt;
 
   ENTER();
@@ -2127,8 +2129,9 @@ static BOOL MA_ScanDate(struct Mail *mail, const char *date)
     s = (char *)date;
   }
 
-  // ensure a valid time zone string in case the parsing process fails to find one
-  tzone[0] = '\0';
+  // ensure a valid time zone abbreviation string
+  // in case the parsing process fails to find one
+  tzAbbr[0] = '\0';
 
   // skip leading spaces
   while(*s && isspace(*s))
@@ -2206,19 +2209,77 @@ static BOOL MA_ScanDate(struct Mail *mail, const char *date)
       }
       break;
 
-      // get the time zone
+      // get the gmt offset (+0000 / -0000)
       case 4:
       {
+        // skip any leading parentheses
         while(*s && *s == '(')
           s++;
 
-        strlcpy(tzone, s, MIN(sizeof(tzone), (unsigned int)(e-s+1)));
+        // check that the gmtOffset string starts with "+" or "-" or
+        // with a numeric value or otherwise the date string doesn't
+        // have a GMT offset but comes with a timezone abbreviation
+        if(*s == '+' || *s == '-' || isdigit(*s))
+        {
+          if(isdigit(*s))
+            gmtOffset = atoi(s);
+          else
+            gmtOffset = atoi(&s[1]);
+
+          if(gmtOffset != 0 && gmtOffset/100 == 0)
+          {
+            char *c;
+
+            // multiply by 100 so that we have now a correct format
+            gmtOffset *= 100;
+
+            // then check if we have a : to seperate HH:MM and add the minutes
+            // to tzcorr
+            if((c = strchr(s, ':')))
+              gmtOffset += atoi(c);
+          }
+
+          // now we have to distingush between + and -
+          if(s[0] == '-')
+            gmtOffset = -gmtOffset;
+
+          // convert to minutes now
+          gmtOffset = (gmtOffset/100)*60 + (gmtOffset%100);
+        }
+        else
+        {
+          W(DBF_MAIL, "No GMT offset found in date string: %s", date);
+
+          // make sure the next iteration ends up at the same position
+          e = s;
+        }
+      }
+      break;
+
+      // the textual timezone abbreviation (e.g. 'CET')
+      case 5:
+      {
+        // skip any leading parentheses
+        while(*s && *s == '(')
+          s++;
+
+        // make sure the first char is A-Za-z
+        if(isalpha(*s))
+        {
+          // remove any ending parentheses
+          while(*(e-1) && *(e-1) == ')')
+            e--;
+        
+          strlcpy(tzAbbr, s, MIN(sizeof(tzAbbr), (unsigned int)(e-s+1)));
+        }
+        else
+          W(DBF_MAIL, "No timezone abbreviation found in date string: %s", date);
       }
       break;
     }
 
     // if we iterated until 4 we can break out
-    if(count == 4)
+    if(count == 5)
       break;
 
     count++;
@@ -2248,12 +2309,14 @@ static BOOL MA_ScanDate(struct Mail *mail, const char *date)
   {
     struct DateStamp *ds = &dt.dat_Stamp;
 
-    // save the gmt offset
-    mail->gmtOffset = TZtoMinutes(tzone);
+    // lets see if we found a valid GMT offset
+    if(gmtOffset != INT_MIN)
+      mail->gmtOffset = gmtOffset;
+    else if(tzAbbr[0] != '\0')
+      mail->gmtOffset = TZtoMinutes(tzAbbr);
 
     // save the tzone abbreviation
-    #warning have to implement tzAbbr saving here
-    //strlcpy(mail->tzAbbr, tzone, sizeof(mail->tzAbbr));
+    strlcpy(mail->tzAbbr, tzAbbr, sizeof(mail->tzAbbr));
 
     // bring the date in relation to UTC
     ds->ds_Minute -= mail->gmtOffset;

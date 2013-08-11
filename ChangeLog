@@ -7,6 +7,10 @@ $URL$
 
 2013-08-11 Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_MAf.c: added proper recognition of the timezone abbreviation in a Date:
+    header string. Only in rare cases the TZtoMinutes() function will now be used
+    and the timezone abbreviation should now properly by stored in the mail
+    structure.
   * YAM_UT.c: revised the TimeValTZConvert() and DateStampTZConvert() functions
     to use a more correct algorithm for converting TimeVal/DateStamp values
     from LOCAL to UTC or vice versa. Now a logic with either mktime() or
