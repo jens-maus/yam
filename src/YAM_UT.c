@@ -2328,7 +2328,7 @@ void TimeValTZConvert(struct TimeVal *tv, enum TZConvert tzc)
       TimeVal2tm(tv, &tm);
 
       // now use mktime() to make sure the tm_gmtoff member is set as well
-      if(mktime(&tm) != -1)
+      if(mktime(&tm) != (time_t)-1)
         tv->Seconds -= tm.tm_gmtoff; // lets substract gmtOffset to actually convert to UTC
     }
     break;
@@ -2410,7 +2410,7 @@ void DateStampTZConvert(struct DateStamp *ds, enum TZConvert tzc)
       TimeVal2tm(&tv, &tm);
 
       // now use mktime() to make sure the tm_gmtoff member is set as well
-      if(mktime(&tm) != -1)
+      if(mktime(&tm) != (time_t)-1)
         ds->ds_Minute -= tm.tm_gmtoff / 60; // lets substract gmtOffset to actually convert to UTC
     }
     break;
