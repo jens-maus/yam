@@ -2194,7 +2194,7 @@ BOOL TimeVal2tm(const struct TimeVal *tv, struct TM *tm)
     // if this argument is not set we get the current time
     if(tv == NULL)
     {
-      GetSysTime(&TIMEVAL(tvnow));
+      GetSysTime(TIMEVAL(&tvnow));
       tv = &tvnow;
     }
 
