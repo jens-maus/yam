@@ -2759,7 +2759,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
         StrBufCat(&cmsg, headerLine);
       }
 
-      DateStamp2String(dateStr, sizeof(dateStr), &rmData->mail->Date, C->DSListFormat, TZC_LOCAL);
+      DateStamp2String(dateStr, sizeof(dateStr), &rmData->mail->Date, C->DSListFormat, TZC_UTC2LOCAL);
       snprintf(headerLine, sizeof(headerLine), "%s: %s\n", tr(MSG_RE_HDR_DATE), dateStr);
       StrBufCat(&cmsg, headerLine);
 

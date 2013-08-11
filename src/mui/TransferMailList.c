@@ -281,7 +281,7 @@ OVERLOAD(MUIM_NList_Display)
       // display date
       data->dateBuffer[0] = '\0';
       if(mail->Date.ds_Days != 0)
-        DateStamp2String(data->dateBuffer, sizeof(data->dateBuffer), &mail->Date, (C->DSListFormat == DSS_DATEBEAT || C->DSListFormat == DSS_RELDATEBEAT) ? DSS_DATEBEAT : DSS_DATETIME, TZC_LOCAL);
+        DateStamp2String(data->dateBuffer, sizeof(data->dateBuffer), &mail->Date, (C->DSListFormat == DSS_DATEBEAT || C->DSListFormat == DSS_RELDATEBEAT) ? DSS_DATEBEAT : DSS_DATETIME, TZC_UTC2LOCAL);
       ndm->strings[6] = data->dateBuffer;
     }
     else

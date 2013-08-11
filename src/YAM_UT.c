@@ -2167,13 +2167,13 @@ ULONG GetDateStamp(void)
 }
 ///
 /// DateStampUTC
-//  gets the current system time in UTC
+//  gets the current system time in local TZ to UTC
 void DateStampUTC(struct DateStamp *ds)
 {
   ENTER();
 
   DateStamp(ds);
-  DateStampTZConvert(ds, TZC_UTC);
+  DateStampTZConvert(ds, TZC_LOCAL2UTC);
 
   LEAVE();
 }
@@ -2274,13 +2274,13 @@ BOOL tm2TimeVal(const struct TM *tm, struct TimeVal *tv)
 }
 ///
 /// GetSysTimeUTC
-//  gets the actual system time in UTC
+//  gets the actual system time in local timezone and converts it to UTC
 void GetSysTimeUTC(struct TimeVal *tv)
 {
   ENTER();
 
   GetSysTime(TIMEVAL(tv));
-  TimeValTZConvert(tv, TZC_UTC);
+  TimeValTZConvert(tv, TZC_LOCAL2UTC);
 
   LEAVE();
 }
@@ -2292,29 +2292,71 @@ void TimeValTZConvert(struct TimeVal *tv, enum TZConvert tzc)
 {
   ENTER();
 
-  // to actually convert absolutely correct we have to first identify the
-  // gmt offset that were effective at the time embedded in DateStamp
-  // because in the past a different gmt offset might have been in place
-  if(tzc != TZC_NONE)
+  // in the following we use two different method (mktime vs. localtime) to
+  // identify the gmtOffset which was effective at the time embedded in the
+  // supplied TimeVal value. We do this, because of the following differences
+  //
+  // TZC_LOCAL2UTC:
+  // In that case the date/time stored in the "tv" value is relative to the
+  // local timezone (e.g. CET) and it should be converted to UTC time. For this
+  // to happen, we simply convert the TimeVal to a struct tm which also stores
+  // date/time in local timezone format and not relative to UTC. Then we use
+  // mktime() to identify the tm_gmtoff offset to GMT time which was effective
+  // at the local time of that date. Then we substract the gmtOffset to end up
+  // with a TimeVal which corresponds now to UTC and not local time anymore.
+  //
+  // TZC_UTC2LOCAL:
+  // In that case the date/time stored in the "tv" value is stored relative to
+  // UTC time. That means, the time embedded in the struct TimeVal structure
+  // should be treated as UTC time relative and should be now converted to
+  // the currently effective local timezone (e.g. CET). For this to happen, we
+  // convert the TimeVal data (which stores the number of seconds and microseconds
+  // since 1/1/1978 00:00:00 -> in our case here in UTC time) to a time_t value
+  // (which corresponds to the number of seconds since 1/1/1970 00:00:00 UTC).
+  // Then we use localtime_r() to convert the UTC-relative time_t value to
+  // the local timezone interpretation in struct tm format and as a result
+  // also set the GMT offset (tm_gmtoff) which was effective in the local timezone.
+
+  switch(tzc)
   {
-    struct TM tm;
-    time_t timet;
+    case TZC_LOCAL2UTC:
+    {
+      struct TM tm;
 
-    // time_t is defined to start from 1/1/1970 00:00:00 UTC while
-    // struct TimeVal starts from 1/1/1978 00:00:00 relative to the local timezone.
-    //
-    // Here 252460800 corresponds to the number of seconds between 1/1/1970 to 1/1/1978
-    // based on the UTC (see http://www.epochconverter.com)
-    timet = tv->Seconds + (tv->Microseconds / 1000000) + 252460800;
+      // convert the TimeVal (which is in local timezone) to a struct tm which
+      // will also store date/time in local timezone format
+      TimeVal2tm(tv, &tm);
 
-    // call localtime_r() so that we get information about the gmt offset
-    // being effective at the time the DateStamp was active
-    localtime_r(&timet, &tm);
+      // now use mktime() to make sure the tm_gmtoff member is set as well
+      if(mktime(&tm) != -1)
+        tv->Seconds -= tm.tm_gmtoff; // lets substract gmtOffset to actually convert to UTC
+    }
+    break;
 
-    if(tzc == TZC_LOCAL)
-      tv->Seconds += tm.tm_gmtoff;
-    else
-      tv->Seconds -= tm.tm_gmtoff;
+    case TZC_UTC2LOCAL:
+    {
+      struct TM tm;
+      time_t timet;
+
+      // time_t is defined to start from 1/1/1970 00:00:00 UTC while
+      // struct TimeVal starts from 1/1/1978 00:00:00 relative to the local timezone. However
+      // in the UTC2LOCAL case here we assume the struct TimeVal to also be relative to UTC.
+      //
+      // Here 252460800 corresponds to the number of seconds between 1/1/1970 to 1/1/1978
+      // based on the UTC (see http://www.epochconverter.com)
+      timet = tv->Seconds + (tv->Microseconds / 1000000) + 252460800;
+
+      // call localtime_r() so that we get information about the gmt offset
+      // being effective at the time the UTC TimeVal was active relative to the
+      // local timezone
+      if(localtime_r(&timet, &tm) != NULL)
+        tv->Seconds += tm.tm_gmtoff; // lets add gmtOffset to actually convert to local timezone
+    }
+    break;
+
+    case TZC_NONE:
+      // nothing
+    break;
   }
 
   LEAVE();
@@ -2327,42 +2369,88 @@ void DateStampTZConvert(struct DateStamp *ds, enum TZConvert tzc)
 {
   ENTER();
 
-  // to actually convert absolutely correct we have to first identify the
-  // gmt offset that were effective at the time embedded in DateStamp
-  // because in the past a different gmt offset might have been in place
+  // in the following we use two different method (mktime vs. localtime) to
+  // identify the gmtOffset which was effective at the time embedded in the
+  // supplied DateStamp value. We do this, because of the following differences
+  //
+  // TZC_LOCAL2UTC:
+  // In that case the date/time stored in the "ds" value is relative to the
+  // local timezone (e.g. CET) and it should be converted to UTC time. For this
+  // to happen, we simply convert the DateStamp to a struct tm which also stores
+  // date/time in local timezone format and not relative to UTC. Then we use
+  // mktime() to identify the tm_gmtoff offset to GMT time which was effective
+  // at the local time of that date. Then we substract the gmtOffset to end up
+  // with a DateStamp which corresponds now to UTC and not local time anymore.
+  //
+  // TZC_UTC2LOCAL:
+  // In that case the date/time stored in the "ds" value is stored relative to
+  // UTC time. That means, the time embedded in the struct DateStampl structure
+  // should be treated as UTC time relative and should be now converted to
+  // the currently effective local timezone (e.g. CET). For this to happen, we
+  // convert the DateStamp data (which stores the date/time usually in local time
+  // -> in our case here relative to UTC, however) to a time_t value
+  // (which corresponds to the number of seconds since 1/1/1970 00:00:00 UTC).
+  // Then we use localtime_r() to convert the UTC-relative time_t value to
+  // the local timezone interpretation in struct tm format and as a result
+  // also set the GMT offset (tm_gmtoff) which was effective in the local timezone.
+
+  switch(tzc)
+  {
+    case TZC_LOCAL2UTC:
+    {
+      struct TimeVal tv;
+      struct TM tm;
+
+      // convert the DateStamp to a TimeVal first
+      tv.Seconds = (ds->ds_Days * 24 * 60 + ds->ds_Minute) * 60 + ds->ds_Tick / TICKS_PER_SECOND;
+      tv.Microseconds = (ds->ds_Tick % TICKS_PER_SECOND) * 1000000 / TICKS_PER_SECOND;
+
+      // convert the TimeVal (which is in local timezone) to a struct tm which
+      // will also store date/time in local timezone format
+      TimeVal2tm(&tv, &tm);
+
+      // now use mktime() to make sure the tm_gmtoff member is set as well
+      if(mktime(&tm) != -1)
+        ds->ds_Minute -= tm.tm_gmtoff / 60; // lets substract gmtOffset to actually convert to UTC
+    }
+    break;
+
+    case TZC_UTC2LOCAL:
+    {
+      struct TM tm;
+      time_t timet;
+
+      // time_t is defined to start from 1/1/1970 00:00:00 UTC while
+      // struct TimeVal starts from 1/1/1978 00:00:00 relative to the local timezone. However
+      // in the UTC2LOCAL case here we assume the struct DateStamp to also be relative to UTC.
+      //
+      // Here 252460800 corresponds to the number of seconds between 1/1/1970 to 1/1/1978
+      // based on the UTC (see http://www.epochconverter.com)
+      timet = (ds->ds_Days * 24 * 60 + ds->ds_Minute) * 60 + ds->ds_Tick / TICKS_PER_SECOND + 252460800;
+
+      // call localtime_r() so that we get information about the gmt offset
+      // being effective at the time the UTC DateStamp was active relative to the
+      // local timezone
+      if(localtime_r(&timet, &tm) != NULL)
+        ds->ds_Minute += tm.tm_gmtoff / 60; // lets add gmtOffset to actually convert to local timezone
+    }
+    break;
+
+    case TZC_NONE:
+      // nothing
+    break;
+  }
+
+  // make sure we check that the DateStamp variable is till valid if
+  // we touched it.
   if(tzc != TZC_NONE)
   {
-    struct TM tm;
-    time_t timet;
-    int gmtOffset;
-
-    // time_t is defined to start from 1/1/1970 00:00:00 UTC while
-    // struct DateStamp starts from 1/1/1978 00:00:00 relative to the local timezone.
-    //
-    // Here 252460800 corresponds to the number of seconds between 1/1/1970 to 1/1/1978
-    // based on the UTC (see http://www.epochconverter.com)
-    timet = (ds->ds_Days * 24 * 60 + ds->ds_Minute) * 60 + ds->ds_Tick / TICKS_PER_SECOND + 252460800;
-
-    // call localtime_r() so that we get information about the gmt offset
-    // being effective at the time the DateStamp was active
-    localtime_r(&timet, &tm);
-
-    // get the gmt offset in minutes
-    gmtOffset = tm.tm_gmtoff / 60;
-
-    // convert the DateStamp from local -> UTC or visa-versa
-    if(tzc == TZC_LOCAL)
-      ds->ds_Minute += gmtOffset;
-    else
-      ds->ds_Minute -= gmtOffset;
-
-    // we need to check the datestamp variable that it is still in it's borders
-    // after the UTC correction
     while(ds->ds_Minute < 0)
     {
       ds->ds_Minute += 1440;
       ds->ds_Days--;
     }
+
     while(ds->ds_Minute >= 1440)
     {
       ds->ds_Minute -= 1440;

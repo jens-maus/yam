@@ -3001,7 +3001,9 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
         // and as a fallback we take the date of the mail file
         if(ObtainFileInfo(mail->MailFile, FI_DATE, &mail->Date) == TRUE)
         {
-          DateStampTZConvert(&mail->Date, TZC_UTC);
+          // we store the mail date in UTC, thus convert it to
+          // a UTC relative DateStamp accordingly.
+          DateStampTZConvert(&mail->Date, TZC_LOCAL2UTC);
         }
       }
 
@@ -3360,7 +3362,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
                       if(ObtainFileInfo(mailfile, FI_DATE, &ds) == TRUE)
                       {
                         // now convert the local TZ fib_Date to a UTC transDate
-                        DateStamp2TimeVal(&ds, &newMail->transDate, TZC_UTC);
+                        DateStamp2TimeVal(&ds, &newMail->transDate, TZC_LOCAL2UTC);
                       }
 
                       // then we update the mailfilename

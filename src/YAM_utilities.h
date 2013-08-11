@@ -72,9 +72,9 @@ enum DateStampType
 
 enum TZConvert
 {
-  TZC_NONE,
-  TZC_UTC,
-  TZC_LOCAL
+  TZC_NONE,      // don't convert at all
+  TZC_LOCAL2UTC, // convert from local timezone to UTC
+  TZC_UTC2LOCAL, // convert from UTC to local timezone
 };
 
 enum ReqFileType

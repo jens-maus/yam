@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-08-11 Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_UT.c: revised the TimeValTZConvert() and DateStampTZConvert() functions
+    to use a more correct algorithm for converting TimeVal/DateStamp values
+    from LOCAL to UTC or vice versa. Now a logic with either mktime() or
+    localtime() is used.
+ 
 2013-08-11 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: fixed some shorcuts and updated to the latest changes.

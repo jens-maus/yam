@@ -151,7 +151,7 @@ OVERLOAD(MUIM_NList_Display)
     {
       // some special treatment of the Date: header line in "short" mode
       // always show the date/time converted to local time
-      DateStamp2String(data->dateBuffer, sizeof(data->dateBuffer), &data->rmData->mail->Date, C->DSListFormat, TZC_LOCAL);
+      DateStamp2String(data->dateBuffer, sizeof(data->dateBuffer), &data->rmData->mail->Date, C->DSListFormat, TZC_UTC2LOCAL);
       ndm->strings[1] = data->dateBuffer;
     }
     else

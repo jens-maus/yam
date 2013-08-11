@@ -489,7 +489,7 @@ OVERLOAD(MUIM_NList_Display)
 
         if(hasMColDate(C->MessageCols) || searchWinHook == TRUE)
         {
-          DateStamp2String(data->date1Buffer, sizeof(data->date1Buffer), &mail->Date, C->DSListFormat, TZC_LOCAL);
+          DateStamp2String(data->date1Buffer, sizeof(data->date1Buffer), &mail->Date, C->DSListFormat, TZC_UTC2LOCAL);
           ndm->strings[4] = data->date1Buffer;
         }
 
@@ -505,7 +505,7 @@ OVERLOAD(MUIM_NList_Display)
         // set by all ppl and strcpy() is costy ;)
         if((hasMColTransDate(C->MessageCols) && mail->transDate.Seconds > 0) || searchWinHook == TRUE)
         {
-          TimeVal2String(data->date2Buffer, sizeof(data->date2Buffer), &mail->transDate, C->DSListFormat, TZC_LOCAL);
+          TimeVal2String(data->date2Buffer, sizeof(data->date2Buffer), &mail->transDate, C->DSListFormat, TZC_UTC2LOCAL);
           ndm->strings[7] = data->date2Buffer;
         }
 
@@ -816,7 +816,7 @@ OVERLOAD(MUIM_CreateShortHelp)
 
         // convert the datestamp of the mail to
         // well defined string
-        DateStamp2String(datestr, sizeof(datestr), &mail->Date, (C->DSListFormat == DSS_DATEBEAT || C->DSListFormat == DSS_RELDATEBEAT) ? DSS_DATEBEAT : DSS_DATETIME, TZC_LOCAL);
+        DateStamp2String(datestr, sizeof(datestr), &mail->Date, (C->DSListFormat == DSS_DATEBEAT || C->DSListFormat == DSS_RELDATEBEAT) ? DSS_DATEBEAT : DSS_DATETIME, TZC_UTC2LOCAL);
 
         // use FormatSize() to prettify the size display of the mail info
         FormatSize(mail->Size, sizestr, sizeof(sizestr), SF_AUTO);

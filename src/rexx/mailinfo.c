@@ -238,7 +238,7 @@ void rx_mailinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
           else
             params->rc = RETURN_ERROR;
 
-          DateStamp2String(optional->date, sizeof(optional->date), &mail->Date, DSS_USDATETIME, TZC_LOCAL);
+          DateStamp2String(optional->date, sizeof(optional->date), &mail->Date, DSS_USDATETIME, TZC_UTC2LOCAL);
           results->date = optional->date;
           results->subject = mail->Subject;
           results->size = &mail->Size;
