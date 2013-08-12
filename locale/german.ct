@@ -8703,10 +8703,10 @@ Kann Zeitzonen-Beschreibungsdatei\n\
 \n\
 Bitte stellen Sie sicher, dass alle für das\n\
 Zeitzonenmanagement benötigen Dateien im\n\
-Verzeichnis 'Resources/zoneinfo' verfügbar sind.
+Verzeichnis '%s/Resources/zoneinfo' verfügbar sind.
 ;
 MSG_TZONE_LOCATION_FILE_MISSING
 Kann Zeitzonen-Ortsdatei '%s' nicht öffnen.\n\
 \n\
-Die Zeitangaben werden falsch sein. Bitte stellen Sie sicher, dass alle für das Zeitzonenmanagement benötigen Dateien im Verzeichnis 'Resources/zoneinfo' verfügbar sind.
+Die Zeitangaben werden falsch sein. Bitte stellen Sie sicher, dass alle für das Zeitzonenmanagement benötigen Dateien im Verzeichnis '%s/Resources/zoneinfo' verfügbar sind.
 ;
