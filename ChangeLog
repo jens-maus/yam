@@ -11,6 +11,8 @@ $URL$
     corresponding location file is available in Resources/zoneinfo and outputs
     a warning otherwise. Additionally the existance of the zone.tab file is
     checked, too.
+  * TZone.c: optimized the FindNextDSTSwitch() function a bit by performing
+    bigger date jumps in the first two iterations.
 
 2013-08-11 Jens Langner <Jens.Langner@light-speed.de>
 

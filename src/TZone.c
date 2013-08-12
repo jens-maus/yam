@@ -683,12 +683,13 @@ time_t FindNextDSTSwitch(const char *tzone, struct TimeVal *tv)
   #define SECSPERMINUTE (60)
   #define SECSPERHOUR   (60*SECSPERMINUTE)
   #define SECSPERDAY    (24*SECSPERHOUR)
+  #define SECSPERMONTH  (30*SECSPERDAY)
 
   // in the outer loop we iterate per DAY with a maximum of
   // one year
   startt = now;
   maxdiff = (365/2+2)*SECSPERDAY;
-  step = SECSPERDAY;
+  step = 3*SECSPERMONTH;
 
   for(newt=startt; maxdiff == 0 || (time_t)abs(newt - startt) < maxdiff; newt += step)
   {
@@ -716,23 +717,35 @@ time_t FindNextDSTSwitch(const char *tzone, struct TimeVal *tv)
 
           if(iter == 0)
           {
+            // now we seem to have found the quarter of the year when the DST change happened.
+            // in the next interation loop we now search backward in 1 month steps
+            step = -(1*SECSPERMONTH);
+          }
+          else if(iter == 1)
+          {
+            // now we seem to have found the time of dst switch within 1 month
+            // so lets iterate 1-day wise from here
+            step = SECSPERDAY;
+          }
+          else if(iter == 2)
+          {
             // now we seem to have found the day when the DST change happened.
             // in the next interation loop we now search backward in 1 hour steps
             step = -(1*SECSPERHOUR);
           }
-          else if(iter == 1)
+          else if(iter == 3)
           {
             // now we seem to have found the time of dst switch within 1 hours
             // so lets iterate 10-minute wise from here
             step = 10*SECSPERMINUTE;
           }
-          else if(iter == 2)
+          else if(iter == 4)
           {
             // now we seem to have found the time of dst switch within 10 minutes
-            // so lets iterate 3-minute wise from here
-            step = -(3*SECSPERMINUTE);
+            // so lets iterate minute wise from here
+            step = -SECSPERMINUTE;
           }
-          else if(iter == 3)
+          else if(iter == 5)
           {
             // now we seem to have found the time of dst switch within 3 minutes
             // so lets iterate second-wise from here
