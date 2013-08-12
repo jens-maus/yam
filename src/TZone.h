@@ -31,6 +31,8 @@
 #include <exec/lists.h>
 #include <exec/nodes.h>
 
+#include "timeval.h"
+
 struct TZoneLocation
 {
   struct MinNode node;
