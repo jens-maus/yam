@@ -153,7 +153,7 @@ static void StartTRequest(struct TRequest *timer)
       #if defined(DEBUG)
       memcpy(&tvTimer, &timer->tr->Time, sizeof(tvTimer));
       #endif
- 
+
       // fire the timer by doing a SendIO()
       SendIO(&timer->tr->Request);
 
@@ -167,7 +167,7 @@ static void StartTRequest(struct TRequest *timer)
       TimeVal2String(dateStrStarted, sizeof(dateStrStarted), &tvTmp, DSS_DATETIME, TZC_NONE);
 
       // get the date/time when the timer finishes in a str
-      AddTime(&tvTmp, &tvTimer);
+      AddTime(TIMEVAL(&tvTmp), TIMEVAL(&tvTimer));
       TimeVal2String(dateStrFinish, sizeof(dateStrFinish), &tvTmp, DSS_DATETIME, TZC_NONE);
 
       if(timer->id != -1)
