@@ -1984,7 +1984,7 @@ static void InitBeforeLogin(BOOL hidden)
 
   // initialize our tzone handling
   if(ParseZoneTabFile() == FALSE)
-    Abort(tr(MSG_TZONE_ZONETAB_FILE_MISSING), G->ProgDir);
+    Abort(tr(MSG_TZONE_ZONETAB_FILE_MISSING), G->ProgDir, G->ProgDir);
 
   LEAVE();
 }

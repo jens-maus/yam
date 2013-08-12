@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-08-12 Jens Langner <Jens.Langner@light-speed.de>
+
+  * locale/YAM.cd, TZone.c, YAM.c: minor changes the the warning messages of
+    either the zone.tab file or the currently selected timezone information
+    file are missing.
+
 2013-08-12 Thore Böckelmann <tboeckel@gmx.de>
 
   * TZone.c: added a wrapper function for tzset() which checks if the

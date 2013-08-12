@@ -7265,9 +7265,14 @@ of the following conditions are met:
 MSG_CO_FALLBACK_TZONE (2444//)
 America/New_York
 ; !!! WARNING !!!
-; Do not translate this fallback name, but just choose a location which represents the language's time zone
-; as good as possible. This fallback name MUST match EXACTLY one of the locations in the resources/zoneinfo.
-; directory. Spaces MUST be replaced by '_'. All locations names MUST be kept in english language.
+; Do not translate this fallback name, but just choose a
+; location which represents the language's time zone
+; as good as possible. If there are multiple possibilities
+; for you language, use the one that matches the captial
+; of your country/language most. This fallback name MUST
+; match EXACTLY one of the locations in the Resources/zoneinfo
+; directory. Spaces MUST be replaced by '_'. All locations
+; names MUST be kept in english language.
 ;
 MSG_HELP_CO_GR_TZONE (2445//)
 Here you can set your current location/time zone.
@@ -7288,14 +7293,16 @@ MSG_CO_TZONE_DESCRIPTION_NA (2450//)
 n/a
 ;
 MSG_TZONE_ZONETAB_FILE_MISSING (2451//)
-Cannot open time zone description file\n\
+Cannot open time zones description file\n\
 '%s/Resources/zoneinfo/zone.tab'.\n\
 \n\
-Please make sure to install all time zone management\n\
-related stuff to the 'Resources/zoneinfo' directory.
+Please make sure to install all time zones management\n\
+related files to the '%s/Resources/zoneinfo' directory.
 ;
 MSG_TZONE_LOCATION_FILE_MISSING (2452//)
-Cannot open time zone location file '%s'.\n\
+Cannot open time zone information file '%s'.\n\
 \n\
-Time zone informations will be incorrect. Please make sure to install all time zone management related stuff to the 'Resources/zoneinfo' directory.
+Time zone information will be incorrect. Please make sure \
+to install all time zones management related files to the \
+'%s/Resources/zoneinfo' directory.
 ;

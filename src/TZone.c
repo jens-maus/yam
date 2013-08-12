@@ -861,10 +861,15 @@ void TZSet(const char *location)
   // check if the file exists and really is a file (i.e. not a directory)
   if(ObtainFileInfo(locationFile, FI_TYPE, &type) == FALSE || type != FIT_FILE)
   {
-    ER_NewError(tr(MSG_TZONE_LOCATION_FILE_MISSING), locationFile);
+    ER_NewError(tr(MSG_TZONE_LOCATION_FILE_MISSING), locationFile, G->ProgDir);
+
+    // call tzset so that it is resets to GMT/UTC
+    tzset("UTC");
   }
   else
   {
+    // call the tzset() function of our libtz so that the timezone information
+    // is setup accordingly.
     tzset(location);
   }
 
