@@ -7287,3 +7287,15 @@ Description:
 MSG_CO_TZONE_DESCRIPTION_NA (2450//)
 n/a
 ;
+MSG_TZONE_ZONETAB_FILE_MISSING (2451//)
+Cannot open time zone description file\n\
+'%s/Resources/zoneinfo/zone.tab'.\n\
+\n\
+Please make sure to install all time zone management\n\
+related stuff to the 'Resources/zoneinfo' directory.
+;
+MSG_TZONE_LOCATION_FILE_MISSING (2452//)
+Cannot open time zone location file '%s'.\n\
+\n\
+Time zone informations will be incorrect. Please make sure to install all time zone management related stuff to the 'Resources/zoneinfo' directory.
+;

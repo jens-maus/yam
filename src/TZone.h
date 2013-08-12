@@ -48,7 +48,7 @@ struct TZoneContinent
   struct MinList locationList;
 };
 
-void ParseZoneTabFile(void);
+BOOL ParseZoneTabFile(void);
 char **BuildContinentEntries(void);
 char **BuildLocationEntries(ULONG continent);
 char *BuildTZoneName(char *name, size_t nameSize, ULONG continent, ULONG location);
@@ -58,6 +58,7 @@ struct TZoneContinent *FindContinent(const char *continent);
 struct TZoneLocation *FindLocation(struct TZoneContinent *continent, const char *location);
 time_t FindNextDSTSwitch(const char *tzone, struct TimeVal *tv);
 void SetTZone(const char *location);
+void TZSet(const char *location);
 void TZoneCleanup(void);
 
 #endif /* TZONE_H */

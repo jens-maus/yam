@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.15 (10.08.2013)
+## version $VER: YAM.catalog 8.16 (12.08.2013)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -8696,4 +8696,17 @@ Beschreibung:
 ;
 MSG_CO_TZONE_DESCRIPTION_NA
 keine
+;
+MSG_TZONE_ZONETAB_FILE_MISSING
+Kann Zeitzonen-Beschreibungsdatei\n\
+'%s/Resources/zoneinfo/zone.tab' nicht öffnen.\n\
+\n\
+Bitte stellen Sie sicher, dass alle für das\n\
+Zeitzonenmanagement benötigen Dateien im\n\
+Verzeichnis 'Resources/zoneinfo' verfügbar sind.
+;
+MSG_TZONE_LOCATION_FILE_MISSING
+Kann Zeitzonen-Ortsdatei '%s' nicht öffnen.\n\
+\n\
+Die Zeitangaben werden falsch sein. Bitte stellen Sie sicher, dass alle für das Zeitzonenmanagement benötigen Dateien im Verzeichnis 'Resources/zoneinfo' verfügbar sind.
 ;

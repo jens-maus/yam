@@ -29,14 +29,18 @@
 #include <string.h>
 
 #include <proto/exec.h>
+#include <proto/dos.h>
 
 #include "extrasrc.h"
 
 #include "YAM.h"
 #include "YAM_config.h"
+#include "YAM_error.h"
 #include "YAM_global.h"
 #include "YAM_utilities.h"
 
+#include "FileInfo.h"
+#include "Locale.h"
 #include "TZone.h"
 
 #include "Debug.h"
@@ -142,8 +146,9 @@ static void sortLocations(void)
 ///
 /// ParseZoneTabFile
 // parse the zone.zab file into continents and cities
-void ParseZoneTabFile(void)
+BOOL ParseZoneTabFile(void)
 {
+  BOOL success = FALSE;
   char filename[SIZE_PATHFILE];
   FILE *fh;
 
@@ -228,13 +233,12 @@ void ParseZoneTabFile(void)
 
     // sort all locations
     sortLocations();
-  }
-  else
-  {
-    E(DBF_TZONE, "failed to open file '%s'", filename);
+
+    success = TRUE;
   }
 
-  LEAVE();
+  RETURN(success);
+  return success;
 }
 
 ///
@@ -671,7 +675,7 @@ time_t FindNextDSTSwitch(const char *tzone, struct TimeVal *tv)
   // the user wants us to return information based on
   // another timezone than the default one.
   if(tzone != NULL)
-    tzset(tzone);
+    TZSet(tzone);
 
   // get current time
   time(&now);
@@ -765,7 +769,7 @@ time_t FindNextDSTSwitch(const char *tzone, struct TimeVal *tv)
 
   // set back the orginal timezone used
   if(tzone != NULL)
-    tzset(C->Location);
+    TZSet(C->Location);
 
   RETURN(result);
   return result;
@@ -782,14 +786,14 @@ void SetTZone(const char *location)
   ENTER();
 
   // set the new location
-  tzset(location);
+  TZSet(location);
 
   // get the current date/time in struct tm format
   TimeVal2tm(NULL, &tm);
 
   // call mktime() so that struct tm will be set correctly.
   mktime(&tm);
- 
+
   // copy the timezone abbreviation string and the
   // gmtoffset to our global structure
   strlcpy(G->tzAbbr, tm.tm_zone, sizeof(G->tzAbbr));
@@ -826,3 +830,32 @@ void SetTZone(const char *location)
 
   LEAVE();
 }
+
+///
+/// TZSet
+// wrapper function for tzset() which checks for the existance of
+// the corresponding location files in Resources/zoneinfo
+void TZSet(const char *location)
+{
+  char locationFile[SIZE_PATHFILE];
+  ULONG type;
+
+  ENTER();
+
+  AddPath(locationFile, G->ProgDir, "Resources/zoneinfo", sizeof(locationFile));
+  AddPart(locationFile, location, sizeof(locationFile));
+
+  // check if the file exists and really is a file (i.e. not a directory)
+  if(ObtainFileInfo(locationFile, FI_TYPE, &type) == FALSE || type != FIT_FILE)
+  {
+    ER_NewError(tr(MSG_TZONE_LOCATION_FILE_MISSING), locationFile);
+  }
+  else
+  {
+    tzset(location);
+  }
+
+  LEAVE();
+}
+
+///

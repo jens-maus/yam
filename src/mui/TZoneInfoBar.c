@@ -109,7 +109,7 @@ OVERLOAD(OM_SET)
           // check if we have to handle a different location than the one in the current configuration
           if(strcasecmp(tzone, C->Location) != 0)
           {
-            tzset(tzone);
+            TZSet(tzone);
             resetTZ = TRUE;
           }
 
@@ -120,12 +120,12 @@ OVERLOAD(OM_SET)
           gmtOffset = tm.tm_gmtoff / 60;
           strlcpy(tzabbr, tm.tm_zone, sizeof(tzabbr));
 
-          // lets get the datestamp of the next scheduled DST switch
+          // get the date/time of the next scheduled DST switch
           dstSwitchTime = FindNextDSTSwitch(NULL, &tv);
 
           // reset the location to the former value
           if(resetTZ == TRUE)
-            tzset(C->Location);
+            TZSet(C->Location);
 
           // convert the GMT offset to a human readable value
           convertedGmtOffset = (gmtOffset/60)*100 + (gmtOffset%60);
@@ -145,7 +145,7 @@ OVERLOAD(OM_SET)
           ParseTZoneName(tzone, &continent, &location, &tzComment);
 
           // prepare the info text we want to show to the user
-          snprintf(data->infoText, sizeof(data->infoText), 
+          snprintf(data->infoText, sizeof(data->infoText),
                                    "%s %s\n%s %+05d (%s)\n%s %s", tr(MSG_CO_TZONE_DESCRIPTION),
                                                                   tzComment != NULL ? tzComment : tr(MSG_CO_TZONE_DESCRIPTION_NA),
                                                                   tr(MSG_CO_TZONE_GMTOFFSET),

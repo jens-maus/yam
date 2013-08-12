@@ -1982,6 +1982,10 @@ static void InitBeforeLogin(BOOL hidden)
   if((G->writeWinNotifyPort = AllocSysObjectTags(ASOT_PORT, TAG_DONE)) == NULL)
     Abort(NULL);
 
+  // initialize our tzone handling
+  if(ParseZoneTabFile() == FALSE)
+    Abort(tr(MSG_TZONE_ZONETAB_FILE_MISSING), G->ProgDir);
+
   LEAVE();
 }
 
@@ -2555,9 +2559,6 @@ int main(int argc, char **argv)
 
     // setup our ImageCache
     ImageCacheSetup();
-
-    // initialize our tzone handling
-    ParseZoneTabFile();
 
     if(yamFirst == TRUE)
     {

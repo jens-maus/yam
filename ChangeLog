@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-08-12 Thore Böckelmann <tboeckel@gmx.de>
+
+  * TZone.c: added a wrapper function for tzset() which checks if the
+    corresponding location file is available in Resources/zoneinfo and outputs
+    a warning otherwise. Additionally the existance of the zone.tab file is
+    checked, too.
+
 2013-08-11 Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_MAf.c: added proper recognition of the timezone abbreviation in a Date:
@@ -15,7 +22,7 @@ $URL$
     to use a more correct algorithm for converting TimeVal/DateStamp values
     from LOCAL to UTC or vice versa. Now a logic with either mktime() or
     localtime() is used.
- 
+
 2013-08-11 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: fixed some shorcuts and updated to the latest changes.
