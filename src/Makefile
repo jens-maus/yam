@@ -121,10 +121,6 @@ CC      = gcc
 STRIP   = strip
 OBJDUMP = objdump
 
-# native compilation on host system
-HCC     = gcc
-HCFLAGS = -Wall -O0 -I.
-
 # path definitions
 CDUP  = /
 CDTHIS=
@@ -463,6 +459,7 @@ endif
 
 # Third-party tools/libraries
 GENCLASSES = $(TOOLS)/genclasses
+SVNREV = $(TOOLS)/svnrev
 TZLIB = $(TOOLS)/tzcode
 
 # our few new rewritten classes
@@ -813,7 +810,7 @@ clean:
 # clean all including .obj directory
 .PHONY: cleanall
 cleanall: clean
-	-$(RM) Locale.? ParseEmail.c HTML2Mail.c $(MUIDIR)/Classes.* $(MUIDIR)/*_cl.h $(MUIDIR)/*.crc $(TOOLS)/svnrev
+	-$(RM) Locale.? ParseEmail.c HTML2Mail.c $(MUIDIR)/Classes.* $(MUIDIR)/*_cl.h $(MUIDIR)/*.crc $(SVNREV)/svnrev
 	-$(RM) $(LOCALE)/*.catalog
 	-$(RMDIR) $(OBJDIR)
 	-$(RMDIR) $(DEPDIR)
@@ -822,6 +819,7 @@ cleanall: clean
 .PHONY: distclean
 distclean: cleanall
 	@$(MAKE) -C$(GENCLASSES) clean
+	@$(MAKE) -C$(SVNREV) clean
 	@$(MAKE) -C$(TZLIB) clean
 
 ## ADD FLAGS TARGETS ##################
@@ -858,22 +856,12 @@ $(LIB)/libtz.a: $(TZLIB)/asctime.c $(TZLIB)/difftime.c \
 
 ## SVNREV TOOL ########################
 
-svnrev.h: $(TOOLS)/svnrev
+svnrev.h: $(SVNREV)/svnrev
 	@echo "  GN $@"
-	@$(TOOLS)/svnrev -o$@ *.c *.h *.l $(MUIDIR)/*.c $(REXXDIR)/*.c $(MIMEDIR)/*.c $(MIMEDIR)/*.h $(TCPDIR)/*.c $(TCPDIR)/*.h $(EXTRADIR)/*.c $(EXTRADIR)/*.h $(LOCALE)/*.cd $(LOCALE)/*.ct
+	@$(SVNREV)/svnrev -o$@ *.c *.h *.l $(MUIDIR)/*.c $(REXXDIR)/*.c $(MIMEDIR)/*.c $(MIMEDIR)/*.h $(TCPDIR)/*.c $(TCPDIR)/*.h $(EXTRADIR)/*.c $(EXTRADIR)/*.h $(LOCALE)/*.cd $(LOCALE)/*.ct
 
-ifeq ($(HOST), AmigaOS4)
-  # there is no SubVersion 1.7 for AmigaOS4 (yet), disable sqlite3 support
-  SVNREVCFLAGS = -DNOSQL
-  SVNREVLIBS = -lunix
-else
-  SVNREVCFLAGS =
-  SVNREVLIBS = -lsqlite3
-endif
-
-$(TOOLS)/svnrev: $(TOOLS)/svnrev.c $(TOOLS)/svnrev.h
-	@echo "  GN $@"
-	@$(HCC) $(HCFLAGS) $(SVNREVCFLAGS) $< -o $@ $(SVNREVLIBS)
+$(SVNREV)/svnrev: $(SVNREV)/svnrev.c $(SVNREV)/svnrev.h
+	@$(MAKE) -C$(SVNREV)
 
 ## CATALOG GENERATION #################
 
