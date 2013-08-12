@@ -461,8 +461,9 @@ endif
 # Here starts all stuff that is common for all target platforms and
 # hosts.
 
-# General vars
-GENCLASSES= $(TOOLS)/genclasses
+# Third-party tools/libraries
+GENCLASSES = $(TOOLS)/genclasses
+TZLIB = $(TOOLS)/tzcode
 
 # our few new rewritten classes
 MUIOBJS = \
@@ -792,7 +793,7 @@ endif
 	@$(FLEX) -Cfe -i -o$@ $<
 
 # for linking the target
-$(TARGET): $(addprefix $(OBJDIR)/,$(OBJS))
+$(TARGET): $(addprefix $(OBJDIR)/,$(OBJS)) $(LIB)/libtz.a
 	@echo "  LD $@.debug"
 	@$(CC) $(LDFLAGS) -o $@.debug $(addprefix $(OBJDIR)/,$(OBJS)) $(LDLIBS) -Wl,--cref,-M,-Map=$@.map
 	@echo "  LD $@"
@@ -821,6 +822,7 @@ cleanall: clean
 .PHONY: distclean
 distclean: cleanall
 	@$(MAKE) -C$(GENCLASSES) clean
+	@$(MAKE) -C$(TZLIB) clean
 
 ## ADD FLAGS TARGETS ##################
 
@@ -837,15 +839,22 @@ $(OBJDIR)/HTML2Mail.o: CFLAGS += -Wno-sign-compare
 
 $(MUIDIR)/Classes.h: $(MUIDIR)/Classes.crc
 $(MUIDIR)/Classes.c: $(MUIDIR)/Classes.crc
+
 $(MUIDIR)/Classes.crc: $(GENCLASSES)/GenClasses $(MUIDIR)/ClassesExtra.h Locale.h $(filter-out $(MUIDIR)/Classes.c, $(addprefix $(MUIDIR)/, $(subst .o,.c, $(MUIOBJS))))
 	@echo "  GN GenClasses"
 	@$(GENCLASSES)/GenClasses mui -bYAM -gpl -storm -iClassesExtra.h,ClassesSetup.h -qdl
 
-#.NOTPARALLEL: $(GENCLASSES)/GenClasses
 $(GENCLASSES)/GenClasses: $(GENCLASSES)/gc.c $(GENCLASSES)/gc.h \
 	$(GENCLASSES)/lists.c $(GENCLASSES)/lists.h \
 	$(GENCLASSES)/crc32.c $(GENCLASSES)/crc32.h
 	@$(MAKE) -C$(GENCLASSES)
+
+## TZLIB TOOL #########################
+
+$(LIB)/libtz.a: $(TZLIB)/asctime.c $(TZLIB)/difftime.c \
+	$(TZLIB)/localtime.c $(TZLIB)/private.h \
+	$(TZLIB)/strftime.c $(TZLIB)/tzfile.h
+	@$(MAKE) -C$(TZLIB)
 
 ## SVNREV TOOL ########################
 
@@ -888,7 +897,7 @@ Locale.c: ../locale/YAM.cd Locale_h.sd Locale_c.sd
 .PHONY: release
 release:
 	@$(RM) $(CATALOGS)
-## Create distributions for all systems
+	## Create distributions for all systems
 	@sh $(TOOLS)/mkrelease.sh os3
 	@sh $(TOOLS)/mkrelease.sh os4
 	@sh $(TOOLS)/mkrelease.sh mos

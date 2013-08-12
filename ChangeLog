@@ -7,6 +7,10 @@ $URL$
 
 2013-08-12 Jens Langner <Jens.Langner@light-speed.de>
 
+  * extrasrc/tzcode, tools/tzcode: moved the libtz code from the extrasrc
+    directory to the tools subdir as it is better suited there. In addition,
+    rather than providing prebuilt version of libtz.a the link library is now
+    built on-the-fly for each system with the normal build environment.
   * locale/YAM.cd, TZone.c, YAM.c: minor changes the the warning messages of
     either the zone.tab file or the currently selected timezone information
     file are missing.
