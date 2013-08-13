@@ -37,37 +37,6 @@ struct Config;
 struct MailList;
 struct UserIdentityList;
 
-struct FO_GUIData
-{
-  Object *WI;
-  Object *ST_FNAME;
-  Object *ST_FPATH;
-  Object *NM_MAXAGE;
-  Object *CY_FMODE;
-  Object *CY_FTYPE;
-  Object *CY_SORT[2];
-  Object *CH_REVERSE[2];
-  Object *CH_EXPIREUNREAD;
-  Object *ST_MLPATTERN;
-  Object *CY_MLIDENTITY;
-  Object *ST_MLREPLYTOADDRESS;
-  Object *ST_MLADDRESS;
-  Object *CY_MLSIGNATURE;
-  Object *CH_STATS;
-  Object *CH_MLSUPPORT;
-  Object *BT_AUTODETECT;
-  Object *BT_OKAY;
-  Object *BT_CANCEL;
-  Object *ST_HELLOTEXT;
-  Object *ST_BYETEXT;
-};
-
-struct FO_ClassData  /* folder configuration window */
-{
-  struct FO_GUIData GUI;
-  struct Folder *   EditFolder;
-};
-
 // Foldertype macros
 enum FolderType
 {

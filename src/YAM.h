@@ -59,7 +59,6 @@ struct EA_ClassData;
 struct WR_ClassData;
 struct ER_ClassData;
 struct FI_ClassData;
-struct FO_ClassData;
 struct DI_ClassData;
 struct ReadMailData;
 struct codeset;
