@@ -21,7 +21,7 @@
 # YAM Official Support Site :  http://www.yam.ch
 # YAM OpenSource project    :  http://sourceforge.net/projects/yamos/
 #
-# $Id: Makefile 6495 2013-01-02 15:40:47Z damato $
+# $Id$
 #
 #***************************************************************************/
 
@@ -33,7 +33,7 @@ CC = gcc
 RM = rm -f
 
 OBJS = svnrev.o
-CFLAGS = -O3 -fomit-frame-pointer -W -Wall -Wno-unused-parameter -Wno-unused-result
+CFLAGS = -O3 -fomit-frame-pointer -W -Wall -Wno-unused-parameter -Wno-unused-result -Wno-uninitialized
 
 ifeq ($(HOST), AmigaOS4)
   # there is no SubVersion 1.7 for AmigaOS4 (yet), disable sqlite3 support
@@ -43,8 +43,6 @@ else
   LDLIBS += -lsqlite3
 endif
 
-.PHONY: clean
-
 $(TARGET): $(OBJS)
 	@echo "  LD $@"
 	@$(CC) -o $@ $(OBJS) $(LDLIBS)
@@ -53,6 +51,10 @@ $(TARGET): $(OBJS)
 	@echo "  CC $<"
 	@$(CC) $(CFLAGS) -c $< -o $@
 
+.PHONY: all
+all: $(TARGET)
+
+.PHONY: clean
 clean:
 	-$(RM) $(OBJS) $(TARGET)
 
