@@ -650,6 +650,7 @@ BOOL RenameFile(const char *oldname, const char *newname)
   RETURN(result);
   return result;
 }
+
 ///
 /// CopyFile
 //  Copies a file
@@ -775,6 +776,92 @@ BOOL AppendFile(const char *dst, const char *src)
 
   RETURN(success);
   return success;
+}
+
+///
+/// MoveDirectory
+// move all contents of a directory to another directory
+BOOL MoveDirectory(const char *src, const char *dst)
+{
+  BOOL result = FALSE;
+
+  ENTER();
+
+  // try a simple move by rename first
+  if(Rename(src, dst) == DOSFALSE)
+  {
+    LONG error;
+
+    #if defined(DEBUG)
+    error = IoErr();
+    D(DBF_FOLDER, "moving '%s' to '%s' by renaming failed, error %ld", src, dst, error);
+    #endif
+
+    // now try to do a simple file by file move
+    if(CreateDirectory(dst) == TRUE)
+    {
+      APTR context;
+
+      if((context = ObtainDirContextTags(EX_StringName, (ULONG)src,
+                                         EX_DataFields, EXF_TYPE|EXF_NAME,
+                                         EX_DoCurrentDir, TRUE,
+                                         TAG_DONE)) != NULL)
+      {
+        struct ExamineData *ed;
+
+        result = TRUE;
+        while((ed = ExamineDir(context)) != NULL && result == TRUE)
+        {
+          if(EXD_IS_DIRECTORY(ed))
+          {
+            result = MoveDirectory(dst, ed->Name);
+          }
+          else if(EXD_IS_FILE(ed))
+          {
+            char dstfile[SIZE_PATHFILE];
+
+            AddPath(dstfile, dst, ed->Name, sizeof(dstfile));
+            D(DBF_FOLDER, "move file '%s' to '%s'", ed->Name, dstfile);
+            result = MoveFile(ed->Name, dstfile);
+          }
+        }
+
+        // check for an error by ExamineDir() only if nothing else failed
+        if(result == TRUE)
+        {
+          error = IoErr();
+          if(error != 0 && error != ERROR_NO_MORE_ENTRIES)
+          {
+            E(DBF_FOLDER, "ExamineDir() failed, error %ld", error);
+            result = FALSE;
+          }
+        }
+
+        ReleaseDirContext(context);
+
+        // finally delete the source directory
+        if(result == TRUE)
+        {
+          D(DBF_FOLDER, "delete directory '%s'", src);
+          if(DeleteFile(src) == DOSFALSE)
+          {
+            #if defined(DEBUG)
+            error = IoErr();
+            E(DBF_FOLDER, "DeleteFile() failed, error %ld", error);
+            #endif
+            result = FALSE;
+          }
+        }
+      }
+    }
+  }
+  else
+  {
+    result = TRUE;
+  }
+
+  RETURN(result);
+  return result;
 }
 
 ///
