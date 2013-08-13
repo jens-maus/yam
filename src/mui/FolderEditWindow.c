@@ -97,38 +97,9 @@ struct Data
 };
 */
 
+#define INVALID_PATH_CHARACTERS ":/\";#?*|()[]<>"
+
 /* Private Functions */
-/// FolderPathFunc
-// set the user's mail directory path as default path instead of YAM's directory
-HOOKPROTONHNO(FolderPathFunc, LONG, struct TagItem *tags)
-{
-  struct TagItem *tag;
-
-  ENTER();
-
-  // search for an already existing drawer tag item
-  if((tag = FindTagItem(ASLFR_InitialDrawer, tags)) != NULL)
-  {
-    // set the initial drawer to the user's mail directory
-    tag->ti_Data = (ULONG)G->MA_MailDir;
-  }
-  else
-  {
-    // MUI allows us to add up to 15 own tags
-    // add the tag for the initial drawer
-    tags->ti_Tag = ASLFR_InitialDrawer;
-    tags->ti_Data = (ULONG)G->MA_MailDir;
-    tags++;
-    // terminate the list
-    tags->ti_Tag = TAG_DONE;
-  }
-
-  RETURN(TRUE);
-  return TRUE;
-}
-MakeStaticHook(FolderPathHook, FolderPathFunc);
-
-///
 /// CompareFolders
 // compare two folder structures for differences
 static BOOL CompareFolders(const struct Folder *fo1, const struct Folder *fo2)
@@ -557,16 +528,10 @@ OVERLOAD(OM_NEW)
     MUIA_Window_TopEdge,  MUIV_Window_TopEdge_Centered,
     WindowContents, VGroup,
       Child, ColGroup(2), GroupFrameT(tr(MSG_FO_Properties)),
-        Child, Label2(tr(MSG_CO_Name)),
-        Child, ST_FNAME = MakeString(SIZE_NAME,tr(MSG_CO_Name)),
-        Child, Label2(tr(MSG_Path)),
-        Child, PopaslObject,
-          MUIA_Popasl_Type, ASL_FileRequest,
-          MUIA_Popasl_StartHook, &FolderPathHook,
-          MUIA_Popstring_String, ST_FPATH = MakeString(SIZE_PATH, ""),
-          MUIA_Popstring_Button, PopButton(MUII_PopDrawer),
-          ASLFR_DrawersOnly, TRUE,
-        End,
+        Child, Label2(tr(MSG_FO_DISPLAYNAME)),
+        Child, ST_FNAME = MakeString(SIZE_NAME, tr(MSG_FO_DISPLAYNAME)),
+        Child, Label2(tr(MSG_FO_DIRECTORYNAME)),
+        Child, ST_FPATH = MakeString(SIZE_PATH, tr(MSG_FO_DIRECTORYNAME)),
         Child, Label2(tr(MSG_FO_MaxAge)),
         Child, HGroup,
           Child, NM_MAXAGE = NumericbuttonObject,
@@ -665,7 +630,7 @@ OVERLOAD(OM_NEW)
 
     DoMethod(G->App, OM_ADDMEMBER, obj);
 
-    set(ST_FPATH, MUIA_String_Reject, " \";#?*|()[]<>");
+    set(ST_FPATH, MUIA_String_Reject, INVALID_PATH_CHARACTERS);
     set(CH_STATS, MUIA_Disabled, C->WBAppIcon == FALSE && C->DockyIcon == FALSE);
 
     SetHelp(ST_FNAME,        MSG_HELP_FO_ST_FNAME       );
@@ -691,6 +656,7 @@ OVERLOAD(OM_NEW)
 
     DoMethod(BT_AUTODETECT, MUIM_Notify, MUIA_Pressed, FALSE, obj, 1, METHOD(MLAutoDetect));
     DoMethod(BT_OKAY, MUIM_Notify, MUIA_Pressed, FALSE, obj, 1, METHOD(SaveFolder));
+    DoMethod(ST_FNAME, MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 2, METHOD(AdaptPath), MUIV_TriggerValue);
     DoMethod(NM_MAXAGE, MUIM_Notify, MUIA_Numeric_Value, MUIV_EveryTime, data->CH_EXPIREUNREAD, 3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
     DoMethod(CH_MLSUPPORT, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, obj, 2, METHOD(MLSupportUpdate), MUIV_NotTriggerValue);
   }
@@ -746,8 +712,8 @@ DECLARE(FolderToGUI)
 
   isdefault = isDefaultFolder(folder);
 
-  set(data->ST_FNAME,  MUIA_String_Contents, folder->Name);
-  set(data->ST_FPATH,  MUIA_String_Contents, folder->Path);
+  nnset(data->ST_FNAME, MUIA_String_Contents, folder->Name);
+  nnset(data->ST_FPATH, MUIA_String_Contents, folder->Path);
   set(data->NM_MAXAGE, MUIA_Numeric_Value,   folder->MaxAge);
 
   xset(data->CH_EXPIREUNREAD, MUIA_Selected, folder->ExpireUnread,
@@ -821,23 +787,8 @@ DECLARE(GUIToFolder) // struct Folder *folder
   GetMUIString(folder->Name, data->ST_FNAME, sizeof(folder->Name));
   GetMUIString(folder->Path, data->ST_FPATH, sizeof(folder->Path));
 
-  // we have to correct the folder path because we shouldn't allow a last / in the
-  // path
-  if(folder->Path[strlen(folder->Path) - 1] == '/')
-    folder->Path[strlen(folder->Path) - 1] = '\0';
-
   // set up the full path to the folder
-  if(strchr(folder->Path, ':') != NULL)
-  {
-    // the path is an absolute path already
-    strlcpy(folder->Fullpath, folder->Path, sizeof(folder->Fullpath));
-  }
-  else
-  {
-    // concatenate the default mail dir and the folder's relative path to an absolute path
-    strlcpy(folder->Fullpath, G->MA_MailDir, sizeof(folder->Fullpath));
-    AddPart(folder->Fullpath, folder->Path, sizeof(folder->Fullpath));
-  }
+  BuildFolderPath(folder->Fullpath, folder->Path, sizeof(folder->Fullpath));
 
   folder->MaxAge = GetMUINumer(data->NM_MAXAGE);
   if(!isDefaultFolder(folder))
@@ -877,6 +828,46 @@ DECLARE(GUIToFolder) // struct Folder *folder
 }
 
 ///
+/// DECLARE(AdaptPath)
+DECLARE(AdaptPath) // const char *name
+{
+  GETDATA;
+  const char *path;
+
+  ENTER();
+
+  path = (const char *)xget(data->ST_FPATH, MUIA_String_Contents);
+  D(DBF_FOLDER, "name '%s'", msg->name);
+  D(DBF_FOLDER, "path '%s'", path);
+
+  if(strncmp(path, msg->name, strlen(path)) == 0)
+  {
+    // name and path strings have an identical start
+    // now strip possible invalid characters from the path
+    char *newPath;
+
+    if((newPath = strdup(msg->name)) != NULL)
+    {
+      char *p = newPath;
+
+      while(p[0] != '\0')
+      {
+        if(strchr(INVALID_PATH_CHARACTERS, p[0]) != NULL)
+          memmove(p, p+1, strlen(p+1)+1);
+        else
+          p++;
+      }
+
+      D(DBF_FOLDER, "adapted path '%s'", newPath);
+      nnset(data->ST_FPATH, MUIA_String_Contents, newPath);
+      free(newPath);
+    }
+  }
+
+  RETURN(0);
+  return 0;
+}
+
 /// DECLARE(MLSupportUpdate)
 DECLARE(MLSupportUpdate) // ULONG disabled
 {

@@ -97,7 +97,7 @@ void rx_folderinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum
 
         results->number = &num;
         results->name = fo->Name;
-        results->path = fo->Path;
+        results->path = fo->Fullpath;
         results->total = &total;
         results->new = &new;
         results->unread = &unread;

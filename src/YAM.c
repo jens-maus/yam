@@ -1450,6 +1450,7 @@ static void InitAfterLogin(void)
 {
   struct FolderList *oldfolders = NULL;
   struct FolderNode *fnode;
+  enum LoadTreeResult ltr;
   BOOL newfolders;
   BOOL splashWasActive;
   char pubScreenName[MAXPUBSCREENNAME + 1];
@@ -1507,7 +1508,13 @@ static void InitAfterLogin(void)
   SplashProgress(tr(MSG_LoadingFolders), 50);
 
   newfolders = FALSE;
-  if(FO_LoadTree() == FALSE && oldfolders != NULL)
+  ltr = FO_LoadTree();
+  if(ltr == LTR_QuitYAM)
+  {
+    // do a hard termination
+	Abort(NULL);
+  }
+  else if(ltr == LTR_Failure && oldfolders != NULL)
   {
     // add all YAM 1.x style folders
     ForEachFolderNode(oldfolders, fnode)
@@ -1707,7 +1714,7 @@ static void InitAfterLogin(void)
   SplashProgress(tr(MSG_LOADINGSPAMTRAININGDATA), 70);
   BayesFilterInit();
 
-  SplashProgress(tr(MSG_LoadingFolders), 75);
+  SplashProgress(tr(MSG_VALIDATING_FOLDERS), 75);
   ForEachFolderNode(G->folders, fnode)
   {
     struct Folder *folder = fnode->folder;

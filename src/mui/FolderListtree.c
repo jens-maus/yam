@@ -90,7 +90,7 @@ static void FormatFolderInfo(char *folderStr, const size_t maxLen,
   if(folder->Name[0] != '\0')
     strlcat(folderStr, folder->Name, maxLen);
   else
-    snprintf(folderStr, maxLen, "%s[%s]", folderStr, FilePart(folder->Path));
+    snprintf(folderStr, maxLen, "%s[%s]", folderStr, folder->Path);
 
   // append the numbers if this is an close folder group or a folder with a valid index
   if((folder->Type == FT_GROUP && isFlagClear(treeNode->tn_Flags, TNF_OPEN)) ||
@@ -261,7 +261,7 @@ OVERLOAD(MUIM_CreateShortHelp)
       FormatSize(folder->Size, sizestr, sizeof(sizestr), SF_AUTO);
 
       if(asprintf(&shortHelp, tr(MSG_FOLDERINFO_SHORTHELP), folder->Name,
-                                                            folder->Path,
+                                                            folder->Fullpath,
                                                             sizestr,
                                                             folder->Total,
                                                             folder->New,

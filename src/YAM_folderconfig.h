@@ -39,27 +39,27 @@ struct UserIdentityList;
 
 struct FO_GUIData
 {
-   Object *WI;
-   Object *ST_FNAME;
-   Object *ST_FPATH;
-   Object *NM_MAXAGE;
-   Object *CY_FMODE;
-   Object *CY_FTYPE;
-   Object *CY_SORT[2];
-   Object *CH_REVERSE[2];
-   Object *CH_EXPIREUNREAD;
-   Object *ST_MLPATTERN;
-   Object *CY_MLIDENTITY;
-   Object *ST_MLREPLYTOADDRESS;
-   Object *ST_MLADDRESS;
-   Object *CY_MLSIGNATURE;
-   Object *CH_STATS;
-   Object *CH_MLSUPPORT;
-   Object *BT_AUTODETECT;
-   Object *BT_OKAY;
-   Object *BT_CANCEL;
-   Object *ST_HELLOTEXT;
-   Object *ST_BYETEXT;
+  Object *WI;
+  Object *ST_FNAME;
+  Object *ST_FPATH;
+  Object *NM_MAXAGE;
+  Object *CY_FMODE;
+  Object *CY_FTYPE;
+  Object *CY_SORT[2];
+  Object *CH_REVERSE[2];
+  Object *CH_EXPIREUNREAD;
+  Object *ST_MLPATTERN;
+  Object *CY_MLIDENTITY;
+  Object *ST_MLREPLYTOADDRESS;
+  Object *ST_MLADDRESS;
+  Object *CY_MLSIGNATURE;
+  Object *CH_STATS;
+  Object *CH_MLSUPPORT;
+  Object *BT_AUTODETECT;
+  Object *BT_OKAY;
+  Object *BT_CANCEL;
+  Object *ST_HELLOTEXT;
+  Object *ST_BYETEXT;
 };
 
 struct FO_ClassData  /* folder configuration window */
@@ -69,18 +69,20 @@ struct FO_ClassData  /* folder configuration window */
 };
 
 // Foldertype macros
-enum FolderType { FT_CUSTOM=0,   // custom folder with received mail
-                  FT_INCOMING,   // the mandatory INCOMING folder
-                  FT_OUTGOING,   // the mandatory OUTGOING folder
-                  FT_SENT,       // the mandatory SENT folder
-                  FT_TRASH,      // the mandatory TRASH folder
-                  FT_GROUP,      // folder is a group and not a real folder
-                  FT_CUSTOMSENT, // custom folder with sent mail
-                  FT_CUSTOMMIXED,// custom folder with sent&received mail
-                  FT_SPAM,       // the mandatory SPAM folder
-                  FT_DRAFTS,     // the mandatory DRAFTS folder
-                  FT_NUM         // MUST be the last one in the enum!
-                };
+enum FolderType
+{
+  FT_CUSTOM=0,   // custom folder with received mail
+  FT_INCOMING,   // the mandatory INCOMING folder
+  FT_OUTGOING,   // the mandatory OUTGOING folder
+  FT_SENT,       // the mandatory SENT folder
+  FT_TRASH,      // the mandatory TRASH folder
+  FT_GROUP,      // folder is a group and not a real folder
+  FT_CUSTOMSENT, // custom folder with sent mail
+  FT_CUSTOMMIXED,// custom folder with sent&received mail
+  FT_SPAM,       // the mandatory SPAM folder
+  FT_DRAFTS,     // the mandatory DRAFTS folder
+  FT_NUM         // MUST be the last one in the enum!
+};
 
 extern const char* const FolderName[FT_NUM];
 
@@ -108,18 +110,22 @@ extern const char* const FolderName[FT_NUM];
                                   isCustomSentFolder(folder))
 
 // LoadedMode enum (if folder index is valid/flushed or unloaded)
-enum LoadedMode { LM_UNLOAD=0,  // invalid/unloaded
-                  LM_FLUSHED,   // flushed
-                  LM_VALID,     // valid index
-                  LM_REBUILD,   // currently rebuilding
-                };
+enum LoadedMode
+{
+  LM_UNLOAD=0,  // invalid/unloaded
+  LM_FLUSHED,   // flushed
+  LM_VALID,     // valid index
+  LM_REBUILD,   // currently rebuilding
+};
 
 // Folder modes
-enum FolderMode { FM_NORMAL=0,  // normal folder
-                  FM_SIMPLE,    // simple protected folder with PW
-                  FM_XPKCOMP,   // XPK compressed folder
-                  FM_XPKCRYPT   // XPK compressed+crypted folder
-                };
+enum FolderMode
+{
+  FM_NORMAL=0,  // normal folder
+  FM_SIMPLE,    // simple protected folder with PW
+  FM_XPKCOMP,   // XPK compressed folder
+  FM_XPKCRYPT   // XPK compressed+crypted folder
+};
 #define isProtectedFolder(folder) (((folder)->Mode == FM_SIMPLE || (folder)->Mode == FM_XPKCRYPT))
 #define isXPKFolder(folder)       (((folder)->Mode == FM_XPKCOMP || (folder)->Mode == FM_XPKCRYPT))
 
@@ -217,6 +223,13 @@ struct Folder
   BOOL              MLSupport;
 };
 
+enum LoadTreeResult
+{
+  LTR_Failure = 0, // loading failed, i.e. missing .folders file
+  LTR_QuitYAM,     // user chose to quit YAM instead of upgrading the .folders file
+  LTR_Success      // everything went ok
+};
+
 BOOL            FO_CreateFolder(enum FolderType type, const char * const path, const char *name);
 BOOL            FO_FreeFolder(struct Folder *folder);
 struct Folder * FO_GetFolderByName(const char *name, int *pos);
@@ -225,7 +238,7 @@ struct Folder * FO_GetFolderByType(const enum FolderType type, int *pos);
 struct Folder * FO_GetFolderRexx(const char *arg, int *pos);
 int             FO_GetFolderPosition(struct Folder *findfo, BOOL withGroups);
 BOOL            FO_LoadConfig(struct Folder *fo);
-BOOL            FO_LoadTree(void);
+enum LoadTreeResult FO_LoadTree(void);
 struct Folder * FO_NewFolder(enum FolderType type, const char *path, const char *name);
 BOOL            FO_SaveConfig(struct Folder *fo);
 BOOL            FO_SaveTree(void);
@@ -240,5 +253,6 @@ struct Folder * GetCurrentFolder(void);
 void            SetCurrentFolder(const struct Folder *folder);
 void            ActivateFolder(const struct Folder *fo);
 void            UpdateAllFolderSettings(const struct Config *co);
+char *          BuildFolderPath(char *fullpath, const char *path, size_t fullpathSize);
 
 #endif /* YAM_FOLDERCONFIG_H */

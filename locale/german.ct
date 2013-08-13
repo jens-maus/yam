@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.16 (12.08.2013)
+## version $VER: YAM.catalog 8.17 (13.08.2013)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -199,9 +199,6 @@ MSG_Columns
 Spalten
 ; Columns
 ;
-MSG_Path
-Pfad
-; Path
 ;
 ;
 ; Module Root
@@ -8708,5 +8705,38 @@ Verzeichnis '%s/Resources/zoneinfo' verfügbar sind.
 MSG_TZONE_LOCATION_FILE_MISSING
 Kann Zeitzonen-Ortsdatei '%s' nicht öffnen.\n\
 \n\
-Die Zeitangaben werden falsch sein. Bitte stellen Sie sicher, dass alle für das Zeitzonenmanagement benötigen Dateien im Verzeichnis '%s/Resources/zoneinfo' verfügbar sind.
+Die Zeitangaben werden falsch sein. Bitte stellen Sie sicher, \
+dass alle für das Zeitzonenmanagement benötigen Dateien im \
+Verzeichnis '%s/Resources/zoneinfo' verfügbar sind.
+;
+MSG_FOLDER_MOVE_WARNING_TITLE 
+YAM-Warnung
+;
+MSG_FOLDER_MOVE_WARNING 
+Eine Postfach-Baumdatei in Version 1 wurde gefunden.\n\
+\n\
+YAM wird nun alle Postfachverzeichnisse in ein neues\n\
+Unterverzeichnis 'Folders' im Postverzeichnis '%s'\n\
+verschieben.\n\
+\n\
+\033bWARNUNG\033n\n\
+Diese Operation ist \033bnicht umbekehrbar\033n und wird eine\n\
+Baumdatei erzeugen, welche nicht mehr zu vorherigen\n\
+Versionen von YAM kompatibel ist!\n\
+\n\
+Wollen Sie diese Operation jetzt ausführen lassen oder\n\
+wollen Sie YAM beenden und eine Sicherung erstellen,\n\
+bevor Sie fortfahren?
+;
+MSG_FOLDER_MOVE_WARNING_GADS 
+_Fortfahren|*_Beenden
+;
+MSG_FO_DISPLAYNAME
+Anzeige_name
+;
+MSG_FO_DIRECTORYNAME
+Verzeichnisna_me
+;
+MSG_VALIDATING_FOLDERS
+Überprüfe Postfächer...
 ;

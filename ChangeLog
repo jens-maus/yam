@@ -5,6 +5,26 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-08-13 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_FO.c, misc: all folder directories will be moved to a new subdirectory
+    named "Folders" in the user's mail directory (which defaults to YAM's
+    program directory if not changed via ToolTypes or the user configuration)
+    to clean up the default directory. Possibly duplicate directory names will
+    be get a unique number appended. In the future it will not be possible
+    anymore to select an arbitrary path for the folders, but only the directory
+    name within the "Folders" directory. The folder's path will default to the
+    name as shown in the folder listtree, unless it contains invalid characters
+    for a path (i.e. a slash or a colon). This closes #222.
+
+    !!! WARNING !!!
+    This move of directories is irreversible and will create a folder tree file
+    which is no longer compatible to former versions of YAM due to the implied
+    directory structure. Please make a backup of all your mails if you are
+    uncertain BEFORE running this and future versions of YAM for the first time.
+    YAM will also output a warning requester about the operation to happen with
+    the possibility to terminate YAM again before doing any change.
+
 2013-08-12 Jens Langner <Jens.Langner@light-speed.de>
 
   * extrasrc/tzcode, tools/tzcode: moved the libtz code from the extrasrc

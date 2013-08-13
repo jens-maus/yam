@@ -89,7 +89,7 @@ void rx_getfolderinfo(UNUSED struct RexxHost *host, struct RexxParams *params, e
 
         if(!strnicmp(key, "NUM", 3))      snprintf(results->value = optional->result, sizeof(optional->result), "%d", num);
         else if(!strnicmp(key, "NAM", 3)) results->value = fo->Name;
-        else if(!strnicmp(key, "PAT", 3)) results->value = fo->Path;
+        else if(!strnicmp(key, "PAT", 3)) results->value = fo->Fullpath;
         else if(!strnicmp(key, "MAX", 3)) snprintf(results->value = optional->result, sizeof(optional->result), "%d", fo->Total);
         else params->rc = RETURN_ERROR;
       }

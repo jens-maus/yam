@@ -573,7 +573,7 @@ BOOL MA_GetIndex(struct Folder *folder)
 
   if(folder != NULL && isGroupFolder(folder) == FALSE)
   {
-    D(DBF_FOLDER, "folder: '%s' path: '%s' type: %ld mode: %ld pw '%s'", folder->Name, folder->Path, folder->Type, folder->LoadedMode, folder->Password);
+    D(DBF_FOLDER, "folder: '%s' path: '%s' type: %ld mode: %ld pw '%s'", folder->Name, folder->Fullpath, folder->Type, folder->LoadedMode, folder->Password);
 
     // check that the folder is in a valid state for
     // getting the index
