@@ -334,11 +334,13 @@ BOOL US_Login(const char *username, const char *password, const char *maildir, c
 
     G->Users.CurrentID = user->ID;
     strlcpy(G->MA_MailDir, maildir ? maildir : user->MailDir, sizeof(G->MA_MailDir));
+    D(DBF_STARTUP, "user mail dir '%s'", G->MA_MailDir);
 
     if(prefsfile != NULL)
       strlcpy(G->CO_PrefsFile, prefsfile, sizeof(G->CO_PrefsFile));
     else
       AddPath(G->CO_PrefsFile, G->MA_MailDir, ".config", sizeof(G->CO_PrefsFile));
+    D(DBF_STARTUP, "user config file '%s'", G->CO_PrefsFile);
 
     AddPath(G->AB_Filename, user->UseAddr ? G->ProgDir : G->MA_MailDir, ".addressbook", sizeof(G->AB_Filename));
     AddPath(G->DI_Filename, user->UseDict ? G->ProgDir : G->MA_MailDir, ".glossary", sizeof(G->DI_Filename));
