@@ -56,7 +56,6 @@ struct MA_ClassData;
 struct CO_ClassData;
 struct AB_ClassData;
 struct EA_ClassData;
-struct WR_ClassData;
 struct ER_ClassData;
 struct FI_ClassData;
 struct DI_ClassData;
