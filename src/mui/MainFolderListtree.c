@@ -401,6 +401,7 @@ OVERLOAD(MUIM_NListtree_Insert)
       {
         struct FolderNode *thisFNode;
         struct FolderNode *prevFNode;
+        struct MUI_NListtree_TreeNode *parentTreeNode;
 
         thisFNode = (struct FolderNode *)thisTreeNode->tn_User;
         prevFNode = (struct FolderNode *)prevTreeNode->tn_User;
@@ -414,6 +415,10 @@ OVERLOAD(MUIM_NListtree_Insert)
           prevTreeNode = (struct MUI_NListtree_TreeNode *)DoMethod(obj, MUIM_NListtree_GetEntry, prevTreeNode, MUIV_NListtree_GetEntry_Position_Tail, MUIF_NONE);
           prevFNode = (struct FolderNode *)prevTreeNode->tn_User;
         }
+
+        // set the parent treenode of the new folder
+        parentTreeNode = (struct MUI_NListtree_TreeNode *)DoMethod(obj, MUIM_NListtree_GetEntry, thisTreeNode, MUIV_NListtree_GetEntry_Position_Parent, MUIF_NONE);
+        thisFNode->folder->parent = (struct FolderNode *)parentTreeNode->tn_User;
 
         // finally move the folder node within the exclusively locked folder list
         LockFolderList(G->folders);

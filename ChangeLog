@@ -24,6 +24,9 @@ $URL$
     uncertain BEFORE running this and future versions of YAM for the first time.
     YAM will also output a warning requester about the operation to happen with
     the possibility to terminate YAM again before doing any change.
+  * mui/MainFolderListtree.c: added the missing adaption of the folder's parent
+    folder pointer. This caused inconsistent behaviour of different folder
+    listtrees after adding a new folder.
 
 2013-08-12 Jens Langner <Jens.Langner@light-speed.de>
 
