@@ -269,6 +269,7 @@ unsigned char ConvertKey(const struct IntuiMessage *imsg);
 BOOL     CopyFile(const char *dest, FILE *destfh, const char *sour, FILE *sourfh);
 BOOL     MoveFile(const char *oldname, const char *newname);
 BOOL     AppendFile(const char *dst, const char *src);
+BOOL     MoveDirectory(const char *src, const char *dst);
 char *   CreateFilename(const char * const file, char *fullPath, const size_t fullPathSize);
 BOOL     CreateDirectory(const char *dir);
 int      TZtoMinutes(const char *tzone);
