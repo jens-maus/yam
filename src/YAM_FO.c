@@ -886,7 +886,7 @@ enum LoadTreeResult FO_LoadTree(void)
                   do
                   {
                     count++;
-                    snprintf(fo->Fullpath, sizeof(fo->Fullpath), "%s_%d", path, count);
+                    snprintf(fo->Fullpath, sizeof(fo->Fullpath), "%s_%ld", path, count);
                   }
                   while(FileExists(fo->Fullpath) == TRUE);
                 }
