@@ -818,9 +818,9 @@ cleanall: clean
 # clean all stuff, including our autotools
 .PHONY: distclean
 distclean: cleanall
-	@$(MAKE) -C$(GENCLASSES) clean
-	@$(MAKE) -C$(SVNREV) clean
-	@$(MAKE) -C$(TZLIB) clean
+	@$(MAKE) -C $(GENCLASSES) clean
+	@$(MAKE) -C $(SVNREV) clean
+	@$(MAKE) -C $(TZLIB) clean
 
 ## ADD FLAGS TARGETS ##################
 
@@ -845,14 +845,14 @@ $(MUIDIR)/Classes.crc: $(GENCLASSES)/GenClasses $(MUIDIR)/ClassesExtra.h Locale.
 $(GENCLASSES)/GenClasses: $(GENCLASSES)/gc.c $(GENCLASSES)/gc.h \
 	$(GENCLASSES)/lists.c $(GENCLASSES)/lists.h \
 	$(GENCLASSES)/crc32.c $(GENCLASSES)/crc32.h
-	@$(MAKE) -C$(GENCLASSES)
+	@$(MAKE) -C $(GENCLASSES)
 
 ## TZLIB TOOL #########################
 
 $(LIB)/libtz.a: $(TZLIB)/asctime.c $(TZLIB)/difftime.c \
 	$(TZLIB)/localtime.c $(TZLIB)/private.h \
 	$(TZLIB)/strftime.c $(TZLIB)/tzfile.h
-	@$(MAKE) -C$(TZLIB)
+	@$(MAKE) -C $(TZLIB)
 
 ## SVNREV TOOL ########################
 
@@ -861,7 +861,7 @@ svnrev.h: $(SVNREV)/svnrev
 	@$(SVNREV)/svnrev -o$@ *.c *.h *.l $(MUIDIR)/*.c $(REXXDIR)/*.c $(MIMEDIR)/*.c $(MIMEDIR)/*.h $(TCPDIR)/*.c $(TCPDIR)/*.h $(EXTRADIR)/*.c $(EXTRADIR)/*.h $(LOCALE)/*.cd $(LOCALE)/*.ct
 
 $(SVNREV)/svnrev: $(SVNREV)/svnrev.c $(SVNREV)/svnrev.h
-	@$(MAKE) -C$(SVNREV)
+	@$(MAKE) -C $(SVNREV) OS=$(OS)
 
 ## CATALOG GENERATION #################
 
