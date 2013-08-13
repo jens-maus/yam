@@ -37,6 +37,7 @@
 #include <libraries/iffparse.h>
 #include <mui/NList_mcc.h>
 #include <mui/NListtree_mcc.h>
+#include <proto/codesets.h>
 #include <proto/dos.h>
 #include <proto/exec.h>
 #include <proto/intuition.h>
@@ -104,15 +105,16 @@
 */
 struct ComprMail
 {
-   char             mailFile[SIZE_MFILE]; // mail filename without path
-   struct DateStamp date;                 // the creation date of the mail (UTC)
-   struct TimeVal   transDate;            // the received/sent date with ms (UTC)
-   unsigned int     sflags;               // mail status flags
-   unsigned int     mflags;               // general mail flags
-   unsigned long    cMsgID;               // compressed MessageID
-   unsigned long    cIRTMsgID;            // compressed InReturnTo MessageID
-   long             size;                 // the total size of the message
-   unsigned int     moreBytes;            // more bytes to follow as the subject
+  char             mailFile[SIZE_MFILE]; // mail filename without path
+  struct DateStamp date;                 // the creation date of the mail (UTC)
+  struct TimeVal   transDate;            // the received/sent date with ms (UTC)
+  unsigned int     sflags;               // mail status flags
+  unsigned int     mflags;               // general mail flags
+  unsigned long    cMsgID;               // compressed MessageID
+  unsigned long    cIRTMsgID;            // compressed InReturnTo MessageID
+  long             size;                 // the total size of the message
+  unsigned int     moreBytes;            // more bytes to follow as the subject
+  // ... more data of size 'moreBytes' follows here
 };
 
 /*
@@ -124,17 +126,17 @@ struct ComprMail
 */
 struct FIndex
 {
-   ULONG ID;
-   int   Total;
-   int   New;
-   int   Unread;
-   int   Size;
-   long  reserved[2];
+  ULONG ID;
+  int   Total;
+  int   New;
+  int   Unread;
+  int   Size;
+  long  reserved[2];
 };
 
 // whenever you change something up there (in FIndex or ComprMail) you
 // need to increase this version ID!
-#define FINDEX_VER  (MAKE_ID('Y','I','N','7'))
+#define FINDEX_VER  (MAKE_ID('Y','I','N','8'))
 
 #include "default-align.h"
 
@@ -299,11 +301,12 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
           // mail list for each single mail we get from the index
           if((tempFolder = AllocFolder()) != NULL)
           {
-            for(;;)
+            do
             {
               struct Mail *mail;
               struct ComprMail cmail;
-              char buf[SIZE_LARGE];
+              char utf8buf[SIZE_LARGE];
+              char *buf;
               char *line;
               char *nextLine;
               int lineNr;
@@ -321,16 +324,28 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
                 break;
               }
 
-              if(cmail.moreBytes > sizeof(buf))
+              if(cmail.moreBytes > sizeof(utf8buf))
               {
                 ER_NewError(tr(MSG_ER_INDEX_CORRUPTED), indexFileName, folder->Name, ftell(fh), cmail.mailFile, cmail.moreBytes);
                 corrupt = TRUE;
                 break;
               }
 
-              if(fread(buf, cmail.moreBytes, 1, fh) != 1)
+              // read the moreBytes data
+              if(fread(utf8buf, cmail.moreBytes, 1, fh) != 1)
               {
                 E(DBF_FOLDER, "fread error while reading index file");
+                error = TRUE;
+                break;
+              }
+
+              // convert the utf8 encoded buffer to the local charset
+              if((buf = CodesetsUTF8ToStr(CSA_Source,          utf8buf,
+                                          CSA_DestCodeset,     G->readCharset,
+                                          CSA_MapForeignChars, C->MapForeignChars,
+                                          TAG_DONE)) == NULL)
+              {
+                E(DBF_FOLDER, "error while converting UTF8 data to local charset");
                 error = TRUE;
                 break;
               }
@@ -404,7 +419,13 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
                 // pointer to the correct current folder.
                 mail->Folder = folder;
               }
+              else
+                error = TRUE;
+
+              // free the codesets buffer
+              CodesetsFreeA(buf, NULL);
             }
+            while(error == FALSE);
           }
 
           // if everything went well then move all mails from the temporary folder
@@ -511,46 +532,67 @@ BOOL MA_SaveIndex(struct Folder *folder)
     fi.New = folder->New;
     fi.Unread = folder->Unread;
     fi.Size = folder->Size;
-    fwrite(&fi, sizeof(struct FIndex), 1, fh);
 
-    LockMailListShared(folder->messages);
-
-    ForEachMailNode(folder->messages, mnode)
+    // write the index header out first
+    if(fwrite(&fi, sizeof(fi), 1, fh) == 1)
     {
-      struct Mail *mail = mnode->mail;
-      struct ComprMail cmail;
-      char buf[SIZE_LARGE];
+      success = TRUE; // assume success TRUE
 
-      snprintf(buf, sizeof(buf), "%s\n%s\n%s\n%s\n%s\n%s\n%s\n",
-                                 mail->Subject,
-                                 mail->From.Address, mail->From.RealName,
-                                 mail->To.Address, mail->To.RealName,
-                                 mail->ReplyTo.Address, mail->ReplyTo.RealName);
+      LockMailListShared(folder->messages);
+      ForEachMailNode(folder->messages, mnode)
+      {
+        struct Mail *mail = mnode->mail;
+        struct ComprMail cmail;
+        char buf[SIZE_LARGE];
+        UTF8 *utf8buf;
 
-      strlcpy(cmail.mailFile, mail->MailFile, sizeof(cmail.mailFile));
-      cmail.date = mail->Date;
-      cmail.transDate = mail->transDate;
-      cmail.sflags = mail->sflags;
-      cmail.mflags = mail->mflags;
-      // we have to make sure that the volatile flag field isn't saved
-      setVOLValue(&cmail, 0);
-      cmail.cMsgID = mail->cMsgID;
-      cmail.cIRTMsgID = mail->cIRTMsgID;
-      cmail.size = mail->Size;
-      cmail.moreBytes = strlen(buf);
+        // create the moreBytes string we append at the end
+        snprintf(buf, sizeof(buf), "%s\n%s\n%s\n%s\n%s\n%s\n%s\n",
+                                   mail->Subject,
+                                   mail->From.Address, mail->From.RealName,
+                                   mail->To.Address, mail->To.RealName,
+                                   mail->ReplyTo.Address, mail->ReplyTo.RealName);
 
-      fwrite(&cmail, sizeof(struct ComprMail), 1, fh);
-      fwrite(buf, 1, cmail.moreBytes, fh);
+        // convert the buffer string to UTF8
+        if((utf8buf = CodesetsUTF8Create(CSA_Source, buf, TAG_DONE)) != NULL)
+        {
+          strlcpy(cmail.mailFile, mail->MailFile, sizeof(cmail.mailFile));
+          cmail.date = mail->Date;
+          cmail.transDate = mail->transDate;
+          cmail.sflags = mail->sflags;
+          cmail.mflags = mail->mflags;
+          // we have to make sure that the volatile flag field isn't saved
+          setVOLValue(&cmail, 0);
+          cmail.cMsgID = mail->cMsgID;
+          cmail.cIRTMsgID = mail->cIRTMsgID;
+          cmail.size = mail->Size;
+          cmail.moreBytes = strlen(buf);
+
+          if(fwrite(&cmail, sizeof(cmail), 1, fh) != 1 ||
+             fwrite(utf8buf, cmail.moreBytes, 1, fh) != 1)
+          {
+            E(DBF_FOLDER, "couldn't write index data of mail '%s'", cmail.mailFile);
+            success = FALSE;
+          }
+
+          // free the codesets buffer
+          CodesetsFreeA(utf8buf, NULL);
+        }
+        else
+          success = FALSE;
+
+        // break out if something went wrong
+        if(success == FALSE)
+          break;
+      }
+
+      UnlockMailList(folder->messages);
+
+      clearFlag(folder->Flags, FOFL_MODIFY);
     }
 
-    UnlockMailList(folder->messages);
-
     fclose(fh);
-
-    clearFlag(folder->Flags, FOFL_MODIFY);
     BusyEnd(busy);
-
-    success = TRUE;
   }
   else
   {
