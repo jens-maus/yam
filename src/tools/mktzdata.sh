@@ -15,7 +15,7 @@ ${RM} -rf ${TZDIR}/*
 # use 'zic' to generate the zoneinfo files we require for yam
 TIMEZONES="africa antarctica asia australasia europe northamerica southamerica"
 for tz in ${TIMEZONES}; do
-  ${ZIC} -y tzdata/yearistype.sh -d ${TZDIR} -L tzdata/leapseconds tzdata/${tz}
+  ${ZIC} -y tzdata/yearistype.sh -d ${TZDIR} -v tzdata/${tz}
 done
 
 # copy the .tab files because YAM will use them

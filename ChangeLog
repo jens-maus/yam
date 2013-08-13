@@ -28,6 +28,16 @@ $URL$
     folder pointer. This caused inconsistent behaviour of different folder
     listtrees after adding a new folder.
 
+2013-08-13 Jens Langner <Jens.Langner@light-speed.de>
+
+  * tools/mktzdata.sh, resources/zoneinfo: fixed the mktzdata.sh script to
+    actually generate zoneinfo files which do not take leapseconds into account.
+    The reason for that is, that according to POSIX leap seconds are not counted
+    and thus a time_t value is always a continues number instead. Now the results
+    of our libtz.a functions like localtime(), etc. should be essentially the same
+    like on any UNIX/POSIX system. The zoneinfo files had been updated accordingly
+    and anyone is asked to update them respectively.
+
 2013-08-12 Jens Langner <Jens.Langner@light-speed.de>
 
   * extrasrc/tzcode, tools/tzcode: moved the libtz code from the extrasrc
