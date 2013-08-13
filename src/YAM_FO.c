@@ -812,21 +812,21 @@ enum LoadTreeResult FO_LoadTree(void)
       D(DBF_FOLDER, "found version V%ld folder tree file", version);
 
       if(version == 1)
-	  {
-	    LONG res;
+      {
+	      LONG res;
 		
-	    // ask the user if moving the folders is desired
-        res = MUI_Request(G->App, G->MA != NULL ? G->MA->GUI.WI : NULL, MUIF_NONE,
+        // ask the user if moving the folders is desired
+        res = MUI_Request(G->App, NULL, MUIF_NONE,
                           tr(MSG_FOLDER_MOVE_WARNING_TITLE),
                           tr(MSG_FOLDER_MOVE_WARNING_GADS),
                           tr(MSG_FOLDER_MOVE_WARNING),
                           G->MA_MailDir);
-	    if(res == 0)
-		{
-		  result = LTR_QuitYAM;
-		  goto failure;
-		}
-	  }
+	      if(res == 0)
+		    {
+          result = LTR_QuitYAM;
+		      goto failure;
+		    }
+	    }
 
       DoMethod(lv, MUIM_NListtree_Clear, NULL, 0);
       set(lv, MUIA_NListtree_Quiet, TRUE);

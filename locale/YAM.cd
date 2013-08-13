@@ -7304,21 +7304,21 @@ to install all time zones management related files to the \
 '%s/Resources/zoneinfo' directory.
 ;
 MSG_FOLDER_MOVE_WARNING_TITLE (2453//)
-YAM warning
+YAM folder format warning
 ;
 MSG_FOLDER_MOVE_WARNING (2454//)
-A version 1 folder tree file has been found.\n\
+An obsolete folder storage format has been found.\n\
 \n\
-YAM will now move all folder directories to a new subdirectory\n\
-called 'Folders' in the mail directory '%s'.\n\
+YAM will now move all folder directories to a new\n\
+subdirectory called 'Folders' in the mail directory '%s'.\n\
 \n\
-\033bWARNING\033n\n\
+\033bWARNING:\033n\n\
 This operation is \033birreversible\033n and will result in\n\
-a folder which is no longer compatible to former\n\
-versions of YAM!\n\
+folders which are no longer compatible to former\n\
+versions of YAM.\n\
 \n\
 Do you want to perform this operation now or\n\
-quit YAM and make a backup before going on?
+quit YAM and make a backup first?
 ;
 MSG_FOLDER_MOVE_WARNING_GADS (2455//)
 _Continue|*_Quit

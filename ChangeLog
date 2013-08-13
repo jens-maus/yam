@@ -30,6 +30,8 @@ $URL$
 
 2013-08-13 Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_FO.c, locale: slightly rephrased the folder format warning to not sound
+    too technical.
   * tools/mktzdata.sh, resources/zoneinfo: fixed the mktzdata.sh script to
     actually generate zoneinfo files which do not take leapseconds into account.
     The reason for that is, that according to POSIX leap seconds are not counted

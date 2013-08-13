@@ -8710,23 +8710,22 @@ dass alle für das Zeitzonenmanagement benötigen Dateien im \
 Verzeichnis '%s/Resources/zoneinfo' verfügbar sind.
 ;
 MSG_FOLDER_MOVE_WARNING_TITLE 
-YAM-Warnung
+YAM Postfach-Format Warnung
 ;
 MSG_FOLDER_MOVE_WARNING 
-Eine Postfach-Baumdatei in Version 1 wurde gefunden.\n\
+Ein veraltetes Postfach-Layout wurde gefunden.\n\
 \n\
 YAM wird nun alle Postfachverzeichnisse in ein neues\n\
 Unterverzeichnis 'Folders' im Postverzeichnis '%s'\n\
 verschieben.\n\
 \n\
-\033bWARNUNG\033n\n\
-Diese Operation ist \033bnicht umbekehrbar\033n und wird eine\n\
-Baumdatei erzeugen, welche nicht mehr zu vorherigen\n\
-Versionen von YAM kompatibel ist!\n\
+\033bWARNUNG:\033n\n\
+Diese Operation ist \033bunumkehrbar\033n und wird\n\
+Dateien erzeugen, welche nicht mehr zu vorherigen\n\
+Versionen von YAM kompatibel sind.\n\
 \n\
-Wollen Sie diese Operation jetzt ausführen lassen oder\n\
-wollen Sie YAM beenden und eine Sicherung erstellen,\n\
-bevor Sie fortfahren?
+Wollen Sie diese Operation jetzt ausführen oder\n\
+YAM beenden und zuerst eine Sicherung erstellen?
 ;
 MSG_FOLDER_MOVE_WARNING_GADS 
 _Fortfahren|*_Beenden
