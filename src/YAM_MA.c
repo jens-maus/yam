@@ -3234,7 +3234,7 @@ HOOKPROTONHNONP(MA_ArchiveMessageFunc, void)
       ULONG i;
 
       // get the list of the currently marked mails
-      snprintf(selectedStr, sizeof(selectedStr), "%d", mlist->count);
+      snprintf(selectedStr, sizeof(selectedStr), "%ld", mlist->count);
       set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, TRUE);
       busy = BusyBegin(BUSY_PROGRESS_ABORT);
       BusyText(busy, tr(MSG_BusyMoving), selectedStr);
