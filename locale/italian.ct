@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.42 (11.08.2013)
+## version $VER: YAM.catalog 8.43 (14.08.2013)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -199,10 +199,6 @@ A
 MSG_Columns
 Colonne
 ; Columns
-;
-MSG_Path
-Percorso
-; Path
 ;
 ; Module Root
 ;
@@ -5848,7 +5844,7 @@ MSG_CO_SenderRFCDateTime
 ; %c  Original sender: RFC 2822 date & time
 ;
 MSG_CO_SenderTimeZone
-%z  Mittente originale: TimeZone (+0000)
+%z  Mittente originale: Fuso Orario (+0000)
 ; %z  Original sender: Time zone (+0000)
 ;
 MSG_CO_Filter_Name
@@ -10056,7 +10052,7 @@ MSG_SSL_CERT_WARNING_IDMISMATCH
 ; - The certificate hostname does not match.
 ;
 MSG_SSL_CERT_WARNING_NOTYETVALID
-- Il certificato non è ancora stato validato.
+- Il certificato non è ancora stato convalidato.
 ; - The certificate is not yet valid.
 ;
 MSG_SSL_CERT_WARNING_EXPIRED
@@ -10405,7 +10401,7 @@ Prossimo passaggio DST:
 ; Next DST switch:
 ;
 MSG_CO_TZONE_NODSTSWITCH
-Nessun salvataggio DST
+nessun salvataggio DST
 ; no daylight saving
 ;
 MSG_CO_TZONE_DESCRIPTION
@@ -10415,4 +10411,78 @@ Descrizione:
 MSG_CO_TZONE_DESCRIPTION_NA
 n/d
 ; n/a
+;
+MSG_TZONE_ZONETAB_FILE_MISSING
+Impossibile aprire il file della descrizione del fuso orario\n\
+presente in '%s/Resources/zoneinfo/zone.tab'.\n\
+\n\
+Per favore assicurati di aver installato tutti i file relativi\n\
+alla gestione del fuso orario in '%s/Resources/zoneinfo'
+; Cannot open time zones description file\n\
+; '%s/Resources/zoneinfo/zone.tab'.\n\
+; \n\
+; Please make sure to install all time zones management\n\
+; related files to the '%s/Resources/zoneinfo' directory.
+;
+MSG_TZONE_LOCATION_FILE_MISSING
+Impossibile aprire file delle informazioni sul fuso\n\
+orario presente in '%s'.\n\
+Le informazioni relative al fuso orario potrebbero\n\
+risultare incorrette, per favore assicurati di aver\n\
+installato tutti i file relativi alla gestione del fuso\n\
+orario presenti in '%s/Resources/zoneinfo'
+; Cannot open time zone information file '%s'.\n\
+; \n\
+; Time zone information will be incorrect. Please make sure \
+; to install all time zones management related files to the \
+; '%s/Resources/zoneinfo' directory.
+;
+MSG_FOLDER_MOVE_WARNING_TITLE
+Avviso formato delle cartelle di YAM
+; YAM folder format warning
+;
+MSG_FOLDER_MOVE_WARNING
+E' stato rilevato un formato di archiviazione cartelle obsoleto.\n\
+\n\
+YAM sposterà ora tutte le directory contenenti i messaggi di\n\
+'posta elettronica' precedentemente archiviati all'interno di\n\
+una nuova sotto directory chiamata 'Cartelle' residente in:\n\
+\n\
+'%s'\n\
+\n\
+\033bATTENZIONE:\033n\n\
+Questa è un operazione \033birreversibile\033n che causerà\n\
+un'immediata incompatibilità con il precedente formato delle\n\
+cartelle generato dalla vecchia versione di YAM.\n\
+\n\
+Si desidera procedere oppure si preferisce uscire in modo da\n\
+prendersi un po' di tempo per effettuare un backup ?
+; An obsolete folder storage format has been found.\n\
+; \n\
+; YAM will now move all folder directories to a new\n\
+; subdirectory called 'Folders' in the mail directory '%s'.\n\
+; \n\
+; \033bWARNING:\033n\n\
+; This operation is \033birreversible\033n and will result in\n\
+; folders which are no longer compatible to former\n\
+; versions of YAM.\n\
+; \n\
+; Do you want to perform this operation now or\n\
+; quit YAM and make a backup first?
+;
+MSG_FOLDER_MOVE_WARNING_GADS
+_Continua|*_Esci
+; _Continue|*_Quit
+;
+MSG_FO_DISPLAYNAME
+Nome _visualizzato
+; Display _name
+;
+MSG_FO_DIRECTORYNAME
+Nome _directory
+; Directory na_me
+;
+MSG_VALIDATING_FOLDERS
+Validazione cartelle...
+; Validating folders...
 ;
