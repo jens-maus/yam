@@ -14,6 +14,8 @@ $URL$
     The archive folders are excluded from deleting old mails automatically to
     make sure the mails are really archived until the user explicitly deletes
     them. This closes #396.
+  * YAM_FO.c: handle the case that the old folder directory layout already
+    matches the new one and don't move or rename anything in this case.
 
 2013-08-14 Samir Hawamdeh <s.hawamdeh@tin.it>
 

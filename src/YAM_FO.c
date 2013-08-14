@@ -887,26 +887,33 @@ enum LoadTreeResult FO_LoadTree(void)
                     AddPath(v1path, G->MA_MailDir, fo->Path, sizeof(v1path));
                   }
 
-                  // check if the new folder directory already exists
-                  if(FileExists(fo->Fullpath) == TRUE)
+                  D(DBF_FOLDER, "old V1 path '%s'", v1path);
+                  D(DBF_FOLDER, "new V2 path '%s'", fo->Fullpath);
+
+                  // first check if the new path differs from the old one
+                  if(strcasecmp(v1path, fo->Fullpath) != 0)
                   {
-                    char path[SIZE_PATH];
-                    ULONG count;
-
-                    // create a new folder directory name by appending a unique number
-                    D(DBF_FOLDER, "directory '%s' already exists, creating new unique path", fo->Fullpath);
-                    strlcpy(path, fo->Fullpath, sizeof(path));
-                    count = 0;
-                    do
+                    // then check if the new folder directory already exists
+                    if(FileExists(fo->Fullpath) == TRUE)
                     {
-                      count++;
-                      snprintf(fo->Fullpath, sizeof(fo->Fullpath), "%s_%ld", path, count);
-                    }
-                    while(FileExists(fo->Fullpath) == TRUE);
-                  }
+                      char path[SIZE_PATH];
+                      ULONG count;
 
-                  D(DBF_FOLDER, "move folder contents from '%s' to '%s'", v1path, fo->Fullpath);
-                  MoveDirectory(v1path, fo->Fullpath);
+                      // create a new folder directory name by appending a unique number
+                      D(DBF_FOLDER, "directory '%s' already exists, creating new unique path", fo->Fullpath);
+                      strlcpy(path, fo->Fullpath, sizeof(path));
+                      count = 0;
+                      do
+                      {
+                        count++;
+                        snprintf(fo->Fullpath, sizeof(fo->Fullpath), "%s_%ld", path, count);
+                      }
+                      while(FileExists(fo->Fullpath) == TRUE);
+                    }
+
+                    D(DBF_FOLDER, "move folder contents from '%s' to '%s'", v1path, fo->Fullpath);
+                    MoveDirectory(v1path, fo->Fullpath);
+                  }
 
                   // use the unique directory name only as path from now on
                   strlcpy(fo->Path, FilePart(fo->Fullpath), sizeof(fo->Path));
