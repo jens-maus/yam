@@ -160,6 +160,7 @@ void MA_ChangeSelected(BOOL forceUpdate)
   // the currently active one, then we don't have to proceed.
   if(forceUpdate == TRUE || mail != lastMail)
   {
+    struct Folder *folder = GetCurrentFolder();
     ULONG numEntries;
     ULONG numSelected = 0;
     BOOL active;
@@ -196,7 +197,7 @@ void MA_ChangeSelected(BOOL forceUpdate)
         StopTimer(TIMER_READPANEUPDATE);
 
         // clear the readmail group now
-        DoMethod(gui->MN_EMBEDDEDREADPANE, MUIM_ReadMailGroup_Clear, GetCurrentFolder()->Total > 0 ? MUIF_ReadMailGroup_Clear_KeepAttachmentGroup : MUIF_NONE);
+        DoMethod(gui->MN_EMBEDDEDREADPANE, MUIM_ReadMailGroup_Clear, folder->Total > 0 ? MUIF_ReadMailGroup_Clear_KeepAttachmentGroup : MUIF_NONE);
         lastMail = NULL;
       }
     }
@@ -204,25 +205,25 @@ void MA_ChangeSelected(BOOL forceUpdate)
     // in case the currently active maillist is the mainmaillist we
     // have to save the lastactive mail ID
     if(xget(gui->PG_MAILLIST, MUIA_MainMailListGroup_ActiveList) == LT_MAIN)
-      GetCurrentFolder()->LastActive = xget(gui->PG_MAILLIST, MUIA_NList_Active);
+      folder->LastActive = xget(gui->PG_MAILLIST, MUIA_NList_Active);
 
     active = (mail != NULL);
     SHOWVALUE(DBF_MAIL, active);
 
     // now we have to make sure that all toolbar and menu items are
     // enabled and disabled according to the folder/mail status
-    folderEnabled = !isGroupFolder(GetCurrentFolder());
+    folderEnabled = !isGroupFolder(folder);
 
     // deal with the toolbar and disable/enable certain buttons
     if(gui->TO_TOOLBAR != NULL)
     {
       DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_READ,    MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0));
-      DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_EDIT,    MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0) || isSpamFolder(GetCurrentFolder()));
+      DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_EDIT,    MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0) || isSpamFolder(folder));
       DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_MOVE,    MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0));
       DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_DELETE,  MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0));
       DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_GETADDR, MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0));
       DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_NEWMAIL, MUIA_TheBar_Attr_Disabled, !folderEnabled);
-      DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_REPLY,   MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0) || isOutgoingFolder(GetCurrentFolder()) || isSpamFolder(GetCurrentFolder()));
+      DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_REPLY,   MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0) || isOutgoingFolder(folder) || isSpamFolder(folder));
       DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_FORWARD, MUIA_TheBar_Attr_Disabled, !folderEnabled || (!active && numSelected == 0));
       DoMethod(gui->TO_TOOLBAR, MUIM_TheBar_SetAttr, TB_MAIN_FILTER,  MUIA_TheBar_Attr_Disabled, !folderEnabled || numEntries == 0);
       DoMethod(gui->TO_TOOLBAR, MUIM_MainWindowToolbar_UpdateSpamControls);
@@ -230,7 +231,7 @@ void MA_ChangeSelected(BOOL forceUpdate)
 
     // change the menu item title of the
     // Edit item so that we either display "Edit" or "Edit as New"
-    if(isDraftsFolder(GetCurrentFolder()))
+    if(isDraftsFolder(folder))
       set(gui->MI_EDIT, MUIA_Menuitem_Title, tr(MSG_MA_MEDIT));
     else
       set(gui->MI_EDIT, MUIA_Menuitem_Title, tr(MSG_MA_MEDITASNEW));
@@ -246,7 +247,7 @@ void MA_ChangeSelected(BOOL forceUpdate)
     //  * NOT in the "Outgoing" folder
     //  * NOT in the "SPAM" folder
     //  * > 0 mails selected
-    DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && !isOutgoingFolder(GetCurrentFolder()) && !isSpamFolder(GetCurrentFolder()) && (active || numSelected > 0),
+    DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && !isOutgoingFolder(folder) && !isSpamFolder(folder) && (active || numSelected > 0),
                                                            gui->MI_REPLY,
                                                            NULL);
 
@@ -254,7 +255,7 @@ void MA_ChangeSelected(BOOL forceUpdate)
     //  * the folder is enabled
     //  * NOT in the "SPAM" folder
     //  * > 0 mails selected
-    DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && !isSpamFolder(GetCurrentFolder()) && (active || numSelected > 0),
+    DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && !isSpamFolder(folder) && (active || numSelected > 0),
                                                            gui->MI_EDIT,
                                                            NULL);
 
@@ -262,7 +263,7 @@ void MA_ChangeSelected(BOOL forceUpdate)
     //  * the folder is enabled
     //  * NOT in the "Sent" folder
     //  * > 0 mails selected
-    DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && !isSentMailFolder(GetCurrentFolder()) && (active || numSelected > 0),
+    DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && !isSentMailFolder(folder) && (active || numSelected > 0),
                                                            gui->MI_TOREAD,
                                                            gui->MI_TOUNREAD,
                                                            gui->MI_ALLTOREAD,
@@ -273,7 +274,7 @@ void MA_ChangeSelected(BOOL forceUpdate)
     //  * the folder is enabled
     //  * is in the "Outgoing" Folder
     //  * > 0 mails selected
-    DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && isOutgoingFolder(GetCurrentFolder()) && (active || numSelected > 0),
+    DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && isOutgoingFolder(folder) && (active || numSelected > 0),
                                                            gui->MI_SEND,
                                                            NULL);
 
@@ -288,6 +289,7 @@ void MA_ChangeSelected(BOOL forceUpdate)
                                                            gui->MI_STATUS,
                                                            gui->MI_EXPMSG,
                                                            gui->MI_COPY,
+                                                           gui->MI_ARCHIVE,
                                                            gui->MI_PRINT,
                                                            gui->MI_SAVE,
                                                            gui->MI_ATTACH,
@@ -297,6 +299,13 @@ void MA_ChangeSelected(BOOL forceUpdate)
                                                            gui->MI_PREVTHREAD,
                                                            NULL);
 
+    // Enable if:
+    //  * the folder is enabled
+    //  * NOT in the "Archive" folder
+    //  * > 0 mails selected
+    DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, folderEnabled && !isArchiveFolder(folder) && (active || numSelected > 0),
+                                                           gui->MI_ARCHIVE,
+                                                           NULL);
     // Enable if:
     //  * the folder is enabled
     //  * > 0 mails in folder
@@ -2679,7 +2688,7 @@ HOOKPROTONHNONP(MA_DeleteOldFunc, void)
     {
       struct Folder *folder = fnode->folder;
 
-      if(isGroupFolder(folder) == FALSE && folder->MaxAge > 0 && MA_GetIndex(folder) == TRUE)
+      if(isGroupFolder(folder) == FALSE && folder->MaxAge > 0 && !isArchiveFolder(folder) && MA_GetIndex(folder) == TRUE)
       {
         struct MailNode *mnode;
 
@@ -3099,14 +3108,16 @@ MakeStaticHook(MA_ImportMessagesHook, MA_ImportMessagesFunc);
 //  Moves selected messages to a user specified folder
 HOOKPROTONHNONP(MA_MoveMessageFunc, void)
 {
+  struct Folder *folder;
+
   ENTER();
 
-  if(GetCurrentFolder() != NULL)
+  if((folder = GetCurrentFolder()) != NULL)
   {
     struct Folder *dst;
 
     if((dst = FolderRequest(tr(MSG_MA_MoveMsg), tr(MSG_MA_MoveMsgReq), tr(MSG_MA_MoveGad), tr(MSG_Cancel), NULL, G->MA->GUI.WI)) != NULL)
-      MA_MoveCopy(NULL, GetCurrentFolder(), dst, MVCPF_CLOSE_WINDOWS);
+      MA_MoveCopy(NULL, folder, dst, MVCPF_CLOSE_WINDOWS);
   }
 
   LEAVE();
@@ -3118,19 +3129,138 @@ MakeHook(MA_MoveMessageHook, MA_MoveMessageFunc);
 //  Copies selected messages to a user specified folder
 HOOKPROTONHNONP(MA_CopyMessageFunc, void)
 {
+  struct Folder *folder;
+
   ENTER();
 
-  if(GetCurrentFolder() != NULL)
+  if((folder = GetCurrentFolder()) != NULL)
   {
     struct Folder *dst;
 
     if((dst = FolderRequest(tr(MSG_MA_CopyMsg), tr(MSG_MA_MoveMsgReq), tr(MSG_MA_CopyGad), tr(MSG_Cancel), NULL, G->MA->GUI.WI)) != NULL)
-      MA_MoveCopy(NULL, GetCurrentFolder(), dst, MVCPF_COPY);
+      MA_MoveCopy(NULL, folder, dst, MVCPF_COPY);
   }
 
   LEAVE();
 }
 MakeHook(MA_CopyMessageHook, MA_CopyMessageFunc);
+
+///
+/// ArchiveMail
+// move a mail to the archive folder
+void MA_ArchiveMail(struct Mail *mail)
+{
+  ldiv_t d;
+  char archiveDisplayName[SIZE_SMALL];
+  char archivePathName[SIZE_PATH];
+  struct Folder *archive;
+  BOOL saveTree = FALSE;
+
+  ENTER();
+
+  // extract the year from the mail's date
+  d = ldiv(DateStamp2Long(&mail->Date), 10000);
+  // generate suitable names for the path and display name of the archive folder
+  snprintf(archiveDisplayName, sizeof(archiveDisplayName), "%ld", d.rem);
+  snprintf(archivePathName, sizeof(archivePathName), "%s%ld", FolderName[FT_ARCHIVE], d.rem);
+
+  // hide the possible add and move operations within the listtree
+  set(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Quiet, TRUE);
+
+  // create the "Archive" folder group if it doesn't exist yet
+  if(FO_GetFolderGroup(tr(MSG_MA_ARCHIVE), NULL) == NULL)
+  {
+    if(DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_MainFolderListtree_NewFolderGroup, tr(MSG_MA_ARCHIVE)) != FALSE)
+    {
+      // move the new archive group folder after the sent folder
+      struct Folder *this = FO_GetFolderGroup(tr(MSG_MA_ARCHIVE), NULL);
+      struct Folder *prev = FO_GetFolderByType(FT_SENT, NULL);
+
+      DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Move, MUIV_NListtree_Move_OldListNode_Root, this->Treenode, MUIV_NListtree_Move_NewListNode_Root, prev->Treenode, MUIF_NONE);
+      saveTree = TRUE;
+    }
+  }
+
+  // create the year folder if it doesn't exist yet
+  if(FO_GetFolderByName(archivePathName, NULL) == NULL)
+  {
+    if(FO_CreateFolder(FT_ARCHIVE, archivePathName, archiveDisplayName) == TRUE)
+    {
+      // move the new archive year folder to the archive group folder
+      struct Folder *this = FO_GetFolderByPath(archivePathName, NULL);
+      struct Folder *group = FO_GetFolderGroup(tr(MSG_MA_ARCHIVE), NULL);
+
+      // move the folder to the end of the group
+      // Note: there is no point in trying to sort the folders as they can be rearranged
+      // by the user which contradicts the requirement of a sorted list to be able
+      // to insert the new entry at the correct position
+      DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Move, MUIV_NListtree_Move_OldListNode_Root, this->Treenode, group->Treenode, MUIV_NListtree_Move_NewTreeNode_Tail, MUIF_NONE);
+      saveTree = TRUE;
+    }
+  }
+
+  set(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Quiet, FALSE);
+
+  if(saveTree == TRUE)
+    FO_SaveTree();
+
+  // finally move the mail to the archive folder
+  if((archive = FO_GetFolderByPath(archivePathName, NULL)) != NULL)
+  {
+    MA_MoveCopy(mail, mail->Folder, archive, 0);
+  }
+
+  LEAVE();
+}
+
+///
+/// MA_ArchiveMessageFunc
+// moves selected messages to the archive folder
+HOOKPROTONHNONP(MA_ArchiveMessageFunc, void)
+{
+  struct Folder *folder;
+
+  ENTER();
+
+  if((folder = GetCurrentFolder()) != NULL)
+  {
+    struct MailList *mlist;
+
+    if((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE)) != NULL)
+    {
+      struct BusyNode *busy;
+      char selectedStr[SIZE_SMALL];
+      struct MailNode *mnode;
+      ULONG i;
+
+      // get the list of the currently marked mails
+      snprintf(selectedStr, sizeof(selectedStr), "%d", mlist->count);
+      set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, TRUE);
+      busy = BusyBegin(BUSY_PROGRESS_ABORT);
+      BusyText(busy, tr(MSG_BusyMoving), selectedStr);
+
+      i = 0;
+      ForEachMailNode(mlist, mnode)
+      {
+        if(mnode->mail != NULL)
+          MA_ArchiveMail(mnode->mail);
+
+        // if BusyProgress() returns FALSE, then the user aborted
+        if(BusyProgress(busy, ++i, mlist->count) == FALSE)
+          break;
+      }
+      BusyEnd(busy);
+      set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, FALSE);
+
+      DeleteMailList(mlist);
+    }
+
+    MA_ChangeSelected(FALSE);
+  }
+
+  LEAVE();
+}
+MakeHook(MA_ArchiveMessageHook, MA_ArchiveMessageFunc);
 
 ///
 /// MA_ChangeSubject
@@ -4053,6 +4183,7 @@ struct MA_ClassData *MA_New(void)
         MenuChild, data->GUI.MI_EDIT = Menuitem(tr(MSG_MA_MEDITASNEW), "E", TRUE, FALSE, MMEN_EDIT),
         MenuChild, data->GUI.MI_MOVE = Menuitem(tr(MSG_MA_MMOVE), "M", TRUE, FALSE, MMEN_MOVE),
         MenuChild, data->GUI.MI_COPY = Menuitem(tr(MSG_MA_MCOPY), "Y", TRUE, FALSE, MMEN_COPY),
+        MenuChild, data->GUI.MI_ARCHIVE = Menuitem(tr(MSG_MA_MARCHIVE), NULL, TRUE, FALSE, MMEN_ARCHIVE),
         MenuChild, data->GUI.MI_DELETE = Menuitem(tr(MSG_MA_MDelete), "Del", TRUE, TRUE, MMEN_DELETE),
         MenuChild, MenuBarLabel,
         MenuChild, data->GUI.MI_PRINT = Menuitem(tr(MSG_MA_MPRINT), "P", TRUE, FALSE, MMEN_PRINT),
@@ -4199,7 +4330,7 @@ struct MA_ClassData *MA_New(void)
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT_SALL,      MUIV_Notify_Self,        2, MUIM_MainWindow_DoEditAction, EA_SELECTALL);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT_SNONE,     MUIV_Notify_Self,        2, MUIM_MainWindow_DoEditAction, EA_SELECTNONE);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_NEWF,           data->GUI.NL_FOLDERS,    1, MUIM_MainFolderListtree_NewFolder);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_NEWFG,          data->GUI.NL_FOLDERS,    1, MUIM_MainFolderListtree_NewFolderGroup);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_NEWFG,          data->GUI.NL_FOLDERS,    2, MUIM_MainFolderListtree_NewFolderGroup, NULL);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDITF,          data->GUI.NL_FOLDERS,    2, MUIM_MainFolderListtree_EditFolder, FALSE);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_DELETEF,        data->GUI.NL_FOLDERS,    1, MUIM_MainFolderListtree_DeleteFolder);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_OSAVE,          data->GUI.NL_FOLDERS,    2, MUIM_MainFolderListtree_SetOrder, MUIV_MainFolderListtree_SetOrder_Save);
@@ -4224,6 +4355,7 @@ struct MA_ClassData *MA_New(void)
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT,           MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_NewMessageHook, NMM_EDIT, 0);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_MOVE,           MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_MoveMessageHook);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_COPY,           MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_CopyMessageHook);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_ARCHIVE,        MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_ArchiveMessageHook);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_DELETE,         MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_DeleteMessageHook, 0);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_PRINT,          MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_SavePrintHook, TRUE);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SAVE,           MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_SavePrintHook, FALSE);

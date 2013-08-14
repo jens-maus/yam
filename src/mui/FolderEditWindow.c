@@ -698,9 +698,10 @@ DECLARE(FolderToGUI)
   GETDATA;
   struct Folder *folder = data->folder;
   struct Folder dummy;
-  static const int type2cycle[9] = { FT_CUSTOM, FT_CUSTOM, FT_INCOMING, FT_INCOMING, FT_OUTGOING, -1, FT_INCOMING, FT_OUTGOING, FT_CUSTOM };
+  static const int type2cycle[10] = { FT_CUSTOM, FT_CUSTOM, FT_INCOMING, FT_INCOMING, FT_OUTGOING, -1, FT_INCOMING, FT_OUTGOING, FT_CUSTOM, FT_CUSTOM };
   int i;
-  BOOL isdefault;
+  BOOL isDefault;
+  BOOL isArchive;
 
   ENTER();
 
@@ -710,20 +711,25 @@ DECLARE(FolderToGUI)
     folder = &dummy;
   }
 
-  isdefault = isDefaultFolder(folder);
+  isDefault = isDefaultFolder(folder);
+  isArchive = isArchiveFolder(folder);
 
   nnset(data->ST_FNAME, MUIA_String_Contents, folder->Name);
   nnset(data->ST_FPATH, MUIA_String_Contents, folder->Path);
-  set(data->NM_MAXAGE, MUIA_Numeric_Value,   folder->MaxAge);
+  set(data->ST_FNAME, MUIA_Disabled, isDefault || isArchive);
+  set(data->ST_FPATH, MUIA_Disabled, isDefault || isArchive);
+
+  xset(data->NM_MAXAGE, MUIA_Numeric_Value, folder->MaxAge,
+                        MUIA_Disabled,      isArchive);
 
   xset(data->CH_EXPIREUNREAD, MUIA_Selected, folder->ExpireUnread,
-                              MUIA_Disabled, isTrashFolder(folder) || isSpamFolder(folder) || folder->MaxAge == 0);
+                              MUIA_Disabled, isTrashFolder(folder) || isSpamFolder(folder) || folder->MaxAge == 0 || isArchive);
 
   xset(data->CY_FTYPE, MUIA_Cycle_Active, type2cycle[folder->Type],
-                       MUIA_Disabled,     isdefault);
+                       MUIA_Disabled,     isDefault || isArchive);
 
   xset(data->CY_FMODE, MUIA_Cycle_Active, folder->Mode,
-                       MUIA_Disabled,     isdefault);
+                       MUIA_Disabled,     isDefault);
 
   for(i = 0; i < 2; i++)
   {
@@ -732,34 +738,36 @@ DECLARE(FolderToGUI)
   }
 
   set(data->CH_STATS,       MUIA_Selected, folder->Stats);
-  set(data->BT_AUTODETECT,  MUIA_Disabled, !folder->MLSupport || isdefault);
-  set(data->ST_HELLOTEXT,   MUIA_String_Contents, folder->WriteIntro);
-  set(data->ST_BYETEXT,     MUIA_String_Contents, folder->WriteGreetings);
+  set(data->BT_AUTODETECT,  MUIA_Disabled, !folder->MLSupport || isDefault || isArchive);
+  xset(data->ST_HELLOTEXT, MUIA_String_Contents, folder->WriteIntro,
+                           MUIA_Disabled,        isArchive);
+  xset(data->ST_BYETEXT,   MUIA_String_Contents, folder->WriteGreetings,
+                           MUIA_Disabled,        isArchive);
 
   // for ML-Support
   xset(data->CH_MLSUPPORT,
-       MUIA_Selected, isdefault ? FALSE : folder->MLSupport,
-       MUIA_Disabled, isdefault);
+       MUIA_Selected, isDefault || isArchive ? FALSE : folder->MLSupport,
+       MUIA_Disabled, isDefault || isArchive);
 
   xset(data->ST_MLADDRESS,
        MUIA_String_Contents, folder->MLAddress,
-       MUIA_Disabled, !folder->MLSupport || isdefault);
+       MUIA_Disabled, !folder->MLSupport || isDefault || isArchive);
 
   xset(data->ST_MLPATTERN,
        MUIA_String_Contents, folder->MLPattern,
-       MUIA_Disabled, !folder->MLSupport || isdefault);
+       MUIA_Disabled, !folder->MLSupport || isDefault || isArchive);
 
   xset(data->ST_MLREPLYTOADDRESS,
        MUIA_String_Contents, folder->MLReplyToAddress,
-       MUIA_Disabled, !folder->MLSupport || isdefault);
+       MUIA_Disabled, !folder->MLSupport || isDefault || isArchive);
 
   xset(data->CY_MLSIGNATURE,
        MUIA_SignatureChooser_Signature, folder->MLSignature,
-       MUIA_Disabled, !folder->MLSupport || isdefault);
+       MUIA_Disabled, !folder->MLSupport || isDefault || isArchive);
 
   xset(data->CY_MLIDENTITY,
        MUIA_IdentityChooser_Identity, folder->MLIdentity,
-       MUIA_Disabled, !folder->MLSupport || isdefault);
+       MUIA_Disabled, !folder->MLSupport || isDefault || isArchive);
 
   // make the folder name object the active one for new folders
   if(data->folder == NULL)
@@ -791,7 +799,7 @@ DECLARE(GUIToFolder) // struct Folder *folder
   BuildFolderPath(folder->Fullpath, folder->Path, sizeof(folder->Fullpath));
 
   folder->MaxAge = GetMUINumer(data->NM_MAXAGE);
-  if(!isDefaultFolder(folder))
+  if(!isDefaultFolder(folder) && !isArchiveFolder(folder))
   {
     folder->Type = cycle2type[GetMUICycle(data->CY_FTYPE)];
     folder->Mode = GetMUICycle(data->CY_FMODE);

@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.17 (13.08.2013)
+## version $VER: YAM.catalog 8.18 (14.08.2013)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -8709,10 +8709,10 @@ Die Zeitangaben werden falsch sein. Bitte stellen Sie sicher, \
 dass alle für das Zeitzonenmanagement benötigen Dateien im \
 Verzeichnis '%s/Resources/zoneinfo' verfügbar sind.
 ;
-MSG_FOLDER_MOVE_WARNING_TITLE 
+MSG_FOLDER_MOVE_WARNING_TITLE
 YAM Postfach-Format Warnung
 ;
-MSG_FOLDER_MOVE_WARNING 
+MSG_FOLDER_MOVE_WARNING
 Ein veraltetes Postfach-Layout wurde gefunden.\n\
 \n\
 YAM wird nun alle Postfachverzeichnisse in ein neues\n\
@@ -8727,7 +8727,7 @@ Versionen von YAM kompatibel sind.\n\
 Wollen Sie diese Operation jetzt ausführen oder\n\
 YAM beenden und zuerst eine Sicherung erstellen?
 ;
-MSG_FOLDER_MOVE_WARNING_GADS 
+MSG_FOLDER_MOVE_WARNING_GADS
 _Fortfahren|*_Beenden
 ;
 MSG_FO_DISPLAYNAME
@@ -8738,4 +8738,10 @@ Verzeichnisna_me
 ;
 MSG_VALIDATING_FOLDERS
 Überprüfe Postfächer...
+;
+MSG_MA_MARCHIVE
+Archivieren
+;
+MSG_MA_ARCHIVE
+Archiv
 ;

@@ -111,9 +111,9 @@ struct Data
 // menu item IDs
 enum
 {
-  RMEN_EDIT=501,RMEN_MOVE,RMEN_COPY,RMEN_DELETE,RMEN_PRINT,RMEN_SAVE,RMEN_DISPLAY,RMEN_DETACH,
-  RMEN_DELETEATT,RMEN_NEW,RMEN_REPLY,RMEN_FORWARD_ATTACH,RMEN_FORWARD_INLINE,RMEN_REDIRECT,
-  RMEN_SAVEADDR,RMEN_CHSUBJ,RMEN_PREV,RMEN_NEXT,RMEN_URPREV,RMEN_URNEXT,RMEN_PREVTH,
+  RMEN_EDIT=501,RMEN_MOVE,RMEN_COPY,RMEN_ARCHIVE,RMEN_DELETE,RMEN_PRINT,RMEN_SAVE,RMEN_DISPLAY,
+  RMEN_DETACH,RMEN_DELETEATT,RMEN_NEW,RMEN_REPLY,RMEN_FORWARD_ATTACH,RMEN_FORWARD_INLINE,
+  RMEN_REDIRECT,RMEN_SAVEADDR,RMEN_CHSUBJ,RMEN_PREV,RMEN_NEXT,RMEN_URPREV,RMEN_URNEXT,RMEN_PREVTH,
   RMEN_NEXTTH,RMEN_EXTKEY,RMEN_CHKSIG,RMEN_SAVEDEC,RMEN_HNONE,RMEN_HSHORT,RMEN_HFULL,
   RMEN_SNONE,RMEN_SDATA,RMEN_SFULL,RMEN_WRAPH,RMEN_TSTYLE,RMEN_FFONT,RMEN_SIMAGE,RMEN_TOMARKED,
   RMEN_TOUNMARKED,RMEN_TOUNREAD,RMEN_TOREAD,RMEN_TOSPAM,RMEN_TOHAM,
@@ -257,6 +257,7 @@ OVERLOAD(OM_NEW)
       MenuChild, data->MI_EDIT = Menuitem(tr(MSG_MA_MEDIT), "E", TRUE, FALSE, RMEN_EDIT),
       MenuChild, data->MI_MOVE = Menuitem(tr(MSG_MA_MMOVE), "M", TRUE, FALSE, RMEN_MOVE),
       MenuChild, Menuitem(tr(MSG_MA_MCOPY), "Y", TRUE, FALSE, RMEN_COPY),
+      MenuChild, Menuitem(tr(MSG_MA_MARCHIVE), NULL, TRUE, FALSE, RMEN_ARCHIVE),
       MenuChild, data->MI_DELETE = Menuitem(tr(MSG_MA_MDelete), "Del", TRUE, TRUE, RMEN_DELETE),
       MenuChild, MenuBarLabel,
       MenuChild, Menuitem(tr(MSG_Print), "P", TRUE, FALSE, RMEN_PRINT),
@@ -399,6 +400,7 @@ OVERLOAD(OM_NEW)
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_EDIT,           obj, 3, MUIM_ReadWindow_NewMail, NMM_EDIT, 0);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_MOVE,           obj, 1, MUIM_ReadWindow_MoveMailRequest);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_COPY,           obj, 1, MUIM_ReadWindow_CopyMailRequest);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_ARCHIVE,        obj, 1, MUIM_ReadWindow_ArchiveMailRequest);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_DELETE,         obj, 2, MUIM_ReadWindow_DeleteMailRequest, 0);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_PRINT,          data->readMailGroup, 1, MUIM_ReadMailGroup_PrintMailRequest);
     DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SAVE,           data->readMailGroup, 1, MUIM_ReadMailGroup_SaveMailRequest);
@@ -952,6 +954,63 @@ DECLARE(CopyMailRequest)
 }
 
 ///
+/// DECLARE(ArchiveMailRequest)
+DECLARE(ArchiveMailRequest)
+{
+  GETDATA;
+  struct ReadMailData *rmData = (struct ReadMailData *)xget(data->readMailGroup, MUIA_ReadMailGroup_ReadMailData);
+  struct Mail *mail = rmData->mail;
+  struct Folder *srcfolder = mail->Folder;
+
+  ENTER();
+
+  if(MailExists(mail, srcfolder) == TRUE)
+  {
+    int pos = SelectMessage(mail); // select the message in the folder and return position
+    int entries;
+    BOOL closeAfter = FALSE;
+
+    // depending on the last move direction we
+    // set it back
+    if(data->lastDirection == -1)
+    {
+      if(pos-1 >= 0)
+        set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Active, --pos);
+      else
+        closeAfter = TRUE;
+    }
+
+    // archive the mail
+    MA_ArchiveMail(mail);
+
+    // erase the old pointer as this has been free()ed by MA_DeleteSingle()
+    rmData->mail = NULL;
+
+    // if there are still mails in the current folder we make sure
+    // it is displayed in this window now or close it
+    if(closeAfter == FALSE &&
+       (entries = xget(G->MA->GUI.PG_MAILLIST, MUIA_NList_Entries)) >= pos+1)
+    {
+      DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_GetEntry, pos, &mail);
+      if(mail)
+        DoMethod(obj, MUIM_ReadWindow_ReadMail, mail);
+      else
+        closeAfter = TRUE;
+    }
+    else
+      closeAfter = TRUE;
+
+    // make sure the read window is closed in case there is no further
+    // mail for deletion in this direction
+    if(closeAfter == TRUE)
+      DoMethod(_app(obj), MUIM_Application_PushMethod, _app(obj), 2, MUIM_YAMApplication_CleanupReadMailData, rmData);
+  }
+
+  RETURN(0);
+  return 0;
+}
+
+///
 /// DECLARE(DeleteMailRequest)
 DECLARE(DeleteMailRequest) // ULONG qualifier
 {
@@ -959,9 +1018,6 @@ DECLARE(DeleteMailRequest) // ULONG qualifier
   struct ReadMailData *rmData = (struct ReadMailData *)xget(data->readMailGroup, MUIA_ReadMailGroup_ReadMailData);
   struct Mail *mail = rmData->mail;
   struct Folder *folder = mail->Folder;
-  struct Folder *delfolder = FO_GetFolderByType(FT_TRASH, NULL);
-  BOOL delatonce = isAnyFlagSet(msg->qualifier, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT));
-  BOOL closeAfter = FALSE;
 
   ENTER();
 
@@ -969,6 +1025,9 @@ DECLARE(DeleteMailRequest) // ULONG qualifier
   {
     int pos = SelectMessage(mail); // select the message in the folder and return position
     int entries;
+    struct Folder *delfolder = FO_GetFolderByType(FT_TRASH, NULL);
+    BOOL delatonce = isAnyFlagSet(msg->qualifier, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT));
+    BOOL closeAfter = FALSE;
 
     // depending on the last move direction we
     // set it back

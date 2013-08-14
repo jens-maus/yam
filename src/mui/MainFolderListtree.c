@@ -298,6 +298,7 @@ OVERLOAD(MUIM_DragQuery)
 /// OVERLOAD(MUIM_DragDrop)
 OVERLOAD(MUIM_DragDrop)
 {
+  IPTR result;
   struct MUIP_DragDrop *dd = (struct MUIP_DragDrop *)msg;
 
   ENTER();
@@ -308,7 +309,7 @@ OVERLOAD(MUIM_DragDrop)
     // let the super class do the dirty work. This will invoke the
     // MUIM_NListtree_Move method, which we also catch to move the
     // folder node within our folder list.
-    DoSuperMethodA(cl, obj, msg);
+    result = DoSuperMethodA(cl, obj, msg);
   }
   else
   {
@@ -324,10 +325,12 @@ OVERLOAD(MUIM_DragDrop)
       if(!isGroupFolder(dstfolder))
         MA_MoveCopy(NULL, srcfolder, dstfolder, MVCPF_CLOSE_WINDOWS);
     }
+
+    result = 0;
   }
 
-  RETURN(0);
-  return 0;
+  RETURN(result);
+  return result;
 }
 
 ///
@@ -421,6 +424,7 @@ OVERLOAD(MUIM_NListtree_Insert)
         thisFNode->folder->parent = (struct FolderNode *)parentTreeNode->tn_User;
 
         // finally move the folder node within the exclusively locked folder list
+        D(DBF_FOLDER, "insert folder '%s' behind folder '%s'", thisFNode->folder->Name, prevFNode->folder->Name);
         LockFolderList(G->folders);
         MoveFolderNode(G->folders, thisFNode, prevFNode);
         UnlockFolderList(G->folders);
@@ -440,13 +444,14 @@ OVERLOAD(MUIM_NListtree_Insert)
 /// OVERLOAD(MUIM_NListtree_Move)
 OVERLOAD(MUIM_NListtree_Move)
 {
+  IPTR result;
   struct MUIP_NListtree_Move *mv = (struct MUIP_NListtree_Move *)msg;
   struct MUI_NListtree_TreeNode *prevTreeNode;
 
   ENTER();
 
   // first let the list tree class do the actual movement of the tree nodes
-  DoSuperMethodA(cl, obj, msg);
+  result = DoSuperMethodA(cl, obj, msg);
 
   // now determine the previous node
   if((prevTreeNode = (struct MUI_NListtree_TreeNode *)DoMethod(obj, MUIM_NListtree_GetEntry, mv->OldTreeNode, MUIV_NListtree_GetEntry_Position_Previous, MUIF_NONE)) != NULL)
@@ -468,6 +473,7 @@ OVERLOAD(MUIM_NListtree_Move)
     }
 
     // finally move the folder node within the exclusively locked folder list
+    D(DBF_FOLDER, "move folder '%s' behind folder '%s'", thisFNode->folder->Name, prevFNode->folder->Name);
     LockFolderList(G->folders);
     MoveFolderNode(G->folders, thisFNode, prevFNode);
     UnlockFolderList(G->folders);
@@ -477,8 +483,8 @@ OVERLOAD(MUIM_NListtree_Move)
       DoMethod(G->FI->GUI.LV_FOLDERS, MUIM_FolderRequestListtree_RefreshTree);
   }
 
-  RETURN(0);
-  return 0;
+  RETURN(result);
+  return result;
 }
 
 ///
@@ -639,11 +645,11 @@ OVERLOAD(MUIM_ContextMenuChoice)
     break;
 
     // or other item out of the FolderListContextMenu
-    case CMN_EDITF:     { DoMethod(obj, METHOD(EditFolder), FALSE);                     } break;
-    case CMN_DELETEF:   { DoMethod(obj, METHOD(DeleteFolder));                          } break;
-    case CMN_INDEX:     { DoMethod(_app(obj), MUIM_CallHook, &MA_RescanIndexHook);         } break;
-    case CMN_NEWF:      { DoMethod(obj, METHOD(NewFolder));                             } break;
-    case CMN_NEWFG:     { DoMethod(obj, METHOD(NewFolderGroup));                        } break;
+    case CMN_EDITF:     { DoMethod(obj, METHOD(EditFolder), FALSE); } break;
+    case CMN_DELETEF:   { DoMethod(obj, METHOD(DeleteFolder)); } break;
+    case CMN_INDEX:     { DoMethod(_app(obj), MUIM_CallHook, &MA_RescanIndexHook); } break;
+    case CMN_NEWF:      { DoMethod(obj, METHOD(NewFolder)); } break;
+    case CMN_NEWFG:     { DoMethod(obj, METHOD(NewFolderGroup), NULL); } break;
     case CMN_SNAPS:     { DoMethod(obj, METHOD(SetOrder), MUIV_MainFolderListtree_SetOrder_Save);  } break;
     case CMN_RELOAD:    { DoMethod(obj, METHOD(SetOrder), MUIV_MainFolderListtree_SetOrder_Reset); } break;
     case CMN_EMPTYTRASH:{ DoMethod(_app(obj), MUIM_CallHook, &MA_DeleteDeletedHook, FALSE);} break;
@@ -731,15 +737,27 @@ DECLARE(ChangeFolder) // struct MUI_NListtree_TreeNode *treenode
 ///
 /// DECLARE(NewFolderGroup)
 // creates a new folder group
-DECLARE(NewFolderGroup)
+DECLARE(NewFolderGroup) // char *name
 {
   struct Folder folder;
+  ULONG result = FALSE;
 
   ENTER();
 
   InitFolder(&folder, FT_GROUP);
 
-  if(StringRequest(folder.Name, SIZE_NAME, tr(MSG_FO_NEWFGROUP), tr(MSG_FO_NEWFGROUPREQ), tr(MSG_Okay), NULL, tr(MSG_Cancel), FALSE, _win(obj)) != 0)
+  // either use the supplied name or prompt the user to enter one otherwise
+  if(msg->name != NULL)
+  {
+    strlcpy(folder.Name, msg->name, sizeof(folder.Name));
+  }
+  else
+  {
+    if(StringRequest(folder.Name, sizeof(folder.Name), tr(MSG_FO_NEWFGROUP), tr(MSG_FO_NEWFGROUPREQ), tr(MSG_Okay), NULL, tr(MSG_Cancel), FALSE, _win(obj)) == 0)
+      folder.Name[0] = '\0';
+  }
+
+  if(folder.Name[0] != '\0')
   {
     struct FolderNode *fnode;
 
@@ -752,12 +770,12 @@ DECLARE(NewFolderGroup)
       // insert the new folder node and remember its treenode pointer
       fnode->folder->Treenode = (struct MUI_NListtree_TreeNode *)DoMethod(obj, MUIM_NListtree_Insert, folder.Name, fnode, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, TNF_LIST | TNF_OPEN);
 
-      FO_SaveTree();
+      result = FO_SaveTree();
     }
   }
 
-  RETURN(0);
-  return 0;
+  RETURN(result);
+  return result;
 }
 
 ///
@@ -788,7 +806,7 @@ DECLARE(NewFolder)
 
       if(isGroupFolder(&data->newFolder))
       {
-        DoMethod(obj, MUIM_MainFolderListtree_NewFolderGroup);
+        DoMethod(obj, MUIM_MainFolderListtree_NewFolderGroup, NULL);
         openEditWindow = FALSE;
       }
       else
@@ -951,6 +969,7 @@ DECLARE(DeleteFolder)
     case FT_CUSTOM:
     case FT_CUSTOMSENT:
     case FT_CUSTOMMIXED:
+    case FT_ARCHIVE:
     {
       if(MUI_Request(_app(obj), _win(obj), MUIF_NONE, NULL, tr(MSG_YesNoReq2), tr(MSG_CO_ConfirmDelete)) != 0)
       {

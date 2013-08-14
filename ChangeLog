@@ -9,6 +9,11 @@ $URL$
 
   * YAM_FO.c: always try create to the global "Folders" directory and not just
     when converting the old directory layout to the new one.
+  * YAM_MA.c, misc: implemented the Archive folder as proposed in #396. Archived
+    mails will be moved to a folder named after the mail's original send date.
+    The archive folders are excluded from deleting old mails automatically to
+    make sure the mails are really archived until the user explicitly deletes
+    them. This closes #396.
 
 2013-08-14 Samir Hawamdeh <s.hawamdeh@tin.it>
 

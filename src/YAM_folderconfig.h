@@ -50,6 +50,7 @@ enum FolderType
   FT_CUSTOMMIXED,// custom folder with sent&received mail
   FT_SPAM,       // the mandatory SPAM folder
   FT_DRAFTS,     // the mandatory DRAFTS folder
+  FT_ARCHIVE,    // the mandatory ARCHIVE folder
   FT_NUM         // MUST be the last one in the enum!
 };
 
@@ -65,6 +66,7 @@ extern const char* const FolderName[FT_NUM];
 #define isCustomMixedFolder(folder) ((folder)->Type == FT_CUSTOMMIXED)
 #define isSpamFolder(folder)        (C->SpamFilterEnabled == TRUE && (folder)->Type == FT_SPAM)
 #define isDraftsFolder(folder)      ((folder)->Type == FT_DRAFTS)
+#define isArchiveFolder(folder)     ((folder)->Type == FT_ARCHIVE)
 
 #define isDefaultFolder(folder)     (isIncomingFolder(folder) || \
                                      isOutgoingFolder(folder) || \
@@ -133,7 +135,8 @@ enum FolderMode
 #define FICON_ID_SPAM_NEW       11 // folder_spam_new
 #define FICON_ID_DRAFTS         12 // folder_drafts
 #define FICON_ID_DRAFTS_NEW     13 // folder_drafts_new
-#define FICON_ID_MAX            14
+#define FICON_ID_ARCHIVE        14 // folder_drafts
+#define FICON_ID_MAX            15
 
 #define FICON_FOLD          "\033o[" STR(FICON_ID_FOLD)         "]"
 #define FICON_UNFOLD        "\033o[" STR(FICON_ID_UNFOLD)       "]"
@@ -149,6 +152,7 @@ enum FolderMode
 #define FICON_SPAM_NEW      "\033o[" STR(FICON_ID_SPAM_NEW)     "]"
 #define FICON_DRAFTS        "\033o[" STR(FICON_ID_DRAFTS)       "]"
 #define FICON_DRAFTS_NEW    "\033o[" STR(FICON_ID_DRAFTS_NEW)   "]"
+#define FICON_ARCHIVE       "\033o[" STR(FICON_ID_ARCHIVE)      "]"
 
 struct Folder
 {
@@ -203,6 +207,7 @@ BOOL            FO_CreateFolder(enum FolderType type, const char * const path, c
 BOOL            FO_FreeFolder(struct Folder *folder);
 struct Folder * FO_GetFolderByName(const char *name, int *pos);
 struct Folder * FO_GetFolderByPath(const char *path, int *pos);
+struct Folder * FO_GetFolderGroup(const char *name, int *pos);
 struct Folder * FO_GetFolderByType(const enum FolderType type, int *pos);
 struct Folder * FO_GetFolderRexx(const char *arg, int *pos);
 int             FO_GetFolderPosition(struct Folder *findfo, BOOL withGroups);

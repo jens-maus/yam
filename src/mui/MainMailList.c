@@ -624,6 +624,7 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
       if(mail != NULL)
       {
         BOOL isSentMail = isSentMailFolder(fo);
+        BOOL isArchive = isArchiveFolder(fo);
         BOOL hasattach = FALSE;
         ULONG numSelected = 0;
         struct Person *pers = isSentMail ? &mail->To : &mail->From;
@@ -653,6 +654,7 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
             MenuChild, Menuitem(isDraftsFolder(fo) ? tr(MSG_MA_MEDIT) : tr(MSG_MA_MEDITASNEW), NULL, TRUE, FALSE, MMEN_EDIT),
             MenuChild, Menuitem(tr(MSG_MA_MMOVE), NULL, TRUE, FALSE, MMEN_MOVE),
             MenuChild, Menuitem(tr(MSG_MA_MCOPY), NULL, TRUE, FALSE, MMEN_COPY),
+            MenuChild, Menuitem(tr(MSG_MA_MARCHIVE), NULL, isArchive == FALSE, FALSE, MMEN_ARCHIVE),
             MenuChild, Menuitem(tr(MSG_MA_MDelete), NULL, TRUE, FALSE, MMEN_DELETE),
             MenuChild, MenuBarLabel,
             MenuChild, Menuitem(tr(MSG_MA_MPRINT), NULL, TRUE, FALSE, MMEN_PRINT),
@@ -770,6 +772,7 @@ OVERLOAD(MUIM_ContextMenuChoice)
     case MMEN_SAVEADDR:       DoMethod(_app(obj), MUIM_CallHook, &MA_GetAddressHook); break;
     case MMEN_MOVE:           DoMethod(_app(obj), MUIM_CallHook, &MA_MoveMessageHook); break;
     case MMEN_COPY:           DoMethod(_app(obj), MUIM_CallHook, &MA_CopyMessageHook); break;
+    case MMEN_ARCHIVE:        DoMethod(_app(obj), MUIM_CallHook, &MA_ArchiveMessageHook); break;
     case MMEN_DELETE:         DoMethod(_app(obj), MUIM_CallHook, &MA_DeleteMessageHook,  0); break;
     case MMEN_PRINT:          DoMethod(_app(obj), MUIM_CallHook, &MA_SavePrintHook, TRUE); break;
     case MMEN_SAVE:           DoMethod(_app(obj), MUIM_CallHook, &MA_SavePrintHook, FALSE); break;

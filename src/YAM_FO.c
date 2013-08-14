@@ -86,6 +86,7 @@ const char* const FolderName[FT_NUM] = { NULL,       // FT_CUSTOM
                                          NULL,       // FT_CUSTOMMIXED
                                          "spam",     // FT_SPAM
                                          "drafts",   // FT_DRAFTS
+                                         "archive",  // FT_ARCHIVE
                                        };
 
 /***************************************************************************
@@ -321,7 +322,7 @@ struct Folder *FO_GetFolderByType(const enum FolderType type, int *pos)
 // comparison function for FO_GetFolderByName
 static BOOL FO_GetFolderByName_cmp(const struct Folder *f, const char *name)
 {
-  return (BOOL)(strcmp(f->Name, name) == 0 && !isGroupFolder(f));
+  return (BOOL)(!isGroupFolder(f) && strcmp(f->Name, name) == 0);
 }
 //  Finds a folder by its name
 struct Folder *FO_GetFolderByName(const char *name, int *pos)
@@ -339,6 +340,18 @@ static BOOL FO_GetFolderByPath_cmp(const struct Folder *f, const char *path)
 struct Folder *FO_GetFolderByPath(const char *path, int *pos)
 {
   return FO_GetFolderByAttribute((BOOL (*)(const struct Folder *, const void *))&FO_GetFolderByPath_cmp, (const void *)path, pos);
+}
+///
+/// FO_GetFolderGroup
+// comparison function for FO_GetFolderGroup
+static BOOL FO_GetFolderGroup_cmp(const struct Folder *f, const char *name)
+{
+  return (BOOL)(isGroupFolder(f) && strcmp(f->Name, name) == 0);
+}
+//  Finds a folder group
+struct Folder *FO_GetFolderGroup(const char *name, int *pos)
+{
+  return FO_GetFolderByAttribute((BOOL (*)(const struct Folder *, const void *))&FO_GetFolderGroup_cmp, (const void *)name, pos);
 }
 ///
 /// FO_GetFolderPosition

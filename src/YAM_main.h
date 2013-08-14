@@ -232,9 +232,9 @@ enum
   MMEN_EDIT_SALL,MMEN_EDIT_SNONE,MMEN_NEWF,MMEN_NEWFG,MMEN_EDITF,MMEN_DELETEF,MMEN_OSAVE,MMEN_ORESET,
   MMEN_SELALL,MMEN_SELNONE,MMEN_SELTOGG,MMEN_SEARCH,MMEN_FILTER,MMEN_CLASSIFY,MMEN_DELDEL,MMEN_DELSPAM,
   MMEN_INDEX,MMEN_FLUSH,MMEN_IMPORT,MMEN_EXPORT,MMEN_GETMAIL,MMEN_GET1MAIL,MMEN_SENDMAIL,MMEN_EXMAIL,
-  MMEN_READ,MMEN_EDIT,MMEN_MOVE,MMEN_COPY,MMEN_DELETE,MMEN_PRINT,MMEN_SAVE,MMEN_DETACH,MMEN_DELETEATT,
-  MMEN_EXPMSG,MMEN_NEXTTH,MMEN_PREVTH,MMEN_NEW,MMEN_REPLY,MMEN_FORWARD_ATTACH,MMEN_FORWARD_INLINE,
-  MMEN_REDIRECT,MMEN_SAVEADDR,MMEN_TOUNREAD,MMEN_TOREAD,MMEN_TOMARKED,
+  MMEN_READ,MMEN_EDIT,MMEN_MOVE,MMEN_COPY,MMEN_ARCHIVE, MMEN_DELETE,MMEN_PRINT,MMEN_SAVE,MMEN_DETACH,
+  MMEN_DELETEATT,MMEN_EXPMSG,MMEN_NEXTTH,MMEN_PREVTH,MMEN_NEW,MMEN_REPLY,MMEN_FORWARD_ATTACH,
+  MMEN_FORWARD_INLINE,MMEN_REDIRECT,MMEN_SAVEADDR,MMEN_TOUNREAD,MMEN_TOREAD,MMEN_TOMARKED,
   MMEN_TOUNMARKED,MMEN_ALLTOREAD,MMEN_TOSPAM,MMEN_TOHAM,MMEN_CHSUBJ,MMEN_SEND,MMEN_ABOOK,MMEN_CONFIG,
   MMEN_USER,MMEN_MUI,MMEN_SCRIPT,MMEN_MACRO,MMEN_HELP_CONTENTS=MMEN_MACRO+MAXRX_MENU,MMEN_HELP_AREXX,
   MMEN_POPHOST
@@ -277,6 +277,7 @@ struct MA_GUIData
   Object *MI_EDIT;
   Object *MI_MOVE;
   Object *MI_COPY;
+  Object *MI_ARCHIVE;
   Object *MI_DELETE;
   Object *MI_PRINT;
   Object *MI_SAVE;
@@ -341,6 +342,7 @@ extern struct Hook MA_SetAllStatusToHook;
 extern struct Hook MA_GetAddressHook;
 extern struct Hook MA_MoveMessageHook;
 extern struct Hook MA_CopyMessageHook;
+extern struct Hook MA_ArchiveMessageHook;
 extern struct Hook MA_DeleteMessageHook;
 extern struct Hook MA_ClassifyMessageHook;
 extern struct Hook MA_SavePrintHook;
@@ -367,6 +369,7 @@ struct Mail *MA_GetActiveMail(struct Folder *forcefolder, struct Folder **folder
 void  MA_GetAddress(struct MailList *mlist);
 BOOL MA_ImportMessages(const char *fname, const ULONG flags);
 struct MA_ClassData *MA_New(void);
+void  MA_ArchiveMail(struct Mail *mail);
 void  MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox, const ULONG flags);
 void  MA_ExchangeMail(const ULONG receiveFlags);
 BOOL  MA_PopNow(struct MailServerNode *msn, const ULONG flags, struct DownloadResult *dlResult);
