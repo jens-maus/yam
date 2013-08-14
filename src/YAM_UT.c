@@ -5480,13 +5480,31 @@ static LONG SyncLaunchCommand(const char *cmd, ULONG flags, enum OutputDefType o
     }
     break;
 
-    case OUT_CONSOLE:
+    case OUT_CONSOLE_WAIT:
     {
+      // open a console window with close gadget which stays open after the command terminated
       #if defined(__amigaos4__)
       // use a window with scrollback buffer on AmigaOS4.1+
-      in = Open("CON:20/20/600/100/YAM thread/AUTO/CLOSE/WAIT/INACTIVE/HISTORY", MODE_NEWFILE);
+      in = Open("CON:20/20/600/100/YAM console/AUTO/CLOSE/WAIT/INACTIVE/HISTORY", MODE_NEWFILE);
       #else
-      in = Open("CON:20/20/600/100/YAM thread/AUTO/CLOSE/WAIT/INACTIVE", MODE_NEWFILE);
+      in = Open("CON:20/20/600/100/YAM console/AUTO/CLOSE/WAIT/INACTIVE", MODE_NEWFILE);
+      #endif
+      out = ZERO;
+      #if defined(__amigaos4__)
+      err = ErrorOutput();
+      closeErr = FALSE;
+      #endif
+    }
+    break;
+
+    case OUT_CONSOLE_CLOSE:
+    {
+      // open a console window which closes itself after the command terminated
+      #if defined(__amigaos4__)
+      // use a window with scrollback buffer on AmigaOS4.1+
+      in = Open("CON:20/20/600/100/YAM console/AUTO/INACTIVE/HISTORY", MODE_NEWFILE);
+      #else
+      in = Open("CON:20/20/600/100/YAM console/AUTO/INACTIVE", MODE_NEWFILE);
       #endif
       out = ZERO;
       #if defined(__amigaos4__)
@@ -5592,7 +5610,7 @@ LONG LaunchCommand(const char *cmd, ULONG flags, enum OutputDefType outdef)
     // the sub thread's standard I/O channel are different from the main
     // thread's, so we let the subthread open a new console window instead.
     if(outdef == OUT_STDOUT)
-      outdef = OUT_CONSOLE;
+      outdef = OUT_CONSOLE_WAIT;
 
     // let the thread framework do the dirty work
     result = (DoAction(NULL, TA_LaunchCommand, TT_LaunchCommand_Command, cmd,

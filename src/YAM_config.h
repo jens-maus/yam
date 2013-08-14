@@ -236,6 +236,7 @@ struct CO_GUIData
   Object *NB_PACKER;
   Object *NB_ENCPACK;
   Object *ST_ARCHIVER;
+  Object *CH_ARCHIVERPROGRESS;
   Object *ST_APPICON;
   Object *CH_FCNTMENU;
   Object *CH_MCNTMENU;
@@ -551,6 +552,7 @@ struct Config
   BOOL  ShowRcptFieldBCC;
   BOOL  ShowRcptFieldReplyTo;
   BOOL  OverrideFromAddress;
+  BOOL  ShowPackerProgress;
 
   struct MUI_PenSpec   ColoredText;
   struct MUI_PenSpec   Color1stLevel;

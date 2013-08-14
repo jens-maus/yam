@@ -16,6 +16,9 @@ $URL$
     them. This closes #396.
   * YAM_FO.c: handle the case that the old folder directory layout already
     matches the new one and don't move or rename anything in this case.
+  * YAM_CO.c, mui/WriteWindow.c: the output of the external archiver command can
+    now be redirected optionally to a console window while the archiver is
+    running to show the progress. This closes #55.
 
 2013-08-14 Samir Hawamdeh <s.hawamdeh@tin.it>
 

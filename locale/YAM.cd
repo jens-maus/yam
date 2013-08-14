@@ -7338,3 +7338,6 @@ Archive
 MSG_MA_ARCHIVE (2460//)
 Archive
 ;
+MSG_CO_SHOW_ARCHIVER_PROGRESS (2461//)
+Show progress
+;

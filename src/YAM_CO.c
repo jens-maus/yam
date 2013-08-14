@@ -1597,6 +1597,7 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     strlcpy(co->DetachDir, "RAM:", sizeof(co->DetachDir));
     strlcpy(co->AttachDir, "RAM:", sizeof(co->AttachDir));
     strlcpy(co->PackerCommand, "LhA -a -m -i%l a \"%a.lha\"", sizeof(co->PackerCommand));
+    co->ShowPackerProgress = FALSE;
     co->IconPositionX = -1; // < 0 means free positioning
     co->IconPositionY = -1; // < 0 means free positioning
     strlcpy(co->AppIconText, tr(MSG_CO_APPICON_LABEL), sizeof(co->AppIconText));
@@ -2068,6 +2069,7 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      c1->ShowFilterStats                 == c2->ShowFilterStats &&
      c1->ConfirmRemoveAttachments        == c2->ConfirmRemoveAttachments &&
      c1->OverrideFromAddress             == c2->OverrideFromAddress &&
+     c1->ShowPackerProgress              == c2->ShowPackerProgress &&
 
      c1->SocketOptions.SendBuffer        == c2->SocketOptions.SendBuffer &&
      c1->SocketOptions.RecvBuffer        == c2->SocketOptions.RecvBuffer &&

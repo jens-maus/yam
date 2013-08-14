@@ -536,21 +536,22 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
     }
 
     fprintf(fh, "\n[Mixed]\n");
-    fprintf(fh, "TempDir          = %s\n", co->TempDir);
-    fprintf(fh, "DetachDir        = %s\n", co->DetachDir);
-    fprintf(fh, "AttachDir        = %s\n", co->AttachDir);
-    fprintf(fh, "WBAppIcon        = %s\n", Bool2Txt(co->WBAppIcon));
-    fprintf(fh, "IconPosition     = %d;%d\n", co->IconPositionX, co->IconPositionY);
-    fprintf(fh, "AppIconText      = %s\n", co->AppIconText);
-    fprintf(fh, "DockyIcon        = %s\n", Bool2Txt(co->DockyIcon));
-    fprintf(fh, "IconifyOnQuit    = %s\n", Bool2Txt(co->IconifyOnQuit));
-    fprintf(fh, "Confirm          = %s\n", Bool2Txt(co->Confirm));
-    fprintf(fh, "ConfirmDelete    = %d\n", co->ConfirmDelete);
-    fprintf(fh, "RemoveAtOnce     = %s\n", Bool2Txt(co->RemoveAtOnce));
-    fprintf(fh, "XPKPack          = %s;%d\n", co->XPKPack, co->XPKPackEff);
-    fprintf(fh, "XPKPackEncrypt   = %s;%d\n", co->XPKPackEncrypt, co->XPKPackEncryptEff);
-    fprintf(fh, "PackerCommand    = %s\n", co->PackerCommand);
-    fprintf(fh, "TransferWindow   = %d\n", co->TransferWindow);
+    fprintf(fh, "TempDir            = %s\n", co->TempDir);
+    fprintf(fh, "DetachDir          = %s\n", co->DetachDir);
+    fprintf(fh, "AttachDir          = %s\n", co->AttachDir);
+    fprintf(fh, "WBAppIcon          = %s\n", Bool2Txt(co->WBAppIcon));
+    fprintf(fh, "IconPosition       = %d;%d\n", co->IconPositionX, co->IconPositionY);
+    fprintf(fh, "AppIconText        = %s\n", co->AppIconText);
+    fprintf(fh, "DockyIcon          = %s\n", Bool2Txt(co->DockyIcon));
+    fprintf(fh, "IconifyOnQuit      = %s\n", Bool2Txt(co->IconifyOnQuit));
+    fprintf(fh, "Confirm            = %s\n", Bool2Txt(co->Confirm));
+    fprintf(fh, "ConfirmDelete      = %d\n", co->ConfirmDelete);
+    fprintf(fh, "RemoveAtOnce       = %s\n", Bool2Txt(co->RemoveAtOnce));
+    fprintf(fh, "XPKPack            = %s;%d\n", co->XPKPack, co->XPKPackEff);
+    fprintf(fh, "XPKPackEncrypt     = %s;%d\n", co->XPKPackEncrypt, co->XPKPackEncryptEff);
+    fprintf(fh, "PackerCommand      = %s\n", co->PackerCommand);
+    fprintf(fh, "ShowPackerProgress = %s\n", Bool2Txt(co->ShowPackerProgress));
+    fprintf(fh, "TransferWindow     = %d\n", co->TransferWindow);
 
     fprintf(fh, "\n[Look&Feel]\n");
     fprintf(fh, "Theme             = %s\n", co->ThemeName);
@@ -1408,6 +1409,7 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
             co->XPKPackEncryptEff = atoi(&value[5]);
           }
           else if(stricmp(buf, "PackerCommand") == 0)            strlcpy(co->PackerCommand, value, sizeof(co->PackerCommand));
+          else if(stricmp(buf, "ShowPackerProgress") == 0)       co->ShowPackerProgress = Txt2Bool(value);
           else if(stricmp(buf, "TransferWindow") == 0)           co->TransferWindow = atoi(value);
 
 /* Look&Feel */
@@ -2358,6 +2360,7 @@ void CO_GetConfig(void)
       CE->XPKPackEff        = GetMUINumer(gui->NB_PACKER);
       CE->XPKPackEncryptEff = GetMUINumer(gui->NB_ENCPACK);
       GetMUIString(CE->PackerCommand, gui->ST_ARCHIVER, sizeof(CE->PackerCommand));
+      CE->ShowPackerProgress = GetMUICheck(gui->CH_ARCHIVERPROGRESS);
       CE->TransferWindow = GetMUICycle  (gui->CY_TRANSWIN);
     }
     break;
@@ -2837,6 +2840,7 @@ void CO_SetConfig(void)
       setslider(gui->NB_PACKER, CE->XPKPackEff);
       setslider(gui->NB_ENCPACK, CE->XPKPackEncryptEff);
       setstring(gui->ST_ARCHIVER, CE->PackerCommand);
+      setcheckmark(gui->CH_ARCHIVERPROGRESS, CE->ShowPackerProgress);
 
       set(gui->CH_APPICONPOS, MUIA_Disabled, CE->WBAppIcon == FALSE);
       setcycle(gui->CY_TRANSWIN, CE->TransferWindow);
