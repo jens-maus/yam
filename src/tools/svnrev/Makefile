@@ -35,7 +35,7 @@ RM = rm -f
 OBJS = svnrev.o
 CFLAGS = -O3 -fomit-frame-pointer -W -Wall -Wno-unused-parameter -Wno-uninitialized
 
-ifeq ($(OS), os4)
+ifeq ($(HOST), AmigaOS4)
   # there is no SubVersion 1.7 for AmigaOS4 (yet), disable sqlite3 support
   CFLAGS += -DNOSQL
   LDLIBS += -lunix
