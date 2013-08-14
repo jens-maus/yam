@@ -796,322 +796,328 @@ enum LoadTreeResult FO_LoadTree(void)
   D(DBF_FOLDER, "load folder tree from file '%s'", dotFoldersPath);
 
   CreateFilename("Folders", foldersPath, sizeof(foldersPath));
-
-  if((fh = fopen(dotFoldersPath, "r")) != NULL)
+  if(CreateDirectory(foldersPath) == TRUE)
   {
-    char *buffer = NULL;
-    size_t size = 0;
-    ULONG version = 0;
-
-    setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
-
-    if(GetLine(&buffer, &size, fh) >= 3 && strncmp(buffer, "YFO", 3) == 0)
+    if((fh = fopen(dotFoldersPath, "r")) != NULL)
     {
-      version = atoi(&buffer[3]);
+      char *buffer = NULL;
+      size_t size = 0;
+      ULONG version = 0;
 
-      D(DBF_FOLDER, "found version V%ld folder tree file", version);
+      setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
-      if(version == 1)
+      if(GetLine(&buffer, &size, fh) >= 3 && strncmp(buffer, "YFO", 3) == 0)
       {
-	      LONG res;
-		
-        // ask the user if moving the folders is desired
-        res = MUI_Request(G->App, NULL, MUIF_NONE,
-                          tr(MSG_FOLDER_MOVE_WARNING_TITLE),
-                          tr(MSG_FOLDER_MOVE_WARNING_GADS),
-                          tr(MSG_FOLDER_MOVE_WARNING),
-                          G->MA_MailDir);
-	      if(res == 0)
-		    {
-          result = LTR_QuitYAM;
-		      goto failure;
-		    }
-	    }
+        version = atoi(&buffer[3]);
 
-      DoMethod(lv, MUIM_NListtree_Clear, NULL, 0);
-      set(lv, MUIA_NListtree_Quiet, TRUE);
-      while(GetLine(&buffer, &size, fh) >= 0)
-      {
-        if(strncmp(buffer, "@FOLDER", 7) == 0)
+        D(DBF_FOLDER, "found version V%ld folder tree file", version);
+
+        if(version == 1)
         {
-          struct Folder *fo;
+          LONG res;
 
-          if((fo = calloc(1, sizeof(*fo))) != NULL)
+          // ask the user if moving the folders is desired
+          res = MUI_Request(G->App, NULL, MUIF_NONE,
+                            tr(MSG_FOLDER_MOVE_WARNING_TITLE),
+                            tr(MSG_FOLDER_MOVE_WARNING_GADS),
+                            tr(MSG_FOLDER_MOVE_WARNING),
+                            G->MA_MailDir);
+          if(res == 0)
           {
-            InitFolder(fo, FT_CUSTOM);
-            strlcpy(fo->Name, Trim(&buffer[8]), sizeof(fo->Name));
+            result = LTR_QuitYAM;
+            goto failure;
+          }
+        }
 
-            GetLine(&buffer, &size, fh);
-            if(version == 1)
-            {
-              // V1 tree files might contain full folder path names in other locations than <MAILDIR>/Folders
-              strlcpy(fo->Path, StripMailDir(Trim(buffer)), sizeof(fo->Path));
-            }
-            else
-            {
-              // V2 tree files contain the directory name only
-              strlcpy(fo->Path, Trim(buffer), sizeof(fo->Path));
-            }
+        DoMethod(lv, MUIM_NListtree_Clear, NULL, 0);
+        set(lv, MUIA_NListtree_Quiet, TRUE);
+        while(GetLine(&buffer, &size, fh) >= 0)
+        {
+          if(strncmp(buffer, "@FOLDER", 7) == 0)
+          {
+            struct Folder *fo;
 
-            if((fo->messages = CreateMailList()) != NULL)
+            if((fo = calloc(1, sizeof(*fo))) != NULL)
             {
-              // set up the full path to the folder
-              BuildFolderPath(fo->Fullpath, FilePart(fo->Path), sizeof(fo->Fullpath));
+              InitFolder(fo, FT_CUSTOM);
+              strlcpy(fo->Name, Trim(&buffer[8]), sizeof(fo->Name));
 
+              GetLine(&buffer, &size, fh);
               if(version == 1)
               {
-                char v1path[SIZE_PATHFILE];
-
-                if(strchr(fo->Path, ':') != NULL)
-                {
-                  // the path is an absolute path already
-                  strlcpy(v1path, fo->Path, sizeof(v1path));
-                }
-                else
-                {
-                  // concatenate the default mail dir and the folder's relative path to an absolute path
-                  AddPath(v1path, G->MA_MailDir, fo->Path, sizeof(v1path));
-                }
-
-                // check if the new folder directory already exists
-                if(FileExists(fo->Fullpath) == TRUE)
-                {
-                  char path[SIZE_PATH];
-                  ULONG count;
-
-                  // create a new folder directory name by appending a unique number
-                  D(DBF_FOLDER, "directory '%s' already exists, creating new unique path", fo->Fullpath);
-                  strlcpy(path, fo->Fullpath, sizeof(path));
-                  count = 0;
-                  do
-                  {
-                    count++;
-                    snprintf(fo->Fullpath, sizeof(fo->Fullpath), "%s_%ld", path, count);
-                  }
-                  while(FileExists(fo->Fullpath) == TRUE);
-                }
-
-                D(DBF_FOLDER, "move folder contents from '%s' to '%s'", v1path, fo->Fullpath);
-                if(CreateDirectory(foldersPath) == TRUE)
-                  MoveDirectory(v1path, fo->Fullpath);
-
-                // use the unique directory name only as path from now on
-                strlcpy(fo->Path, FilePart(fo->Fullpath), sizeof(fo->Path));
+                // V1 tree files might contain full folder path names in other locations than <MAILDIR>/Folders
+                strlcpy(fo->Path, StripMailDir(Trim(buffer)), sizeof(fo->Path));
+              }
+              else
+              {
+                // V2 tree files contain the directory name only
+                strlcpy(fo->Path, Trim(buffer), sizeof(fo->Path));
               }
 
-              if(CreateDirectory(fo->Fullpath) == TRUE)
+              if((fo->messages = CreateMailList()) != NULL)
               {
-                struct FolderNode *fnode;
-                struct MUI_NListtree_TreeNode *tn;
+                // set up the full path to the folder
+                BuildFolderPath(fo->Fullpath, FilePart(fo->Path), sizeof(fo->Fullpath));
 
-                // if there doesn't exist any .fconfig configuration in the folder
-                // we do have to generate it and we do that by analyzing its name,
-                // comparing it to the default folder names we know.
-                if(FO_LoadConfig(fo) == FALSE)
+                if(version == 1)
                 {
-                  char *folderpath = (char *)FilePart(fo->Path);
+                  char v1path[SIZE_PATHFILE];
 
-                  // check if this is a so-called "standard" folder (INCOMING/OUTGOING etc.)
-                  if(stricmp(folderpath, FolderName[FT_INCOMING]) == 0)
-                    fo->Type = FT_INCOMING;
-                  else if(stricmp(folderpath, FolderName[FT_OUTGOING]) == 0)
-                    fo->Type = FT_OUTGOING;
-                  else if(stricmp(folderpath, FolderName[FT_SENT]) == 0)
-                    fo->Type = FT_SENT;
-                  else if(stricmp(folderpath, FolderName[FT_TRASH]) == 0)
-                    fo->Type = FT_TRASH;
-                  else if(C->SpamFilterEnabled == TRUE && stricmp(folderpath, FolderName[FT_SPAM]) == 0)
-                    fo->Type = FT_SPAM;
-                  else if(stricmp(folderpath, FolderName[FT_DRAFTS]) == 0)
-                    fo->Type = FT_DRAFTS;
+                  if(strchr(fo->Path, ':') != NULL)
+                  {
+                    // the path is an absolute path already
+                    strlcpy(v1path, fo->Path, sizeof(v1path));
+                  }
+                  else
+                  {
+                    // concatenate the default mail dir and the folder's relative path to an absolute path
+                    AddPath(v1path, G->MA_MailDir, fo->Path, sizeof(v1path));
+                  }
 
-                  // Save the config now because it could be changed in the meantime
-                  if(FO_SaveConfig(fo) == FALSE)
+                  // check if the new folder directory already exists
+                  if(FileExists(fo->Fullpath) == TRUE)
+                  {
+                    char path[SIZE_PATH];
+                    ULONG count;
+
+                    // create a new folder directory name by appending a unique number
+                    D(DBF_FOLDER, "directory '%s' already exists, creating new unique path", fo->Fullpath);
+                    strlcpy(path, fo->Fullpath, sizeof(path));
+                    count = 0;
+                    do
+                    {
+                      count++;
+                      snprintf(fo->Fullpath, sizeof(fo->Fullpath), "%s_%ld", path, count);
+                    }
+                    while(FileExists(fo->Fullpath) == TRUE);
+                  }
+
+                  D(DBF_FOLDER, "move folder contents from '%s' to '%s'", v1path, fo->Fullpath);
+                  MoveDirectory(v1path, fo->Fullpath);
+
+                  // use the unique directory name only as path from now on
+                  strlcpy(fo->Path, FilePart(fo->Fullpath), sizeof(fo->Path));
+                }
+
+                if(CreateDirectory(fo->Fullpath) == TRUE)
+                {
+                  struct FolderNode *fnode;
+                  struct MUI_NListtree_TreeNode *tn;
+
+                  // if there doesn't exist any .fconfig configuration in the folder
+                  // we do have to generate it and we do that by analyzing its name,
+                  // comparing it to the default folder names we know.
+                  if(FO_LoadConfig(fo) == FALSE)
+                  {
+                    char *folderpath = (char *)FilePart(fo->Path);
+
+                    // check if this is a so-called "standard" folder (INCOMING/OUTGOING etc.)
+                    if(stricmp(folderpath, FolderName[FT_INCOMING]) == 0)
+                      fo->Type = FT_INCOMING;
+                    else if(stricmp(folderpath, FolderName[FT_OUTGOING]) == 0)
+                      fo->Type = FT_OUTGOING;
+                    else if(stricmp(folderpath, FolderName[FT_SENT]) == 0)
+                      fo->Type = FT_SENT;
+                    else if(stricmp(folderpath, FolderName[FT_TRASH]) == 0)
+                      fo->Type = FT_TRASH;
+                    else if(C->SpamFilterEnabled == TRUE && stricmp(folderpath, FolderName[FT_SPAM]) == 0)
+                      fo->Type = FT_SPAM;
+                    else if(stricmp(folderpath, FolderName[FT_DRAFTS]) == 0)
+                      fo->Type = FT_DRAFTS;
+
+                    // Save the config now because it could be changed in the meantime
+                    if(FO_SaveConfig(fo) == FALSE)
+                    {
+                      FreeFolder(fo);
+                      goto failure;
+                    }
+                  }
+
+                  fo->SortIndex = i++;
+                  fo->ImageIndex = j;
+
+                  // now we load the folder images if they exists
+                  if(FO_LoadFolderImage(fo) == TRUE)
+                  {
+                    j++;
+                  }
+                  else
+                  {
+                    // the new/unread statistics are still at zero, so this will result
+                    // in the "no new mails" images
+                    FO_SetFolderImage(fo);
+                  }
+
+                  LockFolderList(G->folders);
+                  fnode = AddNewFolderNode(G->folders, fo);
+                  UnlockFolderList(G->folders);
+
+                  // now we add this folder to the folder listtree
+                  if(fnode == NULL ||
+                     (tn = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_Insert, fo->Name, fnode, tn_root, MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE)) == NULL)
                   {
                     FreeFolder(fo);
                     goto failure;
                   }
+
+                  // remember the treenode and folder root
+                  fo->Treenode = tn;
+                  fo->parent = fnode_root;
                 }
-
-                fo->SortIndex = i++;
-                fo->ImageIndex = j;
-
-                // now we load the folder images if they exists
-                if(FO_LoadFolderImage(fo) == TRUE)
-                {
-                  j++;
-                }
-                else
-                {
-                  // the new/unread statistics are still at zero, so this will result
-                  // in the "no new mails" images
-                  FO_SetFolderImage(fo);
-                }
-
-                LockFolderList(G->folders);
-                fnode = AddNewFolderNode(G->folders, fo);
-                UnlockFolderList(G->folders);
-
-                // now we add this folder to the folder listtree
-                if(fnode == NULL ||
-                   (tn = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_Insert, fo->Name, fnode, tn_root, MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE)) == NULL)
-                {
-                  FreeFolder(fo);
-                  goto failure;
-                }
-
-                // remember the treenode and folder root
-                fo->Treenode = tn;
-                fo->parent = fnode_root;
               }
-            }
-            else
-            {
-              FreeFolder(fo);
-              goto failure;
-            }
+              else
+              {
+                FreeFolder(fo);
+                goto failure;
+              }
 
-            // skip all lines until we find the folder end marker
-            do
-            {
-              if(strcmp(buffer, "@ENDFOLDER") == 0)
-                break;
+              // skip all lines until we find the folder end marker
+              do
+              {
+                if(strcmp(buffer, "@ENDFOLDER") == 0)
+                  break;
+              }
+              while(GetLine(&buffer, &size, fh) >= 0);
             }
-            while(GetLine(&buffer, &size, fh) >= 0);
           }
-        }
-        else if(strncmp(buffer, "@SEPARATOR", 10) == 0)
-        {
-          struct Folder *fo;
-
-          if((fo = calloc(1, sizeof(*fo))) != NULL)
+          else if(strncmp(buffer, "@SEPARATOR", 10) == 0)
           {
-            long tnflags = TNF_LIST;
-            struct FolderNode *fnode;
-            struct MUI_NListtree_TreeNode *tn;
+            struct Folder *fo;
 
-            // SEPARATOR support is obsolete since the folder hierachical order
-            // that's why we handle SEPARATORs as GROUPs now for backward compatibility
-            InitFolder(fo, FT_GROUP);
-            strlcpy(fo->Name, Trim(&buffer[11]), sizeof(fo->Name));
-            do
+            if((fo = calloc(1, sizeof(*fo))) != NULL)
             {
-              if(strcmp(buffer, "@ENDSEPARATOR") == 0)
-                break;
+              long tnflags = TNF_LIST;
+              struct FolderNode *fnode;
+              struct MUI_NListtree_TreeNode *tn;
+
+              // SEPARATOR support is obsolete since the folder hierachical order
+              // that's why we handle SEPARATORs as GROUPs now for backward compatibility
+              InitFolder(fo, FT_GROUP);
+              strlcpy(fo->Name, Trim(&buffer[11]), sizeof(fo->Name));
+              do
+              {
+                if(strcmp(buffer, "@ENDSEPARATOR") == 0)
+                  break;
+              }
+              while(GetLine(&buffer, &size, fh) >= 0);
+              fo->SortIndex = i++;
+
+              LockFolderList(G->folders);
+              fnode = AddNewFolderNode(G->folders, fo);
+              UnlockFolderList(G->folders);
+
+              if(fnode == NULL ||
+                 (tn = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_Insert, fo->Name, fnode, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags)) == NULL)
+              {
+                FreeFolder(fo);
+                goto failure;
+              }
+
+              // remember the treenode and folder root
+              fo->Treenode = tn;
+              fo->parent = NULL;
             }
-            while(GetLine(&buffer, &size, fh) >= 0);
-            fo->SortIndex = i++;
-
-            LockFolderList(G->folders);
-            fnode = AddNewFolderNode(G->folders, fo);
-            UnlockFolderList(G->folders);
-
-            if(fnode == NULL ||
-               (tn = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_Insert, fo->Name, fnode, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags)) == NULL)
-            {
-              FreeFolder(fo);
-              goto failure;
-            }
-
-            // remember the treenode and folder root
-            fo->Treenode = tn;
-            fo->parent = NULL;
           }
-        }
-        else if(strncmp(buffer, "@GROUP", 6) == 0)
-        {
-          struct Folder *fo;
-
-          if((fo = calloc(1, sizeof(*fo))) != NULL)
+          else if(strncmp(buffer, "@GROUP", 6) == 0)
           {
-            long tnflags = TNF_LIST;
-            struct FolderNode *fnode;
+            struct Folder *fo;
 
-            InitFolder(fo, FT_GROUP);
-            strlcpy(fo->Name, Trim(&buffer[7]), sizeof(fo->Name));
-
-            // now we check if the node should be open or not
-            if(GetLine(&buffer, &size, fh) >= 0)
+            if((fo = calloc(1, sizeof(*fo))) != NULL)
             {
-              // if it is greater zero then the node should be displayed open
-              if(atoi(buffer) > 0)
-                setFlag(tnflags, TNF_OPEN);
+              long tnflags = TNF_LIST;
+              struct FolderNode *fnode;
+
+              InitFolder(fo, FT_GROUP);
+              strlcpy(fo->Name, Trim(&buffer[7]), sizeof(fo->Name));
+
+              // now we check if the node should be open or not
+              if(GetLine(&buffer, &size, fh) >= 0)
+              {
+                // if it is greater zero then the node should be displayed open
+                if(atoi(buffer) > 0)
+                  setFlag(tnflags, TNF_OPEN);
+              }
+
+              LockFolderList(G->folders);
+              fnode = AddNewFolderNode(G->folders, fo);
+              UnlockFolderList(G->folders);
+
+              // now we are going to add this treenode to the list
+              if(fnode == NULL ||
+                 (tn_root = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_Insert, fo->Name, fnode, tn_root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags)) == NULL)
+              {
+                FreeFolder(fo);
+                goto failure;
+              }
+
+              // remember the treenode and folder parent
+              fo->Treenode = tn_root;
+              fo->parent = fnode_root;
+
+              // set the new parent folder to this one
+              fnode_root = fnode;
+
+              nested++;
             }
+          }
+          else if(strcmp(buffer,"@ENDGROUP") == 0)
+          {
+            nested--;
 
-            LockFolderList(G->folders);
-            fnode = AddNewFolderNode(G->folders, fo);
-            UnlockFolderList(G->folders);
-
-            // now we are going to add this treenode to the list
-            if(fnode == NULL ||
-               (tn_root = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_Insert, fo->Name, fnode, tn_root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags)) == NULL)
+            // now we check if the nested is zero and if yes then we set tn_root = MUIV_NListtree_Insert_ListNode_Root
+            // otherwise we go back to the root of the root
+            if(nested == 0)
             {
-              FreeFolder(fo);
-              goto failure;
-            }
-
-            // remember the treenode and folder parent
-            fo->Treenode = tn_root;
-            fo->parent = fnode_root;
-
-            // set the new parent folder to this one
-            fnode_root = fnode;
-
-            nested++;
-          }
-        }
-        else if(strcmp(buffer,"@ENDGROUP") == 0)
-        {
-          nested--;
-
-          // now we check if the nested is zero and if yes then we set tn_root = MUIV_NListtree_Insert_ListNode_Root
-          // otherwise we go back to the root of the root
-          if(nested == 0)
-          {
-            tn_root = MUIV_NListtree_Insert_ListNode_Root;
-            fnode_root = NULL;
-          }
-          else
-          {
-            tn_root = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, tn_root, MUIV_NListtree_GetEntry_Position_Parent, MUIF_NONE);
-            if(tn_root != NULL)
-              fnode_root = (struct FolderNode *)tn_root->tn_User;
-            else
+              tn_root = MUIV_NListtree_Insert_ListNode_Root;
               fnode_root = NULL;
+            }
+            else
+            {
+              tn_root = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, tn_root, MUIV_NListtree_GetEntry_Position_Parent, MUIF_NONE);
+              if(tn_root != NULL)
+                fnode_root = (struct FolderNode *)tn_root->tn_User;
+              else
+                fnode_root = NULL;
+            }
           }
         }
+
+        xset(lv, MUIA_NListtree_Active, MUIV_NListtree_Active_FirstVisible,
+                 MUIA_NListtree_Quiet,  FALSE);
+
+        result = LTR_Success;
       }
 
-      xset(lv, MUIA_NListtree_Active, MUIV_NListtree_Active_FirstVisible,
-               MUIA_NListtree_Quiet,  FALSE);
-
-      result = LTR_Success;
-    }
-
 failure:
-    fclose(fh);
+      fclose(fh);
 
-    free(buffer);
+      free(buffer);
 
-    // in case of an error we didn't leave the loop above in a normal fashion and hence have to
-    // revert the listtree's quiet state
-    if(result == LTR_Failure)
-      set(lv, MUIA_NListtree_Quiet,  FALSE);
+      // in case of an error we didn't leave the loop above in a normal fashion and hence have to
+      // revert the listtree's quiet state
+      if(result == LTR_Failure)
+        set(lv, MUIA_NListtree_Quiet,  FALSE);
 
-    // save the new V2 tree file in case we just successfully loaded a V1 tree file
-    if(result == LTR_Success && version == 1)
+      // save the new V2 tree file in case we just successfully loaded a V1 tree file
+      if(result == LTR_Success && version == 1)
+      {
+        D(DBF_FOLDER, "save V2 folder tree file");
+        FO_SaveTree();
+      }
+    }
+    else
+      E(DBF_FOLDER, "failed to open folder tree file '%s'", dotFoldersPath);
+
+    // if the nest count is still greater zero we have a misconfiguration
+    if(result == LTR_Success && nested > 0)
     {
-      D(DBF_FOLDER, "save V2 folder tree file");
-      FO_SaveTree();
+      E(DBF_FOLDER, "malformed folder tree file '%s', nest counter %ld", dotFoldersPath, nested);
+      result = LTR_Failure;
     }
   }
   else
-    E(DBF_FOLDER, "failed to open folder tree file '%s'", dotFoldersPath);
-
-  // if the nest count is still greater zero we have a misconfiguration
-  if(result == LTR_Success && nested > 0)
   {
-    E(DBF_FOLDER, "malformed folder tree file '%s', nest counter %ld", dotFoldersPath, nested);
+    E(DBF_FOLDER, "failed to create '%s' directory", foldersPath);
     result = LTR_Failure;
   }
 
