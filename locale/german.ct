@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.19 (14.08.2013)
+## version $VER: YAM.catalog 8.20 (14.08.2013)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -1636,12 +1636,10 @@ Speichern/Löschen von Nachrichten
 ; Save/delete messages
 ;
 MSG_CO_ConfirmDelPart1
-_Löschen bestätigen ab
-; Confirm _deletion of
+_Löschen ab
 ;
 MSG_CO_ConfirmDelPart2
-Nachrichten
-; or more messages
+Nachrichten bestätigen
 ;
 MSG_CO_Remove
 Nachrichten sofort _entfernen
