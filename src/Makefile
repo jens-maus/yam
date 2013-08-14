@@ -861,7 +861,7 @@ svnrev.h: $(SVNREV)/svnrev
 	@$(SVNREV)/svnrev -o$@ *.c *.h *.l $(MUIDIR)/*.c $(REXXDIR)/*.c $(MIMEDIR)/*.c $(MIMEDIR)/*.h $(TCPDIR)/*.c $(TCPDIR)/*.h $(EXTRADIR)/*.c $(EXTRADIR)/*.h $(LOCALE)/*.cd $(LOCALE)/*.ct
 
 $(SVNREV)/svnrev: $(SVNREV)/svnrev.c $(SVNREV)/svnrev.h
-	@$(MAKE) -C $(SVNREV) OS=$(OS)
+	@$(MAKE) -C $(SVNREV) HOST=$(HOST)
 
 ## CATALOG GENERATION #################
 
