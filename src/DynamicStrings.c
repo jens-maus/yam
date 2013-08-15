@@ -30,46 +30,47 @@
 
 #include "YAM_stringsizes.h"
 
-#include "StrBuf.h"
+#include "DynamicStrings.h"
+
 #include "Debug.h"
 
-struct StrBuf
+struct DynamicString
 {
   size_t size;    // the allocated memory size for the string
   size_t length;  // the current string length
   char string[0]; // the string itsefl
 };
 
-// some macros to make the conversion between (char *) and (struct StrBuf *) easier
-#define STR_TO_STRBUF(ptr)    (struct StrBuf *)(((size_t)(ptr)) - sizeof(struct StrBuf))
-#define STRBUF_TO_STR(strbuf) (&(strbuf)->string[0])
+// some macros to make the conversion between (char *) and (struct DynamicString *) easier
+#define STR_TO_DSTR(str)    (struct DynamicString *)(((size_t)(str)) - sizeof(struct DynamicString))
+#define DSTR_TO_STR(dstr)   (&(dstr)->string[0])
 
-/// AllocStrBufInternal
+/// dallocInternal
 // allocates a dynamic buffer
-static struct StrBuf *AllocStrBufInternal(size_t size)
+static struct DynamicString *dallocInternal(size_t size)
 {
-  struct StrBuf *strbuf;
+  struct DynamicString *dstr;
 
   ENTER();
 
-  if((strbuf = malloc(sizeof(struct StrBuf) + size)) != NULL)
+  if((dstr = malloc(sizeof(*dstr) + size)) != NULL)
   {
-    strbuf->size = size;
-    strbuf->length = 0;
-    strbuf->string[0] = '\0';
+    dstr->size = size;
+    dstr->length = 0;
+    dstr->string[0] = '\0';
   }
 
-  RETURN(strbuf);
-  return strbuf;
+  RETURN(dstr);
+  return dstr;
 }
 
 ///
-/// AllocStrBuf
-//  Allocates a dynamic buffer with a given initial size
-char *AllocStrBuf(size_t initsize)
+/// dalloc
+// allocates a dynamic buffer with a given initial size
+char *dalloc(size_t initsize)
 {
   char *result = NULL;
-  struct StrBuf *strbuf;
+  struct DynamicString *dstr;
   size_t size;
 
   ENTER();
@@ -79,9 +80,9 @@ char *AllocStrBuf(size_t initsize)
   while(size <= initsize)
     size += SIZE_DEFAULT;
 
-  if((strbuf = AllocStrBufInternal(size)) != NULL)
+  if((dstr = dallocInternal(size)) != NULL)
   {
-    result = STRBUF_TO_STR(strbuf);
+    result = DSTR_TO_STR(dstr);
   }
 
   RETURN(result);
@@ -89,30 +90,30 @@ char *AllocStrBuf(size_t initsize)
 }
 
 ///
-/// ResetStrBuf
-//  Reset a dynamic string
-void ResetStrBuf(char *buf)
+/// dreset
+// reset a dynamic string
+void dreset(char *str)
 {
   ENTER();
 
-  if(buf != NULL)
+  if(str != NULL)
   {
-    struct StrBuf *strbuf = STR_TO_STRBUF(buf);
+    struct DynamicString *dstr = STR_TO_DSTR(str);
 
-    strbuf->length = 0;
-    strbuf->string[0] = '\0';
+    dstr->length = 0;
+    dstr->string[0] = '\0';
   }
 
   LEAVE();
 }
 
 ///
-/// StrBufCpy
-//  Fills a dynamic buffer and returns the length of the string
-size_t StrBufCpy(char **buf, const char *source)
+/// dstrcpy
+// fills a dynamic buffer and returns the length of the string
+size_t dstrcpy(char **str, const char *source)
 {
   size_t reqsize;
-  struct StrBuf *strbuf;
+  struct DynamicString *dstr;
 
   ENTER();
 
@@ -121,11 +122,11 @@ size_t StrBufCpy(char **buf, const char *source)
   else
     reqsize = 0;
 
-  // if our strbuf is NULL we have to allocate a new buffer
-  if(*buf == NULL)
+  // if our dstr is NULL we have to allocate a new buffer
+  if(*str == NULL)
   {
-    if((strbuf = AllocStrBufInternal(reqsize+1)) != NULL)
-      *buf = STRBUF_TO_STR(strbuf);
+    if((dstr = dallocInternal(reqsize+1)) != NULL)
+      *str = DSTR_TO_STR(dstr);
     else
       reqsize = 0;
   }
@@ -134,8 +135,8 @@ size_t StrBufCpy(char **buf, const char *source)
     size_t oldsize;
     size_t newsize;
 
-    strbuf = STR_TO_STRBUF(*buf);
-    oldsize = strbuf->size;
+    dstr = STR_TO_DSTR(*str);
+    oldsize = dstr->size;
     newsize = oldsize;
 
     // make sure we allocate in SIZE_DEFAULT chunks
@@ -145,14 +146,14 @@ size_t StrBufCpy(char **buf, const char *source)
     // if we have to change the size do it now
     if(newsize > oldsize)
     {
-      struct StrBuf *newstrbuf;
+      struct DynamicString *newdstr;
 
       // allocate a new buffer and replace the old one with it
-      if((newstrbuf = AllocStrBufInternal(newsize+1)) != NULL)
+      if((newdstr = dallocInternal(newsize+1)) != NULL)
       {
-        free(strbuf);
-        strbuf = newstrbuf;
-        *buf = STRBUF_TO_STR(strbuf);
+        free(dstr);
+        dstr = newdstr;
+        *str = DSTR_TO_STR(dstr);
       }
       else
       {
@@ -164,10 +165,7 @@ size_t StrBufCpy(char **buf, const char *source)
   // do a string copy into the new buffer
   if(reqsize > 0)
   {
-    size_t copied;
-
-    copied = strlcpy(strbuf->string, source, strbuf->size);
-    strbuf->length = copied;
+    dstr->length = strlcpy(dstr->string, source, dstr->size);
   }
 
   RETURN(reqsize);
@@ -175,13 +173,13 @@ size_t StrBufCpy(char **buf, const char *source)
 }
 
 ///
-/// StrBufCat
-//  String concatenation using a dynamic buffer and return the length of the string
-size_t StrBufCat(char **buf, const char *source)
+/// dstrcat
+// string concatenation using a dynamic buffer and return the length of the string
+size_t dstrcat(char **str, const char *source)
 {
   size_t srcsize;
   size_t reqsize;
-  struct StrBuf *strbuf;
+  struct DynamicString *dstr;
 
   ENTER();
 
@@ -192,11 +190,11 @@ size_t StrBufCat(char **buf, const char *source)
 
   reqsize = srcsize;
 
-  // if our strbuf is NULL we have to allocate a new buffer
-  if(*buf == NULL)
+  // if our dstr is NULL we have to allocate a new buffer
+  if(*str == NULL)
   {
-    if((strbuf = AllocStrBufInternal(reqsize+1)) != NULL)
-      *buf = STRBUF_TO_STR(strbuf);
+    if((dstr = dallocInternal(reqsize+1)) != NULL)
+      *str = DSTR_TO_STR(dstr);
     else
       srcsize = 0;
   }
@@ -205,13 +203,13 @@ size_t StrBufCat(char **buf, const char *source)
     size_t oldsize;
     size_t newsize;
 
-    strbuf = STR_TO_STRBUF(*buf);
-    oldsize = strbuf->size;
+    dstr = STR_TO_DSTR(*str);
+    oldsize = dstr->size;
     newsize = oldsize;
 
     // increase required size by the content length of
-    // the old strbuf
-    reqsize += strbuf->length;
+    // the old dstr
+    reqsize += dstr->length;
 
     // make sure we allocate in SIZE_DEFAULT chunks
     while(newsize <= reqsize)
@@ -220,16 +218,16 @@ size_t StrBufCat(char **buf, const char *source)
     // if we have to change the size do it now
     if(newsize > oldsize)
     {
-      struct StrBuf *newstrbuf;
+      struct DynamicString *newdstr;
 
       // allocate a new buffer and replace the old one with it
-      if((newstrbuf = AllocStrBufInternal(newsize+1)) != NULL)
+      if((newdstr = dallocInternal(newsize+1)) != NULL)
       {
-        newstrbuf->length = strbuf->length;
-        memmove(newstrbuf->string, strbuf->string, strbuf->length+1);
-        free(strbuf);
-        strbuf = newstrbuf;
-        *buf = STRBUF_TO_STR(strbuf);
+        newdstr->length = dstr->length;
+        memmove(newdstr->string, dstr->string, dstr->length+1);
+        free(dstr);
+        dstr = newdstr;
+        *str = DSTR_TO_STR(dstr);
       }
       else
       {
@@ -241,11 +239,8 @@ size_t StrBufCat(char **buf, const char *source)
   // do a string concatenation into the new buffer
   if(srcsize > 0)
   {
-    size_t copied;
-
     // use strlcpy() instead of strlcat() because we keep track of the current string length
-    copied = strlcpy(&strbuf->string[strbuf->length], source, strbuf->size - strbuf->length);
-    strbuf->length += copied;
+    dstr->length += strlcpy(&dstr->string[dstr->length], source, dstr->size - dstr->length);
   }
 
   RETURN(reqsize);
@@ -253,19 +248,19 @@ size_t StrBufCat(char **buf, const char *source)
 }
 
 ///
-/// StrBufLength
+/// dstrlen
 // return the current length of a dynamic string buffer without calculation
-size_t StrBufLength(char *buf)
+size_t dstrlen(char *str)
 {
   size_t length = 0;
 
   ENTER();
 
-  if(buf != NULL)
+  if(str != NULL)
   {
-    struct StrBuf *strbuf = STR_TO_STRBUF(buf);
+    struct DynamicString *dstr = STR_TO_DSTR(str);
 
-    length = strbuf->length;
+    length = dstr->length;
   }
 
   RETURN(length);
@@ -273,38 +268,38 @@ size_t StrBufLength(char *buf)
 }
 
 ///
-/// StrBufRead
+/// dread
 // read the given amount of bytes from a file and place them in the dynamic string
-size_t StrBufRead(char **buf, FILE *fh, size_t size)
+size_t dread(char **str, FILE *fh, size_t size)
 {
   size_t nread = 0;
-  struct StrBuf *strbuf;
+  struct DynamicString *dstr;
 
   ENTER();
 
-  if(*buf == NULL)
+  if(*str == NULL)
   {
-    if((strbuf = AllocStrBufInternal(size+1)) != NULL)
-      *buf = STRBUF_TO_STR(strbuf);
+    if((dstr = dallocInternal(size+1)) != NULL)
+      *str = DSTR_TO_STR(dstr);
     else
       size = 0;
   }
   else
   {
-    strbuf = STR_TO_STRBUF(*buf);
+    dstr = STR_TO_DSTR(*str);
 
     // make sure the string buffer is large enough to keep the
     // requested amount of characters
-    if(strbuf->size < size+1)
+    if(dstr->size < size+1)
     {
-      struct StrBuf *newstrbuf;
+      struct DynamicString *newdstr;
 
       // allocate a new buffer and replace the old one with it
-      if((newstrbuf = AllocStrBufInternal(size+1)) != NULL)
+      if((newdstr = dallocInternal(size+1)) != NULL)
       {
-        free(strbuf);
-        strbuf = newstrbuf;
-        *buf = STRBUF_TO_STR(strbuf);
+        free(dstr);
+        dstr = newdstr;
+        *str = DSTR_TO_STR(dstr);
       }
       else
       {
@@ -316,9 +311,9 @@ size_t StrBufRead(char **buf, FILE *fh, size_t size)
   if(size != 0)
   {
     // finally read the characters from the file and NUL terminate the string
-    nread = fread(strbuf->string, 1, size, fh);
-    strbuf->length = size;
-    strbuf->string[size] = '\0';
+    nread = fread(dstr->string, 1, size, fh);
+    dstr->length = size;
+    dstr->string[size] = '\0';
   }
 
   RETURN(nread);
@@ -326,17 +321,17 @@ size_t StrBufRead(char **buf, FILE *fh, size_t size)
 }
 
 ///
-/// FreeStrBuf
+/// dfree
 // free a dynamic string buffer
-void FreeStrBuf(char *buf)
+void dfree(char *str)
 {
   ENTER();
 
-  if(buf != NULL)
+  if(str != NULL)
   {
-    struct StrBuf *strbuf = STR_TO_STRBUF(buf);
+    struct DynamicString *dstr = STR_TO_DSTR(str);
 
-    free(strbuf);
+    free(dstr);
   }
 
   LEAVE();

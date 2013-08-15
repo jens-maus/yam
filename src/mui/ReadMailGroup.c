@@ -52,8 +52,9 @@
 #include "YAM_read.h"
 
 #include "Busy.h"
-#include "HTML2Mail.h"
+#include "DynamicStrings.h"
 #include "FileInfo.h"
+#include "HTML2Mail.h"
 #include "Locale.h"
 #include "Logfile.h"
 #include "MethodStack.h"
@@ -61,7 +62,6 @@
 #include "MUIObjects.h"
 #include "ParseEmail.h"
 #include "Requesters.h"
-#include "StrBuf.h"
 #include "Timer.h"
 #include "UserIdentity.h"
 
@@ -1022,9 +1022,9 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
 
       // free the parsed text afterwards as the texteditor has copied it anyway.
       if(rmData->useTextstyles == TRUE || rmData->useTextcolors == TRUE)
-        FreeStrBuf(body);
+        dfree(body);
 
-      FreeStrBuf(cmsg);
+      dfree(cmsg);
 
       // start the macro
       if(rmData->readWindow != NULL)
@@ -1225,72 +1225,72 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
 
         if(*ab->RealName != '\0' && (newNode = AllocHeaderNode()) != NULL)
         {
-          StrBufCpy(&newNode->name, MUIX_I);
-          StrBufCat(&newNode->name, StripUnderscore(tr(MSG_EA_RealName)));
-          StrBufCpy(&newNode->content, ab->RealName);
+          dstrcpy(&newNode->name, MUIX_I);
+          dstrcat(&newNode->name, StripUnderscore(tr(MSG_EA_RealName)));
+          dstrcpy(&newNode->content, ab->RealName);
           AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
           DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
         }
 
         if(*ab->Street != '\0' && (newNode = AllocHeaderNode()) != NULL)
         {
-          StrBufCpy(&newNode->name, MUIX_I);
-          StrBufCat(&newNode->name, StripUnderscore(tr(MSG_EA_Street)));
-          StrBufCpy(&newNode->content, ab->Street);
+          dstrcpy(&newNode->name, MUIX_I);
+          dstrcat(&newNode->name, StripUnderscore(tr(MSG_EA_Street)));
+          dstrcpy(&newNode->content, ab->Street);
           AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
           DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
         }
 
         if(*ab->City != '\0' && (newNode = AllocHeaderNode()) != NULL)
         {
-          StrBufCpy(&newNode->name, MUIX_I);
-          StrBufCat(&newNode->name, StripUnderscore(tr(MSG_EA_City)));
-          StrBufCpy(&newNode->content, ab->City);
+          dstrcpy(&newNode->name, MUIX_I);
+          dstrcat(&newNode->name, StripUnderscore(tr(MSG_EA_City)));
+          dstrcpy(&newNode->content, ab->City);
           AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
           DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
         }
 
         if(*ab->Country != '\0' && (newNode = AllocHeaderNode()) != NULL)
         {
-          StrBufCpy(&newNode->name, MUIX_I);
-          StrBufCat(&newNode->name, StripUnderscore(tr(MSG_EA_Country)));
-          StrBufCpy(&newNode->content, ab->Country);
+          dstrcpy(&newNode->name, MUIX_I);
+          dstrcat(&newNode->name, StripUnderscore(tr(MSG_EA_Country)));
+          dstrcpy(&newNode->content, ab->Country);
           AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
           DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
         }
 
         if(*ab->Phone != '\0' && (newNode = AllocHeaderNode()) != NULL)
         {
-          StrBufCpy(&newNode->name, MUIX_I);
-          StrBufCat(&newNode->name, StripUnderscore(tr(MSG_EA_Phone)));
-          StrBufCpy(&newNode->content, ab->Phone);
+          dstrcpy(&newNode->name, MUIX_I);
+          dstrcat(&newNode->name, StripUnderscore(tr(MSG_EA_Phone)));
+          dstrcpy(&newNode->content, ab->Phone);
           AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
           DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
         }
 
         if(AB_ExpandBD(ab->BirthDay, dateStr, sizeof(dateStr)) == TRUE && (newNode = AllocHeaderNode()) != NULL)
         {
-          StrBufCpy(&newNode->name, MUIX_I);
-          StrBufCat(&newNode->name, StripUnderscore(tr(MSG_EA_DOB)));
-          StrBufCpy(&newNode->content, dateStr);
+          dstrcpy(&newNode->name, MUIX_I);
+          dstrcat(&newNode->name, StripUnderscore(tr(MSG_EA_DOB)));
+          dstrcpy(&newNode->content, dateStr);
           AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
           DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
         }
 
         if(*ab->Comment != '\0' && (newNode = AllocHeaderNode()) != NULL)
         {
-          StrBufCpy(&newNode->name, MUIX_I);
-          StrBufCat(&newNode->name, StripUnderscore(tr(MSG_EA_Description)));
-          StrBufCpy(&newNode->content, ab->Comment);
+          dstrcpy(&newNode->name, MUIX_I);
+          dstrcat(&newNode->name, StripUnderscore(tr(MSG_EA_Description)));
+          dstrcpy(&newNode->content, ab->Comment);
           AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
           DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
         }
 
         if(*ab->Homepage != '\0' && (newNode = AllocHeaderNode()) != NULL)
         {
-          StrBufCpy(&newNode->name, MUIX_I);
-          StrBufCat(&newNode->name, StripUnderscore(tr(MSG_EA_Homepage)));
-          StrBufCpy(&newNode->content, ab->Homepage);
+          dstrcpy(&newNode->name, MUIX_I);
+          dstrcat(&newNode->name, StripUnderscore(tr(MSG_EA_Homepage)));
+          dstrcpy(&newNode->content, ab->Homepage);
           AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
           DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
         }

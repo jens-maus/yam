@@ -39,8 +39,8 @@
 #include "YAM_utilities.h"
 
 #include "Busy.h"
+#include "DynamicStrings.h"
 #include "MUIObjects.h"
-#include "StrBuf.h"
 
 #include "mui/ImageArea.h"
 #include "mui/FolderListtree.h"
@@ -103,13 +103,13 @@ static void GetFolderInfo(struct Data *data, struct Folder *folder)
       dst[1] = '\0';
     }
 
-    StrBufCat(&info, dst);
+    dstrcat(&info, dst);
   }
 
   if(info != NULL)
   {
     strlcpy(data->folderInfo, info, sizeof(data->folderInfo));
-    FreeStrBuf(info);
+    dfree(info);
   }
   else
     data->folderInfo[0] = '\0';

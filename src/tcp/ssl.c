@@ -58,11 +58,11 @@
 #include "YAM_error.h"
 #include "YAM_utilities.h"
 
+#include "DynamicStrings.h"
 #include "FileInfo.h"
 #include "Locale.h"
 #include "MailServers.h"
 #include "Requesters.h"
-#include "StrBuf.h"
 
 #include "tcp/Connection.h"
 #include "tcp/ssl.h"
@@ -444,7 +444,7 @@ static int GetCertFingerprint(const struct Certificate *cert, char *digest)
 // extract a readable string of all issuers DNAME information
 static char *ExtractReadableDN(X509_NAME *dname)
 {
-  char *result = AllocStrBuf(SIZE_DEFAULT);
+  char *result = dalloc(SIZE_DEFAULT);
   int n;
   int flag = 0;
   const ASN1_OBJECT * const cname = OBJ_nid2obj(NID_commonName);
@@ -462,9 +462,9 @@ static char *ExtractReadableDN(X509_NAME *dname)
        (!flag && n == 1))
     {
       if(flag++)
-        StrBufCat(&result, ", ");
+        dstrcat(&result, ", ");
 
-      StrBufCat(&result, (char *)ASN1_STRING_data(X509_NAME_ENTRY_get_data(ent)));
+      dstrcat(&result, (char *)ASN1_STRING_data(X509_NAME_ENTRY_get_data(ent)));
     }
   }
 
@@ -577,7 +577,7 @@ static void FreeCertificateChain(struct Certificate *top_cert)
     current = next;
     next = current->issuer;
 
-    FreeStrBuf(current->issuerStr);
+    dfree(current->issuerStr);
 
     if(current->identity != NULL)
       free(current->identity);

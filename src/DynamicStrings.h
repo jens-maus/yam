@@ -1,5 +1,5 @@
-#ifndef STRBUF_H
-#define STRBUF_H 1
+#ifndef DYNAMICSTRING_H
+#define DYNAMICSTRING_H 1
 
 /***************************************************************************
 
@@ -31,12 +31,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-char * AllocStrBuf(size_t initsize);
-void ResetStrBuf(char *buf);
-size_t StrBufCat(char **buf, const char *source);
-size_t StrBufCpy(char **buf, const char *source);
-size_t StrBufLength(char *buf);
-size_t StrBufRead(char **buf, FILE *fh, size_t size);
-void FreeStrBuf(char *buf);
+char *dalloc(size_t initsize);
+void dreset(char *str);
+size_t dstrcat(char **str, const char *source);
+size_t dstrcpy(char **str, const char *source);
+size_t dstrlen(char *str);
+size_t dread(char **str, FILE *fh, size_t size);
+void dfree(char *str);
 
-#endif /* STRBUF_H */
+#endif /* DYNAMICSTRING_H */

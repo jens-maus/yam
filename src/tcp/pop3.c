@@ -47,6 +47,7 @@
 
 #include "AppIcon.h"
 #include "Busy.h"
+#include "DynamicStrings.h"
 #include "FolderList.h"
 #include "Locale.h"
 #include "Logfile.h"
@@ -56,7 +57,6 @@
 #include "MailTransferList.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
-#include "StrBuf.h"
 #include "Threads.h"
 #include "UIDL.h"
 
@@ -1028,7 +1028,7 @@ static int ConnectToPOP3(struct TransferContext *tc)
     if((resp = SendPOP3Command(tc, POPCMD_CONNECT, NULL, tr(MSG_ER_POP3WELCOME))) == NULL)
       goto out;
 
-    StrBufCpy(&welcomemsg, resp);
+    dstrcpy(&welcomemsg, resp);
 
     // If the user selected STLS support we have to first send the command
     // to start TLS negotiation (RFC 2595)
@@ -1059,7 +1059,7 @@ static int ConnectToPOP3(struct TransferContext *tc)
     if((resp = SendPOP3Command(tc, POPCMD_CONNECT, NULL, tr(MSG_ER_POP3WELCOME))) == NULL)
       goto out;
 
-    StrBufCpy(&welcomemsg, resp);
+    dstrcpy(&welcomemsg, resp);
   }
 
   if(tc->password[0] == '\0')
@@ -1148,7 +1148,7 @@ static int ConnectToPOP3(struct TransferContext *tc)
 
 out:
 
-  FreeStrBuf(welcomemsg);
+  dfree(welcomemsg);
 
   RETURN(msgs);
   return msgs;

@@ -59,13 +59,13 @@
 #include "mui/StringRequestWindow.h"
 #include "mui/YAMApplication.h"
 
+#include "DynamicStrings.h"
 #include "FolderList.h"
 #include "Locale.h"
 #include "MailServers.h"
 #include "MethodStack.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
-#include "StrBuf.h"
 #include "Threads.h"
 
 #include "tcp/Connection.h"
@@ -580,48 +580,48 @@ BOOL CertWarningRequest(struct Connection *conn, struct Certificate *cert)
     int failures = conn->sslCertFailures;
 
     // now we create the requester text
-    StrBufCpy(&format, tr(MSG_SSL_CERT_WARNING_INTRO));
-    StrBufCat(&format, "\n\n");
+    dstrcpy(&format, tr(MSG_SSL_CERT_WARNING_INTRO));
+    dstrcat(&format, "\n\n");
 
     if(isFlagSet(failures, SSL_CERT_ERR_UNTRUSTED))
     {
-      StrBufCat(&format, tr(MSG_SSL_CERT_WARNING_UNTRUSTED));
-      StrBufCat(&format, "\n");
+      dstrcat(&format, tr(MSG_SSL_CERT_WARNING_UNTRUSTED));
+      dstrcat(&format, "\n");
     }
 
     if(isFlagSet(failures, SSL_CERT_ERR_IDMISMATCH))
     {
-      StrBufCat(&format, tr(MSG_SSL_CERT_WARNING_IDMISMATCH));
-      StrBufCat(&format, "\n");
+      dstrcat(&format, tr(MSG_SSL_CERT_WARNING_IDMISMATCH));
+      dstrcat(&format, "\n");
     }
 
     if(isFlagSet(failures, SSL_CERT_ERR_NOTYETVALID))
     {
-      StrBufCat(&format, tr(MSG_SSL_CERT_WARNING_NOTYETVALID));
-      StrBufCat(&format, "\n");
+      dstrcat(&format, tr(MSG_SSL_CERT_WARNING_NOTYETVALID));
+      dstrcat(&format, "\n");
     }
 
     if(isFlagSet(failures, SSL_CERT_ERR_EXPIRED))
     {
-      StrBufCat(&format, tr(MSG_SSL_CERT_WARNING_EXPIRED));
-      StrBufCat(&format, "\n");
+      dstrcat(&format, tr(MSG_SSL_CERT_WARNING_EXPIRED));
+      dstrcat(&format, "\n");
     }
 
     if(isFlagSet(failures, SSL_CERT_ERR_OTHER))
     {
-      StrBufCat(&format, tr(MSG_SSL_CERT_WARNING_OTHER));
-      StrBufCat(&format, "\n");
+      dstrcat(&format, tr(MSG_SSL_CERT_WARNING_OTHER));
+      dstrcat(&format, "\n");
     }
 
-    StrBufCat(&format, "\n");
-    StrBufCat(&format, tr(MSG_SSL_CERT_WARNING_INFO));
+    dstrcat(&format, "\n");
+    dstrcat(&format, tr(MSG_SSL_CERT_WARNING_INFO));
 
     // convert the format string now to a full string
     // with contents
     if(asprintf(&reqtxt, format, conn->server->hostname, conn->server->port, cert->identity, cert->notBefore, cert->notAfter, cert->issuerStr, cert->fingerprint) != -1)
     {
       // free the format template right now
-      FreeStrBuf(format);
+      dfree(format);
 
       // create the window object now
       win = GenericRequestWindowObject,
@@ -728,7 +728,7 @@ BOOL CertWarningRequest(struct Connection *conn, struct Certificate *cert)
     else
     {
       // free the format template right now
-      FreeStrBuf(format);
+      dfree(format);
     }
   }
 

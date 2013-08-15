@@ -47,9 +47,9 @@
 #include "YAM_write.h"
 
 #include "Busy.h"
+#include "DynamicStrings.h"
 #include "Locale.h"
 #include "MUIObjects.h"
-#include "StrBuf.h"
 
 #include "mui/ClassesExtra.h"
 #include "mui/MailTextEdit.h"
@@ -76,9 +76,9 @@ static void DI_FinishEdit(void)
       char *edtext = (char *)DoMethod((Object *)gui->TE_EDIT, MUIM_TextEditor_ExportText);
 
       new.Text = NULL;
-      StrBufCpy(&new.Text, edtext ? edtext : "");
+      dstrcpy(&new.Text, edtext ? edtext : "");
       if(G->DI->OldEntry->Text)
-        FreeStrBuf(G->DI->OldEntry->Text);
+        dfree(G->DI->OldEntry->Text);
 
       GetMUIString(new.Alias, gui->ST_ALIAS, sizeof(new.Alias));
       if(*new.Alias == '\0')
@@ -167,20 +167,20 @@ static int DI_Load(void)
           char *p;
 
           strlcpy(entry.Alias, Trim(&buffer[7]), sizeof(entry.Alias));
-          entry.Text = AllocStrBuf(80);
+          entry.Text = dalloc(80);
 
           while(GetLine(&buffer, &size, fh) >= 0)
           {
             if((p = strstr(buffer, "@ENDENTRY")) != NULL)
             {
               *p = 0;
-              StrBufCat(&entry.Text, buffer);
+              dstrcat(&entry.Text, buffer);
               break;
             }
             else
             {
-              StrBufCat(&entry.Text, buffer);
-              StrBufCat(&entry.Text, "\n");
+              dstrcat(&entry.Text, buffer);
+              dstrcat(&entry.Text, "\n");
             }
           }
 
@@ -276,7 +276,7 @@ HOOKPROTONHNO(DI_ModifyFunc, void, int *arg)
 
   DI_FinishEdit();
   strlcpy(new.Alias, tr(MSG_NewEntry), sizeof(new.Alias));
-  new.Text = AllocStrBuf(80);
+  new.Text = dalloc(80);
   DoMethod(G->DI->GUI.LV_ENTRIES, MUIM_List_InsertSingle, &new, MUIV_List_Insert_Bottom);
   nnset(G->DI->GUI.LV_ENTRIES, MUIA_List_Active, MUIV_List_Active_Bottom);
 
@@ -330,7 +330,7 @@ MakeStaticHook(DI_LV_ConFuncHook, DI_LV_ConFunc);
 //  Glossary listview destruction hook
 HOOKPROTONHNO(DI_LV_DesFunc, long, struct Dict *entry)
 {
-   FreeStrBuf(entry->Text);
+   dfree(entry->Text);
    free(entry);
    return 0;
 }

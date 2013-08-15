@@ -49,8 +49,8 @@
 
     #include "YAM_utilities.h"
 
+    #include "DynamicStrings.h"
     #include "HTML2Mail.h"
-    #include "StrBuf.h"
 
     #include "Debug.h"
 
@@ -326,7 +326,7 @@ char *html2mail(char *htmlTxt)
   // lets prepare the htmlTxt for the lexer
   if((buffer = yy_scan_string(htmlTxt)))
   {
-    if((cmsg = AllocStrBuf((strlen(htmlTxt)*3)/2+1)) != NULL)
+    if((cmsg = dalloc((strlen(htmlTxt)*3)/2+1)) != NULL)
     {
       enum htmlTagType type;
       char *lastHref = NULL;
@@ -345,89 +345,89 @@ char *html2mail(char *htmlTxt)
           case ht_DD:
           case ht_DL:
           case ht_UL:
-            StrBufCat(&cmsg, "\n");
+            dstrcat(&cmsg, "\n");
           break;
 
           case ht_LI:
-            StrBufCat(&cmsg, "- ");
+            dstrcat(&cmsg, "- ");
           break;
 
           case ht_LI_END:
-            StrBufCat(&cmsg, "\n");
+            dstrcat(&cmsg, "\n");
           break;
 
           case ht_LI_IN:
-            StrBufCat(&cmsg, "\n- ");
+            dstrcat(&cmsg, "\n- ");
           break;
 
           case ht_DT:
-            StrBufCat(&cmsg, "\n  ");
+            dstrcat(&cmsg, "\n  ");
           break;
 
           case ht_PRE:
-            StrBufCat(&cmsg, "\n\n");
+            dstrcat(&cmsg, "\n\n");
           break;
 
           case ht_HR:
-            StrBufCat(&cmsg, "\n---------------------------------------------------------------------------\n");
+            dstrcat(&cmsg, "\n---------------------------------------------------------------------------\n");
           break;
 
           case ht_BOLD:
-            StrBufCat(&cmsg, "\033b");
+            dstrcat(&cmsg, "\033b");
             bold = TRUE;
           break;
 
           case ht_ITALIC:
-            StrBufCat(&cmsg, "\033i");
+            dstrcat(&cmsg, "\033i");
             italic = TRUE;
           break;
 
           case ht_UNDERLINE:
-            StrBufCat(&cmsg, "\033u");
+            dstrcat(&cmsg, "\033u");
             underline = TRUE;
           break;
 
           case ht_BOLD_END:
           {
             bold = FALSE;
-            StrBufCat(&cmsg, "\033n");
+            dstrcat(&cmsg, "\033n");
             if(italic)
-              StrBufCat(&cmsg, "\033i");
+              dstrcat(&cmsg, "\033i");
             if(underline)
-              StrBufCat(&cmsg, "\033u");
+              dstrcat(&cmsg, "\033u");
           }
           break;
 
           case ht_ITALIC_END:
           {
             italic = FALSE;
-            StrBufCat(&cmsg, "\033n");
+            dstrcat(&cmsg, "\033n");
             if(bold)
-              StrBufCat(&cmsg, "\033b");
+              dstrcat(&cmsg, "\033b");
             if(underline)
-              StrBufCat(&cmsg, "\033u");
+              dstrcat(&cmsg, "\033u");
           }
           break;
 
           case ht_UNDERLINE_END:
           {
             underline = FALSE;
-            StrBufCat(&cmsg, "\033n");
+            dstrcat(&cmsg, "\033n");
             if(bold)
-              StrBufCat(&cmsg, "\033b");
+              dstrcat(&cmsg, "\033b");
             if(italic)
-              StrBufCat(&cmsg, "\033i");
+              dstrcat(&cmsg, "\033i");
           }
           break;
 
           case ht_TITLE:
           case ht_HIGHLIGHT:
-            StrBufCat(&cmsg, "\033b\033i");
+            dstrcat(&cmsg, "\033b\033i");
           break;
 
           case ht_TITLE_END:
           case ht_HIGHLIGHT_END:
-            StrBufCat(&cmsg, "\033n\n");
+            dstrcat(&cmsg, "\033n\n");
           break;
 
           case ht_HREF:
@@ -441,9 +441,9 @@ char *html2mail(char *htmlTxt)
           {
             if(lastHref != NULL)
             {
-              StrBufCat(&cmsg, " <");
-              StrBufCat(&cmsg, lastHref);
-              StrBufCat(&cmsg, "> ");
+              dstrcat(&cmsg, " <");
+              dstrcat(&cmsg, lastHref);
+              dstrcat(&cmsg, "> ");
 
               free(lastHref);
               lastHref = NULL;
@@ -452,7 +452,7 @@ char *html2mail(char *htmlTxt)
           break;
 
           case ht_SPACE:
-            StrBufCat(&cmsg, " ");
+            dstrcat(&cmsg, " ");
           break;
 
           case ht_STYLE:
@@ -535,7 +535,7 @@ char *html2mail(char *htmlTxt)
 
             tmp[0] = type;
             tmp[1] = '\0';
-            StrBufCat(&cmsg, tmp);
+            dstrcat(&cmsg, tmp);
           }
           break;
 
@@ -580,12 +580,12 @@ char *html2mail(char *htmlTxt)
             else
               tmp[0] = type;
             tmp[1] = '\0';
-            StrBufCat(&cmsg, tmp);
+            dstrcat(&cmsg, tmp);
           }
           break;
 
           case ht_TRADE:
-            StrBufCat(&cmsg, "(tm)");
+            dstrcat(&cmsg, "(tm)");
           break;
 
           case ht_ASCII_CHAR:
@@ -598,7 +598,7 @@ char *html2mail(char *htmlTxt)
 
               tmp[0] = c;
               tmp[1] = '\0';
-              StrBufCat(&cmsg, tmp);
+              dstrcat(&cmsg, tmp);
             }
             else
               D(DBF_HTML, "found HTML ASCII char out of bounds: '%s'", yytext);
@@ -607,11 +607,11 @@ char *html2mail(char *htmlTxt)
 
           case ht_UNKNOWN_CHAR:
             D(DBF_HTML, "unknown HTML char: '%s'", yytext);
-            StrBufCat(&cmsg, "?");
+            dstrcat(&cmsg, "?");
           break;
 
           case ht_NORMALTEXT:
-            StrBufCat(&cmsg, yytext);
+            dstrcat(&cmsg, yytext);
           break;
         }
       }

@@ -37,11 +37,11 @@
 
 #include "YAM_config.h"
 
+#include "DynamicStrings.h"
 #include "MailTextEdit.h"
 #include "MUIObjects.h"
 #include "ParseEmail.h"
 #include "Signature.h"
-#include "StrBuf.h"
 
 #include "Debug.h"
 
@@ -155,7 +155,7 @@ DECLARE(SetSignatureText) // const char *sigText
 	xset(obj, MUIA_TextEditor_Contents, parsedSig,
 			  MUIA_TextEditor_HasChanged, modified);
 
-	FreeStrBuf(parsedSig);
+	dfree(parsedSig);
   }
   else
   {

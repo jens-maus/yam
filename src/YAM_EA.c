@@ -61,11 +61,11 @@
 #include "mui/Recipientstring.h"
 #include "mui/UserPortraitGroup.h"
 
+#include "DynamicStrings.h"
 #include "Locale.h"
 #include "Logfile.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
-#include "StrBuf.h"
 
 #include "Debug.h"
 
@@ -529,7 +529,7 @@ HOOKPROTONHNO(EA_Okay, void, int *arg)
 
       GetMUIString(addr->RealName, gui->ST_REALNAME, sizeof(addr->RealName));
       GetMUIString(addr->Address, gui->ST_ADDRESS, sizeof(addr->Address));
-      members = AllocStrBuf(SIZE_DEFAULT);
+      members = dalloc(SIZE_DEFAULT);
       for(i = 0; ; i++)
       {
         char *p;
@@ -538,8 +538,8 @@ HOOKPROTONHNO(EA_Okay, void, int *arg)
         if(p == NULL)
           break;
 
-        StrBufCat(&members, p);
-        StrBufCat(&members, "\n");
+        dstrcat(&members, p);
+        dstrcat(&members, "\n");
       }
 
       if(old == TRUE)
@@ -557,7 +557,7 @@ HOOKPROTONHNO(EA_Okay, void, int *arg)
         free(addr->Members);
       }
 
-      FreeStrBuf(members);
+      dfree(members);
     }
     break;
 

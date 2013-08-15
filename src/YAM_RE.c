@@ -74,9 +74,10 @@
 #include "tcp/smtp.h"
 
 #include "Busy.h"
-#include "HTML2Mail.h"
+#include "DynamicStrings.h"
 #include "FileInfo.h"
 #include "FolderList.h"
+#include "HTML2Mail.h"
 #include "Locale.h"
 #include "Logfile.h"
 #include "MailList.h"
@@ -85,7 +86,6 @@
 #include "MUIObjects.h"
 #include "ParseEmail.h"
 #include "Requesters.h"
-#include "StrBuf.h"
 #include "Threads.h"
 #include "UserIdentity.h"
 
@@ -2718,7 +2718,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
   }
 
   // then we generate our final buffer for the message
-  if((cmsg = AllocStrBuf((totsize*3)/2+1)) != NULL)
+  if((cmsg = dalloc((totsize*3)/2+1)) != NULL)
   {
     struct BusyNode *busy = NULL;
 
@@ -2740,30 +2740,30 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
       char dateStr[64];
 
       // use bold italics for the header
-      StrBufCat(&cmsg, "\033[1m\033[3m");
+      dstrcat(&cmsg, "\033[1m\033[3m");
 
       snprintf(headerLine, sizeof(headerLine), "%s: %s\n", tr(MSG_RE_HDR_SUBJECT), rmData->mail->Subject);
-      StrBufCat(&cmsg, headerLine);
+      dstrcat(&cmsg, headerLine);
 
       BuildAddress(addressStr, sizeof(addressStr), rmData->mail->From.Address, rmData->mail->From.RealName);
       if(addressStr[0] != '\0')
       {
         snprintf(headerLine, sizeof(headerLine), "%s: %s\n", tr(MSG_RE_HDR_FROM), addressStr);
-        StrBufCat(&cmsg, headerLine);
+        dstrcat(&cmsg, headerLine);
       }
 
       BuildAddress(addressStr, sizeof(addressStr), rmData->mail->To.Address, rmData->mail->To.RealName);
       if(addressStr[0] != '\0')
       {
         snprintf(headerLine, sizeof(headerLine), "%s: %s\n", tr(MSG_RE_HDR_TO), addressStr);
-        StrBufCat(&cmsg, headerLine);
+        dstrcat(&cmsg, headerLine);
       }
 
       DateStamp2String(dateStr, sizeof(dateStr), &rmData->mail->Date, C->DSListFormat, TZC_UTC2LOCAL);
       snprintf(headerLine, sizeof(headerLine), "%s: %s\n", tr(MSG_RE_HDR_DATE), dateStr);
-      StrBufCat(&cmsg, headerLine);
+      dstrcat(&cmsg, headerLine);
 
-      StrBufCat(&cmsg, "\033[21m\033[23m\n");
+      dstrcat(&cmsg, "\033[21m\033[23m\n");
     }
 
     // Now we check every part of the message if it will be displayed in the
@@ -2810,7 +2810,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                                                                            DescribeCT(part->ContentType),
                                                                            part->ContentType);
 
-          StrBufCat(&cmsg, buffer);
+          dstrcat(&cmsg, buffer);
 
           // append the description for non-EMail attachments only
           if(part->Description[0] != '\0' && stricmp(part->ContentType, "message/rfc822") != 0)
@@ -2819,7 +2819,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
             buffer[0] = '\0';
 
           strlcat(buffer, "\033[s:2]\n", sizeof(buffer));
-          StrBufCat(&cmsg, buffer);
+          dstrcat(&cmsg, buffer);
         }
       }
 
@@ -2841,7 +2841,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
           setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
           // allocate memory for the complete part plus and trailing NUL byte
-          if((msg = AllocStrBuf(part->Size+1)) != NULL)
+          if((msg = dalloc(part->Size+1)) != NULL)
           {
             int nread;
             char *ptr;
@@ -2850,7 +2850,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
             BOOL signatureFound = FALSE;
 
             // read the part into a dynamic string
-            nread = StrBufRead(&msg, fh, part->Size);
+            nread = dread(&msg, fh, part->Size);
 
             // lets check if an error or short item count occurred
             if(nread == 0 || nread != part->Size)
@@ -2864,8 +2864,8 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                 E(DBF_MAIL, "ERROR occurred while reading at pos %ld of '%s'", ftell(fh), part->Filename);
 
                 // cleanup and return NULL
-                FreeStrBuf(cmsg);
-                FreeStrBuf(msg);
+                dfree(cmsg);
+                dfree(msg);
                 fclose(fh);
 
                 if(mode != RIM_QUIET)
@@ -2894,10 +2894,10 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
               if((converted = html2mail(msg)) != NULL)
               {
                 // free the old HTML text
-                FreeStrBuf(msg);
+                dfree(msg);
 
                 // overwrite the old values
-                nread = StrBufLength(converted);
+                nread = dstrlen(converted);
                 msg = converted;
               }
             }
@@ -3162,7 +3162,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                     while(getline(&buf, &buflen, tf->FP) > 0)
                     {
                       D(DBF_MAIL, "%s", buf);
-                      StrBufCat(&cmsg, buf);
+                      dstrcat(&cmsg, buf);
                     }
 
                     free(buf);
@@ -3193,20 +3193,20 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                   if(C->SigSepLine == SST_BAR) // show seperator bar
                   {
                     if(rmData->useTextcolors == FALSE)
-                      StrBufCat(&cmsg, "\033[s:2]");
+                      dstrcat(&cmsg, "\033[s:2]");
                     else
-                      StrBufCat(&cmsg, rptr);
+                      dstrcat(&cmsg, rptr);
                   }
                   else if(C->SigSepLine == SST_SKIP) // skip signature
                     break;
                   else if(C->SigSepLine == SST_DASH || // show "-- "
                           (C->SigSepLine == SST_BLANK && rmData->useTextcolors))
                   {
-                    StrBufCat(&cmsg, rptr);
+                    dstrcat(&cmsg, rptr);
                   }
 
                   if(newlineAtEnd == TRUE)
-                    StrBufCat(&cmsg, "\n");
+                    dstrcat(&cmsg, "\n");
                 }
                 else if(mode == RIM_QUOTE && C->StripSignature)
                 {
@@ -3223,16 +3223,16 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                   // our signature stripping in forwarded mails from
                   // stripping at the wrong position.
                   if(newlineAtEnd == TRUE)
-                    StrBufCat(&cmsg, "--\n");
+                    dstrcat(&cmsg, "--\n");
                   else
-                    StrBufCat(&cmsg, "--");
+                    dstrcat(&cmsg, "--");
                 }
                 else
                 {
                   if(newlineAtEnd == TRUE)
-                    StrBufCat(&cmsg, "-- \n");
+                    dstrcat(&cmsg, "-- \n");
                   else
-                    StrBufCat(&cmsg, "-- ");
+                    dstrcat(&cmsg, "-- ");
                 }
 
                 signatureFound = TRUE;
@@ -3241,10 +3241,10 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
               {
                 rmData->hasPGPKey = TRUE;
 
-                StrBufCat(&cmsg, rptr);
+                dstrcat(&cmsg, rptr);
 
                 if(newlineAtEnd == TRUE)
-                  StrBufCat(&cmsg, "\n");
+                  dstrcat(&cmsg, "\n");
               }
               else if(strncmp(rptr, "-----BEGIN PGP SIGNED MESSAGE", 29) == 0)
               {
@@ -3262,16 +3262,16 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
               }
 /* other */   else
               {
-                StrBufCat(&cmsg, rptr);
+                dstrcat(&cmsg, rptr);
 
                 if(newlineAtEnd == TRUE)
-                  StrBufCat(&cmsg, "\n");
+                  dstrcat(&cmsg, "\n");
               }
 
               rptr = eolptr+1;
             }
 
-            FreeStrBuf(msg);
+            dfree(msg);
           }
 
           fclose(fh);
@@ -3282,10 +3282,10 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
     if(mode == RIM_PRINT && isMP_MixedMail(rmData->mail))
     {
       // add a list of all attachments in printing mode
-      StrBufCat(&cmsg, "\n");
-      StrBufCat(&cmsg, "================================================================================\n");
-      StrBufCat(&cmsg, tr(MSG_Attachments));
-      StrBufCat(&cmsg, ":\n");
+      dstrcat(&cmsg, "\n");
+      dstrcat(&cmsg, "================================================================================\n");
+      dstrcat(&cmsg, tr(MSG_Attachments));
+      dstrcat(&cmsg, ":\n");
 
       for(part = rmData->firstPart; part != NULL; part = part->Next)
       {
@@ -3311,7 +3311,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
 
             FormatSize(part->Size, sizeStr, sizeof(sizeStr), SF_AUTO);
             snprintf(attachLine, sizeof(attachLine), "%-70s%10s\n", name, sizeStr);
-            StrBufCat(&cmsg, attachLine);
+            dstrcat(&cmsg, attachLine);
           }
         }
       }
@@ -3744,7 +3744,7 @@ static void RE_SendMDN(const enum MDNMode mode,
 
           // finally, we compose the MDN mail
           memset(&comp, 0, sizeof(struct Compose));
-          StrBufCpy(&comp.MailTo, BuildAddress(address, sizeof(address), recipient->Address, recipient->RealName));
+          dstrcpy(&comp.MailTo, BuildAddress(address, sizeof(address), recipient->Address, recipient->RealName));
           comp.Subject = buf;
           comp.GenerateMDN = TRUE;
           comp.FirstPart = p1;
@@ -3837,7 +3837,7 @@ static void RE_SendMDN(const enum MDNMode mode,
               ER_NewError(tr(MSG_ER_CANNOT_CREATE_MAIL_FILE), mfilePath);
             }
 
-            FreeStrBuf(comp.MailTo);
+            dfree(comp.MailTo);
             CloseTempFile(tf3);
           }
         }
@@ -4141,7 +4141,7 @@ static BOOL RE_HandleMDNReport(const struct Part *frp)
     FILE *fh;
     const char *mode;
     char *type;
-    char *msgdesc = AllocStrBuf(80);
+    char *msgdesc = dalloc(80);
     char disposition[SIZE_DEFAULT];
     char file[SIZE_FILE];
     char buf[SIZE_PATHFILE];
@@ -4204,7 +4204,7 @@ static BOOL RE_HandleMDNReport(const struct Part *frp)
               char desc[SIZE_LINE];
 
               snprintf(desc, sizeof(desc), "%s %s", msg, value);
-              StrBufCat(&msgdesc, desc);
+              dstrcat(&msgdesc, desc);
             }
           }
 
@@ -4217,7 +4217,7 @@ static BOOL RE_HandleMDNReport(const struct Part *frp)
     }
 
     // add a newline
-    StrBufCat(&msgdesc, "\n");
+    dstrcat(&msgdesc, "\n");
 
     // find out if the disposition was automatically
     // generated or via manual interaction
@@ -4261,7 +4261,7 @@ static BOOL RE_HandleMDNReport(const struct Part *frp)
       result = TRUE;
     }
 
-    FreeStrBuf(msgdesc);
+    dfree(msgdesc);
   }
 
   RETURN(result);
@@ -4565,8 +4565,8 @@ void FreeHeaderNode(struct HeaderNode *hdrNode)
 
   if(hdrNode != NULL)
   {
-    FreeStrBuf(hdrNode->name);
-    FreeStrBuf(hdrNode->content);
+    dfree(hdrNode->name);
+    dfree(hdrNode->content);
 
     FreeSysObject(ASOT_NODE, hdrNode);
   }

@@ -39,9 +39,9 @@
 
 #include "YAM_utilities.h"
 
+#include "DynamicStrings.h"
 #include "FileInfo.h"
 #include "Signature.h"
-#include "StrBuf.h"
 
 #include "Debug.h"
 
@@ -300,7 +300,7 @@ char *ImportSignature(const char *src)
         // append a plain ASCII character
         char cat[2] = {c, '\0'};
 
-        StrBufCat(&sig, cat);
+        dstrcat(&sig, cat);
       }
     }
 
@@ -308,7 +308,7 @@ char *ImportSignature(const char *src)
     {
       char *tmp = strdup(sig);
 
-      FreeStrBuf(sig);
+      dfree(sig);
       sig = tmp;
     }
   }
@@ -337,25 +337,25 @@ char *ExportSignature(const char *src)
       {
         case '\n':
         {
-          StrBufCat(&sig, "\\n");
+          dstrcat(&sig, "\\n");
         }
         break;
 
         case '\r':
         {
-          StrBufCat(&sig, "\\r");
+          dstrcat(&sig, "\\r");
         }
         break;
 
         case '\t':
         {
-          StrBufCat(&sig, "\\t");
+          dstrcat(&sig, "\\t");
         }
         break;
 
         case '\\':
         {
-          StrBufCat(&sig, "\\\\");
+          dstrcat(&sig, "\\\\");
         }
         break;
 
@@ -366,7 +366,7 @@ char *ExportSignature(const char *src)
             // printable ASCII characters are used unmodified
             char cat[2] = {c, '\0'};
 
-            StrBufCat(&sig, cat);
+            dstrcat(&sig, cat);
           }
           else
           {
@@ -374,7 +374,7 @@ char *ExportSignature(const char *src)
 
             // use the typical \xHH representation
             snprintf(xchar, sizeof(xchar), "\\x%02x", c & 0xff);
-            StrBufCat(&sig, xchar);
+            dstrcat(&sig, xchar);
           }
         }
         break;
@@ -385,7 +385,7 @@ char *ExportSignature(const char *src)
     {
       char *tmp = strdup(sig);
 
-      FreeStrBuf(sig);
+      dfree(sig);
       sig = tmp;
     }
   }

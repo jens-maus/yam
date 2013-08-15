@@ -79,12 +79,12 @@
 
 #include "AVLTree.h"
 #include "Busy.h"
+#include "DynamicStrings.h"
 #include "FileInfo.h"
 #include "Locale.h"
 #include "Logfile.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
-#include "StrBuf.h"
 
 #include "Debug.h"
 
@@ -949,8 +949,8 @@ BOOL AB_LoadTree(const char *fname, BOOL append, BOOL sorted)
               if(*buffer == '\0')
                 continue;
 
-              StrBufCat(&members, buffer);
-              StrBufCat(&members, "\n");
+              dstrcat(&members, buffer);
+              dstrcat(&members, "\n");
             }
 
             // the string will be duplicated in the listtree's constructor
@@ -960,7 +960,7 @@ BOOL AB_LoadTree(const char *fname, BOOL append, BOOL sorted)
               addr.Members = members;
               DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, addr.Alias, &addr, parent[nested], MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE);
             }
-            FreeStrBuf(members);
+            dfree(members);
           }
           else if(strncmp(buffer, "@GROUP", 6) == 0)
           {

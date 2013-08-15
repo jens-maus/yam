@@ -41,9 +41,9 @@
 #include "mui/ClassesExtra.h"
 #include "mui/AddrBookListtree.h"
 
+#include "DynamicStrings.h"
 #include "MUIObjects.h"
 #include "Rexx.h"
-#include "StrBuf.h"
 
 #include "Debug.h"
 
@@ -134,18 +134,18 @@ void rx_addredit(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
           char **p;
 
           if(args->add && ab->Members != NULL)
-            StrBufCpy(&memb, ab->Members);
+            dstrcpy(&memb, ab->Members);
 
           for(p = args->member; *p; p++)
           {
-            StrBufCat(&memb, *p);
-            StrBufCat(&memb, "\n");
+            dstrcat(&memb, *p);
+            dstrcat(&memb, "\n");
           }
 
           free(ab->Members);
           ab->Members = strdup(memb);
 
-          FreeStrBuf(memb);
+          dfree(memb);
         }
 
         DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Redraw, MUIV_NListtree_Redraw_Active, MUIF_NONE);

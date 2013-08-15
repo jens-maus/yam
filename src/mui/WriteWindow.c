@@ -61,6 +61,7 @@
 #include "YAM_mainFolder.h"
 
 #include "Busy.h"
+#include "DynamicStrings.h"
 #include "FileInfo.h"
 #include "FolderList.h"
 #include "Locale.h"
@@ -71,7 +72,6 @@
 #include "ParseEmail.h"
 #include "Requesters.h"
 #include "Signature.h"
-#include "StrBuf.h"
 #include "Threads.h"
 #include "UserIdentity.h"
 
@@ -2325,7 +2325,7 @@ DECLARE(AddArchive)
 
       // now we create the command we are going to
       // execute for generating the archive.
-      if((command = AllocStrBuf(SIZE_DEFAULT)) != NULL)
+      if((command = dalloc(SIZE_DEFAULT)) != NULL)
       {
         char *src;
         BPTR filedir;
@@ -2339,7 +2339,7 @@ DECLARE(AddArchive)
             switch(*src)
             {
               case '%':
-                StrBufCat(&command, "%");
+                dstrcat(&command, "%");
               break;
 
               case 'a':
@@ -2348,13 +2348,13 @@ DECLARE(AddArchive)
                 if(strchr(arcpath, ' ') != NULL)
                 {
                   // surround the file name by quotes if it contains spaces
-                  StrBufCat(&command, "\"");
-                  StrBufCat(&command, arcpath);
+                  dstrcat(&command, "\"");
+                  dstrcat(&command, arcpath);
                   // remember to add the closing quotes
                   mustCloseQuote = TRUE;
                 }
                 else
-                  StrBufCat(&command, arcpath);
+                  dstrcat(&command, arcpath);
               }
               break;
 
@@ -2364,13 +2364,13 @@ DECLARE(AddArchive)
                 if(strchr(tf->Filename, ' ') != NULL)
                 {
                   // surround the file name by quotes if it contains spaces
-                  StrBufCat(&command, "\"");
-                  StrBufCat(&command, tf->Filename);
+                  dstrcat(&command, "\"");
+                  dstrcat(&command, tf->Filename);
                   // remember to add the closing quotes
                   mustCloseQuote = TRUE;
                 }
                 else
-                  StrBufCat(&command, tf->Filename);
+                  dstrcat(&command, tf->Filename);
               }
               break;
 
@@ -2383,7 +2383,7 @@ DECLARE(AddArchive)
                   char filename[SIZE_PATHFILE];
 
                   snprintf(filename, sizeof(filename), "\"%s\" ", frc->argList[i]);
-                  StrBufCat(&command, filename);
+                  dstrcat(&command, filename);
                 }
                 break;
               }
@@ -2396,13 +2396,13 @@ DECLARE(AddArchive)
             // to be closed we do it now and forget about the quotes afterwards.
             if(mustCloseQuote == TRUE)
             {
-              StrBufCat(&command, "\" ");
+              dstrcat(&command, "\" ");
               mustCloseQuote = FALSE;
             }
             else
             {
               // no quotes to be closed, just add the space character
-              StrBufCat(&command, " ");
+              dstrcat(&command, " ");
             }
           }
           else
@@ -2412,13 +2412,13 @@ DECLARE(AddArchive)
             chr[0] = *src;
             chr[1] = '\0';
 
-            StrBufCat(&command, chr);
+            dstrcat(&command, chr);
           }
         }
 
         // if there are still quotes to be closed do it now
         if(mustCloseQuote == TRUE)
-          StrBufCat(&command, "\"");
+          dstrcat(&command, "\"");
 
         // now we make the request drawer the current one temporarly.
         if((filedir = Lock(frc->drawer, ACCESS_READ)) != 0)
@@ -2435,7 +2435,7 @@ DECLARE(AddArchive)
         }
 
         // free our private resources
-        FreeStrBuf(command);
+        dfree(command);
         CloseTempFile(tf);
 
         // if everything worked out fine we go
@@ -3033,7 +3033,7 @@ DECLARE(StyleOptionsChanged)
         // set the new text and preserve the changed status
         set(data->TE_EDIT, MUIA_TextEditor_Contents, parsedText);
 
-        FreeStrBuf(parsedText);
+        dfree(parsedText);
       }
 
       FreeVec(orgtext); // use FreeVec() because TextEditor.mcc uses AllocVec()
@@ -4345,13 +4345,13 @@ DECLARE(ComposeMail) // enum WriteMode mode
     // cleanup the In-Reply-To / References stuff
     if(wmData->inReplyToMsgID != NULL)
     {
-      FreeStrBuf(wmData->inReplyToMsgID);
+      dfree(wmData->inReplyToMsgID);
       wmData->inReplyToMsgID = NULL;
     }
 
     if(wmData->references != NULL)
     {
-      FreeStrBuf(wmData->references);
+      dfree(wmData->references);
       wmData->references = NULL;
     }
   }

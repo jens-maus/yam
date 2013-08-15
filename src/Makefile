@@ -665,6 +665,7 @@ YAMOBJS = \
 	BoyerMooreSearch.o \
 	Busy.o \
 	DockyIcon.o \
+	DynamicStrings.o \
 	FileInfo.o \
 	FolderList.o \
 	HashTable.o \
@@ -684,7 +685,6 @@ YAMOBJS = \
 	Requesters.o \
 	Rexx.o \
 	Signature.o \
-	StrBuf.o \
 	Themes.o \
 	Threads.o \
 	Timer.o \

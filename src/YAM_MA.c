@@ -87,6 +87,7 @@
 #include "AppIcon.h"
 #include "BayesFilter.h"
 #include "Busy.h"
+#include "DynamicStrings.h"
 #include "FileInfo.h"
 #include "FolderList.h"
 #include "HTML2Mail.h"
@@ -100,7 +101,6 @@
 #include "MUIObjects.h"
 #include "Requesters.h"
 #include "Rexx.h"
-#include "StrBuf.h"
 #include "Threads.h"
 #include "UserIdentity.h"
 
@@ -1273,17 +1273,17 @@ void MA_RemoveAttach(struct Mail *mail, struct Part **whichParts, BOOL warning)
       while(whichParts[i] != NULL)
       {
         if(whichParts[i]->CParName != NULL)
-          StrBufCat(&fileList, whichParts[i]->CParName);
+          dstrcat(&fileList, whichParts[i]->CParName);
         else
-          StrBufCat(&fileList, whichParts[i]->CParFileName);
+          dstrcat(&fileList, whichParts[i]->CParFileName);
 
-        StrBufCat(&fileList, "\n");
+        dstrcat(&fileList, "\n");
         i++;
       }
 
       goOn = (MUI_Request(G->App, G->MA->GUI.WI, MUIF_NONE, NULL, tr(MSG_YesNoReq2), tr(MSG_MA_DELETESELECTEDREQUEST), fileList) != 0);
 
-      FreeStrBuf(fileList);
+      dfree(fileList);
     }
   }
 
@@ -1528,7 +1528,7 @@ void MA_RemoveAttach(struct Mail *mail, struct Part **whichParts, BOOL warning)
           }
         }
 
-        FreeStrBuf(cmsg);
+        dfree(cmsg);
       }
 
       FreePrivateRMData(rmData);
@@ -1628,7 +1628,7 @@ HOOKPROTONHNONP(MA_SaveAttachFunc, void)
             struct Part *part;
 
             // free the message again as we don't need its content here.
-            FreeStrBuf(cmsg);
+            dfree(cmsg);
 
             if((part = rmData->firstPart->Next) != NULL && part->Next != NULL)
               RE_SaveAll(rmData, frc->drawer);
@@ -1703,7 +1703,7 @@ HOOKPROTONHNO(MA_SavePrintFunc, void, int *arg)
               CloseTempFile(tf);
             }
 
-            FreeStrBuf(cmsg);
+            dfree(cmsg);
           }
 
           FreePrivateRMData(rmData);

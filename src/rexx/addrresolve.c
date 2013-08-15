@@ -41,8 +41,8 @@
 #include "mui/ClassesExtra.h"
 #include "mui/Recipientstring.h"
 
+#include "DynamicStrings.h"
 #include "Rexx.h"
-#include "StrBuf.h"
 
 #include "Debug.h"
 
@@ -96,7 +96,7 @@ void rx_addrresolve(UNUSED struct RexxHost *host, struct RexxParams *params, enu
         // did the string change?
         if(res != NULL && strcmp(args->alias, res) != 0)
         {
-          StrBufCpy(&optional->string, res);
+          dstrcpy(&optional->string, res);
           results->recpt = optional->string;
         }
         else
@@ -117,7 +117,7 @@ void rx_addrresolve(UNUSED struct RexxHost *host, struct RexxParams *params, enu
         FreeVecPooled(G->SharedMemPool, results);
       if(optional != NULL)
       {
-        FreeStrBuf(optional->string);
+        dfree(optional->string);
         FreeVecPooled(G->SharedMemPool, optional);
       }
     }

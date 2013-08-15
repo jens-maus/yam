@@ -48,10 +48,10 @@
 
 #include "BoyerMooreSearch.h"
 #include "Busy.h"
+#include "DynamicStrings.h"
 #include "Locale.h"
 #include "MailList.h"
 #include "MUIObjects.h"
-#include "StrBuf.h"
 
 #include "mui/AddrBookListtree.h"
 #include "mui/MainMailListGroup.h"
@@ -300,7 +300,7 @@ static BOOL MatchMail(struct Mail *mail, enum ViewOptions vo,
             foundMatch = (BoyerMooreSearch(bmContext, cmsg) != NULL);
 
             // free the allocated message text immediately
-            FreeStrBuf(cmsg);
+            dfree(cmsg);
           }
 
           FreePrivateRMData(rmData);

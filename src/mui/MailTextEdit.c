@@ -39,11 +39,11 @@
 #include "YAM_addressbookEntry.h"
 #include "YAM_config.h"
 
+#include "DynamicStrings.h"
 #include "Locale.h"
 #include "MUIObjects.h"
 #include "ParseEmail.h"
 #include "Requesters.h"
-#include "StrBuf.h"
 
 #include "Debug.h"
 
@@ -110,7 +110,7 @@ static void InsertAddressTreeNode(Object *obj, Object *addrObj, struct MUI_NList
 
         // insert the address
         DoMethod(obj, MUIM_TextEditor_InsertText, ptr, MUIV_TextEditor_InsertText_Cursor);
- 
+
         *nptr = '\n';
         ptr = nptr;
       }
@@ -412,7 +412,7 @@ DECLARE(LoadFromFile) // const char *file, ULONG flags
       xset(obj, MUIA_TextEditor_Contents,   parsedText,
                 MUIA_TextEditor_HasChanged, isFlagSet(msg->flags, MUIF_MailTextEdit_LoadFromFile_SetChanged));
 
-      FreeStrBuf(parsedText);
+      dfree(parsedText);
 
       result = TRUE;
     }

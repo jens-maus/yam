@@ -60,6 +60,7 @@
 #include "mime/qprintable.h"
 #include "mime/uucode.h"
 
+#include "DynamicStrings.h"
 #include "FileInfo.h"
 #include "FolderList.h"
 #include "Locale.h"
@@ -68,7 +69,6 @@
 #include "MUIObjects.h"
 #include "Requesters.h"
 #include "Signature.h"
-#include "StrBuf.h"
 #include "UserIdentity.h"
 
 #include "Debug.h"
@@ -724,9 +724,9 @@ static char *WR_GetPGPIds(const char *source, char *ids)
       ER_NewError(tr(MSG_ER_ErrorNoPGPId), source, pid);
     }
 
-    StrBufCat(&ids, (G->PGPVersion == 5) ? "-r \"" : "\"");
-    StrBufCat(&ids, pid);
-    StrBufCat(&ids, "\" ");
+    dstrcat(&ids, (G->PGPVersion == 5) ? "-r \"" : "\"");
+    dstrcat(&ids, pid);
+    dstrcat(&ids, "\" ");
   }
 
   RETURN(ids);
@@ -950,7 +950,7 @@ static BOOL WR_ComposePGP(FILE *fh, const struct Compose *comp, const char *boun
   enum Security sec = comp->Security;
   BOOL success = FALSE;
   struct WritePart pgppart;
-  char *ids = AllocStrBuf(SIZE_DEFAULT);
+  char *ids = dalloc(SIZE_DEFAULT);
   char pgpfile[SIZE_PATHFILE];
   struct TempFile *tf;
 
@@ -973,9 +973,9 @@ static BOOL WR_ComposePGP(FILE *fh, const struct Compose *comp, const char *boun
        comp->Identity->pgpKeyID[0] != '\0')
     {
       if(G->PGPVersion == 5)
-        StrBufCat(&ids, "-r ");
+        dstrcat(&ids, "-r ");
 
-      StrBufCat(&ids, comp->Identity->pgpKeyID);
+      dstrcat(&ids, comp->Identity->pgpKeyID);
     }
   }
 
@@ -1115,7 +1115,7 @@ static BOOL WR_ComposePGP(FILE *fh, const struct Compose *comp, const char *boun
 
 out:
   CloseTempFile(tf);
-  FreeStrBuf(ids);
+  dfree(ids);
   PGPClearPassPhrase(!success);
 
   RETURN(success);
@@ -1435,9 +1435,9 @@ static char *AppendRcpt(char *sbuf, const struct Person *pe,
           // lets prepend a ", " sequence in case sbuf
           // is not empty
           if(*sbuf != '\0')
-            StrBufCat(&sbuf, ", ");
+            dstrcat(&sbuf, ", ");
 
-          StrBufCat(&sbuf, ins);
+          dstrcat(&sbuf, ins);
         }
       }
     }
@@ -1457,7 +1457,7 @@ static char *ExpandText(const char *src, struct ExpandTextData *etd)
   char buf[SIZE_ADDRESS];
   char *p;
   char *p2;
-  char *dst = AllocStrBuf(SIZE_DEFAULT);
+  char *dst = dalloc(SIZE_DEFAULT);
 
   ENTER();
 
@@ -1469,11 +1469,11 @@ static char *ExpandText(const char *src, struct ExpandTextData *etd)
       switch(*src)
       {
         case '\\':
-          StrBufCat(&dst, "\\");
+          dstrcat(&dst, "\\");
         break;
 
         case 'n':
-          StrBufCat(&dst, "\n");
+          dstrcat(&dst, "\n");
         break;
       }
     }
@@ -1483,7 +1483,7 @@ static char *ExpandText(const char *src, struct ExpandTextData *etd)
       switch(*src)
       {
         case 'n':
-          StrBufCat(&dst, etd->OS_Name);
+          dstrcat(&dst, etd->OS_Name);
         break;
 
         case 'f':
@@ -1499,16 +1499,16 @@ static char *ExpandText(const char *src, struct ExpandTextData *etd)
             *p = 0;
             p = buf;
           }
-          StrBufCat(&dst, p);
+          dstrcat(&dst, p);
         }
         break;
 
         case 's':
-          StrBufCat(&dst, etd->OM_Subject);
+          dstrcat(&dst, etd->OM_Subject);
         break;
 
         case 'e':
-          StrBufCat(&dst, etd->OS_Address);
+          dstrcat(&dst, etd->OS_Address);
         break;
 
         case 'd':
@@ -1516,7 +1516,7 @@ static char *ExpandText(const char *src, struct ExpandTextData *etd)
           char datstr[64];
 
           DateStamp2String(datstr, sizeof(datstr), &etd->OM_Date, DSS_DATE, TZC_NONE);
-          StrBufCat(&dst, datstr);
+          dstrcat(&dst, datstr);
         }
         break;
 
@@ -1525,7 +1525,7 @@ static char *ExpandText(const char *src, struct ExpandTextData *etd)
           char datstr[64];
 
           DateStamp2String(datstr, sizeof(datstr), &etd->OM_Date, DSS_TIME, TZC_NONE);
-          StrBufCat(&dst, datstr);
+          dstrcat(&dst, datstr);
         }
         break;
 
@@ -1539,7 +1539,7 @@ static char *ExpandText(const char *src, struct ExpandTextData *etd)
           else
             snprintf(tzone, sizeof(tzone), "%+05d", convertedGmtOffset);
 
-          StrBufCat(&dst, tzone);
+          dstrcat(&dst, tzone);
         }
         break;
 
@@ -1548,7 +1548,7 @@ static char *ExpandText(const char *src, struct ExpandTextData *etd)
           char datstr[64];
 
           DateStamp2String(datstr, sizeof(datstr), &etd->OM_Date, DSS_WEEKDAY, TZC_NONE);
-          StrBufCat(&dst, datstr);
+          dstrcat(&dst, datstr);
         }
         break;
 
@@ -1557,16 +1557,16 @@ static char *ExpandText(const char *src, struct ExpandTextData *etd)
           char datstr[64];
 
           DateStamp2RFCString(datstr, sizeof(datstr), &etd->OM_Date, etd->OM_gmtOffset, etd->OM_tzAbbr, FALSE);
-          StrBufCat(&dst, datstr);
+          dstrcat(&dst, datstr);
         }
         break;
 
         case 'm':
-          StrBufCat(&dst, etd->OM_MessageID);
+          dstrcat(&dst, etd->OM_MessageID);
         break;
 
         case 'r':
-          StrBufCat(&dst, etd->R_Name);
+          dstrcat(&dst, etd->R_Name);
         break;
 
         case 'v':
@@ -1582,12 +1582,12 @@ static char *ExpandText(const char *src, struct ExpandTextData *etd)
             p = buf;
           }
 
-          StrBufCat(&dst, p);
+          dstrcat(&dst, p);
         }
         break;
 
         case 'a':
-          StrBufCat(&dst, etd->R_Address);
+          dstrcat(&dst, etd->R_Address);
         break;
 
         case 'i':
@@ -1600,7 +1600,7 @@ static char *ExpandText(const char *src, struct ExpandTextData *etd)
               *p2++ = *++p;
           }
           *p2 = '\0';
-          StrBufCat(&dst, buf);
+          dstrcat(&dst, buf);
         }
         break;
 
@@ -1617,7 +1617,7 @@ static char *ExpandText(const char *src, struct ExpandTextData *etd)
             }
           }
           *p2 = '\0';
-          StrBufCat(&dst, buf);
+          dstrcat(&dst, buf);
         }
         break;
 
@@ -1625,7 +1625,7 @@ static char *ExpandText(const char *src, struct ExpandTextData *etd)
         {
           if((p = FileToBuffer(etd->HeaderFile)))
           {
-            StrBufCat(&dst, p);
+            dstrcat(&dst, p);
             free(p);
           }
         }
@@ -1638,7 +1638,7 @@ static char *ExpandText(const char *src, struct ExpandTextData *etd)
 
        chr[0] = *src;
        chr[1] = '\0';
-       StrBufCat(&dst, chr);
+       dstrcat(&dst, chr);
     }
   }
 
@@ -1660,7 +1660,7 @@ static void InsertIntroText(FILE *fh, const char *text, struct ExpandTextData *e
     if((sbuf = ExpandText(text, etd)) != NULL)
     {
       fprintf(fh, "%s\n", sbuf);
-      FreeStrBuf(sbuf);
+      dfree(sbuf);
     }
   }
 
@@ -1785,8 +1785,8 @@ struct WriteMailData *NewWriteMailWindow(struct Mail *mail, const int flags)
     // open a new file for writing the default mail text
     if((out = fopen(wmData->filename, "w")) != NULL)
     {
-      char *toAddr = AllocStrBuf(SIZE_ADDRESS);
-      char *replyToAddr = AllocStrBuf(SIZE_ADDRESS);
+      char *toAddr = dalloc(SIZE_ADDRESS);
+      char *replyToAddr = dalloc(SIZE_ADDRESS);
 
       setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
 
@@ -1851,13 +1851,13 @@ struct WriteMailData *NewWriteMailWindow(struct Mail *mail, const int flags)
       else if(folder->MLSupport == TRUE)
       {
         if(folder->MLAddress[0] != '\0')
-          StrBufCpy(&toAddr, folder->MLAddress);
+          dstrcpy(&toAddr, folder->MLAddress);
 
         if(folder->MLIdentity != NULL)
           userIdentity = folder->MLIdentity;
 
         if(folder->MLReplyToAddress[0] != '\0')
-          StrBufCpy(&replyToAddr, folder->MLReplyToAddress);
+          dstrcpy(&replyToAddr, folder->MLReplyToAddress);
       }
 
       if(folder->WriteIntro[0] != '\0')
@@ -1894,8 +1894,8 @@ struct WriteMailData *NewWriteMailWindow(struct Mail *mail, const int flags)
       if(C->LaunchAlways == TRUE && quiet == FALSE)
         DoMethod(wmData->window, MUIM_WriteWindow_LaunchEditor);
 
-      FreeStrBuf(toAddr);
-      FreeStrBuf(replyToAddr);
+      dfree(toAddr);
+      dfree(replyToAddr);
     }
     else
     {
@@ -1984,7 +1984,7 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
 
         if((cmsg = RE_ReadInMessage(rmData, RIM_EDIT)) != NULL)
         {
-          size_t msglen = StrBufLength(cmsg);
+          size_t msglen = dstrlen(cmsg);
 
           // we check whether cmsg contains any text and if so we
           // write out the whole text to our temporary file.
@@ -1996,19 +1996,19 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
             char *sbuf = NULL;
 
             // free our temp text now
-            FreeStrBuf(cmsg);
+            dfree(cmsg);
 
             // set the In-Reply-To / References message header references, if they exist
             if(email->inReplyToMsgID != NULL)
             {
               D(DBF_MAIL, "adding inReplyToMsgID '%s'", email->inReplyToMsgID);
-              StrBufCpy(&wmData->inReplyToMsgID, email->inReplyToMsgID);
+              dstrcpy(&wmData->inReplyToMsgID, email->inReplyToMsgID);
             }
 
             if(email->references != NULL)
             {
               D(DBF_MAIL, "adding references '%s'", email->references);
-              StrBufCpy(&wmData->references, email->references);
+              dstrcpy(&wmData->references, email->references);
             }
 
             // set the subject gadget
@@ -2039,7 +2039,7 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
             {
               // add all ReplyTo: recipients
               D(DBF_MAIL, "adding ReplyTo recipient '%s'", mail->ReplyTo.Address);
-              StrBufCpy(&sbuf, BuildAddress(address, sizeof(address), mail->ReplyTo.Address, mail->ReplyTo.RealName));
+              dstrcpy(&sbuf, BuildAddress(address, sizeof(address), mail->ReplyTo.Address, mail->ReplyTo.RealName));
               for(i=0; i < email->NumSReplyTo; i++)
               {
                 D(DBF_MAIL, "adding ReplyTo recipient '%s'", email->SReplyTo[i].Address);
@@ -2050,7 +2050,7 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
 
             // add all "To:" recipients of the mail
             D(DBF_MAIL, "adding To recipient '%s'", mail->To.Address);
-            StrBufCpy(&sbuf, BuildAddress(address, sizeof(address), mail->To.Address, mail->To.RealName));
+            dstrcpy(&sbuf, BuildAddress(address, sizeof(address), mail->To.Address, mail->To.RealName));
             for(i=0; i < email->NumSTo; i++)
             {
               D(DBF_MAIL, "adding To recipient '%s'", email->STo[i].Address);
@@ -2059,7 +2059,7 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
             set(wmData->window, MUIA_WriteWindow_To, sbuf);
 
             // add all "CC:" recipients of the mail
-            ResetStrBuf(sbuf);
+            dreset(sbuf);
             for(i=0; i < email->NumCC; i++)
             {
               D(DBF_MAIL, "adding CC recipient '%s'", email->CC[i].Address);
@@ -2068,7 +2068,7 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
             set(wmData->window, MUIA_WriteWindow_CC, sbuf);
 
             // add all "BCC:" recipients of the mail
-            ResetStrBuf(sbuf);
+            dreset(sbuf);
             for(i=0; i < email->NumBCC; i++)
             {
               D(DBF_MAIL, "adding BCC recipient '%s'", email->BCC[i].Address);
@@ -2077,7 +2077,7 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
             set(wmData->window, MUIA_WriteWindow_BCC, sbuf);
 
             // free our temporary buffer
-            FreeStrBuf(sbuf);
+            dfree(sbuf);
 
             if(email->extraHeaders != NULL)
               set(wmData->window, MUIA_WriteWindow_ExtHeaders, email->extraHeaders);
@@ -2097,7 +2097,7 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
             E(DBF_MAIL, "Error while writing cmsg to out FH");
 
             // an error occurred while trying to write the text to out
-            FreeStrBuf(cmsg);
+            dfree(cmsg);
             FreePrivateRMData(rmData);
             fclose(out);
             MA_FreeEMailStruct(email);
@@ -2163,7 +2163,7 @@ struct WriteMailData *NewForwardMailWindow(struct MailList *mlist, const int fla
       struct SignatureNode *signature = NULL;
       int j = 0;
       enum ForwardMode fwdMode = C->ForwardMode;
-      char *rsub = AllocStrBuf(SIZE_SUBJECT);
+      char *rsub = dalloc(SIZE_SUBJECT);
       struct MailNode *mnode;
       struct UserIdentityNode *firstIdentity = NULL; // first identified identity over all mails
 
@@ -2224,7 +2224,7 @@ struct WriteMailData *NewForwardMailWindow(struct MailList *mlist, const int fla
           GetMailFile(mailfile, sizeof(mailfile), NULL, mail);
           ER_NewError(tr(MSG_ER_CantOpenFile), mailfile);
           fclose(out);
-          FreeStrBuf(rsub);
+          dfree(rsub);
 
           CleanupWriteMailData(wmData);
 
@@ -2252,9 +2252,9 @@ struct WriteMailData *NewForwardMailWindow(struct MailList *mlist, const int fla
           if(strstr(rsub, buffer) == NULL)
           {
             if(rsub[0] != '\0')
-              StrBufCat(&rsub, "; ");
+              dstrcat(&rsub, "; ");
 
-            StrBufCat(&rsub, buffer);
+            dstrcat(&rsub, buffer);
           }
         }
 
@@ -2323,7 +2323,7 @@ struct WriteMailData *NewForwardMailWindow(struct MailList *mlist, const int fla
                 // output the readin message text immediately to
                 // our out filehandle
                 fputs(cmsg, out);
-                FreeStrBuf(cmsg);
+                dfree(cmsg);
 
                 InsertIntroText(out, C->ForwardFinish, &etd);
 
@@ -2364,7 +2364,7 @@ struct WriteMailData *NewForwardMailWindow(struct MailList *mlist, const int fla
 
       // set the composed subject text
       set(wmData->window, MUIA_WriteWindow_Subject, rsub);
-      FreeStrBuf(rsub);
+      dfree(rsub);
 
       // update the message text
       DoMethod(wmData->window, MUIM_WriteWindow_ReloadText, FALSE);
@@ -2482,10 +2482,10 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
       BOOL altpat = FALSE;
       char *domain = NULL;
       struct UserIdentityNode *firstIdentity = NULL; // first identified identity over all mails
-      char *rto = AllocStrBuf(SIZE_ADDRESS);
-      char *rcc = AllocStrBuf(SIZE_ADDRESS);
-      char *rrepto = AllocStrBuf(SIZE_ADDRESS);
-      char *rsub = AllocStrBuf(SIZE_SUBJECT);
+      char *rto = dalloc(SIZE_ADDRESS);
+      char *rcc = dalloc(SIZE_ADDRESS);
+      char *rrepto = dalloc(SIZE_ADDRESS);
+      char *rsub = dalloc(SIZE_SUBJECT);
       char buffer[SIZE_LARGE];
       struct ExpandTextData etd;
       BOOL mlIntro = FALSE; // an mailing list intro text was added
@@ -2523,9 +2523,9 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
           ER_NewError(tr(MSG_ER_CantOpenFile), mailfile);
           fclose(out);
           CleanupWriteMailData(wmData);
-          FreeStrBuf(rto);
-          FreeStrBuf(rcc);
-          FreeStrBuf(rsub);
+          dfree(rto);
+          dfree(rcc);
+          dfree(rsub);
 
           RETURN(NULL);
           return NULL;
@@ -2565,32 +2565,32 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
           if(strstr(rsub, buffer) == NULL)
           {
             if(rsub[0] != '\0')
-              StrBufCat(&rsub, "; ");
+              dstrcat(&rsub, "; ");
 
-            StrBufCat(&rsub, buffer);
+            dstrcat(&rsub, buffer);
           }
         }
 
         // in case we are replying to a single message we also have to
         // save the messageID of the email we are replying to
         if(wmData->inReplyToMsgID != NULL)
-          StrBufCat(&wmData->inReplyToMsgID, " ");
+          dstrcat(&wmData->inReplyToMsgID, " ");
 
         if(email->messageID != NULL)
-          StrBufCat(&wmData->inReplyToMsgID, email->messageID);
+          dstrcat(&wmData->inReplyToMsgID, email->messageID);
 
         // in addition, we check for "References:" message header stuff
         if(wmData->references != NULL)
-          StrBufCat(&wmData->references, " ");
+          dstrcat(&wmData->references, " ");
 
         if(email->references != NULL)
-          StrBufCat(&wmData->references, email->references);
+          dstrcat(&wmData->references, email->references);
         else
         {
           // check if this email contains inReplyToMsgID data and if so we
           // create a new references header entry
           if(email->inReplyToMsgID != NULL)
-            StrBufCat(&wmData->references, email->inReplyToMsgID);
+            dstrcat(&wmData->references, email->inReplyToMsgID);
         }
 
         // Now we analyse the folder of the selected mail and if it
@@ -2641,9 +2641,9 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
             MA_FreeEMailStruct(email);
             fclose(out);
             CleanupWriteMailData(wmData);
-            FreeStrBuf(rto);
-            FreeStrBuf(rcc);
-            FreeStrBuf(rsub);
+            dfree(rto);
+            dfree(rcc);
+            dfree(rsub);
 
             RETURN(NULL);
             return NULL;
@@ -2827,10 +2827,10 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
                     MA_FreeEMailStruct(email);
                     fclose(out);
                     CleanupWriteMailData(wmData);
-                    FreeStrBuf(rto);
-                    FreeStrBuf(rcc);
-                    FreeStrBuf(rrepto);
-                    FreeStrBuf(rsub);
+                    dfree(rto);
+                    dfree(rcc);
+                    dfree(rrepto);
+                    dfree(rsub);
 
                     RETURN(NULL);
                     return NULL;
@@ -3009,9 +3009,9 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
             else if((cmsg = RE_ReadInMessage(rmData, RIM_QUOTE)) != NULL)
             {
               // make sure we quote the text in question.
-              QuoteText(out, cmsg, StrBufLength(cmsg), C->EdWrapMode != EWM_OFF ? C->EdWrapCol-2 : 1024);
+              QuoteText(out, cmsg, dstrlen(cmsg), C->EdWrapMode != EWM_OFF ? C->EdWrapCol-2 : 1024);
 
-              FreeStrBuf(cmsg);
+              dfree(cmsg);
             }
 
             FreePrivateRMData(rmData);
@@ -3028,9 +3028,9 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
       if(wmData->inReplyToMsgID != NULL)
       {
         if(wmData->references != NULL)
-          StrBufCat(&wmData->references, " ");
+          dstrcat(&wmData->references, " ");
 
-        StrBufCat(&wmData->references, wmData->inReplyToMsgID);
+        dstrcat(&wmData->references, wmData->inReplyToMsgID);
       }
 
       // make sure the correct identity has been set (if multiple mails
@@ -3076,10 +3076,10 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
         DoMethod(wmData->window, MUIM_WriteWindow_LaunchEditor);
 
       // free our temporary buffers
-      FreeStrBuf(rto);
-      FreeStrBuf(rcc);
-      FreeStrBuf(rrepto);
-      FreeStrBuf(rsub);
+      dfree(rto);
+      dfree(rcc);
+      dfree(rrepto);
+      dfree(rsub);
     }
     else
     {
@@ -3217,13 +3217,13 @@ BOOL CleanupWriteMailData(struct WriteMailData *wmData)
   // cleanup the In-Reply-To / References stuff
   if(wmData->inReplyToMsgID != NULL)
   {
-    FreeStrBuf(wmData->inReplyToMsgID);
+    dfree(wmData->inReplyToMsgID);
     wmData->inReplyToMsgID = NULL;
   }
 
   if(wmData->references != NULL)
   {
-    FreeStrBuf(wmData->references);
+    dfree(wmData->references);
     wmData->references = NULL;
   }
 
