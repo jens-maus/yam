@@ -1705,16 +1705,7 @@ static void InitAfterLogin(void)
   // some mail information
   MA_ChangeSelected(TRUE);
 
-  SplashProgress(tr(MSG_RebuildIndices), 60);
-  MA_RebuildIndexes();
-
-  SplashProgress(tr(MSG_LOADINGUPDATESTATE), 65);
-  LoadUpdateState();
-
-  SplashProgress(tr(MSG_LOADINGSPAMTRAININGDATA), 70);
-  BayesFilterInit();
-
-  SplashProgress(tr(MSG_VALIDATING_FOLDERS), 75);
+  SplashProgress(tr(MSG_VALIDATING_FOLDERS), 55);
   ForEachFolderNode(G->folders, fnode)
   {
     struct Folder *folder = fnode->folder;
@@ -1759,6 +1750,15 @@ static void InitAfterLogin(void)
 
     DoMethod(G->App, MUIM_Application_InputBuffered);
   }
+
+  SplashProgress(tr(MSG_RebuildIndices), 60);
+  MA_RebuildIndexes();
+
+  SplashProgress(tr(MSG_LOADINGUPDATESTATE), 70);
+  LoadUpdateState();
+
+  SplashProgress(tr(MSG_LOADINGSPAMTRAININGDATA), 80);
+  BayesFilterInit();
 
   SplashProgress(tr(MSG_LoadingABook), 90);
   AB_LoadTree(G->AB_Filename, FALSE, FALSE);
