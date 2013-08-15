@@ -9,6 +9,8 @@ $URL$
 
   * YAM.c: rearranged the order of some initialization steps to be more
     consistent.
+  * mui/SearchControlGroup.c: the entered search strings is now automatically
+    cloned between the different pages. This closes #48.
 
 2013-08-14 Thore Böckelmann <tboeckel@gmx.de>
 

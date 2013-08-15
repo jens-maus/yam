@@ -274,7 +274,7 @@ OVERLOAD(OM_NEW)
           Child, data->BT_REMRULE = MakeButton(MUIX_B "-" MUIX_N),
         End,
       End,
- 
+
     TAG_MORE, inittags(msg))) != NULL)
   {
     int i;
@@ -359,6 +359,11 @@ OVERLOAD(OM_NEW)
       if(data->BT_EDIT[i] != NULL)
         DoMethod(data->BT_EDIT[i], MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(EditFile), i);
     }
+
+    // set up some notifications to let certain objects share the same search string
+    DoMethod(data->ST_MATCH[0], MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, METHOD(CloneSearchString), data->ST_MATCH[0], MUIV_TriggerValue);
+    DoMethod(data->ST_MATCH[1], MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, METHOD(CloneSearchString), data->ST_MATCH[1], MUIV_TriggerValue);
+    DoMethod(data->ST_MATCH[4], MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, METHOD(CloneSearchString), data->ST_MATCH[4], MUIV_TriggerValue);
 
     // make sure all elements are enabled.
     set(obj, MUIA_Disabled, FALSE);
@@ -724,6 +729,28 @@ DECLARE(RemRule)
 
   DoMethod(obj, MUIM_ObjectListitem_Remove);
   DoMethod(obj, MUIM_CallHook, &RemoveLastRuleHook);
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(CloneSearchString)
+DECLARE(CloneSearchString) // Object *origin, char *str
+{
+  GETDATA;
+
+  ENTER();
+
+  // set the modified string for all objects except the one
+  // that triggered the change, but don't trigger further
+  // notifications
+  if(msg->origin != data->ST_MATCH[0])
+    nnset(data->ST_MATCH[0], MUIA_String_Contents, msg->str);
+  if(msg->origin != data->ST_MATCH[1])
+    nnset(data->ST_MATCH[1], MUIA_String_Contents, msg->str);
+  if(msg->origin != data->ST_MATCH[4])
+    nnset(data->ST_MATCH[4], MUIA_String_Contents, msg->str);
 
   RETURN(0);
   return 0;
