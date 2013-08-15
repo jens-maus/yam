@@ -93,6 +93,7 @@ struct Data
   Object *BT_CANCEL;
   Object *ST_HELLOTEXT;
   Object *ST_BYETEXT;
+  Object *GR_MLPRORPERTIES;
   struct Folder *folder;
 };
 */
@@ -496,6 +497,7 @@ OVERLOAD(OM_NEW)
   Object *BT_CANCEL;
   Object *ST_HELLOTEXT;
   Object *ST_BYETEXT;
+  Object *GR_MLPRORPERTIES;
 
   ENTER();
 
@@ -570,7 +572,8 @@ OVERLOAD(OM_NEW)
           Child, HSpace(0),
         End,
       End,
-      Child, ColGroup(2), GroupFrameT(tr(MSG_FO_MLSupport)),
+      Child, GR_MLPRORPERTIES = ColGroup(2), GroupFrameT(tr(MSG_FO_MLSupport)),
+        MUIA_ShowMe, FALSE,
         Child, Label2(tr(MSG_FO_MLSUPPORT)),
         Child, HGroup,
           Child, CH_MLSUPPORT = MakeCheck(tr(MSG_FO_MLSUPPORT)),
@@ -625,6 +628,7 @@ OVERLOAD(OM_NEW)
     data->BT_CANCEL           = BT_CANCEL;
     data->ST_HELLOTEXT        = ST_HELLOTEXT;
     data->ST_BYETEXT          = ST_BYETEXT;
+    data->GR_MLPRORPERTIES    = GR_MLPRORPERTIES;
 
     data->folder = (struct Folder *)GetTagData(ATTR(Folder), (ULONG)NULL, inittags(msg));
 
@@ -737,37 +741,24 @@ DECLARE(FolderToGUI)
     set(data->CH_REVERSE[i], MUIA_Selected, folder->Sort[i] < 0);
   }
 
-  set(data->CH_STATS,       MUIA_Selected, folder->Stats);
-  set(data->BT_AUTODETECT,  MUIA_Disabled, !folder->MLSupport || isDefault || isArchive);
+  set(data->CH_STATS,      MUIA_Selected, folder->Stats);
   xset(data->ST_HELLOTEXT, MUIA_String_Contents, folder->WriteIntro,
                            MUIA_Disabled,        isArchive);
   xset(data->ST_BYETEXT,   MUIA_String_Contents, folder->WriteGreetings,
                            MUIA_Disabled,        isArchive);
 
   // for ML-Support
-  xset(data->CH_MLSUPPORT,
-       MUIA_Selected, isDefault || isArchive ? FALSE : folder->MLSupport,
-       MUIA_Disabled, isDefault || isArchive);
-
-  xset(data->ST_MLADDRESS,
-       MUIA_String_Contents, folder->MLAddress,
-       MUIA_Disabled, !folder->MLSupport || isDefault || isArchive);
-
-  xset(data->ST_MLPATTERN,
-       MUIA_String_Contents, folder->MLPattern,
-       MUIA_Disabled, !folder->MLSupport || isDefault || isArchive);
-
-  xset(data->ST_MLREPLYTOADDRESS,
-       MUIA_String_Contents, folder->MLReplyToAddress,
-       MUIA_Disabled, !folder->MLSupport || isDefault || isArchive);
-
-  xset(data->CY_MLSIGNATURE,
-       MUIA_SignatureChooser_Signature, folder->MLSignature,
-       MUIA_Disabled, !folder->MLSupport || isDefault || isArchive);
-
-  xset(data->CY_MLIDENTITY,
-       MUIA_IdentityChooser_Identity, folder->MLIdentity,
-       MUIA_Disabled, !folder->MLSupport || isDefault || isArchive);
+  // The complete group is hidden for default and archive folders which do
+  // not support mailing lists. This avoids the need to disable the indivial
+  // objects for non-mailinglist folders.
+  set(data->GR_MLPRORPERTIES, MUIA_ShowMe, isDefault == FALSE && isArchive == FALSE);
+  set(data->BT_AUTODETECT, MUIA_Disabled, !folder->MLSupport || isDefault || isArchive);
+  set(data->CH_MLSUPPORT, MUIA_Selected, isDefault || isArchive ? FALSE : folder->MLSupport);
+  set(data->ST_MLADDRESS, MUIA_String_Contents, folder->MLAddress);
+  set(data->ST_MLPATTERN, MUIA_String_Contents, folder->MLPattern);
+  set(data->ST_MLREPLYTOADDRESS, MUIA_String_Contents, folder->MLReplyToAddress);
+  set(data->CY_MLSIGNATURE, MUIA_SignatureChooser_Signature, folder->MLSignature);
+  set(data->CY_MLIDENTITY, MUIA_IdentityChooser_Identity, folder->MLIdentity);
 
   // make the folder name object the active one for new folders
   if(data->folder == NULL)

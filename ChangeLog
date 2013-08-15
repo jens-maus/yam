@@ -11,6 +11,8 @@ $URL$
     consistent.
   * mui/SearchControlGroup.c: the entered search strings is now automatically
     cloned between the different pages. This closes #48.
+  * mui/FolderEditWindow.c: all mailing list related options will be hidden for
+    the default and archive folders as these don't support mailing lists at all.
 
 2013-08-14 Thore Böckelmann <tboeckel@gmx.de>
 
