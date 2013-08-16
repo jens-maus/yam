@@ -106,27 +106,28 @@
 /* local defines */
 /// ConfigPageHeaderObject()
 #define ConfigPageHeaderObject(id, image, title, summary) \
-          Child, HGroup,                              \
-            Child, MakeImageObject(id, image),        \
-            Child, VGroup,                            \
-              Child, TextObject,                      \
-                MUIA_Text_PreParse, "\033b",          \
-                MUIA_Text_Contents, (title),          \
-                MUIA_Text_Copy,     FALSE,            \
-                MUIA_Weight,        100,              \
-              End,                                    \
-              Child, TextObject,                      \
-                MUIA_Text_Contents, (summary),        \
-                MUIA_Text_Copy,     FALSE,            \
-                MUIA_Font,          MUIV_Font_Tiny,   \
-                MUIA_Weight,        100,              \
-              End,                                    \
-            End,                                      \
-          End,                                        \
-          Child, RectangleObject,                     \
-            MUIA_Rectangle_HBar, TRUE,                \
-            MUIA_FixHeight,      4,                   \
-          End
+  Child, HGroup,                                          \
+    Child, MakeImageObject(id, image),                    \
+    Child, VGroup,                                        \
+      Child, TextObject,                                  \
+        MUIA_Text_PreParse, "\033b",                      \
+        MUIA_Text_Contents, (title),                      \
+        MUIA_Text_Copy,     FALSE,                        \
+        MUIA_Weight,        100,                          \
+      End,                                                \
+      Child, TextObject,                                  \
+        MUIA_Text_Contents, (summary),                    \
+        MUIA_Text_Copy,     FALSE,                        \
+        MUIA_Font,          MUIV_Font_Tiny,               \
+        MUIA_Weight,        100,                          \
+      End,                                                \
+    End,                                                  \
+  End,                                                    \
+  Child, RectangleObject,                                 \
+    MUIA_Rectangle_HBar, TRUE,                            \
+    MUIA_FixHeight,      4,                               \
+  End
+
 ///
 
 /***************************************************************************
@@ -2612,8 +2613,8 @@ Object *CO_PageFilters(struct CO_ClassData *data)
               Child, LLabel2(tr(MSG_CO_ActionMove)),
               Child, data->GUI.PO_MOVETO = PopobjectObject,
                 MUIA_Popstring_String, data->GUI.TX_MOVETO = TextObject,
-                   TextFrame,
-                   MUIA_Text_Copy, FALSE,
+                  TextFrame,
+                  MUIA_Text_Copy, FALSE,
                 End,
                 MUIA_Popstring_Button,bt_moveto = PopButton(MUII_PopUp),
                 MUIA_Popobject_StrObjHook, &PO_Text2ListHook,
