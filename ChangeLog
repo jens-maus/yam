@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-08-15 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: update to the latest changes.
+
 2013-08-15 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.c: rearranged the order of some initialization steps to be more

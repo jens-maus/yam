@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.43 (14.08.2013)
+## version $VER: YAM.catalog 8.44 (16.08.2013)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -10485,4 +10485,16 @@ Nome _directory
 MSG_VALIDATING_FOLDERS
 Validazione cartelle...
 ; Validating folders...
+;
+MSG_MA_MARCHIVE
+Archivio
+; Archive
+;
+MSG_MA_ARCHIVE
+Archivio
+; Archive
+;
+MSG_CO_SHOW_ARCHIVER_PROGRESS
+Mostra progressi
+; Show progress
 ;
