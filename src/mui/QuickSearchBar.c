@@ -48,7 +48,7 @@
 
 #include "BoyerMooreSearch.h"
 #include "Busy.h"
-#include "DynamicStrings.h"
+#include "DynamicString.h"
 #include "Locale.h"
 #include "MailList.h"
 #include "MUIObjects.h"

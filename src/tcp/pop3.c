@@ -47,7 +47,7 @@
 
 #include "AppIcon.h"
 #include "Busy.h"
-#include "DynamicStrings.h"
+#include "DynamicString.h"
 #include "FolderList.h"
 #include "Locale.h"
 #include "Logfile.h"

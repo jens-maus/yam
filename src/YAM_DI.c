@@ -47,7 +47,7 @@
 #include "YAM_write.h"
 
 #include "Busy.h"
-#include "DynamicStrings.h"
+#include "DynamicString.h"
 #include "Locale.h"
 #include "MUIObjects.h"
 

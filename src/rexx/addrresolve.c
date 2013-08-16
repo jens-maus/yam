@@ -41,7 +41,7 @@
 #include "mui/ClassesExtra.h"
 #include "mui/Recipientstring.h"
 
-#include "DynamicStrings.h"
+#include "DynamicString.h"
 #include "Rexx.h"
 
 #include "Debug.h"

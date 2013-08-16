@@ -45,7 +45,7 @@
 
 #include "BayesFilter.h"
 #include "Busy.h"
-#include "DynamicStrings.h"
+#include "DynamicString.h"
 #include "FileInfo.h"
 #include "Locale.h"
 #include "MethodStack.h"

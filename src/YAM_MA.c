@@ -87,7 +87,7 @@
 #include "AppIcon.h"
 #include "BayesFilter.h"
 #include "Busy.h"
-#include "DynamicStrings.h"
+#include "DynamicString.h"
 #include "FileInfo.h"
 #include "FolderList.h"
 #include "HTML2Mail.h"

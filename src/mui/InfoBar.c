@@ -39,7 +39,7 @@
 #include "YAM_utilities.h"
 
 #include "Busy.h"
-#include "DynamicStrings.h"
+#include "DynamicString.h"
 #include "MUIObjects.h"
 
 #include "mui/ImageArea.h"

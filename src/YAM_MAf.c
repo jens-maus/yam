@@ -69,7 +69,7 @@
 
 #include "AppIcon.h"
 #include "Busy.h"
-#include "DynamicStrings.h"
+#include "DynamicString.h"
 #include "FileInfo.h"
 #include "FolderList.h"
 #include "Locale.h"

@@ -39,7 +39,7 @@
 
 #include "YAM_utilities.h"
 
-#include "DynamicStrings.h"
+#include "DynamicString.h"
 #include "FileInfo.h"
 #include "Signature.h"
 

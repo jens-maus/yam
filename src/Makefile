@@ -665,7 +665,7 @@ YAMOBJS = \
 	BoyerMooreSearch.o \
 	Busy.o \
 	DockyIcon.o \
-	DynamicStrings.o \
+	DynamicString.o \
 	FileInfo.o \
 	FolderList.o \
 	HashTable.o \

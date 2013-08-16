@@ -37,7 +37,7 @@
 
 #include "YAM_config.h"
 
-#include "DynamicStrings.h"
+#include "DynamicString.h"
 #include "MailTextEdit.h"
 #include "MUIObjects.h"
 #include "ParseEmail.h"

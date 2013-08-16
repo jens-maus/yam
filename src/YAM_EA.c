@@ -61,7 +61,7 @@
 #include "mui/Recipientstring.h"
 #include "mui/UserPortraitGroup.h"
 
-#include "DynamicStrings.h"
+#include "DynamicString.h"
 #include "Locale.h"
 #include "Logfile.h"
 #include "MUIObjects.h"

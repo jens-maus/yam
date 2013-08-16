@@ -30,7 +30,7 @@
 
 #include "YAM_stringsizes.h"
 
-#include "DynamicStrings.h"
+#include "DynamicString.h"
 
 #include "Debug.h"
 

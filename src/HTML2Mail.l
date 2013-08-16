@@ -49,7 +49,7 @@
 
     #include "YAM_utilities.h"
 
-    #include "DynamicStrings.h"
+    #include "DynamicString.h"
     #include "HTML2Mail.h"
 
     #include "Debug.h"

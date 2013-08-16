@@ -59,7 +59,7 @@
 #include "mui/StringRequestWindow.h"
 #include "mui/YAMApplication.h"
 
-#include "DynamicStrings.h"
+#include "DynamicString.h"
 #include "FolderList.h"
 #include "Locale.h"
 #include "MailServers.h"

@@ -58,7 +58,7 @@
 #include "YAM_error.h"
 #include "YAM_utilities.h"
 
-#include "DynamicStrings.h"
+#include "DynamicString.h"
 #include "FileInfo.h"
 #include "Locale.h"
 #include "MailServers.h"

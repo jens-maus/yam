@@ -60,7 +60,7 @@
 #include "mime/qprintable.h"
 #include "mime/uucode.h"
 
-#include "DynamicStrings.h"
+#include "DynamicString.h"
 #include "FileInfo.h"
 #include "FolderList.h"
 #include "Locale.h"

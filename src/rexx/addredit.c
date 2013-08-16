@@ -41,7 +41,7 @@
 #include "mui/ClassesExtra.h"
 #include "mui/AddrBookListtree.h"
 
-#include "DynamicStrings.h"
+#include "DynamicString.h"
 #include "MUIObjects.h"
 #include "Rexx.h"
 

@@ -39,7 +39,7 @@
 #include "YAM_addressbookEntry.h"
 #include "YAM_config.h"
 
-#include "DynamicStrings.h"
+#include "DynamicString.h"
 #include "Locale.h"
 #include "MUIObjects.h"
 #include "ParseEmail.h"
