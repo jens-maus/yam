@@ -7,6 +7,9 @@ $URL$
 
 2013-08-16 Jens Langner <Jens.Langner@light-speed.de>
 
+  * mui/SignatureTextEdit.c: changed EditExternally method to use OpenTempFile
+    instead of putting in the temporary data to a file with always the same
+    name.
   * DynamicString.c: revised the new dynamic string functions once more to be
     somewhat more compatible to the function prototypes of the standard string
     functions like strcpy(). In addition, a debug cookie will now be placed

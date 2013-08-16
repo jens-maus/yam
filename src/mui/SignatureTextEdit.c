@@ -63,8 +63,8 @@ OVERLOAD(OM_SET)
   {
     switch(tag->ti_Tag)
     {
-	  case ATTR(SignatureNode):
-	  {
+      case ATTR(SignatureNode):
+      {
         if(data->sigNode != NULL && xget(obj, MUIA_TextEditor_HasChanged) == TRUE)
         {
           char *sig;
@@ -80,7 +80,7 @@ OVERLOAD(OM_SET)
         }
 
         // remember the new signature node
-	    data->sigNode = (struct SignatureNode *)tag->ti_Data;
+        data->sigNode = (struct SignatureNode *)tag->ti_Data;
 
         if(data->sigNode != NULL)
         {
@@ -89,25 +89,25 @@ OVERLOAD(OM_SET)
           // switch read-only/edit mode
           set(obj, ATTR(UseSignatureFile), data->sigNode->useSignatureFile);
         }
-	  }
-	  break;
+      }
+      break;
 
-	  case ATTR(UseSignatureFile):
-	  {
+      case ATTR(UseSignatureFile):
+      {
         if(tag->ti_Data == FALSE)
         {
           // switch to edit mode if no signature file is used
           SetSuperAttrs(cl, obj, MUIA_TextEditor_ReadOnly, FALSE,
                                  MUIA_TextEditor_ActiveObjectOnClick, TRUE,
                                  TAG_DONE);
-		}
-		else
+        }
+        else
         {
           // switch to read-write mode if a signature file is used
           SetSuperAttrs(cl, obj, MUIA_TextEditor_ReadOnly, TRUE,
                                  TAG_DONE);
         }
-	  }
+      }
     }
   }
 
@@ -178,27 +178,34 @@ DECLARE(EditExternally)
 
   if(C->Editor[0] != '\0')
   {
-    char editor[SIZE_LARGE];
-    char *buffer;
+    struct TempFile *tf;
 
-    // export the signature text to a temporaty file
-    DoMethod(obj, MUIM_MailTextEdit_SaveToFile, "T:tempsignature");
-
-    // launch the external editor and wait until it is
-    // finished...
-    snprintf(editor, sizeof(editor), "%s \"T:tempsignature\"", C->Editor);
-    LaunchCommand(editor, 0, OUT_NIL);
-
-    // refresh the signature in the internal editor after the external is finished
-    if((buffer = FileToBuffer("T:tempsignature")) != NULL)
+    if((tf = OpenTempFile(NULL)) != NULL)
     {
-      DoMethod(obj, METHOD(SetSignatureText), buffer);
-      free(buffer);
-    }
+      char *editor = NULL;
+      char *buffer;
 
-    // delete the temporary signature file again
-    if(DeleteFile("T:tempsignature") == 0)
-      AddZombieFile("T:tempsignature");
+      // export the signature text to a temporaty file
+      DoMethod(obj, MUIM_MailTextEdit_SaveToFile, tf->Filename);
+
+      // launch the external editor and wait until it is
+      // finished...
+      if(asprintf(&editor, "%s \"%s\"", C->Editor, tf->Filename) >= 0)
+      {
+        // launch the external editor synchronously (wait until it returns)
+        LaunchCommand(editor, 0, OUT_NIL);
+        free(editor);
+
+        // refresh the signature in the internal editor after the external is finished
+        if((buffer = FileToBuffer(tf->Filename)) != NULL)
+        {
+          DoMethod(obj, METHOD(SetSignatureText), buffer);
+          free(buffer);
+        }
+      }
+
+      CloseTempFile(tf);
+    }
   }
 
   RETURN(0);
