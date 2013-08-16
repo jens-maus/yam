@@ -48,6 +48,14 @@ struct DynamicString
 #define STR_TO_DSTR(str)  (struct DynamicString *)(((size_t)(str)) - sizeof(struct DynamicString))
 #define DSTR_TO_STR(dstr) (&(dstr)->str[0])
 
+#if defined(DEBUG)
+#define CHECK_DSTR(ds) \
+  if(ds == NULL || ds->dbg_cookie[0] != 0xbe || ds->dbg_cookie[1] != 0xef) \
+    E(DBF_UTIL, "invalid dstr (0x%08lx) used in %s()", dstr, __FUNCTION__)
+#else
+#define CHECK_DSTR(ds) ((void)0)
+#endif
+
 /// dstrallocInternal
 // allocates a dynamic string
 static struct DynamicString *dstrallocInternal(const size_t size)
@@ -59,8 +67,8 @@ static struct DynamicString *dstrallocInternal(const size_t size)
   if((dstr = malloc(sizeof(*dstr) + size)) != NULL)
   {
     #if defined(DEBUG)
-    dstr->dbg_cookie[0] = 0xBE;
-    dstr->dbg_cookie[1] = 0xEF; // 0xBEEF
+    dstr->dbg_cookie[0] = 0xbe;
+    dstr->dbg_cookie[1] = 0xef; // 0xbeef
     #endif
     dstr->size = size;
     dstr->strlen = 0;
@@ -105,10 +113,7 @@ void dstrreset(const char *dstr)
   {
     struct DynamicString *ds = STR_TO_DSTR(dstr);
 
-    #if defined(DEBUG)
-    if(ds == NULL || ds->dbg_cookie[0] != 0xBE || ds->dbg_cookie[1] != 0xEF)
-      E(DBF_UTIL, "invalid dstr (0x%08x) used in dstrreset()", dstr);
-    #endif
+    CHECK_DSTR(ds);
 
     ds->strlen = 0;
     ds->str[0] = '\0';
@@ -153,10 +158,7 @@ char *dstrcpy(char **dstr, const char *src)
 
     ds = STR_TO_DSTR(*dstr);
 
-    #if defined(DEBUG)
-    if(ds == NULL || ds->dbg_cookie[0] != 0xBE || ds->dbg_cookie[1] != 0xEF)
-      E(DBF_UTIL, "invalid dstr (0x%08x) used in dstrcpy()", dstr);
-    #endif
+    CHECK_DSTR(ds);
 
     oldsize = ds->size;
     newsize = oldsize;
@@ -232,10 +234,7 @@ char *dstrcat(char **dstr, const char *src)
 
     ds = STR_TO_DSTR(*dstr);
 
-    #if defined(DEBUG)
-    if(ds == NULL || ds->dbg_cookie[0] != 0xBE || ds->dbg_cookie[1] != 0xEF)
-      E(DBF_UTIL, "invalid dstr (0x%08x) used in dstrcat()", dstr);
-    #endif
+    CHECK_DSTR(ds);
 
     oldsize = ds->size;
     newsize = oldsize;
@@ -293,10 +292,7 @@ size_t dstrlen(const char *dstr)
   {
     struct DynamicString *ds = STR_TO_DSTR(dstr);
 
-    #if defined(DEBUG)
-    if(ds == NULL || ds->dbg_cookie[0] != 0xBE || ds->dbg_cookie[1] != 0xEF)
-      E(DBF_UTIL, "invalid dstr (0x%08x) used in dstrlen()", dstr);
-    #endif
+    CHECK_DSTR(ds);
 
     result = ds->strlen;
   }
@@ -326,10 +322,7 @@ size_t dstrfread(char **dstr, size_t size, FILE *stream)
   {
     ds = STR_TO_DSTR(*dstr);
 
-    #if defined(DEBUG)
-    if(ds == NULL || ds->dbg_cookie[0] != 0xBE || ds->dbg_cookie[1] != 0xEF)
-      E(DBF_UTIL, "invalid dstr (0x%08x) used in dstrfread()", dstr);
-    #endif
+    CHECK_DSTR(ds);
 
     // make sure the string buffer is large enough to keep the
     // requested amount of characters
