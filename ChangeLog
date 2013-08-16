@@ -7,6 +7,9 @@ $URL$
 
 2013-08-16 Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_MAf.c: fixed a potential problem with saving the index utf8 encoded
+    where a wrong strlen had been calculated and the NUL termination ended
+    up potentially incorrect when loading the index.
   * mui/SignatureTextEdit.c: changed EditExternally method to use OpenTempFile
     instead of putting in the temporary data to a file with always the same
     name.

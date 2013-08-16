@@ -324,7 +324,7 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
                 break;
               }
 
-              if(cmail.moreBytes > sizeof(utf8buf))
+              if(cmail.moreBytes > sizeof(utf8buf)-1)
               {
                 ER_NewError(tr(MSG_ER_INDEX_CORRUPTED), indexFileName, folder->Name, ftell(fh), cmail.mailFile, cmail.moreBytes);
                 corrupt = TRUE;
@@ -338,6 +338,9 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
                 error = TRUE;
                 break;
               }
+
+              // make sure to NUL terminate the utf8 string
+              utf8buf[cmail.moreBytes] = '\0';
 
               // convert the utf8 encoded buffer to the local charset
               if((buf = CodesetsUTF8ToStr(CSA_Source,          utf8buf,
@@ -566,7 +569,7 @@ BOOL MA_SaveIndex(struct Folder *folder)
           cmail.cMsgID = mail->cMsgID;
           cmail.cIRTMsgID = mail->cIRTMsgID;
           cmail.size = mail->Size;
-          cmail.moreBytes = strlen(buf);
+          cmail.moreBytes = strlen((char *)utf8buf); // don't include NUL termination
 
           if(fwrite(&cmail, sizeof(cmail), 1, fh) != 1 ||
              fwrite(utf8buf, cmail.moreBytes, 1, fh) != 1)
