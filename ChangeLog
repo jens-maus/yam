@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-08-16 Thore Böckelmann <tboeckel@gmx.de>
+
+  * DynamicString.c: fixed some free() calls with wrong pointers.
+
 2013-08-16 Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_MAf.c: fixed a potential problem with saving the index utf8 encoded

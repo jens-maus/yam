@@ -37,7 +37,7 @@
 struct DynamicString
 {
   #if defined(DEBUG)
-  char dbg_cookie[2];  // for debugging we put here a magic cookie
+  unsigned char dbg_cookie[2];  // for debugging we put here a magic cookie
   #endif
   size_t size;    // the allocated memory size for the string
   size_t strlen;  // the current string length
@@ -258,7 +258,7 @@ char *dstrcat(char **dstr, const char *src)
       {
         newdstr->strlen = ds->strlen;
         memmove(newdstr->str, ds->str, ds->strlen+1);
-        free(dstr);
+        free(ds);
         ds = newdstr;
         *dstr = DSTR_TO_STR(ds);
       }
@@ -340,7 +340,7 @@ size_t dstrfread(char **dstr, size_t size, FILE *stream)
       // allocate a new buffer and replace the old one with it
       if((newdstr = dstrallocInternal(size+1)) != NULL)
       {
-        free(dstr);
+        free(ds);
         ds = newdstr;
         *dstr = DSTR_TO_STR(ds);
       }
