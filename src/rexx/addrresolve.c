@@ -117,7 +117,7 @@ void rx_addrresolve(UNUSED struct RexxHost *host, struct RexxParams *params, enu
         FreeVecPooled(G->SharedMemPool, results);
       if(optional != NULL)
       {
-        dfree(optional->string);
+        dstrfree(optional->string);
         FreeVecPooled(G->SharedMemPool, optional);
       }
     }

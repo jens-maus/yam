@@ -529,7 +529,7 @@ HOOKPROTONHNO(EA_Okay, void, int *arg)
 
       GetMUIString(addr->RealName, gui->ST_REALNAME, sizeof(addr->RealName));
       GetMUIString(addr->Address, gui->ST_ADDRESS, sizeof(addr->Address));
-      members = dalloc(SIZE_DEFAULT);
+      members = dstralloc(SIZE_DEFAULT);
       for(i = 0; ; i++)
       {
         char *p;
@@ -557,7 +557,7 @@ HOOKPROTONHNO(EA_Okay, void, int *arg)
         free(addr->Members);
       }
 
-      dfree(members);
+      dstrfree(members);
     }
     break;
 

@@ -2718,7 +2718,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
   }
 
   // then we generate our final buffer for the message
-  if((cmsg = dalloc((totsize*3)/2+1)) != NULL)
+  if((cmsg = dstralloc((totsize*3)/2+1)) != NULL)
   {
     struct BusyNode *busy = NULL;
 
@@ -2841,7 +2841,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
           setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
           // allocate memory for the complete part plus and trailing NUL byte
-          if((msg = dalloc(part->Size+1)) != NULL)
+          if((msg = dstralloc(part->Size+1)) != NULL)
           {
             int nread;
             char *ptr;
@@ -2850,7 +2850,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
             BOOL signatureFound = FALSE;
 
             // read the part into a dynamic string
-            nread = dread(&msg, fh, part->Size);
+            nread = dstrfread(&msg, part->Size, fh);
 
             // lets check if an error or short item count occurred
             if(nread == 0 || nread != part->Size)
@@ -2864,8 +2864,8 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                 E(DBF_MAIL, "ERROR occurred while reading at pos %ld of '%s'", ftell(fh), part->Filename);
 
                 // cleanup and return NULL
-                dfree(cmsg);
-                dfree(msg);
+                dstrfree(cmsg);
+                dstrfree(msg);
                 fclose(fh);
 
                 if(mode != RIM_QUIET)
@@ -2894,7 +2894,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
               if((converted = html2mail(msg)) != NULL)
               {
                 // free the old HTML text
-                dfree(msg);
+                dstrfree(msg);
 
                 // overwrite the old values
                 nread = dstrlen(converted);
@@ -3271,7 +3271,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
               rptr = eolptr+1;
             }
 
-            dfree(msg);
+            dstrfree(msg);
           }
 
           fclose(fh);
@@ -3837,7 +3837,7 @@ static void RE_SendMDN(const enum MDNMode mode,
               ER_NewError(tr(MSG_ER_CANNOT_CREATE_MAIL_FILE), mfilePath);
             }
 
-            dfree(comp.MailTo);
+            dstrfree(comp.MailTo);
             CloseTempFile(tf3);
           }
         }
@@ -4141,7 +4141,7 @@ static BOOL RE_HandleMDNReport(const struct Part *frp)
     FILE *fh;
     const char *mode;
     char *type;
-    char *msgdesc = dalloc(80);
+    char *msgdesc = dstralloc(SIZE_DEFAULT);
     char disposition[SIZE_DEFAULT];
     char file[SIZE_FILE];
     char buf[SIZE_PATHFILE];
@@ -4261,7 +4261,7 @@ static BOOL RE_HandleMDNReport(const struct Part *frp)
       result = TRUE;
     }
 
-    dfree(msgdesc);
+    dstrfree(msgdesc);
   }
 
   RETURN(result);
@@ -4565,8 +4565,8 @@ void FreeHeaderNode(struct HeaderNode *hdrNode)
 
   if(hdrNode != NULL)
   {
-    dfree(hdrNode->name);
-    dfree(hdrNode->content);
+    dstrfree(hdrNode->name);
+    dstrfree(hdrNode->content);
 
     FreeSysObject(ASOT_NODE, hdrNode);
   }

@@ -1148,7 +1148,7 @@ static int ConnectToPOP3(struct TransferContext *tc)
 
 out:
 
-  dfree(welcomemsg);
+  dstrfree(welcomemsg);
 
   RETURN(msgs);
   return msgs;

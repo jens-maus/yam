@@ -1022,9 +1022,9 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
 
       // free the parsed text afterwards as the texteditor has copied it anyway.
       if(rmData->useTextstyles == TRUE || rmData->useTextcolors == TRUE)
-        dfree(body);
+        dstrfree(body);
 
-      dfree(cmsg);
+      dstrfree(cmsg);
 
       // start the macro
       if(rmData->readWindow != NULL)

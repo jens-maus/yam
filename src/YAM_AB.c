@@ -960,7 +960,7 @@ BOOL AB_LoadTree(const char *fname, BOOL append, BOOL sorted)
               addr.Members = members;
               DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, addr.Alias, &addr, parent[nested], MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE);
             }
-            dfree(members);
+            dstrfree(members);
           }
           else if(strncmp(buffer, "@GROUP", 6) == 0)
           {

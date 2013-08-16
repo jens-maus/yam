@@ -2325,7 +2325,7 @@ DECLARE(AddArchive)
 
       // now we create the command we are going to
       // execute for generating the archive.
-      if((command = dalloc(SIZE_DEFAULT)) != NULL)
+      if((command = dstralloc(SIZE_DEFAULT)) != NULL)
       {
         char *src;
         BPTR filedir;
@@ -2435,7 +2435,7 @@ DECLARE(AddArchive)
         }
 
         // free our private resources
-        dfree(command);
+        dstrfree(command);
         CloseTempFile(tf);
 
         // if everything worked out fine we go
@@ -3033,7 +3033,7 @@ DECLARE(StyleOptionsChanged)
         // set the new text and preserve the changed status
         set(data->TE_EDIT, MUIA_TextEditor_Contents, parsedText);
 
-        dfree(parsedText);
+        dstrfree(parsedText);
       }
 
       FreeVec(orgtext); // use FreeVec() because TextEditor.mcc uses AllocVec()
@@ -3648,6 +3648,7 @@ DECLARE(LoadText) // char *filename, ULONG changed
     setFlag(flags, MUIF_MailTextEdit_LoadFromFile_UseStyles);
   if(data->useTextColors == TRUE)
     setFlag(flags, MUIF_MailTextEdit_LoadFromFile_UseColors);
+
   result = DoMethod(data->TE_EDIT, MUIM_MailTextEdit_LoadFromFile, msg->filename, flags);
 
   RETURN(result);
@@ -4345,13 +4346,13 @@ DECLARE(ComposeMail) // enum WriteMode mode
     // cleanup the In-Reply-To / References stuff
     if(wmData->inReplyToMsgID != NULL)
     {
-      dfree(wmData->inReplyToMsgID);
+      dstrfree(wmData->inReplyToMsgID);
       wmData->inReplyToMsgID = NULL;
     }
 
     if(wmData->references != NULL)
     {
-      dfree(wmData->references);
+      dstrfree(wmData->references);
       wmData->references = NULL;
     }
   }

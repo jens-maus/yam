@@ -300,7 +300,7 @@ static BOOL MatchMail(struct Mail *mail, enum ViewOptions vo,
             foundMatch = (BoyerMooreSearch(bmContext, cmsg) != NULL);
 
             // free the allocated message text immediately
-            dfree(cmsg);
+            dstrfree(cmsg);
           }
 
           FreePrivateRMData(rmData);

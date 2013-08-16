@@ -145,7 +145,7 @@ void rx_addredit(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
           free(ab->Members);
           ab->Members = strdup(memb);
 
-          dfree(memb);
+          dstrfree(memb);
         }
 
         DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Redraw, MUIV_NListtree_Redraw_Active, MUIF_NONE);

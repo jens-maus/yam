@@ -31,12 +31,16 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-char *dalloc(size_t initsize);
-void dreset(char *str);
-size_t dstrcat(char **str, const char *source);
-size_t dstrcpy(char **str, const char *source);
-size_t dstrlen(char *str);
-size_t dread(char **str, FILE *fh, size_t size);
-void dfree(char *str);
+// prototypes of our dstrXXX() functions which
+// deal with dynamic string functionality and try
+// to be compatible to the standard functions like strcpy()
+
+char *dstralloc(size_t initsize);
+void dstrreset(const char *dstr);
+char *dstrcpy(char **dstr, const char *src);
+char *dstrcat(char **dstr, const char *src);
+size_t dstrlen(const char *dstr);
+size_t dstrfread(char **dstr, size_t size, FILE *fh);
+void dstrfree(const char *dstr);
 
 #endif /* DYNAMICSTRING_H */

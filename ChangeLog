@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-08-16 Jens Langner <Jens.Langner@light-speed.de>
+
+  * DynamicString.c: revised the new dynamic string functions once more to be
+    somewhat more compatible to the function prototypes of the standard string
+    functions like strcpy(). In addition, a debug cookie will now be placed
+    at the top of the dynamic string structure so that we can identify if a
+    supplied pointer is actually a dynamic string or now.
+
 2013-08-15 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: update to the latest changes.

@@ -207,7 +207,7 @@ char *ParseEmailText(const char *mailTxt, const BOOL handleSigDash,
   // lets prepare the mailTxt for the lexer
   if((buffer = yy_scan_string(mailTxt)))
   {
-    if((cmsg = dalloc((strlen(mailTxt)*3)/2+1)) != NULL)
+    if((cmsg = dstralloc((strlen(mailTxt)*3)/2+1)) != NULL)
     {
       BOOL centerActivated = FALSE;
       BOOL signatureFound = FALSE;

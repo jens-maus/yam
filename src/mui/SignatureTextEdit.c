@@ -152,20 +152,18 @@ DECLARE(SetSignatureText) // const char *sigText
     else
       modified = TRUE;
 
-	xset(obj, MUIA_TextEditor_Contents, parsedSig,
-			  MUIA_TextEditor_HasChanged, modified);
+    xset(obj, MUIA_TextEditor_Contents, parsedSig,
+              MUIA_TextEditor_HasChanged, modified);
 
-	dfree(parsedSig);
+    dstrfree(parsedSig);
   }
   else
   {
-	if(msg->sigText != NULL)
-	{
-	  W(DBF_CONFIG, "couldn't load signature '%s' in texteditor", SafeStr(msg->sigText));
-	}
+    if(msg->sigText != NULL)
+      W(DBF_CONFIG, "couldn't load signature '%s' in texteditor", SafeStr(msg->sigText));
 
-	xset(obj, MUIA_TextEditor_Contents, "",
-	          MUIA_TextEditor_HasChanged, FALSE);
+    xset(obj, MUIA_TextEditor_Contents, "",
+              MUIA_TextEditor_HasChanged, FALSE);
   }
 
   RETURN(0);

@@ -465,7 +465,7 @@ static BOOL FI_SearchPatternInBody(const struct Search *search, const struct Mai
       if(G->FI != NULL && G->FI->Abort != FALSE)
         D(DBF_FILTER, "search was aborted");
 
-      dfree(cmsg);
+      dstrfree(cmsg);
     }
 
     FreePrivateRMData(rmData);

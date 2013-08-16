@@ -412,7 +412,7 @@ DECLARE(LoadFromFile) // const char *file, ULONG flags
       xset(obj, MUIA_TextEditor_Contents,   parsedText,
                 MUIA_TextEditor_HasChanged, isFlagSet(msg->flags, MUIF_MailTextEdit_LoadFromFile_SetChanged));
 
-      dfree(parsedText);
+      dstrfree(parsedText);
 
       result = TRUE;
     }

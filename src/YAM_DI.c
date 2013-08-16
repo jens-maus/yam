@@ -78,7 +78,7 @@ static void DI_FinishEdit(void)
       new.Text = NULL;
       dstrcpy(&new.Text, edtext ? edtext : "");
       if(G->DI->OldEntry->Text)
-        dfree(G->DI->OldEntry->Text);
+        dstrfree(G->DI->OldEntry->Text);
 
       GetMUIString(new.Alias, gui->ST_ALIAS, sizeof(new.Alias));
       if(*new.Alias == '\0')
@@ -167,7 +167,7 @@ static int DI_Load(void)
           char *p;
 
           strlcpy(entry.Alias, Trim(&buffer[7]), sizeof(entry.Alias));
-          entry.Text = dalloc(80);
+          entry.Text = dstralloc(SIZE_DEFAULT);
 
           while(GetLine(&buffer, &size, fh) >= 0)
           {
@@ -276,7 +276,7 @@ HOOKPROTONHNO(DI_ModifyFunc, void, int *arg)
 
   DI_FinishEdit();
   strlcpy(new.Alias, tr(MSG_NewEntry), sizeof(new.Alias));
-  new.Text = dalloc(80);
+  new.Text = dstralloc(SIZE_DEFAULT);
   DoMethod(G->DI->GUI.LV_ENTRIES, MUIM_List_InsertSingle, &new, MUIV_List_Insert_Bottom);
   nnset(G->DI->GUI.LV_ENTRIES, MUIA_List_Active, MUIV_List_Active_Bottom);
 
@@ -330,7 +330,7 @@ MakeStaticHook(DI_LV_ConFuncHook, DI_LV_ConFunc);
 //  Glossary listview destruction hook
 HOOKPROTONHNO(DI_LV_DesFunc, long, struct Dict *entry)
 {
-   dfree(entry->Text);
+   dstrfree(entry->Text);
    free(entry);
    return 0;
 }

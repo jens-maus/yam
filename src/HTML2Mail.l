@@ -326,7 +326,7 @@ char *html2mail(char *htmlTxt)
   // lets prepare the htmlTxt for the lexer
   if((buffer = yy_scan_string(htmlTxt)))
   {
-    if((cmsg = dalloc((strlen(htmlTxt)*3)/2+1)) != NULL)
+    if((cmsg = dstralloc((strlen(htmlTxt)*3)/2+1)) != NULL)
     {
       enum htmlTagType type;
       char *lastHref = NULL;

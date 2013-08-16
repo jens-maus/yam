@@ -308,7 +308,7 @@ char *ImportSignature(const char *src)
     {
       char *tmp = strdup(sig);
 
-      dfree(sig);
+      dstrfree(sig);
       sig = tmp;
     }
   }
@@ -385,7 +385,7 @@ char *ExportSignature(const char *src)
     {
       char *tmp = strdup(sig);
 
-      dfree(sig);
+      dstrfree(sig);
       sig = tmp;
     }
   }

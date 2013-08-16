@@ -1874,7 +1874,7 @@ BOOL MA_ReadHeader(const char *mailFile, FILE *fh, struct MinList *headerList, e
 
             // use our dstrcpy() function to copy the name of the header
             // into our ->name element
-            if(dstrcpy(&hdrNode->name, buffer) > 0)
+            if(dstrcpy(&hdrNode->name, buffer) != NULL)
             {
               // now we copy also the rest of buffer into the contents
               // of the headerNode
@@ -1882,6 +1882,7 @@ BOOL MA_ReadHeader(const char *mailFile, FILE *fh, struct MinList *headerList, e
               // start on the next line. Thus we must not check the return
               // value to indicate that something has been copied.
               dstrcpy(&hdrNode->content, Trim(ptr));
+
               // everything seemed to work fine, so lets continue
               continue;
             }
@@ -1946,7 +1947,7 @@ BOOL MA_ReadHeader(const char *mailFile, FILE *fh, struct MinList *headerList, e
 
           if((validLine = ValidateAddressLine(addressHeader->content)) != NULL)
           {
-            dfree(addressHeader->content);
+            dstrfree(addressHeader->content);
             addressHeader->content = validLine;
           }
         }
@@ -1967,19 +1968,19 @@ void MA_FreeEMailStruct(struct ExtendedMail *email)
 
   if(email != NULL)
   {
-    dfree(email->SenderInfo);
+    dstrfree(email->SenderInfo);
     email->SenderInfo = NULL;
 
-    dfree(email->extraHeaders);
+    dstrfree(email->extraHeaders);
     email->extraHeaders = NULL;
 
-    dfree(email->messageID);
+    dstrfree(email->messageID);
     email->messageID = NULL;
 
-    dfree(email->inReplyToMsgID);
+    dstrfree(email->inReplyToMsgID);
     email->inReplyToMsgID = NULL;
 
-    dfree(email->references);
+    dstrfree(email->references);
     email->references = NULL;
 
     if(email->SFrom != NULL)

@@ -1631,7 +1631,7 @@ static void tokenizeMail(struct Tokenizer *t,
     {
       // first tokenize all texts
       tokenizerTokenize(t, rptr);
-      dfree(rptr);
+      dstrfree(rptr);
 
       if(isMultiPartMail(mail))
       {

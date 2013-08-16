@@ -444,7 +444,7 @@ static int GetCertFingerprint(const struct Certificate *cert, char *digest)
 // extract a readable string of all issuers DNAME information
 static char *ExtractReadableDN(X509_NAME *dname)
 {
-  char *result = dalloc(SIZE_DEFAULT);
+  char *result = dstralloc(SIZE_DEFAULT);
   int n;
   int flag = 0;
   const ASN1_OBJECT * const cname = OBJ_nid2obj(NID_commonName);
@@ -577,7 +577,7 @@ static void FreeCertificateChain(struct Certificate *top_cert)
     current = next;
     next = current->issuer;
 
-    dfree(current->issuerStr);
+    dstrfree(current->issuerStr);
 
     if(current->identity != NULL)
       free(current->identity);

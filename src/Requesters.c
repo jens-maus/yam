@@ -621,7 +621,7 @@ BOOL CertWarningRequest(struct Connection *conn, struct Certificate *cert)
     if(asprintf(&reqtxt, format, conn->server->hostname, conn->server->port, cert->identity, cert->notBefore, cert->notAfter, cert->issuerStr, cert->fingerprint) != -1)
     {
       // free the format template right now
-      dfree(format);
+      dstrfree(format);
 
       // create the window object now
       win = GenericRequestWindowObject,
@@ -728,7 +728,7 @@ BOOL CertWarningRequest(struct Connection *conn, struct Certificate *cert)
     else
     {
       // free the format template right now
-      dfree(format);
+      dstrfree(format);
     }
   }
 

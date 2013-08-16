@@ -109,7 +109,7 @@ static void GetFolderInfo(struct Data *data, struct Folder *folder)
   if(info != NULL)
   {
     strlcpy(data->folderInfo, info, sizeof(data->folderInfo));
-    dfree(info);
+    dstrfree(info);
   }
   else
     data->folderInfo[0] = '\0';

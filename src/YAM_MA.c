@@ -1283,7 +1283,7 @@ void MA_RemoveAttach(struct Mail *mail, struct Part **whichParts, BOOL warning)
 
       goOn = (MUI_Request(G->App, G->MA->GUI.WI, MUIF_NONE, NULL, tr(MSG_YesNoReq2), tr(MSG_MA_DELETESELECTEDREQUEST), fileList) != 0);
 
-      dfree(fileList);
+      dstrfree(fileList);
     }
   }
 
@@ -1528,7 +1528,7 @@ void MA_RemoveAttach(struct Mail *mail, struct Part **whichParts, BOOL warning)
           }
         }
 
-        dfree(cmsg);
+        dstrfree(cmsg);
       }
 
       FreePrivateRMData(rmData);
@@ -1628,7 +1628,7 @@ HOOKPROTONHNONP(MA_SaveAttachFunc, void)
             struct Part *part;
 
             // free the message again as we don't need its content here.
-            dfree(cmsg);
+            dstrfree(cmsg);
 
             if((part = rmData->firstPart->Next) != NULL && part->Next != NULL)
               RE_SaveAll(rmData, frc->drawer);
@@ -1703,7 +1703,7 @@ HOOKPROTONHNO(MA_SavePrintFunc, void, int *arg)
               CloseTempFile(tf);
             }
 
-            dfree(cmsg);
+            dstrfree(cmsg);
           }
 
           FreePrivateRMData(rmData);
