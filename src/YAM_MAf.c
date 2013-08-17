@@ -557,7 +557,9 @@ BOOL MA_SaveIndex(struct Folder *folder)
                                    mail->ReplyTo.Address, mail->ReplyTo.RealName);
 
         // convert the buffer string to UTF8
-        if((utf8buf = CodesetsUTF8Create(CSA_Source, buf, TAG_DONE)) != NULL)
+        if((utf8buf = CodesetsUTF8Create(CSA_Source, buf,
+                                         CSA_DestLenPtr, &cmail.moreBytes,
+                                         TAG_DONE)) != NULL)
         {
           strlcpy(cmail.mailFile, mail->MailFile, sizeof(cmail.mailFile));
           cmail.date = mail->Date;
@@ -569,7 +571,6 @@ BOOL MA_SaveIndex(struct Folder *folder)
           cmail.cMsgID = mail->cMsgID;
           cmail.cIRTMsgID = mail->cIRTMsgID;
           cmail.size = mail->Size;
-          cmail.moreBytes = strlen((char *)utf8buf); // don't include NUL termination
 
           if(fwrite(&cmail, sizeof(cmail), 1, fh) != 1 ||
              fwrite(utf8buf, cmail.moreBytes, 1, fh) != 1)

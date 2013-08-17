@@ -9,6 +9,8 @@ $URL$
 
   * YAM_COg.c: removed a duplicate initialization of the mail server and
     signature cycle objects.
+  * YAM_MAf.c: save an additional strlen() call since codesets.library is able
+    to return the length of the generated UTF8 string.
 
 2013-08-16 Thore Böckelmann <tboeckel@gmx.de>
 
