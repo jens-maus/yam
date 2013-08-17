@@ -186,7 +186,7 @@ DECLARE(EditExternally)
       char *buffer;
 
       // export the signature text to a temporaty file
-      DoMethod(obj, MUIM_MailTextEdit_SaveToFile, tf->Filename);
+      DoMethod(obj, MUIM_MailTextEdit_SaveToFile, tf->Filename, NULL);
 
       // launch the external editor and wait until it is
       // finished...

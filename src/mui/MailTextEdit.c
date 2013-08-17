@@ -31,6 +31,8 @@
 #include "MailTextEdit_cl.h"
 
 #include <string.h>
+
+#include <proto/codesets.h>
 #include <proto/muimaster.h>
 #include <mui/TextEditor_mcc.h>
 
@@ -61,6 +63,7 @@ struct Data
 */
 
 /* EXPORT
+// LoadFromFile method flags
 #define MUIF_MailTextEdit_LoadFromFile_SetChanged (1<<0)
 #define MUIF_MailTextEdit_LoadFromFile_UseStyles  (1<<1)
 #define MUIF_MailTextEdit_LoadFromFile_UseColors  (1<<2)
@@ -394,7 +397,7 @@ OVERLOAD(MUIM_TextEditor_HandleError)
 /* Public Methods */
 /// DECLARE(LoadFromFile)
 //  Loads a text from a file
-DECLARE(LoadFromFile) // const char *file, ULONG flags
+DECLARE(LoadFromFile) // const char *file, struct codeset *srcCharset, ULONG flags
 {
   BOOL result = FALSE;
   char *text;
@@ -403,19 +406,57 @@ DECLARE(LoadFromFile) // const char *file, ULONG flags
 
   if((text = FileToBuffer(msg->file)) != NULL)
   {
-    char *parsedText;
+    char *dstText;
+    ULONG dstLen = 0;
+    BOOL converted = FALSE;
 
-    // parse the text and do some highlighting and stuff
-    if((parsedText = ParseEmailText(text, FALSE, isFlagSet(msg->flags, MUIF_MailTextEdit_LoadFromFile_UseStyles), isFlagSet(msg->flags, MUIF_MailTextEdit_LoadFromFile_UseColors))) != NULL)
+    // lets convert to the specified srcCharset if set and different
+    // from the readCharset
+    if(msg->srcCharset != NULL && stricmp(msg->srcCharset->name, G->readCharset->name) != 0)
     {
-      // set the new text and tell the editor that its content has changed
-      xset(obj, MUIA_TextEditor_Contents,   parsedText,
-                MUIA_TextEditor_HasChanged, isFlagSet(msg->flags, MUIF_MailTextEdit_LoadFromFile_SetChanged));
+      D(DBF_MAIL, "convert file content of '%s' from %s to %s", msg->file, msg->srcCharset->name, G->readCharset->name);
 
-      dstrfree(parsedText);
+      // convert from the readCharset to dstCharset (e.g. selected in write window)
+      dstText = CodesetsConvertStr(CSA_SourceCodeset,   msg->srcCharset,
+                                   CSA_DestCodeset,     G->readCharset,
+                                   CSA_Source,          text,
+                                   CSA_SourceLen,       strlen(text),
+                                   CSA_DestLenPtr,      &dstLen,
+                                   CSA_MapForeignChars, C->MapForeignChars,
+                                   TAG_DONE);
 
-      result = TRUE;
+      if(dstText != NULL)
+        converted = TRUE;
+      else
+        dstLen = 0;
     }
+    else
+    {
+      dstText = text;
+      dstLen = strlen(text);
+    }
+
+    // check if operations succeeded
+    if(dstLen > 0)
+    {
+      char *parsedText;
+
+      // parse the text and do some highlighting and stuff
+      if((parsedText = ParseEmailText(dstText, FALSE, isFlagSet(msg->flags, MUIF_MailTextEdit_LoadFromFile_UseStyles), 
+                                                      isFlagSet(msg->flags, MUIF_MailTextEdit_LoadFromFile_UseColors))) != NULL)
+      {
+        // set the new text and tell the editor that its content has changed
+        xset(obj, MUIA_TextEditor_Contents,   parsedText,
+                  MUIA_TextEditor_HasChanged, isFlagSet(msg->flags, MUIF_MailTextEdit_LoadFromFile_SetChanged));
+
+        dstrfree(parsedText);
+
+        result = TRUE;
+      }
+    }
+
+    if(converted == TRUE)
+      CodesetsFreeA(dstText, NULL);
 
     free(text);
   }
@@ -427,7 +468,7 @@ DECLARE(LoadFromFile) // const char *file, ULONG flags
 ///
 /// DECLARE(SaveToFile)
 //  Saves the contents to a file
-DECLARE(SaveToFile) // const char *file
+DECLARE(SaveToFile) // const char *file, struct codeset *dstCharset
 {
   BOOL result = FALSE;
   FILE *fh;
@@ -437,13 +478,53 @@ DECLARE(SaveToFile) // const char *file
   if((fh = fopen(msg->file, "w")) != NULL)
   {
     char *text = (char *)DoMethod(obj, MUIM_TextEditor_ExportText);
+    if(text != NULL)
+    {
+      char *dstText;
+      ULONG dstLen = 0;
+      BOOL converted = FALSE;
 
-    // write out the whole text to the file
-    if(fwrite(text, strlen(text), 1, fh) == 1)
-      result = TRUE;
+      // lets convert to the specified dstCharset if set and different
+      // from the readCharset
+      if(msg->dstCharset != NULL && stricmp(msg->dstCharset->name, G->readCharset->name) != 0)
+      {
+        D(DBF_MAIL, "convert file content of '%s' from %s to %s", msg->file, G->readCharset->name, msg->dstCharset->name);
 
-    // the exported text must be freed using FreeVec()
-    FreeVec(text);
+        // convert from the readCharset to dstCharset (e.g. selected in write window)
+        dstText = CodesetsConvertStr(CSA_SourceCodeset,   G->readCharset,
+                                     CSA_DestCodeset,     msg->dstCharset,
+                                     CSA_Source,          text,
+                                     CSA_SourceLen,       strlen(text),
+                                     CSA_DestLenPtr,      &dstLen,
+                                     CSA_MapForeignChars, C->MapForeignChars,
+                                     TAG_DONE);
+
+        if(dstText != NULL)
+          converted = TRUE;
+        else
+          dstLen = 0;
+      }
+      else
+      {
+        dstText = text;
+        dstLen = strlen(text);
+      }
+
+      // check if operations succeeded
+      if(dstLen > 0)
+      {
+        // write out the whole text to the file
+        if(fwrite(dstText, dstLen, 1, fh) == 1)
+          result = TRUE;
+      }
+
+      if(converted == TRUE)
+        CodesetsFreeA(dstText, NULL);
+
+      // the exported text must be freed using FreeVec()
+      FreeVec(text);
+    }
+
     fclose(fh);
   }
 

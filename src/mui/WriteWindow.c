@@ -520,9 +520,9 @@ static struct WritePart *BuildPartsList(struct WriteMailData *wmData, BOOL delTe
           np->Description = att->Description;
           np->Name        = att->Name;
           np->IsTemp      = att->IsTemp;
+
           // find out which encoding we use for the attachment
           np->EncType = WhichEncodingForFile(np->Filename, np->ContentType, wmData->identity->smtpServer);
-          np->charset = G->writeCharset;
 
           p = np;
         }
@@ -1544,6 +1544,9 @@ OVERLOAD(OM_NEW)
       DoMethod(data->CH_DELSEND,       MUIM_Notify, MUIA_Selected,        MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
       DoMethod(data->CH_MDN,           MUIM_Notify, MUIA_Selected,        MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
       DoMethod(data->CH_ADDINFO,       MUIM_Notify, MUIA_Selected,        MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+
+      // create a notify for changing the charset
+      DoMethod(data->PO_CHARSET, MUIM_Notify, MUIA_Text_Contents, MUIV_EveryTime, obj, 2, METHOD(CharsetChanged), MUIV_TriggerValue);
 
       // set main window button notifies
       DoMethod(data->BT_SAVEASDRAFT, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(ComposeMail), WRITE_DRAFT);
@@ -2627,7 +2630,7 @@ DECLARE(SignatureChanged)
     FILE *in;
     Object *editor = data->TE_EDIT;
 
-    DoMethod(editor, MUIM_MailTextEdit_SaveToFile, tfin->Filename);
+    DoMethod(editor, MUIM_MailTextEdit_SaveToFile, tfin->Filename, NULL);
     if((in = fopen(tfin->Filename, "r")) != NULL)
     {
       struct TempFile *tfout;
@@ -2671,7 +2674,7 @@ DECLARE(SignatureChanged)
         if(xget(editor, MUIA_TextEditor_HasChanged))
           setFlag(flags, MUIF_MailTextEdit_LoadFromFile_SetChanged);
 
-        DoMethod(editor, MUIM_MailTextEdit_LoadFromFile, tfout->Filename, flags);
+        DoMethod(editor, MUIM_MailTextEdit_LoadFromFile, tfout->Filename, NULL, flags);
 
         // make sure the temp file is deleted
         CloseTempFile(tfout);
@@ -3072,9 +3075,7 @@ DECLARE(SaveTextAs)
     if(FileExists(filename) == FALSE ||
        MUI_Request(_app(obj), obj, MUIF_NONE, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_FILE_OVERWRITE), frc->file) != 0)
     {
-      DoMethod(data->TE_EDIT, MUIM_MailTextEdit_SaveToFile, data->wmData->filename);
-
-      if(CopyFile(filename, NULL, data->wmData->filename, NULL) == FALSE)
+      if(DoMethod(data->TE_EDIT, MUIM_MailTextEdit_SaveToFile, filename, data->wmData->charset) == FALSE)
         ER_NewError(tr(MSG_ER_CantCreateFile), filename);
     }
   }
@@ -3406,7 +3407,9 @@ DECLARE(LaunchEditor)
       nnset(data->RG_PAGE, MUIA_Group_ActivePage, 0);
     }
 
-    DoMethod(data->TE_EDIT, MUIM_MailTextEdit_SaveToFile, data->wmData->filename);
+    // save the mail text in the currently selected charset
+    DoMethod(data->TE_EDIT, MUIM_MailTextEdit_SaveToFile, data->wmData->filename, data->wmData->charset);
+
     // remember the modification date of the file
     if(ObtainFileInfo(data->wmData->filename, FI_DATE, &data->wmData->lastFileChangeTime) == FALSE)
     {
@@ -3419,7 +3422,6 @@ DECLARE(LaunchEditor)
 
     // (re)start the file notification on the temporary write window
     // content file
-    // start the notification
     if(StartNotify(wmData->notifyRequest) != 0)
     {
       D(DBF_UTIL, "started notification request for file: '%s' of write window %ld", wmData->filename, data->windowNumber);
@@ -3624,7 +3626,7 @@ DECLARE(ReloadText) // ULONG changed
   if(data->useTextColors == TRUE)
     setFlag(flags, MUIF_MailTextEdit_LoadFromFile_UseColors);
 
-  result = DoMethod(data->TE_EDIT, MUIM_MailTextEdit_LoadFromFile, data->wmData->filename, flags);
+  result = DoMethod(data->TE_EDIT, MUIM_MailTextEdit_LoadFromFile, data->wmData->filename, NULL, flags);
 
   RETURN(result);
   return (ULONG)result;
@@ -3649,7 +3651,7 @@ DECLARE(LoadText) // char *filename, ULONG changed
   if(data->useTextColors == TRUE)
     setFlag(flags, MUIF_MailTextEdit_LoadFromFile_UseColors);
 
-  result = DoMethod(data->TE_EDIT, MUIM_MailTextEdit_LoadFromFile, msg->filename, flags);
+  result = DoMethod(data->TE_EDIT, MUIM_MailTextEdit_LoadFromFile, msg->filename, NULL, flags);
 
   RETURN(result);
   return (ULONG)result;
@@ -3672,18 +3674,10 @@ DECLARE(SetupFromOldMail) // struct ReadMailData *rmData
   {
     if(part->Nr == msg->rmData->letterPartNum)
     {
-      // find the selected charset and default to the global one if it
-      // could not be found
-      if((data->wmData->charset = CodesetsFind(part->CParCSet,
-                                                      CSA_CodesetList,       G->codesetsList,
-                                                      CSA_FallbackToDefault, FALSE,
-                                                      TAG_DONE)) == NULL)
-      {
-        // fallback to global writeCharset
-        data->wmData->charset = G->writeCharset;
-      }
-
-      nnset(data->PO_CHARSET, MUIA_Text_Contents, strippedCharsetName(data->wmData->charset));
+      // use the CharsetChanged method to signal that the write
+      // window should select the charset of the letterPart of the
+      // old mail
+      DoMethod(obj, METHOD(CharsetChanged), part->CParCSet);
     }
 
     if(part->Nr != msg->rmData->letterPartNum &&
@@ -3961,16 +3955,6 @@ DECLARE(ComposeMail) // enum WriteMode mode
       goto out;
     }
 
-    // find the selected charset and default to the global one if it
-    // could not be found
-    if((wmData->charset = CodesetsFind((char *)xget(data->PO_CHARSET, MUIA_Text_Contents),
-                                   CSA_CodesetList,       G->codesetsList,
-                                   CSA_FallbackToDefault, FALSE,
-                                   TAG_DONE)) == NULL)
-    {
-      wmData->charset = G->writeCharset;
-    }
-
     comp.DelSend = GetMUICheck(data->CH_DELSEND);
     comp.UserInfo = GetMUICheck(data->CH_ADDINFO);
 
@@ -3981,8 +3965,8 @@ DECLARE(ComposeMail) // enum WriteMode mode
     // text in the editor beforehand.
     MA_StartMacro(MACRO_POSTWRITE, data->windowNumberStr);
 
-    // export the text of our texteditor to a file
-    DoMethod(data->TE_EDIT, MUIM_MailTextEdit_SaveToFile, data->wmData->filename);
+    // export the text of our texteditor to a file in the currently selected charset
+    DoMethod(data->TE_EDIT, MUIM_MailTextEdit_SaveToFile, wmData->filename, wmData->charset);
 
     // build the whole mail part list including the attachments
     // but don't delete temporary files when saving a draft mail
@@ -5168,7 +5152,6 @@ DECLARE(UpdateIdentities)
 // is not valid anymore at the time this function is executed.
 DECLARE(HandleAppMessage) // struct AppMessage *appmsg
 {
-
   ENTER();
 
   if(msg->appmsg != NULL)
@@ -5198,6 +5181,31 @@ DECLARE(HandleAppMessage) // struct AppMessage *appmsg
       }
     }
   }
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(CharsetChanged)
+// method that is called when the charset in the write window is manually
+// changed by the user.
+DECLARE(CharsetChanged) // char *charsetName
+{
+  GETDATA;
+  ENTER();
+
+  // find the selected charset and default to the global one if it
+  // could not be found
+  if((data->wmData->charset = CodesetsFind(msg->charsetName,
+                                           CSA_CodesetList,       G->codesetsList,
+                                           CSA_FallbackToDefault, FALSE,
+                                           TAG_DONE)) == NULL)
+  {
+    data->wmData->charset = G->writeCharset;
+  }
+
+  nnset(data->PO_CHARSET, MUIA_Text_Contents, strippedCharsetName(data->wmData->charset));
 
   RETURN(0);
   return 0;

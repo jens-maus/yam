@@ -5,6 +5,19 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-08-17 Jens Langner <Jens.Langner@light-speed.de>
+
+  * mui/WriteWindow.c: change SaveToFile uses to actually convert the entered
+    text to the target charset selected in the write window. This should fix
+    problems when trying to generate/send UTF8 encoded mails as they were
+    written to the temp file of the write window with the read encoding always.
+    Now YAM will compare the configured read and write charset and if they are
+    different a charset conversion via SaveToFile will be performed. This
+    hopefully fix a long standing bug and closes #7.
+  * mui/MailTextEdit.c: added charset conversion functionality to LoadFromFile
+    and SaveToFile methods which will allow to save the currently displayed
+    mail text in a specific target charset.
+
 2013-08-17 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_COg.c: removed a duplicate initialization of the mail server and
