@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-08-17 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_COg.c: removed a duplicate initialization of the mail server and
+    signature cycle objects.
+
 2013-08-16 Thore Böckelmann <tboeckel@gmx.de>
 
   * DynamicString.c: fixed some free() calls with wrong pointers.

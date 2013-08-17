@@ -2461,11 +2461,6 @@ Object *CO_PageIdentities(struct CO_ClassData *data)
     DoMethod(data->GUI.BT_IDEL,         MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_DelIdentityHook);
     DoMethod(data->GUI.BT_IDENTITYUP,   MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.LV_IDENTITY, 3, MUIM_NList_Move, MUIV_NList_Move_Selected, MUIV_NList_Move_Previous);
     DoMethod(data->GUI.BT_IDENTITYDOWN, MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.LV_IDENTITY, 3, MUIM_NList_Move, MUIV_NList_Move_Selected, MUIV_NList_Move_Next);
-
-    // update the SMTP server and signature arrays so that the cycle gadgets
-    // reflect the right content
-    DoMethod(data->GUI.CY_IDENTITY_MAILSERVER, MUIM_MailServerChooser_UpdateMailServers);
-    DoMethod(data->GUI.CY_IDENTITY_SIGNATURE, MUIM_SignatureChooser_UpdateSignatures);
   }
 
   RETURN(obj);
