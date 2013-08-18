@@ -13,7 +13,7 @@ $URL$
     written to the temp file of the write window with the read encoding always.
     Now YAM will compare the configured read and write charset and if they are
     different a charset conversion via SaveToFile will be performed. This
-    hopefully fix a long standing bug and closes #7.
+    hopefully fix a long standing bug and closes #9.
   * mui/MailTextEdit.c: added charset conversion functionality to LoadFromFile
     and SaveToFile methods which will allow to save the currently displayed
     mail text in a specific target charset.
