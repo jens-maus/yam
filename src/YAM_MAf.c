@@ -564,7 +564,7 @@ BOOL MA_SaveIndex(struct Folder *folder)
         // convert the buffer string to UTF8
         // the length of the generated string is directly put into the moreBytes variable
         if((utf8buf = CodesetsUTF8Create(CSA_Source, buf,
-                                         CSA_SourceCodeset, defaultCodeset,
+                                         CSA_SourceCodeset, defaultCharset,
                                          CSA_DestLenPtr, &cmail.moreBytes,
                                          TAG_DONE)) != NULL)
         {
