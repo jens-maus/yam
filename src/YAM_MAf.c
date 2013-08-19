@@ -434,10 +434,10 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
           // if everything went well then move all mails from the temporary folder
           // to the real folder
           if(error == FALSE)
-          {
             MoveFolderContents(folder, tempFolder);
-            FreeFolder(tempFolder);
-          }
+          
+          // free the temporary folder in any case
+          FreeFolder(tempFolder);
         }
       }
 

@@ -9,6 +9,8 @@ $URL$
 
   * YAM_MA.c: fixed a wrong search for the archive folder which caused YAM to
     create the folder over and over again.
+  * YAM_MAf.c: fixed a possible memory leak in case loading a folder index 
+    failed for any reason.
 
 2013-08-17 Jens Langner <Jens.Langner@light-speed.de>
 
