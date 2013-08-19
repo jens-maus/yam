@@ -81,17 +81,21 @@ struct DiskObject;
 #define FI_FOLD               0
 #define FI_UNFOLD             1
 #define FI_INCOMING           2
-#define FI_INCOMINGNEW        3
+#define FI_INCOMING_NEW       3
 #define FI_OUTGOING           4
-#define FI_OUTGOINGNEW        5
+#define FI_OUTGOING_NEW       5
 #define FI_SENT               6
-#define FI_SPAM               7
-#define FI_SPAMNEW            8
-#define FI_TRASH              9
-#define FI_TRASHNEW          10
-#define FI_DRAFTS            11
-#define FI_DRAFTSNEW         12
-#define FI_MAX               13
+#define FI_PROTECTED          7
+#define FI_SPAM               8
+#define FI_SPAM_NEW           9
+#define FI_TRASH             10
+#define FI_TRASH_NEW         11
+#define FI_DRAFTS            12
+#define FI_DRAFTS_NEW        13
+#define FI_ARCHIVE           14
+#define FI_ARCHIVE_FOLD      15
+#define FI_ARCHIVE_UNFOLD    16
+#define FI_MAX               17
 
 // the AppIcon images
 #define II_FIRST              0

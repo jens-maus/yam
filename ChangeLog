@@ -18,6 +18,8 @@ $URL$
     down to approx. 2 seconds at most again.
   * resources/themes/default: added folder images for the new Archive folders
     kindly provided by Martin 'mason' Mertz.
+  * YAM_FO.c, Themes.c, mui/FolderListtree.c, misc: make use of the new archive
+    folder images.
 
 2013-08-17 Jens Langner <Jens.Langner@light-speed.de>
 

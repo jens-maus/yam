@@ -93,12 +93,16 @@ static const char * const folderImageIDs[FI_MAX] =
   "folder_outgoing",
   "folder_outgoing_new",
   "folder_sent",
+  "folder_protected",
   "folder_spam",
   "folder_spam_new",
   "folder_trash",
   "folder_trash_new",
   "folder_drafts",
-  "folder_drafts_new"
+  "folder_drafts_new",
+  "folder_archive",
+  "folder_archive_fold",
+  "folder_archive_unfold"
 };
 ///
 /// icon image IDs

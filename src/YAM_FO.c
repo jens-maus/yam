@@ -568,7 +568,7 @@ BOOL FO_LoadFolderImage(struct Folder *folder)
   // first we make sure that valid data is underway.
   if(folder != NULL)
   {
-    if(folder->ImageIndex >= FICON_ID_MAX)
+    if(folder->ImageIndex >= FI_MAX)
     {
       char fname[SIZE_PATHFILE];
       Object *lv = G->MA->GUI.NL_FOLDERS;
@@ -595,7 +595,7 @@ BOOL FO_LoadFolderImage(struct Folder *folder)
     }
     else
     {
-      W(DBF_FOLDER, "imageIndex of folder < FICON_ID_MAX (%ld < %ld)", folder->ImageIndex, FICON_ID_MAX);
+      W(DBF_FOLDER, "imageIndex of folder < FICON_ID_MAX (%ld < %ld)", folder->ImageIndex, FI_MAX);
       folder->imageObject = NULL;
     }
   }
@@ -653,13 +653,14 @@ struct Folder *FO_NewFolder(enum FolderType type, const char *path, const char *
     // set the standard icon images, or none for a custom folder
     switch(type)
     {
-      case FT_INCOMING: folder->ImageIndex = FICON_ID_INCOMING; break;
-      case FT_OUTGOING: folder->ImageIndex = FICON_ID_OUTGOING; break;
-      case FT_TRASH:    folder->ImageIndex = FICON_ID_TRASH;    break;
-      case FT_SENT:     folder->ImageIndex = FICON_ID_SENT;     break;
-      case FT_SPAM:     folder->ImageIndex = FICON_ID_SPAM;     break;
-      case FT_DRAFTS:   folder->ImageIndex = FICON_ID_DRAFTS;   break;
-      default:          folder->ImageIndex = -1;                break;
+      case FT_INCOMING: folder->ImageIndex = FI_INCOMING; break;
+      case FT_OUTGOING: folder->ImageIndex = FI_OUTGOING; break;
+      case FT_TRASH:    folder->ImageIndex = FI_TRASH;    break;
+      case FT_SENT:     folder->ImageIndex = FI_SENT;     break;
+      case FT_SPAM:     folder->ImageIndex = FI_SPAM;     break;
+      case FT_DRAFTS:   folder->ImageIndex = FI_DRAFTS;   break;
+      case FT_ARCHIVE:  folder->ImageIndex = FI_ARCHIVE;  break;
+      default:          folder->ImageIndex = -1;          break;
     }
 
     strlcpy(folder->Path, path, sizeof(folder->Path));
@@ -797,7 +798,7 @@ enum LoadTreeResult FO_LoadTree(void)
   enum LoadTreeResult result = LTR_Failure;
   int nested = 0;
   int i = 0;
-  int j = FICON_ID_MAX;
+  int j = FI_MAX;
   FILE *fh;
   APTR lv = G->MA->GUI.NL_FOLDERS;
   struct MUI_NListtree_TreeNode *tn_root = MUIV_NListtree_Insert_ListNode_Root;
@@ -1267,17 +1268,19 @@ void FO_SetFolderImage(struct Folder *folder)
   if(folder->imageObject == NULL)
   {
     if(isIncomingFolder(folder))
-      folder->ImageIndex = (folder->Unread != 0) ? FICON_ID_INCOMING_NEW : FICON_ID_INCOMING;
+      folder->ImageIndex = (folder->Unread != 0) ? FI_INCOMING_NEW : FI_INCOMING;
     else if(isOutgoingFolder(folder))
-      folder->ImageIndex = (folder->Unread != 0) ? FICON_ID_OUTGOING_NEW : FICON_ID_OUTGOING;
+      folder->ImageIndex = (folder->Unread != 0) ? FI_OUTGOING_NEW : FI_OUTGOING;
     else if(isTrashFolder(folder))
-      folder->ImageIndex = (folder->Unread != 0) ? FICON_ID_TRASH_NEW : FICON_ID_TRASH;
+      folder->ImageIndex = (folder->Unread != 0) ? FI_TRASH_NEW : FI_TRASH;
     else if(isSentFolder(folder))
-      folder->ImageIndex = FICON_ID_SENT;
+      folder->ImageIndex = FI_SENT;
     else if(isSpamFolder(folder))
-      folder->ImageIndex = (folder->Unread != 0) ? FICON_ID_SPAM_NEW : FICON_ID_SPAM;
+      folder->ImageIndex = (folder->Unread != 0) ? FI_SPAM_NEW : FI_SPAM;
     else if(isDraftsFolder(folder))
-      folder->ImageIndex = (folder->Unread != 0) ? FICON_ID_DRAFTS_NEW : FICON_ID_DRAFTS;
+      folder->ImageIndex = (folder->Unread != 0) ? FI_DRAFTS_NEW : FI_DRAFTS;
+    else if(isArchiveFolder(folder))
+      folder->ImageIndex = FI_ARCHIVE;
     else
       folder->ImageIndex = -1;
   }

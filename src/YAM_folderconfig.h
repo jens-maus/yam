@@ -120,40 +120,6 @@ enum FolderMode
 #define hasFColNew(v)           (isFlagSet((v), FCOL_NEW))
 #define hasFColSize(v)          (isFlagSet((v), FCOL_SIZE))
 
-// for managing the different standard folder icons we manage our IDs and ESC sequences here
-#define FICON_ID_FOLD           0  // folder_fold
-#define FICON_ID_UNFOLD         1  // folder_unfold
-#define FICON_ID_INCOMING       2  // folder_incoming
-#define FICON_ID_INCOMING_NEW   3  // folder_incoming_new
-#define FICON_ID_OUTGOING       4  // folder_outgoing
-#define FICON_ID_OUTGOING_NEW   5  // folder_outgoing_new
-#define FICON_ID_TRASH          6  // folder_deleted
-#define FICON_ID_TRASH_NEW      7  // folder_deleted_new
-#define FICON_ID_SENT           8  // folder_sent
-#define FICON_ID_PROTECTED      9  // status_crypt
-#define FICON_ID_SPAM           10 // folder_spam
-#define FICON_ID_SPAM_NEW       11 // folder_spam_new
-#define FICON_ID_DRAFTS         12 // folder_drafts
-#define FICON_ID_DRAFTS_NEW     13 // folder_drafts_new
-#define FICON_ID_ARCHIVE        14 // folder_drafts
-#define FICON_ID_MAX            15
-
-#define FICON_FOLD          "\033o[" STR(FICON_ID_FOLD)         "]"
-#define FICON_UNFOLD        "\033o[" STR(FICON_ID_UNFOLD)       "]"
-#define FICON_INCOMING      "\033o[" STR(FICON_ID_INCOMING)     "]"
-#define FICON_INCOMING_NEW  "\033o[" STR(FICON_ID_INCOMING_NEW) "]"
-#define FICON_OUTGOING      "\033o[" STR(FICON_ID_OUTGOING)     "]"
-#define FICON_OUTGOING_NEW  "\033o[" STR(FICON_ID_OUTGOING_NEW) "]"
-#define FICON_TRASH         "\033o[" STR(FICON_ID_TRASH)        "]"
-#define FICON_TRASH_NEW     "\033o[" STR(FICON_ID_TRASH_NEW)    "]"
-#define FICON_SENT          "\033o[" STR(FICON_ID_SENT)         "]"
-#define FICON_PROTECTED     "\033o[" STR(FICON_ID_PROTECTED)    "]"
-#define FICON_SPAM          "\033o[" STR(FICON_ID_SPAM)         "]"
-#define FICON_SPAM_NEW      "\033o[" STR(FICON_ID_SPAM_NEW)     "]"
-#define FICON_DRAFTS        "\033o[" STR(FICON_ID_DRAFTS)       "]"
-#define FICON_DRAFTS_NEW    "\033o[" STR(FICON_ID_DRAFTS_NEW)   "]"
-#define FICON_ARCHIVE       "\033o[" STR(FICON_ID_ARCHIVE)      "]"
-
 struct Folder
 {
   Object *          imageObject;

@@ -53,13 +53,13 @@
 #include "Debug.h"
 
 /* INCLUDE
-#include "YAM_folderconfig.h"
+#include "Themes.h"
 */
 
 /* CLASSDATA
 struct Data
 {
-  Object *folderImage[FICON_ID_MAX];
+  Object *folderImage[FI_MAX];
   char folderStr[SIZE_DEFAULT];
   char totalStr[SIZE_SMALL];
   char unreadStr[SIZE_SMALL];
@@ -79,10 +79,18 @@ static void FormatFolderInfo(char *folderStr, const size_t maxLen,
   ENTER();
 
   // add the folder image
-  if(folder->Type == FT_GROUP)
-    imageIndex = isFlagSet(treeNode->tn_Flags, TNF_OPEN) ? FICON_ID_UNFOLD : FICON_ID_FOLD;
+  if(isGroupFolder(folder))
+  {
+    // special handling for the archive folder group
+    if(strcmp(folder->Name, tr(MSG_MA_ARCHIVE)) == 0)
+      imageIndex = isFlagSet(treeNode->tn_Flags, TNF_OPEN) ? FI_ARCHIVE_UNFOLD : FI_ARCHIVE_FOLD;
+    else
+      imageIndex = isFlagSet(treeNode->tn_Flags, TNF_OPEN) ? FI_UNFOLD : FI_FOLD;
+  }
   else
-    imageIndex = folder->ImageIndex >= 0 ? folder->ImageIndex : FICON_ID_FOLD;
+  {
+    imageIndex = folder->ImageIndex >= 0 ? folder->ImageIndex : FI_FOLD;
+  }
 
   snprintf(folderStr, maxLen, "\033o[%d]", imageIndex);
 
@@ -173,20 +181,23 @@ OVERLOAD(OM_NEW)
     ULONG i;
 
     // prepare the folder images
-    data->folderImage[FICON_ID_FOLD]        = MakeImageObject("folder_fold",         G->theme.folderImages[FI_FOLD]);
-    data->folderImage[FICON_ID_UNFOLD]      = MakeImageObject("folder_unfold",       G->theme.folderImages[FI_UNFOLD]);
-    data->folderImage[FICON_ID_INCOMING]    = MakeImageObject("folder_incoming",     G->theme.folderImages[FI_INCOMING]);
-    data->folderImage[FICON_ID_INCOMING_NEW]= MakeImageObject("folder_incoming_new", G->theme.folderImages[FI_INCOMINGNEW]);
-    data->folderImage[FICON_ID_OUTGOING]    = MakeImageObject("folder_outgoing",     G->theme.folderImages[FI_OUTGOING]);
-    data->folderImage[FICON_ID_OUTGOING_NEW]= MakeImageObject("folder_outgoing_new", G->theme.folderImages[FI_OUTGOINGNEW]);
-    data->folderImage[FICON_ID_TRASH]       = MakeImageObject("folder_trash",        G->theme.folderImages[FI_TRASH]);
-    data->folderImage[FICON_ID_TRASH_NEW]   = MakeImageObject("folder_trash_new",    G->theme.folderImages[FI_TRASHNEW]);
-    data->folderImage[FICON_ID_SENT]        = MakeImageObject("folder_sent",         G->theme.folderImages[FI_SENT]);
-    data->folderImage[FICON_ID_PROTECTED]   = MakeImageObject("status_crypt",        G->theme.statusImages[SI_CRYPT]);
-    data->folderImage[FICON_ID_SPAM]        = MakeImageObject("folder_spam",         G->theme.folderImages[FI_SPAM]);
-    data->folderImage[FICON_ID_SPAM_NEW]    = MakeImageObject("folder_spam_new",     G->theme.folderImages[FI_SPAMNEW]);
-    data->folderImage[FICON_ID_DRAFTS]      = MakeImageObject("folder_drafts",       G->theme.folderImages[FI_DRAFTS]);
-    data->folderImage[FICON_ID_DRAFTS_NEW]  = MakeImageObject("folder_drafts_new",   G->theme.folderImages[FI_DRAFTSNEW]);
+    data->folderImage[FI_FOLD]           = MakeImageObject("folder_fold",           G->theme.folderImages[FI_FOLD]);
+    data->folderImage[FI_UNFOLD]         = MakeImageObject("folder_unfold",         G->theme.folderImages[FI_UNFOLD]);
+    data->folderImage[FI_INCOMING]       = MakeImageObject("folder_incoming",       G->theme.folderImages[FI_INCOMING]);
+    data->folderImage[FI_INCOMING_NEW]   = MakeImageObject("folder_incoming_new",   G->theme.folderImages[FI_INCOMING_NEW]);
+    data->folderImage[FI_OUTGOING]       = MakeImageObject("folder_outgoing",       G->theme.folderImages[FI_OUTGOING]);
+    data->folderImage[FI_OUTGOING_NEW]   = MakeImageObject("folder_outgoing_new",   G->theme.folderImages[FI_OUTGOING_NEW]);
+    data->folderImage[FI_TRASH]          = MakeImageObject("folder_trash",          G->theme.folderImages[FI_TRASH]);
+    data->folderImage[FI_TRASH_NEW]      = MakeImageObject("folder_trash_new",      G->theme.folderImages[FI_TRASH_NEW]);
+    data->folderImage[FI_SENT]           = MakeImageObject("folder_sent",           G->theme.folderImages[FI_SENT]);
+    data->folderImage[FI_PROTECTED]      = MakeImageObject("status_crypt",          G->theme.statusImages[SI_CRYPT]);
+    data->folderImage[FI_SPAM]           = MakeImageObject("folder_spam",           G->theme.folderImages[FI_SPAM]);
+    data->folderImage[FI_SPAM_NEW]       = MakeImageObject("folder_spam_new",       G->theme.folderImages[FI_SPAM_NEW]);
+    data->folderImage[FI_DRAFTS]         = MakeImageObject("folder_drafts",         G->theme.folderImages[FI_DRAFTS]);
+    data->folderImage[FI_DRAFTS_NEW]     = MakeImageObject("folder_drafts_new",     G->theme.folderImages[FI_DRAFTS_NEW]);
+    data->folderImage[FI_ARCHIVE]        = MakeImageObject("folder_archive",        G->theme.folderImages[FI_ARCHIVE]);
+    data->folderImage[FI_ARCHIVE_FOLD]   = MakeImageObject("folder_archive_fold",   G->theme.folderImages[FI_ARCHIVE_FOLD]);
+    data->folderImage[FI_ARCHIVE_UNFOLD] = MakeImageObject("folder_archive_unfold", G->theme.folderImages[FI_ARCHIVE_UNFOLD]);
     for(i = 0; i < ARRAY_SIZE(data->folderImage); i++)
       DoMethod(obj, MUIM_NList_UseImage, data->folderImage[i], i, MUIF_NONE);
   }
@@ -373,7 +384,7 @@ OVERLOAD(MUIM_NListtree_Display)
           ndm->Preparse[0] = (char *)MUIX_I;
 
         if(isProtectedFolder(entry))
-          snprintf(data->folderStr, sizeof(data->folderStr), "%s \033o[%d]", data->folderStr, FICON_ID_PROTECTED);
+          snprintf(data->folderStr, sizeof(data->folderStr), "%s \033o[%d]", data->folderStr, FI_PROTECTED);
       }
     }
   }
