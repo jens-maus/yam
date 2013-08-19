@@ -445,9 +445,9 @@ HOOKPROTONH(PO_CharsetCloseFunc, void, Object *listview, Object *txt)
 MakeStaticHook(PO_CharsetCloseHook, PO_CharsetCloseFunc);
 
 ///
-/// MakeCharsetPop
-//  Creates a popup list of available charsets supported by codesets.library
-Object *MakeCharsetPop(Object **string, Object **pop)
+/// MakeCodesetPop
+//  Creates a popup list of available codesets supported by codesets.library
+Object *MakeCodesetPop(Object **string, Object **pop)
 {
   Object *listview;
   Object *list;

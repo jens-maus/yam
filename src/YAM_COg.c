@@ -1613,6 +1613,7 @@ static Object *MakeStaticCheck(void)
 Object *CO_PageFirstSteps(struct CO_ClassData *data)
 {
   Object *obj;
+  Object *codesetPopButton;
 
   ENTER();
 
@@ -1646,12 +1647,16 @@ Object *CO_PageFirstSteps(struct CO_ClassData *data)
         End,
 
         Child, ColGroup(2), GroupFrameT(tr(MSG_CO_SYSTEMSETTINGS)),
+
+          Child, Label2(tr(MSG_CO_DEFAULTCHARSET)),
+          Child, MakeCodesetPop(&data->GUI.TX_DEFCODESET_LOCAL, &codesetPopButton),
+
           Child, Label2(tr(MSG_CO_TimeZone)),
-          Child, data->GUI.GR_TZONE = TZoneChooserObject,
-          End,
+          Child, data->GUI.GR_TZONE = TZoneChooserObject, End,
+
           Child, HSpace(-1),
-          Child, data->GUI.TX_TZONE = TZoneInfoBarObject,
-          End,
+          Child, data->GUI.TX_TZONE = TZoneInfoBarObject, End,
+
         End,
 
         Child, HVSpace,
@@ -1663,11 +1668,14 @@ Object *CO_PageFirstSteps(struct CO_ClassData *data)
 
   if(obj != NULL)
   {
-    SetHelp(data->GUI.ST_REALNAME,       MSG_HELP_CO_ST_REALNAME);
-    SetHelp(data->GUI.ST_POPHOST0,       MSG_HELP_CO_ST_POPHOST);
-    SetHelp(data->GUI.ST_USER0,          MSG_HELP_CO_ST_USER);
-    SetHelp(data->GUI.ST_PASSWD0,        MSG_HELP_CO_ST_PASSWD);
-    SetHelp(data->GUI.GR_TZONE,          MSG_HELP_CO_GR_TZONE);
+    set(codesetPopButton, MUIA_ControlChar, ShortCut(tr(MSG_CO_DEFAULTCHARSET)));
+
+    SetHelp(data->GUI.ST_REALNAME,        MSG_HELP_CO_ST_REALNAME);
+    SetHelp(data->GUI.ST_POPHOST0,        MSG_HELP_CO_ST_POPHOST);
+    SetHelp(data->GUI.ST_USER0,           MSG_HELP_CO_ST_USER);
+    SetHelp(data->GUI.ST_PASSWD0,         MSG_HELP_CO_ST_PASSWD);
+    SetHelp(data->GUI.TX_DEFCODESET_LOCAL,MSG_HELP_CO_TX_DEFCODESET_LOCAL);
+    SetHelp(data->GUI.GR_TZONE,           MSG_HELP_CO_GR_TZONE);
 
     DoMethod(data->GUI.ST_POPHOST0, MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_GetDefaultPOPHook);
     DoMethod(data->GUI.ST_USER0, MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_GetDefaultPOPHook);
@@ -2853,7 +2861,6 @@ Object *CO_PageSpam(struct CO_ClassData *data)
 Object *CO_PageRead(struct CO_ClassData *data)
 {
   Object *obj;
-  Object *charsetPopButton;
   static const char *headopt[4];
   static const char *siopt[5];
   static const char *slopt[5];
@@ -2939,9 +2946,7 @@ Object *CO_PageRead(struct CO_ClassData *data)
             MUIA_CycleChain, TRUE,
           End,
 
-          Child, Label2(tr(MSG_CO_DEFAULTCHARSET)),
-          Child, MakeCharsetPop(&data->GUI.TX_DEFCHARSET_READ, &charsetPopButton),
-        End,
+       End,
 
         Child, RectangleObject,
           MUIA_VertWeight,          0,
@@ -3027,8 +3032,6 @@ Object *CO_PageRead(struct CO_ClassData *data)
   {
     set(data->GUI.ST_HEADERS, MUIA_Disabled, TRUE);
 
-    set(charsetPopButton, MUIA_ControlChar, ShortCut(tr(MSG_CO_DEFAULTCHARSET)));
-
     SetHelp(data->GUI.CY_HEADER,          MSG_HELP_CO_CY_HEADER);
     SetHelp(data->GUI.ST_HEADERS,         MSG_HELP_CO_ST_HEADERS);
     SetHelp(data->GUI.CY_SENDERINFO,      MSG_HELP_CO_CY_SENDERINFO);
@@ -3056,7 +3059,6 @@ Object *CO_PageRead(struct CO_ClassData *data)
     SetHelp(data->GUI.CY_MDN_NODOMAIN,    MSG_HELP_CO_CY_MDN_NODOMAIN);
     SetHelp(data->GUI.CY_MDN_DELETE,      MSG_HELP_CO_CY_MDN_DELETE);
     SetHelp(data->GUI.CY_MDN_OTHER,       MSG_HELP_CO_CY_MDN_OTHER);
-    SetHelp(data->GUI.TX_DEFCHARSET_READ, MSG_HELP_CO_TX_DEFAULTCHARSET);
     SetHelp(data->GUI.CH_MAPFOREIGNCHARS, MSG_HELP_CO_MAPFOREIGNCHARS);
     SetHelp(data->GUI.CH_DETECTCYRILLIC,  MSG_HELP_CO_DETECT_CYRILLIC);
     SetHelp(data->GUI.CH_GLOBALMAILTHREADS, MSG_HELP_CO_CH_GLOBALMAILTHREADS);
@@ -3102,7 +3104,7 @@ Object *CO_PageRead(struct CO_ClassData *data)
 Object *CO_PageWrite(struct CO_ClassData *data)
 {
   Object *obj;
-  Object *charsetPopButton;
+  Object *codesetPopButton;
   static const char *wrapmode[4];
 
   ENTER();
@@ -3126,27 +3128,22 @@ Object *CO_PageWrite(struct CO_ClassData *data)
           Child, ColGroup(2),
             Child, Label2(tr(MSG_CO_Welcome)),
             Child, data->GUI.ST_HELLOTEXT = MakeString(SIZE_INTRO,tr(MSG_CO_Welcome)),
+
             Child, Label2(tr(MSG_CO_Greetings)),
             Child, data->GUI.ST_BYETEXT = MakeString(SIZE_INTRO,tr(MSG_CO_Greetings)),
+
+            Child, Label2(tr(MSG_CO_DEFAULTCODESET_WRITE)),
+            Child, MakeCodesetPop(&data->GUI.TX_DEFCODESET_WRITE, &codesetPopButton),
           End,
         End,
 
         Child, VGroup, GroupFrameT(tr(MSG_CO_Editor)),
           Child, ColGroup(2),
+
             Child, Label2(tr(MSG_CO_WordWrap)),
             Child, HGroup,
               Child, data->GUI.ST_EDWRAP = MakeInteger(3, tr(MSG_CO_WordWrap)),
               Child, data->GUI.CY_EDWRAP = MakeCycle(wrapmode, ""),
-            End,
-
-            Child, Label2(tr(MSG_CO_ExternalEditor)),
-            Child, HGroup,
-              Child, PopaslObject,
-                MUIA_Popasl_Type     ,ASL_FileRequest,
-                MUIA_Popstring_String,data->GUI.ST_EDITOR = MakeString(SIZE_PATHFILE,tr(MSG_CO_ExternalEditor)),
-                MUIA_Popstring_Button,PopButton(MUII_PopFile),
-              End,
-              Child, MakeCheckGroup(&data->GUI.CH_LAUNCH, tr(MSG_CO_Launch)),
             End,
 
             Child, Label2(tr(MSG_CO_NB_EMAILCACHE)),
@@ -3171,9 +3168,6 @@ Object *CO_PageWrite(struct CO_ClassData *data)
               Child, HSpace(0),
             End,
 
-            Child, Label2(tr(MSG_CO_DEFAULTCHARSET)),
-            Child, MakeCharsetPop(&data->GUI.TX_DEFCHARSET_WRITE, &charsetPopButton),
-
           End,
 
           Child, RectangleObject,
@@ -3189,6 +3183,7 @@ Object *CO_PageWrite(struct CO_ClassData *data)
 
         Child, VGroup, GroupFrameT(tr(MSG_CO_OtherOptions)),
           Child, MakeCheckGroup(&data->GUI.CH_WARNSUBJECT, tr(MSG_CO_WARNSUBJECT)),
+          Child, MakeCheckGroup(&data->GUI.CH_LAUNCH, tr(MSG_CO_LAUNCH_EXTEDITOR)),
         End,
 
         Child, HVSpace,
@@ -3200,18 +3195,17 @@ Object *CO_PageWrite(struct CO_ClassData *data)
 
   if(obj != NULL)
   {
-    set(charsetPopButton, MUIA_ControlChar, ShortCut(tr(MSG_CO_DEFAULTCHARSET)));
+    set(codesetPopButton, MUIA_ControlChar, ShortCut(tr(MSG_CO_DEFAULTCHARSET)));
 
     SetHelp(data->GUI.ST_HELLOTEXT,        MSG_HELP_CO_ST_HELLOTEXT);
     SetHelp(data->GUI.ST_BYETEXT,          MSG_HELP_CO_ST_BYETEXT);
     SetHelp(data->GUI.CH_WARNSUBJECT,      MSG_HELP_CO_CH_WARNSUBJECT);
     SetHelp(data->GUI.ST_EDWRAP,           MSG_HELP_CO_ST_EDWRAP);
     SetHelp(data->GUI.CY_EDWRAP,           MSG_HELP_CO_CY_EDWRAP);
-    SetHelp(data->GUI.ST_EDITOR,           MSG_HELP_CO_ST_EDITOR);
     SetHelp(data->GUI.CH_LAUNCH,           MSG_HELP_CO_CH_LAUNCH);
     SetHelp(data->GUI.NB_EMAILCACHE,       MSG_HELP_CO_NB_EMAILCACHE);
     SetHelp(data->GUI.NB_AUTOSAVE,         MSG_HELP_CO_NB_AUTOSAVE);
-    SetHelp(data->GUI.TX_DEFCHARSET_WRITE, MSG_HELP_CO_TX_DEFAULTCHARSET);
+    SetHelp(data->GUI.TX_DEFCODESET_WRITE, MSG_HELP_CO_TX_DEFCODESET_WRITE);
     SetHelp(data->GUI.CH_TEXTSTYLES_WRITE, MSG_HELP_CO_CH_TEXTSTYLES_WRITE);
     SetHelp(data->GUI.CH_TEXTCOLORS_WRITE, MSG_HELP_CO_CH_TEXTCOLORS_WRITE);
 
@@ -3949,6 +3943,7 @@ Object *CO_PageMixed(struct CO_ClassData *data)
   static const char *trwopt[4];
   Object *obj;
   Object *popButton;
+  Object *codesetPopButton;
 
   ENTER();
 
@@ -4002,6 +3997,27 @@ Object *CO_PageMixed(struct CO_ClassData *data)
 
         End,
 
+        Child, VGroup, GroupFrameT(tr(MSG_CO_EXTEDITOR)),
+          Child, ColGroup(2),
+            Child, Label2(tr(MSG_CO_ExternalEditor)),
+            Child, PopaslObject,
+              MUIA_Popasl_Type, ASL_FileRequest,
+              MUIA_Popstring_String,data->GUI.ST_EDITOR = MakeString(SIZE_PATHFILE, tr(MSG_CO_ExternalEditor)),
+              MUIA_Popstring_Button, PopButton(MUII_PopFile),
+            End,
+
+            Child, HSpace(1),
+            Child, HGroup,
+              Child, HGroup,
+                Child, data->GUI.CH_DEFCODESET_EDITOR = MakeCheck(tr(MSG_CO_EXTEDITOR_CODESET)),
+                Child, Label1(tr(MSG_CO_EXTEDITOR_CODESET)),
+              End,
+              Child, MakeCodesetPop(&data->GUI.TX_DEFCODESET_EDITOR, &codesetPopButton),
+            End,
+
+          End,
+        End,
+ 
         Child, VGroup, GroupFrameT(tr(MSG_CO_AppIcon)),
           Child, ColGroup(2),
             Child, data->GUI.CH_WBAPPICON = MakeCheck(tr(MSG_CO_WBAPPICON)),
@@ -4100,6 +4116,8 @@ Object *CO_PageMixed(struct CO_ClassData *data)
 
   if(obj != NULL)
   {
+    set(codesetPopButton, MUIA_ControlChar, ShortCut(tr(MSG_CO_EXTEDITOR_CODESET)));
+
     SetHelp(data->GUI.ST_TEMPDIR,       MSG_HELP_CO_ST_TEMPDIR);
     SetHelp(data->GUI.ST_DETACHDIR,     MSG_HELP_CO_ST_DETACHDIR);
     SetHelp(data->GUI.ST_ATTACHDIR,     MSG_HELP_CO_ST_ATTACHDIR);
@@ -4122,11 +4140,16 @@ Object *CO_PageMixed(struct CO_ClassData *data)
     SetHelp(data->GUI.ST_APPICON,       MSG_HELP_CO_ST_APPICON);
     SetHelp(data->GUI.BT_APPICONGETPOS, MSG_HELP_CO_BT_APPICONGETPOS);
     SetHelp(data->GUI.CY_TRANSWIN,      MSG_HELP_CO_CH_TRANSWIN);
+    SetHelp(data->GUI.ST_EDITOR,        MSG_HELP_CO_ST_EDITOR_EXT);
+    SetHelp(data->GUI.CH_DEFCODESET_EDITOR, MSG_HELP_CO_CH_DEFCODESET_EDITOR);
+    SetHelp(data->GUI.TX_DEFCODESET_EDITOR, MSG_HELP_CO_TX_DEFCODESET_EDITOR);
 
     DoMethod(obj, MUIM_MultiSet, MUIA_Disabled, TRUE, data->GUI.ST_APPX, data->GUI.ST_APPY, data->GUI.ST_APPICON, data->GUI.BT_APPICONGETPOS, NULL);
     DoMethod(data->GUI.CH_WBAPPICON, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, MUIV_Notify_Application, 9, MUIM_MultiSet, MUIA_Disabled, MUIV_NotTriggerValue, data->GUI.ST_APPX, data->GUI.ST_APPY, data->GUI.ST_APPICON, data->GUI.CH_APPICONPOS, data->GUI.BT_APPICONGETPOS, NULL);
     DoMethod(data->GUI.BT_APPICONGETPOS, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &GetAppIconPosHook);
     DoMethod(data->GUI.CH_CONFIRM, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, data->GUI.NB_CONFIRMDEL, 3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
+    DoMethod(data->GUI.CH_DEFCODESET_EDITOR, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, data->GUI.TX_DEFCODESET_EDITOR, 3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
+    DoMethod(data->GUI.CH_DEFCODESET_EDITOR, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, codesetPopButton, 3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
 
     #if defined(__amigaos4__)
     set(data->GUI.CH_DOCKYICON, MUIA_Disabled, G->applicationID == 0);
@@ -4138,6 +4161,10 @@ Object *CO_PageMixed(struct CO_ClassData *data)
       set(data->GUI.NB_PACKER, MUIA_Disabled, TRUE);
       set(data->GUI.NB_ENCPACK, MUIA_Disabled, TRUE);
     }
+
+    // disabled the codeset select items
+    set(data->GUI.TX_DEFCODESET_EDITOR, MUIA_Disabled, TRUE);
+    set(codesetPopButton, MUIA_Disabled, TRUE);
   }
 
   RETURN(obj);

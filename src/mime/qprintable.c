@@ -399,7 +399,7 @@ long qpdecode_file(FILE *in, FILE *out, struct codeset *srcCodeset, BOOL isText)
           ULONG strLen = 0;
 
           STRPTR str = CodesetsConvertStr(CSA_SourceCodeset,   srcCodeset,
-                                          CSA_DestCodeset,     G->readCharset,
+                                          CSA_DestCodeset,     G->localCodeset,
                                           CSA_Source,          dptr,
                                           CSA_SourceLen,       todo,
                                           CSA_DestLenPtr,      &strLen,
@@ -478,7 +478,7 @@ long qpdecode_file(FILE *in, FILE *out, struct codeset *srcCodeset, BOOL isText)
       ULONG strLen = 0;
 
       STRPTR str = CodesetsConvertStr(CSA_SourceCodeset,   srcCodeset,
-                                      CSA_DestCodeset,     G->readCharset,
+                                      CSA_DestCodeset,     G->localCodeset,
                                       CSA_Source,          dptr,
                                       CSA_SourceLen,       todo,
                                       CSA_DestLenPtr,      &strLen,

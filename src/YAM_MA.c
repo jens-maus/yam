@@ -1412,7 +1412,7 @@ void MA_RemoveAttach(struct Mail *mail, struct Part **whichParts, BOOL warning)
                     writePart.Filename = part->Filename;
                     writePart.Description = part->CParDesc;
                     writePart.Name = part->CParName;
-                    writePart.charset = G->writeCharset;
+                    writePart.Codeset = G->writeCodeset;
                     writePart.EncType = part->EncodingCode;
 
                     // create a new header, since decoded parts have these stripped
@@ -1466,7 +1466,7 @@ void MA_RemoveAttach(struct Mail *mail, struct Part **whichParts, BOOL warning)
                   writePart.Filename = tempFileName;
                   writePart.Description = part->CParDesc;
                   writePart.Name = tempName;
-                  writePart.charset = G->writeCharset;
+                  writePart.Codeset = G->writeCodeset;
                   writePart.EncType = ENC_8BIT;
 
                   fputc('\n', out);

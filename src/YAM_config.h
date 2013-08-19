@@ -257,8 +257,10 @@ struct CO_GUIData
   #if defined(__amigaos4__)
   Object *CH_DOCKYICON;
   #endif // __amigaos4__
-  Object *TX_DEFCHARSET_READ;
-  Object *TX_DEFCHARSET_WRITE;
+  Object *TX_DEFCODESET_LOCAL;
+  Object *TX_DEFCODESET_WRITE;
+  Object *TX_DEFCODESET_EDITOR;
+  Object *CH_DEFCODESET_EDITOR;
   Object *CY_UPDATEINTERVAL;
   Object *BT_UPDATENOW;
   Object *TX_UPDATEINFO;
@@ -553,6 +555,7 @@ struct Config
   BOOL  ShowRcptFieldReplyTo;
   BOOL  OverrideFromAddress;
   BOOL  ShowPackerProgress;
+  BOOL  ForceEditorCodeset;
 
   struct MUI_PenSpec   ColoredText;
   struct MUI_PenSpec   Color1stLevel;
@@ -596,8 +599,9 @@ struct Config
   char XPKPackEncrypt[5];
   char SupportSite[SIZE_HOST];
   char UpdateServer[SIZE_HOST];
-  char DefaultReadCharset[SIZE_CTYPE+1];
-  char DefaultWriteCharset[SIZE_CTYPE+1];
+  char DefaultLocalCodeset[SIZE_CTYPE+1];
+  char DefaultWriteCodeset[SIZE_CTYPE+1];
+  char ForcedEditorCodeset[SIZE_CTYPE+1];
   char IOCInterfaces[SIZE_LARGE];
   char AppIconText[SIZE_COMMAND];
   char InfoBarText[SIZE_COMMAND];

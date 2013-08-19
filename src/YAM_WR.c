@@ -166,10 +166,10 @@ struct WritePart *NewMIMEpart(struct WriteMailData *wmData)
     if(wmData != NULL)
     {
       p->Filename = wmData->filename;
-      p->charset = wmData->charset;
+      p->Codeset = wmData->codeset;
     }
     else
-      p->charset = G->writeCharset;
+      p->Codeset = G->writeCodeset;
   }
   else
     E(DBF_MAIL, "couldn't create new MIME part");
@@ -486,7 +486,7 @@ void WriteContentTypeAndEncoding(FILE *fh, const struct WritePart *part)
   // output the "Content-Type:
   fprintf(fh, "Content-Type: %s", part->ContentType);
   if(part->EncType != ENC_7BIT && isPrintable == TRUE)
-    fprintf(fh, "; charset=%s", strippedCharsetName(part->charset));
+    fprintf(fh, "; charset=%s", strippedCharsetName(part->Codeset));
 
   // output the "name" and Content-Disposition as well
   // as the "filename" parameter to the mail

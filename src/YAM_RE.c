@@ -1299,7 +1299,7 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, const struct codeset *srcC
 
             // convert from the srcCodeset to the destination one.
             char *str = CodesetsConvertStr(CSA_SourceCodeset,   srcCodeset,
-                                           CSA_DestCodeset,     G->readCharset,
+                                           CSA_DestCodeset,     G->localCodeset,
                                            CSA_Source,          buf,
                                            CSA_SourceLen,       curlen,
                                            CSA_DestLenPtr,      &dstlen,
@@ -1382,7 +1382,7 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
   {
     // now we check that the codeset of the mail part really
     // differs from the local one we are currently using
-    if(stricmp(rp->CParCSet, strippedCharsetName(G->readCharset)) != 0)
+    if(stricmp(rp->CParCSet, strippedCharsetName(G->localCodeset)) != 0)
     {
       D(DBF_MAIL, "found Part #%ld encoded in charset '%s' which is different than local one.", rp->Nr, rp->CParCSet);
 

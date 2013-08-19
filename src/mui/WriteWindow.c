@@ -751,7 +751,7 @@ OVERLOAD(OM_NEW)
   if((data->wmData = AllocWriteMailData()) != NULL)
   {
     Object *menuStripObject = NULL;
-    Object *charsetPopButton;
+    Object *codesetPopButton;
     Object *slider;
     struct TagItem *tags = inittags(msg);
     struct TagItem *tag;
@@ -1205,7 +1205,7 @@ OVERLOAD(OM_NEW)
                   End,
 
                   Child, Label(tr(MSG_WR_CHARSET)),
-                  Child, MakeCharsetPop((Object **)&data->PO_CHARSET, &charsetPopButton),
+                  Child, MakeCodesetPop((Object **)&data->PO_CHARSET, &codesetPopButton),
 
                   Child, Label(tr(MSG_WR_Importance)),
                   Child, data->CY_IMPORTANCE = MakeCycle(priority, tr(MSG_WR_Importance)),
@@ -1296,8 +1296,8 @@ OVERLOAD(OM_NEW)
         set(data->MI_AUTOWRAP,  MUIA_Menuitem_Checked, xget(data->TE_EDIT, MUIA_TextEditor_WrapBorder) > 0);
 
         // set the charset popupbutton string list contents
-        set(charsetPopButton, MUIA_ControlChar, ShortCut(tr(MSG_WR_CHARSET)));
-        nnset(data->PO_CHARSET, MUIA_Text_Contents, C->DefaultWriteCharset);
+        set(codesetPopButton, MUIA_ControlChar, ShortCut(tr(MSG_WR_CHARSET)));
+        nnset(data->PO_CHARSET, MUIA_Text_Contents, C->DefaultWriteCodeset);
 
         // put the importance cycle gadget into the cycle group
         set(data->CY_IMPORTANCE, MUIA_Cycle_Active, TRUE);
@@ -1546,7 +1546,7 @@ OVERLOAD(OM_NEW)
       DoMethod(data->CH_ADDINFO,       MUIM_Notify, MUIA_Selected,        MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
 
       // create a notify for changing the charset
-      DoMethod(data->PO_CHARSET, MUIM_Notify, MUIA_Text_Contents, MUIV_EveryTime, obj, 2, METHOD(CharsetChanged), MUIV_TriggerValue);
+      DoMethod(data->PO_CHARSET, MUIM_Notify, MUIA_Text_Contents, MUIV_EveryTime, obj, 2, METHOD(CodesetChanged), MUIV_TriggerValue);
 
       // set main window button notifies
       DoMethod(data->BT_SAVEASDRAFT, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(ComposeMail), WRITE_DRAFT);
@@ -1562,7 +1562,7 @@ OVERLOAD(OM_NEW)
       AddPath(data->wmData->filename, C->TempDir, filename, sizeof(data->wmData->filename));
 
       // set the global charset as the default one
-      data->wmData->charset = G->writeCharset;
+      data->wmData->codeset = G->writeCodeset;
 
       // Finally set up the notifications for external changes to the file being edited
       // if this is not a redirect window. We let the UserData point to this object to be
@@ -3075,7 +3075,7 @@ DECLARE(SaveTextAs)
     if(FileExists(filename) == FALSE ||
        MUI_Request(_app(obj), obj, MUIF_NONE, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_FILE_OVERWRITE), frc->file) != 0)
     {
-      if(DoMethod(data->TE_EDIT, MUIM_MailTextEdit_SaveToFile, filename, data->wmData->charset) == FALSE)
+      if(DoMethod(data->TE_EDIT, MUIM_MailTextEdit_SaveToFile, filename, data->wmData->codeset) == FALSE)
         ER_NewError(tr(MSG_ER_CantCreateFile), filename);
     }
   }
@@ -3408,7 +3408,7 @@ DECLARE(LaunchEditor)
     }
 
     // save the mail text in the currently selected charset
-    DoMethod(data->TE_EDIT, MUIM_MailTextEdit_SaveToFile, data->wmData->filename, data->wmData->charset);
+    DoMethod(data->TE_EDIT, MUIM_MailTextEdit_SaveToFile, data->wmData->filename, data->wmData->codeset);
 
     // remember the modification date of the file
     if(ObtainFileInfo(data->wmData->filename, FI_DATE, &data->wmData->lastFileChangeTime) == FALSE)
@@ -3674,10 +3674,10 @@ DECLARE(SetupFromOldMail) // struct ReadMailData *rmData
   {
     if(part->Nr == msg->rmData->letterPartNum)
     {
-      // use the CharsetChanged method to signal that the write
+      // use the CodesetChanged method to signal that the write
       // window should select the charset of the letterPart of the
       // old mail
-      DoMethod(obj, METHOD(CharsetChanged), part->CParCSet);
+      DoMethod(obj, METHOD(CodesetChanged), part->CParCSet);
     }
 
     if(part->Nr != msg->rmData->letterPartNum &&
@@ -3966,7 +3966,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
     MA_StartMacro(MACRO_POSTWRITE, data->windowNumberStr);
 
     // export the text of our texteditor to a file in the currently selected charset
-    DoMethod(data->TE_EDIT, MUIM_MailTextEdit_SaveToFile, wmData->filename, wmData->charset);
+    DoMethod(data->TE_EDIT, MUIM_MailTextEdit_SaveToFile, wmData->filename, wmData->codeset);
 
     // build the whole mail part list including the attachments
     // but don't delete temporary files when saving a draft mail
@@ -5187,25 +5187,25 @@ DECLARE(HandleAppMessage) // struct AppMessage *appmsg
 }
 
 ///
-/// DECLARE(CharsetChanged)
-// method that is called when the charset in the write window is manually
+/// DECLARE(CodesetChanged)
+// method that is called when the codeset in the write window is manually
 // changed by the user.
-DECLARE(CharsetChanged) // char *charsetName
+DECLARE(CodesetChanged) // char *codesetName
 {
   GETDATA;
   ENTER();
 
   // find the selected charset and default to the global one if it
   // could not be found
-  if((data->wmData->charset = CodesetsFind(msg->charsetName,
+  if((data->wmData->codeset = CodesetsFind(msg->codesetName,
                                            CSA_CodesetList,       G->codesetsList,
                                            CSA_FallbackToDefault, FALSE,
                                            TAG_DONE)) == NULL)
   {
-    data->wmData->charset = G->writeCharset;
+    data->wmData->codeset = G->writeCodeset;
   }
 
-  nnset(data->PO_CHARSET, MUIA_Text_Contents, strippedCharsetName(data->wmData->charset));
+  nnset(data->PO_CHARSET, MUIA_Text_Contents, strippedCharsetName(data->wmData->codeset));
 
   RETURN(0);
   return 0;

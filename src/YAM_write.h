@@ -75,7 +75,7 @@ struct WriteMailData
   enum NewMailMode  mode;               // the compose mode this write mail operation
   char *            inReplyToMsgID;     // ptr to "In-Reply-To:" message header to compose the message for
   char *            references;         // ptr to "References:" message header to compose the message for
-  struct codeset *  charset;            // the character set being used for this mail
+  struct codeset *  codeset;            // the character set being used for this mail
 
   struct UserIdentityNode *identity;    // ptr to the identity used for composing that mail
 
@@ -139,7 +139,7 @@ struct WritePart
   char *            Filename;
   char *            Description;
   char *            Name;
-  struct codeset *  charset; // the character set being used for this part
+  struct codeset *  Codeset; // the character set being used for this part
   BOOL              IsTemp;
   enum Encoding     EncType;
 };

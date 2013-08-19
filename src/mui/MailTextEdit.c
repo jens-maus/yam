@@ -397,7 +397,7 @@ OVERLOAD(MUIM_TextEditor_HandleError)
 /* Public Methods */
 /// DECLARE(LoadFromFile)
 //  Loads a text from a file
-DECLARE(LoadFromFile) // const char *file, struct codeset *srcCharset, ULONG flags
+DECLARE(LoadFromFile) // const char *file, struct codeset *srcCodeset, ULONG flags
 {
   BOOL result = FALSE;
   char *text;
@@ -410,15 +410,15 @@ DECLARE(LoadFromFile) // const char *file, struct codeset *srcCharset, ULONG fla
     ULONG dstLen = 0;
     BOOL converted = FALSE;
 
-    // lets convert to the specified srcCharset if set and different
-    // from the readCharset
-    if(msg->srcCharset != NULL && stricmp(msg->srcCharset->name, G->readCharset->name) != 0)
+    // lets convert to the specified srcCodeset if set and different
+    // from the localCodeset
+    if(msg->srcCodeset != NULL && stricmp(msg->srcCodeset->name, G->localCodeset->name) != 0)
     {
-      D(DBF_MAIL, "convert file content of '%s' from %s to %s", msg->file, msg->srcCharset->name, G->readCharset->name);
+      D(DBF_MAIL, "convert file content of '%s' from %s to %s", msg->file, msg->srcCodeset->name, G->localCodeset->name);
 
-      // convert from the readCharset to dstCharset (e.g. selected in write window)
-      dstText = CodesetsConvertStr(CSA_SourceCodeset,   msg->srcCharset,
-                                   CSA_DestCodeset,     G->readCharset,
+      // convert from the srcCodeset to the localCodeset
+      dstText = CodesetsConvertStr(CSA_SourceCodeset,   msg->srcCodeset,
+                                   CSA_DestCodeset,     G->localCodeset,
                                    CSA_Source,          text,
                                    CSA_SourceLen,       strlen(text),
                                    CSA_DestLenPtr,      &dstLen,
@@ -468,7 +468,7 @@ DECLARE(LoadFromFile) // const char *file, struct codeset *srcCharset, ULONG fla
 ///
 /// DECLARE(SaveToFile)
 //  Saves the contents to a file
-DECLARE(SaveToFile) // const char *file, struct codeset *dstCharset
+DECLARE(SaveToFile) // const char *file, struct codeset *dstCodeset
 {
   BOOL result = FALSE;
   FILE *fh;
@@ -484,15 +484,15 @@ DECLARE(SaveToFile) // const char *file, struct codeset *dstCharset
       ULONG dstLen = 0;
       BOOL converted = FALSE;
 
-      // lets convert to the specified dstCharset if set and different
-      // from the readCharset
-      if(msg->dstCharset != NULL && stricmp(msg->dstCharset->name, G->readCharset->name) != 0)
+      // lets convert to the specified dstCodeset if set and different
+      // from the localCodeset
+      if(msg->dstCodeset != NULL && stricmp(msg->dstCodeset->name, G->localCodeset->name) != 0)
       {
-        D(DBF_MAIL, "convert file content of '%s' from %s to %s", msg->file, G->readCharset->name, msg->dstCharset->name);
+        D(DBF_MAIL, "convert file content of '%s' from %s to %s", msg->file, G->localCodeset->name, msg->dstCodeset->name);
 
-        // convert from the readCharset to dstCharset (e.g. selected in write window)
-        dstText = CodesetsConvertStr(CSA_SourceCodeset,   G->readCharset,
-                                     CSA_DestCodeset,     msg->dstCharset,
+        // convert from the readCharset to dstCodeset (e.g. selected in write window)
+        dstText = CodesetsConvertStr(CSA_SourceCodeset,   G->localCodeset,
+                                     CSA_DestCodeset,     msg->dstCodeset,
                                      CSA_Source,          text,
                                      CSA_SourceLen,       strlen(text),
                                      CSA_DestLenPtr,      &dstLen,

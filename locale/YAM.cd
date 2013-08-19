@@ -1046,9 +1046,6 @@ before sending
 MSG_CO_ExternalEditor (442//)
 _External editor
 ;
-MSG_CO_Launch (443//)
-_Launch immediately
-;
 MSG_CO_PhraseOpen (444//)
 Open
 ;
@@ -1572,10 +1569,6 @@ typing your messages.
 MSG_HELP_CO_CH_LAUNCH (631//)
 Automatically launch the external editor\n\
 when starting a new message.
-;
-MSG_HELP_CO_ST_EDITOR (632//)
-Filename of your\n\
-favorite text editor.
 ;
 MSG_HELP_CO_ST_FWDSTART (633//)
 Text used to introduce a forwarded message.\n\
@@ -4654,7 +4647,7 @@ Auto-detect c_yrillic charsets
 MSG_HELP_CO_DETECT_CYRILLIC (1707//)
 Try to use the auto-detect feature\n\
 of codesets.library to automatically\n\
-identify the correct cyrillic codeset\n\
+identify the correct cyrillic charset\n\
 (only relevant for cyrillic users).
 ;
 MSG_WR_ErrorNotEnoughUndoMem (1708//)
@@ -5786,13 +5779,6 @@ Remo_ve
 MSG_HELP_EA_BT_REMOVEPHOTO (2049//)
 'Forget' this picture (the\n\
 file on disk will remain).
-;
-MSG_HELP_CO_TX_DEFAULTCHARSET (2050//)
-Use the popup button to select the character set\n\
-you would like YAM to use by default. This should\n\
-match the system's default charset, otherwise a\n\
-requester will appear asking how do you want to\n\
-proceed.
 ;
 MSG_HELP_CO_CH_NOTISOUND (2051//)
 Play a sound file\n\
@@ -7340,4 +7326,48 @@ Archive
 ;
 MSG_CO_SHOW_ARCHIVER_PROGRESS (2461//)
 Show progress
+;
+MSG_CO_LAUNCH_EXTEDITOR (2462//)
+_Launch external editor immediately
+;
+MSG_CO_EXTEDITOR (2463//)
+External editor settings
+;
+MSG_HELP_CO_ST_EDITOR_EXT (2464//)
+Path to your favourite external\n\
+editor which you can use as an\n\
+alternative to the internal one.
+;
+MSG_CO_EXTEDITOR_CODESET (2465//)
+_Force charset
+;
+MSG_HELP_CO_CH_DEFCODESET_EDITOR (2466//)
+If selected the chosen charset\n\
+will be used and the text be\n\
+converted before starting the\n\
+editor.
+;
+MSG_HELP_CO_TX_DEFCODESET_EDITOR (2467//)
+Chose a charset to which the text\n\
+will be converted to before starting\n\
+the external editor.
+;
+MSG_HELP_CO_TX_DEFCODESET_LOCAL (2468//)
+Use the popup button to select the character set\n\
+you would like YAM to use for displaying text.\n\
+This should usually match your system's default\n\
+charset, otherwise a requester will appear asking\n\
+how to proceed.
+;
+MSG_HELP_CO_TX_DEFCODESET_WRITE (2469//)
+Use the popup button to select the character set\n\
+you would like YAM to encode emails to.\n\
+This should usually match your system's default\n\
+charset so that the displayed character set matches\n\
+the one you write mail. However, you can select any\n\
+character set you want to encode your outgoing mails\n\
+to.
+;
+MSG_CO_DEFAULTCODESET_WRITE (2470//)
+Default c_harset
 ;

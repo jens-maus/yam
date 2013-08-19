@@ -464,7 +464,7 @@ int rfc2047_encode_file(FILE *fh, const char *src, const size_t offset)
   // call encode_str() to encode the source string into a valid
   // RFC2047 encoded string with enough spaces so that we can
   // split it later into separate lines not longer than 75 chars.
-  if((dst = rfc2047_encode_str(src, strippedCharsetName(G->writeCharset), &rfc2047_qp_allow_any)))
+  if((dst = rfc2047_encode_str(src, strippedCharsetName(G->writeCodeset), &rfc2047_qp_allow_any)))
   {
     size_t len = strlen(dst);
 
@@ -585,7 +585,7 @@ static int rfc2047_decode_callback(const char *txt, unsigned int len, const char
   {
     // check if the src codeset of the string isn't the same
     // like our local one.
-    if(stricmp(chset, strippedCharsetName(G->readCharset)) != 0)
+    if(stricmp(chset, strippedCharsetName(G->localCodeset)) != 0)
     {
       struct codeset *srcCodeset;
 
@@ -599,7 +599,7 @@ static int rfc2047_decode_callback(const char *txt, unsigned int len, const char
         // now we convert the text from the source codeset to our
         // local codeset
         STRPTR str = CodesetsConvertStr(CSA_SourceCodeset,   srcCodeset,
-                                        CSA_DestCodeset,     G->readCharset,
+                                        CSA_DestCodeset,     G->localCodeset,
                                         CSA_Source,          txt,
                                         CSA_SourceLen,       len,
                                         CSA_DestLenPtr,      &dstLen,
@@ -638,7 +638,7 @@ static int rfc2047_decode_callback(const char *txt, unsigned int len, const char
           return 0;
         }
         else
-          W(DBF_MIME, "couldn't convert src str via CodesetsConvertStr(), codesets '%s' -> '%s'!", SafeStr(srcCodeset->name), SafeStr(G->readCharset->name));
+          W(DBF_MIME, "couldn't convert src str via CodesetsConvertStr(), codesets '%s' -> '%s'!", SafeStr(srcCodeset->name), SafeStr(G->localCodeset->name));
       }
       #if defined(DEBUG)
       else if(stricmp(chset, "us-ascii") != 0)

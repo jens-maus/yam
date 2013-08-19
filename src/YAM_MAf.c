@@ -344,7 +344,7 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
 
               // convert the utf8 encoded buffer to the local charset
               if((buf = CodesetsUTF8ToStr(CSA_Source,          utf8buf,
-                                          CSA_DestCodeset,     G->readCharset,
+                                          CSA_DestCodeset,     G->localCodeset,
                                           CSA_MapForeignChars, C->MapForeignChars,
                                           TAG_DONE)) == NULL)
               {
@@ -536,13 +536,9 @@ BOOL MA_SaveIndex(struct Folder *folder)
     fi.Unread = folder->Unread;
     fi.Size = folder->Size;
 
-    STARTCLOCK(DBF_ALWAYS);
     // write the index header out first
     if(fwrite(&fi, sizeof(fi), 1, fh) == 1)
     {
-      // determine the system's default codeset ahead of all the UTF8 conversion
-      struct codeset *defaultCharset = CodesetsFindA(NULL, NULL);
-
       // assume success at first
       success = TRUE;
 
@@ -564,7 +560,7 @@ BOOL MA_SaveIndex(struct Folder *folder)
         // convert the buffer string to UTF8
         // the length of the generated string is directly put into the moreBytes variable
         if((utf8buf = CodesetsUTF8Create(CSA_Source, buf,
-                                         CSA_SourceCodeset, defaultCharset,
+                                         CSA_SourceCodeset, G->localCodeset,
                                          CSA_DestLenPtr, &cmail.moreBytes,
                                          TAG_DONE)) != NULL)
         {

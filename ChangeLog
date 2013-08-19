@@ -5,6 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-08-19 Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_COg.c, YAM_CO.c, misc: renamed "readCharset" variable to "localCodeset"
+    to make its purpose more clear. Also moved its GUI config items to the
+    "FirstSteps" config page and moved the external editor setup options to
+    "Misc". Added a possibility to specify a codeset to which text should
+    be automatically converted to when starting an external editor. If not
+    set the currently configured codeset of the write window is used or the
+    global one set in YAMs' configuration. This should address one item of
+    a long standing ticket and thus refs #7.
+
 2013-08-19 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MA.c: fixed a wrong search for the archive folder which caused YAM to

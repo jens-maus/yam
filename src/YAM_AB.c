@@ -1203,7 +1203,7 @@ static BOOL AB_ImportTreeLDIF(const char *fname, BOOL append, BOOL sorted)
 
             // now convert this prossible UTF8 string to a normal string
             value = CodesetsUTF8ToStr(CSA_Source,          Trim(b64buffer),
-                                      CSA_DestCodeset,     G->readCharset,
+                                      CSA_DestCodeset,     G->localCodeset,
                                       CSA_MapForeignChars, C->MapForeignChars,
                                       TAG_DONE);
             utf8 = TRUE;
@@ -1410,15 +1410,19 @@ static void WriteLDIFLine(FILE *fh, const char *key, const char *valueFmt, ...)
       if(mustBeEncoded == TRUE)
       {
         UTF8 *utf8;
+        size_t utf8len = 0;
 
         // convert the value string to UTF8
-        if((utf8 = CodesetsUTF8Create(CSA_Source, buffer, TAG_DONE)) != NULL)
+        if((utf8 = CodesetsUTF8Create(CSA_Source, buffer, 
+                                      CSA_SourceCodeset, G->localCodeset,
+                                      CSA_DestLenPtr, &utf8len,
+                                      TAG_DONE)) != NULL)
         {
           char *b64_buffer = NULL;
 
           // we can reuse the former buffer here again, because we have a copy of the string
           // in utf8
-          if(base64encode(&b64_buffer, (char *)utf8, strlen((char *)utf8)) > 0)
+          if(base64encode(&b64_buffer, (char *)utf8, utf8len) > 0)
           {
             // write the key and encoded value strings
             // these are separated by a double colon
@@ -1563,7 +1567,7 @@ static void XMLEndHandler(void *userData, const XML_Char *name)
 
   // now convert this prossible UTF8 string to a normal string
   if((isoStr = CodesetsUTF8ToStr(CSA_Source,          Trim(xmlUserData->xmlData),
-                                 CSA_DestCodeset,     G->readCharset,
+                                 CSA_DestCodeset,     G->localCodeset,
                                  CSA_MapForeignChars, C->MapForeignChars,
                                  TAG_DONE)) != NULL)
   {

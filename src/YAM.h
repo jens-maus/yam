@@ -108,8 +108,8 @@ struct Global
   struct US_ClassData *    US;
   struct ReadMailData *    ActiveRexxRMData;
   struct WriteMailData *   ActiveRexxWMData;
-  struct codeset *         readCharset;
-  struct codeset *         writeCharset;
+  struct codeset *         localCodeset;         // the codeset YAM will use to display text
+  struct codeset *         writeCodeset;         // the codeset YAM will use to write/encode emails
   struct codesetList *     codesetsList;
   struct HashTable *       imageCacheHashTable;
   struct FolderList *      folders;

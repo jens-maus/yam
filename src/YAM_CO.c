@@ -107,7 +107,7 @@ struct Config *CE = NULL;
 
 /* local defines */
 #if defined(__amigaos4__)
-#define SYS_EDITOR "SYS:Tools/NotePad"
+#define SYS_EDITOR "SYS:Utilities/NotePad"
 #elif defined(__AROS__)
 #define SYS_EDITOR "SYS:Tools/Editor"
 #else
@@ -1390,9 +1390,19 @@ void CO_ClearConfig(struct Config *co)
 //  Sets configuration (or a part of it) to the factory settings
 void CO_SetDefaults(struct Config *co, enum ConfigPage page)
 {
+  struct codeset *sysCodeset;
+  char sysCodesetName[SIZE_CTYPE+1];
+
   ENTER();
   SHOWVALUE(DBF_CONFIG, co);
   SHOWVALUE(DBF_CONFIG, page);
+
+  // get the syscodeset to that we can set it as the default
+  sysCodeset = CodesetsFindA(NULL, NULL);
+  if(sysCodeset != NULL)
+    strlcpy(sysCodesetName, sysCodeset->name, sizeof(sysCodesetName));
+  else
+    strlcpy(sysCodesetName, "ISO-8859-1", sizeof(sysCodesetName));
 
   if(page == cp_FirstSteps || page == cp_AllPages)
   {
@@ -1409,6 +1419,8 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     }
     else
       strlcpy(co->Location, tr(MSG_CO_FALLBACK_TZONE), sizeof(co->Location));
+
+    strlcpy(co->DefaultLocalCodeset, sysCodesetName, sizeof(co->DefaultLocalCodeset));
   }
 
   if(page == cp_TCPIP || page == cp_AllPages)
@@ -1502,6 +1514,7 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     co->ShowRcptFieldCC = TRUE;
     co->ShowRcptFieldBCC = FALSE;
     co->ShowRcptFieldReplyTo = FALSE;
+    strlcpy(co->DefaultWriteCodeset, sysCodesetName, sizeof(co->DefaultWriteCodeset));
   }
 
   if(page == cp_ReplyForward || page == cp_AllPages)
@@ -1609,6 +1622,7 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     co->XPKPackEff = 50;
     co->XPKPackEncryptEff = 50;
     co->TransferWindow = TWM_AUTO;
+    strlcpy(co->ForcedEditorCodeset, sysCodesetName, sizeof(co->ForcedEditorCodeset));
 
     // depending on the operating system we set the AppIcon
     // and docky icon defaults different
@@ -1655,7 +1669,7 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     co->LetterPart = 1;
     co->WriteIndexes = 120; // 2 minutes
     co->ExpungeIndexes = 600; // 10 minutes
-    strlcpy(co->SupportSite, "http://www.yam.ch/", sizeof(co->SupportSite));
+    strlcpy(co->SupportSite, "http://yam.ch/", sizeof(co->SupportSite));
     strlcpy(co->UpdateServer, "http://update.yam.ch/", sizeof(co->UpdateServer));
     co->JumpToNewMsg = TRUE;
     co->JumpToIncoming = FALSE;
@@ -1665,8 +1679,6 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     co->IsOnlineCheck = TRUE;
     co->ConfirmOnQuit = FALSE;
     co->HideGUIElements = 0;
-    strlcpy(co->DefaultReadCharset, "ISO-8859-1", sizeof(co->DefaultReadCharset));
-    strlcpy(co->DefaultWriteCharset, "ISO-8859-1", sizeof(co->DefaultWriteCharset));
     co->SysCharsetCheck = TRUE;
     co->AmiSSLCheck = TRUE;
     co->PrintMethod = PRINTMETHOD_RAW;
@@ -2070,6 +2082,7 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      c1->ConfirmRemoveAttachments        == c2->ConfirmRemoveAttachments &&
      c1->OverrideFromAddress             == c2->OverrideFromAddress &&
      c1->ShowPackerProgress              == c2->ShowPackerProgress &&
+     c1->ForceEditorCodeset              == c2->ForceEditorCodeset &&
 
      c1->SocketOptions.SendBuffer        == c2->SocketOptions.SendBuffer &&
      c1->SocketOptions.RecvBuffer        == c2->SocketOptions.RecvBuffer &&
@@ -2128,8 +2141,9 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      strcmp(c1->XPKPackEncrypt,      c2->XPKPackEncrypt) == 0 &&
      strcmp(c1->SupportSite,         c2->SupportSite) == 0 &&
      strcmp(c1->UpdateServer,        c2->UpdateServer) == 0 &&
-     strcmp(c1->DefaultReadCharset,  c2->DefaultReadCharset) == 0 &&
-     strcmp(c1->DefaultWriteCharset, c2->DefaultWriteCharset) == 0 &&
+     strcmp(c1->DefaultLocalCodeset, c2->DefaultLocalCodeset) == 0 &&
+     strcmp(c1->DefaultWriteCodeset, c2->DefaultWriteCodeset) == 0 &&
+     strcmp(c1->ForcedEditorCodeset, c2->ForcedEditorCodeset) == 0 &&
      strcmp(c1->IOCInterfaces,       c2->IOCInterfaces) == 0 &&
      strcmp(c1->AppIconText,         c2->AppIconText) == 0 &&
      strcmp(c1->InfoBarText,         c2->InfoBarText) == 0 &&
@@ -2400,21 +2414,21 @@ void CO_Validate(struct Config *co, BOOL update)
     {
       // now we check whether the currently set localCharset matches
       // the system charset or not
-      if(co->DefaultReadCharset[0] != '\0' && sysCodeset->name[0] != '\0')
+      if(co->DefaultLocalCodeset[0] != '\0' && sysCodeset->name[0] != '\0')
       {
-        if(stricmp(co->DefaultReadCharset, sysCodeset->name) != 0)
+        if(stricmp(co->DefaultLocalCodeset, sysCodeset->name) != 0)
         {
           int res = MUI_Request(G->App, refWindow, MUIF_NONE,
                                 tr(MSG_CO_CHARSETWARN_TITLE),
                                 tr(MSG_CO_CHARSETWARN_BT),
                                 tr(MSG_CO_CHARSETWARN),
-                                co->DefaultReadCharset, sysCodeset->name);
+                                co->DefaultLocalCodeset, sysCodeset->name);
 
           // if the user has clicked on Change, we do
           // change the charset and save it immediatly
           if(res == 1)
           {
-            strlcpy(co->DefaultReadCharset, sysCodeset->name, sizeof(co->DefaultReadCharset));
+            strlcpy(co->DefaultLocalCodeset, sysCodeset->name, sizeof(co->DefaultLocalCodeset));
             saveAtEnd = TRUE;
           }
           else if(res == 2)
@@ -2426,7 +2440,7 @@ void CO_Validate(struct Config *co, BOOL update)
       }
       else if(sysCodeset->name[0] != '\0')
       {
-        strlcpy(co->DefaultReadCharset, sysCodeset->name, sizeof(co->DefaultReadCharset));
+        strlcpy(co->DefaultLocalCodeset, sysCodeset->name, sizeof(co->DefaultLocalCodeset));
         saveAtEnd = TRUE;
       }
       else
@@ -2438,36 +2452,42 @@ void CO_Validate(struct Config *co, BOOL update)
 
   // if the local charset is still empty we set the default
   // charset to 'iso-8859-1' as this one is probably the most common one.
-  if(co->DefaultReadCharset[0] == '\0')
+  if(co->DefaultLocalCodeset[0] == '\0')
   {
-    strlcpy(co->DefaultReadCharset, "ISO-8859-1", sizeof(co->DefaultReadCharset));
+    strlcpy(co->DefaultLocalCodeset, "ISO-8859-1", sizeof(co->DefaultLocalCodeset));
     saveAtEnd = TRUE;
   }
 
-  if(co->DefaultWriteCharset[0] == '\0')
+  if(co->DefaultWriteCodeset[0] == '\0')
   {
-    strlcpy(co->DefaultWriteCharset, "ISO-8859-1", sizeof(co->DefaultWriteCharset));
+    strlcpy(co->DefaultWriteCodeset, "ISO-8859-1", sizeof(co->DefaultWriteCodeset));
+    saveAtEnd = TRUE;
+  }
+
+  if(co->ForcedEditorCodeset[0] == '\0')
+  {
+    strlcpy(co->ForcedEditorCodeset, "ISO-8859-1", sizeof(co->ForcedEditorCodeset));
     saveAtEnd = TRUE;
   }
 
   // now we check if the set default read charset is a valid one also supported
   // by codesets.library and if not we warn the user
-  if((G->readCharset = CodesetsFind(co->DefaultReadCharset,
-                                    CSA_CodesetList,       G->codesetsList,
-                                    CSA_FallbackToDefault, FALSE,
+  if((G->localCodeset = CodesetsFind(co->DefaultLocalCodeset,
+                                     CSA_CodesetList,       G->codesetsList,
+                                     CSA_FallbackToDefault, FALSE,
                                     TAG_DONE)) == NULL)
   {
     int res = MUI_Request(G->App, refWindow, MUIF_NONE,
                           tr(MSG_CO_CHARSETWARN_TITLE),
                           tr(MSG_CO_CHARSETUNKNOWNWARN_BT),
                           tr(MSG_CO_CHARSETUNKNOWNWARN),
-                          co->DefaultReadCharset);
+                          co->DefaultLocalCodeset);
     if(res == 1)
     {
       // fallback to the system's default codeset
-      if((G->readCharset = CodesetsFindA(NULL, NULL)) != NULL)
+      if((G->localCodeset = CodesetsFindA(NULL, NULL)) != NULL)
       {
-        strlcpy(co->DefaultReadCharset, G->readCharset->name, sizeof(co->DefaultReadCharset));
+        strlcpy(co->DefaultLocalCodeset, G->localCodeset->name, sizeof(co->DefaultLocalCodeset));
         saveAtEnd = TRUE;
       }
     }
@@ -2475,7 +2495,7 @@ void CO_Validate(struct Config *co, BOOL update)
 
   // now we check if the set default write charset is a valid one also supported
   // by codesets.library and if not we warn the user
-  if((G->writeCharset = CodesetsFind(co->DefaultWriteCharset,
+  if((G->writeCodeset = CodesetsFind(co->DefaultWriteCodeset,
                                      CSA_CodesetList,       G->codesetsList,
                                      CSA_FallbackToDefault, FALSE,
                                      TAG_DONE)) == NULL)
@@ -2484,13 +2504,38 @@ void CO_Validate(struct Config *co, BOOL update)
                           tr(MSG_CO_CHARSETWARN_TITLE),
                           tr(MSG_CO_CHARSETUNKNOWNWARN_BT),
                           tr(MSG_CO_CHARSETUNKNOWNWARN),
-                          co->DefaultWriteCharset);
+                          co->DefaultWriteCodeset);
     if(res == 1)
     {
       // fallback to the system's default codeset
-      if((G->writeCharset = CodesetsFindA(NULL, NULL)) != NULL)
+      if((G->writeCodeset = CodesetsFindA(NULL, NULL)) != NULL)
       {
-        strlcpy(co->DefaultWriteCharset, G->writeCharset->name, sizeof(co->DefaultWriteCharset));
+        strlcpy(co->DefaultWriteCodeset, G->writeCodeset->name, sizeof(co->DefaultWriteCodeset));
+        saveAtEnd = TRUE;
+      }
+    }
+  }
+
+  // now we check if the set force editor codeset is a valid one also supported
+  // by codesets.library and if not we warn the user
+  if(CodesetsFind(co->ForcedEditorCodeset,
+                  CSA_CodesetList,       G->codesetsList,
+                  CSA_FallbackToDefault, FALSE,
+                  TAG_DONE) == NULL)
+  {
+    int res = MUI_Request(G->App, refWindow, MUIF_NONE,
+                          tr(MSG_CO_CHARSETWARN_TITLE),
+                          tr(MSG_CO_CHARSETUNKNOWNWARN_BT),
+                          tr(MSG_CO_CHARSETUNKNOWNWARN),
+                          co->ForcedEditorCodeset);
+    if(res == 1)
+    {
+      struct codeset *tmpcs;
+
+      // fallback to the system's default codeset
+      if((tmpcs = CodesetsFindA(NULL, NULL)) != NULL)
+      {
+        strlcpy(co->ForcedEditorCodeset, tmpcs->name, sizeof(co->ForcedEditorCodeset));
         saveAtEnd = TRUE;
       }
     }

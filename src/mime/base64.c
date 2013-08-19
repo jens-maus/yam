@@ -642,7 +642,7 @@ long base64decode_file(FILE *in, FILE *out,
       ULONG strLen = 0;
 
       STRPTR str = CodesetsConvertStr(CSA_SourceCodeset,   srcCodeset,
-                                      CSA_DestCodeset,     G->readCharset,
+                                      CSA_DestCodeset,     G->localCodeset,
                                       CSA_Source,          outbuffer,
                                       CSA_SourceLen,       outLength,
                                       CSA_DestLenPtr,      &strLen,
