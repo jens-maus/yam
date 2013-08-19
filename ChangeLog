@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-08-19 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MA.c: fixed a wrong search for the archive folder which caused YAM to
+    create the folder over and over again.
+
 2013-08-17 Jens Langner <Jens.Langner@light-speed.de>
 
   * mui/WriteWindow.c: change SaveToFile uses to actually convert the entered

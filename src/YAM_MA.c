@@ -3182,7 +3182,7 @@ void MA_ArchiveMail(struct Mail *mail)
   }
 
   // create the year folder if it doesn't exist yet
-  if(FO_GetFolderByName(archivePathName, NULL) == NULL)
+  if(FO_GetFolderByPath(archivePathName, NULL) == NULL)
   {
     if(FO_CreateFolder(FT_ARCHIVE, archivePathName, archiveDisplayName) == TRUE)
     {
