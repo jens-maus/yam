@@ -435,7 +435,7 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
           // to the real folder
           if(error == FALSE)
             MoveFolderContents(folder, tempFolder);
-          
+
           // free the temporary folder in any case
           FreeFolder(tempFolder);
         }
@@ -536,10 +536,15 @@ BOOL MA_SaveIndex(struct Folder *folder)
     fi.Unread = folder->Unread;
     fi.Size = folder->Size;
 
+    STARTCLOCK(DBF_ALWAYS);
     // write the index header out first
     if(fwrite(&fi, sizeof(fi), 1, fh) == 1)
     {
-      success = TRUE; // assume success TRUE
+      // determine the system's default codeset ahead of all the UTF8 conversion
+      struct codeset *defaultCharset = CodesetsFindA(NULL, NULL);
+
+      // assume success at first
+      success = TRUE;
 
       LockMailListShared(folder->messages);
       ForEachMailNode(folder->messages, mnode)
@@ -557,7 +562,9 @@ BOOL MA_SaveIndex(struct Folder *folder)
                                    mail->ReplyTo.Address, mail->ReplyTo.RealName);
 
         // convert the buffer string to UTF8
+        // the length of the generated string is directly put into the moreBytes variable
         if((utf8buf = CodesetsUTF8Create(CSA_Source, buf,
+                                         CSA_SourceCodeset, defaultCodeset,
                                          CSA_DestLenPtr, &cmail.moreBytes,
                                          TAG_DONE)) != NULL)
         {
