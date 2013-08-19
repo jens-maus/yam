@@ -16,6 +16,8 @@ $URL$
     determining exactly this codeset upon each and every call. This takes the
     time to save the index of a folder with 20000 mails from approx. 20 seconds
     down to approx. 2 seconds at most again.
+  * resources/themes/default: added folder images for the new Archive folders
+    kindly provided by Martin 'mason' Mertz.
 
 2013-08-17 Jens Langner <Jens.Langner@light-speed.de>
 
