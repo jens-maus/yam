@@ -518,7 +518,8 @@ MUIOBJS = \
 	Recipientstring.o \
 	ScriptList.o \
 	SearchControlGroup.o \
-	Searchwindow.o \
+	SearchMailWindow.o \
+	SearchTextWindow.o \
 	ShutdownWindow.o \
 	SignatureChooser.o \
 	SignatureList.o \

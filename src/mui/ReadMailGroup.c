@@ -70,7 +70,7 @@
 #include "mui/ImageArea.h"
 #include "mui/MainMailListGroup.h"
 #include "mui/MailTextEdit.h"
-#include "mui/Searchwindow.h"
+#include "mui/SearchTextWindow.h"
 #include "mui/ReadMailGroup.h"
 #include "mui/ReadWindow.h"
 #include "mui/YAMApplication.h"
@@ -1892,18 +1892,18 @@ DECLARE(Search) // int flags
 
   if(data->searchWindow == NULL)
   {
-    if((data->searchWindow = SearchwindowObject, End) != NULL)
+    if((data->searchWindow = SearchTextWindowObject, End) != NULL)
     {
       // perform the search operation
-      DoMethod(data->searchWindow, MUIM_Searchwindow_Open, data->mailTextObject);
+      DoMethod(data->searchWindow, MUIM_SearchTextWindow_Open, data->mailTextObject);
     }
   }
   else
   {
     if(hasSearchAgainFlag(msg->flags))
-      DoMethod(data->searchWindow, MUIM_Searchwindow_Next);
+      DoMethod(data->searchWindow, MUIM_SearchTextWindow_Next);
     else
-      DoMethod(data->searchWindow, MUIM_Searchwindow_Open, data->mailTextObject);
+      DoMethod(data->searchWindow, MUIM_SearchTextWindow_Open, data->mailTextObject);
   }
 
   RETURN(0);

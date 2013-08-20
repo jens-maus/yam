@@ -28,7 +28,7 @@
 
 ***************************************************************************/
 
-#include "Searchwindow_cl.h"
+#include "SearchTextWindow_cl.h"
 
 #include <string.h>
 #include <proto/muimaster.h>
@@ -55,11 +55,11 @@ struct Data
 */
 
 /* EXPORT
-#define MUIF_Searchwindow_FromTop                      (1<<0) // search from the beginning of the text
-#define MUIF_Searchwindow_BeepOnFailure                (1<<1) // do a DisplayBeep() if the text was not found
+#define MUIF_SearchTextWindow_FromTop       (1<<0) // search from the beginning of the text
+#define MUIF_SearchTextWindow_BeepOnFailure (1<<1) // do a DisplayBeep() if the text was not found
 
-#define hasFromTopFlag(v)                              (isFlagSet((v), MUIF_Searchwindow_FromTop))
-#define hasBeepOnFailureFlag(v)                        (isFlagSet((v), MUIF_Searchwindow_BeepOnFailure))
+#define hasFromTopFlag(v)                   (isFlagSet((v), MUIF_SearchTextWindow_FromTop))
+#define hasBeepOnFailureFlag(v)             (isFlagSet((v), MUIF_SearchTextWindow_BeepOnFailure))
 */
 
 /* Overloaded Methods */
@@ -105,9 +105,9 @@ OVERLOAD(OM_NEW)
 
     data->Searchstring = string;
 
-    DoMethod(string,         MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, obj, 2, METHOD(Search), MUIF_Searchwindow_FromTop);
+    DoMethod(string,         MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, obj, 2, METHOD(Search), MUIF_SearchTextWindow_FromTop);
     DoMethod(case_sensitive, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, obj, 1, METHOD(ToggleCaseSensitivity));
-    DoMethod(search,         MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(Search), MUIF_Searchwindow_FromTop);
+    DoMethod(search,         MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(Search), MUIF_SearchTextWindow_FromTop);
     DoMethod(cancel,         MUIM_Notify, MUIA_Pressed, FALSE, obj, 1, METHOD(Close));
     DoMethod(obj,            MUIM_Notify, MUIA_Window_CloseRequest, TRUE, obj, 1, METHOD(Close));
   }
@@ -129,19 +129,19 @@ DECLARE(Open) // Object *texteditor
   ENTER();
 
   if(data->ParentWindow != NULL)
-    DoMethod(obj, MUIM_Searchwindow_Close);
+    DoMethod(obj, METHOD(Close));
 
   data->Texteditor = msg->texteditor;
   data->ParentWindow = _win(msg->texteditor);
 
   if(data->ParentWindow != NULL)
   {
-    DoMethod(data->ParentWindow, MUIM_Notify, MUIA_Window_Open, FALSE, obj, 1, MUIM_Searchwindow_Close);
+    DoMethod(data->ParentWindow, MUIM_Notify, MUIA_Window_Open, FALSE, obj, 1, METHOD(Close));
     data->CloseNotifyAdded = TRUE;
   }
 
-  xset(data->Searchstring,  MUIA_String_BufferPos, 0,
-                            MUIA_BetterString_SelectSize, strlen((STRPTR)xget(data->Searchstring, MUIA_String_Contents)));
+  xset(data->Searchstring, MUIA_String_BufferPos, 0,
+                           MUIA_BetterString_SelectSize, strlen((STRPTR)xget(data->Searchstring, MUIA_String_Contents)));
 
   xset(obj, MUIA_Window_Activate,     TRUE,
             MUIA_Window_ActiveObject, data->Searchstring,
@@ -181,7 +181,7 @@ DECLARE(Search) // ULONG flags
 
   ENTER();
 
-  DoMethod(obj, MUIM_Searchwindow_Close);
+  DoMethod(obj, METHOD(Close));
 
   if((string = (STRPTR)xget(data->Searchstring, MUIA_String_Contents), string) != NULL && string[0] != '\0' && data->Texteditor != NULL)
   {
@@ -221,7 +221,7 @@ DECLARE(Search) // ULONG flags
 /// DECLARE(Next)
 DECLARE(Next)
 {
-  return DoMethod(obj, MUIM_Searchwindow_Search, MUIF_Searchwindow_BeepOnFailure);
+  return DoMethod(obj, METHOD(Search), MUIF_SearchTextWindow_BeepOnFailure);
 }
 
 ///

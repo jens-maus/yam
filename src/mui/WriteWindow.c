@@ -81,7 +81,7 @@
 #include "mui/ReadMailGroup.h"
 #include "mui/ReadWindow.h"
 #include "mui/Recipientstring.h"
-#include "mui/Searchwindow.h"
+#include "mui/SearchTextWindow.h"
 #include "mui/SignatureChooser.h"
 #include "mui/WriteAttachmentList.h"
 #include "mui/WriteWindowToolbar.h"
@@ -3575,18 +3575,18 @@ DECLARE(Search) // ULONG flags
 
   if(data->WI_SEARCH == NULL)
   {
-    if((data->WI_SEARCH = SearchwindowObject, End))
+    if((data->WI_SEARCH = SearchTextWindowObject, End))
     {
       // perform the search operation
-      DoMethod(data->WI_SEARCH, MUIM_Searchwindow_Open, data->TE_EDIT);
+      DoMethod(data->WI_SEARCH, MUIM_SearchTextWindow_Open, data->TE_EDIT);
     }
   }
   else
   {
     if(hasSearchAgainFlag(msg->flags))
-      DoMethod(data->WI_SEARCH, MUIM_Searchwindow_Next);
+      DoMethod(data->WI_SEARCH, MUIM_SearchTextWindow_Next);
     else
-      DoMethod(data->WI_SEARCH, MUIM_Searchwindow_Open, data->TE_EDIT);
+      DoMethod(data->WI_SEARCH, MUIM_SearchTextWindow_Open, data->TE_EDIT);
   }
 
   RETURN(0);
