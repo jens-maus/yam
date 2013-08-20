@@ -7348,7 +7348,7 @@ converted before starting the\n\
 editor.
 ;
 MSG_HELP_CO_TX_DEFCODESET_EDITOR (2467//)
-Chose a charset to which the text\n\
+Choose a charset to which the text\n\
 will be converted to before starting\n\
 the external editor.
 ;
