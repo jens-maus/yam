@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.20 (14.08.2013)
+## version $VER: YAM.catalog 8.21 (20.08.2013)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -1384,12 +1384,7 @@ vor dem Senden
 ; before sending
 ;
 MSG_CO_ExternalEditor
-E_xterner Editor
-; _External editor
-;
-MSG_CO_Launch
-So_fort starten
-; _Launch immediately
+Externer E_ditor
 ;
 MSG_CO_PhraseOpen
 Start
@@ -2109,12 +2104,6 @@ Beim Eingeben einer neuen Nachricht\n\
 den externer Editor starten.
 ; Automatically launch the external editor\n\
 ; when starting a new message
-;
-MSG_HELP_CO_ST_EDITOR
-Dateiname Ihres\n\
-bevorzugten Texteditors.
-; Filename of your\n\
-; favorite text editor
 ;
 MSG_HELP_CO_ST_FWDSTART
 Text, der einer weitergeleiteten Nachricht\n\
@@ -5391,40 +5380,35 @@ Empfangs/Versendedatum
 ;
 MSG_FROMTO
 Von/An
-; From/To
 ;
 MSG_HELP_CO_CA_COL1QUOT
-In dieser Farbe werden aktuelle Zitate im\nLesefenster und im Editor dargestellt.
-; Color used for displaying quotes
+In dieser Farbe werden aktuelle Zitate im\n\
+Lesefenster und im Editor dargestellt.
 ;
 MSG_HELP_CO_CA_COL3QUOT
-In dieser Farbe werden Zitate der\ndritten Ebene im Lesefenster\nund im Editor dargestellt.
-; Color used for displaying 3rd level quotes
+In dieser Farbe werden Zitate der\ndritten Ebene im Lesefenster\n\
+und im Editor dargestellt.
 ;
 MSG_HELP_CO_CA_COL4QUOT
-In dieser Farbe werden Zitate der\nvierten Ebene im Lesefenster\nund im Editor dargestellt.
-; Color used for displaying 4th level quotes
+In dieser Farbe werden Zitate der\nvierten Ebene im Lesefenster\n\
+und im Editor dargestellt.
 ;
 MSG_CO_URLCOLOR
 URL Farbe
-; URL color
 ;
 MSG_HELP_CO_CA_COLURL
-In dieser Farbe werden alle Verweise auf URLs\nim Lesefenster und im Editor dargestellt.
-; Color used for displaying clickable URL links
+In dieser Farbe werden alle Verweise auf URLs\n\
+im Lesefenster und im Editor dargestellt.
 ;
 MSG_FO_FOLDERNAMEINVALID
 Es wurde kein Postfachname angegeben oder dieser existiert bereits.\n\
 \n\
 Bitte bestimmen Sie einen korrekten Postfachnamen.
-; The specified folder name is empty or already exists.\n\
-; Please enter a valid folder name before you proceed.
 ;
 MSG_FO_FOLDERPATHINVALID
 Sie haben kein Verzeichnis für das neue Postfach angegeben.\n\
 \n\
 Bitte geben Sie einen Pfad an bevor Sie fortfahren.
-; You haven't specified a valid path for the new folder.
 ;
 MSG_MA_CTX_DEFWIDTH_THIS
 Standardbreite: diese
@@ -7260,13 +7244,6 @@ Ausgewähltes Bild entfernen\n\
 (Die Datei bleibt auf der\n\
 Festplatte erhalten).
 ;
-MSG_HELP_CO_TX_DEFAULTCHARSET
-Mit Hilfe des PopUp-Knopfes können Sie die\n\
-Zeichenkodierung auswählen, die YAM als Standard\n\
-verwenden soll. Dies sollte mit der Kodierung\n\
-übereinstimmen, die im System selber konfiguriert\n\
-ist. Anderenfalls erhalten Sie eine Warnung.
-;
 MSG_HELP_CO_CH_NOTISOUND
 Spielt eine Tondatei\n\
 ab sobald neue E-Mails\n\
@@ -8745,4 +8722,51 @@ Archiv
 ;
 MSG_CO_SHOW_ARCHIVER_PROGRESS
 Fortschritt anzeigen
+;
+MSG_CO_LAUNCH_EXTEDITOR
+_Externen Editor sofort starten
+;
+MSG_CO_EXTEDITOR
+Externer Editor
+;
+MSG_HELP_CO_ST_EDITOR_EXT
+Pfad Ihres bevorzugten externen\n\
+Editors, welchen Sie als Alternative\n\
+zum internen verwenden können.
+;
+MSG_CO_EXTEDITOR_CODESET
+_Zeichenkodierung erzwingen
+;
+MSG_HELP_CO_CH_DEFCODESET_EDITOR
+Fall gewählt, wird die gewählte\n\
+Zeichenkodierung zum Umwandeln des\n\
+Texts verwendet, bevor der Editor\n\
+gestartet wird.
+;
+MSG_HELP_CO_TX_DEFCODESET_EDITOR
+Wählen Sie eine Zeichenkodierung mit\n\
+welcher der Text vor dem Starten des\n\
+Editors umgewandelt wird.
+;
+MSG_HELP_CO_TX_DEFCODESET_LOCAL
+Mit Hilfe des PopUp-Knopfes können Sie die\n\
+Zeichenkodierung auswählen, welche YAM zum\n\
+Anzeigen von Text verwenden soll.\n\
+Diese sollte mit der Kodierung übereinstimmen,\n\
+die im System selber konfiguriert ist.\n\
+Anderenfalls erhalten Sie eine Warnung.
+;
+MSG_HELP_CO_TX_DEFCODESET_WRITE
+Mit Hilfe des PopUp-Knopfes können Sie die\n\
+Zeichenkodierung auswähen, welche YAM zum\n\
+Schreiben von Nachrichten verwenden soll.\n\
+Use the popup button to select the character set\n\
+you would like YAM to encode emails to.\n\
+Diese sollte mit der Kodierung übereinstimmen,\n\
+die im System selber konfiguriert ist.\n\
+Diese Kodierung kann aber jederzeit geändert\n\
+werden.
+;
+MSG_CO_DEFAULTCODESET_WRITE
+Standard-Zeichen_kodierung
 ;
