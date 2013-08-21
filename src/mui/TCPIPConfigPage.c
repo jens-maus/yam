@@ -636,8 +636,6 @@ OVERLOAD(MUIM_ConfigPage_ConfigToGUI)
 
   ENTER();
 
-D(DBF_ALWAYS, "set TCPIP gui");
-
   // clear the lists first
   set(data->LV_POP3, MUIA_NList_Quiet, TRUE);
   DoMethod(data->LV_POP3, MUIM_NList_Clear);
@@ -679,7 +677,6 @@ OVERLOAD(MUIM_ConfigPage_GUIToConfig)
 
   ENTER();
 
-D(DBF_ALWAYS, "set TCPIP config");
   // bring NList elements and Exec list elements into sync
   SortNListToExecList(data->LV_POP3, &CE->pop3ServerList);
   SortNListToExecList(data->LV_SMTP, &CE->smtpServerList);
