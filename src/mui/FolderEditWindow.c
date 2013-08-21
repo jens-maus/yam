@@ -65,6 +65,7 @@
 #include "mui/IdentityChooser.h"
 #include "mui/MainFolderListtree.h"
 #include "mui/Recipientstring.h"
+#include "mui/SearchMailWindow.h"
 #include "mui/SignatureChooser.h"
 #include "mui/YAMApplication.h"
 
@@ -212,8 +213,8 @@ static BOOL SaveOldFolder(struct IClass *cl, Object *obj)
       RenameFolderInFilters(data->folder->Name, folder.Name);
 
     // refresh a possibly existing folder tree in the search window
-    if(nameChanged == TRUE && G->FI != NULL)
-      DoMethod(G->FI->GUI.LV_FOLDERS, MUIM_FolderRequestListtree_RefreshTree);
+    if(nameChanged == TRUE && G->SearchMailWinObject != NULL)
+      DoMethod(G->SearchMailWinObject, MUIM_SearchMailWindow_UpdateFolderTree);
 
     // copy the new folder name
     strlcpy(data->folder->Name, folder.Name, sizeof(data->folder->Name));

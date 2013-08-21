@@ -53,6 +53,7 @@
 #include "mui/FolderRequestListtree.h"
 #include "mui/ImageArea.h"
 #include "mui/MainMailListGroup.h"
+#include "mui/SearchMailWindow.h"
 #include "mui/YAMApplication.h"
 
 #include "Debug.h"
@@ -430,8 +431,8 @@ OVERLOAD(MUIM_NListtree_Insert)
         UnlockFolderList(G->folders);
 
         // refresh a possibly existing folder tree in the search window
-        if(G->FI != NULL)
-          DoMethod(G->FI->GUI.LV_FOLDERS, MUIM_FolderRequestListtree_RefreshTree);
+        if(G->SearchMailWinObject != NULL)
+          DoMethod(G->SearchMailWinObject, MUIM_SearchMailWindow_UpdateFolderTree);
       }
     }
   }
@@ -479,8 +480,8 @@ OVERLOAD(MUIM_NListtree_Move)
     UnlockFolderList(G->folders);
 
     // refresh a possibly existing folder tree in the search window
-    if(G->FI != NULL)
-      DoMethod(G->FI->GUI.LV_FOLDERS, MUIM_FolderRequestListtree_RefreshTree);
+    if(G->SearchMailWinObject != NULL)
+      DoMethod(G->SearchMailWinObject, MUIM_SearchMailWindow_UpdateFolderTree);
   }
 
   RETURN(result);
@@ -1063,8 +1064,8 @@ DECLARE(DeleteFolder)
     DisplayStatistics(NULL, TRUE);
 
     // refresh a possibly existing folder tree in the search window
-    if(G->FI != NULL)
-      DoMethod(G->FI->GUI.LV_FOLDERS, MUIM_FolderRequestListtree_RefreshTree);
+    if(G->SearchMailWinObject != NULL)
+      DoMethod(G->SearchMailWinObject, MUIM_SearchMailWindow_UpdateFolderTree);
   }
   else
     D(DBF_FOLDER, "keeping folder '%s'", GetCurrentFolder()->Name);

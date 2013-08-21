@@ -88,7 +88,6 @@
 #include "YAM_addressbook.h"
 #include "YAM_config.h"
 #include "YAM_error.h"
-#include "YAM_find.h"
 #include "YAM_folderconfig.h"
 #include "YAM_global.h"
 #include "YAM_main.h"
@@ -103,6 +102,7 @@
 #include "mui/MainMailList.h"
 #include "mui/MainMailListGroup.h"
 #include "mui/ReadMailGroup.h"
+#include "mui/SearchMailWindow.h"
 #include "mui/YAMApplication.h"
 
 #include "AppIcon.h"
@@ -3591,8 +3591,8 @@ void RemoveMailFromList(struct Mail *mail, const BOOL closeWindows, const BOOL c
 
   // remove the mail from the search window's mail list as well, if the
   // search window exists at all
-  if(G->FI != NULL)
-    DoMethod(G->FI->GUI.LV_MAILS, MUIM_MainMailList_RemoveMail, mail);
+  if(G->SearchMailWinObject != NULL)
+    DoMethod(G->SearchMailWinObject, MUIM_SearchMailWindow_RemoveMail, mail);
 
   // lets decrease the folder statistics first
   folder->Total--;

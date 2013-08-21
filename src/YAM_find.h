@@ -37,29 +37,6 @@
 // forward declarations
 struct BoyerMooreContext;
 
-struct FI_GUIData
-{
-  Object *WI;
-  Object *LV_FOLDERS;
-  Object *GR_SEARCH;
-  Object *LV_MAILS;
-  Object *GR_PAGE;
-  Object *GA_PROGRESS;
-  Object *BT_SEARCH;
-  Object *BT_SELECTACTIVE;
-  Object *BT_SELECT;
-  Object *BT_READ;
-};
-
-// find window
-struct FI_ClassData
-{
-  struct FI_GUIData GUI;
-  ULONG             Abort;
-  BOOL              SearchActive;
-  BOOL              ClearOnEnd;
-};
-
 enum ApplyFilterMode  { APPLY_USER, APPLY_AUTO, APPLY_SENT, APPLY_REMOTE, APPLY_RX_ALL, APPLY_RX, APPLY_SPAM };
 enum FastSearch       { FS_NONE=0, FS_FROM, FS_TO, FS_CC, FS_REPLYTO, FS_SUBJECT, FS_DATE, FS_SIZE };
 enum SearchMode       { SM_FROM=0, SM_TO, SM_CC, SM_REPLYTO, SM_SUBJECT, SM_DATE, SM_HEADLINE,

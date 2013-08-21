@@ -76,6 +76,8 @@ struct Data
   Object *BT_SELECT;
   Object *BT_READ;
 
+  struct Hook searchOptFromFilterPopupHook;
+
   BOOL active;
   BOOL abort;
   BOOL clearOnEnd;
@@ -103,8 +105,9 @@ MakeStaticHook(InitFilterPopupListHook, InitFilterPopupList);
 ///
 /// SearchOptFromFilterPopup
 //  Gets search options from selected filter
-HOOKPROTONHNP(SearchOptFromFilterPopup, void, Object *listview)
+HOOKPROTONP(SearchOptFromFilterPopup, void, Object *listview)
 {
+  struct Data *data = (struct Data *)hook->h_Data;
   Object *list;
 
   ENTER();
@@ -120,7 +123,7 @@ HOOKPROTONHNP(SearchOptFromFilterPopup, void, Object *listview)
       struct RuleNode *rule;
 
       if((rule = GetFilterRule(filter, 0)) != NULL)
-        DoMethod(G->FI->GUI.GR_SEARCH, MUIM_SearchControlGroup_GetFromRule, rule);
+        DoMethod(data->GR_SEARCH, MUIM_SearchControlGroup_GetFromRule, rule);
     }
   }
 
@@ -192,9 +195,6 @@ OVERLOAD(OM_NEW)
           Child, ColGroup(2),
             Child, PO_FROMRULE = PopobjectObject,
               MUIA_Popstring_Button, MakeButton(tr(MSG_FI_UseFilter)),
-              MUIA_Popobject_ObjStrHook, &SearchOptFromFilterPopupHook,
-              MUIA_Popobject_StrObjHook, &InitFilterPopupListHook,
-              MUIA_Popobject_WindowHook, &PO_WindowHook,
               MUIA_Popobject_Object, NListviewObject,
                 MUIA_NListview_NList, LV_FROMRULE = FilterPopupListObject,
                 End,
@@ -218,6 +218,7 @@ OVERLOAD(OM_NEW)
             MUIA_ContextMenu,    NULL,
             MUIA_NList_Format,   "COL=8 W=-1 MIW=-1 PCS=C BAR, COL=1 W=35 PCS=R BAR, COL=3 W=55 PCS=R BAR, COL=4 W=-1 MIW=-1 BAR, COL=7 W=-1 MIW=-1 BAR, COL=5 W=10 MIW=-1 P=\33r BAR",
             MUIA_MainMailList_HandleDoubleClick, FALSE,
+            MUIA_MainMailList_InSearchWindow, TRUE,
           End,
         End,
       End,
@@ -256,6 +257,11 @@ OVERLOAD(OM_NEW)
     data->BT_SELECT = BT_SELECT;
     data->BT_READ = BT_READ;
 
+    InitHook(&data->searchOptFromFilterPopupHook, SearchOptFromFilterPopupHook, data);
+    xset(PO_FROMRULE, MUIA_Popobject_ObjStrHook, &data->searchOptFromFilterPopupHook,
+                      MUIA_Popobject_StrObjHook, &InitFilterPopupListHook,
+                      MUIA_Popobject_WindowHook, &PO_WindowHook);
+
     set(BT_SELECTACTIVE, MUIA_Disabled, TRUE);
     set(BT_SELECT,       MUIA_Disabled, TRUE);
     set(BT_READ,         MUIA_Disabled, TRUE);
@@ -291,6 +297,21 @@ OVERLOAD(OM_NEW)
 
   RETURN((IPTR)obj);
   return (IPTR)obj;
+}
+
+///
+/// OVERLOAD(OM_GET)
+OVERLOAD(OM_GET)
+{
+  GETDATA;
+  IPTR *store = ((struct opGet *)msg)->opg_Storage;
+
+  switch(((struct opGet *)msg)->opg_AttrID)
+  {
+    case ATTR(Aborted): *store = data->abort; return TRUE;
+  }
+
+  return DoSuperMethodA(cl, obj, msg);
 }
 
 ///
@@ -717,6 +738,34 @@ DECLARE(SelectMails)
   }
 
   MA_ChangeSelected(TRUE);
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(UpdateFolderTree)
+DECLARE(UpdateFolderTree)
+{
+  GETDATA;
+
+  ENTER();
+
+  DoMethod(data->LV_FOLDERS, MUIM_FolderRequestListtree_RefreshTree);
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(RemoveMail)
+DECLARE(RemoveMail) // struct Mail *mail
+{
+  GETDATA;
+
+  ENTER();
+
+  DoMethod(data->LV_MAILS, MUIM_MainMailList_RemoveMail, msg->mail);
 
   RETURN(0);
   return 0;

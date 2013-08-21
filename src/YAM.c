@@ -754,10 +754,6 @@ static void Terminate(void)
     CleanupWriteMailData(wmData);
   }
 
-  D(DBF_STARTUP, "freeing search window...");
-  if(G->FI != NULL)
-    DisposeModule(&G->FI);
-
   D(DBF_STARTUP, "freeing user login window...");
   if(G->US != NULL)
     DisposeModule(&G->US);

@@ -69,6 +69,7 @@ struct Data
   char statusBuffer[SIZE_DEFAULT];
   char sizeBuffer[SIZE_SMALL];
   char context_menu_title[SIZE_DEFAULT];
+  BOOL inSearchWindow;
 };
 */
 
@@ -242,6 +243,7 @@ OVERLOAD(OM_NEW)
 
     // determine whether double clicks are handled by ourself or by some external stuff
     handleDoubleClick = GetTagData(ATTR(HandleDoubleClick), TRUE, inittags(msg));
+    data->inSearchWindow = GetTagData(ATTR(InSearchWindow), FALSE, inittags(msg));
 
     // prepare the mail status images
     data->statusImage[SI_ATTACH]   = MakeImageObject("status_attach",   G->theme.statusImages[SI_ATTACH]);
@@ -387,11 +389,6 @@ OVERLOAD(MUIM_NList_Display)
     GETDATA;
     struct MUIP_NList_Display *ndm = (struct MUIP_NList_Display *)msg;
     struct Mail *mail = (struct Mail *)ndm->entry;
-    BOOL searchWinHook = FALSE;
-
-    // now we check who is the parent of this DisplayHook
-    if(G->FI != NULL && obj == G->FI->GUI.LV_MAILS)
-      searchWinHook = TRUE;
 
     if(mail != NULL)
     {
@@ -427,14 +424,14 @@ OVERLOAD(MUIM_NList_Display)
         if(hasStatusForwarded(mail))  strlcat(data->statusBuffer, SI_STR(SI_FORWARD), sizeof(data->statusBuffer));
 
         // now we generate the proper string for the mailaddress
-        if(hasMColSender(C->MessageCols) || searchWinHook == TRUE)
+        if(hasMColSender(C->MessageCols) || data->inSearchWindow == TRUE)
         {
           BOOL toPrefix = FALSE;
           struct Person *pe;
           char *addr = NULL;
 
           if(((isCustomMixedFolder(mail->Folder) || isTrashFolder(mail->Folder) || isSpamFolder(mail->Folder)) &&
-              (hasStatusSent(mail) || hasStatusError(mail))) || (searchWinHook && isSentMailFolder(mail->Folder)))
+              (hasStatusSent(mail) || hasStatusError(mail))) || (data->inSearchWindow == TRUE && isSentMailFolder(mail->Folder)))
           {
             pe = &mail->To;
 
@@ -473,7 +470,7 @@ OVERLOAD(MUIM_NList_Display)
         }
 
         // lets set all other fields now
-        if(searchWinHook == FALSE && hasMColReplyTo(C->MessageCols))
+        if(data->inSearchWindow == FALSE && hasMColReplyTo(C->MessageCols))
         {
           if(isMultiReplyToMail(mail))
           {
@@ -487,13 +484,13 @@ OVERLOAD(MUIM_NList_Display)
         // then the Subject
         ndm->strings[3] = mail->Subject;
 
-        if(hasMColDate(C->MessageCols) || searchWinHook == TRUE)
+        if(hasMColDate(C->MessageCols) || data->inSearchWindow == TRUE)
         {
           DateStamp2String(data->date1Buffer, sizeof(data->date1Buffer), &mail->Date, C->DSListFormat, TZC_UTC2LOCAL);
           ndm->strings[4] = data->date1Buffer;
         }
 
-        if(hasMColSize(C->MessageCols) || searchWinHook == TRUE)
+        if(hasMColSize(C->MessageCols) || data->inSearchWindow == TRUE)
         {
           ndm->strings[5] = data->sizeBuffer;
           FormatSize(mail->Size, data->sizeBuffer, sizeof(data->sizeBuffer), SF_AUTO);
@@ -503,7 +500,7 @@ OVERLOAD(MUIM_NList_Display)
 
         // we first copy the Date Received/sent because this would probably be not
         // set by all ppl and strcpy() is costy ;)
-        if((hasMColTransDate(C->MessageCols) && mail->transDate.Seconds > 0) || searchWinHook == TRUE)
+        if((hasMColTransDate(C->MessageCols) && mail->transDate.Seconds > 0) || data->inSearchWindow == TRUE)
         {
           TimeVal2String(data->date2Buffer, sizeof(data->date2Buffer), &mail->transDate, C->DSListFormat, TZC_UTC2LOCAL);
           ndm->strings[7] = data->date2Buffer;
@@ -535,18 +532,18 @@ OVERLOAD(MUIM_NList_Display)
       struct Folder *folder = GetCurrentFolder();
 
       // first we have to make sure that the mail window has a valid folder
-      if(searchWinHook == TRUE || folder != NULL)
+      if(data->inSearchWindow == TRUE || folder != NULL)
       {
         ndm->strings[0] = (STRPTR)tr(MSG_MA_TitleStatus);
 
         // depending on the current folder and the parent object we
         // display different titles for different columns
-        if(searchWinHook == FALSE && isSentMailFolder(folder))
+        if(data->inSearchWindow == FALSE && isSentMailFolder(folder))
         {
           ndm->strings[1] = (STRPTR)tr(MSG_To);
           ndm->strings[7] = (STRPTR)tr(MSG_DATE_SENT);
         }
-        else if(searchWinHook == TRUE || isCustomMixedFolder(folder) || isTrashFolder(folder) || isSpamFolder(folder))
+        else if(data->inSearchWindow == TRUE || isCustomMixedFolder(folder) || isTrashFolder(folder) || isSpamFolder(folder))
         {
           ndm->strings[1] = (STRPTR)tr(MSG_FROMTO);
           ndm->strings[7] = (STRPTR)tr(MSG_DATE_SNTRCVD);

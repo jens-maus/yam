@@ -85,6 +85,7 @@ struct Global
   Object *                 App;
   Object *                 SoundDTObj;
   Object *                 SplashWinObject;
+  Object *                 SearchMailWinObject;
   Object *                 UpdateNotifyWinObject;
   Object *                 ReadToolbarCacheObject;
   Object *                 WriteToolbarCacheObject;
@@ -103,7 +104,6 @@ struct Global
   struct AB_ClassData *    AB;
   struct EA_ClassData *    EA[MAXEA];
   struct ER_ClassData *    ER;
-  struct FI_ClassData *    FI;
   struct DI_ClassData *    DI;
   struct US_ClassData *    US;
   struct ReadMailData *    ActiveRexxRMData;
