@@ -32,6 +32,10 @@
 
 #include <proto/asl.h>
 #include <proto/muimaster.h>
+#if defined(__amigaos4__)
+#include <proto/application.h>
+#endif
+
 #include <mui/BetterString_mcc.h>
 #include <mui/NBalance_mcc.h>
 #include <mui/NList_mcc.h>
