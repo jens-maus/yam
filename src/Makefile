@@ -481,11 +481,13 @@ MUIOBJS = \
 	BirthdayRequestWindow.o \
 	CheckboxRequestWindow.o \
 	CharsetPopupList.o \
+	ConfigPage.o \
 	ConfigPageList.o \
 	FilterChooser.o \
 	FilterList.o \
 	FilterPopupList.o \
 	FilterRuleList.o \
+	FirstStepsConfigPage.o \
 	FolderEditWindow.o \
 	FolderListtree.o \
 	FolderRequestListtree.o \

@@ -70,6 +70,7 @@
 #include "mui/ClassesExtra.h"
 #include "mui/AddrBookListtree.h"
 #include "mui/ConfigPageList.h"
+#include "mui/FirstStepsConfigPage.h"
 #include "mui/InfoBar.h"
 #include "mui/MainFolderListtree.h"
 #include "mui/MainMailListGroup.h"
@@ -736,34 +737,6 @@ HOOKPROTONHNONP(CO_PutPOP3Entry, void)
   LEAVE();
 }
 MakeHook(CO_PutPOP3EntryHook, CO_PutPOP3Entry);
-
-///
-/// CO_GetDefaultPOPFunc
-//  Sets values of first POP3 account
-HOOKPROTONHNONP(CO_GetDefaultPOPFunc, void)
-{
-  struct MailServerNode *msn;
-
-  ENTER();
-
-  // get the first POP3 server out of our
-  // mail server list
-  msn = GetMailServer(&CE->pop3ServerList, 0);
-  if(msn != NULL)
-  {
-    GetMUIString(msn->hostname, G->CO->GUI.ST_POPHOST0, sizeof(msn->hostname));
-    GetMUIString(msn->username, G->CO->GUI.ST_USER0, sizeof(msn->username));
-    GetMUIString(msn->password, G->CO->GUI.ST_PASSWD0, sizeof(msn->password));
-
-    if(msn->description[0] == '\0')
-      snprintf(msn->description, sizeof(msn->description), "%s@%s", msn->username, msn->hostname);
-
-    msn->port = 110;
-  }
-
-  LEAVE();
-}
-MakeHook(CO_GetDefaultPOPHook,CO_GetDefaultPOPFunc);
 
 ///
 
@@ -3196,7 +3169,7 @@ static struct CO_ClassData *CO_New(void)
              Child, data->GUI.GR_PAGE = PageGroup,
                 NoFrame,
                 MUIA_Group_ActivePage, 0,
-                Child, CO_PageFirstSteps(data),
+                Child, data->GUI.PG_PAGES[cp_FirstSteps] = FirstStepsConfigPageObject, End,
                 Child, CO_PageTCPIP(data),
                 Child, CO_PageIdentities(data),
                 Child, CO_PageFilters(data),

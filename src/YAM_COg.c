@@ -1609,85 +1609,6 @@ static Object *MakeStaticCheck(void)
 ///
 
 /*** Pages ***/
-/// CO_PageFirstSteps
-Object *CO_PageFirstSteps(struct CO_ClassData *data)
-{
-  Object *obj;
-  Object *codesetPopButton;
-
-  ENTER();
-
-  obj = VGroup,
-    MUIA_HelpNode, "Configuration#FirstSteps",
-
-    ConfigPageHeaderObject("config_firststep_big", G->theme.configImages[CI_FIRSTSTEPBIG], tr(MSG_CO_FIRSTSTEPS_TITLE), tr(MSG_CO_FIRSTSTEPS_SUMMARY)),
-
-    Child, ScrollgroupObject,
-      MUIA_Scrollgroup_FreeHoriz, FALSE,
-      MUIA_Scrollgroup_AutoBars, TRUE,
-      MUIA_Scrollgroup_Contents, VGroupV,
-
-        Child, ColGroup(2), GroupFrameT(tr(MSG_CO_MinConfig)),
-
-          Child, Label2(tr(MSG_CO_RealName)),
-          Child, data->GUI.ST_REALNAME = MakeString(SIZE_REALNAME,tr(MSG_CO_RealName)),
-
-          Child, Label2(tr(MSG_CO_EmailAddress)),
-          Child, MakeAddressField(&data->GUI.ST_EMAIL, tr(MSG_CO_EmailAddress), MSG_HELP_CO_ST_EMAIL, ABM_CONFIG, -1, AFF_NOFULLNAME|AFF_NOCACHE|AFF_NOVALID|AFF_RESOLVEINACTIVE),
-
-          Child, Label2(tr(MSG_CO_SERVERNAME)),
-          Child, data->GUI.ST_POPHOST0 = MakeString(SIZE_HOST, tr(MSG_CO_SERVERNAME)),
-
-          Child, Label2(tr(MSG_CO_POPUserID)),
-          Child, data->GUI.ST_USER0 = MakeString(SIZE_USERID, tr(MSG_CO_POPUserID)),
-
-          Child, Label2(tr(MSG_CO_Password)),
-          Child, data->GUI.ST_PASSWD0 = MakePassString(tr(MSG_CO_Password)),
-
-        End,
-
-        Child, ColGroup(2), GroupFrameT(tr(MSG_CO_SYSTEMSETTINGS)),
-
-          Child, Label2(tr(MSG_CO_DEFAULTCHARSET)),
-          Child, MakeCodesetPop(&data->GUI.TX_DEFCODESET_LOCAL, &codesetPopButton),
-
-          Child, Label2(tr(MSG_CO_TimeZone)),
-          Child, data->GUI.GR_TZONE = TZoneChooserObject, End,
-
-          Child, HSpace(-1),
-          Child, data->GUI.TX_TZONE = TZoneInfoBarObject, End,
-
-        End,
-
-        Child, HVSpace,
-
-      End,
-    End,
-
-  End;
-
-  if(obj != NULL)
-  {
-    set(codesetPopButton, MUIA_ControlChar, ShortCut(tr(MSG_CO_DEFAULTCHARSET)));
-
-    SetHelp(data->GUI.ST_REALNAME,        MSG_HELP_CO_ST_REALNAME);
-    SetHelp(data->GUI.ST_POPHOST0,        MSG_HELP_CO_ST_POPHOST);
-    SetHelp(data->GUI.ST_USER0,           MSG_HELP_CO_ST_USER);
-    SetHelp(data->GUI.ST_PASSWD0,         MSG_HELP_CO_ST_PASSWD);
-    SetHelp(data->GUI.TX_DEFCODESET_LOCAL,MSG_HELP_CO_TX_DEFCODESET_LOCAL);
-    SetHelp(data->GUI.GR_TZONE,           MSG_HELP_CO_GR_TZONE);
-
-    DoMethod(data->GUI.ST_POPHOST0, MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_GetDefaultPOPHook);
-    DoMethod(data->GUI.ST_USER0, MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_GetDefaultPOPHook);
-    DoMethod(data->GUI.ST_PASSWD0, MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_GetDefaultPOPHook);
-    DoMethod(data->GUI.GR_TZONE, MUIM_Notify, MUIA_TZoneChooser_TZone, MUIV_EveryTime, data->GUI.TX_TZONE, 3, MUIM_Set, MUIA_TZoneInfoBar_TZone, MUIV_TriggerValue);
-  }
-
-  RETURN(obj);
-  return obj;
-}
-
-///
 /// CO_PageTCPIP
 Object *CO_PageTCPIP(struct CO_ClassData *data)
 {
@@ -4017,7 +3938,7 @@ Object *CO_PageMixed(struct CO_ClassData *data)
 
           End,
         End,
- 
+
         Child, VGroup, GroupFrameT(tr(MSG_CO_AppIcon)),
           Child, ColGroup(2),
             Child, data->GUI.CH_WBAPPICON = MakeCheck(tr(MSG_CO_WBAPPICON)),

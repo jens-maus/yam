@@ -54,6 +54,7 @@
 #include "YAM_utilities.h"
 
 #include "mui/ClassesExtra.h"
+#include "mui/ConfigPage.h"
 #include "mui/FilterChooser.h"
 #include "mui/MainWindowToolbar.h"
 #include "mui/SignatureTextEdit.h"
@@ -1877,16 +1878,7 @@ void CO_GetConfig(void)
 
     case cp_FirstSteps:
     {
-      struct UserIdentityNode *uin;
-
-      if((uin = GetUserIdentity(&CE->userIdentityList, 0, TRUE)) != NULL)
-      {
-        GetMUIString(uin->realname, gui->ST_REALNAME, sizeof(uin->realname));
-        GetMUIString(uin->address, gui->ST_EMAIL, sizeof(uin->address));
-      }
-
-      strlcpy(CE->Location, (char *)xget(gui->GR_TZONE, MUIA_TZoneChooser_TZone), sizeof(CE->Location));
-      GetMUIText(CE->DefaultLocalCodeset, gui->TX_DEFCODESET_LOCAL, sizeof(CE->DefaultLocalCodeset));
+      DoMethod(gui->PG_PAGES[G->CO->VisiblePage], MUIM_ConfigPage_GUIToConfig, CE);
     }
     break;
 
@@ -2466,7 +2458,7 @@ void CO_SetConfig(void)
 
   ENTER();
 
-  switch (G->CO->VisiblePage)
+  switch(G->CO->VisiblePage)
   {
     case cp_AllPages:
       // nothing
@@ -2474,27 +2466,7 @@ void CO_SetConfig(void)
 
     case cp_FirstSteps:
     {
-      struct MailServerNode *msn;
-      struct UserIdentityNode *uin;
-
-      // try to get the first user identity structure
-      if((uin = GetUserIdentity(&CE->userIdentityList, 0, TRUE)) != NULL)
-      {
-        setstring(gui->ST_REALNAME, uin->realname);
-        setstring(gui->ST_EMAIL, uin->address);
-      }
-
-      set(gui->GR_TZONE, MUIA_TZoneChooser_TZone, CE->Location);
-
-      // try to get the mailer server structure of the first POP3 server
-      if((msn = GetMailServer(&CE->pop3ServerList, 0)) != NULL)
-      {
-        nnset(gui->ST_POPHOST0, MUIA_String_Contents, msn->hostname);
-        nnset(gui->ST_USER0,    MUIA_String_Contents, msn->username);
-        nnset(gui->ST_PASSWD0,  MUIA_String_Contents, msn->password);
-      }
-      
-      nnset(gui->TX_DEFCODESET_LOCAL, MUIA_Text_Contents, CE->DefaultLocalCodeset);
+      DoMethod(gui->PG_PAGES[G->CO->VisiblePage], MUIM_ConfigPage_ConfigToGUI, CE);
     }
     break;
 

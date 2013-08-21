@@ -364,6 +364,7 @@ struct CO_GUIData
   Object *CY_FILTER_COMBINE;
   Object *GR_TZONE;
   Object *TX_TZONE;
+  Object *PG_PAGES[cp_Max];
 };
 
 struct CO_ClassData  /* configuration window */
@@ -628,7 +629,6 @@ extern struct Config *CE;
 
 // external hooks
 extern struct Hook CO_SwitchSpamFilterHook;
-extern struct Hook CO_GetDefaultPOPHook;
 extern struct Hook CO_GetPOP3EntryHook;
 extern struct Hook CO_PutPOP3EntryHook;
 extern struct Hook CO_GetSMTPEntryHook;

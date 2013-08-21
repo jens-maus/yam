@@ -88,6 +88,7 @@ OVERLOAD(OM_NEW)
   {
     if(GetTagData(ATTR(UseScrollgroup), FALSE, inittags(msg)) == TRUE)
     {
+      // add a scrollgroup with the given contents as virtual group
       DoMethod(obj, OM_ADDMEMBER, ScrollgroupObject,
         MUIA_Scrollgroup_FreeHoriz, FALSE,
         MUIA_Scrollgroup_AutoBars, TRUE,
@@ -98,6 +99,7 @@ OVERLOAD(OM_NEW)
     }
     else
     {
+      // just add the contents and a spacer object at the bottom
       DoMethod(obj, OM_ADDMEMBER, contents);
       DoMethod(obj, OM_ADDMEMBER, HVSpace);
     }
@@ -113,7 +115,7 @@ DECLARE(ConfigToGUI)
 {
   ENTER();
 
-  E(DBF_GUI, "class did not overload MUIM_ConfigPage_ConfigToGUI method");
+  E(DBF_GUI, "derived class did not overload MUIM_ConfigPage_ConfigToGUI method");
 
   RETURN(0);
   return 0;
@@ -125,7 +127,7 @@ DECLARE(GUIToConfig)
 {
   ENTER();
 
-  E(DBF_GUI, "class did not overload MUIM_ConfigPage_GUIToConfig method");
+  E(DBF_GUI, "derived class did not overload MUIM_ConfigPage_GUIToConfig method");
 
   RETURN(0);
   return 0;
