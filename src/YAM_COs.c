@@ -1877,16 +1877,9 @@ void CO_GetConfig(void)
     break;
 
     case cp_FirstSteps:
-    {
-      DoMethod(gui->PG_PAGES[G->CO->VisiblePage], MUIM_ConfigPage_GUIToConfig, CE);
-    }
-    break;
-
     case cp_TCPIP:
     {
-      // bring NList elements and Exec list elements into sync
-      SortNListToExecList(gui->LV_POP3, &CE->pop3ServerList);
-      SortNListToExecList(gui->LV_SMTP, &CE->smtpServerList);
+      DoMethod(gui->PG_PAGES[G->CO->VisiblePage], MUIM_ConfigPage_GUIToConfig, CE);
     }
     break;
 
@@ -2465,45 +2458,9 @@ void CO_SetConfig(void)
     break;
 
     case cp_FirstSteps:
-    {
-      DoMethod(gui->PG_PAGES[G->CO->VisiblePage], MUIM_ConfigPage_ConfigToGUI, CE);
-    }
-    break;
-
     case cp_TCPIP:
     {
-      int numPOP = 0;
-      int numSMTP = 0;
-      struct MailServerNode *msn;
-
-      // clear the lists first
-      set(gui->LV_POP3, MUIA_NList_Quiet, TRUE);
-      DoMethod(gui->LV_POP3, MUIM_NList_Clear);
-      set(gui->LV_SMTP, MUIA_NList_Quiet, TRUE);
-      DoMethod(gui->LV_SMTP, MUIM_NList_Clear);
-
-      // we iterate through our mail server list and make sure to populate
-      // out NList object correctly.
-      IterateList(&CE->pop3ServerList, struct MailServerNode *, msn)
-      {
-        DoMethod(gui->LV_POP3, MUIM_NList_InsertSingle, msn, MUIV_NList_Insert_Bottom);
-        numPOP++;
-      }
-      IterateList(&CE->smtpServerList, struct MailServerNode *, msn)
-      {
-        DoMethod(gui->LV_SMTP, MUIM_NList_InsertSingle, msn, MUIV_NList_Insert_Bottom);
-        numSMTP++;
-      }
-
-      // make sure the first entry is selected per default
-      xset(gui->LV_POP3, MUIA_NList_Quiet, FALSE,
-                         MUIA_NList_Active, MUIV_NList_Active_Top);
-      xset(gui->LV_SMTP, MUIA_NList_Quiet, FALSE,
-                         MUIA_NList_Active, MUIV_NList_Active_Top);
-
-      // set the enabled stated of the del button according to the number of available accounts
-      set(gui->BT_PDEL, MUIA_Disabled, numPOP < 2);
-      set(gui->BT_SDEL, MUIA_Disabled, numSMTP < 2);
+      DoMethod(gui->PG_PAGES[G->CO->VisiblePage], MUIM_ConfigPage_ConfigToGUI, CE);
     }
     break;
 

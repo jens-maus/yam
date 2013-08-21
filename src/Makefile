@@ -528,6 +528,7 @@ MUIOBJS = \
 	SignatureTextEdit.o \
 	Splashwindow.o \
 	StringRequestWindow.o \
+	TCPIPConfigPage.o \
 	ThemeList.o \
 	ThemeListGroup.o \
 	TransferControlGroup.o \

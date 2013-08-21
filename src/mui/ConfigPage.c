@@ -101,7 +101,8 @@ OVERLOAD(OM_NEW)
     {
       // just add the contents and a spacer object at the bottom
       DoMethod(obj, OM_ADDMEMBER, contents);
-      DoMethod(obj, OM_ADDMEMBER, HVSpace);
+      if(GetTagData(ATTR(UseSpacer), FALSE, inittags(msg)) == TRUE)
+        DoMethod(obj, OM_ADDMEMBER, HVSpace);
     }
   }
 

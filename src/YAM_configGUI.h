@@ -33,7 +33,6 @@
 // forward declarations
 struct CO_ClassData;
 
-Object *CO_PageTCPIP(struct CO_ClassData *data);
 Object *CO_PageIdentities(struct CO_ClassData *data);
 Object *CO_PageFilters(struct CO_ClassData *data);
 Object *CO_PageSpam(struct CO_ClassData *data);
