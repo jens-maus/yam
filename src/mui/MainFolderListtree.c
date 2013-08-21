@@ -182,6 +182,20 @@ OVERLOAD(OM_SET)
 }
 
 ///
+/// OVERLOAD(OM_GET)
+OVERLOAD(OM_GET)
+{
+  IPTR *store = ((struct opGet *)msg)->opg_Storage;
+
+  switch(((struct opGet *)msg)->opg_AttrID)
+  {
+    case ATTR(TreeChanged): *store = TRUE; return TRUE;
+  }
+
+  return DoSuperMethodA(cl, obj, msg);
+}
+
+///
 /// OVERLOAD(MUIM_Setup)
 OVERLOAD(MUIM_Setup)
 {
@@ -429,12 +443,11 @@ OVERLOAD(MUIM_NListtree_Insert)
         LockFolderList(G->folders);
         MoveFolderNode(G->folders, thisFNode, prevFNode);
         UnlockFolderList(G->folders);
-
-        // refresh a possibly existing folder tree in the search window
-        if(G->SearchMailWinObject != NULL)
-          DoMethod(G->SearchMailWinObject, MUIM_SearchMailWindow_UpdateFolderTree);
       }
     }
+
+    // trigger a changed folder tree
+    set(obj, ATTR(TreeChanged), TRUE);
   }
 
   RETURN(thisTreeNode);
@@ -479,9 +492,8 @@ OVERLOAD(MUIM_NListtree_Move)
     MoveFolderNode(G->folders, thisFNode, prevFNode);
     UnlockFolderList(G->folders);
 
-    // refresh a possibly existing folder tree in the search window
-    if(G->SearchMailWinObject != NULL)
-      DoMethod(G->SearchMailWinObject, MUIM_SearchMailWindow_UpdateFolderTree);
+    // trigger a changed folder tree
+    set(obj, ATTR(TreeChanged), TRUE);
   }
 
   RETURN(result);
@@ -1063,9 +1075,8 @@ DECLARE(DeleteFolder)
     // update the statistics in case the just deleted folder contained new or unread mail
     DisplayStatistics(NULL, TRUE);
 
-    // refresh a possibly existing folder tree in the search window
-    if(G->SearchMailWinObject != NULL)
-      DoMethod(G->SearchMailWinObject, MUIM_SearchMailWindow_UpdateFolderTree);
+    // trigger a changed folder tree
+    set(obj, ATTR(TreeChanged), TRUE);
   }
   else
     D(DBF_FOLDER, "keeping folder '%s'", GetCurrentFolder()->Name);

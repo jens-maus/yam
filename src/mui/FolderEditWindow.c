@@ -206,18 +206,20 @@ static BOOL SaveOldFolder(struct IClass *cl, Object *obj)
       goto out;
     }
 
-    // check if the filter name has changed and if it is part of
-    // an active filter and if so rename it in the filter definition
-    // as well.
-    if(nameChanged == TRUE && FolderIsUsedByFilters(data->folder->Name) == TRUE)
-      RenameFolderInFilters(data->folder->Name, folder.Name);
+    if(nameChanged == TRUE)
+    {
+      // check if the filter name has changed and if it is part of
+      // an active filter and if so rename it in the filter definition
+      // as well.
+      if(FolderIsUsedByFilters(data->folder->Name) == TRUE)
+        RenameFolderInFilters(data->folder->Name, folder.Name);
 
-    // refresh a possibly existing folder tree in the search window
-    if(nameChanged == TRUE && G->SearchMailWinObject != NULL)
-      DoMethod(G->SearchMailWinObject, MUIM_SearchMailWindow_UpdateFolderTree);
+      // copy the new folder name
+      strlcpy(data->folder->Name, folder.Name, sizeof(data->folder->Name));
 
-    // copy the new folder name
-    strlcpy(data->folder->Name, folder.Name, sizeof(data->folder->Name));
+      // trigger a change of the main window's folder listtree
+      set(G->MA->GUI.LV_FOLDERS, MUIA_MainFolderListtree_TreeChanged, TRUE);
+    }
 
     SHOWSTRING(DBF_FOLDER, data->folder->Path);
     SHOWSTRING(DBF_FOLDER, data->folder->Fullpath);

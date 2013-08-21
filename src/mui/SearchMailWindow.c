@@ -57,6 +57,7 @@
 
 #include "mui/FilterPopupList.h"
 #include "mui/FolderRequestListtree.h"
+#include "mui/MainFolderListtree.h"
 #include "mui/MainMailList.h"
 #include "mui/ReadWindow.h"
 #include "mui/SearchControlGroup.h"
@@ -738,20 +739,6 @@ DECLARE(SelectMails)
   }
 
   MA_ChangeSelected(TRUE);
-
-  RETURN(0);
-  return 0;
-}
-
-///
-/// DECLARE(UpdateFolderTree)
-DECLARE(UpdateFolderTree)
-{
-  GETDATA;
-
-  ENTER();
-
-  DoMethod(data->LV_FOLDERS, MUIM_FolderRequestListtree_RefreshTree);
 
   RETURN(0);
   return 0;

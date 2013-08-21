@@ -36,12 +36,14 @@
 #include <mui/NListtree_mcc.h>
 
 #include "YAM.h"
+#include "YAM_main.h"
 #include "YAM_mainFolder.h"
 
 #include "FolderList.h"
 #include "MUIObjects.h"
 
 #include "mui/ImageArea.h"
+#include "mui/MainFolderListtree.h"
 
 #include "Debug.h"
 
@@ -74,6 +76,9 @@ OVERLOAD(OM_NEW)
     data->excludeFolder = (struct Folder *)GetTagData(ATTR(Exclude), (IPTR)NULL, inittags(msg));
 
     DoMethod(obj, METHOD(RefreshTree));
+
+    // keep us informed about all changes to the main window's folder listtree
+    DoMethod(G->MA->GUI.LV_FOLDERS, MUIM_Notify, MUIA_MainFolderListtree_TreeChanged, MUIV_EveryTime, obj, 1, METHOD(RefreshTree));
   }
 
   RETURN((IPTR)obj);
@@ -89,6 +94,10 @@ OVERLOAD(OM_DISPOSE)
   ULONG i;
 
   ENTER();
+
+  // remove the notification if the main window is still alive
+  if(G->MA != NULL)
+    DoMethod(G->MA->GUI.LV_FOLDERS, MUIM_KillNotifyObj, MUIA_MainFolderListtree_TreeChanged, obj);
 
   for(i=0; i < ARRAY_SIZE(data->userImage); i++)
   {
