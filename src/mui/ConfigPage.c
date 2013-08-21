@@ -89,6 +89,7 @@ OVERLOAD(OM_NEW)
     if(GetTagData(ATTR(UseScrollgroup), FALSE, inittags(msg)) == TRUE)
     {
       // add a scrollgroup with the given contents as virtual group
+      // plus a spacer object at the bottom
       DoMethod(obj, OM_ADDMEMBER, ScrollgroupObject,
         MUIA_Scrollgroup_FreeHoriz, FALSE,
         MUIA_Scrollgroup_AutoBars, TRUE,
@@ -96,13 +97,12 @@ OVERLOAD(OM_NEW)
           Child, contents,
         End,
       End);
+      DoMethod(contents, OM_ADDMEMBER, HVSpace);
     }
     else
     {
-      // just add the contents and a spacer object at the bottom
+      // just add the contents
       DoMethod(obj, OM_ADDMEMBER, contents);
-      if(GetTagData(ATTR(UseSpacer), FALSE, inittags(msg)) == TRUE)
-        DoMethod(obj, OM_ADDMEMBER, HVSpace);
     }
   }
 
