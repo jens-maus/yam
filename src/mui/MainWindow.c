@@ -36,7 +36,10 @@
 #include "YAM_config.h"
 #include "YAM_error.h"
 
+#include "Locale.h"
+#include "MailList.h"
 #include "MUIObjects.h"
+#include "Requesters.h"
 
 #include "mui/Aboutwindow.h"
 #include "mui/MainMailListGroup.h"
@@ -51,6 +54,10 @@ struct Data
 {
   Object *aboutWindow;
 };
+*/
+
+/* INCLUDE
+#include "YAM_find.h"
 */
 
 /* Overloaded Methods */
@@ -333,4 +340,114 @@ DECLARE(OpenSearchMailWindow) // struct Folder *folder
   return 0;
 }
 
-///
+/// DECLARE(ApplyFilters)
+DECLARE(ApplyFilters) // enum ApplyFilterMode mode, ULONG qualifier, struct FilterResult *result
+{
+  struct Folder *folder;
+  struct FilterResult filterResult;
+
+  ENTER();
+
+  D(DBF_FILTER, "About to apply SPAM and user defined filters in mode %ld...", msg->mode);
+
+  memset(&filterResult, 0, sizeof(filterResult));
+
+  folder = (msg->mode == APPLY_AUTO) ? FO_GetFolderByType(FT_INCOMING, NULL) : GetCurrentFolder();
+
+  if(folder != NULL && (C->SpamFilterEnabled == FALSE || FO_GetFolderByType(FT_SPAM, NULL) != NULL))
+  {
+    struct MailList *mlist = NULL;
+    BOOL processAllMails = TRUE;
+
+    // query how many mails are currently selected/marked
+    if(msg->mode == APPLY_USER || msg->mode == APPLY_RX || msg->mode == APPLY_RX_ALL || msg->mode == APPLY_SPAM)
+    {
+      ULONG minselected = isAnyFlagSet(msg->qualifier, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT)) ? 1 : 2;
+
+      if((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, msg->mode == APPLY_RX)) != NULL)
+      {
+        if(mlist->count < minselected)
+        {
+          W(DBF_FILTER, "number of selected mails < required minimum (%ld < %ld)", mlist->count, minselected);
+
+          DeleteMailList(mlist);
+          mlist = NULL;
+        }
+        else
+          processAllMails = FALSE;
+      }
+    }
+
+    // if we haven't got any mail list, we
+    // go and create one over all mails in the folder
+    if(mlist == NULL)
+      mlist = MA_CreateFullList(folder, (msg->mode == APPLY_AUTO || msg->mode == APPLY_RX));
+
+    // check that we can continue
+    if(mlist != NULL)
+    {
+      BOOL applyFilters = TRUE;
+
+      // if this function was called manually by the user we ask him
+      // if he really wants to apply the filters or not.
+      if(msg->mode == APPLY_USER)
+      {
+        char buf[SIZE_LARGE];
+
+        if(processAllMails == TRUE)
+          snprintf(buf, sizeof(buf), tr(MSG_MA_CONFIRMFILTER_ALL), folder->Name);
+        else
+          snprintf(buf, sizeof(buf), tr(MSG_MA_CONFIRMFILTER_SELECTED), folder->Name);
+
+        if(MUI_Request(G->App, G->MA->GUI.WI, MUIF_NONE, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), buf) == 0)
+          applyFilters = FALSE;
+      }
+
+      // the user has not cancelled the filter process
+      if(applyFilters == TRUE)
+      {
+        FilterMails(folder, mlist, msg->mode, &filterResult);
+
+        if(filterResult.Checked != 0 && msg->mode == APPLY_USER)
+        {
+          if(C->ShowFilterStats == TRUE)
+          {
+            char buf[SIZE_LARGE];
+
+            if(C->SpamFilterEnabled == TRUE)
+            {
+              // include the number of spam classified mails
+              snprintf(buf, sizeof(buf), tr(MSG_MA_FILTER_STATS_SPAM), filterResult.Checked,
+                                                                       filterResult.Forwarded,
+                                                                       filterResult.Moved,
+                                                                       filterResult.Deleted,
+                                                                       filterResult.Spam);
+            }
+            else
+            {
+              snprintf(buf, sizeof(buf), tr(MSG_MA_FilterStats), filterResult.Checked,
+                                                                 filterResult.Forwarded,
+                                                                 filterResult.Moved,
+                                                                 filterResult.Deleted);
+            }
+
+            MUI_Request(G->App, G->MA->GUI.WI, MUIF_NONE, NULL, tr(MSG_OkayReq), buf);
+          }
+        }
+      }
+      else
+        D(DBF_FILTER, "filtering rejected by user.");
+
+      DeleteMailList(mlist);
+    }
+    else
+      W(DBF_FILTER, "folder empty or error on creating list of mails.");
+  }
+
+  // copy the results if anybody is interested in them
+  if(msg->result != NULL)
+    memcpy(msg->result, &filterResult, sizeof(filterResult));
+
+  RETURN(0);
+  return 0;
+}

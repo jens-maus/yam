@@ -37,13 +37,67 @@
 // forward declarations
 struct BoyerMooreContext;
 
-enum ApplyFilterMode  { APPLY_USER, APPLY_AUTO, APPLY_SENT, APPLY_REMOTE, APPLY_RX_ALL, APPLY_RX, APPLY_SPAM };
-enum FastSearch       { FS_NONE=0, FS_FROM, FS_TO, FS_CC, FS_REPLYTO, FS_SUBJECT, FS_DATE, FS_SIZE };
-enum SearchMode       { SM_FROM=0, SM_TO, SM_CC, SM_REPLYTO, SM_SUBJECT, SM_DATE, SM_HEADLINE,
-                        SM_SIZE, SM_HEADER, SM_BODY, SM_WHOLE, SM_STATUS, SM_SPAM };
-enum CombineMode      { CB_ALL=0, CB_AT_LEAST_ONE, CB_EXACTLY_ONE };
-enum SubSearchMode    { SSM_ADDRESS=0, SSM_NAME };
-enum Comparison       { CP_EQUAL=0, CP_NOTEQUAL, CP_LOWER, CP_GREATER, CP_INPUT };
+enum ApplyFilterMode
+{
+  APPLY_USER=0,
+  APPLY_AUTO,
+  APPLY_SENT,
+  APPLY_REMOTE,
+  APPLY_RX_ALL,
+  APPLY_RX,
+  APPLY_SPAM
+};
+
+enum FastSearch
+{
+  FS_NONE=0,
+  FS_FROM,
+  FS_TO,
+  FS_CC,
+  FS_REPLYTO,
+  FS_SUBJECT,
+  FS_DATE,
+  FS_SIZE
+};
+
+enum SearchMode
+{
+  SM_FROM=0,
+  SM_TO,
+  SM_CC,
+  SM_REPLYTO,
+  SM_SUBJECT,
+  SM_DATE,
+  SM_HEADLINE,
+  SM_SIZE,
+  SM_HEADER,
+  SM_BODY,
+  SM_WHOLE,
+  SM_STATUS,
+  SM_SPAM
+};
+
+enum CombineMode
+{
+  CB_ALL=0,
+  CB_AT_LEAST_ONE,
+  CB_EXACTLY_ONE
+};
+
+enum SubSearchMode
+{
+  SSM_ADDRESS=0,
+  SSM_NAME
+};
+
+enum Comparison
+{
+  CP_EQUAL=0,
+  CP_NOTEQUAL,
+  CP_LOWER,
+  CP_GREATER,
+  CP_INPUT
+};
 
 // lets define all the filter->actions flags and
 // define some flag macros for them
@@ -154,9 +208,6 @@ struct FilterResult
   long Deleted;
   long Spam;
 };
-
-// external hooks
-extern struct Hook ApplyFiltersHook;
 
 extern const char mailStatusCycleMap[11];
 

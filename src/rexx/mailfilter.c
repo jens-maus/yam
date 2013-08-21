@@ -32,9 +32,11 @@
 #include "extrasrc.h"
 
 #include "YAM.h"
-#include "YAM_find.h"
+#include "YAM_main.h"
 
 #include "Rexx.h"
+
+#include "mui/MainWindow.h"
 
 #include "Debug.h"
 
@@ -81,7 +83,7 @@ void rx_mailfilter(UNUSED struct RexxHost *host, struct RexxParams *params, enum
 
     case RXIF_ACTION:
     {
-      DoMethod(G->App, MUIM_CallHook, &ApplyFiltersHook, args->all ? APPLY_RX_ALL : APPLY_RX, 0, &optional->filterResult);
+      DoMethod(G->MA->GUI.WI, MUIM_MainWindow_ApplyFilters, args->all ? APPLY_RX_ALL : APPLY_RX, 0, &optional->filterResult);
 
       results->checked = &optional->filterResult.Checked;
       results->redirected = &optional->filterResult.Redirected;
