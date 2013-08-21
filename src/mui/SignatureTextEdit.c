@@ -32,9 +32,11 @@
 
 #include <string.h>
 
+#include <proto/codesets.h>
 #include <proto/dos.h>
 #include <mui/TextEditor_mcc.h>
 
+#include "YAM.h"
 #include "YAM_config.h"
 
 #include "DynamicString.h"
@@ -183,24 +185,59 @@ DECLARE(EditExternally)
     if((tf = OpenTempFile(NULL)) != NULL)
     {
       char *editor = NULL;
-      char *buffer;
+      struct codeset *dstCodeset = NULL;
 
-      // export the signature text to a temporaty file
-      DoMethod(obj, MUIM_MailTextEdit_SaveToFile, tf->Filename, NULL);
+      if(C->ForceEditorCodeset == TRUE)
+      {
+        dstCodeset = CodesetsFind(C->ForcedEditorCodeset,
+                                  CSA_CodesetList, G->codesetsList,
+                                  CSA_FallbackToDefault, FALSE);
+      }
+
+      // export the signature text to a temporary file
+      DoMethod(obj, MUIM_MailTextEdit_SaveToFile, tf->Filename, dstCodeset);
 
       // launch the external editor and wait until it is
       // finished...
       if(asprintf(&editor, "%s \"%s\"", C->Editor, tf->Filename) >= 0)
       {
+        char *text;
+
         // launch the external editor synchronously (wait until it returns)
         LaunchCommand(editor, 0, OUT_NIL);
         free(editor);
 
         // refresh the signature in the internal editor after the external is finished
-        if((buffer = FileToBuffer(tf->Filename)) != NULL)
+        if((text = FileToBuffer(tf->Filename)) != NULL)
         {
-          DoMethod(obj, METHOD(SetSignatureText), buffer);
-          free(buffer);
+          char *dstText;
+          BOOL converted = FALSE;
+
+          // convert the text from the editor back to our local charset
+          if(dstCodeset != NULL && stricmp(dstCodeset->name, G->localCodeset->name) != 0)
+          {
+            // convert from the srcCodeset to the localCodeset
+            dstText = CodesetsConvertStr(CSA_SourceCodeset,   dstCodeset,
+                                         CSA_DestCodeset,     G->localCodeset,
+                                         CSA_Source,          text,
+                                         CSA_SourceLen,       strlen(text),
+                                         CSA_MapForeignChars, C->MapForeignChars,
+                                         TAG_DONE);
+
+            if(dstText != NULL)
+              converted = TRUE;
+          }
+          else
+            dstText = text;
+
+          // set the signature text
+          DoMethod(obj, METHOD(SetSignatureText), dstText);
+
+          if(converted == TRUE)
+            CodesetsFreeA(dstText, NULL);
+
+          // free the main buffer
+          free(text);
         }
       }
 

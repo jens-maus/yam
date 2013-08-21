@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-08-21 Jens Langner <Jens.Langner@light-speed.de>
+
+  * mui/SignatureTextEdit.c, mui/WriteWindow.c: changed the functionality to
+    open text in an external editor to actually use the new configurable
+    ForcedEditorCodeset. Nevertheless, substantial work is still missing to
+    change YAM to always use UTF8 internally.
+
 2013-08-21 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_FI.c, mui/SearchMailWindow.c: make use of the new mail search window

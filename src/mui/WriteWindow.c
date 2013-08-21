@@ -3392,6 +3392,7 @@ DECLARE(LaunchEditor)
   {
     struct WriteMailData *wmData = data->wmData;
     char buffer[SIZE_COMMAND+SIZE_PATHFILE];
+    struct codeset *dstCodeset;
 
     // stop any pending file notification.
     if(wmData->fileNotifyActive == TRUE)
@@ -3407,8 +3408,18 @@ DECLARE(LaunchEditor)
       nnset(data->RG_PAGE, MUIA_Group_ActivePage, 0);
     }
 
+    // check if we should for a specific editor codeset
+    if(C->ForceEditorCodeset == TRUE)
+    {
+      dstCodeset = CodesetsFind(C->ForcedEditorCodeset,
+                                CSA_CodesetList, G->codesetsList,
+                                CSA_FallbackToDefault, FALSE);
+    }
+    else
+      dstCodeset = data->wmData->codeset;
+    
     // save the mail text in the currently selected charset
-    DoMethod(data->TE_EDIT, MUIM_MailTextEdit_SaveToFile, data->wmData->filename, data->wmData->codeset);
+    DoMethod(data->TE_EDIT, MUIM_MailTextEdit_SaveToFile, data->wmData->filename, dstCodeset);
 
     // remember the modification date of the file
     if(ObtainFileInfo(data->wmData->filename, FI_DATE, &data->wmData->lastFileChangeTime) == FALSE)
@@ -3430,6 +3441,8 @@ DECLARE(LaunchEditor)
     else
       W(DBF_UTIL, "file notification [%s] of write window %ld failed!", wmData->filename, data->windowNumber);
   }
+  else
+    DisplayBeep(NULL);
 
   RETURN(0);
   return 0;
