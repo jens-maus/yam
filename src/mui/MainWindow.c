@@ -42,6 +42,7 @@
 #include "mui/MainMailListGroup.h"
 #include "mui/QuickSearchBar.h"
 #include "mui/ReadMailGroup.h"
+#include "mui/SearchMailWindow.h"
 
 #include "Debug.h"
 
@@ -311,6 +312,22 @@ DECLARE(DoEditAction) // enum EditAction action
   // first and see if it matches
   if(matched == FALSE && C->EmbeddedReadPane == TRUE)
     matched = DoMethod(G->MA->GUI.MN_EMBEDDEDREADPANE, MUIM_ReadMailGroup_DoEditAction, msg->action, TRUE);
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(OpenSearchMailWindow)
+DECLARE(OpenSearchMailWindow) // struct Folder *folder
+{
+  ENTER();
+
+  if(G->SearchMailWinObject == NULL)
+    G->SearchMailWinObject = SearchMailWindowObject, End;
+
+  if(G->SearchMailWinObject != NULL)
+    DoMethod(G->SearchMailWinObject, MUIM_SearchMailWindow_Open, msg->folder);
 
   RETURN(0);
   return 0;

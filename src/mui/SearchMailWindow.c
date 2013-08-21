@@ -369,7 +369,7 @@ DECLARE(Open) // struct Folder *selectFolder
     SafeOpenWindow(obj);
   }
 
-  // set object of last search session active as well
+  // set object of the last search session as the active one again
   set(obj, MUIA_Window_ActiveObject, xget(data->GR_SEARCH, MUIA_SearchControlGroup_ActiveObject));
 
   RETURN(0);

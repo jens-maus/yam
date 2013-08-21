@@ -1081,23 +1081,6 @@ BOOL DoFilterSearch(const struct FilterNode *filter, const struct Mail *mail)
 }
 
 ///
-/// FI_Open
-//  Opens find window
-HOOKPROTONHNO(FI_OpenFunc, void, LONG *arg)
-{
-  ENTER();
-
-  if(G->SearchMailWinObject == NULL)
-    G->SearchMailWinObject = SearchMailWindowObject, End;
-
-  if(G->SearchMailWinObject != NULL)
-    DoMethod(G->SearchMailWinObject, MUIM_SearchMailWindow_Open, arg[0]);
-
-  LEAVE();
-}
-MakeHook(FI_OpenHook, FI_OpenFunc);
-
-///
 /// FI_FilterSingleMail
 //  applies the configured filters on a single mail
 BOOL FI_FilterSingleMail(const struct MinList *filterList, struct Mail *mail, int *matches, struct FilterResult *result)

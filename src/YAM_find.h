@@ -156,7 +156,6 @@ struct FilterResult
 };
 
 // external hooks
-extern struct Hook FI_OpenHook;
 extern struct Hook ApplyFiltersHook;
 
 extern const char mailStatusCycleMap[11];
