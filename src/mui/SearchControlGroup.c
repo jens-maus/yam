@@ -574,7 +574,6 @@ DECLARE(SetToRule) // struct RuleNode *rule
   ENTER();
 
   rule->searchMode = GetMUICycle(data->CY_MODE[data->remoteFilterMode]);
-//  rule->combine = GetMUICycle(data->CY_COMBINE)+1;
   rule->subSearchMode = GetMUIRadio(data->RA_ADRMODE);
   GetMUIString(rule->customField, data->ST_FIELD, sizeof(rule->customField));
   rule->comparison = GetMUICycle(data->CY_COMP[g]);
@@ -620,7 +619,6 @@ DECLARE(GetFromRule) // struct RuleNode *rule
   ENTER();
 
   nnset(data->CY_MODE[data->remoteFilterMode],  MUIA_Cycle_Active,      rule->searchMode);
-//  nnset(data->CY_COMBINE,                       MUIA_Cycle_Active,      rule->combine>0 ? rule->combine-1 : 0);
   nnset(data->RA_ADRMODE,                       MUIA_Radio_Active,      rule->subSearchMode);
   nnset(data->ST_FIELD,                         MUIA_String_Contents,   rule->customField);
   nnset(data->PG_SRCHOPT,                       MUIA_Group_ActivePage,  g);
