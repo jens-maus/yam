@@ -86,7 +86,7 @@ OVERLOAD(OM_NEW)
     End,
   TAG_MORE, inittags(msg))) != NULL)
   {
-    if(GetTagData(ATTR(UseScrollgroup), FALSE, inittags(msg)) == TRUE)
+    if(GetTagData(ATTR(UseScrollgroup), TRUE, inittags(msg)) == TRUE)
     {
       // add a scrollgroup with the given contents as virtual group
       // plus a spacer object at the bottom
