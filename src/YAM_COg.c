@@ -1636,9 +1636,9 @@ Object *CO_PageSecurity(struct CO_ClassData *data)
 
             Child, Label2(tr(MSG_CO_PGPExe)),
             Child, PopaslObject,
-              MUIA_Popasl_Type     ,ASL_FileRequest,
-              MUIA_Popstring_String,data->GUI.ST_PGPCMD= MakeString(SIZE_PATHFILE,tr(MSG_CO_PGPExe)),
-              MUIA_Popstring_Button,PopButton(MUII_PopDrawer),
+              MUIA_Popasl_Type,      ASL_FileRequest,
+              MUIA_Popstring_String, data->GUI.ST_PGPCMD = MakeString(SIZE_PATHFILE,tr(MSG_CO_PGPExe)),
+              MUIA_Popstring_Button, PopButton(MUII_PopDrawer),
               ASLFR_DrawersOnly, TRUE,
             End,
 

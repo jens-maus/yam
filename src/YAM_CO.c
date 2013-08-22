@@ -84,6 +84,7 @@
 #include "mui/ReadMailGroup.h"
 #include "mui/ReadWindow.h"
 #include "mui/SearchControlGroup.h"
+#include "mui/SecurityConfigPage.h"
 #include "mui/SignatureChooser.h"
 #include "mui/SignatureConfigPage.h"
 #include "mui/SignatureTextEdit.h"
@@ -2424,7 +2425,7 @@ static struct CO_ClassData *CO_New(void)
                 Child, data->GUI.PG_PAGES[cp_Write]       = WriteConfigPageObject, End,
                 Child, CO_PageReplyForward(data),
                 Child, data->GUI.PG_PAGES[cp_Signature]   = SignatureConfigPageObject, End,
-                Child, CO_PageSecurity(data),
+                Child, data->GUI.PG_PAGES[cp_Security]    = SecurityConfigPageObject, End,
                 Child, CO_PageStartupQuit(data),
                 Child, CO_PageMIME(data),
                 Child, data->GUI.PG_PAGES[cp_AddressBook] = AddressBookConfigPageObject, End,

@@ -525,6 +525,7 @@ MUIOBJS = \
 	SearchControlGroup.o \
 	SearchMailWindow.o \
 	SearchTextWindow.o \
+	SecurityConfigPage.o \
 	ShutdownWindow.o \
 	SignatureChooser.o \
 	SignatureConfigPage.o \

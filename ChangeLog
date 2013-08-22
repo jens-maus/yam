@@ -17,6 +17,8 @@ $URL$
     page.
   * YAM_CO.c, mui/SignatureConfigPage.c: use the new base class for the
     "Signature" page.
+  * YAM_CO.c, mui/SecurityConfigPage.c: use the new base class for the
+    "Security" page.
 
 2013-08-21 Jens Langner <Jens.Langner@light-speed.de>
 

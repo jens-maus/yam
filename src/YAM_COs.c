@@ -1883,6 +1883,7 @@ void CO_GetConfig(void)
     case cp_Read:
     case cp_Write:
     case cp_Signature:
+    case cp_Security:
     case cp_AddressBook:
     {
       DoMethod(gui->PG_PAGES[G->CO->VisiblePage], MUIM_ConfigPage_GUIToConfig, CE);
@@ -1914,21 +1915,6 @@ void CO_GetConfig(void)
       CE->CompareAddress    = GetMUICheck  (gui->CH_COMPADDR);
       CE->StripSignature    = GetMUICheck  (gui->CH_STRIPSIG);
       CE->ForwardMode = GetMUICycle(gui->CY_FORWARDMODE);
-    }
-    break;
-
-    case cp_Security:
-    {
-      GetMUIString(CE->PGPCmdPath, gui->ST_PGPCMD, sizeof(CE->PGPCmdPath));
-      GetMUIString(CE->LogfilePath, gui->ST_LOGFILE, sizeof(CE->LogfilePath));
-      CE->LogfileMode = GetMUICycle(gui->CY_LOGMODE);
-      CE->SplitLogfile = GetMUICheck(gui->CH_SPLITLOG);
-      CE->LogAllEvents = GetMUICheck(gui->CH_LOGALL);
-
-      if(GetMUICheck(gui->CH_PGPPASSINTERVAL) == TRUE)
-        CE->PGPPassInterval = GetMUINumer(gui->NB_PGPPASSINTERVAL);
-      else
-        CE->PGPPassInterval = -GetMUINumer(gui->NB_PGPPASSINTERVAL);
     }
     break;
 
@@ -2105,6 +2091,7 @@ void CO_SetConfig(void)
     case cp_Read:
     case cp_Write:
     case cp_Signature:
+    case cp_Security:
     case cp_AddressBook:
     {
       DoMethod(gui->PG_PAGES[G->CO->VisiblePage], MUIM_ConfigPage_ConfigToGUI, CE);
@@ -2149,25 +2136,6 @@ void CO_SetConfig(void)
       setcheckmark(gui->CH_COMPADDR, CE->CompareAddress);
       setcheckmark(gui->CH_STRIPSIG, CE->StripSignature);
       setcycle(gui->CY_FORWARDMODE, CE->ForwardMode);
-    }
-    break;
-
-    case cp_Security:
-    {
-      setstring(gui->ST_PGPCMD, CE->PGPCmdPath);
-      setstring(gui->ST_LOGFILE, CE->LogfilePath);
-      setcycle(gui->CY_LOGMODE, CE->LogfileMode);
-      setcheckmark(gui->CH_SPLITLOG, CE->SplitLogfile);
-      setcheckmark(gui->CH_LOGALL, CE->LogAllEvents);
-      setcheckmark(gui->CH_PGPPASSINTERVAL, CE->PGPPassInterval > 0);
-
-      xset(gui->NB_PGPPASSINTERVAL, MUIA_Numeric_Value, abs(CE->PGPPassInterval),
-                                    MUIA_Disabled, CE->PGPPassInterval <= 0);
-
-      DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, CE->LogfileMode == LF_NONE, gui->PO_LOGFILE,
-                                                                                 gui->CH_SPLITLOG,
-                                                                                 gui->CH_LOGALL,
-                                                                                 NULL);
     }
     break;
 
