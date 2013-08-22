@@ -43,7 +43,6 @@ Object *CO_PageSignature(struct CO_ClassData *data);
 Object *CO_PageSecurity(struct CO_ClassData *data);
 Object *CO_PageStartupQuit(struct CO_ClassData *data);
 Object *CO_PageMIME(struct CO_ClassData *data);
-Object *CO_PageAddressBook(struct CO_ClassData *data);
 Object *CO_PageScripts(struct CO_ClassData *data);
 Object *CO_PageMixed(struct CO_ClassData *data);
 Object *CO_PageLookFeel(struct CO_ClassData *data);

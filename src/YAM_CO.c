@@ -69,6 +69,7 @@
 
 #include "mui/ClassesExtra.h"
 #include "mui/AddrBookListtree.h"
+#include "mui/AddressBookConfigPage.h"
 #include "mui/ConfigPageList.h"
 #include "mui/FirstStepsConfigPage.h"
 #include "mui/InfoBar.h"
@@ -2694,8 +2695,8 @@ static struct CO_ClassData *CO_New(void)
              Child, data->GUI.GR_PAGE = PageGroup,
                 NoFrame,
                 MUIA_Group_ActivePage, 0,
-                Child, data->GUI.PG_PAGES[cp_FirstSteps] = FirstStepsConfigPageObject, End,
-                Child, data->GUI.PG_PAGES[cp_TCPIP]      = TCPIPConfigPageObject, End,
+                Child, data->GUI.PG_PAGES[cp_FirstSteps]  = FirstStepsConfigPageObject, End,
+                Child, data->GUI.PG_PAGES[cp_TCPIP]       = TCPIPConfigPageObject, End,
                 Child, CO_PageIdentities(data),
                 Child, CO_PageFilters(data),
                 Child, CO_PageSpam(data),
@@ -2706,7 +2707,7 @@ static struct CO_ClassData *CO_New(void)
                 Child, CO_PageSecurity(data),
                 Child, CO_PageStartupQuit(data),
                 Child, CO_PageMIME(data),
-                Child, CO_PageAddressBook(data),
+                Child, data->GUI.PG_PAGES[cp_AddressBook]  = AddressBookConfigPageObject, End,
                 Child, CO_PageScripts(data),
                 Child, CO_PageMixed(data),
                 Child, CO_PageLookFeel(data),

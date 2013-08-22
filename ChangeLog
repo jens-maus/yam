@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-08-22 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_CO.c, mui/AddressBookConfigPage.c: use the new base class for the
+    "Address book" page.
+
 2013-08-21 Jens Langner <Jens.Langner@light-speed.de>
 
   * mui/SignatureTextEdit.c, mui/WriteWindow.c: changed the functionality to

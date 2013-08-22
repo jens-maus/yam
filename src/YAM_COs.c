@@ -1878,6 +1878,7 @@ void CO_GetConfig(void)
 
     case cp_FirstSteps:
     case cp_TCPIP:
+    case cp_AddressBook:
     {
       DoMethod(gui->PG_PAGES[G->CO->VisiblePage], MUIM_ConfigPage_GUIToConfig, CE);
     }
@@ -2296,23 +2297,6 @@ void CO_GetConfig(void)
     }
     break;
 
-    case cp_AddressBook:
-    {
-      int i;
-
-      GetMUIString(CE->GalleryDir, gui->ST_GALLDIR, sizeof(CE->GalleryDir));
-      GetMUIString(CE->NewAddrGroup, gui->ST_NEWGROUP, sizeof(CE->NewAddrGroup));
-      GetMUIString(CE->ProxyServer, gui->ST_PROXY, sizeof(CE->ProxyServer));
-      CE->AddToAddrbook     = GetMUICycle  (gui->CY_ATAB);
-      CE->AddrbookCols = 1;
-      for(i = 1; i < ABCOLNUM; i++)
-      {
-        if(GetMUICheck(gui->CH_ACOLS[i]))
-          CE->AddrbookCols += (1<<i);
-      }
-    }
-    break;
-
     case cp_Scripts:
     {
       // nothing
@@ -2459,6 +2443,7 @@ void CO_SetConfig(void)
 
     case cp_FirstSteps:
     case cp_TCPIP:
+    case cp_AddressBook:
     {
       DoMethod(gui->PG_PAGES[G->CO->VisiblePage], MUIM_ConfigPage_ConfigToGUI, CE);
     }
@@ -2718,18 +2703,6 @@ void CO_SetConfig(void)
       DoMethod(gui->LV_MIME, MUIM_NList_Jump, MUIV_NList_Jump_Active);
 
       setstring(gui->ST_DEFVIEWER, CE->DefaultMimeViewer);
-    }
-    break;
-
-    case cp_AddressBook:
-    {
-      setstring(gui->ST_GALLDIR, CE->GalleryDir);
-      setstring(gui->ST_NEWGROUP, CE->NewAddrGroup);
-      set(gui->ST_NEWGROUP, MUIA_Disabled, CE->AddToAddrbook == 0);
-      setstring(gui->ST_PROXY, CE->ProxyServer);
-      setcycle(gui->CY_ATAB, CE->AddToAddrbook);
-      for(i = 0; i < ABCOLNUM; i++)
-        setcheckmark(gui->CH_ACOLS[i], (CE->AddrbookCols & (1<<i)) != 0);
     }
     break;
 
