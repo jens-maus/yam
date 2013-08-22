@@ -85,6 +85,7 @@
 #include "mui/ReadWindow.h"
 #include "mui/SearchControlGroup.h"
 #include "mui/SignatureChooser.h"
+#include "mui/SignatureConfigPage.h"
 #include "mui/SignatureTextEdit.h"
 #include "mui/SpamConfigPage.h"
 #include "mui/TCPIPConfigPage.h"
@@ -507,106 +508,6 @@ HOOKPROTONHNO(CO_RemoteToggleFunc, void, int *arg)
   SetActiveFilterData();
 }
 MakeHook(CO_RemoteToggleHook,CO_RemoteToggleFunc);
-
-///
-
-/**** Signatures ***/
-/// CO_GetSignatureEntry
-//  Fills form with data from selected list entry
-HOOKPROTONHNONP(CO_GetSignatureEntry, void)
-{
-  struct SignatureNode *sn = NULL;
-  struct CO_GUIData *gui = &G->CO->GUI;
-  LONG pos = MUIV_NList_GetPos_Start;
-
-  ENTER();
-
-  // get the currently selected signature
-  DoMethod(gui->LV_SIGNATURE, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &sn);
-
-  // make sure to disable GUI elements
-  if(sn == NULL || xget(gui->LV_SIGNATURE, MUIA_NList_Entries) < 2)
-    set(gui->BT_SIGDEL, MUIA_Disabled, TRUE);
-  else
-    set(gui->BT_SIGDEL, MUIA_Disabled, FALSE);
-
-  if(sn != NULL)
-    DoMethod(gui->LV_SIGNATURE, MUIM_NList_GetPos, sn, &pos);
-  else
-    pos = 0;
-
-  set(gui->BT_SIGUP, MUIA_Disabled, pos == 0);
-  set(gui->BT_SIGDOWN, MUIA_Disabled, pos == (LONG)xget(gui->LV_SIGNATURE, MUIA_NList_Entries) - 1);
-
-  if(sn != NULL)
-  {
-    // all notifies here are nnset() notifies so that we don't trigger any additional
-    // notify or otherwise we would run into problems.
-    nnset(gui->CH_SIG_ACTIVE, MUIA_Selected, sn->active);
-    nnset(gui->ST_SIG_DESC, MUIA_String_Contents, sn->description);
-    nnset(gui->TE_SIGEDIT, MUIA_SignatureTextEdit_SignatureNode, sn);
-    nnset(gui->CH_SIG_FILE, MUIA_Selected, sn->useSignatureFile);
-    nnset(gui->ST_SIG_FILE, MUIA_String_Contents, sn->filename);
-    DoMethod(gui->WI, MUIM_MultiSet, MUIA_Disabled, sn->useSignatureFile == TRUE,
-      gui->BT_SIGEDIT,
-      gui->BT_INSTAG,
-      gui->BT_INSENV,
-      NULL);
-    set(gui->PO_SIG_FILE, MUIA_Disabled, sn->useSignatureFile == FALSE);
-  }
-
-  LEAVE();
-}
-MakeHook(CO_GetSignatureEntryHook, CO_GetSignatureEntry);
-
-///
-/// CO_PutSignatureEntry
-//  Fills form data into selected list entry
-HOOKPROTONHNONP(CO_PutSignatureEntry, void)
-{
-  struct CO_GUIData *gui = &G->CO->GUI;
-  int p;
-
-  ENTER();
-
-  p = xget(gui->LV_SIGNATURE, MUIA_NList_Active);
-  if(p != MUIV_NList_Active_Off)
-  {
-    struct SignatureNode *sn = NULL;
-
-    DoMethod(gui->LV_SIGNATURE, MUIM_NList_GetEntry, p, &sn);
-    if(sn != NULL)
-    {
-      sn->active = GetMUICheck(gui->CH_SIG_ACTIVE);
-      GetMUIString(sn->description, gui->ST_SIG_DESC, sizeof(sn->description));
-      sn->useSignatureFile = GetMUICheck(gui->CH_SIG_FILE);
-      GetMUIString(sn->filename, gui->ST_SIG_FILE, sizeof(sn->filename));
-
-      // if the user hasn't yet entered an own description we generate an
-      // own one
-      if(sn->description[0] == '\0' || strcmp(sn->description, tr(MSG_NewEntry)) == 0)
-        strlcpy(sn->description, tr(MSG_CO_Signature), sizeof(sn->description));
-
-      DoMethod(gui->WI, MUIM_MultiSet, MUIA_Disabled, sn->useSignatureFile == TRUE,
-        gui->BT_SIGEDIT,
-        gui->BT_INSTAG,
-        gui->BT_INSENV,
-        NULL);
-      set(gui->PO_SIG_FILE, MUIA_Disabled, sn->useSignatureFile == FALSE);
-      set(gui->TE_SIGEDIT, MUIA_SignatureTextEdit_UseSignatureFile, sn->useSignatureFile);
-
-      // redraw the list
-      DoMethod(gui->LV_SIGNATURE, MUIM_NList_Redraw, p);
-    }
-  }
-
-  // update the signature chooser/ in case the user changed something
-  // on the Identities config page
-  DoMethod(gui->CY_IDENTITY_SIGNATURE, MUIM_SignatureChooser_UpdateSignatures);
-
-  LEAVE();
-}
-MakeHook(CO_PutSignatureEntryHook, CO_PutSignatureEntry);
 
 ///
 
@@ -2514,15 +2415,15 @@ static struct CO_ClassData *CO_New(void)
              Child, data->GUI.GR_PAGE = PageGroup,
                 NoFrame,
                 MUIA_Group_ActivePage, 0,
-                Child, data->GUI.PG_PAGES[cp_FirstSteps] = FirstStepsConfigPageObject, End,
-                Child, data->GUI.PG_PAGES[cp_TCPIP]      = TCPIPConfigPageObject, End,
-                Child, data->GUI.PG_PAGES[cp_Identities] = IdentitiesConfigPageObject, End,
+                Child, data->GUI.PG_PAGES[cp_FirstSteps]  = FirstStepsConfigPageObject, End,
+                Child, data->GUI.PG_PAGES[cp_TCPIP]       = TCPIPConfigPageObject, End,
+                Child, data->GUI.PG_PAGES[cp_Identities]  = IdentitiesConfigPageObject, End,
                 Child, CO_PageFilters(data),
-                Child, data->GUI.PG_PAGES[cp_Spam]       = SpamConfigPageObject, End,
-                Child, data->GUI.PG_PAGES[cp_Read]       = ReadConfigPageObject, End,
-                Child, data->GUI.PG_PAGES[cp_Write]      = WriteConfigPageObject, End,
+                Child, data->GUI.PG_PAGES[cp_Spam]        = SpamConfigPageObject, End,
+                Child, data->GUI.PG_PAGES[cp_Read]        = ReadConfigPageObject, End,
+                Child, data->GUI.PG_PAGES[cp_Write]       = WriteConfigPageObject, End,
                 Child, CO_PageReplyForward(data),
-                Child, CO_PageSignature(data),
+                Child, data->GUI.PG_PAGES[cp_Signature]   = SignatureConfigPageObject, End,
                 Child, CO_PageSecurity(data),
                 Child, CO_PageStartupQuit(data),
                 Child, CO_PageMIME(data),

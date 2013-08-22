@@ -632,8 +632,6 @@ extern struct Hook CO_PlaySoundHook;
 extern struct Hook PO_Text2ListHook;
 extern struct Hook PO_List2TextHook;
 extern struct Hook CO_SwitchSpamFilterHook;
-extern struct Hook CO_GetSignatureEntryHook;
-extern struct Hook CO_PutSignatureEntryHook;
 extern struct Hook CO_OpenHook;
 extern struct Hook CO_PL_DspFuncHook;
 extern struct Hook CO_RemoteToggleHook;

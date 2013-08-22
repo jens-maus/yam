@@ -1882,6 +1882,7 @@ void CO_GetConfig(void)
     case cp_Spam:
     case cp_Read:
     case cp_Write:
+    case cp_Signature:
     case cp_AddressBook:
     {
       DoMethod(gui->PG_PAGES[G->CO->VisiblePage], MUIM_ConfigPage_GUIToConfig, CE);
@@ -1913,30 +1914,6 @@ void CO_GetConfig(void)
       CE->CompareAddress    = GetMUICheck  (gui->CH_COMPADDR);
       CE->StripSignature    = GetMUICheck  (gui->CH_STRIPSIG);
       CE->ForwardMode = GetMUICycle(gui->CY_FORWARDMODE);
-    }
-    break;
-
-    case cp_Signature:
-    {
-      struct SignatureNode *sn;
-
-      GetMUIString(CE->TagsFile, gui->ST_TAGFILE, sizeof(CE->TagsFile));
-      GetMUIString(CE->TagsSeparator, gui->ST_TAGSEP, sizeof(CE->TagsSeparator));
-
-      if((sn = (struct SignatureNode *)xget(gui->TE_SIGEDIT, MUIA_SignatureTextEdit_SignatureNode)) != NULL)
-      {
-        sn->useSignatureFile = GetMUICheck(gui->CH_SIG_FILE);
-        GetMUIString(sn->filename, gui->ST_SIG_FILE, sizeof(sn->filename));
-      }
-
-      // force a signature change
-      // this will copy the signature text to the current signature node
-      nnset(gui->TE_SIGEDIT, MUIA_SignatureTextEdit_SignatureNode, NULL);
-
-      // as the user may have changed the order of the signatures
-      // we have to make sure the order in the NList fits to the
-      // exec list order of our Signature list
-      SortNListToExecList(gui->LV_SIGNATURE, &CE->signatureList);
     }
     break;
 
@@ -2127,6 +2104,7 @@ void CO_SetConfig(void)
     case cp_Spam:
     case cp_Read:
     case cp_Write:
+    case cp_Signature:
     case cp_AddressBook:
     {
       DoMethod(gui->PG_PAGES[G->CO->VisiblePage], MUIM_ConfigPage_ConfigToGUI, CE);
@@ -2171,39 +2149,6 @@ void CO_SetConfig(void)
       setcheckmark(gui->CH_COMPADDR, CE->CompareAddress);
       setcheckmark(gui->CH_STRIPSIG, CE->StripSignature);
       setcycle(gui->CY_FORWARDMODE, CE->ForwardMode);
-    }
-    break;
-
-    case cp_Signature:
-    {
-      int numSignatures = 0;
-      struct SignatureNode *sn;
-
-      setstring(gui->ST_TAGFILE, CE->TagsFile);
-      setstring(gui->ST_TAGSEP, CE->TagsSeparator);
-
-      // clear the list first
-      set(gui->LV_SIGNATURE, MUIA_NList_Quiet, TRUE);
-      DoMethod(gui->LV_SIGNATURE, MUIM_NList_Clear);
-
-      // we iterate through our user identity list and make sure to populate
-      // out NList object correctly.
-      IterateList(&CE->signatureList, struct SignatureNode *, sn)
-      {
-        // if the description is empty we use the mail address instead
-        if(sn->description[0] == '\0')
-          snprintf(sn->description, sizeof(sn->description), "%s %d", tr(MSG_CO_SIGNATURE), numSignatures+1);
-
-        DoMethod(gui->LV_SIGNATURE, MUIM_NList_InsertSingle, sn, MUIV_NList_Insert_Bottom);
-        numSignatures++;
-      }
-
-      // make sure the first entry is selected per default
-      xset(gui->LV_SIGNATURE, MUIA_NList_Quiet, FALSE,
-                              MUIA_NList_Active, MUIV_NList_Active_Top);
-
-      // set the enabled stated of the del button according to the number of available identities
-      set(gui->BT_SIGDEL, MUIA_Disabled, numSignatures < 2);
     }
     break;
 

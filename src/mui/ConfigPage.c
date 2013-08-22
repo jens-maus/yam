@@ -70,6 +70,7 @@ OVERLOAD(OM_NEW)
     case cp_Spam:        imageID = "config_spam_big";       image = CI_SPAMBIG;       title = tr(MSG_CO_SPAMFILTER_TITLE); summary = tr(MSG_CO_SPAMFILTER_SUMMARY); break;
     case cp_Read:        imageID = "config_read_big";       image = CI_READBIG;       title = tr(MSG_CO_READ_TITLE);       summary = tr(MSG_CO_READ_SUMMARY);       break;
     case cp_Write:       imageID = "config_write_big";      image = CI_WRITEBIG;      title = tr(MSG_CO_WRITE_TITLE);      summary = tr(MSG_CO_WRITE_SUMMARY);      break;
+	case cp_Signature:   imageID = "config_signature_big";  image = CI_SIGNATUREBIG;  title = tr(MSG_CO_SIGNATURE_TITLE);  summary = tr(MSG_CO_SIGNATURE_SUMMARY);  break;
     case cp_AddressBook: imageID = "config_abook_big";      image = CI_ABOOKBIG;      title = tr(MSG_CO_ABOOK_TITLE);      summary = tr(MSG_CO_ABOOK_SUMMARY);      break;
     default:             imageID = NULL;                    image = CI_MAX;           title = NULL;                        summary = NULL;                          break;
   }

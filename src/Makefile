@@ -527,6 +527,7 @@ MUIOBJS = \
 	SearchTextWindow.o \
 	ShutdownWindow.o \
 	SignatureChooser.o \
+	SignatureConfigPage.o \
 	SignatureList.o \
 	SignatureTextEdit.o \
 	SpamConfigPage.o \
