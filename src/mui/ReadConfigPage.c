@@ -33,6 +33,7 @@
 #include <proto/muimaster.h>
 
 #include "YAM.h"
+
 #include "mui/ConfigPage.h"
 
 #include "Debug.h"

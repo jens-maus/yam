@@ -1881,6 +1881,7 @@ void CO_GetConfig(void)
     case cp_Identities:
     case cp_Spam:
     case cp_Read:
+    case cp_Write:
     case cp_AddressBook:
     {
       DoMethod(gui->PG_PAGES[G->CO->VisiblePage], MUIM_ConfigPage_GUIToConfig, CE);
@@ -1891,23 +1892,6 @@ void CO_GetConfig(void)
     {
       // bring NList elements and Exec list elements into sync
       SortNListToExecList(gui->LV_RULES, &CE->filterList);
-    }
-    break;
-
-    case cp_Write:
-    {
-      GetMUIString(CE->NewIntro, gui->ST_HELLOTEXT, sizeof(CE->NewIntro));
-      GetMUIString(CE->Greetings, gui->ST_BYETEXT, sizeof(CE->Greetings));
-      CE->WarnSubject       = GetMUICheck  (gui->CH_WARNSUBJECT);
-      CE->EdWrapCol         = GetMUIInteger(gui->ST_EDWRAP);
-      CE->EdWrapMode        = GetMUICycle  (gui->CY_EDWRAP);
-      CE->LaunchAlways      = GetMUICheck  (gui->CH_LAUNCH);
-      CE->EmailCache        = GetMUINumer  (gui->NB_EMAILCACHE);
-      CE->AutoSave          = GetMUINumer  (gui->NB_AUTOSAVE)*60; // in seconds
-      GetMUIText(CE->DefaultWriteCodeset, gui->TX_DEFCODESET_WRITE, sizeof(CE->DefaultWriteCodeset));
-      CE->UseFixedFontWrite = GetMUICheck(gui->CH_FIXEDFONT_WRITE);
-      CE->UseTextStylesWrite = GetMUICheck(gui->CH_TEXTSTYLES_WRITE);
-      CE->UseTextColorsWrite = GetMUICheck(gui->CH_TEXTCOLORS_WRITE);
     }
     break;
 
@@ -2142,6 +2126,7 @@ void CO_SetConfig(void)
     case cp_Identities:
     case cp_Spam:
     case cp_Read:
+    case cp_Write:
     case cp_AddressBook:
     {
       DoMethod(gui->PG_PAGES[G->CO->VisiblePage], MUIM_ConfigPage_ConfigToGUI, CE);
@@ -2165,24 +2150,6 @@ void CO_SetConfig(void)
 
       // make sure the first entry is selected per default
       set(gui->LV_RULES, MUIA_NList_Active, MUIV_NList_Active_Top);
-    }
-    break;
-
-    case cp_Write:
-    {
-      setstring(gui->ST_HELLOTEXT, CE->NewIntro);
-      setstring(gui->ST_BYETEXT, CE->Greetings);
-      setcheckmark(gui->CH_WARNSUBJECT, CE->WarnSubject);
-      xset(gui->ST_EDWRAP, MUIA_String_Integer, CE->EdWrapCol,
-                           MUIA_Disabled, CE->EdWrapMode == EWM_OFF);
-      setcycle(gui->CY_EDWRAP, CE->EdWrapMode);
-      setcheckmark(gui->CH_LAUNCH, CE->LaunchAlways);
-      setslider(gui->NB_EMAILCACHE, CE->EmailCache);
-      setslider(gui->NB_AUTOSAVE, CE->AutoSave/60);
-      nnset(gui->TX_DEFCODESET_WRITE,  MUIA_Text_Contents, CE->DefaultWriteCodeset);
-      setcheckmark(gui->CH_FIXEDFONT_WRITE, CE->UseFixedFontWrite);
-      setcheckmark(gui->CH_TEXTSTYLES_WRITE, CE->UseTextStylesWrite);
-      setcheckmark(gui->CH_TEXTCOLORS_WRITE, CE->UseTextColorsWrite);
     }
     break;
 

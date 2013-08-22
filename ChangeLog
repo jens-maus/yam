@@ -13,6 +13,8 @@ $URL$
     "Identities" page.
   * YAM_CO.c, mui/SpamConfigPage.c: use the new base class for the "Spam" page.
   * YAM_CO.c, mui/ReadConfigPage.c: use the new base class for the "Read" page.
+  * YAM_CO.c, mui/WriteConfigPage.c: use the new base class for the "Write"
+    page.
 
 2013-08-21 Jens Langner <Jens.Langner@light-speed.de>
 

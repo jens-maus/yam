@@ -88,6 +88,7 @@
 #include "mui/SignatureTextEdit.h"
 #include "mui/SpamConfigPage.h"
 #include "mui/TCPIPConfigPage.h"
+#include "mui/WriteConfigPage.h"
 #include "mui/WriteWindow.h"
 
 #include "Busy.h"
@@ -2519,7 +2520,7 @@ static struct CO_ClassData *CO_New(void)
                 Child, CO_PageFilters(data),
                 Child, data->GUI.PG_PAGES[cp_Spam]       = SpamConfigPageObject, End,
                 Child, data->GUI.PG_PAGES[cp_Read]       = ReadConfigPageObject, End,
-                Child, CO_PageWrite(data),
+                Child, data->GUI.PG_PAGES[cp_Write]      = WriteConfigPageObject, End,
                 Child, CO_PageReplyForward(data),
                 Child, CO_PageSignature(data),
                 Child, CO_PageSecurity(data),

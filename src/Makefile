@@ -548,6 +548,7 @@ MUIOBJS = \
 	UserList.o \
 	UserPortraitGroup.o \
 	WriteAttachmentList.o \
+	WriteConfigPage.o \
 	WriteWindow.o \
 	WriteWindowToolbar.o \
 	YAMApplication.o
