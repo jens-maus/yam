@@ -629,13 +629,9 @@ extern struct Config *CE;
 
 // external hooks
 extern struct Hook CO_PlaySoundHook;
+extern struct Hook PO_Text2ListHook;
+extern struct Hook PO_List2TextHook;
 extern struct Hook CO_SwitchSpamFilterHook;
-extern struct Hook CO_GetPOP3EntryHook;
-extern struct Hook CO_PutPOP3EntryHook;
-extern struct Hook CO_GetSMTPEntryHook;
-extern struct Hook CO_PutSMTPEntryHook;
-extern struct Hook CO_GetIdentityEntryHook;
-extern struct Hook CO_PutIdentityEntryHook;
 extern struct Hook CO_GetSignatureEntryHook;
 extern struct Hook CO_PutSignatureEntryHook;
 extern struct Hook CO_OpenHook;

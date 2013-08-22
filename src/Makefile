@@ -495,6 +495,7 @@ MUIOBJS = \
 	FolderRequestWindow.o \
 	GenericRequestWindow.o \
 	HeaderList.o \
+	IdentitiesConfigPage.o \
 	IdentityChooser.o \
 	IdentityList.o \
 	ImageArea.o \

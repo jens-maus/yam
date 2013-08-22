@@ -72,6 +72,7 @@
 #include "mui/AddressBookConfigPage.h"
 #include "mui/ConfigPageList.h"
 #include "mui/FirstStepsConfigPage.h"
+#include "mui/IdentitiesConfigPage.h"
 #include "mui/InfoBar.h"
 #include "mui/MainFolderListtree.h"
 #include "mui/MainMailListGroup.h"
@@ -503,191 +504,6 @@ HOOKPROTONHNO(CO_RemoteToggleFunc, void, int *arg)
   SetActiveFilterData();
 }
 MakeHook(CO_RemoteToggleHook,CO_RemoteToggleFunc);
-
-///
-
-/**** User Identities ****/
-/// CO_GetIdentityEntry
-//  Fills form with data from selected list entry
-HOOKPROTONHNONP(CO_GetIdentityEntry, void)
-{
-  struct UserIdentityNode *uin = NULL;
-  struct CO_GUIData *gui = &G->CO->GUI;
-  LONG pos = MUIV_NList_GetPos_Start;
-
-  ENTER();
-
-  // get the currently selected user identity
-  DoMethod(gui->LV_IDENTITY, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &uin);
-
-  // make sure to disable GUI elements
-  if(uin == NULL || xget(gui->LV_IDENTITY, MUIA_NList_Entries) < 2)
-    set(gui->BT_IDEL, MUIA_Disabled, TRUE);
-  else
-    set(gui->BT_IDEL, MUIA_Disabled, FALSE);
-
-  if(uin != NULL)
-    DoMethod(gui->LV_IDENTITY, MUIM_NList_GetPos, uin, &pos);
-  else
-    pos = 0;
-
-  set(gui->BT_IDENTITYUP, MUIA_Disabled, pos == 0);
-  set(gui->BT_IDENTITYDOWN, MUIA_Disabled, pos == (LONG)xget(gui->LV_IDENTITY, MUIA_NList_Entries) - 1);
-
-  if(uin != NULL)
-  {
-    // all notifies here are nnset() notifies so that we don't trigger any additional
-    // notify or otherwise we would run into problems.
-
-    nnset(gui->CH_IDENTITY_ENABLED,           MUIA_Selected,        uin->active);
-    nnset(gui->ST_IDENTITY_DESCRIPTION,       MUIA_String_Contents, uin->description);
-    nnset(gui->ST_IDENTITY_REALNAME,          MUIA_String_Contents, uin->realname);
-    nnset(gui->ST_IDENTITY_EMAIL,             MUIA_String_Contents, uin->address);
-    nnset(gui->ST_IDENTITY_ORGANIZATION,      MUIA_String_Contents, uin->organization);
-    nnset(gui->ST_IDENTITY_CC,                MUIA_String_Contents, uin->mailCC);
-    nnset(gui->ST_IDENTITY_BCC,               MUIA_String_Contents, uin->mailBCC);
-    nnset(gui->ST_IDENTITY_REPLYTO,           MUIA_String_Contents, uin->mailReplyTo);
-    nnset(gui->ST_IDENTITY_EXTRAHEADER,       MUIA_String_Contents, uin->extraHeaders);
-    nnset(gui->ST_IDENTITY_PHOTOURL,          MUIA_String_Contents, uin->photoURL);
-    nnset(gui->CH_IDENTITY_SENTFOLDER,        MUIA_Selected,        uin->saveSentMail);
-    nnset(gui->TX_IDENTITY_SENTFOLDER,        MUIA_Text_Contents,   uin->sentFolder);
-    nnset(gui->CH_IDENTITY_QUOTEMAILS,        MUIA_Selected,        uin->quoteMails);
-    nnset(gui->CY_IDENTITY_QUOTEPOS,          MUIA_Cycle_Active,    uin->quotePosition);
-    nnset(gui->CY_IDENTITY_SIGPOS,            MUIA_Cycle_Active,    uin->signaturePosition);
-    nnset(gui->CH_IDENTITY_SIGREPLY,          MUIA_Selected,        uin->sigReply);
-    nnset(gui->CH_IDENTITY_SIGFORWARD,        MUIA_Selected,        uin->sigForwarding);
-    nnset(gui->CH_IDENTITY_ADDINFO,           MUIA_Selected,        uin->addPersonalInfo);
-    nnset(gui->CH_IDENTITY_REQUESTMDN,        MUIA_Selected,        uin->requestMDN);
-    nnset(gui->CH_IDENTITY_USEPGP,            MUIA_Selected,        uin->usePGP);
-    nnset(gui->ST_IDENTITY_PGPID,             MUIA_String_Contents, uin->pgpKeyID);
-    nnset(gui->ST_IDENTITY_PGPURL,            MUIA_String_Contents, uin->pgpKeyURL);
-    nnset(gui->CH_IDENTITY_PGPSIGN_UNENC,     MUIA_Selected,        uin->pgpSignUnencrypted);
-    nnset(gui->CH_IDENTITY_PGPSIGN_ENC,       MUIA_Selected,        uin->pgpSignEncrypted);
-    nnset(gui->CH_IDENTITY_PGPENC_ALL,        MUIA_Selected,        uin->pgpEncryptAll);
-    nnset(gui->CH_IDENTITY_PGPENC_SELF,       MUIA_Selected,        uin->pgpSelfEncrypt);
-
-    // we have to set the correct mail server in the GUI so we browse through
-    // the SMTP server list and match the ids
-    if(uin->smtpServer != NULL)
-    {
-      struct MailServerNode *msn;
-
-      // we match the ids because the pointers may be different
-      if((msn = FindMailServer(&CE->smtpServerList, uin->smtpServer->id)) != NULL)
-        nnset(gui->CY_IDENTITY_MAILSERVER, MUIA_MailServerChooser_MailServer, msn);
-    }
-
-    // we have to set the correct signature in the GUI so we browse through
-    // the signature list and match the ids
-    if(uin->signature != NULL)
-    {
-      struct SignatureNode *sn;
-
-      // we match the ids because the pointers may be different
-      if((sn = FindSignatureByID(&CE->signatureList, uin->signature->id)) != NULL)
-        nnset(gui->CY_IDENTITY_SIGNATURE, MUIA_SignatureChooser_Signature, sn);
-    }
-    else
-      nnset(gui->CY_IDENTITY_SIGNATURE, MUIA_SignatureChooser_Signature, NULL);
-  }
-
-  set(gui->CY_IDENTITY_QUOTEPOS, MUIA_Disabled, uin == NULL || uin->quoteMails == FALSE);
-  set(gui->CY_IDENTITY_SIGPOS, MUIA_Disabled, uin == NULL || uin->quotePosition == QPOS_BELOW || uin->quoteMails == FALSE);
-
-  DoMethod(gui->WI, MUIM_MultiSet, MUIA_Disabled, uin == NULL || uin->usePGP == FALSE,
-    gui->ST_IDENTITY_PGPID,
-    gui->ST_IDENTITY_PGPURL,
-    gui->CH_IDENTITY_PGPSIGN_UNENC,
-    gui->CH_IDENTITY_PGPSIGN_ENC,
-    gui->CH_IDENTITY_PGPENC_ALL,
-    gui->CH_IDENTITY_PGPENC_SELF,
-    NULL);
-
-  DoMethod(gui->WI, MUIM_MultiSet, MUIA_Disabled, uin == NULL || uin->saveSentMail == FALSE,
-    gui->PO_IDENTITY_SENTFOLDER,
-    NULL);
-
-  LEAVE();
-}
-MakeHook(CO_GetIdentityEntryHook, CO_GetIdentityEntry);
-
-///
-/// CO_PutIdentityEntry
-//  Fills form data into selected list entry
-HOOKPROTONHNONP(CO_PutIdentityEntry, void)
-{
-  struct CO_GUIData *gui = &G->CO->GUI;
-  int p;
-
-  ENTER();
-
-  p = xget(gui->LV_IDENTITY, MUIA_NList_Active);
-  if(p != MUIV_NList_Active_Off)
-  {
-    struct UserIdentityNode *uin = NULL;
-
-    DoMethod(gui->LV_IDENTITY, MUIM_NList_GetEntry, p, &uin);
-    if(uin != NULL)
-    {
-      uin->active = GetMUICheck(gui->CH_IDENTITY_ENABLED);
-      GetMUIString(uin->description,  gui->ST_IDENTITY_DESCRIPTION, sizeof(uin->description));
-      GetMUIString(uin->realname,     gui->ST_IDENTITY_REALNAME,    sizeof(uin->realname));
-      GetMUIString(uin->address,      gui->ST_IDENTITY_EMAIL,       sizeof(uin->address));
-      GetMUIString(uin->organization, gui->ST_IDENTITY_ORGANIZATION,sizeof(uin->organization));
-      uin->smtpServer = (struct MailServerNode *)xget(gui->CY_IDENTITY_MAILSERVER, MUIA_MailServerChooser_MailServer);
-      uin->signature = (struct SignatureNode *)xget(gui->CY_IDENTITY_SIGNATURE, MUIA_SignatureChooser_Signature);
-      GetMUIString(uin->mailCC,       gui->ST_IDENTITY_CC,          sizeof(uin->mailCC));
-      GetMUIString(uin->mailBCC,      gui->ST_IDENTITY_BCC,         sizeof(uin->mailBCC));
-      GetMUIString(uin->mailReplyTo,  gui->ST_IDENTITY_REPLYTO,     sizeof(uin->mailReplyTo));
-      GetMUIString(uin->extraHeaders, gui->ST_IDENTITY_EXTRAHEADER, sizeof(uin->extraHeaders));
-      GetMUIString(uin->photoURL,     gui->ST_IDENTITY_PHOTOURL,    sizeof(uin->photoURL));
-      GetMUIText(uin->sentFolder,     gui->TX_IDENTITY_SENTFOLDER,  sizeof(uin->sentFolder));
-      uin->saveSentMail = GetMUICheck(gui->CH_IDENTITY_SENTFOLDER);
-      uin->quoteMails = GetMUICheck(gui->CH_IDENTITY_QUOTEMAILS);
-      uin->quotePosition = GetMUICycle(gui->CY_IDENTITY_QUOTEPOS);
-      uin->signaturePosition = GetMUICycle(gui->CY_IDENTITY_SIGPOS);
-      uin->sigReply = GetMUICheck(gui->CH_IDENTITY_SIGREPLY);
-      uin->sigForwarding = GetMUICheck(gui->CH_IDENTITY_SIGFORWARD);
-      uin->addPersonalInfo = GetMUICheck(gui->CH_IDENTITY_ADDINFO);
-      uin->requestMDN = GetMUICheck(gui->CH_IDENTITY_REQUESTMDN);
-
-      uin->usePGP = GetMUICheck(gui->CH_IDENTITY_USEPGP);
-      GetMUIString(uin->pgpKeyID,     gui->ST_IDENTITY_PGPID,       sizeof(uin->pgpKeyID));
-      GetMUIString(uin->pgpKeyURL,    gui->ST_IDENTITY_PGPURL,      sizeof(uin->pgpKeyURL));
-      uin->pgpSignUnencrypted = GetMUICheck(gui->CH_IDENTITY_PGPSIGN_UNENC);
-      uin->pgpSignEncrypted = GetMUICheck(gui->CH_IDENTITY_PGPSIGN_ENC);
-      uin->pgpEncryptAll = GetMUICheck(gui->CH_IDENTITY_PGPENC_ALL);
-      uin->pgpSelfEncrypt = GetMUICheck(gui->CH_IDENTITY_PGPENC_SELF);
-
-      set(gui->CY_IDENTITY_QUOTEPOS, MUIA_Disabled, uin->quoteMails == FALSE);
-      set(gui->CY_IDENTITY_SIGPOS, MUIA_Disabled, uin->quotePosition == QPOS_BELOW || uin->quoteMails == FALSE);
-
-      DoMethod(gui->WI, MUIM_MultiSet, MUIA_Disabled, uin->usePGP == FALSE,
-        gui->ST_IDENTITY_PGPID,
-        gui->ST_IDENTITY_PGPURL,
-        gui->CH_IDENTITY_PGPSIGN_UNENC,
-        gui->CH_IDENTITY_PGPSIGN_ENC,
-        gui->CH_IDENTITY_PGPENC_ALL,
-        gui->CH_IDENTITY_PGPENC_SELF,
-        NULL);
-
-      DoMethod(gui->WI, MUIM_MultiSet, MUIA_Disabled, uin->saveSentMail == FALSE,
-        gui->PO_IDENTITY_SENTFOLDER,
-        NULL);
-
-      // if the user hasn't yet entered an own account name or the default
-      // account name is still present we go and set an automatic generated one
-      if(uin->description[0] == '\0' || strcmp(uin->description, tr(MSG_NewEntry)) == 0)
-        strlcpy(uin->description, uin->address, sizeof(uin->description));
-
-      // redraw the list
-      DoMethod(gui->LV_IDENTITY, MUIM_NList_Redraw, p);
-    }
-  }
-
-  LEAVE();
-}
-MakeHook(CO_PutIdentityEntryHook, CO_PutIdentityEntry);
 
 ///
 
@@ -2695,9 +2511,9 @@ static struct CO_ClassData *CO_New(void)
              Child, data->GUI.GR_PAGE = PageGroup,
                 NoFrame,
                 MUIA_Group_ActivePage, 0,
-                Child, data->GUI.PG_PAGES[cp_FirstSteps]  = FirstStepsConfigPageObject, End,
-                Child, data->GUI.PG_PAGES[cp_TCPIP]       = TCPIPConfigPageObject, End,
-                Child, CO_PageIdentities(data),
+                Child, data->GUI.PG_PAGES[cp_FirstSteps] = FirstStepsConfigPageObject, End,
+                Child, data->GUI.PG_PAGES[cp_TCPIP]      = TCPIPConfigPageObject, End,
+                Child, data->GUI.PG_PAGES[cp_Identities] = IdentitiesConfigPageObject, End,
                 Child, CO_PageFilters(data),
                 Child, CO_PageSpam(data),
                 Child, CO_PageRead(data),
@@ -2707,7 +2523,7 @@ static struct CO_ClassData *CO_New(void)
                 Child, CO_PageSecurity(data),
                 Child, CO_PageStartupQuit(data),
                 Child, CO_PageMIME(data),
-                Child, data->GUI.PG_PAGES[cp_AddressBook]  = AddressBookConfigPageObject, End,
+                Child, data->GUI.PG_PAGES[cp_AddressBook] = AddressBookConfigPageObject, End,
                 Child, CO_PageScripts(data),
                 Child, CO_PageMixed(data),
                 Child, CO_PageLookFeel(data),

@@ -9,6 +9,8 @@ $URL$
 
   * YAM_CO.c, mui/AddressBookConfigPage.c: use the new base class for the
     "Address book" page.
+  * YAM_CO.c, mui/AddressBookConfigPage.c: use the new base class for the
+    "Identities" page.
 
 2013-08-21 Jens Langner <Jens.Langner@light-speed.de>
 

@@ -1878,16 +1878,10 @@ void CO_GetConfig(void)
 
     case cp_FirstSteps:
     case cp_TCPIP:
+    case cp_Identities:
     case cp_AddressBook:
     {
       DoMethod(gui->PG_PAGES[G->CO->VisiblePage], MUIM_ConfigPage_GUIToConfig, CE);
-    }
-    break;
-
-    case cp_Identities:
-    {
-      // bring NList elements and Exec list elements into sync
-      SortNListToExecList(gui->LV_IDENTITY, &CE->userIdentityList);
     }
     break;
 
@@ -2443,39 +2437,10 @@ void CO_SetConfig(void)
 
     case cp_FirstSteps:
     case cp_TCPIP:
+    case cp_Identities:
     case cp_AddressBook:
     {
       DoMethod(gui->PG_PAGES[G->CO->VisiblePage], MUIM_ConfigPage_ConfigToGUI, CE);
-    }
-    break;
-
-    case cp_Identities:
-    {
-      int numIdentities = 0;
-      struct UserIdentityNode *uin;
-
-      // clear the lists first
-      set(gui->LV_IDENTITY, MUIA_NList_Quiet, TRUE);
-      DoMethod(gui->LV_IDENTITY, MUIM_NList_Clear);
-
-      // we iterate through our user identity list and make sure to populate
-      // out NList object correctly.
-      IterateList(&CE->userIdentityList, struct UserIdentityNode *, uin)
-      {
-        // if the description is empty we use the mail address instead
-        if(uin->description[0] == '\0')
-          strlcpy(uin->description, uin->address, sizeof(uin->description));
-
-        DoMethod(gui->LV_IDENTITY, MUIM_NList_InsertSingle, uin, MUIV_NList_Insert_Bottom);
-        numIdentities++;
-      }
-
-      // make sure the first entry is selected per default
-      xset(gui->LV_IDENTITY, MUIA_NList_Quiet, FALSE,
-                             MUIA_NList_Active, MUIV_NList_Active_Top);
-
-      // set the enabled stated of the del button according to the number of available identities
-      set(gui->BT_IDEL, MUIA_Disabled, numIdentities < 2);
     }
     break;
 
