@@ -80,6 +80,7 @@
 #include "mui/MainWindowToolbar.h"
 #include "mui/MailServerChooser.h"
 #include "mui/ObjectList.h"
+#include "mui/ReadConfigPage.h"
 #include "mui/ReadMailGroup.h"
 #include "mui/ReadWindow.h"
 #include "mui/SearchControlGroup.h"
@@ -2517,7 +2518,7 @@ static struct CO_ClassData *CO_New(void)
                 Child, data->GUI.PG_PAGES[cp_Identities] = IdentitiesConfigPageObject, End,
                 Child, CO_PageFilters(data),
                 Child, data->GUI.PG_PAGES[cp_Spam]       = SpamConfigPageObject, End,
-                Child, CO_PageRead(data),
+                Child, data->GUI.PG_PAGES[cp_Read]       = ReadConfigPageObject, End,
                 Child, CO_PageWrite(data),
                 Child, CO_PageReplyForward(data),
                 Child, CO_PageSignature(data),

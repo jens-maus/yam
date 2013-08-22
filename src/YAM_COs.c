@@ -1880,6 +1880,7 @@ void CO_GetConfig(void)
     case cp_TCPIP:
     case cp_Identities:
     case cp_Spam:
+    case cp_Read:
     case cp_AddressBook:
     {
       DoMethod(gui->PG_PAGES[G->CO->VisiblePage], MUIM_ConfigPage_GUIToConfig, CE);
@@ -1890,44 +1891,6 @@ void CO_GetConfig(void)
     {
       // bring NList elements and Exec list elements into sync
       SortNListToExecList(gui->LV_RULES, &CE->filterList);
-    }
-    break;
-
-    case cp_Read:
-    {
-      CE->ShowHeader        = GetMUICycle(gui->CY_HEADER);
-      GetMUIString(CE->ShortHeaders, gui->ST_HEADERS, sizeof(CE->ShortHeaders));
-      CE->ShowSenderInfo    = GetMUICycle(gui->CY_SENDERINFO);
-      CE->SigSepLine        = GetMUICycle(gui->CY_SIGSEPLINE);
-      memcpy(&CE->ColorSignature, (struct MUI_PenSpec*)xget(gui->CA_COLSIG,   MUIA_Pendisplay_Spec), sizeof(struct MUI_PenSpec));
-      memcpy(&CE->ColoredText,    (struct MUI_PenSpec*)xget(gui->CA_COLTEXT,  MUIA_Pendisplay_Spec), sizeof(struct MUI_PenSpec));
-      memcpy(&CE->Color1stLevel,  (struct MUI_PenSpec*)xget(gui->CA_COL1QUOT, MUIA_Pendisplay_Spec), sizeof(struct MUI_PenSpec));
-      memcpy(&CE->Color2ndLevel,  (struct MUI_PenSpec*)xget(gui->CA_COL2QUOT, MUIA_Pendisplay_Spec), sizeof(struct MUI_PenSpec));
-      memcpy(&CE->Color3rdLevel,  (struct MUI_PenSpec*)xget(gui->CA_COL3QUOT, MUIA_Pendisplay_Spec), sizeof(struct MUI_PenSpec));
-      memcpy(&CE->Color4thLevel,  (struct MUI_PenSpec*)xget(gui->CA_COL4QUOT, MUIA_Pendisplay_Spec), sizeof(struct MUI_PenSpec));
-      memcpy(&CE->ColorURL,       (struct MUI_PenSpec*)xget(gui->CA_COLURL,   MUIA_Pendisplay_Spec), sizeof(struct MUI_PenSpec));
-      CE->DisplayAllTexts   = GetMUICheck(gui->CH_ALLTEXTS);
-      CE->FixedFontEdit     = GetMUICheck(gui->CH_FIXFEDIT);
-      CE->WrapHeader        = GetMUICheck(gui->CH_WRAPHEAD);
-      CE->UseTextStylesRead = GetMUICheck(gui->CH_TEXTSTYLES_READ);
-      CE->UseTextColorsRead = GetMUICheck(gui->CH_TEXTCOLORS_READ);
-      CE->DisplayAllAltPart = GetMUICheck(gui->CH_SHOWALTPARTS);
-
-      // get MDN options from GUI
-      CE->MDNEnabled      = GetMUICheck(gui->CH_MDN_ALLOW) && !GetMUICheck(gui->CH_MDN_NEVER);
-      CE->MDN_NoRecipient = GetMUICycle(gui->CY_MDN_NORECIPIENT);
-      CE->MDN_NoDomain    = GetMUICycle(gui->CY_MDN_NODOMAIN);
-      CE->MDN_OnDelete    = GetMUICycle(gui->CY_MDN_DELETE);
-      CE->MDN_Other       = GetMUICycle(gui->CY_MDN_OTHER);
-
-      CE->MultipleReadWindows = GetMUICheck(gui->CH_MULTIWIN);
-      CE->StatusChangeDelayOn = GetMUICheck(gui->CH_DELAYEDSTATUS);
-      CE->StatusChangeDelay   = GetMUINumer(gui->NB_DELAYEDSTATUS)*1000;
-      CE->ConvertHTML         = GetMUICheck(gui->CH_CONVERTHTML);
-
-      CE->DetectCyrillic    = GetMUICheck(gui->CH_DETECTCYRILLIC);
-      CE->MapForeignChars   = GetMUICheck(gui->CH_MAPFOREIGNCHARS);
-      CE->GlobalMailThreads = GetMUICheck(gui->CH_GLOBALMAILTHREADS);
     }
     break;
 
@@ -2178,6 +2141,7 @@ void CO_SetConfig(void)
     case cp_TCPIP:
     case cp_Identities:
     case cp_Spam:
+    case cp_Read:
     case cp_AddressBook:
     {
       DoMethod(gui->PG_PAGES[G->CO->VisiblePage], MUIM_ConfigPage_ConfigToGUI, CE);
@@ -2201,62 +2165,6 @@ void CO_SetConfig(void)
 
       // make sure the first entry is selected per default
       set(gui->LV_RULES, MUIA_NList_Active, MUIV_NList_Active_Top);
-    }
-    break;
-
-    case cp_Read:
-    {
-      setcycle(gui->CY_HEADER, CE->ShowHeader);
-      setstring(gui->ST_HEADERS, CE->ShortHeaders);
-      setcycle(gui->CY_SENDERINFO, CE->ShowSenderInfo);
-      setcycle(gui->CY_SIGSEPLINE, CE->SigSepLine);
-      set(gui->CA_COLSIG,   MUIA_Pendisplay_Spec, &CE->ColorSignature);
-      set(gui->CA_COLTEXT,  MUIA_Pendisplay_Spec, &CE->ColoredText);
-      set(gui->CA_COL1QUOT, MUIA_Pendisplay_Spec, &CE->Color1stLevel);
-      set(gui->CA_COL2QUOT, MUIA_Pendisplay_Spec, &CE->Color2ndLevel);
-      set(gui->CA_COL3QUOT, MUIA_Pendisplay_Spec, &CE->Color3rdLevel);
-      set(gui->CA_COL4QUOT, MUIA_Pendisplay_Spec, &CE->Color4thLevel);
-      set(gui->CA_COLURL,   MUIA_Pendisplay_Spec, &CE->ColorURL);
-      setcheckmark(gui->CH_ALLTEXTS, CE->DisplayAllTexts);
-      setcheckmark(gui->CH_FIXFEDIT, CE->FixedFontEdit);
-      setcheckmark(gui->CH_WRAPHEAD, CE->WrapHeader);
-      setcheckmark(gui->CH_TEXTSTYLES_READ, CE->UseTextStylesRead);
-      setcheckmark(gui->CH_TEXTCOLORS_READ, CE->UseTextColorsRead);
-
-      // disable all poppen objects according to the UseTextColorsRead setting
-      DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, CE->UseTextColorsRead == FALSE, gui->CA_COLSIG,
-                                                                                     gui->CA_COLTEXT,
-                                                                                     gui->CA_COL1QUOT,
-                                                                                     gui->CA_COL2QUOT,
-                                                                                     gui->CA_COL3QUOT,
-                                                                                     gui->CA_COL4QUOT,
-                                                                                     gui->CA_COLURL,
-                                                                                     NULL);
-
-      setcheckmark(gui->CH_SHOWALTPARTS, CE->DisplayAllAltPart);
-
-      // set the MDN stuff according to other config
-      setcheckmark(gui->CH_MDN_NEVER, CE->MDNEnabled == FALSE);
-      setcheckmark(gui->CH_MDN_ALLOW, CE->MDNEnabled == TRUE);
-      setcycle(gui->CY_MDN_NORECIPIENT, CE->MDN_NoRecipient);
-      setcycle(gui->CY_MDN_NODOMAIN, CE->MDN_NoDomain);
-      setcycle(gui->CY_MDN_DELETE, CE->MDN_OnDelete);
-      setcycle(gui->CY_MDN_OTHER, CE->MDN_Other);
-
-      setcheckmark(gui->CH_MULTIWIN, CE->MultipleReadWindows);
-      setcheckmark(gui->CH_DELAYEDSTATUS, CE->StatusChangeDelayOn);
-
-      xset(gui->NB_DELAYEDSTATUS, MUIA_Numeric_Value, CE->StatusChangeDelay / 1000,
-                                  MUIA_Disabled, CE->StatusChangeDelayOn == FALSE);
-
-      setcheckmark(gui->CH_CONVERTHTML, CE->ConvertHTML);
-
-      set(gui->ST_HEADERS, MUIA_Disabled, CE->ShowHeader == HM_NOHEADER || CE->ShowHeader == HM_FULLHEADER);
-      set(gui->CY_SENDERINFO, MUIA_Disabled, CE->ShowHeader == HM_NOHEADER);
-      set(gui->CH_WRAPHEAD, MUIA_Disabled, CE->ShowHeader == HM_NOHEADER);
-      setcheckmark(gui->CH_DETECTCYRILLIC, CE->DetectCyrillic);
-      setcheckmark(gui->CH_MAPFOREIGNCHARS, CE->MapForeignChars);
-      setcheckmark(gui->CH_GLOBALMAILTHREADS, CE->GlobalMailThreads);
     }
     break;
 

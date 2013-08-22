@@ -515,6 +515,7 @@ MUIOBJS = \
 	PlaceholderPopupList.o \
 	PreselectionWindow.o \
 	QuickSearchBar.o \
+	ReadConfigPage.o \
 	ReadMailGroup.o \
 	ReadWindow.o \
 	ReadWindowStatusBar.o \
