@@ -49,6 +49,7 @@ Object * MakePGPKeyList(Object **st, BOOL secret, const char *label);
 Object * MakeString(int maxlen, const char *label);
 Object * MakeAddressField(Object **string, const char *label, const void *help, int abmode, int winnr, ULONG flags);
 Object * MakeCodesetPop(Object **string, Object **pop);
+Object *MakeVarPop(Object **string, Object **popButton, const int mode, const int size, const char *shortcut);
 char ShortCut(const char *label);
 
 #define GetMUICheck(o)   (BOOL)xget((o), MUIA_Selected)

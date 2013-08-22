@@ -45,11 +45,13 @@
 
 #include "YAM.h"
 #include "YAM_addressbook.h"
+#include "YAM_config.h"
 #include "YAM_error.h"
 #include "YAM_read.h"
 
 #include "mui/CharsetPopupList.h"
 #include "mui/ClassesExtra.h"
+#include "mui/PlaceholderPopupList.h"
 #include "mui/Recipientstring.h"
 
 #include "Locale.h"
@@ -74,12 +76,12 @@ Object *MakeCycle(const char *const *labels, const char *label)
 //  Creates a MUI button
 Object *MakeButton(const char *txt)
 {
-   Object *obj;
+  Object *obj;
 
-   if((obj = MUI_MakeObject(MUIO_Button,(IPTR)txt)) != NULL)
-     set(obj, MUIA_CycleChain, TRUE);
+  if((obj = MUI_MakeObject(MUIO_Button,(IPTR)txt)) != NULL)
+    set(obj, MUIA_CycleChain, TRUE);
 
-   return obj;
+  return obj;
 }
 
 ///
@@ -103,11 +105,11 @@ Object *MakeCheck(const char *label)
 //  Creates a labelled MUI checkmark object
 Object *MakeCheckGroup(Object **check, const char *label)
 {
-   return HGroup,
-            Child, *check = MakeCheck(label),
-            Child, Label1(label),
-            Child, HSpace(0),
-          End;
+  return HGroup,
+           Child, *check = MakeCheck(label),
+           Child, Label1(label),
+           Child, HSpace(0),
+         End;
 }
 
 ///
@@ -491,6 +493,113 @@ Object *MakeCodesetPop(Object **string, Object **pop)
   {
     *string = NULL;
     *pop = NULL;
+  }
+
+  RETURN(po);
+  return po;
+}
+
+///
+/// PO_HandleVarHook
+//  Pastes an entry from variable listview into string gadget
+HOOKPROTONH(PO_HandleVarFunc, void, Object *listview, Object *string)
+{
+  Object *list;
+
+  ENTER();
+
+  if((list = (Object *)xget(listview, MUIA_NListview_NList)) != NULL)
+  {
+    char *var = NULL;
+
+    DoMethod(list, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &var);
+    if(var != NULL)
+    {
+      char addstr[3];
+      char *str = (char *)xget(string, MUIA_String_Contents);
+      LONG pos = xget(string, MUIA_String_BufferPos);
+
+      strlcpy(addstr, var, sizeof(addstr));
+
+      if(str != NULL && str[0] != '\0')
+      {
+        int len = strlen(str)+sizeof(addstr);
+        char *buf;
+
+        if((buf = calloc(1, len)) != NULL)
+        {
+          // append the addstr to the right position
+
+          if(pos > 0)
+            strlcpy(buf, str, MIN(len, pos + 1));
+
+          strlcat(buf, addstr, len);
+
+          if(pos >= 0)
+            strlcat(buf, str + pos, len);
+
+          set(string, MUIA_String_Contents, buf);
+
+          free(buf);
+        }
+      }
+      else
+        set(string, MUIA_String_Contents, addstr);
+    }
+  }
+
+  LEAVE();
+}
+MakeStaticHook(PO_HandleVarHook, PO_HandleVarFunc);
+
+///
+/// PO_HandleScriptsOpenHook
+// Hook which is used when the arexx/dos scripts popup window will
+// be opened and populate the listview.
+HOOKPROTONHNP(PO_HandleScriptsOpenFunc, BOOL, Object *listview)
+{
+  Object *list;
+
+  ENTER();
+
+  if((list = (Object *)xget(listview, MUIA_NListview_NList)) != NULL)
+    DoMethod(list, MUIM_PlaceholderPopupList_SetScriptEntry, xget(G->CO->GUI.LV_REXX, MUIA_NList_Active));
+
+  RETURN(TRUE);
+  return TRUE;
+}
+MakeStaticHook(PO_HandleScriptsOpenHook, PO_HandleScriptsOpenFunc);
+
+///
+/// MakeVarPop
+//  Creates a popup list containing variables and descriptions for phrases etc.
+Object *MakeVarPop(Object **string, Object **popButton, const int mode, const int size, const char *shortcut)
+{
+  Object *list;
+  Object *po;
+
+  ENTER();
+
+  if((po = PopobjectObject,
+
+    MUIA_Popstring_String, *string = MakeString(size, shortcut),
+    MUIA_Popstring_Button, *popButton = PopButton(MUII_PopUp),
+    MUIA_Popobject_ObjStrHook, &PO_HandleVarHook,
+    MUIA_Popobject_WindowHook, &PO_WindowHook,
+    MUIA_Popobject_StrObjHook, (mode == PHM_SCRIPTS) ? &PO_HandleScriptsOpenHook : NULL,
+    MUIA_Popobject_Object, NListviewObject,
+      MUIA_FixHeightTxt, "\n\n\n\n\n\n\n\n",
+      MUIA_NListview_Horiz_ScrollBar, MUIV_NListview_HSB_None,
+      MUIA_NListview_Vert_ScrollBar, MUIV_NListview_VSB_FullAuto,
+      MUIA_NListview_NList, list = PlaceholderPopupListObject,
+        MUIA_PlaceholderPopupList_Mode, mode,
+      End,
+    End,
+
+  End))
+  {
+    DoMethod(list, MUIM_Notify, MUIA_NList_DoubleClick, TRUE, po, 2, MUIM_Popstring_Close, TRUE);
+    DoMethod(*string, MUIM_Notify, MUIA_Disabled, MUIV_EveryTime, po, 3, MUIM_Set, MUIA_Disabled, MUIV_TriggerValue);
   }
 
   RETURN(po);
