@@ -75,10 +75,7 @@ OVERLOAD(OM_NEW)
 
   if((obj = DoSuperNew(cl, obj,
     MUIA_HelpNode, "Configuration#FirstSteps",
-    MUIA_ConfigPage_ImageID, "config_firststep_big",
-    MUIA_ConfigPage_Image, CI_FIRSTSTEPBIG,
-    MUIA_ConfigPage_Title, tr(MSG_CO_FIRSTSTEPS_TITLE),
-    MUIA_ConfigPage_Summary, tr(MSG_CO_FIRSTSTEPS_SUMMARY),
+    MUIA_ConfigPage_Page, cp_FirstSteps,
     MUIA_ConfigPage_Contents, VGroup,
       Child, ColGroup(2), GroupFrameT(tr(MSG_CO_MinConfig)),
 

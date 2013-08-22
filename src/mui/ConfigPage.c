@@ -34,6 +34,9 @@
 
 #include "YAM.h"
 
+#include "Locale.h"
+
+#include "mui/ConfigPageList.h"
 #include "mui/ImageArea.h"
 
 #include "Debug.h"
@@ -49,18 +52,23 @@
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
-  ULONG imageID;
+  enum ConfigPage page;
+  const char *imageID;
   ULONG image;
-  char *title;
-  char *summary;
+  const char *title;
+  const char *summary;
   Object *contents;
 
   ENTER();
 
-  imageID = GetTagData(ATTR(ImageID), (IPTR)0, inittags(msg));
-  image = GetTagData(ATTR(Image), (IPTR)0, inittags(msg));
-  title = (char *)GetTagData(ATTR(Title), (IPTR)NULL, inittags(msg));
-  summary = (char *)GetTagData(ATTR(Summary), (IPTR)NULL, inittags(msg));
+  page = (enum ConfigPage)GetTagData(ATTR(Page), (IPTR)cp_Max, inittags(msg));
+  switch(page)
+  {
+    case cp_FirstSteps: imageID = "config_firststep_big"; image = CI_FIRSTSTEPBIG; title = tr(MSG_CO_FIRSTSTEPS_TITLE); summary = tr(MSG_CO_FIRSTSTEPS_SUMMARY); break;
+    case cp_TCPIP:      imageID = "config_network_big";   image = CI_NETWORKBIG;   title = tr(MSG_CO_TCPIP_TITLE);      summary = tr(MSG_CO_TCPIP_SUMMARY);      break;
+    default:            imageID = NULL;                   image = CI_MAX;          title = NULL;                        summary = NULL;                          break;
+  }
+
   contents = (Object *)GetTagData(ATTR(Contents), (IPTR)NULL, inittags(msg));
 
   if((obj = DoSuperNew(cl, obj,

@@ -197,10 +197,7 @@ OVERLOAD(OM_NEW)
 
   if((obj = DoSuperNew(cl, obj,
     MUIA_HelpNode, "Configuration#TCPIP",
-    MUIA_ConfigPage_ImageID, "config_network_big",
-    MUIA_ConfigPage_Image, CI_NETWORKBIG,
-    MUIA_ConfigPage_Title, tr(MSG_CO_TCPIP_TITLE),
-    MUIA_ConfigPage_Summary, tr(MSG_CO_TCPIP_SUMMARY),
+    MUIA_ConfigPage_Page, cp_TCPIP,
     MUIA_ConfigPage_UseScrollgroup, FALSE,
     MUIA_ConfigPage_Contents, RegisterGroup(rtitles),
       MUIA_CycleChain, TRUE,
