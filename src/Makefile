@@ -533,6 +533,7 @@ MUIOBJS = \
 	SignatureTextEdit.o \
 	SpamConfigPage.o \
 	Splashwindow.o \
+	StartupQuitConfigPage.o \
 	StringRequestWindow.o \
 	TCPIPConfigPage.o \
 	ThemeList.o \

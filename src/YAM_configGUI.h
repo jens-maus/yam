@@ -35,7 +35,6 @@ struct CO_ClassData;
 
 Object *CO_PageFilters(struct CO_ClassData *data);
 Object *CO_PageReplyForward(struct CO_ClassData *data);
-Object *CO_PageStartupQuit(struct CO_ClassData *data);
 Object *CO_PageMIME(struct CO_ClassData *data);
 Object *CO_PageScripts(struct CO_ClassData *data);
 Object *CO_PageMixed(struct CO_ClassData *data);

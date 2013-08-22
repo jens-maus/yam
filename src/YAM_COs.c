@@ -1884,6 +1884,7 @@ void CO_GetConfig(void)
     case cp_Write:
     case cp_Signature:
     case cp_Security:
+    case cp_StartupQuit:
     case cp_AddressBook:
     {
       DoMethod(gui->PG_PAGES[G->CO->VisiblePage], MUIM_ConfigPage_GUIToConfig, CE);
@@ -1915,20 +1916,6 @@ void CO_GetConfig(void)
       CE->CompareAddress    = GetMUICheck  (gui->CH_COMPADDR);
       CE->StripSignature    = GetMUICheck  (gui->CH_STRIPSIG);
       CE->ForwardMode = GetMUICycle(gui->CY_FORWARDMODE);
-    }
-    break;
-
-    case cp_StartupQuit:
-    {
-      CE->SendOnStartup     = GetMUICheck(gui->CH_SENDSTART);
-      CE->CleanupOnStartup  = GetMUICheck(gui->CH_DELETESTART);
-      CE->RemoveOnStartup   = GetMUICheck(gui->CH_REMOVESTART);
-      CE->LoadAllFolders    = GetMUICheck(gui->CH_LOADALL);
-      CE->UpdateNewMail     = GetMUICheck(gui->CH_MARKNEW);
-      CE->CheckBirthdates   = GetMUICheck(gui->CH_CHECKBD);
-      CE->SendOnQuit        = GetMUICheck(gui->CH_SENDQUIT);
-      CE->CleanupOnQuit     = GetMUICheck(gui->CH_DELETEQUIT);
-      CE->RemoveOnQuit      = GetMUICheck(gui->CH_REMOVEQUIT);
     }
     break;
 
@@ -2092,6 +2079,7 @@ void CO_SetConfig(void)
     case cp_Write:
     case cp_Signature:
     case cp_Security:
+    case cp_StartupQuit:
     case cp_AddressBook:
     {
       DoMethod(gui->PG_PAGES[G->CO->VisiblePage], MUIM_ConfigPage_ConfigToGUI, CE);
@@ -2136,20 +2124,6 @@ void CO_SetConfig(void)
       setcheckmark(gui->CH_COMPADDR, CE->CompareAddress);
       setcheckmark(gui->CH_STRIPSIG, CE->StripSignature);
       setcycle(gui->CY_FORWARDMODE, CE->ForwardMode);
-    }
-    break;
-
-    case cp_StartupQuit:
-    {
-      setcheckmark(gui->CH_SENDSTART  ,CE->SendOnStartup);
-      setcheckmark(gui->CH_DELETESTART,CE->CleanupOnStartup);
-      setcheckmark(gui->CH_REMOVESTART,CE->RemoveOnStartup);
-      setcheckmark(gui->CH_LOADALL    ,CE->LoadAllFolders);
-      setcheckmark(gui->CH_MARKNEW    ,CE->UpdateNewMail);
-      setcheckmark(gui->CH_CHECKBD    ,CE->CheckBirthdates);
-      setcheckmark(gui->CH_SENDQUIT   ,CE->SendOnQuit);
-      setcheckmark(gui->CH_DELETEQUIT ,CE->CleanupOnQuit);
-      setcheckmark(gui->CH_REMOVEQUIT ,CE->RemoveOnQuit);
     }
     break;
 

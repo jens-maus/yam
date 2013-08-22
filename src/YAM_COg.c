@@ -1608,58 +1608,6 @@ Object *CO_PageReplyForward(struct CO_ClassData *data)
 }
 
 ///
-/// CO_PageStartupQuit
-Object *CO_PageStartupQuit(struct CO_ClassData *data)
-{
-  Object *grp;
-
-  ENTER();
-
-  if((grp = VGroup,
-    MUIA_HelpNode, "Configuration#StartQuit",
-
-    ConfigPageHeaderObject("config_start_big", G->theme.configImages[CI_STARTBIG], tr(MSG_CO_STARTUP_TITLE), tr(MSG_CO_STARTUP_SUMMARY)),
-
-     Child, ScrollgroupObject,
-       MUIA_Scrollgroup_FreeHoriz, FALSE,
-       MUIA_Scrollgroup_AutoBars, TRUE,
-       MUIA_Scrollgroup_Contents, VGroupV,
-
-        Child, VGroup, GroupFrameT(tr(MSG_CO_OnStartup)),
-          Child, MakeCheckGroup(&data->GUI.CH_LOADALL, tr(MSG_CO_LoadAll)),
-          Child, MakeCheckGroup(&data->GUI.CH_MARKNEW, tr(MSG_CO_MarkNew)),
-          Child, MakeCheckGroup(&data->GUI.CH_DELETESTART, tr(MSG_CO_DeleteOld)),
-          Child, MakeCheckGroup(&data->GUI.CH_REMOVESTART, tr(MSG_CO_RemoveDel)),
-          Child, MakeCheckGroup(&data->GUI.CH_CHECKBD, tr(MSG_CO_CheckDOB)),
-          Child, MakeCheckGroup(&data->GUI.CH_SENDSTART, tr(MSG_CO_SendStart)),
-        End,
-        Child, VGroup, GroupFrameT(tr(MSG_CO_OnTermination)),
-          Child, MakeCheckGroup(&data->GUI.CH_SENDQUIT, tr(MSG_CO_SendStart)),
-          Child, MakeCheckGroup(&data->GUI.CH_DELETEQUIT, tr(MSG_CO_DeleteOld)),
-          Child, MakeCheckGroup(&data->GUI.CH_REMOVEQUIT, tr(MSG_CO_RemoveDel)),
-        End,
-        Child, HVSpace,
-
-      End,
-    End,
-  End))
-  {
-    SetHelp(data->GUI.CH_LOADALL,     MSG_HELP_CO_CH_LOADALL  );
-    SetHelp(data->GUI.CH_MARKNEW,     MSG_HELP_CO_CH_MARKNEW  );
-    SetHelp(data->GUI.CH_DELETESTART, MSG_HELP_CO_CH_DELETEOLD);
-    SetHelp(data->GUI.CH_REMOVESTART, MSG_HELP_CO_CH_REMOVEDEL);
-    SetHelp(data->GUI.CH_SENDSTART,   MSG_HELP_CO_CH_SEND     );
-    SetHelp(data->GUI.CH_CHECKBD,     MSG_HELP_CO_CH_CHECKBD  );
-    SetHelp(data->GUI.CH_SENDQUIT,    MSG_HELP_CO_CH_SEND     );
-    SetHelp(data->GUI.CH_DELETEQUIT,  MSG_HELP_CO_CH_DELETEOLD);
-    SetHelp(data->GUI.CH_REMOVEQUIT,  MSG_HELP_CO_CH_REMOVEDEL);
-  }
-
-  RETURN(grp);
-  return grp;
-}
-
-///
 /// CO_PageMIME
 Object *CO_PageMIME(struct CO_ClassData *data)
 {

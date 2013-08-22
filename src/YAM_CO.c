@@ -89,6 +89,7 @@
 #include "mui/SignatureConfigPage.h"
 #include "mui/SignatureTextEdit.h"
 #include "mui/SpamConfigPage.h"
+#include "mui/StartupQuitConfigPage.h"
 #include "mui/TCPIPConfigPage.h"
 #include "mui/WriteConfigPage.h"
 #include "mui/WriteWindow.h"
@@ -2426,7 +2427,7 @@ static struct CO_ClassData *CO_New(void)
                 Child, CO_PageReplyForward(data),
                 Child, data->GUI.PG_PAGES[cp_Signature]   = SignatureConfigPageObject, End,
                 Child, data->GUI.PG_PAGES[cp_Security]    = SecurityConfigPageObject, End,
-                Child, CO_PageStartupQuit(data),
+                Child, data->GUI.PG_PAGES[cp_StartupQuit] = StartupQuitConfigPageObject, End,
                 Child, CO_PageMIME(data),
                 Child, data->GUI.PG_PAGES[cp_AddressBook] = AddressBookConfigPageObject, End,
                 Child, CO_PageScripts(data),

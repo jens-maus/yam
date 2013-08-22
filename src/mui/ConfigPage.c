@@ -72,6 +72,7 @@ OVERLOAD(OM_NEW)
     case cp_Write:       imageID = "config_write_big";      image = CI_WRITEBIG;      title = tr(MSG_CO_WRITE_TITLE);      summary = tr(MSG_CO_WRITE_SUMMARY);      break;
 	case cp_Signature:   imageID = "config_signature_big";  image = CI_SIGNATUREBIG;  title = tr(MSG_CO_SIGNATURE_TITLE);  summary = tr(MSG_CO_SIGNATURE_SUMMARY);  break;
 	case cp_Security:    imageID = "config_security_big";   image = CI_SECURITYBIG;   title = tr(MSG_CO_SECURITY_TITLE);   summary = tr(MSG_CO_SECURITY_SUMMARY);   break;
+	case cp_StartupQuit: imageID = "config_start_big";      image = CI_STARTBIG;      title = tr(MSG_CO_STARTUP_TITLE);    summary = tr(MSG_CO_STARTUP_SUMMARY);    break;
     case cp_AddressBook: imageID = "config_abook_big";      image = CI_ABOOKBIG;      title = tr(MSG_CO_ABOOK_TITLE);      summary = tr(MSG_CO_ABOOK_SUMMARY);      break;
     default:             imageID = NULL;                    image = CI_MAX;           title = NULL;                        summary = NULL;                          break;
   }
