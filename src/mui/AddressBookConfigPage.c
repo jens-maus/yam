@@ -76,7 +76,7 @@ OVERLOAD(OM_NEW)
   atab[5] = NULL;
 
   if((obj = DoSuperNew(cl, obj,
-    MUIA_HelpNode, "Configuration#FirstSteps",
+    MUIA_HelpNode, "Configuration#Addressbook",
     MUIA_ConfigPage_Page, cp_FirstSteps,
     MUIA_ConfigPage_Contents, VGroup,
       Child, HGroup, GroupFrameT(tr(MSG_Columns)),
