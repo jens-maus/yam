@@ -528,6 +528,7 @@ MUIOBJS = \
 	SignatureChooser.o \
 	SignatureList.o \
 	SignatureTextEdit.o \
+	SpamConfigPage.o \
 	Splashwindow.o \
 	StringRequestWindow.o \
 	TCPIPConfigPage.o \

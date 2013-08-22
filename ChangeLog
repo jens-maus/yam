@@ -11,6 +11,7 @@ $URL$
     "Address book" page.
   * YAM_CO.c, mui/AddressBookConfigPage.c: use the new base class for the
     "Identities" page.
+  * YAM_CO.c, mui/SpamConfigPage.c: use the new base class for the "Spam" page.
 
 2013-08-21 Jens Langner <Jens.Langner@light-speed.de>
 

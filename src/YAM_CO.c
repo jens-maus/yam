@@ -85,6 +85,7 @@
 #include "mui/SearchControlGroup.h"
 #include "mui/SignatureChooser.h"
 #include "mui/SignatureTextEdit.h"
+#include "mui/SpamConfigPage.h"
 #include "mui/TCPIPConfigPage.h"
 #include "mui/WriteWindow.h"
 
@@ -2515,7 +2516,7 @@ static struct CO_ClassData *CO_New(void)
                 Child, data->GUI.PG_PAGES[cp_TCPIP]      = TCPIPConfigPageObject, End,
                 Child, data->GUI.PG_PAGES[cp_Identities] = IdentitiesConfigPageObject, End,
                 Child, CO_PageFilters(data),
-                Child, CO_PageSpam(data),
+                Child, data->GUI.PG_PAGES[cp_Spam]       = SpamConfigPageObject, End,
                 Child, CO_PageRead(data),
                 Child, CO_PageWrite(data),
                 Child, CO_PageReplyForward(data),
