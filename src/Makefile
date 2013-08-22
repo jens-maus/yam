@@ -547,6 +547,7 @@ MUIOBJS = \
 	TZoneInfoBar.o \
 	TZoneLocationChooser.o \
 	UpdateComponentList.o \
+	UpdateConfigPage.o \
 	UpdateNotifyWindow.o \
 	UserList.o \
 	UserPortraitGroup.o \

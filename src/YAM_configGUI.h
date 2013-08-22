@@ -39,7 +39,6 @@ Object *CO_PageMIME(struct CO_ClassData *data);
 Object *CO_PageScripts(struct CO_ClassData *data);
 Object *CO_PageMixed(struct CO_ClassData *data);
 Object *CO_PageLookFeel(struct CO_ClassData *data);
-Object *CO_PageUpdate(struct CO_ClassData *data);
 
 Object *MakeMimeTypePop(Object **string, const char *desc);
 

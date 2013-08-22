@@ -605,43 +605,6 @@ HOOKPROTONHNO(CO_PlaySoundFunc, void, int *arg)
 MakeHook(CO_PlaySoundHook,CO_PlaySoundFunc);
 
 ///
-/// UpdateInfoHook
-// update the information text about the update check
-HOOKPROTONHNO(UpdateInfoFunc, void, ULONG *interval)
-{
-  ENTER();
-
-  if(interval[0] == 0)
-    set(G->CO->GUI.TX_UPDATEINFO, MUIA_Text_Contents, tr(MSG_CO_UPDATES_INFO_MANUAL));
-  else
-    set(G->CO->GUI.TX_UPDATEINFO, MUIA_Text_Contents, tr(MSG_CO_UPDATES_INFO_AUTO));
-
-  LEAVE();
-}
-MakeStaticHook(UpdateInfoHook, UpdateInfoFunc);
-
-///
-/// UpdateCheckHook
-// initiates an interactive update check
-HOOKPROTONHNONP(UpdateCheckFunc, void)
-{
-  ENTER();
-
-  // get the configuration settings
-  if(G->CO->VisiblePage == cp_Update)
-    CO_GetConfig();
-
-  // now we make sure the C and CE config structure is in sync again
-  C->UpdateInterval = CE->UpdateInterval;
-
-  // let the application check for updates
-  DoMethod(G->App, MUIM_YAMApplication_UpdateCheck, FALSE);
-
-  LEAVE();
-}
-MakeStaticHook(UpdateCheckHook, UpdateCheckFunc);
-
-///
 /// AddMimeTypeHook
 //  Adds a new MIME type structure to the internal list
 HOOKPROTONHNONP(AddMimeTypeFunc, void)
@@ -2299,72 +2262,4 @@ Object *CO_PageLookFeel(struct CO_ClassData *data)
   RETURN(obj);
   return obj;
 }
-///
-/// CO_PageUpdate
-Object *CO_PageUpdate(struct CO_ClassData *data)
-{
-  Object *obj;
-  static const char *updateInterval[5];
-
-  ENTER();
-
-  updateInterval[0] = tr(MSG_CO_UPDATE_NEVER);
-  updateInterval[1] = tr(MSG_CO_UPDATE_DAILY);
-  updateInterval[2] = tr(MSG_CO_UPDATE_WEEKLY);
-  updateInterval[3] = tr(MSG_CO_UPDATE_MONTHLY);
-  updateInterval[4] = NULL;
-
-  obj = VGroup,
-    MUIA_HelpNode, "Configuration#Updates",
-
-    ConfigPageHeaderObject("config_update_big", G->theme.configImages[CI_UPDATEBIG], tr(MSG_CO_UPDATE_TITLE), tr(MSG_CO_UPDATE_SUMMARY)),
-
-    Child, ScrollgroupObject,
-      MUIA_Scrollgroup_FreeHoriz, FALSE,
-      MUIA_Scrollgroup_AutoBars, TRUE,
-      MUIA_Scrollgroup_Contents, VGroupV,
-
-        Child, VGroup, GroupFrameT(tr(MSG_CO_SOFTWAREUPDATE)),
-          Child, HGroup,
-            Child, LLabel1(tr(MSG_CO_SEARCHFORUPDATES)),
-            Child, data->GUI.CY_UPDATEINTERVAL = MakeCycle(updateInterval, tr(MSG_CO_SEARCHFORUPDATES)),
-            Child, data->GUI.BT_UPDATENOW = MakeButton(tr(MSG_CO_SEARCHNOW)),
-          End,
-          Child, data->GUI.TX_UPDATEINFO = TextObject,
-            MUIA_Font, MUIV_Font_Tiny,
-            MUIA_Text_Copy, FALSE,
-          End,
-          Child, VSpace(10),
-          Child, ColGroup(2),
-            Child, LLabel1(tr(MSG_CO_LASTSEARCH)),
-            Child, data->GUI.TX_UPDATESTATUS = TextObject,
-              MUIA_Text_Contents, tr(MSG_CO_LASTSTATUS_NOCHECK),
-              MUIA_Text_Copy, FALSE,
-            End,
-            Child, HSpace(1),
-            Child, data->GUI.TX_UPDATEDATE = TextObject,
-            End,
-          End,
-        End,
-
-        Child, HVSpace,
-
-      End,
-    End,
-
-  End;
-
-  if(obj != NULL)
-  {
-    SetHelp(data->GUI.CY_UPDATEINTERVAL, MSG_HELP_CH_UPDATECHECK);
-    SetHelp(data->GUI.BT_UPDATENOW,      MSG_HELP_CO_BT_UPDATENOW);
-
-    DoMethod(data->GUI.CY_UPDATEINTERVAL, MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &UpdateInfoHook, MUIV_TriggerValue);
-    DoMethod(data->GUI.BT_UPDATENOW,      MUIM_Notify, MUIA_Pressed,      FALSE,          MUIV_Notify_Application, 2, MUIM_CallHook, &UpdateCheckHook);
-  }
-
-  RETURN(obj);
-  return obj;
-}
-
 ///

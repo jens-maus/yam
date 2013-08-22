@@ -21,6 +21,8 @@ $URL$
     "Security" page.
   * YAM_CO.c, mui/StartupQuitConfigPage.c: use the new base class for the
     "Startup/Quit" page.
+  * YAM_CO.c, mui/UpdateConfigPage.c: use the new base class for the "Update"
+    page.
 
 2013-08-21 Jens Langner <Jens.Langner@light-speed.de>
 

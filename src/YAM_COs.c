@@ -1886,6 +1886,7 @@ void CO_GetConfig(void)
     case cp_Security:
     case cp_StartupQuit:
     case cp_AddressBook:
+    case cp_Update:
     {
       DoMethod(gui->PG_PAGES[G->CO->VisiblePage], MUIM_ConfigPage_GUIToConfig, CE);
     }
@@ -2019,32 +2020,6 @@ void CO_GetConfig(void)
     }
     break;
 
-    case cp_Update:
-    {
-      int interval = GetMUICycle(gui->CY_UPDATEINTERVAL);
-
-      switch(interval)
-      {
-        default:
-        case 0:
-          CE->UpdateInterval = 0; // never
-        break;
-
-        case 1:
-          CE->UpdateInterval = 86400; // 1 day
-        break;
-
-        case 2:
-          CE->UpdateInterval = 604800; // 1 week
-        break;
-
-        case 3:
-          CE->UpdateInterval = 2419200; // 1 month
-        break;
-      }
-    }
-    break;
-
     case cp_Max:
     {
       // nothing
@@ -2081,6 +2056,7 @@ void CO_SetConfig(void)
     case cp_Security:
     case cp_StartupQuit:
     case cp_AddressBook:
+    case cp_Update:
     {
       DoMethod(gui->PG_PAGES[G->CO->VisiblePage], MUIM_ConfigPage_ConfigToGUI, CE);
     }
@@ -2233,61 +2209,6 @@ void CO_SetConfig(void)
       setcheckmark(gui->CH_RELDATETIME, (CE->DSListFormat == DSS_RELDATETIME || CE->DSListFormat == DSS_RELDATEBEAT));
       setcheckmark(gui->CH_FOLDERDBLCLICK, CE->FolderDoubleClick);
       setcycle(gui->CY_FOLDERINFO, CE->FolderInfoMode);
-    }
-    break;
-
-    case cp_Update:
-    {
-      struct UpdateState state;
-
-      // copy the last update state information
-      GetLastUpdateState(&state);
-
-      if(CE->UpdateInterval > 0)
-      {
-        if(CE->UpdateInterval <= 86400)
-          setcycle(gui->CY_UPDATEINTERVAL, 1); // daily
-        else if(CE->UpdateInterval <= 604800)
-          setcycle(gui->CY_UPDATEINTERVAL, 2); // weekly
-        else
-          setcycle(gui->CY_UPDATEINTERVAL, 3); // monthly
-      }
-      else
-        setcycle(gui->CY_UPDATEINTERVAL, 0);
-
-      // now we set the information on the last update check
-      switch(state.LastUpdateStatus)
-      {
-        case UST_NOCHECK:
-          set(gui->TX_UPDATESTATUS, MUIA_Text_Contents, tr(MSG_CO_LASTSTATUS_NOCHECK));
-        break;
-
-        case UST_NOUPDATE:
-          set(gui->TX_UPDATESTATUS, MUIA_Text_Contents, tr(MSG_CO_LASTSTATUS_NOUPDATE));
-        break;
-
-        case UST_NOQUERY:
-          set(gui->TX_UPDATESTATUS, MUIA_Text_Contents, tr(MSG_CO_LASTSTATUS_NOQUERY));
-        break;
-
-        case UST_UPDATESUCCESS:
-          set(gui->TX_UPDATESTATUS, MUIA_Text_Contents, tr(MSG_CO_LASTSTATUS_UPDATESUCCESS));
-        break;
-      }
-
-      // set the lastUpdateCheckDate
-      if(state.LastUpdateStatus != UST_NOCHECK && state.LastUpdateCheck.Seconds > 0)
-      {
-        char buf[SIZE_DEFAULT];
-
-        TimeVal2String(buf, sizeof(buf), &state.LastUpdateCheck, DSS_DATETIME, TZC_NONE);
-        set(gui->TX_UPDATEDATE, MUIA_Text_Contents, buf);
-      }
-      else
-      {
-        // no update check was yet performed, so we clear our status gadgets
-        set(gui->TX_UPDATEDATE, MUIA_Text_Contents, "");
-      }
     }
     break;
 

@@ -91,6 +91,7 @@
 #include "mui/SpamConfigPage.h"
 #include "mui/StartupQuitConfigPage.h"
 #include "mui/TCPIPConfigPage.h"
+#include "mui/UpdateConfigPage.h"
 #include "mui/WriteConfigPage.h"
 #include "mui/WriteWindow.h"
 
@@ -2433,7 +2434,7 @@ static struct CO_ClassData *CO_New(void)
                 Child, CO_PageScripts(data),
                 Child, CO_PageMixed(data),
                 Child, CO_PageLookFeel(data),
-                Child, CO_PageUpdate(data),
+                Child, data->GUI.PG_PAGES[cp_Update]      = UpdateConfigPageObject, End,
              End,
           End,
 
