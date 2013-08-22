@@ -301,7 +301,7 @@ OVERLOAD(MUIM_ConfigPage_ConfigToGUI)
 
   // make sure the first entry is selected per default
   xset(data->LV_SIGNATURE, MUIA_NList_Quiet, FALSE,
-                          MUIA_NList_Active, MUIV_NList_Active_Top);
+                           MUIA_NList_Active, MUIV_NList_Active_Top);
 
   // set the enabled stated of the del button according to the number of available identities
   set(data->BT_SIGDEL, MUIA_Disabled, numSignatures < 2);
@@ -426,10 +426,9 @@ DECLARE(PutSignatureEntry)
       set(data->PO_SIG_FILE, MUIA_Disabled, sn->useSignatureFile == FALSE);
       set(data->TE_SIGEDIT, MUIA_SignatureTextEdit_UseSignatureFile, sn->useSignatureFile);
 
-      // update the signature chooser/ in case the user changed something
+      // update the signature chooser in case the user changed something
       // on the Identities config page
-      #warning object on other page
-   // DoMethod(data->CY_IDENTITY_SIGNATURE, MUIM_SignatureChooser_UpdateSignatures);
+      set(obj, MUIA_ConfigPage_ConfigUpdate, cp_Signature);
 
       // redraw the list
       DoMethod(data->LV_SIGNATURE, MUIM_NList_Redraw, p);

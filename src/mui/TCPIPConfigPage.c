@@ -1207,8 +1207,7 @@ DECLARE(PutSMTPEntry)
       // we also have to update the SMTP Server Array
       // in case the user changes to the Identities
       // config page
-      #warning object on other page
-   // DoMethod(data->CY_IDENTITY_MAILSERVER, MUIM_MailServerChooser_UpdateMailServers);
+      set(obj, MUIA_ConfigPage_ConfigUpdate, cp_TCPIP);
 
       // redraw the list
       DoMethod(data->LV_SMTP, MUIM_NList_Redraw, p);

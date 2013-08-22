@@ -571,6 +571,40 @@ OVERLOAD(MUIM_ConfigPage_GUIToConfig)
 }
 
 ///
+/// OVERLOAD(MUIM_ConfigPage_ConfigUpdate)
+OVERLOAD(MUIM_ConfigPage_ConfigUpdate)
+{
+  GETDATA;
+  enum ConfigPage sourcePage = ((struct MUIP_ConfigPage_ConfigUpdate *)msg)->sourcePage;
+
+  ENTER();
+
+  switch(sourcePage)
+  {
+    case cp_TCPIP:
+    {
+      DoMethod(data->CY_IDENTITY_MAILSERVER, MUIM_MailServerChooser_UpdateMailServers);
+    }
+    break;
+
+    case cp_Signature:
+    {
+      DoMethod(data->CY_IDENTITY_SIGNATURE, MUIM_SignatureChooser_UpdateSignatures);
+    }
+    break;
+
+    default:
+    {
+      // ignore all other pages for the moment
+    }
+    break;
+  }
+
+  RETURN(0);
+  return 0;
+}
+
+///
 /// DECLARE(GetIdentityEntry)
 // fills form with data from selected list entry
 DECLARE(GetIdentityEntry)

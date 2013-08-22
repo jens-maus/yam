@@ -128,6 +128,27 @@ OVERLOAD(OM_NEW)
 }
 
 ///
+/// OVERLOAD(OM_GET)
+OVERLOAD(OM_GET)
+{
+  IPTR *store = ((struct opGet *)msg)->opg_Storage;
+  ULONG result = FALSE;
+
+  ENTER();
+
+  switch(((struct opGet *)msg)->opg_AttrID)
+  {
+    case ATTR(ConfigUpdate): *store = TRUE; result = TRUE; break;
+  }
+
+  if(result == FALSE)
+    result = DoSuperMethodA(cl, obj, msg);
+
+  RETURN(result);
+  return result;
+}
+
+///
 /// DECLARE(ConfigToGUI)
 DECLARE(ConfigToGUI)
 {
@@ -146,6 +167,18 @@ DECLARE(GUIToConfig)
   ENTER();
 
   E(DBF_GUI, "derived class did not overload MUIM_ConfigPage_GUIToConfig method");
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(ConfigUpdate)
+DECLARE(ConfigUpdate) // enum ConfigPage sourcePage
+{
+  ENTER();
+
+  // this method is optional to be overloaded
 
   RETURN(0);
   return 0;

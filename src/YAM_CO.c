@@ -70,6 +70,7 @@
 #include "mui/ClassesExtra.h"
 #include "mui/AddrBookListtree.h"
 #include "mui/AddressBookConfigPage.h"
+#include "mui/ConfigPage.h"
 #include "mui/ConfigPageList.h"
 #include "mui/FirstStepsConfigPage.h"
 #include "mui/IdentitiesConfigPage.h"
@@ -2453,6 +2454,8 @@ static struct CO_ClassData *CO_New(void)
     End;
     if(data->GUI.WI != NULL)
     {
+      LONG i;
+
       DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
       set(data->GUI.WI, MUIA_Window_DefaultObject, data->GUI.NLV_PAGE);
       SetHelp(data->GUI.BT_SAVE,   MSG_HELP_CO_BT_SAVE);
@@ -2469,6 +2472,22 @@ static struct CO_ClassData *CO_New(void)
       DoMethod(data->GUI.BT_USE      ,MUIM_Notify,MUIA_Pressed            ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook,&CO_CloseHook,1);
       DoMethod(data->GUI.BT_CANCEL   ,MUIM_Notify,MUIA_Pressed            ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook,&CO_CloseHook,0);
       DoMethod(data->GUI.WI          ,MUIM_Notify,MUIA_Window_CloseRequest,TRUE          ,MUIV_Notify_Application,3,MUIM_CallHook,&CO_CloseHook,0);
+
+      // set up a cross-page notification to let all pages react on changes on all other pages
+      // currently only the TCPIP and Signature pages cause an update on the Identities page
+      for(i = 0; i < cp_Max; i++)
+      {
+        if(data->GUI.PG_PAGES[i] != NULL)
+        {
+          LONG j;
+
+          for(j = 0; j < cp_Max; j++)
+          {
+            if(j != i && data->GUI.PG_PAGES[j] != NULL)
+              DoMethod(data->GUI.PG_PAGES[i], MUIM_Notify, MUIA_ConfigPage_ConfigUpdate, MUIV_EveryTime, data->GUI.PG_PAGES[j], 2, MUIM_ConfigPage_ConfigUpdate, MUIV_TriggerValue);
+          }
+        }
+      }
     }
     else
     {
