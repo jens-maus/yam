@@ -76,48 +76,48 @@ OVERLOAD(OM_NEW)
     MUIA_HelpNode, "Configuration#Security",
     MUIA_ConfigPage_Page, cp_Security,
     MUIA_ConfigPage_Contents, VGroup,
-        Child, VGroup, GroupFrameT("PGP (Pretty Good Privacy)"),
-          Child, ColGroup(2),
+      Child, VGroup, GroupFrameT("PGP (Pretty Good Privacy)"),
+        Child, ColGroup(2),
 
-            Child, Label2(tr(MSG_CO_PGPExe)),
-            Child, PopaslObject,
-              MUIA_Popasl_Type,      ASL_FileRequest,
-              MUIA_Popstring_String, ST_PGPCMD = MakeString(SIZE_PATHFILE,tr(MSG_CO_PGPExe)),
-              MUIA_Popstring_Button, PopButton(MUII_PopDrawer),
-              ASLFR_DrawersOnly, TRUE,
-            End,
-
-            Child, HSpace(1),
-            Child, HGroup,
-              Child, CH_PGPPASSINTERVAL = MakeCheck(tr(MSG_CO_PGPPASSINTERVAL1)),
-              Child, Label2(tr(MSG_CO_PGPPASSINTERVAL1)),
-              Child, NB_PGPPASSINTERVAL = MakeNumeric(1, 90, FALSE),
-              Child, Label2(tr(MSG_CO_PGPPASSINTERVAL2)),
-              Child, HSpace(0),
-            End,
-
-          End,
-        End,
-
-        Child, ColGroup(2), GroupFrameT(tr(MSG_CO_Logfiles)),
-          Child, Label1(tr(MSG_CO_LogMode)),
-          Child, CY_LOGMODE = MakeCycle(logfmode, tr(MSG_CO_LogMode)),
-
-          Child, Label2(tr(MSG_CO_LogPath)),
-          Child, PO_LOGFILE = PopaslObject,
-            MUIA_Popasl_Type, ASL_FileRequest,
-            MUIA_Popstring_String, ST_LOGFILE = MakeString(SIZE_PATH,tr(MSG_CO_LogPath)),
+          Child, Label2(tr(MSG_CO_PGPExe)),
+          Child, PopaslObject,
+            MUIA_Popasl_Type,      ASL_FileRequest,
+            MUIA_Popstring_String, ST_PGPCMD = MakeString(SIZE_PATHFILE,tr(MSG_CO_PGPExe)),
             MUIA_Popstring_Button, PopButton(MUII_PopDrawer),
             ASLFR_DrawersOnly, TRUE,
           End,
 
           Child, HSpace(1),
-          Child, MakeCheckGroup(&CH_SPLITLOG, tr(MSG_CO_LogSplit)),
-
-          Child, HSpace(1),
-          Child, MakeCheckGroup(&CH_LOGALL, tr(MSG_CO_LogAllEvents)),
+          Child, HGroup,
+            Child, CH_PGPPASSINTERVAL = MakeCheck(tr(MSG_CO_PGPPASSINTERVAL1)),
+            Child, Label2(tr(MSG_CO_PGPPASSINTERVAL1)),
+            Child, NB_PGPPASSINTERVAL = MakeNumeric(1, 90, FALSE),
+            Child, Label2(tr(MSG_CO_PGPPASSINTERVAL2)),
+            Child, HSpace(0),
+          End,
 
         End,
+      End,
+
+      Child, ColGroup(2), GroupFrameT(tr(MSG_CO_Logfiles)),
+        Child, Label1(tr(MSG_CO_LogMode)),
+        Child, CY_LOGMODE = MakeCycle(logfmode, tr(MSG_CO_LogMode)),
+
+        Child, Label2(tr(MSG_CO_LogPath)),
+        Child, PO_LOGFILE = PopaslObject,
+          MUIA_Popasl_Type, ASL_FileRequest,
+          MUIA_Popstring_String, ST_LOGFILE = MakeString(SIZE_PATH,tr(MSG_CO_LogPath)),
+          MUIA_Popstring_Button, PopButton(MUII_PopDrawer),
+          ASLFR_DrawersOnly, TRUE,
+        End,
+
+        Child, HSpace(1),
+        Child, MakeCheckGroup(&CH_SPLITLOG, tr(MSG_CO_LogSplit)),
+
+        Child, HSpace(1),
+        Child, MakeCheckGroup(&CH_LOGALL, tr(MSG_CO_LogAllEvents)),
+
+      End,
     End,
   TAG_MORE, inittags(msg))) != NULL)
   {
