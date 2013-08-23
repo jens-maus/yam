@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.44 (16.08.2013)
+## version $VER: YAM.catalog 8.45 (23.08.2013)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -626,7 +626,7 @@ Script
 ; Scripts
 ;
 MSG_MA_ExecuteScript
-Esegui script...
+Esegui...
 ; Execute script...
 ;
 MSG_MA_CheckSingle
@@ -776,7 +776,7 @@ Invia
 ; Send
 ;
 MSG_MA_Settings
-Impostazioni
+Strumenti
 ; Settings
 ;
 MSG_MA_MAddrBook
@@ -1395,10 +1395,6 @@ MSG_CO_ExternalEditor
 Editor este_rno
 ; _External editor
 ;
-MSG_CO_Launch
-A_vvia immediatamente
-; _Launch immediately
-;
 MSG_CO_PhraseOpen
 apertura
 ; Open
@@ -1472,15 +1468,15 @@ Firma
 ; Signature
 ;
 MSG_CO_EditSig
-mo_difica con editor esterno
+Mo_difica con editor esterno
 ; _Edit in external editor
 ;
 MSG_CO_InsertTag
-inserisci tagline _casuale
+Inserisci tagline _casuale
 ; Insert _random tagline
 ;
 MSG_CO_InsertENV
-inserisci firma:E_NV
+Inserisci firma:E_NV
 ; Insert E_NV:Signature
 ;
 MSG_CO_Taglines
@@ -2141,12 +2137,6 @@ Avvia un editor di testo esterno durante la\n\
 composizione di un nuovo messaggio.
 ; Automatically launch the external editor\n\
 ; when starting a new message.
-;
-MSG_HELP_CO_ST_EDITOR
-Nome dell'editor di\n\
-testi preferito.
-; Filename of your\n\
-; favorite text editor.
 ;
 MSG_HELP_CO_ST_FWDSTART
 Testo utilizzato per introdurre un messaggio\n\
@@ -4108,11 +4098,11 @@ _Successivo >
 ; _Next error
 ;
 MSG_ER_Clear
-_Cancella messaggi
+_Elimina messaggi
 ; _Delete messages
 ;
 MSG_ER_Close
-C_hiudi finestra
+_Chiudi finestra
 ; _Close window
 ;
 ; Module ER - Error Messages
@@ -4422,23 +4412,23 @@ Inviati
 ; Sent
 ;
 MSG_FI_OtherField
-altri campi:
+Altri campi:
 ; other field:
 ;
 MSG_FI_MessageSize
-dimensione del messaggio
+Dimensione del messaggio
 ; Message size
 ;
 MSG_FI_MessageHeader
-intestazione del messaggio
+Intestazione del messaggio
 ; Message headers
 ;
 MSG_FI_MessageBody
-corpo del messaggio
+Corpo del messaggio
 ; Message body
 ;
 MSG_FI_WholeMessage
-intero messaggio
+Intero messaggio
 ; Whole message
 ;
 MSG_FI_SearchIn
@@ -4740,11 +4730,11 @@ Seleziona directory
 ; Module FO - Window
 ;
 MSG_FO_MessageDate
-data del messaggio
+Data del messaggio
 ; Message date
 ;
 MSG_FO_DateRecvd
-data di ricezione
+Data di ricezione
 ; Date received
 ;
 MSG_FO_FMNormal
@@ -4982,7 +4972,7 @@ Script Rexx
 ; ADDED AFTER 04-DEC-2000
 ;
 MSG_FOLDER_NEWFOLDER
-Nuova cartella...
+Nuova...
 ; New folder...
 ;
 MSG_FOLDER_EDIT
@@ -4994,15 +4984,15 @@ Elimina
 ; Delete
 ;
 MSG_FOLDER_IMPORT
-Importa messaggi...
+Importa...
 ; Import...
 ;
 MSG_FOLDER_EXPORT
-Esporta messaggi...
+Esporta...
 ; Export...
 ;
 MSG_MESSAGE_EXPORT
-Esporta messaggi...
+Esporta...
 ; Export...
 ;
 MSG_SETTINGS_USERS
@@ -5076,7 +5066,7 @@ Parte
 ; ADDED AFTER 15-MAR-2001
 ;
 MSG_FOLDER_NEWFOLDERGROUP
-Nuovo gruppo di cartelle...
+Nuovo gruppo...
 ; New folder group...
 ; This is the pulldown menu item, not the one in the pop-up menu
 ;
@@ -6763,7 +6753,7 @@ Controlla la _nuova posta verificando potenziali contenuti Spam
 ; Check _new mails for spam content
 ;
 MSG_CO_SPAM_RESETTRAININGDATA
-_resetta dati di riconoscimento
+_Resetta dati di riconoscimento
 ; _Reset training data
 ;
 MSG_CO_SPAM_GOODCOUNT
@@ -6918,7 +6908,7 @@ Applicazione del filtro AntiSpam...
 ; Applying spam filter on folder...
 ;
 MSG_MA_REMOVESPAM
-Elimina spam dalla cartella
+Elimina spam
 ; Delete spam from folder
 ;
 MSG_MA_BUSYEMPTYINGSPAM
@@ -7558,7 +7548,7 @@ _Inoltra messaggi
 ; _Forward messages
 ;
 MSG_CO_FWDMSG_INLINE
-In coda
+in coda
 ; inlined
 ;
 MSG_HELP_CO_CY_FORWARDMODE
@@ -7793,11 +7783,11 @@ Seleziona tutto
 ; Select all
 ;
 MSG_MA_EDIT_SNONE
-Deseleziona
+Annulla selezione
 ; Select none
 ;
 MSG_WR_SELECTNONE
-Deseleziona
+Annulla selezione
 ; Select none
 ;
 MSG_MA_INVALIDMFILE_TITLE
@@ -8189,20 +8179,6 @@ MSG_HELP_EA_BT_REMOVEPHOTO
 (L'immagine rimarrà salvata su disco)
 ; 'Forget' this picture (the)\n\
 ; file on disk will remain).
-;
-MSG_HELP_CO_TX_DEFAULTCHARSET
-Utilizza questo menu a comparsa in modo da selezionare il\n\
-set di caratteri che YAM dovrà utilizzare in modo predefinito.\n\
-\n\
-Attenzione, la scelta dovrà rispecchiare le impostazioni dei\n\
-caratteri di sistema già esistenti altrimenti il sistema stesso\n\
-sarà costretto a richiedere nuovamente il tipo di procedura da\n\
-utilizzare.
-; Use the popup button to select the character set\n\
-; you would like YAM to use by default. This should\n\
-; match the system's default charset, otherwise a\n\
-; requester will appear asking how do you want to\n\
-; proceed.
 ;
 MSG_HELP_CO_CH_NOTISOUND
 Suona un campione audio al momento\n\
@@ -8846,7 +8822,7 @@ Spaziatura fissa?
 ; Fixed font?
 ;
 MSG_CO_SPAM_OPTIMIZE_TRAININGDATA
-_ottimizza dati di riconoscimento
+_Ottimizza dati di riconoscimento
 ; _Optimize training data
 ;
 MSG_HELP_BT_OPTIMIZE_TRAININGDATA
@@ -10305,15 +10281,15 @@ Posi_zione
 ; Posi_tion
 ;
 MSG_CO_QUICKSEARCHBARPOS01
-Disattivata
+disattivata
 ; Disabled
 ;
 MSG_CO_QUICKSEARCHBARPOS02
-In alto
+in alto
 ; Top
 ;
 MSG_CO_QUICKSEARCHBARPOS03
-In basso
+in basso
 ; Bottom
 ;
 MSG_CO_FILTER_REGISTER_SETTINGS
@@ -10497,4 +10473,75 @@ Archivio
 MSG_CO_SHOW_ARCHIVER_PROGRESS
 Mostra progressi
 ; Show progress
+;
+MSG_CO_LAUNCH_EXTEDITOR
+A_vvia editor esterno immediatamente
+; _Launch external editor immediately
+;
+MSG_CO_EXTEDITOR
+Impostazioni editor esterno
+; External editor settings
+;
+MSG_HELP_CO_ST_EDITOR_EXT
+Percorso dell'editor esterno preferito\n\
+da usare al posto di quello predefinito.
+; Path to your favourite external\n\
+; editor which you can use as an\n\
+; alternative to the internal one.
+;
+MSG_CO_EXTEDITOR_CODESET
+_Forza set di caratteri
+; _Force charset
+;
+MSG_HELP_CO_CH_DEFCODESET_EDITOR
+Se selezionato il set di caratteri scelto verrà\n\
+usato immediatamente convertendo il testo\n\
+prima di avviare l'editor.
+; If selected the chosen charset\n\
+; will be used and the text be\n\
+; converted before starting the\n\
+; editor.
+;
+MSG_HELP_CO_TX_DEFCODESET_EDITOR
+Scegli il set di caratteri con il quale il testo\n\
+dovrà essere convertito prima di avviare\n\
+l'editor esterno.
+; Choose a charset to which the text\n\
+; will be converted to before starting\n\
+; the external editor.
+;
+MSG_HELP_CO_TX_DEFCODESET_LOCAL
+Utilizza questo menu a comparsa per selezionare il\n\
+set di caratteri che si desidera usare su YAM per la\n\
+visualizzazione del testo.\n\
+Questo set in genere dovrà coincidere con il set di\n\
+sistema, altrimenti una "finestra di dialogo" verrà\n\
+aperta illustrando come procedere.
+; Use the popup button to select the character set\n\
+; you would like YAM to use for displaying text.\n\
+; This should usually match your system's default\n\
+; charset, otherwise a requester will appear asking\n\
+; how to proceed.
+;
+MSG_HELP_CO_TX_DEFCODESET_WRITE
+Utilizza questo menu a comparsa per selezionare\n\
+il set di caratteri che si desidera usare su YAM per\n\
+la decodifica del testo.\n\
+In genere questi dovranno coincidere con il set di\n\
+caratteri di sistema, per cui il set visualizzato dovrà\n\
+coincidere con quello dei messaggi di posta in fase\n\
+di composizione.\n\
+Tuttavia sarà sempre possibile scegliere un altro\n\
+tipo di codifica per le mail in uscita.
+; Use the popup button to select the character set\n\
+; you would like YAM to encode emails to.\n\
+; This should usually match your system's default\n\
+; charset so that the displayed character set matches\n\
+; the one you write mail. However, you can select any\n\
+; character set you want to encode your outgoing mails\n\
+; to.
+;
+MSG_CO_DEFAULTCODESET_WRITE
+Set di caratteri _predefinito
+; Default c_harset
 ;
