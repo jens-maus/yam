@@ -55,7 +55,7 @@
 #include "mui/Recipientstring.h"
 
 #include "Locale.h"
-#include "MIMETypes.h"
+#include "MimeTypes.h"
 #include "MUIObjects.h"
 
 #include "Debug.h"

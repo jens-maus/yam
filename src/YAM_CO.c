@@ -2454,15 +2454,17 @@ static struct CO_ClassData *CO_New(void)
           End,
        End,
     End;
+
     if(data->GUI.WI != NULL)
     {
-      LONG i;
-
       DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
+
       set(data->GUI.WI, MUIA_Window_DefaultObject, data->GUI.NLV_PAGE);
+
       SetHelp(data->GUI.BT_SAVE,   MSG_HELP_CO_BT_SAVE);
       SetHelp(data->GUI.BT_USE,    MSG_HELP_CO_BT_USE);
       SetHelp(data->GUI.BT_CANCEL, MSG_HELP_CO_BT_CANCEL);
+
       DoMethod(data->GUI.WI          ,MUIM_Notify,MUIA_Window_MenuAction  ,CMEN_OPEN     ,MUIV_Notify_Application,2,MUIM_CallHook,&CO_OpenConfigHook);
       DoMethod(data->GUI.WI          ,MUIM_Notify,MUIA_Window_MenuAction  ,CMEN_SAVEAS   ,MUIV_Notify_Application,2,MUIM_CallHook,&CO_SaveConfigAsHook);
       DoMethod(data->GUI.WI          ,MUIM_Notify,MUIA_Window_MenuAction  ,CMEN_DEF      ,MUIV_Notify_Application,3,MUIM_CallHook,&CO_ResetToDefaultHook,FALSE);
