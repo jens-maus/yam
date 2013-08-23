@@ -24,7 +24,7 @@
  $Id$
 
  Superclass:  MUIC_ConfigPage
- Description: "Write" configuration page
+ Description: "Reply/Forward" configuration page
 
 ***************************************************************************/
 
