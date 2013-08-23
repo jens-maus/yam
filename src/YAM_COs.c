@@ -1888,6 +1888,7 @@ void CO_GetConfig(void)
     case cp_MIME:
     case cp_StartupQuit:
     case cp_AddressBook:
+    case cp_LookFeel:
     case cp_Update:
     {
       DoMethod(gui->PG_PAGES[G->CO->VisiblePage], MUIM_ConfigPage_GUIToConfig, CE);
@@ -1944,55 +1945,6 @@ void CO_GetConfig(void)
     }
     break;
 
-    case cp_LookFeel:
-    {
-      int i;
-
-      CE->InfoBarPos = GetMUICycle(gui->CY_INFOBARPOS);
-      GetMUIString(CE->InfoBarText, gui->ST_INFOBARTXT, sizeof(CE->InfoBarText));
-      CE->QuickSearchBarPos = GetMUICycle(gui->CY_QUICKSEARCHBARPOS);
-      CE->EmbeddedReadPane = GetMUICheck  (gui->CH_EMBEDDEDREADPANE);
-      CE->SizeFormat = GetMUICycle(gui->CY_SIZE);
-
-      CE->FolderCols = 1;
-      for(i=1; i < FOCOLNUM; i++)
-      {
-        if(GetMUICheck(gui->CH_FCOLS[i]))
-          setFlag(CE->FolderCols, (1<<i));
-      }
-
-      CE->MessageCols = 1;
-      for(i=1; i < MACOLNUM; i++)
-      {
-        if(GetMUICheck(gui->CH_MCOLS[i]))
-          setFlag(CE->MessageCols, (1<<i));
-      }
-
-      CE->FixedFontList = GetMUICheck(gui->CH_FIXFLIST);
-      CE->ABookLookup = GetMUICheck(gui->CH_ABOOKLOOKUP);
-      CE->FolderCntMenu = GetMUICheck(gui->CH_FCNTMENU);
-      CE->MessageCntMenu = GetMUICheck(gui->CH_MCNTMENU);
-      CE->FolderDoubleClick = GetMUICheck(gui->CH_FOLDERDBLCLICK);
-
-      if(GetMUICheck(gui->CH_BEAT) == TRUE)
-      {
-        if(GetMUICheck(gui->CH_RELDATETIME) == TRUE)
-          CE->DSListFormat = DSS_RELDATEBEAT;
-        else
-          CE->DSListFormat = DSS_DATEBEAT;
-      }
-      else
-      {
-        if(GetMUICheck(gui->CH_RELDATETIME) == TRUE)
-          CE->DSListFormat = DSS_RELDATETIME;
-        else
-          CE->DSListFormat = DSS_DATETIME;
-      }
-
-      CE->FolderInfoMode = GetMUICycle(gui->CY_FOLDERINFO);
-    }
-    break;
-
     case cp_Max:
     {
       // nothing
@@ -2009,7 +1961,6 @@ void CO_GetConfig(void)
 void CO_SetConfig(void)
 {
   struct CO_GUIData *gui = &G->CO->GUI;
-  int i;
 
   ENTER();
 
@@ -2031,6 +1982,7 @@ void CO_SetConfig(void)
     case cp_MIME:
     case cp_StartupQuit:
     case cp_AddressBook:
+    case cp_LookFeel:
     case cp_Update:
     {
       DoMethod(gui->PG_PAGES[G->CO->VisiblePage], MUIM_ConfigPage_ConfigToGUI, CE);
@@ -2106,37 +2058,6 @@ void CO_SetConfig(void)
       setstring(gui->ST_EDITOR, CE->Editor);
       setcheckmark(gui->CH_DEFCODESET_EDITOR, CE->ForceEditorCodeset);
       nnset(gui->TX_DEFCODESET_EDITOR, MUIA_Text_Contents, CE->ForcedEditorCodeset);
-    }
-    break;
-
-    case cp_LookFeel:
-    {
-      setcycle(gui->CY_INFOBARPOS, CE->InfoBarPos);
-      setstring(gui->ST_INFOBARTXT, CE->InfoBarText);
-      setcycle(gui->CY_QUICKSEARCHBARPOS, CE->QuickSearchBarPos);
-      setcheckmark(gui->CH_EMBEDDEDREADPANE, CE->EmbeddedReadPane);
-      setcycle(gui->CY_SIZE, CE->SizeFormat);
-
-      set(gui->PO_INFOBARTXT, MUIA_Disabled, CE->InfoBarPos == IB_POS_OFF);
-
-      // update the themeslist and set the current one
-      // as active
-      DoMethod(gui->GR_THEMES, MUIM_ThemeListGroup_Update);
-
-      for(i=0; i < FOCOLNUM; i++)
-        setcheckmark(gui->CH_FCOLS[i], isFlagSet(CE->FolderCols, (1<<i)));
-
-      for(i=0; i < MACOLNUM; i++)
-        setcheckmark(gui->CH_MCOLS[i], isFlagSet(CE->MessageCols, (1<<i)));
-
-      setcheckmark(gui->CH_FIXFLIST, CE->FixedFontList);
-      setcheckmark(gui->CH_ABOOKLOOKUP, CE->ABookLookup);
-      setcheckmark(gui->CH_FCNTMENU, CE->FolderCntMenu);
-      setcheckmark(gui->CH_MCNTMENU, CE->MessageCntMenu);
-      setcheckmark(gui->CH_BEAT, (CE->DSListFormat == DSS_DATEBEAT || CE->DSListFormat == DSS_RELDATEBEAT));
-      setcheckmark(gui->CH_RELDATETIME, (CE->DSListFormat == DSS_RELDATETIME || CE->DSListFormat == DSS_RELDATEBEAT));
-      setcheckmark(gui->CH_FOLDERDBLCLICK, CE->FolderDoubleClick);
-      setcycle(gui->CY_FOLDERINFO, CE->FolderInfoMode);
     }
     break;
 

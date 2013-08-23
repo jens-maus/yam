@@ -501,6 +501,7 @@ MUIOBJS = \
 	ImageArea.o \
 	InfoBar.o \
 	InfoWindow.o \
+	LookFeelConfigPage.o \
 	MailServerChooser.o \
 	MailTextEdit.o \
 	MainFolderListtree.o \

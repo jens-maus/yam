@@ -199,6 +199,7 @@ OVERLOAD(OM_NEW)
     MUIA_HelpNode, "Configuration#TCPIP",
     MUIA_ConfigPage_Page, cp_TCPIP,
     MUIA_ConfigPage_UseScrollgroup, FALSE,
+    MUIA_ConfigPage_AddSpacer, FALSE,
     MUIA_ConfigPage_Contents, RegisterGroup(rtitles),
       MUIA_CycleChain, TRUE,
 

@@ -75,6 +75,7 @@
 #include "mui/FirstStepsConfigPage.h"
 #include "mui/IdentitiesConfigPage.h"
 #include "mui/InfoBar.h"
+#include "mui/LookFeelConfigPage.h"
 #include "mui/MainFolderListtree.h"
 #include "mui/MainMailListGroup.h"
 #include "mui/MainWindow.h"
@@ -2436,7 +2437,7 @@ static struct CO_ClassData *CO_New(void)
                 Child, data->GUI.PG_PAGES[cp_AddressBook]  = AddressBookConfigPageObject, End,
                 Child, CO_PageScripts(data),
                 Child, CO_PageMixed(data),
-                Child, CO_PageLookFeel(data),
+                Child, data->GUI.PG_PAGES[cp_LookFeel]     = LookFeelConfigPageObject, End,
                 Child, data->GUI.PG_PAGES[cp_Update]       = UpdateConfigPageObject, End,
              End,
           End,
