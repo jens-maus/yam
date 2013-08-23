@@ -77,6 +77,10 @@ struct Data
 #include "Themes.h"
 */
 
+/* EXPORT
+#define NUMBER_MAILLIST_COLUMNS 8
+*/
+
 /* Private Functions */
 /// MailCompare
 //  Compares two messages
@@ -897,7 +901,7 @@ DECLARE(DoubleClicked) // LONG entryNum
 //  Creates format definition for message listview
 DECLARE(MakeFormat)
 {
-  static const int defwidth[MACOLNUM] = { -1,-1,-1,-1,-1,-1,-1,-1 };
+  static const int defwidth[NUMBER_MAILLIST_COLUMNS] = { -1,-1,-1,-1,-1,-1,-1,-1 };
   char format[SIZE_LARGE];
   BOOL first = TRUE;
   int i;
@@ -906,7 +910,7 @@ DECLARE(MakeFormat)
 
   *format = '\0';
 
-  for(i = 0; i < MACOLNUM; i++)
+  for(i = 0; i < NUMBER_MAILLIST_COLUMNS; i++)
   {
     if(isFlagSet(C->MessageCols, (1<<i)))
     {

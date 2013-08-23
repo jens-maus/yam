@@ -80,6 +80,8 @@ enum SetOrder
   MUIV_MainFolderListtree_SetOrder_Save=0,
   MUIV_MainFolderListtree_SetOrder_Reset
 };
+
+#define NUMBER_FOLDERTREE_COLUMNS 5
 */
 
 enum
@@ -685,7 +687,7 @@ OVERLOAD(MUIM_ContextMenuChoice)
 // creates format definition for folder listtree
 DECLARE(MakeFormat)
 {
-  static const int defwidth[FOCOLNUM] = { 100,0,0,0,0 };
+  static const int defwidth[NUMBER_FOLDERTREE_COLUMNS] = { 100,0,0,0,0 };
   char format[SIZE_LARGE];
   BOOL first = TRUE;
   int i;
@@ -694,7 +696,7 @@ DECLARE(MakeFormat)
 
   *format = '\0';
 
-  for(i = 0; i < FOCOLNUM; i++)
+  for(i = 0; i < NUMBER_FOLDERTREE_COLUMNS; i++)
   {
     if(isFlagSet(C->FolderCols, (1<<i)))
     {

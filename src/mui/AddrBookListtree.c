@@ -80,6 +80,8 @@ struct Data
 #define MUIV_AddrBookListtree_SortBy_Birthday   8
 #define MUIV_AddrBookListtree_SortBy_PGPId      9
 #define MUIV_AddrBookListtree_SortBy_LastName  10 // artificial column generated from the Name column
+
+#define NUMBER_ABOOK_COLUMNS 9
 */
 
 /* Private Functions */
@@ -610,7 +612,7 @@ DECLARE(MakeFormat)
 
   format[0] = '\0';
 
-  for(i = 0; i < ABCOLNUM; i++)
+  for(i = 1; i < NUMBER_ABOOK_COLUMNS; i++)
   {
     if(isFlagSet(C->AddrbookCols, (1<<i)))
     {

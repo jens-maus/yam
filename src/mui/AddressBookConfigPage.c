@@ -43,7 +43,7 @@
 /* CLASSDATA
 struct Data
 {
-  Object *CH_ACOLS[ABCOLNUM];
+  Object *CH_ACOLS[NUMBER_ABOOK_COLUMNS];
   Object *CY_ATAB;
   Object *ST_NEWGROUP;
   Object *ST_GALLDIR;
@@ -52,14 +52,14 @@ struct Data
 */
 
 /* INCLUDE
-#include "YAM_config.h" // for ABCOLNUM definition
+#include "mui/AddrBookListtree.h"
 */
 
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
-  Object *CH_ACOLS[ABCOLNUM];
+  Object *CH_ACOLS[NUMBER_ABOOK_COLUMNS];
   Object *CY_ATAB;
   Object *ST_NEWGROUP;
   Object *ST_GALLDIR;
@@ -123,7 +123,7 @@ OVERLOAD(OM_NEW)
     GETDATA;
     LONG i;
 
-    for(i = 1; i < ABCOLNUM; i++)
+    for(i = 1; i < NUMBER_ABOOK_COLUMNS; i++)
       data->CH_ACOLS[i] =      CH_ACOLS[i];
     data->CY_ATAB =          CY_ATAB;
     data->ST_NEWGROUP =      ST_NEWGROUP;

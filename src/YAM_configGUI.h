@@ -36,6 +36,5 @@ struct CO_ClassData;
 Object *CO_PageFilters(struct CO_ClassData *data);
 Object *CO_PageScripts(struct CO_ClassData *data);
 Object *CO_PageMixed(struct CO_ClassData *data);
-Object *CO_PageLookFeel(struct CO_ClassData *data);
 
 #endif /* YAM_CONFIGGUI_H */

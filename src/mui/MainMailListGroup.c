@@ -371,7 +371,7 @@ DECLARE(SwitchToList) // enum MainListType type
     // before we switch the activePage of the group object we
     // have to set the individual column width of the two NLists as we only save
     // the width of one.
-    for(i=0; i < MACOLNUM; i++)
+    for(i=0; i < NUMBER_MAILLIST_COLUMNS; i++)
     {
       LONG colWidth = DoMethod(data->mainListObjects[data->activeList], MUIM_NList_ColWidth, i, MUIV_NList_ColWidth_Get);
 

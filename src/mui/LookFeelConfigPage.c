@@ -32,6 +32,8 @@
 
 #include <proto/muimaster.h>
 
+#include "YAM_utilities.h"
+
 #include "mui/ConfigPage.h"
 #include "mui/PlaceholderPopupList.h"
 #include "mui/ThemeListGroup.h"
@@ -43,9 +45,9 @@ struct Data
 {
   Object *GR_THEMES;
   Object *CY_FOLDERINFO;
-  Object *CH_FCOLS[FOCOLNUM];
+  Object *CH_FCOLS[NUMBER_FOLDERTREE_COLUMNS];
   Object *CH_FCNTMENU;
-  Object *CH_MCOLS[MACOLNUM];
+  Object *CH_MCOLS[NUMBER_MAILLIST_COLUMNS];
   Object *CH_MCNTMENU;
   Object *CY_INFOBARPOS;
   Object *PO_INFOBARTXT;
@@ -61,8 +63,9 @@ struct Data
 };
 */
 
-/* EXPORT
-#include "YAM_config.h" // for FOCOLNUM and MACOLNUM
+/* INCLUDE
+#include "mui/MainFolderListtree.h"
+#include "mui/MainMailList.h"
 */
 
 /* Private functions */
@@ -93,9 +96,9 @@ OVERLOAD(OM_NEW)
   static const char *folderf[6];
   Object *GR_THEMES;
   Object *CY_FOLDERINFO;
-  Object *CH_FCOLS[FOCOLNUM];
+  Object *CH_FCOLS[5];
   Object *CH_FCNTMENU;
-  Object *CH_MCOLS[MACOLNUM];
+  Object *CH_MCOLS[8];
   Object *CH_MCNTMENU;
   Object *CY_INFOBARPOS;
   Object *PO_INFOBARTXT;
@@ -306,21 +309,15 @@ OVERLOAD(OM_NEW)
   TAG_MORE, inittags(msg))) != NULL)
   {
     GETDATA;
+    LONG i;
 
     data->GR_THEMES =            GR_THEMES;
     data->CY_FOLDERINFO =        CY_FOLDERINFO;
-    data->CH_FCOLS[1] =          CH_FCOLS[1];
-    data->CH_FCOLS[2] =          CH_FCOLS[2];
-    data->CH_FCOLS[3] =          CH_FCOLS[3];
-    data->CH_FCOLS[4] =          CH_FCOLS[4];
+    for(i = 1; i < 5; i++)
+      data->CH_FCOLS[i] =          CH_FCOLS[i];
     data->CH_FCNTMENU =          CH_FCNTMENU;
-    data->CH_MCOLS[1] =          CH_MCOLS[1];
-    data->CH_MCOLS[2] =          CH_MCOLS[2];
-    data->CH_MCOLS[3] =          CH_MCOLS[3];
-    data->CH_MCOLS[4] =          CH_MCOLS[4];
-    data->CH_MCOLS[5] =          CH_MCOLS[5];
-    data->CH_MCOLS[6] =          CH_MCOLS[6];
-    data->CH_MCOLS[7] =          CH_MCOLS[7];
+    for(i = 1; i < 8; i++)
+      data->CH_MCOLS[i] =          CH_MCOLS[i];
     data->CH_MCNTMENU =          CH_MCNTMENU;
     data->CY_INFOBARPOS =        CY_INFOBARPOS;
     data->PO_INFOBARTXT =        PO_INFOBARTXT;
@@ -375,10 +372,10 @@ OVERLOAD(MUIM_ConfigPage_ConfigToGUI)
   // as active
   DoMethod(data->GR_THEMES, MUIM_ThemeListGroup_Update);
 
-  for(i=1; i < FOCOLNUM; i++)
+  for(i=1; i < NUMBER_FOLDERTREE_COLUMNS; i++)
 	setcheckmark(data->CH_FCOLS[i], isFlagSet(CE->FolderCols, (1<<i)));
 
-  for(i=1; i < MACOLNUM; i++)
+  for(i=1; i < NUMBER_MAILLIST_COLUMNS; i++)
 	setcheckmark(data->CH_MCOLS[i], isFlagSet(CE->MessageCols, (1<<i)));
 
   setcheckmark(data->CH_FIXFLIST, CE->FixedFontList);
@@ -409,15 +406,15 @@ OVERLOAD(MUIM_ConfigPage_GUIToConfig)
   CE->EmbeddedReadPane = GetMUICheck  (data->CH_EMBEDDEDREADPANE);
   CE->SizeFormat = GetMUICycle(data->CY_SIZE);
 
-  CE->FolderCols = 1;
-  for(i=1; i < FOCOLNUM; i++)
+  CE->FolderCols = (1<<0);
+  for(i=1; i < NUMBER_FOLDERTREE_COLUMNS; i++)
   {
 	if(GetMUICheck(data->CH_FCOLS[i]) == TRUE)
 	  setFlag(CE->FolderCols, (1<<i));
   }
 
-  CE->MessageCols = 1;
-  for(i=1; i < MACOLNUM; i++)
+  CE->MessageCols = (1<<0);
+  for(i=1; i < NUMBER_MAILLIST_COLUMNS; i++)
   {
 	if(GetMUICheck(data->CH_MCOLS[i]) == TRUE)
 	  setFlag(CE->MessageCols, (1<<i));
