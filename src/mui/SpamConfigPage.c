@@ -31,11 +31,11 @@
 #include "SpamConfigPage_cl.h"
 
 #include <proto/muimaster.h>
-
 #include <mui/NList_mcc.h>
 #include <mui/NListtree_mcc.h>
 
 #include "YAM.h"
+#include "YAM_config.h"
 #include "YAM_error.h"
 
 #include "FileInfo.h"
@@ -45,6 +45,7 @@
 #include "Requesters.h"
 
 #include "mui/ConfigPage.h"
+#include "mui/ConfigPageList.h"
 #include "mui/FilterChooser.h"
 #include "mui/MainWindowToolbar.h"
 

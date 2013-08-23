@@ -34,7 +34,6 @@
 
 #include <proto/asl.h>
 #include <proto/muimaster.h>
-
 #include <mui/BetterString_mcc.h>
 #include <mui/NBalance_mcc.h>
 #include <mui/NList_mcc.h>
@@ -45,6 +44,7 @@
 #include "YAM_error.h"
 
 #include "mui/ConfigPage.h"
+#include "mui/ConfigPageList.h"
 #include "mui/MimeTypeList.h"
 #include "mui/PlaceholderPopupList.h"
 

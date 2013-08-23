@@ -33,11 +33,13 @@
 #include <proto/muimaster.h>
 
 #include "YAM_addressbook.h"
+#include "YAM_config.h"
 
 #include "MailServers.h"
 #include "UserIdentity.h"
 
 #include "mui/ConfigPage.h"
+#include "mui/ConfigPageList.h"
 #include "mui/TZoneChooser.h"
 #include "mui/TZoneInfoBar.h"
 

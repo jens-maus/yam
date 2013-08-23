@@ -34,9 +34,11 @@
 #include <proto/muimaster.h>
 
 #include "YAM_addressbook.h"
+#include "YAM_config.h"
 #include "YAM_utilities.h"
 
 #include "mui/ConfigPage.h"
+#include "mui/ConfigPageList.h"
 
 #include "Debug.h"
 
@@ -156,7 +158,7 @@ OVERLOAD(MUIM_ConfigPage_ConfigToGUI)
   set(data->ST_NEWGROUP, MUIA_Disabled, CE->AddToAddrbook == 0);
   setstring(data->ST_PROXY, CE->ProxyServer);
   setcycle(data->CY_ATAB, CE->AddToAddrbook);
-  for(i = 1; i < ABCOLNUM; i++)
+  for(i = 1; i < NUMBER_ABOOK_COLUMNS; i++)
     setcheckmark(data->CH_ACOLS[i], isFlagSet(CE->AddrbookCols, (1<<i)));
 
   RETURN(0);
@@ -177,7 +179,7 @@ OVERLOAD(MUIM_ConfigPage_GUIToConfig)
   GetMUIString(CE->ProxyServer, data->ST_PROXY, sizeof(CE->ProxyServer));
   CE->AddToAddrbook = GetMUICycle  (data->CY_ATAB);
   CE->AddrbookCols = 1;
-  for(i = 1; i < ABCOLNUM; i++)
+  for(i = 1; i < NUMBER_ABOOK_COLUMNS; i++)
   {
     if(GetMUICheck(data->CH_ACOLS[i]))
       setFlag(CE->AddrbookCols, (1<<i));

@@ -31,7 +31,6 @@
 #include "IdentitiesConfigPage_cl.h"
 
 #include <proto/muimaster.h>
-
 #include <mui/BetterString_mcc.h>
 #include <mui/NBalance_mcc.h>
 #include <mui/NList_mcc.h>
@@ -39,12 +38,14 @@
 
 #include "YAM.h"
 #include "YAM_addressbook.h"
+#include "YAM_config.h"
 
 #include "MailServers.h"
 #include "Signature.h"
 #include "UserIdentity.h"
 
 #include "mui/ConfigPage.h"
+#include "mui/ConfigPageList.h"
 #include "mui/FolderRequestListtree.h"
 #include "mui/IdentityList.h"
 #include "mui/MailServerChooser.h"

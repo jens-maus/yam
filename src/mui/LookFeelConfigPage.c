@@ -32,9 +32,11 @@
 
 #include <proto/muimaster.h>
 
+#include "YAM_config.h"
 #include "YAM_utilities.h"
 
 #include "mui/ConfigPage.h"
+#include "mui/ConfigPageList.h"
 #include "mui/PlaceholderPopupList.h"
 #include "mui/ThemeListGroup.h"
 

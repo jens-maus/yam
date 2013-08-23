@@ -35,13 +35,13 @@
 #if defined(__amigaos4__)
 #include <proto/application.h>
 #endif
-
 #include <mui/BetterString_mcc.h>
 #include <mui/NBalance_mcc.h>
 #include <mui/NList_mcc.h>
 #include <mui/NListview_mcc.h>
 
 #include "YAM.h"
+#include "YAM_config.h"
 
 #include "MailServers.h"
 #include "UIDL.h"
@@ -49,6 +49,7 @@
 
 #include "mui/AccountList.h"
 #include "mui/ConfigPage.h"
+#include "mui/ConfigPageList.h"
 
 #include "Debug.h"
 

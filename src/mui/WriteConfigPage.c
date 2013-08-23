@@ -32,7 +32,10 @@
 
 #include <proto/muimaster.h>
 
+#include "YAM_config.h"
+
 #include "mui/ConfigPage.h"
+#include "mui/ConfigPageList.h"
 
 #include "Debug.h"
 
