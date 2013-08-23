@@ -210,6 +210,7 @@ HOOKPROTONHNONP(AddNewFilterToList, void)
 
   if((filterNode = CreateNewFilter(FA_TERMINATE, 0)) != NULL)
   {
+    #warning access to old config GUI
     DoMethod(G->CO->GUI.LV_RULES, MUIM_NList_InsertSingle, filterNode, MUIV_NList_Insert_Bottom);
     set(G->CO->GUI.LV_RULES, MUIA_NList_Active, MUIV_NList_Active_Bottom);
 
@@ -232,6 +233,7 @@ HOOKPROTONHNONP(RemoveActiveFilter, void)
   struct FilterNode *filterNode = NULL;
 
   // get the active filterNode
+  #warning access to old config GUI
   DoMethod(G->CO->GUI.LV_RULES, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &filterNode);
 
   // if we got an active entry lets remove it from the GUI List
