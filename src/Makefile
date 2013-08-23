@@ -511,6 +511,7 @@ MUIOBJS = \
 	MainWindowToolbar.o \
 	MimeConfigPage.o \
 	MimeTypeList.o \
+	MixedConfigPage.o \
 	ObjectList.o \
 	ObjectListitem.o \
 	PassphraseRequestWindow.o \

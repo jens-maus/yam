@@ -34,15 +34,12 @@
 
 #include "YAM.h"
 
-#include "Locale.h"
-
 #include "mui/ConfigPageList.h"
 #include "mui/ImageArea.h"
 
 #include "Debug.h"
 
 /* INCLUDE
-#include "YAM_config.h"
 #include "Locale.h"
 #include "MUIObjects.h"
 #include "Themes.h"
@@ -76,6 +73,7 @@ OVERLOAD(OM_NEW)
 	case cp_MIME:         imageID = "config_mime_big";       image = CI_MIMEBIG;       title = tr(MSG_CO_MIME_TITLE);       summary = tr(MSG_CO_MIME_SUMMARY);       break;
 	case cp_StartupQuit:  imageID = "config_start_big";      image = CI_STARTBIG;      title = tr(MSG_CO_STARTUP_TITLE);    summary = tr(MSG_CO_STARTUP_SUMMARY);    break;
     case cp_AddressBook:  imageID = "config_abook_big";      image = CI_ABOOKBIG;      title = tr(MSG_CO_ABOOK_TITLE);      summary = tr(MSG_CO_ABOOK_SUMMARY);      break;
+    case cp_Mixed:        imageID = "config_misc_big";       image = CI_MISCBIG;       title = tr(MSG_CO_MIXED_TITLE);      summary = tr(MSG_CO_MIXED_SUMMARY);      break;
     case cp_LookFeel:     imageID = "config_lookfeel_big";   image = CI_LOOKFEELBIG;   title = tr(MSG_CO_LOOKFEEL_TITLE);   summary = tr(MSG_CO_LOOKFEEL_SUMMARY);   break;
     case cp_Update:       imageID = "config_update_big";     image = CI_UPDATEBIG;     title = tr(MSG_CO_UPDATE_TITLE);     summary = tr(MSG_CO_UPDATE_SUMMARY);     break;
     default:              imageID = NULL;                    image = CI_MAX;           title = NULL;                        summary = NULL;                          break;
@@ -178,7 +176,7 @@ DECLARE(GUIToConfig)
 
 ///
 /// DECLARE(ConfigUpdate)
-DECLARE(ConfigUpdate) // enum ConfigPage sourcePage
+DECLARE(ConfigUpdate) // ULONG sourcePage
 {
   ENTER();
 

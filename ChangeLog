@@ -12,6 +12,8 @@ $URL$
   * YAM_CO.c, mui/MimeConfigPage.c: use the new base class for the "MIME" page.
   * YAM_CO.c, mui/LookFeelConfigPage.c: use the new base class for the
     "Look&Feel" page.
+  * YAM_CO.c, mui/MixedConfigPage.c: use the new base class for the "Mixed"
+    page.
 
 2013-08-23 Samir Hawamdeh <s.hawamdeh@tin.it>
 

@@ -1888,6 +1888,7 @@ void CO_GetConfig(void)
     case cp_MIME:
     case cp_StartupQuit:
     case cp_AddressBook:
+    case cp_Mixed:
     case cp_LookFeel:
     case cp_Update:
     {
@@ -1905,43 +1906,6 @@ void CO_GetConfig(void)
     case cp_Scripts:
     {
       // nothing
-    }
-    break;
-
-    case cp_Mixed:
-    {
-      GetMUIString(CE->TempDir, gui->ST_TEMPDIR, sizeof(CE->TempDir));
-      GetMUIString(CE->DetachDir, gui->ST_DETACHDIR, sizeof(CE->DetachDir));
-      GetMUIString(CE->AttachDir, gui->ST_ATTACHDIR, sizeof(CE->AttachDir));
-      GetMUIString(CE->UpdateDownloadPath, gui->ST_UPDATEDOWNLOADPATH, sizeof(CE->UpdateDownloadPath));
-      CE->WBAppIcon         = GetMUICheck(gui->CH_WBAPPICON);
-      CE->IconPositionX     = GetMUIInteger(gui->ST_APPX);
-      CE->IconPositionY     = GetMUIInteger(gui->ST_APPY);
-
-      if(GetMUICheck(gui->CH_APPICONPOS) == FALSE)
-      {
-        CE->IconPositionX = -CE->IconPositionX;
-        CE->IconPositionY = -CE->IconPositionY;
-      }
-
-      GetMUIString(CE->AppIconText, gui->ST_APPICON, sizeof(CE->AppIconText));
-      #if defined(__amigaos4__)
-      CE->DockyIcon         = GetMUICheck(gui->CH_DOCKYICON);
-      #endif // __amigaos4__
-      CE->IconifyOnQuit     = GetMUICheck(gui->CH_CLGADGET);
-      CE->Confirm           = GetMUICheck(gui->CH_CONFIRM);
-      CE->ConfirmDelete     = GetMUINumer(gui->NB_CONFIRMDEL);
-      CE->RemoveAtOnce      = GetMUICheck(gui->CH_REMOVE);
-      GetMUIText(CE->XPKPack, gui->TX_PACKER, sizeof(CE->XPKPack));
-      GetMUIText(CE->XPKPackEncrypt, gui->TX_ENCPACK, sizeof(CE->XPKPackEncrypt));
-      CE->XPKPackEff        = GetMUINumer(gui->NB_PACKER);
-      CE->XPKPackEncryptEff = GetMUINumer(gui->NB_ENCPACK);
-      GetMUIString(CE->PackerCommand, gui->ST_ARCHIVER, sizeof(CE->PackerCommand));
-      CE->ShowPackerProgress = GetMUICheck(gui->CH_ARCHIVERPROGRESS);
-      CE->TransferWindow = GetMUICycle(gui->CY_TRANSWIN);
-      GetMUIString(CE->Editor, gui->ST_EDITOR, sizeof(CE->Editor));
-      CE->ForceEditorCodeset = GetMUICheck(gui->CH_DEFCODESET_EDITOR);
-      GetMUIText(CE->ForcedEditorCodeset, gui->TX_DEFCODESET_EDITOR, sizeof(CE->ForcedEditorCodeset));
     }
     break;
 
@@ -1982,6 +1946,7 @@ void CO_SetConfig(void)
     case cp_MIME:
     case cp_StartupQuit:
     case cp_AddressBook:
+    case cp_Mixed:
     case cp_LookFeel:
     case cp_Update:
     {
@@ -2022,42 +1987,6 @@ void CO_SetConfig(void)
       set(gui->ST_RXNAME, MUIA_Disabled, act >= 10);
       set(gui->LV_REXX, MUIA_NList_Active, 0);
       DoMethod(gui->LV_REXX, MUIM_NList_Redraw, MUIV_NList_Redraw_All);
-    }
-    break;
-
-    case cp_Mixed:
-    {
-      setstring(gui->ST_TEMPDIR, CE->TempDir);
-      setstring(gui->ST_DETACHDIR, CE->DetachDir);
-      setstring(gui->ST_ATTACHDIR, CE->AttachDir);
-      setstring(gui->ST_UPDATEDOWNLOADPATH, CE->UpdateDownloadPath);
-      setcheckmark(gui->CH_WBAPPICON, CE->WBAppIcon);
-      set(gui->ST_APPX, MUIA_String_Integer, abs(CE->IconPositionX));
-      set(gui->ST_APPY, MUIA_String_Integer, abs(CE->IconPositionY));
-      setcheckmark(gui->CH_APPICONPOS, CE->IconPositionX >= 0 && CE->IconPositionY >= 0);
-      setstring(gui->ST_APPICON, CE->AppIconText);
-      #if defined(__amigaos4__)
-      setcheckmark(gui->CH_DOCKYICON, CE->DockyIcon);
-      #endif // __amigaos4__
-      setcheckmark(gui->CH_CLGADGET, CE->IconifyOnQuit);
-      setcheckmark(gui->CH_CONFIRM, CE->Confirm);
-
-      xset(gui->NB_CONFIRMDEL, MUIA_Numeric_Value, CE->ConfirmDelete,
-                               MUIA_Disabled, CE->Confirm == FALSE);
-
-      setcheckmark(gui->CH_REMOVE, CE->RemoveAtOnce);
-      set(gui->TX_PACKER, MUIA_Text_Contents, CE->XPKPack);
-      set(gui->TX_ENCPACK, MUIA_Text_Contents, CE->XPKPackEncrypt);
-      setslider(gui->NB_PACKER, CE->XPKPackEff);
-      setslider(gui->NB_ENCPACK, CE->XPKPackEncryptEff);
-      setstring(gui->ST_ARCHIVER, CE->PackerCommand);
-      setcheckmark(gui->CH_ARCHIVERPROGRESS, CE->ShowPackerProgress);
-
-      set(gui->CH_APPICONPOS, MUIA_Disabled, CE->WBAppIcon == FALSE);
-      setcycle(gui->CY_TRANSWIN, CE->TransferWindow);
-      setstring(gui->ST_EDITOR, CE->Editor);
-      setcheckmark(gui->CH_DEFCODESET_EDITOR, CE->ForceEditorCodeset);
-      nnset(gui->TX_DEFCODESET_EDITOR, MUIA_Text_Contents, CE->ForcedEditorCodeset);
     }
     break;
 
