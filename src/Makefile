@@ -521,6 +521,7 @@ MUIOBJS = \
 	ReadWindowStatusBar.o \
 	ReadWindowToolbar.o \
 	Recipientstring.o \
+	ReplyForwardConfigPage.o \
 	ScriptList.o \
 	SearchControlGroup.o \
 	SearchMailWindow.o \

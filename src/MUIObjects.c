@@ -562,6 +562,7 @@ HOOKPROTONHNP(PO_HandleScriptsOpenFunc, BOOL, Object *listview)
 
   ENTER();
 
+  #warning access to specific object for PHM_SCRIPTS
   if((list = (Object *)xget(listview, MUIA_NListview_NList)) != NULL)
     DoMethod(list, MUIM_PlaceholderPopupList_SetScriptEntry, xget(G->CO->GUI.LV_REXX, MUIA_NList_Active));
 

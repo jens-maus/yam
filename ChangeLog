@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-08-23 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_CO.c, mui/ReplyForwardConfigPage.c: use the new base class for the
+    "Reply/Forward" page.
+
 2013-08-23 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: update to the latest changes.

@@ -1882,6 +1882,7 @@ void CO_GetConfig(void)
     case cp_Spam:
     case cp_Read:
     case cp_Write:
+    case cp_ReplyForward:
     case cp_Signature:
     case cp_Security:
     case cp_StartupQuit:
@@ -1896,27 +1897,6 @@ void CO_GetConfig(void)
     {
       // bring NList elements and Exec list elements into sync
       SortNListToExecList(gui->LV_RULES, &CE->filterList);
-    }
-    break;
-
-    case cp_ReplyForward:
-    {
-      GetMUIString(CE->ReplyHello, gui->ST_REPLYHI, sizeof(CE->ReplyHello));
-      GetMUIString(CE->ReplyIntro, gui->ST_REPLYTEXT, sizeof(CE->ReplyIntro));
-      GetMUIString(CE->ReplyBye, gui->ST_REPLYBYE, sizeof(CE->ReplyBye));
-      GetMUIString(CE->AltReplyHello, gui->ST_AREPLYHI, sizeof(CE->AltReplyHello));
-      GetMUIString(CE->AltReplyIntro, gui->ST_AREPLYTEXT, sizeof(CE->AltReplyIntro));
-      GetMUIString(CE->AltReplyBye, gui->ST_AREPLYBYE, sizeof(CE->AltReplyBye));
-      GetMUIString(CE->AltReplyPattern, gui->ST_AREPLYPAT, sizeof(CE->AltReplyPattern));
-      GetMUIString(CE->MLReplyHello, gui->ST_MREPLYHI, sizeof(CE->MLReplyHello));
-      GetMUIString(CE->MLReplyIntro, gui->ST_MREPLYTEXT, sizeof(CE->MLReplyIntro));
-      GetMUIString(CE->MLReplyBye, gui->ST_MREPLYBYE, sizeof(CE->MLReplyBye));
-      GetMUIString(CE->ForwardIntro, gui->ST_FWDSTART, sizeof(CE->ForwardIntro));
-      GetMUIString(CE->ForwardFinish, gui->ST_FWDEND, sizeof(CE->ForwardFinish));
-      CE->QuoteEmptyLines   = GetMUICheck  (gui->CH_QUOTEEMPTY);
-      CE->CompareAddress    = GetMUICheck  (gui->CH_COMPADDR);
-      CE->StripSignature    = GetMUICheck  (gui->CH_STRIPSIG);
-      CE->ForwardMode = GetMUICycle(gui->CY_FORWARDMODE);
     }
     break;
 
@@ -2052,6 +2032,7 @@ void CO_SetConfig(void)
     case cp_Spam:
     case cp_Read:
     case cp_Write:
+    case cp_ReplyForward:
     case cp_Signature:
     case cp_Security:
     case cp_StartupQuit:
@@ -2079,27 +2060,6 @@ void CO_SetConfig(void)
 
       // make sure the first entry is selected per default
       set(gui->LV_RULES, MUIA_NList_Active, MUIV_NList_Active_Top);
-    }
-    break;
-
-    case cp_ReplyForward:
-    {
-      setstring(gui->ST_REPLYHI, CE->ReplyHello);
-      setstring(gui->ST_REPLYTEXT, CE->ReplyIntro);
-      setstring(gui->ST_REPLYBYE, CE->ReplyBye);
-      setstring(gui->ST_AREPLYHI, CE->AltReplyHello);
-      setstring(gui->ST_AREPLYTEXT, CE->AltReplyIntro);
-      setstring(gui->ST_AREPLYBYE, CE->AltReplyBye);
-      setstring(gui->ST_AREPLYPAT, CE->AltReplyPattern);
-      setstring(gui->ST_MREPLYHI, CE->MLReplyHello);
-      setstring(gui->ST_MREPLYTEXT, CE->MLReplyIntro);
-      setstring(gui->ST_MREPLYBYE, CE->MLReplyBye);
-      setstring(gui->ST_FWDSTART, CE->ForwardIntro);
-      setstring(gui->ST_FWDEND, CE->ForwardFinish);
-      setcheckmark(gui->CH_QUOTEEMPTY, CE->QuoteEmptyLines);
-      setcheckmark(gui->CH_COMPADDR, CE->CompareAddress);
-      setcheckmark(gui->CH_STRIPSIG, CE->StripSignature);
-      setcycle(gui->CY_FORWARDMODE, CE->ForwardMode);
     }
     break;
 

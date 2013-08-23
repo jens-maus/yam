@@ -84,6 +84,7 @@
 #include "mui/ReadConfigPage.h"
 #include "mui/ReadMailGroup.h"
 #include "mui/ReadWindow.h"
+#include "mui/ReplyForwardConfigPage.h"
 #include "mui/SearchControlGroup.h"
 #include "mui/SecurityConfigPage.h"
 #include "mui/SignatureChooser.h"
@@ -2419,23 +2420,23 @@ static struct CO_ClassData *CO_New(void)
              Child, data->GUI.GR_PAGE = PageGroup,
                 NoFrame,
                 MUIA_Group_ActivePage, 0,
-                Child, data->GUI.PG_PAGES[cp_FirstSteps]  = FirstStepsConfigPageObject, End,
-                Child, data->GUI.PG_PAGES[cp_TCPIP]       = TCPIPConfigPageObject, End,
-                Child, data->GUI.PG_PAGES[cp_Identities]  = IdentitiesConfigPageObject, End,
+                Child, data->GUI.PG_PAGES[cp_FirstSteps]   = FirstStepsConfigPageObject, End,
+                Child, data->GUI.PG_PAGES[cp_TCPIP]        = TCPIPConfigPageObject, End,
+                Child, data->GUI.PG_PAGES[cp_Identities]   = IdentitiesConfigPageObject, End,
                 Child, CO_PageFilters(data),
-                Child, data->GUI.PG_PAGES[cp_Spam]        = SpamConfigPageObject, End,
-                Child, data->GUI.PG_PAGES[cp_Read]        = ReadConfigPageObject, End,
-                Child, data->GUI.PG_PAGES[cp_Write]       = WriteConfigPageObject, End,
-                Child, CO_PageReplyForward(data),
-                Child, data->GUI.PG_PAGES[cp_Signature]   = SignatureConfigPageObject, End,
-                Child, data->GUI.PG_PAGES[cp_Security]    = SecurityConfigPageObject, End,
-                Child, data->GUI.PG_PAGES[cp_StartupQuit] = StartupQuitConfigPageObject, End,
+                Child, data->GUI.PG_PAGES[cp_Spam]         = SpamConfigPageObject, End,
+                Child, data->GUI.PG_PAGES[cp_Read]         = ReadConfigPageObject, End,
+                Child, data->GUI.PG_PAGES[cp_Write]        = WriteConfigPageObject, End,
+                Child, data->GUI.PG_PAGES[cp_ReplyForward] = ReplyForwardConfigPageObject, End,
+                Child, data->GUI.PG_PAGES[cp_Signature]    = SignatureConfigPageObject, End,
+                Child, data->GUI.PG_PAGES[cp_Security]     = SecurityConfigPageObject, End,
+                Child, data->GUI.PG_PAGES[cp_StartupQuit]  = StartupQuitConfigPageObject, End,
                 Child, CO_PageMIME(data),
-                Child, data->GUI.PG_PAGES[cp_AddressBook] = AddressBookConfigPageObject, End,
+                Child, data->GUI.PG_PAGES[cp_AddressBook]  = AddressBookConfigPageObject, End,
                 Child, CO_PageScripts(data),
                 Child, CO_PageMixed(data),
                 Child, CO_PageLookFeel(data),
-                Child, data->GUI.PG_PAGES[cp_Update]      = UpdateConfigPageObject, End,
+                Child, data->GUI.PG_PAGES[cp_Update]       = UpdateConfigPageObject, End,
              End,
           End,
 

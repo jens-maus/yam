@@ -33,7 +33,6 @@
 #include <string.h>
 #include <mui/NList_mcc.h>
 
-#include "YAM_main.h"
 #include "YAM_utilities.h"
 
 #include "Locale.h"
@@ -62,6 +61,10 @@ enum PlaceholderMode
   PHM_MIME_DEFVIEWER,
   PHM_MIME_COMMAND,
 };
+*/
+
+/* INCLUDE
+#include "YAM_main.h" // for enum Macro
 */
 
 /* Overloaded Methods */

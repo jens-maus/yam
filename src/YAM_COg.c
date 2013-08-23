@@ -1060,43 +1060,6 @@ Object *MakeMimeTypePop(Object **string, const char *desc)
 }
 
 ///
-/// MakePhraseGroup
-//  Creates a cycle/string gadgets for forward and reply phrases
-static Object *MakePhraseGroup(Object **hello, Object **intro, Object **bye,
-                               const char *label, const char *help)
-{
-   Object *grp, *cycl, *pgrp;
-   Object *popButton;
-   static const char *cytext[4];
-
-   cytext[0] = tr(MSG_CO_PhraseOpen);
-   cytext[1] = tr(MSG_CO_PhraseIntro);
-   cytext[2] = tr(MSG_CO_PhraseClose);
-   cytext[3] = NULL;
-
-   if ((grp = HGroup,
-         MUIA_Group_HorizSpacing, 1,
-         Child, cycl = CycleObject,
-            MUIA_CycleChain, 1,
-            MUIA_Font, MUIV_Font_Button,
-            MUIA_Cycle_Entries, cytext,
-            MUIA_ControlChar, ShortCut(label),
-            MUIA_Weight, 0,
-         End,
-         Child, pgrp = PageGroup,
-            Child, MakeVarPop(hello, &popButton, PHM_REPLYHELLO, SIZE_INTRO, ""),
-            Child, MakeVarPop(intro, &popButton, PHM_REPLYINTRO, SIZE_INTRO, ""),
-            Child, MakeVarPop(bye,   &popButton, PHM_REPLYBYE,   SIZE_INTRO, ""),
-         End,
-         MUIA_ShortHelp, help,
-      End))
-   {
-      DoMethod(cycl, MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, pgrp, 3, MUIM_Set, MUIA_Group_ActivePage, MUIV_TriggerValue);
-   }
-   return grp;
-}
-
-///
 /// MakeStaticCheck
 //  Creates non-interactive checkmark gadget
 static Object *MakeStaticCheck(void)
@@ -1374,94 +1337,6 @@ Object *CO_PageFilters(struct CO_ClassData *data)
 
   RETURN(grp);
   return grp;
-}
-
-///
-/// CO_PageReplyForward
-Object *CO_PageReplyForward(struct CO_ClassData *data)
-{
-  Object *obj;
-  Object *popButton;
-  static const char *fwdmode[3];
-
-  ENTER();
-
-  fwdmode[0] = tr(MSG_CO_FWDMSG_ATTACH);
-  fwdmode[1] = tr(MSG_CO_FWDMSG_INLINE);
-  fwdmode[2] = NULL;
-
-  obj = VGroup,
-    MUIA_HelpNode, "Configuration#ReplyForward",
-
-    ConfigPageHeaderObject("config_answer_big", G->theme.configImages[CI_ANSWERBIG], tr(MSG_CO_REPLY_TITLE), tr(MSG_CO_REPLY_SUMMARY)),
-
-    Child, ScrollgroupObject,
-      MUIA_Scrollgroup_FreeHoriz, FALSE,
-      MUIA_Scrollgroup_AutoBars, TRUE,
-      MUIA_Scrollgroup_Contents, VGroupV,
-
-        Child, VGroup, GroupFrameT(tr(MSG_CO_Replying)),
-          Child, ColGroup(2),
-            Child, Label2(tr(MSG_CO_RepInit)),
-            Child, MakePhraseGroup(&data->GUI.ST_REPLYHI, &data->GUI.ST_REPLYTEXT, &data->GUI.ST_REPLYBYE, tr(MSG_CO_RepInit), tr(MSG_HELP_CO_ST_REPLYTEXT)),
-
-            Child, Label2(tr(MSG_CO_AltRepInit)),
-            Child, MakePhraseGroup(&data->GUI.ST_AREPLYHI, &data->GUI.ST_AREPLYTEXT, &data->GUI.ST_AREPLYBYE, tr(MSG_CO_AltRepInit), tr(MSG_HELP_CO_ST_AREPLYTEXT)),
-
-            Child, HSpace(1),
-            Child, HGroup,
-              Child, Label2(tr(MSG_CO_AltRepPat)),
-              Child, data->GUI.ST_AREPLYPAT = MakeString(SIZE_PATTERN, tr(MSG_CO_AltRepPat)),
-            End,
-
-            Child, Label2(tr(MSG_CO_MLRepInit)),
-            Child, MakePhraseGroup(&data->GUI.ST_MREPLYHI, &data->GUI.ST_MREPLYTEXT, &data->GUI.ST_MREPLYBYE, tr(MSG_CO_MLRepInit), tr(MSG_HELP_CO_ST_MREPLYTEXT)),
-
-            Child, HSpace(1),
-            Child, MakeCheckGroup(&data->GUI.CH_COMPADDR, tr(MSG_CO_VerifyAddress)),
-
-            Child, HSpace(1),
-            Child, MakeCheckGroup(&data->GUI.CH_QUOTEEMPTY, tr(MSG_CO_QuoteEmpty)),
-
-            Child, HSpace(1),
-            Child, MakeCheckGroup(&data->GUI.CH_STRIPSIG, tr(MSG_CO_StripSignature)),
-
-          End,
-        End,
-
-        Child, ColGroup(2), GroupFrameT(tr(MSG_CO_Forwarding)),
-
-          Child, Label2(tr(MSG_CO_FWDMSG)),
-          Child, data->GUI.CY_FORWARDMODE = MakeCycle(fwdmode, tr(MSG_CO_FWDMSG)),
-
-          Child, Label2(tr(MSG_CO_FwdInit)),
-          Child, MakeVarPop(&data->GUI.ST_FWDSTART, &popButton, PHM_FORWARD, SIZE_INTRO, tr(MSG_CO_FwdInit)),
-
-          Child, Label2(tr(MSG_CO_FwdFinish)),
-          Child, MakeVarPop(&data->GUI.ST_FWDEND, &popButton, PHM_FORWARD, SIZE_INTRO, tr(MSG_CO_FwdFinish)),
-
-        End,
-
-        Child, HVSpace,
-
-      End,
-    End,
-
-  End;
-
-  if(obj != NULL)
-  {
-    SetHelp(data->GUI.ST_FWDSTART,    MSG_HELP_CO_ST_FWDSTART);
-    SetHelp(data->GUI.ST_FWDEND,      MSG_HELP_CO_ST_FWDEND);
-    SetHelp(data->GUI.ST_AREPLYPAT,   MSG_HELP_CO_ST_AREPLYPAT);
-    SetHelp(data->GUI.CH_QUOTEEMPTY,  MSG_HELP_CO_CH_QUOTEEMPTY);
-    SetHelp(data->GUI.CH_COMPADDR,    MSG_HELP_CO_CH_COMPADDR);
-    SetHelp(data->GUI.CH_STRIPSIG,    MSG_HELP_CO_CH_STRIPSIG);
-    SetHelp(data->GUI.CY_FORWARDMODE, MSG_HELP_CO_CY_FORWARDMODE);
-  }
-
-  RETURN(obj);
-  return obj;
 }
 
 ///
