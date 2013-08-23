@@ -344,6 +344,7 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
 
               // convert the utf8 encoded buffer to the local charset
               if((buf = CodesetsUTF8ToStr(CSA_Source,          utf8buf,
+                                          CSA_SourceLen,       cmail.moreBytes,
                                           CSA_DestCodeset,     G->localCodeset,
                                           CSA_MapForeignChars, C->MapForeignChars,
                                           TAG_DONE)) == NULL)
