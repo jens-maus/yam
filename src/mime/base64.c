@@ -635,31 +635,29 @@ long base64decode_file(FILE *in, FILE *out,
     }
 
     // if the caller supplied a source codeset, we have to
-    // make sure we convert our outbuffer before writing it out
+    // make sure we convert our outbuffer to UTF8 before writing it out
     // to the file into our local charset
     if(srcCodeset != NULL)
     {
       ULONG strLen = 0;
 
-      STRPTR str = CodesetsConvertStr(CSA_SourceCodeset,   srcCodeset,
-                                      CSA_DestCodeset,     G->localCodeset,
-                                      CSA_Source,          outbuffer,
-                                      CSA_SourceLen,       outLength,
-                                      CSA_DestLenPtr,      &strLen,
-                                      CSA_MapForeignChars, C->MapForeignChars,
-                                      TAG_DONE);
+      UTF8 *str = CodesetsUTF8Create(CSA_Source,          outbuffer,
+                                     CSA_SourceLen,       outLength,
+                                     CSA_SourceCodeset,   srcCodeset,
+                                     CSA_DestLenPtr,      &strLen,
+                                     TAG_DONE);
 
       if(str != NULL && strLen > 0)
       {
         // if we end up here we successfully converted the
         // sourcebuffer to a destination buffer which complies to our local
         // charset
-        dptr = str;
+        dptr = (char *)str;
         outLength = strLen;
       }
       else
       {
-        W(DBF_MIME, "error while trying to convert base64decoded string to local charset!");
+        W(DBF_MIME, "error while trying to convert base64decoded string to UTF8");
         dptr = outbuffer;
       }
     }

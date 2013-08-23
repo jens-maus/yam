@@ -1166,7 +1166,9 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, enum ReadHeaderM
 }
 ///
 /// RE_ConsumeRestOfPart
-//  Processes body of a message part
+//  Processes body of a message part and takes care to convert the text
+//  to UTF-8 if a srcCodeset has been supplied and the encoding of the part is
+//  either 7bit or 8bit which should signal that it is actually readable text
 static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, const struct codeset *srcCodeset,
                                  const struct Part *rp, const BOOL allowAutoDetect)
 {
@@ -1297,19 +1299,17 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, const struct codeset *srcC
           {
             ULONG dstlen = 0;
 
-            // convert from the srcCodeset to the destination one.
-            char *str = CodesetsConvertStr(CSA_SourceCodeset,   srcCodeset,
-                                           CSA_DestCodeset,     G->localCodeset,
-                                           CSA_Source,          buf,
+            // convert from the srcCodeset to UTF8
+            UTF8 *str = CodesetsUTF8Create(CSA_Source,          buf,
                                            CSA_SourceLen,       curlen,
+                                           CSA_SourceCodeset,   srcCodeset,
                                            CSA_DestLenPtr,      &dstlen,
-                                           CSA_MapForeignChars, C->MapForeignChars,
                                            TAG_DONE);
 
             // check if operations succeeded
             if(str != NULL && dstlen > 0)
             {
-              // now write back exactly the amount of bytes the CodesetsConvertStr()
+              // now write back exactly the amount of bytes the CodesetsUTF8Create()
               // function tells us.
               if(fwrite(str, dstlen, 1, out) <= 0)
               {
@@ -1325,7 +1325,7 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, const struct codeset *srcC
               continue;
             }
             else
-              W(DBF_MAIL, "couldn't convert buf with CodesetsConvertStr(), %08lx %ld %ld", str, dstlen, curlen);
+              W(DBF_MAIL, "couldn't convert buf with CodesetsUTF8Create(), %08lx %ld %ld", str, dstlen, curlen);
           }
 
           // now write back exactly the same amount of bytes we read previously
@@ -1380,11 +1380,11 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
   // local charset or not.
   if(rp->Nr != PART_RAW && isPrintable(rp) == TRUE && rp->CParCSet != NULL)
   {
-    // now we check that the codeset of the mail part really
-    // differs from the local one we are currently using
-    if(stricmp(rp->CParCSet, strippedCharsetName(G->localCodeset)) != 0)
+    // now we check that the codeset of the mail is not utf8
+    // as we always convert to UTF8
+    if(stricmp(rp->CParCSet, "utf-8") != 0 && stricmp(rp->CParCSet, "utf8") != 0)
     {
-      D(DBF_MAIL, "found Part #%ld encoded in charset '%s' which is different than local one.", rp->Nr, rp->CParCSet);
+      D(DBF_MAIL, "found Part #%ld encoded in charset '%s' which is different than UTF8", rp->Nr, rp->CParCSet);
 
       // try to obtain the source codeset from codesets.library
       // such that we can convert to our local charset accordingly.
@@ -2189,7 +2189,7 @@ BOOL RE_DecodePart(struct Part *rp)
 
       // we try to get a proper file extension for our decoded part which we
       // in fact first try to get out of the user's MIME configuration.
-      if(rp->Nr != PART_RAW)
+      if(rp->Nr != PART_RAW && rp->Nr != rp->rmData->letterPartNum)
       {
         // we first try to identify the file extension via the user
         // definable MIME type list configuration.
@@ -2231,7 +2231,7 @@ BOOL RE_DecodePart(struct Part *rp)
           if(strlen(ext) > 5)
             ext[0] = '\0';
           else
-            D(DBF_MIME, "identified file extension '%s' via part name", ext);
+            D(DBF_MIME, "identified file extension '%s' via part name '%s' %s", ext, rp->Name, rp->Filename);
         }
 
         // and last, but not least we try to identify the proper file extension
@@ -2270,8 +2270,18 @@ BOOL RE_DecodePart(struct Part *rp)
         }
       }
 
+      // if we still haven't identified a proper extension
+      // we go and check if the part is printable or not
+      if(ext[0] == '\0')
+      {
+        if(isPrintable(rp))
+          strlcpy(ext, "txt", sizeof(ext));
+        else
+          strlcpy(ext, "tmp", sizeof(ext));
+      }
+
       // lets generate the destination file name for the decoded part
-      snprintf(file, sizeof(file), "YAMm%08x-p%d.%s", (unsigned int)rp->rmData->uniqueID, rp->Nr, ext[0] != '\0' ? ext : "tmp");
+      snprintf(file, sizeof(file), "YAMm%08x-p%d.%s", (unsigned int)rp->rmData->uniqueID, rp->Nr, ext);
       AddPath(filepath, C->TempDir, file, sizeof(filepath));
 
       D(DBF_MAIL, "decoding '%s' to '%s'", rp->Filename, filepath);
@@ -2847,6 +2857,8 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
             char *ptr;
             char *rptr;
             char *msgend;
+            char *cstr;
+            ULONG cstrlen = 0;
             BOOL signatureFound = FALSE;
 
             // read the part into a dynamic string
@@ -2878,6 +2890,28 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
               // if we end up here it is "just" an EOF so lets put out
               // a warning and continue.
               W(DBF_MAIL, "Warning: EOF detected at pos %ld of '%s'", ftell(fh), part->Filename);
+            }
+
+            // now we need to convert 'msg' (which is the text of our part) from UTF8
+            // to the local charset because the mail file is always saved as UTF8
+            if((cstr = CodesetsUTF8ToStr(CSA_Source,          msg,
+                                         CSA_SourceLen,       dstrlen(msg),
+                                         CSA_DestCodeset,     G->localCodeset,
+                                         CSA_DestLenPtr,      &cstrlen,
+                                         CSA_MapForeignChars, C->MapForeignChars,
+                                         TAG_DONE)) != NULL && cstrlen > 0)
+            {
+              // if the size didn't change this should be a signal that nothing
+              // had been actually 
+              if(cstrlen != dstrlen(msg))
+              {
+                // msg has been converted to local charset now, so lets
+                // copy it back
+                dstrcpy(&msg, cstr);
+              }
+
+              // free the converted string again
+              CodesetsFreeA(cstr, NULL);
             }
 
             // now we analyze if that part of the mail text contains HTML
@@ -2951,7 +2985,8 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
 
                 // find the currently last part of the message to where we attach
                 // the new part now
-                for(last = first; last->Next; last = last->Next);
+                for(last = first; last->Next; last = last->Next)
+                  ; // nothing
 
                 // then create the new part to which we will put our uudecoded
                 // data

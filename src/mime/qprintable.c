@@ -393,18 +393,16 @@ long qpdecode_file(FILE *in, FILE *out, struct codeset *srcCodeset, BOOL isText)
 
         // if the caller supplied a source codeset, we have to
         // make sure we convert our outbuffer before writing it out
-        // to the file into our local charset
+        // to the file in UTF8
         if(srcCodeset != NULL)
         {
           ULONG strLen = 0;
 
-          STRPTR str = CodesetsConvertStr(CSA_SourceCodeset,   srcCodeset,
-                                          CSA_DestCodeset,     G->localCodeset,
-                                          CSA_Source,          dptr,
-                                          CSA_SourceLen,       todo,
-                                          CSA_DestLenPtr,      &strLen,
-                                          CSA_MapForeignChars, C->MapForeignChars,
-                                          TAG_DONE);
+          UTF8 *str = CodesetsUTF8Create(CSA_Source,          dptr,
+                                         CSA_SourceLen,       todo,
+                                         CSA_SourceCodeset,   srcCodeset,
+                                         CSA_DestLenPtr,      &strLen,
+                                         TAG_DONE);
 
           if(str != NULL && strLen > 0)
           {
@@ -477,13 +475,11 @@ long qpdecode_file(FILE *in, FILE *out, struct codeset *srcCodeset, BOOL isText)
     {
       ULONG strLen = 0;
 
-      STRPTR str = CodesetsConvertStr(CSA_SourceCodeset,   srcCodeset,
-                                      CSA_DestCodeset,     G->localCodeset,
-                                      CSA_Source,          dptr,
-                                      CSA_SourceLen,       todo,
-                                      CSA_DestLenPtr,      &strLen,
-                                      CSA_MapForeignChars, C->MapForeignChars,
-                                      TAG_DONE);
+      UTF8 *str = CodesetsUTF8Create(CSA_Source,          dptr,
+                                     CSA_SourceLen,       todo,
+                                     CSA_SourceCodeset,   srcCodeset,
+                                     CSA_DestLenPtr,      &strLen,
+                                     TAG_DONE);
 
       if(str != NULL && strLen > 0)
       {

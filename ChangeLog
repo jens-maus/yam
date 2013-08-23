@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-08-23 Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_RE.c, mime/uucode.c, mime/base64.c, mime/qprintable.c: modified mail
+    file decoding routines to always decode to UTF8 instead to the local
+    charset. This results in the temporary mail files to be always encoded
+    in UTF8 and then recoded to the local charset only when loading the text
+    in a texteditor object. This refs #7.
+
 2013-08-23 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_CO.c, mui/ReplyForwardConfigPage.c: use the new base class for the
