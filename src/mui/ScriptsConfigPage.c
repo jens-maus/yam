@@ -35,6 +35,8 @@
 #include <mui/NList_mcc.h>
 #include <mui/NListview_mcc.h>
 
+#include "SDI_hook.h"
+
 #include "YAM_config.h"
 
 #include "mui/ConfigPage.h"
@@ -57,6 +59,9 @@ struct Data
   Object *LV_SCRIPT;
   Object *CH_CONSOLE;
   Object *CH_WAITTERM;
+
+  struct Hook FilereqStartHook;
+  struct Hook FilereqStopHook;
 };
 */
 
@@ -76,6 +81,7 @@ OVERLOAD(OM_NEW)
   Object *LV_SCRIPT;
   Object *CH_CONSOLE;
   Object *CH_WAITTERM;
+  Object *popAsl;
 
   ENTER();
 
@@ -107,11 +113,9 @@ OVERLOAD(OM_NEW)
           Child, HGroup,
             MUIA_Group_HorizSpacing, 0,
             Child, MakeVarPop(&ST_SCRIPT, &PO_SCRIPT, &LV_SCRIPT, PHM_SCRIPTS, SIZE_PATHFILE, tr(MSG_CO_Script)),
-            Child, PopaslObject,
-               MUIA_Popasl_Type,       ASL_FileRequest,
-               MUIA_Popasl_StartHook,  &ScriptsReqStartHook,
-               MUIA_Popasl_StopHook,   &ScriptsReqStopHook,
-               MUIA_Popstring_Button,  PopButton(MUII_PopFile),
+            Child, popAsl = PopaslObject,
+               MUIA_Popasl_Type,      ASL_FileRequest,
+               MUIA_Popstring_Button, PopButton(MUII_PopFile),
             End,
           End,
 
@@ -141,6 +145,13 @@ OVERLOAD(OM_NEW)
 
     for(i = 1; i <= MAXRX; i++)
       DoMethod(LV_REXX, MUIM_NList_InsertSingle, i, MUIV_NList_Insert_Bottom);
+
+    InitHook(&data->FilereqStartHook, FilereqStartHook, data->ST_SCRIPT);
+    InitHook(&data->FilereqStopHook, FilereqStopHook, data->ST_SCRIPT);
+
+    xset(popAsl,
+      MUIA_Popasl_StartHook, &data->FilereqStartHook,
+      MUIA_Popasl_StopHook,  &data->FilereqStopHook);
 
     SetHelp(ST_RXNAME,    MSG_HELP_CO_ST_RXNAME);
     SetHelp(ST_SCRIPT,    MSG_HELP_CO_ST_SCRIPT);

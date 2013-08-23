@@ -39,6 +39,8 @@
 #include <mui/NList_mcc.h>
 #include <mui/NListview_mcc.h>
 
+#include "SDI_hook.h"
+
 #include "YAM.h"
 #include "YAM_config.h"
 #include "YAM_error.h"
@@ -67,6 +69,11 @@ struct Data
   Object *ST_DESCRIPTION;
   Object *ST_COMMAND;
   Object *ST_DEFVIEWER;
+
+  struct Hook MimeCommandReqStartHook;
+  struct Hook MimeCommandReqStopHook;
+  struct Hook MimeDefViewerReqStartHook;
+  struct Hook MimeDefViewerReqStopHook;
 };
 */
 
@@ -86,6 +93,7 @@ OVERLOAD(OM_NEW)
   Object *ST_DEFVIEWER;
   Object *popButton;
   Object *list;
+  Object *popAsl[2];
 
   ENTER();
 
@@ -150,9 +158,8 @@ OVERLOAD(OM_NEW)
               Child, HGroup,
                 MUIA_Group_HorizSpacing, 0,
                 Child, MakeVarPop(&ST_COMMAND, &popButton, &list, PHM_MIME_COMMAND, SIZE_COMMAND, tr(MSG_CO_MimeCmd)),
-                Child, PopaslObject,
-                  MUIA_Popasl_StartHook, &MimeCommandReqStartHook,
-                  MUIA_Popasl_StopHook,  &MimeCommandReqStopHook,
+                Child, popAsl[0] = PopaslObject,
+                  MUIA_Popasl_Type,      ASL_FileRequest,
                   MUIA_Popstring_Button, PopButton(MUII_PopFile),
                 End,
               End,
@@ -172,9 +179,8 @@ OVERLOAD(OM_NEW)
           Child, HGroup,
             MUIA_Group_HorizSpacing, 0,
             Child, MakeVarPop(&ST_DEFVIEWER, &popButton, &list, PHM_MIME_DEFVIEWER, SIZE_COMMAND, tr(MSG_CO_DefaultViewer)),
-            Child, PopaslObject,
-              MUIA_Popasl_StartHook, &MimeDefViewerReqStartHook,
-              MUIA_Popasl_StopHook,  &MimeDefViewerReqStopHook,
+            Child, popAsl[1] = PopaslObject,
+              MUIA_Popasl_Type,      ASL_FileRequest,
               MUIA_Popstring_Button, PopButton(MUII_PopFile),
             End,
           End,
@@ -196,6 +202,18 @@ OVERLOAD(OM_NEW)
     data->ST_DESCRIPTION = ST_DESCRIPTION;
     data->ST_COMMAND =     ST_COMMAND;
     data->ST_DEFVIEWER =   ST_DEFVIEWER;
+
+    InitHook(&data->MimeCommandReqStartHook, FilereqStartHook, data->ST_COMMAND);
+    InitHook(&data->MimeCommandReqStopHook, FilereqStopHook, data->ST_COMMAND);
+    xset(popAsl[0],
+      MUIA_Popasl_StartHook, &data->MimeCommandReqStartHook,
+      MUIA_Popasl_StopHook,  &data->MimeCommandReqStopHook);
+
+    InitHook(&data->MimeDefViewerReqStartHook, FilereqStartHook, data->ST_DEFVIEWER);
+    InitHook(&data->MimeDefViewerReqStopHook, FilereqStopHook, data->ST_DEFVIEWER);
+    xset(popAsl[1],
+      MUIA_Popasl_StartHook, &data->MimeDefViewerReqStartHook,
+      MUIA_Popasl_StopHook,  &data->MimeDefViewerReqStopHook);
 
     SetHelp(ST_CTYPE,       MSG_HELP_CO_ST_CTYPE);
     SetHelp(ST_EXTENS,      MSG_HELP_CO_ST_EXTENS);

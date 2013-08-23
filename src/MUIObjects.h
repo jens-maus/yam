@@ -30,6 +30,8 @@
 
 #include "SDI_compiler.h"
 
+struct FileRequester;
+
 // some flags for MakeAddressField()
 #define AFF_ALLOW_MULTI         (1<<0)
 #define AFF_EXTERNAL_SHORTCUTS  (1<<1)
@@ -52,6 +54,9 @@ Object * MakeCodesetPop(Object **string, Object **pop);
 Object *MakeVarPop(Object **string, Object **popButton, Object **list, const int mode, const int size, const char *shortcut);
 Object *MakeMimeTypePop(Object **string, const char *desc);
 char ShortCut(const char *label);
+
+extern struct Hook FilereqStartHook;
+extern struct Hook FilereqStopHook;
 
 #define GetMUICheck(o)   (BOOL)xget((o), MUIA_Selected)
 #define GetMUICycle(o)   (int)xget((o), MUIA_Cycle_Active)

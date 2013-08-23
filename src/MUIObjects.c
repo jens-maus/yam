@@ -33,6 +33,7 @@
 #include <mui/NList_mcc.h>
 #include <mui/NListtree_mcc.h>
 #include <mui/NListview_mcc.h>
+#include <proto/asl.h>
 #include <proto/codesets.h>
 #include <proto/dos.h>
 #include <proto/exec.h>
@@ -783,6 +784,85 @@ char ShortCut(const char *label)
   RETURN(scut);
   return scut;
 }
+
+///
+/// FilereqStartFunc
+//  Will be executed as soon as the user wants to popup a file requester
+//  for selecting files
+HOOKPROTONO(FilereqStartFunc, BOOL, struct TagItem *tags)
+{
+  Object *strObj = (Object *)hook->h_Data;
+  char *str;
+
+  ENTER();
+
+  str = (char *)xget(strObj, MUIA_String_Contents);
+  if(str != NULL && str[0] != '\0')
+  {
+    int i=0;
+    static char buf[SIZE_PATHFILE];
+    char *p;
+
+    // make sure the string is unquoted.
+    strlcpy(buf, str, sizeof(buf));
+    UnquoteString(buf, FALSE);
+
+    if((p = PathPart(buf)))
+    {
+      static char drawer[SIZE_PATHFILE];
+
+      strlcpy(drawer, buf, MIN(sizeof(drawer), (unsigned int)(p - buf + 1)));
+
+      tags[i].ti_Tag = ASLFR_InitialDrawer;
+      tags[i].ti_Data= (ULONG)drawer;
+      i++;
+    }
+
+    tags[i].ti_Tag = ASLFR_InitialFile;
+    tags[i].ti_Data = (ULONG)FilePart(buf);
+    i++;
+
+    tags[i].ti_Tag = TAG_DONE;
+  }
+
+  RETURN(TRUE);
+  return TRUE;
+}
+MakeHook(FilereqStartHook, FilereqStartFunc);
+
+///
+/// FilereqStopFunc
+//  Will be executed as soon as the user selected a file
+HOOKPROTONO(FilereqStopFunc, void, struct FileRequester *fileReq)
+{
+  Object *strObj = (Object *)hook->h_Data;
+
+  ENTER();
+
+  // check if a file was selected or not
+  if(fileReq->fr_File != NULL && fileReq->fr_File[0] != '\0')
+  {
+    char buf[SIZE_PATHFILE];
+
+    AddPath(buf, fileReq->fr_Drawer, fileReq->fr_File, sizeof(buf));
+
+    // check if there is any space in the path
+    if(strchr(buf, ' ') != NULL)
+    {
+      int len = strlen(buf);
+
+      memmove(&buf[1], buf, len+1);
+      buf[0] = '"';
+      buf[len+1] = '"';
+      buf[len+2] = '\0';
+    }
+
+    set(strObj, MUIA_String_Contents, buf);
+  }
+
+  LEAVE();
+}
+MakeHook(FilereqStopHook, FilereqStopFunc);
 
 ///
 /// GetMUIString

@@ -1854,6 +1854,7 @@ void CO_Validate(struct Config *co, BOOL update)
       {
         if((msn = GetMailServer(&co->pop3ServerList, 0)) != NULL)
         {
+          #warning access to old config GUI
           setstring(G->CO->GUI.ST_POPHOST0, msn->hostname);
           setstring(G->CO->GUI.ST_USER0, msn->username);
         }

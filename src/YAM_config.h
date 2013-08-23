@@ -638,12 +638,6 @@ extern struct Hook GetActiveFilterDataHook;
 extern struct Hook AddNewRuleToListHook;
 extern struct Hook RemoveLastRuleHook;
 extern struct Hook ImportFilterHook;
-extern struct Hook ScriptsReqStartHook;
-extern struct Hook ScriptsReqStopHook;
-extern struct Hook MimeDefViewerReqStartHook;
-extern struct Hook MimeDefViewerReqStopHook;
-extern struct Hook MimeCommandReqStartHook;
-extern struct Hook MimeCommandReqStopHook;
 
 void CO_ClearConfig(struct Config *co);
 BOOL CO_IsValid(void);
