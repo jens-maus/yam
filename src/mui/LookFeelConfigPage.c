@@ -96,9 +96,9 @@ OVERLOAD(OM_NEW)
   static const char *folderf[6];
   Object *GR_THEMES;
   Object *CY_FOLDERINFO;
-  Object *CH_FCOLS[5];
+  Object *CH_FCOLS[NUMBER_FOLDERTREE_COLUMNS];
   Object *CH_FCNTMENU;
-  Object *CH_MCOLS[8];
+  Object *CH_MCOLS[NUMBER_MAILLIST_COLUMNS];
   Object *CH_MCNTMENU;
   Object *CY_INFOBARPOS;
   Object *PO_INFOBARTXT;
@@ -313,10 +313,10 @@ OVERLOAD(OM_NEW)
 
     data->GR_THEMES =            GR_THEMES;
     data->CY_FOLDERINFO =        CY_FOLDERINFO;
-    for(i = 1; i < 5; i++)
+    for(i = 1; i < NUMBER_FOLDERTREE_COLUMNS; i++)
       data->CH_FCOLS[i] =          CH_FCOLS[i];
     data->CH_FCNTMENU =          CH_FCNTMENU;
-    for(i = 1; i < 8; i++)
+    for(i = 1; i < NUMBER_MAILLIST_COLUMNS; i++)
       data->CH_MCOLS[i] =          CH_MCOLS[i];
     data->CH_MCNTMENU =          CH_MCNTMENU;
     data->CY_INFOBARPOS =        CY_INFOBARPOS;
