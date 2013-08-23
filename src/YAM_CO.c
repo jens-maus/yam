@@ -2243,6 +2243,7 @@ HOOKPROTONHNO(CO_CloseFunc, void, int *arg)
       {
         // force a signature change
         // this will copy the signature text to the current signature node
+        #warning access to old config GUI
         nnset(G->CO->GUI.TE_SIGEDIT, MUIA_SignatureTextEdit_SignatureNode, NULL);
 
         CO_SaveConfig(C, G->CO_PrefsFile);

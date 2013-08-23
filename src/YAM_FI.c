@@ -2153,6 +2153,7 @@ BOOL ImportFilter(const char *fileName, const BOOL isVolatile, struct MinList *f
           {
             if(G->CO != NULL && isVolatile == FALSE)
             {
+              #warning access to old config GUI
               DoMethod(G->CO->GUI.LV_RULES, MUIM_NList_InsertSingle, filter, MUIV_NList_Insert_Bottom);
               set(G->CO->GUI.LV_RULES, MUIA_NList_Active, MUIV_NList_Active_Bottom);
             }
@@ -2487,6 +2488,7 @@ BOOL ImportFilter(const char *fileName, const BOOL isVolatile, struct MinList *f
     {
       if(G->CO != NULL && isVolatile == FALSE)
       {
+        #warning access to old config GUI
         DoMethod(G->CO->GUI.LV_RULES, MUIM_NList_InsertSingle, filter, MUIV_NList_Insert_Bottom);
         set(G->CO->GUI.LV_RULES, MUIA_NList_Active, MUIV_NList_Active_Bottom);
       }
