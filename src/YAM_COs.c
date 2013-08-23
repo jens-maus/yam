@@ -1885,6 +1885,7 @@ void CO_GetConfig(void)
     case cp_ReplyForward:
     case cp_Signature:
     case cp_Security:
+    case cp_MIME:
     case cp_StartupQuit:
     case cp_AddressBook:
     case cp_Update:
@@ -1897,14 +1898,6 @@ void CO_GetConfig(void)
     {
       // bring NList elements and Exec list elements into sync
       SortNListToExecList(gui->LV_RULES, &CE->filterList);
-    }
-    break;
-
-    case cp_MIME:
-    {
-      // bring NList elements and Exec list elements into sync
-      SortNListToExecList(gui->LV_MIME, &CE->mimeTypeList);
-      GetMUIString(CE->DefaultMimeViewer, gui->ST_DEFVIEWER, sizeof(CE->DefaultMimeViewer));
     }
     break;
 
@@ -2035,6 +2028,7 @@ void CO_SetConfig(void)
     case cp_ReplyForward:
     case cp_Signature:
     case cp_Security:
+    case cp_MIME:
     case cp_StartupQuit:
     case cp_AddressBook:
     case cp_Update:
@@ -2060,32 +2054,6 @@ void CO_SetConfig(void)
 
       // make sure the first entry is selected per default
       set(gui->LV_RULES, MUIA_NList_Active, MUIV_NList_Active_Top);
-    }
-    break;
-
-    case cp_MIME:
-    {
-      struct MimeTypeNode *mime;
-
-      // clear the filter list first
-      set(gui->LV_MIME, MUIA_NList_Quiet, TRUE);
-      DoMethod(gui->LV_MIME, MUIM_NList_Clear);
-
-      // iterate through our filter list and add it to our
-      // MUI List
-      IterateList(&CE->mimeTypeList, struct MimeTypeNode *, mime)
-        DoMethod(gui->LV_MIME, MUIM_NList_InsertSingle, mime, MUIV_NList_Insert_Bottom);
-
-      // sort the list after inserting all entries
-      DoMethod(gui->LV_MIME, MUIM_NList_Sort);
-      set(gui->LV_MIME, MUIA_NList_Quiet, FALSE);
-
-      // make sure the first entry is selected per default and the listview
-      // is able to display it (jump to it)
-      set(gui->LV_MIME, MUIA_NList_Active, MUIV_NList_Active_Top);
-      DoMethod(gui->LV_MIME, MUIM_NList_Jump, MUIV_NList_Jump_Active);
-
-      setstring(gui->ST_DEFVIEWER, CE->DefaultMimeViewer);
     }
     break;
 

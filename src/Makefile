@@ -508,6 +508,7 @@ MUIOBJS = \
 	MainMailListGroup.o \
 	MainWindow.o \
 	MainWindowToolbar.o \
+	MimeConfigPage.o \
 	MimeTypeList.o \
 	ObjectList.o \
 	ObjectListitem.o \

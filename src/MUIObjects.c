@@ -55,6 +55,7 @@
 #include "mui/Recipientstring.h"
 
 #include "Locale.h"
+#include "MIMETypes.h"
 #include "MUIObjects.h"
 
 #include "Debug.h"
@@ -562,7 +563,7 @@ HOOKPROTONHNP(PO_HandleScriptsOpenFunc, BOOL, Object *listview)
 
   ENTER();
 
-  #warning access to specific object for PHM_SCRIPTS
+  #warning access to old config GUI
   if((list = (Object *)xget(listview, MUIA_NListview_NList)) != NULL)
     DoMethod(list, MUIM_PlaceholderPopupList_SetScriptEntry, xget(G->CO->GUI.LV_REXX, MUIA_NList_Active));
 
@@ -602,6 +603,185 @@ Object *MakeVarPop(Object **string, Object **popButton, const int mode, const in
     DoMethod(list, MUIM_Notify, MUIA_NList_DoubleClick, TRUE, po, 2, MUIM_Popstring_Close, TRUE);
     DoMethod(*string, MUIM_Notify, MUIA_Disabled, MUIV_EveryTime, po, 3, MUIM_Set, MUIA_Disabled, MUIV_TriggerValue);
   }
+
+  RETURN(po);
+  return po;
+}
+
+///
+/// PO_MimeTypeListOpenHook
+//  Sets the popup listview accordingly to the string gadget
+HOOKPROTONH(PO_MimeTypeListOpenFunc, BOOL, Object *listview, Object *str)
+{
+  char *s;
+  Object *list;
+
+  ENTER();
+
+  if((s = (char *)xget(str, MUIA_String_Contents)) != NULL &&
+     (list = (Object *)xget(listview, MUIA_Listview_List)) != NULL)
+  {
+    int i;
+
+    // we build the list totally from ground up.
+    DoMethod(list, MUIM_List_Clear);
+
+    // populate the list with the user's own defined MIME types but only if the source
+    // string isn't the one in the YAM config window.
+    #warning access to old config GUI
+    if(G->CO == NULL || str != G->CO->GUI.ST_CTYPE)
+    {
+      struct MimeTypeNode *mt;
+
+      IterateList(&C->mimeTypeList, struct MimeTypeNode *, mt)
+      {
+        DoMethod(list, MUIM_List_InsertSingle, mt->ContentType, MUIV_List_Insert_Sorted);
+      }
+    }
+
+    // populate the MUI list with our internal MIME types but check that
+    // we don't add duplicate names
+    for(i=0; IntMimeTypeArray[i].ContentType != NULL; i++)
+    {
+      BOOL duplicateFound = FALSE;
+
+      #warning access to old config GUI
+      if(G->CO == NULL || str != G->CO->GUI.ST_CTYPE)
+      {
+        struct MimeTypeNode *mt;
+
+        IterateList(&C->mimeTypeList, struct MimeTypeNode *, mt)
+        {
+          if(stricmp(mt->ContentType, IntMimeTypeArray[i].ContentType) == 0)
+          {
+            duplicateFound = TRUE;
+            break;
+          }
+        }
+      }
+
+      if(duplicateFound == FALSE)
+        DoMethod(list, MUIM_List_InsertSingle, IntMimeTypeArray[i].ContentType, MUIV_List_Insert_Sorted);
+    }
+
+    // make sure to make the current entry active
+    for(i=0;;i++)
+    {
+      char *c;
+
+      DoMethod(list, MUIM_List_GetEntry, i, &c);
+      if(c == NULL || s[0] == '\0')
+      {
+        set(list, MUIA_List_Active, MUIV_List_Active_Off);
+        break;
+      }
+      else if(!stricmp(c, s))
+      {
+        set(list, MUIA_List_Active, i);
+        break;
+      }
+    }
+  }
+
+  RETURN(TRUE);
+  return TRUE;
+}
+MakeStaticHook(PO_MimeTypeListOpenHook, PO_MimeTypeListOpenFunc);
+
+///
+/// PO_MimeTypeListCloseHook
+//  Pastes an entry from the popup listview into string gadget
+HOOKPROTONH(PO_MimeTypeListCloseFunc, void, Object *listview, Object *str)
+{
+  Object *list;
+
+  ENTER();
+
+  if((list = (Object *)xget(listview, MUIA_Listview_List)) != NULL)
+  {
+    char *entry = NULL;
+
+    DoMethod(list, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &entry);
+    if(entry)
+    {
+      set(str, MUIA_String_Contents, entry);
+
+      // in case that this close function is used with the
+      // string gadget in the YAM config window we have to do a deeper search
+      // as we also want to set the file extension and description gadgets
+      #warning access to old config GUI
+      if(G->CO != NULL && str == G->CO->GUI.ST_CTYPE)
+      {
+        struct CO_GUIData *gui = &G->CO->GUI;
+        int i;
+
+        for(i=0; IntMimeTypeArray[i].ContentType != NULL; i++)
+        {
+          struct IntMimeType *mt = (struct IntMimeType *)&IntMimeTypeArray[i];
+
+          if(stricmp(mt->ContentType, entry) == 0)
+          {
+            // we also set the file extension
+            if(mt->Extension)
+              set(gui->ST_EXTENS, MUIA_String_Contents, mt->Extension);
+
+            // we also set the mime description
+            set(gui->ST_DESCRIPTION, MUIA_String_Contents, tr(mt->Description));
+
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  LEAVE();
+}
+MakeStaticHook(PO_MimeTypeListCloseHook, PO_MimeTypeListCloseFunc);
+
+///
+/// MakeMimeTypePop
+//  Creates a popup list of available internal MIME types
+Object *MakeMimeTypePop(Object **string, const char *desc)
+{
+  Object *lv;
+  Object *po;
+  Object *bt;
+
+  ENTER();
+
+  if((po = PopobjectObject,
+
+    MUIA_Popstring_String, *string = BetterStringObject,
+      StringFrame,
+      MUIA_String_Accept,      "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+-/#?*",
+      MUIA_String_MaxLen,      SIZE_CTYPE,
+      MUIA_ControlChar,        ShortCut(desc),
+      MUIA_String_AdvanceOnCR, TRUE,
+      MUIA_CycleChain,         TRUE,
+    End,
+    MUIA_Popstring_Button, bt = PopButton(MUII_PopUp),
+    MUIA_Popobject_StrObjHook, &PO_MimeTypeListOpenHook,
+    MUIA_Popobject_ObjStrHook, &PO_MimeTypeListCloseHook,
+    MUIA_Popobject_WindowHook, &PO_WindowHook,
+    MUIA_Popobject_Object, lv = ListviewObject,
+      MUIA_Listview_ScrollerPos, MUIV_Listview_ScrollerPos_Right,
+      MUIA_Listview_List, ListObject,
+        InputListFrame,
+        MUIA_List_AutoVisible, TRUE,
+        MUIA_List_ConstructHook, MUIV_List_ConstructHook_String,
+        MUIA_List_DestructHook,  MUIV_List_DestructHook_String,
+      End,
+    End,
+
+  End))
+  {
+    set(bt, MUIA_CycleChain,TRUE);
+    DoMethod(lv, MUIM_Notify, MUIA_Listview_DoubleClick, TRUE, po, 2, MUIM_Popstring_Close, TRUE);
+    DoMethod(*string, MUIM_Notify, MUIA_Disabled, MUIV_EveryTime, po, 3, MUIM_Set, MUIA_Disabled, MUIV_TriggerValue);
+  }
+  else
+    *string = NULL;
 
   RETURN(po);
   return po;

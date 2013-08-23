@@ -73,6 +73,7 @@ OVERLOAD(OM_NEW)
     case cp_ReplyForward: imageID = "config_answer_big";     image = CI_ANSWERBIG;     title = tr(MSG_CO_REPLY_TITLE);      summary = tr(MSG_CO_REPLY_SUMMARY);      break;
 	case cp_Signature:    imageID = "config_signature_big";  image = CI_SIGNATUREBIG;  title = tr(MSG_CO_SIGNATURE_TITLE);  summary = tr(MSG_CO_SIGNATURE_SUMMARY);  break;
 	case cp_Security:     imageID = "config_security_big";   image = CI_SECURITYBIG;   title = tr(MSG_CO_SECURITY_TITLE);   summary = tr(MSG_CO_SECURITY_SUMMARY);   break;
+	case cp_MIME:         imageID = "config_mime_big";       image = CI_MIMEBIG;       title = tr(MSG_CO_MIME_TITLE);       summary = tr(MSG_CO_MIME_SUMMARY);       break;
 	case cp_StartupQuit:  imageID = "config_start_big";      image = CI_STARTBIG;      title = tr(MSG_CO_STARTUP_TITLE);    summary = tr(MSG_CO_STARTUP_SUMMARY);    break;
     case cp_AddressBook:  imageID = "config_abook_big";      image = CI_ABOOKBIG;      title = tr(MSG_CO_ABOOK_TITLE);      summary = tr(MSG_CO_ABOOK_SUMMARY);      break;
     case cp_Update:       imageID = "config_update_big";     image = CI_UPDATEBIG;     title = tr(MSG_CO_UPDATE_TITLE);     summary = tr(MSG_CO_UPDATE_SUMMARY);     break;
@@ -115,7 +116,8 @@ OVERLOAD(OM_NEW)
           Child, contents,
         End,
       End);
-      DoMethod(contents, OM_ADDMEMBER, HVSpace);
+      if(GetTagData(ATTR(AddSpacer), FALSE, inittags(msg)) == TRUE)
+        DoMethod(contents, OM_ADDMEMBER, HVSpace);
     }
     else
     {

@@ -9,6 +9,7 @@ $URL$
 
   * YAM_CO.c, mui/ReplyForwardConfigPage.c: use the new base class for the
     "Reply/Forward" page.
+  * YAM_CO.c, mui/MimeConfigPage.c: use the new base class for the "MIME" page.
 
 2013-08-23 Samir Hawamdeh <s.hawamdeh@tin.it>
 
