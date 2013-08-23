@@ -57,6 +57,14 @@ char ShortCut(const char *label);
 
 extern struct Hook FilereqStartHook;
 extern struct Hook FilereqStopHook;
+extern struct Hook PO_MimeTypeListOpenHook;
+extern struct Hook PO_MimeTypeListCloseHook;
+
+struct MimeTypeCloseObjects
+{
+  Object *extension;
+  Object *description;
+};
 
 #define GetMUICheck(o)   (BOOL)xget((o), MUIA_Selected)
 #define GetMUICycle(o)   (int)xget((o), MUIA_Cycle_Active)

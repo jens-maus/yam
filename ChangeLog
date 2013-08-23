@@ -18,6 +18,8 @@ $URL$
     page.
   * MUIObjects.c, mui/MimeConfigPage.c, mui/ScriptsConfigPage.c: eleminated the
     direct access to the old global object list within the ASL start/stop hooks.
+  * MUIObjects.c, mui/MimeConfigPage.c, mui/WriteWindow.c: eleminated the direct
+    access to the old global object list within the popup open/close hooks.
 
 2013-08-23 Samir Hawamdeh <s.hawamdeh@tin.it>
 

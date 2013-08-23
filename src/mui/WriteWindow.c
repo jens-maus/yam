@@ -160,6 +160,9 @@ struct Data
   Object *MI_SIGNATURE;
   Object *MI_SIGNATURES[MAXSIG_MENU];
 
+  struct Hook MimeTypeListOpenHook;
+  struct Hook MimeTypeListCloseHook;
+
   struct WriteMailData *wmData; // ptr to write mail data structure
   struct MsgPort *notifyPort;
   struct NotifyRequest *notifyRequest;
@@ -753,6 +756,7 @@ OVERLOAD(OM_NEW)
     Object *menuStripObject = NULL;
     Object *codesetPopButton;
     Object *slider;
+    Object *popMime = NULL;
     struct TagItem *tags = inittags(msg);
     struct TagItem *tag;
     struct UserIdentityNode *uin;
@@ -1175,7 +1179,7 @@ OVERLOAD(OM_NEW)
 
                 Child, ColGroup(2),
                   Child, Label2(tr(MSG_WR_ContentType)),
-                  Child, MakeMimeTypePop(&data->ST_CTYPE, tr(MSG_WR_ContentType)),
+                  Child, popMime = MakeMimeTypePop(&data->ST_CTYPE, tr(MSG_WR_ContentType)),
                   Child, Label2(tr(MSG_WR_Description)),
                   Child, data->ST_DESC = BetterStringObject,
                     StringFrame,
@@ -1309,6 +1313,14 @@ OVERLOAD(OM_NEW)
                                                                  data->BT_RENAME,
                                                                  data->BT_DISPLAY,
                                                                  NULL);
+
+        // set some hooks for the MIME type popup
+        // hook->h_Data=FALSE tells the hook that the string object does not belong to the config window
+        InitHook(&data->MimeTypeListOpenHook, PO_MimeTypeListOpenHook, FALSE);
+        InitHook(&data->MimeTypeListCloseHook, PO_MimeTypeListCloseHook, NULL);
+        xset(popMime,
+          MUIA_Popobject_StrObjHook, &data->MimeTypeListOpenHook,
+          MUIA_Popobject_ObjStrHook, &data->MimeTypeListCloseHook);
 
         // set the help elements of our GUI gadgets
         SetHelp(data->ST_SUBJECT,     MSG_HELP_WR_ST_SUBJECT);
@@ -3417,7 +3429,7 @@ DECLARE(LaunchEditor)
     }
     else
       dstCodeset = data->wmData->codeset;
-    
+
     // save the mail text in the currently selected charset
     DoMethod(data->TE_EDIT, MUIM_MailTextEdit_SaveToFile, data->wmData->filename, dstCodeset);
 

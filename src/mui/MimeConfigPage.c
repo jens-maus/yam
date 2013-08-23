@@ -70,11 +70,19 @@ struct Data
   Object *ST_COMMAND;
   Object *ST_DEFVIEWER;
 
+  struct Hook MimeTypeListOpenHook;
+  struct Hook MimeTypeListCloseHook;
   struct Hook MimeCommandReqStartHook;
   struct Hook MimeCommandReqStopHook;
   struct Hook MimeDefViewerReqStartHook;
   struct Hook MimeDefViewerReqStopHook;
+
+  struct MimeTypeCloseObjects closeObjs;
 };
+*/
+
+/* INCLUDE
+#include "MUIObjects.h" // for struct MimeTypeCloseObjects
 */
 
 /* Overloaded Methods */
@@ -93,6 +101,7 @@ OVERLOAD(OM_NEW)
   Object *ST_DEFVIEWER;
   Object *popButton;
   Object *list;
+  Object *popMime;
   Object *popAsl[2];
 
   ENTER();
@@ -139,7 +148,7 @@ OVERLOAD(OM_NEW)
             MUIA_Weight, 70,
             Child, GR_MIME = ColGroup(2),
               Child, Label2(tr(MSG_CO_MimeType)),
-              Child, MakeMimeTypePop(&ST_CTYPE, tr(MSG_CO_MimeType)),
+              Child, popMime = MakeMimeTypePop(&ST_CTYPE, tr(MSG_CO_MimeType)),
 
               Child, Label2(tr(MSG_CO_Extension)),
               Child, ST_EXTENS = BetterStringObject,
@@ -202,6 +211,20 @@ OVERLOAD(OM_NEW)
     data->ST_DESCRIPTION = ST_DESCRIPTION;
     data->ST_COMMAND =     ST_COMMAND;
     data->ST_DEFVIEWER =   ST_DEFVIEWER;
+
+    // these are the objects that may be accessed when closing the MIME type list
+    data->closeObjs.extension = ST_EXTENS;
+    data->closeObjs.description = ST_DESCRIPTION;
+
+    // hook->h_Data=TRUE tells the hook that the string object does belong to the config window
+    // I know, this is a quite ugly hack, but unfortunately MUI does not
+    // offer methods for this purpose which could do this stuff in a much
+    // more sophisticated way :(
+    InitHook(&data->MimeTypeListOpenHook, PO_MimeTypeListOpenHook, TRUE);
+    InitHook(&data->MimeTypeListCloseHook, PO_MimeTypeListCloseHook, &data->closeObjs);
+    xset(popMime,
+      MUIA_Popobject_StrObjHook, &data->MimeTypeListOpenHook,
+      MUIA_Popobject_ObjStrHook, &data->MimeTypeListCloseHook);
 
     InitHook(&data->MimeCommandReqStartHook, FilereqStartHook, data->ST_COMMAND);
     InitHook(&data->MimeCommandReqStopHook, FilereqStopHook, data->ST_COMMAND);

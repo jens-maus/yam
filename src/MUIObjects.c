@@ -592,8 +592,9 @@ Object *MakeVarPop(Object **string, Object **popButton, Object **list, const int
 ///
 /// PO_MimeTypeListOpenHook
 //  Sets the popup listview accordingly to the string gadget
-HOOKPROTONH(PO_MimeTypeListOpenFunc, BOOL, Object *listview, Object *str)
+HOOKPROTO(PO_MimeTypeListOpenFunc, BOOL, Object *listview, Object *str)
 {
+  BOOL isConfigWindow = (BOOL)(hook->h_Data != NULL);
   char *s;
   Object *list;
 
@@ -609,8 +610,7 @@ HOOKPROTONH(PO_MimeTypeListOpenFunc, BOOL, Object *listview, Object *str)
 
     // populate the list with the user's own defined MIME types but only if the source
     // string isn't the one in the YAM config window.
-    #warning access to old config GUI
-    if(G->CO == NULL || str != G->CO->GUI.ST_CTYPE)
+    if(isConfigWindow == FALSE)
     {
       struct MimeTypeNode *mt;
 
@@ -626,8 +626,7 @@ HOOKPROTONH(PO_MimeTypeListOpenFunc, BOOL, Object *listview, Object *str)
     {
       BOOL duplicateFound = FALSE;
 
-      #warning access to old config GUI
-      if(G->CO == NULL || str != G->CO->GUI.ST_CTYPE)
+      if(isConfigWindow == FALSE)
       {
         struct MimeTypeNode *mt;
 
@@ -667,13 +666,14 @@ HOOKPROTONH(PO_MimeTypeListOpenFunc, BOOL, Object *listview, Object *str)
   RETURN(TRUE);
   return TRUE;
 }
-MakeStaticHook(PO_MimeTypeListOpenHook, PO_MimeTypeListOpenFunc);
+MakeHook(PO_MimeTypeListOpenHook, PO_MimeTypeListOpenFunc);
 
 ///
 /// PO_MimeTypeListCloseHook
 //  Pastes an entry from the popup listview into string gadget
-HOOKPROTONH(PO_MimeTypeListCloseFunc, void, Object *listview, Object *str)
+HOOKPROTO(PO_MimeTypeListCloseFunc, void, Object *listview, Object *str)
 {
+  struct MimeTypeCloseObjects *objs = (struct MimeTypeCloseObjects *)hook->h_Data;
   Object *list;
 
   ENTER();
@@ -683,17 +683,15 @@ HOOKPROTONH(PO_MimeTypeListCloseFunc, void, Object *listview, Object *str)
     char *entry = NULL;
 
     DoMethod(list, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &entry);
-    if(entry)
+    if(entry != NULL)
     {
       set(str, MUIA_String_Contents, entry);
 
       // in case that this close function is used with the
       // string gadget in the YAM config window we have to do a deeper search
       // as we also want to set the file extension and description gadgets
-      #warning access to old config GUI
-      if(G->CO != NULL && str == G->CO->GUI.ST_CTYPE)
+      if(objs != NULL)
       {
-        struct CO_GUIData *gui = &G->CO->GUI;
         int i;
 
         for(i=0; IntMimeTypeArray[i].ContentType != NULL; i++)
@@ -703,11 +701,11 @@ HOOKPROTONH(PO_MimeTypeListCloseFunc, void, Object *listview, Object *str)
           if(stricmp(mt->ContentType, entry) == 0)
           {
             // we also set the file extension
-            if(mt->Extension)
-              set(gui->ST_EXTENS, MUIA_String_Contents, mt->Extension);
+            if(mt->Extension != NULL)
+              set(objs->extension, MUIA_String_Contents, mt->Extension);
 
             // we also set the mime description
-            set(gui->ST_DESCRIPTION, MUIA_String_Contents, tr(mt->Description));
+            set(objs->description, MUIA_String_Contents, tr(mt->Description));
 
             break;
           }
@@ -718,7 +716,7 @@ HOOKPROTONH(PO_MimeTypeListCloseFunc, void, Object *listview, Object *str)
 
   LEAVE();
 }
-MakeStaticHook(PO_MimeTypeListCloseHook, PO_MimeTypeListCloseFunc);
+MakeHook(PO_MimeTypeListCloseHook, PO_MimeTypeListCloseFunc);
 
 ///
 /// MakeMimeTypePop
@@ -742,8 +740,6 @@ Object *MakeMimeTypePop(Object **string, const char *desc)
       MUIA_CycleChain,         TRUE,
     End,
     MUIA_Popstring_Button, bt = PopButton(MUII_PopUp),
-    MUIA_Popobject_StrObjHook, &PO_MimeTypeListOpenHook,
-    MUIA_Popobject_ObjStrHook, &PO_MimeTypeListCloseHook,
     MUIA_Popobject_WindowHook, &PO_WindowHook,
     MUIA_Popobject_Object, lv = ListviewObject,
       MUIA_Listview_ScrollerPos, MUIV_Listview_ScrollerPos_Right,
