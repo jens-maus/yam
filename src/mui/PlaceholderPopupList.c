@@ -160,6 +160,91 @@ OVERLOAD(OM_NEW)
 }
 
 ///
+/// OVERLOAD(OM_SET)
+OVERLOAD(OM_SET)
+{
+  GETDATA;
+  struct TagItem *tags = inittags(msg), *tag;
+  ULONG result;
+
+  ENTER();
+
+  while((tag = NextTagItem((APTR)&tags)) != NULL)
+  {
+    switch(tag->ti_Tag)
+    {
+      case ATTR(ScriptEntry):
+      {
+        // clear the list first
+        DoMethod(obj, MUIM_NList_Clear);
+
+        switch((enum Macro)tag->ti_Data)
+        {
+          case MACRO_MEN0:
+          case MACRO_MEN1:
+          case MACRO_MEN2:
+          case MACRO_MEN3:
+          case MACRO_MEN4:
+          case MACRO_MEN5:
+          case MACRO_MEN6:
+          case MACRO_MEN7:
+          case MACRO_MEN8:
+          case MACRO_MEN9:
+          case MACRO_STARTUP:
+          case MACRO_QUIT:
+          case MACRO_PRESEND:
+          case MACRO_POSTSEND:
+          case MACRO_PREFILTER:
+          case MACRO_POSTFILTER:
+          default:
+            // nothing
+            data->entries[0] = NULL;
+          break;
+
+          case MACRO_PREGET:
+            data->entries[0] = tr(MSG_CO_SCRIPTS_PREGET);
+          break;
+
+          case MACRO_POSTGET:
+            data->entries[0] = tr(MSG_CO_SCRIPTS_POSTGET);
+          break;
+
+          case MACRO_NEWMSG:
+            data->entries[0] = tr(MSG_CO_SCRIPTS_NEWMSG);
+          break;
+
+          case MACRO_READ:
+            data->entries[0] = tr(MSG_CO_SCRIPTS_READ);
+          break;
+
+          case MACRO_PREWRITE:
+          case MACRO_POSTWRITE:
+            data->entries[0] = tr(MSG_CO_SCRIPTS_WRITE);
+          break;
+
+          case MACRO_URL:
+            data->entries[0] = tr(MSG_CO_SCRIPTS_URL);
+          break;
+        }
+
+        data->entries[1] = NULL;
+
+        if(data->entries[0] != NULL)
+          DoMethod(obj, MUIM_NList_Insert, data->entries, 1, MUIV_NList_Insert_Bottom, MUIF_NONE);
+
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
+    }
+  }
+
+  result = DoSuperMethodA(cl, obj, msg);
+
+  RETURN(result);
+  return result;
+}
+
+///
 /// OVERLOAD(MUIM_NList_Display)
 OVERLOAD(MUIM_NList_Display)
 {
@@ -195,80 +280,6 @@ OVERLOAD(MUIM_NList_Display)
     ndm->strings[0] = data->placeholder;
     ndm->strings[1] = data->description;
   }
-
-  RETURN(0);
-  return 0;
-}
-
-///
-
-/* Private Functions */
-
-/* Public Methods */
-/// DECLARE(SetScriptEntry)
-// set the placeholder entries for a script
-DECLARE(SetScriptEntry) // enum Macro macro
-{
-  GETDATA;
-
-  ENTER();
-
-  // clear the list first
-  DoMethod(obj, MUIM_NList_Clear);
-
-  switch(msg->macro)
-  {
-    case MACRO_MEN0:
-    case MACRO_MEN1:
-    case MACRO_MEN2:
-    case MACRO_MEN3:
-    case MACRO_MEN4:
-    case MACRO_MEN5:
-    case MACRO_MEN6:
-    case MACRO_MEN7:
-    case MACRO_MEN8:
-    case MACRO_MEN9:
-    case MACRO_STARTUP:
-    case MACRO_QUIT:
-    case MACRO_PRESEND:
-    case MACRO_POSTSEND:
-    case MACRO_PREFILTER:
-    case MACRO_POSTFILTER:
-    default:
-      // nothing
-      data->entries[0] = NULL;
-    break;
-
-    case MACRO_PREGET:
-      data->entries[0] = tr(MSG_CO_SCRIPTS_PREGET);
-    break;
-
-    case MACRO_POSTGET:
-      data->entries[0] = tr(MSG_CO_SCRIPTS_POSTGET);
-    break;
-
-    case MACRO_NEWMSG:
-      data->entries[0] = tr(MSG_CO_SCRIPTS_NEWMSG);
-    break;
-
-    case MACRO_READ:
-      data->entries[0] = tr(MSG_CO_SCRIPTS_READ);
-    break;
-
-    case MACRO_PREWRITE:
-    case MACRO_POSTWRITE:
-      data->entries[0] = tr(MSG_CO_SCRIPTS_WRITE);
-    break;
-
-    case MACRO_URL:
-      data->entries[0] = tr(MSG_CO_SCRIPTS_URL);
-    break;
-  }
-
-  data->entries[1] = NULL;
-
-  if(data->entries[0] != NULL)
-    DoMethod(obj, MUIM_NList_Insert, data->entries, 1, MUIV_NList_Insert_Bottom, MUIF_NONE);
 
   RETURN(0);
   return 0;

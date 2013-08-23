@@ -555,30 +555,10 @@ HOOKPROTONH(PO_HandleVarFunc, void, Object *listview, Object *string)
 MakeStaticHook(PO_HandleVarHook, PO_HandleVarFunc);
 
 ///
-/// PO_HandleScriptsOpenHook
-// Hook which is used when the arexx/dos scripts popup window will
-// be opened and populate the listview.
-HOOKPROTONHNP(PO_HandleScriptsOpenFunc, BOOL, Object *listview)
-{
-  Object *list;
-
-  ENTER();
-
-  #warning access to old config GUI
-  if((list = (Object *)xget(listview, MUIA_NListview_NList)) != NULL)
-    DoMethod(list, MUIM_PlaceholderPopupList_SetScriptEntry, xget(G->CO->GUI.LV_REXX, MUIA_NList_Active));
-
-  RETURN(TRUE);
-  return TRUE;
-}
-MakeStaticHook(PO_HandleScriptsOpenHook, PO_HandleScriptsOpenFunc);
-
-///
 /// MakeVarPop
 //  Creates a popup list containing variables and descriptions for phrases etc.
-Object *MakeVarPop(Object **string, Object **popButton, const int mode, const int size, const char *shortcut)
+Object *MakeVarPop(Object **string, Object **popButton, Object **list, const int mode, const int size, const char *shortcut)
 {
-  Object *list;
   Object *po;
 
   ENTER();
@@ -589,19 +569,18 @@ Object *MakeVarPop(Object **string, Object **popButton, const int mode, const in
     MUIA_Popstring_Button, *popButton = PopButton(MUII_PopUp),
     MUIA_Popobject_ObjStrHook, &PO_HandleVarHook,
     MUIA_Popobject_WindowHook, &PO_WindowHook,
-    MUIA_Popobject_StrObjHook, (mode == PHM_SCRIPTS) ? &PO_HandleScriptsOpenHook : NULL,
     MUIA_Popobject_Object, NListviewObject,
       MUIA_FixHeightTxt, "\n\n\n\n\n\n\n\n",
       MUIA_NListview_Horiz_ScrollBar, MUIV_NListview_HSB_None,
       MUIA_NListview_Vert_ScrollBar, MUIV_NListview_VSB_FullAuto,
-      MUIA_NListview_NList, list = PlaceholderPopupListObject,
+      MUIA_NListview_NList, *list = PlaceholderPopupListObject,
         MUIA_PlaceholderPopupList_Mode, mode,
       End,
     End,
 
   End))
   {
-    DoMethod(list, MUIM_Notify, MUIA_NList_DoubleClick, TRUE, po, 2, MUIM_Popstring_Close, TRUE);
+    DoMethod(*list, MUIM_Notify, MUIA_NList_DoubleClick, TRUE, po, 2, MUIM_Popstring_Close, TRUE);
     DoMethod(*string, MUIM_Notify, MUIA_Disabled, MUIV_EveryTime, po, 3, MUIM_Set, MUIA_Disabled, MUIV_TriggerValue);
   }
 

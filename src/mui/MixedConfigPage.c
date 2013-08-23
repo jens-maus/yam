@@ -241,6 +241,7 @@ OVERLOAD(OM_NEW)
   Object *CH_DOCKYICON;
   #endif
   Object *popButton;
+  Object *list;
   Object *codesetPopButton;
 
   ENTER();
@@ -319,7 +320,7 @@ OVERLOAD(OM_NEW)
           Child, ColGroup(2),
 
             Child, Label2(tr(MSG_CO_APPICONTEXT)),
-            Child, MakeVarPop(&ST_APPICON, &popButton, PHM_MAILSTATS, SIZE_DEFAULT/2, tr(MSG_CO_APPICONTEXT)),
+            Child, MakeVarPop(&ST_APPICON, &popButton, &list, PHM_MAILSTATS, SIZE_DEFAULT/2, tr(MSG_CO_APPICONTEXT)),
 
             Child, HGroup,
               Child, CH_APPICONPOS = MakeCheck(tr(MSG_CO_PositionX)),
@@ -390,7 +391,7 @@ OVERLOAD(OM_NEW)
 
           Child, Label1(tr(MSG_CO_Archiver)),
           Child, HGroup,
-            Child, MakeVarPop(&ST_ARCHIVER, &popButton, PHM_ARCHIVE, SIZE_COMMAND, tr(MSG_CO_Archiver)),
+            Child, MakeVarPop(&ST_ARCHIVER, &popButton, &list, PHM_ARCHIVE, SIZE_COMMAND, tr(MSG_CO_Archiver)),
             Child, MakeCheckGroup(&CH_ARCHIVERPROGRESS, tr(MSG_CO_SHOW_ARCHIVER_PROGRESS)),
           End,
         End,

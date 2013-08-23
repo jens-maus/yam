@@ -49,7 +49,7 @@ Object * MakePGPKeyList(Object **st, BOOL secret, const char *label);
 Object * MakeString(int maxlen, const char *label);
 Object * MakeAddressField(Object **string, const char *label, const void *help, int abmode, int winnr, ULONG flags);
 Object * MakeCodesetPop(Object **string, Object **pop);
-Object *MakeVarPop(Object **string, Object **popButton, const int mode, const int size, const char *shortcut);
+Object *MakeVarPop(Object **string, Object **popButton, Object **list, const int mode, const int size, const char *shortcut);
 Object *MakeMimeTypePop(Object **string, const char *desc);
 char ShortCut(const char *label);
 

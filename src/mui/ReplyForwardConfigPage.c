@@ -70,6 +70,7 @@ static Object *MakePhraseGroup(Object **hello, Object **intro, Object **bye,
 {
   Object *grp, *cycl, *pgrp;
   Object *popButton;
+  Object *list;
   static const char *cytext[4];
 
   cytext[0] = tr(MSG_CO_PhraseOpen);
@@ -87,9 +88,9 @@ static Object *MakePhraseGroup(Object **hello, Object **intro, Object **bye,
       MUIA_Weight, 0,
     End,
     Child, pgrp = PageGroup,
-      Child, MakeVarPop(hello, &popButton, PHM_REPLYHELLO, SIZE_INTRO, ""),
-      Child, MakeVarPop(intro, &popButton, PHM_REPLYINTRO, SIZE_INTRO, ""),
-      Child, MakeVarPop(bye,   &popButton, PHM_REPLYBYE,   SIZE_INTRO, ""),
+      Child, MakeVarPop(hello, &popButton, &list, PHM_REPLYHELLO, SIZE_INTRO, ""),
+      Child, MakeVarPop(intro, &popButton, &list, PHM_REPLYINTRO, SIZE_INTRO, ""),
+      Child, MakeVarPop(bye,   &popButton, &list, PHM_REPLYBYE,   SIZE_INTRO, ""),
     End,
     MUIA_ShortHelp, help,
   End))
@@ -124,6 +125,7 @@ OVERLOAD(OM_NEW)
   Object *ST_FWDSTART;
   Object *ST_FWDEND;
   Object *popButton;
+  Object *list;
 
   ENTER();
 
@@ -170,10 +172,10 @@ OVERLOAD(OM_NEW)
         Child, CY_FORWARDMODE = MakeCycle(fwdmode, tr(MSG_CO_FWDMSG)),
 
         Child, Label2(tr(MSG_CO_FwdInit)),
-        Child, MakeVarPop(&ST_FWDSTART, &popButton, PHM_FORWARD, SIZE_INTRO, tr(MSG_CO_FwdInit)),
+        Child, MakeVarPop(&ST_FWDSTART, &popButton, &list, PHM_FORWARD, SIZE_INTRO, tr(MSG_CO_FwdInit)),
 
         Child, Label2(tr(MSG_CO_FwdFinish)),
-        Child, MakeVarPop(&ST_FWDEND, &popButton, PHM_FORWARD, SIZE_INTRO, tr(MSG_CO_FwdFinish)),
+        Child, MakeVarPop(&ST_FWDEND, &popButton, &list, PHM_FORWARD, SIZE_INTRO, tr(MSG_CO_FwdFinish)),
 
       End,
     End,

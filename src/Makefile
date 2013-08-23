@@ -526,6 +526,7 @@ MUIOBJS = \
 	Recipientstring.o \
 	ReplyForwardConfigPage.o \
 	ScriptList.o \
+	ScriptsConfigPage.o \
 	SearchControlGroup.o \
 	SearchMailWindow.o \
 	SearchTextWindow.o \

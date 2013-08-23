@@ -73,6 +73,7 @@ OVERLOAD(OM_NEW)
 	case cp_MIME:         imageID = "config_mime_big";       image = CI_MIMEBIG;       title = tr(MSG_CO_MIME_TITLE);       summary = tr(MSG_CO_MIME_SUMMARY);       break;
 	case cp_StartupQuit:  imageID = "config_start_big";      image = CI_STARTBIG;      title = tr(MSG_CO_STARTUP_TITLE);    summary = tr(MSG_CO_STARTUP_SUMMARY);    break;
     case cp_AddressBook:  imageID = "config_abook_big";      image = CI_ABOOKBIG;      title = tr(MSG_CO_ABOOK_TITLE);      summary = tr(MSG_CO_ABOOK_SUMMARY);      break;
+    case cp_Scripts:      imageID = "config_scripts_big";    image = CI_SCRIPTSBIG;    title = tr(MSG_CO_SCRIPTS_TITLE);    summary = tr(MSG_CO_SCRIPTS_SUMMARY);    break;
     case cp_Mixed:        imageID = "config_misc_big";       image = CI_MISCBIG;       title = tr(MSG_CO_MIXED_TITLE);      summary = tr(MSG_CO_MIXED_SUMMARY);      break;
     case cp_LookFeel:     imageID = "config_lookfeel_big";   image = CI_LOOKFEELBIG;   title = tr(MSG_CO_LOOKFEEL_TITLE);   summary = tr(MSG_CO_LOOKFEEL_SUMMARY);   break;
     case cp_Update:       imageID = "config_update_big";     image = CI_UPDATEBIG;     title = tr(MSG_CO_UPDATE_TITLE);     summary = tr(MSG_CO_UPDATE_SUMMARY);     break;

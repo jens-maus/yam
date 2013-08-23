@@ -85,6 +85,7 @@ OVERLOAD(OM_NEW)
   Object *ST_COMMAND;
   Object *ST_DEFVIEWER;
   Object *popButton;
+  Object *list;
 
   ENTER();
 
@@ -148,7 +149,7 @@ OVERLOAD(OM_NEW)
               Child, Label2(tr(MSG_CO_MimeCmd)),
               Child, HGroup,
                 MUIA_Group_HorizSpacing, 0,
-                Child, MakeVarPop(&ST_COMMAND, &popButton, PHM_MIME_COMMAND, SIZE_COMMAND, tr(MSG_CO_MimeCmd)),
+                Child, MakeVarPop(&ST_COMMAND, &popButton, &list, PHM_MIME_COMMAND, SIZE_COMMAND, tr(MSG_CO_MimeCmd)),
                 Child, PopaslObject,
                   MUIA_Popasl_StartHook, &MimeCommandReqStartHook,
                   MUIA_Popasl_StopHook,  &MimeCommandReqStopHook,
@@ -170,7 +171,7 @@ OVERLOAD(OM_NEW)
           Child, Label2(tr(MSG_CO_DefaultViewer)),
           Child, HGroup,
             MUIA_Group_HorizSpacing, 0,
-            Child, MakeVarPop(&ST_DEFVIEWER, &popButton, PHM_MIME_DEFVIEWER, SIZE_COMMAND, tr(MSG_CO_DefaultViewer)),
+            Child, MakeVarPop(&ST_DEFVIEWER, &popButton, &list, PHM_MIME_DEFVIEWER, SIZE_COMMAND, tr(MSG_CO_DefaultViewer)),
             Child, PopaslObject,
               MUIA_Popasl_StartHook, &MimeDefViewerReqStartHook,
               MUIA_Popasl_StopHook,  &MimeDefViewerReqStopHook,

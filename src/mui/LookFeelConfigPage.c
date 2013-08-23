@@ -114,6 +114,7 @@ OVERLOAD(OM_NEW)
   Object *CH_ABOOKLOOKUP;
   Object *CH_FOLDERDBLCLICK;
   Object *popButton;
+  Object *list;
 
   ENTER();
 
@@ -268,7 +269,7 @@ OVERLOAD(OM_NEW)
             Child, CY_INFOBARPOS = MakeCycle(infob, tr(MSG_CO_INFOBARPOS)),
 
             Child, Label2(tr(MSG_CO_FOLDERLABEL)),
-            Child, PO_INFOBARTXT = MakeVarPop(&ST_INFOBARTXT, &popButton, PHM_MAILSTATS, SIZE_DEFAULT, tr(MSG_CO_FOLDERLABEL)),
+            Child, PO_INFOBARTXT = MakeVarPop(&ST_INFOBARTXT, &popButton, &list, PHM_MAILSTATS, SIZE_DEFAULT, tr(MSG_CO_FOLDERLABEL)),
           End,
 
           // QuicksearchBar settings
