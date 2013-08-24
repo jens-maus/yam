@@ -53,7 +53,6 @@
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
 #include "YAM_config.h"
-#include "YAM_configGUI.h"
 #include "YAM_configFile.h"
 #include "YAM_error.h"
 #include "YAM_global.h"
