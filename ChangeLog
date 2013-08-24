@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-08-24 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/SignatureTextEdit.c: converted a method to a simple attribute.
+
 2013-08-23 Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_RE.c, mime/uucode.c, mime/base64.c, mime/qprintable.c: modified mail

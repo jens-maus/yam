@@ -86,10 +86,9 @@ OVERLOAD(OM_SET)
 
         if(data->sigNode != NULL)
         {
-          // import the new signature text
-          DoMethod(obj, METHOD(SetSignatureText), data->sigNode->signature);
-          // switch read-only/edit mode
-          set(obj, ATTR(UseSignatureFile), data->sigNode->useSignatureFile);
+          // import the new signature text and switch read-only/edit mode
+          xset(obj, ATTR(SignatureText), data->sigNode->signature,
+                    ATTR(UseSignatureFile), data->sigNode->useSignatureFile);
         }
       }
       break;
@@ -110,6 +109,37 @@ OVERLOAD(OM_SET)
                                  TAG_DONE);
         }
       }
+
+      case ATTR(SignatureText):
+      {
+        char *sig = (char *)tag->ti_Data;
+        char *parsedSig;
+
+        // refresh ourself with the new signature text
+        if(sig != NULL && (parsedSig = ParseEmailText(sig, FALSE, TRUE, TRUE)) != NULL)
+        {
+          BOOL modified;
+
+          if(data->sigNode != NULL && data->sigNode->signature != NULL)
+            modified = (strcmp(sig, data->sigNode->signature) != 0);
+          else
+            modified = TRUE;
+
+          xset(obj, MUIA_TextEditor_Contents, parsedSig,
+                    MUIA_TextEditor_HasChanged, modified);
+
+          dstrfree(parsedSig);
+        }
+        else
+        {
+          if(sig != NULL)
+            W(DBF_CONFIG, "couldn't load signature '%s' in texteditor", sig);
+
+          xset(obj, MUIA_TextEditor_Contents, "",
+                    MUIA_TextEditor_HasChanged, FALSE);
+        }
+      }
+      break;
     }
   }
 
@@ -231,7 +261,7 @@ DECLARE(EditExternally)
             dstText = text;
 
           // set the signature text
-          DoMethod(obj, METHOD(SetSignatureText), dstText);
+          set(obj, ATTR(SignatureText), dstText);
 
           if(converted == TRUE)
             CodesetsFreeA(dstText, NULL);
