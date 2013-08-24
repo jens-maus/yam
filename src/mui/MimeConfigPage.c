@@ -31,6 +31,7 @@
 #include "MimeConfigPage_cl.h"
 
 #include <ctype.h>
+#include <string.h>
 
 #include <proto/asl.h>
 #include <proto/muimaster.h>

@@ -30,6 +30,8 @@
 
 #include "MixedConfigPage_cl.h"
 
+#include <string.h>
+
 #include <proto/asl.h>
 #include <proto/muimaster.h>
 #include <proto/wb.h>
