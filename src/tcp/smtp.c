@@ -148,7 +148,7 @@ static char *SendSMTPCommand(struct TransferContext *tc, const enum SMTPCommand 
 
   // first we check if the socket is ready
   // now we prepare the SMTP command
-  if(parmtext == NULL || parmtext[0] == '\0')
+  if(IsStrEmpty(parmtext))
     snprintf(tc->smtpBuffer, sizeof(tc->smtpBuffer), "%s\r\n", SMTPcmd[command]);
   else
     snprintf(tc->smtpBuffer, sizeof(tc->smtpBuffer), "%s %s\r\n", SMTPcmd[command], parmtext);
@@ -512,7 +512,7 @@ static BOOL InitSMTPAUTH(struct TransferContext *tc)
 
   // first we check if the user has supplied the User&Password
   // and if not we return with an error
-  if(tc->msn->username[0] == '\0' || tc->msn->password[0] == '\0')
+  if(IsStrEmpty(tc->msn->username) || IsStrEmpty(tc->msn->password))
   {
     ER_NewError(tr(MSG_ER_NOAUTHUSERPASS));
 

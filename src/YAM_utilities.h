@@ -236,6 +236,7 @@ struct FileReqCache
 #define Bool2Txt(b)           ((b) ? "Y" : "N")
 #define Txt2Bool(t)           (BOOL)(toupper((int)*(t)) == 'Y' || (int)*(t) == '1')
 #define SafeStr(str)          (((str) != NULL) ? (str) : "<NULL>")
+#define IsStrEmpty(str)       ((str) == NULL || (str)[0] == '\0')
 
 #define IterateList(list, type, node)           for((node) = (type)GetHead((struct List *)(list)); (node) != NULL; (node) = (type)GetSucc((struct Node *)(node)))
 #define SafeIterateList(list, type, node, succ) for((node) = (type)GetHead((struct List *)(list)); (node) != NULL && (((succ) = (type)GetSucc((struct Node *)(node))) != NULL || (succ) == NULL); (node) = (succ))

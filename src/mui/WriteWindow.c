@@ -3814,7 +3814,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
     goto out;
   }
-  else if(mode != WRITE_DRAFT && addr != NULL && addr[0] == '\0' && wmData->quietMode == FALSE)
+  else if(mode != WRITE_DRAFT && IsStrEmpty(addr) && wmData->quietMode == FALSE)
   {
     // set the TO Field active and go back
     if(winOpen == TRUE)
@@ -3838,7 +3838,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
   // get the content of the Subject: String gadget and check if it is empty or not.
   comp.Subject = (char *)xget(data->ST_SUBJECT, MUIA_String_Contents);
   if(wmData->mode != NMM_REDIRECT && mode != WRITE_DRAFT && wmData->quietMode == FALSE && C->WarnSubject == TRUE &&
-     (comp.Subject == NULL || comp.Subject[0] == '\0'))
+     IsStrEmpty(comp.Subject))
   {
     char subject[SIZE_SUBJECT];
 

@@ -7,6 +7,11 @@ $URL$
 
 2013-08-24 Jens Langner <Jens.Langner@light-speed.de>
 
+  * YAM_utilities.h, misc: implemented new "IsStrEmpty()" macro which should
+    replace all "if(str[0] == '\0')..." uses with "if(IsStrEmpty(str))..."
+    which should make the check somehwat more secure and intuitiver.
+    Nevertheless, we need to make use of it more widely within the source
+    code of YAM.
   * MimeTypes.c, mui/MimeConfigPage.c: a charset/codeset can now be explicitly
     specified with every configurable MIME type. If not specified, the local
     codeset configured in the FirstSteps section of the config will be used

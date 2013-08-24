@@ -704,7 +704,7 @@ BOOL ConnectionIsOnline(struct Connection *conn)
       // in case the user hasn't specified a specific
       // interface or set that the online check for a specific
       // interface should be disabled we just do a general query
-      if(C->IsOnlineCheck == FALSE || C->IOCInterfaces[0] == '\0')
+      if(C->IsOnlineCheck == FALSE || IsStrEmpty(C->IOCInterfaces))
       {
         ULONG status = 0;
         struct TagItem tags[] =

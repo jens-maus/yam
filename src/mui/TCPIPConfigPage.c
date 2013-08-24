@@ -851,7 +851,7 @@ DECLARE(PutPOP3Entry)
 
       // if the user hasn't yet entered an own account name or the default
       // account name is still present we go and set an automatic generated one
-      if(msn->description[0] == '\0' || strcmp(msn->description, tr(MSG_NewEntry)) == 0)
+      if(IsStrEmpty(msn->description) || strcmp(msn->description, tr(MSG_NewEntry)) == 0)
         snprintf(msn->description, sizeof(msn->description), "%s@%s", msn->username, msn->hostname);
 
       // remember the current flags of the server
@@ -1069,7 +1069,7 @@ DECLARE(PutSMTPEntry)
 
       // if the user hasn't yet entered an own account name or the default
       // account name is still present we go and set an automatic generated one
-      if(msn->description[0] == '\0' || strcmp(msn->description, tr(MSG_NewEntry)) == 0)
+      if(IsStrEmpty(msn->description) || strcmp(msn->description, tr(MSG_NewEntry)) == 0)
         snprintf(msn->description, sizeof(msn->description), "%s@%s", msn->username, msn->hostname);
 
       if(GetMUICheck(data->CH_SMTP8BIT) == TRUE)

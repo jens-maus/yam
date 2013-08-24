@@ -496,7 +496,7 @@ DECLARE(ImportMimeTypes)
           char *p;
           char *p2;
 
-          if(*ctype == '\0' || isspace(*ctype))
+          if(IsStrEmpty(ctype) || isspace(*ctype))
             continue;
 
           if(mode == 1)

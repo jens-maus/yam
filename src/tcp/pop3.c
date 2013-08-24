@@ -184,7 +184,7 @@ static char *SendPOP3Command(struct TransferContext *tc, const enum POPCommand c
   ENTER();
 
   // if we specified a parameter for the pop command lets add it now
-  if(parmtext == NULL || parmtext[0] == '\0')
+  if(IsStrEmpty(parmtext))
     snprintf(tc->pop3Buffer, sizeof(tc->pop3Buffer), "%s\r\n", POPcmd[command]);
   else
     snprintf(tc->pop3Buffer, sizeof(tc->pop3Buffer), "%s %s\r\n", POPcmd[command], parmtext);
@@ -598,7 +598,8 @@ static void GetSingleMessageDetails(struct TransferContext *tc, struct MailTrans
 
   D(DBF_NET, "get details for mail %ld", lline);
 
-  if(mail->From.Address[0] == '\0' && tc->connection->abort == FALSE && tc->connection->error == CONNECTERR_NO_ERROR)
+  if(IsStrEmpty(mail->From.Address) &&
+     tc->connection->abort == FALSE && tc->connection->error == CONNECTERR_NO_ERROR)
   {
     char cmdbuf[SIZE_SMALL];
 
@@ -1062,7 +1063,7 @@ static int ConnectToPOP3(struct TransferContext *tc)
     dstrcpy(&welcomemsg, resp);
   }
 
-  if(tc->password[0] == '\0')
+  if(IsStrEmpty(tc->password))
   {
     Object *passwordWin;
 
@@ -1090,7 +1091,7 @@ static int ConnectToPOP3(struct TransferContext *tc)
     }
 
     // bail out if we still got no password
-    if(tc->password[0] == '\0')
+    if(IsStrEmpty(tc->password))
       goto out;
   }
 
