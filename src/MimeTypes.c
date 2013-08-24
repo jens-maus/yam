@@ -34,6 +34,7 @@
 
 #include <proto/exec.h>
 
+#include "YAM_config.h"
 #include "YAM_stringsizes.h"
 #include "YAM_utilities.h"
 
@@ -115,6 +116,7 @@ struct MimeTypeNode *CreateNewMimeType(void)
     mt->Extension[0] = '\0';
     mt->Description[0] = '\0';
     mt->Command[0] = '\0';
+    strlcpy(mt->CodesetName, C->DefaultLocalCodeset, sizeof(mt->CodesetName));
   }
 
   RETURN(mt);
@@ -156,7 +158,8 @@ static BOOL CompareMimeTypeNodes(const struct Node *n1, const struct Node *n2)
   if(strcmp(mtn1->ContentType, mtn2->ContentType) != 0 ||
      strcmp(mtn1->Extension,   mtn2->Extension) != 0 ||
      strcmp(mtn1->Description, mtn2->Description) != 0 ||
-     strcmp(mtn1->Command,     mtn2->Command) != 0)
+     strcmp(mtn1->Command,     mtn2->Command) != 0 ||
+     strcmp(mtn1->CodesetName, mtn2->CodesetName) != 0)
   {
     // something does not match
     equal = FALSE;

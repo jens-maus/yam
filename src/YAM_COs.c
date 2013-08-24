@@ -228,19 +228,19 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
     i = 0;
     IterateList(&co->smtpServerList, struct MailServerNode *, msn)
     {
-      fprintf(fh, "SMTP%02d.ID                = %08x\n", i, msn->id);
-      fprintf(fh, "SMTP%02d.Enabled           = %s\n", i, Bool2Txt(isServerActive(msn)));
-      fprintf(fh, "SMTP%02d.Description       = %s\n", i, msn->description);
-      fprintf(fh, "SMTP%02d.Server            = %s\n", i, msn->hostname);
-      fprintf(fh, "SMTP%02d.Port              = %d\n", i, msn->port);
-      fprintf(fh, "SMTP%02d.SecMethod         = %d\n", i, MSF2SMTPSecMethod(msn));
-      fprintf(fh, "SMTP%02d.Allow8bit         = %s\n", i, Bool2Txt(hasServer8bit(msn)));
-      fprintf(fh, "SMTP%02d.SMTP-AUTH         = %s\n", i, Bool2Txt(hasServerAuth(msn)));
-      fprintf(fh, "SMTP%02d.AUTH-User         = %s\n", i, msn->username);
-      fprintf(fh, "SMTP%02d.AUTH-Pass         = %s\n", i, Encrypt(msn->password));
-      fprintf(fh, "SMTP%02d.AUTH-Method       = %d\n", i, MSF2SMTPAuthMethod(msn));
-      fprintf(fh, "SMTP%02d.SSLCert           = %s\n", i, msn->certFingerprint);
-      fprintf(fh, "SMTP%02d.SSLCertFailures   = %d\n", i, msn->certFailures);
+      fprintf(fh, "SMTP%02d.ID                    = %08x\n", i, msn->id);
+      fprintf(fh, "SMTP%02d.Enabled               = %s\n", i, Bool2Txt(isServerActive(msn)));
+      fprintf(fh, "SMTP%02d.Description           = %s\n", i, msn->description);
+      fprintf(fh, "SMTP%02d.Server                = %s\n", i, msn->hostname);
+      fprintf(fh, "SMTP%02d.Port                  = %d\n", i, msn->port);
+      fprintf(fh, "SMTP%02d.SecMethod             = %d\n", i, MSF2SMTPSecMethod(msn));
+      fprintf(fh, "SMTP%02d.Allow8bit             = %s\n", i, Bool2Txt(hasServer8bit(msn)));
+      fprintf(fh, "SMTP%02d.SMTP-AUTH             = %s\n", i, Bool2Txt(hasServerAuth(msn)));
+      fprintf(fh, "SMTP%02d.AUTH-User             = %s\n", i, msn->username);
+      fprintf(fh, "SMTP%02d.AUTH-Pass             = %s\n", i, Encrypt(msn->password));
+      fprintf(fh, "SMTP%02d.AUTH-Method           = %d\n", i, MSF2SMTPAuthMethod(msn));
+      fprintf(fh, "SMTP%02d.SSLCert               = %s\n", i, msn->certFingerprint);
+      fprintf(fh, "SMTP%02d.SSLCertFailures       = %d\n", i, msn->certFailures);
 
       i++;
     }
@@ -504,14 +504,23 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
     fprintf(fh, "\n[MIME]\n");
     fprintf(fh, "MV00.ContentType = Default\n");
     fprintf(fh, "MV00.Command     = %s\n", C->DefaultMimeViewer);
+    if(C->DefaultMimeViewerCodesetName[0] != '\0' &&
+       stricmp(C->DefaultMimeViewerCodesetName, C->DefaultLocalCodeset) != 0)
+    {
+      fprintf(fh, "MV00.CharsetName = %s\n", C->DefaultMimeViewerCodesetName);
+    }
 
     i = 1;
     IterateList(&C->mimeTypeList, struct MimeTypeNode *, mtNode)
     {
       fprintf(fh, "MV%02d.ContentType = %s\n", i, mtNode->ContentType);
-      fprintf(fh, "MV%02d.Extension   = %s\n", i, mtNode->Extension);
       fprintf(fh, "MV%02d.Command     = %s\n", i, mtNode->Command);
-      fprintf(fh, "MV%02d.Description = %s\n", i, mtNode->Description);
+      if(mtNode->Extension[0] != '\0')
+        fprintf(fh, "MV%02d.Extension   = %s\n", i, mtNode->Extension);
+      if(mtNode->Description[0] != '\0')
+        fprintf(fh, "MV%02d.Description = %s\n", i, mtNode->Description);
+      if(mtNode->CodesetName[0] != '\0' && stricmp(mtNode->CodesetName, C->DefaultLocalCodeset) != 0)
+        fprintf(fh, "MV%02d.CharsetName = %s\n", i, mtNode->CodesetName);
 
       i++;
     }
@@ -553,8 +562,9 @@ BOOL CO_SaveConfig(struct Config *co, const char *fname)
     fprintf(fh, "ShowPackerProgress = %s\n", Bool2Txt(co->ShowPackerProgress));
     fprintf(fh, "TransferWindow     = %d\n", co->TransferWindow);
     fprintf(fh, "Editor             = %s\n", co->Editor);
-    fprintf(fh, "ForceEditorCharset = %s\n", Bool2Txt(co->ForceEditorCodeset));
-    fprintf(fh, "EditorCharset      = %s\n", co->ForcedEditorCodeset);
+
+    if(co->DefaultEditorCodeset[0] != '\0' && stricmp(co->DefaultEditorCodeset, co->DefaultLocalCodeset) != 0)
+      fprintf(fh, "EditorCharset      = %s\n", co->DefaultEditorCodeset);
 
     fprintf(fh, "\n[Look&Feel]\n");
     fprintf(fh, "Theme             = %s\n", co->ThemeName);
@@ -1357,11 +1367,15 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
                 strlcpy(lastType->Command, value, sizeof(lastType->Command));
               else if(!stricmp(q, "Description"))
                 strlcpy(lastType->Description, value, sizeof(lastType->Description));
+              else if(!stricmp(q, "CharsetName"))
+                strlcpy(lastType->CodesetName, value, sizeof(lastType->CodesetName));
             }
             else
             {
               if(!stricmp(q, "Command"))
                 strlcpy(C->DefaultMimeViewer, value, sizeof(C->DefaultMimeViewer));
+              else if(!stricmp(q, "CharsetName"))
+                strlcpy(C->DefaultMimeViewerCodesetName, value, sizeof(C->DefaultMimeViewerCodesetName));
             }
           }
 
@@ -1414,8 +1428,7 @@ int CO_LoadConfig(struct Config *co, char *fname, struct FolderList **oldfolders
           else if(stricmp(buf, "ShowPackerProgress") == 0)       co->ShowPackerProgress = Txt2Bool(value);
           else if(stricmp(buf, "TransferWindow") == 0)           co->TransferWindow = atoi(value);
           else if(stricmp(buf, "Editor") == 0)                   strlcpy(co->Editor, value, sizeof(co->Editor));
-          else if(stricmp(buf, "ForceEditorCharset") == 0)       co->ForceEditorCodeset = Txt2Bool(value);
-          else if(stricmp(buf, "EditorCharset") == 0)            strlcpy(co->ForcedEditorCodeset, value, sizeof(co->ForcedEditorCodeset));
+          else if(stricmp(buf, "EditorCharset") == 0)            strlcpy(co->DefaultEditorCodeset, value, sizeof(co->DefaultEditorCodeset));
 
 /* Look&Feel */
           else if(stricmp(buf, "Theme") == 0)                    strlcpy(co->ThemeName, value, sizeof(co->ThemeName));

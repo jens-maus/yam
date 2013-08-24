@@ -39,6 +39,7 @@ struct MimeTypeNode
   char Extension[SIZE_NAME];      // space separated string list of extensions
   char Description[SIZE_DEFAULT]; // a short description of the MIME type
   char Command[SIZE_COMMAND];     // command spec for viewing files of that mime Type
+  char CodesetName[SIZE_CTYPE+1]; // name of the codeset to convert data to before command exec
 };
 
 struct MimeTypeNode *CreateNewMimeType(void);

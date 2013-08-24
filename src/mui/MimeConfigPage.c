@@ -70,6 +70,8 @@ struct Data
   Object *ST_DESCRIPTION;
   Object *ST_COMMAND;
   Object *ST_DEFVIEWER;
+  Object *TX_DEFVIEWER_CODESET;
+  Object *TX_MIME_CODESET;
 
   struct Hook MimeTypeListOpenHook;
   struct Hook MimeTypeListCloseHook;
@@ -100,16 +102,20 @@ OVERLOAD(OM_NEW)
   Object *ST_DESCRIPTION;
   Object *ST_COMMAND;
   Object *ST_DEFVIEWER;
+  Object *TX_DEFVIEWER_CODESET;
+  Object *TX_MIME_CODESET;
   Object *popButton;
   Object *list;
   Object *popMime;
   Object *popAsl[2];
+  Object *mimeCodesetPopButton;
+  Object *defaultCodesetPopButton;
 
   ENTER();
 
   if((obj = DoSuperNew(cl, obj,
     MUIA_HelpNode, "Configuration#MIME",
-    MUIA_ConfigPage_Page, cp_Security,
+    MUIA_ConfigPage_Page, cp_MIME,
     MUIA_ConfigPage_AddSpacer, FALSE,
     MUIA_ConfigPage_Contents, VGroup,
       Child, VGroup,
@@ -173,6 +179,10 @@ OVERLOAD(OM_NEW)
                   MUIA_Popstring_Button, PopButton(MUII_PopFile),
                 End,
               End,
+
+              Child, Label2(tr(MSG_CO_MIME_CODESET)),
+              Child, MakeCodesetPop(&TX_MIME_CODESET, &mimeCodesetPopButton),
+
             End,
 
             Child, VSpace(0),
@@ -184,7 +194,8 @@ OVERLOAD(OM_NEW)
           MUIA_FixHeight,      4,
         End,
 
-        Child, HGroup,
+        Child, ColGroup(2),
+
           Child, Label2(tr(MSG_CO_DefaultViewer)),
           Child, HGroup,
             MUIA_Group_HorizSpacing, 0,
@@ -194,7 +205,12 @@ OVERLOAD(OM_NEW)
               MUIA_Popstring_Button, PopButton(MUII_PopFile),
             End,
           End,
+
+          Child, Label2(tr(MSG_CO_DEFAULTVIEWER_CODESET)),
+          Child, MakeCodesetPop(&TX_DEFVIEWER_CODESET, &defaultCodesetPopButton),
+
         End,
+
       End,
 
     End,
@@ -212,6 +228,8 @@ OVERLOAD(OM_NEW)
     data->ST_DESCRIPTION = ST_DESCRIPTION;
     data->ST_COMMAND =     ST_COMMAND;
     data->ST_DEFVIEWER =   ST_DEFVIEWER;
+    data->TX_MIME_CODESET = TX_MIME_CODESET;
+    data->TX_DEFVIEWER_CODESET = TX_DEFVIEWER_CODESET;
 
     // these are the objects that may be accessed when closing the MIME type list
     data->closeObjs.extension = ST_EXTENS;
@@ -247,6 +265,8 @@ OVERLOAD(OM_NEW)
     SetHelp(BT_MIMEIMPORT,  MSG_HELP_CO_BT_MIMEIMPORT);
     SetHelp(ST_DEFVIEWER,   MSG_HELP_CO_ST_DEFVIEWER);
     SetHelp(ST_DESCRIPTION, MSG_HELP_CO_ST_DESCRIPTION);
+    SetHelp(TX_DEFVIEWER_CODESET, MSG_HELP_CO_TX_DEFVIEWER_CODESET);
+    SetHelp(TX_MIME_CODESET, MSG_HELP_CO_TX_MIME_CODESET);
 
     DoMethod(obj, MUIM_MultiSet, MUIA_Disabled, TRUE,
       GR_MIME,
@@ -259,6 +279,8 @@ OVERLOAD(OM_NEW)
     DoMethod(ST_COMMAND,     MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 1, METHOD(PutMimeTypeEntry));
     DoMethod(ST_DESCRIPTION, MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 1, METHOD(PutMimeTypeEntry));
     DoMethod(ST_DEFVIEWER,   MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 1, METHOD(PutMimeTypeEntry));
+    DoMethod(TX_DEFVIEWER_CODESET, MUIM_Notify, MUIA_Text_Contents, MUIV_EveryTime, obj, 1, METHOD(PutMimeTypeEntry));
+    DoMethod(TX_MIME_CODESET,MUIM_Notify, MUIA_Text_Contents,   MUIV_EveryTime, obj, 1, METHOD(PutMimeTypeEntry));
     DoMethod(BT_MADD,        MUIM_Notify, MUIA_Pressed,         FALSE,          obj, 1, METHOD(AddMimeTypeEntry));
     DoMethod(BT_MDEL,        MUIM_Notify, MUIA_Pressed,         FALSE,          obj, 1, METHOD(DeleteMimeTypeEntry));
     DoMethod(BT_MIMEIMPORT,  MUIM_Notify, MUIA_Pressed,         FALSE,          obj, 1, METHOD(ImportMimeTypes));
@@ -296,6 +318,7 @@ OVERLOAD(MUIM_ConfigPage_ConfigToGUI)
   DoMethod(data->LV_MIME, MUIM_NList_Jump, MUIV_NList_Jump_Active);
 
   setstring(data->ST_DEFVIEWER, CE->DefaultMimeViewer);
+  set(data->TX_DEFVIEWER_CODESET, MUIA_Text_Contents, CE->DefaultMimeViewerCodesetName);
 
   RETURN(0);
   return 0;
@@ -311,7 +334,10 @@ OVERLOAD(MUIM_ConfigPage_GUIToConfig)
 
   // bring NList elements and Exec list elements into sync
   SortNListToExecList(data->LV_MIME, &CE->mimeTypeList);
+
+  // retrieve the info on the default mime viewer
   GetMUIString(CE->DefaultMimeViewer, data->ST_DEFVIEWER, sizeof(CE->DefaultMimeViewer));
+  GetMUIText(CE->DefaultMimeViewerCodesetName, data->TX_DEFVIEWER_CODESET, sizeof(CE->DefaultMimeViewerCodesetName));
 
   RETURN(0);
   return 0;
@@ -334,6 +360,7 @@ DECLARE(GetMimeTypeEntry)
     nnset(data->ST_EXTENS, MUIA_String_Contents, mt->Extension);
     nnset(data->ST_COMMAND, MUIA_String_Contents, mt->Command);
     nnset(data->ST_DESCRIPTION, MUIA_String_Contents, mt->Description);
+    nnset(data->TX_MIME_CODESET, MUIA_Text_Contents, mt->CodesetName);
   }
 
   set(data->GR_MIME, MUIA_Disabled, mt == NULL);
@@ -360,6 +387,7 @@ DECLARE(PutMimeTypeEntry)
     GetMUIString(mt->Extension, data->ST_EXTENS, sizeof(mt->Extension));
     GetMUIString(mt->Command, data->ST_COMMAND, sizeof(mt->Command));
     GetMUIString(mt->Description, data->ST_DESCRIPTION, sizeof(mt->Description));
+    GetMUIText(mt->CodesetName, data->TX_MIME_CODESET, sizeof(mt->CodesetName));
 
     DoMethod(data->LV_MIME, MUIM_NList_Redraw, MUIV_NList_Redraw_Active);
   }

@@ -3420,9 +3420,9 @@ DECLARE(LaunchEditor)
     }
 
     // check if we should for a specific editor codeset
-    if(C->ForceEditorCodeset == TRUE)
+    if(C->DefaultEditorCodeset[0] != '\0')
     {
-      dstCodeset = CodesetsFind(C->ForcedEditorCodeset,
+      dstCodeset = CodesetsFind(C->DefaultEditorCodeset,
                                 CSA_CodesetList, G->codesetsList,
                                 CSA_FallbackToDefault, FALSE);
     }

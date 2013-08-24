@@ -7339,13 +7339,7 @@ editor which you can use as an\n\
 alternative to the internal one.
 ;
 MSG_CO_EXTEDITOR_CODESET (2465//)
-_Force charset
-;
-MSG_HELP_CO_CH_DEFCODESET_EDITOR (2466//)
-If selected the chosen charset\n\
-will be used and the text be\n\
-converted before starting the\n\
-editor.
+Display c_harset
 ;
 MSG_HELP_CO_TX_DEFCODESET_EDITOR (2467//)
 Choose a charset to which the text\n\
@@ -7370,4 +7364,20 @@ to.
 ;
 MSG_CO_DEFAULTCODESET_WRITE (2470//)
 Default c_harset
+;
+MSG_CO_MIME_CODESET (2471//)
+Display _charset
+;
+MSG_HELP_CO_TX_MIME_CODESET (2472//)
+Select the charset here that printable\n\
+text should be converted to before\n\
+executing the command of this MIME type.
+;
+MSG_CO_DEFAULTVIEWER_CODESET (2473//)
+_Display charset
+;
+MSG_HELP_CO_TX_DEFVIEWER_CODESET (2474//)
+Select the charset here that printable\n\
+text should be converted to before\n\
+starting the default viewer.
 ;

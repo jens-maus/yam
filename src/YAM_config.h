@@ -294,7 +294,6 @@ struct Config
   BOOL  ShowRcptFieldReplyTo;
   BOOL  OverrideFromAddress;
   BOOL  ShowPackerProgress;
-  BOOL  ForceEditorCodeset;
 
   struct MUI_PenSpec   ColoredText;
   struct MUI_PenSpec   Color1stLevel;
@@ -340,11 +339,12 @@ struct Config
   char UpdateServer[SIZE_HOST];
   char DefaultLocalCodeset[SIZE_CTYPE+1];
   char DefaultWriteCodeset[SIZE_CTYPE+1];
-  char ForcedEditorCodeset[SIZE_CTYPE+1];
+  char DefaultEditorCodeset[SIZE_CTYPE+1];
   char IOCInterfaces[SIZE_LARGE];
   char AppIconText[SIZE_COMMAND];
   char InfoBarText[SIZE_COMMAND];
   char DefaultMimeViewer[SIZE_COMMAND];
+  char DefaultMimeViewerCodesetName[SIZE_CTYPE+1];
   char StyleFGroupUnread[SIZE_SMALL];
   char StyleFGroupRead[SIZE_SMALL];
   char StyleFolderUnread[SIZE_SMALL];

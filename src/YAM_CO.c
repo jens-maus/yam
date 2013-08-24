@@ -726,6 +726,7 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
   {
     FreeMimeTypeList(&co->mimeTypeList);
     strlcpy(co->DefaultMimeViewer, "SYS:Utilities/Multiview \"%s\"", sizeof(co->DefaultMimeViewer));
+    strlcpy(co->DefaultMimeViewerCodesetName, co->DefaultLocalCodeset, sizeof(co->DefaultMimeViewerCodesetName));
   }
 
   if(page == cp_AddressBook || page == cp_AllPages)
@@ -767,7 +768,7 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     co->XPKPackEff = 50;
     co->XPKPackEncryptEff = 50;
     co->TransferWindow = TWM_AUTO;
-    strlcpy(co->ForcedEditorCodeset, sysCodesetName, sizeof(co->ForcedEditorCodeset));
+    strlcpy(co->DefaultEditorCodeset, C->DefaultLocalCodeset, sizeof(co->DefaultEditorCodeset));
 
     // depending on the operating system we set the AppIcon
     // and docky icon defaults different
@@ -1227,7 +1228,6 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      c1->ConfirmRemoveAttachments        == c2->ConfirmRemoveAttachments &&
      c1->OverrideFromAddress             == c2->OverrideFromAddress &&
      c1->ShowPackerProgress              == c2->ShowPackerProgress &&
-     c1->ForceEditorCodeset              == c2->ForceEditorCodeset &&
 
      c1->SocketOptions.SendBuffer        == c2->SocketOptions.SendBuffer &&
      c1->SocketOptions.RecvBuffer        == c2->SocketOptions.RecvBuffer &&
@@ -1288,7 +1288,7 @@ static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
      strcmp(c1->UpdateServer,        c2->UpdateServer) == 0 &&
      strcmp(c1->DefaultLocalCodeset, c2->DefaultLocalCodeset) == 0 &&
      strcmp(c1->DefaultWriteCodeset, c2->DefaultWriteCodeset) == 0 &&
-     strcmp(c1->ForcedEditorCodeset, c2->ForcedEditorCodeset) == 0 &&
+     strcmp(c1->DefaultEditorCodeset,c2->DefaultEditorCodeset) == 0 &&
      strcmp(c1->IOCInterfaces,       c2->IOCInterfaces) == 0 &&
      strcmp(c1->AppIconText,         c2->AppIconText) == 0 &&
      strcmp(c1->InfoBarText,         c2->InfoBarText) == 0 &&
@@ -1605,13 +1605,13 @@ void CO_Validate(struct Config *co, BOOL update)
 
   if(co->DefaultWriteCodeset[0] == '\0')
   {
-    strlcpy(co->DefaultWriteCodeset, "ISO-8859-1", sizeof(co->DefaultWriteCodeset));
+    strlcpy(co->DefaultWriteCodeset, co->DefaultLocalCodeset, sizeof(co->DefaultWriteCodeset));
     saveAtEnd = TRUE;
   }
 
-  if(co->ForcedEditorCodeset[0] == '\0')
+  if(co->DefaultEditorCodeset[0] == '\0')
   {
-    strlcpy(co->ForcedEditorCodeset, "ISO-8859-1", sizeof(co->ForcedEditorCodeset));
+    strlcpy(co->DefaultEditorCodeset, co->DefaultLocalCodeset, sizeof(co->DefaultEditorCodeset));
     saveAtEnd = TRUE;
   }
 
@@ -1661,9 +1661,9 @@ void CO_Validate(struct Config *co, BOOL update)
     }
   }
 
-  // now we check if the set force editor codeset is a valid one also supported
+  // now we check if the set editor codeset is a valid one also supported
   // by codesets.library and if not we warn the user
-  if(CodesetsFind(co->ForcedEditorCodeset,
+  if(CodesetsFind(co->DefaultEditorCodeset,
                   CSA_CodesetList,       G->codesetsList,
                   CSA_FallbackToDefault, FALSE,
                   TAG_DONE) == NULL)
@@ -1672,7 +1672,7 @@ void CO_Validate(struct Config *co, BOOL update)
                           tr(MSG_CO_CHARSETWARN_TITLE),
                           tr(MSG_CO_CHARSETUNKNOWNWARN_BT),
                           tr(MSG_CO_CHARSETUNKNOWNWARN),
-                          co->ForcedEditorCodeset);
+                          co->DefaultEditorCodeset);
     if(res == 1)
     {
       struct codeset *tmpcs;
@@ -1680,7 +1680,7 @@ void CO_Validate(struct Config *co, BOOL update)
       // fallback to the system's default codeset
       if((tmpcs = CodesetsFindA(NULL, NULL)) != NULL)
       {
-        strlcpy(co->ForcedEditorCodeset, tmpcs->name, sizeof(co->ForcedEditorCodeset));
+        strlcpy(co->DefaultEditorCodeset, tmpcs->name, sizeof(co->DefaultEditorCodeset));
         saveAtEnd = TRUE;
       }
     }

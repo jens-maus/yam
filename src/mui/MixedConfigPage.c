@@ -57,7 +57,6 @@ struct Data
   Object *ST_ATTACHDIR;
   Object *ST_UPDATEDOWNLOADPATH;
   Object *ST_EDITOR;
-  Object *CH_DEFCODESET_EDITOR;
   Object *TX_DEFCODESET_EDITOR;
   Object *CH_WBAPPICON;
   Object *ST_APPICON;
@@ -220,7 +219,6 @@ OVERLOAD(OM_NEW)
   Object *ST_ATTACHDIR;
   Object *ST_UPDATEDOWNLOADPATH;
   Object *ST_EDITOR;
-  Object *CH_DEFCODESET_EDITOR;
   Object *TX_DEFCODESET_EDITOR;
   Object *CH_WBAPPICON;
   Object *ST_APPICON;
@@ -301,14 +299,8 @@ OVERLOAD(OM_NEW)
             MUIA_Popstring_Button, PopButton(MUII_PopFile),
           End,
 
-          Child, HSpace(1),
-          Child, HGroup,
-            Child, HGroup,
-              Child, CH_DEFCODESET_EDITOR = MakeCheck(tr(MSG_CO_EXTEDITOR_CODESET)),
-              Child, Label1(tr(MSG_CO_EXTEDITOR_CODESET)),
-            End,
-            Child, MakeCodesetPop(&TX_DEFCODESET_EDITOR, &codesetPopButton),
-          End,
+          Child, Label2(tr(MSG_CO_EXTEDITOR_CODESET)),
+          Child, MakeCodesetPop(&TX_DEFCODESET_EDITOR, &codesetPopButton),
 
         End,
       End,
@@ -412,7 +404,6 @@ OVERLOAD(OM_NEW)
     data->ST_ATTACHDIR =          ST_ATTACHDIR;
     data->ST_UPDATEDOWNLOADPATH = ST_UPDATEDOWNLOADPATH;
     data->ST_EDITOR =             ST_EDITOR;
-    data->CH_DEFCODESET_EDITOR =  CH_DEFCODESET_EDITOR;
     data->TX_DEFCODESET_EDITOR =  TX_DEFCODESET_EDITOR;
     data->CH_WBAPPICON =          CH_WBAPPICON;
     data->ST_APPICON =            ST_APPICON;
@@ -458,7 +449,6 @@ OVERLOAD(OM_NEW)
     SetHelp(BT_APPICONGETPOS,     MSG_HELP_CO_BT_APPICONGETPOS);
     SetHelp(CY_TRANSWIN,          MSG_HELP_CO_CH_TRANSWIN);
     SetHelp(ST_EDITOR,            MSG_HELP_CO_ST_EDITOR_EXT);
-    SetHelp(CH_DEFCODESET_EDITOR, MSG_HELP_CO_CH_DEFCODESET_EDITOR);
     SetHelp(TX_DEFCODESET_EDITOR, MSG_HELP_CO_TX_DEFCODESET_EDITOR);
 
     DoMethod(obj, MUIM_MultiSet, MUIA_Disabled, TRUE,
@@ -466,14 +456,11 @@ OVERLOAD(OM_NEW)
       ST_APPY,
       ST_APPICON,
       BT_APPICONGETPOS,
-      TX_DEFCODESET_EDITOR,
-      codesetPopButton,
       NULL);
+
     DoMethod(CH_WBAPPICON,         MUIM_Notify, MUIA_Selected, MUIV_EveryTime, obj,                  9, MUIM_MultiSet, MUIA_Disabled, MUIV_NotTriggerValue, ST_APPX, ST_APPY, ST_APPICON, CH_APPICONPOS, BT_APPICONGETPOS, NULL);
     DoMethod(BT_APPICONGETPOS,     MUIM_Notify, MUIA_Pressed,  FALSE,          obj,                  1, METHOD(GetAppIconPos));
     DoMethod(CH_CONFIRM,           MUIM_Notify, MUIA_Selected, MUIV_EveryTime, NB_CONFIRMDEL,        3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
-    DoMethod(CH_DEFCODESET_EDITOR, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, TX_DEFCODESET_EDITOR, 3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
-    DoMethod(CH_DEFCODESET_EDITOR, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, codesetPopButton,     3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
 
     #if defined(__amigaos4__)
     set(CH_DOCKYICON, MUIA_Disabled, G->applicationID == 0);
@@ -515,7 +502,7 @@ OVERLOAD(MUIM_ConfigPage_ConfigToGUI)
   setcheckmark(data->CH_CONFIRM, CE->Confirm);
 
   xset(data->NB_CONFIRMDEL, MUIA_Numeric_Value, CE->ConfirmDelete,
-						   MUIA_Disabled, CE->Confirm == FALSE);
+                           MUIA_Disabled, CE->Confirm == FALSE);
 
   setcheckmark(data->CH_REMOVE, CE->RemoveAtOnce);
   set(data->TX_PACKER, MUIA_Text_Contents, CE->XPKPack);
@@ -528,8 +515,7 @@ OVERLOAD(MUIM_ConfigPage_ConfigToGUI)
   set(data->CH_APPICONPOS, MUIA_Disabled, CE->WBAppIcon == FALSE);
   setcycle(data->CY_TRANSWIN, CE->TransferWindow);
   setstring(data->ST_EDITOR, CE->Editor);
-  setcheckmark(data->CH_DEFCODESET_EDITOR, CE->ForceEditorCodeset);
-  nnset(data->TX_DEFCODESET_EDITOR, MUIA_Text_Contents, CE->ForcedEditorCodeset);
+  set(data->TX_DEFCODESET_EDITOR, MUIA_Text_Contents, CE->DefaultEditorCodeset);
 
   RETURN(0);
   return 0;
@@ -553,8 +539,8 @@ OVERLOAD(MUIM_ConfigPage_GUIToConfig)
 
   if(GetMUICheck(data->CH_APPICONPOS) == FALSE)
   {
-	CE->IconPositionX = -CE->IconPositionX;
-	CE->IconPositionY = -CE->IconPositionY;
+    CE->IconPositionX = -CE->IconPositionX;
+    CE->IconPositionY = -CE->IconPositionY;
   }
 
   GetMUIString(CE->AppIconText, data->ST_APPICON, sizeof(CE->AppIconText));
@@ -573,8 +559,7 @@ OVERLOAD(MUIM_ConfigPage_GUIToConfig)
   CE->ShowPackerProgress = GetMUICheck(data->CH_ARCHIVERPROGRESS);
   CE->TransferWindow = GetMUICycle(data->CY_TRANSWIN);
   GetMUIString(CE->Editor, data->ST_EDITOR, sizeof(CE->Editor));
-  CE->ForceEditorCodeset = GetMUICheck(data->CH_DEFCODESET_EDITOR);
-  GetMUIText(CE->ForcedEditorCodeset, data->TX_DEFCODESET_EDITOR, sizeof(CE->ForcedEditorCodeset));
+  GetMUIText(CE->DefaultEditorCodeset, data->TX_DEFCODESET_EDITOR, sizeof(CE->DefaultEditorCodeset));
 
   RETURN(0);
   return 0;
