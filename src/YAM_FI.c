@@ -1927,20 +1927,12 @@ struct FilterNode *CreateNewFilter(const int actions, const int ruleFlags)
     ASONODE_Min, TRUE,
     TAG_DONE)) != NULL)
   {
+    memset(filter, 0, sizeof(*filter));
     filter->actions = actions;
     filter->combine = CB_AT_LEAST_ONE;
-    filter->isVolatile = FALSE;
-    filter->remote = FALSE;
     filter->applyToNew = TRUE;
     filter->applyOnReq = TRUE;
-    filter->applyToSent = FALSE;
     strlcpy(filter->name, tr(MSG_NewEntry), sizeof(filter->name));
-    filter->redirectTo[0] = '\0';
-    filter->forwardTo[0] = '\0';
-    filter->replyFile[0] = '\0';
-    filter->executeCmd[0] = '\0';
-    filter->playSound[0] = '\0';
-    filter->moveTo[0] = '\0';
 
     // initialize the rule list
     NewMinList(&filter->ruleList);
@@ -1995,14 +1987,13 @@ struct RuleNode *CreateNewRule(struct FilterNode *filter, const int flags)
     ASONODE_Min, TRUE,
     TAG_DONE)) != NULL)
   {
+    memset(rule, 0, sizeof(*rule));
+
     // set the default search mode (plain string search or DOS patterns)
-    rule->search = NULL;
     rule->searchMode = SM_FROM;
     rule->subSearchMode = SSM_ADDRESS;
     rule->comparison = CP_EQUAL;
     rule->flags = flags;
-    rule->matchPattern[0] = '\0';
-    rule->customField[0] = '\0';
 
     // if a filter was specified we immediately add this new rule to it
     if(filter != NULL)
