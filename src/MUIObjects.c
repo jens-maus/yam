@@ -56,6 +56,7 @@
 #include "mui/PlaceholderPopupList.h"
 #include "mui/Recipientstring.h"
 
+#include "FolderList.h"
 #include "Locale.h"
 #include "MimeTypes.h"
 #include "MUIObjects.h"
@@ -859,6 +860,69 @@ HOOKPROTONO(FilereqStopFunc, void, struct FileRequester *fileReq)
   LEAVE();
 }
 MakeHook(FilereqStopHook, FilereqStopFunc);
+
+///
+/// PO_Text2ListFunc
+//  selects the folder as active which is currently in the 'str'
+//  object
+HOOKPROTONH(PO_Text2List, BOOL, Object *listview, Object *str)
+{
+  char *s;
+
+  ENTER();
+
+  // get the currently set string
+  s = (char *)xget(str, MUIA_Text_Contents);
+
+  if(s != NULL && listview != NULL)
+  {
+    Object *list = (Object *)xget(listview, MUIA_NListview_NList);
+
+    // now try to find the node and activate it right away
+    DoMethod(list, MUIM_NListtree_FindName, MUIV_NListtree_FindName_ListNode_Root, s, MUIV_NListtree_FindName_Flag_Activate);
+  }
+
+  RETURN(TRUE);
+  return TRUE;
+}
+MakeHook(PO_Text2ListHook, PO_Text2List);
+
+///
+/// PO_List2TextFunc
+//  Copies listview selection to text gadget
+HOOKPROTONH(PO_List2TextFunc, void, Object *listview, Object *text)
+{
+  Object *list;
+
+  ENTER();
+
+  if((list = (Object *)xget(listview, MUIA_NListview_NList)) != NULL && text != NULL)
+  {
+    struct MUI_NListtree_TreeNode *tn = (struct MUI_NListtree_TreeNode *)xget(list, MUIA_NListtree_Active);
+
+    if(tn != NULL && tn->tn_User != NULL)
+    {
+      struct FolderNode *fnode = (struct FolderNode *)tn->tn_User;
+      set(text, MUIA_Text_Contents, fnode->folder->Name);
+    }
+  }
+
+  LEAVE();
+}
+MakeHook(PO_List2TextHook, PO_List2TextFunc);
+
+///
+/// PO_Window
+// Window hook for popup objects
+HOOKPROTONH(PO_Window, void, Object *pop, Object *win)
+{
+  ENTER();
+
+  set(win, MUIA_Window_DefaultObject, pop);
+
+  LEAVE();
+}
+MakeHook(PO_WindowHook, PO_Window);
 
 ///
 /// GetMUIString

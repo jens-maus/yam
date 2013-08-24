@@ -59,6 +59,9 @@ extern struct Hook FilereqStartHook;
 extern struct Hook FilereqStopHook;
 extern struct Hook PO_MimeTypeListOpenHook;
 extern struct Hook PO_MimeTypeListCloseHook;
+extern struct Hook PO_Text2ListHook;
+extern struct Hook PO_List2TextHook;
+extern struct Hook PO_WindowHook;
 
 struct MimeTypeCloseObjects
 {

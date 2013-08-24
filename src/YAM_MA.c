@@ -3647,19 +3647,6 @@ char *MA_GetRealSubject(char *sub)
 ///
 
 /*** Hooks ***/
-/// PO_Window
-/*** PO_Window - Window hook for popup objects ***/
-HOOKPROTONH(PO_Window, void, Object *pop, Object *win)
-{
-  ENTER();
-
-  set(win, MUIA_Window_DefaultObject, pop);
-
-  LEAVE();
-}
-MakeHook(PO_WindowHook, PO_Window);
-
-///
 /// MA_DelKey
 //  User pressed DEL key
 HOOKPROTONHNO(MA_DelKeyFunc, void, int *arg)

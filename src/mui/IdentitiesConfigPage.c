@@ -41,6 +41,7 @@
 #include "YAM_config.h"
 
 #include "MailServers.h"
+#include "MUIObjects.h"
 #include "Signature.h"
 #include "UserIdentity.h"
 

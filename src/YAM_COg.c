@@ -135,56 +135,6 @@
 ***************************************************************************/
 
 /*** Hooks ***/
-/// PO_Text2ListFunc
-//  selects the folder as active which is currently in the 'str'
-//  object
-HOOKPROTONH(PO_Text2List, BOOL, Object *listview, Object *str)
-{
-  char *s;
-
-  ENTER();
-
-  // get the currently set string
-  s = (char *)xget(str, MUIA_Text_Contents);
-
-  if(s != NULL && listview != NULL)
-  {
-    Object *list = (Object *)xget(listview, MUIA_NListview_NList);
-
-    // now try to find the node and activate it right away
-    DoMethod(list, MUIM_NListtree_FindName, MUIV_NListtree_FindName_ListNode_Root, s, MUIV_NListtree_FindName_Flag_Activate);
-  }
-
-  RETURN(TRUE);
-  return TRUE;
-}
-MakeHook(PO_Text2ListHook, PO_Text2List);
-
-///
-/// PO_List2TextFunc
-//  Copies listview selection to text gadget
-HOOKPROTONH(PO_List2TextFunc, void, Object *listview, Object *text)
-{
-  Object *list;
-
-  ENTER();
-
-  if((list = (Object *)xget(listview, MUIA_NListview_NList)) != NULL && text != NULL)
-  {
-    struct MUI_NListtree_TreeNode *tn = (struct MUI_NListtree_TreeNode *)xget(list, MUIA_NListtree_Active);
-
-    if(tn != NULL && tn->tn_User != NULL)
-    {
-      struct FolderNode *fnode = (struct FolderNode *)tn->tn_User;
-      set(text, MUIA_Text_Contents, fnode->folder->Name);
-    }
-  }
-
-  LEAVE();
-}
-MakeHook(PO_List2TextHook, PO_List2TextFunc);
-
-///
 /// CO_PlaySoundFunc
 //  Plays sound file referred by the string gadget
 HOOKPROTONHNO(CO_PlaySoundFunc, void, int *arg)
