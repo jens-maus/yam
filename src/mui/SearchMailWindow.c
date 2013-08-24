@@ -124,7 +124,7 @@ HOOKPROTONP(SearchOptFromFilterPopup, void, Object *listview)
       struct RuleNode *rule;
 
       if((rule = GetFilterRule(filter, 0)) != NULL)
-        DoMethod(data->GR_SEARCH, MUIM_SearchControlGroup_GetFromRule, rule);
+        DoMethod(data->GR_SEARCH, MUIM_SearchControlGroup_RuleToGUI, rule);
     }
   }
 
@@ -611,7 +611,7 @@ DECLARE(CreateFilter)
       strlcpy(filter->name, name, sizeof(filter->name));
 
       if((rule = GetFilterRule(filter, 0)) != NULL)
-        DoMethod(data->GR_SEARCH, MUIM_SearchControlGroup_SetToRule, rule);
+        DoMethod(data->GR_SEARCH, MUIM_SearchControlGroup_GUIToRule, rule);
 
       // Now add the new filter to our list
       AddTail((struct List *)&C->filterList, (struct Node *)filter);

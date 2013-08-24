@@ -563,9 +563,9 @@ DECLARE(PrepareSearch) // struct Search *search
 }
 
 ///
-/// DECLARE(SetToRule)
+/// DECLARE(GUIToRule)
 // fills a rule structure from the settings of this search controls
-DECLARE(SetToRule) // struct RuleNode *rule
+DECLARE(GUIToRule) // struct RuleNode *rule
 {
   GETDATA;
   int g = xget(data->PG_SRCHOPT, MUIA_Group_ActivePage);
@@ -608,9 +608,9 @@ DECLARE(SetToRule) // struct RuleNode *rule
 }
 
 ///
-/// DECLARE(GetFromRule)
+/// DECLARE(RuleToGUI)
 // fills a rule structure from the settings of this search controls
-DECLARE(GetFromRule) // struct RuleNode *rule
+DECLARE(RuleToGUI) // struct RuleNode *rule
 {
   GETDATA;
   struct RuleNode *rule = msg->rule;

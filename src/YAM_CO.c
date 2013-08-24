@@ -174,14 +174,12 @@ HOOKPROTONHNONP(AddNewRuleToList, void)
       Object *newSearchGroup;
 
       // add a new GUI element for that particular rule
-      newSearchGroup = SearchControlGroupObject,
-                         MUIA_SearchControlGroup_RemoteFilterMode, filter->remote,
-                       End;
-
-      if(newSearchGroup != NULL)
+      if((newSearchGroup = (Object *)DoMethod(gui->GR_SGROUP, MUIM_ObjectList_CreateItem)) != NULL)
       {
+        set(newSearchGroup, MUIA_SearchControlGroup_RemoteFilterMode, filter->remote);
+
         // fill the new search group with some content
-        DoMethod(newSearchGroup, MUIM_SearchControlGroup_GetFromRule, rule);
+        DoMethod(newSearchGroup, MUIM_SearchControlGroup_RuleToGUI, rule);
 
         // set some notifies
         DoMethod(newSearchGroup, MUIM_Notify, MUIA_SearchControlGroup_Modified, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &SetActiveFilterDataHook);
@@ -398,21 +396,21 @@ HOOKPROTONHNONP(GetActiveFilterData, void)
     // Now we should have a clean SGROUP and can populate with new SearchControlGroup objects
     IterateList(&filter->ruleList, struct RuleNode *, rule)
     {
-      Object *newSearchGroup = SearchControlGroupObject,
-                                 MUIA_SearchControlGroup_RemoteFilterMode, filter->remote,
-                               End;
+      Object *newSearchGroup;
 
-      if(newSearchGroup == NULL)
-        break;
+      if((newSearchGroup = (Object *)DoMethod(gui->GR_SGROUP, MUIM_ObjectList_CreateItem)) != NULL)
+      {
+        set(newSearchGroup, MUIA_SearchControlGroup_RemoteFilterMode, filter->remote);
 
-      // fill the new search group with some content
-      DoMethod(newSearchGroup, MUIM_SearchControlGroup_GetFromRule, rule);
+        // fill the new search group with some content
+        DoMethod(newSearchGroup, MUIM_SearchControlGroup_RuleToGUI, rule);
 
-      // set some notifies
-      DoMethod(newSearchGroup, MUIM_Notify, MUIA_SearchControlGroup_Modified, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &SetActiveFilterDataHook);
+        // set some notifies
+        DoMethod(newSearchGroup, MUIM_Notify, MUIA_SearchControlGroup_Modified, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &SetActiveFilterDataHook);
 
-      // add it to our searchGroupList
-      DoMethod(gui->GR_SGROUP, MUIM_ObjectList_AddItem, newSearchGroup);
+        // add it to our searchGroupList
+        DoMethod(gui->GR_SGROUP, MUIM_ObjectList_AddItem, newSearchGroup);
+      }
     }
     set(gui->GR_SGROUP, MUIA_ObjectList_Quiet, FALSE);
   }
@@ -486,7 +484,7 @@ HOOKPROTONHNONP(SetActiveFilterData, void)
         CreateNewRule(filter, 0);
 
       // set the rule settings
-      DoMethod(ruleItem, MUIM_SearchControlGroup_SetToRule, rule);
+      DoMethod(ruleItem, MUIM_SearchControlGroup_GUIToRule, rule);
 
       ++i;
     }
