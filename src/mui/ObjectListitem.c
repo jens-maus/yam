@@ -138,6 +138,30 @@ OVERLOAD(OM_GET)
 /* Private Functions */
 
 /* Public Methods */
+/// DECLARE(CreateAndAddItem)
+// let the objectlist create and add a new instance of this class
+DECLARE(CreateAndAddItem)
+{
+  GETDATA;
+  Object *item = NULL;
+
+  ENTER();
+
+  if(data->objectList != NULL)
+  {
+    if((item = (Object *)DoMethod(data->objectList, MUIM_ObjectList_CreateItem)) != NULL)
+    {
+      DoMethod(data->objectList, MUIM_ObjectList_AddItem, item);
+    }
+  }
+  else
+    E(DBF_GUI, "MUIM_ObjectListItem_CreateAndAdd() called for orphaned object item %08lx", obj);
+
+  RETURN((IPTR)item);
+  return (IPTR)item;
+}
+
+///
 /// DECLARE(Remove)
 // remove ourself from our object list
 DECLARE(Remove)

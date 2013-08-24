@@ -47,6 +47,7 @@
 #include "Locale.h"
 #include "MUIObjects.h"
 
+#include "mui/ObjectList.h"
 #include "mui/ObjectListitem.h"
 
 #include "Debug.h"
@@ -307,7 +308,7 @@ OVERLOAD(OM_NEW)
     SetHelp(data->BT_ADDRULE, MSG_HELP_CO_BT_MORE);
     SetHelp(data->BT_REMRULE, MSG_HELP_CO_BT_LESS);
 
-    DoMethod(data->BT_ADDRULE, MUIM_Notify, MUIA_Pressed,         FALSE,          obj, 1, METHOD(AddRule));
+    DoMethod(data->BT_ADDRULE, MUIM_Notify, MUIA_Pressed,         FALSE,          obj, 1, MUIM_ObjectListitem_CreateAndAddItem);
     DoMethod(data->BT_REMRULE, MUIM_Notify, MUIA_Pressed,         FALSE,          obj, 1, MUIM_ObjectListitem_Remove);
     DoMethod(data->CY_MODE[0], MUIM_Notify, MUIA_Cycle_Active,    MUIV_EveryTime, obj, 1, METHOD(Update));
     DoMethod(data->CY_MODE[1], MUIM_Notify, MUIA_Cycle_Active,    MUIV_EveryTime, obj, 1, METHOD(Update));
@@ -703,18 +704,6 @@ DECLARE(Update)
   }
 
   set(obj, ATTR(Modified), TRUE);
-
-  RETURN(0);
-  return 0;
-}
-
-///
-/// DECLARE(AddRule)
-DECLARE(AddRule)
-{
-  ENTER();
-
-  DoMethod(obj, MUIM_CallHook, &AddNewRuleToListHook);
 
   RETURN(0);
   return 0;

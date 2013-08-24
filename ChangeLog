@@ -11,6 +11,9 @@ $URL$
   * YAM_CO.c, mui/FilterRuleList.c, mui/SearchControlGroup.c: the rule list of
     a filter is now rebuild from scratch each time as this makes it lots easier
     to maintain the list.
+  * mui/ObjectListitem.c, mui/SearchControlGroup.c: implemented a new method to
+    let an ObjectListitem cause its ObjectList to create and add a new instance
+    of the class. This simplifies adding new rules to a filter.
 
 2013-08-23 Jens Langner <Jens.Langner@light-speed.de>
 
