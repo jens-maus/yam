@@ -8,6 +8,9 @@ $URL$
 2013-08-24 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/SignatureTextEdit.c: converted a method to a simple attribute.
+  * YAM_CO.c, mui/FilterRuleList.c, mui/SearchControlGroup.c: the rule list of
+    a filter is now rebuild from scratch each time as this makes it lots easier
+    to maintain the list.
 
 2013-08-23 Jens Langner <Jens.Langner@light-speed.de>
 

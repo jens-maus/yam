@@ -198,36 +198,6 @@ HOOKPROTONHNONP(AddNewRuleToList, void)
 MakeHook(AddNewRuleToListHook, AddNewRuleToList);
 
 ///
-/// RemoveLastRule
-//  Deletes the last rule of the filter
-HOOKPROTONHNONP(RemoveLastRule, void)
-{
-  struct FilterNode *filter = NULL;
-  struct CO_GUIData *gui = &G->CO->GUI;
-
-  ENTER();
-
-  // get the active filterNode
-  DoMethod(gui->LV_RULES, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &filter);
-
-  // if we got an active entry lets remove it from the GUI List
-  // and also from the filter's rule list
-  if(filter != NULL)
-  {
-    // lets remove the rule at the end of our ruleList
-    struct RuleNode *rule = (struct RuleNode *)RemTail((struct List *)&filter->ruleList);
-
-    if(rule != NULL)
-    {
-      DeleteRuleNode(rule);
-    }
-  }
-
-  LEAVE();
-}
-MakeHook(RemoveLastRuleHook, RemoveLastRule);
-
-///
 /// ImportFilterHook
 //  Import filter settings from a .sfd file
 HOOKPROTONHNP(ImportFilterFunc, void, Object *obj)
@@ -440,11 +410,9 @@ HOOKPROTONHNONP(SetActiveFilterData, void)
   {
     Object *ruleItem;
     Object *ruleState;
-    int i;
-    int rm = GetMUICheck(gui->CH_REMOTE);
 
     GetMUIString(filter->name, gui->ST_RNAME, sizeof(filter->name));
-    filter->remote = (rm == 1);
+    filter->remote      = GetMUICheck(gui->CH_REMOTE);
     filter->applyToNew  = GetMUICheck(gui->CH_APPLYNEW);
     filter->applyToSent = GetMUICheck(gui->CH_APPLYSENT);
     filter->applyOnReq  = GetMUICheck(gui->CH_APPLYREQ);
@@ -472,21 +440,16 @@ HOOKPROTONHNONP(SetActiveFilterData, void)
     GetMUIString(filter->playSound,  gui->ST_APLAY, sizeof(filter->playSound));
     GetMUIText(filter->moveTo, gui->TX_MOVETO, sizeof(filter->moveTo));
 
-    // make sure to update all rule settings
+    // (re)build the rule liste from scratch
+    FreeFilterRuleList(filter);
     ruleState = NULL;
-    i = 0;
     while((ruleItem = (Object *)DoMethod(gui->GR_SGROUP, MUIM_ObjectList_IterateItems, &ruleState)) != NULL)
     {
       struct RuleNode *rule;
 
-      // get the rule out of the ruleList or create a new one
-      while((rule = GetFilterRule(filter, i)) == NULL)
-        CreateNewRule(filter, 0);
-
       // set the rule settings
-      DoMethod(ruleItem, MUIM_SearchControlGroup_GUIToRule, rule);
-
-      ++i;
+      if((rule = CreateNewRule(filter, 0)) != NULL)
+        DoMethod(ruleItem, MUIM_SearchControlGroup_GUIToRule, rule);
     }
 
     GhostOutFilter(gui, filter);

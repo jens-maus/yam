@@ -63,7 +63,6 @@ OVERLOAD(OM_NEW)
     }
 
     DoMethod(obj, MUIM_Notify, MUIA_ObjectList_ItemCount, MUIV_EveryTime, MUIV_Notify_Self, 2, METHOD(UpdateRules), MUIV_TriggerValue);
-    DoMethod(obj, MUIM_Notify, MUIA_ObjectList_ItemRemoved, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &RemoveLastRuleHook);
   }
 
   RETURN((IPTR)obj);

@@ -308,7 +308,7 @@ OVERLOAD(OM_NEW)
     SetHelp(data->BT_REMRULE, MSG_HELP_CO_BT_LESS);
 
     DoMethod(data->BT_ADDRULE, MUIM_Notify, MUIA_Pressed,         FALSE,          obj, 1, METHOD(AddRule));
-    DoMethod(data->BT_REMRULE, MUIM_Notify, MUIA_Pressed,         FALSE,          obj, 1, METHOD(RemRule));
+    DoMethod(data->BT_REMRULE, MUIM_Notify, MUIA_Pressed,         FALSE,          obj, 1, MUIM_ObjectListitem_Remove);
     DoMethod(data->CY_MODE[0], MUIM_Notify, MUIA_Cycle_Active,    MUIV_EveryTime, obj, 1, METHOD(Update));
     DoMethod(data->CY_MODE[1], MUIM_Notify, MUIA_Cycle_Active,    MUIV_EveryTime, obj, 1, METHOD(Update));
     DoMethod(data->RA_ADRMODE, MUIM_Notify, MUIA_Radio_Active,    MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
@@ -715,19 +715,6 @@ DECLARE(AddRule)
   ENTER();
 
   DoMethod(obj, MUIM_CallHook, &AddNewRuleToListHook);
-
-  RETURN(0);
-  return 0;
-}
-
-///
-/// DECLARE(RemRule)
-DECLARE(RemRule)
-{
-  ENTER();
-
-  DoMethod(obj, MUIM_ObjectListitem_Remove);
-  DoMethod(obj, MUIM_CallHook, &RemoveLastRuleHook);
 
   RETURN(0);
   return 0;
