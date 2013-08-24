@@ -112,7 +112,6 @@ struct CO_ClassData  /* configuration window */
   enum ConfigPage VisiblePage;
   BOOL Visited[cp_Max];
   BOOL UpdateAll;
-  struct SignatureNode *previousSignature;  // ptr to the previously selected signature
 };
 
 /*** RxHook structure ***/

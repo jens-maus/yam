@@ -72,6 +72,7 @@
 #include "mui/AddressBookConfigPage.h"
 #include "mui/ConfigPage.h"
 #include "mui/ConfigPageList.h"
+#include "mui/FilterRuleList.h"
 #include "mui/FirstStepsConfigPage.h"
 #include "mui/IdentitiesConfigPage.h"
 #include "mui/InfoBar.h"
@@ -173,11 +174,11 @@ HOOKPROTONHNONP(AddNewRuleToList, void)
     {
       Object *newSearchGroup;
 
+      set(gui->GR_SGROUP, MUIA_FilterRuleList_Filter, filter);
+
       // add a new GUI element for that particular rule
       if((newSearchGroup = (Object *)DoMethod(gui->GR_SGROUP, MUIM_ObjectList_CreateItem)) != NULL)
       {
-        set(newSearchGroup, MUIA_SearchControlGroup_RemoteFilterMode, filter->remote);
-
         // fill the new search group with some content
         DoMethod(newSearchGroup, MUIM_SearchControlGroup_RuleToGUI, rule);
 
@@ -387,7 +388,8 @@ HOOKPROTONHNONP(GetActiveFilterData, void)
     nnset(gui->ST_APLAY,             MUIA_String_Contents,   filter->playSound);
     nnset(gui->TX_MOVETO,            MUIA_Text_Contents,     filter->moveTo);
 
-    set(gui->GR_SGROUP, MUIA_ObjectList_Quiet, TRUE);
+    xset(gui->GR_SGROUP, MUIA_ObjectList_Quiet, TRUE,
+                         MUIA_FilterRuleList_Filter, filter);
 
     // before we actually set our rule options we have to clear out
     // all previous existing group childs
@@ -400,8 +402,6 @@ HOOKPROTONHNONP(GetActiveFilterData, void)
 
       if((newSearchGroup = (Object *)DoMethod(gui->GR_SGROUP, MUIM_ObjectList_CreateItem)) != NULL)
       {
-        set(newSearchGroup, MUIA_SearchControlGroup_RemoteFilterMode, filter->remote);
-
         // fill the new search group with some content
         DoMethod(newSearchGroup, MUIM_SearchControlGroup_RuleToGUI, rule);
 

@@ -31,15 +31,19 @@
 #include "FilterRuleList_cl.h"
 
 #include "YAM_config.h"
+#include "YAM_find.h"
 
 #include "mui/ObjectList.h"
 #include "mui/SearchControlGroup.h"
 
 #include "Debug.h"
 
-/* Hooks */
-
-/* Private Functions */
+/* CLASSDATA
+struct Data
+{
+  struct FilterNode *filter;
+};
+*/
 
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
@@ -67,14 +71,45 @@ OVERLOAD(OM_NEW)
 }
 
 ///
+/// OVERLOAD(OM_SET)
+OVERLOAD(OM_SET)
+{
+  GETDATA;
+  struct TagItem *tags = inittags(msg), *tag;
+  ULONG ret = 0;
+
+  ENTER();
+
+  while((tag = NextTagItem((APTR)&tags)) != NULL)
+  {
+    switch(tag->ti_Tag)
+    {
+      case ATTR(Filter):
+      {
+        data->filter = (struct FilterNode *)tag->ti_Data;
+      }
+      break;
+    }
+  }
+
+  ret = DoSuperMethodA(cl, obj, msg);
+
+  RETURN(ret);
+  return ret;
+}
+
+///
 /// OVERLOAD(MUIM_ObjectList_CreateItem)
 OVERLOAD(MUIM_ObjectList_CreateItem)
 {
+  GETDATA;
   Object *item;
 
   ENTER();
 
-  item = SearchControlGroupObject, End;
+  item = SearchControlGroupObject,
+    MUIA_SearchControlGroup_RemoteFilterMode, (data->filter != NULL) ? data->filter->remote : FALSE,
+  End;
 
   RETURN((IPTR)item);
   return (IPTR)item;
