@@ -373,7 +373,6 @@ extern struct Hook CO_OpenHook;
 extern struct Hook CO_RemoteToggleHook;
 extern struct Hook SetActiveFilterDataHook;
 extern struct Hook GetActiveFilterDataHook;
-extern struct Hook AddNewRuleToListHook;
 extern struct Hook ImportFilterHook;
 
 void CO_ClearConfig(struct Config *co);

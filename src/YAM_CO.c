@@ -154,50 +154,6 @@ static void CO_NewPrefsFile(char *fname)
 ///
 
 /**** Filters ****/
-/// AddNewRuleToList
-//  Adds a new entry to the current filter's rule list
-HOOKPROTONHNONP(AddNewRuleToList, void)
-{
-  struct FilterNode *filter = NULL;
-  struct CO_GUIData *gui = &G->CO->GUI;
-
-  ENTER();
-
-  // get the active filterNode
-  DoMethod(gui->LV_RULES, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &filter);
-
-  if(filter != NULL)
-  {
-    struct RuleNode *rule;
-
-    if((rule = CreateNewRule(filter, 0)) != NULL)
-    {
-      Object *newSearchGroup;
-
-      set(gui->GR_SGROUP, MUIA_FilterRuleList_Filter, filter);
-
-      // add a new GUI element for that particular rule
-      if((newSearchGroup = (Object *)DoMethod(gui->GR_SGROUP, MUIM_ObjectList_CreateItem)) != NULL)
-      {
-        // fill the new search group with some content
-        DoMethod(newSearchGroup, MUIM_SearchControlGroup_RuleToGUI, rule);
-
-        // set some notifies
-        DoMethod(newSearchGroup, MUIM_Notify, MUIA_SearchControlGroup_Modified, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &SetActiveFilterDataHook);
-
-        // add it to our searchGroupList
-        DoMethod(gui->GR_SGROUP, MUIM_ObjectList_AddItem, newSearchGroup);
-
-        GhostOutFilter(gui, filter);
-      }
-    }
-  }
-
-  LEAVE();
-}
-MakeHook(AddNewRuleToListHook, AddNewRuleToList);
-
-///
 /// ImportFilterHook
 //  Import filter settings from a .sfd file
 HOOKPROTONHNP(ImportFilterFunc, void, Object *obj)
