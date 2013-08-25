@@ -30,10 +30,6 @@
 #include <string.h>
 
 #include <clib/alib_protos.h>
-#include <workbench/workbench.h>
-#include <mui/NList_mcc.h>
-#include <mui/NListtree_mcc.h>
-#include <mui/TextEditor_mcc.h>
 #include <proto/dos.h>
 #include <proto/exec.h>
 #include <proto/intuition.h>
@@ -41,8 +37,6 @@
 #include <proto/utility.h>
 
 #include "extrasrc.h"
-
-#include "timeval.h"
 
 #include "YAM.h"
 #include "YAM_config.h"
@@ -55,11 +49,6 @@
 
 #include "mui/ClassesExtra.h"
 #include "mui/ConfigPage.h"
-#include "mui/FilterChooser.h"
-#include "mui/MainWindowToolbar.h"
-#include "mui/SignatureTextEdit.h"
-#include "mui/ThemeListGroup.h"
-#include "mui/TZoneChooser.h"
 
 #include "BayesFilter.h"
 #include "FileInfo.h"
@@ -73,7 +62,6 @@
 #include "Requesters.h"
 #include "Signature.h"
 #include "UserIdentity.h"
-#include "TZone.h"
 
 #include "Debug.h"
 
@@ -1892,6 +1880,7 @@ void CO_GetConfig(void)
     case cp_FirstSteps:
     case cp_TCPIP:
     case cp_Identities:
+    case cp_Filters:
     case cp_Spam:
     case cp_Read:
     case cp_Write:
@@ -1907,13 +1896,6 @@ void CO_GetConfig(void)
     case cp_Update:
     {
       DoMethod(gui->PG_PAGES[G->CO->VisiblePage], MUIM_ConfigPage_GUIToConfig, CE);
-    }
-    break;
-
-    case cp_Filters:
-    {
-      // bring NList elements and Exec list elements into sync
-      SortNListToExecList(gui->LV_RULES, &CE->filterList);
     }
     break;
 
@@ -1945,6 +1927,7 @@ void CO_SetConfig(void)
     case cp_FirstSteps:
     case cp_TCPIP:
     case cp_Identities:
+    case cp_Filters:
     case cp_Spam:
     case cp_Read:
     case cp_Write:
@@ -1960,26 +1943,6 @@ void CO_SetConfig(void)
     case cp_Update:
     {
       DoMethod(gui->PG_PAGES[G->CO->VisiblePage], MUIM_ConfigPage_ConfigToGUI, CE);
-    }
-    break;
-
-    case cp_Filters:
-    {
-      struct FilterNode *filter;
-
-      // clear the filter list first
-      DoMethod(gui->LV_RULES, MUIM_NList_Clear);
-
-      // iterate through our filter list and add it to our
-      // MUI List
-      IterateList(&CE->filterList, struct FilterNode *, filter)
-      {
-        if(filter->isVolatile == FALSE)
-          DoMethod(gui->LV_RULES, MUIM_NList_InsertSingle, filter, MUIV_NList_Insert_Bottom);
-      }
-
-      // make sure the first entry is selected per default
-      set(gui->LV_RULES, MUIA_NList_Active, MUIV_NList_Active_Top);
     }
     break;
 

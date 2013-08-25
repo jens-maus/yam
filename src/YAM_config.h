@@ -58,49 +58,12 @@ struct CO_GUIData
   Object *GR_PAGE;
   Object *PG_PAGES[cp_Max];
 
-  // objects on "Filters" page
+  // objects on "First steps" page, unused but still accessed
   Object *ST_POPHOST0;
   Object *ST_USER0;
+
+  // objects on "Filters" page, unused but still accessed
   Object *LV_RULES;
-  Object *BT_RADD;
-  Object *BT_RDEL;
-  Object *BT_FILTERUP;
-  Object *BT_FILTERDOWN;
-  Object *BT_FILTER_IMPORT;
-  Object *ST_RNAME;
-  Object *CH_REMOTE;
-  Object *CH_APPLYNEW;
-  Object *CH_APPLYSENT;
-  Object *CH_APPLYREQ;
-  Object *CY_FILTER_COMBINE;
-  Object *GR_SGROUP;
-  Object *CH_AREDIRECT;
-  Object *ST_AREDIRECT;
-  Object *CH_AFORWARD;
-  Object *ST_AFORWARD;
-  Object *CH_ARESPONSE;
-  Object *PO_ARESPONSE;
-  Object *ST_ARESPONSE;
-  Object *CH_AEXECUTE;
-  Object *PO_AEXECUTE;
-  Object *ST_AEXECUTE;
-  Object *CH_APLAY;
-  Object *PO_APLAY;
-  Object *ST_APLAY;
-  Object *BT_APLAY;
-  Object *CH_AMOVE;
-  Object *PO_MOVETO;
-  Object *TX_MOVETO;
-  Object *LV_MOVETO;
-  Object *CH_ASTATUSTOMARKED;
-  Object *CH_ASTATUSTOUNMARKED;
-  Object *CH_ASTATUSTOREAD;
-  Object *CH_ASTATUSTOUNREAD;
-  Object *CH_ASTATUSTOSPAM;
-  Object *CH_ASTATUSTOHAM;
-  Object *CH_ADELETE;
-  Object *CH_ASKIP;
-  Object *CH_ATERMINATE;
 
   // Objects on "Signature" page, unused but still accessed
   Object *TE_SIGEDIT;
@@ -367,17 +330,11 @@ extern struct Config *CE;
 
 // external hooks
 extern struct Hook CO_OpenHook;
-extern struct Hook CO_RemoteToggleHook;
-extern struct Hook SetActiveFilterDataHook;
-extern struct Hook GetActiveFilterDataHook;
-extern struct Hook ImportFilterHook;
 
 void CO_ClearConfig(struct Config *co);
 BOOL CO_IsValid(void);
 void CO_SetDefaults(struct Config *co, enum ConfigPage page);
 void CO_Validate(struct Config *co, BOOL update);
-
-void GhostOutFilter(struct CO_GUIData *gui, struct FilterNode *filter);
 
 void ImportExternalSpamFilters(struct Config *co);
 

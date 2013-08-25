@@ -9,6 +9,9 @@ $URL$
 
   * mui/FolderRequestPopobject.c, YAM_COg.c, MUIObjects.c: added a new class for
     the folder request popup objects.
+  * YAM_CO.c, mui/FiltersConfigPage.c: use the new base class for the "Filters"
+    page. This was the last configuration page to be converted and finally
+    renders a complete ancient and big source file superflous.
 
 2013-08-24 Jens Langner <Jens.Langner@light-speed.de>
 

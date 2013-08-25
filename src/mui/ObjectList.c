@@ -189,6 +189,13 @@ OVERLOAD(OM_GET)
     }
     break;
 
+    case ATTR(ItemsChanged):
+    {
+      *store = TRUE;
+      return TRUE;
+    }
+    break;
+
     case ATTR(ItemCount):
     {
       *store = data->itemCount;

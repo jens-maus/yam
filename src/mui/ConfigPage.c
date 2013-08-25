@@ -64,6 +64,7 @@ OVERLOAD(OM_NEW)
     case cp_FirstSteps:   imageID = "config_firststep_big";  image = CI_FIRSTSTEPBIG;  title = tr(MSG_CO_FIRSTSTEPS_TITLE); summary = tr(MSG_CO_FIRSTSTEPS_SUMMARY); break;
     case cp_TCPIP:        imageID = "config_network_big";    image = CI_NETWORKBIG;    title = tr(MSG_CO_TCPIP_TITLE);      summary = tr(MSG_CO_TCPIP_SUMMARY);      break;
     case cp_Identities:   imageID = "config_identities_big"; image = CI_IDENTITIESBIG; title = tr(MSG_CO_IDENTITIES_TITLE); summary = tr(MSG_CO_IDENTITIES_SUMMARY); break;
+    case cp_Filters:      imageID = "config_filters_big";    image = CI_FILTERSBIG;    title = tr(MSG_CO_FILTER_TITLE);     summary = tr(MSG_CO_FILTER_SUMMARY);     break;
     case cp_Spam:         imageID = "config_spam_big";       image = CI_SPAMBIG;       title = tr(MSG_CO_SPAMFILTER_TITLE); summary = tr(MSG_CO_SPAMFILTER_SUMMARY); break;
     case cp_Read:         imageID = "config_read_big";       image = CI_READBIG;       title = tr(MSG_CO_READ_TITLE);       summary = tr(MSG_CO_READ_SUMMARY);       break;
     case cp_Write:        imageID = "config_write_big";      image = CI_WRITEBIG;      title = tr(MSG_CO_WRITE_TITLE);      summary = tr(MSG_CO_WRITE_SUMMARY);      break;

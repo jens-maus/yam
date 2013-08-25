@@ -73,8 +73,8 @@
 #include "mui/ConfigPage.h"
 #include "mui/ConfigPageList.h"
 #include "mui/FilterRuleList.h"
+#include "mui/FiltersConfigPage.h"
 #include "mui/FirstStepsConfigPage.h"
-#include "mui/FolderRequestPopobject.h"
 #include "mui/IdentitiesConfigPage.h"
 #include "mui/InfoBar.h"
 #include "mui/LookFeelConfigPage.h"
@@ -82,18 +82,14 @@
 #include "mui/MainMailListGroup.h"
 #include "mui/MainWindow.h"
 #include "mui/MainWindowToolbar.h"
-#include "mui/MailServerChooser.h"
 #include "mui/MimeConfigPage.h"
 #include "mui/MixedConfigPage.h"
-#include "mui/ObjectList.h"
 #include "mui/ReadConfigPage.h"
 #include "mui/ReadMailGroup.h"
 #include "mui/ReadWindow.h"
 #include "mui/ReplyForwardConfigPage.h"
 #include "mui/ScriptsConfigPage.h"
-#include "mui/SearchControlGroup.h"
 #include "mui/SecurityConfigPage.h"
-#include "mui/SignatureChooser.h"
 #include "mui/SignatureConfigPage.h"
 #include "mui/SignatureTextEdit.h"
 #include "mui/SpamConfigPage.h"
@@ -155,27 +151,6 @@ static void CO_NewPrefsFile(char *fname)
 ///
 
 /**** Filters ****/
-/// ImportFilterHook
-//  Import filter settings from a .sfd file
-HOOKPROTONHNP(ImportFilterFunc, void, Object *obj)
-{
-  struct FileReqCache *frc;
-
-  ENTER();
-
-  if((frc = ReqFile(ASL_FILTER, _win(obj), tr(MSG_FILTER_IMPORT_TITLE), 0, "PROGDIR:", "")) != NULL)
-  {
-    char path[SIZE_PATHFILE];
-
-    AddPath(path, frc->drawer, frc->file, sizeof(path));
-    ImportFilter(path, FALSE, &CE->filterList);
-  }
-
-  LEAVE();
-}
-MakeHook(ImportFilterHook, ImportFilterFunc);
-
-///
 /// ImportExternalSpamFilters
 // import additional spam filter rules
 void ImportExternalSpamFilters(struct Config *co)
@@ -211,230 +186,6 @@ void ImportExternalSpamFilters(struct Config *co)
 
   LEAVE();
 }
-
-///
-/// GhostOutFilter
-//  Enables/disables GUI gadgets in filter form
-void GhostOutFilter(struct CO_GUIData *gui, struct FilterNode *filter)
-{
-  BOOL isremote;
-  LONG pos = MUIV_NList_GetPos_Start;
-
-  ENTER();
-
-  isremote = (filter != NULL) ? filter->remote : FALSE;
-
-  set(gui->ST_RNAME,             MUIA_Disabled, filter == NULL);
-  set(gui->CH_REMOTE,            MUIA_Disabled, filter == NULL);
-  set(gui->CH_APPLYNEW,          MUIA_Disabled, filter == NULL || isremote);
-  set(gui->CH_APPLYREQ,          MUIA_Disabled, filter == NULL || isremote);
-  set(gui->CH_APPLYSENT,         MUIA_Disabled, filter == NULL || isremote);
-  set(gui->CH_AREDIRECT,         MUIA_Disabled, filter == NULL || isremote);
-  set(gui->CH_AFORWARD,          MUIA_Disabled, filter == NULL || isremote);
-  set(gui->CH_ARESPONSE,         MUIA_Disabled, filter == NULL || isremote);
-  set(gui->CH_AEXECUTE,          MUIA_Disabled, filter == NULL);
-  set(gui->CH_APLAY,             MUIA_Disabled, filter == NULL);
-  set(gui->CH_AMOVE,             MUIA_Disabled, filter == NULL || isremote);
-  set(gui->CH_ASTATUSTOMARKED,   MUIA_Disabled, filter == NULL || isremote);
-  set(gui->CH_ASTATUSTOUNMARKED, MUIA_Disabled, filter == NULL || isremote);
-  set(gui->CH_ASTATUSTOREAD,     MUIA_Disabled, filter == NULL || isremote);
-  set(gui->CH_ASTATUSTOUNREAD,   MUIA_Disabled, filter == NULL || isremote);
-  set(gui->CH_ASTATUSTOSPAM,     MUIA_Disabled, filter == NULL || isremote);
-  set(gui->CH_ASTATUSTOHAM,      MUIA_Disabled, filter == NULL || isremote);
-  set(gui->CH_ADELETE,           MUIA_Disabled, filter == NULL);
-  set(gui->CH_ASKIP,             MUIA_Disabled, filter == NULL || !isremote);
-  set(gui->CH_ATERMINATE,        MUIA_Disabled, filter == NULL);
-  set(gui->ST_AREDIRECT,         MUIA_Disabled, filter == NULL || isremote || !xget(gui->CH_AREDIRECT, MUIA_Selected));
-  set(gui->ST_AFORWARD,          MUIA_Disabled, filter == NULL || isremote || !xget(gui->CH_AFORWARD,  MUIA_Selected));
-  set(gui->BT_APLAY,             MUIA_Disabled, filter == NULL || !xget(gui->CH_APLAY, MUIA_Selected));
-  set(gui->PO_MOVETO,            MUIA_Disabled, filter == NULL || !xget(gui->CH_AMOVE, MUIA_Selected));
-  set(gui->BT_RDEL,              MUIA_Disabled, filter == NULL);
-
-  // lets make sure we ghost the filter up/down buttons if necessary
-  if(filter != NULL)
-    DoMethod(gui->LV_RULES, MUIM_NList_GetPos, filter, &pos);
-
-  set(gui->BT_FILTERUP,   MUIA_Disabled, filter == NULL || pos == 0);
-  set(gui->BT_FILTERDOWN, MUIA_Disabled, filter == NULL || pos+1 == (LONG)xget(gui->LV_RULES, MUIA_NList_Entries));
-
-  // These three "disables" must be done in another context, because the Popasl object will en/disable
-  // the pop button itself as long as the requester is open. After that this hook is called but the object
-  // has not yet enabled the pop button again, so we might get wrong visible results. Not a very nice
-  // solution, I must say :(
-  DoMethod(G->App, MUIM_Application_PushMethod, gui->PO_ARESPONSE, 3, MUIM_Set, MUIA_Disabled, filter == NULL || isremote || !xget(gui->CH_ARESPONSE, MUIA_Selected));
-  DoMethod(G->App, MUIM_Application_PushMethod, gui->PO_AEXECUTE, 3, MUIM_Set, MUIA_Disabled, filter == NULL || !xget(gui->CH_AEXECUTE, MUIA_Selected));
-  DoMethod(G->App, MUIM_Application_PushMethod, gui->PO_APLAY, 3, MUIM_Set, MUIA_Disabled, filter == NULL || !xget(gui->CH_APLAY, MUIA_Selected));
-
-  LEAVE();
-}
-
-///
-/// GetActiveFilterData
-//  Fills GUI elements with data from currently active list entry (filter)
-HOOKPROTONHNONP(GetActiveFilterData, void)
-{
-  struct FilterNode *filter = NULL;
-  struct CO_GUIData *gui = &G->CO->GUI;
-
-  ENTER();
-
-  // get the active filterNode
-  DoMethod(gui->LV_RULES, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &filter);
-
-  // if we got an active entry lets set all other GUI elements from the
-  // values of this filter
-  if(filter != NULL)
-  {
-    struct RuleNode *rule;
-
-    nnset(gui->ST_RNAME,             MUIA_String_Contents,               filter->name);
-    nnset(gui->CH_REMOTE,            MUIA_Selected,                      filter->remote);
-    nnset(gui->CH_APPLYNEW,          MUIA_Selected,                      filter->applyToNew);
-    nnset(gui->CH_APPLYSENT,         MUIA_Selected,                      filter->applyToSent);
-    nnset(gui->CH_APPLYREQ,          MUIA_Selected,                      filter->applyOnReq);
-    nnset(gui->CY_FILTER_COMBINE,    MUIA_Cycle_Active,                  filter->combine);
-    nnset(gui->CH_AREDIRECT,         MUIA_Selected,                      hasRedirectAction(filter));
-    nnset(gui->CH_AFORWARD,          MUIA_Selected,                      hasForwardAction(filter));
-    nnset(gui->CH_ARESPONSE,         MUIA_Selected,                      hasReplyAction(filter));
-    nnset(gui->CH_AEXECUTE,          MUIA_Selected,                      hasExecuteAction(filter));
-    nnset(gui->CH_APLAY,             MUIA_Selected,                      hasPlaySoundAction(filter));
-    nnset(gui->CH_AMOVE,             MUIA_Selected,                      hasMoveAction(filter));
-    nnset(gui->CH_ASTATUSTOMARKED,   MUIA_Selected,                      hasStatusToMarkedAction(filter));
-    nnset(gui->CH_ASTATUSTOUNMARKED, MUIA_Selected,                      hasStatusToUnmarkedAction(filter));
-    nnset(gui->CH_ASTATUSTOREAD,     MUIA_Selected,                      hasStatusToReadAction(filter));
-    nnset(gui->CH_ASTATUSTOUNREAD,   MUIA_Selected,                      hasStatusToUnreadAction(filter));
-    nnset(gui->CH_ASTATUSTOSPAM,     MUIA_Selected,                      hasStatusToSpamAction(filter));
-    nnset(gui->CH_ASTATUSTOHAM,      MUIA_Selected,                      hasStatusToHamAction(filter));
-    nnset(gui->CH_ADELETE,           MUIA_Selected,                      hasDeleteAction(filter));
-    nnset(gui->CH_ASKIP,             MUIA_Selected,                      hasSkipMsgAction(filter));
-    nnset(gui->CH_ATERMINATE,        MUIA_Selected,                      hasTerminateAction(filter));
-    nnset(gui->ST_AREDIRECT,         MUIA_String_Contents,               filter->redirectTo);
-    nnset(gui->ST_AFORWARD,          MUIA_String_Contents,               filter->forwardTo);
-    nnset(gui->ST_ARESPONSE,         MUIA_String_Contents,               filter->replyFile);
-    nnset(gui->ST_AEXECUTE,          MUIA_String_Contents,               filter->executeCmd);
-    nnset(gui->ST_APLAY,             MUIA_String_Contents,               filter->playSound);
-    nnset(gui->PO_MOVETO,            MUIA_FolderRequestPopobject_Folder, filter->moveTo);
-
-    xset(gui->GR_SGROUP, MUIA_ObjectList_Quiet, TRUE,
-                         MUIA_FilterRuleList_Filter, filter);
-
-    // before we actually set our rule options we have to clear out
-    // all previous existing group childs
-    DoMethod(gui->GR_SGROUP, MUIM_ObjectList_Clear);
-
-    // Now we should have a clean SGROUP and can populate with new SearchControlGroup objects
-    IterateList(&filter->ruleList, struct RuleNode *, rule)
-    {
-      Object *newSearchGroup;
-
-      if((newSearchGroup = (Object *)DoMethod(gui->GR_SGROUP, MUIM_ObjectList_CreateItem)) != NULL)
-      {
-        // fill the new search group with some content
-        DoMethod(newSearchGroup, MUIM_SearchControlGroup_RuleToGUI, rule);
-
-        // set some notifies
-        DoMethod(newSearchGroup, MUIM_Notify, MUIA_SearchControlGroup_Modified, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_CallHook, &SetActiveFilterDataHook);
-
-        // add it to our searchGroupList
-        DoMethod(gui->GR_SGROUP, MUIM_ObjectList_AddItem, newSearchGroup);
-      }
-    }
-    set(gui->GR_SGROUP, MUIA_ObjectList_Quiet, FALSE);
-  }
-
-  GhostOutFilter(gui, filter);
-
-  LEAVE();
-}
-MakeHook(GetActiveFilterDataHook, GetActiveFilterData);
-
-///
-/// SetActiveFilterData
-//  Fills filter data structure out of the GUI elements
-HOOKPROTONHNONP(SetActiveFilterData, void)
-{
-  struct FilterNode *filter = NULL;
-  struct CO_GUIData *gui = &G->CO->GUI;
-
-  ENTER();
-
-  // get the active filterNode
-  DoMethod(gui->LV_RULES, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &filter);
-
-  // if we got an active entry lets set all other GUI elements from the
-  // values of this filter
-  if(filter != NULL)
-  {
-    Object *ruleItem;
-    Object *ruleState;
-
-    GetMUIString(filter->name, gui->ST_RNAME, sizeof(filter->name));
-    filter->remote      = GetMUICheck(gui->CH_REMOTE);
-    filter->applyToNew  = GetMUICheck(gui->CH_APPLYNEW);
-    filter->applyToSent = GetMUICheck(gui->CH_APPLYSENT);
-    filter->applyOnReq  = GetMUICheck(gui->CH_APPLYREQ);
-    filter->combine = GetMUICycle(gui->CY_FILTER_COMBINE);
-    filter->actions = 0;
-    if(GetMUICheck(gui->CH_AREDIRECT))         setFlag(filter->actions, FA_REDIRECT);
-    if(GetMUICheck(gui->CH_AFORWARD))          setFlag(filter->actions, FA_FORWARD);
-    if(GetMUICheck(gui->CH_ARESPONSE))         setFlag(filter->actions, FA_REPLY);
-    if(GetMUICheck(gui->CH_AEXECUTE))          setFlag(filter->actions, FA_EXECUTE);
-    if(GetMUICheck(gui->CH_APLAY))             setFlag(filter->actions, FA_PLAYSOUND);
-    if(GetMUICheck(gui->CH_AMOVE))             setFlag(filter->actions, FA_MOVE);
-    if(GetMUICheck(gui->CH_ASTATUSTOMARKED))   setFlag(filter->actions, FA_STATUSTOMARKED);
-    if(GetMUICheck(gui->CH_ASTATUSTOUNMARKED)) setFlag(filter->actions, FA_STATUSTOUNMARKED);
-    if(GetMUICheck(gui->CH_ASTATUSTOREAD))     setFlag(filter->actions, FA_STATUSTOREAD);
-    if(GetMUICheck(gui->CH_ASTATUSTOUNREAD))   setFlag(filter->actions, FA_STATUSTOUNREAD);
-    if(GetMUICheck(gui->CH_ASTATUSTOSPAM))     setFlag(filter->actions, FA_STATUSTOSPAM);
-    if(GetMUICheck(gui->CH_ASTATUSTOHAM))      setFlag(filter->actions, FA_STATUSTOHAM);
-    if(GetMUICheck(gui->CH_ADELETE))           setFlag(filter->actions, FA_DELETE);
-    if(GetMUICheck(gui->CH_ASKIP))             setFlag(filter->actions, FA_SKIPMSG);
-    if(GetMUICheck(gui->CH_ATERMINATE))        setFlag(filter->actions, FA_TERMINATE);
-    GetMUIString(filter->redirectTo, gui->ST_AREDIRECT, sizeof(filter->redirectTo));
-    GetMUIString(filter->forwardTo,  gui->ST_AFORWARD, sizeof(filter->forwardTo));
-    GetMUIString(filter->replyFile,  gui->ST_ARESPONSE, sizeof(filter->replyFile));
-    GetMUIString(filter->executeCmd, gui->ST_AEXECUTE, sizeof(filter->executeCmd));
-    GetMUIString(filter->playSound,  gui->ST_APLAY, sizeof(filter->playSound));
-    strlcpy(filter->moveTo, (char *)xget(gui->PO_MOVETO, MUIA_FolderRequestPopobject_Folder), sizeof(filter->moveTo));
-
-    // (re)build the rule liste from scratch
-    FreeFilterRuleList(filter);
-    ruleState = NULL;
-    while((ruleItem = (Object *)DoMethod(gui->GR_SGROUP, MUIM_ObjectList_IterateItems, &ruleState)) != NULL)
-    {
-      struct RuleNode *rule;
-
-      // set the rule settings
-      if((rule = CreateNewRule(filter, 0)) != NULL)
-        DoMethod(ruleItem, MUIM_SearchControlGroup_GUIToRule, rule);
-    }
-
-    GhostOutFilter(gui, filter);
-    DoMethod(gui->LV_RULES, MUIM_NList_Redraw, MUIV_NList_Redraw_Active);
-  }
-
-  LEAVE();
-}
-MakeHook(SetActiveFilterDataHook, SetActiveFilterData);
-
-///
-/// CO_RemoteToggleFunc
-//  Enables/disables GUI elements for remote filters
-HOOKPROTONHNO(CO_RemoteToggleFunc, void, int *arg)
-{
-  BOOL rm = *arg;
-  Object *ruleItem;
-  Object *ruleState;
-
-  ruleState = NULL;
-  while((ruleItem = (Object *)DoMethod(G->CO->GUI.GR_SGROUP, MUIM_ObjectList_IterateItems, &ruleState)) != NULL)
-  {
-    set(ruleItem, MUIA_SearchControlGroup_RemoteFilterMode, rm);
-  }
-
-  SetActiveFilterData();
-}
-MakeHook(CO_RemoteToggleHook,CO_RemoteToggleFunc);
 
 ///
 
@@ -2347,7 +2098,7 @@ static struct CO_ClassData *CO_New(void)
                 Child, data->GUI.PG_PAGES[cp_FirstSteps]   = FirstStepsConfigPageObject, End,
                 Child, data->GUI.PG_PAGES[cp_TCPIP]        = TCPIPConfigPageObject, End,
                 Child, data->GUI.PG_PAGES[cp_Identities]   = IdentitiesConfigPageObject, End,
-                Child, CO_PageFilters(data),
+                Child, data->GUI.PG_PAGES[cp_Filters   ]   = FiltersConfigPageObject, End,
                 Child, data->GUI.PG_PAGES[cp_Spam]         = SpamConfigPageObject, End,
                 Child, data->GUI.PG_PAGES[cp_Read]         = ReadConfigPageObject, End,
                 Child, data->GUI.PG_PAGES[cp_Write]        = WriteConfigPageObject, End,

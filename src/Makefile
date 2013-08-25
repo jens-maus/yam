@@ -488,6 +488,7 @@ MUIOBJS = \
 	FilterList.o \
 	FilterPopupList.o \
 	FilterRuleList.o \
+	FiltersConfigPage.o \
 	FirstStepsConfigPage.o \
 	FolderEditWindow.o \
 	FolderListtree.o \
@@ -665,7 +666,6 @@ YAMOBJS = \
 	YAM.o \
 	YAM_AB.o \
 	YAM_CO.o \
-	YAM_COg.o \
 	YAM_COs.o \
 	YAM_DI.o \
 	YAM_EA.o \
