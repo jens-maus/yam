@@ -334,9 +334,18 @@ DECLARE(Display)
     // try to decode the message part
     if(RE_DecodePart(data->mailPart) == TRUE)
     {
+      char *fileName;
+
+      // get the suggest filename for the mail part
+      fileName = SuggestPartFileName(data->mailPart);
+
       // run our MIME routines for displaying the part
       // to the user
-      RE_DisplayMIME(data->mailPart->Filename, data->mailPart->ContentType);
+      RE_DisplayMIME(data->mailPart->Filename, fileName,
+                     data->mailPart->ContentType, isPrintable(data->mailPart));
+
+      // free the fileName buffer
+      free(fileName);
 
       // if the part was decoded in RE_DecodePart() then
       // we issue a full refresh of the attachment image
@@ -379,17 +388,7 @@ DECLARE(Save)
     {
       char *fileName;
 
-      fileName = rp->CParFileName;
-      if(fileName == NULL || strlen(fileName) == 0)
-      {
-        fileName = rp->Name;
-        if(fileName == NULL || strlen(fileName) == 0)
-          fileName = rp->Filename;
-      }
-      // finally strip any path from the file name if it is no mail attachment
-      // for mail attachments we want to keep possible "Re:" parts of the subject
-      if(rp->ContentType == NULL || stricmp(rp->ContentType, "message/rfc822") != 0)
-        fileName = FilePart(fileName);
+      fileName = SuggestPartFileName(rp);
 
       RE_Export(rp->rmData,
                 rp->Filename,
@@ -399,6 +398,8 @@ DECLARE(Save)
                 FALSE,
                 FALSE,
                 rp->ContentType);
+
+      free(fileName);
 
       if(oldDecoded == FALSE)
       {
@@ -466,10 +467,10 @@ DECLARE(ImageDropped) // char *dropPath
 {
   GETDATA;
   BOOL result = FALSE;
-  char *fileName = NULL;
-  char filePathBuf[SIZE_PATHFILE];
   BOOL oldDecoded;
   struct BusyNode *busy;
+  char *fileName = NULL;
+  char filePathBuf[SIZE_PATHFILE];
 
   ENTER();
 
@@ -487,18 +488,9 @@ DECLARE(ImageDropped) // char *dropPath
     if(LIB_VERSION_IS_AT_LEAST(WorkbenchBase, 44, 0) == TRUE)
       OpenWorkbenchObjectA(msg->dropPath, NULL);
 
-    // prepare the final path
-    fileName = data->mailPart->CParFileName;
-    if(fileName == NULL || strlen(fileName) == 0)
-    {
-      fileName = data->mailPart->Name;
-      if(fileName == NULL || strlen(fileName) == 0)
-        fileName = data->mailPart->Filename;
-    }
-    // finally strip any path from the file name if it is no mail attachment
-    // for mail attachments we want to keep possible "Re:" parts of the subject
-    if(data->mailPart->ContentType == NULL || stricmp(data->mailPart->ContentType, "message/rfc822") != 0)
-      fileName = FilePart(fileName);
+    // get the suggested filename of the message part
+    fileName = SuggestPartFileName(data->mailPart);
+
     // then add the file name to the drop path
     AddPath(filePathBuf, msg->dropPath, fileName, sizeof(filePathBuf));
 
@@ -565,6 +557,8 @@ DECLARE(ImageDropped) // char *dropPath
     // is actually visible in the window
     if(LIB_VERSION_IS_AT_LEAST(WorkbenchBase, 44, 0) == TRUE)
       MakeWorkbenchObjectVisibleA(filePathBuf, NULL);
+
+    free(fileName);
   }
   else
     DisplayBeep(_screen(obj));

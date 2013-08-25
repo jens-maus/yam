@@ -1701,11 +1701,17 @@ DECLARE(SaveMailRequest)
 
         default:
         {
+          char *suggestedFileName;
+
           RE_DecodePart(part);
 
+          suggestedFileName = SuggestPartFileName(part);
+
           RE_Export(rmData, part->Filename, "",
-                    part->CParFileName ? part->CParFileName : part->Name, part->Nr,
+                    suggestedFileName, part->Nr,
                     FALSE, FALSE, part->ContentType);
+
+          free(suggestedFileName);
         }
       }
     }
@@ -1799,13 +1805,22 @@ DECLARE(DisplayMailRequest)
       switch(part->Nr)
       {
         case PART_ORIGINAL:
-        {
-          RE_DisplayMIME(rmData->readFile, "text/plain");
-        }
+          RE_DisplayMIME(rmData->readFile, NULL, "text/plain", TRUE);
         break;
 
         default:
-          RE_DisplayMIME(part->Filename, part->ContentType);
+        {
+          char *fileName;
+
+          // get the suggested filename for the mail part
+          fileName = SuggestPartFileName(part);
+
+          RE_DisplayMIME(part->Filename, fileName, 
+                         part->ContentType, isPrintable(part));
+
+          free(fileName);
+        }
+        break;
       }
     }
 

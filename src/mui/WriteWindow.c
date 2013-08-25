@@ -2568,7 +2568,7 @@ DECLARE(DisplayAttachment)
   if(attach != NULL)
   {
     if(FileExists(attach->FilePath) == TRUE)
-      RE_DisplayMIME(attach->FilePath, attach->ContentType);
+      RE_DisplayMIME(attach->FilePath, NULL, attach->ContentType, FALSE);
     else
       ER_NewError(tr(MSG_ER_INVALIDATTFILE), attach->FilePath);
   }

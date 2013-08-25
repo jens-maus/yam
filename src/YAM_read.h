@@ -153,7 +153,7 @@ struct HeaderNode
 };
 
 BOOL RE_DecodePart(struct Part *rp);
-void RE_DisplayMIME(const char *fname, const char *ctype);
+void RE_DisplayMIME(const char *srcfile, const char *dstfile, const char *ctype, const BOOL convertFromUTF8);
 BOOL RE_ProcessMDN(const enum MDNMode mode, struct Mail *mail, const BOOL multi, const BOOL autoAction, const Object *win);
 
 struct ReadMailData *CreateReadWindow(BOOL forceNewWindow);
@@ -165,6 +165,7 @@ void FreeHeaderNode(struct HeaderNode *hdrNode);
 void ClearHeaderList(struct MinList *headerList);
 struct ReadMailData *GetReadMailData(const struct Mail *mail);
 BOOL UpdateReadMailDataStatus(const struct Mail *mail);
+char *SuggestPartFileName(const struct Part *part);
 BOOL RE_LoadMessage(struct ReadMailData *rmData);
 char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode rMode);
 void RE_UpdateSenderInfo(struct ABEntry *old, struct ABEntry *new);

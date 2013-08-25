@@ -121,11 +121,11 @@ BOOL RE_Export(struct ReadMailData *rmData, const char *source,
   win = rmData->readWindow ? rmData->readWindow : G->MA->GUI.WI;
   mail = rmData->mail;
 
-  if(dest[0] == '\0')
+  if(IsStrEmpty(dest))
   {
     struct FileReqCache *frc;
 
-    if(name[0] != '\0')
+    if(IsStrEmpty(name) == FALSE)
     {
       char suggestedName[SIZE_FILE];
 
@@ -143,7 +143,7 @@ BOOL RE_Export(struct ReadMailData *rmData, const char *source,
       // in our destination file as well
       stcgfe(ext, source);
 
-      if(ext[0] != '\0')
+      if(IsStrEmpty(ext) == FALSE)
         extlen = strlen(ext);
       else
         extlen = 3;
@@ -375,7 +375,8 @@ static void BuildCommandString(char *command, const size_t commandLen, const cha
 ///
 /// RE_DisplayMIME
 //  Displays a message part (attachment) using a MIME viewer
-void RE_DisplayMIME(const char *fname, const char *ctype)
+void RE_DisplayMIME(const char *srcfile, const char *dstfile,
+                    const char *ctype, const BOOL convertFromUTF8)
 {
   struct MimeTypeNode *mt = NULL;
   BOOL triedToIdentify = FALSE;
@@ -385,17 +386,17 @@ void RE_DisplayMIME(const char *fname, const char *ctype)
   // in case no content-type was specified, or it is empty we try to be
   // somewhat intelligent, by deeper analyzing the file and its content
   // first.
-  if(ctype == NULL || ctype[0] == '\0')
+  if(IsStrEmpty(ctype))
   {
-    D(DBF_MIME, "no content-type specified, analyzing '%s'", fname);
+    D(DBF_MIME, "no content-type specified, analyzing '%s'", srcfile);
 
-    if((ctype = IdentifyFile(fname)) != NULL)
+    if((ctype = IdentifyFile(srcfile)) != NULL)
       D(DBF_MIME, "identified file as '%s'", ctype);
 
     triedToIdentify = TRUE;
   }
 
-  D(DBF_MIME, "trying to display file '%s' of content-type '%s'", fname, ctype);
+  D(DBF_MIME, "trying to display file '%s' of content-type '%s'", srcfile, ctype);
 
   // we first browse through the whole mimeTypeList and try to find
   // out if the content-type spec in one of the user-defined
@@ -426,9 +427,9 @@ void RE_DisplayMIME(const char *fname, const char *ctype)
     {
       struct ExtendedMail *email;
 
-      // copy the contents of our message file into the
+      // copy the contents of our message file into a
       // temporary file.
-      if(CopyFile(tf->Filename, NULL, fname, NULL) == TRUE &&
+      if(CopyFile(tf->Filename, NULL, srcfile, NULL) == TRUE &&
          (email = MA_ExamineMail(NULL, (char *)FilePart(tf->Filename), TRUE)) != NULL)
       {
         struct Mail *mail;
@@ -476,14 +477,17 @@ void RE_DisplayMIME(const char *fname, const char *ctype)
   else
   {
     char command[SIZE_COMMAND+SIZE_PATHFILE];
-    char *cmdPtr;
+    char dstFilePath[SIZE_PATHFILE];
+    char *cmdPtr = NULL;
+    char *codesetName = NULL;
 
     // if we still didn't found the correct mime type or the command line of the
     // current mime type is empty we use the default mime viewer specified in
     // the YAM configuration.
-    if(mt == NULL || mt->Command[0] == '\0')
+    if(mt == NULL || IsStrEmpty(mt->Command))
     {
       cmdPtr = C->DefaultMimeViewer;
+      codesetName = C->DefaultMimeViewerCodesetName;
 
       // if we haven't tried to identify the file
       // via IdentifyFile() yet, we try it here
@@ -491,7 +495,7 @@ void RE_DisplayMIME(const char *fname, const char *ctype)
       {
         D(DBF_MIME, "haven't found a user action, trying to identifying via IdentifyFile()");
 
-        if((ctype = IdentifyFile(fname)) != NULL)
+        if((ctype = IdentifyFile(srcfile)) != NULL)
         {
           struct MimeTypeNode *curType;
 
@@ -501,8 +505,11 @@ void RE_DisplayMIME(const char *fname, const char *ctype)
           {
             if(MatchNoCase(ctype, curType->ContentType))
             {
-              if(curType->Command[0] != '\0')
+              if(IsStrEmpty(curType->Command) == FALSE)
                 cmdPtr = curType->Command;
+
+              if(IsStrEmpty(curType->CodesetName) == FALSE)
+                codesetName = curType->CodesetName;
 
               break;
             }
@@ -511,10 +518,122 @@ void RE_DisplayMIME(const char *fname, const char *ctype)
       }
     }
     else
+    {
       cmdPtr = mt->Command;
+      codesetName = mt->CodesetName;
+    }
+
+    if(dstfile != NULL)
+    {
+      char suggestedName[SIZE_FILE];
+      char basename[SIZE_FILE];
+      int i=0;
+  
+      // preserve the base name of the file
+      strlcpy(basename, dstfile, sizeof(basename));
+
+      // now we have to make sure we don't use a filename
+      // of an already existing file
+      do
+      {
+        if(i > 0)
+          snprintf(suggestedName, sizeof(suggestedName), "%d-%s", i, basename);
+        else
+          strlcpy(suggestedName, basename, sizeof(suggestedName));
+
+        dstfile = AddPath(dstFilePath, C->TempDir, suggestedName, sizeof(dstFilePath));
+
+        i++;
+      }
+      while(dstfile != NULL && FileExists(dstfile));
+
+      // make sure dstfile is valid
+      if(IsStrEmpty(dstfile) == FALSE)
+      { 
+        // now convert from UTF8 to the codeset the user has choosen
+        if(convertFromUTF8 == TRUE &&
+           codesetName != NULL && stricmp(codesetName, "UTF8") != 0 && stricmp(codesetName, "UTF-8") != 0)
+        {
+          struct codeset *dstCodeset;
+          FILE *srcfh;
+
+          // get the codeset struct from the name
+          if((dstCodeset = CodesetsFind(codesetName,
+                                        CSA_CodesetList, G->codesetsList,
+                                        CSA_FallbackToDefault, FALSE)) == NULL)
+          {
+            dstCodeset = G->localCodeset;
+          }
+
+          if((srcfh = fopen(srcfile, "r")) != NULL)
+          {
+            FILE *dstfh;
+
+            setvbuf(srcfh, NULL, _IOFBF, SIZE_FILEBUF);
+
+            if((dstfh = fopen(dstfile, "w")) != NULL)
+            {
+              char *dbuftmp = NULL;
+              char *dbuf = NULL;
+              size_t dbuflen;
+
+              setvbuf(dstfh, NULL, _IOFBF, SIZE_FILEBUF);
+
+              // read in all text/data into dstrbuf.
+              // dstrfread will append it to the previous dynamic buffer
+              while(dstrfread(&dbuftmp, SIZE_FILEBUF, srcfh) > 0)
+                dstrcat(&dbuf, dbuftmp);
+
+              // if dstrbuf is not empty lets go and convert it accordingly
+              if((dbuflen = dstrlen(dbuf)) > 0)
+              {
+                char *cbuf;
+                ULONG cbuflen = 0;
+
+                // convert the utf8 data to local 
+                if((cbuf = CodesetsUTF8ToStr(CSA_Source,          dbuf,
+                                             CSA_SourceLen,       dbuflen,
+                                             CSA_DestCodeset,     dstCodeset,
+                                             CSA_DestLenPtr,      &cbuflen,
+                                             CSA_MapForeignChars, C->MapForeignChars,
+                                             TAG_DONE)) != NULL && cbuflen > 0)
+                {
+                  // now that we have converted the text to the final codeset
+                  // lets write it out to dstfh
+                  if(fwrite(cbuf, 1, cbuflen, dstfh) != (size_t)cbuflen)
+                    E(DBF_MIME, "error while trying to write out converted data");
+
+                  CodesetsFreeA(cbuf, NULL);
+                }
+                else
+                  E(DBF_MIME, "error while converting UTF8 to %s", dstCodeset->name);
+              }
+              else
+                E(DBF_MIME, "couldn't dstrfread() enough data");
+
+              dstrfree(dbuf);
+              dstrfree(dbuftmp);
+              fclose(dstfh);
+            }
+
+            fclose(srcfh);
+          }
+        }
+        else
+        {
+          // we don't need to convert the file, but simply copy it to a file with the
+          // proper name (not YAMmXXXXXX)
+          CopyFile(dstfile, NULL, srcfile, NULL);
+        }
+      }
+      else
+        dstfile = srcfile;
+    }
+    else
+      dstfile = srcfile;
 
     // set up the command string
-    BuildCommandString(command, sizeof(command), cmdPtr, GetRealPath(fname));
+    BuildCommandString(command, sizeof(command), cmdPtr, GetRealPath(dstfile));
 
     // execute the command
     LaunchCommand(command, LAUNCHF_ASYNC, OUT_NIL);
@@ -2111,14 +2230,22 @@ static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
     for(rp = hrp; rp; rp = rp->Next)
     {
       D(DBF_MAIL, "Part[%08lx]:#%ld%s", rp, rp->Nr, rp->Nr == rp->rmData->letterPartNum ? ":LETTERPART" : "");
-      D(DBF_MAIL, "  Name.......: [%s]", rp->Name);
-      D(DBF_MAIL, "  ContentType: [%s]", rp->ContentType);
+      D(DBF_MAIL, "  Name.......: [%s]", SafeStr(rp->Name));
+      D(DBF_MAIL, "  Description: [%s]", SafeStr(rp->Description));
+      D(DBF_MAIL, "  ContentType: [%s]", SafeStr(rp->ContentType));
+      D(DBF_MAIL, "  ContentDisp: [%s]", SafeStr(rp->ContentDisposition));
+      D(DBF_MAIL, "  CParName...: [%s]", SafeStr(rp->CParName));
+      D(DBF_MAIL, "  CParFName..: [%s]", SafeStr(rp->CParFileName));
       D(DBF_MAIL, "  Boundary...: [%s]", SafeStr(rp->CParBndr));
+      D(DBF_MAIL, "  CParProt...: [%s]", SafeStr(rp->CParProt));
+      D(DBF_MAIL, "  CParDesc...: [%s]", SafeStr(rp->CParDesc));
+      D(DBF_MAIL, "  CParRType..: [%s]", SafeStr(rp->CParRType));
       D(DBF_MAIL, "  Charset....: [%s]", SafeStr(rp->CParCSet));
+      D(DBF_MAIL, "  Flags......: [0x%08lx]", rp->Flags);
       D(DBF_MAIL, "  IsAltPart..: %ld",  isAlternativePart(rp));
       D(DBF_MAIL, "  Printable..: %ld",  isPrintable(rp));
       D(DBF_MAIL, "  Encoding...: %ld",  rp->EncodingCode);
-      D(DBF_MAIL, "  Filename...: [%s]", rp->Filename);
+      D(DBF_MAIL, "  Filename...: [%s]", SafeStr(rp->Filename));
       D(DBF_MAIL, "  Size.......: %ld",  rp->Size);
       D(DBF_MAIL, "  Nextptr....: %08lx",  rp->Next);
       D(DBF_MAIL, "  Prevptr....: %08lx",  rp->Prev);
@@ -3330,16 +3457,16 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
           char *name;
 
           name = part->CParDesc;
-          if(name == NULL || name[0] == '\0')
+          if(IsStrEmpty(name))
           {
             name = part->CParFileName;
-            if(name == NULL || name[0] == '\0')
+            if(IsStrEmpty(name))
             {
               name = part->CParName;
             }
           }
 
-          if(name != NULL && name[0] != '\0')
+          if(IsStrEmpty(name) == FALSE)
           {
             char sizeStr[SIZE_DEFAULT];
             char attachLine[SIZE_LARGE];
@@ -4676,6 +4803,31 @@ BOOL UpdateReadMailDataStatus(const struct Mail *mail)
       result = TRUE;
     }
   }
+
+  RETURN(result);
+  return result;
+}
+///
+/// SuggestPartFileName
+// function that returns an appropriate filename for a supplied
+// mail part depending on the information supplied in struct Part
+char *SuggestPartFileName(const struct Part *part)
+{
+  char *result = NULL;
+  ENTER();
+
+  if(part->CParFileName != NULL) // prefer CParFileName
+    result = strdup(part->CParFileName);
+  else if(part->CParName != NULL) // next is CParName
+    result = strdup(part->CParName);
+  else if(part->Name != NULL) // next is Name
+    result = strdup(part->Name);
+  else
+    result = strdup(FilePart(part->Filename));
+
+  // make sure we return a valid filename
+  if(result != NULL)
+    ReplaceInvalidChars(result);
 
   RETURN(result);
   return result;

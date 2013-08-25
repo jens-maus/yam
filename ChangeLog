@@ -5,6 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-08-25 Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_RE.c, mui/ReadMailGroup.c, mui/AttachmentObject.c, mui/WriteWindow.c:
+    reworked RE_DisplayMIME() function and referenced code areas to actually
+    use the new Codeset information in each MIME type. Now YAM will automatically
+    convert the underlying MIME part data from UTF8 to the MIME-type related
+    codeset if the mail part in question is actually a part which contains
+    printable text and is thus encoded in UTF8 accordingly. This should finally
+    fulfill a long standing ticket and make it possible to set e.g. UTF8 as
+    the target codeset and YAM will not convert it at all. This closes #7.
+
 2013-08-25 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/FolderRequestPopobject.c, YAM_COg.c, MUIObjects.c: added a new class for

@@ -351,7 +351,7 @@ size_t dstrfread(char **dstr, size_t size, FILE *stream)
 
     #if defined(DEBUG)
     if(nread != size)
-      E(DBF_UTIL, "fread() result:%d != size:%d", nread, size);
+      W(DBF_UTIL, "fread() result:%d != size:%d", nread, size);
     #endif
   }
 
