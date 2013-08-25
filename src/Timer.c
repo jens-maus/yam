@@ -699,7 +699,7 @@ static void TimerDispatcher(const enum Timer tid)
       D(DBF_TIMER, "timer[%ld]: TIMER_PROCESSQUICKSEARCH fired @ %s", tid, dateString);
 
       // abort a still running previous search
-      DoMethod(gui->GR_QUICKSEARCHBAR, MUIM_QuickSearchBar_AbortSearch);
+      set(gui->GR_QUICKSEARCHBAR, MUIA_QuickSearchBar_AbortSearch, TRUE);
 
       // signal the QuickSearchBar to search now
       DoMethod(gui->GR_QUICKSEARCHBAR, MUIM_QuickSearchBar_ProcessSearch);

@@ -958,8 +958,8 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
         // set the quickbar as disabled as well and abort a search still in progress
         if(C->QuickSearchBarPos != QSB_POS_OFF)
         {
-          set(gui->GR_QUICKSEARCHBAR, MUIA_Disabled, TRUE);
-          DoMethod(gui->GR_QUICKSEARCHBAR, MUIM_QuickSearchBar_AbortSearch);
+          xset(gui->GR_QUICKSEARCHBAR, MUIA_Disabled, TRUE,
+                                       MUIA_QuickSearchBar_AbortSearch, TRUE);
         }
 
         // also set an embedded read pane as disabled.
@@ -992,7 +992,7 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
         // a search still being in progress.
         if(C->QuickSearchBarPos != QSB_POS_OFF)
         {
-          DoMethod(gui->GR_QUICKSEARCHBAR, MUIM_QuickSearchBar_AbortSearch);
+          set(gui->GR_QUICKSEARCHBAR, MUIA_QuickSearchBar_AbortSearch, TRUE);
           DoMethod(gui->GR_QUICKSEARCHBAR, MUIM_QuickSearchBar_Clear);
         }
 

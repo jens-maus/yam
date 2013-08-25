@@ -450,8 +450,6 @@ OVERLOAD(OM_NEW)
     data->NL_SEARCHOPTIONS = searchOptionsList;
     data->ST_SEARCHSTRING = searchString;
 
-    data->searchInProgress = FALSE;
-
     // set the help text for each GUI element
     SetHelp(data->CY_VIEWOPTIONS,       MSG_HELP_QUICKSEARCH_VIEWOPTIONS);
     SetHelp(data->ST_SEARCHSTRING,      MSG_HELP_QUICKSEARCH_SEARCHSTRING);
@@ -478,6 +476,12 @@ OVERLOAD(OM_SET)
   {
     switch(tag->ti_Tag)
     {
+      case ATTR(AbortSearch):
+      {
+        data->abortSearch = tag->ti_Data;
+      }
+      break;
+
       // we only disable/enable what is really required to be disables/enabled
       case MUIA_Disabled:
       {
@@ -639,21 +643,6 @@ DECLARE(ViewOptionChanged) // int activeCycle
     StopTimer(TIMER_PROCESSQUICKSEARCH);
     DoMethod(obj, MUIM_QuickSearchBar_ProcessSearch);
   }
-
-  RETURN(0);
-  return 0;
-}
-
-///
-/// DECLARE(AbortSearch)
-DECLARE(AbortSearch)
-{
-  GETDATA;
-
-  ENTER();
-
-  // signal the search process to abort
-  data->abortSearch = TRUE;
 
   RETURN(0);
   return 0;
