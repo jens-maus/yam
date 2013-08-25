@@ -366,7 +366,6 @@ extern struct Config *C;
 extern struct Config *CE;
 
 // external hooks
-extern struct Hook CO_PlaySoundHook;
 extern struct Hook CO_OpenHook;
 extern struct Hook CO_RemoteToggleHook;
 extern struct Hook SetActiveFilterDataHook;

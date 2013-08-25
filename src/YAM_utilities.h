@@ -252,6 +252,7 @@ extern struct Hook    DisposeModuleHook;
 #if defined(__amigaos4__)
 extern struct Hook    ExamineDirMatchHook;
 #endif
+extern struct Hook    PlaySoundHook;
 
 // all the utility prototypes
 struct Mail *AddMailToFolder(const struct Mail *mail, struct Folder *folder);

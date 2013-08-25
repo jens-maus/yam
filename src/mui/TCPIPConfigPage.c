@@ -530,7 +530,7 @@ OVERLOAD(OM_NEW)
     data->CH_SMTP8BIT =               CH_SMTP8BIT;
     #if defined(__amigaos4__)
     data->CH_POP3_NOTIFY_OS41SYSTEM = CH_POP3_NOTIFY_OS41SYSTEM;
-    #endif
+    #endif // __amigaos4__
 
     SetHelp(ST_SMTPHOST,               MSG_HELP_CO_ST_SMTPHOST);
     SetHelp(ST_SMTPPORT,               MSG_HELP_CO_ST_SMTPPORT);
@@ -621,7 +621,7 @@ OVERLOAD(OM_NEW)
     set(BT_SMTPDOWN, MUIA_CycleChain, TRUE);
 
     set(BT_POP3_NOTIFY_SOUND, MUIA_CycleChain, TRUE);
-    DoMethod(BT_POP3_NOTIFY_SOUND, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_PlaySoundHook, ST_POP3_NOTIFY_SOUND);
+    DoMethod(BT_POP3_NOTIFY_SOUND, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &PlaySoundHook, ST_POP3_NOTIFY_SOUND);
   }
 
   RETURN((IPTR)obj);

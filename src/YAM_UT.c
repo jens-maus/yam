@@ -5119,6 +5119,7 @@ BOOL CheckPrinter(const Object *win)
   RETURN(result);
   return result;
 }
+
 ///
 /// PlaySound
 //  Plays a sound file using datatypes
@@ -5177,6 +5178,23 @@ BOOL PlaySound(const char *filename)
   RETURN(result);
   return result;
 }
+
+///
+/// PlaySoundFunc
+//  Plays sound file referred by the string gadget
+HOOKPROTONHNO(PlaySoundFunc, void, int *arg)
+{
+  char *soundFile;
+
+  ENTER();
+
+  soundFile = (char *)xget((Object *)arg[0], MUIA_String_Contents);
+  if(IsStrEmpty(soundFile) == FALSE)
+    PlaySound(soundFile);
+
+  LEAVE();
+}
+MakeHook(PlaySoundHook, PlaySoundFunc);
 
 ///
 /// MatchExtension

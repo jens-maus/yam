@@ -100,23 +100,6 @@
 ***************************************************************************/
 
 /*** Hooks ***/
-/// CO_PlaySoundFunc
-//  Plays sound file referred by the string gadget
-HOOKPROTONHNO(CO_PlaySoundFunc, void, int *arg)
-{
-  char *soundFile;
-
-  ENTER();
-
-  soundFile = (char *)xget((Object *)arg[0], MUIA_String_Contents);
-  if(soundFile != NULL && soundFile[0] != '\0')
-    PlaySound(soundFile);
-
-  LEAVE();
-}
-MakeHook(CO_PlaySoundHook,CO_PlaySoundFunc);
-
-///
 /// AddNewFilterToList
 //  Adds a new entry to the global filter list
 HOOKPROTONHNONP(AddNewFilterToList, void)
@@ -390,7 +373,7 @@ Object *CO_PageFilters(struct CO_ClassData *data)
     DoMethod(data->GUI.ST_ARESPONSE         ,MUIM_Notify, MUIA_String_Contents                      ,MUIV_EveryTime ,MUIV_Notify_Application        ,2 ,MUIM_CallHook          ,&SetActiveFilterDataHook);
     DoMethod(data->GUI.ST_AEXECUTE          ,MUIM_Notify, MUIA_String_Contents                      ,MUIV_EveryTime ,MUIV_Notify_Application        ,2 ,MUIM_CallHook          ,&SetActiveFilterDataHook);
     DoMethod(data->GUI.ST_APLAY             ,MUIM_Notify, MUIA_String_Contents                      ,MUIV_EveryTime ,MUIV_Notify_Application        ,2 ,MUIM_CallHook          ,&SetActiveFilterDataHook);
-    DoMethod(data->GUI.BT_APLAY             ,MUIM_Notify, MUIA_Pressed                              ,FALSE          ,MUIV_Notify_Application        ,3 ,MUIM_CallHook          ,&CO_PlaySoundHook,data->GUI.ST_APLAY);
+    DoMethod(data->GUI.BT_APLAY             ,MUIM_Notify, MUIA_Pressed                              ,FALSE          ,MUIV_Notify_Application        ,3 ,MUIM_CallHook          ,&PlaySoundHook, data->GUI.ST_APLAY);
     DoMethod(data->GUI.PO_MOVETO            ,MUIM_Notify, MUIA_FolderRequestPopobject_FolderChanged, MUIV_EveryTime ,MUIV_Notify_Application        ,2 ,MUIM_CallHook          ,&SetActiveFilterDataHook);
     DoMethod(data->GUI.BT_RADD              ,MUIM_Notify, MUIA_Pressed              ,                FALSE          ,MUIV_Notify_Application        ,2 ,MUIM_CallHook          ,&AddNewFilterToListHook);
     DoMethod(data->GUI.BT_RDEL              ,MUIM_Notify, MUIA_Pressed              ,                FALSE          ,MUIV_Notify_Application        ,2 ,MUIM_CallHook          ,&RemoveActiveFilterHook);
