@@ -74,6 +74,7 @@
 #include "mui/ConfigPageList.h"
 #include "mui/FilterRuleList.h"
 #include "mui/FirstStepsConfigPage.h"
+#include "mui/FolderRequestPopobject.h"
 #include "mui/IdentitiesConfigPage.h"
 #include "mui/InfoBar.h"
 #include "mui/LookFeelConfigPage.h"
@@ -286,33 +287,33 @@ HOOKPROTONHNONP(GetActiveFilterData, void)
   {
     struct RuleNode *rule;
 
-    nnset(gui->ST_RNAME,             MUIA_String_Contents,   filter->name);
-    nnset(gui->CH_REMOTE,            MUIA_Selected,          filter->remote);
-    nnset(gui->CH_APPLYNEW,          MUIA_Selected,          filter->applyToNew);
-    nnset(gui->CH_APPLYSENT,         MUIA_Selected,          filter->applyToSent);
-    nnset(gui->CH_APPLYREQ,          MUIA_Selected,          filter->applyOnReq);
-    nnset(gui->CY_FILTER_COMBINE,    MUIA_Cycle_Active,      filter->combine);
-    nnset(gui->CH_AREDIRECT,         MUIA_Selected,          hasRedirectAction(filter));
-    nnset(gui->CH_AFORWARD,          MUIA_Selected,          hasForwardAction(filter));
-    nnset(gui->CH_ARESPONSE,         MUIA_Selected,          hasReplyAction(filter));
-    nnset(gui->CH_AEXECUTE,          MUIA_Selected,          hasExecuteAction(filter));
-    nnset(gui->CH_APLAY,             MUIA_Selected,          hasPlaySoundAction(filter));
-    nnset(gui->CH_AMOVE,             MUIA_Selected,          hasMoveAction(filter));
-    nnset(gui->CH_ASTATUSTOMARKED,   MUIA_Selected,          hasStatusToMarkedAction(filter));
-    nnset(gui->CH_ASTATUSTOUNMARKED, MUIA_Selected,          hasStatusToUnmarkedAction(filter));
-    nnset(gui->CH_ASTATUSTOREAD,     MUIA_Selected,          hasStatusToReadAction(filter));
-    nnset(gui->CH_ASTATUSTOUNREAD,   MUIA_Selected,          hasStatusToUnreadAction(filter));
-    nnset(gui->CH_ASTATUSTOSPAM,     MUIA_Selected,          hasStatusToSpamAction(filter));
-    nnset(gui->CH_ASTATUSTOHAM,      MUIA_Selected,          hasStatusToHamAction(filter));
-    nnset(gui->CH_ADELETE,           MUIA_Selected,          hasDeleteAction(filter));
-    nnset(gui->CH_ASKIP,             MUIA_Selected,          hasSkipMsgAction(filter));
-    nnset(gui->CH_ATERMINATE,        MUIA_Selected,          hasTerminateAction(filter));
-    nnset(gui->ST_AREDIRECT,         MUIA_String_Contents,   filter->redirectTo);
-    nnset(gui->ST_AFORWARD,          MUIA_String_Contents,   filter->forwardTo);
-    nnset(gui->ST_ARESPONSE,         MUIA_String_Contents,   filter->replyFile);
-    nnset(gui->ST_AEXECUTE,          MUIA_String_Contents,   filter->executeCmd);
-    nnset(gui->ST_APLAY,             MUIA_String_Contents,   filter->playSound);
-    nnset(gui->TX_MOVETO,            MUIA_Text_Contents,     filter->moveTo);
+    nnset(gui->ST_RNAME,             MUIA_String_Contents,               filter->name);
+    nnset(gui->CH_REMOTE,            MUIA_Selected,                      filter->remote);
+    nnset(gui->CH_APPLYNEW,          MUIA_Selected,                      filter->applyToNew);
+    nnset(gui->CH_APPLYSENT,         MUIA_Selected,                      filter->applyToSent);
+    nnset(gui->CH_APPLYREQ,          MUIA_Selected,                      filter->applyOnReq);
+    nnset(gui->CY_FILTER_COMBINE,    MUIA_Cycle_Active,                  filter->combine);
+    nnset(gui->CH_AREDIRECT,         MUIA_Selected,                      hasRedirectAction(filter));
+    nnset(gui->CH_AFORWARD,          MUIA_Selected,                      hasForwardAction(filter));
+    nnset(gui->CH_ARESPONSE,         MUIA_Selected,                      hasReplyAction(filter));
+    nnset(gui->CH_AEXECUTE,          MUIA_Selected,                      hasExecuteAction(filter));
+    nnset(gui->CH_APLAY,             MUIA_Selected,                      hasPlaySoundAction(filter));
+    nnset(gui->CH_AMOVE,             MUIA_Selected,                      hasMoveAction(filter));
+    nnset(gui->CH_ASTATUSTOMARKED,   MUIA_Selected,                      hasStatusToMarkedAction(filter));
+    nnset(gui->CH_ASTATUSTOUNMARKED, MUIA_Selected,                      hasStatusToUnmarkedAction(filter));
+    nnset(gui->CH_ASTATUSTOREAD,     MUIA_Selected,                      hasStatusToReadAction(filter));
+    nnset(gui->CH_ASTATUSTOUNREAD,   MUIA_Selected,                      hasStatusToUnreadAction(filter));
+    nnset(gui->CH_ASTATUSTOSPAM,     MUIA_Selected,                      hasStatusToSpamAction(filter));
+    nnset(gui->CH_ASTATUSTOHAM,      MUIA_Selected,                      hasStatusToHamAction(filter));
+    nnset(gui->CH_ADELETE,           MUIA_Selected,                      hasDeleteAction(filter));
+    nnset(gui->CH_ASKIP,             MUIA_Selected,                      hasSkipMsgAction(filter));
+    nnset(gui->CH_ATERMINATE,        MUIA_Selected,                      hasTerminateAction(filter));
+    nnset(gui->ST_AREDIRECT,         MUIA_String_Contents,               filter->redirectTo);
+    nnset(gui->ST_AFORWARD,          MUIA_String_Contents,               filter->forwardTo);
+    nnset(gui->ST_ARESPONSE,         MUIA_String_Contents,               filter->replyFile);
+    nnset(gui->ST_AEXECUTE,          MUIA_String_Contents,               filter->executeCmd);
+    nnset(gui->ST_APLAY,             MUIA_String_Contents,               filter->playSound);
+    nnset(gui->PO_MOVETO,            MUIA_FolderRequestPopobject_Folder, filter->moveTo);
 
     xset(gui->GR_SGROUP, MUIA_ObjectList_Quiet, TRUE,
                          MUIA_FilterRuleList_Filter, filter);
@@ -394,7 +395,7 @@ HOOKPROTONHNONP(SetActiveFilterData, void)
     GetMUIString(filter->replyFile,  gui->ST_ARESPONSE, sizeof(filter->replyFile));
     GetMUIString(filter->executeCmd, gui->ST_AEXECUTE, sizeof(filter->executeCmd));
     GetMUIString(filter->playSound,  gui->ST_APLAY, sizeof(filter->playSound));
-    GetMUIText(filter->moveTo, gui->TX_MOVETO, sizeof(filter->moveTo));
+    strlcpy(filter->moveTo, (char *)xget(gui->PO_MOVETO, MUIA_FolderRequestPopobject_Folder), sizeof(filter->moveTo));
 
     // (re)build the rule liste from scratch
     FreeFilterRuleList(filter);

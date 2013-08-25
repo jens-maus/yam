@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-08-25 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/FolderRequestPopobject.c, YAM_COg.c, MUIObjects.c: added a new class for
+    the folder request popup objects.
+
 2013-08-24 Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_utilities.h, misc: implemented new "IsStrEmpty()" macro which should
@@ -16,7 +21,7 @@ $URL$
     specified with every configurable MIME type. If not specified, the local
     codeset configured in the FirstSteps section of the config will be used
     for each MIME type.
- 
+
 2013-08-24 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/SignatureTextEdit.c: converted a method to a simple attribute.

@@ -492,6 +492,7 @@ MUIOBJS = \
 	FolderEditWindow.o \
 	FolderListtree.o \
 	FolderRequestListtree.o \
+	FolderRequestPopobject.o \
 	FolderRequestWindow.o \
 	GenericRequestWindow.o \
 	HeaderList.o \
