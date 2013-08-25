@@ -257,33 +257,33 @@ OVERLOAD(OM_NEW)
       MUIA_Popasl_StartHook, &data->MimeDefViewerReqStartHook,
       MUIA_Popasl_StopHook,  &data->MimeDefViewerReqStopHook);
 
-    SetHelp(ST_CTYPE,       MSG_HELP_CO_ST_CTYPE);
-    SetHelp(ST_EXTENS,      MSG_HELP_CO_ST_EXTENS);
-    SetHelp(ST_COMMAND,     MSG_HELP_CO_ST_COMMAND);
-    SetHelp(BT_MADD,        MSG_HELP_CO_BT_MADD);
-    SetHelp(BT_MDEL,        MSG_HELP_CO_BT_MDEL);
-    SetHelp(BT_MIMEIMPORT,  MSG_HELP_CO_BT_MIMEIMPORT);
-    SetHelp(ST_DEFVIEWER,   MSG_HELP_CO_ST_DEFVIEWER);
-    SetHelp(ST_DESCRIPTION, MSG_HELP_CO_ST_DESCRIPTION);
+    SetHelp(ST_CTYPE,             MSG_HELP_CO_ST_CTYPE);
+    SetHelp(ST_EXTENS,            MSG_HELP_CO_ST_EXTENS);
+    SetHelp(ST_COMMAND,           MSG_HELP_CO_ST_COMMAND);
+    SetHelp(BT_MADD,              MSG_HELP_CO_BT_MADD);
+    SetHelp(BT_MDEL,              MSG_HELP_CO_BT_MDEL);
+    SetHelp(BT_MIMEIMPORT,        MSG_HELP_CO_BT_MIMEIMPORT);
+    SetHelp(ST_DEFVIEWER,         MSG_HELP_CO_ST_DEFVIEWER);
+    SetHelp(ST_DESCRIPTION,       MSG_HELP_CO_ST_DESCRIPTION);
     SetHelp(TX_DEFVIEWER_CODESET, MSG_HELP_CO_TX_DEFVIEWER_CODESET);
-    SetHelp(TX_MIME_CODESET, MSG_HELP_CO_TX_MIME_CODESET);
+    SetHelp(TX_MIME_CODESET,      MSG_HELP_CO_TX_MIME_CODESET);
 
     DoMethod(obj, MUIM_MultiSet, MUIA_Disabled, TRUE,
       GR_MIME,
       BT_MDEL,
       NULL);
 
-    DoMethod(LV_MIME,        MUIM_Notify, MUIA_NList_Active,    MUIV_EveryTime, obj, 1, METHOD(GetMimeTypeEntry));
-    DoMethod(ST_CTYPE,       MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 1, METHOD(PutMimeTypeEntry));
-    DoMethod(ST_EXTENS,      MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 1, METHOD(PutMimeTypeEntry));
-    DoMethod(ST_COMMAND,     MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 1, METHOD(PutMimeTypeEntry));
-    DoMethod(ST_DESCRIPTION, MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 1, METHOD(PutMimeTypeEntry));
-    DoMethod(ST_DEFVIEWER,   MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 1, METHOD(PutMimeTypeEntry));
-    DoMethod(TX_DEFVIEWER_CODESET, MUIM_Notify, MUIA_Text_Contents, MUIV_EveryTime, obj, 1, METHOD(PutMimeTypeEntry));
-    DoMethod(TX_MIME_CODESET,MUIM_Notify, MUIA_Text_Contents,   MUIV_EveryTime, obj, 1, METHOD(PutMimeTypeEntry));
-    DoMethod(BT_MADD,        MUIM_Notify, MUIA_Pressed,         FALSE,          obj, 1, METHOD(AddMimeTypeEntry));
-    DoMethod(BT_MDEL,        MUIM_Notify, MUIA_Pressed,         FALSE,          obj, 1, METHOD(DeleteMimeTypeEntry));
-    DoMethod(BT_MIMEIMPORT,  MUIM_Notify, MUIA_Pressed,         FALSE,          obj, 1, METHOD(ImportMimeTypes));
+    DoMethod(LV_MIME,              MUIM_Notify, MUIA_NList_Active,    MUIV_EveryTime, obj, 1, METHOD(GetMimeTypeEntry));
+    DoMethod(ST_CTYPE,             MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 1, METHOD(PutMimeTypeEntry));
+    DoMethod(ST_EXTENS,            MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 1, METHOD(PutMimeTypeEntry));
+    DoMethod(ST_COMMAND,           MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 1, METHOD(PutMimeTypeEntry));
+    DoMethod(ST_DESCRIPTION,       MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 1, METHOD(PutMimeTypeEntry));
+    DoMethod(ST_DEFVIEWER,         MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 1, METHOD(PutMimeTypeEntry));
+    DoMethod(TX_DEFVIEWER_CODESET, MUIM_Notify, MUIA_Text_Contents,   MUIV_EveryTime, obj, 1, METHOD(PutMimeTypeEntry));
+    DoMethod(TX_MIME_CODESET,      MUIM_Notify, MUIA_Text_Contents,   MUIV_EveryTime, obj, 1, METHOD(PutMimeTypeEntry));
+    DoMethod(BT_MADD,              MUIM_Notify, MUIA_Pressed,         FALSE,          obj, 1, METHOD(AddMimeTypeEntry));
+    DoMethod(BT_MDEL,              MUIM_Notify, MUIA_Pressed,         FALSE,          obj, 1, METHOD(DeleteMimeTypeEntry));
+    DoMethod(BT_MIMEIMPORT,        MUIM_Notify, MUIA_Pressed,         FALSE,          obj, 1, METHOD(ImportMimeTypes));
   }
 
   RETURN((IPTR)obj);
