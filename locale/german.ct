@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.21 (20.08.2013)
+## version $VER: YAM.catalog 8.22 (25.08.2013)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -8737,12 +8737,6 @@ zum internen verwenden können.
 MSG_CO_EXTEDITOR_CODESET
 _Zeichenkodierung erzwingen
 ;
-MSG_HELP_CO_CH_DEFCODESET_EDITOR
-Fall gewählt, wird die gewählte\n\
-Zeichenkodierung zum Umwandeln des\n\
-Texts verwendet, bevor der Editor\n\
-gestartet wird.
-;
 MSG_HELP_CO_TX_DEFCODESET_EDITOR
 Wählen Sie eine Zeichenkodierung mit\n\
 welcher der Text vor dem Starten des\n\
@@ -8769,4 +8763,22 @@ werden.
 ;
 MSG_CO_DEFAULTCODESET_WRITE
 Standard-Zeichen_kodierung
+;
+MSG_CO_MIME_CODESET
+A_nzeige-Zeichenkodierung
+;
+MSG_HELP_CO_TX_MIME_CODESET
+Wählen Sie die Zeichenkodierung, in welche\n\
+anzeigbarer Text umgewandelt werden soll,\n\
+bevor das Kommando für diesen MIME-Typen\n\
+ausgeführt wird.
+;
+MSG_CO_DEFAULTVIEWER_CODESET
+An_zeige-Zeichenkodierung
+;
+MSG_HELP_CO_TX_DEFVIEWER_CODESET
+Wählen Sie die Zeichenkodierung, in welche\n\
+anzeigbarer Text umgewandelt werden soll,\n\
+bevor das Standardanzeigeprogramm ausgeführt\n\
+wird.
 ;

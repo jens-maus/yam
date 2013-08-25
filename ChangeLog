@@ -12,6 +12,7 @@ $URL$
   * YAM_CO.c, mui/FiltersConfigPage.c: use the new base class for the "Filters"
     page. This was the last configuration page to be converted and finally
     renders a complete ancient and big source file superflous.
+  * locale/german.ct: updated german translation.
 
 2013-08-24 Jens Langner <Jens.Langner@light-speed.de>
 
