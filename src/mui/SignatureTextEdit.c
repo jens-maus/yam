@@ -60,9 +60,6 @@ OVERLOAD(OM_SET)
 {
   GETDATA;
   struct TagItem *tags = inittags(msg), *tag;
-  IPTR result;
-
-  ENTER();
 
   while((tag = NextTagItem((APTR)&tags)) != NULL)
   {
@@ -113,6 +110,8 @@ OVERLOAD(OM_SET)
           SetSuperAttrs(cl, obj, MUIA_TextEditor_ReadOnly, TRUE,
                                  TAG_DONE);
         }
+
+        tag->ti_Tag = TAG_IGNORE;
       }
       break;
 
@@ -144,15 +143,14 @@ OVERLOAD(OM_SET)
           SetSuperAttrs(cl, obj, MUIA_TextEditor_Contents, "",
                                  MUIA_TextEditor_HasChanged, FALSE);
         }
+
+        tag->ti_Tag = TAG_IGNORE;
       }
       break;
     }
   }
 
-  result = DoSuperMethodA(cl, obj, msg);
-
-  RETURN(result);
-  return result;
+  return DoSuperMethodA(cl, obj, msg);
 }
 
 ///
