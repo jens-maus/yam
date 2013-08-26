@@ -163,46 +163,7 @@ OVERLOAD(OM_GET)
 
 ///
 
-/* Private Functions */
-
 /* Public Methods */
-/// DECLARE(SetSignatureText)
-DECLARE(SetSignatureText) // const char *sigText
-{
-  GETDATA;
-  char *parsedSig;
-
-  ENTER();
-
-  // refresh ourself with the new signature text
-  if(msg->sigText != NULL && (parsedSig = ParseEmailText(msg->sigText, FALSE, TRUE, TRUE)) != NULL)
-  {
-    BOOL modified;
-
-    if(data->sigNode != NULL && data->sigNode->signature != NULL)
-      modified = (strcmp(msg->sigText, data->sigNode->signature) != 0);
-    else
-      modified = TRUE;
-
-    xset(obj, MUIA_TextEditor_Contents, parsedSig,
-              MUIA_TextEditor_HasChanged, modified);
-
-    dstrfree(parsedSig);
-  }
-  else
-  {
-    if(msg->sigText != NULL)
-      W(DBF_CONFIG, "couldn't load signature '%s' in texteditor", SafeStr(msg->sigText));
-
-    xset(obj, MUIA_TextEditor_Contents, "",
-              MUIA_TextEditor_HasChanged, FALSE);
-  }
-
-  RETURN(0);
-  return 0;
-}
-
-///
 /// DECLARE(EditExternally)
 DECLARE(EditExternally)
 {
