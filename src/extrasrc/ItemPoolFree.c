@@ -38,11 +38,10 @@
 #if defined(NEED_ITEMPOOLFREE)
 /// ItemPoolAlloc
 // allocate an item from the pool specified by <poolHeader>
+// no ENTER/RETURN macro calls on purpose as this would blow up the trace log too much
 APTR ItemPoolFree(APTR poolHeader, APTR item)
 {
   struct ItemPool *pool = poolHeader;
-
-  ENTER();
 
   if(pool->protected != FALSE)
     ObtainSemaphore(&pool->semaphore);
@@ -52,10 +51,10 @@ APTR ItemPoolFree(APTR poolHeader, APTR item)
   if(pool->protected != FALSE)
     ReleaseSemaphore(&pool->semaphore);
 
-  RETURN(item);
   return item;
 }
 #else
   #warning "NEED_ITEMPOOLFREE missing or compilation unnecessary"
 #endif
+
 ///

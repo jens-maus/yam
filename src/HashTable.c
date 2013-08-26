@@ -311,14 +311,10 @@ void DefaultHashMoveEntry(struct HashTable *table, const struct HashEntryHeader 
 
 ///
 /// DefaultHashClearEntry()
-//
+// no ENTER/RETURN macro calls on purpose as this would blow up the trace log too much
 void DefaultHashClearEntry(struct HashTable *table, struct HashEntryHeader *entry)
 {
-  ENTER();
-
   memset(entry, 0, table->entrySize);
-
-  LEAVE();
 }
 
 ///
@@ -376,31 +372,23 @@ BOOL StringHashMatchEntry(UNUSED struct HashTable *table, const struct HashEntry
 
 ///
 /// StringHashClearEntry()
-//
+// no ENTER/RETURN macro calls on purpose as this would blow up the trace log too much
 void StringHashClearEntry(struct HashTable *table, struct HashEntryHeader *entry)
 {
   struct HashEntry *stub = (struct HashEntry *)entry;
 
-  ENTER();
-
   free(stub->key);
   memset(entry, 0, table->entrySize);
-
-  LEAVE();
 }
 
 ///
 /// StringHashDestroyEntry()
-//
+// no ENTER/RETURN macro calls on purpose as this would blow up the trace log too much
 void StringHashDestroyEntry(UNUSED struct HashTable *table, const struct HashEntryHeader *entry)
 {
   struct HashEntry *stub = (struct HashEntry *)entry;
 
-  ENTER();
-
   free(stub->key);
-
-  LEAVE();
 }
 
 ///

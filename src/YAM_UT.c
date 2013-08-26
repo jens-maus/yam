@@ -6184,30 +6184,27 @@ void ToLowerCase(char *str)
 
 ///
 /// WriteUInt32
-//  write a 32bit variable to a stream, big endian style
+// write a 32bit variable to a stream, big endian style
+// no ENTER/RETURN macro calls on purpose as this would blow up the trace log too much
 int WriteUInt32(FILE *stream, ULONG value)
 {
   int n;
-
-  ENTER();
 
   // convert the value to big endian style
   value = htonl(value);
 
   n = fwrite(&value, sizeof(value), 1, stream);
 
-  RETURN(n);
   return n;
 }
 
 ///
 /// ReadUInt32
-//  read a 32bit variable from a stream, big endian style
+// read a 32bit variable from a stream, big endian style
+// no ENTER/RETURN macro calls on purpose as this would blow up the trace log too much
 int ReadUInt32(FILE *stream, ULONG *value)
 {
   int n;
-
-  ENTER();
 
   if((n = fread(value, sizeof(*value), 1, stream)) == 1)
   {
@@ -6215,7 +6212,6 @@ int ReadUInt32(FILE *stream, ULONG *value)
     *value = ntohl(*value);
   }
 
-  RETURN(n);
   return n;
 }
 

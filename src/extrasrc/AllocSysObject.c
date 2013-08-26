@@ -96,6 +96,7 @@ struct SysSignalSemaphore
 
 /// MungeMemory
 // fill a memory block with "random" garbage
+// no ENTER/RETURN macro calls on purpose as this would blow up the trace log too much
 #if defined(DEBUG)
 static void MungeMemory(const void *ptr, size_t size)
 {
@@ -105,8 +106,6 @@ static void MungeMemory(const void *ptr, size_t size)
     ULONG *u32ptr;
     char *u8ptr;
   } _ptr;
-
-  ENTER();
 
   _ptr.vptr = (void *)ptr;
 
@@ -131,8 +130,6 @@ static void MungeMemory(const void *ptr, size_t size)
       }
     }
   }
-
-  LEAVE();
 }
 #else
 // do nothing in the non-debug build
@@ -144,6 +141,7 @@ static void MungeMemory(const void *ptr, size_t size)
 // allocate a system object just like OS4 does
 // this function does not cover all the types of OS4, because some are simply not
 // needed or cannot be simulated
+// no ENTER/RETURN macro calls on purpose as this would blow up the trace log too much
 APTR AllocSysObject(ULONG type, struct TagItem *tags)
 {
   union {
@@ -163,10 +161,6 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
   struct TagItem *tstate = tags;
   struct TagItem *tag;
   ULONG memFlags;
-
-  ENTER();
-
-  SHOWTAGS(DBF_UTIL, tags);
 
   object.pointer = NULL;
 
@@ -694,26 +688,23 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
 
 done:
 
-  RETURN(object.pointer);
   return object.pointer;
 }
 
 ///
 /// AllocSysObjectTags
 // varargs stub for AllocSysObject() for 68k
+// no ENTER/RETURN macro calls on purpose as this would blow up the trace log too much
 #if !defined(__PPC__)
 APTR VARARGS68K AllocSysObjectTags(ULONG type, ...)
 {
   VA_LIST args;
   APTR object;
 
-  ENTER();
-
   VA_START(args, type);
   object = AllocSysObject(type, (struct TagItem *)VA_ARG(args, struct TagItem *));
   VA_END(args);
 
-  RETURN(object);
   return object;
 }
 #endif
@@ -721,10 +712,9 @@ APTR VARARGS68K AllocSysObjectTags(ULONG type, ...)
 ///
 /// FreeSysObject
 // free a system object and perform basic cleanups depending on the type
+// no ENTER/RETURN macro calls on purpose as this would blow up the trace log too much
 void FreeSysObject(ULONG type, APTR object)
 {
-  ENTER();
-
   if(object != NULL)
   {
     switch(type)
@@ -839,8 +829,6 @@ void FreeSysObject(ULONG type, APTR object)
       break;
     }
   }
-
-  LEAVE();
 }
 
 #else
