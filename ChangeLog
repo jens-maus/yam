@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-08-26 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/SignatureTextEdit.c: added a missing break statement which caused the
+    signature text to be erased again immediately.
+
 2013-08-25 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: update to the latest changes.

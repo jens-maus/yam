@@ -60,6 +60,9 @@ OVERLOAD(OM_SET)
 {
   GETDATA;
   struct TagItem *tags = inittags(msg), *tag;
+  IPTR result;
+
+  ENTER();
 
   while((tag = NextTagItem((APTR)&tags)) != NULL)
   {
@@ -90,6 +93,8 @@ OVERLOAD(OM_SET)
           xset(obj, ATTR(SignatureText), data->sigNode->signature,
                     ATTR(UseSignatureFile), data->sigNode->useSignatureFile);
         }
+
+        tag->ti_Tag = TAG_IGNORE;
       }
       break;
 
@@ -109,6 +114,7 @@ OVERLOAD(OM_SET)
                                  TAG_DONE);
         }
       }
+      break;
 
       case ATTR(SignatureText):
       {
@@ -125,8 +131,8 @@ OVERLOAD(OM_SET)
           else
             modified = TRUE;
 
-          xset(obj, MUIA_TextEditor_Contents, parsedSig,
-                    MUIA_TextEditor_HasChanged, modified);
+          SetSuperAttrs(cl, obj, MUIA_TextEditor_Contents, parsedSig,
+                                 MUIA_TextEditor_HasChanged, modified);
 
           dstrfree(parsedSig);
         }
@@ -135,15 +141,18 @@ OVERLOAD(OM_SET)
           if(sig != NULL)
             W(DBF_CONFIG, "couldn't load signature '%s' in texteditor", sig);
 
-          xset(obj, MUIA_TextEditor_Contents, "",
-                    MUIA_TextEditor_HasChanged, FALSE);
+          SetSuperAttrs(cl, obj, MUIA_TextEditor_Contents, "",
+                                 MUIA_TextEditor_HasChanged, FALSE);
         }
       }
       break;
     }
   }
 
-  return DoSuperMethodA(cl, obj, msg);
+  result = DoSuperMethodA(cl, obj, msg);
+
+  RETURN(result);
+  return result;
 }
 
 ///
