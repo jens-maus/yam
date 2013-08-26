@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-08-26 Jens Langner <Jens.Langner@light-speed.de>
+
+  * mui/WriteWindow.c: slightly adapted the write window temporary file name
+    pattern to use a ".txt" extension to make it more clear that the content
+    should be definitly readable text. In addition the window number counter
+    now starts with 1 instead of 0.
+
 2013-08-26 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/SignatureTextEdit.c: added a missing break statement which caused the
