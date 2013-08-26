@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.45 (23.08.2013)
+## version $VER: YAM.catalog 8.46 (26.08.2013)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -10493,15 +10493,6 @@ MSG_CO_EXTEDITOR_CODESET
 _Forza set di caratteri
 ; _Force charset
 ;
-MSG_HELP_CO_CH_DEFCODESET_EDITOR
-Se selezionato il set di caratteri scelto verrà\n\
-usato immediatamente convertendo il testo\n\
-prima di avviare l'editor.
-; If selected the chosen charset\n\
-; will be used and the text be\n\
-; converted before starting the\n\
-; editor.
-;
 MSG_HELP_CO_TX_DEFCODESET_EDITOR
 Scegli il set di caratteri con il quale il testo\n\
 dovrà essere convertito prima di avviare\n\
@@ -10544,4 +10535,29 @@ tipo di codifica per le mail in uscita.
 MSG_CO_DEFAULTCODESET_WRITE
 Set di caratteri _predefinito
 ; Default c_harset
+;
+MSG_CO_MIME_CODESET
+_Mostra set di caratteri
+; Display _charset
+;
+MSG_HELP_CO_TX_MIME_CODESET
+Seleziona il set di caratteri qui in modo che\n\
+i caratteri stampabili siano convertiti prima\n\
+dell'esecuzione del comando di questo tipo\n\
+di MIME.
+; Select the charset here that printable\n\
+; text should be converted to before\n\
+; executing the command of this MIME type.
+;
+MSG_CO_DEFAULTVIEWER_CODESET
+Mostra set di cara_tteri
+; _Display charset
+;
+MSG_HELP_CO_TX_DEFVIEWER_CODESET
+Seleziona il set di caratteri qui in modo che\n\
+i caratteri stampabili siano convertiti prima\n\
+dell'avvio del visualizzatore predefinito.
+; Select the charset here that printable\n\
+; text should be converted to before\n\
+; starting the default viewer.
 ;
