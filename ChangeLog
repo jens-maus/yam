@@ -9,6 +9,8 @@ $URL$
 
   * mui/SignatureTextEdit.c: added a missing break statement which caused the
     signature text to be erased again immediately.
+  * mui/QuickSearchBar.c: any edit operation in the quick search bar will now
+    abort a search operation in progress. This closes #412.
 
 2013-08-25 Samir Hawamdeh <s.hawamdeh@tin.it>
 

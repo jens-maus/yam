@@ -470,8 +470,8 @@ OVERLOAD(OM_NEW)
 OVERLOAD(OM_SET)
 {
   GETDATA;
-
   struct TagItem *tags = inittags(msg), *tag;
+
   while((tag = NextTagItem((APTR)&tags)) != NULL)
   {
     switch(tag->ti_Tag)
@@ -479,6 +479,9 @@ OVERLOAD(OM_SET)
       case ATTR(AbortSearch):
       {
         data->abortSearch = tag->ti_Data;
+
+        // make the superMethod call ignore those tags
+        tag->ti_Tag = TAG_IGNORE;
       }
       break;
 
@@ -529,8 +532,8 @@ DECLARE(SearchContentChanged) // char *content, ULONG force
 
   ENTER();
 
-  ASSERT(data->BT_CLEARBUTTON != NULL);
-  ASSERT(G->MA->GUI.PG_MAILLIST != NULL);
+  // abort any running search process
+  set(obj, ATTR(AbortSearch), TRUE);
 
   // depending on if there is something to search for
   // we have to prepare something different
@@ -586,8 +589,8 @@ DECLARE(SearchOptionChanged) // int activeSearchOption
 
   ENTER();
 
-  ASSERT(data->NL_SEARCHOPTIONS != NULL);
-  ASSERT(G->MA->GUI.PG_MAILLIST != NULL);
+  // abort any running search process
+  set(obj, ATTR(AbortSearch), TRUE);
 
   // make sure the popup window is closed
   DoMethod(data->PO_SEARCHOPTIONPOPUP, MUIM_Popstring_Close, TRUE);
@@ -627,8 +630,8 @@ DECLARE(ViewOptionChanged) // int activeCycle
 
   ENTER();
 
-  ASSERT(data->CY_VIEWOPTIONS != NULL);
-  ASSERT(G->MA->GUI.PG_MAILLIST != NULL);
+  // abort any running search process
+  set(obj, ATTR(AbortSearch), TRUE);
 
   // set the active group of the MAILVIEW pageGroup to 1 if one of the view
   // options is selected by the user
@@ -653,11 +656,11 @@ DECLARE(ViewOptionChanged) // int activeCycle
 DECLARE(ProcessSearch)
 {
   GETDATA;
-  struct Folder *curFolder = GetCurrentFolder();
+  struct Folder *curFolder;
 
   ENTER();
 
-  ASSERT(curFolder != NULL);
+  curFolder = GetCurrentFolder();
 
   // a use of the quicksearchbar is only possible on
   // normal folders
