@@ -2359,7 +2359,7 @@ int main(int argc, char **argv)
                                            "installation instead of a potentially dangerous\n"
                                            "version, please consider to use the current\n"
                                            "stable release version available from:\n\n"
-                                           "http://www.yam.ch/\n\n"
+                                           "http://yam.ch/\n\n"
                                            "Thanks for your help in improving YAM!";
 
           if(GotoURLPossible() == TRUE)
@@ -2377,7 +2377,7 @@ int main(int argc, char **argv)
           else if(answer == 2)
           {
             // visit YAM's home page and continue normally
-            GotoURL("http://www.yam.ch/", FALSE);
+            GotoURL(yamurl, FALSE);
           }
         }
 

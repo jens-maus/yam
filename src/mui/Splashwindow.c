@@ -111,7 +111,7 @@ OVERLOAD(OM_NEW)
           Child, CLabel(yamfullcopyright),
           Child, TextObject,
             MUIA_Text_PreParse, "\033c\033u\0335",
-            MUIA_Text_Contents, "http://yam.ch/",
+            MUIA_Text_Contents, yamurl,
             MUIA_Text_Copy,     FALSE,
           End,
           Child, RectangleObject,

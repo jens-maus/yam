@@ -152,6 +152,7 @@ const char * const yamcopyright     = __YAM_COPYRIGHT;
 const char * const yamfullcopyright = __YAM_FULLCOPYRIGHT;
 const char * const yamversiondate   = __YAM_VERDATE;
 const char * const yamcompiler      = __YAM_COMPILER;
+const char * const yamurl           = "http://yam.ch/";
 const unsigned long yamversiondays  = __YAM_VERDAYS;
 const unsigned long yamsvnrev       = SVN_REV;
 

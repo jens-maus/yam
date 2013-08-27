@@ -603,8 +603,8 @@ Egyszerü fiók ellenörzés
 ; Check single account
 ;
 MSG_MA_WinTitle
-YAM %s  -  Felhasználó: %s
-; YAM %s  -  User: %s
+YAM %s - Felhasználó: %s
+; YAM %s - User: %s
 ; VERSION, NAME
 ;
 MSG_MA_ToPrefix
@@ -6647,8 +6647,8 @@ Ez a program az alábbi külsõ alkalmazásokat használja:
 ; This program uses the following third party software:
 ;
 MSG_ABOUT_YAM_NEWS
-A YAM legújabb frissítési információi megtalálhatók\na YAM fejlesztõi oldalán \0335http://www.yam.ch/\033n
-; The latest news about YAM can be found at the\nYAM Support Site at \0335http://www.yam.ch/\033n
+A YAM legújabb frissítési információi megtalálhatók\na YAM fejlesztõi oldalán \0335http://yam.ch/\033n
+; The latest news about YAM can be found at the\nYAM Support Site at \0335http://yam.ch/\033n
 ;
 MSG_WR_VIEW
 Nézet

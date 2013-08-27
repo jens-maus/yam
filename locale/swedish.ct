@@ -628,8 +628,8 @@ Kontrollera ett konto
 ; Check single account
 ;
 MSG_MA_WinTitle
-YAM %s  -  Användare: %s
-; YAM %s  -  User: %s
+YAM %s - Användare: %s
+; YAM %s - User: %s
 ; VERSION, NAME
 ;
 MSG_MA_ToPrefix
@@ -7185,9 +7185,9 @@ Detta program använder följande mjukvara från tredjepart:
 ; This program uses the following third party software:
 ;
 MSG_ABOUT_YAM_NEWS
-Senaste nytt om YAM kan hittas på YAM's\nsupportsida \0335http://www.yam.ch/\033n
+Senaste nytt om YAM kan hittas på YAM's\nsupportsida \0335http://yam.ch/\033n
 ; The latest news about YAM can be found at the\n\
-; YAM Support Site at \0335http://www.yam.ch/\033n
+; YAM Support Site at \0335http://yam.ch/\033n
 ;
 MSG_WR_VIEW
 Vy

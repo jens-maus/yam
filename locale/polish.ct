@@ -653,8 +653,8 @@ Sprawd¼ pojedyncze konto
 ; Check single account
 ;
 MSG_MA_WinTitle
-YAM %s  -  U¿ytkownik: %s
-; YAM %s  -  User: %s
+YAM %s - U¿ytkownik: %s
+; YAM %s - User: %s
 ; VERSION, NAME
 ;
 MSG_MA_ToPrefix
@@ -8284,9 +8284,9 @@ Ten program wykorzystuje nastêpuj±ce elementy autorstwa osób trzecich:
 ;
 MSG_ABOUT_YAM_NEWS
 Najnowsze wiadomo¶ci o programie mo¿na znale¼æ\n\
-na stronie wsparcia pod adresem URL \0335http://www.yam.ch/\033n
+na stronie wsparcia pod adresem URL \0335http://yam.ch/\033n
 ; The latest news about YAM can be found at the\n\
-; YAM Support Site at \0335http://www.yam.ch/\033n
+; YAM Support Site at \0335http://yam.ch/\033n
 ;
 MSG_WR_VIEW
 Poka¿

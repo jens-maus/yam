@@ -49,8 +49,10 @@ struct Data
   Object *Searchstring;
   Object *Texteditor;
   Object *ParentWindow;
+
   BOOL CaseSensitive;
   BOOL CloseNotifyAdded;
+  char ScreenTitle[SIZE_DEFAULT];
 };
 */
 
@@ -75,7 +77,6 @@ OVERLOAD(OM_NEW)
 
   if((obj = DoSuperNew(cl, obj,
 
-    MUIA_Window_Title, tr(MSG_SEARCHWINDOW_TITLE),
     WindowContents, VGroup,
 
       Child, string = BetterStringObject,
@@ -104,6 +105,9 @@ OVERLOAD(OM_NEW)
     DoMethod(G->App, OM_ADDMEMBER, obj);
 
     data->Searchstring = string;
+
+    xset(obj, MUIA_Window_Title, tr(MSG_SEARCHWINDOW_TITLE),
+              MUIA_Window_ScreenTitle, CreateScreenTitle(data->ScreenTitle, sizeof(data->ScreenTitle), tr(MSG_SEARCHWINDOW_TITLE)));
 
     DoMethod(string,         MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, obj, 2, METHOD(Search), MUIF_SearchTextWindow_FromTop);
     DoMethod(case_sensitive, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, obj, 1, METHOD(ToggleCaseSensitivity));

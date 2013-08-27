@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-08-27 Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_MA.c, MUIObjects.c, misc: implemented use of MUIA_Window_ScreenTitle for
+    all windows created by YAM. This will change the title of the screen yam is
+    running on as soon as a window related to YAM is active. This should improve
+    recognition of the currently active window as the screen titlebar will then
+    automatically refer to YAM and thus make it possible that a user identifies
+    by looking at the screen title bar which application is the currently active
+    one. This implements and closes #414.
+
 2013-08-27 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/ConfigWindow.c: added new class for the config window. This is not used

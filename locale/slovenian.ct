@@ -276,8 +276,8 @@ MSG_UsedSoftware
 ; \nThis application uses the following third party software:\n
 ;
 MSG_WebSite
-Najnovej¹e novice o YAMu lahko najdete na podpornem mestu YAMa na spletnem naslovu \e5http://www.yam.ch/
-; The latest news about YAM can be found at the YAM Support Site at \e5http://www.yam.ch/
+Najnovej¹e novice o YAMu lahko najdete na podpornem mestu YAMa na spletnem naslovu \e5http://yam.ch/
+; The latest news about YAM can be found at the YAM Support Site at \e5http://yam.ch/
 ;
 MSG_UserLogin
 Za prijavo kliknite na svoje ime
@@ -812,8 +812,8 @@ MSG_MA_MessageInfo
 ; NAME, ADDRESS, NAME, ADDRESS, SUBJECT, DATE, FILENAME, SIZE
 ;
 MSG_MA_WinTitle
-YAM %s  -  Uporabnik: %s
-; YAM %s  -  User: %s
+YAM %s - Uporabnik: %s
+; YAM %s - User: %s
 ; VERSION, NAME
 ;
 MSG_MA_ToPrefix

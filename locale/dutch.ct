@@ -468,7 +468,7 @@ MSG_MA_CheckSingle
 Check account
 ;
 MSG_MA_WinTitle
-YAM %s  -  Gebruiker: %s
+YAM %s - Gebruiker: %s
 ;
 MSG_MA_ToPrefix
 \ebAan: \en
@@ -5870,7 +5870,7 @@ Dit programma gebruikt de volgende software van derden:
 ;
 MSG_ABOUT_YAM_NEWS
 Het laatste nieuws over YAM kan gevonden worden  op\n\
-de YAM Support Site op \x1B5http://www.yam.ch/\x1Bn
+de YAM Support Site op \x1B5http://yam.ch/\x1Bn
 ;
 MSG_WR_VIEW
 Toon

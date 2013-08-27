@@ -40,17 +40,17 @@ struct FileRequester;
 #define AFF_NOVALID             (1<<4)
 #define AFF_RESOLVEINACTIVE     (1<<5)
 
-Object * MakeButton(const char *txt);
-Object * MakeCheck(const char *label);
-Object * MakeCheckGroup(Object **check, const char *label);
-Object * MakeCycle(const char *const *labels, const char *label);
-Object * MakeInteger(int maxlen, const char *label);
-Object * MakeNumeric(int min, int max, BOOL percent);
-Object * MakePassString(const char *label);
-Object * MakePGPKeyList(Object **st, BOOL secret, const char *label);
-Object * MakeString(int maxlen, const char *label);
-Object * MakeAddressField(Object **string, const char *label, const void *help, int abmode, int winnr, ULONG flags);
-Object * MakeCodesetPop(Object **string, Object **pop);
+Object *MakeButton(const char *txt);
+Object *MakeCheck(const char *label);
+Object *MakeCheckGroup(Object **check, const char *label);
+Object *MakeCycle(const char *const *labels, const char *label);
+Object *MakeInteger(int maxlen, const char *label);
+Object *MakeNumeric(int min, int max, BOOL percent);
+Object *MakePassString(const char *label);
+Object *MakePGPKeyList(Object **st, BOOL secret, const char *label);
+Object *MakeString(int maxlen, const char *label);
+Object *MakeAddressField(Object **string, const char *label, const void *help, int abmode, int winnr, ULONG flags);
+Object *MakeCodesetPop(Object **string, Object **pop);
 Object *MakeVarPop(Object **string, Object **popButton, Object **list, const int mode, const int size, const char *shortcut);
 Object *MakeMimeTypePop(Object **string, const char *desc);
 char ShortCut(const char *label);
@@ -91,6 +91,7 @@ void GetMUIText(char *s, Object *o, size_t len);
 
 BOOL isChildOfGroup(Object *group, Object *child);
 BOOL isChildOfFamily(Object *family, Object *child);
+const char *CreateScreenTitle(char *dst, size_t dstlen, const char *text);
 
 /* ReturnID collecting macros
 ** every COLLECT_ have to be finished with a REISSUE_

@@ -83,7 +83,8 @@ struct Data
   BOOL abort;
   BOOL clearOnEnd;
 
-  char progressText[40];
+  char progressText[SIZE_DEFAULT];
+  char screenTitle[SIZE_DEFAULT];
 };
 */
 
@@ -158,7 +159,6 @@ OVERLOAD(OM_NEW)
 
   if((obj = DoSuperNew(cl, obj,
 
-    MUIA_Window_Title, tr(MSG_FI_FindMessages),
     MUIA_HelpNode, "Windows#Searchwindow",
     MUIA_Window_ID, MAKE_ID('F','I','N','D'),
     WindowContents, VGroup,
@@ -267,7 +267,9 @@ OVERLOAD(OM_NEW)
     set(BT_SELECT,       MUIA_Disabled, TRUE);
     set(BT_READ,         MUIA_Disabled, TRUE);
 
-    set(obj, MUIA_Window_DefaultObject, LV_MAILS);
+    xset(obj, MUIA_Window_DefaultObject, LV_MAILS,
+              MUIA_Window_Title, tr(MSG_FI_FindMessages),
+              MUIA_Window_ScreenTitle, CreateScreenTitle(data->screenTitle, sizeof(data->screenTitle), tr(MSG_FI_FindMessages)));
 
     SetHelp(LV_FOLDERS,       MSG_HELP_FI_LV_FOLDERS);
     SetHelp(BT_ALL,           MSG_HELP_FI_BT_ALL);

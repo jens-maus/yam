@@ -898,7 +898,7 @@ static const char *const MIMEwarn =
   "reader. Following are some URLs where you can find MIME-capable\n"
   "mail programs for common platforms:\n"
   "\n"
-  "  AmigaOS...........: http://www.yam.ch/\n"
+  "  AmigaOS...........: http://yam.ch/\n"
   "  Unix/MacOS/Windows: http://www.mozilla.com/thunderbird/\n"
   "\n"
   "General information about MIME can be found at:\n"

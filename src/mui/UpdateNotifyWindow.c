@@ -68,6 +68,7 @@ struct Data
   Object *downloadButton;
   char *changeLogText;
   char windowTitle[SIZE_DEFAULT];
+  char screenTitle[SIZE_DEFAULT];
   struct TempFile *tempFile;
   struct BusyNode *busy;
   BOOL quiet;
@@ -94,7 +95,6 @@ OVERLOAD(OM_NEW)
     if((obj = DoSuperNew(cl, obj,
 
       MUIA_Window_ID,         MAKE_ID('U','P','D','1'),
-      MUIA_Window_Title,      tr(MSG_UPD_NOTIFICATION_WTITLE),
       MUIA_Window_Height,     MUIV_Window_Height_MinMax(30),
       MUIA_Window_Width,      MUIV_Window_Width_MinMax(30),
       MUIA_Window_RefWindow,  G->MA->GUI.WI,
@@ -251,6 +251,7 @@ OVERLOAD(OM_SET)
           snprintf(data->windowTitle, sizeof(data->windowTitle), "%s - %s", tr(MSG_UPD_NOTIFICATION_WTITLE), buf);
 
           xset(obj, MUIA_Window_Title,         data->windowTitle,
+                    MUIA_Window_ScreenTitle,   CreateScreenTitle(data->screenTitle, sizeof(data->screenTitle), data->windowTitle),
                     MUIA_Window_DefaultObject, data->componentList);
 
           // we also make sure the application in uniconified.

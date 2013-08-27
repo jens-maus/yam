@@ -145,7 +145,8 @@ static void CO_NewPrefsFile(char *fname)
   strlcpy(G->CO_PrefsFile, fname, sizeof(G->CO_PrefsFile));
   snprintf(wtitle, sizeof(wtitle), "%s (%s)", tr(MSG_MA_MConfig), fname);
 
-  set(G->CO->GUI.WI, MUIA_Window_Title, wtitle);
+  xset(G->CO->GUI.WI, MUIA_Window_Title, wtitle,
+                      MUIA_Window_ScreenTitle, CreateScreenTitle(G->CO->screenTitle, sizeof(G->CO->screenTitle), wtitle));
 }
 
 ///
@@ -567,7 +568,7 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
     co->LetterPart = 1;
     co->WriteIndexes = 120; // 2 minutes
     co->ExpungeIndexes = 600; // 10 minutes
-    strlcpy(co->SupportSite, "http://yam.ch/", sizeof(co->SupportSite));
+    strlcpy(co->SupportSite, yamurl, sizeof(co->SupportSite));
     strlcpy(co->UpdateServer, "http://update.yam.ch/", sizeof(co->UpdateServer));
     co->JumpToNewMsg = TRUE;
     co->JumpToIncoming = FALSE;
@@ -2059,7 +2060,7 @@ static struct CO_ClassData *CO_New(void)
     page[cp_Update      ].PageLabel = MSG_CO_CrdUpdate;
 
     data->GUI.WI = WindowObject,
-       MUIA_Window_Title, tr(MSG_MA_MConfig),
+
        MUIA_HelpNode, "Configuration",
        MUIA_Window_Menustrip, MenustripObject,
           MenuChild, MenuObject,
@@ -2133,7 +2134,9 @@ static struct CO_ClassData *CO_New(void)
     {
       DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
 
-      set(data->GUI.WI, MUIA_Window_DefaultObject, data->GUI.NLV_PAGE);
+      xset(data->GUI.WI, MUIA_Window_DefaultObject, data->GUI.NLV_PAGE,
+                         MUIA_Window_Title, tr(MSG_MA_MConfig),
+                         MUIA_Window_ScreenTitle, CreateScreenTitle(data->screenTitle, sizeof(data->screenTitle), tr(MSG_MA_MConfig)));
 
       SetHelp(data->GUI.BT_SAVE,   MSG_HELP_CO_BT_SAVE);
       SetHelp(data->GUI.BT_USE,    MSG_HELP_CO_BT_USE);

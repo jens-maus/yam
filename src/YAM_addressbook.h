@@ -74,10 +74,12 @@ struct AB_GUIData
 struct AB_ClassData  /* address book window */
 {
   struct AB_GUIData    GUI;
+
   enum AddressbookMode Mode;
-  char                 WTitle[SIZE_DEFAULT];
   Object               *parentStringGadget; // in case ABM_CONFIG is used.
   int                  winNumber;           // related write window number
+  char                 windowTitle[SIZE_DEFAULT];
+  char                 screenTitle[SIZE_DEFAULT];
 };
 
 extern struct Hook AB_OpenHook;

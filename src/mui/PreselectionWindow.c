@@ -67,13 +67,13 @@ struct Data
   Object *quitButton;
 
   ULONG mailCount;
+  ULONG accept;
 
   APTR thread;
   struct MailTransferList *mailList;
 
   char progressText[SIZE_DEFAULT];
-
-  ULONG accept;
+  char screenTitle[SIZE_DEFAULT];
 };
 */
 
@@ -89,8 +89,8 @@ enum PreselectionWindowMode
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
-  struct TagItem *tag;
-  const char *titleText = "YAM";
+  struct TagItem *tags = inittags(msg), *tag;
+  char *titleText = NULL;
   Object *transferGroup;
   Object *transferMailList;
   Object *allButton;
@@ -104,18 +104,21 @@ OVERLOAD(OM_NEW)
 
   ENTER();
 
-  if((tag = FindTagItem(MUIA_Window_Title, inittags(msg))) != NULL)
+  while((tag = NextTagItem((APTR)&tags)) != NULL)
   {
-    if((const char *)tag->ti_Data != NULL)
+    switch(tag->ti_Tag)
     {
-      titleText = (const char *)tag->ti_Data;
+      case MUIA_Window_Title:
+      {
+        titleText = (char *)tag->ti_Data;
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
     }
-    tag->ti_Tag = TAG_IGNORE;
   }
 
   if((obj = DoSuperNew(cl, obj,
 
-    MUIA_Window_Title,       titleText,
     MUIA_Window_ID,          MAKE_ID('P','R','E','S'),
     MUIA_Window_CloseGadget, TRUE,
     WindowContents, VGroup,
@@ -165,6 +168,9 @@ OVERLOAD(OM_NEW)
 
     data->thread = (APTR)GetTagData(ATTR(Thread), (IPTR)NULL, inittags(msg));
     data->mailList = (struct MailTransferList *)GetTagData(ATTR(Mails), (IPTR)NULL, inittags(msg));
+
+    xset(obj, MUIA_Window_Title, titleText != NULL ? titleText : "YAM",
+              MUIA_Window_ScreenTitle, CreateScreenTitle(data->screenTitle, sizeof(data->screenTitle), titleText));
 
     // try to restore any previously remembered NList layout
     if((ds = Base64DataspaceObject,

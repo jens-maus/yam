@@ -644,7 +644,7 @@ Vérifier une BAL
 ;
 MSG_MA_WinTitle
 YAM %s - Utilisateur : %s
-; YAM %s  -  User: %s
+; YAM %s - User: %s
 ; VERSION, NAME
 ;
 MSG_MA_ToPrefix
@@ -7803,9 +7803,9 @@ Ce programme utilise les logiciels tiers suivants :
 MSG_ABOUT_YAM_NEWS
 Les dernières informations concernant YAM peuvent\n\
 être trouvées sur le site officiel de YAM sur\n\
-\0335http://www.yam.ch/\033n
+\0335http://yam.ch/\033n
 ; The latest news about YAM can be found at the\n\
-; YAM Support Site at \0335http://www.yam.ch/\033n
+; YAM Support Site at \0335http://yam.ch/\033n
 ;
 MSG_WR_VIEW
 Affichage

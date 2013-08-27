@@ -350,6 +350,7 @@ static struct DI_ClassData *DI_New(void)
       data->GUI.SL_EDIT = ScrollbarObject, End;
       data->GUI.WI = WindowObject,
          MUIA_Window_Title, tr(MSG_WR_Dictionary),
+         MUIA_Window_ScreenTitle, CreateScreenTitle(data->ScreenTitle, sizeof(data->ScreenTitle), tr(MSG_WR_Dictionary)),
          MUIA_HelpNode, "Windows#WritewindowGlossary",
          MUIA_Window_ID, MAKE_ID('D','I','C','T'),
          WindowContents, VGroup,

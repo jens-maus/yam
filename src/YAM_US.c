@@ -692,6 +692,7 @@ static struct US_ClassData *US_New(BOOL supervisor)
     data->Supervisor = supervisor;
     data->GUI.WI = WindowObject,
        MUIA_Window_Title, tr(MSG_MA_MUsers),
+       MUIA_Window_ScreenTitle, CreateScreenTitle(data->ScreenTitle, sizeof(data->ScreenTitle), tr(MSG_MA_MUsers)),
        MUIA_HelpNode, "Windows#MultipleUsers",
        MUIA_Window_ID, MAKE_ID('U','S','E','R'),
        WindowContents, VGroup,
@@ -734,6 +735,8 @@ static struct US_ClassData *US_New(BOOL supervisor)
 
     if(data->GUI.WI != NULL)
     {
+      DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
+
       SetHelp(data->GUI.ST_USER   ,MSG_HELP_US_ST_USER);
       SetHelp(data->GUI.ST_MAILDIR,MSG_HELP_US_ST_MAILDIR);
       SetHelp(data->GUI.ST_PASSWD ,MSG_HELP_US_ST_PASSWD);
@@ -743,7 +746,7 @@ static struct US_ClassData *US_New(BOOL supervisor)
       SetHelp(data->GUI.CH_ROOT   ,MSG_HELP_US_CH_ROOT);
       SetHelp(data->GUI.BT_ADD    ,MSG_HELP_US_BT_ADD);
       SetHelp(data->GUI.BT_DEL    ,MSG_HELP_US_BT_DEL);
-      DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
+
       DoMethod(data->GUI.LV_USERS,  MUIM_Notify,MUIA_NList_Active,       MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&US_GetUSEntryHook);
       DoMethod(data->GUI.ST_USER,   MUIM_Notify,MUIA_String_Contents,    MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&US_PutUSEntryHook);
       DoMethod(data->GUI.ST_MAILDIR,MUIM_Notify,MUIA_String_Contents,    MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&US_PutUSEntryHook);

@@ -41,12 +41,20 @@
 
 #include "Debug.h"
 
+/* CLASSDATA
+struct Data
+{
+  char screenTitle[SIZE_DEFAULT];
+};
+*/
+
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
   struct TagItem *tags = inittags(msg), *tag;
   char *bodyText = NULL;
+  char *titleText = NULL;
   BOOL active = TRUE;
   Object *parent = NULL;
   Object *okButton = NULL;
@@ -57,6 +65,13 @@ OVERLOAD(OM_NEW)
   {
     switch(tag->ti_Tag)
     {
+      case MUIA_Window_Title:
+      {
+        titleText = (char *)tag->ti_Data;
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
+    
       case MUIA_Window_RefWindow:
       {
         parent = (Object *)tag->ti_Data;
@@ -99,12 +114,16 @@ OVERLOAD(OM_NEW)
 
     TAG_MORE, inittags(msg))) != NULL)
   {
+    GETDATA;
+
     DoMethod(G->App, OM_ADDMEMBER, obj);
 
     DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, MUIV_Notify_Application, 5, MUIM_Application_PushMethod, parent, 2, MUIM_MainWindow_DisposeSubWindow, obj);
     DoMethod(okButton, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 5, MUIM_Application_PushMethod, parent, 2, MUIM_MainWindow_DisposeSubWindow, obj);
 
     xset(obj, MUIA_Window_DefaultObject, okButton,
+              MUIA_Window_Title, titleText,
+              MUIA_Window_ScreenTitle, CreateScreenTitle(data->screenTitle, sizeof(data->screenTitle), titleText),
               MUIA_Window_Open, TRUE);
   }
 

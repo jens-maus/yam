@@ -32,17 +32,18 @@
 
 struct ER_GUIData
 {
-   Object *WI;
-   Object *LV_ERROR;
-   Object *BT_NEXT;
-   Object *NB_ERROR;
-   Object *BT_PREV;
-   char sliderLabel[SIZE_SMALL];
+  Object *WI;
+  Object *LV_ERROR;
+  Object *BT_NEXT;
+  Object *NB_ERROR;
+  Object *BT_PREV;
 };
 
 struct ER_ClassData  /* error window */
 {
-   struct ER_GUIData GUI;
+  struct ER_GUIData GUI;
+  char SliderLabel[SIZE_SMALL];
+  char ScreenTitle[SIZE_DEFAULT];
 };
 
 void ER_NewError(const char *message, ...);

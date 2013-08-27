@@ -51,8 +51,10 @@
 /* CLASSDATA
 struct Data
 {
-  LONG result;
   Object *listObj;
+
+  LONG result;
+  char screenTitle[SIZE_DEFAULT];
 };
 */
 
@@ -124,7 +126,6 @@ OVERLOAD(OM_NEW)
 
   if((obj = DoSuperNew(cl, obj,
 
-    MUIA_Window_Title,      (titleText != NULL) ? titleText : (char *)"YAM",
     MUIA_Window_ID,         MAKE_ID('A','R','E','Q'),
     MUIA_Window_RefWindow,  rmData->readWindow,
     MUIA_Window_LeftEdge,   MUIV_Window_LeftEdge_Centered,
@@ -190,7 +191,9 @@ OVERLOAD(OM_NEW)
     DoMethod(yesButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_AttachmentRequestWindow_FinishInput, 1);
     DoMethod(noButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_AttachmentRequestWindow_FinishInput, 0);
 
-    set(obj, MUIA_Window_DefaultObject, listObj);
+    xset(obj, MUIA_Window_DefaultObject, listObj,
+              MUIA_Window_Title, titleText != NULL ? titleText : "YAM",
+              MUIA_Window_ScreenTitle, CreateScreenTitle(data->screenTitle, sizeof(data->screenTitle), titleText));
   }
 
   RETURN(obj);

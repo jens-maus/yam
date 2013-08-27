@@ -54,10 +54,9 @@ struct Data
 {
   char *aboutText1;
   char *aboutText2;
+  char screenTitle[SIZE_DEFAULT];
 };
 */
-
-#define YAM_URL "http://yam.ch/"
 
 /* Private Functions */
 /// UrlObject
@@ -70,13 +69,13 @@ static Object *UrlObject(void)
 
   // try Urltext.mcc first
   if((obj = UrltextObject,
-    MUIA_Urltext_Url, YAM_URL,
+    MUIA_Urltext_Url, yamurl,
     End) == NULL)
   {
     // fall back to a simple text object
     obj = TextObject,
       MUIA_Text_PreParse, "\033c\033u\0335",
-      MUIA_Text_Contents, YAM_URL,
+      MUIA_Text_Contents, yamurl,
       MUIA_Text_Copy, FALSE,
       MUIA_InputMode, MUIV_InputMode_RelVerify,
     End;
@@ -310,7 +309,6 @@ OVERLOAD(OM_NEW)
   // create the main window object
   if((obj = DoSuperNew(cl, obj,
 
-    MUIA_Window_Title,        tr(MSG_ABOUTYAM),
     MUIA_Window_CloseGadget,  FALSE,
     MUIA_Window_SizeGadget,   FALSE,
     MUIA_Window_LeftEdge,     MUIV_Window_LeftEdge_Centered,
@@ -379,7 +377,9 @@ OVERLOAD(OM_NEW)
     DoMethod(bt_gopage, MUIM_Notify, MUIA_Pressed, FALSE, obj, 1, MUIM_Aboutwindow_GotoSupportPage);
 
     xset(obj, MUIA_Window_Activate,      TRUE,
-              MUIA_Window_DefaultObject, bt_okay);
+              MUIA_Window_DefaultObject, bt_okay,
+              MUIA_Window_Title,         tr(MSG_ABOUTYAM),
+              MUIA_Window_ScreenTitle,   CreateScreenTitle(data->screenTitle, sizeof(data->screenTitle), tr(MSG_ABOUTYAM)));
   }
 
   RETURN((IPTR)obj);
@@ -414,7 +414,7 @@ DECLARE(GotoSupportPage)
 {
   ENTER();
 
-  GotoURL(YAM_URL, FALSE);
+  GotoURL(yamurl, FALSE);
 
   RETURN(0);
   return 0;

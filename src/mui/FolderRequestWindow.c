@@ -50,6 +50,8 @@ struct Data
 {
   Object *listObj;
   ULONG result;
+
+  char screenTitle[SIZE_DEFAULT];
 };
 */
 
@@ -121,7 +123,6 @@ OVERLOAD(OM_NEW)
 
   if((obj = DoSuperNew(cl, obj,
 
-    MUIA_Window_Title,     (titleText != NULL) ? titleText : (char *)"YAM",
     MUIA_Window_LeftEdge,  MUIV_Window_LeftEdge_Centered,
     MUIA_Window_TopEdge,   MUIV_Window_TopEdge_Centered,
     MUIA_Window_Height,    MUIV_Window_Height_MinMax(30),
@@ -156,6 +157,9 @@ OVERLOAD(OM_NEW)
 
     data->listObj = listObj;
     data->result = 0;
+
+    xset(obj, MUIA_Window_Title, titleText != NULL ? titleText : "YAM",
+              MUIA_Window_ScreenTitle, CreateScreenTitle(data->screenTitle, sizeof(data->screenTitle), titleText));
 
     DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, obj, 2, MUIM_FolderRequestWindow_FinishInput, 0);
     DoMethod(yesButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_FolderRequestWindow_FinishInput, 1);

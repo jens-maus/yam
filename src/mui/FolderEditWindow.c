@@ -95,7 +95,9 @@ struct Data
   Object *ST_HELLOTEXT;
   Object *ST_BYETEXT;
   Object *GR_MLPRORPERTIES;
+
   struct Folder *folder;
+  char screenTitle[SIZE_DEFAULT];
 };
 */
 
@@ -526,7 +528,7 @@ OVERLOAD(OM_NEW)
   sortopt[7] = NULL;
 
   if((obj = DoSuperNew(cl, obj,
-    MUIA_Window_Title, tr(MSG_FO_EditFolder),
+
     MUIA_HelpNode,  "Windows#Foldersettings",
     MUIA_Window_ID, MAKE_ID('F','O','L','D'),
     MUIA_Window_LeftEdge, MUIV_Window_LeftEdge_Centered,
@@ -636,6 +638,9 @@ OVERLOAD(OM_NEW)
     data->folder = (struct Folder *)GetTagData(ATTR(Folder), (ULONG)NULL, inittags(msg));
 
     DoMethod(G->App, OM_ADDMEMBER, obj);
+
+    xset(obj, MUIA_Window_Title, tr(MSG_FO_EditFolder),
+              MUIA_Window_ScreenTitle, CreateScreenTitle(data->screenTitle, sizeof(data->screenTitle), tr(MSG_FO_EditFolder)));
 
     set(ST_FPATH, MUIA_String_Reject, INVALID_PATH_CHARACTERS);
     set(CH_STATS, MUIA_Disabled, C->WBAppIcon == FALSE && C->DockyIcon == FALSE);

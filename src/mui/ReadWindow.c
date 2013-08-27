@@ -102,7 +102,8 @@ struct Data
   Object *statusBar;
   Object *readMailGroup;
 
-  char  title[SIZE_SUBJECT+1];
+  char  windowTitle[SIZE_SUBJECT+1];
+  char  screenTitle[SIZE_SUBJECT+1];
   int   lastDirection;
   int   windowNumber;
 };
@@ -341,7 +342,6 @@ OVERLOAD(OM_NEW)
   // create the read window object
   if(menuStripObject != NULL && (obj = DoSuperNew(cl, obj,
 
-    MUIA_Window_Title, "",
     MUIA_HelpNode, "Windows#Readwindow",
     MUIA_Window_ID, MAKE_ID('R','D','W', data->windowNumber),
     MUIA_Window_Menustrip, menuStripObject,
@@ -574,7 +574,7 @@ DECLARE(ReadMail) // struct Mail *mail
   BOOL hasAttach    = isMP_MixedMail(mail);
   BOOL inSpamFolder = isRealMail && isSpamFolder(folder);
   BOOL result = FALSE;
-  BOOL initialCall = data->title[0] == '\0'; // TRUE if this is the first call
+  BOOL initialCall = IsStrEmpty(data->windowTitle); // TRUE if this is the first call
   BOOL prevMailAvailable = FALSE;
   BOOL nextMailAvailable = FALSE;
 
@@ -671,31 +671,31 @@ DECLARE(ReadMail) // struct Mail *mail
     if(C->MultipleReadWindows == TRUE ||
        rmData == G->ActiveRexxRMData)
     {
-      titleLen = snprintf(data->title, sizeof(data->title), "[%d] %s %s: ", data->windowNumber+1,
-                                                            isSentMail ? tr(MSG_To) : tr(MSG_From),
-                                                            isSentMail ? AddrName(mail->To) : AddrName(mail->From));
+      titleLen = snprintf(data->windowTitle, sizeof(data->windowTitle), "[%d] %s %s: ", data->windowNumber+1,
+                                                                                        isSentMail ? tr(MSG_To) : tr(MSG_From),
+                                                                                        isSentMail ? AddrName(mail->To) : AddrName(mail->From));
     }
     else
     {
-      titleLen = snprintf(data->title, sizeof(data->title), "%s %s: ",
-                                                            isSentMail ? tr(MSG_To) : tr(MSG_From),
-                                                            isSentMail ? AddrName(mail->To) : AddrName(mail->From));
+      titleLen = snprintf(data->windowTitle, sizeof(data->windowTitle), "%s %s: ", isSentMail ? tr(MSG_To) : tr(MSG_From),
+                                                                                   isSentMail ? AddrName(mail->To) : AddrName(mail->From));
     }
 
-    if(strlen(mail->Subject)+titleLen > sizeof(data->title)-1)
+    if(strlen(mail->Subject)+titleLen > sizeof(data->windowTitle)-1)
     {
-      if(titleLen < sizeof(data->title)-4)
+      if(titleLen < sizeof(data->windowTitle)-4)
       {
-        strlcat(data->title, mail->Subject, sizeof(data->title)-titleLen-4);
-        strlcat(data->title, "...", sizeof(data->title)); // signals that the string was cut.
+        strlcat(data->windowTitle, mail->Subject, sizeof(data->windowTitle)-titleLen-4);
+        strlcat(data->windowTitle, "...", sizeof(data->windowTitle)); // signals that the string was cut.
       }
       else
-        strlcat(&data->title[sizeof(data->title)-5], "...", 4);
+        strlcat(&data->windowTitle[sizeof(data->windowTitle)-5], "...", 4);
     }
     else
-      strlcat(data->title, mail->Subject, sizeof(data->title));
+      strlcat(data->windowTitle, mail->Subject, sizeof(data->windowTitle));
 
-    set(obj, MUIA_Window_Title, data->title);
+    xset(obj, MUIA_Window_Title, data->windowTitle,
+              MUIA_Window_ScreenTitle, CreateScreenTitle(data->screenTitle, sizeof(data->screenTitle), data->windowTitle));
 
     // enable some Menuitems depending on the read mail
     set(data->MI_PGP,     MUIA_Menu_Enabled, hasPGPKey || hasPGPSig || isPGPEnc);

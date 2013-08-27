@@ -50,6 +50,8 @@ struct Data
   Object *rememberObj;
   ULONG maxLength;
   ULONG result;
+
+  char screenTitle[SIZE_DEFAULT];
 };
 */
 
@@ -95,7 +97,6 @@ OVERLOAD(OM_NEW)
 
   if((obj = DoSuperNew(cl, obj,
 
-    MUIA_Window_Title,     tr(MSG_UT_PGPPASSREQ_TITLE),
     MUIA_Window_LeftEdge,  MUIV_Window_LeftEdge_Centered,
     MUIA_Window_TopEdge,   MUIV_Window_TopEdge_Centered,
     MUIA_Window_Width,     MUIV_Window_Width_MinMax(20),
@@ -145,7 +146,10 @@ OVERLOAD(OM_NEW)
 
     set(stringObj, MUIA_String_Contents, stringContents);
     set(rememberObj, MUIA_Selected, C->PGPPassInterval > 0);
-    set(obj, MUIA_Window_ActiveObject, stringObj);
+
+    xset(obj, MUIA_Window_ActiveObject, stringObj,
+              MUIA_Window_Title,        tr(MSG_UT_PGPPASSREQ_TITLE),
+              MUIA_Window_ScreenTitle,  CreateScreenTitle(data->screenTitle, sizeof(data->screenTitle), tr(MSG_UT_PGPPASSREQ_TITLE)));
   }
 
   RETURN(obj);

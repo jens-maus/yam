@@ -57,6 +57,7 @@ struct DI_ClassData  /* glossary window */
   struct Dict *     OldEntry;
   Object *          writeWindow;
   BOOL              Modified;
+  char              ScreenTitle[SIZE_DEFAULT];
 };
 
 extern struct Hook DI_OpenHook;

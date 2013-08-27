@@ -49,6 +49,7 @@
 #include "YAM_addressbook.h"
 #include "YAM_config.h"
 #include "YAM_error.h"
+#include "YAM_global.h"
 #include "YAM_read.h"
 
 #include "mui/CharsetPopupList.h"
@@ -974,6 +975,29 @@ BOOL isChildOfFamily(Object *family, Object *child)
 
   RETURN(isChild);
   return isChild;
+}
+
+///
+/// CreateScreenTitle
+// constructs a screen title that always starts with "YAM - XXXXXX" where XXXXXX
+// corresponds to the text supplied
+const char *CreateScreenTitle(char *dst, size_t dstlen, const char *text)
+{
+  char *result = NULL;
+  ENTER();
+
+  if(dst != NULL && dstlen > 0)
+  {
+    if(text != NULL)
+      snprintf(dst, dstlen, "YAM %s - %s", yamver, text);
+    else
+      snprintf(dst, dstlen, "YAM %s", yamver);
+
+    result = dst;
+  }
+
+  RETURN(result);
+  return result;
 }
 
 ///

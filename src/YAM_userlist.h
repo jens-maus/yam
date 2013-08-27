@@ -34,24 +34,25 @@
 
 struct US_GUIData
 {
-   Object *WI;
-   Object *LV_USERS;
-   Object *BT_ADD;
-   Object *BT_DEL;
-   Object *PO_MAILDIR;
-   Object *ST_MAILDIR;
-   Object *ST_USER;
-   Object *ST_PASSWD;
-   Object *CH_USEDICT;
-   Object *CH_USEADDR;
-   Object *CH_CLONE;
-   Object *CH_ROOT;
+  Object *WI;
+  Object *LV_USERS;
+  Object *BT_ADD;
+  Object *BT_DEL;
+  Object *PO_MAILDIR;
+  Object *ST_MAILDIR;
+  Object *ST_USER;
+  Object *ST_PASSWD;
+  Object *CH_USEDICT;
+  Object *CH_USEADDR;
+  Object *CH_CLONE;
+  Object *CH_ROOT;
 };
 
 struct US_ClassData  /* user list window */
 {
-   struct US_GUIData GUI;
-   BOOL              Supervisor;
+  struct US_GUIData GUI;
+  BOOL Supervisor;
+  char ScreenTitle[SIZE_DEFAULT];
 };
 
 struct User

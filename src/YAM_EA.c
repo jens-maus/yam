@@ -109,7 +109,9 @@ int EA_Init(enum ABEntry_Type type, struct ABEntry *ab)
       break;
     }
 
-    set(ea->GUI.WI, MUIA_Window_Title, title);
+    xset(ea->GUI.WI, MUIA_Window_Title, title,
+                     MUIA_Window_ScreenTitle, CreateScreenTitle(ea->ScreenTitle, sizeof(ea->ScreenTitle), title));
+
     if(SafeOpenWindow(ea->GUI.WI) == TRUE)
     {
       set(ea->GUI.WI, MUIA_Window_ActiveObject, ea->GUI.ST_ALIAS);
@@ -832,6 +834,7 @@ static struct EA_ClassData *EA_New(int winnum, int type)
 
     data->GUI.WI = WindowObject,
        MUIA_Window_Title, "",
+       MUIA_Window_ScreenTitle, "",
        MUIA_HelpNode, "Windows#AddressbookEnteringaddresses",
        MUIA_Window_ID, MAKE_ID('E','D','A','D'),
        WindowContents, VGroup,

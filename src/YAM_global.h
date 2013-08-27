@@ -42,6 +42,7 @@ extern const char* const yamversiondate;
 extern const char* const yamcopyright;
 extern const char* const yamfullcopyright;
 extern const char* const yamcompiler;
+extern const char* const yamurl;
 extern const unsigned long yamversiondays;
 extern const unsigned long yamsvnrev;
 extern struct WBStartup * WBmsg;

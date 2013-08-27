@@ -611,8 +611,8 @@ Verificar cuenta de correo
 ; Check single account
 ;
 MSG_MA_WinTitle
-YAM %s  -  Usuario: %s
-; YAM %s  -  User: %s
+YAM %s - Usuario: %s
+; YAM %s - User: %s
 ; VERSION, NAME
 ;
 MSG_MA_ToPrefix
@@ -6579,8 +6579,8 @@ Este programa utiliza el siguiente software de terceros:
 ; This program uses the following third party software:
 ;
 MSG_ABOUT_YAM_NEWS
-Las últimas noticias de YAM se pueden encontrar en\nla página de Soporte de YAM\e5http://www.yam.ch/\en
-; The latest news about YAM can be found at the\nYAM Support Site at \0335http://www.yam.ch/\033n
+Las últimas noticias de YAM se pueden encontrar en\nla página de Soporte de YAM\e5http://yam.ch/\en
+; The latest news about YAM can be found at the\nYAM Support Site at \0335http://yam.ch/\033n
 ;
 MSG_WR_VIEW
 Ver

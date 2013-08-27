@@ -50,6 +50,7 @@ struct Data
   LONG result;
   char *titleText;
   char *buttons;
+  char screenTitle[SIZE_DEFAULT];
 };
 */
 
@@ -144,7 +145,6 @@ OVERLOAD(OM_NEW)
 
   if((obj = DoSuperNew(cl, obj,
 
-    MUIA_Window_Title,        (titleText != NULL) ? titleText : (char *)"YAM",
     MUIA_Window_LeftEdge,     MUIV_Window_LeftEdge_Centered,
     MUIA_Window_TopEdge,      MUIV_Window_TopEdge_Centered,
     MUIA_Window_Width,        windowWidth,
@@ -168,6 +168,9 @@ OVERLOAD(OM_NEW)
 
     data->titleText = titleText;
     data->buttons = buttons;
+
+    xset(obj, MUIA_Window_Title, data->titleText != NULL ? data->titleText : "YAM",
+              MUIA_Window_ScreenTitle, CreateScreenTitle(data->screenTitle, sizeof(data->screenTitle), titleText));
 
     // prepare the group for the change.
     if(buttons != NULL && DoMethod(buttonGroup, MUIM_Group_InitChange))

@@ -50,6 +50,7 @@ struct Data
   ULONG maxLength;
   ULONG result;
   APTR thread;
+  char screenTitle[SIZE_DEFAULT];
 };
 */
 
@@ -145,7 +146,6 @@ OVERLOAD(OM_NEW)
 
   if((obj = DoSuperNew(cl, obj,
 
-    MUIA_Window_Title,     (titleText != NULL) ? titleText : (char *)"YAM",
     MUIA_Window_LeftEdge,  MUIV_Window_LeftEdge_Centered,
     MUIA_Window_TopEdge,   MUIV_Window_TopEdge_Centered,
     MUIA_Window_Width,     MUIV_Window_Width_MinMax(20),
@@ -186,7 +186,10 @@ OVERLOAD(OM_NEW)
       DoMethod(altButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(FinishInput), 2);
 
     set(stringObj, MUIA_String_Contents, stringContents);
-    set(obj, MUIA_Window_ActiveObject, stringObj);
+
+    xset(obj, MUIA_Window_ActiveObject, stringObj,
+              MUIA_Window_Title, titleText != NULL ? titleText : "YAM",
+              MUIA_Window_ScreenTitle, CreateScreenTitle(data->screenTitle, sizeof(data->screenTitle), titleText));
   }
 
   RETURN((IPTR)obj);

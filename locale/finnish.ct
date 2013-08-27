@@ -323,8 +323,8 @@ MSG_UsedSoftware
 ; \nThis application uses the following third party software:\n
 ;
 MSG_WebSite
-Tuoreimmat YAM-uutiset löytyvät YAM-tukisivuilta osoitteesta \e5http://www.yam.ch
-; The latest news about YAM can be found at the YAM Support Site at \e5http://www.yam.ch
+Tuoreimmat YAM-uutiset löytyvät YAM-tukisivuilta osoitteesta \e5http://yam.ch/
+; The latest news about YAM can be found at the YAM Support Site at \e5http://yam.ch/
 ;
 MSG_UserLogin
 Kirjaudu klikkaamalla nimeäsi
@@ -822,7 +822,7 @@ MSG_MA_MessageInfo
 ;
 MSG_MA_WinTitle
 YAM %s - Käyttäjä: %s
-; YAM %s  -  User: %s
+; YAM %s - User: %s
 ; VERSION, NAME
 ;
 MSG_MA_ToPrefix

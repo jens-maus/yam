@@ -634,8 +634,8 @@ Verifica un singolo account
 ; Check single account
 ;
 MSG_MA_WinTitle
-YAM %s  -  Utente: %s
-; YAM %s  -  User: %s
+YAM %s - Utente: %s
+; YAM %s - User: %s
 ; VERSION, NAME
 ;
 MSG_MA_ToPrefix
@@ -7594,9 +7594,9 @@ Questo programma usa i seguenti software di terze parti:
 MSG_ABOUT_YAM_NEWS
 Le ultime novità circa lo sviluppo di questo software\n\
 possono essere trovate nel sito ufficiale di YAM\n\
-all'indirizzo internet \0335http://www.yam.ch/\033n
+all'indirizzo internet \0335http://yam.ch/\033n
 ; The latest news about YAM can be found at the\n\
-; YAM Support Site at \0335http://www.yam.ch/\033n
+; YAM Support Site at \0335http://yam.ch/\033n
 ;
 MSG_WR_VIEW
 Visualizza

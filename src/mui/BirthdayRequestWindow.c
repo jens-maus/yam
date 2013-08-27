@@ -53,6 +53,8 @@
 struct Data
 {
   Object *skipTodayCheckbox;
+
+  char screenTitle[SIZE_DEFAULT];
 };
 */
 
@@ -303,7 +305,6 @@ OVERLOAD(OM_NEW)
 
       if((obj = DoSuperNew(cl, obj,
 
-        MUIA_Window_Title,       tr(MSG_AB_BirthdayReminder),
         MUIA_Window_LeftEdge,    MUIV_Window_LeftEdge_Centered,
         MUIA_Window_TopEdge,     MUIV_Window_TopEdge_Centered,
         MUIA_Window_Width,       MUIV_Window_Width_MinMax(0),
@@ -353,8 +354,10 @@ OVERLOAD(OM_NEW)
         DoMethod(yesButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 3, METHOD(FinishInput), alias, TRUE);
         DoMethod(noButton,  MUIM_Notify, MUIA_Pressed, FALSE, obj, 3, METHOD(FinishInput), alias, FALSE);
 
-        xset(obj, MUIA_Window_Activate, TRUE,
-                  MUIA_Window_Open,     TRUE);
+        xset(obj, MUIA_Window_Activate,    TRUE,
+                  MUIA_Window_Title,       tr(MSG_AB_BirthdayReminder),
+                  MUIA_Window_ScreenTitle, CreateScreenTitle(data->screenTitle, sizeof(data->screenTitle), tr(MSG_AB_BirthdayReminder)),
+                  MUIA_Window_Open,        TRUE);
 
         free(buf);
       }

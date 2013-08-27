@@ -378,8 +378,8 @@ MSG_UsedSoftware
 ; \nThis application uses the following third party software:\n
 ;
 MSG_WebSite
-De siste nyhetene om YAM kan bli funnet på YAM Brukerstøtte Side ved \e5http://www.yam.ch/
-; The latest news about YAM can be found at the YAM Support Site at \e5http://www.yam.ch/
+De siste nyhetene om YAM kan bli funnet på YAM Brukerstøtte Side ved \e5http://yam.ch/
+; The latest news about YAM can be found at the YAM Support Site at \e5http://yam.ch/
 ;
 MSG_UserLogin
 Klikk ditt navn for å logge inn
@@ -930,8 +930,8 @@ Str.: %lD bytes
 ; NAME, ADDRESS, NAME, ADDRESS, SUBJECT, DATE, FILENAME, SIZE
 ;
 MSG_MA_WinTitle
-YAM %s  -  Bruker: %s
-; YAM %s  -  User: %s
+YAM %s - Bruker: %s
+; YAM %s - User: %s
 ; VERSION, NAME
 ;
 MSG_MA_ToPrefix

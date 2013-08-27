@@ -2975,8 +2975,10 @@ HOOKPROTONHNO(AB_OpenFunc, void, LONG *arg)
   DoMethod(ab->GUI.TB_TOOLBAR, MUIM_AddrBookToolbar_UpdateControls);
 
 
-  snprintf(ab->WTitle, sizeof(ab->WTitle), "%s %s", tr(MSG_MA_MAddrBook), md);
-  set(ab->GUI.WI, MUIA_Window_Title, ab->WTitle);
+  snprintf(ab->windowTitle, sizeof(ab->windowTitle), "%s %s", tr(MSG_MA_MAddrBook), md);
+
+  xset(ab->GUI.WI, MUIA_Window_Title, ab->windowTitle,
+                   MUIA_Window_ScreenTitle, CreateScreenTitle(ab->screenTitle, sizeof(ab->screenTitle), ab->windowTitle));
 
   SafeOpenWindow(ab->GUI.WI);
 

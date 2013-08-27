@@ -72,9 +72,11 @@ struct CO_GUIData
 struct CO_ClassData  /* configuration window */
 {
   struct CO_GUIData GUI;
+
   enum ConfigPage VisiblePage;
   BOOL Visited[cp_Max];
   BOOL UpdateAll;
+  char screenTitle[SIZE_DEFAULT];
 };
 
 /*** RxHook structure ***/

@@ -206,7 +206,7 @@ Este programa usa o seguinte software externo:\n\
 
 ;
 MSG_WebSite
-As novidades mais recentes acerca do YAM encontram-se no site de suporte do YAM em \e5http://www.yam.ch
+As novidades mais recentes acerca do YAM encontram-se no site de suporte do YAM em \e5http://yam.ch/
 ;
 MSG_UserLogin
 Clique no seu nome para aceder à sua conta:
@@ -577,7 +577,7 @@ Nome do Ficheiro: %s\n\
 Tamanho: %ld bytes
 ;
 MSG_MA_WinTitle
-YAM %s  -  Utilizador: %s
+YAM %s - Utilizador: %s
 ;
 MSG_MA_ToPrefix
 \ebPara: \en

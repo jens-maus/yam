@@ -67,6 +67,7 @@ struct EA_ClassData  /* address book entry window */
   int               Type;
   int               EntryPos;
   char              PhotoName[SIZE_PATHFILE];
+  char              ScreenTitle[SIZE_DEFAULT];
 };
 
 #define AddrName(abentry) ((abentry).RealName[0]?(abentry).RealName:(abentry).Address)

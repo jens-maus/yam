@@ -150,13 +150,14 @@ static void ShowMessage(BOOL isError, const char *message, va_list args)
   if(IsMainThread() == TRUE)
   {
     // update the numeric button to contain the new number of pending errors
-    snprintf(G->ER->GUI.sliderLabel, sizeof(G->ER->GUI.sliderLabel), SLIDER_FORMAT, tr(MSG_ErrorReq), G->ER_NumErr);
+    snprintf(G->ER->SliderLabel, sizeof(G->ER->SliderLabel), SLIDER_FORMAT, tr(MSG_ErrorReq), G->ER_NumErr);
+
     // set the numeric button's new limits, but don't trigger any notifications
     xset(G->ER->GUI.NB_ERROR, MUIA_NoNotify,       TRUE,
                               MUIA_Numeric_Min,    1,
                               MUIA_Numeric_Max,    G->ER_NumErr,
                               MUIA_Numeric_Value,  G->ER_NumErr,
-                              MUIA_Numeric_Format, G->ER->GUI.sliderLabel);
+                              MUIA_Numeric_Format, G->ER->SliderLabel);
     // show the current message
     D(DBF_ALWAYS, "showing %s message #%ld '%s'", isError ? "error" : "warning", G->ER_NumErr, SafeStr(G->ER_Message[G->ER_NumErr-1]));
     set(G->ER->GUI.LV_ERROR, MUIA_NFloattext_Text, G->ER_Message[G->ER_NumErr-1]);
@@ -276,12 +277,14 @@ static struct ER_ClassData *ER_New(void)
 
   if((data = calloc(1, sizeof(struct ER_ClassData))) != NULL)
   {
-    APTR bt_close, bt_clear;
+    Object *bt_close;
+    Object *bt_clear;
 
-    snprintf(data->GUI.sliderLabel, sizeof(data->GUI.sliderLabel), SLIDER_FORMAT, tr(MSG_ErrorReq), 0);
+    snprintf(data->SliderLabel, sizeof(data->SliderLabel), SLIDER_FORMAT, tr(MSG_ErrorReq), 0);
 
     data->GUI.WI = WindowObject,
        MUIA_Window_Title, tr(MSG_ER_ErrorMessages),
+       MUIA_Window_ScreenTitle, CreateScreenTitle(data->ScreenTitle, sizeof(data->ScreenTitle), tr(MSG_ER_ErrorMessages)),
        MUIA_Window_ID, MAKE_ID('E','R','R','O'),
        WindowContents, VGroup,
           Child, HGroup,
@@ -290,7 +293,7 @@ static struct ER_ClassData *ER_New(void)
                 MUIA_Numeric_Min,    1,
                 MUIA_Numeric_Max,    1,
                 MUIA_Numeric_Value,  1,
-                MUIA_Numeric_Format, data->GUI.sliderLabel,
+                MUIA_Numeric_Format, data->SliderLabel,
                 MUIA_CycleChain,     TRUE,
              End,
              Child, data->GUI.BT_NEXT = MakeButton(tr(MSG_ER_NextError)),

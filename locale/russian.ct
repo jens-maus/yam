@@ -274,8 +274,8 @@ MSG_UsedSoftware
 ;
 ;
 MSG_WebSite
-Последние новости о YAM могут быть найдены на сайте поддержки YAM \x1B5http://www.yam.ch/
-;The latest news about YAM can be found at the YAM Support Site at \e5http://www.yam.ch/
+Последние новости о YAM могут быть найдены на сайте поддержки YAM \x1B5http://yam.ch/
+;The latest news about YAM can be found at the YAM Support Site at \e5http://yam.ch/
 ;
 MSG_UserLogin
 Укажите ваше имя для входа
@@ -867,8 +867,8 @@ MSG_MA_MessageInfo
 ;NAME, ADDRESS, NAME, ADDRESS, SUBJECT, DATE, FILENAME, SIZE
 ;
 MSG_MA_WinTitle
-YAM %s  -  Пользователь: %s
-; YAM %s  -  User: %s
+YAM %s - Пользователь: %s
+; YAM %s - User: %s
 ;
 ;VERSION, NAME
 ;

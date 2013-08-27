@@ -74,7 +74,8 @@ struct Data
 
   enum ConfigPage visiblePage;
 
-  char title[SIZE_SMALL+SIZE_PATHFILE];
+  char windowTitle[SIZE_DEFAULT];
+  char screenTitle[SIZE_DEFAULT];
 };
 */
 
@@ -94,9 +95,10 @@ static void NewPrefsFile(struct IClass *cl, Object *obj, char *fname)
   GETDATA;
 
   strlcpy(G->CO_PrefsFile, fname, sizeof(G->CO_PrefsFile));
-  snprintf(data->title, sizeof(data->title), "%s (%s)", tr(MSG_MA_MConfig), fname);
+  snprintf(data->windowTitle, sizeof(data->windowTitle), "%s (%s)", tr(MSG_MA_MConfig), fname);
 
-  set(obj, MUIA_Window_Title, data->title);
+  xset(obj, MUIA_Window_Title, data->windowTitle,
+            MUIA_Window_ScreenTitle, CreateScreenTitle(data->screenTitle, sizeof(data->screenTitle), data->windowTitle));
 }
 
 ///
@@ -149,7 +151,6 @@ OVERLOAD(OM_NEW)
 
   if((obj = DoSuperNew(cl, obj,
 
-    MUIA_Window_Title, tr(MSG_MA_MConfig),
     MUIA_HelpNode, "Configuration",
     MUIA_Window_Menustrip, MenustripObject,
       MenuChild, MenuObject,
@@ -229,7 +230,9 @@ OVERLOAD(OM_NEW)
     // add the window to our application
     DoMethod(G->App, OM_ADDMEMBER, obj);
 
-    set(obj, MUIA_Window_DefaultObject, NLV_PAGE);
+    xset(obj, MUIA_Window_DefaultObject, NLV_PAGE,
+              MUIA_Window_Title, tr(MSG_MA_MConfig),
+              MUIA_Window_ScreenTitle, CreateScreenTitle(data->screenTitle, sizeof(data->screenTitle), tr(MSG_MA_MConfig)));
 
     SetHelp(BT_SAVE,   MSG_HELP_CO_BT_SAVE);
     SetHelp(BT_USE,    MSG_HELP_CO_BT_USE);

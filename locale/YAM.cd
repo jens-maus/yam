@@ -478,7 +478,7 @@ MSG_MA_CheckSingle (174//)
 Check single account
 ;
 MSG_MA_WinTitle (177//)
-YAM %s  -  User: %s
+YAM %s - User: %s
 ; VERSION, NAME
 ;
 MSG_MA_ToPrefix (178//)
@@ -5422,7 +5422,7 @@ This program uses the following third party software:
 ;
 MSG_ABOUT_YAM_NEWS (1968//)
 The latest news about YAM can be found at the\n\
-YAM Support Site at \0335http://www.yam.ch/\033n
+YAM Support Site at \0335http://yam.ch/\033n
 ;
 MSG_WR_VIEW (1969//)
 View

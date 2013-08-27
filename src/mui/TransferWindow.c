@@ -48,6 +48,8 @@
 struct Data
 {
   Object *transferList;
+
+  char screenTitle[SIZE_DEFAULT];
 };
 */
 
@@ -70,7 +72,6 @@ OVERLOAD(OM_NEW)
 
   if((obj = DoSuperNew(cl, obj,
 
-    MUIA_Window_Title, tr(MSG_TRANSFERS_IN_PROGRESS),
     MUIA_Window_ID, MAKE_ID('T','R','A','N'),
     MUIA_Window_CloseGadget, TRUE,
     MUIA_Window_UseRightBorderScroller, TRUE,
@@ -85,6 +86,9 @@ OVERLOAD(OM_NEW)
     TAG_MORE, inittags(msg))) != NULL)
   {
     GETDATA;
+
+    xset(obj, MUIA_Window_Title, tr(MSG_TRANSFERS_IN_PROGRESS),
+              MUIA_Window_ScreenTitle, CreateScreenTitle(data->screenTitle, sizeof(data->screenTitle), tr(MSG_TRANSFERS_IN_PROGRESS)));
 
     DoMethod(G->App, OM_ADDMEMBER, obj);
 

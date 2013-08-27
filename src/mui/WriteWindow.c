@@ -182,6 +182,7 @@ struct Data
 
   char cursorPos[SIZE_SMALL];
   char windowTitle[SIZE_SUBJECT+1]; // string for the title text of the window
+  char screenTitle[SIZE_LARGE];     // string for the title text of the screen
   char windowNumberStr[SIZE_SMALL]; // the unique window number as a string
 };
 */
@@ -812,7 +813,8 @@ OVERLOAD(OM_NEW)
       if(menuStripObject != NULL)
       {
         obj = DoSuperNew(cl, obj,
-          MUIA_Window_Title, tr(MSG_WR_REDIRECT_TITLE),
+          MUIA_Window_Title, "",
+          MUIA_Window_ScreenTitle, "",
           MUIA_HelpNode, "Windows#Writewindow",
           MUIA_Window_ID, MAKE_ID('W','R','I','B'),
           MUIA_Window_AppWindow, FALSE,
@@ -1040,6 +1042,7 @@ OVERLOAD(OM_NEW)
         obj = DoSuperNew(cl, obj,
 
           MUIA_Window_Title, "",
+          MUIA_Window_ScreenTitle, "",
           MUIA_HelpNode, "Windows#Writewindow",
           MUIA_Window_ID, MAKE_ID('W','R','W', data->windowNumber),
           MUIA_Window_AppWindow, TRUE,
@@ -1284,8 +1287,7 @@ OVERLOAD(OM_NEW)
 
         // set the default window object
         xset(obj, MUIA_Window_DefaultObject, data->ST_TO,
-                  MUIA_Window_ActiveObject,  data->ST_TO,
-                  MUIA_Window_Title,         data->windowTitle);
+                  MUIA_Window_ActiveObject,  data->ST_TO);
 
         // set the key focus attributes of the TO and SUBJECT gadgets
         xset(data->ST_TO, MUIA_BetterString_KeyDownFocus, data->ST_SUBJECT,
@@ -1517,6 +1519,15 @@ OVERLOAD(OM_NEW)
         // update the available signatures first
         DoMethod(obj, METHOD(UpdateSignatures));
       }
+      else
+      {
+        // prepare a first initial window title string
+        strlcpy(data->windowTitle, tr(MSG_WR_REDIRECT_TITLE), sizeof(data->windowTitle));
+      }
+
+      // set the default window and screen title
+      xset(obj, MUIA_Window_Title,       data->windowTitle,
+                MUIA_Window_ScreenTitle, CreateScreenTitle(data->screenTitle, sizeof(data->screenTitle), data->windowTitle));
 
       // hide the override from address gadget also
       // in redirect mode
@@ -2281,7 +2292,8 @@ DECLARE(UpdateWindowTitle)
   else
     strlcat(data->windowTitle, subject, sizeof(data->windowTitle));
 
-  set(obj, MUIA_Window_Title, data->windowTitle);
+  xset(obj, MUIA_Window_Title, data->windowTitle,
+            MUIA_Window_ScreenTitle, CreateScreenTitle(data->screenTitle, sizeof(data->screenTitle), data->windowTitle));
 
   // the mail is modified
   data->mailModified = TRUE;

@@ -642,7 +642,7 @@ Bir hesabý kontrol et
 ;
 MSG_MA_WinTitle
 YAM %s - Kullanýcý: %s
-; YAM %s  -  User: %s
+; YAM %s - User: %s
 ; VERSION, NAME
 ;
 MSG_MA_ToPrefix
@@ -7777,9 +7777,9 @@ Bu program aþaðýdaki üçüncü parti yazýlýmlarý kullanýr:
 ;
 MSG_ABOUT_YAM_NEWS
 YAM ile ilgili en son haberler YAM Destek\n\
-Sitesinde bulunabilir : \0335http://www.yam.ch/\033n
+Sitesinde bulunabilir : \0335http://yam.ch/\033n
 ; The latest news about YAM can be found at the\n\
-; YAM Support Site at \0335http://www.yam.ch/\033n
+; YAM Support Site at \0335http://yam.ch/\033n
 ;
 MSG_WR_VIEW
 Göster
