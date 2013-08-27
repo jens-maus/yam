@@ -335,6 +335,8 @@ void CO_ClearConfig(struct Config *co);
 BOOL CO_IsValid(void);
 void CO_SetDefaults(struct Config *co, enum ConfigPage page);
 void CO_Validate(struct Config *co, BOOL update);
+BOOL CopyConfigData(struct Config *dco, const struct Config *sco);
+BOOL CompareConfigData(const struct Config *c1, const struct Config *c2);
 
 void ImportExternalSpamFilters(struct Config *co);
 

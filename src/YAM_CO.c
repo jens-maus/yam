@@ -627,7 +627,7 @@ void CO_SetDefaults(struct Config *co, enum ConfigPage page)
 ///
 /// CopyConfigData
 //  Copies a configuration structure (deep copy)
-static BOOL CopyConfigData(struct Config *dco, const struct Config *sco)
+BOOL CopyConfigData(struct Config *dco, const struct Config *sco)
 {
   BOOL success = TRUE;
 
@@ -858,7 +858,7 @@ static BOOL CompareRxHooks(const struct RxHook *rx1, const struct RxHook *rx2)
 ///
 /// CompareConfigData
 // compares two config data structures (deep compare) and returns TRUE if they are equal
-static BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
+BOOL CompareConfigData(const struct Config *c1, const struct Config *c2)
 {
   BOOL equal = FALSE;
 

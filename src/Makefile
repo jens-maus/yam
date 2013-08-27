@@ -484,6 +484,7 @@ MUIOBJS = \
 	CharsetPopupList.o \
 	ConfigPage.o \
 	ConfigPageList.o \
+	ConfigWindow.o \
 	FilterChooser.o \
 	FilterList.o \
 	FilterPopupList.o \

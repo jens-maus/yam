@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-08-27 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/ConfigWindow.c: added new class for the config window. This is not used
+    yet but will eventually replace all the stuff in the current YAM_CO*.c files.
+
 2013-08-26 Jens Langner <Jens.Langner@light-speed.de>
 
   * mui/WriteWindow.c: slightly adapted the write window temporary file name
