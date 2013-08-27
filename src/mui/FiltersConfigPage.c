@@ -458,7 +458,7 @@ OVERLOAD(OM_NEW)
     DoMethod(ST_ARESPONSE,         MUIM_Notify, MUIA_String_Contents,                      MUIV_EveryTime, obj, 1, METHOD(PutFilterEntry));
     DoMethod(ST_AEXECUTE,          MUIM_Notify, MUIA_String_Contents,                      MUIV_EveryTime, obj, 1, METHOD(PutFilterEntry));
     DoMethod(ST_APLAY,             MUIM_Notify, MUIA_String_Contents,                      MUIV_EveryTime, obj, 1, METHOD(PutFilterEntry));
-    DoMethod(BT_APLAY,             MUIM_Notify, MUIA_Pressed,                              FALSE,          obj, 3, MUIM_CallHook, &PlaySoundHook, ST_APLAY);
+    DoMethod(BT_APLAY,             MUIM_Notify, MUIA_Pressed,                              FALSE,          obj, 2, METHOD(PlaySound), ST_APLAY);
     DoMethod(PO_MOVETO,            MUIM_Notify, MUIA_FolderRequestPopobject_FolderChanged, MUIV_EveryTime, obj, 1, METHOD(PutFilterEntry));
     DoMethod(GR_SGROUP,            MUIM_Notify, MUIA_ObjectList_ItemsChanged,              MUIV_EveryTime, obj, 1, METHOD(PutFilterEntry));
     DoMethod(BT_RADD,              MUIM_Notify, MUIA_Pressed,                              FALSE,          obj, 1, METHOD(AddFilterEntry));
@@ -767,6 +767,23 @@ DECLARE(ImportFilter)
     AddPath(path, frc->drawer, frc->file, sizeof(path));
     ImportFilter(path, FALSE, &CE->filterList);
   }
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(PlaySound)
+// plays sound file referred by the string gadget
+DECLARE(PlaySound) // Object *strObj
+{
+  char *file;
+
+  ENTER();
+
+  file = (char *)xget(msg->strObj, MUIA_String_Contents);
+  if(IsStrEmpty(file) == FALSE)
+    PlaySound(file);
 
   RETURN(0);
   return 0;

@@ -5180,23 +5180,6 @@ BOOL PlaySound(const char *filename)
 }
 
 ///
-/// PlaySoundFunc
-//  Plays sound file referred by the string gadget
-HOOKPROTONHNO(PlaySoundFunc, void, int *arg)
-{
-  char *soundFile;
-
-  ENTER();
-
-  soundFile = (char *)xget((Object *)arg[0], MUIA_String_Contents);
-  if(IsStrEmpty(soundFile) == FALSE)
-    PlaySound(soundFile);
-
-  LEAVE();
-}
-MakeHook(PlaySoundHook, PlaySoundFunc);
-
-///
 /// MatchExtension
 //  Matches a file extension against a list of extension
 static BOOL MatchExtension(const char *fileext, const char *extlist)

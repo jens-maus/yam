@@ -23,6 +23,8 @@ $URL$
     the same stuff again and again.
   * Rexx.c, rexx/misc: check the allocation of the optional structure and return
     an error upon failure. This refs #409.
+  * mui/FiltersConfigPage.c, mui/TCPIPConfigPage.c, YAM_UT.c: use a method to
+    play the sound instead of a hook.
 
 2013-08-26 Jens Langner <Jens.Langner@light-speed.de>
 

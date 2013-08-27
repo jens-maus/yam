@@ -621,7 +621,7 @@ OVERLOAD(OM_NEW)
     set(BT_SMTPDOWN, MUIA_CycleChain, TRUE);
 
     set(BT_POP3_NOTIFY_SOUND, MUIA_CycleChain, TRUE);
-    DoMethod(BT_POP3_NOTIFY_SOUND, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &PlaySoundHook, ST_POP3_NOTIFY_SOUND);
+    DoMethod(BT_POP3_NOTIFY_SOUND, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(PlaySound), ST_POP3_NOTIFY_SOUND);
   }
 
   RETURN((IPTR)obj);
@@ -1273,6 +1273,23 @@ DECLARE(DeleteSMTPEntry)
 
     FreeSysObject(ASOT_NODE, msn);
   }
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(PlaySound)
+// plays sound file referred by the string gadget
+DECLARE(PlaySound) // Object *strObj
+{
+  char *file;
+
+  ENTER();
+
+  file = (char *)xget(msg->strObj, MUIA_String_Contents);
+  if(IsStrEmpty(file) == FALSE)
+    PlaySound(file);
 
   RETURN(0);
   return 0;
