@@ -83,6 +83,7 @@ struct optional
   char flags[SIZE_SMALL];
   char filename[SIZE_PATHFILE];
   char date[64];
+  long size;
   char *msgid;
 };
 
@@ -242,8 +243,8 @@ void rx_mailinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
 
           DateStamp2String(optional->date, sizeof(optional->date), &mail->Date, DSS_USDATETIME, TZC_UTC2LOCAL);
           results->date = optional->date;
-          results->subject = mail->Subject;
-          results->size = &mail->Size;
+          results->subject = strdup(mail->Subject);
+          results->size = &optional->size;
           results->msgid = strdup(email->messageID);
           snprintf(optional->flags, sizeof(optional->flags), "%c%c%c%c%c-%c%c%c",
                     isMultiRCPTMail(mail) ? 'M' : '-',
@@ -279,6 +280,7 @@ void rx_mailinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
         FreeStrArray(results->ccall);
         FreeStrArray(results->bccall);
         FreeStrArray(results->resenttoall);
+        free(results->subject);
         free(results->msgid);
         FreeVecPooled(G->SharedMemPool, results);
       }

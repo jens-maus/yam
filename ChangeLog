@@ -25,6 +25,10 @@ $URL$
     an error upon failure. This refs #409.
   * mui/FiltersConfigPage.c, mui/TCPIPConfigPage.c, YAM_UT.c: use a method to
     play the sound instead of a hook.
+  * rexx/mailinfo.c: make sure that no pointer to internal variables is passed
+    to the calling script as the mail structure might become invalid as soon as
+    handling the ARexx command is done but the script might still access these
+    pointers.
 
 2013-08-26 Jens Langner <Jens.Langner@light-speed.de>
 
