@@ -70,6 +70,8 @@ void rx_newmailfile(UNUSED struct RexxHost *host, struct RexxParams *params, enu
       params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
       params->results = AllocVecPooled(G->SharedMemPool, sizeof(*results));
       params->optional = AllocVecPooled(G->SharedMemPool, sizeof(*optional));
+      if(params->optional == NULL)
+        params->rc = RETURN_ERROR;
     }
     break;
 

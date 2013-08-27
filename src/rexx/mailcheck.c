@@ -74,6 +74,8 @@ void rx_mailcheck(UNUSED struct RexxHost *host, struct RexxParams *params, enum 
       params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
       params->results = AllocVecPooled(G->SharedMemPool, sizeof(*results));
       params->optional = AllocVecPooled(G->SharedMemPool, sizeof(*optional));
+      if(params->optional == NULL)
+        params->rc = RETURN_ERROR;
     }
     break;
 

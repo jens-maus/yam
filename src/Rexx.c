@@ -769,11 +769,16 @@ void DoRXCommand(struct RexxHost *host, struct RexxMsg *rexxmsg)
   D(DBF_REXX, "RXIF_INIT '%s'", rxc->command);
   // get memory for the arguments and the offset of a possible result array
   (rxc->function)(host, &params, RXIF_INIT, rexxmsg);
+  if(params.rc != 0 || params.args == NULL || (rxc->results != NULL && params.results == NULL))
+  {
+    params.rc = 20;
+    params.rc2 = ERROR_NO_FREE_STORE;
+    goto drc_cleanup;
+  }
 
   carglen = (rxc->args != NULL) ? 15 + strlen(rxc->args) : 15;
   cargstr = AllocVecPooled(G->SharedMemPool, carglen);
-
-  if(params.args == NULL || cargstr == NULL || (rxc->results != NULL && params.results == NULL))
+  if(cargstr == NULL)
   {
     params.rc = 20;
     params.rc2 = ERROR_NO_FREE_STORE;

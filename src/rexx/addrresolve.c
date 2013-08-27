@@ -77,7 +77,8 @@ void rx_addrresolve(UNUSED struct RexxHost *host, struct RexxParams *params, enu
       args = params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
       results = params->results = AllocVecPooled(G->SharedMemPool, sizeof(*results));
       optional = params->optional = AllocVecPooled(G->SharedMemPool, sizeof(*optional));
-      optional->string = NULL;
+      if(params->optional == NULL)
+        params->rc = RETURN_ERROR;
     }
     break;
 

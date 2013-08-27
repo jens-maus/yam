@@ -21,6 +21,8 @@ $URL$
     yet but will eventually replace all the stuff in the current YAM_CO*.c files.
   * rexx/mailinfo.c: use the existing FreeStrArray() function instead of doing
     the same stuff again and again.
+  * Rexx.c, rexx/misc: check the allocation of the optional structure and return
+    an error upon failure. This refs #409.
 
 2013-08-26 Jens Langner <Jens.Langner@light-speed.de>
 

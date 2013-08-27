@@ -76,6 +76,8 @@ void rx_requeststring(UNUSED struct RexxHost *host, struct RexxParams *params, e
       params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
       params->results = AllocVecPooled(G->SharedMemPool, sizeof(*results));
       params->optional = AllocVecPooled(G->SharedMemPool, sizeof(*optional));
+      if(params->optional == NULL)
+        params->rc = RETURN_ERROR;
     }
     break;
 
