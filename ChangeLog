@@ -19,6 +19,8 @@ $URL$
 
   * mui/ConfigWindow.c: added new class for the config window. This is not used
     yet but will eventually replace all the stuff in the current YAM_CO*.c files.
+  * rexx/mailinfo.c: use the existing FreeStrArray() function instead of doing
+    the same stuff again and again.
 
 2013-08-26 Jens Langner <Jens.Langner@light-speed.de>
 

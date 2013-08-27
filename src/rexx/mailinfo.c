@@ -271,68 +271,12 @@ void rx_mailinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
         FreeVecPooled(G->SharedMemPool, args);
       if(results != NULL)
       {
-        int i;
-
-        if(results->fromall != NULL)
-        {
-          i = 0;
-          while(results->fromall[i] != NULL)
-          {
-            free(results->fromall[i]);
-            i++;
-          }
-          free(results->fromall);
-        }
-        if(results->toall != NULL)
-        {
-          i = 0;
-          while(results->toall[i] != NULL)
-          {
-            free(results->toall[i]);
-            i++;
-          }
-          free(results->toall);
-        }
-        if(results->replytoall != NULL)
-        {
-          i = 0;
-          while(results->replytoall[i] != NULL)
-          {
-            free(results->replytoall[i]);
-            i++;
-          }
-          free(results->replytoall);
-        }
-        if(results->ccall != NULL)
-        {
-          i = 0;
-          while(results->ccall[i] != NULL)
-          {
-            free(results->ccall[i]);
-            i++;
-          }
-          free(results->ccall);
-        }
-        if(results->bccall != NULL)
-        {
-          i = 0;
-          while(results->bccall[i] != NULL)
-          {
-            free(results->bccall[i]);
-            i++;
-          }
-          free(results->bccall);
-        }
-        if(results->resenttoall != NULL)
-        {
-          i = 0;
-          while(results->resenttoall[i] != NULL)
-          {
-            free(results->resenttoall[i]);
-            i++;
-          }
-          free(results->resenttoall);
-        }
+        FreeStrArray(results->fromall);
+        FreeStrArray(results->toall);
+        FreeStrArray(results->replytoall);
+        FreeStrArray(results->ccall);
+        FreeStrArray(results->bccall);
+        FreeStrArray(results->resenttoall);
         free(results->msgid);
         FreeVecPooled(G->SharedMemPool, results);
       }
