@@ -2923,10 +2923,6 @@ void ValidateConfig(struct Config *co, BOOL update)
   firstSMTP = GetMailServer(&co->smtpServerList, 0);
   if(firstIdentity != NULL && firstPOP3 != NULL && firstSMTP != NULL)
   {
-    struct UserIdentityNode *firstIdentity = GetUserIdentity(&co->userIdentityList, 0, TRUE);
-    struct MailServerNode *firstPOP3 = GetMailServer(&co->pop3ServerList, 0);
-    struct MailServerNode *firstSMTP = GetMailServer(&co->smtpServerList, 0);
-
     // now we walk through our POP3 server list and check and fix certains
     // things in it
     IterateList(&co->pop3ServerList, struct MailServerNode *, msn)
