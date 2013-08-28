@@ -49,6 +49,7 @@ struct args
   long *multiSelect;
   long *drawersOnly;
   long *saveMode;
+  long *noicons;
 };
 
 struct results
@@ -85,6 +86,8 @@ void rx_requestfile(UNUSED struct RexxHost *host, struct RexxParams *params, enu
         setFlag(mode, REQF_DRAWERSONLY);
       if(args->saveMode != NULL)
         setFlag(mode, REQF_SAVEMODE);
+      if(args->noicons != NULL)
+        setFlag(mode, REQF_NOICONS);
 
       if((frc = ReqFile(ASL_GENERIC, NULL, args->title, mode, args->drawer, args->file)) != NULL)
       {
@@ -119,6 +122,7 @@ void rx_requestfile(UNUSED struct RexxHost *host, struct RexxParams *params, enu
     {
       if(args != NULL)
         FreeVecPooled(G->SharedMemPool, args);
+
       if(results != NULL)
       {
         free(results->files);

@@ -196,9 +196,11 @@ struct FileReqCache
 #define REQF_SAVEMODE         (1<<0)
 #define REQF_MULTISELECT      (1<<1)
 #define REQF_DRAWERSONLY      (1<<2)
+#define REQF_NOICONS          (1<<3)
 #define hasSaveModeFlag(v)    (isFlagSet((v), REQF_SAVEMODE))
 #define hasMultiSelectFlag(v) (isFlagSet((v), REQF_MULTISELECT))
 #define hasDrawersOnlyFlag(v) (isFlagSet((v), REQF_DRAWERSONLY))
+#define hasNoIconsFlag(v)     (isFlagSet((v), REQF_NOICONS))
 
 #ifndef MAX
 #define MAX(a,b)              (((a) > (b)) ? (a) : (b))

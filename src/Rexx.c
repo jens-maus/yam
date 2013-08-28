@@ -140,7 +140,7 @@ struct rxs_command rxs_commandlist[] =
   { "READPRINT", "PART/N", NULL, rx_readprint },
   { "READSAVE", "PART/N,FILENAME/K,OVERWRITE/S", NULL, rx_readsave },
   { "REQUEST", "BODY/A,GADGETS/A", "RESULT/N", rx_request },
-  { "REQUESTFILE", "TITLE/A,DRAWER,FILE,MULTISELECT/S,DRAWERSONLY/S,SAVEMODE/S", "DRAWER,FILES/M", rx_requestfile },
+  { "REQUESTFILE", "TITLE/A,DRAWER,FILE,MULTISELECT/S,DRAWERSONLY/S,SAVEMODE/S,NOICONS/S", "DRAWER,FILES/M", rx_requestfile },
   { "REQUESTFOLDER", "BODY/A,EXCLUDEACTIVE/S", "FOLDER", rx_requestfolder },
   { "REQUESTSTRING", "BODY/A,STRING/K,SECRET/S", "STRING", rx_requeststring },
   { "RESTART", "FORCE/S", NULL, rx_restart },

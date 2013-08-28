@@ -7,6 +7,10 @@ $URL$
 
 2013-08-28 Jens Langner <Jens.Langner@light-speed.de>
 
+  * rexx/requestfile.c, src/Rexx.c, src/YAM_UT.c: implemented a NOICONS switch
+    for the REQUESTFILE Arexx command which will open the corresponding file
+    requester but hide and icons (#?.info files). This fulfills a long standing
+    enhancement request and finally closes #108.
   * mui/MainMailListGroup.c, rexx/listfreeze, rexx/listunfreeze.c: fixed the
     LISTFREEZE and LISTUNFREEZE arexx command to make sure that no other internal
     process which will use MUIA_NList_Quiet will suddenly unfreeze a list in
