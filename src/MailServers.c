@@ -39,11 +39,11 @@
 #include <proto/exec.h>
 
 #include "YAM.h"
-#include "YAM_config.h"
 #include "YAM_utilities.h"
 
 #include "extrasrc.h"
 
+#include "Config.h"
 #include "MailList.h"
 #include "MailServers.h"
 #include "Timer.h"

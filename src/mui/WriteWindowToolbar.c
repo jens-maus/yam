@@ -31,8 +31,8 @@
 #include "WriteWindowToolbar_cl.h"
 
 #include "YAM.h"
-#include "YAM_config.h"
 
+#include "Config.h"
 #include "ImageCache.h"
 #include "Locale.h"
 #include "Themes.h"

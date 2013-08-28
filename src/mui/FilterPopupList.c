@@ -32,8 +32,9 @@
 
 #include <mui/NList_mcc.h>
 
-#include "YAM_config.h"
 #include "YAM_find.h"
+
+#include "Config.h"
 
 #include "Debug.h"
 

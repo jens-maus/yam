@@ -33,10 +33,11 @@
 #include <proto/muimaster.h>
 
 #include "YAM.h"
-#include "YAM_config.h"
 
 #include "mui/ConfigPage.h"
 #include "mui/ConfigPageList.h"
+
+#include "Config.h"
 
 #include "Debug.h"
 
@@ -407,8 +408,7 @@ OVERLOAD(MUIM_ConfigPage_ConfigToGUI)
   setcheckmark(data->CH_SHOWALTPARTS, CE->DisplayAllAltPart);
 
   // set the MDN stuff according to other config
-  setcheckmark(data->CH_MDN_NEVER, CE->MDNEnabled == FALSE);
-  setcheckmark(data->CH_MDN_ALLOW, CE->MDNEnabled == TRUE);
+  DoMethod(obj, METHOD(UpdateMDN), CE->MDNEnabled);
   setcycle(data->CY_MDN_NORECIPIENT, CE->MDN_NoRecipient);
   setcycle(data->CY_MDN_NODOMAIN, CE->MDN_NoDomain);
   setcycle(data->CY_MDN_DELETE, CE->MDN_OnDelete);

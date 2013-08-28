@@ -28,7 +28,10 @@
 
 ***************************************************************************/
 
+#include <intuition/classes.h>
+
 #include "YAM_stringsizes.h"
+
 #include "tcp/pop3.h"
 #include "tcp/smtp.h"
 

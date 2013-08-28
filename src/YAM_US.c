@@ -45,7 +45,6 @@
 
 #include "YAM.h"
 #include "YAM_addressbook.h"
-#include "YAM_config.h"
 #include "YAM_error.h"
 #include "YAM_userlist.h"
 #include "YAM_utilities.h"
@@ -54,6 +53,7 @@
 #include "mui/Splashwindow.h"
 #include "mui/UserList.h"
 
+#include "Config.h"
 #include "FileInfo.h"
 #include "Locale.h"
 #include "Logfile.h"

@@ -33,15 +33,15 @@
 #include <proto/muimaster.h>
 
 #include "YAM_addressbook.h"
-#include "YAM_config.h"
-
-#include "MailServers.h"
-#include "UserIdentity.h"
 
 #include "mui/ConfigPage.h"
 #include "mui/ConfigPageList.h"
 #include "mui/TZoneChooser.h"
 #include "mui/TZoneInfoBar.h"
+
+#include "Config.h"
+#include "MailServers.h"
+#include "UserIdentity.h"
 
 #include "Debug.h"
 
@@ -193,6 +193,41 @@ OVERLOAD(MUIM_ConfigPage_GUIToConfig)
 
   strlcpy(CE->Location, (char *)xget(data->GR_TZONE, MUIA_TZoneChooser_TZone), sizeof(CE->Location));
   GetMUIText(CE->DefaultLocalCodeset, data->TX_DEFCODESET_LOCAL, sizeof(CE->DefaultLocalCodeset));
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// OVERLOAD(MUIM_ConfigPage_ConfigUpdate)
+OVERLOAD(MUIM_ConfigPage_ConfigUpdate)
+{
+  GETDATA;
+  enum ConfigPage sourcePage = ((struct MUIP_ConfigPage_ConfigUpdate *)msg)->sourcePage;
+
+  ENTER();
+
+  switch(sourcePage)
+  {
+    case cp_TCPIP:
+    {
+      struct MailServerNode *msn;
+
+      if((msn = GetMailServer(&CE->pop3ServerList, 0)) != NULL)
+      {
+        nnset(data->ST_POPHOST0, MUIA_String_Contents, msn->hostname);
+        nnset(data->ST_USER0,    MUIA_String_Contents, msn->username);
+        nnset(data->ST_PASSWD0,  MUIA_String_Contents, msn->password);
+      }
+    }
+    break;
+
+    default:
+    {
+      // ignore all other pages for the moment
+    }
+    break;
+  }
 
   RETURN(0);
   return 0;

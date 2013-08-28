@@ -34,16 +34,15 @@
 
 #include <mui/NList_mcc.h>
 
+#include "extrasrc.h"
+#include "timeval.h"
+
 #include "YAM.h"
 #include "YAM_addressbook.h"
-#include "YAM_config.h"
 #include "YAM_mainFolder.h"
 #include "YAM_write.h"
 
-#include "extrasrc.h"
-
-#include "timeval.h"
-
+#include "Config.h"
 #include "Locale.h"
 #include "MailServers.h"
 #include "MUIObjects.h"

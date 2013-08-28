@@ -39,15 +39,8 @@
 #include <mui/NListtree_mcc.h>
 
 #include "YAM.h"
-#include "YAM_config.h"
 #include "YAM_find.h"
 #include "YAM_mainFolder.h"
-
-#include "FolderList.h"
-#include "Locale.h"
-#include "MUIObjects.h"
-#include "Requesters.h"
-#include "Themes.h"
 
 #include "mui/FolderEditWindow.h"
 #include "mui/FolderRequestListtree.h"
@@ -55,6 +48,13 @@
 #include "mui/MainMailListGroup.h"
 #include "mui/MainWindow.h"
 #include "mui/YAMApplication.h"
+
+#include "Config.h"
+#include "FolderList.h"
+#include "Locale.h"
+#include "MUIObjects.h"
+#include "Requesters.h"
+#include "Themes.h"
 
 #include "Debug.h"
 

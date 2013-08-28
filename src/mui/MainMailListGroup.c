@@ -36,12 +36,12 @@
 #include <mui/NListview_mcc.h>
 
 #include "YAM.h"
-#include "YAM_config.h"
-
-#include "MUIObjects.h"
 
 #include "mui/MainMailList.h"
 #include "mui/QuickSearchBar.h"
+
+#include "Config.h"
+#include "MUIObjects.h"
 
 #include "Debug.h"
 

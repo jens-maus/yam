@@ -86,7 +86,6 @@
 
 #include "YAM.h"
 #include "YAM_addressbook.h"
-#include "YAM_config.h"
 #include "YAM_error.h"
 #include "YAM_folderconfig.h"
 #include "YAM_global.h"
@@ -107,6 +106,7 @@
 
 #include "AppIcon.h"
 #include "Busy.h"
+#include "Config.h"
 #include "FileInfo.h"
 #include "FolderList.h"
 #include "Locale.h"

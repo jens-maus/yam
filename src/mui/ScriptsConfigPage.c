@@ -37,13 +37,12 @@
 
 #include "SDI_hook.h"
 
-#include "YAM_config.h"
-
 #include "mui/ConfigPage.h"
 #include "mui/ConfigPageList.h"
 #include "mui/PlaceholderPopupList.h"
 #include "mui/ScriptList.h"
 
+#include "Config.h"
 #include "MUIObjects.h"
 
 #include "Debug.h"

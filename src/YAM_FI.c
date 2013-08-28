@@ -48,8 +48,6 @@
 #include "timeval.h"
 
 #include "YAM.h"
-#include "YAM_config.h"
-#include "YAM_configFile.h"
 #include "YAM_error.h"
 #include "YAM_find.h"
 #include "YAM_folderconfig.h"
@@ -66,6 +64,7 @@
 #include "BayesFilter.h"
 #include "BoyerMooreSearch.h"
 #include "Busy.h"
+#include "Config.h"
 #include "DynamicString.h"
 #include "FolderList.h"
 #include "Locale.h"
@@ -2142,11 +2141,11 @@ BOOL ImportFilter(const char *fileName, const BOOL isVolatile, struct MinList *f
           // push a previous filter to the configuration
           if(filter != NULL)
           {
-            if(G->CO != NULL && isVolatile == FALSE)
+            if(G->ConfigWinObject != NULL && isVolatile == FALSE)
             {
               #warning access to old config GUI
-              DoMethod(G->CO->GUI.LV_RULES, MUIM_NList_InsertSingle, filter, MUIV_NList_Insert_Bottom);
-              set(G->CO->GUI.LV_RULES, MUIA_NList_Active, MUIV_NList_Active_Bottom);
+            //DoMethod(G->CO->GUI.LV_RULES, MUIM_NList_InsertSingle, filter, MUIV_NList_Insert_Bottom);
+            //set(G->CO->GUI.LV_RULES, MUIA_NList_Active, MUIV_NList_Active_Bottom);
             }
 
             // volatile filters are added at the top
@@ -2477,11 +2476,11 @@ BOOL ImportFilter(const char *fileName, const BOOL isVolatile, struct MinList *f
     // push the last created filter to the configuration
     if(filter != NULL)
     {
-      if(G->CO != NULL && isVolatile == FALSE)
+      if(G->ConfigWinObject != NULL && isVolatile == FALSE)
       {
         #warning access to old config GUI
-        DoMethod(G->CO->GUI.LV_RULES, MUIM_NList_InsertSingle, filter, MUIV_NList_Insert_Bottom);
-        set(G->CO->GUI.LV_RULES, MUIA_NList_Active, MUIV_NList_Active_Bottom);
+      //DoMethod(G->CO->GUI.LV_RULES, MUIM_NList_InsertSingle, filter, MUIV_NList_Insert_Bottom);
+      //set(G->CO->GUI.LV_RULES, MUIA_NList_Active, MUIV_NList_Active_Bottom);
       }
 
       // volatile filters are added at the top

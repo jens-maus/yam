@@ -62,7 +62,6 @@
 #include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
-#include "YAM_config.h"
 #include "YAM_error.h"
 #include "YAM_global.h"
 #include "YAM_main.h"
@@ -79,6 +78,7 @@
 
 #include "AVLTree.h"
 #include "Busy.h"
+#include "Config.h"
 #include "DynamicString.h"
 #include "FileInfo.h"
 #include "Locale.h"
@@ -1413,7 +1413,7 @@ static void WriteLDIFLine(FILE *fh, const char *key, const char *valueFmt, ...)
         size_t utf8len = 0;
 
         // convert the value string to UTF8
-        if((utf8 = CodesetsUTF8Create(CSA_Source, buffer, 
+        if((utf8 = CodesetsUTF8Create(CSA_Source, buffer,
                                       CSA_SourceCodeset, G->localCodeset,
                                       CSA_DestLenPtr, &utf8len,
                                       TAG_DONE)) != NULL)

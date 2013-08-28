@@ -33,11 +33,11 @@
 #include "extrasrc.h"
 
 #include "YAM.h"
-#include "YAM_config.h"
 
 #include "mui/ClassesExtra.h"
 #include "mui/MainMailListGroup.h"
 
+#include "Config.h"
 #include "Rexx.h"
 
 #include "Debug.h"

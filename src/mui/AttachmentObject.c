@@ -43,16 +43,16 @@
 #include <proto/wb.h>
 #include <libraries/gadtools.h>
 
-#include "YAM_config.h"
 #include "YAM_mainFolder.h"
 #include "YAM_write.h"
 
-#include "Busy.h"
-#include "Locale.h"
-#include "MUIObjects.h"
-
 #include "mui/AttachmentGroup.h"
 #include "mui/AttachmentImage.h"
+
+#include "Busy.h"
+#include "Config.h"
+#include "Locale.h"
+#include "MUIObjects.h"
 
 #include "Debug.h"
 

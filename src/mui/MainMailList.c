@@ -43,17 +43,17 @@
 #include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
-#include "YAM_config.h"
 #include "YAM_find.h"
 #include "YAM_mainFolder.h"
 
+#include "mui/AddrBookListtree.h"
+#include "mui/ImageArea.h"
+
 #include "BayesFilter.h"
+#include "Config.h"
 #include "Locale.h"
 #include "MUIObjects.h"
 #include "Themes.h"
-
-#include "mui/AddrBookListtree.h"
-#include "mui/ImageArea.h"
 
 #include "Debug.h"
 

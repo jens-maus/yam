@@ -42,14 +42,15 @@
 #include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
-#include "YAM_config.h"
 #include "YAM_mainFolder.h"
-#include "MUIObjects.h"
-#include "UserIdentity.h"
 
 #include "mui/AddressmatchPopup.h"
 #include "mui/MainMailListGroup.h"
 #include "mui/YAMApplication.h"
+
+#include "Config.h"
+#include "MUIObjects.h"
+#include "UserIdentity.h"
 
 #include "Debug.h"
 

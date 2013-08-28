@@ -34,12 +34,12 @@
 #include <mui/NList_mcc.h>
 
 #include "YAM.h"
-#include "YAM_config.h"
-
-#include "Locale.h"
-#include "Themes.h"
 
 #include "mui/ImageArea.h"
+
+#include "Config.h"
+#include "Locale.h"
+#include "Themes.h"
 
 #include "Debug.h"
 

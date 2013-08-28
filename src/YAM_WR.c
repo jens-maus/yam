@@ -45,7 +45,6 @@
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
 #include "YAM_utilities.h"
-#include "YAM_config.h"
 #include "YAM_error.h"
 #include "YAM_stringsizes.h"
 #include "YAM_mainFolder.h"
@@ -60,6 +59,7 @@
 #include "mime/qprintable.h"
 #include "mime/uucode.h"
 
+#include "Config.h"
 #include "DynamicString.h"
 #include "FileInfo.h"
 #include "FolderList.h"
@@ -1773,7 +1773,7 @@ struct WriteMailData *NewWriteMailWindow(struct Mail *mail, const int flags)
   ENTER();
 
   // First check if the basic configuration is okay, then open write window */
-  if(folder != NULL && CO_IsValid() == TRUE &&
+  if(folder != NULL && IsValidConfig(C) == TRUE &&
      (wmData = CreateWriteWindow(NMM_NEW, quiet)) != NULL)
   {
     FILE *out;
@@ -1946,7 +1946,7 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
   }
 
   // check if necessary settings for writing are OK and open new window
-  if(CO_IsValid() == TRUE &&
+  if(IsValidConfig(C) == TRUE &&
      (wmData = CreateWriteWindow(isDraftsFolder(folder) ? NMM_EDIT : NMM_EDITASNEW, quiet)) != NULL)
   {
     FILE *out;
@@ -2153,7 +2153,7 @@ struct WriteMailData *NewForwardMailWindow(struct MailList *mlist, const int fla
   ENTER();
 
   // check if necessary settings fror writing are OK and open new window
-  if(CO_IsValid() == TRUE &&
+  if(IsValidConfig(C) == TRUE &&
      (wmData = CreateWriteWindow(NMM_FORWARD, quiet)) != NULL)
   {
     FILE *out;
@@ -2469,7 +2469,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
   ENTER();
 
   // check if necessary settings fror writing are OK and open new window
-  if(CO_IsValid() == TRUE &&
+  if(IsValidConfig(C) == TRUE &&
      (wmData = CreateWriteWindow(NMM_REPLY, quiet)) != NULL)
   {
     FILE *out;
@@ -3103,7 +3103,7 @@ struct WriteMailData *NewRedirectMailWindow(struct MailList *mlist, const int fl
   ENTER();
 
   // check if necessary settings fror writing are OK and open new window
-  if(CO_IsValid() == TRUE &&
+  if(IsValidConfig(C) == TRUE &&
      (wmData = CreateWriteWindow(NMM_REDIRECT, quiet)) != NULL)
   {
     // make sure the write window know of the

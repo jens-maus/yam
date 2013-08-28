@@ -43,11 +43,17 @@
 
 #include "YAM.h"
 #include "YAM_addressbookEntry.h"
-#include "YAM_config.h"
 #include "YAM_find.h"
 #include "YAM_mainFolder.h"
 
+#include "mui/MainMailListGroup.h"
+#include "mui/ReadMailGroup.h"
+#include "mui/ReadWindowStatusBar.h"
+#include "mui/ReadWindowToolbar.h"
+#include "mui/YAMApplication.h"
+
 #include "BayesFilter.h"
+#include "Config.h"
 #include "FolderList.h"
 #include "Locale.h"
 #include "Logfile.h"
@@ -55,12 +61,6 @@
 #include "MimeTypes.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
-
-#include "mui/MainMailListGroup.h"
-#include "mui/ReadMailGroup.h"
-#include "mui/ReadWindowStatusBar.h"
-#include "mui/ReadWindowToolbar.h"
-#include "mui/YAMApplication.h"
 
 #include "Debug.h"
 

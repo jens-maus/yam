@@ -38,12 +38,6 @@
 
 #include "YAM.h"
 #include "YAM_addressbook.h"
-#include "YAM_config.h"
-
-#include "MailServers.h"
-#include "MUIObjects.h"
-#include "Signature.h"
-#include "UserIdentity.h"
 
 #include "mui/ConfigPage.h"
 #include "mui/ConfigPageList.h"
@@ -51,6 +45,12 @@
 #include "mui/IdentityList.h"
 #include "mui/MailServerChooser.h"
 #include "mui/SignatureChooser.h"
+
+#include "Config.h"
+#include "MailServers.h"
+#include "MUIObjects.h"
+#include "Signature.h"
+#include "UserIdentity.h"
 
 #include "Debug.h"
 

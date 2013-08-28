@@ -34,12 +34,12 @@
 
 #include <proto/exec.h>
 
-#include "YAM_config.h"
 #include "YAM_stringsizes.h"
 #include "YAM_utilities.h"
 
 #include "extrasrc.h"
 
+#include "Config.h"
 #include "Locale.h"
 #include "MimeTypes.h"
 

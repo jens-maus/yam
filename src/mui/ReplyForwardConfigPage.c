@@ -32,11 +32,11 @@
 
 #include <proto/muimaster.h>
 
-#include "YAM_config.h"
-
 #include "mui/ConfigPage.h"
 #include "mui/ConfigPageList.h"
 #include "mui/PlaceholderPopupList.h"
+
+#include "Config.h"
 
 #include "Debug.h"
 
@@ -188,6 +188,7 @@ OVERLOAD(OM_NEW)
     data->ST_REPLYBYE =    ST_REPLYBYE;
     data->ST_AREPLYHI =    ST_AREPLYHI;
     data->ST_AREPLYTEXT =  ST_AREPLYTEXT;
+    data->ST_AREPLYPAT  =  ST_AREPLYPAT;
     data->ST_MREPLYBYE =   ST_MREPLYBYE;
     data->ST_MREPLYHI =    ST_MREPLYHI;
     data->ST_MREPLYTEXT =  ST_MREPLYTEXT;

@@ -35,7 +35,6 @@
 #include <proto/dos.h>
 
 #include "YAM.h"
-#include "YAM_config.h"
 #include "YAM_read.h"
 #include "YAM_addressbook.h"
 #include "YAM_mainFolder.h"
@@ -45,6 +44,7 @@
 
 #include "BayesFilter.h"
 #include "Busy.h"
+#include "Config.h"
 #include "DynamicString.h"
 #include "FileInfo.h"
 #include "Locale.h"

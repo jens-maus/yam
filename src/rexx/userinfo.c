@@ -33,8 +33,8 @@
 #include "extrasrc.h"
 
 #include "YAM.h"
-#include "YAM_config.h"
 
+#include "Config.h"
 #include "FolderList.h"
 #include "Rexx.h"
 #include "UserIdentity.h"

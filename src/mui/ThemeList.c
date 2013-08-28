@@ -35,8 +35,7 @@
 #include <proto/dos.h>
 #include <mui/NList_mcc.h>
 
-#include "YAM_config.h"
-
+#include "Config.h"
 #include "Themes.h"
 
 #include "Debug.h"

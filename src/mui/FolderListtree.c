@@ -39,16 +39,16 @@
 #include <mui/NListtree_mcc.h>
 
 #include "YAM.h"
-#include "YAM_config.h"
 #include "YAM_find.h"
 #include "YAM_mainFolder.h"
 
+#include "mui/ImageArea.h"
+
+#include "Config.h"
 #include "FolderList.h"
 #include "Locale.h"
 #include "MUIObjects.h"
 #include "Themes.h"
-
-#include "mui/ImageArea.h"
 
 #include "Debug.h"
 

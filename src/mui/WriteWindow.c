@@ -32,6 +32,7 @@
 
 #include <ctype.h>
 #include <string.h>
+
 #include <proto/codesets.h>
 #include <proto/dos.h>
 #include <proto/muimaster.h>
@@ -52,27 +53,10 @@
 #include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
-#include "YAM_config.h"
-#include "YAM_configFile.h"
 #include "YAM_error.h"
 #include "YAM_global.h"
 #include "YAM_glossarydisplay.h"
 #include "YAM_mainFolder.h"
-
-#include "Busy.h"
-#include "DynamicString.h"
-#include "FileInfo.h"
-#include "FolderList.h"
-#include "Locale.h"
-#include "Logfile.h"
-#include "MailList.h"
-#include "MailServers.h"
-#include "MUIObjects.h"
-#include "ParseEmail.h"
-#include "Requesters.h"
-#include "Signature.h"
-#include "Threads.h"
-#include "UserIdentity.h"
 
 #include "mime/uucode.h"
 #include "mui/IdentityChooser.h"
@@ -86,6 +70,22 @@
 #include "mui/WriteWindowToolbar.h"
 #include "mui/YAMApplication.h"
 #include "tcp/smtp.h"
+
+#include "Busy.h"
+#include "Config.h"
+#include "DynamicString.h"
+#include "FileInfo.h"
+#include "FolderList.h"
+#include "Locale.h"
+#include "Logfile.h"
+#include "MailList.h"
+#include "MailServers.h"
+#include "MUIObjects.h"
+#include "ParseEmail.h"
+#include "Requesters.h"
+#include "Signature.h"
+#include "Threads.h"
+#include "UserIdentity.h"
 
 #include "Debug.h"
 
@@ -4994,7 +4994,7 @@ DECLARE(MenuToggleRecipientObject) // enum RcptType rtype
 
         // also save it to the temp CE struct in
         // case the config window exists (is open)
-        if(G->CO != NULL && CE != NULL)
+        if(G->ConfigWinObject != NULL && CE != NULL)
           CE->ShowRcptFieldCC = show;
 
         saveConfig = TRUE;
@@ -5015,7 +5015,7 @@ DECLARE(MenuToggleRecipientObject) // enum RcptType rtype
 
         // also save it to the temp CE struct in
         // case the config window exists (is open)
-        if(G->CO != NULL && CE != NULL)
+        if(G->ConfigWinObject != NULL && CE != NULL)
           CE->ShowRcptFieldBCC = show;
 
         saveConfig = TRUE;
@@ -5036,7 +5036,7 @@ DECLARE(MenuToggleRecipientObject) // enum RcptType rtype
 
         // also save it to the temp CE struct in
         // case the config window exists (is open)
-        if(G->CO != NULL && CE != NULL)
+        if(G->ConfigWinObject != NULL && CE != NULL)
           CE->ShowRcptFieldReplyTo = show;
 
         saveConfig = TRUE;
@@ -5058,7 +5058,7 @@ DECLARE(MenuToggleRecipientObject) // enum RcptType rtype
   // then we save the new default state for the
   // manually hidden/shown recipient object
   if(saveConfig == TRUE)
-    CO_SaveConfig(C, G->CO_PrefsFile);
+    SaveConfig(C, G->CO_PrefsFile);
 
   RETURN(0);
   return 0;

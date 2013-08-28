@@ -54,18 +54,18 @@
 #include "SDI_hook.h"
 
 #include "YAM.h"
-#include "YAM_config.h"
 #include "YAM_error.h"
 #include "YAM_utilities.h"
 
+#include "tcp/Connection.h"
+#include "tcp/ssl.h"
+
+#include "Config.h"
 #include "DynamicString.h"
 #include "FileInfo.h"
 #include "Locale.h"
 #include "MailServers.h"
 #include "Requesters.h"
-
-#include "tcp/Connection.h"
-#include "tcp/ssl.h"
 
 #include "Debug.h"
 

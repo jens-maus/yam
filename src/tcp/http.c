@@ -29,19 +29,19 @@
 #include <stdio.h>
 
 #include "YAM.h"
-#include "YAM_config.h"
 #include "YAM_error.h"
 #include "YAM_global.h"
-
-#include "Locale.h"
-#include "MailServers.h"
-#include "MethodStack.h"
-#include "Threads.h"
 
 #include "mui/TransferControlGroup.h"
 #include "mui/YAMApplication.h"
 #include "tcp/Connection.h"
 #include "tcp/http.h"
+
+#include "Config.h"
+#include "Locale.h"
+#include "MailServers.h"
+#include "MethodStack.h"
+#include "Threads.h"
 
 #include "Debug.h"
 

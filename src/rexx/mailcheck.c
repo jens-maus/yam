@@ -30,9 +30,9 @@
 #include "extrasrc.h"
 
 #include "YAM.h"
-#include "YAM_config.h"
 #include "YAM_main.h"
 
+#include "Config.h"
 #include "MailServers.h"
 #include "Rexx.h"
 

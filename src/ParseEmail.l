@@ -41,9 +41,9 @@
 %{
     #include <string.h>
 
-    #include "YAM_config.h"
     #include "YAM_read.h"
 
+    #include "Config.h"
     #include "DynamicString.h"
     #include "ParseEmail.h"
 

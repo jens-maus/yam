@@ -39,13 +39,6 @@
 
 #include "Debug.h"
 
-/* CLASSDATA
-struct Data
-{
-  BOOL visited;
-};
-*/
-
 /* INCLUDE
 #include "Locale.h"
 #include "MUIObjects.h"
@@ -139,33 +132,9 @@ OVERLOAD(OM_NEW)
 }
 
 ///
-/// OVERLOAD(OM_SET)
-OVERLOAD(OM_SET)
-{
-  GETDATA;
-  struct TagItem *tags = inittags(msg), *tag;
-
-  while((tag = NextTagItem((APTR)&tags)) != NULL)
-  {
-    switch(tag->ti_Tag)
-    {
-      case ATTR(Visited):
-      {
-        data->visited = tag->ti_Data;
-        tag->ti_Tag = TAG_IGNORE;
-	  }
-	  break;
-    }
-  }
-
-  return DoSuperMethodA(cl, obj, msg);
-}
-
-///
 /// OVERLOAD(OM_GET)
 OVERLOAD(OM_GET)
 {
-  GETDATA;
   IPTR *store = ((struct opGet *)msg)->opg_Storage;
   ULONG result = FALSE;
 
@@ -174,7 +143,6 @@ OVERLOAD(OM_GET)
   switch(((struct opGet *)msg)->opg_AttrID)
   {
     case ATTR(ConfigUpdate): *store = TRUE; result = TRUE; break;
-    case ATTR(Visited):      *store = data->visited; result = TRUE; break;
   }
 
   if(result == FALSE)

@@ -31,23 +31,25 @@
 #include "UserPortraitGroup_cl.h"
 
 #include <string.h>
+
 #include <proto/dos.h>
 #include <proto/muimaster.h>
 
 #include "YAM.h"
 #include "YAM_addressbookEntry.h"
-#include "YAM_config.h"
 #include "YAM_error.h"
-#include "FileInfo.h"
-#include "Locale.h"
-#include "MUIObjects.h"
-#include "Requesters.h"
-#include "Threads.h"
 
 #include "mime/md5.h"
 #include "mui/ClassesExtra.h"
 #include "mui/ImageArea.h"
 #include "tcp/http.h"
+
+#include "Config.h"
+#include "FileInfo.h"
+#include "Locale.h"
+#include "MUIObjects.h"
+#include "Requesters.h"
+#include "Threads.h"
 
 #include "Debug.h"
 

@@ -33,19 +33,21 @@
 #include <proto/muimaster.h>
 
 #include "YAM.h"
-#include "YAM_config.h"
 #include "YAM_error.h"
 
-#include "Locale.h"
-#include "MailList.h"
-#include "MUIObjects.h"
-#include "Requesters.h"
-
 #include "mui/Aboutwindow.h"
+#include "mui/ConfigWindow.h"
 #include "mui/MainMailListGroup.h"
 #include "mui/QuickSearchBar.h"
 #include "mui/ReadMailGroup.h"
 #include "mui/SearchMailWindow.h"
+
+#include "Busy.h"
+#include "Config.h"
+#include "Locale.h"
+#include "MailList.h"
+#include "MUIObjects.h"
+#include "Requesters.h"
 
 #include "Debug.h"
 
@@ -140,9 +142,12 @@ DECLARE(DisposeSubWindow) // Object *win
 
   D(DBF_GUI, "Dispose subwindow: %08lx", msg->win);
 
-  set(msg->win, MUIA_Window_Open, FALSE);
-  DoMethod(_app(obj), OM_REMMEMBER, msg->win);
-  MUI_DisposeObject(msg->win);
+  if(msg->win != NULL)
+  {
+    set(msg->win, MUIA_Window_Open, FALSE);
+    DoMethod(_app(obj), OM_REMMEMBER, msg->win);
+    MUI_DisposeObject(msg->win);
+  }
 
   RETURN(0);
   return 0;
@@ -166,7 +171,8 @@ DECLARE(ShowAbout)
       DoMethod(data->aboutWindow, MUIM_Notify, MUIA_Window_Open, FALSE, MUIV_Notify_Application, 4, MUIM_Application_PushMethod, _app(obj), 1, MUIM_MainWindow_CloseAbout);
   }
 
-  SafeOpenWindow(data->aboutWindow);
+  if(data->aboutWindow != NULL)
+    SafeOpenWindow(data->aboutWindow);
 
   RETURN(0);
   return 0;
@@ -181,13 +187,8 @@ DECLARE(CloseAbout)
 
   ENTER();
 
-  // close the about window object
-  if(data->aboutWindow != NULL)
-  {
-    DoMethod(_app(obj), OM_REMMEMBER, data->aboutWindow);
-    MUI_DisposeObject(data->aboutWindow);
-    data->aboutWindow = NULL;
-  }
+  DoMethod(obj, METHOD(DisposeSubWindow), data->aboutWindow);
+  data->aboutWindow = NULL;
 
   RETURN(0);
   return 0;
@@ -325,6 +326,60 @@ DECLARE(DoEditAction) // enum EditAction action
 }
 
 ///
+/// DECLARE(OpenConfigWindow)
+DECLARE(OpenConfigWindow)
+{
+  ENTER();
+
+  if(G->ConfigWinObject == NULL)
+  {
+    struct BusyNode *busy;
+
+    busy = BusyBegin(BUSY_TEXT);
+    BusyText(busy, tr(MSG_BUSY_OPENINGCONFIG), "");
+
+    if((CE = AllocConfig()) != NULL)
+    {
+      if(CopyConfig(CE, C) == TRUE)
+      {
+        G->ConfigWinObject = ConfigWindowObject, End;
+      }
+    }
+
+    BusyEnd(busy);
+  }
+
+  if(G->ConfigWinObject != NULL)
+  {
+    SafeOpenWindow(G->ConfigWinObject);
+  }
+  else
+  {
+    // inform the user by chiming the bells about the failure
+    DisplayBeep(NULL);
+
+    FreeConfig(CE);
+    CE = NULL;
+  }
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(CloseConfigWindow)
+DECLARE(CloseConfigWindow)
+{
+  ENTER();
+
+  DoMethod(obj, METHOD(DisposeSubWindow), G->ConfigWinObject);
+  G->ConfigWinObject = NULL;
+
+  RETURN(0);
+  return 0;
+}
+
+///
 /// DECLARE(OpenSearchMailWindow)
 DECLARE(OpenSearchMailWindow) // struct Folder *folder
 {
@@ -340,6 +395,7 @@ DECLARE(OpenSearchMailWindow) // struct Folder *folder
   return 0;
 }
 
+///
 /// DECLARE(ApplyFilters)
 DECLARE(ApplyFilters) // enum ApplyFilterMode mode, ULONG qualifier, struct FilterResult *result
 {
@@ -399,7 +455,7 @@ DECLARE(ApplyFilters) // enum ApplyFilterMode mode, ULONG qualifier, struct Filt
         else
           snprintf(buf, sizeof(buf), tr(MSG_MA_CONFIRMFILTER_SELECTED), folder->Name);
 
-        if(MUI_Request(G->App, G->MA->GUI.WI, MUIF_NONE, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), buf) == 0)
+        if(MUI_Request(_app(obj), obj, MUIF_NONE, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), buf) == 0)
           applyFilters = FALSE;
       }
 
@@ -431,7 +487,7 @@ DECLARE(ApplyFilters) // enum ApplyFilterMode mode, ULONG qualifier, struct Filt
                                                                  filterResult.Deleted);
             }
 
-            MUI_Request(G->App, G->MA->GUI.WI, MUIF_NONE, NULL, tr(MSG_OkayReq), buf);
+            MUI_Request(_app(obj), obj, MUIF_NONE, NULL, tr(MSG_OkayReq), buf);
           }
         }
       }
@@ -451,3 +507,5 @@ DECLARE(ApplyFilters) // enum ApplyFilterMode mode, ULONG qualifier, struct Filt
   RETURN(0);
   return 0;
 }
+
+///

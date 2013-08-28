@@ -41,14 +41,14 @@
 
 #include "SDI_hook.h"
 
-#include "YAM_config.h"
 #include "YAM_mainFolder.h"
 
+#include "mui/AttachmentObject.h"
+
 #include "Busy.h"
+#include "Config.h"
 #include "Locale.h"
 #include "MUIObjects.h"
-
-#include "mui/AttachmentObject.h"
 
 #include "Debug.h"
 

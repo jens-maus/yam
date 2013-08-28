@@ -41,15 +41,15 @@
 #include <mui/NListview_mcc.h>
 
 #include "YAM.h"
-#include "YAM_config.h"
-
-#include "MailServers.h"
-#include "UIDL.h"
-#include "UserIdentity.h"
 
 #include "mui/AccountList.h"
 #include "mui/ConfigPage.h"
 #include "mui/ConfigPageList.h"
+
+#include "Config.h"
+#include "MailServers.h"
+#include "UIDL.h"
+#include "UserIdentity.h"
 
 #include "Debug.h"
 

@@ -39,8 +39,8 @@
 #include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
-#include "YAM_config.h"
 
+#include "Config.h"
 #include "DynamicString.h"
 #include "Locale.h"
 #include "MUIObjects.h"
@@ -442,7 +442,7 @@ DECLARE(LoadFromFile) // const char *file, struct codeset *srcCodeset, ULONG fla
       char *parsedText;
 
       // parse the text and do some highlighting and stuff
-      if((parsedText = ParseEmailText(dstText, FALSE, isFlagSet(msg->flags, MUIF_MailTextEdit_LoadFromFile_UseStyles), 
+      if((parsedText = ParseEmailText(dstText, FALSE, isFlagSet(msg->flags, MUIF_MailTextEdit_LoadFromFile_UseStyles),
                                                       isFlagSet(msg->flags, MUIF_MailTextEdit_LoadFromFile_UseColors))) != NULL)
       {
         // set the new text and tell the editor that its content has changed

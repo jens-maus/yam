@@ -43,7 +43,6 @@
 #include "SDI_hook.h"
 
 #include "YAM.h"
-#include "YAM_config.h"
 #include "YAM_error.h"
 
 #include "mui/ConfigPage.h"
@@ -51,6 +50,7 @@
 #include "mui/MimeTypeList.h"
 #include "mui/PlaceholderPopupList.h"
 
+#include "Config.h"
 #include "MimeTypes.h"
 #include "MUIObjects.h"
 #include "Requesters.h"

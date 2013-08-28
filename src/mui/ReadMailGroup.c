@@ -46,12 +46,22 @@
 #include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
-#include "YAM_config.h"
 #include "YAM_error.h"
 #include "YAM_mainFolder.h"
 #include "YAM_read.h"
 
+#include "mui/AttachmentGroup.h"
+#include "mui/HeaderList.h"
+#include "mui/ImageArea.h"
+#include "mui/MainMailListGroup.h"
+#include "mui/MailTextEdit.h"
+#include "mui/SearchTextWindow.h"
+#include "mui/ReadMailGroup.h"
+#include "mui/ReadWindow.h"
+#include "mui/YAMApplication.h"
+
 #include "Busy.h"
+#include "Config.h"
 #include "DynamicString.h"
 #include "FileInfo.h"
 #include "HTML2Mail.h"
@@ -64,16 +74,6 @@
 #include "Requesters.h"
 #include "Timer.h"
 #include "UserIdentity.h"
-
-#include "mui/AttachmentGroup.h"
-#include "mui/HeaderList.h"
-#include "mui/ImageArea.h"
-#include "mui/MainMailListGroup.h"
-#include "mui/MailTextEdit.h"
-#include "mui/SearchTextWindow.h"
-#include "mui/ReadMailGroup.h"
-#include "mui/ReadWindow.h"
-#include "mui/YAMApplication.h"
 
 #include "Debug.h"
 
@@ -1815,7 +1815,7 @@ DECLARE(DisplayMailRequest)
           // get the suggested filename for the mail part
           fileName = SuggestPartFileName(part);
 
-          RE_DisplayMIME(part->Filename, fileName, 
+          RE_DisplayMIME(part->Filename, fileName,
                          part->ContentType, isPrintable(part));
 
           free(fileName);

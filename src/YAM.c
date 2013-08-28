@@ -80,8 +80,6 @@
 
 #include "YAM.h"
 #include "YAM_addressbook.h"
-#include "YAM_config.h"
-#include "YAM_configFile.h"
 #include "YAM_folderconfig.h"
 #include "YAM_global.h"
 #include "YAM_main.h"
@@ -94,6 +92,7 @@
 #include "AVLTree.h"
 #include "BayesFilter.h"
 #include "Busy.h"
+#include "Config.h"
 #include "DockyIcon.h"
 #include "FileInfo.h"
 #include "MUIObjects.h"
@@ -722,15 +721,10 @@ static void Terminate(void)
   BayesFilterCleanup();
 
   D(DBF_STARTUP, "freeing config module...");
-  if(G->CO != NULL)
-  {
-    CO_ClearConfig(CE);
-    free(CE);
-    CE = NULL;
-
-    // free the smtpServerArray
-    DisposeModule(&G->CO);
-  }
+  if(G->ConfigWinObject != NULL && G->MA != NULL)
+    DoMethod(G->MA->GUI.WI, MUIM_MainWindow_CloseConfigWindow);
+  FreeConfig(CE);
+  CE = NULL;
 
   D(DBF_STARTUP, "freeing addressbook entries...");
   for(i = 0; i < MAXEA; i++)
@@ -887,8 +881,7 @@ static void Terminate(void)
   }
 
   D(DBF_STARTUP, "freeing config...");
-  CO_ClearConfig(C);
-  free(C);
+  FreeConfig(C);
   C = NULL;
 
   D(DBF_STARTUP, "unloading/freeing theme images...");
@@ -1208,7 +1201,7 @@ BOOL StayInProg(void)
       case 1:
       {
         // save and quit
-        CO_SaveConfig(C, G->CO_PrefsFile);
+        SaveConfig(C, G->CO_PrefsFile);
       }
       break;
 
@@ -1285,7 +1278,7 @@ BOOL StayInProg(void)
         req = TRUE;
     }
 
-    if(req == TRUE || G->CO != NULL || C->ConfirmOnQuit == TRUE)
+    if(req == TRUE || G->ConfigWinObject != NULL || C->ConfirmOnQuit == TRUE)
     {
       if(MUI_Request(G->App, G->MA->GUI.WI, MUIF_NONE, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_QuitYAMReq)) == 0)
         stayIn = TRUE;
@@ -1460,14 +1453,14 @@ static void InitAfterLogin(void)
   D(DBF_STARTUP, "loading configuration...");
   SplashProgress(tr(MSG_LoadingConfig), 20);
 
-  res = CO_LoadConfig(C, G->CO_PrefsFile, &oldfolders);
+  res = LoadConfig(C, G->CO_PrefsFile, &oldfolders);
   if(res == 0)
     Abort(NULL); // user requested to abort because newer config file found
   else if(res == -1)
-    CO_SetDefaults(C, cp_AllPages); // reset things to defaults if config file missing/invalid
+    SetDefaultConfig(C, cp_AllPages); // reset things to defaults if config file missing/invalid
 
   // make sure the config has valid values
-  CO_Validate(C, FALSE);
+  ValidateConfig(C, FALSE);
 
   // load all necessary graphics/themes
   SplashProgress(tr(MSG_LoadingGFX), 30);

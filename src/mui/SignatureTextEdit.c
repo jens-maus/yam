@@ -37,8 +37,8 @@
 #include <mui/TextEditor_mcc.h>
 
 #include "YAM.h"
-#include "YAM_config.h"
 
+#include "Config.h"
 #include "DynamicString.h"
 #include "MailTextEdit.h"
 #include "MUIObjects.h"

@@ -33,9 +33,11 @@
 #include <proto/codesets.h>
 
 #include "YAM.h"
-#include "YAM_config.h"
 
 #include "mime/qprintable.h"
+
+#include "Config.h"
+
 #include "Debug.h"
 
 // some defines that can be usefull

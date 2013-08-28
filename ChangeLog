@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-08-28 Thore Böckelmann <tboeckel@gmx.de>
+
+  * Config.c, mui/ConfigWindow.c, misc: separated data structure and GUI of the
+    configuration as much as possible. This finally makes the old YAM_CO*.c
+    files obsolete and future modifications to the config GUI should no longer
+    trigger an almost complete rebuild of all modules using the config.
+
 2013-08-27 Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_MA.c, MUIObjects.c, misc: implemented use of MUIA_Window_ScreenTitle for

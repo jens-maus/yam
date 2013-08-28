@@ -31,12 +31,12 @@
 #include "extrasrc.h"
 
 #include "YAM.h"
-#include "YAM_config.h"
 #include "YAM_write.h"
 
 #include "mui/ClassesExtra.h"
 #include "mui/WriteWindow.h"
 
+#include "Config.h"
 #include "Rexx.h"
 
 #include "Debug.h"

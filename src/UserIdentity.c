@@ -35,12 +35,12 @@
 
 #include <proto/exec.h>
 
-#include "YAM_config.h"
+#include "extrasrc.h"
+
 #include "YAM_mainFolder.h"
 #include "YAM_utilities.h"
 
-#include "extrasrc.h"
-
+#include "Config.h"
 #include "MailServers.h"
 #include "Signature.h"
 #include "UserIdentity.h"

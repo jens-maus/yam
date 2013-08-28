@@ -43,23 +43,12 @@
 
 #include "YAM.h"
 #include "YAM_addressbook.h"
-#include "YAM_config.h"
 #include "YAM_error.h"
 #include "YAM_find.h"
 #include "YAM_folderconfig.h"
 #include "YAM_global.h"
 #include "YAM_mainFolder.h"
 #include "YAM_stringsizes.h"
-
-#include "Busy.h"
-#include "FileInfo.h"
-#include "FolderList.h"
-#include "Locale.h"
-#include "MailList.h"
-#include "MUIObjects.h"
-#include "Requesters.h"
-#include "Signature.h"
-#include "UserIdentity.h"
 
 #include "mui/FolderRequestListtree.h"
 #include "mui/IdentityChooser.h"
@@ -68,6 +57,17 @@
 #include "mui/SearchMailWindow.h"
 #include "mui/SignatureChooser.h"
 #include "mui/YAMApplication.h"
+
+#include "Busy.h"
+#include "Config.h"
+#include "FileInfo.h"
+#include "FolderList.h"
+#include "Locale.h"
+#include "MailList.h"
+#include "MUIObjects.h"
+#include "Requesters.h"
+#include "Signature.h"
+#include "UserIdentity.h"
 
 #include "Debug.h"
 

@@ -67,23 +67,23 @@
 
 #include <libraries/genesis.h>
 
+#include "extrasrc.h"
 #include "timeval.h"
 
 #include "YAM.h"
-#include "YAM_config.h"
 #include "YAM_error.h"
 
+#include "mui/YAMApplication.h"
+#include "tcp/Connection.h"
+#include "tcp/ssl.h"
+
+#include "Config.h"
 #include "MailServers.h"
 #include "MethodStack.h"
 #include "Locale.h"
 #include "Requesters.h"
 #include "Threads.h"
 
-#include "mui/YAMApplication.h"
-#include "tcp/Connection.h"
-#include "tcp/ssl.h"
-
-#include "extrasrc.h"
 #include "Debug.h"
 
 #ifndef SHUT_RDWR

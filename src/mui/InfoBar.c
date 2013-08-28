@@ -35,15 +35,15 @@
 #include <proto/muimaster.h>
 
 #include "YAM.h"
-#include "YAM_config.h"
 #include "YAM_utilities.h"
-
-#include "Busy.h"
-#include "DynamicString.h"
-#include "MUIObjects.h"
 
 #include "mui/ImageArea.h"
 #include "mui/FolderListtree.h"
+
+#include "Busy.h"
+#include "Config.h"
+#include "DynamicString.h"
+#include "MUIObjects.h"
 
 #include "Debug.h"
 

@@ -33,11 +33,11 @@
 #endif
 
 #include "YAM.h"
-#include "YAM_config.h"
 
 #include "mui/ClassesExtra.h"
 #include "mui/WriteWindow.h"
 
+#include "Config.h"
 #include "DockyIcon.h"
 #include "Locale.h"
 #include "MUIObjects.h"
@@ -334,7 +334,7 @@ BOOL HandleDockyIcon(void)
         case APPLIBMT_OpenPrefs:
         {
           PopUp();
-          CallHookPkt(&CO_OpenHook, 0, 0);
+          DoMethod(G->MA->GUI.WI, MUIM_MainWindow_OpenConfigWindow);
         }
         break;
 

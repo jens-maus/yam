@@ -28,14 +28,14 @@
 
 ***************************************************************************/
 
+#include "SignatureChooser_cl.h"
+
 #include <stdlib.h>
 #include <string.h>
 
-#include "SignatureChooser_cl.h"
-
-#include "YAM_config.h"
 #include "YAM_utilities.h"
 
+#include "Config.h"
 #include "Locale.h"
 #include "MUIObjects.h"
 #include "Signature.h"

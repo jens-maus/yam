@@ -38,7 +38,6 @@
 #include <clib/macros.h>
 #include <libraries/iffparse.h>
 #include <libraries/gadtools.h>
-#include <libraries/mui.h>
 #include <mui/BetterString_mcc.h>
 #include <mui/NList_mcc.h>
 #include <mui/NListview_mcc.h>
@@ -58,14 +57,16 @@
 #include "SDI_stdarg.h"
 
 #include "YAM.h"
-#include "YAM_config.h"
 #include "YAM_global.h"
 #include "YAM_utilities.h"
 
+#include "Config.h"
 #include "Locale.h"
 #include "ParseEmail.h"
 
 #endif /* INCLUDE_KITCHEN_SINK */
+
+#include <libraries/mui.h>
 
 #include "YAM_main.h" // NewMode
 #include "YAM_read.h" // HeaderMode,SInfoMode

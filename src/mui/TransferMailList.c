@@ -31,6 +31,7 @@
 #include "TransferMailList_cl.h"
 
 #include <string.h>
+
 #include <proto/dos.h>
 #include <proto/muimaster.h>
 #include <libraries/iffparse.h>
@@ -38,15 +39,15 @@
 
 #include "YAM.h"
 #include "YAM_addressbookEntry.h"
-#include "YAM_config.h"
 #include "YAM_mainFolder.h"
 #include "YAM_utilities.h"
 
+#include "mui/ImageArea.h"
+
+#include "Config.h"
 #include "Locale.h"
 #include "MailTransferList.h"
 #include "Themes.h"
-
-#include "mui/ImageArea.h"
 
 #include "Debug.h"
 

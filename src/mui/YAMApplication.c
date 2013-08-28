@@ -31,6 +31,7 @@
 #include "YAMApplication_cl.h"
 
 #include <string.h>
+
 #include <proto/dos.h>
 #include <proto/icon.h>
 #include <proto/muimaster.h>
@@ -44,21 +45,10 @@
 #include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
-#include "YAM_config.h"
 #include "YAM_error.h"
 #include "YAM_find.h"
 #include "YAM_global.h"
 #include "YAM_mainFolder.h"
-
-#include "AppIcon.h"
-#include "Busy.h"
-#include "FileInfo.h"
-#include "Locale.h"
-#include "MailServers.h"
-#include "MUIObjects.h"
-#include "UpdateCheck.h"
-#include "Requesters.h"
-#include "Threads.h"
 
 #include "mui/AddrBookListtree.h"
 #include "mui/AddressmatchPopup.h"
@@ -66,6 +56,17 @@
 #include "mui/StringRequestWindow.h"
 #include "mui/TransferControlGroup.h"
 #include "mui/TransferWindow.h"
+
+#include "AppIcon.h"
+#include "Busy.h"
+#include "Config.h"
+#include "FileInfo.h"
+#include "Locale.h"
+#include "MailServers.h"
+#include "MUIObjects.h"
+#include "UpdateCheck.h"
+#include "Requesters.h"
+#include "Threads.h"
 
 #include "Debug.h"
 

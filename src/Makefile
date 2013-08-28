@@ -666,8 +666,6 @@ YAMOBJS = \
 	YAM_global.o \
 	YAM.o \
 	YAM_AB.o \
-	YAM_CO.o \
-	YAM_COs.o \
 	YAM_DI.o \
 	YAM_EA.o \
 	YAM_ER.o \
@@ -684,6 +682,7 @@ YAMOBJS = \
 	BayesFilter.o \
 	BoyerMooreSearch.o \
 	Busy.o \
+	Config.o \
 	DockyIcon.o \
 	DynamicString.o \
 	FileInfo.o \

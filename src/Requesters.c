@@ -45,8 +45,6 @@
 #include "SDI_hook.h"
 
 #include "YAM.h"
-#include "YAM_config.h"
-#include "YAM_configFile.h"
 #include "YAM_mainFolder.h"
 #include "YAM_read.h"
 
@@ -59,6 +57,7 @@
 #include "mui/StringRequestWindow.h"
 #include "mui/YAMApplication.h"
 
+#include "Config.h"
 #include "DynamicString.h"
 #include "FolderList.h"
 #include "Locale.h"
@@ -667,7 +666,7 @@ BOOL CertWarningRequest(struct Connection *conn, struct Certificate *cert)
                 conn->server->certFailures = failures;
 
                 // make sure to save the config afterwards
-                CO_SaveConfig(C, G->CO_PrefsFile);
+                SaveConfig(C, G->CO_PrefsFile);
 
                 // signal NO error
                 result = TRUE;

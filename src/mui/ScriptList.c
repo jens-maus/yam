@@ -31,10 +31,10 @@
 #include "ScriptList_cl.h"
 
 #include <string.h>
+
 #include <mui/NList_mcc.h>
 
-#include "YAM_config.h"
-
+#include "Config.h"
 #include "Locale.h"
 
 #include "Debug.h"

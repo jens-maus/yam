@@ -31,13 +31,14 @@
 #include "PassphraseRequestWindow_cl.h"
 
 #include <string.h>
+
 #include <proto/muimaster.h>
 #include <libraries/iffparse.h>
 
 #include "YAM.h"
-#include "YAM_config.h"
 #include "YAM_stringsizes.h"
 
+#include "Config.h"
 #include "Locale.h"
 #include "MUIObjects.h"
 

@@ -42,11 +42,11 @@
 #include "SDI_stdarg.h"
 
 #include "YAM.h"
-#include "YAM_config.h"
 #include "YAM_error.h"
 #include "YAM_main.h"
 #include "YAM_utilities.h"
 
+#include "Config.h"
 #include "Locale.h"
 #include "MethodStack.h"
 #include "MUIObjects.h"

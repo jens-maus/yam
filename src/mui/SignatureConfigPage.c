@@ -37,14 +37,13 @@
 #include <mui/NListview_mcc.h>
 #include <mui/TextEditor_mcc.h>
 
-#include "YAM_config.h"
-
-#include "Signature.h"
-
 #include "mui/ConfigPage.h"
 #include "mui/ConfigPageList.h"
 #include "mui/SignatureList.h"
 #include "mui/SignatureTextEdit.h"
+
+#include "Config.h"
+#include "Signature.h"
 
 #include "Debug.h"
 

@@ -51,7 +51,6 @@
 #include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
-#include "YAM_config.h"
 #include "YAM_error.h"
 #include "YAM_folderconfig.h"
 #include "YAM_global.h"
@@ -74,6 +73,7 @@
 #include "tcp/smtp.h"
 
 #include "Busy.h"
+#include "Config.h"
 #include "DynamicString.h"
 #include "FileInfo.h"
 #include "FolderList.h"
@@ -528,7 +528,7 @@ void RE_DisplayMIME(const char *srcfile, const char *dstfile,
       char suggestedName[SIZE_FILE];
       char basename[SIZE_FILE];
       int i=0;
-  
+
       // preserve the base name of the file
       strlcpy(basename, dstfile, sizeof(basename));
 
@@ -549,7 +549,7 @@ void RE_DisplayMIME(const char *srcfile, const char *dstfile,
 
       // make sure dstfile is valid
       if(IsStrEmpty(dstfile) == FALSE)
-      { 
+      {
         // now convert from UTF8 to the codeset the user has choosen
         if(convertFromUTF8 == TRUE &&
            codesetName != NULL && stricmp(codesetName, "UTF8") != 0 && stricmp(codesetName, "UTF-8") != 0)
@@ -590,7 +590,7 @@ void RE_DisplayMIME(const char *srcfile, const char *dstfile,
                 char *cbuf;
                 ULONG cbuflen = 0;
 
-                // convert the utf8 data to local 
+                // convert the utf8 data to local
                 if((cbuf = CodesetsUTF8ToStr(CSA_Source,          dbuf,
                                              CSA_SourceLen,       dbuflen,
                                              CSA_DestCodeset,     dstCodeset,
@@ -3029,7 +3029,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                                          TAG_DONE)) != NULL && cstrlen > 0)
             {
               // if the size didn't change this should be a signal that nothing
-              // had been actually 
+              // had been actually
               if(cstrlen != dstrlen(msg))
               {
                 // msg has been converted to local charset now, so lets

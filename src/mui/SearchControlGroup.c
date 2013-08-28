@@ -40,15 +40,15 @@
 #include <mui/BetterString_mcc.h>
 
 #include "YAM.h"
-#include "YAM_config.h"
 #include "YAM_find.h"
 #include "YAM_utilities.h"
 
-#include "Locale.h"
-#include "MUIObjects.h"
-
 #include "mui/ObjectList.h"
 #include "mui/ObjectListitem.h"
+
+#include "Config.h"
+#include "Locale.h"
+#include "MUIObjects.h"
 
 #include "Debug.h"
 

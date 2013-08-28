@@ -31,20 +31,21 @@
 #include "WriteAttachmentList_cl.h"
 
 #include <string.h>
+
 #include <proto/muimaster.h>
 #include <mui/NList_mcc.h>
 
 #include "YAM.h"
-#include "YAM_config.h"
 #include "YAM_mainFolder.h"
-
-#include "Busy.h"
-#include "Locale.h"
-#include "MUIObjects.h"
 
 #include "mui/AttachmentImage.h"
 #include "mui/MainMailListGroup.h"
 #include "mui/WriteWindow.h"
+
+#include "Busy.h"
+#include "Config.h"
+#include "Locale.h"
+#include "MUIObjects.h"
 
 #include "Debug.h"
 

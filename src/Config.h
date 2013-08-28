@@ -1,5 +1,5 @@
-#ifndef YAM_CONFIG_H
-#define YAM_CONFIG_H
+#ifndef CONFIG_H
+#define CONFIG_H
 
 /***************************************************************************
 
@@ -28,65 +28,31 @@
 
 ***************************************************************************/
 
+#include <exec/lists.h>
 #include <libraries/mui.h>
 
-#include "YAM_read.h"
+#include "YAM_read.h"           // for enum MDNAction, enum SigSepType
+#include "YAM_stringsizes.h"
 #include "YAM_utilities.h"
 
-#include "Logfile.h"
-#include "UpdateCheck.h"
+#include "mui/ConfigPageList.h" // for enum ConfigPage
+#include "mui/TransferWindow.h" // enum TransferWindowMode
 
-#include "mui/ConfigPageList.h"
-#include "mui/TransferWindow.h"
-#include "tcp/Connection.h"
+#include "tcp/Connection.h"     // struct SocketOptions
+
+#include "Logfile.h"            // for enum LFMode
 
 // forward declarations
 struct FilterNode;
+struct FolderList;
 
-#define FOCOLNUM 5
-#define MACOLNUM 8  // the maximum number of columns the MessageListview can have
-#define ABCOLNUM 9
-
-struct CO_GUIData
-{
-  Object *WI;
-  Object *BT_SAVE;
-  Object *BT_USE;
-  Object *BT_CANCEL;
-  Object *NLV_PAGE;
-  Object *LV_PAGE;
-  Object *GR_PAGE;
-  Object *PG_PAGES[cp_Max];
-
-  // objects on "First steps" page, unused but still accessed
-  Object *ST_POPHOST0;
-  Object *ST_USER0;
-
-  // objects on "Filters" page, unused but still accessed
-  Object *LV_RULES;
-
-  // Objects on "Signature" page, unused but still accessed
-  Object *TE_SIGEDIT;
-};
-
-struct CO_ClassData  /* configuration window */
-{
-  struct CO_GUIData GUI;
-
-  enum ConfigPage VisiblePage;
-  BOOL Visited[cp_Max];
-  BOOL UpdateAll;
-  char screenTitle[SIZE_DEFAULT];
-};
-
-/*** RxHook structure ***/
 struct RxHook
 {
-  BOOL  IsAmigaDOS;
-  BOOL  UseConsole;
-  BOOL  WaitTerm;
-  char  Name[SIZE_NAME];
-  char  Script[SIZE_PATHFILE];
+  BOOL IsAmigaDOS;
+  BOOL UseConsole;
+  BOOL WaitTerm;
+  char Name[SIZE_NAME];
+  char Script[SIZE_PATHFILE];
 };
 
 // flags for hiding GUI elements
@@ -133,7 +99,6 @@ enum WrapMode
   EWM_ONSENT   // word wrapping before sent
 };
 
-/*** Configuration main structure ***/
 struct Config
 {
   struct MinList pop3ServerList;   // list of configured POP3 servers
@@ -330,16 +295,17 @@ struct Config
 extern struct Config *C;
 extern struct Config *CE;
 
-// external hooks
-extern struct Hook CO_OpenHook;
-
-void CO_ClearConfig(struct Config *co);
-BOOL CO_IsValid(void);
-void CO_SetDefaults(struct Config *co, enum ConfigPage page);
-void CO_Validate(struct Config *co, BOOL update);
-BOOL CopyConfigData(struct Config *dco, const struct Config *sco);
-BOOL CompareConfigData(const struct Config *c1, const struct Config *c2);
+struct Config *AllocConfig(void);
+void FreeConfig(struct Config *co);
+void ClearConfig(struct Config *co);
+BOOL CopyConfig(struct Config *dco, const struct Config *sco);
+BOOL CompareConfigs(const struct Config *c1, const struct Config *c2);
+void SetDefaultConfig(struct Config *co, enum ConfigPage page);
+int LoadConfig(struct Config *co, const char *fname, struct FolderList **oldfolders);
+BOOL SaveConfig(struct Config *co, const char *fname);
+BOOL IsValidConfig(const struct Config *co);
+void ValidateConfig(struct Config *co, BOOL update);
 
 void ImportExternalSpamFilters(struct Config *co);
 
-#endif /* YAM_CONFIG_H */
+#endif /* CONFIG_H */

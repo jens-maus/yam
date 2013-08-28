@@ -33,10 +33,10 @@
 #include "extrasrc.h"
 
 #include "YAM.h"
-#include "YAM_config.h"
 #include "YAM_global.h"
 #include "YAM_utilities.h"
 
+#include "Config.h"
 #include "Logfile.h"
 #include "MethodStack.h"
 #include "Threads.h"

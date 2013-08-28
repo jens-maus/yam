@@ -32,6 +32,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+
 #include <proto/dos.h>
 #include <proto/muimaster.h>
 #include <proto/openurl.h>
@@ -41,21 +42,22 @@
 #include <mui/NFloattext_mcc.h>
 
 #include "YAM.h"
-#include "YAM_config.h"
-#include "YAM_configFile.h"
 #include "YAM_utilities.h"
 
+#include "mui/ConfigWindow.h"
+#include "mui/ImageArea.h"
+#include "mui/UpdateComponentList.h"
+#include "tcp/http.h"
+
 #include "Busy.h"
+#include "Config.h"
 #include "FileInfo.h"
 #include "Locale.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
 #include "Themes.h"
 #include "Threads.h"
-
-#include "mui/ImageArea.h"
-#include "mui/UpdateComponentList.h"
-#include "tcp/http.h"
+#include "UpdateCheck.h"
 
 #include "Debug.h"
 
@@ -501,9 +503,8 @@ DECLARE(Close)
   }
 
   // make sure the update check config page is correctly refreshed
-  // if it is currently the active one.
-  if(G->CO && G->CO->VisiblePage == cp_Update)
-    CO_SetConfig();
+  if(G->ConfigWinObject != NULL)
+    DoMethod(G->ConfigWinObject, MUIM_ConfigWindow_GUIToConfig, cp_Update);
 
   // now close the window for real.
   set(obj, MUIA_Window_Open, FALSE);

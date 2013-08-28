@@ -34,11 +34,11 @@
 #include "extrasrc.h"
 
 #include "YAM.h"
-#include "YAM_config.h"
 #include "YAM_error.h"
 #include "YAM_global.h"
 #include "YAM_utilities.h"
 
+#include "Config.h"
 #include "FileInfo.h"
 #include "Locale.h"
 #include "TZone.h"

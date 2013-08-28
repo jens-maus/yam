@@ -33,13 +33,15 @@
 #include <proto/exec.h>
 #include <proto/codesets.h>
 
+#include "SDI_compiler.h"
+
+#include "YAM.h"
+
 #include "mime/base64.h"
 #include "mime/qprintable.h"
 
-#include "YAM.h"
-#include "YAM_config.h"
+#include "Config.h"
 
-#include "SDI_compiler.h"
 #include "Debug.h"
 
 // RFC 2047 routines

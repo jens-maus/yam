@@ -90,6 +90,7 @@ struct Global
   Object *                 ReadToolbarCacheObject;
   Object *                 WriteToolbarCacheObject;
   Object *                 AbookToolbarCacheObject;
+  Object *                 ConfigWinObject;
   char *                   ER_Message[MAXERR];
   struct DiskObject *      HideIcon;
   struct AppIcon *         AppIcon;
@@ -100,7 +101,6 @@ struct Global
   struct Locale *          Locale;
   struct Catalog *         Catalog;
   struct MA_ClassData *    MA;
-  struct CO_ClassData *    CO;
   struct AB_ClassData *    AB;
   struct EA_ClassData *    EA[MAXEA];
   struct ER_ClassData *    ER;
@@ -149,7 +149,6 @@ struct Global
   BOOL                     PGP5;
   BOOL                     AppIconQuiet;
   BOOL                     PGPPassVolatile;
-  BOOL                     CO_Valid;
   BOOL                     TR_Debug;
   BOOL                     TR_UseableTLS;
   BOOL                     InStartupPhase;

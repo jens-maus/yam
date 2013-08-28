@@ -57,7 +57,6 @@
 #include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
-#include "YAM_config.h"
 #include "YAM_error.h"
 #include "YAM_find.h"
 #include "YAM_folderconfig.h"
@@ -87,6 +86,7 @@
 #include "AppIcon.h"
 #include "BayesFilter.h"
 #include "Busy.h"
+#include "Config.h"
 #include "DynamicString.h"
 #include "FileInfo.h"
 #include "FolderList.h"
@@ -4365,7 +4365,7 @@ struct MA_ClassData *MA_New(void)
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_ALLTOREAD,      MUIV_Notify_Application, 4, MUIM_CallHook,             &MA_SetAllStatusToHook, SFLAG_READ, SFLAG_NEW);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_TOSPAM,         MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_ClassifyMessageHook, BC_SPAM);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_TOHAM,          MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_ClassifyMessageHook, BC_HAM);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_CONFIG,         MUIV_Notify_Application, 2, MUIM_CallHook,             &CO_OpenHook);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_CONFIG,         data->GUI.WI,            1, MUIM_MainWindow_OpenConfigWindow);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_USER,           MUIV_Notify_Application, 2, MUIM_CallHook,             &US_OpenHook);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_MUI,            MUIV_Notify_Application, 3, MUIM_Application_OpenConfigWindow, MUIF_NONE, NULL);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_ABOUTMUI,       MUIV_Notify_Application, 2, MUIM_Application_AboutMUI, data->GUI.WI);
@@ -4401,7 +4401,7 @@ struct MA_ClassData *MA_New(void)
       DoMethod(data->GUI.TO_TOOLBAR, MUIM_TheBar_Notify, TB_MAIN_FILTER,   MUIA_Pressed, FALSE, data->GUI.WI,            4, MUIM_MainWindow_ApplyFilters, APPLY_USER, MUIV_TheBar_Qualifier, NULL);
       DoMethod(data->GUI.TO_TOOLBAR, MUIM_TheBar_Notify, TB_MAIN_FIND,     MUIA_Pressed, FALSE, data->GUI.WI,            2, MUIM_MainWindow_OpenSearchMailWindow, NULL);
       DoMethod(data->GUI.TO_TOOLBAR, MUIM_TheBar_Notify, TB_MAIN_ADDRBOOK, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &AB_OpenHook, ABM_EDIT);
-      DoMethod(data->GUI.TO_TOOLBAR, MUIM_TheBar_Notify, TB_MAIN_CONFIG,   MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &CO_OpenHook);
+      DoMethod(data->GUI.TO_TOOLBAR, MUIM_TheBar_Notify, TB_MAIN_CONFIG,   MUIA_Pressed, FALSE, data->GUI.WI,            1, MUIM_MainWindow_OpenConfigWindow);
 
       // define shortcut for "Forward" item
       if(C->ForwardMode == FWM_ATTACH)

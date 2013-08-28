@@ -42,18 +42,8 @@
 #include "SDI_hook.h"
 
 #include "YAM.h"
-#include "YAM_config.h"
-#include "YAM_configFile.h"
 #include "YAM_find.h"
 #include "YAM_mainFolder.h"
-
-#include "FolderList.h"
-#include "Locale.h"
-#include "MailList.h"
-#include "MethodStack.h"
-#include "MUIObjects.h"
-#include "Requesters.h"
-#include "Threads.h"
 
 #include "mui/FilterPopupList.h"
 #include "mui/FolderRequestListtree.h"
@@ -61,6 +51,15 @@
 #include "mui/MainMailList.h"
 #include "mui/ReadWindow.h"
 #include "mui/SearchControlGroup.h"
+
+#include "Config.h"
+#include "FolderList.h"
+#include "Locale.h"
+#include "MailList.h"
+#include "MethodStack.h"
+#include "MUIObjects.h"
+#include "Requesters.h"
+#include "Threads.h"
 
 #include "Debug.h"
 
@@ -620,7 +619,7 @@ DECLARE(CreateFilter)
 
       // check if we should immediately save our configuration or not
       if(ch == 1)
-        CO_SaveConfig(C, G->CO_PrefsFile);
+        SaveConfig(C, G->CO_PrefsFile);
     }
   }
 

@@ -35,13 +35,7 @@
 #include <mui/NListview_mcc.h>
 
 #include "YAM.h"
-#include "YAM_config.h"
-#include "YAM_configFile.h"
 #include "YAM_error.h"
-
-#include "FileInfo.h"
-#include "Locale.h"
-#include "Requesters.h"
 
 #include "mui/AddressBookConfigPage.h"
 #include "mui/ConfigPage.h"
@@ -64,6 +58,11 @@
 #include "mui/UpdateConfigPage.h"
 #include "mui/WriteConfigPage.h"
 
+#include "Config.h"
+#include "FileInfo.h"
+#include "Locale.h"
+#include "Requesters.h"
+
 #include "Debug.h"
 
 /* CLASSDATA
@@ -76,6 +75,9 @@ struct Data
 
   char windowTitle[SIZE_DEFAULT];
   char screenTitle[SIZE_DEFAULT];
+
+  BOOL visitedPages[cp_Max];
+  BOOL updateAll;
 };
 */
 
@@ -262,6 +264,9 @@ OVERLOAD(OM_NEW)
           DoMethod(PG_PAGES[i], MUIM_Notify, MUIA_ConfigPage_ConfigUpdate, MUIV_EveryTime, PG_PAGES[j], 2, MUIM_ConfigPage_ConfigUpdate, MUIV_TriggerValue);
       }
     }
+
+    // set up the "First steps" page
+    DoMethod(PG_PAGES[cp_FirstSteps], MUIM_ConfigPage_ConfigToGUI, CE);
   }
 
   RETURN((IPTR)obj);
@@ -269,8 +274,42 @@ OVERLOAD(OM_NEW)
 }
 
 ///
+/// OVERLOAD(OM_GET)
+OVERLOAD(OM_GET)
+{
+  GETDATA;
+  IPTR *store = ((struct opGet *)msg)->opg_Storage;
+
+  switch(((struct opGet *)msg)->opg_AttrID)
+  {
+    case ATTR(UpdateAll):    *store = data->updateAll; data->updateAll = FALSE; return TRUE;
+    case ATTR(VisiblePage):  *store = data->visiblePage; return TRUE;
+    case ATTR(VisitedPages): *store = (IPTR)data->visitedPages; return TRUE;
+  }
+
+  return DoSuperMethodA(cl, obj, msg);
+}
+
+///
 
 /* Public Methods */
+/// DECLARE(GUIToConfig)
+DECLARE(GUIToConfig) // enum ConfigPage page
+{
+  GETDATA;
+
+  ENTER();
+
+  if(msg->page >= cp_FirstSteps && msg->page < cp_Max)
+  {
+    DoMethod(data->PG_PAGES[msg->page], MUIM_ConfigPage_GUIToConfig, CE);
+  }
+
+  RETURN(0);
+  return 0;
+}
+
+///
 /// DECLARE(ChangePage)
 // selects a different page of the configuration
 DECLARE(ChangePage) // enum ConfigPage page
@@ -286,7 +325,7 @@ DECLARE(ChangePage) // enum ConfigPage page
 
     // remember the new page and mark it as visited
     data->visiblePage = msg->page;
-    set(data->PG_PAGES[msg->page], MUIA_ConfigPage_Visited, TRUE);
+    data->visitedPages[msg->page] = TRUE;
 
     #if defined(__amigaos3__)
     // The follow lines are a workaround for OS3.x only because MUI 3.8 is buggy.
@@ -324,11 +363,13 @@ DECLARE(OpenConfig)
     char cname[SIZE_PATHFILE];
 
     AddPath(cname, frc->drawer, frc->file, sizeof(cname));
-    if(CO_LoadConfig(CE, cname, NULL) == 1)
+    if(LoadConfig(CE, cname, NULL) == 1)
       NewPrefsFile(cl, obj, cname);
 
     DoMethod(data->PG_PAGES[data->visiblePage], MUIM_ConfigPage_ConfigToGUI, CE);
-    G->CO->UpdateAll = TRUE;
+
+    // remember to update all config items in ValidateConfig()
+    data->updateAll = TRUE;
   }
 
   RETURN(0);
@@ -354,12 +395,12 @@ DECLARE(SaveConfigAs)
     if(FileExists(cname) == FALSE ||
        MUI_Request(_app(obj), obj, MUIF_NONE, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_FILE_OVERWRITE), frc->file) != 0)
     {
-      // save the settings of the currently visible page first
+      // first let the currently visible page flush any pending changes to the configuration
       DoMethod(data->PG_PAGES[data->visiblePage], MUIM_ConfigPage_GUIToConfig, CE);
 
-      CO_Validate(CE, TRUE);
+      ValidateConfig(CE, TRUE);
       NewPrefsFile(cl, obj, cname);
-      CO_SaveConfig(CE, cname);
+      SaveConfig(CE, cname);
     }
   }
 
@@ -378,11 +419,13 @@ DECLARE(ResetToDefault) // ULONG all
 
   if(msg->all == TRUE)
   {
-    CO_SetDefaults(CE, cp_AllPages);
-    G->CO->UpdateAll = TRUE;
+    SetDefaultConfig(CE, cp_AllPages);
+
+    // remember to update all config items in ValidateConfig()
+    data->updateAll = TRUE;
   }
   else
-    CO_SetDefaults(CE, data->visiblePage);
+    SetDefaultConfig(CE, data->visiblePage);
 
   DoMethod(data->PG_PAGES[data->visiblePage], MUIM_ConfigPage_ConfigToGUI, CE);
 
@@ -399,11 +442,12 @@ DECLARE(LastSaved)
 
   ENTER();
 
-  CO_LoadConfig(CE, G->CO_PrefsFile, NULL);
+  LoadConfig(CE, G->CO_PrefsFile, NULL);
 
   DoMethod(data->PG_PAGES[data->visiblePage], MUIM_ConfigPage_ConfigToGUI, CE);
 
-  G->CO->UpdateAll = TRUE;
+  // remember to update all config items in ValidateConfig()
+  data->updateAll = TRUE;
 
   RETURN(0);
   return 0;
@@ -418,8 +462,8 @@ DECLARE(Restore)
 
   ENTER();
 
-  CO_ClearConfig(CE);
-  CopyConfigData(CE, C);
+  ClearConfig(CE);
+  CopyConfig(CE, C);
 
   DoMethod(data->PG_PAGES[data->visiblePage], MUIM_ConfigPage_ConfigToGUI, CE);
 
@@ -433,85 +477,89 @@ DECLARE(Restore)
 DECLARE(Close) // ULONG how
 {
   GETDATA;
-  BOOL gotSemaphore = FALSE;
 
   ENTER();
 
-  // If the configuration is to be used/save we must exclusively obtain the semaphore
-  // to avoid destroying the mail server nodes which might be in use by active POP3 or
-  // SMTP transfers. If the window is just to be closed we can go on without a lock.
-  if(msg->how == MUIV_ConfigWindow_Close_Cancel || (gotSemaphore = AttemptSemaphore(G->configSemaphore)) != FALSE)
+  // if the main window doesn't exist anymore YAM is shutting down
+  // already and there is no point to do anything here
+  if(G->MA != NULL)
   {
-    BOOL configsEqual;
-    BOOL close = TRUE;
-
-    // make sure we have the latest state of the config in CE
-    DoMethod(data->PG_PAGES[data->visiblePage], MUIM_ConfigPage_GUIToConfig, CE);
-
-    // now we compare the current config against
-    // the temporary config
-    configsEqual = CompareConfigData(C, CE);
-
-    // check if we should copy our edited configuration
-    // to the real one or if we should just free/drop it
-    if(msg->how != MUIV_ConfigWindow_Close_Cancel)
+    BOOL gotSemaphore = FALSE;
+    // If the configuration is to be used/save we must exclusively obtain the semaphore
+    // to avoid destroying the mail server nodes which might be in use by active POP3 or
+    // SMTP transfers. If the window is just to be closed we can go on without a lock.
+    if(msg->how == MUIV_ConfigWindow_Close_Cancel || (gotSemaphore = AttemptSemaphore(G->configSemaphore)) != FALSE)
     {
-      // before we copy over the configuration, we
-      // check if it was changed at all
-      if(configsEqual == FALSE)
+      BOOL configsEqual;
+      BOOL close = TRUE;
+
+      // make sure we have the latest state of the config in CE
+      DoMethod(data->PG_PAGES[data->visiblePage], MUIM_ConfigPage_GUIToConfig, CE);
+
+      // now we compare the current config against
+      // the temporary config
+      configsEqual = CompareConfigs(C, CE);
+
+      // check if we should copy our edited configuration
+      // to the real one or if we should just free/drop it
+      if(msg->how != MUIV_ConfigWindow_Close_Cancel)
       {
-        struct Config *tmpC;
+        // before we copy over the configuration, we
+        // check if it was changed at all
+        if(configsEqual == FALSE)
+        {
+          struct Config *tmpC;
 
-        D(DBF_CONFIG, "configuration found to be different");
+          D(DBF_CONFIG, "configuration found to be different");
 
-        // just swap the pointers instead of clearing and copying the whole stuff
-        tmpC = C;
-        C = CE;
-        CE = tmpC;
-        // the up to now "current" configuration will be freed below
+          // just swap the pointers instead of clearing and copying the whole stuff
+          tmpC = C;
+          C = CE;
+          CE = tmpC;
+          // the up to now "current" configuration will be freed below
+        }
+        else
+          D(DBF_CONFIG, "config wasn't altered, skipped copy operations.");
+
+        // validate that C has valid values
+        ValidateConfig(C, TRUE);
+
+        // we save the configuration if the user
+        // has pressed on 'Save' only.
+        if(msg->how == MUIV_ConfigWindow_Close_Save)
+          SaveConfig(C, G->CO_PrefsFile);
       }
-      else
-        D(DBF_CONFIG, "config wasn't altered, skipped copy operations.");
+      else if(configsEqual == FALSE)
+      {
+        // check if configs are equal and if not ask the user how to proceed
+        int res = MUI_Request(_app(obj), obj, MUIF_NONE,
+                              tr(MSG_CO_CONFIGWARNING_TITLE),
+                              tr(MSG_CO_CONFIGWARNING_BT),
+                              tr(MSG_CO_CONFIGWARNING));
 
-      // validate that C has valid values
-      CO_Validate(C, TRUE);
+        // if user pressed Abort or ESC
+        // then we keep the window open.
+        if(res == 0)
+          close = FALSE;
+      }
 
-      // we save the configuration if the user
-      // has pressed on 'Save' only.
-      if(msg->how == MUIV_ConfigWindow_Close_Save)
-        CO_SaveConfig(C, G->CO_PrefsFile);
+      if(close == TRUE)
+      {
+        // then we free our temporary config structure
+        FreeConfig(CE);
+        CE = NULL;
+
+        // Dipose&Close the config window stuff
+        DoMethod(_app(obj), MUIM_Application_PushMethod, G->MA->GUI.WI, 1, MUIM_MainWindow_CloseConfigWindow);
+      }
+
+      // release the config semaphore again if we obtained it before
+      if(gotSemaphore == TRUE)
+        ReleaseSemaphore(G->configSemaphore);
     }
-    else if(configsEqual == FALSE)
-    {
-      // check if configs are equal and if not ask the user how to proceed
-      int res = MUI_Request(_app(obj), obj, MUIF_NONE,
-                            tr(MSG_CO_CONFIGWARNING_TITLE),
-                            tr(MSG_CO_CONFIGWARNING_BT),
-                            tr(MSG_CO_CONFIGWARNING));
-
-      // if user pressed Abort or ESC
-      // then we keep the window open.
-      if(res == 0)
-        close = FALSE;
-    }
-
-    if(close == TRUE)
-    {
-      // then we free our temporary config structure
-      CO_ClearConfig(CE);
-      free(CE);
-      CE = NULL;
-
-      // Dipose&Close the config window stuff
-      DoMethod(_app(obj), MUIM_Application_PushMethod, G->MA->GUI.WI, 2, MUIM_MainWindow_DisposeSubWindow, obj);
-    }
-
-    // release the config semaphore again if we obtained it before
-    if(gotSemaphore == TRUE)
-      ReleaseSemaphore(G->configSemaphore);
+    else
+      ER_NewError(tr(MSG_CO_CONFIG_IS_LOCKED));
   }
-  else
-    ER_NewError(tr(MSG_CO_CONFIG_IS_LOCKED));
 
   RETURN(0);
   return 0;

@@ -41,9 +41,9 @@
 #include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
-#include "YAM_config.h"
 
 #include "AVLTree.h"
+#include "Config.h"
 #include "Locale.h"
 #include "MailList.h"
 #include "MUIObjects.h"

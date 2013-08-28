@@ -31,14 +31,24 @@
 #include <clib/alib_protos.h>
 #include <proto/exec.h>
 
+#include "extrasrc.h"
+
 #include "YAM.h"
 #include "YAM_addressbookEntry.h"
-#include "YAM_config.h"
 #include "YAM_error.h"
 #include "YAM_find.h"
 #include "YAM_mainFolder.h"
 
+#include "mime/base64.h"
+#include "mime/md5.h"
+#include "mui/ClassesExtra.h"
+#include "mui/TransferControlGroup.h"
+#include "mui/YAMApplication.h"
+#include "tcp/Connection.h"
+#include "tcp/ssl.h"
+
 #include "Busy.h"
+#include "Config.h"
 #include "Locale.h"
 #include "Logfile.h"
 #include "MailList.h"
@@ -49,15 +59,6 @@
 #include "Threads.h"
 #include "UserIdentity.h"
 
-#include "mime/base64.h"
-#include "mime/md5.h"
-#include "mui/ClassesExtra.h"
-#include "mui/TransferControlGroup.h"
-#include "mui/YAMApplication.h"
-#include "tcp/Connection.h"
-#include "tcp/ssl.h"
-
-#include "extrasrc.h"
 #include "Debug.h"
 
 /**************************************************************************/

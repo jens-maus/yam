@@ -36,17 +36,28 @@
 #include <proto/timer.h>
 #include <proto/utility.h>
 
+#include "extrasrc.h"
+
 #include "YAM.h"
 #include "YAM_addressbookEntry.h"
-#include "YAM_config.h"
 #include "YAM_error.h"
 #include "YAM_find.h"
 #include "YAM_folderconfig.h"
 #include "YAM_mainFolder.h"
 #include "YAM_stringsizes.h"
 
+#include "mime/md5.h"
+#include "mui/ClassesExtra.h"
+#include "mui/PreselectionWindow.h"
+#include "mui/StringRequestWindow.h"
+#include "mui/TransferControlGroup.h"
+#include "mui/YAMApplication.h"
+#include "tcp/Connection.h"
+#include "tcp/ssl.h"
+
 #include "AppIcon.h"
 #include "Busy.h"
+#include "Config.h"
 #include "DynamicString.h"
 #include "FolderList.h"
 #include "Locale.h"
@@ -60,16 +71,6 @@
 #include "Threads.h"
 #include "UIDL.h"
 
-#include "mime/md5.h"
-#include "mui/ClassesExtra.h"
-#include "mui/PreselectionWindow.h"
-#include "mui/StringRequestWindow.h"
-#include "mui/TransferControlGroup.h"
-#include "mui/YAMApplication.h"
-#include "tcp/Connection.h"
-#include "tcp/ssl.h"
-
-#include "extrasrc.h"
 #include "Debug.h"
 
 /**************************************************************************/

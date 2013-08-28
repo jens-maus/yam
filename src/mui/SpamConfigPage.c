@@ -35,19 +35,19 @@
 #include <mui/NListtree_mcc.h>
 
 #include "YAM.h"
-#include "YAM_config.h"
 #include "YAM_error.h"
-
-#include "FileInfo.h"
-#include "FolderList.h"
-#include "Locale.h"
-#include "MailList.h"
-#include "Requesters.h"
 
 #include "mui/ConfigPage.h"
 #include "mui/ConfigPageList.h"
 #include "mui/FilterChooser.h"
 #include "mui/MainWindowToolbar.h"
+
+#include "Config.h"
+#include "FileInfo.h"
+#include "FolderList.h"
+#include "Locale.h"
+#include "MailList.h"
+#include "Requesters.h"
 
 #include "Debug.h"
 

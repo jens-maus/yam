@@ -30,11 +30,12 @@
 
 #include "FilterRuleList_cl.h"
 
-#include "YAM_config.h"
 #include "YAM_find.h"
 
 #include "mui/ObjectList.h"
 #include "mui/SearchControlGroup.h"
+
+#include "Config.h"
 
 #include "Debug.h"
 

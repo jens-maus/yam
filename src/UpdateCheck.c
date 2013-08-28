@@ -52,20 +52,20 @@
 #include "timeval.h"
 
 #include "YAM.h"
-#include "YAM_config.h"
-#include "YAM_configFile.h"
 #include "YAM_error.h"
 #include "YAM_global.h"
 #include "YAM_utilities.h"
 
+#include "mui/ClassesExtra.h"
+#include "mui/ConfigWindow.h"
+#include "mui/UpdateNotifyWindow.h"
+#include "mime/rfc1738.h"
+
+#include "Config.h"
 #include "Locale.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
 #include "UpdateCheck.h"
-
-#include "mui/ClassesExtra.h"
-#include "mui/UpdateNotifyWindow.h"
-#include "mime/rfc1738.h"
 
 #include "Debug.h"
 
@@ -461,9 +461,9 @@ BOOL ParseUpdateFile(const char *filename, const BOOL quiet)
     // we have to check if we have to update the config page of an eventually opened YAM
     // configuration window.
     if((LastUpdateState.LastUpdateStatus == UST_NOUPDATE || LastUpdateState.LastUpdateStatus == UST_UPDATESUCCESS) &&
-       G->CO != NULL && G->CO->VisiblePage == cp_Update)
+       G->ConfigWinObject != NULL)
     {
-      CO_SetConfig();
+      DoMethod(G->ConfigWinObject, MUIM_ConfigWindow_GUIToConfig, cp_Update);
     }
   }
 

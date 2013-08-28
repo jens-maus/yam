@@ -47,8 +47,6 @@
 
 #include "YAM.h"
 #include "YAM_addressbook.h"
-#include "YAM_config.h"
-#include "YAM_configFile.h"
 #include "YAM_error.h"
 #include "YAM_find.h"
 #include "YAM_folderconfig.h"
@@ -61,6 +59,7 @@
 #include "mui/ImageArea.h"
 
 #include "Busy.h"
+#include "Config.h"
 #include "FileInfo.h"
 #include "FolderList.h"
 #include "ImageCache.h"

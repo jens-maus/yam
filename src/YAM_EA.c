@@ -51,7 +51,6 @@
 #include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
-#include "YAM_config.h"
 #include "YAM_error.h"
 #include "YAM_utilities.h"
 
@@ -61,6 +60,7 @@
 #include "mui/Recipientstring.h"
 #include "mui/UserPortraitGroup.h"
 
+#include "Config.h"
 #include "DynamicString.h"
 #include "Locale.h"
 #include "Logfile.h"

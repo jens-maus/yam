@@ -47,7 +47,6 @@
 
 #include "YAM.h"
 #include "YAM_addressbook.h"
-#include "YAM_config.h"
 #include "YAM_error.h"
 #include "YAM_global.h"
 #include "YAM_read.h"
@@ -57,6 +56,7 @@
 #include "mui/PlaceholderPopupList.h"
 #include "mui/Recipientstring.h"
 
+#include "Config.h"
 #include "FolderList.h"
 #include "Locale.h"
 #include "MimeTypes.h"
