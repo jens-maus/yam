@@ -7,6 +7,8 @@ $URL$
 
 2013-08-28 Jens Langner <Jens.Langner@light-speed.de>
 
+  * rexx/mailinfo.c: fixed a crash bug where strdup() was used on a NULL pointer
+    if a mail didn't contain any messageID. This closes #409.
   * rexx/requestfile.c, src/Rexx.c, src/YAM_UT.c: implemented a NOICONS switch
     for the REQUESTFILE Arexx command which will open the corresponding file
     requester but hide and icons (#?.info files). This fulfills a long standing

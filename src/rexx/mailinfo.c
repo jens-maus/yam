@@ -247,7 +247,7 @@ void rx_mailinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
           results->date = optional->date;
           results->subject = strdup(mail->Subject);
           results->size = &optional->size;
-          results->msgid = strdup(email->messageID);
+          results->msgid = email->messageID != NULL ? strdup(email->messageID) : NULL;
           snprintf(optional->flags, sizeof(optional->flags), "%c%c%c%c%c-%c%c%c",
                     isMultiRCPTMail(mail) ? 'M' : '-',
                     isMP_MixedMail(mail)  ? 'A' : '-',
