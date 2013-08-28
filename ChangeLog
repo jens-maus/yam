@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-08-28 Jens Langner <Jens.Langner@light-speed.de>
+
+  * mui/MainMailListGroup.c, rexx/listfreeze, rexx/listunfreeze.c: fixed the
+    LISTFREEZE and LISTUNFREEZE arexx command to make sure that no other internal
+    process which will use MUIA_NList_Quiet will suddenly unfreeze a list in
+    case the arexx command previously freezed it. Now a LISTUNFREEZE command is
+    mandatory or the mail list will never return from a quiet state. This finally
+    fixes a long standing issue and finally closes #12.
+
 2013-08-28 Thore Böckelmann <tboeckel@gmx.de>
 
   * Config.c, mui/ConfigWindow.c, misc: separated data structure and GUI of the

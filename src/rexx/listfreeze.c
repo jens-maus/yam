@@ -62,13 +62,8 @@ void rx_listfreeze(UNUSED struct RexxHost *host, struct RexxParams *params, enum
 
     case RXIF_ACTION:
     {
-      Object *list = NULL;
-
       if(stricmp(args->list, "MAILS") == 0)
-        list = G->MA->GUI.PG_MAILLIST;
-
-      if(list != NULL)
-        set(list, MUIA_NList_Quiet, TRUE);
+        set(G->MA->GUI.PG_MAILLIST, MUIA_MainMailListGroup_Freeze, TRUE);
       else
         params->rc = RETURN_ERROR;
     }

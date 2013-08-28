@@ -39,6 +39,7 @@
 
 #include "Config.h"
 #include "Rexx.h"
+#include "MUIObjects.h"
 
 #include "Debug.h"
 
@@ -65,12 +66,16 @@ void rx_listunfreeze(UNUSED struct RexxHost *host, struct RexxParams *params, en
     {
       if(stricmp(args->list, "MAILS") == 0)
       {
-        if(C->EmbeddedReadPane == TRUE)
+        if(xget(G->MA->GUI.PG_MAILLIST, MUIA_MainMailListGroup_Freeze) == TRUE)
         {
-          // force an update of the read pane
-          MA_ChangeSelected(TRUE);
+          if(C->EmbeddedReadPane == TRUE)
+          {
+            // force an update of the read pane
+            MA_ChangeSelected(TRUE);
+          }
+
+          set(G->MA->GUI.PG_MAILLIST, MUIA_MainMailListGroup_Freeze, FALSE);
         }
-        set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, FALSE);
       }
       else
         params->rc = RETURN_ERROR;

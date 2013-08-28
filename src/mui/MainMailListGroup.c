@@ -50,8 +50,10 @@ struct Data
 {
   Object *mainListviewObjects[2];
   Object *mainListObjects[2];
+
   struct Mail *lastActiveMail;
   ULONG activeList;
+  BOOL listIsFreezed; // if set to true the list is hard freezed (cannot be unquite via NList_Quiet)
 };
 */
 
@@ -120,6 +122,7 @@ OVERLOAD(OM_GET)
     case ATTR(ActiveListObject):     *store = (ULONG)data->mainListObjects[data->activeList]; return TRUE;
     case ATTR(MainList):             *store = (ULONG)data->mainListObjects[LT_MAIN]; return TRUE;
     case ATTR(LastActiveMail):       *store = (ULONG)data->lastActiveMail; return TRUE;
+    case ATTR(Freeze):               *store = (BOOL)data->listIsFreezed; return TRUE;
 
     // we also return foreign attributes
     case MUIA_NList_Active:
@@ -144,6 +147,19 @@ OVERLOAD(OM_SET)
   {
     switch(tag->ti_Tag)
     {
+      case ATTR(Freeze):
+      {
+        // mark the list as freezed or unfreezed for the LISTFREEZE/LISTUNFREEZE Arexx Command
+        data->listIsFreezed = tag->ti_Data;
+
+        // make sure to freeze/unfreeze
+        set(obj, MUIA_NList_Quiet, data->listIsFreezed);
+
+        // make the superMethod call ignore those tags
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
+
       case MUIA_Group_ActivePage:
       {
         if(data->activeList != tag->ti_Data)
@@ -168,9 +184,21 @@ OVERLOAD(OM_SET)
       }
       break;
 
+      case MUIA_NList_Quiet:
+      {
+        if(tag->ti_Data == TRUE || data->listIsFreezed == FALSE)
+        {
+          set(data->mainListviewObjects[LT_MAIN], MUIA_NList_Quiet, tag->ti_Data);
+          set(data->mainListviewObjects[LT_QUICKVIEW], MUIA_NList_Quiet, tag->ti_Data);
+        }
+
+        // make the superMethod call ignore those tags
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
+
       case MUIA_ContextMenu:
       case MUIA_NList_DisplayRecall:
-      case MUIA_NList_Quiet:
       case MUIA_NList_SortType:
       case MUIA_NList_SortType2:
       case MUIA_NList_KeyLeftFocus:
