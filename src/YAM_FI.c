@@ -2141,13 +2141,6 @@ BOOL ImportFilter(const char *fileName, const BOOL isVolatile, struct MinList *f
           // push a previous filter to the configuration
           if(filter != NULL)
           {
-            if(G->ConfigWinObject != NULL && isVolatile == FALSE)
-            {
-              #warning access to old config GUI
-            //DoMethod(G->CO->GUI.LV_RULES, MUIM_NList_InsertSingle, filter, MUIV_NList_Insert_Bottom);
-            //set(G->CO->GUI.LV_RULES, MUIA_NList_Active, MUIV_NList_Active_Bottom);
-            }
-
             // volatile filters are added at the top
             if(isVolatile == TRUE)
             {
@@ -2476,13 +2469,6 @@ BOOL ImportFilter(const char *fileName, const BOOL isVolatile, struct MinList *f
     // push the last created filter to the configuration
     if(filter != NULL)
     {
-      if(G->ConfigWinObject != NULL && isVolatile == FALSE)
-      {
-        #warning access to old config GUI
-      //DoMethod(G->CO->GUI.LV_RULES, MUIM_NList_InsertSingle, filter, MUIV_NList_Insert_Bottom);
-      //set(G->CO->GUI.LV_RULES, MUIA_NList_Active, MUIV_NList_Active_Bottom);
-      }
-
       // volatile filters are added at the top
       if(isVolatile == TRUE)
       {

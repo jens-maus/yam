@@ -757,6 +757,7 @@ DECLARE(ToggleRemoteFlag) // ULONG remote
 // import filter settings from a .sfd file
 DECLARE(ImportFilter)
 {
+  GETDATA;
   struct FileReqCache *frc;
 
   ENTER();
@@ -766,7 +767,12 @@ DECLARE(ImportFilter)
     char path[SIZE_PATHFILE];
 
     AddPath(path, frc->drawer, frc->file, sizeof(path));
-    ImportFilter(path, FALSE, &CE->filterList);
+    if(ImportFilter(path, FALSE, &CE->filterList) == TRUE)
+    {
+      // update the GUI and set the imported filter as the active one
+      DoMethod(obj, MUIM_ConfigPage_ConfigToGUI, CE);
+      set(data->LV_RULES, MUIA_NList_Active, MUIV_NList_Active_Bottom);
+    }
   }
 
   RETURN(0);
