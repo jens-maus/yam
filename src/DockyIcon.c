@@ -35,6 +35,7 @@
 #include "YAM.h"
 
 #include "mui/ClassesExtra.h"
+#include "mui/MainWindow.h"
 #include "mui/WriteWindow.h"
 
 #include "Config.h"
