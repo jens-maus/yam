@@ -293,6 +293,23 @@ OVERLOAD(OM_GET)
 ///
 
 /* Public Methods */
+/// DECLARE(ConfigToGUI)
+DECLARE(ConfigToGUI) // enum ConfigPage page
+{
+  GETDATA;
+
+  ENTER();
+
+  if(msg->page >= cp_FirstSteps && msg->page < cp_Max)
+  {
+    DoMethod(data->PG_PAGES[msg->page], MUIM_ConfigPage_ConfigToGUI, CE);
+  }
+
+  RETURN(0);
+  return 0;
+}
+
+///
 /// DECLARE(GUIToConfig)
 DECLARE(GUIToConfig) // enum ConfigPage page
 {

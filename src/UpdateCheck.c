@@ -463,7 +463,7 @@ BOOL ParseUpdateFile(const char *filename, const BOOL quiet)
     if((LastUpdateState.LastUpdateStatus == UST_NOUPDATE || LastUpdateState.LastUpdateStatus == UST_UPDATESUCCESS) &&
        G->ConfigWinObject != NULL)
     {
-      DoMethod(G->ConfigWinObject, MUIM_ConfigWindow_GUIToConfig, cp_Update);
+      DoMethod(G->ConfigWinObject, MUIM_ConfigWindow_ConfigToGUI, cp_Update);
     }
   }
 
