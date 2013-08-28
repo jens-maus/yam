@@ -329,15 +329,15 @@ DECLARE(DoEditAction) // enum EditAction action
 /// DECLARE(OpenConfigWindow)
 DECLARE(OpenConfigWindow)
 {
+  struct BusyNode *busy;
+
   ENTER();
+
+  busy = BusyBegin(BUSY_TEXT);
+  BusyText(busy, tr(MSG_BUSY_OPENINGCONFIG), "");
 
   if(G->ConfigWinObject == NULL)
   {
-    struct BusyNode *busy;
-
-    busy = BusyBegin(BUSY_TEXT);
-    BusyText(busy, tr(MSG_BUSY_OPENINGCONFIG), "");
-
     if((CE = AllocConfig()) != NULL)
     {
       if(CopyConfig(CE, C) == TRUE)
@@ -345,8 +345,6 @@ DECLARE(OpenConfigWindow)
         G->ConfigWinObject = ConfigWindowObject, End;
       }
     }
-
-    BusyEnd(busy);
   }
 
   if(G->ConfigWinObject != NULL)
@@ -361,6 +359,8 @@ DECLARE(OpenConfigWindow)
     FreeConfig(CE);
     CE = NULL;
   }
+
+  BusyEnd(busy);
 
   RETURN(0);
   return 0;
