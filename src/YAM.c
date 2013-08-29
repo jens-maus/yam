@@ -711,6 +711,9 @@ static void Terminate(void)
 
   ENTER();
 
+  // we are going down from now on
+  G->Terminating = TRUE;
+
   D(DBF_STARTUP, "aborting all working threads...");
   AbortWorkingThreads();
 

@@ -53,7 +53,6 @@ struct FileReqCache;
 struct Locale;
 struct Catalog;
 struct MA_ClassData;
-struct CO_ClassData;
 struct AB_ClassData;
 struct EA_ClassData;
 struct ER_ClassData;
@@ -155,6 +154,7 @@ struct Global
   BOOL                     NoImageWarning;
   BOOL                     NoCatalogTranslation;
   BOOL                     DefIconsAvailable;
+  BOOL                     Terminating;
 
   struct DateStamp         StartDate;
   struct TimeVal           nextDSTSwitch;        // date/time of next DST switch

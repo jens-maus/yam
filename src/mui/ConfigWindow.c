@@ -497,9 +497,8 @@ DECLARE(Close) // ULONG how
 
   ENTER();
 
-  // if the main window doesn't exist anymore YAM is shutting down
-  // already and there is no point to do anything here
-  if(G->MA != NULL)
+  // there is no point to do anything here if YAM is terminating
+  if(G->Terminating == FALSE)
   {
     BOOL gotSemaphore = FALSE;
     // If the configuration is to be used/save we must exclusively obtain the semaphore
