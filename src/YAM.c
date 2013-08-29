@@ -2430,7 +2430,7 @@ int main(int argc, char **argv)
     int ret;
 
     // allocate our global G and C structures
-    if((G = calloc(1, sizeof(struct Global))) == NULL)
+    if((G = calloc(1, sizeof(*G))) == NULL)
     {
       // break out immediately to signal an error!
       break;
@@ -2444,19 +2444,11 @@ int main(int argc, char **argv)
     NewMinList(&G->arexxBusyList);
     NewMinList(&G->tzoneContinentList);
 
-    if((C = calloc(1, sizeof(struct Config))) == NULL)
+    if((C = AllocConfig()) == NULL)
     {
       // break out immediately to signal an error!
       break;
     }
-
-    // prepare the exec lists in C
-    NewMinList(&C->pop3ServerList);
-    NewMinList(&C->smtpServerList);
-    NewMinList(&C->filterList);
-    NewMinList(&C->mimeTypeList);
-    NewMinList(&C->userIdentityList);
-    NewMinList(&C->signatureList);
 
     // create the MEMF_SHARED memory pool we use for our
     // own AllocVecPooled() allocations later on
