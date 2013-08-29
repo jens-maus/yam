@@ -41,6 +41,7 @@
 #include "mui/QuickSearchBar.h"
 #include "mui/ReadMailGroup.h"
 #include "mui/SearchMailWindow.h"
+#include "mui/YAMApplication.h"
 
 #include "Busy.h"
 #include "Config.h"
@@ -133,27 +134,6 @@ OVERLOAD(MUIM_Window_Snapshot)
 /* Private Functions */
 
 /* Public Methods */
-/// DECLARE(DisposeSubWindow)
-// method that is used by modeless subwindows to get disposed upon
-// their close
-DECLARE(DisposeSubWindow) // Object *win
-{
-  ENTER();
-
-  D(DBF_GUI, "Dispose subwindow: %08lx", msg->win);
-
-  if(msg->win != NULL)
-  {
-    set(msg->win, MUIA_Window_Open, FALSE);
-    DoMethod(_app(obj), OM_REMMEMBER, msg->win);
-    MUI_DisposeObject(msg->win);
-  }
-
-  RETURN(0);
-  return 0;
-}
-
-///
 /// DECLARE(ShowAbout)
 // show the about window
 DECLARE(ShowAbout)
@@ -187,7 +167,7 @@ DECLARE(CloseAbout)
 
   ENTER();
 
-  DoMethod(obj, METHOD(DisposeSubWindow), data->aboutWindow);
+  DoMethod(_app(obj), MUIM_YAMApplication_DisposeSubWindow, data->aboutWindow);
   data->aboutWindow = NULL;
 
   RETURN(0);
@@ -372,7 +352,7 @@ DECLARE(CloseConfigWindow)
 {
   ENTER();
 
-  DoMethod(obj, METHOD(DisposeSubWindow), G->ConfigWinObject);
+  DoMethod(_app(obj), MUIM_YAMApplication_DisposeSubWindow, G->ConfigWinObject);
   G->ConfigWinObject = NULL;
 
   RETURN(0);

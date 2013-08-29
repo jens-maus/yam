@@ -1393,3 +1393,24 @@ DECLARE(CleanupWriteMailData) // struct WriteMailData *wmData
 }
 
 ///
+/// DECLARE(DisposeSubWindow)
+// method that is used by modeless subwindows to get disposed upon
+// their close
+DECLARE(DisposeSubWindow) // Object *win
+{
+  ENTER();
+
+  D(DBF_GUI, "dispose subwindow %08lx", msg->win);
+
+  if(msg->win != NULL)
+  {
+    set(msg->win, MUIA_Window_Open, FALSE);
+    DoMethod(obj, OM_REMMEMBER, msg->win);
+    MUI_DisposeObject(msg->win);
+  }
+
+  RETURN(0);
+  return 0;
+}
+
+///

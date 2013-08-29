@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-08-29 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/MainWindow.c, mui/YAMApplication.c: moved the method to remove and
+    dispose a window to the application class, because windows are children of
+    the application and not of other window objects.
+
 2013-08-28 Jens Langner <Jens.Langner@light-speed.de>
 
   * rexx/mailinfo.c: fixed a crash bug where strdup() was used on a NULL pointer
