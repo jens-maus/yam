@@ -1959,7 +1959,7 @@ char *BuildAddress(char *buffer, size_t buflen, const char *address, const char 
 
     // check if a real name is given at all
     // or not
-    if(name != NULL && name[0] != '\0')
+    if(IsStrEmpty(name) == FALSE)
     {
       // search for some chars which, when present,
       // require us to put the real name into quotations
