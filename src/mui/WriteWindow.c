@@ -59,6 +59,7 @@
 #include "YAM_mainFolder.h"
 
 #include "mime/uucode.h"
+#include "mui/CharsetPopobject.h"
 #include "mui/IdentityChooser.h"
 #include "mui/MailTextEdit.h"
 #include "mui/ReadMailGroup.h"
@@ -754,7 +755,6 @@ OVERLOAD(OM_NEW)
   if((data->wmData = AllocWriteMailData()) != NULL)
   {
     Object *menuStripObject = NULL;
-    Object *codesetPopButton;
     Object *slider;
     Object *popMime = NULL;
     struct TagItem *tags = inittags(msg);
@@ -1211,7 +1211,9 @@ OVERLOAD(OM_NEW)
                   End,
 
                   Child, Label(tr(MSG_WR_CHARSET)),
-                  Child, MakeCodesetPop((Object **)&data->PO_CHARSET, &codesetPopButton),
+                  Child, data->PO_CHARSET = CharsetPopobjectObject,
+                    MUIA_CharsetPopobject_ControlChar, tr(MSG_WR_CHARSET),
+                  End,
 
                   Child, Label(tr(MSG_WR_Importance)),
                   Child, data->CY_IMPORTANCE = MakeCycle(priority, tr(MSG_WR_Importance)),
@@ -1301,8 +1303,7 @@ OVERLOAD(OM_NEW)
         set(data->MI_AUTOWRAP,  MUIA_Menuitem_Checked, xget(data->TE_EDIT, MUIA_TextEditor_WrapBorder) > 0);
 
         // set the charset popupbutton string list contents
-        set(codesetPopButton, MUIA_ControlChar, ShortCut(tr(MSG_WR_CHARSET)));
-        nnset(data->PO_CHARSET, MUIA_Text_Contents, C->DefaultWriteCodeset);
+        nnset(data->PO_CHARSET, MUIA_CharsetPopobject_Charset, C->DefaultWriteCodeset);
 
         // put the importance cycle gadget into the cycle group
         set(data->CY_IMPORTANCE, MUIA_Cycle_Active, TRUE);
@@ -1552,23 +1553,23 @@ OVERLOAD(OM_NEW)
       SetHelp(data->PO_CHARSET,     MSG_HELP_WR_PO_CHARSET);
 
       // declare the mail as modified if any of these objects reports a change
-      DoMethod(data->ST_FROM_OVERRIDE, MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
-      DoMethod(data->ST_TO,            MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
-      DoMethod(data->ST_CC,            MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
-      DoMethod(data->ST_BCC,           MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
-      DoMethod(data->ST_REPLYTO,       MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
-      DoMethod(data->ST_EXTHEADER,     MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
-      DoMethod(data->ST_CTYPE,         MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
-      DoMethod(data->ST_DESC,          MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
-      DoMethod(data->PO_CHARSET,       MUIM_Notify, MUIA_Text_Contents,   MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
-      DoMethod(data->CY_IMPORTANCE,    MUIM_Notify, MUIA_Cycle_Active,    MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
-      DoMethod(data->CY_SECURITY,      MUIM_Notify, MUIA_Cycle_Active,    MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
-      DoMethod(data->CH_DELSEND,       MUIM_Notify, MUIA_Selected,        MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
-      DoMethod(data->CH_MDN,           MUIM_Notify, MUIA_Selected,        MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
-      DoMethod(data->CH_ADDINFO,       MUIM_Notify, MUIA_Selected,        MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->ST_FROM_OVERRIDE, MUIM_Notify, MUIA_String_Contents,                 MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->ST_TO,            MUIM_Notify, MUIA_String_Contents,                 MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->ST_CC,            MUIM_Notify, MUIA_String_Contents,                 MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->ST_BCC,           MUIM_Notify, MUIA_String_Contents,                 MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->ST_REPLYTO,       MUIM_Notify, MUIA_String_Contents,                 MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->ST_EXTHEADER,     MUIM_Notify, MUIA_String_Contents,                 MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->ST_CTYPE,         MUIM_Notify, MUIA_String_Contents,                 MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->ST_DESC,          MUIM_Notify, MUIA_String_Contents,                 MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->PO_CHARSET,       MUIM_Notify, MUIA_CharsetPopobject_CharsetChanged, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->CY_IMPORTANCE,    MUIM_Notify, MUIA_Cycle_Active,                    MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->CY_SECURITY,      MUIM_Notify, MUIA_Cycle_Active,                    MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->CH_DELSEND,       MUIM_Notify, MUIA_Selected,                        MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->CH_MDN,           MUIM_Notify, MUIA_Selected,                        MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->CH_ADDINFO,       MUIM_Notify, MUIA_Selected,                        MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
 
       // create a notify for changing the charset
-      DoMethod(data->PO_CHARSET, MUIM_Notify, MUIA_Text_Contents, MUIV_EveryTime, obj, 2, METHOD(CodesetChanged), MUIV_TriggerValue);
+      DoMethod(data->PO_CHARSET, MUIM_Notify, MUIA_CharsetPopobject_Charset, MUIV_EveryTime, obj, 2, METHOD(CodesetChanged), MUIV_TriggerValue);
 
       // set main window button notifies
       DoMethod(data->BT_SAVEASDRAFT, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(ComposeMail), WRITE_DRAFT);
@@ -5241,7 +5242,7 @@ DECLARE(CodesetChanged) // char *codesetName
     data->wmData->codeset = G->writeCodeset;
   }
 
-  nnset(data->PO_CHARSET, MUIA_Text_Contents, strippedCharsetName(data->wmData->codeset));
+  nnset(data->PO_CHARSET, MUIA_CharsetPopobject_Charset, strippedCharsetName(data->wmData->codeset));
 
   RETURN(0);
   return 0;

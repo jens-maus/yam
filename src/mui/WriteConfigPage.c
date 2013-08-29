@@ -32,6 +32,7 @@
 
 #include <proto/muimaster.h>
 
+#include "mui/CharsetPopobject.h"
 #include "mui/ConfigPage.h"
 #include "mui/ConfigPageList.h"
 
@@ -44,7 +45,7 @@ struct Data
 {
   Object *ST_HELLOTEXT;
   Object *ST_BYETEXT;
-  Object *TX_DEFCODESET_WRITE;
+  Object *PO_DEFCODESET_WRITE;
   Object *ST_EDWRAP;
   Object *CY_EDWRAP;
   Object *NB_EMAILCACHE;
@@ -64,7 +65,7 @@ OVERLOAD(OM_NEW)
   static const char *wrapmode[4];
   Object *ST_HELLOTEXT;
   Object *ST_BYETEXT;
-  Object *TX_DEFCODESET_WRITE;
+  Object *PO_DEFCODESET_WRITE;
   Object *ST_EDWRAP;
   Object *CY_EDWRAP;
   Object *NB_EMAILCACHE;
@@ -74,7 +75,6 @@ OVERLOAD(OM_NEW)
   Object *CH_TEXTSTYLES_WRITE;
   Object *CH_WARNSUBJECT;
   Object *CH_LAUNCH;
-  Object *codesetPopButton;
 
   ENTER();
 
@@ -96,7 +96,9 @@ OVERLOAD(OM_NEW)
           Child, ST_BYETEXT = MakeString(SIZE_INTRO,tr(MSG_CO_Greetings)),
 
           Child, Label2(tr(MSG_CO_DEFAULTCODESET_WRITE)),
-          Child, MakeCodesetPop(&TX_DEFCODESET_WRITE, &codesetPopButton),
+          Child, PO_DEFCODESET_WRITE = CharsetPopobjectObject,
+            MUIA_CharsetPopobject_ControlChar, tr(MSG_CO_DEFAULTCODESET_WRITE),
+          End,
         End,
       End,
 
@@ -155,7 +157,7 @@ OVERLOAD(OM_NEW)
 
     data->ST_HELLOTEXT =        ST_HELLOTEXT;
     data->ST_BYETEXT =          ST_BYETEXT;
-    data->TX_DEFCODESET_WRITE = TX_DEFCODESET_WRITE;
+    data->PO_DEFCODESET_WRITE = PO_DEFCODESET_WRITE;
     data->ST_EDWRAP =           ST_EDWRAP;
     data->CY_EDWRAP =           CY_EDWRAP;
     data->NB_EMAILCACHE =       NB_EMAILCACHE;
@@ -166,8 +168,6 @@ OVERLOAD(OM_NEW)
     data->CH_WARNSUBJECT =      CH_WARNSUBJECT;
     data->CH_LAUNCH =           CH_LAUNCH;
 
-    set(codesetPopButton, MUIA_ControlChar, ShortCut(tr(MSG_CO_DEFAULTCHARSET)));
-
     SetHelp(ST_HELLOTEXT,        MSG_HELP_CO_ST_HELLOTEXT);
     SetHelp(ST_BYETEXT,          MSG_HELP_CO_ST_BYETEXT);
     SetHelp(CH_WARNSUBJECT,      MSG_HELP_CO_CH_WARNSUBJECT);
@@ -176,7 +176,7 @@ OVERLOAD(OM_NEW)
     SetHelp(CH_LAUNCH,           MSG_HELP_CO_CH_LAUNCH);
     SetHelp(NB_EMAILCACHE,       MSG_HELP_CO_NB_EMAILCACHE);
     SetHelp(NB_AUTOSAVE,         MSG_HELP_CO_NB_AUTOSAVE);
-    SetHelp(TX_DEFCODESET_WRITE, MSG_HELP_CO_TX_DEFCODESET_WRITE);
+    SetHelp(PO_DEFCODESET_WRITE, MSG_HELP_CO_TX_DEFCODESET_WRITE);
     SetHelp(CH_TEXTSTYLES_WRITE, MSG_HELP_CO_CH_TEXTSTYLES_WRITE);
     SetHelp(CH_TEXTCOLORS_WRITE, MSG_HELP_CO_CH_TEXTCOLORS_WRITE);
 
@@ -204,7 +204,7 @@ OVERLOAD(MUIM_ConfigPage_ConfigToGUI)
   setcheckmark(data->CH_LAUNCH, CE->LaunchAlways);
   setslider(data->NB_EMAILCACHE, CE->EmailCache);
   setslider(data->NB_AUTOSAVE, CE->AutoSave/60);
-  nnset(data->TX_DEFCODESET_WRITE,  MUIA_Text_Contents, CE->DefaultWriteCodeset);
+  nnset(data->PO_DEFCODESET_WRITE,  MUIA_CharsetPopobject_Charset, CE->DefaultWriteCodeset);
   setcheckmark(data->CH_FIXEDFONT_WRITE, CE->UseFixedFontWrite);
   setcheckmark(data->CH_TEXTSTYLES_WRITE, CE->UseTextStylesWrite);
   setcheckmark(data->CH_TEXTCOLORS_WRITE, CE->UseTextColorsWrite);
@@ -229,7 +229,7 @@ OVERLOAD(MUIM_ConfigPage_GUIToConfig)
   CE->LaunchAlways      = GetMUICheck  (data->CH_LAUNCH);
   CE->EmailCache        = GetMUINumer  (data->NB_EMAILCACHE);
   CE->AutoSave          = GetMUINumer  (data->NB_AUTOSAVE)*60; // in seconds
-  GetMUIText(CE->DefaultWriteCodeset, data->TX_DEFCODESET_WRITE, sizeof(CE->DefaultWriteCodeset));
+  strlcpy(CE->DefaultWriteCodeset, (char *)xget(data->PO_DEFCODESET_WRITE, MUIA_CharsetPopobject_Charset), sizeof(CE->DefaultWriteCodeset));
   CE->UseFixedFontWrite  = GetMUICheck(data->CH_FIXEDFONT_WRITE);
   CE->UseTextStylesWrite = GetMUICheck(data->CH_TEXTSTYLES_WRITE);
   CE->UseTextColorsWrite = GetMUICheck(data->CH_TEXTCOLORS_WRITE);

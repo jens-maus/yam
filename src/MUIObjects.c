@@ -34,7 +34,6 @@
 #include <mui/NListtree_mcc.h>
 #include <mui/NListview_mcc.h>
 #include <proto/asl.h>
-#include <proto/codesets.h>
 #include <proto/dos.h>
 #include <proto/exec.h>
 #include <proto/intuition.h>
@@ -389,119 +388,6 @@ Object *MakeNumeric(int min, int max, BOOL percent)
            MUIA_Numeric_Format, percent ? "%ld%%" : "%ld",
            MUIA_CycleChain, TRUE,
          End;
-}
-
-///
-/// PO_CharsetOpenHook
-//  Sets the popup listview accordingly to the string gadget
-HOOKPROTONH(PO_CharsetOpenFunc, BOOL, Object *listview, Object *str)
-{
-  char *s;
-  Object *list;
-
-  ENTER();
-
-  if((s = (char *)xget(str, MUIA_Text_Contents)) != NULL &&
-     (list = (Object *)xget(listview, MUIA_NListview_NList)) != NULL)
-  {
-    int i;
-
-    for(i=0;;i++)
-    {
-      char *x;
-
-      DoMethod(list, MUIM_NList_GetEntry, i, &x);
-      if(x == NULL)
-      {
-        set(list, MUIA_NList_Active, MUIV_NList_Active_Off);
-        break;
-      }
-      else if(stricmp(x, s) == 0)
-      {
-        set(list, MUIA_NList_Active, i);
-        break;
-      }
-    }
-  }
-
-  RETURN(TRUE);
-  return TRUE;
-}
-MakeStaticHook(PO_CharsetOpenHook, PO_CharsetOpenFunc);
-
-///
-/// PO_CharsetCloseHook
-//  Pastes an entry from the popup listview into string gadget
-HOOKPROTONH(PO_CharsetCloseFunc, void, Object *listview, Object *txt)
-{
-  Object *list;
-
-  ENTER();
-
-  if((list = (Object *)xget(listview, MUIA_NListview_NList)) != NULL)
-  {
-    char *var = NULL;
-
-    DoMethod(list, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &var);
-    if(var != NULL)
-      set(txt, MUIA_Text_Contents, var);
-  }
-
-  LEAVE();
-}
-MakeStaticHook(PO_CharsetCloseHook, PO_CharsetCloseFunc);
-
-///
-/// MakeCodesetPop
-//  Creates a popup list of available codesets supported by codesets.library
-Object *MakeCodesetPop(Object **string, Object **pop)
-{
-  Object *listview;
-  Object *list;
-  Object *po;
-
-  ENTER();
-
-  if((po = PopobjectObject,
-
-    MUIA_Popstring_String, *string = TextObject,
-      TextFrame,
-      MUIA_Background,  MUII_TextBack,
-    End,
-
-    MUIA_Popstring_Button, *pop = PopButton(MUII_PopUp),
-    MUIA_Popobject_StrObjHook, &PO_CharsetOpenHook,
-    MUIA_Popobject_ObjStrHook, &PO_CharsetCloseHook,
-    MUIA_Popobject_WindowHook, &PO_WindowHook,
-    MUIA_Popobject_Object, listview = NListviewObject,
-      MUIA_NListview_Horiz_ScrollBar, MUIV_NListview_HSB_None,
-      MUIA_NListview_NList, list = CharsetPopupListObject,
-      End,
-    End,
-
-  End) != NULL)
-  {
-    struct codeset *codeset;
-
-    set(*pop, MUIA_CycleChain,TRUE);
-    DoMethod(list, MUIM_Notify, MUIA_NList_DoubleClick, TRUE, po, 2, MUIM_Popstring_Close, TRUE);
-
-    // disable the popup button in case there are no charsets available
-    if(xget(list, MUIA_NList_Entries) == 0)
-      set(po, MUIA_Disabled, TRUE);
-
-    // Use the system's default codeset
-    if((codeset = CodesetsFindA(NULL, NULL)) != NULL)
-      set(*string, MUIA_String_Contents, codeset->name);
-  }
-  else
-  {
-    *string = NULL;
-    *pop = NULL;
-  }
-
-  RETURN(po);
-  return po;
 }
 
 ///

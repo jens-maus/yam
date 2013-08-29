@@ -42,6 +42,7 @@
 
 #include "YAM.h"
 
+#include "mui/CharsetPopobject.h"
 #include "mui/ConfigPage.h"
 #include "mui/ConfigPageList.h"
 #include "mui/PlaceholderPopupList.h"
@@ -58,7 +59,7 @@ struct Data
   Object *ST_ATTACHDIR;
   Object *ST_UPDATEDOWNLOADPATH;
   Object *ST_EDITOR;
-  Object *TX_DEFCODESET_EDITOR;
+  Object *PO_DEFCODESET_EDITOR;
   Object *CH_WBAPPICON;
   Object *ST_APPICON;
   Object *CH_APPICONPOS;
@@ -220,7 +221,7 @@ OVERLOAD(OM_NEW)
   Object *ST_ATTACHDIR;
   Object *ST_UPDATEDOWNLOADPATH;
   Object *ST_EDITOR;
-  Object *TX_DEFCODESET_EDITOR;
+  Object *PO_DEFCODESET_EDITOR;
   Object *CH_WBAPPICON;
   Object *ST_APPICON;
   Object *CH_APPICONPOS;
@@ -243,7 +244,6 @@ OVERLOAD(OM_NEW)
   #endif
   Object *popButton;
   Object *list;
-  Object *codesetPopButton;
 
   ENTER();
 
@@ -301,7 +301,9 @@ OVERLOAD(OM_NEW)
           End,
 
           Child, Label2(tr(MSG_CO_EXTEDITOR_CODESET)),
-          Child, MakeCodesetPop(&TX_DEFCODESET_EDITOR, &codesetPopButton),
+          Child, PO_DEFCODESET_EDITOR = CharsetPopobjectObject,
+            MUIA_CharsetPopobject_ControlChar, tr(MSG_CO_EXTEDITOR_CODESET),
+          End,
 
         End,
       End,
@@ -405,7 +407,7 @@ OVERLOAD(OM_NEW)
     data->ST_ATTACHDIR =          ST_ATTACHDIR;
     data->ST_UPDATEDOWNLOADPATH = ST_UPDATEDOWNLOADPATH;
     data->ST_EDITOR =             ST_EDITOR;
-    data->TX_DEFCODESET_EDITOR =  TX_DEFCODESET_EDITOR;
+    data->PO_DEFCODESET_EDITOR =  PO_DEFCODESET_EDITOR;
     data->CH_WBAPPICON =          CH_WBAPPICON;
     data->ST_APPICON =            ST_APPICON;
     data->CH_APPICONPOS =         CH_APPICONPOS;
@@ -450,7 +452,7 @@ OVERLOAD(OM_NEW)
     SetHelp(BT_APPICONGETPOS,     MSG_HELP_CO_BT_APPICONGETPOS);
     SetHelp(CY_TRANSWIN,          MSG_HELP_CO_CH_TRANSWIN);
     SetHelp(ST_EDITOR,            MSG_HELP_CO_ST_EDITOR_EXT);
-    SetHelp(TX_DEFCODESET_EDITOR, MSG_HELP_CO_TX_DEFCODESET_EDITOR);
+    SetHelp(PO_DEFCODESET_EDITOR, MSG_HELP_CO_TX_DEFCODESET_EDITOR);
 
     DoMethod(obj, MUIM_MultiSet, MUIA_Disabled, TRUE,
       ST_APPX,
@@ -516,7 +518,7 @@ OVERLOAD(MUIM_ConfigPage_ConfigToGUI)
   set(data->CH_APPICONPOS, MUIA_Disabled, CE->WBAppIcon == FALSE);
   setcycle(data->CY_TRANSWIN, CE->TransferWindow);
   setstring(data->ST_EDITOR, CE->Editor);
-  set(data->TX_DEFCODESET_EDITOR, MUIA_Text_Contents, CE->DefaultEditorCodeset);
+  set(data->PO_DEFCODESET_EDITOR, MUIA_CharsetPopobject_Charset, CE->DefaultEditorCodeset);
 
   RETURN(0);
   return 0;
@@ -560,7 +562,7 @@ OVERLOAD(MUIM_ConfigPage_GUIToConfig)
   CE->ShowPackerProgress = GetMUICheck(data->CH_ARCHIVERPROGRESS);
   CE->TransferWindow = GetMUICycle(data->CY_TRANSWIN);
   GetMUIString(CE->Editor, data->ST_EDITOR, sizeof(CE->Editor));
-  GetMUIText(CE->DefaultEditorCodeset, data->TX_DEFCODESET_EDITOR, sizeof(CE->DefaultEditorCodeset));
+  strlcpy(CE->DefaultEditorCodeset, (char *)xget(data->PO_DEFCODESET_EDITOR, MUIA_CharsetPopobject_Charset), sizeof(CE->DefaultEditorCodeset));
 
   RETURN(0);
   return 0;
