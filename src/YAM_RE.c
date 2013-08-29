@@ -1469,7 +1469,7 @@ static BOOL RE_ConsumeRestOfPart(FILE *ifh, FILE *ofh, const struct codeset *src
             W(DBF_MAIL, "couldn't convert dstr with CodesetsUTF8Create(): %08lx %ld", dstr, dstrlen(dstr));
         }
         else
-          W(DBF_MAIL, "srcCodeset == NULL or srcCodeset is UTF8 already, no codeset conversion performed/necessary");
+          D(DBF_MAIL, "srcCodeset is [%s], no codeset conversion performed/necessary", srcCodeset == NULL ? "<NULL>" : srcCodeset->name);
       }
 
       // make sure we fallback to dstr

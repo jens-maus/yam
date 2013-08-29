@@ -2401,7 +2401,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
 
   ENTER();
 
-  D(DBF_MAIL, "Examining mail file '%s' from folder '%s' with deep %d", file, folder->Name, deep);
+  D(DBF_MAIL, "Examining mail file '%s' from folder '%s' with deep %d", file, folder != NULL ? folder->Name : "<NULL>", deep);
 
   // first we generate a new ExtendedMail buffer
   if((email = calloc(1, sizeof(*email))) == NULL)
