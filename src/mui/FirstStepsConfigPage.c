@@ -34,7 +34,7 @@
 
 #include "YAM_addressbook.h"
 
-#include "mui/CharsetPopobject.h"
+#include "mui/CodesetPopobject.h"
 #include "mui/ConfigPage.h"
 #include "mui/ConfigPageList.h"
 #include "mui/TZoneChooser.h"
@@ -101,8 +101,8 @@ OVERLOAD(OM_NEW)
       Child, ColGroup(2), GroupFrameT(tr(MSG_CO_SYSTEMSETTINGS)),
 
         Child, Label2(tr(MSG_CO_DEFAULTCHARSET)),
-        Child, PO_DEFCODESET_LOCAL = CharsetPopobjectObject,
-          MUIA_CharsetPopobject_ControlChar, tr(MSG_CO_DEFAULTCHARSET),
+        Child, PO_DEFCODESET_LOCAL = CodesetPopobjectObject,
+          MUIA_CodesetPopobject_ControlChar, tr(MSG_CO_DEFAULTCHARSET),
         End,
 
         Child, Label2(tr(MSG_CO_TimeZone)),
@@ -170,7 +170,7 @@ OVERLOAD(MUIM_ConfigPage_ConfigToGUI)
     nnset(data->ST_PASSWD0,  MUIA_String_Contents, msn->password);
   }
 
-  nnset(data->PO_DEFCODESET_LOCAL, MUIA_CharsetPopobject_Charset, CE->DefaultLocalCodeset);
+  nnset(data->PO_DEFCODESET_LOCAL, MUIA_CodesetPopobject_Codeset, CE->DefaultLocalCodeset);
 
   RETURN(0);
   return 0;
@@ -192,7 +192,7 @@ OVERLOAD(MUIM_ConfigPage_GUIToConfig)
   }
 
   strlcpy(CE->Location, (char *)xget(data->GR_TZONE, MUIA_TZoneChooser_TZone), sizeof(CE->Location));
-  strlcpy(CE->DefaultLocalCodeset, (char *)xget(data->PO_DEFCODESET_LOCAL, MUIA_CharsetPopobject_Charset), sizeof(CE->DefaultLocalCodeset));
+  strlcpy(CE->DefaultLocalCodeset, (char *)xget(data->PO_DEFCODESET_LOCAL, MUIA_CodesetPopobject_Codeset), sizeof(CE->DefaultLocalCodeset));
 
   RETURN(0);
   return 0;

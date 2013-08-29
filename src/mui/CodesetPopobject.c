@@ -28,7 +28,7 @@
 
 ***************************************************************************/
 
-#include "CharsetPopobject_cl.h"
+#include "CodesetPopobject_cl.h"
 
 #include <string.h>
 
@@ -45,21 +45,21 @@
 #include "Locale.h"
 #include "MUIObjects.h"
 
-#include "mui/CharsetPopupList.h"
+#include "mui/CodesetPopupList.h"
 
 #include "Debug.h"
 
 /* CLASSDATA
 struct Data
 {
-  Object *TX_CHARSET;
+  Object *TX_CODESET;
 };
 */
 
 /* Hooks */
-/// CharsetOpenHook
+/// CodesetOpenHook
 //  Sets the popup listview accordingly to the string gadget
-HOOKPROTONH(CharsetOpenFunc, BOOL, Object *listview, Object *str)
+HOOKPROTONH(CodesetOpenFunc, BOOL, Object *listview, Object *str)
 {
   char *s;
   Object *list;
@@ -92,12 +92,12 @@ HOOKPROTONH(CharsetOpenFunc, BOOL, Object *listview, Object *str)
   RETURN(TRUE);
   return TRUE;
 }
-MakeStaticHook(CharsetOpenHook, CharsetOpenFunc);
+MakeStaticHook(CodesetOpenHook, CodesetOpenFunc);
 
 ///
-/// CharsetCloseHook
+/// CodesetCloseHook
 //  Pastes an entry from the popup listview into string gadget
-HOOKPROTONH(CharsetCloseFunc, void, Object *listview, Object *txt)
+HOOKPROTONH(CodesetCloseFunc, void, Object *listview, Object *txt)
 {
   Object *list;
 
@@ -114,7 +114,7 @@ HOOKPROTONH(CharsetCloseFunc, void, Object *listview, Object *txt)
 
   LEAVE();
 }
-MakeStaticHook(CharsetCloseHook, CharsetCloseFunc);
+MakeStaticHook(CodesetCloseHook, CodesetCloseFunc);
 
 ///
 
@@ -122,7 +122,7 @@ MakeStaticHook(CharsetCloseHook, CharsetCloseFunc);
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
-  Object *TX_CHARSET;
+  Object *TX_CODESET;
   Object *pop;
   Object *list;
   ULONG controlChar;
@@ -132,18 +132,18 @@ OVERLOAD(OM_NEW)
   controlChar = GetTagData(ATTR(ControlChar), 0, inittags(msg));
 
   if((obj = DoSuperNew(cl, obj,
-    MUIA_Popstring_String, TX_CHARSET = TextObject,
+    MUIA_Popstring_String, TX_CODESET = TextObject,
       TextFrame,
       MUIA_Background,  MUII_TextBack,
     End,
 
     MUIA_Popstring_Button, pop = PopButton(MUII_PopUp),
-    MUIA_Popobject_StrObjHook, &CharsetOpenHook,
-    MUIA_Popobject_ObjStrHook, &CharsetCloseHook,
+    MUIA_Popobject_StrObjHook, &CodesetOpenHook,
+    MUIA_Popobject_ObjStrHook, &CodesetCloseHook,
     MUIA_Popobject_WindowHook, &PO_WindowHook,
     MUIA_Popobject_Object, NListviewObject,
       MUIA_NListview_Horiz_ScrollBar, MUIV_NListview_HSB_None,
-      MUIA_NListview_NList, list = CharsetPopupListObject,
+      MUIA_NListview_NList, list = CodesetPopupListObject,
       End,
     End,
     TAG_MORE, inittags(msg))) != NULL)
@@ -151,23 +151,23 @@ OVERLOAD(OM_NEW)
     GETDATA;
     struct codeset *codeset;
 
-    data->TX_CHARSET = TX_CHARSET;
+    data->TX_CODESET = TX_CODESET;
 
     xset(pop,
       MUIA_CycleChain, TRUE,
       MUIA_ControlChar, controlChar);
 
     DoMethod(list, MUIM_Notify, MUIA_NList_DoubleClick, TRUE, obj, 2, MUIM_Popstring_Close, TRUE);
-    DoMethod(TX_CHARSET, MUIM_Notify, MUIA_Text_Contents, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(CharsetChanged), TRUE);
-    DoMethod(TX_CHARSET, MUIM_Notify, MUIA_Text_Contents, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Charset), MUIV_TriggerValue);
+    DoMethod(TX_CODESET, MUIM_Notify, MUIA_Text_Contents, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(CodesetChanged), TRUE);
+    DoMethod(TX_CODESET, MUIM_Notify, MUIA_Text_Contents, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Codeset), MUIV_TriggerValue);
 
-    // disable the popup button in case there are no charsets available
+    // disable the popup button in case there are no codesets available
     if(xget(list, MUIA_NList_Entries) == 0)
       set(obj, MUIA_Disabled, TRUE);
 
     // Use the system's default codeset
     if((codeset = CodesetsFindA(NULL, NULL)) != NULL)
-      set(TX_CHARSET, MUIA_Text_Contents, codeset->name);
+      set(TX_CODESET, MUIA_Text_Contents, codeset->name);
   }
 
   RETURN((IPTR)obj);
@@ -188,9 +188,9 @@ OVERLOAD(OM_SET)
   {
     switch(tag->ti_Tag)
     {
-      case ATTR(Charset):
+      case ATTR(Codeset):
       {
-        nnset(data->TX_CHARSET, MUIA_Text_Contents, tag->ti_Data);
+        nnset(data->TX_CODESET, MUIA_Text_Contents, tag->ti_Data);
       }
       break;
     }
@@ -211,7 +211,7 @@ OVERLOAD(OM_GET)
 
   switch(((struct opGet *)msg)->opg_AttrID)
   {
-    case ATTR(CharsetChanged):
+    case ATTR(CodesetChanged):
     {
       *store = TRUE;
 
@@ -219,9 +219,9 @@ OVERLOAD(OM_GET)
     }
     break;
 
-    case ATTR(Charset):
+    case ATTR(Codeset):
     {
-      *store = xget(data->TX_CHARSET, MUIA_Text_Contents);
+      *store = xget(data->TX_CODESET, MUIA_Text_Contents);
 
       return TRUE;
     }

@@ -45,7 +45,7 @@
 #include "YAM.h"
 #include "YAM_error.h"
 
-#include "mui/CharsetPopobject.h"
+#include "mui/CodesetPopobject.h"
 #include "mui/ConfigPage.h"
 #include "mui/ConfigPageList.h"
 #include "mui/MimeTypeList.h"
@@ -180,8 +180,8 @@ OVERLOAD(OM_NEW)
               End,
 
               Child, Label2(tr(MSG_CO_MIME_CODESET)),
-              Child, PO_MIME_CODESET = CharsetPopobjectObject,
-                MUIA_CharsetPopobject_ControlChar, tr(MSG_CO_MIME_CODESET),
+              Child, PO_MIME_CODESET = CodesetPopobjectObject,
+                MUIA_CodesetPopobject_ControlChar, tr(MSG_CO_MIME_CODESET),
               End,
 
             End,
@@ -208,8 +208,8 @@ OVERLOAD(OM_NEW)
           End,
 
           Child, Label2(tr(MSG_CO_DEFAULTVIEWER_CODESET)),
-          Child, PO_DEFVIEWER_CODESET = CharsetPopobjectObject,
-            MUIA_CharsetPopobject_ControlChar, tr(MSG_CO_DEFAULTVIEWER_CODESET),
+          Child, PO_DEFVIEWER_CODESET = CodesetPopobjectObject,
+            MUIA_CodesetPopobject_ControlChar, tr(MSG_CO_DEFAULTVIEWER_CODESET),
           End,
 
         End,
@@ -282,8 +282,8 @@ OVERLOAD(OM_NEW)
     DoMethod(ST_COMMAND,           MUIM_Notify, MUIA_String_Contents,                 MUIV_EveryTime, obj, 1, METHOD(PutMimeTypeEntry));
     DoMethod(ST_DESCRIPTION,       MUIM_Notify, MUIA_String_Contents,                 MUIV_EveryTime, obj, 1, METHOD(PutMimeTypeEntry));
     DoMethod(ST_DEFVIEWER,         MUIM_Notify, MUIA_String_Contents,                 MUIV_EveryTime, obj, 1, METHOD(PutMimeTypeEntry));
-    DoMethod(PO_DEFVIEWER_CODESET, MUIM_Notify, MUIA_CharsetPopobject_CharsetChanged, MUIV_EveryTime, obj, 1, METHOD(PutMimeTypeEntry));
-    DoMethod(PO_MIME_CODESET,      MUIM_Notify, MUIA_CharsetPopobject_CharsetChanged, MUIV_EveryTime, obj, 1, METHOD(PutMimeTypeEntry));
+    DoMethod(PO_DEFVIEWER_CODESET, MUIM_Notify, MUIA_CodesetPopobject_CodesetChanged, MUIV_EveryTime, obj, 1, METHOD(PutMimeTypeEntry));
+    DoMethod(PO_MIME_CODESET,      MUIM_Notify, MUIA_CodesetPopobject_CodesetChanged, MUIV_EveryTime, obj, 1, METHOD(PutMimeTypeEntry));
     DoMethod(BT_MADD,              MUIM_Notify, MUIA_Pressed,                         FALSE,          obj, 1, METHOD(AddMimeTypeEntry));
     DoMethod(BT_MDEL,              MUIM_Notify, MUIA_Pressed,                         FALSE,          obj, 1, METHOD(DeleteMimeTypeEntry));
     DoMethod(BT_MIMEIMPORT,        MUIM_Notify, MUIA_Pressed,                         FALSE,          obj, 1, METHOD(ImportMimeTypes));
@@ -321,7 +321,7 @@ OVERLOAD(MUIM_ConfigPage_ConfigToGUI)
   DoMethod(data->LV_MIME, MUIM_NList_Jump, MUIV_NList_Jump_Active);
 
   setstring(data->ST_DEFVIEWER, CE->DefaultMimeViewer);
-  set(data->PO_DEFVIEWER_CODESET, MUIA_CharsetPopobject_Charset, CE->DefaultMimeViewerCodesetName);
+  set(data->PO_DEFVIEWER_CODESET, MUIA_CodesetPopobject_Codeset, CE->DefaultMimeViewerCodesetName);
 
   RETURN(0);
   return 0;
@@ -340,7 +340,7 @@ OVERLOAD(MUIM_ConfigPage_GUIToConfig)
 
   // retrieve the info on the default mime viewer
   GetMUIString(CE->DefaultMimeViewer, data->ST_DEFVIEWER, sizeof(CE->DefaultMimeViewer));
-  strlcpy(CE->DefaultMimeViewerCodesetName, (char *)xget(data->PO_DEFVIEWER_CODESET, MUIA_CharsetPopobject_Charset), sizeof(CE->DefaultMimeViewerCodesetName));
+  strlcpy(CE->DefaultMimeViewerCodesetName, (char *)xget(data->PO_DEFVIEWER_CODESET, MUIA_CodesetPopobject_Codeset), sizeof(CE->DefaultMimeViewerCodesetName));
 
   RETURN(0);
   return 0;
@@ -363,7 +363,7 @@ DECLARE(GetMimeTypeEntry)
     nnset(data->ST_EXTENS, MUIA_String_Contents, mt->Extension);
     nnset(data->ST_COMMAND, MUIA_String_Contents, mt->Command);
     nnset(data->ST_DESCRIPTION, MUIA_String_Contents, mt->Description);
-    nnset(data->PO_MIME_CODESET, MUIA_CharsetPopobject_Charset, mt->CodesetName);
+    nnset(data->PO_MIME_CODESET, MUIA_CodesetPopobject_Codeset, mt->CodesetName);
   }
 
   set(data->GR_MIME, MUIA_Disabled, mt == NULL);
@@ -390,7 +390,7 @@ DECLARE(PutMimeTypeEntry)
     GetMUIString(mt->Extension, data->ST_EXTENS, sizeof(mt->Extension));
     GetMUIString(mt->Command, data->ST_COMMAND, sizeof(mt->Command));
     GetMUIString(mt->Description, data->ST_DESCRIPTION, sizeof(mt->Description));
-    strlcpy(mt->CodesetName, (char *)xget(data->PO_MIME_CODESET, MUIA_CharsetPopobject_Charset), sizeof(mt->CodesetName));
+    strlcpy(mt->CodesetName, (char *)xget(data->PO_MIME_CODESET, MUIA_CodesetPopobject_Codeset), sizeof(mt->CodesetName));
 
     DoMethod(data->LV_MIME, MUIM_NList_Redraw, MUIV_NList_Redraw_Active);
   }

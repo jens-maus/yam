@@ -50,7 +50,6 @@
 #include "YAM_global.h"
 #include "YAM_read.h"
 
-#include "mui/CharsetPopupList.h"
 #include "mui/ClassesExtra.h"
 #include "mui/PlaceholderPopupList.h"
 #include "mui/Recipientstring.h"

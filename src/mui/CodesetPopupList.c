@@ -24,11 +24,11 @@
  $Id$
 
  Superclass:  MUIC_NList
- Description: a list showing all available charsets
+ Description: a list showing all available codesets
 
 ***************************************************************************/
 
-#include "CharsetPopupList_cl.h"
+#include "CodesetPopupList_cl.h"
 
 #include <string.h>
 #include <proto/codesets.h>

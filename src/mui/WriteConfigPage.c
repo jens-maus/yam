@@ -32,7 +32,7 @@
 
 #include <proto/muimaster.h>
 
-#include "mui/CharsetPopobject.h"
+#include "mui/CodesetPopobject.h"
 #include "mui/ConfigPage.h"
 #include "mui/ConfigPageList.h"
 
@@ -96,8 +96,8 @@ OVERLOAD(OM_NEW)
           Child, ST_BYETEXT = MakeString(SIZE_INTRO,tr(MSG_CO_Greetings)),
 
           Child, Label2(tr(MSG_CO_DEFAULTCODESET_WRITE)),
-          Child, PO_DEFCODESET_WRITE = CharsetPopobjectObject,
-            MUIA_CharsetPopobject_ControlChar, tr(MSG_CO_DEFAULTCODESET_WRITE),
+          Child, PO_DEFCODESET_WRITE = CodesetPopobjectObject,
+            MUIA_CodesetPopobject_ControlChar, tr(MSG_CO_DEFAULTCODESET_WRITE),
           End,
         End,
       End,
@@ -204,7 +204,7 @@ OVERLOAD(MUIM_ConfigPage_ConfigToGUI)
   setcheckmark(data->CH_LAUNCH, CE->LaunchAlways);
   setslider(data->NB_EMAILCACHE, CE->EmailCache);
   setslider(data->NB_AUTOSAVE, CE->AutoSave/60);
-  nnset(data->PO_DEFCODESET_WRITE,  MUIA_CharsetPopobject_Charset, CE->DefaultWriteCodeset);
+  nnset(data->PO_DEFCODESET_WRITE,  MUIA_CodesetPopobject_Codeset, CE->DefaultWriteCodeset);
   setcheckmark(data->CH_FIXEDFONT_WRITE, CE->UseFixedFontWrite);
   setcheckmark(data->CH_TEXTSTYLES_WRITE, CE->UseTextStylesWrite);
   setcheckmark(data->CH_TEXTCOLORS_WRITE, CE->UseTextColorsWrite);
@@ -229,7 +229,7 @@ OVERLOAD(MUIM_ConfigPage_GUIToConfig)
   CE->LaunchAlways      = GetMUICheck  (data->CH_LAUNCH);
   CE->EmailCache        = GetMUINumer  (data->NB_EMAILCACHE);
   CE->AutoSave          = GetMUINumer  (data->NB_AUTOSAVE)*60; // in seconds
-  strlcpy(CE->DefaultWriteCodeset, (char *)xget(data->PO_DEFCODESET_WRITE, MUIA_CharsetPopobject_Charset), sizeof(CE->DefaultWriteCodeset));
+  strlcpy(CE->DefaultWriteCodeset, (char *)xget(data->PO_DEFCODESET_WRITE, MUIA_CodesetPopobject_Codeset), sizeof(CE->DefaultWriteCodeset));
   CE->UseFixedFontWrite  = GetMUICheck(data->CH_FIXEDFONT_WRITE);
   CE->UseTextStylesWrite = GetMUICheck(data->CH_TEXTSTYLES_WRITE);
   CE->UseTextColorsWrite = GetMUICheck(data->CH_TEXTCOLORS_WRITE);

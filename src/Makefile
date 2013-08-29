@@ -481,8 +481,8 @@ MUIOBJS = \
 	Base64Dataspace.o \
 	BirthdayRequestWindow.o \
 	CheckboxRequestWindow.o \
-	CharsetPopobject.o \
-	CharsetPopupList.o \
+	CodesetPopobject.o \
+	CodesetPopupList.o \
 	ConfigPage.o \
 	ConfigPageList.o \
 	ConfigWindow.o \

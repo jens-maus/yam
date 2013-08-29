@@ -59,7 +59,7 @@
 #include "YAM_mainFolder.h"
 
 #include "mime/uucode.h"
-#include "mui/CharsetPopobject.h"
+#include "mui/CodesetPopobject.h"
 #include "mui/IdentityChooser.h"
 #include "mui/MailTextEdit.h"
 #include "mui/ReadMailGroup.h"
@@ -156,7 +156,7 @@ struct Data
   Object *MI_TCOLOR;
   Object *MI_TSTYLE;
   Object *WI_SEARCH;
-  Object *PO_CHARSET;
+  Object *PO_CODESET;
   Object *MI_SIGNATURE;
   Object *MI_SIGNATURES[MAXSIG_MENU];
 
@@ -1211,8 +1211,8 @@ OVERLOAD(OM_NEW)
                   End,
 
                   Child, Label(tr(MSG_WR_CHARSET)),
-                  Child, data->PO_CHARSET = CharsetPopobjectObject,
-                    MUIA_CharsetPopobject_ControlChar, tr(MSG_WR_CHARSET),
+                  Child, data->PO_CODESET = CodesetPopobjectObject,
+                    MUIA_CodesetPopobject_ControlChar, tr(MSG_WR_CHARSET),
                   End,
 
                   Child, Label(tr(MSG_WR_Importance)),
@@ -1302,8 +1302,8 @@ OVERLOAD(OM_NEW)
         set(data->MI_AUTOSPELL, MUIA_Menuitem_Checked, xget(data->TE_EDIT, MUIA_TextEditor_TypeAndSpell));
         set(data->MI_AUTOWRAP,  MUIA_Menuitem_Checked, xget(data->TE_EDIT, MUIA_TextEditor_WrapBorder) > 0);
 
-        // set the charset popupbutton string list contents
-        nnset(data->PO_CHARSET, MUIA_CharsetPopobject_Charset, C->DefaultWriteCodeset);
+        // set the codeset popupbutton string list contents
+        nnset(data->PO_CODESET, MUIA_CodesetPopobject_Codeset, C->DefaultWriteCodeset);
 
         // put the importance cycle gadget into the cycle group
         set(data->CY_IMPORTANCE, MUIA_Cycle_Active, TRUE);
@@ -1550,7 +1550,7 @@ OVERLOAD(OM_NEW)
       SetHelp(data->BT_QUEUE,       MSG_HELP_WR_BT_QUEUE);
       SetHelp(data->BT_SAVEASDRAFT, MSG_HELP_WR_BT_SAVEASDRAFT);
       SetHelp(data->BT_SEND,        MSG_HELP_WR_BT_SEND);
-      SetHelp(data->PO_CHARSET,     MSG_HELP_WR_PO_CHARSET);
+      SetHelp(data->PO_CODESET,     MSG_HELP_WR_PO_CHARSET);
 
       // declare the mail as modified if any of these objects reports a change
       DoMethod(data->ST_FROM_OVERRIDE, MUIM_Notify, MUIA_String_Contents,                 MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
@@ -1561,15 +1561,15 @@ OVERLOAD(OM_NEW)
       DoMethod(data->ST_EXTHEADER,     MUIM_Notify, MUIA_String_Contents,                 MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
       DoMethod(data->ST_CTYPE,         MUIM_Notify, MUIA_String_Contents,                 MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
       DoMethod(data->ST_DESC,          MUIM_Notify, MUIA_String_Contents,                 MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
-      DoMethod(data->PO_CHARSET,       MUIM_Notify, MUIA_CharsetPopobject_CharsetChanged, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->PO_CODESET,       MUIM_Notify, MUIA_CodesetPopobject_CodesetChanged, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
       DoMethod(data->CY_IMPORTANCE,    MUIM_Notify, MUIA_Cycle_Active,                    MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
       DoMethod(data->CY_SECURITY,      MUIM_Notify, MUIA_Cycle_Active,                    MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
       DoMethod(data->CH_DELSEND,       MUIM_Notify, MUIA_Selected,                        MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
       DoMethod(data->CH_MDN,           MUIM_Notify, MUIA_Selected,                        MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
       DoMethod(data->CH_ADDINFO,       MUIM_Notify, MUIA_Selected,                        MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
 
-      // create a notify for changing the charset
-      DoMethod(data->PO_CHARSET, MUIM_Notify, MUIA_CharsetPopobject_Charset, MUIV_EveryTime, obj, 2, METHOD(CodesetChanged), MUIV_TriggerValue);
+      // create a notify for changing the codeset
+      DoMethod(data->PO_CODESET, MUIM_Notify, MUIA_CodesetPopobject_Codeset, MUIV_EveryTime, obj, 2, METHOD(CodesetChanged), MUIV_TriggerValue);
 
       // set main window button notifies
       DoMethod(data->BT_SAVEASDRAFT, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(ComposeMail), WRITE_DRAFT);
@@ -1584,7 +1584,7 @@ OVERLOAD(OM_NEW)
       snprintf(filename, sizeof(filename), "YAMw%08x-%d.txt", (unsigned int)FindTask(NULL), data->windowNumber+1);
       AddPath(data->wmData->filename, C->TempDir, filename, sizeof(data->wmData->filename));
 
-      // set the global charset as the default one
+      // set the global codeset as the default one
       data->wmData->codeset = G->writeCodeset;
 
       // Finally set up the notifications for external changes to the file being edited
@@ -3442,7 +3442,7 @@ DECLARE(LaunchEditor)
     else
       dstCodeset = data->wmData->codeset;
 
-    // save the mail text in the currently selected charset
+    // save the mail text in the currently selected codeset
     DoMethod(data->TE_EDIT, MUIM_MailTextEdit_SaveToFile, data->wmData->filename, dstCodeset);
 
     // remember the modification date of the file
@@ -3712,7 +3712,7 @@ DECLARE(SetupFromOldMail) // struct ReadMailData *rmData
     if(part->Nr == msg->rmData->letterPartNum)
     {
       // use the CodesetChanged method to signal that the write
-      // window should select the charset of the letterPart of the
+      // window should select the codeset of the letterPart of the
       // old mail
       DoMethod(obj, METHOD(CodesetChanged), part->CParCSet);
     }
@@ -4002,7 +4002,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
     // text in the editor beforehand.
     MA_StartMacro(MACRO_POSTWRITE, data->windowNumberStr);
 
-    // export the text of our texteditor to a file in the currently selected charset
+    // export the text of our texteditor to a file in the currently selected codeset
     DoMethod(data->TE_EDIT, MUIM_MailTextEdit_SaveToFile, wmData->filename, wmData->codeset);
 
     // build the whole mail part list including the attachments
@@ -5232,7 +5232,7 @@ DECLARE(CodesetChanged) // char *codesetName
   GETDATA;
   ENTER();
 
-  // find the selected charset and default to the global one if it
+  // find the selected codeset and default to the global one if it
   // could not be found
   if((data->wmData->codeset = CodesetsFind(msg->codesetName,
                                            CSA_CodesetList,       G->codesetsList,
@@ -5242,7 +5242,7 @@ DECLARE(CodesetChanged) // char *codesetName
     data->wmData->codeset = G->writeCodeset;
   }
 
-  nnset(data->PO_CHARSET, MUIA_CharsetPopobject_Charset, strippedCharsetName(data->wmData->codeset));
+  nnset(data->PO_CODESET, MUIA_CodesetPopobject_Codeset, strippedCharsetName(data->wmData->codeset));
 
   RETURN(0);
   return 0;

@@ -42,7 +42,7 @@
 
 #include "YAM.h"
 
-#include "mui/CharsetPopobject.h"
+#include "mui/CodesetPopobject.h"
 #include "mui/ConfigPage.h"
 #include "mui/ConfigPageList.h"
 #include "mui/PlaceholderPopupList.h"
@@ -301,8 +301,8 @@ OVERLOAD(OM_NEW)
           End,
 
           Child, Label2(tr(MSG_CO_EXTEDITOR_CODESET)),
-          Child, PO_DEFCODESET_EDITOR = CharsetPopobjectObject,
-            MUIA_CharsetPopobject_ControlChar, tr(MSG_CO_EXTEDITOR_CODESET),
+          Child, PO_DEFCODESET_EDITOR = CodesetPopobjectObject,
+            MUIA_CodesetPopobject_ControlChar, tr(MSG_CO_EXTEDITOR_CODESET),
           End,
 
         End,
@@ -518,7 +518,7 @@ OVERLOAD(MUIM_ConfigPage_ConfigToGUI)
   set(data->CH_APPICONPOS, MUIA_Disabled, CE->WBAppIcon == FALSE);
   setcycle(data->CY_TRANSWIN, CE->TransferWindow);
   setstring(data->ST_EDITOR, CE->Editor);
-  set(data->PO_DEFCODESET_EDITOR, MUIA_CharsetPopobject_Charset, CE->DefaultEditorCodeset);
+  set(data->PO_DEFCODESET_EDITOR, MUIA_CodesetPopobject_Codeset, CE->DefaultEditorCodeset);
 
   RETURN(0);
   return 0;
@@ -562,7 +562,7 @@ OVERLOAD(MUIM_ConfigPage_GUIToConfig)
   CE->ShowPackerProgress = GetMUICheck(data->CH_ARCHIVERPROGRESS);
   CE->TransferWindow = GetMUICycle(data->CY_TRANSWIN);
   GetMUIString(CE->Editor, data->ST_EDITOR, sizeof(CE->Editor));
-  strlcpy(CE->DefaultEditorCodeset, (char *)xget(data->PO_DEFCODESET_EDITOR, MUIA_CharsetPopobject_Charset), sizeof(CE->DefaultEditorCodeset));
+  strlcpy(CE->DefaultEditorCodeset, (char *)xget(data->PO_DEFCODESET_EDITOR, MUIA_CodesetPopobject_Codeset), sizeof(CE->DefaultEditorCodeset));
 
   RETURN(0);
   return 0;
