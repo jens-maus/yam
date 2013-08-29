@@ -1288,7 +1288,7 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, enum ReadHeaderM
 //  Processes body of a message part and takes care to convert the text
 //  to UTF-8 if a srcCodeset has been supplied and the encoding of the part is
 //  either 7bit or 8bit which should signal that it is actually readable text
-static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, const struct codeset *srcCodeset,
+static BOOL RE_ConsumeRestOfPart(FILE *ifh, FILE *ofh, const struct codeset *srcCodeset,
                                  const struct Part *rp, const BOOL allowAutoDetect)
 {
   BOOL result = FALSE;
@@ -1296,9 +1296,10 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, const struct codeset *srcC
   ENTER();
 
   // check if an input file stream was given
-  if(in != NULL)
+  if(ifh != NULL)
   {
     char *buf = NULL;
+    char *dstr = NULL;
     size_t buflen = 0;
     ssize_t curlen = 0;
     int boundaryLen = 0;
@@ -1323,7 +1324,7 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, const struct codeset *srcC
 
     // we process the file line-by-line, analyze it if it is between the boundary
     // do an eventually existing charset translation and write it out again.
-    while((curlen = GetLine(&buf, &buflen, in)) >= 0)
+    while((curlen = GetLine(&buf, &buflen, ifh)) >= 0)
     {
       // count number of lines
       numLines++;
@@ -1377,101 +1378,121 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, const struct codeset *srcC
         }
       }
 
-      // check if the data should be written out
-      // immediately or not
-      if(out != NULL)
+      // check if the data should be written out at the end of this function
+      // or if we plainly read data only. If we should write out later we stuff
+      // all our data into a dynamic array first so that we can do any potential
+      // codeset conversion in one run.
+      if(ofh != NULL)
       {
         // as we use GetLine() above (with no LF) we have to output a LF before we
         // go on. This will in fact strip the last newline right where the mime boundary
         // comes.
-        if(numLines > 1 && fputc('\n', out) == EOF)
-        {
-          E(DBF_MAIL, "error during '\\n' write operation! buf: (%ld) '%s'", curlen, buf);
+        if(numLines > 1)
+          dstrcat(&dstr, "\n");
 
-          // no success, return false
-          break;
-        }
-
-        // see if there is anything left to write
-        if(curlen > 0)
-        {
-          // in case the user wants us to detect the correct cyrillic codeset
-          // we do it now
-          if(skipCodesets == FALSE && C->DetectCyrillic == TRUE && allowAutoDetect == TRUE)
-          {
-            if(srcCodeset == NULL || (srcCodeset->name != NULL && stricmp(srcCodeset->name, "utf-8") != 0))
-            {
-              struct codeset *cs = CodesetsFindBest(CSA_Source,         buf,
-                                                    CSA_SourceLen,      curlen,
-                                                    CSA_CodesetFamily,  CSV_CodesetFamily_Cyrillic,
-                                                    TAG_DONE);
-
-              if(cs != NULL && cs != srcCodeset)
-                srcCodeset = cs;
-            }
-          }
-
-          // if this function was invoked with a source Codeset we have to make sure
-          // we convert from the supplied source Codeset to our current local codeset with
-          // help of the functions codesets.library provides.
-          if(skipCodesets == FALSE && srcCodeset != NULL)
-          {
-            ULONG dstlen = 0;
-
-            // convert from the srcCodeset to UTF8
-            UTF8 *str = CodesetsUTF8Create(CSA_Source,          buf,
-                                           CSA_SourceLen,       curlen,
-                                           CSA_SourceCodeset,   srcCodeset,
-                                           CSA_DestLenPtr,      &dstlen,
-                                           TAG_DONE);
-
-            // check if operations succeeded
-            if(str != NULL && dstlen > 0)
-            {
-              // now write back exactly the amount of bytes the CodesetsUTF8Create()
-              // function tells us.
-              if(fwrite(str, dstlen, 1, out) <= 0)
-              {
-                E(DBF_MAIL, "error during write operation!");
-
-                // no success, return false
-                break;
-              }
-
-              CodesetsFreeA(str, NULL);
-
-              // continue with next iteration
-              continue;
-            }
-            else
-              W(DBF_MAIL, "couldn't convert buf with CodesetsUTF8Create(), %08lx %ld %ld", str, dstlen, curlen);
-          }
-
-          // now write back exactly the same amount of bytes we read previously
-          if(fwrite(buf, curlen, 1, out) <= 0)
-          {
-            E(DBF_MAIL, "error during write operation! buf: (%ld) '%s'", curlen, buf);
-
-            // no success, return false
-            break;
-          }
-        }
+        // now stuff the whole buf into the dstr
+        dstrcat(&dstr, buf);
       }
     }
 
+    // free the buffer allocated by GetLine()
+    free(buf);
+
     // if we end up here because of a EOF we have to check
     // if there is still something in c and then write it into the out fh.
-    if(result == FALSE && curlen == -1 && feof(in) != 0)
+    if(result == FALSE && curlen == -1 && feof(ifh) != 0)
     {
       // if we read at least one line we must add a line feed, because GetLine() strips these
-      if(numLines > 1 && out != NULL && fputc('\n', out) == EOF)
-        E(DBF_MAIL, "error during '\\n' write operation!");
-      else
-        result = TRUE;
+      if(numLines > 1 && ofh != NULL)
+        dstrcat(&dstr, "\n");
+
+      result = TRUE;
     }
 
-    // free the buffer allocated by getline()
-    free(buf);
+    // now that we have the whole text in dstr we can check if we need to convert it to
+    // a different codeset or write it out right away.
+    if(ofh != NULL)
+    {
+      char *dststr = NULL;
+      size_t dstlen = 0;
+      BOOL codesetConverted = FALSE;
+
+      if(skipCodesets == FALSE)
+      {
+        // in case the user wants us to detect the correct codeset we do it now
+        if(allowAutoDetect == TRUE)
+        {
+          if(srcCodeset == NULL ||
+             (C->DetectCyrillic == TRUE && srcCodeset->name != NULL && stricmp(srcCodeset->name, "utf-8") != 0))
+          {
+            struct codeset *cs = CodesetsFindBest(CSA_Source,            dstr,
+                                                  CSA_SourceLen,         dstrlen(dstr),
+                                                  CSA_CodesetFamily,     C->DetectCyrillic == TRUE ? CSV_CodesetFamily_Cyrillic : CSV_CodesetFamily_Latin,
+                                                  CSA_FallbackToDefault, FALSE,
+                                                  TAG_DONE);
+
+            if(cs != NULL && cs != srcCodeset)
+            {
+              D(DBF_MAIL, "Detected [%s] codeset using CodesetsFindBest()", cs->name);
+              srcCodeset = cs;
+            }
+            else
+              W(DBF_MAIL, "Couldn't autodetect codeset for supplied src text");
+          }
+        }
+
+        // if this function was invoked with a source Codeset we have to make sure
+        // we convert from the supplied source Codeset to our current local codeset with
+        // help of the functions codesets.library provides.
+        if(srcCodeset != NULL && srcCodeset->name != NULL && stricmp(srcCodeset->name, "utf-8") != 0)
+        {
+          ULONG utf8len = 0;
+
+          // convert from the srcCodeset to UTF8
+          UTF8 *utf8str = CodesetsUTF8Create(CSA_Source,          dstr,
+                                             CSA_SourceLen,       dstrlen(dstr),
+                                             CSA_SourceCodeset,   srcCodeset,
+                                             CSA_DestLenPtr,      &utf8len,
+                                             TAG_DONE);
+
+          // check if operations succeeded
+          if(utf8str != NULL && utf8len > 0)
+          {
+            dststr = (char *)utf8str;
+            dstlen = utf8len;
+
+            // signal that the destination string had
+            // been converted
+            codesetConverted = TRUE;
+          }
+          else
+            W(DBF_MAIL, "couldn't convert dstr with CodesetsUTF8Create(): %08lx %ld", dstr, dstrlen(dstr));
+        }
+        else
+          W(DBF_MAIL, "srcCodeset == NULL or srcCodeset is UTF8 already, no codeset conversion performed/necessary");
+      }
+
+      // make sure we fallback to dstr
+      if(codesetConverted == FALSE)
+      {
+        dststr = dstr;
+        dstlen = dstrlen(dstr);
+      }
+
+      // now write back exactly the same amount of bytes we read previously
+      if(fwrite(dststr, dstlen, 1, ofh) <= 0)
+      {
+        E(DBF_MAIL, "error during write operation!");
+        result = FALSE;
+      }
+
+      // free the codesets converted string
+      if(codesetConverted == TRUE)
+        CodesetsFreeA(dststr, NULL);
+
+      // free the dynamic string
+      dstrfree(dstr);
+    }
   }
 
   RETURN(result);
@@ -1480,13 +1501,9 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, const struct codeset *srcC
 ///
 /// RE_DecodeStream
 //  Decodes contents of a part
-//  return 0 on error
-//  return 1 on success (was decoded)
-//  return 2 on success (no decode required, no data written to out)
-//  return 3 on success (no decode required, data without headers written to out)
-static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
+static BOOL RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
 {
-  int decodeResult = 0;
+  BOOL decodeResult = FALSE;
   struct codeset *sourceCodeset = NULL;
   struct ReadMailData *rmData = rp->rmData;
   BOOL quietParsing = isAnyFlagSet(rmData->parseFlags, PM_QUIET);
@@ -1517,6 +1534,8 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
           W(DBF_MAIL, "the specified codeset '%s' wasn't found in codesets.library", rp->CParCSet);
         #endif
       }
+      else
+        D(DBF_MAIL, "found codeset [%s] to be the one we convert to", sourceCodeset->name);
     }
   }
 
@@ -1536,7 +1555,7 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
       D(DBF_MAIL, "base64 decoded %ld bytes of part %ld.", decoded, rp->Nr);
 
       if(decoded > 0)
-        decodeResult = 1;
+        decodeResult = TRUE;
       else
       {
         switch(decoded)
@@ -1553,7 +1572,7 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
             if(quietParsing == FALSE)
               ER_NewWarning(tr(MSG_ER_B64DEC_WARN), rp->Nr, rmData->readFile);
 
-            decodeResult = 1;
+            decodeResult = TRUE;
           }
           break;
 
@@ -1575,7 +1594,7 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
       D(DBF_MAIL, "quoted-printable decoded %ld chars of part %ld.", decoded, rp->Nr);
 
       if(decoded >= 0)
-        decodeResult = 1;
+        decodeResult = TRUE;
       else
       {
         switch(decoded)
@@ -1601,7 +1620,7 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
             if(quietParsing == FALSE)
               ER_NewWarning(tr(MSG_ER_QPDEC_WARN), rp->Filename);
 
-            decodeResult = 1; // allow to save the resulting file
+            decodeResult = TRUE; // allow to save the resulting file
           }
           break;
 
@@ -1612,7 +1631,7 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
             if(quietParsing == FALSE)
               ER_NewWarning(tr(MSG_ER_QPDEC_CHAR), rp->Filename);
 
-            decodeResult = 1; // allow to save the resulting file
+            decodeResult = TRUE; // allow to save the resulting file
           }
           break;
 
@@ -1634,9 +1653,9 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
       D(DBF_MAIL, "UU decoded %ld chars of part %ld.", decoded, rp->Nr);
 
       if(decoded >= 0 &&
-        RE_ConsumeRestOfPart(in, NULL, NULL, NULL, FALSE))
+         RE_ConsumeRestOfPart(in, NULL, NULL, NULL, FALSE))
       {
-        decodeResult = 1;
+        decodeResult = TRUE;
       }
       else
       {
@@ -1668,7 +1687,7 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
             if(quietParsing == FALSE)
               ER_NewError(tr(MSG_ER_UUDEC_CHECKSUM), rp->Filename);
 
-            decodeResult = 1; // allow to save the resulting file
+            decodeResult = TRUE; // allow to save the resulting file
           }
           break;
 
@@ -1684,7 +1703,7 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
             if(quietParsing == FALSE)
               ER_NewError(tr(MSG_ER_UUDEC_TAGMISS), rp->Filename, "end");
 
-            decodeResult = 1; // allow to save the resulting file
+            decodeResult = TRUE; // allow to save the resulting file
           }
           break;
 
@@ -1700,19 +1719,10 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
 
     default:
     {
-      if(sourceCodeset != NULL || C->DetectCyrillic == TRUE)
-      {
-        if(RE_ConsumeRestOfPart(in, out, sourceCodeset, NULL, TRUE))
-          decodeResult = 1;
-      }
-      else if(hasSubHeaders(rp))
-      {
-        if(CopyFile(NULL, out, NULL, in))
-          decodeResult = 3;
-      }
-      else
-        decodeResult = 2;
+      if(RE_ConsumeRestOfPart(in, out, sourceCodeset, NULL, TRUE))
+        decodeResult = TRUE;
     }
+    break;
   }
 
   RETURN(decodeResult);
@@ -2416,7 +2426,7 @@ BOOL RE_DecodePart(struct Part *rp)
       // now open the stream and decode it afterwards.
       if((out = fopen(filepath, "w")) != NULL)
       {
-        int decodeResult;
+        BOOL decodeResult;
 
         setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
 
@@ -2428,28 +2438,12 @@ BOOL RE_DecodePart(struct Part *rp)
         fclose(in);
 
         // check if we were successfull in decoding the data.
-        if(decodeResult > 0)
+        if(decodeResult == TRUE)
         {
-          // if decodeResult == 2 then no decode was required and we just have to rename
-          // the file
-          if(decodeResult == 2)
-          {
-            D(DBF_MAIL, "no decode required, renaming file '%s' to '%s'", rp->Filename, filepath);
+          D(DBF_MAIL, "successfully decoded file [%s] to [%s]", rp->Filename, filepath);
 
-            DeleteFile(filepath); // delete the temporary file again.
-
-            if(Rename(rp->Filename, filepath) == 0)
-              clearFlag(rp->Flags, PFLAG_DECODED);
-            else
-              setFlag(rp->Flags, PFLAG_DECODED);
-          }
-          else
-          {
-            D(DBF_MAIL, "%s", decodeResult == 1 ? "successfully decoded" : "no decode required, did a raw copy");
-
-            DeleteFile(rp->Filename);
-            setFlag(rp->Flags, PFLAG_DECODED);
-          }
+          DeleteFile(rp->Filename);
+          setFlag(rp->Flags, PFLAG_DECODED);
 
           strlcpy(rp->Filename, filepath, sizeof(rp->Filename));
           RE_SetPartInfo(rp);

@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-08-29 Jens Langner <Jens.Langner@light-speed.de>
+
+  * YAM_RE.c: reworked RE_DecodeStream in combination with RE_ConsumeRestOfPart
+    to actually use dynamic strings and first decode a stream into a dynamic
+    string buffer and afterwards writing it to a file instead of doing this
+    line by line. In addition, YAM will now also perform a codeset identification
+    if no codeset is supplied to RE_ConsumeRestOfPart not only for the cyrillic
+    codeset family.
+
 2013-08-29 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/MainWindow.c, mui/YAMApplication.c: moved the method to remove and
