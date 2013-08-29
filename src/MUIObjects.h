@@ -47,7 +47,6 @@ Object *MakeCycle(const char *const *labels, const char *label);
 Object *MakeInteger(int maxlen, const char *label);
 Object *MakeNumeric(int min, int max, BOOL percent);
 Object *MakePassString(const char *label);
-Object *MakePGPKeyList(Object **st, BOOL secret, const char *label);
 Object *MakeString(int maxlen, const char *label);
 Object *MakeAddressField(Object **string, const char *label, const void *help, int abmode, int winnr, ULONG flags);
 Object *MakeVarPop(Object **string, Object **popButton, Object **list, const int mode, const int size, const char *shortcut);

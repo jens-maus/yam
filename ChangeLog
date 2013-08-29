@@ -12,7 +12,8 @@ $URL$
     the application and not of other window objects.
   * mui/YAMApplication.c, misc: moved all subwindow related stuff (i.e. opening,
     closing, disposing) to the application class as it really fits better there.
-  * mui/CharsetPopobject.c: added new class for all character set popup objects.
+  * mui/CharsetPopobject.c: added new class for all codeset popup objects.
+  * mui/PGPKeyPopobject.c: added new class for all PGP key popup objects.
 
 2013-08-28 Jens Langner <Jens.Langner@light-speed.de>
 

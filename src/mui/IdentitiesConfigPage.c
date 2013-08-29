@@ -44,6 +44,7 @@
 #include "mui/FolderRequestPopobject.h"
 #include "mui/IdentityList.h"
 #include "mui/MailServerChooser.h"
+#include "mui/PGPKeyPopobject.h"
 #include "mui/SignatureChooser.h"
 
 #include "Config.h"
@@ -84,7 +85,7 @@ struct Data
   Object *CH_IDENTITY_ADDINFO;
   Object *CH_IDENTITY_REQUESTMDN;
   Object *CH_IDENTITY_USEPGP;
-  Object *ST_IDENTITY_PGPID;
+  Object *PO_IDENTITY_PGPID;
   Object *ST_IDENTITY_PGPURL;
   Object *CH_IDENTITY_PGPSIGN_UNENC;
   Object *CH_IDENTITY_PGPSIGN_ENC;
@@ -127,7 +128,7 @@ OVERLOAD(OM_NEW)
   Object *CH_IDENTITY_ADDINFO;
   Object *CH_IDENTITY_REQUESTMDN;
   Object *CH_IDENTITY_USEPGP;
-  Object *ST_IDENTITY_PGPID;
+  Object *PO_IDENTITY_PGPID;
   Object *ST_IDENTITY_PGPURL;
   Object *CH_IDENTITY_PGPSIGN_UNENC;
   Object *CH_IDENTITY_PGPSIGN_ENC;
@@ -337,7 +338,10 @@ OVERLOAD(OM_NEW)
               End,
 
               Child, Label2(tr(MSG_CO_IDENTITY_PGPKEY_ID)),
-              Child, MakePGPKeyList(&(ST_IDENTITY_PGPID), TRUE, tr(MSG_CO_IDENTITY_PGPKEY_ID)),
+              Child, PO_IDENTITY_PGPID = PGPKeyPopobjectObject,
+                MUIA_PGPKeyPopobject_Secret, TRUE,
+                MUIA_PGPKeyPopobject_Label, tr(MSG_CO_IDENTITY_PGPKEY_ID),
+              End,
 
               Child, Label2(tr(MSG_CO_IDENTITY_PGPKEY_URL)),
               Child, ST_IDENTITY_PGPURL = MakeString(SIZE_URL, tr(MSG_CO_IDENTITY_PGPKEY_URL)),
@@ -413,7 +417,7 @@ OVERLOAD(OM_NEW)
     data->CH_IDENTITY_ADDINFO =        CH_IDENTITY_ADDINFO;
     data->CH_IDENTITY_REQUESTMDN =     CH_IDENTITY_REQUESTMDN;
     data->CH_IDENTITY_USEPGP =         CH_IDENTITY_USEPGP;
-    data->ST_IDENTITY_PGPID =          ST_IDENTITY_PGPID;
+    data->PO_IDENTITY_PGPID =          PO_IDENTITY_PGPID;
     data->ST_IDENTITY_PGPURL =         ST_IDENTITY_PGPURL;
     data->CH_IDENTITY_PGPSIGN_UNENC =  CH_IDENTITY_PGPSIGN_UNENC;
     data->CH_IDENTITY_PGPSIGN_ENC =    CH_IDENTITY_PGPSIGN_ENC;
@@ -447,7 +451,7 @@ OVERLOAD(OM_NEW)
     SetHelp(CH_IDENTITY_ADDINFO,           MSG_HELP_CO_CH_IDENTITY_ADDINFO);
     SetHelp(CH_IDENTITY_REQUESTMDN,        MSG_HELP_CO_CH_IDENTITY_REQUESTMDN);
     SetHelp(CH_IDENTITY_USEPGP,            MSG_HELP_CO_CH_IDENTITY_USEPGP);
-    SetHelp(ST_IDENTITY_PGPID,             MSG_HELP_CO_ST_IDENTITY_PGPID);
+    SetHelp(PO_IDENTITY_PGPID,             MSG_HELP_CO_ST_IDENTITY_PGPID);
     SetHelp(ST_IDENTITY_PGPURL,            MSG_HELP_CO_ST_IDENTITY_PGPURL);
     SetHelp(CH_IDENTITY_PGPSIGN_UNENC,     MSG_HELP_CO_CH_IDENTITY_PGPSIGN_UNENC);
     SetHelp(CH_IDENTITY_PGPSIGN_ENC,       MSG_HELP_CO_CH_IDENTITY_PGPSIGN_ENC);
@@ -481,7 +485,7 @@ OVERLOAD(OM_NEW)
     DoMethod(CH_IDENTITY_ADDINFO,           MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(PutIdentityEntry));
     DoMethod(CH_IDENTITY_REQUESTMDN,        MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(PutIdentityEntry));
     DoMethod(CH_IDENTITY_USEPGP,            MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(PutIdentityEntry));
-    DoMethod(ST_IDENTITY_PGPID,             MUIM_Notify, MUIA_String_Contents,                      MUIV_EveryTime, obj, 1, METHOD(PutIdentityEntry));
+    DoMethod(PO_IDENTITY_PGPID,             MUIM_Notify, MUIA_PGPKeyPopobject_PGPKeyChanged,        MUIV_EveryTime, obj, 1, METHOD(PutIdentityEntry));
     DoMethod(ST_IDENTITY_PGPURL,            MUIM_Notify, MUIA_String_Contents,                      MUIV_EveryTime, obj, 1, METHOD(PutIdentityEntry));
     DoMethod(CH_IDENTITY_PGPSIGN_UNENC,     MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(PutIdentityEntry));
     DoMethod(CH_IDENTITY_PGPSIGN_ENC,       MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(PutIdentityEntry));
@@ -637,7 +641,7 @@ DECLARE(GetIdentityEntry)
     nnset(data->CH_IDENTITY_ADDINFO,       MUIA_Selected,                      uin->addPersonalInfo);
     nnset(data->CH_IDENTITY_REQUESTMDN,    MUIA_Selected,                      uin->requestMDN);
     nnset(data->CH_IDENTITY_USEPGP,        MUIA_Selected,                      uin->usePGP);
-    nnset(data->ST_IDENTITY_PGPID,         MUIA_String_Contents,               uin->pgpKeyID);
+    nnset(data->PO_IDENTITY_PGPID,         MUIA_PGPKeyPopobject_PGPKey,        uin->pgpKeyID);
     nnset(data->ST_IDENTITY_PGPURL,        MUIA_String_Contents,               uin->pgpKeyURL);
     nnset(data->CH_IDENTITY_PGPSIGN_UNENC, MUIA_Selected,                      uin->pgpSignUnencrypted);
     nnset(data->CH_IDENTITY_PGPSIGN_ENC,   MUIA_Selected,                      uin->pgpSignEncrypted);
@@ -673,7 +677,7 @@ DECLARE(GetIdentityEntry)
   set(data->CY_IDENTITY_SIGPOS, MUIA_Disabled, uin == NULL || uin->quotePosition == QPOS_BELOW || uin->quoteMails == FALSE);
 
   DoMethod(_win(obj), MUIM_MultiSet, MUIA_Disabled, uin == NULL || uin->usePGP == FALSE,
-    data->ST_IDENTITY_PGPID,
+    data->PO_IDENTITY_PGPID,
     data->ST_IDENTITY_PGPURL,
     data->CH_IDENTITY_PGPSIGN_UNENC,
     data->CH_IDENTITY_PGPSIGN_ENC,
@@ -730,8 +734,8 @@ DECLARE(PutIdentityEntry)
       uin->requestMDN = GetMUICheck(data->CH_IDENTITY_REQUESTMDN);
 
       uin->usePGP = GetMUICheck(data->CH_IDENTITY_USEPGP);
-      GetMUIString(uin->pgpKeyID,     data->ST_IDENTITY_PGPID,       sizeof(uin->pgpKeyID));
-      GetMUIString(uin->pgpKeyURL,    data->ST_IDENTITY_PGPURL,      sizeof(uin->pgpKeyURL));
+      strlcpy(uin->pgpKeyID, (char *)xget(data->PO_IDENTITY_PGPID, MUIA_PGPKeyPopobject_PGPKey), sizeof(uin->pgpKeyID));
+      GetMUIString(uin->pgpKeyURL, data->ST_IDENTITY_PGPURL, sizeof(uin->pgpKeyURL));
       uin->pgpSignUnencrypted = GetMUICheck(data->CH_IDENTITY_PGPSIGN_UNENC);
       uin->pgpSignEncrypted = GetMUICheck(data->CH_IDENTITY_PGPSIGN_ENC);
       uin->pgpEncryptAll = GetMUICheck(data->CH_IDENTITY_PGPENC_ALL);
@@ -741,7 +745,7 @@ DECLARE(PutIdentityEntry)
       set(data->CY_IDENTITY_SIGPOS, MUIA_Disabled, uin->quotePosition == QPOS_BELOW || uin->quoteMails == FALSE);
 
       DoMethod(_win(obj), MUIM_MultiSet, MUIA_Disabled, uin->usePGP == FALSE,
-        data->ST_IDENTITY_PGPID,
+        data->PO_IDENTITY_PGPID,
         data->ST_IDENTITY_PGPURL,
         data->CH_IDENTITY_PGPSIGN_UNENC,
         data->CH_IDENTITY_PGPSIGN_ENC,

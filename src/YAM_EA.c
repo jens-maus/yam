@@ -57,6 +57,7 @@
 #include "mui/ClassesExtra.h"
 #include "mui/AddrBookEntryList.h"
 #include "mui/AddrBookListtree.h"
+#include "mui/PGPKeyPopobject.h"
 #include "mui/Recipientstring.h"
 #include "mui/UserPortraitGroup.h"
 
@@ -151,7 +152,7 @@ void EA_Setup(int winnum, struct ABEntry *ab)
       setstring(gui->ST_STREET, ab->Street);
       setstring(gui->ST_CITY, ab->City);
       setstring(gui->ST_COUNTRY, ab->Country);
-      nnset(gui->ST_PGPKEY,MUIA_String_Contents,ab->PGPId);
+      nnset(gui->PO_PGPKEY,MUIA_PGPKeyPopobject_PGPKey,ab->PGPId);
       /* avoid triggering notification to "default security" cycle */
       setcycle(gui->CY_DEFSECURITY,ab->DefSecurity);
       setstring(gui->ST_HOMEPAGE, ab->Homepage);
@@ -481,7 +482,7 @@ HOOKPROTONHNO(EA_Okay, void, int *arg)
       GetMUIString(addr->Street, gui->ST_STREET, sizeof(addr->Street));
       GetMUIString(addr->City, gui->ST_CITY, sizeof(addr->City));
       GetMUIString(addr->Country, gui->ST_COUNTRY, sizeof(addr->Country));
-      GetMUIString(addr->PGPId, gui->ST_PGPKEY, sizeof(addr->PGPId));
+      strlcpy(addr->PGPId, (char *)xget(gui->PO_PGPKEY, MUIA_PGPKeyPopobject_PGPKey), sizeof(addr->PGPId));
       GetMUIString(addr->Homepage, gui->ST_HOMEPAGE, sizeof(addr->Homepage));
 
       // get the default security setting and check if
@@ -690,7 +691,9 @@ static struct EA_ClassData *EA_New(int winnum, int type)
                  Child, Label2(tr(MSG_EA_EmailAddress)),
                  Child, data->GUI.ST_ADDRESS  = MakeString(SIZE_ADDRESS,tr(MSG_EA_EmailAddress)),
                  Child, Label2(tr(MSG_EA_PGPId)),
-                 Child, MakePGPKeyList(&(data->GUI.ST_PGPKEY), FALSE, tr(MSG_EA_PGPId)),
+                 Child, data->GUI.PO_PGPKEY = PGPKeyPopobjectObject,
+                   MUIA_PGPKeyPopobject_Label, tr(MSG_EA_PGPId),
+                 End,
                  Child, Label2(tr(MSG_EA_Homepage)),
                  Child, HGroup,
                     MUIA_Group_HorizSpacing, 1,
@@ -733,7 +736,7 @@ static struct EA_ClassData *EA_New(int winnum, int type)
                                                                   NULL);
           SetHelp(data->GUI.ST_REALNAME   ,MSG_HELP_EA_ST_REALNAME   );
           SetHelp(data->GUI.ST_ADDRESS    ,MSG_HELP_EA_ST_ADDRESS    );
-          SetHelp(data->GUI.ST_PGPKEY     ,MSG_HELP_EA_ST_PGPKEY     );
+          SetHelp(data->GUI.PO_PGPKEY     ,MSG_HELP_EA_ST_PGPKEY     );
           SetHelp(data->GUI.ST_HOMEPAGE   ,MSG_HELP_EA_ST_HOMEPAGE   );
           SetHelp(data->GUI.CY_DEFSECURITY,MSG_HELP_MA_CY_DEFSECURITY);
           SetHelp(data->GUI.ST_STREET     ,MSG_HELP_EA_ST_STREET     );
@@ -743,7 +746,7 @@ static struct EA_ClassData *EA_New(int winnum, int type)
           SetHelp(data->GUI.ST_BIRTHDAY   ,MSG_HELP_EA_ST_BIRTHDAY   );
 
           // when a key ID is selected, set default security to "encrypt"
-          DoMethod(data->GUI.ST_PGPKEY, MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, data->GUI.CY_DEFSECURITY, 3, MUIM_Set, MUIA_Cycle_Active, 2);
+          DoMethod(data->GUI.PO_PGPKEY, MUIM_Notify, MUIA_PGPKeyPopobject_PGPKeyChanged, MUIV_EveryTime, data->GUI.CY_DEFSECURITY, 3, MUIM_Set, MUIA_Cycle_Active, 2);
 
           DoMethod(bt_homepage, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &EA_HomepageHook, winnum);
         }

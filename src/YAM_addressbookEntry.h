@@ -47,7 +47,7 @@ struct EA_GUIData
   Object *ST_STREET;
   Object *ST_CITY;
   Object *ST_COUNTRY;
-  Object *ST_PGPKEY;
+  Object *PO_PGPKEY;
   Object *CY_DEFSECURITY;
   Object *ST_HOMEPAGE;
   Object *ST_BIRTHDAY;
