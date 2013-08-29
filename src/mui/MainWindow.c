@@ -35,13 +35,9 @@
 #include "YAM.h"
 #include "YAM_error.h"
 
-#include "mui/Aboutwindow.h"
-#include "mui/ConfigWindow.h"
 #include "mui/MainMailListGroup.h"
 #include "mui/QuickSearchBar.h"
 #include "mui/ReadMailGroup.h"
-#include "mui/SearchMailWindow.h"
-#include "mui/YAMApplication.h"
 
 #include "Busy.h"
 #include "Config.h"
@@ -51,13 +47,6 @@
 #include "Requesters.h"
 
 #include "Debug.h"
-
-/* CLASSDATA
-struct Data
-{
-  Object *aboutWindow;
-};
-*/
 
 /* INCLUDE
 #include "YAM_find.h"
@@ -134,47 +123,6 @@ OVERLOAD(MUIM_Window_Snapshot)
 /* Private Functions */
 
 /* Public Methods */
-/// DECLARE(ShowAbout)
-// show the about window
-DECLARE(ShowAbout)
-{
-  GETDATA;
-
-  ENTER();
-
-  // create the about window object and open it
-  if(data->aboutWindow == NULL)
-  {
-    data->aboutWindow = AboutwindowObject, End;
-
-    if(data->aboutWindow != NULL)
-      DoMethod(data->aboutWindow, MUIM_Notify, MUIA_Window_Open, FALSE, MUIV_Notify_Application, 4, MUIM_Application_PushMethod, _app(obj), 1, MUIM_MainWindow_CloseAbout);
-  }
-
-  if(data->aboutWindow != NULL)
-    SafeOpenWindow(data->aboutWindow);
-
-  RETURN(0);
-  return 0;
-}
-
-///
-/// DECLARE(CloseAbout)
-// close the about window
-DECLARE(CloseAbout)
-{
-  GETDATA;
-
-  ENTER();
-
-  DoMethod(_app(obj), MUIM_YAMApplication_DisposeSubWindow, data->aboutWindow);
-  data->aboutWindow = NULL;
-
-  RETURN(0);
-  return 0;
-}
-
-///
 /// DECLARE(ShowErrors)
 // show the error window
 DECLARE(ShowErrors)
@@ -300,76 +248,6 @@ DECLARE(DoEditAction) // enum EditAction action
   // first and see if it matches
   if(matched == FALSE && C->EmbeddedReadPane == TRUE)
     matched = DoMethod(G->MA->GUI.MN_EMBEDDEDREADPANE, MUIM_ReadMailGroup_DoEditAction, msg->action, TRUE);
-
-  RETURN(0);
-  return 0;
-}
-
-///
-/// DECLARE(OpenConfigWindow)
-DECLARE(OpenConfigWindow)
-{
-  struct BusyNode *busy;
-
-  ENTER();
-
-  busy = BusyBegin(BUSY_TEXT);
-  BusyText(busy, tr(MSG_BUSY_OPENINGCONFIG), "");
-
-  if(G->ConfigWinObject == NULL)
-  {
-    if((CE = AllocConfig()) != NULL)
-    {
-      if(CopyConfig(CE, C) == TRUE)
-      {
-        G->ConfigWinObject = ConfigWindowObject, End;
-      }
-    }
-  }
-
-  if(G->ConfigWinObject != NULL)
-  {
-    SafeOpenWindow(G->ConfigWinObject);
-  }
-  else
-  {
-    // inform the user by chiming the bells about the failure
-    DisplayBeep(NULL);
-
-    FreeConfig(CE);
-    CE = NULL;
-  }
-
-  BusyEnd(busy);
-
-  RETURN(0);
-  return 0;
-}
-
-///
-/// DECLARE(CloseConfigWindow)
-DECLARE(CloseConfigWindow)
-{
-  ENTER();
-
-  DoMethod(_app(obj), MUIM_YAMApplication_DisposeSubWindow, G->ConfigWinObject);
-  G->ConfigWinObject = NULL;
-
-  RETURN(0);
-  return 0;
-}
-
-///
-/// DECLARE(OpenSearchMailWindow)
-DECLARE(OpenSearchMailWindow) // struct Folder *folder
-{
-  ENTER();
-
-  if(G->SearchMailWinObject == NULL)
-    G->SearchMailWinObject = SearchMailWindowObject, End;
-
-  if(G->SearchMailWinObject != NULL)
-    DoMethod(G->SearchMailWinObject, MUIM_SearchMailWindow_Open, msg->folder);
 
   RETURN(0);
   return 0;

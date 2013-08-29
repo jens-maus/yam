@@ -46,7 +46,6 @@
 #include "mui/FolderRequestListtree.h"
 #include "mui/ImageArea.h"
 #include "mui/MainMailListGroup.h"
-#include "mui/MainWindow.h"
 #include "mui/YAMApplication.h"
 
 #include "Config.h"
@@ -672,7 +671,7 @@ OVERLOAD(MUIM_ContextMenuChoice)
     case CMN_EMPTYTRASH:{ DoMethod(_app(obj), MUIM_CallHook, &MA_DeleteDeletedHook, FALSE);} break;
     case CMN_EMPTYSPAM: { DoMethod(_app(obj), MUIM_CallHook, &MA_DeleteSpamHook, FALSE);   } break;
     case CMN_ALLTOREAD: { DoMethod(_app(obj), MUIM_CallHook, &MA_SetAllStatusToHook, SFLAG_READ, SFLAG_NEW); } break;
-    case CMN_SEARCH:    { DoMethod(_win(obj), MUIM_MainWindow_OpenSearchMailWindow, GetCurrentFolder()); } break;
+    case CMN_SEARCH:    { DoMethod(_app(obj), MUIM_YAMApplication_OpenSearchMailWindow, GetCurrentFolder()); } break;
 
     default:
       result = DoSuperMethodA(cl, obj, (Msg)msg);

@@ -95,6 +95,7 @@
 #include "mui/UpdateConfigPage.h"
 #include "mui/WriteConfigPage.h"
 #include "mui/WriteWindow.h"
+#include "mui/YAMApplication.h"
 
 #include "Busy.h"
 #include "Config.h"
@@ -2842,7 +2843,7 @@ BOOL IsValidConfig(const struct Config *co)
 
   if(valid == FALSE)
   {
-    DoMethod(G->MA->GUI.WI, MUIM_MainWindow_OpenConfigWindow);
+    DoMethod(G->App, MUIM_YAMApplication_OpenConfigWindow);
     MUI_Request(G->App, G->MA->GUI.WI, MUIF_NONE, NULL, tr(MSG_OkayReq), tr(MSG_CO_InvalidConf));
   }
 

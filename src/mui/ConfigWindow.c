@@ -44,7 +44,6 @@
 #include "mui/FirstStepsConfigPage.h"
 #include "mui/IdentitiesConfigPage.h"
 #include "mui/LookFeelConfigPage.h"
-#include "mui/MainWindow.h"
 #include "mui/MimeConfigPage.h"
 #include "mui/MixedConfigPage.h"
 #include "mui/ReadConfigPage.h"
@@ -57,6 +56,7 @@
 #include "mui/TCPIPConfigPage.h"
 #include "mui/UpdateConfigPage.h"
 #include "mui/WriteConfigPage.h"
+#include "mui/YAMApplication.h"
 
 #include "Config.h"
 #include "FileInfo.h"
@@ -567,7 +567,7 @@ DECLARE(Close) // ULONG how
         CE = NULL;
 
         // Dipose&Close the config window stuff
-        DoMethod(_app(obj), MUIM_Application_PushMethod, G->MA->GUI.WI, 1, MUIM_MainWindow_CloseConfigWindow);
+        DoMethod(_app(obj), MUIM_Application_PushMethod, _app(obj), 1, MUIM_YAMApplication_CloseConfigWindow);
       }
 
       // release the config semaphore again if we obtained it before

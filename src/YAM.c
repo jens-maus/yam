@@ -721,8 +721,8 @@ static void Terminate(void)
   BayesFilterCleanup();
 
   D(DBF_STARTUP, "freeing config module...");
-  if(G->ConfigWinObject != NULL && G->MA != NULL)
-    DoMethod(G->MA->GUI.WI, MUIM_MainWindow_CloseConfigWindow);
+  if(G->ConfigWinObject != NULL)
+    DoMethod(G->App, MUIM_YAMApplication_CloseConfigWindow);
   FreeConfig(CE);
   CE = NULL;
 

@@ -50,9 +50,12 @@
 #include "YAM_global.h"
 #include "YAM_mainFolder.h"
 
+#include "mui/Aboutwindow.h"
 #include "mui/AddrBookListtree.h"
 #include "mui/AddressmatchPopup.h"
+#include "mui/ConfigWindow.h"
 #include "mui/InfoWindow.h"
+#include "mui/SearchMailWindow.h"
 #include "mui/StringRequestWindow.h"
 #include "mui/TransferControlGroup.h"
 #include "mui/TransferWindow.h"
@@ -75,6 +78,7 @@
 /* CLASSDATA
 struct Data
 {
+  Object *aboutWindow;
   Object *transferWindow;
   struct MinList emailCache;
   BOOL emailCacheModified;
@@ -1408,6 +1412,117 @@ DECLARE(DisposeSubWindow) // Object *win
     DoMethod(obj, OM_REMMEMBER, msg->win);
     MUI_DisposeObject(msg->win);
   }
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(OpenAboutWindow)
+// show the about window
+DECLARE(OpenAboutWindow)
+{
+  GETDATA;
+
+  ENTER();
+
+  // create the about window object and open it
+  if(data->aboutWindow == NULL)
+  {
+    data->aboutWindow = AboutwindowObject, End;
+
+    if(data->aboutWindow != NULL)
+      DoMethod(data->aboutWindow, MUIM_Notify, MUIA_Window_Open, FALSE, obj, 4, MUIM_Application_PushMethod,obj, 1, MUIM_YAMApplication_CloseAboutWindow);
+  }
+
+  if(data->aboutWindow != NULL)
+    SafeOpenWindow(data->aboutWindow);
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(CloseAboutWindow)
+// close the about window
+DECLARE(CloseAboutWindow)
+{
+  GETDATA;
+
+  ENTER();
+
+  DoMethod(_app(obj), MUIM_YAMApplication_DisposeSubWindow, data->aboutWindow);
+  data->aboutWindow = NULL;
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(OpenConfigWindow)
+DECLARE(OpenConfigWindow)
+{
+  struct BusyNode *busy;
+
+  ENTER();
+
+  busy = BusyBegin(BUSY_TEXT);
+  BusyText(busy, tr(MSG_BUSY_OPENINGCONFIG), "");
+
+  if(G->ConfigWinObject == NULL)
+  {
+    if((CE = AllocConfig()) != NULL)
+    {
+      if(CopyConfig(CE, C) == TRUE)
+      {
+        G->ConfigWinObject = ConfigWindowObject, End;
+      }
+    }
+  }
+
+  if(G->ConfigWinObject != NULL)
+  {
+    SafeOpenWindow(G->ConfigWinObject);
+  }
+  else
+  {
+    // inform the user by chiming the bells about the failure
+    DisplayBeep(NULL);
+
+    FreeConfig(CE);
+    CE = NULL;
+  }
+
+  BusyEnd(busy);
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(CloseConfigWindow)
+DECLARE(CloseConfigWindow)
+{
+  ENTER();
+
+  DoMethod(_app(obj), MUIM_YAMApplication_DisposeSubWindow, G->ConfigWinObject);
+  G->ConfigWinObject = NULL;
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(OpenSearchMailWindow)
+DECLARE(OpenSearchMailWindow) // struct Folder *folder
+{
+  ENTER();
+
+  if(G->SearchMailWinObject == NULL)
+    G->SearchMailWinObject = SearchMailWindowObject, End;
+
+  if(G->SearchMailWinObject != NULL)
+    DoMethod(G->SearchMailWinObject, MUIM_SearchMailWindow_Open, msg->folder);
 
   RETURN(0);
   return 0;

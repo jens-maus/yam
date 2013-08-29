@@ -35,8 +35,8 @@
 #include "YAM.h"
 
 #include "mui/ClassesExtra.h"
-#include "mui/MainWindow.h"
 #include "mui/WriteWindow.h"
+#include "mui/YAMApplication.h"
 
 #include "Config.h"
 #include "DockyIcon.h"
@@ -335,7 +335,7 @@ BOOL HandleDockyIcon(void)
         case APPLIBMT_OpenPrefs:
         {
           PopUp();
-          DoMethod(G->MA->GUI.WI, MUIM_MainWindow_OpenConfigWindow);
+          DoMethod(G->App, MUIM_YAMApplication_OpenConfigWindow);
         }
         break;
 
