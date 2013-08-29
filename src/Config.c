@@ -3482,16 +3482,16 @@ void ValidateConfig(struct Config *co, BOOL update)
         {
           // forward the modified information directly to the read mail group
           if(updateHeaderMode == TRUE)
-            DoMethod(G->App, MUIM_Application_PushMethod, rmData->readMailGroup, 2, MUIM_ReadMailGroup_ChangeHeaderMode, co->ShowHeader);
+            DoMethod(_app(rmData->readMailGroup), MUIM_Application_PushMethod, rmData->readMailGroup, 2, MUIM_ReadMailGroup_ChangeHeaderMode, co->ShowHeader);
 
           if(updateSenderInfo == TRUE)
-            DoMethod(G->App, MUIM_Application_PushMethod, rmData->readMailGroup, 2, MUIM_ReadMailGroup_ChangeSenderInfoMode, co->ShowSenderInfo);
+            DoMethod(_app(rmData->readMailGroup), MUIM_Application_PushMethod, rmData->readMailGroup, 2, MUIM_ReadMailGroup_ChangeSenderInfoMode, co->ShowSenderInfo);
         }
         else if(rmData->readWindow != NULL && (updateReadWindows == TRUE || updateMenuShortcuts == TRUE))
         {
           // forward the modifed information to the window, because a read mail group has no toolbar
           if(updateReadWindows == TRUE)
-            DoMethod(G->App, MUIM_Application_PushMethod, rmData->readWindow, 2, MUIM_ReadWindow_ReadMail, rmData->mail);
+            DoMethod(_app(rmData->readWindow), MUIM_Application_PushMethod, rmData->readWindow, 2, MUIM_ReadWindow_ReadMail, rmData->mail);
 
           if(updateMenuShortcuts == TRUE)
             DoMethod(rmData->readWindow, MUIM_ReadWindow_UpdateMenuShortcuts);
