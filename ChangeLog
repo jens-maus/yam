@@ -14,6 +14,8 @@ $URL$
     closing, disposing) to the application class as it really fits better there.
   * mui/CharsetPopobject.c: added new class for all codeset popup objects.
   * mui/PGPKeyPopobject.c: added new class for all PGP key popup objects.
+  * mui/MimeTypePopobject.c: added new class for all MIME type popup objects.
+    This makes the internal handling of the open/close hooks MUCH easier.
 
 2013-08-28 Jens Langner <Jens.Langner@light-speed.de>
 

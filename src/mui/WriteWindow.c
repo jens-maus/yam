@@ -62,6 +62,7 @@
 #include "mui/CodesetPopobject.h"
 #include "mui/IdentityChooser.h"
 #include "mui/MailTextEdit.h"
+#include "mui/MimeTypePopobject.h"
 #include "mui/ReadMailGroup.h"
 #include "mui/ReadWindow.h"
 #include "mui/Recipientstring.h"
@@ -112,7 +113,7 @@ struct Data
   Object *BT_DISPLAY;
   Object *RA_ENCODING;
   Object *CY_CTYPE;
-  Object *ST_CTYPE;
+  Object *PO_CTYPE;
   Object *ST_DESC;
   Object *GR_HEADER;
   Object *LB_CC;
@@ -159,9 +160,6 @@ struct Data
   Object *PO_CODESET;
   Object *MI_SIGNATURE;
   Object *MI_SIGNATURES[MAXSIG_MENU];
-
-  struct Hook MimeTypeListOpenHook;
-  struct Hook MimeTypeListCloseHook;
 
   struct WriteMailData *wmData; // ptr to write mail data structure
   struct MsgPort *notifyPort;
@@ -756,7 +754,6 @@ OVERLOAD(OM_NEW)
   {
     Object *menuStripObject = NULL;
     Object *slider;
-    Object *popMime = NULL;
     struct TagItem *tags = inittags(msg);
     struct TagItem *tag;
     struct UserIdentityNode *uin;
@@ -1181,7 +1178,9 @@ OVERLOAD(OM_NEW)
 
                 Child, ColGroup(2),
                   Child, Label2(tr(MSG_WR_ContentType)),
-                  Child, popMime = MakeMimeTypePop(&data->ST_CTYPE, tr(MSG_WR_ContentType)),
+                  Child, data->PO_CTYPE = MimeTypePopobjectObject,
+                    MUIA_MimeTypePopobject_ControlChar, ShortCut(tr(MSG_WR_ContentType)),
+                  End,
                   Child, Label2(tr(MSG_WR_Description)),
                   Child, data->ST_DESC = BetterStringObject,
                     StringFrame,
@@ -1309,20 +1308,12 @@ OVERLOAD(OM_NEW)
         set(data->CY_IMPORTANCE, MUIA_Cycle_Active, TRUE);
 
         // disable certain GUI elements per default
-        DoMethod(_app(obj), MUIM_MultiSet,  MUIA_Disabled, TRUE, data->ST_CTYPE,
+        DoMethod(_app(obj), MUIM_MultiSet,  MUIA_Disabled, TRUE, data->PO_CTYPE,
                                                                  data->ST_DESC,
                                                                  data->BT_REMOVE,
                                                                  data->BT_RENAME,
                                                                  data->BT_DISPLAY,
                                                                  NULL);
-
-        // set some hooks for the MIME type popup
-        // hook->h_Data=FALSE tells the hook that the string object does not belong to the config window
-        InitHook(&data->MimeTypeListOpenHook, PO_MimeTypeListOpenHook, FALSE);
-        InitHook(&data->MimeTypeListCloseHook, PO_MimeTypeListCloseHook, NULL);
-        xset(popMime,
-          MUIA_Popobject_StrObjHook, &data->MimeTypeListOpenHook,
-          MUIA_Popobject_ObjStrHook, &data->MimeTypeListCloseHook);
 
         // set the help elements of our GUI gadgets
         SetHelp(data->ST_SUBJECT,     MSG_HELP_WR_ST_SUBJECT);
@@ -1330,7 +1321,7 @@ OVERLOAD(OM_NEW)
         SetHelp(data->BT_ADDPACK,     MSG_HELP_WR_BT_ADDPACK);
         SetHelp(data->BT_REMOVE,      MSG_HELP_WR_BT_REMOVE);
         SetHelp(data->BT_DISPLAY,     MSG_HELP_WR_BT_DISPLAY);
-        SetHelp(data->ST_CTYPE,       MSG_HELP_WR_ST_CTYPE);
+        SetHelp(data->PO_CTYPE,       MSG_HELP_WR_ST_CTYPE);
         SetHelp(data->ST_DESC,        MSG_HELP_WR_ST_DESC);
         SetHelp(data->ST_EXTHEADER,   MSG_HELP_WR_ST_EXTHEADER);
         SetHelp(data->CH_DELSEND,     MSG_HELP_WR_CH_DELSEND);
@@ -1453,33 +1444,33 @@ OVERLOAD(OM_NEW)
         DoMethod(data->MI_UNDERLINE,   MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, obj, 3, METHOD(SetSoftStyle), SSM_UNDERLINE, ORIGIN_MENU);
         DoMethod(data->MI_COLORED,     MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, obj, 3, METHOD(SetSoftStyle), SSM_COLOR, ORIGIN_MENU);
 
-        DoMethod(data->RG_PAGE,        MUIM_Notify, MUIA_Group_ActivePage,   0, MUIV_Notify_Window, 3, MUIM_Set, MUIA_Window_ActiveObject, data->TE_EDIT);
-        DoMethod(data->RG_PAGE,        MUIM_Notify, MUIA_Group_ActivePage,   1, MUIV_Notify_Window, 3, MUIM_Set, MUIA_Window_ActiveObject, data->LV_ATTACH);
-        DoMethod(data->ST_SUBJECT,     MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, MUIV_Notify_Window, 3, MUIM_Set, MUIA_Window_ActiveObject, data->TE_EDIT);
-        DoMethod(data->ST_SUBJECT,     MUIM_Notify, MUIA_String_Contents,    MUIV_EveryTime, obj, 1, METHOD(UpdateWindowTitle));
-        DoMethod(data->BT_ADD,         MUIM_Notify, MUIA_Pressed,            FALSE,          obj, 2, METHOD(RequestAttachment), C->AttachDir);
-        DoMethod(data->BT_ADDPACK,     MUIM_Notify, MUIA_Pressed,            FALSE,          obj, 1, METHOD(AddArchive));
-        DoMethod(data->BT_REMOVE,      MUIM_Notify, MUIA_Pressed,            FALSE,          obj, 1, METHOD(RemoveAttachment));
-        DoMethod(data->BT_RENAME,      MUIM_Notify, MUIA_Pressed,            FALSE,          obj, 1, METHOD(RenameAttachment));
-        DoMethod(data->BT_DISPLAY,     MUIM_Notify, MUIA_Pressed,            FALSE,          obj, 1, METHOD(DisplayAttachment));
-        DoMethod(data->LV_ATTACH,      MUIM_Notify, MUIA_NList_DoubleClick,  MUIV_EveryTime, obj, 1, METHOD(DisplayAttachment));
-        DoMethod(data->LV_ATTACH,      MUIM_Notify, MUIA_NList_Active,       MUIV_EveryTime, obj, 1, METHOD(GetAttachmentEntry));
-        DoMethod(data->LV_ATTACH_TINY, MUIM_Notify, MUIA_NList_DoubleClick,  MUIV_EveryTime, obj, 1, METHOD(DisplayAttachment));
-        DoMethod(data->LV_ATTACH_TINY, MUIM_Notify, MUIA_NList_Active,       MUIV_EveryTime, obj, 1, METHOD(GetAttachmentEntry));
-        DoMethod(data->ST_CTYPE,       MUIM_Notify, MUIA_String_Contents,    MUIV_EveryTime, obj, 1, METHOD(PutAttachmentEntry));
-        DoMethod(data->ST_DESC,        MUIM_Notify, MUIA_String_Contents,    MUIV_EveryTime, obj, 1, METHOD(PutAttachmentEntry));
-        DoMethod(data->CH_DELSEND,     MUIM_Notify, MUIA_Selected,           MUIV_EveryTime, data->MI_DELSEND,        3, MUIM_Set,      MUIA_Menuitem_Checked, MUIV_TriggerValue);
-        DoMethod(data->CH_MDN,         MUIM_Notify, MUIA_Selected,           MUIV_EveryTime, data->MI_MDN,            3, MUIM_Set,      MUIA_Menuitem_Checked, MUIV_TriggerValue);
-        DoMethod(data->CH_ADDINFO,     MUIM_Notify, MUIA_Selected,           MUIV_EveryTime, data->MI_ADDINFO,        3, MUIM_Set,      MUIA_Menuitem_Checked, MUIV_TriggerValue);
-        DoMethod(data->MI_AUTOSPELL,   MUIM_Notify, MUIA_Menuitem_Checked,   MUIV_EveryTime, data->TE_EDIT,           3, MUIM_Set,      MUIA_TextEditor_TypeAndSpell, MUIV_TriggerValue);
-        DoMethod(data->MI_AUTOWRAP,    MUIM_Notify, MUIA_Menuitem_Checked,   TRUE,           data->TE_EDIT,           3, MUIM_Set,      MUIA_TextEditor_WrapBorder, C->EdWrapCol);
-        DoMethod(data->MI_AUTOWRAP,    MUIM_Notify, MUIA_Menuitem_Checked,   FALSE,          data->TE_EDIT,           3, MUIM_Set,      MUIA_TextEditor_WrapBorder, 0);
-        DoMethod(data->MI_DELSEND,     MUIM_Notify, MUIA_Menuitem_Checked,   MUIV_EveryTime, data->CH_DELSEND,        3, MUIM_Set,      MUIA_Selected, MUIV_TriggerValue);
-        DoMethod(data->MI_MDN,         MUIM_Notify, MUIA_Menuitem_Checked,   MUIV_EveryTime, data->CH_MDN,            3, MUIM_Set,      MUIA_Selected, MUIV_TriggerValue);
-        DoMethod(data->MI_ADDINFO,     MUIM_Notify, MUIA_Menuitem_Checked,   MUIV_EveryTime, data->CH_ADDINFO,        3, MUIM_Set,      MUIA_Selected, MUIV_TriggerValue);
-        DoMethod(data->MI_FFONT,       MUIM_Notify, MUIA_Menuitem_Checked,   MUIV_EveryTime, obj, 1, METHOD(StyleOptionsChanged));
-        DoMethod(data->MI_TCOLOR,      MUIM_Notify, MUIA_Menuitem_Checked,   MUIV_EveryTime, obj, 1, METHOD(StyleOptionsChanged));
-        DoMethod(data->MI_TSTYLE,      MUIM_Notify, MUIA_Menuitem_Checked,   MUIV_EveryTime, obj, 1, METHOD(StyleOptionsChanged));
+        DoMethod(data->RG_PAGE,        MUIM_Notify, MUIA_Group_ActivePage,                  0, MUIV_Notify_Window, 3, MUIM_Set, MUIA_Window_ActiveObject, data->TE_EDIT);
+        DoMethod(data->RG_PAGE,        MUIM_Notify, MUIA_Group_ActivePage,                  1, MUIV_Notify_Window, 3, MUIM_Set, MUIA_Window_ActiveObject, data->LV_ATTACH);
+        DoMethod(data->ST_SUBJECT,     MUIM_Notify, MUIA_String_Acknowledge,                MUIV_EveryTime, MUIV_Notify_Window, 3, MUIM_Set, MUIA_Window_ActiveObject, data->TE_EDIT);
+        DoMethod(data->ST_SUBJECT,     MUIM_Notify, MUIA_String_Contents,                   MUIV_EveryTime, obj, 1, METHOD(UpdateWindowTitle));
+        DoMethod(data->BT_ADD,         MUIM_Notify, MUIA_Pressed,                           FALSE,          obj, 2, METHOD(RequestAttachment), C->AttachDir);
+        DoMethod(data->BT_ADDPACK,     MUIM_Notify, MUIA_Pressed,                           FALSE,          obj, 1, METHOD(AddArchive));
+        DoMethod(data->BT_REMOVE,      MUIM_Notify, MUIA_Pressed,                           FALSE,          obj, 1, METHOD(RemoveAttachment));
+        DoMethod(data->BT_RENAME,      MUIM_Notify, MUIA_Pressed,                           FALSE,          obj, 1, METHOD(RenameAttachment));
+        DoMethod(data->BT_DISPLAY,     MUIM_Notify, MUIA_Pressed,                           FALSE,          obj, 1, METHOD(DisplayAttachment));
+        DoMethod(data->LV_ATTACH,      MUIM_Notify, MUIA_NList_DoubleClick,                 MUIV_EveryTime, obj, 1, METHOD(DisplayAttachment));
+        DoMethod(data->LV_ATTACH,      MUIM_Notify, MUIA_NList_Active,                      MUIV_EveryTime, obj, 1, METHOD(GetAttachmentEntry));
+        DoMethod(data->LV_ATTACH_TINY, MUIM_Notify, MUIA_NList_DoubleClick,                 MUIV_EveryTime, obj, 1, METHOD(DisplayAttachment));
+        DoMethod(data->LV_ATTACH_TINY, MUIM_Notify, MUIA_NList_Active,                      MUIV_EveryTime, obj, 1, METHOD(GetAttachmentEntry));
+        DoMethod(data->PO_CTYPE,       MUIM_Notify, MUIA_MimeTypePopobject_MimeTypeChanged, MUIV_EveryTime, obj, 1, METHOD(PutAttachmentEntry));
+        DoMethod(data->ST_DESC,        MUIM_Notify, MUIA_String_Contents,                   MUIV_EveryTime, obj, 1, METHOD(PutAttachmentEntry));
+        DoMethod(data->CH_DELSEND,     MUIM_Notify, MUIA_Selected,                          MUIV_EveryTime, data->MI_DELSEND,        3, MUIM_Set,      MUIA_Menuitem_Checked, MUIV_TriggerValue);
+        DoMethod(data->CH_MDN,         MUIM_Notify, MUIA_Selected,                          MUIV_EveryTime, data->MI_MDN,            3, MUIM_Set,      MUIA_Menuitem_Checked, MUIV_TriggerValue);
+        DoMethod(data->CH_ADDINFO,     MUIM_Notify, MUIA_Selected,                          MUIV_EveryTime, data->MI_ADDINFO,        3, MUIM_Set,      MUIA_Menuitem_Checked, MUIV_TriggerValue);
+        DoMethod(data->MI_AUTOSPELL,   MUIM_Notify, MUIA_Menuitem_Checked,                  MUIV_EveryTime, data->TE_EDIT,           3, MUIM_Set,      MUIA_TextEditor_TypeAndSpell, MUIV_TriggerValue);
+        DoMethod(data->MI_AUTOWRAP,    MUIM_Notify, MUIA_Menuitem_Checked,                  TRUE,           data->TE_EDIT,           3, MUIM_Set,      MUIA_TextEditor_WrapBorder, C->EdWrapCol);
+        DoMethod(data->MI_AUTOWRAP,    MUIM_Notify, MUIA_Menuitem_Checked,                  FALSE,          data->TE_EDIT,           3, MUIM_Set,      MUIA_TextEditor_WrapBorder, 0);
+        DoMethod(data->MI_DELSEND,     MUIM_Notify, MUIA_Menuitem_Checked,                  MUIV_EveryTime, data->CH_DELSEND,        3, MUIM_Set,      MUIA_Selected, MUIV_TriggerValue);
+        DoMethod(data->MI_MDN,         MUIM_Notify, MUIA_Menuitem_Checked,                  MUIV_EveryTime, data->CH_MDN,            3, MUIM_Set,      MUIA_Selected, MUIV_TriggerValue);
+        DoMethod(data->MI_ADDINFO,     MUIM_Notify, MUIA_Menuitem_Checked,                  MUIV_EveryTime, data->CH_ADDINFO,        3, MUIM_Set,      MUIA_Selected, MUIV_TriggerValue);
+        DoMethod(data->MI_FFONT,       MUIM_Notify, MUIA_Menuitem_Checked,                  MUIV_EveryTime, obj, 1, METHOD(StyleOptionsChanged));
+        DoMethod(data->MI_TCOLOR,      MUIM_Notify, MUIA_Menuitem_Checked,                  MUIV_EveryTime, obj, 1, METHOD(StyleOptionsChanged));
+        DoMethod(data->MI_TSTYLE,      MUIM_Notify, MUIA_Menuitem_Checked,                  MUIV_EveryTime, obj, 1, METHOD(StyleOptionsChanged));
 
         // set the notifies for the importance cycle gadget
         DoMethod(data->CY_IMPORTANCE, MUIM_Notify, MUIA_Cycle_Active,      0,              menuStripObject,         4, MUIM_SetUData, WMEN_IMPORT0, MUIA_Menuitem_Checked, TRUE);
@@ -1553,20 +1544,20 @@ OVERLOAD(OM_NEW)
       SetHelp(data->PO_CODESET,     MSG_HELP_WR_PO_CHARSET);
 
       // declare the mail as modified if any of these objects reports a change
-      DoMethod(data->ST_FROM_OVERRIDE, MUIM_Notify, MUIA_String_Contents,                 MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
-      DoMethod(data->ST_TO,            MUIM_Notify, MUIA_String_Contents,                 MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
-      DoMethod(data->ST_CC,            MUIM_Notify, MUIA_String_Contents,                 MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
-      DoMethod(data->ST_BCC,           MUIM_Notify, MUIA_String_Contents,                 MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
-      DoMethod(data->ST_REPLYTO,       MUIM_Notify, MUIA_String_Contents,                 MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
-      DoMethod(data->ST_EXTHEADER,     MUIM_Notify, MUIA_String_Contents,                 MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
-      DoMethod(data->ST_CTYPE,         MUIM_Notify, MUIA_String_Contents,                 MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
-      DoMethod(data->ST_DESC,          MUIM_Notify, MUIA_String_Contents,                 MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
-      DoMethod(data->PO_CODESET,       MUIM_Notify, MUIA_CodesetPopobject_CodesetChanged, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
-      DoMethod(data->CY_IMPORTANCE,    MUIM_Notify, MUIA_Cycle_Active,                    MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
-      DoMethod(data->CY_SECURITY,      MUIM_Notify, MUIA_Cycle_Active,                    MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
-      DoMethod(data->CH_DELSEND,       MUIM_Notify, MUIA_Selected,                        MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
-      DoMethod(data->CH_MDN,           MUIM_Notify, MUIA_Selected,                        MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
-      DoMethod(data->CH_ADDINFO,       MUIM_Notify, MUIA_Selected,                        MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->ST_FROM_OVERRIDE, MUIM_Notify, MUIA_String_Contents,                   MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->ST_TO,            MUIM_Notify, MUIA_String_Contents,                   MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->ST_CC,            MUIM_Notify, MUIA_String_Contents,                   MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->ST_BCC,           MUIM_Notify, MUIA_String_Contents,                   MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->ST_REPLYTO,       MUIM_Notify, MUIA_String_Contents,                   MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->ST_EXTHEADER,     MUIM_Notify, MUIA_String_Contents,                   MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->PO_CTYPE,         MUIM_Notify, MUIA_MimeTypePopobject_MimeTypeChanged, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->ST_DESC,          MUIM_Notify, MUIA_String_Contents,                   MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->PO_CODESET,       MUIM_Notify, MUIA_CodesetPopobject_CodesetChanged,   MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->CY_IMPORTANCE,    MUIM_Notify, MUIA_Cycle_Active,                      MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->CY_SECURITY,      MUIM_Notify, MUIA_Cycle_Active,                      MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->CH_DELSEND,       MUIM_Notify, MUIA_Selected,                          MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->CH_MDN,           MUIM_Notify, MUIA_Selected,                          MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->CH_ADDINFO,       MUIM_Notify, MUIA_Selected,                          MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
 
       // create a notify for changing the codeset
       DoMethod(data->PO_CODESET, MUIM_Notify, MUIA_CodesetPopobject_Codeset, MUIV_EveryTime, obj, 2, METHOD(CodesetChanged), MUIV_TriggerValue);
@@ -1896,7 +1887,7 @@ OVERLOAD(OM_SET)
 
       case ATTR(AttachContentType):
       {
-        setstring(data->ST_CTYPE, tag->ti_Data);
+        set(data->PO_CTYPE, MUIA_MimeTypePopobject_MimeType, tag->ti_Data);
 
         // make the superMethod call ignore those tags
         tag->ti_Tag = TAG_IGNORE;
@@ -2013,7 +2004,7 @@ DECLARE(EditActionPerformed) // enum EditAction action
                 actObj == data->ST_CC || actObj == data->ST_BCC ||
                 actObj == data->ST_REPLYTO ||
                 actObj == data->ST_EXTHEADER || actObj == data->ST_DESC ||
-                actObj == data->ST_CTYPE)
+                actObj == data->PO_CTYPE)
         {
           DoMethod(actObj, MUIM_BetterString_DoAction, MUIV_BetterString_DoAction_Cut);
         }
@@ -2028,7 +2019,7 @@ DECLARE(EditActionPerformed) // enum EditAction action
                 actObj == data->ST_CC || actObj == data->ST_BCC ||
                 actObj == data->ST_REPLYTO ||
                 actObj == data->ST_EXTHEADER || actObj == data->ST_DESC ||
-                actObj == data->ST_CTYPE)
+                actObj == data->PO_CTYPE)
         {
           DoMethod(actObj, MUIM_BetterString_DoAction, MUIV_BetterString_DoAction_Copy);
         }
@@ -2047,7 +2038,7 @@ DECLARE(EditActionPerformed) // enum EditAction action
                 actObj == data->ST_CC || actObj == data->ST_BCC ||
                 actObj == data->ST_REPLYTO ||
                 actObj == data->ST_EXTHEADER || actObj == data->ST_DESC ||
-                actObj == data->ST_CTYPE)
+                actObj == data->PO_CTYPE)
         {
           DoMethod(actObj, MUIM_BetterString_DoAction, MUIV_BetterString_DoAction_Paste);
         }
@@ -2062,7 +2053,7 @@ DECLARE(EditActionPerformed) // enum EditAction action
                 actObj == data->ST_CC || actObj == data->ST_BCC ||
                 actObj == data->ST_REPLYTO ||
                 actObj == data->ST_EXTHEADER || actObj == data->ST_DESC ||
-                actObj == data->ST_CTYPE)
+                actObj == data->PO_CTYPE)
         {
           DoMethod(actObj, MUIM_BetterString_DoAction, MUIV_BetterString_DoAction_Delete);
         }
@@ -2077,7 +2068,7 @@ DECLARE(EditActionPerformed) // enum EditAction action
                 actObj == data->ST_CC || actObj == data->ST_BCC ||
                 actObj == data->ST_REPLYTO ||
                 actObj == data->ST_EXTHEADER || actObj == data->ST_DESC ||
-                actObj == data->ST_CTYPE)
+                actObj == data->PO_CTYPE)
         {
           DoMethod(actObj, MUIM_BetterString_DoAction, MUIV_BetterString_DoAction_Undo);
         }
@@ -2092,7 +2083,7 @@ DECLARE(EditActionPerformed) // enum EditAction action
                 actObj == data->ST_CC || actObj == data->ST_BCC ||
                 actObj == data->ST_REPLYTO ||
                 actObj == data->ST_EXTHEADER || actObj == data->ST_DESC ||
-                actObj == data->ST_CTYPE)
+                actObj == data->PO_CTYPE)
         {
           DoMethod(actObj, MUIM_BetterString_DoAction, MUIV_BetterString_DoAction_Redo);
         }
@@ -2107,7 +2098,7 @@ DECLARE(EditActionPerformed) // enum EditAction action
                 actObj == data->ST_CC || actObj == data->ST_BCC ||
                 actObj == data->ST_REPLYTO ||
                 actObj == data->ST_EXTHEADER || actObj == data->ST_DESC ||
-                actObj == data->ST_CTYPE)
+                actObj == data->PO_CTYPE)
         {
           DoMethod(actObj, MUIM_BetterString_DoAction, MUIV_BetterString_DoAction_SelectAll);
         }
@@ -2122,7 +2113,7 @@ DECLARE(EditActionPerformed) // enum EditAction action
                 actObj == data->ST_CC || actObj == data->ST_BCC ||
                 actObj == data->ST_REPLYTO ||
                 actObj == data->ST_EXTHEADER || actObj == data->ST_DESC ||
-                actObj == data->ST_CTYPE)
+                actObj == data->PO_CTYPE)
         {
           DoMethod(actObj, MUIM_BetterString_DoAction, MUIV_BetterString_DoAction_SelectNone);
         }
@@ -2234,7 +2225,7 @@ DECLARE(AddPGPKey)
       if(ObtainFileInfo(fname, FI_SIZE, &size) == TRUE && size > 0)
       {
         DoMethod(obj, METHOD(AddAttachment), fname, NULL, TRUE);
-        setstring(data->ST_CTYPE, "application/pgp-keys");
+        set(data->PO_CTYPE, MUIA_MimeTypePopobject_MimeType, "application/pgp-keys");
       }
       else
         ER_NewError(tr(MSG_ER_ErrorAppendKey), pgpid);
@@ -2601,7 +2592,7 @@ DECLARE(GetAttachmentEntry)
   ENTER();
 
   DoMethod(data->LV_ATTACH, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &attach);
-  DoMethod(_app(obj), MUIM_MultiSet, MUIA_Disabled, attach ? FALSE : TRUE, data->ST_CTYPE,
+  DoMethod(_app(obj), MUIM_MultiSet, MUIA_Disabled, attach ? FALSE : TRUE, data->PO_CTYPE,
                                                                            data->ST_DESC,
                                                                            data->BT_REMOVE,
                                                                            data->BT_RENAME,
@@ -2609,7 +2600,7 @@ DECLARE(GetAttachmentEntry)
 
   if(attach != NULL)
   {
-    nnset(data->ST_CTYPE, MUIA_String_Contents, attach->ContentType);
+    nnset(data->PO_CTYPE, MUIA_MimeTypePopobject_MimeType, attach->ContentType);
     nnset(data->ST_DESC, MUIA_String_Contents, attach->Description);
   }
 
@@ -2630,7 +2621,7 @@ DECLARE(PutAttachmentEntry)
   DoMethod(data->LV_ATTACH, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &attach);
   if(attach != NULL)
   {
-    GetMUIString(attach->ContentType, data->ST_CTYPE, sizeof(attach->ContentType));
+    strlcpy(attach->ContentType, (char *)xget(data->PO_CTYPE, MUIA_MimeTypePopobject_MimeType), sizeof(attach->ContentType));
     GetMUIString(attach->Description, data->ST_DESC, sizeof(attach->Description));
     DoMethod(data->LV_ATTACH, MUIM_NList_Redraw, MUIV_NList_Redraw_Active);
   }
@@ -3181,7 +3172,7 @@ DECLARE(AddAttachment) // const char *filename, const char *name, ULONG istemp
       strlcpy(attach.FilePath, msg->filename, sizeof(attach.FilePath));
       strlcpy(attach.Name, msg->name ? msg->name : (char *)FilePart(msg->filename), sizeof(attach.Name));
       strlcpy(attach.ContentType, ctype, sizeof(attach.ContentType));
-      nnset(data->ST_CTYPE, MUIA_String_Contents, attach.ContentType);
+      nnset(data->PO_CTYPE, MUIA_MimeTypePopobject_MimeType, attach.ContentType);
       nnset(data->ST_DESC, MUIA_String_Contents, attach.Description);
 
       // put the attachment into our attachment MUI list and set

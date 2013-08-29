@@ -49,6 +49,7 @@
 #include "mui/ConfigPage.h"
 #include "mui/ConfigPageList.h"
 #include "mui/MimeTypeList.h"
+#include "mui/MimeTypePopobject.h"
 #include "mui/PlaceholderPopupList.h"
 
 #include "Config.h"
@@ -66,7 +67,7 @@ struct Data
   Object *BT_MDEL;
   Object *BT_MIMEIMPORT;
   Object *GR_MIME;
-  Object *ST_CTYPE;
+  Object *PO_CTYPE;
   Object *ST_EXTENS;
   Object *ST_DESCRIPTION;
   Object *ST_COMMAND;
@@ -74,19 +75,11 @@ struct Data
   Object *PO_DEFVIEWER_CODESET;
   Object *PO_MIME_CODESET;
 
-  struct Hook MimeTypeListOpenHook;
-  struct Hook MimeTypeListCloseHook;
   struct Hook MimeCommandReqStartHook;
   struct Hook MimeCommandReqStopHook;
   struct Hook MimeDefViewerReqStartHook;
   struct Hook MimeDefViewerReqStopHook;
-
-  struct MimeTypeCloseObjects closeObjs;
 };
-*/
-
-/* INCLUDE
-#include "MUIObjects.h" // for struct MimeTypeCloseObjects
 */
 
 /* Overloaded Methods */
@@ -98,7 +91,7 @@ OVERLOAD(OM_NEW)
   Object *BT_MDEL;
   Object *BT_MIMEIMPORT;
   Object *GR_MIME;
-  Object *ST_CTYPE;
+  Object *PO_CTYPE;
   Object *ST_EXTENS;
   Object *ST_DESCRIPTION;
   Object *ST_COMMAND;
@@ -107,7 +100,6 @@ OVERLOAD(OM_NEW)
   Object *PO_MIME_CODESET;
   Object *popButton;
   Object *list;
-  Object *popMime;
   Object *popAsl[2];
 
   ENTER();
@@ -154,7 +146,10 @@ OVERLOAD(OM_NEW)
             MUIA_Weight, 70,
             Child, GR_MIME = ColGroup(2),
               Child, Label2(tr(MSG_CO_MimeType)),
-              Child, popMime = MakeMimeTypePop(&ST_CTYPE, tr(MSG_CO_MimeType)),
+              Child, PO_CTYPE = MimeTypePopobjectObject,
+                MUIA_MimeTypePopobject_ControlChar, ShortCut(tr(MSG_CO_MimeType)),
+                MUIA_MimeTypePopobject_InConfigWindow, TRUE,
+              End,
 
               Child, Label2(tr(MSG_CO_Extension)),
               Child, ST_EXTENS = BetterStringObject,
@@ -226,7 +221,7 @@ OVERLOAD(OM_NEW)
     data->BT_MDEL =        BT_MDEL;
     data->BT_MIMEIMPORT =  BT_MIMEIMPORT;
     data->GR_MIME =        GR_MIME;
-    data->ST_CTYPE =       ST_CTYPE;
+    data->PO_CTYPE =       PO_CTYPE;
     data->ST_EXTENS =      ST_EXTENS;
     data->ST_DESCRIPTION = ST_DESCRIPTION;
     data->ST_COMMAND =     ST_COMMAND;
@@ -235,18 +230,9 @@ OVERLOAD(OM_NEW)
     data->PO_DEFVIEWER_CODESET = PO_DEFVIEWER_CODESET;
 
     // these are the objects that may be accessed when closing the MIME type list
-    data->closeObjs.extension = ST_EXTENS;
-    data->closeObjs.description = ST_DESCRIPTION;
-
-    // hook->h_Data=TRUE tells the hook that the string object does belong to the config window
-    // I know, this is a quite ugly hack, but unfortunately MUI does not
-    // offer methods for this purpose which could do this stuff in a much
-    // more sophisticated way :(
-    InitHook(&data->MimeTypeListOpenHook, PO_MimeTypeListOpenHook, TRUE);
-    InitHook(&data->MimeTypeListCloseHook, PO_MimeTypeListCloseHook, &data->closeObjs);
-    xset(popMime,
-      MUIA_Popobject_StrObjHook, &data->MimeTypeListOpenHook,
-      MUIA_Popobject_ObjStrHook, &data->MimeTypeListCloseHook);
+    xset(PO_CTYPE,
+      MUIA_MimeTypePopobject_ExtensionObject, ST_EXTENS,
+      MUIA_MimeTypePopobject_DescriptionObject, ST_DESCRIPTION);
 
     InitHook(&data->MimeCommandReqStartHook, FilereqStartHook, data->ST_COMMAND);
     InitHook(&data->MimeCommandReqStopHook, FilereqStopHook, data->ST_COMMAND);
@@ -260,7 +246,7 @@ OVERLOAD(OM_NEW)
       MUIA_Popasl_StartHook, &data->MimeDefViewerReqStartHook,
       MUIA_Popasl_StopHook,  &data->MimeDefViewerReqStopHook);
 
-    SetHelp(ST_CTYPE,             MSG_HELP_CO_ST_CTYPE);
+    SetHelp(PO_CTYPE,             MSG_HELP_CO_ST_CTYPE);
     SetHelp(ST_EXTENS,            MSG_HELP_CO_ST_EXTENS);
     SetHelp(ST_COMMAND,           MSG_HELP_CO_ST_COMMAND);
     SetHelp(BT_MADD,              MSG_HELP_CO_BT_MADD);
@@ -276,17 +262,17 @@ OVERLOAD(OM_NEW)
       BT_MDEL,
       NULL);
 
-    DoMethod(LV_MIME,              MUIM_Notify, MUIA_NList_Active,                    MUIV_EveryTime, obj, 1, METHOD(GetMimeTypeEntry));
-    DoMethod(ST_CTYPE,             MUIM_Notify, MUIA_String_Contents,                 MUIV_EveryTime, obj, 1, METHOD(PutMimeTypeEntry));
-    DoMethod(ST_EXTENS,            MUIM_Notify, MUIA_String_Contents,                 MUIV_EveryTime, obj, 1, METHOD(PutMimeTypeEntry));
-    DoMethod(ST_COMMAND,           MUIM_Notify, MUIA_String_Contents,                 MUIV_EveryTime, obj, 1, METHOD(PutMimeTypeEntry));
-    DoMethod(ST_DESCRIPTION,       MUIM_Notify, MUIA_String_Contents,                 MUIV_EveryTime, obj, 1, METHOD(PutMimeTypeEntry));
-    DoMethod(ST_DEFVIEWER,         MUIM_Notify, MUIA_String_Contents,                 MUIV_EveryTime, obj, 1, METHOD(PutMimeTypeEntry));
-    DoMethod(PO_DEFVIEWER_CODESET, MUIM_Notify, MUIA_CodesetPopobject_CodesetChanged, MUIV_EveryTime, obj, 1, METHOD(PutMimeTypeEntry));
-    DoMethod(PO_MIME_CODESET,      MUIM_Notify, MUIA_CodesetPopobject_CodesetChanged, MUIV_EveryTime, obj, 1, METHOD(PutMimeTypeEntry));
-    DoMethod(BT_MADD,              MUIM_Notify, MUIA_Pressed,                         FALSE,          obj, 1, METHOD(AddMimeTypeEntry));
-    DoMethod(BT_MDEL,              MUIM_Notify, MUIA_Pressed,                         FALSE,          obj, 1, METHOD(DeleteMimeTypeEntry));
-    DoMethod(BT_MIMEIMPORT,        MUIM_Notify, MUIA_Pressed,                         FALSE,          obj, 1, METHOD(ImportMimeTypes));
+    DoMethod(LV_MIME,              MUIM_Notify, MUIA_NList_Active,                      MUIV_EveryTime, obj, 1, METHOD(GetMimeTypeEntry));
+    DoMethod(PO_CTYPE,             MUIM_Notify, MUIA_MimeTypePopobject_MimeTypeChanged, MUIV_EveryTime, obj, 1, METHOD(PutMimeTypeEntry));
+    DoMethod(ST_EXTENS,            MUIM_Notify, MUIA_String_Contents,                   MUIV_EveryTime, obj, 1, METHOD(PutMimeTypeEntry));
+    DoMethod(ST_COMMAND,           MUIM_Notify, MUIA_String_Contents,                   MUIV_EveryTime, obj, 1, METHOD(PutMimeTypeEntry));
+    DoMethod(ST_DESCRIPTION,       MUIM_Notify, MUIA_String_Contents,                   MUIV_EveryTime, obj, 1, METHOD(PutMimeTypeEntry));
+    DoMethod(ST_DEFVIEWER,         MUIM_Notify, MUIA_String_Contents,                   MUIV_EveryTime, obj, 1, METHOD(PutMimeTypeEntry));
+    DoMethod(PO_DEFVIEWER_CODESET, MUIM_Notify, MUIA_CodesetPopobject_CodesetChanged,   MUIV_EveryTime, obj, 1, METHOD(PutMimeTypeEntry));
+    DoMethod(PO_MIME_CODESET,      MUIM_Notify, MUIA_CodesetPopobject_CodesetChanged,   MUIV_EveryTime, obj, 1, METHOD(PutMimeTypeEntry));
+    DoMethod(BT_MADD,              MUIM_Notify, MUIA_Pressed,                           FALSE,          obj, 1, METHOD(AddMimeTypeEntry));
+    DoMethod(BT_MDEL,              MUIM_Notify, MUIA_Pressed,                           FALSE,          obj, 1, METHOD(DeleteMimeTypeEntry));
+    DoMethod(BT_MIMEIMPORT,        MUIM_Notify, MUIA_Pressed,                           FALSE,          obj, 1, METHOD(ImportMimeTypes));
   }
 
   RETURN((IPTR)obj);
@@ -359,7 +345,7 @@ DECLARE(GetMimeTypeEntry)
   DoMethod(data->LV_MIME, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mt);
   if(mt != NULL)
   {
-    nnset(data->ST_CTYPE, MUIA_String_Contents, mt->ContentType);
+    nnset(data->PO_CTYPE, MUIA_MimeTypePopobject_MimeType, mt->ContentType);
     nnset(data->ST_EXTENS, MUIA_String_Contents, mt->Extension);
     nnset(data->ST_COMMAND, MUIA_String_Contents, mt->Command);
     nnset(data->ST_DESCRIPTION, MUIA_String_Contents, mt->Description);
@@ -386,7 +372,7 @@ DECLARE(PutMimeTypeEntry)
   DoMethod(data->LV_MIME, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mt);
   if(mt != NULL)
   {
-    GetMUIString(mt->ContentType, data->ST_CTYPE, sizeof(mt->ContentType));
+    strlcpy(mt->ContentType, (char *)xget(data->PO_CTYPE, MUIA_MimeTypePopobject_MimeType), sizeof(mt->ContentType));
     GetMUIString(mt->Extension, data->ST_EXTENS, sizeof(mt->Extension));
     GetMUIString(mt->Command, data->ST_COMMAND, sizeof(mt->Command));
     GetMUIString(mt->Description, data->ST_DESCRIPTION, sizeof(mt->Description));
@@ -421,7 +407,7 @@ DECLARE(AddMimeTypeEntry)
     // make sure the new entry is the active entry and that the list
     // is also the active gadget in the window.
     set(data->LV_MIME, MUIA_NList_Active, MUIV_NList_Active_Bottom);
-    set(_win(obj), MUIA_Window_ActiveObject, data->ST_CTYPE);
+    set(_win(obj), MUIA_Window_ActiveObject, data->PO_CTYPE);
   }
 
   RETURN(0);

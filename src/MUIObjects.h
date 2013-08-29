@@ -50,20 +50,11 @@ Object *MakePassString(const char *label);
 Object *MakeString(int maxlen, const char *label);
 Object *MakeAddressField(Object **string, const char *label, const void *help, int abmode, int winnr, ULONG flags);
 Object *MakeVarPop(Object **string, Object **popButton, Object **list, const int mode, const int size, const char *shortcut);
-Object *MakeMimeTypePop(Object **string, const char *desc);
 char ShortCut(const char *label);
 
 extern struct Hook FilereqStartHook;
 extern struct Hook FilereqStopHook;
-extern struct Hook PO_MimeTypeListOpenHook;
-extern struct Hook PO_MimeTypeListCloseHook;
 extern struct Hook PO_WindowHook;
-
-struct MimeTypeCloseObjects
-{
-  Object *extension;
-  Object *description;
-};
 
 #define GetMUICheck(o)   (BOOL)xget((o), MUIA_Selected)
 #define GetMUICycle(o)   (int)xget((o), MUIA_Cycle_Active)
