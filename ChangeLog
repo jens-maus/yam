@@ -18,6 +18,7 @@ $URL$
     This makes the internal handling of the open/close hooks MUCH easier.
   * mui/PlaceholderPopobject.c: added new class for all placeholder popup
     objects.
+  * rexx/KillDuplicates.yam: updated the script kindly provided by AmigaPhil.
 
 2013-08-28 Jens Langner <Jens.Langner@light-speed.de>
 

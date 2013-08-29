@@ -1,7 +1,7 @@
-/* KillDuplicates.yam - Remove duplicate messages in current folder        */
-/* $VER: KillDuplicates.yam 1.0 (09.01.00) © 2000 by M.Beck <mbeck@yam.ch> */
-/* Requires YAM 2.1 or later                                               */
-/* Note: Switch off 'List like multiselect' in MUI/NListviews/Misc/Misc6   */
+/* KillDuplicates.yam - Remove duplicate messages in current folder          */
+/* $VER: KillDuplicates.yam 1.1 (29.08.2013) © 2000 by M.Beck <mbeck@yam.ch> */
+/* Requires YAM 2.1 or later                                                 */
+/* Note: Switch off 'List like multiselect' in MUI/NListviews/Misc/Misc6     */
 
 ADDRESS YAM
 OPTIONS RESULTS
@@ -9,8 +9,10 @@ FOLDERINFO STEM fi.
 dups = 0
 LISTSELECT 'NONE'
 DO i=0 TO fi.total-1
+   DROP mi.
    MAILINFO STEM mi. i
-   mails.i.msgid = mi.msgid
+   IF mi.msgid = "MI.MSGID" THEN mails.i.msgid = mi.date
+   ELSE mails.i.msgid = mi.msgid
    mails.i.isdup = 0
    DO j=0 TO i-1
       IF mails.i.msgid = mails.j.msgid THEN mails.i.isdup = 1
