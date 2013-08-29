@@ -521,6 +521,7 @@ MUIOBJS = \
 	ObjectListitem.o \
 	PassphraseRequestWindow.o \
 	PGPKeyPopobject.o \
+	PlaceholderPopobject.o \
 	PlaceholderPopupList.o \
 	PreselectionWindow.o \
 	QuickSearchBar.o \

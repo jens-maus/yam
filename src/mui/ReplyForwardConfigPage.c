@@ -34,6 +34,7 @@
 
 #include "mui/ConfigPage.h"
 #include "mui/ConfigPageList.h"
+#include "mui/PlaceholderPopobject.h"
 #include "mui/PlaceholderPopupList.h"
 
 #include "Config.h"
@@ -57,8 +58,8 @@ struct Data
   Object *CH_QUOTEEMPTY;
   Object *CH_STRIPSIG;
   Object *CY_FORWARDMODE;
-  Object *ST_FWDSTART;
-  Object *ST_FWDEND;
+  Object *PO_FWDSTART;
+  Object *PO_FWDEND;
 };
 */
 
@@ -68,9 +69,9 @@ struct Data
 static Object *MakePhraseGroup(Object **hello, Object **intro, Object **bye,
                                const char *label, const char *help)
 {
-  Object *grp, *cycl, *pgrp;
-  Object *popButton;
-  Object *list;
+  Object *grp;
+  Object *cycl;
+  Object *pgrp;
   static const char *cytext[4];
 
   cytext[0] = tr(MSG_CO_PhraseOpen);
@@ -88,9 +89,18 @@ static Object *MakePhraseGroup(Object **hello, Object **intro, Object **bye,
       MUIA_Weight, 0,
     End,
     Child, pgrp = PageGroup,
-      Child, MakeVarPop(hello, &popButton, &list, PHM_REPLYHELLO, SIZE_INTRO, ""),
-      Child, MakeVarPop(intro, &popButton, &list, PHM_REPLYINTRO, SIZE_INTRO, ""),
-      Child, MakeVarPop(bye,   &popButton, &list, PHM_REPLYBYE,   SIZE_INTRO, ""),
+      Child, *hello = PlaceholderPopobjectObject,
+        MUIA_String_MaxLen, SIZE_INTRO,
+        MUIA_PlaceholderPopobject_Mode, PHM_REPLYHELLO,
+      End,
+      Child, *intro = PlaceholderPopobjectObject,
+        MUIA_String_MaxLen, SIZE_INTRO,
+        MUIA_PlaceholderPopobject_Mode, PHM_REPLYINTRO,
+      End,
+      Child, *bye = PlaceholderPopobjectObject,
+        MUIA_String_MaxLen, SIZE_INTRO,
+        MUIA_PlaceholderPopobject_Mode, PHM_REPLYBYE,
+      End,
     End,
     MUIA_ShortHelp, help,
   End))
@@ -122,10 +132,8 @@ OVERLOAD(OM_NEW)
   Object *CH_QUOTEEMPTY;
   Object *CH_STRIPSIG;
   Object *CY_FORWARDMODE;
-  Object *ST_FWDSTART;
-  Object *ST_FWDEND;
-  Object *popButton;
-  Object *list;
+  Object *PO_FWDSTART;
+  Object *PO_FWDEND;
 
   ENTER();
 
@@ -172,10 +180,18 @@ OVERLOAD(OM_NEW)
         Child, CY_FORWARDMODE = MakeCycle(fwdmode, tr(MSG_CO_FWDMSG)),
 
         Child, Label2(tr(MSG_CO_FwdInit)),
-        Child, MakeVarPop(&ST_FWDSTART, &popButton, &list, PHM_FORWARD, SIZE_INTRO, tr(MSG_CO_FwdInit)),
+        Child, PO_FWDSTART = PlaceholderPopobjectObject,
+          MUIA_String_MaxLen, SIZE_INTRO,
+          MUIA_PlaceholderPopobject_Mode, PHM_FORWARD,
+          MUIA_PlaceholderPopobject_ControlChar, ShortCut(tr(MSG_CO_FwdInit)),
+        End,
 
         Child, Label2(tr(MSG_CO_FwdFinish)),
-        Child, MakeVarPop(&ST_FWDEND, &popButton, &list, PHM_FORWARD, SIZE_INTRO, tr(MSG_CO_FwdFinish)),
+        Child, PO_FWDEND = PlaceholderPopobjectObject,
+          MUIA_String_MaxLen, SIZE_INTRO,
+          MUIA_PlaceholderPopobject_Mode, PHM_FORWARD,
+          MUIA_PlaceholderPopobject_ControlChar, ShortCut(tr(MSG_CO_FwdFinish)),
+        End,
 
       End,
     End,
@@ -197,11 +213,11 @@ OVERLOAD(OM_NEW)
     data->CH_QUOTEEMPTY =  CH_QUOTEEMPTY;
     data->CH_STRIPSIG =    CH_STRIPSIG;
     data->CY_FORWARDMODE = CY_FORWARDMODE;
-    data->ST_FWDSTART =    ST_FWDSTART;
-    data->ST_FWDEND =      ST_FWDEND;
+    data->PO_FWDSTART =    PO_FWDSTART;
+    data->PO_FWDEND =      PO_FWDEND;
 
-    SetHelp(ST_FWDSTART,    MSG_HELP_CO_ST_FWDSTART);
-    SetHelp(ST_FWDEND,      MSG_HELP_CO_ST_FWDEND);
+    SetHelp(PO_FWDSTART,    MSG_HELP_CO_ST_FWDSTART);
+    SetHelp(PO_FWDEND,      MSG_HELP_CO_ST_FWDEND);
     SetHelp(ST_AREPLYPAT,   MSG_HELP_CO_ST_AREPLYPAT);
     SetHelp(CH_QUOTEEMPTY,  MSG_HELP_CO_CH_QUOTEEMPTY);
     SetHelp(CH_COMPADDR,    MSG_HELP_CO_CH_COMPADDR);
@@ -231,8 +247,8 @@ OVERLOAD(MUIM_ConfigPage_ConfigToGUI)
   setstring(data->ST_MREPLYHI, CE->MLReplyHello);
   setstring(data->ST_MREPLYTEXT, CE->MLReplyIntro);
   setstring(data->ST_MREPLYBYE, CE->MLReplyBye);
-  setstring(data->ST_FWDSTART, CE->ForwardIntro);
-  setstring(data->ST_FWDEND, CE->ForwardFinish);
+  setstring(data->PO_FWDSTART, CE->ForwardIntro);
+  setstring(data->PO_FWDEND, CE->ForwardFinish);
   setcheckmark(data->CH_QUOTEEMPTY, CE->QuoteEmptyLines);
   setcheckmark(data->CH_COMPADDR, CE->CompareAddress);
   setcheckmark(data->CH_STRIPSIG, CE->StripSignature);
@@ -260,8 +276,8 @@ OVERLOAD(MUIM_ConfigPage_GUIToConfig)
   GetMUIString(CE->MLReplyHello, data->ST_MREPLYHI, sizeof(CE->MLReplyHello));
   GetMUIString(CE->MLReplyIntro, data->ST_MREPLYTEXT, sizeof(CE->MLReplyIntro));
   GetMUIString(CE->MLReplyBye, data->ST_MREPLYBYE, sizeof(CE->MLReplyBye));
-  GetMUIString(CE->ForwardIntro, data->ST_FWDSTART, sizeof(CE->ForwardIntro));
-  GetMUIString(CE->ForwardFinish, data->ST_FWDEND, sizeof(CE->ForwardFinish));
+  GetMUIString(CE->ForwardIntro, data->PO_FWDSTART, sizeof(CE->ForwardIntro));
+  GetMUIString(CE->ForwardFinish, data->PO_FWDEND, sizeof(CE->ForwardFinish));
   CE->QuoteEmptyLines = GetMUICheck(data->CH_QUOTEEMPTY);
   CE->CompareAddress =  GetMUICheck(data->CH_COMPADDR);
   CE->StripSignature =  GetMUICheck(data->CH_STRIPSIG);

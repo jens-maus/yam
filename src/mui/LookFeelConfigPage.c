@@ -36,6 +36,7 @@
 
 #include "mui/ConfigPage.h"
 #include "mui/ConfigPageList.h"
+#include "mui/PlaceholderPopobject.h"
 #include "mui/PlaceholderPopupList.h"
 #include "mui/ThemeListGroup.h"
 
@@ -54,7 +55,6 @@ struct Data
   Object *CH_MCNTMENU;
   Object *CY_INFOBARPOS;
   Object *PO_INFOBARTXT;
-  Object *ST_INFOBARTXT;
   Object *CY_QUICKSEARCHBARPOS;
   Object *CY_SIZE;
   Object *CH_EMBEDDEDREADPANE;
@@ -105,7 +105,6 @@ OVERLOAD(OM_NEW)
   Object *CH_MCNTMENU;
   Object *CY_INFOBARPOS;
   Object *PO_INFOBARTXT;
-  Object *ST_INFOBARTXT;
   Object *CY_QUICKSEARCHBARPOS;
   Object *CY_SIZE;
   Object *CH_EMBEDDEDREADPANE;
@@ -114,8 +113,6 @@ OVERLOAD(OM_NEW)
   Object *CH_RELDATETIME;
   Object *CH_ABOOKLOOKUP;
   Object *CH_FOLDERDBLCLICK;
-  Object *popButton;
-  Object *list;
 
   ENTER();
 
@@ -270,7 +267,11 @@ OVERLOAD(OM_NEW)
             Child, CY_INFOBARPOS = MakeCycle(infob, tr(MSG_CO_INFOBARPOS)),
 
             Child, Label2(tr(MSG_CO_FOLDERLABEL)),
-            Child, PO_INFOBARTXT = MakeVarPop(&ST_INFOBARTXT, &popButton, &list, PHM_MAILSTATS, SIZE_DEFAULT, tr(MSG_CO_FOLDERLABEL)),
+            Child, PO_INFOBARTXT = PlaceholderPopobjectObject,
+              MUIA_String_MaxLen, SIZE_DEFAULT,
+              MUIA_PlaceholderPopobject_Mode, PHM_MAILSTATS,
+              MUIA_PlaceholderPopobject_ControlChar, ShortCut(tr(MSG_CO_FOLDERLABEL)),
+            End,
           End,
 
           // QuicksearchBar settings
@@ -325,7 +326,6 @@ OVERLOAD(OM_NEW)
     data->CH_MCNTMENU =          CH_MCNTMENU;
     data->CY_INFOBARPOS =        CY_INFOBARPOS;
     data->PO_INFOBARTXT =        PO_INFOBARTXT;
-    data->ST_INFOBARTXT =        ST_INFOBARTXT;
     data->CY_QUICKSEARCHBARPOS = CY_QUICKSEARCHBARPOS;
     data->CY_SIZE =              CY_SIZE;
     data->CH_EMBEDDEDREADPANE =  CH_EMBEDDEDREADPANE;
@@ -336,7 +336,7 @@ OVERLOAD(OM_NEW)
     data->CH_FOLDERDBLCLICK =    CH_FOLDERDBLCLICK;
 
     SetHelp(CY_INFOBARPOS,        MSG_HELP_CO_CH_INFOBAR);
-    SetHelp(ST_INFOBARTXT,        MSG_HELP_CO_ST_INFOBARTXT);
+    SetHelp(PO_INFOBARTXT,        MSG_HELP_CO_ST_INFOBARTXT);
     SetHelp(CY_QUICKSEARCHBARPOS, MSG_HELP_CO_CH_QUICKSEARCHBAR);
     SetHelp(CH_EMBEDDEDREADPANE,  MSG_HELP_CO_CH_EMBEDDEDREADPANE);
     SetHelp(CY_SIZE,              MSG_HELP_CO_CY_SIZE);
@@ -348,7 +348,7 @@ OVERLOAD(OM_NEW)
     SetHelp(CH_MCNTMENU,          MSG_HELP_CO_CONTEXTMENU);
     SetHelp(CY_FOLDERINFO,        MSG_HELP_CO_CY_FOLDERINFO);
 
-    DoMethod(CY_INFOBARPOS, MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, obj, 2, METHOD(InfoBarPosChanged), MUIV_TriggerValue);
+    DoMethod(CY_INFOBARPOS, MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, PO_INFOBARTXT, 3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
   }
 
   RETURN((IPTR)obj);
@@ -365,7 +365,7 @@ OVERLOAD(MUIM_ConfigPage_ConfigToGUI)
   ENTER();
 
   setcycle(data->CY_INFOBARPOS, CE->InfoBarPos);
-  setstring(data->ST_INFOBARTXT, CE->InfoBarText);
+  setstring(data->PO_INFOBARTXT, CE->InfoBarText);
   setcycle(data->CY_QUICKSEARCHBARPOS, CE->QuickSearchBarPos);
   setcheckmark(data->CH_EMBEDDEDREADPANE, CE->EmbeddedReadPane);
   setcycle(data->CY_SIZE, CE->SizeFormat);
@@ -405,9 +405,9 @@ OVERLOAD(MUIM_ConfigPage_GUIToConfig)
   ENTER();
 
   CE->InfoBarPos = GetMUICycle(data->CY_INFOBARPOS);
-  GetMUIString(CE->InfoBarText, data->ST_INFOBARTXT, sizeof(CE->InfoBarText));
+  GetMUIString(CE->InfoBarText, data->PO_INFOBARTXT, sizeof(CE->InfoBarText));
   CE->QuickSearchBarPos = GetMUICycle(data->CY_QUICKSEARCHBARPOS);
-  CE->EmbeddedReadPane = GetMUICheck  (data->CH_EMBEDDEDREADPANE);
+  CE->EmbeddedReadPane = GetMUICheck(data->CH_EMBEDDEDREADPANE);
   CE->SizeFormat = GetMUICycle(data->CY_SIZE);
 
   CE->FolderCols = (1<<0);
@@ -446,24 +446,6 @@ OVERLOAD(MUIM_ConfigPage_GUIToConfig)
   }
 
   CE->FolderInfoMode = GetMUICycle(data->CY_FOLDERINFO);
-
-  RETURN(0);
-  return 0;
-}
-
-///
-/// DECLARE(InfoBarPosChanged)
-// update the InfoBar contents string gadget according to the position setting
-DECLARE(InfoBarPosChanged) // ULONG inactive
-{
-  GETDATA;
-
-  ENTER();
-
-  // disabling the Popstring object completely doesn't work, because on reactivation the string
-  // gadget is not redrawn correctly (bug in MUI?), hence we do it separately.
-  nnset(data->ST_INFOBARTXT, MUIA_Disabled, msg->inactive == TRUE);
-  nnset((Object *)xget(data->PO_INFOBARTXT, MUIA_Popstring_Button), MUIA_Disabled, msg->inactive == TRUE);
 
   RETURN(0);
   return 0;

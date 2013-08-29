@@ -49,7 +49,6 @@ Object *MakeNumeric(int min, int max, BOOL percent);
 Object *MakePassString(const char *label);
 Object *MakeString(int maxlen, const char *label);
 Object *MakeAddressField(Object **string, const char *label, const void *help, int abmode, int winnr, ULONG flags);
-Object *MakeVarPop(Object **string, Object **popButton, Object **list, const int mode, const int size, const char *shortcut);
 char ShortCut(const char *label);
 
 extern struct Hook FilereqStartHook;

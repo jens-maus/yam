@@ -45,6 +45,7 @@
 #include "mui/CodesetPopobject.h"
 #include "mui/ConfigPage.h"
 #include "mui/ConfigPageList.h"
+#include "mui/PlaceholderPopobject.h"
 #include "mui/PlaceholderPopupList.h"
 
 #include "Config.h"
@@ -61,7 +62,7 @@ struct Data
   Object *ST_EDITOR;
   Object *PO_DEFCODESET_EDITOR;
   Object *CH_WBAPPICON;
-  Object *ST_APPICON;
+  Object *PO_APPICON;
   Object *CH_APPICONPOS;
   Object *ST_APPX;
   Object *ST_APPY;
@@ -74,7 +75,7 @@ struct Data
   Object *NB_PACKER;
   Object *TX_ENCPACK;
   Object *NB_ENCPACK;
-  Object *ST_ARCHIVER;
+  Object *PO_ARCHIVER;
   Object *CH_ARCHIVERPROGRESS;
   Object *CY_TRANSWIN;
   #if defined(__amigaos4__)
@@ -223,7 +224,7 @@ OVERLOAD(OM_NEW)
   Object *ST_EDITOR;
   Object *PO_DEFCODESET_EDITOR;
   Object *CH_WBAPPICON;
-  Object *ST_APPICON;
+  Object *PO_APPICON;
   Object *CH_APPICONPOS;
   Object *ST_APPX;
   Object *ST_APPY;
@@ -236,14 +237,12 @@ OVERLOAD(OM_NEW)
   Object *NB_PACKER;
   Object *TX_ENCPACK;
   Object *NB_ENCPACK;
-  Object *ST_ARCHIVER;
+  Object *PO_ARCHIVER;
   Object *CH_ARCHIVERPROGRESS;
   Object *CY_TRANSWIN;
   #if defined(__amigaos4__)
   Object *CH_DOCKYICON;
   #endif
-  Object *popButton;
-  Object *list;
 
   ENTER();
 
@@ -317,7 +316,11 @@ OVERLOAD(OM_NEW)
           Child, ColGroup(2),
 
             Child, Label2(tr(MSG_CO_APPICONTEXT)),
-            Child, MakeVarPop(&ST_APPICON, &popButton, &list, PHM_MAILSTATS, SIZE_DEFAULT/2, tr(MSG_CO_APPICONTEXT)),
+            Child, PO_APPICON = PlaceholderPopobjectObject,
+              MUIA_String_MaxLen, SIZE_DEFAULT/2,
+              MUIA_PlaceholderPopobject_Mode, PHM_MAILSTATS,
+              MUIA_PlaceholderPopobject_ControlChar, ShortCut(tr(MSG_CO_APPICONTEXT)),
+            End,
 
             Child, HGroup,
               Child, CH_APPICONPOS = MakeCheck(tr(MSG_CO_PositionX)),
@@ -388,7 +391,11 @@ OVERLOAD(OM_NEW)
 
           Child, Label1(tr(MSG_CO_Archiver)),
           Child, HGroup,
-            Child, MakeVarPop(&ST_ARCHIVER, &popButton, &list, PHM_ARCHIVE, SIZE_COMMAND, tr(MSG_CO_Archiver)),
+            Child, PO_ARCHIVER = PlaceholderPopobjectObject,
+              MUIA_String_MaxLen, SIZE_COMMAND,
+              MUIA_PlaceholderPopobject_Mode, PHM_ARCHIVE,
+              MUIA_PlaceholderPopobject_ControlChar, ShortCut(tr(MSG_CO_Archiver)),
+            End,
             Child, MakeCheckGroup(&CH_ARCHIVERPROGRESS, tr(MSG_CO_SHOW_ARCHIVER_PROGRESS)),
           End,
         End,
@@ -409,7 +416,7 @@ OVERLOAD(OM_NEW)
     data->ST_EDITOR =             ST_EDITOR;
     data->PO_DEFCODESET_EDITOR =  PO_DEFCODESET_EDITOR;
     data->CH_WBAPPICON =          CH_WBAPPICON;
-    data->ST_APPICON =            ST_APPICON;
+    data->PO_APPICON =            PO_APPICON;
     data->CH_APPICONPOS =         CH_APPICONPOS;
     data->ST_APPX =               ST_APPX;
     data->ST_APPY =               ST_APPY;
@@ -422,7 +429,7 @@ OVERLOAD(OM_NEW)
     data->NB_PACKER =             NB_PACKER;
     data->TX_ENCPACK =            TX_ENCPACK;
     data->NB_ENCPACK =            NB_ENCPACK;
-    data->ST_ARCHIVER =           ST_ARCHIVER;
+    data->PO_ARCHIVER =           PO_ARCHIVER;
     data->CH_ARCHIVERPROGRESS =   CH_ARCHIVERPROGRESS;
     data->CY_TRANSWIN =           CY_TRANSWIN;
     #if defined(__amigaos4__)
@@ -447,8 +454,8 @@ OVERLOAD(OM_NEW)
     SetHelp(TX_PACKER,            MSG_HELP_CO_TX_PACKER);
     SetHelp(NB_ENCPACK,           MSG_HELP_CO_NB_ENCPACK);
     SetHelp(NB_PACKER,            MSG_HELP_CO_NB_ENCPACK);
-    SetHelp(ST_ARCHIVER,          MSG_HELP_CO_ST_ARCHIVER);
-    SetHelp(ST_APPICON,           MSG_HELP_CO_ST_APPICON);
+    SetHelp(PO_ARCHIVER,          MSG_HELP_CO_ST_ARCHIVER);
+    SetHelp(PO_APPICON,           MSG_HELP_CO_ST_APPICON);
     SetHelp(BT_APPICONGETPOS,     MSG_HELP_CO_BT_APPICONGETPOS);
     SetHelp(CY_TRANSWIN,          MSG_HELP_CO_CH_TRANSWIN);
     SetHelp(ST_EDITOR,            MSG_HELP_CO_ST_EDITOR_EXT);
@@ -457,11 +464,11 @@ OVERLOAD(OM_NEW)
     DoMethod(obj, MUIM_MultiSet, MUIA_Disabled, TRUE,
       ST_APPX,
       ST_APPY,
-      ST_APPICON,
+      PO_APPICON,
       BT_APPICONGETPOS,
       NULL);
 
-    DoMethod(CH_WBAPPICON,         MUIM_Notify, MUIA_Selected, MUIV_EveryTime, obj,                  9, MUIM_MultiSet, MUIA_Disabled, MUIV_NotTriggerValue, ST_APPX, ST_APPY, ST_APPICON, CH_APPICONPOS, BT_APPICONGETPOS, NULL);
+    DoMethod(CH_WBAPPICON,         MUIM_Notify, MUIA_Selected, MUIV_EveryTime, obj,                  9, MUIM_MultiSet, MUIA_Disabled, MUIV_NotTriggerValue, ST_APPX, ST_APPY, PO_APPICON, CH_APPICONPOS, BT_APPICONGETPOS, NULL);
     DoMethod(BT_APPICONGETPOS,     MUIM_Notify, MUIA_Pressed,  FALSE,          obj,                  1, METHOD(GetAppIconPos));
     DoMethod(CH_CONFIRM,           MUIM_Notify, MUIA_Selected, MUIV_EveryTime, NB_CONFIRMDEL,        3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
 
@@ -497,7 +504,7 @@ OVERLOAD(MUIM_ConfigPage_ConfigToGUI)
   set(data->ST_APPX, MUIA_String_Integer, abs(CE->IconPositionX));
   set(data->ST_APPY, MUIA_String_Integer, abs(CE->IconPositionY));
   setcheckmark(data->CH_APPICONPOS, CE->IconPositionX >= 0 && CE->IconPositionY >= 0);
-  setstring(data->ST_APPICON, CE->AppIconText);
+  setstring(data->PO_APPICON, CE->AppIconText);
   #if defined(__amigaos4__)
   setcheckmark(data->CH_DOCKYICON, CE->DockyIcon);
   #endif // __amigaos4__
@@ -512,7 +519,7 @@ OVERLOAD(MUIM_ConfigPage_ConfigToGUI)
   set(data->TX_ENCPACK, MUIA_Text_Contents, CE->XPKPackEncrypt);
   setslider(data->NB_PACKER, CE->XPKPackEff);
   setslider(data->NB_ENCPACK, CE->XPKPackEncryptEff);
-  setstring(data->ST_ARCHIVER, CE->PackerCommand);
+  setstring(data->PO_ARCHIVER, CE->PackerCommand);
   setcheckmark(data->CH_ARCHIVERPROGRESS, CE->ShowPackerProgress);
 
   set(data->CH_APPICONPOS, MUIA_Disabled, CE->WBAppIcon == FALSE);
@@ -546,7 +553,7 @@ OVERLOAD(MUIM_ConfigPage_GUIToConfig)
     CE->IconPositionY = -CE->IconPositionY;
   }
 
-  GetMUIString(CE->AppIconText, data->ST_APPICON, sizeof(CE->AppIconText));
+  GetMUIString(CE->AppIconText, data->PO_APPICON, sizeof(CE->AppIconText));
   #if defined(__amigaos4__)
   CE->DockyIcon         = GetMUICheck(data->CH_DOCKYICON);
   #endif // __amigaos4__
@@ -558,7 +565,7 @@ OVERLOAD(MUIM_ConfigPage_GUIToConfig)
   GetMUIText(CE->XPKPackEncrypt, data->TX_ENCPACK, sizeof(CE->XPKPackEncrypt));
   CE->XPKPackEff        = GetMUINumer(data->NB_PACKER);
   CE->XPKPackEncryptEff = GetMUINumer(data->NB_ENCPACK);
-  GetMUIString(CE->PackerCommand, data->ST_ARCHIVER, sizeof(CE->PackerCommand));
+  GetMUIString(CE->PackerCommand, data->PO_ARCHIVER, sizeof(CE->PackerCommand));
   CE->ShowPackerProgress = GetMUICheck(data->CH_ARCHIVERPROGRESS);
   CE->TransferWindow = GetMUICycle(data->CY_TRANSWIN);
   GetMUIString(CE->Editor, data->ST_EDITOR, sizeof(CE->Editor));

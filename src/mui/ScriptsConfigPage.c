@@ -39,6 +39,7 @@
 
 #include "mui/ConfigPage.h"
 #include "mui/ConfigPageList.h"
+#include "mui/PlaceholderPopobject.h"
 #include "mui/PlaceholderPopupList.h"
 #include "mui/ScriptList.h"
 
@@ -53,9 +54,7 @@ struct Data
   Object *LV_REXX;
   Object *ST_RXNAME;
   Object *CY_ISADOS;
-  Object *ST_SCRIPT;
   Object *PO_SCRIPT;
-  Object *LV_SCRIPT;
   Object *CH_CONSOLE;
   Object *CH_WAITTERM;
 
@@ -75,9 +74,7 @@ OVERLOAD(OM_NEW)
   Object *LV_REXX;
   Object *ST_RXNAME;
   Object *CY_ISADOS;
-  Object *ST_SCRIPT;
   Object *PO_SCRIPT;
-  Object *LV_SCRIPT;
   Object *CH_CONSOLE;
   Object *CH_WAITTERM;
   Object *popAsl;
@@ -111,7 +108,11 @@ OVERLOAD(OM_NEW)
           Child, Label2(tr(MSG_CO_Script)),
           Child, HGroup,
             MUIA_Group_HorizSpacing, 0,
-            Child, MakeVarPop(&ST_SCRIPT, &PO_SCRIPT, &LV_SCRIPT, PHM_SCRIPTS, SIZE_PATHFILE, tr(MSG_CO_Script)),
+            Child, PO_SCRIPT = PlaceholderPopobjectObject,
+              MUIA_String_MaxLen, SIZE_PATHFILE,
+              MUIA_PlaceholderPopobject_Mode, PHM_SCRIPTS,
+              MUIA_PlaceholderPopobject_ControlChar, ShortCut(tr(MSG_CO_Script)),
+            End,
             Child, popAsl = PopaslObject,
                MUIA_Popasl_Type,      ASL_FileRequest,
                MUIA_Popstring_Button, PopButton(MUII_PopFile),
@@ -136,24 +137,22 @@ OVERLOAD(OM_NEW)
     data->LV_REXX =     LV_REXX;
     data->ST_RXNAME =   ST_RXNAME;
     data->CY_ISADOS =   CY_ISADOS;
-    data->ST_SCRIPT =   ST_SCRIPT;
     data->PO_SCRIPT =   PO_SCRIPT;
-    data->LV_SCRIPT =   LV_SCRIPT;
     data->CH_CONSOLE =  CH_CONSOLE;
     data->CH_WAITTERM = CH_WAITTERM;
 
     for(i = 1; i <= MAXRX; i++)
       DoMethod(LV_REXX, MUIM_NList_InsertSingle, i, MUIV_NList_Insert_Bottom);
 
-    InitHook(&data->FilereqStartHook, FilereqStartHook, data->ST_SCRIPT);
-    InitHook(&data->FilereqStopHook, FilereqStopHook, data->ST_SCRIPT);
+    InitHook(&data->FilereqStartHook, FilereqStartHook, data->PO_SCRIPT);
+    InitHook(&data->FilereqStopHook, FilereqStopHook, data->PO_SCRIPT);
 
     xset(popAsl,
       MUIA_Popasl_StartHook, &data->FilereqStartHook,
       MUIA_Popasl_StopHook,  &data->FilereqStopHook);
 
     SetHelp(ST_RXNAME,    MSG_HELP_CO_ST_RXNAME);
-    SetHelp(ST_SCRIPT,    MSG_HELP_CO_ST_SCRIPT);
+    SetHelp(PO_SCRIPT,    MSG_HELP_CO_ST_SCRIPT);
     SetHelp(CY_ISADOS,    MSG_HELP_CO_CY_ISADOS);
     SetHelp(CH_CONSOLE,   MSG_HELP_CO_CH_CONSOLE);
     SetHelp(CH_WAITTERM,  MSG_HELP_CO_CH_WAITTERM);
@@ -161,7 +160,7 @@ OVERLOAD(OM_NEW)
 
     DoMethod(LV_REXX,     MUIM_Notify, MUIA_NList_Active,    MUIV_EveryTime, obj, 1, METHOD(GetRXEntry));
     DoMethod(ST_RXNAME,   MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 1, METHOD(PutRXEntry));
-    DoMethod(ST_SCRIPT,   MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 1, METHOD(PutRXEntry));
+    DoMethod(PO_SCRIPT,   MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 1, METHOD(PutRXEntry));
     DoMethod(CY_ISADOS,   MUIM_Notify, MUIA_Cycle_Active,    MUIV_EveryTime, obj, 1, METHOD(PutRXEntry));
     DoMethod(CH_CONSOLE,  MUIM_Notify, MUIA_Selected,        MUIV_EveryTime, obj, 1, METHOD(PutRXEntry));
     DoMethod(CH_WAITTERM, MUIM_Notify, MUIA_Selected,        MUIV_EveryTime, obj, 1, METHOD(PutRXEntry));
@@ -185,7 +184,7 @@ OVERLOAD(MUIM_ConfigPage_ConfigToGUI)
   rh = &(CE->RX[act]);
 
   nnset(data->ST_RXNAME, MUIA_String_Contents, act < 10 ? rh->Name : "");
-  nnset(data->ST_SCRIPT, MUIA_String_Contents, rh->Script);
+  nnset(data->PO_SCRIPT, MUIA_String_Contents, rh->Script);
   nnset(data->CY_ISADOS, MUIA_Cycle_Active, rh->IsAmigaDOS ? 1 : 0);
   nnset(data->CH_CONSOLE, MUIA_Selected, rh->UseConsole);
   nnset(data->CH_WAITTERM, MUIA_Selected, rh->WaitTerm);
@@ -227,7 +226,7 @@ DECLARE(GetRXEntry)
   macro = act;
 
   nnset(data->ST_RXNAME, MUIA_String_Contents, act < 10 ? rh->Name : "");
-  nnset(data->ST_SCRIPT, MUIA_String_Contents, rh->Script);
+  nnset(data->PO_SCRIPT, MUIA_String_Contents, rh->Script);
   nnset(data->CY_ISADOS, MUIA_Cycle_Active, rh->IsAmigaDOS ? 1 : 0);
   nnset(data->CH_CONSOLE, MUIA_Selected, rh->UseConsole);
   nnset(data->CH_WAITTERM, MUIA_Selected, rh->WaitTerm);
@@ -253,7 +252,7 @@ DECLARE(GetRXEntry)
     case MACRO_POSTFILTER:
     default:
       // disable the popup button since these script don't take any parameter
-      nnset(data->PO_SCRIPT, MUIA_Disabled, TRUE);
+      nnset(data->PO_SCRIPT, MUIA_PlaceholderPopobject_PopbuttonDisabled, TRUE);
     break;
 
     case MACRO_PREGET:
@@ -264,13 +263,13 @@ DECLARE(GetRXEntry)
     case MACRO_POSTWRITE:
     case MACRO_URL:
       // enable the popup button
-      nnset(data->PO_SCRIPT, MUIA_Disabled, FALSE);
+      nnset(data->PO_SCRIPT, MUIA_PlaceholderPopobject_PopbuttonDisabled, FALSE);
     break;
   }
 
   DoMethod(data->LV_REXX, MUIM_NList_Redraw, act);
 
-  set(data->LV_SCRIPT, MUIA_PlaceholderPopupList_ScriptEntry, macro);
+  set(data->PO_SCRIPT, MUIA_PlaceholderPopobject_ScriptEntry, macro);
 
   RETURN(0);
   return 0;
@@ -292,7 +291,7 @@ DECLARE(PutRXEntry)
     struct RxHook *rh = &(CE->RX[act]);
 
     GetMUIString(rh->Name, data->ST_RXNAME, sizeof(rh->Name));
-    GetMUIString(rh->Script, data->ST_SCRIPT, sizeof(rh->Script));
+    GetMUIString(rh->Script, data->PO_SCRIPT, sizeof(rh->Script));
     rh->IsAmigaDOS = GetMUICycle(data->CY_ISADOS) == 1;
     rh->UseConsole = GetMUICheck(data->CH_CONSOLE);
     rh->WaitTerm = GetMUICheck(data->CH_WAITTERM);
