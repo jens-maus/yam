@@ -1652,11 +1652,8 @@ static BOOL RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
       long decoded = uudecode_file(in, out, sourceCodeset, isText);
       D(DBF_MAIL, "UU decoded %ld chars of part %ld.", decoded, rp->Nr);
 
-      if(decoded >= 0 &&
-         RE_ConsumeRestOfPart(in, NULL, NULL, NULL, FALSE))
-      {
+      if(decoded >= 0)
         decodeResult = TRUE;
-      }
       else
       {
         switch(decoded)
