@@ -46,6 +46,7 @@
 #include "MUIObjects.h"
 
 #include "mui/WriteWindow.h"
+#include "mui/YAMApplication.h"
 
 #include "Debug.h"
 
