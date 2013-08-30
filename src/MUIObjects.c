@@ -253,7 +253,7 @@ HOOKPROTONO(FilereqStartFunc, BOOL, struct TagItem *tags)
   ENTER();
 
   str = (char *)xget(strObj, MUIA_String_Contents);
-  if(str != NULL && str[0] != '\0')
+  if(IsStrEmpty(str) == FALSE)
   {
     int i=0;
     static char buf[SIZE_PATHFILE];
@@ -296,7 +296,7 @@ HOOKPROTONO(FilereqStopFunc, void, struct FileRequester *fileReq)
   ENTER();
 
   // check if a file was selected or not
-  if(fileReq->fr_File != NULL && fileReq->fr_File[0] != '\0')
+  if(IsStrEmpty(fileReq->fr_File) == FALSE)
   {
     char buf[SIZE_PATHFILE];
 

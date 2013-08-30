@@ -742,7 +742,7 @@ void LoadTheme(struct Theme *theme, const char *themeName)
   {
     char *image = theme->configImages[i];
 
-    if(image != NULL && image[0] != '\0')
+    if(IsStrEmpty(image) == FALSE)
     {
       if(ObtainImage(configImageIDs[i], image, NULL) == NULL)
         W(DBF_THEME, "couldn't obtain image '%s' of theme '%s'", image, theme->directory);
@@ -755,7 +755,7 @@ void LoadTheme(struct Theme *theme, const char *themeName)
   {
     char *image = theme->folderImages[i];
 
-    if(image != NULL && image[0] != '\0')
+    if(IsStrEmpty(image) == FALSE)
     {
       if(ObtainImage(folderImageIDs[i], image, NULL) == NULL)
         W(DBF_THEME, "couldn't obtain image '%s' of theme '%s'", image, theme->directory);
@@ -768,7 +768,7 @@ void LoadTheme(struct Theme *theme, const char *themeName)
   {
     char *image = theme->statusImages[i];
 
-    if(image != NULL && image[0] != '\0')
+    if(IsStrEmpty(image) == FALSE)
     {
       if(ObtainImage(statusImageIDs[i], image, NULL) == NULL)
         W(DBF_THEME, "couldn't obtain image '%s' of theme '%s'", image, theme->directory);
@@ -781,7 +781,7 @@ void LoadTheme(struct Theme *theme, const char *themeName)
   {
     char *image = theme->iconImages[i];
 
-    if(image != NULL && image[0] != '\0')
+    if(IsStrEmpty(image) == FALSE)
     {
       char osIconImage[SIZE_PATHFILE];
 

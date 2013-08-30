@@ -1352,7 +1352,7 @@ static unsigned long CompressMsgID(const char *msgid)
   // if the MsgID is valid we calculate the CRC32 checksum and as it
   // consists only of one cycle through the crc function we call it
   // with -1
-  if(msgid != NULL && msgid[0] != '\0')
+  if(IsStrEmpty(msgid) == FALSE)
   {
     char *end;
     size_t len;
@@ -1876,7 +1876,7 @@ BOOL MA_ReadHeader(const char *mailFile, FILE *fh, struct MinList *headerList, e
             }
           }
 
-          if(ptr != NULL && *ptr != '\0')
+          if(IsStrEmpty(ptr) == FALSE)
           {
             *ptr++ = '\0';
 
@@ -1914,7 +1914,7 @@ BOOL MA_ReadHeader(const char *mailFile, FILE *fh, struct MinList *headerList, e
     if(success == FALSE)
       ClearHeaderList(headerList);
     else if(IsMinListEmpty(headerList) == TRUE &&
-            (mode == RHM_MAINHEADER || (buffer != NULL && buffer[0] != '\0') || linesread != 1))
+            (mode == RHM_MAINHEADER || IsStrEmpty(buffer) == FALSE || linesread != 1))
     {
       W(DBF_MAIL, "no required header data found while scanning '%s'", mailFile);
       success = FALSE;

@@ -271,7 +271,7 @@ static int rfc2047_encode_callback(const char *str, const char *charset,
 
   ENTER();
 
-  if(str != NULL && str[0] != '\0')
+  if(IsStrEmpty(str) == FALSE)
   {
     // output quoted-printable-encoded
     while(*str != '\0')
@@ -583,7 +583,7 @@ static int rfc2047_decode_callback(const char *txt, unsigned int len, const char
 
   // now we try to get the src codeset from codesets.library
   // and convert the string into our local charset if required
-  if(chset != NULL && chset[0] != '\0')
+  if(IsStrEmpty(chset) == FALSE)
   {
     // check if the src codeset of the string isn't the same
     // like our local one.
@@ -713,7 +713,7 @@ static int rfc2047_decode_int(const char *text,
   char *encoding;
   char *enctext;
 
-  while(text != 0 && *text != '\0')
+  while(IsStrEmpty(text) == FALSE)
   {
     p=text;
 

@@ -148,8 +148,8 @@ static BOOL Image_Load(struct Data *data, Object *obj)
   ENTER();
 
   if(data->imageLoaded == FALSE &&
-     data->id != NULL && data->id[0] != '\0' &&
-     data->filename != NULL && data->filename[0] != '\0')
+     IsStrEmpty(data->id) == FALSE &&
+     IsStrEmpty(data->filename) == FALSE)
   {
     struct ImageCacheNode *node;
 
@@ -176,7 +176,7 @@ static void Image_Unload(struct Data *data)
   if(data->imageLoaded == TRUE)
   {
     // releasing an image requires a valid ID
-    if(data->id != NULL && data->id[0] != '\0')
+    if(IsStrEmpty(data->id) == FALSE)
     {
       D(DBF_IMAGE, "unloaded old image '%s' (%s)", data->id, data->filename);
       ReleaseImage(data->id, FALSE);
@@ -588,14 +588,14 @@ OVERLOAD(OM_SET)
 
         if(data->id != NULL)
         {
-          if(newId == NULL || newId[0] != '\0')
+          if(IsStrEmpty(newId) == TRUE)
             ReleaseImage(data->id, TRUE);
 
           free(data->id);
           data->id = NULL;
         }
 
-        if(newId != NULL && newId[0] != '\0')
+        if(IsStrEmpty(newId) == FALSE)
         {
           data->id = strdup(newId);
 
@@ -737,7 +737,7 @@ OVERLOAD(MUIM_AskMinMax)
       minheight = data->imageNode.height;
     }
   }
-  else if(data->altText != NULL && data->altText[0] != '\0')
+  else if(IsStrEmpty(data->altText) == FALSE)
   {
     struct RastPort rp;
 
@@ -1063,7 +1063,7 @@ OVERLOAD(MUIM_Draw)
         rel_y += data->imageNode.height;
       }
     }
-    else if(data->altText != NULL && data->altText[0] != '\0')
+    else if(IsStrEmpty(data->altText) == FALSE)
     {
       LONG len;
       struct TextExtent te;

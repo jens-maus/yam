@@ -490,7 +490,7 @@ void WriteContentTypeAndEncoding(FILE *fh, const struct WritePart *part)
 
   // output the "name" and Content-Disposition as well
   // as the "filename" parameter to the mail
-  if(part->Name != NULL && part->Name[0] != '\0')
+  if(IsStrEmpty(part->Name) == FALSE)
   {
     fputc(';', fh);
     HeaderFputs(fh, part->Name, "name", 0);
@@ -514,7 +514,7 @@ void WriteContentTypeAndEncoding(FILE *fh, const struct WritePart *part)
     fprintf(fh, "Content-Transfer-Encoding: %s\n", EncodingName(part->EncType));
 
   // output the Content-Description if appropriate
-  if(part->Description != NULL && part->Description[0] != '\0')
+  if(IsStrEmpty(part->Description) == FALSE)
     EmitHeader(fh, "Content-Description", part->Description);
 
   LEAVE();
@@ -1396,8 +1396,7 @@ static char *AppendRcpt(char *sbuf, const struct Person *pe,
     // Make sure that the person has at least either name or address and
     // that these are non-empty strings. Otherwise we will add invalid
     // recipients like '@domain' without any real name and user name.
-    if((pe->Address != NULL && pe->Address[0] != '\0') ||
-       (pe->RealName != NULL && pe->RealName[0] != '\0'))
+    if(IsStrEmpty(pe->Address) == FALSE || IsStrEmpty(pe->RealName) == FALSE)
     {
       char address[SIZE_LARGE];
       char *ins;
@@ -1534,7 +1533,7 @@ static char *ExpandText(const char *src, struct ExpandTextData *etd)
           char tzone[SIZE_SMALL];
           int convertedGmtOffset = (etd->OM_gmtOffset/60)*100 + (etd->OM_gmtOffset%60);
 
-          if(etd->OM_tzAbbr != NULL && etd->OM_tzAbbr[0] != '\0')
+          if(IsStrEmpty(etd->OM_tzAbbr) == FALSE)
             snprintf(tzone, sizeof(tzone), "%+05d (%s)", convertedGmtOffset, etd->OM_tzAbbr);
           else
             snprintf(tzone, sizeof(tzone), "%+05d", convertedGmtOffset);
@@ -2690,7 +2689,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
 
                 // we found a matching folder for the mail we are going to
                 // reply to, so we go and add the 'mailTo' to our To: addresses
-                while(ptr != NULL && *ptr != '\0')
+                while(IsStrEmpty(ptr) == FALSE)
                 {
                   char *next;
 
@@ -2714,7 +2713,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
 
                 // we found a matching folder for the mail we are going to
                 // reply to, so we go and add the 'mailReplyTo' to our Reply-To: addresses
-                while(ptr != NULL && *ptr != '\0')
+                while(IsStrEmpty(ptr) == FALSE)
                 {
                   char *next;
 
@@ -3001,7 +3000,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
 
             // if there has been another (preferred) reply text given
             // we use that one instead
-            if(replytxt != NULL && replytxt[0] != '\0')
+            if(IsStrEmpty(replytxt) == FALSE)
             {
               // make sure we quote the text in question.
               QuoteText(out, replytxt, strlen(replytxt), C->EdWrapMode != EWM_OFF ? C->EdWrapCol-2 : 1024);

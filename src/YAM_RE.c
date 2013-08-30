@@ -2330,7 +2330,7 @@ BOOL RE_DecodePart(struct Part *rp)
       {
         // we first try to identify the file extension via the user
         // definable MIME type list configuration.
-        if(rp->ContentType != NULL && rp->ContentType[0] != '\0')
+        if(IsStrEmpty(rp->ContentType) == FALSE)
         {
           struct MimeTypeNode *curType;
 
@@ -2374,7 +2374,7 @@ BOOL RE_DecodePart(struct Part *rp)
         // and last, but not least we try to identify the proper file extension
         // via our internal fallback mime type list
         if(ext[0] == '\0' &&
-           rp->ContentType != NULL && rp->ContentType[0] != '\0')
+           IsStrEmpty(rp->ContentType) == FALSE)
         {
           int i;
 

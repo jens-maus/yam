@@ -370,7 +370,7 @@ struct ImageCacheNode *ObtainImage(const char *id, const char *filename, const s
   if((node = CreateImageCacheNode(id, filename)) == NULL)
   {
     // check if the file exists or not.
-    if(filename != NULL && filename[0] != '\0' && FileExists(filename) == FALSE)
+    if(IsStrEmpty(filename) == FALSE && FileExists(filename) == FALSE)
     {
       if(G->NoImageWarning == FALSE)
       {

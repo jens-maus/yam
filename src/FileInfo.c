@@ -222,7 +222,7 @@ BOOL FileExists(const char *filename)
 
   ENTER();
 
-  if(filename != NULL && filename[0] != '\0' &&
+  if(IsStrEmpty(filename) == FALSE &&
      (lock = Lock(filename, ACCESS_READ)))
   {
     D(DBF_UTIL, "file/dir '%s' does exist", filename);

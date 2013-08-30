@@ -537,7 +537,7 @@ DECLARE(SearchContentChanged) // char *content, ULONG force
 
   // depending on if there is something to search for
   // we have to prepare something different
-  if(msg->content != NULL && msg->content[0] != '\0')
+  if(IsStrEmpty(msg->content) == FALSE)
   {
     // we only start the actual search in case a minimum of two
     // characters are specified or the user pressed return explicitly
@@ -609,7 +609,7 @@ DECLARE(SearchOptionChanged) // int activeSearchOption
   set(data->ST_SEARCHSTRING, MUIA_BetterString_InactiveContents, inactiveContents);
 
   // now we check whether the there is something to search for or not.
-  if(searchContent != NULL && searchContent[0] != '\0')
+  if(IsStrEmpty(searchContent) == FALSE)
   {
     // immediately process the search, but make sure there is no
     // pending timerIO waiting already

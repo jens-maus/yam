@@ -1824,7 +1824,7 @@ OVERLOAD(OM_SET)
         char *str = (char *)tag->ti_Data;
 
         setstring(data->ST_CC, str);
-        if(str != NULL && str[0] != '\0')
+        if(IsStrEmpty(str) == FALSE)
           DoMethod(obj, METHOD(ShowRecipientObject), MUIV_WriteWindow_RcptType_CC);
 
         // make the superMethod call ignore those tags
@@ -1837,7 +1837,7 @@ OVERLOAD(OM_SET)
         char *str = (char *)tag->ti_Data;
 
         setstring(data->ST_BCC, str);
-        if(str != NULL && str[0] != '\0')
+        if(IsStrEmpty(str) == FALSE)
           DoMethod(obj, METHOD(ShowRecipientObject), MUIV_WriteWindow_RcptType_BCC);
 
         // make the superMethod call ignore those tags
@@ -1850,7 +1850,7 @@ OVERLOAD(OM_SET)
         char *str = (char *)tag->ti_Data;
 
         setstring(data->ST_REPLYTO, str);
-        if(str != NULL && str[0] != '\0')
+        if(IsStrEmpty(str) == FALSE)
           DoMethod(obj, METHOD(ShowRecipientObject), MUIV_WriteWindow_RcptType_ReplyTo);
 
         // make the superMethod call ignore those tags
@@ -3836,7 +3836,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
     else
       goto out;
   }
-  else if(addr != NULL && addr[0] != '\0')
+  else if(IsStrEmpty(addr) == FALSE)
     comp.MailTo = addr; // To: address
 
   // get the content of the Subject: String gadget and check if it is empty or not.
@@ -3884,7 +3884,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
     goto out;
   }
-  else if(addr != NULL && addr[0] != '\0')
+  else if(IsStrEmpty(addr) == FALSE)
     comp.MailCC = addr;
 
   // then we check the BCC string gadget
@@ -3903,7 +3903,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
     goto out;
   }
-  else if(addr != NULL && addr[0] != '\0')
+  else if(IsStrEmpty(addr) == FALSE)
     comp.MailBCC = addr;
 
   // from here on a mail redirect window/operation doesn't need to take care
@@ -3926,7 +3926,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
       goto out;
     }
-    else if(addr != NULL && addr[0] != '\0')
+    else if(IsStrEmpty(addr) == FALSE)
       comp.ReplyTo = addr;
 
     // now we search all To:,CC: and BCC: addresses and try to match them

@@ -182,7 +182,7 @@ static void NormalizeSelection(Object *obj)
 
   ENTER();
 
-  if(rcp != NULL && rcp[0] != '\0')
+  if(IsStrEmpty(rcp) == FALSE)
   {
     LONG start = DoMethod(obj, METHOD(RecipientStart));
     LONG rcpSize;

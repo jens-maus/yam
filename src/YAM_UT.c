@@ -2771,7 +2771,7 @@ BOOL DateStamp2RFCString(char *dst, const int dstlen, const struct DateStamp *da
   Amiga2Date(seconds, &cd);
 
   // use snprintf to format the RFC2822 conforming datetime string.
-  if(tzAbbr != NULL && tzAbbr[0] != '\0')
+  if(IsStrEmpty(tzAbbr) == FALSE)
   {
     if(gmtOffset > INT_MIN)
     {

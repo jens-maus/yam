@@ -348,7 +348,7 @@ DECLARE(FindEmailMatches) // STRPTR matchText, Object *list
 
   ENTER();
 
-  if(msg->matchText != NULL && msg->matchText[0] != '\0')
+  if(IsStrEmpty(msg->matchText) == FALSE)
   {
     // We first try to find matches in the Addressbook
     // and add them to the MUI list
@@ -408,7 +408,7 @@ DECLARE(FindEmailCacheMatch) // STRPTR matchText
 
   ENTER();
 
-  if(C->EmailCache > 0 && msg->matchText && msg->matchText[0] != '\0')
+  if(C->EmailCache > 0 && IsStrEmpty(msg->matchText) == FALSE)
   {
     int i, matches = 0;
     LONG tl = strlen(msg->matchText);

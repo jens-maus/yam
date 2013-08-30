@@ -82,7 +82,7 @@ HOOKPROTONH(HandleVarFunc, void, Object *listview, Object *string)
 
       strlcpy(addstr, var, sizeof(addstr));
 
-      if(str != NULL && str[0] != '\0')
+      if(IsStrEmpty(str) == FALSE)
       {
         int len = strlen(str)+sizeof(addstr);
         char *buf;
