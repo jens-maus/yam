@@ -188,7 +188,7 @@ OVERLOAD(OM_NEW)
     SetHelp(CH_MOVEHAMTOINCOMING,     MSG_HELP_CH_MOVE_HAM_TO_INCOMING);
     SetHelp(CH_FILTERHAM,             MSG_HELP_CH_FILTER_HAM);
 
-    DoMethod(CH_SPAMFILTERENABLED,        MUIM_Notify, MUIA_Selected, MUIV_EveryTime, obj,                    2, METHOD(ToggleSpamFilter), MUIV_TriggerValue);
+    DoMethod(CH_SPAMFILTERENABLED,        MUIM_Notify, MUIA_Selected, MUIV_EveryTime, obj,                    2, METHOD(ToggleSpamFilter), MUIV_NotTriggerValue);
     DoMethod(CH_MOVEHAMTOINCOMING,        MUIM_Notify, MUIA_Selected, MUIV_EveryTime, CH_FILTERHAM,           3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
     DoMethod(CH_SPAM_TRUSTEXTERNALFILTER, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, CY_SPAM_EXTERNALFILTER, 3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
     DoMethod(BT_SPAMRESETTRAININGDATA,    MUIM_Notify, MUIA_Pressed,  FALSE,          obj,                    1, METHOD(ResetSpamTrainingData));
@@ -510,40 +510,27 @@ DECLARE(UpdateStats)
 /// DECLARE(ToggleSpamFilter)
 // enable/disable all spam filter relevant GUI elements according to the
 // current spam filter settings
-DECLARE(ToggleSpamFilter) // ULONG active
+DECLARE(ToggleSpamFilter) // ULONG inactive
 {
   GETDATA;
 
   ENTER();
 
+  DoMethod(obj, MUIM_MultiSet, MUIA_Disabled, msg->inactive,
+    data->BT_SPAMRESETTRAININGDATA,
+    data->BT_OPTIMIZETRAININGDATA,
+    data->CH_SPAMFILTERFORNEWMAIL,
+    data->CH_SPAMABOOKISWHITELIST,
+    data->CH_SPAMMARKONMOVE,
+    data->CH_SPAMMARKASREAD,
+    data->CH_MOVEHAMTOINCOMING,
+    data->CH_SPAM_TRUSTEXTERNALFILTER,
+    NULL);
+
   if(msg->active == TRUE)
   {
-    DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, FALSE, data->BT_SPAMRESETTRAININGDATA,
-                                                          data->BT_OPTIMIZETRAININGDATA,
-                                                          data->CH_SPAMFILTERFORNEWMAIL,
-                                                          data->CH_SPAMABOOKISWHITELIST,
-                                                          data->CH_SPAMMARKONMOVE,
-                                                          data->CH_SPAMMARKASREAD,
-                                                          data->CH_MOVEHAMTOINCOMING,
-                                                          data->CH_SPAM_TRUSTEXTERNALFILTER,
-                                                          NULL);
     set(data->CH_FILTERHAM, MUIA_Disabled, xget(data->CH_MOVEHAMTOINCOMING, MUIA_Selected) == FALSE);
     set(data->CY_SPAM_EXTERNALFILTER, MUIA_Disabled, xget(data->CH_SPAM_TRUSTEXTERNALFILTER, MUIA_Selected) == FALSE);
-  }
-  else
-  {
-    // disable all spam filter controls
-    DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, TRUE, data->BT_SPAMRESETTRAININGDATA,
-                                                         data->BT_OPTIMIZETRAININGDATA,
-                                                         data->CH_SPAMFILTERFORNEWMAIL,
-                                                         data->CH_SPAMABOOKISWHITELIST,
-                                                         data->CH_SPAMMARKONMOVE,
-                                                         data->CH_SPAMMARKASREAD,
-                                                         data->CH_MOVEHAMTOINCOMING,
-                                                         data->CH_FILTERHAM,
-                                                         data->CH_SPAM_TRUSTEXTERNALFILTER,
-                                                         data->CY_SPAM_EXTERNALFILTER,
-                                                         NULL);
   }
 
   RETURN(0);
