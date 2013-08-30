@@ -490,11 +490,12 @@ DECLARE(UpdateMDN) // ULONG active
 
   nnset(data->CH_MDN_NEVER, MUIA_Selected, msg->active == FALSE);
   nnset(data->CH_MDN_ALLOW, MUIA_Selected, msg->active == TRUE);
-  DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, msg->active == FALSE, data->CY_MDN_NORECIPIENT,
-                                                                       data->CY_MDN_NODOMAIN,
-                                                                       data->CY_MDN_DELETE,
-                                                                       data->CY_MDN_OTHER,
-                                                                       NULL);
+  DoMethod(obj, MUIM_MultiSet, MUIA_Disabled, msg->active == FALSE,
+    data->CY_MDN_NORECIPIENT,
+    data->CY_MDN_NODOMAIN,
+    data->CY_MDN_DELETE,
+    data->CY_MDN_OTHER,
+    NULL);
 
   RETURN(0);
   return 0;
