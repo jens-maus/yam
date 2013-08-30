@@ -90,9 +90,9 @@ char *dstralloc(size_t initsize)
 
   ENTER();
 
-  // make sure we allocate in SIZE_DEFAULT chunks
+  // make sure we allocate in SIZE_DSTRCHUNK chunks
   while(size <= initsize)
-    size += SIZE_DEFAULT;
+    size += SIZE_DSTRCHUNK;
 
   if((dstr = dstrallocInternal(size)) != NULL)
     result = DSTR_TO_STR(dstr);
@@ -163,9 +163,9 @@ char *dstrcpy(char **dstr, const char *src)
     oldsize = ds->size;
     newsize = oldsize;
 
-    // make sure we allocate in SIZE_DEFAULT chunks
+    // make sure we allocate in SIZE_DSTRCHUNK chunks
     while(newsize <= reqsize)
-      newsize += SIZE_DEFAULT;
+      newsize += SIZE_DSTRCHUNK;
 
     // if we have to change the size do it now
     if(newsize > oldsize)
@@ -243,9 +243,9 @@ char *dstrcat(char **dstr, const char *src)
     // the old dstr
     reqsize += ds->strlen;
 
-    // make sure we allocate in SIZE_DEFAULT chunks
+    // make sure we allocate in SIZE_DSTRCHUNK chunks
     while(newsize <= reqsize)
-      newsize += SIZE_DEFAULT;
+      newsize += SIZE_DSTRCHUNK;
 
     // if we have to change the size do it now
     if(newsize > oldsize)

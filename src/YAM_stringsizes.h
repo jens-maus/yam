@@ -53,6 +53,7 @@
 #define SIZE_EXALLBUF  32768
 #define SIZE_FILEBUF   65536 // the buffer size for our fopen() file buffers
 #define SIZE_STACK     65536 // stack size for main task and threads
+#define SIZE_DSTRCHUNK  1024 // must be a power of 2
 
 #define MAXRX             23  // Number of script entries in the script list
 

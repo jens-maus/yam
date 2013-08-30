@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-08-30 Thore Böckelmann <tboeckel@gmx.de>
+
+  * DynamicString.c: increased the chunk size for dynamic strings to 1024 bytes.
+    Reason is the recent change to use dynamic string when reading mails parts.
+    The former chunk size of 80 bytes resulted in thousands of reallocations for
+    large attachments which made the process *very* slow.
+
 2013-08-30 Pär Boberg <pbobbenb@spray.se>
 
   * locale/swedish.ct: updated to the latest changes.
