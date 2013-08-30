@@ -102,8 +102,9 @@ struct Data
 /* Private functions */
 /// GhostOutFilter
 //  Enables/disables GUI gadgets in filter form
-static void GhostOutFilter(struct Data *data)
+static void GhostOutFilter(struct IClass *cl, Object *obj)
 {
+  GETDATA;
   struct FilterNode *filter = data->filter;
   BOOL isremote;
   LONG pos = MUIV_NList_GetPos_Start;
@@ -430,7 +431,7 @@ OVERLOAD(OM_NEW)
     set(BT_FILTERDOWN, MUIA_CycleChain, TRUE);
     set(BT_FILTER_IMPORT, MUIA_CycleChain, TRUE);
 
-    GhostOutFilter(data);
+    GhostOutFilter(cl, obj);
 
     DoMethod(LV_RULES,             MUIM_Notify, MUIA_NList_Active,                         MUIV_EveryTime, obj, 1, METHOD(GetFilterEntry));
     DoMethod(ST_RNAME,             MUIM_Notify, MUIA_String_Contents,                      MUIV_EveryTime, obj, 1, METHOD(PutFilterEntry));
@@ -598,7 +599,7 @@ DECLARE(GetFilterEntry)
     set(data->GR_SGROUP, MUIA_ObjectList_Quiet, FALSE);
   }
 
-  GhostOutFilter(data);
+  GhostOutFilter(cl, obj);
 
   RETURN(0);
   return 0;
@@ -666,7 +667,7 @@ DECLARE(PutFilterEntry)
         DoMethod(ruleItem, MUIM_SearchControlGroup_GUIToRule, rule);
     }
 
-    GhostOutFilter(data);
+    GhostOutFilter(cl, obj);
     DoMethod(data->LV_RULES, MUIM_NList_Redraw, MUIV_NList_Redraw_Active);
   }
 
@@ -746,7 +747,7 @@ DECLARE(ToggleRemoteFlag) // ULONG remote
     set(ruleItem, MUIA_SearchControlGroup_RemoteFilterMode, msg->remote);
   }
 
-  GhostOutFilter(data);
+  GhostOutFilter(cl, obj);
 
   RETURN(0);
   return 0;
