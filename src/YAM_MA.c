@@ -4289,8 +4289,6 @@ struct MA_ClassData *MA_New(void)
     {
       ULONG i;
 
-      DoMethod(data->GUI.NL_FOLDERS, MUIM_MainFolderListtree_MakeFormat);
-
       DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
 
       // set the maillist group as the active object of that window

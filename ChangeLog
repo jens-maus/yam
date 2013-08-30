@@ -11,6 +11,8 @@ $URL$
     Reason is the recent change to use dynamic string when reading mails parts.
     The former chunk size of 80 bytes resulted in thousands of reallocations for
     large attachments which made the process *very* slow.
+  * YAM_MA.c, mui/MainFolderListtree.c: call the MakeFormat method in the folder
+    listtree's constructor rather than from the main window's.
 
 2013-08-30 Pär Boberg <pbobbenb@spray.se>
 
