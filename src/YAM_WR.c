@@ -53,6 +53,7 @@
 
 #include "mui/ClassesExtra.h"
 #include "mui/WriteWindow.h"
+#include "mui/YAMApplication.h"
 #include "mime/rfc2231.h"
 #include "mime/rfc2047.h"
 #include "mime/base64.h"
@@ -1750,8 +1751,7 @@ static struct WriteMailData *CreateWriteWindow(const enum NewMailMode mailMode, 
       return wmData;
     }
 
-    DoMethod(G->App, OM_REMMEMBER, newWriteWindow);
-    MUI_DisposeObject(newWriteWindow);
+    DoMethod(G->App, MUIM_YAMApplication_DisposeSubWindow, newWriteWindow);
   }
 
   E(DBF_GUI, "ERROR occurred during write window creation!");
@@ -2635,7 +2635,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
         {
           // ask the user and in case he want to abort, quit this
           // function immediately.
-          if((repmode = MUI_Request(G->App, G->MA->GUI.WI, MUIF_NONE, NULL, tr(MSG_MA_ReplyReqOpt), tr(MSG_MA_ReplyReq))) == 0)
+          if((repmode = MUI_Request(_app(wmData->window), G->MA->GUI.WI, MUIF_NONE, NULL, tr(MSG_MA_ReplyReqOpt), tr(MSG_MA_ReplyReq))) == 0)
           {
             MA_FreeEMailStruct(email);
             fclose(out);
@@ -2792,7 +2792,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
                 else
                   snprintf(buffer, sizeof(buffer), tr(MSG_MA_CompareReq), mail->From.Address, mail->ReplyTo.Address);
 
-                switch(MUI_Request(G->App, G->MA->GUI.WI, MUIF_NONE, NULL, tr(MSG_MA_Compare3ReqOpt), buffer))
+                switch(MUI_Request(_app(wmData->window), G->MA->GUI.WI, MUIF_NONE, NULL, tr(MSG_MA_Compare3ReqOpt), buffer))
                 {
                   // Both (From:+ReplyTo:/Mail-Reply-To:) address
                   case 3:
@@ -3234,8 +3234,7 @@ BOOL CleanupWriteMailData(struct WriteMailData *wmData)
     nnset(wmData->window, MUIA_Window_Open, FALSE);
 
     D(DBF_GUI, "cleaning up write window");
-    DoMethod(G->App, OM_REMMEMBER, wmData->window);
-    MUI_DisposeObject(wmData->window);
+    DoMethod(_app(wmData->window), MUIM_YAMApplication_DisposeSubWindow, wmData->window);
 
     wmData->window = NULL;
   }

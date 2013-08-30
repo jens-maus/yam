@@ -64,6 +64,7 @@
 #include "mui/ReadMailGroup.h"
 #include "mui/ReadWindow.h"
 #include "mui/WriteWindow.h"
+#include "mui/YAMApplication.h"
 #include "mime/rfc2231.h"
 #include "mime/base64.h"
 #include "mime/qprintable.h"
@@ -187,7 +188,7 @@ BOOL RE_Export(struct ReadMailData *rmData, const char *source,
   {
     if(FileExists(dest) == TRUE && overwrite == FALSE)
     {
-      if(MUI_Request(G->App, win, MUIF_NONE, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_FILE_OVERWRITE), FilePart(dest)) == 0)
+      if(MUI_Request(_app(win), win, MUIF_NONE, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_FILE_OVERWRITE), FilePart(dest)) == 0)
         dest = NULL;
     }
   }
@@ -257,7 +258,7 @@ BOOL RE_PrintFile(const char *filename, const Object *win)
     // signal the failure to the user
     // in case we were not able to print something
     if(success == FALSE)
-      MUI_Request(G->App, win, MUIF_NONE, tr(MSG_ErrorReq), tr(MSG_OkayReq), tr(MSG_ER_PRINTER_FAILED));
+      MUI_Request(_app(win), win, MUIF_NONE, tr(MSG_ErrorReq), tr(MSG_OkayReq), tr(MSG_ER_PRINTER_FAILED));
   }
 
   RETURN(success);
@@ -3563,7 +3564,7 @@ struct ABEntry *RE_AddToAddrbook(Object *win, struct ABEntry *templ)
       char address[SIZE_LARGE];
 
       snprintf(buf, sizeof(buf), tr(MSG_RE_AddSender), BuildAddress(address, sizeof(address), templ->Address, templ->RealName));
-      doit = MUI_Request(G->App, win, MUIF_NONE, NULL, tr(MSG_YesNoReq), buf);
+      doit = MUI_Request(_app(win), win, MUIF_NONE, NULL, tr(MSG_YesNoReq), buf);
     }
     break;
 
@@ -3680,7 +3681,7 @@ void RE_ClickedOnMessage(char *address, const Object *win)
 
     snprintf(buf, sizeof(buf), tr(MSG_RE_SelectAddressReq), address);
 
-    switch(MUI_Request(G->App, win, MUIF_NONE, NULL, tr(hits ? MSG_RE_SelectAddressEdit : MSG_RE_SelectAddressAdd), buf))
+    switch(MUI_Request(_app(win), win, MUIF_NONE, NULL, tr(hits ? MSG_RE_SelectAddressEdit : MSG_RE_SelectAddressAdd), buf))
     {
       case 1:
       {
@@ -3718,7 +3719,7 @@ void RE_ClickedOnMessage(char *address, const Object *win)
       {
         int winNum;
 
-        DoMethod(G->App, MUIM_CallHook, &AB_OpenHook, ABM_EDIT);
+        DoMethod(win, MUIM_CallHook, &AB_OpenHook, ABM_EDIT);
 
         if(hits != 0)
         {
@@ -4459,7 +4460,7 @@ struct ReadMailData *CreateReadWindow(BOOL forceNewWindow)
 
   // if we end up here we create a new ReadWindowObject
   newReadWindow = ReadWindowObject, End;
-  if(newReadWindow)
+  if(newReadWindow != NULL)
   {
     // get the ReadMailData and check that it is the same like created
     struct ReadMailData *rmData = (struct ReadMailData *)xget(newReadWindow, MUIA_ReadWindow_ReadMailData);
@@ -4472,8 +4473,7 @@ struct ReadMailData *CreateReadWindow(BOOL forceNewWindow)
       return rmData;
     }
 
-    DoMethod(G->App, OM_REMMEMBER, newReadWindow);
-    MUI_DisposeObject(newReadWindow);
+    DoMethod(_app(newReadWindow), MUIM_YAMApplication_DisposeSubWindow, newReadWindow);
   }
 
   E(DBF_GUI, "ERROR occurred during read Window creation!");
@@ -4674,11 +4674,8 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL fullCleanup)
     // clean up the read window now
     if(rmData->readWindow != NULL)
     {
-      Object *readWindow = rmData->readWindow;
-
       D(DBF_GUI, "cleaning up readwindow");
-      DoMethod(G->App, OM_REMMEMBER, readWindow);
-      MUI_DisposeObject(readWindow);
+      DoMethod(_app(rmData->readWindow), MUIM_YAMApplication_DisposeSubWindow, rmData->readWindow);
       // do not access rmData beyond this point as the pointer is free()'d in
       // the ReadWindow's OM_DISPOSE method
     }
