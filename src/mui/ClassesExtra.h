@@ -35,7 +35,6 @@
 #include <string.h>
 
 #include <clib/alib_protos.h>
-#include <clib/macros.h>
 #include <libraries/iffparse.h>
 #include <libraries/gadtools.h>
 #include <mui/BetterString_mcc.h>

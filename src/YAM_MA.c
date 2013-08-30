@@ -33,7 +33,6 @@
 #include <clib/alib_protos.h>
 #endif
 
-#include <clib/macros.h>
 #include <libraries/asl.h>
 #include <libraries/gadtools.h>
 #include <libraries/iffparse.h>

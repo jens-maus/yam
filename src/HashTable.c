@@ -28,11 +28,10 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include <clib/macros.h>
+#include "YAM_utilities.h"
 
 #include "HashTable.h"
 
-#include "YAM_utilities.h"
 #include "Debug.h"
 
 /*** Macro definitions ***/

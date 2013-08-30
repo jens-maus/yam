@@ -32,7 +32,6 @@
 #include <limits.h>
 
 #include <clib/alib_protos.h>
-#include <clib/macros.h>
 #include <libraries/gadtools.h>
 #include <libraries/iffparse.h>
 #include <mui/NList_mcc.h>

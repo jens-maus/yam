@@ -39,7 +39,6 @@
 #include <netinet/in.h>
 
 #include <clib/alib_protos.h>
-#include <clib/macros.h>
 #include <datatypes/pictureclass.h>
 #include <datatypes/soundclass.h>
 #include <devices/printer.h>
