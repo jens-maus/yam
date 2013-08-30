@@ -26,7 +26,6 @@
 ***************************************************************************/
 
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 #include "YAM_stringsizes.h"
@@ -62,26 +61,25 @@ struct DynamicString
 static struct DynamicString *dstrallocInternal(size_t size)
 {
   struct DynamicString *dstr;
-  ldiv_t chunks;
+  size_t chunks;
 
   ENTER();
 
   // add one byte for the terminating NUL byte
   size++;
 
-  // calculate the number of chunks required
-  chunks = ldiv(size, SIZE_DSTRCHUNK);
-  if(chunks.rem != 0)
-    chunks.quot++;
+  // calculate the number of chunks required, +1 for any remaining bytes
+  // beyond the chunk size
+  chunks = (size / SIZE_DSTRCHUNK) + 1;
 
   // allocate the dstr structure and the number of chunks
-  if((dstr = malloc(sizeof(*dstr) + chunks.quot * SIZE_DSTRCHUNK)) != NULL)
+  if((dstr = malloc(sizeof(*dstr) + chunks * SIZE_DSTRCHUNK)) != NULL)
   {
     #if defined(DEBUG)
     dstr->dbg_cookie[0] = 0xbe;
     dstr->dbg_cookie[1] = 0xef; // 0xbeef
     #endif
-    dstr->size = chunks.quot * SIZE_DSTRCHUNK;
+    dstr->size = chunks * SIZE_DSTRCHUNK;
     dstr->strlen = 0;
     dstr->str[0] = '\0';
   }
