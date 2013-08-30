@@ -527,7 +527,7 @@ DECLARE(ToggleSpamFilter) // ULONG inactive
     data->CH_SPAM_TRUSTEXTERNALFILTER,
     NULL);
 
-  if(msg->active == TRUE)
+  if(msg->inactive == FALSE)
   {
     set(data->CH_FILTERHAM, MUIA_Disabled, xget(data->CH_MOVEHAMTOINCOMING, MUIA_Selected) == FALSE);
     set(data->CY_SPAM_EXTERNALFILTER, MUIA_Disabled, xget(data->CH_SPAM_TRUSTEXTERNALFILTER, MUIA_Selected) == FALSE);
