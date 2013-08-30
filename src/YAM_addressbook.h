@@ -41,14 +41,14 @@ struct ABEntry;
 struct Person;
 
 // special Searchtypes for AB_SearchEntry()
-#define ASM_ALIAS    1
-#define ASM_REALNAME 2
-#define ASM_ADDRESS  4
+#define ASM_ALIAS    (1<<0)
+#define ASM_REALNAME (1<<1)
+#define ASM_ADDRESS  (1<<2)
 #define ASM_TYPEMASK 7
-#define ASM_USER     8
-#define ASM_LIST     16
-#define ASM_GROUP    32
-#define ASM_COMPLETE 64
+#define ASM_USER     (1<<3)
+#define ASM_LIST     (1<<4)
+#define ASM_GROUP    (1<<5)
+#define ASM_COMPLETE (1<<6)
 
 #define isAliasSearch(mode)     (isFlagSet((mode), ASM_ALIAS))
 #define isRealNameSearch(mode)  (isFlagSet((mode), ASM_REALNAME))
@@ -58,8 +58,26 @@ struct Person;
 #define isGroupSearch(mode)     (isFlagSet((mode), ASM_GROUP))
 #define isCompleteSearch(mode)  (isFlagSet((mode), ASM_COMPLETE))
 
-enum AddressbookMode { ABM_NONE=0, ABM_EDIT, ABM_FROM, ABM_TO, ABM_CC, ABM_BCC, ABM_REPLYTO, ABM_CONFIG };
-enum AddressbookFind { ABF_USER=0, ABF_RX, ABF_RX_NAME, ABF_RX_EMAIL, ABF_RX_NAMEEMAIL };
+enum AddressbookMode
+{
+  ABM_NONE=0,
+  ABM_EDIT,
+  ABM_FROM,
+  ABM_TO,
+  ABM_CC,
+  ABM_BCC,
+  ABM_REPLYTO,
+  ABM_CONFIG
+};
+
+enum AddressbookFind
+{
+ ABF_USER=0,
+ ABF_RX,
+ ABF_RX_NAME,
+ ABF_RX_EMAIL,
+ ABF_RX_NAMEEMAIL
+};
 
 struct AB_GUIData
 {
@@ -96,5 +114,16 @@ BOOL   AB_LoadTree(const char *fname, BOOL append, BOOL sorted);
 struct AB_ClassData *AB_New(void);
 BOOL   AB_SaveTree(const char *fname);
 int    AB_SearchEntry(const char *text, int mode, struct ABEntry **ab);
+
+void AB_PrintLevel(struct MUI_NListtree_TreeNode *list, FILE *prt, int mode);
+void AB_PrintLongEntry(FILE *prt, struct ABEntry *ab);
+void AB_PrintShortEntry(FILE *prt, struct ABEntry *ab);
+void AB_InsertAddressTreeNode(Object *writeWindow, ULONG type, struct MUI_NListtree_TreeNode *tn);
+
+BOOL AB_ExportTreeLDIF(const char *fname);
+BOOL AB_ImportTreeLDIF(const char *fname, BOOL append, BOOL sorted);
+BOOL AB_ImportTreeTabCSV(const char *fname, BOOL append, BOOL sorted, char delim);
+BOOL AB_ExportTreeTabCSV(const char *fname, char delim);
+BOOL AB_ImportTreeXML(const char *fname, BOOL append, BOOL sorted);
 
 #endif /* YAM_ADDRESSBOOK_H */

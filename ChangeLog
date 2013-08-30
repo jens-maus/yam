@@ -8,11 +8,15 @@ $URL$
 2013-08-30 Thore Böckelmann <tboeckel@gmx.de>
 
   * DynamicString.c: increased the chunk size for dynamic strings to 1024 bytes.
-    Reason is the recent change to use dynamic string when reading mails parts.
+    Reason is the recent change to use dynamic strings when reading mails parts.
     The former chunk size of 80 bytes resulted in thousands of reallocations for
     large attachments which made the process *very* slow.
   * YAM_MA.c, mui/MainFolderListtree.c: call the MakeFormat method in the folder
     listtree's constructor rather than from the main window's.
+  * mui/AddressBookWindow.c: added new class to separate the address book GUI
+    from the address book data structures. This class is not yet used, because
+    the address book data structures are still far too much convoluted with the
+    current GUI.
 
 2013-08-30 Pär Boberg <pbobbenb@spray.se>
 
@@ -34,7 +38,7 @@ $URL$
     the application and not of other window objects.
   * mui/YAMApplication.c, misc: moved all subwindow related stuff (i.e. opening,
     closing, disposing) to the application class as it really fits better there.
-  * mui/CharsetPopobject.c: added new class for all codeset popup objects.
+  * mui/CodesetPopobject.c: added new class for all codeset popup objects.
   * mui/PGPKeyPopobject.c: added new class for all PGP key popup objects.
   * mui/MimeTypePopobject.c: added new class for all MIME type popup objects.
     This makes the internal handling of the open/close hooks MUCH easier.

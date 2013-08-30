@@ -704,7 +704,7 @@ char *AB_CompleteAlias(const char *text)
 
 ///
 /// AB_InsertAddressTreeNode (rec)
-static void AB_InsertAddressTreeNode(Object *writeWindow, enum RcptType type, struct MUI_NListtree_TreeNode *tn)
+void AB_InsertAddressTreeNode(Object *writeWindow, ULONG type, struct MUI_NListtree_TreeNode *tn)
 {
   struct ABEntry *ab = (struct ABEntry *)(tn->tn_User);
 
@@ -1143,7 +1143,7 @@ BOOL AB_CreateEmptyABook(const char *fname)
 ///
 /// AB_ImportTreeLDIF
 //  Imports an address book in LDIF format
-static BOOL AB_ImportTreeLDIF(const char *fname, BOOL append, BOOL sorted)
+BOOL AB_ImportTreeLDIF(const char *fname, BOOL append, BOOL sorted)
 {
   FILE *fh;
   BOOL result = FALSE;
@@ -1769,7 +1769,7 @@ static void XMLCharacterDataHandler(void *userData, const XML_Char *s, int len)
 ///
 /// AB_ImportTreeXML
 // imports an address book in XML format (i.e. from SimpleMail)
-static BOOL AB_ImportTreeXML(const char *fname, BOOL append, BOOL sorted)
+BOOL AB_ImportTreeXML(const char *fname, BOOL append, BOOL sorted)
 {
   FILE *fh;
   BOOL result = FALSE;
@@ -1916,7 +1916,7 @@ static void AB_ExportTreeNodeLDIF(FILE *fh, struct MUI_NListtree_TreeNode *list)
 ///
 /// AB_ExportTreeLDIF
 //  Exports an address book as LDIF file
-static BOOL AB_ExportTreeLDIF(const char *fname)
+BOOL AB_ExportTreeLDIF(const char *fname)
 {
   FILE *fh;
   BOOL result = FALSE;
@@ -1942,7 +1942,7 @@ static BOOL AB_ExportTreeLDIF(const char *fname)
 ///
 /// AB_ImportTreeTabCSV
 //  Imports an address book with comma or tab separated entries
-static BOOL AB_ImportTreeTabCSV(const char *fname, BOOL append, BOOL sorted, char delim)
+BOOL AB_ImportTreeTabCSV(const char *fname, BOOL append, BOOL sorted, char delim)
 {
   FILE *fh;
   BOOL result = FALSE;
@@ -2281,7 +2281,7 @@ static void AB_ExportTreeNodeTabCSV(FILE *fh, struct MUI_NListtree_TreeNode *lis
 ///
 /// AB_ExportTreeTabCSV
 //  Exports an address book with comma or tab separated entries
-static BOOL AB_ExportTreeTabCSV(const char *fname, char delim)
+BOOL AB_ExportTreeTabCSV(const char *fname, char delim)
 {
   FILE *fh;
   BOOL result = FALSE;
@@ -2616,7 +2616,7 @@ static void AB_PrintField(FILE *prt, const char *fieldname, const char *field)
 ///
 /// AB_PrintShortEntry
 //  Prints an address book entry in compact format
-static void AB_PrintShortEntry(FILE *prt, struct ABEntry *ab)
+void AB_PrintShortEntry(FILE *prt, struct ABEntry *ab)
 {
   static const char types[3] = { 'P','L','G' };
 
@@ -2631,7 +2631,7 @@ static void AB_PrintShortEntry(FILE *prt, struct ABEntry *ab)
 ///
 /// AB_PrintLongEntry
 //  Prints an address book entry in detailed format
-static void AB_PrintLongEntry(FILE *prt, struct ABEntry *ab)
+void AB_PrintLongEntry(FILE *prt, struct ABEntry *ab)
 {
   ENTER();
 
@@ -2703,7 +2703,7 @@ static void AB_PrintLongEntry(FILE *prt, struct ABEntry *ab)
 ///
 /// AB_PrintLevel (rec)
 //  Recursively prints an address book node
-static void AB_PrintLevel(struct MUI_NListtree_TreeNode *list, FILE *prt, int mode)
+void AB_PrintLevel(struct MUI_NListtree_TreeNode *list, FILE *prt, int mode)
 {
   struct MUI_NListtree_TreeNode *tn;
   int i;

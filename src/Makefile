@@ -471,6 +471,7 @@ MUIOBJS = \
 	AddrBookListtree.o \
 	AddrBookToolbar.o \
 	AddressBookConfigPage.o \
+	AddressBookWindow.o \
 	AddressmatchList.o \
 	AddressmatchPopup.o \
 	AttachmentGroup.o \
