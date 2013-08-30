@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.2 (06.03.2013)
+## version $VER: YAM.catalog 8.3 (30.08.2013)
 ## language svenska
 ## codeset 0
 ;
@@ -38,10 +38,6 @@ Bilagor
 MSG_Options
 Alternativ
 ; Options
-;
-MSG_Del
-_Radera
-; _Delete
 ;
 MSG_New
 Nytt
@@ -206,10 +202,6 @@ Till
 MSG_Columns
 Kolumner
 ; Columns
-;
-MSG_Path
-Sökväg
-; Path
 ;
 MSG_Version
 Version:
@@ -1075,106 +1067,6 @@ MSG_CO_Cancel
 A_vbryt
 ; _Cancel
 ;
-MSG_CO_TZoneM12
-(GMT-12:00) Kwajalein, Eniwetok (IDLW)
-; (GMT-12:00) Kwajalein Islands (IDLW)
-;
-MSG_CO_TZoneM11
-(GMT-11:00) Midwayöarna, Västra Samoa (NT)
-; (GMT-11:00) Midway Islands, Samoa (NT)
-;
-MSG_CO_TZoneM10
-(GMT-10:00) Honolulu, Tahiti (HST)
-; (GMT-10:00) Honolulu, Tahiti (HST)
-;
-MSG_CO_TZoneM9
-(GMT-09:00) Alaska (AKST)
-; (GMT-09:00) Anchorage (AKST)
-;
-MSG_CO_TZoneM8
-(GMT-08:00) Los Angeles, San Francisco (PST)
-; (GMT-08:00) Los Angeles, San Francisco (PST)
-;
-MSG_CO_TZoneM7
-(GMT-07:00) Calgary, Denver, Phoenix (MST)
-; (GMT-07:00) Calgary, Denver, Phoenix (MST)
-;
-MSG_CO_TZoneM6
-(GMT-06:00) Chicago, Dallas, Mexico City (CST)
-; (GMT-06:00) Chicago, Dallas, Mexico City (CST)
-;
-MSG_CO_TZoneM5
-(GMT-05:00) Lima, Miami, Montreal, New York (EST)
-; (GMT-05:00) Lima, Miami, Montreal, New York (EST)
-;
-MSG_CO_TZoneM4
-(GMT-04:00) Caracas, Santiago, Thule (AST)
-; (GMT-04:00) Caracas, Santiago, Thule (AST)
-;
-MSG_CO_TZoneM3
-(GMT-03:00) Buenos Aires, Rio de Janeiro (BRT)
-; (GMT-03:00) Buenos Aires, Rio de Janeiro (BRT)
-;
-MSG_CO_TZoneM2
-(GMT-02:00) Reykjavik (FNT)
-; (GMT-02:00) Brazil East (FNT)
-;
-MSG_CO_TZoneM1
-(GMT-01:00) Azorerna (WAT)
-; (GMT-01:00) Azores (WAT)
-;
-MSG_CO_TZone0
-(GMT 00:00) Dublin, Lissabon, London (GMT/UTC)
-; (GMT 00:00) Dublin, Lisbon, London (GMT/UTC)
-;
-MSG_CO_TZone1
-(GMT+01:00) Berlin, Paris, Madrid, Oslo, Stockholm (CET)
-; (GMT+01:00) Berlin, Paris, Madrid, Oslo (CET)
-;
-MSG_CO_TZone2
-(GMT+02:00) Aten, Kairo, Helsingfors (EET)
-; (GMT+02:00) Athens, Cairo, Helsinki (EET)
-;
-MSG_CO_TZone3
-(GMT+03:00) Bagdad, Kuwait, Moskva, Nairobi (EEST)
-; (GMT+03:00) Baghdad, Kuwait, Moscow, Nairobi (EEST)
-;
-MSG_CO_TZone4
-(GMT+04:00) Dubai, Port Louis, Victoria (ZP4)
-; (GMT+04:00) Dubai, Port Louis, Victoria (ZP4)
-;
-MSG_CO_TZone5
-(GMT+05:00) Islamabad, Karachi (ZP5)
-; (GMT+05:00) Islamabad, Karachi (ZP5)
-;
-MSG_CO_TZone6
-(GMT+06:00) Alma-Ata, Dhaka, Tashkent (ZP6)
-; (GMT+06:00) Alma-Ata, Dhaka, Tashkent (ZP6)
-;
-MSG_CO_TZone7
-(GMT+07:00) Bangkok, Hanoi, Phnom Penh
-; (GMT+07:00) Bangkok, Hanoi, Phnom Penh
-;
-MSG_CO_TZone8
-(GMT+08:00) Hong Kong, Shanghai, Singapore (WST)
-; (GMT+08:00) Hong Kong, Shanghai, Singapore (WST)
-;
-MSG_CO_TZone9
-(GMT+09:00) Osaka, Seoul, Tokyo (JST)
-; (GMT+09:00) Osaka, Seoul, Tokyo (JST)
-;
-MSG_CO_TZone10
-(GMT+10:00) Melbourne, Sydney, Vladivostok (GST)
-; (GMT+10:00) Melbourne, Sydney, Vladivostok (GST)
-;
-MSG_CO_TZone11
-(GMT+11:00) Nya Caledonien (AEDT)
-; (GMT+11:00) New Caldonia (AEDT)
-;
-MSG_CO_TZone12
-(GMT+12:00) Auckland, Wellington (IDLE)
-; (GMT+12:00) Auckland, Wellington (IDLE)
-;
 MSG_CO_MinConfig
 Minimal konfiguration
 ; Minimal configuration
@@ -1248,7 +1140,7 @@ visa alltid
 ; show always
 ;
 MSG_CO_TransferWin
-S_tatusfönster
+_Statusfönster
 ; _Transfer window
 ;
 MSG_CO_PreSelect
@@ -1278,26 +1170,6 @@ Ko_mmando
 MSG_CO_Name
 _Namn
 ; N_ame
-;
-MSG_CO_CTAnd
-och
-; and
-;
-MSG_CO_CTOr
-eller
-; or
-;
-MSG_CO_CTXor
-exklusivt eller
-; exclusive or
-;
-MSG_CO_Comparison
-Jämförelse
-; Comparison
-;
-MSG_CO_Action
-Händelse
-; Action
 ;
 MSG_CO_Remote
 _Fjärrfilter
@@ -1490,10 +1362,6 @@ innan du skickar
 MSG_CO_ExternalEditor
 _Extern redigerare
 ; _External editor
-;
-MSG_CO_Launch
-Starta _genast
-; _Launch immediately
 ;
 MSG_CO_PhraseOpen
 Början
@@ -1764,7 +1632,7 @@ Packa/Skydda
 ; Pack/Protect
 ;
 MSG_CO_Archiver
-Ark_iverare
+Arkiverare
 ; Archi_ver
 ;
 MSG_CO_ScriptMenu
@@ -1886,11 +1754,6 @@ Lösenord för åtkomst\ntill POP3-servern.
 ; Password to access\n\
 ; the POP3 server.
 ;
-MSG_HELP_CO_CY_TZONE
-Välj den tidszon där\ndu befinner dig.
-; Select the time zone of\n\
-; your current location.
-;
 MSG_HELP_CO_ST_SMTPHOST
 Adress till SMTP-servern för att skicka\npost. Om du lämnar detta fält tomt\nanvänds adressen till POP3-servern\nsom nödlösning.
 ; The address of the SMTP server to send mail to.\n\
@@ -2001,11 +1864,6 @@ MSG_HELP_CO_CH_APPLYREQ
 Applicera detta filter när du\nanvänder manuell filtrering.
 ; Apply this filter when you use\n\
 ; the filter function manually.
-;
-MSG_HELP_CO_CY_COMBINE
-Hur sökreglerna skall\nkombineras för detta filter.
-; How to combine the rules\n\
-; for this filter.
 ;
 MSG_HELP_CO_CH_AFORWARD
 Vidarebefordra matchande\nmeddelanden till en annan person.
@@ -2180,11 +2038,6 @@ MSG_HELP_CO_CH_LAUNCH
 Starta den externa redigeraren automatiskt\nnär du börjar på ett nytt meddelande.
 ; Automatically launch the external editor\n\
 ; when starting a new message.
-;
-MSG_HELP_CO_ST_EDITOR
-Filnamnet på din favorit\ntextredigerare.
-; Filename of your\n\
-; favorite text editor.
 ;
 MSG_HELP_CO_ST_FWDSTART
 Text att infoga i början på ett vidarebefordrat meddelande.\nAnvänd popupp-knappen till höger för att se de variabler\nsom du kan använda.
@@ -4889,7 +4742,7 @@ Generella inställningar
 ; General settings
 ;
 MSG_CO_SIZEFORMAT
-S_torleks format
+Sto_rleks format
 ; Si_ze format
 ;
 MSG_HELP_CO_CY_SIZE
@@ -4933,7 +4786,7 @@ Text som skall visas\nsom etikett för Appikonen.
 ; as the label of the AppIcon.
 ;
 MSG_CO_APPICONTEXT
-_Etikett
+Et_ikett
 ; _Label
 ;
 MSG_CO_NEWMSGS
@@ -5306,38 +5159,6 @@ MSG_CTapplicationpdf
 PDF-dokument
 ; PDF document
 ;
-MSG_CO_TZoneM330
-(GMT-03:30) Newfoundland (NFT)
-; (GMT-03:30) Newfoundland (NFT)
-;
-MSG_CO_TZone330
-(GMT+03:30) Teheran (IT)
-; (GMT+03:30) Teheran (IT)
-;
-MSG_CO_TZone430
-(GMT+04:30) Kabul
-; (GMT+04:30) Kabul
-;
-MSG_CO_TZone530
-(GMT+05:30) Chennai, Kolkata, Mumbai, New-Delhi (IST)
-; (GMT+05:30) Chennai, Kolkata, Mumbai, New-Delhi (IST)
-;
-MSG_CO_TZone545
-(GMT+05:45) Katmandu
-; (GMT+05:45) Katmandu
-;
-MSG_CO_TZone630
-(GMT+06:30) Rangun (NST)
-; (GMT+06:30) Rangun (NST)
-;
-MSG_CO_TZone930
-(GMT+09:30) Adelaide, Darwin (ACST)
-; (GMT+09:30) Adelaide, Darwin (ACST)
-;
-MSG_CO_TZone13
-(GMT+13:00) Nuku'alofa (NZDT)
-; (GMT+13:00) Nuku'alofa (NZDT)
-;
 MSG_HELP_CO_ST_INFOBARTXT
 Text som bör visas i statusraden.
 ; Text that should be displayed\n\
@@ -5595,14 +5416,6 @@ MSG_CTunknown
 okänd
 ; unknown
 ;
-MSG_CO_More
-_Mer
-; _More
-;
-MSG_CO_Less
-Mindre
-; _Less
-;
 MSG_CO_NB_AUTOSAVE
 Autospara intervall
 ; Autosave interval
@@ -5624,16 +5437,6 @@ Ett fel inträffade vid försök att flytta innehållet i mappen '%s' till katalogen
 ; \n\
 ; This may be due to insufficient space or an invalid or not writable \
 ; destination path.
-;
-MSG_CO_QUICKSEARCHBAR
-Visa sna_bbsök i huvudfönstret
-; Show search _bar in main window
-;
-MSG_HELP_CO_CH_QUICKSEARCHBAR
-Om vald, visas ett sökfält i huvudfönstret,\nför att snabbt söka efter specifika brev.
-; If checked, a search bar will appear\n\
-; in the main window to let you find\n\
-; certain e-mails more quickly.
 ;
 MSG_FI_SELECTACTIVE
 Välj _aktivt matchande
@@ -5738,7 +5541,7 @@ Letar efter meddelanden i mappen '%s'...
 ; FOLDERNAME
 ;
 MSG_CO_WBAPPICON
-A_ppikon på Workbench
+_Appikon på Workbench
 ; A_ppIcon on Workbench
 ;
 MSG_HELP_CO_CH_WBAPPICON
@@ -5982,37 +5785,6 @@ MSG_BUSY_OPENINGCONFIG
 Öppnar inställningar...
 ; Opening configuration...
 ;
-MSG_CO_TIMEZONEWARN_TITLE
-Tidszonsinställningsvarning
-; Time zone setting warning
-;
-MSG_CO_TIMEZONEWARN
-Tidszonsinställningen i YAM, matchar inte\nsystemets förvalda tidszon.\n\nHur vill du fortsätta?
-; The time zone setting in YAM doesn't match\n\
-; the system's default time zone.\n\
-; \n\
-; How do you want to proceed?
-;
-MSG_CO_TIMEZONEWARN_BT
-*_Ändra|_Ignorera alltid|Ig_norera
-; *_Change|Ignore _always|_Ignore
-;
-MSG_CO_AUTODSTWARN_TITLE
-Automatisk sommartids varning
-; AutoDST warning
-;
-MSG_CO_AUTODSTWARN
-YAM har upptäckt ett program för automatisk sommartid\nsom rapporterar en annan sommartidsinställning\nän vad som förnärvarande är konfigurerat i YAM.\n\nHur vill du fortsätta?
-; YAM has found an AutoDST tool active and\n\
-; it is reporting a Daylight Saving Time\n\
-; different to what is configured in YAM.\n\
-; \n\
-; How do you want to proceed?
-;
-MSG_CO_AUTODSTWARN_BT
-*_Ändra|_Ignorera alltid|Ig_norera
-; *_Change|Ignore _always|_Ignore
-;
 MSG_MA_UPDATECHECK
 Kolla efter uppdatering
 ; Check for updates
@@ -6184,7 +5956,7 @@ MSG_HELP_CO_DETECT_CYRILLIC
 Försök använda autodetektera\nfunktionen i codesets.library för att\nautomatiskt identifiera korrekt cyrillisk\nteckenuppsättning\n(endast relevant för cyrilliska användare).
 ; Try to use the auto-detect feature\n\
 ; of codesets.library to automatically\n\
-; identify the correct cyrillic codeset\n\
+; identify the correct cyrillic charset\n\
 ; (only relevant for cyrillic users).
 ;
 MSG_WR_ErrorNotEnoughUndoMem
@@ -6904,16 +6676,6 @@ MSG_CO_CRDLOOKFEEL
 Utseende & Känsla
 ; Look & Feel
 ;
-MSG_CO_DSTACTIVE
-So_mmartid (DST) är aktiv
-; D_aylight Saving Time (DST) is active
-;
-MSG_HELP_CO_CH_DSTACTIVE
-Aktivera detta om sommartid för\nnärvarande är aktivt i din tidszon.
-; Enable this if daylight saving time is\n\
-; currently active in your time zone\n\
-; (summer time).
-;
 MSG_CO_SMTP_SERVERPORT
 Ser_ver/Port
 ; Ser_ver/Port
@@ -7617,14 +7379,6 @@ MSG_HELP_EA_BT_REMOVEPHOTO
 'Glöm' denna bild. (Filen kommer\natt finnas kvar på hårddisken).
 ; 'Forget' this picture (the\n\
 ; file on disk will remain).
-;
-MSG_HELP_CO_TX_DEFAULTCHARSET
-Använd popupp knappen för att välja den tecken-\nuppsättning du vill YAM ska använda som\nförval. Detta bör matcha systemets förvalda\nteckenuppsättning, annars kommer det fram\nett dialogfönster som frågar hur du vill fortsätta.
-; Use the popup button to select the character set\n\
-; you would like YAM to use by default. This should\n\
-; match the system's default charset, otherwise a\n\
-; requester will appear asking how do you want to\n\
-; proceed.
 ;
 MSG_HELP_CO_CH_NOTISOUND
 Spela en ljudfil\nnär du fått ny post.
@@ -8865,10 +8619,6 @@ MSG_MA_FLUSH_ALL_INDICES
 Töm alla index
 ; Flush all indices
 ;
-MSG_FI_CONDITION
-Villkor
-; Condition
-;
 MSG_HELP_CO_CH_IDENTITY_ENABLED
 Om markerad, så är denna användare tillgänglig för användning.
 ; If checked, this user identity is enabled for use.
@@ -9484,4 +9234,306 @@ Döp om bilaga
 MSG_WR_ENTER_NEW_NAME
 Skriv in nytt namn för bilaga:
 ; Enter new attachment name:
+;
+MSG_FI_SKIP_ENCRYPTED
+Skippa krypterade brev
+; Skip encrypted mails
+;
+MSG_HELP_FI_CH_SKIP_ENCRYPTED
+Skippa krypterade brev (t.ex. PGP)\n\
+vid sökningen.
+; Skip encrypted mails (i.e. PGP)\n\
+; during the search.
+;
+MSG_CO_QUICKSEARCHBAR
+Visa snabbsök i huvudfönstret
+; Quick search bar
+;
+MSG_HELP_CO_CH_QUICKSEARCHBAR
+Om vald, visas ett sökfält i huvudfönstret,\n\
+för att snabbt söka efter specifika brev.
+; Here you can select the position of\n\
+; the quick search bar.
+;
+MSG_CO_QUICKSEARCHBARPOS
+P_osition
+; Posi_tion
+;
+MSG_CO_QUICKSEARCHBARPOS01
+Avstängd
+; Disabled
+;
+MSG_CO_QUICKSEARCHBARPOS02
+Överst
+; Top
+;
+MSG_CO_QUICKSEARCHBARPOS03
+Nederst
+; Bottom
+;
+MSG_CO_FILTER_REGISTER_SETTINGS
+Allmänt
+; General
+;
+MSG_CO_FILTER_REGISTER_CONDITIONS
+Villkor
+; Conditions
+;
+MSG_CO_FILTER_REGISTER_ACTIONS
+Åtgärder
+; Actions
+;
+MSG_CO_CONDITION_ALL
+alla
+; all
+;
+MSG_CO_CONDITION_MIN_ONE
+en eller flera
+; one or more
+;
+MSG_CO_CONDITION_MAX_ONE
+endast en
+; only one
+;
+MSG_WR_CMENU_TITLE
+Bilagor
+; Attachments
+;
+MSG_WR_CMENU_ADD_ATTACHMENT
+Lägg till fil(er)...
+; Add file(s)...
+;
+MSG_WR_CMENU_ADD_ARCHIVE_ATTACHMENT
+Packa & lägg till...
+; Pack & add...
+;
+MSG_WR_CMENU_REMOVE_ATTACHMENT
+Ta bort
+; Remove
+;
+MSG_WR_CMENU_RENAME_ATTACHMENT
+Döp om...
+; Rename...
+;
+MSG_WR_CMENU_DISPLAY_ATTACHMENT
+Visa
+; Display
+;
+MSG_WR_TITLEATTACHMENT
+Bilaga
+; Attachment
+;
+MSG_WR_REMOVE
+T_a bort
+; Re_move
+;
+MSG_CO_CONDITION_PREPHRASE
+Om
+; If
+;
+MSG_CO_CONDITION_POSTPHRASE
+av följande villkor uppfylls:
+; of the following conditions are met:
+;
+MSG_CO_FALLBACK_TZONE
+Europe/Stockholm
+; America/New_York
+; !!! WARNING !!!
+; Do not translate this fallback name, but just choose a
+; location which represents the language's time zone
+; as good as possible. If there are multiple possibilities
+; for you language, use the one that matches the captial
+; of your country/language most. This fallback name MUST
+; match EXACTLY one of the locations in the Resources/zoneinfo
+; directory. Spaces MUST be replaced by '_'. All locations
+; names MUST be kept in english language.
+;
+MSG_HELP_CO_GR_TZONE
+Här kan du ställa in din nuvarande plats/tidszon.
+; Here you can set your current location/time zone.
+;
+MSG_CO_TZONE_GMTOFFSET
+Nuvarande GMT avvikelse:
+; Current GMT offset:
+;
+MSG_CO_TZONE_NEXTDSTSWITCH
+Nästa DST växling:
+; Next DST switch:
+;
+MSG_CO_TZONE_NODSTSWITCH
+ingen sommartid
+; no daylight saving
+;
+MSG_CO_TZONE_DESCRIPTION
+Beskrivning:
+; Description:
+;
+MSG_CO_TZONE_DESCRIPTION_NA
+n/a
+; n/a
+;
+MSG_TZONE_ZONETAB_FILE_MISSING
+Kan inte öppna tidszon beskrivningsfilen\n\
+'%s/Resources/zoneinfo/zone.tab'.\n\
+\n\
+Kontrollera att alla tidszon relaterade filer\n\
+har kopierats till '%s/Resources/zoneinfo' katalogen.
+; Cannot open time zones description file\n\
+; '%s/Resources/zoneinfo/zone.tab'.\n\
+; \n\
+; Please make sure to install all time zones management\n\
+; related files to the '%s/Resources/zoneinfo' directory.
+;
+MSG_TZONE_LOCATION_FILE_MISSING
+Kan inte öppna tidszon informationsfil '%s'.\n\
+\n\
+Tidszon information kommer att vara felaktig. Kontrollera \
+att alla tidszon relaterade filer har kopierats till \
+'%s/Resources/zoneinfo' katalogen.
+; Cannot open time zone information file '%s'.\n\
+; \n\
+; Time zone information will be incorrect. Please make sure \
+; to install all time zones management related files to the \
+; '%s/Resources/zoneinfo' directory.
+;
+MSG_FOLDER_MOVE_WARNING_TITLE
+YAM mappformat varning
+; YAM folder format warning
+;
+MSG_FOLDER_MOVE_WARNING
+Ett föråldrat mapplagringsformat har upptäckts.\n\
+\n\
+YAM kommer nu att flytta alla mappkataloger till en\n\
+ny underkatalog, kallad 'Folders' i mailkatalogen '%s'.\n\
+\n\
+\033bVARNING:\033n\n\
+Denna operation är \033boåterkallelig\033n och resulterar i\n\
+mappar som inte längre är kompatibel med föregående versioner\n\
+av YAM.\n\
+\n\
+Vill du utföra denna operation nu eller avsluta YAM\n\
+och skapa en backup först?
+; An obsolete folder storage format has been found.\n\
+; \n\
+; YAM will now move all folder directories to a new\n\
+; subdirectory called 'Folders' in the mail directory '%s'.\n\
+; \n\
+; \033bWARNING:\033n\n\
+; This operation is \033birreversible\033n and will result in\n\
+; folders which are no longer compatible to former\n\
+; versions of YAM.\n\
+; \n\
+; Do you want to perform this operation now or\n\
+; quit YAM and make a backup first?
+;
+MSG_FOLDER_MOVE_WARNING_GADS
+_Fortsätt|*_Avsluta
+; _Continue|*_Quit
+;
+MSG_FO_DISPLAYNAME
+Visa _namn
+; Display _name
+;
+MSG_FO_DIRECTORYNAME
+Katalogna_mn
+; Directory na_me
+;
+MSG_VALIDATING_FOLDERS
+Validerar mappar...
+; Validating folders...
+;
+MSG_MA_MARCHIVE
+Arkiv
+; Archive
+;
+MSG_MA_ARCHIVE
+Arkiv
+; Archive
+;
+MSG_CO_SHOW_ARCHIVER_PROGRESS
+Visa förlopp
+; Show progress
+;
+MSG_CO_LAUNCH_EXTEDITOR
+_Ladda extern redigerare direkt
+; _Launch external editor immediately
+;
+MSG_CO_EXTEDITOR
+Inställningar extern redigerare
+; External editor settings
+;
+MSG_HELP_CO_ST_EDITOR_EXT
+Sökväg till din externa favorit\n\
+redigerare, som du kan använda som\n\
+alternativ till den interna.
+; Path to your favourite external\n\
+; editor which you can use as an\n\
+; alternative to the internal one.
+;
+MSG_CO_EXTEDITOR_CODESET
+_Visa teckenuppsättning
+; Display c_harset
+;
+MSG_HELP_CO_TX_DEFCODESET_EDITOR
+Välj en teckenuppsättning som texen\n\
+konverteras till, innan den externa\n\
+redigeraren startas.
+; Choose a charset to which the text\n\
+; will be converted to before starting\n\
+; the external editor.
+;
+MSG_HELP_CO_TX_DEFCODESET_LOCAL
+Använd popupp knappen för att välja teckenuppsättningen\n\
+du vill YAM ska använda för att visa text.\n\
+Detta bör vanligtvis matcha ditt systems förvalda\n\
+teckenuppsättning, annars visas en dialogruta\n\
+som frågar hur vi ska gå vidare.
+; Use the popup button to select the character set\n\
+; you would like YAM to use for displaying text.\n\
+; This should usually match your system's default\n\
+; charset, otherwise a requester will appear asking\n\
+; how to proceed.
+;
+MSG_HELP_CO_TX_DEFCODESET_WRITE
+Använd popupp knappen för att välja teckenuppsättningen\n\
+du vill YAM ska använda till kodning av brev.\n\
+Detta bör vanligtvis matcha ditt systems förvalda\n\
+teckenuppsättning, så att den visade teckenuppsättningen\n\
+matchar den du skriver brev med. Du kan dock välja vilken\n\
+teckenuppsättning du vill, att koda dina utgående brev med.
+; Use the popup button to select the character set\n\
+; you would like YAM to encode emails to.\n\
+; This should usually match your system's default\n\
+; charset so that the displayed character set matches\n\
+; the one you write mail. However, you can select any\n\
+; character set you want to encode your outgoing mails\n\
+; to.
+;
+MSG_CO_DEFAULTCODESET_WRITE
+Förvald teckenu_ppsättning
+; Default c_harset
+;
+MSG_CO_MIME_CODESET
+Visa te_ckenuppsättning
+; Display _charset
+;
+MSG_HELP_CO_TX_MIME_CODESET
+Välj teckenuppsättning här, som utskriftsbar\n\
+text ska konverteras till, innan exekvering\n\
+av kommando för denna MIME typ.
+; Select the charset here that printable\n\
+; text should be converted to before\n\
+; executing the command of this MIME type.
+;
+MSG_CO_DEFAULTVIEWER_CODESET
+_Visa teckenuppsättning
+; _Display charset
+;
+MSG_HELP_CO_TX_DEFVIEWER_CODESET
+Välj teckenuppsättning här, som utskriftsbar\n\
+text ska konverteras til, innan förvald\n\
+visare startas.
+; Select the charset here that printable\n\
+; text should be converted to before\n\
+; starting the default viewer.
 ;

@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-08-30 Pär Boberg <pbobbenb@spray.se>
+
+  * locale/swedish.ct: updated to the latest changes.
+
 2013-08-29 Jens Langner <Jens.Langner@light-speed.de>
 
   * YAM_RE.c: reworked RE_DecodeStream in combination with RE_ConsumeRestOfPart
