@@ -237,7 +237,7 @@ BOOL RE_Export(struct ReadMailData *rmData, const char *source,
 ///
 /// RE_PrintFile
 //  Prints a file. Currently it is just dumped to PRT:
-BOOL RE_PrintFile(const char *filename, const Object *win)
+BOOL RE_PrintFile(const char *filename, Object *win)
 {
   BOOL success = FALSE;
 
@@ -3626,7 +3626,7 @@ struct ABEntry *RE_AddToAddrbook(Object *win, struct ABEntry *templ)
 ///
 /// RE_ClickedOnMessage
 //  User clicked on a e-mail address
-void RE_ClickedOnMessage(char *address, const Object *win)
+void RE_ClickedOnMessage(char *address, Object *win)
 {
   int l;
 
@@ -4018,7 +4018,7 @@ BOOL RE_ProcessMDN(const enum MDNMode mode,
                    struct Mail *mail,
                    const BOOL multi,
                    const BOOL autoAction,
-                   const Object *win)
+                   Object *win)
 {
   BOOL ignoreall = FALSE;
 
