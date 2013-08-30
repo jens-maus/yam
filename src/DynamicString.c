@@ -25,8 +25,9 @@
 
 ***************************************************************************/
 
-#include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "YAM_stringsizes.h"
 
@@ -58,19 +59,29 @@ struct DynamicString
 
 /// dstrallocInternal
 // allocates a dynamic string
-static struct DynamicString *dstrallocInternal(const size_t size)
+static struct DynamicString *dstrallocInternal(size_t size)
 {
   struct DynamicString *dstr;
+  ldiv_t chunks;
 
   ENTER();
 
-  if((dstr = malloc(sizeof(*dstr) + size)) != NULL)
+  // add one byte for the terminating NUL byte
+  size++;
+
+  // calculate the number of chunks required
+  chunks = ldiv(size, SIZE_DSTRCHUNK);
+  if(chunks.rem != 0)
+    chunks.quot++;
+
+  // allocate the dstr structure and the number of chunks
+  if((dstr = malloc(sizeof(*dstr) + chunks.quot * SIZE_DSTRCHUNK)) != NULL)
   {
     #if defined(DEBUG)
     dstr->dbg_cookie[0] = 0xbe;
     dstr->dbg_cookie[1] = 0xef; // 0xbeef
     #endif
-    dstr->size = size;
+    dstr->size = chunks.quot * SIZE_DSTRCHUNK;
     dstr->strlen = 0;
     dstr->str[0] = '\0';
   }
@@ -86,15 +97,10 @@ char *dstralloc(size_t initsize)
 {
   char *result = NULL;
   struct DynamicString *dstr;
-  size_t size = 0;
 
   ENTER();
 
-  // make sure we allocate in SIZE_DSTRCHUNK chunks
-  while(size <= initsize)
-    size += SIZE_DSTRCHUNK;
-
-  if((dstr = dstrallocInternal(size)) != NULL)
+  if((dstr = dstrallocInternal(initsize)) != NULL)
     result = DSTR_TO_STR(dstr);
 
   RETURN(result);
@@ -146,34 +152,25 @@ char *dstrcpy(char **dstr, const char *src)
   // if the content of dstr is NULL we have to allocate a new buffer
   if(*dstr == NULL)
   {
-    if((ds = dstrallocInternal(reqsize+1)) != NULL)
+    if((ds = dstrallocInternal(reqsize)) != NULL)
       *dstr = DSTR_TO_STR(ds);
     else
       reqsize = 0;
   }
   else
   {
-    size_t oldsize;
-    size_t newsize;
-
     ds = STR_TO_DSTR(*dstr);
 
     CHECK_DSTR(ds);
 
-    oldsize = ds->size;
-    newsize = oldsize;
-
-    // make sure we allocate in SIZE_DSTRCHUNK chunks
-    while(newsize <= reqsize)
-      newsize += SIZE_DSTRCHUNK;
-
-    // if we have to change the size do it now
-    if(newsize > oldsize)
+    // make sure the string buffer is large enough to keep the
+    // requested amount of characters + NUL byte
+    if(reqsize+1 > ds->size)
     {
       struct DynamicString *newdstr;
 
       // allocate a new buffer and replace the old one with it
-      if((newdstr = dstrallocInternal(newsize+1)) != NULL)
+      if((newdstr = dstrallocInternal(reqsize)) != NULL)
       {
         free(ds);
         ds = newdstr;
@@ -222,40 +219,32 @@ char *dstrcat(char **dstr, const char *src)
   // if our dstr is NULL we have to allocate a new buffer
   if(*dstr == NULL)
   {
-    if((ds = dstrallocInternal(reqsize+1)) != NULL)
+    if((ds = dstrallocInternal(reqsize)) != NULL)
       *dstr = DSTR_TO_STR(ds);
     else
       srcsize = 0;
   }
   else
   {
-    size_t oldsize;
-    size_t newsize;
-
     ds = STR_TO_DSTR(*dstr);
 
     CHECK_DSTR(ds);
-
-    oldsize = ds->size;
-    newsize = oldsize;
 
     // increase required size by the content length of
     // the old dstr
     reqsize += ds->strlen;
 
-    // make sure we allocate in SIZE_DSTRCHUNK chunks
-    while(newsize <= reqsize)
-      newsize += SIZE_DSTRCHUNK;
-
-    // if we have to change the size do it now
-    if(newsize > oldsize)
+    // make sure the string buffer is large enough to keep the
+    // requested amount of characters + NUL byte
+    if(reqsize+1 > ds->size)
     {
       struct DynamicString *newdstr;
 
       // allocate a new buffer and replace the old one with it
-      if((newdstr = dstrallocInternal(newsize+1)) != NULL)
+      if((newdstr = dstrallocInternal(reqsize)) != NULL)
       {
         newdstr->strlen = ds->strlen;
+        // copy the old dstr to the new one including the terminating NUL byte
         memmove(newdstr->str, ds->str, ds->strlen+1);
         free(ds);
         ds = newdstr;
@@ -313,7 +302,7 @@ size_t dstrfread(char **dstr, size_t size, FILE *stream)
 
   if(*dstr == NULL)
   {
-    if((ds = dstrallocInternal(size+1)) != NULL)
+    if((ds = dstrallocInternal(size)) != NULL)
       *dstr = DSTR_TO_STR(ds);
     else
       size = 0;
@@ -325,13 +314,13 @@ size_t dstrfread(char **dstr, size_t size, FILE *stream)
     CHECK_DSTR(ds);
 
     // make sure the string buffer is large enough to keep the
-    // requested amount of characters
-    if(ds->size < size+1)
+    // requested amount of characters + NUL byte
+    if(size+1 > ds->size)
     {
       struct DynamicString *newdstr;
 
       // allocate a new buffer and replace the old one with it
-      if((newdstr = dstrallocInternal(size+1)) != NULL)
+      if((newdstr = dstrallocInternal(size)) != NULL)
       {
         free(ds);
         ds = newdstr;
@@ -370,10 +359,7 @@ void dstrfree(const char *dstr)
   {
     struct DynamicString *ds = STR_TO_DSTR(dstr);
 
-    #if defined(DEBUG)
-    if(ds == NULL || ds->dbg_cookie[0] != 0xBE || ds->dbg_cookie[1] != 0xEF)
-      E(DBF_UTIL, "invalid dstr (0x%08x) used in dstrfree()", dstr);
-    #endif
+    CHECK_DSTR(ds);
 
     free(ds);
   }
