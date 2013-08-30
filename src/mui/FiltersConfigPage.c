@@ -149,9 +149,9 @@ static void GhostOutFilter(struct Data *data)
   // the pop button itself as long as the requester is open. After that this hook is called but the object
   // has not yet enabled the pop button again, so we might get wrong visible results. Not a very nice
   // solution, I must say :(
-  DoMethod(G->App, MUIM_Application_PushMethod, data->PO_ARESPONSE, 3, MUIM_Set, MUIA_Disabled, filter == NULL || isremote || !xget(data->CH_ARESPONSE, MUIA_Selected));
-  DoMethod(G->App, MUIM_Application_PushMethod, data->PO_AEXECUTE, 3, MUIM_Set, MUIA_Disabled, filter == NULL || !xget(data->CH_AEXECUTE, MUIA_Selected));
-  DoMethod(G->App, MUIM_Application_PushMethod, data->PO_APLAY, 3, MUIM_Set, MUIA_Disabled, filter == NULL || !xget(data->CH_APLAY, MUIA_Selected));
+  DoMethod(_app(obj), MUIM_Application_PushMethod, data->PO_ARESPONSE, 3, MUIM_Set, MUIA_Disabled, filter == NULL || isremote || !xget(data->CH_ARESPONSE, MUIA_Selected));
+  DoMethod(_app(obj), MUIM_Application_PushMethod, data->PO_AEXECUTE, 3, MUIM_Set, MUIA_Disabled, filter == NULL || !xget(data->CH_AEXECUTE, MUIA_Selected));
+  DoMethod(_app(obj), MUIM_Application_PushMethod, data->PO_APLAY, 3, MUIM_Set, MUIA_Disabled, filter == NULL || !xget(data->CH_APLAY, MUIA_Selected));
 
   LEAVE();
 }
