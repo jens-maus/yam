@@ -115,15 +115,15 @@ struct AB_ClassData *AB_New(void);
 BOOL   AB_SaveTree(const char *fname);
 int    AB_SearchEntry(const char *text, int mode, struct ABEntry **ab);
 
-void AB_PrintLevel(struct MUI_NListtree_TreeNode *list, FILE *prt, int mode);
+void AB_PrintLevel(Object *tree, struct MUI_NListtree_TreeNode *list, FILE *prt, int mode);
 void AB_PrintLongEntry(FILE *prt, struct ABEntry *ab);
 void AB_PrintShortEntry(FILE *prt, struct ABEntry *ab);
-void AB_InsertAddressTreeNode(Object *writeWindow, ULONG type, struct MUI_NListtree_TreeNode *tn);
+void AB_InsertAddressTreeNode(Object *writeWindow, ULONG type, Object *tree, struct MUI_NListtree_TreeNode *tn);
 
-BOOL AB_ExportTreeLDIF(const char *fname);
-BOOL AB_ImportTreeLDIF(const char *fname, BOOL append, BOOL sorted);
-BOOL AB_ImportTreeTabCSV(const char *fname, BOOL append, BOOL sorted, char delim);
-BOOL AB_ExportTreeTabCSV(const char *fname, char delim);
-BOOL AB_ImportTreeXML(const char *fname, BOOL append, BOOL sorted);
+BOOL AB_ExportTreeLDIF(Object *tree, const char *fname);
+BOOL AB_ImportTreeLDIF(Object *tree, const char *fname, BOOL append, BOOL sorted);
+BOOL AB_ImportTreeTabCSV(Object *tree, const char *fname, BOOL append, BOOL sorted, char delim);
+BOOL AB_ExportTreeTabCSV(Object *tree, const char *fname, char delim);
+BOOL AB_ImportTreeXML(Object *tree, const char *fname, BOOL append, BOOL sorted);
 
 #endif /* YAM_ADDRESSBOOK_H */

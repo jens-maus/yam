@@ -405,6 +405,7 @@ DECLARE(SaveAs)
 // prints the entire address book in compact or detailed format
 DECLARE(PrintAll)
 {
+  GETDATA;
   int mode;
 
   ENTER();
@@ -432,8 +433,7 @@ DECLARE(PrintAll)
           fprintf(prt, "\n  %-12.12s %-20.20s %s/%s\n", tr(MSG_AB_AliasFld), tr(MSG_EA_RealName), tr(MSG_EA_EmailAddress), tr(MSG_EA_Description));
           fputs("------------------------------------------------------------------------\n", prt);
         }
-        #warning implicit access to old abook GUI
-        AB_PrintLevel(MUIV_NListtree_GetEntry_ListNode_Root, prt, mode);
+        AB_PrintLevel(data->LV_ADDRESSES, MUIV_NListtree_GetEntry_ListNode_Root, prt, mode);
         BusyEnd(busy);
 
         // before we close the file
@@ -480,10 +480,9 @@ DECLARE(PrintEntry)
 
         set(_app(obj), MUIA_Application_Sleep, TRUE);
 
-        #warning implicit access to old abook GUI
         AB_PrintLongEntry(prt, ab);
         if(ab->Type == AET_GROUP)
-          AB_PrintLevel(tn, prt, 1);
+          AB_PrintLevel(data->LV_ADDRESSES, tn, prt, 1);
 
         // before we close the file
         // handle we check the error state
@@ -650,7 +649,7 @@ DECLARE(UseEntry) // enum AddressbookMode mode
         if(tn == (struct MUI_NListtree_TreeNode *)MUIV_NListtree_NextSelected_End || tn == NULL)
           break;
         else
-          AB_InsertAddressTreeNode(writeWindow, type, tn);
+          AB_InsertAddressTreeNode(writeWindow, type, data->LV_ADDRESSES, tn);
       }
       while(TRUE);
 
@@ -695,6 +694,7 @@ DECLARE(Close)
 // imports an LDIF address book
 DECLARE(ImportLDIF)
 {
+  GETDATA;
   struct FileReqCache *frc;
 
   ENTER();
@@ -704,7 +704,7 @@ DECLARE(ImportLDIF)
     char ldifname[SIZE_PATHFILE];
 
     AddPath(ldifname, frc->drawer, frc->file, sizeof(ldifname));
-    AB_ImportTreeLDIF(ldifname, TRUE, FALSE);
+    AB_ImportTreeLDIF(data->LV_ADDRESSES, ldifname, TRUE, FALSE);
   }
 
   RETURN(0);
@@ -716,6 +716,7 @@ DECLARE(ImportLDIF)
 // exports an LDIF address book
 DECLARE(ExportLDIF)
 {
+  GETDATA;
   struct FileReqCache *frc;
 
   ENTER();
@@ -729,7 +730,7 @@ DECLARE(ExportLDIF)
     if(FileExists(ldifname) == FALSE ||
        MUI_Request(_app(obj), obj, MUIF_NONE, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_FILE_OVERWRITE), frc->file) != 0)
     {
-      AB_ExportTreeLDIF(ldifname);
+      AB_ExportTreeLDIF(data->LV_ADDRESSES, ldifname);
     }
   }
 
@@ -742,6 +743,7 @@ DECLARE(ExportLDIF)
 // imports a comma or TAB separated address book
 DECLARE(ImportTabCSV) // ULONG delim
 {
+  GETDATA;
   char delim = (char)msg->delim;
   int type;
   struct FileReqCache *frc;
@@ -760,7 +762,7 @@ DECLARE(ImportTabCSV) // ULONG delim
     char aname[SIZE_PATHFILE];
 
     AddPath(aname, frc->drawer, frc->file, sizeof(aname));
-    AB_ImportTreeTabCSV(aname, TRUE, FALSE, delim);
+    AB_ImportTreeTabCSV(data->LV_ADDRESSES, aname, TRUE, FALSE, delim);
   }
 
   RETURN(0);
@@ -772,6 +774,7 @@ DECLARE(ImportTabCSV) // ULONG delim
 // exports a comma or TAB separated address book
 DECLARE(ExportTabCSV) // ULONG delim
 {
+  GETDATA;
   char delim = (char)msg->delim;
   int type;
   struct FileReqCache *frc;
@@ -794,7 +797,7 @@ DECLARE(ExportTabCSV) // ULONG delim
     if(FileExists(aname) == FALSE ||
        MUI_Request(_app(obj), obj, MUIF_NONE, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_FILE_OVERWRITE), frc->file) != 0)
     {
-      AB_ExportTreeTabCSV(aname, delim);
+      AB_ExportTreeTabCSV(data->LV_ADDRESSES, aname, delim);
     }
   }
 
@@ -807,6 +810,7 @@ DECLARE(ExportTabCSV) // ULONG delim
 // imports an XML address book
 DECLARE(ImportXML)
 {
+  GETDATA;
   struct FileReqCache *frc;
 
   ENTER();
@@ -816,7 +820,7 @@ DECLARE(ImportXML)
     char xmlname[SIZE_PATHFILE];
 
     AddPath(xmlname, frc->drawer, frc->file, sizeof(xmlname));
-    AB_ImportTreeXML(xmlname, TRUE, FALSE);
+    AB_ImportTreeXML(data->LV_ADDRESSES, xmlname, TRUE, FALSE);
   }
 
   RETURN(0);

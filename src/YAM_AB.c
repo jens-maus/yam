@@ -122,6 +122,7 @@ struct XMLUserData
   struct ABEntry entry;
   XML_Char xmlData[SIZE_LARGE];
   size_t xmlDataSize;
+  Object *tree;
 };
 
 /***************************************************************************
@@ -704,7 +705,7 @@ char *AB_CompleteAlias(const char *text)
 
 ///
 /// AB_InsertAddressTreeNode (rec)
-void AB_InsertAddressTreeNode(Object *writeWindow, ULONG type, struct MUI_NListtree_TreeNode *tn)
+void AB_InsertAddressTreeNode(Object *writeWindow, ULONG type, Object *tree, struct MUI_NListtree_TreeNode *tn)
 {
   struct ABEntry *ab = (struct ABEntry *)(tn->tn_User);
 
@@ -749,11 +750,11 @@ void AB_InsertAddressTreeNode(Object *writeWindow, ULONG type, struct MUI_NListt
 
         do
         {
-          tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, tn, pos, MUIV_NListtree_GetEntry_Flag_SameLevel);
+          tn = (struct MUI_NListtree_TreeNode *)DoMethod(tree, MUIM_NListtree_GetEntry, tn, pos, MUIV_NListtree_GetEntry_Flag_SameLevel);
           if(tn == NULL)
             break;
 
-          AB_InsertAddressTreeNode(writeWindow, type, tn);
+          AB_InsertAddressTreeNode(writeWindow, type, tree, tn);
 
           pos = MUIV_NListtree_GetEntry_Position_Next;
         }
@@ -829,7 +830,7 @@ HOOKPROTONHNO(AB_FromAddrBook, BOOL, ULONG *arg)
         if(tn == (struct MUI_NListtree_TreeNode *)MUIV_NListtree_NextSelected_End || tn == NULL)
           break;
         else
-          AB_InsertAddressTreeNode(writeWindow, type, tn);
+          AB_InsertAddressTreeNode(writeWindow, type, G->AB->GUI.LV_ADDRESSES, tn);
       }
       while(TRUE);
 
@@ -1143,7 +1144,7 @@ BOOL AB_CreateEmptyABook(const char *fname)
 ///
 /// AB_ImportTreeLDIF
 //  Imports an address book in LDIF format
-BOOL AB_ImportTreeLDIF(const char *fname, BOOL append, BOOL sorted)
+BOOL AB_ImportTreeLDIF(Object *tree, const char *fname, BOOL append, BOOL sorted)
 {
   FILE *fh;
   BOOL result = FALSE;
@@ -1159,9 +1160,9 @@ BOOL AB_ImportTreeLDIF(const char *fname, BOOL append, BOOL sorted)
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
     if(append == FALSE)
-      DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Clear, NULL, 0);
+      DoMethod(tree, MUIM_NListtree_Clear, NULL, 0);
 
-    set(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Quiet, TRUE);
+    set(tree, MUIA_NListtree_Quiet, TRUE);
 
     while(GetLine(&buffer, &size, fh) >= 0)
     {
@@ -1176,7 +1177,7 @@ BOOL AB_ImportTreeLDIF(const char *fname, BOOL append, BOOL sorted)
             EA_SetDefaultAlias(&addr);
 
           // put it into the tree
-          DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, addr.Alias[0] ? addr.Alias : addr.RealName, &addr, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE);
+          DoMethod(tree, MUIM_NListtree_Insert, addr.Alias[0] ? addr.Alias : addr.RealName, &addr, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE);
           result = TRUE;
         }
       }
@@ -1331,7 +1332,7 @@ BOOL AB_ImportTreeLDIF(const char *fname, BOOL append, BOOL sorted)
       }
     }
 
-    set(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Quiet, FALSE);
+    set(tree, MUIA_NListtree_Quiet, FALSE);
 
     fclose(fh);
 
@@ -1344,10 +1345,10 @@ BOOL AB_ImportTreeLDIF(const char *fname, BOOL append, BOOL sorted)
   {
     // sort the tree first, because this will set the "modified" flag
     if(sorted == TRUE)
-      DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_AddrBookListtree_SortBy, MUIV_AddrBookListtree_SortBy_Alias);
+      DoMethod(tree, MUIM_AddrBookListtree_SortBy, MUIV_AddrBookListtree_SortBy_Alias);
 
     // now remember the "modified" state
-    set(G->AB->GUI.LV_ADDRESSES, MUIA_AddrBookListtree_Modified, append);
+    set(tree, MUIA_AddrBookListtree_Modified, append);
   }
 
   RETURN(result);
@@ -1739,7 +1740,7 @@ static void XMLEndHandler(void *userData, const XML_Char *name)
         EA_SetDefaultAlias(entry);
 
       // put it into the tree
-      DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, entry->Alias[0] ? entry->Alias : entry->RealName, entry, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE);
+      DoMethod(xmlUserData->tree, MUIM_NListtree_Insert, entry->Alias[0] ? entry->Alias : entry->RealName, entry, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE);
     }
   }
 
@@ -1769,7 +1770,7 @@ static void XMLCharacterDataHandler(void *userData, const XML_Char *s, int len)
 ///
 /// AB_ImportTreeXML
 // imports an address book in XML format (i.e. from SimpleMail)
-BOOL AB_ImportTreeXML(const char *fname, BOOL append, BOOL sorted)
+BOOL AB_ImportTreeXML(Object *tree, const char *fname, BOOL append, BOOL sorted)
 {
   FILE *fh;
   BOOL result = FALSE;
@@ -1783,9 +1784,9 @@ BOOL AB_ImportTreeXML(const char *fname, BOOL append, BOOL sorted)
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
     if(append == FALSE)
-      DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Clear, NULL, 0);
+      DoMethod(tree, MUIM_NListtree_Clear, NULL, 0);
 
-    set(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Quiet, TRUE);
+    set(tree, MUIA_NListtree_Quiet, TRUE);
 
     // create the XML parser
     if((parser = XML_ParserCreate(NULL)) != NULL)
@@ -1798,6 +1799,7 @@ BOOL AB_ImportTreeXML(const char *fname, BOOL append, BOOL sorted)
 
       xmlUserData.section = xs_Unknown;
       xmlUserData.dataType = xd_Unknown;
+      xmlUserData.tree = tree;
 
       XML_SetElementHandler(parser, XMLStartHandler, XMLEndHandler);
       XML_SetCharacterDataHandler(parser, XMLCharacterDataHandler);
@@ -1828,7 +1830,7 @@ BOOL AB_ImportTreeXML(const char *fname, BOOL append, BOOL sorted)
       XML_ParserFree(parser);
     }
 
-    set(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Quiet, FALSE);
+    set(tree, MUIA_NListtree_Quiet, FALSE);
 
     fclose(fh);
   }
@@ -1839,10 +1841,10 @@ BOOL AB_ImportTreeXML(const char *fname, BOOL append, BOOL sorted)
   {
     // sort the tree first, because this will set the "modified" flag
     if(sorted == TRUE)
-      DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_AddrBookListtree_SortBy, MUIV_AddrBookListtree_SortBy_Alias);
+      DoMethod(tree, MUIM_AddrBookListtree_SortBy, MUIV_AddrBookListtree_SortBy_Alias);
 
     // now remember the "modified" state
-    set(G->AB->GUI.LV_ADDRESSES, MUIA_AddrBookListtree_Modified, append);
+    set(tree, MUIA_AddrBookListtree_Modified, append);
   }
 
   RETURN(result);
@@ -1852,7 +1854,7 @@ BOOL AB_ImportTreeXML(const char *fname, BOOL append, BOOL sorted)
 ///
 /// AB_ExportTreeNodeLDIF
 //  Exports an address book as LDIF file
-static void AB_ExportTreeNodeLDIF(FILE *fh, struct MUI_NListtree_TreeNode *list)
+static void AB_ExportTreeNodeLDIF(FILE *fh, Object *tree, struct MUI_NListtree_TreeNode *list)
 {
   int i;
 
@@ -1862,7 +1864,7 @@ static void AB_ExportTreeNodeLDIF(FILE *fh, struct MUI_NListtree_TreeNode *list)
   {
     struct MUI_NListtree_TreeNode *tn;
 
-    if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, list, i, MUIV_NListtree_GetEntry_Flag_SameLevel)) != NULL)
+    if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(tree, MUIM_NListtree_GetEntry, list, i, MUIV_NListtree_GetEntry_Flag_SameLevel)) != NULL)
     {
       struct ABEntry *ab;
 
@@ -1897,7 +1899,7 @@ static void AB_ExportTreeNodeLDIF(FILE *fh, struct MUI_NListtree_TreeNode *list)
 
         case AET_GROUP:
         {
-          AB_ExportTreeNodeLDIF(fh, tn);
+          AB_ExportTreeNodeLDIF(fh, tree, tn);
         }
         break;
 
@@ -1916,7 +1918,7 @@ static void AB_ExportTreeNodeLDIF(FILE *fh, struct MUI_NListtree_TreeNode *list)
 ///
 /// AB_ExportTreeLDIF
 //  Exports an address book as LDIF file
-BOOL AB_ExportTreeLDIF(const char *fname)
+BOOL AB_ExportTreeLDIF(Object *tree, const char *fname)
 {
   FILE *fh;
   BOOL result = FALSE;
@@ -1927,7 +1929,7 @@ BOOL AB_ExportTreeLDIF(const char *fname)
   {
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
-    AB_ExportTreeNodeLDIF(fh, MUIV_NListtree_GetEntry_ListNode_Root);
+    AB_ExportTreeNodeLDIF(fh, tree, MUIV_NListtree_GetEntry_ListNode_Root);
 
     fclose(fh);
     result = TRUE;
@@ -1942,7 +1944,7 @@ BOOL AB_ExportTreeLDIF(const char *fname)
 ///
 /// AB_ImportTreeTabCSV
 //  Imports an address book with comma or tab separated entries
-BOOL AB_ImportTreeTabCSV(const char *fname, BOOL append, BOOL sorted, char delim)
+BOOL AB_ImportTreeTabCSV(Object *tree, const char *fname, BOOL append, BOOL sorted, char delim)
 {
   FILE *fh;
   BOOL result = FALSE;
@@ -1958,9 +1960,9 @@ BOOL AB_ImportTreeTabCSV(const char *fname, BOOL append, BOOL sorted, char delim
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
     if(append == FALSE)
-      DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Clear, NULL, 0);
+      DoMethod(tree, MUIM_NListtree_Clear, NULL, 0);
 
-    set(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Quiet, TRUE);
+    set(tree, MUIA_NListtree_Quiet, TRUE);
 
     delimStr[0] = delim;
     delimStr[1] = '\0';
@@ -2132,13 +2134,13 @@ BOOL AB_ImportTreeTabCSV(const char *fname, BOOL append, BOOL sorted, char delim
         if(addr.Alias[0] == '\0')
           EA_SetDefaultAlias(&addr);
 
-        DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, addr.Alias[0] ? addr.Alias : addr.RealName, &addr, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE);
+        DoMethod(tree, MUIM_NListtree_Insert, addr.Alias[0] ? addr.Alias : addr.RealName, &addr, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE);
       }
 
       result = TRUE;
     }
 
-    set(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Quiet, FALSE);
+    set(tree, MUIA_NListtree_Quiet, FALSE);
 
     free(buffer);
 
@@ -2151,10 +2153,10 @@ BOOL AB_ImportTreeTabCSV(const char *fname, BOOL append, BOOL sorted, char delim
   {
     // sort the tree first, because this will set the "modified" flag
     if(sorted == TRUE)
-      DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_AddrBookListtree_SortBy, MUIV_AddrBookListtree_SortBy_Alias);
+      DoMethod(tree, MUIM_AddrBookListtree_SortBy, MUIV_AddrBookListtree_SortBy_Alias);
 
     // now remember the "modified" state
-    set(G->AB->GUI.LV_ADDRESSES, MUIA_AddrBookListtree_Modified, append);
+    set(tree, MUIA_AddrBookListtree_Modified, append);
   }
 
   RETURN(result);
@@ -2202,7 +2204,7 @@ static void WriteTabCSVItem(FILE *fh, const char *value, const char delim)
 ///
 /// AB_ExportTreeNodeTabCSV
 //  Exports an address book with comma or tab separated entries
-static void AB_ExportTreeNodeTabCSV(FILE *fh, struct MUI_NListtree_TreeNode *list, const char delim)
+static void AB_ExportTreeNodeTabCSV(FILE *fh, Object *tree, struct MUI_NListtree_TreeNode *list, const char delim)
 {
   int i;
 
@@ -2212,7 +2214,7 @@ static void AB_ExportTreeNodeTabCSV(FILE *fh, struct MUI_NListtree_TreeNode *lis
   {
     struct MUI_NListtree_TreeNode *tn;
 
-    if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, list, i, MUIV_NListtree_GetEntry_Flag_SameLevel)) != NULL)
+    if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(tree, MUIM_NListtree_GetEntry, list, i, MUIV_NListtree_GetEntry_Flag_SameLevel)) != NULL)
     {
       struct ABEntry *ab;
 
@@ -2262,7 +2264,7 @@ static void AB_ExportTreeNodeTabCSV(FILE *fh, struct MUI_NListtree_TreeNode *lis
 
         case AET_GROUP:
         {
-          AB_ExportTreeNodeTabCSV(fh, tn, delim);
+          AB_ExportTreeNodeTabCSV(fh, tree, tn, delim);
         }
         break;
 
@@ -2281,7 +2283,7 @@ static void AB_ExportTreeNodeTabCSV(FILE *fh, struct MUI_NListtree_TreeNode *lis
 ///
 /// AB_ExportTreeTabCSV
 //  Exports an address book with comma or tab separated entries
-BOOL AB_ExportTreeTabCSV(const char *fname, char delim)
+BOOL AB_ExportTreeTabCSV(Object *tree, const char *fname, char delim)
 {
   FILE *fh;
   BOOL result = FALSE;
@@ -2292,7 +2294,7 @@ BOOL AB_ExportTreeTabCSV(const char *fname, char delim)
   {
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
-    AB_ExportTreeNodeTabCSV(fh, MUIV_NListtree_GetEntry_ListNode_Root, delim);
+    AB_ExportTreeNodeTabCSV(fh, tree, MUIV_NListtree_GetEntry_ListNode_Root, delim);
 
     fclose(fh);
     result = TRUE;
@@ -2437,7 +2439,7 @@ HOOKPROTONHNONP(AB_ImportLDIFABookFunc, void)
     char ldifname[SIZE_PATHFILE];
 
     AddPath(ldifname, frc->drawer, frc->file, sizeof(ldifname));
-    AB_ImportTreeLDIF(ldifname, TRUE, FALSE);
+    AB_ImportTreeLDIF(G->AB->GUI.LV_ADDRESSES, ldifname, TRUE, FALSE);
   }
 
   LEAVE();
@@ -2462,7 +2464,7 @@ HOOKPROTONHNONP(AB_ExportLDIFABookFunc, void)
     if(FileExists(ldifname) == FALSE ||
        MUI_Request(G->App, G->AB->GUI.WI, MUIF_NONE, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_FILE_OVERWRITE), frc->file) != 0)
     {
-      AB_ExportTreeLDIF(ldifname);
+      AB_ExportTreeLDIF(G->AB->GUI.LV_ADDRESSES, ldifname);
     }
   }
 
@@ -2493,7 +2495,7 @@ HOOKPROTONHNO(AB_ImportTabCSVABookFunc, void, int *arg)
     char aname[SIZE_PATHFILE];
 
     AddPath(aname, frc->drawer, frc->file, sizeof(aname));
-    AB_ImportTreeTabCSV(aname, TRUE, FALSE, delim);
+    AB_ImportTreeTabCSV(G->AB->GUI.LV_ADDRESSES, aname, TRUE, FALSE, delim);
   }
 
   LEAVE();
@@ -2527,7 +2529,7 @@ HOOKPROTONHNO(AB_ExportTabCSVABookFunc, void, int *arg)
     if(FileExists(aname) == FALSE ||
        MUI_Request(G->App, G->AB->GUI.WI, MUIF_NONE, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_FILE_OVERWRITE), frc->file) != 0)
     {
-      AB_ExportTreeTabCSV(aname, delim);
+      AB_ExportTreeTabCSV(G->AB->GUI.LV_ADDRESSES, aname, delim);
     }
   }
 
@@ -2550,7 +2552,7 @@ HOOKPROTONHNONP(AB_ImportXMLABookFunc, void)
     char xmlname[SIZE_PATHFILE];
 
     AddPath(xmlname, frc->drawer, frc->file, sizeof(xmlname));
-    AB_ImportTreeXML(xmlname, TRUE, FALSE);
+    AB_ImportTreeXML(G->AB->GUI.LV_ADDRESSES, xmlname, TRUE, FALSE);
   }
 
   LEAVE();
@@ -2703,7 +2705,7 @@ void AB_PrintLongEntry(FILE *prt, struct ABEntry *ab)
 ///
 /// AB_PrintLevel (rec)
 //  Recursively prints an address book node
-void AB_PrintLevel(struct MUI_NListtree_TreeNode *list, FILE *prt, int mode)
+void AB_PrintLevel(Object *tree, struct MUI_NListtree_TreeNode *list, FILE *prt, int mode)
 {
   struct MUI_NListtree_TreeNode *tn;
   int i;
@@ -2712,7 +2714,7 @@ void AB_PrintLevel(struct MUI_NListtree_TreeNode *list, FILE *prt, int mode)
 
   for(i = 0; ; i++)
   {
-    if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, list, i, MUIV_NListtree_GetEntry_Flag_SameLevel)) != NULL)
+    if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(tree, MUIM_NListtree_GetEntry, list, i, MUIV_NListtree_GetEntry_Flag_SameLevel)) != NULL)
     {
       struct ABEntry *ab = tn->tn_User;
 
@@ -2722,7 +2724,7 @@ void AB_PrintLevel(struct MUI_NListtree_TreeNode *list, FILE *prt, int mode)
         AB_PrintShortEntry(prt, ab);
 
       if(ab->Type == AET_GROUP)
-         AB_PrintLevel(tn, prt, mode);
+         AB_PrintLevel(tree, tn, prt, mode);
     }
     else
       break;
@@ -2763,7 +2765,7 @@ HOOKPROTONHNONP(AB_PrintABookFunc, void)
           fprintf(prt, "\n  %-12.12s %-20.20s %s/%s\n", tr(MSG_AB_AliasFld), tr(MSG_EA_RealName), tr(MSG_EA_EmailAddress), tr(MSG_EA_Description));
           fputs("------------------------------------------------------------------------\n", prt);
         }
-        AB_PrintLevel(MUIV_NListtree_GetEntry_ListNode_Root, prt, mode);
+        AB_PrintLevel(G->AB->GUI.LV_ADDRESSES, MUIV_NListtree_GetEntry_ListNode_Root, prt, mode);
         BusyEnd(busy);
 
         // before we close the file
@@ -2811,7 +2813,7 @@ HOOKPROTONHNONP(AB_PrintFunc, void)
 
          AB_PrintLongEntry(prt, ab);
          if(ab->Type == AET_GROUP)
-           AB_PrintLevel(tn, prt, 1);
+           AB_PrintLevel(G->AB->GUI.LV_ADDRESSES, tn, prt, 1);
 
         // before we close the file
         // handle we check the error state
