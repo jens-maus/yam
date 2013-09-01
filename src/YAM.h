@@ -89,6 +89,7 @@ struct Global
   Object *                 ReadToolbarCacheObject;
   Object *                 WriteToolbarCacheObject;
   Object *                 AbookToolbarCacheObject;
+  Object *                 ABookWinObject;
   Object *                 ConfigWinObject;
   char *                   ER_Message[MAXERR];
   struct DiskObject *      HideIcon;

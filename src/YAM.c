@@ -1753,7 +1753,7 @@ static void InitAfterLogin(void)
   BayesFilterInit();
 
   SplashProgress(tr(MSG_LoadingABook), 90);
-  AB_LoadTree(G->AB_Filename, FALSE, FALSE);
+  AB_LoadTree(G->AB->GUI.LV_ADDRESSES, G->AB_Filename, FALSE, FALSE);
   if((G->RexxHost = SetupARexxHost("YAM", NULL)) == NULL)
     Abort(tr(MSG_ErrorARexx));
 

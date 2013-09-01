@@ -110,9 +110,9 @@ BOOL   AB_CreateEmptyABook(const char *fname);
 BOOL   AB_ExpandBD(const long date, char *dateStr, const size_t dateStrSize);
 int    AB_FindEntry(const char *pattern, enum AddressbookFind mode, char **result);
 APTR   AB_GotoEntry(const char *alias);
-BOOL   AB_LoadTree(const char *fname, BOOL append, BOOL sorted);
+BOOL   AB_LoadTree(Object *tree, const char *fname, BOOL append, BOOL sorted);
 struct AB_ClassData *AB_New(void);
-BOOL   AB_SaveTree(const char *fname);
+BOOL   AB_SaveTree(Object *tree, const char *fname);
 int    AB_SearchEntry(const char *text, int mode, struct ABEntry **ab);
 
 void AB_PrintLevel(Object *tree, struct MUI_NListtree_TreeNode *list, FILE *prt, int mode);

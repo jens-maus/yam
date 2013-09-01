@@ -31,8 +31,10 @@
 #include "AddressBookWindow_cl.h"
 
 #include <string.h>
+#include <proto/dos.h>
 #include <proto/expat.h>
 #include <proto/muimaster.h>
+#include <proto/timer.h>
 #include <libraries/gadtools.h>
 #include <libraries/iffparse.h>
 #include <mui/NList_mcc.h>
@@ -48,6 +50,7 @@
 
 #include "mui/AddrBookListtree.h"
 #include "mui/AddrBookToolbar.h"
+#include "mui/BirthdayRequestWindow.h"
 #include "mui/RecipientString.h"
 #include "mui/WriteWindow.h"
 
@@ -69,6 +72,11 @@ struct Data
   Object *TB_TOOLBAR;
   Object *LV_ADDRESSES;
 
+  enum AddressbookMode mode;
+  LONG windowNumber;
+  Object *recipientObject;
+
+  char windowTitle[SIZE_DEFAULT];
   char screenTitle[SIZE_DEFAULT];
 };
 */
@@ -294,23 +302,48 @@ OVERLOAD(OM_GET)
 /* Public Methods */
 /// DECLARE(Open)
 // open address book window
-DECLARE(Open)
+DECLARE(Open) // enum AddressbookMode mode, LONG windowNumber, Object *recipientObj
 {
+  GETDATA;
+  const char *md;
+  BOOL nodeActive;
+
   ENTER();
 
-  // check if the window is already open
-  if(xget(obj, MUIA_Window_Open) == TRUE)
+  switch(msg->mode)
   {
-    // bring window to front
-    DoMethod(obj, MUIM_Window_ToFront);
+    case ABM_FROM:    md = "(From)";     break;
+    case ABM_TO:      md = "(To)";       break;
+    case ABM_CC:      md = "(CC)";       break;
+    case ABM_BCC:     md = "(BCC)";      break;
+    case ABM_REPLYTO: md = "(Reply-To)"; break;
+    case ABM_CONFIG:  md = "";           break;
+    default:          md = "";           break;
+  }
 
-    // make window active
-    set(obj, MUIA_Window_Activate, TRUE);
-  }
-  else
-  {
-    SafeOpenWindow(obj);
-  }
+  data->mode =msg-> mode;
+  data->windowNumber = (*md != '\0' ? msg->windowNumber : -1),
+  set(data->LV_ADDRESSES, MUIA_AddrBookListtree_Modified, FALSE);
+
+  // enable/disable the To/CC/BCC buttons depending on whether there is an active entry or not
+  nodeActive = ((struct MUI_NListtree_TreeNode *)xget(data->LV_ADDRESSES, MUIA_NListtree_Active) != NULL);
+  DoMethod(obj, MUIM_MultiSet, MUIA_Disabled, nodeActive == FALSE,
+    data->BT_TO,
+    data->BT_CC,
+    data->BT_BCC,
+    NULL);
+
+  if(data->TB_TOOLBAR != NULL)
+    DoMethod(data->TB_TOOLBAR, MUIM_AddrBookToolbar_UpdateControls);
+
+
+  snprintf(data->windowTitle, sizeof(data->windowTitle), "%s %s", tr(MSG_MA_MAddrBook), md);
+
+  xset(obj,
+    MUIA_Window_Title, data->windowTitle,
+    MUIA_Window_ScreenTitle, CreateScreenTitle(data->screenTitle, sizeof(data->screenTitle), data->windowTitle));
+
+  SafeOpenWindow(obj);
 
   RETURN(0);
   return 0;
@@ -321,6 +354,7 @@ DECLARE(Open)
 // load an address book
 DECLARE(Load)
 {
+  GETDATA;
   struct FileReqCache *frc;
 
   ENTER();
@@ -328,7 +362,7 @@ DECLARE(Load)
   if((frc = ReqFile(ASL_ABOOK, obj, tr(MSG_Open), REQF_NONE, G->MA_MailDir, "")) != NULL)
   {
     AddPath(G->AB_Filename, frc->drawer, frc->file, sizeof(G->AB_Filename));
-    AB_LoadTree(G->AB_Filename, FALSE, FALSE);
+    AB_LoadTree(data->LV_ADDRESSES, G->AB_Filename, FALSE, FALSE);
   }
 
   RETURN(0);
@@ -340,6 +374,7 @@ DECLARE(Load)
 // append an address book
 DECLARE(Append)
 {
+  GETDATA;
   struct FileReqCache *frc;
 
   ENTER();
@@ -349,7 +384,7 @@ DECLARE(Append)
     char aname[SIZE_PATHFILE];
 
     AddPath(aname, frc->drawer, frc->file, sizeof(aname));
-    AB_LoadTree(aname, TRUE, FALSE);
+    AB_LoadTree(data->LV_ADDRESSES, aname, TRUE, FALSE);
   }
 
   RETURN(0);
@@ -368,7 +403,7 @@ DECLARE(Save)
 
   busy = BusyBegin(BUSY_TEXT);
   BusyText(busy, tr(MSG_BusySavingAB), G->AB_Filename);
-  AB_SaveTree(G->AB_Filename);
+  AB_SaveTree(data->LV_ADDRESSES, G->AB_Filename);
   set(data->LV_ADDRESSES, MUIA_AddrBookListtree_Modified, FALSE);
   BusyEnd(busy);
 
@@ -537,9 +572,9 @@ DECLARE(HandleDoubleClick)
 
   ENTER();
 
-  if(G->AB->winNumber != -1)
+  if(data->windowNumber != -1)
   {
-    if(DoMethod(obj, METHOD(UseEntry), G->AB->Mode) == TRUE)
+    if(DoMethod(obj, METHOD(UseEntry), data->mode) == TRUE)
       DoMethod(obj, METHOD(Close));
   }
   else
@@ -549,14 +584,14 @@ DECLARE(HandleDoubleClick)
     if((active = (struct MUI_NListtree_TreeNode *)xget(data->LV_ADDRESSES, MUIA_NListtree_Active)) != NULL &&
        isFlagClear(active->tn_Flags, TNF_LIST))
     {
-      if(G->AB->Mode == ABM_CONFIG && G->AB->parentStringGadget != NULL)
+      if(data->mode == ABM_CONFIG && data->recipientObject != NULL)
       {
         struct ABEntry *addr = (struct ABEntry *)active->tn_User;
         char *recipient;
 
         // check if the recipient string object has the NoFullName tag set
         // and if so we only add the recipient by email address
-        if(xget(G->AB->parentStringGadget, MUIA_Recipientstring_NoFullName) == TRUE)
+        if(xget(data->recipientObject, MUIA_Recipientstring_NoFullName) == TRUE)
           recipient = addr->Address;
         else if(addr->Alias != NULL)
           recipient = addr->Alias;
@@ -566,14 +601,14 @@ DECLARE(HandleDoubleClick)
           recipient = addr->Address;
 
         // send the found recipient to the recipientstring object
-        DoMethod(G->AB->parentStringGadget, MUIM_Recipientstring_AddRecipient, recipient);
+        DoMethod(data->recipientObject, MUIM_Recipientstring_AddRecipient, recipient);
 
         // close the addressbook again.
         set(obj, MUIA_Window_CloseRequest, TRUE);
 
         // make sure to set the parentString as the new active object in
         // the window it belongs to because the user will return to it.
-        set(_win(G->AB->parentStringGadget), MUIA_Window_ActiveObject, G->AB->parentStringGadget);
+        set(_win(data->recipientObject), MUIA_Window_ActiveObject, data->recipientObject);
       }
       else
       {
@@ -600,7 +635,7 @@ DECLARE(UseEntry) // enum AddressbookMode mode
   {
     Object *writeWindow = NULL;
 
-    if(G->AB->winNumber == -1)
+    if(data->windowNumber == -1)
     {
       struct WriteMailData *wmData = NewWriteMailWindow(NULL, 0);
       if(wmData != NULL)
@@ -615,7 +650,7 @@ DECLARE(UseEntry) // enum AddressbookMode mode
       IterateList(&G->writeMailDataList, struct WriteMailData *, wmData)
       {
         if(wmData->window != NULL &&
-           (int)xget(wmData->window, MUIA_WriteWindow_Num) == G->AB->winNumber)
+           (int)xget(wmData->window, MUIA_WriteWindow_Num) == data->windowNumber)
         {
           writeWindow = wmData->window;
           break;
@@ -678,7 +713,7 @@ DECLARE(Close)
       case 0: closeWin = FALSE; break;
       case 1: DoMethod(obj, METHOD(Save)); break;
       case 2: break;
-      case 3: AB_LoadTree(G->AB_Filename, FALSE, FALSE); break;
+      case 3: AB_LoadTree(data->LV_ADDRESSES, G->AB_Filename, FALSE, FALSE); break;
     }
   }
 
@@ -822,6 +857,321 @@ DECLARE(ImportXML)
     AddPath(xmlname, frc->drawer, frc->file, sizeof(xmlname));
     AB_ImportTreeXML(data->LV_ADDRESSES, xmlname, TRUE, FALSE);
   }
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(Find)
+// Searches an address book node for a given pattern
+DECLARE(Find) // const char *pattern, enum AddressbookFind mode, char **result
+{
+  GETDATA;
+  int res = 0;
+  int i;
+  BOOL goOn = TRUE;
+
+  ENTER();
+
+  D(DBF_ALWAYS, "searching for pattern '%s' in abook, mode=%ld", msg->pattern, msg->mode);
+
+  for(i = 0; goOn == TRUE; i++)
+  {
+    struct MUI_NListtree_TreeNode *tn;
+
+    if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(data->LV_ADDRESSES, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE)) != NULL)
+    {
+      struct ABEntry *ab = tn->tn_User;
+
+      if(ab->Type == AET_GROUP)
+        continue;
+      else
+      {
+        BOOL found = FALSE;
+        int winnum;
+
+        switch(msg->mode)
+        {
+          case ABF_RX_NAME:
+            found = MatchNoCase(ab->RealName, msg->pattern);
+          break;
+
+          case ABF_RX_EMAIL:
+            found = MatchNoCase(ab->Address, msg->pattern);
+          break;
+
+          case ABF_RX_NAMEEMAIL:
+            found = MatchNoCase(ab->RealName, msg->pattern) || MatchNoCase(ab->Address, msg->pattern);
+          break;
+
+          default:
+          {
+            if((found = MatchNoCase(ab->Alias, msg->pattern) || MatchNoCase(ab->Comment, msg->pattern)) == FALSE)
+            {
+              if((found = MatchNoCase(ab->RealName, msg->pattern) || MatchNoCase(ab->Address, msg->pattern)) == FALSE && ab->Type == AET_USER)
+              {
+                found = MatchNoCase(ab->Homepage, msg->pattern) ||
+                        MatchNoCase(ab->Street, msg->pattern)   ||
+                        MatchNoCase(ab->City, msg->pattern)     ||
+                        MatchNoCase(ab->Country, msg->pattern)  ||
+                        MatchNoCase(ab->Phone, msg->pattern);
+              }
+            }
+          }
+        }
+
+        if(found == TRUE)
+        {
+          D(DBF_ALWAYS, "found pattern '%s' in entry with address '%s'", msg->pattern, ab->Address);
+
+          res++;
+
+          if(msg->mode == ABF_USER)
+          {
+            char buf[SIZE_LARGE];
+
+            DoMethod(data->LV_ADDRESSES, MUIM_NListtree_Open, MUIV_NListtree_Open_ListNode_Parent, tn, MUIF_NONE);
+            set(data->LV_ADDRESSES, MUIA_NListtree_Active, tn);
+
+            snprintf(buf, sizeof(buf), tr(MSG_AB_FoundEntry), ab->Alias, ab->RealName);
+
+            switch(MUI_Request(_app(obj), obj, MUIF_NONE, tr(MSG_AB_FindEntry), tr(MSG_AB_FoundEntryGads), buf))
+            {
+              case 1:
+                // nothing
+              break;
+
+              case 2:
+              {
+                if((winnum = EA_Init(ab->Type, ab)) >= 0)
+                  EA_Setup(winnum, ab);
+              }
+              // fall through
+
+              case 0:
+              {
+                res = -1;
+                goOn = FALSE;
+              }
+              break;
+            }
+          }
+          else if(msg->result != NULL)
+            *msg->result++ = ab->Alias;
+        }
+      }
+    }
+    else
+    {
+      goOn = FALSE;
+    }
+  }
+
+  RETURN(res);
+  return res;
+}
+
+///
+/// DECLARE(Search)
+// searches the address book by alias, name or address
+// it will break if there is more then one entry
+DECLARE(Search) // const char *text, int mode, struct ABEntry **ab
+{
+  GETDATA;
+  struct MUI_NListtree_TreeNode *tn;
+  struct ABEntry *ab_found;
+  int i;
+  ULONG hits = 0;
+  BOOL found = FALSE;
+  int mode_type = msg->mode&ASM_TYPEMASK;
+  LONG tl;
+
+  ENTER();
+
+  tl = strlen(msg->text);
+
+  // we scan until we are at the end of the list or
+  // if we found more then one matching entry
+  for(i = 0; hits <= 2; i++, found = FALSE)
+  {
+    tn = (struct MUI_NListtree_TreeNode *)DoMethod(data->LV_ADDRESSES, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE);
+    if(tn == NULL)
+      break;
+
+    // now we set the AB_Entry
+    ab_found = tn->tn_User;
+    if(ab_found == NULL)
+      break;
+
+    // now we check if this entry is one of the not wished entry types
+    // and then we skip it.
+    if(ab_found->Type == AET_USER  && !isUserSearch(msg->mode))
+      continue;
+    if(ab_found->Type == AET_LIST  && !isListSearch(msg->mode))
+      continue;
+    if(ab_found->Type == AET_GROUP && !isGroupSearch(msg->mode))
+      continue;
+
+    if(isCompleteSearch(msg->mode))
+    {
+      // Now we check for the ALIAS->REALNAME->ADDRESS, so only ONE mode is allowed at a time
+      if(isAliasSearch(mode_type))
+        found = !Strnicmp(ab_found->Alias,    msg->text, tl);
+      else if(isRealNameSearch(mode_type))
+        found = !Strnicmp(ab_found->RealName, msg->text, tl);
+      else if(isAddressSearch(mode_type))
+        found = !Strnicmp(ab_found->Address,  msg->text, tl);
+    }
+    else
+    {
+      // Now we check for the ALIAS->REALNAME->ADDRESS, so only ONE mode is allowed at a time
+      if(isAliasSearch(mode_type))
+        found = !Stricmp(ab_found->Alias,    msg->text);
+      else if(isRealNameSearch(mode_type))
+        found = !Stricmp(ab_found->RealName, msg->text);
+      else if(isAddressSearch(mode_type))
+        found = !Stricmp(ab_found->Address,  msg->text);
+    }
+
+    if(found == TRUE)
+    {
+      *msg->ab = ab_found;
+      hits++;
+    }
+  }
+
+  RETURN(hits);
+  return hits;
+}
+
+///
+/// DECLARE(CompleteAlias)
+// auto-completes alias or name in recipient field
+DECLARE(CompleteAlias) // const char *text
+{
+  char *compl = NULL;
+  struct ABEntry *ab = NULL;
+
+  ENTER();
+
+  if(DoMethod(obj, METHOD(Search), msg->text, ASM_ALIAS|ASM_USER|ASM_LIST|ASM_COMPLETE, &ab) == 1)
+  {
+    compl = ab->Alias;
+  }
+  else if(DoMethod(obj, METHOD(Search), msg->text, ASM_REALNAME|ASM_USER|ASM_LIST|ASM_COMPLETE, &ab) == 1)
+  {
+    compl = ab->RealName;
+  }
+  else if(DoMethod(obj, METHOD(Search), msg->text, ASM_ADDRESS|ASM_USER|ASM_LIST|ASM_COMPLETE, &ab) == 1)
+  {
+    compl = ab->Address;
+  }
+
+  if(compl != NULL)
+    compl = &compl[strlen(msg->text)];
+
+  RETURN((IPTR)compl);
+  return (IPTR)compl;
+}
+
+///
+/// DECLARE(Goto)
+// searches an entry by alias and activates it
+DECLARE(Goto) // const char *alias
+{
+  GETDATA;
+  struct MUI_NListtree_TreeNode *tn = NULL;
+
+  ENTER();
+
+  if(msg->alias != NULL)
+  {
+    if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(data->LV_ADDRESSES, MUIM_NListtree_FindName, MUIV_NListtree_FindName_ListNode_Root, msg->alias, MUIF_NONE)) != NULL)
+    {
+      DoMethod(data->LV_ADDRESSES, MUIM_NListtree_Open, MUIV_NListtree_Open_ListNode_Parent, tn, MUIF_NONE);
+      set(data->LV_ADDRESSES, MUIA_NListtree_Active, tn);
+    }
+  }
+
+  RETURN((IPTR)tn);
+  return (IPTR)tn;
+}
+
+///
+/// DECLARE(CheckBirthdates)
+// searches the address book for today's birthdays
+DECLARE(CheckBirthdates) // ULONG check
+{
+  GETDATA;
+  struct TimeVal nowTV;
+  struct TimeVal nextTV;
+  struct DateStamp nextDS;
+
+  ENTER();
+
+  // perform the check only if we are instructed to do it
+  if(msg->check == TRUE)
+  {
+    ldiv_t today = ldiv(DateStamp2Long(NULL), 10000);
+    int i = 0;
+    struct MUI_NListtree_TreeNode *tn;
+
+    while((tn = (struct MUI_NListtree_TreeNode *)DoMethod(data->LV_ADDRESSES, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE)) != NULL)
+    {
+      struct ABEntry *ab = tn->tn_User;
+
+      if(ab->Type == AET_USER && ab->BirthDay != 0)
+      {
+        ldiv_t birthday = ldiv(ab->BirthDay, 10000);
+
+        if(birthday.quot == today.quot)
+        {
+          char question[SIZE_LARGE];
+          char *name = *ab->RealName ? ab->RealName : ab->Alias;
+          char dateString[64];
+
+          DateStamp2String(dateString, sizeof(dateString), NULL, DSS_DATE, TZC_NONE);
+          snprintf(question, sizeof(question), tr(MSG_AB_BirthdayReqBody), dateString, name, today.rem - birthday.rem);
+
+          // show the Birthday Requester
+          BirthdayRequestWindowObject,
+            MUIA_BirthdayRequestWindow_Body, question,
+            MUIA_BirthdayRequestWindow_Alias, ab->Alias,
+          End;
+        }
+      }
+
+      i++;
+    }
+  }
+
+  // reschedule the birthday check for the configured check time
+  DateStamp(&nextDS);
+  nextDS.ds_Minute = C->BirthdayCheckTime.ds_Minute;
+  nextDS.ds_Tick = 0;
+
+  DateStamp2TimeVal(&nextDS, &nextTV, TZC_NONE);
+
+  GetSysTime(TIMEVAL(&nowTV));
+  if(CmpTime(TIMEVAL(&nowTV), TIMEVAL(&nextTV)) < 0)
+  {
+    // if the check time is already over for today we schedule the next check
+    // for tomorrow
+    nextDS.ds_Days++;
+    DateStamp2TimeVal(&nextDS, &nextTV, TZC_NONE);
+  }
+
+  #if defined(DEBUG)
+  {
+    char dateString[64];
+
+    DateStamp2String(dateString, sizeof(dateString), &nextDS, DSS_DATETIME, TZC_NONE);
+    D(DBF_TIMER, "next birthday check @ %s", dateString);
+  }
+  #endif
+
+  RestartTimer(TIMER_CHECKBIRTHDAYS, nextTV.Seconds, nextTV.Microseconds, TRUE);
 
   RETURN(0);
   return 0;

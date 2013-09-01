@@ -846,7 +846,7 @@ MakeStaticHook(AB_FromAddrBookHook, AB_FromAddrBook);
 ///
 /// AB_LoadTree
 //  Loads the address book from a file
-BOOL AB_LoadTree(const char *fname, BOOL append, BOOL sorted)
+BOOL AB_LoadTree(Object *tree, const char *fname, BOOL append, BOOL sorted)
 {
   FILE *fh;
   BOOL result = FALSE;
@@ -872,9 +872,9 @@ BOOL AB_LoadTree(const char *fname, BOOL append, BOOL sorted)
         int version = buffer[3] - '0';
 
         if(append == FALSE)
-          DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Clear, NULL, 0);
+          DoMethod(tree, MUIM_NListtree_Clear, NULL, 0);
 
-        set(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Quiet, TRUE);
+        set(tree, MUIA_NListtree_Quiet, TRUE);
 
         while(GetLine(&buffer, &size, fh) >= 0)
         {
@@ -924,7 +924,7 @@ BOOL AB_LoadTree(const char *fname, BOOL append, BOOL sorted)
             }
             while(GetLine(&buffer, &size, fh) >= 0);
 
-            DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, addr.Alias[0] ? addr.Alias : addr.RealName, &addr, parent[nested], MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE);
+            DoMethod(tree, MUIM_NListtree_Insert, addr.Alias[0] ? addr.Alias : addr.RealName, &addr, parent[nested], MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE);
           }
           else if(strncmp(buffer, "@LIST", 5) == 0)
           {
@@ -959,7 +959,7 @@ BOOL AB_LoadTree(const char *fname, BOOL append, BOOL sorted)
             if(members != NULL)
             {
               addr.Members = members;
-              DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, addr.Alias, &addr, parent[nested], MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE);
+              DoMethod(tree, MUIM_NListtree_Insert, addr.Alias, &addr, parent[nested], MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE);
             }
             dstrfree(members);
           }
@@ -970,7 +970,7 @@ BOOL AB_LoadTree(const char *fname, BOOL append, BOOL sorted)
             GetLine(&buffer, &size, fh);
             strlcpy(addr.Comment, Trim(buffer), sizeof(addr.Comment));
             nested++;
-            parent[nested] = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, addr.Alias, &addr, parent[nested-1], MUIV_NListtree_Insert_PrevNode_Tail, TNF_LIST);
+            parent[nested] = (struct MUI_NListtree_TreeNode *)DoMethod(tree, MUIM_NListtree_Insert, addr.Alias, &addr, parent[nested-1], MUIV_NListtree_Insert_PrevNode_Tail, TNF_LIST);
           }
           else if(strcmp(buffer,"@ENDGROUP") == 0)
           {
@@ -978,7 +978,7 @@ BOOL AB_LoadTree(const char *fname, BOOL append, BOOL sorted)
           }
         }
 
-        set(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Quiet, FALSE);
+        set(tree, MUIA_NListtree_Quiet, FALSE);
 
         // no errors happened
         result = TRUE;
@@ -987,10 +987,10 @@ BOOL AB_LoadTree(const char *fname, BOOL append, BOOL sorted)
       {
         // ask the user if he really wants to read out a non YAM
         // Addressbook file.
-        if(MUI_Request(G->App, G->AB->GUI.WI, MUIF_NONE, NULL, tr(MSG_AB_NOYAMADDRBOOK_GADS), tr(MSG_AB_NOYAMADDRBOOK), fname))
+        if(MUI_Request(_app(tree), _win(tree), MUIF_NONE, NULL, tr(MSG_AB_NOYAMADDRBOOK_GADS), tr(MSG_AB_NOYAMADDRBOOK), fname))
         {
           if(append == FALSE)
-            DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Clear, NULL, 0);
+            DoMethod(tree, MUIM_NListtree_Clear, NULL, 0);
 
           fseek(fh, 0, SEEK_SET);
           while(GetLine(&buffer, &size, fh) >= 0)
@@ -1015,7 +1015,7 @@ BOOL AB_LoadTree(const char *fname, BOOL append, BOOL sorted)
                  *p2 = '\0';
             }
             strlcpy(addr.Alias, p, sizeof(addr.Alias));
-            DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, addr.Alias, &addr, parent[nested], MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE);
+            DoMethod(tree, MUIM_NListtree_Insert, addr.Alias, &addr, parent[nested], MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE);
           }
         }
 
@@ -1041,10 +1041,10 @@ BOOL AB_LoadTree(const char *fname, BOOL append, BOOL sorted)
   {
     // sort the tree first, because this will set the "modified" flag
     if(sorted == TRUE)
-      DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_AddrBookListtree_SortBy, MUIV_AddrBookListtree_SortBy_Alias);
+      DoMethod(tree, MUIM_AddrBookListtree_SortBy, MUIV_AddrBookListtree_SortBy_Alias);
 
     // now remember the "modified" state
-    set(G->AB->GUI.LV_ADDRESSES, MUIA_AddrBookListtree_Modified, append);
+    set(tree, MUIA_AddrBookListtree_Modified, append);
   }
 
   RETURN(result);
@@ -1054,7 +1054,7 @@ BOOL AB_LoadTree(const char *fname, BOOL append, BOOL sorted)
 ///
 /// AB_SaveTreeNode (rec)
 //  Recursively saves an address book node
-static void AB_SaveTreeNode(FILE *fh, struct MUI_NListtree_TreeNode *list)
+static void AB_SaveTreeNode(FILE *fh, Object *tree, struct MUI_NListtree_TreeNode *list)
 {
   struct MUI_NListtree_TreeNode *tn;
   int i;
@@ -1063,7 +1063,7 @@ static void AB_SaveTreeNode(FILE *fh, struct MUI_NListtree_TreeNode *list)
 
   for(i = 0; ; i++)
   {
-    if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, list, i, MUIV_NListtree_GetEntry_Flag_SameLevel)) != NULL)
+    if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(tree, MUIM_NListtree_GetEntry, list, i, MUIV_NListtree_GetEntry_Flag_SameLevel)) != NULL)
     {
       struct ABEntry *ab = tn->tn_User;
 
@@ -1078,7 +1078,7 @@ static void AB_SaveTreeNode(FILE *fh, struct MUI_NListtree_TreeNode *list)
           break;
         case AET_GROUP:
           fprintf(fh, "@GROUP %s\n%s\n", ab->Alias, ab->Comment);
-          AB_SaveTreeNode(fh, tn);
+          AB_SaveTreeNode(fh, tree, tn);
           fputs("@ENDGROUP\n", fh);
           break;
       }
@@ -1093,7 +1093,7 @@ static void AB_SaveTreeNode(FILE *fh, struct MUI_NListtree_TreeNode *list)
 ///
 /// AB_SaveTree
 //  Saves the address book to a file
-BOOL AB_SaveTree(const char *fname)
+BOOL AB_SaveTree(Object *tree, const char *fname)
 {
   FILE *fh;
   BOOL result = FALSE;
@@ -1105,7 +1105,7 @@ BOOL AB_SaveTree(const char *fname)
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
     fputs("YAB4 - YAM Addressbook\n", fh);
-    AB_SaveTreeNode(fh, MUIV_NListtree_GetEntry_ListNode_Root);
+    AB_SaveTreeNode(fh, tree, MUIV_NListtree_GetEntry_ListNode_Root);
     fclose(fh);
     AppendToLogfile(LF_VERBOSE, 70, tr(MSG_LOG_SavingABook), fname);
 
@@ -2397,7 +2397,7 @@ HOOKPROTONHNONP(AB_OpenABookFunc, void)
   if((frc = ReqFile(ASL_ABOOK,G->AB->GUI.WI, tr(MSG_Open), REQF_NONE, G->MA_MailDir, "")) != NULL)
   {
     AddPath(G->AB_Filename, frc->drawer, frc->file, sizeof(G->AB_Filename));
-    AB_LoadTree(G->AB_Filename, FALSE, FALSE);
+    AB_LoadTree(G->AB->GUI.LV_ADDRESSES, G->AB_Filename, FALSE, FALSE);
   }
 
   LEAVE();
@@ -2418,7 +2418,7 @@ HOOKPROTONHNONP(AB_AppendABookFunc, void)
     char aname[SIZE_PATHFILE];
 
     AddPath(aname, frc->drawer, frc->file, sizeof(aname));
-    AB_LoadTree(aname, TRUE, FALSE);
+    AB_LoadTree(G->AB->GUI.LV_ADDRESSES, aname, TRUE, FALSE);
   }
 
   LEAVE();
@@ -2570,7 +2570,7 @@ HOOKPROTONHNONP(AB_SaveABookFunc, void)
 
   busy = BusyBegin(BUSY_TEXT);
   BusyText(busy, tr(MSG_BusySavingAB), G->AB_Filename);
-  AB_SaveTree(G->AB_Filename);
+  AB_SaveTree(G->AB->GUI.LV_ADDRESSES, G->AB_Filename);
   set(G->AB->GUI.LV_ADDRESSES, MUIA_AddrBookListtree_Modified, FALSE);
   BusyEnd(busy);
 
@@ -3004,7 +3004,7 @@ HOOKPROTONHNONP(AB_Close, void)
       case 0: closeWin = FALSE; break;
       case 1: AB_SaveABookFunc(); break;
       case 2: break;
-      case 3: AB_LoadTree(G->AB_Filename, FALSE, FALSE); break;
+      case 3: AB_LoadTree(G->AB->GUI.LV_ADDRESSES, G->AB_Filename, FALSE, FALSE); break;
     }
   }
 

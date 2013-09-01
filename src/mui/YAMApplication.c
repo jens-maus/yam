@@ -52,6 +52,7 @@
 
 #include "mui/Aboutwindow.h"
 #include "mui/AddrBookListtree.h"
+#include "mui/AddressBookWindow.h"
 #include "mui/AddressmatchPopup.h"
 #include "mui/ConfigWindow.h"
 #include "mui/InfoWindow.h"

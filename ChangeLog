@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-09-01 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_AB.c, mui/AddressBookWindow.c: implemented some methods to replace
+    certain old functions in the future.
+
 2013-08-30 Thore Böckelmann <tboeckel@gmx.de>
 
   * DynamicString.c: increased the chunk size for dynamic strings to 1024 bytes.

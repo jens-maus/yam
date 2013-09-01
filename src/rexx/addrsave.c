@@ -62,12 +62,12 @@ void rx_addrsave(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
     {
       if(args->filename)
       {
-        if(!AB_SaveTree(args->filename))
+        if(!AB_SaveTree(G->AB->GUI.LV_ADDRESSES, args->filename))
           params->rc = RETURN_ERROR;
       }
       else
       {
-        if(AB_SaveTree(G->AB_Filename))
+        if(AB_SaveTree(G->AB->GUI.LV_ADDRESSES, G->AB_Filename))
           set(G->AB->GUI.LV_ADDRESSES, MUIA_AddrBookListtree_Modified, FALSE);
         else
           params->rc = RETURN_ERROR;
