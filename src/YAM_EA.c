@@ -55,10 +55,10 @@
 #include "YAM_utilities.h"
 
 #include "mui/ClassesExtra.h"
-#include "mui/AddrBookEntryList.h"
-#include "mui/AddrBookListtree.h"
-#include "mui/PGPKeyPopobject.h"
-#include "mui/Recipientstring.h"
+#include "mui/AddressBookEntryList.h"
+#include "mui/AddressBookListtree.h"
+#include "mui/PGPKeyPopup.h"
+#include "mui/RecipientString.h"
 #include "mui/UserPortraitGroup.h"
 
 #include "Config.h"
@@ -152,7 +152,7 @@ void EA_Setup(int winnum, struct ABEntry *ab)
       setstring(gui->ST_STREET, ab->Street);
       setstring(gui->ST_CITY, ab->City);
       setstring(gui->ST_COUNTRY, ab->Country);
-      nnset(gui->PO_PGPKEY,MUIA_PGPKeyPopobject_PGPKey,ab->PGPId);
+      nnset(gui->PO_PGPKEY,MUIA_PGPKeyPopup_PGPKey,ab->PGPId);
       /* avoid triggering notification to "default security" cycle */
       setcycle(gui->CY_DEFSECURITY,ab->DefSecurity);
       setstring(gui->ST_HOMEPAGE, ab->Homepage);
@@ -461,7 +461,7 @@ HOOKPROTONHNO(EA_Okay, void, int *arg)
     }
   }
 
-  set(G->AB->GUI.LV_ADDRESSES, MUIA_AddrBookListtree_Modified, TRUE);
+  set(G->AB->GUI.LV_ADDRESSES, MUIA_AddressBookListtree_Modified, TRUE);
   if(old == TRUE)
     addr = G->EA[winnum]->ABEntry;
   else
@@ -482,7 +482,7 @@ HOOKPROTONHNO(EA_Okay, void, int *arg)
       GetMUIString(addr->Street, gui->ST_STREET, sizeof(addr->Street));
       GetMUIString(addr->City, gui->ST_CITY, sizeof(addr->City));
       GetMUIString(addr->Country, gui->ST_COUNTRY, sizeof(addr->Country));
-      strlcpy(addr->PGPId, (char *)xget(gui->PO_PGPKEY, MUIA_PGPKeyPopobject_PGPKey), sizeof(addr->PGPId));
+      strlcpy(addr->PGPId, (char *)xget(gui->PO_PGPKEY, MUIA_PGPKeyPopup_PGPKey), sizeof(addr->PGPId));
       GetMUIString(addr->Homepage, gui->ST_HOMEPAGE, sizeof(addr->Homepage));
 
       // get the default security setting and check if
@@ -691,8 +691,8 @@ static struct EA_ClassData *EA_New(int winnum, int type)
                  Child, Label2(tr(MSG_EA_EmailAddress)),
                  Child, data->GUI.ST_ADDRESS  = MakeString(SIZE_ADDRESS,tr(MSG_EA_EmailAddress)),
                  Child, Label2(tr(MSG_EA_PGPId)),
-                 Child, data->GUI.PO_PGPKEY = PGPKeyPopobjectObject,
-                   MUIA_PGPKeyPopobject_Label, tr(MSG_EA_PGPId),
+                 Child, data->GUI.PO_PGPKEY = PGPKeyPopupObject,
+                   MUIA_PGPKeyPopup_Label, tr(MSG_EA_PGPId),
                  End,
                  Child, Label2(tr(MSG_EA_Homepage)),
                  Child, HGroup,
@@ -746,7 +746,7 @@ static struct EA_ClassData *EA_New(int winnum, int type)
           SetHelp(data->GUI.ST_BIRTHDAY   ,MSG_HELP_EA_ST_BIRTHDAY   );
 
           // when a key ID is selected, set default security to "encrypt"
-          DoMethod(data->GUI.PO_PGPKEY, MUIM_Notify, MUIA_PGPKeyPopobject_PGPKeyChanged, MUIV_EveryTime, data->GUI.CY_DEFSECURITY, 3, MUIM_Set, MUIA_Cycle_Active, 2);
+          DoMethod(data->GUI.PO_PGPKEY, MUIM_Notify, MUIA_PGPKeyPopup_PGPKeyChanged, MUIV_EveryTime, data->GUI.CY_DEFSECURITY, 3, MUIM_Set, MUIA_Cycle_Active, 2);
 
           DoMethod(bt_homepage, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &EA_HomepageHook, winnum);
         }
@@ -788,14 +788,14 @@ static struct EA_ClassData *EA_New(int winnum, int type)
               Child, NListviewObject,
                  MUIA_CycleChain, 1,
                  MUIA_Listview_DragType, MUIV_Listview_DragType_Immediate,
-                 MUIA_NListview_NList, data->GUI.LV_MEMBER = AddrBookEntryListObject,
+                 MUIA_NListview_NList, data->GUI.LV_MEMBER = AddressBookEntryListObject,
                     InputListFrame,
                     MUIA_NList_DragSortable,  TRUE,
                     MUIA_NList_ConstructHook, MUIV_NList_ConstructHook_String,
                     MUIA_NList_DestructHook,  MUIV_NList_DestructHook_String,
                  End,
               End,
-              Child, data->GUI.ST_MEMBER = RecipientstringObject,
+              Child, data->GUI.ST_MEMBER = RecipientStringObject,
                  MUIA_CycleChain,               TRUE,
                  MUIA_String_MaxLen,            SIZE_ADDRESS,
                  MUIA_BetterString_NoShortcuts, FALSE,

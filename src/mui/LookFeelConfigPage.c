@@ -36,7 +36,7 @@
 
 #include "mui/ConfigPage.h"
 #include "mui/ConfigPageList.h"
-#include "mui/PlaceholderPopobject.h"
+#include "mui/PlaceholderPopup.h"
 #include "mui/PlaceholderPopupList.h"
 #include "mui/ThemeListGroup.h"
 
@@ -267,10 +267,10 @@ OVERLOAD(OM_NEW)
             Child, CY_INFOBARPOS = MakeCycle(infob, tr(MSG_CO_INFOBARPOS)),
 
             Child, Label2(tr(MSG_CO_FOLDERLABEL)),
-            Child, PO_INFOBARTXT = PlaceholderPopobjectObject,
+            Child, PO_INFOBARTXT = PlaceholderPopupObject,
               MUIA_String_MaxLen, SIZE_DEFAULT,
-              MUIA_PlaceholderPopobject_Mode, PHM_MAILSTATS,
-              MUIA_PlaceholderPopobject_ControlChar, ShortCut(tr(MSG_CO_FOLDERLABEL)),
+              MUIA_PlaceholderPopup_Mode, PHM_MAILSTATS,
+              MUIA_PlaceholderPopup_ControlChar, ShortCut(tr(MSG_CO_FOLDERLABEL)),
             End,
           End,
 

@@ -28,7 +28,7 @@
 
 ***************************************************************************/
 
-#include "AddressmatchPopup_cl.h"
+#include "AddressMatchPopupWindow_cl.h"
 
 #include <stdlib.h>
 #include <proto/muimaster.h>
@@ -43,8 +43,8 @@
 
 #include "MUIObjects.h"
 
-#include "mui/AddressmatchList.h"
-#include "mui/Recipientstring.h"
+#include "mui/AddressMatchList.h"
+#include "mui/RecipientString.h"
 #include "mui/YAMApplication.h"
 
 #include "Debug.h"
@@ -93,7 +93,7 @@ OVERLOAD(OM_NEW)
       Child, listview = NListviewObject,
         MUIA_NListview_Horiz_ScrollBar, MUIV_NListview_HSB_None,
         MUIA_NListview_Vert_ScrollBar,  MUIV_NListview_VSB_FullAuto,
-        MUIA_NListview_NList, list = AddressmatchListObject,
+        MUIA_NListview_NList, list = AddressMatchListObject,
         End,
       End,
     End,
@@ -361,7 +361,7 @@ DECLARE(ActiveChange) // LONG active
           // signal the string that we need to replace the selected part with
           // some new entry
           if(res != NULL)
-            DoMethod(data->String, MUIM_Recipientstring_ReplaceSelected, res);
+            DoMethod(data->String, MUIM_RecipientString_ReplaceSelected, res);
         }
         break;
 
@@ -373,7 +373,7 @@ DECLARE(ActiveChange) // LONG active
           // signal the string that we need to replace the selected part with
           // some new entry
           if(res != NULL)
-            DoMethod(data->String, MUIM_Recipientstring_ReplaceSelected, res);
+            DoMethod(data->String, MUIM_RecipientString_ReplaceSelected, res);
         }
         break;
 
@@ -401,7 +401,7 @@ DECLARE(AddRecipient)
   // adding the recipient is done by simply resolving the address, as the
   // recipient itself has been added already by selecting one entry from
   // our list
-  DoMethod(data->String, MUIM_Recipientstring_Resolve, MUIF_NONE);
+  DoMethod(data->String, MUIM_RecipientString_Resolve, MUIF_NONE);
   // append a comma and a space to allow easy further input
   DoMethod(data->String, MUIM_BetterString_Insert, ", ", MUIV_BetterString_Insert_EndOfString);
   // close the window

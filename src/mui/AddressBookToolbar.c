@@ -28,7 +28,7 @@
 
 ***************************************************************************/
 
-#include "AddrBookToolbar_cl.h"
+#include "AddressBookToolbar_cl.h"
 
 #include <mui/NListtree_mcc.h>
 

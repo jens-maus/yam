@@ -28,7 +28,7 @@
 
 ***************************************************************************/
 
-#include "AddrBookListtree_cl.h"
+#include "AddressBookListtree_cl.h"
 
 #include <ctype.h>
 #include <string.h>
@@ -69,17 +69,17 @@ struct Data
 */
 
 /* EXPORT
-#define MUIV_AddrBookListtree_SortBy_Alias      0
-#define MUIV_AddrBookListtree_SortBy_FirstName  1
-#define MUIV_AddrBookListtree_SortBy_Coment     2
-#define MUIV_AddrBookListtree_SortBy_Address    3
-#define MUIV_AddrBookListtree_SortBy_Street     4
-#define MUIV_AddrBookListtree_SortBy_City       5
-#define MUIV_AddrBookListtree_SortBy_Country    6
-#define MUIV_AddrBookListtree_SortBy_Phone      7
-#define MUIV_AddrBookListtree_SortBy_Birthday   8
-#define MUIV_AddrBookListtree_SortBy_PGPId      9
-#define MUIV_AddrBookListtree_SortBy_LastName  10 // artificial column generated from the Name column
+#define MUIV_AddressBookListtree_SortBy_Alias      0
+#define MUIV_AddressBookListtree_SortBy_FirstName  1
+#define MUIV_AddressBookListtree_SortBy_Coment     2
+#define MUIV_AddressBookListtree_SortBy_Address    3
+#define MUIV_AddressBookListtree_SortBy_Street     4
+#define MUIV_AddressBookListtree_SortBy_City       5
+#define MUIV_AddressBookListtree_SortBy_Country    6
+#define MUIV_AddressBookListtree_SortBy_Phone      7
+#define MUIV_AddressBookListtree_SortBy_Birthday   8
+#define MUIV_AddressBookListtree_SortBy_PGPId      9
+#define MUIV_AddressBookListtree_SortBy_LastName  10 // artificial column generated from the Name column
 
 #define NUMBER_ABOOK_COLUMNS 9
 */
@@ -361,61 +361,61 @@ OVERLOAD(MUIM_NListtree_Compare)
 
   switch(data->sortBy)
   {
-    case MUIV_AddrBookListtree_SortBy_Alias:
+    case MUIV_AddressBookListtree_SortBy_Alias:
     {
       cmp = 0;
     }
     break;
 
-    case MUIV_AddrBookListtree_SortBy_FirstName:
+    case MUIV_AddressBookListtree_SortBy_FirstName:
     {
       cmp = Stricmp(ab1->RealName, ab2->RealName);
     }
     break;
 
-    case MUIV_AddrBookListtree_SortBy_Coment:
+    case MUIV_AddressBookListtree_SortBy_Coment:
     {
       cmp = Stricmp(ab1->Comment, ab2->Comment);
     }
     break;
 
-    case MUIV_AddrBookListtree_SortBy_Street:
+    case MUIV_AddressBookListtree_SortBy_Street:
     {
       cmp = Stricmp(ab1->Street, ab2->Street);
     }
     break;
 
-    case MUIV_AddrBookListtree_SortBy_City:
+    case MUIV_AddressBookListtree_SortBy_City:
     {
       cmp = Stricmp(ab1->City, ab2->City);
     }
     break;
 
-    case MUIV_AddrBookListtree_SortBy_Country:
+    case MUIV_AddressBookListtree_SortBy_Country:
     {
       cmp = Stricmp(ab1->Country, ab2->Country);
     }
     break;
 
-    case MUIV_AddrBookListtree_SortBy_Phone:
+    case MUIV_AddressBookListtree_SortBy_Phone:
     {
       cmp = Stricmp(ab1->Phone, ab2->Phone);
     }
     break;
 
-    case MUIV_AddrBookListtree_SortBy_Birthday:
+    case MUIV_AddressBookListtree_SortBy_Birthday:
     {
       cmp = ab1->BirthDay - ab2->BirthDay;
     }
     break;
 
-    case MUIV_AddrBookListtree_SortBy_PGPId:
+    case MUIV_AddressBookListtree_SortBy_PGPId:
     {
       cmp = Stricmp(ab1->PGPId, ab2->PGPId);
     }
     break;
 
-    case MUIV_AddrBookListtree_SortBy_LastName:
+    case MUIV_AddressBookListtree_SortBy_LastName:
     {
       char *n1, *n2;
 
@@ -659,7 +659,7 @@ DECLARE(ClearTree)
   ENTER();
 
   DoMethod(obj, MUIM_NListtree_Clear, NULL, MUIF_NONE);
-  set(obj, MUIA_AddrBookListtree_Modified, TRUE);
+  set(obj, MUIA_AddressBookListtree_Modified, TRUE);
 
   RETURN(0);
   return 0;
@@ -770,7 +770,7 @@ DECLARE(DeleteEntry)
   ENTER();
 
   DoMethod(obj, MUIM_NListtree_Remove, MUIV_NListtree_Remove_ListNode_Root, MUIV_NListtree_Remove_TreeNode_Selected, MUIF_NONE);
-  set(obj, MUIA_AddrBookListtree_Modified, TRUE);
+  set(obj, MUIA_AddressBookListtree_Modified, TRUE);
 
   RETURN(0);
   return 0;

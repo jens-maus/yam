@@ -39,7 +39,7 @@
 #include "YAM_addressbookEntry.h"
 
 #include "mui/ClassesExtra.h"
-#include "mui/Recipientstring.h"
+#include "mui/RecipientString.h"
 
 #include "DynamicString.h"
 #include "Rexx.h"
@@ -85,14 +85,14 @@ void rx_addrresolve(UNUSED struct RexxHost *host, struct RexxParams *params, enu
     case RXIF_ACTION:
     {
       // generate a "fake" RecipientstringObject and use it on the resolve task
-      Object *str = RecipientstringObject,
-                      MUIA_Recipientstring_MultipleRecipients, TRUE,
+      Object *str = RecipientStringObject,
+                      MUIA_RecipientString_MultipleRecipients, TRUE,
                       MUIA_String_Contents,                    args->alias,
                     End;
 
       if(str != NULL)
       {
-        STRPTR res = (STRPTR)DoMethod(str, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoCache);
+        STRPTR res = (STRPTR)DoMethod(str, MUIM_RecipientString_Resolve, MUIF_RecipientString_Resolve_NoCache);
 
         // did the string change?
         if(res != NULL && strcmp(args->alias, res) != 0)

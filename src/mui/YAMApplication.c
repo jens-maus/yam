@@ -50,10 +50,10 @@
 #include "YAM_global.h"
 #include "YAM_mainFolder.h"
 
-#include "mui/Aboutwindow.h"
-#include "mui/AddrBookListtree.h"
+#include "mui/AboutWindow.h"
+#include "mui/AddressBookListtree.h"
 #include "mui/AddressBookWindow.h"
-#include "mui/AddressmatchPopup.h"
+#include "mui/AddressMatchPopupWindow.h"
 #include "mui/ConfigWindow.h"
 #include "mui/InfoWindow.h"
 #include "mui/SearchMailWindow.h"
@@ -332,7 +332,7 @@ static BOOL FindABPerson(const struct Person *person)
   ENTER();
 
   // Now we try to find matches in the Addressbook Listtree
-  if((APTR)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_AddrBookListtree_FindPerson, person) != NULL)
+  if((APTR)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_AddressBookListtree_FindPerson, person) != NULL)
     result = TRUE;
 
   RETURN(result);
@@ -1430,7 +1430,7 @@ DECLARE(OpenAboutWindow)
   // create the about window object and open it
   if(data->aboutWindow == NULL)
   {
-    data->aboutWindow = AboutwindowObject, End;
+    data->aboutWindow = AboutWindowObject, End;
 
     if(data->aboutWindow != NULL)
       DoMethod(data->aboutWindow, MUIM_Notify, MUIA_Window_Open, FALSE, obj, 4, MUIM_Application_PushMethod,obj, 1, MUIM_YAMApplication_CloseAboutWindow);

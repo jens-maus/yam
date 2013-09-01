@@ -28,7 +28,7 @@
 
 ***************************************************************************/
 
-#include "Recipientstring_cl.h"
+#include "RecipientString_cl.h"
 
 #include <ctype.h>
 #include <string.h>
@@ -44,7 +44,7 @@
 #include "YAM_addressbookEntry.h"
 #include "YAM_mainFolder.h"
 
-#include "mui/AddressmatchPopup.h"
+#include "mui/AddressMatchPopupWindow.h"
 #include "mui/MainMailListGroup.h"
 #include "mui/YAMApplication.h"
 
@@ -76,13 +76,13 @@ struct Data
 */
 
 /* EXPORT
-#define MUIF_Recipientstring_Resolve_NoFullName  (1 << 0) // do not resolve with fullname "Mister X <misterx@mister.com>"
-#define MUIF_Recipientstring_Resolve_NoValid     (1 << 1) // do not resolve already valid string like "misterx@mister.com"
-#define MUIF_Recipientstring_Resolve_NoCache     (1 << 2) // do not resolve addresses out of the eMailCache
+#define MUIF_RecipientString_Resolve_NoFullName  (1 << 0) // do not resolve with fullname "Mister X <misterx@mister.com>"
+#define MUIF_RecipientString_Resolve_NoValid     (1 << 1) // do not resolve already valid string like "misterx@mister.com"
+#define MUIF_RecipientString_Resolve_NoCache     (1 << 2) // do not resolve addresses out of the eMailCache
 
-#define hasNoFullNameFlag(v)   (isFlagSet((v), MUIF_Recipientstring_Resolve_NoFullName))
-#define hasNoValidFlag(v)      (isFlagSet((v), MUIF_Recipientstring_Resolve_NoValid))
-#define hasNoCacheFlag(v)      (isFlagSet((v), MUIF_Recipientstring_Resolve_NoCache))
+#define hasNoFullNameFlag(v)   (isFlagSet((v), MUIF_RecipientString_Resolve_NoFullName))
+#define hasNoValidFlag(v)      (isFlagSet((v), MUIF_RecipientString_Resolve_NoValid))
+#define hasNoCacheFlag(v)      (isFlagSet((v), MUIF_RecipientString_Resolve_NoCache))
 */
 
 /* Hooks */
@@ -534,8 +534,8 @@ OVERLOAD(MUIM_Setup)
   // create the address match list object, if it does not exist yet
   if(data->Matchwindow == NULL)
   {
-    data->Matchwindow = AddressmatchPopupObject,
-      MUIA_AddressmatchPopup_String, obj,
+    data->Matchwindow = AddressMatchPopupWindowObject,
+      MUIA_AddressMatchPopupWindow_String, obj,
     End;
     D(DBF_GUI, "Create addrlistpopup: %08lx", data->Matchwindow);
   }
@@ -571,7 +571,7 @@ OVERLOAD(MUIM_Show)
 
   ENTER();
 
-  DoMethod(data->Matchwindow, MUIM_AddressmatchPopup_ChangeWindow);
+  DoMethod(data->Matchwindow, MUIM_AddressMatchPopupWindow_ChangeWindow);
   result = DoSuperMethodA(cl, obj, msg);
 
   RETURN(result);
@@ -710,7 +710,7 @@ OVERLOAD(MUIM_Popstring_Open)
 {
   ENTER();
 
-  set(obj, MUIA_Recipientstring_Popup, TRUE);
+  set(obj, ATTR(Popup), TRUE);
 
   RETURN(0);
   return 0;
@@ -743,7 +743,7 @@ OVERLOAD(MUIM_HandleEvent)
             if(matchListWasOpen == TRUE)
             {
               // only if we successfully resolved the string we move on to the next object.
-              if(DoMethod(obj, METHOD(Resolve), isAnyFlagSet(imsg->Qualifier, (IEQUALIFIER_RSHIFT | IEQUALIFIER_LSHIFT)) ? MUIF_Recipientstring_Resolve_NoFullName : MUIF_NONE))
+              if(DoMethod(obj, METHOD(Resolve), isAnyFlagSet(imsg->Qualifier, (IEQUALIFIER_RSHIFT | IEQUALIFIER_LSHIFT)) ? MUIF_RecipientString_Resolve_NoFullName : MUIF_NONE))
               {
                 set(data->Matchwindow, MUIA_Window_Open, FALSE);
                 set(_win(obj), MUIA_Window_ActiveObject, obj);
@@ -787,7 +787,7 @@ OVERLOAD(MUIM_HandleEvent)
         case NM_WHEEL_RIGHT:
         {
           // forward this event to the addrmatchlist
-          if(DoMethod(data->Matchwindow, MUIM_AddressmatchPopup_Event, imsg))
+          if(DoMethod(data->Matchwindow, MUIM_AddressMatchPopupWindow_Event, imsg))
             result = MUI_EventHandlerRC_Eat;
         }
         break;
@@ -868,7 +868,7 @@ OVERLOAD(MUIM_HandleEvent)
             struct CustomABEntry *abentry;
 
             if(cur_rcpt != NULL &&
-               (abentry = (struct CustomABEntry *)DoMethod(data->Matchwindow, MUIM_AddressmatchPopup_Open, cur_rcpt)) != NULL)
+               (abentry = (struct CustomABEntry *)DoMethod(data->Matchwindow, MUIM_AddressMatchPopupWindow_Open, cur_rcpt)) != NULL)
             {
               ULONG pos = xget(obj, MUIA_String_BufferPos);
               struct ABEntry *matchEntry = abentry->MatchEntry;
@@ -910,13 +910,13 @@ OVERLOAD(MUIM_HandleEvent)
     {
       // only if the matchwindow is open we advice the matchwindow to refresh it`s position.
       if(xget(data->Matchwindow, MUIA_Window_Open))
-        DoMethod(data->Matchwindow, MUIM_AddressmatchPopup_ChangeWindow);
+        DoMethod(data->Matchwindow, MUIM_AddressMatchPopupWindow_ChangeWindow);
     }
     #if defined(__amigaos4__)
     else if(imsg->Class == IDCMP_EXTENDEDMOUSE && (imsg->Code & IMSGCODE_INTUIWHEELDATA))
     {
       // we forward OS4 mousewheel events to the addrmatchlist directly
-      if(DoMethod(data->Matchwindow, MUIM_AddressmatchPopup_Event, imsg))
+      if(DoMethod(data->Matchwindow, MUIM_AddressMatchPopupWindow_Event, imsg))
         result = MUI_EventHandlerRC_Eat;
     }
     #endif
@@ -1298,7 +1298,7 @@ DECLARE(ReplaceSelected) // char *address
 
     DoMethod(obj, MUIM_BetterString_ClearSelected);
 
-    start = DoMethod(obj, MUIM_Recipientstring_RecipientStart);
+    start = DoMethod(obj, METHOD(RecipientStart));
   }
   pos = xget(obj, MUIA_String_BufferPos);
 

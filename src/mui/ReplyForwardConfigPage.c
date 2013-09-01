@@ -34,7 +34,7 @@
 
 #include "mui/ConfigPage.h"
 #include "mui/ConfigPageList.h"
-#include "mui/PlaceholderPopobject.h"
+#include "mui/PlaceholderPopup.h"
 #include "mui/PlaceholderPopupList.h"
 
 #include "Config.h"
@@ -89,17 +89,17 @@ static Object *MakePhraseGroup(Object **hello, Object **intro, Object **bye,
       MUIA_Weight, 0,
     End,
     Child, pgrp = PageGroup,
-      Child, *hello = PlaceholderPopobjectObject,
+      Child, *hello = PlaceholderPopupObject,
         MUIA_String_MaxLen, SIZE_INTRO,
-        MUIA_PlaceholderPopobject_Mode, PHM_REPLYHELLO,
+        MUIA_PlaceholderPopup_Mode, PHM_REPLYHELLO,
       End,
-      Child, *intro = PlaceholderPopobjectObject,
+      Child, *intro = PlaceholderPopupObject,
         MUIA_String_MaxLen, SIZE_INTRO,
-        MUIA_PlaceholderPopobject_Mode, PHM_REPLYINTRO,
+        MUIA_PlaceholderPopup_Mode, PHM_REPLYINTRO,
       End,
-      Child, *bye = PlaceholderPopobjectObject,
+      Child, *bye = PlaceholderPopupObject,
         MUIA_String_MaxLen, SIZE_INTRO,
-        MUIA_PlaceholderPopobject_Mode, PHM_REPLYBYE,
+        MUIA_PlaceholderPopup_Mode, PHM_REPLYBYE,
       End,
     End,
     MUIA_ShortHelp, help,
@@ -180,17 +180,17 @@ OVERLOAD(OM_NEW)
         Child, CY_FORWARDMODE = MakeCycle(fwdmode, tr(MSG_CO_FWDMSG)),
 
         Child, Label2(tr(MSG_CO_FwdInit)),
-        Child, PO_FWDSTART = PlaceholderPopobjectObject,
+        Child, PO_FWDSTART = PlaceholderPopupObject,
           MUIA_String_MaxLen, SIZE_INTRO,
-          MUIA_PlaceholderPopobject_Mode, PHM_FORWARD,
-          MUIA_PlaceholderPopobject_ControlChar, ShortCut(tr(MSG_CO_FwdInit)),
+          MUIA_PlaceholderPopup_Mode, PHM_FORWARD,
+          MUIA_PlaceholderPopup_ControlChar, ShortCut(tr(MSG_CO_FwdInit)),
         End,
 
         Child, Label2(tr(MSG_CO_FwdFinish)),
-        Child, PO_FWDEND = PlaceholderPopobjectObject,
+        Child, PO_FWDEND = PlaceholderPopupObject,
           MUIA_String_MaxLen, SIZE_INTRO,
-          MUIA_PlaceholderPopobject_Mode, PHM_FORWARD,
-          MUIA_PlaceholderPopobject_ControlChar, ShortCut(tr(MSG_CO_FwdFinish)),
+          MUIA_PlaceholderPopup_Mode, PHM_FORWARD,
+          MUIA_PlaceholderPopup_ControlChar, ShortCut(tr(MSG_CO_FwdFinish)),
         End,
 
       End,

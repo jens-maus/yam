@@ -52,7 +52,7 @@
 
 #include "mui/ClassesExtra.h"
 #include "mui/PlaceholderPopupList.h"
-#include "mui/Recipientstring.h"
+#include "mui/RecipientString.h"
 
 #include "Config.h"
 #include "FolderList.h"
@@ -173,15 +173,15 @@ Object *MakeAddressField(Object **string, const char *label, const void *help, i
   if((obj = HGroup,
 
     GroupSpacing(1),
-    Child, *string = RecipientstringObject,
+    Child, *string = RecipientStringObject,
       MUIA_CycleChain,                          TRUE,
       MUIA_String_AdvanceOnCR,                  TRUE,
-      MUIA_Recipientstring_ResolveOnCR,         TRUE,
-      MUIA_Recipientstring_MultipleRecipients,  isFlagSet(flags, AFF_ALLOW_MULTI),
-      MUIA_Recipientstring_NoFullName,          isFlagSet(flags, AFF_NOFULLNAME),
-      MUIA_Recipientstring_NoCache,             isFlagSet(flags, AFF_NOCACHE),
-      MUIA_Recipientstring_NoValid,             isFlagSet(flags, AFF_NOVALID),
-      MUIA_Recipientstring_ResolveOnInactive,   isFlagSet(flags, AFF_RESOLVEINACTIVE),
+      MUIA_RecipientString_ResolveOnCR,         TRUE,
+      MUIA_RecipientString_MultipleRecipients,  isFlagSet(flags, AFF_ALLOW_MULTI),
+      MUIA_RecipientString_NoFullName,          isFlagSet(flags, AFF_NOFULLNAME),
+      MUIA_RecipientString_NoCache,             isFlagSet(flags, AFF_NOCACHE),
+      MUIA_RecipientString_NoValid,             isFlagSet(flags, AFF_NOVALID),
+      MUIA_RecipientString_ResolveOnInactive,   isFlagSet(flags, AFF_RESOLVEINACTIVE),
       MUIA_BetterString_NoShortcuts,            isFlagSet(flags, AFF_EXTERNAL_SHORTCUTS),
       MUIA_ControlChar,                         ShortCut(label),
     End,
@@ -196,12 +196,12 @@ Object *MakeAddressField(Object **string, const char *label, const void *help, i
     if(abmode == ABM_CONFIG)
     {
       DoMethod(bt_adr, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 4, MUIM_CallHook, &AB_OpenHook, abmode, *string);
-      DoMethod(*string, MUIM_Notify, MUIA_Recipientstring_Popup, TRUE, MUIV_Notify_Application, 4, MUIM_CallHook, &AB_OpenHook, abmode, *string);
+      DoMethod(*string, MUIM_Notify, MUIA_RecipientString_Popup, TRUE, MUIV_Notify_Application, 4, MUIM_CallHook, &AB_OpenHook, abmode, *string);
     }
     else
     {
       DoMethod(bt_adr, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 4, MUIM_CallHook, &AB_OpenHook, abmode, winnr);
-      DoMethod(*string, MUIM_Notify, MUIA_Recipientstring_Popup, TRUE, MUIV_Notify_Application, 4, MUIM_CallHook, &AB_OpenHook, abmode, winnr);
+      DoMethod(*string, MUIM_Notify, MUIA_RecipientString_Popup, TRUE, MUIV_Notify_Application, 4, MUIM_CallHook, &AB_OpenHook, abmode, winnr);
     }
 
     DoMethod(*string, MUIM_Notify, MUIA_Disabled, MUIV_EveryTime,  bt_adr, 3, MUIM_Set, MUIA_Disabled, MUIV_TriggerValue);

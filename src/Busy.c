@@ -35,7 +35,7 @@
 #include "extrasrc.h"
 
 #include "mui/InfoBar.h"
-#include "mui/Splashwindow.h"
+#include "mui/SplashWindow.h"
 #include "mui/YAMApplication.h"
 
 #include "Busy.h"
@@ -90,7 +90,7 @@ static BOOL BusyShow(const struct BusyNode *busy)
   // check if we are in startup phase so that we also
   // update the gauge elements of the splash window
   if(G->InStartupPhase == TRUE)
-    DoMethod(G->SplashWinObject, MUIM_Splashwindow_ProgressChange, busy);
+    DoMethod(G->SplashWinObject, MUIM_SplashWindow_ProgressChange, busy);
   else if(G->MA != NULL)
     goOn = DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_ShowBusyBar, busy);
 

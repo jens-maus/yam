@@ -64,7 +64,7 @@
 #include "YAM_utilities.h"
 
 #include "mui/ClassesExtra.h"
-#include "mui/AddrBookListtree.h"
+#include "mui/AddressBookListtree.h"
 #include "mui/AddressBookConfigPage.h"
 #include "mui/ConfigPage.h"
 #include "mui/ConfigPageList.h"
@@ -3385,7 +3385,7 @@ void ValidateConfig(struct Config *co, BOOL update)
 
     if(visited[cp_AddressBook] == TRUE || updateAll == TRUE)
     {
-      DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_AddrBookListtree_MakeFormat);
+      DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_AddressBookListtree_MakeFormat);
     }
 
     if(visited[cp_LookFeel] == TRUE || updateAll == TRUE)

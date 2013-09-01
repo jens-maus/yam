@@ -34,7 +34,7 @@
 
 ***************************************************************************/
 
-#include "AttachmentObject_cl.h"
+#include "Attachment_cl.h"
 
 #include <string.h>
 #include <proto/dos.h>

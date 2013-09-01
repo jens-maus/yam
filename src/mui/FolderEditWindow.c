@@ -53,7 +53,7 @@
 #include "mui/FolderRequestListtree.h"
 #include "mui/IdentityChooser.h"
 #include "mui/MainFolderListtree.h"
-#include "mui/Recipientstring.h"
+#include "mui/RecipientString.h"
 #include "mui/SearchMailWindow.h"
 #include "mui/SignatureChooser.h"
 #include "mui/YAMApplication.h"
@@ -821,8 +821,8 @@ DECLARE(GUIToFolder) // struct Folder *folder
   GetMUIString(folder->MLPattern, data->ST_MLPATTERN, sizeof(folder->MLPattern));
 
   // resolve the addresses first, in case someone entered an alias
-  DoMethod(data->ST_MLADDRESS, MUIM_Recipientstring_Resolve, MUIF_NONE);
-  DoMethod(data->ST_MLREPLYTOADDRESS, MUIM_Recipientstring_Resolve, MUIF_NONE);
+  DoMethod(data->ST_MLADDRESS, MUIM_RecipientString_Resolve, MUIF_NONE);
+  DoMethod(data->ST_MLREPLYTOADDRESS, MUIM_RecipientString_Resolve, MUIF_NONE);
 
   GetMUIString(folder->MLAddress, data->ST_MLADDRESS, sizeof(folder->MLAddress));
   GetMUIString(folder->MLReplyToAddress, data->ST_MLREPLYTOADDRESS, sizeof(folder->MLReplyToAddress));

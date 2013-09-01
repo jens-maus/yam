@@ -28,7 +28,7 @@
 
 ***************************************************************************/
 
-#include "CodesetPopobject_cl.h"
+#include "CodesetPopup_cl.h"
 
 #include <string.h>
 

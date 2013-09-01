@@ -39,7 +39,7 @@
 
 #include "mui/ConfigPage.h"
 #include "mui/ConfigPageList.h"
-#include "mui/PlaceholderPopobject.h"
+#include "mui/PlaceholderPopup.h"
 #include "mui/PlaceholderPopupList.h"
 #include "mui/ScriptList.h"
 
@@ -108,10 +108,10 @@ OVERLOAD(OM_NEW)
           Child, Label2(tr(MSG_CO_Script)),
           Child, HGroup,
             MUIA_Group_HorizSpacing, 0,
-            Child, PO_SCRIPT = PlaceholderPopobjectObject,
+            Child, PO_SCRIPT = PlaceholderPopupObject,
               MUIA_String_MaxLen, SIZE_PATHFILE,
-              MUIA_PlaceholderPopobject_Mode, PHM_SCRIPTS,
-              MUIA_PlaceholderPopobject_ControlChar, ShortCut(tr(MSG_CO_Script)),
+              MUIA_PlaceholderPopup_Mode, PHM_SCRIPTS,
+              MUIA_PlaceholderPopup_ControlChar, ShortCut(tr(MSG_CO_Script)),
             End,
             Child, popAsl = PopaslObject,
                MUIA_Popasl_Type,      ASL_FileRequest,
@@ -252,7 +252,7 @@ DECLARE(GetRXEntry)
     case MACRO_POSTFILTER:
     default:
       // disable the popup button since these script don't take any parameter
-      nnset(data->PO_SCRIPT, MUIA_PlaceholderPopobject_PopbuttonDisabled, TRUE);
+      nnset(data->PO_SCRIPT, MUIA_PlaceholderPopup_PopbuttonDisabled, TRUE);
     break;
 
     case MACRO_PREGET:
@@ -263,13 +263,13 @@ DECLARE(GetRXEntry)
     case MACRO_POSTWRITE:
     case MACRO_URL:
       // enable the popup button
-      nnset(data->PO_SCRIPT, MUIA_PlaceholderPopobject_PopbuttonDisabled, FALSE);
+      nnset(data->PO_SCRIPT, MUIA_PlaceholderPopup_PopbuttonDisabled, FALSE);
     break;
   }
 
   DoMethod(data->LV_REXX, MUIM_NList_Redraw, act);
 
-  set(data->PO_SCRIPT, MUIA_PlaceholderPopobject_ScriptEntry, macro);
+  set(data->PO_SCRIPT, MUIA_PlaceholderPopup_ScriptEntry, macro);
 
   RETURN(0);
   return 0;

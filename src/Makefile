@@ -465,24 +465,24 @@ TZLIB = $(TOOLS)/tzcode
 # our few new rewritten classes
 MUIOBJS = \
 	Classes.o \
-	Aboutwindow.o \
+	AboutWindow.o \
 	AccountList.o \
-	AddrBookEntryList.o \
-	AddrBookListtree.o \
-	AddrBookToolbar.o \
+	AddressBookEntryList.o \
+	AddressBookListtree.o \
+	AddressBookToolbar.o \
 	AddressBookConfigPage.o \
 	AddressBookWindow.o \
-	AddressmatchList.o \
-	AddressmatchPopup.o \
+	AddressMatchList.o \
+	AddressMatchPopupWindow.o \
+	Attachment.o \
 	AttachmentGroup.o \
 	AttachmentImage.o \
 	AttachmentList.o \
-	AttachmentObject.o \
 	AttachmentRequestWindow.o \
 	Base64Dataspace.o \
 	BirthdayRequestWindow.o \
 	CheckboxRequestWindow.o \
-	CodesetPopobject.o \
+	CodesetPopup.o \
 	CodesetPopupList.o \
 	ConfigPage.o \
 	ConfigPageList.o \
@@ -496,7 +496,7 @@ MUIOBJS = \
 	FolderEditWindow.o \
 	FolderListtree.o \
 	FolderRequestListtree.o \
-	FolderRequestPopobject.o \
+	FolderRequestPopup.o \
 	FolderRequestWindow.o \
 	GenericRequestWindow.o \
 	HeaderList.o \
@@ -516,13 +516,13 @@ MUIOBJS = \
 	MainWindowToolbar.o \
 	MimeConfigPage.o \
 	MimeTypeList.o \
-	MimeTypePopobject.o \
+	MimeTypePopup.o \
 	MixedConfigPage.o \
 	ObjectList.o \
 	ObjectListitem.o \
 	PassphraseRequestWindow.o \
-	PGPKeyPopobject.o \
-	PlaceholderPopobject.o \
+	PGPKeyPopup.o \
+	PlaceholderPopup.o \
 	PlaceholderPopupList.o \
 	PreselectionWindow.o \
 	QuickSearchBar.o \
@@ -531,7 +531,7 @@ MUIOBJS = \
 	ReadWindow.o \
 	ReadWindowStatusBar.o \
 	ReadWindowToolbar.o \
-	Recipientstring.o \
+	RecipientString.o \
 	ReplyForwardConfigPage.o \
 	ScriptList.o \
 	ScriptsConfigPage.o \
@@ -545,7 +545,7 @@ MUIOBJS = \
 	SignatureList.o \
 	SignatureTextEdit.o \
 	SpamConfigPage.o \
-	Splashwindow.o \
+	SplashWindow.o \
 	StartupQuitConfigPage.o \
 	StringRequestWindow.o \
 	TCPIPConfigPage.o \

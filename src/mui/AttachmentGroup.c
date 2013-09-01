@@ -43,7 +43,7 @@
 
 #include "YAM_mainFolder.h"
 
-#include "mui/AttachmentObject.h"
+#include "mui/Attachment.h"
 
 #include "Busy.h"
 #include "Config.h"
@@ -133,7 +133,7 @@ HOOKPROTONH(LayoutFunc, ULONG, UNUSED Object *obj, struct MUI_LayoutMsg *lm)
         LONG mw = _minwidth(child);
         LONG mh = _minheight(child);
         #if defined(DEBUG)
-        struct Part *mailPart = (struct Part *)xget(child, MUIA_AttachmentObject_MailPart);
+        struct Part *mailPart = (struct Part *)xget(child, MUIA_Attachment_MailPart);
         #endif
 
         D(DBF_GUI, "layouting child %08lx '%s'", child, mailPart->Name);
@@ -452,9 +452,9 @@ DECLARE(Refresh) // struct Part *firstPart
       {
         Object *attObject;
 
-        if((attObject = AttachmentObjectObject,
-                          MUIA_AttachmentObject_MailPart, rp,
-                          MUIA_AttachmentObject_Group,    obj,
+        if((attObject = AttachmentObject,
+                          MUIA_Attachment_MailPart, rp,
+                          MUIA_Attachment_Group,    obj,
                         End) != NULL)
         {
           DoMethod(obj, OM_ADDMEMBER, attObject);
@@ -528,7 +528,7 @@ DECLARE(SaveSelected)
     while((child = NextObject(&cstate)) != NULL)
     {
       if(xget(child, MUIA_Selected) == TRUE)
-        DoMethod(child, MUIM_AttachmentObject_Save);
+        DoMethod(child, MUIM_Attachment_Save);
     }
   }
 
@@ -589,7 +589,7 @@ DECLARE(DeleteSelected)
       while((child = NextObject(&cstate)) != NULL)
       {
         if(xget(child, MUIA_Selected) == TRUE)
-          parts[i++] = (struct Part *)xget(child, MUIA_AttachmentObject_MailPart);
+          parts[i++] = (struct Part *)xget(child, MUIA_Attachment_MailPart);
       }
 
       // and finally remove the attachments

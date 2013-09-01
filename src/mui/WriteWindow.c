@@ -59,13 +59,13 @@
 #include "YAM_mainFolder.h"
 
 #include "mime/uucode.h"
-#include "mui/CodesetPopobject.h"
+#include "mui/CodesetPopup.h"
 #include "mui/IdentityChooser.h"
 #include "mui/MailTextEdit.h"
-#include "mui/MimeTypePopobject.h"
+#include "mui/MimeTypePopup.h"
 #include "mui/ReadMailGroup.h"
 #include "mui/ReadWindow.h"
-#include "mui/Recipientstring.h"
+#include "mui/RecipientString.h"
 #include "mui/SearchTextWindow.h"
 #include "mui/SignatureChooser.h"
 #include "mui/WriteAttachmentList.h"
@@ -1178,8 +1178,8 @@ OVERLOAD(OM_NEW)
 
                 Child, ColGroup(2),
                   Child, Label2(tr(MSG_WR_ContentType)),
-                  Child, data->PO_CTYPE = MimeTypePopobjectObject,
-                    MUIA_MimeTypePopobject_ControlChar, ShortCut(tr(MSG_WR_ContentType)),
+                  Child, data->PO_CTYPE = MimeTypePopupObject,
+                    MUIA_MimeTypePopup_ControlChar, ShortCut(tr(MSG_WR_ContentType)),
                   End,
                   Child, Label2(tr(MSG_WR_Description)),
                   Child, data->ST_DESC = BetterStringObject,
@@ -1210,8 +1210,8 @@ OVERLOAD(OM_NEW)
                   End,
 
                   Child, Label(tr(MSG_WR_CHARSET)),
-                  Child, data->PO_CODESET = CodesetPopobjectObject,
-                    MUIA_CodesetPopobject_ControlChar, tr(MSG_WR_CHARSET),
+                  Child, data->PO_CODESET = CodesetPopupObject,
+                    MUIA_CodesetPopup_ControlChar, tr(MSG_WR_CHARSET),
                   End,
 
                   Child, Label(tr(MSG_WR_Importance)),
@@ -1292,7 +1292,7 @@ OVERLOAD(OM_NEW)
 
         // set the key focus attributes of the TO and SUBJECT gadgets
         xset(data->ST_TO, MUIA_BetterString_KeyDownFocus, data->ST_SUBJECT,
-                          MUIA_Recipientstring_ReplyToString, data->ST_REPLYTO);
+                          MUIA_RecipientString_ReplyToString, data->ST_REPLYTO);
 
         xset(data->ST_SUBJECT, MUIA_BetterString_KeyUpFocus, data->ST_TO,
                                MUIA_BetterString_KeyDownFocus, data->TE_EDIT);
@@ -1302,7 +1302,7 @@ OVERLOAD(OM_NEW)
         set(data->MI_AUTOWRAP,  MUIA_Menuitem_Checked, xget(data->TE_EDIT, MUIA_TextEditor_WrapBorder) > 0);
 
         // set the codeset popupbutton string list contents
-        nnset(data->PO_CODESET, MUIA_CodesetPopobject_Codeset, C->DefaultWriteCodeset);
+        nnset(data->PO_CODESET, MUIA_CodesetPopup_Codeset, C->DefaultWriteCodeset);
 
         // put the importance cycle gadget into the cycle group
         set(data->CY_IMPORTANCE, MUIA_Cycle_Active, TRUE);
@@ -1457,7 +1457,7 @@ OVERLOAD(OM_NEW)
         DoMethod(data->LV_ATTACH,      MUIM_Notify, MUIA_NList_Active,                      MUIV_EveryTime, obj, 1, METHOD(GetAttachmentEntry));
         DoMethod(data->LV_ATTACH_TINY, MUIM_Notify, MUIA_NList_DoubleClick,                 MUIV_EveryTime, obj, 1, METHOD(DisplayAttachment));
         DoMethod(data->LV_ATTACH_TINY, MUIM_Notify, MUIA_NList_Active,                      MUIV_EveryTime, obj, 1, METHOD(GetAttachmentEntry));
-        DoMethod(data->PO_CTYPE,       MUIM_Notify, MUIA_MimeTypePopobject_MimeTypeChanged, MUIV_EveryTime, obj, 1, METHOD(PutAttachmentEntry));
+        DoMethod(data->PO_CTYPE,       MUIM_Notify, MUIA_MimeTypePopup_MimeTypeChanged,     MUIV_EveryTime, obj, 1, METHOD(PutAttachmentEntry));
         DoMethod(data->ST_DESC,        MUIM_Notify, MUIA_String_Contents,                   MUIV_EveryTime, obj, 1, METHOD(PutAttachmentEntry));
         DoMethod(data->CH_DELSEND,     MUIM_Notify, MUIA_Selected,                          MUIV_EveryTime, data->MI_DELSEND,        3, MUIM_Set,      MUIA_Menuitem_Checked, MUIV_TriggerValue);
         DoMethod(data->CH_MDN,         MUIM_Notify, MUIA_Selected,                          MUIV_EveryTime, data->MI_MDN,            3, MUIM_Set,      MUIA_Menuitem_Checked, MUIV_TriggerValue);
@@ -1550,9 +1550,9 @@ OVERLOAD(OM_NEW)
       DoMethod(data->ST_BCC,           MUIM_Notify, MUIA_String_Contents,                   MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
       DoMethod(data->ST_REPLYTO,       MUIM_Notify, MUIA_String_Contents,                   MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
       DoMethod(data->ST_EXTHEADER,     MUIM_Notify, MUIA_String_Contents,                   MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
-      DoMethod(data->PO_CTYPE,         MUIM_Notify, MUIA_MimeTypePopobject_MimeTypeChanged, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->PO_CTYPE,         MUIM_Notify, MUIA_MimeTypePopup_MimeTypeChanged,     MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
       DoMethod(data->ST_DESC,          MUIM_Notify, MUIA_String_Contents,                   MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
-      DoMethod(data->PO_CODESET,       MUIM_Notify, MUIA_CodesetPopobject_CodesetChanged,   MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->PO_CODESET,       MUIM_Notify, MUIA_CodesetPopup_CodesetChanged,       MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
       DoMethod(data->CY_IMPORTANCE,    MUIM_Notify, MUIA_Cycle_Active,                      MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
       DoMethod(data->CY_SECURITY,      MUIM_Notify, MUIA_Cycle_Active,                      MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
       DoMethod(data->CH_DELSEND,       MUIM_Notify, MUIA_Selected,                          MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
@@ -1560,7 +1560,7 @@ OVERLOAD(OM_NEW)
       DoMethod(data->CH_ADDINFO,       MUIM_Notify, MUIA_Selected,                          MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
 
       // create a notify for changing the codeset
-      DoMethod(data->PO_CODESET, MUIM_Notify, MUIA_CodesetPopobject_Codeset, MUIV_EveryTime, obj, 2, METHOD(CodesetChanged), MUIV_TriggerValue);
+      DoMethod(data->PO_CODESET, MUIM_Notify, MUIA_CodesetPopup_Codeset, MUIV_EveryTime, obj, 2, METHOD(CodesetChanged), MUIV_TriggerValue);
 
       // set main window button notifies
       DoMethod(data->BT_SAVEASDRAFT, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(ComposeMail), WRITE_DRAFT);
@@ -1887,7 +1887,7 @@ OVERLOAD(OM_SET)
 
       case ATTR(AttachContentType):
       {
-        set(data->PO_CTYPE, MUIA_MimeTypePopobject_MimeType, tag->ti_Data);
+        set(data->PO_CTYPE, MUIA_MimeTypePopup_MimeType, tag->ti_Data);
 
         // make the superMethod call ignore those tags
         tag->ti_Tag = TAG_IGNORE;
@@ -2225,7 +2225,7 @@ DECLARE(AddPGPKey)
       if(ObtainFileInfo(fname, FI_SIZE, &size) == TRUE && size > 0)
       {
         DoMethod(obj, METHOD(AddAttachment), fname, NULL, TRUE);
-        set(data->PO_CTYPE, MUIA_MimeTypePopobject_MimeType, "application/pgp-keys");
+        set(data->PO_CTYPE, MUIA_MimeTypePopup_MimeType, "application/pgp-keys");
       }
       else
         ER_NewError(tr(MSG_ER_ErrorAppendKey), pgpid);
@@ -2600,7 +2600,7 @@ DECLARE(GetAttachmentEntry)
 
   if(attach != NULL)
   {
-    nnset(data->PO_CTYPE, MUIA_MimeTypePopobject_MimeType, attach->ContentType);
+    nnset(data->PO_CTYPE, MUIA_MimeTypePopup_MimeType, attach->ContentType);
     nnset(data->ST_DESC, MUIA_String_Contents, attach->Description);
   }
 
@@ -2621,7 +2621,7 @@ DECLARE(PutAttachmentEntry)
   DoMethod(data->LV_ATTACH, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &attach);
   if(attach != NULL)
   {
-    strlcpy(attach->ContentType, (char *)xget(data->PO_CTYPE, MUIA_MimeTypePopobject_MimeType), sizeof(attach->ContentType));
+    strlcpy(attach->ContentType, (char *)xget(data->PO_CTYPE, MUIA_MimeTypePopup_MimeType), sizeof(attach->ContentType));
     GetMUIString(attach->Description, data->ST_DESC, sizeof(attach->Description));
     DoMethod(data->LV_ATTACH, MUIM_NList_Redraw, MUIV_NList_Redraw_Active);
   }
@@ -3172,7 +3172,7 @@ DECLARE(AddAttachment) // const char *filename, const char *name, ULONG istemp
       strlcpy(attach.FilePath, msg->filename, sizeof(attach.FilePath));
       strlcpy(attach.Name, msg->name ? msg->name : (char *)FilePart(msg->filename), sizeof(attach.Name));
       strlcpy(attach.ContentType, ctype, sizeof(attach.ContentType));
-      nnset(data->PO_CTYPE, MUIA_MimeTypePopobject_MimeType, attach.ContentType);
+      nnset(data->PO_CTYPE, MUIA_MimeTypePopup_MimeType, attach.ContentType);
       nnset(data->ST_DESC, MUIA_String_Contents, attach.Description);
 
       // put the attachment into our attachment MUI list and set
@@ -3288,25 +3288,25 @@ DECLARE(AddRecipient) // enum RcptType type, char *recipient
     break;
 
     case MUIV_WriteWindow_RcptType_FromOverride:
-      DoMethod(data->ST_FROM_OVERRIDE, MUIM_Recipientstring_AddRecipient, msg->recipient);
+      DoMethod(data->ST_FROM_OVERRIDE, MUIM_RecipientString_AddRecipient, msg->recipient);
     break;
 
     case MUIV_WriteWindow_RcptType_To:
-      DoMethod(data->ST_TO, MUIM_Recipientstring_AddRecipient, msg->recipient);
+      DoMethod(data->ST_TO, MUIM_RecipientString_AddRecipient, msg->recipient);
     break;
 
     case MUIV_WriteWindow_RcptType_CC:
-      DoMethod(data->ST_CC, MUIM_Recipientstring_AddRecipient, msg->recipient);
+      DoMethod(data->ST_CC, MUIM_RecipientString_AddRecipient, msg->recipient);
       DoMethod(obj, METHOD(ShowRecipientObject), MUIV_WriteWindow_RcptType_CC);
     break;
 
     case MUIV_WriteWindow_RcptType_BCC:
-      DoMethod(data->ST_BCC, MUIM_Recipientstring_AddRecipient, msg->recipient);
+      DoMethod(data->ST_BCC, MUIM_RecipientString_AddRecipient, msg->recipient);
       DoMethod(obj, METHOD(ShowRecipientObject), MUIV_WriteWindow_RcptType_BCC);
     break;
 
     case MUIV_WriteWindow_RcptType_ReplyTo:
-      DoMethod(data->ST_REPLYTO, MUIM_Recipientstring_AddRecipient, msg->recipient);
+      DoMethod(data->ST_REPLYTO, MUIM_RecipientString_AddRecipient, msg->recipient);
       DoMethod(obj, METHOD(ShowRecipientObject), MUIV_WriteWindow_RcptType_ReplyTo);
     break;
   }
@@ -3385,7 +3385,7 @@ DECLARE(InsertAddresses) // enum RcptType type, char **addr, ULONG add
 
     do
     {
-      DoMethod(str, MUIM_Recipientstring_AddRecipient, *(msg->addr));
+      DoMethod(str, MUIM_RecipientString_AddRecipient, *(msg->addr));
       ++msg->addr;
     }
     while(*(msg->addr) != NULL);
@@ -3803,7 +3803,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
     comp.FromOverride = (char *)xget(data->ST_FROM_OVERRIDE, MUIA_String_Contents);
 
   // get the contents of the TO: String gadget and check if it is valid
-  addr = (char *)DoMethod(data->ST_TO, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValid);
+  addr = (char *)DoMethod(data->ST_TO, MUIM_RecipientString_Resolve, MUIF_RecipientString_Resolve_NoValid);
   if(mode != WRITE_DRAFT && addr == NULL)
   {
     ER_NewError(tr(MSG_ER_AliasNotFound), (STRPTR)xget(data->ST_TO, MUIA_String_Contents));
@@ -3869,7 +3869,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
   }
 
   // then we check the CC string gadget
-  addr = (char *)DoMethod(data->ST_CC, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValid);
+  addr = (char *)DoMethod(data->ST_CC, MUIM_RecipientString_Resolve, MUIF_RecipientString_Resolve_NoValid);
   if(mode != WRITE_DRAFT && addr == NULL)
   {
     ER_NewError(tr(MSG_ER_AliasNotFound), (STRPTR)xget(data->ST_CC, MUIA_String_Contents));
@@ -3888,7 +3888,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
     comp.MailCC = addr;
 
   // then we check the BCC string gadget
-  addr = (char *)DoMethod(data->ST_BCC, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValid);
+  addr = (char *)DoMethod(data->ST_BCC, MUIM_RecipientString_Resolve, MUIF_RecipientString_Resolve_NoValid);
   if(mode != WRITE_DRAFT && addr == NULL)
   {
     ER_NewError(tr(MSG_ER_AliasNotFound), (STRPTR)xget(data->ST_BCC, MUIA_String_Contents));
@@ -3911,7 +3911,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
   if(wmData->mode != NMM_REDIRECT)
   {
     // then we check the ReplyTo string gadget
-    addr = (char *)DoMethod(data->ST_REPLYTO, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValid);
+    addr = (char *)DoMethod(data->ST_REPLYTO, MUIM_RecipientString_Resolve, MUIF_RecipientString_Resolve_NoValid);
     if(mode != WRITE_DRAFT && addr == NULL)
     {
       ER_NewError(tr(MSG_ER_AliasNotFound), (STRPTR)xget(data->ST_REPLYTO, MUIA_String_Contents));
@@ -4512,10 +4512,10 @@ DECLARE(DoAutoSave)
       // prevent the autosave from happening when one of the match windows of
       // the recipientstring objects are open or otherwise they are intermediately
       // closed and resolved as soon as the autosave happens.
-      if(xget(data->ST_TO, MUIA_Recipientstring_MatchwindowOpen) == FALSE &&
-         xget(data->ST_CC, MUIA_Recipientstring_MatchwindowOpen) == FALSE &&
-         xget(data->ST_BCC, MUIA_Recipientstring_MatchwindowOpen) == FALSE &&
-         xget(data->ST_REPLYTO, MUIA_Recipientstring_MatchwindowOpen) == FALSE)
+      if(xget(data->ST_TO, MUIA_RecipientString_MatchwindowOpen) == FALSE &&
+         xget(data->ST_CC, MUIA_RecipientString_MatchwindowOpen) == FALSE &&
+         xget(data->ST_BCC, MUIA_RecipientString_MatchwindowOpen) == FALSE &&
+         xget(data->ST_REPLYTO, MUIA_RecipientString_MatchwindowOpen) == FALSE)
       {
         if(DoMethod(obj, METHOD(ComposeMail), WRITE_DRAFT) == TRUE)
         {
@@ -4661,11 +4661,11 @@ DECLARE(IdentityChanged) // struct UserIdentityNode *uin;
 
   // first we update things in the write window GUI
   setstring(data->ST_FROM_OVERRIDE, msg->uin->address);
-  set(data->ST_TO, MUIA_Recipientstring_ActiveIdentity, msg->uin);
+  set(data->ST_TO, MUIA_RecipientString_ActiveIdentity, msg->uin);
   xset(data->ST_CC, MUIA_String_Contents, msg->uin->mailCC,
-                    MUIA_Recipientstring_ActiveIdentity, msg->uin);
+                    MUIA_RecipientString_ActiveIdentity, msg->uin);
   xset(data->ST_BCC, MUIA_String_Contents, msg->uin->mailBCC,
-                     MUIA_Recipientstring_ActiveIdentity, msg->uin);
+                     MUIA_RecipientString_ActiveIdentity, msg->uin);
 
   // just go on in non redirection mode
   if(data->wmData->mode != NMM_REDIRECT)
@@ -4676,7 +4676,7 @@ DECLARE(IdentityChanged) // struct UserIdentityNode *uin;
     set(data->CH_DELSEND, MUIA_Selected, msg->uin->saveSentMail == FALSE);
     set(data->CH_ADDINFO, MUIA_Selected, msg->uin->addPersonalInfo);
     set(data->CH_MDN, MUIA_Selected, msg->uin->requestMDN);
-    set(data->ST_REPLYTO, MUIA_Recipientstring_ActiveIdentity, msg->uin);
+    set(data->ST_REPLYTO, MUIA_RecipientString_ActiveIdentity, msg->uin);
 
     // check if we have to show the CC/BCC/ReplyTo string objects
     // in case we filled in sensible information
@@ -5233,7 +5233,7 @@ DECLARE(CodesetChanged) // char *codesetName
     data->wmData->codeset = G->writeCodeset;
   }
 
-  nnset(data->PO_CODESET, MUIA_CodesetPopobject_Codeset, strippedCharsetName(data->wmData->codeset));
+  nnset(data->PO_CODESET, MUIA_CodesetPopup_Codeset, strippedCharsetName(data->wmData->codeset));
 
   RETURN(0);
   return 0;

@@ -114,9 +114,9 @@
 #include "tcp/Connection.h"
 #include "mui/ClassesExtra.h"
 #include "mui/ClassesSetup.h"
-#include "mui/AddrBookListtree.h"
+#include "mui/AddressBookListtree.h"
 #include "mui/MainWindow.h"
-#include "mui/Splashwindow.h"
+#include "mui/SplashWindow.h"
 #include "mui/ShutdownWindow.h"
 #include "mui/WriteWindow.h"
 #include "mui/YAMApplication.h"
@@ -1090,7 +1090,7 @@ static void SplashProgress(const char *txt, int percent)
 {
   ENTER();
 
-  DoMethod(G->SplashWinObject, MUIM_Splashwindow_StatusChange, txt, percent);
+  DoMethod(G->SplashWinObject, MUIM_SplashWindow_StatusChange, txt, percent);
 
   LEAVE();
 }
@@ -1156,7 +1156,7 @@ BOOL StayInProg(void)
 
   ENTER();
 
-  if(stayIn == FALSE && xget(G->AB->GUI.LV_ADDRESSES, MUIA_AddrBookListtree_Modified) == TRUE)
+  if(stayIn == FALSE && xget(G->AB->GUI.LV_ADDRESSES, MUIA_AddressBookListtree_Modified) == TRUE)
   {
     int result;
 
@@ -1363,7 +1363,7 @@ static BOOL Root_New(BOOL hidden)
   {
     // create the splash window object and return true if
     // everything worked out fine.
-    if((G->SplashWinObject = SplashwindowObject, End) != NULL)
+    if((G->SplashWinObject = SplashWindowObject, End) != NULL)
     {
       G->InStartupPhase = TRUE;
 

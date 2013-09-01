@@ -28,7 +28,7 @@
 
 ***************************************************************************/
 
-#include "Splashwindow_cl.h"
+#include "SplashWindow_cl.h"
 
 #include <string.h>
 #include <proto/dos.h>

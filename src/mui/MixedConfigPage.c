@@ -42,10 +42,10 @@
 
 #include "YAM.h"
 
-#include "mui/CodesetPopobject.h"
+#include "mui/CodesetPopup.h"
 #include "mui/ConfigPage.h"
 #include "mui/ConfigPageList.h"
-#include "mui/PlaceholderPopobject.h"
+#include "mui/PlaceholderPopup.h"
 #include "mui/PlaceholderPopupList.h"
 
 #include "Config.h"
@@ -300,8 +300,8 @@ OVERLOAD(OM_NEW)
           End,
 
           Child, Label2(tr(MSG_CO_EXTEDITOR_CODESET)),
-          Child, PO_DEFCODESET_EDITOR = CodesetPopobjectObject,
-            MUIA_CodesetPopobject_ControlChar, tr(MSG_CO_EXTEDITOR_CODESET),
+          Child, PO_DEFCODESET_EDITOR = CodesetPopupObject,
+            MUIA_CodesetPopup_ControlChar, tr(MSG_CO_EXTEDITOR_CODESET),
           End,
 
         End,
@@ -316,10 +316,10 @@ OVERLOAD(OM_NEW)
           Child, ColGroup(2),
 
             Child, Label2(tr(MSG_CO_APPICONTEXT)),
-            Child, PO_APPICON = PlaceholderPopobjectObject,
+            Child, PO_APPICON = PlaceholderPopupObject,
               MUIA_String_MaxLen, SIZE_DEFAULT/2,
-              MUIA_PlaceholderPopobject_Mode, PHM_MAILSTATS,
-              MUIA_PlaceholderPopobject_ControlChar, ShortCut(tr(MSG_CO_APPICONTEXT)),
+              MUIA_PlaceholderPopup_Mode, PHM_MAILSTATS,
+              MUIA_PlaceholderPopup_ControlChar, ShortCut(tr(MSG_CO_APPICONTEXT)),
             End,
 
             Child, HGroup,
@@ -391,10 +391,10 @@ OVERLOAD(OM_NEW)
 
           Child, Label1(tr(MSG_CO_Archiver)),
           Child, HGroup,
-            Child, PO_ARCHIVER = PlaceholderPopobjectObject,
+            Child, PO_ARCHIVER = PlaceholderPopupObject,
               MUIA_String_MaxLen, SIZE_COMMAND,
-              MUIA_PlaceholderPopobject_Mode, PHM_ARCHIVE,
-              MUIA_PlaceholderPopobject_ControlChar, ShortCut(tr(MSG_CO_Archiver)),
+              MUIA_PlaceholderPopup_Mode, PHM_ARCHIVE,
+              MUIA_PlaceholderPopup_ControlChar, ShortCut(tr(MSG_CO_Archiver)),
             End,
             Child, MakeCheckGroup(&CH_ARCHIVERPROGRESS, tr(MSG_CO_SHOW_ARCHIVER_PROGRESS)),
           End,
@@ -525,7 +525,7 @@ OVERLOAD(MUIM_ConfigPage_ConfigToGUI)
   set(data->CH_APPICONPOS, MUIA_Disabled, CE->WBAppIcon == FALSE);
   setcycle(data->CY_TRANSWIN, CE->TransferWindow);
   setstring(data->ST_EDITOR, CE->Editor);
-  set(data->PO_DEFCODESET_EDITOR, MUIA_CodesetPopobject_Codeset, CE->DefaultEditorCodeset);
+  set(data->PO_DEFCODESET_EDITOR, MUIA_CodesetPopup_Codeset, CE->DefaultEditorCodeset);
 
   RETURN(0);
   return 0;
@@ -569,7 +569,7 @@ OVERLOAD(MUIM_ConfigPage_GUIToConfig)
   CE->ShowPackerProgress = GetMUICheck(data->CH_ARCHIVERPROGRESS);
   CE->TransferWindow = GetMUICycle(data->CY_TRANSWIN);
   GetMUIString(CE->Editor, data->ST_EDITOR, sizeof(CE->Editor));
-  strlcpy(CE->DefaultEditorCodeset, (char *)xget(data->PO_DEFCODESET_EDITOR, MUIA_CodesetPopobject_Codeset), sizeof(CE->DefaultEditorCodeset));
+  strlcpy(CE->DefaultEditorCodeset, (char *)xget(data->PO_DEFCODESET_EDITOR, MUIA_CodesetPopup_Codeset), sizeof(CE->DefaultEditorCodeset));
 
   RETURN(0);
   return 0;

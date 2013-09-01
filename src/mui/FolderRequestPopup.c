@@ -28,7 +28,7 @@
 
 ***************************************************************************/
 
-#include "FolderRequestPopobject_cl.h"
+#include "FolderRequestPopup_cl.h"
 
 #include <proto/muimaster.h>
 #include <mui/NList_mcc.h>

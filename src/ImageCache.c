@@ -50,7 +50,7 @@
 #include "YAM_error.h"
 
 #include "mui/ClassesExtra.h"
-#include "mui/AddrBookToolbar.h"
+#include "mui/AddressBookToolbar.h"
 #include "mui/ReadWindowToolbar.h"
 #include "mui/WriteWindowToolbar.h"
 
@@ -672,7 +672,7 @@ BOOL ToolbarCacheInit(void)
   G->WriteToolbarCacheObject = WriteWindowToolbarObject, End;
   D(DBF_IMAGE, "init writewindow toolbar: %08lx", G->WriteToolbarCacheObject);
 
-  G->AbookToolbarCacheObject = AddrBookToolbarObject, End;
+  G->AbookToolbarCacheObject = AddressBookToolbarObject, End;
   D(DBF_IMAGE, "init abookwindow toolbar: %08lx", G->AbookToolbarCacheObject);
 
 

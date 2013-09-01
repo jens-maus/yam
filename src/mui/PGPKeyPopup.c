@@ -28,7 +28,7 @@
 
 ***************************************************************************/
 
-#include "PGPKeyPopobject_cl.h"
+#include "PGPKeyPopup_cl.h"
 
 #include <string.h>
 

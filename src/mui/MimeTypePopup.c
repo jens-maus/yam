@@ -28,7 +28,7 @@
 
 ***************************************************************************/
 
-#include "MimeTypePopobject_cl.h"
+#include "MimeTypePopup_cl.h"
 
 #include <proto/muimaster.h>
 #include <mui/BetterString_mcc.h>

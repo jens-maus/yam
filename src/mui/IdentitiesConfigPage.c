@@ -41,10 +41,10 @@
 
 #include "mui/ConfigPage.h"
 #include "mui/ConfigPageList.h"
-#include "mui/FolderRequestPopobject.h"
+#include "mui/FolderRequestPopup.h"
 #include "mui/IdentityList.h"
 #include "mui/MailServerChooser.h"
-#include "mui/PGPKeyPopobject.h"
+#include "mui/PGPKeyPopup.h"
 #include "mui/SignatureChooser.h"
 
 #include "Config.h"
@@ -270,7 +270,7 @@ OVERLOAD(OM_NEW)
                   Child, LLabel1(tr(MSG_CO_IDENTITY_COMPOSE_SENTFOLDER)),
 
                   Child, HSpace(0),
-                  Child, PO_IDENTITY_SENTFOLDER = FolderRequestPopobjectObject,
+                  Child, PO_IDENTITY_SENTFOLDER = FolderRequestPopupObject,
                   End,
 
                   Child, CH_IDENTITY_QUOTEMAILS = MakeCheck(tr(MSG_CO_IDENTITY_COMPOSE_QUOTE)),
@@ -338,9 +338,9 @@ OVERLOAD(OM_NEW)
               End,
 
               Child, Label2(tr(MSG_CO_IDENTITY_PGPKEY_ID)),
-              Child, PO_IDENTITY_PGPID = PGPKeyPopobjectObject,
-                MUIA_PGPKeyPopobject_Secret, TRUE,
-                MUIA_PGPKeyPopobject_Label, tr(MSG_CO_IDENTITY_PGPKEY_ID),
+              Child, PO_IDENTITY_PGPID = PGPKeyPopupObject,
+                MUIA_PGPKeyPopup_Secret, TRUE,
+                MUIA_PGPKeyPopup_Label, tr(MSG_CO_IDENTITY_PGPKEY_ID),
               End,
 
               Child, Label2(tr(MSG_CO_IDENTITY_PGPKEY_URL)),
@@ -476,7 +476,7 @@ OVERLOAD(OM_NEW)
     DoMethod(ST_IDENTITY_EXTRAHEADER,       MUIM_Notify, MUIA_String_Contents,                      MUIV_EveryTime, obj, 1, METHOD(PutIdentityEntry));
     DoMethod(ST_IDENTITY_PHOTOURL,          MUIM_Notify, MUIA_String_Contents,                      MUIV_EveryTime, obj, 1, METHOD(PutIdentityEntry));
     DoMethod(CH_IDENTITY_SENTFOLDER,        MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(PutIdentityEntry));
-    DoMethod(PO_IDENTITY_SENTFOLDER,        MUIM_Notify, MUIA_FolderRequestPopobject_FolderChanged, MUIV_EveryTime, obj, 1, METHOD(PutIdentityEntry));
+    DoMethod(PO_IDENTITY_SENTFOLDER,        MUIM_Notify, MUIA_FolderRequestPopup_FolderChanged,     MUIV_EveryTime, obj, 1, METHOD(PutIdentityEntry));
     DoMethod(CH_IDENTITY_QUOTEMAILS,        MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(PutIdentityEntry));
     DoMethod(CY_IDENTITY_QUOTEPOS,          MUIM_Notify, MUIA_Cycle_Active,                         MUIV_EveryTime, obj, 1, METHOD(PutIdentityEntry));
     DoMethod(CY_IDENTITY_SIGPOS,            MUIM_Notify, MUIA_Cycle_Active,                         MUIV_EveryTime, obj, 1, METHOD(PutIdentityEntry));
@@ -485,7 +485,7 @@ OVERLOAD(OM_NEW)
     DoMethod(CH_IDENTITY_ADDINFO,           MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(PutIdentityEntry));
     DoMethod(CH_IDENTITY_REQUESTMDN,        MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(PutIdentityEntry));
     DoMethod(CH_IDENTITY_USEPGP,            MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(PutIdentityEntry));
-    DoMethod(PO_IDENTITY_PGPID,             MUIM_Notify, MUIA_PGPKeyPopobject_PGPKeyChanged,        MUIV_EveryTime, obj, 1, METHOD(PutIdentityEntry));
+    DoMethod(PO_IDENTITY_PGPID,             MUIM_Notify, MUIA_PGPKeyPopup_PGPKeyChanged,            MUIV_EveryTime, obj, 1, METHOD(PutIdentityEntry));
     DoMethod(ST_IDENTITY_PGPURL,            MUIM_Notify, MUIA_String_Contents,                      MUIV_EveryTime, obj, 1, METHOD(PutIdentityEntry));
     DoMethod(CH_IDENTITY_PGPSIGN_UNENC,     MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(PutIdentityEntry));
     DoMethod(CH_IDENTITY_PGPSIGN_ENC,       MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(PutIdentityEntry));
@@ -632,7 +632,7 @@ DECLARE(GetIdentityEntry)
     nnset(data->ST_IDENTITY_EXTRAHEADER,   MUIA_String_Contents,               uin->extraHeaders);
     nnset(data->ST_IDENTITY_PHOTOURL,      MUIA_String_Contents,               uin->photoURL);
     nnset(data->CH_IDENTITY_SENTFOLDER,    MUIA_Selected,                      uin->saveSentMail);
-    nnset(data->PO_IDENTITY_SENTFOLDER,    MUIA_FolderRequestPopobject_Folder, uin->sentFolder);
+    nnset(data->PO_IDENTITY_SENTFOLDER,    MUIA_FolderRequestPopup_Folder,     uin->sentFolder);
     nnset(data->CH_IDENTITY_QUOTEMAILS,    MUIA_Selected,                      uin->quoteMails);
     nnset(data->CY_IDENTITY_QUOTEPOS,      MUIA_Cycle_Active,                  uin->quotePosition);
     nnset(data->CY_IDENTITY_SIGPOS,        MUIA_Cycle_Active,                  uin->signaturePosition);
@@ -641,7 +641,7 @@ DECLARE(GetIdentityEntry)
     nnset(data->CH_IDENTITY_ADDINFO,       MUIA_Selected,                      uin->addPersonalInfo);
     nnset(data->CH_IDENTITY_REQUESTMDN,    MUIA_Selected,                      uin->requestMDN);
     nnset(data->CH_IDENTITY_USEPGP,        MUIA_Selected,                      uin->usePGP);
-    nnset(data->PO_IDENTITY_PGPID,         MUIA_PGPKeyPopobject_PGPKey,        uin->pgpKeyID);
+    nnset(data->PO_IDENTITY_PGPID,         MUIA_PGPKeyPopup_PGPKey,            uin->pgpKeyID);
     nnset(data->ST_IDENTITY_PGPURL,        MUIA_String_Contents,               uin->pgpKeyURL);
     nnset(data->CH_IDENTITY_PGPSIGN_UNENC, MUIA_Selected,                      uin->pgpSignUnencrypted);
     nnset(data->CH_IDENTITY_PGPSIGN_ENC,   MUIA_Selected,                      uin->pgpSignEncrypted);
@@ -723,7 +723,7 @@ DECLARE(PutIdentityEntry)
       GetMUIString(uin->mailReplyTo,  data->ST_IDENTITY_REPLYTO,     sizeof(uin->mailReplyTo));
       GetMUIString(uin->extraHeaders, data->ST_IDENTITY_EXTRAHEADER, sizeof(uin->extraHeaders));
       GetMUIString(uin->photoURL,     data->ST_IDENTITY_PHOTOURL,    sizeof(uin->photoURL));
-      strlcpy(uin->sentFolder, (char *)xget(data->PO_IDENTITY_SENTFOLDER, MUIA_FolderRequestPopobject_Folder), sizeof(uin->sentFolder));
+      strlcpy(uin->sentFolder, (char *)xget(data->PO_IDENTITY_SENTFOLDER, MUIA_FolderRequestPopup_Folder), sizeof(uin->sentFolder));
       uin->saveSentMail = GetMUICheck(data->CH_IDENTITY_SENTFOLDER);
       uin->quoteMails = GetMUICheck(data->CH_IDENTITY_QUOTEMAILS);
       uin->quotePosition = GetMUICycle(data->CY_IDENTITY_QUOTEPOS);
@@ -734,7 +734,7 @@ DECLARE(PutIdentityEntry)
       uin->requestMDN = GetMUICheck(data->CH_IDENTITY_REQUESTMDN);
 
       uin->usePGP = GetMUICheck(data->CH_IDENTITY_USEPGP);
-      strlcpy(uin->pgpKeyID, (char *)xget(data->PO_IDENTITY_PGPID, MUIA_PGPKeyPopobject_PGPKey), sizeof(uin->pgpKeyID));
+      strlcpy(uin->pgpKeyID, (char *)xget(data->PO_IDENTITY_PGPID, MUIA_PGPKeyPopup_PGPKey), sizeof(uin->pgpKeyID));
       GetMUIString(uin->pgpKeyURL, data->ST_IDENTITY_PGPURL, sizeof(uin->pgpKeyURL));
       uin->pgpSignUnencrypted = GetMUICheck(data->CH_IDENTITY_PGPSIGN_UNENC);
       uin->pgpSignEncrypted = GetMUICheck(data->CH_IDENTITY_PGPSIGN_ENC);

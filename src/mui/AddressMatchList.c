@@ -28,7 +28,7 @@
 
 ***************************************************************************/
 
-#include "AddressmatchList_cl.h"
+#include "AddressMatchList_cl.h"
 
 #include <stdlib.h>
 #include <mui/NList_mcc.h>
@@ -36,7 +36,7 @@
 #include "YAM_addressbookEntry.h"
 #include "YAM_global.h"
 
-#include "mui/AddressmatchPopup.h"
+#include "mui/AddressMatchPopupWindow.h"
 
 #include "Debug.h"
 

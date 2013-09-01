@@ -38,7 +38,7 @@
 #include "MUIObjects.h"
 #include "Rexx.h"
 
-#include "mui/AddrBookListtree.h"
+#include "mui/AddressBookListtree.h"
 
 #include "Debug.h"
 
@@ -68,12 +68,12 @@ void rx_addrdelete(UNUSED struct RexxHost *host, struct RexxParams *params, enum
       if(!args->alias)
       {
         if(xget(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active) != MUIV_NListtree_Active_Off)
-          DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_AddrBookListtree_DeleteEntry);
+          DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_AddressBookListtree_DeleteEntry);
         else
           params->rc = RETURN_WARN;
       }
       else if(AB_GotoEntry(args->alias))
-        DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_AddrBookListtree_DeleteEntry);
+        DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_AddressBookListtree_DeleteEntry);
       else
         params->rc = RETURN_WARN;
     }

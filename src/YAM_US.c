@@ -50,7 +50,7 @@
 #include "YAM_utilities.h"
 
 #include "mui/ClassesExtra.h"
-#include "mui/Splashwindow.h"
+#include "mui/SplashWindow.h"
 #include "mui/UserList.h"
 
 #include "Config.h"
@@ -319,7 +319,7 @@ BOOL US_Login(const char *username, const char *password, const char *maildir, c
     else if(G->Users.Num >= 2)
     {
       // more than one users are available, let the user at the screen choose from these
-      userIndex = DoMethod(G->SplashWinObject, MUIM_Splashwindow_SelectUser);
+      userIndex = DoMethod(G->SplashWinObject, MUIM_SplashWindow_SelectUser);
     }
     else
     {
@@ -351,7 +351,7 @@ BOOL US_Login(const char *username, const char *password, const char *maildir, c
       if(password != NULL)
         loggedin = (strcmp(password, user->Password) == 0 || strcmp(password, "\01") == 0);
       else
-        loggedin = DoMethod(G->SplashWinObject, MUIM_Splashwindow_PasswordRequest, user);
+        loggedin = DoMethod(G->SplashWinObject, MUIM_SplashWindow_PasswordRequest, user);
     }
     else
     {

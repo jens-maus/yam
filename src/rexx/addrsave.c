@@ -35,7 +35,7 @@
 
 #include "Rexx.h"
 
-#include "mui/AddrBookListtree.h"
+#include "mui/AddressBookListtree.h"
 
 #include "Debug.h"
 
@@ -68,7 +68,7 @@ void rx_addrsave(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
       else
       {
         if(AB_SaveTree(G->AB->GUI.LV_ADDRESSES, G->AB_Filename))
-          set(G->AB->GUI.LV_ADDRESSES, MUIA_AddrBookListtree_Modified, FALSE);
+          set(G->AB->GUI.LV_ADDRESSES, MUIA_AddressBookListtree_Modified, FALSE);
         else
           params->rc = RETURN_ERROR;
       }

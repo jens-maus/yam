@@ -28,7 +28,7 @@
 
 ***************************************************************************/
 
-#include "AddrBookEntryList_cl.h"
+#include "AddressBookEntryList_cl.h"
 
 #include "YAM.h"
 #include "YAM_addressbook.h"

@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-09-01 Jens Langner <Jens.Langner@light-speed.de>
+
+  * mui, misc: renamed some of our mui classes to carry a more appropriate name
+    and also enforced a proper CamelCase for the class names as they weren't
+    quite consistent (e.g. Recipientstring vs. RecipientString).
+
 2013-09-01 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_AB.c, mui/AddressBookWindow.c: implemented some methods to replace
