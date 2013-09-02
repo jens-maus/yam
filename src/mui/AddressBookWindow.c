@@ -1249,8 +1249,8 @@ DECLARE(FindPerson) // struct Person *pe
 
   result = (struct Person *)DoMethod(data->LV_ADDRESSES, MUIM_AddressBookListtree_FindPerson, msg->pe);
 
-  RETURN(0);
-  return 0;
+  RETURN(result);
+  return (IPTR)result;
 }
 
 ///
