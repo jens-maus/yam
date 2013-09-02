@@ -30,6 +30,8 @@
 
 #include <intuition/classusr.h>
 
+#include "YAM_stringsizes.h"
+
 struct ER_GUIData
 {
   Object *WI;
