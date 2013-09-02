@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-09-02 Pär Boberg <pbobbenb@spray.se>
+
+  * locale/swedish.ct: fixed some typos.
+
 2013-09-02 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_AB.c, mui/AddressBookWindow.c, misc: implemented some methods to replace

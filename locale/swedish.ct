@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.3 (30.08.2013)
+## version $VER: YAM.catalog 8.4 (02.09.2013)
 ## language svenska
 ## codeset 0
 ;
@@ -9520,7 +9520,7 @@ Visa te_ckenuppsättning
 MSG_HELP_CO_TX_MIME_CODESET
 Välj teckenuppsättning här, som utskriftsbar\n\
 text ska konverteras till, innan exekvering\n\
-av kommando för denna MIME typ.
+av kommandot för denna MIME typ.
 ; Select the charset here that printable\n\
 ; text should be converted to before\n\
 ; executing the command of this MIME type.
@@ -9531,7 +9531,7 @@ _Visa teckenuppsättning
 ;
 MSG_HELP_CO_TX_DEFVIEWER_CODESET
 Välj teckenuppsättning här, som utskriftsbar\n\
-text ska konverteras til, innan förvald\n\
+text ska konverteras till, innan förvald\n\
 visare startas.
 ; Select the charset here that printable\n\
 ; text should be converted to before\n\
