@@ -9,6 +9,8 @@ $URL$
 
   * YAM_AB.c, mui/AddressBookWindow.c, misc: implemented some methods to replace
     certain old functions in the future.
+  * mui/FolderRequestListtree.c: added a NULL pointer check before adding the
+    global folder tree notification. This closes #416.
 
 2013-09-01 Jens Langner <Jens.Langner@light-speed.de>
 

@@ -78,7 +78,8 @@ OVERLOAD(OM_NEW)
     DoMethod(obj, METHOD(RefreshTree));
 
     // keep us informed about all changes to the main window's folder listtree
-    DoMethod(G->MA->GUI.LV_FOLDERS, MUIM_Notify, MUIA_MainFolderListtree_TreeChanged, MUIV_EveryTime, obj, 1, METHOD(RefreshTree));
+    if(G->MA != NULL)
+      DoMethod(G->MA->GUI.LV_FOLDERS, MUIM_Notify, MUIA_MainFolderListtree_TreeChanged, MUIV_EveryTime, obj, 1, METHOD(RefreshTree));
   }
 
   RETURN((IPTR)obj);
