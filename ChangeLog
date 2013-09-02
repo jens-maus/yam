@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-09-02 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_AB.c, mui/AddressBookWindow.c, misc: implemented some methods to replace
+    certain old functions in the future.
+
 2013-09-01 Jens Langner <Jens.Langner@light-speed.de>
 
   * mui, misc: renamed some of our mui classes to carry a more appropriate name

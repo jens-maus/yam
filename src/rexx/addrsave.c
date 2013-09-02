@@ -25,6 +25,7 @@
 
 ***************************************************************************/
 
+#include <clib/alib_protos.h>
 #include <proto/exec.h>
 
 #include "extrasrc.h"
@@ -35,7 +36,7 @@
 
 #include "Rexx.h"
 
-#include "mui/AddressBookListtree.h"
+#include "mui/AddressBookWindow.h"
 
 #include "Debug.h"
 
@@ -60,18 +61,8 @@ void rx_addrsave(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
 
     case RXIF_ACTION:
     {
-      if(args->filename)
-      {
-        if(!AB_SaveTree(G->AB->GUI.LV_ADDRESSES, args->filename))
-          params->rc = RETURN_ERROR;
-      }
-      else
-      {
-        if(AB_SaveTree(G->AB->GUI.LV_ADDRESSES, G->AB_Filename))
-          set(G->AB->GUI.LV_ADDRESSES, MUIA_AddressBookListtree_Modified, FALSE);
-        else
-          params->rc = RETURN_ERROR;
-      }
+      if(DoMethod(G->ABookWinObject, MUIM_AddressBookWindow_Save, args->filename) == FALSE)
+        params->rc = RETURN_ERROR;
     }
     break;
 

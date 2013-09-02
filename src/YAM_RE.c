@@ -59,6 +59,7 @@
 #include "YAM_write.h"
 #include "YAM_utilities.h"
 
+#include "mui/AddressBookWindow.h"
 #include "mui/ClassesExtra.h"
 #include "mui/MainMailListGroup.h"
 #include "mui/ReadMailGroup.h"
@@ -3582,24 +3583,9 @@ struct ABEntry *RE_AddToAddrbook(Object *win, struct ABEntry *templ)
   if(doit == TRUE)
   {
     struct ABEntry ab_new;
-    struct MUI_NListtree_TreeNode *tn = NULL;
+    struct MUI_NListtree_TreeNode *tn;
 
-    // first we check if the group for new entries already exists and if so
-    // we add this address to this special group.
-    if(C->NewAddrGroup[0])
-    {
-      tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindName, MUIV_NListtree_FindName_ListNode_Root, C->NewAddrGroup, MUIF_NONE);
-
-      // only if the group doesn't exist yet
-      if(tn == NULL || ((struct ABEntry *)tn->tn_User)->Type != AET_GROUP)
-      {
-        memset(&ab_new, 0, sizeof(struct ABEntry));
-        strlcpy(ab_new.Alias, C->NewAddrGroup, sizeof(ab_new.Alias));
-        strlcpy(ab_new.Comment, tr(MSG_RE_NewGroupTitle), sizeof(ab_new.Comment));
-        ab_new.Type = AET_GROUP;
-        tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, ab_new.Alias, &ab_new, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Sorted, TNF_LIST);
-      }
-    }
+    tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->ABookWinObject, MUIM_AddressBookWindow_CreateDefaultGroup);
 
     // then lets add the entry to the group that was perhaps
     // created previously.
@@ -3608,10 +3594,9 @@ struct ABEntry *RE_AddToAddrbook(Object *win, struct ABEntry *templ)
     RE_UpdateSenderInfo(&ab_new, templ);
     EA_SetDefaultAlias(&ab_new);
 
-    tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, ab_new.Alias, &ab_new, tn ? tn : MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Sorted, MUIF_NONE);
-    if(tn != NULL)
+    if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->ABookWinObject, MUIM_AddressBookWindow_AddEntry, &ab_new, tn)) != NULL)
     {
-      CallHookPkt(&AB_SaveABookHook, 0, 0);
+      DoMethod(G->ABookWinObject, MUIM_AddressBookWindow_Save, NULL);
 
       result = tn->tn_User;
     }
@@ -3716,7 +3701,7 @@ void RE_ClickedOnMessage(char *address, Object *win)
       {
         int winNum;
 
-        DoMethod(win, MUIM_CallHook, &AB_OpenHook, ABM_EDIT);
+        DoMethod(_app(win), MUIM_YAMApplication_OpenAddressBookWindow);
 
         if(hits != 0)
         {

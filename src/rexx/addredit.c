@@ -39,7 +39,7 @@
 #include "YAM_addressbookEntry.h"
 
 #include "mui/ClassesExtra.h"
-#include "mui/AddressBookListtree.h"
+#include "mui/AddressBookWindow.h"
 
 #include "DynamicString.h"
 #include "MUIObjects.h"
@@ -83,6 +83,7 @@ void rx_addredit(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
     {
       struct MUI_NListtree_TreeNode *tn;
 
+      #warning access to G->AB
       if((tn = (struct MUI_NListtree_TreeNode *)xget(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active)) != NULL)
       {
         struct ABEntry *ab = (struct ABEntry *)(tn->tn_User);
@@ -149,7 +150,7 @@ void rx_addredit(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
         }
 
         DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Redraw, MUIV_NListtree_Redraw_Active, MUIF_NONE);
-        set(G->AB->GUI.LV_ADDRESSES, MUIA_AddressBookListtree_Modified, TRUE);
+        set(G->ABookWinObject, MUIA_AddressBookWindow_Modified, TRUE);
       }
       else
         params->rc = RETURN_ERROR;

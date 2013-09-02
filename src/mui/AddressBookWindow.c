@@ -227,7 +227,7 @@ OVERLOAD(OM_NEW)
     SetHelp(BT_BCC, MSG_HELP_AB_BT_BCC);
 
     DoMethod(obj,          MUIM_Notify, MUIA_Window_MenuAction,     AMEN_NEW,         LV_ADDRESSES, 1, MUIM_AddressBookListtree_ClearTree);
-    DoMethod(obj,          MUIM_Notify, MUIA_Window_MenuAction,     AMEN_LOAD,        obj,          1, METHOD(Load));
+    DoMethod(obj,          MUIM_Notify, MUIA_Window_MenuAction,     AMEN_LOAD,        obj,          2, METHOD(Load), TRUE);
     DoMethod(obj,          MUIM_Notify, MUIA_Window_MenuAction,     AMEN_APPEND,      obj,          1, METHOD(Append));
     DoMethod(obj,          MUIM_Notify, MUIA_Window_MenuAction,     AMEN_IMPORT_LDIF, obj,          1, METHOD(ImportLDIF));
     DoMethod(obj,          MUIM_Notify, MUIA_Window_MenuAction,     AMEN_IMPORT_TAB,  obj,          2, METHOD(ImportTabCSV), '\t');
@@ -236,7 +236,7 @@ OVERLOAD(OM_NEW)
     DoMethod(obj,          MUIM_Notify, MUIA_Window_MenuAction,     AMEN_EXPORT_LDIF, obj,          1, METHOD(ExportLDIF));
     DoMethod(obj,          MUIM_Notify, MUIA_Window_MenuAction,     AMEN_EXPORT_TAB,  obj,          2, METHOD(ExportTabCSV), '\t');
     DoMethod(obj,          MUIM_Notify, MUIA_Window_MenuAction,     AMEN_EXPORT_CSV,  obj,          2, METHOD(ExportTabCSV), ',');
-    DoMethod(obj,          MUIM_Notify, MUIA_Window_MenuAction,     AMEN_SAVE,        obj,          1, METHOD(Save));
+    DoMethod(obj,          MUIM_Notify, MUIA_Window_MenuAction,     AMEN_SAVE,        obj,          2, METHOD(Save), NULL);
     DoMethod(obj,          MUIM_Notify, MUIA_Window_MenuAction,     AMEN_SAVEAS,      obj,          1, METHOD(SaveAs));
     DoMethod(obj,          MUIM_Notify, MUIA_Window_MenuAction,     AMEN_PRINTA,      obj,          1, METHOD(PrintAll));
     DoMethod(obj,          MUIM_Notify, MUIA_Window_MenuAction,     AMEN_NEWUSER,     LV_ADDRESSES, 2, MUIM_AddressBookListtree_AddEntry, AET_USER);
@@ -254,7 +254,7 @@ OVERLOAD(OM_NEW)
     DoMethod(obj,          MUIM_Notify, MUIA_Window_MenuAction,     AMEN_SORTADDR,    LV_ADDRESSES, 2, MUIM_AddressBookListtree_SortBy, MUIV_AddressBookListtree_SortBy_Address);
     DoMethod(obj,          MUIM_Notify, MUIA_Window_MenuAction,     AMEN_FOLD,        LV_ADDRESSES, 2, MUIM_AddressBookListtree_FoldTree, FALSE);
     DoMethod(obj,          MUIM_Notify, MUIA_Window_MenuAction,     AMEN_UNFOLD,      LV_ADDRESSES, 2, MUIM_AddressBookListtree_FoldTree, TRUE);
-    DoMethod(LV_ADDRESSES, MUIM_Notify, MUIA_NListtree_Active,      MUIV_EveryTime,   obj,          1, METHOD(ActiveChange));
+    DoMethod(LV_ADDRESSES, MUIM_Notify, MUIA_NListtree_Active,      MUIV_EveryTime,   obj,          2, METHOD(ActiveChange), MUIV_TriggerValue);
     DoMethod(LV_ADDRESSES, MUIM_Notify, MUIA_NListtree_DoubleClick, MUIV_EveryTime,   obj,          1, METHOD(HandleDoubleClick));
     DoMethod(BT_TO,        MUIM_Notify, MUIA_Pressed,               FALSE,            obj,          1, METHOD(UseEntry), ABM_TO);
     DoMethod(BT_CC,        MUIM_Notify, MUIA_Pressed,               FALSE,            obj,          1, METHOD(UseEntry), ABM_CC);
@@ -263,7 +263,7 @@ OVERLOAD(OM_NEW)
 
     if(TB_TOOLBAR != NULL)
     {
-      DoMethod(TB_TOOLBAR, MUIM_TheBar_Notify, TB_ABOOK_SAVE,      MUIA_Pressed, FALSE, obj,          1, METHOD(Save));
+      DoMethod(TB_TOOLBAR, MUIM_TheBar_Notify, TB_ABOOK_SAVE,      MUIA_Pressed, FALSE, obj,          2, METHOD(Save), NULL);
       DoMethod(TB_TOOLBAR, MUIM_TheBar_Notify, TB_ABOOK_FIND,      MUIA_Pressed, FALSE, LV_ADDRESSES, 1, MUIM_AddressBookListtree_FindEntry);
       DoMethod(TB_TOOLBAR, MUIM_TheBar_Notify, TB_ABOOK_NEWUSER,   MUIA_Pressed, FALSE, LV_ADDRESSES, 2, MUIM_AddressBookListtree_AddEntry, AET_USER);
       DoMethod(TB_TOOLBAR, MUIM_TheBar_Notify, TB_ABOOK_NEWLIST,   MUIA_Pressed, FALSE, LV_ADDRESSES, 2, MUIM_AddressBookListtree_AddEntry, AET_LIST);
@@ -281,6 +281,42 @@ OVERLOAD(OM_NEW)
 }
 
 ///
+/// OVERLOAD(OM_SET)
+OVERLOAD(OM_SET)
+{
+  GETDATA;
+  struct TagItem *tags = inittags(msg), *tag;
+  ULONG result;
+
+  ENTER();
+
+  while((tag = NextTagItem((APTR)&tags)) != NULL)
+  {
+    switch(tag->ti_Tag)
+    {
+      case ATTR(WindowNumber):
+      {
+        data->windowNumber = tag->ti_Data;
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
+
+      case ATTR(ConfigModified):
+      {
+        DoMethod(data->LV_ADDRESSES, MUIM_AddressBookListtree_MakeFormat);
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
+    }
+  }
+
+  result = DoSuperMethodA(cl, obj, msg);
+
+  RETURN(result);
+  return result;
+}
+
+///
 /// OVERLOAD(OM_GET)
 OVERLOAD(OM_GET)
 {
@@ -289,7 +325,9 @@ OVERLOAD(OM_GET)
 
   switch(((struct opGet *)msg)->opg_AttrID)
   {
-    //case ATTR(xxx): *store = xxx; return TRUE;
+    case ATTR(WindowNumber): *store = data->windowNumber; return TRUE;
+    case ATTR(Modified):     *store = xget(data->LV_ADDRESSES, MUIA_AddressBookListtree_Modified); return TRUE;
+    case ATTR(Listtree):     *store = (IPTR)data->LV_ADDRESSES; return TRUE;
   }
 
   return DoSuperMethodA(cl, obj, msg);
@@ -306,7 +344,7 @@ DECLARE(Open) // enum AddressbookMode mode, LONG windowNumber, Object *recipient
 {
   GETDATA;
   const char *md;
-  BOOL nodeActive;
+  struct MUI_NListtree_TreeNode *tn;
 
   ENTER();
 
@@ -321,20 +359,23 @@ DECLARE(Open) // enum AddressbookMode mode, LONG windowNumber, Object *recipient
     default:          md = "";           break;
   }
 
-  data->mode =msg-> mode;
+  data->mode = msg-> mode;
   data->windowNumber = (*md != '\0' ? msg->windowNumber : -1),
   set(data->LV_ADDRESSES, MUIA_AddressBookListtree_Modified, FALSE);
 
   // enable/disable the To/CC/BCC buttons depending on whether there is an active entry or not
-  nodeActive = ((struct MUI_NListtree_TreeNode *)xget(data->LV_ADDRESSES, MUIA_NListtree_Active) != NULL);
-  DoMethod(obj, MUIM_MultiSet, MUIA_Disabled, nodeActive == FALSE,
+  tn = (struct MUI_NListtree_TreeNode *)xget(data->LV_ADDRESSES, MUIA_NListtree_Active);
+  DoMethod(obj, MUIM_MultiSet, MUIA_Disabled, tn == NULL,
     data->BT_TO,
     data->BT_CC,
     data->BT_BCC,
     NULL);
 
   if(data->TB_TOOLBAR != NULL)
-    DoMethod(data->TB_TOOLBAR, MUIM_AddressBookToolbar_UpdateControls);
+  {
+    DoMethod(data->TB_TOOLBAR, MUIM_TheBar_SetAttr, TB_ABOOK_EDIT,   MUIA_TheBar_Attr_Disabled, tn == NULL);
+    DoMethod(data->TB_TOOLBAR, MUIM_TheBar_SetAttr, TB_ABOOK_DELETE, MUIA_TheBar_Attr_Disabled, tn == NULL);
+  }
 
   snprintf(data->windowTitle, sizeof(data->windowTitle), "%s %s", tr(MSG_MA_MAddrBook), md);
 
@@ -351,18 +392,30 @@ DECLARE(Open) // enum AddressbookMode mode, LONG windowNumber, Object *recipient
 ///
 /// DECLARE(Load)
 // load an address book
-DECLARE(Load)
+DECLARE(Load) // ULONG request
 {
   GETDATA;
-  struct FileReqCache *frc;
+  BOOL load = FALSE;
 
   ENTER();
 
-  if((frc = ReqFile(ASL_ABOOK, obj, tr(MSG_Open), REQF_NONE, G->MA_MailDir, "")) != NULL)
+  if(msg->request == TRUE)
   {
-    AddPath(G->AB_Filename, frc->drawer, frc->file, sizeof(G->AB_Filename));
-    AB_LoadTree(data->LV_ADDRESSES, G->AB_Filename, FALSE, FALSE);
+    struct FileReqCache *frc;
+
+    if((frc = ReqFile(ASL_ABOOK, obj, tr(MSG_Open), REQF_NONE, G->MA_MailDir, "")) != NULL)
+    {
+      AddPath(G->AB_Filename, frc->drawer, frc->file, sizeof(G->AB_Filename));
+      load = TRUE;
+    }
   }
+  else
+  {
+    load = TRUE;
+  }
+
+  if(load == TRUE)
+    AB_LoadTree(data->LV_ADDRESSES, G->AB_Filename, FALSE, FALSE);
 
   RETURN(0);
   return 0;
@@ -393,21 +446,29 @@ DECLARE(Append)
 ///
 /// DECLARE(Save)
 // save the address book using the default name
-DECLARE(Save)
+DECLARE(Save) // const char *filename;
 {
   GETDATA;
+  const char *filename;
   struct BusyNode *busy;
+  ULONG success;
 
   ENTER();
 
+  if(msg->filename != NULL)
+    filename = msg->filename;
+  else
+    filename = G->AB_Filename;
+
   busy = BusyBegin(BUSY_TEXT);
-  BusyText(busy, tr(MSG_BusySavingAB), G->AB_Filename);
-  AB_SaveTree(data->LV_ADDRESSES, G->AB_Filename);
-  set(data->LV_ADDRESSES, MUIA_AddressBookListtree_Modified, FALSE);
+  BusyText(busy, tr(MSG_BusySavingAB), filename);
+  success = AB_SaveTree(data->LV_ADDRESSES, filename);
+  if(msg->filename == NULL)
+    set(data->LV_ADDRESSES, MUIA_AddressBookListtree_Modified, FALSE);
   BusyEnd(busy);
 
-  RETURN(0);
-  return 0;
+  RETURN(success);
+  return success;
 }
 
 ///
@@ -426,7 +487,7 @@ DECLARE(SaveAs)
     if(FileExists(G->AB_Filename) == FALSE ||
        MUI_Request(_app(obj), obj, MUIF_NONE, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_FILE_OVERWRITE), frc->file) != 0)
     {
-      DoMethod(obj, METHOD(Save));
+      DoMethod(obj, METHOD(Save), NULL);
     }
   }
 
@@ -541,22 +602,23 @@ DECLARE(PrintEntry)
 ///
 /// DECLARE(ActiveChange)
 // the active entry in the address book listtree has changed
-DECLARE(ActiveChange)
+DECLARE(ActiveChange) // struct MUI_NListtree_TreeNode *tn
 {
   GETDATA;
-  BOOL disabled;
 
   ENTER();
 
-  disabled = ((struct MUI_NListtree_TreeNode *)xget(data->LV_ADDRESSES, MUIA_NListtree_Active) == NULL);
-  DoMethod(obj, MUIM_MultiSet, MUIA_Disabled, disabled,
+  DoMethod(obj, MUIM_MultiSet, MUIA_Disabled, msg->tn == NULL,
     data->BT_TO,
     data->BT_CC,
     data->BT_BCC,
     NULL);
 
   if(data->TB_TOOLBAR != NULL)
-    DoMethod(data->TB_TOOLBAR, MUIM_AddressBookToolbar_UpdateControls);
+  {
+    DoMethod(data->TB_TOOLBAR, MUIM_TheBar_SetAttr, TB_ABOOK_EDIT,   MUIA_TheBar_Attr_Disabled, msg->tn == NULL);
+    DoMethod(data->TB_TOOLBAR, MUIM_TheBar_SetAttr, TB_ABOOK_DELETE, MUIA_TheBar_Attr_Disabled, msg->tn == NULL);
+  }
 
   RETURN(0);
   return 0;
@@ -710,7 +772,7 @@ DECLARE(Close)
     switch(MUI_Request(_app(obj), obj, MUIF_NONE, NULL, tr(MSG_AB_ModifiedGads), tr(MSG_AB_Modified)))
     {
       case 0: closeWin = FALSE; break;
-      case 1: DoMethod(obj, METHOD(Save)); break;
+      case 1: DoMethod(obj, METHOD(Save), NULL); break;
       case 2: break;
       case 3: AB_LoadTree(data->LV_ADDRESSES, G->AB_Filename, FALSE, FALSE); break;
     }
@@ -1174,6 +1236,68 @@ DECLARE(CheckBirthdates) // ULONG check
 
   RETURN(0);
   return 0;
+}
+
+///
+/// DECLARE(FindPerson)
+DECLARE(FindPerson) // struct Person *pe
+{
+  GETDATA;
+  struct Person *result;
+
+  ENTER();
+
+  result = (struct Person *)DoMethod(data->LV_ADDRESSES, MUIM_AddressBookListtree_FindPerson, msg->pe);
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(CreateDefaultGroup)
+DECLARE(CreateDefaultGroup)
+{
+  GETDATA;
+  struct MUI_NListtree_TreeNode *tn = NULL;
+
+  ENTER();
+
+  // first we check if the group for new entries already exists and if so
+  // we add this address to this special group.
+  if(C->NewAddrGroup[0] != '\0')
+  {
+    tn = (struct MUI_NListtree_TreeNode *)DoMethod(data->LV_ADDRESSES, MUIM_NListtree_FindName, MUIV_NListtree_FindName_ListNode_Root, C->NewAddrGroup, MUIF_NONE);
+
+    // only if the group doesn't exist yet
+    if(tn == NULL || ((struct ABEntry *)tn->tn_User)->Type != AET_GROUP)
+    {
+      struct ABEntry ab_new;
+
+      memset(&ab_new, 0, sizeof(struct ABEntry));
+      strlcpy(ab_new.Alias, C->NewAddrGroup, sizeof(ab_new.Alias));
+      strlcpy(ab_new.Comment, tr(MSG_RE_NewGroupTitle), sizeof(ab_new.Comment));
+      ab_new.Type = AET_GROUP;
+      tn = (struct MUI_NListtree_TreeNode *)DoMethod(data->LV_ADDRESSES, MUIM_NListtree_Insert, ab_new.Alias, &ab_new, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Sorted, TNF_LIST);
+    }
+  }
+
+  RETURN((IPTR)tn);
+  return (IPTR)tn;
+}
+
+///
+/// DECLARE(AddEntry)
+DECLARE(AddEntry) // struct ABEntry *entry, struct MUI_NListtree_TreeNode *parent
+{
+  GETDATA;
+  struct MUI_NListtree_TreeNode *tn;
+
+  ENTER();
+
+  tn = (struct MUI_NListtree_TreeNode *)DoMethod(data->LV_ADDRESSES, MUIM_NListtree_Insert, msg->entry->Alias, msg->entry, msg->parent != NULL ? msg->parent : MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Sorted, MUIF_NONE);
+
+  RETURN((IPTR)tn);
+  return (IPTR)tn;
 }
 
 ///

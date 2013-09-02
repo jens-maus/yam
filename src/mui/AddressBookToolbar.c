@@ -165,6 +165,7 @@ DECLARE(UpdateControls)
 
   ENTER();
 
+  #warning access to G->AB
   disabled = ((Object *)xget(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active) == NULL);
 
   DoMethod(obj, MUIM_TheBar_SetAttr, TB_ABOOK_EDIT,   MUIA_TheBar_Attr_Disabled, disabled);

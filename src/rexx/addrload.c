@@ -34,6 +34,8 @@
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
 
+#include "mui/YAMApplication.h"
+
 #include "Rexx.h"
 
 #include "Debug.h"
@@ -60,12 +62,13 @@ void rx_addrload(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
 
     case RXIF_ACTION:
     {
+      #warning access to G->AB
       if(AB_LoadTree(G->AB->GUI.LV_ADDRESSES, args->filename, FALSE, FALSE) == TRUE)
       {
         if(args->open != 0)
         {
           PopUp();
-          DoMethod(G->App, MUIM_CallHook, &AB_OpenHook, ABM_EDIT);
+          DoMethod(G->App, MUIM_YAMApplication_OpenAddressBookWindow);
         }
       }
       else

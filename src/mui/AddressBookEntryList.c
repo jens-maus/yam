@@ -34,6 +34,8 @@
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
 
+#include "mui/AddressBookWindow.h"
+
 #include "MUIObjects.h"
 
 #include "Debug.h"
@@ -46,7 +48,7 @@ OVERLOAD(MUIM_DragQuery)
 
   if(d->obj != obj)
   {
-    if(d->obj == G->AB->GUI.LV_ADDRESSES)
+    if(d->obj == (Object *)xget(G->ABookWinObject, MUIA_AddressBookWindow_Listtree))
     {
       struct MUI_NListtree_TreeNode *active;
 
@@ -71,7 +73,7 @@ OVERLOAD(MUIM_DragDrop)
 
   if(d->obj != obj)
   {
-    if(d->obj == G->AB->GUI.LV_ADDRESSES)
+    if(d->obj == (Object *)xget(G->ABookWinObject, MUIA_AddressBookWindow_Listtree))
     {
       struct MUI_NListtree_TreeNode *active;
 

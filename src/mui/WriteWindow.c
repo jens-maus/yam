@@ -59,6 +59,7 @@
 #include "YAM_mainFolder.h"
 
 #include "mime/uucode.h"
+#include "mui/AddressBookWindow.h"
 #include "mui/CodesetPopup.h"
 #include "mui/IdentityChooser.h"
 #include "mui/MailTextEdit.h"
@@ -1697,8 +1698,8 @@ OVERLOAD(OM_DISPOSE)
   }
 
   // check the reference window ptr of the addressbook
-  if(G->AB->winNumber == data->windowNumber)
-    G->AB->winNumber = -1;
+  if((LONG)xget(G->ABookWinObject, MUIA_AddressBookWindow_WindowNumber) == data->windowNumber)
+    set(G->ABookWinObject, MUIA_AddressBookWindow_WindowNumber, -1);
 
   // we have to dispose certain object on our own
   // because they may be hidden by the user

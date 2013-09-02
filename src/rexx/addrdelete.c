@@ -65,6 +65,7 @@ void rx_addrdelete(UNUSED struct RexxHost *host, struct RexxParams *params, enum
     {
       // if the command was called without any parameter it will delete the active entry
       // if not we search for the one in question and if found delete it.
+      #warning access to G->AB
       if(!args->alias)
       {
         if(xget(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active) != MUIV_NListtree_Active_Off)

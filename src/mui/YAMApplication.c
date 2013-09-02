@@ -266,11 +266,12 @@ static BOOL MatchRealName(const char *realName, const char *text, LONG textLen, 
 }
 
 ///
-/// FindAllABMatches()
+/// FindAllABMatches
 // tries to find all matching addressbook entries and add them to the list
 static void FindAllABMatches(const char *text, Object *list, struct MUI_NListtree_TreeNode *root)
 {
   LONG tl;
+  Object *tree;
   struct MUI_NListtree_TreeNode *tn;
 
   ENTER();
@@ -278,7 +279,8 @@ static void FindAllABMatches(const char *text, Object *list, struct MUI_NListtre
   tl = strlen(text);
 
   // Now we try to find matches in the Addressbook Listtree
-  tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, root, MUIV_NListtree_GetEntry_Position_Head, MUIF_NONE);
+  tree = (Object *)xget(G->ABookWinObject, MUIA_AddressBookWindow_Listtree);
+  tn = (struct MUI_NListtree_TreeNode *)DoMethod(tree, MUIM_NListtree_GetEntry, root, MUIV_NListtree_GetEntry_Position_Head, MUIF_NONE);
 
   for(;tn;)
   {
@@ -316,14 +318,14 @@ static void FindAllABMatches(const char *text, Object *list, struct MUI_NListtre
       }
     }
 
-    tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Next, MUIF_NONE);
+    tn = (struct MUI_NListtree_TreeNode *)DoMethod(tree, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Next, MUIF_NONE);
   }
 
   LEAVE();
 }
 
 ///
-/// FindABPerson()
+/// FindABPerson
 // tries to find a Person in the addressbook
 static BOOL FindABPerson(const struct Person *person)
 {
@@ -332,7 +334,7 @@ static BOOL FindABPerson(const struct Person *person)
   ENTER();
 
   // Now we try to find matches in the Addressbook Listtree
-  if((APTR)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_AddressBookListtree_FindPerson, person) != NULL)
+  if((APTR)DoMethod(G->ABookWinObject, MUIM_AddressBookWindow_FindPerson, person) != NULL)
     result = TRUE;
 
   RETURN(result);
@@ -1524,6 +1526,18 @@ DECLARE(OpenSearchMailWindow) // struct Folder *folder
 
   if(G->SearchMailWinObject != NULL)
     DoMethod(G->SearchMailWinObject, MUIM_SearchMailWindow_Open, msg->folder);
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(OpenAddressBookWindow)
+DECLARE(OpenAddressBookWindow)
+{
+  ENTER();
+
+  DoMethod(G->ABookWinObject, MUIM_AddressBookWindow_Open, ABM_EDIT, -1, NULL);
 
   RETURN(0);
   return 0;

@@ -54,7 +54,7 @@
 #include "SDI_hook.h"
 
 #include "YAM.h"
-#include "YAM_addressbook.h"
+//#include "YAM_addressbook.h"
 #include "YAM_error.h"
 #include "YAM_find.h"
 #include "YAM_folderconfig.h"
@@ -64,8 +64,9 @@
 #include "YAM_utilities.h"
 
 #include "mui/ClassesExtra.h"
-#include "mui/AddressBookListtree.h"
 #include "mui/AddressBookConfigPage.h"
+#include "mui/AddressBookListtree.h"
+#include "mui/AddressBookWindow.h"
 #include "mui/ConfigPage.h"
 #include "mui/ConfigPageList.h"
 #include "mui/ConfigWindow.h"
@@ -3385,7 +3386,7 @@ void ValidateConfig(struct Config *co, BOOL update)
 
     if(visited[cp_AddressBook] == TRUE || updateAll == TRUE)
     {
-      DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_AddressBookListtree_MakeFormat);
+      set(G->ABookWinObject, MUIA_AddressBookWindow_ConfigModified, TRUE);
     }
 
     if(visited[cp_LookFeel] == TRUE || updateAll == TRUE)

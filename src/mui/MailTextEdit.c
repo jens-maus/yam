@@ -40,6 +40,8 @@
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
 
+#include "mui/AddressBookWindow.h"
+
 #include "Config.h"
 #include "DynamicString.h"
 #include "Locale.h"
@@ -176,7 +178,7 @@ OVERLOAD(OM_NEW)
 /// OVERLOAD(MUIM_DragQuery)
 OVERLOAD(MUIM_DragQuery)
 {
-  struct MUIP_DragDrop *drop_msg = (struct MUIP_DragDrop *)msg;
+  struct MUIP_DragDrop *d = (struct MUIP_DragDrop *)msg;
   IPTR result;
 
   ENTER();
@@ -184,7 +186,7 @@ OVERLOAD(MUIM_DragQuery)
   // only allow drag&drop operations into a writeable texteditor
   // object
   if(xget(obj, MUIA_TextEditor_ReadOnly) == FALSE &&
-     (drop_msg->obj == G->AB->GUI.LV_ADDRESSES))
+     d->obj == (Object *)xget(G->ABookWinObject, MUIA_AddressBookWindow_Listtree))
   {
     result = MUIV_DragQuery_Accept;
   }
@@ -204,7 +206,7 @@ OVERLOAD(MUIM_DragDrop)
 
   ENTER();
 
-  if(d->obj == G->AB->GUI.LV_ADDRESSES)
+  if(d->obj == (Object *)xget(G->ABookWinObject, MUIA_AddressBookWindow_Listtree))
   {
     struct MUI_NListtree_TreeNode *tn = (struct MUI_NListtree_TreeNode *)MUIV_NListtree_NextSelected_Start;
     int i=0;

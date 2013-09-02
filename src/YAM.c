@@ -115,6 +115,7 @@
 #include "mui/ClassesExtra.h"
 #include "mui/ClassesSetup.h"
 #include "mui/AddressBookListtree.h"
+#include "mui/AddressBookWindow.h"
 #include "mui/MainWindow.h"
 #include "mui/SplashWindow.h"
 #include "mui/ShutdownWindow.h"
@@ -782,8 +783,11 @@ static void Terminate(void)
   }
 
   D(DBF_STARTUP, "freeing addressbook module...");
+  #warning access to G->AB
   if(G->AB != NULL)
     DisposeModule(&G->AB);
+  DoMethod(G->App, MUIM_YAMApplication_DisposeSubWindow, G->ABookWinObject);
+  G->ABookWinObject = NULL;
 
   D(DBF_STARTUP, "freeing main window module...");
   if(G->MA != NULL)
@@ -1156,7 +1160,7 @@ BOOL StayInProg(void)
 
   ENTER();
 
-  if(stayIn == FALSE && xget(G->AB->GUI.LV_ADDRESSES, MUIA_AddressBookListtree_Modified) == TRUE)
+  if(stayIn == FALSE && xget(G->ABookWinObject, MUIA_AddressBookWindow_Modified) == TRUE)
   {
     int result;
 
@@ -1174,7 +1178,7 @@ BOOL StayInProg(void)
       case 1:
       {
         // save and quit
-        CallHookPkt(&AB_SaveABookHook, 0, 0);
+        DoMethod(G->ABookWinObject, MUIM_AddressBookWindow_Save, NULL);
       }
       break;
 
@@ -1485,7 +1489,10 @@ static void InitAfterLogin(void)
   InitDockyIcon();
 
   // Create a new Main & Addressbook Window
+  #warning access to G->AB
   if((G->MA = MA_New()) == NULL || (G->AB = AB_New()) == NULL)
+    Abort(tr(MSG_ErrorMuiApp));
+  if((G->ABookWinObject = AddressBookWindowObject, End) == NULL)
     Abort(tr(MSG_ErrorMuiApp));
 
   // make sure the GUI objects for the embedded read pane are created
@@ -1753,7 +1760,8 @@ static void InitAfterLogin(void)
   BayesFilterInit();
 
   SplashProgress(tr(MSG_LoadingABook), 90);
-  AB_LoadTree(G->AB->GUI.LV_ADDRESSES, G->AB_Filename, FALSE, FALSE);
+  DoMethod(G->ABookWinObject, MUIM_AddressBookWindow_Load, FALSE);
+
   if((G->RexxHost = SetupARexxHost("YAM", NULL)) == NULL)
     Abort(tr(MSG_ErrorARexx));
 

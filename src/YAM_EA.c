@@ -224,6 +224,7 @@ void EA_AddMembers(Object *obj, struct MUI_NListtree_TreeNode *list)
 
   ENTER();
 
+  #warning access to G->AB
   for(i=0; ; i++)
   {
     if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, list, i, MUIV_NListtree_GetEntry_Flag_SameLevel)) != NULL)
@@ -309,6 +310,7 @@ MakeStaticHook(EA_PutEntryHook, EA_PutEntry);
 //  Inserts an entry into the address book tree
 void EA_InsertBelowActive(struct ABEntry *addr, int flags)
 {
+  #warning access to G->AB
   Object *lt = G->AB->GUI.LV_ADDRESSES;
   struct MUI_NListtree_TreeNode *node;
   struct MUI_NListtree_TreeNode *list;
@@ -461,6 +463,7 @@ HOOKPROTONHNO(EA_Okay, void, int *arg)
     }
   }
 
+  #warning access to G->AB
   set(G->AB->GUI.LV_ADDRESSES, MUIA_AddressBookListtree_Modified, TRUE);
   if(old == TRUE)
     addr = G->EA[winnum]->ABEntry;
@@ -575,6 +578,7 @@ HOOKPROTONHNO(EA_Okay, void, int *arg)
 
   set(gui->WI, MUIA_Window_Open, FALSE);
 
+  #warning access to G->AB
   if(old == TRUE)
     DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_List_Redraw, MUIV_List_Redraw_All);
   else

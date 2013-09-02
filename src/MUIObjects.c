@@ -50,6 +50,7 @@
 #include "YAM_global.h"
 #include "YAM_read.h"
 
+#include "mui/AddressBookWindow.h"
 #include "mui/ClassesExtra.h"
 #include "mui/PlaceholderPopupList.h"
 #include "mui/RecipientString.h"
@@ -195,13 +196,13 @@ Object *MakeAddressField(Object **string, const char *label, const void *help, i
 
     if(abmode == ABM_CONFIG)
     {
-      DoMethod(bt_adr, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 4, MUIM_CallHook, &AB_OpenHook, abmode, *string);
-      DoMethod(*string, MUIM_Notify, MUIA_RecipientString_Popup, TRUE, MUIV_Notify_Application, 4, MUIM_CallHook, &AB_OpenHook, abmode, *string);
+      DoMethod(bt_adr, MUIM_Notify, MUIA_Pressed, FALSE, G->ABookWinObject, 4, MUIM_AddressBookWindow_Open, abmode, -1, *string);
+      DoMethod(*string, MUIM_Notify, MUIA_RecipientString_Popup, TRUE, G->ABookWinObject, 4, MUIM_AddressBookWindow_Open, abmode, -1, *string);
     }
     else
     {
-      DoMethod(bt_adr, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 4, MUIM_CallHook, &AB_OpenHook, abmode, winnr);
-      DoMethod(*string, MUIM_Notify, MUIA_RecipientString_Popup, TRUE, MUIV_Notify_Application, 4, MUIM_CallHook, &AB_OpenHook, abmode, winnr);
+      DoMethod(bt_adr, MUIM_Notify, MUIA_Pressed, FALSE, G->ABookWinObject, 4, MUIM_AddressBookWindow_Open, abmode, winnr, NULL);
+      DoMethod(*string, MUIM_Notify, MUIA_RecipientString_Popup, TRUE, G->ABookWinObject, 4, MUIM_AddressBookWindow_Open, abmode, winnr, NULL);
     }
 
     DoMethod(*string, MUIM_Notify, MUIA_Disabled, MUIV_EveryTime,  bt_adr, 3, MUIM_Set, MUIA_Disabled, MUIV_TriggerValue);

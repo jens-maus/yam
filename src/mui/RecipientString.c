@@ -44,6 +44,7 @@
 #include "YAM_addressbookEntry.h"
 #include "YAM_mainFolder.h"
 
+#include "mui/AddressBookWindow.h"
 #include "mui/AddressMatchPopupWindow.h"
 #include "mui/MainMailListGroup.h"
 #include "mui/YAMApplication.h"
@@ -649,7 +650,7 @@ OVERLOAD(MUIM_DragQuery)
 
   ENTER();
 
-  if(d->obj == G->AB->GUI.LV_ADDRESSES)
+  if(d->obj == (Object *)xget(G->ABookWinObject, MUIA_AddressBookWindow_Listtree))
     result = MUIV_DragQuery_Accept;
   else if(DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_IsMailList, d->obj) == TRUE)
     result = MUIV_DragQuery_Accept;
@@ -668,7 +669,7 @@ OVERLOAD(MUIM_DragDrop)
 
   ENTER();
 
-  if(d->obj == G->AB->GUI.LV_ADDRESSES)
+  if(d->obj == (Object *)xget(G->ABookWinObject, MUIA_AddressBookWindow_Listtree))
   {
     struct MUI_NListtree_TreeNode *tn = (struct MUI_NListtree_TreeNode *)MUIV_NListtree_NextSelected_Start;
 
@@ -941,6 +942,7 @@ DECLARE(Resolve) // ULONG flags
   BOOL withcache = TRUE;
   BOOL quiet;
   ULONG result;
+  Object *tree;
 
   ENTER();
 
@@ -957,7 +959,9 @@ DECLARE(Resolve) // ULONG flags
   if(hasNoCacheFlag(msg->flags) || data->NoCache)
     withcache = FALSE;
 
-  set(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_FindUserDataHook, &FindAddressHook);
+  // a very ugly direct access, I know...
+  tree = (Object *)xget(G->ABookWinObject, MUIA_AddressBookWindow_Listtree);
+  set(tree, MUIA_NListtree_FindUserDataHook, &FindAddressHook);
 
   do
   {
@@ -1023,16 +1027,16 @@ DECLARE(Resolve) // ULONG flags
           DoMethod(obj, MUIM_BetterString_Insert, strchr(uin->address, '@')+1, MUIV_BetterString_Insert_EndOfString);
         }
       }
-      else if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindUserData, MUIV_NListtree_FindUserData_ListNode_Root, s, MUIF_NONE))) /* entry found in address book */
+      else if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(tree, MUIM_NListtree_FindUserData, MUIV_NListtree_FindUserData_ListNode_Root, s, MUIF_NONE))) /* entry found in address book */
       {
-        struct MUI_NListtree_TreeNode *nexttn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Next, MUIF_NONE);
+        struct MUI_NListtree_TreeNode *nexttn = (struct MUI_NListtree_TreeNode *)DoMethod(tree, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Next, MUIF_NONE);
 
         D(DBF_GUI, "found match '%s'", s);
 
         entry = (struct ABEntry *)tn->tn_User;
 
         // Now we have to check if there exists another entry in the AB with this string
-        if(nexttn == NULL || DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindUserData, nexttn, s, MUIV_NListtree_FindUserData_Flag_StartNode) == (ULONG)NULL)
+        if(nexttn == NULL || DoMethod(tree, MUIM_NListtree_FindUserData, nexttn, s, MUIV_NListtree_FindUserData_Flag_StartNode) == (ULONG)NULL)
         {
           if(entry->Type == AET_USER) /* it's a normal person */
           {
