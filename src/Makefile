@@ -682,6 +682,7 @@ YAMOBJS = \
 	YAM_US.o \
 	YAM_UT.o \
 	YAM_WR.o \
+	AddressBook.o \
 	AppIcon.o \
 	AVLTree.o \
 	BayesFilter.o \

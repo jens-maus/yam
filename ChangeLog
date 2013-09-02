@@ -11,6 +11,8 @@ $URL$
     certain old functions in the future.
   * mui/FolderRequestListtree.c: added a NULL pointer check before adding the
     global folder tree notification. This closes #416.
+  * AddressBook.c: added a new module for handling address books without the need
+    to use NListtree.mcc as the controlling instance.
 
 2013-09-01 Jens Langner <Jens.Langner@light-speed.de>
 
