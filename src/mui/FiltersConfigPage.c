@@ -431,8 +431,6 @@ OVERLOAD(OM_NEW)
     set(BT_FILTERDOWN, MUIA_CycleChain, TRUE);
     set(BT_FILTER_IMPORT, MUIA_CycleChain, TRUE);
 
-    GhostOutFilter(cl, obj);
-
     DoMethod(LV_RULES,             MUIM_Notify, MUIA_NList_Active,                         MUIV_EveryTime, obj, 1, METHOD(GetFilterEntry));
     DoMethod(ST_RNAME,             MUIM_Notify, MUIA_String_Contents,                      MUIV_EveryTime, obj, 1, METHOD(PutFilterEntry));
     DoMethod(CH_REMOTE,            MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 2, METHOD(ToggleRemoteFlag), MUIV_TriggerValue);
