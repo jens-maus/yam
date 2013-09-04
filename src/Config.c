@@ -2845,7 +2845,7 @@ BOOL IsValidConfig(const struct Config *co)
   if(valid == FALSE)
   {
     DoMethod(G->App, MUIM_YAMApplication_OpenConfigWindow);
-    MUI_Request(G->App, G->MA->GUI.WI, MUIF_NONE, NULL, tr(MSG_OkayReq), tr(MSG_CO_InvalidConf));
+    MUI_Request(G->App, G->MA != NULL ? G->MA->GUI.WI : NULL, MUIF_NONE, NULL, tr(MSG_OkayReq), tr(MSG_CO_InvalidConf));
   }
 
   RETURN(valid);

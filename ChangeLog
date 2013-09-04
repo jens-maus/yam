@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-09-04 Thore Böckelmann <tboeckel@gmx.de>
+
+  * Config.c: added a NULL pointer check for a valid main window pointer. This
+    refs #416.
+
 2013-09-03 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/FiltersConfigPage.c: don't ghost inactive GUI elements in the constructor
