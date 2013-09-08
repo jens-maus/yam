@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-09-08 Alper Sönmez <amithlondestek@gmail.com>
+
+ * locale/turkish.ct: update to the latest changes.
+
 2013-09-04 Thore Böckelmann <tboeckel@gmx.de>
 
   * Config.c: added a NULL pointer check for a valid main window pointer. This

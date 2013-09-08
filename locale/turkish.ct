@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.4 (09.07.2013)
+## version $VER: YAM.catalog 8.6 (08.09.2013)
 ## language türkçe
 ## codeset 0
 ## chunk AUTH Alper Sönmez <amithlondestek@gmail.com>
@@ -38,10 +38,6 @@ Ekler
 MSG_Options
 Seçenekler
 ; Options
-;
-MSG_Del
-_Sil
-; _Delete
 ;
 MSG_New
 Yeni
@@ -206,10 +202,6 @@ Kime
 MSG_Columns
 Sütunlar
 ; Columns
-;
-MSG_Path
-Yol
-; Path
 ;
 MSG_Version
 Sürüm:
@@ -642,7 +634,7 @@ Bir hesabý kontrol et
 ;
 MSG_MA_WinTitle
 YAM %s - Kullanýcý: %s
-; YAM %s - User: %s
+; YAM %s  -  User: %s
 ; VERSION, NAME
 ;
 MSG_MA_ToPrefix
@@ -1113,106 +1105,6 @@ MSG_CO_Cancel
 _Ýptal
 ; _Cancel
 ;
-MSG_CO_TZoneM12
-Kwajalein Adlr. (Uluslararasý Tarih Çizgisi Batý)
-; (GMT-12:00) Kwajalein Islands (IDLW)
-;
-MSG_CO_TZoneM11
- (GMT-11:00) Midway Adalarý, Samoa (NT)
-; (GMT-11:00) Midway Islands, Samoa (NT)
-;
-MSG_CO_TZoneM10
-(GMT-10:00) Honolulu, Tahiti (HST)
-; (GMT-10:00) Honolulu, Tahiti (HST)
-;
-MSG_CO_TZoneM9
-(GMT-09:00) Anchorage (AKST)
-; (GMT-09:00) Anchorage (AKST)
-;
-MSG_CO_TZoneM8
-(GMT-08:00) Los Angeles, San Francisco (PST)
-; (GMT-08:00) Los Angeles, San Francisco (PST)
-;
-MSG_CO_TZoneM7
-(GMT-07:00) Calgary, Denver, Phoenix (MST)
-; (GMT-07:00) Calgary, Denver, Phoenix (MST)
-;
-MSG_CO_TZoneM6
-(GMT-06:00) Chicago, Dallas, Mexico City (CST)
-; (GMT-06:00) Chicago, Dallas, Mexico City (CST)
-;
-MSG_CO_TZoneM5
-(GMT-05:00) Lima, Miami, Montreal, New York (EST)
-; (GMT-05:00) Lima, Miami, Montreal, New York (EST)
-;
-MSG_CO_TZoneM4
-(GMT-04:00) Karakas, Santiago, Thule (AST)
-; (GMT-04:00) Caracas, Santiago, Thule (AST)
-;
-MSG_CO_TZoneM3
-(GMT-03:00) Buenos Aires, Rio de Janeiro (BRT)
-; (GMT-03:00) Buenos Aires, Rio de Janeiro (BRT)
-;
-MSG_CO_TZoneM2
-(GMT-02:00) Brezilya Doðu (FNT)
-; (GMT-02:00) Brazil East (FNT)
-;
-MSG_CO_TZoneM1
-(GMT-01:00) Azorlar (WAT)
-; (GMT-01:00) Azores (WAT)
-;
-MSG_CO_TZone0
-(GMT 00:00) Dublin, Lisbon, Londra (GMT/UTC)
-; (GMT 00:00) Dublin, Lisbon, London (GMT/UTC)
-;
-MSG_CO_TZone1
-(GMT+01:00) Berlin, Paris, Madrid, Oslo (CET)
-; (GMT+01:00) Berlin, Paris, Madrid, Oslo (CET)
-;
-MSG_CO_TZone2
-(GMT+02:00) Atina, Kahire, Ýstanbul (EET)
-; (GMT+02:00) Athens, Cairo, Helsinki (EET)
-;
-MSG_CO_TZone3
-(GMT+03:00) Baðdat, Kuveyt, Moskova, Nayrobi (EEST)
-; (GMT+03:00) Baghdad, Kuwait, Moscow, Nairobi (EEST)
-;
-MSG_CO_TZone4
-(GMT+04:00) Dubai, Port Louis, Victoria (ZP4)
-; (GMT+04:00) Dubai, Port Louis, Victoria (ZP4)
-;
-MSG_CO_TZone5
-(GMT+05:00) Ýslamabad, Karaçi (ZP5)
-; (GMT+05:00) Islamabad, Karachi (ZP5)
-;
-MSG_CO_TZone6
-(GMT+06:00) Alma-Ata, Dhaka, Taþkent  (ZP6)
-; (GMT+06:00) Alma-Ata, Dhaka, Tashkent (ZP6)
-;
-MSG_CO_TZone7
-(GMT+07:00) Bangkok, Hanoi, Phnom Penh
-; (GMT+07:00) Bangkok, Hanoi, Phnom Penh
-;
-MSG_CO_TZone8
-(GMT+08:00) Hong Kong, Þangay, Singapur (WST)
-; (GMT+08:00) Hong Kong, Shanghai, Singapore (WST)
-;
-MSG_CO_TZone9
-(GMT+09:00) Osaka, Seul, Tokyo (JST)
-; (GMT+09:00) Osaka, Seoul, Tokyo (JST)
-;
-MSG_CO_TZone10
-(GMT+10:00) Melbourne, Sidney, Vladivostok (GST)
-; (GMT+10:00) Melbourne, Sydney, Vladivostok (GST)
-;
-MSG_CO_TZone11
-(GMT+11:00) Yeni Kaledonya (AEDT)
-; (GMT+11:00) New Caldonia (AEDT)
-;
-MSG_CO_TZone12
-(GMT+12:00) Auckland, Wellington (IDLE)
-; (GMT+12:00) Auckland, Wellington (IDLE)
-;
 MSG_CO_MinConfig
 Asgari ayarlar
 ; Minimal configuration
@@ -1316,26 +1208,6 @@ K_omut
 MSG_CO_Name
 _Ad
 ; N_ame
-;
-MSG_CO_CTAnd
-ve
-; and
-;
-MSG_CO_CTOr
-ve/veya
-; or
-;
-MSG_CO_CTXor
-veya
-; exclusive or
-;
-MSG_CO_Comparison
-Karþýlaþtýrma
-; Comparison
-;
-MSG_CO_Action
-Eylem
-; Action
 ;
 MSG_CO_Remote
 U_zaktan süz
@@ -1528,10 +1400,6 @@ göndermeden önce
 MSG_CO_ExternalEditor
 _Harici düzenleyici
 ; _External editor
-;
-MSG_CO_Launch
-Hemen ba_þlat
-; _Launch immediately
 ;
 MSG_CO_PhraseOpen
 Aç
@@ -1928,12 +1796,6 @@ yapmak için gereken þifre.
 ; Password to access\n\
 ; the POP3 server.
 ;
-MSG_HELP_CO_CY_TZONE
-Mevcut konumunuzun\n\
-saat dilimini seçin.
-; Select the time zone of\n\
-; your current location.
-;
 MSG_HELP_CO_ST_SMTPHOST
 Posta göndermek için kullanýlacak SMTP sunucusunun\n\
 adresi. Eðer bu alaný boþ býrakýrsanýz, POP3\n\
@@ -2068,12 +1930,6 @@ Süzme iþlevi el ile çaðýrýldýðýnda\n\
 bu süzgeci uygula.
 ; Apply this filter when you use\n\
 ; the filter function manually.
-;
-MSG_HELP_CO_CY_COMBINE
-Bu süzgeç için kurallarýn\n\
-birleþtirilme þekli.
-; How to combine the rules\n\
-; for this filter.
 ;
 MSG_HELP_CO_CH_AFORWARD
 Eþleþen iletileri baþka\n\
@@ -2281,12 +2137,6 @@ Yeni bir iletiye baþlarken otomatik\n\
 olarak harici düzenleyiciyi çalýþtýr.
 ; Automatically launch the external editor\n\
 ; when starting a new message.
-;
-MSG_HELP_CO_ST_EDITOR
-Kullanmayý düþündüðünüz metin\n\
-düzenleyicinin dosya adý.
-; Filename of your\n\
-; favorite text editor.
 ;
 MSG_HELP_CO_ST_FWDSTART
 Yönlendirilmiþ bir ileti için giriþ metni.\n\
@@ -5698,38 +5548,6 @@ MSG_CTapplicationpdf
 PDF dökumaný
 ; PDF document
 ;
-MSG_CO_TZoneM330
-(GMT-03:30) Labrador (NFT)
-; (GMT-03:30) Newfoundland (NFT)
-;
-MSG_CO_TZone330
-(GMT+03:30) Tahran (IT)
-; (GMT+03:30) Teheran (IT)
-;
-MSG_CO_TZone430
-(GMT+04:30) Kabil
-; (GMT+04:30) Kabul
-;
-MSG_CO_TZone530
-(GMT+05:30) Madras, Kalküta, Bombay, Yeni-Delhi (IST)
-; (GMT+05:30) Chennai, Kolkata, Mumbai, New-Delhi (IST)
-;
-MSG_CO_TZone545
-(GMT+05:45) Katmandu
-; (GMT+05:45) Katmandu
-;
-MSG_CO_TZone630
-(GMT+06:30) Rangun (NST)
-; (GMT+06:30) Rangun (NST)
-;
-MSG_CO_TZone930
-(GMT+09:30) Adelaide, Darwin (ACST)
-; (GMT+09:30) Adelaide, Darwin (ACST)
-;
-MSG_CO_TZone13
-(GMT+13:00) Nuku'alofa (NZDT)
-; (GMT+13:00) Nuku'alofa (NZDT)
-;
 MSG_HELP_CO_ST_INFOBARTXT
 Durum çubuðunda\n\
 gösterilecek metin.
@@ -6025,14 +5843,6 @@ MSG_CO_Filter_UType
 MSG_CTunknown
 bilinmeyen
 ; unknown
-;
-MSG_CO_More
-_Fazla
-; _More
-;
-MSG_CO_Less
-_Az
-; _Less
 ;
 MSG_CO_NB_AUTOSAVE
 Otomatik kaydetme zaman aralýðý
@@ -6449,44 +6259,6 @@ MSG_CO_AMISSLWARN_BT
 MSG_BUSY_OPENINGCONFIG
 Ayarlar açýlýyor...
 ; Opening configuration...
-;
-MSG_CO_TIMEZONEWARN_TITLE
-Zaman dilimi ayarý uyarýsý
-; Time zone setting warning
-;
-MSG_CO_TIMEZONEWARN
-YAM'ýn zaman dilimi ayarý\n\
-sistem varsayýlanýndan farklý.\n\
-\n\
-Nasýl devam etmek istersiniz?
-; The time zone setting in YAM doesn't match\n\
-; the system's default time zone.\n\
-; \n\
-; How do you want to proceed?
-;
-MSG_CO_TIMEZONEWARN_BT
-*_Deðiþtir|_Herzaman Yoksay|_Yoksay
-; *_Change|Ignore _always|_Ignore
-;
-MSG_CO_AUTODSTWARN_TITLE
-AutoDST uyarýsý
-; AutoDST warning
-;
-MSG_CO_AUTODSTWARN
-YAM aktif bir AutoDST programý buldu\n\
-ve bu program, YAM ayarlarýndan farklý\n\
-bir zaman bildiriyor.\n\
-\n\
-Nasýl devam etmek istersiniz?
-; YAM has found an AutoDST tool active and\n\
-; it is reporting a Daylight Saving Time\n\
-; different to what is configured in YAM.\n\
-; \n\
-; How do you want to proceed?
-;
-MSG_CO_AUTODSTWARN_BT
-*_Deðiþtir|_Herzaman Yoksay|_Yoksay
-; *_Change|Ignore _always|_Ignore
 ;
 MSG_MA_UPDATECHECK
 Güncellemeleri kontrol et
@@ -7461,18 +7233,6 @@ MSG_CO_CRDLOOKFEEL
 Görünüm
 ; Look & Feel
 ;
-MSG_CO_DSTACTIVE
-_Günýþýðýndan yararlanma deðiþiklikleri (DST) etkin
-; D_aylight Saving Time (DST) is active
-;
-MSG_HELP_CO_CH_DSTACTIVE
-Eðer zaman diliminizde gün ýþýðýndan\n\
-yararlanma etkinse bunu iþaretleyiniz\n\
-(yaz saati uygulamasý).
-; Enable this if daylight saving time is\n\
-; currently active in your time zone\n\
-; (summer time).
-;
 MSG_CO_SMTP_SERVERPORT
 S_unucu/Port
 ; Ser_ver/Port
@@ -7777,9 +7537,9 @@ Bu program aþaðýdaki üçüncü parti yazýlýmlarý kullanýr:
 ;
 MSG_ABOUT_YAM_NEWS
 YAM ile ilgili en son haberler YAM Destek\n\
-Sitesinde bulunabilir : \0335http://yam.ch/\033n
+Sitesinde bulunabilir : \0335http://www.yam.ch/\033n
 ; The latest news about YAM can be found at the\n\
-; YAM Support Site at \0335http://yam.ch/\033n
+; YAM Support Site at \0335http://www.yam.ch/\033n
 ;
 MSG_WR_VIEW
 Göster
@@ -8326,18 +8086,6 @@ Bu resmi 'unut' (diskteki \
 dosya yerinde kalacaktýr).
 ; 'Forget' this picture (the\n\
 ; file on disk will remain).
-;
-MSG_HELP_CO_TX_DEFAULTCHARSET
-YAM'ýn varsayýlan olarak kullanmasýný istediðiniz\n\
-karakter setini seçmek için popup butonunu kullanýnýz.\n\
-Bu seçim sistem varsayýlan karakter setinizle ayný olmalý,\n\
-aksi taktirde nasýl devam etmek istediðinize dair bir istemci\n\
-penceresi açýlacaktýr.
-; Use the popup button to select the character set\n\
-; you would like YAM to use by default. This should\n\
-; match the system's default charset, otherwise a\n\
-; requester will appear asking how do you want to\n\
-; proceed.
 ;
 MSG_HELP_CO_CH_NOTISOUND
 Yeni posta aldýðýnýzda\n\
@@ -9748,10 +9496,6 @@ MSG_MA_FLUSH_ALL_INDICES
 Tüm indisleri boþalt
 ; Flush all indices
 ;
-MSG_FI_CONDITION
-Durum
-; Condition
-;
 MSG_HELP_CO_CH_IDENTITY_ENABLED
 Seçildiðinde bu kullanýcý kimliði etkinleþtirilmiþ olur.
 ; If checked, this user identity is enabled for use.
@@ -10400,4 +10144,269 @@ MSG_CO_QUICKSEARCHBARPOS02
 MSG_CO_QUICKSEARCHBARPOS03
 Altta
 ; Bottom
+;
+MSG_CO_FILTER_REGISTER_SETTINGS
+Genel
+; General
+;
+MSG_CO_FILTER_REGISTER_CONDITIONS
+Koþullar
+; Conditions
+;
+MSG_CO_FILTER_REGISTER_ACTIONS
+Eylemler
+; Actions
+;
+MSG_CO_CONDITION_ALL
+tümü
+; all
+;
+MSG_CO_CONDITION_MIN_ONE
+biri veya diðeri
+; one or more
+;
+MSG_CO_CONDITION_MAX_ONE
+yalnýz biri
+; only one
+;
+MSG_WR_CMENU_TITLE
+Ekler
+; Attachments
+;
+MSG_WR_CMENU_ADD_ATTACHMENT
+Dosya ekle...
+; Add file(s)...
+;
+MSG_WR_CMENU_ADD_ARCHIVE_ATTACHMENT
+Sýkýþtýr & Ekle...
+; Pack & add...
+;
+MSG_WR_CMENU_REMOVE_ATTACHMENT
+Kaldýr
+; Remove
+;
+MSG_WR_CMENU_RENAME_ATTACHMENT
+Yeniden Adlandýr...
+; Rename...
+;
+MSG_WR_CMENU_DISPLAY_ATTACHMENT
+Göster
+; Display
+;
+MSG_WR_TITLEATTACHMENT
+Ek
+; Attachment
+;
+MSG_WR_REMOVE
+Ka_ldýr
+; Re_move
+;
+MSG_CO_CONDITION_PREPHRASE
+Aþaðýdaki koþullardan
+; If
+;
+MSG_CO_CONDITION_POSTPHRASE
+tanesi karþýlandýysa:
+; of the following conditions are met:
+;
+MSG_CO_FALLBACK_TZONE
+Asia/Istanbul
+; America/New_York
+; !!! WARNING !!!
+; Do not translate this fallback name, but just choose a
+; location which represents the language's time zone
+; as good as possible. If there are multiple possibilities
+; for you language, use the one that matches the captial
+; of your country/language most. This fallback name MUST
+; match EXACTLY one of the locations in the Resources/zoneinfo
+; directory. Spaces MUST be replaced by '_'. All locations
+; names MUST be kept in english language.
+;
+MSG_HELP_CO_GR_TZONE
+Burada mevcut konum/zaman diliminizi ayarlayabilirsiniz.
+; Here you can set your current location/time zone.
+;
+MSG_CO_TZONE_GMTOFFSET
+Mevcut GMT farký:
+; Current GMT offset:
+;
+MSG_CO_TZONE_NEXTDSTSWITCH
+Sonraki DST deðiþimi:
+; Next DST switch:
+;
+MSG_CO_TZONE_NODSTSWITCH
+gün ýþýðýndan yararlanma kapalý
+; no daylight saving
+;
+MSG_CO_TZONE_DESCRIPTION
+Açýklama:
+; Description:
+;
+MSG_CO_TZONE_DESCRIPTION_NA
+n/a
+; n/a
+;
+MSG_TZONE_ZONETAB_FILE_MISSING
+Zaman dilimi açýklama dosyasý açýlamadý\n\
+'%s/Resources/zoneinfo/zone.tab'.\n\
+\n\
+Lütfen tüm zaman dilimi yönetimi dosyalarýnýn\n\
+'%s/Resources/zoneinfo' dizininde olduðundan emin olun.
+; Cannot open time zones description file\n\
+; '%s/Resources/zoneinfo/zone.tab'.\n\
+; \n\
+; Please make sure to install all time zones management\n\
+; related files to the '%s/Resources/zoneinfo' directory.
+;
+MSG_TZONE_LOCATION_FILE_MISSING
+'%s' zaman dilimi bilgisi dosyasý açýlamadý.\n\
+\n\
+Zaman dilimi bilgisi yanlýþ olacak. Lütfen tüm zaman dilimi \
+yönetimi dosyalarýnýn '%s/Resources/zoneinfo' \
+dizininde olduðundan emin olun.
+; Cannot open time zone information file '%s'.\n\
+; \n\
+; Time zone information will be incorrect. Please make sure \
+; to install all time zones management related files to the \
+; '%s/Resources/zoneinfo' directory.
+;
+MSG_FOLDER_MOVE_WARNING_TITLE
+YAM klasörü biçem uyarýsý
+; YAM folder format warning
+;
+MSG_FOLDER_MOVE_WARNING
+Eskimiþ bir klasör saklama biçemi bulunudu.\n\
+\n\
+YAM tüm klasör dizinlerini '%s' posta\n\
+dizinindeki 'Folders' adlý yeni bir alt dizine taþýyacak.\n\
+\n\
+\033bUYARI:\033n\n\
+Bu iþlem \033bgeri alýnamaz\033n ve klasörlerin önceki\n\
+YAM sürümleriyle uyumsuz hale gelmesine neden olacaktýr.\n\
+\n\
+Bu iþlemi þimdi gerçekleþtirmek mi istersiniz veya\n\
+çýkýþ yapýp önce bir yedekleme yapmak mý istersiniz?
+; An obsolete folder storage format has been found.\n\
+; \n\
+; YAM will now move all folder directories to a new\n\
+; subdirectory called 'Folders' in the mail directory '%s'.\n\
+; \n\
+; \033bWARNING:\033n\n\
+; This operation is \033birreversible\033n and will result in\n\
+; folders which are no longer compatible to former\n\
+; versions of YAM.\n\
+; \n\
+; Do you want to perform this operation now or\n\
+; quit YAM and make a backup first?
+;
+MSG_FOLDER_MOVE_WARNING_GADS
+_Devam et|*_Çýk
+; _Continue|*_Quit
+;
+MSG_FO_DISPLAYNAME
+Görünen _ad
+; Display _name
+;
+MSG_FO_DIRECTORYNAME
+Dizin a_dý
+; Directory na_me
+;
+MSG_VALIDATING_FOLDERS
+Dizinler onaylanýyor...
+; Validating folders...
+;
+MSG_MA_MARCHIVE
+Arþiv
+; Archive
+;
+MSG_MA_ARCHIVE
+Arþiv
+; Archive
+;
+MSG_CO_SHOW_ARCHIVER_PROGRESS
+Ýlerlemeyi göster
+; Show progress
+;
+MSG_CO_LAUNCH_EXTEDITOR
+_Harici düzenleyiciyi hemen çalýþtýr
+; _Launch external editor immediately
+;
+MSG_CO_EXTEDITOR
+Harici düzenleyici ayarlarý
+; External editor settings
+;
+MSG_HELP_CO_ST_EDITOR_EXT
+Dahili düzenleyiciye alternatif olarak\n\
+kullanabileceðiniz harici düzenleyicinizin\n\
+diskteki konumu.
+; Path to your favourite external\n\
+; editor which you can use as an\n\
+; alternative to the internal one.
+;
+MSG_CO_EXTEDITOR_CODESET
+Karakter _setini görüntüle
+; Display c_harset
+;
+MSG_HELP_CO_TX_DEFCODESET_EDITOR
+Harici düzenleyici çaðýrýlmadan önce\n\
+metnin dönüþtürüleceði karakter setini seçin.
+; Choose a charset to which the text\n\
+; will be converted to before starting\n\
+; the external editor.
+;
+MSG_HELP_CO_TX_DEFCODESET_LOCAL
+YAM'ýn metin gösteriminde kullanacaðý karakter\n\
+setini seçmek için popup düðmesini kullanýn.\n\
+Bu genellikle sisteminizin varsayýlan karakter setiyle\n\
+ayný olmalýdýr, aksi takdirde nasýl devam edileceðini\n\
+soran bir istemci açýlacaktýr.
+; Use the popup button to select the character set\n\
+; you would like YAM to use for displaying text.\n\
+; This should usually match your system's default\n\
+; charset, otherwise a requester will appear asking\n\
+; how to proceed.
+;
+MSG_HELP_CO_TX_DEFCODESET_WRITE
+YAM'ýn e-postalarý enkode ederken kullanacaðý\n\
+karakter setini seçmek için popup düðmesini kullanýn.\n\
+Bu genellikle sisteminizin varsayýlan karakter setiyle\n\
+ayný olmalýdýr ki, görüntülenen karakter seti e-postayý\n\
+yazdýðýnýz set ile uyuþsun. Bununla birlikte, giden\n\
+postalarýnýzýn enkode edilmesi için dilediðiniz\n\
+karakter setini seçebilirsiniz.
+; Use the popup button to select the character set\n\
+; you would like YAM to encode emails to.\n\
+; This should usually match your system's default\n\
+; charset so that the displayed character set matches\n\
+; the one you write mail. However, you can select any\n\
+; character set you want to encode your outgoing mails\n\
+; to.
+;
+MSG_CO_DEFAULTCODESET_WRITE
+_Varsayýlan karakter Seti
+; Default c_harset
+;
+MSG_CO_MIME_CODESET
+Karakter setini _görüntüle
+; Display _charset
+;
+MSG_HELP_CO_TX_MIME_CODESET
+Bu MIME türündeki komut çalýþtýrýlmadan\n\
+önce yazdýrýlabilir metnin dönüþtürülmesi\n\
+gereken karakter setini seçin.
+; Select the charset here that printable\n\
+; text should be converted to before\n\
+; executing the command of this MIME type.
+;
+MSG_CO_DEFAULTVIEWER_CODESET
+Karakter setini _görüntüle
+; _Display charset
+;
+MSG_HELP_CO_TX_DEFVIEWER_CODESET
+Varsayýlan görüntüleyici çalýþtýrýlmadan\n\
+önce yazdýrýlabilir metnin dönüþtürülmesi\n\
+gereken karakter setini seçin.
+; Select the charset here that printable\n\
+; text should be converted to before\n\
+; starting the default viewer.
 ;
