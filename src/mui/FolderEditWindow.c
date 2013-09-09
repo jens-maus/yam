@@ -767,6 +767,9 @@ DECLARE(FolderToGUI)
   set(data->ST_MLREPLYTOADDRESS, MUIA_String_Contents, folder->MLReplyToAddress);
   set(data->CY_MLSIGNATURE, MUIA_SignatureChooser_Signature, folder->MLSignature);
   set(data->CY_MLIDENTITY, MUIA_IdentityChooser_Identity, folder->MLIdentity);
+  // call the update method explicitly again here as the notification doesn't
+  // seem to work properly upon opening the window
+  DoMethod(obj, METHOD(MLSupportUpdate), !(isDefault || isArchive ? FALSE : folder->MLSupport));
 
   // make the folder name object the active one for new folders
   if(data->folder == NULL)
