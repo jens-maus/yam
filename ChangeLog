@@ -9,7 +9,9 @@ $URL$
 
   * mui/FolderEditWindow.c: changing a folder's path will now save the global
     .folders file again to make the change persistent. This closes #418.
-
+  * YAM_FI.c: mails in the Trash folder are now excluded from the spam filter.
+    This closes #419.
+    
 2013-09-08 Alper Sönmez <amithlondestek@gmail.com>
 
  * locale/turkish.ct: update to the latest changes.

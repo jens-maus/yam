@@ -1600,9 +1600,9 @@ void FilterMails(struct Folder *folder, const struct MailList *mlist, const int 
         {
           BOOL doClassification;
 
-          D(DBF_FILTER, "About to apply SPAM filter to message with subject \"%s\"", mail->Subject);
+          D(DBF_FILTER, "about to apply SPAM filter to message with subject \"%s\"", mail->Subject);
 
-          if(mode == APPLY_AUTO && C->SpamFilterForNewMail == TRUE)
+          if(mode == APPLY_AUTO && C->SpamFilterForNewMail == TRUE && mail->Folder != NULL && isTrashFolder(mail->Folder) == FALSE)
           {
             // classify this mail if we are allowed to check new mails automatically
             doClassification = TRUE;
@@ -1620,11 +1620,11 @@ void FilterMails(struct Folder *folder, const struct MailList *mlist, const int 
 
           if(doClassification == TRUE)
           {
-            D(DBF_FILTER, "Classifying message with subject \"%s\"", mail->Subject);
+            D(DBF_FILTER, "classifying message with subject \"%s\"", mail->Subject);
 
             if(BayesFilterClassifyMessage(mail) == TRUE)
             {
-              D(DBF_FILTER, "Message was classified as spam");
+              D(DBF_FILTER, "message was classified as spam");
 
               // set the SPAM flags, but clear the NEW and READ flags only if desired
               if(C->SpamMarkAsRead == TRUE)
