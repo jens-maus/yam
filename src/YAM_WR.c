@@ -1751,7 +1751,7 @@ static struct WriteMailData *CreateWriteWindow(const enum NewMailMode mailMode, 
       return wmData;
     }
 
-    DoMethod(G->App, MUIM_YAMApplication_DisposeSubWindow, newWriteWindow);
+    DoMethod(G->App, MUIM_YAMApplication_DisposeWindow, newWriteWindow);
   }
 
   E(DBF_GUI, "ERROR occurred during write window creation!");
@@ -3234,7 +3234,7 @@ BOOL CleanupWriteMailData(struct WriteMailData *wmData)
     nnset(wmData->window, MUIA_Window_Open, FALSE);
 
     D(DBF_GUI, "cleaning up write window");
-    DoMethod(_app(wmData->window), MUIM_YAMApplication_DisposeSubWindow, wmData->window);
+    DoMethod(_app(wmData->window), MUIM_YAMApplication_DisposeWindow, wmData->window);
 
     wmData->window = NULL;
   }

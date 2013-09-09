@@ -4455,7 +4455,7 @@ struct ReadMailData *CreateReadWindow(BOOL forceNewWindow)
       return rmData;
     }
 
-    DoMethod(_app(newReadWindow), MUIM_YAMApplication_DisposeSubWindow, newReadWindow);
+    DoMethod(_app(newReadWindow), MUIM_YAMApplication_DisposeWindow, newReadWindow);
   }
 
   E(DBF_GUI, "ERROR occurred during read Window creation!");
@@ -4657,7 +4657,7 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL fullCleanup)
     if(rmData->readWindow != NULL)
     {
       D(DBF_GUI, "cleaning up readwindow");
-      DoMethod(_app(rmData->readWindow), MUIM_YAMApplication_DisposeSubWindow, rmData->readWindow);
+      DoMethod(_app(rmData->readWindow), MUIM_YAMApplication_DisposeWindow, rmData->readWindow);
       // do not access rmData beyond this point as the pointer is free()'d in
       // the ReadWindow's OM_DISPOSE method
     }

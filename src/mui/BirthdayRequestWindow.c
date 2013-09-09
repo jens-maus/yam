@@ -388,7 +388,7 @@ DECLARE(FinishInput) // const char *alias, ULONG writeMail
   set(obj, MUIA_Window_Open, FALSE);
 
   // remove & dispose the requester object
-  DoMethod(_app(obj), MUIM_Application_PushMethod, _app(obj), 2, MUIM_YAMApplication_DisposeSubWindow, obj);
+  DoMethod(_app(obj), MUIM_Application_PushMethod, _app(obj), 2, MUIM_YAMApplication_DisposeWindow, obj);
 
   if(skipToday == TRUE)
   {

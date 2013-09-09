@@ -786,7 +786,7 @@ static void Terminate(void)
   #warning access to G->AB
   if(G->AB != NULL)
     DisposeModule(&G->AB);
-  DoMethod(G->App, MUIM_YAMApplication_DisposeSubWindow, G->ABookWinObject);
+  DoMethod(G->App, MUIM_YAMApplication_DisposeWindow, G->ABookWinObject);
   G->ABookWinObject = NULL;
 
   D(DBF_STARTUP, "freeing main window module...");
