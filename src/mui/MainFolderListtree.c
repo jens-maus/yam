@@ -961,11 +961,11 @@ DECLARE(CloseFolderEditWindow)
 
   ENTER();
 
-  if(data->folderEditWindow != NULL)
-  {
-    DoMethod(_app(obj), MUIM_YAMApplication_DisposeWindow, data->folderEditWindow);
-    data->folderEditWindow = NULL;
-  }
+  // don't dispose the window directly here, because this method is called
+  // as a direct notification of the window's close request and disposing
+  // it immediately would "pull the rug out" from under the window.
+  DoMethod(_app(obj), MUIM_Application_PushMethod, _app(obj), 2, MUIM_YAMApplication_DisposeWindow, data->folderEditWindow);
+  data->folderEditWindow = NULL;
 
   RETURN(0);
   return 0;
