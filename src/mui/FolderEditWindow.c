@@ -195,8 +195,8 @@ static BOOL SaveOldFolder(struct IClass *cl, Object *obj)
   // check if something has changed and if not we exit here immediately
   if(CompareFolders(&folder, data->folder) == FALSE)
   {
-    BOOL nameChanged;
-    nameChanged = (strcasecmp(data->folder->Name, folder.Name) != 0);
+    BOOL nameChanged = (strcasecmp(data->folder->Name, folder.Name) != 0);
+    BOOL pathChanged = (strcasecmp(data->folder->Path, folder.Path) != 0);
 
     // first check for a valid folder name
     // it is invalid if:
@@ -229,46 +229,41 @@ static BOOL SaveOldFolder(struct IClass *cl, Object *obj)
     SHOWSTRING(DBF_FOLDER, folder.Fullpath);
 
     // if the folderpath string has changed
-    if(strcasecmp(data->folder->Path, folder.Path) != 0)
+    if(pathChanged == TRUE)
     {
-      // check if the full pathes are different
-      if(strcasecmp(data->folder->Fullpath, folder.Fullpath) != 0)
+      LONG result;
+
+      // ask the user whether to perform the move or not
+      result = MUI_Request(_app(obj), obj, MUIF_NONE, NULL, tr(MSG_YesNoReq), tr(MSG_FO_MOVEFOLDERTO), data->folder->Fullpath, folder.Fullpath);
+      if(result == 1)
       {
-        LONG result;
+        // first unload the old folder image to make it moveable/deletable
+        FO_UnloadFolderImage(data->folder);
 
-        // ask the user whether to perform the move or not
-        result = MUI_Request(_app(obj), obj, MUIF_NONE, NULL, tr(MSG_YesNoReq), tr(MSG_FO_MOVEFOLDERTO), data->folder->Fullpath, folder.Fullpath);
-        if(result == 1)
+        if(Rename(data->folder->Fullpath, folder.Fullpath) == FALSE)
         {
-          // first unload the old folder image to make it moveable/deletable
-          FO_UnloadFolderImage(data->folder);
-
-          if(Rename(data->folder->Fullpath, folder.Fullpath) == FALSE)
+          if(!(CreateDirectory(folder.Fullpath) && FO_MoveFolderDir(&folder, data->folder)))
           {
-            if(!(CreateDirectory(folder.Fullpath) && FO_MoveFolderDir(&folder, data->folder)))
-            {
-              ER_NewError(tr(MSG_ER_MOVEFOLDERDIR), folder.Name, folder.Fullpath);
-              goto out;
-            }
-          }
-
-          // now reload the image from the new path
-          if(FO_LoadFolderImage(&folder) == TRUE)
-          {
-            // remember the newly obtained image pointer
-            data->folder->imageObject = folder.imageObject;
+            ER_NewError(tr(MSG_ER_MOVEFOLDERDIR), folder.Name, folder.Fullpath);
+            goto out;
           }
         }
-        else
+
+        // now reload the image from the new path
+        if(FO_LoadFolderImage(&folder) == TRUE)
         {
-          goto out;
+          // remember the newly obtained image pointer
+          data->folder->imageObject = folder.imageObject;
         }
       }
-
-      strlcpy(data->folder->Path, folder.Path, sizeof(data->folder->Path));
-      strlcpy(data->folder->Fullpath, folder.Fullpath, sizeof(data->folder->Fullpath));
+      else
+      {
+        goto out;
+      }
     }
 
+    strlcpy(data->folder->Path,             folder.Path, sizeof(data->folder->Path));
+    strlcpy(data->folder->Fullpath,         folder.Fullpath, sizeof(data->folder->Fullpath));
     strlcpy(data->folder->WriteIntro,       folder.WriteIntro, sizeof(data->folder->WriteIntro));
     strlcpy(data->folder->WriteGreetings,   folder.WriteGreetings, sizeof(data->folder->WriteGreetings));
     strlcpy(data->folder->MLReplyToAddress, folder.MLReplyToAddress, sizeof(data->folder->MLReplyToAddress));
@@ -345,6 +340,11 @@ static BOOL SaveOldFolder(struct IClass *cl, Object *obj)
 
     if(FO_SaveConfig(data->folder) == TRUE)
       success = TRUE;
+
+    // if everything went well and either the folder's name or path
+    // has changed we must save the folder tree, too
+    if(success == TRUE && (nameChanged == TRUE || pathChanged == TRUE))
+      FO_SaveTree();
   }
   else
   {

@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-09-09 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/FolderEditWindow.c: changing a folder's path will now save the global
+    .folders file again to make the change persistent. This closes #418.
+
 2013-09-08 Alper Sönmez <amithlondestek@gmail.com>
 
  * locale/turkish.ct: update to the latest changes.
