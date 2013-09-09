@@ -242,7 +242,7 @@ static BOOL SaveOldFolder(struct IClass *cl, Object *obj)
 
         if(Rename(data->folder->Fullpath, folder.Fullpath) == FALSE)
         {
-          if(!(CreateDirectory(folder.Fullpath) && FO_MoveFolderDir(&folder, data->folder)))
+          if(CreateDirectory(folder.Fullpath) == FALSE || FO_MoveFolderDir(&folder, data->folder) == FALSE)
           {
             ER_NewError(tr(MSG_ER_MOVEFOLDERDIR), folder.Name, folder.Fullpath);
             goto out;
@@ -288,24 +288,24 @@ static BOOL SaveOldFolder(struct IClass *cl, Object *obj)
       {
         changed = FALSE;
       }
-      else if(!isProtectedFolder(&folder) && isProtectedFolder(data->folder) &&
+      else if(isProtectedFolder(&folder) == FALSE && isProtectedFolder(data->folder) == TRUE &&
               data->folder->LoadedMode != LM_VALID)
       {
         if((changed = MA_PromptFolderPassword(&folder, obj)) == FALSE)
           goto out;
       }
-      else if(isProtectedFolder(&folder) && !isProtectedFolder(data->folder))
+      else if(isProtectedFolder(&folder) == TRUE && isProtectedFolder(data->folder) == FALSE)
       {
         if((changed = EnterPassword(obj, &folder)) == FALSE)
           goto out;
       }
 
-      if(isProtectedFolder(&folder) && isProtectedFolder(data->folder))
+      if(isProtectedFolder(&folder) == TRUE && isProtectedFolder(data->folder) == TRUE)
          strlcpy(folder.Password, data->folder->Password, sizeof(folder.Password));
 
       if(changed == TRUE)
       {
-        if(!isProtectedFolder(&folder))
+        if(isProtectedFolder(&folder) == FALSE)
           folder.Password[0] = '\0';
 
         if(folder.Mode != oldmode)
