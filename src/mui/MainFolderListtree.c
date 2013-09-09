@@ -151,7 +151,7 @@ OVERLOAD(OM_DISPOSE)
     MUI_DisposeObject(data->contextMenu);
 
   // dispose a possibly still opened folder edit window
-  DoMethod(obj, METHOD(DeleteFolderEditWindow));
+  DoMethod(obj, METHOD(CloseFolderEditWindow));
 
   // dispose ourself
   result = DoSuperMethodA(cl, obj, msg);
@@ -873,7 +873,7 @@ DECLARE(NewFolder)
   if(openEditWindow == TRUE)
   {
     // there is no "old" folder which could be edited, just the new one
-    DoMethod(obj, METHOD(CreateFolderEditWindow), NULL);
+    DoMethod(obj, METHOD(OpenFolderEditWindow), NULL);
   }
 
   RETURN(0);
@@ -904,7 +904,7 @@ DECLARE(EditFolder) // ULONG wasDoubleClick
     }
     else
     {
-      DoMethod(obj, METHOD(CreateFolderEditWindow), folder);
+      DoMethod(obj, METHOD(OpenFolderEditWindow), folder);
     }
   }
 
@@ -913,9 +913,9 @@ DECLARE(EditFolder) // ULONG wasDoubleClick
 }
 
 ///
-/// DECLARE(CreateFolderEditWindow)
+/// DECLARE(OpenFolderEditWindow)
 // create and open a new folder edit window if it does exist yet
-DECLARE(CreateFolderEditWindow) // struct Folder *folder
+DECLARE(OpenFolderEditWindow) // struct Folder *folder
 {
   GETDATA;
 
@@ -931,7 +931,7 @@ DECLARE(CreateFolderEditWindow) // struct Folder *folder
       {
         data->folderEditWindow = folderEditWindow;
         // dispose the folder edit window whenever it asks for it
-        DoMethod(folderEditWindow, MUIM_Notify, MUIA_FolderEditWindow_DisposeMe, MUIV_EveryTime, obj, 1, METHOD(DeleteFolderEditWindow));
+        DoMethod(folderEditWindow, MUIM_Notify, MUIA_FolderEditWindow_DisposeRequest, MUIV_EveryTime, obj, 1, METHOD(CloseFolderEditWindow));
       }
       else
       {
@@ -953,9 +953,9 @@ DECLARE(CreateFolderEditWindow) // struct Folder *folder
 }
 
 ///
-/// DECLARE(DeleteFolderEditWindow)
+/// DECLARE(CloseFolderEditWindow)
 // dispose the folder edit window
-DECLARE(DeleteFolderEditWindow)
+DECLARE(CloseFolderEditWindow)
 {
   GETDATA;
 

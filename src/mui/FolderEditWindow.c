@@ -663,8 +663,8 @@ OVERLOAD(OM_NEW)
     SetHelp(ST_HELLOTEXT,    MSG_HELP_FO_ST_HELLOTEXT   );
     SetHelp(ST_BYETEXT,      MSG_HELP_FO_ST_BYETEXT     );
 
-    DoMethod(BT_CANCEL, MUIM_Notify, MUIA_Pressed, FALSE, obj, 3, MUIM_Set, ATTR(DisposeMe), TRUE);
-    DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, obj, 3, MUIM_Set, ATTR(DisposeMe), TRUE);
+    DoMethod(BT_CANCEL, MUIM_Notify, MUIA_Pressed, FALSE, obj, 3, MUIM_Set, ATTR(DisposeRequest), TRUE);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, obj, 3, MUIM_Set, ATTR(DisposeRequest), TRUE);
 
     DoMethod(BT_AUTODETECT, MUIM_Notify, MUIA_Pressed, FALSE, obj, 1, METHOD(MLAutoDetect));
     DoMethod(BT_OKAY, MUIM_Notify, MUIA_Pressed, FALSE, obj, 1, METHOD(SaveFolder));
@@ -696,6 +696,20 @@ OVERLOAD(OM_SET)
       }
       break;
     }
+  }
+
+  return DoSuperMethodA(cl, obj, msg);
+}
+
+///
+/// OVERLOAD(OM_GET)
+OVERLOAD(OM_GET)
+{
+  IPTR *store = ((struct opGet *)msg)->opg_Storage;
+
+  switch(((struct opGet *)msg)->opg_AttrID)
+  {
+    case ATTR(DisposeRequest): *store = TRUE; return TRUE;
   }
 
   return DoSuperMethodA(cl, obj, msg);
@@ -1072,7 +1086,7 @@ DECLARE(SaveFolder)
     DisplayStatistics(data->folder, TRUE);
 
     // ask for disposing
-    set(obj, ATTR(DisposeMe), TRUE);
+    set(obj, ATTR(DisposeRequest), TRUE);
   }
 
   RETURN(0);
