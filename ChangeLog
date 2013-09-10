@@ -5,20 +5,24 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-09-10 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/AddressBookListtree.c: fixed the missing tree column.
+
 2013-09-09 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/FolderEditWindow.c: changing a folder's path will now save the global
     .folders file again to make the change persistent. This closes #418.
   * YAM_FI.c: mails in the Trash folder are now excluded from the spam filter.
     This closes #419.
-  * mui/MainFolderListtree.c: defer the disposing of the folder edit window 
+  * mui/MainFolderListtree.c: defer the disposing of the folder edit window
     until the notification has finished completely. Since the method to close
     the window is called synchronously from the notification handling the window
     must not be disposed immediately as this would "pull out the rug" from under
     the window's feet while it is still alive. But it is quite strange that only
     MUI 3.8 falls prey to this effect, while MUI 3.9 and MUI 4.0 seems to be
     immune. This closes #417.
-    
+
 2013-09-08 Alper Sönmez <amithlondestek@gmail.com>
 
  * locale/turkish.ct: update to the latest changes.

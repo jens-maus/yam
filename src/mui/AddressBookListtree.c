@@ -612,7 +612,8 @@ DECLARE(MakeFormat)
 
   format[0] = '\0';
 
-  for(i = 1; i < NUMBER_ABOOK_COLUMNS; i++)
+  // start at zero here, otherwise the tree column will be missing
+  for(i = 0; i < NUMBER_ABOOK_COLUMNS; i++)
   {
     if(isFlagSet(C->AddrbookCols, (1<<i)))
     {
