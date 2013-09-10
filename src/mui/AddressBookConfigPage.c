@@ -178,8 +178,8 @@ OVERLOAD(MUIM_ConfigPage_GUIToConfig)
   GetMUIString(CE->GalleryDir, data->ST_GALLDIR, sizeof(CE->GalleryDir));
   GetMUIString(CE->NewAddrGroup, data->ST_NEWGROUP, sizeof(CE->NewAddrGroup));
   GetMUIString(CE->ProxyServer, data->ST_PROXY, sizeof(CE->ProxyServer));
-  CE->AddToAddrbook = GetMUICycle  (data->CY_ATAB);
-  CE->AddrbookCols = 1;
+  CE->AddToAddrbook = GetMUICycle(data->CY_ATAB);
+  CE->AddrbookCols = (1<<0);
   for(i = 1; i < NUMBER_ABOOK_COLUMNS; i++)
   {
     if(GetMUICheck(data->CH_ACOLS[i]))

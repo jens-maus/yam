@@ -858,7 +858,7 @@ void SetDefaultConfig(struct Config *co, enum ConfigPage page)
     AddPath(co->GalleryDir, G->ProgDir, "Resources/Gallery", sizeof(co->GalleryDir));
     strlcpy(co->NewAddrGroup, "NEW", sizeof(co->NewAddrGroup));
     co->AddToAddrbook = 0;
-    co->AddrbookCols = 1+2+4;
+    co->AddrbookCols = (1<<0) | (1<<1) | (1<<2);
   }
 
   if(page == cp_Scripts || page == cp_AllPages)
