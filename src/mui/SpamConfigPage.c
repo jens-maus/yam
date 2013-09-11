@@ -164,18 +164,6 @@ OVERLOAD(OM_NEW)
     data->CH_SPAM_TRUSTEXTERNALFILTER = CH_SPAM_TRUSTEXTERNALFILTER;
     data->CY_SPAM_EXTERNALFILTER =      CY_SPAM_EXTERNALFILTER;
 
-    DoMethod(obj, MUIM_MultiSet, MUIA_Disabled, TRUE, BT_SPAMRESETTRAININGDATA,
-                                                      BT_OPTIMIZETRAININGDATA,
-                                                      CH_SPAMFILTERFORNEWMAIL,
-                                                      CH_SPAMABOOKISWHITELIST,
-                                                      CH_SPAMMARKONMOVE,
-                                                      CH_SPAMMARKASREAD,
-                                                      CH_MOVEHAMTOINCOMING,
-                                                      CH_FILTERHAM,
-                                                      CH_SPAM_TRUSTEXTERNALFILTER,
-                                                      CY_SPAM_EXTERNALFILTER,
-                                                      NULL);
-
     SetHelp(CH_SPAMFILTERENABLED,     MSG_HELP_CH_SPAMFILTERENABLED);
     SetHelp(TX_SPAMBADCOUNT,          MSG_HELP_TX_SPAMBADCOUNT);
     SetHelp(TX_SPAMGOODCOUNT,         MSG_HELP_TX_SPAMGOODCOUNT);
@@ -531,6 +519,13 @@ DECLARE(ToggleSpamFilter) // ULONG inactive
   {
     set(data->CH_FILTERHAM, MUIA_Disabled, xget(data->CH_MOVEHAMTOINCOMING, MUIA_Selected) == FALSE);
     set(data->CY_SPAM_EXTERNALFILTER, MUIA_Disabled, xget(data->CH_SPAM_TRUSTEXTERNALFILTER, MUIA_Selected) == FALSE);
+  }
+  else
+  {
+    DoMethod(obj, MUIM_MultiSet, MUIA_Disabled, TRUE,
+      data->CH_FILTERHAM,
+      data->CY_SPAM_EXTERNALFILTER,
+      NULL);
   }
 
   RETURN(0);

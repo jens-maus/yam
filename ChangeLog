@@ -11,6 +11,8 @@ $URL$
     lists manually.
   * mui/MimeTypePopup.c: replaced stricmp() by strcasecmp() to fix all AROS
     builds.
+  * mui/SpamConfigPage.c: disabled all GUI objects in case the spam filter is
+    disabled. This closes #421.
 
 2013-09-10 Thore Böckelmann <tboeckel@gmx.de>
 
