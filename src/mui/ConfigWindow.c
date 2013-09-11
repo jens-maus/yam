@@ -319,7 +319,7 @@ DECLARE(GUIToConfig) // enum ConfigPage page
 
   if(msg->page >= cp_FirstSteps && msg->page < cp_Max)
   {
-    DoMethod(data->PG_PAGES[msg->page], MUIM_ConfigPage_GUIToConfig, CE);
+    DoMethod(data->PG_PAGES[msg->page], MUIM_ConfigPage_GUIToConfig);
   }
 
   RETURN(0);
@@ -338,7 +338,7 @@ DECLARE(ChangePage) // enum ConfigPage page
   if(msg->page >= cp_FirstSteps && msg->page < cp_Max)
   {
     // save the settings of the formerly visible page first
-    DoMethod(data->PG_PAGES[data->visiblePage], MUIM_ConfigPage_GUIToConfig, CE);
+    DoMethod(data->PG_PAGES[data->visiblePage], MUIM_ConfigPage_GUIToConfig);
 
     // remember the new page and mark it as visited
     data->visiblePage = msg->page;
@@ -356,7 +356,7 @@ DECLARE(ChangePage) // enum ConfigPage page
     #endif
 
     // set the settings of the new page
-    DoMethod(data->PG_PAGES[msg->page], MUIM_ConfigPage_ConfigToGUI, CE);
+    DoMethod(data->PG_PAGES[msg->page], MUIM_ConfigPage_ConfigToGUI);
 
     set(data->GR_PAGE, MUIA_Group_ActivePage, msg->page);
   }
@@ -413,7 +413,7 @@ DECLARE(SaveConfigAs)
        MUI_Request(_app(obj), obj, MUIF_NONE, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_FILE_OVERWRITE), frc->file) != 0)
     {
       // first let the currently visible page flush any pending changes to the configuration
-      DoMethod(data->PG_PAGES[data->visiblePage], MUIM_ConfigPage_GUIToConfig, CE);
+      DoMethod(data->PG_PAGES[data->visiblePage], MUIM_ConfigPage_GUIToConfig);
 
       ValidateConfig(CE, TRUE);
       NewPrefsFile(cl, obj, cname);
@@ -510,7 +510,7 @@ DECLARE(Close) // ULONG how
       BOOL close = TRUE;
 
       // make sure we have the latest state of the config in CE
-      DoMethod(data->PG_PAGES[data->visiblePage], MUIM_ConfigPage_GUIToConfig, CE);
+      DoMethod(data->PG_PAGES[data->visiblePage], MUIM_ConfigPage_GUIToConfig);
 
       // now we compare the current config against
       // the temporary config
