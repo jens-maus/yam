@@ -17,6 +17,8 @@ $URL$
     spam filter is disabled.
   * mui/ReplyForwardConfigPage.c: corrected a variable assignment which caused
     the alternative leave-taking text to be remain unchanged. This closes #422.
+  * Requesters.c, mui/SpamConfigPage.c: made the confirmation requester when
+    deactivating the spam filter working again.
 
 2013-09-10 Thore Böckelmann <tboeckel@gmx.de>
 

@@ -513,7 +513,7 @@ LONG CheckboxRequest(Object *parent, const char *tit, ULONG numBoxes, const char
     {
       DoMethod(win, MUIM_Notify, MUIA_CheckboxRequestWindow_Result, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_Application_ReturnID, REQUESTER_RETURNID);
 
-      set(G->App, MUIA_Application_Sleep, TRUE);
+      set(_app(parent), MUIA_Application_Sleep, TRUE);
 
       if(SafeOpenWindow(win) == TRUE)
       {
@@ -521,7 +521,7 @@ LONG CheckboxRequest(Object *parent, const char *tit, ULONG numBoxes, const char
 
         do
         {
-          if(DoMethod(G->App, MUIM_Application_NewInput, &signals) == REQUESTER_RETURNID)
+          if(DoMethod(_app(parent), MUIM_Application_NewInput, &signals) == REQUESTER_RETURNID)
           {
             flags = xget(win, MUIA_CheckboxRequestWindow_Flags);
             break;
@@ -542,11 +542,10 @@ LONG CheckboxRequest(Object *parent, const char *tit, ULONG numBoxes, const char
       }
 
       // remove & dispose the requester object
-      DoMethod(G->App, OM_REMMEMBER, win);
-      MUI_DisposeObject(win);
+      DoMethod(_app(parent), MUIM_YAMApplication_DisposeWindow, win);
 
       // wake up the application
-      set(G->App, MUIA_Application_Sleep, FALSE);
+      set(_app(parent), MUIA_Application_Sleep, FALSE);
     }
 
     free(entries);

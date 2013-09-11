@@ -204,6 +204,7 @@ OVERLOAD(MUIM_ConfigPage_ConfigToGUI)
   setcheckmark(data->CH_FILTERHAM, CE->FilterHam);
   setcheckmark(data->CH_SPAM_TRUSTEXTERNALFILTER, CE->SpamTrustExternalFilter);
   set(data->CY_SPAM_EXTERNALFILTER, MUIA_FilterChooser_Filter, CE->SpamExternalFilter);
+D(DBF_ALWAYS,"set ena %ld",CE->SpamFilterEnabled);
 
   DoMethod(obj, METHOD(UpdateStats));
 
@@ -220,6 +221,7 @@ OVERLOAD(MUIM_ConfigPage_GUIToConfig)
   ENTER();
 
   CE->SpamFilterEnabled = GetMUICheck(data->CH_SPAMFILTERENABLED);
+D(DBF_ALWAYS,"get ena %ld",CE->SpamFilterEnabled);
   CE->SpamFilterForNewMail = GetMUICheck(data->CH_SPAMFILTERFORNEWMAIL);
   CE->SpamMarkOnMove = GetMUICheck(data->CH_SPAMMARKONMOVE);
   CE->SpamMarkAsRead = GetMUICheck(data->CH_SPAMMARKASREAD);
@@ -236,13 +238,12 @@ OVERLOAD(MUIM_ConfigPage_GUIToConfig)
     // raise a CheckboxRequest and ask the user which
     // operations he want to performed while disabling the
     // SPAM filter.
-    mask = CheckboxRequest(obj, NULL, 3, tr(MSG_CO_SPAM_DISABLEFILTERASK),
-                                         tr(MSG_CO_SPAM_RESETTDATA),
-                                         tr(MSG_CO_SPAM_RESETMAILFLAGS),
-                                         tr(MSG_CO_SPAM_DELETESPAMFOLDER));
+    mask = CheckboxRequest(_win(obj), NULL, 3, tr(MSG_CO_SPAM_DISABLEFILTERASK),
+                                               tr(MSG_CO_SPAM_RESETTDATA),
+                                               tr(MSG_CO_SPAM_RESETMAILFLAGS),
+                                               tr(MSG_CO_SPAM_DELETESPAMFOLDER));
 
     SHOWVALUE(DBF_CONFIG, mask);
-    SHOWVALUE(DBF_ALWAYS, mask);
     // check if the user canceled the requester
     if(mask >= 0)
     {
