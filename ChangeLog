@@ -13,6 +13,8 @@ $URL$
     builds.
   * mui/SpamConfigPage.c: disabled all GUI objects in case the spam filter is
     disabled. This closes #421.
+  * mui/FiltersConfigPage.c: disable the spam related GUI objects in case the
+    spam filter is disabled.
 
 2013-09-10 Thore Böckelmann <tboeckel@gmx.de>
 

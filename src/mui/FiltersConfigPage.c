@@ -570,6 +570,11 @@ DECLARE(GetFilterEntry)
     nnset(data->ST_APLAY,             MUIA_String_Contents,           filter->playSound);
     nnset(data->PO_MOVETO,            MUIA_FolderRequestPopup_Folder, filter->moveTo);
 
+    DoMethod(obj, MUIM_MultiSet, MUIA_Disabled, CE->SpamFilterEnabled == FALSE,
+      data->CH_ASTATUSTOSPAM,
+      data->CH_ASTATUSTOHAM,
+      NULL);
+
     xset(data->GR_SGROUP, MUIA_ObjectList_Quiet, TRUE,
                           MUIA_FilterRuleList_Filter, filter);
 
