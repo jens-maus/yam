@@ -3578,7 +3578,8 @@ void RemoveMailFromList(struct Mail *mail, const BOOL closeWindows, const BOOL c
 {
   struct Folder *folder = mail->Folder;
   struct MailNode *mnode;
-  struct Node *curNode;
+  struct ReadMailData *rmData;
+  struct ReadMailData *next;
 
   ENTER();
 
@@ -3665,12 +3666,8 @@ void RemoveMailFromList(struct Mail *mail, const BOOL closeWindows, const BOOL c
 
   // Now we check if there is any read window with that very same
   // mail currently open and if so we have to close it.
-  curNode = GetHead((struct List *)&G->readMailDataList);
-  while(curNode != NULL)
+  SafeIterateList(&G->readMailDataList, struct ReadMailData *, rmData, next)
   {
-    struct ReadMailData *rmData = (struct ReadMailData *)curNode;
-    struct Node *nextNode = GetSucc(curNode);
-
     if(rmData->mail == mail)
     {
       if(closeWindows == TRUE && rmData->readWindow != NULL)
@@ -3693,8 +3690,6 @@ void RemoveMailFromList(struct Mail *mail, const BOOL closeWindows, const BOOL c
         rmData->mail = NULL;
       }
     }
-
-    curNode = nextNode;
   }
 
   // and last, but not least, we have to free the mail
@@ -3768,7 +3763,8 @@ struct Mail *ReplaceMailInFolder(const char *mailFile, const struct Mail *mail, 
 //  Removes all messages from a folder
 void ClearFolderMails(struct Folder *folder, BOOL resetstats)
 {
-  struct Node *node;
+  struct ReadMailData *rmData;
+  struct ReadMailData *next;
 
   ENTER();
 
@@ -3784,16 +3780,10 @@ void ClearFolderMails(struct Folder *folder, BOOL resetstats)
   // active readMailData is pointing back to the folder. This is
   // much more efficient as one has usually only very few read
   // windows opened in parallel.
-  node = GetHead((struct List *)&G->readMailDataList);
-  while(node != NULL)
+  SafeIterateList(&G->readMailDataList, struct ReadMailData *, rmData, next)
   {
-    struct ReadMailData *rmData = (struct ReadMailData *)node;
-    struct Node *nextNode = GetSucc(node);
-
     if(rmData->mail != NULL && rmData->mail->Folder == folder)
       CleanupReadMailData(rmData, TRUE);
-
-    node = nextNode;
   }
 
   LockMailList(folder->messages);

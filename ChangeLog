@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-09-11 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_UT.c: use the SafeIterateList() macro instead of iterating over some
+    lists manually.
+
 2013-09-10 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/AddressBookListtree.c: fixed the missing tree column.
