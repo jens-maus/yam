@@ -270,6 +270,8 @@ OVERLOAD(MUIM_HandleEvent)
   struct MUIP_HandleEvent *mhe = (struct MUIP_HandleEvent *)msg;
   IPTR result = 0;
 
+  ENTER();
+
   if(mhe->imsg->Class == IDCMP_RAWKEY)
   {
     // check for DEL key without CAPS LOCK
