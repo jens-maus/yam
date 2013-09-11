@@ -35,6 +35,8 @@
 
 #include "SDI_hook.h"
 
+#include "extrasrc.h"
+
 #include "Config.h"
 #include "Locale.h"
 #include "MimeTypes.h"
@@ -121,7 +123,7 @@ HOOKPROTO(MimeTypeListOpenFunc, BOOL, Object *listview, Object *str)
         set(list, MUIA_List_Active, MUIV_List_Active_Off);
         break;
       }
-      else if(!stricmp(c, s))
+      else if(strcasecmp(c, s) == 0)
       {
         set(list, MUIA_List_Active, i);
         break;

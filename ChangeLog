@@ -9,6 +9,8 @@ $URL$
 
   * YAM_UT.c: use the SafeIterateList() macro instead of iterating over some
     lists manually.
+  * mui/MimeTypePopup.c: replaced stricmp() by strcasecmp() to fix all AROS
+    builds.
 
 2013-09-10 Thore Böckelmann <tboeckel@gmx.de>
 
