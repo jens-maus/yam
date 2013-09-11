@@ -105,6 +105,7 @@
 #include "FolderList.h"
 #include "Locale.h"
 #include "MimeTypes.h"
+#include "MailList.h"
 #include "MailServers.h"
 #include "MUIObjects.h"
 #include "ParseEmail.h"
@@ -3515,6 +3516,275 @@ void ValidateConfig(struct Config *co, BOOL update)
   }
 
   LEAVE();
+}
+
+///
+/// CheckConfigDiffs
+// check C and CE for important state changes which need confirmation from the user
+// returns TRUE if these changes are accepted or if something else was changed that
+// requires a new comparison
+BOOL CheckConfigDiffs(const BOOL *visited)
+{
+  BOOL result = FALSE;
+
+  ENTER();
+
+  if(visited[cp_Spam] == TRUE)
+  {
+    if(C->SpamFilterEnabled == TRUE && CE->SpamFilterEnabled == FALSE)
+    {
+      LONG mask;
+
+      // raise a CheckboxRequest and ask the user which
+      // operations he want to performed while disabling the
+      // SPAM filter.
+      mask = CheckboxRequest(G->ConfigWinObject, NULL, 3, tr(MSG_CO_SPAM_DISABLEFILTERASK),
+                                                          tr(MSG_CO_SPAM_RESETTDATA),
+                                                          tr(MSG_CO_SPAM_RESETMAILFLAGS),
+                                                          tr(MSG_CO_SPAM_DELETESPAMFOLDER));
+
+      SHOWVALUE(DBF_CONFIG, mask);
+      // check if the user canceled the requester
+      if(mask >= 0)
+      {
+        // reset training data
+        if(mask & (1 << 0))
+        {
+          D(DBF_CONFIG, "resetting spam training data");
+          BayesFilterResetTrainingData();
+        }
+
+        // reset spam state of all mails
+        if(mask & (1 << 1))
+        {
+          struct FolderNode *fnode;
+
+          D(DBF_CONFIG, "resetting spam state of all mails");
+
+          LockFolderListShared(G->folders);
+
+          ForEachFolderNode(G->folders, fnode)
+          {
+            struct Folder *folder = fnode->folder;
+
+            if(!isGroupFolder(folder))
+            {
+              struct MailList *mlist;
+
+              if((mlist = MA_CreateFullList(folder, FALSE)) != NULL)
+              {
+                struct MailNode *mnode;
+
+                // clear all possible spam/ham flags from each mail
+                ForEachMailNode(mlist, mnode)
+                {
+                  struct Mail *mail = mnode->mail;
+
+                  if(mail != NULL)
+                    MA_ChangeMailStatus(mail, SFLAG_NONE, SFLAG_USERSPAM|SFLAG_AUTOSPAM|SFLAG_HAM);
+                }
+
+                DeleteMailList(mlist);
+              }
+            }
+          }
+
+          UnlockFolderList(G->folders);
+        }
+
+        // delete spam folder
+        if(mask & (1 << 2))
+        {
+          struct Folder *spamFolder;
+
+          D(DBF_CONFIG, "deleting spam folder");
+
+          // first locate the spam folder
+          if((spamFolder = FO_GetFolderByType(FT_SPAM, NULL)) != NULL)
+          {
+            // delete the folder on disk
+            DeleteMailDir(spamFolder->Fullpath, FALSE);
+
+            // remove all mails from our internal list
+            ClearFolderMails(spamFolder, TRUE);
+
+            // remove the folder from the folder list
+            DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Remove, MUIV_NListtree_Remove_ListNode_Root, spamFolder->Treenode, MUIF_NONE);
+
+            // and finally save the modified tree to the folder config now
+            FO_SaveTree();
+
+            // update the statistics in case the spam folder contained new or unread mails
+            DisplayStatistics(NULL, TRUE);
+
+            // remove and delete the folder from our list
+            LockFolderList(G->folders);
+            RemoveFolder(G->folders, spamFolder);
+            UnlockFolderList(G->folders);
+
+            FO_FreeFolder(spamFolder);
+          }
+        }
+        else
+        {
+          // the spam folder should be kept, but it must be "degraded" to a normal folder
+          // to make it deleteable later
+          struct Folder *spamFolder;
+
+          // first locate the spam folder
+          if((spamFolder = FO_GetFolderByType(FT_SPAM, NULL)) != NULL)
+          {
+            if(spamFolder->imageObject != NULL)
+            {
+              // we make sure that the NList also doesn't use the image in future anymore
+              DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, spamFolder->ImageIndex, MUIF_NONE);
+              spamFolder->imageObject = NULL;
+              // we don't need to dispose the image, because it is one of the standard images and not
+              // a custom image of the user.
+            }
+
+            // degrade it to a custom folder without folder image
+            spamFolder->Type = FT_CUSTOM;
+            spamFolder->ImageIndex = -1;
+
+            // finally save the modified configuration
+            FO_SaveConfig(spamFolder);
+
+            // update the statistics in case the spam folder contained new or unread mails
+            DisplayStatistics(spamFolder, TRUE);
+          }
+        }
+
+        // update the toolbar to the new settings
+        if(G->MA->GUI.TO_TOOLBAR != NULL)
+          DoMethod(G->MA->GUI.TO_TOOLBAR, MUIM_MainWindowToolbar_UpdateSpamControls);
+      }
+      else
+      {
+        // the user canceled the requester so lets set the Spam filter
+        // back online
+        CE->SpamFilterEnabled = TRUE;
+
+        // signal a change
+        result = TRUE;
+      }
+    }
+    else if(C->SpamFilterEnabled == FALSE && CE->SpamFilterEnabled == TRUE)
+    {
+      // the spam filter has been enabled, now try to create the mandatory spam folder
+      char spamPath[SIZE_PATHFILE];
+      BOOL createSpamFolder;
+      enum FType type;
+
+      if(ObtainFileInfo(CreateFilename(FolderName[FT_SPAM], spamPath, sizeof(spamPath)), FI_TYPE, &type) == TRUE && type == FIT_NONEXIST)
+      {
+        // no directory named "spam" exists, so let's create it
+        createSpamFolder = TRUE;
+      }
+      else
+      {
+        ULONG result;
+
+        // the directory "spam" already exists, but it is not the standard spam folder
+        // let the user decide what to do
+        result = MUI_Request(G->App, G->ConfigWinObject, MUIF_NONE, NULL, tr(MSG_ER_SPAMDIR_EXISTS_ANSWERS), tr(MSG_ER_SPAMDIR_EXISTS));
+        switch(result)
+        {
+          default:
+          case 0:
+          {
+            // the user has chosen to disable the spam filter, so we do it
+            // or the requester was cancelled
+            CE->SpamFilterEnabled = FALSE;
+            createSpamFolder = FALSE;
+            // signal a change
+            result = TRUE;
+          }
+          break;
+
+          case 1:
+          {
+            // delete everything in the folder, the directory itself can be kept
+            DeleteMailDir(CreateFilename(FolderName[FT_SPAM], spamPath, sizeof(spamPath)), FALSE);
+            createSpamFolder = TRUE;
+          }
+          break;
+
+          case 2:
+          {
+            // keep the folder contents
+            createSpamFolder = TRUE;
+          }
+          break;
+        }
+      }
+
+      if(createSpamFolder == TRUE)
+      {
+        struct Folder *spamFolder;
+
+        // if a folder named "spam" already exists, but a new spam folder should be
+        // created, we need to remove the old folder from the tree view first
+        if((spamFolder = FO_GetFolderByPath((STRPTR)FolderName[FT_SPAM], NULL)) != NULL)
+        {
+          // remove the folder from the folder list
+          DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Remove, MUIV_NListtree_Remove_ListNode_Root, spamFolder->Treenode, MUIF_NONE);
+          spamFolder->Treenode = NULL;
+
+          if(spamFolder->imageObject != NULL)
+          {
+            // we make sure that the NList also doesn't use the image in future anymore
+            DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, spamFolder->ImageIndex, MUIF_NONE);
+            spamFolder->imageObject = NULL;
+          }
+        }
+
+        // try to create the folder and save the new folder tree
+        if(FO_CreateFolder(FT_SPAM, FolderName[FT_SPAM], tr(MSG_MA_SPAM)) == FALSE || FO_SaveTree() == FALSE)
+        {
+          // something failed, so we disable the spam filter again
+          ER_NewError(tr(MSG_CO_ER_CANNOT_CREATE_SPAMFOLDER));
+          CE->SpamFilterEnabled = FALSE;
+          // signal a change
+          result = TRUE;
+        }
+        else
+        {
+          // move the new spam folder after the trash folder
+          struct Folder *this = FO_GetFolderByType(FT_SPAM, NULL);
+          struct Folder *prev = FO_GetFolderByType(FT_TRASH, NULL);
+
+          DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Move, MUIV_NListtree_Move_OldListNode_Root, this->Treenode, MUIV_NListtree_Move_NewListNode_Root, prev->Treenode, MUIF_NONE);
+
+          // update the toolbar to the new settings
+          if(G->MA->GUI.TO_TOOLBAR != NULL)
+            DoMethod(G->MA->GUI.TO_TOOLBAR, MUIM_MainWindowToolbar_UpdateSpamControls);
+        }
+      }
+    }
+
+    if(CE->SpamFilterEnabled == TRUE && CE->SpamMarkAsRead == TRUE)
+    {
+      ULONG numberClassified = BayesFilterNumberOfHamClassifiedMails() + BayesFilterNumberOfSpamClassifiedMails();
+
+      if(numberClassified < 100)
+      {
+        // Less than 100 mails have been classified so far.
+        // Better ask the user if new spam mails really should be mark as "read", because
+        // the filter is most probably not trained well enough an non-spam mails may be
+        // marked as spam and read unnoticed.
+        if(MUI_Request(G->App, G->ConfigWinObject, MUIF_NONE, NULL, tr(MSG_YesNoReq), tr(MSG_ER_SPAM_NOT_ENOUGH_CLASSIFIED_MAILS), numberClassified))
+        {
+          CE->SpamMarkAsRead = FALSE;
+          // signal a change
+          result = TRUE;
+        }
+      }
+    }
+  }
+
+  RETURN(result);
+  return result;
 }
 
 ///

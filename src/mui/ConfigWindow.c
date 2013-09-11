@@ -524,15 +524,22 @@ DECLARE(Close) // ULONG how
         // check if it was changed at all
         if(configsEqual == FALSE)
         {
-          struct Config *tmpC;
-
           D(DBF_CONFIG, "configuration found to be different");
 
-          // just swap the pointers instead of clearing and copying the whole stuff
-          tmpC = C;
-          C = CE;
-          CE = tmpC;
-          // the up to now "current" configuration will be freed below
+          // check for certain important state changes and do another comparison
+          if(CheckConfigDiffs(data->visitedPages) == TRUE)
+            configsEqual = CompareConfigs(C, CE);
+
+          if(configsEqual == FALSE)
+          {
+            struct Config *tmpC;
+
+            // just swap the pointers instead of clearing and copying the whole stuff
+            tmpC = C;
+            C = CE;
+            CE = tmpC;
+            // the up to now "current" configuration will be freed below
+          }
         }
         else
           D(DBF_CONFIG, "config wasn't altered, skipped copy operations.");

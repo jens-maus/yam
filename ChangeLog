@@ -19,6 +19,9 @@ $URL$
     the alternative leave-taking text to be remain unchanged. This closes #422.
   * Requesters.c, mui/SpamConfigPage.c: made the confirmation requester when
     deactivating the spam filter working again.
+  * Config.c, mui/ConfigWindow.c, mui/SpamConfigPage.c: a poossible state change
+    of the spam filter is now checked again upon using/saving the configuration
+    instead of when changing pages.
 
 2013-09-10 Thore Böckelmann <tboeckel@gmx.de>
 
