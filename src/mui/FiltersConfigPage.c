@@ -587,11 +587,9 @@ DECLARE(FilterToGUI)
         // fill the new search group with some content
         DoMethod(newSearchGroup, MUIM_SearchControlGroup_RuleToGUI, rule);
 
-        // set some notifies
-        DoMethod(newSearchGroup, MUIM_Notify, MUIA_SearchControlGroup_Modified, MUIV_EveryTime, obj, 1, METHOD(GUIToFilter));
-
         // add it to our searchGroupList
         DoMethod(data->GR_SGROUP, MUIM_ObjectList_AddItem, newSearchGroup);
+        SHOWVALUE(DBF_ALWAYS, newSearchGroup);
       }
     }
     set(data->GR_SGROUP, MUIA_ObjectList_Quiet, FALSE);
@@ -668,6 +666,19 @@ DECLARE(GUIToFilter)
     GhostOutFilter(cl, obj);
     DoMethod(data->LV_RULES, MUIM_NList_Redraw, MUIV_NList_Redraw_Active);
   }
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(InitRuleObject)
+DECLARE(InitRuleObject) // Object *searchGroup
+{
+  ENTER();
+
+  // set some notifies
+  DoMethod(msg->searchGroup, MUIM_Notify, MUIA_SearchControlGroup_Modified, MUIV_EveryTime, obj, 1, METHOD(GUIToFilter));
 
   RETURN(0);
   return 0;
