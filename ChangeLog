@@ -9,6 +9,9 @@ $URL$
 
   * mui/FiltersConfigPage.c, mui/SearchControlGroup.c: disable the spam related
     GUI objects in case the spam filter is disabled.
+  * mui/FiltersConfigPage.c, mui/SearchControlGroup.c: make sure that all filter
+    conditions are correctly saved when changing filters or config pages. This
+    closes #423.
 
 2013-09-11 Thore Böckelmann <tboeckel@gmx.de>
 

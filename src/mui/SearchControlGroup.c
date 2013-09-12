@@ -580,12 +580,15 @@ DECLARE(GUIToRule) // struct RuleNode *rule
   GetMUIString(rule->customField, data->ST_FIELD, sizeof(rule->customField));
   rule->comparison = GetMUICycle(data->CY_COMP[g]);
 
-  if(g != 3) // Page 3 (Status) has no ST_MATCH
-    GetMUIString(rule->matchPattern, data->ST_MATCH[g], sizeof(rule->matchPattern));
-  else
+  // Page 3 (Status) has no ST_MATCH
+  if(g == 3)
   {
     rule->matchPattern[0] = mailStatusCycleMap[GetMUICycle(data->CY_STATUS)];
     rule->matchPattern[1] = '\0';
+  }
+  else
+  {
+    GetMUIString(rule->matchPattern, data->ST_MATCH[g], sizeof(rule->matchPattern));
   }
 
   rule->flags = 0;
@@ -628,9 +631,8 @@ DECLARE(RuleToGUI) // struct RuleNode *rule
 
   set(data->ST_FIELD, MUIA_ShowMe, rule->searchMode == 6);
 
-  if(g != 3) // Page 3 (Status) has no ST_MATCH
-    nnset(data->ST_MATCH[g], MUIA_String_Contents, rule->matchPattern);
-  else
+  // Page 3 (Status) has no ST_MATCH
+  if(g == 3)
   {
     size_t i;
 
@@ -642,6 +644,10 @@ DECLARE(RuleToGUI) // struct RuleNode *rule
         break;
       }
     }
+  }
+  else
+  {
+    nnset(data->ST_MATCH[g], MUIA_String_Contents, rule->matchPattern);
   }
 
   if(data->CH_CASESENS[g] != NULL)

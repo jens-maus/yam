@@ -431,7 +431,7 @@ OVERLOAD(OM_NEW)
     set(BT_FILTERDOWN, MUIA_CycleChain, TRUE);
     set(BT_FILTER_IMPORT, MUIA_CycleChain, TRUE);
 
-    DoMethod(LV_RULES,             MUIM_Notify, MUIA_NList_Active,                         MUIV_EveryTime, obj, 1, METHOD(FilterToGUI));
+    DoMethod(LV_RULES,             MUIM_Notify, MUIA_NList_Active,                         MUIV_EveryTime, obj, 2, METHOD(ChangeActiveFilter), MUIV_TriggerValue);
     DoMethod(ST_RNAME,             MUIM_Notify, MUIA_String_Contents,                      MUIV_EveryTime, obj, 1, METHOD(GUIToFilter));
     DoMethod(CH_REMOTE,            MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 2, METHOD(ToggleRemoteFlag), MUIV_TriggerValue);
     DoMethod(CH_APPLYREQ,          MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(GUIToFilter));
@@ -523,23 +523,36 @@ OVERLOAD(MUIM_ConfigPage_GUIToConfig)
 }
 
 ///
+/// DECLARE(ChangeActiveFilter)
+DECLARE(ChangeActiveFilter) // LONG active
+{
+  GETDATA;
+
+  ENTER();
+
+  // transfer any pending changes from the GUI to the previous filter entry
+  DoMethod(obj, METHOD(GUIToFilter));
+  // get the now active filter entry
+  DoMethod(data->LV_RULES, MUIM_NList_GetEntry, msg->active, &data->filter);
+  // update the GUI
+  DoMethod(obj, METHOD(FilterToGUI));
+
+  RETURN(0);
+  return 0;
+}
+
+///
 /// DECLARE(FilterToGUI)
 // fills form with data from selected list entry
 DECLARE(FilterToGUI)
 {
   GETDATA;
-  struct FilterNode *filter = NULL;
 
   ENTER();
 
-  // get the active filterNode
-  DoMethod(data->LV_RULES, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &filter);
-  data->filter = filter;
-
-  // if we got an active entry lets set all other GUI elements from the
-  // values of this filter
-  if(filter != NULL)
+  if(data->filter != NULL)
   {
+    struct FilterNode *filter = data->filter;
     struct RuleNode *rule;
 
     nnset(data->ST_RNAME,             MUIA_String_Contents,           filter->name);
@@ -589,7 +602,8 @@ DECLARE(FilterToGUI)
 
         // add it to our searchGroupList
         DoMethod(data->GR_SGROUP, MUIM_ObjectList_AddItem, newSearchGroup);
-        SHOWVALUE(DBF_ALWAYS, newSearchGroup);
+        // the notifications above will ensure that the necessary notifications
+        // for this new object will be added automatically
       }
     }
     set(data->GR_SGROUP, MUIA_ObjectList_Quiet, FALSE);
@@ -607,18 +621,12 @@ DECLARE(FilterToGUI)
 DECLARE(GUIToFilter)
 {
   GETDATA;
-  struct FilterNode *filter = NULL;
 
   ENTER();
 
-  // get the active filterNode
-  DoMethod(data->LV_RULES, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &filter);
-  data->filter = filter;
-
-  // if we got an active entry lets set all other GUI elements from the
-  // values of this filter
-  if(filter != NULL)
+  if(data->filter != NULL)
   {
+    struct FilterNode *filter = data->filter;
     Object *ruleItem;
     Object *ruleState;
 
