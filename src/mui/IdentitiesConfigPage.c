@@ -459,38 +459,38 @@ OVERLOAD(OM_NEW)
     SetHelp(CH_IDENTITY_PGPENC_SELF,       MSG_HELP_CO_CH_IDENTITY_PGPENC_SELF);
 
     // connect a notify if the user selects a different identity in the list
-    DoMethod(LV_IDENTITY, MUIM_Notify, MUIA_NList_Active, MUIV_EveryTime, obj, 1, METHOD(GetIdentityEntry));
+    DoMethod(LV_IDENTITY, MUIM_Notify, MUIA_NList_Active, MUIV_EveryTime, obj, 1, METHOD(IdentityToGUI));
 
     // connect notifies to update the UserIdentityNode according to the latest
     // settings in this config page
-    DoMethod(CH_IDENTITY_ENABLED,           MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(PutIdentityEntry));
-    DoMethod(ST_IDENTITY_DESCRIPTION,       MUIM_Notify, MUIA_String_Contents,                      MUIV_EveryTime, obj, 1, METHOD(PutIdentityEntry));
-    DoMethod(ST_IDENTITY_REALNAME,          MUIM_Notify, MUIA_String_Contents,                      MUIV_EveryTime, obj, 1, METHOD(PutIdentityEntry));
-    DoMethod(ST_IDENTITY_EMAIL,             MUIM_Notify, MUIA_String_Contents,                      MUIV_EveryTime, obj, 1, METHOD(PutIdentityEntry));
-    DoMethod(ST_IDENTITY_ORGANIZATION,      MUIM_Notify, MUIA_String_Contents,                      MUIV_EveryTime, obj, 1, METHOD(PutIdentityEntry));
-    DoMethod(CY_IDENTITY_MAILSERVER,        MUIM_Notify, MUIA_Cycle_Active,                         MUIV_EveryTime, obj, 1, METHOD(PutIdentityEntry));
-    DoMethod(CY_IDENTITY_SIGNATURE,         MUIM_Notify, MUIA_Cycle_Active,                         MUIV_EveryTime, obj, 1, METHOD(PutIdentityEntry));
-    DoMethod(ST_IDENTITY_CC,                MUIM_Notify, MUIA_String_Contents,                      MUIV_EveryTime, obj, 1, METHOD(PutIdentityEntry));
-    DoMethod(ST_IDENTITY_BCC,               MUIM_Notify, MUIA_String_Contents,                      MUIV_EveryTime, obj, 1, METHOD(PutIdentityEntry));
-    DoMethod(ST_IDENTITY_REPLYTO,           MUIM_Notify, MUIA_String_Contents,                      MUIV_EveryTime, obj, 1, METHOD(PutIdentityEntry));
-    DoMethod(ST_IDENTITY_EXTRAHEADER,       MUIM_Notify, MUIA_String_Contents,                      MUIV_EveryTime, obj, 1, METHOD(PutIdentityEntry));
-    DoMethod(ST_IDENTITY_PHOTOURL,          MUIM_Notify, MUIA_String_Contents,                      MUIV_EveryTime, obj, 1, METHOD(PutIdentityEntry));
-    DoMethod(CH_IDENTITY_SENTFOLDER,        MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(PutIdentityEntry));
-    DoMethod(PO_IDENTITY_SENTFOLDER,        MUIM_Notify, MUIA_FolderRequestPopup_FolderChanged,     MUIV_EveryTime, obj, 1, METHOD(PutIdentityEntry));
-    DoMethod(CH_IDENTITY_QUOTEMAILS,        MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(PutIdentityEntry));
-    DoMethod(CY_IDENTITY_QUOTEPOS,          MUIM_Notify, MUIA_Cycle_Active,                         MUIV_EveryTime, obj, 1, METHOD(PutIdentityEntry));
-    DoMethod(CY_IDENTITY_SIGPOS,            MUIM_Notify, MUIA_Cycle_Active,                         MUIV_EveryTime, obj, 1, METHOD(PutIdentityEntry));
-    DoMethod(CH_IDENTITY_SIGREPLY,          MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(PutIdentityEntry));
-    DoMethod(CH_IDENTITY_SIGFORWARD,        MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(PutIdentityEntry));
-    DoMethod(CH_IDENTITY_ADDINFO,           MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(PutIdentityEntry));
-    DoMethod(CH_IDENTITY_REQUESTMDN,        MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(PutIdentityEntry));
-    DoMethod(CH_IDENTITY_USEPGP,            MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(PutIdentityEntry));
-    DoMethod(PO_IDENTITY_PGPID,             MUIM_Notify, MUIA_PGPKeyPopup_PGPKeyChanged,            MUIV_EveryTime, obj, 1, METHOD(PutIdentityEntry));
-    DoMethod(ST_IDENTITY_PGPURL,            MUIM_Notify, MUIA_String_Contents,                      MUIV_EveryTime, obj, 1, METHOD(PutIdentityEntry));
-    DoMethod(CH_IDENTITY_PGPSIGN_UNENC,     MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(PutIdentityEntry));
-    DoMethod(CH_IDENTITY_PGPSIGN_ENC,       MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(PutIdentityEntry));
-    DoMethod(CH_IDENTITY_PGPENC_ALL,        MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(PutIdentityEntry));
-    DoMethod(CH_IDENTITY_PGPENC_SELF,       MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(PutIdentityEntry));
+    DoMethod(CH_IDENTITY_ENABLED,           MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(GUIToIdentity));
+    DoMethod(ST_IDENTITY_DESCRIPTION,       MUIM_Notify, MUIA_String_Contents,                      MUIV_EveryTime, obj, 1, METHOD(GUIToIdentity));
+    DoMethod(ST_IDENTITY_REALNAME,          MUIM_Notify, MUIA_String_Contents,                      MUIV_EveryTime, obj, 1, METHOD(GUIToIdentity));
+    DoMethod(ST_IDENTITY_EMAIL,             MUIM_Notify, MUIA_String_Contents,                      MUIV_EveryTime, obj, 1, METHOD(GUIToIdentity));
+    DoMethod(ST_IDENTITY_ORGANIZATION,      MUIM_Notify, MUIA_String_Contents,                      MUIV_EveryTime, obj, 1, METHOD(GUIToIdentity));
+    DoMethod(CY_IDENTITY_MAILSERVER,        MUIM_Notify, MUIA_Cycle_Active,                         MUIV_EveryTime, obj, 1, METHOD(GUIToIdentity));
+    DoMethod(CY_IDENTITY_SIGNATURE,         MUIM_Notify, MUIA_Cycle_Active,                         MUIV_EveryTime, obj, 1, METHOD(GUIToIdentity));
+    DoMethod(ST_IDENTITY_CC,                MUIM_Notify, MUIA_String_Contents,                      MUIV_EveryTime, obj, 1, METHOD(GUIToIdentity));
+    DoMethod(ST_IDENTITY_BCC,               MUIM_Notify, MUIA_String_Contents,                      MUIV_EveryTime, obj, 1, METHOD(GUIToIdentity));
+    DoMethod(ST_IDENTITY_REPLYTO,           MUIM_Notify, MUIA_String_Contents,                      MUIV_EveryTime, obj, 1, METHOD(GUIToIdentity));
+    DoMethod(ST_IDENTITY_EXTRAHEADER,       MUIM_Notify, MUIA_String_Contents,                      MUIV_EveryTime, obj, 1, METHOD(GUIToIdentity));
+    DoMethod(ST_IDENTITY_PHOTOURL,          MUIM_Notify, MUIA_String_Contents,                      MUIV_EveryTime, obj, 1, METHOD(GUIToIdentity));
+    DoMethod(CH_IDENTITY_SENTFOLDER,        MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(GUIToIdentity));
+    DoMethod(PO_IDENTITY_SENTFOLDER,        MUIM_Notify, MUIA_FolderRequestPopup_FolderChanged,     MUIV_EveryTime, obj, 1, METHOD(GUIToIdentity));
+    DoMethod(CH_IDENTITY_QUOTEMAILS,        MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(GUIToIdentity));
+    DoMethod(CY_IDENTITY_QUOTEPOS,          MUIM_Notify, MUIA_Cycle_Active,                         MUIV_EveryTime, obj, 1, METHOD(GUIToIdentity));
+    DoMethod(CY_IDENTITY_SIGPOS,            MUIM_Notify, MUIA_Cycle_Active,                         MUIV_EveryTime, obj, 1, METHOD(GUIToIdentity));
+    DoMethod(CH_IDENTITY_SIGREPLY,          MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(GUIToIdentity));
+    DoMethod(CH_IDENTITY_SIGFORWARD,        MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(GUIToIdentity));
+    DoMethod(CH_IDENTITY_ADDINFO,           MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(GUIToIdentity));
+    DoMethod(CH_IDENTITY_REQUESTMDN,        MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(GUIToIdentity));
+    DoMethod(CH_IDENTITY_USEPGP,            MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(GUIToIdentity));
+    DoMethod(PO_IDENTITY_PGPID,             MUIM_Notify, MUIA_PGPKeyPopup_PGPKeyChanged,            MUIV_EveryTime, obj, 1, METHOD(GUIToIdentity));
+    DoMethod(ST_IDENTITY_PGPURL,            MUIM_Notify, MUIA_String_Contents,                      MUIV_EveryTime, obj, 1, METHOD(GUIToIdentity));
+    DoMethod(CH_IDENTITY_PGPSIGN_UNENC,     MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(GUIToIdentity));
+    DoMethod(CH_IDENTITY_PGPSIGN_ENC,       MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(GUIToIdentity));
+    DoMethod(CH_IDENTITY_PGPENC_ALL,        MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(GUIToIdentity));
+    DoMethod(CH_IDENTITY_PGPENC_SELF,       MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(GUIToIdentity));
 
     DoMethod(BT_IADD,         MUIM_Notify, MUIA_Pressed, FALSE, obj, 1, METHOD(AddIdentityEntry));
     DoMethod(BT_IDEL,         MUIM_Notify, MUIA_Pressed, FALSE, obj, 1, METHOD(DeleteIdentityEntry));
@@ -589,9 +589,9 @@ OVERLOAD(MUIM_ConfigPage_ConfigUpdate)
 }
 
 ///
-/// DECLARE(GetIdentityEntry)
+/// DECLARE(IdentityToGUI)
 // fills form with data from selected list entry
-DECLARE(GetIdentityEntry)
+DECLARE(IdentityToGUI)
 {
   GETDATA;
   struct UserIdentityNode *uin = NULL;
@@ -694,9 +694,9 @@ DECLARE(GetIdentityEntry)
 }
 
 ///
-/// DECLARE(PutIdentityEntry)
+/// DECLARE(GUIToIdentity)
 // fills form data into selected list entry
-DECLARE(PutIdentityEntry)
+DECLARE(GUIToIdentity)
 {
   GETDATA;
   int p;

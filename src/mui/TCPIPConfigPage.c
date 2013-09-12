@@ -568,51 +568,51 @@ OVERLOAD(OM_NEW)
     SetHelp(CH_POP3_NOTIFY_OS41SYSTEM, MSG_HELP_CO_CH_NOTIOS41SYSTEM);
     #endif // __amigaos4__
 
-    DoMethod(LV_POP3,                   MUIM_Notify, MUIA_NList_Active,     MUIV_EveryTime, obj, 1, METHOD(GetPOP3Entry));
-    DoMethod(ST_POPDESC,                MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, obj, 1, METHOD(PutPOP3Entry));
-    DoMethod(ST_POPHOST,                MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, obj, 1, METHOD(PutPOP3Entry));
-    DoMethod(ST_POPPORT,                MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, obj, 1, METHOD(PutPOP3Entry));
-    DoMethod(ST_POPUSERID,              MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, obj, 1, METHOD(PutPOP3Entry));
-    DoMethod(ST_PASSWD,                 MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, obj, 1, METHOD(PutPOP3Entry));
-    DoMethod(CH_POPENABLED,             MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, obj, 1, METHOD(PutPOP3Entry));
-    DoMethod(CY_POPAUTH,                MUIM_Notify, MUIA_Cycle_Active,     MUIV_EveryTime, obj, 1, METHOD(PutPOP3Entry));
-    DoMethod(CH_DELETE,                 MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, obj, 1, METHOD(PutPOP3Entry));
-    DoMethod(CH_DOWNLOADONSTARTUP,      MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, obj, 1, METHOD(PutPOP3Entry));
-    DoMethod(CH_INTERVAL,               MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, obj, 1, METHOD(PutPOP3Entry));
-    DoMethod(NM_INTERVAL,               MUIM_Notify, MUIA_Numeric_Value,    MUIV_EveryTime, obj, 1, METHOD(PutPOP3Entry));
-    DoMethod(CH_DLLARGE,                MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, obj, 1, METHOD(PutPOP3Entry));
-    DoMethod(ST_WARNSIZE,               MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, obj, 1, METHOD(PutPOP3Entry));
-    DoMethod(CH_APPLYREMOTEFILTERS,     MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, obj, 1, METHOD(PutPOP3Entry));
-    DoMethod(CY_PRESELECTION,           MUIM_Notify, MUIA_Cycle_Active,     MUIV_EveryTime, obj, 1, METHOD(PutPOP3Entry));
+    DoMethod(LV_POP3,                   MUIM_Notify, MUIA_NList_Active,     MUIV_EveryTime, obj, 1, METHOD(POP3ToGUI));
+    DoMethod(ST_POPDESC,                MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, obj, 1, METHOD(GUIToPOP3));
+    DoMethod(ST_POPHOST,                MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, obj, 1, METHOD(GUIToPOP3));
+    DoMethod(ST_POPPORT,                MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, obj, 1, METHOD(GUIToPOP3));
+    DoMethod(ST_POPUSERID,              MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, obj, 1, METHOD(GUIToPOP3));
+    DoMethod(ST_PASSWD,                 MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, obj, 1, METHOD(GUIToPOP3));
+    DoMethod(CH_POPENABLED,             MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, obj, 1, METHOD(GUIToPOP3));
+    DoMethod(CY_POPAUTH,                MUIM_Notify, MUIA_Cycle_Active,     MUIV_EveryTime, obj, 1, METHOD(GUIToPOP3));
+    DoMethod(CH_DELETE,                 MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, obj, 1, METHOD(GUIToPOP3));
+    DoMethod(CH_DOWNLOADONSTARTUP,      MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, obj, 1, METHOD(GUIToPOP3));
+    DoMethod(CH_INTERVAL,               MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, obj, 1, METHOD(GUIToPOP3));
+    DoMethod(NM_INTERVAL,               MUIM_Notify, MUIA_Numeric_Value,    MUIV_EveryTime, obj, 1, METHOD(GUIToPOP3));
+    DoMethod(CH_DLLARGE,                MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, obj, 1, METHOD(GUIToPOP3));
+    DoMethod(ST_WARNSIZE,               MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, obj, 1, METHOD(GUIToPOP3));
+    DoMethod(CH_APPLYREMOTEFILTERS,     MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, obj, 1, METHOD(GUIToPOP3));
+    DoMethod(CY_PRESELECTION,           MUIM_Notify, MUIA_Cycle_Active,     MUIV_EveryTime, obj, 1, METHOD(GUIToPOP3));
     DoMethod(BT_PADD,                   MUIM_Notify, MUIA_Pressed,          FALSE,          obj, 1, METHOD(AddPOP3Entry));
     DoMethod(BT_PDEL,                   MUIM_Notify, MUIA_Pressed,          FALSE,          obj, 1, METHOD(DeletePOP3Entry));
     DoMethod(BT_POPUP,                  MUIM_Notify, MUIA_Pressed,          FALSE,          LV_POP3, 3, MUIM_NList_Move, MUIV_NList_Move_Selected, MUIV_NList_Move_Previous);
     DoMethod(BT_POPDOWN,                MUIM_Notify, MUIA_Pressed,          FALSE,          LV_POP3, 3, MUIM_NList_Move, MUIV_NList_Move_Selected, MUIV_NList_Move_Next);
-    DoMethod(CY_POPSECURE,              MUIM_Notify, MUIA_Cycle_Active,     MUIV_EveryTime, obj, 1, METHOD(PutPOP3Entry));
-    DoMethod(CH_POP3_NOTIFY_REQ,        MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, obj, 1, METHOD(PutPOP3Entry));
+    DoMethod(CY_POPSECURE,              MUIM_Notify, MUIA_Cycle_Active,     MUIV_EveryTime, obj, 1, METHOD(GUIToPOP3));
+    DoMethod(CH_POP3_NOTIFY_REQ,        MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, obj, 1, METHOD(GUIToPOP3));
     #if defined(__amigaos4__)
-    DoMethod(CH_POP3_NOTIFY_OS41SYSTEM, MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, obj, 1, METHOD(PutPOP3Entry));
+    DoMethod(CH_POP3_NOTIFY_OS41SYSTEM, MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, obj, 1, METHOD(GUIToPOP3));
     #endif // __amigaos4__
-    DoMethod(CH_POP3_NOTIFY_CMD,        MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, obj, 1, METHOD(PutPOP3Entry));
-    DoMethod(ST_POP3_NOTIFY_CMD,        MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, obj, 1, METHOD(PutPOP3Entry));
-    DoMethod(CH_POP3_NOTIFY_SOUND,      MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, obj, 1, METHOD(PutPOP3Entry));
-    DoMethod(ST_POP3_NOTIFY_SOUND,      MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, obj, 1, METHOD(PutPOP3Entry));
+    DoMethod(CH_POP3_NOTIFY_CMD,        MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, obj, 1, METHOD(GUIToPOP3));
+    DoMethod(ST_POP3_NOTIFY_CMD,        MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, obj, 1, METHOD(GUIToPOP3));
+    DoMethod(CH_POP3_NOTIFY_SOUND,      MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, obj, 1, METHOD(GUIToPOP3));
+    DoMethod(ST_POP3_NOTIFY_SOUND,      MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, obj, 1, METHOD(GUIToPOP3));
 
     // connect SMTP related stuff to the corresponding Hooks
-    DoMethod(LV_SMTP              , MUIM_Notify, MUIA_NList_Active,     MUIV_EveryTime, obj, 1, METHOD(GetSMTPEntry));
-    DoMethod(ST_SMTPDESC          , MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, obj, 1, METHOD(PutSMTPEntry));
-    DoMethod(ST_SMTPHOST          , MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, obj, 1, METHOD(PutSMTPEntry));
-    DoMethod(ST_SMTPPORT          , MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, obj, 1, METHOD(PutSMTPEntry));
-    DoMethod(ST_SMTPAUTHUSER      , MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, obj, 1, METHOD(PutSMTPEntry));
-    DoMethod(ST_SMTPAUTHPASS      , MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, obj, 1, METHOD(PutSMTPEntry));
-    DoMethod(CH_SMTPENABLED       , MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, obj, 1, METHOD(PutSMTPEntry));
-    DoMethod(CY_SMTPAUTH          , MUIM_Notify, MUIA_Cycle_Active,     MUIV_EveryTime, obj, 1, METHOD(PutSMTPEntry));
-    DoMethod(CH_SMTP8BIT,           MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, obj, 1, METHOD(PutSMTPEntry));
+    DoMethod(LV_SMTP              , MUIM_Notify, MUIA_NList_Active,     MUIV_EveryTime, obj, 1, METHOD(SMTPToGUI));
+    DoMethod(ST_SMTPDESC          , MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, obj, 1, METHOD(GUIToSMTP));
+    DoMethod(ST_SMTPHOST          , MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, obj, 1, METHOD(GUIToSMTP));
+    DoMethod(ST_SMTPPORT          , MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, obj, 1, METHOD(GUIToSMTP));
+    DoMethod(ST_SMTPAUTHUSER      , MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, obj, 1, METHOD(GUIToSMTP));
+    DoMethod(ST_SMTPAUTHPASS      , MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, obj, 1, METHOD(GUIToSMTP));
+    DoMethod(CH_SMTPENABLED       , MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, obj, 1, METHOD(GUIToSMTP));
+    DoMethod(CY_SMTPAUTH          , MUIM_Notify, MUIA_Cycle_Active,     MUIV_EveryTime, obj, 1, METHOD(GUIToSMTP));
+    DoMethod(CH_SMTP8BIT,           MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, obj, 1, METHOD(GUIToSMTP));
     DoMethod(BT_SADD              , MUIM_Notify, MUIA_Pressed,          FALSE,          obj, 1, METHOD(AddSMTPEntry));
     DoMethod(BT_SDEL              , MUIM_Notify, MUIA_Pressed,          FALSE,          obj, 1, METHOD(DeleteSMTPEntry));
     DoMethod(BT_SMTPUP            , MUIM_Notify, MUIA_Pressed,          FALSE,          LV_SMTP, 3, MUIM_NList_Move, MUIV_NList_Move_Selected, MUIV_NList_Move_Previous);
     DoMethod(BT_SMTPDOWN          , MUIM_Notify, MUIA_Pressed,          FALSE,          LV_SMTP, 3, MUIM_NList_Move, MUIV_NList_Move_Selected, MUIV_NList_Move_Next);
-    DoMethod(CY_SMTPSECURE,         MUIM_Notify, MUIA_Cycle_Active,     MUIV_EveryTime, obj, 1, METHOD(PutSMTPEntry));
+    DoMethod(CY_SMTPSECURE,         MUIM_Notify, MUIA_Cycle_Active,     MUIV_EveryTime, obj, 1, METHOD(GUIToSMTP));
 
     // set some additional cyclechain data
     set(BT_POPUP,    MUIA_CycleChain, TRUE);
@@ -689,9 +689,9 @@ OVERLOAD(MUIM_ConfigPage_GUIToConfig)
 }
 
 ///
-/// DECLARE(GetPOP3Entry)
+/// DECLARE(POP3ToGUI)
 // fills form with data from selected list entry
-DECLARE(GetPOP3Entry)
+DECLARE(POP3ToGUI)
 {
   GETDATA;
   struct MailServerNode *msn = NULL;
@@ -775,9 +775,9 @@ DECLARE(GetPOP3Entry)
 }
 
 ///
-/// DECLARE(PutPOP3Entry)
+/// DECLARE(GUIToPOP3)
 // fills form data into selected list entry
-DECLARE(PutPOP3Entry)
+DECLARE(GUIToPOP3)
 {
   GETDATA;
   int p;
@@ -983,9 +983,9 @@ DECLARE(DeletePOP3Entry)
 }
 
 ///
-/// DECLARE(GetSMTPEntry)
+/// DECLARE(SMTPToGUI)
 // fills form with data from selected list entry
-DECLARE(GetSMTPEntry)
+DECLARE(SMTPToGUI)
 {
   GETDATA;
   struct MailServerNode *msn = NULL;
@@ -1038,9 +1038,9 @@ DECLARE(GetSMTPEntry)
 }
 
 ///
-/// DECLARE(PutSMTPEntry)
+/// DECLARE(GUIToSMTP)
 // fills form data into selected list entry
-DECLARE(PutSMTPEntry)
+DECLARE(GUIToSMTP)
 {
   GETDATA;
   int p;

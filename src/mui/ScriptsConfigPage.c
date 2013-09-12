@@ -158,12 +158,12 @@ OVERLOAD(OM_NEW)
     SetHelp(CH_WAITTERM,  MSG_HELP_CO_CH_WAITTERM);
     SetHelp(LV_REXX,      MSG_HELP_CO_LV_REXX);
 
-    DoMethod(LV_REXX,     MUIM_Notify, MUIA_NList_Active,    MUIV_EveryTime, obj, 1, METHOD(GetRXEntry));
-    DoMethod(ST_RXNAME,   MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 1, METHOD(PutRXEntry));
-    DoMethod(PO_SCRIPT,   MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 1, METHOD(PutRXEntry));
-    DoMethod(CY_ISADOS,   MUIM_Notify, MUIA_Cycle_Active,    MUIV_EveryTime, obj, 1, METHOD(PutRXEntry));
-    DoMethod(CH_CONSOLE,  MUIM_Notify, MUIA_Selected,        MUIV_EveryTime, obj, 1, METHOD(PutRXEntry));
-    DoMethod(CH_WAITTERM, MUIM_Notify, MUIA_Selected,        MUIV_EveryTime, obj, 1, METHOD(PutRXEntry));
+    DoMethod(LV_REXX,     MUIM_Notify, MUIA_NList_Active,    MUIV_EveryTime, obj, 1, METHOD(ScriptToGUI));
+    DoMethod(ST_RXNAME,   MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 1, METHOD(GUIToScript));
+    DoMethod(PO_SCRIPT,   MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 1, METHOD(GUIToScript));
+    DoMethod(CY_ISADOS,   MUIM_Notify, MUIA_Cycle_Active,    MUIV_EveryTime, obj, 1, METHOD(GUIToScript));
+    DoMethod(CH_CONSOLE,  MUIM_Notify, MUIA_Selected,        MUIV_EveryTime, obj, 1, METHOD(GUIToScript));
+    DoMethod(CH_WAITTERM, MUIM_Notify, MUIA_Selected,        MUIV_EveryTime, obj, 1, METHOD(GUIToScript));
   }
 
   RETURN((IPTR)obj);
@@ -210,9 +210,9 @@ OVERLOAD(MUIM_ConfigPage_GUIToConfig)
 }
 
 ///
-/// DECLARE(GetRXEntry)
+/// DECLARE(ScriptToGUI)
 // fills form with data from selected list entry
-DECLARE(GetRXEntry)
+DECLARE(ScriptToGUI)
 {
   GETDATA;
   struct RxHook *rh;
@@ -276,9 +276,9 @@ DECLARE(GetRXEntry)
 }
 
 ///
-/// DECLARE(PutRXEntry)
+/// DECLARE(GUIToScript)
 // fills form data into selected list entry
-DECLARE(PutRXEntry)
+DECLARE(GUIToScript)
 {
   GETDATA;
   int act;
