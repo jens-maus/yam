@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.2 (17.02.2013)
+## version $VER: YAM.catalog 8.4 (06.09.2013)
 ## codeset 0
 ## language español
 ## chunk AUTH Emilio Jimenez
@@ -15,7 +15,6 @@
 ; and increase the last listed identifier number by one for your
 ; new entries. And if you delete an entry NEVER reorder or resort
 ; the ID numbers accordingly.
-;
 ;
 ; General
 ;
@@ -34,10 +33,6 @@ Anexos
 MSG_Options
 Opciones
 ; Options
-;
-MSG_Del
-_Borrar
-; _Delete
 ;
 MSG_New
 Nuevo
@@ -202,10 +197,6 @@ Para
 MSG_Columns
 Columnas
 ; Columns
-;
-MSG_Path
-Ruta
-; Path
 ;
 MSG_Version
 Versión:
@@ -460,11 +451,6 @@ MSG_LOG_Forwarding
 Mensaje reenviado de '%s' sobre '%s' para '%s'
 ; Forwarded message from '%s' about '%s' to '%s'
 ; SENDER, SUBJECT, RECIPIENT
-;
-MSG_LOG_Filtering
-%ld mensaje(s) filtrado(s) en la carpeta '%s': %ld coincide(n)
-; Filtered %ld message(s) in folder '%s': %ld match(es)
-; COUNT, FOLDER, COUNT
 ;
 MSG_LOG_SavingConfig
 Salvado archivo de configuración '%s'
@@ -1033,106 +1019,6 @@ MSG_CO_Cancel
 _Cancelar
 ; _Cancel
 ;
-MSG_CO_TZoneM12
-(GMT-12:00) Kwajalein Islands (IDLW)
-; (GMT-12:00) Kwajalein Islands (IDLW)
-;
-MSG_CO_TZoneM11
-(GMT-11:00) Midway Islands, Samoa (NT)
-; (GMT-11:00) Midway Islands, Samoa (NT)
-;
-MSG_CO_TZoneM10
-(GMT-10:00) Honolulu, Tahití (HST)
-; (GMT-10:00) Honolulu, Tahiti (HST)
-;
-MSG_CO_TZoneM9
-(GMT-09:00) Anchorage (AKST)
-; (GMT-09:00) Anchorage (AKST)
-;
-MSG_CO_TZoneM8
-(GMT-08:00) Los Angeles, San Francisco (PST)
-; (GMT-08:00) Los Angeles, San Francisco (PST)
-;
-MSG_CO_TZoneM7
-(GMT-07:00) Calgary, Denver, Phoenix (MST)
-; (GMT-07:00) Calgary, Denver, Phoenix (MST)
-;
-MSG_CO_TZoneM6
-(GMT-06:00) Chicago, Dallas, Mexico City (CST)
-; (GMT-06:00) Chicago, Dallas, Mexico City (CST)
-;
-MSG_CO_TZoneM5
-(GMT-05:00) Lima, Miami, Montreal, New York (EST)
-; (GMT-05:00) Lima, Miami, Montreal, New York (EST)
-;
-MSG_CO_TZoneM4
-(GMT-04:00) Caracas, Santiago, Thule (AST)
-; (GMT-04:00) Caracas, Santiago, Thule (AST)
-;
-MSG_CO_TZoneM3
-(GMT-03:00) Buenos Aires, Rio de Janeiro (BRT)
-; (GMT-03:00) Buenos Aires, Rio de Janeiro (BRT)
-;
-MSG_CO_TZoneM2
-(GMT-02:00) Brasil East (FNT)
-; (GMT-02:00) Brazil East (FNT)
-;
-MSG_CO_TZoneM1
-(GMT-01:00) Azores (WAT)
-; (GMT-01:00) Azores (WAT)
-;
-MSG_CO_TZone0
-(GMT 00:00) Dublin, Lisboa, Londres (GMT/UTC)
-; (GMT 00:00) Dublin, Lisbon, London (GMT/UTC)
-;
-MSG_CO_TZone1
-(GMT+01:00) Berlin, Paris, Madrid, Oslo (CET)
-; (GMT+01:00) Berlin, Paris, Madrid, Oslo (CET)
-;
-MSG_CO_TZone2
-(GMT+02:00) Atenas, El Cairo, Helsinki (EET)
-; (GMT+02:00) Athens, Cairo, Helsinki (EET)
-;
-MSG_CO_TZone3
-(GMT+03:00) Bagdad, Kuwait, Moscú, Nairobi (EEST)
-; (GMT+03:00) Baghdad, Kuwait, Moscow, Nairobi (EEST)
-;
-MSG_CO_TZone4
-(GMT+04:00) Dubai, Port Louis, Victoria (ZP4)
-; (GMT+04:00) Dubai, Port Louis, Victoria (ZP4)
-;
-MSG_CO_TZone5
-(GMT+05:00) Islamabad, Karachi (ZP5)
-; (GMT+05:00) Islamabad, Karachi (ZP5)
-;
-MSG_CO_TZone6
-(GMT+06:00) Alma-Ata, Dhaka, Tashkent (ZP6)
-; (GMT+06:00) Alma-Ata, Dhaka, Tashkent (ZP6)
-;
-MSG_CO_TZone7
-(GMT+07:00) Bangkok, Hanoi, Phnom Penh
-; (GMT+07:00) Bangkok, Hanoi, Phnom Penh
-;
-MSG_CO_TZone8
-(GMT+08:00) Hong Kong, Shanghai, Singapur (WST)
-; (GMT+08:00) Hong Kong, Shanghai, Singapore (WST)
-;
-MSG_CO_TZone9
-(GMT+09:00) Osaka, Seoul, Tokio (JST)
-; (GMT+09:00) Osaka, Seoul, Tokyo (JST)
-;
-MSG_CO_TZone10
-(GMT+10:00) Melbourne, Sydney, Vladivostok (GST)
-; (GMT+10:00) Melbourne, Sydney, Vladivostok (GST)
-;
-MSG_CO_TZone11
-(GMT+11:00) New Caldonia (AEDT)
-; (GMT+11:00) New Caldonia (AEDT)
-;
-MSG_CO_TZone12
-(GMT+12:00) Auckland, Wellington (IDLE)
-; (GMT+12:00) Auckland, Wellington (IDLE)
-;
 MSG_CO_MinConfig
 Configuración mínima
 ; Minimal configuration
@@ -1236,26 +1122,6 @@ Co_mando
 MSG_CO_Name
 N_ombre
 ; N_ame
-;
-MSG_CO_CTAnd
-y
-; and
-;
-MSG_CO_CTOr
-o
-; or
-;
-MSG_CO_CTXor
-o exclusivo
-; exclusive or
-;
-MSG_CO_Comparison
-Comparación
-; Comparison
-;
-MSG_CO_Action
-Acción
-; Action
 ;
 MSG_CO_Remote
 _Filtro Remoto
@@ -1448,10 +1314,6 @@ antes de enviar
 MSG_CO_ExternalEditor
 Editor _Externo
 ; _External editor
-;
-MSG_CO_Launch
-Iniciar inmediatamente
-; _Launch immediately
 ;
 MSG_CO_PhraseOpen
 Abrir
@@ -1840,10 +1702,6 @@ MSG_HELP_CO_ST_PASSWD
 Clave para acceder\nal servidor POP3.
 ; Password to access\nthe POP3 server.
 ;
-MSG_HELP_CO_CY_TZONE
-Selecciona la zona horaria de\ntu región.
-; Select the time zone of\nyour current location.
-;
 MSG_HELP_CO_ST_SMTPHOST
 La dirección del servidor SMTP donde se enviará el correo.\nSi lo dejas en blanco, se usará la dirección del\nservidor POP3.
 ; The address of the SMTP server to send mail to.\nIf you leave this field empty, the address of the\nPOP3 server will be used as fallback.
@@ -1931,10 +1789,6 @@ Aplica este filtro a mensajes enviados.
 MSG_HELP_CO_CH_APPLYREQ
 Aplica este filtro cuando utilices\nla función de filtro manualmente.
 ; Apply this filter when you use\nthe filter function manually.
-;
-MSG_HELP_CO_CY_COMBINE
-Cómo combinar las reglas\npara este filtro.
-; How to combine the rules\nfor this filter.
 ;
 MSG_HELP_CO_CH_AFORWARD
 Reenviar mensajes coincidentes\na otra persona.
@@ -2075,10 +1929,6 @@ Selecciona 'al escribir' para estructurar las líneas\nautomáticamente mientras\n
 MSG_HELP_CO_CH_LAUNCH
 Inicia automáticamente el editor externo\ncuando inicias un nuevo mensaje.
 ; Automatically launch the external editor\nwhen starting a new message.
-;
-MSG_HELP_CO_ST_EDITOR
-Nombre del archivo de tu\neditor de texto favorito.
-; Filename of your\nfavorite text editor.
 ;
 MSG_HELP_CO_ST_FWDSTART
 Texto utilizado al introducir un mensaje reenviado.\nHaz Click en el botón emergente de la derecha para ver\nlas variables que puedes usar.
@@ -4913,38 +4763,6 @@ MSG_CTapplicationpdf
 documento PDF
 ; PDF document
 ;
-MSG_CO_TZoneM330
-(GMT-03:30) Newfoundland (NFT)
-; (GMT-03:30) Newfoundland (NFT)
-;
-MSG_CO_TZone330
-(GMT+03:30) Teheran (IT)
-; (GMT+03:30) Teheran (IT)
-;
-MSG_CO_TZone430
-(GMT+04:30) Kabul
-; (GMT+04:30) Kabul
-;
-MSG_CO_TZone530
-(GMT+05:30) Chennai, Kolkata, Mumbai, New-Delhi (IST)
-; (GMT+05:30) Chennai, Kolkata, Mumbai, New-Delhi (IST)
-;
-MSG_CO_TZone545
-(GMT+05:45) Katmandu
-; (GMT+05:45) Katmandu
-;
-MSG_CO_TZone630
-(GMT+06:30) Rangun (NST)
-; (GMT+06:30) Rangun (NST)
-;
-MSG_CO_TZone930
-(GMT+09:30) Adelaide, Darwin (ACST)
-; (GMT+09:30) Adelaide, Darwin (ACST)
-;
-MSG_CO_TZone13
-(GMT+13:00) Nuku'alofa (NZDT)
-; (GMT+13:00) Nuku'alofa (NZDT)
-;
 MSG_HELP_CO_ST_INFOBARTXT
 Texto que se mostrará\nen la barra de estado.
 ; Text that should be displayed\nin the status bar.
@@ -5162,14 +4980,6 @@ U
 MSG_CTunknown
 Desconocido
 ; unknown
-;
-MSG_CO_More
-_Más
-; _More
-;
-MSG_CO_Less
-Me_nos
-; _Less
 ;
 MSG_CO_NB_AUTOSAVE
 Intervalo Auto_guardado
@@ -5501,30 +5311,6 @@ MSG_BUSY_OPENINGCONFIG
 Abriendo configuración...
 ; Opening configuration...
 ;
-MSG_CO_TIMEZONEWARN_TITLE
-Advertencia preferencias de Zona Horaria
-; Time zone setting warning
-;
-MSG_CO_TIMEZONEWARN
-La configuración de la zona horaria de YAM no coincide\ncon las definidas en el sistema.\n\nQué quieres hacer?
-; The time zone setting in YAM doesn't match\nthe system's default time zone.\n\nHow do you want to proceed?
-;
-MSG_CO_TIMEZONEWARN_BT
-*_Cambiar|Ignorar _siempre|_Ignorar
-; *_Change|Ignore _always|_Ignore
-;
-MSG_CO_AUTODSTWARN_TITLE
-Advertencia AutoDST
-; AutoDST warning
-;
-MSG_CO_AUTODSTWARN
-YAM ha encontrado una herramienta activa de AutoDST y\nestá reportando un Cambio de Horario de Verano\ndiferente al configurado en YAM.\n\nCómo quieres proceder?
-; YAM has found an AutoDST tool active and\nit is reporting a Daylight Saving Time\ndifferent to what is configured in YAM.\n\nHow do you want to proceed?
-;
-MSG_CO_AUTODSTWARN_BT
-*_Cambiar|Ignor_ar siempre|_Ignorar
-; *_Change|Ignore _always|_Ignore
-;
 MSG_MA_UPDATECHECK
 Comprobar actualizaciones
 ; Check for updates
@@ -5737,7 +5523,6 @@ Si la parte principal de un correo es HTML, YAM lo convertirá\na texto plano ant
 MSG_TR_TRANSFERSTATUS
 %s de %s @ %s/s\n%02ld'%02ld'' en proceso - %02ld'%02ld'' restan
 ; %s of %s @ %s/s\n%02ld'%02ld'' running - %02ld'%02ld'' left
-; SIZE, SIZE, SPEED, MINS, SECS, MINS, SECS
 ;
 MSG_TR_TRANSFERSIZE
 %s de %s
@@ -5747,12 +5532,10 @@ MSG_TR_TRANSFERSIZE
 MSG_FI_GAUGETEXT
 %%ld de %ld mensajes
 ; %%ld of %ld messages
-; COUNT, COUNT
 ;
 MSG_MA_MIMEPART_INFO
 \ebAnexo - MIME parte #%ld\en\nNombre: %s\nDescripción: %s\nTipo-Contenido: %s <%s>\nTamaño: ~%s
 ; \ebAttachment - MIME part #%ld\en\nName: %s\nDescription: %s\nContent-Type: %s <%s>\nSize: ~%s
-; PART-NR, NAME, DESCRIPTION, CONTENT-TYPE, SIZE
 ;
 MSG_MA_MIMEPART_MENU
 Anexo/MIME parte #%ld
@@ -5821,7 +5604,6 @@ Ocurrió un error al intentar abrir la petición de ASL.\n\nPor favor asegúrate qu
 MSG_MA_CONFIRMDELETION
 %ld mensaje(s) se han seleccionado.\n\nQuieres realmente borrar\nel(los) mensaje(s)?
 ; %ld message(s) are selected.\n\nDo you really want to delete\nthese messages?
-; AMOUNT
 ;
 MSG_MA_SPAM
 Spam
@@ -6333,14 +6115,6 @@ MSG_CO_CRDLOOKFEEL
 Apariencia
 ; Look & Feel
 ;
-MSG_CO_DSTACTIVE
-Activar Cambio _Horario de Verano (DST)
-; D_aylight Saving Time (DST) is active
-;
-MSG_HELP_CO_CH_DSTACTIVE
-Activalo si el cambio de horario\nde verano se utiliza en tu zona horaria\n(horario de verano).
-; Enable this if daylight saving time is\ncurrently active in your time zone\n(summer time).
-;
 MSG_CO_SMTP_SERVERPORT
 Ser_vidor/Puerto
 ; Ser_ver/Port
@@ -6532,7 +6306,6 @@ Enviar más tarde
 MSG_ER_CONNECTIONBROKEN
 La conexión con el servidor '%s' fue interrumpida mientras intentaba enviar el comando '%s'.\n\nEsto puede ser a causa de un corte en la conexión desde el servidor.
 ; Connection with server '%s' was interrupted while trying to send command '%s'.\n\nThis may be due to a connection dropped by the server.
-; SERVER, COMMAND
 ;
 MSG_WR_MSWITCH_MSG
 Mensaje
@@ -6621,7 +6394,6 @@ Advertencia de Seguridad
 MSG_WR_INVALIDSECURITY
 Las preferencias de seguridad de la agenda de contactos para el destinatario\n\n'%s'\n\nestá definida para mensajes firmados y/o encriptados,\npero la instalación PGP requerida no se encuentra.\n\nEl mensaje no será firmado ni encriptado.
 ; The address book security setting for recipient\n\n'%s'\n\nis set to signed and/or encrypted messages,\nbut the required PGP installation wasn't found.\n\nThe message will be neither signed or encrypted.
-; RECIPIENT
 ;
 MSG_WR_INVALIDSECURITY_GADS
 *_Sí|_Cancelar
@@ -6630,17 +6402,14 @@ MSG_WR_INVALIDSECURITY_GADS
 MSG_ER_FILEENCODE
 Error inesperado mientras intentaba codificar el archivo '%s'.\n\nPor favor asegúrate que el archivo existe y es accesible, entonces intenta componer el mensaje de nuevo.
 ; An unexpected error occurred while trying to encode file '%s'.\n\nPlease make sure that the file exists and is readable, then try to compose the message again.
-; FILENAME
 ;
 MSG_ER_MISSINGATTFILE
 El archivo '%s' no se encontró mientras intentaba crear los anexos del mensaje.\n\nPor favor asegúrate qye el archivo existe y es accesible, entonces intenta crear el mensaje otra vez.
 ; File '%s' couldn't be found while trying to compose the attachments of a message.\n\nPlease make sure that the file exists and is readable, then try to compose the message again.
-; FILENAME
 ;
 MSG_ER_INVALIDATTFILE
 El archivo '%s' no se puede encontrar mientras intentas visualizar los anexos del mensaje.\n\nPor favor asegúrate que el archivo existe y es accesible.
 ; File '%s' couldn't be found while trying to view the attachment of a message.\n\nPlease make sure that the file exists and is readable.
-; FILENAME
 ;
 MSG_ER_PRINTER_OFFLINE
 La impresora parece estar apagada u ocupada.\n\nPor favor comprueba la impresora e inténtalo de nuevo.
@@ -6705,7 +6474,6 @@ Encontrado archivo de correo no válido
 MSG_MA_INVALIDMFILE
 El archivo '%s' en la carpeta '%s'\nno parece tener un formato de correo válido\no puede estar dañado.\n\nPor favor asegúrate que el archivo es accesible\ny en un archivo de correo válido.
 ; File '%s' in folder '%s'\ndoesn't seem to have a valid mail format\nor may be corrupted.\n\nPlease make sure that the file is readable\nand is a valid mail file.
-; FILENAME, FOLDER
 ;
 MSG_MA_INVALIDMFILE_BT
 *_Reintentar|_Ignorar|Ignorar _Todo|_Borrar|_Cancelar
@@ -6714,47 +6482,38 @@ MSG_MA_INVALIDMFILE_BT
 MSG_ER_CANNOT_READ_INDEX
 Ocurrió un error mientras intentaba cargar el archivo anexo '%s' de la carpeta '%s'.\n\nPor favor comprueba que puedes leer el contenido del archivo y que tiene permisos correctos.
 ; An error occurred while trying to read the index file '%s' of folder '%s'.\n\nPlease check that you can read the contents of the file and that the permission settings are correct.
-; FILENAME, FOLDER
 ;
 MSG_ER_CANNOT_WRITE_INDEX
 Ocurrió un error mientras intentaba guardar el archivo anexo '%s' en la carpeta '%s'.\n\nPor favor comprueba que el directorio donde quieres almacenar no está protegido.
 ; An error occurred while trying to write the index file '%s' in folder '%s'.\n\nPlease check that you can write to the directory where the file is supposed to be stored.
-; FILENAME, FOLDER
 ;
 MSG_ER_INDEX_CORRUPTED
 El archivo anexo '%s' en la carpeta '%s' está corrupto en la posición %d junto al archivo de información del correo '%s' (MoreBytes: 0x%x).\n\nLa carpeta fue marcada como 'no cargada' y se requiere una actualización del anexo para solucionar el problema.
 ; Index file '%s' in folder '%s' is corrupt at position %d near the information about mail file '%s' (MoreBytes: 0x%x).\n\nThe folder was flagged as 'unloaded' and an index update was initiated or is required to solve the problem.
-; FILENAME, FOLDER, POSITION, MAILFILE, MOREBYTES
 ;
 MSG_ER_UNKNOWN_MIME_ENCODING
 Desconocida codificación MIME '%s' en el archivo de correo '%s'.\n\nYAM falló al decodificar una parte del mensaje. Salva el mensaje a disco e inténtalo con otro decodificador.
 ; Unknown MIME encoding '%s' in mail file '%s'.\n\nYAM failed to decode a part of the message. Save the message to disk and try with a different decoder.
-; ENCODING_TYPE, FILENAME
 ;
 MSG_ER_UNKNOWN_HEADER_ENCODING
 Desconocida codificación de cabecera '%s' en el archivo de correo '%s'.\n\nYAM no puede mostrar la cabecera en este mensaje.
 ; Unknown header encoding '%s' in mail file '%s'.\n\nYAM cannot display a certain header in this message.
-; ENCODING_TYPE, FILENAME
 ;
 MSG_ER_UNEXPECTED_MULTIPART_EOF
 Inesperado EOF mientras decodificaba el archivo de mensaje dividido '%s'.\n\nEl mensaje parece estar incompleto.
 ; Unexpected EOF while decoding multipart message in file '%s'.\n\nThe message seems to be truncated.
-; FILENAME
 ;
 MSG_ER_MIME_ERROR
 No puedo extraer MIME desde el archivo de mensaje '%s'.\n\nEl mensaje contiene partes MIME deterioradas, o está vacío o incompleto.
 ; Couldn't extract MIME message from file '%s'.\n\nThe message contains malformed MIME parts, or it is empty or truncated.
-; FILENAME
 ;
 MSG_ER_UNEXPECTED_UUE_EOF
 Inesperado EOF mientras decodificaba el archivo UUcode '%s'. El mensaje parece que está incompleto.
 ; Unexpected EOF while decoding the UUcode encoded file '%s'. The message seems to be truncated.
-; FILENAME
 ;
 MSG_ER_INVALID_UUE_LENGTH
 Incorrecta longitud de línea %ld en archivo codificado UUcode '%s'.\n\nFallo en el codificador utilizado de UUcode o el mensaje no está completo.
 ; Invalid line length %ld in UUcode encoded file '%s'.\n\nEither a faulty UUcode encoder was used or the message is truncated.
-; SIZE, FILENAME
 ;
 MSG_RE_HDR_REPLYTO
 Responder A
@@ -6819,22 +6578,18 @@ Borrar
 MSG_ER_B64DEC_FILEIO
 Ocurrió un error de E/S mientras intentaba decodificar (Base64) un MIME %ld del correo '%s'. El decodificado ha sido abortado.\n\nEsto puede ser a causa de espacio insuficiente en el volúmen donde estaba siendo decodificado, o porque no se pudo acceder al archivo origen.
 ; A file I/O error occurred while trying to Base64 decode MIME part %ld of mail file '%s'. The decoding has been aborted.\n\nThis may be caused by insufficient space on the volume the file was being decoded to, or because the source file wasn't accessible.
-; PARTNR, MSGFILE
 ;
 MSG_ER_B64DEC_WARN
 Se encontraron algunos caractéres no válidos mientras decodificaba (Base64) un MIME %ld del correo '%s'.Por lo tanto la salida generada puede contener información no válida o puede estar dañada.\n\nEsto puede ser a causa de una codificación incorrecta por el cliente de correo de origen o porque ha sido deteriorada durante la transmisión.
 ; Some invalid characters were found while Base64 decoding MIME part %ld of mail file '%s'. The generated output may therefore contain invalid data or may be corrupted.\n\nThis may be caused by an incorrect encoding done by the sending mail client or because the Base64 part has been malformed during transmission.
-; PARTNR, MSGFILE
 ;
 MSG_ER_B64DEC_UNEXP
 Ocurrió un error mientras intentaba decodificar (Base64) un MIME %ld del correo '%s'. El decodificado ha sido abortado.\n\nO no hay datos que decodificar o YAM no puede acceder a la información codificada.
 ; An error occurred while trying to Base64 decode MIME part %ld of mail file '%s'. The decoding has been aborted.\n\nEither there's no data to decode or YAM can't access the encoded data.
-; PARTNR, MSGFILE
 ;
 MSG_MA_ADD_WHICH_ADDRESS
 La dirección del remitente (De) es \eb<%s>\en pero\nla dirección de retorno (Responder a) es \eb<%s>\en.\n\nQué dirección quiere añadir a su agenda de contactos?
 ; The sender address (From) is \033b<%s>\033n but\nthe return address (Reply-To) is \033b<%s>\033n.\n\nWhich address do you want to add to your address book?
-; ADDRESS, ADDRESS
 ;
 MSG_CO_SCRIPTACTION
 Acción (Nombre)
@@ -6891,10 +6646,6 @@ Eli_minar
 MSG_HELP_EA_BT_REMOVEPHOTO
 'Quitar' esta fotografía (el archivo de la imagen\nno será borrado del disco).
 ; 'Forget' this picture (the\nfile on disk will remain).
-;
-MSG_HELP_CO_TX_DEFAULTCHARSET
-Usa el botón emergente para seleccionar el juego de caracteres\nque quieres utilizar por defecto en YAM. Deberá coincidir con el\njuego de caractéres del sistema, o de lo contrario,\naparecerá una ventana de petición consultando que\nquieres hacer.
-; Use the popup button to select the character set\nyou would like YAM to use by default. This should\nmatch the system's default charset, otherwise a\nrequester will appear asking how do you want to\nproceed.
 ;
 MSG_HELP_CO_CH_NOTISOUND
 Reproduce un archivo de sonido\ncuando recibes\ncorreo nuevo.
@@ -6963,12 +6714,10 @@ Excluye todas las carpetas de la\nbúsqueda, excepto la actual.
 MSG_MA_CONFIRMFILTER_ALL
 Todos los mensajes de la carpeta\n'%s' serán filtrados.\n\nDesea continuar?
 ; If you continue, all messages of folder\n'%s' will be filtered.\n\nDo you want to proceed?
-; FOLDER
 ;
 MSG_MA_CONFIRMFILTER_SELECTED
 Has seleccionado varios mensajes en\nla carpeta '%s'. Sólo serán filtrados\nestos mensajes.\n\nQuieres proceder?
 ; You have selected several messages in\nfolder '%s'. Only these messages\nare going to be filtered.\n\nDo you want to proceed?
-; FOLDER
 ;
 MSG_AB_XML
 Agenda de contactos XML (*.xml)
@@ -6977,12 +6726,10 @@ Agenda de contactos XML (*.xml)
 MSG_MA_FILTER_STATS_SPAM
 Filtrado realizado:\n\n%3ld mensaje(s) comprobado(s),\n%3ld reenviado(s),\n%3ld archivado(s),\n%3ld borrado(s),\n%3ld clasificado(s) como spam
 ; Filtering done:\n\n%3ld messages checked,\n%3ld forwarded,\n%3ld archived,\n%3ld deleted,\n%3ld classified as spam
-; COUNT, COUNT, COUNT, COUNT, COUNT
 ;
 MSG_TR_FILTER_STATS_SPAM
 \nFiltrado realizado:\n\n%3ld mensaje(s) comprobado(s),\n%3ld remitido(s),\n%3ld reenviado(s),\n%3ld auto-contestado(s),\n%3ld comando(s) activado(s),\n%3ld movido(s),\n%3ld borrado(s),\n%3ld clasificado(s) como spam
 ; \nFiltering done:\n\n%3ld messages checked,\n%3ld bounced,\n%3ld forwarded,\n%3ld auto-replied,\n%3ld command activated,\n%3ld moved,\n%3ld deleted,\n%3ld classified as spam
-; COUNT, COUNT, COUNT, COUNT, COUNT, COUNT, COUNT, COUNT
 ;
 MSG_FCHANGE_WARN_TITLE
 Advertencia cambio de archivo
@@ -6991,12 +6738,10 @@ Advertencia cambio de archivo
 MSG_FCHANGE_WARN
 Mientras has editado el texto del mensaje\nde la ventana de escritura %ld en un editor externo,\nel texto en el editor interno ha\nsido modificado también.\n\nQuiere realmente utilizar el texto\ndel editor externo obviando los cambios\nrealizados en el editor interno?
 ; While you have edited the message text\nof write window %ld in an external editor,\nthe text in the internal text editor has\nalso been altered.\n\nDo you really want to use the text of\nthe external editor dropping the changes\ndone in the internal editor?
-; NUMBER
 ;
 MSG_LOG_SENDING_FAILED
 Falló el envío de %ld mensaje(s) usando servidor SMTP '%s'
 ; Sending %ld message(s) using SMTP server '%s' failed
-; COUNT, HOST
 ;
 MSG_HELP_EA_ST_BIRTHDAY
 Fecha de cumpleaños en formato local\n(ej. 19.06.1974 o 19/06/1974).
@@ -7026,82 +6771,66 @@ Acerca de YAM
 MSG_ER_CONNECTERR_SOCKET_IN_USE_POP3
 No puedo conectar con la dirección '%s' de la cuenta '%s'.\n\nUna conexión socket TCP/IP parece estar ya activa. Por favor cierra cualquier otra transferencia existente.
 ; Couldn't connect to host '%s' of account '%s'.\n\nA TCP/IP socket connection seems to be already active. Please close any other existing transfers.
-; HOST, ACCOUNT
 ;
 MSG_ER_CONNECTERR_TIMEDOUT_POP3
 No puedo conectar con la dirección '%s' de la cuenta '%s'.\n\nEl servidor de correo no respondió con la temporización predefinida y por lo tanto está acabada.
 ; Couldn't connect to host '%s' of account '%s'.\n\nThe mail server didn't respond within the predefined time frame and therefore timed out.
-; HOST, ACCOUNT
 ;
 MSG_ER_CONNECTERR_NO_SOCKET_POP3
 No puedo conectar con la dirección '%s' de la cuenta '%s'.\n\nYAM no pudo establecer una conexión socket con el servidor de correo. Por favor asegúrate que tu pila TCP/IP está activa y funcionando correctamente.
 ; Couldn't connect to host '%s' of account '%s'.\n\nYAM wasn't able to establish a socket connection to the mail server. Please make sure that your TCP/IP stack is online and working properly.
-; HOST, ACCOUNT
 ;
 MSG_ER_CONNECTERR_NO_NONBLOCKIO_POP3
 No puedo conecar con el host '%s' de la cuenta '%s'.\n\nYAM no pudo establecer una conexión asíncrona I/O con el servidor de correo. Por favor asegúrate de que la pila TCP/IP puede establecer conexiones asíncronas I/O.
 ; Couldn't connect to host '%s' of account '%s'.\n\nYAM wasn't able to establish a non-blocking I/O connection to the mail server. Please make sure that your TCP/IP stack can establish non-blocking I/O connections.
-; HOST, ACCOUNT
 ;
 MSG_ER_UNKNOWN_HOST_POP3
 Servidor POP3 desconocido '%s' de la cuenta '%s'.\n\nTCP/IP está apagado o la dirección del servidor no es válida.
 ; Unknown POP3 server '%s' of account '%s'.\n\nTCP/IP is offline or the server address is invalid.
-; HOST, ACCOUNT
 ;
 MSG_ER_CANNOT_CONNECT_POP3
 No puedo conectar con la dirección '%s' de la cuenta '%s'.\n\nEl servidor de correo está actualmente caído o no soporta el protocolo POP3.
 ; Couldn't connect to host '%s' of account '%s'.\n\nThe mail server is currently down or doesn't support the POP3 protocols.
-; HOST, ACCOUNT
 ;
 MSG_ER_POP3WELCOME
 Servidor POP3 '%s' de la cuenta '%s' respondde con un mensaje de error durante el procedimiento de inicio y la conexión fue abortada:\n\n%s\n\n
 ; POP3 server '%s' of account '%s' replied with an error message during the welcome procedure and the connection was terminated:\n\n%s\n\n
-; SERVER, ACCOUNT, TEXT
 ;
 MSG_ER_BADRESPONSE_POP3
 Respuesta errónea del servidor de correo '%s' de la cuenta '%s' al comando '%s':\n\n%s\n\nEl servidor de correo no puede ejecutar el comando y responde con el mensaje de error de arriba.
 ; Bad response from mail server '%s' of account '%s' to command '%s':\n%s\n\nThe mail server couldn't execute the command and replied with the above error message.
-; SERVER, ACCOUNT, COMMAND, TEXT
 ;
 MSG_ER_INITTLS_POP3
 No puedo inicializar la sesión TLSv1/SSLv3 con el host '%s' de la cuenta '%s'.
 ; Couldn't initialize TLSv1/SSLv3 session with host '%s' of account '%s'.
-; HOST, ACCOUNT
 ;
 MSG_ER_NO_APOP
 El servidor POP3 '%s' de la cuenta '%s' no soporta APOP. Por favor desactiva APOP en la configuración.
 ; The POP3 server '%s' of account '%s' doesn't support APOP. Please disable APOP in the configuration.
-; HOST, ACCOUNT
 ;
 MSG_ER_CONNECTERR_SOCKET_IN_USE_SMTP
 No puedo conectar con la dirección '%s'.\n\nUna conexión socket TCP/IP parece estar ya activa. Por favor cierra cualquier otra transferencia existente.
 ; Couldn't connect to host '%s'.\n\nA TCP/IP socket connection seems to be already active. Please close any other existing transfers.
-; HOST
 ;
 MSG_ER_CONNECTERR_TIMEDOUT_SMTP
 No puedo conectar con la dirección '%s'.\n\nEl servidor de correo no respondió con la temporización predefinida y por lo tanto se finalizó la conexión.
 ; Couldn't connect to host '%s'.\n\nThe mail server didn't respond within the predefined time frame and therefore timed out.
-; HOST
 ;
 MSG_ER_CONNECTERR_NO_SOCKET_SMTP
 No puedo conectar con la dirección '%s'.\n\nYAM no pudo establecer una conexión socket con el servidor de correo.
 ; Couldn't connect to host '%s'.\n\nYAM wasn't able to establish a socket connection to the mail server. Please make sure that your TCP/IP stack is online and working properly.
-; HOST
 ;
 MSG_ER_CONNECTERR_NO_NONBLOCKIO_SMTP
 No puedo conectar al host '%s'.\n\nYAM no pudo establecer una conexión asincrona I/O con el servidor de correo.
 ; Couldn't connect to host '%s'.\n\nYAM wasn't able to establish a non-blocking I/O connection to the mail server. Please make sure that your TCP/IP stack can establish non-blocking I/O connections.
-; HOST
 ;
 MSG_ER_INITTLS_SMTP
 No puedo inicializar la sesión TLSv1/SSLv3 sin el host '%s'.
 ; Couldn't initialize TLSv1/SSLv3 session with host '%s'.
-; HOST
 ;
 MSG_ER_NOSTARTTLS_SMTP
 El servidor SMTP '%s' no soporta TLS/SSL. Por favor desactiva esta opción en la configuración.
 ; Your SMTP server '%s' doesn't support TLS/SSL. Please disable this option in the configuration.
-; HOST
 ;
 MSG_ER_BADRESPONSE_SMTP
 Respuesta errónea del servidor de correo '%s' al comando '%s':\n\n%s\n\nEl servidor de correo no puede ejecutar el comando y contestó con el mensaje de error de arriba.
@@ -7111,12 +6840,10 @@ Respuesta errónea del servidor de correo '%s' al comando '%s':\n\n%s\n\nEl servi
 MSG_ER_CANNOT_CONNECT_SMTP
 No puedo conectar con la dirección '%s'.\n\nEl servidor de correo está actualmente caído o no soporta protocolo SMTP.
 ; Couldn't connect to host '%s'.\n\nThe mail server is currently down or doesn't support the SMTP protocols.
-; HOS
 ;
 MSG_ER_UNKNOWN_HOST_SMTP
 Servidor SMTP desconocido '%s'.\n\nTCP/IP está apagado o la dirección del servidor no es válida.
 ; Unknown SMTP server '%s'.\n\nTCP/IP is offline or the server address is invalid.
-; HOST
 ;
 MSG_ER_NO8BITMIME_SMTP
 El servidor SMTP '%s' devolvió que no soporta transferencia de correo en 8bit ya que tiene activada la opción de utilizar transferencia 8bit.\n\nPor favor desactive esta opción en sus preferencias TCP/IP\ny reedite el mensaje antes de intentar enviarlo otra vez,\nde lo contrario el mensaje puede quedar deteriorado.
@@ -7141,7 +6868,6 @@ Los anexos siguientes serán borrados:\n%s\nQuiere realmente continuar?
 MSG_LOG_DELETEDATT
 Borrado anexo(s) del mensaje '%s' en la carpeta '%s'
 ; Deleted attachment(s) of message '%s' in folder '%s'
-; MAILFILE, FOLDER
 ;
 MSG_MA_DELETEATT
 Borrar
@@ -7190,12 +6916,10 @@ Si está activado, la búsqueda para mensajes del\nmismo tema será extendida a tod
 MSG_FILE_OVERWRITE
 Archivo '%s' ya existe.\n\nQuieres sobreescribirlo?
 ; File '%s' already exists.\n\nDo you want to overwrite it?
-; FILENAME
 ;
 MSG_ER_USER_DIR_MISSING
 El directorio base '%s' del usuario '%s' no existe.
 ; The home directory '%s' of user '%s' does not exist.
-; PATH, USERNAME
 ;
 MSG_CO_TEXTCOLORS_READ
 Muestra colores de tex_to
@@ -7272,7 +6996,6 @@ MSG_CO_SPAM_STATISTICS
 MSG_ER_WRONG_DOB_FORMAT
 Utilizas un formato erróneo para la fecha de nacimiento. El formato correcto es '%s'.\n%%d - día con cero a izquierda (01-31)\n%%-d - día sin cero a izquierda (1-31)\n%%e - día con espacio a izquierda ( 1-31)\n%%m - mes con cero a izquierda (01-12)\n%%-m - mes sin cero a izquierda (1-12)\n%%y - año con ceros a izquierda (00-99, 2 dígitos)\n%%-y - año sin ceros a izquierda  (0-99, 2 dígitos)\n%%Y - año (4 dígitos)\n%%-Y - año sin ceros a izquierda (4 digitos).\nEl año debe ser mayor o igual a 1900.
 ; Date of birth uses a wrong format. The correct format is '%s'.\n%%d  - day with leading zeros (01-31)\n%%-d - day without leading zeros (1-31)\n%%e  - day with leading spaces ( 1-31)\n%%m  - month with leading zeros (01-12)\n%%-m - month without leading zeros (1-12)\n%%y  - year with leading zeros (00-99, 2 digits)\n%%-y - year without leading zeros (0-99, 2 digits)\n%%Y  - year with leading zeros (4 digits)\n%%-Y - year without leading zeros (4 digits)\nThe year number must be greater or equal 1900.
-; DOBFORMAT
 ;
 MSG_CO_NOTIOS41SYSTEM
 Notificación del sistema AmigaOS_4.1
@@ -7289,7 +7012,6 @@ John Doe
 MSG_RE_DEFAULT_MIMEPART_NAME
 Parte %ld.%ld
 ; Part %ld.%ld
-; PARENTNUMBER PARTNUMER
 ;
 MSG_OPEN_WRITEWINDOWS
 Existen todavía algunas ventanas de escritura abiertas!\n\nCómo quieres proceder?
@@ -7334,12 +7056,10 @@ Firma PGP
 MSG_AB_BirthdayReqBody
 Hoy, el %s, %s cumple %ld años. ¿Desea enviarle una tarjeta de felicitación?
 ; Today, on %s, %s reaches age %ld.\n\nDo you want to send a greetings card?
-; DATE, NAME, AGE
 ;
 MSG_ER_AREXX_EXECUTION_ERROR
 La ejecución del comando ARexx '%s' ha fallado (código de error %ld).\nPor favor, asegúrese de que el archivo es accesible y es un script válido de comandos ARexx.
 ; Execution of the ARexx command '%s' failed (error code %ld).\nPlease make sure that the file is accessible and is a valid ARexx script.
-; COMMANDNAME, ERRORCODE
 ;
 MSG_BIRTHDAYREQUEST_DONTSHOWAGAIN
 No mostrar esta solicitud hoy de nuevo.
@@ -7356,7 +7076,7 @@ No hay actualizaciones disponibles
 MSG_UPD_NO_UPDATES_FOUND
 No hay actualizaciones de software.\n%s
 ; There are no software updates available.\n%s
-; HINT
+; 
 MSG_UPD_NO_UPDATES_FOUND_HINT_AUTOCHECK
 YAM comprobará automáticamente actualizaciones disponibles.
 ; YAM will check for available updates automatically.
@@ -7380,7 +7100,6 @@ _Reintentar|_Ignorar
 MSG_EXECUTE_COMMAND_FAILED
 La ejecución del comando '%s' ha fallado (código de error %ld: %s).
 ; The execution of the command '%s' failed (error code %ld: %s).
-; COMMAND, ERRORCODE, ERRORSTRING
 ;
 MSG_ERROR_METHODSTACK
 No se puede iniciar método de pila.
@@ -7397,17 +7116,14 @@ No puedo iniciar conexiones.
 MSG_LOG_CONNECT_POP3
 Identificado en la cuenta POP3 '%s': esperando %ld mensajes
 ; Logged in on POP3 account '%s': %ld messages waiting
-; ACCOUNT, COUNT
 ;
 MSG_LOG_RETRIEVED_POP3
 Recogido %ld mensaje(s) de la cuenta POP3 '%s'
 ; Retrieved %ld message(s) from POP3 account '%s'
-; COUNT, ACCOUNT
 ;
 MSG_TR_ENTER_POP3_PASSWORD
 Por favor introduzca la clave para\nla cuenta POP3 '%s':
 ; Please enter the password for\nPOP3 account '%s':
-; ACCOUNT
 ;
 MSG_ALTIMAGE_STATUS_DOWNLOAD
 D
@@ -7432,17 +7148,14 @@ Esperando preselección del usuario...
 MSG_POP3_NEW_MAIL_NOTIFY_REQ
 \e8Tiene nuevo correo de la cuenta '%s'.\e2\n\n%3ld mensajes descargados,\n%3ld en el servidor\n%3ld duplicados evitados\n
 ; \e8You have new mail from account '%s'.\e2\n\n%3ld messages downloaded,\n%3ld left on server\n%3ld duplicates skipped\n
-; ACCOUNT, COUNT, COUNT, COUNT, COUNT
 ;
 MSG_POP3_NEW_MAIL_NOTIFY_OS4_ONE
 %s\nRecibido 1 nuevo mensaje.
 ; %s\nReceived 1 new mail.
-; ACCOUNT
 ;
 MSG_POP3_NEW_MAIL_NOTIFY_OS4_MANY
 %s\nRecibidos %ld nuevos mensajes.
 ; %s\nReceived %ld new mails.
-; ACCOUNT, COUNT
 ;
 MSG_MA_SEND_AND_GET_MAIL
 Enviar y recibir correo
@@ -7503,12 +7216,10 @@ Comprobar automáticamente nuevo correo de esta cuenta cada vez que inicie YAM.
 MSG_IMPORT_UNKNOWN_FILE_FORMAT
 Formato de archivo de correo desconocido en el archivo '%s'.
 ; Unknown mail file format in file '%s'.
-; FILE
 ;
 MSG_IMPORT_NO_MAILS
 El archivo '%s' no contiene correos que se puedan importar.
 ; The file '%s' does not contain any importable mails.
-; FILE
 ;
 MSG_CO_CONFIG_IS_LOCKED
 La configuración está bloqueada.\n\nPor favor espere hasta que todas las transferencias del POP3 y SMTP hayan finalizado.
@@ -7517,12 +7228,10 @@ La configuración está bloqueada.\n\nPor favor espere hasta que todas las transfe
 MSG_FOLDERINFO_SHORTHELP
 \ebCarpeta actual\en\nNombre: %s\nRuta: %s\nTamaño: %s\nMensajes: %ld (%ld nuevos, %ld sin leer)
 ; \ebFolder\en\nName: %s\nPath: %s\nSize: %s\nMessages: %ld (%ld new, %ld unread)
-; NAME, PATH, SIZE, COUNT, COUNT, COUNT
 ;
 MSG_MAILINFO_SHORTHELP
 \ebMensaje actual\en\nDe: %s <%s>\nPara: %s <%s>\nAsunto: %s\nFecha: %s\nArchivo: %s\nTamaño: %s
 ; \ebMail\en\nFrom: %s <%s>\nTo: %s <%s>\nSubject: %s\nDate: %s\nFilename: %s\nSize: %s
-; NAME, ADDRESS, NAME, ADDRESS, SUBJECT, DATE, FILENAME, SIZE
 ;
 MSG_CO_UPDATE_DOWNLOAD_PATH
 Ruta de Descarga:
@@ -7535,7 +7244,7 @@ Descargar
 MSG_TR_DOWNLOADING_FROM_SERVER
 Descargando desde '%s'
 ; Downloading from '%s'
-; SERVER
+; 
 MSG_MA_HELP
 Ayuda
 ; Help
@@ -7555,12 +7264,10 @@ Buscar en gra_vatar.com...
 MSG_ER_NO_GRAVATAR_FOUND
 No se ha encontrado Gravatar para la dirección '%s'.    Quizas esta persona no ha subido todavía su fotografía a gravatar.com.
 ; No Gravatar found for address '%s'.\n\nPerhaps the person has not uploaded a portrait image to gravatar.com yet.
-; ADDRESS
 ;
 MSG_ER_NON_MIME_CONFORMANT_MAIL
 No se ha encontrado la cabecera 'MIME-Version' mientras escaneaba el archivo '%s'. La salida generada, por tanto, puede contener datos no válidos o puede estar dañado.
 ; No 'MIME-Version' header line was found while scanning the mail file '%s'. The generated output may therefore contain invalid data or may be corrupted.
-; MSGFILE
 ;
 MSG_CO_ACTION_SET_STATUS_TO_MARKED
 Fijar estado a 'Marcado'
@@ -7763,11 +7470,11 @@ Sin firma
 ; no signature
 ;
 MSG_CO_IDENTITY_ABOVEQUOTE
-antes del citado
+antes de la cita
 ; above quotes
 ;
 MSG_CO_IDENTITY_BELOWQUOTE
-después del citado
+después de la cita
 ; below quotes
 ;
 MSG_CO_IDENTITY_DESCRIPTION
@@ -7881,12 +7588,10 @@ Nombre de usuario para acceso al\nservidor de correo.
 MSG_FO_MOVEFOLDERTO
 Realmente quiere mover la carpeta desde\n'%s'\nto\n'%s'?
 ; Do you really want to move the folder from\n'%s'\nto\n'%s'?
-; FROM,TO
 ;
 MSG_FO_FOLDER_ALREADY_EXISTS
 El archivo o directorio llamado '%s' ya existe\nyserá sobreescrito/borrado.\n\nRealmente quiere proceder?
 ; A file or directory named '%s' already exists\nand will be overwritten/deleted.\n\nDo you really want to proceed?
-; PATH
 ;
 MSG_ER_CANNOT_CREATE_FOLDER
 Error al crear el directorio '%s' (%s).
@@ -7900,10 +7605,6 @@ _Activo
 MSG_MA_FLUSH_ALL_INDICES
 Eliminar todos losindices
 ; Flush all indices
-;
-MSG_FI_CONDITION
-Condición
-; Condition
 ;
 MSG_HELP_CO_CH_IDENTITY_ENABLED
 Si está activado, esta identidad del usuario está habilitada para su uso.
@@ -8168,7 +7869,6 @@ _Aceptar|Aceptar _Permanentemente|Mo_strar Certificado|*_Rechazar
 MSG_SSL_CERT_WARNING_INTRO
 Error en la validación del servidor para el certificado '\033b%s:%d\033n':
 ; Error validating server certificate for '\033b%s:%d\033n':
-; HOSTNAME, PORT
 ;
 MSG_SSL_CERT_WARNING_UNTRUSTED
 - El certificado no es emitido por una autoridad de confianza. Usar la\nhuella digital para validar el certificado manualmente.
@@ -8193,27 +7893,22 @@ MSG_SSL_CERT_WARNING_OTHER
 MSG_SSL_CERT_WARNING_INFO
 Información del Certificado:\n- Nombre: \033b%s\033n\n- Válido: \033b%s\033n hasta \033b%s\033n\n- Emisor: \033b%s\033n\n- Huella Digital: \033b%s\033n
 ; Certificate information:\n- Hostname: \033b%s\033n\n- Valid: \033b%s\033n until \033b%s\033n\n- Issuer: \033b%s\033n\n- Fingerprint: \033b%s\033n
-; HOSTNAME, VALID_FROM, VALID_TO, ISSUER, FINGERPRINT
 ;
 MSG_SSL_CERT_WARNING_SHOWTITLE
 Certificado de %s:%d
 ; Certificate of %s:%d
-; HOSTNAME, PORT
 ;
 MSG_ER_WARN_CAFILE
 Al tratar de establecer una conexión SSL no se encuentra el certificado '%s' en el paquete de certificados.\n\nPor favor, asegúrese de que el certificado existe y está actualizado o si no\ncada conexión SSL se marcará como no verificada.
 ; While trying to establish a SSL connection the certificate bundle file '%s' was found to be missing.\n\nPlease make sure that the file exists and is uptodate or otherwise each SSL connection will be flagged as unverified.
-; FILEPATH
 ;
 MSG_ER_WARN_LOADCAPATH
 Al tratar de cargar el paquete de certificados '%s' o los certificados individuales de '%s' se ha producido un error.\n\nPor favor, asegúrese de que no se ha colocado ningún archivo\nno válido en la carpeta de certificados.
 ; While trying to load the certificate bundle '%s' or individual certificate files from '%s' an error occurred.\n\nPlease make sure that no invalid file has been placed in the certificate folder.
-; FILEPATH, DIRPATH
 ;
 MSG_ER_WARN_CAPATH
 Al tratar de instalar un certificado SSL se detectó que no se encuentra en el directorio '%s'.\n\nPor favor, asegúrese de que el camino existe y contiene el archivo de paquete de certificado que se \nsuministra durante el proceso de instalación de YAM.
 ; While trying to setup a SSL certificate verify the directory '%s' was found to be missing.\n\nPlease make sure that the path exists and contains the certificate bundle file as supplied during the installation process of YAM.
-; DIRPATH
 ;
 MSG_CO_ACTION_TERMINATE_FILTER
 Finalizar proceso de filtrado
@@ -8266,7 +7961,6 @@ Mostrar caracteres
 MSG_CANNOT_CREATE_CUSTOM_CLASS
 Error al crear clase personalizada de '%s'\ncomo subclase de '%s'.
 ; Failed to create custom class '%s'\nas subclass of '%s'.
-; CLASS,SUPERCLASS
 ;
 MSG_ER_MORPHOS_REXX_WARNING
 YAM ha identificado que está ejecutando una versión de la 'rexxsyslib.library' en su sistema MorphOS que se sabe que no funciona ARexx.\n\nPara resolver esta situación y conseguir que ARexx corra con YAM\nusted debe instalar una copia de la 'rexxsyslib.library' desde 'SYS:Libs' de una instalación de AmigaOS 3.1-3.9,\nrenombre 'rexxsyslib.library' en MOSSYS:Libs" y reinicie el sistema.
@@ -8291,7 +7985,6 @@ Cerrar
 MSG_LOG_REDIRECT
 Mensaje redirigido desde '%s' sobre '%s' a '%s'
 ;Redirected message from '%s' about '%s' to '%s'
-; SENDER, SUBJECT, RECIPIENT
 ;
 MSG_CO_ACTIONREDIRECT
 _Redirigir
@@ -8332,5 +8025,245 @@ Redirigir mensaje(s)
 MSG_ER_CANNOT_CREATE_MAIL_FILE
 No puedo crear archivo de correo '%s'.\n\nMotivo: Directorio incorrecto o espacio insuficiente en disco.
 ;Could not create mail file '%s'.\n\nReason: invalid folder directory or insufficient disk space.
-; FILE
+;
+MSG_WR_RENAME
+_Renombrar
+;_Rename
+;
+MSG_WR_RENAME_ATTACHMENT
+Renombrar anexo
+;Rename attachment
+;
+MSG_WR_ENTER_NEW_NAME
+Introducir nuevo nombre del anexo:
+;Enter new attachment name:
+;
+MSG_FI_SKIP_ENCRYPTED
+Saltar correos encriptados
+;Skip encrypted mails
+;
+MSG_HELP_FI_CH_SKIP_ENCRYPTED
+Salta correos encripatdos (p.ej. PGP)\ndurante la búsqueda.
+;Skip encrypted mails (i.e. PGP)\nduring the search.
+;
+MSG_CO_QUICKSEARCHBAR
+Barra de Búsqueda rápida
+;Quick search bar
+;
+MSG_HELP_CO_CH_QUICKSEARCHBAR
+Aquí puede seleccionar la posición de la barra de búsqueda rápida.
+;Here you can select the position of the quick search bar.
+;
+MSG_CO_QUICKSEARCHBARPOS
+Posición
+;Posi_tion
+;
+MSG_CO_QUICKSEARCHBARPOS01
+Desactivado
+;Disabled
+;
+MSG_CO_QUICKSEARCHBARPOS02
+Arriba
+;Top
+;
+MSG_CO_QUICKSEARCHBARPOS03
+Abajo
+;Bottom
+;
+MSG_CO_FILTER_REGISTER_SETTINGS
+General
+;General
+;
+MSG_CO_FILTER_REGISTER_CONDITIONS
+Condiciones
+;Conditions
+;
+MSG_CO_FILTER_REGISTER_ACTIONS
+Acciones
+;Actions
+;
+MSG_CO_CONDITION_ALL
+todas
+; all
+;
+MSG_CO_CONDITION_MIN_ONE
+al menos una
+; one or more
+;
+MSG_CO_CONDITION_MAX_ONE
+sólo una
+; only one
+;
+MSG_WR_CMENU_TITLE
+Anexos
+; Attachments
+;
+MSG_WR_CMENU_ADD_ATTACHMENT
+Añadir archivo(s)...
+; Add file(s)...
+;
+MSG_WR_CMENU_ADD_ARCHIVE_ATTACHMENT
+Comprimir y añadir...
+; Pack & add...
+;
+MSG_WR_CMENU_REMOVE_ATTACHMENT
+Eliminar
+; Remove
+;
+MSG_WR_CMENU_RENAME_ATTACHMENT
+Renombrar...
+; Rename...
+;
+MSG_WR_CMENU_DISPLAY_ATTACHMENT
+Mostrar
+; Display
+;
+MSG_WR_TITLEATTACHMENT
+Anexo
+; Attachment
+;
+MSG_WR_REMOVE
+Eli_minar
+; Re_move
+;
+MSG_CO_CONDITION_PREPHRASE
+Si
+; If
+;
+MSG_CO_CONDITION_POSTPHRASE
+de las siguientes condiciones se cumple:
+; of the following conditions are met:
+;
+MSG_CO_FALLBACK_TZONE
+America/New_York
+; America/New_York
+; !!! WARNING !!!
+; Do not translate this fallback name, but just choose a
+; location which represents the language's time zone
+; as good as possible. If there are multiple possibilities
+; for you language, use the one that matches the captial
+; of your country/language most. This fallback name MUST
+; match EXACTLY one of the locations in the Resources/zoneinfo
+; directory. Spaces MUST be replaced by '_'. All locations
+; names MUST be kept in english language.
+;
+MSG_HELP_CO_GR_TZONE
+Aqui puede configurar su ubicación actual/zona horaria.
+; Here you can set your current location/time zone.
+;
+MSG_CO_TZONE_GMTOFFSET
+Actual variación GMT:
+; Current GMT offset:
+;
+MSG_CO_TZONE_NEXTDSTSWITCH
+Próximo cambio DST:
+; Next DST switch:
+;
+MSG_CO_TZONE_NODSTSWITCH
+No cambiar horario de verano
+; no daylight saving
+;
+MSG_CO_TZONE_DESCRIPTION
+Descripción:
+; Description:
+;
+MSG_CO_TZONE_DESCRIPTION_NA
+n/a
+; n/a
+;
+MSG_TZONE_ZONETAB_FILE_MISSING
+No se puede abrir archivo de descripción de zonas horarias\n'%s/Resources/zoneinfo/zone.tab'.\n\nPor favor, asegúrese de instalar todas las zonas de gestión horaria\nen el directorio '%s/Resources/zoneinfo'.
+; Cannot open time zones description file\n'%s/Resources/zoneinfo/zone.tab'.\n\nPlease make sure to install all time zones management\nrelated files to the '%s/Resources/zoneinfo' directory.
+;
+MSG_TZONE_LOCATION_FILE_MISSING
+No se puede abrir el archivo de información de zona horaria '%s'.\n\nLa información de la zona horaria será incorrecta. Por favor, asegúrese de instalar todos los archivos relacionados con las zonas de gestión horaria en el directorio '%s/Resources/zoneinfo'.
+; Cannot open time zone information file '%s'.\n\nTime zone information will be incorrect. Please make sure to install all time zones management related files to the '%s/Resources/zoneinfo' directory.
+;
+MSG_FOLDER_MOVE_WARNING_TITLE
+Advertencia formato de carpeta YAM
+; YAM folder format warning
+;
+MSG_FOLDER_MOVE_WARNING
+Se ha detectado un formato de almacenamiento de carpetas obsoleto\n\nYam moverá todos los directorios de carpetas a un nuevo\nsubdirectorio denominado "Folders" en el directorio de correo '%s'.\n\n\033bATENCION:\033n\nEsta operación es \033birreversible\033n y dará lugar a\ncarpetas que ya no serán compatibles con las\nversiones anteriores de YAM.\n\n¿Desea realizar esta operación ahora o\nsalir de YAM y hacer una copia de seguridad antes?
+; An obsolete folder storage format has been found.\n\nYAM will now move all folder directories to a new\nsubdirectory called 'Folders' in the mail directory '%s'.\n\n\033bWARNING:\033n\nThis operation is \033birreversible\033n and will result in\nfolders which are no longer compatible to former\nversions of YAM.\n\nDo you want to perform this operation now or\nquit YAM and make a backup first?
+;
+MSG_FOLDER_MOVE_WARNING_GADS
+_Continuar|*_Salir
+; _Continue|*_Quit
+;
+MSG_FO_DISPLAYNAME
+Mostrar _nombre
+; Display _name
+;
+MSG_FO_DIRECTORYNAME
+No_mbre Directorio
+; Directory na_me
+;
+MSG_VALIDATING_FOLDERS
+Validando carpetas...
+; Validating folders...
+;
+MSG_MA_MARCHIVE
+Archivo
+; Archive
+;
+MSG_MA_ARCHIVE
+Archivo
+; Archive
+;
+MSG_CO_SHOW_ARCHIVER_PROGRESS
+Mostrar progreso
+; Show progress
+;
+MSG_CO_LAUNCH_EXTEDITOR
+_Iniciar editor externo inmediatamente
+; _Launch external editor immediately
+;
+MSG_CO_EXTEDITOR
+Preferencias editor externo
+; External editor settings
+;
+MSG_HELP_CO_ST_EDITOR_EXT
+Ruta de su editor externo favorito\nque se pueda utilizar como\nalternativo al editor interno.
+; Path to your favourite external\neditor which you can use as an\nalternative to the internal one.
+;
+MSG_CO_EXTEDITOR_CODESET
+Mostrar jue_go de caracteres
+; Display c_harset
+;
+MSG_HELP_CO_TX_DEFCODESET_EDITOR
+Seleccione un juego de caracteres para que el texto\nse pueda convertir antes de empezar\nel editor externo.
+; Choose a charset to which the text\nwill be converted to before starting\nthe external editor.
+;
+MSG_HELP_CO_TX_DEFCODESET_LOCAL
+Utilice el botón emergente para seleccionar el juego de caracteres\nque desea para que YAM lo utilice para la visualización del texto.\nEste debe coincidir generalmente con el juego de caracteres\npor defecto del sistema, de lo contrario aparecerá una petición del sistema\nconsultandole como proceder.
+; Use the popup button to select the character set\nyou would like YAM to use for displaying text.\nThis should usually match your system's default\ncharset, otherwise a requester will appear asking\nhow to proceed.
+;
+MSG_HELP_CO_TX_DEFCODESET_WRITE
+Utilice el botón emergente para seleccionar el juego de caracteres\nque desea para que YAM codifique los mensajes de correo electrónico.\nEste debe coincidir generalmente con el juego de caracteres\npor defecto del sistema para que los caracteres mostrados coincidan con el correo  escrito. Sin embargo, puede seleccionar cualquier\njuego de caracteres que desee para codificar los mensajes salientes.
+; Use the popup button to select the character set\nyou would like YAM to encode emails to.\nThis should usually match your system's default\ncharset so that the displayed character set matches\nthe one you write mail. However, you can select any\ncharacter set you want to encode your outgoing mails\nto.
+;
+MSG_CO_DEFAULTCODESET_WRITE
+Jue_go de caracteres por defecto
+; Default c_harset
+;
+MSG_CO_MIME_CODESET
+Mostrar juego de _caracteres
+; Display _charset
+;
+MSG_HELP_CO_TX_MIME_CODESET
+Seleccione el juego de caracteres al que\ndebe convertirse el texto antes\nde ejecutar el comando de este tipo MIME.
+; Select the charset here that printable\ntext should be converted to before\nexecuting the command of this MIME type.
+;
+MSG_CO_DEFAULTVIEWER_CODESET
+Mostrar juego de caracteres
+; _Display charset
+;
+MSG_HELP_CO_TX_DEFVIEWER_CODESET
+Seleccione el juego de caracteres al que\ndebe convertirse el texto antes\nde iniciar el visor por defecto.
+; Select the charset here that printable\ntext should be converted to before\nstarting the default viewer.
+;
+MSG_LOG_FILTER_DONE
+%ld mensaje(s) filtrado(s) en la carpeta '%s': %ld coincide(n)
+; Filtered %ld message(s) with %ld match(es)
 ;

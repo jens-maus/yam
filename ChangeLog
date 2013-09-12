@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-02-17 Emilio Jimenez <ejim@ono.com>
+
+  * locale/spanish.ct: update to the latest changes.
+
 2013-09-12 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/FiltersConfigPage.c, mui/SearchControlGroup.c: disable the spam related
