@@ -320,7 +320,7 @@ DECLARE(ApplyFilters) // enum ApplyFilterMode mode, ULONG qualifier, struct Filt
       // the user has not cancelled the filter process
       if(applyFilters == TRUE)
       {
-        FilterMails(folder, mlist, msg->mode, &filterResult);
+        FilterMails(mlist, msg->mode, &filterResult);
 
         if(filterResult.Checked != 0 && msg->mode == APPLY_USER)
         {

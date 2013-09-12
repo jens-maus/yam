@@ -1035,7 +1035,7 @@ DECLARE(MoveCopyMail) // struct Mail *mail, struct Folder *frombox, struct Folde
 {
   ENTER();
 
-  MA_MoveCopy(msg->mail, msg->frombox, msg->tobox, msg->flags);
+  MA_MoveCopy(msg->mail, msg->tobox, msg->flags);
 
   RETURN(0);
   return 0;
@@ -1066,7 +1066,7 @@ DECLARE(FilterNewMails) // const struct MailList *mailList, struct FilterResult 
 {
   ENTER();
 
-  FilterMails(FO_GetFolderByType(FT_INCOMING, NULL), msg->mailList, APPLY_AUTO, msg->filterResult);
+  FilterMails(msg->mailList, APPLY_AUTO, msg->filterResult);
 
   // Now we jump to the first new mail we received if the number of messages has changed
   // after the mail transfer

@@ -231,7 +231,7 @@ struct RuleNode *CreateNewRule(struct FilterNode *filter, const int flags);
 struct RuleNode *GetFilterRule(struct FilterNode *filter, int pos);
 BOOL DoFilterSearch(const struct FilterNode *filter, const struct Mail *mail);
 BOOL CompareFilterLists(const struct MinList *fl1, const struct MinList *fl2);
-void FilterMails(struct Folder *folder, const struct MailList *mlist, const int mode, struct FilterResult *result);
+void FilterMails(const struct MailList *mlist, const int mode, struct FilterResult *result);
 BOOL FolderIsUsedByFilters(const char *folder);
 void RenameFolderInFilters(const char *oldFolder, const char *newFolder);
 void RemoveFolderFromFilters(const char *folder);

@@ -108,7 +108,7 @@
 extern struct Library *RexxSysBase;
 
 /* local protos */
-static struct Mail *MA_MoveCopySingle(struct Mail *mail, struct Folder *from, struct Folder *to, const ULONG flags);
+static struct Mail *MA_MoveCopySingle(struct Mail *mail, struct Folder *to, const ULONG flags);
 
 /***************************************************************************
  Module: Main
@@ -695,22 +695,20 @@ void MA_DeleteSingle(struct Mail *mail, const ULONG delFlags)
 
   if(mail != NULL && mail->Folder != NULL)
   {
-    struct Folder *mailFolder = mail->Folder;
-
     if(C->RemoveAtOnce == TRUE ||
-       isTrashFolder(mailFolder) ||
-       (isSpamFolder(mailFolder) && hasStatusSpam(mail)) ||
+       isTrashFolder(mail->Folder) ||
+       (isSpamFolder(mail->Folder) && hasStatusSpam(mail)) ||
        isFlagSet(delFlags, DELF_AT_ONCE))
     {
       char mailfile[SIZE_PATHFILE];
 
-      D(DBF_MAIL, "deleting mail with subject '%s' from folder '%s'", mail->Subject, mailFolder->Name);
+      D(DBF_MAIL, "deleting mail with subject '%s' from folder '%s'", mail->Subject, mail->Folder->Name);
 
       // before we go and delete/free the mail we have to check
       // all possible write windows if they are refering to it
       SetWriteMailDataMailRef(mail, NULL);
 
-      AppendToLogfile(LF_VERBOSE, 21, tr(MSG_LOG_DeletingVerbose), AddrName(mail->From), mail->Subject, mailFolder->Name);
+      AppendToLogfile(LF_VERBOSE, 21, tr(MSG_LOG_DeletingVerbose), AddrName(mail->From), mail->Subject, mail->Folder->Name);
 
       // make sure we delete the mailfile
       GetMailFile(mailfile, sizeof(mailfile), NULL, mail);
@@ -722,15 +720,15 @@ void MA_DeleteSingle(struct Mail *mail, const ULONG delFlags)
       // if we are allowed to make some noise we
       // update our Statistics
       if(isFlagClear(delFlags, DELF_QUIET))
-        DisplayStatistics(mailFolder, isFlagSet(delFlags, DELF_UPDATE_APPICON));
+        DisplayStatistics(mail->Folder, isFlagSet(delFlags, DELF_UPDATE_APPICON));
     }
     else
     {
       struct Folder *delfolder = FO_GetFolderByType(FT_TRASH, NULL);
 
-      D(DBF_MAIL, "moving mail with subject '%s' from folder '%s' to folder 'trash'", mail->Subject, mailFolder->Name);
+      D(DBF_MAIL, "moving mail with subject '%s' from folder '%s' to folder 'trash'", mail->Subject, mail->Folder->Name);
 
-      MA_MoveCopySingle(mail, mailFolder, delfolder, isFlagSet(delFlags, DELF_CLOSE_WINDOWS) ? MVCPF_CLOSE_WINDOWS : 0);
+      MA_MoveCopySingle(mail, delfolder, isFlagSet(delFlags, DELF_CLOSE_WINDOWS) ? MVCPF_CLOSE_WINDOWS : 0);
 
       // if we are allowed to make some noise we
       // update our statistics
@@ -740,7 +738,7 @@ void MA_DeleteSingle(struct Mail *mail, const ULONG delFlags)
         DisplayStatistics(delfolder, FALSE);
 
         // but update it now, if that is allowed
-        DisplayStatistics(mailFolder, isFlagSet(delFlags, DELF_UPDATE_APPICON));
+        DisplayStatistics(mail->Folder, isFlagSet(delFlags, DELF_UPDATE_APPICON));
       }
     }
   }
@@ -753,14 +751,16 @@ void MA_DeleteSingle(struct Mail *mail, const ULONG delFlags)
 ///
 /// MA_MoveCopySingle
 //  Moves or copies a single message from one folder to another
-static struct Mail *MA_MoveCopySingle(struct Mail *mail, struct Folder *from, struct Folder *to, const ULONG flags)
+static struct Mail *MA_MoveCopySingle(struct Mail *mail, struct Folder *to, const ULONG flags)
 {
+  struct Folder *from;
   struct Mail *newMail = NULL;
   char mfile[SIZE_MFILE];
   int result;
 
   ENTER();
 
+  from = mail->Folder;
   strlcpy(mfile, mail->MailFile, sizeof(mfile));
 
   if((result = TransferMailFile(isFlagSet(flags, MVCPF_COPY), mail, to)) >= 0)
@@ -836,20 +836,20 @@ static struct Mail *MA_MoveCopySingle(struct Mail *mail, struct Folder *from, st
 ///
 /// MA_MoveCopy
 //  Moves or copies messages from one folder to another
-void MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox, const ULONG flags)
+void MA_MoveCopy(struct Mail *mail, struct Folder *tobox, const ULONG flags)
 {
+  struct Folder *frombox;
   struct MailList *mlist;
   int selected;
 
   ENTER();
 
-  if(frombox == tobox && isFlagClear(flags, MVCPF_COPY))
-  {
-    LEAVE();
-    return;
-  }
+  if(mail != NULL)
+    frombox = mail->Folder;
+  else
+    frombox = GetCurrentFolder();
 
-  if(frombox != GetCurrentFolder() && mail == NULL)
+  if(isFlagClear(flags, MVCPF_COPY) && frombox == tobox)
   {
     LEAVE();
     return;
@@ -859,7 +859,7 @@ void MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox
   if(mail != NULL)
   {
     selected = 1;
-    MA_MoveCopySingle(mail, frombox, tobox, flags);
+    MA_MoveCopySingle(mail, tobox, flags);
   }
   else if((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE)) != NULL)
   {
@@ -879,7 +879,7 @@ void MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox
     ForEachMailNode(mlist, mnode)
     {
       if(mnode->mail != NULL)
-        MA_MoveCopySingle(mnode->mail, frombox, tobox, flags);
+        MA_MoveCopySingle(mnode->mail, tobox, flags);
 
       // if BusyProgress() returns FALSE, then the user aborted
       if(BusyProgress(busy, ++i, selected) == FALSE)
@@ -2076,8 +2076,7 @@ void MA_ClassifyMessage(enum BayesClassification bclass)
             setStatusToUserSpam(mail);
 
             // move the mail
-            if(GetCurrentFolder() != spamFolder)
-              MA_MoveCopySingle(mail, GetCurrentFolder(), spamFolder, MVCPF_CLOSE_WINDOWS);
+            MA_MoveCopySingle(mail, spamFolder, MVCPF_CLOSE_WINDOWS);
           }
           else if(hasStatusHam(mail) == FALSE && bclass == BC_HAM)
           {
@@ -2107,8 +2106,8 @@ void MA_ClassifyMessage(enum BayesClassification bclass)
               }
 
               // if the mail has not been moved to another folder before we move it to the incoming folder now.
-              if(moveToIncoming == TRUE && GetCurrentFolder() != incomingFolder)
-                MA_MoveCopySingle(mail, GetCurrentFolder(), incomingFolder, MVCPF_CLOSE_WINDOWS);
+              if(moveToIncoming == TRUE)
+                MA_MoveCopySingle(mail, incomingFolder, MVCPF_CLOSE_WINDOWS);
             }
           }
         }
@@ -3107,17 +3106,12 @@ MakeStaticHook(MA_ImportMessagesHook, MA_ImportMessagesFunc);
 //  Moves selected messages to a user specified folder
 HOOKPROTONHNONP(MA_MoveMessageFunc, void)
 {
-  struct Folder *folder;
+  struct Folder *dst;
 
   ENTER();
 
-  if((folder = GetCurrentFolder()) != NULL)
-  {
-    struct Folder *dst;
-
-    if((dst = FolderRequest(tr(MSG_MA_MoveMsg), tr(MSG_MA_MoveMsgReq), tr(MSG_MA_MoveGad), tr(MSG_Cancel), NULL, G->MA->GUI.WI)) != NULL)
-      MA_MoveCopy(NULL, folder, dst, MVCPF_CLOSE_WINDOWS);
-  }
+  if((dst = FolderRequest(tr(MSG_MA_MoveMsg), tr(MSG_MA_MoveMsgReq), tr(MSG_MA_MoveGad), tr(MSG_Cancel), NULL, G->MA->GUI.WI)) != NULL)
+    MA_MoveCopy(NULL, dst, MVCPF_CLOSE_WINDOWS);
 
   LEAVE();
 }
@@ -3128,17 +3122,12 @@ MakeHook(MA_MoveMessageHook, MA_MoveMessageFunc);
 //  Copies selected messages to a user specified folder
 HOOKPROTONHNONP(MA_CopyMessageFunc, void)
 {
-  struct Folder *folder;
+  struct Folder *dst;
 
   ENTER();
 
-  if((folder = GetCurrentFolder()) != NULL)
-  {
-    struct Folder *dst;
-
-    if((dst = FolderRequest(tr(MSG_MA_CopyMsg), tr(MSG_MA_MoveMsgReq), tr(MSG_MA_CopyGad), tr(MSG_Cancel), NULL, G->MA->GUI.WI)) != NULL)
-      MA_MoveCopy(NULL, folder, dst, MVCPF_COPY);
-  }
+  if((dst = FolderRequest(tr(MSG_MA_CopyMsg), tr(MSG_MA_MoveMsgReq), tr(MSG_MA_CopyGad), tr(MSG_Cancel), NULL, G->MA->GUI.WI)) != NULL)
+    MA_MoveCopy(NULL, dst, MVCPF_COPY);
 
   LEAVE();
 }
@@ -3206,7 +3195,7 @@ void MA_ArchiveMail(struct Mail *mail)
   // finally move the mail to the archive folder
   if((archive = FO_GetFolderByPath(archivePathName, NULL)) != NULL)
   {
-    MA_MoveCopy(mail, mail->Folder, archive, 0);
+    MA_MoveCopy(mail, archive, 0);
   }
 
   LEAVE();
@@ -3217,45 +3206,40 @@ void MA_ArchiveMail(struct Mail *mail)
 // moves selected messages to the archive folder
 HOOKPROTONHNONP(MA_ArchiveMessageFunc, void)
 {
-  struct Folder *folder;
+  struct MailList *mlist;
 
   ENTER();
 
-  if((folder = GetCurrentFolder()) != NULL)
+  if((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE)) != NULL)
   {
-    struct MailList *mlist;
+    struct BusyNode *busy;
+    char selectedStr[SIZE_SMALL];
+    struct MailNode *mnode;
+    ULONG i;
 
-    if((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE)) != NULL)
+    // get the list of the currently marked mails
+    snprintf(selectedStr, sizeof(selectedStr), "%ld", mlist->count);
+    set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, TRUE);
+    busy = BusyBegin(BUSY_PROGRESS_ABORT);
+    BusyText(busy, tr(MSG_BusyMoving), selectedStr);
+
+    i = 0;
+    ForEachMailNode(mlist, mnode)
     {
-      struct BusyNode *busy;
-      char selectedStr[SIZE_SMALL];
-      struct MailNode *mnode;
-      ULONG i;
+      if(mnode->mail != NULL)
+        MA_ArchiveMail(mnode->mail);
 
-      // get the list of the currently marked mails
-      snprintf(selectedStr, sizeof(selectedStr), "%ld", mlist->count);
-      set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, TRUE);
-      busy = BusyBegin(BUSY_PROGRESS_ABORT);
-      BusyText(busy, tr(MSG_BusyMoving), selectedStr);
-
-      i = 0;
-      ForEachMailNode(mlist, mnode)
-      {
-        if(mnode->mail != NULL)
-          MA_ArchiveMail(mnode->mail);
-
-        // if BusyProgress() returns FALSE, then the user aborted
-        if(BusyProgress(busy, ++i, mlist->count) == FALSE)
-          break;
-      }
-      BusyEnd(busy);
-      set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, FALSE);
-
-      DeleteMailList(mlist);
+      // if BusyProgress() returns FALSE, then the user aborted
+      if(BusyProgress(busy, ++i, mlist->count) == FALSE)
+        break;
     }
+    BusyEnd(busy);
+    set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, FALSE);
 
-    MA_ChangeSelected(FALSE);
+    DeleteMailList(mlist);
   }
+
+  MA_ChangeSelected(FALSE);
 
   LEAVE();
 }

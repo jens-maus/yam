@@ -349,10 +349,6 @@ MSG_LOG_Forwarding (127//)
 Forwarded message from '%s' about '%s' to '%s'
 ; SENDER, SUBJECT, RECIPIENT
 ;
-MSG_LOG_Filtering (128//)
-Filtered %ld message(s) in folder '%s': %ld match(es)
-; COUNT, FOLDER, COUNT
-;
 MSG_LOG_SavingConfig (129//)
 Saved configuration file '%s'
 ; CONFIG_FILE
@@ -7380,4 +7376,8 @@ MSG_HELP_CO_TX_DEFVIEWER_CODESET (2474//)
 Select the charset here that printable\n\
 text should be converted to before\n\
 starting the default viewer.
+;
+MSG_LOG_FILTER_DONE (2475//)
+Filtered %ld message(s) with %ld match(es)
+; COUNT, COUNT
 ;

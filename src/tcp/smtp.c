@@ -1571,7 +1571,7 @@ BOOL SendMails(struct UserIdentityNode *uin, enum SendMailMode mode, const ULONG
                             sentfolder = FO_GetFolderByType(FT_SENT, NULL);
 
                           // the filter process did not move the mail, hence we do it now
-                          PushMethodOnStackWait(G->App, 5, MUIM_YAMApplication_MoveCopyMail, mail->Reference, outfolder, sentfolder, MVCPF_CLOSE_WINDOWS);
+                          PushMethodOnStackWait(G->App, 5, MUIM_YAMApplication_MoveCopyMail, mail->Reference, sentfolder, MVCPF_CLOSE_WINDOWS);
                         }
                         else
                         {

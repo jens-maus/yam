@@ -12,6 +12,13 @@ $URL$
   * mui/FiltersConfigPage.c, mui/SearchControlGroup.c: make sure that all filter
     conditions are correctly saved when changing filters or config pages. This
     closes #423.
+  * YAM_FI.c, YAM_MA.c, misc: simplified the moving/copying of mails by omitting
+    the additional folder pointer. Since each mail already carries a pointer to
+    the folder it resides in it is quite senseless to specify the mail's source
+    folder explicitly again. Furthermore this changes makes it possible to filter
+    mails from different folders in one go as is it required after receiving
+    mails and some of these mails have been moved from the Incoming folder to
+    somewhere else by a script already (i.e. SpamFryer). This closes #420.
 
 2013-09-11 Thore Böckelmann <tboeckel@gmx.de>
 

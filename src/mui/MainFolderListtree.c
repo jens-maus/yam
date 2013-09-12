@@ -334,16 +334,13 @@ OVERLOAD(MUIM_DragDrop)
   else
   {
     struct MUI_NListtree_TreeNode *tn_dst;
-    struct MUI_NListtree_TreeNode *tn_src;
 
-    if((tn_dst = (struct MUI_NListtree_TreeNode *)xget(obj, MUIA_NListtree_DropTarget)) != NULL &&
-       (tn_src = (struct MUI_NListtree_TreeNode *)xget(obj, MUIA_NListtree_Active)) != NULL)
+    if((tn_dst = (struct MUI_NListtree_TreeNode *)xget(obj, MUIA_NListtree_DropTarget)) != NULL)
     {
-      struct Folder *srcfolder = ((struct FolderNode *)tn_src->tn_User)->folder;
       struct Folder *dstfolder = ((struct FolderNode *)tn_dst->tn_User)->folder;
 
-      if(!isGroupFolder(dstfolder))
-        MA_MoveCopy(NULL, srcfolder, dstfolder, MVCPF_CLOSE_WINDOWS);
+      if(isGroupFolder(dstfolder) == FALSE)
+        MA_MoveCopy(NULL, dstfolder, MVCPF_CLOSE_WINDOWS);
     }
 
     result = 0;

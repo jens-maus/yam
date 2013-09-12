@@ -864,7 +864,7 @@ DECLARE(MoveMailRequest)
       }
 
       // move the mail to the selected destination folder
-      MA_MoveCopy(mail, srcfolder, dstfolder, 0);
+      MA_MoveCopy(mail, dstfolder, 0);
 
       // erase the old pointer as this has been free()ed by MA_MoveCopy()
       rmData->mail = NULL;
@@ -921,7 +921,7 @@ DECLARE(CopyMailRequest)
       // export to the destination folder
       if(srcfolder != NULL)
       {
-        MA_MoveCopy(mail, srcfolder, dstfolder, MVCPF_COPY);
+        MA_MoveCopy(mail, dstfolder, MVCPF_COPY);
 
         AppendToLogfile(LF_NORMAL, 24, tr(MSG_LOG_Copying), 1, srcfolder->Name, dstfolder->Name);
       }
@@ -1112,7 +1112,7 @@ DECLARE(ClassifyMessage) // enum BayesClassification class
       setStatusToUserSpam(mail);
 
       // move the mail
-      MA_MoveCopy(mail, folder, spamFolder, 0);
+      MA_MoveCopy(mail, spamFolder, 0);
 
       // erase the old pointer as this has been free()ed by MA_MoveCopy()
       rmData->mail = NULL;
@@ -1188,7 +1188,7 @@ DECLARE(ClassifyMessage) // enum BayesClassification class
 
         // if the mail has not been moved to another folder before we move it to the incoming folder now.
         if(moveToIncoming == TRUE)
-          MA_MoveCopy(mail, folder, incomingFolder, 0);
+          MA_MoveCopy(mail, incomingFolder, 0);
 
         // erase the old pointer as this has been free()ed by MA_MoveCopy() or by the filter action
         rmData->mail = NULL;

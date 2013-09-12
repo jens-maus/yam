@@ -1496,7 +1496,7 @@ BOOL ExecuteFilterAction(const struct FilterNode *filter, struct Mail *mail, str
           accessFreed = TRUE;
         }
 
-        MA_MoveCopy(mail, mail->Folder, fo, MVCPF_CLOSE_WINDOWS|MVCPF_QUIET);
+        MA_MoveCopy(mail, fo, MVCPF_CLOSE_WINDOWS|MVCPF_QUIET);
 
         // restore the old access mode if it was changed before
         if(accessFreed)
@@ -1549,7 +1549,7 @@ BOOL ExecuteFilterAction(const struct FilterNode *filter, struct Mail *mail, str
 ///
 /// FilterMails
 // Apply filters
-void FilterMails(struct Folder *folder, const struct MailList *mlist, const int mode, struct FilterResult *result)
+void FilterMails(const struct MailList *mlist, const int mode, struct FilterResult *result)
 {
   struct MinList *filterList;
 
@@ -1633,7 +1633,7 @@ void FilterMails(struct Folder *folder, const struct MailList *mlist, const int 
                 setStatusToAutoSpam(mail);
 
               // move newly recognized spam to the spam folder
-              MA_MoveCopy(mail, folder, spamfolder, MVCPF_QUIET);
+              MA_MoveCopy(mail, spamfolder, MVCPF_QUIET);
               wasSpam = TRUE;
 
               // update the stats
@@ -1678,7 +1678,7 @@ void FilterMails(struct Folder *folder, const struct MailList *mlist, const int 
     DeleteFilterList(filterList);
 
     if(result->Checked != 0)
-      AppendToLogfile(LF_ALL, 26, tr(MSG_LOG_Filtering), result->Checked, folder->Name, matches);
+      AppendToLogfile(LF_ALL, 26, tr(MSG_LOG_FILTER_DONE), result->Checked, matches);
 
     MA_StartMacro(MACRO_POSTFILTER, NULL);
 
