@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-09-12 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/FiltersConfigPage.c, mui/SearchControlGroup.c: disable the spam related
+    GUI objects in case the spam filter is disabled.
+
 2013-09-11 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_UT.c: use the SafeIterateList() macro instead of iterating over some

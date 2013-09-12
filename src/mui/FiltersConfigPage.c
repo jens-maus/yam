@@ -128,8 +128,8 @@ static void GhostOutFilter(struct IClass *cl, Object *obj)
   set(data->CH_ASTATUSTOUNMARKED, MUIA_Disabled, filter == NULL || isremote);
   set(data->CH_ASTATUSTOREAD,     MUIA_Disabled, filter == NULL || isremote);
   set(data->CH_ASTATUSTOUNREAD,   MUIA_Disabled, filter == NULL || isremote);
-  set(data->CH_ASTATUSTOSPAM,     MUIA_Disabled, filter == NULL || isremote);
-  set(data->CH_ASTATUSTOHAM,      MUIA_Disabled, filter == NULL || isremote);
+  set(data->CH_ASTATUSTOSPAM,     MUIA_Disabled, filter == NULL || isremote || CE->SpamFilterEnabled == FALSE);
+  set(data->CH_ASTATUSTOHAM,      MUIA_Disabled, filter == NULL || isremote || CE->SpamFilterEnabled == FALSE);
   set(data->CH_ADELETE,           MUIA_Disabled, filter == NULL);
   set(data->CH_ASKIP,             MUIA_Disabled, filter == NULL || !isremote);
   set(data->CH_ATERMINATE,        MUIA_Disabled, filter == NULL);
@@ -569,11 +569,6 @@ DECLARE(FilterToGUI)
     nnset(data->ST_AEXECUTE,          MUIA_String_Contents,           filter->executeCmd);
     nnset(data->ST_APLAY,             MUIA_String_Contents,           filter->playSound);
     nnset(data->PO_MOVETO,            MUIA_FolderRequestPopup_Folder, filter->moveTo);
-
-    DoMethod(obj, MUIM_MultiSet, MUIA_Disabled, CE->SpamFilterEnabled == FALSE,
-      data->CH_ASTATUSTOSPAM,
-      data->CH_ASTATUSTOHAM,
-      NULL);
 
     xset(data->GR_SGROUP, MUIA_ObjectList_Quiet, TRUE,
                           MUIA_FilterRuleList_Filter, filter);

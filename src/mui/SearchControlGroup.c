@@ -133,7 +133,7 @@ OVERLOAD(OM_NEW)
   statopt[6] = tr(MSG_FI_StatHold);
   statopt[7] = tr(MSG_FI_StatSent);
   statopt[8] = tr(MSG_FI_StatMarked);
-  statopt[9] = tr(MSG_FI_STATSPAM);
+  statopt[9] = CE->SpamFilterEnabled ? tr(MSG_FI_STATSPAM) : NULL;
   statopt[10] = NULL;
 
   compopt[0] = compopt[5] = compopt[ 8] = " = ";
