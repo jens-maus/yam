@@ -431,36 +431,36 @@ OVERLOAD(OM_NEW)
     set(BT_FILTERDOWN, MUIA_CycleChain, TRUE);
     set(BT_FILTER_IMPORT, MUIA_CycleChain, TRUE);
 
-    DoMethod(LV_RULES,             MUIM_Notify, MUIA_NList_Active,                         MUIV_EveryTime, obj, 1, METHOD(GetFilterEntry));
-    DoMethod(ST_RNAME,             MUIM_Notify, MUIA_String_Contents,                      MUIV_EveryTime, obj, 1, METHOD(PutFilterEntry));
+    DoMethod(LV_RULES,             MUIM_Notify, MUIA_NList_Active,                         MUIV_EveryTime, obj, 1, METHOD(FilterToGUI));
+    DoMethod(ST_RNAME,             MUIM_Notify, MUIA_String_Contents,                      MUIV_EveryTime, obj, 1, METHOD(GUIToFilter));
     DoMethod(CH_REMOTE,            MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 2, METHOD(ToggleRemoteFlag), MUIV_TriggerValue);
-    DoMethod(CH_APPLYREQ,          MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(PutFilterEntry));
-    DoMethod(CH_APPLYSENT,         MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(PutFilterEntry));
-    DoMethod(CH_APPLYNEW,          MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(PutFilterEntry));
-    DoMethod(CY_FILTER_COMBINE,    MUIM_Notify, MUIA_Cycle_Active,                         MUIV_EveryTime, obj, 1, METHOD(PutFilterEntry));
-    DoMethod(CH_AREDIRECT,         MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(PutFilterEntry));
-    DoMethod(CH_AFORWARD,          MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(PutFilterEntry));
-    DoMethod(CH_ARESPONSE,         MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(PutFilterEntry));
-    DoMethod(CH_AEXECUTE,          MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(PutFilterEntry));
-    DoMethod(CH_APLAY,             MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(PutFilterEntry));
-    DoMethod(CH_AMOVE,             MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(PutFilterEntry));
-    DoMethod(CH_ASTATUSTOMARKED,   MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(PutFilterEntry));
-    DoMethod(CH_ASTATUSTOUNMARKED, MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(PutFilterEntry));
-    DoMethod(CH_ASTATUSTOREAD,     MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(PutFilterEntry));
-    DoMethod(CH_ASTATUSTOUNREAD,   MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(PutFilterEntry));
-    DoMethod(CH_ASTATUSTOSPAM,     MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(PutFilterEntry));
-    DoMethod(CH_ASTATUSTOHAM,      MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(PutFilterEntry));
-    DoMethod(CH_ADELETE,           MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(PutFilterEntry));
-    DoMethod(CH_ASKIP,             MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(PutFilterEntry));
-    DoMethod(CH_ATERMINATE,        MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(PutFilterEntry));
-    DoMethod(ST_AREDIRECT,         MUIM_Notify, MUIA_String_BufferPos,                     MUIV_EveryTime, obj, 1, METHOD(PutFilterEntry));
-    DoMethod(ST_AFORWARD,          MUIM_Notify, MUIA_String_BufferPos,                     MUIV_EveryTime, obj, 1, METHOD(PutFilterEntry));
-    DoMethod(ST_ARESPONSE,         MUIM_Notify, MUIA_String_Contents,                      MUIV_EveryTime, obj, 1, METHOD(PutFilterEntry));
-    DoMethod(ST_AEXECUTE,          MUIM_Notify, MUIA_String_Contents,                      MUIV_EveryTime, obj, 1, METHOD(PutFilterEntry));
-    DoMethod(ST_APLAY,             MUIM_Notify, MUIA_String_Contents,                      MUIV_EveryTime, obj, 1, METHOD(PutFilterEntry));
+    DoMethod(CH_APPLYREQ,          MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(GUIToFilter));
+    DoMethod(CH_APPLYSENT,         MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(GUIToFilter));
+    DoMethod(CH_APPLYNEW,          MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(GUIToFilter));
+    DoMethod(CY_FILTER_COMBINE,    MUIM_Notify, MUIA_Cycle_Active,                         MUIV_EveryTime, obj, 1, METHOD(GUIToFilter));
+    DoMethod(CH_AREDIRECT,         MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(GUIToFilter));
+    DoMethod(CH_AFORWARD,          MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(GUIToFilter));
+    DoMethod(CH_ARESPONSE,         MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(GUIToFilter));
+    DoMethod(CH_AEXECUTE,          MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(GUIToFilter));
+    DoMethod(CH_APLAY,             MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(GUIToFilter));
+    DoMethod(CH_AMOVE,             MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(GUIToFilter));
+    DoMethod(CH_ASTATUSTOMARKED,   MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(GUIToFilter));
+    DoMethod(CH_ASTATUSTOUNMARKED, MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(GUIToFilter));
+    DoMethod(CH_ASTATUSTOREAD,     MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(GUIToFilter));
+    DoMethod(CH_ASTATUSTOUNREAD,   MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(GUIToFilter));
+    DoMethod(CH_ASTATUSTOSPAM,     MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(GUIToFilter));
+    DoMethod(CH_ASTATUSTOHAM,      MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(GUIToFilter));
+    DoMethod(CH_ADELETE,           MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(GUIToFilter));
+    DoMethod(CH_ASKIP,             MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(GUIToFilter));
+    DoMethod(CH_ATERMINATE,        MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(GUIToFilter));
+    DoMethod(ST_AREDIRECT,         MUIM_Notify, MUIA_String_BufferPos,                     MUIV_EveryTime, obj, 1, METHOD(GUIToFilter));
+    DoMethod(ST_AFORWARD,          MUIM_Notify, MUIA_String_BufferPos,                     MUIV_EveryTime, obj, 1, METHOD(GUIToFilter));
+    DoMethod(ST_ARESPONSE,         MUIM_Notify, MUIA_String_Contents,                      MUIV_EveryTime, obj, 1, METHOD(GUIToFilter));
+    DoMethod(ST_AEXECUTE,          MUIM_Notify, MUIA_String_Contents,                      MUIV_EveryTime, obj, 1, METHOD(GUIToFilter));
+    DoMethod(ST_APLAY,             MUIM_Notify, MUIA_String_Contents,                      MUIV_EveryTime, obj, 1, METHOD(GUIToFilter));
     DoMethod(BT_APLAY,             MUIM_Notify, MUIA_Pressed,                              FALSE,          obj, 2, METHOD(PlaySound), ST_APLAY);
-    DoMethod(PO_MOVETO,            MUIM_Notify, MUIA_FolderRequestPopup_FolderChanged,     MUIV_EveryTime, obj, 1, METHOD(PutFilterEntry));
-    DoMethod(GR_SGROUP,            MUIM_Notify, MUIA_ObjectList_ItemsChanged,              MUIV_EveryTime, obj, 1, METHOD(PutFilterEntry));
+    DoMethod(PO_MOVETO,            MUIM_Notify, MUIA_FolderRequestPopup_FolderChanged,     MUIV_EveryTime, obj, 1, METHOD(GUIToFilter));
+    DoMethod(GR_SGROUP,            MUIM_Notify, MUIA_ObjectList_ItemsChanged,              MUIV_EveryTime, obj, 1, METHOD(GUIToFilter));
     DoMethod(BT_RADD,              MUIM_Notify, MUIA_Pressed,                              FALSE,          obj, 1, METHOD(AddFilterEntry));
     DoMethod(BT_RDEL,              MUIM_Notify, MUIA_Pressed,                              FALSE,          obj, 1, METHOD(DeleteFilterEntry));
     DoMethod(BT_FILTER_IMPORT,     MUIM_Notify, MUIA_Pressed,                              FALSE,          obj, 1, METHOD(ImportFilter));
@@ -523,9 +523,9 @@ OVERLOAD(MUIM_ConfigPage_GUIToConfig)
 }
 
 ///
-/// DECLARE(GetFilterEntry)
+/// DECLARE(FilterToGUI)
 // fills form with data from selected list entry
-DECLARE(GetFilterEntry)
+DECLARE(FilterToGUI)
 {
   GETDATA;
   struct FilterNode *filter = NULL;
@@ -593,7 +593,7 @@ DECLARE(GetFilterEntry)
         DoMethod(newSearchGroup, MUIM_SearchControlGroup_RuleToGUI, rule);
 
         // set some notifies
-        DoMethod(newSearchGroup, MUIM_Notify, MUIA_SearchControlGroup_Modified, MUIV_EveryTime, obj, 1, METHOD(PutFilterEntry));
+        DoMethod(newSearchGroup, MUIM_Notify, MUIA_SearchControlGroup_Modified, MUIV_EveryTime, obj, 1, METHOD(GUIToFilter));
 
         // add it to our searchGroupList
         DoMethod(data->GR_SGROUP, MUIM_ObjectList_AddItem, newSearchGroup);
@@ -609,9 +609,9 @@ DECLARE(GetFilterEntry)
 }
 
 ///
-/// DECLARE(PutFilterEntry)
+/// DECLARE(GUIToFilter)
 // fills form data into selected list entry
-DECLARE(PutFilterEntry)
+DECLARE(GUIToFilter)
 {
   GETDATA;
   struct FilterNode *filter = NULL;
