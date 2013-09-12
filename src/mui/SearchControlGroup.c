@@ -80,31 +80,6 @@ struct Data
 
 static const int Mode2Group[12] = { 0,0,0,0,1,2,1,2,4,4,4,3 };
 
-/* Hooks */
-
-/* Private Functions */
-/// DECLARE(EditFile)
-//  Edits pattern list in text editor
-DECLARE(EditFile) // int n
-{
-  GETDATA;
-
-  ENTER();
-
-  if(*C->Editor)
-  {
-    char buffer[SIZE_COMMAND+SIZE_PATHFILE];
-
-    snprintf(buffer, sizeof(buffer), "%s \"%s\"", C->Editor, GetRealPath((char *)xget(data->ST_MATCH[msg->n], MUIA_String_Contents)));
-    LaunchCommand(buffer, LAUNCHF_ASYNC, OUT_NIL);
-  }
-
-  RETURN(0);
-  return 0;
-}
-
-///
-
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
@@ -358,7 +333,7 @@ OVERLOAD(OM_NEW)
       }
 
       if(data->BT_EDIT[i] != NULL)
-        DoMethod(data->BT_EDIT[i], MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(EditFile), i);
+        DoMethod(data->BT_EDIT[i], MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(EditFile), data->BT_EDIT[i]);
     }
 
     // set up some notifications to let certain objects share the same search string
@@ -732,6 +707,25 @@ DECLARE(CloneSearchString) // Object *origin, char *str
     nnset(data->ST_MATCH[1], MUIA_String_Contents, msg->str);
   if(msg->origin != data->ST_MATCH[4])
     nnset(data->ST_MATCH[4], MUIA_String_Contents, msg->str);
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(EditFile)
+//  Edits pattern list in text editor
+DECLARE(EditFile) // Object *strObject
+{
+  ENTER();
+
+  if(IsStrEmpty(C->Editor) == FALSE)
+  {
+    char buffer[SIZE_COMMAND+SIZE_PATHFILE];
+
+    snprintf(buffer, sizeof(buffer), "%s \"%s\"", C->Editor, GetRealPath((char *)xget(msg->strObject, MUIA_String_Contents)));
+    LaunchCommand(buffer, LAUNCHF_ASYNC, OUT_NIL);
+  }
 
   RETURN(0);
   return 0;
