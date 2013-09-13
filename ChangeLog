@@ -5,7 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
-2013-02-17 Emilio Jimenez <ejim@ono.com>
+2013-09-13 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/YAMApplication.c: corrected the method parameters of the MoveCopyMail
+    method to fix a crash after sending mails.
+
+2013-09-12 Emilio Jimenez <ejim@ono.com>
 
   * locale/spanish.ct: update to the latest changes.
 

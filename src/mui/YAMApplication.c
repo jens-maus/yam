@@ -1031,7 +1031,7 @@ DECLARE(StartMacro) // enum Macro num, const char *param
 
 ///
 /// DECLARE(MoveCopyMail)
-DECLARE(MoveCopyMail) // struct Mail *mail, struct Folder *frombox, struct Folder *tobox, ULONG flags
+DECLARE(MoveCopyMail) // struct Mail *mail, struct Folder *tobox, ULONG flags
 {
   ENTER();
 

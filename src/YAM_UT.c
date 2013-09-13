@@ -3912,13 +3912,16 @@ static BOOL UncompressMailFile(const char *src, const char *dst, const char *pas
 //  Copies or moves a message file, handles compression
 int TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
 {
-  struct Folder *srcfolder = mail->Folder;
-  enum FolderMode srcMode = srcfolder->Mode;
-  enum FolderMode dstMode = dstfolder->Mode;
+  struct Folder *srcfolder;
+  enum FolderMode srcMode;
+  enum FolderMode dstMode;
   int success = -1;
 
   ENTER();
 
+  srcfolder = mail->Folder;
+  srcMode = srcfolder->Mode;
+  dstMode = dstfolder->Mode;
   D(DBF_UTIL, "TransferMailFile: %s '%s' to '%s' %ld->%ld", copyit ? "copy" : "move", mail->MailFile, dstfolder->Fullpath, srcMode, dstMode);
 
   if(MA_GetIndex(srcfolder) == TRUE && MA_GetIndex(dstfolder) == TRUE)
