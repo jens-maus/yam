@@ -1466,9 +1466,6 @@ static void InitAfterLogin(void)
   else if(res == -1)
     SetDefaultConfig(C, cp_AllPages); // reset things to defaults if config file missing/invalid
 
-  // make sure the config has valid values
-  ValidateConfig(C, FALSE);
-
   // load all necessary graphics/themes
   SplashProgress(tr(MSG_LoadingGFX), 30);
 
@@ -1479,6 +1476,9 @@ static void InitAfterLogin(void)
   // cause YAM to cache all often used toolbars and their images
   if(ToolbarCacheInit() == FALSE)
     Abort(NULL); // exit the application
+
+  // make sure the config has valid values
+  ValidateConfig(C, FALSE);
 
   // create all necessary GUI elements
   D(DBF_STARTUP, "creating GUI...");

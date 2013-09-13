@@ -13,6 +13,11 @@ $URL$
 
   * mui/YAMApplication.c: corrected the method parameters of the MoveCopyMail
     method to fix a crash after sending mails.
+  * YAM.c: moved the validation of the config after loading the configured theme.
+    This solves the problem when YAM is run for the very first time after an
+    installation from scratch without any valid .config file. Opening the config
+    window too early will leave this window without any graphics from the default
+    theme otherwise. This refs #413.
 
 2013-09-12 Emilio Jimenez <ejim@ono.com>
 
