@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-09-13 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: update to the latest changes.
+
 2013-09-13 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/YAMApplication.c: corrected the method parameters of the MoveCopyMail

@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.46 (26.08.2013)
+## version $VER: YAM.catalog 8.47 (12.09.2013)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -463,11 +463,6 @@ Inoltrato il messaggio di '%s' relativo a '%s' in '%s'
 ; Forwarded message from '%s' about '%s' to '%s'
 ; SENDER, SUBJECT, RECIPIENT
 ;
-MSG_LOG_Filtering
-Filtrati(o) %ld messaggi(o) nella cartella '%s': %ld riscontro(i)
-; Filtered %ld message(s) in folder '%s': %ld match(es)
-; COUNT, FOLDER, COUNT
-;
 MSG_LOG_SavingConfig
 Salvato il file di configurazione '%s'
 ; Saved configuration file '%s'
@@ -887,14 +882,14 @@ Per favore ridigita la password:
 ; Please re-type the password:
 ;
 MSG_CO_ConfirmDelete
-Tutti i messaggi in questa cartella andranno perduti.\n\
-Sei sicuro di volerli cancellare?
+Tutti i messaggi di questa cartella andranno perduti.\n\
+Sei sicuro di volerli eliminare?
 ; All messages in this folder will be lost.\n\
 ; Do you really want to delete it?
 ;
 MSG_CO_InvalidConf
-La configurazione è errata!\n\
-(Nome host, Indirizzo E-Mail e/o password mancanti).\n\
+La configurazione è errata o incompleta!\n\
+(Nome host, Indirizzo e-mail e/o password mancanti)\n\
 \n\
 Per favore riempi questi campi e riprova nuovamente.
 ; Invalid configuration (missing SMTP/POP3\n\
@@ -903,7 +898,7 @@ Per favore riempi questi campi e riprova nuovamente.
 ; Please fill in these fields and try again.
 ;
 MSG_CO_ImportMIMEReq
-Importa le configurazioni da...
+Importa configurazioni da...
 ; Import settings from...
 ;
 MSG_CO_ImportMIMEGads
@@ -10560,4 +10555,9 @@ dell'avvio del visualizzatore predefinito.
 ; Select the charset here that printable\n\
 ; text should be converted to before\n\
 ; starting the default viewer.
+;
+MSG_LOG_FILTER_DONE
+Filtrati %ld messaggi(o) con %ld riscontri(o)
+; Filtered %ld message(s) with %ld match(es)
+; COUNT, COUNT
 ;
