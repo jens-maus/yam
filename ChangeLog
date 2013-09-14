@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-09-14 Emilio Jimenez <ejim@ono.com>
+
+  * locale/spanish.ct: fixed bug duplicated MSG_CO_QUICKSEARCHBAR
+
 2013-09-13 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: update to the latest changes.

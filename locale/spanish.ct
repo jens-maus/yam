@@ -8046,10 +8046,6 @@ MSG_HELP_FI_CH_SKIP_ENCRYPTED
 Salta correos encripatdos (p.ej. PGP)\ndurante la búsqueda.
 ;Skip encrypted mails (i.e. PGP)\nduring the search.
 ;
-MSG_CO_QUICKSEARCHBAR
-Barra de Búsqueda rápida
-;Quick search bar
-;
 MSG_HELP_CO_CH_QUICKSEARCHBAR
 Aquí puede seleccionar la posición de la barra de búsqueda rápida.
 ;Here you can select the position of the quick search bar.
