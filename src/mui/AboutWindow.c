@@ -111,7 +111,7 @@ OVERLOAD(OM_NEW)
   const char aboutTemplate1[] =
                           "\033b%s\033n\n" // current developers
                           "\n"
-                          "Jens Langner\n"
+                          "Jens Maus\n"
                           "Thore Boeckelmann";
   const char aboutTemplate2[] =
                           "\n"
@@ -137,7 +137,7 @@ OVERLOAD(OM_NEW)
                           "Vit Sindlar (czech)\n"
                           "Thore Boeckelmann (english-british)\n"
                           "Alexandre Balaban (french)\n"
-                          "Thore Boeckelmann, Jens Langner (german)\n"
+                          "Thore Boeckelmann, Jens Maus (german)\n"
                           "Miklos Gubucz (hungarian)\n"
                           "Samir Hawamdeh (italian)\n"
                           "Emilio Jimenez (spanish)\n"

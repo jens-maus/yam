@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-09-14 Jens Maus <mail@jens-maus.de>
+
+  * misc: updated various files to reflect my new real name "Jens Maus". Same
+    quality, different name. A new era begins...
+
 2013-09-14 Emilio Jimenez <ejim@ono.com>
 
   * locale/spanish.ct: fixed bug duplicated MSG_CO_QUICKSEARCHBAR

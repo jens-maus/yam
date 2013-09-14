@@ -1,6 +1,6 @@
 Short:        YAM 2.8p1 - MUI-based E-mail client
 Author:       YAM Open Source Team (http://yam.ch/)
-Uploader:     Jens Langner <Jens.Langner@light-speed.de>
+Uploader:     Jens Maus <mail@jens-maus.de>
 Type:         comm/yam
 Version:      2.8p1
 Replaces:     comm/yam/YAM28*
@@ -57,7 +57,7 @@ What's new
 Here's a  list (in  alphabetical order)  of the  brave developers  who have
 contributed   to    this   release    since   the   last    official   one:
 
-              Jens Langner
+              Jens Maus
               Thore Boeckelmann
 
 And here's a  PARTIAL list of the  changes in this version  with respect to
