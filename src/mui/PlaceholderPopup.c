@@ -161,6 +161,7 @@ OVERLOAD(OM_NEW)
 
     DoMethod(LV_PHOLDER, MUIM_Notify, MUIA_NList_DoubleClick, TRUE,           obj, 2, MUIM_Popstring_Close, TRUE);
     DoMethod(ST_PHOLDER, MUIM_Notify, MUIA_Disabled,          MUIV_EveryTime, obj, 3, MUIM_Set, MUIA_Disabled, MUIV_TriggerValue);
+    DoMethod(ST_PHOLDER, MUIM_Notify, MUIA_String_Contents,   MUIV_EveryTime, obj, 3, MUIM_Set, MUIA_String_Contents, MUIV_TriggerValue);
   }
 
   RETURN((IPTR)obj);
@@ -184,8 +185,6 @@ OVERLOAD(OM_SET)
       case MUIA_String_Contents:
       {
         nnset(data->ST_PHOLDER, MUIA_String_Contents, tag->ti_Data);
-        // make the superMethod call ignore those tags
-        tag->ti_Tag = TAG_IGNORE;
       }
       break;
 

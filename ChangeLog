@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-09-15 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/PlaceholderPopup.c: made notifications of the string contents work
+    again.
+
 2013-09-14 Jens Maus <mail@jens-maus.de>
 
   * misc: updated various files to reflect my new real name "Jens Maus". Same
