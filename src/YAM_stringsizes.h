@@ -55,8 +55,6 @@
 #define SIZE_STACK     65536 // stack size for main task and threads
 #define SIZE_DSTRCHUNK  1024 // must be a power of 2
 
-#define MAXRX             23  // Number of script entries in the script list
-
 #define MAXP3_MENU        30  // the hardcoded max. for POP3 menu entries
 #define MAXRX_MENU        10  // the hardcoded max. for Rexx menu entries
 #define MAXSIG_MENU        8  // the hardcoded max. for signature menu entries

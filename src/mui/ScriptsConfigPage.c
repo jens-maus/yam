@@ -58,6 +58,8 @@ struct Data
   Object *CH_CONSOLE;
   Object *CH_WAITTERM;
 
+  LONG script;
+
   struct Hook FilereqStartHook;
   struct Hook FilereqStopHook;
 };
@@ -141,8 +143,12 @@ OVERLOAD(OM_NEW)
     data->CH_CONSOLE =  CH_CONSOLE;
     data->CH_WAITTERM = CH_WAITTERM;
 
-    for(i = 1; i <= MAXRX; i++)
-      DoMethod(LV_REXX, MUIM_NList_InsertSingle, i, MUIV_NList_Insert_Bottom);
+    data->script = MUIV_NList_Active_Off;
+
+    // we must use macro+1 here as list entry, because the entry is treated as a pointer
+    // and otherwise the first entry (=0) will be ignored
+    for(i = MACRO_MEN0; i < MACRO_COUNT; i++)
+      DoMethod(LV_REXX, MUIM_NList_InsertSingle, i+1, MUIV_NList_Insert_Bottom);
 
     InitHook(&data->FilereqStartHook, FilereqStartHook, data->PO_SCRIPT);
     InitHook(&data->FilereqStopHook, FilereqStopHook, data->PO_SCRIPT);
@@ -158,7 +164,7 @@ OVERLOAD(OM_NEW)
     SetHelp(CH_WAITTERM,  MSG_HELP_CO_CH_WAITTERM);
     SetHelp(LV_REXX,      MSG_HELP_CO_LV_REXX);
 
-    DoMethod(LV_REXX,     MUIM_Notify, MUIA_NList_Active,    MUIV_EveryTime, obj, 1, METHOD(ScriptToGUI));
+    DoMethod(LV_REXX,     MUIM_Notify, MUIA_NList_Active,    MUIV_EveryTime, obj, 2, METHOD(ChangeActiveScript), MUIV_TriggerValue);
     DoMethod(ST_RXNAME,   MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 1, METHOD(GUIToScript));
     DoMethod(PO_SCRIPT,   MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 1, METHOD(GUIToScript));
     DoMethod(CY_ISADOS,   MUIM_Notify, MUIA_Cycle_Active,    MUIV_EveryTime, obj, 1, METHOD(GUIToScript));
@@ -175,22 +181,11 @@ OVERLOAD(OM_NEW)
 OVERLOAD(MUIM_ConfigPage_ConfigToGUI)
 {
   GETDATA;
-  int act;
-  struct RxHook *rh;
 
   ENTER();
 
-  act = xget(data->LV_REXX, MUIA_NList_Active);
-  rh = &(CE->RX[act]);
-
-  nnset(data->ST_RXNAME, MUIA_String_Contents, act < 10 ? rh->Name : "");
-  nnset(data->PO_SCRIPT, MUIA_String_Contents, rh->Script);
-  nnset(data->CY_ISADOS, MUIA_Cycle_Active, rh->IsAmigaDOS ? 1 : 0);
-  nnset(data->CH_CONSOLE, MUIA_Selected, rh->UseConsole);
-  nnset(data->CH_WAITTERM, MUIA_Selected, rh->WaitTerm);
-  set(data->ST_RXNAME, MUIA_Disabled, act >= 10);
-  set(data->LV_REXX, MUIA_NList_Active, 0);
-  DoMethod(data->LV_REXX, MUIM_NList_Redraw, MUIV_NList_Redraw_All);
+  // just set the active entry, this will cause all necessary notifications
+  set(data->LV_REXX, MUIA_NList_Active, MUIV_NList_Active_Top);
 
   RETURN(0);
   return 0;
@@ -210,66 +205,82 @@ OVERLOAD(MUIM_ConfigPage_GUIToConfig)
 }
 
 ///
+/// DECLARE(ChangeActiveScript)
+DECLARE(ChangeActiveScript) // LONG active
+{
+  GETDATA;
+
+  ENTER();
+
+  // transfer any pending changes from the GUI to the previous script entry
+  DoMethod(obj, METHOD(GUIToScript));
+  // get the now active script entry
+  data->script = msg->active;
+  // update the GUI
+  DoMethod(obj, METHOD(ScriptToGUI));
+
+  RETURN(0);
+  return 0;
+}
+
+///
 /// DECLARE(ScriptToGUI)
 // fills form with data from selected list entry
 DECLARE(ScriptToGUI)
 {
   GETDATA;
-  struct RxHook *rh;
-  int act;
-  enum Macro macro;
 
   ENTER();
 
-  act = xget(data->LV_REXX, MUIA_NList_Active);
-  rh = &(CE->RX[act]);
-  macro = act;
-
-  nnset(data->ST_RXNAME, MUIA_String_Contents, act < 10 ? rh->Name : "");
-  nnset(data->PO_SCRIPT, MUIA_String_Contents, rh->Script);
-  nnset(data->CY_ISADOS, MUIA_Cycle_Active, rh->IsAmigaDOS ? 1 : 0);
-  nnset(data->CH_CONSOLE, MUIA_Selected, rh->UseConsole);
-  nnset(data->CH_WAITTERM, MUIA_Selected, rh->WaitTerm);
-  set(data->ST_RXNAME, MUIA_Disabled, act >= 10);
-
-  switch(macro)
+  if(data->script != MUIV_NList_Active_Off)
   {
-    case MACRO_MEN0:
-    case MACRO_MEN1:
-    case MACRO_MEN2:
-    case MACRO_MEN3:
-    case MACRO_MEN4:
-    case MACRO_MEN5:
-    case MACRO_MEN6:
-    case MACRO_MEN7:
-    case MACRO_MEN8:
-    case MACRO_MEN9:
-    case MACRO_STARTUP:
-    case MACRO_QUIT:
-    case MACRO_PRESEND:
-    case MACRO_POSTSEND:
-    case MACRO_PREFILTER:
-    case MACRO_POSTFILTER:
-    default:
-      // disable the popup button since these script don't take any parameter
-      nnset(data->PO_SCRIPT, MUIA_PlaceholderPopup_PopbuttonDisabled, TRUE);
-    break;
+    struct RxHook *rh = &CE->RX[data->script];
+    enum Macro macro = data->script;
 
-    case MACRO_PREGET:
-    case MACRO_POSTGET:
-    case MACRO_NEWMSG:
-    case MACRO_READ:
-    case MACRO_PREWRITE:
-    case MACRO_POSTWRITE:
-    case MACRO_URL:
-      // enable the popup button
-      nnset(data->PO_SCRIPT, MUIA_PlaceholderPopup_PopbuttonDisabled, FALSE);
-    break;
+    nnset(data->ST_RXNAME, MUIA_String_Contents, macro <= MACRO_MEN9 ? rh->Name : "");
+    nnset(data->PO_SCRIPT, MUIA_String_Contents, rh->Script);
+    nnset(data->CY_ISADOS, MUIA_Cycle_Active, rh->IsAmigaDOS ? 1 : 0);
+    nnset(data->CH_CONSOLE, MUIA_Selected, rh->UseConsole);
+    nnset(data->CH_WAITTERM, MUIA_Selected, rh->WaitTerm);
+    set(data->ST_RXNAME, MUIA_Disabled, macro > MACRO_MEN9);
+
+    switch(macro)
+    {
+      case MACRO_MEN0:
+      case MACRO_MEN1:
+      case MACRO_MEN2:
+      case MACRO_MEN3:
+      case MACRO_MEN4:
+      case MACRO_MEN5:
+      case MACRO_MEN6:
+      case MACRO_MEN7:
+      case MACRO_MEN8:
+      case MACRO_MEN9:
+      case MACRO_STARTUP:
+      case MACRO_QUIT:
+      case MACRO_PRESEND:
+      case MACRO_POSTSEND:
+      case MACRO_PREFILTER:
+      case MACRO_POSTFILTER:
+      default:
+        // disable the popup button since these script don't take any parameter
+        nnset(data->PO_SCRIPT, MUIA_PlaceholderPopup_PopbuttonDisabled, TRUE);
+      break;
+
+      case MACRO_PREGET:
+      case MACRO_POSTGET:
+      case MACRO_NEWMSG:
+      case MACRO_READ:
+      case MACRO_PREWRITE:
+      case MACRO_POSTWRITE:
+      case MACRO_URL:
+        // enable the popup button
+        nnset(data->PO_SCRIPT, MUIA_PlaceholderPopup_PopbuttonDisabled, FALSE);
+      break;
+    }
+
+    set(data->PO_SCRIPT, MUIA_PlaceholderPopup_ScriptEntry, macro);
   }
-
-  DoMethod(data->LV_REXX, MUIM_NList_Redraw, act);
-
-  set(data->PO_SCRIPT, MUIA_PlaceholderPopup_ScriptEntry, macro);
 
   RETURN(0);
   return 0;
@@ -281,14 +292,12 @@ DECLARE(ScriptToGUI)
 DECLARE(GUIToScript)
 {
   GETDATA;
-  int act;
 
   ENTER();
 
-  act = xget(data->LV_REXX, MUIA_NList_Active);
-  if(act != MUIV_List_Active_Off)
+  if(data->script != MUIV_NList_Active_Off)
   {
-    struct RxHook *rh = &(CE->RX[act]);
+    struct RxHook *rh = &CE->RX[data->script];
 
     GetMUIString(rh->Name, data->ST_RXNAME, sizeof(rh->Name));
     GetMUIString(rh->Script, data->PO_SCRIPT, sizeof(rh->Script));
@@ -296,7 +305,7 @@ DECLARE(GUIToScript)
     rh->UseConsole = GetMUICheck(data->CH_CONSOLE);
     rh->WaitTerm = GetMUICheck(data->CH_WAITTERM);
 
-    DoMethod(data->LV_REXX, MUIM_NList_Redraw, act);
+    DoMethod(data->LV_REXX, MUIM_NList_Redraw, data->script);
   }
 
   RETURN(0);

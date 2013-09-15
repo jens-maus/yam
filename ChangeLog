@@ -9,6 +9,8 @@ $URL$
 
   * mui/PlaceholderPopup.c: made notifications of the string contents work
     again.
+  * mui/ScriptsConfigPage.c, Config.c: simplified the internal handling of
+    script entries in the configuration.
 
 2013-09-14 Jens Maus <mail@jens-maus.de>
 

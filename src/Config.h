@@ -31,6 +31,7 @@
 #include <exec/lists.h>
 #include <libraries/mui.h>
 
+#include "YAM_main.h"           // for enum Macro
 #include "YAM_read.h"           // for enum MDNAction, enum SigSepType
 #include "YAM_stringsizes.h"
 #include "YAM_utilities.h"
@@ -232,7 +233,7 @@ struct Config
   struct MUI_PenSpec   Color4thLevel;
   struct MUI_PenSpec   ColorURL;
   struct MUI_PenSpec   ColorSignature;
-  struct RxHook        RX[MAXRX];
+  struct RxHook        RX[MACRO_COUNT];
   struct SocketOptions SocketOptions;
   struct DateStamp     BirthdayCheckTime;
 

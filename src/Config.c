@@ -426,7 +426,7 @@ static BOOL CompareRxHooks(const struct RxHook *rx1, const struct RxHook *rx2)
 
   ENTER();
 
-  for(i = 0; i < MAXRX; i++)
+  for(i = 0; i < MACRO_COUNT; i++)
   {
     const struct RxHook *r1 = &rx1[i];
     const struct RxHook *r2 = &rx2[i];
@@ -866,7 +866,7 @@ void SetDefaultConfig(struct Config *co, enum ConfigPage page)
   {
     int i;
 
-    for(i = 0; i < MAXRX; i++)
+    for(i = 0; i < MACRO_COUNT; i++)
     {
       co->RX[i].Name[0] = '\0';
       co->RX[i].Script[0] = '\0';
@@ -1763,7 +1763,7 @@ int LoadConfig(struct Config *co, const char *fname, struct FolderList **oldfold
           {
             int j = atoi(&buf[4]);
 
-            if(j >= 0 && j < MAXRX)
+            if(j >= 0 && j < MACRO_COUNT)
             {
               p = &buf[7];
               if(!stricmp(p, "Name"))                            strlcpy(co->RX[j].Name, value, sizeof(co->RX[j].Name));
@@ -2648,7 +2648,7 @@ BOOL SaveConfig(struct Config *co, const char *fname)
     fprintf(fh, "AddrbookCols     = %d\n", co->AddrbookCols);
 
     fprintf(fh, "\n[Scripts]\n");
-    for(i = 0; i < MAXRX; i++)
+    for(i = 0; i < MACRO_COUNT; i++)
     {
       if(i < 10)
         fprintf(fh, "Rexx%02d.Name       = %s\n", i, co->RX[i].Name);
