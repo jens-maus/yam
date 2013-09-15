@@ -1596,11 +1596,13 @@ void FilterMails(const struct MailList *mlist, const int mode, struct FilterResu
 
       if(mail != NULL)
       {
+        D(DBF_FILTER, "about to apply filters to message with subject '%s' in folder '%s'", mail->Subject, (mail->Folder != NULL) ? mail->Folder->Name : "<NULL>");
+
         if(C->SpamFilterEnabled == TRUE && (mode == APPLY_AUTO || mode == APPLY_SPAM))
         {
           BOOL doClassification;
 
-          D(DBF_FILTER, "about to apply SPAM filter to message with subject \"%s\"", mail->Subject);
+          D(DBF_FILTER, "about to apply spam filter to message with subject '%s'", mail->Subject);
 
           if(mode == APPLY_AUTO && C->SpamFilterForNewMail == TRUE && mail->Folder != NULL && isTrashFolder(mail->Folder) == FALSE)
           {
@@ -1620,7 +1622,7 @@ void FilterMails(const struct MailList *mlist, const int mode, struct FilterResu
 
           if(doClassification == TRUE)
           {
-            D(DBF_FILTER, "classifying message with subject \"%s\"", mail->Subject);
+            D(DBF_FILTER, "classifying message with subject '%s'", mail->Subject);
 
             if(BayesFilterClassifyMessage(mail) == TRUE)
             {
