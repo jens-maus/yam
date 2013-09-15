@@ -2,7 +2,8 @@
 ## codeset 0
 ## language español
 ## chunk AUTH Emilio Jimenez
-; YAM.cd - YAM 2.8 catalog description file
+;
+; $ld: spanish.ct 7052 2013-09-15 01:29:33Z ejimenez $
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -8046,10 +8047,6 @@ MSG_HELP_FI_CH_SKIP_ENCRYPTED
 Salta correos encripatdos (p.ej. PGP)\ndurante la búsqueda.
 ;Skip encrypted mails (i.e. PGP)\nduring the search.
 ;
-MSG_HELP_CO_CH_QUICKSEARCHBAR
-Aquí puede seleccionar la posición de la barra de búsqueda rápida.
-;Here you can select the position of the quick search bar.
-;
 MSG_CO_QUICKSEARCHBARPOS
 Posición
 ;Posi_tion
@@ -8260,6 +8257,6 @@ Seleccione el juego de caracteres al que\ndebe convertirse el texto antes\nde in
 ; Select the charset here that printable\ntext should be converted to before\nstarting the default viewer.
 ;
 MSG_LOG_FILTER_DONE
-%ld mensaje(s) filtrado(s) en la carpeta '%s': %ld coincide(n)
+%ld mensaje(s) filtrado(s) con %ld coincide(n)
 ; Filtered %ld message(s) with %ld match(es)
 ;
