@@ -3455,8 +3455,10 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
               {
                 struct Mail *newMail;
 
-                if((newMail = AddMailToFolder(&email->Mail, folder)) != NULL)
+                if((newMail = CloneMail(&email->Mail)) != NULL)
                 {
+                  AddMailToFolder(newMail, folder);
+
                   // if this new mail hasn't got a valid transDate we have to check if we
                   // have to take the fileDate as a fallback value.
                   if(newMail->transDate.Seconds == 0)

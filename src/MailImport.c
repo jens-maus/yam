@@ -994,21 +994,20 @@ static void ProcessImport(struct TransferContext *tc, const char *importFile, st
                 GetSysTimeUTC(&mail->transDate);
 
               // add the mail to the folderlist now
-              if((mail = AddMailToFolder(mail, folder)) != NULL)
-              {
-                // update the mailFile Path
-                strlcpy(mail->MailFile, FilePart(mfilePath), sizeof(mail->MailFile));
+              AddMailToFolder(mail, folder);
 
-                // if this was a compressed/encrypted folder we need to pack the mail now
-                if(folder->Mode > FM_SIMPLE)
-                  RepackMailFile(mail, -1, NULL);
+              // update the mailFile Path
+              strlcpy(mail->MailFile, FilePart(mfilePath), sizeof(mail->MailFile));
 
-                // update the mailfile accordingly.
-                MA_UpdateMailFile(mail);
+              // if this was a compressed/encrypted folder we need to pack the mail now
+              if(folder->Mode > FM_SIMPLE)
+                RepackMailFile(mail, -1, NULL);
 
-                // put the transferStat to 100%
-                PushMethodOnStack(tc->transferGroup, 3, MUIM_TransferControlGroup_Update, TCG_SETMAX, tr(MSG_TR_Importing));
-              }
+              // update the mailfile accordingly.
+              MA_UpdateMailFile(mail);
+
+              // put the transferStat to 100%
+              PushMethodOnStack(tc->transferGroup, 3, MUIM_TransferControlGroup_Update, TCG_SETMAX, tr(MSG_TR_Importing));
             }
 
             fclose(ifh);
@@ -1086,21 +1085,20 @@ static void ProcessImport(struct TransferContext *tc, const char *importFile, st
                 GetSysTimeUTC(&mail->transDate);
 
               // add the mail to the folderlist now
-              if((mail = AddMailToFolder(mail, folder)) != NULL)
-              {
-                // update the mailFile Path
-                strlcpy(mail->MailFile, FilePart(mfilePath), sizeof(mail->MailFile));
+              AddMailToFolder(mail, folder);
 
-                // if this was a compressed/encrypted folder we need to pack the mail now
-                if(folder->Mode > FM_SIMPLE)
-                  RepackMailFile(mail, -1, NULL);
+              // update the mailFile Path
+              strlcpy(mail->MailFile, FilePart(mfilePath), sizeof(mail->MailFile));
 
-                // update the mailfile accordingly.
-                MA_UpdateMailFile(mail);
+              // if this was a compressed/encrypted folder we need to pack the mail now
+              if(folder->Mode > FM_SIMPLE)
+                RepackMailFile(mail, -1, NULL);
 
-                // put the transferStat to 100%
-                PushMethodOnStack(tc->transferGroup, 3, MUIM_TransferControlGroup_Update, TCG_SETMAX, tr(MSG_TR_Importing));
-              }
+              // update the mailfile accordingly.
+              MA_UpdateMailFile(mail);
+
+              // put the transferStat to 100%
+              PushMethodOnStack(tc->transferGroup, 3, MUIM_TransferControlGroup_Update, TCG_SETMAX, tr(MSG_TR_Importing));
             }
 
             fclose(ifh);

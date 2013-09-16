@@ -715,7 +715,7 @@ void MA_DeleteSingle(struct Mail *mail, const ULONG delFlags)
       DeleteFile(mailfile);
 
       // now remove the mail from its folder/mail list
-      RemoveMailFromList(mail, isFlagSet(delFlags, DELF_CLOSE_WINDOWS), isFlagSet(delFlags, DELF_CHECK_CONNECTIONS));
+      RemoveMailFromFolder(mail, isFlagSet(delFlags, DELF_CLOSE_WINDOWS), isFlagSet(delFlags, DELF_CHECK_CONNECTIONS));
 
       // if we are allowed to make some noise we
       // update our Statistics
@@ -769,26 +769,37 @@ static struct Mail *MA_MoveCopySingle(struct Mail *mail, struct Folder *to, cons
     {
       AppendToLogfile(LF_VERBOSE, 25, tr(MSG_LOG_CopyingVerbose), AddrName(mail->From), mail->Subject, from->Name, to->Name);
 
-      // add the new mail
-      newMail = AddMailToFolder(mail, to);
+      if((newMail = CloneMail(mail)) != NULL)
+      {
+        // add the new mail
+        AddMailToFolder(newMail, to);
 
-      // restore the old filename in case it was changed by TransferMailFile()
-      strlcpy(mail->MailFile, mfile, sizeof(mail->MailFile));
+        // restore the old filename in case it was changed by TransferMailFile()
+        strlcpy(mail->MailFile, mfile, sizeof(mail->MailFile));
+        strlcpy(newMail->MailFile, mfile, sizeof(newMail->MailFile));
+      }
     }
     else
     {
       AppendToLogfile(LF_VERBOSE, 23, tr(MSG_LOG_MovingVerbose), AddrName(mail->From), mail->Subject, from->Name, to->Name);
 
-      // add the new mail
-      newMail = AddMailToFolder(mail, to);
+      newMail = mail;
 
-      // now we have to check all opened write windows
-      // for still valid references to the old mail and
-      // change it accordingly.
-      SetWriteMailDataMailRef(mail, newMail);
+      // increase the mail's reference counter so that RemoveMailFromFolder() doesn't free it
+      mail->RefCounter++;
 
       // now remove the mail from its folder/mail list
-      RemoveMailFromList(mail, isFlagSet(flags, MVCPF_CLOSE_WINDOWS), isFlagSet(flags, MVCPF_CHECK_CONNECTIONS));
+      RemoveMailFromFolder(mail, isFlagSet(flags, MVCPF_CLOSE_WINDOWS), isFlagSet(flags, MVCPF_CHECK_CONNECTIONS));
+
+      // add the mail to the new folder
+      AddMailToFolder(mail, to);
+
+      // decrease the reference counter again
+      mail->RefCounter--;
+
+      // there is no need to check the opened write mail window if they
+      // are referring to this mail, as it is not going to magically
+      // vanish from under their feet.
     }
 
     if(newMail != NULL)

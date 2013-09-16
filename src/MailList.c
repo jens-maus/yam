@@ -99,7 +99,9 @@ void ClearMailList(struct MailList *mlist, const BOOL freeMails)
     {
       struct MailNode *mnode = (struct MailNode *)node;
 
-      ItemPoolFree(G->mailItemPool, mnode->mail);
+      // decrease the mail's reference counter
+      mnode->mail->RefCounter--;
+      FreeMail(mnode->mail);
     }
 
     ItemPoolFree(G->mailNodeItemPool, node);
@@ -200,7 +202,7 @@ void MoveMailList(struct MailList *to, struct MailList *from)
 /// AddNewMailNode
 // add a new mail to an existing list
 // if locking of the list is needed this must be done by the calling function
-struct MailNode *AddNewMailNode(struct MailList *mlist, const struct Mail *mail)
+struct MailNode *AddNewMailNode(struct MailList *mlist, struct Mail *mail)
 {
   struct MailNode *mnode = NULL;
 
@@ -215,6 +217,9 @@ struct MailNode *AddNewMailNode(struct MailList *mlist, const struct Mail *mail)
     {
       // initialize the node's contents
       mnode->mail = (struct Mail *)mail;
+
+      // increase the mail's reference counter
+      mail->RefCounter++;
 
       // add the new mail node to the end of the list
       AddTail((struct List *)&mlist->list, (struct Node *)&mnode->node);
@@ -276,6 +281,10 @@ void RemoveMailNode(struct MailList *mlist, struct MailNode *mnode)
 void DeleteMailNode(struct MailNode *mnode)
 {
   ENTER();
+
+  // decrease the mail's reference counter
+  if(mnode->mail != NULL)
+    mnode->mail->RefCounter--;
 
   ItemPoolFree(G->mailNodeItemPool, mnode);
 
@@ -538,7 +547,11 @@ struct Mail *CloneMail(const struct Mail *mail)
   ENTER();
 
   if((clone = ItemPoolAlloc(G->mailItemPool)) != NULL)
+  {
     memcpy(clone, mail, sizeof(*clone));
+    // start with a reference counter of zero
+    clone->RefCounter = 0;
+  }
 
   RETURN(clone);
   return clone;
@@ -551,7 +564,8 @@ void FreeMail(struct Mail *mail)
 {
   ENTER();
 
-  ItemPoolFree(G->mailItemPool, mail);
+  if(mail->RefCounter == 0)
+    ItemPoolFree(G->mailItemPool, mail);
 
   LEAVE();
 }

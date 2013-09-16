@@ -67,6 +67,7 @@
 #include "HTML2Mail.h"
 #include "Locale.h"
 #include "Logfile.h"
+#include "MailList.h"
 #include "MethodStack.h"
 #include "MimeTypes.h"
 #include "MUIObjects.h"
@@ -1599,8 +1600,10 @@ DECLARE(SaveDecryptedMail)
         memcpy(&email->Mail.transDate, &mail->transDate, sizeof(email->Mail.transDate));
 
         // add the mail to the folder now
-        if((newmail = AddMailToFolder(&email->Mail, folder)) != NULL)
+        if((newmail = CloneMail(&email->Mail)) != NULL)
         {
+          AddMailToFolder(newmail, folder);
+
           // if this was a compressed/encrypted folder we need to pack the mail now
           if(folder->Mode > FM_SIMPLE)
             RepackMailFile(newmail, -1, NULL);

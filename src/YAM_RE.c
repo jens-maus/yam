@@ -3922,8 +3922,10 @@ static void RE_SendMDN(const enum MDNMode mode,
                 {
                   struct Mail *mdnMail;
 
-                  if((mdnMail = AddMailToFolder(&email->Mail, outfolder)) != NULL)
+                  if((mdnMail = CloneMail(&email->Mail)) != NULL)
                   {
+                    AddMailToFolder(mdnMail, outfolder);
+
                     // refresh the folder statistics before the transfer
                     DisplayStatistics(outfolder, TRUE);
 

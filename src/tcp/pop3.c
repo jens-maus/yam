@@ -1214,8 +1214,10 @@ static BOOL LoadMessage(struct TransferContext *tc, struct Folder *inFolder, con
       {
         struct Mail *mail;
 
-        if((mail = AddMailToFolder(&email->Mail, inFolder)) != NULL)
+        if((mail = CloneMail(&email->Mail)) != NULL)
         {
+          AddMailToFolder(mail, inFolder);
+
           // we have to get the actual Time and place it in the transDate, so that we know at
           // which time this mail arrived
           GetSysTimeUTC(&mail->transDate);

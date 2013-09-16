@@ -3522,28 +3522,23 @@ void DisplayMailList(struct Folder *fo, Object *lv)
 
   LEAVE();
 }
+
 ///
 /// AddMailToFolder
 //  Adds a message to a folder
-struct Mail *AddMailToFolder(const struct Mail *mail, struct Folder *folder)
+void AddMailToFolder(struct Mail *mail, struct Folder *folder)
 {
-  struct Mail *new;
-
   ENTER();
 
-  if((new = CloneMail(mail)) != NULL)
-  {
-    // add the cloned message to the folder
-    LockMailList(folder->messages);
-    AddMailToFolderSimple(new, folder);
-    UnlockMailList(folder->messages);
+  // add the cloned message to the folder
+  LockMailList(folder->messages);
+  AddMailToFolderSimple(mail, folder);
+  UnlockMailList(folder->messages);
 
-    // expire the folder's index as we just added a new message
-    MA_ExpireIndex(folder);
-  }
+  // expire the folder's index as we just added a new message
+  MA_ExpireIndex(folder);
 
-  RETURN(new);
-  return new;
+  LEAVE();
 }
 
 ///
@@ -3572,9 +3567,9 @@ void AddMailToFolderSimple(struct Mail *mail, struct Folder *folder)
 }
 
 ///
-/// RemoveMailFromList
+/// RemoveMailFromFolder
 //  Removes a message from a folder
-void RemoveMailFromList(struct Mail *mail, const BOOL closeWindows, const BOOL checkConnections)
+void RemoveMailFromFolder(struct Mail *mail, const BOOL closeWindows, const BOOL checkConnections)
 {
   struct Folder *folder = mail->Folder;
   struct MailNode *mnode;
@@ -3742,6 +3737,8 @@ struct Mail *ReplaceMailInFolder(const char *mailFile, const struct Mail *mail, 
 
       // replace the mail in the list
       mnode->mail = addedMail;
+      // increase the reference counter
+      addedMail->RefCounter++;
     }
     else
     {

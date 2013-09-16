@@ -4120,7 +4120,10 @@ DECLARE(ComposeMail) // enum WriteMode mode
             if(mode == WRITE_DRAFT)
               newMail = ReplaceMailInFolder(FilePart(newMailFile), &email->Mail, outfolder, &replacedMail);
             else
-              newMail = AddMailToFolder(&email->Mail, outfolder);
+            {
+              if((newMail = CloneMail(&email->Mail)) != NULL)
+                AddMailToFolder(newMail, outfolder);
+            }
 
             if(newMail != NULL)
             {
@@ -4192,7 +4195,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
                   }
                 }
 
-                RemoveMailFromList(refMail, TRUE, TRUE);
+                RemoveMailFromFolder(refMail, TRUE, TRUE);
                 refMail = newMail;
               }
               else if(wmData->mode == NMM_NEW && refMail != NULL)

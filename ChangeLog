@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-09-16 Thore Böckelmann <tboeckel@gmx.de>
+
+  * MailList.c, misc: added a reference counter to each mail. This makes it
+    possible move a mail to a different folder in concurrent processes while
+    still accessing the same mail without accessing invalid or already freed
+    memory. The last referencing instance will finally free the mail if
+    requested. This finally closes #420.
+
 2013-09-15 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/PlaceholderPopup.c: made notifications of the string contents work

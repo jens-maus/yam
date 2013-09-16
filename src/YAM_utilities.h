@@ -256,7 +256,7 @@ extern struct Hook    ExamineDirMatchHook;
 #endif
 
 // all the utility prototypes
-struct Mail *AddMailToFolder(const struct Mail *mail, struct Folder *folder);
+void     AddMailToFolder(struct Mail *mail, struct Folder *folder);
 void     AddMailToFolderSimple(struct Mail *mail, struct Folder *folder);
 struct Mail *ReplaceMailInFolder(const char *mailFile, const struct Mail *mail, struct Folder *folder, struct Mail **replacedMail);
 void     AddZombieFile(const char *fileName);
@@ -334,7 +334,7 @@ LONG     PGPCommand(const char *progname, const char *options, const int flags);
 void     PGPGetPassPhrase(void);
 BOOL     PlaySound(const char *filename);
 void     QuoteText(FILE *out, const char *src, const int len, const int line_max);
-void     RemoveMailFromList(struct Mail *mail, const BOOL closeWindows, const BOOL checkConnections);
+void     RemoveMailFromFolder(struct Mail *mail, const BOOL closeWindows, const BOOL checkConnections);
 BOOL     RenameFile(const char *oldname, const char *newname);
 BOOL     RepackMailFile(struct Mail *mail, enum FolderMode dstMode, const char *passwd);
 struct FileReqCache *ReqFile(enum ReqFileType num, Object *win, const char *title, int mode, const char *drawer, const char *file);
