@@ -108,7 +108,7 @@
 extern struct Library *RexxSysBase;
 
 /* local protos */
-static struct Mail *MA_MoveCopySingle(struct Mail *mail, struct Folder *to, const ULONG flags);
+static void MA_MoveCopySingle(struct Mail *mail, struct Folder *to, const ULONG flags);
 
 /***************************************************************************
  Module: Main
@@ -751,7 +751,7 @@ void MA_DeleteSingle(struct Mail *mail, const ULONG delFlags)
 ///
 /// MA_MoveCopySingle
 //  Moves or copies a single message from one folder to another
-static struct Mail *MA_MoveCopySingle(struct Mail *mail, struct Folder *to, const ULONG flags)
+static void MA_MoveCopySingle(struct Mail *mail, struct Folder *to, const ULONG flags)
 {
   struct Folder *from;
   struct Mail *newMail = NULL;
@@ -840,8 +840,7 @@ static struct Mail *MA_MoveCopySingle(struct Mail *mail, struct Folder *to, cons
     }
   }
 
-  RETURN(newMail);
-  return newMail;
+  LEAVE();
 }
 
 ///
@@ -889,8 +888,7 @@ void MA_MoveCopy(struct Mail *mail, struct Folder *tobox, const ULONG flags)
     i = 0;
     ForEachMailNode(mlist, mnode)
     {
-      if(mnode->mail != NULL)
-        MA_MoveCopySingle(mnode->mail, tobox, flags);
+      MA_MoveCopySingle(mnode->mail, tobox, flags);
 
       // if BusyProgress() returns FALSE, then the user aborted
       if(BusyProgress(busy, ++i, selected) == FALSE)
@@ -2898,18 +2896,15 @@ HOOKPROTONHNO(MA_DeleteSpamFunc, void, int *arg)
         if(BusyProgress(busy, ++i, mlist->count) == FALSE)
           break;
 
-        if(mail != NULL)
+        // not every mail in the a folder *must* be spam
+        // so better check this
+        if(hasStatusSpam(mail))
         {
-          // not every mail in the a folder *must* be spam
-          // so better check this
-          if(hasStatusSpam(mail))
-          {
-            // remove the spam mail from the folder and take care to
-            // remove it immediately in case this is the SPAM folder, otherwise
-            // the mail will be moved to the trash first. In fact, DeleteSingle()
-            // takes care of that itself.
-            MA_DeleteSingle(mail, delFlags);
-          }
+          // remove the spam mail from the folder and take care to
+          // remove it immediately in case this is the SPAM folder, otherwise
+          // the mail will be moved to the trash first. In fact, DeleteSingle()
+          // takes care of that itself.
+          MA_DeleteSingle(mail, delFlags);
         }
       }
 
