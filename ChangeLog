@@ -10,6 +10,7 @@ $URL$
   * MailList.c, misc: fixed two memory leaks caused by the new reference counter.
     On the other hand this counter makes things much easier to handle, as we
     don't have to distinguish between temporary and static mail lists anymore.
+  * Config.c: fixed a shadowed variable.
 
 2013-09-16 Thore Böckelmann <tboeckel@gmx.de>
 

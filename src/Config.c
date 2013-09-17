@@ -3683,12 +3683,12 @@ BOOL CheckConfigDiffs(const BOOL *visited)
       }
       else
       {
-        ULONG result;
+        ULONG answer;
 
         // the directory "spam" already exists, but it is not the standard spam folder
         // let the user decide what to do
-        result = MUI_Request(G->App, G->ConfigWinObject, MUIF_NONE, NULL, tr(MSG_ER_SPAMDIR_EXISTS_ANSWERS), tr(MSG_ER_SPAMDIR_EXISTS));
-        switch(result)
+        answer = MUI_Request(G->App, G->ConfigWinObject, MUIF_NONE, NULL, tr(MSG_ER_SPAMDIR_EXISTS_ANSWERS), tr(MSG_ER_SPAMDIR_EXISTS));
+        switch(answer)
         {
           default:
           case 0:
