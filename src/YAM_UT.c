@@ -3784,7 +3784,7 @@ void ClearFolderMails(struct Folder *folder, BOOL resetstats)
   }
 
   LockMailList(folder->messages);
-  ClearMailList(folder->messages, TRUE);
+  ClearMailList(folder->messages);
   UnlockMailList(folder->messages);
 
   D(DBF_FOLDER, "cleared mail list of folder '%s'", folder->Name);

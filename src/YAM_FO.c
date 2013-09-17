@@ -695,7 +695,7 @@ BOOL FO_FreeFolder(struct Folder *folder)
     FO_UnloadFolderImage(folder);
 
     if(!isGroupFolder(folder))
-      ClearMailList(folder->messages, TRUE);
+      ClearMailList(folder->messages);
 
     D(DBF_FOLDER, "freed folder '%s'", folder->Name);
 

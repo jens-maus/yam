@@ -54,7 +54,7 @@ struct MailNode
 
 void InitMailList(struct MailList *mlist);
 struct MailList *CreateMailList(void);
-void ClearMailList(struct MailList *mlist, const BOOL freeMails);
+void ClearMailList(struct MailList *mlist);
 void DeleteMailList(struct MailList *mlist);
 struct MailList *CloneMailList(const struct MailList *mlist);
 void MoveMailList(struct MailList *to, struct MailList *from);
