@@ -57,14 +57,14 @@ void InitMailTransferList(struct MailTransferList *tlist)
 // removed all nodes from a transfer list
 void ClearMailTransferList(struct MailTransferList *tlist)
 {
-  struct Node *node;
+  struct MailTransferNode *tnode;
 
   ENTER();
 
-  while((node = RemHead((struct List *)&tlist->list)) != NULL)
+  while((tnode = (struct MailTransferNode *)RemHead((struct List *)&tlist->list)) != NULL)
   {
-    struct MailTransferNode *tnode = (struct MailTransferNode *)node;
-
+    // decrease the mail's reference counter
+    tnode->mail->RefCounter--;
     DeleteMailTransferNode(tnode);
   }
   tlist->count = 0;
@@ -215,6 +215,9 @@ void AddMailTransferNode(struct MailTransferList *tlist, struct MailTransferNode
   // we only accept existing transfers
   if(tlist != NULL && tnode != NULL && tnode->mail != NULL)
   {
+    // increase the mail's reference counter
+    tnode->mail->RefCounter++;
+
     // add the new transfer node to the end of the list
     AddTail((struct List *)&tlist->list, (struct Node *)&tnode->node);
 
