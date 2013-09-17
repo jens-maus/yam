@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-09-17 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: fixed some typos.
+
 2013-09-17 Thore Böckelmann <tboeckel@gmx.de>
 
   * MailList.c, misc: fixed two memory leaks caused by the new reference counter.

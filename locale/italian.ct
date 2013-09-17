@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.47 (12.09.2013)
+## version $VER: YAM.catalog 8.48 (17.09.2013)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -4715,7 +4715,7 @@ esistente sul disco.
 ; already existing directory.
 ;
 MSG_FO_NewFolderGads
-*_Interne predef.|_Come _correnti|Directory _esistente|_Annulla
+*_Interne predef.|Come _corrente|Directory _esistente|_Annulla
 ; *_Internal defaults|_Like current|_Existing directory|_Cancel
 ;
 MSG_FO_SelectDir
@@ -5238,7 +5238,7 @@ Sei sicuro di voler cancellare questo gruppo?
 ; Do you really want to delete this group?
 ;
 MSG_FOLDER_NONSEL
-(nessuna selezionata)
+(nessuna selezione)
 ; (none selected)
 ;
 MSG_FO_NEWFGROUP
@@ -6479,7 +6479,7 @@ perduto.
 ; Therefore, the undo buffer is lost.
 ;
 MSG_RE_HEADERDISPLAY
-Visualizzazione intestazione
+Intestazione visualizzata
 ; Header display
 ;
 MSG_RE_MAILDETAILS
