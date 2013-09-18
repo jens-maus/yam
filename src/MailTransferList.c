@@ -187,16 +187,9 @@ struct MailTransferNode *CreateMailTransferNode(const struct Mail *mail, const U
 
     if(mail != NULL)
     {
-      if((tnode->mail = CloneMail(mail)) == NULL)
-      {
-        FreeSysObject(ASOT_NODE, tnode);
-        tnode = NULL;
-      }
-      else
-      {
-        // increase the reference counter
-        tnode->mail->RefCounter++;
-      }
+      tnode->mail = mail;
+      // increase the reference counter
+      tnode->mail->RefCounter++;
     }
   }
 

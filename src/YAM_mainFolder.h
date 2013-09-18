@@ -39,7 +39,6 @@ struct UserIdentityNode;
 struct Mail
 {
   size_t           RefCounter; // how many struct MailNode are referencing us?
-  struct Mail *    Reference;  // pointer to the mail referencing to us
   struct Folder *  Folder;     // pointer to the folder this mail belongs to
   unsigned long    cMsgID;     // compressed message ID
   unsigned long    cIRTMsgID;  // compressed in-return-to message ID

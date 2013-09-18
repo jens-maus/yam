@@ -1348,7 +1348,7 @@ static int SendMessage(struct TransferContext *tc, struct Mail *mail)
                   PushMethodOnStack(tc->transferGroup, 3, MUIM_TransferControlGroup_Update, TCG_SETMAX, tr(MSG_TR_Sending));
 
                   // now that we are at 100% we have to set the transfer Date of the message
-                  GetSysTimeUTC(&mail->Reference->transDate);
+                  GetSysTimeUTC(&mail->transDate);
 
                   result = email->DelSend ? 2 : 1;
                   AppendToLogfile(LF_VERBOSE, 42, tr(MSG_LOG_SendingVerbose), AddrName(mail->To), mail->Subject, mail->Size);
@@ -1427,8 +1427,6 @@ BOOL SendMails(struct UserIdentityNode *uin, enum SendMailMode mode, const ULONG
           {
             AddMailTransferNode(transferList, tnode);
 
-            // let the duplicated mail reference to its origin
-            tnode->mail->Reference = mail;
             tnode->index = transferList->count;
             totalSize += mail->Size;
           }
@@ -1539,7 +1537,7 @@ BOOL SendMails(struct UserIdentityNode *uin, enum SendMailMode mode, const ULONG
                       // immediatly by leaving the mailserver alone.
                       case -1:
                       {
-                        setStatusToError(mail->Reference);
+                        setStatusToError(mail);
                         tc->conn->error = CONNECTERR_UNKNOWN_ERROR;
                       }
                       break;
@@ -1548,7 +1546,7 @@ BOOL SendMails(struct UserIdentityNode *uin, enum SendMailMode mode, const ULONG
                       // so we can abort the transaction cleanly by a RSET and QUIT
                       case 0:
                       {
-                        setStatusToError(mail->Reference);
+                        setStatusToError(mail);
                         SendSMTPCommand(tc, SMTP_RSET, NULL, NULL); // no error check
                         tc->conn->error = CONNECTERR_NO_ERROR;
                       }
@@ -1559,8 +1557,8 @@ BOOL SendMails(struct UserIdentityNode *uin, enum SendMailMode mode, const ULONG
                       {
                         struct Folder *outfolder = FO_GetFolderByType(FT_OUTGOING, NULL);
 
-                        setStatusToSent(mail->Reference);
-                        if(PushMethodOnStackWait(G->App, 3, MUIM_YAMApplication_FilterMail, sentMailFilters, mail->Reference) == TRUE)
+                        setStatusToSent(mail);
+                        if(PushMethodOnStackWait(G->App, 3, MUIM_YAMApplication_FilterMail, sentMailFilters, mail) == TRUE)
                         {
                           struct Folder *sentfolder;
 
@@ -1571,7 +1569,7 @@ BOOL SendMails(struct UserIdentityNode *uin, enum SendMailMode mode, const ULONG
                             sentfolder = FO_GetFolderByType(FT_SENT, NULL);
 
                           // the filter process did not move the mail, hence we do it now
-                          PushMethodOnStackWait(G->App, 5, MUIM_YAMApplication_MoveCopyMail, mail->Reference, sentfolder, MVCPF_CLOSE_WINDOWS);
+                          PushMethodOnStackWait(G->App, 5, MUIM_YAMApplication_MoveCopyMail, mail, sentfolder, MVCPF_CLOSE_WINDOWS);
                         }
                         else
                         {
@@ -1584,11 +1582,11 @@ BOOL SendMails(struct UserIdentityNode *uin, enum SendMailMode mode, const ULONG
                       // 2 means we filter and delete afterwards
                       case 2:
                       {
-                        setStatusToSent(mail->Reference);
-                        if(PushMethodOnStackWait(G->App, 3, MUIM_YAMApplication_FilterMail, sentMailFilters, mail->Reference) == TRUE)
+                        setStatusToSent(mail);
+                        if(PushMethodOnStackWait(G->App, 3, MUIM_YAMApplication_FilterMail, sentMailFilters, mail) == TRUE)
                         {
                           // the filter process did not delete the mail, hence we do it now
-                          PushMethodOnStackWait(G->App, 3, MUIM_YAMApplication_DeleteMail, mail->Reference, DELF_UPDATE_APPICON);
+                          PushMethodOnStackWait(G->App, 3, MUIM_YAMApplication_DeleteMail, mail, DELF_UPDATE_APPICON);
                         }
                       }
                       break;

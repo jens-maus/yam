@@ -444,9 +444,8 @@ void RE_DisplayMIME(const char *srcfile, const char *dstfile,
           return;
         }
 
-        mail->Reference = NULL;
-        mail->Folder    = NULL;
-        mail->sflags    = SFLAG_READ; // this sets the mail as OLD
+        mail->Folder = NULL;
+        mail->sflags = SFLAG_READ; // this sets the mail as OLD
         setFlag(mail->mflags, MFLAG_NOFOLDER);
 
         MA_FreeEMailStruct(email);
