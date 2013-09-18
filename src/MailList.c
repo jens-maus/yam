@@ -104,6 +104,7 @@ void ClearMailList(struct MailList *mlist)
 
     ItemPoolFree(G->mailNodeItemPool, mnode);
   }
+
   InitMailList(mlist);
 
   LEAVE();

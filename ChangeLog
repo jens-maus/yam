@@ -18,6 +18,7 @@ $URL$
   * mui/SearchControlGroup.c, misc: use a new attribute to allow/forbid the
     usage of "Spam" as selectable status instead of accessing the configuration
     being edited directly as this might not exist. This closes #425.
+  * MailTransferList.c: fixed another memory leak.
 
 2013-09-17 Samir Hawamdeh <s.hawamdeh@tin.it>
 

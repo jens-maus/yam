@@ -215,9 +215,6 @@ void AddMailTransferNode(struct MailTransferList *tlist, struct MailTransferNode
   // we only accept existing transfers
   if(tlist != NULL && tnode != NULL && tnode->mail != NULL)
   {
-    // increase the mail's reference counter
-    tnode->mail->RefCounter++;
-
     // add the new transfer node to the end of the list
     AddTail((struct List *)&tlist->list, (struct Node *)&tnode->node);
 
