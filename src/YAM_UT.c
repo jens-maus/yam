@@ -3696,67 +3696,61 @@ void RemoveMailFromFolder(struct Mail *mail, const BOOL closeWindows, const BOOL
 ///
 /// ReplaceMailInFolder
 // replace a mail in a folder by a new one
-struct Mail *ReplaceMailInFolder(const char *mailFile, const struct Mail *mail, struct Folder *folder, struct Mail **replacedMail)
+struct Mail *ReplaceMailInFolder(const char *mailFile, struct Mail *mail, struct Folder *folder)
 {
-  struct Mail *addedMail;
+  struct Mail *replacedMail = NULL;
+  struct MailNode *mnode;
 
   ENTER();
 
-  *replacedMail = NULL;
+  LockMailList(folder->messages);
 
-  if((addedMail = CloneMail(mail)) != NULL)
+  if((mnode = FindMailByFilename(folder->messages, mailFile)) != NULL)
   {
-    struct MailNode *mnode;
+    // remove the old mail's stats from the folder stats
+    folder->Size -= mnode->mail->Size;
 
-    LockMailList(folder->messages);
+    if(hasStatusNew(mnode->mail))
+      folder->New--;
 
-    if((mnode = FindMailByFilename(folder->messages, mailFile)) != NULL)
+    if(!hasStatusRead(mnode->mail))
+      folder->Unread--;
+
+    mail->Folder = folder;
+
+    // addd the new mail's stats to the folder stats
+    folder->Size += mail->Size;
+
+    if(hasStatusNew(mail))
+      folder->New++;
+
+    if(!hasStatusRead(mail))
+      folder->Unread++;
+
+    // remember the replaced mail and decrease its reference counter
+    if(mnode->mail != NULL)
     {
-      // remove the old mail's stats from the folder stats
-      folder->Size -= mnode->mail->Size;
-
-      if(hasStatusNew(mnode->mail))
-        folder->New--;
-
-      if(!hasStatusRead(mnode->mail))
-        folder->Unread--;
-
-      addedMail->Folder = folder;
-
-      // addd the new mail's stats to the folder stats
-      folder->Size += addedMail->Size;
-
-      if(hasStatusNew(addedMail))
-        folder->New++;
-
-      if(!hasStatusRead(addedMail))
-        folder->Unread++;
-
-      // remember the replaced mail and decrease its reference counter
-      if(mnode->mail != NULL)
-      {
-        *replacedMail = mnode->mail;
-        mnode->mail->RefCounter--;
-      }
-
-      // replace the mail in the list
-      mnode->mail = addedMail;
-      // increase the reference counter
-      addedMail->RefCounter++;
-    }
-    else
-    {
-      AddMailToFolderSimple(addedMail, folder);
+      replacedMail = mnode->mail;
+      replacedMail->RefCounter--;
     }
 
-    UnlockMailList(folder->messages);
-
-    // expire the folder's index as we just added a new message
-    MA_ExpireIndex(folder);
+    // replace the mail in the list
+    mnode->mail = mail;
+    // increase the reference counter
+    mail->RefCounter++;
+  }
+  else
+  {
+    AddMailToFolderSimple(mail, folder);
   }
 
-  RETURN(addedMail);
-  return addedMail;
+  UnlockMailList(folder->messages);
+
+  // expire the folder's index as we just added a new message
+  MA_ExpireIndex(folder);
+
+  RETURN(replacedMail);
+  return replacedMail;
 }
 
 ///

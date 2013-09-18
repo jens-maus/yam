@@ -4115,18 +4115,20 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
           if((email = MA_ExamineMail(outfolder, FilePart(newMailFile), C->EmailCache > 0 ? TRUE : FALSE)) != NULL)
           {
-            struct Mail *replacedMail = NULL;
-
-            if(mode == WRITE_DRAFT)
-              newMail = ReplaceMailInFolder(FilePart(newMailFile), &email->Mail, outfolder, &replacedMail);
-            else
+            if((newMail = CloneMail(&email->Mail)) != NULL)
             {
-              if((newMail = CloneMail(&email->Mail)) != NULL)
+              struct Mail *replacedMail = NULL;
+
+              if(mode == WRITE_DRAFT)
+              {
+                replacedMail = ReplaceMailInFolder(FilePart(newMailFile), newMail, outfolder);
+              }
+              else
+              {
                 AddMailToFolder(newMail, outfolder);
-            }
+                replacedMail = NULL;
+              }
 
-            if(newMail != NULL)
-            {
               // Now we have to check whether we have to add the To & CC addresses
               // to the emailCache
               if(C->EmailCache > 0)
@@ -4214,7 +4216,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
               }
 
               // add the new mail to our newMailList if
-              // we later have to sent it
+              // we have to sent it later
               AddNewMailNode(newMailList, newMail);
             }
 

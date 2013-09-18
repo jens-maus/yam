@@ -19,6 +19,7 @@ $URL$
     usage of "Spam" as selectable status instead of accessing the configuration
     being edited directly as this might not exist. This closes #425.
   * MailTransferList.c: fixed another memory leak.
+  * YAM_UT.c, mui/WriteWindow.c: simplified the replacing of mails in a folder.
 
 2013-09-17 Samir Hawamdeh <s.hawamdeh@tin.it>
 
