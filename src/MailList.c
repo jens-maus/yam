@@ -96,8 +96,11 @@ void ClearMailList(struct MailList *mlist)
   while((mnode = (struct MailNode *)RemHead((struct List *)&mlist->list)) != NULL)
   {
     // decrease the mail's reference counter and try to free it
-    mnode->mail->RefCounter--;
-    FreeMail(mnode->mail);
+    if(mnode->mail != NULL)
+    {
+      mnode->mail->RefCounter--;
+      FreeMail(mnode->mail);
+    }
 
     ItemPoolFree(G->mailNodeItemPool, mnode);
   }
@@ -211,10 +214,11 @@ struct MailNode *AddNewMailNode(struct MailList *mlist, struct Mail *mail)
     if((mnode = ItemPoolAlloc(G->mailNodeItemPool)) != NULL)
     {
       // initialize the node's contents
-      mnode->mail = (struct Mail *)mail;
+      mnode->mail = mail;
 
       // increase the mail's reference counter
-      mail->RefCounter++;
+      if(mail != NULL)
+        mail->RefCounter++;
 
       // add the new mail node to the end of the list
       AddTail((struct List *)&mlist->list, (struct Node *)&mnode->node);
@@ -559,7 +563,7 @@ void FreeMail(struct Mail *mail)
 {
   ENTER();
 
-  if(mail->RefCounter == 0)
+  if(mail != NULL && mail->RefCounter == 0)
     ItemPoolFree(G->mailItemPool, mail);
 
   LEAVE();
