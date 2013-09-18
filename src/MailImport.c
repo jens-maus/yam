@@ -95,25 +95,35 @@ static struct MailTransferNode *AddMessageHeader(struct TransferContext *tc, int
 
   if((email = MA_ExamineMail(NULL, tfname, FALSE)) != NULL)
   {
-    struct MailTransferNode *tnode;
+    struct Mail *mail;
 
-    if((tnode = CreateMailTransferNode(&email->Mail, TRF_TRANSFER)) != NULL)
+    if((mail = CloneMail(&email->Mail)) != NULL)
     {
-      struct Mail *mail = tnode->mail;
+      struct MailTransferNode *tnode;
 
-      mail->Folder  = NULL;
-      mail->Size    = size;
+      if((tnode = CreateMailTransferNode(mail, TRF_TRANSFER)) != NULL)
+      {
+        struct Mail *mail = tnode->mail;
 
-      tnode->index      = ++(*count);
-      tnode->importAddr = addr;
+        mail->Folder  = NULL;
+        mail->Size    = size;
 
-      AddMailTransferNode(tc->importList, tnode);
-      D(DBF_IMPORT, "added mail '%s' (%ld bytes) to import list.", mail->Subject, size);
+        tnode->index      = ++(*count);
+        tnode->importAddr = addr;
 
-      ret = tnode;
+        AddMailTransferNode(tc->importList, tnode);
+        D(DBF_IMPORT, "added mail '%s' (%ld bytes) to import list.", mail->Subject, size);
+
+        ret = tnode;
+      }
+      else
+      {
+        E(DBF_IMPORT, "couldn't allocate enough memory for struct MailTransferNode");
+        FreeMail(mail);
+      }
     }
     else
-      E(DBF_IMPORT, "Couldn't allocate enough memory for struct MailTransferNode");
+      E(DBF_IMPORT, "couldn't allocate enough memory for struct Mail");
 
     MA_FreeEMailStruct(email);
   }
