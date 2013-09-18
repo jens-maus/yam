@@ -1117,21 +1117,10 @@ DECLARE(SetOrder) // enum SetOrder order
         if(folder == NULL)
           break;
 
-        // we do not have to call FreeFolder manually, because the
-        // destructor of the Listtree will do this for us. But we
-        // have to free the FImage of the folder if it exists
-        if(folder->imageObject != NULL)
-        {
-          // we make sure that the NList also doesn't use the image in future anymore
-          DoMethod(obj, MUIM_NList_UseImage, NULL, folder->ImageIndex, MUIF_NONE);
+        // we do not have to call FreeFolder manually here, because the
+        // destructor of the Listtree will do this for us.
 
-          // and last, but not least we free the BC object here, so that this Object is also gone
-          MUI_DisposeObject(folder->imageObject);
-          // let's set it to NULL so that the destructor doesn't do the work again.
-          folder->imageObject = NULL;
-        }
-
-        // free this folder
+        // free this folder and its image
         FO_FreeFolder(folder);
         // and free its node
         DeleteFolderNode(fnode);
