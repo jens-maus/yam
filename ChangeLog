@@ -13,8 +13,11 @@ $URL$
     load function to ensure that no old tree nodes might be accessed while
     reloading the folder tree.
   * MailList.c: allow NULL mail pointers in mail lists. This is required during
-    composing new mails but needs special handing for the reference counter. This
-    closes #424.
+    composing new mails but needs special handing for the reference counter.
+    This closes #424.
+  * mui/SearchControlGroup.c, misc: use a new attribute to allow/forbid the
+    usage of "Spam" as selectable status instead of accessing the configuration
+    being edited directly as this might not exist. This closes #425.
 
 2013-09-17 Samir Hawamdeh <s.hawamdeh@tin.it>
 

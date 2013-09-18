@@ -109,6 +109,7 @@ OVERLOAD(MUIM_ObjectList_CreateItem)
 
   item = SearchControlGroupObject,
     MUIA_SearchControlGroup_RemoteFilterMode, (data->filter != NULL) ? data->filter->remote : FALSE,
+    MUIA_SearchControlGroup_AllowSpamStatus, CE->SpamFilterEnabled,
   End;
 
   RETURN((IPTR)item);

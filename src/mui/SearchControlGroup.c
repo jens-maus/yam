@@ -75,6 +75,8 @@ struct Data
   Object *activeObject;
 
   BOOL remoteFilterMode;
+
+  const char *statusCycleEntries[11];
 };
 */
 
@@ -108,7 +110,7 @@ OVERLOAD(OM_NEW)
   statopt[6] = tr(MSG_FI_StatHold);
   statopt[7] = tr(MSG_FI_StatSent);
   statopt[8] = tr(MSG_FI_StatMarked);
-  statopt[9] = CE->SpamFilterEnabled ? tr(MSG_FI_STATSPAM) : NULL;
+  statopt[9] = tr(MSG_FI_STATSPAM);
   statopt[10] = NULL;
 
   compopt[0] = compopt[5] = compopt[ 8] = " = ";
@@ -142,13 +144,22 @@ OVERLOAD(OM_NEW)
     return 0;
   }
 
+  memcpy(data->statusCycleEntries, statopt, sizeof(data->statusCycleEntries));
+
   // get eventually set attributes first
   while((tag = NextTagItem((APTR)&tags)) != NULL)
   {
     switch(tag->ti_Tag)
     {
       case ATTR(RemoteFilterMode): data->remoteFilterMode = tag->ti_Data; break;
-      case ATTR(SingleRule)      : singleRule = tag->ti_Data; break;
+      case ATTR(SingleRule):       singleRule = tag->ti_Data; break;
+      case ATTR(AllowSpamStatus):
+      {
+        // disable the "Spam" status entry
+        if(tag->ti_Data == FALSE)
+          data->statusCycleEntries[9] = NULL;
+      }
+      break;
     }
   }
 
@@ -221,7 +232,7 @@ OVERLOAD(OM_NEW)
         Child, VGroup, // 3  status
            Child, HGroup,
              Child, data->CY_COMP[3] = MakeCycle(&compopt[5], ""),
-             Child, data->CY_STATUS = MakeCycle(statopt, ""),
+             Child, data->CY_STATUS = MakeCycle(data->statusCycleEntries, ""),
              Child, HSpace(0),
            End,
           Child, HVSpace,

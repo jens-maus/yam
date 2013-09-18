@@ -191,6 +191,7 @@ OVERLOAD(OM_NEW)
           Child, GR_SEARCH = SearchControlGroupObject,
             MUIA_SearchControlGroup_RemoteFilterMode, FALSE,
             MUIA_SearchControlGroup_SingleRule, TRUE,
+            MUIA_SearchControlGroup_AllowSpamStatus, C->SpamFilterEnabled,
           End,
           Child, ColGroup(2),
             Child, PO_FROMRULE = PopobjectObject,
