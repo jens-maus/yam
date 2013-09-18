@@ -3732,8 +3732,12 @@ struct Mail *ReplaceMailInFolder(const char *mailFile, const struct Mail *mail, 
       if(!hasStatusRead(addedMail))
         folder->Unread++;
 
-      // remember the replaced mail
-      *replacedMail = mnode->mail;
+      // remember the replaced mail and decrease its reference counter
+      if(mnode->mail != NULL)
+      {
+        *replacedMail = mnode->mail;
+        mnode->mail->RefCounter--;
+      }
 
       // replace the mail in the list
       mnode->mail = addedMail;
