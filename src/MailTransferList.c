@@ -170,7 +170,7 @@ struct MailTransferNode *ScanMailTransferList(const struct MailTransferList *tli
 ///
 /// CreateMailTransferNode
 // create a new transfer node, a given mail pointer will be memdup()'ed
-struct MailTransferNode *CreateMailTransferNode(const struct Mail *mail, const ULONG flags)
+struct MailTransferNode *CreateMailTransferNode(struct Mail *mail, const ULONG flags)
 {
   struct MailTransferNode *tnode;
 
