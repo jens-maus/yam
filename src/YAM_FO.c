@@ -842,7 +842,6 @@ enum LoadTreeResult FO_LoadTree(void)
           }
         }
 
-        DoMethod(lv, MUIM_NListtree_Clear, NULL, 0);
         set(lv, MUIA_NListtree_Quiet, TRUE);
         while(GetLine(&buffer, &size, fh) >= 0)
         {

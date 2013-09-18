@@ -1106,6 +1106,9 @@ DECLARE(SetOrder) // enum SetOrder order
     {
       struct FolderNode *fnode;
 
+      // clear the listtree first to avoid accesses to no longer existing entries
+      DoMethod(obj, MUIM_NListtree_Clear, NULL, 0);
+
       // before we reset/reload the foldertree we have to
       // make sure everything is freed correctly.
       LockFolderList(G->folders);

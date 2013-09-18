@@ -9,6 +9,9 @@ $URL$
 
   * mui/MainFolderListtree.c: free the folder image only once. Trying to do this
     twice doesn't cause any harm but is unneeded overhead.
+  * YAM_FO.c, mui/MainFolderListtree.c: moved the listtree clearing outside the
+    load function to ensure that no old tree nodes might be accessed while
+    reloading the folder tree.
 
 2013-09-17 Samir Hawamdeh <s.hawamdeh@tin.it>
 
