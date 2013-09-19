@@ -232,7 +232,7 @@ OVERLOAD(OM_NEW)
         Child, VGroup, // 3  status
            Child, HGroup,
              Child, data->CY_COMP[3] = MakeCycle(&compopt[5], ""),
-             Child, data->CY_STATUS = MakeCycle(data->statusCycleEntries, ""),
+             Child, data->CY_STATUS = MakeCycle(NULL, ""),
              Child, HSpace(0),
            End,
           Child, HVSpace,
@@ -270,6 +270,9 @@ OVERLOAD(OM_NEW)
 
     // copy back the data stored in our temporarly struct Data
     memcpy(data, tmpData, sizeof(struct Data));
+
+    // set the cycle entries containing the correct strings
+    set(data->CY_STATUS, MUIA_Cycle_Entries, data->statusCycleEntries);
 
     // if this isn't a single rule we show the +/- buttons
     set(data->RT_BUTTONS, MUIA_ShowMe, singleRule == FALSE);

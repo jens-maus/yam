@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-09-19 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/SearchControlGroup.c: set the status cycle entries when the final address
+    of the instance data is valid. Before the address of some temporary structrue
+    was used which made MUI access invalid memory as soon as the config window
+    was opened. This closes #426.
+
 2013-09-18 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/MainFolderListtree.c: free the folder image only once. Trying to do this
