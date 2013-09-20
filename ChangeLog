@@ -19,6 +19,8 @@ $URL$
     100% compatible. So if you have some ARexx scripts dealing with YAM's address
     book please check them as intensively as possible to rule out any unwanted
     new inconsistencies.
+  * MailTransferList.c: added missing increasing of the mail's reference counter
+    to avoid a memory leak. Also removed an unused function.
 
 2013-09-19 Thore Böckelmann <tboeckel@gmx.de>
 

@@ -210,31 +210,13 @@ void AddMailTransferNode(struct MailTransferList *tlist, struct MailTransferNode
   // we only accept existing transfers
   if(tlist != NULL && tnode != NULL && tnode->mail != NULL)
   {
+    tnode->mail->RefCounter++;
+
     // add the new transfer node to the end of the list
     AddTail((struct List *)&tlist->list, (struct Node *)&tnode->node);
 
     // and increase the counter
     tlist->count++;
-  }
-
-  LEAVE();
-}
-
-///
-/// RemoveMailTransferNode
-// remove a transfer node from the list, the node is NOT freed
-// if locking of the list is needed this must be done by the calling function
-void RemoveMailTransferNode(struct MailTransferList *tlist, struct MailTransferNode *tnode)
-{
-  ENTER();
-
-  if(tlist != NULL && tnode != NULL)
-  {
-    // remove the transfer node from the list
-    Remove((struct Node *)&tnode->node);
-
-    // and decrease the counter
-    tlist->count--;
   }
 
   LEAVE();
