@@ -462,8 +462,10 @@ BOOL LoadABook(const char *filename, struct ABook *abook, BOOL append)
     {
       int nested = 0;
       struct ABookNode *parent[8];
+      struct ABookNode *afterThis[8];
 
       parent[0] = &abook->rootGroup;
+      afterThis[0] = NULL;
 
       if(strncmp(buffer,"YAB",3) == 0)
       {
@@ -521,7 +523,8 @@ BOOL LoadABook(const char *filename, struct ABook *abook, BOOL append)
               }
               while(GetLine(&buffer, &size, fh) >= 0);
 
-              AddABookNode(parent[nested], abn, NULL);
+              AddABookNode(parent[nested], abn, afterThis[nested]);
+              afterThis[nested] = abn;
             }
           }
           else if(strncmp(buffer, "@LIST", 5) == 0)
@@ -550,7 +553,8 @@ BOOL LoadABook(const char *filename, struct ABook *abook, BOOL append)
                 dstrcat(&abn->ListMembers, "\n");
               }
 
-              AddABookNode(parent[nested], abn, NULL);
+              AddABookNode(parent[nested], abn, afterThis[nested]);
+              afterThis[nested] = abn;
             }
           }
           else if(strncmp(buffer, "@GROUP", 6) == 0)
@@ -560,10 +564,12 @@ BOOL LoadABook(const char *filename, struct ABook *abook, BOOL append)
               strlcpy(abn->Alias, Trim(&buffer[7]), sizeof(abn->Alias));
               GetLine(&buffer, &size, fh);
               strlcpy(abn->Comment, Trim(buffer), sizeof(abn->Comment));
-              AddABookNode(parent[nested], abn, NULL);
+              AddABookNode(parent[nested], abn, afterThis[nested]);
+              afterThis[nested] = abn;
 
               nested++;
               parent[nested] = abn;
+              afterThis[nested] = NULL;
             }
           }
           else if(strcmp(buffer,"@ENDGROUP") == 0)
@@ -581,6 +587,8 @@ BOOL LoadABook(const char *filename, struct ABook *abook, BOOL append)
         // Addressbook file.
         if(MUI_Request(G->App, NULL, MUIF_NONE, NULL, tr(MSG_AB_NOYAMADDRBOOK_GADS), tr(MSG_AB_NOYAMADDRBOOK), filename))
         {
+          struct ABookNode *lastABN = NULL;
+
           if(append == FALSE)
             ClearABook(abook);
 
@@ -610,7 +618,8 @@ BOOL LoadABook(const char *filename, struct ABook *abook, BOOL append)
               }
               strlcpy(abn->Alias, p, sizeof(abn->Alias));
 
-              AddABookNode(parent[nested], abn, NULL);
+              AddABookNode(parent[nested], abn, lastABN);
+              lastABN = abn;
             }
           }
         }
