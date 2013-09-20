@@ -152,20 +152,43 @@ static void LoadEMailCache(const char *name, struct ABook *cache)
 }
 
 ///
+
+struct SaveEMailCacheStuff
+{
+  FILE *fh;
+  LONG savedEntries;
+};
+
 /// SaveEMailCacheEntry
 static BOOL SaveEMailCacheEntry(const struct ABookNode *abn, UNUSED ULONG flags, void *userData)
 {
-  FILE *fh = (FILE *)userData;
+  BOOL result;
+  struct SaveEMailCacheStuff *stuff = (struct SaveEMailCacheStuff *)userData;
 
   ENTER();
 
-  if(abn->RealName[0] != '\0')
-	fprintf(fh, "%s <%s>\n", abn->RealName, abn->Address);
-  else
-	fprintf(fh, "<%s>\n", abn->Address);
+  if(stuff->savedEntries < C->EmailCache)
+  {
+    // the cache contains user entries only, thus we don't have to care about the type here
+    if(abn->RealName[0] != '\0')
+	  fprintf(stuff->fh, "%s <%s>\n", abn->RealName, abn->Address);
+    else
+	  fprintf(stuff->fh, "<%s>\n", abn->Address);
 
-  RETURN(TRUE);
-  return TRUE;
+    // count the number of saved entries
+    stuff->savedEntries++;
+
+    // continue to save entries
+    result = TRUE;
+  }
+  else
+  {
+    // too many entries, abort
+    result = FALSE;
+  }
+
+  RETURN(result);
+  return result;
 }
 
 ///
@@ -178,6 +201,10 @@ static void SaveEMailCache(const char *name, struct ABook *cache)
 
   if((fh = fopen(name, "w")) != NULL)
   {
+    struct SaveEMailCacheStuff stuff;
+
+    stuff.fh = fh;
+    stuff.savedEntries = 0;
     IterateABook(cache, 0, SaveEMailCacheEntry, fh);
 
     fclose(fh);
