@@ -494,8 +494,9 @@ static BOOL FI_SearchPatternInHeader(const struct Search *search, const struct M
     {
       struct MinList *headerList;
 
-      if((headerList = AllocSysObjectTags(ASOT_LIST, ASOLIST_Min, TRUE,
-                                                     TAG_DONE)) != NULL)
+      if((headerList = AllocSysObjectTags(ASOT_LIST,
+        ASOLIST_Min, TRUE,
+        TAG_DONE)) != NULL)
       {
         setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
@@ -581,9 +582,10 @@ static struct SearchPatternNode *AllocSearchPatternNode(const char *pattern, con
 
   ENTER();
 
-  if((spn = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*spn),
-                                          ASONODE_Min, TRUE,
-                                          TAG_DONE)) != NULL)
+  if((spn = AllocSysObjectTags(ASOT_NODE,
+    ASONODE_Size, sizeof(*spn),
+    ASONODE_Min, TRUE,
+    TAG_DONE)) != NULL)
   {
     BOOL parseOk = FALSE;
 
@@ -1236,8 +1238,9 @@ struct MinList *CloneFilterList(enum ApplyFilterMode mode)
 
   ENTER();
 
-  if((clonedList = AllocSysObjectTags(ASOT_LIST, ASOLIST_Min, TRUE,
-                                                 TAG_DONE)) != NULL)
+  if((clonedList = AllocSysObjectTags(ASOT_LIST,
+    ASOLIST_Min, TRUE,
+    TAG_DONE)) != NULL)
   {
     struct FilterNode *filter;
 

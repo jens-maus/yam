@@ -34,7 +34,6 @@
 #include <mui/TheBar_mcc.h>
 
 #include "YAM.h"
-#include "YAM_addressbook.h"
 #include "YAM_find.h"
 #include "YAM_mainFolder.h"
 

@@ -91,6 +91,7 @@
 #define DBF_THREAD   (1<<22)    // for the Thread management (Thread.c)
 #define DBF_MTRACK   (1<<23)    // to show all memory allocations
 #define DBF_TZONE    (1<<24)    // for the time zone management (TZone.c, libtz.a)
+#define DBF_ABOOK    (1<<25)    // for the address book handling (AddressBook.c)
 #define DBF_ALL      0xffffffff
 
 // debug modules

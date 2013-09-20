@@ -45,7 +45,6 @@
 #include "SDI_hook.h"
 
 #include "YAM.h"
-#include "YAM_addressbook.h"
 #include "YAM_error.h"
 #include "YAM_global.h"
 #include "YAM_read.h"

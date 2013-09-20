@@ -33,7 +33,6 @@
 #include <stdlib.h>
 #include <mui/NList_mcc.h>
 
-#include "YAM_addressbookEntry.h"
 #include "YAM_global.h"
 
 #include "mui/AddressMatchPopupWindow.h"
@@ -68,8 +67,8 @@ OVERLOAD(OM_NEW)
 OVERLOAD(MUIM_NList_Construct)
 {
   struct MUIP_NList_Construct *ncm = (struct MUIP_NList_Construct *)msg;
-  struct CustomABEntry *abEntry = ncm->entry;
-  struct CustomABEntry *entry;
+  struct MatchedABookEntry *abEntry = ncm->entry;
+  struct MatchedABookEntry *entry;
 
   ENTER();
 
@@ -84,7 +83,7 @@ OVERLOAD(MUIM_NList_Construct)
 OVERLOAD(MUIM_NList_Destruct)
 {
   struct MUIP_NList_Destruct *ncm = (struct MUIP_NList_Destruct *)msg;
-  struct CustomABEntry *abEntry = ncm->entry;
+  struct MatchedABookEntry *abEntry = ncm->entry;
 
   ENTER();
 
@@ -99,7 +98,7 @@ OVERLOAD(MUIM_NList_Destruct)
 OVERLOAD(MUIM_NList_Display)
 {
   struct MUIP_NList_Display *ndm = (struct MUIP_NList_Display *)msg;
-  struct CustomABEntry *entry = (struct CustomABEntry *)ndm->entry;
+  struct MatchedABookEntry *entry = (struct MatchedABookEntry *)ndm->entry;
   GETDATA;
 
   ENTER();
@@ -127,8 +126,8 @@ OVERLOAD(MUIM_NList_Display)
 OVERLOAD(MUIM_NList_Compare)
 {
   struct MUIP_NList_Compare *ncm = (struct MUIP_NList_Compare *)msg;
-  struct CustomABEntry *entry1 = (struct CustomABEntry *)ncm->entry1;
-  struct CustomABEntry *entry2 = (struct CustomABEntry *)ncm->entry2;
+  struct MatchedABookEntry *entry1 = (struct MatchedABookEntry *)ncm->entry1;
+  struct MatchedABookEntry *entry2 = (struct MatchedABookEntry *)ncm->entry2;
   LONG result;
 
   ENTER();

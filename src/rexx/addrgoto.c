@@ -26,12 +26,13 @@
 ***************************************************************************/
 
 #include <proto/exec.h>
+#include <proto/muimaster.h>
 
 #include "extrasrc.h"
 
 #include "YAM.h"
-#include "YAM_addressbook.h"
-#include "YAM_addressbookEntry.h"
+
+#include "mui/AddressBookWindow.h"
 
 #include "Rexx.h"
 
@@ -58,7 +59,12 @@ void rx_addrgoto(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
 
     case RXIF_ACTION:
     {
-      if(!AB_GotoEntry(args->alias))
+      if(SearchABook(&G->abook, args->alias, ASM_ALIAS|ASM_USER|ASM_LIST|ASM_GROUP, &G->abook.arexxABN) != 0)
+      {
+        if(G->ABookWinObject != NULL)
+          set(G->ABookWinObject, MUIA_AddressBookWindow_ActiveEntry, G->abook.arexxABN);
+      }
+      else
         params->rc = RETURN_WARN;
     }
     break;

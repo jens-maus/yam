@@ -30,15 +30,58 @@
 
 #include "AddressBookEntryList_cl.h"
 
+#include <mui/NListtree_mcc.h>
+
 #include "YAM.h"
-#include "YAM_addressbook.h"
-#include "YAM_addressbookEntry.h"
 
 #include "mui/AddressBookWindow.h"
 
 #include "MUIObjects.h"
 
 #include "Debug.h"
+
+
+/* Private Functions */
+/// AddSingleMember
+//  Adds a single entry to the member list by Drag&Drop
+static void AddSingleMember(Object *obj, struct MUI_NListtree_TreeNode *tn)
+{
+  struct ABookNode *abn = (struct ABookNode *)tn->tn_User;
+
+  ENTER();
+
+  DoMethod(obj, MUIM_List_InsertSingle, abn->Alias, xget(obj, MUIA_List_DropMark));
+
+  LEAVE();
+}
+
+///
+/// AddMembers (rec)
+//  Adds an entire group to the member list by Drag&Drop
+static void AddMembers(Object *obj, Object *tree, struct MUI_NListtree_TreeNode *list)
+{
+  struct MUI_NListtree_TreeNode *tn;
+  int i;
+
+  ENTER();
+
+  for(i=0; ; i++)
+  {
+    if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(tree, MUIM_NListtree_GetEntry, list, i, MUIV_NListtree_GetEntry_Flag_SameLevel)) != NULL)
+    {
+      if(isFlagSet(tn->tn_Flags, TNF_LIST))
+        AddMembers(obj, tree, tn);
+      else
+        AddSingleMember(obj, tn);
+    }
+    else
+      break;
+  }
+
+  LEAVE();
+}
+
+///
 
 /* Overloaded Methods */
 /// OVERLOAD(MUIM_DragQuery)
@@ -54,7 +97,7 @@ OVERLOAD(MUIM_DragQuery)
 
       if((active = (struct MUI_NListtree_TreeNode *)xget(d->obj, MUIA_NListtree_Active)))
       {
-        if(!((struct ABEntry *)(active->tn_User))->Members)
+        if(((struct ABookNode *)(active->tn_User))->ListMembers == NULL)
           return MUIV_DragQuery_Accept;
       }
     }
@@ -77,12 +120,12 @@ OVERLOAD(MUIM_DragDrop)
     {
       struct MUI_NListtree_TreeNode *active;
 
-      if((active = (struct MUI_NListtree_TreeNode *)xget(d->obj, MUIA_NListtree_Active)))
+      if((active = (struct MUI_NListtree_TreeNode *)xget(d->obj, MUIA_NListtree_Active)) != NULL)
       {
         if(isFlagSet(active->tn_Flags, TNF_LIST))
-          EA_AddMembers(obj, active);
+          AddMembers(obj, d->obj, active);
         else
-          EA_AddSingleMember(obj, active);
+          AddSingleMember(obj, active);
       }
     }
 
@@ -93,7 +136,5 @@ OVERLOAD(MUIM_DragDrop)
 }
 
 ///
-
-/* Private Functions */
 
 /* Public Methods */

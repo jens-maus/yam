@@ -28,19 +28,20 @@
 #include <strings.h>
 #include <ctype.h>
 
+#include <clib/alib_protos.h>
 #include <proto/exec.h>
+#include <proto/muimaster.h>
 
 #include "extrasrc.h"
 
 #include "YAM.h"
-#include "YAM_addressbook.h"
-#include "YAM_addressbookEntry.h"
+
+#include "mui/AddressBookWindow.h"
 
 #include "Locale.h"
 #include "Logfile.h"
+#include "MUIObjects.h"
 #include "Rexx.h"
-
-#include "mui/AddressBookWindow.h"
 
 #include "Debug.h"
 
@@ -58,10 +59,16 @@ struct results
   char *alias;
 };
 
+struct optional
+{
+  struct ABookNode abn;
+};
+
 void rx_addrnew(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
 {
   struct args *args = params->args;
   struct results *results = params->results;
+  struct optional *optional = params->optional;
 
   ENTER();
 
@@ -71,44 +78,83 @@ void rx_addrnew(UNUSED struct RexxHost *host, struct RexxParams *params, enum Re
     {
       params->args = AllocVecPooled(G->SharedMemPool, sizeof(*args));
       params->results = AllocVecPooled(G->SharedMemPool, sizeof(*results));
+      params->optional = AllocVecPooled(G->SharedMemPool, sizeof(*optional));
+      if(params->optional == NULL)
+        params->rc = RETURN_ERROR;
     }
     break;
 
     case RXIF_ACTION:
     {
-      static struct ABEntry addr;
+      enum ABookNodeType type;
 
-      memset(&addr, 0, sizeof(struct ABEntry));
-      addr.Type = AET_USER;
-      addr.Members = (char *)"";
-
-      if(args->type)
+      if(args->type != NULL)
       {
         if(tolower(*args->type) == 'g')
-          addr.Type = AET_GROUP;
+          type = ABNT_GROUP;
         else if(tolower(*args->type) == 'l')
-          addr.Type = AET_LIST;
+          type = ABNT_LIST;
+        else
+          type = ABNT_USER;
       }
+      else
+        type = ABNT_USER;
 
-      if(args->alias)    strlcpy(addr.Alias, args->alias, sizeof(addr.Alias));
-      if(args->name)     strlcpy(addr.RealName, args->name, sizeof(addr.RealName));
-      if(args->email)    strlcpy(addr.Address, args->email, sizeof(addr.Address));
+      InitABookNode(&optional->abn, type);
 
-      if(!*addr.Alias)
+      if(args->alias != NULL)
+        strlcpy(optional->abn.Alias, args->alias, sizeof(optional->abn.Alias));
+      if(args->name != NULL)
+        strlcpy(optional->abn.RealName, args->name, sizeof(optional->abn.RealName));
+      if(args->email != NULL)
+        strlcpy(optional->abn.Address, args->email, sizeof(optional->abn.Address));
+
+      if(IsStrEmpty(optional->abn.Alias) == TRUE)
       {
-        if(addr.Type == AET_USER)
-          EA_SetDefaultAlias(&addr);
+        if(optional->abn.type == ABNT_USER)
+          SetDefaultAlias(&optional->abn);
         else
           params->rc = RETURN_ERROR;
       }
 
       if(params->rc == 0)
       {
-        EA_FixAlias(&addr, FALSE);
-        results->alias = addr.Alias;
-        EA_InsertBelowActive(&addr, addr.Type == AET_GROUP ? TNF_LIST : 0);
-        set(G->ABookWinObject, MUIA_AddressBookWindow_Modified, TRUE);
-        AppendToLogfile(LF_VERBOSE, 71, tr(MSG_LOG_NewAddress), addr.Alias);
+        struct ABookNode *abn;
+
+        FixAlias(&G->abook, &optional->abn, FALSE);
+        results->alias = optional->abn.Alias;
+
+        if((abn = CreateABookNode(optional->abn.type)) != NULL)
+        {
+          struct ABookNode *group;
+          struct ABookNode *afterThis;
+
+          memcpy(abn, &optional->abn, sizeof(*abn));
+
+          if(G->ABookWinObject != NULL)
+          {
+            group = (struct ABookNode *)xget(G->ABookWinObject, MUIA_AddressBookWindow_ActiveGroup);
+            afterThis = (struct ABookNode *)xget(G->ABookWinObject, MUIA_AddressBookWindow_ActiveEntry);
+          }
+          else
+          {
+            group = &G->abook.rootGroup;
+            afterThis = NULL;
+          }
+
+          AddABookNode(group, abn, afterThis);
+          G->abook.arexxABN = abn;
+          G->abook.modified = TRUE;
+
+          // update an existing address book window as well
+          if(G->ABookWinObject != NULL)
+            DoMethod(G->ABookWinObject, MUIM_AddressBookWindow_RebuildTree);
+
+          set(G->ABookWinObject, MUIA_AddressBookWindow_Modified, TRUE);
+          AppendToLogfile(LF_VERBOSE, 71, tr(MSG_LOG_NewAddress), optional->abn.Alias);
+        }
+        else
+          params->rc = RETURN_ERROR;
       }
     }
     break;
@@ -119,6 +165,8 @@ void rx_addrnew(UNUSED struct RexxHost *host, struct RexxParams *params, enum Re
         FreeVecPooled(G->SharedMemPool, args);
       if(results != NULL)
         FreeVecPooled(G->SharedMemPool, results);
+      if(optional != NULL)
+        FreeVecPooled(G->SharedMemPool, optional);
     }
     break;
   }

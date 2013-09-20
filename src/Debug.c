@@ -368,6 +368,7 @@ void SetupDebug(void)
       { "thread",   DBF_THREAD  },
       { "mtrack",   DBF_MTRACK  },
       { "tzone",    DBF_TZONE   },
+      { "abook",    DBF_ABOOK   },
       { "all",      DBF_ALL     },
       { NULL,       0           }
     };

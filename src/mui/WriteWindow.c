@@ -43,6 +43,7 @@
 #include <mui/BetterString_mcc.h>
 #include <mui/NBalance_mcc.h>
 #include <mui/NList_mcc.h>
+#include <mui/NListtree_mcc.h>
 #include <mui/NListview_mcc.h>
 #include <mui/TextEditor_mcc.h>
 #include <mui/TheBar_mcc.h>
@@ -51,8 +52,6 @@
 #include "SDI_hook.h"
 
 #include "YAM.h"
-#include "YAM_addressbook.h"
-#include "YAM_addressbookEntry.h"
 #include "YAM_error.h"
 #include "YAM_global.h"
 #include "YAM_glossarydisplay.h"
@@ -363,7 +362,7 @@ static BOOL SetDefaultSecurity(struct Compose *comp, const Object *win)
     // copy string as strtok() will modify it
     if((buf = strdup(CheckThese[i])))
     {
-      struct ABEntry *ab=NULL;
+      struct ABookNode *ab=NULL;
       enum Security currsec;
       char *in=buf;
       char *s;
@@ -386,10 +385,10 @@ static BOOL SetDefaultSecurity(struct Compose *comp, const Object *win)
         }
 
         // can't find address for this entry - shouldn't happen
-        if(!t)
+        if(t == NULL)
           continue;
 
-        if(AB_SearchEntry(t, ASM_ADDRESS|ASM_USER|ASM_COMPLETE, &ab) && (ab != NULL))
+        if(SearchABook(&G->abook, t, ASM_ADDRESS|ASM_USER|ASM_COMPLETE, &ab) != 0)
         {
           // get default from entry
           currsec = ab->DefSecurity;
@@ -1698,7 +1697,7 @@ OVERLOAD(OM_DISPOSE)
   }
 
   // check the reference window ptr of the addressbook
-  if((LONG)xget(G->ABookWinObject, MUIA_AddressBookWindow_WindowNumber) == data->windowNumber)
+  if(G->ABookWinObject != NULL && (LONG)xget(G->ABookWinObject, MUIA_AddressBookWindow_WindowNumber) == data->windowNumber)
     set(G->ABookWinObject, MUIA_AddressBookWindow_WindowNumber, -1);
 
   // we have to dispose certain object on our own
@@ -5214,6 +5213,74 @@ DECLARE(HandleAppMessage) // struct AppMessage *appmsg
         DoMethod(obj, METHOD(RequestAttachment), buf);
       }
     }
+  }
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(InsertABookTreenode)
+DECLARE(InsertABookTreenode) // enum RcptType type, Object *tree, struct MUI_NListtree_TreeNode *tn
+{
+  struct ABookNode *abn = (struct ABookNode *)msg->tn->tn_User;
+
+  ENTER();
+
+  switch(abn->type)
+  {
+    case ABNT_USER:
+    {
+      // insert the address
+      DoMethod(obj, METHOD(AddRecipient), msg->type, abn->Alias);
+    }
+    break;
+
+    case ABNT_LIST:
+    {
+      char *ptr;
+
+      if((ptr = abn->ListMembers) != NULL)
+      {
+        while(*ptr != '\0')
+        {
+          char *nptr;
+
+          if((nptr = strchr(ptr, '\n')) != NULL)
+            *nptr = '\0';
+          else
+            break;
+
+          // insert the address
+          DoMethod(obj, METHOD(AddRecipient), msg->type, ptr);
+
+          *nptr = '\n';
+          ptr = nptr;
+
+          ptr++;
+        }
+      }
+    }
+    break;
+
+    case ABNT_GROUP:
+    {
+      ULONG pos = MUIV_NListtree_GetEntry_Position_Head;
+      struct MUI_NListtree_TreeNode *tn = msg->tn;
+
+      do
+      {
+        tn = (struct MUI_NListtree_TreeNode *)DoMethod(msg->tree, MUIM_NListtree_GetEntry, tn, pos, MUIV_NListtree_GetEntry_Flag_SameLevel);
+        if(tn == NULL)
+          break;
+
+        DoMethod(obj, METHOD(InsertABookTreenode), msg->type, msg->tree, tn);
+
+        pos = MUIV_NListtree_GetEntry_Position_Next;
+      }
+      while(TRUE);
+    }
+    break;
   }
 
   RETURN(0);

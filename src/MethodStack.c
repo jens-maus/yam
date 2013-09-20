@@ -119,8 +119,9 @@ BOOL VARARGS68K PushMethodOnStack(Object *obj, ULONG argCount, ...)
 
   ENTER();
 
-  if((pm = AllocSysObjectTags(ASOT_MESSAGE, ASOMSG_Size, sizeof(*pm),
-                                            TAG_DONE)) != NULL)
+  if((pm = AllocSysObjectTags(ASOT_MESSAGE,
+    ASOMSG_Size, sizeof(*pm),
+    TAG_DONE)) != NULL)
   {
     VA_LIST args;
 
@@ -156,8 +157,9 @@ IPTR VARARGS68K PushMethodOnStackWait(Object *obj, ULONG argCount, ...)
 
   ENTER();
 
-  if((pm = AllocSysObjectTags(ASOT_MESSAGE, ASOMSG_Size, sizeof(*pm),
-                                            TAG_DONE)) != NULL)
+  if((pm = AllocSysObjectTags(ASOT_MESSAGE,
+    ASOMSG_Size, sizeof(*pm),
+    TAG_DONE)) != NULL)
   {
     VA_LIST args;
 

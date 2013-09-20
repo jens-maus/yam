@@ -27,13 +27,12 @@
 
 #include <stdlib.h>
 
+#include <clib/alib_protos.h>
 #include <proto/exec.h>
 
 #include "extrasrc.h"
 
 #include "YAM.h"
-#include "YAM_addressbook.h"
-#include "YAM_addressbookEntry.h"
 
 #include "Rexx.h"
 
@@ -70,19 +69,20 @@ void rx_addrfind(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
 
     case RXIF_ACTION:
     {
-      int hits;
-      int mode;
+      ULONG mode;
+      ULONG hits;
 
       if(args->nameonly)
-        mode = args->emailonly ? ABF_RX_NAMEEMAIL : ABF_RX_NAME;
+        mode = args->emailonly ? ASM_ADDRESS|ASM_REALNAME|ASM_USER|ASM_LIST : ASM_REALNAME|ASM_USER|ASM_LIST;
       else
-        mode = args->emailonly ? ABF_RX_EMAIL     : ABF_RX;
+        mode = args->emailonly ? ASM_ADDRESS|ASM_USER|ASM_LIST : ASM_ALIAS|ASM_COMMENT|ASM_REALNAME|ASM_ADDRESS|ASM_USERINFO|ASM_USER|ASM_LIST;
 
-      if((hits = AB_FindEntry(args->pattern, mode, NULL)) > 0)
+      if((hits = PatternSearchABook(&G->abook, args->pattern, mode, NULL)) != 0)
       {
-        results->alias = calloc(hits+1, sizeof(char *));
-        if(AB_FindEntry(args->pattern, mode, results->alias) == 0)
-          params->rc = RETURN_WARN;
+        if((results->alias = calloc(hits+1, sizeof(char *))) != NULL)
+          PatternSearchABook(&G->abook, args->pattern, mode, results->alias);
+        else
+          params->rc = RETURN_ERROR;
       }
       else
         params->rc = RETURN_WARN;

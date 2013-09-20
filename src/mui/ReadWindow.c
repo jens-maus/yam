@@ -42,7 +42,6 @@
 #include "SDI_hook.h"
 
 #include "YAM.h"
-#include "YAM_addressbookEntry.h"
 #include "YAM_find.h"
 #include "YAM_mainFolder.h"
 

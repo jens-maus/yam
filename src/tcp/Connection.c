@@ -818,15 +818,17 @@ struct hostent *GetHostByName(struct Connection *conn, const char *host)
   // set up a message port with uses our abort signal as signal bit
   // in case the time runs out it will abort the gethostbyname() call
   // and let it return NULL
-  if((timeoutPort = AllocSysObjectTags(ASOT_PORT, ASOPORT_Signal, conn->abortSignal,
-                                                  ASOPORT_AllocSig, FALSE,
-                                                  TAG_DONE)) != NULL)
+  if((timeoutPort = AllocSysObjectTags(ASOT_PORT,
+    ASOPORT_Signal, conn->abortSignal,
+    ASOPORT_AllocSig, FALSE,
+    TAG_DONE)) != NULL)
   {
     struct TimeRequest *timeoutIO;
 
-    if((timeoutIO = AllocSysObjectTags(ASOT_IOREQUEST, ASOIOR_Size, sizeof(*timeoutIO),
-                                                       ASOIOR_ReplyPort, (IPTR)timeoutPort,
-                                                       TAG_DONE)) != NULL)
+    if((timeoutIO = AllocSysObjectTags(ASOT_IOREQUEST,
+      ASOIOR_Size, sizeof(*timeoutIO),
+      ASOIOR_ReplyPort, (IPTR)timeoutPort,
+      TAG_DONE)) != NULL)
     {
       if(OpenDevice(TIMERNAME, UNIT_VBLANK, (struct IORequest *)timeoutIO, 0L) == 0)
       {

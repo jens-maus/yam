@@ -59,9 +59,10 @@ struct FolderList *CreateFolderList(void)
   ENTER();
 
   // at first create the list itself
-  if((flist = AllocSysObjectTags(ASOT_LIST, ASOLIST_Size, sizeof(*flist),
-                                            ASOLIST_Min, TRUE,
-                                            TAG_DONE)) != NULL)
+  if((flist = AllocSysObjectTags(ASOT_LIST,
+    ASOLIST_Size, sizeof(*flist),
+    ASOLIST_Min, TRUE,
+    TAG_DONE)) != NULL)
   {
     // now create the arbitration semaphore
     if((flist->lockSemaphore = AllocSysObjectTags(ASOT_SEMAPHORE, TAG_DONE)) != NULL)
@@ -128,9 +129,10 @@ struct FolderNode *AddNewFolderNode(struct FolderList *flist, const struct Folde
   // we only accept existing folders
   if(folder != NULL)
   {
-    if((fnode = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*fnode),
-                                              ASONODE_Min, TRUE,
-                                              TAG_DONE)) != NULL)
+    if((fnode = AllocSysObjectTags(ASOT_NODE,
+      ASONODE_Size, sizeof(*fnode),
+      ASONODE_Min, TRUE,
+      TAG_DONE)) != NULL)
     {
       // initialize the node's contents
       fnode->folder = (struct Folder *)folder;

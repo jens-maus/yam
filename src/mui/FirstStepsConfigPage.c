@@ -32,8 +32,7 @@
 
 #include <proto/muimaster.h>
 
-#include "YAM_addressbook.h"
-
+#include "mui/AddressBookWindow.h"
 #include "mui/CodesetPopup.h"
 #include "mui/ConfigPage.h"
 #include "mui/ConfigPageList.h"

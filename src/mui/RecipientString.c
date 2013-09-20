@@ -35,13 +35,12 @@
 #include <proto/muimaster.h>
 #include <mui/BetterString_mcc.h>
 #include <mui/NList_mcc.h>
+#include <mui/NListtree_mcc.h>
 
 #include "SDI_hook.h"
 #include "newmouse.h"
 
 #include "YAM.h"
-#include "YAM_addressbook.h"
-#include "YAM_addressbookEntry.h"
 #include "YAM_mainFolder.h"
 
 #include "mui/AddressBookWindow.h"
@@ -49,6 +48,7 @@
 #include "mui/MainMailListGroup.h"
 #include "mui/YAMApplication.h"
 
+#include "AddressBook.h"
 #include "Config.h"
 #include "MUIObjects.h"
 #include "UserIdentity.h"
@@ -85,51 +85,6 @@ struct Data
 #define hasNoValidFlag(v)      (isFlagSet((v), MUIF_RecipientString_Resolve_NoValid))
 #define hasNoCacheFlag(v)      (isFlagSet((v), MUIF_RecipientString_Resolve_NoCache))
 */
-
-/* Hooks */
-/// FindAddressHook
-HOOKPROTONHNO(FindAddressFunc, LONG, struct MUIP_NListtree_FindUserDataMessage *msg)
-{
-  struct ABEntry *entry;
-  LONG result = ~0;
-
-  ENTER();
-
-  entry = (struct ABEntry *)msg->UserData;
-
-  if(entry->Type == AET_USER || entry->Type == AET_LIST)
-  {
-    // first see if our string matches the alias
-    if(Stricmp(msg->User, entry->Alias) == 0)
-    {
-      D(DBF_GUI, "\"%s\" matches alias \"%s\"", msg->User, entry->Alias);
-      result = 0;
-    }
-    else
-    {
-      // then we search for the realname
-      char *unquoted = UnquoteString(entry->RealName, TRUE);
-
-      if(Stricmp(msg->User, unquoted) == 0)
-      {
-        D(DBF_GUI, "\"%s\" matches realname \"%s\"", msg->User, entry->RealName);
-        result = 0;
-      }
-      else if(entry->Type == AET_USER && Stricmp(msg->User, entry->Address) == 0)
-      {
-        D(DBF_GUI, "\"%s\" matches address \"%s\"", msg->User, entry->Address);
-        result = 0;
-      }
-
-      free(unquoted);
-    }
-  }
-
-  RETURN(result);
-  return result;
-}
-MakeStaticHook(FindAddressHook, FindAddressFunc);
-///
 
 /* Private Functions */
 /// rcptok()
@@ -283,24 +238,24 @@ static void InsertAddress(Object *obj, const char *alias, const char *name, cons
 /// InsertAddressTreeNode() rec
 static void InsertAddressTreeNode(Object *obj, Object *addrObj, struct MUI_NListtree_TreeNode *tn)
 {
-  struct ABEntry *ab = (struct ABEntry *)(tn->tn_User);
+  struct ABookNode *ab = (struct ABookNode *)(tn->tn_User);
 
   ENTER();
 
-  switch(ab->Type)
+  switch(ab->type)
   {
-    case AET_USER:
+    case ABNT_USER:
     {
       // insert the address
       InsertAddress(obj, "", ab->RealName, ab->Address);
     }
     break;
 
-    case AET_LIST:
+    case ABNT_LIST:
     {
       char *ptr;
 
-      for(ptr = ab->Members; *ptr != '\0'; ptr++)
+      for(ptr = ab->ListMembers; *ptr != '\0'; ptr++)
       {
         char *nptr;
 
@@ -317,24 +272,21 @@ static void InsertAddressTreeNode(Object *obj, Object *addrObj, struct MUI_NList
     }
     break;
 
-    case AET_GROUP:
+    case ABNT_GROUP:
     {
-      if(isFlagSet(tn->tn_Flags, TNF_LIST))
+      ULONG pos = MUIV_NListtree_GetEntry_Position_Head;
+
+      do
       {
-        ULONG pos = MUIV_NListtree_GetEntry_Position_Head;
+        tn = (struct MUI_NListtree_TreeNode *)DoMethod(addrObj, MUIM_NListtree_GetEntry, tn, pos, MUIV_NListtree_GetEntry_Flag_SameLevel);
+        if(tn == NULL)
+          break;
 
-        do
-        {
-          tn = (struct MUI_NListtree_TreeNode *)DoMethod(addrObj, MUIM_NListtree_GetEntry, tn, pos, MUIV_NListtree_GetEntry_Flag_SameLevel);
-          if(tn == NULL)
-            break;
+        InsertAddressTreeNode(obj, addrObj, tn);
 
-          InsertAddressTreeNode(obj, addrObj, tn);
-
-          pos = MUIV_NListtree_GetEntry_Position_Next;
-        }
-        while(TRUE);
+        pos = MUIV_NListtree_GetEntry_Position_Next;
       }
+      while(TRUE);
     }
     break;
   }
@@ -650,7 +602,7 @@ OVERLOAD(MUIM_DragQuery)
 
   ENTER();
 
-  if(d->obj == (Object *)xget(G->ABookWinObject, MUIA_AddressBookWindow_Listtree))
+  if(G->ABookWinObject != NULL && d->obj == (Object *)xget(G->ABookWinObject, MUIA_AddressBookWindow_Listtree))
     result = MUIV_DragQuery_Accept;
   else if(DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_IsMailList, d->obj) == TRUE)
     result = MUIV_DragQuery_Accept;
@@ -669,7 +621,7 @@ OVERLOAD(MUIM_DragDrop)
 
   ENTER();
 
-  if(d->obj == (Object *)xget(G->ABookWinObject, MUIA_AddressBookWindow_Listtree))
+  if(G->ABookWinObject != NULL && d->obj == (Object *)xget(G->ABookWinObject, MUIA_AddressBookWindow_Listtree))
   {
     struct MUI_NListtree_TreeNode *tn = (struct MUI_NListtree_TreeNode *)MUIV_NListtree_NextSelected_Start;
 
@@ -866,13 +818,13 @@ OVERLOAD(MUIM_HandleEvent)
           if(closeMatchWin == FALSE)
           {
             char *cur_rcpt = (char *)DoMethod(obj, METHOD(CurrentRecipient));
-            struct CustomABEntry *abentry;
+            struct MatchedABookEntry *abentry;
 
             if(cur_rcpt != NULL &&
-               (abentry = (struct CustomABEntry *)DoMethod(data->Matchwindow, MUIM_AddressMatchPopupWindow_Open, cur_rcpt)) != NULL)
+               (abentry = (struct MatchedABookEntry *)DoMethod(data->Matchwindow, MUIM_AddressMatchPopupWindow_Open, cur_rcpt)) != NULL)
             {
               ULONG pos = xget(obj, MUIA_String_BufferPos);
-              struct ABEntry *matchEntry = abentry->MatchEntry;
+              struct ABookNode *matchEntry = abentry->MatchEntry;
 
               if(matchEntry != NULL)
               {
@@ -942,7 +894,6 @@ DECLARE(Resolve) // ULONG flags
   BOOL withcache = TRUE;
   BOOL quiet;
   ULONG result;
-  Object *tree;
 
   ENTER();
 
@@ -959,14 +910,9 @@ DECLARE(Resolve) // ULONG flags
   if(hasNoCacheFlag(msg->flags) || data->NoCache)
     withcache = FALSE;
 
-  // a very ugly direct access, I know...
-  tree = (Object *)xget(G->ABookWinObject, MUIA_AddressBookWindow_Listtree);
-  set(tree, MUIA_NListtree_FindUserDataHook, &FindAddressHook);
-
   do
   {
-    struct MUI_NListtree_TreeNode *tn;
-    struct ABEntry *entry;
+    struct ABookNode *entry;
     BOOL quote = FALSE;
     char *contents;
     char *s;
@@ -985,6 +931,7 @@ DECLARE(Resolve) // ULONG flags
     while((s = rcptok(tmp, &quote)) != NULL)
     {
       char *marks;
+      int hits;
 
       D(DBF_GUI, "token '%s' (quoted %ld)", s, quote);
 
@@ -1027,18 +974,14 @@ DECLARE(Resolve) // ULONG flags
           DoMethod(obj, MUIM_BetterString_Insert, strchr(uin->address, '@')+1, MUIV_BetterString_Insert_EndOfString);
         }
       }
-      else if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(tree, MUIM_NListtree_FindUserData, MUIV_NListtree_FindUserData_ListNode_Root, s, MUIF_NONE))) /* entry found in address book */
+      else if((hits = SearchABook(&G->abook, s, ASM_ALIAS|ASM_REALNAME|ASM_ADDRESS|ASM_COMPLETE, &entry)) != 0) /* entry found in address book */
       {
-        struct MUI_NListtree_TreeNode *nexttn = (struct MUI_NListtree_TreeNode *)DoMethod(tree, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Next, MUIF_NONE);
-
         D(DBF_GUI, "found match '%s'", s);
 
-        entry = (struct ABEntry *)tn->tn_User;
-
         // Now we have to check if there exists another entry in the AB with this string
-        if(nexttn == NULL || DoMethod(tree, MUIM_NListtree_FindUserData, nexttn, s, MUIV_NListtree_FindUserData_Flag_StartNode) == (ULONG)NULL)
+        if(hits == 1)
         {
-          if(entry->Type == AET_USER) /* it's a normal person */
+          if(entry->type == ABNT_USER) /* it's a normal person */
           {
             D(DBF_GUI, "\tplain user '%s' <%s>", entry->RealName, entry->Address);
 
@@ -1052,13 +995,13 @@ DECLARE(Resolve) // ULONG flags
             else
               DoMethod(obj, METHOD(AddRecipient), entry->Address);
           }
-          else if(entry->Type == AET_LIST) /* it's a list of persons */
+          else if(entry->type == ABNT_LIST) /* it's a list of persons */
           {
             if(data->MultipleRecipients == TRUE)
             {
               char *members;
 
-              if((members = strdup(entry->Members)) != NULL)
+              if((members = strdup(entry->ListMembers)) != NULL)
               {
                 char *lf;
 
@@ -1084,7 +1027,7 @@ DECLARE(Resolve) // ULONG flags
           }
           else /* it's unknown... */
           {
-            D(DBF_GUI, "found matching entry in address book with unknown type %ld", entry->Type);
+            D(DBF_GUI, "found matching entry in address book with unknown type %ld", entry->type);
             DoMethod(obj, METHOD(AddRecipient), s);
             if(quiet == FALSE)
               set(_win(obj), MUIA_Window_ActiveObject, obj);
@@ -1100,7 +1043,7 @@ DECLARE(Resolve) // ULONG flags
           res = FALSE;
         }
       }
-      else if(withcache == TRUE && (entry = (struct ABEntry *)DoMethod(_app(obj), MUIM_YAMApplication_FindEmailCacheMatch, s)) != NULL)
+      else if(withcache == TRUE && (entry = (struct ABookNode *)DoMethod(_app(obj), MUIM_YAMApplication_FindEmailCacheMatch, s)) != NULL)
       {
         D(DBF_GUI, "\temail cache Hit '%s' <%s>", entry->RealName, entry->Address);
         if(withrealname == TRUE && entry->RealName[0] != '\0')

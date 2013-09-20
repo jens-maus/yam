@@ -36,7 +36,6 @@
 #include <proto/muimaster.h>
 
 #include "YAM.h"
-#include "YAM_addressbookEntry.h"
 #include "YAM_error.h"
 
 #include "mime/md5.h"
@@ -61,9 +60,10 @@ struct Data
   Object *selectButton;
   Object *removeButton;
   Object *gravatarButton;
-  int windowNumber;
+  char portraitName[SIZE_PATHFILE];
   char address[SIZE_ADDRESS];
   char lcAddress[SIZE_ADDRESS];
+  struct ABookNode *abookNode;
   APTR thread;
   BOOL cleared;
 };
@@ -115,8 +115,6 @@ OVERLOAD(OM_NEW)
     data->removeButton = removeButton;
     data->gravatarButton = gravatarButton;
 
-    data->windowNumber = GetTagData(ATTR(WindowNumber), -1, inittags(msg));
-
     SetHelp(portrait, MSG_HELP_EA_BC_PHOTO);
     SetHelp(selectButton, MSG_HELP_EA_BT_SELECTPHOTO);
     SetHelp(removeButton, MSG_HELP_EA_BT_REMOVEPHOTO);
@@ -150,26 +148,89 @@ OVERLOAD(OM_DISPOSE)
 }
 
 ///
+/// OVERLOAD(OM_SET)
+OVERLOAD(OM_SET)
+{
+  GETDATA;
+  struct TagItem *tags = inittags(msg), *tag;
+  ULONG result = FALSE;
+
+  ENTER();
+
+  while((tag = NextTagItem((APTR)&tags)) != NULL)
+  {
+    switch(tag->ti_Tag)
+    {
+      case ATTR(ABookNode):
+      {
+        data->abookNode = (struct ABookNode *)tag->ti_Data;
+        // make the superMethod call ignore those tags
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
+    }
+  }
+
+  result = DoSuperMethodA(cl, obj, msg);
+
+  RETURN(result);
+  return result;
+}
+
+///
+/// OVERLOAD(OM_GET)
+OVERLOAD(OM_GET)
+{
+  GETDATA;
+  IPTR *store = ((struct opGet *)msg)->opg_Storage;
+
+  switch(((struct opGet *)msg)->opg_AttrID)
+  {
+    case ATTR(PortraitName):
+    {
+      *store = (IPTR)data->portraitName;
+
+      return TRUE;
+    }
+    break;
+  }
+
+  return DoSuperMethodA(cl, obj, msg);
+}
+
+///
+/// OVERLOAD(MUIM_Cleanup)
+OVERLOAD(MUIM_Cleanup)
+{
+  IPTR rc;
+
+  ENTER();
+
+  DoMethod(obj, METHOD(Clear));
+  rc = DoSuperMethodA(cl, obj, msg);
+
+  RETURN(rc);
+  return rc;
+}
+
+///
 
 /* Public Methods */
 /// DECLARE(SetPortrait)
 DECLARE(SetPortrait) // char *portraitName
 {
   GETDATA;
-  struct EA_ClassData *ea = G->EA[data->windowNumber];
-  char *fname;
 
   ENTER();
 
   if(msg->portraitName != NULL)
-    strlcpy(ea->PhotoName, msg->portraitName, sizeof(ea->PhotoName));
+    strlcpy(data->portraitName, msg->portraitName, sizeof(data->portraitName));
 
-  fname = ea->PhotoName;
-  if(fname[0] != '\0')
+  if(data->portraitName[0] != '\0')
   {
     enum FType type;
 
-    if(ObtainFileInfo(fname, FI_TYPE, &type) == TRUE && type == FIT_FILE &&
+    if(ObtainFileInfo(data->portraitName, FI_TYPE, &type) == TRUE && type == FIT_FILE &&
        DoMethod(data->portraitGroup, MUIM_Group_InitChange))
     {
       if((char *)xget(data->portrait, MUIA_ImageArea_Filename) != NULL)
@@ -179,8 +240,9 @@ DECLARE(SetPortrait) // char *portraitName
       }
 
       // set the new attributes
-      xset(data->portrait, MUIA_ImageArea_ID,       ea->ABEntry != NULL ? ea->ABEntry->Address : "dummy",
-                           MUIA_ImageArea_Filename, fname);
+      xset(data->portrait,
+        MUIA_ImageArea_ID,       data->abookNode != NULL ? data->abookNode->Address : "dummy",
+        MUIA_ImageArea_Filename, data->portraitName);
 
       // and force a cleanup/setup pair
       DoMethod(data->portraitGroup, OM_REMMEMBER, data->portrait);
@@ -201,14 +263,13 @@ DECLARE(SetPortrait) // char *portraitName
 DECLARE(SelectPortrait)
 {
   GETDATA;
-  struct EA_ClassData *ea = G->EA[data->windowNumber];
   struct FileReqCache *frc;
 
   ENTER();
 
-  if((frc = ReqFile(ASL_PHOTO, ea->GUI.WI, tr(MSG_EA_SelectPhoto_Title), REQF_NONE, C->GalleryDir, ea->PhotoName)) != NULL)
+  if((frc = ReqFile(ASL_PHOTO, _win(obj), tr(MSG_EA_SelectPhoto_Title), REQF_NONE, C->GalleryDir, data->portraitName)) != NULL)
   {
-    AddPath(ea->PhotoName, frc->drawer, frc->file, sizeof(ea->PhotoName));
+    AddPath(data->portraitName, frc->drawer, frc->file, sizeof(data->portraitName));
     DoMethod(obj, METHOD(SetPortrait), NULL);
   }
 
@@ -221,11 +282,10 @@ DECLARE(SelectPortrait)
 DECLARE(RemovePortrait)
 {
   GETDATA;
-  struct EA_ClassData *ea = G->EA[data->windowNumber];
 
   ENTER();
 
-  ea->PhotoName[0] = '\0';
+  data->portraitName[0] = '\0';
   if(DoMethod(data->portraitGroup, MUIM_Group_InitChange))
   {
     // force the image to be removed from the cache
@@ -249,12 +309,10 @@ DECLARE(RemovePortrait)
 DECLARE(CheckGravatar)
 {
   GETDATA;
-  struct EA_ClassData *ea = G->EA[data->windowNumber];
-  char *address;
 
   ENTER();
 
-  if((address = (char *)xget(ea->GUI.ST_ADDRESS, MUIA_String_Contents)) != NULL && address[0] != '\0')
+  if(data->abookNode->Address[0] != '\0')
   {
     struct MD5Context md5ctx;
     unsigned char digest[16];
@@ -263,7 +321,7 @@ DECLARE(CheckGravatar)
     BOOL doDownload;
 
     // create a trimmed and lower case copy of the user's address
-    strlcpy(data->address, Trim(address), sizeof(data->address));
+    strlcpy(data->address, Trim(data->abookNode->Address), sizeof(data->address));
     strlcpy(data->lcAddress, data->address, sizeof(data->lcAddress));
     ToLowerCase(data->lcAddress);
 
@@ -311,7 +369,7 @@ DECLARE(CheckGravatar)
 
     if(doDownload == TRUE)
     {
-      if(stricmp(imagePath, ea->PhotoName) == 0)
+      if(stricmp(imagePath, data->portraitName) == 0)
       {
         // if we are checking for the same image again we must make sure that the current
         // image is no longer in use
@@ -336,8 +394,8 @@ DECLARE(CheckGravatar)
 /// OVERLOAD(MUIM_ThreadFinished)
 OVERLOAD(MUIM_ThreadFinished)
 {
-  struct MUIP_ThreadFinished *tf = (struct MUIP_ThreadFinished *)msg;
   GETDATA;
+  struct MUIP_ThreadFinished *tf = (struct MUIP_ThreadFinished *)msg;
 
   ENTER();
 
@@ -347,12 +405,10 @@ OVERLOAD(MUIM_ThreadFinished)
     DoMethod(obj, METHOD(SetPortrait), GetTagData(TT_DownloadURL_Filename, (IPTR)NULL, tf->actionTags));
   else
   {
-    struct EA_ClassData *ea = G->EA[data->windowNumber];
-
     // restore the previous portrait if it was cleared before
-    if(data->cleared == TRUE && ea->PhotoName[0] != '\0')
+    if(data->cleared == TRUE && data->portraitName[0] != '\0')
     {
-      DoMethod(obj, METHOD(SetPortrait), ea->PhotoName);
+      DoMethod(obj, METHOD(SetPortrait), data->portraitName);
       data->cleared = FALSE;
     }
 
@@ -371,16 +427,16 @@ OVERLOAD(MUIM_ThreadFinished)
 DECLARE(Clear)
 {
   GETDATA;
-  struct EA_ClassData *ea = G->EA[data->windowNumber];
 
   ENTER();
 
-  if(ea->ABEntry != NULL)
+  if(data->abookNode != NULL)
   {
     // update the user image ID and remove it from the cache
     // it will be reloaded when necessary
-    xset(data->portrait, MUIA_ImageArea_ID,       ea->ABEntry->Address,
-                         MUIA_ImageArea_Filename, NULL);
+    xset(data->portrait,
+      MUIA_ImageArea_ID,       data->abookNode->Address,
+      MUIA_ImageArea_Filename, NULL);
   }
 
   RETURN(0);

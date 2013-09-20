@@ -82,9 +82,10 @@ struct MailTransferList *CreateMailTransferList(void)
   ENTER();
 
   // at first create the list itself
-  if((tlist = AllocSysObjectTags(ASOT_LIST, ASOLIST_Size, sizeof(*tlist),
-                                            ASOLIST_Min,  TRUE,
-                                            TAG_DONE)) != NULL)
+  if((tlist = AllocSysObjectTags(ASOT_LIST,
+    ASOLIST_Size, sizeof(*tlist),
+    ASOLIST_Min,  TRUE,
+    TAG_DONE)) != NULL)
   {
     // now create the arbitration semaphore
     if((tlist->lockSemaphore = AllocSysObjectTags(ASOT_SEMAPHORE, TAG_DONE)) != NULL)
@@ -176,9 +177,10 @@ struct MailTransferNode *CreateMailTransferNode(struct Mail *mail, const ULONG f
 
   ENTER();
 
-  if((tnode = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*tnode),
-                                            ASONODE_Min, TRUE,
-                                            TAG_DONE)) != NULL)
+  if((tnode = AllocSysObjectTags(ASOT_NODE,
+    ASONODE_Size, sizeof(*tnode),
+    ASONODE_Min, TRUE,
+    TAG_DONE)) != NULL)
   {
     // clear the structure, ASOT() does not do that for us
     memset(tnode, 0, sizeof(*tnode));

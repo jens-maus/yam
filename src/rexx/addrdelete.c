@@ -27,18 +27,16 @@
 
 #include <clib/alib_protos.h>
 #include <proto/exec.h>
+#include <proto/muimaster.h>
 #include <proto/utility.h>
 
 #include "extrasrc.h"
 
 #include "YAM.h"
-#include "YAM_addressbook.h"
-#include "YAM_addressbookEntry.h"
 
-#include "MUIObjects.h"
+#include "mui/AddressBookWindow.h"
+
 #include "Rexx.h"
-
-#include "mui/AddressBookListtree.h"
 
 #include "Debug.h"
 
@@ -65,16 +63,26 @@ void rx_addrdelete(UNUSED struct RexxHost *host, struct RexxParams *params, enum
     {
       // if the command was called without any parameter it will delete the active entry
       // if not we search for the one in question and if found delete it.
-      #warning access to G->AB
-      if(!args->alias)
+      if(args->alias != NULL)
       {
-        if(xget(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active) != MUIV_NListtree_Active_Off)
-          DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_AddressBookListtree_DeleteEntry);
-        else
-          params->rc = RETURN_WARN;
+        if(SearchABook(&G->abook, args->alias, ASM_ALIAS|ASM_USER|ASM_LIST|ASM_GROUP, &G->abook.arexxABN) != 0)
+        {
+          if(G->ABookWinObject != NULL)
+            set(G->ABookWinObject, MUIA_AddressBookWindow_ActiveEntry, G->abook.arexxABN);
+        }
       }
-      else if(AB_GotoEntry(args->alias))
-        DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_AddressBookListtree_DeleteEntry);
+
+      if(G->abook.arexxABN != NULL)
+      {
+        RemoveABookNode(G->abook.arexxABN);
+        DeleteABookNode(G->abook.arexxABN);
+        G->abook.arexxABN = NULL;
+        G->abook.modified = TRUE;
+
+        // update an existing address book window as well
+        if(G->ABookWinObject != NULL)
+          DoMethod(G->ABookWinObject, MUIM_AddressBookWindow_RebuildTree);
+      }
       else
         params->rc = RETURN_WARN;
     }

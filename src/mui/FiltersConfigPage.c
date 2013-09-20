@@ -38,9 +38,9 @@
 #include <mui/NListview_mcc.h>
 
 #include "YAM.h"
-#include "YAM_addressbook.h"
 #include "YAM_find.h"
 
+#include "mui/AddressBookWindow.h"
 #include "mui/ConfigPage.h"
 #include "mui/ConfigPageList.h"
 #include "mui/FilterList.h"

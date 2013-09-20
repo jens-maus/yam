@@ -40,8 +40,6 @@
 #include "SDI_hook.h"
 
 #include "YAM.h"
-#include "YAM_addressbook.h"
-#include "YAM_addressbookEntry.h"
 #include "YAM_find.h"
 #include "YAM_mainFolder.h"
 #include "YAM_utilities.h"
@@ -137,7 +135,7 @@ static BOOL MatchMail(struct Mail *mail, enum ViewOptions vo,
     // check if the mail comes from a person we know
     case VO_KNOWNPEOPLE:
     {
-      foundMatch = ((APTR)DoMethod(G->ABookWinObject, MUIM_AddressBookWindow_FindPerson, &mail->From) != NULL);
+      foundMatch = (FindPersonInABook(&G->abook, &mail->From) != NULL);
       if(foundMatch == FALSE && isMultiSenderMail(mail))
       {
         struct ExtendedMail *email;
@@ -148,7 +146,7 @@ static BOOL MatchMail(struct Mail *mail, enum ViewOptions vo,
 
           for(j=0; j < email->NumSFrom && foundMatch == FALSE; j++)
           {
-            foundMatch = ((APTR)DoMethod(G->ABookWinObject, MUIM_AddressBookWindow_FindPerson, &email->SFrom[j]) != NULL);
+            foundMatch = (FindPersonInABook(&G->abook, &email->SFrom[j]) != NULL);
           }
 
           MA_FreeEMailStruct(email);

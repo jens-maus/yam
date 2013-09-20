@@ -33,7 +33,6 @@
 #include <proto/asl.h>
 #include <proto/muimaster.h>
 
-#include "YAM_addressbook.h"
 #include "YAM_utilities.h"
 
 #include "mui/ConfigPage.h"

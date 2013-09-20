@@ -34,7 +34,6 @@
 #include "extrasrc.h"
 
 #include "YAM.h"
-#include "YAM_addressbookEntry.h"
 #include "YAM_error.h"
 #include "YAM_find.h"
 #include "YAM_mainFolder.h"

@@ -30,10 +30,12 @@
 #include <string.h>
 
 #include <proto/codesets.h>
+#include <proto/dos.h>
 #include <proto/exec.h>
 #include <proto/expat.h>
 #include <proto/locale.h>
 #include <proto/muimaster.h>
+#include <proto/timer.h>
 #include <proto/utility.h>
 
 #include "extrasrc.h"
@@ -43,6 +45,7 @@
 #include "YAM_utilities.h"
 
 #include "mime/base64.h"
+#include "mui/BirthdayRequestWindow.h"
 #include "mui/ClassesExtra.h"
 
 #include "AddressBook.h"
@@ -52,8 +55,11 @@
 #include "Locale.h"
 #include "Logfile.h"
 #include "Requesters.h"
+#include "Timer.h"
 
 #include "Debug.h"
+
+static void ClearABookGroup(struct ABookNode *group);
 
 /// CreateABookNode
 struct ABookNode *CreateABookNode(enum ABookNodeType type)
@@ -83,20 +89,7 @@ void InitABookNode(struct ABookNode *abn, enum ABookNodeType type)
   memset(abn, 0, sizeof(*abn));
   abn->type = type;
 
-  switch(type)
-  {
-    case AET_GROUP:
-    {
-      NewMinList(&abn->content.group.Members);
-    }
-    break;
-
-    default:
-    {
-      // nothing else to do
-    }
-    break;
-  }
+  NewMinList(&abn->GroupMembers);
 
   LEAVE();
 }
@@ -107,49 +100,223 @@ void DeleteABookNode(struct ABookNode *abn)
 {
   ENTER();
 
+  if(abn->type == ABNT_GROUP)
+  {
+    ClearABookGroup(abn);
+  }
+  else if(abn->type == ABNT_LIST)
+  {
+    D(DBF_ABOOK, "free members of list '%s'", abn->Alias);
+    dstrfree(abn->ListMembers);
+  }
+
+  // the member list of groups is assumed to be cleared already
+
   FreeSysObject(ASOT_NODE, abn);
 
   LEAVE();
 }
 
 ///
-/// InitAddressBook
-void InitAddressBook(struct AddressBook *abook)
+/// AddABookNode
+void AddABookNode(struct ABookNode *group, struct ABookNode *member, struct ABookNode *afterThis)
 {
   ENTER();
 
-  NewMinList(&abook->root);
+  if(afterThis == NULL)
+    AddHead((struct List *)&group->GroupMembers, (struct Node *)member);
+  else
+    Insert((struct List *)&group->GroupMembers, (struct Node *)member, (struct Node *)afterThis);
+
+  LEAVE();
+}
+
+///
+/// RemoveABookNode
+void RemoveABookNode(struct ABookNode *member)
+{
+  ENTER();
+
+  Remove((struct Node *)member);
+
+  LEAVE();
+}
+
+///
+/// MoveABookNode
+void MoveABookNode(struct ABookNode *group, struct ABookNode *member, struct ABookNode *afterThis)
+{
+  ENTER();
+
+  D(DBF_ABOOK, "move '%s' behind '%s' in group '%s'", member->Alias, afterThis != NULL ? afterThis->Alias : "<NULL>", group->Alias);
+  // first remove the node from the list
+  RemoveABookNode(member);
+  // then insert it again at the desired position
+  AddABookNode(group, member, afterThis);
+
+  LEAVE();
+}
+
+///
+/// CompareABookNodes
+BOOL CompareABookNodes(const struct ABookNode *abn1, const struct ABookNode *abn2)
+{
+  BOOL equal = TRUE;
+
+  ENTER();
+
+  if(abn1->type == abn2->type)
+  {
+    switch(abn1->type)
+    {
+      case ABNT_USER:
+      {
+        if(strcmp(abn1->Alias, abn2->Alias) != 0 ||
+           strcmp(abn1->RealName, abn2->RealName) != 0 ||
+           strcmp(abn1->Address, abn2->Address) != 0 ||
+           strcmp(abn1->Comment, abn2->Comment) != 0 ||
+           strcmp(abn1->PGPId, abn2->PGPId) != 0 ||
+           strcmp(abn1->Street, abn2->Street) != 0 ||
+           strcmp(abn1->City, abn2->City) != 0 ||
+           strcmp(abn1->Country, abn2->Country) != 0 ||
+           strcmp(abn1->Phone, abn2->Phone) != 0 ||
+           strcmp(abn1->Photo, abn2->Photo) != 0 ||
+           abn1->Birthday != abn2->Birthday ||
+           abn1->DefSecurity != abn2->DefSecurity)
+        {
+          equal = FALSE;
+        }
+      }
+      break;
+
+      case ABNT_GROUP:
+      {
+        if(strcmp(abn1->Alias, abn2->Alias) != 0 ||
+           strcmp(abn1->Comment, abn2->Comment) != 0)
+        {
+          equal = FALSE;
+        }
+      }
+      break;
+
+      case ABNT_LIST:
+      {
+        if(strcmp(abn1->Alias, abn2->Alias) != 0 ||
+           strcmp(abn1->RealName, abn2->RealName) != 0 ||
+           strcmp(abn1->Address, abn2->Address) != 0 ||
+           strcmp(abn1->Comment, abn2->Comment) != 0 ||
+           strcmp(abn1->ListMembers != NULL ? abn1->ListMembers : (char *)"", abn2->ListMembers != NULL ? abn2->ListMembers : (char *)"") != 0)
+        {
+          equal = FALSE;
+        }
+      }
+      break;
+
+      default:
+      {
+        equal = FALSE;
+      }
+      break;
+    }
+  }
+  else
+  {
+    equal = FALSE;
+  }
+
+  RETURN(equal);
+  return equal;
+}
+
+///
+/// InitABook
+void InitABook(struct ABook *abook)
+{
+  ENTER();
+
+  InitABookNode(&abook->rootGroup, ABNT_GROUP);
+  strlcpy(abook->rootGroup.Alias, "root", sizeof(abook->rootGroup.Alias));
   abook->modified = FALSE;
 
   LEAVE();
 }
 
 ///
-/// ClearAddressBookNode
-static BOOL ClearAddressBookNode(const struct ABookNode *abn, BOOL first, UNUSED const void *userData)
+/// ClearABookGroup
+static void ClearABookGroup(struct ABookNode *group)
 {
+  struct ABookNode *abn;
+
   ENTER();
 
-  if(first == TRUE)
+  D(DBF_ABOOK, "free members of group %08lx '%s'", group, group->Alias);
+  while((abn = (struct ABookNode *)RemHead((struct List *)&group->GroupMembers)) != NULL)
   {
-    if(abn->type == AET_LIST)
-      free(abn->content.list.Members);
-
-    DeleteABookNode((struct ABookNode *)abn);
+    D(DBF_ABOOK, "free member %08lx '%s'", abn, abn->Alias);
+    DeleteABookNode(abn);
   }
 
-  RETURN(TRUE);
-  return TRUE;
+  LEAVE();
 }
 
 ///
-/// ClearAddressBook
-void ClearAddressBook(struct AddressBook *abook)
+/// ClearABook
+void ClearABook(struct ABook *abook)
 {
   ENTER();
 
-  IterateAddressBook(abook, ClearAddressBookNode, NULL);
-  InitAddressBook(abook);
+  ClearABookGroup(&abook->rootGroup);
+  InitABook(abook);
+
+  LEAVE();
+}
+
+///
+/// MoveABookNodes
+void MoveABookNodes(struct ABook *dst, struct ABook *src)
+{
+  ENTER();
+
+  MoveList((struct List *)&dst->rootGroup.GroupMembers, (struct List *)&src->rootGroup.GroupMembers);
+
+  LEAVE();
+}
+
+///
+/// FixAlias
+//  Avoids ambiguos aliases
+void FixAlias(const struct ABook *abook, struct ABookNode *abn, BOOL excludemyself)
+{
+  char alias[SIZE_NAME];
+  int count = 1;
+  struct ABookNode *found = NULL;
+  BOOL useAlias = TRUE;
+
+  ENTER();
+
+  strlcpy(alias, abn->Alias, sizeof(alias));
+
+  while(SearchABook(abook, alias, ASM_ALIAS|ASM_USER|ASM_LIST|ASM_GROUP, &found) != 0)
+  {
+    size_t len;
+
+    if(excludemyself == TRUE && abn == found)
+    {
+      useAlias = FALSE;
+      break;
+    }
+
+    if((len = strlen(abn->Alias)) > SIZE_NAME-2)
+      len = SIZE_NAME-2;
+
+    snprintf(&alias[len], sizeof(alias)-len, "%d", ++count);
+  }
+
+  if(useAlias == TRUE)
+  {
+    // copy the modified string back
+    strlcpy(abn->Alias, alias, sizeof(abn->Alias));
+  }
 
   LEAVE();
 }
@@ -157,7 +324,7 @@ void ClearAddressBook(struct AddressBook *abook)
 ///
 /// SetDefaultAlias
 //  Creates an alias from the real name if user left it empty
-static void SetDefaultAlias(struct ABookNode *abn)
+void SetDefaultAlias(struct ABookNode *abn)
 {
   char *p;
 
@@ -165,21 +332,21 @@ static void SetDefaultAlias(struct ABookNode *abn)
 
   memset(abn->Alias, 0, sizeof(abn->Alias));
   p = abn->Alias;
-  if(abn->content.user.RealName[0] != '\0')
+  if(abn->RealName[0] != '\0')
   {
     char *ln;
 
-    if((ln = strrchr(abn->content.user.RealName, ' ')) != NULL)
+    if((ln = strrchr(abn->RealName, ' ')) != NULL)
     {
-      if(isAlNum(abn->content.user.RealName[0]))
+      if(isAlNum(abn->RealName[0]))
       {
-        *p++ = abn->content.user.RealName[0];
+        *p++ = abn->RealName[0];
         *p++ = '_';
       }
       ln++;
     }
     else
-      ln = abn->content.user.RealName;
+      ln = abn->RealName;
 
     for(; strlen(abn->Alias) < SIZE_NAME-2 && ln[0] != '\0'; ln++)
     {
@@ -191,7 +358,7 @@ static void SetDefaultAlias(struct ABookNode *abn)
   {
     char *ln;
 
-    for(ln = abn->content.user.Address; strlen(abn->Alias) < SIZE_NAME-2 && *ln != '\0' && *ln != '@'; ln++)
+    for(ln = abn->Address; strlen(abn->Alias) < SIZE_NAME-2 && *ln != '\0' && *ln != '@'; ln++)
     {
       if(isAlNum(*ln))
         *p++ = *ln;
@@ -202,35 +369,36 @@ static void SetDefaultAlias(struct ABookNode *abn)
 }
 
 ///
-
-/// IterateAddressBookTree
-static BOOL IterateAddressBookTree(const struct MinList *root, BOOL (*nodeFunc)(const struct ABookNode *abn, BOOL first, const void *userData), const void *userData)
+/// IterateABookGroup
+BOOL IterateABookGroup(const struct ABookNode *group, ULONG flags, BOOL (*nodeFunc)(const struct ABookNode *abn, ULONG flags, void *userData), void *userData)
 {
   struct ABookNode *abn;
-  struct ABookNode *next;
   BOOL result = TRUE;
 
   ENTER();
 
-  // safe iteration over all nodes, because this function might be used for cleanup
-  // purposes, too
-  SafeIterateList(root, struct ABookNode *, abn, next)
+  IterateList(&group->GroupMembers, struct ABookNode *, abn)
   {
-    result = nodeFunc(abn, TRUE, userData);
-    if(result == FALSE)
-      break;
-
     // handle groups in a recursive fashion first
-    if(abn->type == AET_GROUP)
+    if(abn->type == ABNT_GROUP)
     {
-      result = IterateAddressBookTree(&abn->content.group.Members, nodeFunc, userData);
-      if(result == FALSE)
+      if((result = nodeFunc(abn, IABF_FIRST_GROUP_VISIT, userData)) == FALSE)
+        break;
+
+      if((result = IterateABookGroup(abn, flags, nodeFunc, userData)) == FALSE)
+        break;
+
+      if(isFlagSet(flags, IABF_VISIT_GROUPS_TWICE))
+      {
+        if((result = nodeFunc(abn, IABF_SECOND_GROUP_VISIT, userData)) == FALSE)
+          break;
+      }
+    }
+    else
+    {
+      if((result = nodeFunc(abn, 0, userData)) == FALSE)
         break;
     }
-
-    result = nodeFunc(abn, FALSE, userData);
-    if(result == FALSE)
-      break;
   }
 
   RETURN(result);
@@ -238,22 +406,45 @@ static BOOL IterateAddressBookTree(const struct MinList *root, BOOL (*nodeFunc)(
 }
 
 ///
-/// IterateAddressBook
-BOOL IterateAddressBook(struct AddressBook *abook, BOOL (*nodeFunc)(const struct ABookNode *abn, BOOL first, const void *userData), const void *userData)
+/// IterateABook
+BOOL IterateABook(const struct ABook *abook, ULONG flags, BOOL (*nodeFunc)(const struct ABookNode *abn, ULONG flags, void *userData), void *userData)
 {
   BOOL result;
 
   ENTER();
 
-  result = IterateAddressBookTree(&abook->root, nodeFunc, userData);
+  result = IterateABookGroup(&abook->rootGroup, flags, nodeFunc, userData);
 
   RETURN(result);
   return result;
 }
 
 ///
-/// LoadAddressBook
-BOOL LoadAddressBook(const char *filename, struct AddressBook *abook, BOOL append)
+/// CreateEmptyABookFile
+// create an empty address book
+BOOL CreateEmptyABookFile(const char *filename)
+{
+  FILE *fh;
+  BOOL result = FALSE;
+
+  ENTER();
+
+  if((fh = fopen(filename, "w")) != NULL)
+  {
+    // write at least the header, this is required for a valid .addressbook file
+    fputs("YAB4 - YAM Addressbook\n", fh);
+    fclose(fh);
+  }
+  else
+    ER_NewError(tr(MSG_ER_CantCreateFile), filename);
+
+  RETURN(result);
+  return result;
+}
+
+///
+/// LoadABook
+BOOL LoadABook(const char *filename, struct ABook *abook, BOOL append)
 {
   FILE *fh;
   BOOL result = FALSE;
@@ -270,16 +461,16 @@ BOOL LoadAddressBook(const char *filename, struct AddressBook *abook, BOOL appen
     if(GetLine(&buffer, &size, fh) >= 0)
     {
       int nested = 0;
-      struct MinList *parent[8];
+      struct ABookNode *parent[8];
 
-      parent[0] = &abook->root;
+      parent[0] = &abook->rootGroup;
 
       if(strncmp(buffer,"YAB",3) == 0)
       {
         int version = buffer[3] - '0';
 
         if(append == FALSE)
-          InitAddressBook(abook);
+          ClearABook(abook);
 
         while(GetLine(&buffer, &size, fh) >= 0)
         {
@@ -287,39 +478,39 @@ BOOL LoadAddressBook(const char *filename, struct AddressBook *abook, BOOL appen
 
           if(strncmp(buffer, "@USER", 5) == 0)
           {
-            if((abn = CreateABookNode(AET_USER)) != NULL)
+            if((abn = CreateABookNode(ABNT_USER)) != NULL)
             {
               strlcpy(abn->Alias, Trim(&buffer[6]), sizeof(abn->Alias));
               GetLine(&buffer, &size, fh);
-              strlcpy(abn->content.user.Address, Trim(buffer), sizeof(abn->content.user.Address));
+              strlcpy(abn->Address, Trim(buffer), sizeof(abn->Address));
               GetLine(&buffer, &size, fh);
-              strlcpy(abn->content.user.RealName, Trim(buffer), sizeof(abn->content.user.RealName));
+              strlcpy(abn->RealName, Trim(buffer), sizeof(abn->RealName));
               GetLine(&buffer, &size, fh);
               strlcpy(abn->Comment, Trim(buffer), sizeof(abn->Comment));
               if(version > 2)
               {
                 GetLine(&buffer, &size, fh);
-                strlcpy(abn->content.user.Phone, Trim(buffer), sizeof(abn->content.user.Phone));
+                strlcpy(abn->Phone, Trim(buffer), sizeof(abn->Phone));
                 GetLine(&buffer, &size, fh);
-                strlcpy(abn->content.user.Street, Trim(buffer), sizeof(abn->content.user.Street));
+                strlcpy(abn->Street, Trim(buffer), sizeof(abn->Street));
                 GetLine(&buffer, &size, fh);
-                strlcpy(abn->content.user.City, Trim(buffer), sizeof(abn->content.user.City));
+                strlcpy(abn->City, Trim(buffer), sizeof(abn->City));
                 GetLine(&buffer, &size, fh);
-                strlcpy(abn->content.user.Country, Trim(buffer), sizeof(abn->content.user.Country));
+                strlcpy(abn->Country, Trim(buffer), sizeof(abn->Country));
                 GetLine(&buffer, &size, fh);
-                strlcpy(abn->content.user.PGPId, Trim(buffer), sizeof(abn->content.user.PGPId));
+                strlcpy(abn->PGPId, Trim(buffer), sizeof(abn->PGPId));
                 GetLine(&buffer, &size, fh);
-                abn->content.user.Birthday = atol(Trim(buffer));
+                abn->Birthday = atol(Trim(buffer));
                 GetLine(&buffer, &size, fh);
-                strlcpy(abn->content.user.Photo, Trim(buffer), sizeof(abn->content.user.Photo));
+                strlcpy(abn->Photo, Trim(buffer), sizeof(abn->Photo));
                 GetLine(&buffer, &size, fh);
                 if(strcmp(buffer, "@ENDUSER") == 0)
-                  strlcpy(abn->content.user.Homepage, Trim(buffer), sizeof(abn->content.user.Homepage));
+                  strlcpy(abn->Homepage, Trim(buffer), sizeof(abn->Homepage));
               }
               if(version > 3)
               {
                 GetLine(&buffer, &size, fh);
-                abn->content.user.DefSecurity = atoi(Trim(buffer));
+                abn->DefSecurity = atoi(Trim(buffer));
               }
 
               // skip any additional lines
@@ -330,20 +521,20 @@ BOOL LoadAddressBook(const char *filename, struct AddressBook *abook, BOOL appen
               }
               while(GetLine(&buffer, &size, fh) >= 0);
 
-              AddTail((struct List *)parent[nested], (struct Node *)abn);
+              AddABookNode(parent[nested], abn, NULL);
             }
           }
           else if(strncmp(buffer, "@LIST", 5) == 0)
           {
-            if((abn = CreateABookNode(AET_LIST)) != NULL)
+            if((abn = CreateABookNode(ABNT_LIST)) != NULL)
             {
               strlcpy(abn->Alias, Trim(&buffer[6]), sizeof(abn->Alias));
               if(version > 2)
               {
                 GetLine(&buffer, &size, fh);
-                strlcpy(abn->content.list.Address, Trim(buffer), sizeof(abn->content.list.Address));
+                strlcpy(abn->Address, Trim(buffer), sizeof(abn->Address));
                 GetLine(&buffer, &size, fh);
-                strlcpy(abn->content.list.RealName, Trim(buffer), sizeof(abn->content.list.RealName));
+                strlcpy(abn->RealName, Trim(buffer), sizeof(abn->RealName));
               }
               GetLine(&buffer, &size, fh);
               strlcpy(abn->Comment, Trim(buffer), sizeof(abn->Comment));
@@ -355,24 +546,24 @@ BOOL LoadAddressBook(const char *filename, struct AddressBook *abook, BOOL appen
                 if(*buffer == '\0')
                   continue;
 
-                dstrcat(&abn->content.list.Members, buffer);
-                dstrcat(&abn->content.list.Members, "\n");
+                dstrcat(&abn->ListMembers, buffer);
+                dstrcat(&abn->ListMembers, "\n");
               }
 
-              AddTail((struct List *)parent[nested], (struct Node *)abn);
+              AddABookNode(parent[nested], abn, NULL);
             }
           }
           else if(strncmp(buffer, "@GROUP", 6) == 0)
           {
-            if((abn = CreateABookNode(AET_GROUP)) != NULL)
+            if((abn = CreateABookNode(ABNT_GROUP)) != NULL)
             {
               strlcpy(abn->Alias, Trim(&buffer[7]), sizeof(abn->Alias));
               GetLine(&buffer, &size, fh);
               strlcpy(abn->Comment, Trim(buffer), sizeof(abn->Comment));
-              AddTail((struct List *)parent[nested], (struct Node *)abn);
+              AddABookNode(parent[nested], abn, NULL);
 
               nested++;
-              parent[nested] = &abn->content.group.Members;
+              parent[nested] = abn;
             }
           }
           else if(strcmp(buffer,"@ENDGROUP") == 0)
@@ -391,23 +582,23 @@ BOOL LoadAddressBook(const char *filename, struct AddressBook *abook, BOOL appen
         if(MUI_Request(G->App, NULL, MUIF_NONE, NULL, tr(MSG_AB_NOYAMADDRBOOK_GADS), tr(MSG_AB_NOYAMADDRBOOK), filename))
         {
           if(append == FALSE)
-            InitAddressBook(abook);
+            ClearABook(abook);
 
           fseek(fh, 0, SEEK_SET);
           while(GetLine(&buffer, &size, fh) >= 0)
           {
             struct ABookNode *abn;
 
-            if((abn = CreateABookNode(AET_USER)) != NULL)
+            if((abn = CreateABookNode(ABNT_USER)) != NULL)
             {
               char *p, *p2;
 
               if((p = strchr(buffer, ' ')) != NULL)
                 *p = '\0';
-              strlcpy(abn->content.user.Address, buffer, sizeof(abn->content.user.Address));
+              strlcpy(abn->Address, buffer, sizeof(abn->Address));
               if(p != NULL)
               {
-                strlcpy(abn->content.user.RealName, ++p, sizeof(abn->content.user.RealName));
+                strlcpy(abn->RealName, ++p, sizeof(abn->RealName));
                 if((p2 = strchr(p, ' ')) != NULL)
                    *p2 = '\0';
               }
@@ -419,7 +610,7 @@ BOOL LoadAddressBook(const char *filename, struct AddressBook *abook, BOOL appen
               }
               strlcpy(abn->Alias, p, sizeof(abn->Alias));
 
-              AddTail((struct List *)parent[nested], (struct Node *)abn);
+              AddABookNode(parent[nested], abn, NULL);
             }
           }
         }
@@ -452,8 +643,8 @@ BOOL LoadAddressBook(const char *filename, struct AddressBook *abook, BOOL appen
 }
 
 ///
-/// SaveAddressBookEntry
-static BOOL SaveAddressBookEntry(const struct ABookNode *abn, BOOL first, const void *userData)
+/// SaveABookEntry
+static BOOL SaveABookEntry(const struct ABookNode *abn, ULONG flags, void *userData)
 {
   FILE *fh = (FILE *)userData;
 
@@ -461,29 +652,23 @@ static BOOL SaveAddressBookEntry(const struct ABookNode *abn, BOOL first, const 
 
   switch(abn->type)
   {
-    case AET_USER:
+    case ABNT_USER:
     {
-      if(first == TRUE)
-      {
-        fprintf(fh, "@USER %s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%08ld\n%s\n%s\n%d\n@ENDUSER\n",
-                    abn->Alias, abn->content.user.Address, abn->content.user.RealName, abn->Comment,
-                    abn->content.user.Phone, abn->content.user.Street, abn->content.user.City, abn->content.user.Country, abn->content.user.PGPId, abn->content.user.Birthday, abn->content.user.Photo, abn->content.user.Homepage, abn->content.user.DefSecurity);
-      }
+      fprintf(fh, "@USER %s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%08ld\n%s\n%s\n%d\n@ENDUSER\n",
+                  abn->Alias, abn->Address, abn->RealName, abn->Comment,
+                  abn->Phone, abn->Street, abn->City, abn->Country, abn->PGPId, abn->Birthday, abn->Photo, abn->Homepage, abn->DefSecurity);
     }
     break;
 
-    case AET_LIST:
+    case ABNT_LIST:
     {
-      if(first == TRUE)
-      {
-        fprintf(fh, "@LIST %s\n%s\n%s\n%s\n%s\n@ENDLIST\n", abn->Alias, abn->content.user.Address, abn->content.user.RealName, abn->Comment, abn->content.list.Members != NULL ? abn->content.list.Members : "");
-      }
+      fprintf(fh, "@LIST %s\n%s\n%s\n%s\n%s\n@ENDLIST\n", abn->Alias, abn->Address, abn->RealName, abn->Comment, abn->ListMembers != NULL ? abn->ListMembers : "");
     }
     break;
 
-    case AET_GROUP:
+    case ABNT_GROUP:
     {
-      if(first == TRUE)
+      if(isFlagSet(flags, IABF_FIRST_GROUP_VISIT))
         fprintf(fh, "@GROUP %s\n%s\n", abn->Alias, abn->Comment);
       else
         fputs("@ENDGROUP\n", fh);
@@ -496,8 +681,8 @@ static BOOL SaveAddressBookEntry(const struct ABookNode *abn, BOOL first, const 
 }
 
 ///
-/// SaveAddressBook
-BOOL SaveAddressBook(const char *filename, const struct AddressBook *abook)
+/// SaveABook
+BOOL SaveABook(const char *filename, const struct ABook *abook)
 {
   FILE *fh;
   BOOL result = FALSE;
@@ -509,7 +694,7 @@ BOOL SaveAddressBook(const char *filename, const struct AddressBook *abook)
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
     fputs("YAB4 - YAM Addressbook\n", fh);
-    result = IterateAddressBook((struct AddressBook *)abook, SaveAddressBookEntry, fh);
+    result = IterateABook((struct ABook *)abook, IABF_VISIT_GROUPS_TWICE, SaveABookEntry, fh);
     fclose(fh);
     AppendToLogfile(LF_VERBOSE, 70, tr(MSG_LOG_SavingABook), filename);
   }
@@ -521,9 +706,9 @@ BOOL SaveAddressBook(const char *filename, const struct AddressBook *abook)
 }
 
 ///
-/// ImportAddressBookLDIF
+/// ImportLDIFABook
 //  Imports an address book in LDIF format
-BOOL ImportAddressBookLDIF(const char *filename, struct AddressBook *abook, BOOL append)
+BOOL ImportLDIFABook(const char *filename, struct ABook *abook, BOOL append)
 {
   FILE *fh;
   BOOL result = FALSE;
@@ -539,9 +724,9 @@ BOOL ImportAddressBookLDIF(const char *filename, struct AddressBook *abook, BOOL
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
     if(append == FALSE)
-      InitAddressBook(abook);
+      ClearABook(abook);
 
-    InitABookNode(&abn, AET_USER);
+    InitABookNode(&abn, ABNT_USER);
 
     while(GetLine(&buffer, &size, fh) >= 0)
     {
@@ -549,7 +734,7 @@ BOOL ImportAddressBookLDIF(const char *filename, struct AddressBook *abook, BOOL
       if(buffer[0] == '\0')
       {
         // we need at least an EMail address
-        if(abn.content.user.Address[0] != '\0')
+        if(abn.Address[0] != '\0')
         {
           struct ABookNode *node;
 
@@ -560,7 +745,7 @@ BOOL ImportAddressBookLDIF(const char *filename, struct AddressBook *abook, BOOL
           if((node = DuplicateNode(&abn, sizeof(abn))) != NULL)
           {
             // put it into the tree
-            AddTail((struct List *)&abook->root, (struct Node *)node);
+            AddABookNode(&abook->rootGroup, node, NULL);
             result = TRUE;
           }
         }
@@ -608,103 +793,103 @@ BOOL ImportAddressBookLDIF(const char *filename, struct AddressBook *abook, BOOL
             // so clear the structure for further actions now
             if(stricmp(key, "dn") == 0)
             {
-              InitABookNode(&abn, AET_USER);
+              InitABookNode(&abn, ABNT_USER);
             }
             else if(stricmp(key, "cn") == 0)                         // complete name
-              strlcpy(abn.content.user.RealName, value, sizeof(abn.content.user.RealName));
+              strlcpy(abn.RealName, value, sizeof(abn.RealName));
             else if(stricmp(key, "mail") == 0)                       // mail address
-              strlcpy(abn.content.user.Address, value, sizeof(abn.content.user.Address));
+              strlcpy(abn.Address, value, sizeof(abn.Address));
             else if(stricmp(key, "mozillaNickname") == 0)            // alias
               strlcpy(abn.Alias, value, sizeof(abn.Alias));
             else if(stricmp(key, "telephoneNumber") == 0)            // phone number
             {
-              if(abn.content.user.Phone[0] != '\0')
-                strlcat(abn.content.user.Phone, ", ", sizeof(abn.content.user.Phone));
-              strlcat(abn.content.user.Phone, value, sizeof(abn.content.user.Phone));
+              if(abn.Phone[0] != '\0')
+                strlcat(abn.Phone, ", ", sizeof(abn.Phone));
+              strlcat(abn.Phone, value, sizeof(abn.Phone));
             }
             else if(stricmp(key, "homePhone") == 0)                  // phone number
             {
-              if(abn.content.user.Phone[0] != '\0')
-                strlcat(abn.content.user.Phone, ", ", sizeof(abn.content.user.Phone));
-              strlcat(abn.content.user.Phone, value, sizeof(abn.content.user.Phone));
+              if(abn.Phone[0] != '\0')
+                strlcat(abn.Phone, ", ", sizeof(abn.Phone));
+              strlcat(abn.Phone, value, sizeof(abn.Phone));
             }
             else if(stricmp(key, "fax") == 0)                        // fax number
             {
-              if(abn.content.user.Phone[0] != '\0')
-              strlcat(abn.content.user.Phone, ", ", sizeof(abn.content.user.Phone));
-              strlcat(abn.content.user.Phone, value, sizeof(abn.content.user.Phone));
+              if(abn.Phone[0] != '\0')
+              strlcat(abn.Phone, ", ", sizeof(abn.Phone));
+              strlcat(abn.Phone, value, sizeof(abn.Phone));
             }
             else if(stricmp(key, "pager") == 0)                      // pager number
             {
-              if(abn.content.user.Phone[0] != '\0')
-                strlcat(abn.content.user.Phone, ", ", sizeof(abn.content.user.Phone));
-              strlcat(abn.content.user.Phone, value, sizeof(abn.content.user.Phone));
+              if(abn.Phone[0] != '\0')
+                strlcat(abn.Phone, ", ", sizeof(abn.Phone));
+              strlcat(abn.Phone, value, sizeof(abn.Phone));
             }
             else if(stricmp(key, "mobile") == 0)                     // mobile number
             {
-              if(abn.content.user.Phone[0] != '\0')
-                strlcat(abn.content.user.Phone, ", ", sizeof(abn.content.user.Phone));
-              strlcat(abn.content.user.Phone, value, sizeof(abn.content.user.Phone));
+              if(abn.Phone[0] != '\0')
+                strlcat(abn.Phone, ", ", sizeof(abn.Phone));
+              strlcat(abn.Phone, value, sizeof(abn.Phone));
             }
             else if(stricmp(key, "homeStreet") == 0)                 // office street
             {
-              if(abn.content.user.Street[0] != '\0')
-                strlcat(abn.content.user.Street, ", ", sizeof(abn.content.user.Street));
-              strlcat(abn.content.user.Street, value, sizeof(abn.content.user.Street));
+              if(abn.Street[0] != '\0')
+                strlcat(abn.Street, ", ", sizeof(abn.Street));
+              strlcat(abn.Street, value, sizeof(abn.Street));
             }
             else if(stricmp(key, "mozillaHomeStreet2") == 0)         // home street
             {
-              if(abn.content.user.Street[0] != '\0')
-                strlcat(abn.content.user.Street, ", ", sizeof(abn.content.user.Street));
-              strlcat(abn.content.user.Street, value, sizeof(abn.content.user.Street));
+              if(abn.Street[0] != '\0')
+                strlcat(abn.Street, ", ", sizeof(abn.Street));
+              strlcat(abn.Street, value, sizeof(abn.Street));
             }
             else if(stricmp(key, "l") == 0)                          // office locality
             {
-              if(abn.content.user.City[0] != '\0')
-                strlcat(abn.content.user.City, ", ", sizeof(abn.content.user.City));
-              strlcat(abn.content.user.City, value, sizeof(abn.content.user.City));
+              if(abn.City[0] != '\0')
+                strlcat(abn.City, ", ", sizeof(abn.City));
+              strlcat(abn.City, value, sizeof(abn.City));
             }
             else if(stricmp(key, "mozillaHomeLocalityName") == 0)    // home locality
             {
-              if(abn.content.user.City[0] != '\0')
-                strlcat(abn.content.user.City, ", ", sizeof(abn.content.user.City));
-              strlcat(abn.content.user.City, value, sizeof(abn.content.user.City));
+              if(abn.City[0] != '\0')
+                strlcat(abn.City, ", ", sizeof(abn.City));
+              strlcat(abn.City, value, sizeof(abn.City));
             }
             else if(stricmp(key, "postalCode") == 0)                 // office postal code
             {
-              if(abn.content.user.City[0] != '\0')
-                strlcat(abn.content.user.City, ", ", sizeof(abn.content.user.City));
-              strlcat(abn.content.user.City, value, sizeof(abn.content.user.City));
+              if(abn.City[0] != '\0')
+                strlcat(abn.City, ", ", sizeof(abn.City));
+              strlcat(abn.City, value, sizeof(abn.City));
             }
             else if(stricmp(key, "mozillaHomePostalCode") == 0)      // home postal code
             {
-              if(abn.content.user.City[0] != '\0')
-                strlcat(abn.content.user.City, ", ", sizeof(abn.content.user.City));
-              strlcat(abn.content.user.City, value, sizeof(abn.content.user.City));
+              if(abn.City[0] != '\0')
+                strlcat(abn.City, ", ", sizeof(abn.City));
+              strlcat(abn.City, value, sizeof(abn.City));
             }
             else if(stricmp(key, "c") == 0)                          // office country
             {
-              if(abn.content.user.Country[0] != '\0')
-                strlcat(abn.content.user.Country, ", ", sizeof(abn.content.user.Country));
-              strlcat(abn.content.user.Country, value, sizeof(abn.content.user.Country));
+              if(abn.Country[0] != '\0')
+                strlcat(abn.Country, ", ", sizeof(abn.Country));
+              strlcat(abn.Country, value, sizeof(abn.Country));
             }
             else if(stricmp(key, "mozillaHomeCountryName") == 0)     // home country
             {
-              if(abn.content.user.Country[0] != '\0')
-                strlcat(abn.content.user.Country, ", ", sizeof(abn.content.user.Country));
-              strlcat(abn.content.user.Country, value, sizeof(abn.content.user.Country));
+              if(abn.Country[0] != '\0')
+                strlcat(abn.Country, ", ", sizeof(abn.Country));
+              strlcat(abn.Country, value, sizeof(abn.Country));
             }
             else if(stricmp(key, "mozillaWorkUrl") == 0)             // working home page
             {
-              if(abn.content.user.Homepage[0] != '\0')
-                strlcat(abn.content.user.Homepage, ", ", sizeof(abn.content.user.Homepage));
-              strlcat(abn.content.user.Homepage, value, sizeof(abn.content.user.Homepage));
+              if(abn.Homepage[0] != '\0')
+                strlcat(abn.Homepage, ", ", sizeof(abn.Homepage));
+              strlcat(abn.Homepage, value, sizeof(abn.Homepage));
             }
             else if(stricmp(key, "mozillaHomeUrl") == 0)             // private homepage
             {
-              if(abn.content.user.Homepage[0] != '\0')
-                strlcat(abn.content.user.Homepage, ", ", sizeof(abn.content.user.Homepage));
-              strlcat(abn.content.user.Homepage, value, sizeof(abn.content.user.Homepage));
+              if(abn.Homepage[0] != '\0')
+                strlcat(abn.Homepage, ", ", sizeof(abn.Homepage));
+              strlcat(abn.Homepage, value, sizeof(abn.Homepage));
             }
           }
 
@@ -833,9 +1018,9 @@ static void WriteLDIFLine(FILE *fh, const char *key, const char *valueFmt, ...)
 }
 
 ///
-/// ExportAddressBookLDIFEntry
+/// ExportLDIFABookEntry
 //  Exports an address book as LDIF file
-static BOOL ExportAddressBookLDIFEntry(const struct ABookNode *abn, BOOL first, const void *userData)
+static BOOL ExportLDIFABookEntry(const struct ABookNode *abn, UNUSED ULONG flags, void *userData)
 {
   FILE *fh = (FILE *)userData;
 
@@ -843,38 +1028,35 @@ static BOOL ExportAddressBookLDIFEntry(const struct ABookNode *abn, BOOL first, 
 
   switch(abn->type)
   {
-    case AET_USER:
+    case ABNT_USER:
     {
-      if(first == TRUE)
-      {
-        WriteLDIFLine(fh, "dn", "cn=%s,mail=%s", abn->content.user.RealName, abn->content.user.Address);
-        WriteLDIFLine(fh, "objectClass", "top");
-        WriteLDIFLine(fh, "objectClass", "person");
-        WriteLDIFLine(fh, "objectClass", "organizationalPerson");
-        WriteLDIFLine(fh, "objectClass", "inetOrdPerson");
-        WriteLDIFLine(fh, "objectClass", "mozillaAbPersonAlpha");
-        WriteLDIFLine(fh, "cn", "%s", abn->content.user.RealName);
-        WriteLDIFLine(fh, "mail", "%s", abn->content.user.Address);
-        if(abn->Alias[0] != '\0')
-          WriteLDIFLine(fh, "mozillaNickname", "%s", abn->Alias);
-        if(abn->content.user.Phone[0] != '\0')
-          WriteLDIFLine(fh, "telephoneNumber", "%s", abn->content.user.Phone);
-        if(abn->content.user.Street[0] != '\0')
-          WriteLDIFLine(fh, "street", "%s", abn->content.user.Street);
-        if(abn->content.user.City[0] != '\0')
-          WriteLDIFLine(fh, "l", "%s", abn->content.user.City);
-        if(abn->content.user.Country[0] != '\0')
-          WriteLDIFLine(fh, "c", "%s", abn->content.user.Country);
-        if(abn->content.user.Homepage[0] != '\0')
-          WriteLDIFLine(fh, "mozillaHomeUrl", "%s", abn->content.user.Homepage);
-        WriteLDIFLine(fh, "", "");
-      }
+      WriteLDIFLine(fh, "dn", "cn=%s,mail=%s", abn->RealName, abn->Address);
+      WriteLDIFLine(fh, "objectClass", "top");
+      WriteLDIFLine(fh, "objectClass", "person");
+      WriteLDIFLine(fh, "objectClass", "organizationalPerson");
+      WriteLDIFLine(fh, "objectClass", "inetOrdPerson");
+      WriteLDIFLine(fh, "objectClass", "mozillaAbPersonAlpha");
+      WriteLDIFLine(fh, "cn", "%s", abn->RealName);
+      WriteLDIFLine(fh, "mail", "%s", abn->Address);
+      if(abn->Alias[0] != '\0')
+        WriteLDIFLine(fh, "mozillaNickname", "%s", abn->Alias);
+      if(abn->Phone[0] != '\0')
+        WriteLDIFLine(fh, "telephoneNumber", "%s", abn->Phone);
+      if(abn->Street[0] != '\0')
+        WriteLDIFLine(fh, "street", "%s", abn->Street);
+      if(abn->City[0] != '\0')
+        WriteLDIFLine(fh, "l", "%s", abn->City);
+      if(abn->Country[0] != '\0')
+        WriteLDIFLine(fh, "c", "%s", abn->Country);
+      if(abn->Homepage[0] != '\0')
+        WriteLDIFLine(fh, "mozillaHomeUrl", "%s", abn->Homepage);
+      WriteLDIFLine(fh, "", "");
     }
     break;
 
-    case AET_GROUP:
+    case ABNT_GROUP:
     {
-      // groups are handled by IterateAddressBook() already
+      // groups are handled by IterateABook() already
     }
     break;
 
@@ -890,9 +1072,9 @@ static BOOL ExportAddressBookLDIFEntry(const struct ABookNode *abn, BOOL first, 
 }
 
 ///
-/// ExportAddressBookLDIF
+/// ExportLDIFABook
 //  Exports an address book as LDIF file
-BOOL ExportAddressBookLDIF(const char *filename, const struct AddressBook *abook)
+BOOL ExportLDIFABook(const char *filename, const struct ABook *abook)
 {
   FILE *fh;
   BOOL result = FALSE;
@@ -903,7 +1085,7 @@ BOOL ExportAddressBookLDIF(const char *filename, const struct AddressBook *abook
   {
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
-    result = IterateAddressBook((struct AddressBook *)abook, ExportAddressBookLDIFEntry, fh);
+    result = IterateABook(abook, 0, ExportLDIFABookEntry, fh);
 
     fclose(fh);
     result = TRUE;
@@ -923,9 +1105,9 @@ struct CSVStuff
   char delimiter;
 };
 
-/// ImportAddressBookCSV
+/// ImportCSVABook
 //  Imports an address book with comma or tab separated entries
-BOOL ImportAddressBookCSV(const char *filename, struct AddressBook *abook, BOOL append, char delimiter)
+BOOL ImportCSVABook(const char *filename, struct ABook *abook, BOOL append, char delimiter)
 {
   FILE *fh;
   BOOL result = FALSE;
@@ -941,7 +1123,7 @@ BOOL ImportAddressBookCSV(const char *filename, struct AddressBook *abook, BOOL 
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
     if(append == FALSE)
-      InitAddressBook(abook);
+      ClearABook(abook);
 
     delimStr[0] = delimiter;
     delimStr[1] = '\0';
@@ -952,7 +1134,7 @@ BOOL ImportAddressBookCSV(const char *filename, struct AddressBook *abook, BOOL 
       char *item = buffer;
       int itemNumber = 0;
 
-      InitABookNode(&abn, AET_USER);
+      InitABookNode(&abn, ABNT_USER);
 
       do
       {
@@ -978,7 +1160,7 @@ BOOL ImportAddressBookCSV(const char *filename, struct AddressBook *abook, BOOL 
             // no closing quote found, abort this line
             item[0] = '\0';
             // to make sure this item doesn't make it into YAM's address book clear all values again
-            abn.content.user.Address[0] = '\0';
+            abn.Address[0] = '\0';
           }
         }
         else
@@ -1001,23 +1183,23 @@ BOOL ImportAddressBookCSV(const char *filename, struct AddressBook *abook, BOOL 
             // first name
             case 1:
             {
-              strlcat(abn.content.user.RealName, item, sizeof(abn.content.user.RealName));
+              strlcat(abn.RealName, item, sizeof(abn.RealName));
             }
             break;
 
             // last name
             case 2:
             {
-              if(abn.content.user.RealName[0] != '\0')
-                strlcat(abn.content.user.RealName, " ", sizeof(abn.content.user.RealName));
-              strlcat(abn.content.user.RealName, item, sizeof(abn.content.user.RealName));
+              if(abn.RealName[0] != '\0')
+                strlcat(abn.RealName, " ", sizeof(abn.RealName));
+              strlcat(abn.RealName, item, sizeof(abn.RealName));
             }
             break;
 
             // complete name, preferred, if available
             case 3:
             {
-              strlcpy(abn.content.user.RealName, item, sizeof(abn.content.user.RealName));
+              strlcpy(abn.RealName, item, sizeof(abn.RealName));
             }
             break;
 
@@ -1031,7 +1213,7 @@ BOOL ImportAddressBookCSV(const char *filename, struct AddressBook *abook, BOOL 
             // EMail address
             case 5:
             {
-              strlcpy(abn.content.user.Address, item, sizeof(abn.content.user.Address));
+              strlcpy(abn.Address, item, sizeof(abn.Address));
             }
             break;
 
@@ -1046,25 +1228,25 @@ BOOL ImportAddressBookCSV(const char *filename, struct AddressBook *abook, BOOL 
             case 10:  // pager number
             case 11:  // mobile phone
             {
-              if(abn.content.user.Phone[0] != '\0')
-                strlcat(abn.content.user.Phone, ", ", sizeof(abn.content.user.Phone));
-              strlcat(abn.content.user.Phone, item, sizeof(abn.content.user.Phone));
+              if(abn.Phone[0] != '\0')
+                strlcat(abn.Phone, ", ", sizeof(abn.Phone));
+              strlcat(abn.Phone, item, sizeof(abn.Phone));
             }
             break;
 
             case 12: // address, part 1
             case 13: // address, part 2
             {
-              if(abn.content.user.Street[0] != '\0')
-                strlcat(abn.content.user.Street, " ", sizeof(abn.content.user.Street));
-              strlcat(abn.content.user.Street, item, sizeof(abn.content.user.Street));
+              if(abn.Street[0] != '\0')
+                strlcat(abn.Street, " ", sizeof(abn.Street));
+              strlcat(abn.Street, item, sizeof(abn.Street));
             }
             break;
 
             // city
             case 14:
             {
-              strlcpy(abn.content.user.City, item, sizeof(abn.content.user.City));
+              strlcpy(abn.City, item, sizeof(abn.City));
             }
             break;
 
@@ -1076,23 +1258,23 @@ BOOL ImportAddressBookCSV(const char *filename, struct AddressBook *abook, BOOL 
             // ZIP code, append it to the city name
             case 16:
             {
-              if(abn.content.user.City[0] != '\0')
-                strlcat(abn.content.user.City, ", ", sizeof(abn.content.user.City));
-              strlcat(abn.content.user.City, item, sizeof(abn.content.user.City));
+              if(abn.City[0] != '\0')
+                strlcat(abn.City, ", ", sizeof(abn.City));
+              strlcat(abn.City, item, sizeof(abn.City));
             }
             break;
 
             // country
             case 17:
             {
-              strlcpy(abn.content.user.Country, item, sizeof(abn.content.user.Country));
+              strlcpy(abn.Country, item, sizeof(abn.Country));
             }
             break;
 
             case 27: // office web address
             case 28: // private web address
             {
-              strlcpy(abn.content.user.Homepage, item, sizeof(abn.content.user.Homepage));
+              strlcpy(abn.Homepage, item, sizeof(abn.Homepage));
             }
             break;
 
@@ -1106,7 +1288,7 @@ BOOL ImportAddressBookCSV(const char *filename, struct AddressBook *abook, BOOL 
       while(item != NULL);
 
       // we need at least an EMail address
-      if(abn.content.user.Address[0] != '\0')
+      if(abn.Address[0] != '\0')
       {
         struct ABookNode *node;
 
@@ -1117,7 +1299,7 @@ BOOL ImportAddressBookCSV(const char *filename, struct AddressBook *abook, BOOL 
 
         if((node = DuplicateNode(&abn, sizeof(abn))) != NULL)
         {
-          AddTail((struct List *)&abook->root, (struct Node *)node);
+          AddABookNode(&abook->rootGroup, node, NULL);
           result = TRUE;
         }
       }
@@ -1179,9 +1361,9 @@ static void WriteCSVItem(struct CSVStuff *stuff, const char *value)
 }
 
 ///
-/// ExportAddressBookCSVEntry
+/// ExportCSVABookEntry
 //  Exports an address book with comma or tab separated entries
-static BOOL ExportAddressBookCSVEntry(const struct ABookNode *abn, BOOL first, const void *userData)
+static BOOL ExportCSVABookEntry(const struct ABookNode *abn, UNUSED ULONG flags, void *userData)
 {
   struct CSVStuff *stuff = (struct CSVStuff *)userData;
 
@@ -1189,53 +1371,50 @@ static BOOL ExportAddressBookCSVEntry(const struct ABookNode *abn, BOOL first, c
 
   switch(abn->type)
   {
-    case AET_USER:
+    case ABNT_USER:
     {
-      if(first == TRUE)
-      {
-        WriteCSVItem(stuff, "");
-        WriteCSVItem(stuff, "");
-        WriteCSVItem(stuff, abn->content.user.RealName);
-        WriteCSVItem(stuff, abn->Alias);
-        WriteCSVItem(stuff, abn->content.user.Address);
-        WriteCSVItem(stuff, "");
-        WriteCSVItem(stuff, "");
-        WriteCSVItem(stuff, abn->content.user.Phone);
-        WriteCSVItem(stuff, "");
-        WriteCSVItem(stuff, "");
-        WriteCSVItem(stuff, "");
-        WriteCSVItem(stuff, abn->content.user.Street);
-        WriteCSVItem(stuff, "");
-        WriteCSVItem(stuff, abn->content.user.City);
-        WriteCSVItem(stuff, "");
-        WriteCSVItem(stuff, ""); // postal code
-        WriteCSVItem(stuff, abn->content.user.Country);
-        WriteCSVItem(stuff, "");
-        WriteCSVItem(stuff, "");
-        WriteCSVItem(stuff, "");
-        WriteCSVItem(stuff, "");
-        WriteCSVItem(stuff, "");
-        WriteCSVItem(stuff, "");
-        WriteCSVItem(stuff, "");
-        WriteCSVItem(stuff, "");
-        WriteCSVItem(stuff, "");
-        WriteCSVItem(stuff, "");
-        WriteCSVItem(stuff, abn->content.user.Homepage);
-        WriteCSVItem(stuff, "");
-        WriteCSVItem(stuff, "");
-        WriteCSVItem(stuff, "");
-        WriteCSVItem(stuff, "");
-        WriteCSVItem(stuff, "");
-        WriteCSVItem(stuff, "");
-        WriteCSVItem(stuff, "");
-        WriteCSVItem(stuff, NULL);
-      }
+      WriteCSVItem(stuff, "");
+      WriteCSVItem(stuff, "");
+      WriteCSVItem(stuff, abn->RealName);
+      WriteCSVItem(stuff, abn->Alias);
+      WriteCSVItem(stuff, abn->Address);
+      WriteCSVItem(stuff, "");
+      WriteCSVItem(stuff, "");
+      WriteCSVItem(stuff, abn->Phone);
+      WriteCSVItem(stuff, "");
+      WriteCSVItem(stuff, "");
+      WriteCSVItem(stuff, "");
+      WriteCSVItem(stuff, abn->Street);
+      WriteCSVItem(stuff, "");
+      WriteCSVItem(stuff, abn->City);
+      WriteCSVItem(stuff, "");
+      WriteCSVItem(stuff, ""); // postal code
+      WriteCSVItem(stuff, abn->Country);
+      WriteCSVItem(stuff, "");
+      WriteCSVItem(stuff, "");
+      WriteCSVItem(stuff, "");
+      WriteCSVItem(stuff, "");
+      WriteCSVItem(stuff, "");
+      WriteCSVItem(stuff, "");
+      WriteCSVItem(stuff, "");
+      WriteCSVItem(stuff, "");
+      WriteCSVItem(stuff, "");
+      WriteCSVItem(stuff, "");
+      WriteCSVItem(stuff, abn->Homepage);
+      WriteCSVItem(stuff, "");
+      WriteCSVItem(stuff, "");
+      WriteCSVItem(stuff, "");
+      WriteCSVItem(stuff, "");
+      WriteCSVItem(stuff, "");
+      WriteCSVItem(stuff, "");
+      WriteCSVItem(stuff, "");
+      WriteCSVItem(stuff, NULL);
     }
     break;
 
-    case AET_GROUP:
+    case ABNT_GROUP:
     {
-      // groups are handled by IterateAddressBook() already
+      // groups are handled by IterateABook() already
     }
     break;
 
@@ -1250,9 +1429,9 @@ static BOOL ExportAddressBookCSVEntry(const struct ABookNode *abn, BOOL first, c
 }
 
 ///
-/// ExportAddressBookCSV
+/// ExportCSVABook
 //  Exports an address book with comma or tab separated entries
-BOOL ExportAddressBookCSV(const char *filename, const struct AddressBook *abook, char delimiter)
+BOOL ExportCSVABook(const char *filename, const struct ABook *abook, char delimiter)
 {
   FILE *fh;
   BOOL result = FALSE;
@@ -1267,7 +1446,7 @@ BOOL ExportAddressBookCSV(const char *filename, const struct AddressBook *abook,
 
     stuff.fh = fh;
     stuff.delimiter = delimiter;
-    result = IterateAddressBook((struct AddressBook *)abook, ExportAddressBookCSVEntry, &stuff);
+    result = IterateABook(abook, 0, ExportCSVABookEntry, &stuff);
 
     fclose(fh);
     result = TRUE;
@@ -1312,7 +1491,7 @@ struct XMLUserData
 {
   enum XMLSection section;
   enum XMLData dataType;
-  struct AddressBook *abook;
+  struct ABook *abook;
   struct ABookNode abn;
   XML_Char xmlData[SIZE_LARGE];
   size_t xmlDataSize;
@@ -1343,12 +1522,12 @@ static void XMLStartHandler(void *userData, const XML_Char *name, UNUSED const X
       case xs_Group:
         // not yet supported
         xmlUserData->dataType = xd_Unknown;
-        InitABookNode(&xmlUserData->abn, AET_GROUP);
+        InitABookNode(&xmlUserData->abn, ABNT_GROUP);
       break;
 
       case xs_Contact:
         xmlUserData->dataType = xd_ContactName;
-        InitABookNode(&xmlUserData->abn, AET_USER);
+        InitABookNode(&xmlUserData->abn, ABNT_USER);
       break;
     }
   }
@@ -1445,7 +1624,7 @@ static void XMLEndHandler(void *userData, const XML_Char *name)
       {
         case xd_ContactName:
         {
-          strlcpy(xmlUserData->abn.content.user.RealName, isoStr, sizeof(xmlUserData->abn.content.user.RealName));
+          strlcpy(xmlUserData->abn.RealName, isoStr, sizeof(xmlUserData->abn.RealName));
         }
         break;
 
@@ -1457,7 +1636,7 @@ static void XMLEndHandler(void *userData, const XML_Char *name)
 
         case xd_Address:
         {
-          strlcpy(xmlUserData->abn.content.user.Address, isoStr, sizeof(xmlUserData->abn.content.user.Address));
+          strlcpy(xmlUserData->abn.Address, isoStr, sizeof(xmlUserData->abn.Address));
         }
         break;
 
@@ -1469,19 +1648,19 @@ static void XMLEndHandler(void *userData, const XML_Char *name)
 
         case xd_PGPId:
         {
-          strlcpy(xmlUserData->abn.content.user.PGPId, isoStr, sizeof(xmlUserData->abn.content.user.PGPId));
+          strlcpy(xmlUserData->abn.PGPId, isoStr, sizeof(xmlUserData->abn.PGPId));
         }
         break;
 
         case xd_Homepage:
         {
-          strlcpy(xmlUserData->abn.content.user.Homepage, isoStr, sizeof(xmlUserData->abn.content.user.Homepage));
+          strlcpy(xmlUserData->abn.Homepage, isoStr, sizeof(xmlUserData->abn.Homepage));
         }
         break;
 
         case xd_Portrait:
         {
-          strlcpy(xmlUserData->abn.content.user.Photo, isoStr, sizeof(xmlUserData->abn.content.user.Photo));
+          strlcpy(xmlUserData->abn.Photo, isoStr, sizeof(xmlUserData->abn.Photo));
         }
         break;
 
@@ -1507,50 +1686,50 @@ static void XMLEndHandler(void *userData, const XML_Char *name)
           }
           year = atol(p);
 
-          xmlUserData->abn.content.user.Birthday = day * 1000000 + month * 10000 + year;
+          xmlUserData->abn.Birthday = day * 1000000 + month * 10000 + year;
         }
         break;
 
         case xd_Street:
         {
-          if(xmlUserData->abn.content.user.Street[0] == '\0')
+          if(xmlUserData->abn.Street[0] == '\0')
           {
-            strlcpy(xmlUserData->abn.content.user.Street, isoStr, sizeof(xmlUserData->abn.content.user.Street));
+            strlcpy(xmlUserData->abn.Street, isoStr, sizeof(xmlUserData->abn.Street));
           }
           else
           {
-            strlcat(xmlUserData->abn.content.user.Street, ", ", sizeof(xmlUserData->abn.content.user.Street));
-            strlcat(xmlUserData->abn.content.user.Street, isoStr, sizeof(xmlUserData->abn.content.user.Street));
+            strlcat(xmlUserData->abn.Street, ", ", sizeof(xmlUserData->abn.Street));
+            strlcat(xmlUserData->abn.Street, isoStr, sizeof(xmlUserData->abn.Street));
           }
         }
         break;
 
         case xd_City:
         {
-          if(xmlUserData->abn.content.user.City[0] == '\0')
+          if(xmlUserData->abn.City[0] == '\0')
           {
-            strlcpy(xmlUserData->abn.content.user.City, isoStr, sizeof(xmlUserData->abn.content.user.City));
+            strlcpy(xmlUserData->abn.City, isoStr, sizeof(xmlUserData->abn.City));
           }
           else
           {
-            strlcat(xmlUserData->abn.content.user.City, ", ", sizeof(xmlUserData->abn.content.user.City));
-            strlcat(xmlUserData->abn.content.user.City, isoStr, sizeof(xmlUserData->abn.content.user.City));
+            strlcat(xmlUserData->abn.City, ", ", sizeof(xmlUserData->abn.City));
+            strlcat(xmlUserData->abn.City, isoStr, sizeof(xmlUserData->abn.City));
           }
         }
         break;
 
         case xd_ZIPCode:
         {
-          if(xmlUserData->abn.content.user.City[0] == '\0')
+          if(xmlUserData->abn.City[0] == '\0')
           {
-            strlcpy(xmlUserData->abn.content.user.City, isoStr, sizeof(xmlUserData->abn.content.user.City));
+            strlcpy(xmlUserData->abn.City, isoStr, sizeof(xmlUserData->abn.City));
           }
           else
           {
             char tmp[SIZE_DEFAULT];
 
-            strlcpy(tmp, xmlUserData->abn.content.user.City, sizeof(tmp));
-            snprintf(xmlUserData->abn.content.user.City, sizeof(xmlUserData->abn.content.user.City), "%s %s", isoStr, tmp);
+            strlcpy(tmp, xmlUserData->abn.City, sizeof(tmp));
+            snprintf(xmlUserData->abn.City, sizeof(xmlUserData->abn.City), "%s %s", isoStr, tmp);
           }
         }
         break;
@@ -1558,28 +1737,28 @@ static void XMLEndHandler(void *userData, const XML_Char *name)
         case xd_State:
         case xd_Country:
         {
-          if(xmlUserData->abn.content.user.Country[0] == '\0')
+          if(xmlUserData->abn.Country[0] == '\0')
           {
-            strlcpy(xmlUserData->abn.content.user.Country, isoStr, sizeof(xmlUserData->abn.content.user.Country));
+            strlcpy(xmlUserData->abn.Country, isoStr, sizeof(xmlUserData->abn.Country));
           }
           else
           {
-            strlcat(xmlUserData->abn.content.user.Country, ", ", sizeof(xmlUserData->abn.content.user.Country));
-            strlcat(xmlUserData->abn.content.user.Country, isoStr, sizeof(xmlUserData->abn.content.user.Country));
+            strlcat(xmlUserData->abn.Country, ", ", sizeof(xmlUserData->abn.Country));
+            strlcat(xmlUserData->abn.Country, isoStr, sizeof(xmlUserData->abn.Country));
           }
         }
         break;
 
         case xd_Phone:
         {
-          if(xmlUserData->abn.content.user.Phone[0] == '\0')
+          if(xmlUserData->abn.Phone[0] == '\0')
           {
-            strlcpy(xmlUserData->abn.content.user.Phone, isoStr, sizeof(xmlUserData->abn.content.user.Phone));
+            strlcpy(xmlUserData->abn.Phone, isoStr, sizeof(xmlUserData->abn.Phone));
           }
           else
           {
-            strlcat(xmlUserData->abn.content.user.Phone, ", ", sizeof(xmlUserData->abn.content.user.Phone));
-            strlcat(xmlUserData->abn.content.user.Phone, isoStr, sizeof(xmlUserData->abn.content.user.Phone));
+            strlcat(xmlUserData->abn.Phone, ", ", sizeof(xmlUserData->abn.Phone));
+            strlcat(xmlUserData->abn.Phone, isoStr, sizeof(xmlUserData->abn.Phone));
           }
         }
         break;
@@ -1599,7 +1778,7 @@ static void XMLEndHandler(void *userData, const XML_Char *name)
   if(xmlUserData->section == xs_Contact && strcmp(name, "newcontact") == 0)
   {
     // we need at least an EMail address
-    if(xmlUserData->abn.content.user.Address[0] != '\0')
+    if(xmlUserData->abn.Address[0] != '\0')
     {
       struct ABookNode *abn;
 
@@ -1610,7 +1789,7 @@ static void XMLEndHandler(void *userData, const XML_Char *name)
       if((abn = DuplicateNode(&xmlUserData->abn, sizeof(xmlUserData->abn))) != NULL)
       {
         // put it into the tree
-        AddTail((struct List *)&xmlUserData->abook->root, (struct Node *)abn);
+        AddABookNode(&xmlUserData->abook->rootGroup, abn, NULL);
         xmlUserData->success = TRUE;
       }
     }
@@ -1640,9 +1819,9 @@ static void XMLCharacterDataHandler(void *userData, const XML_Char *s, int len)
 }
 
 ///
-/// ImportAddressBookXML
+/// ImportXMLABook
 // imports an address book in XML format (i.e. from SimpleMail)
-BOOL ImportAddressBookXML(const char *filename, struct AddressBook *abook, BOOL append)
+BOOL ImportXMLABook(const char *filename, struct ABook *abook, BOOL append)
 {
   FILE *fh;
   BOOL result = FALSE;
@@ -1656,7 +1835,7 @@ BOOL ImportAddressBookXML(const char *filename, struct AddressBook *abook, BOOL 
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
     if(append == FALSE)
-      ClearAddressBook(abook);
+      ClearABook(abook);
 
     // create the XML parser
     if((parser = XML_ParserCreate(NULL)) != NULL)
@@ -1718,56 +1897,58 @@ BOOL ImportAddressBookXML(const char *filename, struct AddressBook *abook, BOOL 
 
 ///
 
-struct SearchStuff
+struct PlainSearchStuff
 {
   const char *text;
   size_t textLen;
-  int mode;
-  int mode_type;
+  ULONG mode;
   struct ABookNode **result;
-  int hits;
+  ULONG hits;
 };
 
-/// SearchAddressBookEntry
-BOOL SearchAddressBookEntry(const struct ABookNode *abn, BOOL first, const void *userData)
+/// SearchABookEntry
+BOOL SearchABookEntry(const struct ABookNode *abn, UNUSED ULONG flags, void *userData)
 {
-  struct SearchStuff *stuff = (struct SearchStuff *)userData;
+  struct PlainSearchStuff *stuff = (struct PlainSearchStuff *)userData;
   BOOL result = TRUE;
+  BOOL doSearch;
 
   ENTER();
 
-  if(first == TRUE)
+  // now we check if this entry is one of the not wished entry types
+  // and then we skip it.
+  if(abn->type == ABNT_USER && isUserTypeSearch(stuff->mode) == TRUE)
+    doSearch = TRUE;
+  else if(abn->type == ABNT_LIST && isListTypeSearch(stuff->mode) == TRUE)
+    doSearch = TRUE;
+  else if(abn->type == ABNT_GROUP && isGroupTypeSearch(stuff->mode) == TRUE)
+    doSearch = TRUE;
+  else
+    doSearch = FALSE;
+
+  if(doSearch == TRUE)
   {
     BOOL found = FALSE;
-
-    // now we check if this entry is one of the not wished entry types
-    // and then we skip it.
-    if(abn->type == AET_USER && !isUserSearch(stuff->mode))
-      goto out;
-    if(abn->type == AET_LIST && !isListSearch(stuff->mode))
-      goto out;
-    if(abn->type == AET_GROUP && !isGroupSearch(stuff->mode))
-      goto out;
 
     if(isCompleteSearch(stuff->mode))
     {
       // Now we check for the ALIAS->REALNAME->ADDRESS, so only ONE mode is allowed at a time
-      if(isAliasSearch(stuff->mode_type))
-        found = !Strnicmp(abn->Alias, stuff->text, stuff->textLen);
-      else if(isRealNameSearch(stuff->mode_type))
-        found = !Strnicmp(abn->content.user.RealName, stuff->text, stuff->textLen);
-      else if(isAddressSearch(stuff->mode_type))
-        found = !Strnicmp(abn->content.user.Address, stuff->text, stuff->textLen);
+      if(found == FALSE && isAliasSearch(stuff->mode))
+        found = (Strnicmp(abn->Alias, stuff->text, stuff->textLen) == 0);
+      if(found == FALSE && isRealNameSearch(stuff->mode))
+        found = (Strnicmp(abn->RealName, stuff->text, stuff->textLen) == 0);
+      if(found == FALSE && isAddressSearch(stuff->mode))
+        found = (Strnicmp(abn->Address, stuff->text, stuff->textLen) == 0);
     }
     else
     {
       // Now we check for the ALIAS->REALNAME->ADDRESS, so only ONE mode is allowed at a time
-      if(isAliasSearch(stuff->mode_type))
-        found = !Stricmp(abn->Alias, stuff->text);
-      else if(isRealNameSearch(stuff->mode_type))
-        found = !Stricmp(abn->content.user.RealName, stuff->text);
-      else if(isAddressSearch(stuff->mode_type))
-        found = !Stricmp(abn->content.user.Address, stuff->text);
+      if(found == FALSE && isAliasSearch(stuff->mode))
+        found = (Stricmp(abn->Alias, stuff->text) == 0);
+      if(found == FALSE && isRealNameSearch(stuff->mode))
+        found = (Stricmp(abn->RealName, stuff->text) == 0);
+      if(found == FALSE && isAddressSearch(stuff->mode))
+        found = (Stricmp(abn->Address, stuff->text) == 0);
     }
 
     if(found == TRUE)
@@ -1782,34 +1963,413 @@ BOOL SearchAddressBookEntry(const struct ABookNode *abn, BOOL first, const void 
     }
   }
 
-out:
   RETURN(result);
   return result;
 }
 
 ///
-/// SearchAddressBook
+/// SearchABook
 //  Searches the address book by alias, name or address
 //  it will break if there is more then one entry
-int SearchAddressBook(const struct AddressBook *abook, const char *text, int mode, struct ABookNode **abn)
+ULONG SearchABook(const struct ABook *abook, const char *text, ULONG mode, struct ABookNode **abn)
 {
-  struct SearchStuff stuff;
-  int hits;
+  struct PlainSearchStuff stuff;
+  ULONG hits;
 
   ENTER();
 
   stuff.text = text;
   stuff.textLen = strlen(text);
   stuff.mode = mode;
-  stuff.mode_type = mode & ASM_TYPEMASK;;
   stuff.result = abn;
   stuff.hits = 0;
-  IterateAddressBook((struct AddressBook *)abook, SearchAddressBookEntry, &stuff);
+  IterateABook(abook, 0, SearchABookEntry, &stuff);
 
   hits = stuff.hits;
 
   RETURN(hits);
   return hits;
+}
+
+///
+
+struct PatternSearchStuff
+{
+  const char *pattern;
+  ULONG mode;
+  char **aliases;
+  ULONG hits;
+};
+
+/// PatternSearchABookEntry
+BOOL PatternSearchABookEntry(const struct ABookNode *abn, UNUSED ULONG flags, void *userData)
+{
+  struct PatternSearchStuff *stuff = (struct PatternSearchStuff *)userData;
+  BOOL doSearch;
+
+  ENTER();
+
+  // now we check if this entry is one of the not wished entry types
+  // and then we skip it.
+  if(abn->type == ABNT_USER && isUserTypeSearch(stuff->mode) == TRUE)
+    doSearch = TRUE;
+  else if(abn->type == ABNT_LIST && isListTypeSearch(stuff->mode) == TRUE)
+    doSearch = TRUE;
+  else
+    doSearch = FALSE;
+
+  if(doSearch == TRUE)
+  {
+    BOOL found = FALSE;
+
+    // Now we check for the ALIAS->REALNAME->ADDRESS, so only ONE mode is allowed at a time
+    if(found == FALSE && isAliasSearch(stuff->mode))
+      found = MatchNoCase(abn->Alias, stuff->pattern);
+    if(found == FALSE && isRealNameSearch(stuff->mode))
+      found = MatchNoCase(abn->RealName, stuff->pattern);
+    if(found == FALSE && isAddressSearch(stuff->mode))
+      found = MatchNoCase(abn->Address, stuff->pattern);
+    if(found == FALSE && isCommentSearch(stuff->mode))
+      found = MatchNoCase(abn->Comment, stuff->pattern);
+    if(found == FALSE && isUserInfoSearch(stuff->mode) && abn->type == ABNT_USER)
+      found = MatchNoCase(abn->Homepage, stuff->pattern) ||
+              MatchNoCase(abn->Street, stuff->pattern)   ||
+              MatchNoCase(abn->City, stuff->pattern)     ||
+              MatchNoCase(abn->Country, stuff->pattern)  ||
+              MatchNoCase(abn->Phone, stuff->pattern);
+
+    if(found == TRUE)
+    {
+      D(DBF_ABOOK, "found pattern '%s' in entry with alias '%s'", stuff->pattern, abn->Alias);
+
+      if(stuff->aliases != NULL)
+        stuff->aliases[stuff->hits] = (char *)abn->Alias;
+
+      // always count the number of hits
+      stuff->hits++;
+    }
+  }
+
+  RETURN(TRUE);
+  return TRUE;
+}
+
+///
+/// PatternSearchABook
+//  Searches the address book by alias, name or address
+//  it will break if there is more then one entry
+ULONG PatternSearchABook(const struct ABook *abook, const char *pattern, ULONG mode, char **aliases)
+{
+  struct PatternSearchStuff stuff;
+  ULONG hits;
+
+  ENTER();
+
+  stuff.pattern = pattern;
+  stuff.mode = mode;
+  stuff.aliases = aliases;
+  stuff.hits = 0;
+  IterateABook(abook, 0, PatternSearchABookEntry, &stuff);
+
+  hits = stuff.hits;
+
+  RETURN(hits);
+  return hits;
+}
+
+///
+/// CreateABookGroup
+// create a new group, default to the root group
+struct ABookNode *CreateABookGroup(struct ABook *abook, const char *name)
+{
+  struct ABookNode *result = &abook->rootGroup;
+
+  ENTER();
+
+  if(IsStrEmpty(name) == FALSE)
+  {
+    struct ABookNode *abn;
+
+    if(SearchABook(abook, name, ASM_ALIAS|ASM_GROUP|ASM_COMPLETE, &abn) == 0)
+    {
+      if((abn = CreateABookNode(ABNT_GROUP)) != NULL)
+      {
+        strlcpy(abn->Alias, name, sizeof(abn->Alias));
+        AddABookNode(&abook->rootGroup, abn, NULL);
+
+        result = abn;
+      }
+    }
+  }
+
+  RETURN(result);
+  return result;
+}
+
+///
+/// FindPersonInABook
+struct ABookNode *FindPersonInABook(const struct ABook *abook, const struct Person *pe)
+{
+  struct ABookNode *result = NULL;
+  struct ABookNode *abn;
+
+  ENTER();
+
+  if(SearchABook(abook, pe->Address, ASM_ADDRESS|ASM_USER|ASM_COMPLETE, &abn) == 1)
+  {
+    result = abn;
+  }
+
+  RETURN(result);
+  return result;
+}
+
+///
+
+struct BirthdayStuff
+{
+  ldiv_t today;
+};
+
+/// CheckABookEntryBirthday
+static BOOL CheckABookEntryBirthday(const struct ABookNode *abn, UNUSED ULONG flags, void *userData)
+{
+  struct BirthdayStuff *stuff = (struct BirthdayStuff *)userData;
+
+  ENTER();
+
+  if(abn->type == ABNT_USER && abn->Birthday != 0)
+  {
+    ldiv_t birthday = ldiv(abn->Birthday, 10000);
+
+    if(birthday.quot == stuff->today.quot)
+    {
+      char question[SIZE_LARGE];
+      const char *name = abn->RealName[0] != '\0' ? abn->RealName : abn->Alias;
+      char dateString[64];
+
+      DateStamp2String(dateString, sizeof(dateString), NULL, DSS_DATE, TZC_NONE);
+      snprintf(question, sizeof(question), tr(MSG_AB_BirthdayReqBody), dateString, name, stuff->today.rem - birthday.rem);
+
+      // show the Birthday Requester
+      BirthdayRequestWindowObject,
+        MUIA_BirthdayRequestWindow_Body, question,
+        MUIA_BirthdayRequestWindow_Alias, abn->Alias,
+      End;
+    }
+  }
+
+  RETURN(TRUE);
+  return TRUE;
+}
+
+///
+/// CheckABookBirthdays
+// searches the address book for todays birthdays
+void CheckABookBirthdays(const struct ABook *abook, BOOL check)
+{
+  struct TimeVal nowTV;
+  struct TimeVal nextTV;
+  struct DateStamp nextDS;
+
+  ENTER();
+
+  // perform the check only if we are instructed to do it
+  if(check == TRUE)
+  {
+    struct BirthdayStuff stuff;
+
+    stuff.today = ldiv(DateStamp2Long(NULL), 10000);
+    IterateABook(abook, 0, CheckABookEntryBirthday, &stuff);
+  }
+
+  // reschedule the birthday check for the configured check time
+  DateStamp(&nextDS);
+  nextDS.ds_Minute = C->BirthdayCheckTime.ds_Minute;
+  nextDS.ds_Tick = 0;
+
+  DateStamp2TimeVal(&nextDS, &nextTV, TZC_NONE);
+
+  GetSysTime(TIMEVAL(&nowTV));
+  if(CmpTime(TIMEVAL(&nowTV), TIMEVAL(&nextTV)) < 0)
+  {
+    // if the check time is already over for today we schedule the next check
+    // for tomorrow
+    nextDS.ds_Days++;
+    DateStamp2TimeVal(&nextDS, &nextTV, TZC_NONE);
+  }
+
+  // calculate the remaining time until the next check
+  SubTime(TIMEVAL(&nextTV), TIMEVAL(&nowTV));
+
+  #if defined(DEBUG)
+  {
+  char dateString[64];
+
+  DateStamp2String(dateString, sizeof(dateString), &nextDS, DSS_DATETIME, TZC_NONE);
+  D(DBF_TIMER, "next birthday check @ %s", dateString);
+  }
+  #endif
+  RestartTimer(TIMER_CHECKBIRTHDAYS, nextTV.Seconds, nextTV.Microseconds, TRUE);
+
+  LEAVE();
+}
+
+///
+
+struct PrintStuff
+{
+  FILE *prt;
+  int mode;
+};
+
+/// PrintABookEntryField
+//  Formats and prints a single field
+static void PrintABookEntryField(const char *fieldname, const char *field, FILE *prt)
+{
+  ENTER();
+
+  if(IsStrEmpty(field) == FALSE)
+    fprintf(prt, "%-20.20s: %-50.50s\n", StripUnderscore(fieldname), field);
+
+  LEAVE();
+}
+
+///
+/// PrintShortABookEntry
+//  Prints an address book entry in compact format
+void PrintShortABookEntry(const struct ABookNode *abn, FILE *prt)
+{
+  static const char types[3] = { 'P','L','G' };
+
+  ENTER();
+
+  fprintf(prt, "%c %-12.12s %-20.20s %-36.36s\n", types[abn->type-ABNT_USER],
+     abn->Alias, abn->RealName, abn->type == ABNT_USER ? abn->Address : abn->Comment);
+
+  LEAVE();
+}
+
+///
+/// PrintLongABookEntry
+//  Prints an address book entry in detailed format
+void PrintLongABookEntry(const struct ABookNode *abn, FILE *prt)
+{
+  ENTER();
+
+  fputs("------------------------------------------------------------------------\n", prt);
+  switch(abn->type)
+  {
+    case ABNT_USER:
+    {
+      char dateStr[SIZE_SMALL];
+
+      BirthdayToString(abn->Birthday, dateStr, sizeof(dateStr));
+
+      PrintABookEntryField(tr(MSG_AB_PersonAlias), abn->Alias, prt);
+      PrintABookEntryField(tr(MSG_EA_RealName), abn->RealName, prt);
+      PrintABookEntryField(tr(MSG_EA_EmailAddress), abn->Address, prt);
+      PrintABookEntryField(tr(MSG_EA_PGPId), abn->PGPId, prt);
+      PrintABookEntryField(tr(MSG_EA_Homepage), abn->Homepage, prt);
+      PrintABookEntryField(tr(MSG_EA_Street), abn->Street, prt);
+      PrintABookEntryField(tr(MSG_EA_City), abn->City, prt);
+      PrintABookEntryField(tr(MSG_EA_Country), abn->Country, prt);
+      PrintABookEntryField(tr(MSG_EA_Phone), abn->Phone, prt);
+      PrintABookEntryField(tr(MSG_EA_DOB), dateStr, prt);
+    }
+    break;
+
+    case ABNT_GROUP:
+    {
+      PrintABookEntryField(tr(MSG_AB_GroupAlias), abn->Alias, prt);
+    }
+    break;
+
+    case ABNT_LIST:
+    {
+      PrintABookEntryField(tr(MSG_AB_ListAlias), abn->Alias, prt);
+      PrintABookEntryField(tr(MSG_EA_MLName), abn->RealName, prt);
+      PrintABookEntryField(tr(MSG_EA_ReturnAddress), abn->Address, prt);
+      if(abn->ListMembers != NULL)
+      {
+        BOOL header = FALSE;
+        char *ptr;
+
+        for(ptr = abn->ListMembers; *ptr; ptr++)
+        {
+          char *nptr = strchr(ptr, '\n');
+
+          if(nptr != NULL)
+            *nptr = 0;
+          else
+            break;
+          if(header == FALSE)
+          {
+            PrintABookEntryField(tr(MSG_EA_Members), ptr, prt);
+            header = TRUE;
+          }
+          else
+            fprintf(prt, "                      %s\n", ptr);
+          *nptr = '\n';
+          ptr = nptr;
+        }
+      }
+    }
+    break;
+  }
+
+  PrintABookEntryField(tr(MSG_EA_Description), abn->Comment, prt);
+
+  LEAVE();
+}
+
+///
+/// PrintABookEntry
+static BOOL PrintABookEntry(const struct ABookNode *abn, UNUSED ULONG flags, void *userData)
+{
+  struct PrintStuff *stuff = (struct PrintStuff *)userData;
+
+  ENTER();
+
+  if(stuff->mode == 1)
+    PrintLongABookEntry(abn, stuff->prt);
+  else
+    PrintShortABookEntry(abn, stuff->prt);
+
+  RETURN(TRUE);
+  return TRUE;
+}
+
+///
+/// PrintABook
+//  Recursively prints all address book entries
+void PrintABook(const struct ABook *abook, FILE *prt, int mode)
+{
+  struct PrintStuff stuff;
+
+  ENTER();
+
+  stuff.prt = prt;
+  stuff.mode = mode;
+  IterateABook(abook, 0, PrintABookEntry, &stuff);
+
+  LEAVE();
+}
+
+///
+/// PrintABookGroup
+//  Recursively prints an address book group
+void PrintABookGroup(const struct ABookNode *group, FILE *prt, int mode)
+{
+  struct PrintStuff stuff;
+
+  ENTER();
+
+  stuff.prt = prt;
+  stuff.mode = mode;
+  IterateABookGroup(group, 0, PrintABookEntry, &stuff);
+
+  LEAVE();
 }
 
 ///

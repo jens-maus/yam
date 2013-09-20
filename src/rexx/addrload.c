@@ -31,8 +31,6 @@
 #include "extrasrc.h"
 
 #include "YAM.h"
-#include "YAM_addressbook.h"
-#include "YAM_addressbookEntry.h"
 
 #include "mui/YAMApplication.h"
 
@@ -62,8 +60,7 @@ void rx_addrload(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
 
     case RXIF_ACTION:
     {
-      #warning access to G->AB
-      if(AB_LoadTree(G->AB->GUI.LV_ADDRESSES, args->filename, FALSE, FALSE) == TRUE)
+      if(LoadABook(args->filename, &G->abook, FALSE) == TRUE)
       {
         if(args->open != 0)
         {

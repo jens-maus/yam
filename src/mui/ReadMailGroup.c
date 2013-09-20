@@ -44,8 +44,6 @@
 #include "SDI_hook.h"
 
 #include "YAM.h"
-#include "YAM_addressbook.h"
-#include "YAM_addressbookEntry.h"
 #include "YAM_error.h"
 #include "YAM_mainFolder.h"
 #include "YAM_read.h"
@@ -372,11 +370,11 @@ static char *Cleanse(char *s)
 /// ExtractSenderInfo
 // Extracts all sender information of a mail and put it
 // into a supplied ABEntry. (parses X-SenderInfo header field)
-static void ExtractSenderInfo(const struct Mail *mail, struct ABEntry *ab)
+static void ExtractSenderInfo(const struct Mail *mail, struct ABookNode *ab)
 {
   ENTER();
 
-  memset(ab, 0, sizeof(struct ABEntry));
+  InitABookNode(ab, ABNT_USER);
   strlcpy(ab->Address, mail->From.Address, sizeof(ab->Address));
   strlcpy(ab->RealName, mail->From.RealName, sizeof(ab->RealName));
 
@@ -421,11 +419,9 @@ static void ExtractSenderInfo(const struct Mail *mail, struct ABEntry *ab)
             else if(stricmp(s, "homepage") == 0)
               strlcpy(ab->Homepage, eq, sizeof(ab->Homepage));
             else if(stricmp(s, "dob") == 0)
-              ab->BirthDay = atol(eq);
+              ab->Birthday = atol(eq);
             else if(stricmp(s, "picture") == 0)
               strlcpy(ab->Photo, eq, sizeof(ab->Photo));
-
-            ab->Type = 1;
           }
           s = t;
         }
@@ -1116,8 +1112,8 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
   GETDATA;
   struct ReadMailData *rmData = data->readMailData;
   struct Person *from = &rmData->mail->From;
-  struct ABEntry *ab = NULL;
-  struct ABEntry abtmpl;
+  struct ABookNode *ab = NULL;
+  struct ABookNode abtmpl;
   BOOL foundIdentity;
   BOOL dispheader;
   int hits;
@@ -1165,7 +1161,7 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
   // we search in the address for the matching entry by just comparing
   // the email addresses or otherwise we can't be certain that the found
   // addressbook entry really belongs to the sender address of the mail.
-  hits = AB_SearchEntry(from->Address, ASM_ADDRESS|ASM_USER, &ab);
+  hits = SearchABook(&G->abook, from->Address, ASM_ADDRESS|ASM_USER, &ab);
 
   // extract the realname/email address and
   // X-SenderInfo information from the mail into a temporary ABEntry
@@ -1216,7 +1212,7 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
   {
     if(rmData->senderInfoMode != SIM_IMAGE)
     {
-      if(hits == 1 || ab->Type == AET_LIST)
+      if(hits == 1 || ab->type == ABNT_LIST)
       {
         struct HeaderNode *newNode;
         char dateStr[SIZE_SMALL];
@@ -1269,7 +1265,7 @@ DECLARE(UpdateHeaderDisplay) // ULONG flags
           DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Sorted);
         }
 
-        if(AB_ExpandBD(ab->BirthDay, dateStr, sizeof(dateStr)) == TRUE && (newNode = AllocHeaderNode()) != NULL)
+        if(BirthdayToString(ab->Birthday, dateStr, sizeof(dateStr)) == TRUE && (newNode = AllocHeaderNode()) != NULL)
         {
           dstrcpy(&newNode->name, MUIX_I);
           dstrcat(&newNode->name, StripUnderscore(tr(MSG_EA_DOB)));

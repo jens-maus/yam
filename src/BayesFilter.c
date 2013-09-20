@@ -36,12 +36,12 @@
 
 #include "YAM.h"
 #include "YAM_read.h"
-#include "YAM_addressbook.h"
 #include "YAM_mainFolder.h"
 #include "YAM_utilities.h"
 
 #include "extrasrc.h"
 
+#include "AddressBook.h"
 #include "BayesFilter.h"
 #include "Busy.h"
 #include "Config.h"
@@ -1374,7 +1374,7 @@ static BOOL tokenAnalyzerClassifyMessage(const struct Tokenizer *t,
   if(C->SpamAddressBookIsWhiteList == TRUE)
   {
     // try to find the sender's address in the address book
-    isInWhiteList = (AB_FindEntry(mail->From.Address, ABF_RX_EMAIL, NULL) != 0);
+    isInWhiteList = (FindPersonInABook(&G->abook, &mail->From) != NULL);
   }
   else
   {

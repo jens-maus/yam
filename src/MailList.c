@@ -61,9 +61,10 @@ struct MailList *CreateMailList(void)
   ENTER();
 
   // at first create the list itself
-  if((mlist = AllocSysObjectTags(ASOT_LIST, ASOLIST_Size, sizeof(*mlist),
-                                            ASOLIST_Min,  TRUE,
-                                            TAG_DONE)) != NULL)
+  if((mlist = AllocSysObjectTags(ASOT_LIST,
+    ASOLIST_Size, sizeof(*mlist),
+    ASOLIST_Min,  TRUE,
+    TAG_DONE)) != NULL)
   {
     // now create the arbitration semaphore
     if((mlist->lockSemaphore = AllocSysObjectTags(ASOT_SEMAPHORE, TAG_DONE)) != NULL)

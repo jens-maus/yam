@@ -39,6 +39,7 @@
 #include <mui/NBalance_mcc.h>
 #include <mui/NList_mcc.h>
 #include <mui/NListview_mcc.h>
+#include <mui/NListtree_mcc.h>
 #include <mui/TextEditor_mcc.h>
 #include <mui/TheBar_mcc.h>
 #include <rexx/storage.h>
@@ -54,8 +55,6 @@
 #include "SDI_hook.h"
 
 #include "YAM.h"
-#include "YAM_addressbook.h"
-#include "YAM_addressbookEntry.h"
 #include "YAM_error.h"
 #include "YAM_find.h"
 #include "YAM_folderconfig.h"
@@ -67,6 +66,7 @@
 #include "YAM_utilities.h"
 #include "YAM_write.h"
 
+#include "mui/AddressBookWindow.h"
 #include "mui/ClassesExtra.h"
 #include "mui/InfoBar.h"
 #include "mui/MainFolderListtree.h"
@@ -2156,8 +2156,6 @@ MakeHook(MA_ClassifyMessageHook, MA_ClassifyMessageFunc);
 //  Stores address from a list of messages to the address book
 void MA_GetAddress(struct MailList *mlist)
 {
-  int winnum;
-  enum ABEntry_Type mode;
   struct MailNode *mnode = FirstMailNode(mlist);
   struct Mail *mail = mnode->mail;
   struct Folder *folder = mail->Folder;
@@ -2165,6 +2163,7 @@ void MA_GetAddress(struct MailList *mlist)
   BOOL isMLFolder = (folder != NULL) ? folder->MLSupport : FALSE;
   struct ExtendedMail *email;
   struct Person *pe = NULL;
+  struct ABookNode abn;
 
   ENTER();
 
@@ -2204,102 +2203,109 @@ void MA_GetAddress(struct MailList *mlist)
         pe = &mail->From;
     }
 
-    mode = AET_USER;
+    InitABookNode(&abn, ABNT_USER);
+
+    // if there is a "," in the realname of the new address
+    // we have to encapsulate it in quotes
+    if(strchr(pe->RealName, ','))
+      snprintf(abn.RealName, sizeof(abn.RealName), "\"%s\"", pe->RealName);
+    else
+      strlcpy(abn.RealName, pe->RealName, sizeof(abn.RealName));
+
+    strlcpy(abn.Address, pe->Address, sizeof(abn.Address));
   }
   else
-    mode = AET_LIST;
-
-  DoMethod(G->App, MUIM_YAMApplication_OpenAddressBookWindow);
-
-  winnum = EA_Init(mode, NULL);
-  if(winnum >= 0)
   {
-    if(mode == AET_USER)
-    {
-      // if there is a "," in the realname of the new address
-      // we have to encapsulate it in quotes
-      if(strchr(pe->RealName, ','))
-      {
-        char quotedRealName[SIZE_REALNAME];
+    InitABookNode(&abn, ABNT_LIST);
 
-        snprintf(quotedRealName, sizeof(quotedRealName), "\"%s\"", pe->RealName);
-        setstring(G->EA[winnum]->GUI.ST_REALNAME, quotedRealName);
+    LockMailListShared(mlist);
+
+    ForEachMailNode(mlist, mnode)
+    {
+      char address[SIZE_LARGE];
+
+      mail = mnode->mail;
+
+      if(isSentFolder == TRUE)
+      {
+        dstrcat(&abn.ListMembers, BuildAddress(address, sizeof(address), mail->To.Address, mail->To.RealName));
+        dstrcat(&abn.ListMembers, "\n");
+
+        if(isMultiRCPTMail(mail) &&
+           (email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)) != NULL)
+        {
+          int j;
+
+          for(j=0; j < email->NumSTo; j++)
+          {
+            dstrcat(&abn.ListMembers, BuildAddress(address, sizeof(address), email->STo[j].Address, email->STo[j].RealName));
+            dstrcat(&abn.ListMembers, "\n");
+          }
+
+          for(j=0; j < email->NumCC; j++)
+          {
+            dstrcat(&abn.ListMembers, BuildAddress(address, sizeof(address), email->CC[j].Address, email->CC[j].RealName));
+            dstrcat(&abn.ListMembers, "\n");
+          }
+
+          MA_FreeEMailStruct(email);
+        }
       }
       else
-        setstring(G->EA[winnum]->GUI.ST_REALNAME, pe->RealName);
-
-      setstring(G->EA[winnum]->GUI.ST_ADDRESS, pe->Address);
-    }
-    else
-    {
-      LockMailListShared(mlist);
-
-      ForEachMailNode(mlist, mnode)
       {
-        char address[SIZE_LARGE];
-
-        mail = mnode->mail;
-
-        if(isSentFolder == TRUE)
+        // now we check whether the mail got ReplyTo addresses which we should add
+        // or if we should add all From: addresses
+        if(isMLFolder == FALSE && mail->ReplyTo.Address[0] != '\0')
         {
-          DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddress(address, sizeof(address), mail->To.Address, mail->To.RealName), MUIV_List_Insert_Bottom);
+          dstrcat(&abn.ListMembers, BuildAddress(address, sizeof(address), mail->ReplyTo.Address, mail->ReplyTo.RealName));
+          dstrcat(&abn.ListMembers, "\n");
 
-          if(isMultiRCPTMail(mail) &&
+          if(isMultiReplyToMail(mail) &&
              (email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)) != NULL)
           {
             int j;
 
-            for(j=0; j < email->NumSTo; j++)
-              DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddress(address, sizeof(address), email->STo[j].Address, email->STo[j].RealName), MUIV_List_Insert_Bottom);
-
-            for(j=0; j < email->NumCC; j++)
-              DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddress(address, sizeof(address), email->CC[j].Address, email->CC[j].RealName), MUIV_List_Insert_Bottom);
+            for(j=0; j < email->NumSReplyTo; j++)
+            {
+              dstrcat(&abn.ListMembers, BuildAddress(address, sizeof(address), email->SReplyTo[j].Address, email->SReplyTo[j].RealName));
+              dstrcat(&abn.ListMembers, "\n");
+            }
 
             MA_FreeEMailStruct(email);
           }
         }
         else
         {
-          // now we check whether the mail got ReplyTo addresses which we should add
-          // or if we should add all From: addresses
-          if(isMLFolder == FALSE && mail->ReplyTo.Address[0] != '\0')
+          // there seem to exist no ReplyTo: addresses, so lets go and
+          // add all From: addresses to our addressbook.
+          dstrcat(&abn.ListMembers, BuildAddress(address, sizeof(address), mail->From.Address, mail->From.RealName));
+          dstrcat(&abn.ListMembers, "\n");
+
+          if(isMultiSenderMail(mail) &&
+             (email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)) != NULL)
           {
-            DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddress(address, sizeof(address), mail->ReplyTo.Address, mail->ReplyTo.RealName), MUIV_List_Insert_Bottom);
+            int j;
 
-            if(isMultiReplyToMail(mail) &&
-               (email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)) != NULL)
+            for(j=0; j < email->NumSFrom; j++)
             {
-              int j;
-
-              for(j=0; j < email->NumSReplyTo; j++)
-                DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddress(address, sizeof(address), email->SReplyTo[j].Address, email->SReplyTo[j].RealName), MUIV_List_Insert_Bottom);
-
-              MA_FreeEMailStruct(email);
+              dstrcat(&abn.ListMembers, BuildAddress(address, sizeof(address), email->SFrom[j].Address, email->SFrom[j].RealName));
+              dstrcat(&abn.ListMembers, "\n");
             }
-          }
-          else
-          {
-            // there seem to exist no ReplyTo: addresses, so lets go and
-            // add all From: addresses to our addressbook.
-            DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddress(address, sizeof(address), mail->From.Address, mail->From.RealName), MUIV_List_Insert_Bottom);
 
-            if(isMultiSenderMail(mail) &&
-               (email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)) != NULL)
-            {
-              int j;
-
-              for(j=0; j < email->NumSFrom; j++)
-                DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddress(address, sizeof(address), email->SFrom[j].Address, email->SFrom[j].RealName), MUIV_List_Insert_Bottom);
-
-              MA_FreeEMailStruct(email);
-            }
+            MA_FreeEMailStruct(email);
           }
         }
       }
-
-      UnlockMailList(mlist);
     }
+
+    UnlockMailList(mlist);
   }
+
+  if(DoMethod(G->App, MUIM_YAMApplication_OpenAddressBookWindow) == TRUE)
+    DoMethod(G->ABookWinObject, MUIM_AddressBookWindow_EditNewEntry, &abn);
+
+  // free the list members, it is handled now by the edit window
+  dstrfree(abn.ListMembers);
 
   LEAVE();
 }

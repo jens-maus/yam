@@ -34,14 +34,14 @@
 
 #include <proto/codesets.h>
 #include <proto/muimaster.h>
+#include <mui/NListtree_mcc.h>
 #include <mui/TextEditor_mcc.h>
 
 #include "YAM.h"
-#include "YAM_addressbook.h"
-#include "YAM_addressbookEntry.h"
 
 #include "mui/AddressBookWindow.h"
 
+#include "AddressBook.h"
 #include "Config.h"
 #include "DynamicString.h"
 #include "Locale.h"
@@ -75,14 +75,14 @@ struct Data
 /// InsertAddressTreeNode() rec
 static void InsertAddressTreeNode(Object *obj, Object *addrObj, struct MUI_NListtree_TreeNode *tn, int i)
 {
-  struct ABEntry *ab = (struct ABEntry *)(tn->tn_User);
+  struct ABookNode *ab = (struct ABookNode *)(tn->tn_User);
   char address[SIZE_LARGE];
 
   ENTER();
 
-  switch(ab->Type)
+  switch(ab->type)
   {
-    case AET_USER:
+    case ABNT_USER:
     {
       // build the address by using the real name and mail address
       BuildAddress(address, sizeof(address), ab->Address, ab->RealName);
@@ -96,11 +96,11 @@ static void InsertAddressTreeNode(Object *obj, Object *addrObj, struct MUI_NList
     }
     break;
 
-    case AET_LIST:
+    case ABNT_LIST:
     {
       char *ptr;
 
-      for(ptr = ab->Members; *ptr != '\0'; ptr++, i++)
+      for(ptr = ab->ListMembers; *ptr != '\0'; ptr++, i++)
       {
         char *nptr;
 
@@ -122,24 +122,21 @@ static void InsertAddressTreeNode(Object *obj, Object *addrObj, struct MUI_NList
     }
     break;
 
-    case AET_GROUP:
+    case ABNT_GROUP:
     {
-      if(isFlagSet(tn->tn_Flags, TNF_LIST))
+      ULONG pos = MUIV_NListtree_GetEntry_Position_Head;
+      do
       {
-        ULONG pos = MUIV_NListtree_GetEntry_Position_Head;
-        do
-        {
-          tn = (struct MUI_NListtree_TreeNode *)DoMethod(addrObj, MUIM_NListtree_GetEntry, tn, pos, MUIV_NListtree_GetEntry_Flag_SameLevel);
-          if(tn == NULL)
-            break;
+        tn = (struct MUI_NListtree_TreeNode *)DoMethod(addrObj, MUIM_NListtree_GetEntry, tn, pos, MUIV_NListtree_GetEntry_Flag_SameLevel);
+        if(tn == NULL)
+          break;
 
-          InsertAddressTreeNode(obj, addrObj, tn, i);
+        InsertAddressTreeNode(obj, addrObj, tn, i);
 
-          pos = MUIV_NListtree_GetEntry_Position_Next;
-          i++;
-        }
-        while(TRUE);
+        pos = MUIV_NListtree_GetEntry_Position_Next;
+        i++;
       }
+      while(TRUE);
     }
     break;
   }
@@ -186,6 +183,7 @@ OVERLOAD(MUIM_DragQuery)
   // only allow drag&drop operations into a writeable texteditor
   // object
   if(xget(obj, MUIA_TextEditor_ReadOnly) == FALSE &&
+     G->ABookWinObject != NULL &&
      d->obj == (Object *)xget(G->ABookWinObject, MUIA_AddressBookWindow_Listtree))
   {
     result = MUIV_DragQuery_Accept;
@@ -206,7 +204,7 @@ OVERLOAD(MUIM_DragDrop)
 
   ENTER();
 
-  if(d->obj == (Object *)xget(G->ABookWinObject, MUIA_AddressBookWindow_Listtree))
+  if(G->ABookWinObject != NULL && d->obj == (Object *)xget(G->ABookWinObject, MUIA_AddressBookWindow_Listtree))
   {
     struct MUI_NListtree_TreeNode *tn = (struct MUI_NListtree_TreeNode *)MUIV_NListtree_NextSelected_Start;
     int i=0;

@@ -31,7 +31,7 @@
 #include "YAM_write.h"
 
 // forward declarations
-struct ABEntry;
+struct ABookNode;
 struct TempFile;
 
 // special defines for Part Types
@@ -168,8 +168,8 @@ BOOL UpdateReadMailDataStatus(const struct Mail *mail);
 char *SuggestPartFileName(const struct Part *part);
 BOOL RE_LoadMessage(struct ReadMailData *rmData);
 char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode rMode);
-void RE_UpdateSenderInfo(struct ABEntry *old, struct ABEntry *new);
-struct ABEntry *RE_AddToAddrbook(Object *win, struct ABEntry *templ);
+void RE_UpdateSenderInfo(struct ABookNode *old, struct ABookNode *new);
+struct ABookNode *RE_AddToAddrbook(Object *win, struct ABookNode *templ);
 void RE_GetSigFromLog(struct ReadMailData *rmData, char *decrFor);
 void RE_ClickedOnMessage(char *address, Object *win);
 BOOL RE_PrintFile(const char *filename, Object *win);

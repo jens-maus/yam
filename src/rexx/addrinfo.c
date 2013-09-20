@@ -33,8 +33,6 @@
 #include "extrasrc.h"
 
 #include "YAM.h"
-#include "YAM_addressbook.h"
-#include "YAM_addressbookEntry.h"
 
 #include "Rexx.h"
 
@@ -58,15 +56,15 @@ struct results
   char *country;
   char *phone;
   char *comment;
-  long *birthdate;
+  ULONG *birthdate;
   char *image;
   char **members;
 };
 
 struct optional
 {
-  char *members;
-  char **memberptr;
+  struct ABookNode abn;
+  char **memberArray;
 };
 
 void rx_addrinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum RexxAction action, UNUSED struct RexxMsg *rexxmsg)
@@ -91,55 +89,68 @@ void rx_addrinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
 
     case RXIF_ACTION:
     {
-      struct ABEntry *ab = NULL;
+      struct ABookNode *abn = NULL;
 
-      if(AB_SearchEntry(args->alias, ASM_ALIAS|ASM_USER|ASM_LIST|ASM_GROUP, &ab) && (ab != NULL))
+      if(SearchABook(&G->abook, args->alias, ASM_ALIAS|ASM_USER|ASM_LIST|ASM_GROUP, &abn) != 0)
       {
-        switch(ab->Type)
+        switch(abn->type)
         {
-          case AET_USER:
+          case ABNT_USER:
             results->type = "P";
           break;
 
-          case AET_LIST:
+          case ABNT_LIST:
             results->type = "L";
           break;
 
-          case AET_GROUP:
+          case ABNT_GROUP:
             results->type = "G";
           break;
         }
 
-        results->name = ab->RealName;
-        results->email = ab->Address;
-        results->pgp = ab->PGPId;
-        results->homepage = ab->Homepage;
-        results->street = ab->Street;
-        results->city = ab->City;
-        results->country = ab->Country;
-        results->phone = ab->Phone;
-        results->comment = ab->Comment;
-        results->birthdate = &ab->BirthDay;
-        results->image = ab->Photo;
+        memcpy(&optional->abn, abn, sizeof(optional->abn));
+        results->name = optional->abn.RealName;
+        results->email = optional->abn.Address;
+        results->pgp = optional->abn.PGPId;
+        results->homepage = optional->abn.Homepage;
+        results->street = optional->abn.Street;
+        results->city = optional->abn.City;
+        results->country = optional->abn.Country;
+        results->phone = optional->abn.Phone;
+        results->comment = optional->abn.Comment;
+        results->birthdate = &optional->abn.Birthday;
+        results->image = optional->abn.Photo;
 
-        if(ab->Members && (optional->members = strdup(ab->Members)))
+        if(abn->ListMembers != NULL)
         {
-          char *ptr;
-          int i;
-          int j;
-
-          for(j = 0, ptr = optional->members; *ptr; j++, ptr++)
+          if((optional->abn.ListMembers = strdup(abn->ListMembers)) != NULL)
           {
-            if((ptr = strchr(ptr, '\n')))
-              *ptr = '\0';
-            else
-              break;
-          }
+            char *ptr;
+            int j;
 
-          results->members = optional->memberptr = calloc(j+1, sizeof(char *));
-          for(i = 0, ptr = optional->members; i < j; ptr += strlen(ptr)+1)
-            optional->memberptr[i++] = ptr;
+            for(j = 0, ptr = optional->abn.ListMembers; *ptr; j++, ptr++)
+            {
+              if((ptr = strchr(ptr, '\n')) != NULL)
+                *ptr = '\0';
+              else
+                break;
+            }
+
+            if((optional->memberArray = calloc(j+1, sizeof(char *))) != NULL)
+            {
+              int i;
+
+              for(i = 0, ptr = optional->abn.ListMembers; i < j; ptr += strlen(ptr)+1)
+                optional->memberArray[i++] = ptr;
+
+              results->members = optional->memberArray;
+            }
+            else
+              params->rc = RETURN_ERROR;
+          }
         }
+        else
+          params->rc = RETURN_ERROR;
       }
       else
         params->rc = RETURN_ERROR;
@@ -154,8 +165,8 @@ void rx_addrinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
         FreeVecPooled(G->SharedMemPool, results);
       if(optional != NULL)
       {
-        free(optional->members);
-        free(optional->memberptr);
+        free(optional->abn.ListMembers);
+        free(optional->memberArray);
         FreeVecPooled(G->SharedMemPool, optional);
       }
     }

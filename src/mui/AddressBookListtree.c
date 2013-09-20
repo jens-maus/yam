@@ -39,18 +39,16 @@
 #include <mui/NListtree_mcc.h>
 
 #include "YAM.h"
-#include "YAM_addressbook.h"
-#include "YAM_addressbookEntry.h"
 
-#include "AVLTree.h"
+#include "mui/AddressBookEditWindow.h"
+#include "mui/ImageArea.h"
+#include "mui/MainMailListGroup.h"
+
 #include "Config.h"
 #include "Locale.h"
 #include "MailList.h"
 #include "MUIObjects.h"
 #include "Requesters.h"
-
-#include "mui/ImageArea.h"
-#include "mui/MainMailListGroup.h"
 
 #include "Debug.h"
 
@@ -59,11 +57,10 @@ struct Data
 {
   Object *listImage;
   ULONG sortBy;
-  BOOL modified;
-  struct AVL_Tree *avlTree;        // the address book as an AVL tree
+  BOOL selfReorder;
+  struct MUI_NListtree_TreeNode *activeTN;
   char dateStr[SIZE_SMALL];
   char aliasStr[SIZE_DEFAULT];
-  char pattern[SIZE_PATTERN+1];
   struct MUI_EventHandlerNode eh;
 };
 */
@@ -82,6 +79,12 @@ struct Data
 #define MUIV_AddressBookListtree_SortBy_LastName  10 // artificial column generated from the Name column
 
 #define NUMBER_ABOOK_COLUMNS 9
+
+#define MUIV_AddressBookListtree_Search_User          0
+#define MUIV_AddressBookListtree_Search_RX            1
+#define MUIV_AddressBookListtree_Search_RXName        2
+#define MUIV_AddressBookListtree_Search_RXAddress     3
+#define MUIV_AddressBookListtree_Search_RXNameAddress 4
 */
 
 /* Private Functions */
@@ -96,50 +99,96 @@ static int ComparePersons(const void *p1, const void *p2)
 }
 
 ///
+/// BuildTreeEntry
+struct BuildTreeStuff
+{
+  Object *obj;
+  struct MUI_NListtree_TreeNode *parent[8];
+  LONG nestLevel;
+};
+
+static BOOL BuildTreeEntry(const struct ABookNode *abn, ULONG flags, void *userData)
+{
+  struct BuildTreeStuff *stuff = (struct BuildTreeStuff *)userData;
+  BOOL success = TRUE;
+
+  ENTER();
+
+  switch(abn->type)
+  {
+    case ABNT_USER:
+    {
+      if((APTR)DoMethod(stuff->obj, MUIM_NListtree_Insert, abn->Alias[0] != '\0' ? abn->Alias : abn->RealName, abn, stuff->parent[stuff->nestLevel], MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE) == NULL)
+        success = FALSE;
+    }
+    break;
+
+    case ABNT_GROUP:
+    {
+      if(isFlagSet(flags, IABF_FIRST_GROUP_VISIT))
+      {
+        if((stuff->parent[stuff->nestLevel+1] = (struct MUI_NListtree_TreeNode *)DoMethod(stuff->obj, MUIM_NListtree_Insert, abn->Alias, abn, stuff->parent[stuff->nestLevel], MUIV_NListtree_Insert_PrevNode_Tail, TNF_LIST)) == NULL)
+          success = FALSE;
+        else
+          stuff->nestLevel++;
+      }
+      else
+      {
+        stuff->nestLevel--;
+      }
+    }
+    break;
+
+    case ABNT_LIST:
+    {
+      if((APTR)DoMethod(stuff->obj, MUIM_NListtree_Insert, abn->Alias, abn, stuff->parent[stuff->nestLevel], MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE) == NULL)
+        success = FALSE;
+    }
+    break;
+  }
+
+  RETURN(success);
+  return success;
+}
+
+///
 
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
-  struct AVL_Tree *avlTree;
-
   ENTER();
 
-  if((avlTree = CreateAVLTree(ComparePersons)) != NULL)
+  if((obj = DoSuperNew(cl, obj,
+
+    InputListFrame,
+    MUIA_NListtree_DragDropSort,     TRUE,
+    MUIA_NListtree_Title,            TRUE,
+    MUIA_NListtree_EmptyNodes,       TRUE,
+    MUIA_NListtree_MultiSelect,      MUIV_NListtree_MultiSelect_Default,
+    MUIA_NList_AutoVisible,          TRUE,
+    MUIA_NList_TitleClick,           TRUE,
+    MUIA_NList_TitleClick2,          TRUE,
+    MUIA_NList_TitleSeparator,       TRUE,
+    MUIA_NList_DefaultObjectOnClick, FALSE,
+    MUIA_Font,                       C->FixedFontList ? MUIV_NList_Font_Fixed : MUIV_NList_Font,
+
+    TAG_MORE, inittags(msg))) != NULL)
   {
-    if((obj = DoSuperNew(cl, obj,
+    GETDATA;
 
-      InputListFrame,
-      MUIA_NListtree_DragDropSort,     TRUE,
-      MUIA_NListtree_Title,            TRUE,
-      MUIA_NListtree_EmptyNodes,       TRUE,
-      MUIA_NListtree_MultiSelect,      MUIV_NListtree_MultiSelect_Default,
-      MUIA_NList_AutoVisible,          TRUE,
-      MUIA_NList_TitleClick,           TRUE,
-      MUIA_NList_TitleClick2,          TRUE,
-      MUIA_NList_TitleSeparator,       TRUE,
-      MUIA_NList_DefaultObjectOnClick, FALSE,
-      MUIA_Font,                       C->FixedFontList ? MUIV_NList_Font_Fixed : MUIV_NList_Font,
+    // prepare the group image
+    data->listImage = MakeImageObject("status_group", G->theme.statusImages[SI_GROUP]);
+    DoMethod(obj, MUIM_NList_UseImage, data->listImage, 0, MUIF_NONE);
 
-      TAG_MORE, inittags(msg))) != NULL)
-    {
-      GETDATA;
+    DoMethod(obj, METHOD(MakeFormat));
 
-      // prepare the group image
-      data->listImage = MakeImageObject("status_group", G->theme.statusImages[SI_GROUP]);
-      DoMethod(obj, MUIM_NList_UseImage, data->listImage, 0, MUIF_NONE);
+    DoMethod(obj, MUIM_Notify, MUIA_NList_TitleClick, MUIV_EveryTime, MUIV_Notify_Self, 2, METHOD(SortBy), MUIV_TriggerValue);
+    DoMethod(obj, MUIM_Notify, MUIA_NListtree_Active, MUIV_EveryTime, MUIV_Notify_Self, 3, MUIM_Set, ATTR(ActiveTreeNode), MUIV_TriggerValue);
 
-      DoMethod(obj, METHOD(MakeFormat));
-
-      DoMethod(obj, MUIM_Notify, MUIA_NList_TitleClick, MUIV_EveryTime, MUIV_Notify_Self, 2, METHOD(SortBy), MUIV_TriggerValue);
-
-      data->avlTree = avlTree;
-    }
-    else
-      DeleteAVLTree(avlTree);
+    data->activeTN = (struct MUI_NListtree_TreeNode *)MUIV_NListtree_Active_Off;
+    data->selfReorder = TRUE;
   }
-  else
-    obj = NULL;
 
   RETURN((IPTR)obj);
   return (IPTR)obj;
@@ -155,12 +204,6 @@ OVERLOAD(OM_DISPOSE)
   DoMethod(obj, MUIM_NList_UseImage, NULL, 0, MUIF_NONE);
   MUI_DisposeObject(data->listImage);
   data->listImage = NULL;
-
-  // delete the AVL tree and erase the pointer, because disposing
-  // an NListtree object will invoke MUIM_NListtree_Clear during
-  // the disposal
-  DeleteAVLTree(data->avlTree);
-  data->avlTree = NULL;
 
   return DoSuperMethodA(cl, obj, msg);
 }
@@ -180,12 +223,22 @@ OVERLOAD(OM_SET)
   {
     switch(tag->ti_Tag)
     {
-      case ATTR(Modified):
+      case ATTR(ActiveEntry):
       {
-        data->modified = (tag->ti_Data != 0) ? TRUE : FALSE;
+        struct ABookNode *abn = (struct ABookNode *)tag->ti_Data;
 
-        // make the superMethod call ignore those tags
-        tag->ti_Tag = TAG_IGNORE;
+        data->activeTN = (struct MUI_NListtree_TreeNode *)DoMethod(obj, MUIM_NListtree_FindName, MUIV_NListtree_FindName_ListNode_Root, abn->Alias, MUIF_NONE);
+        if(data->activeTN != NULL)
+        {
+          DoMethod(obj, MUIM_NListtree_Open, MUIV_NListtree_Open_ListNode_Parent, data->activeTN);
+          nnset(obj, MUIA_NListtree_Active, data->activeTN);
+        }
+      }
+      break;
+
+      case ATTR(ActiveTreeNode):
+      {
+        data->activeTN = (struct MUI_NListtree_TreeNode *)tag->ti_Data;
       }
       break;
     }
@@ -210,7 +263,21 @@ OVERLOAD(OM_GET)
 
   switch(((struct opGet *)msg)->opg_AttrID)
   {
-    case ATTR(Modified): *store = (ULONG)data->modified; result = TRUE; break;
+    case ATTR(DeleteEntryRequest): *store = TRUE; result = TRUE; break;
+    case ATTR(ActiveGroup):
+    {
+      *store = (IPTR)NULL;
+      if(data->activeTN != (struct MUI_NListtree_TreeNode *)MUIV_NListtree_ActiveList_Off)
+      {
+        struct MUI_NListtree_TreeNode *tn;
+
+        tn = (struct MUI_NListtree_TreeNode *)DoMethod(obj, MUIM_NListtree_GetEntry, data->activeTN, MUIV_NListtree_GetEntry_Position_Parent, MUIF_NONE);
+        if(tn != NULL)
+          *store = (IPTR)tn->tn_User;
+      }
+    }
+    break;
+    case ATTR(ActiveEntry):        *store = (IPTR)(data->activeTN != NULL ? data->activeTN->tn_User : NULL); result = TRUE; break;
   }
 
   if(result == FALSE)
@@ -277,7 +344,7 @@ OVERLOAD(MUIM_HandleEvent)
     // check for DEL key without CAPS LOCK
     if(mhe->imsg->Code == 0x46 && isFlagClear(mhe->imsg->Qualifier, IEQUALIFIER_CAPSLOCK))
     {
-      DoMethod(obj, METHOD(DeleteEntry));
+      set(obj, ATTR(DeleteEntryRequest), TRUE);
       // eat the key press in any case
       result = MUI_EventHandlerRC_Eat;
     }
@@ -288,75 +355,13 @@ OVERLOAD(MUIM_HandleEvent)
 }
 
 ///
-/// OVERLOAD(MUIM_NListtree_Construct)
-OVERLOAD(MUIM_NListtree_Construct)
-{
-  struct MUIP_NListtree_Construct *ncm = (struct MUIP_NListtree_Construct *)msg;
-  struct ABEntry *addr = (struct ABEntry *)ncm->UserData;
-  struct ABEntry *entry;
-  GETDATA;
-
-  ENTER();
-
-  if((entry = memdup(addr, sizeof(*addr))) != NULL)
-  {
-    // accept real users only
-    if(entry->Type == AET_USER)
-    {
-      // insert the person part in the AVL tree
-      InsertInAVLTree(data->avlTree, &entry->Address[0]);
-    }
-    else if(addr->Members != NULL)
-    {
-      // clone the member list of groups
-      if((entry->Members = strdup(addr->Members)) == NULL)
-      {
-        // if strdup() failed then we let the whole function fail
-        free(entry);
-        entry = NULL;
-      }
-    }
-  }
-
-  RETURN(entry);
-  return (IPTR)entry;
-}
-
-///
-/// OVERLOAD(MUIM_NListtree_Destruct)
-OVERLOAD(MUIM_NListtree_Destruct)
-{
-  struct MUIP_NListtree_Destruct *ndm = (struct MUIP_NListtree_Destruct *)msg;
-  struct ABEntry *entry = (struct ABEntry *)ndm->UserData;
-  GETDATA;
-
-  ENTER();
-
-  if(entry != NULL)
-  {
-    // remove users only
-    if(entry->Type == AET_USER && data->avlTree != NULL)
-    {
-      // remove the person part from the AVL tree
-      RemoveFromAVLTree(data->avlTree, &entry->Address[0]);
-    }
-
-    free(entry->Members);
-    free(entry);
-  }
-
-  RETURN(0);
-  return 0;
-}
-
-///
 /// OVERLOAD(MUIM_NListtree_Compare)
 OVERLOAD(MUIM_NListtree_Compare)
 {
   GETDATA;
   struct MUIP_NListtree_Compare *ncm = (struct MUIP_NListtree_Compare *)msg;
-  struct ABEntry *ab1 = (struct ABEntry *)ncm->TreeNode1->tn_User;
-  struct ABEntry *ab2 = (struct ABEntry *)ncm->TreeNode2->tn_User;
+  struct ABookNode *ab1 = (struct ABookNode *)ncm->TreeNode1->tn_User;
+  struct ABookNode *ab2 = (struct ABookNode *)ncm->TreeNode2->tn_User;
   LONG cmp = 0;
 
   ENTER();
@@ -407,7 +412,7 @@ OVERLOAD(MUIM_NListtree_Compare)
 
     case MUIV_AddressBookListtree_SortBy_Birthday:
     {
-      cmp = ab1->BirthDay - ab2->BirthDay;
+      cmp = ab1->Birthday - ab2->Birthday;
     }
     break;
 
@@ -448,9 +453,9 @@ OVERLOAD(MUIM_NListtree_Display)
   if(ndm->TreeNode != NULL)
   {
     GETDATA;
-    struct ABEntry *entry = (struct ABEntry *)ndm->TreeNode->tn_User;
+    struct ABookNode *entry = (struct ABookNode *)ndm->TreeNode->tn_User;
 
-    AB_ExpandBD(entry->BirthDay, data->dateStr, sizeof(data->dateStr));
+    BirthdayToString(entry->Birthday, data->dateStr, sizeof(data->dateStr));
 
     ndm->Array[0]  = entry->Alias;
     ndm->Array[1]  = entry->RealName;
@@ -464,25 +469,25 @@ OVERLOAD(MUIM_NListtree_Display)
     ndm->Array[9]  = entry->PGPId;
     ndm->Array[10] = entry->Homepage;
 
-    switch(entry->Type)
+    switch(entry->type)
     {
-       case AET_LIST:
-       {
-         snprintf(data->aliasStr, sizeof(data->aliasStr), "\033o[0]%s", entry->Alias);
-         ndm->Array[0] = data->aliasStr;
-       }
-       break;
+      case ABNT_GROUP:
+      {
+        ndm->Preparse[0] = (char *)MUIX_B;
+        ndm->Preparse[2] = (char *)MUIX_B;
+      }
+      break;
 
-       case AET_GROUP:
-       {
-         ndm->Preparse[0] = (char *)MUIX_B;
-         ndm->Preparse[2] = (char *)MUIX_B;
-       }
-       break;
+      case ABNT_LIST:
+      {
+        snprintf(data->aliasStr, sizeof(data->aliasStr), "\033o[0]%s", entry->Alias);
+        ndm->Array[0] = data->aliasStr;
+      }
+      break;
 
-       default:
-         // nothing
-       break;
+      default:
+        // nothing
+      break;
     }
   }
   else
@@ -548,15 +553,15 @@ OVERLOAD(MUIM_NListtree_DropType)
   // get the current drop target
   if((tn = (struct MUI_NListtree_TreeNode *)xget(obj, MUIA_NListtree_DropTarget)) != NULL)
   {
-    struct ABEntry *entry;
+    struct ABookNode *entry;
 
-    if((entry = (struct ABEntry *)tn->tn_User) != NULL)
+    if((entry = (struct ABookNode *)tn->tn_User) != NULL)
     {
-      // If we drag an ABEntry on another ABEntry we abort the
+      // If we drag an ABookNode on another ABookNode we abort the
       // DragReport immediately because we want to support drag operations
-      // between ABEntry elements and groups is allowed
-      if(*dt->Type == MUIV_NListtree_DropType_Onto && entry->Type != AET_GROUP)
-         *dt->Type = MUIV_NListtree_DropType_None;
+      // between ABookNode elements and groups is allowed
+      if(*dt->Type == MUIV_NListtree_DropType_Onto && entry->type != ABNT_GROUP)
+        *dt->Type = MUIV_NListtree_DropType_None;
     }
     else
       *dt->Type = MUIV_NListtree_DropType_None;
@@ -569,10 +574,187 @@ OVERLOAD(MUIM_NListtree_DropType)
 }
 
 ///
+/// OVERLOAD(MUIM_NListtree_Insert)
+OVERLOAD(MUIM_NListtree_Insert)
+{
+  GETDATA;
+  struct MUIP_NListtree_Insert *mi = (struct MUIP_NListtree_Insert *)msg;
+  struct MUI_NListtree_TreeNode *thisTN;
+
+  ENTER();
+
+  // first let the list tree class do the actual insertion of the tree nodes
+  if((thisTN = (struct MUI_NListtree_TreeNode *)DoSuperMethodA(cl, obj, msg)) != NULL)
+  {
+    // reorder the address book only if we are explicitly told to do so
+    if(data->selfReorder == TRUE)
+    {
+      struct ABookNode *groupABN;
+      struct ABookNode *thisABN;
+      struct MUI_NListtree_TreeNode *predTN;
+      struct ABookNode *predABN;
+
+      groupABN = (mi->ListNode != NULL && mi->ListNode->tn_User != NULL) ? (struct ABookNode *)mi->ListNode->tn_User : &G->abook.rootGroup;
+      thisABN = (struct ABookNode *)thisTN->tn_User;
+
+      // ideally we could use the mi->TreeNode pointer directly, but this might
+      // be one of the special MUIV_#? values. Hence we better obtain the predecessor
+      // node in the traditional way
+      predTN = (struct MUI_NListtree_TreeNode *)DoMethod(obj, MUIM_NListtree_GetEntry, thisTN, MUIV_NListtree_GetEntry_Position_Previous, MUIF_NONE);
+      predABN = (predTN != NULL) ? (struct ABookNode *)predTN->tn_User : NULL;
+
+      // finally insert the node into the address book
+      D(DBF_ABOOK, "insert entry '%s' behind entry '%s', group '%s'", thisABN->Alias, predABN != NULL ? predABN->Alias : "<head>", groupABN->Alias);
+      AddABookNode(groupABN, thisABN, predABN);
+      G->abook.modified = TRUE;
+    }
+  }
+
+  RETURN(thisTN);
+  return (IPTR)thisTN;
+}
+
+///
+/// OVERLOAD(MUIM_NListtree_Move)
+OVERLOAD(MUIM_NListtree_Move)
+{
+  IPTR result;
+  struct MUIP_NListtree_Move *mv = (struct MUIP_NListtree_Move *)msg;
+  struct ABookNode *groupABN;
+  struct ABookNode *thisABN;
+  struct MUI_NListtree_TreeNode *predTN;
+  struct ABookNode *predABN;
+
+  ENTER();
+
+  // first let the list tree class do the actual movement of the tree nodes
+  result = DoSuperMethodA(cl, obj, msg);
+
+  groupABN = (mv->NewListNode->tn_User != NULL) ? (struct ABookNode *)mv->NewListNode->tn_User : &G->abook.rootGroup;
+  thisABN = (struct ABookNode *)mv->OldTreeNode->tn_User;
+
+  // ideally we could use the mv->NewTreeNode pointer directly, but this might
+  // be one of the special MUIV_#? values. Hence we better obtain the predecessor
+  // node in the traditional way
+  predTN = (struct MUI_NListtree_TreeNode *)DoMethod(obj, MUIM_NListtree_GetEntry, mv->OldTreeNode, MUIV_NListtree_GetEntry_Position_Previous, MUIF_NONE);
+  predABN = (predTN != NULL) ? (struct ABookNode *)predTN->tn_User : NULL;
+
+  // finally move the node within the address book
+  D(DBF_ABOOK, "move entry '%s' behind entry '%s', group '%s'", thisABN->Alias, predABN != NULL ? predABN->Alias : "<head>", groupABN->Alias);
+  MoveABookNode(groupABN, thisABN, predABN);
+  G->abook.modified = TRUE;
+
+  RETURN(result);
+  return result;
+}
+
+///
 
 /* Public Methods */
+/// DECLARE(BuildTree)
+// (re)build the NListtree from the global address book
+DECLARE(BuildTree)
+{
+  GETDATA;
+  struct BuildTreeStuff stuff;
+
+  ENTER();
+
+  data->selfReorder = FALSE;
+
+  set(obj, MUIA_NListtree_Quiet, TRUE);
+  DoMethod(obj, MUIM_NListtree_Clear);
+  stuff.obj = obj;
+  stuff.parent[0] = MUIV_NListtree_Insert_ListNode_Root;
+  stuff.nestLevel = 0;
+  IterateABook(&G->abook, IABF_VISIT_GROUPS_TWICE, BuildTreeEntry, &stuff);
+  set(obj, MUIA_NListtree_Quiet, FALSE);
+
+  data->selfReorder = TRUE;
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(BuildABook)
+// (re)build the global address book from the NListtree
+DECLARE(BuildABook)
+{
+  struct ABook tempABook;
+  struct MUI_NListtree_TreeNode *tn;
+  struct MUI_NListtree_TreeNode *parentTN[8];
+  struct ABookNode *groupABN[8];
+  struct ABookNode *afterThisABN[8];
+  ULONG nestLevel;
+  ULONG i;
+
+  ENTER();
+
+  // we need a temporary address book, because me move all entries
+  // from the global book to the temporary one
+  InitABook(&tempABook);
+
+  parentTN[0] = MUIV_NListtree_GetEntry_ListNode_Root;
+  groupABN[0] = &tempABook.rootGroup;
+  afterThisABN[0] = NULL;
+  nestLevel = 0;
+  i = 0;
+  while((tn = (struct MUI_NListtree_TreeNode *)DoMethod(obj, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE)) != NULL)
+  {
+    struct ABookNode *abn = (struct ABookNode *)tn->tn_User;
+
+    if(abn->type == ABNT_GROUP)
+    {
+      // move group nodes before bumping the nesting level
+      MoveABookNode(groupABN[nestLevel], abn, afterThisABN[nestLevel]);
+      afterThisABN[nestLevel] = abn;
+
+      // bump the nesting level and remember the new group details
+      nestLevel++;
+      parentTN[nestLevel] = tn;
+      groupABN[nestLevel] = abn;
+      afterThisABN[nestLevel] = NULL;
+    }
+    else
+    {
+      // check if our parent treenode changed
+      struct MUI_NListtree_TreeNode *parent;
+
+      parent = (struct MUI_NListtree_TreeNode *)DoMethod(obj, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Parent, MUIF_NONE);
+      if(parent != parentTN[nestLevel])
+      {
+        // the parent treenode has changed, so go back until we find the correct treenode
+        do
+        {
+          nestLevel--;
+        }
+        while(nestLevel != 0 && parent != parentTN[nestLevel]);
+
+        // replace the artificial MUIV_#? root pointer by the true root pointer
+        if(nestLevel == 0 && parentTN[0] == NULL)
+          parentTN[0] = parent;
+      }
+
+      // move user and list nodes after bumping the nesting level
+      MoveABookNode(groupABN[nestLevel], abn, afterThisABN[nestLevel]);
+      afterThisABN[nestLevel] = abn;
+    }
+
+    i++;
+  }
+
+  // finally move all nodes back to the global address book and mark it as modified
+  MoveABookNodes(&G->abook, &tempABook);
+  G->abook.modified = TRUE;
+
+  RETURN(0);
+  return 0;
+}
+
+///
 /// DECLARE(SortBy)
-DECLARE(SortBy) // ULONG sortBy;
+DECLARE(SortBy) // ULONG sortBy
 {
   GETDATA;
 
@@ -580,25 +762,11 @@ DECLARE(SortBy) // ULONG sortBy;
 
   data->sortBy = msg->sortBy;
   DoMethod(obj, MUIM_NListtree_Sort, MUIV_NListtree_Sort_ListNode_Root, MUIV_NListtree_Sort_Flag_RecursiveAll);
-  data->modified = TRUE;
+  // rebuild the address book from the sorted listtree
+  DoMethod(obj, METHOD(BuildABook));
 
   RETURN(0);
   return 0;
-}
-
-///
-/// DECLARE(FindPerson)
-DECLARE(FindPerson) // struct Person *person
-{
-  GETDATA;
-  struct Person *result;
-
-  ENTER();
-
-  result = (struct Person *)FindInAVLTree(data->avlTree, msg->person);
-
-  RETURN(result);
-  return (IPTR)result;
 }
 
 ///
@@ -621,7 +789,7 @@ DECLARE(MakeFormat)
     {
       int p;
 
-      if(first)
+      if(first == TRUE)
         first = FALSE;
       else
         strlcat(format, " BAR,", sizeof(format));
@@ -655,128 +823,67 @@ DECLARE(FoldTree) // ULONG unfold
 }
 
 ///
-/// DECLARE(ClearTree)
-// clears entire address book
-DECLARE(ClearTree)
+/// DECLARE(IncrementalSearch)
+// incrementally searches the address book node for a given pattern
+DECLARE(IncrementalSearch) // const char *pattern, ULONG *iterator
 {
-  ENTER();
-
-  DoMethod(obj, MUIM_NListtree_Clear, NULL, MUIF_NONE);
-  set(obj, MUIA_AddressBookListtree_Modified, TRUE);
-
-  RETURN(0);
-  return 0;
-}
-
-///
-/// DECLARE(AddEntry)
-// add a new entry to the address book
-DECLARE(AddEntry) // ULONG type
-{
-  ENTER();
-
-  EA_Init(msg->type, NULL);
-
-  RETURN(0);
-  return 0;
-}
-
-///
-/// DECLARE(EditEntry)
-// edit the selected address book entry
-DECLARE(EditEntry)
-{
+  struct ABookNode *foundABN = NULL;
   struct MUI_NListtree_TreeNode *tn;
+  ULONG i;
 
   ENTER();
 
-  if((tn = (struct MUI_NListtree_TreeNode *)xget(obj, MUIA_NListtree_Active)) != NULL)
+  D(DBF_ABOOK, "searching for pattern '%s'", msg->pattern);
+
+  i = *msg->iterator;
+
+  do
   {
-    struct ABEntry *ab = (struct ABEntry *)(tn->tn_User);
-    int winnum;
-
-    if((winnum = EA_Init(ab->Type, ab)) >= 0)
-      EA_Setup(winnum, ab);
-  }
-
-  RETURN(0);
-  return 0;
-}
-
-///
-/// DECLARE(DuplicateEntry)
-// duplicate the selected address book entry
-DECLARE(DuplicateEntry)
-{
-  struct MUI_NListtree_TreeNode *tn;
-
-  ENTER();
-
-  if((tn = (struct MUI_NListtree_TreeNode *)xget(obj, MUIA_NListtree_Active)) != NULL)
-  {
-    struct ABEntry *ab = (struct ABEntry *)(tn->tn_User);
-    int winnum;
-
-    if((winnum = EA_Init(ab->Type, NULL)) >= 0)
+    if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(obj, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE)) != NULL)
     {
-      char buf[SIZE_NAME];
-      int len;
+      struct ABookNode *abn = (struct ABookNode *)tn->tn_User;
 
-      EA_Setup(winnum, ab);
-      strlcpy(buf, ab->Alias, sizeof(buf));
-      if((len = strlen(buf)) > 0)
+      if(abn->type == ABNT_USER || abn->type == ABNT_LIST)
       {
-        if(isdigit(buf[len - 1]))
-          buf[len - 1]++;
-        else if(len < SIZE_NAME - 1)
-          strlcat(buf, "2", sizeof(buf));
-        else
-          buf[len - 1] = '2';
+        BOOL found;
 
-        setstring(G->EA[winnum]->GUI.ST_ALIAS, buf);
+        D(DBF_ABOOK, "match entry with alias '%s'", abn->Alias);
+
+        found = MatchNoCase(abn->Alias, msg->pattern) ||
+                MatchNoCase(abn->Comment, msg->pattern);
+        if(found == FALSE && abn->type == ABNT_USER)
+        {
+          found = MatchNoCase(abn->RealName, msg->pattern) ||
+                  MatchNoCase(abn->Address, msg->pattern)  ||
+                  MatchNoCase(abn->Homepage, msg->pattern) ||
+                  MatchNoCase(abn->Street, msg->pattern)   ||
+                  MatchNoCase(abn->City, msg->pattern)     ||
+                  MatchNoCase(abn->Country, msg->pattern)  ||
+                  MatchNoCase(abn->Phone, msg->pattern);
+        }
+
+        if(found == TRUE)
+        {
+          D(DBF_ALWAYS, "found pattern '%s' in entry with address '%s'", msg->pattern, abn->Address);
+
+          DoMethod(obj, MUIM_NListtree_Open, MUIV_NListtree_Open_ListNode_Parent, tn, MUIF_NONE);
+          set(obj, MUIA_NListtree_Active, tn);
+
+          foundABN = abn;
+          // return the next to be examined index
+          *msg->iterator = i+1;
+
+          break;
+        }
       }
     }
+
+    i++;
   }
+  while(tn != NULL);
 
-  RETURN(0);
-  return 0;
-}
-
-///
-/// DECLARE(FindEntry)
-// searches address book
-DECLARE(FindEntry)
-{
-  GETDATA;
-
-  ENTER();
-
-  if(StringRequest(data->pattern, SIZE_PATTERN, tr(MSG_AB_FindEntry), tr(MSG_AB_FindEntryReq), tr(MSG_AB_StartSearch), NULL, tr(MSG_Cancel), FALSE, _win(obj)) != 0)
-  {
-    char searchPattern[SIZE_PATTERN+5];
-
-    snprintf(searchPattern, sizeof(searchPattern), "#?%s#?", data->pattern);
-
-    if(AB_FindEntry(searchPattern, ABF_USER, NULL) == 0)
-      MUI_Request(_app(obj), _win(obj), MUIF_NONE, tr(MSG_AB_FindEntry), tr(MSG_OkayReq), tr(MSG_AB_NoneFound));
-  }
-
-  RETURN(0);
-  return 0;
-}
-
-///
-/// DECLARE(DeleteEntry)
-// delete the selected address book entry
-DECLARE(DeleteEntry)
-{
-  ENTER();
-
-  DoMethod(obj, MUIM_NListtree_Remove, MUIV_NListtree_Remove_ListNode_Root, MUIV_NListtree_Remove_TreeNode_Selected, MUIF_NONE);
-  set(obj, MUIA_AddressBookListtree_Modified, TRUE);
-
-  RETURN(0);
-  return 0;
+  RETURN(foundABN);
+  return (IPTR)foundABN;
 }
 
 ///

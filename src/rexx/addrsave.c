@@ -31,12 +31,8 @@
 #include "extrasrc.h"
 
 #include "YAM.h"
-#include "YAM_addressbook.h"
-#include "YAM_addressbookEntry.h"
 
 #include "Rexx.h"
-
-#include "mui/AddressBookWindow.h"
 
 #include "Debug.h"
 
@@ -61,7 +57,7 @@ void rx_addrsave(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
 
     case RXIF_ACTION:
     {
-      if(DoMethod(G->ABookWinObject, MUIM_AddressBookWindow_Save, args->filename) == FALSE)
+      if(SaveABook(args->filename, &G->abook) == FALSE)
         params->rc = RETURN_ERROR;
     }
     break;

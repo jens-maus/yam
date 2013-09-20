@@ -35,6 +35,7 @@
 #include <libraries/asl.h>
 #include <libraries/iffparse.h>
 #include <mui/NList_mcc.h>
+#include <mui/NListtree_mcc.h>
 #include <proto/dos.h>
 #include <proto/muimaster.h>
 #include <proto/xpkmaster.h>
@@ -42,7 +43,6 @@
 #include "SDI_hook.h"
 
 #include "YAM.h"
-#include "YAM_addressbook.h"
 #include "YAM_error.h"
 #include "YAM_find.h"
 #include "YAM_folderconfig.h"
@@ -50,6 +50,7 @@
 #include "YAM_mainFolder.h"
 #include "YAM_stringsizes.h"
 
+#include "mui/AddressBookWindow.h"
 #include "mui/FolderRequestListtree.h"
 #include "mui/IdentityChooser.h"
 #include "mui/MainFolderListtree.h"

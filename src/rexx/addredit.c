@@ -35,8 +35,6 @@
 #include "extrasrc.h"
 
 #include "YAM.h"
-#include "YAM_addressbook.h"
-#include "YAM_addressbookEntry.h"
 
 #include "mui/ClassesExtra.h"
 #include "mui/AddressBookWindow.h"
@@ -81,33 +79,35 @@ void rx_addredit(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
 
     case RXIF_ACTION:
     {
-      struct MUI_NListtree_TreeNode *tn;
+      struct ABookNode *abn;
 
-      #warning access to G->AB
-      if((tn = (struct MUI_NListtree_TreeNode *)xget(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active)) != NULL)
+      abn = G->abook.arexxABN;
+      if(abn == NULL && G->ABookWinObject != NULL)
+        abn = (struct ABookNode *)xget(G->ABookWinObject, MUIA_AddressBookWindow_ActiveEntry);
+
+      SHOWVALUE(DBF_ABOOK, abn);
+      if(abn != NULL)
       {
-        struct ABEntry *ab = (struct ABEntry *)(tn->tn_User);
-
         if(args->alias != NULL)
-          strlcpy(ab->Alias, args->alias, sizeof(ab->Alias));
+          strlcpy(abn->Alias, args->alias, sizeof(abn->Alias));
         if(args->name != NULL)
-          strlcpy(ab->RealName, args->name, sizeof(ab->RealName));
+          strlcpy(abn->RealName, args->name, sizeof(abn->RealName));
         if(args->email != NULL)
-          strlcpy(ab->Address, args->email, sizeof(ab->Address));
+          strlcpy(abn->Address, args->email, sizeof(abn->Address));
         if(args->pgp != NULL)
-          strlcpy(ab->PGPId, args->pgp, sizeof(ab->PGPId));
+          strlcpy(abn->PGPId, args->pgp, sizeof(abn->PGPId));
         if(args->homepage != NULL)
-          strlcpy(ab->Homepage, args->homepage, sizeof(ab->Homepage));
+          strlcpy(abn->Homepage, args->homepage, sizeof(abn->Homepage));
         if(args->street != NULL)
-          strlcpy(ab->Street, args->street, sizeof(ab->Street));
+          strlcpy(abn->Street, args->street, sizeof(abn->Street));
         if(args->city != NULL)
-          strlcpy(ab->City, args->city, sizeof(ab->City));
+          strlcpy(abn->City, args->city, sizeof(abn->City));
         if(args->country != NULL)
-          strlcpy(ab->Country, args->country, sizeof(ab->Country));
+          strlcpy(abn->Country, args->country, sizeof(abn->Country));
         if(args->phone != NULL)
-          strlcpy(ab->Phone, args->phone, sizeof(ab->Phone));
+          strlcpy(abn->Phone, args->phone, sizeof(abn->Phone));
         if(args->comment != NULL)
-          strlcpy(ab->Comment, args->comment, sizeof(ab->Comment));
+          strlcpy(abn->Comment, args->comment, sizeof(abn->Comment));
 
         if(args->birthdate != NULL)
         {
@@ -116,9 +116,9 @@ void rx_addredit(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
           // if the user supplied 0 as the birthdate, he wants to "delete" the current
           // birthdate
           if(*args->birthdate == 0)
-            ab->BirthDay = 0;
-          else if(AB_ExpandBD(*args->birthdate, dateStr, sizeof(dateStr)) == TRUE)
-            ab->BirthDay = *args->birthdate;
+            abn->Birthday = 0;
+          else if(BirthdayToString(*args->birthdate, dateStr, sizeof(dateStr)) == TRUE)
+            abn->Birthday = *args->birthdate;
           else
           {
             params->rc = RETURN_ERROR;
@@ -127,30 +127,32 @@ void rx_addredit(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
         }
 
         if(args->image != NULL)
-          strlcpy(ab->Photo, args->image, sizeof(ab->Photo));
+          strlcpy(abn->Photo, args->image, sizeof(abn->Photo));
 
-        if(args->member != NULL && ab->Type == AET_LIST)
+        if(args->member != NULL && abn->type == ABNT_LIST)
         {
-          char *memb = NULL;
           char **p;
 
-          if(args->add && ab->Members != NULL)
-            dstrcpy(&memb, ab->Members);
-
-          for(p = args->member; *p; p++)
+          // free the list members in case we are told to replace them
+          if(args->add == FALSE)
           {
-            dstrcat(&memb, *p);
-            dstrcat(&memb, "\n");
+            dstrfree(abn->ListMembers);
+            abn->ListMembers = NULL;
           }
 
-          free(ab->Members);
-          ab->Members = strdup(memb);
-
-          dstrfree(memb);
+          for(p = args->member; *p != NULL; p++)
+          {
+            dstrcat(&abn->ListMembers, *p);
+            dstrcat(&abn->ListMembers, "\n");
+          }
         }
 
-        DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Redraw, MUIV_NListtree_Redraw_Active, MUIF_NONE);
-        set(G->ABookWinObject, MUIA_AddressBookWindow_Modified, TRUE);
+        G->abook.arexxABN = abn;
+        G->abook.modified = TRUE;
+
+        // update an existing address book window as well
+        if(G->ABookWinObject != NULL)
+          DoMethod(G->ABookWinObject, MUIM_AddressBookWindow_RedrawActiveEntry);
       }
       else
         params->rc = RETURN_ERROR;

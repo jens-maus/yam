@@ -35,8 +35,6 @@
 #include "extrasrc.h"
 
 #include "YAM.h"
-#include "YAM_addressbook.h"
-#include "YAM_addressbookEntry.h"
 
 #include "mui/ClassesExtra.h"
 #include "mui/RecipientString.h"

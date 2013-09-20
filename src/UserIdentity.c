@@ -59,9 +59,10 @@ struct UserIdentityNode *CreateNewUserIdentity(const struct Config *co)
 
   ENTER();
 
-  if((uin = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*uin),
-                                          ASONODE_Min, TRUE,
-                                          TAG_DONE)) != NULL)
+  if((uin = AllocSysObjectTags(ASOT_NODE,
+    ASONODE_Size, sizeof(*uin),
+    ASONODE_Min, TRUE,
+    TAG_DONE)) != NULL)
   {
     struct Folder *sentFolder;
     struct MailServerNode *msn;

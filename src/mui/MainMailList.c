@@ -41,14 +41,12 @@
 #include "timeval.h"
 
 #include "YAM.h"
-#include "YAM_addressbook.h"
-#include "YAM_addressbookEntry.h"
 #include "YAM_find.h"
 #include "YAM_mainFolder.h"
 
-#include "mui/AddressBookWindow.h"
 #include "mui/ImageArea.h"
 
+#include "AddressBook.h"
 #include "BayesFilter.h"
 #include "Config.h"
 #include "Locale.h"
@@ -148,16 +146,16 @@ static int MailCompare(struct Mail *entry1, struct Mail *entry2, LONG column)
       // list we do it right here.
       if(C->ABookLookup == TRUE)
       {
-        struct Person *fp1;
-        struct Person *fp2;
+        struct ABookNode *abn1;
+        struct ABookNode *abn2;
 
-        if((fp1 = (struct Person *)DoMethod(G->ABookWinObject, MUIM_AddressBookWindow_FindPerson, pe1)) != NULL)
-          addr1 = fp1->RealName[0] ? fp1->RealName : AddrName(*pe1);
+        if((abn1 = FindPersonInABook(&G->abook, pe1)) != NULL)
+          addr1 = abn1->RealName[0] != '\0' ? abn1->RealName : AddrName(*pe1);
         else
           addr1 = AddrName(*pe1);
 
-        if((fp2 = (struct Person *)DoMethod(G->ABookWinObject, MUIM_AddressBookWindow_FindPerson, pe2)) != NULL)
-          addr2 = fp2->RealName[0] ? fp2->RealName : AddrName(*pe2);
+        if((abn2 = FindPersonInABook(&G->abook, pe2)) != NULL)
+          addr2 = abn1->RealName[0] != '\0' ? abn2->RealName : AddrName(*pe2);
         else
           addr2 = AddrName(*pe2);
       }
@@ -448,12 +446,12 @@ OVERLOAD(MUIM_NList_Display)
         // list we do it right here.
         if(C->ABookLookup == TRUE)
         {
-          struct Person *person;
+          struct ABookNode *abn;
 
-          if((person = (struct Person *)DoMethod(G->ABookWinObject, MUIM_AddressBookWindow_FindPerson, pe)) != NULL)
+          if((abn = FindPersonInABook(&G->abook, pe)) != NULL)
           {
-            if(person->RealName[0] != '\0')
-              addr = person->RealName;
+            if(abn->RealName[0] != '\0')
+              addr = abn->RealName;
           }
         }
 

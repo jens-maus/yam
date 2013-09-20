@@ -5,6 +5,21 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-09-20 Thore Böckelmann <tboeckel@gmx.de>
+
+  * AddressBook.c, misc: completely reworked the address book handling. Before
+    the address book was very tightly convoluted with the MUI GUI. This approach
+    has the big disadvantage that a simple search for a person within the address
+    book always resulted into lots of accessed to an NListtree object which makes
+    things far slower than they need to be. Now the complete address book is
+    separated from the GUI and a search can be performed much faster and
+    independendly of any GUI related bottle necks.
+    The drawback is that the ARexx interface also made heavy use of the GUI as
+    controling element of a data structure. Not everything could be reimplemented
+    100% compatible. So if you have some ARexx scripts dealing with YAM's address
+    book please check them as intensively as possible to rule out any unwanted
+    new inconsistencies.
+
 2013-09-19 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/SearchControlGroup.c: set the status cycle entries when the final address

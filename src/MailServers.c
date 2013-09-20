@@ -63,9 +63,10 @@ struct MailServerNode *CreateNewMailServer(const enum MailServerType type, const
 
   ENTER();
 
-  if((msn = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*msn),
-                                          ASONODE_Min, TRUE,
-                                          TAG_DONE)) != NULL)
+  if((msn = AllocSysObjectTags(ASOT_NODE,
+    ASONODE_Size, sizeof(*msn),
+    ASONODE_Min, TRUE,
+    TAG_DONE)) != NULL)
   {
     // initialize all variables as AllocSysObject() does not clear the memory
     memset(msn, 0, sizeof(*msn));

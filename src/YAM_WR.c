@@ -42,8 +42,6 @@
 #include "extrasrc.h"
 
 #include "YAM.h"
-#include "YAM_addressbook.h"
-#include "YAM_addressbookEntry.h"
 #include "YAM_utilities.h"
 #include "YAM_error.h"
 #include "YAM_stringsizes.h"
@@ -60,6 +58,7 @@
 #include "mime/qprintable.h"
 #include "mime/uucode.h"
 
+#include "AddressBook.h"
 #include "Config.h"
 #include "DynamicString.h"
 #include "FileInfo.h"
@@ -526,16 +525,16 @@ void WriteContentTypeAndEncoding(FILE *fh, const struct WritePart *part)
 //  Outputs X-SenderInfo header line
 static void WR_WriteUserInfo(FILE *fh, struct Compose *comp)
 {
-  struct ABEntry *ab = NULL;
+  struct ABookNode *ab = NULL;
 
   ENTER();
 
   // Now we extract the real email from the address string
-  if(AB_SearchEntry(comp->Identity->address, ASM_ADDRESS|ASM_USER, &ab) > 0)
+  if(SearchABook(&G->abook, comp->Identity->address, ASM_ADDRESS|ASM_USER, &ab) > 0)
   {
-    if(ab->Type != AET_USER)
+    if(ab->type != ABNT_USER)
       ab = NULL;
-    else if(ab->Homepage[0] == '\0' && ab->Phone[0] == '\0' && ab->Street[0] == '\0' && ab->City[0] == '\0' && ab->Country[0] == '\0' && ab->BirthDay == 0)
+    else if(ab->Homepage[0] == '\0' && ab->Phone[0] == '\0' && ab->Street[0] == '\0' && ab->City[0] == '\0' && ab->Country[0] == '\0' && ab->Birthday == 0)
       ab = NULL;
   }
 
@@ -575,10 +574,10 @@ static void WR_WriteUserInfo(FILE *fh, struct Compose *comp)
         fputc(';', fh);
         HeaderFputs(fh, ab->Phone, "phone", 0);
       }
-      if(ab->BirthDay != 0)
+      if(ab->Birthday != 0)
         fprintf(fh, ";\n"
                     "\tdob=%ld",
-                    ab->BirthDay);
+                    ab->Birthday);
     }
     fputc('\n', fh);
   }
@@ -679,13 +678,13 @@ BOOL EncodePart(FILE *ofh, const struct WritePart *part)
 static char *WR_GetPGPId(const struct Person *pe)
 {
   char *pgpid = NULL;
-  struct ABEntry *ab = NULL;
+  struct ABookNode *ab = NULL;
 
   ENTER();
 
-  if(AB_SearchEntry(pe->RealName, ASM_REALNAME|ASM_USER, &ab) == 0)
+  if(SearchABook(&G->abook, pe->RealName, ASM_REALNAME|ASM_USER, &ab) == 0)
   {
-    AB_SearchEntry(pe->Address, ASM_ADDRESS|ASM_USER, &ab);
+    SearchABook(&G->abook, pe->Address, ASM_ADDRESS|ASM_USER, &ab);
   }
 
   if(ab != NULL)
@@ -3135,9 +3134,10 @@ struct WriteMailData *AllocWriteMailData(void)
 
   ENTER();
 
-  if((wmData = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*wmData),
-                                             ASONODE_Min, TRUE,
-                                             TAG_DONE)) != NULL)
+  if((wmData = AllocSysObjectTags(ASOT_NODE,
+    ASONODE_Size, sizeof(*wmData),
+    ASONODE_Min, TRUE,
+    TAG_DONE)) != NULL)
   {
     memset(wmData, 0, sizeof(*wmData));
     wmData->mode = NMM_NEW;

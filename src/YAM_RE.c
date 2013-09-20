@@ -48,8 +48,6 @@
 #include "SDI_hook.h"
 
 #include "YAM.h"
-#include "YAM_addressbook.h"
-#include "YAM_addressbookEntry.h"
 #include "YAM_error.h"
 #include "YAM_folderconfig.h"
 #include "YAM_global.h"
@@ -61,6 +59,7 @@
 
 #include "mui/AddressBookWindow.h"
 #include "mui/ClassesExtra.h"
+#include "mui/AddressBookEditWindow.h"
 #include "mui/MainMailListGroup.h"
 #include "mui/ReadMailGroup.h"
 #include "mui/ReadWindow.h"
@@ -73,6 +72,7 @@
 #include "tcp/Connection.h"
 #include "tcp/smtp.h"
 
+#include "AddressBook.h"
 #include "Busy.h"
 #include "Config.h"
 #include "DynamicString.h"
@@ -1124,8 +1124,9 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, enum ReadHeaderM
   else
   {
     // we do not have any headerList yet so lets allocate a new one
-    if((rp->headerList = AllocSysObjectTags(ASOT_LIST, ASOLIST_Min, TRUE,
-                                                       TAG_DONE)) == NULL)
+    if((rp->headerList = AllocSysObjectTags(ASOT_LIST,
+      ASOLIST_Min, TRUE,
+      TAG_DONE)) == NULL)
     {
       RETURN(FALSE);
       return FALSE;
@@ -3480,7 +3481,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
 ///
 /// RE_UpdateSenderInfo
 //  Updates address book entry of sender
-void RE_UpdateSenderInfo(struct ABEntry *old, struct ABEntry *new)
+void RE_UpdateSenderInfo(struct ABookNode *old, struct ABookNode *new)
 {
   BOOL changed = FALSE;
 
@@ -3524,14 +3525,14 @@ void RE_UpdateSenderInfo(struct ABEntry *old, struct ABEntry *new)
       strlcpy(old->Homepage, new->Homepage, sizeof(old->Homepage));
       changed = TRUE;
     }
-    if(old->BirthDay == 0 && new->BirthDay != 0)
+    if(old->Birthday == 0 && new->Birthday != 0)
     {
-      old->BirthDay = new->BirthDay;
+      old->Birthday = new->Birthday;
       changed = TRUE;
     }
 
     if(changed == TRUE)
-      CallHookPkt(&AB_SaveABookHook, 0, 0);
+      SaveABook(G->abookFilename, &G->abook);
   }
 
   LEAVE();
@@ -3539,9 +3540,9 @@ void RE_UpdateSenderInfo(struct ABEntry *old, struct ABEntry *new)
 ///
 /// RE_AddToAddrbook
 //  Adds sender to the address book
-struct ABEntry *RE_AddToAddrbook(Object *win, struct ABEntry *templ)
+struct ABookNode *RE_AddToAddrbook(Object *win, struct ABookNode *templ)
 {
-  struct ABEntry *result = NULL;
+  struct ABookNode *result = NULL;
   BOOL doit = FALSE;
 
   ENTER();
@@ -3550,7 +3551,7 @@ struct ABEntry *RE_AddToAddrbook(Object *win, struct ABEntry *templ)
   {
     case 1:
     {
-      if(templ->Type == AET_USER)
+      if(templ->type == ABNT_USER)
         break;
     }
     // continue
@@ -3567,7 +3568,7 @@ struct ABEntry *RE_AddToAddrbook(Object *win, struct ABEntry *templ)
 
     case 3:
     {
-      if(templ->Type == AET_USER)
+      if(templ->type == ABNT_USER)
         break;
     }
     // continue
@@ -3581,29 +3582,27 @@ struct ABEntry *RE_AddToAddrbook(Object *win, struct ABEntry *templ)
 
   if(doit == TRUE)
   {
-    struct ABEntry ab_new;
-    struct MUI_NListtree_TreeNode *tn;
+    struct ABookNode *abn;
 
-    tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->ABookWinObject, MUIM_AddressBookWindow_CreateDefaultGroup);
-
-    // then lets add the entry to the group that was perhaps
-    // created previously.
-    memset(&ab_new, 0, sizeof(struct ABEntry));
-    ab_new.Type = AET_USER;
-    RE_UpdateSenderInfo(&ab_new, templ);
-    EA_SetDefaultAlias(&ab_new);
-
-    if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->ABookWinObject, MUIM_AddressBookWindow_AddEntry, &ab_new, tn)) != NULL)
+    if((abn = CreateABookNode(ABNT_USER)) != NULL)
     {
-      DoMethod(G->ABookWinObject, MUIM_AddressBookWindow_Save, NULL);
+      struct ABookNode *parent;
 
-      result = tn->tn_User;
+      if((parent = CreateABookGroup(&G->abook, C->NewAddrGroup)) != NULL)
+      {
+        RE_UpdateSenderInfo(abn, templ);
+        SetDefaultAlias(abn);
+        AddABookNode(parent, abn, NULL);
+        if(G->ABookWinObject != NULL)
+          DoMethod(G->ABookWinObject, MUIM_AddressBookWindow_RebuildTree);
+      }
     }
   }
 
   RETURN(result);
   return result;
 }
+
 ///
 /// RE_ClickedOnMessage
 //  User clicked on a e-mail address
@@ -3624,7 +3623,7 @@ void RE_ClickedOnMessage(char *address, Object *win)
     char *cc = NULL;
     char *bcc = NULL;
     char buf[SIZE_LARGE];
-    struct ABEntry *ab = NULL;
+    struct ABookNode *ab = NULL;
     int hits;
 
     // now we check for additional options to the mailto: string (if it is one)
@@ -3658,7 +3657,7 @@ void RE_ClickedOnMessage(char *address, Object *win)
 
     // lets see if we have an entry for that in the Addressbook
     // and if so, we reuse it
-    hits = AB_SearchEntry(address, ASM_ADDRESS|ASM_USER|ASM_LIST, &ab);
+    hits = SearchABook(&G->abook, address, ASM_ADDRESS|ASM_USER|ASM_LIST, &ab);
 
     snprintf(buf, sizeof(buf), tr(MSG_RE_SelectAddressReq), address);
 
@@ -3698,19 +3697,20 @@ void RE_ClickedOnMessage(char *address, Object *win)
 
       case 2:
       {
-        int winNum;
+        Object *editWin;
 
         DoMethod(_app(win), MUIM_YAMApplication_OpenAddressBookWindow);
 
-        if(hits != 0)
+        if((editWin = AddressBookEditWindowObject,
+          MUIA_AddressBookEditWindow_Type, (hits != 0) ? ab->type : ABNT_USER,
+        End) != NULL)
         {
-          if((winNum = EA_Init(ab->Type, ab)) >= 0)
-            EA_Setup(winNum, ab);
-        }
-        else
-        {
-          if((winNum = EA_Init(AET_USER, NULL)) >= 0)
-            setstring(G->EA[winNum]->GUI.ST_ADDRESS, address);
+          set(editWin, MUIA_AddressBookEditWindow_ABookNode, (hits != 0) ? ab : NULL);
+
+          if(hits == 0)
+            set(editWin, MUIA_AddressBookEditWindow_Address, address);
+
+          SafeOpenWindow(editWin);
         }
       }
       break;
@@ -3719,6 +3719,7 @@ void RE_ClickedOnMessage(char *address, Object *win)
 
   LEAVE();
 }
+
 ///
 
 /*** MDN management (RFC 3798) ***/
@@ -4304,8 +4305,9 @@ static BOOL RE_HandleMDNReport(const struct Part *frp)
       {
         struct MinList *headerList;
 
-        if((headerList = AllocSysObjectTags(ASOT_LIST, ASOLIST_Min, TRUE,
-                                                       TAG_DONE)) != NULL)
+        if((headerList = AllocSysObjectTags(ASOT_LIST,
+          ASOLIST_Min, TRUE,
+          TAG_DONE)) != NULL)
         {
           struct HeaderNode *hdrNode;
 
@@ -4476,9 +4478,10 @@ struct ReadMailData *AllocPrivateRMData(const struct Mail *mail, short parseFlag
 
   ENTER();
 
-  if((rmData = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*rmData),
-                                             ASONODE_Min, TRUE,
-                                             TAG_DONE)) != NULL)
+  if((rmData = AllocSysObjectTags(ASOT_NODE,
+    ASONODE_Size, sizeof(*rmData),
+    ASONODE_Min, TRUE,
+    TAG_DONE)) != NULL)
   {
     memset(rmData, 0, sizeof(*rmData));
     rmData->mail = (struct Mail *)mail;
@@ -4679,9 +4682,10 @@ struct HeaderNode *AllocHeaderNode(void)
 
   ENTER();
 
-  if((hdrNode = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*hdrNode),
-                                              ASONODE_Min, TRUE,
-                                              TAG_DONE)) != NULL)
+  if((hdrNode = AllocSysObjectTags(ASOT_NODE,
+    ASONODE_Size, sizeof(*hdrNode),
+    ASONODE_Min, TRUE,
+    TAG_DONE)) != NULL)
   {
     hdrNode->name = NULL;
     hdrNode->content = NULL;

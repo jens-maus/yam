@@ -40,6 +40,7 @@
 #include "YAM_userlist.h"    // struct Users
 #include "YAM_utilities.h"   // ASL_MAX
 
+#include "AddressBook.h"     // struct AddressBook
 #include "BayesFilter.h"     // struct TokenAnalyzer
 #include "Themes.h"          // struct Theme
 #include "Timer.h"           // struct Timers
@@ -53,8 +54,6 @@ struct FileReqCache;
 struct Locale;
 struct Catalog;
 struct MA_ClassData;
-struct AB_ClassData;
-struct EA_ClassData;
 struct ER_ClassData;
 struct FI_ClassData;
 struct DI_ClassData;
@@ -101,8 +100,6 @@ struct Global
   struct Locale *          Locale;
   struct Catalog *         Catalog;
   struct MA_ClassData *    MA;
-  struct AB_ClassData *    AB;
-  struct EA_ClassData *    EA[MAXEA];
   struct ER_ClassData *    ER;
   struct DI_ClassData *    DI;
   struct US_ClassData *    US;
@@ -122,7 +119,6 @@ struct Global
   struct Folder *          currentFolder;        // the currently active folder
   APTR                     mailItemPool;         // item pool for struct Mail
   APTR                     mailNodeItemPool;     // item pool for struct MailNode
-  APTR                     avlNodeItemPool;      // item pool for struct AVL_Node
   struct Screen *          workbenchScreen;
 
   #if defined(__amigaos4__)
@@ -169,6 +165,7 @@ struct Global
   struct Theme             theme;
   struct TokenAnalyzer     spamFilter;
   struct Timers            timerData;
+  struct ABook             abook;
 
   // the data for our thread implementation
   struct MsgPort         * threadPort;
@@ -186,7 +183,7 @@ struct Global
   char                     ThemesDir[SIZE_PATH];
   char                     PGPPassPhrase[SIZE_DEFAULT];
   char                     MA_MailDir[SIZE_PATH];
-  char                     AB_Filename[SIZE_PATHFILE];
+  char                     abookFilename[SIZE_PATHFILE];
   char                     CO_PrefsFile[SIZE_PATHFILE];
   char                     DI_Filename[SIZE_PATHFILE];
   char                     preselectionListLayout[SIZE_LARGE];

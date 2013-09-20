@@ -467,10 +467,14 @@ MUIOBJS = \
 	Classes.o \
 	AboutWindow.o \
 	AccountList.o \
+	AddressBookConfigPage.o \
+	AddressBookEditGroupPanel.o \
+	AddressBookEditListPanel.o \
+	AddressBookEditUserPanel.o \
+	AddressBookEditWindow.o \
 	AddressBookEntryList.o \
 	AddressBookListtree.o \
 	AddressBookToolbar.o \
-	AddressBookConfigPage.o \
 	AddressBookWindow.o \
 	AddressMatchList.o \
 	AddressMatchPopupWindow.o \
@@ -670,9 +674,7 @@ TCPOBJS = \
 YAMOBJS = \
 	YAM_global.o \
 	YAM.o \
-	YAM_AB.o \
 	YAM_DI.o \
-	YAM_EA.o \
 	YAM_ER.o \
 	YAM_FI.o \
 	YAM_FO.o \
@@ -684,7 +686,6 @@ YAMOBJS = \
 	YAM_WR.o \
 	AddressBook.o \
 	AppIcon.o \
-	AVLTree.o \
 	BayesFilter.o \
 	BoyerMooreSearch.o \
 	Busy.o \

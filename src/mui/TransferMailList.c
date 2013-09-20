@@ -38,7 +38,6 @@
 #include <mui/NList_mcc.h>
 
 #include "YAM.h"
-#include "YAM_addressbookEntry.h"
 #include "YAM_mainFolder.h"
 #include "YAM_utilities.h"
 

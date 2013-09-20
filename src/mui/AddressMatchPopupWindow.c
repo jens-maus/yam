@@ -39,7 +39,6 @@
 #include "newmouse.h"
 
 #include "YAM.h"
-#include "YAM_addressbookEntry.h"
 
 #include "MUIObjects.h"
 
@@ -61,13 +60,17 @@ struct Data
 */
 
 /* EXPORT
-struct CustomABEntry
+struct MatchedABookEntry
 {
   LONG MatchField;
   LONG RealNameMatchPart;
   char *MatchString;
-  struct ABEntry *MatchEntry;
+  struct ABookNode *MatchEntry;
 };
+*/
+
+/* INCLUDE
+#include "AddressBook.h"
 */
 
 /* Overloaded Methods */
@@ -288,8 +291,8 @@ DECLARE(Open) // char *str
 {
   GETDATA;
   LONG entries;
-  struct CustomABEntry *entry;
-  struct CustomABEntry *result = NULL;
+  struct MatchedABookEntry *entry;
+  struct MatchedABookEntry *result = NULL;
 
   ENTER();
 
@@ -345,39 +348,33 @@ DECLARE(ActiveChange) // LONG active
 
   if(msg->active >= 0)
   {
-    struct CustomABEntry *entry;
+    struct MatchedABookEntry *entry;
 
     // get the active entry
     DoMethod(data->Matchlist, MUIM_NList_GetEntry, msg->active, &entry);
     if(entry != NULL)
     {
-      switch(entry->MatchEntry->Type)
+      switch(entry->MatchEntry->type)
       {
-        case AET_USER:
+        case ABNT_USER:
         {
           // for users we prefer their address
-          char *res = entry->MatchEntry->Address;
-
           // signal the string that we need to replace the selected part with
           // some new entry
-          if(res != NULL)
-            DoMethod(data->String, MUIM_RecipientString_ReplaceSelected, res);
+          DoMethod(data->String, MUIM_RecipientString_ReplaceSelected, entry->MatchEntry->Address);
         }
         break;
 
-        case AET_LIST:
+        case ABNT_LIST:
         {
           // for lists we use the list name
-          char *res = entry->MatchEntry->RealName;
-
           // signal the string that we need to replace the selected part with
           // some new entry
-          if(res != NULL)
-            DoMethod(data->String, MUIM_RecipientString_ReplaceSelected, res);
+          DoMethod(data->String, MUIM_RecipientString_ReplaceSelected, entry->MatchEntry->RealName);
         }
         break;
 
-        case AET_GROUP:
+        case ABNT_GROUP:
         {
           // this should not happen
         }

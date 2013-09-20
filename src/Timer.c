@@ -38,7 +38,6 @@
 #include "timeval.h"
 
 #include "YAM.h"
-#include "YAM_addressbook.h"
 #include "YAM_mainFolder.h"
 #include "YAM_write.h"
 
@@ -749,7 +748,7 @@ static void TimerDispatcher(const enum Timer tid)
     {
       D(DBF_TIMER, "timer[%ld]: TIMER_CHECKBIRTHDAYS fired @ %s", tid, dateString);
 
-      AB_CheckBirthdates(TRUE);
+      CheckABookBirthdays(&G->abook, TRUE);
     }
     break;
 

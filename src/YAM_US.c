@@ -44,7 +44,6 @@
 #include "SDI_hook.h"
 
 #include "YAM.h"
-#include "YAM_addressbook.h"
 #include "YAM_error.h"
 #include "YAM_userlist.h"
 #include "YAM_utilities.h"
@@ -53,6 +52,7 @@
 #include "mui/SplashWindow.h"
 #include "mui/UserList.h"
 
+#include "AddressBook.h"
 #include "Config.h"
 #include "FileInfo.h"
 #include "Locale.h"
@@ -342,7 +342,7 @@ BOOL US_Login(const char *username, const char *password, const char *maildir, c
       AddPath(G->CO_PrefsFile, G->MA_MailDir, ".config", sizeof(G->CO_PrefsFile));
     D(DBF_STARTUP, "user config file '%s'", G->CO_PrefsFile);
 
-    AddPath(G->AB_Filename, user->UseAddr ? G->ProgDir : G->MA_MailDir, ".addressbook", sizeof(G->AB_Filename));
+    AddPath(G->abookFilename, user->UseAddr ? G->ProgDir : G->MA_MailDir, ".addressbook", sizeof(G->abookFilename));
     AddPath(G->DI_Filename, user->UseDict ? G->ProgDir : G->MA_MailDir, ".glossary", sizeof(G->DI_Filename));
 
     if(user->Password[0] != '\0')
@@ -500,7 +500,7 @@ static BOOL US_SaveUserList(void)
 
           // clone some files for the new user
           AddPath(dest, user->MailDir, ".addressbook", sizeof(dest));
-          CopyFile(dest, NULL, G->AB_Filename, NULL);
+          CopyFile(dest, NULL, G->abookFilename, NULL);
 
           AddPath(dest, user->MailDir, ".glossary", sizeof(dest));
           CopyFile(dest, NULL, G->DI_Filename, NULL);
@@ -514,7 +514,7 @@ static BOOL US_SaveUserList(void)
 
           // create an empty .addressbook file
           AddPath(dest, user->MailDir, ".addressbook", sizeof(dest));
-          AB_CreateEmptyABook(dest);
+          CreateEmptyABookFile(dest);
         }
       }
     }

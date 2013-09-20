@@ -37,6 +37,7 @@
 #include <libraries/iffparse.h>
 #include <libraries/locale.h>
 #include <mui/NListview_mcc.h>
+#include <mui/NListtree_mcc.h>
 #include <proto/codesets.h>
 #include <proto/dos.h>
 #include <proto/exec.h>
@@ -54,7 +55,6 @@
 #include "SDI_hook.h"
 
 #include "YAM.h"
-//#include "YAM_addressbook.h"
 #include "YAM_error.h"
 #include "YAM_find.h"
 #include "YAM_folderconfig.h"
@@ -65,7 +65,6 @@
 
 #include "mui/ClassesExtra.h"
 #include "mui/AddressBookConfigPage.h"
-#include "mui/AddressBookListtree.h"
 #include "mui/AddressBookWindow.h"
 #include "mui/ConfigPage.h"
 #include "mui/ConfigPageList.h"
@@ -3387,7 +3386,8 @@ void ValidateConfig(struct Config *co, BOOL update)
 
     if(visited[cp_AddressBook] == TRUE || updateAll == TRUE)
     {
-      set(G->ABookWinObject, MUIA_AddressBookWindow_ConfigModified, TRUE);
+      if(G->ABookWinObject != NULL)
+        set(G->ABookWinObject, MUIA_AddressBookWindow_ConfigModified, TRUE);
     }
 
     if(visited[cp_LookFeel] == TRUE || updateAll == TRUE)

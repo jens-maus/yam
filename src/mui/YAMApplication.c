@@ -43,8 +43,6 @@
 #include <workbench/icon.h>
 
 #include "YAM.h"
-#include "YAM_addressbook.h"
-#include "YAM_addressbookEntry.h"
 #include "YAM_error.h"
 #include "YAM_find.h"
 #include "YAM_global.h"
@@ -61,6 +59,7 @@
 #include "mui/TransferControlGroup.h"
 #include "mui/TransferWindow.h"
 
+#include "AddressBook.h"
 #include "AppIcon.h"
 #include "Busy.h"
 #include "Config.h"
@@ -81,8 +80,7 @@ struct Data
 {
   Object *aboutWindow;
   Object *transferWindow;
-  struct MinList emailCache;
-  BOOL emailCacheModified;
+  struct ABook emailCache;
   char *emailCacheName;
   char compileInfo[SIZE_DEFAULT];
 };
@@ -90,24 +88,19 @@ struct Data
 
 /* INCLUDE
 #include "YAM_main.h"
+#include "AddressBook.h"
 #include "mui/PreselectionWindow.h"
 */
 
-struct EMailCacheNode
-{
-  struct MinNode ecn_Node;
-  struct ABEntry ecn_Person;
-};
-
 /* Private functions */
-/// LoadEMailCache()
-static void LoadEMailCache(const char *name, struct MinList *list)
+/// LoadEMailCache
+static void LoadEMailCache(const char *name, struct ABook *cache)
 {
   FILE *fh;
 
   ENTER();
 
-  NewMinList(list);
+  InitABook(cache);
 
   if((fh = fopen(name, "r")) != NULL)
   {
@@ -125,26 +118,20 @@ static void LoadEMailCache(const char *name, struct MinList *list)
 
       if((addr = strchr(line, '<')) != NULL && (end = strchr(addr, '>')) != NULL)
       {
-        struct EMailCacheNode *node;
+        struct ABookNode *abn;
 
-       	if((node = AllocSysObjectTags(ASOT_NODE,
-       	  ASONODE_Size, sizeof(*node),
-          ASONODE_Min, TRUE,
-          TAG_DONE)) != NULL)
+       	if((abn = CreateABookNode(ABNT_USER)) != NULL)
         {
-          // clear the node structure
-          memset(node, 0, sizeof(*node));
-
           if(addr != line)
           {
             addr[-1] = '\0';
             // copy the real name
-            strlcpy(node->ecn_Person.RealName, line, sizeof(node->ecn_Person.RealName));
+            strlcpy(abn->RealName, line, sizeof(abn->RealName));
           }
           end[0] = '\0';
-          strlcpy(node->ecn_Person.Address, addr+1, sizeof(node->ecn_Person.Address));
+          strlcpy(abn->Address, addr+1, sizeof(abn->Address));
 
-          AddTail((struct List *)list, (struct Node *)node);
+          AddABookNode(&cache->rootGroup, abn, NULL);
         }
       }
       else
@@ -165,8 +152,25 @@ static void LoadEMailCache(const char *name, struct MinList *list)
 }
 
 ///
-/// SaveEMailCache()
-static void SaveEMailCache(const char *name, struct MinList *list)
+/// SaveEMailCacheEntry
+static BOOL SaveEMailCacheEntry(const struct ABookNode *abn, UNUSED ULONG flags, void *userData)
+{
+  FILE *fh = (FILE *)userData;
+
+  ENTER();
+
+  if(abn->RealName[0] != '\0')
+	fprintf(fh, "%s <%s>\n", abn->RealName, abn->Address);
+  else
+	fprintf(fh, "<%s>\n", abn->Address);
+
+  RETURN(TRUE);
+  return TRUE;
+}
+
+///
+/// SaveEMailCache
+static void SaveEMailCache(const char *name, struct ABook *cache)
 {
   FILE *fh;
 
@@ -174,24 +178,7 @@ static void SaveEMailCache(const char *name, struct MinList *list)
 
   if((fh = fopen(name, "w")) != NULL)
   {
-    int i;
-    struct EMailCacheNode *node;
-
-    i = 0;
-    IterateList(list, struct EMailCacheNode *, node)
-    {
-      struct ABEntry *entry = &node->ecn_Person;
-
-      if(i >= C->EmailCache)
-        break;
-
-      if(entry->RealName[0] != '\0')
-        fprintf(fh, "%s <%s>\n", entry->RealName, entry->Address);
-      else
-        fprintf(fh, "<%s>\n", entry->Address);
-
-      i++;
-    }
+    IterateABook(cache, 0, SaveEMailCacheEntry, fh);
 
     fclose(fh);
   }
@@ -266,79 +253,69 @@ static BOOL MatchRealName(const char *realName, const char *text, LONG textLen, 
 }
 
 ///
-/// FindAllABMatches
-// tries to find all matching addressbook entries and add them to the list
-static void FindAllABMatches(const char *text, Object *list, struct MUI_NListtree_TreeNode *root)
+
+struct FindAllABMatchesStuff
 {
-  LONG tl;
-  Object *tree;
-  struct MUI_NListtree_TreeNode *tn;
+  const char *text;
+  size_t textlen;
+  Object *list;
+};
+
+/// FindAllABMatchesEntry
+static BOOL FindAllABMatchesEntry(const struct ABookNode *abn, UNUSED ULONG flags, void *userData)
+{
+  struct FindAllABMatchesStuff *stuff = (struct FindAllABMatchesStuff *)userData;
 
   ENTER();
 
-  tl = strlen(text);
-
-  // Now we try to find matches in the Addressbook Listtree
-  tree = (Object *)xget(G->ABookWinObject, MUIA_AddressBookWindow_Listtree);
-  tn = (struct MUI_NListtree_TreeNode *)DoMethod(tree, MUIM_NListtree_GetEntry, root, MUIV_NListtree_GetEntry_Position_Head, MUIF_NONE);
-
-  for(;tn;)
+  if(abn->type == ABNT_USER || abn->type == ABNT_LIST)
   {
-    if(isFlagSet(tn->tn_Flags, TNF_LIST)) /* it's a sublist */
+    struct MatchedABookEntry e = { -1, -1, NULL, NULL };
+
+    if(Strnicmp(abn->Alias, stuff->text, stuff->textlen) == 0)
     {
-      FindAllABMatches(text, list, tn);
+      e.MatchField = 0;
+      e.MatchString = (char *)abn->Alias;
     }
-    else
+    else if(MatchRealName(abn->RealName, stuff->text, stuff->textlen, &e.RealNameMatchPart) == TRUE)
     {
-      struct ABEntry *entry = (struct ABEntry *)tn->tn_User;
-      struct CustomABEntry e = { -1, -1, NULL, NULL };
-
-      if(Strnicmp(entry->Alias, text, tl) == 0)
-      {
-        e.MatchField = 0;
-        e.MatchString = entry->Alias;
-      }
-      else if(MatchRealName(entry->RealName, text, tl, &e.RealNameMatchPart) == TRUE)
-      {
-        e.MatchField = 1;
-        e.MatchString = entry->RealName;
-      }
-      // don't match addresses in recipient lists
-      // for lists the address field represents the reply address and this should never match
-      else if(entry->Type != AET_LIST && Strnicmp(entry->Address, text, tl) == 0)
-      {
-        e.MatchField = 2;
-        e.MatchString = entry->Address;
-      }
-
-      if(e.MatchField != -1) /* one of the fields matches, so let's insert it in the MUI list */
-      {
-        e.MatchEntry = entry;
-        DoMethod(list, MUIM_NList_InsertSingle, &e, MUIV_NList_Insert_Sorted);
-      }
+      e.MatchField = 1;
+      e.MatchString = (char *)abn->RealName;
+    }
+    // don't match addresses in recipient lists
+    // for lists the address field represents the reply address and this should never match
+    else if(abn->type == ABNT_USER && Strnicmp(abn->Address, stuff->text, stuff->textlen) == 0)
+    {
+      e.MatchField = 2;
+      e.MatchString = (char *)abn->Address;
     }
 
-    tn = (struct MUI_NListtree_TreeNode *)DoMethod(tree, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Next, MUIF_NONE);
+    if(e.MatchField != -1) /* one of the fields matches, so let's insert it in the MUI list */
+    {
+      e.MatchEntry = (struct ABookNode *)abn;
+      DoMethod(stuff->list, MUIM_NList_InsertSingle, &e, MUIV_NList_Insert_Sorted);
+    }
   }
 
-  LEAVE();
+  RETURN(TRUE);
+  return TRUE;
 }
 
 ///
-/// FindABPerson
-// tries to find a Person in the addressbook
-static BOOL FindABPerson(const struct Person *person)
+/// FindAllABMatches
+// tries to find all matching addressbook entries and add them to the list
+static void FindAllABMatches(const struct ABook *abook, const char *text, Object *list)
 {
-  BOOL result = FALSE;
+  struct FindAllABMatchesStuff stuff;
 
   ENTER();
 
-  // Now we try to find matches in the Addressbook Listtree
-  if((APTR)DoMethod(G->ABookWinObject, MUIM_AddressBookWindow_FindPerson, person) != NULL)
-    result = TRUE;
+  stuff.text = text;
+  stuff.textlen = strlen(text);
+  stuff.list = list;
+  IterateABook(abook, 0, FindAllABMatchesEntry, &stuff);
 
-  RETURN(result);
-  return result;
+  LEAVE();
 }
 
 ///
@@ -355,46 +332,12 @@ DECLARE(FindEmailMatches) // STRPTR matchText, Object *list
   {
     // We first try to find matches in the Addressbook
     // and add them to the MUI list
-    FindAllABMatches(msg->matchText, msg->list, MUIV_NListtree_GetEntry_ListNode_Root);
+    FindAllABMatches(&G->abook, msg->matchText, msg->list);
 
     // If the user has selected the EmailCache feature we also have to check this
     // list and add matches to the MUI List too
     if(C->EmailCache > 0)
-    {
-      int i;
-      LONG tl = strlen(msg->matchText);
-      struct EMailCacheNode *node;
-
-      i = 0;
-      IterateList(&data->emailCache, struct EMailCacheNode *, node)
-      {
-        struct ABEntry *entry = &node->ecn_Person;
-        struct CustomABEntry e = { -1, -1, NULL, NULL };
-
-        if(i >= C->EmailCache)
-          break;
-
-        if(MatchRealName(entry->RealName, msg->matchText, tl, &e.RealNameMatchPart) == TRUE)
-        {
-          e.MatchField = 1;
-          e.MatchString = entry->RealName;
-        }
-        else if(Strnicmp(entry->Address, msg->matchText, tl) == 0)
-        {
-          e.MatchField = 2;
-          e.MatchString = entry->Address;
-        }
-
-        if(e.MatchField != -1)
-        {
-          // at least one of the fields matches, so let's insert it in the MUI list
-          e.MatchEntry = entry;
-          DoMethod(msg->list, MUIM_NList_InsertSingle, &e, MUIV_NList_Insert_Bottom);
-        }
-
-        i++;
-      }
-    }
+      FindAllABMatches(&data->emailCache, msg->matchText, msg->list);
   }
 
   RETURN(0);
@@ -402,42 +345,20 @@ DECLARE(FindEmailMatches) // STRPTR matchText, Object *list
 }
 
 ///
+/// FindEMailCacheMatchEntry
 /// DECLARE(FindEmailCacheMatch)
 // Method that search in the email cache and return the found entry if not more than one
 DECLARE(FindEmailCacheMatch) // STRPTR matchText
 {
   GETDATA;
-  struct ABEntry *foundentry = NULL;
+  struct ABookNode *foundentry = NULL;
 
   ENTER();
 
   if(C->EmailCache > 0 && IsStrEmpty(msg->matchText) == FALSE)
   {
-    int i, matches = 0;
-    LONG tl = strlen(msg->matchText);
-    struct EMailCacheNode *node;
-
-    i = 0;
-    IterateList(&data->emailCache, struct EMailCacheNode *, node)
-    {
-      struct ABEntry *entry = &node->ecn_Person;
-
-      if(i >= C->EmailCache)
-        break;
-
-      if(MatchRealName(entry->RealName, msg->matchText, tl, NULL) == TRUE ||
-         Strnicmp(entry->Address,  msg->matchText, tl) == 0)
-      {
-        if(++matches > 1)
-        {
-          foundentry = NULL;
-          break;
-        }
-        foundentry = entry;
-      }
-
-      i++;
-    }
+    if(SearchABook(&data->emailCache, msg->matchText, ASM_REALNAME|ASM_ADDRESS|ASM_USER, &foundentry) > 1)
+      foundentry = NULL;
   }
 
   RETURN(foundentry);
@@ -463,72 +384,46 @@ DECLARE(AddToEmailCache) // struct Person *person
 
   // We first check the Addressbook if this Person already exists in the AB and if
   // so we cancel this whole operation.
-  if(FindABPerson(msg->person) == FALSE)
+  if(FindPersonInABook(&G->abook, msg->person) == NULL)
   {
-    int i;
-    BOOL found = FALSE;
-    struct EMailCacheNode *node;
+    struct ABookNode *abn;
 
     // Ok, it doesn't exists in the AB, now lets check the cache list
     // itself
-    i = 0;
-    IterateList(&data->emailCache, struct EMailCacheNode *, node)
+    if((abn = FindPersonInABook(&data->emailCache, msg->person)) != NULL)
     {
-      struct ABEntry *entry = &node->ecn_Person;
-
-      if(i >= C->EmailCache)
-        break;
-
-      // If we find the same entry already in the list we just move it
+      // if we find the same entry already in the list we just move it
       // up to the top
-      if((msg->person->RealName[0] ? !Stricmp(entry->RealName, msg->person->RealName) : TRUE) &&
-         !Stricmp(entry->Address, msg->person->Address))
-      {
-        Remove((struct Node *)node);
-        AddHead((struct List *)&data->emailCache, (struct Node *)node);
-        // the cache was modified
-        data->emailCacheModified = TRUE;
-        found = TRUE;
-        break;
-      }
-
-      i++;
+      MoveABookNode(&data->emailCache.rootGroup, abn, NULL);
+      // the cache was modified
+      data->emailCache.modified = TRUE;
     }
 
     // if we didn't find the person already in the list
     // we have to add it after the last node
-    if(found == FALSE)
+    if(abn == NULL)
     {
-      struct EMailCacheNode *newnode;
-
-      // we alloc mem for this new node and add it behind the last node
-      if((newnode = AllocSysObjectTags(ASOT_NODE,
-        ASONODE_Size, sizeof(*newnode),
-        ASONODE_Min, TRUE,
-        TAG_DONE)) != NULL)
+      // create a new entry
+      if((abn = CreateABookNode(ABNT_USER)) != NULL)
       {
-        struct ABEntry *entry = &newnode->ecn_Person;
         char *p;
-
-        // clear the node structure
-        memset(newnode, 0, sizeof(*newnode));
 
         // Lets copy the data in the new Person struct
         // for the real name we have to check for possible commas without quotes yet
         if(strchr(msg->person->RealName, ',') != NULL && msg->person->RealName[0] != '"')
         {
           // add the necessary double quotes around the real name
-          snprintf(entry->RealName, sizeof(entry->RealName), "\"%s\"", msg->person->RealName);
+          snprintf(abn->RealName, sizeof(abn->RealName), "\"%s\"", msg->person->RealName);
         }
         else
         {
           // simply copy the real name
-          strlcpy(entry->RealName, msg->person->RealName, sizeof(entry->RealName));
+          strlcpy(abn->RealName, msg->person->RealName, sizeof(abn->RealName));
         }
-        strlcpy(entry->Address, msg->person->Address, sizeof(entry->Address));
+        strlcpy(abn->Address, msg->person->Address, sizeof(abn->Address));
 
         // strip any single quotes from the real name
-        p = entry->RealName;
+        p = abn->RealName;
         while((p = strchr(p, '\'')) != NULL)
         {
           // move all characters one backward including the trailing NUL byte
@@ -536,9 +431,9 @@ DECLARE(AddToEmailCache) // struct Person *person
 		}
 
         // we always add new items to the top because this is a FILO
-        AddHead((struct List *)&data->emailCache, (struct Node *)newnode);
+        AddABookNode(&data->emailCache.rootGroup, abn, NULL);
         // the cache was modified
-        data->emailCacheModified = TRUE;
+        data->emailCache.modified = TRUE;
       }
     }
   }
@@ -654,17 +549,13 @@ OVERLOAD(OM_NEW)
 OVERLOAD(OM_DISPOSE)
 {
   GETDATA;
-  struct EMailCacheNode *node;
 
   // save the email cache if it was modified
-  if(data->emailCacheModified == TRUE)
+  if(data->emailCache.modified == TRUE)
     SaveEMailCache(data->emailCacheName, &data->emailCache);
 
   // lets free the EMailCache List ourself in here, to make it a bit cleaner.
-  while((node = (struct EMailCacheNode *)RemHead((struct List *)&data->emailCache)) != NULL)
-  {
-    FreeSysObject(ASOT_NODE, node);
-  }
+  ClearABook(&data->emailCache);
 
   // then we call the supermethod to let
   // MUI free the rest for us.
@@ -1515,12 +1406,23 @@ DECLARE(OpenSearchMailWindow) // struct Folder *folder
 /// DECLARE(OpenAddressBookWindow)
 DECLARE(OpenAddressBookWindow)
 {
+  BOOL result = FALSE;
+
   ENTER();
 
-  DoMethod(G->ABookWinObject, MUIM_AddressBookWindow_Open, ABM_EDIT, -1, NULL);
+  if(G->ABookWinObject == NULL)
+  {
+    G->ABookWinObject = AddressBookWindowObject, End;
+  }
 
-  RETURN(0);
-  return 0;
+  if(G->ABookWinObject != NULL)
+  {
+    DoMethod(G->ABookWinObject, MUIM_AddressBookWindow_Open, ABM_EDIT, -1, NULL);
+    result = TRUE;
+  }
+
+  RETURN(result);
+  return result;
 }
 
 ///

@@ -57,9 +57,10 @@ struct SignatureNode *CreateNewSignature(void)
 
   ENTER();
 
-  if((sn = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*sn),
-                                         ASONODE_Min, TRUE,
-                                         TAG_DONE)) != NULL)
+  if((sn = AllocSysObjectTags(ASOT_NODE,
+    ASONODE_Size, sizeof(*sn),
+    ASONODE_Min, TRUE,
+    TAG_DONE)) != NULL)
   {
     // initialize all variables as AllocSysObject() does not clear the memory
     memset(sn, 0, sizeof(*sn));

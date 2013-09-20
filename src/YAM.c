@@ -39,6 +39,7 @@
 #include <libraries/asl.h>
 #include <mui/BetterString_mcc.h>
 #include <mui/NListview_mcc.h>
+#include <mui/NListtree_mcc.h>
 #include <mui/NFloattext_mcc.h>
 #include <mui/TextEditor_mcc.h>
 #include <mui/TheBar_mcc.h>
@@ -79,7 +80,6 @@
 #include "extrasrc/NewReadArgs.h"
 
 #include "YAM.h"
-#include "YAM_addressbook.h"
 #include "YAM_folderconfig.h"
 #include "YAM_global.h"
 #include "YAM_main.h"
@@ -88,8 +88,17 @@
 #include "YAM_write.h"
 #include "YAM_utilities.h"
 
+#include "tcp/Connection.h"
+#include "mui/ClassesExtra.h"
+#include "mui/ClassesSetup.h"
+#include "mui/AddressBookWindow.h"
+#include "mui/MainWindow.h"
+#include "mui/SplashWindow.h"
+#include "mui/ShutdownWindow.h"
+#include "mui/WriteWindow.h"
+#include "mui/YAMApplication.h"
+
 #include "AppIcon.h"
-#include "AVLTree.h"
 #include "BayesFilter.h"
 #include "Busy.h"
 #include "Config.h"
@@ -110,17 +119,6 @@
 #include "TZone.h"
 #include "UpdateCheck.h"
 #include "UserIdentity.h"
-
-#include "tcp/Connection.h"
-#include "mui/ClassesExtra.h"
-#include "mui/ClassesSetup.h"
-#include "mui/AddressBookListtree.h"
-#include "mui/AddressBookWindow.h"
-#include "mui/MainWindow.h"
-#include "mui/SplashWindow.h"
-#include "mui/ShutdownWindow.h"
-#include "mui/WriteWindow.h"
-#include "mui/YAMApplication.h"
 
 #include "Debug.h"
 
@@ -517,8 +515,9 @@ static BOOL InitXPKPackerList(void)
   ENTER();
 
   // create the list first
-  if((G->xpkPackerList = AllocSysObjectTags(ASOT_LIST, ASOLIST_Min, TRUE,
-                                                       TAG_DONE)) != NULL)
+  if((G->xpkPackerList = AllocSysObjectTags(ASOT_LIST,
+    ASOLIST_Min, TRUE,
+    TAG_DONE)) != NULL)
   {
     if(XpkBase != NULL)
     {
@@ -545,9 +544,10 @@ static BOOL InitXPKPackerList(void)
             {
               struct xpkPackerNode *newPacker;
 
-              if((newPacker = AllocSysObjectTags(ASOT_NODE, ASONODE_Size, sizeof(*newPacker),
-                                                            ASONODE_Min, TRUE,
-                                                            TAG_DONE)) != NULL)
+              if((newPacker = AllocSysObjectTags(ASOT_NODE,
+                ASONODE_Size, sizeof(*newPacker),
+                ASONODE_Min, TRUE,
+                TAG_DONE)) != NULL)
               {
                 memcpy(&newPacker->info, &xpi, sizeof(newPacker->info));
 
@@ -648,11 +648,12 @@ static struct StartupSemaphore *CreateStartupSemaphore(void)
   if(semaphore == NULL)
   {
     // allocate the memory for the semaphore system structure itself
-    if((semaphore = AllocSysObjectTags(ASOT_SEMAPHORE, ASOSEM_Size, sizeof(*semaphore),
-                                                       ASOSEM_Name, (ULONG)STARTUP_SEMAPHORE_NAME,
-                                                       ASOSEM_CopyName, TRUE,
-                                                       ASOSEM_Public, TRUE,
-                                                       TAG_DONE)) != NULL)
+    if((semaphore = AllocSysObjectTags(ASOT_SEMAPHORE,
+      ASOSEM_Size, sizeof(*semaphore),
+      ASOSEM_Name, (ULONG)STARTUP_SEMAPHORE_NAME,
+      ASOSEM_CopyName, TRUE,
+      ASOSEM_Public, TRUE,
+      TAG_DONE)) != NULL)
     {
       // initialize the semaphore structure and start with a use counter of 1
       semaphore->UseCount = 1;
@@ -730,10 +731,6 @@ static void Terminate(void)
   FreeConfig(CE);
   CE = NULL;
 
-  D(DBF_STARTUP, "freeing addressbook entries...");
-  for(i = 0; i < MAXEA; i++)
-    DisposeModule(&G->EA[i]);
-
   D(DBF_STARTUP, "freeing readMailData...");
   // cleanup the still existing readmailData objects
   while((curNode = RemHead((struct List *)&G->readMailDataList)) != NULL)
@@ -783,11 +780,9 @@ static void Terminate(void)
   }
 
   D(DBF_STARTUP, "freeing addressbook module...");
-  #warning access to G->AB
-  if(G->AB != NULL)
-    DisposeModule(&G->AB);
   DoMethod(G->App, MUIM_YAMApplication_DisposeWindow, G->ABookWinObject);
   G->ABookWinObject = NULL;
+  ClearABook(&G->abook);
 
   D(DBF_STARTUP, "freeing main window module...");
   if(G->MA != NULL)
@@ -976,11 +971,6 @@ static void Terminate(void)
   free(G->virtualMailpart[1]);
 
   // free the item pools
-  if(G->avlNodeItemPool != NULL)
-  {
-    FreeSysObject(ASOT_ITEMPOOL, G->avlNodeItemPool);
-    G->avlNodeItemPool = NULL;
-  }
   if(G->mailItemPool != NULL)
   {
     FreeSysObject(ASOT_ITEMPOOL, G->mailItemPool);
@@ -1160,7 +1150,7 @@ BOOL StayInProg(void)
 
   ENTER();
 
-  if(stayIn == FALSE && xget(G->ABookWinObject, MUIA_AddressBookWindow_Modified) == TRUE)
+  if(stayIn == FALSE && G->abook.modified == TRUE)
   {
     int result;
 
@@ -1178,7 +1168,7 @@ BOOL StayInProg(void)
       case 1:
       {
         // save and quit
-        DoMethod(G->ABookWinObject, MUIM_AddressBookWindow_Save, NULL);
+        SaveABook(G->abookFilename, &G->abook);
       }
       break;
 
@@ -1276,16 +1266,7 @@ BOOL StayInProg(void)
 
   if(stayIn == FALSE)
   {
-    int i;
-    BOOL req = FALSE;
-
-    for(i=0; i < MAXEA && req == FALSE; i++)
-    {
-      if(G->EA[i] != NULL)
-        req = TRUE;
-    }
-
-    if(req == TRUE || G->ConfigWinObject != NULL || C->ConfirmOnQuit == TRUE)
+    if(G->ConfigWinObject != NULL || C->ConfirmOnQuit == TRUE)
     {
       if(MUI_Request(G->App, G->MA->GUI.WI, MUIF_NONE, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_QuitYAMReq)) == 0)
         stayIn = TRUE;
@@ -1488,11 +1469,8 @@ static void InitAfterLogin(void)
   // we register the application to application.library
   InitDockyIcon();
 
-  // Create a new Main & Addressbook Window
-  #warning access to G->AB
-  if((G->MA = MA_New()) == NULL || (G->AB = AB_New()) == NULL)
-    Abort(tr(MSG_ErrorMuiApp));
-  if((G->ABookWinObject = AddressBookWindowObject, End) == NULL)
+  // Create a new Main Window
+  if((G->MA = MA_New()) == NULL)
     Abort(tr(MSG_ErrorMuiApp));
 
   // make sure the GUI objects for the embedded read pane are created
@@ -1760,7 +1738,7 @@ static void InitAfterLogin(void)
   BayesFilterInit();
 
   SplashProgress(tr(MSG_LoadingABook), 90);
-  DoMethod(G->ABookWinObject, MUIM_AddressBookWindow_Load, FALSE);
+  LoadABook(G->abookFilename, &G->abook, FALSE);
 
   if((G->RexxHost = SetupARexxHost("YAM", NULL)) == NULL)
     Abort(tr(MSG_ErrorARexx));
@@ -2084,7 +2062,7 @@ static void DoStartup(BOOL nocheck, BOOL hide)
       // Check for current birth days in our addressbook if the user
       // configured it. This will also setup the timer for the repeated
       // birthday check on the next day.
-      AB_CheckBirthdates(C->CheckBirthdates == TRUE && nocheck == FALSE && hide == FALSE);
+      CheckABookBirthdays(&G->abook, C->CheckBirthdates == TRUE && nocheck == FALSE && hide == FALSE);
 
       // the rest of the startup jobs require a running TCP/IP stack,
       // so check if it is properly running.
@@ -2451,6 +2429,7 @@ int main(int argc, char **argv)
     NewMinList(&G->normalBusyList);
     NewMinList(&G->arexxBusyList);
     NewMinList(&G->tzoneContinentList);
+    InitABook(&G->abook);
 
     if((C = AllocConfig()) == NULL)
     {
@@ -2499,29 +2478,22 @@ int main(int argc, char **argv)
       break;
 
     // setup the item pools for mails and mail nodes
-    if((G->mailItemPool = AllocSysObjectTags(ASOT_ITEMPOOL, ASOITEM_MFlags, MEMF_SHARED|MEMF_CLEAR,
-                                                            ASOITEM_ItemSize, sizeof(struct Mail),
-                                                            ASOITEM_BatchSize, 1000,
-                                                            ASOITEM_GCPolicy, ITEMGC_AFTERCOUNT,
-                                                            TAG_DONE)) == NULL)
+    if((G->mailItemPool = AllocSysObjectTags(ASOT_ITEMPOOL,
+      ASOITEM_MFlags, MEMF_SHARED|MEMF_CLEAR,
+      ASOITEM_ItemSize, sizeof(struct Mail),
+      ASOITEM_BatchSize, 1000,
+      ASOITEM_GCPolicy, ITEMGC_AFTERCOUNT,
+      TAG_DONE)) == NULL)
     {
       // break out immediately to signal an error!
       break;
     }
-    if((G->mailNodeItemPool = AllocSysObjectTags(ASOT_ITEMPOOL, ASOITEM_MFlags, MEMF_SHARED|MEMF_CLEAR,
-                                                                ASOITEM_ItemSize, sizeof(struct MailNode),
-                                                                ASOITEM_BatchSize, 1000,
-                                                                ASOITEM_GCPolicy, ITEMGC_AFTERCOUNT,
-                                                                TAG_DONE)) == NULL)
-    {
-      // break out immediately to signal an error!
-      break;
-    }
-    if((G->avlNodeItemPool = AllocSysObjectTags(ASOT_ITEMPOOL, ASOITEM_MFlags, MEMF_PRIVATE|MEMF_CLEAR,
-                                                               ASOITEM_ItemSize, sizeof(struct AVL_Node),
-                                                               ASOITEM_BatchSize, 100,
-                                                               ASOITEM_GCPolicy, ITEMGC_AFTERCOUNT,
-                                                               TAG_DONE)) == NULL)
+    if((G->mailNodeItemPool = AllocSysObjectTags(ASOT_ITEMPOOL,
+      ASOITEM_MFlags, MEMF_SHARED|MEMF_CLEAR,
+      ASOITEM_ItemSize, sizeof(struct MailNode),
+      ASOITEM_BatchSize, 1000,
+      ASOITEM_GCPolicy, ITEMGC_AFTERCOUNT,
+      TAG_DONE)) == NULL)
     {
       // break out immediately to signal an error!
       break;
@@ -2773,7 +2745,7 @@ int main(int argc, char **argv)
       // Create the shutdown window object, but only show it if the application is visible, too.
       // This window will be closed and disposed automatically as soon as the application itself
       // is disposed.
-      if(G->App != NULL && xget(G->App, MUIA_Application_Iconified) == FALSE && args.noSplashWindow == FALSE)
+      if(xget(G->App, MUIA_Application_Iconified) == FALSE && args.noSplashWindow == FALSE)
         ShutdownWindowObject, End;
 
       SetIoErr(RETURN_OK);
