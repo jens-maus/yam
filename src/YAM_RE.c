@@ -545,7 +545,7 @@ void RE_DisplayMIME(const char *srcfile, const char *dstfile,
 
         i++;
       }
-      while(dstfile != NULL && FileExists(dstfile));
+      while(dstfile != NULL && FileExists(dstfile) == TRUE);
 
       // make sure dstfile is valid
       if(IsStrEmpty(dstfile) == FALSE)
@@ -4791,8 +4791,10 @@ BOOL UpdateReadMailDataStatus(const struct Mail *mail)
 char *SuggestPartFileName(const struct Part *part)
 {
   char *result = NULL;
+
   ENTER();
 
+  D(DBF_MIME, "choose file name from '%s' '%s' '%s' '%s'", SafeStr(part->CParFileName), SafeStr(part->CParName), SafeStr(part->Name), SafeStr(part->Filename));
   if(part->CParFileName != NULL) // prefer CParFileName
     result = strdup(part->CParFileName);
   else if(part->CParName != NULL) // next is CParName

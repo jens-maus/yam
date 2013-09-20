@@ -334,18 +334,13 @@ DECLARE(Display)
     // try to decode the message part
     if(RE_DecodePart(data->mailPart) == TRUE)
     {
-      char *fileName;
-
-      // get the suggest filename for the mail part
-      fileName = SuggestPartFileName(data->mailPart);
-
-      // run our MIME routines for displaying the part
-      // to the user
-      RE_DisplayMIME(data->mailPart->Filename, fileName,
+      // run our MIME routines for displaying the part to the user
+      // Don't generate a suggested filename as this will possibly omit
+      // the original extension. RE_DisplayMIME() will take care to
+      // set up a unique file name in case a charset conversion must
+      // be done.
+      RE_DisplayMIME(data->mailPart->Filename, FilePart(data->mailPart->Filename),
                      data->mailPart->ContentType, isPrintable(data->mailPart));
-
-      // free the fileName buffer
-      free(fileName);
 
       // if the part was decoded in RE_DecodePart() then
       // we issue a full refresh of the attachment image
