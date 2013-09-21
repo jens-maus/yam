@@ -35,6 +35,8 @@
 #include <proto/dos.h>
 #include <proto/muimaster.h>
 
+#include "extrasrc.h"
+
 #include "YAM.h"
 #include "YAM_error.h"
 
@@ -63,7 +65,6 @@ struct Data
   char portraitName[SIZE_PATHFILE];
   char address[SIZE_ADDRESS];
   char lcAddress[SIZE_ADDRESS];
-  struct ABookNode *abookNode;
   APTR thread;
   BOOL cleared;
 };
@@ -161,9 +162,18 @@ OVERLOAD(OM_SET)
   {
     switch(tag->ti_Tag)
     {
-      case ATTR(ABookNode):
+      case ATTR(Address):
       {
-        data->abookNode = (struct ABookNode *)tag->ti_Data;
+        strlcpy(data->address, (char *)tag->ti_Data, sizeof(data->address));
+        // make the superMethod call ignore those tags
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
+
+      case ATTR(PortraitName):
+      {
+        strlcpy(data->portraitName, (char *)tag->ti_Data, sizeof(data->portraitName));
+        DoMethod(obj, METHOD(UpdatePortrait));
         // make the superMethod call ignore those tags
         tag->ti_Tag = TAG_IGNORE;
       }
@@ -216,15 +226,12 @@ OVERLOAD(MUIM_Cleanup)
 ///
 
 /* Public Methods */
-/// DECLARE(SetPortrait)
-DECLARE(SetPortrait) // char *portraitName
+/// DECLARE(UpdatePortrait)
+DECLARE(UpdatePortrait)
 {
   GETDATA;
 
   ENTER();
-
-  if(msg->portraitName != NULL)
-    strlcpy(data->portraitName, msg->portraitName, sizeof(data->portraitName));
 
   if(data->portraitName[0] != '\0')
   {
@@ -241,7 +248,7 @@ DECLARE(SetPortrait) // char *portraitName
 
       // set the new attributes
       xset(data->portrait,
-        MUIA_ImageArea_ID,       data->abookNode != NULL ? data->abookNode->Address : "dummy",
+        MUIA_ImageArea_ID,       data->address,
         MUIA_ImageArea_Filename, data->portraitName);
 
       // and force a cleanup/setup pair
@@ -270,7 +277,7 @@ DECLARE(SelectPortrait)
   if((frc = ReqFile(ASL_PHOTO, _win(obj), tr(MSG_EA_SelectPhoto_Title), REQF_NONE, C->GalleryDir, data->portraitName)) != NULL)
   {
     AddPath(data->portraitName, frc->drawer, frc->file, sizeof(data->portraitName));
-    DoMethod(obj, METHOD(SetPortrait), NULL);
+    DoMethod(obj, METHOD(UpdatePortrait));
   }
 
   RETURN(0);
@@ -312,7 +319,7 @@ DECLARE(CheckGravatar)
 
   ENTER();
 
-  if(data->abookNode->Address[0] != '\0')
+  if(data->address[0] != '\0')
   {
     struct MD5Context md5ctx;
     unsigned char digest[16];
@@ -320,8 +327,7 @@ DECLARE(CheckGravatar)
     char imagePath[SIZE_PATHFILE];
     BOOL doDownload;
 
-    // create a trimmed and lower case copy of the user's address
-    strlcpy(data->address, Trim(data->abookNode->Address), sizeof(data->address));
+    // create a lower case copy of the user's address
     strlcpy(data->lcAddress, data->address, sizeof(data->lcAddress));
     ToLowerCase(data->lcAddress);
 
@@ -369,7 +375,7 @@ DECLARE(CheckGravatar)
 
     if(doDownload == TRUE)
     {
-      if(stricmp(imagePath, data->portraitName) == 0)
+      if(strcasecmp(imagePath, data->portraitName) == 0)
       {
         // if we are checking for the same image again we must make sure that the current
         // image is no longer in use
@@ -402,14 +408,17 @@ OVERLOAD(MUIM_ThreadFinished)
   // the thread which did the download has finished
   // now use the originally supplied file name as new portrait file
   if(tf->result == TRUE)
-    DoMethod(obj, METHOD(SetPortrait), GetTagData(TT_DownloadURL_Filename, (IPTR)NULL, tf->actionTags));
+  {
+    strlcpy(data->portraitName, (char *)GetTagData(TT_DownloadURL_Filename, (IPTR)"", tf->actionTags), sizeof(data->portraitName));
+    DoMethod(obj, METHOD(UpdatePortrait));
+  }
   else
   {
     // restore the previous portrait if it was cleared before
-    if(data->cleared == TRUE && data->portraitName[0] != '\0')
+    if(data->cleared == TRUE)
     {
-      DoMethod(obj, METHOD(SetPortrait), data->portraitName);
       data->cleared = FALSE;
+      DoMethod(obj, METHOD(UpdatePortrait));
     }
 
     ER_NewError(tr(MSG_ER_NO_GRAVATAR_FOUND), data->address);
@@ -430,12 +439,12 @@ DECLARE(Clear)
 
   ENTER();
 
-  if(data->abookNode != NULL)
+  if(data->address[0] != '\0')
   {
     // update the user image ID and remove it from the cache
     // it will be reloaded when necessary
     xset(data->portrait,
-      MUIA_ImageArea_ID,       data->abookNode->Address,
+      MUIA_ImageArea_ID,       data->address,
       MUIA_ImageArea_Filename, NULL);
   }
 

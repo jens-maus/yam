@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-09-21 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/UserPortraitGroup.c: don't use a never set address book entry but a
+    user's address and photo instead. This closes #428.
+
 2013-09-20 Thore Böckelmann <tboeckel@gmx.de>
 
   * AddressBook.c, misc: completely reworked the address book handling. Before

@@ -226,7 +226,9 @@ OVERLOAD(OM_SET)
           setstring(data->ST_PHONE, abn->Phone);
           setstring(data->ST_COMMENT, abn->Comment);
           setstring(data->ST_BIRTHDAY, dateStr);
-          DoMethod(data->GR_PHOTO, MUIM_UserPortraitGroup_SetPortrait, abn->Photo);
+          xset(data->GR_PHOTO,
+            MUIA_UserPortraitGroup_Address, abn->Address,
+            MUIA_UserPortraitGroup_PortraitName, abn->Photo);
         }
 
         // make the superMethod call ignore those tags
