@@ -125,7 +125,7 @@ ULONG PatternSearchABook(const struct ABook *abook, const char *pattern, ULONG m
 struct ABookNode *CreateABookGroup(struct ABook *abook, const char *name);
 struct ABookNode *FindPersonInABook(const struct ABook *abook, const struct Person *pe);
 void CheckABookBirthdays(const struct ABook *abook, BOOL check);
-void FixAlias(const struct ABook *abook, struct ABookNode *abn, BOOL excludemyself);
+void FixAlias(const struct ABook *abook, struct ABookNode *abn, const struct ABookNode *excludeThis);
 void SetDefaultAlias(struct ABookNode *abn);
 void PrintABook(const struct ABook *abook, FILE *prt, int mode);
 void PrintABookGroup(const struct ABookNode *group, FILE *prt, int mode);

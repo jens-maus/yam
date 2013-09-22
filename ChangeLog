@@ -10,6 +10,7 @@ $URL$
   * YAM_RE.c: artificial MIME part names like "part 1.2" are now remembered as
     such and are no longer used when having to suggest suitable file names as
     they are lacking the typical extensions.
+  * AddressBook.c: fixed the wrong alias correction when editing old entries.
 
 2013-09-21 Thore Böckelmann <tboeckel@gmx.de>
 

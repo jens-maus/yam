@@ -841,7 +841,7 @@ DECLARE(InsertNewEntry) // Object *editWindow, ULONG type
     struct MUI_NListtree_TreeNode *groupTN;
     struct ABookNode *dup;
 
-    FixAlias(&G->abook, &abn, FALSE);
+    FixAlias(&G->abook, &abn, NULL);
 
     // find the preceeding and the group node of the active entry
     predTN = (struct MUI_NListtree_TreeNode *)xget(data->LV_ADDRESSES, MUIA_NListtree_Active);
@@ -931,26 +931,26 @@ DECLARE(EditOldEntry)
 DECLARE(UpdateOldEntry) // Object *editWindow, struct MUI_NListtree_TreeNode *tn
 {
   GETDATA;
+  struct ABookNode *oldABN;
   struct ABookNode abn;
-  struct ABookNode prev;
 
   ENTER();
 
-  // create a copy of the entry and let the edit window update the contents
-  memcpy(&abn, msg->tn->tn_User, sizeof(abn));
-  memcpy(&prev, msg->tn->tn_User, sizeof(prev));
+  // create a copy of the old entry and let the edit window update the contents
+  oldABN = (struct ABookNode *)msg->tn->tn_User;
+  memcpy(&abn, oldABN, sizeof(abn));
   get(msg->editWindow, MUIA_AddressBookEditWindow_ABookNode, &abn);
 
   // check if everything is ok
   if(CheckABookNode(obj, &abn) == TRUE)
   {
-    FixAlias(&G->abook, &abn, TRUE);
+    FixAlias(&G->abook, &abn, oldABN);
 
     // check if something has changed
-    if(CompareABookNodes(&abn, &prev) == FALSE)
+    if(CompareABookNodes(&abn, oldABN) == FALSE)
     {
       // copy everything back
-      memcpy(msg->tn->tn_User, &abn, sizeof(abn));
+      memcpy(oldABN, &abn, sizeof(*oldABN));
 
       // update the listtree and mark the address book as modified
       DoMethod(data->LV_ADDRESSES, MUIM_NListtree_Redraw, msg->tn, MUIF_NONE);

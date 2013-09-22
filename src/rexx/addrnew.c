@@ -121,7 +121,7 @@ void rx_addrnew(UNUSED struct RexxHost *host, struct RexxParams *params, enum Re
       {
         struct ABookNode *abn;
 
-        FixAlias(&G->abook, &optional->abn, FALSE);
+        FixAlias(&G->abook, &optional->abn, NULL);
         results->alias = optional->abn.Alias;
 
         if((abn = CreateABookNode(optional->abn.type)) != NULL)

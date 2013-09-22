@@ -285,7 +285,7 @@ void MoveABookNodes(struct ABook *dst, struct ABook *src)
 ///
 /// FixAlias
 //  Avoids ambiguos aliases
-void FixAlias(const struct ABook *abook, struct ABookNode *abn, BOOL excludemyself)
+void FixAlias(const struct ABook *abook, struct ABookNode *abn, const struct ABookNode *excludeThis)
 {
   char alias[SIZE_NAME];
   int count = 1;
@@ -300,14 +300,14 @@ void FixAlias(const struct ABook *abook, struct ABookNode *abn, BOOL excludemyse
   {
     size_t len;
 
-    if(excludemyself == TRUE && abn == found)
+    if(found == excludeThis)
     {
       useAlias = FALSE;
       break;
     }
 
-    if((len = strlen(abn->Alias)) > SIZE_NAME-2)
-      len = SIZE_NAME-2;
+    if((len = strlen(abn->Alias)) > sizeof(alias)-2)
+      len = sizeof(alias)-2;
 
     snprintf(&alias[len], sizeof(alias)-len, "%d", ++count);
   }
