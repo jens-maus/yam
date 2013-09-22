@@ -180,6 +180,7 @@ OVERLOAD(OM_NEW)
 
     set(ST_BIRTHDAY, MUIA_String_Accept, "0123456789.-/");
 
+    DoMethod(ST_ADDRESS, MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, GR_PHOTO, 3, MUIM_Set, MUIA_UserPortraitGroup_Address, MUIV_TriggerValue);
     // when a key ID is selected, set default security to "encrypt"
     DoMethod(PO_PGPKEY, MUIM_Notify, MUIA_PGPKeyPopup_PGPKeyChanged, MUIV_EveryTime, CY_DEFSECURITY, 3, MUIM_Set, MUIA_Cycle_Active, 2);
 
@@ -226,9 +227,7 @@ OVERLOAD(OM_SET)
           setstring(data->ST_PHONE, abn->Phone);
           setstring(data->ST_COMMENT, abn->Comment);
           setstring(data->ST_BIRTHDAY, dateStr);
-          xset(data->GR_PHOTO,
-            MUIA_UserPortraitGroup_Address, abn->Address,
-            MUIA_UserPortraitGroup_PortraitName, abn->Photo);
+          set(data->GR_PHOTO,  MUIA_UserPortraitGroup_PortraitName, abn->Photo);
         }
 
         // make the superMethod call ignore those tags
