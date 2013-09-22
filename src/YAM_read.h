@@ -139,6 +139,7 @@ struct Part
   int                  Flags;              // PFLAG_#? flags
   int                  Nr;
   enum Encoding        EncodingCode;
+  BOOL                 nameIsArtificial;
 
   char                 Name[SIZE_DEFAULT];
   char                 Description[SIZE_DEFAULT];

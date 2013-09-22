@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-09-22 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_RE.c: artificial MIME part names like "part 1.2" are now remembered as
+    such and are no longer used when having to suggest suitable file names as
+    they are lacking the typical extensions.
+
 2013-09-21 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/UserPortraitGroup.c: don't use a never set address book entry but a

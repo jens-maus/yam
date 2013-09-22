@@ -2062,7 +2062,14 @@ static void RE_SetPartInfo(struct Part *rp)
   if(rp->Name[0] == '\0')
     strlcpy(rp->Name, rp->Description, sizeof(rp->Name));
   if(rp->Name[0] == '\0')
+  {
     snprintf(rp->Name, sizeof(rp->Name), tr(MSG_RE_DEFAULT_MIMEPART_NAME), (rp->Parent != NULL) ? rp->Parent->Nr+1 : 1, rp->Nr);
+    rp->nameIsArtificial = TRUE;
+  }
+  else
+  {
+    rp->nameIsArtificial = FALSE;
+  }
 
   // Now that we have defined that this part is printable we have
   // to check whether our readMailData structure already contains a reference
@@ -4799,7 +4806,7 @@ char *SuggestPartFileName(const struct Part *part)
     result = strdup(part->CParFileName);
   else if(part->CParName != NULL) // next is CParName
     result = strdup(part->CParName);
-  else if(part->Name != NULL) // next is Name
+  else if(part->Name != NULL && part->nameIsArtificial == FALSE) // next is Name if not artificial
     result = strdup(part->Name);
   else
     result = strdup(FilePart(part->Filename));
