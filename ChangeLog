@@ -11,6 +11,9 @@ $URL$
     name now that the SuggestPartFileName() correctly respects artificial names.
   * YAM_RE.c: don't reset the "artificial name" information once it has been
     set.
+  * YAM_RE.c: always try to find a suitable codeset when reading in mails, even
+    for UTF8 encoded mails. Otherwise an UTF8 encoded mail will be converted to
+    UTF8 a second time resulting in invalid UTF8 sequences.
 
 2013-09-22 Thore Böckelmann <tboeckel@gmx.de>
 

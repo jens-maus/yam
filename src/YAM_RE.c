@@ -1517,27 +1517,25 @@ static BOOL RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
   // local charset or not.
   if(rp->Nr != PART_RAW && isPrintable(rp) == TRUE && rp->CParCSet != NULL)
   {
-    // now we check that the codeset of the mail is not utf8
-    // as we always convert to UTF8
-    if(stricmp(rp->CParCSet, "utf-8") != 0 && stricmp(rp->CParCSet, "utf8") != 0)
-    {
-      D(DBF_MAIL, "found Part #%ld encoded in charset '%s' which is different than UTF8", rp->Nr, rp->CParCSet);
+    // Always try to find a suitable codeset, even for UTF8 encoded mails,
+    // otherwise an UTF8 encoded mail will be converted to UTF8 again
+    // resulting in invalid UTF8 sequences.
+    D(DBF_MAIL, "part #%ld is encoded in charset '%s'", rp->Nr, rp->CParCSet);
 
-      // try to obtain the source codeset from codesets.library
-      // such that we can convert to our local charset accordingly.
-      if((sourceCodeset = CodesetsFind(rp->CParCSet,
-                                       CSA_CodesetList,       G->codesetsList,
-                                       CSA_FallbackToDefault, FALSE,
-                                       TAG_DONE)) == NULL)
-      {
-        #if defined(DEBUG)
-        if(stricmp(rp->CParCSet, "us-ascii") != 0)
-          W(DBF_MAIL, "the specified codeset '%s' wasn't found in codesets.library", rp->CParCSet);
-        #endif
-      }
-      else
-        D(DBF_MAIL, "found codeset [%s] to be the one we convert to", sourceCodeset->name);
+    // try to obtain the source codeset from codesets.library
+    // such that we can convert to our local charset accordingly.
+    if((sourceCodeset = CodesetsFind(rp->CParCSet,
+                                     CSA_CodesetList,       G->codesetsList,
+                                     CSA_FallbackToDefault, FALSE,
+                                     TAG_DONE)) == NULL)
+    {
+      #if defined(DEBUG)
+      if(stricmp(rp->CParCSet, "us-ascii") != 0)
+        W(DBF_MAIL, "the specified codeset '%s' wasn't found in codesets.library", rp->CParCSet);
+      #endif
     }
+    else
+      D(DBF_MAIL, "found codeset '%s' to be the one we convert to", sourceCodeset->name);
   }
 
   SHOWVALUE(DBF_MAIL, rp->EncodingCode);
