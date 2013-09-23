@@ -9,6 +9,8 @@ $URL$
 
   * mui/Attachment.c: restored the former behaviour to generate a suitable file
     name now that the SuggestPartFileName() correctly respects artificial names.
+  * YAM_RE.c: don't reset the "artificial name" information once it has been
+    set.
 
 2013-09-22 Thore Böckelmann <tboeckel@gmx.de>
 
