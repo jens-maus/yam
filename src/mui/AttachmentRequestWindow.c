@@ -218,7 +218,6 @@ OVERLOAD(OM_SET)
       case ATTR(Result):
       {
         data->result = tag->ti_Data;
-        tag->ti_Tag = TAG_IGNORE;
       }
       break;
     }
