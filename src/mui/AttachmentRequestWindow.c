@@ -168,7 +168,7 @@ OVERLOAD(OM_NEW)
     set(listObj, MUIA_NList_Active, MUIV_NList_Active_Top);
 
     // if this AttachRequest isn't a DISPLAY request we show all the option to select the text we actually see
-    if(!isDisplayReq(mode))
+    if(isDisplayReq(mode) == FALSE)
     {
       G->virtualMailpart[1]->Nr = PART_ALLTEXT;
       strlcpy(G->virtualMailpart[1]->Name, tr(MSG_RE_AllTexts), sizeof(G->virtualMailpart[1]->Name));
@@ -186,14 +186,15 @@ OVERLOAD(OM_NEW)
       }
     }
 
-    DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, obj, 2, MUIM_AttachmentRequestWindow_FinishInput, 0);
-    DoMethod(listObj, MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime, obj, 2, MUIM_AttachmentRequestWindow_FinishInput, 1);
-    DoMethod(yesButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_AttachmentRequestWindow_FinishInput, 1);
-    DoMethod(noButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, MUIM_AttachmentRequestWindow_FinishInput, 0);
+    DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, obj, 3, MUIM_Set, ATTR(Result), 0);
+    DoMethod(listObj, MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Result), 1);
+    DoMethod(yesButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 3, MUIM_Set, ATTR(Result), 1);
+    DoMethod(noButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 3, MUIM_Set, ATTR(Result), 0);
 
-    xset(obj, MUIA_Window_DefaultObject, listObj,
-              MUIA_Window_Title, titleText != NULL ? titleText : "YAM",
-              MUIA_Window_ScreenTitle, CreateScreenTitle(data->screenTitle, sizeof(data->screenTitle), titleText));
+    xset(obj,
+      MUIA_Window_DefaultObject, listObj,
+      MUIA_Window_Title, titleText != NULL ? titleText : "YAM",
+      MUIA_Window_ScreenTitle, CreateScreenTitle(data->screenTitle, sizeof(data->screenTitle), titleText));
   }
 
   RETURN(obj);
@@ -201,8 +202,36 @@ OVERLOAD(OM_NEW)
 }
 
 ///
+/// OVERLOAD(OM_SET)
+OVERLOAD(OM_SET)
+{
+  GETDATA;
+  struct TagItem *tags = inittags(msg), *tag;
+  ULONG result;
+
+  ENTER();
+
+  while((tag = NextTagItem((APTR)&tags)) != NULL)
+  {
+    switch(tag->ti_Tag)
+    {
+      case ATTR(Result):
+      {
+        data->data->result = tag->ti_Data;
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
+    }
+  }
+
+  result = DoSuperMethodA(cl, obj, msg);
+
+  RETURN(result);
+  return result;
+}
+
+///
 /// OVERLOAD(OM_GET)
-//
 OVERLOAD(OM_GET)
 {
   GETDATA;
@@ -250,26 +279,3 @@ OVERLOAD(OM_GET)
 }
 
 ///
-
-/* Private Functions */
-
-/* Public Methods */
-/// DECLARE(FinishInput)
-//
-DECLARE(FinishInput) // ULONG result
-{
-  GETDATA;
-
-  ENTER();
-
-  data->result = msg->result;
-
-  // trigger possible notifications
-  set(obj, MUIA_AttachmentRequestWindow_Result, msg->result);
-
-  RETURN(0);
-  return 0;
-}
-
-///
-
