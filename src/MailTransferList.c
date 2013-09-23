@@ -62,11 +62,8 @@ void ClearMailTransferList(struct MailTransferList *tlist)
   ENTER();
 
   while((tnode = (struct MailTransferNode *)RemHead((struct List *)&tlist->list)) != NULL)
-  {
-    // decrease the mail's reference counter
-    tnode->mail->RefCounter--;
     DeleteMailTransferNode(tnode);
-  }
+
   tlist->count = 0;
 
   LEAVE();

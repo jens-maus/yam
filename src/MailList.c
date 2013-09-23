@@ -283,9 +283,12 @@ void DeleteMailNode(struct MailNode *mnode)
 {
   ENTER();
 
-  // decrease the mail's reference counter
+  // decrease the mail's reference counter and try to free it
   if(mnode->mail != NULL)
+  {
     mnode->mail->RefCounter--;
+    FreeMail(mnode->mail);
+  }
 
   ItemPoolFree(G->mailNodeItemPool, mnode);
 
