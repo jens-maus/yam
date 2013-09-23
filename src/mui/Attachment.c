@@ -337,7 +337,7 @@ DECLARE(Display)
       char *fileName;
 
       // get the suggested filename for the mail part
-      fileName = SuggestPartFileName(part);
+      fileName = SuggestPartFileName(data->mailPart);
 
       // run our MIME routines for displaying the part to the user
       RE_DisplayMIME(data->mailPart->Filename, fileName,
