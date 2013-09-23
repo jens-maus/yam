@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-09-23 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/Attachment.c: restored the former behaviour to generate a suitable file
+    name now that the SuggestPartFileName() correctly respects artificial names.
+
 2013-09-22 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_RE.c: artificial MIME part names like "part 1.2" are now remembered as
