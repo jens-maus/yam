@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-09-24 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/MainFolderListtree.c: don't try to close the folder edit window during
+    OM_DISPOSE, but just close it if it exists. Pushing the dispose method might
+    let YAM try to dispose the window twice later on. This closes #433.
+
 2013-09-23 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/Attachment.c: restored the former behaviour to generate a suitable file

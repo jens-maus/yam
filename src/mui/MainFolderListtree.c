@@ -150,8 +150,12 @@ OVERLOAD(OM_DISPOSE)
   if(data->contextMenu != NULL)
     MUI_DisposeObject(data->contextMenu);
 
-  // dispose a possibly still opened folder edit window
-  DoMethod(obj, METHOD(CloseFolderEditWindow));
+  // Just close a possibly still opened folder edit window,
+  // it will be disposed along with the application.
+  // Closing it here is just done to let it "vanish" visibly
+  // together with the main window.
+  if(data->folderEditWindow != NULL)
+    set(data->folderEditWindow, MUIA_Window_Open, FALSE);
 
   // dispose ourself
   result = DoSuperMethodA(cl, obj, msg);
