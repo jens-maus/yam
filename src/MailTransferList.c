@@ -207,8 +207,6 @@ void AddMailTransferNode(struct MailTransferList *tlist, struct MailTransferNode
   // we only accept existing transfers
   if(tlist != NULL && tnode != NULL && tnode->mail != NULL)
   {
-    tnode->mail->RefCounter++;
-
     // add the new transfer node to the end of the list
     AddTail((struct List *)&tlist->list, (struct Node *)&tnode->node);
 
@@ -228,6 +226,7 @@ void DeleteMailTransferNode(struct MailTransferNode *tnode)
 
   tnode->mail->RefCounter--;
   FreeMail(tnode->mail);
+
   free(tnode->uidl);
   FreeSysObject(ASOT_NODE, tnode);
 
