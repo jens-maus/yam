@@ -150,13 +150,6 @@ OVERLOAD(OM_DISPOSE)
   if(data->contextMenu != NULL)
     MUI_DisposeObject(data->contextMenu);
 
-  // Just close a possibly still opened folder edit window,
-  // it will be disposed along with the application.
-  // Closing it here is just done to let it "vanish" visibly
-  // together with the main window.
-  if(data->folderEditWindow != NULL)
-    set(data->folderEditWindow, MUIA_Window_Open, FALSE);
-
   // dispose ourself
   result = DoSuperMethodA(cl, obj, msg);
 
@@ -932,7 +925,7 @@ DECLARE(OpenFolderEditWindow) // struct Folder *folder
       {
         data->folderEditWindow = folderEditWindow;
         // dispose the folder edit window whenever it asks for it
-        DoMethod(folderEditWindow, MUIM_Notify, MUIA_FolderEditWindow_DisposeRequest, MUIV_EveryTime, obj, 1, METHOD(CloseFolderEditWindow));
+        DoMethod(folderEditWindow, MUIM_Notify, MUIA_FolderEditWindow_DisposeRequest, MUIV_EveryTime, obj, 2, METHOD(CloseFolderEditWindow), FALSE);
       }
       else
       {
@@ -956,17 +949,27 @@ DECLARE(OpenFolderEditWindow) // struct Folder *folder
 ///
 /// DECLARE(CloseFolderEditWindow)
 // dispose the folder edit window
-DECLARE(CloseFolderEditWindow)
+DECLARE(CloseFolderEditWindow) // ULONG immediately
 {
   GETDATA;
 
   ENTER();
 
-  // don't dispose the window directly here, because this method is called
-  // as a direct notification of the window's close request and disposing
-  // it immediately would "pull the rug out" from under the window.
-  DoMethod(_app(obj), MUIM_Application_PushMethod, _app(obj), 2, MUIM_YAMApplication_DisposeWindow, data->folderEditWindow);
-  data->folderEditWindow = NULL;
+  if(data->folderEditWindow != NULL)
+  {
+    if(msg->immediately == TRUE)
+    {
+      DoMethod(_app(obj), MUIM_YAMApplication_DisposeWindow, data->folderEditWindow);
+    }
+    else
+    {
+      // don't dispose the window directly here, because this method is called
+      // as a direct notification of the window's close request and disposing
+      // it immediately would "pull the rug out" from under the window.
+      DoMethod(_app(obj), MUIM_Application_PushMethod, _app(obj), 2, MUIM_YAMApplication_DisposeWindow, data->folderEditWindow);
+    }
+    data->folderEditWindow = NULL;
+  }
 
   RETURN(0);
   return 0;

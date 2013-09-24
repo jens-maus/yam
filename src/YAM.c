@@ -92,6 +92,7 @@
 #include "mui/ClassesExtra.h"
 #include "mui/ClassesSetup.h"
 #include "mui/AddressBookWindow.h"
+#include "mui/MainFolderListtree.h"
 #include "mui/MainWindow.h"
 #include "mui/SplashWindow.h"
 #include "mui/ShutdownWindow.h"
@@ -760,6 +761,8 @@ static void Terminate(void)
     // remember the current layout, but don't make that permanent yet
     SaveLayout(FALSE);
     set(G->MA->GUI.WI, MUIA_Window_Open, FALSE);
+    // close any open folder edit window immediately
+    DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_MainFolderListtree_CloseFolderEditWindow, TRUE);
   }
 
   D(DBF_STARTUP, "freeing folders...");
