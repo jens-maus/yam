@@ -183,17 +183,18 @@ struct WritePart *NewMIMEpart(struct WriteMailData *wmData)
 //  Clears message parts and deletes temporary files
 void FreePartsList(struct WritePart *p, BOOL delTemp)
 {
-  struct WritePart *np;
-
   ENTER();
 
-  for(; p; p = np)
+  while(p != NULL)
   {
-    np = p->Next;
+    struct WritePart *np = p->Next;
+
     if(p->IsTemp == TRUE && delTemp == TRUE)
       DeleteFile(p->Filename);
 
     free(p);
+
+    p = np;
   }
 
   LEAVE();
@@ -1216,7 +1217,7 @@ BOOL WriteOutMessage(struct Compose *comp)
     {
       setvbuf(tfh, NULL, _IOFBF, SIZE_FILEBUF);
 
-      memcpy(&tcomp, comp, sizeof(tcomp));   // clone struct Compose
+      memcpy(&tcomp, comp, sizeof(tcomp)); // clone struct Compose
       tcomp.FH = tfh;                      // set new filehandle
       tcomp.Security = SEC_NONE;           // temp msg gets attachments and no security
 
