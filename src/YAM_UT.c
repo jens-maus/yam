@@ -3686,8 +3686,8 @@ void RemoveMailFromFolder(struct Mail *mail, const BOOL closeWindows, const BOOL
     }
   }
 
-  // and last, but not least, we have to free the mail
-  FreeMail(mail);
+  // erase the mail's folder pointer
+  mail->Folder = NULL;
 
   LEAVE();
 }

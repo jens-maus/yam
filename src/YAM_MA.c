@@ -695,20 +695,22 @@ void MA_DeleteSingle(struct Mail *mail, const ULONG delFlags)
 
   if(mail != NULL && mail->Folder != NULL)
   {
+    struct Folder *folder = mail->Folder;
+
     if(C->RemoveAtOnce == TRUE ||
-       isTrashFolder(mail->Folder) ||
-       (isSpamFolder(mail->Folder) && hasStatusSpam(mail)) ||
+       isTrashFolder(folder) ||
+       (isSpamFolder(folder) && hasStatusSpam(mail)) ||
        isFlagSet(delFlags, DELF_AT_ONCE))
     {
       char mailfile[SIZE_PATHFILE];
 
-      D(DBF_MAIL, "deleting mail with subject '%s' from folder '%s'", mail->Subject, mail->Folder->Name);
+      D(DBF_MAIL, "deleting mail with subject '%s' from folder '%s'", mail->Subject, folder->Name);
 
       // before we go and delete/free the mail we have to check
       // all possible write windows if they are refering to it
       SetWriteMailDataMailRef(mail, NULL);
 
-      AppendToLogfile(LF_VERBOSE, 21, tr(MSG_LOG_DeletingVerbose), AddrName(mail->From), mail->Subject, mail->Folder->Name);
+      AppendToLogfile(LF_VERBOSE, 21, tr(MSG_LOG_DeletingVerbose), AddrName(mail->From), mail->Subject, folder->Name);
 
       // make sure we delete the mailfile
       GetMailFile(mailfile, sizeof(mailfile), NULL, mail);
@@ -720,13 +722,16 @@ void MA_DeleteSingle(struct Mail *mail, const ULONG delFlags)
       // if we are allowed to make some noise we
       // update our Statistics
       if(isFlagClear(delFlags, DELF_QUIET))
-        DisplayStatistics(mail->Folder, isFlagSet(delFlags, DELF_UPDATE_APPICON));
-    }
+        DisplayStatistics(folder, isFlagSet(delFlags, DELF_UPDATE_APPICON));
+
+      // and last, but not least, we have to free the mail
+      FreeMail(mail);
+   }
     else
     {
       struct Folder *delfolder = FO_GetFolderByType(FT_TRASH, NULL);
 
-      D(DBF_MAIL, "moving mail with subject '%s' from folder '%s' to folder 'trash'", mail->Subject, mail->Folder->Name);
+      D(DBF_MAIL, "moving mail with subject '%s' from folder '%s' to folder 'trash'", mail->Subject, folder->Name);
 
       MA_MoveCopySingle(mail, delfolder, isFlagSet(delFlags, DELF_CLOSE_WINDOWS) ? MVCPF_CLOSE_WINDOWS : 0);
 
@@ -738,7 +743,7 @@ void MA_DeleteSingle(struct Mail *mail, const ULONG delFlags)
         DisplayStatistics(delfolder, FALSE);
 
         // but update it now, if that is allowed
-        DisplayStatistics(mail->Folder, isFlagSet(delFlags, DELF_UPDATE_APPICON));
+        DisplayStatistics(folder, isFlagSet(delFlags, DELF_UPDATE_APPICON));
       }
     }
   }
@@ -785,17 +790,11 @@ static void MA_MoveCopySingle(struct Mail *mail, struct Folder *to, const ULONG 
 
       newMail = mail;
 
-      // increase the mail's reference counter so that RemoveMailFromFolder() doesn't free it
-      mail->RefCounter++;
-
       // now remove the mail from its folder/mail list
       RemoveMailFromFolder(mail, isFlagSet(flags, MVCPF_CLOSE_WINDOWS), isFlagSet(flags, MVCPF_CHECK_CONNECTIONS));
 
       // add the mail to the new folder
       AddMailToFolder(mail, to);
-
-      // decrease the reference counter again
-      mail->RefCounter--;
 
       // there is no need to check the opened write mail window if they
       // are referring to this mail, as it is not going to magically

@@ -4197,6 +4197,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
                 }
 
                 RemoveMailFromFolder(refMail, TRUE, TRUE);
+                FreeMail(refMail);
                 refMail = newMail;
               }
               else if(wmData->mode == NMM_NEW && refMail != NULL)
