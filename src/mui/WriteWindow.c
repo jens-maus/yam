@@ -4332,10 +4332,6 @@ DECLARE(ComposeMail) // enum WriteMode mode
     }
   }
 
-  // free the list of MIME parts but don't delete temporary
-  // files when saving a draft mail
-  FreePartsList(comp.FirstPart, mode != WRITE_DRAFT);
-
   if(mode == WRITE_DRAFT)
   {
     // the mail is no longer modified
@@ -4428,6 +4424,10 @@ out:
 
   if(refMailList != NULL)
     DeleteMailList(refMailList);
+
+  // free the list of MIME parts but don't delete temporary
+  // files when saving a draft mail
+  FreePartsList(comp.FirstPart, mode != WRITE_DRAFT);
 
   // free the compose structure
   FreeCompose(&comp);

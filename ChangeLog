@@ -11,6 +11,8 @@ $URL$
     OM_DISPOSE, but just close it if it exists. Pushing the dispose method might
     let YAM try to dispose the window twice later on. This closes #433.
   * mui/YAMApplication.c: fixed the broken address cache saving. This refs #433.
+  * mui/WriteWindow.c: fixed a memory leak in case writing out a mail file failed
+    for any reason.
 
 2013-09-23 Thore Böckelmann <tboeckel@gmx.de>
 
