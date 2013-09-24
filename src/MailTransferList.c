@@ -183,13 +183,10 @@ struct MailTransferNode *CreateMailTransferNode(struct Mail *mail, const ULONG f
     memset(tnode, 0, sizeof(*tnode));
 
     tnode->tflags = flags;
+    tnode->mail = mail;
 
-    if(mail != NULL)
-    {
-      tnode->mail = mail;
-      // increase the reference counter
-      tnode->mail->RefCounter++;
-    }
+    // increase the reference counter
+    mail->RefCounter++;
   }
 
   RETURN(tnode);

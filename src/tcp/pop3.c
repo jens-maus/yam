@@ -547,9 +547,8 @@ static BOOL GetMessageList(struct TransferContext *tc)
 
           // allocate a new MailTransferNode and add it to our
           // new transferlist
-          if((tnode = CreateMailTransferNode(NULL, tflags)) != NULL)
+          if((tnode = CreateMailTransferNode(newMail, tflags)) != NULL)
           {
-            tnode->mail = newMail;
             tnode->index = serverIndex;
 
             AddMailTransferNode(tc->transferList, tnode);
