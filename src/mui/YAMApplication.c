@@ -205,7 +205,7 @@ static void SaveEMailCache(const char *name, struct ABook *cache)
 
     stuff.fh = fh;
     stuff.savedEntries = 0;
-    IterateABook(cache, 0, SaveEMailCacheEntry, fh);
+    IterateABook(cache, 0, SaveEMailCacheEntry, &stuff);
 
     fclose(fh);
   }
