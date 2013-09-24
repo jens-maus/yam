@@ -88,17 +88,6 @@ struct Data
 */
 
 /* Private Functions */
-/// ComparePersons
-// compare two person entries in the AVL tree
-static int ComparePersons(const void *p1, const void *p2)
-{
-  const struct Person *entry1 = (const struct Person *)p1;
-  const struct Person *entry2 = (const struct Person *)p2;
-
-  return Stricmp(entry1->Address, entry2->Address);
-}
-
-///
 /// BuildTreeEntry
 struct BuildTreeStuff
 {
