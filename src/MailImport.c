@@ -95,14 +95,14 @@ static struct MailTransferNode *AddMessageHeader(struct TransferContext *tc, int
 
   if((email = MA_ExamineMail(NULL, tfname, FALSE)) != NULL)
   {
+    struct Mail *mail;
+
     if((mail = CloneMail(&email->Mail)) != NULL)
     {
       struct MailTransferNode *tnode;
 
       if((tnode = CreateMailTransferNode(mail, TRF_TRANSFER)) != NULL)
       {
-        struct Mail *mail = tnode->mail;
-
         mail->Folder  = NULL;
         mail->Size    = size;
 
