@@ -5,14 +5,20 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-09-25 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_WR.c, mui/WriteWindow.c: all header lines are encoded using the
+    configured or dynamically set write charset. This finally makes it possible
+    to compose proper UTF8 encoded mails and refs #9.
+
 2013-09-24 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/MainFolderListtree.c: don't try to close the folder edit window during
     OM_DISPOSE, but just close it if it exists. Pushing the dispose method might
     let YAM try to dispose the window twice later on. This closes #433.
   * mui/YAMApplication.c: fixed the broken address cache saving. This refs #433.
-  * mui/WriteWindow.c: fixed a memory leak in case writing out a mail file failed
-    for any reason.
+  * mui/WriteWindow.c: fixed a memory leak in case writing out a mail file
+    failed for any reason.
   * mui/WriteWindow.c, YAM_MA.c, YAM_UT.c: erase the mail's folder pointer after
     removing it from a folder to avoid accessing this pointer after the mail has
     been freed. This closes #431.

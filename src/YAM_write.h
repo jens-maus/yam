@@ -170,6 +170,7 @@ struct Compose
   BOOL                      UserInfo;       // should personal user info be added to the mail?
   enum Security             Security;       // (PGP) security level to be applied to mail
   enum Security             SelSecurity;    // (PGP) security level selected in WriteWindow
+  struct codeset          * codeset;        // the codeset to be used
 };
 
 // Soft-style modes for text
@@ -182,7 +183,7 @@ enum SoftStyleMode
   SSM_COLOR
 };
 
-void  EmitHeader(FILE *fh, const char *hdr, const char *body);
+void  EmitHeader(FILE *fh, const char *hdr, const char *body, struct codeset *codeset);
 void  FreePartsList(struct WritePart *p, BOOL delTemp);
 void  WR_NewMail(enum WriteMode mode, int winnum);
 BOOL  WriteOutMessage(struct Compose *comp);

@@ -3976,6 +3976,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
     comp.Signature = (struct SignatureNode *)xget(data->CY_SIGNATURE, MUIA_SignatureChooser_Signature);
     comp.Security = GetMUICycle(data->CY_SECURITY);
     comp.SelSecurity = comp.Security;
+    comp.codeset = wmData->codeset;
 
     if(comp.Security == SEC_DEFAULTS &&
        SetDefaultSecurity(&comp, obj) == FALSE)

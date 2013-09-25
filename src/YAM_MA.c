@@ -3303,9 +3303,9 @@ void MA_ChangeSubject(struct Mail *mail, char *subj)
               inbody = TRUE;
 
               if(hasorigsubj == FALSE)
-                EmitHeader(newfh, "X-Original-Subject", mail->Subject);
+                EmitHeader(newfh, "X-Original-Subject", mail->Subject, G->writeCodeset);
 
-              EmitHeader(newfh, "Subject", subj);
+              EmitHeader(newfh, "Subject", subj, G->writeCodeset);
             }
 
             if(!isspace(*buf))

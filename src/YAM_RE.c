@@ -3812,21 +3812,21 @@ static void RE_SendMDN(const enum MDNMode mode,
         // message should include the DNS-Name (hostname) of the
         // machine that sends the MDN
         snprintf(buf, sizeof(buf), "%s; %s", hostName, yamversion);
-        EmitHeader(tf2->FP, "Reporting-UA", buf);
+        EmitHeader(tf2->FP, "Reporting-UA", buf, G->writeCodeset);
 
         if(email->OriginalRcpt.Address[0] != '\0')
         {
           // email address only according to RFC 2298
           snprintf(buf, sizeof(buf), "rfc822;%s", email->OriginalRcpt.Address);
-          EmitHeader(tf2->FP, "Original-Recipient", buf);
+          EmitHeader(tf2->FP, "Original-Recipient", buf, G->writeCodeset);
         }
 
         // email address only according to RFC 2298
         snprintf(buf, sizeof(buf), "rfc822;%s", uin->address);
-        EmitHeader(tf2->FP, "Final-Recipient", buf);
+        EmitHeader(tf2->FP, "Final-Recipient", buf, G->writeCodeset);
 
-        EmitHeader(tf2->FP, "Original-Message-ID", email->messageID);
-        EmitHeader(tf2->FP, "Disposition", disp);
+        EmitHeader(tf2->FP, "Original-Message-ID", email->messageID, G->writeCodeset);
+        EmitHeader(tf2->FP, "Disposition", disp, G->writeCodeset);
 
         // close the file handle
         fclose(tf2->FP);

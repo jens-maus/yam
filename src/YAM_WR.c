@@ -34,6 +34,7 @@
 #include <string.h>
 
 #include <clib/alib_protos.h>
+#include <proto/codesets.h>
 #include <proto/dos.h>
 #include <proto/exec.h>
 #include <proto/muimaster.h>
@@ -206,14 +207,18 @@ void FreePartsList(struct WritePart *p, BOOL delTemp)
 // RFC2231 complicant MIME parameter encoding, but also RFC2047 compliant
 // MIME value encoding as well. As soon as "param" is set to NULL, RFC2047
 // encoding will be used, otherwise RFC2231-based one.
-static void HeaderFputs(FILE *fh, const char *s, const char *param, const int offset)
+static void HeaderFputs(FILE *fh, const char *s, const char *param, const int offset, struct codeset *codeset)
 {
   BOOL doEncoding = FALSE;
   char *c = (char *)s;
-  int paramLen = 0;
+  size_t sLen;
+  size_t paramLen = 0;
+  char *sCS = NULL;
+  char *paramCS = NULL;
 
   ENTER();
 
+  sLen = strlen(s);
   if(param != NULL)
     paramLen = strlen(param);
 
@@ -259,6 +264,30 @@ static void HeaderFputs(FILE *fh, const char *s, const char *param, const int of
   // have to check whether we do rfc2047 or rfc2231 based encoding
   if(doEncoding == TRUE)
   {
+    if(codeset != NULL && codeset != G->localCodeset)
+    {
+      // convert the strings to the desired codeset and replace the old
+      // strings with them
+      sCS = CodesetsConvertStr(CSA_SourceCodeset,   G->localCodeset,
+                               CSA_DestCodeset,     codeset,
+                               CSA_Source,          s,
+                               CSA_SourceLen,       sLen,
+                               CSA_MapForeignChars, C->MapForeignChars,
+                               TAG_DONE);
+      s = (const char *)sCS;
+
+      if(param != NULL)
+      {
+        paramCS = CodesetsConvertStr(CSA_SourceCodeset,   G->localCodeset,
+                                     CSA_DestCodeset,     codeset,
+                                     CSA_Source,          param,
+                                     CSA_SourceLen,       paramLen,
+                                     CSA_MapForeignChars, C->MapForeignChars,
+                                     TAG_DONE);
+        param = (const char *)paramCS;
+      }
+	}
+
     if(param != NULL)
     {
       // do the actual rfc2231 based MIME paramater encoding
@@ -271,6 +300,14 @@ static void HeaderFputs(FILE *fh, const char *s, const char *param, const int of
       D(DBF_MAIL, "writing RFC2047 content '%s' with offset %ld", s, offset);
       rfc2047_encode_file(fh, s, offset);
     }
+
+    if(codeset != NULL && codeset != G->localCodeset)
+    {
+      if(sCS != NULL)
+        CodesetsFreeA(sCS, NULL);
+      if(paramCS != NULL)
+        CodesetsFreeA(paramCS, NULL);
+	}
   }
   else if(param != NULL)
   {
@@ -284,8 +321,6 @@ static void HeaderFputs(FILE *fh, const char *s, const char *param, const int of
   }
   else
   {
-    size_t len = strlen(s);
-
     // there seem to be no "violating" characters in the string and
     // the resulting string will also be not > 78 chars in case we
     // have to encode a MIME parameter, so we go and output the source
@@ -294,7 +329,7 @@ static void HeaderFputs(FILE *fh, const char *s, const char *param, const int of
 
     // all we have to make sure now is that we don't write longer lines
     // than 78 chars or we fold them
-    if(len >= (size_t)75-offset)
+    if(sLen >= (size_t)75-offset)
     {
       char *p = (char *)s;
       char *e = (char *)s;
@@ -302,7 +337,7 @@ static void HeaderFputs(FILE *fh, const char *s, const char *param, const int of
       size_t l = offset;
 
       // start our search
-      while(len > 0)
+      while(sLen > 0)
       {
         if(*e == ' ')
           last_space = e;
@@ -314,7 +349,7 @@ static void HeaderFputs(FILE *fh, const char *s, const char *param, const int of
         {
           fwrite(p, last_space-p, 1, fh);
 
-          if(len > 1)
+          if(sLen > 1)
             fwrite("\n ", 2, 1, fh);
 
           p = last_space+1;
@@ -324,14 +359,14 @@ static void HeaderFputs(FILE *fh, const char *s, const char *param, const int of
 
         l++;
         e++;
-        len--;
+        sLen--;
       }
 
       if(l > 0)
         fwrite(p, e-p, 1, fh);
     }
     else
-      fwrite(s, len, 1, fh);
+      fwrite(s, sLen, 1, fh);
   }
 
   LEAVE();
@@ -340,7 +375,7 @@ static void HeaderFputs(FILE *fh, const char *s, const char *param, const int of
 ///
 /// EmitHeader
 //  Outputs a complete header line
-void EmitHeader(FILE *fh, const char *hdr, const char *body)
+void EmitHeader(FILE *fh, const char *hdr, const char *body, struct codeset *codeset)
 {
   ENTER();
 
@@ -351,7 +386,7 @@ void EmitHeader(FILE *fh, const char *hdr, const char *body)
     int offset;
 
     offset = fprintf(fh, "%s: ", hdr);
-    HeaderFputs(fh, body, NULL, offset);
+    HeaderFputs(fh, body, NULL, offset, codeset);
     fputc('\n', fh);
   }
 
@@ -361,7 +396,7 @@ void EmitHeader(FILE *fh, const char *hdr, const char *body)
 ///
 /// EmitRcptField
 //  Outputs the value of a recipient header line, one entry per line
-static void EmitRcptField(FILE *fh, const char *body)
+static void EmitRcptField(FILE *fh, const char *body, struct codeset *codeset)
 {
   char *bodycpy;
 
@@ -383,7 +418,7 @@ static void EmitRcptField(FILE *fh, const char *body)
       if((next = MyStrChr(part, ',')) != NULL)
         *next++ = '\0';
 
-      HeaderFputs(fh, Trim(part), NULL, 0);
+      HeaderFputs(fh, Trim(part), NULL, 0, codeset);
 
       part = next;
       if(part != NULL)
@@ -399,7 +434,7 @@ static void EmitRcptField(FILE *fh, const char *body)
 ///
 /// EmitRcptHeader
 //  Outputs a complete recipient header line
-static void EmitRcptHeader(FILE *fh, const char *hdr, const char *body)
+static void EmitRcptHeader(FILE *fh, const char *hdr, const char *body, struct codeset *codeset)
 {
   ENTER();
 
@@ -408,7 +443,7 @@ static void EmitRcptHeader(FILE *fh, const char *hdr, const char *body)
   if(body != NULL)
   {
     fprintf(fh, "%s: ", hdr);
-    EmitRcptField(fh, body);
+    EmitRcptField(fh, body, codeset);
     fputc('\n', fh);
   }
 
@@ -494,7 +529,7 @@ void WriteContentTypeAndEncoding(FILE *fh, const struct WritePart *part)
   if(IsStrEmpty(part->Name) == FALSE)
   {
     fputc(';', fh);
-    HeaderFputs(fh, part->Name, "name", 0);
+    HeaderFputs(fh, part->Name, "name", 0, NULL);
 
     // output the Content-Disposition (RFC 2183)
     if(isPrintable == TRUE)
@@ -506,7 +541,7 @@ void WriteContentTypeAndEncoding(FILE *fh, const struct WritePart *part)
 
     // add the filename parameter to the Content-Disposition
     fputc(';', fh);
-    HeaderFputs(fh, FilePart(part->Name), "filename", 0);
+    HeaderFputs(fh, FilePart(part->Name), "filename", 0, NULL);
   }
   fputc('\n', fh);
 
@@ -516,7 +551,7 @@ void WriteContentTypeAndEncoding(FILE *fh, const struct WritePart *part)
 
   // output the Content-Description if appropriate
   if(IsStrEmpty(part->Description) == FALSE)
-    EmitHeader(fh, "Content-Description", part->Description);
+    EmitHeader(fh, "Content-Description", part->Description, NULL);
 
   LEAVE();
 }
@@ -545,7 +580,7 @@ static void WR_WriteUserInfo(FILE *fh, struct Compose *comp)
     if(comp->Identity->photoURL[0] != '\0')
     {
       fputc(';', fh);
-      HeaderFputs(fh, comp->Identity->photoURL, "picture", 0);
+      HeaderFputs(fh, comp->Identity->photoURL, "picture", 0, comp->codeset);
     }
 
     if(ab != NULL)
@@ -553,27 +588,27 @@ static void WR_WriteUserInfo(FILE *fh, struct Compose *comp)
       if(ab->Homepage[0] != '\0')
       {
         fputc(';', fh);
-        HeaderFputs(fh, ab->Homepage, "homepage", 0);
+        HeaderFputs(fh, ab->Homepage, "homepage", 0, comp->codeset);
       }
       if(ab->Street[0] != '\0')
       {
         fputc(';', fh);
-        HeaderFputs(fh, ab->Street, "street", 0);
+        HeaderFputs(fh, ab->Street, "street", 0, comp->codeset);
       }
       if(ab->City[0] != '\0')
       {
         fputc(';', fh);
-        HeaderFputs(fh, ab->City, "city", 0);
+        HeaderFputs(fh, ab->City, "city", 0, comp->codeset);
       }
       if(ab->Country[0] != '\0')
       {
         fputc(';', fh);
-        HeaderFputs(fh, ab->Country, "country", 0);
+        HeaderFputs(fh, ab->Country, "country", 0, comp->codeset);
       }
       if(ab->Phone[0] != '\0')
       {
         fputc(';', fh);
-        HeaderFputs(fh, ab->Phone, "phone", 0);
+        HeaderFputs(fh, ab->Phone, "phone", 0, comp->codeset);
       }
       if(ab->Birthday != 0)
         fprintf(fh, ";\n"
@@ -760,14 +795,14 @@ static BOOL WR_Redirect(FILE *fh, const struct Compose *comp)
       // now we add the "Resent-#?" type headers which are defined
       // by RFC2822 section 3.6.6. The RFC defined that these headers
       // should be added to the top of a message
-      EmitHeader(fh, "Resent-From", BuildAddress(address, sizeof(address), comp->Identity->address, comp->Identity->realname));
-      EmitRcptHeader(fh, "Resent-To", comp->MailTo);
-      EmitRcptHeader(fh, "Resent-CC", comp->MailCC);
-      EmitRcptHeader(fh, "Resent-BCC", comp->MailBCC);
-      EmitHeader(fh, "Resent-Date", GetDateTime());
+      EmitHeader(fh, "Resent-From", BuildAddress(address, sizeof(address), comp->Identity->address, comp->Identity->realname), comp->codeset);
+      EmitRcptHeader(fh, "Resent-To", comp->MailTo, comp->codeset);
+      EmitRcptHeader(fh, "Resent-CC", comp->MailCC, comp->codeset);
+      EmitRcptHeader(fh, "Resent-BCC", comp->MailBCC, comp->codeset);
+      EmitHeader(fh, "Resent-Date", GetDateTime(), comp->codeset);
       NewMessageID(msgID, sizeof(msgID), comp->Identity->smtpServer);
-      EmitHeader(fh, "Resent-Message-ID", msgID);
-      EmitHeader(fh, "Resent-User-Agent", yamuseragent);
+      EmitHeader(fh, "Resent-Message-ID", msgID, comp->codeset);
+      EmitHeader(fh, "Resent-User-Agent", yamuseragent, comp->codeset);
 
       // now we copy the rest of the message
       // directly from the file handlers
@@ -1181,9 +1216,9 @@ BOOL WriteOutMessage(struct Compose *comp)
   if(comp->Mode == NMM_REDIRECT)
   {
     if(comp->DelSend == TRUE)
-      EmitHeader(fh, "X-YAM-Options", "delsent,redirect");
+      EmitHeader(fh, "X-YAM-Options", "delsent,redirect", comp->codeset);
     else
-      EmitHeader(fh, "X-YAM-Options", "redirect");
+      EmitHeader(fh, "X-YAM-Options", "redirect", comp->codeset);
 
     success = WR_Redirect(fh, comp);
 
@@ -1281,40 +1316,40 @@ BOOL WriteOutMessage(struct Compose *comp)
                                                                            comp->Identity != NULL ? comp->Identity->id : 0,
                                                                            SecCodes[comp->SelSecurity],
                                                                            comp->DelSend == TRUE ? ",delsent" : "");
-  EmitHeader(fh, "X-YAM-Options", buf);
+  EmitHeader(fh, "X-YAM-Options", buf, comp->codeset);
 
   // put the From: header entry into the mail
   if(comp->FromOverride != NULL && strcmp(comp->FromOverride, comp->Identity->address) != 0)
-    EmitRcptHeader(fh, "From", BuildAddress(address, sizeof(address), comp->FromOverride, comp->Identity->realname));
+    EmitRcptHeader(fh, "From", BuildAddress(address, sizeof(address), comp->FromOverride, comp->Identity->realname), comp->codeset);
   else
-    EmitRcptHeader(fh, "From", BuildAddress(address, sizeof(address), comp->Identity->address, comp->Identity->realname));
+    EmitRcptHeader(fh, "From", BuildAddress(address, sizeof(address), comp->Identity->address, comp->Identity->realname), comp->codeset);
 
-  EmitRcptHeader(fh, "Reply-To", comp->ReplyTo);
-  EmitRcptHeader(fh, "To", comp->MailTo);
-  EmitRcptHeader(fh, "CC", comp->MailCC);
-  EmitRcptHeader(fh, "BCC", comp->MailBCC);
-  EmitRcptHeader(fh, "Mail-Reply-To", comp->MailReplyTo);
-  EmitRcptHeader(fh, "Mail-Followup-To", comp->MailFollowupTo);
+  EmitRcptHeader(fh, "Reply-To", comp->ReplyTo, comp->codeset);
+  EmitRcptHeader(fh, "To", comp->MailTo, comp->codeset);
+  EmitRcptHeader(fh, "CC", comp->MailCC, comp->codeset);
+  EmitRcptHeader(fh, "BCC", comp->MailBCC, comp->codeset);
+  EmitRcptHeader(fh, "Mail-Reply-To", comp->MailReplyTo, comp->codeset);
+  EmitRcptHeader(fh, "Mail-Followup-To", comp->MailFollowupTo, comp->codeset);
 
   // output the current date
-  EmitHeader(fh, "Date", GetDateTime());
+  EmitHeader(fh, "Date", GetDateTime(), comp->codeset);
 
   // output the Message-ID, In-Reply-To and References message headers
   NewMessageID(msgID, sizeof(msgID), comp->Identity->smtpServer);
-  EmitHeader(fh, "Message-ID", msgID);
-  EmitHeader(fh, "In-Reply-To", comp->inReplyToMsgID);
-  EmitHeader(fh, "References", comp->references);
+  EmitHeader(fh, "Message-ID", msgID, comp->codeset);
+  EmitHeader(fh, "In-Reply-To", comp->inReplyToMsgID, comp->codeset);
+  EmitHeader(fh, "References", comp->references, comp->codeset);
 
   if(comp->RequestMDN == TRUE)
   {
     if(comp->ReplyTo != NULL)
-      EmitRcptHeader(fh, "Disposition-Notification-To", comp->ReplyTo);
+      EmitRcptHeader(fh, "Disposition-Notification-To", comp->ReplyTo, comp->codeset);
     else
-      EmitRcptHeader(fh, "Disposition-Notification-To", comp->Identity->address);
+      EmitRcptHeader(fh, "Disposition-Notification-To", comp->Identity->address, comp->codeset);
   }
 
   if(comp->Importance != 0)
-    EmitHeader(fh, "Importance", comp->Importance == 1 ? "High" : "Low");
+    EmitHeader(fh, "Importance", comp->Importance == 1 ? "High" : "Low", comp->codeset);
 
   fprintf(fh, "User-Agent: %s\n", yamuseragent);
 
@@ -1336,17 +1371,17 @@ BOOL WriteOutMessage(struct Compose *comp)
     if(comp->Identity->pgpKeyURL[0] != '\0')
     {
       fputc(';', fh);
-      HeaderFputs(fh, comp->Identity->pgpKeyURL, "url", 0);
+      HeaderFputs(fh, comp->Identity->pgpKeyURL, "url", 0, comp->codeset);
     }
 
     fputc('\n', fh);
   }
 
   if(comp->Identity->organization[0] != '\0')
-    EmitHeader(fh, "Organization", comp->Identity->organization);
+    EmitHeader(fh, "Organization", comp->Identity->organization, comp->codeset);
 
   if(comp->Subject[0] != '\0')
-    EmitHeader(fh, "Subject", comp->Subject);
+    EmitHeader(fh, "Subject", comp->Subject, comp->codeset);
 
   if(comp->ExtHeader != NULL)
     WR_EmitExtHeader(fh, comp);
