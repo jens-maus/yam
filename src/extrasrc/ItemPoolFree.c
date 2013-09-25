@@ -43,13 +43,17 @@ APTR ItemPoolFree(APTR poolHeader, APTR item)
 {
   struct ItemPool *pool = poolHeader;
 
+  #if defined(__amigaos3__)
   if(pool->protected != FALSE)
     ObtainSemaphore(&pool->semaphore);
+  #endif
 
   FreeVecPooled(pool->pool, item);
 
+  #if defined(__amigaos3__)
   if(pool->protected != FALSE)
     ReleaseSemaphore(&pool->semaphore);
+  #endif
 
   return item;
 }

@@ -44,13 +44,17 @@ APTR ItemPoolAlloc(APTR poolHeader)
   struct ItemPool *pool = poolHeader;
   APTR item;
 
+  #if defined(__amigaos3__)
   if(pool->protected != FALSE)
     ObtainSemaphore(&pool->semaphore);
+  #endif
 
   item = AllocVecPooled(pool->pool, pool->itemSize);
 
+  #if defined(__amigaos3__)
   if(pool->protected != FALSE)
     ReleaseSemaphore(&pool->semaphore);
+  #endif
 
   return item;
 }

@@ -36,8 +36,11 @@ struct ItemPool
 {
   APTR pool;
   ULONG itemSize;
+  #if defined(__amigaos3__)
+  // AmigaOS3 does not support semaphore protected pools
   BOOL protected;
   struct SignalSemaphore semaphore;
+  #endif
 };
 
 #endif /* ITEMPOOL_H */

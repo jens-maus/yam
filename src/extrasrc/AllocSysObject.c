@@ -632,11 +632,19 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
 
       if((object.itempool = AllocVec(sizeof(struct ItemPool), MEMF_CLEAR)) != NULL)
       {
+        #if !defined(__amigaos3__)
+        // let the system handle the semaphore protection
+        if(protected != FALSE)
+          SET_FLAG(flags, MEMF_SEM_PROTECTED);
+        #endif
+
         if((object.itempool->pool = CreatePool(flags, batchSize*itemSize, batchSize*itemSize)) != NULL)
         {
           object.itempool->itemSize = itemSize;
+          #if defined(__amigaos3__)
           object.itempool->protected = protected;
           InitSemaphore(&object.itempool->semaphore);
+          #endif
         }
         else
         {
