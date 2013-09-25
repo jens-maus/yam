@@ -3715,9 +3715,7 @@ struct Mail *ReplaceMailInFolder(const char *mailFile, struct Mail *mail, struct
     if(!hasStatusRead(mnode->mail))
       folder->Unread--;
 
-    mail->Folder = folder;
-
-    // addd the new mail's stats to the folder stats
+    // add the new mail's stats to the folder stats
     folder->Size += mail->Size;
 
     if(hasStatusNew(mail))
@@ -3731,12 +3729,14 @@ struct Mail *ReplaceMailInFolder(const char *mailFile, struct Mail *mail, struct
     {
       replacedMail = mnode->mail;
       replacedMail->RefCounter--;
+      replacedMail->Folder = NULL;
     }
 
     // replace the mail in the list
     mnode->mail = mail;
     // increase the reference counter
     mail->RefCounter++;
+    mail->Folder = folder;
   }
   else
   {
