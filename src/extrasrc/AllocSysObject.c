@@ -562,7 +562,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
 
     case ASOT_MEMPOOL:
     {
-      ULONG flags = MEMF_ANY;
+      ULONG memFlags = MEMF_ANY;
       ULONG puddle = 8192;
       ULONG thresh = 8000;
 
@@ -573,7 +573,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
           switch(tag->ti_Tag)
           {
             case ASOPOOL_MFlags:
-              flags = tag->ti_Data;
+              memFlags = tag->ti_Data;
             break;
 
             case ASOPOOL_Puddle:
@@ -592,13 +592,13 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
           puddle = thresh;
       }
 
-      object.mempool = CreatePool(flags, puddle, thresh);
+      object.mempool = CreatePool(memFlags, puddle, thresh);
     }
     break;
 
     case ASOT_ITEMPOOL:
     {
-      ULONG flags = MEMF_ANY;
+      ULONG memFlags = MEMF_ANY;
       ULONG itemSize = 8;
       ULONG batchSize = 32;
       BOOL protected = FALSE;
@@ -610,7 +610,7 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
           switch(tag->ti_Tag)
           {
             case ASOITEM_MFlags:
-              flags = tag->ti_Data;
+              memFlags = tag->ti_Data;
             break;
 
             case ASOITEM_ItemSize:
@@ -635,10 +635,10 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
         #if !defined(__amigaos3__)
         // let the system handle the semaphore protection
         if(protected != FALSE)
-          SET_FLAG(flags, MEMF_SEM_PROTECTED);
+          memFlags |= MEMF_SEM_PROTECTED;
         #endif
 
-        if((object.itempool->pool = CreatePool(flags, batchSize*itemSize, batchSize*itemSize)) != NULL)
+        if((object.itempool->pool = CreatePool(memFlags, batchSize*itemSize, batchSize*itemSize)) != NULL)
         {
           object.itempool->itemSize = itemSize;
           #if defined(__amigaos3__)
