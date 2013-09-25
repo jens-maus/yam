@@ -46,7 +46,7 @@ APTR ItemPoolFree(APTR poolHeader, APTR item)
   if(pool->protected != FALSE)
     ObtainSemaphore(&pool->semaphore);
 
-  FreePooled(pool->pool, item, pool->itemSize);
+  FreeVecPooled(pool->pool, item);
 
   if(pool->protected != FALSE)
     ReleaseSemaphore(&pool->semaphore);

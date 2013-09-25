@@ -47,7 +47,7 @@ APTR ItemPoolAlloc(APTR poolHeader)
   if(pool->protected != FALSE)
     ObtainSemaphore(&pool->semaphore);
 
-  item = AllocPooled(pool->pool, pool->itemSize);
+  item = AllocVecPooled(pool->pool, pool->itemSize);
 
   if(pool->protected != FALSE)
     ReleaseSemaphore(&pool->semaphore);
