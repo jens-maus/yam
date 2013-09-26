@@ -4198,15 +4198,8 @@ DECLARE(ComposeMail) // enum WriteMode mode
                   }
                 }
 
-                // increase the mail's reference counter to prevent RemoveMailFromFolder() from
-                // freeing the mail in its DeleteMailNode() call
-                ReferenceMail(refMail);
-
-                // remove the mail
+                // remove and free the mail
                 RemoveMailFromFolder(refMail, TRUE, TRUE);
-
-                // decrease the reference counter again and free the mail
-                DereferenceMail(refMail);
 
                 refMail = newMail;
               }
