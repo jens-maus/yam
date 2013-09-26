@@ -4197,12 +4197,24 @@ DECLARE(ComposeMail) // enum WriteMode mode
                   }
                 }
 
+                // increase the mail's reference counter to prevent RemoveMailFromFolder() from
+                // freeing the mail in its DeleteMailNode() call
+                refMail->RefCounter++;
+
+                // remove the mail
                 RemoveMailFromFolder(refMail, TRUE, TRUE);
+
+                // decrease the reference counter again
+                refMail->RefCounter--;
+
+                // free the old mail before remembering the new one
                 FreeMail(refMail);
                 refMail = newMail;
               }
               else if(wmData->mode == NMM_NEW && refMail != NULL)
                 refMail = newMail;
+
+              mnode->mail = refMail;
 
               if(wmData->draftMail != NULL || mode == WRITE_DRAFT)
               {

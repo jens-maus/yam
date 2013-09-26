@@ -3730,6 +3730,8 @@ struct Mail *ReplaceMailInFolder(const char *mailFile, struct Mail *mail, struct
       replacedMail = mnode->mail;
       replacedMail->RefCounter--;
       replacedMail->Folder = NULL;
+
+      // don't free the replaced mail here, this is done outside
     }
 
     // replace the mail in the list
