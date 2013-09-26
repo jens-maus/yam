@@ -4164,15 +4164,16 @@ DECLARE(ComposeMail) // enum WriteMode mode
                   DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_ReplaceSingle, newMail, pos, NOWRAP, ALIGN_LEFT);
                   DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_Sort);
                   set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, FALSE);
-
-                  // free the replaced mail
-                  FreeMail(replacedMail);
                 }
                 else
                 {
                   DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_InsertSingle, newMail, MUIV_NList_Insert_Sorted);
                 }
               }
+
+              // finally dereference and free the replaced mail
+              if(replacedMail != NULL)
+                DereferenceMail(replacedMail);
 
               MA_UpdateMailFile(newMail);
 

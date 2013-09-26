@@ -11,6 +11,8 @@ $URL$
     reference counter before it is moved to another folder to prevent it from
     being freed too early when one of its referencing mail nodes is freed. This
     refs #429 and refs #435.
+  * YAM_UT.c, mui/WriteWindow.c: defer dereferencing and freeing a replaced mail
+    until it is really no longer in use to avoid accessing just freed memory.
 
 2013-09-25 Thore Böckelmann <tboeckel@gmx.de>
 
