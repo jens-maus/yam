@@ -4199,21 +4199,20 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
                 // increase the mail's reference counter to prevent RemoveMailFromFolder() from
                 // freeing the mail in its DeleteMailNode() call
-                refMail->RefCounter++;
+                ReferenceMail(refMail);
 
                 // remove the mail
                 RemoveMailFromFolder(refMail, TRUE, TRUE);
 
-                // decrease the reference counter again
-                refMail->RefCounter--;
+                // decrease the reference counter again and free the mail
+                DereferenceMail(refMail);
 
-                // free the old mail before remembering the new one
-                FreeMail(refMail);
                 refMail = newMail;
               }
               else if(wmData->mode == NMM_NEW && refMail != NULL)
                 refMail = newMail;
 
+              // replace the mail pointer in the reference mail list
               mnode->mail = refMail;
 
               if(wmData->draftMail != NULL || mode == WRITE_DRAFT)
@@ -4224,7 +4223,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
                   MA_DeleteSingle(wmData->draftMail, DELF_AT_ONCE);
                 }
 
-                // remember the new mail as draft mail if we had a draft mail pointer before
+                // remember the new mail as draft mail
                 wmData->draftMail = newMail;
               }
 

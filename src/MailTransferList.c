@@ -185,8 +185,7 @@ struct MailTransferNode *CreateMailTransferNode(struct Mail *mail, const ULONG f
     tnode->tflags = flags;
     tnode->mail = mail;
 
-    // increase the reference counter
-    mail->RefCounter++;
+    ReferenceMail(mail);
   }
 
   RETURN(tnode);
@@ -221,8 +220,7 @@ void DeleteMailTransferNode(struct MailTransferNode *tnode)
 {
   ENTER();
 
-  tnode->mail->RefCounter--;
-  FreeMail(tnode->mail);
+  DereferenceMail(tnode->mail);
 
   free(tnode->uidl);
   FreeSysObject(ASOT_NODE, tnode);

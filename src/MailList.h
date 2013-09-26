@@ -69,6 +69,8 @@ struct MailNode *FindMailByFilename(const struct MailList *mlist, const char *fi
 struct MailNode *TakeMailNode(struct MailList *mlist);
 struct Mail *AllocMail(void);
 struct Mail *CloneMail(const struct Mail *mail);
+void ReferenceMail(struct Mail *mail);
+void DereferenceMail(struct Mail *mail);
 void FreeMail(struct Mail *mail);
 
 // check if a mail list is empty

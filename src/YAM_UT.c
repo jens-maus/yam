@@ -3736,9 +3736,9 @@ struct Mail *ReplaceMailInFolder(const char *mailFile, struct Mail *mail, struct
 
     // replace the mail in the list
     mnode->mail = mail;
-    // increase the reference counter
-    mail->RefCounter++;
     mail->Folder = folder;
+    // increase the reference counter
+    ReferenceMail(mail);
   }
   else
   {

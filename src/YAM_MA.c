@@ -718,16 +718,13 @@ void MA_DeleteSingle(struct Mail *mail, const ULONG delFlags)
 
       // increase the mail's reference counter to prevent RemoveMailFromFolder() from
       // freeing the mail in its DeleteMailNode() call
-      mail->RefCounter++;
+      ReferenceMail(mail);
 
       // now remove the mail from its folder/mail list
       RemoveMailFromFolder(mail, isFlagSet(delFlags, DELF_CLOSE_WINDOWS), isFlagSet(delFlags, DELF_CHECK_CONNECTIONS));
 
-      // decrease the reference counter again
-      mail->RefCounter--;
-
-      // and last, but not least, we have to free the mail
-      FreeMail(mail);
+      // decrease the reference counter again and free the mail
+      DereferenceMail(mail);
 
       // if we are allowed to make some noise we
       // update our Statistics
@@ -795,11 +792,9 @@ static void MA_MoveCopySingle(struct Mail *mail, struct Folder *to, const ULONG 
     {
       AppendToLogfile(LF_VERBOSE, 23, tr(MSG_LOG_MovingVerbose), AddrName(mail->From), mail->Subject, from->Name, to->Name);
 
-      newMail = mail;
-
       // increase the mail's reference counter to prevent RemoveMailFromFolder() from
       // freeing the mail in its DeleteMailNode() call
-      mail->RefCounter++;
+      ReferenceMail(mail);
 
       // now remove the mail from its folder/mail list
       RemoveMailFromFolder(mail, isFlagSet(flags, MVCPF_CLOSE_WINDOWS), isFlagSet(flags, MVCPF_CHECK_CONNECTIONS));
@@ -808,7 +803,10 @@ static void MA_MoveCopySingle(struct Mail *mail, struct Folder *to, const ULONG 
       AddMailToFolder(mail, to);
 
       // decrease the reference counter again
-      mail->RefCounter--;
+      // it will not be freed as it has been added to the new folder
+      DereferenceMail(mail);
+
+      newMail = mail;
 
       // there is no need to check the opened write mail window if they
       // are referring to this mail, as it is not going to magically
