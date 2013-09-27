@@ -155,7 +155,7 @@ static int MailCompare(struct Mail *entry1, struct Mail *entry2, LONG column)
           addr1 = AddrName(*pe1);
 
         if((abn2 = FindPersonInABook(&G->abook, pe2)) != NULL)
-          addr2 = abn1->RealName[0] != '\0' ? abn2->RealName : AddrName(*pe2);
+          addr2 = abn2->RealName[0] != '\0' ? abn2->RealName : AddrName(*pe2);
         else
           addr2 = AddrName(*pe2);
       }

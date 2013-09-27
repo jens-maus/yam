@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-09-27 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/MainMailList.c: fixed a typo in function comparing two address book
+    entries which could have caused an access to a NULL pointer in case one of
+    the entries did not exist. This closes #429.
+
 2013-09-26 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MA.c, mui/WriteWindow.c: artifically increase and decrease the mail's
