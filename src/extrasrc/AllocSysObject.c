@@ -94,49 +94,6 @@ struct SysSignalSemaphore
    #pragma default-align
 #endif
 
-/// MungeMemory
-// fill a memory block with "random" garbage
-// no ENTER/RETURN macro calls on purpose as this would blow up the trace log too much
-#if defined(DEBUG)
-static void MungeMemory(const void *ptr, size_t size)
-{
-  union
-  {
-    void *vptr;
-    ULONG *u32ptr;
-    char *u8ptr;
-  } _ptr;
-
-  _ptr.vptr = (void *)ptr;
-
-  // first do 32bit fills
-  while(size >= sizeof(_ptr.u32ptr))
-  {
-    *_ptr.u32ptr++ = 0xabadcafe;
-    size -= sizeof(*_ptr.u32ptr);
-  }
-  // fill the remaining single bytes
-  if(size > 0)
-  {
-    *_ptr.u8ptr++ = 0xab;
-    size -= sizeof(*_ptr.u8ptr);
-    if(size > 0)
-    {
-      *_ptr.u8ptr++ = 0xad;
-      size -= sizeof(*_ptr.u8ptr);
-      if(size > 0)
-      {
-        *_ptr.u8ptr++ = 0xca;
-      }
-    }
-  }
-}
-#else
-// do nothing in the non-debug build
-#define MungeMemory(ptr, size) ((void)0)
-#endif
-
-///
 /// AllocSysObject
 // allocate a system object just like OS4 does
 // this function does not cover all the types of OS4, because some are simply not
@@ -246,8 +203,6 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
 
       if((object.hook = AllocVec(size, memFlags)) != NULL)
       {
-        MungeMemory(object.hook, size);
-
         #if defined(__MORPHOS__) || defined(__AROS__)
         // MorphOS and AROS need to go through the standard HookEntry function
         // to pass the parameters in the correct registers. The normal entry
@@ -275,8 +230,6 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
 
       if((object.list = AllocVec(size, memFlags)) != NULL)
       {
-        MungeMemory(object.list, size);
-
         NewList(object.list);
 
         if(min == FALSE)
@@ -297,8 +250,6 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
 
       if((object.node = AllocVec(size, memFlags)) != NULL)
       {
-        MungeMemory(object.node, size);
-
         object.node->ln_Succ = (struct Node *)0xffffffff;
         object.node->ln_Pred = (struct Node *)0xffffffff;
 
@@ -375,8 +326,6 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
       if((object.port = AllocVec(size, memFlags)) != NULL)
       {
         struct SysMsgPort *sobject = (struct SysMsgPort *)object.port;
-
-        MungeMemory(object.port, size);
 
         sobject->name = NULL;
         sobject->signal = -1;
@@ -457,8 +406,6 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
 
       if((object.message = AllocVec(size, memFlags)) != NULL)
       {
-        MungeMemory(object.message, size);
-
         object.message->mn_Node.ln_Name = name;
         object.message->mn_Node.ln_Type = NT_MESSAGE;
         object.message->mn_ReplyPort = port;
@@ -510,8 +457,6 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
       if((object.semaphore = AllocVec(size, memFlags)) != NULL)
       {
         struct SysSignalSemaphore *sobject = (struct SysSignalSemaphore *)object.semaphore;
-
-        MungeMemory(object.semaphore, size);
 
         sobject->name = NULL;
         sobject->public = public;
@@ -684,8 +629,6 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
 
       if((object.interrupt = AllocVec(size, memFlags)) != NULL)
       {
-        MungeMemory(object.interrupt, size);
-
         object.interrupt->is_Code = code;
         object.interrupt->is_Data = data;
         object.interrupt->is_Node.ln_Type = NT_INTERRUPT;
@@ -743,7 +686,6 @@ void FreeSysObject(ULONG type, APTR object)
         if(sobject->signal != -1)
           FreeSignal(sobject->signal);
 
-        MungeMemory(sobject, sizeof(struct SysMsgPort));
         FreeVec(sobject);
       }
       break;
@@ -756,30 +698,24 @@ void FreeSysObject(ULONG type, APTR object)
 
       case ASOT_HOOK:
       {
-        MungeMemory(object, sizeof(struct Hook));
         FreeVec(object);
       }
       break;
 
       case ASOT_LIST:
       {
-        // munge a MinList only
-        MungeMemory(object, sizeof(struct MinList));
         FreeVec(object);
       }
       break;
 
       case ASOT_NODE:
       {
-        // munge a MinNode only
-        MungeMemory(object, sizeof(struct MinNode));
         FreeVec(object);
       }
       break;
 
       case ASOT_MESSAGE:
       {
-        MungeMemory(object, sizeof(struct Message));
         FreeVec(object);
       }
       break;
@@ -802,7 +738,6 @@ void FreeSysObject(ULONG type, APTR object)
         if(sobject->copy != FALSE)
           free(sobject->name);
 
-        MungeMemory(sobject, sizeof(struct SysSignalSemaphore));
         FreeVec(sobject);
       }
       break;
@@ -818,14 +753,12 @@ void FreeSysObject(ULONG type, APTR object)
         struct ItemPool *sobject = (struct ItemPool *)object;
 
         DeletePool(sobject->pool);
-        MungeMemory(sobject, sizeof(struct ItemPool));
         FreeVec(sobject);
       }
       break;
 
       case ASOT_INTERRUPT:
       {
-        MungeMemory(object, sizeof(struct Interrupt));
         FreeVec(object);
       }
       break;
