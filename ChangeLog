@@ -10,6 +10,8 @@ $URL$
   * mui/MainMailList.c: fixed a typo in function comparing two address book
     entries which could have caused an access to a NULL pointer in case one of
     the entries did not exist. This closes #429.
+  * YAM_MA.c: changed the ARexx menu item help node to the new Wiki link. This
+    closes #434.
 
 2013-09-26 Thore Böckelmann <tboeckel@gmx.de>
 
