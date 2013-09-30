@@ -48,7 +48,7 @@ APTR ItemPoolFree(APTR poolHeader, APTR item)
     ObtainSemaphore(&pool->semaphore);
   #endif
 
-  FreeVecPooled(pool->pool, item);
+  FreePooled(pool->pool, item, pool->itemSize);
 
   #if defined(__amigaos3__)
   if(pool->protected != FALSE)

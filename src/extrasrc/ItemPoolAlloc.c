@@ -49,7 +49,7 @@ APTR ItemPoolAlloc(APTR poolHeader)
     ObtainSemaphore(&pool->semaphore);
   #endif
 
-  item = AllocVecPooled(pool->pool, pool->itemSize);
+  item = AllocPooled(pool->pool, pool->itemSize);
 
   #if defined(__amigaos3__)
   if(pool->protected != FALSE)
