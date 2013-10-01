@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-10-01 Thore Böckelmann <tboeckel@gmx.de>
+
+  * locale/YAM.cd: made the "Edit hit" button of the address book search window
+    the default active one.
+
 2013-09-27 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/MainMailList.c: fixed a typo in function comparing two address book

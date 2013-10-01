@@ -1827,7 +1827,7 @@ MSG_AB_StartSearch (714//)
 _Start search
 ;
 MSG_AB_FoundEntryGads (715//)
-_Next hit|_Edit hit|_Cancel
+_Next hit|*_Edit hit|_Cancel
 ;
 MSG_AB_NoneFound (716//)
 No matching entries found.

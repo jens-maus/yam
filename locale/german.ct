@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.23 (12.09.2013)
+## version $VER: YAM.catalog 8.24 (01.10.2013)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -2472,8 +2472,7 @@ _Suche starten
 ; _Start search
 ;
 MSG_AB_FoundEntryGads
-_Nächster Treffer|Treffer _editieren|_Abbrechen
-; _Next hit|_Edit hit|_Cancel
+_Nächster Treffer|*Treffer _editieren|_Abbrechen
 ;
 MSG_AB_NoneFound
 Keine passenden Einträge gefunden.
