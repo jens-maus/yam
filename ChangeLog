@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-10-02 Alper Sönmez <amithlondestek@gmail.com>
+
+ * locale/turkish.ct: update to the latest changes.
+
 2013-10-01 Thore Böckelmann <tboeckel@gmx.de>
 
   * locale/YAM.cd: made the "Edit hit" button of the address book search window

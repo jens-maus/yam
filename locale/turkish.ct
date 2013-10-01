@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.6 (08.09.2013)
+## version $VER: YAM.catalog 8.6 (02.10.2013)
 ## language türkçe
 ## codeset 0
 ## chunk AUTH Alper Sönmez <amithlondestek@gmail.com>
@@ -458,11 +458,6 @@ MSG_LOG_Forwarding
 '%s'den gelen, '%s' konulu ileti '%s'ye iletildi
 ; Forwarded message from '%s' about '%s' to '%s'
 ; SENDER, SUBJECT, RECIPIENT
-;
-MSG_LOG_Filtering
-%ld ileti (%s klasöründeki) süzüldü : %ld eþleþti
-; Filtered %ld message(s) in folder '%s': %ld match(es)
-; COUNT, FOLDER, COUNT
 ;
 MSG_LOG_SavingConfig
 Ayarlar dosyasý '%s' kaydedildi
@@ -10409,4 +10404,9 @@ gereken karakter setini seçin.
 ; Select the charset here that printable\n\
 ; text should be converted to before\n\
 ; starting the default viewer.
+;
+MSG_LOG_FILTER_DONE
+%ld ileti, %ld eþleþme ile süzüldü
+; Filtered %ld message(s) with %ld match(es)
+; COUNT, COUNT
 ;
