@@ -5,9 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-10-03 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.h: added inclusion of dos/obsolete.h to fix the AmigaOS4 build with the
+    most recent DOS SDK changes.
+
 2013-10-02 Alper Sönmez <amithlondestek@gmail.com>
 
- * locale/turkish.ct: update to the latest changes.
+  * locale/turkish.ct: update to the latest changes.
 
 2013-10-01 Thore Böckelmann <tboeckel@gmx.de>
 

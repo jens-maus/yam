@@ -30,6 +30,9 @@
 
 #include <xpk/xpk.h>
 
+#if defined(__amigaos4__)
+#include <dos/obsolete.h>
+#endif
 #if defined(__AROS__)
 #include <sys/types.h>
 #endif
