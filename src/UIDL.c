@@ -30,6 +30,9 @@
 #include <string.h>
 
 #include <proto/dos.h>
+#if defined(__amigaos4__)
+#include <dos/obsolete.h>
+#endif
 
 #include "extrasrc.h"
 
