@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-10-04 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/MainFolderListtree.c, mui/FolderEditWindow.c: fixed the broken "like
+    current folder" choice when creating a new folder.
+
 2013-10-03 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.h: added inclusion of dos/obsolete.h to fix the AmigaOS4 build with the

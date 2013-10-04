@@ -812,7 +812,7 @@ DECLARE(NewFolder)
     case 1: break;
     case 2:
     {
-      // as the user decided to use the settings from the current folder, wie copy
+      // as the user decided to use the settings from the current folder, we copy
       // the current one to our new one.
       memcpy(&data->newFolder, GetCurrentFolder(), sizeof(data->newFolder));
 
@@ -879,6 +879,8 @@ DECLARE(NewFolder)
 //  Opens folder window to edit the settings of the active folder
 DECLARE(EditFolder) // ULONG wasDoubleClick
 {
+  GETDATA;
+
   ENTER();
 
   // respect the configuration about editing on double click
@@ -886,6 +888,8 @@ DECLARE(EditFolder) // ULONG wasDoubleClick
   {
     struct Folder *folder = GetCurrentFolder();
 
+    // copy the current folder as this will be used for editing
+    memcpy(&data->newFolder, GetCurrentFolder(), sizeof(data->newFolder));
     if(isGroupFolder(folder))
     {
       // don't edit folder groups on double click
@@ -938,8 +942,10 @@ DECLARE(OpenFolderEditWindow) // struct Folder *folder
 
   if(data->folderEditWindow != NULL)
   {
-    // edit the given folder, might be NULL in case of a new folder
-    set(data->folderEditWindow, MUIA_FolderEditWindow_Folder, msg->folder);
+    // set the folder to be edited, the old folder might be NULL in case of a new folder
+    xset(data->folderEditWindow,
+      MUIA_FolderEditWindow_OldFolder, msg->folder,
+      MUIA_FolderEditWindow_EditFolder, &data->newFolder);
   }
 
   RETURN(0);

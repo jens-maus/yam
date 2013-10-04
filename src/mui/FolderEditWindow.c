@@ -97,7 +97,8 @@ struct Data
   Object *ST_BYETEXT;
   Object *GR_MLPRORPERTIES;
 
-  struct Folder *folder;
+  struct Folder *oldFolder;
+  struct Folder *editFolder;
   char screenTitle[SIZE_DEFAULT];
 };
 */
@@ -189,15 +190,15 @@ static BOOL SaveOldFolder(struct IClass *cl, Object *obj)
 
   ENTER();
 
-  memcpy(&folder, data->folder, sizeof(folder));
+  memcpy(&folder, data->oldFolder, sizeof(folder));
   DoMethod(obj, METHOD(GUIToFolder), &folder);
   SHOWSTRING(DBF_FOLDER, folder.Name);
 
   // check if something has changed and if not we exit here immediately
-  if(CompareFolders(&folder, data->folder) == FALSE)
+  if(CompareFolders(&folder, data->oldFolder) == FALSE)
   {
-    BOOL nameChanged = (strcasecmp(data->folder->Name, folder.Name) != 0);
-    BOOL pathChanged = (strcasecmp(data->folder->Path, folder.Path) != 0);
+    BOOL nameChanged = (strcasecmp(data->oldFolder->Name, folder.Name) != 0);
+    BOOL pathChanged = (strcasecmp(data->oldFolder->Path, folder.Path) != 0);
 
     // first check for a valid folder name
     // it is invalid if:
@@ -214,20 +215,15 @@ static BOOL SaveOldFolder(struct IClass *cl, Object *obj)
       // check if the filter name has changed and if it is part of
       // an active filter and if so rename it in the filter definition
       // as well.
-      if(FolderIsUsedByFilters(data->folder->Name) == TRUE)
-        RenameFolderInFilters(data->folder->Name, folder.Name);
+      if(FolderIsUsedByFilters(data->oldFolder->Name) == TRUE)
+        RenameFolderInFilters(data->oldFolder->Name, folder.Name);
 
       // copy the new folder name
-      strlcpy(data->folder->Name, folder.Name, sizeof(data->folder->Name));
+      strlcpy(data->oldFolder->Name, folder.Name, sizeof(data->oldFolder->Name));
 
       // trigger a change of the main window's folder listtree
       set(G->MA->GUI.LV_FOLDERS, MUIA_MainFolderListtree_TreeChanged, TRUE);
     }
-
-    SHOWSTRING(DBF_FOLDER, data->folder->Path);
-    SHOWSTRING(DBF_FOLDER, data->folder->Fullpath);
-    SHOWSTRING(DBF_FOLDER, folder.Path);
-    SHOWSTRING(DBF_FOLDER, folder.Fullpath);
 
     // if the folderpath string has changed
     if(pathChanged == TRUE)
@@ -235,15 +231,15 @@ static BOOL SaveOldFolder(struct IClass *cl, Object *obj)
       LONG result;
 
       // ask the user whether to perform the move or not
-      result = MUI_Request(_app(obj), obj, MUIF_NONE, NULL, tr(MSG_YesNoReq), tr(MSG_FO_MOVEFOLDERTO), data->folder->Fullpath, folder.Fullpath);
+      result = MUI_Request(_app(obj), obj, MUIF_NONE, NULL, tr(MSG_YesNoReq), tr(MSG_FO_MOVEFOLDERTO), data->oldFolder->Fullpath, folder.Fullpath);
       if(result == 1)
       {
         // first unload the old folder image to make it moveable/deletable
-        FO_UnloadFolderImage(data->folder);
+        FO_UnloadFolderImage(data->oldFolder);
 
-        if(Rename(data->folder->Fullpath, folder.Fullpath) == FALSE)
+        if(Rename(data->oldFolder->Fullpath, folder.Fullpath) == FALSE)
         {
-          if(CreateDirectory(folder.Fullpath) == FALSE || FO_MoveFolderDir(&folder, data->folder) == FALSE)
+          if(CreateDirectory(folder.Fullpath) == FALSE || FO_MoveFolderDir(&folder, data->oldFolder) == FALSE)
           {
             ER_NewError(tr(MSG_ER_MOVEFOLDERDIR), folder.Name, folder.Fullpath);
             goto out;
@@ -254,7 +250,7 @@ static BOOL SaveOldFolder(struct IClass *cl, Object *obj)
         if(FO_LoadFolderImage(&folder) == TRUE)
         {
           // remember the newly obtained image pointer
-          data->folder->imageObject = folder.imageObject;
+          data->oldFolder->imageObject = folder.imageObject;
         }
       }
       else
@@ -263,25 +259,25 @@ static BOOL SaveOldFolder(struct IClass *cl, Object *obj)
       }
     }
 
-    strlcpy(data->folder->Path,             folder.Path, sizeof(data->folder->Path));
-    strlcpy(data->folder->Fullpath,         folder.Fullpath, sizeof(data->folder->Fullpath));
-    strlcpy(data->folder->WriteIntro,       folder.WriteIntro, sizeof(data->folder->WriteIntro));
-    strlcpy(data->folder->WriteGreetings,   folder.WriteGreetings, sizeof(data->folder->WriteGreetings));
-    strlcpy(data->folder->MLReplyToAddress, folder.MLReplyToAddress, sizeof(data->folder->MLReplyToAddress));
-    strlcpy(data->folder->MLAddress,        folder.MLAddress, sizeof(data->folder->MLAddress));
-    strlcpy(data->folder->MLPattern,        folder.MLPattern, sizeof(data->folder->MLPattern));
-    data->folder->MLIdentity   = folder.MLIdentity;
-    data->folder->MLSignature  = folder.MLSignature;
-    data->folder->Sort[0]      = folder.Sort[0];
-    data->folder->Sort[1]      = folder.Sort[1];
-    data->folder->MaxAge       = folder.MaxAge;
-    data->folder->ExpireUnread = folder.ExpireUnread;
-    data->folder->Stats        = folder.Stats;
-    data->folder->MLSupport    = folder.MLSupport;
+    strlcpy(data->oldFolder->Path,             folder.Path, sizeof(data->oldFolder->Path));
+    strlcpy(data->oldFolder->Fullpath,         folder.Fullpath, sizeof(data->oldFolder->Fullpath));
+    strlcpy(data->oldFolder->WriteIntro,       folder.WriteIntro, sizeof(data->oldFolder->WriteIntro));
+    strlcpy(data->oldFolder->WriteGreetings,   folder.WriteGreetings, sizeof(data->oldFolder->WriteGreetings));
+    strlcpy(data->oldFolder->MLReplyToAddress, folder.MLReplyToAddress, sizeof(data->oldFolder->MLReplyToAddress));
+    strlcpy(data->oldFolder->MLAddress,        folder.MLAddress, sizeof(data->oldFolder->MLAddress));
+    strlcpy(data->oldFolder->MLPattern,        folder.MLPattern, sizeof(data->oldFolder->MLPattern));
+    data->oldFolder->MLIdentity   = folder.MLIdentity;
+    data->oldFolder->MLSignature  = folder.MLSignature;
+    data->oldFolder->Sort[0]      = folder.Sort[0];
+    data->oldFolder->Sort[1]      = folder.Sort[1];
+    data->oldFolder->MaxAge       = folder.MaxAge;
+    data->oldFolder->ExpireUnread = folder.ExpireUnread;
+    data->oldFolder->Stats        = folder.Stats;
+    data->oldFolder->MLSupport    = folder.MLSupport;
 
     if(xget(data->CY_FTYPE, MUIA_Disabled) == FALSE)
     {
-      enum FolderMode oldmode = data->folder->Mode;
+      enum FolderMode oldmode = data->oldFolder->Mode;
       enum FolderMode newmode = folder.Mode;
       BOOL changed = TRUE;
 
@@ -289,20 +285,20 @@ static BOOL SaveOldFolder(struct IClass *cl, Object *obj)
       {
         changed = FALSE;
       }
-      else if(isProtectedFolder(&folder) == FALSE && isProtectedFolder(data->folder) == TRUE &&
-              data->folder->LoadedMode != LM_VALID)
+      else if(isProtectedFolder(&folder) == FALSE && isProtectedFolder(data->oldFolder) == TRUE &&
+              data->oldFolder->LoadedMode != LM_VALID)
       {
         if((changed = MA_PromptFolderPassword(&folder, obj)) == FALSE)
           goto out;
       }
-      else if(isProtectedFolder(&folder) == TRUE && isProtectedFolder(data->folder) == FALSE)
+      else if(isProtectedFolder(&folder) == TRUE && isProtectedFolder(data->oldFolder) == FALSE)
       {
         if((changed = EnterPassword(obj, &folder)) == FALSE)
           goto out;
       }
 
-      if(isProtectedFolder(&folder) == TRUE && isProtectedFolder(data->folder) == TRUE)
-         strlcpy(folder.Password, data->folder->Password, sizeof(folder.Password));
+      if(isProtectedFolder(&folder) == TRUE && isProtectedFolder(data->oldFolder) == TRUE)
+         strlcpy(folder.Password, data->oldFolder->Password, sizeof(folder.Password));
 
       if(changed == TRUE)
       {
@@ -331,15 +327,15 @@ static BOOL SaveOldFolder(struct IClass *cl, Object *obj)
 
           BusyEnd(busy);
 
-          data->folder->Mode = newmode;
+          data->oldFolder->Mode = newmode;
         }
 
-        strlcpy(data->folder->Password, folder.Password, sizeof(data->folder->Password));
+        strlcpy(data->oldFolder->Password, folder.Password, sizeof(data->oldFolder->Password));
       }
-      data->folder->Type = folder.Type;
+      data->oldFolder->Type = folder.Type;
     }
 
-    if(FO_SaveConfig(data->folder) == TRUE)
+    if(FO_SaveConfig(data->oldFolder) == TRUE)
       success = TRUE;
 
     // if everything went well and either the folder's name or path
@@ -368,7 +364,7 @@ static BOOL SaveNewFolder(struct IClass *cl, Object *obj)
 
   ENTER();
 
-  memset(&folder, 0, sizeof(struct Folder));
+  memset(&folder, 0, sizeof(folder));
   folder.ImageIndex = -1;
 
   if((folder.messages = CreateMailList()) != NULL)
@@ -418,13 +414,13 @@ static BOOL SaveNewFolder(struct IClass *cl, Object *obj)
           if(FO_SaveConfig(&folder) == TRUE)
           {
             // allocate memory for the new folder
-            if((data->folder = memdup(&folder, sizeof(folder))) != NULL)
+            if((data->oldFolder = memdup(&folder, sizeof(folder))) != NULL)
             {
               struct FolderNode *fnode;
 
               // finally add the new folder to the global list
               LockFolderList(G->folders);
-              fnode = AddNewFolderNode(G->folders, data->folder);
+              fnode = AddNewFolderNode(G->folders, data->oldFolder);
               UnlockFolderList(G->folders);
 
               if(fnode != NULL)
@@ -438,12 +434,12 @@ static BOOL SaveNewFolder(struct IClass *cl, Object *obj)
                 if(isGroupFolder(prevFolder))
                 {
                   // add the folder to the end of the current folder group
-                  DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, data->folder->Name, fnode, prevFolder->Treenode, MUIV_NListtree_Insert_PrevNode_Tail, MUIV_NListtree_Insert_Flag_Active);
+                  DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, data->oldFolder->Name, fnode, prevFolder->Treenode, MUIV_NListtree_Insert_PrevNode_Tail, MUIV_NListtree_Insert_Flag_Active);
                 }
                 else
                 {
                   // add the folder after the current folder
-                  DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, data->folder->Name, fnode, MUIV_NListtree_Insert_ListNode_Active, MUIV_NListtree_Insert_PrevNode_Active, MUIV_NListtree_Insert_Flag_Active);
+                  DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, data->oldFolder->Name, fnode, MUIV_NListtree_Insert_ListNode_Active, MUIV_NListtree_Insert_PrevNode_Active, MUIV_NListtree_Insert_Flag_Active);
                 }
 
                 // the MainFolderListtree class has catched the insert operation and
@@ -636,7 +632,7 @@ OVERLOAD(OM_NEW)
     data->ST_BYETEXT          = ST_BYETEXT;
     data->GR_MLPRORPERTIES    = GR_MLPRORPERTIES;
 
-    data->folder = (struct Folder *)GetTagData(ATTR(Folder), (ULONG)NULL, inittags(msg));
+    data->oldFolder = (struct Folder *)GetTagData(ATTR(Folder), (ULONG)NULL, inittags(msg));
 
     DoMethod(G->App, OM_ADDMEMBER, obj);
 
@@ -689,9 +685,16 @@ OVERLOAD(OM_SET)
   {
     switch(tag->ti_Tag)
     {
-      case ATTR(Folder):
+      case ATTR(OldFolder):
       {
-        data->folder = (struct Folder *)tag->ti_Data;
+        data->oldFolder = (struct Folder *)tag->ti_Data;
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
+
+      case ATTR(EditFolder):
+      {
+        data->editFolder = (struct Folder *)tag->ti_Data;
         DoMethod(obj, METHOD(FolderToGUI));
         tag->ti_Tag = TAG_IGNORE;
       }
@@ -723,20 +726,13 @@ OVERLOAD(OM_GET)
 DECLARE(FolderToGUI)
 {
   GETDATA;
-  struct Folder *folder = data->folder;
-  struct Folder dummy;
+  struct Folder *folder = data->editFolder;
   static const int type2cycle[10] = { FT_CUSTOM, FT_CUSTOM, FT_INCOMING, FT_INCOMING, FT_OUTGOING, -1, FT_INCOMING, FT_OUTGOING, FT_CUSTOM, FT_CUSTOM };
   int i;
   BOOL isDefault;
   BOOL isArchive;
 
   ENTER();
-
-  if(folder == NULL)
-  {
-    InitFolder(&dummy, FT_CUSTOM);
-    folder = &dummy;
-  }
 
   isDefault = isDefaultFolder(folder);
   isArchive = isArchiveFolder(folder);
@@ -787,7 +783,7 @@ DECLARE(FolderToGUI)
   DoMethod(obj, METHOD(MLSupportUpdate), !(isDefault || isArchive ? FALSE : folder->MLSupport));
 
   // make the folder name object the active one for new folders
-  if(data->folder == NULL)
+  if(data->oldFolder == NULL)
     set(obj, MUIA_Window_ActiveObject, data->ST_FNAME);
 
   // we make sure the window is at the front if it is already open
@@ -921,11 +917,11 @@ DECLARE(MLAutoDetect)
 
   ENTER();
 
-  if(data->folder != NULL)
+  if(data->oldFolder != NULL)
   {
-    LockMailListShared(data->folder->messages);
+    LockMailListShared(data->oldFolder->messages);
 
-    if(IsMailListEmpty(data->folder->messages) == FALSE)
+    if(IsMailListEmpty(data->oldFolder->messages) == FALSE)
     {
       #define SCANMSGS  5
       struct MailNode *mnode;
@@ -937,13 +933,13 @@ DECLARE(MLAutoDetect)
       int i;
       BOOL success;
 
-      mnode = FirstMailNode(data->folder->messages);
+      mnode = FirstMailNode(data->oldFolder->messages);
       toPattern = mnode->mail->To.Address;
       toAddress = mnode->mail->To.Address;
 
       i = 0;
       success = TRUE;
-      ForEachMailNode(data->folder->messages, mnode)
+      ForEachMailNode(data->oldFolder->messages, mnode)
       {
         // skip the first mail as this has already been processed before
         if(i > 0)
@@ -981,7 +977,7 @@ DECLARE(MLAutoDetect)
           break;
       }
 
-      UnlockMailList(data->folder->messages);
+      UnlockMailList(data->oldFolder->messages);
 
       if(success == TRUE)
       {
@@ -1058,9 +1054,9 @@ DECLARE(SaveFolder)
 
   ENTER();
 
-  if(data->folder != NULL)
+  if(data->oldFolder != NULL)
   {
-    D(DBF_FOLDER, "old folder=%08lx '%s'", data->folder, SafeStr(data->folder->Name));
+    D(DBF_FOLDER, "old folder=%08lx '%s'", data->oldFolder, SafeStr(data->oldFolder->Name));
     newFolder = FALSE;
     success = SaveOldFolder(cl, obj);
   }
@@ -1076,7 +1072,7 @@ DECLARE(SaveFolder)
     MA_SetSortFlag();
     DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_Redraw, MUIV_NList_Redraw_Title);
     DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_Sort);
-    MA_ChangeFolder(FO_GetFolderByName(data->folder->Name, NULL), FALSE);
+    MA_ChangeFolder(FO_GetFolderByName(data->oldFolder->Name, NULL), FALSE);
 
     // Save the folder tree only if we just created a new folder, otherwise
     // a temporarily modified open/close state of folder groups will be saved
@@ -1084,7 +1080,7 @@ DECLARE(SaveFolder)
     if(newFolder == TRUE)
       FO_SaveTree();
 
-    DisplayStatistics(data->folder, TRUE);
+    DisplayStatistics(data->oldFolder, TRUE);
 
     // ask for disposing
     set(obj, ATTR(DisposeRequest), TRUE);
