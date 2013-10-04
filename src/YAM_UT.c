@@ -4842,7 +4842,7 @@ LONG PGPCommand(const char *progname, const char *options, const int flags)
 
   busy = BusyBegin(BUSY_TEXT);
   BusyText(busy, tr(MSG_BusyPGPrunning), "");
-  error = LaunchCommand(command, LAUNCHF_IGNORE_RC, OUT_REDIRECT);
+  error = LaunchCommand(command, 0, OUT_REDIRECT);
   BusyEnd(busy);
 
   if(error > 0 && !hasNoErrorsFlag(flags))

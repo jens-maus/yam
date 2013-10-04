@@ -9,6 +9,8 @@ $URL$
 
   * mui/MainFolderListtree.c, mui/FolderEditWindow.c: fixed the broken "like
     current folder" choice when creating a new folder.
+  * YAM_UT.c: don't ignore the return code when executing PGP commands. This
+    refs #427.
 
 2013-10-03 Thore Böckelmann <tboeckel@gmx.de>
 
