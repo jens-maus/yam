@@ -191,6 +191,7 @@ anything      .|[\n\t\r]
 <*>"&dollar;"      { return ht_DOLLAR;       }
 <*>"&percnt;"      { return ht_PERCNT;       }
 <*>"&amp;"         { return ht_AMP;          }
+<*>"&#8217;"       |
 <*>"&apos;"        { return ht_APOS;         }
 <*>"&lpar;"        { return ht_LPAR;         }
 <*>"&rpar;"        { return ht_RPAR;         }
