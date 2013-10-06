@@ -8,6 +8,8 @@ $URL$
 2013-10-06 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_UT.c: let FileToBuffer() return the number of read bytes, too.
+  * YAM_RE.c: don't exclude the letter part's file from determining a proper
+    file name extension. This closes #437.
 
 2013-10-04 Thore Böckelmann <tboeckel@gmx.de>
 

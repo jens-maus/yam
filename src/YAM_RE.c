@@ -2307,7 +2307,7 @@ BOOL RE_DecodePart(struct Part *rp)
 
       // we try to get a proper file extension for our decoded part which we
       // in fact first try to get out of the user's MIME configuration.
-      if(rp->Nr != PART_RAW && rp->Nr != rp->rmData->letterPartNum)
+      if(rp->Nr != PART_RAW)
       {
         // we first try to identify the file extension via the user
         // definable MIME type list configuration.
