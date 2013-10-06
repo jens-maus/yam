@@ -555,7 +555,8 @@ void RE_DisplayMIME(const char *srcfile, const char *dstfile,
            codesetName != NULL && stricmp(codesetName, "UTF8") != 0 && stricmp(codesetName, "UTF-8") != 0)
         {
           struct codeset *dstCodeset;
-          FILE *srcfh;
+          char *buf;
+          size_t buflen;
 
           // get the codeset struct from the name
           if((dstCodeset = CodesetsFind(codesetName,
@@ -565,58 +566,39 @@ void RE_DisplayMIME(const char *srcfile, const char *dstfile,
             dstCodeset = G->localCodeset;
           }
 
-          if((srcfh = fopen(srcfile, "r")) != NULL)
+          if((buf = FileToBuffer(srcfile, &buflen)) != NULL && buflen != 0)
           {
             FILE *dstfh;
 
-            setvbuf(srcfh, NULL, _IOFBF, SIZE_FILEBUF);
-
             if((dstfh = fopen(dstfile, "w")) != NULL)
             {
-              char *dbuftmp = NULL;
-              char *dbuf = NULL;
-              size_t dbuflen;
+              char *cbuf;
+              size_t cbuflen = 0;
 
-              setvbuf(dstfh, NULL, _IOFBF, SIZE_FILEBUF);
-
-              // read in all text/data into dstrbuf.
-              // dstrfread will append it to the previous dynamic buffer
-              while(dstrfread(&dbuftmp, SIZE_FILEBUF, srcfh) > 0)
-                dstrcat(&dbuf, dbuftmp);
-
-              // if dstrbuf is not empty lets go and convert it accordingly
-              if((dbuflen = dstrlen(dbuf)) > 0)
+              // convert the utf8 data to local
+              if((cbuf = CodesetsUTF8ToStr(CSA_Source,          buf,
+                                           CSA_SourceLen,       buflen,
+                                           CSA_DestCodeset,     dstCodeset,
+                                           CSA_DestLenPtr,      &cbuflen,
+                                           CSA_MapForeignChars, C->MapForeignChars,
+                                           TAG_DONE)) != NULL && cbuflen != 0)
               {
-                char *cbuf;
-                ULONG cbuflen = 0;
+                // now that we have converted the text to the final codeset
+                // lets write it out to dstfh
+                if(fwrite(cbuf, 1, cbuflen, dstfh) != (size_t)cbuflen)
+                  E(DBF_MIME, "error while trying to write out converted data");
 
-                // convert the utf8 data to local
-                if((cbuf = CodesetsUTF8ToStr(CSA_Source,          dbuf,
-                                             CSA_SourceLen,       dbuflen,
-                                             CSA_DestCodeset,     dstCodeset,
-                                             CSA_DestLenPtr,      &cbuflen,
-                                             CSA_MapForeignChars, C->MapForeignChars,
-                                             TAG_DONE)) != NULL && cbuflen > 0)
-                {
-                  // now that we have converted the text to the final codeset
-                  // lets write it out to dstfh
-                  if(fwrite(cbuf, 1, cbuflen, dstfh) != (size_t)cbuflen)
-                    E(DBF_MIME, "error while trying to write out converted data");
-
-                  CodesetsFreeA(cbuf, NULL);
-                }
-                else
-                  E(DBF_MIME, "error while converting UTF8 to %s", dstCodeset->name);
+                CodesetsFreeA(cbuf, NULL);
               }
               else
-                E(DBF_MIME, "couldn't dstrfread() enough data");
+                E(DBF_MIME, "error while converting UTF8 to %s", dstCodeset->name);
 
-              dstrfree(dbuf);
-              dstrfree(dbuftmp);
               fclose(dstfh);
             }
+            else
+              E(DBF_MIME, "couldn't open destination file '%s'", dstfile);
 
-            fclose(srcfh);
+            free(buf);
           }
         }
         else
