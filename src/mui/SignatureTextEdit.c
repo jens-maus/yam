@@ -200,13 +200,14 @@ DECLARE(EditExternally)
       if(asprintf(&editor, "%s \"%s\"", C->Editor, tf->Filename) >= 0)
       {
         char *text;
+        size_t textlen;
 
         // launch the external editor synchronously (wait until it returns)
         LaunchCommand(editor, 0, OUT_NIL);
         free(editor);
 
         // refresh the signature in the internal editor after the external is finished
-        if((text = FileToBuffer(tf->Filename)) != NULL)
+        if((text = FileToBuffer(tf->Filename, &textlen)) != NULL)
         {
           char *dstText;
           BOOL converted = FALSE;
@@ -218,7 +219,7 @@ DECLARE(EditExternally)
             dstText = CodesetsConvertStr(CSA_SourceCodeset,   dstCodeset,
                                          CSA_DestCodeset,     G->localCodeset,
                                          CSA_Source,          text,
-                                         CSA_SourceLen,       strlen(text),
+                                         CSA_SourceLen,       textlen,
                                          CSA_MapForeignChars, C->MapForeignChars,
                                          TAG_DONE);
 

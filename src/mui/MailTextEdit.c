@@ -401,10 +401,11 @@ DECLARE(LoadFromFile) // const char *file, struct codeset *srcCodeset, ULONG fla
 {
   BOOL result = FALSE;
   char *text;
+  size_t textlen;
 
   ENTER();
 
-  if((text = FileToBuffer(msg->file)) != NULL)
+  if((text = FileToBuffer(msg->file, &textlen)) != NULL)
   {
     char *dstText;
     ULONG dstLen = 0;
@@ -420,7 +421,7 @@ DECLARE(LoadFromFile) // const char *file, struct codeset *srcCodeset, ULONG fla
       dstText = CodesetsConvertStr(CSA_SourceCodeset,   msg->srcCodeset,
                                    CSA_DestCodeset,     G->localCodeset,
                                    CSA_Source,          text,
-                                   CSA_SourceLen,       strlen(text),
+                                   CSA_SourceLen,       textlen,
                                    CSA_DestLenPtr,      &dstLen,
                                    CSA_MapForeignChars, C->MapForeignChars,
                                    TAG_DONE);

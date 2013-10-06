@@ -186,7 +186,7 @@ static void SaveBirthdayCheckFile(const char *alias)
     // get the current date
     DateStamp2String(todayDateString, sizeof(todayDateString), NULL, DSS_DATE, TZC_NONE);
 
-    if((buf = FileToBuffer(BIRTHDAYCHECKFILE)) != NULL)
+    if((buf = FileToBuffer(BIRTHDAYCHECKFILE, NULL)) != NULL)
     {
       // check if we really work on a YAM BirthdayCheck file
       if(strnicmp(buf, "YBC", 3) == 0)

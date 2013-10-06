@@ -1738,10 +1738,10 @@ BOOL DeleteMailDir(const char *dir, BOOL isroot)
 ///
 /// FileToBuffer
 //  Reads a complete file into memory
-char *FileToBuffer(const char *file)
+char *FileToBuffer(const char *file, size_t *outsize)
 {
   char *text = NULL;
-  LONG size;
+  LONG size = 0;
 
   ENTER();
 
@@ -1768,6 +1768,9 @@ char *FileToBuffer(const char *file)
       text = NULL;
     }
   }
+
+  if(outsize != NULL)
+    *outsize = size;
 
   RETURN(text);
   return text;

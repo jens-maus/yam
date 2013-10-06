@@ -311,7 +311,7 @@ char *   GetRealPath(const char *path);
 LONG     LaunchCommand(const char *cmd, ULONG flags, enum OutputDefType outdef);
 char *   BuildAddress(char *buffer, size_t buflen, const char *address, const char *name);
 void     ExtractAddress(const char *line, struct Person *pe);
-char *   FileToBuffer(const char *file);
+char *   FileToBuffer(const char *file, size_t *outsize);
 LONG     FileCount(const char *directory, const char *pattern);
 char *   AddPath(char *dst, const char *src, const char *add, const size_t size);
 void     FinishUnpack(const char *file);

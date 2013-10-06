@@ -1658,7 +1658,7 @@ static char *ExpandText(const char *src, struct ExpandTextData *etd)
 
         case 'h':
         {
-          if((p = FileToBuffer(etd->HeaderFile)))
+          if((p = FileToBuffer(etd->HeaderFile, NULL)) != NULL)
           {
             dstrcat(&dst, p);
             free(p);
@@ -3483,7 +3483,7 @@ void WriteSignature(FILE *out, struct SignatureNode *sn, BOOL separator)
       char sigPath[SIZE_PATHFILE];
 
       // read the signature text from the specified file
-      sigText = FileToBuffer(CreateFilename(sn->filename, sigPath, sizeof(sigPath)));
+      sigText = FileToBuffer(CreateFilename(sn->filename, sigPath, sizeof(sigPath)), NULL);
     }
     else
     {
