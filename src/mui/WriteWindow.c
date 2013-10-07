@@ -4392,36 +4392,33 @@ DECLARE(ComposeMail) // enum WriteMode mode
   {
     struct UserIdentityNode *uin = wmData->identity;
 
-    if((uin->sentMailList = CloneMailList(newMailList)) != NULL)
+    // close the write window now
+    set(obj, MUIA_Window_Open, FALSE);
+
+    if(uin->smtpServer != NULL)
     {
-      BOOL mailSent = FALSE;
-
-      // close the write window now
-      set(obj, MUIA_Window_Open, FALSE);
-
-      if(uin->smtpServer != NULL)
+      if(hasServerInUse(uin->smtpServer) == FALSE)
       {
-        if(hasServerInUse(uin->smtpServer) == FALSE)
+        if((uin->sentMailList = CloneMailList(newMailList)) != NULL)
         {
           // mark the server as "in use"
           setFlag(uin->smtpServer->flags, MSF_IN_USE);
 
-          mailSent = (DoAction(NULL, TA_SendMails, TT_SendMails_UserIdentity, uin,
+          if(DoAction(NULL, TA_SendMails, TT_SendMails_UserIdentity, uin,
                                                    TT_SendMails_Mode, SENDMAIL_ACTIVE_USER,
-                                                   TAG_DONE) != NULL);
-          if(mailSent == FALSE)
+                                                   TAG_DONE) == NULL)
+          {
             clearFlag(uin->smtpServer->flags, MSF_IN_USE);
+            DeleteMailList(uin->sentMailList);
+            uin->sentMailList = NULL;
+          }
         }
-        else
-          W(DBF_MAIL, "SMTP server '%s' in use, couldn't sent out mail", uin->smtpServer->description);
       }
-
-      if(mailSent == FALSE)
-      {
-        DeleteMailList(uin->sentMailList);
-        uin->sentMailList = NULL;
-      }
+      else
+        W(DBF_MAIL, "SMTP server '%s' in use, couldn't sent out mail", uin->smtpServer->description);
     }
+    else
+      E(DBF_MAIL, "no SMTP server configured for user identity '%s'", uin->description);
   }
 
   // make sure to dispose the window data by calling
