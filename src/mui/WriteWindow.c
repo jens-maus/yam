@@ -4201,10 +4201,20 @@ DECLARE(ComposeMail) // enum WriteMode mode
                 // remove and free the mail
                 RemoveMailFromFolder(refMail, TRUE, TRUE);
 
+                // update the references
+                D(DBF_MAIL, "replace reference mail %08lx by %08lx", refMail, newMail);
+                DereferenceMail(refMail);
                 refMail = newMail;
+                ReferenceMail(refMail);
               }
               else if(wmData->mode == NMM_NEW && refMail != NULL)
+              {
+                // update the references
+                D(DBF_MAIL, "replace reference mail %08lx by %08lx", refMail, newMail);
+                DereferenceMail(refMail);
                 refMail = newMail;
+                ReferenceMail(refMail);
+              }
 
               // replace the mail pointer in the reference mail list
               mnode->mail = refMail;
