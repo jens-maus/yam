@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-10-08 Marko Raina <marko.raina@fimnet.fi>
+
+  * locale/finnish.ct: update to the current version of yam.cd
+
 2013-10-07 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/WriteWindow.c: fixed a possible duplicate freeing of mails when saving
