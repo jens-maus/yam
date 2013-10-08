@@ -183,17 +183,9 @@ DECLARE(EditExternally)
     if((tf = OpenTempFile(NULL)) != NULL)
     {
       char *editor = NULL;
-      struct codeset *dstCodeset = NULL;
-
-      if(C->DefaultEditorCodeset[0] != '\0')
-      {
-        dstCodeset = CodesetsFind(C->DefaultEditorCodeset,
-                                  CSA_CodesetList, G->codesetsList,
-                                  CSA_FallbackToDefault, FALSE);
-      }
 
       // export the signature text to a temporary file
-      DoMethod(obj, MUIM_MailTextEdit_SaveToFile, tf->Filename, dstCodeset);
+      DoMethod(obj, MUIM_MailTextEdit_SaveToFile, tf->Filename, G->editorCodeset);
 
       // launch the external editor and wait until it is
       // finished...
@@ -213,10 +205,10 @@ DECLARE(EditExternally)
           BOOL converted = FALSE;
 
           // convert the text from the editor back to our local charset
-          if(dstCodeset != NULL && stricmp(dstCodeset->name, G->localCodeset->name) != 0)
+          if(stricmp(G->editorCodeset->name, G->localCodeset->name) != 0)
           {
-            // convert from the srcCodeset to the localCodeset
-            dstText = CodesetsConvertStr(CSA_SourceCodeset,   dstCodeset,
+            // convert from the editorCodeset to the localCodeset
+            dstText = CodesetsConvertStr(CSA_SourceCodeset,   G->editorCodeset,
                                          CSA_DestCodeset,     G->localCodeset,
                                          CSA_Source,          text,
                                          CSA_SourceLen,       textlen,

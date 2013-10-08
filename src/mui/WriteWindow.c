@@ -3401,13 +3401,13 @@ DECLARE(InsertAddresses) // enum RcptType type, char **addr, ULONG add
 DECLARE(LaunchEditor)
 {
   GETDATA;
+
   ENTER();
 
   if(C->Editor[0] != '\0')
   {
     struct WriteMailData *wmData = data->wmData;
     char buffer[SIZE_COMMAND+SIZE_PATHFILE];
-    struct codeset *dstCodeset;
 
     // stop any pending file notification.
     if(wmData->fileNotifyActive == TRUE)
@@ -3423,18 +3423,8 @@ DECLARE(LaunchEditor)
       nnset(data->RG_PAGE, MUIA_Group_ActivePage, 0);
     }
 
-    // check if we should for a specific editor codeset
-    if(C->DefaultEditorCodeset[0] != '\0')
-    {
-      dstCodeset = CodesetsFind(C->DefaultEditorCodeset,
-                                CSA_CodesetList, G->codesetsList,
-                                CSA_FallbackToDefault, FALSE);
-    }
-    else
-      dstCodeset = data->wmData->codeset;
-
     // save the mail text in the currently selected codeset
-    DoMethod(data->TE_EDIT, MUIM_MailTextEdit_SaveToFile, data->wmData->filename, dstCodeset);
+    DoMethod(data->TE_EDIT, MUIM_MailTextEdit_SaveToFile, data->wmData->filename, G->editorCodeset);
 
     // remember the modification date of the file
     if(ObtainFileInfo(data->wmData->filename, FI_DATE, &data->wmData->lastFileChangeTime) == FALSE)

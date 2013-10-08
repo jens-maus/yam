@@ -3116,32 +3116,32 @@ void ValidateConfig(struct Config *co, BOOL update)
   // minimum. This will open the config window in case of an invalid config.
   IsValidConfig(C);
 
+  // get the system's default codeset
+  G->systemCodeset = CodesetsFindA(NULL, NULL);
+
   // we try to find out the system charset and validate it with the
   // currently configured local charset
   if(co->SysCharsetCheck == TRUE)
   {
-    struct codeset *sysCodeset;
-
-    // get the system's default codeset
-    if((sysCodeset = CodesetsFindA(NULL, NULL)) != NULL)
+    if(G->systemCodeset != NULL)
     {
       // now we check whether the currently set localCharset matches
       // the system charset or not
-      if(co->DefaultLocalCodeset[0] != '\0' && sysCodeset->name[0] != '\0')
+      if(co->DefaultLocalCodeset[0] != '\0' && G->systemCodeset->name[0] != '\0')
       {
-        if(stricmp(co->DefaultLocalCodeset, sysCodeset->name) != 0)
+        if(stricmp(co->DefaultLocalCodeset, G->systemCodeset->name) != 0)
         {
           int res = MUI_Request(G->App, refWindow, MUIF_NONE,
                                 tr(MSG_CO_CHARSETWARN_TITLE),
                                 tr(MSG_CO_CHARSETWARN_BT),
                                 tr(MSG_CO_CHARSETWARN),
-                                co->DefaultLocalCodeset, sysCodeset->name);
+                                co->DefaultLocalCodeset, G->systemCodeset->name);
 
           // if the user has clicked on Change, we do
           // change the charset and save it immediatly
           if(res == 1)
           {
-            strlcpy(co->DefaultLocalCodeset, sysCodeset->name, sizeof(co->DefaultLocalCodeset));
+            strlcpy(co->DefaultLocalCodeset, G->systemCodeset->name, sizeof(co->DefaultLocalCodeset));
             saveAtEnd = TRUE;
           }
           else if(res == 2)
@@ -3151,9 +3151,9 @@ void ValidateConfig(struct Config *co, BOOL update)
           }
         }
       }
-      else if(sysCodeset->name[0] != '\0')
+      else if(G->systemCodeset->name[0] != '\0')
       {
-        strlcpy(co->DefaultLocalCodeset, sysCodeset->name, sizeof(co->DefaultLocalCodeset));
+        strlcpy(co->DefaultLocalCodeset, G->systemCodeset->name, sizeof(co->DefaultLocalCodeset));
         saveAtEnd = TRUE;
       }
       else
@@ -3198,11 +3198,9 @@ void ValidateConfig(struct Config *co, BOOL update)
     if(res == 1)
     {
       // fallback to the system's default codeset
-      if((G->localCodeset = CodesetsFindA(NULL, NULL)) != NULL)
-      {
-        strlcpy(co->DefaultLocalCodeset, G->localCodeset->name, sizeof(co->DefaultLocalCodeset));
-        saveAtEnd = TRUE;
-      }
+      G->localCodeset = G->systemCodeset;
+      strlcpy(co->DefaultLocalCodeset, G->systemCodeset->name, sizeof(co->DefaultLocalCodeset));
+      saveAtEnd = TRUE;
     }
   }
 
@@ -3221,11 +3219,9 @@ void ValidateConfig(struct Config *co, BOOL update)
     if(res == 1)
     {
       // fallback to the system's default codeset
-      if((G->writeCodeset = CodesetsFindA(NULL, NULL)) != NULL)
-      {
-        strlcpy(co->DefaultWriteCodeset, G->writeCodeset->name, sizeof(co->DefaultWriteCodeset));
-        saveAtEnd = TRUE;
-      }
+      G->writeCodeset = G->systemCodeset;
+      strlcpy(co->DefaultWriteCodeset, G->systemCodeset->name, sizeof(co->DefaultWriteCodeset));
+      saveAtEnd = TRUE;
     }
   }
 
@@ -3243,14 +3239,10 @@ void ValidateConfig(struct Config *co, BOOL update)
                           co->DefaultEditorCodeset);
     if(res == 1)
     {
-      struct codeset *tmpcs;
-
       // fallback to the system's default codeset
-      if((tmpcs = CodesetsFindA(NULL, NULL)) != NULL)
-      {
-        strlcpy(co->DefaultEditorCodeset, tmpcs->name, sizeof(co->DefaultEditorCodeset));
-        saveAtEnd = TRUE;
-      }
+      G->editorCodeset = G->systemCodeset;
+      strlcpy(co->DefaultEditorCodeset, G->systemCodeset->name, sizeof(co->DefaultEditorCodeset));
+      saveAtEnd = TRUE;
     }
   }
 

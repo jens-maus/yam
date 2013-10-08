@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-10-08 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MAf.c, Config.c: the folder index is converted from the more or less
+    fixed system charset rather than the configurable local charset to UTF8.
+    This avoids corrupted index files in case a user chose UTF8 as local
+    charset, because in this case no conversion happens and non-ASCII
+    characters are not converted to UTF8 and let the index loading process
+    fail due to false conversions. This closes #436.
+
 2013-10-08 Marko Raina <marko.raina@fimnet.fi>
 
   * locale/finnish.ct: update to the current version of yam.cd
