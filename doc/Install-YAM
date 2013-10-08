@@ -1,5 +1,5 @@
 ;
-; $VER: Install-YAM 1.31 (4.7.2013) (c) 2000-2013 by YAM Open Source Team
+; $VER: Install-YAM 1.32 (8.10.2013) (c) 2000-2013 by YAM Open Source Team
 ; Language support added by Sönke Tesch/ATO
 ;
 ; $Id$
@@ -16,14 +16,15 @@
 (set #def_lang_spanish             $040)
 (set #def_lang_turkish             $080)
 (set #def_lang_hungarian           $100)
-;(set #def_lang_dutch               $200)
-;(set #def_lang_polish              $400)
+(set #def_lang_finnish             $200)
+;(set #def_lang_dutch               $400)
+;(set #def_lang_polish              $800)
 ; add more languages here
 ; (set #def_lang_<language name>     bitmask)
 ;
 ; accents of languages should be appended at the end rather than somewhere in the middle,
 ; because only AmigaOS 4.x can handle them.
-(set #def_lang_english_british     $200)
+(set #def_lang_english_british     $400)
 ; add more accents of languages here
 ; (set #def_lang_<language name>     bitmask)
 ; ///
@@ -411,6 +412,7 @@
         (set #cat_name_spanish               "spanish")
         (set #cat_name_turkish               "turkish")
         (set #cat_name_hungarian             "hungarian")
+        (set #cat_name_finnish               "finnish")
         (set #cat_name_english_british       "english-british")
     )
     ; AmigaOS 3.x and MorphOS use localized locale names
@@ -426,6 +428,7 @@
         (set #cat_name_spanish               "español")
         (set #cat_name_turkish               "türkçe")
         (set #cat_name_hungarian             "magyar")
+        (set #cat_name_finnish               "suomi")
     )
 )
 
@@ -727,6 +730,20 @@
                     (source "/Catalogs/hungarian")
                     (choices "YAM.catalog")
                     (dest (tackon Cat_dir #cat_name_hungarian))
+                    (help @copyfiles-help)
+                )
+            )
+        )
+
+        ; finnish catalog file
+        (if (bitand catalog_lang #def_lang_finnish)
+            (
+                (makedir (tackon Cat_dir #cat_name_finnish))
+
+                (copyfiles
+                    (source "/Catalogs/finnish")
+                    (choices "YAM.catalog")
+                    (dest (tackon Cat_dir #cat_name_finnish))
                     (help @copyfiles-help)
                 )
             )
