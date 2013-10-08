@@ -136,6 +136,7 @@ OVERLOAD(OM_NEW)
                           "\n"
                           "Vit Sindlar (czech)\n"
                           "Thore Boeckelmann (english-british)\n"
+                          "Marko Raina (finnish)\n"
                           "Alexandre Balaban (french)\n"
                           "Thore Boeckelmann, Jens Maus (german)\n"
                           "Miklos Gubucz (hungarian)\n"
