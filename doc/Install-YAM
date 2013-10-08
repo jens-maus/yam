@@ -1,5 +1,5 @@
 ;
-; $VER: Install-YAM 1.32 (8.10.2013) (c) 2000-2013 by YAM Open Source Team
+; $VER: Install-YAM 1.33 (8.10.2013) (c) 2000-2013 by YAM Open Source Team
 ; Language support added by Sönke Tesch/ATO
 ;
 ; $Id$
@@ -16,15 +16,15 @@
 (set #def_lang_spanish             $040)
 (set #def_lang_turkish             $080)
 (set #def_lang_hungarian           $100)
-(set #def_lang_finnish             $200)
-;(set #def_lang_dutch               $400)
-;(set #def_lang_polish              $800)
+(set #def_lang_polish              $200)
+(set #def_lang_finnish             $400)
+;(set #def_lang_dutch               $800)
 ; add more languages here
 ; (set #def_lang_<language name>     bitmask)
 ;
 ; accents of languages should be appended at the end rather than somewhere in the middle,
 ; because only AmigaOS 4.x can handle them.
-(set #def_lang_english_british     $400)
+(set #def_lang_english_british     $800)
 ; add more accents of languages here
 ; (set #def_lang_<language name>     bitmask)
 ; ///
@@ -104,7 +104,7 @@
 ; /// ***** Polish
 (if (= @language "polski")
     (
-        (set #def_cat_lang #def_lang_english)
+        (set #def_cat_lang #def_lang_polish)
         (set #acknowledgeOS (cat "Prosze potwierdzic automatycznie\n"
                                  "wykryty system operacyjny:"))
         (set #YAM_dir  (cat "Prosze wybrac katalog dla programu YAM\n"
@@ -356,6 +356,43 @@
     )
 )
 ; ///
+; /// ***** Suomi
+(if (= @language "soumi")
+    (
+        (set #def_cat_lang #def_lang_finnish)
+        (set #acknowledgeOS (cat "Tarkista käyttöjärjestelmäsi\n"
+                                 "automaattinen tunnistus:"))
+        (set #YAM_dir  (cat "Valitse hakemisto YAMia varten.\n"
+                            "(Uutta hakemistoa EI luoda!)"))
+        (set #lang_catalog (cat "Mikä käännöstiedosto asennetaan?\n"
+                                "(Englanninkieliset tekstit on sisäänrakennettu)"))
+        (set #ask_charsets "Haluatko asentaa codesets.libraryn tarvitsemat kirjaimistotiedostot?")
+        (set #no_way_back_warning (cat "VAROITUS!!\n"
+                                       "(jos haluat päivittää jo asennetun YAM 2.4-version)\n"
+                                       "\n"
+                                       "Postin nimeämistapa on muuttunut täysin. Kun käynnistät YAM -version 2.8p1 ensimmäistä kertaa, kaikki olemassa olevat postisi muunnetaan uuden tavan mukaisiksi. Tämän jälkeen YAM 2.4 ei enää pysty käsittelemään niitä. Joten sinun kannattaa varmuuskopioida kaikki sähköpostisi ENNEN kuin käynnistät YAM 2.8p1:n.\n"
+                                       "\n"
+                                       "Kuitenkin voit ongelmitta asentaa YAM-version 2.4 ja YAM-version 2.8p1 eri hakemistoihin."))
+        (set #faq_and_bugtracker (cat "\n"
+                                      "Jos sinulla on mitä tahansa YAMia koskevia kysymyksiä, voit kysyä niitä YAM-keskustelufoorumissa:\n"
+                                      "http://forum.yam.ch/\n"
+                                      "\n"
+                                      "Usein kysyttyjä kysymyksiä on jo vastattu YAM FAQ-sivulla:\n"
+                                      "http://faq.yam.ch/\n"
+                                      "\n"
+                                      "Jos löydät YAMista ohjelmointivirheen, ilmoita se YAMin bugtracker-palveluun:\n"
+                                      "http://bugs.yam.ch/"))
+        (set #done_1   (cat "\n"
+                            "YAM on asennettu onnistuneesti.\n"
+                            "\n"
+                            "Tuplaklikkaa \"YAM\" -kuvaketta\n"))
+        (set #done_2   (cat "\n"
+                            "hakemistossa ja pääset kokeilemaan sitä.\n"
+                            "\n"
+                            "Pidä hauskaa..."))
+    )
+)
+; ///
 ;----------------------------------------------------------------------------
 ; /// Checking environment
 (set EXEC_ver (getversion "exec.library" (resident)))
@@ -470,6 +507,8 @@
                      "Español"
                      "Türkçe"
                      "Magyar"
+                     "Polski"
+                     "Suomi"
                      "English (british)"
             )
             (default #def_cat_lang)
@@ -489,6 +528,8 @@
                      "Español"
                      "Türkçe"
                      "Magyar"
+                     "Polski"
+                     "Suomi"
             )
             (default #def_cat_lang)
         )
