@@ -126,10 +126,12 @@ OVERLOAD(OM_NEW)
   Object *pop;
   Object *list;
   ULONG controlChar;
+  BOOL allowMultibyte;
 
   ENTER();
 
   controlChar = GetTagData(ATTR(ControlChar), 0, inittags(msg));
+  allowMultibyte = GetTagData(ATTR(AllowMultibyteCodesets), TRUE, inittags(msg));
 
   if((obj = DoSuperNew(cl, obj,
     MUIA_Popstring_String, TX_CODESET = TextObject,
@@ -144,6 +146,7 @@ OVERLOAD(OM_NEW)
     MUIA_Popobject_Object, NListviewObject,
       MUIA_NListview_Horiz_ScrollBar, MUIV_NListview_HSB_None,
       MUIA_NListview_NList, list = CodesetPopupListObject,
+        MUIA_CodesetPopupList_AllowMultibyteCodesets, allowMultibyte,
       End,
     End,
     TAG_MORE, inittags(msg))) != NULL)

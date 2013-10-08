@@ -101,6 +101,8 @@ struct codeset *CodesetsFindBest(Tag tag1, ...)
 { return CodesetsFindBestA((struct TagItem *)&tag1); }
 STRPTR CodesetsConvertStr(Tag tag1, ...)
 { return CodesetsConvertStrA((struct TagItem *)&tag1); }
+struct codesetList *CodesetsListCreate(Tag tag1, ...)
+{ return CodesetsListCreateA((struct TagItem *)&tag1); }
 BOOL CodesetsListDelete(Tag tag1, ...)
 { return CodesetsListDeleteA((struct TagItem *)&tag1); }
 STRPTR CodesetsUTF8ToStr(Tag tag1, ...)
@@ -188,6 +190,13 @@ STRPTR CodesetsConvertStr(Tag tag1, ...)
 {
   AROS_SLOWSTACKTAGS_PRE(tag1)
   retval = (IPTR)CodesetsConvertStrA((struct TagItem *)AROS_SLOWSTACKTAGS_ARG(tag1));
+  AROS_SLOWSTACKTAGS_POST
+}
+
+struct codesetList *CodesetsListCreate(Tag tag1, ...)
+{
+  AROS_SLOWSTACKTAGS_PRE(tag1)
+  retval = (IPTR)CodesetsListCreateA((struct TagItem *)AROS_SLOWSTACKTAGS_ARG(tag1));
   AROS_SLOWSTACKTAGS_POST
 }
 

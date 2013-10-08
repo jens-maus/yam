@@ -13,6 +13,10 @@ $URL$
     charset, because in this case no conversion happens and non-ASCII
     characters are not converted to UTF8 and let the index loading process
     fail due to false conversions. This closes #436.
+  * mui/CodesetsPopupList.c: made inclusion of multibyte charsets (i.e. UTF8)
+    optional. This is required for the local default codeset because nothing in
+    the system can handle UTF8 reliably yet. This requires the yet to be
+    released version 6.16 of codesets.library.
 
 2013-10-08 Marko Raina <marko.raina@fimnet.fi>
 

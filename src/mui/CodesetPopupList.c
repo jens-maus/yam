@@ -38,6 +38,11 @@
 
 #include "Debug.h"
 
+#warning remove this definition as soon as codesets.library 6.16 has been released
+#ifndef CSA_AllowMultibyteCodesets
+#define CSA_AllowMultibyteCodesets CODESETSLIB_TAG(30)
+#endif
+
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
@@ -54,10 +59,12 @@ OVERLOAD(OM_NEW)
 
     TAG_MORE, inittags(msg))) != NULL)
   {
+    BOOL allowMultibyte = GetTagData(ATTR(AllowMultibyteCodesets), TRUE, inittags(msg));
     STRPTR *array;
 
     // Build list of available codesets
     if((array = CodesetsSupported(CSA_CodesetList, G->codesetsList,
+                                  CSA_AllowMultibyteCodesets, allowMultibyte,
                                   TAG_DONE)) != NULL)
     {
       DoMethod(obj, MUIM_NList_Insert, array, -1, MUIV_NList_Insert_Sorted);

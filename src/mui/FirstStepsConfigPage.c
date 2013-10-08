@@ -102,6 +102,7 @@ OVERLOAD(OM_NEW)
         Child, Label2(tr(MSG_CO_DEFAULTCHARSET)),
         Child, PO_DEFCODESET_LOCAL = CodesetPopupObject,
           MUIA_CodesetPopup_ControlChar, tr(MSG_CO_DEFAULTCHARSET),
+          MUIA_CodesetPopup_AllowMultibyteCodesets, FALSE,
         End,
 
         Child, Label2(tr(MSG_CO_TimeZone)),
