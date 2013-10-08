@@ -735,7 +735,7 @@ CATALOGS = \
 	$(LOCALE)/czech.catalog \
 	$(LOCALE)/dutch.catalog \
 	$(LOCALE)/english-british.catalog \
-	$(LOCALE)/finnish.catalog
+	$(LOCALE)/finnish.catalog \
 	$(LOCALE)/french.catalog \
 	$(LOCALE)/german.catalog \
 	$(LOCALE)/greek.catalog \
