@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-10-09 Thore Böckelmann <tboeckel@gmx.de>
+
+  * tcp/pop3.c: sped up the UIDL comparison by elemininating lots of iterations
+    over the list of available mails.
+
 2013-10-08 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MAf.c, Config.c: the folder index is converted from the more or less

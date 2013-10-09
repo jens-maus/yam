@@ -821,6 +821,8 @@ static BOOL FilterDuplicates(struct TransferContext *tc)
       // get the first line the pop server returns after the UIDL command
       if(ReceiveLineFromHost(tc->connection, tc->lineBuffer, sizeof(tc->lineBuffer)) > 0)
       {
+        struct MailTransferNode *lastTNode = NULL;
+
         // we get the "unique-id list" as long as we haven't received a
         // finishing octet
         while(tc->connection->abort == FALSE && tc->connection->error == CONNECTERR_NO_ERROR && strncmp(tc->lineBuffer, ".\r\n", 3) != 0)
@@ -843,8 +845,13 @@ static BOOL FilterDuplicates(struct TransferContext *tc)
             if((p = strchr(uidl, '\r')) != NULL)
               *p = '\0';
 
+            if(lastTNode != NULL)
+              tnode = NextMailTransferNode(lastTNode);
+            else
+              tnode = FirstMailTransferNode(tc->transferList);
+
             // search through our transferList
-            ForEachMailTransferNode(tc->transferList, tnode)
+            if(tnode != NULL)
             {
               if(tnode->index == num)
               {
@@ -871,10 +878,20 @@ static BOOL FilterDuplicates(struct TransferContext *tc)
                     }
                   }
                 }
-
+              }
+              else
+              {
+                W(DBF_UIDL, "mail enumeration doesn't match, expected %ld, got %ld", tnode->index, num);
                 break;
               }
             }
+            else
+            {
+              W(DBF_UTIL, "premature end of list");
+              break;
+            }
+
+            lastTNode = tnode;
           }
 
           if(tc->connection->abort == TRUE || tc->connection->error != CONNECTERR_NO_ERROR)
