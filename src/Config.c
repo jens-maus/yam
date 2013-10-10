@@ -1445,56 +1445,58 @@ int LoadConfig(struct Config *co, const char *fname, struct FolderList **oldfold
                 // if nothing of the above string matched than the FI string
                 // is probably a rule definition so we check it here
 
+                // the old config uses no number for the first condition and
+                // numbers additional conditions as 2,3,...
                 if(strnicmp(q, "Field", 5) == 0)
                 {
-                  int n = atoi(q+5);
+                  int n = (q[5] == '\0') ? 1 : atoi(q+5);
 
-                  while((rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)) == NULL)
+                  while((rule = GetFilterRule(lastFilter, n)) == NULL)
                     CreateNewRule(lastFilter, SEARCHF_DOS_PATTERN);
 
                   rule->searchMode = atoi(value);
                 }
                 else if(strnicmp(q, "SubField", 8) == 0)
                 {
-                  int n = atoi(q+8);
+                  int n = (q[8] == '\0') ? 1 : atoi(q+8);
 
-                  while((rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)) == NULL)
+                  while((rule = GetFilterRule(lastFilter, n)) == NULL)
                     CreateNewRule(lastFilter, SEARCHF_DOS_PATTERN);
 
                   rule->subSearchMode = atoi(value);
                 }
                 else if(strnicmp(q, "CustomField", 11) == 0)
                 {
-                  int n = atoi(q+11);
+                  int n = (q[11] == '\0') ? 1 : atoi(q+11);
 
-                  while((rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)) == NULL)
+                  while((rule = GetFilterRule(lastFilter, n)) == NULL)
                     CreateNewRule(lastFilter, SEARCHF_DOS_PATTERN);
 
                   strlcpy(rule->customField, value, sizeof(rule->customField));
                 }
                 else if(strnicmp(q, "Comparison", 10) == 0)
                 {
-                  int n = atoi(q+10);
+                  int n = (q[10] == '\0') ? 1 : atoi(q+10);
 
-                  while((rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)) == NULL)
+                  while((rule = GetFilterRule(lastFilter, n)) == NULL)
                     CreateNewRule(lastFilter, SEARCHF_DOS_PATTERN);
 
                   rule->comparison = atoi(value);
                 }
                 else if(strnicmp(q, "Match", 5) == 0)
                 {
-                  int n = atoi(q+5);
+                  int n = (q[5] == '\0') ? 1 : atoi(q+5);
 
-                  while((rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)) == NULL)
+                  while((rule = GetFilterRule(lastFilter, n)) == NULL)
                     CreateNewRule(lastFilter, SEARCHF_DOS_PATTERN);
 
                   strlcpy(rule->matchPattern, value2, sizeof(rule->matchPattern));
                 }
                 else if(strnicmp(q, "CaseSens", 8) == 0)
                 {
-                  int n = atoi(q+8);
+                  int n = (q[8] == '\0') ? 1 : atoi(q+8);
 
-                  while((rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)) == NULL)
+                  while((rule = GetFilterRule(lastFilter, n)) == NULL)
                     CreateNewRule(lastFilter, SEARCHF_DOS_PATTERN);
 
                   if(Txt2Bool(value) == TRUE)
@@ -1504,9 +1506,9 @@ int LoadConfig(struct Config *co, const char *fname, struct FolderList **oldfold
                 }
                 else if(strnicmp(q, "Substring", 9) == 0)
                 {
-                  int n = atoi(q+9);
+                  int n = (q[9] == '\0') ? 1 : atoi(q+9);
 
-                  while((rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)) == NULL)
+                  while((rule = GetFilterRule(lastFilter, n)) == NULL)
                     CreateNewRule(lastFilter, SEARCHF_DOS_PATTERN);
 
                   if(Txt2Bool(value) == TRUE)
@@ -1516,9 +1518,9 @@ int LoadConfig(struct Config *co, const char *fname, struct FolderList **oldfold
                 }
                 else if(strnicmp(q, "DOSPattern", 10) == 0)
                 {
-                  int n = atoi(q+10);
+                  int n = (q[10] == '\0') ? 1 : atoi(q+10);
 
-                  while((rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)) == NULL)
+                  while((rule = GetFilterRule(lastFilter, n)) == NULL)
                     CreateNewRule(lastFilter, SEARCHF_DOS_PATTERN);
 
                   if(Txt2Bool(value) == TRUE)
@@ -1528,9 +1530,9 @@ int LoadConfig(struct Config *co, const char *fname, struct FolderList **oldfold
                 }
                 else if(strnicmp(q, "SkipEncrypted", 13) == 0)
                 {
-                  int n = atoi(q+10);
+                  int n = (q[10] == '\0') ? 1 : atoi(q+10);
 
-                  while((rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)) == NULL)
+                  while((rule = GetFilterRule(lastFilter, n)) == NULL)
                     CreateNewRule(lastFilter, SEARCHF_DOS_PATTERN);
 
                   if(Txt2Bool(value) == TRUE)

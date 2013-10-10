@@ -12,6 +12,7 @@ $URL$
     to become permanent.
   * Config.c: added some debug output to the config validation to point out why
     an updated configuration needs to be saved.
+  * Config.c: fixed the wrong loading of filters with multiple conditions.
 
 2013-10-09 Thore Böckelmann <tboeckel@gmx.de>
 
