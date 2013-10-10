@@ -515,6 +515,8 @@ OVERLOAD(MUIM_ConfigPage_GUIToConfig)
 
   ENTER();
 
+  // transfer any pending changes from the GUI to the current filter entry
+  DoMethod(obj, METHOD(GUIToFilter));
   // bring NList elements and Exec list elements into sync
   SortNListToExecList(data->LV_RULES, &CE->filterList);
 

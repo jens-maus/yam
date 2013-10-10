@@ -13,6 +13,9 @@ $URL$
   * Config.c: added some debug output to the config validation to point out why
     an updated configuration needs to be saved.
   * Config.c: fixed the wrong loading of filters with multiple conditions.
+  * mui/FiltersConfigPage.c: make sure to transfer any pending changes from the
+    GUI to the current filter entry when closing the config window. This closes
+    #441.
 
 2013-10-09 Thore Böckelmann <tboeckel@gmx.de>
 
