@@ -2979,6 +2979,7 @@ void ValidateConfig(struct Config *co, BOOL update, BOOL saveChanges)
       }
       while(IsUniqueMailServerID(&co->pop3ServerList, id) == FALSE);
 
+      D(DBF_CONFIG, "replaced invalid id of POP3 server '%s'", msn->description);
       msn->id = id;
 
       saveAtEnd = TRUE;
@@ -3004,6 +3005,7 @@ void ValidateConfig(struct Config *co, BOOL update, BOOL saveChanges)
       }
       while(IsUniqueMailServerID(&co->smtpServerList, id) == FALSE);
 
+      D(DBF_CONFIG, "replaced invalid id of SMTP server '%s'", msn->description);
       msn->id = id;
 
       saveAtEnd = TRUE;
@@ -3029,6 +3031,7 @@ void ValidateConfig(struct Config *co, BOOL update, BOOL saveChanges)
       }
       while(FindUserIdentityByID(&co->userIdentityList, id) != NULL);
 
+      D(DBF_CONFIG, "replaced invalid id of user identity '%s'", uin->description);
       uin->id = id;
 
       saveAtEnd = TRUE;
@@ -3055,6 +3058,7 @@ void ValidateConfig(struct Config *co, BOOL update, BOOL saveChanges)
     if((sn = CreateSignatureFromFile(".altsignature2", tr(MSG_CO_AltSig2))) != NULL)
       AddTail((struct List *)&co->signatureList, (struct Node *)sn);
 
+    D(DBF_CONFIG, "added default signatures");
     saveAtEnd = TRUE;
   }
 
@@ -3079,6 +3083,7 @@ void ValidateConfig(struct Config *co, BOOL update, BOOL saveChanges)
 
       sn->id = id;
 
+      D(DBF_CONFIG, "replaced invalid id of signature '%s'", sn->description);
       saveAtEnd = TRUE;
     }
   }
@@ -3141,6 +3146,7 @@ void ValidateConfig(struct Config *co, BOOL update, BOOL saveChanges)
           // change the charset and save it immediatly
           if(res == 1)
           {
+            D(DBF_CONFIG, "updated local codeset from '%s' to '%s'", co->DefaultLocalCodeset, G->systemCodeset->name);
             strlcpy(co->DefaultLocalCodeset, G->systemCodeset->name, sizeof(co->DefaultLocalCodeset));
             saveAtEnd = TRUE;
           }
@@ -3153,6 +3159,7 @@ void ValidateConfig(struct Config *co, BOOL update, BOOL saveChanges)
       }
       else if(G->systemCodeset->name[0] != '\0')
       {
+        D(DBF_CONFIG, "updated local codeset from '%s' to '%s'", co->DefaultLocalCodeset, G->systemCodeset->name);
         strlcpy(co->DefaultLocalCodeset, G->systemCodeset->name, sizeof(co->DefaultLocalCodeset));
         saveAtEnd = TRUE;
       }
@@ -3167,18 +3174,21 @@ void ValidateConfig(struct Config *co, BOOL update, BOOL saveChanges)
   // charset to 'iso-8859-1' as this one is probably the most common one.
   if(co->DefaultLocalCodeset[0] == '\0')
   {
+    D(DBF_CONFIG, "updated local codeset from '%s' to '%s'", co->DefaultLocalCodeset, "ISO-8859-1");
     strlcpy(co->DefaultLocalCodeset, "ISO-8859-1", sizeof(co->DefaultLocalCodeset));
     saveAtEnd = TRUE;
   }
 
   if(co->DefaultWriteCodeset[0] == '\0')
   {
+    D(DBF_CONFIG, "updated write codeset from '%s' to '%s'", co->DefaultWriteCodeset, co->DefaultLocalCodeset);
     strlcpy(co->DefaultWriteCodeset, co->DefaultLocalCodeset, sizeof(co->DefaultWriteCodeset));
     saveAtEnd = TRUE;
   }
 
   if(co->DefaultEditorCodeset[0] == '\0')
   {
+    D(DBF_CONFIG, "updated editor codeset from '%s' to '%s'", co->DefaultEditorCodeset, co->DefaultLocalCodeset);
     strlcpy(co->DefaultEditorCodeset, co->DefaultLocalCodeset, sizeof(co->DefaultEditorCodeset));
     saveAtEnd = TRUE;
   }
@@ -3188,7 +3198,7 @@ void ValidateConfig(struct Config *co, BOOL update, BOOL saveChanges)
   if((G->localCodeset = CodesetsFind(co->DefaultLocalCodeset,
                                      CSA_CodesetList,       G->codesetsList,
                                      CSA_FallbackToDefault, FALSE,
-                                    TAG_DONE)) == NULL)
+                                     TAG_DONE)) == NULL)
   {
     int res = MUI_Request(G->App, refWindow, MUIF_NONE,
                           tr(MSG_CO_CHARSETWARN_TITLE),
@@ -3199,6 +3209,7 @@ void ValidateConfig(struct Config *co, BOOL update, BOOL saveChanges)
     {
       // fallback to the system's default codeset
       G->localCodeset = G->systemCodeset;
+      D(DBF_CONFIG, "updated local codeset from '%s' to '%s'", co->DefaultLocalCodeset, G->systemCodeset->name);
       strlcpy(co->DefaultLocalCodeset, G->systemCodeset->name, sizeof(co->DefaultLocalCodeset));
       saveAtEnd = TRUE;
     }
@@ -3219,6 +3230,7 @@ void ValidateConfig(struct Config *co, BOOL update, BOOL saveChanges)
     if(res == 1)
     {
       // fallback to the system's default codeset
+      D(DBF_CONFIG, "updated write codeset from '%s' to '%s'", co->DefaultWriteCodeset, G->systemCodeset->name);
       G->writeCodeset = G->systemCodeset;
       strlcpy(co->DefaultWriteCodeset, G->systemCodeset->name, sizeof(co->DefaultWriteCodeset));
       saveAtEnd = TRUE;
@@ -3240,6 +3252,7 @@ void ValidateConfig(struct Config *co, BOOL update, BOOL saveChanges)
     if(res == 1)
     {
       // fallback to the system's default codeset
+      D(DBF_CONFIG, "updated editor codeset from '%s' to '%s'", co->DefaultEditorCodeset, G->systemCodeset->name);
       G->editorCodeset = G->systemCodeset;
       strlcpy(co->DefaultEditorCodeset, G->systemCodeset->name, sizeof(co->DefaultEditorCodeset));
       saveAtEnd = TRUE;
@@ -3268,6 +3281,7 @@ void ValidateConfig(struct Config *co, BOOL update, BOOL saveChanges)
       }
       else if(res == 2)
       {
+        D(DBF_CONFIG, "disabled AmiSSL check");
         co->AmiSSLCheck = FALSE;
         saveAtEnd = TRUE;
       }
@@ -3279,6 +3293,7 @@ void ValidateConfig(struct Config *co, BOOL update, BOOL saveChanges)
     // the library to be working fine.
     if(AmiSSLMasterBase != NULL && AmiSSLBase != NULL && G->TR_UseableTLS == TRUE)
     {
+      D(DBF_CONFIG, "(re)enabled AmiSSL check");
       co->AmiSSLCheck = TRUE;
       saveAtEnd = TRUE;
     }
@@ -3289,11 +3304,13 @@ void ValidateConfig(struct Config *co, BOOL update, BOOL saveChanges)
     // limit the spam probability threshold to sensible values
     if(co->SpamProbabilityThreshold < 75)
     {
+      D(DBF_CONFIG, "changed spam probability threshold from %ld to %ld", co->SpamProbabilityThreshold, 75);
       co->SpamProbabilityThreshold = 75;
       saveAtEnd = TRUE;
     }
     else if(co->SpamProbabilityThreshold > 99)
     {
+      D(DBF_CONFIG, "changed spam probability threshold from %ld to %ld", co->SpamProbabilityThreshold, 99);
       co->SpamProbabilityThreshold = 99;
       saveAtEnd = TRUE;
     }
@@ -3304,12 +3321,14 @@ void ValidateConfig(struct Config *co, BOOL update, BOOL saveChanges)
   if(co->StatusChangeDelay < 1000)
   {
     // a delay less than one second is not possible
+    D(DBF_CONFIG, "changed status change delay %ld to %ld", co->StatusChangeDelay, 1000);
     co->StatusChangeDelay = 1000;
     saveAtEnd = TRUE;
   }
   else if(co->StatusChangeDelay > 10000)
   {
     // a delay longer than ten seconds is not possible, either
+    D(DBF_CONFIG, "changed status change delay %ld to %ld", co->StatusChangeDelay, 10000);
     co->StatusChangeDelay = 10000;
     saveAtEnd = TRUE;
   }
@@ -3317,6 +3336,7 @@ void ValidateConfig(struct Config *co, BOOL update, BOOL saveChanges)
   // check for valid birthday check times
   if(co->BirthdayCheckTime.ds_Minute < 0 || co->BirthdayCheckTime.ds_Minute > 23*60+59)
   {
+    D(DBF_CONFIG, "changed birthday check interval from %ld to %ld", co->BirthdayCheckTime.ds_Minute, 10*60);
     co->BirthdayCheckTime.ds_Days = 0;
     co->BirthdayCheckTime.ds_Minute = 10*60;
     co->BirthdayCheckTime.ds_Tick = 0;

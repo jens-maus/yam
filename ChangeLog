@@ -10,6 +10,8 @@ $URL$
   * Config.c: validating the configuration will save a possibly modified
     configuration only if explicitly allowed to do so to avoid volatile changes
     to become permanent.
+  * Config.c: added some debug output to the config validation to point out why
+    an updated configuration needs to be saved.
 
 2013-10-09 Thore Böckelmann <tboeckel@gmx.de>
 
