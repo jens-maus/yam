@@ -1461,8 +1461,8 @@ static void InitAfterLogin(void)
   if(ToolbarCacheInit() == FALSE)
     Abort(NULL); // exit the application
 
-  // make sure the config has valid values
-  ValidateConfig(C, FALSE);
+  // make sure the config has valid values and save any changes automatically
+  ValidateConfig(C, FALSE, TRUE);
 
   // create all necessary GUI elements
   D(DBF_STARTUP, "creating GUI...");

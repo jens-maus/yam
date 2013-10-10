@@ -2893,7 +2893,7 @@ static int DetectPGP(const struct Config *co)
 ///
 /// ValidateConfig
 //  Validates a configuration, update GUI etc.
-void ValidateConfig(struct Config *co, BOOL update)
+void ValidateConfig(struct Config *co, BOOL update, BOOL saveChanges)
 {
   BOOL saveAtEnd = FALSE;
   BOOL updateReadWindows = FALSE;
@@ -3459,8 +3459,10 @@ void ValidateConfig(struct Config *co, BOOL update)
     UpdateAllFolderSettings(co);
   }
 
-  // if some items have modified the config we do save it again.
-  if(saveAtEnd == TRUE)
+  // if some items have been modified we save the configuration,
+  // but only if we allowed to do so
+  // forbidding will occur when the configuration is "used" only
+  if(saveAtEnd == TRUE && saveChanges == TRUE)
     SaveConfig(co, G->CO_PrefsFile);
 
   // update possibly open read windows

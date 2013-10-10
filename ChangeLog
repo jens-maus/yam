@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-10-10 Thore Böckelmann <tboeckel@gmx.de>
+
+  * Config.c: validating the configuration will save a possibly modified
+    configuration only if explicitly allowed to do so to avoid volatile changes
+    to become permanent.
+
 2013-10-09 Thore Böckelmann <tboeckel@gmx.de>
 
   * tcp/pop3.c: sped up the UIDL comparison by elemininating lots of iterations

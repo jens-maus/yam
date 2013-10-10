@@ -415,7 +415,9 @@ DECLARE(SaveConfigAs)
       // first let the currently visible page flush any pending changes to the configuration
       DoMethod(data->PG_PAGES[data->visiblePage], MUIM_ConfigPage_GUIToConfig);
 
-      ValidateConfig(CE, TRUE);
+      // forbid automatically saving the config after validation,
+      // it will be saved anyway later
+      ValidateConfig(CE, TRUE, FALSE);
       NewPrefsFile(cl, obj, cname);
       SaveConfig(CE, cname);
     }
@@ -545,7 +547,8 @@ DECLARE(Close) // ULONG how
           D(DBF_CONFIG, "config wasn't altered, skipped copy operations.");
 
         // validate that C has valid values
-        ValidateConfig(C, TRUE);
+        // forbid automatically saving the config after validation
+        ValidateConfig(C, TRUE, FALSE);
 
         // we save the configuration if the user
         // has pressed on 'Save' only.
