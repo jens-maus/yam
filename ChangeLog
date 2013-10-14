@@ -15,6 +15,7 @@ $URL$
   * mui/MainMailList.c, mui/ReadWindow.c: use the folder's current sort order to
     determine the next to be shown mail instead of the configured order. This
     refs #76.
+  * YAM_MA.c: fixed a memory leak when disabling the embedded pane.
 
 2013-10-10 Thore Böckelmann <tboeckel@gmx.de>
 

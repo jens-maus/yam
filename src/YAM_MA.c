@@ -3968,6 +3968,9 @@ void MA_SetupEmbeddedReadPane(void)
         DoMethod(mailViewGroup, OM_REMMEMBER, readPaneObj);
         DoMethod(mailViewGroup, OM_REMMEMBER, mailBalanceObj);
 
+        // clear all contents of the currenly displayed mail
+        DoMethod(readPaneObj, MUIM_ReadMailGroup_Clear, MUIF_NONE);
+
         // dispose the objects now that we don't need them anymore
         MUI_DisposeObject(readPaneObj);
         MUI_DisposeObject(mailBalanceObj);
