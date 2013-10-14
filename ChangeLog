@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-10-14 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/ReadWindow.c: determine the next to be shown mail after deleting/moving
+    the current one on basis of the current sort order instead of the direction
+    of the last navigational movement within the folder. This refs #76.
+
 2013-10-10 Thore Böckelmann <tboeckel@gmx.de>
 
   * Config.c: validating the configuration will save a possibly modified

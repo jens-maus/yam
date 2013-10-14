@@ -103,7 +103,6 @@ struct Data
 
   char  windowTitle[SIZE_SUBJECT+1];
   char  screenTitle[SIZE_SUBJECT+1];
-  int   lastDirection;
   int   windowNumber;
 };
 */
@@ -852,9 +851,8 @@ DECLARE(MoveMailRequest)
       int pos = SelectMessage(mail); // select the message in the folder and return position
       int entries;
 
-      // depending on the last move direction we
-      // set it back
-      if(data->lastDirection == -1)
+      // determine the index of the mail to be selected afterwards
+      if(srcfolder->Sort[0] < 0 || srcfolder->Sort[1] < 0)
       {
         if(pos-1 >= 0)
           set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Active, --pos);
@@ -971,9 +969,8 @@ DECLARE(ArchiveMailRequest)
     int entries;
     BOOL closeAfter = FALSE;
 
-    // depending on the last move direction we
-    // set it back
-    if(data->lastDirection == -1)
+    // determine the index of the mail to be selected afterwards
+    if(srcfolder->Sort[0] < 0 || srcfolder->Sort[1] < 0)
     {
       if(pos-1 >= 0)
         set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Active, --pos);
@@ -1030,9 +1027,8 @@ DECLARE(DeleteMailRequest) // ULONG qualifier
     BOOL delatonce = isAnyFlagSet(msg->qualifier, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT));
     BOOL closeAfter = FALSE;
 
-    // depending on the last move direction we
-    // set it back
-    if(data->lastDirection == -1)
+    // determine the index of the mail to be selected afterwards
+    if(folder->Sort[0] < 0 || folder->Sort[1] < 0)
     {
       if(pos-1 >= 0)
         set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Active, --pos);
@@ -1097,9 +1093,8 @@ DECLARE(ClassifyMessage) // enum BayesClassification class
       int pos = SelectMessage(mail); // select the message in the folder and return position
       int entries;
 
-      // depending on the last move direction we
-      // set it back
-      if(data->lastDirection == -1)
+      // determine the index of the mail to be selected afterwards
+      if(folder->Sort[0] < 0 || folder->Sort[1] < 0)
       {
         if(pos-1 >= 0)
           set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Active, --pos);
@@ -1153,9 +1148,8 @@ DECLARE(ClassifyMessage) // enum BayesClassification class
       int pos = SelectMessage(mail); // select the message in the folder and return position
       int entries;
 
-      // depending on the last move direction we
-      // set it back
-      if(data->lastDirection == -1)
+      // determine the index of the mail to be selected afterwards
+      if(folder->Sort[0] < 0 || folder->Sort[1] < 0)
       {
         if(pos-1 >= 0)
           set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Active, --pos);
@@ -1345,9 +1339,6 @@ DECLARE(SwitchMail) // LONG direction, ULONG qualifier
   folder = mail->Folder;
   direction = msg->direction;
   onlynew = isAnyFlagSet(msg->qualifier, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT));
-
-  // save the direction we are going to process now
-  data->lastDirection = direction;
 
   // we have to make sure that the folder the next/prev mail will
   // be showed from is active, that`s why we call ChangeFolder with TRUE.
