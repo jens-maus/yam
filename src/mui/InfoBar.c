@@ -143,6 +143,7 @@ OVERLOAD(OM_NEW)
     MUIA_Group_Horiz,   TRUE,
     Child, HGroup,
       InnerSpacing(0,0),
+      MUIA_HorizWeight, 50,
       Child, folderString = TextObject,
         MUIA_HorizWeight,    0,
         MUIA_HorizDisappear, 2,
