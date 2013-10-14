@@ -779,7 +779,6 @@ static void MA_MoveCopySingle(struct Mail *mail, struct Folder *to, const ULONG 
 
         // restore the old filename in case it was changed by TransferMailFile()
         strlcpy(mail->MailFile, mfile, sizeof(mail->MailFile));
-        strlcpy(newMail->MailFile, mfile, sizeof(newMail->MailFile));
       }
     }
     else
