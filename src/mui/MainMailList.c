@@ -324,8 +324,15 @@ OVERLOAD(OM_GET)
 
   switch(((struct opGet *)msg)->opg_AttrID)
   {
-    case ATTR(PrimarySortOrder): *store = xget(obj, MUIA_NList_SortType); return TRUE;
-    case ATTR(SecondarySortOrder): *store = xget(obj, MUIA_NList_SortType2); return TRUE;
+    case ATTR(SortOrderReversed):
+    {
+      LONG sortOrder[2];
+
+      sortOrder[0] = xget(obj, MUIA_NList_SortType);
+      sortOrder[1] = xget(obj, MUIA_NList_SortType2);
+      *store = (sortOrder[0] < 0 || sortOrder[1] < 0) ? TRUE : FALSE;
+      return TRUE;
+    }
   }
 
   return DoSuperMethodA(cl, obj, msg);

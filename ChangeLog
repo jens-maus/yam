@@ -16,6 +16,9 @@ $URL$
     determine the next to be shown mail instead of the configured order. This
     refs #76.
   * YAM_MA.c: fixed a memory leak when disabling the embedded pane.
+  * YAM_MA.c, mui/ReadWindow.c, mui/MainMailList.c: deleting or archiving a
+    single mail will now behave consistently in every situation and correctly
+    respect the folder's current sort order. This closes #76.
 
 2013-10-10 Thore Böckelmann <tboeckel@gmx.de>
 

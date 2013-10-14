@@ -123,12 +123,11 @@ OVERLOAD(OM_GET)
     case ATTR(MainList):             *store = (ULONG)data->mainListObjects[LT_MAIN]; return TRUE;
     case ATTR(LastActiveMail):       *store = (ULONG)data->lastActiveMail; return TRUE;
     case ATTR(Freeze):               *store = (BOOL)data->listIsFreezed; return TRUE;
-    case ATTR(PrimarySortOrder):     *store = xget(data->mainListObjects[data->activeList], MUIA_NList_SortType); return TRUE;
-    case ATTR(SecondarySortOrder):   *store = xget(data->mainListObjects[data->activeList], MUIA_NList_SortType2); return TRUE;
 
     // we also return foreign attributes
     case MUIA_NList_Active:
     case MUIA_NList_Entries:
+    case MUIA_MainMailList_SortOrderReversed:
     {
       *store = xget(data->mainListObjects[data->activeList], ((struct opGet *)msg)->opg_AttrID);
       return TRUE;

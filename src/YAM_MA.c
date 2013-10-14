@@ -70,6 +70,7 @@
 #include "mui/ClassesExtra.h"
 #include "mui/InfoBar.h"
 #include "mui/MainFolderListtree.h"
+#include "mui/MainMailList.h"
 #include "mui/MainMailListGroup.h"
 #include "mui/MainWindow.h"
 #include "mui/MainWindowToolbar.h"
@@ -1961,14 +1962,30 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
 
       if(okToDelete == TRUE)
       {
+        struct Folder *folder = GetCurrentFolder();
         struct BusyNode *busy;
         char selectedStr[SIZE_SMALL];
         struct MailNode *mnode;
         ULONG deleted;
         BOOL ignoreall = FALSE;
         ULONG delFlags = (delatonce == TRUE) ? DELF_AT_ONCE|DELF_QUIET|DELF_CLOSE_WINDOWS|DELF_UPDATE_APPICON|DELF_CHECK_CONNECTIONS : DELF_QUIET|DELF_CLOSE_WINDOWS|DELF_UPDATE_APPICON|DELF_CHECK_CONNECTIONS;
+        LONG selectNext = -1;
 
-        D(DBF_MAIL, "going to delete %ld mails from folder '%s'", mlist->count, GetCurrentFolder()->Name);
+        D(DBF_MAIL, "going to delete %ld mails from folder '%s'", mlist->count, folder->Name);
+
+        if(mlist->count == 1)
+        {
+          // there is only one mail to be deleted
+          // now determine the next to be selected mail
+          if(xget(G->MA->GUI.PG_MAILLIST, MUIA_MainMailList_SortOrderReversed) == TRUE)
+          {
+            LONG pos;
+
+            pos = xget(G->MA->GUI.PG_MAILLIST, MUIA_NList_Active);
+            if(pos >= 1)
+              selectNext = pos-1;
+          }
+        }
 
         set(lv, MUIA_NList_Quiet, TRUE);
 
@@ -2003,6 +2020,10 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
         }
 
         BusyEnd(busy);
+
+        if(selectNext != -1)
+          set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Active, selectNext);
+
         set(lv, MUIA_NList_Quiet, FALSE);
 
         // modify the toolbar buttons, if the toolbar is visible
@@ -2012,21 +2033,22 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
         // modify the menu items
         set(gui->MI_DELETE, MUIA_Menuitem_Enabled, TRUE);
 
-        if(delatonce == TRUE || C->RemoveAtOnce == TRUE || GetCurrentFolder() == delfolder || isSpamFolder(GetCurrentFolder()))
-          AppendToLogfile(LF_NORMAL, 20, tr(MSG_LOG_Deleting), deleted, GetCurrentFolder()->Name);
+        if(delatonce == TRUE || C->RemoveAtOnce == TRUE || folder == delfolder || isSpamFolder(folder))
+          AppendToLogfile(LF_NORMAL, 20, tr(MSG_LOG_Deleting), deleted, folder->Name);
         else
-          AppendToLogfile(LF_NORMAL, 22, tr(MSG_LOG_Moving), deleted, GetCurrentFolder()->Name, delfolder->Name);
+          AppendToLogfile(LF_NORMAL, 22, tr(MSG_LOG_Moving), deleted, folder->Name, delfolder->Name);
 
         // update the stats for the deleted folder,
         // but only if it isn't the current one and only
         // if the mail was not instantly deleted without moving
         // it to the delfolder
-        if(delatonce == FALSE && delfolder != GetCurrentFolder())
+        if(delatonce == FALSE && delfolder != folder)
           DisplayStatistics(delfolder, FALSE);
 
         // then update the statistics for the folder we moved the
         // mail from as well.
-        DisplayStatistics(GetCurrentFolder(), TRUE);
+        DisplayStatistics(folder, TRUE);
+
         MA_ChangeSelected(FALSE);
       }
 
@@ -2072,6 +2094,21 @@ void MA_ClassifyMessage(enum BayesClassification bclass)
       char selectedStr[SIZE_SMALL];
       struct MailNode *mnode;
       ULONG i;
+      LONG selectNext = -1;
+
+      if(mlist->count == 1)
+      {
+        // there is only one mail to be reclassified
+        // now determine the next to be selected mail
+        if(xget(G->MA->GUI.PG_MAILLIST, MUIA_MainMailList_SortOrderReversed) == TRUE)
+        {
+          LONG pos;
+
+          pos = xget(G->MA->GUI.PG_MAILLIST, MUIA_NList_Active);
+          if(pos >= 1)
+            selectNext = pos-1;
+        }
+      }
 
       set(lv, MUIA_NList_Quiet, TRUE);
       snprintf(selectedStr, sizeof(selectedStr), "%d", (int)mlist->count);
@@ -2125,8 +2162,12 @@ void MA_ClassifyMessage(enum BayesClassification bclass)
               // if the mail has not been moved to another folder before we move it to the incoming folder now.
               if(moveToIncoming == TRUE)
                 MA_MoveCopySingle(mail, incomingFolder, MVCPF_CLOSE_WINDOWS);
+              else
+                selectNext = -1;
             }
           }
+          else
+            selectNext = -1;
         }
 
         // if BusyProgress() returns FALSE, then the user aborted
@@ -2134,6 +2175,10 @@ void MA_ClassifyMessage(enum BayesClassification bclass)
           break;
       }
       BusyEnd(busy);
+
+      if(selectNext != -1)
+        set(lv, MUIA_NList_Active, selectNext);
+
       set(lv, MUIA_NList_Quiet, FALSE);
 
       DeleteMailList(mlist);
@@ -3230,14 +3275,29 @@ HOOKPROTONHNONP(MA_ArchiveMessageFunc, void)
 
   ENTER();
 
+  // get the list of the currently marked mails
   if((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE)) != NULL)
   {
     struct BusyNode *busy;
     char selectedStr[SIZE_SMALL];
     struct MailNode *mnode;
     ULONG i;
+    LONG selectNext = -1;
 
-    // get the list of the currently marked mails
+    if(mlist->count == 1)
+    {
+      // there is only one mail to be deleted and the embedded read pane is active
+      // now determine the next to be selected mail
+      if(xget(G->MA->GUI.PG_MAILLIST, MUIA_MainMailList_SortOrderReversed) == TRUE)
+      {
+        LONG pos;
+
+        pos = xget(G->MA->GUI.PG_MAILLIST, MUIA_NList_Active);
+        if(pos >= 1)
+          selectNext = pos-1;
+      }
+    }
+
     snprintf(selectedStr, sizeof(selectedStr), "%ld", mlist->count);
     set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, TRUE);
     busy = BusyBegin(BUSY_PROGRESS_ABORT);
@@ -3254,6 +3314,10 @@ HOOKPROTONHNONP(MA_ArchiveMessageFunc, void)
         break;
     }
     BusyEnd(busy);
+
+    if(selectNext != -1)
+      set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Active, selectNext);
+
     set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, FALSE);
 
     DeleteMailList(mlist);
