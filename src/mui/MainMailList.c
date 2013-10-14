@@ -317,6 +317,21 @@ OVERLOAD(OM_DISPOSE)
 }
 
 ///
+/// OVERLOAD(OM_GET)
+OVERLOAD(OM_GET)
+{
+  IPTR *store = ((struct opGet *)msg)->opg_Storage;
+
+  switch(((struct opGet *)msg)->opg_AttrID)
+  {
+    case ATTR(PrimarySortOrder): *store = xget(obj, MUIA_NList_SortType); return TRUE;
+    case ATTR(SecondarySortOrder): *store = xget(obj, MUIA_NList_SortType2); return TRUE;
+  }
+
+  return DoSuperMethodA(cl, obj, msg);
+}
+
+///
 /// OVERLOAD(MUIM_NList_Construct)
 OVERLOAD(MUIM_NList_Construct)
 {

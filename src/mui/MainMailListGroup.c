@@ -123,6 +123,8 @@ OVERLOAD(OM_GET)
     case ATTR(MainList):             *store = (ULONG)data->mainListObjects[LT_MAIN]; return TRUE;
     case ATTR(LastActiveMail):       *store = (ULONG)data->lastActiveMail; return TRUE;
     case ATTR(Freeze):               *store = (BOOL)data->listIsFreezed; return TRUE;
+    case ATTR(PrimarySortOrder):     *store = xget(data->mainListObjects[data->activeList], MUIA_NList_SortType); return TRUE;
+    case ATTR(SecondarySortOrder):   *store = xget(data->mainListObjects[data->activeList], MUIA_NList_SortType2); return TRUE;
 
     // we also return foreign attributes
     case MUIA_NList_Active:
@@ -136,6 +138,7 @@ OVERLOAD(OM_GET)
 
   return DoSuperMethodA(cl, obj, msg);
 }
+
 ///
 /// OVERLOAD(OM_SET)
 OVERLOAD(OM_SET)
@@ -215,6 +218,7 @@ OVERLOAD(OM_SET)
 
   return DoSuperMethodA(cl, obj, msg);
 }
+
 ///
 /// OVERLOAD(MUIM_GoActive)
 OVERLOAD(MUIM_GoActive)
@@ -229,6 +233,7 @@ OVERLOAD(MUIM_GoActive)
   RETURN(0);
   return 0;
 }
+
 ///
 /// OVERLOAD(MUIM_NList_Clear)
 OVERLOAD(MUIM_NList_Clear)

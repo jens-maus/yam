@@ -12,6 +12,9 @@ $URL$
     of the last navigational movement within the folder. This refs #76.
   * YAM_MA.c: fixed a possibly invalid index entry when copying a mail to an
     other folder twice.
+  * mui/MainMailList.c, mui/ReadWindow.c: use the folder's current sort order to
+    determine the next to be shown mail instead of the configured order. This
+    refs #76.
 
 2013-10-10 Thore Böckelmann <tboeckel@gmx.de>
 

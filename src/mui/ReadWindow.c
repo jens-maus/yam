@@ -45,6 +45,7 @@
 #include "YAM_find.h"
 #include "YAM_mainFolder.h"
 
+#include "mui/MainMailList.h"
 #include "mui/MainMailListGroup.h"
 #include "mui/ReadMailGroup.h"
 #include "mui/ReadWindowStatusBar.h"
@@ -833,7 +834,6 @@ DECLARE(MoveMailRequest)
   struct ReadMailData *rmData = (struct ReadMailData *)xget(data->readMailGroup, MUIA_ReadMailGroup_ReadMailData);
   struct Mail *mail = rmData->mail;
   struct Folder *srcfolder = mail->Folder;
-  BOOL closeAfter = FALSE;
 
   ENTER();
 
@@ -848,11 +848,15 @@ DECLARE(MoveMailRequest)
 
     if(dstfolder != NULL && dstfolder != srcfolder)
     {
+      BOOL closeAfter = FALSE;
+      LONG sortOrder[2];
       int pos = SelectMessage(mail); // select the message in the folder and return position
       int entries;
 
       // determine the index of the mail to be selected afterwards
-      if(srcfolder->Sort[0] < 0 || srcfolder->Sort[1] < 0)
+      sortOrder[0] = xget(G->MA->GUI.PG_MAILLIST, MUIA_MainMailList_PrimarySortOrder);
+      sortOrder[1] = xget(G->MA->GUI.PG_MAILLIST, MUIA_MainMailList_SecondarySortOrder);
+      if(sortOrder[0] < 0 || sortOrder[1] < 0)
       {
         if(pos-1 >= 0)
           set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Active, --pos);
@@ -965,12 +969,15 @@ DECLARE(ArchiveMailRequest)
 
   if(MailExists(mail, srcfolder) == TRUE)
   {
+    BOOL closeAfter = FALSE;
+    LONG sortOrder[2];
     int pos = SelectMessage(mail); // select the message in the folder and return position
     int entries;
-    BOOL closeAfter = FALSE;
 
     // determine the index of the mail to be selected afterwards
-    if(srcfolder->Sort[0] < 0 || srcfolder->Sort[1] < 0)
+    sortOrder[0] = xget(G->MA->GUI.PG_MAILLIST, MUIA_MainMailList_PrimarySortOrder);
+    sortOrder[1] = xget(G->MA->GUI.PG_MAILLIST, MUIA_MainMailList_SecondarySortOrder);
+    if(sortOrder[0] < 0 || sortOrder[1] < 0)
     {
       if(pos-1 >= 0)
         set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Active, --pos);
@@ -1021,14 +1028,17 @@ DECLARE(DeleteMailRequest) // ULONG qualifier
 
   if(MailExists(mail, folder))
   {
+    BOOL closeAfter = FALSE;
+    LONG sortOrder[2];
     int pos = SelectMessage(mail); // select the message in the folder and return position
     int entries;
     struct Folder *delfolder = FO_GetFolderByType(FT_TRASH, NULL);
     BOOL delatonce = isAnyFlagSet(msg->qualifier, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT));
-    BOOL closeAfter = FALSE;
 
     // determine the index of the mail to be selected afterwards
-    if(folder->Sort[0] < 0 || folder->Sort[1] < 0)
+    sortOrder[0] = xget(G->MA->GUI.PG_MAILLIST, MUIA_MainMailList_PrimarySortOrder);
+    sortOrder[1] = xget(G->MA->GUI.PG_MAILLIST, MUIA_MainMailList_SecondarySortOrder);
+    if(sortOrder[0] < 0 || sortOrder[1] < 0)
     {
       if(pos-1 >= 0)
         set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Active, --pos);
@@ -1090,11 +1100,14 @@ DECLARE(ClassifyMessage) // enum BayesClassification class
     if(hasStatusSpam(mail) == FALSE && class == BC_SPAM)
     {
       BOOL closeAfter = FALSE;
+      LONG sortOrder[2];
       int pos = SelectMessage(mail); // select the message in the folder and return position
       int entries;
 
       // determine the index of the mail to be selected afterwards
-      if(folder->Sort[0] < 0 || folder->Sort[1] < 0)
+      sortOrder[0] = xget(G->MA->GUI.PG_MAILLIST, MUIA_MainMailList_PrimarySortOrder);
+      sortOrder[1] = xget(G->MA->GUI.PG_MAILLIST, MUIA_MainMailList_SecondarySortOrder);
+      if(sortOrder[0] < 0 || sortOrder[1] < 0)
       {
         if(pos-1 >= 0)
           set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Active, --pos);
@@ -1145,11 +1158,14 @@ DECLARE(ClassifyMessage) // enum BayesClassification class
     else if(hasStatusHam(mail) == FALSE && class == BC_HAM)
     {
       BOOL closeAfter = FALSE;
+      LONG sortOrder[2];
       int pos = SelectMessage(mail); // select the message in the folder and return position
       int entries;
 
       // determine the index of the mail to be selected afterwards
-      if(folder->Sort[0] < 0 || folder->Sort[1] < 0)
+      sortOrder[0] = xget(G->MA->GUI.PG_MAILLIST, MUIA_MainMailList_PrimarySortOrder);
+      sortOrder[1] = xget(G->MA->GUI.PG_MAILLIST, MUIA_MainMailList_SecondarySortOrder);
+      if(sortOrder[0] < 0 || sortOrder[1] < 0)
       {
         if(pos-1 >= 0)
           set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Active, --pos);
