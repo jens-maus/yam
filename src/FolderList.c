@@ -306,6 +306,8 @@ void InitFolder(struct Folder *folder, enum FolderType type)
     folder->Sort[0] = 1;
     folder->Sort[1] = 3;
     folder->LastActive = -1;
+    folder->JumpToUnread = TRUE;
+    folder->JumpToRecent = FALSE;
     // preserve the message list
     folder->messages = messages;
   }

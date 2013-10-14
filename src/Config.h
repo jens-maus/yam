@@ -183,9 +183,7 @@ struct Config
   BOOL  IconifyOnQuit;
   BOOL  Confirm;
   BOOL  RemoveAtOnce;
-  BOOL  JumpToNewMsg;
   BOOL  JumpToIncoming;
-  BOOL  JumpToRecentMsg;
   BOOL  PrinterCheck;
   BOOL  IsOnlineCheck;
   BOOL  ConfirmOnQuit;

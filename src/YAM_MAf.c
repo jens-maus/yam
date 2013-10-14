@@ -1003,7 +1003,7 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
 
         // Now we jump to messages that are NEW
         jumped = FALSE;
-        if(jumped == FALSE && C->JumpToNewMsg == TRUE && (folder->New != 0 || folder->Unread != 0))
+        if(jumped == FALSE && folder->JumpToUnread == TRUE && (folder->New != 0 || folder->Unread != 0))
           jumped = MA_JumpToNewMsg();
 
         if(jumped == FALSE && folder->LastActive >= 0)
@@ -1012,7 +1012,7 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
           jumped = TRUE;
         }
 
-        if(jumped == FALSE && C->JumpToRecentMsg == TRUE)
+        if(jumped == FALSE && folder->JumpToRecent == TRUE)
           jumped = MA_JumpToRecentMsg();
 
         // if there is still no entry active in the NList we make the first one active

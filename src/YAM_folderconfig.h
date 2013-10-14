@@ -159,6 +159,8 @@ struct Folder
 
   BOOL              ExpireUnread;
   BOOL              Stats;
+  BOOL              JumpToUnread;
+  BOOL              JumpToRecent;
   BOOL              MLSupport;
 };
 

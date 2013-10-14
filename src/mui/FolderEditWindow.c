@@ -89,6 +89,8 @@ struct Data
   Object *ST_MLADDRESS;
   Object *CY_MLSIGNATURE;
   Object *CH_STATS;
+  Object *CH_JUMPTOUNREAD;
+  Object *CH_JUMPTORECENT;
   Object *CH_MLSUPPORT;
   Object *BT_AUTODETECT;
   Object *BT_OKAY;
@@ -133,6 +135,8 @@ static BOOL CompareFolders(const struct Folder *fo1, const struct Folder *fo2)
      fo1->MaxAge                != fo2->MaxAge ||
      fo1->ExpireUnread          != fo2->ExpireUnread ||
      fo1->Stats                 != fo2->Stats ||
+     fo1->JumpToUnread          != fo2->JumpToUnread ||
+     fo1->JumpToRecent          != fo2->JumpToRecent ||
      fo1->MLSupport             != fo2->MLSupport)
   {
     equal = FALSE;
@@ -273,6 +277,8 @@ static BOOL SaveOldFolder(struct IClass *cl, Object *obj)
     data->oldFolder->MaxAge       = folder.MaxAge;
     data->oldFolder->ExpireUnread = folder.ExpireUnread;
     data->oldFolder->Stats        = folder.Stats;
+    data->oldFolder->JumpToUnread = folder.JumpToUnread;
+    data->oldFolder->JumpToRecent = folder.JumpToRecent;
     data->oldFolder->MLSupport    = folder.MLSupport;
 
     if(xget(data->CY_FTYPE, MUIA_Disabled) == FALSE)
@@ -493,6 +499,8 @@ OVERLOAD(OM_NEW)
   Object *ST_MLADDRESS;
   Object *CY_MLSIGNATURE;
   Object *CH_STATS;
+  Object *CH_JUMPTOUNREAD;
+  Object *CH_JUMPTORECENT;
   Object *CH_MLSUPPORT;
   Object *BT_AUTODETECT;
   Object *BT_OKAY;
@@ -568,11 +576,12 @@ OVERLOAD(OM_NEW)
         Child, ST_HELLOTEXT = MakeString(SIZE_INTRO,tr(MSG_FO_Welcome)),
         Child, Label2(tr(MSG_FO_Greetings)),
         Child, ST_BYETEXT = MakeString(SIZE_INTRO,tr(MSG_FO_Greetings)),
-        Child, Label1(tr(MSG_FO_DSTATS)),
-        Child, HGroup,
-          Child, CH_STATS = MakeCheck(tr(MSG_FO_DSTATS)),
-          Child, HSpace(0),
-        End,
+        Child, HSpace(0),
+        Child, MakeCheckGroup(&CH_STATS, tr(MSG_FO_DSTATS)),
+        Child, HSpace(0),
+        Child, MakeCheckGroup(&CH_JUMPTOUNREAD, tr(MSG_FO_JUMP_TO_UNREAD_MESSAGE)),
+        Child, HSpace(0),
+        Child, MakeCheckGroup(&CH_JUMPTORECENT, tr(MSG_FO_JUMP_TO_RECENT_MESSAGE)),
       End,
       Child, GR_MLPRORPERTIES = ColGroup(2), GroupFrameT(tr(MSG_FO_MLSupport)),
         MUIA_ShowMe, FALSE,
@@ -624,6 +633,8 @@ OVERLOAD(OM_NEW)
     data->ST_MLADDRESS        = ST_MLADDRESS;
     data->CY_MLSIGNATURE      = CY_MLSIGNATURE;
     data->CH_STATS            = CH_STATS;
+    data->CH_JUMPTOUNREAD     = CH_JUMPTOUNREAD;
+    data->CH_JUMPTORECENT     = CH_JUMPTORECENT;
     data->CH_MLSUPPORT        = CH_MLSUPPORT;
     data->BT_AUTODETECT       = BT_AUTODETECT;
     data->BT_OKAY             = BT_OKAY;
@@ -642,23 +653,25 @@ OVERLOAD(OM_NEW)
     set(ST_FPATH, MUIA_String_Reject, INVALID_PATH_CHARACTERS);
     set(CH_STATS, MUIA_Disabled, C->WBAppIcon == FALSE && C->DockyIcon == FALSE);
 
-    SetHelp(ST_FNAME,        MSG_HELP_FO_ST_FNAME       );
-    SetHelp(ST_FPATH,        MSG_HELP_FO_TX_FPATH       );
-    SetHelp(NM_MAXAGE,       MSG_HELP_FO_ST_MAXAGE      );
-    SetHelp(CY_FMODE,        MSG_HELP_FO_CY_FMODE       );
-    SetHelp(CY_FTYPE,        MSG_HELP_FO_CY_FTYPE       );
-    SetHelp(CY_SORT[0],      MSG_HELP_FO_CY_SORT0       );
-    SetHelp(CY_SORT[1],      MSG_HELP_FO_CY_SORT1       );
-    SetHelp(CH_REVERSE[0],   MSG_HELP_FO_CH_REVERSE     );
-    SetHelp(CH_REVERSE[1],   MSG_HELP_FO_CH_REVERSE     );
-    SetHelp(ST_MLPATTERN,    MSG_HELP_FO_ST_MLPATTERN   );
-    SetHelp(CY_MLSIGNATURE,  MSG_HELP_FO_CY_MLSIGNATURE );
-    SetHelp(CH_STATS,        MSG_HELP_FO_CH_STATS       );
+    SetHelp(ST_FNAME,        MSG_HELP_FO_ST_FNAME);
+    SetHelp(ST_FPATH,        MSG_HELP_FO_TX_FPATH);
+    SetHelp(NM_MAXAGE,       MSG_HELP_FO_ST_MAXAGE);
+    SetHelp(CY_FMODE,        MSG_HELP_FO_CY_FMODE);
+    SetHelp(CY_FTYPE,        MSG_HELP_FO_CY_FTYPE);
+    SetHelp(CY_SORT[0],      MSG_HELP_FO_CY_SORT0);
+    SetHelp(CY_SORT[1],      MSG_HELP_FO_CY_SORT1);
+    SetHelp(CH_REVERSE[0],   MSG_HELP_FO_CH_REVERSE);
+    SetHelp(CH_REVERSE[1],   MSG_HELP_FO_CH_REVERSE);
+    SetHelp(ST_MLPATTERN,    MSG_HELP_FO_ST_MLPATTERN);
+    SetHelp(CY_MLSIGNATURE,  MSG_HELP_FO_CY_MLSIGNATURE);
+    SetHelp(CH_STATS,        MSG_HELP_FO_CH_STATS);
+    SetHelp(CH_JUMPTOUNREAD, MSG_HELP_FO_CH_JUMPTOUNREAD);
+    SetHelp(CH_JUMPTORECENT, MSG_HELP_FO_CH_JUMPTORECENT);
     SetHelp(CH_EXPIREUNREAD, MSG_HELP_FO_CH_EXPIREUNREAD);
-    SetHelp(CH_MLSUPPORT,    MSG_HELP_FO_CH_MLSUPPORT   );
-    SetHelp(BT_AUTODETECT,   MSG_HELP_FO_BT_AUTODETECT  );
-    SetHelp(ST_HELLOTEXT,    MSG_HELP_FO_ST_HELLOTEXT   );
-    SetHelp(ST_BYETEXT,      MSG_HELP_FO_ST_BYETEXT     );
+    SetHelp(CH_MLSUPPORT,    MSG_HELP_FO_CH_MLSUPPORT);
+    SetHelp(BT_AUTODETECT,   MSG_HELP_FO_BT_AUTODETECT);
+    SetHelp(ST_HELLOTEXT,    MSG_HELP_FO_ST_HELLOTEXT);
+    SetHelp(ST_BYETEXT,      MSG_HELP_FO_ST_BYETEXT);
 
     DoMethod(BT_CANCEL, MUIM_Notify, MUIA_Pressed, FALSE, obj, 3, MUIM_Set, ATTR(DisposeRequest), TRUE);
     DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, obj, 3, MUIM_Set, ATTR(DisposeRequest), TRUE);
@@ -760,7 +773,9 @@ DECLARE(FolderToGUI)
     set(data->CH_REVERSE[i], MUIA_Selected, folder->Sort[i] < 0);
   }
 
-  set(data->CH_STATS,      MUIA_Selected, folder->Stats);
+  set(data->CH_STATS,        MUIA_Selected, folder->Stats);
+  set(data->CH_JUMPTOUNREAD, MUIA_Selected, folder->JumpToUnread);
+  set(data->CH_JUMPTORECENT, MUIA_Selected, folder->JumpToRecent);
   xset(data->ST_HELLOTEXT, MUIA_String_Contents, folder->WriteIntro,
                            MUIA_Disabled,        isArchive);
   xset(data->ST_BYETEXT,   MUIA_String_Contents, folder->WriteGreetings,
@@ -827,6 +842,8 @@ DECLARE(GUIToFolder) // struct Folder *folder
 
   folder->ExpireUnread = GetMUICheck(data->CH_EXPIREUNREAD);
   folder->Stats = GetMUICheck(data->CH_STATS);
+  folder->JumpToUnread = GetMUICheck(data->CH_JUMPTOUNREAD);
+  folder->JumpToRecent = GetMUICheck(data->CH_JUMPTORECENT);
   folder->MLSupport = GetMUICheck(data->CH_MLSUPPORT);
 
   GetMUIString(folder->WriteIntro, data->ST_HELLOTEXT, sizeof(folder->WriteIntro));

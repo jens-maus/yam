@@ -533,9 +533,7 @@ BOOL CompareConfigs(const struct Config *c1, const struct Config *c2)
      c1->IconifyOnQuit                   == c2->IconifyOnQuit &&
      c1->Confirm                         == c2->Confirm &&
      c1->RemoveAtOnce                    == c2->RemoveAtOnce &&
-     c1->JumpToNewMsg                    == c2->JumpToNewMsg &&
      c1->JumpToIncoming                  == c2->JumpToIncoming &&
-     c1->JumpToRecentMsg                 == c2->JumpToRecentMsg &&
      c1->PrinterCheck                    == c2->PrinterCheck &&
      c1->IsOnlineCheck                   == c2->IsOnlineCheck &&
      c1->ConfirmOnQuit                   == c2->ConfirmOnQuit &&
@@ -941,9 +939,7 @@ void SetDefaultConfig(struct Config *co, enum ConfigPage page)
     co->ExpungeIndexes = 600; // 10 minutes
     strlcpy(co->SupportSite, yamurl, sizeof(co->SupportSite));
     strlcpy(co->UpdateServer, "http://update.yam.ch/", sizeof(co->UpdateServer));
-    co->JumpToNewMsg = TRUE;
     co->JumpToIncoming = FALSE;
-    co->JumpToRecentMsg = FALSE;
     co->AskJumpUnread = TRUE;
     co->PrinterCheck = TRUE;
     co->IsOnlineCheck = TRUE;
@@ -1826,9 +1822,7 @@ int LoadConfig(struct Config *co, const char *fname, struct FolderList **oldfold
           else if(stricmp(buf, "WriteIndexes") == 0)             co->WriteIndexes = atoi(value);
           else if(stricmp(buf, "ExpungeIndexes") == 0)           co->ExpungeIndexes = atoi(value);
           else if(stricmp(buf, "SupportSite") == 0)              strlcpy(co->SupportSite, value, sizeof(co->SupportSite));
-          else if(stricmp(buf, "JumpToNewMsg") == 0)             co->JumpToNewMsg = Txt2Bool(value);
           else if(stricmp(buf, "JumpToIncoming") == 0)           co->JumpToIncoming = Txt2Bool(value);
-          else if(stricmp(buf, "JumpToRecentMsg") == 0)          co->JumpToRecentMsg = Txt2Bool(value);
           else if(stricmp(buf, "AskJumpUnread") == 0)            co->AskJumpUnread = Txt2Bool(value);
           else if(stricmp(buf, "PrinterCheck") == 0)             co->PrinterCheck = Txt2Bool(value);
           else if(stricmp(buf, "IsOnlineCheck") == 0)            co->IsOnlineCheck = Txt2Bool(value);
@@ -2700,9 +2694,7 @@ BOOL SaveConfig(struct Config *co, const char *fname)
     fprintf(fh, "WriteIndexes             = %d\n", co->WriteIndexes);
     fprintf(fh, "ExpungeIndexes           = %d\n", co->ExpungeIndexes);
     fprintf(fh, "SupportSite              = %s\n", co->SupportSite);
-    fprintf(fh, "JumpToNewMsg             = %s\n", Bool2Txt(co->JumpToNewMsg));
     fprintf(fh, "JumpToIncoming           = %s\n", Bool2Txt(co->JumpToIncoming));
-    fprintf(fh, "JumpToRecentMsg          = %s\n", Bool2Txt(co->JumpToRecentMsg));
     fprintf(fh, "AskJumpUnread            = %s\n", Bool2Txt(co->AskJumpUnread));
     fprintf(fh, "PrinterCheck             = %s\n", Bool2Txt(co->PrinterCheck));
     fprintf(fh, "IsOnlineCheck            = %s\n", Bool2Txt(co->IsOnlineCheck));

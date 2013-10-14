@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.24 (01.10.2013)
+## version $VER: YAM.catalog 8.25 (14.10.2013)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -8778,4 +8778,10 @@ wird.
 ;
 MSG_LOG_FILTER_DONE
 %ld Nachricht(en) mit %ld Treffer(n) gefiltert
+;
+MSG_FO_JUMP_TO_UNREAD_MESSAGE
+zu erster ungelesener Nachricht springen
+;
+MSG_FO_JUMP_TO_RECENT_MESSAGE
+zu neuester Nachricht springen
 ;

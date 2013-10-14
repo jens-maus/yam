@@ -440,6 +440,8 @@ BOOL FO_LoadConfig(struct Folder *fo)
           else if(stricmp(buf, "Sort1") == 0)          fo->Sort[0] = atoi(value);
           else if(stricmp(buf, "Sort2") == 0)          fo->Sort[1] = atoi(value);
           else if(stricmp(buf, "Stats") == 0)          { fo->Stats = Txt2Bool(value); statsproc = TRUE; }
+          else if(stricmp(buf, "JumpToUnread") == 0)   fo->JumpToUnread = Txt2Bool(value);
+          else if(stricmp(buf, "JumpToRecent") == 0)   fo->JumpToRecent = Txt2Bool(value);
           else if(stricmp(buf, "ExpireUnread") == 0)   fo->ExpireUnread = Txt2Bool(value);
           else if(stricmp(buf, "MLSupport") == 0)      fo->MLSupport = Txt2Bool(value);
           else if(stricmp(buf, "MLIdentityID") == 0)   fo->MLIdentity = FindUserIdentityByID(&C->userIdentityList, strtol(value, NULL, 16));
@@ -517,7 +519,7 @@ BOOL FO_SaveConfig(struct Folder *fo)
 
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
-    fprintf(fh, "YFC3 - YAM Folder Configuration\n");
+    fprintf(fh, "YFC4 - YAM Folder Configuration\n");
     fprintf(fh, "Name           = %s\n", fo->Name);
     fprintf(fh, "MaxAge         = %d\n", fo->MaxAge);
     fprintf(fh, "Password       = %s\n", Encrypt(fo->Password));
@@ -526,6 +528,8 @@ BOOL FO_SaveConfig(struct Folder *fo)
     fprintf(fh, "Sort1          = %d\n", fo->Sort[0]);
     fprintf(fh, "Sort2          = %d\n", fo->Sort[1]);
     fprintf(fh, "Stats          = %s\n", Bool2Txt(fo->Stats));
+    fprintf(fh, "JumpToUnread   = %s\n", Bool2Txt(fo->JumpToUnread));
+    fprintf(fh, "JumpToRecent   = %s\n", Bool2Txt(fo->JumpToRecent));
     fprintf(fh, "ExpireUnread   = %s\n", Bool2Txt(fo->ExpireUnread));
     fprintf(fh, "MLSupport      = %s\n", Bool2Txt(fo->MLSupport));
     fprintf(fh, "MLIdentityID   = %08x\n", fo->MLIdentity != NULL ? fo->MLIdentity->id : 0);

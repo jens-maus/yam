@@ -19,6 +19,9 @@ $URL$
   * YAM_MA.c, mui/ReadWindow.c, mui/MainMailList.c: deleting or archiving a
     single mail will now behave consistently in every situation and correctly
     respect the folder's current sort order. This closes #76.
+  * YAM_FO.c, misc: jumping to the first unread and/or most recent message when
+    entering a folder is now a per folder option instead of a global option.
+    This closes #40.
 
 2013-10-10 Thore Böckelmann <tboeckel@gmx.de>
 
