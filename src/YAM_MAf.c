@@ -1036,14 +1036,16 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
 BOOL MA_JumpToNewMsg(void)
 {
   Object *lv;
+  struct Folder *folder;
   int i, incr, newIdx = -1;
   BOOL jumped = FALSE;
 
   ENTER();
 
   lv = G->MA->GUI.PG_MAILLIST;
+  folder = GetCurrentFolder();
 
-  if(GetCurrentFolder()->Sort[0] < 0 || GetCurrentFolder()->Sort[1] < 0)
+  if(folder->Sort[0] < 0 || folder->Sort[1] < 0)
   {
     i = xget(lv, MUIA_NList_Entries) - 1;
     incr = -1;
@@ -1071,7 +1073,7 @@ BOOL MA_JumpToNewMsg(void)
     i += incr;
   }
 
-  if(newIdx >= 0 && newIdx != GetCurrentFolder()->LastActive)
+  if(newIdx >= 0 && newIdx != folder->LastActive)
   {
     set(lv, MUIA_NList_Active, newIdx);
     jumped = TRUE;
@@ -1080,6 +1082,7 @@ BOOL MA_JumpToNewMsg(void)
   RETURN(jumped);
   return jumped;
 }
+
 ///
 /// MA_JumpToRecentMsg
 // Function that jumps to the most recent mail in a folder
@@ -1122,6 +1125,7 @@ BOOL MA_JumpToRecentMsg(void)
   RETURN(jumped);
   return jumped;
 }
+
 ///
 /// MA_ConvertOldMailFile
 // This function takes a fileinfoblock and a folder and converts the
