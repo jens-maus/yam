@@ -1327,15 +1327,27 @@ static BOOL RE_ConsumeRestOfPart(FILE *ifh, FILE *ofh, const struct codeset *src
           break;
 
           case ENC_B64:
-          case ENC_UUE:
           {
             size_t encodedSize;
 
-            // base64 and uue encode 3 input bytes in 4 output bytes
+            // base64 encodes 3 input bytes in 4 output bytes
             encodedSize = rp->Size * 4 / 3;
             // each encoded line consists of 72 characters at most
             // add the number of lines for the LF characters inbetween
             encodedSize += (encodedSize + 71) / 72;
+            dstr = dstralloc(encodedSize);
+          }
+          break;
+
+          case ENC_UUE:
+          {
+            size_t encodedSize;
+
+            // uue encodes 3 input bytes in 4 output bytes
+            encodedSize = rp->Size * 4 / 3;
+            // each encoded line consists of 63 characters at most
+            // add the number of lines for the LF characters inbetween
+            encodedSize += (encodedSize + 62) / 63;
             dstr = dstralloc(encodedSize);
           }
           break;
