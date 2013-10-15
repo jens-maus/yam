@@ -61,6 +61,8 @@ struct BusyNode *BusyBegin(ULONG type)
     {
       memset(busy, 0, sizeof(*busy));
       busy->type = type;
+      busy->progressCurrent = (type == BUSY_PROGRESS_ABORT) ? 0 : -1;
+      busy->progressMax = 0;
 
       if(type == BUSY_AREXX)
         AddTail((struct List *)&G->arexxBusyList, (struct Node *)busy);

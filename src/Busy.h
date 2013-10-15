@@ -37,6 +37,7 @@ struct BusyNode
   ULONG progressCurrent;       // current progress (progress bars only)
   ULONG progressMax;           // maximum progress (progress bars only)
   char infoText[SIZE_DEFAULT]; // the information text to be shown
+  BOOL wasVisible;             // was this action visible before already?
 };
 
 #define BUSY_TEXT             1 // a simple information text only, normal usage

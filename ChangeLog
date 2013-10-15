@@ -9,6 +9,9 @@ $URL$
 
   * YAM_MAf.c: determining to the most recent mail is now done without accessing
     the main mail list object. This is lots faster than the former approach.
+  * Busy.c, mui/InfoBar.c: make sure that progress busy bars are made visible if
+    they become visible for the first time no matter how often they have been
+    updated before.
 
 2013-10-14 Thore Böckelmann <tboeckel@gmx.de>
 
