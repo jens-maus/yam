@@ -1088,39 +1088,41 @@ BOOL MA_JumpToNewMsg(void)
 // Function that jumps to the most recent mail in a folder
 BOOL MA_JumpToRecentMsg(void)
 {
-  Object *lv;
   struct Mail *recent = NULL;
-  int recentIdx = -1, i;
+  struct MailNode *mnode;
+  struct Folder *folder;
   BOOL jumped = FALSE;
 
   ENTER();
 
-  lv = G->MA->GUI.PG_MAILLIST;
+  folder = GetCurrentFolder();
 
-  i = 0;
-  while(TRUE)
+  LockMailList(folder->messages);
+
+  mnode = FirstMailNode(folder->messages);
+  while(mnode != NULL)
   {
-    struct Mail *mail;
+    struct Mail *mail = mnode->mail;
 
-    DoMethod(lv, MUIM_NList_GetEntry, i, &mail);
-    if(mail == NULL)
-      break;
-
-    if(recent == NULL || MA_CompareByDate(mail, recent) > 0)
+    if(mail != NULL)
     {
-      // this mail is more recent than the yet most recent known
-      recentIdx = i;
-      recent = mail;
+      if(recent == NULL || MA_CompareByDate(mail, recent) > 0)
+      {
+        // this mail is more recent than the yet most recent known
+        recent = mail;
+      }
     }
 
-    i++;
+    mnode = NextMailNode(mnode);
   }
 
-  if(recentIdx >= 0 && recentIdx != GetCurrentFolder()->LastActive)
+  if(recent != NULL)
   {
-    set(lv, MUIA_NList_Active, recentIdx);
+    DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_SetActive, recent, MUIV_NList_SetActive_Entry|MUIV_NList_SetActive_Jump_Center);
     jumped = TRUE;
   }
+
+  UnlockMailList(folder->messages);
 
   RETURN(jumped);
   return jumped;

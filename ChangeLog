@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-10-15 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MAf.c: determining to the most recent mail is now done without accessing
+    the main mail list object. This is lots faster than the former approach.
+
 2013-10-14 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/ReadWindow.c: determine the next to be shown mail after deleting/moving
