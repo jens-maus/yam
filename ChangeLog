@@ -12,8 +12,13 @@ $URL$
   * Busy.c, mui/InfoBar.c: make sure that progress busy bars are made visible if
     they become visible for the first time no matter how often they have been
     updated before.
-  * YAM_WR.c: include the size of an attachment in the Content-Disposition header
-    line.
+  * YAM_WR.c: include the size of an attachment in the Content-Disposition
+    header line.
+  * YAM_RE.c: evaluate a possible size argument in the Content-Disposition
+    header line. This makes it possible to allocate a suitable buffer ahead of
+    reading that part instead of having to constanly grow the buffer. Mail parts
+    of big attachments can be read *LOTS* faster this way and it requires only
+    half the memory during the scan process.
 
 2013-10-14 Thore Böckelmann <tboeckel@gmx.de>
 

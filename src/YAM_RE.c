@@ -1070,6 +1070,14 @@ static void RE_ParseContentParameters(char *str, struct Part *rp, enum parameter
                 rp->CParFileName = value;
               }
             }
+            else if(strncmp(attribute, "size", 4) == 0)
+            {
+              // try to obtain the attachment's decoded size
+              SHOWVALUE(DBF_ALWAYS, rp->Size);
+              rp->Size = strtol(value, NULL, 10);
+              SHOWVALUE(DBF_ALWAYS, rp->Size);
+              free(value);
+            }
             else
               free(value);
           }
@@ -1302,6 +1310,36 @@ static BOOL RE_ConsumeRestOfPart(FILE *ifh, FILE *ofh, const struct codeset *src
          rp->EncodingCode != ENC_7BIT && rp->EncodingCode != ENC_8BIT)
       {
         skipCodesets = TRUE;
+      }
+
+      // preallocate a buffer in case the part size is known already
+      if(rp->Size > 0 && ofh != NULL)
+      {
+        switch(rp->EncodingCode)
+        {
+          case ENC_7BIT:
+          case ENC_8BIT:
+          case ENC_BIN:
+          case ENC_QP:
+          {
+            dstr = dstralloc(rp->Size);
+          }
+          break;
+
+          case ENC_B64:
+          case ENC_UUE:
+          {
+            size_t encodedSize;
+
+            // base64 and uue encode 3 input bytes in 4 output bytes
+            encodedSize = rp->Size * 4 / 3;
+            // each encoded line consists of 72 characters at most
+            // add the number of lines for the LF characters inbetween
+            encodedSize += (encodedSize + 71) / 72;
+            dstr = dstralloc(encodedSize);
+          }
+          break;
+        }
       }
     }
 
