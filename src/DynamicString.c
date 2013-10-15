@@ -289,6 +289,28 @@ size_t dstrlen(const char *dstr)
 }
 
 ///
+/// dstrsize
+// return the allocation size of a dynamic string buffer
+size_t dstrsize(const char *dstr)
+{
+  size_t result = 0;
+
+  ENTER();
+
+  if(dstr != NULL)
+  {
+    struct DynamicString *ds = STR_TO_DSTR(dstr);
+
+    CHECK_DSTR(ds);
+
+    result = ds->size;
+  }
+
+  RETURN(result);
+  return result;
+}
+
+///
 /// dstrfread
 // read the given amount of bytes from a file and place them in the dynamic string
 size_t dstrfread(char **dstr, size_t size, FILE *stream)
