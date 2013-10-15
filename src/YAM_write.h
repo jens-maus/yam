@@ -139,6 +139,7 @@ struct WritePart
   char *            Filename;
   char *            Description;
   char *            Name;
+  long              Size;
   struct codeset *  Codeset; // the character set being used for this part
   BOOL              IsTemp;
   enum Encoding     EncType;

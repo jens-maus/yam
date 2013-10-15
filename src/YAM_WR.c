@@ -163,6 +163,7 @@ struct WritePart *NewMIMEpart(struct WriteMailData *wmData)
   {
     p->ContentType = "text/plain";
     p->EncType = ENC_7BIT;
+    p->Size = -1;
 
     if(wmData != NULL)
     {
@@ -542,6 +543,13 @@ void WriteContentTypeAndEncoding(FILE *fh, const struct WritePart *part)
     // add the filename parameter to the Content-Disposition
     fputc(';', fh);
     HeaderFputs(fh, FilePart(part->Name), "filename", 0, NULL);
+
+    // add the attachment's size
+    if(part->Size != -1)
+    {
+      fprintf(fh, ";\n"
+                  "\tsize=%ld", part->Size);
+    }
   }
   fputc('\n', fh);
 
@@ -1271,7 +1279,7 @@ BOOL WriteOutMessage(struct Compose *comp)
         struct WritePart *tpart = comp->FirstPart;
 
         // replace with single new part
-        if((comp->FirstPart = (struct WritePart *)calloc(1,sizeof(struct WritePart))) != NULL)
+        if((comp->FirstPart = (struct WritePart *)calloc(1, sizeof(struct WritePart))) != NULL)
         {
           // reuse encoding
           comp->FirstPart->EncType = tpart->EncType;

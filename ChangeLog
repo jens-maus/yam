@@ -12,6 +12,8 @@ $URL$
   * Busy.c, mui/InfoBar.c: make sure that progress busy bars are made visible if
     they become visible for the first time no matter how often they have been
     updated before.
+  * YAM_WR.c: include the size of an attachment in the Content-Disposition header
+    line.
 
 2013-10-14 Thore Böckelmann <tboeckel@gmx.de>
 

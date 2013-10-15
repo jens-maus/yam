@@ -521,6 +521,7 @@ static struct WritePart *BuildPartsList(struct WriteMailData *wmData, BOOL delTe
           np->Filename    = att->FilePath;
           np->Description = att->Description;
           np->Name        = att->Name;
+          np->Size        = att->Size;
           np->IsTemp      = att->IsTemp;
 
           // find out which encoding we use for the attachment
