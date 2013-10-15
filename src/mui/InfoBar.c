@@ -325,6 +325,7 @@ DECLARE(ShowBusyBar) // struct BusyNode *busy
     switch(msg->busy->type)
     {
       case BUSY_TEXT:
+      case BUSY_AREXX:
       {
         set(data->TX_INFO, MUIA_Text_Contents, msg->busy->infoText);
         set(data->GA_LABEL, MUIA_Text_Contents, NULL);
@@ -368,6 +369,7 @@ DECLARE(ShowBusyBar) // struct BusyNode *busy
             msg->busy->wasVisible = TRUE;
           }
         }
+        break;
 
         default:
         {
