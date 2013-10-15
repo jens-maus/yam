@@ -1008,7 +1008,7 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
 
         if(jumped == FALSE && folder->LastActive >= 0)
         {
-          set(gui->PG_MAILLIST, MUIA_NList_Active, folder->LastActive);
+          DoMethod(gui->PG_MAILLIST, MUIM_NList_SetActive, folder->LastActive, MUIV_NList_SetActive_Jump_Center);
           jumped = TRUE;
         }
 
@@ -1016,7 +1016,7 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
           jumped = MA_JumpToRecentMsg();
 
         // if there is still no entry active in the NList we make the first one active
-        if(xget(gui->PG_MAILLIST, MUIA_NList_Active) == (ULONG)MUIV_NList_Active_Off)
+        if(jumped == FALSE)
           set(gui->PG_MAILLIST, MUIA_NList_Active, MUIV_NList_Active_Top);
 
         // if there are no messages in the folder the GUI needs to be updated nevertheless
