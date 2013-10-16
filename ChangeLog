@@ -14,6 +14,7 @@ $URL$
   * YAM_FO.c, YAM_UT.c: removed the function to recalculate a folder's statistic
     numbers (i.e. total number of mails, unread mail, etc) as the stats are
     always kept up-to-date. This makes moving mails around lots faster.
+  * locale/YAM.cd: rephrased the filter result message a bit.
 
 2013-10-16 Alper Sönmez <amithlondestek@gmail.com>
 

@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.27 (16.10.2013)
+## version $VER: YAM.catalog 8.28 (16.10.2013)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -557,16 +557,8 @@ MSG_MA_FilterStats
 Filtervorgang beendet:\n\
 %3ld Nachrichten geprüft,\n\
 %3ld weitergeleitet,\n\
-%3ld archiviert,\n\
+%3ld verschoben,\n\
 %3ld gelöscht
-; Filtering done:\n\
-; \n\
-; %3ld messages checked,\n\
-; %3ld forwarded,\n\
-; %3ld archived,\n\
-; %3ld deleted
-; COUNT, COUNT, COUNT, COUNT
-;
 MSG_MA_ExportAppendReq
 Die Ausgabedatei existiert bereits. Soll sie\n\
 überschrieben oder die Nachrichten angehängt werden?
