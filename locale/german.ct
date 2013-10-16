@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.26 (16.10.2013)
+## version $VER: YAM.catalog 8.27 (16.10.2013)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -5069,10 +5069,11 @@ A_ppIcon Statistiken
 ; App_Icon stats
 ;
 MSG_HELP_FO_CH_STATS
-Sollen die Postfachstatistiken im\nAppIcon-Text von YAM angezeigt werden?
+Sollen die Postfachstatistiken im\n\
+AppIcon-Text von YAM angezeigt werden?
 ; Would you like to see this\n\
-; folder's statistics in the\n\
-; YAM AppIcon's label?
+; folder's statistics in YAM's\n\
+; AppIcon label?
 ;
 MSG_OPENGUI
 Oberfläche wird geöffnet...
@@ -5083,7 +5084,9 @@ Kontextmenü
 ; Context menu
 ;
 MSG_HELP_CO_CONTEXTMENU
-Soll ein Popupmenü beim Klicken der\nrechten Maustaste über diesem Punkt\nauf der Liste angezeigt werden?
+Soll ein Popupmenü beim Klicken der\n\
+rechten Maustaste über diesem Punkt\n\
+auf der Liste angezeigt werden?
 ; Show a popup menu when clicking\n\
 ; the right mouse button on this list?
 ;
@@ -5092,7 +5095,8 @@ Statusleiste
 ; Status bar
 ;
 MSG_HELP_CO_CH_INFOBAR
-Hier kann die Position der Statusleiste festgelegt werden.\nDiese zeigt allgemeine Informationen von YAM.
+Hier kann die Position der Statusleiste festgelegt werden.\n\
+Diese zeigt allgemeine Informationen von YAM.
 ; Here you can select the position of the status bar\n\
 ; that shows general information in YAM.
 ;
@@ -8778,6 +8782,17 @@ MSG_LOG_FILTER_DONE
 MSG_FO_JUMP_TO_UNREAD_MESSAGE
 zu erster ungelesener Nachricht springen
 ;
+MSG_HELP_FO_CH_JUMPTOUNREAD
+Beim ersten Betreten des Postfachs wird\n\
+zur ersten ungelesenen Nachricht gesprungen.
+;
 MSG_FO_JUMP_TO_RECENT_MESSAGE
 zu neuester Nachricht springen
 ;
+MSG_HELP_FO_CH_JUMPTORECENT
+Beim ersten Betreten des Postfachs wird\n\
+zur neuesten Nachricht gesprungen.
+;
+MSG_HELP_FO_CH_STATS
+Sollen die Postfachstatistiken im\n\
+AppIcon-Text von YAM angezeigt werden?
