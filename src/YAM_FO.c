@@ -1265,7 +1265,8 @@ void FO_SetFolderImage(struct Folder *folder)
   ENTER();
 
   // if this folder hasn't got any own folder image in the folder
-  // directory and it is one of our standard folders we have to check which image we put in front of it
+  // directory and it is one of our standard folders we have to
+  // check which image we put in front of it
   if(folder->imageObject == NULL)
   {
     if(isIncomingFolder(folder))
@@ -1284,55 +1285,6 @@ void FO_SetFolderImage(struct Folder *folder)
       folder->ImageIndex = FI_ARCHIVE;
     else
       folder->ImageIndex = -1;
-  }
-
-  LEAVE();
-}
-
-///
-/// FO_UpdateStatistics
-// recalculate the number of new/unread/etc mails in a folder
-void FO_UpdateStatistics(struct Folder *folder)
-{
-  ENTER();
-
-  // make sure we don't deal with a group folder and
-  // the folder's index is valid. There is no point in
-  // updating the stats of a folder with a flushed index.
-  if(isGroupFolder(folder) == FALSE && folder->LoadedMode == LM_VALID)
-  {
-    struct MailNode *mnode;
-
-    D(DBF_FOLDER, "updating stats of folder '%s'", folder->Name);
-
-    folder->Unread = 0;
-    folder->New = 0;
-    folder->Total = 0;
-    folder->Sent = 0;
-
-    LockMailListShared(folder->messages);
-
-    // now we recount the amount of messages of this folder
-    ForEachMailNode(folder->messages, mnode)
-    {
-      struct Mail *mail = mnode->mail;
-
-      folder->Total++;
-
-      if(hasStatusNew(mail))
-        folder->New++;
-
-      if(!hasStatusRead(mail))
-        folder->Unread++;
-
-      if(hasStatusSent(mail))
-        folder->Sent++;
-    }
-
-    UnlockMailList(folder->messages);
-
-    // finally update the image based on the new numbers
-    FO_SetFolderImage(folder);
   }
 
   LEAVE();

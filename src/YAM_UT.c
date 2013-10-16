@@ -4885,9 +4885,10 @@ void DisplayStatistics(struct Folder *fo, BOOL updateAppIcon)
   {
     D(DBF_GUI, "updating statistics for folder '%s', appicon %ld", fo->Name, updateAppIcon);
 
-    // update the stats for this folder
-    FO_UpdateStatistics(fo);
-    // Recalc the number of messages of the folder group
+    // update the folder image
+    if(isGroupFolder(fo) == FALSE)
+      FO_SetFolderImage(fo);
+    // recalc the number of messages of the folder group
     FO_UpdateTreeStatistics(fo, TRUE);
 
     if(fo == GetCurrentFolder())
@@ -4920,11 +4921,11 @@ void FolderTreeUpdate(void)
 
     if(isGroupFolder(folder) == TRUE)
     {
-      folder->Unread  = 0;
-      folder->New     = 0;
-      folder->Total   = 0;
-      folder->Sent    = 0;
-      folder->Size    = 0;
+      folder->Size   = 0;
+      folder->Total  = 0;
+      folder->New    = 0;
+      folder->Unread = 0;
+      folder->Sent   = 0;
     }
   }
 
@@ -4937,7 +4938,8 @@ void FolderTreeUpdate(void)
     {
       struct FolderNode *parentFNode;
 
-      FO_UpdateStatistics(folder);
+      // update the folder's image
+      FO_SetFolderImage(folder);
 
       // add the folder stats to the parent group's stats if it exists
       parentFNode = folder->parent;
@@ -4945,11 +4947,11 @@ void FolderTreeUpdate(void)
       {
         struct Folder *parentFolder = parentFNode->folder;
 
-        parentFolder->Unread  += folder->Unread;
-        parentFolder->New     += folder->New;
-        parentFolder->Total   += folder->Total;
-        parentFolder->Sent    += folder->Sent;
-        parentFolder->Size    += folder->Size;
+        parentFolder->Size   += folder->Size;
+        parentFolder->Total  += folder->Total;
+        parentFolder->New    += folder->New;
+        parentFolder->Unread += folder->Unread;
+        parentFolder->Sent   += folder->Sent;
 
         parentFNode = parentFolder->parent;
       }
