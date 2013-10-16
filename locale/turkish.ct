@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.6 (02.10.2013)
+## version $VER: YAM.catalog 8.6 (16.10.2013)
 ## language türkçe
 ## codeset 0
 ## chunk AUTH Alper Sönmez <amithlondestek@gmail.com>
@@ -10409,4 +10409,24 @@ MSG_LOG_FILTER_DONE
 %ld ileti, %ld eþleþme ile süzüldü
 ; Filtered %ld message(s) with %ld match(es)
 ; COUNT, COUNT
+;
+MSG_FO_JUMP_TO_UNREAD_MESSAGE
+Okunmamýþ ilk iletiye atla
+; Jump to first unread message
+;
+MSG_HELP_FO_CH_JUMPTOUNREAD
+Bu klasöre girildiðinde, klasördeki\n\
+okunmamýþ ilk iletiye atlar.
+; Jump to the first unread message when\n\
+; entering this folder.
+;
+MSG_FO_JUMP_TO_RECENT_MESSAGE
+En yeni iletiye atla
+; Jump to newest message
+;
+MSG_HELP_FO_CH_JUMPTORECENT
+Bu klasöre girildiðinde, klasördeki en\n\
+yakýn tarihli iletiye atlar.
+; Jump to the most recent message when\n\
+; entering this folder.
 ;

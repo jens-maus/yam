@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-10-16 Alper Sönmez <amithlondestek@gmail.com>
+
+  * locale/turkish.ct: update to the latest changes.
+
 2013-10-15 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MAf.c: determining to the most recent mail is now done without accessing
