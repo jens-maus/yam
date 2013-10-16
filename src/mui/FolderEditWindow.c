@@ -1091,12 +1091,13 @@ DECLARE(SaveFolder)
     DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_Sort);
     MA_ChangeFolder(FO_GetFolderByName(data->oldFolder->Name, NULL), FALSE);
 
-    // Save the folder tree only if we just created a new folder, otherwise
+    // save the folder tree only if we just created a new folder, otherwise
     // a temporarily modified open/close state of folder groups will be saved
     // as well, even if the user didn't want this.
     if(newFolder == TRUE)
       FO_SaveTree();
 
+    // redisplay the statistics in case the folder's AppIcon contribution changed
     DisplayStatistics(data->oldFolder, TRUE);
 
     // ask for disposing
