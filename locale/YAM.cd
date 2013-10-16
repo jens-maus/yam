@@ -3745,8 +3745,8 @@ App_Icon stats
 ;
 MSG_HELP_FO_CH_STATS (1378//)
 Would you like to see this\n\
-folder's statistics in the\n\
-YAM AppIcon's label?
+folder's statistics in YAM's\n\
+AppIcon label?
 ;
 MSG_OPENGUI (1380//)
 Opening GUI...
