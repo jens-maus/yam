@@ -91,7 +91,6 @@ struct Part;
 #define SFLAG_QUEUED    (1<<4)        // If set, this message is queued for delivery
 #define SFLAG_HOLD      (1<<5)        // If set, this message is locked and will not be delivered or deleted
 #define SFLAG_SENT      (1<<6)        // Message was successfully sent (if outgoing mail)
-#define SFLAG_DELETED   (1<<7)        // Message was marked as deleted
 #define SFLAG_MARKED    (1<<8)        // Message is marked/flagged
 #define SFLAG_ERROR     (1<<9)        // This message is in an error state (error sending)
 #define SFLAG_USERSPAM  (1<<10)       // This message is marked as spam by user
@@ -104,7 +103,6 @@ struct Part;
 #define SCHAR_QUEUED    'Q'           // [Q] - SFLAG_QUEUED
 #define SCHAR_HOLD      'H'           // [H] - SFLAG_HOLD
 #define SCHAR_SENT      'S'           // [S] - SFLAG_SENT
-#define SCHAR_DELETED   'D'           // [D] - SFLAG_DELETED
 #define SCHAR_MARKED    'M'           // [M] - SFLAG_MARKED
 #define SCHAR_ERROR     'E'           // [E] - SFLAG_ERROR
 #define SCHAR_USERSPAM  'X'           // [X] - SFLAG_USERSPAM
@@ -115,7 +113,6 @@ struct Part;
 #define hasStatusForwarded(mail)      (isFlagSet((mail)->sflags, SFLAG_FORWARDED))
 #define hasStatusNew(mail)            (isFlagSet((mail)->sflags, SFLAG_NEW))
 #define hasStatusSent(mail)           (isFlagSet((mail)->sflags, SFLAG_SENT))
-#define hasStatusDeleted(mail)        (isFlagSet((mail)->sflags, SFLAG_DELETED))
 #define hasStatusMarked(mail)         (isFlagSet((mail)->sflags, SFLAG_MARKED))
 #define hasStatusError(mail)          (isFlagSet((mail)->sflags, SFLAG_ERROR))
 #define hasStatusSpam(mail)           (isAnyFlagSet((mail)->sflags, SFLAG_USERSPAM | SFLAG_AUTOSPAM))
@@ -127,7 +124,6 @@ struct Part;
 #define setStatusToForwarded(mail)    MA_ChangeMailStatus(mail, SFLAG_FORWARDED, SFLAG_NEW)
 #define setStatusToNew(mail)          MA_ChangeMailStatus(mail, SFLAG_NEW, SFLAG_NONE)
 #define setStatusToSent(mail)         MA_ChangeMailStatus(mail, SFLAG_SENT|SFLAG_READ, SFLAG_NEW|SFLAG_QUEUED|SFLAG_HOLD|SFLAG_ERROR)
-#define setStatusToDeleted(mail)      MA_ChangeMailStatus(mail, SFLAG_DELETED, SFLAG_NONE)
 #define setStatusToMarked(mail)       MA_ChangeMailStatus(mail, SFLAG_MARKED, SFLAG_NONE)
 #define setStatusToUnmarked(mail)     MA_ChangeMailStatus(mail, SFLAG_NONE, SFLAG_MARKED)
 #define setStatusToError(mail)        MA_ChangeMailStatus(mail, SFLAG_ERROR, SFLAG_NONE)

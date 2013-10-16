@@ -101,7 +101,6 @@ void UpdateAppIcon(void)
   int unr_msg = 0;
   int tot_msg = 0;
   int snt_msg = 0;
-  int del_msg = 0;
 
   ENTER();
 
@@ -123,7 +122,6 @@ void UpdateAppIcon(void)
         unr_msg += fo->Unread;
         tot_msg += fo->Total;
         snt_msg += fo->Sent;
-        del_msg += fo->Deleted;
       }
     }
   }
@@ -153,7 +151,6 @@ void UpdateAppIcon(void)
           case 'u': snprintf(dst, sizeof(dst), "%d", unr_msg); break;
           case 't': snprintf(dst, sizeof(dst), "%d", tot_msg); break;
           case 's': snprintf(dst, sizeof(dst), "%d", snt_msg); break;
-          case 'd': snprintf(dst, sizeof(dst), "%d", del_msg); break;
         }
       }
       else

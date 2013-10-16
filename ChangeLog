@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-10-16 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_FO.c, YAM_MA-c, YAM_MAf.c, YAM_UT.c: removed the "deleted" mail flag as
+    it was not used at all in YAM.
+
 2013-10-16 Alper Sönmez <amithlondestek@gmail.com>
 
   * locale/turkish.ct: update to the latest changes.

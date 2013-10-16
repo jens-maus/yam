@@ -112,8 +112,6 @@ static int MailCompare(struct Mail *entry1, struct Mail *entry2, LONG column)
       status2 += hasStatusForwarded(entry2) ? 32 : 0;
       status1 += hasStatusSent(entry1) ? 32 : 0;
       status2 += hasStatusSent(entry2) ? 32 : 0;
-      status1 += hasStatusDeleted(entry1) ? 16 : 0;
-      status2 += hasStatusDeleted(entry2) ? 16 : 0;
       status1 += hasStatusMarked(entry1) ? 8  : 0;
       status2 += hasStatusMarked(entry2) ? 8  : 0;
       status1 += (getImportanceLevel(entry1) == IMP_HIGH) ? 16 : 0;

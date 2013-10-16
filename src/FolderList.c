@@ -344,7 +344,6 @@ void MoveFolderContents(struct Folder *to, struct Folder *from)
   to->New += from->New;
   to->Unread += from->Unread;
   to->Sent += from->Sent;
-  to->Deleted += from->Deleted;
 
   // erase the stats of the originating folder
   from->Size = 0;
@@ -352,7 +351,6 @@ void MoveFolderContents(struct Folder *to, struct Folder *from)
   from->New = 0;
   from->Unread = 0;
   from->Sent = 0;
-  from->Deleted = 0;
 
   LEAVE();
 }

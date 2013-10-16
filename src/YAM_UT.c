@@ -4918,7 +4918,6 @@ void FolderTreeUpdate(void)
       folder->New     = 0;
       folder->Total   = 0;
       folder->Sent    = 0;
-      folder->Deleted = 0;
       folder->Size    = 0;
     }
   }
@@ -4944,7 +4943,6 @@ void FolderTreeUpdate(void)
         parentFolder->New     += folder->New;
         parentFolder->Total   += folder->Total;
         parentFolder->Sent    += folder->Sent;
-        parentFolder->Deleted += folder->Deleted;
         parentFolder->Size    += folder->Size;
 
         parentFNode = parentFolder->parent;

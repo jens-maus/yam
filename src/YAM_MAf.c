@@ -3077,10 +3077,6 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
               setFlag(mail->sflags, SFLAG_SENT);
             break;
 
-            case SCHAR_DELETED:
-              setFlag(mail->sflags, SFLAG_DELETED);
-            break;
-
             case SCHAR_MARKED:
               setFlag(mail->sflags, SFLAG_MARKED);
             break;
@@ -3099,6 +3095,10 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
 
             case SCHAR_HAM:
               setFlag(mail->sflags, SFLAG_HAM);
+            break;
+
+            default:
+              W(DBF_FOLDER, "invalid mail status character '%lc' found", *ptr);
             break;
           }
         }

@@ -132,7 +132,6 @@ struct Folder
   int               New;
   int               Unread;
   int               Sent;
-  int               Deleted;
   int               Sort[2];
   int               MaxAge;
   int               LastActive;

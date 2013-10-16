@@ -3737,9 +3737,6 @@ MSG_CO_UNREADMSGS (1373//)
 MSG_CO_TOTALMSGS (1374//)
 %t  Total messages
 ;
-MSG_CO_DELMSGS (1375//)
-%d  Deleted messages
-;
 MSG_CO_SENTMSGS (1376//)
 %s  Sent messages
 ;

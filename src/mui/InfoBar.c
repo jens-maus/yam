@@ -94,7 +94,6 @@ static void GetFolderInfo(struct Data *data, struct Folder *folder)
         case 'u': snprintf(dst, sizeof(dst), "%d", folder->Unread);  break;
         case 't': snprintf(dst, sizeof(dst), "%d", folder->Total);   break;
         case 's': snprintf(dst, sizeof(dst), "%d", folder->Sent);    break;
-        case 'd': snprintf(dst, sizeof(dst), "%d", folder->Deleted); break;
       }
     }
     else

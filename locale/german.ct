@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.25 (14.10.2013)
+## version $VER: YAM.catalog 8.26 (16.10.2013)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -5059,10 +5059,6 @@ MSG_CO_UNREADMSGS
 MSG_CO_TOTALMSGS
 %t  Nachrichten insgesamt
 ; %t  Total messages
-;
-MSG_CO_DELMSGS
-%d  Gelöschte Nachrichten
-; %d  Deleted messages
 ;
 MSG_CO_SENTMSGS
 %s  Versandte Nachrichten

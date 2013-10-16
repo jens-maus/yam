@@ -128,9 +128,8 @@ OVERLOAD(OM_NEW)
         data->entries[0] = tr(MSG_CO_NEWMSGS);
         data->entries[1] = tr(MSG_CO_UNREADMSGS);
         data->entries[2] = tr(MSG_CO_TOTALMSGS);
-        data->entries[3] = tr(MSG_CO_DELMSGS);
-        data->entries[4] = tr(MSG_CO_SENTMSGS);
-        data->entries[5] = NULL;
+        data->entries[3] = tr(MSG_CO_SENTMSGS);
+        data->entries[4] = NULL;
       }
       break;
 

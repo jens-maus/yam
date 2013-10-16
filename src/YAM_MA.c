@@ -476,7 +476,6 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
   if(hasStatusForwarded(mail))  *ptr++ = SCHAR_FORWARDED;
   if(hasStatusNew(mail))        *ptr++ = SCHAR_NEW;
   if(hasStatusSent(mail))       *ptr++ = SCHAR_SENT;
-  if(hasStatusDeleted(mail))    *ptr++ = SCHAR_DELETED;
   if(hasStatusMarked(mail))     *ptr++ = SCHAR_MARKED;
   if(hasStatusError(mail))      *ptr++ = SCHAR_ERROR;
   if(hasStatusUserSpam(mail))   *ptr++ = SCHAR_USERSPAM;
@@ -998,9 +997,6 @@ char *MA_ToXStatusHeader(struct Mail *mail)
   if(hasStatusMarked(mail))
     *ptr++ = 'F';
 
-  if(hasStatusDeleted(mail))
-    *ptr++ = 'D';
-
   if(hasStatusUserSpam(mail))
     *ptr++ = 'X';
 
@@ -1075,10 +1071,6 @@ unsigned int MA_FromXStatusHeader(char *xstatusflags)
 
       case 'F':
         setFlag(sflags, SFLAG_MARKED);
-      break;
-
-      case 'D':
-        setFlag(sflags, SFLAG_DELETED);
       break;
 
       case 'T':
