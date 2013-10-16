@@ -414,8 +414,30 @@ void MA_ChangeMailStatus(struct Mail *mail, int addflags, int clearflags)
   {
     if(IsMainThread() == TRUE)
     {
+      struct Folder *folder = mail->Folder;
+
+      // first substract the mail's old status from the folder's stats
+      if(hasStatusNew(mail))
+        folder->New--;
+
+      if(!hasStatusRead(mail))
+        folder->Unread--;
+
+      if(hasStatusSent(mail))
+        folder->Sent--;
+
       // set the new status
       mail->sflags = newstatus;
+
+      // now add the mail's new status to the folder's stats
+      if(hasStatusNew(mail))
+        folder->New++;
+
+      if(!hasStatusRead(mail))
+        folder->Unread++;
+
+      if(hasStatusSent(mail))
+        folder->Sent++;
 
       // set the comment to the Mailfile
       MA_UpdateMailFile(mail);

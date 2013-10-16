@@ -7,8 +7,10 @@ $URL$
 
 2013-10-16 Thore Böckelmann <tboeckel@gmx.de>
 
-  * YAM_FO.c, YAM_MA-c, YAM_MAf.c, YAM_UT.c: removed the "deleted" mail flag as
+  * YAM_FO.c, YAM_MA.c, YAM_MAf.c, YAM_UT.c: removed the "deleted" mail flag as
     it was not used at all in YAM.
+  * YAM_MA.c, YAM_UT.c: changing a mail's status now automatically update the
+    folder's statistics.
 
 2013-10-16 Alper Sönmez <amithlondestek@gmail.com>
 

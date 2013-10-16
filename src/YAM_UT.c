@@ -3565,6 +3565,9 @@ void AddMailToFolderSimple(struct Mail *mail, struct Folder *folder)
   if(!hasStatusRead(mail))
     folder->Unread++;
 
+  if(hasStatusSent(mail))
+    folder->Sent++;
+
   LEAVE();
 }
 
@@ -3600,6 +3603,9 @@ void RemoveMailFromFolder(struct Mail *mail, const BOOL closeWindows, const BOOL
 
   if(!hasStatusRead(mail))
     folder->Unread--;
+
+  if(hasStatusSent(mail))
+    folder->Sent--;
 
   LockMailList(folder->messages);
 
