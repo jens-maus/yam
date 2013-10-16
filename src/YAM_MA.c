@@ -3499,7 +3499,6 @@ HOOKPROTONHNONP(MA_ChangeSubjectFunc, void)
     DeleteMailList(mlist);
 
     DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_Redraw, MUIV_NList_Redraw_All);
-    DisplayStatistics(NULL, TRUE);
   }
 
   LEAVE();
