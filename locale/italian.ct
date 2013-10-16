@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.48 (17.09.2013)
+## version $VER: YAM.catalog 8.49 (16.10.2013)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -563,13 +563,13 @@ Filtraggio eseguito:\n\
 \n\
 %3ld messaggi controllati,\n\
 %3ld messaggi inoltrati,\n\
-%3ld messaggi archiviati,\n\
+%3ld messaggi spostati,\n\
 %3ld messaggi cancellati
 ; Filtering done:\n\
 ; \n\
 ; %3ld messages checked,\n\
 ; %3ld forwarded,\n\
-; %3ld archived,\n\
+; %3ld moved,\n\
 ; %3ld deleted
 ; COUNT, COUNT, COUNT, COUNT
 ;
@@ -5134,10 +5134,6 @@ MSG_CO_TOTALMSGS
 %t  Messaggi totali
 ; %t  Total messages
 ;
-MSG_CO_DELMSGS
-%d  Messaggi cancellati
-; %d  Deleted messages
-;
 MSG_CO_SENTMSGS
 %s  Messaggi inviati
 ; %s  Sent messages
@@ -5147,12 +5143,11 @@ Statistic_he AppIcon
 ; App_Icon stats
 ;
 MSG_HELP_FO_CH_STATS
-Se selezionato il programma visualizzerà le\n\
-statistiche della cartella nell'etichetta della\n\
-AppIcon di YAM
+Se selezionato le statistiche della cartella verranno\n\
+visualizzate nell'etichetta dell'AppIcon di YAM.
 ; Would you like to see this\n\
-; folder's statistics in the\n\
-; YAM AppIcon's label?
+; folder's statistics in YAM's\n\
+; AppIcon label?
 ;
 MSG_OPENGUI
 Inizializzazione e apertura della GUI...
@@ -10560,4 +10555,24 @@ MSG_LOG_FILTER_DONE
 Filtrati %ld messaggi(o) con %ld riscontri(o)
 ; Filtered %ld message(s) with %ld match(es)
 ; COUNT, COUNT
+;
+MSG_FO_JUMP_TO_UNREAD_MESSAGE
+Vai al primo messaggio non letto
+; Jump to first unread message
+;
+MSG_HELP_FO_CH_JUMPTOUNREAD
+Vai al primo messaggio non letto quando\n\
+si accede a questa cartella.
+; Jump to the first unread message when\n\
+; entering this folder.
+;
+MSG_FO_JUMP_TO_RECENT_MESSAGE
+Vai al messaggio più recente
+; Jump to newest message
+;
+MSG_HELP_FO_CH_JUMPTORECENT
+Vai al messaggio più recente quando\n\
+si accede a questa cartella
+; Jump to the most recent message when\n\
+; entering this folder.
 ;
