@@ -5856,7 +5856,7 @@ Filtering done:\n\
 \n\
 %3ld messages checked,\n\
 %3ld forwarded,\n\
-%3ld archived,\n\
+%3ld moved,\n\
 %3ld deleted,\n\
 %3ld classified as spam
 ; COUNT, COUNT, COUNT, COUNT, COUNT

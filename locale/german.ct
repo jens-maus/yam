@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.28 (16.10.2013)
+## version $VER: YAM.catalog 8.29 (17.10.2013)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -555,10 +555,12 @@ Bitte bestätigen
 ;
 MSG_MA_FilterStats
 Filtervorgang beendet:\n\
+\n\
 %3ld Nachrichten geprüft,\n\
 %3ld weitergeleitet,\n\
 %3ld verschoben,\n\
 %3ld gelöscht
+;
 MSG_MA_ExportAppendReq
 Die Ausgabedatei existiert bereits. Soll sie\n\
 überschrieben oder die Nachrichten angehängt werden?
@@ -3927,17 +3929,6 @@ Filtervorgang abgeschlossen:\n\
 %3ld starteten Befehl,\n\
 %3ld verschoben,\n\
 %3ld gelöscht
-; \n\
-; Filtering done:\n\
-; \n\
-; %3ld messages checked,\n\
-; %3ld redirected,\n\
-; %3ld forwarded,\n\
-; %3ld auto-replied,\n\
-; %3ld command activated,\n\
-; %3ld moved,\n\
-; %3ld deleted
-; COUNT, COUNT, COUNT, COUNT, COUNT, COUNT, COUNT
 ;
 MSG_TR_NewMail
 Neue Post
@@ -7316,9 +7307,10 @@ XML-Adressbuch (*.xml)
 ;
 MSG_MA_FILTER_STATS_SPAM
 Filtervorgang beendet:\n\
+\n\
 %3ld Nachrichten geprüft,\n\
 %3ld weitergeleitet,\n\
-%3ld archiviert,\n\
+%3ld verschoben,\n\
 %3ld gelöscht,\n\
 %3ld als Spam klassifiziert
 ;
