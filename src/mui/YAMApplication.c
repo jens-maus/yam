@@ -35,6 +35,7 @@
 #include <proto/dos.h>
 #include <proto/icon.h>
 #include <proto/muimaster.h>
+#include <proto/rexxsyslib.h>
 #if defined(__amigaos4__)
 #include <proto/application.h>
 #endif
@@ -69,6 +70,7 @@
 #include "MUIObjects.h"
 #include "UpdateCheck.h"
 #include "Requesters.h"
+#include "Rexx.h"
 #include "Threads.h"
 
 #include "Debug.h"
@@ -944,7 +946,175 @@ DECLARE(SetStatusTo) // struct Mail *mail, int addflags, int clearflags
 /// DECLARE(StartMacro)
 DECLARE(StartMacro) // enum Macro num, const char *param
 {
-  return MA_StartMacro(msg->num, msg->param);
+  ULONG rc = FALSE;
+
+  ENTER();
+
+  if(msg->num == MACRO_PROMPT_USER)
+  {
+    if(G->RexxHost != NULL)
+    {
+      struct FileReqCache *frc;
+      char scname[SIZE_COMMAND];
+
+      AddPath(scname, G->ProgDir, "rexx", sizeof(scname));
+      if((frc = ReqFile(ASL_REXX, G->MA->GUI.WI, tr(MSG_MA_EXECUTESCRIPT_TITLE), REQF_NONE, scname, "")))
+      {
+        AddPath(scname, frc->drawer, frc->file, sizeof(scname));
+
+        // only RexxSysBase v45+ seems to support properly quoted
+        // strings via the new RXFF_SCRIPT flag
+        if(LIB_VERSION_IS_AT_LEAST(RexxSysBase, 45, 0) == TRUE && MyStrChr(scname, ' ') != NULL)
+        {
+          char command[SIZE_COMMAND];
+
+          snprintf(command, sizeof(command), "\"%s\"", scname);
+          if(SendRexxCommand(G->RexxHost, command, 0) != NULL)
+            rc = TRUE;
+        }
+        else
+        {
+          if(SendRexxCommand(G->RexxHost, scname, 0) != NULL)
+            rc = TRUE;
+        }
+      }
+    }
+    else
+      E(DBF_REXX, "no RexxHost, cannot execute Arexx scripts");
+  }
+  else
+  {
+    struct RxHook *macro = &C->RX[msg->num];
+
+    if(IsStrEmpty(macro->Script) == FALSE)
+    {
+      char command[SIZE_LARGE];
+      char *s = macro->Script;
+      char *p;
+
+      command[0] = '\0';
+
+      // now we check if the script command contains
+      // the '%p' placeholder and if so we go and replace
+      // it with our parameter
+      while((p = strstr(s, "%p")) != NULL)
+      {
+        strlcat(command, s, MIN(p-s+1, (LONG)sizeof(command)));
+
+        if(msg->param != NULL)
+          strlcat(command, msg->param, sizeof(command));
+
+        s = p+2;
+      }
+
+      // add the rest
+      strlcat(command, s, sizeof(command));
+
+      // check if the script in question is an amigados
+      // or arexx script
+      if(macro->IsAmigaDOS == TRUE)
+      {
+        struct BusyNode *busy;
+
+        // now execute the command
+        busy = BusyBegin(BUSY_TEXT);
+        BusyText(busy, tr(MSG_MA_EXECUTINGCMD), "");
+        LaunchCommand(command, macro->WaitTerm ? 0 : LAUNCHF_ASYNC, macro->UseConsole ? OUT_STDOUT : OUT_NIL);
+        BusyEnd(busy);
+
+        rc = TRUE;
+      }
+      else if(G->RexxHost != NULL) // make sure that rexx it available
+      {
+        BPTR fh;
+
+        // prepare the command string
+        // only RexxSysBase v45+ seems to support properly quoted
+        // strings via the new RXFF_SCRIPT flag
+        if(LIB_VERSION_IS_AT_LEAST(RexxSysBase, 45, 0) == FALSE)
+          UnquoteString(command, FALSE);
+
+        // make sure to open the output console handler
+        if((fh = Open(macro->UseConsole ? "CON:////YAM ARexx Window/AUTO" : "NIL:", MODE_NEWFILE)) != ZERO)
+        {
+          struct RexxMsg *sentrm;
+
+          // execute the Arexx command
+          if((sentrm = SendRexxCommand(G->RexxHost, command, fh)) != NULL)
+          {
+            // if the user wants to wait for the termination
+            // of the script, we do so...
+            SHOWVALUE(DBF_REXX, macro->WaitTerm);
+            if(macro->WaitTerm == TRUE)
+            {
+              struct BusyNode *busy;
+              struct RexxMsg *rm;
+              BOOL waiting = TRUE;
+
+              busy = BusyBegin(BUSY_TEXT);
+              BusyText(busy, tr(MSG_MA_EXECUTINGCMD), "");
+              do
+              {
+                WaitPort(G->RexxHost->port);
+
+                while((rm = (struct RexxMsg *)GetMsg(G->RexxHost->port)) != NULL)
+                {
+                  if((rm->rm_Action & RXCODEMASK) != RXCOMM)
+                    ReplyMsg((struct Message *)rm);
+                  else if(rm->rm_Node.mn_Node.ln_Type == NT_REPLYMSG)
+                  {
+                    struct RexxMsg *org = (struct RexxMsg *)rm->rm_Args[15];
+
+                    if(org != NULL)
+                    {
+                      if(rm->rm_Result1 != 0)
+                        ReplyRexxCommand(org, 20, ERROR_NOT_IMPLEMENTED, NULL);
+                      else
+                        ReplyRexxCommand(org, 0, 0, (char *)rm->rm_Result2);
+                    }
+
+                    if(rm == sentrm)
+                    {
+                      if(rm->rm_Result1 == 0)
+                        rc = TRUE;
+                      else
+                        ER_NewError(tr(MSG_ER_AREXX_EXECUTION_ERROR), rm->rm_Args[0], rm->rm_Result1);
+
+                      waiting = FALSE;
+                    }
+
+                    FreeRexxCommand(rm);
+                    --G->RexxHost->replies;
+                  }
+                  else if(rm->rm_Args[0] != 0)
+                    DoRXCommand(G->RexxHost, rm);
+                  else
+                    ReplyMsg((struct Message *)rm);
+                }
+              }
+              while(waiting);
+              BusyEnd(busy);
+            }
+
+            rc = TRUE;
+            D(DBF_REXX, "finished");
+          }
+          else
+          {
+            Close(fh);
+            ER_NewError(tr(MSG_ER_ErrorARexxScript), command);
+          }
+        }
+        else
+          ER_NewError(tr(MSG_ER_ErrorConsole));
+      }
+      else
+        E(DBF_REXX, "no RexxHost, cannot execute Arexx script '%ld'", macro->Script);
+    }
+  }
+
+  RETURN(rc);
+  return rc;
 }
 
 ///

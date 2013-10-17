@@ -2300,6 +2300,7 @@ static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
   RETURN(hrp);
   return hrp;
 }
+
 ///
 /// RE_DecodePart
 //  Decodes a single message part
@@ -2504,6 +2505,7 @@ BOOL RE_DecodePart(struct Part *rp)
   RETURN(isDecoded(rp));
   return isDecoded(rp);
 }
+
 ///
 /// RE_HandleSignedMessage
 //  Handles a PGP signed message, checks validity of signature
@@ -2536,6 +2538,7 @@ static void RE_HandleSignedMessage(struct Part *frp)
 
   LEAVE();
 }
+
 ///
 /// RE_DecryptPGP
 //  Decrypts a PGP encrypted file
@@ -2557,7 +2560,7 @@ static int RE_DecryptPGP(struct ReadMailData *rmData, char *src)
     snprintf(fname, sizeof(fname), "%s.asc", src);
     Rename(src, fname);
     snprintf(options, sizeof(options), "%s +batchmode=1 +force +language=us", fname);
-    error = PGPCommand("pgpv", options, KEEPLOG|NOERRORS);
+    error = PGPCommand("pgpv", options, NOERRORS|KEEPLOG);
     RE_GetSigFromLog(rmData, orcpt);
     if(orcpt[0] != '\0')
       error = 2;
@@ -2569,7 +2572,7 @@ static int RE_DecryptPGP(struct ReadMailData *rmData, char *src)
     char options[SIZE_LARGE];
 
     snprintf(options, sizeof(options), "%s +bat +f +lang=en", src);
-    error = PGPCommand("pgp", options, KEEPLOG|NOERRORS);
+    error = PGPCommand("pgp", options, NOERRORS|KEEPLOG);
     RE_GetSigFromLog(rmData, NULL);
   }
 
@@ -2592,6 +2595,7 @@ static int RE_DecryptPGP(struct ReadMailData *rmData, char *src)
   RETURN(error);
   return error;
 }
+
 ///
 /// RE_HandleEncryptedMessage
 //  Handles a PGP encryped message
@@ -2676,6 +2680,7 @@ static void RE_HandleEncryptedMessage(struct Part *frp)
 
   LEAVE();
 }
+
 ///
 /// RE_LoadMessagePart
 //  Decodes a single message part
@@ -2719,6 +2724,7 @@ static void RE_LoadMessagePart(struct ReadMailData *rmData, struct Part *part)
 
   LEAVE();
 }
+
 ///
 /// RE_LoadMessage
 // Function that preparses a mail for either direct display in a read mail group

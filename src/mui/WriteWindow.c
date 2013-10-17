@@ -1638,7 +1638,7 @@ OVERLOAD(OM_NEW)
 
       // we created a new write window, lets
       // go and start the PREWRITE macro
-      MA_StartMacro(MACRO_PREWRITE, data->windowNumberStr);
+      DoMethod(_app(obj), MUIM_YAMApplication_StartMacro, MACRO_PREWRITE, data->windowNumberStr);
 
       // the mail is not modified yet
       data->mailModified = FALSE;
@@ -3983,7 +3983,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
     // we execute the POSTWRITE macro right before writing out
     // the message because the postwrite macro may want to modify the
     // text in the editor beforehand.
-    MA_StartMacro(MACRO_POSTWRITE, data->windowNumberStr);
+    DoMethod(_app(obj), MUIM_YAMApplication_StartMacro, MACRO_POSTWRITE, data->windowNumberStr);
 
     // export the text of our texteditor to a file in the currently selected codeset
     DoMethod(data->TE_EDIT, MUIM_MailTextEdit_SaveToFile, wmData->filename, wmData->codeset);
@@ -3996,7 +3996,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
     }
   }
   else if(mode != WRITE_DRAFT)
-    MA_StartMacro(MACRO_POSTWRITE, data->windowNumberStr);
+    DoMethod(_app(obj), MUIM_YAMApplication_StartMacro, MACRO_POSTWRITE, data->windowNumberStr);
 
   comp.Mode = wmData->mode;
   comp.Identity = wmData->identity;

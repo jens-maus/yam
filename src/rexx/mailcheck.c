@@ -25,12 +25,15 @@
 
 ***************************************************************************/
 
+#include <clib/alib_protos.h>
 #include <proto/exec.h>
 
 #include "extrasrc.h"
 
 #include "YAM.h"
 #include "YAM_main.h"
+
+#include "mui/YAMApplication.h"
 
 #include "Config.h"
 #include "MailServers.h"
@@ -90,7 +93,7 @@ void rx_mailcheck(UNUSED struct RexxHost *host, struct RexxParams *params, enum 
 
       if(pop >= -1)
       {
-        MA_StartMacro(MACRO_PREGET, "3");
+        DoMethod(G->App, MUIM_YAMApplication_StartMacro, MACRO_PREGET, "3");
 
         if(pop == -1)
         {

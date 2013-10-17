@@ -2454,13 +2454,13 @@ BOOL MA_PopNow(struct MailServerNode *msn, const ULONG flags, struct DownloadRes
 
   // the USER flag must be checked at last, because STARTUP and USER might be used together
   if(isFlagSet(flags, RECEIVEF_STARTUP))
-    MA_StartMacro(MACRO_PREGET, "1");
+    DoMethod(G->App, MUIM_YAMApplication_StartMacro, MACRO_PREGET, "1");
   else if(isFlagSet(flags, RECEIVEF_TIMER))
-    MA_StartMacro(MACRO_PREGET, "2");
+    DoMethod(G->App, MUIM_YAMApplication_StartMacro, MACRO_PREGET, "2");
   else if(isFlagSet(flags, RECEIVEF_AREXX))
-    MA_StartMacro(MACRO_PREGET, "3");
+    DoMethod(G->App, MUIM_YAMApplication_StartMacro, MACRO_PREGET, "3");
   else if(isFlagSet(flags, RECEIVEF_USER))
-    MA_StartMacro(MACRO_PREGET, "0");
+    DoMethod(G->App, MUIM_YAMApplication_StartMacro, MACRO_PREGET, "0");
 
   if(msn == NULL)
   {
@@ -3509,184 +3509,6 @@ HOOKPROTONHNONP(MA_ChangeSubjectFunc, void)
 MakeHook(MA_ChangeSubjectHook, MA_ChangeSubjectFunc);
 
 ///
-/// MA_StartMacro
-//  Launches user-defined ARexx script or AmigaDOS command
-BOOL MA_StartMacro(const enum Macro num, const char *param)
-{
-  BOOL result = FALSE;
-
-  ENTER();
-
-  if(C->RX[num].Script[0] != '\0')
-  {
-    char command[SIZE_LARGE];
-    char *s = C->RX[num].Script;
-    char *p;
-
-    command[0] = '\0';
-
-    // now we check if the script command contains
-    // the '%p' placeholder and if so we go and replace
-    // it with our parameter
-    while((p = strstr(s, "%p")) != NULL)
-    {
-      strlcat(command, s, MIN(p-s+1, (LONG)sizeof(command)));
-
-      if(param != NULL)
-        strlcat(command, param, sizeof(command));
-
-      s = p+2;
-    }
-
-    // add the rest
-    strlcat(command, s, sizeof(command));
-
-    // check if the script in question is an amigados
-    // or arexx script
-    if(C->RX[num].IsAmigaDOS == TRUE)
-    {
-      struct BusyNode *busy;
-
-      // now execute the command
-      busy = BusyBegin(BUSY_TEXT);
-      BusyText(busy, tr(MSG_MA_EXECUTINGCMD), "");
-      LaunchCommand(command, C->RX[num].WaitTerm ? 0 : LAUNCHF_ASYNC, C->RX[num].UseConsole ? OUT_STDOUT : OUT_NIL);
-      BusyEnd(busy);
-
-      result = TRUE;
-    }
-    else if(G->RexxHost != NULL) // make sure that rexx it available
-    {
-      BPTR fh;
-
-      // prepare the command string
-      // only RexxSysBase v45+ seems to support properly quoted
-      // strings via the new RXFF_SCRIPT flag
-      if(LIB_VERSION_IS_AT_LEAST(RexxSysBase, 45, 0) == FALSE)
-        UnquoteString(command, FALSE);
-
-      // make sure to open the output console handler
-      if((fh = Open(C->RX[num].UseConsole ? "CON:////YAM ARexx Window/AUTO" : "NIL:", MODE_NEWFILE)) != ZERO)
-      {
-        struct RexxMsg *sentrm;
-
-        // execute the Arexx command
-        if((sentrm = SendRexxCommand(G->RexxHost, command, fh)) != NULL)
-        {
-          // if the user wants to wait for the termination
-          // of the script, we do so...
-          SHOWVALUE(DBF_REXX, C->RX[num].WaitTerm);
-          if(C->RX[num].WaitTerm == TRUE)
-          {
-            struct BusyNode *busy;
-            struct RexxMsg *rm;
-            BOOL waiting = TRUE;
-
-            busy = BusyBegin(BUSY_TEXT);
-            BusyText(busy, tr(MSG_MA_EXECUTINGCMD), "");
-            do
-            {
-              WaitPort(G->RexxHost->port);
-
-              while((rm = (struct RexxMsg *)GetMsg(G->RexxHost->port)) != NULL)
-              {
-                if((rm->rm_Action & RXCODEMASK) != RXCOMM)
-                  ReplyMsg((struct Message *)rm);
-                else if(rm->rm_Node.mn_Node.ln_Type == NT_REPLYMSG)
-                {
-                  struct RexxMsg *org = (struct RexxMsg *)rm->rm_Args[15];
-
-                  if(org != NULL)
-                  {
-                    if(rm->rm_Result1 != 0)
-                      ReplyRexxCommand(org, 20, ERROR_NOT_IMPLEMENTED, NULL);
-                    else
-                      ReplyRexxCommand(org, 0, 0, (char *)rm->rm_Result2);
-                  }
-
-                  if(rm == sentrm)
-                  {
-                    if(rm->rm_Result1 == 0)
-                      result = TRUE;
-                    else
-                      ER_NewError(tr(MSG_ER_AREXX_EXECUTION_ERROR), rm->rm_Args[0], rm->rm_Result1);
-
-                    waiting = FALSE;
-                  }
-
-                  FreeRexxCommand(rm);
-                  --G->RexxHost->replies;
-                }
-                else if(rm->rm_Args[0] != 0)
-                  DoRXCommand(G->RexxHost, rm);
-                else
-                  ReplyMsg((struct Message *)rm);
-              }
-            }
-            while(waiting);
-            BusyEnd(busy);
-          }
-
-          result = TRUE;
-          D(DBF_REXX, "finished");
-        }
-        else
-        {
-          Close(fh);
-          ER_NewError(tr(MSG_ER_ErrorARexxScript), command);
-        }
-      }
-      else
-        ER_NewError(tr(MSG_ER_ErrorConsole));
-    }
-  }
-
-  RETURN(result);
-  return result;
-}
-
-///
-/// MA_CallRexxFunc
-//  Launches a script from the ARexx menu
-HOOKPROTONHNO(MA_CallRexxFunc, void, int *arg)
-{
-  int script = *arg;
-
-  ENTER();
-
-  if(script >= 0)
-    MA_StartMacro(MACRO_MEN0+script, NULL);
-  else if(G->RexxHost != NULL)
-  {
-    struct FileReqCache *frc;
-    char scname[SIZE_COMMAND];
-
-    AddPath(scname, G->ProgDir, "rexx", sizeof(scname));
-    if((frc = ReqFile(ASL_REXX, G->MA->GUI.WI, tr(MSG_MA_EXECUTESCRIPT_TITLE), REQF_NONE, scname, "")))
-    {
-      AddPath(scname, frc->drawer, frc->file, sizeof(scname));
-
-      // only RexxSysBase v45+ seems to support properly quoted
-      // strings via the new RXFF_SCRIPT flag
-      if(LIB_VERSION_IS_AT_LEAST(RexxSysBase, 45, 0) == TRUE && MyStrChr(scname, ' ') != NULL)
-      {
-        char command[SIZE_COMMAND];
-
-        snprintf(command, sizeof(command), "\"%s\"", scname);
-        SendRexxCommand(G->RexxHost, command, 0);
-      }
-      else
-        SendRexxCommand(G->RexxHost, scname, 0);
-    }
-  }
-  else
-    E(DBF_REXX, "couldn't execute Arexx script '%ld'", script);
-
-  LEAVE();
-}
-MakeStaticHook(MA_CallRexxHook, MA_CallRexxFunc);
-
-///
 /// MA_GetRealSubject
 //  Strips reply prefix / mailing list name from subject
 char *MA_GetRealSubject(char *sub)
@@ -4453,14 +4275,14 @@ struct MA_ClassData *MA_New(void)
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_USER,           MUIV_Notify_Application, 2, MUIM_CallHook,             &US_OpenHook);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_MUI,            MUIV_Notify_Application, 3, MUIM_Application_OpenConfigWindow, MUIF_NONE, NULL);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_ABOUTMUI,       MUIV_Notify_Application, 2, MUIM_Application_AboutMUI, data->GUI.WI);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SCRIPT,         MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_CallRexxHook, -1);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SCRIPT,         MUIV_Notify_Application, 3, MUIM_YAMApplication_StartMacro, MACRO_PROMPT_USER, NULL);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_PREVTH,         MUIV_Notify_Application, 3, MUIM_CallHook,             &FollowThreadHook, -1);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_NEXTTH,         MUIV_Notify_Application, 3, MUIM_CallHook,             &FollowThreadHook, +1);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_HELP_CONTENTS,  MUIV_Notify_Application, 5, MUIM_Application_ShowHelp, data->GUI.WI, NULL, NULL, 0);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_HELP_AREXX,     MUIV_Notify_Application, 5, MUIM_Application_ShowHelp, data->GUI.WI, NULL, "ARexx%20API", 0);
 
       for(i=0; i < MAXRX_MENU; i++)
-        DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_MACRO+i, MUIV_Notify_Application, 3, MUIM_CallHook, &MA_CallRexxHook, i);
+        DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_MACRO+i, MUIV_Notify_Application, 3, MUIM_YAMApplication_StartMacro, i, NULL);
 
       DoMethod(data->GUI.WI,            MUIM_Notify, MUIA_Window_CloseRequest,  TRUE,                   MUIV_Notify_Application,  2, MUIM_Application_ReturnID, ID_CLOSEALL);
 

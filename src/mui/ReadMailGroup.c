@@ -1029,10 +1029,10 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
         char numStr[SIZE_SMALL];
 
         snprintf(numStr, sizeof(numStr), "%d", (int)xget(rmData->readWindow, MUIA_ReadWindow_Num));
-        MA_StartMacro(MACRO_READ, numStr);
+        DoMethod(_app(obj), MUIM_YAMApplication_StartMacro, MACRO_READ, numStr);
       }
       else
-        MA_StartMacro(MACRO_READ, "-1");
+        DoMethod(_app(obj), MUIM_YAMApplication_StartMacro, MACRO_READ, "-1");
 
       // if the displayed mail isn't a virtual one we flag it as read now
       if(!isVirtualMail(mail) &&

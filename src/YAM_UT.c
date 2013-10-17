@@ -5682,7 +5682,7 @@ BOOL GotoURL(const char *url, const BOOL newWindow)
 
       snprintf(newurl, sizeof(newurl), "\"%s\"", url);
       D(DBF_UTIL, "trying script '%s' to open URL '%s'", C->RX[MACRO_URL].Script, url);
-      wentToURL = MA_StartMacro(MACRO_URL, newurl);
+      wentToURL = DoMethod(G->App, MUIM_YAMApplication_StartMacro, MACRO_URL, newurl);
     }
     else
     {

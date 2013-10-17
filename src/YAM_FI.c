@@ -60,6 +60,7 @@
 #include "mui/ClassesExtra.h"
 #include "mui/SearchMailWindow.h"
 #include "mui/WriteWindow.h"
+#include "mui/YAMApplication.h"
 
 #include "BayesFilter.h"
 #include "BoyerMooreSearch.h"
@@ -1586,7 +1587,7 @@ void FilterMails(const struct MailList *mlist, const int mode, struct FilterResu
     else
       BusyText(busy, tr(MSG_FI_BUSYCHECKSPAM), "");
 
-    MA_StartMacro(MACRO_PREFILTER, NULL);
+    DoMethod(G->App, MUIM_YAMApplication_StartMacro, MACRO_PREFILTER, NULL);
 
     memset(&lastStatsUpdate, 0, sizeof(lastStatsUpdate));
     memset(&lastResult, 0, sizeof(lastResult));
@@ -1685,7 +1686,7 @@ void FilterMails(const struct MailList *mlist, const int mode, struct FilterResu
     if(result->Checked != 0)
       AppendToLogfile(LF_ALL, 26, tr(MSG_LOG_FILTER_DONE), result->Checked, matches);
 
-    MA_StartMacro(MACRO_POSTFILTER, NULL);
+    DoMethod(G->App, MUIM_YAMApplication_StartMacro, MACRO_POSTFILTER, NULL);
 
     BusyEnd(busy);
 

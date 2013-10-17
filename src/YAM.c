@@ -2549,7 +2549,7 @@ int main(int argc, char **argv)
 
     DoMethod(G->App, MUIM_Application_Load, MUIV_Application_Load_ENVARC);
     AppendToLogfile(LF_ALL, 0, tr(MSG_LOG_Started));
-    MA_StartMacro(MACRO_STARTUP, NULL);
+    DoMethod(G->App, MUIM_YAMApplication_StartMacro, MACRO_STARTUP, NULL);
 
     if(yamFirst == TRUE)
     {
@@ -2740,7 +2740,7 @@ int main(int argc, char **argv)
       DoMethod(G->App, MUIM_CallHook, &MA_DeleteDeletedHook, TRUE);
 
     AppendToLogfile(LF_ALL, 99, tr(MSG_LOG_Terminated));
-    MA_StartMacro(MACRO_QUIT, NULL);
+    DoMethod(G->App, MUIM_YAMApplication_StartMacro, MACRO_QUIT, NULL);
 
     // if the user really wants to exit, do it now as Terminate() is broken !
     if(ret == 1)

@@ -217,12 +217,31 @@ enum ForwardMode
 
 enum Macro
 {
-   MACRO_MEN0=0, MACRO_MEN1, MACRO_MEN2, MACRO_MEN3, MACRO_MEN4, MACRO_MEN5,
-   MACRO_MEN6, MACRO_MEN7, MACRO_MEN8, MACRO_MEN9, MACRO_STARTUP, MACRO_QUIT,
-   MACRO_PREGET, MACRO_POSTGET, MACRO_NEWMSG, MACRO_PRESEND, MACRO_POSTSEND,
-   MACRO_READ, MACRO_PREWRITE, MACRO_POSTWRITE, MACRO_URL, MACRO_PREFILTER,
-   MACRO_POSTFILTER,
-   MACRO_COUNT
+  MACRO_PROMPT_USER=-1,
+  MACRO_MEN0=0,
+  MACRO_MEN1,
+  MACRO_MEN2,
+  MACRO_MEN3,
+  MACRO_MEN4,
+  MACRO_MEN5,
+  MACRO_MEN6,
+  MACRO_MEN7,
+  MACRO_MEN8,
+  MACRO_MEN9,
+  MACRO_STARTUP,
+  MACRO_QUIT,
+  MACRO_PREGET,
+  MACRO_POSTGET,
+  MACRO_NEWMSG,
+  MACRO_PRESEND,
+  MACRO_POSTSEND,
+  MACRO_READ,
+  MACRO_PREWRITE,
+  MACRO_POSTWRITE,
+  MACRO_URL,
+  MACRO_PREFILTER,
+  MACRO_POSTFILTER,
+  MACRO_COUNT
 };
 
 // main window menu enumerations
@@ -380,7 +399,6 @@ BOOL  MA_UpdateMailFile(struct Mail *mail);
 void  MA_SetSortFlag(void);
 void  MA_SetStatusTo(int addflags, int clearflags, BOOL all);
 void  MA_SetupDynamicMenus(void);
-BOOL  MA_StartMacro(const enum Macro num, const char *param);
 char *MA_ToStatusHeader(struct Mail *mail);
 char *MA_ToXStatusHeader(struct Mail *mail);
 unsigned int MA_FromStatusHeader(char *statusflags);
