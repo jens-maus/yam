@@ -54,7 +54,6 @@
 /* CLASSDATA
 struct Data
 {
-  Object *slider;
   LONG pens[7];
   LONG colorMap[16];
 
@@ -147,31 +146,6 @@ static void InsertAddressTreeNode(Object *obj, Object *addrObj, struct MUI_NList
 ///
 
 /* Overloaded Methods */
-/// OVERLOAD(OM_NEW)
-OVERLOAD(OM_NEW)
-{
-  ENTER();
-
-  if((obj = (Object *)DoSuperMethodA(cl, obj, msg)))
-  {
-    GETDATA;
-    struct TagItem *tags = inittags(msg), *tag;
-
-    while((tag = NextTagItem((APTR)&tags)) != NULL)
-    {
-      switch(tag->ti_Tag)
-      {
-        // we also catch foreign attributes
-        case MUIA_TextEditor_Slider: data->slider = (Object *)tag->ti_Data; break;
-      }
-    }
-  }
-
-  RETURN((IPTR)obj);
-  return (IPTR)obj;
-}
-
-///
 /// OVERLOAD(MUIM_DragQuery)
 OVERLOAD(MUIM_DragQuery)
 {
