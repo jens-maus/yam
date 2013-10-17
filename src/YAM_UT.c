@@ -5449,6 +5449,7 @@ static LONG SyncLaunchCommand(const char *cmd, ULONG flags, enum OutputDefType o
   #endif
 
   ENTER();
+
   SHOWSTRING(DBF_UTIL, cmd);
 
   switch(outdef)
@@ -5550,17 +5551,17 @@ static LONG SyncLaunchCommand(const char *cmd, ULONG flags, enum OutputDefType o
 
   if(result != RETURN_OK)
   {
-    LONG error = IoErr();
-    char fault[SIZE_LARGE];
-
     // an error occurred as SystemTags should always
     // return zero on success, no matter what.
-    E(DBF_UTIL, "execution of '%s' failed, rc=%ld", cmd, result);
+    LONG error = IoErr();
+    char errorStr[SIZE_LARGE];
 
     // setup the error message and put it on the application's method stack to
     // let the main thread display it.
-    Fault(error, NULL, fault, sizeof(fault));
-    ER_NewError(tr(MSG_EXECUTE_COMMAND_FAILED), cmd, error, fault);
+    Fault(error, NULL, errorStr, sizeof(errorStr));
+    E(DBF_UTIL, "execution of '%s' failed, rc=%ld, error=%ld (%s)", cmd, result, error, errorStr);
+
+    ER_NewError(tr(MSG_EXECUTE_COMMAND_FAILED), cmd, error, errorStr);
 
     // manually free our search path as SystemTags() shouldn't have freed
     // it itself, but only if the result is equal to -1. All other values
