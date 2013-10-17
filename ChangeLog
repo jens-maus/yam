@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-10-17 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MA.c: when deleting old mails the folder stats will be updated only for
+    those folders where mails actually were deleted from.
+
 2013-10-16 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: update to the latest changes.

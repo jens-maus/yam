@@ -2742,7 +2742,6 @@ HOOKPROTONHNONP(MA_DeleteOldFunc, void)
   ULONG today_days;
   BOOL mailsDeleted = FALSE;
   struct MailList *toBeDeletedList;
-  ULONG delFlags = (C->RemoveOnQuit == TRUE) ? DELF_AT_ONCE|DELF_QUIET : DELF_QUIET;
 
   ENTER();
 
@@ -2757,6 +2756,7 @@ HOOKPROTONHNONP(MA_DeleteOldFunc, void)
     struct BusyNode *busy;
     ULONG f;
     struct FolderNode *fnode;
+    ULONG delFlags = (C->RemoveOnQuit == TRUE) ? DELF_AT_ONCE : 0;
 
     busy = BusyBegin(BUSY_PROGRESS_ABORT);
     BusyText(busy, tr(MSG_BusyDeletingOld), "");
@@ -2821,23 +2821,26 @@ HOOKPROTONHNONP(MA_DeleteOldFunc, void)
 
         UnlockMailList(folder->messages);
 
-        // No need to lock the "to be deleted" list as this is known in this function only.
-        // Iterate through the list "by foot" as we remove the nodes, ForEachMailNode() is
-        // not safe to call here!
-        while((mnode = TakeMailNode(toBeDeletedList)) != NULL)
+        if(IsMailListEmpty(toBeDeletedList) == FALSE)
         {
-          // Finally delete the mail. Removing/freeing the mail from the folder's list of mails
-          // is in fact done by the MA_DeleteSingle() function itself.
-          MA_DeleteSingle(mnode->mail, delFlags);
+          // no need to lock the "to be deleted" list as this is known in this function only.
+          // Iterate through the list "by foot" as we remove the nodes, ForEachMailNode() is
+          // not safe to call here!
+          while((mnode = TakeMailNode(toBeDeletedList)) != NULL)
+          {
+            // Finally delete the mail. Removing/freeing the mail from the folder's list of mails
+            // is in fact done by the MA_DeleteSingle() function itself.
+            MA_DeleteSingle(mnode->mail, delFlags|DELF_QUIET);
 
-          // remember that we deleted at least one mail
-          mailsDeleted = TRUE;
+            // remember that we deleted at least one mail
+            mailsDeleted = TRUE;
 
-          // delete the mail node itself
-          DeleteMailNode(mnode);
+            // delete the mail node itself
+            DeleteMailNode(mnode);
+          }
+
+          DisplayStatistics(folder, FALSE);
         }
-
-        DisplayStatistics(folder, FALSE);
       }
 
       // if BusyProgress() returns FALSE, then the user aborted
