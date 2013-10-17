@@ -42,7 +42,6 @@
 #include <mui/NListtree_mcc.h>
 #include <mui/TextEditor_mcc.h>
 #include <mui/TheBar_mcc.h>
-#include <rexx/storage.h>
 #include <proto/dos.h>
 #include <proto/exec.h>
 #include <proto/intuition.h>
@@ -105,8 +104,6 @@
 #include "UserIdentity.h"
 
 #include "Debug.h"
-
-extern struct Library *RexxSysBase;
 
 /* local protos */
 static void MA_MoveCopySingle(struct Mail *mail, struct Folder *to, const ULONG flags);
