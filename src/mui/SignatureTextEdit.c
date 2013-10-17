@@ -131,7 +131,8 @@ OVERLOAD(OM_SET)
             modified = TRUE;
 
           SetSuperAttrs(cl, obj, MUIA_TextEditor_Contents, parsedSig,
-                                 MUIA_TextEditor_HasChanged, modified);
+                                 MUIA_TextEditor_HasChanged, modified,
+                                 TAG_DONE);
 
           dstrfree(parsedSig);
         }
@@ -141,7 +142,8 @@ OVERLOAD(OM_SET)
             W(DBF_CONFIG, "couldn't load signature '%s' in texteditor", sig);
 
           SetSuperAttrs(cl, obj, MUIA_TextEditor_Contents, "",
-                                 MUIA_TextEditor_HasChanged, FALSE);
+                                 MUIA_TextEditor_HasChanged, FALSE,
+                                 TAG_DONE);
         }
 
         tag->ti_Tag = TAG_IGNORE;
