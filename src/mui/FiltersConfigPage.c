@@ -372,6 +372,7 @@ OVERLOAD(OM_NEW)
     data->ST_AREDIRECT =         ST_AREDIRECT;
     data->CH_AFORWARD =          CH_AFORWARD;
     data->ST_AFORWARD =          ST_AFORWARD;
+    data->CH_ARESPONSE =         CH_ARESPONSE;
     data->PO_ARESPONSE =         PO_ARESPONSE;
     data->ST_ARESPONSE =         ST_ARESPONSE;
     data->CH_AEXECUTE =          CH_AEXECUTE;
