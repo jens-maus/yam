@@ -97,8 +97,6 @@ struct ExtendedMail
   struct Person            OriginalRcpt;   // the original recipient for a requested MDN
 };
 
-extern struct Hook MA_FlushIndexHook;
-
 // MA_ReadHeader modes
 enum ReadHeaderMode
 {
@@ -109,7 +107,6 @@ enum ReadHeaderMode
 void  MA_ChangeFolder(struct Folder *folder, BOOL set_active);
 void  MA_ExpireIndex(struct Folder *folder);
 struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *file, const BOOL deep);
-void  MA_FlushIndexes(void);
 BOOL  MA_JumpToNewMsg(void);
 BOOL  MA_JumpToRecentMsg(void);
 void  MA_FreeEMailStruct(struct ExtendedMail *email);
@@ -120,7 +117,6 @@ BOOL  MA_PromptFolderPassword(struct Folder *fo, APTR win);
 BOOL  MA_ReadHeader(const char *mailFile, FILE *fh, struct MinList *headerList, enum ReadHeaderMode mode);
 BOOL  MA_SaveIndex(struct Folder *folder);
 void  MA_RebuildIndexes(void);
-void  MA_UpdateIndexes(void);
 void  MA_UpdateInfoBar(struct Folder *folder);
 struct Mail *FindMailByMsgID(struct Folder *folder, const char *msgid);
 

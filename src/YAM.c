@@ -757,7 +757,7 @@ static void Terminate(void)
   D(DBF_STARTUP, "finalizing indexes and closing main window...");
   if(G->MA != NULL)
   {
-    MA_UpdateIndexes();
+    DoMethod(G->App, MUIM_YAMApplication_FlushFolderIndexes, TRUE);
     // remember the current layout, but don't make that permanent yet
     SaveLayout(FALSE);
     set(G->MA->GUI.WI, MUIA_Window_Open, FALSE);
@@ -2056,11 +2056,11 @@ static void DoStartup(BOOL nocheck, BOOL hide)
       // if the user wishs to delete all old mail during startup of YAM,
       // we do it now
       if(C->CleanupOnStartup == TRUE)
-        DoMethod(G->App, MUIM_CallHook, &MA_DeleteOldHook);
+        DoMethod(G->App, MUIM_YAMApplication_DeleteOldMails);
 
       // if the user wants to clean the trash upon starting YAM, do it
       if(C->RemoveOnStartup == TRUE)
-        DoMethod(G->App, MUIM_CallHook, &MA_DeleteDeletedHook, FALSE);
+        DoMethod(G->App, MUIM_YAMApplication_EmptyTrashFolder, FALSE);
 
       // Check for current birth days in our addressbook if the user
       // configured it. This will also setup the timer for the repeated
@@ -2734,10 +2734,10 @@ int main(int argc, char **argv)
     }
 
     if(C->CleanupOnQuit == TRUE)
-      DoMethod(G->App, MUIM_CallHook, &MA_DeleteOldHook);
+      DoMethod(G->App, MUIM_YAMApplication_DeleteOldMails);
 
     if(C->RemoveOnQuit == TRUE)
-      DoMethod(G->App, MUIM_CallHook, &MA_DeleteDeletedHook, TRUE);
+      DoMethod(G->App, MUIM_YAMApplication_EmptyTrashFolder, TRUE);
 
     AppendToLogfile(LF_ALL, 99, tr(MSG_LOG_Terminated));
     DoMethod(G->App, MUIM_YAMApplication_StartMacro, MACRO_QUIT, NULL);

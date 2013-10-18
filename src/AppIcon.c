@@ -45,6 +45,7 @@
 
 #include "mui/ClassesExtra.h"
 #include "mui/WriteWindow.h"
+#include "mui/YAMApplication.h"
 
 #include "AppIcon.h"
 #include "Config.h"
@@ -352,8 +353,7 @@ void HandleAppIcon(void)
         // so we go and empty the trash folder accordingly.
         case AMCLASSICON_EmptyTrash:
         {
-          // empty the "deleted" folder
-          DoMethod(G->App, MUIM_CallHook, &MA_DeleteDeletedHook, FALSE);
+          DoMethod(G->App, MUIM_YAMApplication_EmptyTrashFolder, FALSE);
         }
         break;
       }

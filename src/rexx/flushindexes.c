@@ -25,12 +25,15 @@
 
 ***************************************************************************/
 
+#include <clib/alib_protos.h>
 #include <proto/exec.h>
 
 #include "extrasrc.h"
 
 #include "YAM.h"
 #include "YAM_mainFolder.h"
+
+#include "mui/YAMApplication.h"
 
 #include "Rexx.h"
 
@@ -58,7 +61,7 @@ void rx_flushindexes(UNUSED struct RexxHost *host, struct RexxParams *params, en
     case RXIF_ACTION:
     {
       // flush the index of all folders
-      MA_FlushIndexes();
+      DoMethod(G->App, MUIM_YAMApplication_FlushFolderIndexes, FALSE);
     }
     break;
 

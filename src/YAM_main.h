@@ -370,10 +370,6 @@ extern struct Hook MA_SaveAttachHook;
 extern struct Hook MA_RemoveAttachHook;
 extern struct Hook MA_ExportMessagesHook;
 extern struct Hook MA_ChangeSelectedHook;
-extern struct Hook MA_DeleteDeletedHook;
-extern struct Hook MA_DeleteSpamHook;
-extern struct Hook MA_DeleteOldHook;
-extern struct Hook MA_RescanIndexHook;
 extern struct Hook MA_SendHook;
 extern struct Hook MA_PopNowHook;
 

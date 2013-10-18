@@ -26,13 +26,14 @@
 ***************************************************************************/
 
 #include <clib/alib_protos.h>
-#include <libraries/mui.h>
 #include <proto/exec.h>
 
 #include "extrasrc.h"
 
 #include "YAM.h"
 #include "YAM_main.h"
+
+#include "mui/YAMApplication.h"
 
 #include "Rexx.h"
 
@@ -59,7 +60,7 @@ void rx_mailupdate(UNUSED struct RexxHost *host, struct RexxParams *params, enum
 
     case RXIF_ACTION:
     {
-      DoMethod(G->App, MUIM_CallHook, &MA_RescanIndexHook);
+      DoMethod(G->App, MUIM_YAMApplication_RebuildFolderIndex);
     }
     break;
 

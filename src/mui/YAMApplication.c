@@ -65,7 +65,9 @@
 #include "Busy.h"
 #include "Config.h"
 #include "FileInfo.h"
+#include "FolderList.h"
 #include "Locale.h"
+#include "MailList.h"
 #include "MailServers.h"
 #include "MUIObjects.h"
 #include "UpdateCheck.h"
@@ -85,6 +87,7 @@ struct Data
   struct ABook emailCache;
   char *emailCacheName;
   char compileInfo[SIZE_DEFAULT];
+  BOOL iconified;
 };
 */
 
@@ -348,6 +351,49 @@ static void FindAllABMatches(const struct ABook *abook, const char *text, Object
 }
 
 ///
+/// FlushIndex
+// flushes (saves/expungs) the loaded index of a folder. You have to
+// make sure yourself to lock the folder list accordingly when you
+// use this function. The 'minAccessTime' variable can be used to
+// prevent this function from expunging the index in case the
+// folder was last accessed >= minAccessTime. Use 0 to expunge it
+// at all times.
+static BOOL FlushIndex(struct Folder *folder, time_t minAccessTime)
+{
+  BOOL flushed = FALSE;
+
+  ENTER();
+
+  // make sure the folder index is saved
+  if(isModified(folder))
+    MA_SaveIndex(folder);
+
+  // then we make sure we only clear the folder index of
+  // a folder where this should really be done and also not
+  // on the actual folder or otherwise we risk to run into
+  // problems.
+  if((isSentFolder(folder) || isDefaultFolder(folder) == FALSE) &&
+     folder->LoadedMode == LM_VALID &&
+     (minAccessTime == 0 || minAccessTime >= folder->lastAccessTime) &&
+     folder != GetCurrentFolder())
+  {
+    if(minAccessTime != 0)
+      D(DBF_FOLDER, "flush index of folder '%s' due to lastAccessTime (%d) < minAccessTime (%d)", folder->Name, folder->lastAccessTime, minAccessTime);
+    else
+      D(DBF_FOLDER, "flush index of folder '%s'", folder->Name);
+
+    ClearFolderMails(folder, FALSE);
+    folder->LoadedMode = LM_FLUSHED;
+    clearFlag(folder->Flags, FOFL_FREEXS);
+
+    flushed = TRUE;
+  }
+
+  RETURN(flushed);
+  return flushed;
+}
+
+///
 
 /* Public Methods */
 /// DECLARE(FindEmailMatches)
@@ -567,7 +613,6 @@ OVERLOAD(OM_NEW)
       set(obj, MUIA_Application_Iconified, TRUE);
 
     DoMethod(obj, MUIM_Notify, MUIA_Application_DoubleStart, TRUE, MUIV_Notify_Self, 1, METHOD(PopUp));
-    DoMethod(obj, MUIM_Notify, MUIA_Application_Iconified, TRUE, MUIV_Notify_Self, 1, METHOD(Iconify));
   }
 
   return (IPTR)obj;
@@ -610,6 +655,7 @@ OVERLOAD(OM_GET)
 /// OVERLOAD(OM_SET)
 OVERLOAD(OM_SET)
 {
+  GETDATA;
   struct TagItem *tags = inittags(msg), *tag;
 
   while((tag = NextTagItem((APTR)&tags)) != NULL)
@@ -647,13 +693,17 @@ OVERLOAD(OM_SET)
         }
         #endif
 
-        D(DBF_STARTUP, "Application was %s", tag->ti_Data ? "iconified" : "uniconified");
+        D(DBF_STARTUP, "application was %s", tag->ti_Data ? "iconified" : "uniconified");
+
+        data->iconified = tag->ti_Data;
+        if(data->iconified == TRUE)
+          DoMethod(obj, METHOD(FlushFolderIndexes), TRUE);
       }
       break;
 
       case MUIA_Application_Active:
       {
-        D(DBF_STARTUP, "Application is %s", tag->ti_Data ? "active" : "inactive");
+        D(DBF_STARTUP, "application is %s", tag->ti_Data ? "active" : "inactive");
 
         set(obj, MUIA_Application_Sleep, !tag->ti_Data);
       }
@@ -1189,6 +1239,8 @@ DECLARE(UpdateAppIcon)
 //  Notifies user when new mail is available
 DECLARE(NewMailAlert) // struct MailServerNode *msn, struct DownloadResult *downloadResult, struct FilterResult *filterResult, const ULONG flags
 {
+  GETDATA;
+
   ENTER();
 
   SHOWSTRING(DBF_NET, msg->msn->description);
@@ -1205,7 +1257,7 @@ DECLARE(NewMailAlert) // struct MailServerNode *msn, struct DownloadResult *down
       char buffer[SIZE_LARGE];
 
       // make sure the application isn't iconified
-      if(xget(obj, MUIA_Application_Iconified) == TRUE)
+      if(data->iconified == TRUE)
         PopUp();
 
       snprintf(buffer, sizeof(buffer), tr(MSG_POP3_NEW_MAIL_NOTIFY_REQ), msg->msn->description, msg->downloadResult->downloaded, msg->downloadResult->onServer-msg->downloadResult->deleted, msg->downloadResult->dupeSkipped);
@@ -1306,6 +1358,7 @@ DECLARE(ChangeSelected) // const struct Folder *folder, const ULONG forceUpdate
 /// DECLARE(CreatePasswordWindow)
 DECLARE(CreatePasswordWindow) // APTR thread, const char *title, const char *body, ULONG maxLength
 {
+  GETDATA;
   Object *window;
 
   ENTER();
@@ -1322,7 +1375,7 @@ DECLARE(CreatePasswordWindow) // APTR thread, const char *title, const char *bod
   End) != NULL)
   {
     // make sure the application isn't iconified
-    if(xget(obj, MUIA_Application_Iconified) == TRUE)
+    if(data->iconified == TRUE)
       PopUp();
 
     set(window, MUIA_Window_Open, TRUE);
@@ -1336,6 +1389,7 @@ DECLARE(CreatePasswordWindow) // APTR thread, const char *title, const char *bod
 /// DECLARE(CreatePreselectionWindow)
 DECLARE(CreatePreselectionWindow) // APTR thread, const char *title, LONG sizeLimit, enum PreselectionWindowMode mode, struct MinList *mailList
 {
+  GETDATA;
   Object *window;
 
   ENTER();
@@ -1349,7 +1403,7 @@ DECLARE(CreatePreselectionWindow) // APTR thread, const char *title, LONG sizeLi
   End) != NULL)
   {
     // make sure the application isn't iconified
-    if(xget(obj, MUIA_Application_Iconified) == TRUE)
+    if(data->iconified == TRUE)
       PopUp();
 
     set(window, MUIA_Window_Open, TRUE);
@@ -1405,19 +1459,6 @@ DECLARE(PopUp)
 }
 
 ///
-/// DECLARE(Iconify)
-// hide ourself
-DECLARE(Iconify)
-{
-  ENTER();
-
-  MA_UpdateIndexes();
-
-  RETURN(0);
-  return 0;
-}
-
-///
 /// DECLARE(MUIRequestA)
 // call MUI requester
 DECLARE(MUIRequestA) // Object *app, Object *win, LONG flags, const char *title, const char *gadgets, const char *reqtxt
@@ -1455,11 +1496,13 @@ DECLARE(CertWarningRequest) // struct Connection *conn, struct Certificate *cert
 // free the ReadMailData structure of a recently closed read window
 DECLARE(CleanupReadMailData) // struct ReadMailData *rmData
 {
+  GETDATA;
+
   ENTER();
 
   // only if this is not a close operation because the application
   // is getting iconified we really cleanup our readmail data
-  if(msg->rmData == G->ActiveRexxRMData || xget(obj, MUIA_Application_Iconified) == FALSE)
+  if(msg->rmData == G->ActiveRexxRMData || data->iconified == FALSE)
   {
     // calls the CleanupReadMailData to clean everything else up
     CleanupReadMailData(msg->rmData, TRUE);
@@ -1474,11 +1517,13 @@ DECLARE(CleanupReadMailData) // struct ReadMailData *rmData
 // free the WriteMailData structure of a recently closed write window
 DECLARE(CleanupWriteMailData) // struct WriteMailData *wmData
 {
+  GETDATA;
+
   ENTER();
 
   // only if this is not a close operation because the application
   // is getting iconified we really cleanup our writemail data
-  if(msg->wmData == G->ActiveRexxWMData || xget(obj, MUIA_Application_Iconified) == FALSE)
+  if(msg->wmData == G->ActiveRexxWMData || data->iconified == FALSE)
   {
     // calls the CleanupWriteMailData to clean everything else up
     CleanupWriteMailData(msg->wmData);
@@ -1620,6 +1665,352 @@ DECLARE(OpenAddressBookWindow)
 
   RETURN(result);
   return result;
+}
+
+///
+/// DECLARE(EmptyTrashFolder)
+DECLARE(EmptyTrashFolder) // ULONG quiet
+{
+  struct Folder *folder;
+
+  ENTER();
+
+  if((folder = FO_GetFolderByType(FT_TRASH, NULL)) != NULL)
+  {
+    struct BusyNode *busy;
+    struct MailNode *mnode;
+    int i;
+
+    busy = BusyBegin(BUSY_PROGRESS);
+    BusyText(busy, tr(MSG_BusyEmptyingTrash), "");
+
+    LockMailList(folder->messages);
+
+    i = 0;
+    ForEachMailNode(folder->messages, mnode)
+    {
+      struct Mail *mail = mnode->mail;
+      char mailfile[SIZE_PATHFILE];
+
+      BusyProgress(busy, ++i, folder->Total);
+      AppendToLogfile(LF_VERBOSE, 21, tr(MSG_LOG_DeletingVerbose), AddrName(mail->From), mail->Subject, folder->Name);
+      GetMailFile(mailfile, sizeof(mailfile), NULL, mail);
+      DeleteFile(mailfile);
+    }
+
+    // We only clear the folder if it wasn't empty anyway..
+    if(i > 0)
+    {
+      ClearFolderMails(folder, TRUE);
+
+      MA_ExpireIndex(folder);
+
+      if(GetCurrentFolder() == folder)
+        DisplayMailList(folder, G->MA->GUI.PG_MAILLIST);
+
+      AppendToLogfile(LF_NORMAL, 20, tr(MSG_LOG_Deleting), i, folder->Name);
+
+      if(msg->quiet == FALSE)
+        DisplayStatistics(folder, TRUE);
+    }
+
+    UnlockMailList(folder->messages);
+
+    BusyEnd(busy);
+  }
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(DeleteOldMails)
+DECLARE(DeleteOldMails)
+{
+  struct DateStamp today;
+  ULONG today_days;
+  BOOL mailsDeleted = FALSE;
+  struct MailList *toBeDeletedList;
+
+  ENTER();
+
+  DateStampUTC(&today);
+  today.ds_Minute = 0;
+  today.ds_Tick = 0;
+  today_days = today.ds_Days;
+
+  // we need a temporary "to be deleted" list of mails to avoid doubly locking a folder's mail list
+  if((toBeDeletedList = CreateMailList()) != NULL)
+  {
+    struct BusyNode *busy;
+    ULONG f;
+    struct FolderNode *fnode;
+    ULONG delFlags = (C->RemoveOnQuit == TRUE) ? DELF_AT_ONCE : 0;
+
+    busy = BusyBegin(BUSY_PROGRESS_ABORT);
+    BusyText(busy, tr(MSG_BusyDeletingOld), "");
+
+    LockFolderListShared(G->folders);
+
+    f = 0;
+    ForEachFolderNode(G->folders, fnode)
+    {
+      struct Folder *folder = fnode->folder;
+
+      if(isGroupFolder(folder) == FALSE && folder->MaxAge > 0 && !isArchiveFolder(folder) && MA_GetIndex(folder) == TRUE)
+      {
+        struct MailNode *mnode;
+
+        // calculate the maximum age for this folder
+        today.ds_Days = today_days - folder->MaxAge;
+
+        LockMailList(folder->messages);
+
+        // initialize the list of mails to be deleted
+        InitMailList(toBeDeletedList);
+
+        ForEachMailNode(folder->messages, mnode)
+        {
+          struct Mail *mail = mnode->mail;
+
+          if(CompareDates(&today, &mail->Date) < 0)
+          {
+            BOOL deleteMail;
+
+            // Delete any message from trash and spam folder automatically
+            // or if the message is read already (keep unread messages).
+            // "Marked" messages will never be deleted automatically.
+            if(isTrashFolder(folder) || isSpamFolder(folder))
+            {
+              // old mails in the trash and spam folders are deleted in any case
+              deleteMail = TRUE;
+            }
+            else if(!hasStatusNew(mail) && !hasStatusMarked(mail) && hasStatusRead(mail))
+            {
+              // delete old mails if they are read already, but respect marked mails
+              deleteMail = TRUE;
+            }
+            else if(folder->ExpireUnread == TRUE && !hasStatusMarked(mail))
+            {
+              // delete old mails if the folder's configuration allows us to do that, but
+              // respect marked mails
+              deleteMail = TRUE;
+            }
+            else
+            {
+              // keep the mail if it is either unread, marked or not yet old enough
+              deleteMail = FALSE;
+            }
+
+            // put the mail in the "to be deleted" list if it may be deleted
+            if(deleteMail == TRUE)
+              AddNewMailNode(toBeDeletedList, mail);
+          }
+        }
+
+        UnlockMailList(folder->messages);
+
+        if(IsMailListEmpty(toBeDeletedList) == FALSE)
+        {
+          // no need to lock the "to be deleted" list as this is known in this function only.
+          // Iterate through the list "by foot" as we remove the nodes, ForEachMailNode() is
+          // not safe to call here!
+          while((mnode = TakeMailNode(toBeDeletedList)) != NULL)
+          {
+            // Finally delete the mail. Removing/freeing the mail from the folder's list of mails
+            // is in fact done by the MA_DeleteSingle() function itself.
+            MA_DeleteSingle(mnode->mail, delFlags|DELF_QUIET);
+
+            // remember that we deleted at least one mail
+            mailsDeleted = TRUE;
+
+            // delete the mail node itself
+            DeleteMailNode(mnode);
+          }
+
+          DisplayStatistics(folder, FALSE);
+        }
+      }
+
+      // if BusyProgress() returns FALSE, then the user aborted
+      if(BusyProgress(busy, ++f, G->folders->count) == FALSE)
+      {
+        // abort the loop
+        break;
+      }
+    }
+
+    UnlockFolderList(G->folders);
+
+    // delete the "to be deleted" list
+    DeleteMailList(toBeDeletedList);
+
+    BusyEnd(busy);
+  }
+
+  // MA_DeleteSingle() does not update the trash folder treeitem if something was deleted from
+  // another folder, because it was advised to be quiet. So we must refresh the trash folder
+  // tree item manually here to get an up-to-date folder treeview.
+  if(mailsDeleted == TRUE)
+  {
+    struct Folder *trashFolder;
+
+    trashFolder = FO_GetFolderByType(FT_TRASH, NULL);
+    // only update the trash folder item if it is not the active one, as the active one
+    // will be updated below
+    if(GetCurrentFolder() != trashFolder)
+      DisplayStatistics(trashFolder, FALSE);
+  }
+
+  // and last but not least we update the appIcon also
+  DisplayStatistics(NULL, TRUE);
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(DeleteSpamMails)
+DECLARE(DeleteSpamMails) // ULONG quiet
+{
+  ENTER();
+
+  if(GetCurrentFolder() != NULL && isGroupFolder(GetCurrentFolder()) == FALSE)
+  {
+    ULONG delFlags;
+    struct BusyNode *busy;
+    struct MailList *mlist;
+
+    delFlags = (msg->quiet == FALSE) ? DELF_CLOSE_WINDOWS : DELF_QUIET|DELF_CLOSE_WINDOWS;
+
+    // show an interruptable Busy gauge
+    busy = BusyBegin(BUSY_PROGRESS_ABORT);
+    BusyText(busy, tr(MSG_MA_BUSYEMPTYINGSPAM), "");
+
+    // get the complete mail list of the spam folder
+    if((mlist = MA_CreateFullList(GetCurrentFolder(), FALSE)) != NULL)
+    {
+      struct MailNode *mnode;
+      ULONG i;
+
+      i = 0;
+      ForEachMailNode(mlist, mnode)
+      {
+        struct Mail *mail = mnode->mail;
+
+        // if BusyProgress() returns FALSE, then the user aborted
+        if(BusyProgress(busy, ++i, mlist->count) == FALSE)
+          break;
+
+        // not every mail in the a folder *must* be spam
+        // so better check this
+        if(hasStatusSpam(mail))
+        {
+          // remove the spam mail from the folder and take care to
+          // remove it immediately in case this is the SPAM folder, otherwise
+          // the mail will be moved to the trash first. In fact, DeleteSingle()
+          // takes care of that itself.
+          MA_DeleteSingle(mail, delFlags);
+        }
+      }
+
+      if(msg->quiet == FALSE)
+        DisplayStatistics(GetCurrentFolder(), TRUE);
+
+      // finally free the mail list
+      DeleteMailList(mlist);
+    }
+
+    BusyEnd(busy);
+  }
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(RebuildFolderIndex)
+DECLARE(RebuildFolderIndex)
+{
+  struct Folder *folder;
+
+  ENTER();
+
+  folder = GetCurrentFolder();
+  // on groups we don't allow any index rescanning operation
+  if(folder != NULL && isGroupFolder(folder) == FALSE)
+  {
+    // we start a rescan by expiring the current index and issueing
+    // a new MA_GetIndex(). That will also cause the GUI to refresh!
+    folder->LoadedMode = LM_UNLOAD;
+
+    MA_ExpireIndex(folder);
+    if(MA_GetIndex(folder) == TRUE)
+    {
+      // if we are still in the folder we wanted to rescan,
+      // we can refresh the list.
+      if(folder == GetCurrentFolder())
+        MA_ChangeFolder(NULL, FALSE);
+    }
+  }
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(FlushFolderIndexes)
+DECLARE(FlushFolderIndexes) // ULONG force
+{
+  GETDATA;
+  struct FolderNode *fnode;
+  BOOL anyFlushed = FALSE;
+
+  ENTER();
+
+  D(DBF_FOLDER, "flush indexes %ld", msg->force);
+
+  LockFolderListShared(G->folders);
+
+  ForEachFolderNode(G->folders, fnode)
+  {
+    struct Folder *folder = fnode->folder;
+
+    if(msg->force == TRUE)
+    {
+      if(FlushIndex(folder, 0) == TRUE)
+        anyFlushed = TRUE;
+
+      // a forced flush will not redraw the folder tree, because that happens
+      // only if the application is terminating or being iconfied which in turn
+      // makes a visual update unnecessary
+    }
+    else
+    {
+      BOOL flushed;
+
+      if(C->ExpungeIndexes == 0)
+        flushed = FlushIndex(folder, 1);
+      else
+        flushed = FlushIndex(folder, GetDateStamp() - C->ExpungeIndexes);
+
+      if(flushed == TRUE)
+      {
+        anyFlushed = TRUE;
+        if(data->iconified == FALSE)
+          DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, folder->Treenode, MUIF_NONE);
+      }
+    }
+  }
+
+  UnlockFolderList(G->folders);
+
+  // finally update the AppIcon as well
+  if(G->Terminating == FALSE && G->AppIconQuiet == FALSE && anyFlushed == TRUE)
+    UpdateAppIcon();
+
+  RETURN(0);
+  return 0;
 }
 
 ///

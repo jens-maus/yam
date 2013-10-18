@@ -659,13 +659,13 @@ OVERLOAD(MUIM_ContextMenuChoice)
     // or other item out of the FolderListContextMenu
     case CMN_EDITF:     { DoMethod(obj, METHOD(EditFolder), FALSE); } break;
     case CMN_DELETEF:   { DoMethod(obj, METHOD(DeleteFolder)); } break;
-    case CMN_INDEX:     { DoMethod(_app(obj), MUIM_CallHook, &MA_RescanIndexHook); } break;
+    case CMN_INDEX:     { DoMethod(_app(obj), MUIM_YAMApplication_RebuildFolderIndex); } break;
     case CMN_NEWF:      { DoMethod(obj, METHOD(NewFolder)); } break;
     case CMN_NEWFG:     { DoMethod(obj, METHOD(NewFolderGroup), NULL); } break;
     case CMN_SNAPS:     { DoMethod(obj, METHOD(SetOrder), MUIV_MainFolderListtree_SetOrder_Save);  } break;
     case CMN_RELOAD:    { DoMethod(obj, METHOD(SetOrder), MUIV_MainFolderListtree_SetOrder_Reset); } break;
-    case CMN_EMPTYTRASH:{ DoMethod(_app(obj), MUIM_CallHook, &MA_DeleteDeletedHook, FALSE);} break;
-    case CMN_EMPTYSPAM: { DoMethod(_app(obj), MUIM_CallHook, &MA_DeleteSpamHook, FALSE);   } break;
+    case CMN_EMPTYTRASH:{ DoMethod(_app(obj), MUIM_YAMApplication_EmptyTrashFolder, FALSE); } break;
+    case CMN_EMPTYSPAM: { DoMethod(_app(obj), MUIM_YAMApplication_DeleteSpamMails, FALSE); } break;
     case CMN_ALLTOREAD: { DoMethod(_app(obj), MUIM_CallHook, &MA_SetAllStatusToHook, SFLAG_READ, SFLAG_NEW); } break;
     case CMN_SEARCH:    { DoMethod(_app(obj), MUIM_YAMApplication_OpenSearchMailWindow, GetCurrentFolder()); } break;
 

@@ -607,7 +607,7 @@ static void TimerDispatcher(const enum Timer tid)
       }
 
       if(updateIndex == TRUE)
-        MA_UpdateIndexes();
+        DoMethod(G->App, MUIM_YAMApplication_FlushFolderIndexes, FALSE);
       else
         D(DBF_TIMER, "Editor object of a write window is active, skipping update index operation");
 
