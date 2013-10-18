@@ -305,8 +305,7 @@ OVERLOAD(MUIM_ConfigPage_ConfigToGUI)
 
   // make sure the first entry is selected per default and the listview
   // is able to display it (jump to it)
-  set(data->LV_MIME, MUIA_NList_Active, MUIV_NList_Active_Top);
-  DoMethod(data->LV_MIME, MUIM_NList_Jump, MUIV_NList_Jump_Active);
+  DoMethod(data->LV_MIME, MUIM_NList_SetActive, MUIV_NList_Active_Top, MUIV_NList_SetActive_Jump_Center);
 
   setstring(data->PO_DEFVIEWER, CE->DefaultMimeViewer);
   set(data->PO_DEFVIEWER_CODESET, MUIA_CodesetPopup_Codeset, CE->DefaultMimeViewerCodesetName);
