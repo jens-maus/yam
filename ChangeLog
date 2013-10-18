@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-10-18 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/MimeConfigPage.c: disable the "-" button in case of an empty MIME type
+    list.
+
 2013-10-17 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MA.c: when deleting old mails the folder stats will be updated only for

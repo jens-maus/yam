@@ -310,6 +310,8 @@ OVERLOAD(MUIM_ConfigPage_ConfigToGUI)
   setstring(data->PO_DEFVIEWER, CE->DefaultMimeViewer);
   set(data->PO_DEFVIEWER_CODESET, MUIA_CodesetPopup_Codeset, CE->DefaultMimeViewerCodesetName);
 
+  set(data->BT_MDEL, MUIA_Disabled, IsMinListEmpty(&CE->mimeTypeList));
+
   RETURN(0);
   return 0;
 }
@@ -409,6 +411,7 @@ DECLARE(AddMimeTypeEntry)
 
     // add the new MimeType also to the config page.
     DoMethod(data->LV_MIME, MUIM_NList_InsertSingle, mt, MUIV_NList_Insert_Bottom);
+    set(data->BT_MDEL, MUIA_Disabled, IsMinListEmpty(&CE->mimeTypeList));
 
     // make sure the new entry is the active entry and that the list
     // is also the active gadget in the window.
@@ -445,6 +448,8 @@ DECLARE(DeleteMimeTypeEntry)
 
       // free memory.
       FreeSysObject(ASOT_NODE, mt);
+
+      set(data->BT_MDEL, MUIA_Disabled, IsMinListEmpty(&CE->mimeTypeList));
     }
   }
 
