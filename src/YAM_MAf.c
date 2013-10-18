@@ -514,6 +514,8 @@ BOOL MA_SaveIndex(struct Folder *folder)
 
   ENTER();
 
+  D(DBF_FOLDER, "save index of folder '%s'", folder->Name);
+
   AddPath(indexFileName, folder->Fullpath, ".index", sizeof(indexFileName));
 
   if((fh = fopen(indexFileName, "w")) != NULL)
