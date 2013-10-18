@@ -9,6 +9,7 @@ $URL$
 
   * mui/MimeConfigPage.c: disable the "-" button in case of an empty MIME type
     list.
+  * mui/FiltersConfigPage.c: make sure the active entry is always visible.
 
 2013-10-17 Thore Böckelmann <tboeckel@gmx.de>
 

@@ -501,7 +501,7 @@ OVERLOAD(MUIM_ConfigPage_ConfigToGUI)
   }
 
   // make sure the first entry is selected per default
-  set(data->LV_RULES, MUIA_NList_Active, MUIV_NList_Active_Top);
+  DoMethod(data->LV_RULES, MUIM_NList_SetActive, MUIV_NList_Active_Top, MUIV_NList_SetActive_Jump_Center);
 
   RETURN(0);
   return 0;
