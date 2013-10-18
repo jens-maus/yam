@@ -3771,10 +3771,7 @@ void ClearFolderMails(struct Folder *folder, BOOL resetstats)
 
   ENTER();
 
-  ASSERT(folder != NULL);
-  ASSERT(folder->messages != NULL);
-  ASSERT(folder->messages->lockSemaphore != NULL);
-  D(DBF_FOLDER, "clearing mail list of folder '%s'", folder->Name);
+  D(DBF_FOLDER, "clear mail list of folder '%s', reset stats %ld", folder->Name, resetstats);
 
   // First we check if there is any read window open with a mail
   // belonging to the folder we are about to clear.
@@ -3792,8 +3789,6 @@ void ClearFolderMails(struct Folder *folder, BOOL resetstats)
   LockMailList(folder->messages);
   ClearMailList(folder->messages);
   UnlockMailList(folder->messages);
-
-  D(DBF_FOLDER, "cleared mail list of folder '%s'", folder->Name);
 
   if(resetstats == TRUE)
   {
