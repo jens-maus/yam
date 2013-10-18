@@ -4032,8 +4032,8 @@ struct MA_ClassData *MA_New(void)
       DoMethod(data->GUI.TO_TOOLBAR, MUIM_TheBar_Notify, TB_MAIN_NEWMAIL,  MUIA_Pressed, FALSE, MUIV_Notify_Application, 4, MUIM_CallHook, &MA_NewMessageHook, NMM_NEW, MUIV_TheBar_Qualifier);
       DoMethod(data->GUI.TO_TOOLBAR, MUIM_TheBar_Notify, TB_MAIN_REPLY,    MUIA_Pressed, FALSE, MUIV_Notify_Application, 4, MUIM_CallHook, &MA_NewMessageHook, NMM_REPLY, MUIV_TheBar_Qualifier);
       DoMethod(data->GUI.TO_TOOLBAR, MUIM_TheBar_Notify, TB_MAIN_FORWARD,  MUIA_Pressed, FALSE, MUIV_Notify_Application, 4, MUIM_CallHook, &MA_NewMessageHook, NMM_FORWARD, MUIV_TheBar_Qualifier);
-      DoMethod(data->GUI.TO_TOOLBAR, MUIM_TheBar_Notify, TB_MAIN_GETMAIL,  MUIA_Pressed, FALSE, MUIV_Notify_Application, 8, MUIM_Application_PushMethod, G->App, 5, MUIM_CallHook, &MA_PopNowHook, NULL, RECEIVEF_USER, MUIV_TheBar_Qualifier);
-      DoMethod(data->GUI.TO_TOOLBAR, MUIM_TheBar_Notify, TB_MAIN_SENDALL,  MUIA_Pressed, FALSE, MUIV_Notify_Application, 6, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &MA_SendHook, SENDMAIL_ALL_USER);
+      DoMethod(data->GUI.TO_TOOLBAR, MUIM_TheBar_Notify, TB_MAIN_GETMAIL,  MUIA_Pressed, FALSE, MUIV_Notify_Application, 5, MUIM_CallHook, &MA_PopNowHook, NULL, RECEIVEF_USER, MUIV_TheBar_Qualifier);
+      DoMethod(data->GUI.TO_TOOLBAR, MUIM_TheBar_Notify, TB_MAIN_SENDALL,  MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &MA_SendHook, SENDMAIL_ALL_USER);
       DoMethod(data->GUI.TO_TOOLBAR, MUIM_TheBar_Notify, TB_MAIN_SPAM,     MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &MA_ClassifyMessageHook, BC_SPAM);
       DoMethod(data->GUI.TO_TOOLBAR, MUIM_TheBar_Notify, TB_MAIN_HAM,      MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &MA_ClassifyMessageHook, BC_HAM);
       DoMethod(data->GUI.TO_TOOLBAR, MUIM_TheBar_Notify, TB_MAIN_FILTER,   MUIA_Pressed, FALSE, data->GUI.WI,            4, MUIM_MainWindow_ApplyFilters, APPLY_USER, MUIV_TheBar_Qualifier, NULL);
