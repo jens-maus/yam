@@ -4364,25 +4364,28 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
     if(uin->smtpServer != NULL)
     {
-      if(hasServerInUse(uin->smtpServer) == FALSE)
-      {
-        if((uin->sentMailList = CloneMailList(newMailList)) != NULL)
-        {
-          // mark the server as "in use"
-          setFlag(uin->smtpServer->flags, MSF_IN_USE);
+      // mark the server as "in use"
+      LockMailServer(uin->smtpServer);
+      uin->smtpServer->useCount++;
 
-          if(DoAction(NULL, TA_SendMails, TT_SendMails_UserIdentity, uin,
-                                                   TT_SendMails_Mode, SENDMAIL_ACTIVE_USER,
-                                                   TAG_DONE) == NULL)
-          {
-            clearFlag(uin->smtpServer->flags, MSF_IN_USE);
-            DeleteMailList(uin->sentMailList);
-            uin->sentMailList = NULL;
-          }
-        }
+      if(DoAction(NULL, TA_SendMails,
+        TT_SendMails_UserIdentity, uin,
+        TT_SendMails_Mails, newMailList,
+        TT_SendMails_Mode, SENDMAIL_ACTIVE_USER,
+        TAG_DONE) == NULL)
+      {
+        // starting the thread failed, the list of mails will be deleted below
+        uin->smtpServer->useCount--;
       }
       else
-        W(DBF_MAIL, "SMTP server '%s' in use, couldn't sent out mail", uin->smtpServer->description);
+      {
+        // starting the thread succeeded, the list of mails will be deleted within
+        // the thread, thus we must erase the pointer here to avoid deleting it
+        // below
+        newMailList = NULL;
+      }
+
+      UnlockMailServer(uin->smtpServer);
     }
     else
       E(DBF_MAIL, "no SMTP server configured for user identity '%s'", uin->description);

@@ -1379,7 +1379,7 @@ static int SendMessage(struct TransferContext *tc, struct Mail *mail)
 
 ///
 /// SendMails
-BOOL SendMails(struct UserIdentityNode *uin, enum SendMailMode mode, const ULONG flags)
+BOOL SendMails(struct UserIdentityNode *uin, struct MailList *mailsToSend, enum SendMailMode mode, const ULONG flags)
 {
   BOOL success = FALSE;
   struct TransferContext *tc;
@@ -1415,9 +1415,9 @@ BOOL SendMails(struct UserIdentityNode *uin, enum SendMailMode mode, const ULONG
         PushMethodOnStackWait(G->App, 3, MUIM_YAMApplication_StartMacro, MACRO_PRESEND, NULL);
 
         // now we build the list of mails to be transfered.
-        LockMailListShared(uin->sentMailList);
+        LockMailListShared(mailsToSend);
 
-        ForEachMailNode(uin->sentMailList, mnode)
+        ForEachMailNode(mailsToSend, mnode)
         {
           struct Mail *mail = mnode->mail;
           struct MailTransferNode *tnode;
@@ -1431,7 +1431,7 @@ BOOL SendMails(struct UserIdentityNode *uin, enum SendMailMode mode, const ULONG
           }
         }
 
-        UnlockMailList(uin->sentMailList);
+        UnlockMailList(mailsToSend);
 
         D(DBF_NET, "prepared %ld mails for sending, %ld bytes", transferList->count, totalSize);
 
@@ -1708,11 +1708,12 @@ BOOL SendMails(struct UserIdentityNode *uin, enum SendMailMode mode, const ULONG
   }
 
   // delete the list of mails
-  DeleteMailList(uin->sentMailList);
-  uin->sentMailList = NULL;
+  DeleteMailList(mailsToSend);
 
   // mark the server as being no longer "in use"
-  clearFlag(msn->flags, MSF_IN_USE);
+  LockMailServer(msn);
+  msn->useCount--;
+  UnlockMailServer(msn);
 
   // now we are done
   ReleaseSemaphore(G->configSemaphore);

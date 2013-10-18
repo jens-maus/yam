@@ -334,8 +334,6 @@ BOOL CopyConfig(struct Config *dco, const struct Config *sco)
         else
           dstNode->signature = NULL;
 
-        dstNode->sentMailList = NULL;
-
         AddTail((struct List *)&dco->userIdentityList, (struct Node *)dstNode);
       }
       else

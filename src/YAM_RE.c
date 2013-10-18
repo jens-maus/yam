@@ -3946,9 +3946,10 @@ static void RE_SendMDN(const enum MDNMode mode,
             if(MA_NewMailFile(outfolder, mfilePath, sizeof(mfilePath)) == TRUE &&
                (comp.FH = fopen(mfilePath, "w")) != NULL)
             {
-              // create a new sentMailList in the userIdentity
-              // and then sent the mail
-              if((uin->sentMailList = CreateMailList()) != NULL)
+              struct MailList *mailsToSend;
+
+              // create a new MailList and then send the mail
+              if((mailsToSend = CreateMailList()) != NULL)
               {
                 BOOL mdnSent = FALSE;
 
@@ -3968,7 +3969,7 @@ static void RE_SendMDN(const enum MDNMode mode,
                     // refresh the folder statistics before the transfer
                     DisplayStatistics(outfolder, TRUE);
 
-                    AddNewMailNode(uin->sentMailList, mdnMail);
+                    AddNewMailNode(mailsToSend, mdnMail);
                   }
 
                   MA_FreeEMailStruct(email);
@@ -3976,25 +3977,25 @@ static void RE_SendMDN(const enum MDNMode mode,
 
                 // in case the user wants to send the message
                 // immediately we go and send it out
-                if(sendnow == TRUE && uin->sentMailList->count != 0)
+                if(sendnow == TRUE && mailsToSend->count != 0)
                 {
                   if(uin->smtpServer != NULL)
                   {
-                    if(hasServerInUse(uin->smtpServer) == FALSE)
-                    {
-                      // mark the server as "in use"
-                      setFlag(uin->smtpServer->flags, MSF_IN_USE);
+                    // mark the server as "in use"
+                    LockMailServer(uin->smtpServer);
+                    uin->smtpServer->useCount++;
 
-                      mdnSent = (DoAction(NULL, TA_SendMails, TT_SendMails_UserIdentity, uin,
-                                                              TT_SendMails_Mode, autoSend ? SENDMAIL_ACTIVE_AUTO : SENDMAIL_ACTIVE_USER,
-                                                              TAG_DONE) != NULL);
+                    mdnSent = (DoAction(NULL, TA_SendMails,
+                      TT_SendMails_UserIdentity, uin,
+                      TT_SendMails_Mails, mailsToSend,
+                      TT_SendMails_Mode, autoSend ? SENDMAIL_ACTIVE_AUTO : SENDMAIL_ACTIVE_USER,
+                      TAG_DONE) != NULL);
 
-                      // clear the "in use" flag if the send process failed
-                      if(mdnSent == FALSE)
-                        clearFlag(uin->smtpServer->flags, MSF_IN_USE);
-                    }
-                    else
-                      W(DBF_MAIL, "mailServer already in use, cannot send out the message!");
+                    // clear the "in use" flag if the send process failed
+                    if(mdnSent == FALSE)
+                      uin->smtpServer->useCount--;
+
+                    UnlockMailServer(uin->smtpServer);
                   }
                   else
                     W(DBF_MAIL, "uin == NULL || uin->smtpServer == NULL");
@@ -4002,10 +4003,7 @@ static void RE_SendMDN(const enum MDNMode mode,
 
                 // delete the mail list again if the MDN was not sent
                 if(mdnSent == FALSE)
-                {
-                  DeleteMailList(uin->sentMailList);
-                  uin->sentMailList = NULL;
-                }
+                  DeleteMailList(mailsToSend);
 
                 // refresh the folder statistics after the transfer
                 DisplayStatistics(outfolder, TRUE);

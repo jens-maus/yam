@@ -2414,10 +2414,11 @@ BOOL ReceiveMailsFromPOP(struct MailServerNode *msn, const ULONG flags, struct D
 
   ENTER();
 
-  if(hasServerInUse(msn) == FALSE)
+  LockMailServer(msn);
+  if(msn->useCount == 0)
   {
     // mark the server as being "in use"
-    setFlag(msn->flags, MSF_IN_USE);
+    msn->useCount = 1;
 
     success = (DoAction(NULL, TA_ReceiveMails, TT_ReceiveMails_MailServer, msn,
                                                TT_ReceiveMails_Flags, flags,
@@ -2427,11 +2428,12 @@ BOOL ReceiveMailsFromPOP(struct MailServerNode *msn, const ULONG flags, struct D
     if(success == FALSE)
     {
       // clear the "in use" flag again in case of an error
-      clearFlag(msn->flags, MSF_IN_USE);
+      msn->useCount = 0;
     }
   }
   else
     W(DBF_NET, "server '%s' is already in use", msn->description);
+  UnlockMailServer(msn);
 
   RETURN(success);
   return success;
@@ -2570,90 +2572,114 @@ BOOL MA_Send(enum SendMailMode mode, ULONG flags)
     // and then create a subgroup of mlist with them.
     if(mlist->count != 0)
     {
-      struct MailNode *mnode;
-      struct MailNode *succ;
-      struct UserIdentityNode *uin;
+      struct MailList **mailsToSend;
+      ULONG numUINs = NumberOfUserIdentities(&C->userIdentityList);
 
-      SafeIterateList(mlist, struct MailNode *, mnode, succ)
+      // create an array of mail lists for all user identities
+      if((mailsToSend = calloc(numUINs, sizeof(*mailsToSend))) != NULL)
       {
-        struct Mail *mail = mnode->mail;
-        struct ExtendedMail *email;
+        struct MailNode *mnode;
+        struct MailNode *succ;
+        ULONG i;
 
-        // we need to use ExamineMail here so that it parses all headers and
-        // eventually stores the identityID in the email structure
-        if((email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)) != NULL)
+        SafeIterateList(mlist, struct MailNode *, mnode, succ)
         {
-          // make sure the identity exists
-          if((uin = email->identity) != NULL)
-          {
-            // create a new mail list if this user identity
-            // hasn't one yet
-            if(uin->sentMailList == NULL)
-              uin->sentMailList = CreateMailList();
+          struct Mail *mail = mnode->mail;
+          struct ExtendedMail *email;
 
-            // remove from global list add the current mail to the list
-            RemoveMailNode(mlist, mnode);
-            AddMailNode(uin->sentMailList, mnode);
+          // we need to use ExamineMail here so that it parses all headers and
+          // eventually stores the identityID in the email structure
+          if((email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)) != NULL)
+          {
+            // make sure the identity exists
+            if(email->identity != NULL)
+            {
+              LONG idx;
+
+              if((idx = IndexOfUserIdentity(&C->userIdentityList, email->identity)) != -1)
+              {
+                // create a new mail list if this user identity
+                // hasn't one yet
+                if(mailsToSend[idx] == NULL)
+                  mailsToSend[idx] = CreateMailList();
+
+                if(mailsToSend[idx] != NULL)
+                {
+                  // remove from global list add the current mail to the list
+                  RemoveMailNode(mlist, mnode);
+                  AddMailNode(mailsToSend[idx], mnode);
+                }
+              }
+            }
+            else
+              E(DBF_MAIL, "no user identity found for mail with subject '%s'", mail->Subject);
+
+            // free the ExtendedMail struct
+            MA_FreeEMailStruct(email);
           }
           else
-            E(DBF_MAIL, "no user identity found for mail with subject '%s'", mail->Subject);
-
-          // free the ExtendedMail struct
-          MA_FreeEMailStruct(email);
+            W(DBF_MAIL, "ExamineMail() returned NULL");
         }
-        else
-          W(DBF_MAIL, "ExamineMail() returned NULL");
-      }
 
-      // make sure mlist is empty after the move operations
-      if(IsMailListEmpty(mlist) == FALSE)
-        E(DBF_MAIL, "couldn't move all mail from main mail list to submail lists");
+        // make sure mlist is empty after the move operations
+        if(IsMailListEmpty(mlist) == FALSE)
+          E(DBF_MAIL, "couldn't move all mail from main mail list to submail lists");
 
-      // delete the mlist mail list as this is not required anymore
-      DeleteMailList(mlist);
-
-      // now we walk through our user identities and if
-      // they have a non empty sentMailList we start the mail transfer
-      success = TRUE;
-      IterateList(&C->userIdentityList, struct UserIdentityNode *, uin)
-      {
-        BOOL sendMailSuccess = FALSE;
-
-        if(uin->sentMailList != NULL && IsMailListEmpty(uin->sentMailList) == FALSE)
+        // now we walk through our user identities and if
+        // they have a non empty sentMailList we start the mail transfer
+        success = TRUE;
+        for(i = 0; i < numUINs; i++)
         {
-          // we only proceed if there isn't already a transfer
-          // process in action for this server
-          if(hasServerInUse(uin->smtpServer) == FALSE)
+          BOOL sendMailSuccess = FALSE;
+
+          if(mailsToSend[i] != NULL && IsMailListEmpty(mailsToSend[i]) == FALSE)
           {
+            struct UserIdentityNode *uin = GetUserIdentity(&C->userIdentityList, i, TRUE);
+
             // mark the server as "in use"
-            setFlag(uin->smtpServer->flags, MSF_IN_USE);
+            LockMailServer(uin->smtpServer);
+            uin->smtpServer->useCount++;
 
             // call the thread action now signaling that we want to sent the
             // associated mails
-            sendMailSuccess = (DoAction(NULL, TA_SendMails, TT_SendMails_UserIdentity, uin,
-                                                            TT_SendMails_Mode, mode,
-                                                            TT_SendMails_Flags, flags,
-                                                            TAG_DONE) != NULL);
-          }
+            sendMailSuccess = (DoAction(NULL, TA_SendMails,
+              TT_SendMails_UserIdentity, uin,
+              TT_SendMails_Mails, mailsToSend[i],
+              TT_SendMails_Mode, mode,
+              TT_SendMails_Flags, flags,
+              TAG_DONE) != NULL);
 
-          // reset everything in case of failure
-          if(sendMailSuccess == FALSE)
-          {
-            DeleteMailList(uin->sentMailList);
-            uin->sentMailList = NULL;
+            if(sendMailSuccess == FALSE)
+            {
+              // reset everything in case of failure
+              uin->smtpServer->useCount--;
 
-            clearFlag(uin->smtpServer->flags, MSF_IN_USE);
+              success = FALSE;
+            }
+            else
+            {
+              // starting the thread succeeded, the list of mails will be deleted within
+              // the thread, thus we must erase the pointer here to avoid deleting it
+              // below
+              mailsToSend[i] = NULL;
+            }
 
-            success = FALSE;
+            UnlockMailServer(uin->smtpServer);
           }
         }
+
+        for(i = 0; i < numUINs; i++)
+        {
+          if(mailsToSend[i] != NULL)
+            DeleteMailList(mailsToSend[i]);
+        }
+
+        free(mailsToSend);
       }
     }
-    else
-    {
-      // delete the mlist mail list as this is not required anymore
-      DeleteMailList(mlist);
-    }
+
+    // delete the mlist mail list as this is not required anymore
+    DeleteMailList(mlist);
   }
 
   // now we are done

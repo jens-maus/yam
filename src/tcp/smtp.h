@@ -43,6 +43,6 @@ enum SendMailMode
 #define SENDF_SIGNAL  (1<<0) // wakeup a waiting thread after the transfer
 
 // prototypes
-BOOL SendMails(struct UserIdentityNode *uin, enum SendMailMode mode, const ULONG flags);
+BOOL SendMails(struct UserIdentityNode *uin, struct MailList *mailsToSend, enum SendMailMode mode, const ULONG flags);
 
 #endif /* SMTP_H */

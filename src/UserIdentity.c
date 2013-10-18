@@ -391,3 +391,34 @@ ULONG NumberOfUserIdentities(const struct MinList *userIdentityList)
 }
 
 ///
+/// IndexOfUserIdentity
+// return the index of a user identity within the list
+LONG IndexOfUserIdentity(const struct MinList *userIdentityList, const struct UserIdentityNode *uin)
+{
+  LONG result = -1;
+  LONG idx;
+  struct UserIdentityNode *iter;
+
+  ENTER();
+
+  idx = 0;
+  IterateList(userIdentityList, struct UserIdentityNode *, iter)
+  {
+    // count active identites only
+    if(iter->active == TRUE)
+    {
+      if(iter == uin)
+      {
+        result = idx;
+        break;
+      }
+
+      idx++;
+    }
+  }
+
+  RETURN(idx);
+  return idx;
+}
+
+///

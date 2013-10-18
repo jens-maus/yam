@@ -53,8 +53,9 @@ enum ThreadAction
 #define TT_LaunchCommand_Output                    (TAG_USER + 3)
 
 #define TT_SendMails_UserIdentity                  (TAG_USER + 1)
-#define TT_SendMails_Mode                          (TAG_USER + 2)
-#define TT_SendMails_Flags                         (TAG_USER + 3)
+#define TT_SendMails_Mails                         (TAG_USER + 2)
+#define TT_SendMails_Mode                          (TAG_USER + 3)
+#define TT_SendMails_Flags                         (TAG_USER + 4)
 
 #define TT_ReceiveMails_MailServer                 (TAG_USER + 1)
 #define TT_ReceiveMails_Flags                      (TAG_USER + 2)

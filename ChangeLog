@@ -18,6 +18,12 @@ $URL$
   * MailServers.c: replaced the "in use" flag by a "use counter" to allow for
     multiple parallel uses of a single mail server, i.e. send multiple mails to
     an SMTP server in parallel.
+  * tcp/smtp.c, Threads.c, misc: the SendMail() function no longer takes the
+    list of mails to be sent from the supplied user identity, but from an
+    additional parameter. Thus each SMTP server can now be used multiple times
+    in parallel for sending mails. In future this will make it possible to let
+    filters send out automatically generated mails immediately and hence refs
+    #91.
 
 2013-10-17 Thore Böckelmann <tboeckel@gmx.de>
 

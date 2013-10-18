@@ -3637,7 +3637,13 @@ void RemoveMailFromFolder(struct Mail *mail, const BOOL closeWindows, const BOOL
 
       while(mailFound == FALSE && (msn = GetMailServer(&C->pop3ServerList, i)) != NULL)
       {
-        if(hasServerInUse(msn) == TRUE)
+        int useCount;
+
+        LockMailServer(msn);
+        useCount = msn->useCount;
+        UnlockMailServer(msn);
+
+        if(useCount != 0)
         {
           LockMailList(msn->downloadedMails);
 

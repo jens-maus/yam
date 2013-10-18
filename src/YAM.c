@@ -2823,11 +2823,20 @@ void MiniMainLoop(void)
         IterateList(&C->userIdentityList, struct UserIdentityNode *, uin)
         {
           // check if the SMTP server is still in use because it is still sending mails
-          if(uin->smtpServer != NULL && isFlagSet(uin->smtpServer->flags, MSF_IN_USE))
+          if(uin->smtpServer != NULL)
           {
-            // at least one server is still in use
-            allFinished = FALSE;
-            break;
+            int useCount;
+
+            LockMailServer(uin->smtpServer);
+            useCount = uin->smtpServer->useCount;
+            UnlockMailServer(uin->smtpServer);
+
+            if(useCount != 0)
+            {
+              // at least one server is still in use
+              allFinished = FALSE;
+              break;
+            }
           }
         }
 

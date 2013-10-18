@@ -1712,7 +1712,9 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
   }
 
   // mark the server as being no longer "in use"
-  clearFlag(msn->flags, MSF_IN_USE);
+  LockMailServer(msn);
+  msn->useCount--;
+  UnlockMailServer(msn);
 
   // now we are done
   ReleaseSemaphore(G->configSemaphore);

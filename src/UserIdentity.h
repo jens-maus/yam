@@ -77,8 +77,6 @@ struct UserIdentityNode
   BOOL pgpSignEncrypted;             // sign encrypted mail per default
   BOOL pgpEncryptAll;                // encrypt all outgoing mails per default
   BOOL pgpSelfEncrypt;               // when encrypting also add own key
-
-  struct MailList *sentMailList;     // ptr to a list of mails for being sent
 };
 
 // public functions
@@ -91,5 +89,6 @@ struct UserIdentityNode *FindUserIdentityByID(const struct MinList *userIdentity
 struct UserIdentityNode *FindUserIdentityByDescription(const struct MinList *userIdentityList, const char *description);
 struct UserIdentityNode *FindUserIdentityByAddress(const struct MinList *userIdentityList, const char *address);
 ULONG NumberOfUserIdentities(const struct MinList *userIdentityList);
+LONG IndexOfUserIdentity(const struct MinList *userIdentityList, const struct UserIdentityNode *uin);
 
 #endif // USERIDENTITY_H
