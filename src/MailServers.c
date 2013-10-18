@@ -70,6 +70,8 @@ struct MailServerNode *CreateNewMailServer(const enum MailServerType type, const
   {
     // initialize all variables as AllocSysObject() does not clear the memory
     memset(msn, 0, sizeof(*msn));
+
+    InitSemaphore(&msn->lock);
     msn->type = type;
     msn->flags = MSF_ACTIVE;
 
@@ -156,8 +158,11 @@ struct MailServerNode *CloneMailServer(const struct MailServerNode *msn)
 
   if((clone = DuplicateNode(msn, sizeof(*msn))) != NULL)
   {
+    memset(&clone->lock, 0, sizeof(clone->lock));
+    InitSemaphore(&clone->lock);
+
     // the clone is not in use yet
-    clearFlag(clone->flags, MSF_IN_USE);
+    clone->useCount = 0;
 
     // prepare some stuff for POP3 servers
     if(msn->type == MST_POP3)

@@ -15,6 +15,9 @@ $URL$
   * mui/WriteWindow.c: merged the write window' load and reload methods into a
     single method.
   * mui/FiltersConfigPage.c: fixed the broken handling of the answer handling.
+  * MailServers.c: replaced the "in use" flag by a "use counter" to allow for
+    multiple parallel uses of a single mail server, i.e. send multiple mails to
+    an SMTP server in parallel.
 
 2013-10-17 Thore Böckelmann <tboeckel@gmx.de>
 

@@ -58,7 +58,6 @@ enum MailServerType { MST_UNKNOWN=0, MST_SMTP, MST_POP3, MST_IMAP };
 #define MSF_AUTH_LOGIN            (1<<10) // [SMTP]      : SMTP AUTH method = LOGIN
 #define MSF_AUTH_PLAIN            (1<<11) // [SMTP]      : SMTP AUTH method = PLAIN
 #define MSF_ALLOW_8BIT            (1<<12) // [SMTP]      : Server allows 8bit characters
-#define MSF_IN_USE                (1<<13) // [POP3/SMTP] : server is currently up/downloading mails
 #define MSF_AVOID_DUPLICATES      (1<<14) // [POP3]      : download mail once only
 #define MSF_APPLY_REMOTE_FILTERS  (1<<15) // [POP3]      : apply remote filters
 #define MSF_DOWNLOAD_ON_STARTUP   (1<<16) // [POP3]      : check for new mail on startup
@@ -78,7 +77,6 @@ enum MailServerType { MST_UNKNOWN=0, MST_SMTP, MST_POP3, MST_IMAP };
 #define hasServerAuth_LOGIN(v)           (isFlagSet((v)->flags, MSF_AUTH_LOGIN))
 #define hasServerAuth_PLAIN(v)           (isFlagSet((v)->flags, MSF_AUTH_PLAIN))
 #define hasServer8bit(v)                 (isFlagSet((v)->flags, MSF_ALLOW_8BIT))
-#define hasServerInUse(v)                (isFlagSet((v)->flags, MSF_IN_USE))
 #define hasServerAvoidDuplicates(v)      (isFlagSet((v)->flags, MSF_AVOID_DUPLICATES))
 #define hasServerApplyRemoteFilters(v)   (isFlagSet((v)->flags, MSF_APPLY_REMOTE_FILTERS))
 #define hasServerDownloadOnStartup(v)    (isFlagSet((v)->flags, MSF_DOWNLOAD_ON_STARTUP))
@@ -112,6 +110,7 @@ enum PreselectionMode
 struct MailServerNode
 {
   struct MinNode node;                   // required for placing it into struct Config
+  struct SignalSemaphore lock;           // semaphore to arbitrate concurrent access
 
   int type;                              // type of this sever (POP3, SMTP, etc)
   int id;                                // a unique ID for this server
@@ -126,6 +125,7 @@ struct MailServerNode
   int certFailures;                      // the SSL cert failures bitmask
 
   unsigned int flags;                    // for mail server flags (MSF_#?)
+  int useCount;                          // use counter for this mail server
 
   // mail server type specific flags
   unsigned int smtpFlags;                // [MST_SMTP]: runtime SMTP flags found during connection
@@ -152,5 +152,8 @@ BOOL CompareMailServerLists(const struct MinList *msl1, const struct MinList *ms
 struct MailServerNode *GetMailServer(const struct MinList *mailServerList, const unsigned int num);
 BOOL IsUniqueMailServerID(const struct MinList *mailServerList, const int id);
 struct MailServerNode *FindMailServer(const struct MinList *mailServerList, const int id);
+
+#define LockMailServer(msn)   ObtainSemaphore(&(msn)->lock)
+#define UnlockMailServer(msn) ReleaseSemaphore(&(msn)->lock)
 
 #endif // MAILSERVERS_H
