@@ -3627,33 +3627,9 @@ DECLARE(InsertText) // char *text
 }
 
 ///
-/// DECLARE(ReloadText)
-// Reload the message text from the current temporary file
-DECLARE(ReloadText) // ULONG changed
-{
-  GETDATA;
-  BOOL result;
-  ULONG flags;
-
-  ENTER();
-
-  flags = MUIF_NONE;
-  if(msg->changed != FALSE)
-    setFlag(flags, MUIF_MailTextEdit_LoadFromFile_SetChanged);
-  if(data->useTextStyles == TRUE)
-    setFlag(flags, MUIF_MailTextEdit_LoadFromFile_UseStyles);
-  if(data->useTextColors == TRUE)
-    setFlag(flags, MUIF_MailTextEdit_LoadFromFile_UseColors);
-
-  result = DoMethod(data->TE_EDIT, MUIM_MailTextEdit_LoadFromFile, data->wmData->filename, NULL, flags);
-
-  RETURN(result);
-  return (ULONG)result;
-}
-
-///
 /// DECLARE(LoadText)
 // Load the message text from a specified file
+// or reload it from the former file
 DECLARE(LoadText) // char *filename, ULONG changed
 {
   GETDATA;
@@ -3670,7 +3646,7 @@ DECLARE(LoadText) // char *filename, ULONG changed
   if(data->useTextColors == TRUE)
     setFlag(flags, MUIF_MailTextEdit_LoadFromFile_UseColors);
 
-  result = DoMethod(data->TE_EDIT, MUIM_MailTextEdit_LoadFromFile, msg->filename, NULL, flags);
+  result = DoMethod(data->TE_EDIT, MUIM_MailTextEdit_LoadFromFile, (msg->filename != NULL) ? msg->filename : data->wmData->filename, NULL, flags);
 
   RETURN(result);
   return (ULONG)result;
@@ -4645,7 +4621,7 @@ DECLARE(MailFileModified)
       if(keep == FALSE)
       {
         // let the TextEditor.mcc load the modified file and mark it as changed again
-        DoMethod(obj, METHOD(ReloadText), TRUE);
+        DoMethod(obj, METHOD(LoadText), NULL, TRUE);
 
         // remember this new date stamp
         memcpy(&data->wmData->lastFileChangeTime, &currentFileChangeTime, sizeof(data->wmData->lastFileChangeTime));

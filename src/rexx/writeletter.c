@@ -70,7 +70,7 @@ void rx_writeletter(UNUSED struct RexxHost *host, struct RexxParams *params, enu
           if(args->nosig == FALSE)
             DoMethod(G->ActiveRexxWMData->window, MUIM_WriteWindow_AddSignature);
 
-          DoMethod(G->ActiveRexxWMData->window, MUIM_WriteWindow_ReloadText, TRUE);
+          DoMethod(G->ActiveRexxWMData->window, MUIM_WriteWindow_LoadText, NULL, TRUE);
         }
         else
           params->rc = RETURN_ERROR;

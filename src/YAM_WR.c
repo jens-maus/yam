@@ -1924,7 +1924,7 @@ struct WriteMailData *NewWriteMailWindow(struct Mail *mail, const int flags)
       fclose(out);
 
       // update the message text
-      DoMethod(wmData->window, MUIM_WriteWindow_ReloadText, FALSE);
+      DoMethod(wmData->window, MUIM_WriteWindow_LoadText, NULL, FALSE);
 
       // make sure the window is opened
       if(quiet == FALSE)
@@ -2158,7 +2158,7 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
       MA_FreeEMailStruct(email);
 
       // update the message text
-      DoMethod(wmData->window, MUIM_WriteWindow_ReloadText, FALSE);
+      DoMethod(wmData->window, MUIM_WriteWindow_LoadText, NULL, FALSE);
 
       // make sure the window is opened
       if(quiet == FALSE)
@@ -2409,7 +2409,7 @@ struct WriteMailData *NewForwardMailWindow(struct MailList *mlist, const int fla
       dstrfree(rsub);
 
       // update the message text
-      DoMethod(wmData->window, MUIM_WriteWindow_ReloadText, FALSE);
+      DoMethod(wmData->window, MUIM_WriteWindow_LoadText, NULL, FALSE);
 
       // make sure the window is opened
       if(quiet == FALSE)
@@ -3102,7 +3102,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
       fclose(out);
 
       // update the message text
-      DoMethod(wmData->window, MUIM_WriteWindow_ReloadText, FALSE);
+      DoMethod(wmData->window, MUIM_WriteWindow_LoadText, NULL, FALSE);
 
       // make sure the window is opened
       if(quiet == FALSE)
