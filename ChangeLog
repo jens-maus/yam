@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-10-20 Jens Maus <mail@jens-maus.de>
+
+  * resources/zoneinfo, tools/tzdata, extrasrc/tzcode: updated tzdata/tzcode
+    environment to the latest version (2013g) released by iana.org.
+
 2013-10-18 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/MimeConfigPage.c: disable the "-" button in case of an empty MIME type
