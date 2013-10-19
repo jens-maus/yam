@@ -7,6 +7,10 @@ $URL$
 
 2013-10-20 Jens Maus <mail@jens-maus.de>
 
+  * resources/certificates: updated root CA certificates to latest mozilla
+    trusted versions.
+  * tools/mk-ca-bundle.pl: added perl script to extract all the latest mozilla
+    trusted root CAs.
   * resources/zoneinfo, tools/tzdata, extrasrc/tzcode: updated tzdata/tzcode
     environment to the latest version (2013g) released by iana.org.
 
