@@ -985,6 +985,15 @@ static void Terminate(void)
     G->mailNodeItemPool = NULL;
   }
 
+  if(G->mailsInTransfer != NULL)
+  {
+    if(IsMailListEmpty(G->mailsInTransfer) == FALSE)
+      E(DBF_NET, "there are still %ld mails being sent", G->mailsInTransfer->count);
+
+    DeleteMailList(G->mailsInTransfer);
+    G->mailsInTransfer = NULL;
+  }
+
   // make sure to free the shared memory pool before
   // freeing the rest
   if(G->SharedMemPool != NULL)
@@ -2497,6 +2506,12 @@ int main(int argc, char **argv)
       ASOITEM_BatchSize, 1000,
       ASOITEM_GCPolicy, ITEMGC_AFTERCOUNT,
       TAG_DONE)) == NULL)
+    {
+      // break out immediately to signal an error!
+      break;
+    }
+
+    if((G->mailsInTransfer = CreateMailList()) == NULL)
     {
       // break out immediately to signal an error!
       break;

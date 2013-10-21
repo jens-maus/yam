@@ -1707,6 +1707,7 @@ BOOL SendMails(struct UserIdentityNode *uin, struct MailList *mailsToSend, enum 
     free(tc);
   }
 
+  CleanMailsInTransfer(mailsToSend);
   // delete the list of mails
   DeleteMailList(mailsToSend);
 
@@ -1724,6 +1725,31 @@ BOOL SendMails(struct UserIdentityNode *uin, struct MailList *mailsToSend, enum 
 
   RETURN(success);
   return success;
+}
+
+///
+/// CleanMailsInTransfer
+// remove all mails in a list from the global list of mails in transfer
+void CleanMailsInTransfer(const struct MailList *mlist)
+{
+  struct MailNode *mnode;
+
+  ENTER();
+
+  LockMailList(G->mailsInTransfer);
+  ForEachMailNode(mlist, mnode)
+  {
+    struct MailNode *mnode2;
+
+    if((mnode2 = FindMailByAddress(G->mailsInTransfer, mnode->mail)) != NULL)
+    {
+      RemoveMailNode(G->mailsInTransfer, mnode2);
+      DeleteMailNode(mnode2);
+    }
+  }
+  UnlockMailList(G->mailsInTransfer);
+
+  LEAVE();
 }
 
 ///

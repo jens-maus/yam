@@ -3964,12 +3964,16 @@ static void RE_SendMDN(const enum MDNMode mode,
 
                   if((mdnMail = CloneMail(&email->Mail)) != NULL)
                   {
-                    AddMailToFolder(mdnMail, outfolder);
+                    AddNewMailNode(mailsToSend, mdnMail);
 
+                    // add the mail to the global list of mails being sent currently
+                    LockMailList(G->mailsInTransfer);
+                    AddNewMailNode(G->mailsInTransfer, mdnMail);
+                    UnlockMailList(G->mailsInTransfer);
+
+                    AddMailToFolder(mdnMail, outfolder);
                     // refresh the folder statistics before the transfer
                     DisplayStatistics(outfolder, TRUE);
-
-                    AddNewMailNode(mailsToSend, mdnMail);
                   }
 
                   MA_FreeEMailStruct(email);
@@ -3993,7 +3997,10 @@ static void RE_SendMDN(const enum MDNMode mode,
 
                     // clear the "in use" flag if the send process failed
                     if(mdnSent == FALSE)
+                    {
                       uin->smtpServer->useCount--;
+                      CleanMailsInTransfer(mailsToSend);
+                    }
 
                     UnlockMailServer(uin->smtpServer);
                   }

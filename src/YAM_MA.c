@@ -2598,17 +2598,27 @@ BOOL MA_Send(enum SendMailMode mode, ULONG flags)
 
               if((idx = IndexOfUserIdentity(&C->userIdentityList, email->identity)) != -1)
               {
-                // create a new mail list if this user identity
-                // hasn't one yet
-                if(mailsToSend[idx] == NULL)
-                  mailsToSend[idx] = CreateMailList();
-
-                if(mailsToSend[idx] != NULL)
+                // check if the mail is being sent already
+                LockMailList(G->mailsInTransfer);
+                if(FindMailByAddress(G->mailsInTransfer, mnode->mail) == NULL)
                 {
-                  // remove from global list add the current mail to the list
-                  RemoveMailNode(mlist, mnode);
-                  AddMailNode(mailsToSend[idx], mnode);
+                  // create a new mail list if this user identity
+                  // hasn't one yet
+                  if(mailsToSend[idx] == NULL)
+                    mailsToSend[idx] = CreateMailList();
+
+                  if(mailsToSend[idx] != NULL)
+                  {
+                    // remove from global list add the current mail to the list
+                    RemoveMailNode(mlist, mnode);
+                    AddMailNode(mailsToSend[idx], mnode);
+
+                    // add the mail to the global list of mails being sent currently
+                    AddNewMailNode(G->mailsInTransfer, mnode->mail);
+                  }
                 }
+
+                UnlockMailList(G->mailsInTransfer);
               }
             }
             else
@@ -2653,6 +2663,7 @@ BOOL MA_Send(enum SendMailMode mode, ULONG flags)
             {
               // reset everything in case of failure
               uin->smtpServer->useCount--;
+              CleanMailsInTransfer(mailsToSend[i]);
 
               success = FALSE;
             }

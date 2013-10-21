@@ -125,6 +125,7 @@ struct Global
   APTR                     mailItemPool;         // item pool for struct Mail
   APTR                     mailNodeItemPool;     // item pool for struct MailNode
   struct Screen *          workbenchScreen;
+  struct MailList *        mailsInTransfer;      // list of mail currently being sent
 
   #if defined(__amigaos4__)
   struct MsgPort *         AppLibPort;

@@ -4364,9 +4364,19 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
     if(uin->smtpServer != NULL)
     {
+      struct MailNode *mnode;
+
       // mark the server as "in use"
       LockMailServer(uin->smtpServer);
       uin->smtpServer->useCount++;
+
+      // add the mail to the global list of mails being sent currently
+      LockMailList(G->mailsInTransfer);
+      ForEachMailNode(newMailList, mnode)
+      {
+        AddNewMailNode(G->mailsInTransfer, mnode->mail);
+      }
+      UnlockMailList(G->mailsInTransfer);
 
       if(DoAction(NULL, TA_SendMails,
         TT_SendMails_UserIdentity, uin,
@@ -4376,6 +4386,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
       {
         // starting the thread failed, the list of mails will be deleted below
         uin->smtpServer->useCount--;
+        CleanMailsInTransfer(newMailList);
       }
       else
       {

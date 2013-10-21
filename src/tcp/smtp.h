@@ -44,5 +44,6 @@ enum SendMailMode
 
 // prototypes
 BOOL SendMails(struct UserIdentityNode *uin, struct MailList *mailsToSend, enum SendMailMode mode, const ULONG flags);
+void CleanMailsInTransfer(const struct MailList *mlist);
 
 #endif /* SMTP_H */
