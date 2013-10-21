@@ -3865,9 +3865,6 @@ first five e-mails in the folder.
 MSG_FO_NOTRECOGNIZED (1420//)
 Couldn't be recognized.
 ;
-MSG_FO_MAXAGEFMT (1421//)
-%ld days
-;
 MSG_CO_NB_EMAILCACHE (1422//)
 E-mail cache
 ;
@@ -7391,4 +7388,7 @@ Jump to newest message
 MSG_HELP_FO_CH_JUMPTORECENT (2479//)
 Jump to the most recent message when\n\
 entering this folder.
+;
+MSG_FO_MAXAGE_DAYS (2480//)
+days
 ;

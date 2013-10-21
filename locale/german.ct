@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.29 (17.10.2013)
+## version $VER: YAM.catalog 8.30 (21.10.2013)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -5221,10 +5221,6 @@ MSG_FO_NOTRECOGNIZED
 Keine Erkennung.
 ; Couldn't be recognized.
 ;
-MSG_FO_MAXAGEFMT
-%ld Tage
-; %ld days
-;
 MSG_CO_NB_EMAILCACHE
 E-Mail Cache
 ; Email cache
@@ -8776,4 +8772,7 @@ zu neuester Nachricht springen
 MSG_HELP_FO_CH_JUMPTORECENT
 Beim ersten Betreten des Postfachs wird\n\
 zur neuesten Nachricht gesprungen.
+;
+MSG_FO_MAXAGE_DAYS
+Tage
 ;

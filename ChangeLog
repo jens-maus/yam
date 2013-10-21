@@ -10,6 +10,9 @@ $URL$
   * YAM.c, tcp/smtp.c: implemented a global list of mails currently being sent
     to ensure that mails don't get sent twice if their transfer takes a bit
     longer and a second transfer to the same SMTP server is started in parallel.
+  * mui/FolderEditWindow.c: replaced the maximum mail age numeric object by an
+    integer string object. This makes it much easier to enter arbitrary numbers
+    and allows larger time ranges.
 
 2013-10-20 Jens Maus <mail@jens-maus.de>
 

@@ -34,6 +34,7 @@
 
 #include <libraries/asl.h>
 #include <libraries/iffparse.h>
+#include <mui/BetterString_mcc.h>
 #include <mui/NList_mcc.h>
 #include <mui/NListtree_mcc.h>
 #include <proto/dos.h>
@@ -77,7 +78,7 @@ struct Data
 {
   Object *ST_FNAME;
   Object *ST_FPATH;
-  Object *NM_MAXAGE;
+  Object *ST_MAXAGE;
   Object *CY_FMODE;
   Object *CY_FTYPE;
   Object *CY_SORT[2];
@@ -487,7 +488,7 @@ OVERLOAD(OM_NEW)
   static const char *sortopt[8];
   Object *ST_FNAME;
   Object *ST_FPATH;
-  Object *NM_MAXAGE;
+  Object *ST_MAXAGE;
   Object *CY_FMODE;
   Object *CY_FTYPE;
   Object *CY_SORT[2];
@@ -546,12 +547,17 @@ OVERLOAD(OM_NEW)
         Child, ST_FPATH = MakeString(SIZE_PATH, tr(MSG_FO_DIRECTORYNAME)),
         Child, Label2(tr(MSG_FO_MaxAge)),
         Child, HGroup,
-          Child, NM_MAXAGE = NumericbuttonObject,
-            MUIA_CycleChain,      1,
-            MUIA_Numeric_Min,     0,
-            MUIA_Numeric_Max,     730,
-            MUIA_Numeric_Format,  tr(MSG_FO_MAXAGEFMT),
+          Child, ST_MAXAGE = BetterStringObject,
+            StringFrame,
+            MUIA_CycleChain,         TRUE,
+            MUIA_ControlChar,        ShortCut(tr(MSG_FO_MaxAge)),
+            MUIA_FixWidthTxt,        "00000",
+            MUIA_String_MaxLen,      5+1,
+            MUIA_String_AdvanceOnCR, TRUE,
+            MUIA_String_Accept,      "0123456879",
+            MUIA_String_Format,      MUIV_String_Format_Right,
           End,
+          Child, LLabel2(tr(MSG_FO_MAXAGE_DAYS)),
           Child, CH_EXPIREUNREAD = MakeCheck(tr(MSG_FO_EXPIREUNREAD)),
           Child, LLabel1(tr(MSG_FO_EXPIREUNREAD)),
           Child, HSpace(0),
@@ -619,7 +625,7 @@ OVERLOAD(OM_NEW)
 
     data->ST_FNAME            = ST_FNAME;
     data->ST_FPATH            = ST_FPATH;
-    data->NM_MAXAGE           = NM_MAXAGE;
+    data->ST_MAXAGE           = ST_MAXAGE;
     data->CY_FMODE            = CY_FMODE;
     data->CY_FTYPE            = CY_FTYPE;
     data->CY_SORT[0]          = CY_SORT[0];
@@ -655,7 +661,7 @@ OVERLOAD(OM_NEW)
 
     SetHelp(ST_FNAME,        MSG_HELP_FO_ST_FNAME);
     SetHelp(ST_FPATH,        MSG_HELP_FO_TX_FPATH);
-    SetHelp(NM_MAXAGE,       MSG_HELP_FO_ST_MAXAGE);
+    SetHelp(ST_MAXAGE,       MSG_HELP_FO_ST_MAXAGE);
     SetHelp(CY_FMODE,        MSG_HELP_FO_CY_FMODE);
     SetHelp(CY_FTYPE,        MSG_HELP_FO_CY_FTYPE);
     SetHelp(CY_SORT[0],      MSG_HELP_FO_CY_SORT0);
@@ -679,7 +685,7 @@ OVERLOAD(OM_NEW)
     DoMethod(BT_AUTODETECT, MUIM_Notify, MUIA_Pressed, FALSE, obj, 1, METHOD(MLAutoDetect));
     DoMethod(BT_OKAY, MUIM_Notify, MUIA_Pressed, FALSE, obj, 1, METHOD(SaveFolder));
     DoMethod(ST_FNAME, MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 2, METHOD(AdaptPath), MUIV_TriggerValue);
-    DoMethod(NM_MAXAGE, MUIM_Notify, MUIA_Numeric_Value, MUIV_EveryTime, data->CH_EXPIREUNREAD, 3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
+    DoMethod(ST_MAXAGE, MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 1, METHOD(MaxAgeUpdate));
     DoMethod(CH_MLSUPPORT, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, obj, 2, METHOD(MLSupportUpdate), MUIV_NotTriggerValue);
   }
 
@@ -755,8 +761,8 @@ DECLARE(FolderToGUI)
   set(data->ST_FNAME, MUIA_Disabled, isDefault || isArchive);
   set(data->ST_FPATH, MUIA_Disabled, isDefault || isArchive);
 
-  xset(data->NM_MAXAGE, MUIA_Numeric_Value, folder->MaxAge,
-                        MUIA_Disabled,      isArchive);
+  xset(data->ST_MAXAGE, MUIA_String_Integer, folder->MaxAge,
+                        MUIA_Disabled,       isArchive);
 
   xset(data->CH_EXPIREUNREAD, MUIA_Selected, folder->ExpireUnread,
                               MUIA_Disabled, isTrashFolder(folder) || isSpamFolder(folder) || folder->MaxAge == 0 || isArchive);
@@ -826,7 +832,7 @@ DECLARE(GUIToFolder) // struct Folder *folder
   // set up the full path to the folder
   BuildFolderPath(folder->Fullpath, folder->Path, sizeof(folder->Fullpath));
 
-  folder->MaxAge = GetMUINumer(data->NM_MAXAGE);
+  folder->MaxAge = GetMUIInteger(data->ST_MAXAGE);
   if(!isDefaultFolder(folder) && !isArchiveFolder(folder))
   {
     folder->Type = cycle2type[GetMUICycle(data->CY_FTYPE)];
@@ -901,6 +907,20 @@ DECLARE(AdaptPath) // const char *name
       free(newPath);
     }
   }
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(MaxAgeUpdate)
+DECLARE(MaxAgeUpdate)
+{
+  GETDATA;
+
+  ENTER();
+
+  set(data->CH_EXPIREUNREAD, MUIA_Disabled, GetMUIInteger(data->ST_MAXAGE) == 0);
 
   RETURN(0);
   return 0;
