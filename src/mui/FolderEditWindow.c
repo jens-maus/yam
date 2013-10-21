@@ -906,6 +906,7 @@ DECLARE(AdaptPath) // const char *name
   return 0;
 }
 
+///
 /// DECLARE(MLSupportUpdate)
 DECLARE(MLSupportUpdate) // ULONG disabled
 {
