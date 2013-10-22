@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-10-22 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_RE.c: make use of the Content-Length: header line to precalculate the
+    size of an attachment.
+
 2013-10-21 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.c, tcp/smtp.c: implemented a global list of mails currently being sent

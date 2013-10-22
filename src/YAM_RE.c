@@ -1072,10 +1072,10 @@ static void RE_ParseContentParameters(char *str, struct Part *rp, enum parameter
             }
             else if(strncmp(attribute, "size", 4) == 0)
             {
-              // try to obtain the attachment's decoded size
-              SHOWVALUE(DBF_ALWAYS, rp->Size);
-              rp->Size = strtol(value, NULL, 10);
-              SHOWVALUE(DBF_ALWAYS, rp->Size);
+              // try to obtain the attachment's decoded size if it is yet unknown
+              if(rp->Size <= 0)
+                rp->Size = strtol(value, NULL, 10);
+
               free(value);
             }
             else
@@ -1239,6 +1239,12 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, enum ReadHeaderM
         clearFlag(rp->Flags, PFLAG_ALTPART);
       }
     }
+    else if(stricmp(field, "content-length") == 0)
+    {
+      // try to obtain the attachment's decoded size if it is yet unknown
+      if(rp->Size <= 0)
+        rp->Size = strtol(value, NULL, 10);
+	}
     else if(mode == RHM_MAINHEADER && stricmp(field, "mime-version") == 0)
     {
       // RFC 2049 requires a MIME coformance mail client
