@@ -4242,24 +4242,6 @@ MSG_HELP_FI_BT_SELECTACTIVE (1577//)
 Select the current message\n\
 in the main window.
 ;
-MSG_QUICKSEARCH_SO_SUBJECT (1578//)
-Subject
-;
-MSG_QUICKSEARCH_SO_SENDER (1579//)
-Sender
-;
-MSG_QUICKSEARCH_SO_SUBJORSENDER (1580//)
-Subject Or Sender
-;
-MSG_QUICKSEARCH_SO_TOORCC (1581//)
-Recipient (To or CC)
-;
-MSG_QUICKSEARCH_SO_INMSG (1582//)
-Message Body
-;
-MSG_QUICKSEARCH_SO_ENTIREMSG (1583//)
-Whole Message
-;
 MSG_QUICKSEARCH_VO_ALL (1584//)
 All
 ;
@@ -4304,10 +4286,6 @@ will be displayed.
 MSG_HELP_QUICKSEARCH_SEARCHSTRING (1597//)
 Text inserted here will be used as the search\n\
 criterion to display mail in this folder.
-;
-MSG_HELP_QUICKSEARCH_SEARCHOPTIONPOPUP (1598//)
-Select here where the string at the right\n\
-should be searched in the mail.
 ;
 MSG_BUSY_SEARCHINGFOLDER (1599//)
 Searching messages in folder '%s'...
@@ -7391,4 +7369,19 @@ entering this folder.
 ;
 MSG_FO_MAXAGE_DAYS (2480//)
 days
+;
+MSG_QUICKSEARCH_FILTER_LIST (2481//)
+Filter list...
+;
+MSG_QUICKSEARCH_FROM (2482//)
+Sender
+;
+MSG_QUICKSEARCH_TO (2483//)
+Receiver
+;
+MSG_QUICKSEARCH_SUBJECT (2484//)
+Subject
+;
+MSG_QUICKSEARCH_BODY (2485//)
+Mail body
 ;

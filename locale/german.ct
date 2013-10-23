@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.30 (21.10.2013)
+## version $VER: YAM.catalog 8.31 (23.10.2013)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -5657,24 +5657,6 @@ MSG_HELP_FI_BT_SELECTACTIVE
 Wählt alle momentan markierten Nachrichten im\n\
 Hauptfenster aus.
 ;
-MSG_QUICKSEARCH_SO_SUBJECT
-Betreff
-;
-MSG_QUICKSEARCH_SO_SENDER
-Absender
-;
-MSG_QUICKSEARCH_SO_SUBJORSENDER
-Betreff oder Absender
-;
-MSG_QUICKSEARCH_SO_TOORCC
-Empfänger (An oder CC)
-;
-MSG_QUICKSEARCH_SO_INMSG
-Nachrichtentext
-;
-MSG_QUICKSEARCH_SO_ENTIREMSG
-Gesamte Nachricht
-;
 MSG_QUICKSEARCH_VO_ALL
 Alle
 ;
@@ -5721,13 +5703,9 @@ Suchkriterium verwendet nach dem die Nachrichten\n\
 des aktuellen Postfaches zur Anzeige ausgewählt\n\
 werden.
 ;
-MSG_HELP_QUICKSEARCH_SEARCHOPTIONPOPUP
-Mit diesem Popup können Sie das Suchkriterium\n\
-auswählen.
-;
 MSG_BUSY_SEARCHINGFOLDER
 Suche Nachrichten im Postfach '%s'...
-; FOLDERNAME
+;
 MSG_CO_WBAPPICON
 A_ppIcon auf der Workbench
 ;
@@ -8775,4 +8753,19 @@ zur neuesten Nachricht gesprungen.
 ;
 MSG_FO_MAXAGE_DAYS
 Tage
+;
+MSG_QUICKSEARCH_FILTER_LIST
+Liste filtern...
+;
+MSG_QUICKSEARCH_FROM
+Absender
+;
+MSG_QUICKSEARCH_TO
+Empfänger
+;
+MSG_QUICKSEARCH_SUBJECT
+Betreff
+;
+MSG_QUICKSEARCH_BODY
+Nachrichteninhalt
 ;

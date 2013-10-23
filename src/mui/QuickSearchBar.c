@@ -61,10 +61,13 @@ struct Data
 {
   Object *CY_VIEWOPTIONS;
   Object *TX_STATUSTEXT;
-  Object *PO_SEARCHOPTIONPOPUP;
-  Object *NL_SEARCHOPTIONS;
   Object *ST_SEARCHSTRING;
-  Object *BT_CLEARBUTTON;
+  Object *BT_CLEAR;
+  Object *GR_WHERE;
+  Object *BT_FROM;
+  Object *BT_TO;
+  Object *BT_SUBJECT;
+  Object *BT_BODY;
   struct TimeVal last_statusupdate;
   BOOL abortSearch;
   BOOL searchInProgress;
@@ -78,14 +81,33 @@ struct Data
 
 /* Enumerations */
 enum SearchOptions { SO_SUBJECT=0, SO_SENDER, SO_SUBJORSENDER, SO_TOORCC, SO_INMSG, SO_ENTIREMSG };
-enum ViewOptions { VO_ALL=0, VO_UNREAD, VO_NEW, VO_MARKED, VO_IMPORTANT, VO_LAST5DAYS, VO_KNOWNPEOPLE, VO_HASATTACHMENTS, VO_MINSIZE };
+enum ViewOptions
+{
+  VO_ALL=0,
+  VO_UNREAD,
+  VO_NEW,
+  VO_MARKED,
+  VO_IMPORTANT,
+  VO_LAST5DAYS,
+  VO_KNOWNPEOPLE,
+  VO_HASATTACHMENTS,
+  VO_MINSIZE
+};
+
+enum SearchFlags
+{
+  SF_FROM=(1<<0),
+  SF_TO=(1<<1),
+  SF_SUBJECT=(1<<2),
+  SF_BODY=(1<<3)
+};
 
 /* Private Functions */
 /// MatchMail()
 // function to actually check if a struct Mail* matches
 // the currently active criteria
-static BOOL MatchMail(struct Mail *mail, enum ViewOptions vo,
-                      enum SearchOptions so, const struct BoyerMooreContext *bmContext, struct TimeVal *curTimeUTC)
+static BOOL MatchMail(const struct Mail *mail, enum ViewOptions vo,
+                      ULONG searchFlags, const struct BoyerMooreContext *bmContext, struct TimeVal *curTimeUTC)
 {
   BOOL foundMatch = FALSE;
 
@@ -174,30 +196,39 @@ static BOOL MatchMail(struct Mail *mail, enum ViewOptions vo,
   // is specified as well
   if(foundMatch == TRUE && bmContext != NULL)
   {
-    // we check which search option is currently choosen the matching
-    switch(so)
+    foundMatch = FALSE;
+
+    // first check the simple things
+    if(foundMatch == FALSE && isFlagSet(searchFlags, SF_FROM))
     {
-      // check if the searchstring matches any string in the mail's subject
-      case SO_SUBJECT:
+      foundMatch = (BoyerMooreSearch(bmContext, mail->From.Address) != NULL ||
+                    BoyerMooreSearch(bmContext, mail->From.RealName) != NULL);
+    }
+    if(foundMatch == FALSE && isFlagSet(searchFlags, SF_TO))
+    {
+      foundMatch = (BoyerMooreSearch(bmContext, mail->To.Address) != NULL ||
+                    BoyerMooreSearch(bmContext, mail->To.RealName) != NULL);
+    }
+    if(foundMatch == FALSE && isFlagSet(searchFlags, SF_SUBJECT))
+    {
+      foundMatch = (BoyerMooreSearch(bmContext, mail->Subject) != NULL);
+    }
+
+    // now check the slightly more complex things
+    if(foundMatch == FALSE)
+    {
+      if((isFlagSet(searchFlags, SF_FROM) && isMultiSenderMail(mail)) ||
+         (isFlagSet(searchFlags, SF_TO) && isMultiRCPTMail(mail)))
       {
-        foundMatch = (BoyerMooreSearch(bmContext, mail->Subject) != NULL);
-      }
-      break;
+        struct ExtendedMail *email;
 
-      // check if the searchstring matches any string in the mail's sender address
-      case SO_SENDER:
-      {
-        foundMatch = (BoyerMooreSearch(bmContext, mail->From.Address) != NULL ||
-                      BoyerMooreSearch(bmContext, mail->From.RealName) != NULL);
-
-
-        if(foundMatch == FALSE && isMultiSenderMail(mail))
+        if((email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)) != NULL)
         {
-          struct ExtendedMail *email;
-
-          if((email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)) != NULL)
+          if(isFlagSet(searchFlags, SF_FROM))
           {
             int j;
+
+            // search the additional From: addresses
 
             for(j=0; j < email->NumSFrom && foundMatch == FALSE; j++)
             {
@@ -206,59 +237,12 @@ static BOOL MatchMail(struct Mail *mail, enum ViewOptions vo,
               foundMatch = (BoyerMooreSearch(bmContext, pe->Address) != NULL ||
                             BoyerMooreSearch(bmContext, pe->RealName) != NULL);
             }
-
-            MA_FreeEMailStruct(email);
           }
-        }
-      }
-      break;
-
-      // check if the searchstring matches any string in the mail's subject or sender
-      case SO_SUBJORSENDER:
-      {
-        foundMatch = (BoyerMooreSearch(bmContext, mail->Subject) != NULL ||
-                      BoyerMooreSearch(bmContext, mail->From.Address) != NULL ||
-                      BoyerMooreSearch(bmContext, mail->From.RealName) != NULL);
-
-        if(foundMatch == FALSE && isMultiSenderMail(mail))
-        {
-          struct ExtendedMail *email;
-
-          if((email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)) != NULL)
+          if(isFlagSet(searchFlags, SF_TO))
           {
             int j;
 
-            for(j=0; j < email->NumSFrom && foundMatch == FALSE; j++)
-            {
-              struct Person *pe = &email->SFrom[j];
-
-              foundMatch = (BoyerMooreSearch(bmContext, pe->Address) != NULL ||
-                            BoyerMooreSearch(bmContext, pe->RealName) != NULL);
-            }
-
-            MA_FreeEMailStruct(email);
-          }
-        }
-      }
-      break;
-
-      // check if the searchString matches any string in the mail's TO or CC address
-      case SO_TOORCC:
-      {
-        foundMatch = (BoyerMooreSearch(bmContext, mail->To.Address) != NULL ||
-                      BoyerMooreSearch(bmContext, mail->To.RealName) != NULL);
-
-        // if we still haven't found a match with the To: string we go
-        // and do a deeper search
-        if(foundMatch == FALSE && isMultiRCPTMail(mail))
-        {
-          struct ExtendedMail *email;
-
-          if((email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)) != NULL)
-          {
-            int j;
-
-            // search the additional To: recipients
+            // search the additional To: addresses
             for(j=0; j < email->NumSTo && foundMatch == FALSE; j++)
             {
               struct Person *to = &email->STo[j];
@@ -266,7 +250,7 @@ static BOOL MatchMail(struct Mail *mail, enum ViewOptions vo,
               foundMatch = (BoyerMooreSearch(bmContext, to->Address) != NULL ||
                             BoyerMooreSearch(bmContext, to->RealName) != NULL);
             }
-
+            // search the CC: addresses
             for(j=0; j < email->NumCC && foundMatch == FALSE; j++)
             {
               struct Person *cc = &email->CC[j];
@@ -274,59 +258,35 @@ static BOOL MatchMail(struct Mail *mail, enum ViewOptions vo,
               foundMatch = (BoyerMooreSearch(bmContext, cc->Address) != NULL ||
                             BoyerMooreSearch(bmContext, cc->RealName) != NULL);
             }
-
-            MA_FreeEMailStruct(email);
-          }
-        }
-      }
-      break;
-
-      // check if the searchString matches anything at all in the actual mail text
-      case SO_INMSG:
-      {
-        struct ReadMailData *rmData;
-
-        // allocate a private readmaildata object in which we readin
-        // the mail text
-        if((rmData = AllocPrivateRMData(mail, PM_TEXTS)) != NULL)
-        {
-          char *cmsg;
-
-          if((cmsg = RE_ReadInMessage(rmData, RIM_QUIET)) != NULL)
-          {
-            // perform the search in the complete body
-            foundMatch = (BoyerMooreSearch(bmContext, cmsg) != NULL);
-
-            // free the allocated message text immediately
-            dstrfree(cmsg);
           }
 
-          FreePrivateRMData(rmData);
+          MA_FreeEMailStruct(email);
         }
       }
-      break;
+    }
 
-      // check if the searchString matches anything at all in our entire message
-      case SO_ENTIREMSG:
+    // finally the most complex part, check the message contents
+    if(foundMatch == FALSE && isFlagSet(searchFlags, SF_BODY))
+    {
+      struct ReadMailData *rmData;
+
+      // allocate a private readmaildata object in which we readin
+      // the mail text
+      if((rmData = AllocPrivateRMData(mail, PM_TEXTS)) != NULL)
       {
-        struct Search search;
+        char *cmsg;
 
-        // we use our global find function for searching in the entire message
-        // (including the headers)
-        if(FI_PrepareSearch(&search, SM_WHOLE,
-                                     0,
-                                     CP_EQUAL,
-                                     0,
-                                     bmContext->pattern,
-                                     "",
-                                     SEARCHF_SUBSTRING))
+        if((cmsg = RE_ReadInMessage(rmData, RIM_QUIET)) != NULL)
         {
-          foundMatch = FI_DoSearch(&search, mail);
+          // perform the search in the complete body
+          foundMatch = (BoyerMooreSearch(bmContext, cmsg) != NULL);
+
+          // free the allocated message text immediately
+          dstrfree(cmsg);
         }
 
-        FreeSearchData(&search);
+        FreePrivateRMData(rmData);
       }
-      break;
     }
   }
 
@@ -340,22 +300,16 @@ static BOOL MatchMail(struct Mail *mail, enum ViewOptions vo,
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
-  Object *viewOptionCycle;
-  Object *statusText;
-  Object *searchOptionPopup;
-  Object *searchOptionsList;
-  Object *searchString;
-  Object *clearButton;
-  static const char *searchOptions[7];
+  Object *CY_VIEWOPTIONS;
+  Object *TX_STATUSTEXT;
+  Object *ST_SEARCHSTRING;
+  Object *BT_CLEAR;
+  Object *GR_WHERE;
+  Object *BT_FROM;
+  Object *BT_TO;
+  Object *BT_SUBJECT;
+  Object *BT_BODY;
   static const char *viewOptions[10];
-
-  searchOptions[0] = tr(MSG_QUICKSEARCH_SO_SUBJECT);
-  searchOptions[1] = tr(MSG_QUICKSEARCH_SO_SENDER);
-  searchOptions[2] = tr(MSG_QUICKSEARCH_SO_SUBJORSENDER);
-  searchOptions[3] = tr(MSG_QUICKSEARCH_SO_TOORCC);
-  searchOptions[4] = tr(MSG_QUICKSEARCH_SO_INMSG);
-  searchOptions[5] = tr(MSG_QUICKSEARCH_SO_ENTIREMSG);
-  searchOptions[6] = NULL;
 
   viewOptions[0] = tr(MSG_QUICKSEARCH_VO_ALL);
   viewOptions[1] = tr(MSG_QUICKSEARCH_VO_UNREAD);
@@ -370,67 +324,106 @@ OVERLOAD(OM_NEW)
 
   if((obj = DoSuperNew(cl, obj,
 
-    MUIA_Group_Horiz,   TRUE,
+    MUIA_Group_Horiz, FALSE,
     Child, HGroup,
-      MUIA_Weight, 25,
-      InnerSpacing(0,0),
-      Child, MUI_MakeObject(MUIO_Label, (ULONG)tr(MSG_QUICKSEARCH_VIEW), MUIO_Label_Tiny),
-      Child, viewOptionCycle = CycleObject,
-        MUIA_Font,          MUIV_Font_Tiny,
-        MUIA_CycleChain,    TRUE,
-        MUIA_Cycle_Entries, viewOptions,
-        MUIA_ControlChar,   ShortCut(tr(MSG_QUICKSEARCH_VIEW)),
-      End,
-    End,
-
-    Child, HGroup,
-      MUIA_Weight, 50,
-      Child, statusText = TextObject,
-        MUIA_Font,          MUIV_Font_Tiny,
-        MUIA_Text_PreParse, "\033c",
-        MUIA_Text_Contents, " ",
-        MUIA_Text_Copy,     FALSE,
-      End,
-    End,
-
-    Child, HGroup,
-      MUIA_Weight, 25,
-      InnerSpacing(0,0),
-      MUIA_Group_Spacing,    0,
-      MUIA_Group_SameHeight, TRUE,
-
-      Child, searchOptionPopup = PopobjectObject,
-        MUIA_Popstring_Button, PopButton(MUII_PopUp),
-        MUIA_Popobject_Object, NListviewObject,
-          MUIA_NListview_NList, searchOptionsList = NListObject,
-            InputListFrame,
-            MUIA_NList_Active,               SO_SUBJORSENDER,
-            MUIA_NList_SourceArray,          searchOptions,
-            MUIA_NList_AdjustHeight,         TRUE,
-            MUIA_NList_AdjustWidth,          TRUE,
-            MUIA_NList_DefaultObjectOnClick, FALSE,
-          End,
+      Child, HGroup,
+        MUIA_Weight, 25,
+        InnerSpacing(0,0),
+        Child, MUI_MakeObject(MUIO_Label, (ULONG)tr(MSG_QUICKSEARCH_VIEW), MUIO_Label_Tiny),
+        Child, CY_VIEWOPTIONS = CycleObject,
+          MUIA_Font,          MUIV_Font_Tiny,
+          MUIA_CycleChain,    TRUE,
+          MUIA_Cycle_Entries, viewOptions,
+          MUIA_ControlChar,   ShortCut(tr(MSG_QUICKSEARCH_VIEW)),
         End,
       End,
-      Child, searchString =  BetterStringObject,
-        StringFrame,
-        MUIA_ControlChar,                   tr(MSG_QUICKSEARCH_STR_CONTROLCHAR)[0],
-        MUIA_CycleChain,                    TRUE,
-        MUIA_Font,                          MUIV_Font_Tiny,
-        MUIA_String_AdvanceOnCR,            FALSE,
-        MUIA_BetterString_InactiveContents, tr(MSG_QUICKSEARCH_SO_SUBJORSENDER),
-        MUIA_BetterString_NoShortcuts,      TRUE,
-        MUIA_BetterString_SelectOnActive,   TRUE,
+
+      Child, HGroup,
+        MUIA_Weight, 50,
+        Child, TX_STATUSTEXT = TextObject,
+          MUIA_Font,          MUIV_Font_Tiny,
+          MUIA_Text_PreParse, "\033c",
+          MUIA_Text_Contents, " ",
+          MUIA_Text_Copy,     FALSE,
+        End,
       End,
-      Child, clearButton = TextObject,
+
+      Child, HGroup,
+        MUIA_Weight, 25,
+        InnerSpacing(0,0),
+        MUIA_Group_Spacing,    0,
+        MUIA_Group_SameHeight, TRUE,
+
+        Child, ST_SEARCHSTRING =  BetterStringObject,
+          StringFrame,
+          MUIA_ControlChar,                   tr(MSG_QUICKSEARCH_STR_CONTROLCHAR)[0],
+          MUIA_CycleChain,                    TRUE,
+          MUIA_Font,                          MUIV_Font_Tiny,
+          MUIA_String_AdvanceOnCR,            FALSE,
+          MUIA_BetterString_InactiveContents, tr(MSG_QUICKSEARCH_FILTER_LIST),
+          MUIA_BetterString_NoShortcuts,      TRUE,
+          MUIA_BetterString_SelectOnActive,   TRUE,
+        End,
+        Child, BT_CLEAR = TextObject,
+          ButtonFrame,
+          MUIA_ShowMe,         FALSE,
+          MUIA_CycleChain,     TRUE,
+          MUIA_Font,           MUIV_Font_Tiny,
+          MUIA_Text_PreParse,  "\033b",
+          MUIA_Text_Contents,  "X",
+          MUIA_InputMode,      MUIV_InputMode_RelVerify,
+          MUIA_Background,     MUII_ButtonBack,
+          MUIA_Text_SetMax,    TRUE,
+          MUIA_Text_Copy,      FALSE,
+        End,
+      End,
+    End,
+    Child, GR_WHERE = HGroup,
+      MUIA_ShowMe, FALSE,
+      Child, HSpace(0),
+      Child, BT_FROM = TextObject,
         ButtonFrame,
-        MUIA_CycleChain,     TRUE,
-        MUIA_Font,           MUIV_Font_Tiny,
-        MUIA_Text_Contents,  "\033bX",
-        MUIA_InputMode,      MUIV_InputMode_RelVerify,
-        MUIA_Background,     MUII_ButtonBack,
-        MUIA_Text_SetMax,    TRUE,
-        MUIA_Text_Copy,      FALSE,
+        MUIA_CycleChain,    TRUE,
+        MUIA_Font,          MUIV_Font_Tiny,
+        MUIA_InputMode,     MUIV_InputMode_Toggle,
+        MUIA_Background,    MUII_ButtonBack,
+        MUIA_Selected,      TRUE,
+        MUIA_Text_Contents, tr(MSG_QUICKSEARCH_FROM),
+        MUIA_Text_SetMax,   TRUE,
+        MUIA_Text_Copy,     FALSE,
+      End,
+      Child, BT_TO = TextObject,
+        ButtonFrame,
+        MUIA_CycleChain,    TRUE,
+        MUIA_Font,          MUIV_Font_Tiny,
+        MUIA_InputMode,     MUIV_InputMode_Toggle,
+        MUIA_Background,    MUII_ButtonBack,
+        MUIA_Selected,      TRUE,
+        MUIA_Text_Contents, tr(MSG_QUICKSEARCH_TO),
+        MUIA_Text_SetMax,   TRUE,
+        MUIA_Text_Copy,     FALSE,
+      End,
+      Child, BT_SUBJECT = TextObject,
+        ButtonFrame,
+        MUIA_CycleChain,    TRUE,
+        MUIA_Font,          MUIV_Font_Tiny,
+        MUIA_InputMode,     MUIV_InputMode_Toggle,
+        MUIA_Background,    MUII_ButtonBack,
+        MUIA_Selected,      TRUE,
+        MUIA_Text_Contents, tr(MSG_QUICKSEARCH_SUBJECT),
+        MUIA_Text_SetMax,   TRUE,
+        MUIA_Text_Copy,     FALSE,
+      End,
+      Child, BT_BODY = TextObject,
+        ButtonFrame,
+        MUIA_CycleChain,    TRUE,
+        MUIA_Font,          MUIV_Font_Tiny,
+        MUIA_InputMode,     MUIV_InputMode_Toggle,
+        MUIA_Background,    MUII_ButtonBack,
+        MUIA_Selected,      FALSE,
+        MUIA_Text_Contents, tr(MSG_QUICKSEARCH_BODY),
+        MUIA_Text_SetMax,   TRUE,
+        MUIA_Text_Copy,     FALSE,
       End,
     End,
 
@@ -438,31 +431,34 @@ OVERLOAD(OM_NEW)
   {
     GETDATA;
 
-    // per default we set the clear button as hidden
-    set(clearButton, MUIA_ShowMe, FALSE);
-
-    data->CY_VIEWOPTIONS = viewOptionCycle;
-    data->TX_STATUSTEXT = statusText;
-    data->BT_CLEARBUTTON = clearButton;
-    data->PO_SEARCHOPTIONPOPUP = searchOptionPopup;
-    data->NL_SEARCHOPTIONS = searchOptionsList;
-    data->ST_SEARCHSTRING = searchString;
+    data->CY_VIEWOPTIONS  = CY_VIEWOPTIONS;
+    data->TX_STATUSTEXT   = TX_STATUSTEXT;
+    data->ST_SEARCHSTRING = ST_SEARCHSTRING;
+    data->BT_CLEAR        = BT_CLEAR;
+    data->GR_WHERE        = GR_WHERE;
+    data->BT_FROM         = BT_FROM;
+    data->BT_TO           = BT_TO;
+    data->BT_SUBJECT      = BT_SUBJECT;
+    data->BT_BODY         = BT_BODY;
 
     // set the help text for each GUI element
-    SetHelp(data->CY_VIEWOPTIONS,       MSG_HELP_QUICKSEARCH_VIEWOPTIONS);
-    SetHelp(data->ST_SEARCHSTRING,      MSG_HELP_QUICKSEARCH_SEARCHSTRING);
-    SetHelp(data->PO_SEARCHOPTIONPOPUP, MSG_HELP_QUICKSEARCH_SEARCHOPTIONPOPUP);
+    SetHelp(CY_VIEWOPTIONS,  MSG_HELP_QUICKSEARCH_VIEWOPTIONS);
+    SetHelp(ST_SEARCHSTRING, MSG_HELP_QUICKSEARCH_SEARCHSTRING);
 
     // set notifies
-    DoMethod(data->NL_SEARCHOPTIONS,MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime, obj, 2, MUIM_QuickSearchBar_SearchOptionChanged, MUIV_TriggerValue);
-    DoMethod(data->CY_VIEWOPTIONS,  MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, obj, 2, MUIM_QuickSearchBar_ViewOptionChanged, MUIV_TriggerValue);
-    DoMethod(data->ST_SEARCHSTRING, MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 3, MUIM_QuickSearchBar_SearchContentChanged, MUIV_TriggerValue, FALSE);
-    DoMethod(data->ST_SEARCHSTRING, MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, obj, 3, MUIM_QuickSearchBar_SearchContentChanged, MUIV_TriggerValue, TRUE);
-    DoMethod(data->BT_CLEARBUTTON,  MUIM_Notify, MUIA_Pressed, FALSE, data->ST_SEARCHSTRING, 3, MUIM_Set, MUIA_String_Contents, "");
+    DoMethod(CY_VIEWOPTIONS,  MUIM_Notify, MUIA_Cycle_Active,       MUIV_EveryTime, obj,             2, METHOD(ViewOptionChanged), MUIV_TriggerValue);
+    DoMethod(ST_SEARCHSTRING, MUIM_Notify, MUIA_String_Contents,    MUIV_EveryTime, obj,             3, METHOD(SearchContentChanged), MUIV_TriggerValue, FALSE);
+    DoMethod(ST_SEARCHSTRING, MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, obj,             3, METHOD(SearchContentChanged), MUIV_TriggerValue, TRUE);
+    DoMethod(BT_CLEAR,        MUIM_Notify, MUIA_Pressed,            FALSE,          ST_SEARCHSTRING, 3, MUIM_Set, MUIA_String_Contents, "");
+    DoMethod(BT_FROM,         MUIM_Notify, MUIA_Selected,           MUIV_EveryTime, obj,             1, METHOD(SearchFlagsChanged));
+    DoMethod(BT_TO,           MUIM_Notify, MUIA_Selected,           MUIV_EveryTime, obj,             1, METHOD(SearchFlagsChanged));
+    DoMethod(BT_SUBJECT,      MUIM_Notify, MUIA_Selected,           MUIV_EveryTime, obj,             1, METHOD(SearchFlagsChanged));
+    DoMethod(BT_BODY,         MUIM_Notify, MUIA_Selected,           MUIV_EveryTime, obj,             1, METHOD(SearchFlagsChanged));
   }
 
   return (IPTR)obj;
 }
+
 ///
 /// OVERLOAD(OM_SET)
 OVERLOAD(OM_SET)
@@ -487,7 +483,6 @@ OVERLOAD(OM_SET)
       case MUIA_Disabled:
       {
         set(data->CY_VIEWOPTIONS, MUIA_Disabled, tag->ti_Data);
-        set(data->PO_SEARCHOPTIONPOPUP, MUIA_Disabled, tag->ti_Data);
         set(data->ST_SEARCHSTRING, MUIA_Disabled, tag->ti_Data);
 
         if(tag->ti_Data == TRUE)
@@ -502,6 +497,7 @@ OVERLOAD(OM_SET)
 
   return DoSuperMethodA(cl, obj, msg);
 }
+
 ///
 /// OVERLOAD(OM_GET)
 OVERLOAD(OM_GET)
@@ -543,7 +539,8 @@ DECLARE(SearchContentChanged) // char *content, ULONG force
     {
       // make sure the clear button is shown and that
       // the correct mailview is displayed to the user
-      set(data->BT_CLEARBUTTON, MUIA_ShowMe, TRUE);
+      set(data->BT_CLEAR, MUIA_ShowMe, TRUE);
+      set(data->GR_WHERE, MUIA_ShowMe, TRUE);
 
       // now we issue a RestartTimer() command to schedule
       // the actual search in about 400ms from now on
@@ -564,55 +561,14 @@ DECLARE(SearchContentChanged) // char *content, ULONG force
 
       // now reset some other GUI elements as well.
       set(data->TX_STATUSTEXT, MUIA_Text_Contents, " ");
-      set(data->BT_CLEARBUTTON, MUIA_ShowMe, FALSE);
+      set(data->BT_CLEAR, MUIA_ShowMe, FALSE);
+      set(data->GR_WHERE, MUIA_ShowMe, FALSE);
     }
     else
     {
       // otherwise we issue a quicksearch start as well
       RestartTimer(TIMER_PROCESSQUICKSEARCH, 0, 500000, FALSE);
     }
-  }
-
-  RETURN(0);
-  return 0;
-}
-
-///
-/// DECLARE(SearchOptionChanged)
-DECLARE(SearchOptionChanged) // int activeSearchOption
-{
-  GETDATA;
-  char *searchContent = (char *)xget(data->ST_SEARCHSTRING, MUIA_String_Contents);
-  const char *inactiveContents;
-
-  ENTER();
-
-  // abort any running search process
-  set(obj, ATTR(AbortSearch), TRUE);
-
-  // make sure the popup window is closed
-  DoMethod(data->PO_SEARCHOPTIONPOPUP, MUIM_Popstring_Close, TRUE);
-
-  // update the inactive search string accordingly
-  switch(msg->activeSearchOption)
-  {
-    case 0: inactiveContents = tr(MSG_QUICKSEARCH_SO_SUBJECT); break;
-    case 1: inactiveContents = tr(MSG_QUICKSEARCH_SO_SENDER); break;
-    case 2: inactiveContents = tr(MSG_QUICKSEARCH_SO_SUBJORSENDER); break;
-    case 3: inactiveContents = tr(MSG_QUICKSEARCH_SO_TOORCC); break;
-    case 4: inactiveContents = tr(MSG_QUICKSEARCH_SO_INMSG); break;
-    case 5: inactiveContents = tr(MSG_QUICKSEARCH_SO_ENTIREMSG); break;
-    default: inactiveContents = NULL; break;
-  }
-  set(data->ST_SEARCHSTRING, MUIA_BetterString_InactiveContents, inactiveContents);
-
-  // now we check whether the there is something to search for or not.
-  if(IsStrEmpty(searchContent) == FALSE)
-  {
-    // immediately process the search, but make sure there is no
-    // pending timerIO waiting already
-    StopTimer(TIMER_PROCESSQUICKSEARCH);
-    DoMethod(obj, MUIM_QuickSearchBar_ProcessSearch);
   }
 
   RETURN(0);
@@ -635,15 +591,33 @@ DECLARE(ViewOptionChanged) // int activeCycle
   // options is selected by the user
   if(msg->activeCycle == VO_ALL && (searchContent == NULL || searchContent[0] == '\0'))
   {
-    DoMethod(obj, MUIM_QuickSearchBar_Clear);
+    DoMethod(obj, METHOD(Clear));
   }
   else
   {
     // immediately process the search, but make sure there is no
     // pending timerIO waiting already
     StopTimer(TIMER_PROCESSQUICKSEARCH);
-    DoMethod(obj, MUIM_QuickSearchBar_ProcessSearch);
+    DoMethod(obj, METHOD(ProcessSearch));
   }
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(SearchFlagsChanged)
+DECLARE(SearchFlagsChanged)
+{
+  ENTER();
+
+  // abort any running search process
+  set(obj, ATTR(AbortSearch), TRUE);
+
+  // immediately process the search, but make sure there is no
+  // pending timerIO waiting already
+  StopTimer(TIMER_PROCESSQUICKSEARCH);
+  DoMethod(obj, METHOD(ProcessSearch));
 
   RETURN(0);
   return 0;
@@ -666,7 +640,7 @@ DECLARE(ProcessSearch)
   {
     struct MailNode *mnode;
     enum ViewOptions viewOption = xget(data->CY_VIEWOPTIONS, MUIA_Cycle_Active);
-    enum SearchOptions searchOption = xget(data->NL_SEARCHOPTIONS, MUIA_NList_Active);
+    ULONG searchFlags;
     char *searchString = (char *)xget(data->ST_SEARCHSTRING, MUIA_String_Contents);
     struct TimeVal curTimeUTC;
     struct BoyerMooreContext *bmContext;
@@ -681,6 +655,16 @@ DECLARE(ProcessSearch)
 
     // initialize a case insensitive Boyer/Moore search, searchString may be NULL
     bmContext = BoyerMooreInit(searchString, FALSE);
+
+    searchFlags = 0;
+    if(xget(data->BT_FROM, MUIA_Selected) == TRUE)
+      setFlag(searchFlags, SF_FROM);
+    if(xget(data->BT_TO, MUIA_Selected) == TRUE)
+      setFlag(searchFlags, SF_TO);
+    if(xget(data->BT_SUBJECT, MUIA_Selected) == TRUE)
+      setFlag(searchFlags, SF_SUBJECT);
+    if(xget(data->BT_BODY, MUIA_Selected) == TRUE)
+      setFlag(searchFlags, SF_BODY);
 
     // make sure the correct mailview list is visible and quiet
     DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_SwitchToList, LT_QUICKVIEW);
@@ -702,7 +686,7 @@ DECLARE(ProcessSearch)
       struct Mail *curMail = mnode->mail;
 
       // check if that mail matches the search/view criteria
-      if(MatchMail(curMail, viewOption, searchOption, bmContext, &curTimeUTC) == TRUE)
+      if(MatchMail(curMail, viewOption, searchFlags, bmContext, &curTimeUTC) == TRUE)
         DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_AddMailToList, LT_QUICKVIEW, curMail);
 
       DoMethod(_app(obj), MUIM_Application_InputBuffered);
@@ -723,7 +707,7 @@ DECLARE(ProcessSearch)
       LONG pos = MUIV_NList_GetPos_Start;
 
       // make sure the statistics are updated as well
-      DoMethod(obj, MUIM_QuickSearchBar_UpdateStats, TRUE);
+      DoMethod(obj, METHOD(UpdateStats), TRUE);
 
       // get the last active mail in the maillistgroup
       lastActiveMail = (struct Mail *)xget(G->MA->GUI.PG_MAILLIST, MUIA_MainMailListGroup_LastActiveMail);
@@ -757,7 +741,7 @@ DECLARE(MatchMail) // struct Mail *mail
 {
   GETDATA;
   enum ViewOptions viewOption = xget(data->CY_VIEWOPTIONS, MUIA_Cycle_Active);
-  enum SearchOptions searchOption = xget(data->NL_SEARCHOPTIONS, MUIA_NList_Active);
+  ULONG searchFlags;
   char *searchString = (char *)xget(data->ST_SEARCHSTRING, MUIA_String_Contents);
   struct TimeVal curTimeUTC;
   struct BoyerMooreContext *bmContext;
@@ -773,9 +757,19 @@ DECLARE(MatchMail) // struct Mail *mail
   // initialize a case insensitive Boyer/Moore search, searchString may be NULL
   bmContext = BoyerMooreInit(searchString, FALSE);
 
+  searchFlags = 0;
+  if(xget(data->BT_FROM, MUIA_Selected) == TRUE)
+    setFlag(searchFlags, SF_FROM);
+  if(xget(data->BT_TO, MUIA_Selected) == TRUE)
+    setFlag(searchFlags, SF_TO);
+  if(xget(data->BT_SUBJECT, MUIA_Selected) == TRUE)
+    setFlag(searchFlags, SF_SUBJECT);
+  if(xget(data->BT_BODY, MUIA_Selected) == TRUE)
+    setFlag(searchFlags, SF_BODY);
+
   // now we check that a match is really required and if so we process it
   match = (ULONG)((viewOption != VO_ALL || searchString != NULL) &&
-                  MatchMail(msg->mail, viewOption, searchOption, bmContext, &curTimeUTC) == TRUE);
+                  MatchMail(msg->mail, viewOption, searchFlags, bmContext, &curTimeUTC) == TRUE);
 
   BoyerMooreCleanup(bmContext);
 
@@ -802,8 +796,7 @@ DECLARE(Clear)
   nnset(data->ST_SEARCHSTRING, MUIA_String_Contents, "");
   nnset(data->CY_VIEWOPTIONS, MUIA_Cycle_Active, VO_ALL);
   set(data->TX_STATUSTEXT, MUIA_Text_Contents, " ");
-  set(data->BT_CLEARBUTTON, MUIA_ShowMe, FALSE);
-  set(data->NL_SEARCHOPTIONS, MUIA_NList_Active, SO_SUBJORSENDER);
+  set(data->BT_CLEAR, MUIA_ShowMe, FALSE);
 
   // make sure our objects are not disabled
   set(obj, MUIA_Disabled, FALSE);

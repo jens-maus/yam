@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-10-23 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/QuickSearchBar.c: reworked the quicksearch bar to act like the bar
+    in Thunderbird. Instead of choosing one fixed search option from a cycle
+    object it is now possible to refine the search by simple toggle buttons.
+    This is much more intuitive and lets the user define his own search criteria
+    instead of forcing him to use predefined combinations (i.e. sender+subject
+    instead of receiver+subject).
+
 2013-10-22 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_RE.c: make use of the Content-Length: header line to precalculate the
