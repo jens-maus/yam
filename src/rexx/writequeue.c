@@ -64,7 +64,7 @@ void rx_writequeue(UNUSED struct RexxHost *host, struct RexxParams *params, enum
       struct WriteMailData *wmData = G->ActiveRexxWMData;
 
       if(wmData != NULL && wmData->window != NULL)
-        DoMethod(wmData->window, MUIM_WriteWindow_ComposeMail, args->draft ? WRITE_HOLD : WRITE_QUEUE);
+        DoMethod(wmData->window, MUIM_WriteWindow_ComposeMail, args->draft ? WRITE_DRAFT : WRITE_QUEUE);
       else
         params->rc = RETURN_ERROR;
     }

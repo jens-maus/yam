@@ -203,6 +203,13 @@ enum ActiveObject
   MUIV_WriteWindow_ActiveObject_TextEditor,
   MUIV_WriteWindow_ActiveObject_Subject
 };
+
+enum WriteMode
+{
+  WRITE_SEND = 0,
+  WRITE_QUEUE,
+  WRITE_DRAFT
+};
 */
 
 // menu item IDs
@@ -3798,7 +3805,8 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
     if(MUI_Request(_app(obj), obj, MUIF_NONE, NULL, tr(MSG_WR_NoRcptReqGad), tr(MSG_WR_ErrorNoRcpt)) != 0)
     {
-      mode = WRITE_HOLD;
+      // turn the action into writing a draft mail
+      mode = WRITE_DRAFT;
     }
     else
       goto out;
@@ -3976,7 +3984,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
   comp.Mode = wmData->mode;
   comp.Identity = wmData->identity;
-  outfolder = FO_GetFolderByType(mode == WRITE_HOLD || mode == WRITE_DRAFT ? FT_DRAFTS : FT_OUTGOING, NULL);
+  outfolder = FO_GetFolderByType(mode == WRITE_DRAFT ? FT_DRAFTS : FT_OUTGOING, NULL);
 
   ////////////////////////////////
   // now we have checked that all input data is actually present

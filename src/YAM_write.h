@@ -113,14 +113,6 @@ enum TransformMode
   ED_INSUUCODE
 };
 
-enum WriteMode
-{
-  WRITE_HOLD,
-  WRITE_SEND,
-  WRITE_QUEUE,
-  WRITE_DRAFT
-};
-
 // mail text encoding codes
 enum Encoding
 {
@@ -186,7 +178,6 @@ enum SoftStyleMode
 
 void  EmitHeader(FILE *fh, const char *hdr, const char *body, struct codeset *codeset);
 void  FreePartsList(struct WritePart *p, BOOL delTemp);
-void  WR_NewMail(enum WriteMode mode, int winnum);
 BOOL  WriteOutMessage(struct Compose *comp);
 void WriteContentTypeAndEncoding(FILE *fh, const struct WritePart *part);
 const char *EncodingName(const enum Encoding encoding);
