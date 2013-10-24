@@ -3721,14 +3721,20 @@ struct Mail *ReplaceMailInFolder(const char *mailFile, struct Mail *mail, struct
 
   if((mnode = FindMailByFilename(folder->messages, mailFile)) != NULL)
   {
-    // remove the old mail's stats from the folder stats
-    folder->Size -= mnode->mail->Size;
+    // remember the replaced mail
+    replacedMail = mnode->mail;
 
-    if(hasStatusNew(mnode->mail))
+    // remove the old mail's stats from the folder stats
+    folder->Size -= replacedMail->Size;
+
+    if(hasStatusNew(replacedMail))
       folder->New--;
 
-    if(!hasStatusRead(mnode->mail))
+    if(!hasStatusRead(replacedMail))
       folder->Unread--;
+
+    // clear the replaced mail's folder
+    replacedMail->Folder = NULL;
 
     // add the new mail's stats to the folder stats
     folder->Size += mail->Size;
@@ -3739,17 +3745,11 @@ struct Mail *ReplaceMailInFolder(const char *mailFile, struct Mail *mail, struct
     if(!hasStatusRead(mail))
       folder->Unread++;
 
-    // remember the replaced mail and decrease its reference counter
-    if(mnode->mail != NULL)
-    {
-      replacedMail = mnode->mail;
-      replacedMail->Folder = NULL;
-      // don't dereference the replaced mail here, this is done outside
-    }
-
-    // replace the mail in the list
+    // replace the mail in the list and set its folder, but don't
+    // dereference the replaced mail here, this is done outside
     mnode->mail = mail;
     mail->Folder = folder;
+
     // increase the reference counter
     ReferenceMail(mail);
   }
