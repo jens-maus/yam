@@ -3765,6 +3765,8 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
   ENTER();
 
+  D(DBF_MAIL, "write mode %ld", mode);
+
   // clear some variables we fill up later on
   memset(&comp, 0, sizeof(struct Compose));
 
@@ -3984,7 +3986,9 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
   comp.Mode = wmData->mode;
   comp.Identity = wmData->identity;
+
   outfolder = FO_GetFolderByType(mode == WRITE_DRAFT ? FT_DRAFTS : FT_OUTGOING, NULL);
+  D(DBF_MAIL, "outfolder '%s'", outfolder->Name);
 
   ////////////////////////////////
   // now we have checked that all input data is actually present
@@ -4018,6 +4022,8 @@ DECLARE(ComposeMail) // enum WriteMode mode
       // forget the previous file name
       newMailFile[0] = '\0';
 
+      D(DBF_MAIL, "draft mail %08lx %08lx '%s'", wmData->draftMail, wmData->draftMail != NULL ? wmData->draftMail->MailFile : "NULL");
+
       // now we check how the new mail file should be named
       // or created. As we iterate through all refMailList
       // nodes we only generate a new file for the mail redirecting
@@ -4050,6 +4056,8 @@ DECLARE(ComposeMail) // enum WriteMode mode
           break;
         }
       }
+
+      D(DBF_MAIL, "new mail file '%s'", newMailFile);
 
       if(newMailFile[0] != '\0')
       {
@@ -4097,10 +4105,12 @@ DECLARE(ComposeMail) // enum WriteMode mode
               if(mode == WRITE_DRAFT)
               {
                 replacedMail = ReplaceMailInFolder(FilePart(newMailFile), newMail, outfolder);
+                D(DBF_MAIL, "replaced mail file %08lx '%s' by %08lx '%s'", replacedMail, replacedMail != NULL ? replacedMail->MailFile : "NULL", newMail, newMail->MailFile);
               }
               else
               {
                 AddMailToFolder(newMail, outfolder);
+                D(DBF_MAIL, "added new mail file %08lx '%s'", newMail, newMail->MailFile);
                 replacedMail = NULL;
               }
 
@@ -4204,6 +4214,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
                 // remember the new mail as draft mail
                 wmData->draftMail = newMail;
+                D(DBF_MAIL, "new draft mail %08lx '%s'", wmData->draftMail, wmData->draftMail->MailFile);
               }
 
               // add the new mail to our newMailList if
