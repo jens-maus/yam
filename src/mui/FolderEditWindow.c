@@ -920,7 +920,7 @@ DECLARE(MaxAgeUpdate)
 
   ENTER();
 
-  set(data->CH_EXPIREUNREAD, MUIA_Disabled, GetMUIInteger(data->ST_MAXAGE) == 0);
+  set(data->CH_EXPIREUNREAD, MUIA_Disabled, isTrashFolder(data->editFolder) || isSpamFolder(data->editFolder) || GetMUIInteger(data->ST_MAXAGE) == 0 || isArchiveFolder(data->editFolder));
 
   RETURN(0);
   return 0;

@@ -9,6 +9,8 @@ $URL$
 
   * mui/QuickSearchBar.c: hide the search flag buttons when clearing the bar
     contents.
+  * mui/FolderEditWindow.c: don't enable the "expire unread" checkmark for spam,
+    trash or archive folders.
 
 2013-10-23 Thore Böckelmann <tboeckel@gmx.de>
 
