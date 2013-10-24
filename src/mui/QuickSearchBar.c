@@ -539,8 +539,10 @@ DECLARE(SearchContentChanged) // char *content, ULONG force
     {
       // make sure the clear button is shown and that
       // the correct mailview is displayed to the user
-      set(data->BT_CLEAR, MUIA_ShowMe, TRUE);
-      set(data->GR_WHERE, MUIA_ShowMe, TRUE);
+      DoMethod(obj, MUIM_MultiSet, MUIA_ShowMe, TRUE,
+        data->BT_CLEAR,
+        data->GR_WHERE,
+        NULL);
 
       // now we issue a RestartTimer() command to schedule
       // the actual search in about 400ms from now on
@@ -561,8 +563,10 @@ DECLARE(SearchContentChanged) // char *content, ULONG force
 
       // now reset some other GUI elements as well.
       set(data->TX_STATUSTEXT, MUIA_Text_Contents, " ");
-      set(data->BT_CLEAR, MUIA_ShowMe, FALSE);
-      set(data->GR_WHERE, MUIA_ShowMe, FALSE);
+      DoMethod(obj, MUIM_MultiSet, MUIA_ShowMe, FALSE,
+        data->BT_CLEAR,
+        data->GR_WHERE,
+        NULL);
     }
     else
     {
@@ -796,8 +800,10 @@ DECLARE(Clear)
   nnset(data->ST_SEARCHSTRING, MUIA_String_Contents, "");
   nnset(data->CY_VIEWOPTIONS, MUIA_Cycle_Active, VO_ALL);
   set(data->TX_STATUSTEXT, MUIA_Text_Contents, " ");
-  set(data->BT_CLEAR, MUIA_ShowMe, FALSE);
-  set(data->GR_WHERE, MUIA_ShowMe, FALSE);
+  DoMethod(obj, MUIM_MultiSet, MUIA_ShowMe, FALSE,
+    data->BT_CLEAR,
+    data->GR_WHERE,
+    NULL);
 
   // make sure our objects are not disabled
   set(obj, MUIA_Disabled, FALSE);
