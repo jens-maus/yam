@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-10-24 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/QuickSearchBar.c: hide the search flag buttons when clearing the bar
+    contents.
+
 2013-10-23 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/QuickSearchBar.c: reworked the quicksearch bar to act like the bar

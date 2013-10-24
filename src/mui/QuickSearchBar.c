@@ -797,6 +797,7 @@ DECLARE(Clear)
   nnset(data->CY_VIEWOPTIONS, MUIA_Cycle_Active, VO_ALL);
   set(data->TX_STATUSTEXT, MUIA_Text_Contents, " ");
   set(data->BT_CLEAR, MUIA_ShowMe, FALSE);
+  set(data->GR_WHERE, MUIA_ShowMe, FALSE);
 
   // make sure our objects are not disabled
   set(obj, MUIA_Disabled, FALSE);
