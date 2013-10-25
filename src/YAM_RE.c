@@ -2551,6 +2551,10 @@ static void RE_HandleSignedMessage(struct Part *frp)
       // flag the mail as having a PGP signature within the MIME encoding
       setFlag(frp->rmData->signedFlags, PGPS_MIME);
 
+      // decode the letter part first, otherwise PGP might want to check
+      // a still encoded file which definitely will fail.
+      RE_DecodePart(letterPart);
+
       snprintf(options, sizeof(options), (G->PGPVersion == 5) ? "%s -o %s +batchmode=1 +force +language=us" : "%s %s +bat +f +lang=en", pgpPart->Filename, letterPart->Filename);
       error = PGPCommand((G->PGPVersion == 5) ? "pgpv": "pgp", options, NOERRORS|KEEPLOG);
       if(error > 0)
@@ -2558,8 +2562,6 @@ static void RE_HandleSignedMessage(struct Part *frp)
 
       if(error >= 0)
         RE_GetSigFromLog(rmData, NULL);
-
-      RE_DecodePart(letterPart);
     }
   }
 

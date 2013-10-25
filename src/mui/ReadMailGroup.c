@@ -1381,6 +1381,10 @@ DECLARE(CheckPGPSignature) // ULONG forceRequester
 
       if(letterPart != NULL && pgpPart != NULL)
       {
+        // decode the letter part first, otherwise PGP might want to check
+        // a still encoded file which definitely will fail.
+        RE_DecodePart(letterPart);
+
         snprintf(options, sizeof(options), (G->PGPVersion == 5) ? "%s -o %s +batchmode=1 +force +language=us" : "%s %s +bat +f +lang=en", pgpPart->Filename, letterPart->Filename);
         error = PGPCommand((G->PGPVersion == 5) ? "pgpv": "pgp", options, KEEPLOG);
         if(error > 0)
