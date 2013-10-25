@@ -1362,28 +1362,19 @@ DECLARE(CheckPGPSignature) // ULONG forceRequester
       struct Part *letterPart = NULL;
       struct Part *pgpPart = NULL;
 
-      // find the letter part
+      // find the letter and signature parts
       part = rmData->firstPart;
       do
       {
-        if(part->Nr == rmData->letterPartNum)
+        if(letterPart == NULL && part->Nr == rmData->letterPartNum)
         {
           letterPart = part;
-          break;
         }
-        part = part->Next;
-      }
-      while(part != NULL);
-
-      // find the signature part
-      part = rmData->firstPart;
-      do
-      {
-        if(stricmp(part->ContentType, "application/pgp-signature") == 0)
+        else if(pgpPart == NULL && stricmp(part->ContentType, "application/pgp-signature") == 0)
         {
           pgpPart = part;
-          break;
         }
+
         part = part->Next;
       }
       while(part != NULL);

@@ -11,6 +11,9 @@ $URL$
     64K.
   * YAM_UT.c: correctly handle the case of a failed command execution but with
     IoErr()==0 to set up an empty error string.
+  * YAM_RE.c, mui/ReadMailGroup.c: don't assume that the letter part is directly
+    followed by the PGP signature part, but search for both independently. This
+    refs #427.
 
 2013-10-24 Thore Böckelmann <tboeckel@gmx.de>
 
