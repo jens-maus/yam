@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-10-08 Marko Raina <marko.raina@fimnet.fi>
+
+  * locale/finnish.ct: updated Finnish translation
+
 2013-10-25 Vit Sindlar <sindlarv at centrum dot cz>
 
   * locale/czech.ct: updated Czech translation.

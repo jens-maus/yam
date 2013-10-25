@@ -1,8 +1,8 @@
-## version $VER: YAM.catalog 8.0 (08.10.2013)
+## version $VER: YAM.catalog 8.1 (25.10.2013)
 ## language suomi
 ## codeset 0
 ;
-# chunk AUTH Marko Raina
+## chunk AUTH Marko Raina
 ; YAM.cd - YAM 2.8 catalog description file
 ; $Id$
 ;
@@ -559,7 +559,7 @@ Suodatus tehty:\n%3ld viestiä tarkistettu,\n%3ld välitetty,\n%3ld arkistoitu,\n%
 ; \n\
 ; %3ld messages checked,\n\
 ; %3ld forwarded,\n\
-; %3ld archived,\n\
+; %3ld moved,\n\
 ; %3ld deleted
 ; COUNT, COUNT, COUNT, COUNT
 ;
@@ -1719,7 +1719,7 @@ Palauta kaikki asetukset
 ; Reset all settings
 ;
 MSG_CO_LastSaved
-Viimeeksi tallennettu
+Viimeksi tallennettu
 ; Last saved
 ;
 MSG_CO_Restore
@@ -1727,7 +1727,7 @@ Palauta
 ; Restore
 ;
 MSG_CO_ImportMIME
-Tuo MIME-näyttäjät & tyypit...
+Tuo MIME-katseluohjelmat & tyypit...
 ; Import MIME viewers & types...
 ;
 ;
@@ -2385,7 +2385,7 @@ Osoitekirjaa on muutettu!
 ; Address book has been modified.
 ;
 MSG_AB_ModifiedGads
-*_Tallenna|_Käytä|_Palauta entiselleen|_Peru
+*_Tallenna|_Käytä|P_eru muutokset|_Peru
 ; *_Save|_Use|_Discard changes|_Cancel
 ;
 ;
@@ -3222,12 +3222,12 @@ _Lisää vastaanottaja myöhemmin|*_Peru
 ; _Add recipient later|*_Cancel
 ;
 MSG_WR_DiscardChanges
-Haluatko tosiaan palauttaa entiselleen kaikki tähän viestiin tehdyt muutokset?
+Haluatko tosiaan perua kaikki tähän viestiin tehdyt muutokset?
 ; Do you really want to discard all\n\
 ; modifications to this message?
 ;
 MSG_WR_DiscardChangesGad
-*_Lähetä myöhemmin|Palauta _Entiselleen|_Peru
+*_Lähetä myöhemmin|P_eru muutokset|_Peru
 ; *_Send later|_Discard|_Cancel
 ;
 MSG_WR_SaveTextAs
@@ -4794,18 +4794,15 @@ Osittain
 MSG_FOLDER_NEWFOLDERGROUP
 Uusi kansioryhmä...
 ; New folder group...
-;
 ;This is the pulldown menu item, not the one in the pop-up menu
 ;
 MSG_CO_GENLISTCFG
 Yleiset asetukset
 ; General settings
 ;
-;
 MSG_CO_SIZEFORMAT
 Koon _muoto
 ; Si_ze format
-;
 ;
 MSG_HELP_CO_CY_SIZE
 Missä muodossa haluat viestin\n\
@@ -4813,31 +4810,25 @@ koon näytettävän?
 ; How would you like the size of\n\
 ; each mail to be displayed?
 ;
-;
 MSG_CO_SIZEFORMAT01
 Vanha muoto - (1.234.567 tavua)
 ; Old format - (1.234.567 bytes)
-;
 ;
 MSG_CO_SIZEFORMAT02
 Vaihteleva tarkkuus (0.001 GB, 0.01 MB, 0.1 KB)
 ; Mixed precision (0.001 GB, 0.01 MB, 0.1 KB)
 ;
-;
 MSG_CO_SIZEFORMAT03
  10^-1 tarkkuus (0.1 GB/MB/KB)
 ; 10^-1 precision (0.1 GB/MB/KB)
-;
 ;
 MSG_CO_SIZEFORMAT04
 10^-2 tarkkuus (0.01 GB/MB/KB)
 ; 10^-2 precision (0.01 GB/MB/KB)
 ;
-;
 MSG_CO_SIZEFORMAT05
 10^-3 tarkkuus (0.001 GB/MB/KB)
 ; 10^-3 precision (0.001 GB/MB/KB)
-;
 ;
 MSG_HELP_CO_ST_SMTPAUTHUSER
 SMTP AUTH-käyttäjän\n\
@@ -4845,13 +4836,11 @@ käyttäjänimi.
 ; User name of the\n\
 ; SMTP AUTH user.
 ;
-;
 MSG_HELP_CO_ST_SMTPAUTHPASS
 SMTP AUTH-käyttäjän\n\
 salasana.
 ; Password of the\n\
 ; SMTP AUTH user.
-;
 ;
 MSG_HELP_CO_ST_APPICON
 AppIcon-kuvakkeessa näkyvä\n\
@@ -4859,60 +4848,45 @@ teksti.
 ; Text that should be displayed\n\
 ; as the label of the AppIcon.
 ;
-;
 MSG_CO_APPICONTEXT
 _Teksti
 ; _Label
-;
 ;
 MSG_CO_NEWMSGS
 %n  Uutta viestiä
 ; %n  New messages
 ;
-;
 MSG_CO_UNREADMSGS
 %u  Lukematonta viestiä
 ; %u  Unread messages
-;
 ;
 MSG_CO_TOTALMSGS
 %t  Viestejä yhteensä
 ; %t  Total messages
 ;
-;
-MSG_CO_DELMSGS
-%d  Poistettuja viestejä
-; %d  Deleted messages
-;
-;
 MSG_CO_SENTMSGS
 %s  Lähetettyjä viestejä
 ; %s  Sent messages
 ;
-;
 MSG_FO_DSTATS
 App_Icon-tilastot
 ; App_Icon stats
-;
 ;
 MSG_HELP_FO_CH_STATS
 Haluatko nähdä tämän\n\
 kansion tilastot YAMin\n\
 AppIcon-kuvakkeen tekstinä?
 ; Would you like to see this\n\
-; folder's statistics in the\n\
-; YAM AppIcon's label?
-;
+; folder's statistics in YAM's\n\
+; AppIcon label?
 ;
 MSG_OPENGUI
 Avataan käyttöliittymää...
 ; Opening GUI...
 ;
-;
 MSG_CO_CONTEXTMENU
 Ponnahdusvalikko
 ; Context menu
-;
 ;
 MSG_HELP_CO_CONTEXTMENU
 Näytä ponnahdusvalikko, kun painat\n\
@@ -4920,11 +4894,9 @@ hiiren oikeaa nappulaa tämän listan päällä?
 ; Show a popup menu when clicking\n\
 ; the right mouse button on this list?
 ;
-;
 MSG_CO_INFOBAR
 Tilakenttä
 ; Status bar
-;
 ;
 MSG_HELP_CO_CH_INFOBAR
 Tästä voit valita YAMin yleistä tietoa\n\
@@ -4932,11 +4904,9 @@ näyttävän tilakentän paikan.
 ; Here you can select the position of the status bar\n\
 ; that shows general information in YAM.
 ;
-;
 MSG_CO_WARNSUBJECT
 Varoita, kun Viestin aihe-kenttä on tyhjä
 ; Warn when there's an empty su_bject line
-;
 ;
 MSG_HELP_CO_CH_WARNSUBJECT
 Halutako varoituksen, jos olet jättänyt\n\
@@ -4944,52 +4914,42 @@ viestin aihe-kentän tyhjäksi?
 ; Would you like to be warned if you\n\
 ; leave the subject line blank?
 ;
-;
 MSG_WR_NOSUBJECTREQ
 Aihe puuttu, jatketaanko silti?
 ; The subject is missing, continue anyway?
 ;
-;
 MSG_WR_TBSearch
 Etsi
 ; Search
-;
 ;
 MSG_HELP_WR_BT_SEARCH
 Etsi merkkijonoa tekstistä.
 ; Search the text\n\
 ; for a given string.
 ;
-;
 MSG_SEARCHWINDOW_TITLE
 Etsi
 ; Search
-;
 ;
 MSG_SEARCHWINDOW_TOGGLE_CASESENSITVE
 _Erota isot/pienet kirjaimet
 ; C_ase sensitive
 ;
-;
 MSG_SEARCHWINDOW_BT_SEARCH
 E_tsi
 ; _Search
-;
 ;
 MSG_SEARCHWINDOW_BT_CANCEL
 _Peruuta
 ; _Cancel
 ;
-;
 MSG_SEARCHNOTFOUND_TITLE
 Etsi
 ; Search
 ;
-;
 MSG_SEARCHNOTFOUND_MSG
 '%s' ei löytynyt.
 ; '%s' not found.
-;
 ;
 MSG_FO_GROUP_CONFDEL
 Tässä ryhmässä on alikansioita, jotka\n\
@@ -5001,22 +4961,18 @@ Haluatko varmasti poistaa tämän ryhmän.
 ; \n\
 ; Do you really want to delete this group?
 ;
-;
 MSG_FOLDER_NONSEL
 (ei valittu)
 ; (none selected)
 ;
-;
 MSG_FO_NEWFGROUP
 Uusi kansioryhmä...
 ; New folder group...
-;
 ; The item in the context menu
 ;
 MSG_FO_NEWFGROUPREQ
 Anna uuden kansioryhmän nimi:
 ; Please enter a name for the new folder group:
-;
 ;
 MSG_ER_CANTMOVEMAIL
 Viestiä '%s' ei voi siirtää kansioon '%s'.\n\
@@ -5027,54 +4983,43 @@ Tarkista suodatinasetukset.
 ; \n\
 ; No folder with this name could be found. \
 ; Please check your Filters configuration.
-;
 ; MAILFILE, FOLDERNAME
 ;
 MSG_MA_EXECUTINGCMD
 Suoritetaan komentoa...
 ; Executing command...
 ;
-;
 MSG_APP_DESCRIPTION
 SMTP/POP3 Sähköpostiohjelma AmigaOS-käyttöjärjestelmälle
 ; SMTP/POP3 E-Mail Client for AmigaOS
-;
 ;
 MSG_CO_INFOBARPOS
 _Paikka
 ; Pos_ition
 ;
-;
 MSG_CO_INFOBARPOS01
 Ylhäällä
 ; Top
-;
 ;
 MSG_CO_INFOBARPOS02
 Keskellä
 ; Center
 ;
-;
 MSG_CO_INFOBARPOS03
 Alhaalla
 ; Bottom
-;
 ;
 MSG_CO_INFOBARPOS04
 Ei käytössä
 ; Disabled
 ;
-;
 MSG_CO_FOLDERLABEL
 _Otsikko
 ; _Label
 ;
-; ***NEW***
-;
 MSG_FO_MLSUPPORT
 Pos_tilista-tuki
 ; ML_-Support
-;
 ;
 MSG_HELP_FO_CH_MLSUPPORT
 Kytke tämän kansion\n\
@@ -5082,11 +5027,9 @@ postilista-tuki päälle/pois.
 ; Turn on/off the mailing list\n\
 ; support for this folder.
 ;
-;
 MSG_FO_AUTODETECT
 Havaitse _automaattisesti
 ; Auto_detect
-;
 ;
 MSG_HELP_FO_BT_AUTODETECT
 Yritetään automaattisesti löytää sopivat\n\
@@ -5096,26 +5039,17 @@ viisi ensimmäistä viestiä.
 ; ML support settings by scanning the\n\
 ; first five e-mails in the folder.
 ;
-;
 MSG_FO_NOTRECOGNIZED
 Ei tunnistettu.
 ; Couldn't be recognized.
-;
-;
-MSG_FO_MAXAGEFMT
-%ld päivää
-; %ld days
-;
 ;
 MSG_CO_NB_EMAILCACHE
 Sähköpostitaltio
 ; E-mail cache
 ;
-;
 MSG_CO_NB_EMAILCACHEFMT
 %ld osoite(tta)
 ; %ld address(es)
-;
 ;
 MSG_HELP_CO_NB_EMAILCACHE
 Eniten käytettyjen vastaanottajien taltion\n\
@@ -5125,13 +5059,11 @@ Valitse 0, jos haluat tämän toiminnon pois käytöstä.
 ; recipients not yet in the address book.\n\
 ; Select 0 to disable this feature.
 ;
-;
 MSG_HELP_CO_ST_SMTPPORT
 SMTP-palvelimen käyttämä portti\n\
 (oletus: 25).
 ; Port used by the SMTP server\n\
 ; (default: 25).
-;
 ;
 MSG_HELP_CO_ST_POPPORT
 POP3-palvelimen käyttämä portti\n\
@@ -5139,16 +5071,13 @@ POP3-palvelimen käyttämä portti\n\
 ; Port used by the POP3 server\n\
 ; (default: 110).
 ;
-;
 MSG_CO_InfoBarDef
 - Yhteensä: %t Uusia: %n Lukemattomia: %u
 ; - Total: %t New: %n Unread: %u
 ;
-;
 MSG_TR_INITTLS
 Valmistellaan TLSv1/SSLv3-toimintoa...
 ; Initializing TLSv1/SSLv3 session...
-;
 ;
 MSG_ER_INITAMISSL
 Kirjaston amissl.library avaus ei onnistunut - TLSv1/SSLv3-tuki\n\
@@ -5159,16 +5088,13 @@ Tarkista AmiSSL-asennuksesi ja käynnistä YAM uudestaan.
 ; \n\
 ; Please check your AmiSSL installation and restart YAM.
 ;
-;
 MSG_TR_SENDAUTH
 Lähetetään SMTP AUTH-pyyntöä...
 ; Sending SMTP AUTH request...
 ;
-;
 MSG_CO_IMPORTMIMETITLE
 Tuo MIME katseluohjelmat ja -tyypit
 ; Import MIME viewers & types
-;
 ;
 MSG_ER_TRANSFERMAIL
 Viestiä '%s' ei voitu siirtää kansioon '%s'.\n\
@@ -5177,7 +5103,6 @@ Joko tiedostoa ei ole tai sitä ei jostain syystä voitu kopioida.
 ; Couldn't transfer mail '%s' to folder '%s'.\n\
 ; \n\
 ; Either the file doesn't exist or it couldn't be copied for some reason.
-;
 ; MAILFILE, FOLDERNAME
 ;
 MSG_ER_ADDRBOOKLOAD
@@ -5187,7 +5112,6 @@ Joko tiedostoa ei ole tai sitä ei jostain syystä voitu avata.
 ; Couldn't load address book from file '%s'.\n\
 ; \n\
 ; Either the file doesn't exist or it couldn't be opened for some reason.
-;
 ; FILENAME
 ;
 MSG_AB_NOYAMADDRBOOK
@@ -5199,23 +5123,19 @@ ovat eri riveillä?
 ; \n\
 ; Process it as a file containing e-mail addresses\n\
 ; on separate lines?
-;
 ; FILENAME
 ;
 MSG_AB_NOYAMADDRBOOK_GADS
 _Kyllä|*_Ei
 ; _Yes|*_No
 ;
-;
 MSG_FO_EDIT_FGROUP
 Kansioryhmän asetukset
 ; Folder group preferences
 ;
-;
 MSG_FO_EDIT_FGROUPREQ
 Kansioryhmän nimi:
 ; Name of folder group:
-;
 ;
 MSG_ER_UNUSABLEAMISSL
 Olet valinnut TLSv1/SSLv3-toiminnon tähän yhteyteen, mutta\n\
@@ -5225,11 +5145,9 @@ tai poista TLS/SSL-toiminto tästä yhteydestä.
 ; couldn't be initialized. Please check your AmiSSL installation \
 ; or disable TLS/SSL for this connection.
 ;
-;
 MSG_RETRY_QUIT_GAD
 Yritä uudestaan|Lopeta
 ; Try again|Quit
-;
 ;
 MSG_ER_NOAUTHUSERPASS
 SMTP AUTH-yhteyteen ei annettu käyttäjänimeä tai salasanaa. \
@@ -5237,42 +5155,34 @@ Tarkista asetukset.
 ; No user name or password was specified for the SMTP AUTH connection \
 ; YAM was trying to establish. Please check your configuration.
 ;
-;
 MSG_CO_APPICON_LABEL
 Uusia: %n Yhteensä: %t
 ; New: %n Total: %t
-;
 ;
 MSG_DATE_RECEIVED
 Saapunut
 ; Received
 ;
-;
 MSG_DATE_SENT
 Lähetetty
 ; Sent
-;
 ;
 MSG_DATE_SNTRCVD
 Lähetetty/Saapunut
 ; Sent/Received
 ;
-;
 MSG_CO_DATE_SNTRCVD
 Lähetys/saapumispäiväys
 ; Date Sent/Received
-;
 ;
 MSG_FROMTO
 Keneltä/Kenelle
 ; From/To
 ;
-;
 MSG_HELP_CO_CA_COL1QUOT
 Lainausten näyttöväri
 ; Color used to\n\
 ; display quotes.
-;
 ;
 MSG_HELP_CO_CA_COL3QUOT
 3. tason lainauksen näyttämiseen\n\
@@ -5280,18 +5190,15 @@ käytetty väri
 ; Color used to display\n\
 ; 3rd level quotes.
 ;
-;
 MSG_HELP_CO_CA_COL4QUOT
 4. tason lainauksen näyttämiseen\n\
 käytetty väri
 ; Color used to display\n\
 ; 4th level quotes.
 ;
-;
 MSG_CO_URLCOLOR
 URL-väri
 ; URL color
-;
 ;
 MSG_HELP_CO_CA_COLURL
 Klikattavien URL-linkkien näyttämiseen\n\
@@ -5299,48 +5206,39 @@ käytetty väri
 ; Color used to display\n\
 ; clickable URL links.
 ;
-;
 MSG_FO_FOLDERNAMEINVALID
 Annettu kansion nimi on tyhjä tai jo käytössä.\n\
 Anna hyväksyttävä kansion nimi ennen kuin jatkat.
 ; The specified folder name is empty or already exists.\n\
 ; Please enter a valid folder name before you proceed.
 ;
-;
 MSG_FO_FOLDERPATHINVALID
 Et ole antanut kansiolle hyväksyttävää tiedostopolkua.
 ; You haven't specified a valid path for the new folder.
-;
 ;
 MSG_MA_CTX_DEFWIDTH_THIS
 Oletusleveys: tämä
 ; Default width: this
 ;
-;
 MSG_MA_CTX_DEFWIDTH_ALL
 Oletusleveys: kaikki
 ; Default width: all
-;
 ;
 MSG_MA_CTX_DEFORDER_THIS
 Oletusjärjestys: tämä
 ; Default order: this
 ;
-;
 MSG_MA_CTX_DEFORDER_ALL
 Oletusjärjestys: kaikki
 ; Default order: all
-;
 ;
 MSG_MA_CTX_MAILLIST
 Viestilista
 ; Message list
 ;
-;
 MSG_MA_CTX_FOLDERLIST
 Kansiolista
 ; Folder list
-;
 ;
 MSG_HELP_FO_CY_MLSIGNATURE
 Käytä tätä allekirjoitusta, kun lähetät\n\
@@ -5348,17 +5246,14 @@ uusia viestejä listalle.
 ; Use this signature when posting\n\
 ; new mails to the list.
 ;
-;
 MSG_CTapplicationpdf
 PDF-dokumentti
 ; PDF document
-;
 ;
 MSG_HELP_CO_ST_INFOBARTXT
 Tilakentässä näytettävä teksti
 ; Text that should be displayed\n\
 ; in the status bar.
-;
 ;
 ;
 ; *** Added for YAM 2.5 ********************************************************
@@ -5367,13 +5262,11 @@ MSG_YesNoReq2
 _Kyllä|*_Ei
 ; _Yes|*_No
 ;
-;
 MSG_HELP_FO_ST_HELLOTEXT
 Uuden viestin alkuun\n\
 liitettävä teksti.
 ; Text to insert at the\n\
 ; top of a new message.
-;
 ;
 MSG_HELP_FO_ST_BYETEXT
 Uuden viestin loppuun\n\
@@ -5381,16 +5274,13 @@ liitettävä teksti.
 ; Text to insert at the\n\
 ; bottom of a new message.
 ;
-;
 MSG_FO_Welcome
 _Tervetuloteksti
 ; _Welcome phrase
 ;
-;
 MSG_FO_Greetings
 _Lopetusteksti
 ; C_losing phrase
-;
 ;
 MSG_ER_SOCKETOPTION
 TCP-asetusta '%s' ei voitu käyttää.\n\
@@ -5401,28 +5291,24 @@ asetuksissa väärin.
 ; \n\
 ; Either this option is not supported by the TCP/IP stack your are using, \
 ; or it is specified wrong in your configuration.
-;
 ; OPTIONNAME
 ;
 MSG_ER_B64FILEENCODE
 Virhe pakattaessa tiedostoa '%s' Base64-muotoon
 ; An unexpected error occurred while trying to encode file \
 ; '%s' with the Base64 file encoding routines.
-;
 ; FILENAME
 ;
 MSG_ER_QPFILEENCODE
 Virhe pakattaessa tiedostoa '%s' Quoted-Printable (QP)-muotoon
 ; An unexpected error occurred while trying to encode file \
 ; '%s' with the Quoted-Printable (QP) file encoding routines.
-;
 ; FILENAME
 ;
 MSG_ER_UUFILEENCODE
 Virhe pakattaessa tiedostoa '%s' UUcode-muotoon
 ; An unexpected error occurred while trying to encode file \
 ; '%s' with the UUcode file encoding routines.
-;
 ; FILENAME
 ;
 MSG_ER_QPDEC_FILEIO
@@ -5430,12 +5316,10 @@ I/O-virhe purettaessa Quoted-Printable (QP)-muotoista tiedostoa '%s'
 ; An input/output error occurred during decoding of the \
 ; Quoted-Printable (QP) encoded file '%s'.
 ;
-;
 MSG_ER_QPDEC_UNEXP
 Virhe purettaessa Quoted-Printable (QP)-muotoista tiedostoa '%s'
 ; An unexpected error occurred while trying to decode file \
 ; '%s' with the Quoted-Printable (QP) file decoding routines.
-;
 ; FILENAME
 ;
 MSG_ER_QPDEC_WARN
@@ -5443,7 +5327,6 @@ Virhe purettaessa Quoted-Printable (QP)-muotoista tiedostoa '%s'.\n\
 Tiedostosta löytyi virheellisiä kontrollimerkkejä, joita ei muutettu.
 ; During the Quoted-Printable (QP) decoding of file '%s' some broken \
 ; control sequences were detected and kept undecoded in the output.
-;
 ; FILENAME
 ;
 MSG_ER_QPDEC_CHAR
@@ -5451,7 +5334,6 @@ Virhe purettaessa Quoted-Printable (QP)-muotoista tiedostoa '%s'.\n\
 Tiedostosta löydettiin kiellettyjä merkkejä, ja nämä poistettiin tulostiedostosta.
 ; During the Quoted-Printable (QP) decoding of file '%s' some forbidden \
 ; characters were found and therefore removed in the output.
-;
 ; FILENAME
 ;
 MSG_ER_UUDEC_TAGMISS
@@ -5462,7 +5344,6 @@ Joko tiedosto on jäänyt kesken tai ei ole UUcode-standardin mukainen.
 ; \n\
 ; Either the file is truncated or it wasn't encoded following the UUcode \
 ; encoding standard.
-;
 ; FILENAME, TAG
 ;
 MSG_ER_UUDEC_CHECKSUM
@@ -5474,7 +5355,6 @@ Joko viesti on jäänyt kesken tai ei ole UUcode-standardin mukainen.
 ; that the resulting file might be corrupt.\n\
 ; \n\
 ; Either the message is truncated or it was generated with a faulty UUcode encoder.
-;
 ; FILENAME
 ;
 MSG_ER_UUDEC_CORRUPT
@@ -5484,13 +5364,11 @@ Joko viesti on jäänyt kesken tai ei ole UUcode-standardin mukainen.
 ; During the UUcode decoding of file '%s' the encoded part was found be corrupt.\n\
 ; \n\
 ; Either the message is truncated or it was generated with a faulty UUcode encoder.
-;
 ; FILENAME
 ;
 MSG_FI_StatMarked
 Merkitty
 ; Marked
-;
 ;
 MSG_MA_CREQUEST_OLDFILE
 Tiedosto '%s' kansiossa '%s' on vanhentuneessa postimuodossa,\n\
@@ -5501,7 +5379,6 @@ Haluatko muuttaa tämän tiedoston uuteen muotoon?
 ; only supported by older YAM versions.\n\
 ; \n\
 ; Do you want to convert this file to the new format?
-;
 ; FILENAME, FOLDER
 ;
 MSG_MA_CREQUEST_UNKNOWN
@@ -5511,13 +5388,11 @@ Tuodaanko se normaalina viestitiedostona?
 ; Unknown file '%s' found in directory of folder '%s'.\n\
 ; \n\
 ; Do you want to import it as a normal mail file?
-;
 ; FILENAME, FOLDER
 ;
 MSG_MA_YESNOTOALL
 *_Kyllä|K_yllä kaikkiin|_Ei|E_i kaikkiin
 ; *_Yes|Y_es to all|_No|N_o to all
-;
 ;
 MSG_ER_CONVERTMFILE
 Virhe päivitettäessä tiedostoa '%s' kansiossa '%s'\n\
@@ -5530,7 +5405,6 @@ ei ole kirjoitussuojattu.
 ; \n\
 ; Please check that the folder directory has enough space and \
 ; is not write protected.
-;
 ; FILENAME, FOLDER
 ;
 MSG_ER_XPKUSAGE
@@ -5541,23 +5415,19 @@ Tarkista XPK-asennuksesi ja tähän liittyvät YAMin asetukset.
 ; \n\
 ; Please check your XPK installation and the relevant settings \
 ; in the configuration.
-;
 ; FILENAME
 ;
 MSG_MA_CREQ_OLDFILE_TITLE
 Löydetty vanhentuneessa muodossa oleva postitiedosto
 ; Mail file in old format found
 ;
-;
 MSG_MA_CREQ_UNKNOWN_TITLE
 Kansiohakemistosta löydetty tuntematon tiedosto
 ; Unknown file in folder directory found
 ;
-;
 MSG_CO_SHOWEMBEDDEDREADPANE
 Näytä viestin luku_alue pääikkunassa
 ; Show embedded read _pane in main window
-;
 ;
 MSG_HELP_CO_CH_EMBEDDEDREADPANE
 Näyttää viestin lukualueen\n\
@@ -5565,16 +5435,13 @@ pääikkunassa.
 ; Shows an embedded read pane\n\
 ; directly in the main window.
 ;
-;
 MSG_CO_SETSTATUSDELAYED1
 _Viivytä näytetyn postin merkitsemistä luetuksi
 ; Delay mar_king of displayed mail as read for
 ;
-;
 MSG_CO_SETSTATUSDELAYED2
 sekuntia
 ; second(s)
-;
 ;
 MSG_HELP_CO_SETSTATUSDELAYED
 Kun viesti on avattu, YAM odottaa\n\
@@ -5584,56 +5451,45 @@ viestin luetuksi.
 ; wait this amount of time before\n\
 ; marking the e-mail as 'read'.
 ;
-;
 MSG_MA_ATTACHMENT
 Liite
 ; Attachment
-;
 ;
 MSG_MA_ATTACHMENTS
 Liitteet:
 ; Attachments:
 ;
-;
 MSG_MA_ATTACHMENT_DISPLAY
 Näytä
 ; Display
-;
 ;
 MSG_MA_ATTACHMENT_SAVEAS
 Tallenna nimellä...
 ; Save as...
 ;
-;
 MSG_MA_ATTACHMENT_PRINT
 Tulosta
 ; Print
-;
 ;
 MSG_MA_ATTACHMENT_SAVEALL
 Tallenna kaikki...
 ; Save all...
 ;
-;
 MSG_MA_ATTACHMENT_SAVESEL
 Tallenna valitut...
 ; Save selected...
-;
 ;
 MSG_CO_SImageOnly
 vain kuva
 ; image only
 ;
-;
 MSG_RE_SImageOnly
 Vain kuva
 ; Image only
 ;
-;
 MSG_CO_CHARSETWARN_TITLE
 Kirjaimistovaroitus
 ; Local charset warning
-;
 ;
 MSG_CO_CHARSETWARN
 YAM:n kirjaimistoksi valittu '%s'\n\
@@ -5644,63 +5500,51 @@ Miten haluat jatkaa?
 ; match the system's default charset '%s'.\n\
 ; \n\
 ; How do you want to proceed?
-;
 ; LOCALCHARSET, SYSCHARSET
 ;
 MSG_CO_CHARSETWARN_BT
 *_Muuta|Ohita _aina|_Ohita
 ; *_Change|Ignore _always|_Ignore
 ;
-;
 MSG_CO_SenderRFCDateTime
 %c  Alkuperäinen lähettäjä: RFC 2822 päiväys ja kellonaika
 ; %c  Original sender: RFC 2822 date & time
-;
 ;
 MSG_CO_SenderTimeZone
 %z  Alkuperäinen lähettäjä: Aikavyöhyke (+0000)
 ; %z  Original sender: Time zone (+0000)
 ;
-;
 MSG_CO_Filter_Name
 Nimi
 ; Name
-;
 ;
 MSG_CO_Filter_RType
 R
 ; R
 ;
-;
 MSG_CO_Filter_NType
 N
 ; N
-;
 ;
 MSG_CO_Filter_SType
 S
 ; S
 ;
-;
 MSG_CO_Filter_UType
 U
 ; U
-;
 ;
 MSG_CTunknown
 tuntematon
 ; unknown
 ;
-;
 MSG_CO_NB_AUTOSAVE
 Automaattitallennuksen aikaväli
 ; Autosave interval
 ;
-;
 MSG_CO_NB_AUTOSAVEFMT
 %ld minuutti(a)
 ; %ld minute(s)
-;
 ;
 MSG_HELP_CO_NB_AUTOSAVE
 Kuinka usein YAM kirjoittaa levylle varmuuskopion\n\
@@ -5709,7 +5553,6 @@ Laita 0, jos haluat ettei varmuuskopioita tallenneta.
 ; How often YAM should write to disk a backup\n\
 ; of the e-mail you are currently composing.\n\
 ; Select 0 to disable this feature.
-;
 ;
 MSG_ER_MOVEFOLDERDIR
 Virhe siirrettäessä kansion '%s' sisältöä\n\
@@ -5722,12 +5565,9 @@ Tämä voi johtua tilan loppumisesta tai virheellisestä tai kirjoitussuojatusta ko
 ; This may be due to insufficient space or an invalid or not writable \
 ; destination path.
 ;
-;
 MSG_FI_SELECTACTIVE
 Valitse tämä _viesti
 ; Select this m_atch
-;
-; ***NEW***
 ;
 MSG_HELP_FI_BT_SELECTACTIVE
 Valitse tämänhetkinen viesti\n\
@@ -5735,97 +5575,54 @@ pääikkunassa.
 ; Select the current message\n\
 ; in the main window.
 ;
-;
-MSG_QUICKSEARCH_SO_SUBJECT
-Aihe
-; Subject
-;
-;
-MSG_QUICKSEARCH_SO_SENDER
-Lähettäjä
-; Sender
-;
-;
-MSG_QUICKSEARCH_SO_SUBJORSENDER
-Aihe tai lähettäjä
-; Subject Or Sender
-;
-;
-MSG_QUICKSEARCH_SO_TOORCC
-Vastaanottaja (To tai CC)
-; Recipient (To or CC)
-;
-;
-MSG_QUICKSEARCH_SO_INMSG
-Viestin teksti
-; Message Body
-;
-;
-MSG_QUICKSEARCH_SO_ENTIREMSG
-Koko viesti
-; Whole Message
-;
-;
 MSG_QUICKSEARCH_VO_ALL
 Kaikki
 ; All
-;
 ;
 MSG_QUICKSEARCH_VO_UNREAD
 Lukematon
 ; Unread
 ;
-;
 MSG_QUICKSEARCH_VO_NEW
 Uusi
 ; New
-;
 ;
 MSG_QUICKSEARCH_VO_MARKED
 Merkitty
 ; Marked
 ;
-;
 MSG_QUICKSEARCH_VO_IMPORTANT
 Tärkeä
 ; Important
-;
 ;
 MSG_QUICKSEARCH_VO_LAST5DAYS
 Viimeiset 5 päivää
 ; Last 5 Days
 ;
-;
 MSG_QUICKSEARCH_VO_KNOWNPEOPLE
 Henkilöt, jotka tunnen
 ; People I Know
-;
 ;
 MSG_QUICKSEARCH_VO_HASATTACHMENTS
 joissa liitteitä
 ; Has Attachments
 ;
-;
 MSG_QUICKSEARCH_VO_MINSIZE
 Viestin koko > 1 MB
 ; Message Size > 1 MB
-;
 ;
 MSG_QUICKSEARCH_VIEW
 _Näytä:
 ; _View:
 ;
-;
 MSG_QUICKSEARCH_SHOWNMSGS
 %ld /  %ld viestistä näkyvissä
 ; %ld of %ld shown
-;
 ; COUNT, COUNT
 ;
 MSG_FI_NOFOLDERS
 ei _missään
 ; n_owhere
-;
 ;
 MSG_HELP_QUICKSEARCH_VIEWOPTIONS
 Vain kriteerin täyttävä\n\
@@ -5833,31 +5630,20 @@ posti näytetään.
 ; Only mail matching this criterion\n\
 ; will be displayed.
 ;
-;
 MSG_HELP_QUICKSEARCH_SEARCHSTRING
 Tähän laitettavaa tekstiä käytetään hakukriteerinä\n\
 näytettäessä tämän kansion viestejä.
 ; Text inserted here will be used as the search\n\
 ; criterion to display mail in this folder.
 ;
-;
-MSG_HELP_QUICKSEARCH_SEARCHOPTIONPOPUP
-Valitse tästä, mistä oikealla olevaa merkkijonoa\n\
-etsitään postissa.
-; Select here where the string at the right\n\
-; should be searched in the mail.
-;
-;
 MSG_BUSY_SEARCHINGFOLDER
 Etsitään viestejä kansiosta '%s'...
 ; Searching messages in folder '%s'...
-;
 ; FOLDERNAME
 ;
 MSG_CO_WBAPPICON
 A_ppIcon Workbench-työpöydällä
 ; A_ppIcon on Workbench
-;
 ;
 MSG_HELP_CO_CH_WBAPPICON
 Jos valittu, Workbench-työpöydälle tulee\n\
@@ -5865,12 +5651,9 @@ AppIcon-kuvake, jossa näytetään kansion tilastotietoja.
 ; If checked, an AppIcon will appear on\n\
 ; Workbench showing folder statistics.
 ;
-;
 MSG_CO_DOCKYICON
 Ota käyttöön d_ocky-kuvake
 ; Enable 'd_ocky' icon
-;
-; ***NEW***
 ;
 MSG_HELP_CO_CH_DOCKYICON
 Jos valittu, YAM lisää 'docky'-kuvakkeen\n\
@@ -5878,11 +5661,9 @@ AmiDock-telakkaan. Tähän vaaditaan AmigaOS 4.x.
 ; If checked, YAM will add a 'docky' to\n\
 ; AmiDock. This requires AmigaOS 4.x.
 ;
-;
 MSG_MA_MessageImport
 Tuo viestejä
 ; Import messages
-;
 ;
 MSG_ER_MESSAGEIMPORT
 Virhe tuotaessa posteja tiedostosta '%s'.\n\
@@ -5897,28 +5678,23 @@ Lisätietoja saat käyttöohjeesta.
 ; e-mails using a format supported by YAM. The currently supported \
 ; formats are 'MBOX', 'DBX' (Outlook Express) or plain RFC822 mail files. \
 ; Read the documentation for more information.
-;
 ; FILENAME
 ;
 MSG_MA_MESSAGEEXPORT
 Tallenna viestejä
 ; Export messages
 ;
-;
 MSG_YAMINFO
 Open Source sähköpostiohjelma Amigalle
 ; Open Source E-Mail Client for the Amiga
-;
 ;
 MSG_CO_SYSTEMSETTINGS
 Järjestelmän asetukset
 ; System settings
 ;
-;
 MSG_CO_DEFAULTCHARSET
 _Kirjaimisto
 ; C_harset
-;
 ;
 MSG_CO_CHARSETUNKNOWNWARN
 YAMin asetuksissa valittu kirjaimisto '%s' ei ole\n\
@@ -5929,13 +5705,11 @@ Miten haluat jatkaa?
 ; supported by the installed version of codesets.library.\n\
 ; \n\
 ; How do you want to proceed?
-;
 ; LOCALCHARSET
 ;
 MSG_CO_CHARSETUNKNOWNWARN_BT
 *_Vaihda oletukseksi|_Ohita
 ; *_Change to default|_Ignore
-;
 ;
 MSG_ER_LIB
 Kirjastoa '%s', versio v%lu.%lu ei voitu avata.\n\
@@ -5946,7 +5720,6 @@ minimiversio asennettuna.
 ; \n\
 ; Please make sure you have at least this\n\
 ; minimum version correctly installed.
-;
 ; LIBRARY_NAME, LIBRARY_VERSION, LIBRARY_REVISION
 ;
 MSG_ER_LIB_URL
@@ -5959,7 +5732,6 @@ uusin versio ja varmista, että olet asentanut sen oikein.
 ; Please visit '%s',\n\
 ; download the most recent version and make\n\
 ; sure you have it correctly installed.
-;
 ; LIBRARY_NAME, LIBRARY_VERSION, LIBRARY_REVISION, LIBRARY_URL
 ;
 MSG_ER_NO_MCC
@@ -5972,7 +5744,6 @@ uusin versio ja varmista, että olet asentanut sen oikein.
 ; Please visit '%s',\n\
 ; download the most recent version and make\n\
 ; sure you have it correctly installed.
-;
 ; MCC_NAME, MCC_VERSION, MCC_REVISION, MCC_URL
 ;
 MSG_ER_MCC_OLD
@@ -5980,12 +5751,10 @@ MUIn luokkaa '%s', versio v%lu.%lu ei voitu avata.\n\
 \n\
 Tällä hetkellä asennettuna on v%lu.%lu. Päivitä se\n\
 lataamalla osoitteesta '%s'.
-;
 ; Couldn't open required MUI custom class '%s' v%lu.%lu.\n\
 ; \n\
 ; Currently installed is v%lu.%lu. Please upgrade by downloading\n\
 ; the latest version from '%s'.
-;
 ; MCC_NAME, MCC_VERSION, MCC_REVISION, MCC_URL
 ;
 MSG_ER_MCC_IN_USE
@@ -6004,159 +5773,127 @@ että vanha luokka on poistettu muistista ja yritä uudestaan.
 ; sure you have it correctly installed. Then close\n\
 ; all MUI programs and make sure the old class\n\
 ; is flushed from memory and try again.
-;
 ; MCC_NAME, MCC_VERSION, MCC_REVISION, MCC_VERSION, MCC_REVISION, MCC_URL
 ;
 MSG_CO_FIRSTSTEPS_TITLE
 Ensiaskeleet-asetukset
 ; First Steps Settings
 ;
-;
 MSG_CO_FIRSTSTEPS_SUMMARY
 Minimiasetukset, joiden avulla saat lähetettyä ja vastaanotettua sähköpostia...
 ; The minimum parameters to be able to send/receive e-mail...
-;
 ;
 MSG_CO_TCPIP_TITLE
 TCP/IP-asetukset
 ; TCP/IP Settings
 ;
-;
 MSG_CO_TCPIP_SUMMARY
 Muokkaa SMTP- ja POP3-tilejäsi...
 ; Configure your SMTP and POP3 accounts...
-;
 ;
 MSG_CO_FILTER_TITLE
 Pääsuodatinasetukset
 ; Mail Filter Settings
 ;
-;
 MSG_CO_FILTER_SUMMARY
 Määritä omat postisuodattimet...
 ; Define own mail filters you need...
-;
 ;
 MSG_CO_READ_TITLE
 Postin lukuasetukset
 ; Mail Reading Settings
 ;
-;
 MSG_CO_READ_SUMMARY
 Postin lukemiseen liittyvät asetukset...
 ; Settings related to e-mail reading...
-;
 ;
 MSG_CO_WRITE_TITLE
 Postin kirjoitusasetukset
 ; Mail Writing Settings
 ;
-;
 MSG_CO_WRITE_SUMMARY
 Postin kirjoittamiseen liittyvät asetukset...
 ; Settings related to e-mail composing...
-;
 ;
 MSG_CO_REPLY_TITLE
 Viestin vastaamis- ja jatkolähetysasetukset
 ; Mail Reply & Forward Settings
 ;
-;
 MSG_CO_REPLY_SUMMARY
 Viestin vastaamiseen ja jatkolähetykseen liittyvät asetukset...
 ; Settings related to e-mail replying & forwarding...
-;
 ;
 MSG_CO_SIGNATURE_TITLE
 Postin allekirjoitusasetukset
 ; Mail Signature Settings
 ;
-;
 MSG_CO_SIGNATURE_SUMMARY
 Määritä sähköpostiallekirjoituksesi...
 ; Configure your e-mail signatures...
-;
 ;
 MSG_CO_SECURITY_TITLE
 Turvallisuusasetukset
 ; Security Settings
 ;
-;
 MSG_CO_SECURITY_SUMMARY
 Määritä turvallisuuteen liittyvät asetukset...
 ; Configure security related settings...
-;
 ;
 MSG_CO_STARTUP_TITLE
 Käynnistys/Lopetusasetukset
 ; Startup/Quit Action Settings
 ;
-;
 MSG_CO_STARTUP_SUMMARY
 Määritä, mmitä YAM tekee käynnistyksessä ja lopetuksessa...
 ; Configure what YAM should do on startup and exit...
-;
 ;
 MSG_CO_MIME_TITLE
 MIME-tyyppien asetukset
 ; MIME Types Settings
 ;
-;
 MSG_CO_MIME_SUMMARY
 Määritä omat MIME-tyypit ja katseluohjelmat...
 ; Configure own MIME types and viewers...
-;
 ;
 MSG_CO_ABOOK_TITLE
 Osoitekirja-asetukset
 ; Address Book Settings
 ;
-;
 MSG_CO_ABOOK_SUMMARY
 Määritä osoitekirjaan liittyvät asetukset...
 ; Configure address book related options...
-;
 ;
 MSG_CO_SCRIPTS_TITLE
 Komentojonoasetukset
 ; Scripts Settings
 ;
-;
 MSG_CO_SCRIPTS_SUMMARY
 Määritä avustavat komentojonosi...
 ; Configure your helper scripts...
-;
 ;
 MSG_CO_MIXED_TITLE
 Sekalaiset asetukset
 ; Miscellaneous Settings
 ;
-;
 MSG_CO_MIXED_SUMMARY
 Joukko asetuksia, jotka eivät sovi muualle...
 ; A bunch of settings that don't fit anywhere else...
-;
 ;
 MSG_CO_UPDATE_TITLE
 Ohjelmiston päivitykset
 ; Software Updates
 ;
-; ***NEW***
-;
 MSG_CO_UPDATE_SUMMARY
 Seuraa YAMin ja siihen liittyvien komponenttien päivityksiä...
 ; Keep track of updates to YAM and related components...
-;
 ;
 MSG_CO_CrdUpdate
 Päivitykset
 ; Updates
 ;
-;
 MSG_CO_AMISSLWARN_TITLE
 AmiSSL ei käytettävissä.
 ; AmiSSL not available
-;
 ;
 MSG_CO_AMISSLWARN
 AmiSSL ei ole käytettävissä. Siksi kaikki turvalliset\n\
@@ -6171,78 +5908,63 @@ oikein ja käynnistä sitten YAM uudestaan.
 ; \n\
 ; Please verify that at least AmiSSL v%lu.%lu is\n\
 ; correctly installed and then restart YAM.
-;
 ; AMISSL_VERSION, AMISSL_REVISION
 ;
 MSG_CO_AMISSLWARN_BT
 *_Lopeta|Ohita _aina|Ohita
 ; *_Exit|Ignore _always|Ignore
 ;
-;
 MSG_BUSY_OPENINGCONFIG
 Avataan asetuksia...
 ; Opening configuration...
-;
 ;
 MSG_MA_UPDATECHECK
 Tarkista päivitykset
 ; Check for updates
 ;
-;
 MSG_CO_SOFTWAREUPDATE
 Päivtysten tarkistus
 ; Update check
-;
 ;
 MSG_CO_UPDATE_DAILY
 Päivittäin
 ; Daily
 ;
-;
 MSG_CO_UPDATE_WEEKLY
 Viikottain
 ; Weekly
-;
 ;
 MSG_CO_UPDATE_MONTHLY
 Kuukausittain
 ; Monthly
 ;
-;
 MSG_CO_SEARCHFORUPDATES
 Hae _päivityksiä
 ; Check for up_dates
-;
 ;
 MSG_CO_SEARCHNOW
 Tarkista _nyt
 ; Check _now
 ;
-;
 MSG_CO_LASTSEARCH
 Viimeksi tarkistettu:
 ; Last check:
-;
 ;
 MSG_CO_LASTSTATUS_NOCHECK
 Tarkistusta ei vielä tehty.
 ; No check performed yet.
 ;
-;
 MSG_CO_LASTSTATUS_NOUPDATE
 Ei uusia päivityksiä saatavilla.
 ; No new software updates were available.
-;
 ;
 MSG_CO_LASTSTATUS_NOQUERY
 Päivityksiä ei saatu tarkistettua palvelimelta.
 ; Couldn't query server for updates.
 ;
-;
 MSG_CO_LASTSTATUS_UPDATESUCCESS
 Päivitykset löydetty ja ilmoitettu käyttäjälle onnistuneesti.
 ; Successfully found and notified user on new updates.
-;
 ;
 MSG_WR_SECURITYREQ
 Sähköpostin vastaanottajilla on erilaiset\n\
@@ -6254,146 +5976,117 @@ Millaista turvallisuusasetusta haluat käyttää?
 ; \n\
 ; What type of security do you want to use?
 ;
-;
 MSG_WR_UUCODE
 UUencode-muotoinen teksti
 ; UUencoded text
-;
 ;
 MSG_UPD_NOTIFICATION_WTITLE
 Päivitysilmoitus
 ; Update notification
 ;
-;
 MSG_UPD_NOTIFICATION_TITLE
 Päivityksiä saatavilla
 ; Updates available
-;
 ;
 MSG_UPD_NOTIFICATION_SUMMARY
 Seuraavat päivitykset ovat ladattavissa:
 ; The following updates are available for download:
 ;
-;
 MSG_UPD_NOTIFICATION_CHANGES
 Muutoksia:
 ; Changes:
-;
 ;
 MSG_UPD_NOTIFICATION_NOUPDATE
 Älä tiedota päivityksistä jatkossa
 ; Do not notify me on updates in future
 ;
-;
 MSG_UPD_NOTIFICATION_CLOSE
 Sulje
 ; Close
-;
 ;
 MSG_UPD_NOTIFICATION_COMP
 Komponentti
 ; Component
 ;
-;
 MSG_UPD_NOTIFICATION_RECENT
 Tuoreet
 ; Recent
-;
 ;
 MSG_UPD_NOTIFICATION_INSTALLED
 Asennettu
 ; Installed
 ;
-;
 MSG_UPD_NOTIFICATION_URL
 URL
 ; URL
-;
 ;
 MSG_CO_MIME_DESCRIPTION
 _Kuvaus
 ; D_escription
 ;
-;
 MSG_CTapplicationgz
 GNU zip-paketti
 ; GNU zip archive
-;
 ;
 MSG_CTapplicationhqx
 Macintosh-paketti
 ; Macintosh archive
 ;
-;
 MSG_CTapplicationxls
 Microsoft Excel-tiedosto
 ; Microsoft Excel file
-;
 ;
 MSG_CTapplicationppt
 Microsoft PowerPoint-tiedosto
 ; Microsoft PowerPoint file
 ;
-;
 MSG_CTapplicationdoc
 Microsoft Word-tiedosto
 ; Microsoft Word file
-;
 ;
 MSG_CTtextxml
 XML-tiedosto
 ; XML file
 ;
-;
 MSG_CTapplicationz
 zlib-pakattu tiedosto
 ; zlib compressed file
-;
 ;
 MSG_CTapplicationtar
 tar-paketti
 ; tar archive
 ;
-;
 MSG_CTaudioaiff
 AIFF-äänitiedosto
 ; AIFF audio file
-;
 ;
 MSG_CTaudiomidi
 MIDI-äänitiedosto
 ; MIDI audio file
 ;
-;
 MSG_CTaudiompeg
 MPEG-äänitiedosto
 ; MPEG audio file
-;
 ;
 MSG_CTimagebmp
 Bittikartta-kuvatiedosto
 ; Bitmap image file
 ;
-;
 MSG_CTapplicationtgz
 gzip tar-paketti
 ; gzipped tar archive
-;
 ;
 MSG_CTapplicationpgp
 PGP-salattu tiedosto
 ; PGP encrypted file
 ;
-;
 MSG_CTapplicationbz2
 BZIP2-paketti
 ; BZIP2 archive
 ;
-;
 MSG_CO_DETECT_CYRILLIC
 Tarkista _kyrillinen kirjaimisto automaattisesti
 ; Auto-detect c_yrillic charsets
-;
 ;
 MSG_HELP_CO_DETECT_CYRILLIC
 Yritä automaattisesti löytää oikea kyrillinen\n\
@@ -6403,7 +6096,6 @@ kirjaimisto codesets.library-kirjaston avulla\n\
 ; of codesets.library to automatically\n\
 ; identify the correct cyrillic charset\n\
 ; (only relevant for cyrillic users).
-;
 ;
 MSG_WR_ErrorNotEnoughUndoMem
 Poistettu teksti ei mahtunut\n\
@@ -6415,16 +6107,13 @@ Niinpä perumispuskurin sisältö menetettiin.
 ; \n\
 ; Therefore, the undo buffer is lost.
 ;
-;
 MSG_RE_HEADERDISPLAY
 Otsikkonäyttö
 ; Header display
 ;
-;
 MSG_RE_MAILDETAILS
 Viestin yksityiskohdat
 ; Mail details
-;
 ;
 MSG_ER_ADDFILEERROR
 Tiedostoa '%s' ei saatu liitettyä viestiin.\n\
@@ -6434,7 +6123,6 @@ Tarkista, että tiedosto on saatavissa eikä ole lukusuojattu.
 ; \n\
 ; Please make sure that the file is accessible \
 ; and that is not read protected.
-;
 ;
 MSG_ER_PACKERROR
 Virhe luotaessa pakettia valituista tiedostoista.\n\
@@ -6446,11 +6134,9 @@ Tarkista, että tiedostot ovat saatavissa, eivätkä ole lukusuojattuja.
 ; Please make sure that all files are accessible \
 ; and not read protected.
 ;
-;
 MSG_CO_ABOOKLOOKUP
 _Osoitekirjan tarkistus viestilistassa
 ; _Address book lookup in message list
-;
 ;
 MSG_HELP_CO_CH_ABOOKLOOKUP
 Käy läpi osoitekirja ja muuta viestilistaan\n\
@@ -6469,7 +6155,6 @@ on paljon osoitteita.
 ; This is especially true for a large amount of address\n\
 ; book entries.
 ;
-;
 MSG_TR_MESSAGEGAUGE
 Viesti %%ld / %ld
 ; Message %%ld of %ld
@@ -6479,32 +6164,27 @@ MSG_CO_CONVERTHTML
 _Muuta HTML-postit tavalliseksi tekstiksi
 ; Con_vert HTML e-mails to plain text
 ;
-;
 MSG_HELP_CO_CONVERTHTML
 Jos viestin pääosa on HTML-muotoista, YAM\n\
 muuttaa sen tavalliseksi tekstiksi ennen viestin näyttämistä.
 ; If the main part of an e-mail is HTML, YAM will\n\
 ; convert it to plain text before displaying it.
 ;
-;
 MSG_TR_TRANSFERSTATUS
 %s / %s @ %s/s\n\
 %02ld'%02ld'' menossa - %02ld'%02ld'' jäljellä
 ; %s of %s @ %s/s\n\
 ; %02ld'%02ld'' running - %02ld'%02ld'' left
-;
 ; SIZE, SIZE, SPEED, MINS, SECS, MINS, SECS
 ;
 MSG_TR_TRANSFERSIZE
 %s / %s
 ; %s of %s
-;
 ; SIZE, SIZE
 ;
 MSG_FI_GAUGETEXT
 %%ld / %ld viestiä
 ; %%ld of %ld messages
-;
 ; COUNT, COUNT
 ;
 MSG_MA_MIMEPART_INFO
@@ -6518,23 +6198,19 @@ Koko: ~%s
 ; Description: %s\n\
 ; Content-Type: %s <%s>\n\
 ; Size: ~%s
-;
 ; PART-NR, NAME, DESCRIPTION, CONTENT-TYPE, SIZE
 ;
 MSG_MA_MIMEPART_MENU
 Liite/MIME-osa #%ld
 ; Attachment/MIME part #%ld
 ;
-;
 MSG_CO_PGPPASSINTERVAL1
 M_uista tunnussana
 ; Remem_ber passphrase for
 ;
-;
 MSG_CO_PGPPASSINTERVAL2
 joutilaana minuutti(a)
 ; idle minute(s)
-;
 ;
 MSG_HELP_CO_PGPPASSINTERVAL
 Jos valittu, PGP-salasanasi muistetaan tämän ajan verran.\n\
@@ -6544,61 +6220,49 @@ tunnussanaa.
 ; for this amount of time. Subsequent PGP operations then\n\
 ; won't trigger another passphrase query.
 ;
-;
 MSG_UT_PGPPASSREQ_TITLE
 PGP-tunnussanakysely
 ; PGP passphrase request
-;
 ;
 MSG_CO_GR_REPLYFORWARD
 Vastaa/Jatkolähetä
 ; Reply/Forward
 ;
-;
 MSG_CO_GR_SCRIPTS
 Komentojonot
 ; Scripts
-;
 ;
 MSG_CO_GR_STARTUPQUIT
 Käynnistys/Lopetus
 ; Startup/Quit
 ;
-;
 MSG_CO_SCRIPTS_PREGET
 %p  Lataustoiminnon tyyppi
 ; %p  Type of download action
-;
 ;
 MSG_CO_SCRIPTS_POSTGET
 %p  Saatujen viestien lukumäärä
 ; %p  Number of messages received
 ;
-;
 MSG_CO_SCRIPTS_NEWMSG
 %p  Uuden viestitiedoston nimi
 ; %p  Name of new message file
-;
 ;
 MSG_CO_SCRIPTS_READ
 %p  Lukuikkunan numero
 ; %p  Number of read window
 ;
-;
 MSG_CO_SCRIPTS_WRITE
 %p  Kirjoitusikkunan numero
 ; %p  Number of write window
-;
 ;
 MSG_CO_SCRIPTS_URL
 %p  Kokonainen URL-polku
 ; %p  Full URL path
 ;
-;
 MSG_CO_MIMECMD_PARAMETER
 %s  Kokonainen tiedostopolku
 ; %s  Full path of file
-;
 ;
 MSG_ER_CANTOPENASL
 Virhe avattaessa ASL-ikkunaa.\n\
@@ -6611,7 +6275,6 @@ ja että muistia on riittävästi vapaana.
 ; Please make sure that your ASL setup is \
 ; valid and that you have enough memory left.
 ;
-;
 MSG_MA_CONFIRMDELETION
 %ld viesti(ä) on valittuna\n\
 \n\
@@ -6621,150 +6284,121 @@ poistaa nämä viestit?
 ; \n\
 ; Do you really want to delete\n\
 ; these messages?
-;
 ; AMOUNT
 ;
 MSG_MA_SPAM
 Roskapostia
 ; Spam
 ;
-;
 MSG_LOADINGSPAMTRAININGDATA
 Ladataan roskaposti-opettelutietoja...
 ; Loading spam training data...
-;
 ;
 MSG_MA_TBSPAM
 _Roska
 ; Sp_am
 ;
-;
 MSG_MA_TBNOTSPAM
 Ei r_osk
 ; N.Sp_am
-;
 ;
 MSG_HELP_MA_BT_SPAM
 Merkitse viesti roskapostiksi
 ; Mark message as spam
 ;
-;
 MSG_HELP_MA_BT_NOTSPAM
 Merkitse viesti ei-roskapostiksi
 ; Mark message as not spam
-;
 ;
 MSG_RE_TBSPAM
 _Roska
 ; Sp_am
 ;
-;
 MSG_RE_TBNOTSPAM
 Ei r_osk
 ; N.Sp_am
-;
 ;
 MSG_HELP_RE_BT_SPAM
 Merkitse viesti roskapostiksi
 ; Mark message as spam.
 ;
-;
 MSG_HELP_RE_BT_NOTSPAM
 Merkitse viesti ei-roskapostiksi
 ; Mark message as not spam.
 ;
-;
 MSG_LOG_MAILISSPAM
 Viesti lähettäjältä '%s' aiheena '%s' käsitellään roskapostina.
 ; Message from '%s' about '%s' is treated as spam.
-;
 ; SENDER, SUBJECT
 ;
 MSG_LOG_MAILISNOTSPAM
 Viesti lähettäjältä '%s' aiheena '%s' ei enää arvioitu roskapostiksi.
 ; Message from '%s' about '%s' is no longer treated as spam.
-;
 ; SENDER, SUBJECT
 ;
 MSG_FI_STATSPAM
 Roskaposti
 ; Spam
 ;
-;
 MSG_MA_TOSPAM
 Roskaposti
 ; Spam
-;
 ;
 MSG_MA_TONOTSPAM
 Ei roskapostia
 ; Not spam
 ;
-;
 MSG_CO_CRDSPAMFILTER
 Roskaposti
 ; Spam
-;
 ;
 MSG_CO_SPAMFILTER
 Roskapostisuodatin
 ; Spam filter
 ;
-;
 MSG_CO_SPAMFILTER_TITLE
 Roskapostisuodatin
 ; Spam filter
-;
 ;
 MSG_CO_SPAMFILTER_SUMMARY
 Määritä roskapostisuodatin...
 ; Configure the spam filter...
 ;
-;
 MSG_CO_SPAM_FILTERFORNEWMAIL
 Tarkista _uudet viestit roskapostin varalta
 ; Check _new mails for spam content
-;
 ;
 MSG_CO_SPAM_RESETTRAININGDATA
 _Nollaa roskaposti-opettelutiedot
 ; _Reset training data
 ;
-;
 MSG_CO_SPAM_GOODCOUNT
 Ei-roskapostiksi luokitellut viestit
 ; "Not spam" classified mails
-;
 ;
 MSG_CO_SPAM_BADCOUNT
 Roskapostiksi luokitellut viestit
 ; "Spam" classified mails
 ;
-;
 MSG_BUSYFLUSHINGSPAMTRAININGDATA
 Tyhjennetään roskaposti-opettelutietoja...
 ; Flushing spam training data...
-;
 ;
 MSG_CO_SPAM_MARKONMOVE
 Merkitse viestit roskapostiksi, kun ne _siirretään Roskaposti-kansioon
 ; Mark mails as spam when _moved to the Spam folder
 ;
-;
 MSG_CO_SPAM_ADDRESSBOOKISWHITELIST
 Osoitekirja on _hyväksyttyjen lista
 ; Address book is _white list
-;
 ;
 MSG_CO_SPAM_RECOGNITION
 Roskapostin tunnistus
 ; Spam recognition
 ;
-;
 MSG_CO_SPAM_FILTERENABLED
 _Roskapostisuodatin käytössä
 ; S_pam filter enabled
-;
 ;
 MSG_CO_SPAM_RESETTRAININGDATAASK
 Oletko varma, että haluat todella nollata roskapostin\n\
@@ -6776,11 +6410,9 @@ Roskapostisuodatin pitää 'opettaa' uudestaan tämän jälkeen.
 ; \n\
 ; The spam filter must be trained again afterwards.
 ;
-;
 MSG_TR_CHECKUIDL
 Tarkistetaan UIDL:t tuplaviestien välttämiseksi...
 ; Checking UIDLs to avoid duplicates...
-;
 ;
 MSG_CO_SPAM_DISABLEFILTERASK
 Roskapostisuodatin on kytketty pois päältä.\n\
@@ -6792,21 +6424,17 @@ haluat tehdä?
 ; Which of the following operations\n\
 ; do you want to apply?
 ;
-;
 MSG_CO_SPAM_RESETTDATA
 _Nollaa opettelutiedot
 ; _Reset training data
-;
 ;
 MSG_CO_SPAM_RESETMAILFLAGS
 Nollaa kaikkien viestien _roskaposti-tila
 ; Reset _spam state of all mails
 ;
-;
 MSG_CO_SPAM_DELETESPAMFOLDER
 _Poista roskapostikansio
 ; _Delete Spam folder
-;
 ;
 MSG_HELP_CO_CY_SMTPAUTHMETHOD
 Valitse YAMin käyttämä todennustapa.\n\
@@ -6821,34 +6449,25 @@ turvallisuusjärjestyksessä. Turvallisin on listan yläosassa.
 ; listed in order according to how safe they are, with the\n\
 ; safest at the top.
 ;
-;
 MSG_CO_SMTPAUTH_AUTO
 Auto
 ; Auto
-;
 ;
 MSG_CO_SMTPAUTH_DIGEST
 DIGEST-MD5
 ; DIGEST-MD5
 ;
-; ***NEW***
-;
 MSG_CO_SMTPAUTH_CRAM
 CRAM-MD5
 ; CRAM-MD5
-;
-; ***NEW***
 ;
 MSG_CO_SMTPAUTH_LOGIN
 LOGIN
 ; LOGIN
 ;
-; ***NEW***
-;
 MSG_CO_SMTPAUTH_PLAIN
 PLAIN
 ; PLAIN
-;
 ;
 MSG_CO_ER_SMTPAUTH
 SMTP-palvelin '%s' ei näytä tukevan valittua SMTP-AUTH-tapaa.\n\
@@ -6862,7 +6481,6 @@ pitää muokata.
 ; Please ask your provider which authentication methods are \
 ; available and how to configure them in your e-mail client.
 ;
-;
 MSG_ER_SPAMDIR_EXISTS
 Uutta roskapostikansiota luotaessa YAM\n\
 löysi 'Spam'-nimisen hakemiston.\n\
@@ -6875,11 +6493,9 @@ roskapostikansiona?
 ; Do you want to use this directory as the standard\n\
 ; Spam folder?
 ;
-;
 MSG_ER_SPAMDIR_EXISTS_ANSWERS
 P_uhdista ja käytä|_Käytä|*_Peru
 ; C_leanup&Use|_Use|*_Cancel
-;
 ;
 MSG_CO_ER_CANNOT_CREATE_SPAMFOLDER
 Roskapostikansion luonti ei onnistunut.\n\
@@ -6892,246 +6508,197 @@ levyllä on riittävästi tilaa ja levyä ei ole kirjoitussuojattu.
 ; there is enough space left on the drive and that the drive is \
 ; not write protected.
 ;
-;
 MSG_MA_CHECKSPAM
 Käytä roskapostisuodatinta
 ; Apply spam filter
-;
 ;
 MSG_FI_BUSYCHECKSPAM
 Käytetään roskapostisuodatinta kansiossa...
 ; Applying spam filter on folder...
 ;
-;
 MSG_MA_REMOVESPAM
 Poista roskaposti kansiosta
 ; Delete spam from folder
-;
 ;
 MSG_MA_BUSYEMPTYINGSPAM
 Poistetaan roskapostia kansiosta...
 ; Deleting spam from folder...
 ;
-;
 MSG_MA_TRASH
 Roskakori
 ; Trash
-;
 ;
 MSG_WR_SEARCH
 Etsi...
 ; Search...
 ;
-;
 MSG_AB_IMPORT
 Tuo
 ; Import
-;
 ;
 MSG_AB_EXPORT
 Tallenna
 ; Export
 ;
-;
 MSG_AB_LDIF
 LDIF-osoitekirja (*.ldif)
 ; LDIF address book (*.ldif)
-;
 ;
 MSG_AB_CSV
 Pilkulla erotettu-muotoinen (*.csv)
 ; Comma separated values (*.csv)
 ;
-;
 MSG_AB_TAB
 TAB-merkillä erotettu-muoto (*.tab)
 ; TAB separated values (*.tab)
-;
 ;
 MSG_ER_ADDRBOOKIMPORT
 Osoitekirjan \"%s\" tuonti ei onnistunut.
 ; Could not import address book \"%s\".
 ;
-;
 MSG_ER_ADDRBOOKEXPORT
 Osoitekirjan \"%s\" tallennus ei onnistunut.
 ; Could not export address book \"%s\".
-;
 ;
 MSG_LOADINGUPDATESTATE
 Ladataan päivitystilannetta...
 ; Loading update state data...
 ;
-;
 MSG_MA_HIDE
 Piilota
 ; Hide
-;
 ;
 MSG_MA_QUIT
 Lopeta
 ; Quit
 ;
-;
 MSG_MA_SELECTALL
 Kaikki
 ; All
-;
 ;
 MSG_MA_SELECTNONE
 Ei mitään
 ; None
 ;
-;
 MSG_MA_SELECTTOGGLE
 Vaihda
 ; Toggle
-;
 ;
 MSG_MA_MSEARCH
 Etsi...
 ; Search...
 ;
-;
 MSG_MA_MFILTER
 Suodata...
 ; Filter...
-;
 ;
 MSG_MA_REMOVEDELETED
 Tyhjennä roskakori
 ; Empty trash
 ;
-;
 MSG_MA_UPDATEINDEX
 Päivitä hakemisto
 ; Update index
-;
 ;
 MSG_MA_MREAD
 Lue
 ; Read
 ;
-;
 MSG_MA_TOUNREAD
 Lukemattomaksi
 ; Unread
-;
 ;
 MSG_MA_TOREAD
 Luetuksi
 ; Read
 ;
-;
 MSG_PROJECT_MABOUT
 Tietoja ohjelmasta...
 ; About...
-;
 ;
 MSG_MA_MEDIT
 Muokkaa...
 ; Edit...
 ;
-;
 MSG_MA_MMOVE
 Siirrä...
 ; Move...
-;
 ;
 MSG_MA_MCOPY
 Kopioi...
 ; Copy...
 ;
-;
 MSG_MA_MPRINT
 Tulosta...
 ; Print...
-;
 ;
 MSG_MA_MSAVE
 Tallenna...
 ; Save...
 ;
-;
 MSG_MA_MSAVEATT
 Tallenna...
 ; Save...
-;
 ;
 MSG_MA_MNEW
 Uusi...
 ; New...
 ;
-;
 MSG_MA_MREPLY
 Vastaa...
 ; Reply...
-;
 ;
 MSG_MA_MFORWARD
 Jatkolähetä...
 ; Forward...
 ;
-;
 MSG_MA_MSAVEADDRESS
 Tallenna osoite...
 ; Save address...
-;
 ;
 MSG_MA_MADDRESSBOOK
 Osoitekirja...
 ; Address book...
 ;
-;
 MSG_MA_MCONFIG
 Asetukset...
 ; Configuration...
-;
 ;
 MSG_MA_TOMARKED
 Merkitse
 ; Marked
 ;
-;
 MSG_MA_TOUNMARKED
 Poista merkintä
 ; Unmarked
-;
 ;
 MSG_MA_ALLTOREAD
 Kaikki luetuksi
 ; All to read
 ;
-;
 MSG_MA_MEDITASNEW
 Muokkaa uutena...
 ; Edit as new...
-;
 ;
 MSG_RE_SEARCH
 Etsi...
 ; Search...
 ;
-;
 MSG_RE_SEARCH_AGAIN
 Etsi uudelleen
 ; Search again
-;
 ;
 MSG_WR_SEARCH_AGAIN
 Etsi uudelleen
 ; Search again
 ;
-;
 MSG_WR_AUTOWRAP
 Rivitä?
 ; Word-wrap?
 ;
-;
 MSG_CO_SPAM_MARK_AS_READ
 Merkitse uudet roskapostiviestit _luetuksi
 ; Mark new spam mai_ls as read
-;
 ;
 MSG_HELP_CH_SPAMFILTERENABLED
 Ottaa roskapostisuodattimen käyttöön, jotta\n\
@@ -7139,13 +6706,11 @@ häiritsevät mainosviestit suodatetaan pois.
 ; Enables the spam filter, allowing you\n\
 ; to filter out abusive advertising e-mails.
 ;
-;
 MSG_HELP_TX_SPAMBADCOUNT
 Näyttää roskapostiksi manuaalisesti\n\
 merkittyjen viestien lukumäärän.
 ; Shows the amount of e-mails\n\
 ; manually classified as 'spam'.
-;
 ;
 MSG_HELP_TX_SPAMGOODCOUNT
 Näyttää ei-roskapostiksi\n\
@@ -7154,7 +6719,6 @@ merkittyjen viestien lukumäärän.
 ; manually classified as 'not spam',\n\
 ; also known as 'ham'.
 ;
-;
 MSG_HELP_BT_SPAMRESETTRAININGDATA
 Nollaa kaiken roskapostisuodattimelle opetetun\n\
 tiedon. Tämä toiminto on hyvin harvoin tarpeen.
@@ -7162,13 +6726,11 @@ tiedon. Tämä toiminto on hyvin harvoin tarpeen.
 ; training data. This should be necessary only\n\
 ; in very rare cases.
 ;
-;
 MSG_HELP_CH_SPAMFILTERFORNEWMAIL
 Jos valittu, roskapostisuodatin analysoi uudet\n\
 vastaanotetut viestit heti niiden saavuttua.
 ; If enabled, new incoming e-mail will be\n\
 ; immediately analyzed by the spam filter.
-;
 ;
 MSG_HELP_CH_SPAMABOOKISWHITELIST
 Jos valittu, viestit, joiden lähettäjän osoite löytyy\n\
@@ -7177,20 +6739,17 @@ osoitekirjasta, ei koskaan arvioida roskapostiksi.
 ; can be found in the address book will never\n\
 ; be considered as spam.
 ;
-;
 MSG_HELP_CH_SPAMMARKONMOVE
 Jos valittu, kaikki Roskaposti-kansioon manuaalisesti\n\
 siirretyt postit merkitään automaattisesti roskapostiksi.
 ; If checked, any e-mail manually moved to the Spam\n\
 ; folder will be automatically marked as spam.
 ;
-;
 MSG_HELP_CH_SPAMMARKASREAD
 Jos valittu, roskaposti merkitään\n\
 automaattisesti luetuksi.
 ; If checked, spam mail will be\n\
 ; automatically flagged as 'read'.
-;
 ;
 MSG_HELP_CH_UPDATECHECK
 Kuinka usein haluat YAMin tarkistavan\n\
@@ -7200,11 +6759,9 @@ Valitse 'ei koskaan' kytkeäksesi tarkistuksen pois.
 ; automatically check for updates?\n\
 ; Select 'never' to disable this feature.
 ;
-;
 MSG_WR_SELECTALL
 Valitse kaikki
 ; Select all
-;
 ;
 MSG_RE_MDN_ACCEPT_LATER
 Hyväksy ja\n\
@@ -7212,83 +6769,67 @@ lähetä _myöhemmin
 ; Accept and\n\
 ; send _later
 ;
-;
 MSG_RE_MDN_ACCEPT_NOW
 Hyväksy ja\n\
 lähetä _heti
 ; Accept and\n\
 ; send _now
 ;
-;
 MSG_RE_MDN_IGNORE
 _Ohita
 ; _Ignore
-;
 ;
 MSG_RE_MDN_IGNORE_ALL
 Ohita _kaikki
 ; Ignore _all
 ;
-;
 MSG_CO_MDN_ACTION_IGNORE
 Älä lähetä koskaan
 ; Never send
-;
 ;
 MSG_CO_MDN_ACTION_SEND
 Lähetä aina
 ; Always send
 ;
-;
 MSG_CO_MDN_ACTION_QUEUE
 Laita aina jonoon
 ; Always queue
-;
 ;
 MSG_CO_MDN_ACTION_ASK
 Kysy
 ; Ask me
 ;
-;
 MSG_CO_MDN_TITLE
 Vastaanottoilmoitukset
 ; Return receipts
-;
 ;
 MSG_CO_MDN_DESCRIPTION
 Kun saadaan pyyntö vastaanottoilmoituksesta...
 ; When I receive a request for a return receipt...
 ;
-;
 MSG_CO_MDN_DISABLED
 Älä lähetä _koskaan vastaanottoilmoitusta
 ; _Never send a return receipt
-;
 ;
 MSG_CO_MDN_ENABLED
 Salli _joidenkin viestien vastaanottoilmoitukse lähetys
 ; Allow _return receipts for some messages
 ;
-;
 MSG_CO_MDN_NORECIPIENT
 Jos en ole viestin _Vastaanottaja- tai Kopio-kentissä:
 ; If I'm not in the _To: or Cc: of the message:
-;
 ;
 MSG_CO_MDN_NODOMAIN
 Jos lähettäjä on alueeni _ulkopuolella:
 ; If the sender is _outside my domain:
 ;
-;
 MSG_CO_MDN_DELETE
 Jos olen _poistamassa viestiä:
 ; If I'm going to just _delete the message:
 ;
-;
 MSG_CO_MDN_OTHER
 Kaikissa _muissa tapauksissa:
 ; In all oth_er cases:
-;
 ;
 MSG_HELP_CO_CH_MDN_NEVER
 Jos valittu, vastaanottoilmoitusta ei lähetetä\n\
@@ -7296,13 +6837,11 @@ vaikka niitä olisi pyydetty.
 ; If selected, no return receipt will be\n\
 ; sent, even if explicitly requested.
 ;
-;
 MSG_HELP_CO_CH_MDN_ALLOW
 Jos valittu, vastaanottoilmoituspyynnöt käsitellään\n\
 tässä määriteltyjen sääntöjen mukaan.
 ; If selected, return receipts will be processed\n\
 ; according to the rules defined here.
-;
 ;
 MSG_HELP_CO_CY_MDN_NORECIPIENT
 Mitä tehdään vastaanottoilmoituspyynnölle\n\
@@ -7312,13 +6851,11 @@ Vastaanottaja- eikä Kopio-kentässä.
 ; when your e-mail address doesn't appear\n\
 ; neither in the To: or Cc: headers.
 ;
-;
 MSG_HELP_CO_CY_MDN_NODOMAIN
 Mitä tehdään vastaanottoilmoituspyynnölle\n\
 kun lähettäjän alue ei ole sama kuin sinulla.
 ; What to do with a return receipt request\n\
 ; when the sender's domain doesn't match yours.
-;
 ;
 MSG_HELP_CO_CY_MDN_DELETE
 Mitä tehdään vastaanottoilmoituspyynnölle\n\
@@ -7326,68 +6863,55 @@ kun vain poistat alkuperäisen viestin.
 ; What to do with a return receipt request\n\
 ; when you just delete the original message.
 ;
-;
 MSG_HELP_CO_CY_MDN_OTHER
 Mitä tehdään vastaanottoilmoituspyynnölle\n\
 kun mikään ylläolevista säännöistä ei sovi.
 ; What to do with a return receipt request\n\
 ; when none of the above rules applies.
 ;
-;
 MSG_CO_LOOKFEEL_TITLE
 Ulkoasu
 ; Look & Feel
-;
 ;
 MSG_CO_LOOKFEEL_SUMMARY
 Muokkaa YAMin yleistä ulkoasua...
 ; Configure the general Look & Feel of YAM...
 ;
-;
 MSG_CO_CRDLOOKFEEL
 Ulkoasu
 ; Look & Feel
-;
 ;
 MSG_CO_SMTP_SERVERPORT
 Pal_velin/Portti
 ; Ser_ver/Port
 ;
-;
 MSG_CO_POP_SERVERPORT
 _Palvelin/Portti
 ; Serve_r/Port
-;
 ;
 MSG_CO_LOOKFEEL_THEMES
 Teemat
 ; Themes
 ;
-;
 MSG_CO_THEME_ACTIVATE
 _Aktivoi
 ; _Activate
-;
 ;
 MSG_CO_THEME_PREVIEW
 Esikatsele
 ; Preview
 ;
-;
 MSG_CO_THEME_AUTHOR
 Tekijä
 ; Author
-;
 ;
 MSG_CO_THEME_URL
 URL
 ; URL
 ;
-;
 MSG_CO_RELDATETIME
 Suhteellinen _päiväys
 ; Rela_tive date output
-;
 ;
 MSG_HELP_CO_CH_RELDATETIME
 Jos valittu, päiväyssarakkeissa näytetään\n\
@@ -7397,38 +6921,31 @@ tieto suhteellisessa muodossa (esim. 'Tänään' tai\n\
 ; will use a relative output (e.g. 'Today' or\n\
 ; 'Yesterday') instead of the full date if possible.
 ;
-;
 MSG_FOLDER_SNAPSHOT_TREE
 Tallenna järjestely
 ; Snapshot arrangement
-;
 ;
 MSG_FOLDER_RELOAD_TREE
 Lataa järjestely uudelleen
 ; Reload arrangement
 ;
-;
 MSG_ER_USER_UNKNOWN_TITLE
 Tuntematon käyttäjä
 ; Unknown user
-;
 ;
 MSG_ER_USER_UNKNOWN_BUTTON
 *_Ok
 ; *_Ok
 ;
-;
 MSG_ER_USER_UNKNOWN_ERROR
 Tuntematon käyttäjä '%s'.
 ; Unknown user '%s'.
-;
 ;
 MSG_HELP_CO_CA_COLSIG
 Postin allekirjoituksen näyttämiseen\n\
 käytettävä väri.
 ; The color that should be used to\n\
 ; print the signature of a mail.
-;
 ;
 MSG_ER_SPAM_NOT_ENOUGH_CLASSIFIED_MAILS
 Tätä ominaisuutta ei suositella käytettäväksi tähän\n\
@@ -7442,41 +6959,33 @@ Haluatko kytkeä tämän toiminnon jällen pois käytöstä?
 ; \n\
 ; Do you want to disable this option again?
 ;
-;
 MSG_ER_CANNOT_CREATE_SEMAPHORE
 Semaphore-rakennetta ei luotu.
 ; Can't create semaphore.
-;
 ;
 MSG_RE_HDR_FROM
 Keneltä
 ; From
 ;
-;
 MSG_RE_HDR_TO
 Kenelle
 ; To
-;
 ;
 MSG_RE_HDR_DATE
 Päiväys
 ; Date
 ;
-;
 MSG_RE_HDR_SUBJECT
 Aihe
 ; Subject
-;
 ;
 MSG_RE_VIRTUALMAIL
 Virtuaalisähköposti
 ; Virtual e-mail
 ;
-;
 MSG_CO_MIMECMD_PUBSCREEN
 %p  YAMin julkisen näytön nimi
 ; %p  Name of YAM's public screen
-;
 ;
 MSG_ER_ZOMBIE_FILES_EXIST
 Kaikkia väliaikaistiedostoja ei saatu poistettua.\n\
@@ -7492,21 +7001,17 @@ MIME-katseluohjelmia (esim. MultiView).
 ; which you may have used from within YAM, like MIME\n\
 ; viewers (e.g. MultiView).
 ;
-;
 MSG_ER_ZOMBIE_FILES_EXIST_BT
 _Yritä uudestaan|_Ohita
 ; _Retry|_Ignore
-;
 ;
 MSG_ER_ZOMBIE_FILES_EXIST_TITLE
 YAMin puhdistusvaroitus
 ; YAM cleanup warning
 ;
-;
 MSG_CO_SHOWALTPARTS
 Näytä _vaihtoehtoiset osat
 ; Show a_lternative parts
-;
 ;
 MSG_HELP_CO_CH_SHOWALTPARTS
 Jos valittu, 'multipart/alternative'-viestin\n\
@@ -7517,7 +7022,6 @@ piilossa, näytetään liitteinä.
 ; would otherwise remain hidden will be\n\
 ; displayed as attachments instead.
 ;
-;
 MSG_US_DIRECTORY_DOESNT_EXIST
 Postihakemisto '%s' käyttäjällä '%s' ei löydy.\n\
 \n\
@@ -7526,18 +7030,15 @@ Haluatko luoda sen nyt?
 ; \n\
 ; Do you want to create it now?
 ;
-;
 MSG_HELP_CO_BT_APPICONGETPOS
 Klikkaa saadakseni nykyisen\n\
 AppIcon-kuvakkeen paikan.
 ; Click to get the current\n\
 ; position of the AppIcon.
 ;
-;
 MSG_CO_MOVE_HAM_TO_INCOMING
 Siirrä 'ei roskapostia'-viestit takaisin Tulevat-kansioon
 ; Move 'not spam' e-mails back to _Incoming folder
-;
 ;
 MSG_HELP_CH_MOVE_HAM_TO_INCOMING
 Jos valittu, kaikki viestit, jotka olivat virheellisesti\n\
@@ -7548,11 +7049,9 @@ takaisin Tulevat-kansioon.
 ; as 'spam' and later manually marked as 'not spam' will be\n\
 ; automatically moved back to the Incoming folder.
 ;
-;
 MSG_CO_FILTER_HAM
 Käytä _suodattimia
 ; Apply _filters
-;
 ;
 MSG_HELP_CH_FILTER_HAM
 Jos valittu, viestin siirron jälkeen kaikkia\n\
@@ -7560,11 +7059,9 @@ käyttäjän määrittelemiä suodattimia käytetään siihen.
 ; If enabled, after moving the e-mail all the user\n\
 ; defined filters will be applied to it.
 ;
-;
 MSG_SHUTDOWN_SHUTTING_DOWN
 YAM suljetaan...
 ; Shutting down YAM...
-;
 ;
 MSG_HELP_CO_CY_FOLDERINFO
 Tiedot, jotka näytetään kansion\n\
@@ -7572,36 +7069,29 @@ nimenä.
 ; Information that should be displayed\n\
 ; as the label of the folder.
 ;
-;
 MSG_CO_FOLDERINFO01
 Kansion nimi
 ; Folder name
-;
 ;
 MSG_CO_FOLDERINFO02
 Kansion nimi (uusi)
 ; Folder name (new)
 ;
-;
 MSG_CO_FOLDERINFO03
 Kansion nimi (lukemattomat)
 ; Folder name (unread)
-;
 ;
 MSG_CO_FOLDERINFO04
 Kansion nimi (uudet/lukemattomat)
 ; Folder name (new/unread)
 ;
-;
 MSG_CO_FOLDERINFO05
 Kansion nimi (lukemattomat/uudet)
 ; Folder name (unread/new)
 ;
-;
 MSG_FO_EXPIREUNREAD
 myös lukemattomat
 ; also unread
-;
 ;
 MSG_HELP_FO_CH_EXPIREUNREAD
 Jos valittu, vanhat viestit poistetaan,\n\
@@ -7609,26 +7099,21 @@ vaikka niitä ei ole vielä luettu.
 ; If selected, old messages will be deleted,\n\
 ; even if they are not yet read.
 ;
-;
 MSG_WR_SENDNOW
 _Lähetä nyt
 ; _Send now
-;
 ;
 MSG_WR_SENDLATER
 Lähetä _myöhemmin
 ; Send _later
 ;
-;
 MSG_WR_MSENDNOW
 Lähetä nyt
 ; Send now
 ;
-;
 MSG_WR_MSENDLATER
 Lähetä myöhemmin
 ; Send later
-;
 ;
 MSG_ER_CONNECTIONBROKEN
 Yhteys palvelimeen '%s' keskeytyi \
@@ -7639,33 +7124,27 @@ Tämä voi johtua yhteyden katkaisemisesta.
 ; while trying to send command '%s'.\n\
 ; \n\
 ; This may be due to a connection dropped by the server.
-;
 ; SERVER, COMMAND
 ;
 MSG_WR_MSWITCH_MSG
 Viesti
 ; Message
 ;
-;
 MSG_WR_MSWITCH_ATT
 Liitteet
 ; Attachments
-;
 ;
 MSG_WR_MSWITCH_OPT
 Valinnat
 ; Options
 ;
-;
 MSG_CO_FWDMSG
 _Jatkolähetä viestit
 ; _Forward messages
 ;
-;
 MSG_CO_FWDMSG_INLINE
 sisällytetty
 ; inlined
-;
 ;
 MSG_HELP_CO_CY_FORWARDMODE
 Valitse tässä jatkolähettämisen oletustapa.\n\
@@ -7677,21 +7156,17 @@ tai se voidaan sisällyttää uuteen viestiin.
 ; message text can be put inlined to the\n\
 ; new message.
 ;
-;
 MSG_ABOUT_CURRENT_DEVELOPERS
 Nykyiset kehittäjät:
 ; Current Developers:
-;
 ;
 MSG_ABOUT_CONTRIBUTORS
 Avustajat:
 ; Contributors:
 ;
-;
 MSG_ABOUT_LOCALIZATION_CONTRIBUTORS
 Käännöksissä avustaneet:
 ; Localization Contributors:
-;
 ;
 MSG_ABOUT_GPL
 Tämä ohjelma on vapaa ohjelmisto (free software). Voit\n\
@@ -7703,11 +7178,9 @@ dokumenteista.
 ; GNU Public License. See the enclosed documents for\n\
 ; more details.
 ;
-;
 MSG_ABOUT_3RD_PARTY_SOFTWARE
 Tämä ohjelma käyttää seuraavia muiden tahojen tekemiä ohjelmia:
 ; This program uses the following third party software:
-;
 ;
 MSG_ABOUT_YAM_NEWS
 Uusimmat YAMia koskevat uutiset löytyvät YAMin\n\
@@ -7715,11 +7188,9 @@ tukisivulta \0335http://yam.ch/\033n
 ; The latest news about YAM can be found at the\n\
 ; YAM Support Site at \0335http://yam.ch/\033n
 ;
-;
 MSG_WR_VIEW
 Näytä
 ; View
-;
 ;
 MSG_CONFIG_MODIFIED
 Asetuksia on muutettu,\n\
@@ -7731,16 +7202,13 @@ Miten haluat jatkaa?
 ; \n\
 ; How do you want to proceed?
 ;
-;
 MSG_CONFIG_MODIFIED_GAD
 *_Tallenna nyt|_Lopeta tallentamatta|_Peruuta
 ; *_Save now|_Quit without saving|_Cancel
 ;
-;
 MSG_ABOOK_MODIFIED_GAD
 *_Tallenna nyt|_Lopeta tallentamatta|_Peruuta
 ; *_Save now|_Quit without saving|_Cancel
-;
 ;
 MSG_HELP_CO_BT_MIMEIMPORT
 Toiminnolla voidaan tuoda MIME-tyyppiasetukset\n\
@@ -7750,11 +7218,9 @@ muista MIME-tiedostoista, kuten 'MIME.prefs',\n\
 ; third party MIME files, such as 'MIME.prefs',\n\
 ; 'mailcap' or 'mime.types'.
 ;
-;
 MSG_AB_INVALIDSECURITY_TITLE
 Turvallisuusvaroitus
 ; Security warning
-;
 ;
 MSG_AB_INVALIDSECURITY
 Tämä osoitekirjan osoitteen oletukseksi on asetettu\n\
@@ -7770,16 +7236,13 @@ oletusturvallisuusasetukset?
 ; Do you want to reset the default security\n\
 ; setting for this entry?
 ;
-;
 MSG_AB_INVALIDSECURITY_GADS
 *_Kyllä|_Ei
 ; *_Yes|_No
 ;
-;
 MSG_WR_INVALIDSECURITY_TITLE
 Turvallisuusvaroitus
 ; Security warning
-;
 ;
 MSG_WR_INVALIDSECURITY
 Vastaanottajan turvallisuusasetus osoitekirjassa\n\
@@ -7798,13 +7261,11 @@ Viestiä ei allekirjoiteta eikä salata.
 ; but the required PGP installation wasn't found.\n\
 ; \n\
 ; The message will be neither signed or encrypted.
-;
 ; RECIPIENT
 ;
 MSG_WR_INVALIDSECURITY_GADS
 *_Ok|_Peruuta
 ; *_Ok|_Cancel
-;
 ;
 MSG_ER_FILEENCODE
 Tiedostoa '%s' pakatessa tapahtui virhe.\n\
@@ -7816,7 +7277,6 @@ yritä sitten koostaa viesti uudestaan.
 ; \n\
 ; Please make sure that the file exists and is readable, \
 ; then try to compose the message again.
-;
 ; FILENAME
 ;
 MSG_ER_MISSINGATTFILE
@@ -7830,7 +7290,6 @@ yritä sitten koostaa viesti uudestaan.
 ; \n\
 ; Please make sure that the file exists and is readable, \
 ; then try to compose the message again.
-;
 ; FILENAME
 ;
 MSG_ER_INVALIDATTFILE
@@ -7842,7 +7301,6 @@ Tarkista, että tiedosto on olemassa ja luettavissa.
 ; of a message.\n\
 ; \n\
 ; Please make sure that the file exists and is readable.
-;
 ; FILENAME
 ;
 MSG_ER_PRINTER_OFFLINE
@@ -7853,11 +7311,9 @@ Tarkista tulostin tai yritä myöhemmin uudestaan.
 ; \n\
 ; Please check the printer or try again later.
 ;
-;
 MSG_ER_PRINTER_OFFLINE_GADS
 *_Yritä uudestaan|_Ohita|_Peruuta
 ; *_Retry|_Ignore|_Cancel
-;
 ;
 MSG_ER_PRINTER_NOPAPER
 Tulostimessa ei ole paperia.\n\
@@ -7867,11 +7323,9 @@ Tarkista tulostin tai yritä myöhemmin uudestaan.
 ; \n\
 ; Please check the printer or try again later.
 ;
-;
 MSG_ER_PRINTER_NOPAPER_GADS
 *_Yritä uudestaan|_Ohita|_Peruuta
 ; *_Retry|_Ignore|_Cancel
-;
 ;
 MSG_ER_PRINTER_FAILED
 Virhe lähetettäessä tietoa tulostimelle.\n\
@@ -7884,56 +7338,45 @@ jos dokumentti ei tulostunut oikein.
 ; Please check your printer and try again if\n\
 ; your document wasn't printed properly.
 ;
-;
 MSG_MA_EDIT
 Muokkaa
 ; Edit
-;
 ;
 MSG_MA_EDIT_UNDO
 Peru
 ; Undo
 ;
-;
 MSG_MA_EDIT_REDO
 Tee uudelleen
 ; Redo
-;
 ;
 MSG_MA_EDIT_CUT
 Leikkaa
 ; Cut
 ;
-;
 MSG_MA_EDIT_COPY
 Kopioi
 ; Copy
-;
 ;
 MSG_MA_EDIT_PASTE
 Liimaa
 ; Paste
 ;
-;
 MSG_MA_EDIT_SALL
 Valitse kaikki
 ; Select all
-;
 ;
 MSG_MA_EDIT_SNONE
 Poista valinnat
 ; Select none
 ;
-;
 MSG_WR_SELECTNONE
 Poista valinnat
 ; Select none
 ;
-;
 MSG_MA_INVALIDMFILE_TITLE
 Virheellinen postitiedosto
 ; Invalid mail file found
-;
 ;
 MSG_MA_INVALIDMFILE
 Tiedosto '%s' kansiossa '%s'\n\
@@ -7948,14 +7391,11 @@ ja on oikeassa postimuodossa.
 ; \n\
 ; Please make sure that the file is readable\n\
 ; and is a valid mail file.
-;
 ; FILENAME, FOLDER
 ;
 MSG_MA_INVALIDMFILE_BT
 *_Yritä uudelleen|_Ohita|Ohita _kaikki|P_oista|_Peruuta
 ; *_Retry|_Ignore|Ignore _All|_Delete|_Cancel
-;
-; ***NEW***
 ;
 MSG_ER_CANNOT_READ_INDEX
 Virhe luettaessa indeksitiedostoa '%s' kansiossa '%s'.\n\
@@ -7966,7 +7406,6 @@ suojausasetukset ovat oikein.
 ; \n\
 ; Please check that you can read the contents of the file and \
 ; that the permission settings are correct.
-;
 ; FILENAME, FOLDER
 ;
 MSG_ER_CANNOT_WRITE_INDEX
@@ -7978,7 +7417,6 @@ tiedosto kirjoitetaan.
 ; \n\
 ; Please check that you can write to the directory where the \
 ; file is supposed to be stored.
-;
 ; FILENAME, FOLDER
 ;
 MSG_ER_INDEX_CORRUPTED
@@ -7992,7 +7430,6 @@ aloitettiin tai tarvitaan ongelman ratkaisemiseksi.
 ; \n\
 ; The folder was flagged as 'unloaded' and an index update \
 ; was initiated or is required to solve the problem.
-;
 ; FILENAME, FOLDER, POSITION, MAILFILE, MOREBYTES
 ;
 MSG_ER_UNKNOWN_MIME_ENCODING
@@ -8004,7 +7441,6 @@ levylle ja yritä toisella purkamisohjelmalla.
 ; \n\
 ; YAM failed to decode a part of the message. Save the message \
 ; to disk and try with a different decoder.
-;
 ; ENCODING_TYPE, FILENAME
 ;
 MSG_ER_UNKNOWN_HEADER_ENCODING
@@ -8014,7 +7450,6 @@ YAM ei voi näyttää jotain viestin otsikkoa.
 ; Unknown header encoding '%s' in mail file '%s'.\n\
 ; \n\
 ; YAM cannot display a certain header in this message.
-;
 ; ENCODING_TYPE, FILENAME
 ;
 MSG_ER_UNEXPECTED_MULTIPART_EOF
@@ -8025,7 +7460,6 @@ Viesti näyttää katkenneen kesken.
 ; Unexpected EOF while decoding multipart message in file '%s'.\n\
 ; \n\
 ; The message seems to be truncated.
-;
 ; FILENAME
 ;
 MSG_ER_MIME_ERROR
@@ -8035,7 +7469,6 @@ Viestissä on virheellisiä MIME-osia, tai se on tyhjä tai katkennut.
 ; Couldn't extract MIME message from file '%s'.\n\
 ; \n\
 ; The message contains malformed MIME parts, or it is empty or truncated.
-;
 ; FILENAME
 ;
 MSG_ER_UNEXPECTED_UUE_EOF
@@ -8045,7 +7478,6 @@ tiedostoa '%s'.\n\
 Viesti näyttää katkenneen kesken.
 ; Unexpected EOF while decoding the UUcode encoded file '%s'. \
 ; The message seems to be truncated.
-;
 ; FILENAME
 ;
 MSG_ER_INVALID_UUE_LENGTH
@@ -8057,83 +7489,67 @@ viesti on katkennut.
 ; Invalid line length %ld in UUcode encoded file '%s'.\n\
 ; \n\
 ; Either a faulty UUcode encoder was used or the message is truncated.
-;
 ; SIZE, FILENAME
 ;
 MSG_RE_HDR_REPLYTO
 Vastaus
 ; Reply-To
 ;
-;
 MSG_FI_FROM_FIELD
 \ebKeneltä\en
 ; \ebFrom\en
-;
 ;
 MSG_FI_TO_FIELD
 \ebKenelle\en
 ; \ebTo\en
 ;
-;
 MSG_FI_CC_FIELD
 \ebKopio\en
 ; \ebCC\en
-;
 ;
 MSG_FI_REPLYTO_FIELD
 \ebVastaus\en
 ; \ebReply-To\en
 ;
-;
 MSG_FI_SUBJECT_FIELD
 \ebAihe\en
 ; \ebSubject\en
-;
 ;
 MSG_FI_DATE_FIELD
 \ebPäiväys\en
 ; \ebDate\en
 ;
-;
 MSG_FO_TO_PATTERN
 _Pattern (To:/CC:)
 ; _Pattern (To:/CC:)
-;
 ;
 MSG_FO_TO_ADDRESS
 Vastaanottajan osoite (_Kenelle:)
 ; Destination address (_To:)
 ;
-;
 MSG_FO_FROM_ADDRESS
 Lähettäjän osoite (Ke_neltä:)
 ; Sender address (_From:)
-;
 ;
 MSG_FO_REPLYTO_ADDRESS
 _Vastausosoite (Vastaus:)
 ; _Reply address (Reply-To:)
 ;
-;
 MSG_RETRY_HOMEPAGE_QUIT_GAD
 Yritä uudestaan|Kotisivulle|Lopeta
 ; Try again|Visit homepage|Quit
-;
 ;
 MSG_HOMEPAGE_QUIT_GAD
 Kotisivulle|Lopeta
 ; Visit homepage|Quit
 ;
-;
 MSG_MA_EDIT_DELETE
 Poista
 ; Delete
 ;
-;
 MSG_WR_DELETE
 Poista
 ; Delete
-;
 ;
 MSG_ER_B64DEC_FILEIO
 Tiedoston I/O-virhe purettaessa Base64 MIME-osaa \
@@ -8147,7 +7563,6 @@ lähdetiedostoa voitu avata.
 ; This may be caused by insufficient space on the volume the \
 ; file was being decoded to, or because the source file wasn't \
 ; accessible.
-;
 ; PARTNR, MSGFILE
 ;
 MSG_ER_B64DEC_WARN
@@ -8164,7 +7579,6 @@ Base64-osan vaurioitumisesta.
 ; This may be caused by an incorrect encoding done by \
 ; the sending mail client or because the Base64 part has \
 ; been malformed during transmission.
-;
 ; PARTNR, MSGFILE
 ;
 MSG_ER_B64DEC_UNEXP
@@ -8178,7 +7592,6 @@ käsittelemään purettavaa tietoa.
 ; \n\
 ; Either there's no data to decode or YAM can't access \
 ; the encoded data.
-;
 ; PARTNR, MSGFILE
 ;
 MSG_MA_ADD_WHICH_ADDRESS
@@ -8190,18 +7603,15 @@ Kumpi osoite lisätään osoitekirjaasi?
 ; the return address (Reply-To) is \033b<%s>\033n.\n\
 ; \n\
 ; Which address do you want to add to your address book?
-;
 ; ADDRESS, ADDRESS
 ;
 MSG_CO_SCRIPTACTION
 Toiminto (Nimi)
 ; Action (Name)
 ;
-;
 MSG_CO_SCRIPTPATH
 Polku
 ; Path
-;
 ;
 MSG_ER_ICONOBJECT_WARNING
 Virhe ladattaessa kuvaketta \
@@ -8218,7 +7628,6 @@ välttääksesi varoitukset.
 ; the necessary icons, or disable the theme to avoid \
 ; further warnings.
 ;
-;
 MSG_ER_THEMEVER_FALLBACK
 Aktiivinen teema '%s' ei ole yhteensopivaa versiota \
 eikä sitä ladattu. Oletusteema on aktivoitu tilalle.\n\
@@ -8233,7 +7642,6 @@ käytöstä asetuksissa.
 ; Please make sure to update the theme to a compatible \
 ; version or disable it in the configuration.
 ;
-;
 MSG_ER_THEMEVER_IGNORE
 YAMin oletusteeman versio on virheellinen.\n\
 \n\
@@ -8245,7 +7653,6 @@ päivittää oletusteema yhteensopivaan versioon.
 ; The theme loading process was aborted and you are \
 ; adviced to upgrade the default theme to a compatible \
 ; version.
-;
 ;
 MSG_ER_DATATYPE_ERROR
 Virhe ladattaessa kuvatiedostoa '%s' \
@@ -8260,7 +7667,6 @@ toimii (eli kuva näkyy normaalisti MultiView-ohjelmalla).
 ; your datatypes system correctly set up (e.g. that the \
 ; image displays properly with MultiView).
 ;
-;
 MSG_ER_IMAGEOBJECT_WARNING
 Virhe ladattaessa kuvatiedostoa '%s' \
 hakemistosta '%s'.\n\
@@ -8274,7 +7680,6 @@ on määritelty viimeisimmän teeman version asetuksissa.
 ; necessary images as defined in the latest theme version \
 ; layout.
 ;
-;
 MSG_ER_THEME_FATAL
 YAM ei pystynyt lataamaan oletusteemaa ja teeman \
 lataus keskeytettiin.\n\
@@ -8286,7 +7691,6 @@ siellä on YAMin mukana tullut oletusteema.
 ; \n\
 ; Please make sure that your themes directory is readable and \
 ; contains the correct default theme distributed with YAM.
-;
 ;
 MSG_ER_THEME_FALLBACK
 Aktiivinen teema '%s' on joko tavoittamattomissa tai se \
@@ -8301,11 +7705,9 @@ ja oikeanmuotoinen YAM-teema.
 ; Please make sure your selected theme is readable \
 ; and a valid YAM theme.
 ;
-;
 MSG_ER_THEME_ACTIVATED_TITLE
 YAM pitää käynnistää uudelleen
 ; YAM restart required
-;
 ;
 MSG_ER_THEME_ACTIVATED
 Ennen kuin valittu teema voidaan ottaa käyttöön, \n\
@@ -8314,23 +7716,19 @@ YAM uudelleen.
 ; Before the selected theme can be applied, you have\n\
 ; to save the configuration and restart YAM.
 ;
-;
 MSG_FOLDER_ALLTOREAD
 Merkitse kansio luetuksi
 ; Mark folder read
 ;
-;
 MSG_EA_REMOVEPHOTO
 Pois_ta
 ; Remo_ve
-;
 ;
 MSG_HELP_EA_BT_REMOVEPHOTO
 'Unohda' tämä kuva\n\
 (tiedosto levyllä jää jäljelle).
 ; 'Forget' this picture (the\n\
 ; file on disk will remain).
-;
 ;
 MSG_HELP_CO_CH_NOTISOUND
 Soita äänitiedosto\n\
@@ -8339,7 +7737,6 @@ kun saat uuden viestin.
 ; when you receive\n\
 ; new mail.
 ;
-;
 MSG_HELP_CO_CH_NOTICMD
 Suorita komento,\n\
 kun saat uuden viestin.
@@ -8347,11 +7744,9 @@ kun saat uuden viestin.
 ; when you received\n\
 ; new mail.
 ;
-;
 MSG_HELP_CO_BT_MORE
 Lisää sääntö tähän suodattimeen.
 ; Add a rule to this filter.
-;
 ;
 MSG_HELP_CO_BT_LESS
 Poista viimeinen sääntö\n\
@@ -8359,13 +7754,11 @@ tästä suodattimesta.
 ; Remove the last rule\n\
 ; from this filter.
 ;
-;
 MSG_HELP_CO_BT_FILTERUP
 Siirrä tätä suodatinta\n\
 ylöspäin listassa.
 ; Move this filter\n\
 ; up in the list.
-;
 ;
 MSG_HELP_CO_BT_FILTERDOWN
 Siirrä tätä suodatinta\n\
@@ -8373,63 +7766,52 @@ alaspäin listassa.
 ; Move this filter\n\
 ; down in the list.
 ;
-;
 MSG_HELP_CO_PO_APLAY
 Avaa tiedostovalitsin\n\
 soitettavan tiedoston valitsemiseksi.
 ; Open a file requester to\n\
 ; select the file to play.
 ;
-;
 MSG_HELP_CO_BT_APLAY
 Kokeile ääntä.
 ; Test the sound.
-;
 ;
 MSG_HELP_CO_ST_DESCRIPTION
 Tämän MIME-tyypin kuvaus.
 ; A custom description for\n\
 ; this MIME type.
 ;
-;
 MSG_HELP_CO_LV_REXX
 Komentojonojen lista.
 ; List of scripts.
-;
 ;
 MSG_HELP_CO_BT_UPDATENOW
 Tarkista päivitykset nyt.
 ; Perform a check\n\
 ; for updates now.
 ;
-;
 MSG_HELP_WR_LV_ATTACH
 Tämän viestin liitteet.
 ; List of attachments\n\
 ; in this message.
 ;
-;
 MSG_QUICKSEARCH_STR_CONTROLCHAR
 k
 ; k
-;
 ;
 MSG_CO_UPDATE_NEVER
 Ei koskaan
 ; Never
 ;
-;
 MSG_MA_EXECUTESCRIPT_TITLE
 Valitse suoritettava komentojono
 ; Select script to execute
-;
 ;
 MSG_HELP_FI_BT_NONE
 Jätä kaikki muut kuin nykyinen\n\
 kansio pois etsinnästä.
 ; Exclude all folders from the\n\
 ; search, except the current one.
-;
 ;
 MSG_MA_CONFIRMFILTER_ALL
 Jos jatkat, kaikki kansion '%s'\n\
@@ -8440,7 +7822,6 @@ Haluatko jatkaa?
 ; '%s' will be filtered.\n\
 ; \n\
 ; Do you want to proceed?
-;
 ; FOLDER
 ;
 MSG_MA_CONFIRMFILTER_SELECTED
@@ -8453,13 +7834,11 @@ Haluatko jatkaa?
 ; are going to be filtered.\n\
 ; \n\
 ; Do you want to proceed?
-;
 ; FOLDER
 ;
 MSG_AB_XML
 XML-osoitekirja (*.xml)
 ; XML address book (*.xml)
-;
 ;
 MSG_MA_FILTER_STATS_SPAM
 Suodatus tehty:\n\
@@ -8473,10 +7852,9 @@ Suodatus tehty:\n\
 ; \n\
 ; %3ld messages checked,\n\
 ; %3ld forwarded,\n\
-; %3ld archived,\n\
+; %3ld moved,\n\
 ; %3ld deleted,\n\
 ; %3ld classified as spam
-;
 ; COUNT, COUNT, COUNT, COUNT, COUNT
 ;
 MSG_TR_FILTER_STATS_SPAM
@@ -8502,13 +7880,11 @@ Suodatus tehty:\n\
 ; %3ld moved,\n\
 ; %3ld deleted,\n\
 ; %3ld classified as spam
-;
 ; COUNT, COUNT, COUNT, COUNT, COUNT, COUNT, COUNT, COUNT
 ;
 MSG_FCHANGE_WARN_TITLE
 Tiedoston muutosvaroitus
 ; Filechange warning
-;
 ;
 MSG_FCHANGE_WARN
 Kun muokkasit viestin tekstiä\n\
@@ -8527,13 +7903,11 @@ tehdyt muutokset?
 ; Do you really want to use the text of\n\
 ; the external editor dropping the changes\n\
 ; done in the internal editor?
-;
 ; NUMBER
 ;
 MSG_LOG_SENDING_FAILED
 %ld viestin lähettäminen SMTP-palvelimella '%s' epäonnistui
 ; Sending %ld message(s) using SMTP server '%s' failed
-;
 ; COUNT, HOST
 ;
 MSG_HELP_EA_ST_BIRTHDAY
@@ -8546,7 +7920,6 @@ MSG_ERROR_THREADS
 Ketjujärjestelmää ei saatu alustettua
 ; Cannot initialize thread system.
 ;
-;
 MSG_ERROR_PLAYSOUND
 Virhe äänitiedoston  '%s' soittamisessa.\n\
 \n\
@@ -8555,13 +7928,11 @@ tai sound.datatypen virheellisestä toiminnasta.
 ; An error occurred while trying to play the sound file '%s'.\n\
 ; \n\
 ; This could be either due to a broken or unsupported sound file or because your sound datatype is not properly working.
-;
 ; FILE
 ;
 MSG_WR_CHARSET
 _Kirjaimisto
 ; _Charset
-;
 ;
 MSG_HELP_WR_PO_CHARSET
 Käytä ponnahdusnappia tämän viestin kirjaimiston\n\
@@ -8571,11 +7942,9 @@ käytössä oleva kirjaimisto.
 ; you would like YAM to use for this mail. This\n\
 ; defaults to the global character set.
 ;
-;
 MSG_ABOUTYAM
 Tietoa YAM-ohjelmasta
 ; About YAM
-;
 ;
 MSG_ER_CONNECTERR_SOCKET_IN_USE_POP3
 Yhdistäminen palveluun '%s' tilillä '%s' ei onnistunut.\n\
@@ -8586,7 +7955,6 @@ Sulje muut käytössä olevat siirrot.
 ; \n\
 ; A TCP/IP socket connection seems to be already active. \
 ; Please close any other existing transfers.
-;
 ; HOST, ACCOUNT
 ;
 MSG_ER_CONNECTERR_TIMEDOUT_POP3
@@ -8597,7 +7965,6 @@ Postipalvelin ei vastannut määritellyssä ajassa.
 ; \n\
 ; The mail server didn't respond within the predefined \
 ; time frame and therefore timed out.
-;
 ; HOST, ACCOUNT
 ;
 MSG_ER_CONNECTERR_NO_SOCKET_POP3
@@ -8610,7 +7977,6 @@ että TCP/IP-pino on käynnissä ja toimii normaalisti.
 ; YAM wasn't able to establish a socket connection \
 ; to the mail server. Please make sure that your TCP/IP \
 ; stack is online and working properly.
-;
 ; HOST, ACCOUNT
 ;
 MSG_ER_CONNECTERR_NO_NONBLOCKIO_POP3
@@ -8625,7 +7991,6 @@ TCP/IP-pino voi avata non-blocking I/O-yhteyksiä.
 ; connection to the mail server. Please make sure that \
 ; your TCP/IP stack can establish non-blocking I/O \
 ; connections.
-;
 ; HOST, ACCOUNT
 ;
 MSG_ER_UNKNOWN_HOST_POP3
@@ -8636,7 +8001,6 @@ osoite on virheellinen.
 ; Unknown POP3 server '%s' of account '%s'.\n\
 ; \n\
 ; TCP/IP is offline or the server address is invalid.
-;
 ; HOST, ACCOUNT
 ;
 MSG_ER_CANNOT_CONNECT_POP3
@@ -8646,7 +8010,6 @@ Postipalvelin on pois käytöstä tai ei tue POP3-protokollaa.
 ; Couldn't connect to host '%s' of account '%s'.\n\
 ; \n\
 ; The mail server is currently down or doesn't support the POP3 protocols.
-;
 ; HOST, ACCOUNT
 ;
 MSG_ER_POP3WELCOME
@@ -8660,7 +8023,6 @@ ja yhteys katkaistiin.\n\
 ; \n\
 ; %s\n\
 ; \n
-;
 ; SERVER, ACCOUNT, TEXT
 ;
 MSG_ER_BADRESPONSE_POP3
@@ -8673,13 +8035,11 @@ Postipalvelimen ei voinut suorittaa komentoa ja vastasi ylläolevalla virheviesti
 ; \n\
 ; The mail server couldn't execute the command \
 ; and replied with the above error message.
-;
 ; SERVER, ACCOUNT, COMMAND, TEXT
 ;
 MSG_ER_INITTLS_POP3
 TLSv1/SSLv3-istuntoa palvelussa '%s' tilillä '%s' ei voitu alustaa.
 ; Couldn't initialize TLSv1/SSLv3 session with host '%s' of account '%s'.
-;
 ; HOST, ACCOUNT
 ;
 MSG_ER_NO_APOP
@@ -8687,7 +8047,6 @@ POP3-palvelin '%s' tilillä '%s' ei tue APOP-toimintoa. \
 Kytke APOP pois asetuksissa.
 ; The POP3 server '%s' of account '%s' doesn't support APOP. \
 ; Please disable APOP in the configuration.
-;
 ; HOST, ACCOUNT
 ;
 MSG_ER_CONNECTERR_SOCKET_IN_USE_SMTP
@@ -8699,7 +8058,6 @@ Sulje kaikki muut siirrot.
 ; \n\
 ; A TCP/IP socket connection seems to be already active. \
 ; Please close any other existing transfers.
-;
 ; HOST
 ;
 MSG_ER_CONNECTERR_TIMEDOUT_SMTP
@@ -8710,7 +8068,6 @@ Postipalvelin ei vastannut määritellyssä ajassa.
 ; \n\
 ; The mail server didn't respond within the predefined \
 ; time frame and therefore timed out.
-;
 ; HOST
 ;
 MSG_ER_CONNECTERR_NO_SOCKET_SMTP
@@ -8723,7 +8080,6 @@ että TCP/IP-pino on käynnissä ja toimii normaalisti.
 ; YAM wasn't able to establish a socket connection \
 ; to the mail server. Please make sure that your TCP/IP \
 ; stack is online and working properly.
-;
 ; HOST
 ;
 MSG_ER_CONNECTERR_NO_NONBLOCKIO_SMTP
@@ -8738,13 +8094,11 @@ TCP/IP-pino voi avata non-blocking I/O-yhteyksiä.
 ; connection to the mail server. Please make sure that \
 ; your TCP/IP stack can establish non-blocking I/O \
 ; connections.
-;
 ; HOST
 ;
 MSG_ER_INITTLS_SMTP
 TLSv1/SSLv3-istuntoa palvelussa '%s' ei voitu alustaa.
 ; Couldn't initialize TLSv1/SSLv3 session with host '%s'.
-;
 ; HOST
 ;
 MSG_ER_NOSTARTTLS_SMTP
@@ -8752,7 +8106,6 @@ SMTP-palvelimesi '%s' ei tue TLS/SSL-protokollaa. \
 Kytke tämä toiminto pois asetuksissa.
 ; Your SMTP server '%s' doesn't support TLS/SSL. \
 ; Please disable this option in the configuration.
-;
 ; HOST
 ;
 MSG_ER_BADRESPONSE_SMTP
@@ -8767,7 +8120,6 @@ Postipalvelimen ei voinut suorittaa komentoa ja vastasi ylläolevalla virheviesti
 ; \n\
 ; The mail server couldn't execute the command \
 ; and replied with the above error message.
-;
 ; SERVER, COMMAND, TEXT
 ;
 MSG_ER_CANNOT_CONNECT_SMTP
@@ -8777,7 +8129,6 @@ Postipalvelin on pois käytöstä tai ei tue SMTP-protokollaa.
 ; Couldn't connect to host '%s'.\n\
 ; \n\
 ; The mail server is currently down or doesn't support the SMTP protocols.
-;
 ; HOS
 ;
 MSG_ER_UNKNOWN_HOST_SMTP
@@ -8787,7 +8138,6 @@ TCP/IP ei ole yhteydessä tai palvelimen osoite on virheellinen.
 ; Unknown SMTP server '%s'.\n\
 ; \n\
 ; TCP/IP is offline or the server address is invalid.
-;
 ; HOST
 ;
 MSG_ER_NO8BITMIME_SMTP
@@ -8806,21 +8156,17 @@ muuten viesti voi olla väärässä muodossa.
 ; and re-edit the e-mail before trying to send it again,\n\
 ; otherwise the e-mail may be malformed.
 ;
-;
 MSG_CO_FOLDERDBLCLICK
 Kaksoisklikkaa kansiota avataksesi kansion asetukset
 ; Double click on folder opens folder settings
-;
 ;
 MSG_MA_ATTACHMENT_DELETE
 Poista
 ; Delete
 ;
-;
 MSG_MA_ATTACHMENT_DELETESEL
 Poista valitut
 ; Delete selected
-;
 ;
 MSG_MA_DELETESELECTEDREQUEST
 Seuraavat liitteet poistetaan:\n\
@@ -8833,17 +8179,14 @@ Haluatko varmasti jatkaa?
 ; \n\
 ; Do you really want to proceed?
 ;
-;
 MSG_LOG_DELETEDATT
 Poistettu liitteet viestistä '%s' kansiossa '%s'
 ; Deleted attachment(s) of message '%s' in folder '%s'
-;
 ; MAILFILE, FOLDER
 ;
 MSG_MA_DELETEATT
 Poista
 ; Delete
-;
 ;
 MSG_MA_DELETEATTREQUEST
 Kaikki valittujen viestien\n\
@@ -8855,21 +8198,17 @@ Haluatko varmasti jatkaa?
 ; \n\
 ; Do you really want to proceed?
 ;
-;
 MSG_MA_ATTACHMENT_DELETEALL
 Poista kaikki
 ; Delete all
-;
 ;
 MSG_MA_MDELETEATT
 Poista
 ; Delete
 ;
-;
 MSG_CO_MAPFOREIGNCHARS
 Muuta ulkomaiset merkit ASCII-muotoon
 ; Map foreign chars to ASCII
-;
 ;
 MSG_HELP_CO_MAPFOREIGNCHARS
 Jos valittu, kirjaimet joita ei voi muuttaa\n\
@@ -8880,26 +8219,21 @@ niitä muistuttavaan ASCII-muotoon.
 ; will be mapped to looklike ASCII\n\
 ; sequences.
 ;
-;
 MSG_MA_NAVIGATION
 Navigaatio
 ; Navigation
-;
 ;
 MSG_MA_MNEXTTH
 Ketjun seuraava viesti
 ; Next message in thread
 ;
-;
 MSG_MA_MPREVTH
 Ketjun edellinen viesti
 ; Previous message in thread
 ;
-;
 MSG_CO_GLOBALMAILTHREADS
 Etsi saman ketjun viestejä kaikista kansioista
 ; Search for mails of same thread in all folders
-;
 ;
 MSG_HELP_CO_CH_GLOBALMAILTHREADS
 Jos valittu, ketjun viestejä etsitään\n\
@@ -8910,7 +8244,6 @@ saman kansion posteista.
 ; folders rather than only searching for\n\
 ; mails in the same folder.
 ;
-;
 MSG_FILE_OVERWRITE
 Tiedosto '%s' on jo olemassa\n\
 \n\
@@ -8918,19 +8251,16 @@ Kirjoitetaanko tämän tiedoston päälle?
 ; File '%s' already exists.\n\
 ; \n\
 ; Do you want to overwrite it?
-;
 ; FILENAME
 ;
 MSG_ER_USER_DIR_MISSING
 Hakemistoa '%s' eli käyttäjän '%s' kotihakemistoa ei löydy.
 ; The home directory '%s' of user '%s' does not exist.
-;
 ; PATH, USERNAME
 ;
 MSG_CO_TEXTCOLORS_READ
 Näytä tekstin _värit
 ; Show te_xt colors
-;
 ;
 MSG_HELP_CO_CH_TEXTCOLORS_READ
 Käytä tekstin värejä osoittamaan erityiset\n\
@@ -8938,11 +8268,9 @@ tekstialueet (kuten sitaatit jne.)
 ; Use text colors to signal special\n\
 ; text passages, (e.g. quotations, etc.)
 ;
-;
 MSG_CO_TEXTSTYLES_READ
 Näytä tekstin _tyylit
 ; Show te_xt styles
-;
 ;
 MSG_HELP_CO_CH_TEXTSTYLES_READ
 Tulkitse merkit '/', '*', '_' ja '#'\n\
@@ -8950,11 +8278,9 @@ tekstityylien kontrollimerkeiksi.
 ; Interpret '/', '*', '_' and '#' as\n\
 ; control characters for text styles.
 ;
-;
 MSG_CO_TEXTCOLORS_WRITE
 Näytä tekstin _värit
 ; Show tex_t colors
-;
 ;
 MSG_HELP_CO_CH_TEXTCOLORS_WRITE
 Käytä tekstin värejä osoittamaan erityiset\n\
@@ -8962,12 +8288,9 @@ tekstialueet (kuten sitaatit jne.)
 ; Use text colors to signal special\n\
 ; text passages, (e.g. quotations, etc.)
 ;
-;
 MSG_CO_TEXTSTYLES_WRITE
 Näytä tekstin _tyylit
 ; Show te_xt styles
-;
-; ***NEW***
 ;
 MSG_HELP_CO_CH_TEXTSTYLES_WRITE
 Tulkitse merkit '/', '*', '_' ja '#'\n\
@@ -8975,41 +8298,33 @@ tekstityylien kontrollimerkeiksi.
 ; Interpret '/', '*', '_' and '#' as\n\
 ; control characters for text styles.
 ;
-;
 MSG_CO_FONTSETTINGS
 Kirjasinasetukset
 ; Font settings
-;
 ;
 MSG_CO_FIXEDFONT_WRITE
 Käytä _tasalevyistä kirjasinta
 ; Use _fixed font
 ;
-;
 MSG_RE_TEXTCOLORS
 Tekstin värit?
 ; Text colors?
-;
 ;
 MSG_WR_TEXTSTYLES
 Tekstin tyylit?
 ; Text styles?
 ;
-;
 MSG_WR_TEXTCOLORS
 Tekstin värit?
 ; Text colors?
-;
 ;
 MSG_WR_FIXEDFONT
 Tekstin tyylit?
 ; Fixed font?
 ;
-;
 MSG_CO_SPAM_OPTIMIZE_TRAININGDATA
 _Optimoi opettelutiedot
 ; _Optimize training data
-;
 ;
 MSG_HELP_BT_OPTIMIZE_TRAININGDATA
 Poistaa opettelutiedoista harvinaiset sanat\n\
@@ -9018,7 +8333,6 @@ roskapostin käsittely nopeutuisi.
 ; Removes very infrequent words from the training\n\
 ; data to speed up loading of training data and\n\
 ; increase processing speed of spam mails.
-;
 ;
 MSG_CO_SPAM_OPTIMIZE_TRAININGDATA_ASK
 Oletko varma, että haluat optimoida roskapostisuodattimen\n\
@@ -9034,11 +8348,9 @@ käyttää vähemmän muistia.
 ; afterwards, but the filter process will be faster and\n\
 ; use less memory.
 ;
-;
 MSG_CO_SPAM_STATISTICS
 %ld (%ld sanaa)
 ; %ld (%ld words)
-;
 ;
 MSG_ER_WRONG_DOB_FORMAT
 Syntymäpäivä on väärässä muodossa. Oikea muoto on '%s'\n\
@@ -9063,13 +8375,11 @@ Vuosiluvun pitää olla 1900 tai enemmän
 ; %%Y  - year with leading zeros (4 digits)\n\
 ; %%-Y - year without leading zeros (4 digits)\n\
 ; The year number must be greater or equal 1900.
-;
 ; DOBFORMAT
 ;
 MSG_CO_NOTIOS41SYSTEM
 AmigaOS_4.1 ilmoitusjärjestelmä
 ; AmigaOS_4.1 notification system
-;
 ;
 MSG_HELP_CO_CH_NOTIOS41SYSTEM
 Jos valittu, YAM käyttää AmigaOS4.1:n\n\
@@ -9080,16 +8390,13 @@ Tähän tarvitaan vähintään application.libraryn V53.2
 ; system to notify the user about new received mails.\n\
 ; This requires at least application.library V53.2.
 ;
-;
 MSG_USERNAME_FALLBACK
 Matti Mainio
 ; John Doe
 ;
-;
 MSG_RE_DEFAULT_MIMEPART_NAME
 Osa %ld.%ld
 ; Part %ld.%ld
-;
 ; PARENTNUMBER PARTNUMER
 ;
 MSG_OPEN_WRITEWINDOWS
@@ -9100,43 +8407,33 @@ Miten haluat jatkaa?
 ; \n\
 ; How do you want to proceed?
 ;
-;
 MSG_OPEN_WRITEWINDOWS_GAD
 *_Tallenna nyt|_Lopeta tallentamatta|_Peruuta
 ; *_Save now|_Quit without saving|_Cancel
-;
 ;
 MSG_MA_MFORWARD_ATTACH
 liitteenä
 ; as attachment
 ;
-;
 MSG_MA_MFORWARD_INLINE
 sisällytettynä
 ; inlined
-;
 ;
 MSG_CO_FWDMSG_ATTACH
 liitteenä
 ; as attachment
 ;
-;
 MSG_CO_ScriptPreFilterMail
 Ennen postin suodatusta
 ; Before filter mail
-;
-; ***NEW***
 ;
 MSG_CO_ScriptPostFilterMail
 Postin suodatuksen jälkeen
 ; After filter mail
 ;
-;
 MSG_FI_DOS_PATTERN
 Käytä AmigaDOS-jokerimerkkejä
 ; Use AmigaDOS patterns
-;
-; ***NEW***
 ;
 MSG_HELP_FI_CH_DOS_PATTERN
 Salli AmigaDOS-jokerimerkit\n\
@@ -9144,11 +8441,9 @@ merkkijonon etsinnässä.
 ; Enable AmigaDOS patterns\n\
 ; in the string search.
 ;
-;
 MSG_CTapplicationpgpsig
 PGP-allekirjoitus
 ; PGP signature
-;
 ;
 MSG_AB_BirthdayReqBody
 Tänään '%s', %s täyttää %ld vuotta.\n\
@@ -9157,7 +8452,6 @@ Haluatko lähettää onnittelukortin?
 ; Today, on %s, %s reaches age %ld.\n\
 ; \n\
 ; Do you want to send a greetings card?
-;
 ; DATE, NAME, AGE
 ;
 MSG_ER_AREXX_EXECUTION_ERROR
@@ -9165,35 +8459,29 @@ ARexx-komennon '%s' suoritus ei onnistunut (virhekoodi %ld).\n\
 Tarkista, että tiedosto on saavutettavissa ja on oikea ARexx-komentojono.
 ; Execution of the ARexx command '%s' failed (error code %ld).\n\
 ; Please make sure that the file is accessible and is a valid ARexx script.
-;
 ; COMMANDNAME, ERRORCODE
 ;
 MSG_BIRTHDAYREQUEST_DONTSHOWAGAIN
 Älä näytä tätä ikkunaa enää tänään.
 ; Do not show this requester today again.
 ;
-;
 MSG_RE_SAVE_FILE
 Tallenna tiedosto
 ; Save file
 ;
-;
 MSG_UPD_NO_UPDATES_FOUND_TITLE
 Ei päivityksiä saatavilla
 ; No software updates available
-;
 ;
 MSG_UPD_NO_UPDATES_FOUND
 Ei ohjelmistopäivityksiä saatavilla.\n\
 %s
 ; There are no software updates available.\n\
 ; %s
-;
 ; HINT
 MSG_UPD_NO_UPDATES_FOUND_HINT_AUTOCHECK
 YAM tarkistaa päivitysten saatavuuden automaattisesti.
 ; YAM will check for available updates automatically.
-;
 ;
 MSG_UPD_NO_UPDATES_FOUND_HINT_NOAUTOCHECK
 Yritä myöhemmin uudelleen tai aktivoi automaattinen\n\
@@ -9201,11 +8489,9 @@ ohjelmisto päivitysten tarkistus.
 ; Please try again later or activate the automatic\n\
 ; software update check.
 ;
-;
 MSG_THREAD_EXIT_WARNING_TITLE
 YAM-varoitus
 ; YAM warning
-;
 ;
 MSG_THREAD_EXIT_WARNING
 Kun YAMia suljettiin, löytyi edelleen käynnissä olevia\n\
@@ -9224,76 +8510,62 @@ myöhemmin koneen kaatumiseen)?
 ; Do you want to retry to quit YAM or ignore the still\n\
 ; running sub thread (which could end up in later crashes)?
 ;
-;
 MSG_THREAD_EXIT_WARNING_BT
 _Yritä uudelleen|_Ohita
 ; _Retry|_Ignore
 ;
-;
 MSG_EXECUTE_COMMAND_FAILED
 Komennon '%s' suoritus epäonnistui (virhekoodi %ld: %s).
 ; The execution of the command '%s' failed (error code %ld: %s).
-;
 ; COMMAND, ERRORCODE, ERRORSTRING
 ;
 MSG_ERROR_METHODSTACK
 Metodipinoa ei voitu alustaa.
 ; Cannot initialize method stack.
 ;
-;
 MSG_TRANSFERS_IN_PROGRESS
 Siirto käynnissä
 ; Transfers in progress
-;
 ;
 MSG_ERROR_CONNECTIONS
 Yhteyksiä ei voitu alustaa.
 ; Cannot initialize connections.
 ;
-;
 MSG_LOG_CONNECT_POP3
 POP3-tilille '%s' kirjauduttu: %ld viestiä odottamassa
 ; Logged in on POP3 account '%s': %ld messages waiting
-;
 ; ACCOUNT, COUNT
 ;
 MSG_LOG_RETRIEVED_POP3
 Noudettu %ld viesti(ä) POP3-tililtä '%s'
 ; Retrieved %ld message(s) from POP3 account '%s'
-;
 ; COUNT, ACCOUNT
 ;
 MSG_TR_ENTER_POP3_PASSWORD
 Annan POP3-tilin '%s' salasana:
 ; Please enter the password for\n\
 ; POP3 account '%s':
-;
 ; ACCOUNT
 ;
 MSG_ALTIMAGE_STATUS_DOWNLOAD
 D
 ; D
 ;
-;
 MSG_ALTIMAGE_STATUS_DELETE
 X
 ; X
-;
 ;
 MSG_PRESELECT_INDEX
 Indeksi
 ; Index
 ;
-;
 MSG_TR_WAIT_FOR_PASSWORD
 Odotetaan käyttäjän antamaa salasanaa...
 ; Waiting for user's password input...
 ;
-;
 MSG_TR_WAIT_FOR_PRESELECTION
 Odotetaan käyttäjän valintaa...
 ; Waiting for user's preselection...
-;
 ;
 MSG_POP3_NEW_MAIL_NOTIFY_REQ
 \e8Sinulla on uutta postia tililtä '%s'.\e2\n\
@@ -9306,7 +8578,6 @@ MSG_POP3_NEW_MAIL_NOTIFY_REQ
 ; %3ld messages downloaded,\n\
 ; %3ld left on server\n\
 ; %3ld duplicates skipped\n
-;
 ; ACCOUNT, COUNT, COUNT, COUNT, COUNT
 ;
 MSG_POP3_NEW_MAIL_NOTIFY_OS4_ONE
@@ -9314,7 +8585,6 @@ MSG_POP3_NEW_MAIL_NOTIFY_OS4_ONE
 Vastaanotettu 1 uusi viesti
 ; %s\n\
 ; Received 1 new mail.
-;
 ; ACCOUNT
 ;
 MSG_POP3_NEW_MAIL_NOTIFY_OS4_MANY
@@ -9322,63 +8592,51 @@ MSG_POP3_NEW_MAIL_NOTIFY_OS4_MANY
 Vastaanotettu %ld uutta viestiä
 ; %s\n\
 ; Received %ld new mails.
-;
 ; ACCOUNT, COUNT
 ;
 MSG_MA_SEND_AND_GET_MAIL
 Lähetä ja vastaanota postia
 ; Send and get mail
 ;
-;
 MSG_MA_SEND_MAIL
 Lähetä postia
 ; Send mail
-;
 ;
 MSG_MA_GET_MAIL
 Hae postia
 ; Get mail
 ;
-;
 MSG_WR_SECURITYREQ_GADS
 *P_erus|_Allekirjoitettu|_Salattu|Alle_kirjoitettu ja salattu|_Peruuta
 ; *_Plain|_Signed|_Encrypted|S_igned & encrypted|_Cancel
-;
 ;
 MSG_HTTP_CONNECTING_TO_SERVER
 Yhdistetään palvelimeen...
 ; Connecting to server...
 ;
-;
 MSG_HTTP_SENDING_REQUEST
 Lähetetään HTTP-pyyntö...
 ; Sending HTTP request...
-;
 ;
 MSG_HTTP_WAITING_FOR_ANSWER
 Odotetaan palvelimen vastausta...
 ; Waiting for server's answer...
 ;
-;
 MSG_HTTP_RECEIVING_DATA
 Vastaanotetaan tietoa...
 ; Receiving data...
-;
 ;
 MSG_HTTP_DISCONNECTING_FROM_SERVER
 Katkaistaan palvelinyhteys...
 ; Disconnecting from server...
 ;
-;
 MSG_SHOW_TRANSFER_WINDOW
 Näytä meneillään olevat siirrot...
 ; Show transfers in progress...
 ;
-;
 MSG_CO_APPLY_REMOTE_FILTERS
 Käytä _etäsuodattimia
 ; Apply remote _filters
-;
 ;
 MSG_HELP_CO_CH_APPLY_REMOTE_FILTERS
 Käytä kaikkia määriteltyjä etäsuodattimia\n\
@@ -9387,11 +8645,9 @@ kun tältä palvelimelta haetaan postia.
 ; when downloading mail from this\n\
 ; server.
 ;
-;
 MSG_CO_DOWNLOAD_ON_STARTUP
 Tarkista uusi posti käynnistyessä
 ; Check for new mail on startup
-;
 ;
 MSG_HELP_CO_CH_DOWNLOAD_ON_STARTUP
 Tarkista tämän tilin uudet postit automaattisesti\n\
@@ -9399,17 +8655,14 @@ YAMin käynnistyessä.
 ; Check this account for new mail on every\n\
 ; startup of YAM automatically.
 ;
-;
 MSG_IMPORT_UNKNOWN_FILE_FORMAT
 Postitiedoston '%s' muoto on tuntematon.
 ; Unknown mail file format in file '%s'.
-;
 ; FILE
 ;
 MSG_IMPORT_NO_MAILS
 Tiedostossa '%s' ei ole tuotavissa olevia posteja.
 ; The file '%s' does not contain any importable mails.
-;
 ; FILE
 ;
 MSG_CO_CONFIG_IS_LOCKED
@@ -9419,7 +8672,6 @@ Odota, kunnes kaikki PO3 ja SMTP-siirrot ovat valmiita.
 ; The configuration is currently locked.\n\
 ; \n\
 ; Please wait until all POP3 and SMTP transfers are finished.
-;
 ;
 MSG_FOLDERINFO_SHORTHELP
 \ebKansio\en\n\
@@ -9432,7 +8684,6 @@ Viestejä: %ld (%ld uutta, %ld lukematonta)
 ; Path: %s\n\
 ; Size: %s\n\
 ; Messages: %ld (%ld new, %ld unread)
-;
 ; NAME, PATH, SIZE, COUNT, COUNT, COUNT
 ;
 MSG_MAILINFO_SHORTHELP
@@ -9450,43 +8701,35 @@ Koko: %s
 ; Date: %s\n\
 ; Filename: %s\n\
 ; Size: %s
-;
 ; NAME, ADDRESS, NAME, ADDRESS, SUBJECT, DATE, FILENAME, SIZE
 ;
 MSG_CO_UPDATE_DOWNLOAD_PATH
 Lataus_polku:
 ; Download _path:
 ;
-;
 MSG_UPD_NOTIFICATION_DOWNLOAD
 Lataa
 ; Download
 ;
-;
 MSG_TR_DOWNLOADING_FROM_SERVER
 Ladataan palvelimelta '%s'
 ; Downloading from '%s'
-;
 ; SERVER
 MSG_MA_HELP
 Apua
 ; Help
 ;
-;
 MSG_MA_HELP_CONTENTS
 Sisällys
 ; Contents
-;
 ;
 MSG_MA_HELP_AREXX
 ARexx-toiminnot
 ; ARexx interface
 ;
-;
 MSG_EA_SEARCH_GRAVATAR
 Etsitään _gravatar.com...
 ; Search on gra_vatar.com...
-;
 ;
 MSG_ER_NO_GRAVATAR_FOUND
 Osoitteessa '%s' ei ollut Gravataria.\n\
@@ -9495,7 +8738,6 @@ Ehkä henkilö ei ole tallentanut vielä kuvaansa palveluun gravatar.com.
 ; No Gravatar found for address '%s'.\n\
 ; \n\
 ; Perhaps the person has not uploaded a portrait image to gravatar.com yet.
-;
 ; ADDRESS
 ;
 MSG_ER_NON_MIME_CONFORMANT_MAIL
@@ -9503,78 +8745,63 @@ Viestitiedostosta '%s' ei löytynyt 'MIME-Version'-otsikkoriviä. \
 Tulostiedostossa voi tämän takia olla virheellistä tietoa.
 ; No 'MIME-Version' header line was found while scanning the mail file '%s'. \
 ; The generated output may therefore contain invalid data or may be corrupted.
-;
 ; MSGFILE
 ;
 MSG_CO_ACTION_SET_STATUS_TO_MARKED
 Aseta tilaksi 'Merkitty'
 ; Set status to 'Marked'
 ;
-;
 MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_MARKED
 Aseta suodatetun postin tilaksi 'Merkitty'
 ; Set the status of the filtered mail to 'Marked'
-;
 ;
 MSG_CO_ACTION_SET_STATUS_TO_UNMARKED
 Aseta tilaksi 'Merkitsemätön'
 ; Set status to 'Unmarked'
 ;
-;
 MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_UNMARKED
 Aseta suodatetun postin tilaksi 'Merkitsemätön'
 ; Set the status of the filtered mail to 'Unmarked'
-;
 ;
 MSG_CO_ACTION_SET_STATUS_TO_READ
 Aseta tilaksi 'Luettu'
 ; Set status to 'Read'
 ;
-;
 MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_READ
 Aseta suodatetun postin tilaksi 'Luettu'
 ; Set the status of the filtered mail to 'Read'
-;
 ;
 MSG_CO_ACTION_SET_STATUS_TO_UNREAD
 Aseta tilaksi 'Lukematon'
 ; Set status to 'Unread'
 ;
-;
 MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_UNREAD
 Aseta suodatetun postin tilaksi 'Lukematon'
 ; Set the status of the filtered mail to 'Unread'
-;
 ;
 MSG_CO_ACTION_SET_STATUS_TO_SPAM
 Aseta tilaksi 'Roskapostia'
 ; Set status to 'Spam'
 ;
-;
 MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_SPAM
 Aseta suodatetun postin tilaksi 'Roskapostia'
 ; Set the status of the filtered mail to 'Spam'
-;
 ;
 MSG_CO_ACTION_SET_STATUS_TO_HAM
 Aseta tilaksi 'Ei roskapostia'
 ; Set status to 'Not spam'
 ;
-;
 MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_HAM
 Aseta suodatetun postin tilaksi 'Ei roskapostia'
 ; Set the status of the filtered mail to 'Not spam'
-;
 ;
 MSG_CO_SMTP_ACTIVE
 _Aktiivinen
 ; _Active
 ;
-;
 MSG_CO_POP_AUTH
 Todennus
 ; Authentification
-;
 ;
 MSG_HELP_CO_CY_POPAUTH
 Kun ei käytetä yhteyden suojausta (TLS tai SSL),\n\
@@ -9585,36 +8812,29 @@ salasana voidaan lähettää APOP-salattuna.\n\
 ; using the APOP encryption algorithm instead.\n\
 ; (not supported by all POP3 servers)
 ;
-;
 MSG_CO_POP_AUTH_PLAIN
 Suojaton salasana
 ; Plain Password
-;
 ;
 MSG_CO_POP_AUTH_APOP
 Salattu salasana (APOP)
 ; Encrypted Password (APOP)
 ;
-;
 MSG_CO_POP_SECURITY
 Yhteyden suojaus
 ; Connection Security
-;
 ;
 MSG_CO_POP_SECURITY_NONE
 Ei suojausta
 ; No Security
 ;
-;
 MSG_CO_POP_SECURITY_TLS
 STARTTLS
 ; STARTTLS
 ;
-;
 MSG_CO_POP_SECURITY_SSL
 SSL/TLS
 ; SSL/TLS
-;
 ;
 MSG_HELP_CO_CY_POPSECURE
 STARTTLS- tai SSL/TLS suojattu yhteys rakennetaan POP3-palvelimen\n\
@@ -9627,41 +8847,33 @@ ole tällä hetkellä käytettävissä.
 ; gadget is ghosted, it means AmiSSL support is currently\n\
 ; not available.
 ;
-;
 MSG_CO_POP_SERVERLIST
 Palvelinlista
 ; Server List
-;
 ;
 MSG_CO_POP_SERVERSETTINGS
 Palvelinasetukset
 ; Server Settings
 ;
-;
 MSG_CO_POP_SECURITYAUTH
 Turvallisuus ja todennus
 ; Security and Authentification
-;
 ;
 MSG_CO_POP_MSGHANDLING
 Viestien käsittely
 ; Message handling
 ;
-;
 MSG_CO_SMTP_SERVERLIST
 Palvelinlista
 ; Server List
-;
 ;
 MSG_CO_SMTP_SERVERSETTINGS
 Palvelinasetukset
 ; Server Settings
 ;
-;
 MSG_CO_POP_DESC
 Kuvaus
 ; Description
-;
 ;
 MSG_HELP_CO_ST_POPDESC
 Vapaavalintainen palvelinyhteyden kuvaus/nimi,\n\
@@ -9670,11 +8882,9 @@ jota käytetään käyttäjä@palvelin -nimen tilalla.
 ; server connection which will be used instead\n\
 ; of user@host.
 ;
-;
 MSG_CO_SMTP_DESC
 Kuvaus
 ; Description
-;
 ;
 MSG_HELP_CO_ST_SMTPDESC
 Vapaavalintainen palvelinyhteyden kuvaus/nimi,\n\
@@ -9683,31 +8893,25 @@ jota käytetään käyttäjä@palvelin -nimen tilalla.
 ; server connection which will be used instead\n\
 ; of user@host.
 ;
-;
 MSG_CO_SMTP_SECURITY
 Yhteyden suojaus
 ; Connection Security
-;
 ;
 MSG_CO_SMTP_SECURITY_NONE
 Ei suojausta
 ; No Security
 ;
-;
 MSG_CO_SMTP_SECURITY_TLS
 STARTTLS
 ; STARTTLS
-;
 ;
 MSG_CO_SMTP_SECURITY_SSL
 SSL/TLS
 ; SSL/TLS
 ;
-;
 MSG_CO_SMTP_SECURITYAUTH
 Suojaus ja todennus
 ; Security and Authentification
-;
 ;
 MSG_HELP_CO_CY_SMTPSECURE
 STARTTLS- tai SSL/TLS suojattu yhteys rakennetaan POP3-palvelimen\n\
@@ -9720,212 +8924,170 @@ ole tällä hetkellä käytettävissä.
 ; gadget is ghosted, it means AmiSSL support is currently\n\
 ; not available.
 ;
-;
 MSG_CO_SMTP_AUTH
 Todennus
 ; Authentification
-;
 ;
 MSG_CO_SMTPAUTH_NONE
 Ei todennusta
 ; No Authentication
 ;
-;
 MSG_CO_SMTP_OPTIONS
 Valinnat
 ; Options
-;
 ;
 MSG_CO_CRDIDENTITIES
 Identiteetit
 ; Identities
 ;
-;
 MSG_CO_IDENTITIES_TITLE
 Identiteettiasetukset
 ; Identities Settings
-;
 ;
 MSG_CO_IDENTITIES_SUMMARY
 Ylläpidä useita identiteettejä viestien rakentamisessa...
 ; Manage multiple identities for composing mails...
 ;
-;
 MSG_CO_IDENTITY_LIST
 Identiteetit
 ; Identities
-;
 ;
 MSG_CO_IDENTITY_SETTINGS
 Yleiset asetukset
 ; General Settings
 ;
-;
 MSG_CO_IDENTITY_REGISTER_SETTINGS
 Yleiset asetukset
 ; General Settings
-;
 ;
 MSG_CO_IDENTITY_REGISTER_COMPOSE
 Viestin rakentaminen
 ; Compose Mail
 ;
-;
 MSG_CO_IDENTITY_REGISTER_PGPSEC
 PGP-suojaus
 ; PGP-Security
-;
 ;
 MSG_CO_IDENTITY_NOSIGNATURE
 ei allekirjoitusta
 ; no signature
 ;
-;
 MSG_CO_IDENTITY_ABOVEQUOTE
 ennen lainausta
 ; above quotes
-;
 ;
 MSG_CO_IDENTITY_BELOWQUOTE
 lainauksen jälkeen
 ; below quotes
 ;
-;
 MSG_CO_IDENTITY_DESCRIPTION
 Kuvaus
 ; Description
-;
 ;
 MSG_CO_IDENTITY_MAILSERVER
 Postipalvelin (SMTP)
 ; Mail server (SMTP)
 ;
-;
 MSG_CO_IDENTITY_COMPOSE
 Viestin rakentamisasetukset
 ; Compose mail settings
-;
 ;
 MSG_CO_IDENTITY_CC
 Kopio: -osoite
 ; CC: address
 ;
-;
 MSG_CO_IDENTITY_BCC
 BCC: -osoite
 ; BCC: address
-;
 ;
 MSG_CO_IDENTITY_REPLYTO
 Vastausosoite:
 ; Reply-To: address
 ;
-;
 MSG_CO_IDENTITY_COMPOSE_OPTIONS
 Valinnat
 ; Options
-;
 ;
 MSG_CO_IDENTITY_COMPOSE_SENTFOLDER
 Tallenna lähetetty posti kansioon
 ; Store sent mail to folder
 ;
-;
 MSG_CO_IDENTITY_COMPOSE_QUOTE
 Lainaa viestejä vastatessasi
 ; Quote messages when answering
-;
 ;
 MSG_CO_IDENTITY_COMPOSE_ANSWER
 Laita vastaukseni
 ; Put my answer
 ;
-;
 MSG_CO_IDENTITY_COMPOSE_SIGNATURE
 Laita allekirjoitukseni
 ; Put my signature
-;
 ;
 MSG_CO_IDENTITY_USESIG_REPLY
 Käytä allekirjoitusta vastattaessa
 ; Use signature when replying
 ;
-;
 MSG_CO_IDENTITY_USESIG_FORWARD
 Käytä allekirjoitusta jatkolähettäessä
 ; Use signature when forwarding
-;
 ;
 MSG_CO_IDENTITY_PGPSETTINGS
 PGP-suojausasetukset
 ; PGP-Security Settings
 ;
-;
 MSG_CO_IDENTITY_USEPGP
 Käytä PGP:tä tässä identiteetissä
 ; Use PGP for this identity
-;
 ;
 MSG_CO_IDENTITY_PGPKEY_ID
 PGP-avaimen ID-tunnus
 ; PGP key ID
 ;
-;
 MSG_CO_IDENTITY_PGPKEY_URL
 PGP-avaimen URL
 ; PGP key URL
-;
 ;
 MSG_CO_IDENTITY_PGP_OPTIONS
 Valinnat
 ; Options
 ;
-;
 MSG_CO_IDENTITY_PGP_SIGN_UNENC
 Allekirjoita salaamattomat postit oletuksena
 ; Sign unencrypted mails per default
-;
 ;
 MSG_CO_IDENTITY_PGP_SIGN_ENC
 Allekirjoita salatut viestit oletuksena
 ; Sign encrypted mails per default
 ;
-;
 MSG_CO_IDENTITY_PGP_ENCRYPTALL
 Salaa kaikki viestit oletuksena
 ; Encrypt all mails per default
-;
 ;
 MSG_CO_IDENTITY_PGP_ADDOWN
 Lisää oma avain kun salaat postia
 ; Add own key when encrypting mails
 ;
-;
 MSG_CO_IDENTITY_PHOTOURL
 Oman kuvan URL
 ; URL to own photo
-;
 ;
 MSG_CO_IDENTITY_ADDINFO
 Lisää henkilökohtaisia tietoja
 ; Add personal information
 ;
-;
 MSG_CO_IDENTITY_REQUESTMDN
 Pyydä vastaanottoilmoitus
 ; Request a return receipt
-;
 ;
 MSG_CO_SERVERNAME
 Palvelimen nimi
 ; Server name
 ;
-;
 MSG_HELP_CO_ST_USER
 Postipalvelimen käyttäjänimi
 ; The username for accessing the\n\
 ; mail server.
-;
 ;
 MSG_FO_MOVEFOLDERTO
 Haluatko varmasti siirtää kansion paikasta\n\
@@ -9936,7 +9098,6 @@ paikkaan\n\
 ; '%s'\n\
 ; to\n\
 ; '%s'?
-;
 ; FROM,TO
 ;
 MSG_FO_FOLDER_ALREADY_EXISTS
@@ -9948,35 +9109,29 @@ Haluatko varmasti jatkaa?
 ; and will be overwritten/deleted.\n\
 ; \n\
 ; Do you really want to proceed?
-;
 ; PATH
 ;
 MSG_ER_CANNOT_CREATE_FOLDER
 Hakemiston '%s' luominen ei onnistunut (%s).
 ; Failed to create directory '%s' (%s).
-;
 ; PATH, ERROR
 ;
 MSG_CO_IdentityActive
 _Aktiivinen
 ; _Active
 ;
-;
 MSG_MA_FLUSH_ALL_INDICES
 Tyhjennä kaikki indeksit
 ; Flush all indices
-;
 ;
 MSG_HELP_CO_CH_IDENTITY_ENABLED
 Jos valittu, tämä käyttäjäidentiteetti on käytettävissä.
 ; If checked, this user identity is enabled for use.
 ;
-;
 MSG_HELP_CO_ST_IDENTITY_DESCRIPTION
 Tämän käyttäjäidentiteetin kuvaus
 ; A custom description for this\n\
 ; user identity.
-;
 ;
 MSG_HELP_CO_ST_IDENTITY_REALNAME
 Tämän käyttäjäidentiteetin oikea nimi\n\
@@ -9984,20 +9139,17 @@ muodossa "etunimi sukunimi".
 ; The realname "firstname lastname" for\n\
 ; this user identity.
 ;
-;
 MSG_HELP_CO_ST_IDENTITY_EMAIL
 Tähän käyttäjäidentiteettiin liittyvä\n\
 sähköpostiosoite.
 ; The e-mail address associated with\n\
 ; this user identity.
 ;
-;
 MSG_HELP_CO_ST_IDENTITY_ORGANIZATION
 Valinnainen organisaation nimi,\n\
 johon tämä käyttäjäidentiteetti kuuluu.
 ; Optional name of the organization\n\
 ; this user identity belongs to.
-;
 ;
 MSG_HELP_CO_CY_IDENTITY_MAILSERVER
 Voit valita lähtevän postin SMTP-palvelimen,\n\
@@ -10007,13 +9159,11 @@ lähettää postia.
 ; which will be used when mail is going to be\n\
 ; sent using this user identity.
 ;
-;
 MSG_HELP_CO_ST_IDENTITY_CC
 Kopio:-vastaanottajat, jotka lisätään oletuksena\n\
 kun uutta viestiä tehdään.
 ; The default CC: recipients added when\n\
 ; composing a new mail.
-;
 ;
 MSG_HELP_CO_ST_IDENTITY_BCC
 BCC:-vastaanottajat, jotka lisätään oletuksena\n\
@@ -10021,13 +9171,11 @@ kun uutta viestiä tehdään.
 ; The default BCC: recipients added when\n\
 ; composing a new mail.
 ;
-;
 MSG_HELP_CO_ST_IDENTITY_REPLYTO
 Vastaanottajat, jotka lisätään oletuksena\n\
 kun uutta viestiä tehdään.
 ; The default Reply-To: recipients added when\n\
 ; composing a new mail.
-;
 ;
 MSG_HELP_CO_ST_IDENTITY_EXTRAHEADER
 Voit määrittää ylimääräiset otsikot, jotka\n\
@@ -10035,13 +9183,11 @@ liitetään oletuksena lähtevään postiin.
 ; Allows you to specify the default for putting\n\
 ; additional headers to an outgoing mail.
 ;
-;
 MSG_HELP_CO_ST_IDENTITY_PHOTOURL
 Valinnainen URL valokuvaan, joka liittyy\n\
 tähän käyttäjäidentiteettiin.
 ; An optional URL to a photo associated with\n\
 ; this user identity.
-;
 ;
 MSG_HELP_CO_CH_IDENTITY_SENTFOLDER
 Jos valittu, lähetetty posti tallennetaan\n\
@@ -10051,13 +9197,11 @@ posti poistetaan.
 ; sent mail folder. Otherwise the sent mail\n\
 ; will be deleted.
 ;
-;
 MSG_HELP_CO_TX_IDENTITY_SENTFOLDER
 Voit valita mihin postikansioon\n\
 lähetetty posti tallennetaan.
 ; Allows to specify which mail folder should\n\
 ; be used when storing sent mail.
-;
 ;
 MSG_HELP_CO_CH_IDENTITY_QUOTEMAILS
 Kun viestiin vastataan tai lähetetään eteenpäin,\n\
@@ -10065,13 +9209,11 @@ teksti lainataan jos tämä toiminto on valittu.
 ; When replying or forwarding mails text will\n\
 ; be quoted if this option is enabled.
 ;
-;
 MSG_HELP_CO_CH_IDENTITY_QUOTEPOS
 Voit valita, laitetaanko vastauksesi\n\
 ennen lainausta vai sen jälkeen.
 ; Allows to define if your answer should be\n\
 ; placed above or below quotes.
-;
 ;
 MSG_HELP_CO_CH_IDENTITY_SIGPOS
 Voit valita, laitetaanko allekirjoituksesi\n\
@@ -10079,20 +9221,17 @@ ennen lainausta vai sen jälkeen.
 ; Allows to define if your signature should\n\
 ; appear below or above the quotes.
 ;
-;
 MSG_HELP_CO_CH_IDENTITY_SIGREPLY
 Jos valittu, allekirjoitus lisätään\n\
 kun viestiin vastataan.
 ; If enabled, a signature will be added when\n\
 ; replying to a mail.
 ;
-;
 MSG_HELP_CO_CH_IDENTITY_SIGFORWARD
 Jos valittu, allekirjoitus lisätään\n\
 kun viesti jatkolähetetään.
 ; If enabled, a signature will be added when\n\
 ; forwarding a mail.
-;
 ;
 MSG_HELP_CO_CH_IDENTITY_ADDINFO
 Jos valittu, henkilökohtainen tieto lisätään\n\
@@ -10105,7 +9244,6 @@ tällä käyttäjäidentiteetillä.
 ; This requires an addressbook entry with\n\
 ; the same email address as this user identity.
 ;
-;
 MSG_HELP_CO_CH_IDENTITY_REQUESTMDN
 Jos valittu, postin vastaanottoilmoitus pyydetään\n\
 oletuksena viestiä tehtäessä.
@@ -10113,13 +9251,11 @@ oletuksena viestiä tehtäessä.
 ; will be requested per default when composing\n\
 ; a mail.
 ;
-;
 MSG_HELP_CO_CH_IDENTITY_USEPGP
 Voit ottaa käyttöön/pois käytöstä PGP-toiminnallisuuden\n\
 koko käyttäjäidentiteetin osalta.
 ; Allows to enable/disable the PGP functionality\n\
 ; for this whole user identity.
-;
 ;
 MSG_HELP_CO_ST_IDENTITY_PGPID
 Voit määrittää PGP-avaimen ID:n, jota käytetään\n\
@@ -10127,13 +9263,11 @@ tässä käyttäjäidentiteetissä.
 ; Allows to specify the PGP-Key ID which should\n\
 ; be used for this user identity.
 ;
-;
 MSG_HELP_CO_ST_IDENTITY_PGPURL
 Voit määrittää URL-linkin, josta tämän\n\
 käyttäjäidentiteetin julkisen avaimen voi hakea.
 ; Allows to specify an URL where the public key\n\
 ; for this user identity can be accessed.
-;
 ;
 MSG_HELP_CO_CH_IDENTITY_PGPSIGN_UNENC
 Jos valittu, oletuksena PGP allekirjoittaa kaikki\n\
@@ -10141,20 +9275,17 @@ salaamattomat viestit niitä luotaessa.
 ; If enabled, the default is set to PGP sign all\n\
 ; unencrypted emails when starting to compose them.
 ;
-;
 MSG_HELP_CO_CH_IDENTITY_PGPSIGN_ENC
 Jos valittu, oletuksena PGP allekirjoittaa kaikki\n\
 salatut viestit niitä luotaessa.
 ; If enabled, the default is set to PGP sign all\n\
 ; encrypted emails when starting to compose them.
 ;
-;
 MSG_HELP_CO_CH_IDENTITY_PGPENC_ALL
 Jos valittu, oletuksena PGP allekirjoittaa kaikki\n\
 viestit niitä luotaessa.
 ; If enabled, the default is set to PGP encrypt all\n\
 ; emails when starting to compose them.
-;
 ;
 MSG_HELP_CO_CH_IDENTITY_PGPENC_SELF
 Jos valittu, kaikki PGP:llä salattavat viestit\n\
@@ -10166,7 +9297,6 @@ purkaa tällä käyttäjäidentiteetillä.
 ; If disabled, encrypted emails cannot be decrypted\n\
 ; by this user identity.
 ;
-;
 MSG_HELP_CO_CY_IDENTITY_SIGNATURE
 Voit valita oletusallekirjoituksen, jota käytetään\n\
 tällä käyttäjäidentiteetillä tehtävien viestien luomiseen.
@@ -10174,11 +9304,9 @@ tällä käyttäjäidentiteetillä tehtävien viestien luomiseen.
 ; should be used when composing emails with this\n\
 ; user identity.
 ;
-;
 MSG_CO_CONFIGWARNING_TITLE
 Asetusvaroitus
 ; Configuration Warning
-;
 ;
 MSG_CO_CONFIGWARNING
 Olet muuttanut joitakin asetuksia ja\n\
@@ -10191,16 +9319,13 @@ Miten haluat jatkaa?
 ; \n\
 ; How do you want to proceed?
 ;
-;
 MSG_CO_CONFIGWARNING_BT
 _Sulje ikkuna|*_Keskeytä
 ; _Close window|*_Abort
 ;
-;
 MSG_CO_CONFIGVERSIONWARNING_TITLE
 Asetusten versiovaroitus
 ; Configuration Version Warning
-;
 ;
 MSG_CO_CONFIGVERSIONWARNING
 Asetustiedosto, jota YAM yrittää ladata, on\n\
@@ -10217,46 +9342,37 @@ Miten haluat jatkaa?
 ; \n\
 ; How do you want to proceed?
 ;
-;
 MSG_CO_CONFIGVERSIONWARNING_BT
 _Jatka|*_Keskeytä
 ; _Continue|*_Abort
-;
 ;
 MSG_WR_MCCADDRFIELD
 Kopio-osoitekenttä
 ; CC address field
 ;
-;
 MSG_WR_MBCCADDRFIELD
 BCC-osoitekenttä
 ; BCC address field
-;
 ;
 MSG_WR_MREPLYTOADDRFIELD
 Vastausosoitekenttä
 ; Reply-To address field
 ;
-;
 MSG_CO_LISTCOLUMNSETTINGS
 Sarakeasetukset
 ; Column settings
-;
 ;
 MSG_CO_LOOKFEEL_MAINWINDOW
 Pääikkuna
 ; Main window
 ;
-;
 MSG_CO_LOOKFEEL_TITLE_THEME
 Teema
 ; Theme
 ;
-;
 MSG_CO_LOOKFEEL_TITLE_INFO
 Tietoja
 ; Information
-;
 ;
 MSG_HELP_WR_CY_SIGNATURE
 Voit valita, mitä allekirjoitusta käytetään\n\
@@ -10265,11 +9381,9 @@ juuri nyt muokattavassa viestissä.
 ; show be used for the currently\n\
 ; composed message.
 ;
-;
 MSG_WR_PGPSECURITY
 PGP-turvallisuustaso
 ; PGP security level
-;
 ;
 MSG_HELP_WR_CY_SECURITY
 Voit valita PGP-turvallisuustason.\n\
@@ -10283,76 +9397,61 @@ siellä määriteltyjä asetuksia.
 ; the recipient in your address book and use\n\
 ; the settings defined there.
 ;
-;
 MSG_CO_MIMETYPE_TITLE
 MIME-tyyppi
 ; MIME type
-;
 ;
 MSG_CO_DOWNLOAD_LARGE_MAILS1
 _Lataa viestit, jotka ovat suurempia kuin
 ; _Download messages larger than
 ;
-;
 MSG_CO_DOWNLOAD_LARGE_MAILS2
 KT
 ; KB
-;
 ;
 MSG_MA_DRAFTS
 Luonnokset
 ; Drafts
 ;
-;
 MSG_CO_SIGNATURE
 Allekirjoitus
 ; Signature
-;
 ;
 MSG_CO_SIGNATURES
 Allekirjoitus
 ; Signatures
 ;
-;
 MSG_CO_SIGNATURE_DESCRIPTION
 Kuvaus
 ; Description
-;
 ;
 MSG_CO_SIGNATURE_ACTIVE
 _Aktiivinen
 ; _Active
 ;
-;
 MSG_CO_IDENTITY_SIGNATURE
 Allekirjoitus
 ; Signature
-;
 ;
 MSG_HELP_CO_LV_SIGNATURE
 Lista kaikista allekirjoituksista
 ; List of all signatures
 ;
-;
 MSG_HELP_CO_BT_SIGADD
 Lisää uuden allekirjoituksen listaan.
 ; Adds a new signature to the list.
-;
 ;
 MSG_HELP_CO_BT_SIGDEL
 Poistaa valitun allekirjoituksen listasta.
 ; Removes selected signature from list.
 ;
-;
 MSG_HELP_CO_BT_SIGUP
 Siirtää allekirjoitusta yhden rivin ylöspäin.
 ; Moves signature one entry up.
 ;
-;
 MSG_HELP_CO_BT_SIGDOWN
 Siirtää allekirjoitusta yhden rivin alaspäin.
 ; Moves signature one entry down.
-;
 ;
 MSG_HELP_CO_BT_SIG_ACTIVE
 Merkitsee valitun allekirjoituksen\n\
@@ -10360,13 +9459,11 @@ joko aktiiviseksi tai inaktiiviseksi.
 ; Flags the currently selected signature\n\
 ; as active or inactive.
 ;
-;
 MSG_HELP_CO_ST_SIG_DESC
 Voit muokata vapaata tekstiä olevan\n\
 kuvauksen allekirjoitukseen.
 ; Allows you to enter a freetext\n\
 ; description for the signature.
-;
 ;
 MSG_HELP_CO_TE_SIGEDIT
 Tekstieditori, jolla voit syöttää/muuttaa\n\
@@ -10374,31 +9471,25 @@ allekirjoitustekstiä.
 ; Text editor for entering/changing\n\
 ; the signature text.
 ;
-;
 MSG_CO_MIXED_CONNECTIONS
 Yhteydet
 ; Connections
-;
 ;
 MSG_CO_POP_NOTIFICATION
 Ilmoitus uusista viesteistä
 ; Notification for new mails
 ;
-;
 MSG_SSL_CERT_WARNING_TITLE
 SSL sertifikaattivaroitus
 ; SSL Certificate Warning
-;
 ;
 MSG_SSL_CERT_WARNING_BUTTONS
 _Hyväksy|Hyväksy _pysyvästi|_Näytä sertifikaatti|*H_ylkää
 ; _Accept|Accept _Permanently|_Show Certificate|*_Reject
 ;
-;
 MSG_SSL_CERT_WARNING_INTRO
 Virhe tarkistettaessa palvelinsertifikaattia '\033b%s:%d\033n':
 ; Error validating server certificate for '\033b%s:%d\033n':
-;
 ; HOSTNAME, PORT
 ;
 MSG_SSL_CERT_WARNING_UNTRUSTED
@@ -10407,26 +9498,21 @@ sormenjälkeä sertifikaatin tarkistamiseksi manuaalisesti.
 ; - The certificate is not issued by a trusted authority. Use the\n\
 ;   fingerprint to validate the certificate manually.
 ;
-;
 MSG_SSL_CERT_WARNING_IDMISMATCH
 Sertifikaatin isäntänimi ei ole oikein.
 ; - The certificate hostname does not match.
-;
 ;
 MSG_SSL_CERT_WARNING_NOTYETVALID
 Sertifikaatti ei ole vielä voimassa.
 ; - The certificate is not yet valid.
 ;
-;
 MSG_SSL_CERT_WARNING_EXPIRED
 Sertifikaatti on vanhentunut.
 ; - The certificate has expired.
 ;
-;
 MSG_SSL_CERT_WARNING_OTHER
 Sertifikaatissa on tuntematon virhe.
 ; - The certificate has an unknown error.
-;
 ;
 MSG_SSL_CERT_WARNING_INFO
 Tietoja sertifikaatista:\n\
@@ -10434,19 +9520,16 @@ Tietoja sertifikaatista:\n\
 - Voimassa: \033b%s\033n - \033b%s\033n\n\
 - Toimittaja: \033b%s\033n\n\
 - Sormenjälki: \033b%s\033n
-;
 ; Certificate information:\n\
 ; - Hostname: \033b%s\033n\n\
 ; - Valid: \033b%s\033n until \033b%s\033n\n\
 ; - Issuer: \033b%s\033n\n\
 ; - Fingerprint: \033b%s\033n
-;
 ; HOSTNAME, VALID_FROM, VALID_TO, ISSUER, FINGERPRINT
 ;
 MSG_SSL_CERT_WARNING_SHOWTITLE
 Sertifikaatti %s:%d
 ; Certificate of %s:%d
-;
 ; HOSTNAME, PORT
 ;
 MSG_ER_WARN_CAFILE
@@ -10460,7 +9543,6 @@ Muuten SSL-yhteys luokitellaan tarkistamattomaksi.
 ; \n\
 ; Please make sure that the file exists and is uptodate or otherwise \
 ; each SSL connection will be flagged as unverified.
-;
 ; FILEPATH
 ;
 MSG_ER_WARN_LOADCAPATH
@@ -10474,7 +9556,6 @@ virheellistä tiedostoa.
 ; \n\
 ; Please make sure that no invalid file has been placed in the \
 ; certificate folder.
-;
 ; FILEPATH, DIRPATH
 ;
 MSG_ER_WARN_CAPATH
@@ -10488,13 +9569,11 @@ nipputiedosto, joka asennettiin YAMin mukana.
 ; \n\
 ; Please make sure that the path exists and contains the certificate \
 ; bundle file as supplied during the installation process of YAM.
-;
 ; DIRPATH
 ;
 MSG_CO_ACTION_TERMINATE_FILTER
 Pysäytä suodatusprosessi
 ; Terminate filter process
-;
 ;
 MSG_HELP_CO_CH_ATERMINATE
 Pysäytä suodatusprosessi tämän suodattimen\n\
@@ -10504,63 +9583,51 @@ käynnistetä.
 ; filter. Following filters will not\n\
 ; be executed anymore.
 ;
-;
 MSG_CO_FILTER_IMPORT
 Tuo...
 ; Import...
-;
 ;
 MSG_FILTER_IMPORT_TITLE
 Tuo suodatin
 ; Import filter
 ;
-;
 MSG_SPAM_TRUSTHEADERLINES
 Luota tämän ulkopuolisen suodattimen otsikoihin:
 ; Trust header lines of this external filter:
-;
 ;
 MSG_ER_POP3_UIDLHASH_INIT_FAILED
 UIDL-taulukon alustus ei onnistunut.
 ; Failed to initialized UIDL hash table.
 ;
-;
 MSG_CO_SIGNATURE_TEXT
 Allekirjoitusteksti
 ; Signature text
-;
 ;
 MSG_CO_APPEND_SIGNATURE_FILE
 Liitä allekirjoitustiedosto tämän sijasta.
 ; Append a file as signature instead
 ;
-;
 MSG_PRESELECT_GETTING_DETAILS
 Haetaan viestien yksityiskohtia (%%ld / %ld)
 ; Getting message details (%%ld of %ld)
-;
 ;
 MSG_CO_UPDATES_INFO_MANUAL
 Sinun pitää tarkistaa päivitykset manuaalisesti.
 ; You will have to check for updates manually.
 ;
-;
 MSG_CO_UPDATES_INFO_AUTO
 Sinulle ilmoitetaan, kun päivityksiä on saatavilla.
 ; You will be notified as soon as updates are available.
 ;
-;
 MSG_PGPPASS_SHOW_CHARS
 Näytä merkit
 ; Show characters
-;
 ;
 MSG_CANNOT_CREATE_CUSTOM_CLASS
 Ohjelman oman luokan '%s'\n\
 luominen '%s' alaluokaksi ei onnistunut.
 ; Failed to create custom class '%s'\n\
 ; as subclass of '%s'.
-;
 ; CLASS,SUPERCLASS
 ;
 MSG_ER_MORPHOS_REXX_WARNING
@@ -10583,11 +9650,9 @@ käynnistää järjestelmäsi uudestaan.
 ; the 'rexxsyslib.library' in 'MOSSYS:Libs' and reboot your \
 ; system.
 ;
-;
 MSG_WR_SAVEASDRAFT
 Tallenna luonnoksena
 ; Save as draft
-;
 ;
 MSG_HELP_WR_BT_SAVEASDRAFT
 Tallentaa viestin\n\
@@ -10595,27 +9660,22 @@ Tallentaa viestin\n\
 ; Saves the message to\n\
 ; the 'Drafts' folder.
 ;
-;
 MSG_WR_MSAVEASDRAFT
 Tallenna luonnoksena
 ; Save as draft
-;
 ;
 MSG_WR_MCLOSE
 Sulje
 ; Close
 ;
-;
 MSG_LOG_REDIRECT
 Ohjattiin viesti lähettäjältä '%s' aiheella '%s' vastaanottajalle '%s'
 ; Redirected message from '%s' about '%s' to '%s'
-;
 ; SENDER, SUBJECT, RECIPIENT
 ;
 MSG_CO_ACTIONREDIRECT
 _Ohjaa uudelleen
 ; _Redirect
-;
 ;
 MSG_HELP_CO_CH_AREDIRECT
 Ohjaa sopivat viestit\n\
@@ -10623,43 +9683,35 @@ toiselle henkilölle.
 ; Redirect matching messages\n\
 ; to another person.
 ;
-;
 MSG_HELP_CO_ST_AREDIRECT
 Sähköpostiosoitteet, joihin\n\
 uudelleenohjatut viestit lähetetään.
 ; E-mail address(es) that should\n\
 ; get the redirected messages.
 ;
-;
 MSG_MA_MREDIRECT
 Ohjaa uudelleen...
 ; Redirect...
-;
 ;
 MSG_WR_REDIRECT_FROM
 Lähetetty uudestaan-_Keneltä
 ; Resent-_From
 ;
-;
 MSG_WR_REDIRECT_TO
 Lähetetty uudestaan-Ke_nelle
 ; Resent-_To
-;
 ;
 MSG_WR_REDIRECT_CC
 Lähetetty uudestaan-K_opio
 ; Resent-_CC
 ;
-;
 MSG_WR_REDIRECT_BCC
 Lähetetty uudestaan-_BCC
 ; Resent-_BCC
 ;
-;
 MSG_WR_REDIRECT_TITLE
 Ohjaa viestejä uudelleen
 ; Redirect message(s)
-;
 ;
 MSG_ER_CANNOT_CREATE_MAIL_FILE
 Viestitiedostoa '%s' ei voitu luoda.\n\
@@ -10668,28 +9720,23 @@ Syy: kansion hakemisto on virheellinen tai levyllä ei ole tilaa.
 ; Could not create mail file '%s'.\n\
 ; \n\
 ; Reason: invalid folder directory or insufficient disk space.
-;
 ; FILE
 ;
 MSG_WR_RENAME
 _Nimeä uudelleen
 ; _Rename
 ;
-;
 MSG_WR_RENAME_ATTACHMENT
 Nimeä liite uudelleen
 ; Rename attachment
-;
 ;
 MSG_WR_ENTER_NEW_NAME
 Anna uusi liitteen nimi:
 ; Enter new attachment name:
 ;
-;
 MSG_FI_SKIP_ENCRYPTED
 Ohita salatut viestit
 ; Skip encrypted mails
-;
 ;
 MSG_HELP_FI_CH_SKIP_ENCRYPTED
 Ohita salatut viestit (esim. PGP)\n\
@@ -10697,122 +9744,98 @@ etsinnän aikana.
 ; Skip encrypted mails (i.e. PGP)\n\
 ; during the search.
 ;
-;
 MSG_CO_QUICKSEARCHBAR
 Pikaetsintäpalkki
 ; Quick search bar
-;
 ;
 MSG_HELP_CO_CH_QUICKSEARCHBAR
 Tästä voit valita pikaetsintäpalkin paikan.
 ; Here you can select the position of\n\
 ; the quick search bar.
 ;
-;
 MSG_CO_QUICKSEARCHBARPOS
 _Paikka
 ; Posi_tion
-;
 ;
 MSG_CO_QUICKSEARCHBARPOS01
 Pois käytöstä
 ; Disabled
 ;
-;
 MSG_CO_QUICKSEARCHBARPOS02
 Ylös
 ; Top
-;
 ;
 MSG_CO_QUICKSEARCHBARPOS03
 Alas
 ; Bottom
 ;
-;
 MSG_CO_FILTER_REGISTER_SETTINGS
 Yleiset
 ; General
-;
 ;
 MSG_CO_FILTER_REGISTER_CONDITIONS
 Ehdot
 ; Conditions
 ;
-;
 MSG_CO_FILTER_REGISTER_ACTIONS
 Toiminnot
 ; Actions
-;
 ;
 MSG_CO_CONDITION_ALL
 kaikki
 ; all
 ;
-;
 MSG_CO_CONDITION_MIN_ONE
 yksi tai useampi
 ; one or more
-;
 ;
 MSG_CO_CONDITION_MAX_ONE
 vain yksi
 ; only one
 ;
-;
 MSG_WR_CMENU_TITLE
 Liitteet
 ; Attachments
-;
 ;
 MSG_WR_CMENU_ADD_ATTACHMENT
 Lisää tiedosto(ja)...
 ; Add file(s)...
 ;
-;
 MSG_WR_CMENU_ADD_ARCHIVE_ATTACHMENT
 Pakkaa & lisää...
 ; Pack & add...
-;
 ;
 MSG_WR_CMENU_REMOVE_ATTACHMENT
 Poista
 ; Remove
 ;
-;
 MSG_WR_CMENU_RENAME_ATTACHMENT
 Nimeä uudelleen...
 ; Rename...
-;
 ;
 MSG_WR_CMENU_DISPLAY_ATTACHMENT
 Näytä
 ; Display
 ;
-;
 MSG_WR_TITLEATTACHMENT
 Liite
 ; Attachment
-;
 ;
 MSG_WR_REMOVE
 Pois_ta
 ; Re_move
 ;
-;
 MSG_CO_CONDITION_PREPHRASE
 Jos
 ; If
-;
 ;
 MSG_CO_CONDITION_POSTPHRASE
 seuraavat ehdot täyttyvät:
 ; of the following conditions are met:
 ;
-;
 MSG_CO_FALLBACK_TZONE
 Finland/Helsinki
 ; America/New_York
-;
 ; !!! WARNING !!!
 ; Do not translate this fallback name, but just choose a
 ; location which represents the language's time zone
@@ -10827,31 +9850,25 @@ MSG_HELP_CO_GR_TZONE
 Voit määrittää nykyisen paikkakunnan/aikavyöhykkeen.
 ; Here you can set your current location/time zone.
 ;
-;
 MSG_CO_TZONE_GMTOFFSET
 Nykyinen GMT-lisäys:
 ; Current GMT offset:
-;
 ;
 MSG_CO_TZONE_NEXTDSTSWITCH
 Seuraava kesä/talviajan vaihto:
 ; Next DST switch:
 ;
-;
 MSG_CO_TZONE_NODSTSWITCH
 ei kesäaikaa
 ; no daylight saving
-;
 ;
 MSG_CO_TZONE_DESCRIPTION
 Kuvaus
 ; Description:
 ;
-;
 MSG_CO_TZONE_DESCRIPTION_NA
 ei sovellu
 ; n/a
-;
 ;
 MSG_TZONE_ZONETAB_FILE_MISSING
 Aikavyöhykkeiden kuvaustiedosto\n\
@@ -10866,8 +9883,6 @@ liittyvät tiedoston on tallennettu hakemistoon\n\
 ; Please make sure to install all time zones management\n\
 ; related files to the '%s/Resources/zoneinfo' directory.
 ;
-; ***NEW***
-;
 MSG_TZONE_LOCATION_FILE_MISSING
 Aikavyöhykkeen tietotiedosto '%s' ei aukea.\n\
 \n\
@@ -10880,11 +9895,9 @@ hakemistoon '%s/Resources/zoneinfo'.
 ; to install all time zones management related files to the \
 ; '%s/Resources/zoneinfo' directory.
 ;
-;
 MSG_FOLDER_MOVE_WARNING_TITLE
 YAM kansion muotovaroitus
 ; YAM folder format warning
-;
 ;
 MSG_FOLDER_MOVE_WARNING
 Kansio on tallennettu vanhentuneessa muodossa.\n\
@@ -10911,51 +9924,41 @@ haluatko sulkea YAMin ja tehdä ensin varmuuskopion?
 ; Do you want to perform this operation now or\n\
 ; quit YAM and make a backup first?
 ;
-;
 MSG_FOLDER_MOVE_WARNING_GADS
 _Jatka|*_Lopeta
 ; _Continue|*_Quit
-;
 ;
 MSG_FO_DISPLAYNAME
 Näytä _nimi
 ; Display _name
 ;
-;
 MSG_FO_DIRECTORYNAME
 Hakemiston ni_mi
 ; Directory na_me
-;
 ;
 MSG_VALIDATING_FOLDERS
 Tarkistetaan kansioita...
 ; Validating folders...
 ;
-;
 MSG_MA_MARCHIVE
 Arkisto
 ; Archive
-;
 ;
 MSG_MA_ARCHIVE
 Arkisto
 ; Archive
 ;
-;
 MSG_CO_SHOW_ARCHIVER_PROGRESS
 Näytä edistyminen
 ; Show progress
-;
 ;
 MSG_CO_LAUNCH_EXTEDITOR
 _Käynnistä ulkoinen editori heti
 ; _Launch external editor immediately
 ;
-;
 MSG_CO_EXTEDITOR
 Ulkoisen editorin asetukset
 ; External editor settings
-;
 ;
 MSG_HELP_CO_ST_EDITOR_EXT
 Polku ulkoiseen editoriin, jota voit\n\
@@ -10964,11 +9967,9 @@ käyttää sisäisen editorin sijasta.
 ; editor which you can use as an\n\
 ; alternative to the internal one.
 ;
-;
 MSG_CO_EXTEDITOR_CODESET
 Näytä k_irjaimisto
 ; Display c_harset
-;
 ;
 MSG_HELP_CO_TX_DEFCODESET_EDITOR
 Valitse kirjaimisto, johon teksti\n\
@@ -10977,7 +9978,6 @@ editori käynnistetään.
 ; Choose a charset to which the text\n\
 ; will be converted to before starting\n\
 ; the external editor.
-;
 ;
 MSG_HELP_CO_TX_DEFCODESET_LOCAL
 Käytä ponnahduspainiketta valitaksesi kirjaimiston,\n\
@@ -10990,7 +9990,6 @@ kysytään, kuinka jatketaan.
 ; This should usually match your system's default\n\
 ; charset, otherwise a requester will appear asking\n\
 ; how to proceed.
-;
 ;
 MSG_HELP_CO_TX_DEFCODESET_WRITE
 Käytä ponnahduspainiketta valitaksesi kirjaimiston,\n\
@@ -11008,16 +10007,13 @@ posti muunnetaan.
 ; character set you want to encode your outgoing mails\n\
 ; to.
 ;
-;
 MSG_CO_DEFAULTCODESET_WRITE
 Oletuski_rjaimisto
 ; Default c_harset
 ;
-;
 MSG_CO_MIME_CODESET
 Näytön _kirjaimisto
 ; Display _charset
-;
 ;
 MSG_HELP_CO_TX_MIME_CODESET
 Valitse tähän kirjaimisto, johon tulostettava\n\
@@ -11027,11 +10023,9 @@ MIME-tyyppiin liittyvä komento suoritetaan.
 ; text should be converted to before\n\
 ; executing the command of this MIME type.
 ;
-;
 MSG_CO_DEFAULTVIEWER_CODESET
 _Näytön kirjaimisto
 ; _Display charset
-;
 ;
 MSG_HELP_CO_TX_DEFVIEWER_CODESET
 Valitse tähän kirjaimisto, johon tulostettava\n\
@@ -11041,10 +10035,62 @@ oletuskatseluohjelma käynnistetään.
 ; text should be converted to before\n\
 ; starting the default viewer.
 ;
-;
 MSG_LOG_FILTER_DONE
 Suodatettiin %ld viesti(ä), joista %ld osuma(a)
 ; Filtered %ld message(s) with %ld match(es)
-;
 ; COUNT, COUNT
+;
+MSG_FO_JUMP_TO_UNREAD_MESSAGE
+Siirry ensimmäiseen lukemattomaan viestiin
+; Jump to first unread message
+;
+;
+MSG_HELP_FO_CH_JUMPTOUNREAD
+Siirry ensimmäiseen lukemattomaan viestiin,\n\
+kun tämä kansio avataan.
+; Jump to the first unread message when\n\
+; entering this folder.
+;
+;
+MSG_FO_JUMP_TO_RECENT_MESSAGE
+Siirry uusimpaan viestiin
+; Jump to newest message
+;
+;
+MSG_HELP_FO_CH_JUMPTORECENT
+Siirry uusimpaan viestiin,\n\
+kun tämä kansio avataan.
+; Jump to the most recent message when\n\
+; entering this folder.
+;
+;
+MSG_FO_MAXAGE_DAYS
+päivää
+; days
+;
+;
+MSG_QUICKSEARCH_FILTER_LIST
+Suodatuslista...
+; Filter list...
+;
+;
+MSG_QUICKSEARCH_FROM
+Lähettäjä
+; Sender
+;
+;
+MSG_QUICKSEARCH_TO
+Vastaanottaja
+; Receiver
+;
+;
+MSG_QUICKSEARCH_SUBJECT
+Aihe
+; Subject
+;
+;
+MSG_QUICKSEARCH_BODY
+Viesti
+; Mail body
+;
 ;
