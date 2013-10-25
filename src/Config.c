@@ -946,7 +946,7 @@ void SetDefaultConfig(struct Config *co, enum ConfigPage page)
     co->SysCharsetCheck = TRUE;
     co->AmiSSLCheck = TRUE;
     co->PrintMethod = PRINTMETHOD_RAW;
-    co->StackSize = 40000;
+    co->StackSize = SIZE_STACK;
     co->AutoColumnResize = TRUE;
     co->SocketOptions.SendBuffer  = -1;
     co->SocketOptions.RecvBuffer  = -1;
@@ -3332,6 +3332,13 @@ void ValidateConfig(struct Config *co, BOOL update, BOOL saveChanges)
     co->BirthdayCheckTime.ds_Days = 0;
     co->BirthdayCheckTime.ds_Minute = 10*60;
     co->BirthdayCheckTime.ds_Tick = 0;
+    saveAtEnd = TRUE;
+  }
+
+  // check for a minimum stack size
+  if(co->StackSize < SIZE_STACK)
+  {
+    co->StackSize = SIZE_STACK;
     saveAtEnd = TRUE;
   }
 

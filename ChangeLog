@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-10-25 Thore Böckelmann <tboeckel@gmx.de>
+
+  * Config.c: raised the default stack size for externally launched commands to
+    64K.
+
 2013-10-24 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/QuickSearchBar.c: hide the search flag buttons when clearing the bar
