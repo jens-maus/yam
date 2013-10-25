@@ -18,6 +18,11 @@ $URL$
   * YAM_RE.c, mui/ReadMailGroup.c: don't assume that the letter part is directly
     followed by the PGP signature part, but search for both independently. This
     refs #427.
+  * YAM_RE.c: don't check a PGP signature for validity when parsing a mail. It
+    is extremly annoying if one receives PGP signed mails but they sender's
+    public key is not available (for whatever reason) and the undesired check
+    causes tons of error messages, even when just filtering the mail to a
+    different folder.
 
 2013-10-24 Thore Böckelmann <tboeckel@gmx.de>
 

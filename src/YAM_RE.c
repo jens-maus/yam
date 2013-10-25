@@ -2522,7 +2522,6 @@ static void RE_HandleSignedMessage(struct Part *frp)
   if(G->PGPVersion >= 0)
   {
     struct ReadMailData *rmData = frp->rmData;
-    struct Part *letterPart = NULL;
     struct Part *pgpPart = NULL;
     struct Part *part;
 
@@ -2530,38 +2529,20 @@ static void RE_HandleSignedMessage(struct Part *frp)
     part = frp;
     do
     {
-      if(letterPart == NULL && part->Nr == rmData->letterPartNum)
-      {
-        letterPart = part;
-      }
-      else if(pgpPart == NULL && stricmp(part->ContentType, "application/pgp-signature") == 0)
+      if(pgpPart == NULL && stricmp(part->ContentType, "application/pgp-signature") == 0)
       {
         pgpPart = part;
       }
 
       part = part->Next;
     }
-    while(part != NULL);
+    while(part != NULL && pgpPart == NULL);
 
-    if(letterPart != NULL && pgpPart != NULL)
+    if(pgpPart != NULL)
     {
-      int error;
-      char options[SIZE_LARGE];
-
       // flag the mail as having a PGP signature within the MIME encoding
+      // but don't check the signature now
       setFlag(frp->rmData->signedFlags, PGPS_MIME);
-
-      // decode the letter part first, otherwise PGP might want to check
-      // a still encoded file which definitely will fail.
-      RE_DecodePart(letterPart);
-
-      snprintf(options, sizeof(options), (G->PGPVersion == 5) ? "%s -o %s +batchmode=1 +force +language=us" : "%s %s +bat +f +lang=en", pgpPart->Filename, letterPart->Filename);
-      error = PGPCommand((G->PGPVersion == 5) ? "pgpv": "pgp", options, NOERRORS|KEEPLOG);
-      if(error > 0)
-        setFlag(rmData->signedFlags, PGPS_BADSIG);
-
-      if(error >= 0)
-        RE_GetSigFromLog(rmData, NULL);
     }
   }
 
