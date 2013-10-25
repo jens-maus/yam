@@ -9,6 +9,8 @@ $URL$
 
   * Config.c: raised the default stack size for externally launched commands to
     64K.
+  * YAM_UT.c: correctly handle the case of a failed command execution but with
+    IoErr()==0 to set up an empty error string.
 
 2013-10-24 Thore Böckelmann <tboeckel@gmx.de>
 

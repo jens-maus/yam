@@ -5559,7 +5559,8 @@ static LONG SyncLaunchCommand(const char *cmd, ULONG flags, enum OutputDefType o
 
     // setup the error message and put it on the application's method stack to
     // let the main thread display it.
-    Fault(error, NULL, errorStr, sizeof(errorStr));
+    if(error == 0 || Fault(error, NULL, errorStr, sizeof(errorStr)) == 0)
+      errorStr[0] = '\0';
     E(DBF_UTIL, "execution of '%s' failed, rc=%ld, error=%ld (%s)", cmd, result, error, errorStr);
 
     ER_NewError(tr(MSG_EXECUTE_COMMAND_FAILED), cmd, error, errorStr);
