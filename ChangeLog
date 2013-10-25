@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-10-25 Vit Sindlar <sindlarv at centrum dot cz>
+
+  * locale/czech.ct: updated Czech translation.
+
 2013-10-25 Thore Böckelmann <tboeckel@gmx.de>
 
   * Config.c: raised the default stack size for externally launched commands to

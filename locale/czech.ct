@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.2 (13.5.2013)
+## version $VER: YAM.catalog 8.3 (25.10.2013)
 ## language czech
 ## codeset 5
 ;
@@ -38,10 +38,6 @@ Pøílohy
 MSG_Options
 Mo¾nosti
 ; Options
-;
-MSG_Del
-Odeb_rat
-; _Delete
 ;
 MSG_New
 Nová
@@ -207,10 +203,6 @@ MSG_Columns
 Sloupce
 ; Columns
 ;
-MSG_Path
-Cesta
-; Path
-;
 MSG_Version
 Verze programu:
 ; Version:
@@ -310,15 +302,15 @@ dokument RTF
 ; Rich Text Format
 ;
 MSG_CTapplicationlha
-archív LhA
+archiv LhA
 ; LhA archive
 ;
 MSG_CTapplicationlzx
-archív LZX
+archiv LZX
 ; LZX archive
 ;
 MSG_CTapplicationzip
-archív ZIP
+archiv ZIP
 ; ZIP archive
 ;
 MSG_CTapplicationamigaexe
@@ -467,11 +459,6 @@ Pøeposlána zpráva od '%s'; pøedmìt '%s', urèená pro '%s'
 ; Forwarded message from '%s' about '%s' to '%s'
 ; SENDER, SUBJECT, RECIPIENT
 ;
-MSG_LOG_Filtering
-Odfiltrováno %ld zpráv ze slo¾ky '%s': %ld odpovídá zadaným kritériím
-; Filtered %ld message(s) in folder '%s': %ld match(es)
-; COUNT, FOLDER, COUNT
-;
 MSG_LOG_SavingConfig
 Ulo¾en konfiguraèní soubor s názvem '%s'
 ; Saved configuration file '%s'
@@ -582,7 +569,7 @@ Poèet smazaných: %3ld
 ; \n\
 ; %3ld messages checked,\n\
 ; %3ld forwarded,\n\
-; %3ld archived,\n\
+; %3ld moved,\n\
 ; %3ld deleted
 ; COUNT, COUNT, COUNT, COUNT
 ;
@@ -1043,7 +1030,7 @@ MSG_CO_CompleteHeader
 ; %h  Complete header
 ;
 MSG_CO_ArchiveName
-%a  název archívu
+%a  název archivu
 ; %a  Filename of archive
 ;
 MSG_CO_ArchiveFiles
@@ -1108,106 +1095,6 @@ _Pou¾ít
 MSG_CO_Cancel
 _Zru¹it
 ; _Cancel
-;
-MSG_CO_TZoneM12
-(GMT-12:00) Kwajalein Islands (IDLW)
-; (GMT-12:00) Kwajalein Islands (IDLW)
-;
-MSG_CO_TZoneM11
-(GMT-11:00) Midway Islands, Samoa (NT)
-; (GMT-11:00) Midway Islands, Samoa (NT)
-;
-MSG_CO_TZoneM10
-(GMT-10:00) Honolulu, Tahiti (HST)
-; (GMT-10:00) Honolulu, Tahiti (HST)
-;
-MSG_CO_TZoneM9
-(GMT-09:00) Anchorage (AKST)
-; (GMT-09:00) Anchorage (AKST)
-;
-MSG_CO_TZoneM8
-(GMT-08:00) Los Angeles, San Francisco (PST)
-; (GMT-08:00) Los Angeles, San Francisco (PST)
-;
-MSG_CO_TZoneM7
-(GMT-07:00) Calgary, Denver, Phoenix (MST)
-; (GMT-07:00) Calgary, Denver, Phoenix (MST)
-;
-MSG_CO_TZoneM6
-(GMT-06:00) Chicago, Dallas, Mexico City (CST)
-; (GMT-06:00) Chicago, Dallas, Mexico City (CST)
-;
-MSG_CO_TZoneM5
-(GMT-05:00) Lima, Miami, Montreal, New York (EST)
-; (GMT-05:00) Lima, Miami, Montreal, New York (EST)
-;
-MSG_CO_TZoneM4
-(GMT-04:00) Caracas, Santiago, Thule (AST)
-; (GMT-04:00) Caracas, Santiago, Thule (AST)
-;
-MSG_CO_TZoneM3
-(GMT-03:00) Buenos Aires, Rio de Janeiro (BRT)
-; (GMT-03:00) Buenos Aires, Rio de Janeiro (BRT)
-;
-MSG_CO_TZoneM2
-(GMT-02:00) Brazil East (FNT)
-; (GMT-02:00) Brazil East (FNT)
-;
-MSG_CO_TZoneM1
-(GMT-01:00) Azores (WAT)
-; (GMT-01:00) Azores (WAT)
-;
-MSG_CO_TZone0
-(GMT 00:00) Dublin, Lisbon, London (GMT/UTC)
-; (GMT 00:00) Dublin, Lisbon, London (GMT/UTC)
-;
-MSG_CO_TZone1
-(GMT+01:00) Prague, Berlin, Paris, Oslo (CET)
-; (GMT+01:00) Berlin, Paris, Madrid, Oslo (CET)
-;
-MSG_CO_TZone2
-(GMT+02:00) Athens, Cairo, Helsinki (EET)
-; (GMT+02:00) Athens, Cairo, Helsinki (EET)
-;
-MSG_CO_TZone3
-(GMT+03:00) Baghdad, Kuwait, Moscow, Nairobi (EEST)
-; (GMT+03:00) Baghdad, Kuwait, Moscow, Nairobi (EEST)
-;
-MSG_CO_TZone4
-(GMT+04:00) Dubai, Port Louis, Victoria (ZP4)
-; (GMT+04:00) Dubai, Port Louis, Victoria (ZP4)
-;
-MSG_CO_TZone5
-(GMT+05:00) Islamabad, Karachi (ZP5)
-; (GMT+05:00) Islamabad, Karachi (ZP5)
-;
-MSG_CO_TZone6
-(GMT+06:00) Alma-Ata, Dhaka, Tashkent (ZP6)
-; (GMT+06:00) Alma-Ata, Dhaka, Tashkent (ZP6)
-;
-MSG_CO_TZone7
-(GMT+07:00) Bangkok, Hanoi, Phnom Penh
-; (GMT+07:00) Bangkok, Hanoi, Phnom Penh
-;
-MSG_CO_TZone8
-(GMT+08:00) Hong Kong, Shanghai, Singapore (WST)
-; (GMT+08:00) Hong Kong, Shanghai, Singapore (WST)
-;
-MSG_CO_TZone9
-(GMT+09:00) Osaka, Seoul, Tokyo (JST)
-; (GMT+09:00) Osaka, Seoul, Tokyo (JST)
-;
-MSG_CO_TZone10
-(GMT+10:00) Melbourne, Sydney, Vladivostok (GST)
-; (GMT+10:00) Melbourne, Sydney, Vladivostok (GST)
-;
-MSG_CO_TZone11
-(GMT+11:00) New Caldonia (AEDT)
-; (GMT+11:00) New Caldonia (AEDT)
-;
-MSG_CO_TZone12
-(GMT+12:00) Auckland, Wellington (IDLE)
-; (GMT+12:00) Auckland, Wellington (IDLE)
 ;
 MSG_CO_MinConfig
 Minimální konfigurace
@@ -1282,7 +1169,7 @@ zobrazit
 ; show always
 ;
 MSG_CO_TransferWin
-Prùbìh _stahování
+Prùbìh s_tahování
 ; _Transfer window
 ;
 MSG_CO_PreSelect
@@ -1312,26 +1199,6 @@ Pøí_kaz
 MSG_CO_Name
 Náz_ev
 ; N_ame
-;
-MSG_CO_CTAnd
-a (AND)
-; and
-;
-MSG_CO_CTOr
-nebo (OR)
-; or
-;
-MSG_CO_CTXor
-exkl. nebo (EX OR)
-; exclusive or
-;
-MSG_CO_Comparison
-Porovnání
-; Comparison
-;
-MSG_CO_Action
-Akce
-; Action
 ;
 MSG_CO_Remote
 Aplikovat pøed _stáhnutím po¹ty
@@ -1524,10 +1391,6 @@ a¾ pøed odesláním
 MSG_CO_ExternalEditor
 _Externí editor
 ; _External editor
-;
-MSG_CO_Launch
-_Spustit okam¾itì
-; _Launch immediately
 ;
 MSG_CO_PhraseOpen
 Pozdrav
@@ -1746,7 +1609,7 @@ Definice cest
 ; Paths
 ;
 MSG_CO_Detach
-Ulo¾_ení pøíloh
+Ulo¾ení pøí_loh
 ; D_ecode files to
 ;
 MSG_CO_Attach
@@ -1754,7 +1617,7 @@ N_aètení pøíloh
 ; _Attach files from
 ;
 MSG_CO_TempDir
-_Doèasné soubory
+_Doèasné soubory:
 ; For _temporary files
 ;
 MSG_CO_AppIcon
@@ -1922,11 +1785,6 @@ Heslo pro po¹tovní server
 ; Password to access\n\
 ; the POP3 server.
 ;
-MSG_HELP_CO_CY_TZONE
-Definuje èasové pásmo va¹eho bydli¹tì.
-; Select the time zone of\n\
-; your current location.
-;
 MSG_HELP_CO_ST_SMTPHOST
 Adresa serveru pro odesílání po¹ty. Ponecháte-li\n\
 toto pole prázdné, bude pou¾ita adresa serveru\n\
@@ -2051,11 +1909,6 @@ Vybraný filtr program neaplikuje automaticky,\n\
 spustíte ho sami, ruènì.
 ; Apply this filter when you use\n\
 ; the filter function manually.
-;
-MSG_HELP_CO_CY_COMBINE
-Definuje zpùsob kombinování pravidel filtrování.
-; How to combine the rules\n\
-; for this filter.
 ;
 MSG_HELP_CO_CH_AFORWARD
 Zprávy vyhovující definovaným kritériím pøepo¹le\n\
@@ -2252,11 +2105,6 @@ Pøi psaní nové zprávy spustí program automaticky\n\
 externí editor.
 ; Automatically launch the external editor\n\
 ; when starting a new message.
-;
-MSG_HELP_CO_ST_EDITOR
-Definuje cestu k externímu textovému editoru.
-; Filename of your\n\
-; favorite text editor.
 ;
 MSG_HELP_CO_ST_FWDSTART
 Definuje text pro uvození pøeposílané zprávy.\n\
@@ -2625,8 +2473,8 @@ _Hledat
 ; _Start search
 ;
 MSG_AB_FoundEntryGads
-_Dal¹í|Up_ravit|_Zru¹it
-; _Next hit|_Edit hit|_Cancel
+_Dal¹í|*Up_ravit|_Zru¹it
+; _Next hit|*_Edit hit|_Cancel
 ;
 MSG_AB_NoneFound
 V seznamu nebyl nalezen odpovídající kontakt.
@@ -3549,11 +3397,11 @@ Vyberte po¾adované soubory
 ; Select files to attach
 ;
 MSG_WR_CreateArc
-Vytvoøit archív
+Vytvoøit archiv
 ; Create archive
 ;
 MSG_WR_CreateArcReq
-Zadejte prosím název nového archívu:
+Zadejte prosím název nového archivu:
 ; Please enter a filename for the new archive
 ;
 MSG_WR_InsertFile
@@ -3939,7 +3787,7 @@ soubor.
 ;
 MSG_HELP_WR_BT_ADDPACK
 Z vybraných souborù vytvoøí\n\
-archív a pøilo¾í ke zprávì.
+archiv a pøilo¾í ke zprávì.
 ; Create an archive with one\n\
 ; or more files and add it to\n\
 ; the list as an attachment.
@@ -5214,10 +5062,6 @@ MSG_CO_TOTALMSGS
 %t - celkový poèet
 ; %t  Total messages
 ;
-MSG_CO_DELMSGS
-%d - smazané zprávy
-; %d  Deleted messages
-;
 MSG_CO_SENTMSGS
 %s - odeslané zprávy
 ; %s  Sent messages
@@ -5231,8 +5075,8 @@ Pøidá informace o poètu zpráv ve vybrané slo¾ce\n\
 k ostatním a souhrn zobrazí v ikonì na pracovní\n\
 plo¹e.
 ; Would you like to see this\n\
-; folder's statistics in the\n\
-; YAM AppIcon's label?
+; folder's statistics in YAM's\n\
+; AppIcon label?
 ;
 MSG_OPENGUI
 Otevøení u¾ivatelského rozhraní...
@@ -5395,10 +5239,6 @@ o rozesílacím seznamu.
 MSG_FO_NOTRECOGNIZED
 Nepodaøilo se zjistit potøebné informace.
 ; Couldn't be recognized.
-;
-MSG_FO_MAXAGEFMT
-%ld dnù
-; %ld days
 ;
 MSG_CO_NB_EMAILCACHE
 Zrychlení práce
@@ -5604,38 +5444,6 @@ Urèuje podpis pro vybraný rozesílací seznam.
 MSG_CTapplicationpdf
 dokument PDF
 ; PDF document
-;
-MSG_CO_TZoneM330
-(GMT-03:30) Newfoundland (NFT)
-; (GMT-03:30) Newfoundland (NFT)
-;
-MSG_CO_TZone330
-(GMT+03:30) Teheran (IT)
-; (GMT+03:30) Teheran (IT)
-;
-MSG_CO_TZone430
-(GMT+04:30) Kabul
-; (GMT+04:30) Kabul
-;
-MSG_CO_TZone530
-(GMT+05:30) Chennai, Kolkata, Mumbai, New-Delhi (IST)
-; (GMT+05:30) Chennai, Kolkata, Mumbai, New-Delhi (IST)
-;
-MSG_CO_TZone545
-(GMT+05:45) Katmandu
-; (GMT+05:45) Katmandu
-;
-MSG_CO_TZone630
-(GMT+06:30) Rangun (NST)
-; (GMT+06:30) Rangun (NST)
-;
-MSG_CO_TZone930
-(GMT+09:30) Adelaide, Darwin (ACST)
-; (GMT+09:30) Adelaide, Darwin (ACST)
-;
-MSG_CO_TZone13
-(GMT+13:00) Nuku'alofa (NZDT)
-; (GMT+13:00) Nuku'alofa (NZDT)
 ;
 MSG_HELP_CO_ST_INFOBARTXT
 Text, který by mìl být zobrazen ve stavové li¹tì
@@ -5931,14 +5739,6 @@ MSG_CTunknown
 neznámý
 ; unknown
 ;
-MSG_CO_More
-Pøid_at
-; _More
-;
-MSG_CO_Less
-Odeb_rat
-; _Less
-;
 MSG_CO_NB_AUTOSAVE
 Interval ukládání
 ; Autosave interval
@@ -5968,18 +5768,6 @@ na disku nebo nedostateèná práva pro zápis.
 ; This may be due to insufficient space or an invalid or not writable \
 ; destination path.
 ;
-MSG_CO_QUICKSEARCHBAR
-Zo_brazit v hlavním oknì panel pro rychlé hledání
-; Show search _bar in main window
-;
-MSG_HELP_CO_CH_QUICKSEARCHBAR
-Do hlavního okna programu vpravo nahoru pøidá\n\
-panel, pomocí kterého ve vybrané slo¾ce rychle\n\
-najdete po¾adovanou zprávu.
-; If checked, a search bar will appear\n\
-; in the main window to let you find\n\
-; certain e-mails more quickly.
-;
 MSG_FI_SELECTACTIVE
 Vybr_at oznaèenou
 ; Select this m_atch
@@ -5989,30 +5777,6 @@ Oznaèenou zprávu v oknì hledání vybere v hlavním\n\
 oknì programu.
 ; Select the current message\n\
 ; in the main window.
-;
-MSG_QUICKSEARCH_SO_SUBJECT
-Pøedmìt
-; Subject
-;
-MSG_QUICKSEARCH_SO_SENDER
-Odesílatel
-; Sender
-;
-MSG_QUICKSEARCH_SO_SUBJORSENDER
-Pøedmìt nebo odesílatel
-; Subject Or Sender
-;
-MSG_QUICKSEARCH_SO_TOORCC
-Pøíjemce (Komu nebo Kopie)
-; Recipient (To or CC)
-;
-MSG_QUICKSEARCH_SO_INMSG
-Text zprávy
-; Message Body
-;
-MSG_QUICKSEARCH_SO_ENTIREMSG
-Text zprávy vèetnì hlavièek
-; Whole Message
 ;
 MSG_QUICKSEARCH_VO_ALL
 V¹echny zprávy
@@ -6074,18 +5838,13 @@ Vyhledá zadaný text dle definovaného kritéria.
 ; Text inserted here will be used as the search\n\
 ; criterion to display mail in this folder.
 ;
-MSG_HELP_QUICKSEARCH_SEARCHOPTIONPOPUP
-Definuje kritérium hledání pro zadaný text.
-; Select here where the string at the right\n\
-; should be searched in the mail.
-;
 MSG_BUSY_SEARCHINGFOLDER
 Hledání zpráv ve slo¾ce '%s'...
 ; Searching messages in folder '%s'...
 ; FOLDERNAME
 ;
 MSG_CO_WBAPPICON
-Zobrazit a_plikaèní ikonu na pracovní plo¹e
+Zo_brazit aplikaèní ikonu na pracovní plo¹e
 ; A_ppIcon on Workbench
 ;
 MSG_HELP_CO_CH_WBAPPICON
@@ -6363,43 +6122,6 @@ MSG_BUSY_OPENINGCONFIG
 Otevírání konfiguraèního okna...
 ; Opening configuration...
 ;
-MSG_CO_TIMEZONEWARN_TITLE
-Upozornìní :: Nastavení èasového pásma
-; Time zone setting warning
-;
-MSG_CO_TIMEZONEWARN
-Èasové pásmo definované v operaèním systému\n\
-a programu YAM se neshodují.\n\
-\n\
-Co si pøejete udìlat?
-; The time zone setting in YAM doesn't match\n\
-; the system's default time zone.\n\
-; \n\
-; How do you want to proceed?
-;
-MSG_CO_TIMEZONEWARN_BT
-*Z_mìnit|Ignorov_at v¾dy|_Ignorovat
-; *_Change|Ignore _always|_Ignore
-;
-MSG_CO_AUTODSTWARN_TITLE
-Upozornìní :: Zmìna èasu
-; AutoDST warning
-;
-MSG_CO_AUTODSTWARN
-Období letního èas definované v operaèním systému\n\
-a programu YAM se neshodují.\n\
-\n\
-Co si pøejete udìlat?
-; YAM has found an AutoDST tool active and\n\
-; it is reporting a Daylight Saving Time\n\
-; different to what is configured in YAM.\n\
-; \n\
-; How do you want to proceed?
-;
-MSG_CO_AUTODSTWARN_BT
-*Z_mìnit|Ignorov_at v¾dy|_Ignorovat
-; *_Change|Ignore _always|_Ignore
-;
 MSG_MA_UPDATECHECK
 Zjistit aktualizace
 ; Check for updates
@@ -6507,11 +6229,11 @@ Pop_is
 ; D_escription
 ;
 MSG_CTapplicationgz
-archív GNU zip
+archiv GNU zip
 ; GNU zip archive
 ;
 MSG_CTapplicationhqx
-archív HQX (Macintosh)
+archiv HQX (Macintosh)
 ; Macintosh archive
 ;
 MSG_CTapplicationxls
@@ -6535,7 +6257,7 @@ komprimovaný soubor (zlib)
 ; zlib compressed file
 ;
 MSG_CTapplicationtar
-archív tar
+archiv tar
 ; tar archive
 ;
 MSG_CTaudioaiff
@@ -6555,7 +6277,7 @@ obrázek BMP
 ; Bitmap image file
 ;
 MSG_CTapplicationtgz
-archív tgz
+archiv tgz
 ; gzipped tar archive
 ;
 MSG_CTapplicationpgp
@@ -6563,7 +6285,7 @@ MSG_CTapplicationpgp
 ; PGP encrypted file
 ;
 MSG_CTapplicationbz2
-archív BZIP2
+archiv BZIP2
 ; BZIP2 archive
 ;
 MSG_CO_DETECT_CYRILLIC
@@ -6575,7 +6297,7 @@ Pokusí se automaticky detekovat správnì kódování\n\
 rusky psaného textu.
 ; Try to use the auto-detect feature\n\
 ; of codesets.library to automatically\n\
-; identify the correct cyrillic codeset\n\
+; identify the correct cyrillic charset\n\
 ; (only relevant for cyrillic users).
 ;
 MSG_WR_ErrorNotEnoughUndoMem
@@ -6605,7 +6327,7 @@ a máte oprávnìní pro ètení.
 ; and that is not read protected.
 ;
 MSG_ER_PACKERROR
-Chyba pøi vytváøení archívu z vybraných souborù.\n\
+Chyba pøi vytváøení archivu z vybraných souborù.\n\
 \n\
 Zkontrolujte, zda jsou v¹echny soubory v poøádku \
 a máte potøebná oprávnìní pro ètení.
@@ -7352,16 +7074,6 @@ Konfigurace vzhledu programu...
 MSG_CO_CRDLOOKFEEL
 Vzhled
 ; Look & Feel
-;
-MSG_CO_DSTACTIVE
-N_astavit období letního èasu (DST)
-; D_aylight Saving Time (DST) is active
-;
-MSG_HELP_CO_CH_DSTACTIVE
-Tuto funkci zapnìte v období letního èasu.
-; Enable this if daylight saving time is\n\
-; currently active in your time zone\n\
-; (summer time).
 ;
 MSG_CO_SMTP_SERVERPORT
 Ser_ver/Port
@@ -8200,18 +7912,6 @@ smazán nebude).
 ; 'Forget' this picture (the\n\
 ; file on disk will remain).
 ;
-MSG_HELP_CO_TX_DEFAULTCHARSET
-Ze seznamu vyberte výchozí kódování programu.\n\
-\n\
-Vybrané kódování by obecnì mìlo odpovídat kódování\n\
-operaèního systému. Pokud ne, YAM otevøe dialogové\n\
-okno a zeptá se vás, co dál.
-; Use the popup button to select the character set\n\
-; you would like YAM to use by default. This should\n\
-; match the system's default charset, otherwise a\n\
-; requester will appear asking how do you want to\n\
-; proceed.
-;
 MSG_HELP_CO_CH_NOTISOUND
 Pøi doruèení nové po¹ty pøehraje definovaný zvuk.
 ; Play a sound file\n\
@@ -8333,7 +8033,7 @@ Poèet nevy¾ádaných: %3ld
 ; \n\
 ; %3ld messages checked,\n\
 ; %3ld forwarded,\n\
-; %3ld archived,\n\
+; %3ld moved,\n\
 ; %3ld deleted,\n\
 ; %3ld classified as spam
 ; COUNT, COUNT, COUNT, COUNT, COUNT
@@ -8413,10 +8113,9 @@ _Kódování
 ; _Charset
 ;
 MSG_HELP_WR_PO_CHARSET
-Ze seznamu vyberte po¾adované kódování.\n\
-\n\
-Vybrané kódování by obecnì mìlo odpovídat kódování\n\
-operaèního systému.
+Definuje kódování, do kterého bude text pøeveden\n\
+je¹tì pøed odesláním zprávy. Vybrané kódování by\n\
+mìlo odpovídat kódování operaèního systému.
 ; Use the popup button to select the character set\n\
 ; you would like YAM to use for this mail. This\n\
 ; defaults to the global character set.
@@ -9179,7 +8878,7 @@ Velikost: %s
 ; NAME, ADDRESS, NAME, ADDRESS, SUBJECT, DATE, FILENAME, SIZE
 ;
 MSG_CO_UPDATE_DOWNLOAD_PATH
-Umístìní:
+Sta_hování aktualizací
 ; Download _path:
 ;
 MSG_UPD_NOTIFICATION_DOWNLOAD
@@ -9603,10 +9302,6 @@ _Aktivní
 MSG_MA_FLUSH_ALL_INDICES
 Vyprázdnit indexy
 ; Flush all indices
-;
-MSG_FI_CONDITION
-Podmínka
-; Condition
 ;
 MSG_HELP_CO_CH_IDENTITY_ENABLED
 Urèuje, zda je vybraná identita povolená.
@@ -10194,4 +9889,352 @@ Pøejmenovat pøílohu
 MSG_WR_ENTER_NEW_NAME
 Zadejte nový název pøílohy:
 ; Enter new attachment name:
+;
+MSG_FI_SKIP_ENCRYPTED
+Pøeskoèit ¹ifrované zprávy
+; Skip encrypted mails
+;
+MSG_HELP_FI_CH_SKIP_ENCRYPTED
+Pøi hledání pøeskoèí za¹ifrované zprávy\n\
+(napø. zprávy kódované systémem PGP).
+; Skip encrypted mails (i.e. PGP)\n\
+; during the search.
+;
+MSG_CO_QUICKSEARCHBAR
+Zo_brazit v hlavním oknì panel pro rychlé hledání
+; Quick search bar
+;
+MSG_HELP_CO_CH_QUICKSEARCHBAR
+Do hlavního okna programu vpravo nahoru pøidá\n\
+panel, pomocí kterého ve vybrané slo¾ce rychle\n\
+najdete po¾adovanou zprávu.
+; Here you can select the position of\n\
+; the quick search bar.
+;
+MSG_CO_QUICKSEARCHBARPOS
+Umís_tìní
+; Posi_tion
+;
+MSG_CO_QUICKSEARCHBARPOS01
+Vypnuto
+; Disabled
+;
+MSG_CO_QUICKSEARCHBARPOS02
+Nahoøe
+; Top
+;
+MSG_CO_QUICKSEARCHBARPOS03
+Dole
+; Bottom
+;
+MSG_CO_FILTER_REGISTER_SETTINGS
+Obecné
+; General
+;
+MSG_CO_FILTER_REGISTER_CONDITIONS
+Podmínky
+; Conditions
+;
+MSG_CO_FILTER_REGISTER_ACTIONS
+Akce
+; Actions
+;
+MSG_CO_CONDITION_ALL
+v¹echny
+; all
+;
+MSG_CO_CONDITION_MIN_ONE
+jedna nebo více
+; one or more
+;
+MSG_CO_CONDITION_MAX_ONE
+pouze jedna
+; only one
+;
+MSG_WR_CMENU_TITLE
+Pøílohy
+; Attachments
+;
+MSG_WR_CMENU_ADD_ATTACHMENT
+Pøidat...
+; Add file(s)...
+;
+MSG_WR_CMENU_ADD_ARCHIVE_ATTACHMENT
+Zabalit a _pøidat...
+; Pack & add...
+;
+MSG_WR_CMENU_REMOVE_ATTACHMENT
+Odebrat
+; Remove
+;
+MSG_WR_CMENU_RENAME_ATTACHMENT
+Pøejmenovat...
+; Rename...
+;
+MSG_WR_CMENU_DISPLAY_ATTACHMENT
+Zobrazit
+; Display
+;
+MSG_WR_TITLEATTACHMENT
+Pøíloha
+; Attachment
+;
+MSG_WR_REMOVE
+Odeb_rat
+; Re_move
+;
+MSG_CO_CONDITION_PREPHRASE
+Pokud
+; If
+;
+MSG_CO_CONDITION_POSTPHRASE
+je splnìna jedna z tìchto podmínek:
+; of the following conditions are met:
+;
+MSG_CO_FALLBACK_TZONE
+Europe/Prague
+; America/New_York
+; !!! WARNING !!!
+; Do not translate this fallback name, but just choose a
+; location which represents the language's time zone
+; as good as possible. If there are multiple possibilities
+; for you language, use the one that matches the captial
+; of your country/language most. This fallback name MUST
+; match EXACTLY one of the locations in the Resources/zoneinfo
+; directory. Spaces MUST be replaced by '_'. All locations
+; names MUST be kept in english language.
+;
+MSG_HELP_CO_GR_TZONE
+Definuje va¹e aktuální èasové pásmo.
+; Here you can set your current location/time zone.
+;
+MSG_CO_TZONE_GMTOFFSET
+Èasový posun vùèi GMT:
+; Current GMT offset:
+;
+MSG_CO_TZONE_NEXTDSTSWITCH
+Pøí¹tí zmìna èasu:
+; Next DST switch:
+;
+MSG_CO_TZONE_NODSTSWITCH
+---
+; no daylight saving
+;
+MSG_CO_TZONE_DESCRIPTION
+Popis:
+; Description:
+;
+MSG_CO_TZONE_DESCRIPTION_NA
+---
+; n/a
+;
+MSG_TZONE_ZONETAB_FILE_MISSING
+Nelze otevøít soubor s popisem èasových pásem\n\
+'%s/Resources/zoneinfo/zone.tab'.\n\
+\n\
+Zkontrolujte prosím, zda jsou v¹echny soubory\n\
+potøebné pro správu èasových pásem v adresáøi\n\
+'%s/Resources/zoneinfo'.
+; Cannot open time zones description file\n\
+; '%s/Resources/zoneinfo/zone.tab'.\n\
+; \n\
+; Please make sure to install all time zones management\n\
+; related files to the '%s/Resources/zoneinfo' directory.
+;
+MSG_TZONE_LOCATION_FILE_MISSING
+Nelze otevøít soubor s definicí èasového pásma\n\
+'%s'.\n\
+\n\
+Zkontrolujte prosím, zda jsou v¹echny soubory\n\
+potøebné pro správu èasových pásem v adresáøi\n\
+'%s/Resources/zoneinfo'.
+; Cannot open time zone information file '%s'.\n\
+; \n\
+; Time zone information will be incorrect. Please make sure \
+; to install all time zones management related files to the \
+; '%s/Resources/zoneinfo' directory.
+;
+MSG_FOLDER_MOVE_WARNING_TITLE
+Upozornìní na zastaralý formát dat
+; YAM folder format warning
+;
+MSG_FOLDER_MOVE_WARNING
+Pøi spu¹tìní byla nalezena data v zastaralém formátu.\n\
+\n\
+YAM nyní pøesune v¹echny slo¾ky se zprávami do nového\n\
+spoleèného adresáøe s názvem 'Folders', který najdete\n\
+na disku v '%s'.\n\
+\n\
+\033bUPOZORNÌNÍ:\033n\n\
+Tato operace je \033bnevratná\033n a výsledkem budou data\n\
+ve formátu nekompatibilním s pøedchozími verzemi YAMu.\n\
+\n\
+Chcete pokraèovat nebo YAM ukonèit a zazálohovat data?
+; An obsolete folder storage format has been found.\n\
+; \n\
+; YAM will now move all folder directories to a new\n\
+; subdirectory called 'Folders' in the mail directory '%s'.\n\
+; \n\
+; \033bWARNING:\033n\n\
+; This operation is \033birreversible\033n and will result in\n\
+; folders which are no longer compatible to former\n\
+; versions of YAM.\n\
+; \n\
+; Do you want to perform this operation now or\n\
+; quit YAM and make a backup first?
+;
+MSG_FOLDER_MOVE_WARNING_GADS
+_Pokraèovat|*U_konèit
+; _Continue|*_Quit
+;
+MSG_FO_DISPLAYNAME
+_Název
+; Display _name
+;
+MSG_FO_DIRECTORYNAME
+_Adresáø na disku
+; Directory na_me
+;
+MSG_VALIDATING_FOLDERS
+Kontrola adresáøù...
+; Validating folders...
+;
+MSG_MA_MARCHIVE
+Archivovat
+; Archive
+;
+MSG_MA_ARCHIVE
+Archiv
+; Archive
+;
+MSG_CO_SHOW_ARCHIVER_PROGRESS
+Zobrazit prùbìh
+; Show progress
+;
+MSG_CO_LAUNCH_EXTEDITOR
+Automaticky _spustit externí textový editor
+; _Launch external editor immediately
+;
+MSG_CO_EXTEDITOR
+Externí textový editor
+; External editor settings
+;
+MSG_HELP_CO_ST_EDITOR_EXT
+Urèuje cestu k va¹emu oblíbenému textovému editoru,\n\
+kterým mù¾ete podle libosti nahradit interní editor.
+; Path to your favourite external\n\
+; editor which you can use as an\n\
+; alternative to the internal one.
+;
+MSG_CO_EXTEDITOR_CODESET
+_Cílové kódování
+; Display c_harset
+;
+MSG_HELP_CO_TX_DEFCODESET_EDITOR
+Definuje kódování, do kterého bude text pøeveden\n\
+je¹tì pøed otevøením v textovém editoru.
+; Choose a charset to which the text\n\
+; will be converted to before starting\n\
+; the external editor.
+;
+MSG_HELP_CO_TX_DEFCODESET_LOCAL
+Definuje kódování, do kterého bude text pøeveden\n\
+je¹tì pøed zobrazením. Vybrané kódování by mìlo\n\
+odpovídat kódování systému. Pokud ne, YAM bude ¾ádat\n\
+potvrzení a zeptá se znovu.
+; Use the popup button to select the character set\n\
+; you would like YAM to use for displaying text.\n\
+; This should usually match your system's default\n\
+; charset, otherwise a requester will appear asking\n\
+; how to proceed.
+;
+MSG_HELP_CO_TX_DEFCODESET_WRITE
+Definuje kódování, do kterého bude text pøeveden\n\
+je¹tì pøed odesláním zprávy. Vybrané kódování by\n\
+mìlo odpovídat kódování operaèního systému, ale\n\
+není to nutné.\n\
+V pøípadì pochybností vyberte kódování UTF-8.
+; Use the popup button to select the character set\n\
+; you would like YAM to encode emails to.\n\
+; This should usually match your system's default\n\
+; charset so that the displayed character set matches\n\
+; the one you write mail. However, you can select any\n\
+; character set you want to encode your outgoing mails\n\
+; to.
+;
+MSG_CO_DEFAULTCODESET_WRITE
+Výc_hozí kódování
+; Default c_harset
+;
+MSG_CO_MIME_CODESET
+_Cílové kódování
+; Display _charset
+;
+MSG_HELP_CO_TX_MIME_CODESET
+Definuje kódování, do kterého bude text pøeveden\n\
+je¹tì pøed spu¹tìním pøíkazu definovaného pro daný\n\
+druh souboru dle MIME.
+; Select the charset here that printable\n\
+; text should be converted to before\n\
+; executing the command of this MIME type.
+;
+MSG_CO_DEFAULTVIEWER_CODESET
+Cílové kó_dování
+; _Display charset
+;
+MSG_HELP_CO_TX_DEFVIEWER_CODESET
+Definuje kódování, do kterého bude text pøeveden\n\
+je¹tì pøed zobrazením v po¾adovaném prohlí¾eèi.
+; Select the charset here that printable\n\
+; text should be converted to before\n\
+; starting the default viewer.
+;
+MSG_LOG_FILTER_DONE
+Zpracováno %ld zpráv na základì %ld kritérií
+; Filtered %ld message(s) with %ld match(es)
+; COUNT, COUNT
+;
+MSG_FO_JUMP_TO_UNREAD_MESSAGE
+Pøejít na první nepøeètenou zprávu
+; Jump to first unread message
+;
+MSG_HELP_FO_CH_JUMPTOUNREAD
+Po kliknutí na po¾adovanou slo¾ku automaticky\n\
+pøejde na první nepøeètenou zprávu.
+; Jump to the first unread message when\n\
+; entering this folder.
+;
+MSG_FO_JUMP_TO_RECENT_MESSAGE
+Pøejít na nejnovìj¹í zprávu
+; Jump to newest message
+;
+MSG_HELP_FO_CH_JUMPTORECENT
+Po kliknutí na po¾adovanou slo¾ku automaticky\n\
+pøejde na nejnovìj¹í zprávu.
+; Jump to the most recent message when\n\
+; entering this folder.
+;
+MSG_FO_MAXAGE_DAYS
+dnù
+; days
+;
+MSG_QUICKSEARCH_FILTER_LIST
+Seznam filtrù...
+; Filter list...
+;
+MSG_QUICKSEARCH_FROM
+Odesílatel
+; Sender
+;
+MSG_QUICKSEARCH_TO
+Pøíjemce
+; Receiver
+;
+MSG_QUICKSEARCH_SUBJECT
+Pøedmìt
+; Subject
+;
+MSG_QUICKSEARCH_BODY
+Text zprávy
+; Mail body
 ;
