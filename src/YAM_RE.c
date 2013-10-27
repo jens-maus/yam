@@ -2521,11 +2521,10 @@ static void RE_HandleSignedMessage(struct Part *frp)
 
   if(G->PGPVersion >= 0)
   {
-    struct ReadMailData *rmData = frp->rmData;
     struct Part *pgpPart = NULL;
     struct Part *part;
 
-    // find the letter and signature parts
+    // find the signature part
     part = frp;
     do
     {
