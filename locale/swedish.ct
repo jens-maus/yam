@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.4 (02.09.2013)
+## version $VER: YAM.catalog 8.5 (27.10.2013)
 ## language svenska
 ## codeset 0
 ;
@@ -458,11 +458,6 @@ Vidarebefordrade meddelande från '%s' om '%s' till '%s'
 ; Forwarded message from '%s' about '%s' to '%s'
 ; SENDER, SUBJECT, RECIPIENT
 ;
-MSG_LOG_Filtering
-Filtrerade %ld meddelande(n) i mapp '%s': %ld träff(ar)
-; Filtered %ld message(s) in folder '%s': %ld match(es)
-; COUNT, FOLDER, COUNT
-;
 MSG_LOG_SavingConfig
 Sparade inställningarna i filen '%s'
 ; Saved configuration file '%s'
@@ -557,12 +552,12 @@ Bekräftelseförfrågan
 ; Confirmation Request
 ;
 MSG_MA_FilterStats
-Filtreringen är klar:\n\n%3ld meddelanden genomsökta,\n%3ld vidarebefordrade,\n%3ld arkiverade,\n%3ld raderade
+Filtreringen är klar:\n\n%3ld meddelanden genomsökta,\n%3ld vidarebefordrade,\n%3ld flyttade,\n%3ld raderade
 ; Filtering done:\n\
 ; \n\
 ; %3ld messages checked,\n\
 ; %3ld forwarded,\n\
-; %3ld archived,\n\
+; %3ld moved,\n\
 ; %3ld deleted
 ; COUNT, COUNT, COUNT, COUNT
 ;
@@ -2366,8 +2361,8 @@ _Sök
 ; _Start search
 ;
 MSG_AB_FoundEntryGads
-_Nästa träff|R_edigera träff|A_vbryt
-; _Next hit|_Edit hit|_Cancel
+_Nästa träff|*R_edigera träff|A_vbryt
+; _Next hit|*_Edit hit|_Cancel
 ;
 MSG_AB_NoneFound
 Hittade inga poster!
@@ -4801,10 +4796,6 @@ MSG_CO_TOTALMSGS
 %t  Totala meddelanden
 ; %t  Total messages
 ;
-MSG_CO_DELMSGS
-%d  Raderade meddelanden
-; %d  Deleted messages
-;
 MSG_CO_SENTMSGS
 %s  Skickade meddelanden
 ; %s  Sent messages
@@ -4816,8 +4807,8 @@ App_Ikon status
 MSG_HELP_FO_CH_STATS
 Skulle du vilja se denna\nmapps statistik i\nYAM's Appikon etikett?
 ; Would you like to see this\n\
-; folder's statistics in the\n\
-; YAM AppIcon's label?
+; folder's statistics in YAM's\n\
+; AppIcon label?
 ;
 MSG_OPENGUI
 Öppnar GUI...
@@ -4969,10 +4960,6 @@ Försök att automatiskt gissa en passande\nsändliste inställning, genom att skann
 MSG_FO_NOTRECOGNIZED
 Gick ej att känna igen!
 ; Couldn't be recognized.
-;
-MSG_FO_MAXAGEFMT
-%ld dagar
-; %ld days
 ;
 MSG_CO_NB_EMAILCACHE
 E-post buffert
@@ -5447,30 +5434,6 @@ Väljer det aktiva meddelandet\ni huvudfönstret.
 ; Select the current message\n\
 ; in the main window.
 ;
-MSG_QUICKSEARCH_SO_SUBJECT
-Ärende
-; Subject
-;
-MSG_QUICKSEARCH_SO_SENDER
-Avsändare
-; Sender
-;
-MSG_QUICKSEARCH_SO_SUBJORSENDER
-Ärende eller avsändare
-; Subject Or Sender
-;
-MSG_QUICKSEARCH_SO_TOORCC
-Mottagare (Till eller Kopia)
-; Recipient (To or CC)
-;
-MSG_QUICKSEARCH_SO_INMSG
-I meddelandet
-; Message Body
-;
-MSG_QUICKSEARCH_SO_ENTIREMSG
-Hela meddelandet
-; Whole Message
-;
 MSG_QUICKSEARCH_VO_ALL
 Alla
 ; All
@@ -5529,11 +5492,6 @@ MSG_HELP_QUICKSEARCH_SEARCHSTRING
 Text som skrivs in här kommer att användas som\nsökkriterium för visning av brev i denna mapp.
 ; Text inserted here will be used as the search\n\
 ; criterion to display mail in this folder.
-;
-MSG_HELP_QUICKSEARCH_SEARCHOPTIONPOPUP
-Genom att använda denna popupp kan du välja\nkriterium för den specifierade söktexten.
-; Select here where the string at the right\n\
-; should be searched in the mail.
 ;
 MSG_BUSY_SEARCHINGFOLDER
 Letar efter meddelanden i mappen '%s'...
@@ -7478,12 +7436,12 @@ XML adressbok (*.xml)
 ; XML address book (*.xml)
 ;
 MSG_MA_FILTER_STATS_SPAM
-Filtrering klar:\n\n%3ld meddelanden kontrollerade,\n%3ld vidarebefordrade,\n%3ld arkiverade,\n%3ld raderade,\n%3ld klassifierade som skräppost
+Filtrering klar:\n\n%3ld meddelanden kontrollerade,\n%3ld vidarebefordrade,\n%3ld flyttade,\n%3ld raderade,\n%3ld klassifierade som skräppost
 ; Filtering done:\n\
 ; \n\
 ; %3ld messages checked,\n\
 ; %3ld forwarded,\n\
-; %3ld archived,\n\
+; %3ld moved,\n\
 ; %3ld deleted,\n\
 ; %3ld classified as spam
 ; COUNT, COUNT, COUNT, COUNT, COUNT
@@ -9536,4 +9494,53 @@ visare startas.
 ; Select the charset here that printable\n\
 ; text should be converted to before\n\
 ; starting the default viewer.
+;
+MSG_LOG_FILTER_DONE
+Filtrerat %ld meddelande(n) med %ld matchning(ar)
+; Filtered %ld message(s) with %ld match(es)
+; COUNT, COUNT
+;
+MSG_FO_JUMP_TO_UNREAD_MESSAGE
+Hoppa till första olästa meddelande
+; Jump to first unread message
+;
+MSG_HELP_FO_CH_JUMPTOUNREAD
+Hoppa till första olästa meddelande när\n\
+du går till denna mapp.
+; Jump to the first unread message when\n\
+; entering this folder.
+;
+MSG_FO_JUMP_TO_RECENT_MESSAGE
+Hoppa till nyaste meddelandet
+; Jump to newest message
+;
+MSG_HELP_FO_CH_JUMPTORECENT
+Hoppa till det senaste meddelandet när\n\
+du går till denna mapp.
+; Jump to the most recent message when\n\
+; entering this folder.
+;
+MSG_FO_MAXAGE_DAYS
+dagar
+; days
+;
+MSG_QUICKSEARCH_FILTER_LIST
+Filterlista...
+; Filter list...
+;
+MSG_QUICKSEARCH_FROM
+Avsändare
+; Sender
+;
+MSG_QUICKSEARCH_TO
+Mottagare
+; Receiver
+;
+MSG_QUICKSEARCH_SUBJECT
+Ämne
+; Subject
+;
+MSG_QUICKSEARCH_BODY
+Meddelande
+; Mail body
 ;

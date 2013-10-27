@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-10-27 Pär Boberg <pbobbenb@spray.se>
+
+  * locale/swedish.ct: updated to the latest changes.
+
 2013-10-25 Marko Raina <marko.raina@fimnet.fi>
 
   * locale/finnish.ct: updated Finnish translation
