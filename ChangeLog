@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-10-28 Thore Böckelmann <tboeckel@gmx.de>
+
+  * Timer.c, mui/WriteWindow.c: turned the IsEditorActive method into a simple
+    attribute.
+
 2013-10-27 Pär Boberg <pbobbenb@spray.se>
 
   * locale/swedish.ct: updated to the latest changes.

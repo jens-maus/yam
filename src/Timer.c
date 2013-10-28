@@ -598,7 +598,7 @@ static void TimerDispatcher(const enum Timer tid)
       {
         if(wmData->window != NULL)
         {
-          if(DoMethod(wmData->window, MUIM_WriteWindow_IsEditorActive) == TRUE)
+          if(xget(wmData->window, MUIA_WriteWindow_EditorActive) == TRUE)
           {
             updateIndex = FALSE;
             break;

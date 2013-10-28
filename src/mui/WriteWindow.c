@@ -1761,6 +1761,7 @@ OVERLOAD(OM_GET)
     case ATTR(To):            *store = xget(data->ST_TO, MUIA_String_Contents) ; return TRUE;
     case ATTR(Quiet):         *store = data->wmData->quietMode; return TRUE;
     case ATTR(NotifyPort):    *store = (ULONG)data->notifyPort; return TRUE;
+    case ATTR(EditorActive):  *store = (Object *)xget(obj, MUIA_Window_ActiveObject) == data->TE_EDIT) ? TRUE : FALSE; return TRUE;
   }
 
   return DoSuperMethodA(cl, obj, msg);
@@ -3725,20 +3726,6 @@ DECLARE(GetAttachment) // int num, struct Attach *att
   ENTER();
 
   result = DoMethod(data->LV_ATTACH, MUIM_NList_GetEntry, msg->num, msg->att);
-
-  RETURN(result);
-  return result;
-}
-
-///
-/// DECLARE(IsEditorActive)
-DECLARE(IsEditorActive)
-{
-  GETDATA;
-  ULONG result = 0;
-  ENTER();
-
-  result = ((Object *)xget(obj, MUIA_Window_ActiveObject) == data->TE_EDIT) ? 1 : 0;
 
   RETURN(result);
   return result;
