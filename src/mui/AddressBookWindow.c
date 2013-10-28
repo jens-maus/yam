@@ -444,7 +444,6 @@ OVERLOAD(OM_GET)
     case ATTR(Listtree):     *store = (IPTR)data->LV_ADDRESSES; return TRUE;
     case ATTR(ActiveGroup):  *store = (IPTR)xget(data->LV_ADDRESSES, MUIA_AddressBookListtree_ActiveGroup); return TRUE;
     case ATTR(ActiveEntry):  *store = (IPTR)xget(data->LV_ADDRESSES, MUIA_AddressBookListtree_ActiveEntry); return TRUE;
-    break;
   }
 
   return DoSuperMethodA(cl, obj, msg);
