@@ -476,6 +476,7 @@ MUIOBJS = \
 	AddressBookListtree.o \
 	AddressBookToolbar.o \
 	AddressBookWindow.o \
+	AddressField.o \
 	AddressMatchList.o \
 	AddressMatchPopupWindow.o \
 	Attachment.o \

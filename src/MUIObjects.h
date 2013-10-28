@@ -32,14 +32,6 @@
 
 struct FileRequester;
 
-// some flags for MakeAddressField()
-#define AFF_ALLOW_MULTI         (1<<0)
-#define AFF_EXTERNAL_SHORTCUTS  (1<<1)
-#define AFF_NOFULLNAME          (1<<2)
-#define AFF_NOCACHE             (1<<3)
-#define AFF_NOVALID             (1<<4)
-#define AFF_RESOLVEINACTIVE     (1<<5)
-
 Object *MakeButton(const char *txt);
 Object *MakeCheck(const char *label);
 Object *MakeCheckGroup(Object **check, const char *label);

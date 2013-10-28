@@ -3745,20 +3745,21 @@ void RE_ClickedOnMessage(char *address, Object *win)
 
       case 2:
       {
-        Object *editWin;
-
-        DoMethod(_app(win), MUIM_YAMApplication_OpenAddressBookWindow);
-
-        if((editWin = AddressBookEditWindowObject,
-          MUIA_AddressBookEditWindow_Type, (hits != 0) ? ab->type : ABNT_USER,
-        End) != NULL)
+        if(DoMethod(_app(win), MUIM_YAMApplication_OpenAddressBookWindow, ABM_EDIT, -1, NULL) == TRUE)
         {
-          set(editWin, MUIA_AddressBookEditWindow_ABookNode, (hits != 0) ? ab : NULL);
+          Object *editWin;
 
-          if(hits == 0)
-            set(editWin, MUIA_AddressBookEditWindow_Address, address);
+          if((editWin = AddressBookEditWindowObject,
+            MUIA_AddressBookEditWindow_Type, (hits != 0) ? ab->type : ABNT_USER,
+          End) != NULL)
+          {
+            set(editWin, MUIA_AddressBookEditWindow_ABookNode, (hits != 0) ? ab : NULL);
 
-          SafeOpenWindow(editWin);
+            if(hits == 0)
+              set(editWin, MUIA_AddressBookEditWindow_Address, address);
+
+            SafeOpenWindow(editWin);
+          }
         }
       }
       break;

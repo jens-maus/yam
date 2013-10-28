@@ -39,6 +39,7 @@
 #include "YAM.h"
 
 #include "mui/AddressBookWindow.h"
+#include "mui/AddressField.h"
 #include "mui/ConfigPage.h"
 #include "mui/ConfigPageList.h"
 #include "mui/FolderRequestPopup.h"

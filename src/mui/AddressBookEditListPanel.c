@@ -40,6 +40,7 @@
 #include "mui/AddressBookEditWindow.h"
 #include "mui/AddressBookEntryList.h"
 #include "mui/AddressBookWindow.h"
+#include "mui/AddressField.h"
 #include "mui/RecipientString.h"
 
 #include "AddressBook.h"

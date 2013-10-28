@@ -65,7 +65,7 @@ void rx_addrload(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
         if(args->open != 0)
         {
           PopUp();
-          DoMethod(G->App, MUIM_YAMApplication_OpenAddressBookWindow);
+          DoMethod(G->App, MUIM_YAMApplication_OpenAddressBookWindow, ABM_EDIT, -1, NULL);
         }
       }
       else

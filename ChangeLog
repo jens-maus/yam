@@ -11,6 +11,9 @@ $URL$
     attribute.
   * YAM.c: added a low memory handler to flush the folder indexes in case of a
     low memory situation. This closes #444.
+  * mui/AddressField.c, mui/YAMApplication.c, misc: moved the address field into
+    a separate group and made the recipient string popup button work again. This
+    closes #442.
 
 2013-10-27 Pär Boberg <pbobbenb@spray.se>
 

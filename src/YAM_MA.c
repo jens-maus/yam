@@ -2365,7 +2365,7 @@ void MA_GetAddress(struct MailList *mlist)
     UnlockMailList(mlist);
   }
 
-  if(DoMethod(G->App, MUIM_YAMApplication_OpenAddressBookWindow) == TRUE)
+  if(DoMethod(G->App, MUIM_YAMApplication_OpenAddressBookWindow, ABM_EDIT, -1, NULL) == TRUE)
     DoMethod(G->ABookWinObject, MUIM_AddressBookWindow_EditNewEntry, &abn);
 
   // free the list members, it is handled now by the edit window
@@ -4008,7 +4008,7 @@ struct MA_ClassData *MA_New(void)
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_DELSPAM,        MUIV_Notify_Application, 2, MUIM_YAMApplication_DeleteSpamMails, FALSE);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_INDEX,          MUIV_Notify_Application, 1, MUIM_YAMApplication_RebuildFolderIndex);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_FLUSH,          MUIV_Notify_Application, 2, MUIM_YAMApplication_FlushFolderIndexes, FALSE);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_ABOOK,          MUIV_Notify_Application, 1, MUIM_YAMApplication_OpenAddressBookWindow);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_ABOOK,          MUIV_Notify_Application, 4, MUIM_YAMApplication_OpenAddressBookWindow, ABM_EDIT, -1, NULL);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EXPORT,         MUIV_Notify_Application, 3, MUIM_CallHook,             &MA_ExportMessagesHook, TRUE);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_IMPORT,         MUIV_Notify_Application, 2, MUIM_CallHook,             &MA_ImportMessagesHook);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_GETMAIL,        MUIV_Notify_Application, 5, MUIM_CallHook,             &MA_PopNowHook, NULL, RECEIVEF_USER, 0);
@@ -4075,7 +4075,7 @@ struct MA_ClassData *MA_New(void)
       DoMethod(data->GUI.TO_TOOLBAR, MUIM_TheBar_Notify, TB_MAIN_HAM,      MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &MA_ClassifyMessageHook, BC_HAM);
       DoMethod(data->GUI.TO_TOOLBAR, MUIM_TheBar_Notify, TB_MAIN_FILTER,   MUIA_Pressed, FALSE, data->GUI.WI,            4, MUIM_MainWindow_ApplyFilters, APPLY_USER, MUIV_TheBar_Qualifier, NULL);
       DoMethod(data->GUI.TO_TOOLBAR, MUIM_TheBar_Notify, TB_MAIN_FIND,     MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_YAMApplication_OpenSearchMailWindow, NULL);
-      DoMethod(data->GUI.TO_TOOLBAR, MUIM_TheBar_Notify, TB_MAIN_ADDRBOOK, MUIA_Pressed, FALSE, MUIV_Notify_Application, 1, MUIM_YAMApplication_OpenAddressBookWindow);
+      DoMethod(data->GUI.TO_TOOLBAR, MUIM_TheBar_Notify, TB_MAIN_ADDRBOOK, MUIA_Pressed, FALSE, MUIV_Notify_Application, 4, MUIM_YAMApplication_OpenAddressBookWindow, ABM_EDIT, -1, NULL);
       DoMethod(data->GUI.TO_TOOLBAR, MUIM_TheBar_Notify, TB_MAIN_CONFIG,   MUIA_Pressed, FALSE, MUIV_Notify_Application, 1, MUIM_YAMApplication_OpenConfigWindow);
     }
   }

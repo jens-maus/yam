@@ -94,6 +94,7 @@ struct Data
 /* INCLUDE
 #include "YAM_main.h"
 #include "AddressBook.h"
+#include "mui/AddressBookWindow.h"
 #include "mui/PreselectionWindow.h"
 */
 
@@ -1646,7 +1647,7 @@ DECLARE(OpenSearchMailWindow) // struct Folder *folder
 
 ///
 /// DECLARE(OpenAddressBookWindow)
-DECLARE(OpenAddressBookWindow)
+DECLARE(OpenAddressBookWindow) // enum AddressbookMode mode, LONG windowNumber, Object *recipientObj
 {
   BOOL result = FALSE;
 
@@ -1659,7 +1660,7 @@ DECLARE(OpenAddressBookWindow)
 
   if(G->ABookWinObject != NULL)
   {
-    DoMethod(G->ABookWinObject, MUIM_AddressBookWindow_Open, ABM_EDIT, -1, NULL);
+    DoMethod(G->ABookWinObject, MUIM_AddressBookWindow_Open, msg->mode, msg->windowNumber, msg->recipientObj);
     result = TRUE;
   }
 

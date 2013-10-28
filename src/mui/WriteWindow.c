@@ -59,6 +59,7 @@
 
 #include "mime/uucode.h"
 #include "mui/AddressBookWindow.h"
+#include "mui/AddressField.h"
 #include "mui/CodesetPopup.h"
 #include "mui/IdentityChooser.h"
 #include "mui/MailTextEdit.h"

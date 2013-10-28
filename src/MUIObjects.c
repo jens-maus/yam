@@ -50,6 +50,7 @@
 #include "YAM_read.h"
 
 #include "mui/AddressBookWindow.h"
+#include "mui/AddressField.h"
 #include "mui/ClassesExtra.h"
 #include "mui/PlaceholderPopupList.h"
 #include "mui/RecipientString.h"
@@ -166,45 +167,18 @@ Object *MakeInteger(int maxlen, const char *label)
 Object *MakeAddressField(Object **string, const char *label, const void *help, int abmode, int winnr, ULONG flags)
 {
   Object *obj;
-  Object *bt_adr;
 
   ENTER();
 
-  if((obj = HGroup,
-
-    GroupSpacing(1),
-    Child, *string = RecipientStringObject,
-      MUIA_CycleChain,                          TRUE,
-      MUIA_String_AdvanceOnCR,                  TRUE,
-      MUIA_RecipientString_ResolveOnCR,         TRUE,
-      MUIA_RecipientString_MultipleRecipients,  isFlagSet(flags, AFF_ALLOW_MULTI),
-      MUIA_RecipientString_NoFullName,          isFlagSet(flags, AFF_NOFULLNAME),
-      MUIA_RecipientString_NoCache,             isFlagSet(flags, AFF_NOCACHE),
-      MUIA_RecipientString_NoValid,             isFlagSet(flags, AFF_NOVALID),
-      MUIA_RecipientString_ResolveOnInactive,   isFlagSet(flags, AFF_RESOLVEINACTIVE),
-      MUIA_BetterString_NoShortcuts,            isFlagSet(flags, AFF_EXTERNAL_SHORTCUTS),
-      MUIA_ControlChar,                         ShortCut(label),
-    End,
-    Child, bt_adr = PopButton(MUII_PopUp),
-
-  End))
+  if((obj = AddressFieldObject,
+    MUIA_AddressField_Flags, flags,
+    MUIA_AddressField_Shortcut, ShortCut(label),
+    MUIA_AddressField_Help, help,
+    MUIA_AddressField_Mode, abmode,
+    MUIA_AddressField_WindowNumber, winnr,
+  End) != NULL)
   {
-    if(help != NULL)
-      SetHelp(*string, help);
-    SetHelp(bt_adr, MSG_HELP_WR_BT_ADR);
-
-    if(abmode == ABM_CONFIG)
-    {
-      DoMethod(bt_adr, MUIM_Notify, MUIA_Pressed, FALSE, G->ABookWinObject, 4, MUIM_AddressBookWindow_Open, abmode, -1, *string);
-      DoMethod(*string, MUIM_Notify, MUIA_RecipientString_Popup, TRUE, G->ABookWinObject, 4, MUIM_AddressBookWindow_Open, abmode, -1, *string);
-    }
-    else
-    {
-      DoMethod(bt_adr, MUIM_Notify, MUIA_Pressed, FALSE, G->ABookWinObject, 4, MUIM_AddressBookWindow_Open, abmode, winnr, NULL);
-      DoMethod(*string, MUIM_Notify, MUIA_RecipientString_Popup, TRUE, G->ABookWinObject, 4, MUIM_AddressBookWindow_Open, abmode, winnr, NULL);
-    }
-
-    DoMethod(*string, MUIM_Notify, MUIA_Disabled, MUIV_EveryTime,  bt_adr, 3, MUIM_Set, MUIA_Disabled, MUIV_TriggerValue);
+    *string = (Object *)xget(obj, MUIA_AddressField_RecipientString);
   }
 
   RETURN(obj);
