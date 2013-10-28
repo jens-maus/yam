@@ -9,6 +9,8 @@ $URL$
 
   * Timer.c, mui/WriteWindow.c: turned the IsEditorActive method into a simple
     attribute.
+  * YAM.c: added a low memory handler to flush the folder indexes in case of a
+    low memory situation. This closes #444.
 
 2013-10-27 Pär Boberg <pbobbenb@spray.se>
 

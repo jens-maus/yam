@@ -994,6 +994,13 @@ static void Terminate(void)
     G->mailsInTransfer = NULL;
   }
 
+  if(G->lowMemHandler != NULL)
+  {
+    RemMemHandler(G->lowMemHandler);
+    FreeSysObject(ASOT_INTERRUPT, G->lowMemHandler);
+    G->lowMemHandler = NULL;
+  }
+
   // make sure to free the shared memory pool before
   // freeing the rest
   if(G->SharedMemPool != NULL)
@@ -2208,6 +2215,26 @@ static LONG ParseCommandArgs(void)
 }
 
 ///
+/// LowMemHandler
+// low memory handler function to flush all folder indexes
+#if defined(__amigaos4__)
+static LONG LowMemHandler(struct ExecBase *ExecBase, UNUSED struct MemHandlerData *memHandlerData, UNUSED APTR data)
+#else
+static LONG ASM LowMemHandler(REG(a6, UNUSED struct ExecBase *ExecBase), REG(a0, UNUSED struct MemHandlerData *memHandlerData), REG(a1, UNUSED APTR data))
+#endif
+{
+  #if defined(__amigaos4__)
+  struct ExecIFace *IExec = (struct ExecIFace *)ExecBase->MainInterface;
+  #endif
+
+  // restart the index flush timer
+  RestartTimer(TIMER_WRINDEX, 0, 1, FALSE);
+
+  // that was all we could do
+  return MEM_ALL_DONE;
+}
+
+///
 
 /*** main entry function ***/
 /// main
@@ -2512,6 +2539,21 @@ int main(int argc, char **argv)
     }
 
     if((G->mailsInTransfer = CreateMailList()) == NULL)
+    {
+      // break out immediately to signal an error!
+      break;
+    }
+
+    // install the low memory handler
+    if((G->lowMemHandler = AllocSysObjectTags(ASOT_INTERRUPT,
+      ASOINTR_Code, LowMemHandler,
+      TAG_DONE)) != NULL)
+    {
+      G->lowMemHandler->is_Node.ln_Pri = 50;
+      G->lowMemHandler->is_Node.ln_Name = (STRPTR)"YAM index lowmem";
+      AddMemHandler(G->lowMemHandler);
+    }
+    else
     {
       // break out immediately to signal an error!
       break;
