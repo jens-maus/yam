@@ -2218,7 +2218,7 @@ static LONG ParseCommandArgs(void)
 /// LowMemHandler
 // low memory handler function to flush all folder indexes
 #if defined(__amigaos4__)
-static LONG LowMemHandler(struct ExecBase *ExecBase, UNUSED struct MemHandlerData *memHandlerData, UNUSED APTR data)
+static LONG LowMemHandler(UNUSED struct ExecBase *ExecBase, UNUSED struct MemHandlerData *memHandlerData, UNUSED APTR data)
 #else
 static LONG ASM LowMemHandler(REG(a6, UNUSED struct ExecBase *ExecBase), REG(a0, UNUSED struct MemHandlerData *memHandlerData), REG(a1, UNUSED APTR data))
 #endif
