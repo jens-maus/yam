@@ -2223,14 +2223,14 @@ static LONG LowMemHandler(struct ExecBase *ExecBase, UNUSED struct MemHandlerDat
 static LONG ASM LowMemHandler(REG(a6, UNUSED struct ExecBase *ExecBase), REG(a0, UNUSED struct MemHandlerData *memHandlerData), REG(a1, UNUSED APTR data))
 #endif
 {
-  #if defined(__amigaos4__)
-  struct ExecIFace *IExec = (struct ExecIFace *)ExecBase->MainInterface;
-  #endif
+  ENTER();
 
+  W(DBF_FOLDER, "low memory situation, flushing folder indexes");
   // restart the index flush timer
   RestartTimer(TIMER_WRINDEX, 0, 1, FALSE);
 
   // that was all we could do
+  RETURN(MEM_ALL_DONE);
   return MEM_ALL_DONE;
 }
 
