@@ -1761,7 +1761,7 @@ OVERLOAD(OM_GET)
     case ATTR(To):            *store = xget(data->ST_TO, MUIA_String_Contents) ; return TRUE;
     case ATTR(Quiet):         *store = data->wmData->quietMode; return TRUE;
     case ATTR(NotifyPort):    *store = (ULONG)data->notifyPort; return TRUE;
-    case ATTR(EditorActive):  *store = (Object *)xget(obj, MUIA_Window_ActiveObject) == data->TE_EDIT) ? TRUE : FALSE; return TRUE;
+    case ATTR(EditorActive):  *store = ((Object *)xget(obj, MUIA_Window_ActiveObject) == data->TE_EDIT) ? TRUE : FALSE; return TRUE;
   }
 
   return DoSuperMethodA(cl, obj, msg);
