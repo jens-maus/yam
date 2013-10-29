@@ -9,6 +9,8 @@ $URL$
 
   * mui/AddressBookWindow.c: increased the method parameter counter to correctly
     pass the required parameter to the UseEntry method. This closes #443.
+  * YAM_WR.c: obtain the tagline hash file's size in the usual way instead of by
+    seeking to the end.
 
 2013-10-28 Thore Böckelmann <tboeckel@gmx.de>
 

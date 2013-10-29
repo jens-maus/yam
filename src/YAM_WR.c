@@ -3416,28 +3416,28 @@ static void AddTagline(FILE *fh_mail)
 
     if((fh_tag = fopen(C->TagsFile, "r")) != NULL)
     {
-      FILE *fh_hash;
+      ULONG hsize;
 
-      setvbuf(fh_tag, NULL, _IOFBF, SIZE_FILEBUF);
-
-      if((fh_hash = fopen(hashfile, "r")) != NULL)
+      if(ObtainFileInfo(hashfile, FI_SIZE, &hsize) == TRUE && hsize > sizeof(ULONG))
       {
-        long hsize;
+        FILE *fh_hash;
 
-        setvbuf(fh_hash, NULL, _IOFBF, SIZE_FILEBUF);
+        setvbuf(fh_tag, NULL, _IOFBF, SIZE_FILEBUF);
 
-        fseek(fh_hash, 0, SEEK_END);
-        hsize = ftell(fh_hash);
-        if((hsize = hsize / sizeof(long)) > 1)
+        if((fh_hash = fopen(hashfile, "r")) != NULL)
         {
-          long fpos;
+          ULONG fpos;
+
+          setvbuf(fh_hash, NULL, _IOFBF, SIZE_FILEBUF);
+
+          hsize /= sizeof(ULONG);
 
           // calculate a random offset
-          fpos = (((long)rand()) % hsize) * sizeof(long);
+          fpos = (rand() % hsize) * sizeof(ULONG);
           fseek(fh_hash, fpos, SEEK_SET);
 
           // read the offset to the tagline from the hash file
-          if(ReadUInt32(fh_hash, (APTR)&fpos) == 1)
+          if(ReadUInt32(fh_hash, &fpos) == 1)
           {
             char *buf = NULL;
             size_t bufsize = 0;
@@ -3459,9 +3459,9 @@ static void AddTagline(FILE *fh_mail)
 
             free(buf);
           }
-        }
 
-        fclose(fh_hash);
+          fclose(fh_hash);
+        }
       }
       else
         ER_NewError(tr(MSG_ER_CantOpenFile), hashfile);
