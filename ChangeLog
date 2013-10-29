@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-10-29 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/AddressBookWindow.c: increased the method parameter counter to correctly
+    pass the required parameter to the UseEntry method. This closes #443.
+
 2013-10-28 Thore Böckelmann <tboeckel@gmx.de>
 
   * Timer.c, mui/WriteWindow.c: turned the IsEditorActive method into a simple

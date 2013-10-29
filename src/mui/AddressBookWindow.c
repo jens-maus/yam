@@ -355,9 +355,9 @@ OVERLOAD(OM_NEW)
     DoMethod(LV_ADDRESSES, MUIM_Notify, MUIA_NListtree_Active,                       MUIV_EveryTime,   obj,          2, METHOD(ActiveChange), MUIV_TriggerValue);
     DoMethod(LV_ADDRESSES, MUIM_Notify, MUIA_NListtree_DoubleClick,                  MUIV_EveryTime,   obj,          1, METHOD(HandleDoubleClick));
     DoMethod(LV_ADDRESSES, MUIM_Notify, MUIA_AddressBookListtree_DeleteEntryRequest, MUIV_EveryTime,   obj,          1, METHOD(DeleteEntry));
-    DoMethod(BT_TO,        MUIM_Notify, MUIA_Pressed,                                FALSE,            obj,          1, METHOD(UseEntry), ABM_TO);
-    DoMethod(BT_CC,        MUIM_Notify, MUIA_Pressed,                                FALSE,            obj,          1, METHOD(UseEntry), ABM_CC);
-    DoMethod(BT_BCC,       MUIM_Notify, MUIA_Pressed,                                FALSE,            obj,          1, METHOD(UseEntry), ABM_BCC);
+    DoMethod(BT_TO,        MUIM_Notify, MUIA_Pressed,                                FALSE,            obj,          2, METHOD(UseEntry), ABM_TO);
+    DoMethod(BT_CC,        MUIM_Notify, MUIA_Pressed,                                FALSE,            obj,          2, METHOD(UseEntry), ABM_CC);
+    DoMethod(BT_BCC,       MUIM_Notify, MUIA_Pressed,                                FALSE,            obj,          2, METHOD(UseEntry), ABM_BCC);
     DoMethod(obj,          MUIM_Notify, MUIA_Window_CloseRequest,                    TRUE,             obj,          3, MUIM_Set, MUIA_Window_Open, FALSE);
 
     if(TB_TOOLBAR != NULL)
@@ -1046,24 +1046,44 @@ DECLARE(DeleteEntry)
 DECLARE(ActiveChange) // struct MUI_NListtree_TreeNode *tn
 {
   GETDATA;
+  BOOL disabled = FALSE;
 
   ENTER();
 
-  DoMethod(obj, MUIM_MultiSet, MUIA_Disabled, data->mode != ABM_CONFIG || msg->tn == NULL,
+  if(data->mode == ABM_CONFIG)
+  {
+    disabled = TRUE;
+  }
+  else if(msg->tn != NULL)
+  {
+    struct ABookNode *abn = msg->tn->tn_User;
+
+    // disable the buttons for groups only
+    if(abn->type == ABNT_GROUP)
+      disabled = TRUE;
+  }
+  else
+  {
+    // no active entry
+    disabled = TRUE;
+  }
+
+  DoMethod(obj, MUIM_MultiSet, MUIA_Disabled, disabled,
     data->BT_TO,
     data->BT_CC,
     data->BT_BCC,
     NULL);
-  DoMethod(obj, MUIM_MultiSet, MUIA_Menuitem_Enabled, msg->tn != NULL,
+  DoMethod(obj, MUIM_MultiSet, MUIA_Menuitem_Enabled, !disabled,
     data->MI_EDIT,
     data->MI_DUPLICATE,
     data->MI_DELETE,
     data->MI_PRINT,
     NULL);
+
   if(data->TB_TOOLBAR != NULL)
   {
-    DoMethod(data->TB_TOOLBAR, MUIM_TheBar_SetAttr, TB_ABOOK_EDIT,   MUIA_TheBar_Attr_Disabled, msg->tn == NULL);
-    DoMethod(data->TB_TOOLBAR, MUIM_TheBar_SetAttr, TB_ABOOK_DELETE, MUIA_TheBar_Attr_Disabled, msg->tn == NULL);
+    DoMethod(data->TB_TOOLBAR, MUIM_TheBar_SetAttr, TB_ABOOK_EDIT,   MUIA_TheBar_Attr_Disabled, disabled);
+    DoMethod(data->TB_TOOLBAR, MUIM_TheBar_SetAttr, TB_ABOOK_DELETE, MUIA_TheBar_Attr_Disabled, disabled);
   }
 
   RETURN(0);
@@ -1144,8 +1164,9 @@ DECLARE(UseEntry) // enum AddressbookMode mode
 
     if(data->windowNumber == -1)
     {
-      struct WriteMailData *wmData = NewWriteMailWindow(NULL, 0);
-      if(wmData != NULL)
+      struct WriteMailData *wmData;
+
+      if((wmData = NewWriteMailWindow(NULL, 0)) != NULL)
         writeWindow = wmData->window;
     }
     else
