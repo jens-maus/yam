@@ -2718,6 +2718,11 @@ int main(int argc, char **argv)
         {
           W(DBF_FOLDER, "low memory situation, flushing folder indexes");
           DoMethod(G->App, MUIM_YAMApplication_FlushFolderIndexes, TRUE);
+          #if defined(__amigaos4__)
+          // flush the item pools as well
+          ItemPoolGC(G->mailItemPool);
+          ItemPoolGC(G->mailNodeItemPool);
+          #endif
           G->LowMemSituation = FALSE;
         }
 
