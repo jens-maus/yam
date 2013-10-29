@@ -369,12 +369,11 @@ static BOOL FlushIndex(struct Folder *folder, time_t minAccessTime)
   if(isModified(folder))
     MA_SaveIndex(folder);
 
-  // then we make sure we only clear the folder index of
-  // a folder where this should really be done and also not
-  // on the actual folder or otherwise we risk to run into
-  // problems.
-  if((isSentFolder(folder) || isDefaultFolder(folder) == FALSE) &&
-     folder->LoadedMode == LM_VALID &&
+  // flush the index if
+  // - the index is loaded at all, and
+  // - the minimum access time has been exceeded
+  // - the folder is not the currently active one
+  if(folder->LoadedMode == LM_VALID &&
      (minAccessTime == 0 || minAccessTime >= folder->lastAccessTime) &&
      folder != GetCurrentFolder())
   {

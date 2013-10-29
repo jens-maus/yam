@@ -13,6 +13,8 @@ $URL$
     seeking to the end.
   * YAM.c, Timer.c: added a boolean variable to catch too frequent triggers of
     the low memory handle and to enforce the index flush.
+  * mui/YAMApplication.c: flushing the indexes will now happen for all folders
+    except the currently active one.
 
 2013-10-28 Thore Böckelmann <tboeckel@gmx.de>
 
