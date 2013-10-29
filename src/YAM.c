@@ -2218,9 +2218,9 @@ static LONG ParseCommandArgs(void)
 /// LowMemHandler
 // low memory handler function to flush all folder indexes
 #if defined(__amigaos4__)
-static LONG LowMemHandler(UNUSED struct ExecBase *ExecBase, UNUSED struct MemHandlerData *memHandlerData, UNUSED APTR data)
+static LONG LowMemHandler(UNUSED struct ExecBase *ExecBase, UNUSED struct MemHandlerData *memHandlerData, APTR yam)
 #else
-static LONG ASM LowMemHandler(REG(a6, UNUSED struct ExecBase *ExecBase), REG(a0, UNUSED struct MemHandlerData *memHandlerData), REG(a1, UNUSED APTR data))
+static LONG ASM LowMemHandler(REG(a6, UNUSED struct ExecBase *ExecBase), REG(a0, UNUSED struct MemHandlerData *memHandlerData), REG(a1, APTR yam))
 #endif
 {
   ENTER();
@@ -2229,9 +2229,8 @@ static LONG ASM LowMemHandler(REG(a6, UNUSED struct ExecBase *ExecBase), REG(a0,
   if(G->LowMemSituation == FALSE)
   {
     G->LowMemSituation = TRUE;
-    W(DBF_FOLDER, "low memory situation, flushing folder indexes");
-    // restart the index flush timer
-    RestartTimer(TIMER_WRINDEX, 0, 1, FALSE);
+    // signal the application
+    Signal(yam, SIGBREAKF_CTRL_E);
   }
 
   // that was all we could do
@@ -2552,6 +2551,7 @@ int main(int argc, char **argv)
     // install the low memory handler
     if((G->lowMemHandler = AllocSysObjectTags(ASOT_INTERRUPT,
       ASOINTR_Code, LowMemHandler,
+      ASOINTR_Data, FindTask(NULL),
       TAG_DONE)) != NULL)
     {
       G->lowMemHandler->is_Node.ln_Pri = 50;
@@ -2700,7 +2700,7 @@ int main(int argc, char **argv)
     {
       if(signals != 0)
       {
-        signals = Wait(signals | SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_D | SIGBREAKF_CTRL_F | timerSig | rexxSig | appSig | applibSig | writeWinNotifySig | threadSig | wakeupSig | methodStackSig);
+        signals = Wait(signals | SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_D | SIGBREAKF_CTRL_E | SIGBREAKF_CTRL_F | timerSig | rexxSig | appSig | applibSig | writeWinNotifySig | threadSig | wakeupSig | methodStackSig);
 
         if(isFlagSet(signals, SIGBREAKF_CTRL_C))
         {
@@ -2712,6 +2712,13 @@ int main(int argc, char **argv)
         {
           ret = 0;
           break;
+        }
+
+        if(isFlagSet(signals, SIGBREAKF_CTRL_E))
+        {
+          W(DBF_FOLDER, "low memory situation, flushing folder indexes");
+          DoMethod(G->App, MUIM_YAMApplication_FlushFolderIndexes, TRUE);
+          G->LowMemSituation = FALSE;
         }
 
         if(isFlagSet(signals, SIGBREAKF_CTRL_F))
