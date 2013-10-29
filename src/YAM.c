@@ -2225,9 +2225,14 @@ static LONG ASM LowMemHandler(REG(a6, UNUSED struct ExecBase *ExecBase), REG(a0,
 {
   ENTER();
 
-  W(DBF_FOLDER, "low memory situation, flushing folder indexes");
-  // restart the index flush timer
-  RestartTimer(TIMER_WRINDEX, 0, 1, FALSE);
+  // don't trigger the flushing again if the former trigger has not been handled yet
+  if(G->LowMemSituation == FALSE)
+  {
+    G->LowMemSituation = TRUE;
+    W(DBF_FOLDER, "low memory situation, flushing folder indexes");
+    // restart the index flush timer
+    RestartTimer(TIMER_WRINDEX, 0, 1, FALSE);
+  }
 
   // that was all we could do
   RETURN(MEM_ALL_DONE);

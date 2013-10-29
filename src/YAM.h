@@ -159,6 +159,7 @@ struct Global
   BOOL                     NoCatalogTranslation;
   BOOL                     DefIconsAvailable;
   BOOL                     Terminating;
+  BOOL                     LowMemSituation;
 
   struct DateStamp         StartDate;
   struct TimeVal           nextDSTSwitch;        // date/time of next DST switch

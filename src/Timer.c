@@ -607,12 +607,14 @@ static void TimerDispatcher(const enum Timer tid)
       }
 
       if(updateIndex == TRUE)
-        DoMethod(G->App, MUIM_YAMApplication_FlushFolderIndexes, FALSE);
+        DoMethod(G->App, MUIM_YAMApplication_FlushFolderIndexes, G->LowMemSituation);
       else
-        D(DBF_TIMER, "Editor object of a write window is active, skipping update index operation");
+        D(DBF_TIMER, "editor object of a write window is active, skipping update index operation");
 
       // prepare the timer to get fired again
       PrepareTimer(tid, C->WriteIndexes, 0, FALSE);
+      // forget about a low memory situation
+      G->LowMemSituation = FALSE;
     }
     break;
 
