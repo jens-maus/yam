@@ -359,10 +359,8 @@ static void FindAllABMatches(const struct ABook *abook, const char *text, Object
 // prevent this function from expunging the index in case the
 // folder was last accessed >= minAccessTime. Use 0 to expunge it
 // at all times.
-static BOOL FlushIndex(struct Folder *folder, time_t minAccessTime)
+static void FlushIndex(struct Folder *folder, time_t minAccessTime)
 {
-  BOOL flushed = FALSE;
-
   ENTER();
 
   // make sure the folder index is saved
@@ -385,12 +383,9 @@ static BOOL FlushIndex(struct Folder *folder, time_t minAccessTime)
     ClearFolderMails(folder, FALSE);
     folder->LoadedMode = LM_FLUSHED;
     clearFlag(folder->Flags, FOFL_FREEXS);
-
-    flushed = TRUE;
   }
 
-  RETURN(flushed);
-  return flushed;
+  LEAVE();
 }
 
 ///
@@ -1962,9 +1957,7 @@ DECLARE(RebuildFolderIndex)
 /// DECLARE(FlushFolderIndexes)
 DECLARE(FlushFolderIndexes) // ULONG force
 {
-  GETDATA;
   struct FolderNode *fnode;
-  BOOL anyFlushed = FALSE;
 
   ENTER();
 
@@ -1976,38 +1969,23 @@ DECLARE(FlushFolderIndexes) // ULONG force
   {
     struct Folder *folder = fnode->folder;
 
-    if(msg->force == TRUE)
+    if(isGroupFolder(folder) == FALSE)
     {
-      if(FlushIndex(folder, 0) == TRUE)
-        anyFlushed = TRUE;
-
-      // a forced flush will not redraw the folder tree, because that happens
-      // only if the application is terminating or being iconfied which in turn
-      // makes a visual update unnecessary
-    }
-    else
-    {
-      BOOL flushed;
-
-      if(C->ExpungeIndexes == 0)
-        flushed = FlushIndex(folder, 1);
-      else
-        flushed = FlushIndex(folder, GetDateStamp() - C->ExpungeIndexes);
-
-      if(flushed == TRUE)
+      if(msg->force == TRUE)
       {
-        anyFlushed = TRUE;
-        if(data->iconified == FALSE)
-          DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, folder->Treenode, MUIF_NONE);
+        FlushIndex(folder, 0);
+      }
+      else
+      {
+        if(C->ExpungeIndexes == 0)
+          FlushIndex(folder, 1);
+        else
+          FlushIndex(folder, GetDateStamp() - C->ExpungeIndexes);
       }
     }
   }
 
   UnlockFolderList(G->folders);
-
-  // finally update the AppIcon as well
-  if(G->Terminating == FALSE && G->AppIconQuiet == FALSE && anyFlushed == TRUE)
-    UpdateAppIcon();
 
   RETURN(0);
   return 0;
