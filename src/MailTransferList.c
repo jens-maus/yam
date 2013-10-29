@@ -54,17 +54,19 @@ void InitMailTransferList(struct MailTransferList *tlist)
 
 ///
 /// ClearMailTransferList
-// removed all nodes from a transfer list
+// remove all nodes from a transfer list
 void ClearMailTransferList(struct MailTransferList *tlist)
 {
   struct MailTransferNode *tnode;
+  struct MailTransferNode *succ;
 
   ENTER();
 
-  while((tnode = (struct MailTransferNode *)RemHead((struct List *)&tlist->list)) != NULL)
+  SafeIterateList(&tlist->list, struct MailTransferNode *, tnode, succ)
+  {
     DeleteMailTransferNode(tnode);
-
-  tlist->count = 0;
+  }
+  InitMailTransferList(tlist);
 
   LEAVE();
 }

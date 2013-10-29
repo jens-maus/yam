@@ -91,12 +91,14 @@ struct MailList *CreateMailList(void)
 void ClearMailList(struct MailList *mlist)
 {
   struct MailNode *mnode;
+  struct MailNode *succ;
 
   ENTER();
 
-  while((mnode = (struct MailNode *)RemHead((struct List *)&mlist->list)) != NULL)
+  SafeIterateList(&mlist->list, struct MailNode *, mnode, succ)
+  {
     DeleteMailNode(mnode);
-
+  }
   InitMailList(mlist);
 
   LEAVE();
