@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-10-30 Thore Böckelmann <tboeckel@gmx.de>
+
+  * MailList.c: replaced the custom mail list sorting function by the generic
+    Exec list sorting algorithm as it was exactly the same code except for the
+    variable types.
+
 2013-10-29 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/AddressBookWindow.c: increased the method parameter counter to correctly
