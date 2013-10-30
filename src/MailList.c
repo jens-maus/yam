@@ -28,6 +28,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <clib/alib_protos.h>
+#include <proto/dos.h>
 #include <proto/exec.h>
 
 #include "extrasrc.h"
@@ -285,7 +286,7 @@ void DeleteMailNode(struct MailNode *mnode)
 ///
 /// SortMailList
 // sort a list of mails with a comparison function
-void SortMailList(struct MailList *mlist, int (* compare)(const struct Mail *m1, const struct Mail *m2))
+void SortMailList(struct MailList *mlist, int (* compare)(const struct MailNode *m1, const struct MailNode *m2))
 {
   ENTER();
 
@@ -326,6 +327,14 @@ struct Mail **MailListToMailArray(const struct MailList *mlist)
 
   RETURN(marray);
   return marray;
+}
+
+///
+/// CompareMailsByDate
+// comparison function to sort mails by their date
+int CompareMailsByDate(const struct MailNode *m1, const struct MailNode *m2)
+{
+  return CompareDates(&m2->mail->Date, &m1->mail->Date);
 }
 
 ///

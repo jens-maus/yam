@@ -1268,14 +1268,6 @@ HOOKPROTONHNONP(MA_ReadMessage, void)
 MakeHook(MA_ReadMessageHook, MA_ReadMessage);
 
 ///
-/// MA_CompareByDate
-//  Compares two messages by date
-int MA_CompareByDate(const struct Mail *m1, const struct Mail *m2)
-{
-  return CompareDates(&m2->Date, &m1->Date);
-}
-
-///
 /// MA_RemoveAttach
 //  Removes attachments from a message
 void MA_RemoveAttach(struct Mail *mail, struct Part **whichParts, BOOL warning)

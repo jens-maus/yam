@@ -2240,7 +2240,7 @@ struct WriteMailData *NewForwardMailWindow(struct MailList *mlist, const int fla
       wmData->refMailList = CloneMailList(mlist);
 
       // sort the mail list by date
-      SortMailList(mlist, MA_CompareByDate);
+      SortMailList(mlist, CompareMailsByDate);
 
       // insert the intro text
       InsertIntroText(out, C->NewIntro, NULL);
@@ -2541,7 +2541,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
 
       // make sure we sort the mlist according to
       // the mail date
-      SortMailList(mlist, MA_CompareByDate);
+      SortMailList(mlist, CompareMailsByDate);
 
       // Now we iterate through all selected mails
       j = 0;

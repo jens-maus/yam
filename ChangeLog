@@ -10,6 +10,8 @@ $URL$
   * MailList.c: replaced the custom mail list sorting function by the generic
     Exec list sorting algorithm as it was exactly the same code except for the
     variable types.
+  * YAM_MAf, MailList.c: moved the mail date comparison function to a more
+    appropriate place.
 
 2013-10-29 Thore Böckelmann <tboeckel@gmx.de>
 

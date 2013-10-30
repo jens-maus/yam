@@ -374,7 +374,6 @@ extern struct Hook MA_SendHook;
 extern struct Hook MA_PopNowHook;
 
 void  MA_ChangeSubject(struct Mail *mail, char *subj);
-int   MA_CompareByDate(const struct Mail *m1, const struct Mail *m2);
 struct MailList *MA_CreateMarkedList(Object *lv, BOOL onlyNew);
 struct MailList *MA_CreateFullList(struct Folder *fo, BOOL onlyNew);
 void  MA_DeleteMessage(BOOL delatonce, BOOL force);

@@ -62,7 +62,7 @@ struct MailNode *AddNewMailNode(struct MailList *mlist, struct Mail *mail);
 void AddMailNode(struct MailList *mlist, struct MailNode *mnode);
 void RemoveMailNode(struct MailList *mlist, struct MailNode *mnode);
 void DeleteMailNode(struct MailNode *mnode);
-void SortMailList(struct MailList *mlist, int (* compare)(const struct Mail *m1, const struct Mail *m2));
+void SortMailList(struct MailList *mlist, int (* compare)(const struct MailNode *m1, const struct MailNode *m2));
 struct Mail **MailListToMailArray(const struct MailList *mlist);
 struct MailNode *FindMailByAddress(const struct MailList *mlist, const struct Mail *mail);
 struct MailNode *FindMailByFilename(const struct MailList *mlist, const char *filename);
@@ -72,6 +72,9 @@ struct Mail *CloneMail(const struct Mail *mail);
 void ReferenceMail(struct Mail *mail);
 void DereferenceMail(struct Mail *mail);
 void FreeMail(struct Mail *mail);
+
+// public comparison functions
+int CompareMailsByDate(const struct MailNode *m1, const struct MailNode *m2);
 
 // check if a mail list is empty
 #define IsMailListEmpty(mlist)                    IsMinListEmpty(&(mlist)->list)

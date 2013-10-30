@@ -967,7 +967,7 @@ BOOL MA_JumpToNewMsg(void)
 // Function that jumps to the most recent mail in a folder
 BOOL MA_JumpToRecentMsg(void)
 {
-  struct Mail *recent = NULL;
+  struct MailNode *recent = NULL;
   struct MailNode *mnode;
   struct Folder *folder;
   BOOL jumped = FALSE;
@@ -981,15 +981,10 @@ BOOL MA_JumpToRecentMsg(void)
   mnode = FirstMailNode(folder->messages);
   while(mnode != NULL)
   {
-    struct Mail *mail = mnode->mail;
-
-    if(mail != NULL)
+    if(recent == NULL || CompareMailsByDate(mnode, recent) > 0)
     {
-      if(recent == NULL || MA_CompareByDate(mail, recent) > 0)
-      {
-        // this mail is more recent than the yet most recent known
-        recent = mail;
-      }
+      // this mail is more recent than the yet most recent known
+      recent = mnode;
     }
 
     mnode = NextMailNode(mnode);
@@ -997,7 +992,7 @@ BOOL MA_JumpToRecentMsg(void)
 
   if(recent != NULL)
   {
-    DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_SetActive, recent, MUIV_NList_SetActive_Entry|MUIV_NList_SetActive_Jump_Center);
+    DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_SetActive, recent->mail, MUIV_NList_SetActive_Entry|MUIV_NList_SetActive_Jump_Center);
     jumped = TRUE;
   }
 
