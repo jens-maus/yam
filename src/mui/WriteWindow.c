@@ -162,7 +162,6 @@ struct Data
   Object *MI_SIGNATURE;
   Object *MI_SIGNATURES[MAXSIG_MENU];
   Object *GR_ATTACH_REMIND;
-  Object *LB_ATTACH_REMIND;
   Object *BT_ATTACH_REMIND_ADD;
   Object *BT_ATTACH_REMIND_LATER;
   Object *BT_ATTACH_REMIND_NEVER;
@@ -1189,8 +1188,11 @@ OVERLOAD(OM_NEW)
 
                 Child, data->GR_ATTACH_REMIND = HGroup,
                   MUIA_ShowMe, FALSE,
-                  Child, data->LB_ATTACH_REMIND = TextObject,
-                    MUIA_Font, MUIV_Font_Tiny,
+                  Child, TextObject,
+                    MUIA_Font,          MUIV_Font_Tiny,
+                    MUIA_Text_Contents, tr(MSG_ATTACHMENT_REMIND_INFO),
+                    MUIA_Text_SetMax,   TRUE,
+                    MUIA_Text_Copy,     FALSE,
                   End,
                   Child, HSpace(0),
                   Child, data->BT_ATTACH_REMIND_ADD = TextObject,
@@ -5410,7 +5412,7 @@ DECLARE(KeywordFound) // const char *keyword
 
   ENTER();
 
-  D(DBF_GUI, "keyword '%s'", SafeStr(msg->keyword));
+  D(DBF_GUI, "found attachedment keyword '%s'", SafeStr(msg->keyword));
   // pop up the attachment reminder if
   // - it is not disabled yet
   // - there are no attachments yet
@@ -5419,14 +5421,7 @@ DECLARE(KeywordFound) // const char *keyword
      xget(data->LV_ATTACH, MUIA_NList_Entries) == 0 &&
      xget(data->GR_ATTACH_REMIND, MUIA_ShowMe) == FALSE)
   {
-    char *reminder;
-
-    if(asprintf(&reminder, tr(MSG_ATTACHMENT_REMIND_INFO), msg->keyword) != -1)
-    {
-      set(data->LB_ATTACH_REMIND, MUIA_Text_Contents, reminder);
-      set(data->GR_ATTACH_REMIND, MUIA_ShowMe, TRUE);
-      free(reminder);
-    }
+    set(data->GR_ATTACH_REMIND, MUIA_ShowMe, TRUE);
   }
 
   RETURN(0);

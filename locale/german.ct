@@ -8811,7 +8811,7 @@ MSG_ATTACHMENT_KEYWORDS
 Anhang,Anhänge,angehängt,angefügt,anbei,Wiedervorlage,Begleitschreiben
 ;
 MSG_ATTACHMENT_REMIND_INFO
-Schlüsselwort der Anhang-Erinnerung gefunden: \033b%s\033n
+Haben Sie eventuell vergessen einen Anhang anzufügen?
 ;
 MSG_ATTACHMENT_REMIND_ADD
 Anhang hinzufügen...

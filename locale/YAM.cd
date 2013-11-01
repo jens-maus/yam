@@ -7426,7 +7426,7 @@ MSG_ATTACHMENT_KEYWORDS (2497//)
 attachment,attach,attached,attaching,enclosed,CV,cover letter
 ;
 MSG_ATTACHMENT_REMIND_INFO (2498//)
-Found keyword of the attachment reminder: \033b%s\033n
+Did you possibly forget to add an attchment?
 ;
 MSG_ATTACHMENT_REMIND_ADD (2499//)
 Add attachment...
