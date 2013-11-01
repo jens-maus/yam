@@ -131,9 +131,6 @@ struct Config *CE = NULL;
 #define SYS_EDITOR "C:Ed"
 #endif
 
-// some filename extensions which might suggest the existance of an attachment
-#define STATIC_ATTACHMENT_KEYWORDS ".bz2,.doc,.gz,.lha,.lzx,.odb,.odf,.odg,.odp,.ods,.odt,.pdf,.pps,.ppt,.rtf,.tar,.tgz,.xls,.xz,.zip"
-
 // define the current version of the config
 // This will also be the latest version this YAM
 // version will try to load without warning the user
@@ -773,7 +770,7 @@ void SetDefaultConfig(struct Config *co, enum ConfigPage page)
     strlcpy(co->Greetings, tr(MSG_CO_GreetingsDef), sizeof(co->Greetings));
     co->WarnSubject = TRUE;
     co->AttachmentReminder = TRUE;
-    snprintf(co->AttachmentKeywords, sizeof(co->AttachmentKeywords), STATIC_ATTACHMENT_KEYWORDS ",%s", tr(MSG_ATTACHMENT_KEYWORDS));
+    strlcpy(co->AttachmentKeywords, tr(MSG_ATTACHMENT_KEYWORDS), sizeof(co->AttachmentKeywords));
     co->EdWrapCol = 78;
     co->EdWrapMode = EWM_EDITING;
     co->UseFixedFontWrite = TRUE;
