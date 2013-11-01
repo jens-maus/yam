@@ -45,6 +45,7 @@
 #include "Config.h"
 #include "DynamicString.h"
 #include "Locale.h"
+#include "MimeTypes.h"
 #include "MUIObjects.h"
 #include "ParseEmail.h"
 #include "Requesters.h"
@@ -56,7 +57,6 @@ struct Data
 {
   LONG pens[7];
   LONG colorMap[16];
-  char **keywords;
 
   struct MUI_EventHandlerNode ehnode;
 
@@ -70,11 +70,6 @@ struct Data
 #define MUIF_MailTextEdit_LoadFromFile_UseStyles  (1<<1)
 #define MUIF_MailTextEdit_LoadFromFile_UseColors  (1<<2)
 */
-
-#warning remove this definition as soon as TextEditor.mcc 15.42 has been released
-#ifndef MUIA_TextEditor_Keywords
-#define MUIA_TextEditor_Keywords              (TextEditor_Dummy + 0x40)
-#endif
 
 /* Private Function */
 /// InsertAddressTreeNode() rec
@@ -150,6 +145,56 @@ static void InsertAddressTreeNode(Object *obj, Object *addrObj, struct MUI_NList
 }
 
 ///
+/// BuildKeywordString
+static char *BuildKeywordString(void)
+{
+  char *keywords = NULL;
+  ULONG i;
+
+  ENTER();
+
+  dstrcpy(&keywords, C->AttachmentKeywords);
+
+  for(i=0; IntMimeTypeArray[i].ContentType != NULL; i++)
+  {
+    if(IsStrEmpty(IntMimeTypeArray[i].Extension) == FALSE)
+    {
+      char *copy;
+
+      // split the space separated extensions and build a string of
+      // comma separated extensions with leading '.'
+      if((copy = strdup(IntMimeTypeArray[i].Extension)) != NULL)
+      {
+        char *ext = copy;
+
+        do
+        {
+          char *e;
+
+          if((e = strpbrk(ext, " ")) != NULL)
+            *e++ = '\0';
+
+          if(dstrlen(keywords) != 0)
+            dstrcat(&keywords, ",");
+
+          dstrcat(&keywords, ".");
+          dstrcat(&keywords, ext);
+
+          ext = e;
+        }
+        while(ext != NULL);
+
+        free(copy);
+      }
+    }
+  }
+  D(DBF_GUI, "build keyword string '%s'", keywords);
+
+  RETURN(keywords);
+  return keywords;
+}
+
+///
 
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
@@ -159,38 +204,21 @@ OVERLOAD(OM_NEW)
 
   if((obj = (Object *)DoSuperMethodA(cl, obj, msg)) != NULL)
   {
-    GETDATA;
-
     if(GetTagData(MUIA_TextEditor_ReadOnly, FALSE, inittags(msg)) == FALSE &&
        GetTagData(ATTR(CheckKeywords), FALSE, inittags(msg)) == TRUE)
     {
-      if((data->keywords = SplitString(C->AttachmentKeywords, ",")) != NULL)
+      char *keywords;
+
+      if((keywords = BuildKeywordString()) != NULL)
       {
-        set(obj, MUIA_TextEditor_Keywords, data->keywords);
+        set(obj, MUIA_TextEditor_Keywords, keywords);
+        dstrfree(keywords);
       }
     }
   }
 
   RETURN((IPTR)obj);
   return (IPTR)obj;
-}
-
-///
-/// OVERLOAD(OM_DISPOSE)
-OVERLOAD(OM_DISPOSE)
-{
-  GETDATA;
-  ULONG result;
-
-  ENTER();
-
-  FreeStrArray(data->keywords);
-  data->keywords = NULL;
-
-  result = DoSuperMethodA(cl, obj, msg);
-
-  RETURN(result);
-  return result;
 }
 
 ///

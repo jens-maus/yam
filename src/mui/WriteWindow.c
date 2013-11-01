@@ -249,11 +249,6 @@ enum
   ORIGIN_TOOLBAR
 };
 
-#warning remove this definition as soon as TextEditor.mcc 15.42 has been released
-#ifndef MUIA_TextEditor_KeywordFound
-#define MUIA_TextEditor_KeywordFound          (TextEditor_Dummy + 0x41)
-#endif
-
 /* Private Functions */
 /// WhichEncodingForFile
 //  Determines best MIME encoding mode for a file
@@ -1482,7 +1477,7 @@ OVERLOAD(OM_NEW)
         DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen,            10,             data->MI_COLORED,   3, MUIM_NoNotifySet, MUIA_Menuitem_Checked, FALSE);
         DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen,            11,             data->MI_COLORED,   3, MUIM_NoNotifySet, MUIA_Menuitem_Checked, FALSE);
         DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen,            12,             data->MI_COLORED,   3, MUIM_NoNotifySet, MUIA_Menuitem_Checked, FALSE);
-        DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_KeywordFound,   MUIV_EveryTime, obj,                2, METHOD(KeywordFound), MUIV_TriggerValue);
+        DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_MatchedKeyword, MUIV_EveryTime, obj,                2, METHOD(MatchedKeyword), MUIV_TriggerValue);
 
         DoMethod(data->MI_BOLD,      MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, obj, 3, METHOD(SetSoftStyle), SSM_BOLD, ORIGIN_MENU);
         DoMethod(data->MI_ITALIC,    MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, obj, 3, METHOD(SetSoftStyle), SSM_ITALIC, ORIGIN_MENU);
@@ -5375,15 +5370,15 @@ DECLARE(CodesetChanged) // char *codesetName
 }
 
 ///
-/// DECLARE(KeywordFound)
+/// DECLARE(MatchedKeyword)
 // a keyword from the attachment keyword list has been typed
-DECLARE(KeywordFound) // const char *keyword
+DECLARE(MatchedKeyword) // const char *keyword
 {
   GETDATA;
 
   ENTER();
 
-  D(DBF_GUI, "found attachedment keyword '%s'", SafeStr(msg->keyword));
+  D(DBF_GUI, "matched attachment keyword '%s'", SafeStr(msg->keyword));
   // pop up the attachment reminder if
   // - it is not disabled yet
   // - there are no attachments yet
