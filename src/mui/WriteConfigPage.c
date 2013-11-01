@@ -171,6 +171,7 @@ OVERLOAD(OM_NEW)
           End,
           Child, NListviewObject,
             MUIA_CycleChain, TRUE,
+            MUIA_FixHeightTxt, "\n\n\n\n\n",
             MUIA_NListview_NList, LV_ATTACHMENTKEYWORDS = AttachmentKeywordListObject,
             End,
           End,
