@@ -38,11 +38,6 @@
 
 #include "Debug.h"
 
-#warning remove this definition as soon as codesets.library 6.16 has been released
-#ifndef CSA_AllowMultibyteCodesets
-#define CSA_AllowMultibyteCodesets CODESETSLIB_TAG(30)
-#endif
-
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
