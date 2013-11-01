@@ -417,8 +417,8 @@ LONG IndexOfUserIdentity(const struct MinList *userIdentityList, const struct Us
     }
   }
 
-  RETURN(idx);
-  return idx;
+  RETURN(result);
+  return result;
 }
 
 ///
