@@ -32,6 +32,7 @@
 
 #include <proto/muimaster.h>
 
+#include "mui/AttachmentKeywordWindow.h"
 #include "mui/CodesetPopup.h"
 #include "mui/ConfigPage.h"
 #include "mui/ConfigPageList.h"
@@ -54,6 +55,8 @@ struct Data
   Object *CH_TEXTCOLORS_WRITE;
   Object *CH_TEXTSTYLES_WRITE;
   Object *CH_WARNSUBJECT;
+  Object *CH_ATTACHMENTREMINDER;
+  Object *BT_ATTACHMENTKEYWORDS;
   Object *CH_LAUNCH;
 };
 */
@@ -74,6 +77,8 @@ OVERLOAD(OM_NEW)
   Object *CH_TEXTCOLORS_WRITE;
   Object *CH_TEXTSTYLES_WRITE;
   Object *CH_WARNSUBJECT;
+  Object *CH_ATTACHMENTREMINDER;
+  Object *BT_ATTACHMENTKEYWORDS;
   Object *CH_LAUNCH;
 
   ENTER();
@@ -148,6 +153,11 @@ OVERLOAD(OM_NEW)
 
       Child, VGroup, GroupFrameT(tr(MSG_CO_OtherOptions)),
         Child, MakeCheckGroup(&CH_WARNSUBJECT, tr(MSG_CO_WARNSUBJECT)),
+        Child, HGroup,
+          Child, MakeCheckGroup(&CH_ATTACHMENTREMINDER, tr(MSG_CO_CHECK_FOR_MISSING_ATTACHMENTS)),
+          Child, HSpace(0),
+          Child, BT_ATTACHMENTKEYWORDS = MakeButton(tr(MSG_CO_ATTACHMENT_KEYWORDS)),
+        End,
         Child, MakeCheckGroup(&CH_LAUNCH, tr(MSG_CO_LAUNCH_EXTEDITOR)),
       End,
     End,
@@ -155,32 +165,38 @@ OVERLOAD(OM_NEW)
   {
     GETDATA;
 
-    data->ST_HELLOTEXT =        ST_HELLOTEXT;
-    data->ST_BYETEXT =          ST_BYETEXT;
-    data->PO_DEFCODESET_WRITE = PO_DEFCODESET_WRITE;
-    data->ST_EDWRAP =           ST_EDWRAP;
-    data->CY_EDWRAP =           CY_EDWRAP;
-    data->NB_EMAILCACHE =       NB_EMAILCACHE;
-    data->NB_AUTOSAVE =         NB_AUTOSAVE;
-    data->CH_FIXEDFONT_WRITE =  CH_FIXEDFONT_WRITE;
-    data->CH_TEXTCOLORS_WRITE = CH_TEXTCOLORS_WRITE;
-    data->CH_TEXTSTYLES_WRITE = CH_TEXTSTYLES_WRITE;
-    data->CH_WARNSUBJECT =      CH_WARNSUBJECT;
-    data->CH_LAUNCH =           CH_LAUNCH;
+    data->ST_HELLOTEXT =          ST_HELLOTEXT;
+    data->ST_BYETEXT =            ST_BYETEXT;
+    data->PO_DEFCODESET_WRITE =   PO_DEFCODESET_WRITE;
+    data->ST_EDWRAP =             ST_EDWRAP;
+    data->CY_EDWRAP =             CY_EDWRAP;
+    data->NB_EMAILCACHE =         NB_EMAILCACHE;
+    data->NB_AUTOSAVE =           NB_AUTOSAVE;
+    data->CH_FIXEDFONT_WRITE =    CH_FIXEDFONT_WRITE;
+    data->CH_TEXTCOLORS_WRITE =   CH_TEXTCOLORS_WRITE;
+    data->CH_TEXTSTYLES_WRITE =   CH_TEXTSTYLES_WRITE;
+    data->CH_WARNSUBJECT =        CH_WARNSUBJECT;
+    data->CH_ATTACHMENTREMINDER = CH_ATTACHMENTREMINDER;
+    data->BT_ATTACHMENTKEYWORDS = BT_ATTACHMENTKEYWORDS;
+    data->CH_LAUNCH =             CH_LAUNCH;
 
-    SetHelp(ST_HELLOTEXT,        MSG_HELP_CO_ST_HELLOTEXT);
-    SetHelp(ST_BYETEXT,          MSG_HELP_CO_ST_BYETEXT);
-    SetHelp(CH_WARNSUBJECT,      MSG_HELP_CO_CH_WARNSUBJECT);
-    SetHelp(ST_EDWRAP,           MSG_HELP_CO_ST_EDWRAP);
-    SetHelp(CY_EDWRAP,           MSG_HELP_CO_CY_EDWRAP);
-    SetHelp(CH_LAUNCH,           MSG_HELP_CO_CH_LAUNCH);
-    SetHelp(NB_EMAILCACHE,       MSG_HELP_CO_NB_EMAILCACHE);
-    SetHelp(NB_AUTOSAVE,         MSG_HELP_CO_NB_AUTOSAVE);
-    SetHelp(PO_DEFCODESET_WRITE, MSG_HELP_CO_TX_DEFCODESET_WRITE);
-    SetHelp(CH_TEXTSTYLES_WRITE, MSG_HELP_CO_CH_TEXTSTYLES_WRITE);
-    SetHelp(CH_TEXTCOLORS_WRITE, MSG_HELP_CO_CH_TEXTCOLORS_WRITE);
+    SetHelp(ST_HELLOTEXT,          MSG_HELP_CO_ST_HELLOTEXT);
+    SetHelp(ST_BYETEXT,            MSG_HELP_CO_ST_BYETEXT);
+    SetHelp(ST_EDWRAP,             MSG_HELP_CO_ST_EDWRAP);
+    SetHelp(CY_EDWRAP,             MSG_HELP_CO_CY_EDWRAP);
+    SetHelp(CH_WARNSUBJECT,        MSG_HELP_CO_CH_WARNSUBJECT);
+    SetHelp(CH_ATTACHMENTREMINDER, MSG_HELP_CO_CH_ATTACHMENTREMINDER);
+    SetHelp(BT_ATTACHMENTKEYWORDS, MSG_HELP_CO_BT_ATTACHMENTKEYWORDS);
+    SetHelp(CH_LAUNCH,             MSG_HELP_CO_CH_LAUNCH);
+    SetHelp(NB_EMAILCACHE,         MSG_HELP_CO_NB_EMAILCACHE);
+    SetHelp(NB_AUTOSAVE,           MSG_HELP_CO_NB_AUTOSAVE);
+    SetHelp(PO_DEFCODESET_WRITE,   MSG_HELP_CO_TX_DEFCODESET_WRITE);
+    SetHelp(CH_TEXTSTYLES_WRITE,   MSG_HELP_CO_CH_TEXTSTYLES_WRITE);
+    SetHelp(CH_TEXTCOLORS_WRITE,   MSG_HELP_CO_CH_TEXTCOLORS_WRITE);
 
-    DoMethod(CY_EDWRAP, MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, ST_EDWRAP, 3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
+    DoMethod(CY_EDWRAP,             MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, ST_EDWRAP,             3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
+    DoMethod(CH_ATTACHMENTREMINDER, MUIM_Notify, MUIA_Selected,     MUIV_EveryTime, BT_ATTACHMENTKEYWORDS, 3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
+    DoMethod(BT_ATTACHMENTKEYWORDS, MUIM_Notify, MUIA_Pressed,      FALSE,          obj,                   1, METHOD(EditAttachmentKeywords));
   }
 
   RETURN((IPTR)obj);
@@ -208,6 +224,7 @@ OVERLOAD(MUIM_ConfigPage_ConfigToGUI)
   setcheckmark(data->CH_FIXEDFONT_WRITE, CE->UseFixedFontWrite);
   setcheckmark(data->CH_TEXTSTYLES_WRITE, CE->UseTextStylesWrite);
   setcheckmark(data->CH_TEXTCOLORS_WRITE, CE->UseTextColorsWrite);
+  setcheckmark(data->CH_ATTACHMENTREMINDER, CE->AttachmentReminder);
 
   RETURN(0);
   return 0;
@@ -233,6 +250,28 @@ OVERLOAD(MUIM_ConfigPage_GUIToConfig)
   CE->UseFixedFontWrite  = GetMUICheck(data->CH_FIXEDFONT_WRITE);
   CE->UseTextStylesWrite = GetMUICheck(data->CH_TEXTSTYLES_WRITE);
   CE->UseTextColorsWrite = GetMUICheck(data->CH_TEXTCOLORS_WRITE);
+  CE->AttachmentReminder = GetMUICheck(data->CH_ATTACHMENTREMINDER);
+
+  RETURN(0);
+  return 0;
+}
+
+///
+
+/* Public Methods */
+/// DECLARE(EditAttachmentKeywords)
+DECLARE(EditAttachmentKeywords)
+{
+  Object *win;
+
+  ENTER();
+
+  if((win = AttachmentKeywordWindowObject,
+    MUIA_Window_RefWindow, _win(obj),
+    End) != NULL)
+  {
+    SafeOpenWindow(win);
+  }
 
   RETURN(0);
   return 0;

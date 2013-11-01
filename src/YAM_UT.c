@@ -6461,6 +6461,59 @@ int GetHostName(char *name, size_t namelen)
 }
 
 ///
+/// SplitString
+// split a string separated by certain delimiting characters into an array of words
+char **SplitString(const char *str, const char *delimiters)
+{
+  char *copy;
+  char **array = NULL;
+
+  ENTER();
+
+  if(str != NULL && (copy = strdup(str)) != NULL)
+  {
+    char *p = copy;
+    LONG wordCnt;
+
+    // count the number of words, we have one at least
+    wordCnt = 1;
+    while(*p != '\0')
+    {
+      if(strchr(delimiters, *p) != NULL)
+        wordCnt++;
+
+      p++;
+    }
+
+    if((array = calloc(wordCnt+1, sizeof(char *))) != NULL)
+    {
+      LONG i = 0;
+      char *word = copy;
+
+      // split the string
+      do
+      {
+        char *e;
+
+        if((e = strpbrk(word, delimiters)) != NULL)
+          *e++ = '\0';
+
+        array[i] = strdup(word);
+        i++;
+
+        word = e;
+      }
+      while(word != NULL);
+    }
+
+    free(copy);
+  }
+
+  RETURN(array);
+  return array;
+}
+
+///
 /// FreeStrArray
 // free() a NULL terminated array of strings
 void FreeStrArray(char **array)
@@ -6469,18 +6522,13 @@ void FreeStrArray(char **array)
 
   if(array != NULL)
   {
-    int i=0;
-    char *p;
+    LONG i = 0;
 
-    do
+    while(array[i] != NULL)
     {
-      if((p = array[i]) == NULL)
-        break;
-
-      free(p);
+      free(array[i]);
       i++;
     }
-    while(1);
 
     free(array);
   }

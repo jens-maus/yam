@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.31 (23.10.2013)
+## version $VER: YAM.catalog 8.32 (1.11.2013)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Langner, Thore Böckelmann
@@ -5088,7 +5088,8 @@ Warnung bei _leerer Betreffzeile
 ; Warn when there's an empty su_bject line
 ;
 MSG_HELP_CO_CH_WARNSUBJECT
-Soll bei leerer Betreff-\nzeile gewarnt werden?
+Soll bei leerer Betreff-\n\
+zeile gewarnt werden?
 ; Would you like to be warned if you\n\
 ; leave the subject line blank?
 ;
@@ -8768,4 +8769,62 @@ Betreff
 ;
 MSG_QUICKSEARCH_BODY
 Nachrichteninhalt
+;
+MSG_CO_CHECK_FOR_MISSING_ATTACHMENTS
+Auf fehlende Anhänge prüfen
+;
+MSG_CO_ATTACHMENT_KEYWORDS
+Schlüsselwörter...
+;
+MSG_CO_ATTACHMENT_KEYWORDS_TITLE
+Schlüsserwörter der Anhang-Erinnerung
+;
+MSG_CO_ATTACHMENT_KEYWORDS_ADD
+Hinzufügen...
+;
+MSG_CO_ATTACHMENT_KEYWORDS_MODIFY
+Bearbeiten...
+;
+MSG_CO_ATTACHMENT_KEYWORDS_REMOVE
+Löschen
+;
+MSG_CO_ATTACHMENT_KEYWORDS_ADD_KEYWORD
+Schlüsselwort hinzufügen
+;
+MSG_CO_ATTACHMENT_KEYWORDS_MODIFY_KEYWORD
+Schlüsselwort bearbeiten
+;
+MSG_CO_ATTACHMENT_KEYWORDS_KEYWORD
+Schlüsselwort:
+;
+MSG_HELP_CO_CH_ATTACHMENTREMINDER
+Soll gewarnt werden, falls der Nachrichten-\n\
+text auf das Vorhandensein eines Anhangs\n\
+hinweist, aber die Anhänge fehlen?
+;
+MSG_HELP_CO_BT_ATTACHMENTKEYWORDS
+Konfigurieren Sie die Schlüsselwörter,\n\
+welche die gewünschte Existenz eines\n\
+Anhangs andeuten.
+;
+MSG_ATTACHMENT_KEYWORDS
+Anhang,Anhänge,angehängt,angefügt,anbei,Wiedervorlage,Begleitschreiben
+;
+MSG_ATTACHMENT_REMIND_INFO
+Schlüsselwort der Anhang-Erinnerung gefunden: \033b%s\033n
+;
+MSG_ATTACHMENT_REMIND_ADD
+Anhang hinzufügen...
+;
+MSG_ATTACHMENT_REMIND_LATER
+Mich später erinnern
+;
+MSG_WR_NO_ATTACHMENTS_TITLE
+Anhang-Erinnerung
+;
+MSG_WR_NO_ATTACHMENTS
+Haben Sie vergessen einen Anhang anzufügen?
+;
+MSG_WR_NO_ATTACHMENTS_GADS
+Ja, habe ich!|Nein, jetzt senden
 ;

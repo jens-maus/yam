@@ -7385,3 +7385,61 @@ Subject
 MSG_QUICKSEARCH_BODY (2485//)
 Mail body
 ;
+MSG_CO_CHECK_FOR_MISSING_ATTACHMENTS (2486//)
+Check for missing attachments
+;
+MSG_CO_ATTACHMENT_KEYWORDS (2487//)
+Keywords...
+;
+MSG_CO_ATTACHMENT_KEYWORDS_TITLE (2488//)
+Keywords for attachment reminder
+;
+MSG_CO_ATTACHMENT_KEYWORDS_ADD (2489//)
+Add...
+;
+MSG_CO_ATTACHMENT_KEYWORDS_MODIFY (2490//)
+Modify...
+;
+MSG_CO_ATTACHMENT_KEYWORDS_REMOVE (2491//)
+Remove
+;
+MSG_CO_ATTACHMENT_KEYWORDS_ADD_KEYWORD (2492//)
+Add new keyword
+;
+MSG_CO_ATTACHMENT_KEYWORDS_MODIFY_KEYWORD (2493//)
+Modify keyword
+;
+MSG_CO_ATTACHMENT_KEYWORDS_KEYWORD (2494//)
+Keyword:
+;
+MSG_HELP_CO_CH_ATTACHMENTREMINDER (2495//)
+Would you like to be warned if the\n\
+mail body suggests the existance of\n\
+an attachment but these are missing?
+;
+MSG_HELP_CO_BT_ATTACHMENTKEYWORDS (2496//)
+Configure the keywords which might\n\
+suggest the desired existance of an\n\
+attachment.
+;
+MSG_ATTACHMENT_KEYWORDS (2497//)
+attachment,attach,attached,attaching,enclosed,CV,cover letter
+;
+MSG_ATTACHMENT_REMIND_INFO (2498//)
+Found keyword of the attachment reminder: \033b%s\033n
+;
+MSG_ATTACHMENT_REMIND_ADD (2499//)
+Add attachment...
+;
+MSG_ATTACHMENT_REMIND_LATER (2500//)
+Remind me later
+;
+MSG_WR_NO_ATTACHMENTS_TITLE (2501//)
+Attachment reminder
+;
+MSG_WR_NO_ATTACHMENTS (2502//)
+Did you forget to add an attachment?
+;
+MSG_WR_NO_ATTACHMENTS_GADS (2503//)
+Yes, I did!|No, send now
+;

@@ -223,6 +223,7 @@ struct Config
   BOOL  ShowRcptFieldReplyTo;
   BOOL  OverrideFromAddress;
   BOOL  ShowPackerProgress;
+  BOOL  AttachmentReminder;
 
   struct MUI_PenSpec   ColoredText;
   struct MUI_PenSpec   Color1stLevel;
@@ -289,6 +290,7 @@ struct Config
   char SpamExternalFilter[SIZE_FILE];
   char MachineFQDN[SIZE_DEFAULT];
   char Location[SIZE_DEFAULT];
+  char AttachmentKeywords[SIZE_LARGE];
 };
 
 extern struct Config *C;

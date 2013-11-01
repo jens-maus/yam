@@ -131,6 +131,9 @@ struct Config *CE = NULL;
 #define SYS_EDITOR "C:Ed"
 #endif
 
+// some filename extensions which might suggest the existance of an attachment
+#define STATIC_ATTACHMENT_KEYWORDS ".bz2,.doc,.gz,.lha,.lzx,.odb,.odf,.odg,.odp,.ods,.odt,.pdf,.pps,.ppt,.rtf,.tar,.tgz,.xls,.xz,.zip"
+
 // define the current version of the config
 // This will also be the latest version this YAM
 // version will try to load without warning the user
@@ -537,6 +540,7 @@ BOOL CompareConfigs(const struct Config *c1, const struct Config *c2)
      c1->ConfirmOnQuit                   == c2->ConfirmOnQuit &&
      c1->AskJumpUnread                   == c2->AskJumpUnread &&
      c1->WarnSubject                     == c2->WarnSubject &&
+     c1->AttachmentReminder              == c2->AttachmentReminder &&
      c1->FolderCntMenu                   == c2->FolderCntMenu &&
      c1->MessageCntMenu                  == c2->MessageCntMenu &&
      c1->AutoColumnResize                == c2->AutoColumnResize &&
@@ -643,7 +647,8 @@ BOOL CompareConfigs(const struct Config *c1, const struct Config *c2)
      strcmp(c1->AltQuoteChar,         c2->AltQuoteChar) == 0 &&
      strcmp(c1->ThemeName,            c2->ThemeName) == 0 &&
      strcmp(c1->UpdateDownloadPath,   c2->UpdateDownloadPath) == 0 &&
-     strcmp(c1->SpamExternalFilter,   c2->SpamExternalFilter) == 0)
+     strcmp(c1->SpamExternalFilter,   c2->SpamExternalFilter) == 0 &&
+     strcmp(c1->AttachmentKeywords,   c2->AttachmentKeywords) == 0)
   {
     equal = TRUE;
   }
@@ -767,6 +772,8 @@ void SetDefaultConfig(struct Config *co, enum ConfigPage page)
     strlcpy(co->NewIntro, tr(MSG_CO_NewIntroDef), sizeof(co->NewIntro));
     strlcpy(co->Greetings, tr(MSG_CO_GreetingsDef), sizeof(co->Greetings));
     co->WarnSubject = TRUE;
+    co->AttachmentReminder = TRUE;
+    snprintf(co->AttachmentKeywords, sizeof(co->AttachmentKeywords), STATIC_ATTACHMENT_KEYWORDS ",%s", tr(MSG_ATTACHMENT_KEYWORDS));
     co->EdWrapCol = 78;
     co->EdWrapMode = EWM_EDITING;
     co->UseFixedFontWrite = TRUE;
@@ -1612,6 +1619,8 @@ int LoadConfig(struct Config *co, const char *fname, struct FolderList **oldfold
           else if(stricmp(buf, "NewIntro") == 0)                 strlcpy(co->NewIntro, value2, sizeof(co->NewIntro));
           else if(stricmp(buf, "Greetings") == 0)                strlcpy(co->Greetings, value2, sizeof(co->Greetings));
           else if(stricmp(buf, "WarnSubject") == 0)              co->WarnSubject = Txt2Bool(value);
+          else if(stricmp(buf, "AttachmentReminder") == 0)       co->AttachmentReminder = Txt2Bool(value);
+          else if(stricmp(buf, "AttachmentKeywords") == 0)       strlcpy(co->AttachmentKeywords, value2, sizeof(co->AttachmentKeywords));
           else if(stricmp(buf, "EdWrapCol") == 0)                co->EdWrapCol = atoi(value);
           else if(stricmp(buf, "EdWrapMode") == 0)               co->EdWrapMode = atoi(value);
           else if(stricmp(buf, "LaunchAlways") == 0)             co->LaunchAlways = Txt2Bool(value);
@@ -2546,6 +2555,8 @@ BOOL SaveConfig(struct Config *co, const char *fname)
     fprintf(fh, "NewIntro             = %s\n", co->NewIntro);
     fprintf(fh, "Greetings            = %s\n", co->Greetings);
     fprintf(fh, "WarnSubject          = %s\n", Bool2Txt(co->WarnSubject));
+    fprintf(fh, "AttachmentReminder   = %s\n", Bool2Txt(co->AttachmentReminder));
+    fprintf(fh, "AttachmentKeywords   = %s\n", co->AttachmentKeywords);
     fprintf(fh, "EdWrapCol            = %d\n", co->EdWrapCol);
     fprintf(fh, "EdWrapMode           = %d\n", co->EdWrapMode);
     fprintf(fh, "LaunchAlways         = %s\n", Bool2Txt(co->LaunchAlways));

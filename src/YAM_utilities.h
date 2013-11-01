@@ -355,6 +355,7 @@ char *   UnquoteString(const char *s, BOOL new);
 int      ReadUInt32(FILE *stream, ULONG *value);
 int      WriteUInt32(FILE *stream, ULONG value);
 int      GetHostName(char *name, size_t namelen);
+char **  SplitString(const char *str, const char *delimiters);
 void     FreeStrArray(char **array);
 void     FolderTreeUpdate(void);
 BOOL     BirthdayToString(const LONG date, char *dateStr, const size_t dateStrSize);

@@ -161,6 +161,11 @@ struct Data
   Object *PO_CODESET;
   Object *MI_SIGNATURE;
   Object *MI_SIGNATURES[MAXSIG_MENU];
+  Object *GR_ATTACH_REMIND;
+  Object *LB_ATTACH_REMIND;
+  Object *BT_ATTACH_REMIND_ADD;
+  Object *BT_ATTACH_REMIND_LATER;
+  Object *BT_ATTACH_REMIND_NEVER;
 
   struct WriteMailData *wmData; // ptr to write mail data structure
   struct MsgPort *notifyPort;
@@ -184,6 +189,8 @@ struct Data
   char windowTitle[SIZE_SUBJECT+1]; // string for the title text of the window
   char screenTitle[SIZE_LARGE];     // string for the title text of the screen
   char windowNumberStr[SIZE_SMALL]; // the unique window number as a string
+
+  enum AttachmentRemind attachmentRemind;
 };
 */
 
@@ -195,7 +202,7 @@ enum RcptType
   MUIV_WriteWindow_RcptType_To,
   MUIV_WriteWindow_RcptType_CC,
   MUIV_WriteWindow_RcptType_BCC,
-  MUIV_WriteWindow_RcptType_ReplyTo,
+  MUIV_WriteWindow_RcptType_ReplyTo
 };
 
 enum ActiveObject
@@ -210,6 +217,13 @@ enum WriteMode
   WRITE_SEND = 0,
   WRITE_QUEUE,
   WRITE_DRAFT
+};
+
+enum AttachmentRemind
+{
+  MUIV_WriteWindow_AttachmentRemind_None = 0,
+  MUIV_WriteWindow_AttachmentRemind_Never,
+  MUIV_WriteWindow_AttachmentRemind_Later
 };
 */
 
@@ -235,6 +249,11 @@ enum
   ORIGIN_MENU=0,
   ORIGIN_TOOLBAR
 };
+
+#warning remove this definition as soon as TextEditor.mcc 15.42 has been released
+#ifndef MUIA_TextEditor_KeywordFound
+#define MUIA_TextEditor_KeywordFound          (TextEditor_Dummy + 0x41)
+#endif
 
 /* Private Functions */
 /// WhichEncodingForFile
@@ -1155,16 +1174,59 @@ OVERLOAD(OM_NEW)
                   MUIA_Group_Spacing, 0,
                   Child, data->TE_EDIT = MailTextEditObject,
                     InputListFrame,
-                    MUIA_CycleChain, TRUE,
-                    MUIA_TextEditor_Slider,     slider,
-                    MUIA_TextEditor_FixedFont,  C->UseFixedFontWrite,
-                    MUIA_TextEditor_WrapMode,   MUIV_TextEditor_WrapMode_SoftWrap,
-                    MUIA_TextEditor_WrapBorder, C->EdWrapMode == EWM_EDITING ? C->EdWrapCol : 0,
-                    MUIA_TextEditor_ExportWrap, C->EdWrapMode != EWM_OFF ? C->EdWrapCol : 0,
-                    MUIA_TextEditor_ImportHook, MUIV_TextEditor_ImportHook_Plain,
-                    MUIA_TextEditor_ExportHook, MUIV_TextEditor_ExportHook_NoStyle,
+                    MUIA_CycleChain,                 TRUE,
+                    MUIA_TextEditor_Slider,          slider,
+                    MUIA_TextEditor_FixedFont,       C->UseFixedFontWrite,
+                    MUIA_TextEditor_WrapMode,        MUIV_TextEditor_WrapMode_SoftWrap,
+                    MUIA_TextEditor_WrapBorder,      C->EdWrapMode == EWM_EDITING ? C->EdWrapCol : 0,
+                    MUIA_TextEditor_ExportWrap,      C->EdWrapMode != EWM_OFF ? C->EdWrapCol : 0,
+                    MUIA_TextEditor_ImportHook,      MUIV_TextEditor_ImportHook_Plain,
+                    MUIA_TextEditor_ExportHook,      MUIV_TextEditor_ExportHook_NoStyle,
+                    MUIA_MailTextEdit_CheckKeywords, C->AttachmentReminder,
                   End,
                   Child, slider,
+                End,
+
+                Child, data->GR_ATTACH_REMIND = HGroup,
+                  MUIA_ShowMe, FALSE,
+                  Child, data->LB_ATTACH_REMIND = TextObject,
+                    MUIA_Font, MUIV_Font_Tiny,
+                  End,
+                  Child, HSpace(0),
+                  Child, data->BT_ATTACH_REMIND_ADD = TextObject,
+                    ButtonFrame,
+                    MUIA_Weight,        0,
+                    MUIA_CycleChain,    TRUE,
+                    MUIA_Font,          MUIV_Font_Tiny,
+                    MUIA_InputMode,     MUIV_InputMode_RelVerify,
+                    MUIA_Background,    MUII_ButtonBack,
+                    MUIA_Text_Contents, tr(MSG_ATTACHMENT_REMIND_ADD),
+                    MUIA_Text_SetMax,   TRUE,
+                    MUIA_Text_Copy,     FALSE,
+                  End,
+                  Child, data->BT_ATTACH_REMIND_LATER = TextObject,
+                    ButtonFrame,
+                    MUIA_Weight,        0,
+                    MUIA_CycleChain,    TRUE,
+                    MUIA_Font,          MUIV_Font_Tiny,
+                    MUIA_InputMode,     MUIV_InputMode_RelVerify,
+                    MUIA_Background,    MUII_ButtonBack,
+                    MUIA_Text_Contents, tr(MSG_ATTACHMENT_REMIND_LATER),
+                    MUIA_Text_SetMax,   TRUE,
+                    MUIA_Text_Copy,     FALSE,
+                  End,
+                  Child, data->BT_ATTACH_REMIND_NEVER = TextObject,
+                    ButtonFrame,
+                    MUIA_Weight,        0,
+                    MUIA_CycleChain,    TRUE,
+                    MUIA_Font,          MUIV_Font_Tiny,
+                    MUIA_InputMode,     MUIV_InputMode_RelVerify,
+                    MUIA_Background,    MUII_ButtonBack,
+                    MUIA_Text_PreParse, "\033b",
+                    MUIA_Text_Contents, "X",
+                    MUIA_Text_SetMax,   TRUE,
+                    MUIA_Text_Copy,     FALSE,
+                  End,
                 End,
               End,
 
@@ -1439,19 +1501,20 @@ OVERLOAD(OM_NEW)
         DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_StyleBold,      MUIV_EveryTime, data->MI_BOLD,      3, MUIM_NoNotifySet, MUIA_Menuitem_Checked, MUIV_TriggerValue);
         DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_StyleItalic,    MUIV_EveryTime, data->MI_ITALIC,    3, MUIM_NoNotifySet, MUIA_Menuitem_Checked, MUIV_TriggerValue);
         DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_StyleUnderline, MUIV_EveryTime, data->MI_UNDERLINE, 3, MUIM_NoNotifySet, MUIA_Menuitem_Checked, MUIV_TriggerValue);
-        DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen,            0,              data->MI_COLORED,   3, MUIM_NoNotifySet, MUIA_Menuitem_Checked, FALSE);
-        DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen,            6,              data->MI_COLORED,   3, MUIM_NoNotifySet, MUIA_Menuitem_Checked, FALSE);
-        DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen,            7,              data->MI_COLORED,   3, MUIM_NoNotifySet, MUIA_Menuitem_Checked, TRUE);
-        DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen,            8,              data->MI_COLORED,   3, MUIM_NoNotifySet, MUIA_Menuitem_Checked, FALSE);
-        DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen,            9,              data->MI_COLORED,   3, MUIM_NoNotifySet, MUIA_Menuitem_Checked, FALSE);
-        DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen,           10,              data->MI_COLORED,   3, MUIM_NoNotifySet, MUIA_Menuitem_Checked, FALSE);
-        DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen,           11,              data->MI_COLORED,   3, MUIM_NoNotifySet, MUIA_Menuitem_Checked, FALSE);
-        DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen,           12,              data->MI_COLORED,   3, MUIM_NoNotifySet, MUIA_Menuitem_Checked, FALSE);
+        DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen,             0,             data->MI_COLORED,   3, MUIM_NoNotifySet, MUIA_Menuitem_Checked, FALSE);
+        DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen,             6,             data->MI_COLORED,   3, MUIM_NoNotifySet, MUIA_Menuitem_Checked, FALSE);
+        DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen,             7,             data->MI_COLORED,   3, MUIM_NoNotifySet, MUIA_Menuitem_Checked, TRUE);
+        DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen,             8,             data->MI_COLORED,   3, MUIM_NoNotifySet, MUIA_Menuitem_Checked, FALSE);
+        DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen,             9,             data->MI_COLORED,   3, MUIM_NoNotifySet, MUIA_Menuitem_Checked, FALSE);
+        DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen,            10,             data->MI_COLORED,   3, MUIM_NoNotifySet, MUIA_Menuitem_Checked, FALSE);
+        DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen,            11,             data->MI_COLORED,   3, MUIM_NoNotifySet, MUIA_Menuitem_Checked, FALSE);
+        DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_Pen,            12,             data->MI_COLORED,   3, MUIM_NoNotifySet, MUIA_Menuitem_Checked, FALSE);
+        DoMethod(data->TE_EDIT, MUIM_Notify, MUIA_TextEditor_KeywordFound,   MUIV_EveryTime, obj,                2, METHOD(KeywordFound), MUIV_TriggerValue);
 
-        DoMethod(data->MI_BOLD,        MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, obj, 3, METHOD(SetSoftStyle), SSM_BOLD, ORIGIN_MENU);
-        DoMethod(data->MI_ITALIC,      MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, obj, 3, METHOD(SetSoftStyle), SSM_ITALIC, ORIGIN_MENU);
-        DoMethod(data->MI_UNDERLINE,   MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, obj, 3, METHOD(SetSoftStyle), SSM_UNDERLINE, ORIGIN_MENU);
-        DoMethod(data->MI_COLORED,     MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, obj, 3, METHOD(SetSoftStyle), SSM_COLOR, ORIGIN_MENU);
+        DoMethod(data->MI_BOLD,      MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, obj, 3, METHOD(SetSoftStyle), SSM_BOLD, ORIGIN_MENU);
+        DoMethod(data->MI_ITALIC,    MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, obj, 3, METHOD(SetSoftStyle), SSM_ITALIC, ORIGIN_MENU);
+        DoMethod(data->MI_UNDERLINE, MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, obj, 3, METHOD(SetSoftStyle), SSM_UNDERLINE, ORIGIN_MENU);
+        DoMethod(data->MI_COLORED,   MUIM_Notify, MUIA_Menuitem_Checked, MUIV_EveryTime, obj, 3, METHOD(SetSoftStyle), SSM_COLOR, ORIGIN_MENU);
 
         DoMethod(data->RG_PAGE,        MUIM_Notify, MUIA_Group_ActivePage,                  0, MUIV_Notify_Window, 3, MUIM_Set, MUIA_Window_ActiveObject, data->TE_EDIT);
         DoMethod(data->RG_PAGE,        MUIM_Notify, MUIA_Group_ActivePage,                  1, MUIV_Notify_Window, 3, MUIM_Set, MUIA_Window_ActiveObject, data->LV_ATTACH);
@@ -1480,6 +1543,10 @@ OVERLOAD(OM_NEW)
         DoMethod(data->MI_FFONT,       MUIM_Notify, MUIA_Menuitem_Checked,                  MUIV_EveryTime, obj, 1, METHOD(StyleOptionsChanged));
         DoMethod(data->MI_TCOLOR,      MUIM_Notify, MUIA_Menuitem_Checked,                  MUIV_EveryTime, obj, 1, METHOD(StyleOptionsChanged));
         DoMethod(data->MI_TSTYLE,      MUIM_Notify, MUIA_Menuitem_Checked,                  MUIV_EveryTime, obj, 1, METHOD(StyleOptionsChanged));
+
+        DoMethod(data->BT_ATTACH_REMIND_ADD,   MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(RequestAttachment), C->AttachDir);
+        DoMethod(data->BT_ATTACH_REMIND_LATER, MUIM_Notify, MUIA_Pressed, FALSE, obj, 3, MUIM_Set, ATTR(AttachmentRemind), MUIV_WriteWindow_AttachmentRemind_Later);
+        DoMethod(data->BT_ATTACH_REMIND_NEVER, MUIM_Notify, MUIA_Pressed, FALSE, obj, 3, MUIM_Set, ATTR(AttachmentRemind), MUIV_WriteWindow_AttachmentRemind_Never);
 
         // set the notifies for the importance cycle gadget
         DoMethod(data->CY_IMPORTANCE, MUIM_Notify, MUIA_Cycle_Active,      0,              menuStripObject,         4, MUIM_SetUData, WMEN_IMPORT0, MUIA_Menuitem_Checked, TRUE);
@@ -1981,6 +2048,16 @@ OVERLOAD(OM_SET)
         data->mailModified = tag->ti_Data ? TRUE : FALSE;
       }
       break;
+
+      case ATTR(AttachmentRemind):
+      {
+        data->attachmentRemind = tag->ti_Data;
+        set(data->GR_ATTACH_REMIND, MUIA_ShowMe, FALSE);
+
+        // make the superMethod call ignore those tags
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
     }
   }
 
@@ -2145,7 +2222,7 @@ DECLARE(RequestAttachment) // STRPTR drawer
 
   ENTER();
 
-  if((frc = ReqFile(ASL_ATTACH, obj, tr(MSG_WR_AddFile), REQF_MULTISELECT, msg->drawer, "")))
+  if((frc = ReqFile(ASL_ATTACH, obj, tr(MSG_WR_AddFile), REQF_MULTISELECT, msg->drawer, "")) != NULL)
   {
     char filename[SIZE_PATHFILE];
 
@@ -3190,6 +3267,7 @@ DECLARE(AddAttachment) // const char *filename, const char *name, ULONG istemp
       DoMethod(data->LV_ATTACH, MUIM_NList_InsertSingle, &attach, MUIV_NList_Insert_Bottom);
       set(data->LV_ATTACH, MUIA_NList_Active, MUIV_NList_Active_Bottom);
       set(data->GR_ATTACH_TINY, MUIA_ShowMe, TRUE);
+      set(data->GR_ATTACH_REMIND, MUIA_ShowMe, FALSE);
 
       // the mail is modified
       data->mailModified = TRUE;
@@ -3875,6 +3953,17 @@ DECLARE(ComposeMail) // enum WriteMode mode
   // of reply-to, attachments checking, etc.
   if(wmData->mode != NMM_REDIRECT)
   {
+    numAttachments = xget(data->LV_ATTACH, MUIA_NList_Entries);
+
+    // remind the user if there are still no attachments
+    if(mode != WRITE_DRAFT && data->attachmentRemind == MUIV_WriteWindow_AttachmentRemind_Later && numAttachments == 0)
+    {
+      if(MUI_Request(_app(obj), obj, MUIF_NONE, tr(MSG_WR_NO_ATTACHMENTS_TITLE), tr(MSG_WR_NO_ATTACHMENTS_GADS), tr(MSG_WR_NO_ATTACHMENTS)) != 0)
+      {
+        goto out;
+      }
+    }
+
     // then we check the ReplyTo string gadget
     addr = (char *)DoMethod(data->ST_REPLYTO, MUIM_RecipientString_Resolve, MUIF_RecipientString_Resolve_NoValid);
     if(mode != WRITE_DRAFT && addr == NULL)
@@ -3951,8 +4040,6 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
     comp.DelSend = GetMUICheck(data->CH_DELSEND);
     comp.UserInfo = GetMUICheck(data->CH_ADDINFO);
-
-    numAttachments = xget(data->LV_ATTACH, MUIA_NList_Entries);
 
     // we execute the POSTWRITE macro right before writing out
     // the message because the postwrite macro may want to modify the
@@ -5309,6 +5396,38 @@ DECLARE(CodesetChanged) // char *codesetName
   }
 
   nnset(data->PO_CODESET, MUIA_CodesetPopup_Codeset, strippedCharsetName(data->wmData->codeset));
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(KeywordFound)
+// a keyword from the attachment keyword list has been typed
+DECLARE(KeywordFound) // const char *keyword
+{
+  GETDATA;
+
+  ENTER();
+
+  D(DBF_GUI, "keyword '%s'", SafeStr(msg->keyword));
+  // pop up the attachment reminder if
+  // - it is not disabled yet
+  // - there are no attachments yet
+  // - it is yet invisible
+  if(data->attachmentRemind != MUIV_WriteWindow_AttachmentRemind_Never &&
+     xget(data->LV_ATTACH, MUIA_NList_Entries) == 0 &&
+     xget(data->GR_ATTACH_REMIND, MUIA_ShowMe) == FALSE)
+  {
+    char *reminder;
+
+    if(asprintf(&reminder, tr(MSG_ATTACHMENT_REMIND_INFO), msg->keyword) != -1)
+    {
+      set(data->LB_ATTACH_REMIND, MUIA_Text_Contents, reminder);
+      set(data->GR_ATTACH_REMIND, MUIA_ShowMe, TRUE);
+      free(reminder);
+    }
+  }
 
   RETURN(0);
   return 0;

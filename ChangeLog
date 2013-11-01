@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-11-01 Thore Böckelmann <tboeckel@gmx.de>
+
+  * Config.c, mui/AttachmentKeywordList.c, mui/AttachmentKeywordWindow.c,
+    mui/MailTextEdit.c, mui/WriteWindow.c: implemented an interactive attachment
+    reminder feature as known from Thunderbird. If enabled and the user types in
+    certain keywords from a user definable list and no attachment has been added
+    to the mail a reminder will be shown to inform the user that an attachment
+    might be desired. This requires the not yet released version 15.42 of
+    TextEditor.mcc. This closes #317.
+
 2013-10-30 Thore Böckelmann <tboeckel@gmx.de>
 
   * MailList.c: replaced the custom mail list sorting function by the generic

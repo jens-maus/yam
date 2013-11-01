@@ -483,6 +483,8 @@ MUIOBJS = \
 	AttachmentGroup.o \
 	AttachmentImage.o \
 	AttachmentList.o \
+	AttachmentKeywordList.o \
+	AttachmentKeywordWindow.o \
 	AttachmentRequestWindow.o \
 	Base64Dataspace.o \
 	BirthdayRequestWindow.o \
