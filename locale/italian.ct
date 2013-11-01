@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.49 (16.10.2013)
+## version $VER: YAM.catalog 8.50 (1.11.2013)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -5040,7 +5040,7 @@ Citazione alternativa
 ; Alternative quoted
 ;
 MSG_EA_SelectPhoto_Title
-Seleziona un immagine
+Seleziona immagine
 ; Select portrait
 ;
 MSG_RE_MoveNextFolderReq
@@ -5313,10 +5313,6 @@ per il supporto Mailing list facendo un'analisi dei primi\n\
 MSG_FO_NOTRECOGNIZED
 Impossibile riconoscere.
 ; Couldn't be recognized.
-;
-MSG_FO_MAXAGEFMT
-%ld giorni
-; %ld days
 ;
 MSG_CO_NB_EMAILCACHE
 Cache E-Mail
@@ -5889,30 +5885,6 @@ attivi nella finestra principale.
 ; Select the current message\n\
 ; in the main window.
 ;
-MSG_QUICKSEARCH_SO_SUBJECT
-Oggetto
-; Subject
-;
-MSG_QUICKSEARCH_SO_SENDER
-Mittente
-; Sender
-;
-MSG_QUICKSEARCH_SO_SUBJORSENDER
-Oggetto o Mittente
-; Subject Or Sender
-;
-MSG_QUICKSEARCH_SO_TOORCC
-Destinatario (A o CC)
-; Recipient (To or CC)
-;
-MSG_QUICKSEARCH_SO_INMSG
-Trova nel messaggio
-; Message Body
-;
-MSG_QUICKSEARCH_SO_ENTIREMSG
-Intero messaggio
-; Whole Message
-;
 MSG_QUICKSEARCH_VO_ALL
 Tutti
 ; All
@@ -5974,15 +5946,8 @@ in modo da mostrare i messaggi nella cartella corrente.
 ; Text inserted here will be used as the search\n\
 ; criterion to display mail in this folder.
 ;
-MSG_HELP_QUICKSEARCH_SEARCHOPTIONPOPUP
-Selezionando questa opzione sarà possibile\n\
-selezionare un criterio di ricerca per il testo\n\
-specificato.
-; Select here where the string at the right\n\
-; should be searched in the mail.
-;
 MSG_BUSY_SEARCHINGFOLDER
-Ricerca dei messaggi nella cartella '%s'...
+Ricerca messaggi nella cartella '%s'...
 ; Searching messages in folder '%s'...
 ; FOLDERNAME
 ;
@@ -10575,4 +10540,108 @@ Vai al messaggio più recente quando\n\
 si accede a questa cartella
 ; Jump to the most recent message when\n\
 ; entering this folder.
+;
+MSG_FO_MAXAGE_DAYS
+giorni
+; days
+;
+MSG_QUICKSEARCH_FILTER_LIST
+Lista filtri...
+; Filter list...
+;
+MSG_QUICKSEARCH_FROM
+Mittente
+; Sender
+;
+MSG_QUICKSEARCH_TO
+Destinatario
+; Receiver
+;
+MSG_QUICKSEARCH_SUBJECT
+Oggetto
+; Subject
+;
+MSG_QUICKSEARCH_BODY
+Corpo del messaggio
+; Mail body
+;
+MSG_CO_CHECK_FOR_MISSING_ATTACHMENTS
+Verifica eventuali allegati mancanti
+; Check for missing attachments
+;
+MSG_CO_ATTACHMENT_KEYWORDS
+Parole chiave:
+; Keywords:
+;
+MSG_CO_ATTACHMENT_KEYWORDS_TITLE
+Parole chiave per gli allegati mancanti
+; Keywords for attachment reminder
+;
+MSG_CO_ATTACHMENT_KEYWORDS_ADD
+Aggiungi...
+; Add...
+;
+MSG_CO_ATTACHMENT_KEYWORDS_MODIFY
+Modifica...
+; Modify...
+;
+MSG_CO_ATTACHMENT_KEYWORDS_REMOVE
+Rimuovi
+; Remove
+;
+MSG_CO_ATTACHMENT_KEYWORDS_ADD_KEYWORD
+Aggiungi nuova parola chiave
+; Add new keyword
+;
+MSG_CO_ATTACHMENT_KEYWORDS_MODIFY_KEYWORD
+Modifica parola chiave
+; Modify keyword
+;
+MSG_CO_ATTACHMENT_KEYWORDS_KEYWORD
+Parola chiave:
+; Keyword:
+;
+MSG_HELP_CO_CH_ATTACHMENTREMINDER
+Si desidera essere avvertiti nel caso il corpo\n\
+del messaggio suggerisca l'esistenza di un\n\
+possibile allegato da includere al messaggio?
+; Would you like to be warned if the\n\
+; mail body suggests the existance of\n\
+; an attachment but these are missing?
+;
+MSG_HELP_CO_LV_ATTACHMENTKEYWORDS
+Configura delle parole chiave per istruire\n\
+il programma circa l'eventuale mancanza\n\
+di allegati prima dell'invio della posta.
+; Configure the keywords which might\n\
+; suggest the desired existance of an\n\
+; attachment.
+;
+MSG_ATTACHMENT_KEYWORDS
+allegato, allegati,attachment,attach,attached,attaching,enclosed,CV,cover letter
+; attachment,attach,attached,attaching,enclosed,CV,cover letter
+;
+MSG_ATTACHMENT_REMIND_INFO
+Hai per caso dimenticato di aggiungere un allegato?
+; Did you possibly forget to add an attachment?
+;
+MSG_ATTACHMENT_REMIND_ADD
+Aggiungi allegato...
+; Add attachment...
+;
+MSG_ATTACHMENT_REMIND_LATER
+Ricordamelo successivamente
+; Remind me later
+;
+MSG_WR_NO_ATTACHMENTS_TITLE
+Promemoria per gli allegati
+; Attachment reminder
+;
+MSG_WR_NO_ATTACHMENTS
+Hai dimenticato di aggiungere un allegato?
+; Did you forget to add an attachment?
+;
+MSG_WR_NO_ATTACHMENTS_GADS
+Si|No, invia ora
+; Yes, I did!|No, send now
 ;
