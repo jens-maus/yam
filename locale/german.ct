@@ -8774,7 +8774,7 @@ MSG_CO_CHECK_FOR_MISSING_ATTACHMENTS
 Auf fehlende Anhänge prüfen
 ;
 MSG_CO_ATTACHMENT_KEYWORDS
-Schlüsselwörter...
+Schlüsselwörter:
 ;
 MSG_CO_ATTACHMENT_KEYWORDS_TITLE
 Schlüsserwörter der Anhang-Erinnerung
@@ -8802,7 +8802,7 @@ Soll gewarnt werden, falls der Nachrichten-\n\
 text auf das Vorhandensein eines Anhangs\n\
 hinweist, aber die Anhänge fehlen?
 ;
-MSG_HELP_CO_BT_ATTACHMENTKEYWORDS
+MSG_HELP_CO_LV_ATTACHMENTKEYWORDS
 Konfigurieren Sie die Schlüsselwörter,\n\
 welche die gewünschte Existenz eines\n\
 Anhangs andeuten.

@@ -7389,7 +7389,7 @@ MSG_CO_CHECK_FOR_MISSING_ATTACHMENTS (2486//)
 Check for missing attachments
 ;
 MSG_CO_ATTACHMENT_KEYWORDS (2487//)
-Keywords...
+Keywords:
 ;
 MSG_CO_ATTACHMENT_KEYWORDS_TITLE (2488//)
 Keywords for attachment reminder
@@ -7417,7 +7417,7 @@ Would you like to be warned if the\n\
 mail body suggests the existance of\n\
 an attachment but these are missing?
 ;
-MSG_HELP_CO_BT_ATTACHMENTKEYWORDS (2496//)
+MSG_HELP_CO_LV_ATTACHMENTKEYWORDS (2496//)
 Configure the keywords which might\n\
 suggest the desired existance of an\n\
 attachment.
