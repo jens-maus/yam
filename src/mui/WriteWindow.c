@@ -1188,47 +1188,11 @@ OVERLOAD(OM_NEW)
 
                 Child, data->GR_ATTACH_REMIND = HGroup,
                   MUIA_ShowMe, FALSE,
-                  Child, TextObject,
-                    MUIA_Font,          MUIV_Font_Tiny,
-                    MUIA_Text_Contents, tr(MSG_ATTACHMENT_REMIND_INFO),
-                    MUIA_Text_SetMax,   TRUE,
-                    MUIA_Text_Copy,     FALSE,
-                  End,
+                  Child, Label(tr(MSG_ATTACHMENT_REMIND_INFO)),
                   Child, HSpace(0),
-                  Child, data->BT_ATTACH_REMIND_ADD = TextObject,
-                    ButtonFrame,
-                    MUIA_Weight,        0,
-                    MUIA_CycleChain,    TRUE,
-                    MUIA_Font,          MUIV_Font_Tiny,
-                    MUIA_InputMode,     MUIV_InputMode_RelVerify,
-                    MUIA_Background,    MUII_ButtonBack,
-                    MUIA_Text_Contents, tr(MSG_ATTACHMENT_REMIND_ADD),
-                    MUIA_Text_SetMax,   TRUE,
-                    MUIA_Text_Copy,     FALSE,
-                  End,
-                  Child, data->BT_ATTACH_REMIND_LATER = TextObject,
-                    ButtonFrame,
-                    MUIA_Weight,        0,
-                    MUIA_CycleChain,    TRUE,
-                    MUIA_Font,          MUIV_Font_Tiny,
-                    MUIA_InputMode,     MUIV_InputMode_RelVerify,
-                    MUIA_Background,    MUII_ButtonBack,
-                    MUIA_Text_Contents, tr(MSG_ATTACHMENT_REMIND_LATER),
-                    MUIA_Text_SetMax,   TRUE,
-                    MUIA_Text_Copy,     FALSE,
-                  End,
-                  Child, data->BT_ATTACH_REMIND_NEVER = TextObject,
-                    ButtonFrame,
-                    MUIA_Weight,        0,
-                    MUIA_CycleChain,    TRUE,
-                    MUIA_Font,          MUIV_Font_Tiny,
-                    MUIA_InputMode,     MUIV_InputMode_RelVerify,
-                    MUIA_Background,    MUII_ButtonBack,
-                    MUIA_Text_PreParse, "\033b",
-                    MUIA_Text_Contents, "X",
-                    MUIA_Text_SetMax,   TRUE,
-                    MUIA_Text_Copy,     FALSE,
-                  End,
+                  Child, data->BT_ATTACH_REMIND_ADD = MakeButton(tr(MSG_ATTACHMENT_REMIND_ADD)),
+                  Child, data->BT_ATTACH_REMIND_LATER = MakeButton(tr(MSG_ATTACHMENT_REMIND_LATER)),
+                  Child, data->BT_ATTACH_REMIND_NEVER = MakeButton("\033bX"),
                 End,
               End,
 
@@ -1405,6 +1369,13 @@ OVERLOAD(OM_NEW)
         SetHelp(data->CY_SECURITY,    MSG_HELP_WR_CY_SECURITY);
         SetHelp(data->LV_ATTACH,      MSG_HELP_WR_LV_ATTACH);
         SetHelp(data->LV_ATTACH_TINY, MSG_HELP_WR_LV_ATTACH);
+
+        DoMethod(obj, MUIM_MultiSet, MUIA_Font, MUIV_Font_Tiny,
+          data->BT_ATTACH_REMIND_ADD,
+          data->BT_ATTACH_REMIND_LATER,
+          data->BT_ATTACH_REMIND_NEVER,
+          NULL);
+        set(data->BT_ATTACH_REMIND_NEVER, MUIA_Weight, 0);
 
         // set the menuitem notifies
         DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_NEW,         data->TE_EDIT, 1, MUIM_TextEditor_ClearText);
