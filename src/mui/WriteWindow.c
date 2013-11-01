@@ -5415,7 +5415,7 @@ DECLARE(KeywordFound) // const char *keyword
   // - it is not disabled yet
   // - there are no attachments yet
   // - it is yet invisible
-  if(data->attachmentRemind != MUIV_WriteWindow_AttachmentRemind_Never &&
+  if(data->attachmentRemind == MUIV_WriteWindow_AttachmentRemind_None &&
      xget(data->LV_ATTACH, MUIA_NList_Entries) == 0 &&
      xget(data->GR_ATTACH_REMIND, MUIA_ShowMe) == FALSE)
   {
