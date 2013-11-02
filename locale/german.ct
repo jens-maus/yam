@@ -8808,7 +8808,7 @@ welche die gewünschte Existenz eines\n\
 Anhangs andeuten.
 ;
 MSG_ATTACHMENT_KEYWORDS
-Anhang,Anhänge,angehängt,angefügt,anbei,Wiedervorlage,Begleitschreiben
+Anhang,Anhänge,angehängt,angefügt,anbei,Wiedervorlage,Begleitschreiben,Attachment
 ;
 MSG_ATTACHMENT_REMIND_INFO
 Haben Sie eventuell vergessen einen Anhang anzufügen?
@@ -8817,7 +8817,7 @@ MSG_ATTACHMENT_REMIND_ADD
 Anhang hinzufügen...
 ;
 MSG_ATTACHMENT_REMIND_LATER
-Mich später erinnern
+Später erinnern
 ;
 MSG_WR_NO_ATTACHMENTS_TITLE
 Anhang-Erinnerung
@@ -8826,5 +8826,5 @@ MSG_WR_NO_ATTACHMENTS
 Haben Sie vergessen einen Anhang anzufügen?
 ;
 MSG_WR_NO_ATTACHMENTS_GADS
-Ja, habe ich!|Nein, jetzt senden
+Ja, habe ich|Nein, jetzt senden
 ;

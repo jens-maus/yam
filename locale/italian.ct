@@ -10618,7 +10618,7 @@ di allegati prima dell'invio della posta.
 ; attachment.
 ;
 MSG_ATTACHMENT_KEYWORDS
-allegato, allegati,attachment,attach,attached,attaching,enclosed,CV,cover letter
+allegato,allegati,attachment,attach,attached,attaching,enclosed,CV,cover letter
 ; attachment,attach,attached,attaching,enclosed,CV,cover letter
 ;
 MSG_ATTACHMENT_REMIND_INFO
@@ -10643,5 +10643,5 @@ Hai dimenticato di aggiungere un allegato?
 ;
 MSG_WR_NO_ATTACHMENTS_GADS
 Si|No, invia ora
-; Yes, I did!|No, send now
+; Yes, I did|No, send now
 ;

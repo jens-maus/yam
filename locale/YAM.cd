@@ -7426,7 +7426,7 @@ MSG_ATTACHMENT_KEYWORDS (2497//)
 attachment,attach,attached,attaching,enclosed,CV,cover letter
 ;
 MSG_ATTACHMENT_REMIND_INFO (2498//)
-Did you possibly forget to add an attchment?
+Did you possibly forget to add an attachment?
 ;
 MSG_ATTACHMENT_REMIND_ADD (2499//)
 Add attachment...
@@ -7441,5 +7441,5 @@ MSG_WR_NO_ATTACHMENTS (2502//)
 Did you forget to add an attachment?
 ;
 MSG_WR_NO_ATTACHMENTS_GADS (2503//)
-Yes, I did!|No, send now
+Yes, I did|No, send now
 ;
