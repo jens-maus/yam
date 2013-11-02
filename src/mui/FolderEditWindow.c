@@ -178,7 +178,7 @@ static BOOL EnterPassword(Object *obj, struct Folder *fo)
       break;
     }
     else
-      DisplayBeep(NULL);
+      DisplayBeep(_screen(obj));
   }
   while(TRUE);
 

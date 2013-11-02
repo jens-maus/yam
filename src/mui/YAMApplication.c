@@ -1598,7 +1598,7 @@ DECLARE(OpenConfigWindow)
   else
   {
     // inform the user by chiming the bells about the failure
-    DisplayBeep(NULL);
+    DisplayBeep(_screen(obj));
 
     FreeConfig(CE);
     CE = NULL;

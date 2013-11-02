@@ -7,6 +7,9 @@ $URL$
 
 2013-11-02 Jens Maus <mail@jens-maus.de>
 
+  * misc: changed all possible DisplayBeep(NULL) calls in YAM to actually refer
+    to a screen pointer using "_screen(obj)" instead. This should be more polite
+    instead of beeping all open screens.
   * mui/WriteConfigPage.c: slightly tuned the config gui layout for the new
     attachment reminder functionality.
 

@@ -1348,7 +1348,7 @@ struct FileReqCache *ReqFile(enum ReqFileType num, Object *win,
         ER_NewError(tr(MSG_ER_CANTOPENASL));
 
         // beep the display as well
-        DisplayBeep(NULL);
+        DisplayBeep(_screen(win));
       }
 
 
@@ -4298,7 +4298,7 @@ BOOL SafeOpenWindow(Object *obj)
   {
     // otherwise we perform a DisplayBeep()
     E(DBF_ALWAYS, "failed to open window with title '%s'", (char *)xget(obj, MUIA_Window_Title));
-    DisplayBeep(NULL);
+    DisplayBeep(_screen(obj));
   }
 
   RETURN(success);

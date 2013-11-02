@@ -434,7 +434,7 @@ OVERLOAD(MUIM_TextEditor_HandleError)
   if(errortxt)
     MUI_Request(_app(obj), _win(obj), MUIF_NONE, NULL, tr(MSG_OkayReq), errortxt);
   else
-    DisplayBeep(NULL);
+    DisplayBeep(_screen(obj));
 
   LEAVE();
   return DoSuperMethodA(cl, obj, msg);

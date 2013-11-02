@@ -2289,7 +2289,7 @@ DECLARE(AddPGPKey)
       ER_NewError(tr(MSG_ER_ErrorAppendKey), pgpid);
   }
   else
-    DisplayBeep(NULL);
+    DisplayBeep(_screen(obj));
 
   RETURN(0);
   return 0;
@@ -3339,7 +3339,7 @@ DECLARE(AddRecipient) // enum RcptType type, char *recipient
       if((uin = FindUserIdentityByAddress(&C->userIdentityList, msg->recipient)) != NULL)
         set(data->CY_FROM, MUIA_IdentityChooser_Identity, uin);
       else
-        DisplayBeep(NULL);
+        DisplayBeep(_screen(obj));
     }
     break;
 
@@ -3406,7 +3406,7 @@ DECLARE(InsertAddresses) // enum RcptType type, char **addr, ULONG add
       while(*(msg->addr) != NULL);
 
       if(uin == NULL)
-        DisplayBeep(NULL);
+        DisplayBeep(_screen(obj));
     }
     break;
 
@@ -3503,7 +3503,7 @@ DECLARE(LaunchEditor)
       W(DBF_UTIL, "file notification [%s] of write window %ld failed!", wmData->filename, data->windowNumber);
   }
   else
-    DisplayBeep(NULL);
+    DisplayBeep(_screen(obj));
 
   RETURN(0);
   return 0;

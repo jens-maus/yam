@@ -1062,9 +1062,7 @@ DECLARE(DeleteFolder)
     break;
 
     default:
-    {
-      DisplayBeep(NULL);
-    }
+      DisplayBeep(_screen(obj));
     break;
   }
 
