@@ -61,11 +61,10 @@ struct Data
   Object *CH_ATTACHMENTREMINDER;
   Object *LV_ATTACHMENTKEYWORDS;
   Object *NL_ATTACHMENTKEYWORDS;
+  Object *ST_ATTACHMENTKEYWORD;
   Object *BT_KEYWORDADD;
   Object *BT_KEYWORDREMOVE;
   Object *CH_LAUNCH;
-
-  char keyword[SIZE_DEFAULT];
 };
 */
 
@@ -88,6 +87,7 @@ OVERLOAD(OM_NEW)
   Object *CH_ATTACHMENTREMINDER;
   Object *LV_ATTACHMENTKEYWORDS;
   Object *NL_ATTACHMENTKEYWORDS;
+  Object *ST_ATTACHMENTKEYWORD;
   Object *BT_KEYWORDADD;
   Object *BT_KEYWORDREMOVE;
   Object *CH_LAUNCH;
@@ -162,29 +162,56 @@ OVERLOAD(OM_NEW)
 
       End,
 
-      Child, VGroup, GroupFrameT(tr(MSG_CO_OtherOptions)),
-        Child, MakeCheckGroup(&CH_WARNSUBJECT, tr(MSG_CO_WARNSUBJECT)),
-        Child, MakeCheckGroup(&CH_ATTACHMENTREMINDER, tr(MSG_CO_CHECK_FOR_MISSING_ATTACHMENTS)),
+      Child, ColGroup(2), GroupFrameT(tr(MSG_CO_OtherOptions)),
+
+        Child, CH_WARNSUBJECT = MakeCheck(tr(MSG_CO_WARNSUBJECT)),
         Child, HGroup,
-          Child, HSpace(8),
+          Child, LLabel(tr(MSG_CO_WARNSUBJECT)),
+          Child, HSpace(0),
+        End,
+
+        Child, CH_LAUNCH = MakeCheck(tr(MSG_CO_LAUNCH_EXTEDITOR)),
+        Child, HGroup,
+          Child, LLabel(tr(MSG_CO_LAUNCH_EXTEDITOR)),
+          Child, HSpace(0),
+        End,
+
+        Child, CH_ATTACHMENTREMINDER = MakeCheck(tr(MSG_CO_CHECK_FOR_MISSING_ATTACHMENTS)),
+        Child, HGroup,
+          Child, LLabel(tr(MSG_CO_CHECK_FOR_MISSING_ATTACHMENTS)),
+          Child, HSpace(0),
+        End,
+
+        Child, HSpace(1),
+        Child, HGroup,
           Child, VGroup,
             Child, Label(tr(MSG_CO_ATTACHMENT_KEYWORDS)),
             Child, VSpace(0),
           End,
-          Child, LV_ATTACHMENTKEYWORDS = NListviewObject,
-            MUIA_CycleChain, TRUE,
-            MUIA_FixHeightTxt, "\n\n\n\n\n",
-            MUIA_NListview_NList, NL_ATTACHMENTKEYWORDS = AttachmentKeywordListObject,
+          Child, VGroup,
+            MUIA_Group_Spacing, 0,
+            Child, LV_ATTACHMENTKEYWORDS = NListviewObject,
+              MUIA_CycleChain, TRUE,
+              MUIA_FixHeightTxt, "\n\n\n\n",
+              MUIA_NListview_NList, NL_ATTACHMENTKEYWORDS = AttachmentKeywordListObject,
+              End,
             End,
+            Child, ST_ATTACHMENTKEYWORD = MakeString(SIZE_DEFAULT, tr(MSG_CO_ATTACHMENT_KEYWORDS)),
           End,
           Child, VGroup,
-            MUIA_HorizWeight, 0,
-            Child, BT_KEYWORDADD = MakeButton("+"),
-            Child, BT_KEYWORDREMOVE = MakeButton("-"),
+            MUIA_Group_Spacing, 0,
+            Child, VGroup,
+              MUIA_Group_Spacing, 1,
+              MUIA_Group_SameWidth, TRUE,
+              MUIA_Group_SameHeight, TRUE,
+              MUIA_Weight, 1,
+              Child, BT_KEYWORDADD = MakeButton(MUIX_B "+" MUIX_N),
+              Child, BT_KEYWORDREMOVE = MakeButton(MUIX_B "-" MUIX_N),
+            End,
             Child, VSpace(0),
           End,
         End,
-        Child, MakeCheckGroup(&CH_LAUNCH, tr(MSG_CO_LAUNCH_EXTEDITOR)),
+
       End,
     End,
   TAG_MORE, inittags(msg))) != NULL)
@@ -205,6 +232,7 @@ OVERLOAD(OM_NEW)
     data->CH_ATTACHMENTREMINDER = CH_ATTACHMENTREMINDER;
     data->LV_ATTACHMENTKEYWORDS = LV_ATTACHMENTKEYWORDS;
     data->NL_ATTACHMENTKEYWORDS = NL_ATTACHMENTKEYWORDS;
+    data->ST_ATTACHMENTKEYWORD =  ST_ATTACHMENTKEYWORD;
     data->BT_KEYWORDADD =         BT_KEYWORDADD;
     data->BT_KEYWORDREMOVE =      BT_KEYWORDREMOVE;
     data->CH_LAUNCH =             CH_LAUNCH;
@@ -226,9 +254,9 @@ OVERLOAD(OM_NEW)
     DoMethod(CY_EDWRAP,             MUIM_Notify, MUIA_Cycle_Active,      MUIV_EveryTime, ST_EDWRAP,             3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
     DoMethod(CH_ATTACHMENTREMINDER, MUIM_Notify, MUIA_Selected,          MUIV_EveryTime, obj,                   3, METHOD(UpdateButtons), CH_ATTACHMENTREMINDER, MUIV_NotTriggerValue);
     DoMethod(NL_ATTACHMENTKEYWORDS, MUIM_Notify, MUIA_NList_Active,      MUIV_EveryTime, obj,                   3, METHOD(UpdateButtons), NL_ATTACHMENTKEYWORDS, FALSE);
-    DoMethod(NL_ATTACHMENTKEYWORDS, MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime, obj,                   1, METHOD(ModifyAttachmentKeyword));
     DoMethod(BT_KEYWORDADD,         MUIM_Notify, MUIA_Pressed,           FALSE,          obj,                   1, METHOD(AddAttachmentKeyword));
     DoMethod(BT_KEYWORDREMOVE,      MUIM_Notify, MUIA_Pressed,           FALSE,          NL_ATTACHMENTKEYWORDS, 2, MUIM_NList_Remove, MUIV_NList_Remove_Active);
+    DoMethod(ST_ATTACHMENTKEYWORD,  MUIM_Notify, MUIA_String_Acknowledge,MUIV_EveryTime, NL_ATTACHMENTKEYWORDS, 2, MUIM_AttachmentKeywordList_ModifyKeyword, MUIV_TriggerValue);
   }
 
   RETURN((IPTR)obj);
@@ -305,11 +333,13 @@ DECLARE(UpdateButtons) // Object *sender, ULONG state
   {
     DoMethod(obj, MUIM_MultiSet, MUIA_Disabled, msg->state,
       data->LV_ATTACHMENTKEYWORDS,
+      data->ST_ATTACHMENTKEYWORD,
       data->BT_KEYWORDADD,
       NULL);
   }
 
   DoMethod(data->NL_ATTACHMENTKEYWORDS, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &activeKeyword);
+  set(data->ST_ATTACHMENTKEYWORD, MUIA_String_Contents, activeKeyword);
   set(data->BT_KEYWORDREMOVE, MUIA_Disabled, msg->state || activeKeyword == NULL);
 
   RETURN(0);
@@ -321,34 +351,14 @@ DECLARE(UpdateButtons) // Object *sender, ULONG state
 DECLARE(AddAttachmentKeyword)
 {
   GETDATA;
-
+  char *newKeyword;
   ENTER();
 
-  data->keyword[0] = '\0';
-  if(StringRequest(data->keyword, sizeof(data->keyword), tr(MSG_CO_ATTACHMENT_KEYWORDS_ADD_KEYWORD), tr(MSG_CO_ATTACHMENT_KEYWORDS_KEYWORD), tr(MSG_Okay), NULL, tr(MSG_Cancel), FALSE, obj) != 0)
-  {
-    DoMethod(data->NL_ATTACHMENTKEYWORDS, MUIM_AttachmentKeywordList_AddKeyword, data->keyword);
-  }
-
-  RETURN(0);
-  return 0;
-}
-
-///
-/// DECLARE(ModifyAttachmentKeyword)
-DECLARE(ModifyAttachmentKeyword)
-{
-  GETDATA;
-  char *activeKeyword;
-
-  ENTER();
-
-  DoMethod(data->NL_ATTACHMENTKEYWORDS, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &activeKeyword);
-  strlcpy(data->keyword, activeKeyword, sizeof(data->keyword));
-  if(StringRequest(data->keyword, sizeof(data->keyword), tr(MSG_CO_ATTACHMENT_KEYWORDS_MODIFY_KEYWORD), tr(MSG_CO_ATTACHMENT_KEYWORDS_KEYWORD), tr(MSG_Okay), NULL, tr(MSG_Cancel), FALSE, obj) != 0)
-  {
-    DoMethod(data->NL_ATTACHMENTKEYWORDS, MUIM_AttachmentKeywordList_ModifyKeyword, data->keyword);
-  }
+  newKeyword = (char *)xget(data->ST_ATTACHMENTKEYWORD, MUIA_String_Contents);
+  if(IsStrEmpty(newKeyword) == FALSE)
+    DoMethod(data->NL_ATTACHMENTKEYWORDS, MUIM_AttachmentKeywordList_AddKeyword, xget(data->ST_ATTACHMENTKEYWORD, MUIA_String_Contents));
+  else
+    DisplayBeep(_screen(obj));
 
   RETURN(0);
   return 0;

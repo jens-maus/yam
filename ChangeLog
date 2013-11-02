@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-11-02 Jens Maus <mail@jens-maus.de>
+
+  * mui/WriteConfigPage.c: slightly tuned the config gui layout for the new
+    attachment reminder functionality.
+
 2013-11-01 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: update to the latest changes.
