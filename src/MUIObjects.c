@@ -218,8 +218,8 @@ Object *MakeCloseButton(void)
   }
   else
   {
-    // create a simple button with an "X"
-    obj = MakeButton("\033bX");
+    // create a simple button with a bold "X"
+    obj = MakeButton(MUIX_B "X");
   }
 
   RETURN(obj);
