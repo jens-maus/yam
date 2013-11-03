@@ -201,6 +201,7 @@ OVERLOAD(OM_NEW)
               Child, ST_ATTACHMENTKEYWORD = MakeString(SIZE_DEFAULT, tr(MSG_CO_ATTACHMENT_KEYWORDS)),
               Child, HGroup,
                 MUIA_Weight, 0,
+                MUIA_Group_Spacing, 1,
                 MUIA_Group_SameWidth, TRUE,
                 Child, BT_KEYWORDADD = MakeButton(MUIX_B "+" MUIX_N),
                 Child, BT_KEYWORDREMOVE = MakeButton(MUIX_B "-" MUIX_N),
@@ -248,12 +249,12 @@ OVERLOAD(OM_NEW)
     SetHelp(CH_TEXTSTYLES_WRITE,   MSG_HELP_CO_CH_TEXTSTYLES_WRITE);
     SetHelp(CH_TEXTCOLORS_WRITE,   MSG_HELP_CO_CH_TEXTCOLORS_WRITE);
 
-    DoMethod(CY_EDWRAP,             MUIM_Notify, MUIA_Cycle_Active,      MUIV_EveryTime, ST_EDWRAP,             3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
-    DoMethod(CH_ATTACHMENTREMINDER, MUIM_Notify, MUIA_Selected,          MUIV_EveryTime, obj,                   3, METHOD(UpdateButtons), CH_ATTACHMENTREMINDER, MUIV_NotTriggerValue);
-    DoMethod(NL_ATTACHMENTKEYWORDS, MUIM_Notify, MUIA_NList_Active,      MUIV_EveryTime, obj,                   3, METHOD(UpdateButtons), NL_ATTACHMENTKEYWORDS, FALSE);
-    DoMethod(BT_KEYWORDADD,         MUIM_Notify, MUIA_Pressed,           FALSE,          obj,                   1, METHOD(AddAttachmentKeyword));
-    DoMethod(BT_KEYWORDREMOVE,      MUIM_Notify, MUIA_Pressed,           FALSE,          NL_ATTACHMENTKEYWORDS, 2, MUIM_NList_Remove, MUIV_NList_Remove_Active);
-    DoMethod(ST_ATTACHMENTKEYWORD,  MUIM_Notify, MUIA_String_Acknowledge,MUIV_EveryTime, NL_ATTACHMENTKEYWORDS, 2, MUIM_AttachmentKeywordList_ModifyKeyword, MUIV_TriggerValue);
+    DoMethod(CY_EDWRAP,             MUIM_Notify, MUIA_Cycle_Active,       MUIV_EveryTime, ST_EDWRAP,             3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
+    DoMethod(CH_ATTACHMENTREMINDER, MUIM_Notify, MUIA_Selected,           MUIV_EveryTime, obj,                   3, METHOD(UpdateButtons), CH_ATTACHMENTREMINDER, MUIV_NotTriggerValue);
+    DoMethod(NL_ATTACHMENTKEYWORDS, MUIM_Notify, MUIA_NList_Active,       MUIV_EveryTime, obj,                   3, METHOD(UpdateButtons), NL_ATTACHMENTKEYWORDS, FALSE);
+    DoMethod(BT_KEYWORDADD,         MUIM_Notify, MUIA_Pressed,            FALSE,          obj,                   1, METHOD(AddAttachmentKeyword));
+    DoMethod(BT_KEYWORDREMOVE,      MUIM_Notify, MUIA_Pressed,            FALSE,          NL_ATTACHMENTKEYWORDS, 2, MUIM_NList_Remove, MUIV_NList_Remove_Active);
+    DoMethod(ST_ATTACHMENTKEYWORD,  MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, NL_ATTACHMENTKEYWORDS, 2, MUIM_AttachmentKeywordList_ModifyKeyword, MUIV_TriggerValue);
   }
 
   RETURN((IPTR)obj);
@@ -353,9 +354,9 @@ DECLARE(AddAttachmentKeyword)
 
   newKeyword = (char *)xget(data->ST_ATTACHMENTKEYWORD, MUIA_String_Contents);
   if(IsStrEmpty(newKeyword) == FALSE)
-    DoMethod(data->NL_ATTACHMENTKEYWORDS, MUIM_AttachmentKeywordList_AddKeyword, xget(data->ST_ATTACHMENTKEYWORD, MUIA_String_Contents));
+    DoMethod(data->NL_ATTACHMENTKEYWORDS, MUIM_AttachmentKeywordList_AddKeyword, newKeyword);
   else
-    DisplayBeep(_screen(obj));
+    set(_win(obj), MUIA_Window_ActiveObject, data->ST_ATTACHMENTKEYWORD);
 
   RETURN(0);
   return 0;
