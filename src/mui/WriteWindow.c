@@ -1187,7 +1187,7 @@ OVERLOAD(OM_NEW)
                   Child, HSpace(0),
                   Child, data->BT_ATTACH_REMIND_ADD = MakeButton(tr(MSG_ATTACHMENT_REMIND_ADD)),
                   Child, data->BT_ATTACH_REMIND_LATER = MakeButton(tr(MSG_ATTACHMENT_REMIND_LATER)),
-                  Child, data->BT_ATTACH_REMIND_NEVER = MakeButton("\033bX"),
+                  Child, data->BT_ATTACH_REMIND_NEVER = MakeCloseButton(),
                 End,
               End,
 

@@ -199,6 +199,33 @@ Object *MakeNumeric(int min, int max, BOOL percent)
 }
 
 ///
+/// MakeCloseButton
+// create a close button
+Object *MakeCloseButton(void)
+{
+  Object *obj;
+
+  ENTER();
+
+  if(LIB_VERSION_IS_AT_LEAST(MUIMasterBase, 20, 5500))
+  {
+    // make use of MUI4's close button image
+    obj = ImageObject,
+      MUIA_Image_Spec, MUII_Close,
+      MUIA_InputMode, MUIV_InputMode_RelVerify,
+    End;
+  }
+  else
+  {
+    // create a simple button with an "X"
+    obj = MakeButton("\033bX");
+  }
+
+  RETURN(obj);
+  return obj;
+}
+
+///
 /// ShortCut
 //  Finds keyboard shortcut in text label
 char ShortCut(const char *label)

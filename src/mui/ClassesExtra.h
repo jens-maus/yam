@@ -172,6 +172,9 @@ struct  MUIP_DoDrag                         { STACKED ULONG MethodID; STACKED LO
 #ifndef MUIA_Menuitem_CopyStrings
 #define MUIA_Menuitem_CopyStrings           0x8042dc1bUL /* V20 i.. BOOL              */
 #endif
+#ifndef MUII_Close
+#define MUII_Close                          54
+#endif
 
 enum { IECODE_SPACE = 64,
        IECODE_TAB = 66,
