@@ -4643,12 +4643,6 @@ DECLARE(CancelAction)
         break;
       }
     }
-    else
-    {
-      // remove a previously saved draft mail from the drafts folder
-      if(data->wmData->draftMail != NULL)
-        MA_DeleteSingle(data->wmData->draftMail, DELF_AT_ONCE);
-    }
   }
 
   // check if we have to close/discard the window

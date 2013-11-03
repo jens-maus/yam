@@ -9,8 +9,6 @@ $URL$
 
   * MUIObjects.c, mui/WriteWindow.c: make use of MUI4's close button image to
     create a graphical button rather than a textual.
-  * mui/WriteWindow.c: remove explicitly saved draft mails, too, if composing
-    the mail is canceled.
 
 2013-11-02 Jens Maus <mail@jens-maus.de>
 
