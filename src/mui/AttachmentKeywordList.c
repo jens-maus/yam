@@ -101,6 +101,7 @@ DECLARE(AddKeyword) // const char *keyword
   ENTER();
 
   DoMethod(obj, MUIM_NList_InsertSingle, msg->keyword, MUIV_NList_Insert_Bottom);
+  set(obj, MUIA_NList_Active, MUIV_NList_Active_Bottom);
 
   RETURN(0);
   return 0;
