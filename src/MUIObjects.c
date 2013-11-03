@@ -213,6 +213,7 @@ Object *MakeCloseButton(void)
     obj = ImageObject,
       MUIA_Image_Spec, MUII_Close,
       MUIA_InputMode, MUIV_InputMode_RelVerify,
+      MUIA_CycleChain, TRUE,
     End;
   }
   else
