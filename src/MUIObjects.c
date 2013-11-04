@@ -211,6 +211,9 @@ Object *MakeCloseButton(void)
   {
     // make use of MUI4's close button image
     obj = ImageObject,
+      // Image.mui will kill frame and background if the image requires this
+      ButtonFrame,
+      MUIA_Background, MUII_ButtonBack,
       MUIA_Image_Spec, MUII_Close,
       MUIA_InputMode, MUIV_InputMode_RelVerify,
       MUIA_CycleChain, TRUE,
