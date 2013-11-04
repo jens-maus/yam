@@ -146,6 +146,7 @@ struct Part;
 #define MCOL_SIZE               (1<<5) // message size
 #define MCOL_FILENAME           (1<<6) // message filename
 #define MCOL_TRANSDATE          (1<<7) // recipient/sender transfer date
+#define MCOL_MAILACCOUNT        (1<<8) // mail account mail was transfered to/from
 #define hasMColStatus(v)        (isFlagSet((v), MCOL_STATUS))
 #define hasMColSender(v)        (isFlagSet((v), MCOL_SENDER))
 #define hasMColReplyTo(v)       (isFlagSet((v), MCOL_REPLYTO))
@@ -154,6 +155,7 @@ struct Part;
 #define hasMColSize(v)          (isFlagSet((v), MCOL_SIZE))
 #define hasMColFilename(v)      (isFlagSet((v), MCOL_FILENAME))
 #define hasMColTransDate(v)     (isFlagSet((v), MCOL_TRANSDATE))
+#define hasMColMailAccount(v)   (isFlagSet((v), MCOL_MAILACCOUNT))
 
 // Mail importance levels
 enum ImportanceLevel

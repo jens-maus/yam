@@ -112,8 +112,28 @@ struct ComprMail
   unsigned long    cMsgID;               // compressed MessageID
   unsigned long    cIRTMsgID;            // compressed InReturnTo MessageID
   long             size;                 // the total size of the message
-  unsigned int     moreBytes;            // more bytes to follow as the subject
-  // ... more data of size 'moreBytes' follows here
+  unsigned int     moreBytes;            // more bytes to follow for additional
+                                         // information (subject, reply-to, etc.)
+
+  // ... more data follows here formatted in terms of a
+  // linefeed separated string array with additional information:
+  //
+  // 1. line: 'subject' of mail
+  // 2. line: 'from' mail address
+  // 3. line: 'from' realname 
+  // 4. line: 'to' address
+  // 5. line: 'to' realname
+  // 6. line: 'reply-to' address
+  // 7. line: 'reply-to' realname
+  // 8. line: hostname of server this mail was transfered to/from
+  //
+  // NOTE: removing/changing any of the above information in the 'moreBytes'
+  // area requires a version bump in FINDEX_VER so that an index rescan is
+  // performed. However, adding any information as an additional line is fine
+  // without bumping the index because the routines in LoadIndex() take care
+  // of that.
+
+  #define COMPRMAIL_MORELINES 8
 };
 
 /*
@@ -125,12 +145,12 @@ struct ComprMail
 */
 struct FIndex
 {
-  ULONG ID;
-  int   Total;
-  int   New;
-  int   Unread;
-  int   Size;
-  long  reserved[2];
+  ULONG ID;           // version of Index (should be >= FINDEX_VER)
+  int   Total;        // number of total mails in folder
+  int   New;          // number of new mails in folder
+  int   Unread;       // number of unread mails in folder
+  int   Size;         // size of folder (bytes)
+  long  reserved[2];  // reserved unused area 
 };
 
 // whenever you change something up there (in FIndex or ComprMail) you
@@ -394,11 +414,15 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
                     case 7:
                       strlcpy(mail->ReplyTo.RealName, line, sizeof(mail->ReplyTo.RealName));
                     break;
+
+                    case 8:
+                      strlcpy(mail->MailAccount, line, sizeof(mail->MailAccount));
+                    break;
                   }
 
                   line = nextLine;
                 }
-                while(line != NULL && lineNr < 7);
+                while(line != NULL && lineNr < COMPRMAIL_MORELINES);
 
                 mail->mflags = cmail.mflags;
                 mail->sflags = cmail.sflags;
@@ -553,11 +577,12 @@ BOOL MA_SaveIndex(struct Folder *folder)
         UTF8 *utf8buf;
 
         // create the moreBytes string we append at the end
-        snprintf(buf, sizeof(buf), "%s\n%s\n%s\n%s\n%s\n%s\n%s\n",
+        snprintf(buf, sizeof(buf), "%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n",
                                    mail->Subject,
                                    mail->From.Address, mail->From.RealName,
                                    mail->To.Address, mail->To.RealName,
-                                   mail->ReplyTo.Address, mail->ReplyTo.RealName);
+                                   mail->ReplyTo.Address, mail->ReplyTo.RealName,
+                                   mail->MailAccount);
 
         // convert the buffer string to UTF8
         // the length of the generated string is directly put into the moreBytes variable
@@ -2698,6 +2723,10 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
         setFlag(mail->mflags, MFLAG_SENDERINFO);
         if(deep == TRUE)
           dstrcat(&email->SenderInfo, value);
+      }
+      else if(stricmp(field, "x-yam-mailaccount") == 0)
+      {
+        strlcpy(mail->MailAccount, value, sizeof(mail->MailAccount));
       }
       else if(deep == TRUE) // and if we end up here we check if we really have to go further
       {

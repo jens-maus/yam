@@ -254,6 +254,10 @@ OVERLOAD(OM_NEW)
                 Child, LLabel(tr(MSG_CO_DATE_SNTRCVD)),
                 Child, HSpace(0),
 
+                Child, CH_MCOLS[8] = MakeCheck(""),
+                Child, LLabel(tr(MSG_CO_MAILACCOUNT_TRANSFERRED)),
+                Child, HSpace(0),
+
                 Child, CH_MCNTMENU = MakeCheck(""),
                 Child, LLabel(tr(MSG_CO_CONTEXTMENU)),
                 Child, HSpace(0),
@@ -413,15 +417,15 @@ OVERLOAD(MUIM_ConfigPage_GUIToConfig)
   CE->FolderCols = (1<<0);
   for(i=1; i < NUMBER_FOLDERTREE_COLUMNS; i++)
   {
-	if(GetMUICheck(data->CH_FCOLS[i]) == TRUE)
-	  setFlag(CE->FolderCols, (1<<i));
+    if(GetMUICheck(data->CH_FCOLS[i]) == TRUE)
+      setFlag(CE->FolderCols, (1<<i));
   }
 
   CE->MessageCols = (1<<0);
   for(i=1; i < NUMBER_MAILLIST_COLUMNS; i++)
   {
-	if(GetMUICheck(data->CH_MCOLS[i]) == TRUE)
-	  setFlag(CE->MessageCols, (1<<i));
+    if(GetMUICheck(data->CH_MCOLS[i]) == TRUE)
+      setFlag(CE->MessageCols, (1<<i));
   }
 
   CE->FixedFontList = GetMUICheck(data->CH_FIXFLIST);

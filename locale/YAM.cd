@@ -7422,3 +7422,9 @@ Did you forget to add an attachment?
 MSG_WR_NO_ATTACHMENTS_GADS (2503//)
 Yes, I did|No, send now
 ;
+MSG_CO_MAILACCOUNT_TRANSFERRED (2504//)
+Mail account
+;
+MSG_MAILACCOUNT_TRANSFERRED (2505//)
+Mail account
+;

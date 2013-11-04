@@ -38,7 +38,7 @@ struct UserIdentityNode;
 
 struct Mail
 {
-  size_t           RefCounter; // how many struct MailNode are referencing us?
+  short            RefCounter; // how many struct MailNode are referencing us?
   struct Folder *  Folder;     // pointer to the folder this mail belongs to
   unsigned long    cMsgID;     // compressed message ID
   unsigned long    cIRTMsgID;  // compressed in-return-to message ID
@@ -46,16 +46,17 @@ struct Mail
   unsigned int     mflags;     // internal mail flags (no status flags)
   unsigned int     sflags;     // mail status flags (read/new etc.)
   int              position;   // current position of the mail (various uses)
-  int              gmtOffset;  // the offset to GMT this mail is based on
+  short            gmtOffset;  // the offset to GMT this mail is based on
   struct DateStamp Date;       // the datestamp of the mail (UTC)
   struct TimeVal   transDate;  // the date/time when this messages arrived/was sent. (UTC)
   struct Person    From;       // The main sender (normally first entry in "From:")
   struct Person    To;         // The main mail recipient (first entry in "To:")
   struct Person    ReplyTo;    // The main Reply-To recipients (first entry in "Reply-To:")
 
-  char tzAbbr[SIZE_SMALL];     // copy of the timezone abbreviation
-  char Subject[SIZE_SUBJECT];  // copy of the mail Subject: header
-  char MailFile[SIZE_MFILE];   // name of mail file (without path)
+  char tzAbbr[SIZE_SMALL];        // copy of the timezone abbreviation
+  char MailAccount[SIZE_DEFAULT]; // name of mail account used to receive/sent mail
+  char Subject[SIZE_SUBJECT];     // copy of the mail Subject: header
+  char MailFile[SIZE_MFILE];      // name of mail file (without path)
 };
 
 struct ExtendedMail

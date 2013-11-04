@@ -5,6 +5,18 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-11-04 Jens Maus <mail@jens-maus.de>
+
+  * MainMailList.c, YAM_MAf.c, tcp/pop3.c, misc: implemented a new
+    "Mail Account" column in the main mail list which will show the mail
+    account as "username@hostname" over which the particular mail had
+    been transferred. This new column should allow to sort emails based
+    on mail account/hostname a mail was received so that users can better
+    order their mails due to the fact that since YAM 2.8 mails are now
+    transferred asynchronously from multiple servers and thus mails from
+    different mail accounts end up mixed in the incoming folder.
+    This closes #230.
+
 2013-11-03 Thore Böckelmann <tboeckel@gmx.de>
 
   * MUIObjects.c: set the usual button frame and background for the close

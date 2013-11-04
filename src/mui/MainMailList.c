@@ -76,7 +76,7 @@ struct Data
 */
 
 /* EXPORT
-#define NUMBER_MAILLIST_COLUMNS 8
+#define NUMBER_MAILLIST_COLUMNS 9
 */
 
 /* Private Functions */
@@ -204,6 +204,12 @@ static int MailCompare(struct Mail *entry1, struct Mail *entry2, LONG column)
     break;
 
     case 8:
+    {
+      return stricmp(entry1->MailAccount, entry2->MailAccount);
+    }
+    break;
+
+    case 9:
     {
       return stricmp(entry1->Folder->Name, entry2->Folder->Name);
     }
@@ -526,7 +532,10 @@ OVERLOAD(MUIM_NList_Display)
         ndm->strings[7] = data->date2Buffer;
       }
 
-      ndm->strings[8] = mail->Folder->Name;
+      ndm->strings[8] = mail->MailAccount;
+
+      // The Folder is just a dummy entry to serve the SearchMailWindow DisplayHook
+      ndm->strings[9] = mail->Folder->Name;
 
       // depending on the mail status we set the font to bold or plain
       if(hasStatusUnread(mail) || hasStatusNew(mail))
@@ -579,9 +588,10 @@ OVERLOAD(MUIM_NList_Display)
       ndm->strings[4] = (STRPTR)tr(MSG_Date);
       ndm->strings[5] = (STRPTR)tr(MSG_Size);
       ndm->strings[6] = (STRPTR)tr(MSG_Filename);
+      ndm->strings[8] = (STRPTR)tr(MSG_MAILACCOUNT_TRANSFERRED);
 
-      // The Folder is just a dummy entry to serve the SearchWindowDisplayHook
-      ndm->strings[8] = (STRPTR)tr(MSG_Folder);
+      // The Folder is just a dummy entry to serve the SearchMailWindow DisplayHook
+      ndm->strings[9] = (STRPTR)tr(MSG_Folder);
     }
   }
 
@@ -617,6 +627,7 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
         MenuChild, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_Size),                 MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, 6, MUIA_Menuitem_Checked, hasMColSize(C->MessageCols),      MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
         MenuChild, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_Filename),             MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, 7, MUIA_Menuitem_Checked, hasMColFilename(C->MessageCols),  MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
         MenuChild, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_CO_DATE_SNTRCVD),      MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, 8, MUIA_Menuitem_Checked, hasMColTransDate(C->MessageCols), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
+        MenuChild, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_CO_MAILACCOUNT_TRANSFERRED), MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, 9, MUIA_Menuitem_Checked, hasMColMailAccount(C->MessageCols),MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
         MenuChild, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
         MenuChild, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_CTX_DEFWIDTH_THIS), MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, MUIV_NList_Menu_DefWidth_This, End,
         MenuChild, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_CTX_DEFWIDTH_ALL),  MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, MUIV_NList_Menu_DefWidth_All,  End,
@@ -756,6 +767,7 @@ OVERLOAD(MUIM_ContextMenuChoice)
     case 6:
     case 7:
     case 8:
+    case 9:
     {
       ULONG flag = (1 << (xget(m->item, MUIA_UserData)-1));
 
@@ -916,7 +928,7 @@ DECLARE(DoubleClicked) // LONG entryNum
 //  Creates format definition for message listview
 DECLARE(MakeFormat)
 {
-  static const int defwidth[NUMBER_MAILLIST_COLUMNS] = { -1,-1,-1,-1,-1,-1,-1,-1 };
+  static const int defwidth[NUMBER_MAILLIST_COLUMNS] = { -1,-1,-1,-1,-1,-1,-1,-1,-1 };
   char format[SIZE_LARGE];
   BOOL first = TRUE;
   int i;

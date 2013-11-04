@@ -260,6 +260,12 @@ static int ReceiveToFile(struct TransferContext *tc, FILE *fh, const char *filen
   // get the first data the pop server returns after the TOP command
   if((read = count = ReceiveFromHost(tc->connection, tc->pop3Buffer, sizeof(tc->pop3Buffer))) <= 0)
     tc->connection->error = CONNECTERR_UNKNOWN_ERROR;
+  else
+  {
+    // the first line we write out to our mail file is a X-YAM-MailAccount: header in which we
+    // mark through which mail account this mail was received.
+    fprintf(fh, "X-YAM-MailAccount: %s@%s\n", tc->msn->username, tc->msn->hostname);
+  }
 
   while(tc->connection->abort == FALSE && tc->connection->error == CONNECTERR_NO_ERROR)
   {
