@@ -8776,27 +8776,6 @@ Auf fehlende Anhänge prüfen
 MSG_CO_ATTACHMENT_KEYWORDS
 Schlüsselwörter:
 ;
-MSG_CO_ATTACHMENT_KEYWORDS_TITLE
-Schlüsserwörter der Anhang-Erinnerung
-;
-MSG_CO_ATTACHMENT_KEYWORDS_ADD
-Hinzufügen...
-;
-MSG_CO_ATTACHMENT_KEYWORDS_MODIFY
-Bearbeiten...
-;
-MSG_CO_ATTACHMENT_KEYWORDS_REMOVE
-Löschen
-;
-MSG_CO_ATTACHMENT_KEYWORDS_ADD_KEYWORD
-Schlüsselwort hinzufügen
-;
-MSG_CO_ATTACHMENT_KEYWORDS_MODIFY_KEYWORD
-Schlüsselwort bearbeiten
-;
-MSG_CO_ATTACHMENT_KEYWORDS_KEYWORD
-Schlüsselwort:
-;
 MSG_HELP_CO_CH_ATTACHMENTREMINDER
 Soll gewarnt werden, falls der Nachrichten-\n\
 text auf das Vorhandensein eines Anhangs\n\
