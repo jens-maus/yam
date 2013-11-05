@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.50 (1.11.2013)
+## version $VER: YAM.catalog 8.51 (5.11.2013)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -10573,34 +10573,6 @@ MSG_CO_ATTACHMENT_KEYWORDS
 Parole chiave:
 ; Keywords:
 ;
-MSG_CO_ATTACHMENT_KEYWORDS_TITLE
-Parole chiave per gli allegati mancanti
-; Keywords for attachment reminder
-;
-MSG_CO_ATTACHMENT_KEYWORDS_ADD
-Aggiungi...
-; Add...
-;
-MSG_CO_ATTACHMENT_KEYWORDS_MODIFY
-Modifica...
-; Modify...
-;
-MSG_CO_ATTACHMENT_KEYWORDS_REMOVE
-Rimuovi
-; Remove
-;
-MSG_CO_ATTACHMENT_KEYWORDS_ADD_KEYWORD
-Aggiungi nuova parola chiave
-; Add new keyword
-;
-MSG_CO_ATTACHMENT_KEYWORDS_MODIFY_KEYWORD
-Modifica parola chiave
-; Modify keyword
-;
-MSG_CO_ATTACHMENT_KEYWORDS_KEYWORD
-Parola chiave:
-; Keyword:
-;
 MSG_HELP_CO_CH_ATTACHMENTREMINDER
 Si desidera essere avvertiti nel caso il corpo\n\
 del messaggio suggerisca l'esistenza di un\n\
@@ -10642,6 +10614,14 @@ Hai dimenticato di aggiungere un allegato?
 ; Did you forget to add an attachment?
 ;
 MSG_WR_NO_ATTACHMENTS_GADS
-Si|No, invia ora
+Si, aggiungilo|No, invia ora
 ; Yes, I did|No, send now
+;
+MSG_CO_MAILACCOUNT_TRANSFERRED
+Account di posta
+; Mail account
+;
+MSG_MAILACCOUNT_TRANSFERRED
+Account di posta
+; Mail account
 ;
