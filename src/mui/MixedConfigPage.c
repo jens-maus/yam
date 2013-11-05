@@ -339,7 +339,7 @@ OVERLOAD(OM_NEW)
               End,
               Child, Label2("_Y"),
               Child, HGroup,
-                MUIA_Group_Spacing, 1,
+                MUIA_Group_Spacing, 0,
                 Child, ST_APPY = BetterStringObject,
                   StringFrame,
                   MUIA_CycleChain,          TRUE,

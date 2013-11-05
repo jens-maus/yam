@@ -165,7 +165,7 @@ OVERLOAD(OM_NEW)
 
               Child, Label2(tr(MSG_CO_MimeCmd)),
               Child, HGroup,
-                MUIA_Group_HorizSpacing, 0,
+                MUIA_Group_Spacing, 0,
                 Child, PO_COMMAND = PlaceholderPopupObject,
                   MUIA_String_MaxLen, SIZE_COMMAND,
                   MUIA_PlaceholderPopup_Mode, PHM_MIME_COMMAND,

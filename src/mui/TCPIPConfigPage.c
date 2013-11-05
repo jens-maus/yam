@@ -348,7 +348,7 @@ OVERLOAD(OM_NEW)
                   Child, CH_POP3_NOTIFY_SOUND = MakeCheck(tr(MSG_CO_NotiSound)),
                   Child, LLabel(tr(MSG_CO_NotiSound)),
                   Child, HGroup,
-                    MUIA_Group_HorizSpacing, 0,
+                    MUIA_Group_Spacing, 0,
                     Child, PO_POP3_NOTIFY_SOUND = PopaslObject,
                       MUIA_Popasl_Type, ASL_FileRequest,
                       MUIA_Popstring_String, ST_POP3_NOTIFY_SOUND = MakeString(SIZE_PATHFILE, ""),

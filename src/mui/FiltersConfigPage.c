@@ -325,7 +325,7 @@ OVERLOAD(OM_NEW)
               Child, CH_APLAY = MakeCheck(tr(MSG_CO_ActionPlay)),
               Child, LLabel2(tr(MSG_CO_ActionPlay)),
               Child, HGroup,
-                MUIA_Group_HorizSpacing, 0,
+                MUIA_Group_Spacing, 0,
                 Child, PO_APLAY = PopaslObject,
                   MUIA_Popasl_Type,      ASL_FileRequest,
                   MUIA_Popstring_String, ST_APLAY = MakeString(SIZE_PATHFILE, ""),

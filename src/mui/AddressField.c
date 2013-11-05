@@ -90,7 +90,7 @@ OVERLOAD(OM_NEW)
 
   if((obj = DoSuperNew(cl, obj,
     MUIA_Group_Horiz, TRUE,
-    GroupSpacing(1),
+    MUIA_Group_Spacing, 0,
     Child, ST_RECIPIENTS = RecipientStringObject,
       MUIA_CycleChain,                         TRUE,
       MUIA_String_AdvanceOnCR,                 TRUE,

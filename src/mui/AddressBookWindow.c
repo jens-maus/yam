@@ -277,7 +277,7 @@ OVERLOAD(OM_NEW)
           MUIA_HelpNode, "Windows#AddressbookToolbar",
           Child, VGroup,
             MUIA_Weight, 10,
-            MUIA_Group_VertSpacing, 0,
+            MUIA_Group_Spacing, 1,
             Child, BT_TO  = MakeButton("_To:"),
             Child, BT_CC  = MakeButton("_CC:"),
             Child, BT_BCC = MakeButton("_BCC:"),

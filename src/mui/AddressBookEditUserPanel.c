@@ -110,7 +110,7 @@ OVERLOAD(OM_NEW)
         End,
         Child, Label2(tr(MSG_EA_Homepage)),
         Child, HGroup,
-          MUIA_Group_HorizSpacing, 1,
+          MUIA_Group_Spacing, 0,
           Child, ST_HOMEPAGE = MakeString(SIZE_URL, tr(MSG_EA_Homepage)),
           Child, BT_HOMEPAGE = PopButton(MUII_TapeRecord),
         End,
