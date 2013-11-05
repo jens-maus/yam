@@ -33,6 +33,7 @@
 #include <string.h>
 #include <proto/muimaster.h>
 #include <proto/timer.h>
+#include <libraries/iffparse.h>
 #include <mui/BetterString_mcc.h>
 #include <mui/NList_mcc.h>
 #include <mui/NListview_mcc.h>
@@ -331,6 +332,7 @@ OVERLOAD(OM_NEW)
         InnerSpacing(0,0),
         Child, MUI_MakeObject(MUIO_Label, (ULONG)tr(MSG_QUICKSEARCH_VIEW), MUIO_Label_Tiny),
         Child, CY_VIEWOPTIONS = CycleObject,
+          MUIA_ObjectID,      MAKE_ID('C','Y','0','1'),
           MUIA_Font,          MUIV_Font_Tiny,
           MUIA_CycleChain,    TRUE,
           MUIA_Cycle_Entries, viewOptions,

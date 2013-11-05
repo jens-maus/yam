@@ -12,6 +12,9 @@ $URL$
 2013-11-05 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_WR.c: write the X-YAM-MailAccount: header line for sent mails, too.
+  * mui/QuickSearchBar.c: added a unique ObjectID to the view options cycle
+    object. This makes it possible to permanently save the current settings
+    by snapshotting the main window. This refs #284.
 
 2013-11-04 Jens Maus <mail@jens-maus.de>
 
