@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.51 (5.11.2013)
+## version $VER: YAM.catalog 8.52 (5.11.2013)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -1543,7 +1543,7 @@ Segna nuovi messaggi come non letti
 ; Mark new mail as unread
 ;
 MSG_CO_SendStart
-Spedisci la posta della cartella In attesa
+Spedisci la posta della cartella in attesa
 ; Send mail in outgoing queue
 ;
 MSG_CO_CheckDOB
@@ -3883,7 +3883,7 @@ Mittente per questo messaggio.
 ; for this message.
 ;
 MSG_HELP_WR_CH_DELSEND
-Non salvare questo messaggio\n\
+Non conservare questo messaggio\n\
 nella cartella 'Inviati'.
 ; Do not store this message\n\
 ; in the Sent folder.
@@ -9482,7 +9482,7 @@ Opzioni
 ; Options
 ;
 MSG_CO_IDENTITY_COMPOSE_SENTFOLDER
-Salva messaggi inviati nella cartella
+Conserva nella cartella i messaggi inviati
 ; Store sent mail to folder
 ;
 MSG_CO_IDENTITY_COMPOSE_QUOTE
@@ -10624,4 +10624,30 @@ Account di posta
 MSG_MAILACCOUNT_TRANSFERRED
 Account di posta
 ; Mail account
+;
+MSG_CO_SAVE_LAYOUT
+Salva layout dell'interfaccia utente
+; Save user interface layout
+;
+MSG_HELP_CO_CH_SAVELAYOUTQUIT
+Salva permanentemente la posizione e le dimensioni\n\
+della finestra, il layout dei determinati gruppi nonchè\n\
+lo stato dei diversi oggetti grafici.
+; Permanently save the position and dimensions\n\
+; of all windows, the layout of certain groups\n\
+; and the state of various graphical objects.
+;
+MSG_CO_SMTP_FOLDERS
+Cartelle predefinite
+; Default folders
+;
+MSG_CO_SMTP_SENTFOLDER
+Cartella inviati
+; Sent folder
+;
+MSG_HELP_CO_PO_SMTP_SENTFOLDER
+Permette di impostare una cartella diversa in\n\
+cui conservare i messaggi una volta inviati.
+; Allows to set a different folder where mails\n\
+; will be stored after being sent out.
 ;
