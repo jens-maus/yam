@@ -1053,7 +1053,7 @@ DECLARE(ActiveChange) // struct MUI_NListtree_TreeNode *tn
     data->BT_CC,
     data->BT_BCC,
     NULL);
-  DoMethod(obj, MUIM_MultiSet, MUIA_Menuitem_Enabled, !disabled,
+  DoMethod(obj, MUIM_MultiSet, MUIA_Menuitem_Enabled, msg->tn != NULL,
     data->MI_EDIT,
     data->MI_DUPLICATE,
     data->MI_DELETE,
@@ -1062,8 +1062,8 @@ DECLARE(ActiveChange) // struct MUI_NListtree_TreeNode *tn
 
   if(data->TB_TOOLBAR != NULL)
   {
-    DoMethod(data->TB_TOOLBAR, MUIM_TheBar_SetAttr, TB_ABOOK_EDIT,   MUIA_TheBar_Attr_Disabled, disabled);
-    DoMethod(data->TB_TOOLBAR, MUIM_TheBar_SetAttr, TB_ABOOK_DELETE, MUIA_TheBar_Attr_Disabled, disabled);
+    DoMethod(data->TB_TOOLBAR, MUIM_TheBar_SetAttr, TB_ABOOK_EDIT,   MUIA_TheBar_Attr_Disabled, msg->tn == NULL);
+    DoMethod(data->TB_TOOLBAR, MUIM_TheBar_SetAttr, TB_ABOOK_DELETE, MUIA_TheBar_Attr_Disabled, msg->tn == NULL);
   }
 
   RETURN(0);

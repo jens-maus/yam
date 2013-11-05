@@ -20,6 +20,8 @@ $URL$
     the layout/state of certain groups and objects. This closes #410.
   * mui/AddressBookWindow.c: fixed the wrong initial state of some objects
     after opening the window.
+  * mui/AddressBookWindow.c: fixed the wrong activation of some objects when
+    the active list entry changes.
 
 2013-11-04 Jens Maus <mail@jens-maus.de>
 
