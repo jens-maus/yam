@@ -314,11 +314,6 @@ OVERLOAD(OM_NEW)
     data->LV_ADDRESSES = LV_ADDRESSES;
 
     set(obj, MUIA_Window_DefaultObject, LV_ADDRESSES);
-    DoMethod(obj, MUIM_MultiSet, MUIA_Disabled, TRUE,
-      BT_TO,
-      BT_CC,
-      BT_BCC,
-      NULL);
 
     SetHelp(BT_TO,  MSG_HELP_AB_BT_TO);
     SetHelp(BT_CC,  MSG_HELP_AB_BT_CC);
@@ -480,22 +475,7 @@ DECLARE(Open) // enum AddressbookMode mode, LONG windowNumber, Object *recipient
 
   // enable/disable the To/CC/BCC buttons depending on whether there is an active entry or not
   tn = (struct MUI_NListtree_TreeNode *)xget(data->LV_ADDRESSES, MUIA_NListtree_Active);
-  DoMethod(obj, MUIM_MultiSet, MUIA_Disabled, data->mode != ABM_CONFIG || tn == NULL,
-    data->BT_TO,
-    data->BT_CC,
-    data->BT_BCC,
-    NULL);
-  DoMethod(obj, MUIM_MultiSet, MUIA_Menuitem_Enabled, tn != NULL,
-    data->MI_EDIT,
-    data->MI_DUPLICATE,
-    data->MI_DELETE,
-    data->MI_PRINT,
-    NULL);
-  if(data->TB_TOOLBAR != NULL)
-  {
-    DoMethod(data->TB_TOOLBAR, MUIM_TheBar_SetAttr, TB_ABOOK_EDIT,   MUIA_TheBar_Attr_Disabled, tn == NULL);
-    DoMethod(data->TB_TOOLBAR, MUIM_TheBar_SetAttr, TB_ABOOK_DELETE, MUIA_TheBar_Attr_Disabled, tn == NULL);
-  }
+  DoMethod(obj, METHOD(ActiveChange), tn);
 
   snprintf(data->windowTitle, sizeof(data->windowTitle), "%s %s", tr(MSG_MA_MAddrBook), md);
 
