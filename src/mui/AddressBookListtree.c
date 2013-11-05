@@ -514,7 +514,7 @@ OVERLOAD(MUIM_DragQuery)
 /// OVERLOAD(MUIM_DragDrop)
 OVERLOAD(MUIM_DragDrop)
 {
-  struct MUIP_DragQuery *d = (struct MUIP_DragQuery *)msg;
+  struct MUIP_DragDrop *d = (struct MUIP_DragDrop *)msg;
 
   if(DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_IsMailList, d->obj) == TRUE)
   {
