@@ -1992,3 +1992,33 @@ DECLARE(FlushFolderIndexes) // ULONG force
 }
 
 ///
+/// DECLARE(SaveLayout)
+DECLARE(SaveLayout) // ULONG permanent
+{
+  struct List *windowList;
+
+  ENTER();
+
+  if((windowList = (struct List *)xget(obj, MUIA_Application_WindowList)) != NULL)
+  {
+    Object *window;
+	Object *cstate = (Object *)GetHead(windowList);
+
+    SHOWVALUE(DBF_ALWAYS, windowList);
+
+    // trigger a snapshot action on all currently alive windows
+	while((window = NextObject(&cstate)) != NULL)
+    {
+      SHOWVALUE(DBF_ALWAYS, window);
+      DoMethod(window, MUIM_Window_Snapshot, TRUE);
+    }
+  }
+
+  // finally save the layout of certain groups
+  SaveLayout(msg->permanent);
+
+  RETURN(0);
+  return 0;
+}
+
+///

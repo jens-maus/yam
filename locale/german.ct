@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.33 (4.11.2013)
+## version $VER: YAM.catalog 8.34 (4.11.2013)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Maus, Thore Böckelmann
@@ -8812,4 +8812,11 @@ Nachrichtenkonto
 ;
 MSG_MAILACCOUNT_TRANSFERRED
 Nachrichtenkonto
+;
+MSG_CO_SAVE_LAYOUT
+Layout speichern
+;
+MSG_HELP_CO_CH_SAVELAYOUTQUIT
+Position und Größe aller Fenster permanent speichern, so wie\n\
+das Layout bestimmter Gruppen und den Zustand bestimmter Objekte.
 ;

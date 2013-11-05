@@ -15,6 +15,9 @@ $URL$
   * mui/QuickSearchBar.c: added a unique ObjectID to the view options cycle
     object. This makes it possible to permanently save the current settings
     by snapshotting the main window. This refs #284.
+  * YAM.c, mui/StartupQuitConfigPage.c, mui/YAMApplication.c: implemented a
+    new option to trigger a snapshot action on all alive windows and to save
+    the layout/state of certain groups and objects. This closes #410.
 
 2013-11-04 Jens Maus <mail@jens-maus.de>
 

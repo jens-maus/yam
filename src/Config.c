@@ -528,6 +528,7 @@ BOOL CompareConfigs(const struct Config *c1, const struct Config *c2)
      c1->SendOnQuit                      == c2->SendOnQuit &&
      c1->CleanupOnQuit                   == c2->CleanupOnQuit &&
      c1->RemoveOnQuit                    == c2->RemoveOnQuit &&
+     c1->SaveLayoutOnQuit                == c2->SaveLayoutOnQuit &&
      c1->IconifyOnQuit                   == c2->IconifyOnQuit &&
      c1->Confirm                         == c2->Confirm &&
      c1->RemoveAtOnce                    == c2->RemoveAtOnce &&
@@ -844,6 +845,7 @@ void SetDefaultConfig(struct Config *co, enum ConfigPage page)
     co->CheckBirthdates = TRUE;
     co->CleanupOnQuit = TRUE;
     co->RemoveOnQuit = TRUE;
+    co->SaveLayoutOnQuit = TRUE;
   }
 
   if(page == cp_MIME || page == cp_AllPages)
@@ -1680,6 +1682,7 @@ int LoadConfig(struct Config *co, const char *fname, struct FolderList **oldfold
           else if(stricmp(buf, "SendOnQuit") == 0)               co->SendOnQuit = Txt2Bool(value);
           else if(stricmp(buf, "CleanupOnQuit") == 0)            co->CleanupOnQuit = Txt2Bool(value);
           else if(stricmp(buf, "RemoveOnQuit") == 0)             co->RemoveOnQuit = Txt2Bool(value);
+          else if(stricmp(buf, "SaveLayoutOnQuit") == 0)         co->SaveLayoutOnQuit = Txt2Bool(value);
 
 /* MIME */
           else if(strnicmp(buf, "MV", 2) == 0 && isdigit(buf[2]) && isdigit(buf[3]) && strchr(buf, '.'))
@@ -2616,6 +2619,7 @@ BOOL SaveConfig(struct Config *co, const char *fname)
     fprintf(fh, "SendOnQuit       = %s\n", Bool2Txt(co->SendOnQuit));
     fprintf(fh, "CleanupOnQuit    = %s\n", Bool2Txt(co->CleanupOnQuit));
     fprintf(fh, "RemoveOnQuit     = %s\n", Bool2Txt(co->RemoveOnQuit));
+    fprintf(fh, "SaveLayoutOnQuit = %s\n", Bool2Txt(co->SaveLayoutOnQuit));
 
     fprintf(fh, "\n[MIME]\n");
     fprintf(fh, "MV00.ContentType = Default\n");

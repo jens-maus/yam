@@ -7428,3 +7428,10 @@ Mail account
 MSG_MAILACCOUNT_TRANSFERRED (2505//)
 Mail account
 ;
+MSG_CO_SAVE_LAYOUT (2506//)
+Save layout
+;
+MSG_HELP_CO_CH_SAVELAYOUTQUIT (2507//)
+Permanently save the position and dimension of all windows,\n\
+the layout of certain groups and the state of certain objects.
+;

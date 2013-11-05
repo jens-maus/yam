@@ -51,6 +51,7 @@ struct Data
   Object *CH_SENDQUIT;
   Object *CH_DELETEQUIT;
   Object *CH_REMOVEQUIT;
+  Object *CH_SAVELAYOUTQUIT;
 };
 */
 
@@ -67,6 +68,7 @@ OVERLOAD(OM_NEW)
   Object *CH_SENDQUIT;
   Object *CH_DELETEQUIT;
   Object *CH_REMOVEQUIT;
+  Object *CH_SAVELAYOUTQUIT;
 
   ENTER();
 
@@ -86,31 +88,34 @@ OVERLOAD(OM_NEW)
         Child, MakeCheckGroup(&CH_SENDQUIT, tr(MSG_CO_SendStart)),
         Child, MakeCheckGroup(&CH_DELETEQUIT, tr(MSG_CO_DeleteOld)),
         Child, MakeCheckGroup(&CH_REMOVEQUIT, tr(MSG_CO_RemoveDel)),
+        Child, MakeCheckGroup(&CH_SAVELAYOUTQUIT, tr(MSG_CO_SAVE_LAYOUT)),
       End,
     End,
   TAG_MORE, inittags(msg))) != NULL)
   {
     GETDATA;
 
-    data->CH_LOADALL =     CH_LOADALL;
-    data->CH_MARKNEW =     CH_MARKNEW;
-    data->CH_DELETESTART = CH_DELETESTART;
-    data->CH_REMOVESTART = CH_REMOVESTART;
-    data->CH_CHECKBD =     CH_CHECKBD;
-    data->CH_SENDSTART =   CH_SENDSTART;
-    data->CH_SENDQUIT =    CH_SENDQUIT;
-    data->CH_DELETEQUIT =  CH_DELETEQUIT;
-    data->CH_REMOVEQUIT =  CH_REMOVEQUIT;
+    data->CH_LOADALL =        CH_LOADALL;
+    data->CH_MARKNEW =        CH_MARKNEW;
+    data->CH_DELETESTART =    CH_DELETESTART;
+    data->CH_REMOVESTART =    CH_REMOVESTART;
+    data->CH_CHECKBD =        CH_CHECKBD;
+    data->CH_SENDSTART =      CH_SENDSTART;
+    data->CH_SENDQUIT =       CH_SENDQUIT;
+    data->CH_DELETEQUIT =     CH_DELETEQUIT;
+    data->CH_REMOVEQUIT =     CH_REMOVEQUIT;
+    data->CH_SAVELAYOUTQUIT = CH_SAVELAYOUTQUIT;
 
-    SetHelp(CH_LOADALL,     MSG_HELP_CO_CH_LOADALL  );
-    SetHelp(CH_MARKNEW,     MSG_HELP_CO_CH_MARKNEW  );
-    SetHelp(CH_DELETESTART, MSG_HELP_CO_CH_DELETEOLD);
-    SetHelp(CH_REMOVESTART, MSG_HELP_CO_CH_REMOVEDEL);
-    SetHelp(CH_SENDSTART,   MSG_HELP_CO_CH_SEND     );
-    SetHelp(CH_CHECKBD,     MSG_HELP_CO_CH_CHECKBD  );
-    SetHelp(CH_SENDQUIT,    MSG_HELP_CO_CH_SEND     );
-    SetHelp(CH_DELETEQUIT,  MSG_HELP_CO_CH_DELETEOLD);
-    SetHelp(CH_REMOVEQUIT,  MSG_HELP_CO_CH_REMOVEDEL);
+    SetHelp(CH_LOADALL,        MSG_HELP_CO_CH_LOADALL);
+    SetHelp(CH_MARKNEW,        MSG_HELP_CO_CH_MARKNEW);
+    SetHelp(CH_DELETESTART,    MSG_HELP_CO_CH_DELETEOLD);
+    SetHelp(CH_REMOVESTART,    MSG_HELP_CO_CH_REMOVEDEL);
+    SetHelp(CH_SENDSTART,      MSG_HELP_CO_CH_SEND);
+    SetHelp(CH_CHECKBD,        MSG_HELP_CO_CH_CHECKBD);
+    SetHelp(CH_SENDQUIT,       MSG_HELP_CO_CH_SEND);
+    SetHelp(CH_DELETEQUIT,     MSG_HELP_CO_CH_DELETEOLD);
+    SetHelp(CH_REMOVEQUIT,     MSG_HELP_CO_CH_REMOVEDEL);
+    SetHelp(CH_SAVELAYOUTQUIT, MSG_HELP_CO_CH_SAVELAYOUTQUIT);
   }
 
   RETURN((IPTR)obj);
@@ -125,15 +130,16 @@ OVERLOAD(MUIM_ConfigPage_ConfigToGUI)
 
   ENTER();
 
-  setcheckmark(data->CH_SENDSTART,   CE->SendOnStartup);
-  setcheckmark(data->CH_DELETESTART, CE->CleanupOnStartup);
-  setcheckmark(data->CH_REMOVESTART, CE->RemoveOnStartup);
-  setcheckmark(data->CH_LOADALL,     CE->LoadAllFolders);
-  setcheckmark(data->CH_MARKNEW,     CE->UpdateNewMail);
-  setcheckmark(data->CH_CHECKBD,     CE->CheckBirthdates);
-  setcheckmark(data->CH_SENDQUIT,    CE->SendOnQuit);
-  setcheckmark(data->CH_DELETEQUIT,  CE->CleanupOnQuit);
-  setcheckmark(data->CH_REMOVEQUIT,  CE->RemoveOnQuit);
+  setcheckmark(data->CH_SENDSTART,      CE->SendOnStartup);
+  setcheckmark(data->CH_DELETESTART,    CE->CleanupOnStartup);
+  setcheckmark(data->CH_REMOVESTART,    CE->RemoveOnStartup);
+  setcheckmark(data->CH_LOADALL,        CE->LoadAllFolders);
+  setcheckmark(data->CH_MARKNEW,        CE->UpdateNewMail);
+  setcheckmark(data->CH_CHECKBD,        CE->CheckBirthdates);
+  setcheckmark(data->CH_SENDQUIT,       CE->SendOnQuit);
+  setcheckmark(data->CH_DELETEQUIT,     CE->CleanupOnQuit);
+  setcheckmark(data->CH_REMOVEQUIT,     CE->RemoveOnQuit);
+  setcheckmark(data->CH_SAVELAYOUTQUIT, CE->SaveLayoutOnQuit);
 
   RETURN(0);
   return 0;
@@ -156,6 +162,7 @@ OVERLOAD(MUIM_ConfigPage_GUIToConfig)
   CE->SendOnQuit       = GetMUICheck(data->CH_SENDQUIT);
   CE->CleanupOnQuit    = GetMUICheck(data->CH_DELETEQUIT);
   CE->RemoveOnQuit     = GetMUICheck(data->CH_REMOVEQUIT);
+  CE->SaveLayoutOnQuit = GetMUICheck(data->CH_SAVELAYOUTQUIT);
 
   RETURN(0);
   return 0;

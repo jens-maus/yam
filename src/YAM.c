@@ -2813,6 +2813,9 @@ int main(int argc, char **argv)
     if(C->RemoveOnQuit == TRUE)
       DoMethod(G->App, MUIM_YAMApplication_EmptyTrashFolder, TRUE);
 
+    if(C->SaveLayoutOnQuit == TRUE)
+      DoMethod(G->App, MUIM_YAMApplication_SaveLayout, FALSE);
+
     AppendToLogfile(LF_ALL, 99, tr(MSG_LOG_Terminated));
     DoMethod(G->App, MUIM_YAMApplication_StartMacro, MACRO_QUIT, NULL);
 
