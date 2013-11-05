@@ -1321,10 +1321,15 @@ BOOL WriteOutMessage(struct Compose *comp)
   // that we can identify later certain options we have to set
   // if the same mail is being edited by the user again
   snprintf(buf, sizeof(buf), "signature=%08x,identity=%08x,security=%s%s", comp->Signature != NULL ? comp->Signature->id : 0,
-                                                                           comp->Identity != NULL ? comp->Identity->id : 0,
+                                                                           comp->Identity->id,
                                                                            SecCodes[comp->SelSecurity],
                                                                            comp->DelSend == TRUE ? ",delsent" : "");
   EmitHeader(fh, "X-YAM-Options", buf, comp->codeset);
+
+  // add the "X-YAM-MailAccount" header to track over which SMTP server
+  // this mail was sent
+  snprintf(buf, sizeof(buf), "%s@%s", comp->Identity->smtpServer->username, comp->Identity->smtpServer->hostname);
+  EmitHeader(fh, "X-YAM-MailAccount", buf, comp->codeset);
 
   // put the From: header entry into the mail
   if(comp->FromOverride != NULL && strcmp(comp->FromOverride, comp->Identity->address) != 0)

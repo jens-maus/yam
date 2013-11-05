@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-11-05 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_WR.c: write the X-YAM-MailAccount: header line for sent mails, too.
+
 2013-11-04 Jens Maus <mail@jens-maus.de>
 
   * MainMailList.c, YAM_MAf.c, tcp/pop3.c, misc: implemented a new
