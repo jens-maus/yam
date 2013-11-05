@@ -2814,7 +2814,7 @@ int main(int argc, char **argv)
       DoMethod(G->App, MUIM_YAMApplication_EmptyTrashFolder, TRUE);
 
     if(C->SaveLayoutOnQuit == TRUE)
-      DoMethod(G->App, MUIM_YAMApplication_SaveLayout, FALSE);
+      DoMethod(G->App, MUIM_YAMApplication_SaveLayout, TRUE);
 
     AppendToLogfile(LF_ALL, 99, tr(MSG_LOG_Terminated));
     DoMethod(G->App, MUIM_YAMApplication_StartMacro, MACRO_QUIT, NULL);
