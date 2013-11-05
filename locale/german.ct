@@ -8814,9 +8814,10 @@ MSG_MAILACCOUNT_TRANSFERRED
 Nachrichtenkonto
 ;
 MSG_CO_SAVE_LAYOUT
-Layout speichern
+Speichern des Benutzeroberflächen-Layouts
 ;
 MSG_HELP_CO_CH_SAVELAYOUTQUIT
-Position und Größe aller Fenster permanent speichern, so wie\n\
-das Layout bestimmter Gruppen und den Zustand bestimmter Objekte.
+Position und Größe aller Fenster permanent\n\
+speichern, sowie das Layout bestimmter Gruppen\n\
+und den Zustand einiger graphischer Objekte.
 ;
