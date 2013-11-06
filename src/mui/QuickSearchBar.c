@@ -642,7 +642,7 @@ DECLARE(ProcessSearch)
 
   // a use of the quicksearchbar is only possible on
   // normal folders
-  if(!isGroupFolder(curFolder))
+  if(curFolder != NULL && !isGroupFolder(curFolder))
   {
     struct MailNode *mnode;
     enum ViewOptions viewOption = xget(data->CY_VIEWOPTIONS, MUIA_Cycle_Active);
@@ -732,8 +732,6 @@ DECLARE(ProcessSearch)
     set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, FALSE);
     data->searchInProgress = FALSE;
   }
-  else
-    E(DBF_ALL, "curFolder->Type == FT_GROUP ?????");
 
   RETURN(0);
   return 0;
