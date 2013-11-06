@@ -48,17 +48,23 @@
 /* CLASSDATA
 struct Data
 {
-  Object *mainListviewObjects[2];
-  Object *mainListObjects[2];
+  Object *mainListviewObjects[LT_COUNT];
+  Object *mainListObjects[LT_COUNT];
 
   struct Mail *lastActiveMail;
   ULONG activeList;
+  BOOL setupDone;
   BOOL listIsFreezed; // if set to true the list is hard freezed (cannot be unquite via NList_Quiet)
 };
 */
 
 /* EXPORT
-enum MainListType { LT_MAIN=0, LT_QUICKVIEW };
+enum MainListType
+{
+  LT_MAIN=0,
+  LT_QUICKVIEW,
+  LT_COUNT
+};
 */
 
 /* Private Functions */
@@ -67,41 +73,39 @@ enum MainListType { LT_MAIN=0, LT_QUICKVIEW };
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
-  Object *mainListview;
-  Object *mainList;
-  Object *quickviewListview;
-  Object *quickviewList;
+  Object *mainListviewObjects[LT_COUNT];
+  Object *mainListObjects[LT_COUNT];
 
   if((obj = DoSuperNew(cl, obj,
 
     MUIA_Group_PageMode, TRUE,
 
-    Child, mainListview = NListviewObject,
-       MUIA_CycleChain, TRUE,
-       MUIA_NListview_NList, mainList = MainMailListObject,
-          MUIA_ObjectID,       MAKE_ID('N','L','0','2'),
-          MUIA_ContextMenu,    C->MessageCntMenu ? MUIV_NList_ContextMenu_Always : MUIV_NList_ContextMenu_Never,
-          MUIA_NList_DragType, MUIV_NList_DragType_Default,
-          MUIA_NList_Exports,  MUIV_NList_Exports_ColWidth|MUIV_NList_Exports_ColOrder,
-          MUIA_NList_Imports,  MUIV_NList_Imports_ColWidth|MUIV_NList_Imports_ColOrder,
-       End,
+    Child, mainListviewObjects[LT_MAIN] = NListviewObject,
+      MUIA_CycleChain, TRUE,
+      MUIA_NListview_NList, mainListObjects[LT_MAIN] = MainMailListObject,
+        MUIA_ObjectID,       MAKE_ID('N','L','0','2'),
+        MUIA_ContextMenu,    C->MessageCntMenu ? MUIV_NList_ContextMenu_Always : MUIV_NList_ContextMenu_Never,
+        MUIA_NList_DragType, MUIV_NList_DragType_Default,
+        MUIA_NList_Exports,  MUIV_NList_Exports_ColWidth|MUIV_NList_Exports_ColOrder,
+        MUIA_NList_Imports,  MUIV_NList_Imports_ColWidth|MUIV_NList_Imports_ColOrder,
+      End,
     End,
-    Child, quickviewListview = NListviewObject,
-       MUIA_CycleChain, TRUE,
-       MUIA_NListview_NList, quickviewList = MainMailListObject,
-          MUIA_ContextMenu,    C->MessageCntMenu ? MUIV_NList_ContextMenu_Always : MUIV_NList_ContextMenu_Never,
-          MUIA_NList_DragType, MUIV_NList_DragType_Default,
-       End,
+    Child, mainListviewObjects[LT_QUICKVIEW] = NListviewObject,
+      MUIA_CycleChain, TRUE,
+      MUIA_NListview_NList, mainListObjects[LT_QUICKVIEW] = MainMailListObject,
+        MUIA_ContextMenu,    C->MessageCntMenu ? MUIV_NList_ContextMenu_Always : MUIV_NList_ContextMenu_Never,
+        MUIA_NList_DragType, MUIV_NList_DragType_Default,
+      End,
     End,
 
     TAG_MORE, inittags(msg))) != NULL)
   {
     GETDATA;
 
-    data->mainListviewObjects[LT_MAIN] = mainListview;
-    data->mainListviewObjects[LT_QUICKVIEW] = quickviewListview;
-    data->mainListObjects[LT_MAIN] = mainList;
-    data->mainListObjects[LT_QUICKVIEW] = quickviewList;
+    data->mainListviewObjects[LT_MAIN] =      mainListviewObjects[LT_MAIN];
+    data->mainListviewObjects[LT_QUICKVIEW] = mainListviewObjects[LT_QUICKVIEW];
+    data->mainListObjects[LT_MAIN] =          mainListObjects[LT_MAIN];
+    data->mainListObjects[LT_QUICKVIEW] =     mainListObjects[LT_QUICKVIEW];
   }
 
   return (IPTR)obj;
@@ -168,7 +172,7 @@ OVERLOAD(OM_SET)
         {
           // set the new mainlist as the default object of the window it belongs to
           // but only if not another one is yet active
-          if((Object*)xget(_win(obj), MUIA_Window_DefaultObject) == data->mainListviewObjects[data->activeList])
+          if(data->setupDone == TRUE && (Object*)xget(_win(obj), MUIA_Window_DefaultObject) == data->mainListviewObjects[data->activeList])
             set(_win(obj), MUIA_Window_DefaultObject, data->mainListviewObjects[tag->ti_Data]);
 
           data->activeList = tag->ti_Data;
@@ -219,10 +223,45 @@ OVERLOAD(OM_SET)
 }
 
 ///
+/// OVERLOAD(MUIM_Setup)
+OVERLOAD(MUIM_Setup)
+{
+  GETDATA;
+  IPTR result;
+
+  ENTER();
+
+  if((result = DoSuperMethodA(cl, obj, msg)) != 0)
+  {
+    data->setupDone = TRUE;
+  }
+
+  RETURN(result);
+  return result;
+}
+
+///
+/// OVERLOAD(MUIM_Cleanup)
+OVERLOAD(MUIM_Cleanup)
+{
+  GETDATA;
+  IPTR result;
+
+  ENTER();
+
+  data->setupDone = FALSE;
+  result = DoSuperMethodA(cl, obj, msg);
+
+  RETURN(result);
+  return result;
+}
+
+///
 /// OVERLOAD(MUIM_GoActive)
 OVERLOAD(MUIM_GoActive)
 {
   GETDATA;
+
   ENTER();
 
   // we don't forward the GoActive() call to our own
@@ -394,7 +433,6 @@ DECLARE(SwitchToList) // enum MainListType type
   // refresh the last active information
   DoMethod(data->mainListObjects[data->activeList], MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &data->lastActiveMail);
 
-  // no matter what, we always clear the quickview list on a switch.
   if(data->activeList != msg->type)
   {
     int i;
@@ -407,12 +445,12 @@ DECLARE(SwitchToList) // enum MainListType type
     {
       LONG colWidth = DoMethod(data->mainListObjects[data->activeList], MUIM_NList_ColWidth, i, MUIV_NList_ColWidth_Get);
 
-      // set the columnwidth of the LT_QUICKVIEW maillist also the same
+      // set the column width of the LT_QUICKVIEW maillist also the same
       DoMethod(data->mainListObjects[msg->type], MUIM_NList_ColWidth, i, colWidth != -1 ? colWidth : MUIV_NList_ColWidth_Default);
     }
 
     // see if we have to make the switched object as the new active one
-    if(((Object *)xget(_win(data->mainListviewObjects[data->activeList]), MUIA_Window_ActiveObject)) == data->mainListviewObjects[data->activeList])
+    if(data->setupDone == TRUE && ((Object *)xget(_win(obj), MUIA_Window_ActiveObject)) == data->mainListviewObjects[data->activeList])
       listWasActive = TRUE;
 
     // switch the page of the group now
@@ -435,13 +473,14 @@ DECLARE(SwitchToList) // enum MainListType type
 
       // make sure to set a new message so that the mail view is updated
       DoMethod(data->mainListObjects[LT_MAIN], MUIM_NList_SetActive, pos, MUIV_NList_SetActive_Jump_Center);
-      xset(data->mainListObjects[LT_MAIN], MUIA_NList_SelectChange, TRUE);
+      set(data->mainListObjects[LT_MAIN], MUIA_NList_SelectChange, TRUE);
     }
 
     if(listWasActive == TRUE)
-      xset(_win(data->mainListviewObjects[data->activeList]), MUIA_Window_ActiveObject, data->mainListviewObjects[data->activeList]);
+      set(_win(obj), MUIA_Window_ActiveObject, data->mainListviewObjects[data->activeList]);
   }
 
+  // no matter what, we always clear the quickview list on a switch.
   DoMethod(data->mainListObjects[LT_QUICKVIEW], MUIM_NList_Clear);
 
   RETURN(0);

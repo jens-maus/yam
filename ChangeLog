@@ -7,8 +7,10 @@ $URL$
 
 2013-11-06 Thore Böckelmann <tboeckel@gmx.de>
 
-  * QuickSearchBar.c: added a NULL pointer check for a valid folder. This closes
-    #446.
+  * mui/QuickSearchBar.c: added a NULL pointer check for a valid folder. This
+    closes #446.
+  * mui/MainMailListGroup.c: made the class more robust against certain method
+    calls before the main window is opened.
 
 2013-11-05 Samir Hawamdeh <s.hawamdeh@tin.it>
 
