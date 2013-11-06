@@ -98,6 +98,7 @@
 #include "mui/MainFolderListtree.h"
 #include "mui/MainMailList.h"
 #include "mui/MainMailListGroup.h"
+#include "mui/QuickSearchBar.h"
 #include "mui/ReadMailGroup.h"
 #include "mui/SearchMailWindow.h"
 #include "mui/YAMApplication.h"
@@ -4354,6 +4355,7 @@ void LoadLayout(void)
   G->Weights[10] = 5;
   G->Weights[11] = 100;
   strlcpy(G->preselectionListLayout, EMPTY_B64DSPACE_STRING, sizeof(G->preselectionListLayout));
+  G->quickSearchViewOptions = VO_ALL;
 
   // Load the application configuration from the ENV: directory.
   DoMethod(G->App, MUIM_Application_Load, MUIV_Application_Load_ENV);
@@ -4482,6 +4484,7 @@ void LoadLayout(void)
                                "READWINHEADERVERT/K/N," \
                                "READWINTEXTVERT/K/N," \
                                "PRESELECTIONLIST/K," \
+                               "QUICKSEARCHVIEWOPTIONS/K/N," \
                                "DUMMY/M"
 
       union LayoutArgs
@@ -4500,6 +4503,7 @@ void LoadLayout(void)
           LONG *readWinHeaderVert;
           LONG *readWinTextVert;
           STRPTR preselectionList;
+          LONG *quickSearchViewOptions;
           STRPTR *dummy;
         } vars;
       } args;
@@ -4549,6 +4553,9 @@ void LoadLayout(void)
 
         if(args.vars.preselectionList != NULL)
           strlcpy(G->preselectionListLayout, args.vars.preselectionList, sizeof(G->preselectionListLayout));
+
+        if(args.vars.quickSearchViewOptions != NULL)
+          G->quickSearchViewOptions = args.vars.quickSearchViewOptions[0];
 
         if(args.vars.dummy != NULL)
           D(DBF_UTIL, "ignored layout parameters '%s'", args.vars.dummy);
@@ -4600,6 +4607,7 @@ void SaveLayout(BOOL permanent)
                     "READWINHEADERVERT=%d " \
                     "READWINTEXTVERT=%d " \
                     "PRESELECTIONLIST=\"%s\" " \
+                    "QUICKSEARCHVIEWOPTIONS=%d " \
                     "\n",
     (int)G->Weights[0],
     (int)G->Weights[1],
@@ -4611,7 +4619,8 @@ void SaveLayout(BOOL permanent)
     (int)G->Weights[9],
     (int)G->Weights[10],
     (int)G->Weights[11],
-    G->preselectionListLayout) != -1)
+    G->preselectionListLayout,
+    G->quickSearchViewOptions) != -1)
   {
     setstring(G->MA->GUI.ST_LAYOUT, buf);
 

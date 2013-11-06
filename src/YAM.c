@@ -94,6 +94,7 @@
 #include "mui/AddressBookWindow.h"
 #include "mui/MainFolderListtree.h"
 #include "mui/MainWindow.h"
+#include "mui/QuickSearchBar.h"
 #include "mui/SplashWindow.h"
 #include "mui/ShutdownWindow.h"
 #include "mui/WriteWindow.h"
@@ -2609,9 +2610,10 @@ int main(int argc, char **argv)
       InitAfterLogin();
     }
 
-    DoMethod(G->App, MUIM_Application_Load, MUIV_Application_Load_ENVARC);
     AppendToLogfile(LF_ALL, 0, tr(MSG_LOG_Started));
     DoMethod(G->App, MUIM_YAMApplication_StartMacro, MACRO_STARTUP, NULL);
+
+    set(G->MA->GUI.GR_QUICKSEARCHBAR, MUIA_QuickSearchBar_ViewOptions, G->quickSearchViewOptions);
 
     if(yamFirst == TRUE)
     {

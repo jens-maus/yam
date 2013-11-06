@@ -11,6 +11,9 @@ $URL$
     closes #446.
   * mui/MainMailListGroup.c: made the class more robust against certain method
     calls before the main window is opened.
+  * YAM.c, YAM_UT.c, mui/QuickSearchBar.c: reworked the handling of the
+    remembered quick search bar view options to correctly restore the former
+    setting after restarting YAM.
 
 2013-11-05 Samir Hawamdeh <s.hawamdeh@tin.it>
 

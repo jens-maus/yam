@@ -133,6 +133,7 @@ struct Global
   #endif
 
   LONG                     Weights[12];
+  ULONG                    quickSearchViewOptions;
 
   int                      PGPVersion;
   int                      ER_NumErr;

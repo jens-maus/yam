@@ -76,12 +76,7 @@ struct Data
 };
 */
 
-/* INCLUDE
-#include "timeval.h"
-*/
-
-/* Enumerations */
-enum SearchOptions { SO_SUBJECT=0, SO_SENDER, SO_SUBJORSENDER, SO_TOORCC, SO_INMSG, SO_ENTIREMSG };
+/* EXPORT
 enum ViewOptions
 {
   VO_ALL=0,
@@ -94,7 +89,13 @@ enum ViewOptions
   VO_HASATTACHMENTS,
   VO_MINSIZE
 };
+*/
 
+/* INCLUDE
+#include "timeval.h"
+*/
+
+/* Enumerations */
 enum SearchFlags
 {
   SF_FROM=(1<<0),
@@ -332,7 +333,6 @@ OVERLOAD(OM_NEW)
         InnerSpacing(0,0),
         Child, MUI_MakeObject(MUIO_Label, (ULONG)tr(MSG_QUICKSEARCH_VIEW), MUIO_Label_Tiny),
         Child, CY_VIEWOPTIONS = CycleObject,
-          MUIA_ObjectID,      MAKE_ID('C','Y','0','1'),
           MUIA_Font,          MUIV_Font_Tiny,
           MUIA_CycleChain,    TRUE,
           MUIA_Cycle_Entries, viewOptions,
@@ -472,6 +472,15 @@ OVERLOAD(OM_SET)
   {
     switch(tag->ti_Tag)
     {
+      case ATTR(ViewOptions):
+      {
+        set(data->CY_VIEWOPTIONS, MUIA_Cycle_Active, tag->ti_Data);
+
+        // make the superMethod call ignore those tags
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
+
       case ATTR(AbortSearch):
       {
         data->abortSearch = tag->ti_Data;
@@ -509,6 +518,13 @@ OVERLOAD(OM_GET)
 
   switch(((struct opGet *)msg)->opg_AttrID)
   {
+    case ATTR(ViewOptions):
+    {
+      *store = xget(data->CY_VIEWOPTIONS, MUIA_Cycle_Active);
+      return TRUE;
+    }
+    break;
+
     case ATTR(SearchStringIsActive):
     {
       *store = (Object *)xget(_win(data->ST_SEARCHSTRING), MUIA_Window_ActiveObject) == data->ST_SEARCHSTRING;
@@ -595,6 +611,7 @@ DECLARE(ViewOptionChanged) // int activeCycle
 
   // set the active group of the MAILVIEW pageGroup to 1 if one of the view
   // options is selected by the user
+  G->quickSearchViewOptions = msg->activeCycle;
   if(msg->activeCycle == VO_ALL && (searchContent == NULL || searchContent[0] == '\0'))
   {
     DoMethod(obj, METHOD(Clear));
