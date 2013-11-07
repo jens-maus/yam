@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-11-07 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/FolderEditWindow.c: remember the newly added tree nodes to avoid a crash
+    when deleting that new folder immediately again due to a NULL pointer
+    access.
+
 2013-11-06 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/QuickSearchBar.c: added a NULL pointer check for a valid folder. This

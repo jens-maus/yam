@@ -442,12 +442,12 @@ static BOOL SaveNewFolder(struct IClass *cl, Object *obj)
                 if(isGroupFolder(prevFolder))
                 {
                   // add the folder to the end of the current folder group
-                  DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, data->oldFolder->Name, fnode, prevFolder->Treenode, MUIV_NListtree_Insert_PrevNode_Tail, MUIV_NListtree_Insert_Flag_Active);
+                  data->oldFolder->Treenode = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, data->oldFolder->Name, fnode, prevFolder->Treenode, MUIV_NListtree_Insert_PrevNode_Tail, MUIV_NListtree_Insert_Flag_Active);
                 }
                 else
                 {
                   // add the folder after the current folder
-                  DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, data->oldFolder->Name, fnode, MUIV_NListtree_Insert_ListNode_Active, MUIV_NListtree_Insert_PrevNode_Active, MUIV_NListtree_Insert_Flag_Active);
+                  data->oldFolder->Treenode = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, data->oldFolder->Name, fnode, MUIV_NListtree_Insert_ListNode_Active, MUIV_NListtree_Insert_PrevNode_Active, MUIV_NListtree_Insert_Flag_Active);
                 }
 
                 // the MainFolderListtree class has catched the insert operation and
