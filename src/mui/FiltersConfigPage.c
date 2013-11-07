@@ -122,6 +122,7 @@ static void GhostOutFilter(struct IClass *cl, Object *obj)
   set(data->CH_AREDIRECT,         MUIA_Disabled, filter == NULL || isremote);
   set(data->CH_AFORWARD,          MUIA_Disabled, filter == NULL || isremote);
   set(data->CH_ARESPONSE,         MUIA_Disabled, filter == NULL || isremote);
+  set(data->CY_FILTER_COMBINE,    MUIA_Disabled, filter == NULL);
   set(data->CH_AEXECUTE,          MUIA_Disabled, filter == NULL);
   set(data->CH_APLAY,             MUIA_Disabled, filter == NULL);
   set(data->CH_AMOVE,             MUIA_Disabled, filter == NULL || isremote);
@@ -143,9 +144,14 @@ static void GhostOutFilter(struct IClass *cl, Object *obj)
   // lets make sure we ghost the filter up/down buttons if necessary
   if(filter != NULL)
     DoMethod(data->LV_RULES, MUIM_NList_GetPos, filter, &pos);
+  else
+    DoMethod(data->GR_SGROUP, MUIM_ObjectList_Clear);
 
   set(data->BT_FILTERUP,   MUIA_Disabled, filter == NULL || pos == 0);
   set(data->BT_FILTERDOWN, MUIA_Disabled, filter == NULL || pos+1 == (LONG)xget(data->LV_RULES, MUIA_NList_Entries));
+
+  if(filter == NULL)
+    DoMethod(data->GR_SGROUP, MUIM_ObjectList_Clear);
 
   // These three "disables" must be done in another context, because the Popasl object will en/disable
   // the pop button itself as long as the requester is open. After that this hook is called but the object

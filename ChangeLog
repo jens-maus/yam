@@ -10,6 +10,8 @@ $URL$
   * mui/FolderEditWindow.c: remember the newly added tree nodes to avoid a crash
     when deleting that new folder immediately again due to a NULL pointer
     access.
+  * mui/FiltersConfigPage.c: clear the condition list in case there is no filter
+    defined.
 
 2013-11-06 Thore Böckelmann <tboeckel@gmx.de>
 
