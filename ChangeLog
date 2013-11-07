@@ -14,6 +14,8 @@ $URL$
     defined.
   * Config.c: fixed the loading of pre-2.9 filter definitions to not create an
     additional empty condition.
+  * Config.c: clear the complete config before clearing the individual sections
+    to avoid inter-section dependencies.
 
 2013-11-06 Thore Böckelmann <tboeckel@gmx.de>
 

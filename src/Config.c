@@ -670,6 +670,15 @@ void SetDefaultConfig(struct Config *co, enum ConfigPage page)
   else
     strlcpy(sysCodesetName, "ISO-8859-1", sizeof(sysCodesetName));
 
+  if(page == cp_AllPages)
+  {
+    // clear the complete configuration first, as there are certain dependencies
+    // between some sections (i.e. First Steps and Identities) and clearing one
+    // section after the other will leave some settings alive which should be
+    // cleared
+    ClearConfig(co);
+  }
+
   if(page == cp_FirstSteps || page == cp_AllPages)
   {
     // check if the Location is setup correctly and if not
