@@ -1445,11 +1445,15 @@ int LoadConfig(struct Config *co, const char *fname, struct FolderList **oldfold
                 // if nothing of the above string matched than the FI string
                 // is probably a rule definition so we check it here
 
-                // the old config uses no number for the first condition and
-                // numbers additional conditions as 2,3,...
+                // Up to YAM 2.8p1 (version 5) the subfields were named "Field","Field2",Field3","Field4",...
+                // Since YAM 2.9 (version 6) these are named "Field0","Field1","Field2",Field3",...
+                // Hence we must adapt the numbering for configurations from older releases.
                 if(strnicmp(q, "Field", 5) == 0)
                 {
                   int n = (q[5] == '\0') ? 1 : atoi(q+5);
+
+                  if(version < 6)
+                    n--;
 
                   while((rule = GetFilterRule(lastFilter, n)) == NULL)
                     CreateNewRule(lastFilter, SEARCHF_DOS_PATTERN);
@@ -1460,6 +1464,9 @@ int LoadConfig(struct Config *co, const char *fname, struct FolderList **oldfold
                 {
                   int n = (q[8] == '\0') ? 1 : atoi(q+8);
 
+                  if(version < 6)
+                    n--;
+
                   while((rule = GetFilterRule(lastFilter, n)) == NULL)
                     CreateNewRule(lastFilter, SEARCHF_DOS_PATTERN);
 
@@ -1468,6 +1475,9 @@ int LoadConfig(struct Config *co, const char *fname, struct FolderList **oldfold
                 else if(strnicmp(q, "CustomField", 11) == 0)
                 {
                   int n = (q[11] == '\0') ? 1 : atoi(q+11);
+
+                  if(version < 6)
+                    n--;
 
                   while((rule = GetFilterRule(lastFilter, n)) == NULL)
                     CreateNewRule(lastFilter, SEARCHF_DOS_PATTERN);
@@ -1478,6 +1488,9 @@ int LoadConfig(struct Config *co, const char *fname, struct FolderList **oldfold
                 {
                   int n = (q[10] == '\0') ? 1 : atoi(q+10);
 
+                  if(version < 6)
+                    n--;
+
                   while((rule = GetFilterRule(lastFilter, n)) == NULL)
                     CreateNewRule(lastFilter, SEARCHF_DOS_PATTERN);
 
@@ -1487,6 +1500,9 @@ int LoadConfig(struct Config *co, const char *fname, struct FolderList **oldfold
                 {
                   int n = (q[5] == '\0') ? 1 : atoi(q+5);
 
+                  if(version < 6)
+                    n--;
+
                   while((rule = GetFilterRule(lastFilter, n)) == NULL)
                     CreateNewRule(lastFilter, SEARCHF_DOS_PATTERN);
 
@@ -1495,6 +1511,9 @@ int LoadConfig(struct Config *co, const char *fname, struct FolderList **oldfold
                 else if(strnicmp(q, "CaseSens", 8) == 0)
                 {
                   int n = (q[8] == '\0') ? 1 : atoi(q+8);
+
+                  if(version < 6)
+                    n--;
 
                   while((rule = GetFilterRule(lastFilter, n)) == NULL)
                     CreateNewRule(lastFilter, SEARCHF_DOS_PATTERN);
@@ -1508,6 +1527,9 @@ int LoadConfig(struct Config *co, const char *fname, struct FolderList **oldfold
                 {
                   int n = (q[9] == '\0') ? 1 : atoi(q+9);
 
+                  if(version < 6)
+                    n--;
+
                   while((rule = GetFilterRule(lastFilter, n)) == NULL)
                     CreateNewRule(lastFilter, SEARCHF_DOS_PATTERN);
 
@@ -1520,6 +1542,9 @@ int LoadConfig(struct Config *co, const char *fname, struct FolderList **oldfold
                 {
                   int n = (q[10] == '\0') ? 1 : atoi(q+10);
 
+                  if(version < 6)
+                    n--;
+
                   while((rule = GetFilterRule(lastFilter, n)) == NULL)
                     CreateNewRule(lastFilter, SEARCHF_DOS_PATTERN);
 
@@ -1531,6 +1556,9 @@ int LoadConfig(struct Config *co, const char *fname, struct FolderList **oldfold
                 else if(strnicmp(q, "SkipEncrypted", 13) == 0)
                 {
                   int n = (q[10] == '\0') ? 1 : atoi(q+10);
+
+                  if(version < 6)
+                    n--;
 
                   while((rule = GetFilterRule(lastFilter, n)) == NULL)
                     CreateNewRule(lastFilter, SEARCHF_DOS_PATTERN);

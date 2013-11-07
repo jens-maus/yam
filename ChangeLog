@@ -12,6 +12,8 @@ $URL$
     access.
   * mui/FiltersConfigPage.c: clear the condition list in case there is no filter
     defined.
+  * Config.c: fixed the loading of pre-2.9 filter definitions to not create an
+    additional empty condition.
 
 2013-11-06 Thore Böckelmann <tboeckel@gmx.de>
 
