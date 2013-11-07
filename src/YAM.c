@@ -1918,6 +1918,8 @@ static void InitBeforeLogin(BOOL hidden)
   // now we search through PROGDIR:Charsets and load all user defined
   // codesets via codesets.library
   G->codesetsList = CodesetsListCreateA(NULL);
+  // get the system's default codeset
+  G->systemCodeset = CodesetsFindA(NULL, NULL);
 
   // create a public semaphore which can be used to single thread certain actions
   if((startupSemaphore = CreateStartupSemaphore()) == NULL)

@@ -660,15 +660,13 @@ BOOL CompareConfigs(const struct Config *c1, const struct Config *c2)
 // sets configuration (or a part of it) to the factory settings
 void SetDefaultConfig(struct Config *co, enum ConfigPage page)
 {
-  struct codeset *sysCodeset;
   char sysCodesetName[SIZE_CTYPE+1];
 
   ENTER();
 
-  // get the syscodeset to that we can set it as the default
-  sysCodeset = CodesetsFindA(NULL, NULL);
-  if(sysCodeset != NULL)
-    strlcpy(sysCodesetName, sysCodeset->name, sizeof(sysCodesetName));
+  // get the system codeset's name
+  if(G->systemCodeset != NULL)
+    strlcpy(sysCodesetName, G->systemCodeset->name, sizeof(sysCodesetName));
   else
     strlcpy(sysCodesetName, "ISO-8859-1", sizeof(sysCodesetName));
 
@@ -3152,9 +3150,6 @@ void ValidateConfig(struct Config *co, BOOL update, BOOL saveChanges)
   // check if the current configuration is already valid at an absolute
   // minimum. This will open the config window in case of an invalid config.
   IsValidConfig(C);
-
-  // get the system's default codeset
-  G->systemCodeset = CodesetsFindA(NULL, NULL);
 
   // we try to find out the system charset and validate it with the
   // currently configured local charset
