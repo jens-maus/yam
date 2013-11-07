@@ -986,11 +986,14 @@ DECLARE(CloseFolderEditWindow) // ULONG immediately
 // removes the active folder
 DECLARE(DeleteFolder)
 {
-  struct Folder *folder = GetCurrentFolder();
-  struct FolderNode *fnode = (struct FolderNode *)folder->Treenode->tn_User;
+  struct Folder *folder;
+  struct FolderNode *fnode;
   BOOL delete_folder = FALSE;
 
   ENTER();
+
+  folder = GetCurrentFolder();
+  fnode = (struct FolderNode *)folder->Treenode->tn_User;
 
   switch(folder->Type)
   {
@@ -1092,7 +1095,7 @@ DECLARE(DeleteFolder)
     set(obj, ATTR(TreeChanged), TRUE);
   }
   else
-    D(DBF_FOLDER, "keeping folder '%s'", GetCurrentFolder()->Name);
+    D(DBF_FOLDER, "keeping folder '%s'", folder->Name);
 
   RETURN(0);
   return 0;
