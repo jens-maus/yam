@@ -2004,14 +2004,9 @@ DECLARE(SaveLayout) // ULONG permanent
     Object *window;
     Object *cstate = (Object *)GetHead(windowList);
 
-    SHOWVALUE(DBF_ALWAYS, windowList);
-
     // trigger a snapshot action on all currently alive windows
     while((window = NextObject(&cstate)) != NULL)
-    {
-      SHOWVALUE(DBF_ALWAYS, window);
       DoMethod(window, MUIM_Window_Snapshot, TRUE);
-    }
   }
 
   // finally save the layout of certain groups
