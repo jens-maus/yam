@@ -236,5 +236,6 @@ BOOL FolderIsUsedByFilters(const char *folder);
 void RenameFolderInFilters(const char *oldFolder, const char *newFolder);
 void RemoveFolderFromFilters(const char *folder);
 BOOL ImportFilter(const char *fileName, const BOOL isVolatile, struct MinList *filterList);
+void CheckFilterRules(struct FilterNode *filter);
 
 #endif /* YAM_FIND_H */

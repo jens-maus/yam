@@ -2499,3 +2499,74 @@ BOOL ImportFilter(const char *fileName, const BOOL isVolatile, struct MinList *f
 }
 
 ///
+/// CheckFilterRules
+// check the rules of a filter for consistency
+void CheckFilterRules(struct FilterNode *filter)
+{
+  struct RuleNode *rule;
+  struct RuleNode *next;
+  ULONG cnt;
+
+  ENTER();
+
+  D(DBF_FILTER, "checking rules of filter '%s'", filter->name);
+
+  cnt = 0;
+  SafeIterateList(&filter->ruleList, struct RuleNode *, rule, next)
+  {
+    BOOL invalidRule = FALSE;
+
+    cnt++;
+    switch(rule->searchMode)
+    {
+      case SM_FROM:
+      case SM_TO:
+      case SM_CC:
+      case SM_REPLYTO:
+      case SM_SUBJECT:
+      case SM_DATE:
+      case SM_SIZE:
+      case SM_HEADER:
+      case SM_BODY:
+      case SM_WHOLE:
+      {
+        // the match pattern must be a non-empty string
+        if(IsStrEmpty(rule->matchPattern) == TRUE)
+        {
+          W(DBF_FILTER, "empty match pattern for rule #%ld, search mode %ld", cnt, rule->searchMode);
+          invalidRule = TRUE;
+        }
+      }
+      break;
+
+      case SM_HEADLINE:
+      {
+        // the field name and the match pattern must be non-empty strings
+        if(IsStrEmpty(rule->matchPattern) == TRUE || IsStrEmpty(rule->customField) == TRUE)
+        {
+          W(DBF_FILTER, "empty match pattern or empty custom field for rule #%ld, search mode %ld", cnt, rule->searchMode);
+          invalidRule = TRUE;
+        }
+      }
+      break;
+
+      case SM_STATUS:
+      case SM_SPAM:
+      {
+        // simple status checks are always valid
+      }
+      break;
+    }
+
+    if(invalidRule == TRUE)
+    {
+      // remove and free the rule
+      Remove((struct Node *)rule);
+      DeleteRuleNode(rule);
+    }
+  }
+
+  LEAVE();
+}
+
+///

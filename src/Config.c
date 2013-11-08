@@ -2947,6 +2947,7 @@ void ValidateConfig(struct Config *co, BOOL update, BOOL saveChanges)
   struct MailServerNode *msn;
   struct UserIdentityNode *uin;
   struct SignatureNode *sn;
+  struct FilterNode *filter;
 
   ENTER();
 
@@ -3333,6 +3334,12 @@ void ValidateConfig(struct Config *co, BOOL update, BOOL saveChanges)
       co->AmiSSLCheck = TRUE;
       saveAtEnd = TRUE;
     }
+  }
+
+  // check all filters for rules with empty strings
+  IterateList(&co->filterList, struct FilterNode *, filter)
+  {
+    CheckFilterRules(filter);
   }
 
   if(co->SpamFilterEnabled == TRUE)
