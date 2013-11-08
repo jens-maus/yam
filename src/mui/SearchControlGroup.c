@@ -103,7 +103,7 @@ static const int Mode2Group[MP_COUNT] = { 0,0,0,0,1,2,1,2,4,4,4,3 };
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
-  static const char *fldopt[2][MP_COUNT];
+  static const char *fldopt[2][MP_COUNT+1];
   static const char *compopt[14];
   static const char *statopt[11];
   static const char *amode[3];
@@ -111,6 +111,8 @@ OVERLOAD(OM_NEW)
   struct Data *tmpData;
   struct TagItem *tags = inittags(msg), *tag;
   BOOL singleRule = FALSE;
+
+  ENTER();
 
   amode[0] = tr(MSG_Address);
   amode[1] = tr(MSG_Name);
@@ -151,12 +153,10 @@ OVERLOAD(OM_NEW)
   fldopt[0][MP_STATUS]  =                         tr(MSG_Status);
   fldopt[0][MP_COUNT]   = NULL;
 
-  fldopt[1][MP_BODY] =
-  fldopt[1][MP_WHOLE] =
-  fldopt[1][MP_STATUS] =
+  fldopt[1][MP_BODY] = NULL;
+  fldopt[1][MP_WHOLE] = NULL;
+  fldopt[1][MP_STATUS] = NULL;
   fldopt[1][MP_COUNT] = NULL;
-
-  ENTER();
 
   // generate a temporary struct Data to which we store our data and
   // copy it later on
