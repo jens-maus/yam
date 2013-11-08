@@ -670,7 +670,7 @@ DECLARE(GUIToFilter)
     GetMUIString(filter->playSound,  data->ST_APLAY, sizeof(filter->playSound));
     strlcpy(filter->moveTo, (char *)xget(data->PO_MOVETO, MUIA_FolderRequestPopup_Folder), sizeof(filter->moveTo));
 
-    // (re)build the rule liste from scratch
+    // (re)build the rule list from scratch
     FreeFilterRuleList(filter);
     ruleState = NULL;
     while((ruleItem = (Object *)DoMethod(data->GR_SGROUP, MUIM_ObjectList_IterateItems, &ruleState)) != NULL)
@@ -685,19 +685,6 @@ DECLARE(GUIToFilter)
     GhostOutFilter(cl, obj);
     DoMethod(data->LV_RULES, MUIM_NList_Redraw, MUIV_NList_Redraw_Active);
   }
-
-  RETURN(0);
-  return 0;
-}
-
-///
-/// DECLARE(InitRuleObject)
-DECLARE(InitRuleObject) // Object *searchGroup
-{
-  ENTER();
-
-  // set some notifies
-  DoMethod(msg->searchGroup, MUIM_Notify, MUIA_SearchControlGroup_Modified, MUIV_EveryTime, obj, 1, METHOD(GUIToFilter));
 
   RETURN(0);
   return 0;
