@@ -2558,11 +2558,15 @@ void CheckFilterRules(struct FilterNode *filter)
       break;
     }
 
+    // remove and free invalid rules, but only if there are other rules left,
+    // because YAM's filters always have at least one rule
     if(invalidRule == TRUE)
     {
-      // remove and free the rule
-      Remove((struct Node *)rule);
-      DeleteRuleNode(rule);
+      if(cnt > 1 || next != NULL)
+      {
+        Remove((struct Node *)rule);
+        DeleteRuleNode(rule);
+      }
     }
   }
 
