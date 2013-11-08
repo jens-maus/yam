@@ -281,41 +281,41 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
         {
           switch (tag->ti_Tag)
           {
-              case ASOPORT_Size:
-                size = MAX(size, tag->ti_Data);
-              break;
+            case ASOPORT_Size:
+              size = MAX(size, tag->ti_Data);
+            break;
 
-              case ASOPORT_AllocSig:
-                allocsig = tag->ti_Data;
-              break;
+            case ASOPORT_AllocSig:
+              allocsig = tag->ti_Data;
+            break;
 
-              case ASOPORT_Action:
-                action = tag->ti_Data;
-              break;
+            case ASOPORT_Action:
+              action = tag->ti_Data;
+            break;
 
-              case ASOPORT_Pri:
-                pri = tag->ti_Data;
-              break;
+            case ASOPORT_Pri:
+              pri = tag->ti_Data;
+            break;
 
-              case ASOPORT_Name:
-                name = (STRPTR)tag->ti_Data;
-              break;
+            case ASOPORT_Name:
+              name = (STRPTR)tag->ti_Data;
+            break;
 
-              case ASOPORT_Signal:
-                signum = tag->ti_Data;
-              break;
+            case ASOPORT_Signal:
+              signum = tag->ti_Data;
+            break;
 
-              case ASOPORT_Target:
-                target = (APTR)tag->ti_Data;
-              break;
+            case ASOPORT_Target:
+              target = (APTR)tag->ti_Data;
+            break;
 
-              case ASOPORT_Public:
-                public = tag->ti_Data;
-              break;
+            case ASOPORT_Public:
+              public = tag->ti_Data;
+            break;
 
-              case ASOPORT_CopyName:
-                copy = tag->ti_Data;
-              break;
+            case ASOPORT_CopyName:
+              copy = tag->ti_Data;
+            break;
           }
         }
       }
@@ -635,6 +635,12 @@ APTR AllocSysObject(ULONG type, struct TagItem *tags)
       }
     }
     break;
+
+    default:
+    {
+      // ignored
+    }
+    break;
   }
 
 done:
@@ -686,6 +692,11 @@ void FreeSysObject(ULONG type, APTR object)
         if(sobject->signal != -1)
           FreeSignal(sobject->signal);
 
+        #if defined(DEBUG)
+        if(IsListEmpty(&sobject->port.mp_MsgList) == FALSE)
+          W(DBF_UTIL, "freeing MsgPort %08lx with pending messages", &sobject->port);
+        #endif
+
         FreeVec(sobject);
       }
       break;
@@ -704,6 +715,11 @@ void FreeSysObject(ULONG type, APTR object)
 
       case ASOT_LIST:
       {
+        #if defined(DEBUG)
+        if(IsListEmpty((struct List *)object) == FALSE)
+          W(DBF_UTIL, "freeing non-empty list %08lx", object);
+        #endif
+
         FreeVec(object);
       }
       break;
