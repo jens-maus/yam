@@ -80,13 +80,30 @@ struct Data
 };
 */
 
-static const int Mode2Group[12] = { 0,0,0,0,1,2,1,2,4,4,4,3 };
+enum ModePage
+{
+  MP_FROM = 0,
+  MP_TO,
+  MP_CC,
+  MP_REPLYTO,
+  MP_SUBJECT,
+  MP_DATE,
+  MP_OTHER,
+  MP_SIZE,
+  MP_HEADER,
+  MP_BODY,
+  MP_WHOLE,
+  MP_STATUS,
+  MP_COUNT
+};
+
+static const int Mode2Group[MP_COUNT] = { 0,0,0,0,1,2,1,2,4,4,4,3 };
 
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
-  static const char *fldopt[2][13];
+  static const char *fldopt[2][MP_COUNT];
   static const char *compopt[14];
   static const char *statopt[11];
   static const char *amode[3];
@@ -120,19 +137,24 @@ OVERLOAD(OM_NEW)
                             compopt[12] = " IN ";
   compopt[4] = compopt[7] = compopt[13] = NULL;
 
-  fldopt[0][0] = fldopt[1][0] = tr(MSG_FI_FROM_FIELD);
-  fldopt[0][1] = fldopt[1][1] = tr(MSG_FI_TO_FIELD);
-  fldopt[0][2] = fldopt[1][2] = tr(MSG_FI_CC_FIELD);
-  fldopt[0][3] = fldopt[1][3] = tr(MSG_FI_REPLYTO_FIELD);
-  fldopt[0][4] = fldopt[1][4] = tr(MSG_FI_SUBJECT_FIELD);
-  fldopt[0][5] = fldopt[1][5] = tr(MSG_FI_DATE_FIELD);
-  fldopt[0][6] = fldopt[1][6] = tr(MSG_FI_OtherField);
-  fldopt[0][7] = fldopt[1][7] = tr(MSG_FI_MessageSize);
-  fldopt[0][8] = fldopt[1][8] = tr(MSG_FI_MessageHeader);
-  fldopt[0][9] =                 tr(MSG_FI_MessageBody);
-  fldopt[0][10]=                 tr(MSG_FI_WholeMessage);
-  fldopt[0][11]=                 tr(MSG_Status);
-  fldopt[0][12]= fldopt[1][9] = fldopt[1][10] = fldopt[1][11] = fldopt[1][12] = NULL;
+  fldopt[0][MP_FROM]    = fldopt[1][MP_FROM]    = tr(MSG_FI_FROM_FIELD);
+  fldopt[0][MP_TO]      = fldopt[1][MP_TO]      = tr(MSG_FI_TO_FIELD);
+  fldopt[0][MP_CC]      = fldopt[1][MP_CC]      = tr(MSG_FI_CC_FIELD);
+  fldopt[0][MP_REPLYTO] = fldopt[1][MP_REPLYTO] = tr(MSG_FI_REPLYTO_FIELD);
+  fldopt[0][MP_SUBJECT] = fldopt[1][MP_SUBJECT] = tr(MSG_FI_SUBJECT_FIELD);
+  fldopt[0][MP_DATE]    = fldopt[1][MP_DATE]    = tr(MSG_FI_DATE_FIELD);
+  fldopt[0][MP_OTHER]   = fldopt[1][MP_OTHER]   = tr(MSG_FI_OtherField);
+  fldopt[0][MP_SIZE]    = fldopt[1][MP_SIZE]    = tr(MSG_FI_MessageSize);
+  fldopt[0][MP_HEADER]  = fldopt[1][MP_HEADER]  = tr(MSG_FI_MessageHeader);
+  fldopt[0][MP_BODY]    =                         tr(MSG_FI_MessageBody);
+  fldopt[0][MP_WHOLE]   =                         tr(MSG_FI_WholeMessage);
+  fldopt[0][MP_STATUS]  =                         tr(MSG_Status);
+  fldopt[0][MP_COUNT]   = NULL;
+
+  fldopt[1][MP_BODY] =
+  fldopt[1][MP_WHOLE] =
+  fldopt[1][MP_STATUS] =
+  fldopt[1][MP_COUNT] = NULL;
 
   ENTER();
 
@@ -512,13 +534,14 @@ DECLARE(Clear)
 DECLARE(PrepareSearch) // struct Search *search
 {
   GETDATA;
-  int pg = xget(data->PG_SRCHOPT, MUIA_Group_ActivePage);
+  int pg;
   const char *match;
   const char *field;
   int flags;
 
   ENTER();
 
+  pg = xget(data->PG_SRCHOPT, MUIA_Group_ActivePage);
   if(pg != 3) // Page 3 (Status) has no ST_MATCH
     match = (const char *)xget(data->ST_MATCH[pg], MUIA_String_Contents);
   else
@@ -559,10 +582,13 @@ DECLARE(PrepareSearch) // struct Search *search
 DECLARE(GUIToRule) // struct RuleNode *rule
 {
   GETDATA;
-  int g = xget(data->PG_SRCHOPT, MUIA_Group_ActivePage);
-  struct RuleNode *rule = msg->rule;
+  int g;
+  struct RuleNode *rule;
 
   ENTER();
+
+  g = xget(data->PG_SRCHOPT, MUIA_Group_ActivePage);
+  rule = msg->rule;
 
   rule->searchMode = GetMUICycle(data->CY_MODE[data->remoteFilterMode]);
   rule->subSearchMode = GetMUIRadio(data->RA_ADRMODE);
@@ -607,10 +633,13 @@ DECLARE(GUIToRule) // struct RuleNode *rule
 DECLARE(RuleToGUI) // struct RuleNode *rule
 {
   GETDATA;
-  struct RuleNode *rule = msg->rule;
-  int g = Mode2Group[rule->searchMode];
+  struct RuleNode *rule;
+  int g;
 
   ENTER();
+
+  rule = msg->rule;
+  g = Mode2Group[rule->searchMode];
 
   nnset(data->CY_MODE[data->remoteFilterMode],  MUIA_Cycle_Active,      rule->searchMode);
   nnset(data->RA_ADRMODE,                       MUIA_Radio_Active,      rule->subSearchMode);
@@ -661,11 +690,12 @@ DECLARE(RuleToGUI) // struct RuleNode *rule
 DECLARE(Update)
 {
   GETDATA;
-  ULONG mode = GetMUICycle(data->CY_MODE[data->remoteFilterMode]);
+  enum ModePage mode;
 
   ENTER();
 
-  if(mode < 12)
+  mode = GetMUICycle(data->CY_MODE[data->remoteFilterMode]);
+  if(mode < MP_COUNT)
   {
     ULONG group = Mode2Group[mode];
     Object *newActiveObj = NULL;
