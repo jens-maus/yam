@@ -127,18 +127,16 @@ struct MimeTypeNode *CreateNewMimeType(void)
 /// FreeMimeTypeList
 void FreeMimeTypeList(struct MinList *mimeTypeList)
 {
-  struct Node *curNode;
+  struct MimeTypeNode *mtn;
+  struct MimeTypeNode *next;
 
   ENTER();
 
   // we have to free the mimeTypeList
-  while((curNode = RemHead((struct List *)mimeTypeList)) != NULL)
+  SafeIterateList(mimeTypeList, struct MimeTypeNode *, mtn, next)
   {
-    struct MimeTypeNode *mt = (struct MimeTypeNode *)curNode;
-
-    FreeSysObject(ASOT_NODE, mt);
+    FreeSysObject(ASOT_NODE, mtn);
   }
-
   NewMinList(mimeTypeList);
 
   LEAVE();

@@ -211,18 +211,16 @@ void DeleteMailServer(struct MailServerNode *msn)
 /// FreeMailServerList
 void FreeMailServerList(struct MinList *mailServerList)
 {
-  struct Node *curNode;
+  struct MailServerNode *msn;
+  struct MailServerNode *next;
 
   ENTER();
 
   // we have to free the mailServerList
-  while((curNode = RemHead((struct List *)mailServerList)) != NULL)
+  SafeIterateList(mailServerList, struct MailServerNode *, msn, next)
   {
-    struct MailServerNode *msn = (struct MailServerNode *)curNode;
-
     DeleteMailServer(msn);
   }
-
   NewMinList(mailServerList);
 
   LEAVE();

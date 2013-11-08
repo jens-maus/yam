@@ -94,13 +94,17 @@ void DeleteFolderList(struct FolderList *flist)
     if(flist->lockSemaphore != NULL)
     {
       struct FolderNode *fnode;
+      struct FolderNode *next;
 
       // lock the list just, just for safety reasons
       LockFolderList(flist);
 
       // remove and free all remaining nodes in the list
-      while((fnode = (struct FolderNode *)RemHead((struct List *)&flist->list)) != NULL)
+      SafeIterateList(&flist->list, struct FolderNode *, fnode, next)
+      {
         FreeSysObject(ASOT_NODE, fnode);
+      }
+      NewMinList(&flist->list);
 
       // unlock the list again
       UnlockFolderList(flist);

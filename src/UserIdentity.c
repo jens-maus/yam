@@ -113,18 +113,16 @@ struct UserIdentityNode *CreateNewUserIdentity(const struct Config *co)
 /// FreeUserIdentityList
 void FreeUserIdentityList(struct MinList *userIdentityList)
 {
-  struct Node *curNode;
+  struct UserIdentityNode *uin;
+  struct UserIdentityNode *next;
 
   ENTER();
 
   // we have to free the userIdentityList
-  while((curNode = RemHead((struct List *)userIdentityList)) != NULL)
+  SafeIterateList(userIdentityList, struct UserIdentityNode *, uin, next)
   {
-    struct UserIdentityNode *uin = (struct UserIdentityNode *)curNode;
-
     FreeSysObject(ASOT_NODE, uin);
   }
-
   NewMinList(userIdentityList);
 
   LEAVE();

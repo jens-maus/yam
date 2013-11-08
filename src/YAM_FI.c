@@ -1121,17 +1121,17 @@ BOOL FI_FilterSingleMail(const struct MinList *filterList, struct Mail *mail, in
 // Function to free the search data
 void FreeSearchData(struct Search *search)
 {
-  struct Node *curNode;
+  struct SearchPatternNode *patternNode;
+  struct SearchPatternNode *next;
 
   ENTER();
 
   // free all search pattern nodes
-  while((curNode = RemHead((struct List *)&search->patternList)) != NULL)
+  SafeIterateList(&search->patternList, struct SearchPatternNode *, patternNode, next)
   {
-    struct SearchPatternNode *patternNode = (struct SearchPatternNode *)curNode;
-
     FreeSysObject(ASOT_NODE, patternNode);
   }
+  NewMinList(&search->patternList);
 
   // free a possibly initalized Boyer-Moore search context
   if(search->bmContext != NULL)
@@ -1815,14 +1815,17 @@ static BOOL CopySearchData(struct Search *dstSearch, struct Search *srcSearch)
 /// FreeFilterRuleList
 void FreeFilterRuleList(struct FilterNode *filter)
 {
-  struct Node *curNode;
+  struct RuleNode *rule;
+  struct RuleNode *next;
 
   ENTER();
 
   // we do have to iterate through our ruleList and
   // free them as well
-  while((curNode = RemHead((struct List *)&filter->ruleList)) != NULL)
-    DeleteRuleNode((struct RuleNode *)curNode);
+  SafeIterateList(&filter->ruleList, struct RuleNode *, rule, next)
+  {
+    DeleteRuleNode(rule);
+  }
 
   // initialize the ruleList as well
   NewMinList(&filter->ruleList);
@@ -1961,15 +1964,14 @@ struct FilterNode *CreateNewFilter(const int actions, const int ruleFlags)
 // frees a complete filter list with all embedded filters
 void FreeFilterList(struct MinList *filterList)
 {
-  struct Node *curNode;
+  struct FilterNode *filter;
+  struct FilterNode *next;
 
   ENTER();
 
   // we have to free the filterList
-  while((curNode = RemHead((struct List *)filterList)) != NULL)
+  SafeIterateList(filterList, struct FilterNode *, filter, next)
   {
-    struct FilterNode *filter = (struct FilterNode *)curNode;
-
     DeleteFilterNode(filter);
   }
 
@@ -2002,10 +2004,7 @@ struct RuleNode *CreateNewRule(struct FilterNode *filter, const int flags)
 
     // if a filter was specified we immediately add this new rule to it
     if(filter != NULL)
-    {
-      SHOWSTRING(DBF_FILTER, filter->name);
       AddTail((struct List *)&filter->ruleList, (struct Node *)rule);
-    }
   }
 
   RETURN(rule);

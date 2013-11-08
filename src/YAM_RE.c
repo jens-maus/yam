@@ -4776,15 +4776,15 @@ void ClearHeaderList(struct MinList *headerList)
 
   if(headerList != NULL)
   {
-    struct Node *curNode;
+    struct HeaderNode *hdrNode;
+    struct HeaderNode *next;
 
     // Now we process the read header to set all flags accordingly
-    while((curNode = RemHead((struct List *)headerList)) != NULL)
+    SafeIterateList(headerList, struct HeaderNode *, hdrNode, next)
     {
-      struct HeaderNode *hdrNode = (struct HeaderNode *)curNode;
-
       FreeHeaderNode(hdrNode);
     }
+    NewMinList(headerList);
   }
 
   LEAVE();

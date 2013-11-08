@@ -544,15 +544,17 @@ static char *CreateVAR(struct MinList *stemList)
 static void FreeStemList(struct MinList *list)
 {
   struct StemNode *node;
+  struct StemNode *next;
 
   ENTER();
 
-  while((node = (struct StemNode *)RemHead((struct List *)list)) != NULL)
+  SafeIterateList(list, struct StemNode *, node, next)
   {
     free(node->name);
     free(node->value);
     free(node);
   }
+  NewMinList(list);
 
   LEAVE();
 }

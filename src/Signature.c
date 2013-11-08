@@ -79,19 +79,17 @@ struct SignatureNode *CreateNewSignature(void)
 /// FreeSignatureList
 void FreeSignatureList(struct MinList *signatureList)
 {
-  struct Node *curNode;
+  struct SignatureNode *sn;
+  struct SignatureNode *next;
 
   ENTER();
 
   // we have to free the signatureList
-  while((curNode = RemHead((struct List *)signatureList)) != NULL)
+  SafeIterateList(signatureList, struct SignatureNode *, sn, next)
   {
-    struct SignatureNode *sn = (struct SignatureNode *)curNode;
-
     free(sn->signature);
     FreeSysObject(ASOT_NODE, sn);
   }
-
   NewMinList(signatureList);
 
   LEAVE();

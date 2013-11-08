@@ -114,13 +114,17 @@ void DeleteMailTransferList(struct MailTransferList *tlist)
   if(tlist != NULL)
   {
     struct MailTransferNode *tnode;
+    struct MailTransferNode *next;
 
     // lock the list just, just for safety reasons
     LockMailTransferList(tlist);
 
     // remove and free all remaining nodes in the list
-    while((tnode = (struct MailTransferNode *)RemHead((struct List *)&tlist->list)) != NULL)
+    SafeIterateList(&tlist->list, struct MailTransferNode *, tnode, next)
+    {
       DeleteMailTransferNode(tnode);
+    }
+    NewMinList(&tlist->list);
 
     // unlock the list again
     UnlockMailTransferList(tlist);

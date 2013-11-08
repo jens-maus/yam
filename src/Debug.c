@@ -1247,8 +1247,9 @@ static void CleanupDbgMalloc(void)
       for(i = 0; i < ARRAY_SIZE(DbgMallocList); i++)
       {
         struct DbgMallocNode *dmn;
+        struct DbgMallocNode *next;
 
-        while((dmn = (struct DbgMallocNode *)RemHead((struct List *)&DbgMallocList[i])) != NULL)
+        SafeIterateList(&DbgMallocList[i], struct DbgMallocNode *, dmn, next)
         {
           _DPRINTF(DBC_ERROR, DBF_ALWAYS, NULL, dmn->file, dmn->line, "unfreed memory tracking: 0x%08lx, size/type %ld, func (%s)", dmn->memory, dmn->size, dmn->func);
 
@@ -1259,6 +1260,7 @@ static void CleanupDbgMalloc(void)
           // free all further pending allocations upon program termination.
           free(dmn);
         }
+        NewMinList(&DbgMallocList[i]);
       }
     }
     else

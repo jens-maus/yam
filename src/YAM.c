@@ -608,14 +608,16 @@ static void FreeXPKPackerList(void)
 
   if(G->xpkPackerList != NULL)
   {
-    struct Node *curNode;
+    struct Node *node;
+    struct Node *next;
 
     // subsequently remove all nodes from the list and free them
-    while((curNode = RemHead((struct List *)G->xpkPackerList)) != NULL)
+    SafeIterateList(G->xpkPackerList, struct Node *, node, next)
     {
       // free everything of the node
-      FreeSysObject(ASOT_NODE, curNode);
+      FreeSysObject(ASOT_NODE, node);
     }
+    NewMinList(G->xpkPackerList);
 
     FreeSysObject(ASOT_LIST, G->xpkPackerList);
     G->xpkPackerList = NULL;
@@ -711,7 +713,10 @@ static void DeleteStartupSemaphore(void)
 static void Terminate(void)
 {
   int i;
-  struct Node *curNode;
+  struct ReadMailData *rmData;
+  struct ReadMailData *nextRMD;
+  struct WriteMailData *wmData;
+  struct WriteMailData *nextWMD;
 
   ENTER();
 
@@ -735,21 +740,19 @@ static void Terminate(void)
 
   D(DBF_STARTUP, "freeing readMailData...");
   // cleanup the still existing readmailData objects
-  while((curNode = RemHead((struct List *)&G->readMailDataList)) != NULL)
+  SafeIterateList(&G->readMailDataList, struct ReadMailData *, rmData, nextRMD)
   {
-    struct ReadMailData *rmData = (struct ReadMailData *)curNode;
-
     CleanupReadMailData(rmData, TRUE);
   }
+  NewMinList(&G->readMailDataList);
 
   D(DBF_STARTUP, "freeing writeMailData...");
   // cleanup the still existing writemailData objects
-  while((curNode = RemHead((struct List *)&G->writeMailDataList)) != NULL)
+  SafeIterateList(&G->writeMailDataList, struct WriteMailData *, wmData, nextWMD)
   {
-    struct WriteMailData *wmData = (struct WriteMailData *)curNode;
-
     CleanupWriteMailData(wmData);
   }
+  NewMinList(&G->writeMailDataList);
 
   D(DBF_STARTUP, "freeing user login window...");
   if(G->US != NULL)

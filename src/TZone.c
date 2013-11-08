@@ -628,24 +628,28 @@ const char *GuessTZone(const int gmtOffset)
 void TZoneCleanup(void)
 {
   struct TZoneContinent *cont;
+  struct TZoneContinent *nextc;
 
   ENTER();
 
-  while((cont = (struct TZoneContinent *)RemHead((struct List *)&G->tzoneContinentList)) != NULL)
+  SafeIterateList(&G->tzoneContinentList, struct TZoneContinent *, cont, nextc)
   {
     struct TZoneLocation *loc;
+    struct TZoneLocation *nextl;
 
-    while((loc = (struct TZoneLocation *)RemHead((struct List *)&cont->locationList)) != NULL)
+    SafeIterateList(&cont->locationList, struct TZoneLocation *, loc, nextl)
     {
       free(loc->name);
       free(loc->comment);
 
       FreeSysObject(ASOT_NODE, loc);
     }
+    NewMinList(&cont->locationList);
 
     free(cont->name);
     FreeSysObject(ASOT_NODE, cont);
   }
+  NewMinList(&G->tzoneContinentList);
 
   LEAVE();
 }

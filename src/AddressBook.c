@@ -246,15 +246,17 @@ void InitABook(struct ABook *abook)
 static void ClearABookGroup(struct ABookNode *group)
 {
   struct ABookNode *abn;
+  struct ABookNode *next;
 
   ENTER();
 
   D(DBF_ABOOK, "free members of group %08lx '%s'", group, group->Alias);
-  while((abn = (struct ABookNode *)RemHead((struct List *)&group->GroupMembers)) != NULL)
+  SafeIterateList(&group->GroupMembers, struct ABookNode *, abn, next)
   {
     D(DBF_ABOOK, "free member %08lx '%s'", abn, abn->Alias);
     DeleteABookNode(abn);
   }
+  NewMinList(&group->GroupMembers);
 
   LEAVE();
 }

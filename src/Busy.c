@@ -204,24 +204,24 @@ void BusyEnd(struct BusyNode *busy)
 // free any still pending busy actions
 void BusyCleanup(void)
 {
-  struct Node *node;
+  struct BusyNode *busy;
+  struct BusyNode *next;
 
   ENTER();
 
-  while((node = RemHead((struct List *)&G->normalBusyList)) != NULL)
+  SafeIterateList(&G->normalBusyList, struct BusyNode *, busy, next)
   {
-    struct BusyNode *busy = (struct BusyNode *)node;
-
     W(DBF_STARTUP, "freeing pending normal busy action %08lx, type %ld, text '%s'", busy, busy->type, busy->infoText);
     FreeSysObject(ASOT_NODE, busy);
   }
-  while((node = RemHead((struct List *)&G->arexxBusyList)) != NULL)
-  {
-    struct BusyNode *busy = (struct BusyNode *)node;
+  NewMinList(&G->normalBusyList);
 
+  SafeIterateList(&G->arexxBusyList, struct BusyNode *, busy, next)
+  {
     W(DBF_STARTUP, "freeing pending ARexx busy action %08lx, type %ld, text '%s'", busy, busy->type, busy->infoText);
     FreeSysObject(ASOT_NODE, busy);
   }
+  NewMinList(&G->arexxBusyList);
 
   LEAVE();
 }
