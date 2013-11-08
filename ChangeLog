@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-11-08 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/FiltersConfigPage.c: fixed a possible memory leak and invalid pointer
+    access after removing either all or the last filter entries.
+
 2013-11-07 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/FolderEditWindow.c: remember the newly added tree nodes to avoid a crash

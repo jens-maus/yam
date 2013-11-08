@@ -498,6 +498,7 @@ OVERLOAD(MUIM_ConfigPage_ConfigToGUI)
   ENTER();
 
   // clear the filter list first
+  data->filter = NULL;
   DoMethod(data->LV_RULES, MUIM_NList_Clear);
 
   // iterate through our filter list and add it to our
