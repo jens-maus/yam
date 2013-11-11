@@ -126,7 +126,7 @@ static void LoadEMailCache(const char *name, struct ABook *cache)
       {
         struct ABookNode *abn;
 
-       	if((abn = CreateABookNode(ABNT_USER)) != NULL)
+        if((abn = CreateABookNode(ABNT_USER)) != NULL)
         {
           if(addr != line)
           {
@@ -177,9 +177,9 @@ static BOOL SaveEMailCacheEntry(const struct ABookNode *abn, UNUSED ULONG flags,
   {
     // the cache contains user entries only, thus we don't have to care about the type here
     if(abn->RealName[0] != '\0')
-	  fprintf(stuff->fh, "%s <%s>\n", abn->RealName, abn->Address);
+      fprintf(stuff->fh, "%s <%s>\n", abn->RealName, abn->Address);
     else
-	  fprintf(stuff->fh, "<%s>\n", abn->Address);
+      fprintf(stuff->fh, "<%s>\n", abn->Address);
 
     // count the number of saved entries
     stuff->savedEntries++;
@@ -498,7 +498,7 @@ DECLARE(AddToEmailCache) // struct Person *person
         {
           // move all characters one backward including the trailing NUL byte
           memmove(p, p+1, strlen(p)+1);
-		}
+        }
 
         // we always add new items to the top because this is a FILO
         AddABookNode(&data->emailCache.rootGroup, abn, NULL);

@@ -69,10 +69,10 @@ OVERLOAD(OM_NEW)
     case cp_Read:         imageID = "config_read_big";       image = CI_READBIG;       title = tr(MSG_CO_READ_TITLE);       summary = tr(MSG_CO_READ_SUMMARY);       break;
     case cp_Write:        imageID = "config_write_big";      image = CI_WRITEBIG;      title = tr(MSG_CO_WRITE_TITLE);      summary = tr(MSG_CO_WRITE_SUMMARY);      break;
     case cp_ReplyForward: imageID = "config_answer_big";     image = CI_ANSWERBIG;     title = tr(MSG_CO_REPLY_TITLE);      summary = tr(MSG_CO_REPLY_SUMMARY);      break;
-	case cp_Signature:    imageID = "config_signature_big";  image = CI_SIGNATUREBIG;  title = tr(MSG_CO_SIGNATURE_TITLE);  summary = tr(MSG_CO_SIGNATURE_SUMMARY);  break;
-	case cp_Security:     imageID = "config_security_big";   image = CI_SECURITYBIG;   title = tr(MSG_CO_SECURITY_TITLE);   summary = tr(MSG_CO_SECURITY_SUMMARY);   break;
-	case cp_MIME:         imageID = "config_mime_big";       image = CI_MIMEBIG;       title = tr(MSG_CO_MIME_TITLE);       summary = tr(MSG_CO_MIME_SUMMARY);       break;
-	case cp_StartupQuit:  imageID = "config_start_big";      image = CI_STARTBIG;      title = tr(MSG_CO_STARTUP_TITLE);    summary = tr(MSG_CO_STARTUP_SUMMARY);    break;
+    case cp_Signature:    imageID = "config_signature_big";  image = CI_SIGNATUREBIG;  title = tr(MSG_CO_SIGNATURE_TITLE);  summary = tr(MSG_CO_SIGNATURE_SUMMARY);  break;
+    case cp_Security:     imageID = "config_security_big";   image = CI_SECURITYBIG;   title = tr(MSG_CO_SECURITY_TITLE);   summary = tr(MSG_CO_SECURITY_SUMMARY);   break;
+    case cp_MIME:         imageID = "config_mime_big";       image = CI_MIMEBIG;       title = tr(MSG_CO_MIME_TITLE);       summary = tr(MSG_CO_MIME_SUMMARY);       break;
+    case cp_StartupQuit:  imageID = "config_start_big";      image = CI_STARTBIG;      title = tr(MSG_CO_STARTUP_TITLE);    summary = tr(MSG_CO_STARTUP_SUMMARY);    break;
     case cp_AddressBook:  imageID = "config_abook_big";      image = CI_ABOOKBIG;      title = tr(MSG_CO_ABOOK_TITLE);      summary = tr(MSG_CO_ABOOK_SUMMARY);      break;
     case cp_Scripts:      imageID = "config_scripts_big";    image = CI_SCRIPTSBIG;    title = tr(MSG_CO_SCRIPTS_TITLE);    summary = tr(MSG_CO_SCRIPTS_SUMMARY);    break;
     case cp_Mixed:        imageID = "config_misc_big";       image = CI_MISCBIG;       title = tr(MSG_CO_MIXED_TITLE);      summary = tr(MSG_CO_MIXED_SUMMARY);      break;

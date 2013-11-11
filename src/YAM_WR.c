@@ -287,7 +287,7 @@ static void HeaderFputs(FILE *fh, const char *s, const char *param, const int of
                                      TAG_DONE);
         param = (const char *)paramCS;
       }
-	}
+    }
 
     if(param != NULL)
     {
@@ -308,7 +308,7 @@ static void HeaderFputs(FILE *fh, const char *s, const char *param, const int of
         CodesetsFreeA(sCS, NULL);
       if(paramCS != NULL)
         CodesetsFreeA(paramCS, NULL);
-	}
+    }
   }
   else if(param != NULL)
   {

@@ -116,7 +116,7 @@ static char *rcptok(char *s, BOOL *quote)
     else if(*p == ',' && *quote == FALSE)
     {
       *p++ = '\0';
-	    break;
+        break;
     }
 
     p++;

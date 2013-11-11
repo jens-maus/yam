@@ -203,22 +203,22 @@ DECLARE(Relayout)
         DoMethod(G->MA->GUI.GR_MAILLIST, MUIM_Group_Sort, G->MA->GUI.GR_QUICKSEARCHBAR,
                                                           G->MA->GUI.PG_MAILLIST,
                                                           NULL);
-	  }
-	  break;
+      }
+      break;
 
       case QSB_POS_BOTTOM:
       {
         DoMethod(G->MA->GUI.GR_MAILLIST, MUIM_Group_Sort, G->MA->GUI.PG_MAILLIST,
                                                           G->MA->GUI.GR_QUICKSEARCHBAR,
                                                           NULL);
-	  }
-	  break;
+      }
+      break;
 
       default:
       {
         showbar = FALSE;
-	  }
-	  break;
+      }
+      break;
     }
 
     // if the QuickSearchBar is enabled by the user we make sure we show it

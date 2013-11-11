@@ -273,8 +273,9 @@ OVERLOAD(MUIM_ConfigPage_ConfigToGUI)
   setstring(data->ST_BYETEXT, CE->Greetings);
   setcheckmark(data->CH_WARNSUBJECT, CE->WarnSubject);
   set(data->NL_ATTACHMENTKEYWORDS, MUIA_AttachmentKeywordList_Keywords, CE->AttachmentKeywords);
-  xset(data->ST_EDWRAP, MUIA_String_Integer, CE->EdWrapCol,
-					    MUIA_Disabled, CE->EdWrapMode == EWM_OFF);
+  xset(data->ST_EDWRAP, 
+    MUIA_String_Integer, CE->EdWrapCol,
+    MUIA_Disabled, CE->EdWrapMode == EWM_OFF);
   setcycle(data->CY_EDWRAP, CE->EdWrapMode);
   setcheckmark(data->CH_LAUNCH, CE->LaunchAlways);
   setslider(data->NB_EMAILCACHE, CE->EmailCache);

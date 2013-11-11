@@ -1509,7 +1509,7 @@ static void InitAfterLogin(void)
   if(ltr == LTR_QuitYAM)
   {
     // do a hard termination
-	Abort(NULL);
+    Abort(NULL);
   }
   else if(ltr == LTR_Failure && oldfolders != NULL)
   {

@@ -180,7 +180,7 @@ HOOKPROTONH(TextEditDoubleClickFunc, BOOL, Object *obj, struct ClickMessage *cli
       // the doubleclick area
       if((type = ExtractURL(surl, &url)) != 0)
       {
-      	SHOWSTRING(DBF_GUI, url);
+        SHOWSTRING(DBF_GUI, url);
 
         switch(type)
         {
@@ -330,9 +330,9 @@ static char *ParamEnd(const char *s)
       break;
     }
     else if(*s == '"')
-	{
+    {
       inquotes = TRUE;
-	}
+    }
 
     s++;
   }

@@ -5202,14 +5202,14 @@ DECLARE(UpdateSignatures)
         {
           activeSigIndex = i;
         }
-	  }
-	  else
-	  {
+      }
+      else
+      {
         // maximum reached, bail out
         break;
-	  }
+      }
 
-	  i++;
+      i++;
     }
   }
 

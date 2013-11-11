@@ -381,10 +381,10 @@ OVERLOAD(MUIM_ConfigPage_ConfigToGUI)
   DoMethod(data->GR_THEMES, MUIM_ThemeListGroup_Update);
 
   for(i=1; i < NUMBER_FOLDERTREE_COLUMNS; i++)
-	setcheckmark(data->CH_FCOLS[i], isFlagSet(CE->FolderCols, (1<<i)));
+    setcheckmark(data->CH_FCOLS[i], isFlagSet(CE->FolderCols, (1<<i)));
 
   for(i=1; i < NUMBER_MAILLIST_COLUMNS; i++)
-	setcheckmark(data->CH_MCOLS[i], isFlagSet(CE->MessageCols, (1<<i)));
+    setcheckmark(data->CH_MCOLS[i], isFlagSet(CE->MessageCols, (1<<i)));
 
   setcheckmark(data->CH_FIXFLIST, CE->FixedFontList);
   setcheckmark(data->CH_ABOOKLOOKUP, CE->ABookLookup);
@@ -436,17 +436,17 @@ OVERLOAD(MUIM_ConfigPage_GUIToConfig)
 
   if(GetMUICheck(data->CH_BEAT) == TRUE)
   {
-	if(GetMUICheck(data->CH_RELDATETIME) == TRUE)
-	  CE->DSListFormat = DSS_RELDATEBEAT;
-	else
-	  CE->DSListFormat = DSS_DATEBEAT;
+    if(GetMUICheck(data->CH_RELDATETIME) == TRUE)
+      CE->DSListFormat = DSS_RELDATEBEAT;
+    else
+      CE->DSListFormat = DSS_DATEBEAT;
   }
   else
   {
-	if(GetMUICheck(data->CH_RELDATETIME) == TRUE)
-	  CE->DSListFormat = DSS_RELDATETIME;
-	else
-	  CE->DSListFormat = DSS_DATETIME;
+    if(GetMUICheck(data->CH_RELDATETIME) == TRUE)
+      CE->DSListFormat = DSS_RELDATETIME;
+    else
+      CE->DSListFormat = DSS_DATETIME;
   }
 
   CE->FolderInfoMode = GetMUICycle(data->CY_FOLDERINFO);

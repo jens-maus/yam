@@ -417,8 +417,9 @@ OVERLOAD(MUIM_ConfigPage_ConfigToGUI)
   setcheckmark(data->CH_MULTIWIN, CE->MultipleReadWindows);
   setcheckmark(data->CH_DELAYEDSTATUS, CE->StatusChangeDelayOn);
 
-  xset(data->NB_DELAYEDSTATUS, MUIA_Numeric_Value, CE->StatusChangeDelay / 1000,
-							   MUIA_Disabled, CE->StatusChangeDelayOn == FALSE);
+  xset(data->NB_DELAYEDSTATUS, 
+    MUIA_Numeric_Value, CE->StatusChangeDelay / 1000,
+    MUIA_Disabled, CE->StatusChangeDelayOn == FALSE);
 
   setcheckmark(data->CH_CONVERTHTML, CE->ConvertHTML);
 

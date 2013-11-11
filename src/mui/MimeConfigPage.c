@@ -297,7 +297,7 @@ OVERLOAD(MUIM_ConfigPage_ConfigToGUI)
   // iterate through our filter list and add it to our
   // MUI List
   IterateList(&CE->mimeTypeList, struct MimeTypeNode *, mime)
-	DoMethod(data->LV_MIME, MUIM_NList_InsertSingle, mime, MUIV_NList_Insert_Bottom);
+    DoMethod(data->LV_MIME, MUIM_NList_InsertSingle, mime, MUIV_NList_Insert_Bottom);
 
   // sort the list after inserting all entries
   DoMethod(data->LV_MIME, MUIM_NList_Sort);

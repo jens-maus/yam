@@ -123,8 +123,8 @@ OVERLOAD(OM_SET)
       {
         data->serverList = (struct MinList *)tag->ti_Data;
         DoMethod(obj, METHOD(UpdateMailServers));
-	  }
-	  break;
+      }
+      break;
 
       case ATTR(MailServer):
       {

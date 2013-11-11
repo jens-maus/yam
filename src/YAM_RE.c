@@ -1244,7 +1244,7 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, enum ReadHeaderM
       // try to obtain the attachment's decoded size if it is yet unknown
       if(rp->Size <= 0)
         rp->Size = strtol(value, NULL, 10);
-	}
+    }
     else if(mode == RHM_MAINHEADER && stricmp(field, "mime-version") == 0)
     {
       // RFC 2049 requires a MIME coformance mail client

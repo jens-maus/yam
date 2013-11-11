@@ -107,9 +107,9 @@ OVERLOAD(OM_SET)
         if(tag->ti_Data)
         {
           data->quiet++;
-		}
-		else
-		{
+        }
+        else
+        {
           if(data->quiet > 0)
           {
             data->quiet--;
@@ -118,7 +118,7 @@ OVERLOAD(OM_SET)
               set(obj, ATTR(ItemCount), data->itemCount);
             }
           }
-		}
+        }
       }
       break;
     }
