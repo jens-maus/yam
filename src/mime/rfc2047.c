@@ -373,7 +373,9 @@ static int rfc2047_encode_callback(const char *str, const char *charset,
 static int rfc2047_count_char(const char *c UNUSED, size_t l, void *p)
 {
   size_t *i=(size_t *)p;
+
   *i += l;
+
   return 0;
 }
 
@@ -385,8 +387,10 @@ static int rfc2047_count_char(const char *c UNUSED, size_t l, void *p)
 static int rfc2047_save_char(const char *c, size_t l, void *p)
 {
   char **s=(char **)p;
-  memcpy(*s, c, l);
+
+  strlcpy(*s, c, l);
   *s += l;
+
   return 0;
 }
 
@@ -680,11 +684,10 @@ INLINE char *rfc2047_search_quote(const char **ptr)
   while(**ptr && **ptr != '?')
     ++(*ptr);
 
-  l = *ptr - p;
-  if((s = malloc(l + 1)) != NULL)
+  l = *ptr - p + 1;
+  if((s = malloc(l)) != NULL)
   {
-    memcpy(s, p, l);
-    s[l] = 0;
+    strlcpy(s, p, l);
   }
 
   return (s);

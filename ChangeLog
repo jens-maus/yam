@@ -10,6 +10,8 @@ $URL$
   * YAM_MA.c, mui/MainWindow.c: integrated the setup of the embedded read pane
     into the main window's Relayout method as these two actions are always done
     in a sequence anyway.
+  * mime/rfc2047.c: use strlcpy() instead of memcpy() plus an artificial NUL
+    termination to copy strings.
 
 2013-11-08 Thore Böckelmann <tboeckel@gmx.de>
 
