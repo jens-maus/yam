@@ -120,7 +120,7 @@ struct ComprMail
   //
   // 1. line: 'subject' of mail
   // 2. line: 'from' mail address
-  // 3. line: 'from' realname 
+  // 3. line: 'from' realname
   // 4. line: 'to' address
   // 5. line: 'to' realname
   // 6. line: 'reply-to' address
@@ -150,7 +150,7 @@ struct FIndex
   int   New;          // number of new mails in folder
   int   Unread;       // number of unread mails in folder
   int   Size;         // size of folder (bytes)
-  long  reserved[2];  // reserved unused area 
+  long  reserved[2];  // reserved unused area
 };
 
 // whenever you change something up there (in FIndex or ComprMail) you
@@ -1714,12 +1714,11 @@ BOOL MA_ReadHeader(const char *mailFile, FILE *fh, struct MinList *headerList, e
         if(hdrNode != NULL)
         {
           char *ptr;
-          char *hdrContents = hdrNode->content;
           int len;
 
           // we first decode the header according to RFC 2047 which
           // should give us the full charset interpretation
-          if((len = rfc2047_decode(hdrContents, hdrContents, strlen(hdrContents))) == -1)
+          if((len = rfc2047_decode(hdrNode->content, hdrNode->content, dstrlen(hdrNode->content))) == -1)
           {
             E(DBF_FOLDER, "ERROR: malloc() error during rfc2047() decoding");
             break; // break-out
@@ -1729,7 +1728,7 @@ BOOL MA_ReadHeader(const char *mailFile, FILE *fh, struct MinList *headerList, e
             W(DBF_FOLDER, "WARNING: unknown header encoding found");
 
             // signal an error but continue.
-            ER_NewError(tr(MSG_ER_UNKNOWN_HEADER_ENCODING), hdrContents, mailFile);
+            ER_NewError(tr(MSG_ER_UNKNOWN_HEADER_ENCODING), hdrNode->content, mailFile);
           }
           else if(len == -3)
           {
@@ -1739,7 +1738,7 @@ BOOL MA_ReadHeader(const char *mailFile, FILE *fh, struct MinList *headerList, e
           // now that we have decoded the headerline accoring to rfc2047
           // we have to strip out eventually existing ESC sequences as
           // this can be dangerous with MUI.
-          for(ptr=hdrContents; *ptr; ptr++)
+          for(ptr=hdrNode->content; *ptr; ptr++)
           {
             // if we find an ESC sequence, strip it!
             if(*ptr == 0x1b)
