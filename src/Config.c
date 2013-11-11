@@ -295,8 +295,9 @@ BOOL CopyConfig(struct Config *dco, const struct Config *sco)
 
       if((dstNode = DuplicateNode(srcNode, sizeof(*srcNode))) != NULL)
       {
+        dstNode->signature = NULL;
         if(srcNode->signature != NULL)
-          dstNode->signature = strdup(srcNode->signature);
+          dstrcpy(&dstNode->signature, srcNode->signature);
         AddTail((struct List *)&dco->signatureList, (struct Node *)dstNode);
       }
       else
