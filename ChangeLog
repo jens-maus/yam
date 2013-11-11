@@ -12,6 +12,8 @@ $URL$
     in a sequence anyway.
   * mime/rfc2047.c: use strlcpy() instead of memcpy() plus an artificial NUL
     termination to copy strings.
+  * Signature.c: use the imported signature string as a dynamic string instead
+    of copying it around a second time.
 
 2013-11-08 Thore Böckelmann <tboeckel@gmx.de>
 

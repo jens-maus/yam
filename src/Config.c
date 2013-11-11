@@ -100,6 +100,7 @@
 #include "Busy.h"
 #include "Config.h"
 #include "DockyIcon.h"
+#include "DynamicString.h"
 #include "FileInfo.h"
 #include "FolderList.h"
 #include "Locale.h"
@@ -2449,7 +2450,7 @@ BOOL SaveConfig(struct Config *co, const char *fname)
       fprintf(fh, "SIG%02d.Signature   = %s\n", i, sig != NULL ? sig : "");
       fprintf(fh, "SIG%02d.UseSigFile  = %s\n", i, Bool2Txt(sn->useSignatureFile));
 
-      free(sig);
+      dstrfree(sig);
 
       i++;
     }

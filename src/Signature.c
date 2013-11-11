@@ -87,7 +87,7 @@ void FreeSignatureList(struct MinList *signatureList)
   // we have to free the signatureList
   SafeIterateList(signatureList, struct SignatureNode *, sn, next)
   {
-    free(sn->signature);
+    dstrfree(sn->signature);
     FreeSysObject(ASOT_NODE, sn);
   }
   NewMinList(signatureList);
@@ -302,14 +302,6 @@ char *ImportSignature(const char *src)
         dstrcat(&sig, cat);
       }
     }
-
-    if(sig != NULL)
-    {
-      char *tmp = strdup(sig);
-
-      dstrfree(sig);
-      sig = tmp;
-    }
   }
 
   RETURN(sig);
@@ -378,14 +370,6 @@ char *ExportSignature(const char *src)
         }
         break;
       }
-    }
-
-    if(sig != NULL)
-    {
-      char *tmp = strdup(sig);
-
-      dstrfree(sig);
-      sig = tmp;
     }
   }
 
