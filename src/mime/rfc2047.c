@@ -774,11 +774,12 @@ static int rfc2047_decode_int(const char *text,
     // and to sort out possible errors we check for the finalizing NUL-byte
     if(encoding[0] != '\0' && encoding[1] == '\0') // have to be 1 char long
     {
-      switch(tolower(encoding[0]))
+      switch(encoding[0])
       {
         // we found a quoted-printable encoded rfc2047 compliant string, so
         // lets decode it.
         case 'q':
+        case 'Q':
         {
           char *q, *r;
 
@@ -819,6 +820,7 @@ static int rfc2047_decode_int(const char *text,
         // we found a base64 encoded rfc2047 compliant string, so
         // lets decode it.
         case 'b':
+        case 'B':
         {
           char *etext = Trim(enctext);
           char *dectext = NULL;
