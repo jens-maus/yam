@@ -425,8 +425,8 @@ OVERLOAD(OM_SET)
       case ATTR(RemoveForbidden):
       {
         set(data->BT_REMRULE, MUIA_Disabled, tag->ti_Data);
-	  }
-	  break;
+      }
+      break;
 
       // Overload some global attributes as well
       case MUIA_Disabled:
