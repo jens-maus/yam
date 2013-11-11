@@ -3982,9 +3982,6 @@ struct MA_ClassData *MA_New(void)
       DoMethod(data->GUI.TO_TOOLBAR, MUIM_TheBar_Notify, TB_MAIN_FIND,     MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_YAMApplication_OpenSearchMailWindow, NULL);
       DoMethod(data->GUI.TO_TOOLBAR, MUIM_TheBar_Notify, TB_MAIN_ADDRBOOK, MUIA_Pressed, FALSE, MUIV_Notify_Application, 4, MUIM_YAMApplication_OpenAddressBookWindow, ABM_EDIT, -1, NULL);
       DoMethod(data->GUI.TO_TOOLBAR, MUIM_TheBar_Notify, TB_MAIN_CONFIG,   MUIA_Pressed, FALSE, MUIV_Notify_Application, 1, MUIM_YAMApplication_OpenConfigWindow);
-
-      // place some objects at the configured positions
-      DoMethod(data->GUI.WI, MUIM_MainWindow_Relayout);
     }
   }
   else
