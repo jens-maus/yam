@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-11-11 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MA.c, mui/MainWindow.c: integrated the setup of the embedded read pane
+    into the main window's Relayout method as these two actions are always done
+    in a sequence anyway.
+
 2013-11-08 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/FiltersConfigPage.c: fixed a possible memory leak and invalid pointer

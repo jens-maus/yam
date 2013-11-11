@@ -3464,10 +3464,6 @@ void ValidateConfig(struct Config *co, BOOL update, BOOL saveChanges)
       // Now we update the InfoBar because the text could have been changed
       DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_SetFolder, GetCurrentFolder());
 
-      // we signal the mainwindow that it may check whether to include the
-      // embedded read pane part or not
-      MA_SetupEmbeddedReadPane();
-
       // Modify the ContextMenu flags
       set(G->MA->GUI.PG_MAILLIST,MUIA_ContextMenu, C->MessageCntMenu ? MUIV_NList_ContextMenu_Always : MUIV_NList_ContextMenu_Never);
       set(G->MA->GUI.NL_FOLDERS, MUIA_ContextMenu, C->FolderCntMenu ? MUIV_NList_ContextMenu_Always : MUIV_NList_ContextMenu_Never);

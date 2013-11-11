@@ -3608,93 +3608,6 @@ void MA_SetupDynamicMenus(void)
 }
 
 ///
-/// MA_SetupEmbeddedReadPane
-//  Updates/Setup the embedded read pane part in the main window
-void MA_SetupEmbeddedReadPane(void)
-{
-  Object *mailViewGroup  = G->MA->GUI.GR_MAILVIEW;
-  Object *mailBalanceObj = G->MA->GUI.BL_MAILVIEW;
-  Object *readPaneObj    = G->MA->GUI.MN_EMBEDDEDREADPANE;
-
-  ENTER();
-
-  // check whether the embedded read pane object is already embeeded in our main
-  // window so that we know what to do now
-  if(readPaneObj != NULL)
-  {
-    if(C->EmbeddedReadPane == FALSE)
-    {
-      // the user want to have the embedded read pane removed from the main
-      // window, so lets do it now
-      if(DoMethod(mailViewGroup, MUIM_Group_InitChange))
-      {
-        DoMethod(mailViewGroup, OM_REMMEMBER, readPaneObj);
-        DoMethod(mailViewGroup, OM_REMMEMBER, mailBalanceObj);
-
-        // clear all contents of the currenly displayed mail
-        DoMethod(readPaneObj, MUIM_ReadMailGroup_Clear, MUIF_NONE);
-
-        // dispose the objects now that we don't need them anymore
-        MUI_DisposeObject(readPaneObj);
-        MUI_DisposeObject(mailBalanceObj);
-
-        // and nullify it to make it readdable again
-        G->MA->GUI.MN_EMBEDDEDREADPANE = NULL;
-        G->MA->GUI.BL_MAILVIEW = NULL;
-
-        DoMethod(mailViewGroup, MUIM_Group_ExitChange);
-      }
-    }
-  }
-  else
-  {
-    if(C->EmbeddedReadPane == TRUE)
-    {
-      // the user want to have the embedded read pane added to the main
-      // window, so lets do it now and create the object
-      G->MA->GUI.BL_MAILVIEW = mailBalanceObj = NBalanceObject,
-                                                  MUIA_ObjectID, MAKE_ID('B','0','0','2'),
-                                                  MUIA_Balance_Quiet, TRUE,
-                                                End;
-
-      if(mailBalanceObj != NULL)
-      {
-        G->MA->GUI.MN_EMBEDDEDREADPANE = readPaneObj = ReadMailGroupObject,
-                                                         MUIA_ContextMenu, TRUE,
-                                                         MUIA_VertWeight, G->Weights[7],
-                                                         MUIA_ReadMailGroup_HGVertWeight, G->Weights[8],
-                                                         MUIA_ReadMailGroup_TGVertWeight, G->Weights[9],
-                                                       End;
-
-        if(readPaneObj != NULL)
-        {
-          if(DoMethod(mailViewGroup, MUIM_Group_InitChange))
-          {
-            set(G->MA->GUI.GR_MAILLIST, MUIA_VertWeight, G->Weights[6]);
-
-            DoMethod(mailViewGroup, OM_ADDMEMBER, mailBalanceObj);
-            DoMethod(mailViewGroup, OM_ADDMEMBER, readPaneObj);
-
-            DoMethod(mailViewGroup, MUIM_Group_ExitChange);
-
-            // here everything worked fine so we can return immediately
-            LEAVE();
-            return;
-          }
-
-          MUI_DisposeObject(readPaneObj);
-          G->MA->GUI.MN_EMBEDDEDREADPANE = NULL;
-        }
-
-        MUI_DisposeObject(mailBalanceObj);
-        G->MA->GUI.BL_MAILVIEW = NULL;
-      }
-    }
-  }
-
-  LEAVE();
-}
-///
 /// MA_New
 //  Creates main window
 struct MA_ClassData *MA_New(void)
@@ -4069,6 +3982,9 @@ struct MA_ClassData *MA_New(void)
       DoMethod(data->GUI.TO_TOOLBAR, MUIM_TheBar_Notify, TB_MAIN_FIND,     MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_YAMApplication_OpenSearchMailWindow, NULL);
       DoMethod(data->GUI.TO_TOOLBAR, MUIM_TheBar_Notify, TB_MAIN_ADDRBOOK, MUIA_Pressed, FALSE, MUIV_Notify_Application, 4, MUIM_YAMApplication_OpenAddressBookWindow, ABM_EDIT, -1, NULL);
       DoMethod(data->GUI.TO_TOOLBAR, MUIM_TheBar_Notify, TB_MAIN_CONFIG,   MUIA_Pressed, FALSE, MUIV_Notify_Application, 1, MUIM_YAMApplication_OpenConfigWindow);
+
+      // place some objects at the configured positions
+      DoMethod(data->GUI.WI, MUIM_MainWindow_Relayout);
     }
   }
   else

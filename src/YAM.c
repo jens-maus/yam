@@ -1496,12 +1496,6 @@ static void InitAfterLogin(void)
   if((G->MA = MA_New()) == NULL)
     Abort(tr(MSG_ErrorMuiApp));
 
-  // make sure the GUI objects for the embedded read pane are created
-  MA_SetupEmbeddedReadPane();
-
-  // place the info and quicksearch bars at the configured positions
-  DoMethod(G->MA->GUI.WI, MUIM_MainWindow_Relayout);
-
   // load the main window GUI layout from the ENV: variable
   LoadLayout();
 

@@ -31,6 +31,8 @@
 #include "MainWindow_cl.h"
 
 #include <proto/muimaster.h>
+#include <libraries/iffparse.h>
+#include <mui/NBalance_mcc.h>
 
 #include "YAM.h"
 #include "YAM_error.h"
@@ -223,6 +225,72 @@ DECLARE(Relayout)
     set(G->MA->GUI.GR_QUICKSEARCHBAR, MUIA_ShowMe, showbar);
 
     DoMethod(G->MA->GUI.GR_MAILLIST, MUIM_Group_ExitChange);
+  }
+
+  // check whether the embedded read pane object is already embeeded in our main
+  // window so that we know what to do now
+  if(G->MA->GUI.MN_EMBEDDEDREADPANE != NULL && C->EmbeddedReadPane == FALSE)
+  {
+    // the user want to have the embedded read pane removed from the main
+    // window, so lets do it now
+    if(DoMethod(G->MA->GUI.GR_MAILVIEW, MUIM_Group_InitChange))
+    {
+      DoMethod(G->MA->GUI.GR_MAILVIEW, OM_REMMEMBER, G->MA->GUI.MN_EMBEDDEDREADPANE);
+      DoMethod(G->MA->GUI.GR_MAILVIEW, OM_REMMEMBER, G->MA->GUI.BL_MAILVIEW);
+
+      // clear all contents of the currenly displayed mail
+      DoMethod(G->MA->GUI.MN_EMBEDDEDREADPANE, MUIM_ReadMailGroup_Clear, MUIF_NONE);
+
+      // dispose the objects now that we don't need them anymore
+      MUI_DisposeObject(G->MA->GUI.MN_EMBEDDEDREADPANE);
+      MUI_DisposeObject(G->MA->GUI.BL_MAILVIEW);
+
+      // and nullify it to make it readdable again
+      G->MA->GUI.MN_EMBEDDEDREADPANE = NULL;
+      G->MA->GUI.BL_MAILVIEW = NULL;
+
+      DoMethod(G->MA->GUI.GR_MAILVIEW, MUIM_Group_ExitChange);
+    }
+  }
+  else if(G->MA->GUI.MN_EMBEDDEDREADPANE == NULL && C->EmbeddedReadPane == TRUE)
+  {
+    // the user want to have the embedded read pane added to the main
+    // window, so lets do it now and create the object
+    if((G->MA->GUI.BL_MAILVIEW = NBalanceObject,
+      MUIA_ObjectID, MAKE_ID('B','0','0','2'),
+      MUIA_Balance_Quiet, TRUE,
+    End) != NULL)
+    {
+      if((G->MA->GUI.MN_EMBEDDEDREADPANE = ReadMailGroupObject,
+        MUIA_ContextMenu, TRUE,
+        MUIA_VertWeight, G->Weights[7],
+        MUIA_ReadMailGroup_HGVertWeight, G->Weights[8],
+        MUIA_ReadMailGroup_TGVertWeight, G->Weights[9],
+      End) != NULL)
+      {
+        if(DoMethod(G->MA->GUI.GR_MAILVIEW, MUIM_Group_InitChange))
+        {
+          set(G->MA->GUI.GR_MAILLIST, MUIA_VertWeight, G->Weights[6]);
+
+          DoMethod(G->MA->GUI.GR_MAILVIEW, OM_ADDMEMBER, G->MA->GUI.BL_MAILVIEW);
+          DoMethod(G->MA->GUI.GR_MAILVIEW, OM_ADDMEMBER, G->MA->GUI.MN_EMBEDDEDREADPANE);
+
+          DoMethod(G->MA->GUI.GR_MAILVIEW, MUIM_Group_ExitChange);
+        }
+        else
+        {
+          MUI_DisposeObject(G->MA->GUI.MN_EMBEDDEDREADPANE);
+          G->MA->GUI.MN_EMBEDDEDREADPANE = NULL;
+          MUI_DisposeObject(G->MA->GUI.BL_MAILVIEW);
+          G->MA->GUI.BL_MAILVIEW = NULL;
+        }
+      }
+      else
+      {
+        MUI_DisposeObject(G->MA->GUI.BL_MAILVIEW);
+        G->MA->GUI.BL_MAILVIEW = NULL;
+      }
+    }
   }
 
   RETURN(0);
