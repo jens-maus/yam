@@ -312,6 +312,7 @@ static void ReleaseSearchPath(BPTR path)
 
   LEAVE();
 }
+
 ///
 
 /*** String related ***/
@@ -336,6 +337,7 @@ BOOL MatchNoCase(const char *string, const char *match)
   RETURN(result);
   return result;
 }
+
 ///
 /// StripUnderscore
 //  Removes underscore from button labels
@@ -901,6 +903,7 @@ BOOL ConvertCRLF(char *in, char *out, BOOL to)
   RETURN(success);
   return success;
 }
+
 ///
 /// Word_Length
 //  returns the string length of the next word
@@ -935,6 +938,7 @@ static int Word_Length(const char *buf)
 
   return len;
 }
+
 ///
 /// Quoting_Chars
 //  Determines and copies all quoting characters ">" to the buffer "buf"
@@ -1201,6 +1205,7 @@ void QuoteText(FILE *out, const char *src, const int len, const int line_max)
 
   LEAVE();
 }
+
 ///
 /// SimpleWordWrap
 //  Reformats a file to a new line length
@@ -1241,6 +1246,7 @@ void SimpleWordWrap(const char *filename, int wrapsize)
 
   LEAVE();
 }
+
 ///
 /// ReqFile
 //  Puts up a file requester
@@ -1363,6 +1369,7 @@ struct FileReqCache *ReqFile(enum ReqFileType num, Object *win,
   RETURN(result);
   return result;
 }
+
 ///
 /// FreeFileReqCache
 // free all structures inside a filerequest cache structure
@@ -1389,6 +1396,7 @@ void FreeFileReqCache(struct FileReqCache *frc)
 
   LEAVE();
 }
+
 ///
 /// AddZombieFile
 //  add an orphaned file to the zombie file list
@@ -1422,6 +1430,7 @@ void AddZombieFile(const char *fileName)
 
   LEAVE();
 }
+
 ///
 /// DeleteZombieFiles
 //  try to delete all files in the list of zombie files
@@ -1463,6 +1472,7 @@ BOOL DeleteZombieFiles(BOOL force)
   RETURN(listCleared);
   return listCleared;
 }
+
 ///
 /// OpenTempFile
 //  Creates or opens a temporary file
@@ -1504,6 +1514,7 @@ struct TempFile *OpenTempFile(const char *mode)
   RETURN(tf);
   return tf;
 }
+
 ///
 /// CloseTempFile
 //  Closes a temporary file
@@ -1525,6 +1536,7 @@ void CloseTempFile(struct TempFile *tf)
 
   LEAVE();
 }
+
 ///
 /// DumpClipboard
 //  Exports contents of clipboard unit 0 to a file
@@ -1580,6 +1592,7 @@ BOOL DumpClipboard(FILE *out)
   RETURN(success);
   return success;
 }
+
 ///
 /// IsFolderDir
 //  Checks if a directory is used as a mail folder
@@ -1613,6 +1626,7 @@ static BOOL IsFolderDir(const char *dir)
   RETURN(result);
   return result;
 }
+
 ///
 /// AllFolderLoaded
 //  Checks if all folder index are correctly loaded
@@ -1645,6 +1659,7 @@ BOOL AllFolderLoaded(void)
   RETURN(allLoaded);
   return allLoaded;
 }
+
 ///
 /// DeleteMailDir (rec)
 //  Recursively deletes a mail directory
@@ -1736,6 +1751,7 @@ BOOL DeleteMailDir(const char *dir, BOOL isroot)
   RETURN(result);
   return result;
 }
+
 ///
 /// FileToBuffer
 //  Reads a complete file into memory
@@ -1776,6 +1792,7 @@ char *FileToBuffer(const char *file, size_t *outsize)
   RETURN(text);
   return text;
 }
+
 ///
 /// FileCount
 // returns the total number of files matching a pattern that are in a directory
@@ -1839,6 +1856,7 @@ LONG FileCount(const char *directory, const char *pattern)
   RETURN(result);
   return result;
 }
+
 ///
 /// AddPath
 // Function that is a wrapper to AddPart so that we can add the
@@ -1858,6 +1876,7 @@ char *AddPath(char *dst, const char *src, const char *add, const size_t size)
   RETURN(dst);
   return dst;
 }
+
 ///
 
 /*** Mail related ***/
@@ -1872,6 +1891,7 @@ char *CreateFilename(const char * const file, char *fullPath, const size_t fullP
   RETURN(fullPath);
   return fullPath;
 }
+
 ///
 /// CreateDirectory
 //  Makes a directory
@@ -1928,6 +1948,7 @@ BOOL CreateDirectory(const char *dir)
   RETURN(success);
   return success;
 }
+
 ///
 /// GetMailFile
 //  Returns path of a message file
@@ -1945,6 +1966,7 @@ void GetMailFile(char *string, const size_t stringSize, const struct Folder *fol
 
   LEAVE();
 }
+
 ///
 /// BuildAddress
 // Creates "Real Name <E-mail>" string from a given address and name
@@ -2177,6 +2199,7 @@ void ExtractAddress(const char *line, struct Person *pe)
 
   LEAVE();
 }
+
 ///
 /// DescribeCT
 //  Returns description of a content type
@@ -2235,6 +2258,7 @@ const char *DescribeCT(const char *ct)
   RETURN(ret);
   return ret;
 }
+
 ///
 /// GetDateStamp
 //  Get number of seconds since 1/1-1978
@@ -2254,6 +2278,7 @@ ULONG GetDateStamp(void)
   RETURN(seconds);
   return seconds;
 }
+
 ///
 /// DateStampUTC
 //  gets the current system time in local TZ to UTC
@@ -2266,6 +2291,7 @@ void DateStampUTC(struct DateStamp *ds)
 
   LEAVE();
 }
+
 ///
 /// TimeVal2tm
 // converts a struct TimeVal to a struct tm
@@ -2306,6 +2332,7 @@ BOOL TimeVal2tm(const struct TimeVal *tv, struct TM *tm)
   RETURN(result);
   return result;
 }
+
 ///
 /// tm2TimeVal
 // converts a struct tm to struct TimeVal
@@ -2361,6 +2388,7 @@ BOOL tm2TimeVal(const struct TM *tm, struct TimeVal *tv)
   RETURN(result);
   return result;
 }
+
 ///
 /// GetSysTimeUTC
 //  gets the actual system time in local timezone and converts it to UTC
@@ -2373,6 +2401,7 @@ void GetSysTimeUTC(struct TimeVal *tv)
 
   LEAVE();
 }
+
 ///
 /// TimeValTZConvert
 //  converts a supplied timeval depending on the TZConvert flag to be converted
@@ -2450,6 +2479,7 @@ void TimeValTZConvert(struct TimeVal *tv, enum TZConvert tzc)
 
   LEAVE();
 }
+
 ///
 /// DateStampTZConvert
 //  converts a supplied DateStamp depending on the TZConvert flag to be converted
@@ -2549,6 +2579,7 @@ void DateStampTZConvert(struct DateStamp *ds, enum TZConvert tzc)
 
   LEAVE();
 }
+
 ///
 /// TimeVal2DateStamp
 //  converts a struct TimeVal to a struct DateStamp
@@ -2570,6 +2601,7 @@ void TimeVal2DateStamp(const struct TimeVal *tv, struct DateStamp *ds, enum TZCo
 
   LEAVE();
 }
+
 ///
 /// DateStamp2TimeVal
 //  converts a struct DateStamp to a struct TimeVal
@@ -2591,6 +2623,7 @@ void DateStamp2TimeVal(const struct DateStamp *ds, struct TimeVal *tv, enum TZCo
 
   LEAVE();
 }
+
 ///
 /// TimeVal2String
 //  Converts a timeval structure to a string with using DateStamp2String after a convert
@@ -2610,6 +2643,7 @@ BOOL TimeVal2String(char *dst, int dstlen, const struct TimeVal *tv, enum DateSt
   RETURN(result);
   return result;
 }
+
 ///
 /// DateStamp2String
 //  Converts a datestamp to a string. The caller have to make sure that the destination has
@@ -2737,6 +2771,7 @@ BOOL DateStamp2String(char *dst, int dstlen, struct DateStamp *date, enum DateSt
   RETURN(success);
   return success;
 }
+
 ///
 /// DateStamp2RFCString
 BOOL DateStamp2RFCString(char *dst, const int dstlen, const struct DateStamp *date,
@@ -2831,6 +2866,7 @@ BOOL DateStamp2RFCString(char *dst, const int dstlen, const struct DateStamp *da
   RETURN(TRUE);
   return TRUE;
 }
+
 ///
 /// DateStamp2Long
 // Converts a datestamp to a pseudo numeric value
@@ -2875,6 +2911,7 @@ long DateStamp2Long(struct DateStamp *date)
   RETURN(res);
   return res;
 }
+
 ///
 /// String2DateStamp
 //  Tries to converts a string into a datestamp via StrToDate()
@@ -3297,6 +3334,7 @@ int TZtoMinutes(const char *tzone)
 
    return tzcorr == -1 ? 0 : (tzcorr/100)*60 + (tzcorr%100);
 }
+
 ///
 /// FormatSize
 //  Displays large numbers using group separators
@@ -3460,6 +3498,7 @@ void FormatSize(LONG size, char *buf, int buflen, enum SizeFormat forcedPrecisio
 
   LEAVE();
 }
+
 ///
 /// MailExists
 //  Checks if a message still exists
@@ -3488,6 +3527,7 @@ BOOL MailExists(const struct Mail *mailptr, struct Folder *folder)
   RETURN(exists);
   return exists;
 }
+
 ///
 /// DisplayMailList
 //  Lists folder contents in the message listview
@@ -3533,13 +3573,17 @@ void AddMailToFolder(struct Mail *mail, struct Folder *folder)
 {
   ENTER();
 
-  // add the cloned message to the folder
-  LockMailList(folder->messages);
-  AddMailToFolderSimple(mail, folder);
-  UnlockMailList(folder->messages);
+  // make sure we have a valid index as it might have been flushed inbetween
+  if(MA_GetIndex(folder) == TRUE)
+  {
+    // add the cloned message to the folder
+    LockMailList(folder->messages);
+    AddMailToFolderSimple(mail, folder);
+    UnlockMailList(folder->messages);
 
-  // expire the folder's index as we just added a new message
-  MA_ExpireIndex(folder);
+    // expire the folder's index as we just added a new message
+    MA_ExpireIndex(folder);
+  }
 
   LEAVE();
 }
@@ -3578,101 +3622,111 @@ void AddMailToFolderSimple(struct Mail *mail, struct Folder *folder)
 void RemoveMailFromFolder(struct Mail *mail, const BOOL closeWindows, const BOOL checkConnections)
 {
   struct Folder *folder = mail->Folder;
-  struct MailNode *mnode;
   struct ReadMailData *rmData;
   struct ReadMailData *next;
 
   ENTER();
 
-  // now we remove the mail from main mail
-  // listviews in case the folder of it is the
-  // currently active one.
-  if(folder == GetCurrentFolder())
-    DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_RemoveMail, mail);
-
-  // remove the mail from the search window's mail list as well, if the
-  // search window exists at all
-  if(G->SearchMailWinObject != NULL)
-    DoMethod(G->SearchMailWinObject, MUIM_SearchMailWindow_RemoveMail, mail);
-
-  // lets decrease the folder statistics first
-  folder->Total--;
-  folder->Size -= mail->Size;
-
-  if(hasStatusNew(mail))
-    folder->New--;
-
-  if(!hasStatusRead(mail))
-    folder->Unread--;
-
-  if(hasStatusSent(mail))
-    folder->Sent--;
-
-  LockMailList(folder->messages);
-
-  if((mnode = FindMailByAddress(folder->messages, mail)) != NULL)
+  // make sure we have a valid index as it might have been
+  // flushed inbetween
+  if(MA_GetIndex(folder) == TRUE)
   {
-    // remove the mail from the folder's mail list
-    D(DBF_UTIL, "removing mail with subject '%s' from folder '%s'", mail->Subject, folder->Name);
-    RemoveMailNode(folder->messages, mnode);
-    DeleteMailNode(mnode);
-  }
+    struct MailNode *mnode;
 
-  UnlockMailList(folder->messages);
+    // now we remove the mail from main mail
+    // listviews in case the folder of it is the
+    // currently active one.
+    if(folder == GetCurrentFolder())
+      DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_RemoveMail, mail);
 
-  if(checkConnections == TRUE)
-  {
-    int activeConnections;
+    // remove the mail from the search window's mail list as well, if the
+    // search window exists at all
+    if(G->SearchMailWinObject != NULL)
+      DoMethod(G->SearchMailWinObject, MUIM_SearchMailWindow_RemoveMail, mail);
 
-    // now check if the mail to be removed has just been downloaded, but not yet filtered
-    ObtainSemaphoreShared(G->connectionSemaphore);
-    activeConnections = G->activeConnections;
-    ReleaseSemaphore(G->connectionSemaphore);
+    // lets decrease the folder statistics first
+    folder->Total--;
+    folder->Size -= mail->Size;
 
-    // we need to check only if there are any active connections
-    if(activeConnections > 0)
+    if(hasStatusNew(mail))
+      folder->New--;
+
+    if(!hasStatusRead(mail))
+      folder->Unread--;
+
+    if(hasStatusSent(mail))
+      folder->Sent--;
+
+    LockMailList(folder->messages);
+
+    if((mnode = FindMailByAddress(folder->messages, mail)) != NULL)
     {
-      struct MailServerNode *msn;
-      int i = 0;
-      BOOL mailFound = FALSE;
+      // remove the mail from the folder's mail list
+      D(DBF_UTIL, "removing mail with subject '%s' from folder '%s'", mail->Subject, folder->Name);
+      RemoveMailNode(folder->messages, mnode);
+      DeleteMailNode(mnode);
+    }
 
-      while(mailFound == FALSE && (msn = GetMailServer(&C->pop3ServerList, i)) != NULL)
+    UnlockMailList(folder->messages);
+
+    if(checkConnections == TRUE)
+    {
+      int activeConnections;
+
+      // now check if the mail to be removed has just been downloaded, but not yet filtered
+      ObtainSemaphoreShared(G->connectionSemaphore);
+      activeConnections = G->activeConnections;
+      ReleaseSemaphore(G->connectionSemaphore);
+
+      // we need to check only if there are any active connections
+      if(activeConnections > 0)
       {
-        int useCount;
+        struct MailServerNode *msn;
+        int i = 0;
+        BOOL mailFound = FALSE;
 
-        LockMailServer(msn);
-        useCount = msn->useCount;
-        UnlockMailServer(msn);
-
-        if(useCount != 0)
+        while(mailFound == FALSE && (msn = GetMailServer(&C->pop3ServerList, i)) != NULL)
         {
-          LockMailList(msn->downloadedMails);
+          int useCount;
 
-          if((mnode = FindMailByAddress(msn->downloadedMails, mail)) != NULL)
+          LockMailServer(msn);
+          useCount = msn->useCount;
+          UnlockMailServer(msn);
+
+          if(useCount != 0)
           {
-            // remove the mail from the list of just downloaded mails,
-            // so it will not be filtered anymore when the download
-            // process finishes
-            D(DBF_UTIL, "removing mail with subject '%s' from download list", mail->Subject);
-            RemoveMailNode(msn->downloadedMails, mnode);
-            DeleteMailNode(mnode);
+            LockMailList(msn->downloadedMails);
 
-            // we found the mail, but it cannot be part of more than one list thus we
-            // can exit this loop
-            mailFound = TRUE;
+            if((mnode = FindMailByAddress(msn->downloadedMails, mail)) != NULL)
+            {
+              // remove the mail from the list of just downloaded mails,
+              // so it will not be filtered anymore when the download
+              // process finishes
+              D(DBF_UTIL, "removing mail with subject '%s' from download list", mail->Subject);
+              RemoveMailNode(msn->downloadedMails, mnode);
+              DeleteMailNode(mnode);
+
+              // we found the mail, but it cannot be part of more than one list thus we
+              // can exit this loop
+              mailFound = TRUE;
+            }
+
+            UnlockMailList(msn->downloadedMails);
           }
 
-          UnlockMailList(msn->downloadedMails);
+          i++;
         }
-
-        i++;
       }
     }
-  }
 
-  // then we have to mark the folder index as expired so
-  // that it will be saved next time.
-  MA_ExpireIndex(folder);
+    // then we have to mark the folder index as expired so
+    // that it will be saved next time.
+    MA_ExpireIndex(folder);
+  }
+  else
+  {
+    E(DBF_ALWAYS, "no index");
+  }
 
   // Now we check if there is any read window with that very same
   // mail currently open and if so we have to close it.
@@ -3714,55 +3768,65 @@ void RemoveMailFromFolder(struct Mail *mail, const BOOL closeWindows, const BOOL
 struct Mail *ReplaceMailInFolder(const char *mailFile, struct Mail *mail, struct Folder *folder)
 {
   struct Mail *replacedMail = NULL;
-  struct MailNode *mnode;
 
   ENTER();
 
-  LockMailList(folder->messages);
-
-  if((mnode = FindMailByFilename(folder->messages, mailFile)) != NULL)
+  // make sure we have a valid index as it might have been
+  // flushed inbetween
+  if(MA_GetIndex(folder) == TRUE)
   {
-    // remember the replaced mail
-    replacedMail = mnode->mail;
+    struct MailNode *mnode;
 
-    // remove the old mail's stats from the folder stats
-    folder->Size -= replacedMail->Size;
+    LockMailList(folder->messages);
 
-    if(hasStatusNew(replacedMail))
-      folder->New--;
+    if((mnode = FindMailByFilename(folder->messages, mailFile)) != NULL)
+    {
+      // remember the replaced mail
+      replacedMail = mnode->mail;
 
-    if(!hasStatusRead(replacedMail))
-      folder->Unread--;
+      // remove the old mail's stats from the folder stats
+      folder->Size -= replacedMail->Size;
 
-    // clear the replaced mail's folder
-    replacedMail->Folder = NULL;
+      if(hasStatusNew(replacedMail))
+        folder->New--;
 
-    // add the new mail's stats to the folder stats
-    folder->Size += mail->Size;
+      if(!hasStatusRead(replacedMail))
+        folder->Unread--;
 
-    if(hasStatusNew(mail))
-      folder->New++;
+      // clear the replaced mail's folder
+      replacedMail->Folder = NULL;
 
-    if(!hasStatusRead(mail))
-      folder->Unread++;
+      // add the new mail's stats to the folder stats
+      folder->Size += mail->Size;
 
-    // replace the mail in the list and set its folder, but don't
-    // dereference the replaced mail here, this is done outside
-    mnode->mail = mail;
-    mail->Folder = folder;
+      if(hasStatusNew(mail))
+        folder->New++;
 
-    // increase the reference counter
-    ReferenceMail(mail);
+      if(!hasStatusRead(mail))
+        folder->Unread++;
+
+      // replace the mail in the list and set its folder, but don't
+      // dereference the replaced mail here, this is done outside
+      mnode->mail = mail;
+      mail->Folder = folder;
+
+      // increase the reference counter
+      ReferenceMail(mail);
+    }
+    else
+    {
+      AddMailToFolderSimple(mail, folder);
+    }
+
+    UnlockMailList(folder->messages);
+
+    // expire the folder's index as we just added a new message
+    MA_ExpireIndex(folder);
   }
   else
   {
-    AddMailToFolderSimple(mail, folder);
+    E(DBF_ALWAYS, "no index");
   }
-
-  UnlockMailList(folder->messages);
-
-  // expire the folder's index as we just added a new message
-  MA_ExpireIndex(folder);
 
   RETURN(replacedMail);
   return replacedMail;
@@ -3807,6 +3871,7 @@ void ClearFolderMails(struct Folder *folder, BOOL resetstats)
 
   LEAVE();
 }
+
 ///
 /// GetPackMethod
 //  Returns packer type and efficiency
@@ -3844,6 +3909,7 @@ static BOOL GetPackMethod(enum FolderMode fMode, char **method, int *eff)
   RETURN(result);
   return result;
 }
+
 ///
 /// CompressMailFile
 //  Shrinks a message file
@@ -3879,6 +3945,7 @@ static BOOL CompressMailFile(const char *src, const char *dst, const char *passw
   RETURN((BOOL)(error == XPKERR_OK));
   return (BOOL)(error == XPKERR_OK);
 }
+
 ///
 /// UncompressMailFile
 //  Expands a compressed message file
@@ -3912,6 +3979,7 @@ static BOOL UncompressMailFile(const char *src, const char *dst, const char *pas
   RETURN((BOOL)(error == XPKERR_OK));
   return (BOOL)(error == XPKERR_OK);
 }
+
 ///
 /// TransferMailFile
 //  Copies or moves a message file, handles compression
@@ -4047,6 +4115,7 @@ int TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
   RETURN(success);
   return success;
 }
+
 ///
 /// RepackMailFile
 //  (Re/Un)Compresses a message file
@@ -4142,6 +4211,7 @@ BOOL RepackMailFile(struct Mail *mail, enum FolderMode dstMode, const char *pass
   RETURN(success);
   return success;
 }
+
 ///
 /// DoPack
 //  Compresses a file
@@ -4167,6 +4237,7 @@ BOOL DoPack(const char *file, const char *newfile, const struct Folder *folder)
   RETURN(result);
   return result;
 }
+
 ///
 /// StartUnpack
 //  Unpacks a file to a temporary file
@@ -4212,6 +4283,7 @@ char *StartUnpack(const char *file, char *newfile, const struct Folder *folder)
   RETURN(result);
   return result;
 }
+
 ///
 /// FinishUnpack
 //  Deletes temporary unpacked file
@@ -4244,6 +4316,7 @@ void FinishUnpack(const char *file)
 
   LEAVE();
 }
+
 ///
 
 /*** Hooks ***/
@@ -4305,6 +4378,7 @@ BOOL SafeOpenWindow(Object *obj)
   RETURN(success);
   return success;
 }
+
 ///
 /// DisposeModule
 // Free resources of a MUI window
@@ -4585,6 +4659,7 @@ void LoadLayout(void)
 
   LEAVE();
 }
+
 ///
 /// SaveLayout
 //  Saves column widths to ENV(ARC):MUI/YAM.cfg
@@ -4675,6 +4750,7 @@ unsigned char ConvertKey(const struct IntuiMessage *imsg)
   RETURN(code);
   return code;
 }
+
 ///
 
 /*** GFX related ***/
@@ -4827,6 +4903,7 @@ void PGPGetPassPhrase(void)
 
   LEAVE();
 }
+
 ///
 /// PGPClearPassPhrase
 //  Clears the ENV variable containing the PGP passphrase
@@ -4842,6 +4919,7 @@ void PGPClearPassPhrase(BOOL force)
 
   LEAVE();
 }
+
 ///
 /// PGPCommand
 //  Launches a PGP command
@@ -5413,6 +5491,7 @@ const char *IdentifyFile(const char *fname)
   RETURN(ctype);
   return ctype;
 }
+
 ///
 /// GetRealPath
 //  Function that gets the real path out of a supplied path. It will correctly resolve pathes like PROGDIR: aso.
@@ -5942,6 +6021,7 @@ abort:
   RETURN(similar);
   return similar;
 }
+
 ///
 /// CRC32
 //  Function that calculates a 32bit crc checksum for a provided buffer.

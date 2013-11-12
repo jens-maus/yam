@@ -682,18 +682,16 @@ BOOL MA_GetIndex(struct Folder *folder)
           DisplayStatistics(folder, FALSE);
       }
       else
-        W(DBF_FOLDER, "password of protected folder '%s' couldn't be verified!", folder->Name);
+        W(DBF_FOLDER, "password of protected folder '%s' could not be verified!", folder->Name);
     }
-    else
-      W(DBF_FOLDER, "skipping index loading due to LoadedMode %ld for folder '%s'", folder->LoadedMode, folder->Name);
 
     // set the lastAccessTime of the folder to the current time
     // so that the index expunge timer knows when to free the folder
     // index in case it hasn't been touched for a certain time
     folder->lastAccessTime = GetDateStamp();
 
-    // check if the load status is valid or not
-    result = (BOOL)(folder->LoadedMode == LM_VALID);
+    // check if the index is either valid or currently being rebuilt
+    result = (BOOL)(folder->LoadedMode == LM_VALID || folder->LoadedMode == LM_REBUILD);
   }
 
   RETURN(result);

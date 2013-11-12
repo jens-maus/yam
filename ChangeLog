@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-11-12 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MAf.c, YAM_UT.c: make sure to have a loaded and valid folder whenever a
+    mail is to be added or removed from a folder. Otherwise it might happen that
+    the corresponding mail file is moved somewhere else, but the index entry
+    stays in the former folder. This closes #445.
+
 2013-11-11 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MA.c, mui/MainWindow.c: integrated the setup of the embedded read pane
