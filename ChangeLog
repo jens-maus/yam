@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-11-13 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MAf.c: use a temporary folder structure during rebuilding a folder's
+    index. This saves lots of semaphore obtain/release action and should reduce
+    the rescan time of big folders a bit.
+
 2013-11-12 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MAf.c, YAM_UT.c: make sure to have a loaded and valid folder whenever a
