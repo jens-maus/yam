@@ -161,7 +161,7 @@ int base64decode(char **out, const char *in, size_t inlen)
   ENTER();
 
   if(inlen > 0 && (inlen % 4) == 0 &&
-     (buffer = malloc(inlen * 3 / 4)) != NULL)
+     (buffer = malloc(inlen * 3 / 4 + 1)) != NULL)
   {
     unsigned char *inp = (unsigned char *)in;
     unsigned char *outp = buffer;

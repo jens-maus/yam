@@ -10,6 +10,13 @@ $URL$
   * YAM_MAf.c: use a temporary folder structure during rebuilding a folder's
     index. This saves lots of semaphore obtain/release action and should reduce
     the rescan time of big folders a bit.
+  * mime/base64.c: the output buffer for the decoding was always one byte too
+    small to keep the terminating NUL byte. This always went unnoticed even when
+    running tools like Wipeout/Mungwall if the length of the source string was
+    not a multiple of 8. In this case the granularity of AmigaOS' memory system
+    shadowed this buffer overrun. Only for source strings with a length being an
+    exact multiple of 8 bytes the buffer overrun eventually really happend. This
+    closes #449.
 
 2013-11-12 Thore Böckelmann <tboeckel@gmx.de>
 
