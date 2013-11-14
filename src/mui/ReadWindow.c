@@ -341,7 +341,7 @@ OVERLOAD(OM_NEW)
   // create the read window object
   if(menuStripObject != NULL && (obj = DoSuperNew(cl, obj,
 
-    MUIA_HelpNode, "Windows#Readwindow",
+    MUIA_HelpNode, "Windows/Readwindow",
     MUIA_Window_ID, MAKE_ID('R','D','W', data->windowNumber),
     MUIA_Window_Menustrip, menuStripObject,
     WindowContents, VGroup,
@@ -350,7 +350,7 @@ OVERLOAD(OM_NEW)
         (VGroup,
           Child, HGroupV,
             Child, data->windowToolbar = ReadWindowToolbarObject,
-              MUIA_HelpNode, "Windows#ReadwindowToolbar",
+              MUIA_HelpNode, "Windows/Readwindow#Toolbar",
             End,
           End,
           Child, data->statusBar = ReadWindowStatusBarObject,

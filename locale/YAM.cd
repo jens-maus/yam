@@ -7466,3 +7466,15 @@ Incoming folder
 MSG_HELP_CO_PO_POP_INCOMINGFOLDER (2518//)
 Allows to set a different folder where mails\n\
 will be stored after having received them.
+;
+MSG_DOC_LANGUAGE_CODE (2519//)
+
+; !!! NOTE !!!
+; When translating MSG_LANGUAGE_CODE please put the 
+; language code (see http://yam.ch/wiki/TracLanguages)
+; for the language you translate YAM to here. This
+; language code will then be appended to each online
+; documentation request (HELP hotkey) and thus a
+; potentially translated page should come up. For
+; english, the MSG_LANGUAGE_CODE should be empty.
+;

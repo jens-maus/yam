@@ -6456,3 +6456,6 @@ Beskjed %%ld av %ld
 ; Message %%ld of %ld
 ; COUNT, COUNT
 ;
+MSG_DOC_LANGUAGE_CODE
+nb
+;

@@ -204,7 +204,7 @@ OVERLOAD(OM_NEW)
 
   if((obj = DoSuperNew(cl, obj,
 
-    MUIA_HelpNode, "Windows#Addressbook",
+    MUIA_HelpNode, "Windows/Addressbook",
     MUIA_Window_Menustrip, MenustripObject,
       MenuChild, MenuObject,
         MUIA_Menu_Title, tr(MSG_CO_CrdABook),
@@ -268,13 +268,13 @@ OVERLOAD(OM_NEW)
     WindowContents, VGroup,
       Child, hasHideToolBarFlag(C->HideGUIElements) ?
         (HGroup,
-          MUIA_HelpNode, "Windows#AddressbookToolbar",
+          MUIA_HelpNode, "Windows/Addressbook#Toolbar",
           Child, BT_TO  = MakeButton("_To:"),
           Child, BT_CC  = MakeButton("_CC:"),
           Child, BT_BCC = MakeButton("_BCC:"),
         End) :
         (HGroup, GroupSpacing(0),
-          MUIA_HelpNode, "Windows#AddressbookToolbar",
+          MUIA_HelpNode, "Windows/Addressbook#Toolbar",
           Child, VGroup,
             MUIA_Weight, 10,
             MUIA_Group_Spacing, 1,

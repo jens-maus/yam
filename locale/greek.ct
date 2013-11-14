@@ -8630,3 +8630,6 @@ MSG_WR_ENTER_NEW_NAME
 Εισάγετε νέο όνομα επισύναψης:
 ; Enter new attachment name:
 ;
+MSG_DOC_LANGUAGE_CODE
+el
+;

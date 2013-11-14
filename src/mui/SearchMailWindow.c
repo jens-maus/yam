@@ -158,7 +158,7 @@ OVERLOAD(OM_NEW)
 
   if((obj = DoSuperNew(cl, obj,
 
-    MUIA_HelpNode, "Windows#Searchwindow",
+    MUIA_HelpNode, "Windows/Searchwindow",
     MUIA_Window_ID, MAKE_ID('F','I','N','D'),
     WindowContents, VGroup,
 

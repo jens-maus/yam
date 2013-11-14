@@ -10651,3 +10651,6 @@ cui conservare i messaggi una volta inviati.
 ; Allows to set a different folder where mails\n\
 ; will be stored after being sent out.
 ;
+MSG_DOC_LANGUAGE_CODE
+it
+;

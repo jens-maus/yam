@@ -834,7 +834,7 @@ OVERLOAD(OM_NEW)
         obj = DoSuperNew(cl, obj,
           MUIA_Window_Title, "",
           MUIA_Window_ScreenTitle, "",
-          MUIA_HelpNode, "Windows#Writewindow",
+          MUIA_HelpNode, "Windows/Writewindow",
           MUIA_Window_ID, MAKE_ID('W','R','I','B'),
           MUIA_Window_AppWindow, FALSE,
           MUIA_Window_Menustrip, menuStripObject,
@@ -1062,7 +1062,7 @@ OVERLOAD(OM_NEW)
 
           MUIA_Window_Title, "",
           MUIA_Window_ScreenTitle, "",
-          MUIA_HelpNode, "Windows#Writewindow",
+          MUIA_HelpNode, "Windows/Writewindow",
           MUIA_Window_ID, MAKE_ID('W','R','W', data->windowNumber),
           MUIA_Window_AppWindow, TRUE,
           MUIA_Window_Menustrip, menuStripObject,
@@ -1072,7 +1072,7 @@ OVERLOAD(OM_NEW)
 
               // Message
               Child, VGroup,
-                MUIA_HelpNode, "Windows#WritewindowMessagesheet",
+                MUIA_HelpNode, "Windows/Writewindow#Messagesheet",
 
                 Child, HGroup,
                   GroupSpacing(0),
@@ -1164,7 +1164,7 @@ OVERLOAD(OM_NEW)
                 End),
 
                 Child, HGroup,
-                  MUIA_HelpNode, "Windows#WritewindowInternaleditor",
+                  MUIA_HelpNode, "Windows/Writewindow#Internaleditor",
                   MUIA_Group_Spacing, 0,
                   Child, data->TE_EDIT = MailTextEditObject,
                     InputListFrame,
@@ -1193,7 +1193,7 @@ OVERLOAD(OM_NEW)
 
               // Attachments
               Child, VGroup,
-                MUIA_HelpNode, "Windows#WritewindowAttachmentsheet",
+                MUIA_HelpNode, "Windows/Writewindow#Attachmentsheet",
                 Child, NListviewObject,
                   MUIA_CycleChain, TRUE,
                   MUIA_NListview_NList, data->LV_ATTACH = WriteAttachmentListObject,
@@ -1227,7 +1227,7 @@ OVERLOAD(OM_NEW)
 
               // Options
               Child, VGroup,
-                MUIA_HelpNode, "Windows#WritewindowOptionssheet",
+                MUIA_HelpNode, "Windows/Writewindow#OptionssheetWindows",
                 Child, ColGroup(2),
                   GroupFrameT(tr(MSG_Options)),
 

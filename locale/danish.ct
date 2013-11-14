@@ -7320,3 +7320,6 @@ Besked %%ld af %ld
 ; Message %%ld of %ld
 ; COUNT, COUNT
 ;
+MSG_DOC_LANGUAGE_CODE
+da
+;

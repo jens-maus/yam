@@ -10430,3 +10430,6 @@ yakýn tarihli iletiye atlar.
 ; Jump to the most recent message when\n\
 ; entering this folder.
 ;
+MSG_DOC_LANGUAGE_CODE
+tr
+;

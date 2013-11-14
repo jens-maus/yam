@@ -9950,3 +9950,6 @@ MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_HAM
 Ustawia status odfiltrowanej wiadomo¶ci na \"po¿±dana\"
 ; Set the status of the filtered mail to 'Not spam'
 ;
+MSG_DOC_LANGUAGE_CODE
+pl
+;

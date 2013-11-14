@@ -8821,3 +8821,49 @@ Position und Größe aller Fenster permanent\n\
 speichern, sowie das Layout bestimmter Gruppen\n\
 und den Zustand einiger graphischer Objekte.
 ;
+MSG_CO_SMTP_FOLDERS
+Standard-Postfächer
+;
+MSG_CO_SMTP_SENTFOLDER
+'Gesendete'-Postfach
+;
+MSG_HELP_CO_PO_SMTP_SENTFOLDER
+Erlaubt ein alternatives Postfach für alle\n\
+gesendeten E-Mails dieses SMTP-Accounts zu\n\
+definieren.
+;
+MSG_CO_IDENTITY_SAVESENTMAIL
+Versendete E-Mails speichern
+;
+MSG_HELP_CO_CH_IDENTITY_SAVESENTMAIL
+Wenn aktiviert, werden versendete E-Mails nach\n\
+dem Transfer im Gesendete-Postfach gespeichert.\n\
+Ansonsten werden Sie direkt nach dem Transfer\n\
+gelöscht.
+;
+MSG_CO_IDENTITY_ALTSENTFOLDER
+Alternatives Gesendete-Postfach:
+;
+MSG_HELP_CO_CH_IDENTITY_ALTSENTFOLDER
+Wenn aktiviert, werden alle versendeten E-Mails\n\
+in einem anderen Postfach abgelegt und nicht in\n\
+dem unter TCP/IP konfiguriertem Gesendete-Postfach.
+;
+MSG_HELP_CO_TX_IDENTITY_ALTSENTFOLDER
+Erlaubt es ein alternatives Postfach auszuwählen\n\
+in dem gesendete E-Mails gespeichert werden sollen.
+;
+MSG_CO_POP_FOLDERS
+Standard-Postfächer
+;
+MSG_CO_POP_INCOMINGFOLDER
+'Eingang'-Postfach
+;
+MSG_HELP_CO_PO_POP_INCOMINGFOLDER
+Erlaubt es ein anderes Postfach auszuwählen\n\
+in dem eingehenden E-Mails dieses POP3 Accounts\n\
+gespeichert werden sollen.
+;
+MSG_DOC_LANGUAGE_CODE
+de
+;

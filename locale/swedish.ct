@@ -9544,3 +9544,6 @@ MSG_QUICKSEARCH_BODY
 Meddelande
 ; Mail body
 ;
+MSG_DOC_LANGUAGE_CODE
+sv
+;

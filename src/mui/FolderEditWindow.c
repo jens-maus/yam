@@ -536,7 +536,7 @@ OVERLOAD(OM_NEW)
 
   if((obj = DoSuperNew(cl, obj,
 
-    MUIA_HelpNode,  "Windows#Foldersettings",
+    MUIA_HelpNode,  "Windows/Foldersettings",
     MUIA_Window_ID, MAKE_ID('F','O','L','D'),
     MUIA_Window_LeftEdge, MUIV_Window_LeftEdge_Centered,
     MUIA_Window_TopEdge,  MUIV_Window_TopEdge_Centered,

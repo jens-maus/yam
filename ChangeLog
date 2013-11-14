@@ -7,6 +7,18 @@ $URL$
 
 2013-11-14 Jens Maus <mail@jens-maus.de>
 
+  * mui/YAMApplication.c, misc: modified the MUIM_Application_ShowHelp method to
+    also consider the language code so that upon pressing the HELP key YAM will
+    open an URL which will point to an eventually translated documentation page
+    rather than always pointing to the english documentation pages only. In
+    addition, as the documentation had been updated lately all MUIA_HelpNode
+    uses had been updated to point to their correct documentation pages on our
+    yam.ch wiki.
+  * locale: added a two-character language code to all catalogs (except english)
+    which is synchronized to our supported documentation languages on our wiki
+    pages (https://yam.ch/wiki/TracLanguages). This will allow to popup the
+    online documentation localized rather than always pointing at the english
+    version of the documentation (given a page had been translated already).
   * mui/TCPIPConfigPage.c, misc: added a FolderRequestPopupObject to the POP3
     and SMTP config pages to allow to set an alternative incoming and sent
     folder. This refs #400. Please note, that the functionality is yet not being

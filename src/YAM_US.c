@@ -693,7 +693,7 @@ static struct US_ClassData *US_New(BOOL supervisor)
     data->GUI.WI = WindowObject,
        MUIA_Window_Title, tr(MSG_MA_MUsers),
        MUIA_Window_ScreenTitle, CreateScreenTitle(data->ScreenTitle, sizeof(data->ScreenTitle), tr(MSG_MA_MUsers)),
-       MUIA_HelpNode, "Windows#MultipleUsers",
+       MUIA_HelpNode, "Windows/Userswindow",
        MUIA_Window_ID, MAKE_ID('U','S','E','R'),
        WindowContents, VGroup,
           Child, NListviewObject,

@@ -565,7 +565,7 @@ OVERLOAD(OM_NEW)
     MUIA_Application_Description,    tr(MSG_APP_DESCRIPTION),
     MUIA_Application_UseRexx,        FALSE,
     MUIA_Application_UsedClasses,    Classes,
-    MUIA_Application_HelpFile,       "http://docs.yam.ch",
+    MUIA_Application_HelpFile,       "http://yam.ch/wiki",
     MUIA_Application_DiskObject,     G->HideIcon,
 
     TAG_MORE, inittags(msg))) != NULL)
@@ -732,11 +732,22 @@ OVERLOAD(MUIM_Application_ShowHelp)
     // construct the URL from the HelpFile and the HelpNode
     char *url = NULL;
     char *helpNode = ((struct MUIP_Application_ShowHelp *)msg)->node;
+    const char *langCode = tr(MSG_DOC_LANGUAGE_CODE);
 
     if(helpNode != NULL)
-      asprintf(&url, "%s/%s", helpFile, helpNode);
+    {
+      if(IsStrEmpty(langCode))
+        asprintf(&url, "%s/Documentation/%s", helpFile, helpNode);
+      else
+        asprintf(&url, "%s/%s:Documentation/%s", helpFile, langCode, helpNode);
+    }
     else
-      asprintf(&url, "%s", helpFile);
+    {
+      if(IsStrEmpty(langCode))
+        asprintf(&url, "%s/Documentation", helpFile);
+      else
+        asprintf(&url, "%s/%s:Documentation", helpFile, langCode);
+    }
 
     D(DBF_GUI, "opening help url: '%s'", url);
     GotoURL(url, FALSE);

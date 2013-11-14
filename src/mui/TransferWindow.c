@@ -76,7 +76,7 @@ OVERLOAD(OM_NEW)
     MUIA_Window_CloseGadget, TRUE,
     MUIA_Window_UseRightBorderScroller, TRUE,
     MUIA_Window_SizeRight, TRUE,
-    MUIA_HelpNode, "Windows#Mailtransfers",
+    MUIA_HelpNode, "Windows/Mailtransfers",
     WindowContents, VGroup,
       MUIA_Background, MUII_GroupBack,
       Child, transferList = TransferControlListObject,

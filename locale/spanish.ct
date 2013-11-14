@@ -8260,3 +8260,6 @@ MSG_LOG_FILTER_DONE
 %ld mensaje(s) filtrado(s) con %ld coincide(n)
 ; Filtered %ld message(s) with %ld match(es)
 ;
+MSG_DOC_LANGUAGE_CODE
+es
+;

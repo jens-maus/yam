@@ -84,7 +84,7 @@ OVERLOAD(OM_NEW)
   }
 
   if((obj = DoSuperNew(cl, obj,
-    MUIA_HelpNode, "Windows#AddressbookEnteringaddresses",
+    MUIA_HelpNode, "Windows/Addressbook#Enteringaddresses",
     MUIA_Window_ID, MAKE_ID('E','D','A','D'),
 
     WindowContents, VGroup,

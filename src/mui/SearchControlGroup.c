@@ -188,7 +188,7 @@ OVERLOAD(OM_NEW)
   if((obj = DoSuperNew(cl, obj,
 
     MUIA_Group_Horiz, FALSE,
-    MUIA_HelpNode, "Windows#SearchwindowSearchcriteria",
+    MUIA_HelpNode, "Windows/Searchwindow",
      Child, HGroup,
         Child, Label1(tr(MSG_FI_SearchIn)),
         Child, data->PG_MODE = PageGroup,

@@ -8315,3 +8315,6 @@ MSG_ER_POP3_UIDLHASH_INIT_FAILED
 Nem sikerült elindítani az UIDL hash táblát.
 ; Failed to initialized UIDL hash table.
 ;
+MSG_DOC_LANGUAGE_CODE
+hu
+;

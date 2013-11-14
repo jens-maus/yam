@@ -10238,3 +10238,6 @@ MSG_QUICKSEARCH_BODY
 Text zprávy
 ; Mail body
 ;
+MSG_DOC_LANGUAGE_CODE
+cs
+;
