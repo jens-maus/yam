@@ -1221,6 +1221,7 @@ int LoadConfig(struct Config *co, const char *fname, struct FolderList **oldfold
                 else if(stricmp(q, "AUTH-Method") == 0)          setFlag(msn->flags, SMTPAuthMethod2MSF(atoi(value)));
                 else if(stricmp(q, "SSLCert") == 0)              strlcpy(msn->certFingerprint, value, sizeof(msn->certFingerprint));
                 else if(stricmp(q, "SSLCertFailures") == 0)      msn->certFailures = atoi(value);
+                else if(stricmp(q, "SentFolder") == 0)           strlcpy(msn->mailStoreFolder, value, sizeof(msn->mailStoreFolder));
                 else
                   W(DBF_CONFIG, "unknown '%s' SMTP config tag", q);
               }
@@ -1278,6 +1279,7 @@ int LoadConfig(struct Config *co, const char *fname, struct FolderList **oldfold
                 else if(stricmp(q, "NotifyCommand") == 0)          strlcpy(msn->notifyCommand, value, sizeof(msn->notifyCommand));
                 else if(stricmp(q, "SSLCert") == 0)                strlcpy(msn->certFingerprint, value, sizeof(msn->certFingerprint));
                 else if(stricmp(q, "SSLCertFailures") == 0)        msn->certFailures = atoi(value);
+                else if(stricmp(q, "IncomingFolder") == 0)         strlcpy(msn->mailStoreFolder, value, sizeof(msn->mailStoreFolder));
                 else
                   W(DBF_CONFIG, "unknown '%s' POP config tag", q);
               }
@@ -2395,6 +2397,7 @@ BOOL SaveConfig(struct Config *co, const char *fname)
       fprintf(fh, "SMTP%02d.AUTH-Method           = %d\n", i, MSF2SMTPAuthMethod(msn));
       fprintf(fh, "SMTP%02d.SSLCert               = %s\n", i, msn->certFingerprint);
       fprintf(fh, "SMTP%02d.SSLCertFailures       = %d\n", i, msn->certFailures);
+      fprintf(fh, "SMTP%02d.SentFolder            = %s\n", i, msn->mailStoreFolder);
 
       i++;
     }
@@ -2429,6 +2432,7 @@ BOOL SaveConfig(struct Config *co, const char *fname)
       fprintf(fh, "POP%02d.NotifyCommand          = %s\n", i, msn->notifyCommand);
       fprintf(fh, "POP%02d.SSLCert                = %s\n", i, msn->certFingerprint);
       fprintf(fh, "POP%02d.SSLCertFailures        = %d\n", i, msn->certFailures);
+      fprintf(fh, "POP%02d.IncomingFolder         = %s\n", i, msn->mailStoreFolder);
 
       i++;
     }

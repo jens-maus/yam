@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-11-14 Jens Maus <mail@jens-maus.de>
+
+  * mui/TCPIPConfigPage.c, misc: added a FolderRequestPopupObject to the POP3
+    and SMTP config pages to allow to set an alternative incoming and sent
+    folder. This refs #400. Please note, that the functionality is yet not being
+    used in YAM as we first have to change the way folders are referenced within
+    YAM.
+
 2013-11-13 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MAf.c: use a temporary folder structure during rebuilding a folder's

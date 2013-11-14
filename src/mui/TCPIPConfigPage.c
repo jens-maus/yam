@@ -45,6 +45,7 @@
 #include "mui/AccountList.h"
 #include "mui/ConfigPage.h"
 #include "mui/ConfigPageList.h"
+#include "mui/FolderRequestPopup.h"
 
 #include "Config.h"
 #include "MailServers.h"
@@ -99,6 +100,8 @@ struct Data
   Object *ST_SMTPAUTHUSER;
   Object *ST_SMTPAUTHPASS;
   Object *CH_SMTP8BIT;
+  Object *PO_SMTP_SENTFOLDER;
+  Object *PO_POP_INCOMINGFOLDER;
   #if defined(__amigaos4__)
   Object *CH_POP3_NOTIFY_OS41SYSTEM;
   #endif
@@ -158,6 +161,8 @@ OVERLOAD(OM_NEW)
   Object *ST_SMTPAUTHUSER;
   Object *ST_SMTPAUTHPASS;
   Object *CH_SMTP8BIT;
+  Object *PO_SMTP_SENTFOLDER;
+  Object *PO_POP_INCOMINGFOLDER;
   #if defined(__amigaos4__)
   Object *CH_POP3_NOTIFY_OS41SYSTEM;
   #endif
@@ -325,6 +330,12 @@ OVERLOAD(OM_NEW)
                 Child, MakeCheckGroup(&CH_APPLYREMOTEFILTERS, tr(MSG_CO_APPLY_REMOTE_FILTERS)),
 
                 Child, HSpace(1),
+                Child, HBarT(tr(MSG_CO_POP_FOLDERS)), End,
+
+                Child, Label2(tr(MSG_CO_POP_INCOMINGFOLDER)),
+                Child, PO_POP_INCOMINGFOLDER = FolderRequestPopupObject, End,
+
+                Child, HSpace(1),
                 Child, HBarT(tr(MSG_CO_POP_NOTIFICATION)), End,
 
                 Child, HSpace(1),
@@ -471,6 +482,13 @@ OVERLOAD(OM_NEW)
                   Child, HSpace(0),
                 End,
 
+                Child, HSpace(1),
+                Child, HBarT(tr(MSG_CO_SMTP_FOLDERS)), End,
+
+                Child, Label2(tr(MSG_CO_SMTP_SENTFOLDER)),
+                Child, PO_SMTP_SENTFOLDER = FolderRequestPopupObject,
+                End,
+
                 Child, HVSpace,
                 Child, HVSpace,
 
@@ -528,6 +546,8 @@ OVERLOAD(OM_NEW)
     data->ST_SMTPAUTHUSER =           ST_SMTPAUTHUSER;
     data->ST_SMTPAUTHPASS =           ST_SMTPAUTHPASS;
     data->CH_SMTP8BIT =               CH_SMTP8BIT;
+    data->PO_SMTP_SENTFOLDER =        PO_SMTP_SENTFOLDER;
+    data->PO_POP_INCOMINGFOLDER =     PO_POP_INCOMINGFOLDER;
     #if defined(__amigaos4__)
     data->CH_POP3_NOTIFY_OS41SYSTEM = CH_POP3_NOTIFY_OS41SYSTEM;
     #endif // __amigaos4__
@@ -564,6 +584,8 @@ OVERLOAD(OM_NEW)
     SetHelp(CH_POP3_NOTIFY_CMD,        MSG_HELP_CO_CH_NOTICMD);
     SetHelp(ST_POP3_NOTIFY_CMD,        MSG_HELP_CO_ST_NOTICMD);
     SetHelp(ST_POP3_NOTIFY_SOUND,      MSG_HELP_CO_ST_NOTISOUND);
+    SetHelp(PO_SMTP_SENTFOLDER,        MSG_HELP_CO_PO_SMTP_SENTFOLDER);
+    SetHelp(PO_POP_INCOMINGFOLDER,     MSG_HELP_CO_PO_POP_INCOMINGFOLDER);
     #if defined(__amigaos4__)
     SetHelp(CH_POP3_NOTIFY_OS41SYSTEM, MSG_HELP_CO_CH_NOTIOS41SYSTEM);
     #endif // __amigaos4__
@@ -597,6 +619,7 @@ OVERLOAD(OM_NEW)
     DoMethod(ST_POP3_NOTIFY_CMD,        MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, obj, 1, METHOD(GUIToPOP3));
     DoMethod(CH_POP3_NOTIFY_SOUND,      MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, obj, 1, METHOD(GUIToPOP3));
     DoMethod(ST_POP3_NOTIFY_SOUND,      MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, obj, 1, METHOD(GUIToPOP3));
+    DoMethod(PO_POP_INCOMINGFOLDER,     MUIM_Notify, MUIA_FolderRequestPopup_FolderChanged, MUIV_EveryTime, obj, 1, METHOD(GUIToPOP3));
 
     // connect SMTP related stuff to the corresponding Hooks
     DoMethod(LV_SMTP              , MUIM_Notify, MUIA_NList_Active,     MUIV_EveryTime, obj, 1, METHOD(SMTPToGUI));
@@ -613,6 +636,7 @@ OVERLOAD(OM_NEW)
     DoMethod(BT_SMTPUP            , MUIM_Notify, MUIA_Pressed,          FALSE,          LV_SMTP, 3, MUIM_NList_Move, MUIV_NList_Move_Selected, MUIV_NList_Move_Previous);
     DoMethod(BT_SMTPDOWN          , MUIM_Notify, MUIA_Pressed,          FALSE,          LV_SMTP, 3, MUIM_NList_Move, MUIV_NList_Move_Selected, MUIV_NList_Move_Next);
     DoMethod(CY_SMTPSECURE,         MUIM_Notify, MUIA_Cycle_Active,     MUIV_EveryTime, obj, 1, METHOD(GUIToSMTP));
+    DoMethod(PO_SMTP_SENTFOLDER,    MUIM_Notify, MUIA_FolderRequestPopup_FolderChanged, MUIV_EveryTime, obj, 1, METHOD(GUIToSMTP));
 
     // set some additional cyclechain data
     set(BT_POPUP,    MUIA_CycleChain, TRUE);
@@ -742,6 +766,7 @@ DECLARE(POP3ToGUI)
     nnset(data->CH_POP3_NOTIFY_CMD,        MUIA_Selected,        msn->notifyByCommand);
     nnset(data->ST_POP3_NOTIFY_SOUND,      MUIA_String_Contents, msn->notifySound);
     nnset(data->ST_POP3_NOTIFY_CMD,        MUIA_String_Contents, msn->notifyCommand);
+    nnset(data->PO_POP_INCOMINGFOLDER,     MUIA_FolderRequestPopup_Folder, msn->mailStoreFolder);
 
     set(data->NM_INTERVAL, MUIA_Disabled, hasServerDownloadPeriodically(msn) == FALSE);
     set(data->ST_WARNSIZE, MUIA_Disabled, hasServerDownloadLargeMails(msn) == FALSE);
@@ -904,6 +929,8 @@ DECLARE(GUIToPOP3)
       msn->notifyByCommand = GetMUICheck(data->CH_POP3_NOTIFY_CMD);
       GetMUIString(msn->notifySound, data->ST_POP3_NOTIFY_SOUND, sizeof(msn->notifySound));
       GetMUIString(msn->notifyCommand, data->ST_POP3_NOTIFY_CMD, sizeof(msn->notifyCommand));
+      
+      strlcpy(msn->mailStoreFolder, (char *)xget(data->PO_POP_INCOMINGFOLDER, MUIA_FolderRequestPopup_Folder), sizeof(msn->mailStoreFolder));
 
       #if defined(__amigaos4__)
       set(data->CH_POP3_NOTIFY_OS41SYSTEM, MUIA_Disabled, G->applicationID == 0 || LIB_VERSION_IS_AT_LEAST(ApplicationBase, 53, 2) == FALSE);
@@ -1015,13 +1042,14 @@ DECLARE(SMTPToGUI)
     // all notifies here are nnset() notifies so that we don't trigger any additional
     // notify or otherwise we would run into problems.
 
-    nnset(data->CH_SMTPENABLED,   MUIA_Selected,        isServerActive(msn));
-    nnset(data->ST_SMTPDESC,      MUIA_String_Contents, msn->description);
-    nnset(data->ST_SMTPHOST,      MUIA_String_Contents, msn->hostname);
-    nnset(data->ST_SMTPPORT,      MUIA_String_Integer,  msn->port);
-    nnset(data->ST_SMTPAUTHUSER,  MUIA_String_Contents, msn->username);
-    nnset(data->ST_SMTPAUTHPASS,  MUIA_String_Contents, msn->password);
-    nnset(data->CH_SMTP8BIT,      MUIA_Selected,        hasServer8bit(msn));
+    nnset(data->CH_SMTPENABLED,     MUIA_Selected,                  isServerActive(msn));
+    nnset(data->ST_SMTPDESC,        MUIA_String_Contents,           msn->description);
+    nnset(data->ST_SMTPHOST,        MUIA_String_Contents,           msn->hostname);
+    nnset(data->ST_SMTPPORT,        MUIA_String_Integer,            msn->port);
+    nnset(data->ST_SMTPAUTHUSER,    MUIA_String_Contents,           msn->username);
+    nnset(data->ST_SMTPAUTHPASS,    MUIA_String_Contents,           msn->password);
+    nnset(data->CH_SMTP8BIT,        MUIA_Selected,                  hasServer8bit(msn));
+    nnset(data->PO_SMTP_SENTFOLDER, MUIA_FolderRequestPopup_Folder, msn->mailStoreFolder);
 
     xset(data->CY_SMTPSECURE, MUIA_NoNotify,     TRUE,
                               MUIA_Cycle_Active, MSF2SMTPSecMethod(msn),
@@ -1205,6 +1233,9 @@ DECLARE(GUIToSMTP)
         set(data->ST_SMTPAUTHUSER, MUIA_Disabled, TRUE);
         set(data->ST_SMTPAUTHPASS, MUIA_Disabled, TRUE);
       }
+
+      // get the sent folder
+      strlcpy(msn->mailStoreFolder, (char *)xget(data->PO_SMTP_SENTFOLDER, MUIA_FolderRequestPopup_Folder), sizeof(msn->mailStoreFolder));
 
       // we also have to update the SMTP Server Array
       // in case the user changes to the Identities

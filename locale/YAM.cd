@@ -6763,15 +6763,6 @@ MSG_HELP_CO_ST_IDENTITY_PHOTOURL (2322//)
 An optional URL to a photo associated with\n\
 this user identity.
 ;
-MSG_HELP_CO_CH_IDENTITY_SENTFOLDER (2323//)
-If enabled, sent mail will be stored in a\n\
-sent mail folder. Otherwise the sent mail\n\
-will be deleted.
-;
-MSG_HELP_CO_TX_IDENTITY_SENTFOLDER (2324//)
-Allows to specify which mail folder should\n\
-be used when storing sent mail.
-;
 MSG_HELP_CO_CH_IDENTITY_QUOTEMAILS (2325//)
 When replying or forwarding mails text will\n\
 be quoted if this option is enabled.
@@ -7446,3 +7437,32 @@ MSG_HELP_CO_PO_SMTP_SENTFOLDER (2510//)
 Allows to set a different folder where mails\n\
 will be stored after being sent out.
 ;
+MSG_CO_IDENTITY_SAVESENTMAIL (2511//)
+After transfer store mail in sent folder
+;
+MSG_HELP_CO_CH_IDENTITY_SAVESENTMAIL (2512//)
+If enabled, sent mail will be stored after\n\
+the mail transfer. Otherwise the sent mail\n\
+will be deleted.
+;
+MSG_CO_IDENTITY_ALTSENTFOLDER (2513//)
+Use alternative sent folder:
+;
+MSG_HELP_CO_CH_IDENTITY_ALTSENTFOLDER (2514//)
+If enabled, sent mail will be stored in an\n\
+alternative mail folder than configured in\n\
+the TCP/IP section of the configuration.
+;
+MSG_HELP_CO_TX_IDENTITY_ALTSENTFOLDER (2515//)
+Allows to specify which alternative mail\n\
+folder should be used when storing sent mail.
+;
+MSG_CO_POP_FOLDERS (2516//)
+Default folders
+;
+MSG_CO_POP_INCOMINGFOLDER (2517//)
+Incoming folder
+;
+MSG_HELP_CO_PO_POP_INCOMINGFOLDER (2518//)
+Allows to set a different folder where mails\n\
+will be stored after having received them.

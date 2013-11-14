@@ -833,19 +833,22 @@ dump:
 # cleanup target
 .PHONY: clean
 clean:
-	-$(RM) $(TARGET) $(TARGET).debug $(TARGET).map $(addprefix $(OBJDIR)/,$(OBJS)) svnrev.h
+	@echo "  CLEAN"
+	@$(RM) $(TARGET) $(TARGET).debug $(TARGET).map $(addprefix $(OBJDIR)/,$(OBJS)) svnrev.h
 
 # clean all including .obj directory
 .PHONY: cleanall
 cleanall: clean
-	-$(RM) Locale.? ParseEmail.c HTML2Mail.c $(MUIDIR)/Classes.* $(MUIDIR)/*_cl.h $(MUIDIR)/*.crc
-	-$(RM) $(LOCALE)/*.catalog
-	-$(RMDIR) $(OBJDIR)
-	-$(RMDIR) $(DEPDIR)
+	@echo "  CLEANALL"
+	@$(RM) Locale.? ParseEmail.c HTML2Mail.c $(MUIDIR)/Classes.* $(MUIDIR)/*_cl.h $(MUIDIR)/*.crc
+	@$(RM) $(LOCALE)/*.catalog
+	@$(RMDIR) $(OBJDIR)
+	@$(RMDIR) $(DEPDIR)
 
 # clean all stuff, including our autotools
 .PHONY: distclean
 distclean: cleanall
+	@echo "  DISTCLEAN"
 	@$(MAKE) -C $(GENCLASSES) clean
 	@$(MAKE) -C $(SVNREV) clean
 	@$(MAKE) -C $(TZLIB) clean

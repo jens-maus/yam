@@ -80,6 +80,7 @@ struct UserIdentityNode *CreateNewUserIdentity(const struct Config *co)
     uin->saveSentMail = TRUE;
     uin->sigReply = TRUE;
     uin->sigForwarding = TRUE;
+
     // we get the first valid smtpServer from the list and put that
     // as the default one so that we don't have a NULL pointer in
     // uin->smtpServer

@@ -84,6 +84,8 @@ struct MailServerNode *CreateNewMailServer(const enum MailServerType type, const
         {
           if(CreateTRequest(&msn->downloadTimer, -1, msn) == TRUE)
           {
+            struct Folder *incomingFolder;
+
             if(first == TRUE)
             {
               struct UserIdentityNode *uin;
@@ -116,13 +118,20 @@ struct MailServerNode *CreateNewMailServer(const enum MailServerType type, const
             #else
             msn->notifyByRequester = TRUE;
             #endif
+
+            // get the name of the incoming folder so that it will be
+            // the default of that mail server
+            if((incomingFolder = FO_GetFolderByType(FT_INCOMING, NULL)) != NULL)
+              strlcpy(msn->mailStoreFolder, incomingFolder->Name, sizeof(msn->mailStoreFolder));
+            else
+              strlcpy(msn->mailStoreFolder, FolderName[FT_INCOMING], sizeof(msn->mailStoreFolder));
           }
           else
           {
             DeleteMailList(msn->downloadedMails);
             FreeSysObject(ASOT_NODE, msn);
             msn = NULL;
-		  }
+          }
         }
         else
         {
@@ -134,7 +143,16 @@ struct MailServerNode *CreateNewMailServer(const enum MailServerType type, const
 
       case MST_SMTP:
       {
+        struct Folder *sentFolder;
+
         msn->port = 25;
+
+        // get the name of the incoming folder so that it will be
+        // the default of that mail server
+        if((sentFolder = FO_GetFolderByType(FT_SENT, NULL)) != NULL)
+          strlcpy(msn->mailStoreFolder, sentFolder->Name, sizeof(msn->mailStoreFolder));
+        else
+          strlcpy(msn->mailStoreFolder, FolderName[FT_SENT], sizeof(msn->mailStoreFolder));
       }
       break;
 
@@ -243,6 +261,7 @@ static BOOL CompareMailServerNodes(const struct Node *n1, const struct Node *n2)
      strcmp(msn1->username,    msn2->username) != 0 ||
      strcmp(msn1->password,    msn2->password) != 0 ||
      strcmp(msn1->certFingerprint, msn2->certFingerprint) != 0 ||
+     strcmp(msn1->mailStoreFolder, msn2->mailStoreFolder) != 0 ||
      msn1->certFailures   != msn2->certFailures ||
      msn1->port           != msn2->port ||
      msn1->flags          != msn2->flags)

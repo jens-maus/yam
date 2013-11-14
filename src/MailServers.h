@@ -141,6 +141,8 @@ struct MailServerNode
   BOOL notifyByCommand;                  // [MST_POP3]: notify by executing a command
   char notifySound[SIZE_PATHFILE];       // [MST_POP3]: play a sound when new mails have been received
   char notifyCommand[SIZE_COMMAND];      // [MST_POP3]: execute a command when new mails have been received
+
+  char mailStoreFolder[SIZE_NAME];       // [MST_SMTP/POP3]: folder name for storing transferred mail to
 };
 
 // public functions

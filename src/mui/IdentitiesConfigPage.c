@@ -76,8 +76,9 @@ struct Data
   Object *ST_IDENTITY_REPLYTO;
   Object *ST_IDENTITY_EXTRAHEADER;
   Object *ST_IDENTITY_PHOTOURL;
-  Object *CH_IDENTITY_SENTFOLDER;
-  Object *PO_IDENTITY_SENTFOLDER;
+  Object *CH_IDENTITY_SAVESENTMAIL;
+  Object *CH_IDENTITY_ALTSENTFOLDER;
+  Object *PO_IDENTITY_ALTSENTFOLDER;
   Object *CH_IDENTITY_QUOTEMAILS;
   Object *CY_IDENTITY_QUOTEPOS;
   Object *CY_IDENTITY_SIGPOS;
@@ -119,8 +120,9 @@ OVERLOAD(OM_NEW)
   Object *ST_IDENTITY_REPLYTO;
   Object *ST_IDENTITY_EXTRAHEADER;
   Object *ST_IDENTITY_PHOTOURL;
-  Object *CH_IDENTITY_SENTFOLDER;
-  Object *PO_IDENTITY_SENTFOLDER;
+  Object *CH_IDENTITY_SAVESENTMAIL;
+  Object *CH_IDENTITY_ALTSENTFOLDER;
+  Object *PO_IDENTITY_ALTSENTFOLDER;
   Object *CH_IDENTITY_QUOTEMAILS;
   Object *CY_IDENTITY_QUOTEPOS;
   Object *CY_IDENTITY_SIGPOS;
@@ -267,11 +269,18 @@ OVERLOAD(OM_NEW)
               Child, VGroup,
                 Child, ColGroup(2),
 
-                  Child, CH_IDENTITY_SENTFOLDER = MakeCheck(tr(MSG_CO_IDENTITY_COMPOSE_SENTFOLDER)),
-                  Child, LLabel1(tr(MSG_CO_IDENTITY_COMPOSE_SENTFOLDER)),
+                  Child, CH_IDENTITY_SAVESENTMAIL = MakeCheck(tr(MSG_CO_IDENTITY_SAVESENTMAIL)),
+                  Child, LLabel1(tr(MSG_CO_IDENTITY_SAVESENTMAIL)),
 
                   Child, HSpace(0),
-                  Child, PO_IDENTITY_SENTFOLDER = FolderRequestPopupObject,
+                  Child, ColGroup(2),
+
+                    Child, CH_IDENTITY_ALTSENTFOLDER = MakeCheck(tr(MSG_CO_IDENTITY_ALTSENTFOLDER)),
+                    Child, LLabel1(tr(MSG_CO_IDENTITY_ALTSENTFOLDER)),
+
+                    Child, HSpace(1),
+                    Child, PO_IDENTITY_ALTSENTFOLDER = FolderRequestPopupObject, End,
+
                   End,
 
                   Child, CH_IDENTITY_QUOTEMAILS = MakeCheck(tr(MSG_CO_IDENTITY_COMPOSE_QUOTE)),
@@ -408,8 +417,9 @@ OVERLOAD(OM_NEW)
     data->ST_IDENTITY_REPLYTO =        ST_IDENTITY_REPLYTO;
     data->ST_IDENTITY_EXTRAHEADER =    ST_IDENTITY_EXTRAHEADER;
     data->ST_IDENTITY_PHOTOURL =       ST_IDENTITY_PHOTOURL;
-    data->CH_IDENTITY_SENTFOLDER =     CH_IDENTITY_SENTFOLDER;
-    data->PO_IDENTITY_SENTFOLDER =     PO_IDENTITY_SENTFOLDER;
+    data->CH_IDENTITY_SAVESENTMAIL =   CH_IDENTITY_SAVESENTMAIL;
+    data->CH_IDENTITY_ALTSENTFOLDER =  CH_IDENTITY_ALTSENTFOLDER;
+    data->PO_IDENTITY_ALTSENTFOLDER =  PO_IDENTITY_ALTSENTFOLDER;
     data->CH_IDENTITY_QUOTEMAILS =     CH_IDENTITY_QUOTEMAILS;
     data->CY_IDENTITY_QUOTEPOS =       CY_IDENTITY_QUOTEPOS;
     data->CY_IDENTITY_SIGPOS =         CY_IDENTITY_SIGPOS;
@@ -442,8 +452,9 @@ OVERLOAD(OM_NEW)
     SetHelp(ST_IDENTITY_REPLYTO,           MSG_HELP_CO_ST_IDENTITY_REPLYTO);
     SetHelp(ST_IDENTITY_EXTRAHEADER,       MSG_HELP_CO_ST_IDENTITY_EXTRAHEADER);
     SetHelp(ST_IDENTITY_PHOTOURL,          MSG_HELP_CO_ST_IDENTITY_PHOTOURL);
-    SetHelp(CH_IDENTITY_SENTFOLDER,        MSG_HELP_CO_CH_IDENTITY_SENTFOLDER);
-    SetHelp(PO_IDENTITY_SENTFOLDER,        MSG_HELP_CO_TX_IDENTITY_SENTFOLDER);
+    SetHelp(CH_IDENTITY_SAVESENTMAIL,      MSG_HELP_CO_CH_IDENTITY_SAVESENTMAIL);
+    SetHelp(CH_IDENTITY_ALTSENTFOLDER,     MSG_HELP_CO_CH_IDENTITY_ALTSENTFOLDER);
+    SetHelp(PO_IDENTITY_ALTSENTFOLDER,     MSG_HELP_CO_TX_IDENTITY_ALTSENTFOLDER);
     SetHelp(CH_IDENTITY_QUOTEMAILS,        MSG_HELP_CO_CH_IDENTITY_QUOTEMAILS);
     SetHelp(CY_IDENTITY_QUOTEPOS,          MSG_HELP_CO_CH_IDENTITY_QUOTEPOS);
     SetHelp(CY_IDENTITY_SIGPOS,            MSG_HELP_CO_CH_IDENTITY_SIGPOS);
@@ -476,8 +487,9 @@ OVERLOAD(OM_NEW)
     DoMethod(ST_IDENTITY_REPLYTO,           MUIM_Notify, MUIA_String_Contents,                      MUIV_EveryTime, obj, 1, METHOD(GUIToIdentity));
     DoMethod(ST_IDENTITY_EXTRAHEADER,       MUIM_Notify, MUIA_String_Contents,                      MUIV_EveryTime, obj, 1, METHOD(GUIToIdentity));
     DoMethod(ST_IDENTITY_PHOTOURL,          MUIM_Notify, MUIA_String_Contents,                      MUIV_EveryTime, obj, 1, METHOD(GUIToIdentity));
-    DoMethod(CH_IDENTITY_SENTFOLDER,        MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(GUIToIdentity));
-    DoMethod(PO_IDENTITY_SENTFOLDER,        MUIM_Notify, MUIA_FolderRequestPopup_FolderChanged,     MUIV_EveryTime, obj, 1, METHOD(GUIToIdentity));
+    DoMethod(CH_IDENTITY_SAVESENTMAIL,      MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(GUIToIdentity));
+    DoMethod(CH_IDENTITY_ALTSENTFOLDER,     MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(GUIToIdentity));
+    DoMethod(PO_IDENTITY_ALTSENTFOLDER,     MUIM_Notify, MUIA_FolderRequestPopup_FolderChanged,     MUIV_EveryTime, obj, 1, METHOD(GUIToIdentity));
     DoMethod(CH_IDENTITY_QUOTEMAILS,        MUIM_Notify, MUIA_Selected,                             MUIV_EveryTime, obj, 1, METHOD(GUIToIdentity));
     DoMethod(CY_IDENTITY_QUOTEPOS,          MUIM_Notify, MUIA_Cycle_Active,                         MUIV_EveryTime, obj, 1, METHOD(GUIToIdentity));
     DoMethod(CY_IDENTITY_SIGPOS,            MUIM_Notify, MUIA_Cycle_Active,                         MUIV_EveryTime, obj, 1, METHOD(GUIToIdentity));
@@ -633,8 +645,9 @@ DECLARE(IdentityToGUI)
     nnset(data->ST_IDENTITY_REPLYTO,       MUIA_String_Contents,               uin->mailReplyTo);
     nnset(data->ST_IDENTITY_EXTRAHEADER,   MUIA_String_Contents,               uin->extraHeaders);
     nnset(data->ST_IDENTITY_PHOTOURL,      MUIA_String_Contents,               uin->photoURL);
-    nnset(data->CH_IDENTITY_SENTFOLDER,    MUIA_Selected,                      uin->saveSentMail);
-    nnset(data->PO_IDENTITY_SENTFOLDER,    MUIA_FolderRequestPopup_Folder,     uin->sentFolder);
+    nnset(data->CH_IDENTITY_SAVESENTMAIL,  MUIA_Selected,                      uin->saveSentMail);
+    nnset(data->CH_IDENTITY_ALTSENTFOLDER, MUIA_Selected,                      IsStrEmpty(uin->sentFolder) == FALSE);
+    nnset(data->PO_IDENTITY_ALTSENTFOLDER, MUIA_FolderRequestPopup_Folder,     uin->sentFolder);
     nnset(data->CH_IDENTITY_QUOTEMAILS,    MUIA_Selected,                      uin->quoteMails);
     nnset(data->CY_IDENTITY_QUOTEPOS,      MUIA_Cycle_Active,                  uin->quotePosition);
     nnset(data->CY_IDENTITY_SIGPOS,        MUIA_Cycle_Active,                  uin->signaturePosition);
@@ -688,7 +701,11 @@ DECLARE(IdentityToGUI)
     NULL);
 
   DoMethod(_win(obj), MUIM_MultiSet, MUIA_Disabled, uin == NULL || uin->saveSentMail == FALSE,
-    data->PO_IDENTITY_SENTFOLDER,
+    data->CH_IDENTITY_ALTSENTFOLDER,
+    NULL);
+
+  DoMethod(_win(obj), MUIM_MultiSet, MUIA_Disabled, uin == NULL || uin->saveSentMail == FALSE || GetMUICheck(data->CH_IDENTITY_ALTSENTFOLDER) == FALSE,
+    data->PO_IDENTITY_ALTSENTFOLDER,
     NULL);
 
   RETURN(0);
@@ -725,8 +742,13 @@ DECLARE(GUIToIdentity)
       GetMUIString(uin->mailReplyTo,  data->ST_IDENTITY_REPLYTO,     sizeof(uin->mailReplyTo));
       GetMUIString(uin->extraHeaders, data->ST_IDENTITY_EXTRAHEADER, sizeof(uin->extraHeaders));
       GetMUIString(uin->photoURL,     data->ST_IDENTITY_PHOTOURL,    sizeof(uin->photoURL));
-      strlcpy(uin->sentFolder, (char *)xget(data->PO_IDENTITY_SENTFOLDER, MUIA_FolderRequestPopup_Folder), sizeof(uin->sentFolder));
-      uin->saveSentMail = GetMUICheck(data->CH_IDENTITY_SENTFOLDER);
+
+      if(GetMUICheck(data->CH_IDENTITY_ALTSENTFOLDER))
+        strlcpy(uin->sentFolder, (char *)xget(data->PO_IDENTITY_ALTSENTFOLDER, MUIA_FolderRequestPopup_Folder), sizeof(uin->sentFolder));
+      else
+        uin->sentFolder[0] = '\0';
+
+      uin->saveSentMail = GetMUICheck(data->CH_IDENTITY_SAVESENTMAIL);
       uin->quoteMails = GetMUICheck(data->CH_IDENTITY_QUOTEMAILS);
       uin->quotePosition = GetMUICycle(data->CY_IDENTITY_QUOTEPOS);
       uin->signaturePosition = GetMUICycle(data->CY_IDENTITY_SIGPOS);
@@ -756,7 +778,11 @@ DECLARE(GUIToIdentity)
         NULL);
 
       DoMethod(_win(obj), MUIM_MultiSet, MUIA_Disabled, uin->saveSentMail == FALSE,
-        data->PO_IDENTITY_SENTFOLDER,
+        data->CH_IDENTITY_ALTSENTFOLDER,
+        NULL);
+
+      DoMethod(_win(obj), MUIM_MultiSet, MUIA_Disabled, uin->saveSentMail == FALSE || GetMUICheck(data->CH_IDENTITY_ALTSENTFOLDER) == FALSE,
+        data->PO_IDENTITY_ALTSENTFOLDER,
         NULL);
 
       // if the user hasn't yet entered an own account name or the default
