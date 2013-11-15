@@ -7431,7 +7431,7 @@ MSG_CO_SMTP_FOLDERS (2508//)
 Default folders
 ;
 MSG_CO_SMTP_SENTFOLDER (2509//)
-Sent folder
+'Sent' folder
 ;
 MSG_HELP_CO_PO_SMTP_SENTFOLDER (2510//)
 Allows to set a different folder where mails\n\
@@ -7446,7 +7446,7 @@ the mail transfer. Otherwise the sent mail\n\
 will be deleted.
 ;
 MSG_CO_IDENTITY_ALTSENTFOLDER (2513//)
-Use alternative sent folder:
+Use alternative 'Sent' folder:
 ;
 MSG_HELP_CO_CH_IDENTITY_ALTSENTFOLDER (2514//)
 If enabled, sent mail will be stored in an\n\
@@ -7461,7 +7461,7 @@ MSG_CO_POP_FOLDERS (2516//)
 Default folders
 ;
 MSG_CO_POP_INCOMINGFOLDER (2517//)
-Incoming folder
+'Incoming' folder
 ;
 MSG_HELP_CO_PO_POP_INCOMINGFOLDER (2518//)
 Allows to set a different folder where mails\n\
@@ -7470,7 +7470,7 @@ will be stored after having received them.
 MSG_DOC_LANGUAGE_CODE (2519//)
 
 ; !!! NOTE !!!
-; When translating MSG_LANGUAGE_CODE please put the 
+; When translating MSG_LANGUAGE_CODE please put the
 ; language code (see http://yam.ch/wiki/TracLanguages)
 ; for the language you translate YAM to here. This
 ; language code will then be appended to each online
