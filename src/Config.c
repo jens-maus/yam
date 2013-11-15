@@ -2401,7 +2401,6 @@ BOOL SaveConfig(struct Config *co, const char *fname)
       fprintf(fh, "SMTP%02d.SSLCert               = %s\n", i, msn->certFingerprint);
       fprintf(fh, "SMTP%02d.SSLCertFailures       = %d\n", i, msn->certFailures);
       fprintf(fh, "SMTP%02d.SentFolderID          = %08x\n", i, msn->mailStoreFolderID);
-      fprintf(fh, "SMTP%02d.SentFolder            = %s\n", i, msn->mailStoreFolderName);
 
       i++;
     }
@@ -2437,7 +2436,6 @@ BOOL SaveConfig(struct Config *co, const char *fname)
       fprintf(fh, "POP%02d.SSLCert                = %s\n", i, msn->certFingerprint);
       fprintf(fh, "POP%02d.SSLCertFailures        = %d\n", i, msn->certFailures);
       fprintf(fh, "POP%02d.IncomingFolderID       = %08x\n", i, msn->mailStoreFolderID);
-      fprintf(fh, "POP%02d.IncomingFolder         = %s\n", i, msn->mailStoreFolderName);
 
       i++;
     }
@@ -2486,7 +2484,6 @@ BOOL SaveConfig(struct Config *co, const char *fname)
       fprintf(fh, "ID%02d.PhotoURL           = %s\n", i, uin->photoURL);
       fprintf(fh, "ID%02d.SaveSentMail       = %s\n", i, Bool2Txt(uin->saveSentMail));
       fprintf(fh, "ID%02d.SentFolderID       = %08x\n", i, uin->sentFolderID);
-      fprintf(fh, "ID%02d.SentFolder         = %s\n", i, uin->sentFolderName);
       fprintf(fh, "ID%02d.QuoteMails         = %s\n", i, Bool2Txt(uin->quoteMails));
       fprintf(fh, "ID%02d.QuotePosition      = %d\n", i, uin->quotePosition);
       fprintf(fh, "ID%02d.SignaturePosition  = %d\n", i, uin->signaturePosition);
@@ -2549,7 +2546,6 @@ BOOL SaveConfig(struct Config *co, const char *fname)
         fprintf(fh, "FI%02d.ExecuteCmd     = %s\n", i, filter->executeCmd);
         fprintf(fh, "FI%02d.PlaySound      = %s\n", i, filter->playSound);
         fprintf(fh, "FI%02d.MoveToFolderID = %08x\n", i, filter->moveToID);
-        fprintf(fh, "FI%02d.MoveTo         = %s\n", i, filter->moveToName);
 
         i++;
       }
@@ -3614,7 +3610,7 @@ void ResolveConfigFolders(struct Config *co)
       else
         W(DBF_CONFIG, "cannot resolve sent folder '%s' of POP3 server '%s'", msn->mailStoreFolderName, msn->description);
     }
-    else if(msn->mailStoreFolderID != 0 && IsStrEmpty(msn->mailStoreFolderName) == TRUE)
+    else if(msn->mailStoreFolderID != 0)
     {
       struct Folder *folder;
 
@@ -3637,7 +3633,7 @@ void ResolveConfigFolders(struct Config *co)
       else
         W(DBF_CONFIG, "cannot resolve sent folder '%s' of SMTP server '%s'", msn->mailStoreFolderName, msn->description);
     }
-    else if(msn->mailStoreFolderID != 0 && IsStrEmpty(msn->mailStoreFolderName) == TRUE)
+    else if(msn->mailStoreFolderID != 0)
     {
       struct Folder *folder;
 
@@ -3660,7 +3656,7 @@ void ResolveConfigFolders(struct Config *co)
       else
         W(DBF_CONFIG, "cannot resolve sent folder '%s' of user identity '%s'", uin->sentFolderName, uin->description);
     }
-    else if(uin->sentFolderID != 0 && IsStrEmpty(uin->sentFolderName) == TRUE)
+    else if(uin->sentFolderID != 0)
     {
       struct Folder *folder;
 
@@ -3683,7 +3679,7 @@ void ResolveConfigFolders(struct Config *co)
       else
         W(DBF_CONFIG, "cannot resolve moveTo folder '%s' of filter '%s'", filter->moveToName, filter->name);
     }
-    else if(filter->moveToID != 0 && IsStrEmpty(filter->moveToName) == TRUE)
+    else if(filter->moveToID != 0)
     {
       struct Folder *folder;
 
