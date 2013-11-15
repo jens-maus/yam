@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.35 (15.11.2013)
+## version $VER: YAM.catalog 8.36 (15.11.2013)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Maus, Thore Böckelmann
@@ -8166,13 +8166,6 @@ Nachrichten hinzugefügt.
 ;
 MSG_HELP_CO_ST_IDENTITY_PHOTOURL
 Eine optionale URL eines Fotos dieser Benutzeridentität.
-;
-MSG_HELP_CO_CH_IDENTITY_SENTFOLDER
-Falls aktiv, werden gesendete Nachrichten in diesem\n\
-Postfach gespeichert. Ansonsten werden sie gelöscht.
-;
-MSG_HELP_CO_TX_IDENTITY_SENTFOLDER
-Läßt Sie ein Postfach für gesendete Nachrichten auswählen.
 ;
 MSG_HELP_CO_CH_IDENTITY_QUOTEMAILS
 Beim Beantworten und Weiterleiten von Nachrichten\n\
