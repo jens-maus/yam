@@ -436,7 +436,7 @@ BOOL FO_LoadConfig(struct Folder *fo)
         if(*buf != '\0' && value != NULL)
         {
           if(stricmp(buf, "Name") == 0)                strlcpy(fo->Name, value, sizeof(fo->Name));
-          else if(stricmp(buf, "ID") == 0)             fo->ID = strtol(value, NULL, 16);
+          else if(stricmp(buf, "ID") == 0)             fo->ID = strtoul(value, NULL, 16);
           else if(stricmp(buf, "MaxAge") == 0)         fo->MaxAge = atoi(value);
           else if(stricmp(buf, "Password") == 0)       strlcpy(fo->Password, Decrypt(value), sizeof(fo->Password));
           else if(stricmp(buf, "Type") == 0)           fo->Type = atoi(value);
@@ -449,11 +449,11 @@ BOOL FO_LoadConfig(struct Folder *fo)
           else if(stricmp(buf, "JumpToRecent") == 0)   fo->JumpToRecent = Txt2Bool(value);
           else if(stricmp(buf, "ExpireUnread") == 0)   fo->ExpireUnread = Txt2Bool(value);
           else if(stricmp(buf, "MLSupport") == 0)      fo->MLSupport = Txt2Bool(value);
-          else if(stricmp(buf, "MLIdentityID") == 0)   fo->MLIdentity = FindUserIdentityByID(&C->userIdentityList, strtol(value, NULL, 16));
+          else if(stricmp(buf, "MLIdentityID") == 0)   fo->MLIdentity = FindUserIdentityByID(&C->userIdentityList, strtoul(value, NULL, 16));
           else if(stricmp(buf, "MLRepToAddr") == 0)    strlcpy(fo->MLReplyToAddress, value, sizeof(fo->MLReplyToAddress));
           else if(stricmp(buf, "MLAddress") == 0)      strlcpy(fo->MLAddress, value, sizeof(fo->MLAddress));
           else if(stricmp(buf, "MLPattern") == 0)      strlcpy(fo->MLPattern, value, sizeof(fo->MLPattern));
-          else if(stricmp(buf, "MLSignatureID") == 0)  fo->MLSignature = FindSignatureByID(&C->signatureList, strtol(value, NULL, 16));
+          else if(stricmp(buf, "MLSignatureID") == 0)  fo->MLSignature = FindSignatureByID(&C->signatureList, strtoul(value, NULL, 16));
           else if(stricmp(buf, "WriteIntro") == 0)     strlcpy(fo->WriteIntro, value, sizeof(fo->WriteIntro));
           else if(stricmp(buf, "WriteGreetings") == 0) strlcpy(fo->WriteGreetings, value, sizeof(fo->WriteGreetings));
           // obsolete config parameters, convert these to the current stuff and features
@@ -910,7 +910,7 @@ enum LoadTreeResult FO_LoadTree(void)
               {
                 // V3 introduced unique folder IDs
                 GetLine(&buffer, &size, fh);
-                fo->ID = strtol(Trim(buffer), NULL, 16);
+                fo->ID = strtoul(Trim(buffer), NULL, 16);
                 D(DBF_FOLDER, "folder '%s' id '%s' -> %08lx", fo->Name, Trim(buffer), fo->ID);
               }
 

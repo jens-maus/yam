@@ -1208,7 +1208,7 @@ int LoadConfig(struct Config *co, const char *fname, struct FolderList **oldfold
                 char *q = strchr(buf, '.')+1;
 
                 // now find out which subtype this smtp configuration is
-                if(stricmp(q, "ID") == 0)                        msn->id = strtol(value, NULL, 16);
+                if(stricmp(q, "ID") == 0)                        msn->id = strtoul(value, NULL, 16);
                 else if(stricmp(q, "Description") == 0)          strlcpy(msn->description, value, sizeof(msn->description));
                 else if(stricmp(q, "Server") == 0)               strlcpy(msn->hostname, value, sizeof(msn->hostname));
                 else if(stricmp(q, "Port") == 0)                 msn->port = atoi(value);
@@ -1221,7 +1221,7 @@ int LoadConfig(struct Config *co, const char *fname, struct FolderList **oldfold
                 else if(stricmp(q, "AUTH-Method") == 0)          setFlag(msn->flags, SMTPAuthMethod2MSF(atoi(value)));
                 else if(stricmp(q, "SSLCert") == 0)              strlcpy(msn->certFingerprint, value, sizeof(msn->certFingerprint));
                 else if(stricmp(q, "SSLCertFailures") == 0)      msn->certFailures = atoi(value);
-                else if(stricmp(q, "SentFolderID") == 0)         msn->mailStoreFolderID = strtol(value, NULL, 16);
+                else if(stricmp(q, "SentFolderID") == 0)         msn->mailStoreFolderID = strtoul(value, NULL, 16);
                 else if(stricmp(q, "SentFolder") == 0)           strlcpy(msn->mailStoreFolderName, value, sizeof(msn->mailStoreFolderName));
                 else
                   W(DBF_CONFIG, "unknown '%s' SMTP config tag", q);
@@ -1254,7 +1254,7 @@ int LoadConfig(struct Config *co, const char *fname, struct FolderList **oldfold
               {
                 char *q = strchr(buf, '.')+1;
 
-                if(stricmp(q, "ID") == 0)                          msn->id = strtol(value, NULL, 16);
+                if(stricmp(q, "ID") == 0)                          msn->id = strtoul(value, NULL, 16);
                 else if(stricmp(q, "Description") == 0)            strlcpy(msn->description, value, sizeof(msn->description));
                 else if(stricmp(q, "Server") == 0)                 strlcpy(msn->hostname, value, sizeof(msn->hostname));
                 else if(stricmp(q, "Port") == 0)                   msn->port = atoi(value);
@@ -1280,7 +1280,7 @@ int LoadConfig(struct Config *co, const char *fname, struct FolderList **oldfold
                 else if(stricmp(q, "NotifyCommand") == 0)          strlcpy(msn->notifyCommand, value, sizeof(msn->notifyCommand));
                 else if(stricmp(q, "SSLCert") == 0)                strlcpy(msn->certFingerprint, value, sizeof(msn->certFingerprint));
                 else if(stricmp(q, "SSLCertFailures") == 0)        msn->certFailures = atoi(value);
-                else if(stricmp(q, "IncomingFolderID") == 0)       msn->mailStoreFolderID = strtol(value, NULL, 16);
+                else if(stricmp(q, "IncomingFolderID") == 0)       msn->mailStoreFolderID = strtoul(value, NULL, 16);
                 else if(stricmp(q, "IncomingFolder") == 0)         strlcpy(msn->mailStoreFolderName, value, sizeof(msn->mailStoreFolderName));
                 else
                   W(DBF_CONFIG, "unknown '%s' POP config tag", q);
@@ -1317,7 +1317,7 @@ int LoadConfig(struct Config *co, const char *fname, struct FolderList **oldfold
                 char *q = strchr(buf, '.')+1;
 
                 // now find out which subtype this signature is
-                if(stricmp(q, "ID") == 0)               sn->id = strtol(value, NULL, 16);
+                if(stricmp(q, "ID") == 0)               sn->id = strtoul(value, NULL, 16);
                 else if(stricmp(q, "Enabled") == 0)     sn->active = Txt2Bool(value);
                 else if(stricmp(q, "Description") == 0) strlcpy(sn->description, value, sizeof(sn->description));
                 else if(stricmp(q, "Filename") == 0)    CreateFilename(value, sn->filename, sizeof(sn->filename));
@@ -1353,21 +1353,21 @@ int LoadConfig(struct Config *co, const char *fname, struct FolderList **oldfold
                 char *q = strchr(buf, '.')+1;
 
                 // now find out which subtype this smtp configuration is
-                if(stricmp(q, "ID") == 0)                        uin->id = strtol(value, NULL, 16);
+                if(stricmp(q, "ID") == 0)                        uin->id = strtoul(value, NULL, 16);
                 else if(stricmp(q, "Enabled") == 0)              uin->active = Txt2Bool(value);
                 else if(stricmp(q, "Description") == 0)          strlcpy(uin->description, value, sizeof(uin->description));
                 else if(stricmp(q, "Realname") == 0)             strlcpy(uin->realname, value, sizeof(uin->realname));
                 else if(stricmp(q, "Address") == 0)              strlcpy(uin->address, value, sizeof(uin->address));
                 else if(stricmp(q, "Organization") == 0)         strlcpy(uin->organization, value, sizeof(uin->organization));
-                else if(stricmp(q, "MailServerID") == 0)         uin->smtpServer = FindMailServer(&co->smtpServerList, strtol(value, NULL, 16));
-                else if(stricmp(q, "SignatureID") == 0)          uin->signature = FindSignatureByID(&co->signatureList, strtol(value, NULL, 16));
+                else if(stricmp(q, "MailServerID") == 0)         uin->smtpServer = FindMailServer(&co->smtpServerList, strtoul(value, NULL, 16));
+                else if(stricmp(q, "SignatureID") == 0)          uin->signature = FindSignatureByID(&co->signatureList, strtoul(value, NULL, 16));
                 else if(stricmp(q, "MailCC") == 0)               strlcpy(uin->mailCC, value, sizeof(uin->mailCC));
                 else if(stricmp(q, "MailBCC") == 0)              strlcpy(uin->mailBCC, value, sizeof(uin->mailBCC));
                 else if(stricmp(q, "MailReplyTo") == 0)          strlcpy(uin->mailReplyTo, value, sizeof(uin->mailReplyTo));
                 else if(stricmp(q, "ExtraHeaders") == 0)         strlcpy(uin->extraHeaders, value, sizeof(uin->extraHeaders));
                 else if(stricmp(q, "PhotoURL") == 0)             strlcpy(uin->photoURL, value, sizeof(uin->photoURL));
               	else if(stricmp(q, "SentFolder") == 0)           strlcpy(uin->sentFolderName, value, sizeof(uin->sentFolderName));
-                else if(stricmp(q, "SentFolderID") == 0)         uin->sentFolderID = strtol(value, NULL, 16);
+                else if(stricmp(q, "SentFolderID") == 0)         uin->sentFolderID = strtoul(value, NULL, 16);
                 else if(stricmp(q, "SaveSentMail") == 0)         uin->saveSentMail = Txt2Bool(value);
                 else if(stricmp(q, "QuoteMails") == 0)           uin->quoteMails = Txt2Bool(value);
                 else if(stricmp(q, "QuotePosition") == 0)        uin->quotePosition = atoi(value);
@@ -1451,7 +1451,7 @@ int LoadConfig(struct Config *co, const char *fname, struct FolderList **oldfold
               else if(stricmp(q, "ExecuteCmd") == 0)             strlcpy(lastFilter->executeCmd, value, sizeof(lastFilter->executeCmd));
               else if(stricmp(q, "PlaySound") == 0)              strlcpy(lastFilter->playSound, value, sizeof(lastFilter->playSound));
               else if(stricmp(q, "MoveTo") == 0)                 strlcpy(lastFilter->moveToName, value, sizeof(lastFilter->moveToName));
-              else if(stricmp(q, "MoveToID") == 0)               lastFilter->moveToID = strtol(value, NULL, 16);
+              else if(stricmp(q, "MoveToID") == 0)               lastFilter->moveToID = strtoul(value, NULL, 16);
               else
               {
                 struct RuleNode *rule;
@@ -2015,7 +2015,7 @@ int LoadConfig(struct Config *co, const char *fname, struct FolderList **oldfold
             else if(stricmp(buf, "SaveSent") == 0)                 fUserIdentity->saveSentMail = Txt2Bool(value);
             else if(stricmp(buf, "AddMyInfo") == 0)                fUserIdentity->addPersonalInfo = Txt2Bool(value);
             else if(stricmp(buf, "UseSignature") == 0)             fUserIdentity->signature = (Txt2Bool(value) == TRUE ? GetSignature(&co->signatureList, 0, TRUE) : NULL);
-            else if(stricmp(buf, "SMTP-ID") == 0)                  fSMTP->id = strtol(value, NULL, 16);
+            else if(stricmp(buf, "SMTP-ID") == 0)                  fSMTP->id = strtoul(value, NULL, 16);
             else if(stricmp(buf, "SMTP-Enabled") == 0)             Txt2Bool(value) == TRUE ? setFlag(fSMTP->flags, MSF_ACTIVE) : clearFlag(fSMTP->flags, MSF_ACTIVE);
             else if(stricmp(buf, "SMTP-Description") == 0)         strlcpy(fSMTP->description, value, sizeof(fSMTP->description));
             else if(stricmp(buf, "SMTP-Server") == 0)              strlcpy(fSMTP->hostname, value, sizeof(fSMTP->hostname));

@@ -14,6 +14,9 @@ $URL$
     this ID only instead of referencing them by name, path or type. This will
     eventually make it possible to have equally named folders in different
     paths. This refs #400 and also refs #50.
+  * Config.c, YAM_FO.c, YAM_MAf.c: use the strtoul() function instead of the
+    strtol() function when having to parse hexadecimal strings to numbers to
+    avoid numerical errors due to too large numbers.
 
 2013-11-14 Jens Maus <mail@jens-maus.de>
 

@@ -2745,7 +2745,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
             char idStr[9] = ""; // the is only 8 chars long + 1 NUL
 
             strlcpy(idStr, &p[8], sizeof(idStr));
-            email->signatureID = strtol(idStr, NULL, 16);
+            email->signatureID = strtoul(idStr, NULL, 16);
 
             // try to get the signature structure
             if(email->signatureID != 0)
@@ -2765,7 +2765,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
             char idStr[9] = ""; // the id is only 8 chars long + 1 NUL
 
             strlcpy(idStr, &p[9], sizeof(idStr));
-            email->identityID = strtol(idStr, NULL, 16);
+            email->identityID = strtoul(idStr, NULL, 16);
 
             // try to get the identity structure
             if(email->identityID != 0)
