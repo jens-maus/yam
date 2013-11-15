@@ -44,6 +44,7 @@
 #include "extrasrc.h"
 
 #include "Config.h"
+#include "Locale.h"
 #include "MailList.h"
 #include "MailServers.h"
 #include "Timer.h"
@@ -124,7 +125,7 @@ struct MailServerNode *CreateNewMailServer(const enum MailServerType type, const
             if((incomingFolder = FO_GetFolderByType(FT_INCOMING, NULL)) != NULL)
               strlcpy(msn->mailStoreFolder, incomingFolder->Name, sizeof(msn->mailStoreFolder));
             else
-              strlcpy(msn->mailStoreFolder, FolderName[FT_INCOMING], sizeof(msn->mailStoreFolder));
+              strlcpy(msn->mailStoreFolder, tr(MSG_MA_Incoming), sizeof(msn->mailStoreFolder));
           }
           else
           {
@@ -152,7 +153,7 @@ struct MailServerNode *CreateNewMailServer(const enum MailServerType type, const
         if((sentFolder = FO_GetFolderByType(FT_SENT, NULL)) != NULL)
           strlcpy(msn->mailStoreFolder, sentFolder->Name, sizeof(msn->mailStoreFolder));
         else
-          strlcpy(msn->mailStoreFolder, FolderName[FT_SENT], sizeof(msn->mailStoreFolder));
+          strlcpy(msn->mailStoreFolder, tr(MSG_MA_Sent), sizeof(msn->mailStoreFolder));
       }
       break;
 

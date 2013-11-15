@@ -41,6 +41,7 @@
 #include "YAM_utilities.h"
 
 #include "Config.h"
+#include "Locale.h"
 #include "MailServers.h"
 #include "Signature.h"
 #include "UserIdentity.h"
@@ -103,7 +104,7 @@ struct UserIdentityNode *CreateNewUserIdentity(const struct Config *co)
     if((sentFolder = FO_GetFolderByType(FT_SENT, NULL)) != NULL)
       strlcpy(uin->sentFolder, sentFolder->Name, sizeof(uin->sentFolder));
     else
-      strlcpy(uin->sentFolder, FolderName[FT_SENT], sizeof(uin->sentFolder));
+      strlcpy(uin->sentFolder, tr(MSG_MA_Sent), sizeof(uin->sentFolder));
   }
 
   RETURN(uin);

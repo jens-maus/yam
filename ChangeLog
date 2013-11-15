@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-11-15 Thore Böckelmann <tboeckel@gmx.de>
+
+  * MailServers.c, UserIdentities.c: use the translated folder names rather than
+    the internal names as these can be resolved more precisely later.
+
 2013-11-14 Jens Maus <mail@jens-maus.de>
 
   * mui/YAMApplication.c, misc: modified the MUIM_Application_ShowHelp method to
