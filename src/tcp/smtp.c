@@ -48,6 +48,7 @@
 
 #include "Busy.h"
 #include "Config.h"
+#include "FolderList.h"
 #include "Locale.h"
 #include "Logfile.h"
 #include "MailList.h"
@@ -1564,7 +1565,7 @@ BOOL SendMails(struct UserIdentityNode *uin, struct MailList *mailsToSend, enum 
                           // depending on the sentfolder settings in the user identity we
                           // store the mail in a different folder (but we fallback to the
                           // first SENT folder found)
-                          if((sentfolder = FO_GetFolderByName(tc->uin->sentFolder, NULL)) == NULL)
+                          if((sentfolder = FindFolderByID(G->folders, tc->uin->sentFolderID)) == NULL)
                             sentfolder = FO_GetFolderByType(FT_SENT, NULL);
 
                           // the filter process did not move the mail, hence we do it now

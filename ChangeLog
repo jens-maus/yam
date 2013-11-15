@@ -9,6 +9,11 @@ $URL$
 
   * MailServers.c, UserIdentities.c: use the translated folder names rather than
     the internal names as these can be resolved more precisely later.
+  * YAM_FO.c, Config.c, FolderList.c, misc: each folder now gets a unique ID
+    assigned. In the future everything will be changed to reference folders by
+    this ID only instead of referencing them by name, path or type. This will
+    eventually make it possible to have equally named folders in different
+    paths. This refs #400 and also refs #50.
 
 2013-11-14 Jens Maus <mail@jens-maus.de>
 

@@ -59,6 +59,7 @@
 
 #include "Busy.h"
 #include "Config.h"
+#include "DynamicString.h"
 #include "FileInfo.h"
 #include "FolderList.h"
 #include "ImageCache.h"
@@ -70,6 +71,8 @@
 #include "UserIdentity.h"
 
 #include "Debug.h"
+
+#define LATEST_FOLDER_VERSION 3
 
 // According to the folder types we define the corresponding
 // default folder names. Please note that order and length IS important here.
@@ -382,6 +385,7 @@ int FO_GetFolderPosition(struct Folder *findfo, BOOL withGroups)
   RETURN(pos);
   return pos;
 }
+
 ///
 /// FO_LoadConfig
 //  Loads folder configuration from .fconfig file
@@ -432,6 +436,7 @@ BOOL FO_LoadConfig(struct Folder *fo)
         if(*buf != '\0' && value != NULL)
         {
           if(stricmp(buf, "Name") == 0)                strlcpy(fo->Name, value, sizeof(fo->Name));
+          else if(stricmp(buf, "ID") == 0)             fo->ID = strtol(value, NULL, 16);
           else if(stricmp(buf, "MaxAge") == 0)         fo->MaxAge = atoi(value);
           else if(stricmp(buf, "Password") == 0)       strlcpy(fo->Password, Decrypt(value), sizeof(fo->Password));
           else if(stricmp(buf, "Type") == 0)           fo->Type = atoi(value);
@@ -503,7 +508,7 @@ BOOL FO_LoadConfig(struct Folder *fo)
 ///
 /// FO_SaveConfig
 //  Saves folder configuration to .fconfig file
-BOOL FO_SaveConfig(struct Folder *fo)
+BOOL FO_SaveConfig(const struct Folder *fo)
 {
   char fname[SIZE_PATHFILE];
   FILE *fh;
@@ -733,6 +738,9 @@ BOOL FO_CreateFolder(enum FolderType type, const char * const path, const char *
     {
       struct MUI_NListtree_TreeNode *tn;
 
+      // remember the backlink to our own folder node
+      fnode->folder->self = fnode;
+
       if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, folder->Name, fnode, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE)) != NULL)
       {
         if(FO_SaveConfig(folder) == TRUE)
@@ -791,6 +799,30 @@ char *BuildFolderPath(char *fullpath, const char *path, size_t fullpathSize)
 }
 
 ///
+/// GenerateFolderID
+// generate a unique ID for a folder
+int GenerateFolderID(const struct Folder *folder)
+{
+  int id;
+  char dateBuf[SIZE_LARGE];
+  char *crcBuf = NULL;
+
+  ENTER();
+
+  // construct a string from the current date and the folder's full path
+  DateStamp2String(dateBuf, sizeof(dateBuf), NULL, DSS_DATETIME, TZC_NONE);
+  dstrcpy(&crcBuf, dateBuf);
+  dstrcat(&crcBuf, " ");
+  dstrcat(&crcBuf, folder->Fullpath);
+
+  id = CRC32(crcBuf, dstrlen(crcBuf), 0);
+  dstrfree(crcBuf);
+
+  RETURN(id);
+  return id;
+}
+
+///
 /// FO_LoadTree
 //  Loads folder list from a file
 enum LoadTreeResult FO_LoadTree(void)
@@ -805,6 +837,7 @@ enum LoadTreeResult FO_LoadTree(void)
   APTR lv = G->MA->GUI.NL_FOLDERS;
   struct MUI_NListtree_TreeNode *tn_root = MUIV_NListtree_Insert_ListNode_Root;
   struct FolderNode *fnode_root = NULL; // NULL == root
+  BOOL saveTree = FALSE;
 
   ENTER();
 
@@ -826,7 +859,11 @@ enum LoadTreeResult FO_LoadTree(void)
       {
         version = atoi(&buffer[3]);
 
-        D(DBF_FOLDER, "found version V%ld folder tree file", version);
+        D(DBF_FOLDER, "found V%ld folder tree file", version);
+
+        // save old folder tree definitions in any case
+        if(version < LATEST_FOLDER_VERSION)
+          saveTree = TRUE;
 
         if(version == 1)
         {
@@ -865,8 +902,16 @@ enum LoadTreeResult FO_LoadTree(void)
               }
               else
               {
-                // V2 tree files contain the directory name only
+                // V2+ tree files contain the directory name only
                 strlcpy(fo->Path, Trim(buffer), sizeof(fo->Path));
+              }
+
+              if(version >= 3)
+              {
+                // V3 introduced unique folder IDs
+                GetLine(&buffer, &size, fh);
+                fo->ID = strtol(Trim(buffer), NULL, 16);
+                D(DBF_FOLDER, "folder '%s' id '%s' -> %08lx", fo->Name, Trim(buffer), fo->ID);
               }
 
               if((fo->messages = CreateMailList()) != NULL)
@@ -890,7 +935,7 @@ enum LoadTreeResult FO_LoadTree(void)
                   }
 
                   D(DBF_FOLDER, "old V1 path '%s'", v1path);
-                  D(DBF_FOLDER, "new V2 path '%s'", fo->Fullpath);
+                  D(DBF_FOLDER, "new V2+ path '%s'", fo->Fullpath);
 
                   // first check if the new path differs from the old one
                   if(strcasecmp(v1path, fo->Fullpath) != 0)
@@ -982,6 +1027,18 @@ enum LoadTreeResult FO_LoadTree(void)
                     goto failure;
                   }
 
+                  // ensure a unique folder ID
+                  if(fo->ID == 0)
+                  {
+                    fo->ID = GenerateFolderID(fo);
+                    D(DBF_FOLDER, "generated new ID %08lx for folder '%s'", fo->ID, fo->Name);
+                    // remember to save the newly generated ID in the .folders file
+                    saveTree = TRUE;
+                  }
+
+                  // remember the backlink to our own folder node
+                  fnode->folder->self = fnode;
+
                   // remember the treenode and folder root
                   fo->Treenode = tn;
                   fo->parent = fnode_root;
@@ -1035,6 +1092,9 @@ enum LoadTreeResult FO_LoadTree(void)
                 goto failure;
               }
 
+              // remember the backlink to our own folder node
+              fnode->folder->self = fnode;
+
               // remember the treenode and folder root
               fo->Treenode = tn;
               fo->parent = NULL;
@@ -1071,6 +1131,9 @@ enum LoadTreeResult FO_LoadTree(void)
                 FreeFolder(fo);
                 goto failure;
               }
+
+              // remember the backlink to our own folder node
+              fnode->folder->self = fnode;
 
               // remember the treenode and folder parent
               fo->Treenode = tn_root;
@@ -1109,6 +1172,10 @@ enum LoadTreeResult FO_LoadTree(void)
 
         result = LTR_Success;
       }
+      else
+      {
+        E(DBF_FOLDER, "invalid head line '%s'", buffer);
+      }
 
 failure:
       fclose(fh);
@@ -1120,10 +1187,10 @@ failure:
       if(result == LTR_Failure)
         set(lv, MUIA_NListtree_Quiet,  FALSE);
 
-      // save the new V2 tree file in case we just successfully loaded a V1 tree file
-      if(result == LTR_Success && version == 1)
+      // save the new tree file in case the loaded version required updates
+      if(result == LTR_Success && saveTree == TRUE)
       {
-        D(DBF_FOLDER, "save V2 folder tree file");
+        D(DBF_FOLDER, "save V%ld folder tree file", LATEST_FOLDER_VERSION);
         FO_SaveTree();
       }
     }
@@ -1215,8 +1282,9 @@ static BOOL FO_SaveSubTree(FILE *fh, struct MUI_NListtree_TreeNode *subtree)
       {
         fprintf(fh, "@FOLDER %s\n"
                     "%s\n"
+                    "%08x\n"
                     "@ENDFOLDER\n",
-                    fo->Name, fo->Path);
+                    fo->Name, fo->Path, fo->ID);
       }
 
       tn_root = tn;
@@ -1244,7 +1312,7 @@ BOOL FO_SaveTree(void)
   {
     setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
-    fputs("YFO2 - YAM Folders\n", fh);
+    fprintf(fh, "YFO%d - YAM Folders\n", LATEST_FOLDER_VERSION);
 
     success = FO_SaveSubTree(fh, MUIV_NListtree_GetEntry_ListNode_Root);
 

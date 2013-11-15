@@ -142,7 +142,8 @@ struct MailServerNode
   char notifySound[SIZE_PATHFILE];       // [MST_POP3]: play a sound when new mails have been received
   char notifyCommand[SIZE_COMMAND];      // [MST_POP3]: execute a command when new mails have been received
 
-  char mailStoreFolder[SIZE_NAME];       // [MST_SMTP/POP3]: folder name for storing transferred mail to
+  int mailStoreFolderID;                 // [MST_SMTP/POP3]: folder ID for storing transferred mail to
+  char mailStoreFolderName[SIZE_NAME];   // [MST_SMTP/POP3]: folder name for storing transferred mail to
 };
 
 // public functions

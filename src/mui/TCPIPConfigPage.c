@@ -766,7 +766,7 @@ DECLARE(POP3ToGUI)
     nnset(data->CH_POP3_NOTIFY_CMD,        MUIA_Selected,        msn->notifyByCommand);
     nnset(data->ST_POP3_NOTIFY_SOUND,      MUIA_String_Contents, msn->notifySound);
     nnset(data->ST_POP3_NOTIFY_CMD,        MUIA_String_Contents, msn->notifyCommand);
-    nnset(data->PO_POP_INCOMINGFOLDER,     MUIA_FolderRequestPopup_Folder, msn->mailStoreFolder);
+    nnset(data->PO_POP_INCOMINGFOLDER,     MUIA_FolderRequestPopup_FolderID, msn->mailStoreFolderID);
 
     set(data->NM_INTERVAL, MUIA_Disabled, hasServerDownloadPeriodically(msn) == FALSE);
     set(data->ST_WARNSIZE, MUIA_Disabled, hasServerDownloadLargeMails(msn) == FALSE);
@@ -929,8 +929,9 @@ DECLARE(GUIToPOP3)
       msn->notifyByCommand = GetMUICheck(data->CH_POP3_NOTIFY_CMD);
       GetMUIString(msn->notifySound, data->ST_POP3_NOTIFY_SOUND, sizeof(msn->notifySound));
       GetMUIString(msn->notifyCommand, data->ST_POP3_NOTIFY_CMD, sizeof(msn->notifyCommand));
-      
-      strlcpy(msn->mailStoreFolder, (char *)xget(data->PO_POP_INCOMINGFOLDER, MUIA_FolderRequestPopup_Folder), sizeof(msn->mailStoreFolder));
+
+      msn->mailStoreFolderID = xget(data->PO_POP_INCOMINGFOLDER, MUIA_FolderRequestPopup_FolderID);
+      strlcpy(msn->mailStoreFolderName, (char *)xget(data->PO_POP_INCOMINGFOLDER, MUIA_FolderRequestPopup_FolderName), sizeof(msn->mailStoreFolderName));
 
       #if defined(__amigaos4__)
       set(data->CH_POP3_NOTIFY_OS41SYSTEM, MUIA_Disabled, G->applicationID == 0 || LIB_VERSION_IS_AT_LEAST(ApplicationBase, 53, 2) == FALSE);
@@ -1042,14 +1043,14 @@ DECLARE(SMTPToGUI)
     // all notifies here are nnset() notifies so that we don't trigger any additional
     // notify or otherwise we would run into problems.
 
-    nnset(data->CH_SMTPENABLED,     MUIA_Selected,                  isServerActive(msn));
-    nnset(data->ST_SMTPDESC,        MUIA_String_Contents,           msn->description);
-    nnset(data->ST_SMTPHOST,        MUIA_String_Contents,           msn->hostname);
-    nnset(data->ST_SMTPPORT,        MUIA_String_Integer,            msn->port);
-    nnset(data->ST_SMTPAUTHUSER,    MUIA_String_Contents,           msn->username);
-    nnset(data->ST_SMTPAUTHPASS,    MUIA_String_Contents,           msn->password);
-    nnset(data->CH_SMTP8BIT,        MUIA_Selected,                  hasServer8bit(msn));
-    nnset(data->PO_SMTP_SENTFOLDER, MUIA_FolderRequestPopup_Folder, msn->mailStoreFolder);
+    nnset(data->CH_SMTPENABLED,     MUIA_Selected,                    isServerActive(msn));
+    nnset(data->ST_SMTPDESC,        MUIA_String_Contents,             msn->description);
+    nnset(data->ST_SMTPHOST,        MUIA_String_Contents,             msn->hostname);
+    nnset(data->ST_SMTPPORT,        MUIA_String_Integer,              msn->port);
+    nnset(data->ST_SMTPAUTHUSER,    MUIA_String_Contents,             msn->username);
+    nnset(data->ST_SMTPAUTHPASS,    MUIA_String_Contents,             msn->password);
+    nnset(data->CH_SMTP8BIT,        MUIA_Selected,                    hasServer8bit(msn));
+    nnset(data->PO_SMTP_SENTFOLDER, MUIA_FolderRequestPopup_FolderID, msn->mailStoreFolderID);
 
     xset(data->CY_SMTPSECURE, MUIA_NoNotify,     TRUE,
                               MUIA_Cycle_Active, MSF2SMTPSecMethod(msn),
@@ -1235,7 +1236,8 @@ DECLARE(GUIToSMTP)
       }
 
       // get the sent folder
-      strlcpy(msn->mailStoreFolder, (char *)xget(data->PO_SMTP_SENTFOLDER, MUIA_FolderRequestPopup_Folder), sizeof(msn->mailStoreFolder));
+      msn->mailStoreFolderID = xget(data->PO_SMTP_SENTFOLDER, MUIA_FolderRequestPopup_FolderID);
+      strlcpy(msn->mailStoreFolderName, (char *)xget(data->PO_SMTP_SENTFOLDER, MUIA_FolderRequestPopup_FolderName), sizeof(msn->mailStoreFolderName));
 
       // we also have to update the SMTP Server Array
       // in case the user changes to the Identities

@@ -122,10 +122,12 @@ enum FolderMode
 
 struct Folder
 {
+  int               ID;                    // unique id for the folder
   Object *          imageObject;
   struct MailList * messages;
   struct MUI_NListtree_TreeNode *Treenode; // links to MainFolderListtree
-  struct FolderNode *parent; // ptr to parent folder node, NULL if parent is root
+  struct FolderNode *self;                 // ptr back to own folder node
+  struct FolderNode *parent;               // ptr to parent folder node, NULL if parent is root
   ULONG             Flags;
   LONG              Size;
   int               Total;
@@ -181,7 +183,7 @@ int             FO_GetFolderPosition(struct Folder *findfo, BOOL withGroups);
 BOOL            FO_LoadConfig(struct Folder *fo);
 enum LoadTreeResult FO_LoadTree(void);
 struct Folder * FO_NewFolder(enum FolderType type, const char *path, const char *name);
-BOOL            FO_SaveConfig(struct Folder *fo);
+BOOL            FO_SaveConfig(const struct Folder *fo);
 BOOL            FO_SaveTree(void);
 void            FO_SetFolderImage(struct Folder *folder);
 void            FO_UpdateTreeStatistics(const struct Folder *folder, const BOOL redraw);
@@ -194,5 +196,6 @@ void            SetCurrentFolder(const struct Folder *folder);
 void            ActivateFolder(const struct Folder *fo);
 void            UpdateAllFolderSettings(const struct Config *co);
 char *          BuildFolderPath(char *fullpath, const char *path, size_t fullpathSize);
+int             GenerateFolderID(const struct Folder *folder);
 
 #endif /* YAM_FOLDERCONFIG_H */

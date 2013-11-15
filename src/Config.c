@@ -1221,7 +1221,8 @@ int LoadConfig(struct Config *co, const char *fname, struct FolderList **oldfold
                 else if(stricmp(q, "AUTH-Method") == 0)          setFlag(msn->flags, SMTPAuthMethod2MSF(atoi(value)));
                 else if(stricmp(q, "SSLCert") == 0)              strlcpy(msn->certFingerprint, value, sizeof(msn->certFingerprint));
                 else if(stricmp(q, "SSLCertFailures") == 0)      msn->certFailures = atoi(value);
-                else if(stricmp(q, "SentFolder") == 0)           strlcpy(msn->mailStoreFolder, value, sizeof(msn->mailStoreFolder));
+                else if(stricmp(q, "SentFolderID") == 0)         msn->mailStoreFolderID = strtol(value, NULL, 16);
+                else if(stricmp(q, "SentFolder") == 0)           strlcpy(msn->mailStoreFolderName, value, sizeof(msn->mailStoreFolderName));
                 else
                   W(DBF_CONFIG, "unknown '%s' SMTP config tag", q);
               }
@@ -1279,7 +1280,8 @@ int LoadConfig(struct Config *co, const char *fname, struct FolderList **oldfold
                 else if(stricmp(q, "NotifyCommand") == 0)          strlcpy(msn->notifyCommand, value, sizeof(msn->notifyCommand));
                 else if(stricmp(q, "SSLCert") == 0)                strlcpy(msn->certFingerprint, value, sizeof(msn->certFingerprint));
                 else if(stricmp(q, "SSLCertFailures") == 0)        msn->certFailures = atoi(value);
-                else if(stricmp(q, "IncomingFolder") == 0)         strlcpy(msn->mailStoreFolder, value, sizeof(msn->mailStoreFolder));
+                else if(stricmp(q, "IncomingFolderID") == 0)       msn->mailStoreFolderID = strtol(value, NULL, 16);
+                else if(stricmp(q, "IncomingFolder") == 0)         strlcpy(msn->mailStoreFolderName, value, sizeof(msn->mailStoreFolderName));
                 else
                   W(DBF_CONFIG, "unknown '%s' POP config tag", q);
               }
@@ -1364,7 +1366,8 @@ int LoadConfig(struct Config *co, const char *fname, struct FolderList **oldfold
                 else if(stricmp(q, "MailReplyTo") == 0)          strlcpy(uin->mailReplyTo, value, sizeof(uin->mailReplyTo));
                 else if(stricmp(q, "ExtraHeaders") == 0)         strlcpy(uin->extraHeaders, value, sizeof(uin->extraHeaders));
                 else if(stricmp(q, "PhotoURL") == 0)             strlcpy(uin->photoURL, value, sizeof(uin->photoURL));
-                else if(stricmp(q, "SentFolder") == 0)           strlcpy(uin->sentFolder, value, sizeof(uin->sentFolder));
+              	else if(stricmp(q, "SentFolder") == 0)           strlcpy(uin->sentFolderName, value, sizeof(uin->sentFolderName));
+                else if(stricmp(q, "SentFolderID") == 0)         uin->sentFolderID = strtol(value, NULL, 16);
                 else if(stricmp(q, "SaveSentMail") == 0)         uin->saveSentMail = Txt2Bool(value);
                 else if(stricmp(q, "QuoteMails") == 0)           uin->quoteMails = Txt2Bool(value);
                 else if(stricmp(q, "QuotePosition") == 0)        uin->quotePosition = atoi(value);
@@ -1380,7 +1383,6 @@ int LoadConfig(struct Config *co, const char *fname, struct FolderList **oldfold
                 else if(stricmp(q, "PGPSignEncrypted") == 0)     uin->pgpSignEncrypted = Txt2Bool(value);
                 else if(stricmp(q, "PGPEncryptAll") == 0)        uin->pgpEncryptAll = Txt2Bool(value);
                 else if(stricmp(q, "PGPSelfEncrypt") == 0)       uin->pgpSelfEncrypt = Txt2Bool(value);
-
                 else
                   W(DBF_CONFIG, "unknown '%s' ID config tag", q);
               }
@@ -1448,7 +1450,8 @@ int LoadConfig(struct Config *co, const char *fname, struct FolderList **oldfold
               else if(stricmp(q, "ReplyFile") == 0)              strlcpy(lastFilter->replyFile, value, sizeof(lastFilter->replyFile));
               else if(stricmp(q, "ExecuteCmd") == 0)             strlcpy(lastFilter->executeCmd, value, sizeof(lastFilter->executeCmd));
               else if(stricmp(q, "PlaySound") == 0)              strlcpy(lastFilter->playSound, value, sizeof(lastFilter->playSound));
-              else if(stricmp(q, "MoveTo") == 0)                 strlcpy(lastFilter->moveTo, value, sizeof(lastFilter->moveTo));
+              else if(stricmp(q, "MoveTo") == 0)                 strlcpy(lastFilter->moveToName, value, sizeof(lastFilter->moveToName));
+              else if(stricmp(q, "MoveToID") == 0)               lastFilter->moveToID = strtol(value, NULL, 16);
               else
               {
                 struct RuleNode *rule;
@@ -2122,7 +2125,7 @@ int LoadConfig(struct Config *co, const char *fname, struct FolderList **oldfold
 
                 p = strchr(p2 = &p[2], ';');
                 *p++ = '\0';
-                strlcpy(filter->moveTo, p2, sizeof(filter->moveTo));
+                strlcpy(filter->moveToName, p2, sizeof(filter->moveToName));
                 strlcpy(filter->forwardTo, p, sizeof(filter->forwardTo));
                 if(*filter->forwardTo != '\0')
                   setFlag(filter->actions, FA_FORWARD);
@@ -2397,7 +2400,8 @@ BOOL SaveConfig(struct Config *co, const char *fname)
       fprintf(fh, "SMTP%02d.AUTH-Method           = %d\n", i, MSF2SMTPAuthMethod(msn));
       fprintf(fh, "SMTP%02d.SSLCert               = %s\n", i, msn->certFingerprint);
       fprintf(fh, "SMTP%02d.SSLCertFailures       = %d\n", i, msn->certFailures);
-      fprintf(fh, "SMTP%02d.SentFolder            = %s\n", i, msn->mailStoreFolder);
+      fprintf(fh, "SMTP%02d.SentFolderID          = %08x\n", i, msn->mailStoreFolderID);
+      fprintf(fh, "SMTP%02d.SentFolder            = %s\n", i, msn->mailStoreFolderName);
 
       i++;
     }
@@ -2432,7 +2436,8 @@ BOOL SaveConfig(struct Config *co, const char *fname)
       fprintf(fh, "POP%02d.NotifyCommand          = %s\n", i, msn->notifyCommand);
       fprintf(fh, "POP%02d.SSLCert                = %s\n", i, msn->certFingerprint);
       fprintf(fh, "POP%02d.SSLCertFailures        = %d\n", i, msn->certFailures);
-      fprintf(fh, "POP%02d.IncomingFolder         = %s\n", i, msn->mailStoreFolder);
+      fprintf(fh, "POP%02d.IncomingFolderID       = %08x\n", i, msn->mailStoreFolderID);
+      fprintf(fh, "POP%02d.IncomingFolder         = %s\n", i, msn->mailStoreFolderName);
 
       i++;
     }
@@ -2479,8 +2484,9 @@ BOOL SaveConfig(struct Config *co, const char *fname)
       fprintf(fh, "ID%02d.MailReplyTo        = %s\n", i, uin->mailReplyTo);
       fprintf(fh, "ID%02d.ExtraHeaders       = %s\n", i, uin->extraHeaders);
       fprintf(fh, "ID%02d.PhotoURL           = %s\n", i, uin->photoURL);
-      fprintf(fh, "ID%02d.SentFolder         = %s\n", i, uin->sentFolder);
       fprintf(fh, "ID%02d.SaveSentMail       = %s\n", i, Bool2Txt(uin->saveSentMail));
+      fprintf(fh, "ID%02d.SentFolderID       = %08x\n", i, uin->sentFolderID);
+      fprintf(fh, "ID%02d.SentFolder         = %s\n", i, uin->sentFolderName);
       fprintf(fh, "ID%02d.QuoteMails         = %s\n", i, Bool2Txt(uin->quoteMails));
       fprintf(fh, "ID%02d.QuotePosition      = %d\n", i, uin->quotePosition);
       fprintf(fh, "ID%02d.SignaturePosition  = %d\n", i, uin->signaturePosition);
@@ -2542,7 +2548,8 @@ BOOL SaveConfig(struct Config *co, const char *fname)
         fprintf(fh, "FI%02d.ReplyFile      = %s\n", i, filter->replyFile);
         fprintf(fh, "FI%02d.ExecuteCmd     = %s\n", i, filter->executeCmd);
         fprintf(fh, "FI%02d.PlaySound      = %s\n", i, filter->playSound);
-        fprintf(fh, "FI%02d.MoveTo         = %s\n", i, filter->moveTo);
+        fprintf(fh, "FI%02d.MoveToFolderID = %08x\n", i, filter->moveToID);
+        fprintf(fh, "FI%02d.MoveTo         = %s\n", i, filter->moveToName);
 
         i++;
       }
@@ -3578,6 +3585,112 @@ void ValidateConfig(struct Config *co, BOOL update, BOOL saveChanges)
     {
       DoMethod(wmData->window, MUIM_WriteWindow_UpdateIdentities);
       DoMethod(wmData->window, MUIM_WriteWindow_UpdateSignatures);
+    }
+  }
+
+  LEAVE();
+}
+
+///
+/// ResolveConfigFolders
+// resolve all folder IDs contained in the config to real folders
+void ResolveConfigFolders(struct Config *co)
+{
+  struct MailServerNode *msn;
+  struct UserIdentityNode *uin;
+  struct FilterNode *filter;
+
+  ENTER();
+
+  // resolve the sent folders of the POP3 servers
+  IterateList(&co->pop3ServerList, struct MailServerNode *, msn)
+  {
+    if(msn->mailStoreFolderID == 0 && IsStrEmpty(msn->mailStoreFolderName) == FALSE)
+    {
+      struct Folder *folder;
+
+      if((folder = FO_GetFolderByName(msn->mailStoreFolderName, NULL)) != NULL)
+        msn->mailStoreFolderID = folder->ID;
+      else
+        W(DBF_CONFIG, "cannot resolve sent folder '%s' of POP3 server '%s'", msn->mailStoreFolderName, msn->description);
+    }
+    else if(msn->mailStoreFolderID != 0 && IsStrEmpty(msn->mailStoreFolderName) == TRUE)
+    {
+      struct Folder *folder;
+
+      if((folder = FindFolderByID(G->folders, msn->mailStoreFolderID)) != NULL)
+        strlcpy(msn->mailStoreFolderName, folder->Name, sizeof(msn->mailStoreFolderName));
+      else
+        W(DBF_CONFIG, "cannot resolve sent folder ID 0x%08lx of POP3 server '%s'", msn->mailStoreFolderID, msn->description);
+    }
+  }
+
+  // resolve the sent folders of the SMTP servers
+  IterateList(&co->smtpServerList, struct MailServerNode *, msn)
+  {
+    if(msn->mailStoreFolderID == 0 && IsStrEmpty(msn->mailStoreFolderName) == FALSE)
+    {
+      struct Folder *folder;
+
+      if((folder = FO_GetFolderByName(msn->mailStoreFolderName, NULL)) != NULL)
+        msn->mailStoreFolderID = folder->ID;
+      else
+        W(DBF_CONFIG, "cannot resolve sent folder '%s' of SMTP server '%s'", msn->mailStoreFolderName, msn->description);
+    }
+    else if(msn->mailStoreFolderID != 0 && IsStrEmpty(msn->mailStoreFolderName) == TRUE)
+    {
+      struct Folder *folder;
+
+      if((folder = FindFolderByID(G->folders, msn->mailStoreFolderID)) != NULL)
+        strlcpy(msn->mailStoreFolderName, folder->Name, sizeof(msn->mailStoreFolderName));
+      else
+        W(DBF_CONFIG, "cannot resolve sent folder ID 0x%08lx of SMTP server '%s'", msn->mailStoreFolderID, msn->description);
+    }
+  }
+
+  // resolve the sent folders of the user identities
+  IterateList(&co->userIdentityList, struct UserIdentityNode *, uin)
+  {
+    if(uin->sentFolderID == 0 && IsStrEmpty(uin->sentFolderName) == FALSE)
+    {
+      struct Folder *folder;
+
+      if((folder = FO_GetFolderByName(uin->sentFolderName, NULL)) != NULL)
+        uin->sentFolderID = folder->ID;
+      else
+        W(DBF_CONFIG, "cannot resolve sent folder '%s' of user identity '%s'", uin->sentFolderName, uin->description);
+    }
+    else if(uin->sentFolderID != 0 && IsStrEmpty(uin->sentFolderName) == TRUE)
+    {
+      struct Folder *folder;
+
+      if((folder = FindFolderByID(G->folders, uin->sentFolderID)) != NULL)
+        strlcpy(uin->sentFolderName, folder->Name, sizeof(uin->sentFolderName));
+      else
+        W(DBF_CONFIG, "cannot resolve sent folder ID 0x%08lx of user identity '%s'", uin->sentFolderID, uin->description);
+    }
+  }
+
+  // resolve the "move to" folders of the filters
+  IterateList(&co->filterList, struct FilterNode *, filter)
+  {
+    if(filter->moveToID == 0 && IsStrEmpty(filter->moveToName) == FALSE)
+    {
+      struct Folder *folder;
+
+      if((folder = FO_GetFolderByName(filter->moveToName, NULL)) != NULL)
+        filter->moveToID = folder->ID;
+      else
+        W(DBF_CONFIG, "cannot resolve moveTo folder '%s' of filter '%s'", filter->moveToName, filter->name);
+    }
+    else if(filter->moveToID != 0 && IsStrEmpty(filter->moveToName) == TRUE)
+    {
+      struct Folder *folder;
+
+      if((folder = FindFolderByID(G->folders, filter->moveToID)) != NULL)
+        strlcpy(filter->moveToName, folder->Name, sizeof(filter->moveToName));
+      else
+        W(DBF_CONFIG, "cannot resolve sent folder ID 0x%08lx of filter '%s'", filter->moveToID, filter->name);
     }
   }
 

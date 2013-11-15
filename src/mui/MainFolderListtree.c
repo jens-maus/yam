@@ -779,6 +779,9 @@ DECLARE(NewFolderGroup) // char *name
 
     if(fnode != NULL)
     {
+      // remember the backlink to our own folder node
+      fnode->folder->self = fnode;
+
       // insert the new folder node and remember its treenode pointer
       fnode->folder->Treenode = (struct MUI_NListtree_TreeNode *)DoMethod(obj, MUIM_NListtree_Insert, folder.Name, fnode, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, TNF_LIST | TNF_OPEN);
 
@@ -1006,8 +1009,8 @@ DECLARE(DeleteFolder)
       {
         // check if the folder that is about to be deleted is part
         // of an active filter and if so remove it from it
-        if(FolderIsUsedByFilters(folder->Name) == TRUE)
-          RemoveFolderFromFilters(folder->Name);
+        if(FolderIsUsedByFilters(folder) == TRUE)
+          RemoveFolderFromFilters(folder);
 
         delete_folder = TRUE;
         DeleteMailDir(folder->Fullpath, FALSE);

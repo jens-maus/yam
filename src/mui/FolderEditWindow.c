@@ -221,8 +221,8 @@ static BOOL SaveOldFolder(struct IClass *cl, Object *obj)
       // check if the filter name has changed and if it is part of
       // an active filter and if so rename it in the filter definition
       // as well.
-      if(FolderIsUsedByFilters(data->oldFolder->Name) == TRUE)
-        RenameFolderInFilters(data->oldFolder->Name, folder.Name);
+      if(FolderIsUsedByFilters(data->oldFolder) == TRUE)
+        RenameFolderInFilters(data->oldFolder, &folder);
 
       // copy the new folder name
       strlcpy(data->oldFolder->Name, folder.Name, sizeof(data->oldFolder->Name));
@@ -419,6 +419,9 @@ static BOOL SaveNewFolder(struct IClass *cl, Object *obj)
       {
         if(CreateDirectory(folder.Fullpath) == TRUE)
         {
+          // generate a unique ID
+          folder.ID = GenerateFolderID(&folder);
+
           if(FO_SaveConfig(&folder) == TRUE)
           {
             // allocate memory for the new folder
@@ -434,6 +437,9 @@ static BOOL SaveNewFolder(struct IClass *cl, Object *obj)
               if(fnode != NULL)
               {
                 struct Folder *prevFolder;
+
+                // remember the backlink to our own folder node
+                fnode->folder->self = fnode;
 
                 // allow the listtree to reorder our folder list
                 set(G->MA->GUI.NL_FOLDERS, MUIA_MainFolderListtree_ReorderFolderList, TRUE);

@@ -37,41 +37,78 @@
 
 #include "SDI_hook.h"
 
+#include "YAM.h"
+
+#include "mui/FolderRequestListtree.h"
+
+#include "DynamicString.h"
 #include "Locale.h"
 #include "FolderList.h"
 #include "MUIObjects.h"
-
-#include "mui/FolderRequestListtree.h"
 
 #include "Debug.h"
 
 /* CLASSDATA
 struct Data
 {
+  Object *self;
   Object *TX_FOLDER;
+  Object *LT_FOLDER;
+
+  int folderID;
+  struct Folder *folder;
+  char folderPath[SIZE_PATH];
+
+  struct Hook Text2ListHook;
+  struct Hook List2TextHook;
 };
 */
 
+/* Private Functions */
+/// BuildFolderPathString
+// recursively build a path string like "group1 / group2 / folder"
+static void BuildFolderPathString(struct Data *data, const struct Folder *folder)
+{
+  ENTER();
+
+  if(isGroupFolder(folder) == TRUE)
+  {
+    // prepend the group path
+    char *childPath;
+
+    // duplicate the path to avoid overwriting it
+    if((childPath = strdup(data->folderPath)) != NULL)
+    {
+      // construct the new path
+      snprintf(data->folderPath, sizeof(data->folderPath), "%s / %s", folder->Name, childPath);
+      free(childPath);
+    }
+  }
+  else
+  {
+    // use the plain folder name
+    strlcpy(data->folderPath, folder->Name, sizeof(data->folderPath));
+  }
+
+  // prepend parent folder group names except the root group
+  if(folder->parent != NULL)
+    BuildFolderPathString(data, folder->parent->folder);
+
+  LEAVE();
+}
+
+///
+
 /* Hooks */
 /// Text2ListFunc
-//  selects the folder as active which is currently in the 'str'
-//  object
-HOOKPROTONH(Text2ListFunc, BOOL, Object *listview, Object *str)
+// select the currently active folder
+HOOKPROTONONP(Text2ListFunc, BOOL)
 {
-  char *s;
+  struct Data *data = (struct Data *)hook->h_Data;
 
   ENTER();
 
-  // get the currently set string
-  s = (char *)xget(str, MUIA_Text_Contents);
-
-  if(s != NULL && listview != NULL)
-  {
-    Object *list = (Object *)xget(listview, MUIA_NListview_NList);
-
-    // now try to find the node and activate it right away
-    DoMethod(list, MUIM_NListtree_FindName, MUIV_NListtree_FindName_ListNode_Root, s, MUIV_NListtree_FindName_Flag_Activate);
-  }
+  DoMethod(data->LT_FOLDER, MUIM_NListtree_FindUserData, MUIV_NListtree_FindUserData_ListNode_Root, data->folder->self, MUIV_NListtree_FindUserData_Flag_Activate);
 
   RETURN(TRUE);
   return TRUE;
@@ -80,22 +117,25 @@ MakeStaticHook(Text2ListHook, Text2ListFunc);
 
 ///
 /// List2TextFunc
-//  Copies listview selection to text gadget
-HOOKPROTONH(List2TextFunc, void, Object *listview, Object *text)
+// update the text object with the newly selected folder
+HOOKPROTONONP(List2TextFunc, void)
 {
-  Object *list;
+  struct Data *data = (struct Data *)hook->h_Data;
+  struct MUI_NListtree_TreeNode *tn;
 
   ENTER();
 
-  if((list = (Object *)xget(listview, MUIA_NListview_NList)) != NULL && text != NULL)
+  tn = (struct MUI_NListtree_TreeNode *)xget(data->LT_FOLDER, MUIA_NListtree_Active);
+  if(tn != NULL && tn->tn_User != NULL)
   {
-    struct MUI_NListtree_TreeNode *tn = (struct MUI_NListtree_TreeNode *)xget(list, MUIA_NListtree_Active);
+    struct FolderNode *fnode = (struct FolderNode *)tn->tn_User;
+    struct Folder *folder = fnode->folder;
 
-    if(tn != NULL && tn->tn_User != NULL)
-    {
-      struct FolderNode *fnode = (struct FolderNode *)tn->tn_User;
-      set(text, MUIA_Text_Contents, fnode->folder->Name);
-    }
+    data->folderID = folder->ID;
+    data->folder = folder;
+    BuildFolderPathString(data, folder);
+    set(data->TX_FOLDER, MUIA_Text_Contents, data->folderPath);
+    set(data->self, ATTR(FolderChanged), folder->ID);
   }
 
   LEAVE();
@@ -109,7 +149,7 @@ MakeStaticHook(List2TextHook, List2TextFunc);
 OVERLOAD(OM_NEW)
 {
   Object *TX_FOLDER;
-  Object *LV_FOLDER;
+  Object *LT_FOLDER;
   Object *BT_FOLDER;
 
   ENTER();
@@ -120,11 +160,10 @@ OVERLOAD(OM_NEW)
       MUIA_Text_Copy, FALSE,
     End,
     MUIA_Popstring_Button, BT_FOLDER = PopButton(MUII_PopUp),
-    MUIA_Popobject_StrObjHook, &Text2ListHook,
-    MUIA_Popobject_ObjStrHook, &List2TextHook,
     MUIA_Popobject_WindowHook, &PO_WindowHook,
     MUIA_Popobject_Object, NListviewObject,
-      MUIA_NListview_NList, LV_FOLDER = FolderRequestListtreeObject,
+      MUIA_FixHeightTxt, "\n\n\n\n\n\n\n\n",
+      MUIA_NListview_NList, LT_FOLDER = FolderRequestListtreeObject,
         MUIA_NList_DoubleClick, TRUE,
       End,
     End,
@@ -132,11 +171,18 @@ OVERLOAD(OM_NEW)
   {
     GETDATA;
 
+    data->self = obj;
     data->TX_FOLDER = TX_FOLDER;
+    data->LT_FOLDER = LT_FOLDER;
+
+    InitHook(&data->Text2ListHook, Text2ListHook, data);
+    InitHook(&data->List2TextHook, List2TextHook, data);
+    xset(obj,
+      MUIA_Popobject_StrObjHook, &data->Text2ListHook,
+      MUIA_Popobject_ObjStrHook, &data->List2TextHook);
 
     set(BT_FOLDER, MUIA_CycleChain, TRUE);
-    DoMethod(LV_FOLDER, MUIM_Notify, MUIA_NList_DoubleClick, TRUE, obj, 2, MUIM_Popstring_Close, TRUE);
-    DoMethod(TX_FOLDER, MUIM_Notify, MUIA_Text_Contents, MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(FolderChanged), TRUE);
+    DoMethod(LT_FOLDER, MUIM_Notify, MUIA_NList_DoubleClick, TRUE, obj, 2, MUIM_Popstring_Close, TRUE);
   }
 
   RETURN((IPTR)obj);
@@ -157,9 +203,14 @@ OVERLOAD(OM_SET)
   {
     switch(tag->ti_Tag)
     {
-      case ATTR(Folder):
+      case ATTR(FolderID):
       {
-        nnset(data->TX_FOLDER, MUIA_Text_Contents, tag->ti_Data);
+        data->folderID = tag->ti_Data;
+        if((data->folder = FindFolderByID(G->folders, data->folderID)) != NULL)
+        {
+          BuildFolderPathString(data, data->folder);
+          set(data->TX_FOLDER, MUIA_Text_Contents, data->folderPath);
+        }
         // make the superMethod call ignore those tags
         tag->ti_Tag = TAG_IGNORE;
       }
@@ -190,9 +241,17 @@ OVERLOAD(OM_GET)
     }
     break;
 
-    case ATTR(Folder):
+    case ATTR(FolderID):
     {
-      *store = xget(data->TX_FOLDER, MUIA_Text_Contents);
+      *store = data->folderID;
+
+      return TRUE;
+    }
+    break;
+
+    case ATTR(FolderName):
+    {
+      *store = (IPTR)((data->folderID != 0 && data->folder != NULL) ? data->folder->Name : "");
 
       return TRUE;
     }

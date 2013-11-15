@@ -123,9 +123,15 @@ struct MailServerNode *CreateNewMailServer(const enum MailServerType type, const
             // get the name of the incoming folder so that it will be
             // the default of that mail server
             if((incomingFolder = FO_GetFolderByType(FT_INCOMING, NULL)) != NULL)
-              strlcpy(msn->mailStoreFolder, incomingFolder->Name, sizeof(msn->mailStoreFolder));
+            {
+              msn->mailStoreFolderID = incomingFolder->ID;
+              strlcpy(msn->mailStoreFolderName, incomingFolder->Name, sizeof(msn->mailStoreFolderName));
+            }
             else
-              strlcpy(msn->mailStoreFolder, tr(MSG_MA_Incoming), sizeof(msn->mailStoreFolder));
+            {
+              // leave the folder ID unassigned, this will be resolved later
+              strlcpy(msn->mailStoreFolderName, tr(MSG_MA_Incoming), sizeof(msn->mailStoreFolderName));
+            }
           }
           else
           {
@@ -151,9 +157,15 @@ struct MailServerNode *CreateNewMailServer(const enum MailServerType type, const
         // get the name of the incoming folder so that it will be
         // the default of that mail server
         if((sentFolder = FO_GetFolderByType(FT_SENT, NULL)) != NULL)
-          strlcpy(msn->mailStoreFolder, sentFolder->Name, sizeof(msn->mailStoreFolder));
+        {
+          msn->mailStoreFolderID = sentFolder->ID;
+          strlcpy(msn->mailStoreFolderName, sentFolder->Name, sizeof(msn->mailStoreFolderName));
+        }
         else
-          strlcpy(msn->mailStoreFolder, tr(MSG_MA_Sent), sizeof(msn->mailStoreFolder));
+        {
+          // leave the folder ID unassigned, this will be resolved later
+          strlcpy(msn->mailStoreFolderName, tr(MSG_MA_Sent), sizeof(msn->mailStoreFolderName));
+        }
       }
       break;
 
@@ -262,7 +274,8 @@ static BOOL CompareMailServerNodes(const struct Node *n1, const struct Node *n2)
      strcmp(msn1->username,    msn2->username) != 0 ||
      strcmp(msn1->password,    msn2->password) != 0 ||
      strcmp(msn1->certFingerprint, msn2->certFingerprint) != 0 ||
-     strcmp(msn1->mailStoreFolder, msn2->mailStoreFolder) != 0 ||
+     msn1->mailStoreFolderID != msn2->mailStoreFolderID ||
+     strcmp(msn1->mailStoreFolderName, msn2->mailStoreFolderName) != 0 ||
      msn1->certFailures   != msn2->certFailures ||
      msn1->port           != msn2->port ||
      msn1->flags          != msn2->flags)

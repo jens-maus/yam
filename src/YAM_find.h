@@ -193,7 +193,8 @@ struct FilterNode
   char             replyFile[SIZE_PATHFILE]; // path to a file to use as the reply text
   char             executeCmd[SIZE_COMMAND]; // command string for execute action
   char             playSound[SIZE_PATHFILE]; // path to sound file for sound notification action
-  char             moveTo[SIZE_NAME];        // folder name for move mail action
+  char             moveToName[SIZE_NAME];    // folder name for move mail action
+  int              moveToID;                 // folder ID for move mail action
   struct MinList   ruleList;                 // list of all rules that filter evaluates.
 };
 
@@ -232,9 +233,9 @@ struct RuleNode *GetFilterRule(struct FilterNode *filter, int pos);
 BOOL DoFilterSearch(const struct FilterNode *filter, const struct Mail *mail);
 BOOL CompareFilterLists(const struct MinList *fl1, const struct MinList *fl2);
 void FilterMails(const struct MailList *mlist, const int mode, struct FilterResult *result);
-BOOL FolderIsUsedByFilters(const char *folder);
-void RenameFolderInFilters(const char *oldFolder, const char *newFolder);
-void RemoveFolderFromFilters(const char *folder);
+BOOL FolderIsUsedByFilters(const struct Folder *folder);
+void RenameFolderInFilters(const struct Folder *oldFolder, const struct Folder *newFolder);
+void RemoveFolderFromFilters(const struct Folder *folder);
 BOOL ImportFilter(const char *fileName, const BOOL isVolatile, struct MinList *filterList);
 void CheckFilterRules(struct FilterNode *filter);
 

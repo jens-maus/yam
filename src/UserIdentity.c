@@ -65,8 +65,8 @@ struct UserIdentityNode *CreateNewUserIdentity(const struct Config *co)
     ASONODE_Min, TRUE,
     TAG_DONE)) != NULL)
   {
-    struct Folder *sentFolder;
     struct MailServerNode *msn;
+    struct Folder *sentFolder;
 
     // initialize all variables as AllocSysObject() does not clear the memory
     memset(uin, 0, sizeof(*uin));
@@ -102,9 +102,15 @@ struct UserIdentityNode *CreateNewUserIdentity(const struct Config *co)
     // get the name of the first sent folder so that we make
     // that one as the default
     if((sentFolder = FO_GetFolderByType(FT_SENT, NULL)) != NULL)
-      strlcpy(uin->sentFolder, sentFolder->Name, sizeof(uin->sentFolder));
+    {
+      uin->sentFolderID = sentFolder->ID;
+      strlcpy(uin->sentFolderName, sentFolder->Name, sizeof(uin->sentFolderName));
+    }
     else
-      strlcpy(uin->sentFolder, tr(MSG_MA_Sent), sizeof(uin->sentFolder));
+    {
+      // leave the folder ID unassigned, this will be resolved later
+      strlcpy(uin->sentFolderName, tr(MSG_MA_Sent), sizeof(uin->sentFolderName));
+    }
   }
 
   RETURN(uin);
@@ -135,41 +141,42 @@ void FreeUserIdentityList(struct MinList *userIdentityList)
 static BOOL CompareUserIdentityNodes(const struct Node *n1, const struct Node *n2)
 {
   BOOL equal = TRUE;
-  const struct UserIdentityNode *uid1 = (const struct UserIdentityNode *)n1;
-  const struct UserIdentityNode *uid2 = (const struct UserIdentityNode *)n2;
+  const struct UserIdentityNode *uin1 = (const struct UserIdentityNode *)n1;
+  const struct UserIdentityNode *uin2 = (const struct UserIdentityNode *)n2;
 
   ENTER();
 
   // compare every single member of the structure
-  if(uid1->id != uid2->id ||
-     uid1->active != uid2->active ||
-     strcmp(uid1->description, uid2->description) != 0 ||
-     strcmp(uid1->realname, uid2->realname) != 0 ||
-     strcmp(uid1->address, uid2->address) != 0 ||
-     strcmp(uid1->organization, uid2->organization) != 0 ||
-     (uid1->smtpServer != NULL ? uid1->smtpServer->id : -1) != (uid2->smtpServer != NULL ? uid2->smtpServer->id : -1) ||
-     (uid1->signature != NULL ? uid1->signature->id : -1) != (uid2->signature != NULL ? uid2->signature->id : -1) ||
-     strcmp(uid1->mailCC, uid2->mailCC) != 0 ||
-     strcmp(uid1->mailBCC, uid2->mailBCC) != 0 ||
-     strcmp(uid1->mailReplyTo, uid2->mailReplyTo) != 0 ||
-     strcmp(uid1->extraHeaders, uid2->extraHeaders) != 0 ||
-     strcmp(uid1->photoURL, uid2->photoURL) != 0 ||
-     strcmp(uid1->sentFolder, uid2->sentFolder) != 0 ||
-     uid1->saveSentMail != uid2->saveSentMail ||
-     uid1->quoteMails != uid2->quoteMails ||
-     uid1->quotePosition != uid2->quotePosition ||
-     uid1->signaturePosition != uid2->signaturePosition ||
-     uid1->sigReply != uid2->sigReply ||
-     uid1->sigForwarding != uid2->sigForwarding ||
-     uid1->addPersonalInfo != uid2->addPersonalInfo ||
-     uid1->requestMDN != uid2->requestMDN ||
-     uid1->usePGP != uid2->usePGP ||
-     strcmp(uid1->pgpKeyID, uid2->pgpKeyID) != 0 ||
-     strcmp(uid1->pgpKeyURL, uid2->pgpKeyURL) != 0 ||
-     uid1->pgpSignUnencrypted != uid2->pgpSignUnencrypted ||
-     uid1->pgpSignEncrypted != uid2->pgpSignEncrypted ||
-     uid1->pgpEncryptAll != uid2->pgpEncryptAll ||
-     uid1->pgpSelfEncrypt != uid2->pgpSelfEncrypt)
+  if(uin1->id != uin2->id ||
+     uin1->active != uin2->active ||
+     strcmp(uin1->description, uin2->description) != 0 ||
+     strcmp(uin1->realname, uin2->realname) != 0 ||
+     strcmp(uin1->address, uin2->address) != 0 ||
+     strcmp(uin1->organization, uin2->organization) != 0 ||
+     (uin1->smtpServer != NULL ? uin1->smtpServer->id : -1) != (uin2->smtpServer != NULL ? uin2->smtpServer->id : -1) ||
+     (uin1->signature != NULL ? uin1->signature->id : -1) != (uin2->signature != NULL ? uin2->signature->id : -1) ||
+     strcmp(uin1->mailCC, uin2->mailCC) != 0 ||
+     strcmp(uin1->mailBCC, uin2->mailBCC) != 0 ||
+     strcmp(uin1->mailReplyTo, uin2->mailReplyTo) != 0 ||
+     strcmp(uin1->extraHeaders, uin2->extraHeaders) != 0 ||
+     strcmp(uin1->photoURL, uin2->photoURL) != 0 ||
+     strcmp(uin1->sentFolderName, uin2->sentFolderName) != 0 ||
+     uin1->sentFolderID != uin2->sentFolderID ||
+     uin1->saveSentMail != uin2->saveSentMail ||
+     uin1->quoteMails != uin2->quoteMails ||
+     uin1->quotePosition != uin2->quotePosition ||
+     uin1->signaturePosition != uin2->signaturePosition ||
+     uin1->sigReply != uin2->sigReply ||
+     uin1->sigForwarding != uin2->sigForwarding ||
+     uin1->addPersonalInfo != uin2->addPersonalInfo ||
+     uin1->requestMDN != uin2->requestMDN ||
+     uin1->usePGP != uin2->usePGP ||
+     strcmp(uin1->pgpKeyID, uin2->pgpKeyID) != 0 ||
+     strcmp(uin1->pgpKeyURL, uin2->pgpKeyURL) != 0 ||
+     uin1->pgpSignUnencrypted != uin2->pgpSignUnencrypted ||
+     uin1->pgpSignEncrypted != uin2->pgpSignEncrypted ||
+     uin1->pgpEncryptAll != uin2->pgpEncryptAll ||
+     uin1->pgpSelfEncrypt != uin2->pgpSelfEncrypt)
   {
     // something does not match
     equal = FALSE;

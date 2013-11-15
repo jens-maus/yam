@@ -383,6 +383,8 @@ DECLARE(OpenConfig)
     if(LoadConfig(CE, cname, NULL) == 1)
       NewPrefsFile(cl, obj, cname);
 
+    // resolve any unset folder IDs
+    ResolveConfigFolders(CE);
     DoMethod(data->PG_PAGES[data->visiblePage], MUIM_ConfigPage_ConfigToGUI, CE);
 
     // remember to update all config items in ValidateConfig()
@@ -418,6 +420,8 @@ DECLARE(SaveConfigAs)
       // forbid automatically saving the config after validation,
       // it will be saved anyway later
       ValidateConfig(CE, TRUE, FALSE);
+      // resolve any changed folder IDs
+      ResolveConfigFolders(CE);
       NewPrefsFile(cl, obj, cname);
       SaveConfig(CE, cname);
     }
@@ -549,6 +553,9 @@ DECLARE(Close) // ULONG how
         // validate that C has valid values
         // forbid automatically saving the config after validation
         ValidateConfig(C, TRUE, FALSE);
+
+        // resolve any changed folder IDs
+        ResolveConfigFolders(C);
 
         // we save the configuration if the user
         // has pressed on 'Save' only.

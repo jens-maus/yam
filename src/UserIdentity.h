@@ -60,7 +60,9 @@ struct UserIdentityNode
   char extraHeaders[SIZE_LARGE];     // user definable extra headers
   char photoURL[SIZE_URL];           // user definable URL to photo image
 
-  char sentFolder[SIZE_NAME];        // folder name for storing sent mail to
+  int sentFolderID;                  // folder ID for storing sent mail to
+  char sentFolderName[SIZE_NAME];    // folder name for storing sent mail to
+
   BOOL saveSentMail;                 // store sent mail to the folder yes/no
   BOOL quoteMails;                   // TRUE if user has quoted text enabled when replying/forwarding
   enum QuotePos quotePosition;       // position where the quote should appear

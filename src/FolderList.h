@@ -66,6 +66,8 @@ struct Folder *AllocFolder();
 void InitFolder(struct Folder *folder, enum FolderType type);
 void FreeFolder(struct Folder *folder);
 void MoveFolderContents(struct Folder *to, struct Folder *from);
+BOOL IsUniqueFolderID(const struct FolderList *flist, const int id);
+struct Folder *FindFolderByID(const struct FolderList *flist, const int id);
 
 // check if a folder list is empty
 #define IsFolderListEmpty(flist)                  IsMinListEmpty(&(flist)->list)

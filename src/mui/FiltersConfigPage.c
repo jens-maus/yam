@@ -566,33 +566,33 @@ DECLARE(FilterToGUI)
     struct FilterNode *filter = data->filter;
     struct RuleNode *rule;
 
-    nnset(data->ST_RNAME,             MUIA_String_Contents,           filter->name);
-    nnset(data->CH_REMOTE,            MUIA_Selected,                  filter->remote);
-    nnset(data->CH_APPLYNEW,          MUIA_Selected,                  filter->applyToNew);
-    nnset(data->CH_APPLYSENT,         MUIA_Selected,                  filter->applyToSent);
-    nnset(data->CH_APPLYREQ,          MUIA_Selected,                  filter->applyOnReq);
-    nnset(data->CY_FILTER_COMBINE,    MUIA_Cycle_Active,              filter->combine);
-    nnset(data->CH_AREDIRECT,         MUIA_Selected,                  hasRedirectAction(filter));
-    nnset(data->CH_AFORWARD,          MUIA_Selected,                  hasForwardAction(filter));
-    nnset(data->CH_ARESPONSE,         MUIA_Selected,                  hasReplyAction(filter));
-    nnset(data->CH_AEXECUTE,          MUIA_Selected,                  hasExecuteAction(filter));
-    nnset(data->CH_APLAY,             MUIA_Selected,                  hasPlaySoundAction(filter));
-    nnset(data->CH_AMOVE,             MUIA_Selected,                  hasMoveAction(filter));
-    nnset(data->CH_ASTATUSTOMARKED,   MUIA_Selected,                  hasStatusToMarkedAction(filter));
-    nnset(data->CH_ASTATUSTOUNMARKED, MUIA_Selected,                  hasStatusToUnmarkedAction(filter));
-    nnset(data->CH_ASTATUSTOREAD,     MUIA_Selected,                  hasStatusToReadAction(filter));
-    nnset(data->CH_ASTATUSTOUNREAD,   MUIA_Selected,                  hasStatusToUnreadAction(filter));
-    nnset(data->CH_ASTATUSTOSPAM,     MUIA_Selected,                  hasStatusToSpamAction(filter));
-    nnset(data->CH_ASTATUSTOHAM,      MUIA_Selected,                  hasStatusToHamAction(filter));
-    nnset(data->CH_ADELETE,           MUIA_Selected,                  hasDeleteAction(filter));
-    nnset(data->CH_ASKIP,             MUIA_Selected,                  hasSkipMsgAction(filter));
-    nnset(data->CH_ATERMINATE,        MUIA_Selected,                  hasTerminateAction(filter));
-    nnset(data->ST_AREDIRECT,         MUIA_String_Contents,           filter->redirectTo);
-    nnset(data->ST_AFORWARD,          MUIA_String_Contents,           filter->forwardTo);
-    nnset(data->ST_ARESPONSE,         MUIA_String_Contents,           filter->replyFile);
-    nnset(data->ST_AEXECUTE,          MUIA_String_Contents,           filter->executeCmd);
-    nnset(data->ST_APLAY,             MUIA_String_Contents,           filter->playSound);
-    nnset(data->PO_MOVETO,            MUIA_FolderRequestPopup_Folder, filter->moveTo);
+    nnset(data->ST_RNAME,             MUIA_String_Contents,             filter->name);
+    nnset(data->CH_REMOTE,            MUIA_Selected,                    filter->remote);
+    nnset(data->CH_APPLYNEW,          MUIA_Selected,                    filter->applyToNew);
+    nnset(data->CH_APPLYSENT,         MUIA_Selected,                    filter->applyToSent);
+    nnset(data->CH_APPLYREQ,          MUIA_Selected,                    filter->applyOnReq);
+    nnset(data->CY_FILTER_COMBINE,    MUIA_Cycle_Active,                filter->combine);
+    nnset(data->CH_AREDIRECT,         MUIA_Selected,                    hasRedirectAction(filter));
+    nnset(data->CH_AFORWARD,          MUIA_Selected,                    hasForwardAction(filter));
+    nnset(data->CH_ARESPONSE,         MUIA_Selected,                    hasReplyAction(filter));
+    nnset(data->CH_AEXECUTE,          MUIA_Selected,                    hasExecuteAction(filter));
+    nnset(data->CH_APLAY,             MUIA_Selected,                    hasPlaySoundAction(filter));
+    nnset(data->CH_AMOVE,             MUIA_Selected,                    hasMoveAction(filter));
+    nnset(data->CH_ASTATUSTOMARKED,   MUIA_Selected,                    hasStatusToMarkedAction(filter));
+    nnset(data->CH_ASTATUSTOUNMARKED, MUIA_Selected,                    hasStatusToUnmarkedAction(filter));
+    nnset(data->CH_ASTATUSTOREAD,     MUIA_Selected,                    hasStatusToReadAction(filter));
+    nnset(data->CH_ASTATUSTOUNREAD,   MUIA_Selected,                    hasStatusToUnreadAction(filter));
+    nnset(data->CH_ASTATUSTOSPAM,     MUIA_Selected,                    hasStatusToSpamAction(filter));
+    nnset(data->CH_ASTATUSTOHAM,      MUIA_Selected,                    hasStatusToHamAction(filter));
+    nnset(data->CH_ADELETE,           MUIA_Selected,                    hasDeleteAction(filter));
+    nnset(data->CH_ASKIP,             MUIA_Selected,                    hasSkipMsgAction(filter));
+    nnset(data->CH_ATERMINATE,        MUIA_Selected,                    hasTerminateAction(filter));
+    nnset(data->ST_AREDIRECT,         MUIA_String_Contents,             filter->redirectTo);
+    nnset(data->ST_AFORWARD,          MUIA_String_Contents,             filter->forwardTo);
+    nnset(data->ST_ARESPONSE,         MUIA_String_Contents,             filter->replyFile);
+    nnset(data->ST_AEXECUTE,          MUIA_String_Contents,             filter->executeCmd);
+    nnset(data->ST_APLAY,             MUIA_String_Contents,             filter->playSound);
+    nnset(data->PO_MOVETO,            MUIA_FolderRequestPopup_FolderID, filter->moveToID);
 
     xset(data->GR_SGROUP, MUIA_ObjectList_Quiet, TRUE,
                           MUIA_FilterRuleList_Filter, filter);
@@ -668,7 +668,8 @@ DECLARE(GUIToFilter)
     GetMUIString(filter->replyFile,  data->ST_ARESPONSE, sizeof(filter->replyFile));
     GetMUIString(filter->executeCmd, data->ST_AEXECUTE, sizeof(filter->executeCmd));
     GetMUIString(filter->playSound,  data->ST_APLAY, sizeof(filter->playSound));
-    strlcpy(filter->moveTo, (char *)xget(data->PO_MOVETO, MUIA_FolderRequestPopup_Folder), sizeof(filter->moveTo));
+    filter->moveToID = xget(data->PO_MOVETO, MUIA_FolderRequestPopup_FolderID);
+    strlcpy(filter->moveToName, (char *)xget(data->PO_MOVETO, MUIA_FolderRequestPopup_FolderName), sizeof(filter->moveToName));
 
     // (re)build the rule list from scratch
     FreeFilterRuleList(filter);

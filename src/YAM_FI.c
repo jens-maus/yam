@@ -1481,9 +1481,9 @@ BOOL ExecuteFilterAction(const struct FilterNode *filter, struct Mail *mail, str
   // Move Action
   if(hasMoveAction(filter) && filter->remote == FALSE)
   {
-    struct Folder* fo;
+    struct Folder *fo;
 
-    if((fo = FO_GetFolderByName(filter->moveTo, NULL)) != NULL)
+    if((fo = FindFolderByID(G->folders, filter->moveToID)) != NULL)
     {
       if(mail->Folder != fo)
       {
@@ -1517,7 +1517,7 @@ BOOL ExecuteFilterAction(const struct FilterNode *filter, struct Mail *mail, str
       }
     }
     else
-      ER_NewError(tr(MSG_ER_CANTMOVEMAIL), mail->MailFile, filter->moveTo);
+      ER_NewError(tr(MSG_ER_CANTMOVEMAIL), mail->MailFile, filter->moveToName);
   }
 
   // Delete Action
@@ -1884,19 +1884,20 @@ static BOOL CompareFilterNodes(const struct Node *n1, const struct Node *n2)
   ENTER();
 
    // compare every single member of the structure
-  if(fn1->combine         != fn2->combine ||
-     fn1->actions         != fn2->actions ||
-     fn1->remote          != fn2->remote ||
-     fn1->applyToNew      != fn2->applyToNew ||
-     fn1->applyOnReq      != fn2->applyOnReq ||
-     fn1->applyToSent     != fn2->applyToSent ||
-     strcmp(fn1->name,       fn2->name) != 0 ||
-     strcmp(fn1->redirectTo, fn2->redirectTo) != 0 ||
-     strcmp(fn1->forwardTo,  fn2->forwardTo) != 0 ||
-     strcmp(fn1->replyFile,  fn2->replyFile) != 0 ||
-     strcmp(fn1->executeCmd, fn2->executeCmd) != 0 ||
-     strcmp(fn1->playSound,  fn2->playSound) != 0 ||
-     strcmp(fn1->moveTo,     fn2->moveTo) != 0 ||
+  if(fn1->combine            != fn2->combine ||
+     fn1->actions            != fn2->actions ||
+     fn1->remote             != fn2->remote ||
+     fn1->applyToNew         != fn2->applyToNew ||
+     fn1->applyOnReq         != fn2->applyOnReq ||
+     fn1->applyToSent        != fn2->applyToSent ||
+     fn1->moveToID           != fn2->moveToID ||
+     strcmp(fn1->name,          fn2->name) != 0 ||
+     strcmp(fn1->redirectTo,    fn2->redirectTo) != 0 ||
+     strcmp(fn1->forwardTo,     fn2->forwardTo) != 0 ||
+     strcmp(fn1->replyFile,     fn2->replyFile) != 0 ||
+     strcmp(fn1->executeCmd,    fn2->executeCmd) != 0 ||
+     strcmp(fn1->playSound,     fn2->playSound) != 0 ||
+     strcmp(fn1->moveToName,    fn2->moveToName) != 0 ||
      CompareRuleLists(&fn1->ruleList, &fn2->ruleList) == FALSE)
   {
     equal = FALSE;
@@ -2031,7 +2032,7 @@ struct RuleNode *GetFilterRule(struct FilterNode *filter, int pos)
 ///
 /// FolderUsedByFilters
 // check if the folder is used by any filter as "move to" folder
-BOOL FolderIsUsedByFilters(const char *folder)
+BOOL FolderIsUsedByFilters(const struct Folder *folder)
 {
   struct FilterNode *filter;
   BOOL folderIsUsed = FALSE;
@@ -2042,7 +2043,7 @@ BOOL FolderIsUsedByFilters(const char *folder)
   // the old folder name by the new one
   IterateList(&C->filterList, struct FilterNode *, filter)
   {
-    if(hasMoveAction(filter) == TRUE && stricmp(filter->moveTo, folder) == 0)
+    if(hasMoveAction(filter) == TRUE && filter->moveToID == folder->ID)
     {
       folderIsUsed = TRUE;
       break;
@@ -2056,7 +2057,7 @@ BOOL FolderIsUsedByFilters(const char *folder)
 ///
 /// RenameFolderInFilters
 // modify the destination folder of all filters
-void RenameFolderInFilters(const char *oldFolder, const char *newFolder)
+void RenameFolderInFilters(const struct Folder *oldFolder, const struct Folder *newFolder)
 {
   struct FilterNode *filter;
 
@@ -2066,10 +2067,11 @@ void RenameFolderInFilters(const char *oldFolder, const char *newFolder)
   // the old folder name by the new one
   IterateList(&C->filterList, struct FilterNode *, filter)
   {
-    if(hasMoveAction(filter) == TRUE && stricmp(filter->moveTo, oldFolder) == 0)
+    if(hasMoveAction(filter) == TRUE && filter->moveToID == oldFolder->ID)
     {
-      D(DBF_FILTER, "changing MoveTo folder of filer '%s' to '%s'", filter->name, newFolder);
-      strlcpy(filter->moveTo, newFolder, sizeof(filter->moveTo));
+      D(DBF_FILTER, "changing moveTo folder of filer '%s' to '%s'", filter->name, newFolder);
+      filter->moveToID = newFolder->ID;
+      strlcpy(filter->moveToName, newFolder->Name, sizeof(filter->moveToName));
 
       // remember the modified configuration, but don't save it yet
       C->ConfigIsSaved = FALSE;
@@ -2082,7 +2084,7 @@ void RenameFolderInFilters(const char *oldFolder, const char *newFolder)
 ///
 /// RemoveFolderFromFilters
 // remove a folder from a filter in case it is its "move to" folder
-void RemoveFolderFromFilters(const char *folder)
+void RemoveFolderFromFilters(const struct Folder *folder)
 {
   struct FilterNode *filter;
 
@@ -2092,10 +2094,11 @@ void RemoveFolderFromFilters(const char *folder)
   // the old folder name by the new one
   IterateList(&C->filterList, struct FilterNode *, filter)
   {
-    if(hasMoveAction(filter) == TRUE && stricmp(filter->moveTo, folder) == 0)
+    if(hasMoveAction(filter) == TRUE && filter->moveToID == folder->ID)
     {
-      D(DBF_FILTER, "removing MoveTo folder '%s' of filer '%s'", folder, filter->name);
-      filter->moveTo[0] = '\0';
+      D(DBF_FILTER, "removing moveTo folder '%s' of filer '%s'", folder, filter->name);
+      filter->moveToID = 0;
+      filter->moveToName[0] = '\0';
       clearFlag(filter->actions, FA_MOVE);
 
       // remember the modified configuration, but don't save it yet
@@ -2242,7 +2245,8 @@ BOOL ImportFilter(const char *fileName, const BOOL isVolatile, struct MinList *f
                 if((folder = FO_GetFolderByType(FT_SPAM, NULL)) != NULL)
                 {
                   // move the mail to the spam folder if it exists
-                  strlcpy(filter->moveTo, folder->Name, sizeof(filter->moveTo));
+                  filter->moveToID = folder->ID;
+                  strlcpy(filter->moveToName, folder->Name, sizeof(filter->moveToName));
                   setFlag(filter->actions, FA_MOVE);
                 }
                 else

@@ -360,6 +360,92 @@ void MoveFolderContents(struct Folder *to, struct Folder *from)
 }
 
 ///
+/// IsUniqueFolderID
+// check for a unique folder ID
+BOOL IsUniqueFolderID(const struct FolderList *flist, const int id)
+{
+  BOOL isUnique = TRUE;
+  struct FolderNode *fnode;
+
+  ENTER();
+
+  LockFolderList(flist);
+  IterateList(flist, struct FolderNode *, fnode)
+  {
+    if(fnode->folder->ID == id)
+    {
+      // we found exactly this ID, this is bad
+      isUnique = FALSE;
+      break;
+    }
+  }
+  UnlockFolderList(flist);
+
+  RETURN(isUnique);
+  return isUnique;
+}
+
+///
+/// FindFolderByID
+// find a folder by its unique ID
+struct Folder *FindFolderByID(const struct FolderList *flist, const int id)
+{
+  struct Folder *result = NULL;
+
+  ENTER();
+
+  if(id != 0)
+  {
+    struct FolderNode *fn;
+
+    LockFolderListShared(flist);
+    IterateList(flist, struct FolderNode *, fn)
+    {
+      // check if we found exactly this ID
+      if(id == fn->folder->ID)
+      {
+        result = fn->folder;
+        break;
+      }
+    }
+    UnlockFolderList(flist);
+  }
+
+  RETURN(result);
+  return result;
+}
+
+///
+/// FindFolderNode
+// find a folder node
+struct FolderNode *FindFolderNode(const struct FolderList *flist, const struct Folder *folder)
+{
+  struct FolderNode *result = NULL;
+
+  ENTER();
+
+  if(folder != NULL)
+  {
+    struct FolderNode *fnode;
+
+    LockFolderList(flist);
+    IterateList(flist, struct FolderNode *, fnode)
+    {
+      // check if we found exactly this ID
+      if(folder == fnode->folder)
+      {
+        result = fnode;
+        break;
+      }
+    }
+    UnlockFolderList(flist);
+  }
+
+  RETURN(result);
+  return result;
+}
+
+///
 
 #if defined(DEBUG)
 static LONG folderLocks = 0;

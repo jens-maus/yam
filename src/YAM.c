@@ -1695,6 +1695,9 @@ static void InitAfterLogin(void)
     FO_SaveTree();
   }
 
+  // now that the folder tree is available we can resolve all folder references in the config
+  ResolveConfigFolders(C);
+
   // setup some dynamic (changing) menus
   MA_SetupDynamicMenus();
 

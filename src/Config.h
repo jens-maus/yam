@@ -307,6 +307,7 @@ int LoadConfig(struct Config *co, const char *fname, struct FolderList **oldfold
 BOOL SaveConfig(struct Config *co, const char *fname);
 BOOL IsValidConfig(const struct Config *co);
 void ValidateConfig(struct Config *co, BOOL update, BOOL saveChanges);
+void ResolveConfigFolders(struct Config *co);
 BOOL CheckConfigDiffs(const BOOL *visited);
 void ImportExternalSpamFilters(struct Config *co);
 

@@ -542,7 +542,7 @@ OVERLOAD(MUIM_ConfigPage_ConfigToGUI)
   }
 
   // make sure the first entry is selected per default
-  xset(data->LV_IDENTITY, 
+  xset(data->LV_IDENTITY,
     MUIA_NList_Quiet, FALSE,
     MUIA_NList_Active, MUIV_NList_Active_Top);
 
@@ -635,33 +635,33 @@ DECLARE(IdentityToGUI)
     // all notifies here are nnset() notifies so that we don't trigger any additional
     // notify or otherwise we would run into problems.
 
-    nnset(data->CH_IDENTITY_ENABLED,       MUIA_Selected,                      uin->active);
-    nnset(data->ST_IDENTITY_DESCRIPTION,   MUIA_String_Contents,               uin->description);
-    nnset(data->ST_IDENTITY_REALNAME,      MUIA_String_Contents,               uin->realname);
-    nnset(data->ST_IDENTITY_EMAIL,         MUIA_String_Contents,               uin->address);
-    nnset(data->ST_IDENTITY_ORGANIZATION,  MUIA_String_Contents,               uin->organization);
-    nnset(data->ST_IDENTITY_CC,            MUIA_String_Contents,               uin->mailCC);
-    nnset(data->ST_IDENTITY_BCC,           MUIA_String_Contents,               uin->mailBCC);
-    nnset(data->ST_IDENTITY_REPLYTO,       MUIA_String_Contents,               uin->mailReplyTo);
-    nnset(data->ST_IDENTITY_EXTRAHEADER,   MUIA_String_Contents,               uin->extraHeaders);
-    nnset(data->ST_IDENTITY_PHOTOURL,      MUIA_String_Contents,               uin->photoURL);
-    nnset(data->CH_IDENTITY_SAVESENTMAIL,  MUIA_Selected,                      uin->saveSentMail);
-    nnset(data->CH_IDENTITY_ALTSENTFOLDER, MUIA_Selected,                      IsStrEmpty(uin->sentFolder) == FALSE);
-    nnset(data->PO_IDENTITY_ALTSENTFOLDER, MUIA_FolderRequestPopup_Folder,     uin->sentFolder);
-    nnset(data->CH_IDENTITY_QUOTEMAILS,    MUIA_Selected,                      uin->quoteMails);
-    nnset(data->CY_IDENTITY_QUOTEPOS,      MUIA_Cycle_Active,                  uin->quotePosition);
-    nnset(data->CY_IDENTITY_SIGPOS,        MUIA_Cycle_Active,                  uin->signaturePosition);
-    nnset(data->CH_IDENTITY_SIGREPLY,      MUIA_Selected,                      uin->sigReply);
-    nnset(data->CH_IDENTITY_SIGFORWARD,    MUIA_Selected,                      uin->sigForwarding);
-    nnset(data->CH_IDENTITY_ADDINFO,       MUIA_Selected,                      uin->addPersonalInfo);
-    nnset(data->CH_IDENTITY_REQUESTMDN,    MUIA_Selected,                      uin->requestMDN);
-    nnset(data->CH_IDENTITY_USEPGP,        MUIA_Selected,                      uin->usePGP);
-    nnset(data->PO_IDENTITY_PGPID,         MUIA_PGPKeyPopup_PGPKey,            uin->pgpKeyID);
-    nnset(data->ST_IDENTITY_PGPURL,        MUIA_String_Contents,               uin->pgpKeyURL);
-    nnset(data->CH_IDENTITY_PGPSIGN_UNENC, MUIA_Selected,                      uin->pgpSignUnencrypted);
-    nnset(data->CH_IDENTITY_PGPSIGN_ENC,   MUIA_Selected,                      uin->pgpSignEncrypted);
-    nnset(data->CH_IDENTITY_PGPENC_ALL,    MUIA_Selected,                      uin->pgpEncryptAll);
-    nnset(data->CH_IDENTITY_PGPENC_SELF,   MUIA_Selected,                      uin->pgpSelfEncrypt);
+    nnset(data->CH_IDENTITY_ENABLED,       MUIA_Selected,                    uin->active);
+    nnset(data->ST_IDENTITY_DESCRIPTION,   MUIA_String_Contents,             uin->description);
+    nnset(data->ST_IDENTITY_REALNAME,      MUIA_String_Contents,             uin->realname);
+    nnset(data->ST_IDENTITY_EMAIL,         MUIA_String_Contents,             uin->address);
+    nnset(data->ST_IDENTITY_ORGANIZATION,  MUIA_String_Contents,             uin->organization);
+    nnset(data->ST_IDENTITY_CC,            MUIA_String_Contents,             uin->mailCC);
+    nnset(data->ST_IDENTITY_BCC,           MUIA_String_Contents,             uin->mailBCC);
+    nnset(data->ST_IDENTITY_REPLYTO,       MUIA_String_Contents,             uin->mailReplyTo);
+    nnset(data->ST_IDENTITY_EXTRAHEADER,   MUIA_String_Contents,             uin->extraHeaders);
+    nnset(data->ST_IDENTITY_PHOTOURL,      MUIA_String_Contents,             uin->photoURL);
+    nnset(data->CH_IDENTITY_SAVESENTMAIL,  MUIA_Selected,                    uin->saveSentMail);
+    nnset(data->CH_IDENTITY_ALTSENTFOLDER, MUIA_Selected,                    uin->sentFolderID != 0);
+    nnset(data->PO_IDENTITY_ALTSENTFOLDER, MUIA_FolderRequestPopup_FolderID, uin->sentFolderID);
+    nnset(data->CH_IDENTITY_QUOTEMAILS,    MUIA_Selected,                    uin->quoteMails);
+    nnset(data->CY_IDENTITY_QUOTEPOS,      MUIA_Cycle_Active,                uin->quotePosition);
+    nnset(data->CY_IDENTITY_SIGPOS,        MUIA_Cycle_Active,                uin->signaturePosition);
+    nnset(data->CH_IDENTITY_SIGREPLY,      MUIA_Selected,                    uin->sigReply);
+    nnset(data->CH_IDENTITY_SIGFORWARD,    MUIA_Selected,                    uin->sigForwarding);
+    nnset(data->CH_IDENTITY_ADDINFO,       MUIA_Selected,                    uin->addPersonalInfo);
+    nnset(data->CH_IDENTITY_REQUESTMDN,    MUIA_Selected,                    uin->requestMDN);
+    nnset(data->CH_IDENTITY_USEPGP,        MUIA_Selected,                    uin->usePGP);
+    nnset(data->PO_IDENTITY_PGPID,         MUIA_PGPKeyPopup_PGPKey,          uin->pgpKeyID);
+    nnset(data->ST_IDENTITY_PGPURL,        MUIA_String_Contents,             uin->pgpKeyURL);
+    nnset(data->CH_IDENTITY_PGPSIGN_UNENC, MUIA_Selected,                    uin->pgpSignUnencrypted);
+    nnset(data->CH_IDENTITY_PGPSIGN_ENC,   MUIA_Selected,                    uin->pgpSignEncrypted);
+    nnset(data->CH_IDENTITY_PGPENC_ALL,    MUIA_Selected,                    uin->pgpEncryptAll);
+    nnset(data->CH_IDENTITY_PGPENC_SELF,   MUIA_Selected,                    uin->pgpSelfEncrypt);
 
     // we have to set the correct mail server in the GUI so we browse through
     // the SMTP server list and match the ids
@@ -704,7 +704,7 @@ DECLARE(IdentityToGUI)
     data->CH_IDENTITY_ALTSENTFOLDER,
     NULL);
 
-  DoMethod(_win(obj), MUIM_MultiSet, MUIA_Disabled, uin == NULL || uin->saveSentMail == FALSE || GetMUICheck(data->CH_IDENTITY_ALTSENTFOLDER) == FALSE,
+  DoMethod(_win(obj), MUIM_MultiSet, MUIA_Disabled, uin == NULL || uin->saveSentMail == FALSE || uin->sentFolderID == 0,
     data->PO_IDENTITY_ALTSENTFOLDER,
     NULL);
 
@@ -744,9 +744,15 @@ DECLARE(GUIToIdentity)
       GetMUIString(uin->photoURL,     data->ST_IDENTITY_PHOTOURL,    sizeof(uin->photoURL));
 
       if(GetMUICheck(data->CH_IDENTITY_ALTSENTFOLDER))
-        strlcpy(uin->sentFolder, (char *)xget(data->PO_IDENTITY_ALTSENTFOLDER, MUIA_FolderRequestPopup_Folder), sizeof(uin->sentFolder));
+      {
+        uin->sentFolderID = xget(data->PO_IDENTITY_ALTSENTFOLDER, MUIA_FolderRequestPopup_FolderID);
+        strlcpy(uin->sentFolderName, (char *)xget(data->PO_IDENTITY_ALTSENTFOLDER, MUIA_FolderRequestPopup_FolderName), sizeof(uin->sentFolderName));
+      }
       else
-        uin->sentFolder[0] = '\0';
+      {
+        uin->sentFolderID = 0;
+        uin->sentFolderName[0] = '\0';
+      }
 
       uin->saveSentMail = GetMUICheck(data->CH_IDENTITY_SAVESENTMAIL);
       uin->quoteMails = GetMUICheck(data->CH_IDENTITY_QUOTEMAILS);
