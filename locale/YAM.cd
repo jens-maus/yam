@@ -1350,15 +1350,15 @@ supports 8-bit transfers, otherwise your messages may get corrupted.
 ;
 MSG_HELP_CO_LV_POP3 (563//)
 List of the POP3\n\
-accounts.
+servers.
 ;
 MSG_HELP_CO_BT_PADD (564//)
-Add a new POP3 account\n\
+Add a new POP3 servers\n\
 to the list.
 ;
 MSG_HELP_CO_BT_PDEL (565//)
 Remove the selected POP3\n\
-account from the list.
+servers from the list.
 ;
 MSG_HELP_CO_ST_POPUSERID (566//)
 User name to log in on the POP3 server.\n\
@@ -4391,7 +4391,7 @@ MSG_CO_TCPIP_TITLE (1621//)
 TCP/IP Settings
 ;
 MSG_CO_TCPIP_SUMMARY (1622//)
-Configure your SMTP and POP3 accounts...
+Configure your SMTP and POP3 servers...
 ;
 MSG_CO_FILTER_TITLE (1625//)
 Mail Filter Settings
@@ -7438,18 +7438,18 @@ Allows to set a different folder where mails\n\
 will be stored after being sent out.
 ;
 MSG_CO_IDENTITY_SAVESENTMAIL (2511//)
-After transfer store mail in sent folder
+After transfer store mails in 'Sent' folder
 ;
 MSG_HELP_CO_CH_IDENTITY_SAVESENTMAIL (2512//)
-If enabled, sent mail will be stored after\n\
-the mail transfer. Otherwise the sent mail\n\
+If enabled, sent mails will be stored after\n\
+the mail transfer. Otherwise the sent mails\n\
 will be deleted.
 ;
 MSG_CO_IDENTITY_ALTSENTFOLDER (2513//)
 Use alternative 'Sent' folder:
 ;
 MSG_HELP_CO_CH_IDENTITY_ALTSENTFOLDER (2514//)
-If enabled, sent mail will be stored in an\n\
+If enabled, sent mails will be stored in an\n\
 alternative mail folder than configured in\n\
 the TCP/IP section of the configuration.
 ;

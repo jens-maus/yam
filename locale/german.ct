@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.36 (15.11.2013)
+## version $VER: YAM.catalog 8.37 (15.11.2013)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Maus, Thore Böckelmann
@@ -1786,16 +1786,16 @@ Ihre Nachrichten eventuell verstümmelt.
 ; transfers, otherwise your messages may get corrupted.
 ;
 MSG_HELP_CO_LV_POP3
-Liste der POP3-Zugänge.
+Liste der POP3-Server.
 ; List of POP3 accounts
 ;
 MSG_HELP_CO_BT_PADD
-Einen neuen POP3-Zugang\n\
+Einen neuen POP3-Server\n\
 zur Liste hinzufügen.
 ; Add a new POP3 account to the list
 ;
 MSG_HELP_CO_BT_PDEL
-Ausgewählten POP3-Zugang\n\
+Ausgewählten POP3-Server\n\
 von der Liste entfernen.
 ; Remove selected POP3 account from the list
 ;
@@ -5816,7 +5816,7 @@ MSG_CO_TCPIP_TITLE
 TCP/IP Einstellungen
 ;
 MSG_CO_TCPIP_SUMMARY
-Um Ihre SMTP und POP3 Server zu konfigurieren...
+Um Ihre SMTP- und POP3-Server zu konfigurieren...
 ;
 MSG_CO_FILTER_TITLE
 Nachrichtenfilter Einstellungen
@@ -8822,29 +8822,29 @@ MSG_CO_SMTP_SENTFOLDER
 ;
 MSG_HELP_CO_PO_SMTP_SENTFOLDER
 Erlaubt ein alternatives Postfach für alle\n\
-gesendeten E-Mails dieses SMTP-Accounts zu\n\
+gesendeten Nachrichten dieses SMTP-Servers zu\n\
 definieren.
 ;
 MSG_CO_IDENTITY_SAVESENTMAIL
-Versendete E-Mails speichern
+Versandte Nachrichten speichern
 ;
 MSG_HELP_CO_CH_IDENTITY_SAVESENTMAIL
-Wenn aktiviert, werden versendete E-Mails nach\n\
-dem Transfer im Gesendete-Postfach gespeichert.\n\
-Ansonsten werden Sie direkt nach dem Transfer\n\
+Wenn aktiviert, werden versandte Nachrichten\n\
+anschließend im 'Gesendete'-Postfach gespeichert.\n\
+Ansonsten werden Sie direkt nach dem Senden\n\
 gelöscht.
 ;
 MSG_CO_IDENTITY_ALTSENTFOLDER
 Alternatives 'Gesendete'-Postfach:
 ;
 MSG_HELP_CO_CH_IDENTITY_ALTSENTFOLDER
-Wenn aktiviert, werden alle versendeten E-Mails\n\
+Wenn aktiviert, werden alle versendeten Nachrichten\n\
 in einem anderen Postfach abgelegt und nicht in\n\
 dem unter TCP/IP konfiguriertem Gesendete-Postfach.
 ;
 MSG_HELP_CO_TX_IDENTITY_ALTSENTFOLDER
-Erlaubt es ein alternatives Postfach auszuwählen\n\
-in dem gesendete E-Mails gespeichert werden sollen.
+Erlaubt es, ein alternatives Postfach auszuwählen\n\
+in dem versandte Nachrichten gespeichert werden sollen.
 ;
 MSG_CO_POP_FOLDERS
 Standard-Postfächer
@@ -8853,8 +8853,8 @@ MSG_CO_POP_INCOMINGFOLDER
 'Eingang'-Postfach
 ;
 MSG_HELP_CO_PO_POP_INCOMINGFOLDER
-Erlaubt es ein anderes Postfach auszuwählen\n\
-in dem eingehenden E-Mails dieses POP3 Accounts\n\
+Erlaubt es, ein anderes Postfach auszuwählen,\n\
+in dem eingehende Nachrichten dieses POP3-Servers\n\
 gespeichert werden sollen.
 ;
 MSG_DOC_LANGUAGE_CODE
