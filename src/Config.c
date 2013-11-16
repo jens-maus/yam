@@ -1594,6 +1594,8 @@ int LoadConfig(struct Config *co, const char *fname, struct FolderList **oldfold
                     case 3: lastFilter->combine = CB_EXACTLY_ONE; break;
                   }
                 }
+                else
+                  W(DBF_CONFIG, "unknown '%s' FI config tag", q);
               }
             }
           }
