@@ -102,7 +102,7 @@ void rx_getselected(UNUSED struct RexxHost *host, struct RexxParams *params, enu
       }
       else
       {
-        if(results->num = calloc(1, sizeof(results->num[0])))  != NULL)
+        if((results->num = calloc(1, sizeof(results->num[0])))  != NULL)
           results->num[0] = 0;
         else
           params->rc = RETURN_ERROR;
