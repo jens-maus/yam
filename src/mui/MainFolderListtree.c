@@ -43,7 +43,6 @@
 #include "YAM_mainFolder.h"
 
 #include "mui/FolderEditWindow.h"
-#include "mui/FolderRequestListtree.h"
 #include "mui/ImageArea.h"
 #include "mui/MainMailListGroup.h"
 #include "mui/YAMApplication.h"

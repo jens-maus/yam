@@ -53,7 +53,6 @@
 
 #include "mui/AddressBookWindow.h"
 #include "mui/AddressField.h"
-#include "mui/FolderRequestListtree.h"
 #include "mui/IdentityChooser.h"
 #include "mui/MainFolderListtree.h"
 #include "mui/RecipientString.h"
