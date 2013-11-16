@@ -1052,7 +1052,7 @@ static void String2MUIStyle(const char *string, char *muistr)
 /// LoadConfig
 // loads configuration from a file. return 1 on success, 0 on error and -1 if
 // no (valid) config file found
-int LoadConfig(struct Config *co, const char *fname, struct FolderList **oldfolders)
+int LoadConfig(struct Config *co, const char *fname)
 {
   int result = -1;
   FILE *fh;
@@ -1075,7 +1075,6 @@ int LoadConfig(struct Config *co, const char *fname, struct FolderList **oldfold
     if(getline(&buf, &buflen, fh) >= 3 && strnicmp(buf, "YCO", 3) == 0)
     {
       int version = atoi(&buf[3]);
-      struct FolderList *ofo = NULL;
       struct FilterNode *lastFilter = NULL;
       int lastTypeID = -1;
       struct MimeTypeNode *lastType = NULL;
@@ -2048,50 +2047,6 @@ int LoadConfig(struct Config *co, const char *fname, struct FolderList **oldfold
             else if(stricmp(buf, "NotifyCommand") == 0)            { strlcpy(globalPOP3NotifyCommand, value, sizeof(globalPOP3NotifyCommand)); foundGlobalPOP3Options = TRUE; }
             else if(stricmp(buf, "QuickSearchBar") == 0)           co->QuickSearchBarPos = Txt2Bool(value) ? QSB_POS_TOP : QSB_POS_OFF;
             else if(stricmp(buf, "InfoBar") == 0)                  { int v = atoi(value)+1; co->InfoBarPos = (v == 3) ? IB_POS_OFF : v; }
-            else if(strnicmp(buf, "Folder", 6) == 0 && oldfolders != NULL)
-            {
-              if(ofo == NULL)
-              {
-                ofo = CreateFolderList();
-                *oldfolders = ofo;
-              }
-
-              if(ofo != NULL)
-              {
-                int type;
-                struct Folder *folder;
-
-                switch(atoi(&buf[6]))
-                {
-                  case 0:
-                    type = FT_INCOMING;
-                  break;
-
-                  case 1:
-                    type = FT_OUTGOING;
-                  break;
-
-                  case 2:
-                    type = FT_SENT;
-                  break;
-
-                  default:
-                    type = FT_CUSTOM;
-                  break;
-                }
-
-                if((p = strchr(&value[4], ';')) != NULL)
-                  *p++ = '\0';
-
-                if((folder = FO_NewFolder(type, &value[4], p)) != NULL)
-                {
-                  static const int sortconv[4] = { -1, 1, 3, 5 };
-
-                  folder->Sort[0] = sortconv[atoi(&value[2])];
-                  AddNewFolderNode(ofo, folder);
-                }
-              }
-            }
             else if(strnicmp(buf, "Rule", 4) == 0)
             {
               struct FilterNode *filter;
@@ -2157,28 +2112,6 @@ int LoadConfig(struct Config *co, const char *fname, struct FolderList **oldfold
 
               strlcpy(co->RX[j].Name, (char *)FilePart(value), sizeof(co->RX[j].Name));
               strlcpy(co->RX[j].Script, value, sizeof(co->RX[j].Script));
-            }
-            else if(strnicmp(buf, "FolderPath", 10) == 0 && oldfolders != NULL)
-            {
-              if(ofo == NULL)
-              {
-                ofo = CreateFolderList();
-                *oldfolders = ofo;
-              }
-
-              if(ofo != NULL)
-              {
-                struct Folder *folder;
-
-                if((folder = FO_NewFolder(FT_CUSTOM, value, (char *)FilePart(value))) != NULL)
-                {
-                  if(AddNewFolderNode(ofo, folder) != NULL)
-                  {
-                    if(FO_LoadConfig(folder) == FALSE)
-                      FO_SaveConfig(folder);
-                  }
-                }
-              }
             }
             else
               W(DBF_CONFIG, "unknown OLD config option: '%s' = '%s'", buf, value);

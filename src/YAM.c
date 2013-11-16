@@ -1448,9 +1448,7 @@ static BOOL Root_New(BOOL hidden)
 //  Phase 2 of program initialization (after user logs in)
 static void InitAfterLogin(void)
 {
-  struct FolderList *oldfolders = NULL;
   struct FolderNode *fnode;
-  enum LoadTreeResult ltr;
   BOOL newfolders;
   BOOL splashWasActive;
   char pubScreenName[MAXPUBSCREENNAME + 1];
@@ -1464,7 +1462,7 @@ static void InitAfterLogin(void)
   D(DBF_STARTUP, "loading configuration...");
   SplashProgress(tr(MSG_LoadingConfig), 20);
 
-  res = LoadConfig(C, G->CO_PrefsFile, &oldfolders);
+  res = LoadConfig(C, G->CO_PrefsFile);
   if(res == 0)
     Abort(NULL); // user requested to abort because newer config file found
   else if(res == -1)
@@ -1504,36 +1502,13 @@ static void InitAfterLogin(void)
 
   SplashProgress(tr(MSG_LoadingFolders), 50);
 
-  newfolders = FALSE;
-  ltr = FO_LoadTree();
-  if(ltr == LTR_QuitYAM)
+  if(FO_LoadTree() == LTR_QuitYAM)
   {
     // do a hard termination
     Abort(NULL);
   }
-  else if(ltr == LTR_Failure && oldfolders != NULL)
-  {
-    // add all YAM 1.x style folders
-    ForEachFolderNode(oldfolders, fnode)
-    {
-      struct Folder *folder = fnode->folder;
 
-      DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, folder->Name, fnode, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE);
-    }
-
-    newfolders = TRUE;
-  }
-
-  // free any YAM 1.x style folder
-  if(oldfolders != NULL)
-  {
-    ForEachFolderNode(oldfolders, fnode)
-    {
-      free(fnode->folder);
-    }
-
-    DeleteFolderList(oldfolders);
-  }
+  newfolders = FALSE;
 
   if(FO_GetFolderByType(FT_INCOMING, NULL) == NULL)
   {

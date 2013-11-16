@@ -10,6 +10,10 @@ $URL$
   * Config.c: fixed a wrong keyword for the destination folder of a filter's
     "move to" action when loading the configuration.
   * rexx/getselected.c: fixed a possible NULL pointer access;
+  * Config.c: dropped the support for YAM 1.x style folder definitions. If
+    someone really updates to YAM 2.x after more than 15 years then an interim
+    update to YAM 2.8p1 is required before finally updating to YAM 2.9 if the
+    old folders are to be kept.
 
 2013-11-15 Thore Böckelmann <tboeckel@gmx.de>
 

@@ -380,7 +380,7 @@ DECLARE(OpenConfig)
     char cname[SIZE_PATHFILE];
 
     AddPath(cname, frc->drawer, frc->file, sizeof(cname));
-    if(LoadConfig(CE, cname, NULL) == 1)
+    if(LoadConfig(CE, cname) == 1)
       NewPrefsFile(cl, obj, cname);
 
     // resolve any unset folder IDs
@@ -465,7 +465,7 @@ DECLARE(LastSaved)
 
   ENTER();
 
-  LoadConfig(CE, G->CO_PrefsFile, NULL);
+  LoadConfig(CE, G->CO_PrefsFile);
 
   DoMethod(data->PG_PAGES[data->visiblePage], MUIM_ConfigPage_ConfigToGUI, CE);
 
