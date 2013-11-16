@@ -409,10 +409,11 @@ DECLARE(Close)
 DECLARE(Search)
 {
   GETDATA;
+  ULONG numSelected;
   int fndmsg = 0;
   int totmsg = 0;
   int progress = 0;
-  struct FolderList *flist;
+  struct Folder **selectedFolders;
 
   ENTER();
 
@@ -434,9 +435,11 @@ DECLARE(Search)
   // up the search process if many mails match the search criteria.
   set(data->LV_MAILS, MUIA_NList_Quiet, TRUE);
 
-  if((flist = CreateFolderList()) != NULL)
+  DoMethod(data->LV_FOLDERS, MUIM_NListtree_Select, MUIV_NListtree_Select_All, MUIV_NListtree_Select_Ask, 0, &numSelected);
+  if((selectedFolders = calloc(numSelected, sizeof(selectedFolders[0]))) != NULL)
   {
     struct MUI_NListtree_TreeNode *tn = (struct MUI_NListtree_TreeNode *)MUIV_NListtree_NextSelected_Start;
+    ULONG i = 0;
 
     do
     {
@@ -450,10 +453,20 @@ DECLARE(Search)
       {
         if(MA_GetIndex(folder) == TRUE)
         {
-          if(folder->Total != 0 && AddNewFolderNode(flist, folder) != NULL)
+          if(folder->Total != 0)
+          {
+            selectedFolders[i] = folder;
             totmsg += folder->Total;
+            i++;
+          }
+          else
+            numSelected--;
         }
+        else
+          numSelected--;
       }
+      else
+        numSelected--;
     }
     while(TRUE);
 
@@ -461,7 +474,6 @@ DECLARE(Search)
     {
       struct Search search;
       struct TimeVal last;
-      struct FolderNode *fnode;
 
       // lets prepare the search
       DoMethod(data->GR_SEARCH, MUIM_SearchControlGroup_PrepareSearch, &search);
@@ -476,9 +488,9 @@ DECLARE(Search)
 
       memset(&last, 0, sizeof(struct TimeVal));
 
-      ForEachFolderNode(flist, fnode)
+      for(i = 0; i < numSelected; i++)
       {
-        struct Folder *folder = fnode->folder;
+        struct Folder *folder = selectedFolders[i];
         struct MailList *folderMessages;
 
         if((folderMessages = CloneMailList(folder->messages)) != NULL)
@@ -543,7 +555,7 @@ DECLARE(Search)
       FreeSearchData(&search);
     }
 
-    DeleteFolderList(flist);
+    free(selectedFolders);
   }
 
   set(data->LV_MAILS, MUIA_NList_Quiet, FALSE);
