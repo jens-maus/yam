@@ -1366,8 +1366,8 @@ int LoadConfig(struct Config *co, const char *fname, struct FolderList **oldfold
                 else if(stricmp(q, "MailReplyTo") == 0)          strlcpy(uin->mailReplyTo, value, sizeof(uin->mailReplyTo));
                 else if(stricmp(q, "ExtraHeaders") == 0)         strlcpy(uin->extraHeaders, value, sizeof(uin->extraHeaders));
                 else if(stricmp(q, "PhotoURL") == 0)             strlcpy(uin->photoURL, value, sizeof(uin->photoURL));
-              	else if(stricmp(q, "SentFolder") == 0)           strlcpy(uin->sentFolderName, value, sizeof(uin->sentFolderName));
                 else if(stricmp(q, "SentFolderID") == 0)         uin->sentFolderID = strtoul(value, NULL, 16);
+              	else if(stricmp(q, "SentFolder") == 0)           strlcpy(uin->sentFolderName, value, sizeof(uin->sentFolderName));
                 else if(stricmp(q, "SaveSentMail") == 0)         uin->saveSentMail = Txt2Bool(value);
                 else if(stricmp(q, "QuoteMails") == 0)           uin->quoteMails = Txt2Bool(value);
                 else if(stricmp(q, "QuotePosition") == 0)        uin->quotePosition = atoi(value);
@@ -1450,8 +1450,8 @@ int LoadConfig(struct Config *co, const char *fname, struct FolderList **oldfold
               else if(stricmp(q, "ReplyFile") == 0)              strlcpy(lastFilter->replyFile, value, sizeof(lastFilter->replyFile));
               else if(stricmp(q, "ExecuteCmd") == 0)             strlcpy(lastFilter->executeCmd, value, sizeof(lastFilter->executeCmd));
               else if(stricmp(q, "PlaySound") == 0)              strlcpy(lastFilter->playSound, value, sizeof(lastFilter->playSound));
-              else if(stricmp(q, "MoveTo") == 0)                 strlcpy(lastFilter->moveToName, value, sizeof(lastFilter->moveToName));
               else if(stricmp(q, "MoveToID") == 0)               lastFilter->moveToID = strtoul(value, NULL, 16);
+              else if(stricmp(q, "MoveTo") == 0)                 strlcpy(lastFilter->moveToName, value, sizeof(lastFilter->moveToName));
               else
               {
                 struct RuleNode *rule;
@@ -3619,6 +3619,9 @@ void ResolveConfigFolders(struct Config *co)
       else
         W(DBF_CONFIG, "cannot resolve sent folder ID 0x%08lx of POP3 server '%s'", msn->mailStoreFolderID, msn->description);
     }
+
+    if(msn->mailStoreFolderID == 0)
+      W(DBF_CONFIG, "sent folder '%s' of POP3 server '%s' has no valid ID", msn->mailStoreFolderName, msn->description);
   }
 
   // resolve the sent folders of the SMTP servers
@@ -3642,6 +3645,9 @@ void ResolveConfigFolders(struct Config *co)
       else
         W(DBF_CONFIG, "cannot resolve sent folder ID 0x%08lx of SMTP server '%s'", msn->mailStoreFolderID, msn->description);
     }
+
+    if(msn->mailStoreFolderID == 0)
+      W(DBF_CONFIG, "sent folder '%s' of SMTP server '%s' has no valid ID", msn->mailStoreFolderName, msn->description);
   }
 
   // resolve the sent folders of the user identities
@@ -3665,28 +3671,38 @@ void ResolveConfigFolders(struct Config *co)
       else
         W(DBF_CONFIG, "cannot resolve sent folder ID 0x%08lx of user identity '%s'", uin->sentFolderID, uin->description);
     }
+
+    if(uin->sentFolderID == 0)
+      W(DBF_CONFIG, "sent folder '%s' of user identity '%s' has no valid ID", uin->sentFolderName, uin->description);
   }
 
   // resolve the "move to" folders of the filters
   IterateList(&co->filterList, struct FilterNode *, filter)
   {
-    if(filter->moveToID == 0 && IsStrEmpty(filter->moveToName) == FALSE)
-    {
-      struct Folder *folder;
+    // only check filters which actually have a "Move to" action defined
+  	if(hasMoveAction(filter) == TRUE)
+  	{
+      if(filter->moveToID == 0 && IsStrEmpty(filter->moveToName) == FALSE)
+      {
+        struct Folder *folder;
 
-      if((folder = FO_GetFolderByName(filter->moveToName, NULL)) != NULL)
-        filter->moveToID = folder->ID;
-      else
-        W(DBF_CONFIG, "cannot resolve moveTo folder '%s' of filter '%s'", filter->moveToName, filter->name);
-    }
-    else if(filter->moveToID != 0)
-    {
-      struct Folder *folder;
+        if((folder = FO_GetFolderByName(filter->moveToName, NULL)) != NULL)
+          filter->moveToID = folder->ID;
+        else
+          W(DBF_CONFIG, "cannot resolve moveTo folder '%s' of filter '%s'", filter->moveToName, filter->name);
+      }
+      else if(filter->moveToID != 0)
+      {
+        struct Folder *folder;
 
-      if((folder = FindFolderByID(G->folders, filter->moveToID)) != NULL)
-        strlcpy(filter->moveToName, folder->Name, sizeof(filter->moveToName));
-      else
-        W(DBF_CONFIG, "cannot resolve sent folder ID 0x%08lx of filter '%s'", filter->moveToID, filter->name);
+        if((folder = FindFolderByID(G->folders, filter->moveToID)) != NULL)
+          strlcpy(filter->moveToName, folder->Name, sizeof(filter->moveToName));
+        else
+          W(DBF_CONFIG, "cannot resolve moveTo folder ID 0x%08lx of filter '%s'", filter->moveToID, filter->name);
+      }
+
+      if(filter->moveToID == 0)
+        W(DBF_CONFIG, "moveTo folder '%s' of filter '%s' has no valid ID", filter->moveToName, filter->name);
     }
   }
 
