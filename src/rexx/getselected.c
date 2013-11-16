@@ -77,7 +77,7 @@ void rx_getselected(UNUSED struct RexxHost *host, struct RexxParams *params, enu
 
       if((mlist = MA_CreateMarkedList(lv, FALSE)) != NULL)
       {
-        if((results->num = calloc(mlist->count + 1, sizeof(long))))
+        if((results->num = calloc(mlist->count + 1, sizeof(results->num[0]))) != NULL)
         {
           struct MailNode *mnode;
           ULONG i;
@@ -95,13 +95,17 @@ void rx_getselected(UNUSED struct RexxHost *host, struct RexxParams *params, enu
             i++;
           }
         }
+        else
+          params->rc = RETURN_ERROR;
 
         DeleteMailList(mlist);
       }
       else
       {
-        results->num    = calloc(1, sizeof(long));
-        results->num[0] = 0;
+        if(results->num = calloc(1, sizeof(results->num[0])))  != NULL)
+          results->num[0] = 0;
+        else
+          params->rc = RETURN_ERROR;
       }
     }
     break;

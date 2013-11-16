@@ -9,6 +9,7 @@ $URL$
 
   * Config.c: fixed a wrong keyword for the destination folder of a filter's
     "move to" action when loading the configuration.
+  * rexx/getselected.c: fixed a possible NULL pointer access;
 
 2013-11-15 Thore Böckelmann <tboeckel@gmx.de>
 
