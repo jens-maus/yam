@@ -1450,7 +1450,7 @@ int LoadConfig(struct Config *co, const char *fname, struct FolderList **oldfold
               else if(stricmp(q, "ReplyFile") == 0)              strlcpy(lastFilter->replyFile, value, sizeof(lastFilter->replyFile));
               else if(stricmp(q, "ExecuteCmd") == 0)             strlcpy(lastFilter->executeCmd, value, sizeof(lastFilter->executeCmd));
               else if(stricmp(q, "PlaySound") == 0)              strlcpy(lastFilter->playSound, value, sizeof(lastFilter->playSound));
-              else if(stricmp(q, "MoveToID") == 0)               lastFilter->moveToID = strtoul(value, NULL, 16);
+              else if(stricmp(q, "MoveToFolderID") == 0)         lastFilter->moveToID = strtoul(value, NULL, 16);
               else if(stricmp(q, "MoveTo") == 0)                 strlcpy(lastFilter->moveToName, value, sizeof(lastFilter->moveToName));
               else
               {
