@@ -911,7 +911,6 @@ enum LoadTreeResult FO_LoadTree(void)
                 // V3 introduced unique folder IDs
                 GetLine(&buffer, &size, fh);
                 fo->ID = strtoul(Trim(buffer), NULL, 16);
-                D(DBF_FOLDER, "folder '%s' id '%s' -> %08lx", fo->Name, Trim(buffer), fo->ID);
               }
 
               if((fo->messages = CreateMailList()) != NULL)
