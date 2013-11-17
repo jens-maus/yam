@@ -1562,11 +1562,19 @@ BOOL SendMails(struct UserIdentityNode *uin, struct MailList *mailsToSend, enum 
                         {
                           struct Folder *sentfolder;
 
-                          // depending on the sentfolder settings in the user identity we
-                          // store the mail in a different folder (but we fallback to the
-                          // first SENT folder found)
-                          if((sentfolder = FindFolderByID(G->folders, tc->uin->sentFolderID)) == NULL)
-                            sentfolder = FO_GetFolderByType(FT_SENT, NULL);
+                          // depending on the sentfolder settings we store the mail in a
+                          // different folder. That said the following order of sent folder
+                          // settings is applied:
+                          //
+                          // 1. configured 'Sent' folder in user identity
+                          // 2. if not set, configured 'Sent' folder in SMTP settings
+                          // 3. if not set, default 'Sent' folder (first SENT folder found)
+                          //
+                          if(tc->uin->sentFolderID == 0 || (sentfolder = FindFolderByID(G->folders, tc->uin->sentFolderID)) == NULL)
+                          {
+                            if(tc->msn->mailStoreFolderID == 0 || (sentfolder = FindFolderByID(G->folders, tc->msn->mailStoreFolderID)) == NULL)
+                              sentfolder = FO_GetFolderByType(FT_SENT, NULL);
+                          }
 
                           // the filter process did not move the mail, hence we do it now
                           PushMethodOnStackWait(G->App, 5, MUIM_YAMApplication_MoveCopyMail, mail, sentfolder, MVCPF_CLOSE_WINDOWS);

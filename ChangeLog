@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-11-17 Jens Maus <mail@jens-maus.de>
+
+  * tcp/pop3.c, tcp/smtp.c: changed the respective receive and sent functions
+    of the pop3 and smtp routines to store mails in the respective mail store
+    folder based on the folder id stored. This closes #400 and thus should
+    allow to configure different 'Incoming' and 'Sent' folders for each
+    POP3 and SMTP account. As a net result this should allow to sort mails
+    based on the accounts in different folders.
+
 2013-11-17 Thore Böckelmann <tboeckel@gmx.de>
 
   * Config.c: let the debug build omit a warning about an unresolvable sent

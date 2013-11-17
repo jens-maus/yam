@@ -1309,10 +1309,19 @@ static BOOL DeleteMessage(struct TransferContext *tc, const int number)
 /// DownloadMails
 static void DownloadMails(struct TransferContext *tc)
 {
-  struct Folder *inFolder = FO_GetFolderByType(FT_INCOMING, NULL);
+  struct Folder *incomingFolder;
   struct MailTransferNode *tnode;
 
   ENTER();
+
+  // depending on the incoming folder settings in the 
+  // POP3 server configuration we store mail either in the
+  // folder configured there or in the default incoming folder
+  if(tc->msn->mailStoreFolderID == 0 ||
+     (incomingFolder = FindFolderByID(G->folders, tc->msn->mailStoreFolderID)) == NULL)
+  {
+    incomingFolder = FO_GetFolderByType(FT_INCOMING, NULL);
+  }
 
   GetSysTime(TIMEVAL(&tc->lastUpdateTime));
 
@@ -1328,12 +1337,12 @@ static void DownloadMails(struct TransferContext *tc)
       // update the transfer status
       PushMethodOnStack(tc->transferGroup, 5, MUIM_TransferControlGroup_Next, tnode->index - tc->numberOfMailsSkipped, tnode->position, mail->Size, tr(MSG_TR_Downloading));
 
-      if(LoadMessage(tc, inFolder, tnode->index) == TRUE)
+      if(LoadMessage(tc, incomingFolder, tnode->index) == TRUE)
       {
         if(TimeHasElapsed(&tc->lastUpdateTime, 250000) == TRUE)
         {
           // redraw the folderentry in the listtree 4 times per second at most
-          PushMethodOnStack(G->MA->GUI.NL_FOLDERS, 3, MUIM_NListtree_Redraw, inFolder->Treenode, MUIF_NONE);
+          PushMethodOnStack(G->MA->GUI.NL_FOLDERS, 3, MUIM_NListtree_Redraw, incomingFolder->Treenode, MUIF_NONE);
         }
 
         // put the transferStat for this mail to 100%
@@ -1396,10 +1405,10 @@ static void DownloadMails(struct TransferContext *tc)
   PushMethodOnStack(tc->transferGroup, 1, MUIM_TransferControlGroup_Finish);
 
   // update the stats
-  PushMethodOnStack(G->App, 3, MUIM_YAMApplication_DisplayStatistics, inFolder, TRUE);
+  PushMethodOnStack(G->App, 3, MUIM_YAMApplication_DisplayStatistics, incomingFolder, TRUE);
 
   // update the menu items and toolbars
-  PushMethodOnStack(G->App, 2, MUIM_YAMApplication_ChangeSelected, inFolder, TRUE);
+  PushMethodOnStack(G->App, 2, MUIM_YAMApplication_ChangeSelected, incomingFolder, TRUE);
 
   LEAVE();
 }
