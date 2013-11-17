@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-11-17 Thore Böckelmann <tboeckel@gmx.de>
+
+  * Config.c: let the debug build omit a warning about an unresolvable sent
+    folder if there is none configured for a user identity.
+
 2013-11-16 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: update to the latest changes.

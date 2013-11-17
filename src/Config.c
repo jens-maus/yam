@@ -3607,7 +3607,10 @@ void ResolveConfigFolders(struct Config *co)
         W(DBF_CONFIG, "cannot resolve sent folder ID 0x%08lx of user identity '%s'", uin->sentFolderID, uin->description);
     }
 
-    if(uin->sentFolderID == 0)
+    // complain only if there is no folder ID but a name
+    // the user identity's sent folder is optional and an ID equal to zero plus
+    // no folder names indicates that NO custom sent folder is configured
+    if(uin->sentFolderID == 0 && IsStrEmpty(uin->sentFolderName) == FALSE)
       W(DBF_CONFIG, "sent folder '%s' of user identity '%s' has no valid ID", uin->sentFolderName, uin->description);
   }
 
