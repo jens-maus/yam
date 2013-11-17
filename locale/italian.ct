@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.52 (5.11.2013)
+## version $VER: YAM.catalog 8.53 (16.11.2013)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -9664,20 +9664,6 @@ a questa identità.
 ; An optional URL to a photo associated with\n\
 ; this user identity.
 ;
-MSG_HELP_CO_CH_IDENTITY_SENTFOLDER
-Se selezionato la posta inviata verrà conservata nella\n\
-cartella dei messaggi inviati, in caso contrario questi\n\
-messaggi verranno cancellati.
-; If enabled, sent mail will be stored in a\n\
-; sent mail folder. Otherwise the sent mail\n\
-; will be deleted.
-;
-MSG_HELP_CO_TX_IDENTITY_SENTFOLDER
-Permette di specificare quale cartella di posta andrà\n\
-utilizzata per memorizzare i messaggi inviati.
-; Allows to specify which mail folder should\n\
-; be used when storing sent mail.
-;
 MSG_HELP_CO_CH_IDENTITY_QUOTEMAILS
 Se selezionato permette di citare ll testo del\n\
 messaggio quando si risponde o si inoltra un\n\
@@ -10632,7 +10618,7 @@ Salva layout dell'interfaccia utente
 MSG_HELP_CO_CH_SAVELAYOUTQUIT
 Salva permanentemente la posizione e le dimensioni\n\
 della finestra, il layout dei determinati gruppi nonchè\n\
-lo stato dei diversi oggetti grafici.
+lo stato dei diversi oggetti grafici presenti.
 ; Permanently save the position and dimensions\n\
 ; of all windows, the layout of certain groups\n\
 ; and the state of various graphical objects.
@@ -10651,6 +10637,59 @@ cui conservare i messaggi una volta inviati.
 ; Allows to set a different folder where mails\n\
 ; will be stored after being sent out.
 ;
+MSG_CO_IDENTITY_SAVESENTMAIL
+Conserva i messaggi nella cartella 'Inviati'
+; After transfer store mails in 'Sent' folder
+;
+MSG_HELP_CO_CH_IDENTITY_SAVESENTMAIL
+Se selezionato i messaggi inviati verranno conservati\n\
+dopo il loro trasferimento, altrimenti questi verranno\n\
+cancellati.
+; If enabled, sent mails will be stored after\n\
+; the mail transfer. Otherwise the sent mails\n\
+; will be deleted.
+;
+MSG_CO_IDENTITY_ALTSENTFOLDER
+Usa una cartella 'Inviati' alternativa:
+; Use alternative 'Sent' folder:
+;
+MSG_HELP_CO_CH_IDENTITY_ALTSENTFOLDER
+Se selezionato i messaggi inviati verranno conservati in\n\
+una cartella di posta alternativa rispetto a quella\n\
+configurata nella sezione TCP/IP delle preferenze di YAM.
+; If enabled, sent mails will be stored in an\n\
+; alternative mail folder than configured in\n\
+; the TCP/IP section of the configuration.
+;
+MSG_HELP_CO_TX_IDENTITY_ALTSENTFOLDER
+Permette di specificare in quale cartella alternativa\n\
+dovranno essere conservati i messaggi inviati.
+; Allows to specify which alternative mail\n\
+; folder should be used when storing sent mail.
+;
+MSG_CO_POP_FOLDERS
+Cartelle predefinite
+; Default folders
+;
+MSG_CO_POP_INCOMINGFOLDER
+Cartella 'in arrivo'
+; 'Incoming' folder
+;
+MSG_HELP_CO_PO_POP_INCOMINGFOLDER
+Permette di impostare una cartella differente nel\n\
+quale conservare i messaggi una volta ricevuti.
+; Allows to set a different folder where mails\n\
+; will be stored after having received them.
+;
 MSG_DOC_LANGUAGE_CODE
 it
+; 
+; !!! NOTE !!!
+; When translating MSG_LANGUAGE_CODE please put the
+; language code (see http://yam.ch/wiki/TracLanguages)
+; for the language you translate YAM to here. This
+; language code will then be appended to each online
+; documentation request (HELP hotkey) and thus a
+; potentially translated page should come up. For
+; english, the MSG_LANGUAGE_CODE should be empty.
 ;

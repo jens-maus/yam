@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-11-16 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: update to the latest changes.
+
 2013-11-16 Thore Böckelmann <tboeckel@gmx.de>
 
   * Config.c: fixed a wrong keyword for the destination folder of a filter's
