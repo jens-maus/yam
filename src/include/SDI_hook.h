@@ -257,17 +257,17 @@
   #define DISPATCHERPROTO(name)  \
     IPTR name(struct IClass * cl, Object * obj, Msg msg); \
     AROS_UFP3(IPTR, Gate_##name, \
-    	    AROS_UFPA(struct IClass *, cl, A0), \
-    	    AROS_UFPA(Object *, obj, A2), \
-    	    AROS_UFPA(Msg, msg, A1))
+          AROS_UFPA(struct IClass *, cl, A0), \
+          AROS_UFPA(Object *, obj, A2), \
+          AROS_UFPA(Msg, msg, A1))
   #define DISPATCHERx(x,name) \
     x IPTR name(struct IClass * cl, Object * obj, Msg msg); \
     x AROS_UFH3(IPTR, Gate_##name, \
-    	    AROS_UFHA(struct IClass *, cl, A0), \
-    	    AROS_UFHA(Object *, obj, A2), \
-    	    AROS_UFHA(Msg, msg, A1)) \
+          AROS_UFHA(struct IClass *, cl, A0), \
+          AROS_UFHA(Object *, obj, A2), \
+          AROS_UFHA(Msg, msg, A1)) \
     { AROS_USERFUNC_INIT \
-    	return name(cl, obj, msg); \
+      return name(cl, obj, msg); \
       AROS_USERFUNC_EXIT \
     } \
     x IPTR name(struct IClass * cl, Object * obj, Msg msg)

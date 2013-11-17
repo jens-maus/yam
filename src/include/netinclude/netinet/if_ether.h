@@ -13,7 +13,7 @@
 
 /*
  * Copyright (c) 1982, 1986, 1993
- *	The Regents of the University of California.  All rights reserved.
+ *  The Regents of the University of California.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,8 @@
  *    documentation and/or other materials provided with the distribution.
  * 3. All advertising materials mentioning features or use of this software
  *    must display the following acknowledgement:
- *	This product includes software developed by the University of
- *	California, Berkeley and its contributors.
+ *  This product includes software developed by the University of
+ *  California, Berkeley and its contributors.
  * 4. Neither the name of the University nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
@@ -43,7 +43,7 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- *	@(#)if_ether.h	8.3 (Berkeley) 5/2/95
+ *  @(#)if_ether.h  8.3 (Berkeley) 5/2/95
  */
 
 #ifndef _NETINET_IF_ETHER_H
@@ -85,26 +85,26 @@ extern "C" {
  * Structure of a 10Mb/s Ethernet header.
  */
 struct ether_header {
-	__UBYTE	ether_dhost[6];
-	__UBYTE	ether_shost[6];
-	__UWORD	ether_type;
+  __UBYTE  ether_dhost[6];
+  __UBYTE  ether_shost[6];
+  __UWORD  ether_type;
 };
 
-#define	ETHERTYPE_PUP		0x0200	/* PUP protocol */
-#define	ETHERTYPE_IP		0x0800	/* IP protocol */
-#define ETHERTYPE_ARP		0x0806	/* Addr. resolution protocol */
-#define ETHERTYPE_REVARP	0x8035	/* reverse Addr. resolution protocol */
+#define  ETHERTYPE_PUP    0x0200  /* PUP protocol */
+#define  ETHERTYPE_IP    0x0800  /* IP protocol */
+#define ETHERTYPE_ARP    0x0806  /* Addr. resolution protocol */
+#define ETHERTYPE_REVARP  0x8035  /* reverse Addr. resolution protocol */
 
 /*
  * The ETHERTYPE_NTRAILER packet types starting at ETHERTYPE_TRAIL have
  * (type-ETHERTYPE_TRAIL)*512 bytes of data followed
  * by an ETHER type (as given above) and then the (variable-length) header.
  */
-#define	ETHERTYPE_TRAIL		0x1000		/* Trailer packet */
-#define	ETHERTYPE_NTRAILER	16
+#define  ETHERTYPE_TRAIL    0x1000    /* Trailer packet */
+#define  ETHERTYPE_NTRAILER  16
 
-#define	ETHERMTU	1500
-#define	ETHERMIN	(60-14)
+#define  ETHERMTU  1500
+#define  ETHERMIN  (60-14)
 
 /*
  * Ethernet Address Resolution Protocol.
@@ -114,27 +114,27 @@ struct ether_header {
  * RFC 826.
  */
 struct ether_arp {
-	struct arphdr	ea_hdr;		/* fixed-size header */
-	__UBYTE		arp_sha[6];	/* sender hardware address */
-	__UBYTE		arp_spa[4];	/* sender protocol address */
-	__UBYTE		arp_tha[6];	/* target hardware address */
-	__UBYTE		arp_tpa[4];	/* target protocol address */
+  struct arphdr  ea_hdr;    /* fixed-size header */
+  __UBYTE    arp_sha[6];  /* sender hardware address */
+  __UBYTE    arp_spa[4];  /* sender protocol address */
+  __UBYTE    arp_tha[6];  /* target hardware address */
+  __UBYTE    arp_tpa[4];  /* target protocol address */
 };
 
-#define	arp_hrd	ea_hdr.ar_hrd
-#define	arp_pro	ea_hdr.ar_pro
-#define	arp_hln	ea_hdr.ar_hln
-#define	arp_pln	ea_hdr.ar_pln
-#define	arp_op	ea_hdr.ar_op
+#define  arp_hrd  ea_hdr.ar_hrd
+#define  arp_pro  ea_hdr.ar_pro
+#define  arp_hln  ea_hdr.ar_hln
+#define  arp_pln  ea_hdr.ar_pln
+#define  arp_op  ea_hdr.ar_op
 
 struct sockaddr_inarp {
-	__UBYTE		sin_len;
-	__UBYTE		sin_family;
-	__UWORD		sin_port;
-	struct in_addr	sin_addr;
-	struct in_addr	sin_srcaddr;
-	__UWORD		sin_tos;
-	__UWORD		sin_other;
+  __UBYTE    sin_len;
+  __UBYTE    sin_family;
+  __UWORD    sin_port;
+  struct in_addr  sin_addr;
+  struct in_addr  sin_srcaddr;
+  __UWORD    sin_tos;
+  __UWORD    sin_other;
 };
 
 #define SIN_PROXY 1
@@ -142,8 +142,8 @@ struct sockaddr_inarp {
 /*
  * IP and ethernet specific routing flags
  */
-#define	RTF_USETRAILERS	RTF_PROTO1	/* use trailers */
-#define RTF_ANNOUNCE	RTF_PROTO2	/* announce new arp entry */
+#define  RTF_USETRAILERS  RTF_PROTO1  /* use trailers */
+#define RTF_ANNOUNCE  RTF_PROTO2  /* announce new arp entry */
 
 /****************************************************************************/
 

@@ -21,27 +21,27 @@ typedef ULONG _sfdc_vararg;
 #endif /* !AMISSLMASTER_BASE_NAME */
 
 #define InitAmiSSLMaster(___APIVersion, ___AllowUserStructs) \
-	AROS_LC2(LONG, InitAmiSSLMaster, \
-	AROS_LCA(LONG, (___APIVersion), D0), \
-	AROS_LCA(LONG, (___AllowUserStructs), D1), \
-	struct Library *, AMISSLMASTER_BASE_NAME, 5, Amisslmaster)
+  AROS_LC2(LONG, InitAmiSSLMaster, \
+  AROS_LCA(LONG, (___APIVersion), D0), \
+  AROS_LCA(LONG, (___AllowUserStructs), D1), \
+  struct Library *, AMISSLMASTER_BASE_NAME, 5, Amisslmaster)
 
 #define OpenAmiSSL() \
-	AROS_LC0(struct Library *, OpenAmiSSL, \
-	struct Library *, AMISSLMASTER_BASE_NAME, 6, Amisslmaster)
+  AROS_LC0(struct Library *, OpenAmiSSL, \
+  struct Library *, AMISSLMASTER_BASE_NAME, 6, Amisslmaster)
 
 #define CloseAmiSSL() \
-	AROS_LC0(void, CloseAmiSSL, \
-	struct Library *, AMISSLMASTER_BASE_NAME, 7, Amisslmaster)
+  AROS_LC0(void, CloseAmiSSL, \
+  struct Library *, AMISSLMASTER_BASE_NAME, 7, Amisslmaster)
 
 #define OpenAmiSSLCipher(___Cipher) \
-	AROS_LC1(struct Library *, OpenAmiSSLCipher, \
-	AROS_LCA(LONG, (___Cipher), D0), \
-	struct Library *, AMISSLMASTER_BASE_NAME, 8, Amisslmaster)
+  AROS_LC1(struct Library *, OpenAmiSSLCipher, \
+  AROS_LCA(LONG, (___Cipher), D0), \
+  struct Library *, AMISSLMASTER_BASE_NAME, 8, Amisslmaster)
 
 #define CloseAmiSSLCipher(___CipherBase) \
-	AROS_LC1(void, CloseAmiSSLCipher, \
-	AROS_LCA(struct Library *, (___CipherBase), A0), \
-	struct Library *, AMISSLMASTER_BASE_NAME, 9, Amisslmaster)
+  AROS_LC1(void, CloseAmiSSLCipher, \
+  AROS_LCA(struct Library *, (___CipherBase), A0), \
+  struct Library *, AMISSLMASTER_BASE_NAME, 9, Amisslmaster)
 
 #endif /* !_INLINE_AMISSLMASTER_H */

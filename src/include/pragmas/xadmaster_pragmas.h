@@ -3,12 +3,12 @@
 #define PRAGMAS_XADMASTER_PRAGMAS_H
 
 /*
-**	$VER: xadmaster_pragmas.h 13.3 (25.07.2004)
+**  $VER: xadmaster_pragmas.h 13.3 (25.07.2004)
 **
-**	Direct ROM interface (pragma) definitions.
+**  Direct ROM interface (pragma) definitions.
 **
-**	Copyright © 2001 Amiga, Inc.
-**	    All Rights Reserved
+**  Copyright © 2001 Amiga, Inc.
+**      All Rights Reserved
 */
 
 #if defined(LATTICE) || defined(__SASC) || defined(_DCC)

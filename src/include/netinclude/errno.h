@@ -11,6 +11,6 @@
  * Freely Distributable
  */
 
-#ifndef	_SYS_ERRNO_H
+#ifndef  _SYS_ERRNO_H
 #include <sys/errno.h>
 #endif /* !_SYS_ERRNO_H */

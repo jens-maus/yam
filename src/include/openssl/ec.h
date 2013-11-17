@@ -73,24 +73,24 @@ extern "C" {
 
 
 typedef enum {
-	/* values as defined in X9.62 (ECDSA) and elsewhere */
-	POINT_CONVERSION_COMPRESSED = 2,
-	POINT_CONVERSION_UNCOMPRESSED = 4,
-	POINT_CONVERSION_HYBRID = 6
+  /* values as defined in X9.62 (ECDSA) and elsewhere */
+  POINT_CONVERSION_COMPRESSED = 2,
+  POINT_CONVERSION_UNCOMPRESSED = 4,
+  POINT_CONVERSION_HYBRID = 6
 } point_conversion_form_t;
 
 
 typedef struct ec_method_st EC_METHOD;
 
 typedef struct ec_group_st
-	/*
-	 EC_METHOD *meth;
-	 -- field definition
-	 -- curve coefficients
-	 -- optional generator with associated information (order, cofactor)
-	 -- optional extra data (TODO: precomputed table for fast computation of multiples of generator)
-	*/
-	EC_GROUP;
+  /*
+   EC_METHOD *meth;
+   -- field definition
+   -- curve coefficients
+   -- optional generator with associated information (order, cofactor)
+   -- optional extra data (TODO: precomputed table for fast computation of multiples of generator)
+  */
+  EC_GROUP;
 
 typedef struct ec_point_st EC_POINT;
 
@@ -112,7 +112,7 @@ void EC_GROUP_clear_free(EC_GROUP *);
 int EC_GROUP_copy(EC_GROUP *, const EC_GROUP *);
 
 const EC_METHOD *EC_GROUP_method_of(const EC_GROUP *);
-	
+  
 
 /* We don't have types for field specifications and field elements in general.
  * Otherwise we could declare
@@ -139,15 +139,15 @@ const EC_METHOD *EC_POINT_method_of(const EC_POINT *);
 
 int EC_POINT_set_to_infinity(const EC_GROUP *, EC_POINT *);
 int EC_POINT_set_Jprojective_coordinates_GFp(const EC_GROUP *, EC_POINT *,
-	const BIGNUM *x, const BIGNUM *y, const BIGNUM *z, BN_CTX *);
+  const BIGNUM *x, const BIGNUM *y, const BIGNUM *z, BN_CTX *);
 int EC_POINT_get_Jprojective_coordinates_GFp(const EC_GROUP *, const EC_POINT *,
-	BIGNUM *x, BIGNUM *y, BIGNUM *z, BN_CTX *);
+  BIGNUM *x, BIGNUM *y, BIGNUM *z, BN_CTX *);
 int EC_POINT_set_affine_coordinates_GFp(const EC_GROUP *, EC_POINT *,
-	const BIGNUM *x, const BIGNUM *y, BN_CTX *);
+  const BIGNUM *x, const BIGNUM *y, BN_CTX *);
 int EC_POINT_get_affine_coordinates_GFp(const EC_GROUP *, const EC_POINT *,
-	BIGNUM *x, BIGNUM *y, BN_CTX *);
+  BIGNUM *x, BIGNUM *y, BN_CTX *);
 int EC_POINT_set_compressed_coordinates_GFp(const EC_GROUP *, EC_POINT *,
-	const BIGNUM *x, int y_bit, BN_CTX *);
+  const BIGNUM *x, int y_bit, BN_CTX *);
 
 size_t EC_POINT_point2oct(const EC_GROUP *, const EC_POINT *, point_conversion_form_t form,
         unsigned char *buf, size_t len, BN_CTX *);
@@ -181,65 +181,65 @@ void ERR_load_EC_strings(void);
 /* Error codes for the EC functions. */
 
 /* Function codes. */
-#define EC_F_COMPUTE_WNAF				 143
-#define EC_F_EC_GFP_MONT_FIELD_DECODE			 133
-#define EC_F_EC_GFP_MONT_FIELD_ENCODE			 134
-#define EC_F_EC_GFP_MONT_FIELD_MUL			 131
-#define EC_F_EC_GFP_MONT_FIELD_SQR			 132
-#define EC_F_EC_GFP_SIMPLE_GROUP_SET_CURVE_GFP		 100
-#define EC_F_EC_GFP_SIMPLE_GROUP_SET_GENERATOR		 101
-#define EC_F_EC_GFP_SIMPLE_MAKE_AFFINE			 102
-#define EC_F_EC_GFP_SIMPLE_OCT2POINT			 103
-#define EC_F_EC_GFP_SIMPLE_POINT2OCT			 104
-#define EC_F_EC_GFP_SIMPLE_POINTS_MAKE_AFFINE		 137
+#define EC_F_COMPUTE_WNAF         143
+#define EC_F_EC_GFP_MONT_FIELD_DECODE       133
+#define EC_F_EC_GFP_MONT_FIELD_ENCODE       134
+#define EC_F_EC_GFP_MONT_FIELD_MUL       131
+#define EC_F_EC_GFP_MONT_FIELD_SQR       132
+#define EC_F_EC_GFP_SIMPLE_GROUP_SET_CURVE_GFP     100
+#define EC_F_EC_GFP_SIMPLE_GROUP_SET_GENERATOR     101
+#define EC_F_EC_GFP_SIMPLE_MAKE_AFFINE       102
+#define EC_F_EC_GFP_SIMPLE_OCT2POINT       103
+#define EC_F_EC_GFP_SIMPLE_POINT2OCT       104
+#define EC_F_EC_GFP_SIMPLE_POINTS_MAKE_AFFINE     137
 #define EC_F_EC_GFP_SIMPLE_POINT_GET_AFFINE_COORDINATES_GFP 105
 #define EC_F_EC_GFP_SIMPLE_POINT_SET_AFFINE_COORDINATES_GFP 128
 #define EC_F_EC_GFP_SIMPLE_SET_COMPRESSED_COORDINATES_GFP 129
-#define EC_F_EC_GROUP_COPY				 106
-#define EC_F_EC_GROUP_GET0_GENERATOR			 139
-#define EC_F_EC_GROUP_GET_COFACTOR			 140
-#define EC_F_EC_GROUP_GET_CURVE_GFP			 130
-#define EC_F_EC_GROUP_GET_ORDER				 141
-#define EC_F_EC_GROUP_NEW				 108
-#define EC_F_EC_GROUP_PRECOMPUTE_MULT			 142
-#define EC_F_EC_GROUP_SET_CURVE_GFP			 109
-#define EC_F_EC_GROUP_SET_EXTRA_DATA			 110
-#define EC_F_EC_GROUP_SET_GENERATOR			 111
-#define EC_F_EC_POINTS_MAKE_AFFINE			 136
-#define EC_F_EC_POINTS_MUL				 138
-#define EC_F_EC_POINT_ADD				 112
-#define EC_F_EC_POINT_CMP				 113
-#define EC_F_EC_POINT_COPY				 114
-#define EC_F_EC_POINT_DBL				 115
-#define EC_F_EC_POINT_GET_AFFINE_COORDINATES_GFP	 116
-#define EC_F_EC_POINT_GET_JPROJECTIVE_COORDINATES_GFP	 117
-#define EC_F_EC_POINT_IS_AT_INFINITY			 118
-#define EC_F_EC_POINT_IS_ON_CURVE			 119
-#define EC_F_EC_POINT_MAKE_AFFINE			 120
-#define EC_F_EC_POINT_NEW				 121
-#define EC_F_EC_POINT_OCT2POINT				 122
-#define EC_F_EC_POINT_POINT2OCT				 123
-#define EC_F_EC_POINT_SET_AFFINE_COORDINATES_GFP	 124
-#define EC_F_EC_POINT_SET_COMPRESSED_COORDINATES_GFP	 125
-#define EC_F_EC_POINT_SET_JPROJECTIVE_COORDINATES_GFP	 126
-#define EC_F_EC_POINT_SET_TO_INFINITY			 127
-#define EC_F_GFP_MONT_GROUP_SET_CURVE_GFP		 135
+#define EC_F_EC_GROUP_COPY         106
+#define EC_F_EC_GROUP_GET0_GENERATOR       139
+#define EC_F_EC_GROUP_GET_COFACTOR       140
+#define EC_F_EC_GROUP_GET_CURVE_GFP       130
+#define EC_F_EC_GROUP_GET_ORDER         141
+#define EC_F_EC_GROUP_NEW         108
+#define EC_F_EC_GROUP_PRECOMPUTE_MULT       142
+#define EC_F_EC_GROUP_SET_CURVE_GFP       109
+#define EC_F_EC_GROUP_SET_EXTRA_DATA       110
+#define EC_F_EC_GROUP_SET_GENERATOR       111
+#define EC_F_EC_POINTS_MAKE_AFFINE       136
+#define EC_F_EC_POINTS_MUL         138
+#define EC_F_EC_POINT_ADD         112
+#define EC_F_EC_POINT_CMP         113
+#define EC_F_EC_POINT_COPY         114
+#define EC_F_EC_POINT_DBL         115
+#define EC_F_EC_POINT_GET_AFFINE_COORDINATES_GFP   116
+#define EC_F_EC_POINT_GET_JPROJECTIVE_COORDINATES_GFP   117
+#define EC_F_EC_POINT_IS_AT_INFINITY       118
+#define EC_F_EC_POINT_IS_ON_CURVE       119
+#define EC_F_EC_POINT_MAKE_AFFINE       120
+#define EC_F_EC_POINT_NEW         121
+#define EC_F_EC_POINT_OCT2POINT         122
+#define EC_F_EC_POINT_POINT2OCT         123
+#define EC_F_EC_POINT_SET_AFFINE_COORDINATES_GFP   124
+#define EC_F_EC_POINT_SET_COMPRESSED_COORDINATES_GFP   125
+#define EC_F_EC_POINT_SET_JPROJECTIVE_COORDINATES_GFP   126
+#define EC_F_EC_POINT_SET_TO_INFINITY       127
+#define EC_F_GFP_MONT_GROUP_SET_CURVE_GFP     135
 
 /* Reason codes. */
-#define EC_R_BUFFER_TOO_SMALL				 100
-#define EC_R_INCOMPATIBLE_OBJECTS			 101
-#define EC_R_INVALID_ARGUMENT				 112
-#define EC_R_INVALID_COMPRESSED_POINT			 110
-#define EC_R_INVALID_COMPRESSION_BIT			 109
-#define EC_R_INVALID_ENCODING				 102
-#define EC_R_INVALID_FIELD				 103
-#define EC_R_INVALID_FORM				 104
-#define EC_R_NOT_INITIALIZED				 111
-#define EC_R_POINT_AT_INFINITY				 106
-#define EC_R_POINT_IS_NOT_ON_CURVE			 107
-#define EC_R_SLOT_FULL					 108
-#define EC_R_UNDEFINED_GENERATOR			 113
-#define EC_R_UNKNOWN_ORDER				 114
+#define EC_R_BUFFER_TOO_SMALL         100
+#define EC_R_INCOMPATIBLE_OBJECTS       101
+#define EC_R_INVALID_ARGUMENT         112
+#define EC_R_INVALID_COMPRESSED_POINT       110
+#define EC_R_INVALID_COMPRESSION_BIT       109
+#define EC_R_INVALID_ENCODING         102
+#define EC_R_INVALID_FIELD         103
+#define EC_R_INVALID_FORM         104
+#define EC_R_NOT_INITIALIZED         111
+#define EC_R_POINT_AT_INFINITY         106
+#define EC_R_POINT_IS_NOT_ON_CURVE       107
+#define EC_R_SLOT_FULL           108
+#define EC_R_UNDEFINED_GENERATOR       113
+#define EC_R_UNKNOWN_ORDER         114
 
 #ifdef  __cplusplus
 }

@@ -3259,10 +3259,10 @@ extern char MUIC_Pixmap[];
 
 struct MUI_GlobalInfo
 {
-	ULONG priv0;
-	Object *mgi_ApplicationObject;
+  ULONG priv0;
+  Object *mgi_ApplicationObject;
 
-	/* ... private data follows ... */
+  /* ... private data follows ... */
 };
 
 
@@ -3270,13 +3270,13 @@ struct MUI_GlobalInfo
 
 struct MUI_NotifyData
 {
-	struct MUI_GlobalInfo *mnd_GlobalInfo;
-	ULONG                  mnd_UserData;
-	ULONG                  mnd_ObjectID;
-	ULONG priv1;
-	ULONG priv2;
-	ULONG priv3;
-	ULONG priv4;
+  struct MUI_GlobalInfo *mnd_GlobalInfo;
+  ULONG                  mnd_UserData;
+  ULONG                  mnd_ObjectID;
+  ULONG priv1;
+  ULONG priv2;
+  ULONG priv3;
+  ULONG priv4;
 };
 
 
@@ -3285,12 +3285,12 @@ struct MUI_NotifyData
 
 struct MUI_MinMax
 {
-	WORD MinWidth;
-	WORD MinHeight;
-	WORD MaxWidth;
-	WORD MaxHeight;
-	WORD DefWidth;
-	WORD DefHeight;
+  WORD MinWidth;
+  WORD MinHeight;
+  WORD MaxWidth;
+  WORD MaxHeight;
+  WORD DefWidth;
+  WORD DefHeight;
 };
 
 #define MUI_MAXMAX 10000 /* use this if a dimension is not limited. */
@@ -3300,16 +3300,16 @@ struct MUI_MinMax
 
 struct MUI_LayoutMsg
 {
-	ULONG                  lm_Type;     /* type of message (see defines below)                      */
-	struct MinList        *lm_Children; /* list of this groups children, traverse with NextObject() */
-	struct MUI_MinMax      lm_MinMax;   /* results for MUILM_MINMAX                                 */
-	struct
-	{
-		LONG Width;
-		LONG Height;
-		ULONG priv5;
-		ULONG priv6;
-	} lm_Layout;   /* size (and result) for MUILM_LAYOUT                       */
+  ULONG                  lm_Type;     /* type of message (see defines below)                      */
+  struct MinList        *lm_Children; /* list of this groups children, traverse with NextObject() */
+  struct MUI_MinMax      lm_MinMax;   /* results for MUILM_MINMAX                                 */
+  struct
+  {
+    LONG Width;
+    LONG Height;
+    ULONG priv5;
+    ULONG priv6;
+  } lm_Layout;   /* size (and result) for MUILM_LAYOUT                       */
 };
 
 #define MUILM_MINMAX    1  /* MUI wants you to calc your min & max sizes */
@@ -3322,18 +3322,18 @@ struct MUI_LayoutMsg
 
 struct MUI_AreaData
 {
-	struct MUI_RenderInfo *mad_RenderInfo;     /* RenderInfo for this object */
-	ULONG priv7;
-	struct TextFont       *mad_Font;           /* Font */
-	struct MUI_MinMax      mad_MinMax;         /* min/max/default sizes */
-	struct IBox            mad_Box;            /* position and dimension */
-	BYTE                   mad_addleft;        /* frame & innerspacing left offset */
-	BYTE                   mad_addtop;         /* frame & innerspacing top offset  */
-	BYTE                   mad_subwidth;       /* frame & innerspacing add. width  */
-	BYTE                   mad_subheight;      /* frame & innerspacing add. height */
-	ULONG                  mad_Flags;          /* see definitions below */
+  struct MUI_RenderInfo *mad_RenderInfo;     /* RenderInfo for this object */
+  ULONG priv7;
+  struct TextFont       *mad_Font;           /* Font */
+  struct MUI_MinMax      mad_MinMax;         /* min/max/default sizes */
+  struct IBox            mad_Box;            /* position and dimension */
+  BYTE                   mad_addleft;        /* frame & innerspacing left offset */
+  BYTE                   mad_addtop;         /* frame & innerspacing top offset  */
+  BYTE                   mad_subwidth;       /* frame & innerspacing add. width  */
+  BYTE                   mad_subheight;      /* frame & innerspacing add. height */
+  ULONG                  mad_Flags;          /* see definitions below */
 
-	/* ... private data follows ... */
+  /* ... private data follows ... */
 };
 
 /* Definitions for mad_Flags, other flags are private */
@@ -3363,17 +3363,17 @@ struct MUI_AreaData
 
 struct MUI_RenderInfo
 {
-	Object          *mri_WindowObject;  /* valid between MUIM_Setup/MUIM_Cleanup */
+  Object          *mri_WindowObject;  /* valid between MUIM_Setup/MUIM_Cleanup */
 
-	struct Screen   *mri_Screen;        /* valid between MUIM_Setup/MUIM_Cleanup */
-	struct DrawInfo *mri_DrawInfo;      /* valid between MUIM_Setup/MUIM_Cleanup */
-	UWORD           *mri_Pens;          /* valid between MUIM_Setup/MUIM_Cleanup */
-	struct Window   *mri_Window;        /* valid between MUIM_Show/MUIM_Hide */
-	struct RastPort *mri_RastPort;      /* valid between MUIM_Show/MUIM_Hide */
+  struct Screen   *mri_Screen;        /* valid between MUIM_Setup/MUIM_Cleanup */
+  struct DrawInfo *mri_DrawInfo;      /* valid between MUIM_Setup/MUIM_Cleanup */
+  UWORD           *mri_Pens;          /* valid between MUIM_Setup/MUIM_Cleanup */
+  struct Window   *mri_Window;        /* valid between MUIM_Show/MUIM_Hide */
+  struct RastPort *mri_RastPort;      /* valid between MUIM_Show/MUIM_Hide */
 
-	ULONG            mri_Flags;         /* valid between MUIM_Setup/MUIM_Cleanup */
+  ULONG            mri_Flags;         /* valid between MUIM_Setup/MUIM_Cleanup */
 
-	/* ... private data follows ... */
+  /* ... private data follows ... */
 };
 
 /*
@@ -3413,8 +3413,8 @@ struct MUI_RenderInfo
 
 struct __dummyXFC2__
 {
-	struct MUI_NotifyData mnd;
-	struct MUI_AreaData   mad;
+  struct MUI_NotifyData mnd;
+  struct MUI_AreaData   mad;
 };
 
 #define muiNotifyData(obj) (&(((struct __dummyXFC2__ *)(obj))->mnd))
@@ -3430,32 +3430,32 @@ struct __dummyXFC2__
 
 enum
 {
-	MUIKEY_RELEASE = -2, /* not a real key, faked when MUIKEY_PRESS is released */
-	MUIKEY_NONE    = -1,
-	MUIKEY_PRESS,
-	MUIKEY_TOGGLE,
-	MUIKEY_UP,
-	MUIKEY_DOWN,
-	MUIKEY_PAGEUP,
-	MUIKEY_PAGEDOWN,
-	MUIKEY_TOP,
-	MUIKEY_BOTTOM,
-	MUIKEY_LEFT,
-	MUIKEY_RIGHT,
-	MUIKEY_WORDLEFT,
-	MUIKEY_WORDRIGHT,
-	MUIKEY_LINESTART,
-	MUIKEY_LINEEND,
-	MUIKEY_GADGET_NEXT,
-	MUIKEY_GADGET_PREV,
-	MUIKEY_GADGET_OFF,
-	MUIKEY_WINDOW_CLOSE,
-	MUIKEY_WINDOW_NEXT,
-	MUIKEY_WINDOW_PREV,
-	MUIKEY_HELP,
-	MUIKEY_POPUP,
-	MUIKEY_PRESS2,
-	MUIKEY_COUNT /* counter */
+  MUIKEY_RELEASE = -2, /* not a real key, faked when MUIKEY_PRESS is released */
+  MUIKEY_NONE    = -1,
+  MUIKEY_PRESS,
+  MUIKEY_TOGGLE,
+  MUIKEY_UP,
+  MUIKEY_DOWN,
+  MUIKEY_PAGEUP,
+  MUIKEY_PAGEDOWN,
+  MUIKEY_TOP,
+  MUIKEY_BOTTOM,
+  MUIKEY_LEFT,
+  MUIKEY_RIGHT,
+  MUIKEY_WORDLEFT,
+  MUIKEY_WORDRIGHT,
+  MUIKEY_LINESTART,
+  MUIKEY_LINEEND,
+  MUIKEY_GADGET_NEXT,
+  MUIKEY_GADGET_PREV,
+  MUIKEY_GADGET_OFF,
+  MUIKEY_WINDOW_CLOSE,
+  MUIKEY_WINDOW_NEXT,
+  MUIKEY_WINDOW_PREV,
+  MUIKEY_HELP,
+  MUIKEY_POPUP,
+  MUIKEY_PRESS2,
+  MUIKEY_COUNT /* counter */
 };
 
 #define MUIKEYF_PRESS        (1<<MUIKEY_PRESS)
@@ -3527,17 +3527,17 @@ enum
 
 struct MUI_CustomClass
 {
-	APTR mcc_UserData;                  /* use for whatever you want */
+  APTR mcc_UserData;                  /* use for whatever you want */
 
-	struct Library *mcc_UtilityBase;    /* MUI has opened these libraries */
-	struct Library *mcc_DOSBase;        /* for you automatically. You can */
-	struct Library *mcc_GfxBase;        /* use them or decide to open     */
-	struct Library *mcc_IntuitionBase;  /* your libraries yourself.       */
+  struct Library *mcc_UtilityBase;    /* MUI has opened these libraries */
+  struct Library *mcc_DOSBase;        /* for you automatically. You can */
+  struct Library *mcc_GfxBase;        /* use them or decide to open     */
+  struct Library *mcc_IntuitionBase;  /* your libraries yourself.       */
 
-	struct IClass *mcc_Super;           /* pointer to super class   */
-	struct IClass *mcc_Class;           /* pointer to the new class */
+  struct IClass *mcc_Super;           /* pointer to super class   */
+  struct IClass *mcc_Class;           /* pointer to the new class */
 
-	/* ... private data follows ... */
+  /* ... private data follows ... */
 };
 
 

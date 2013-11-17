@@ -11,6 +11,6 @@
  * Freely Distributable
  */
 
-#ifndef	_SYS_SYSLOG_H
+#ifndef  _SYS_SYSLOG_H
 #include <sys/syslog.h>
 #endif /* !_SYS_SYSLOG_H */

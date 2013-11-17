@@ -19,17 +19,17 @@
 
 struct AmiSSLMasterIFace
 {
-	struct InterfaceData Data;
+  struct InterfaceData Data;
 
-	ULONG APICALL (*Obtain)(struct AmiSSLMasterIFace *Self);
-	ULONG APICALL (*Release)(struct AmiSSLMasterIFace *Self);
-	void APICALL (*Expunge)(struct AmiSSLMasterIFace *Self);
-	struct Interface * APICALL (*Clone)(struct AmiSSLMasterIFace *Self);
-	LONG APICALL (*InitAmiSSLMaster)(struct AmiSSLMasterIFace *Self, LONG APIVersion, LONG UsesOpenSSLStructs);
-	struct Library * APICALL (*OpenAmiSSL)(struct AmiSSLMasterIFace *Self);
-	void APICALL (*CloseAmiSSL)(struct AmiSSLMasterIFace *Self);
-	struct Library * APICALL (*OpenAmiSSLCipher)(struct AmiSSLMasterIFace *Self, LONG Cipher);
-	void APICALL (*CloseAmiSSLCipher)(struct AmiSSLMasterIFace *Self, struct Library * CipherBase);
+  ULONG APICALL (*Obtain)(struct AmiSSLMasterIFace *Self);
+  ULONG APICALL (*Release)(struct AmiSSLMasterIFace *Self);
+  void APICALL (*Expunge)(struct AmiSSLMasterIFace *Self);
+  struct Interface * APICALL (*Clone)(struct AmiSSLMasterIFace *Self);
+  LONG APICALL (*InitAmiSSLMaster)(struct AmiSSLMasterIFace *Self, LONG APIVersion, LONG UsesOpenSSLStructs);
+  struct Library * APICALL (*OpenAmiSSL)(struct AmiSSLMasterIFace *Self);
+  void APICALL (*CloseAmiSSL)(struct AmiSSLMasterIFace *Self);
+  struct Library * APICALL (*OpenAmiSSLCipher)(struct AmiSSLMasterIFace *Self, LONG Cipher);
+  void APICALL (*CloseAmiSSLCipher)(struct AmiSSLMasterIFace *Self, struct Library * CipherBase);
 };
 
 #endif /* AMISSLMASTER_INTERFACE_DEF_H */

@@ -68,23 +68,23 @@
 
 #include <openssl/evp.h>
 
-#define HMAC_MAX_MD_CBLOCK	64
+#define HMAC_MAX_MD_CBLOCK  64
 
 #ifdef  __cplusplus
 extern "C" {
 #endif
 
 typedef struct hmac_ctx_st
-	{
-	const EVP_MD *md;
-	EVP_MD_CTX md_ctx;
-	EVP_MD_CTX i_ctx;
-	EVP_MD_CTX o_ctx;
-	unsigned int key_length;
-	unsigned char key[HMAC_MAX_MD_CBLOCK];
-	} HMAC_CTX;
+  {
+  const EVP_MD *md;
+  EVP_MD_CTX md_ctx;
+  EVP_MD_CTX i_ctx;
+  EVP_MD_CTX o_ctx;
+  unsigned int key_length;
+  unsigned char key[HMAC_MAX_MD_CBLOCK];
+  } HMAC_CTX;
 
-#define HMAC_size(e)	(EVP_MD_size((e)->md))
+#define HMAC_size(e)  (EVP_MD_size((e)->md))
 
 
 void HMAC_CTX_init(HMAC_CTX *ctx);
@@ -93,14 +93,14 @@ void HMAC_CTX_cleanup(HMAC_CTX *ctx);
 #define HMAC_cleanup(ctx) HMAC_CTX_cleanup(ctx) /* deprecated */
 
 void HMAC_Init(HMAC_CTX *ctx, const void *key, int len,
-	       const EVP_MD *md); /* deprecated */
+         const EVP_MD *md); /* deprecated */
 void HMAC_Init_ex(HMAC_CTX *ctx, const void *key, int len,
-		  const EVP_MD *md, ENGINE *impl);
+      const EVP_MD *md, ENGINE *impl);
 void HMAC_Update(HMAC_CTX *ctx, const unsigned char *data, int len);
 void HMAC_Final(HMAC_CTX *ctx, unsigned char *md, unsigned int *len);
 unsigned char *HMAC(const EVP_MD *evp_md, const void *key, int key_len,
-		    const unsigned char *d, int n, unsigned char *md,
-		    unsigned int *md_len);
+        const unsigned char *d, int n, unsigned char *md,
+        unsigned int *md_len);
 
 void HMAC_CTX_set_flags(HMAC_CTX *ctx, unsigned long flags);
 

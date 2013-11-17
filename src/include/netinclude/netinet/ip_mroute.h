@@ -14,7 +14,7 @@
 /*
  * Copyright (c) 1989 Stephen Deering.
  * Copyright (c) 1992, 1993
- *	The Regents of the University of California.  All rights reserved.
+ *  The Regents of the University of California.  All rights reserved.
  *
  * This code is derived from software contributed to Berkeley by
  * Stephen Deering of Stanford University.
@@ -29,8 +29,8 @@
  *    documentation and/or other materials provided with the distribution.
  * 3. All advertising materials mentioning features or use of this software
  *    must display the following acknowledgement:
- *	This product includes software developed by the University of
- *	California, Berkeley and its contributors.
+ *  This product includes software developed by the University of
+ *  California, Berkeley and its contributors.
  * 4. Neither the name of the University nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
@@ -47,7 +47,7 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- *	@(#)ip_mroute.h	8.2 (Berkeley) 4/28/95
+ *  @(#)ip_mroute.h  8.2 (Berkeley) 4/28/95
  */
 
 #ifndef _NETINET_IP_MROUTE_H
@@ -96,29 +96,29 @@ extern "C" {
 /*
  * DVMRP-specific setsockopt commands.
  */
-#define	DVMRP_INIT	100
-#define	DVMRP_DONE	101
-#define	DVMRP_ADD_VIF	102
-#define	DVMRP_DEL_VIF	103
-#define	DVMRP_ADD_LGRP	104
-#define	DVMRP_DEL_LGRP	105
-#define	DVMRP_ADD_MRT	106
-#define	DVMRP_DEL_MRT	107
+#define  DVMRP_INIT  100
+#define  DVMRP_DONE  101
+#define  DVMRP_ADD_VIF  102
+#define  DVMRP_DEL_VIF  103
+#define  DVMRP_ADD_LGRP  104
+#define  DVMRP_DEL_LGRP  105
+#define  DVMRP_ADD_MRT  106
+#define  DVMRP_DEL_MRT  107
 
 
 /*
  * Types and macros for handling bitmaps with one bit per virtual interface.
  */
-#define	MAXVIFS 32
+#define  MAXVIFS 32
 typedef __ULONG vifbitmap_t;
-typedef __UWORD vifi_t;		/* type of a vif index */
+typedef __UWORD vifi_t;    /* type of a vif index */
 
-#define	VIFM_SET(n, m)		((m) |= (1 << (n)))
-#define	VIFM_CLR(n, m)		((m) &= ~(1 << (n)))
-#define	VIFM_ISSET(n, m)	((m) & (1 << (n)))
-#define	VIFM_CLRALL(m)		((m) = 0x00000000)
-#define	VIFM_COPY(mfrom, mto)	((mto) = (mfrom))
-#define	VIFM_SAME(m1, m2)	((m1) == (m2))
+#define  VIFM_SET(n, m)    ((m) |= (1 << (n)))
+#define  VIFM_CLR(n, m)    ((m) &= ~(1 << (n)))
+#define  VIFM_ISSET(n, m)  ((m) & (1 << (n)))
+#define  VIFM_CLRALL(m)    ((m) = 0x00000000)
+#define  VIFM_COPY(mfrom, mto)  ((mto) = (mfrom))
+#define  VIFM_SAME(m1, m2)  ((m1) == (m2))
 
 
 /*
@@ -126,22 +126,22 @@ typedef __UWORD vifi_t;		/* type of a vif index */
  * (DVMRP_DEL_VIF takes a single vifi_t argument.)
  */
 struct vifctl {
-	vifi_t	    vifc_vifi;	    	/* the index of the vif to be added */
-	__UBYTE	    vifc_flags;     	/* VIFF_ flags defined below */
-	__UBYTE	    vifc_threshold; 	/* min ttl required to forward on vif */
-	struct	in_addr vifc_lcl_addr;	/* local interface address */
-	struct	in_addr vifc_rmt_addr;	/* remote address (tunnels only) */
+  vifi_t      vifc_vifi;        /* the index of the vif to be added */
+  __UBYTE      vifc_flags;       /* VIFF_ flags defined below */
+  __UBYTE      vifc_threshold;   /* min ttl required to forward on vif */
+  struct  in_addr vifc_lcl_addr;  /* local interface address */
+  struct  in_addr vifc_rmt_addr;  /* remote address (tunnels only) */
 };
 
-#define	VIFF_TUNNEL	0x1		/* vif represents a tunnel end-point */
+#define  VIFF_TUNNEL  0x1    /* vif represents a tunnel end-point */
 
 
 /*
  * Argument structure for DVMRP_ADD_LGRP and DVMRP_DEL_LGRP.
  */
 struct lgrplctl {
-	vifi_t	lgc_vifi;
-	struct	in_addr lgc_gaddr;
+  vifi_t  lgc_vifi;
+  struct  in_addr lgc_gaddr;
 };
 
 
@@ -150,25 +150,25 @@ struct lgrplctl {
  * (DVMRP_DEL_MRT takes a single struct in_addr argument, containing origin.)
  */
 struct mrtctl {
-	struct	in_addr mrtc_origin;	/* subnet origin of multicasts */
-	struct	in_addr mrtc_originmask; /* subnet mask for origin */
-	vifi_t	mrtc_parent;    	/* incoming vif */
-	vifbitmap_t mrtc_children;	/* outgoing children vifs */
-	vifbitmap_t mrtc_leaves;	/* subset of outgoing children vifs */
+  struct  in_addr mrtc_origin;  /* subnet origin of multicasts */
+  struct  in_addr mrtc_originmask; /* subnet mask for origin */
+  vifi_t  mrtc_parent;      /* incoming vif */
+  vifbitmap_t mrtc_children;  /* outgoing children vifs */
+  vifbitmap_t mrtc_leaves;  /* subset of outgoing children vifs */
 };
 
 /*
  * The kernel's multicast routing statistics.
  */
 struct mrtstat {
-	__ULONG	mrts_mrt_lookups;	/* # multicast route lookups */
-	__ULONG	mrts_mrt_misses;	/* # multicast route cache misses */
-	__ULONG	mrts_grp_lookups;	/* # group address lookups */
-	__ULONG	mrts_grp_misses;	/* # group address cache misses */
-	__ULONG	mrts_no_route;		/* no route for packet's origin */
-	__ULONG	mrts_bad_tunnel;	/* malformed tunnel options */
-	__ULONG	mrts_cant_tunnel;	/* no room for tunnel options */
-	__ULONG	mrts_wrong_if;		/* arrived on the wrong interface */
+  __ULONG  mrts_mrt_lookups;  /* # multicast route lookups */
+  __ULONG  mrts_mrt_misses;  /* # multicast route cache misses */
+  __ULONG  mrts_grp_lookups;  /* # group address lookups */
+  __ULONG  mrts_grp_misses;  /* # group address cache misses */
+  __ULONG  mrts_no_route;    /* no route for packet's origin */
+  __ULONG  mrts_bad_tunnel;  /* malformed tunnel options */
+  __ULONG  mrts_cant_tunnel;  /* no room for tunnel options */
+  __ULONG  mrts_wrong_if;    /* arrived on the wrong interface */
 };
 
 /****************************************************************************/

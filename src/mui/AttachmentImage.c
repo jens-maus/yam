@@ -685,7 +685,7 @@ static void LoadImage(struct IClass *cl, Object *obj)
             }
 
             DisposeLayerInfo(li);
-	      }
+          }
 
           FreeBitMap(orgBitMap);
         }

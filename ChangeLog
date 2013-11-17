@@ -7,6 +7,9 @@ $URL$
 
 2013-11-17 Jens Maus <mail@jens-maus.de>
 
+  * *.c,*.h: replaced all real tabs by two spaces throughout the whole
+    repository. In addition, a pre-commit hook will now also take care that no
+    real tabs can be checked in any *.c,*.h,*.l,*.sd file anymore.
   * tcp/pop3.c, tcp/smtp.c: changed the respective receive and sent functions
     of the pop3 and smtp routines to store mails in the respective mail store
     folder based on the folder id stored. This closes #400 and thus should

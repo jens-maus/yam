@@ -1366,7 +1366,7 @@ int LoadConfig(struct Config *co, const char *fname)
                 else if(stricmp(q, "ExtraHeaders") == 0)         strlcpy(uin->extraHeaders, value, sizeof(uin->extraHeaders));
                 else if(stricmp(q, "PhotoURL") == 0)             strlcpy(uin->photoURL, value, sizeof(uin->photoURL));
                 else if(stricmp(q, "SentFolderID") == 0)         uin->sentFolderID = strtoul(value, NULL, 16);
-              	else if(stricmp(q, "SentFolder") == 0)           strlcpy(uin->sentFolderName, value, sizeof(uin->sentFolderName));
+                else if(stricmp(q, "SentFolder") == 0)           strlcpy(uin->sentFolderName, value, sizeof(uin->sentFolderName));
                 else if(stricmp(q, "SaveSentMail") == 0)         uin->saveSentMail = Txt2Bool(value);
                 else if(stricmp(q, "QuoteMails") == 0)           uin->quoteMails = Txt2Bool(value);
                 else if(stricmp(q, "QuotePosition") == 0)        uin->quotePosition = atoi(value);
@@ -3618,8 +3618,8 @@ void ResolveConfigFolders(struct Config *co)
   IterateList(&co->filterList, struct FilterNode *, filter)
   {
     // only check filters which actually have a "Move to" action defined
-  	if(hasMoveAction(filter) == TRUE)
-  	{
+    if(hasMoveAction(filter) == TRUE)
+    {
       if(filter->moveToID == 0 && IsStrEmpty(filter->moveToName) == FALSE)
       {
         struct Folder *folder;

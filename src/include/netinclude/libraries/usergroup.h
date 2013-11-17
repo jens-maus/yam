@@ -17,7 +17,7 @@
 
 /*
  * Copyright (c) 1989, 1993
- *	The Regents of the University of California.  All rights reserved.
+ *  The Regents of the University of California.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,8 +29,8 @@
  *    documentation and/or other materials provided with the distribution.
  * 3. All advertising materials mentioning features or use of this software
  *    must display the following acknowledgement:
- *	This product includes software developed by the University of
- *	California, Berkeley and its contributors.
+ *  This product includes software developed by the University of
+ *  California, Berkeley and its contributors.
  * 4. Neither the name of the University nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
@@ -47,7 +47,7 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- *	@(#)ucred.h	8.4 (Berkeley) 1/9/95
+ *  @(#)ucred.h  8.4 (Berkeley) 1/9/95
  */
 
 #ifndef LIBRARIES_USERGROUP_H
@@ -93,16 +93,16 @@ extern "C" {
 
 /****************************************************************************/
 
-#define	_PASSWORD_EFMT1	'_'	/* extended encryption format */
-#define	_PASSWORD_LEN	128	/* max length, not counting NULL */
+#define  _PASSWORD_EFMT1  '_'  /* extended encryption format */
+#define  _PASSWORD_LEN  128  /* max length, not counting NULL */
 
 /****************************************************************************/
 
-#define	NGROUPS		32	/* max number groups */
+#define  NGROUPS    32  /* max number groups */
 
 /****************************************************************************/
 
-#define MAXLOGNAME      32	/* max length of login name */
+#define MAXLOGNAME      32  /* max length of login name */
 
 /****************************************************************************/
 
@@ -111,14 +111,14 @@ extern "C" {
  */
 struct UserGroupCredentials
 {
-	LONG	cr_ruid;
-	LONG	cr_rgid;
-	UWORD	cr_umask;
-	LONG	cr_euid;
-	WORD	cr_ngroups;
-	LONG	cr_groups[NGROUPS];
-	LONG	cr_session;
-	TEXT	cr_login[MAXLOGNAME];
+  LONG  cr_ruid;
+  LONG  cr_rgid;
+  UWORD  cr_umask;
+  LONG  cr_euid;
+  WORD  cr_ngroups;
+  LONG  cr_groups[NGROUPS];
+  LONG  cr_session;
+  TEXT  cr_login[MAXLOGNAME];
 };
 
 /****************************************************************************/
@@ -138,9 +138,9 @@ struct UserGroupCredentials
 #define UGT_ERRNOWPTR 0x80000002
 #define UGT_ERRNOLPTR 0x80000004
 #define UGT_ERRNOPTR(size) \
-	((size == sizeof(long))		? UGT_ERRNOLPTR : \
-	 (size == sizeof(short))	? UGT_ERRNOWPTR : \
-	 (size == sizeof(char))		? UGT_ERRNOBPTR : 1)
+  ((size == sizeof(long))    ? UGT_ERRNOLPTR : \
+   (size == sizeof(short))  ? UGT_ERRNOWPTR : \
+   (size == sizeof(char))    ? UGT_ERRNOBPTR : 1)
 #define UGT_OWNER     0x80000011
 #define UGT_INTRMASK  0x80000010
 

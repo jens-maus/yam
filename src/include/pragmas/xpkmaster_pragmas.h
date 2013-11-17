@@ -56,4 +56,4 @@
 #pragma tagcall XpkBase XpkPassRequestTags   072 801
 #endif
 
-#endif	/*  PRAGMAS_XPKMASTER_PRAGMAS_H  */
+#endif  /*  PRAGMAS_XPKMASTER_PRAGMAS_H  */

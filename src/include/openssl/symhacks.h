@@ -68,69 +68,69 @@
 
 /* Hack a long name in crypto/ex_data.c */
 #undef CRYPTO_get_ex_data_implementation
-#define CRYPTO_get_ex_data_implementation	CRYPTO_get_ex_data_impl
+#define CRYPTO_get_ex_data_implementation  CRYPTO_get_ex_data_impl
 #undef CRYPTO_set_ex_data_implementation
-#define CRYPTO_set_ex_data_implementation	CRYPTO_set_ex_data_impl
+#define CRYPTO_set_ex_data_implementation  CRYPTO_set_ex_data_impl
 
 /* Hack a long name in crypto/asn1/a_mbstr.c */
 #undef ASN1_STRING_set_default_mask_asc
-#define ASN1_STRING_set_default_mask_asc	ASN1_STRING_set_def_mask_asc
+#define ASN1_STRING_set_default_mask_asc  ASN1_STRING_set_def_mask_asc
 
 #if 0 /* No longer needed, since safestack macro magic does the job */
 /* Hack the names created with DECLARE_ASN1_SET_OF(PKCS7_SIGNER_INFO) */
 #undef i2d_ASN1_SET_OF_PKCS7_SIGNER_INFO
-#define i2d_ASN1_SET_OF_PKCS7_SIGNER_INFO	i2d_ASN1_SET_OF_PKCS7_SIGINF
+#define i2d_ASN1_SET_OF_PKCS7_SIGNER_INFO  i2d_ASN1_SET_OF_PKCS7_SIGINF
 #undef d2i_ASN1_SET_OF_PKCS7_SIGNER_INFO
-#define d2i_ASN1_SET_OF_PKCS7_SIGNER_INFO	d2i_ASN1_SET_OF_PKCS7_SIGINF
+#define d2i_ASN1_SET_OF_PKCS7_SIGNER_INFO  d2i_ASN1_SET_OF_PKCS7_SIGINF
 #endif
 
 #if 0 /* No longer needed, since safestack macro magic does the job */
 /* Hack the names created with DECLARE_ASN1_SET_OF(PKCS7_RECIP_INFO) */
 #undef i2d_ASN1_SET_OF_PKCS7_RECIP_INFO
-#define i2d_ASN1_SET_OF_PKCS7_RECIP_INFO	i2d_ASN1_SET_OF_PKCS7_RECINF
+#define i2d_ASN1_SET_OF_PKCS7_RECIP_INFO  i2d_ASN1_SET_OF_PKCS7_RECINF
 #undef d2i_ASN1_SET_OF_PKCS7_RECIP_INFO
-#define d2i_ASN1_SET_OF_PKCS7_RECIP_INFO	d2i_ASN1_SET_OF_PKCS7_RECINF
+#define d2i_ASN1_SET_OF_PKCS7_RECIP_INFO  d2i_ASN1_SET_OF_PKCS7_RECINF
 #endif
 
 #if 0 /* No longer needed, since safestack macro magic does the job */
 /* Hack the names created with DECLARE_ASN1_SET_OF(ACCESS_DESCRIPTION) */
 #undef i2d_ASN1_SET_OF_ACCESS_DESCRIPTION
-#define i2d_ASN1_SET_OF_ACCESS_DESCRIPTION	i2d_ASN1_SET_OF_ACC_DESC
+#define i2d_ASN1_SET_OF_ACCESS_DESCRIPTION  i2d_ASN1_SET_OF_ACC_DESC
 #undef d2i_ASN1_SET_OF_ACCESS_DESCRIPTION
-#define d2i_ASN1_SET_OF_ACCESS_DESCRIPTION	d2i_ASN1_SET_OF_ACC_DESC
+#define d2i_ASN1_SET_OF_ACCESS_DESCRIPTION  d2i_ASN1_SET_OF_ACC_DESC
 #endif
 
 /* Hack the names created with DECLARE_PEM_rw(NETSCAPE_CERT_SEQUENCE) */
 #undef PEM_read_NETSCAPE_CERT_SEQUENCE
-#define PEM_read_NETSCAPE_CERT_SEQUENCE		PEM_read_NS_CERT_SEQ
+#define PEM_read_NETSCAPE_CERT_SEQUENCE    PEM_read_NS_CERT_SEQ
 #undef PEM_write_NETSCAPE_CERT_SEQUENCE
-#define PEM_write_NETSCAPE_CERT_SEQUENCE	PEM_write_NS_CERT_SEQ
+#define PEM_write_NETSCAPE_CERT_SEQUENCE  PEM_write_NS_CERT_SEQ
 #undef PEM_read_bio_NETSCAPE_CERT_SEQUENCE
-#define PEM_read_bio_NETSCAPE_CERT_SEQUENCE	PEM_read_bio_NS_CERT_SEQ
+#define PEM_read_bio_NETSCAPE_CERT_SEQUENCE  PEM_read_bio_NS_CERT_SEQ
 #undef PEM_write_bio_NETSCAPE_CERT_SEQUENCE
-#define PEM_write_bio_NETSCAPE_CERT_SEQUENCE	PEM_write_bio_NS_CERT_SEQ
+#define PEM_write_bio_NETSCAPE_CERT_SEQUENCE  PEM_write_bio_NS_CERT_SEQ
 #undef PEM_write_cb_bio_NETSCAPE_CERT_SEQUENCE
-#define PEM_write_cb_bio_NETSCAPE_CERT_SEQUENCE	PEM_write_cb_bio_NS_CERT_SEQ
+#define PEM_write_cb_bio_NETSCAPE_CERT_SEQUENCE  PEM_write_cb_bio_NS_CERT_SEQ
 
 /* Hack the names created with DECLARE_PEM_rw(PKCS8_PRIV_KEY_INFO) */
 #undef PEM_read_PKCS8_PRIV_KEY_INFO
-#define PEM_read_PKCS8_PRIV_KEY_INFO		PEM_read_P8_PRIV_KEY_INFO
+#define PEM_read_PKCS8_PRIV_KEY_INFO    PEM_read_P8_PRIV_KEY_INFO
 #undef PEM_write_PKCS8_PRIV_KEY_INFO
-#define PEM_write_PKCS8_PRIV_KEY_INFO		PEM_write_P8_PRIV_KEY_INFO
+#define PEM_write_PKCS8_PRIV_KEY_INFO    PEM_write_P8_PRIV_KEY_INFO
 #undef PEM_read_bio_PKCS8_PRIV_KEY_INFO
-#define PEM_read_bio_PKCS8_PRIV_KEY_INFO	PEM_read_bio_P8_PRIV_KEY_INFO
+#define PEM_read_bio_PKCS8_PRIV_KEY_INFO  PEM_read_bio_P8_PRIV_KEY_INFO
 #undef PEM_write_bio_PKCS8_PRIV_KEY_INFO
-#define PEM_write_bio_PKCS8_PRIV_KEY_INFO	PEM_write_bio_P8_PRIV_KEY_INFO
+#define PEM_write_bio_PKCS8_PRIV_KEY_INFO  PEM_write_bio_P8_PRIV_KEY_INFO
 #undef PEM_write_cb_bio_PKCS8_PRIV_KEY_INFO
-#define PEM_write_cb_bio_PKCS8_PRIV_KEY_INFO	PEM_wrt_cb_bio_P8_PRIV_KEY_INFO
+#define PEM_write_cb_bio_PKCS8_PRIV_KEY_INFO  PEM_wrt_cb_bio_P8_PRIV_KEY_INFO
 
 /* Hack other PEM names */
 #undef PEM_write_bio_PKCS8PrivateKey_nid
-#define PEM_write_bio_PKCS8PrivateKey_nid	PEM_write_bio_PKCS8PrivKey_nid
+#define PEM_write_bio_PKCS8PrivateKey_nid  PEM_write_bio_PKCS8PrivKey_nid
 
 /* Hack some long X509 names */
 #undef X509_REVOKED_get_ext_by_critical
-#define X509_REVOKED_get_ext_by_critical	X509_REVOKED_get_ext_by_critic
+#define X509_REVOKED_get_ext_by_critical  X509_REVOKED_get_ext_by_critic
 
 /* Hack some long CRYPTO names */
 #undef CRYPTO_set_dynlock_destroy_callback
@@ -170,9 +170,9 @@
 
 /* Hack some long ENGINE names */
 #undef ENGINE_get_default_BN_mod_exp_crt
-#define ENGINE_get_default_BN_mod_exp_crt	ENGINE_get_def_BN_mod_exp_crt
+#define ENGINE_get_default_BN_mod_exp_crt  ENGINE_get_def_BN_mod_exp_crt
 #undef ENGINE_set_default_BN_mod_exp_crt
-#define ENGINE_set_default_BN_mod_exp_crt	ENGINE_set_def_BN_mod_exp_crt
+#define ENGINE_set_default_BN_mod_exp_crt  ENGINE_set_def_BN_mod_exp_crt
 #undef ENGINE_set_load_privkey_function
 #define ENGINE_set_load_privkey_function        ENGINE_set_load_privkey_fn
 #undef ENGINE_get_load_privkey_function
@@ -188,15 +188,15 @@
 
 /* Hack some long DES names */
 #undef _ossl_old_des_ede3_cfb64_encrypt
-#define _ossl_old_des_ede3_cfb64_encrypt	_ossl_odes_ede3_cfb64_encrypt
+#define _ossl_old_des_ede3_cfb64_encrypt  _ossl_odes_ede3_cfb64_encrypt
 #undef _ossl_old_des_ede3_ofb64_encrypt
-#define _ossl_old_des_ede3_ofb64_encrypt	_ossl_odes_ede3_ofb64_encrypt
+#define _ossl_old_des_ede3_ofb64_encrypt  _ossl_odes_ede3_ofb64_encrypt
 
 /* Hack some long EVP names */
 #undef OPENSSL_add_all_algorithms_noconf
-#define OPENSSL_add_all_algorithms_noconf	OPENSSL_add_all_algo_noconf
+#define OPENSSL_add_all_algorithms_noconf  OPENSSL_add_all_algo_noconf
 #undef OPENSSL_add_all_algorithms_conf
-#define OPENSSL_add_all_algorithms_conf		OPENSSL_add_all_algo_conf
+#define OPENSSL_add_all_algorithms_conf    OPENSSL_add_all_algo_conf
 
 /* Hack some long EC names */
 #undef EC_POINT_set_Jprojective_coordinates_GFp
@@ -253,7 +253,7 @@
 /* Case insensiteve linking causes problems.... */
 #if defined(OPENSSL_SYS_WIN16) || defined(OPENSSL_SYS_VMS) || defined(OPENSSL_SYS_OS2)
 #undef ERR_load_CRYPTO_strings
-#define ERR_load_CRYPTO_strings			ERR_load_CRYPTOlib_strings
+#define ERR_load_CRYPTO_strings      ERR_load_CRYPTOlib_strings
 #undef OCSP_crlID_new
 #define OCSP_crlID_new                          OCSP_crlID2_new
 

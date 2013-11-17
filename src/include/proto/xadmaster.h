@@ -2,13 +2,13 @@
 #define PROTO_XADMASTER_H
 
 /*
-**	$Id$
-**	Includes Release 50.1
+**  $Id$
+**  Includes Release 50.1
 **
-**	Prototype/inline/pragma header file combo
+**  Prototype/inline/pragma header file combo
 **
-**	(C) Copyright 2003-2007 Amiga, Inc.
-**	    All Rights Reserved
+**  (C) Copyright 2003-2007 Amiga, Inc.
+**      All Rights Reserved
 */
 
 #ifndef UTILITY_TAGITEM_H

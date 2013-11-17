@@ -351,12 +351,12 @@ struct MUIS_TheBar_Strip
   struct BitMap *dgreyBM;     /* Grey disabled BitMap */
   struct BitMap *dmask;       /* Grey mask            */
 
-  UBYTE	*nchunky;
-  UBYTE	*gchunky;
+  UBYTE  *nchunky;
+  UBYTE  *gchunky;
   UBYTE *snchunky;
   UBYTE *sgchunky;
   UBYTE *dnchunky;
-  UBYTE	*dgchunky;
+  UBYTE  *dgchunky;
 };
 
 

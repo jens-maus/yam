@@ -107,17 +107,17 @@ enum
 
 struct URL_Prefs
 {
-	UBYTE          up_Version;         /* always check this version number!     */
-	struct MinList up_BrowserList;     /* list of struct URL_BrowserNodes       */
-	struct MinList up_MailerList;      /* list of struct URL_MailerNodes        */
-	struct MinList up_FTPList;         /* list of struct URL_MailerNodes        */
+  UBYTE          up_Version;         /* always check this version number!     */
+  struct MinList up_BrowserList;     /* list of struct URL_BrowserNodes       */
+  struct MinList up_MailerList;      /* list of struct URL_MailerNodes        */
+  struct MinList up_FTPList;         /* list of struct URL_MailerNodes        */
 
-	ULONG          up_Flags;           /* flags, see below                      */
-	
+  ULONG          up_Flags;           /* flags, see below                      */
+  
     ULONG          up_DefShow;         /* these BOOLs are the defaults for      */
-	ULONG          up_DefBringToFront; /* the similarly named tags              */
-	ULONG          up_DefNewWindow;    /* they are all new with Version 2       */
-	ULONG          up_DefLaunch;
+  ULONG          up_DefBringToFront; /* the similarly named tags              */
+  ULONG          up_DefNewWindow;    /* they are all new with Version 2       */
+  ULONG          up_DefLaunch;
 };
 
 /* up_Flags */
@@ -149,15 +149,15 @@ enum
 
 struct URL_BrowserNode
 {
-	struct MinNode ubn_Node;
-	ULONG          ubn_Flags;                        /* flags, see below                 */
-	UBYTE          ubn_Name[NAME_LEN];               /* name of webbrowser                */
-	UBYTE          ubn_Path[PATH_LEN];               /* complete path to browser          */
-	UBYTE          ubn_Port[PORT_LEN];               /* webbrowser arexx port             */
-	UBYTE          ubn_ShowCmd[SHOWCMD_LEN];         /* command to show/uniconify browser */
-	UBYTE          ubn_ToFrontCmd[TOFRONTCMD_LEN];   /* command to bring browser to front */
-	UBYTE          ubn_OpenURLCmd[OPENURLCMD_LEN];   /* command to open url               */
-	UBYTE          ubn_OpenURLWCmd[OPENURLWCMD_LEN]; /* command to open url in new window */
+  struct MinNode ubn_Node;
+  ULONG          ubn_Flags;                        /* flags, see below                 */
+  UBYTE          ubn_Name[NAME_LEN];               /* name of webbrowser                */
+  UBYTE          ubn_Path[PATH_LEN];               /* complete path to browser          */
+  UBYTE          ubn_Port[PORT_LEN];               /* webbrowser arexx port             */
+  UBYTE          ubn_ShowCmd[SHOWCMD_LEN];         /* command to show/uniconify browser */
+  UBYTE          ubn_ToFrontCmd[TOFRONTCMD_LEN];   /* command to bring browser to front */
+  UBYTE          ubn_OpenURLCmd[OPENURLCMD_LEN];   /* command to open url               */
+  UBYTE          ubn_OpenURLWCmd[OPENURLWCMD_LEN]; /* command to open url in new window */
 };
 
 /* ubn_Flags */
@@ -178,14 +178,14 @@ enum
 
 struct URL_MailerNode
 {
-	struct MinNode umn_Node;
-	ULONG          umn_Flags;                          /* flags, none defined              */
-	UBYTE          umn_Name[NAME_LEN];                 /* name of mailer                   */
-	UBYTE          umn_Path[PATH_LEN];                 /* complete path to mailer          */
-	UBYTE          umn_Port[PORT_LEN];                 /* mailer arexx port                */
-	UBYTE          umn_ShowCmd[SHOWCMD_LEN];           /* command to show/uniconify mailer */
-	UBYTE          umn_ToFrontCmd[TOFRONTCMD_LEN];     /* command to bring mailer to front */
-	UBYTE          umn_WriteMailCmd[WRITEMAILCMD_LEN]; /* command to write mail            */
+  struct MinNode umn_Node;
+  ULONG          umn_Flags;                          /* flags, none defined              */
+  UBYTE          umn_Name[NAME_LEN];                 /* name of mailer                   */
+  UBYTE          umn_Path[PATH_LEN];                 /* complete path to mailer          */
+  UBYTE          umn_Port[PORT_LEN];                 /* mailer arexx port                */
+  UBYTE          umn_ShowCmd[SHOWCMD_LEN];           /* command to show/uniconify mailer */
+  UBYTE          umn_ToFrontCmd[TOFRONTCMD_LEN];     /* command to bring mailer to front */
+  UBYTE          umn_WriteMailCmd[WRITEMAILCMD_LEN]; /* command to write mail            */
 };
 
 /**************************************************************************/
@@ -195,15 +195,15 @@ struct URL_MailerNode
 
 struct URL_FTPNode
 {
-	struct MinNode ufn_Node;
-	ULONG          ufn_Flags;                        /* flags, see below                     */
-	UBYTE          ufn_Name[NAME_LEN];               /* name of ftp client                   */
-	UBYTE          ufn_Path[PATH_LEN];               /* complete path to ftp client          */
-	UBYTE          ufn_Port[PORT_LEN];               /* webbrowser arexx port                */
-	UBYTE          ufn_ShowCmd[SHOWCMD_LEN];         /* command to show/uniconify ftp client */
-	UBYTE          ufn_ToFrontCmd[TOFRONTCMD_LEN];   /* command to bring ftp client to front */
-	UBYTE          ufn_OpenURLCmd[OPENURLCMD_LEN];   /* command to open url                  */
-	UBYTE          ufn_OpenURLWCmd[OPENURLWCMD_LEN]; /* command to open url in new window    */
+  struct MinNode ufn_Node;
+  ULONG          ufn_Flags;                        /* flags, see below                     */
+  UBYTE          ufn_Name[NAME_LEN];               /* name of ftp client                   */
+  UBYTE          ufn_Path[PATH_LEN];               /* complete path to ftp client          */
+  UBYTE          ufn_Port[PORT_LEN];               /* webbrowser arexx port                */
+  UBYTE          ufn_ShowCmd[SHOWCMD_LEN];         /* command to show/uniconify ftp client */
+  UBYTE          ufn_ToFrontCmd[TOFRONTCMD_LEN];   /* command to bring ftp client to front */
+  UBYTE          ufn_OpenURLCmd[OPENURLCMD_LEN];   /* command to open url                  */
+  UBYTE          ufn_OpenURLWCmd[OPENURLWCMD_LEN]; /* command to open url in new window    */
 };
 
 /* ufn_Flags */

@@ -9,10 +9,10 @@
 #ifndef SVN_REV_H
 #define SVN_REV_H
 
-#define SVN_REV		4605
-#define SVN_REVSTR	"4605"
-#define SVN_REVDATE	"2011-11-15"
-#define SVN_REVSTAMP	20111115L
-#define SVN_REVMODIFIED	0
+#define SVN_REV    4605
+#define SVN_REVSTR  "4605"
+#define SVN_REVDATE  "2011-11-15"
+#define SVN_REVSTAMP  20111115L
+#define SVN_REVMODIFIED  0
 
 #endif /* SVN_REV_H */

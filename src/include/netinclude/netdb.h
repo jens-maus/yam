@@ -15,7 +15,7 @@
  * ++Copyright++ 1980, 1983, 1988, 1993
  * -
  * Copyright (c) 1980, 1983, 1988, 1993
- *	The Regents of the University of California.  All rights reserved.
+ *  The Regents of the University of California.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,8 +27,8 @@
  *    documentation and/or other materials provided with the distribution.
  * 3. All advertising materials mentioning features or use of this software
  *    must display the following acknowledgement:
- *	This product includes software developed by the University of
- *	California, Berkeley and its contributors.
+ *  This product includes software developed by the University of
+ *  California, Berkeley and its contributors.
  * 4. Neither the name of the University nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
@@ -67,8 +67,8 @@
  */
 
 /*
- *      @(#)netdb.h	8.1 (Berkeley) 6/2/93
- *	$NetBSD: netdb.h,v 1.8 1997/10/13 09:26:06 lukem Exp $
+ *      @(#)netdb.h  8.1 (Berkeley) 6/2/93
+ *  $NetBSD: netdb.h,v 1.8 1997/10/13 09:26:06 lukem Exp $
  */
 
 #ifndef _NETDB_H
@@ -116,12 +116,12 @@ extern "C" {
  */
 struct hostent
 {
-	__STRPTR	h_name;		/* official name of host */
-	__STRPTR *	h_aliases;	/* alias list */
-	__LONG		h_addrtype;	/* host address type */
-	__LONG		h_length;	/* length of address */
-	__BYTE **	h_addr_list;	/* list of addresses from name server */
-#define	h_addr		h_addr_list[0]	/* address, for backward compatiblity */
+  __STRPTR  h_name;    /* official name of host */
+  __STRPTR *  h_aliases;  /* alias list */
+  __LONG    h_addrtype;  /* host address type */
+  __LONG    h_length;  /* length of address */
+  __BYTE **  h_addr_list;  /* list of addresses from name server */
+#define  h_addr    h_addr_list[0]  /* address, for backward compatiblity */
 };
 
 /*
@@ -130,25 +130,25 @@ struct hostent
  */
 struct netent
 {
-	__STRPTR	n_name;		/* official name of net */
-	__STRPTR *	n_aliases;	/* alias list */
-	__LONG		n_addrtype;	/* net address type */
-	in_addr_t	n_net;		/* network # */
+  __STRPTR  n_name;    /* official name of net */
+  __STRPTR *  n_aliases;  /* alias list */
+  __LONG    n_addrtype;  /* net address type */
+  in_addr_t  n_net;    /* network # */
 };
 
 struct servent
 {
-	__STRPTR	s_name;		/* official service name */
-	__STRPTR *	s_aliases;	/* alias list */
-	__LONG		s_port;		/* port # */
-	__STRPTR	s_proto;	/* protocol to use */
+  __STRPTR  s_name;    /* official service name */
+  __STRPTR *  s_aliases;  /* alias list */
+  __LONG    s_port;    /* port # */
+  __STRPTR  s_proto;  /* protocol to use */
 };
 
 struct protoent
 {
-	__STRPTR	p_name;		/* official protocol name */
-	__STRPTR *	p_aliases;	/* alias list */
-	__LONG		p_proto;	/* protocol # */
+  __STRPTR  p_name;    /* official protocol name */
+  __STRPTR *  p_aliases;  /* alias list */
+  __LONG    p_proto;  /* protocol # */
 };
 
 /*
@@ -156,13 +156,13 @@ struct protoent
  * (left in extern int h_errno).
  */
 
-#define	NETDB_INTERNAL	-1		/* see errno */
-#define	NETDB_SUCCESS	0		/* no problem */
-#define	HOST_NOT_FOUND	1 		/* Authoritative Answer Host not found */
-#define	TRY_AGAIN	2 		/* Non-Authoritive Host not found, or SERVERFAIL */
-#define	NO_RECOVERY	3 		/* Non recoverable errors, FORMERR, REFUSED, NOTIMP */
-#define	NO_DATA		4 		/* Valid name, no data record of requested type */
-#define	NO_ADDRESS	NO_DATA		/* no address, look for MX record */
+#define  NETDB_INTERNAL  -1    /* see errno */
+#define  NETDB_SUCCESS  0    /* no problem */
+#define  HOST_NOT_FOUND  1     /* Authoritative Answer Host not found */
+#define  TRY_AGAIN  2     /* Non-Authoritive Host not found, or SERVERFAIL */
+#define  NO_RECOVERY  3     /* Non recoverable errors, FORMERR, REFUSED, NOTIMP */
+#define  NO_DATA    4     /* Valid name, no data record of requested type */
+#define  NO_ADDRESS  NO_DATA    /* no address, look for MX record */
 
 /****************************************************************************/
 

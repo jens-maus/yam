@@ -13,7 +13,7 @@
 
 /*
  * Copyright (c) 1985, 1986, 1993
- *	The Regents of the University of California.  All rights reserved.
+ *  The Regents of the University of California.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,8 @@
  *    documentation and/or other materials provided with the distribution.
  * 3. All advertising materials mentioning features or use of this software
  *    must display the following acknowledgement:
- *	This product includes software developed by the University of
- *	California, Berkeley and its contributors.
+ *  This product includes software developed by the University of
+ *  California, Berkeley and its contributors.
  * 4. Neither the name of the University nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
@@ -43,7 +43,7 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- *	@(#)in_var.h	8.2 (Berkeley) 1/9/95
+ *  @(#)in_var.h  8.2 (Berkeley) 1/9/95
  */
 
 #ifndef _NETINET_IN_VAR_H
@@ -88,39 +88,39 @@ extern "C" {
  * of the structure and is assumed to be first.
  */
 struct in_ifaddr {
-	struct	ifaddr ia_ifa;		/* protocol-independent info */
-#define	ia_ifp		ia_ifa.ifa_ifp
-#define ia_flags	ia_ifa.ifa_flags
-					/* ia_{,sub}net{,mask} in host order */
-	__ULONG	ia_net;			/* network number of interface */
-	__ULONG	ia_netmask;		/* mask of net part */
-	__ULONG	ia_subnet;		/* subnet number, including net */
-	__ULONG	ia_subnetmask;		/* mask of subnet part */
-	struct	in_addr ia_netbroadcast; /* to recognize net broadcasts */
-	struct	in_ifaddr *ia_next;	/* next in list of internet addresses */
-	struct	sockaddr_in ia_addr;	/* reserve space for interface name */
-	struct	sockaddr_in ia_dstaddr; /* reserve space for broadcast addr */
-#define	ia_broadaddr	ia_dstaddr
-	struct	sockaddr_in ia_sockmask; /* reserve space for general netmask */
-	struct	in_multi *ia_multiaddrs; /* list of multicast addresses */
+  struct  ifaddr ia_ifa;    /* protocol-independent info */
+#define  ia_ifp    ia_ifa.ifa_ifp
+#define ia_flags  ia_ifa.ifa_flags
+          /* ia_{,sub}net{,mask} in host order */
+  __ULONG  ia_net;      /* network number of interface */
+  __ULONG  ia_netmask;    /* mask of net part */
+  __ULONG  ia_subnet;    /* subnet number, including net */
+  __ULONG  ia_subnetmask;    /* mask of subnet part */
+  struct  in_addr ia_netbroadcast; /* to recognize net broadcasts */
+  struct  in_ifaddr *ia_next;  /* next in list of internet addresses */
+  struct  sockaddr_in ia_addr;  /* reserve space for interface name */
+  struct  sockaddr_in ia_dstaddr; /* reserve space for broadcast addr */
+#define  ia_broadaddr  ia_dstaddr
+  struct  sockaddr_in ia_sockmask; /* reserve space for general netmask */
+  struct  in_multi *ia_multiaddrs; /* list of multicast addresses */
 };
 
-struct	in_aliasreq {
-	__TEXT	ifra_name[IFNAMSIZ];		/* if name, e.g. "en0" */
-	struct	sockaddr_in ifra_addr;
-	struct	sockaddr_in ifra_broadaddr;
+struct  in_aliasreq {
+  __TEXT  ifra_name[IFNAMSIZ];    /* if name, e.g. "en0" */
+  struct  sockaddr_in ifra_addr;
+  struct  sockaddr_in ifra_broadaddr;
 #define ifra_dstaddr ifra_broadaddr
-	struct	sockaddr_in ifra_mask;
+  struct  sockaddr_in ifra_mask;
 };
 /*
  * Given a pointer to an in_ifaddr (ifaddr),
  * return a pointer to the addr as a sockaddr_in.
  */
-#define	IA_SIN(ia) (&(((struct in_ifaddr *)(ia))->ia_addr))
+#define  IA_SIN(ia) (&(((struct in_ifaddr *)(ia))->ia_addr))
 
 #define IN_LNAOF(in, ifa) \
-	((ntohl((in).s_addr) & ~((struct in_ifaddr *)(ifa)->ia_subnetmask))
-			
+  ((ntohl((in).s_addr) & ~((struct in_ifaddr *)(ifa)->ia_subnetmask))
+      
 
 /*
  * Internet multicast address structure.  There is one of these for each IP
@@ -129,12 +129,12 @@ struct	in_aliasreq {
  * structure.
  */
 struct in_multi {
-	struct	in_addr inm_addr;	/* IP multicast address */
-	struct	ifnet *inm_ifp;		/* back pointer to ifnet */
-	struct	in_ifaddr *inm_ia;	/* back pointer to in_ifaddr */
-	__ULONG	inm_refcount;		/* no. membership claims by sockets */
-	__ULONG	inm_timer;		/* IGMP membership report timer */
-	struct	in_multi *inm_next;	/* ptr to next multicast address */
+  struct  in_addr inm_addr;  /* IP multicast address */
+  struct  ifnet *inm_ifp;    /* back pointer to ifnet */
+  struct  in_ifaddr *inm_ia;  /* back pointer to in_ifaddr */
+  __ULONG  inm_refcount;    /* no. membership claims by sockets */
+  __ULONG  inm_timer;    /* IGMP membership report timer */
+  struct  in_multi *inm_next;  /* ptr to next multicast address */
 };
 
 /****************************************************************************/

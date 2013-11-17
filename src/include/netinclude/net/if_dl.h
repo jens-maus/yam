@@ -13,7 +13,7 @@
 
 /*
  * Copyright (c) 1990, 1993
- *	The Regents of the University of California.  All rights reserved.
+ *  The Regents of the University of California.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,8 @@
  *    documentation and/or other materials provided with the distribution.
  * 3. All advertising materials mentioning features or use of this software
  *    must display the following acknowledgement:
- *	This product includes software developed by the University of
- *	California, Berkeley and its contributors.
+ *  This product includes software developed by the University of
+ *  California, Berkeley and its contributors.
  * 4. Neither the name of the University nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
@@ -43,7 +43,7 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- *	@(#)if_dl.h	8.1 (Berkeley) 6/10/93
+ *  @(#)if_dl.h  8.1 (Berkeley) 6/10/93
  */
 
 #ifndef _NET_IF_DL_H
@@ -95,15 +95,15 @@ extern "C" {
  * Structure of a Link-Level sockaddr:
  */
 struct sockaddr_dl {
-	__UBYTE	sdl_len;	/* Total length of sockaddr */
-	__UBYTE	sdl_family;	/* AF_DLI */
-	__UWORD	sdl_index;	/* if != 0, system given index for interface */
-	__UBYTE	sdl_type;	/* interface type */
-	__UBYTE	sdl_nlen;	/* interface name length, no trailing 0 reqd. */
-	__UBYTE	sdl_alen;	/* link level address length */
-	__UBYTE	sdl_slen;	/* link layer selector length */
-	__BYTE	sdl_data[12];	/* minimum work area, can be larger;
-				   contains both if name and ll address */
+  __UBYTE  sdl_len;  /* Total length of sockaddr */
+  __UBYTE  sdl_family;  /* AF_DLI */
+  __UWORD  sdl_index;  /* if != 0, system given index for interface */
+  __UBYTE  sdl_type;  /* interface type */
+  __UBYTE  sdl_nlen;  /* interface name length, no trailing 0 reqd. */
+  __UBYTE  sdl_alen;  /* link level address length */
+  __UBYTE  sdl_slen;  /* link layer selector length */
+  __BYTE  sdl_data[12];  /* minimum work area, can be larger;
+           contains both if name and ll address */
 };
 
 #define LLADDR(s) ((__APTR)((s)->sdl_data + (s)->sdl_nlen))

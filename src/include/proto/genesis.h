@@ -2,13 +2,13 @@
 #define PROTO_GENESIS_H
 
 /*
-**	$Id: genesis.h 2024 2006-03-05 10:27:25Z damato $
-**	Includes Release 50.1
+**  $Id: genesis.h 2024 2006-03-05 10:27:25Z damato $
+**  Includes Release 50.1
 **
-**	Prototype/inline/pragma header file combo
+**  Prototype/inline/pragma header file combo
 **
-**	(C) Copyright 2003-2004 Amiga, Inc.
-**	    All Rights Reserved
+**  (C) Copyright 2003-2004 Amiga, Inc.
+**      All Rights Reserved
 */
 
 #ifndef EXEC_TYPES_H

@@ -13,7 +13,7 @@
 
 /*
  * Copyright (c) 1982, 1986, 1988, 1993
- *	The Regents of the University of California.  All rights reserved.
+ *  The Regents of the University of California.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,8 @@
  *    documentation and/or other materials provided with the distribution.
  * 3. All advertising materials mentioning features or use of this software
  *    must display the following acknowledgement:
- *	This product includes software developed by the University of
- *	California, Berkeley and its contributors.
+ *  This product includes software developed by the University of
+ *  California, Berkeley and its contributors.
  * 4. Neither the name of the University nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
@@ -43,11 +43,11 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- *	@(#)syslog.h	8.1 (Berkeley) 6/2/93
+ *  @(#)syslog.h  8.1 (Berkeley) 6/2/93
  */
 
-#ifndef	_SYS_SYSLOG_H
-#define	_SYS_SYSLOG_H
+#ifndef  _SYS_SYSLOG_H
+#define  _SYS_SYSLOG_H
 
 /****************************************************************************/
 
@@ -60,14 +60,14 @@
  *
  * priorities (these are ordered)
  */
-#define	LOG_EMERG	0	/* system is unusable */
-#define	LOG_ALERT	1	/* action must be taken immediately */
-#define	LOG_CRIT	2	/* critical conditions */
-#define	LOG_ERR		3	/* error conditions */
-#define	LOG_WARNING	4	/* warning conditions */
-#define	LOG_NOTICE	5	/* normal but significant condition */
-#define	LOG_INFO	6	/* informational */
-#define	LOG_DEBUG	7	/* debug-level messages */
+#define  LOG_EMERG  0  /* system is unusable */
+#define  LOG_ALERT  1  /* action must be taken immediately */
+#define  LOG_CRIT  2  /* critical conditions */
+#define  LOG_ERR    3  /* error conditions */
+#define  LOG_WARNING  4  /* warning conditions */
+#define  LOG_NOTICE  5  /* normal but significant condition */
+#define  LOG_INFO  6  /* informational */
+#define  LOG_DEBUG  7  /* debug-level messages */
 
 /****************************************************************************/
 

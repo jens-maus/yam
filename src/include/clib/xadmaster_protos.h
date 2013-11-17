@@ -3,12 +3,12 @@
 
 
 /*
-**	$VER: xadmaster_protos.h 13.2 (03.07.2004)
+**  $VER: xadmaster_protos.h 13.2 (03.07.2004)
 **
-**	C prototypes. For use with 32 bit integers only.
+**  C prototypes. For use with 32 bit integers only.
 **
-**	Copyright © 2004 Dirk Stöcker
-**	All Rights Reserved
+**  Copyright © 2004 Dirk Stöcker
+**  All Rights Reserved
 */
 
 #ifndef  UTILITY_TAGITEM_H
@@ -23,7 +23,7 @@ xadPTR xadAllocObject(xadUINT32 type, Tag tags, ...);
 void xadFreeObjectA(xadPTR object, const struct TagItem * tags);
 void xadFreeObject(xadPTR object, Tag tags, ...);
 struct xadClient * xadRecogFileA(xadSize size, const void * memory,
-	const struct TagItem * tags);
+  const struct TagItem * tags);
 struct xadClient * xadRecogFile(xadSize size, const void * memory, Tag tags, ...);
 xadERROR xadGetInfoA(struct xadArchiveInfo * ai, const struct TagItem * tags);
 xadERROR xadGetInfo(struct xadArchiveInfo * ai, Tag tags, ...);
@@ -38,13 +38,13 @@ struct xadClient * xadGetClientInfo(void);
 /* This HookAccess function can be called from clients only! */
 
 xadERROR xadHookAccess(xadUINT32 command, xadSignSize data, xadPTR buffer,
-	struct xadArchiveInfo * ai);
+  struct xadArchiveInfo * ai);
 xadERROR xadConvertDatesA(const struct TagItem * tags);
 xadERROR xadConvertDates(Tag tags, ...);
 xadUINT16 xadCalcCRC16(xadUINT32 id, xadUINT32 init, xadSize size,
-	const xadUINT8 * buffer);
+  const xadUINT8 * buffer);
 xadUINT32 xadCalcCRC32(xadUINT32 id, xadUINT32 init, xadSize size,
-	const xadUINT8 * buffer);
+  const xadUINT8 * buffer);
 
 /* --- functions in V2 or higher --- */
 
@@ -54,9 +54,9 @@ void xadCopyMem(const void * src, xadPTR dest, xadSize size);
 /* --- functions in V3 or higher --- */
 
 xadERROR xadHookTagAccessA(xadUINT32 command, xadSignSize data, xadPTR buffer,
-	struct xadArchiveInfo * ai, const struct TagItem * tags);
+  struct xadArchiveInfo * ai, const struct TagItem * tags);
 xadERROR xadHookTagAccess(xadUINT32 command, xadSignSize data, xadPTR buffer,
-	struct xadArchiveInfo * ai, Tag tags, ...);
+  struct xadArchiveInfo * ai, Tag tags, ...);
 
 /* --- functions in V4 or higher --- */
 
@@ -75,18 +75,18 @@ void xadFreeHookAccess(struct xadArchiveInfo * ai, Tag tags, ...);
 /* --- functions in V10 or higher --- */
 
 xadERROR xadAddFileEntryA(struct xadFileInfo * fi, struct xadArchiveInfo * ai,
-	const struct TagItem * tags);
+  const struct TagItem * tags);
 xadERROR xadAddFileEntry(struct xadFileInfo * fi, struct xadArchiveInfo * ai, Tag tags, ...);
 xadERROR xadAddDiskEntryA(struct xadDiskInfo * di, struct xadArchiveInfo * ai,
-	const struct TagItem * tags);
+  const struct TagItem * tags);
 xadERROR xadAddDiskEntry(struct xadDiskInfo * di, struct xadArchiveInfo * ai, Tag tags, ...);
 
 /* --- functions in V12 or higher --- */
 
 xadERROR xadGetFilenameA(xadUINT32 buffersize, xadSTRPTR buffer, const xadSTRING * path,
-	const xadSTRING * name, const struct TagItem * tags);
+  const xadSTRING * name, const struct TagItem * tags);
 xadERROR xadGetFilename(xadUINT32 buffersize, xadSTRPTR buffer, const xadSTRING * path,
-	const xadSTRING * name, Tag tags, ...);
+  const xadSTRING * name, Tag tags, ...);
 xadSTRPTR xadConvertNameA(xadUINT32 charset, const struct TagItem * tags);
 xadSTRPTR xadConvertName(xadUINT32 charset, Tag tags, ...);
 
@@ -96,4 +96,4 @@ xadSTRPTR xadGetDefaultNameA(const struct TagItem * tags);
 xadSTRPTR xadGetDefaultName(Tag tags, ...);
 const struct xadSystemInfo * xadGetSystemInfo(void);
 
-#endif	/*  CLIB_XADMASTER_PROTOS_H  */
+#endif  /*  CLIB_XADMASTER_PROTOS_H  */

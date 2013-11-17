@@ -30,12 +30,12 @@ extern "C" {
 
 /****************************************************************************/
 
-typedef long		__LONG;     /* signed 32-bit quantity */
-typedef unsigned long	__ULONG;    /* unsigned 32-bit quantity */
-typedef short		__WORD;     /* signed 16-bit quantity */
-typedef unsigned short	__UWORD;    /* unsigned 16-bit quantity */
-typedef signed char	__BYTE;     /* signed 8-bit quantity */
-typedef unsigned char	__UBYTE;    /* unsigned 8-bit quantity */
+typedef long    __LONG;     /* signed 32-bit quantity */
+typedef unsigned long  __ULONG;    /* unsigned 32-bit quantity */
+typedef short    __WORD;     /* signed 16-bit quantity */
+typedef unsigned short  __UWORD;    /* unsigned 16-bit quantity */
+typedef signed char  __BYTE;     /* signed 8-bit quantity */
+typedef unsigned char  __UBYTE;    /* unsigned 8-bit quantity */
 
 /****************************************************************************/
 

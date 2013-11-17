@@ -111,4 +111,4 @@
 #pragma  tagcall UserGroupBase ug_SetupContextTags    01e 9802
 #endif
 
-#endif	/*  PRAGMAS_USERGROUP_H  */
+#endif  /*  PRAGMAS_USERGROUP_H  */

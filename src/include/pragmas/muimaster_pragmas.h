@@ -83,5 +83,5 @@
 #pragma  tagcall MUIMasterBase MUI_MakeObject         078 8002
 #endif
 
-#endif	/*  _INCLUDE_PRAGMA_MUIMASTER_LIB_H  */
+#endif  /*  _INCLUDE_PRAGMA_MUIMASTER_LIB_H  */
 #endif /* private */

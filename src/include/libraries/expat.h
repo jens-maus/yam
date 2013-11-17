@@ -97,9 +97,9 @@ struct XML_cp
 {
     enum XML_Content_Type     type;
     enum XML_Content_Quant    quant;
-    XML_Char 		      *name;
+    XML_Char           *name;
     unsigned int              numchildren;
-    XML_Content 	      *children;
+    XML_Content         *children;
 };
 
 
@@ -153,7 +153,7 @@ enum XML_Parsing
 typedef struct
 {
     enum XML_Parsing parsing;
-    XML_Bool 	     finalBuffer;
+    XML_Bool        finalBuffer;
 } XML_ParsingStatus;
 
 
@@ -180,11 +180,11 @@ typedef struct
 
 /* Handlers  */
 
-typedef void (*XML_ElementDeclHandler) (void 	       *userData,
+typedef void (*XML_ElementDeclHandler) (void          *userData,
                                         const XML_Char *name,
                                         XML_Content    *model);
 
-typedef void (*XML_AttlistDeclHandler) (void	       *userData,
+typedef void (*XML_AttlistDeclHandler) (void         *userData,
                                         const XML_Char *elname,
                                         const XML_Char *attname,
                                         const XML_Char *att_type,
@@ -197,85 +197,85 @@ typedef void (*XML_XmlDeclHandler) (void            *userData,
                                     int             standalone);
 
 
-typedef void (*XML_StartElementHandler)(void 	       *userData,
+typedef void (*XML_StartElementHandler)(void          *userData,
                                         const XML_Char *name,
                                         const XML_Char **atts);
 
-typedef void (*XML_EndElementHandler)(void 	     *userData,
+typedef void (*XML_EndElementHandler)(void        *userData,
                                       const XML_Char *name);
 
-typedef void (*XML_CharacterDataHandler)(void 		*userData,
+typedef void (*XML_CharacterDataHandler)(void     *userData,
                                          const XML_Char *s,
-                                         int 		len);
+                                         int     len);
 
-typedef void (*XML_ProcessingInstructionHandler)(void 		*userData,
+typedef void (*XML_ProcessingInstructionHandler)(void     *userData,
                                                  const XML_Char *target,
                                                  const XML_Char *data);
 
-typedef void (*XML_CommentHandler)(void 	  *userData,
-				   const XML_Char *data);
+typedef void (*XML_CommentHandler)(void     *userData,
+           const XML_Char *data);
 
 typedef void (*XML_StartCdataSectionHandler)(void *userData);
 
 typedef void (*XML_EndCdataSectionHandler)(void *userData);
 
-typedef void (*XML_DefaultHandler)(void 	  *userData,
+typedef void (*XML_DefaultHandler)(void     *userData,
                                    const XML_Char *s,
-                                   int 		  len);
+                                   int       len);
 
 typedef void (*XML_StartDoctypeDeclHandler)(void           *userData,
                                             const XML_Char *doctypeName,
                                             const XML_Char *sysid,
                                             const XML_Char *pubid,
-                                            int 	   has_internal_subset);
+                                            int      has_internal_subset);
 
 typedef void (*XML_EndDoctypeDeclHandler)(void *userData);
 
-typedef void (*XML_EntityDeclHandler) (void 	      *userData,
+typedef void (*XML_EntityDeclHandler) (void         *userData,
                                        const XML_Char *entityName,
-                                       int 	      is_parameter_entity,
+                                       int         is_parameter_entity,
                                        const XML_Char *value,
-                                       int 	      value_length,
+                                       int         value_length,
                                        const XML_Char *base,
                                        const XML_Char *systemId,
                                        const XML_Char *publicId,
                                        const XML_Char *notationName);
 
-typedef void (*XML_UnparsedEntityDeclHandler)(void 	     *userData,
+typedef void (*XML_UnparsedEntityDeclHandler)(void        *userData,
                                               const XML_Char *entityName,
                                               const XML_Char *base,
                                               const XML_Char *systemId,
                                               const XML_Char *publicId,
                                               const XML_Char *notationName);
 
-typedef void (*XML_NotationDeclHandler)(void 	       *userData,
+typedef void (*XML_NotationDeclHandler)(void          *userData,
                                         const XML_Char *notationName,
                                         const XML_Char *base,
                                         const XML_Char *systemId,
                                         const XML_Char *publicId);
 
-typedef void (*XML_StartNamespaceDeclHandler)(void 	     *userData,
+typedef void (*XML_StartNamespaceDeclHandler)(void        *userData,
                                               const XML_Char *prefix,
                                               const XML_Char *uri);
 
-typedef void (*XML_EndNamespaceDeclHandler)(void 	   *userData,
+typedef void (*XML_EndNamespaceDeclHandler)(void      *userData,
                                             const XML_Char *prefix);
 
 typedef int (*XML_NotStandaloneHandler)(void *userData);
 
-typedef int (*XML_ExternalEntityRefHandler)(XML_Parser 	   parser,
+typedef int (*XML_ExternalEntityRefHandler)(XML_Parser      parser,
                                             const XML_Char *context,
                                             const XML_Char *base,
                                             const XML_Char *systemId,
                                             const XML_Char *publicId);
 
-typedef void (*XML_SkippedEntityHandler)(void 		*userData,
+typedef void (*XML_SkippedEntityHandler)(void     *userData,
                                          const XML_Char *entityName,
-                                         int 		is_parameter_entity);
+                                         int     is_parameter_entity);
 
-typedef int (*XML_UnknownEncodingHandler)(void 		 *encodingHandlerData,
+typedef int (*XML_UnknownEncodingHandler)(void      *encodingHandlerData,
                                           const XML_Char *name,
-                                          XML_Encoding 	 *info);
+                                          XML_Encoding    *info);
 
 #if defined(__PPC__)
   #if defined(__GNUC__)

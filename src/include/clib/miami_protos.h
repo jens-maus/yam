@@ -2,12 +2,12 @@
 #define  CLIB_MIAMI_PROTOS_H
 
 /*
-**	$VER: miami_protos.h 2.1 (10.07.97)
+**  $VER: miami_protos.h 2.1 (10.07.97)
 **
-**	C prototypes. For use with 32 bit integers only.
+**  C prototypes. For use with 32 bit integers only.
 **
-**	(C) Copyright 1996 Holger Kruse
-**	    All Rights Reserved
+**  (C) Copyright 1996 Holger Kruse
+**      All Rights Reserved
 **
 ** Adapted by the YAMOS team to only carry the miami.library specific
 */

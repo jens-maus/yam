@@ -76,31 +76,31 @@
 #define MUIF_NONE                    0
 #endif
 
-#define MenuChild					MUIA_Family_Child
-#define Menuitem(t,s,e,c,u)			MenuitemObject,\
-                                      MUIA_Menuitem_Title,			(t),\
-                                      MUIA_Menuitem_CopyStrings,	FALSE,\
-                                      MUIA_Menuitem_Shortcut,		(s),\
-                                      MUIA_Menuitem_Enabled,		(e),\
-                                      MUIA_Menuitem_CommandString,	(c),\
-                                      MUIA_UserData,				(u),\
+#define MenuChild          MUIA_Family_Child
+#define Menuitem(t,s,e,c,u)      MenuitemObject,\
+                                      MUIA_Menuitem_Title,      (t),\
+                                      MUIA_Menuitem_CopyStrings,  FALSE,\
+                                      MUIA_Menuitem_Shortcut,    (s),\
+                                      MUIA_Menuitem_Enabled,    (e),\
+                                      MUIA_Menuitem_CommandString,  (c),\
+                                      MUIA_UserData,        (u),\
                                     End
 
-#define MenuitemCheck(t,s,e,c,g,x,u)	MenuitemObject,\
-                                        MUIA_Menuitem_Checkit,		 TRUE,\
-                                        MUIA_Menuitem_Title,		(t),\
-                                        MUIA_Menuitem_CopyStrings,	FALSE,\
-                                        MUIA_Menuitem_Shortcut,		(s),\
-                                        MUIA_Menuitem_Checked,		(c),\
-                                        MUIA_Menuitem_Toggle,		(g),\
-                                        MUIA_Menuitem_Exclude,		(x),\
-                                        MUIA_Menuitem_Enabled,		(e),\
-                                        MUIA_UserData,				(u),\
+#define MenuitemCheck(t,s,e,c,g,x,u)  MenuitemObject,\
+                                        MUIA_Menuitem_Checkit,     TRUE,\
+                                        MUIA_Menuitem_Title,    (t),\
+                                        MUIA_Menuitem_CopyStrings,  FALSE,\
+                                        MUIA_Menuitem_Shortcut,    (s),\
+                                        MUIA_Menuitem_Checked,    (c),\
+                                        MUIA_Menuitem_Toggle,    (g),\
+                                        MUIA_Menuitem_Exclude,    (x),\
+                                        MUIA_Menuitem_Enabled,    (e),\
+                                        MUIA_UserData,        (u),\
                                       End
 
-#define MenuBarLabel				MenuitemObject,\
-                                      MUIA_Menuitem_Title,			NM_BARLABEL,\
-                                      MUIA_Menuitem_CopyStrings,	FALSE,\
+#define MenuBarLabel        MenuitemObject,\
+                                      MUIA_Menuitem_Title,      NM_BARLABEL,\
+                                      MUIA_Menuitem_CopyStrings,  FALSE,\
                                     End
 
 
@@ -128,16 +128,16 @@ struct  MUIP_Layout                         { ULONG MethodID; LONG left; LONG to
 #define MUIA_List_CursorType                0x8042c53eUL /* V4  is. LONG     */
 #endif
 #ifndef MUIV_List_CursorType_Bar
-#define MUIV_List_CursorType_Bar 		    1
+#define MUIV_List_CursorType_Bar         1
 #endif
 #ifndef MUIA_Text_HiIndex
 #define MUIA_Text_HiIndex                   0x804214f5UL /* V11 i.. LONG     */
 #endif
 #ifndef MUIM_DeleteDragImage
-#define MUIM_DeleteDragImage 				0x80423037UL
+#define MUIM_DeleteDragImage         0x80423037UL
 #endif
 #ifndef MUIM_Group_MoveMember
-#define MUIM_Group_MoveMember				0x8042ff4eUL /* V16 */
+#define MUIM_Group_MoveMember        0x8042ff4eUL /* V16 */
 #endif
 #ifndef MUIM_Group_ExitChange2
 #define MUIM_Group_ExitChange2              0x8042e541 /* private */ /* V12 */
@@ -190,9 +190,9 @@ enum { IECODE_SPACE = 64,
      };
 
 // some own usefull MUI-style macros to check mouse positions in objects
-#define _between(a,x,b) 					((x)>=(a) && (x)<=(b))
-#define _isinobject(o,x,y) 				(_between(_mleft(o),(x),_mright (o)) && _between(_mtop(o) ,(y),_mbottom(o)))
-#define _isinwholeobject(o,x,y) 	(_between(_left(o),(x),_right (o)) && _between(_top(o) ,(y),_bottom(o)))
+#define _between(a,x,b)           ((x)>=(a) && (x)<=(b))
+#define _isinobject(o,x,y)         (_between(_mleft(o),(x),_mright (o)) && _between(_mtop(o) ,(y),_mbottom(o)))
+#define _isinwholeobject(o,x,y)   (_between(_left(o),(x),_right (o)) && _between(_top(o) ,(y),_bottom(o)))
 
 
 // this method is invoked for an object as soon

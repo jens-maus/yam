@@ -67,8 +67,8 @@
 #error MD2 is disabled.
 #endif
 
-#define MD2_DIGEST_LENGTH	16
-#define MD2_BLOCK       	16
+#define MD2_DIGEST_LENGTH  16
+#define MD2_BLOCK         16
 #include <openssl/opensslconf.h> /* MD2_INT */
 
 #ifdef  __cplusplus
@@ -76,12 +76,12 @@ extern "C" {
 #endif
 
 typedef struct MD2state_st
-	{
-	int num;
-	unsigned char data[MD2_BLOCK];
-	MD2_INT cksm[MD2_BLOCK];
-	MD2_INT state[MD2_BLOCK];
-	} MD2_CTX;
+  {
+  int num;
+  unsigned char data[MD2_BLOCK];
+  MD2_INT cksm[MD2_BLOCK];
+  MD2_INT state[MD2_BLOCK];
+  } MD2_CTX;
 
 const char *MD2_options(void);
 #ifdef OPENSSL_FIPS

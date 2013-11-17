@@ -13,7 +13,7 @@
 
 /*
  * Copyright (c) 1982, 1986, 1993
- *	The Regents of the University of California.  All rights reserved.
+ *  The Regents of the University of California.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,8 @@
  *    documentation and/or other materials provided with the distribution.
  * 3. All advertising materials mentioning features or use of this software
  *    must display the following acknowledgement:
- *	This product includes software developed by the University of
- *	California, Berkeley and its contributors.
+ *  This product includes software developed by the University of
+ *  California, Berkeley and its contributors.
  * 4. Neither the name of the University nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
@@ -43,7 +43,7 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- *	@(#)ip_var.h	8.2 (Berkeley) 1/9/95
+ *  @(#)ip_var.h  8.2 (Berkeley) 1/9/95
  */
 
 #ifndef _NETINET_IP_VAR_H
@@ -85,12 +85,12 @@ extern "C" {
  * Overlay for ip header used by other protocols (tcp, udp).
  */
 struct ipovly {
-	__APTR	ih_next, ih_prev;	/* for protocol sequence q's */
-	__UBYTE	ih_x1;			/* (unused) */
-	__UBYTE	ih_pr;			/* protocol */
-	__WORD	ih_len;			/* protocol length */
-	struct	in_addr ih_src;		/* source internet address */
-	struct	in_addr ih_dst;		/* destination internet address */
+  __APTR  ih_next, ih_prev;  /* for protocol sequence q's */
+  __UBYTE  ih_x1;      /* (unused) */
+  __UBYTE  ih_pr;      /* protocol */
+  __WORD  ih_len;      /* protocol length */
+  struct  in_addr ih_src;    /* source internet address */
+  struct  in_addr ih_dst;    /* destination internet address */
 };
 
 /*
@@ -99,38 +99,38 @@ struct ipovly {
  * The actual length of the options (including ipopt_dst)
  * is in m_len.
  */
-#define MAX_IPOPTLEN	40
+#define MAX_IPOPTLEN  40
 
 struct ipoption {
-	struct	in_addr ipopt_dst;		/* first-hop dst if source routed */
-	__BYTE	ipopt_list[MAX_IPOPTLEN];	/* options proper */
+  struct  in_addr ipopt_dst;    /* first-hop dst if source routed */
+  __BYTE  ipopt_list[MAX_IPOPTLEN];  /* options proper */
 };
 
-struct	ipstat {
-	__ULONG	ips_total;		/* total packets received */
-	__ULONG	ips_badsum;		/* checksum bad */
-	__ULONG	ips_tooshort;		/* packet too short */
-	__ULONG	ips_toosmall;		/* not enough data */
-	__ULONG	ips_badhlen;		/* ip header length < data size */
-	__ULONG	ips_badlen;		/* ip length < ip header length */
-	__ULONG	ips_fragments;		/* fragments received */
-	__ULONG	ips_fragdropped;	/* frags dropped (dups, out of space) */
-	__ULONG	ips_fragtimeout;	/* fragments timed out */
-	__ULONG	ips_forward;		/* packets forwarded */
-	__ULONG	ips_cantforward;	/* packets rcvd for unreachable dest */
-	__ULONG	ips_redirectsent;	/* packets forwarded on same net */
-	__ULONG	ips_noproto;		/* unknown or unsupported protocol */
-	__ULONG	ips_delivered;		/* datagrams delivered to upper level*/
-	__ULONG	ips_localout;		/* total ip packets generated here */
-	__ULONG	ips_odropped;		/* lost packets due to nobufs, etc. */
-	__ULONG	ips_reassembled;	/* total packets reassembled ok */
-	__ULONG	ips_fragmented;		/* datagrams sucessfully fragmented */
-	__ULONG	ips_ofragments;		/* output fragments created */
-	__ULONG	ips_cantfrag;		/* don't fragment flag was set, etc. */
-	__ULONG	ips_badoptions;		/* error in option processing */
-	__ULONG	ips_noroute;		/* packets discarded due to no route */
-	__ULONG	ips_badvers;		/* ip version != 4 */
-	__ULONG	ips_rawout;		/* total raw ip packets generated */
+struct  ipstat {
+  __ULONG  ips_total;    /* total packets received */
+  __ULONG  ips_badsum;    /* checksum bad */
+  __ULONG  ips_tooshort;    /* packet too short */
+  __ULONG  ips_toosmall;    /* not enough data */
+  __ULONG  ips_badhlen;    /* ip header length < data size */
+  __ULONG  ips_badlen;    /* ip length < ip header length */
+  __ULONG  ips_fragments;    /* fragments received */
+  __ULONG  ips_fragdropped;  /* frags dropped (dups, out of space) */
+  __ULONG  ips_fragtimeout;  /* fragments timed out */
+  __ULONG  ips_forward;    /* packets forwarded */
+  __ULONG  ips_cantforward;  /* packets rcvd for unreachable dest */
+  __ULONG  ips_redirectsent;  /* packets forwarded on same net */
+  __ULONG  ips_noproto;    /* unknown or unsupported protocol */
+  __ULONG  ips_delivered;    /* datagrams delivered to upper level*/
+  __ULONG  ips_localout;    /* total ip packets generated here */
+  __ULONG  ips_odropped;    /* lost packets due to nobufs, etc. */
+  __ULONG  ips_reassembled;  /* total packets reassembled ok */
+  __ULONG  ips_fragmented;    /* datagrams sucessfully fragmented */
+  __ULONG  ips_ofragments;    /* output fragments created */
+  __ULONG  ips_cantfrag;    /* don't fragment flag was set, etc. */
+  __ULONG  ips_badoptions;    /* error in option processing */
+  __ULONG  ips_noroute;    /* packets discarded due to no route */
+  __ULONG  ips_badvers;    /* ip version != 4 */
+  __ULONG  ips_rawout;    /* total raw ip packets generated */
 };
 
 /****************************************************************************/

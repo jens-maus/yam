@@ -890,10 +890,10 @@ DECLARE(EditOldEntry)
     struct ABookNode *abn = (struct ABookNode *)tn->tn_User;
     Object *editWin;
 
-	if((editWin = AddressBookEditWindowObject,
-	  MUIA_AddressBookEditWindow_Type, abn->type,
-	End) != NULL)
-	{
+    if((editWin = AddressBookEditWindowObject,
+      MUIA_AddressBookEditWindow_Type, abn->type,
+    End) != NULL)
+    {
       set(editWin, MUIA_AddressBookEditWindow_ABookNode, abn);
       DoMethod(editWin, MUIM_Notify, MUIA_AddressBookEditWindow_SaveContents, MUIV_EveryTime, obj, 3, METHOD(UpdateOldEntry), editWin, tn);
       SafeOpenWindow(editWin);
@@ -959,10 +959,10 @@ DECLARE(DuplicateEntry)
     struct ABookNode *abn = (struct ABookNode *)tn->tn_User;
     Object *editWin;
 
-	if((editWin = AddressBookEditWindowObject,
-	  MUIA_AddressBookEditWindow_Type, abn->type,
-	End) != NULL)
-	{
+    if((editWin = AddressBookEditWindowObject,
+      MUIA_AddressBookEditWindow_Type, abn->type,
+    End) != NULL)
+    {
       char buf[SIZE_NAME];
       size_t len;
 
@@ -977,9 +977,10 @@ DECLARE(DuplicateEntry)
           buf[len-1] = '2';
       }
 
-	  xset(editWin,
-	    MUIA_AddressBookEditWindow_ABookNode, abn,
-	    MUIA_AddressBookEditWindow_Address, buf);
+      xset(editWin,
+        MUIA_AddressBookEditWindow_ABookNode, abn,
+        MUIA_AddressBookEditWindow_Address, buf);
+
       DoMethod(editWin, MUIM_Notify, MUIA_AddressBookEditWindow_SaveContents, MUIV_EveryTime, obj, 3, METHOD(InsertNewEntry), editWin, abn->type);
       SafeOpenWindow(editWin);
     }

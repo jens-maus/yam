@@ -13,7 +13,7 @@
 
 /*-
  * Copyright (c) 1982, 1986, 1990, 1993, 1994
- *	The Regents of the University of California.  All rights reserved.
+ *  The Regents of the University of California.  All rights reserved.
  * (c) UNIX System Laboratories, Inc.
  * All or some portions of this file are derived from material licensed
  * to the University of California by American Telephone and Telegraph
@@ -30,8 +30,8 @@
  *    documentation and/or other materials provided with the distribution.
  * 3. All advertising materials mentioning features or use of this software
  *    must display the following acknowledgement:
- *	This product includes software developed by the University of
- *	California, Berkeley and its contributors.
+ *  This product includes software developed by the University of
+ *  California, Berkeley and its contributors.
  * 4. Neither the name of the University nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
@@ -48,11 +48,11 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- *	@(#)filio.h	8.1 (Berkeley) 3/28/94
+ *  @(#)filio.h  8.1 (Berkeley) 3/28/94
  */
 
-#ifndef	_SYS_FILIO_H
-#define	_SYS_FILIO_H
+#ifndef  _SYS_FILIO_H
+#define  _SYS_FILIO_H
 
 /****************************************************************************/
 
@@ -60,7 +60,7 @@
 #include <sys/netinclude_types.h>
 #endif /* _SYS_NETINCLUDE_TYPES_H */
 
-#ifndef	_SYS_IOCCOM_H
+#ifndef  _SYS_IOCCOM_H
 #include <sys/ioccom.h>
 #endif /* !_SYS_IOCCOM_H */
 
@@ -83,13 +83,13 @@ extern "C" {
 /****************************************************************************/
 
 /* Generic file-descriptor ioctl's. */
-#define	FIOCLEX		 _IO('f', 1)		/* set close on exec on fd */
-#define	FIONCLEX	 _IO('f', 2)		/* remove close on exec */
-#define	FIONREAD	_IOR('f', 127, __LONG)	/* get # bytes to read */
-#define	FIONBIO		_IOW('f', 126, __LONG)	/* set/clear non-blocking i/o */
-#define	FIOASYNC	_IOW('f', 125, __LONG)	/* set/clear async i/o */
-#define	FIOSETOWN	_IOW('f', 124, __LONG)	/* set owner */
-#define	FIOGETOWN	_IOR('f', 123, __LONG)	/* get owner */
+#define  FIOCLEX     _IO('f', 1)    /* set close on exec on fd */
+#define  FIONCLEX   _IO('f', 2)    /* remove close on exec */
+#define  FIONREAD  _IOR('f', 127, __LONG)  /* get # bytes to read */
+#define  FIONBIO    _IOW('f', 126, __LONG)  /* set/clear non-blocking i/o */
+#define  FIOASYNC  _IOW('f', 125, __LONG)  /* set/clear async i/o */
+#define  FIOSETOWN  _IOW('f', 124, __LONG)  /* set owner */
+#define  FIOGETOWN  _IOR('f', 123, __LONG)  /* get owner */
 
 /****************************************************************************/
 

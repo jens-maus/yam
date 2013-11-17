@@ -17,7 +17,7 @@
 
 /*
  * Copyright (c) 1988, 1993
- *	The Regents of the University of California.  All rights reserved.
+ *  The Regents of the University of California.  All rights reserved.
  * (c) UNIX System Laboratories, Inc.
  * All or some portions of this file are derived from material licensed
  * to the University of California by American Telephone and Telegraph
@@ -34,8 +34,8 @@
  *    documentation and/or other materials provided with the distribution.
  * 3. All advertising materials mentioning features or use of this software
  *    must display the following acknowledgement:
- *	This product includes software developed by the University of
- *	California, Berkeley and its contributors.
+ *  This product includes software developed by the University of
+ *  California, Berkeley and its contributors.
  * 4. Neither the name of the University nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
@@ -52,11 +52,11 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- *	@(#)utmp.h	8.2 (Berkeley) 1/21/94
+ *  @(#)utmp.h  8.2 (Berkeley) 1/21/94
  */
 
-#ifndef	_UTMP_H
-#define	_UTMP_H
+#ifndef  _UTMP_H
+#define  _UTMP_H
 
 /****************************************************************************/
 
@@ -82,18 +82,18 @@ extern "C" {
 
 /****************************************************************************/
 
-#define	UT_NAMESIZE	32
-#define	UT_LINESIZE	32
-#define	UT_HOSTSIZE	64
+#define  UT_NAMESIZE  32
+#define  UT_LINESIZE  32
+#define  UT_HOSTSIZE  64
 
 /****************************************************************************/
 
 struct lastlog
 {
-	__LONG	ll_time;
-	__LONG	ll_uid;
-	__TEXT	ll_name[UT_NAMESIZE];
-	__TEXT	ll_host[UT_HOSTSIZE];
+  __LONG  ll_time;
+  __LONG  ll_uid;
+  __TEXT  ll_name[UT_NAMESIZE];
+  __TEXT  ll_host[UT_HOSTSIZE];
 };
 
 #define ll_line ll_host
@@ -102,10 +102,10 @@ struct lastlog
 
 struct utmp
 {
-	__LONG	ut_time;
-	__LONG	ut_sid;
-	__TEXT	ut_name[UT_NAMESIZE];
-	__TEXT	ut_host[UT_HOSTSIZE];
+  __LONG  ut_time;
+  __LONG  ut_sid;
+  __TEXT  ut_name[UT_NAMESIZE];
+  __TEXT  ut_host[UT_HOSTSIZE];
 };
 
 #define ut_line ut_host

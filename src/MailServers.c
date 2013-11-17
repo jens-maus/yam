@@ -212,7 +212,7 @@ struct MailServerNode *CloneMailServer(const struct MailServerNode *msn)
       {
         FreeSysObject(ASOT_NODE, clone);
         clone = NULL;
-	  }
+      }
     }
   }
 
@@ -398,9 +398,7 @@ struct MailServerNode *FindMailServer(const struct MinList *mailServerList, cons
     W(DBF_ALWAYS, "mail server with id %08lx not found, using first one", id);
     result = GetMailServer(mailServerList, 0);
     if(result == NULL)
-    {
       E(DBF_ALWAYS, "there is no mail server configured at all!");
-	}
   }
 
   RETURN(result);
