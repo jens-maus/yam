@@ -3543,7 +3543,7 @@ void ResolveConfigFolders(struct Config *co)
       if((folder = FO_GetFolderByName(msn->mailStoreFolderName, NULL)) != NULL)
         msn->mailStoreFolderID = folder->ID;
       else
-        W(DBF_CONFIG, "cannot resolve sent folder '%s' of POP3 server '%s'", msn->mailStoreFolderName, msn->description);
+        W(DBF_CONFIG, "cannot resolve incoming folder '%s' of POP3 server '%s'", msn->mailStoreFolderName, msn->description);
     }
     else if(msn->mailStoreFolderID != 0)
     {
@@ -3552,11 +3552,11 @@ void ResolveConfigFolders(struct Config *co)
       if((folder = FindFolderByID(G->folders, msn->mailStoreFolderID)) != NULL)
         strlcpy(msn->mailStoreFolderName, folder->Name, sizeof(msn->mailStoreFolderName));
       else
-        W(DBF_CONFIG, "cannot resolve sent folder ID 0x%08lx of POP3 server '%s'", msn->mailStoreFolderID, msn->description);
+        W(DBF_CONFIG, "cannot resolve incoming folder ID 0x%08lx of POP3 server '%s'", msn->mailStoreFolderID, msn->description);
     }
 
     if(msn->mailStoreFolderID == 0)
-      W(DBF_CONFIG, "sent folder '%s' of POP3 server '%s' has no valid ID", msn->mailStoreFolderName, msn->description);
+      W(DBF_CONFIG, "incoming folder '%s' of POP3 server '%s' has no valid ID", msn->mailStoreFolderName, msn->description);
   }
 
   // resolve the sent folders of the SMTP servers
