@@ -762,9 +762,13 @@ static void Terminate(void)
   if(G->MA != NULL)
   {
     DoMethod(G->App, MUIM_YAMApplication_FlushFolderIndexes, TRUE);
+
     // remember the current layout, but don't make that permanent yet
     SaveLayout(FALSE);
+
+    // close the main window
     set(G->MA->GUI.WI, MUIA_Window_Open, FALSE);
+
     // close any open folder edit window immediately
     DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_MainFolderListtree_CloseFolderEditWindow, TRUE);
   }

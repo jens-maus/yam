@@ -4712,7 +4712,6 @@ void SaveLayout(BOOL permanent)
       oldWindowPtr = SetProcWindow((APTR)-1);
 
       DoMethod(G->App, MUIM_Application_Save, MUIV_Application_Save_ENVARC);
-
       D(DBF_UTIL, "permanently saved layout string '%s'", SafeStr(buf));
 
       // restore the old windowPtr

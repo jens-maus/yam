@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-11-18 Jens Maus <mail@jens-maus.de>
+
+  * YAM.c, YAM_MA.c, YAM_UT.c, mui/MainFolderListtree.c, mui/MainWindow.c:
+    the folder listtree sorting will now also be automatically saved when
+    the new SaveLayoutOnQuit option is turned on (which is the default). In
+    addition, the folder listtree order/sorting will now also be saved when
+    using the MUI snapshot feature. This change also renders the manual
+    menu and context menu entries/functionality for saving and reloading
+    the order obsolete. Thus they have been removed. This closes #284.
+
 2013-11-17 Jens Maus <mail@jens-maus.de>
 
   * *.c,*.h: replaced all real tabs by two spaces throughout the whole

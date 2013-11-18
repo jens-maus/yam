@@ -110,6 +110,9 @@ OVERLOAD(MUIM_Window_Snapshot)
       G->Weights[9] = xget(G->MA->GUI.MN_EMBEDDEDREADPANE, MUIA_ReadMailGroup_TGVertWeight);
     }
 
+    // save the FolderListtree order
+    FO_SaveTree();
+
     // make sure the layout is saved
     SaveLayout(TRUE);
   }

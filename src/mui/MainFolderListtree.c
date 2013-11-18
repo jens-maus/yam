@@ -73,12 +73,6 @@ struct Data
 */
 
 /* EXPORT
-enum SetOrder
-{
-  MUIV_MainFolderListtree_SetOrder_Save=0,
-  MUIV_MainFolderListtree_SetOrder_Reset
-};
-
 #define NUMBER_FOLDERTREE_COLUMNS 5
 */
 
@@ -89,8 +83,6 @@ enum
   CMN_INDEX,
   CMN_NEWF,
   CMN_NEWFG,
-  CMN_SNAPS,
-  CMN_RELOAD,
   CMN_EMPTYTRASH,
   CMN_EMPTYSPAM,
   CMN_ALLTOREAD,
@@ -593,9 +585,6 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
       Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_UPDATEINDEX),              MUIA_Menuitem_CopyStrings, FALSE, MUIA_Menuitem_Enabled, !disable_update, MUIA_UserData, CMN_INDEX,   End,
       Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
       Child, lastItem = MenuitemObject, MUIA_Menuitem_Title, tr(MSG_FOLDER_ALLTOREAD), MUIA_Menuitem_CopyStrings, FALSE, MUIA_Menuitem_Enabled, !disable_alltoread, MUIA_UserData, CMN_ALLTOREAD, End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_FOLDER_SNAPSHOT_TREE),        MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, CMN_SNAPS,  End,
-      Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_FOLDER_RELOAD_TREE),          MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, CMN_RELOAD, End,
     End,
   End;
 
@@ -661,8 +650,6 @@ OVERLOAD(MUIM_ContextMenuChoice)
     case CMN_INDEX:     { DoMethod(_app(obj), MUIM_YAMApplication_RebuildFolderIndex); } break;
     case CMN_NEWF:      { DoMethod(obj, METHOD(NewFolder)); } break;
     case CMN_NEWFG:     { DoMethod(obj, METHOD(NewFolderGroup), NULL); } break;
-    case CMN_SNAPS:     { DoMethod(obj, METHOD(SetOrder), MUIV_MainFolderListtree_SetOrder_Save);  } break;
-    case CMN_RELOAD:    { DoMethod(obj, METHOD(SetOrder), MUIV_MainFolderListtree_SetOrder_Reset); } break;
     case CMN_EMPTYTRASH:{ DoMethod(_app(obj), MUIM_YAMApplication_EmptyTrashFolder, FALSE); } break;
     case CMN_EMPTYSPAM: { DoMethod(_app(obj), MUIM_YAMApplication_DeleteSpamMails, FALSE); } break;
     case CMN_ALLTOREAD: { DoMethod(_app(obj), MUIM_CallHook, &MA_SetAllStatusToHook, SFLAG_READ, SFLAG_NEW); } break;
@@ -1098,62 +1085,6 @@ DECLARE(DeleteFolder)
   }
   else
     D(DBF_FOLDER, "keeping folder '%s'", folder->Name);
-
-  RETURN(0);
-  return 0;
-}
-
-///
-/// DECLARE(SetOrder)
-// saves or resets folder order
-DECLARE(SetOrder) // enum SetOrder order
-{
-  ENTER();
-
-  switch(msg->order)
-  {
-    case MUIV_MainFolderListtree_SetOrder_Save:
-    {
-      FO_SaveTree();
-    }
-    break;
-
-    case MUIV_MainFolderListtree_SetOrder_Reset:
-    {
-      struct FolderNode *fnode;
-
-      // clear the listtree first to avoid accesses to no longer existing entries
-      DoMethod(obj, MUIM_NListtree_Clear, NULL, 0);
-
-      // before we reset/reload the foldertree we have to
-      // make sure everything is freed correctly.
-      LockFolderList(G->folders);
-
-      while((fnode = TakeFolderNode(G->folders)) != NULL)
-      {
-        struct Folder *folder = fnode->folder;
-
-        if(folder == NULL)
-          break;
-
-        // we do not have to call FreeFolder manually here, because the
-        // destructor of the Listtree will do this for us.
-
-        // free this folder and its image
-        FO_FreeFolder(folder);
-        // and free its node
-        DeleteFolderNode(fnode);
-      }
-
-      // all folder nodes have been freed, now initialize the list again
-      InitFolderList(G->folders);
-
-      UnlockFolderList(G->folders);
-
-      FO_LoadTree();
-    }
-    break;
-  }
 
   RETURN(0);
   return 0;
