@@ -4065,7 +4065,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
       // forget the previous file name
       newMailFile[0] = '\0';
 
-      D(DBF_MAIL, "draft mail %08lx %08lx '%s'", wmData->draftMail, wmData->draftMail != NULL ? wmData->draftMail->MailFile : "NULL");
+      D(DBF_MAIL, "draft mail %08lx '%s'", wmData->draftMail, wmData->draftMail != NULL ? wmData->draftMail->MailFile : "NULL");
 
       // now we check how the new mail file should be named
       // or created. As we iterate through all refMailList
