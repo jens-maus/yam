@@ -388,7 +388,7 @@ static int rfc2047_save_char(const char *c, size_t l, void *p)
 {
   char **s=(char **)p;
 
-  strlcpy(*s, c, l);
+  memcpy(*s, c, l);
   *s += l;
 
   return 0;
