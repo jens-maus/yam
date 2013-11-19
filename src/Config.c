@@ -2922,6 +2922,7 @@ void ValidateConfig(struct Config *co, BOOL update, BOOL saveChanges)
       if(msn->username[0] == '\0')
       {
         char *p = strchr(firstIdentity->address, '@');
+
         strlcpy(msn->username, firstIdentity->address, p ? (unsigned int)(p - firstIdentity->address + 1) : sizeof(msn->username));
       }
 
@@ -2963,7 +2964,7 @@ void ValidateConfig(struct Config *co, BOOL update, BOOL saveChanges)
       }
       while(IsUniqueMailServerID(&co->pop3ServerList, id) == FALSE);
 
-      D(DBF_CONFIG, "replaced invalid id of POP3 server '%s'", msn->description);
+      D(DBF_CONFIG, "replaced invalid ID of POP3 server '%s'", msn->description);
       msn->id = id;
 
       saveAtEnd = TRUE;
@@ -2989,7 +2990,7 @@ void ValidateConfig(struct Config *co, BOOL update, BOOL saveChanges)
       }
       while(IsUniqueMailServerID(&co->smtpServerList, id) == FALSE);
 
-      D(DBF_CONFIG, "replaced invalid id of SMTP server '%s'", msn->description);
+      D(DBF_CONFIG, "replaced invalid ID of SMTP server '%s'", msn->description);
       msn->id = id;
 
       saveAtEnd = TRUE;
@@ -3015,7 +3016,7 @@ void ValidateConfig(struct Config *co, BOOL update, BOOL saveChanges)
       }
       while(FindUserIdentityByID(&co->userIdentityList, id) != NULL);
 
-      D(DBF_CONFIG, "replaced invalid id of user identity '%s'", uin->description);
+      D(DBF_CONFIG, "replaced invalid ID of user identity '%s'", uin->description);
       uin->id = id;
 
       saveAtEnd = TRUE;
@@ -3067,7 +3068,7 @@ void ValidateConfig(struct Config *co, BOOL update, BOOL saveChanges)
 
       sn->id = id;
 
-      D(DBF_CONFIG, "replaced invalid id of signature '%s'", sn->description);
+      D(DBF_CONFIG, "replaced invalid ID of signature '%s'", sn->description);
       saveAtEnd = TRUE;
     }
   }
@@ -3133,6 +3134,7 @@ void ValidateConfig(struct Config *co, BOOL update, BOOL saveChanges)
           }
           else if(res == 2)
           {
+            D(DBF_CONFIG, "disabled system codeset check");
             co->SysCharsetCheck = FALSE;
             saveAtEnd = TRUE;
           }
@@ -3333,6 +3335,7 @@ void ValidateConfig(struct Config *co, BOOL update, BOOL saveChanges)
   // check for a minimum stack size
   if(co->StackSize < SIZE_STACK)
   {
+    D(DBF_CONFIG, "raised stack size from %ld to %ld", co->StackSize, SIZE_STACK);
     co->StackSize = SIZE_STACK;
     saveAtEnd = TRUE;
   }
