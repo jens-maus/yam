@@ -209,12 +209,15 @@ OVERLOAD(OM_SET)
         if((data->folder = FindFolderByID(G->folders, data->folderID)) != NULL)
         {
           BuildFolderPathString(data, data->folder);
-          set(data->TX_FOLDER, MUIA_Text_Contents, data->folderPath);
         }
-        else if(data->folderID != 0)
+        else
         {
-          W(DBF_FOLDER, "cannot resolve folder ID 0x%08lx", data->folderID);
+          data->folderPath[0] = '\0';
+          if(data->folderID != 0)
+            W(DBF_FOLDER, "cannot resolve folder ID 0x%08lx", data->folderID);
         }
+
+        set(data->TX_FOLDER, MUIA_Text_Contents, data->folderPath);
 
         // make the superMethod call ignore those tags
         tag->ti_Tag = TAG_IGNORE;
