@@ -10,6 +10,8 @@ $URL$
   * mime/rfc2047.c: restored a formerly replaced memcpy() call as the strlcpy()
     function omits certain characters due to the length restriction. This closes
     #453.
+  * mui/FolderRequestPopup.c: added a NULL pointer check for unresolved folders.
+    This refs #451.
 
 2013-11-18 Jens Maus <mail@jens-maus.de>
 

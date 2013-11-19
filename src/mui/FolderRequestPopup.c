@@ -108,7 +108,10 @@ HOOKPROTONONP(Text2ListFunc, BOOL)
 
   ENTER();
 
-  DoMethod(data->LT_FOLDER, MUIM_NListtree_FindUserData, MUIV_NListtree_FindUserData_ListNode_Root, data->folder->self, MUIV_NListtree_FindUserData_Flag_Activate);
+  if(data->folder != NULL)
+    DoMethod(data->LT_FOLDER, MUIM_NListtree_FindUserData, MUIV_NListtree_FindUserData_ListNode_Root, data->folder->self, MUIV_NListtree_FindUserData_Flag_Activate);
+  else
+    set(data->LT_FOLDER, MUIA_NListtree_Active, MUIV_NListtree_Active_Off);
 
   RETURN(TRUE);
   return TRUE;
