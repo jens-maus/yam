@@ -10,6 +10,8 @@ $URL$
   * mui/MainFolderListtree.c: added handling of all kinds of default folders
     when creating a new folder after selecting "like current" as default
     settings.
+  * mui/MainFolderListtree.c: use the new "Folders" path when selecting an
+    existing directory for a folder.
 
 2013-11-19 Thore Böckelmann <tboeckel@gmx.de>
 

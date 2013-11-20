@@ -832,9 +832,11 @@ DECLARE(NewFolder)
 
     case 3:
     {
+      char foldersPath[SIZE_PATHFILE];
       struct FileReqCache *frc;
 
-      if((frc = ReqFile(ASL_FOLDER, _win(obj), tr(MSG_FO_SelectDir), REQF_DRAWERSONLY, G->MA_MailDir, "")) != NULL)
+      CreateFilename("Folders", foldersPath, sizeof(foldersPath));
+      if((frc = ReqFile(ASL_FOLDER, _win(obj), tr(MSG_FO_SelectDir), REQF_DRAWERSONLY, G->foldersPath, "")) != NULL)
       {
         strlcpy(data->newFolder.Path, frc->drawer, sizeof(data->newFolder.Path));
 
