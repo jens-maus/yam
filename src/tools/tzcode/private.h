@@ -253,7 +253,9 @@ extern char *  asctime_r(struct tm const *, char *);
 ** typical platforms.
 */
 #ifdef time_tz
-//static time_t sys_time(time_t *x) { return time(x); }
+#if 0 /* AMIGA */
+static time_t sys_time(time_t *x) { return time(x); }
+#endif
 
 # undef  ctime
 # define ctime tz_ctime
@@ -320,7 +322,7 @@ size_t strftime(char * const s, const size_t maxsize, const char *const format,
 char *asctime_r(register const struct tm *timeptr, char *buf);
 char *asctime(register const struct tm *timeptr);
 
-/*
+#if 0 /* AMIGA */ 
 static time_t
 time(time_t *p)
 {
@@ -329,7 +331,7 @@ time(time_t *p)
     *p = r;
   return r;
 }
-*/
+#endif
 #endif
 
 /*
