@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-11-20 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/MainFolderListtree.c: added handling of all kinds of default folders
+    when creating a new folder after selecting "like current" as default
+    settings.
+
 2013-11-19 Thore Böckelmann <tboeckel@gmx.de>
 
   * mime/rfc2047.c: restored a formerly replaced memcpy() call as the strlcpy()

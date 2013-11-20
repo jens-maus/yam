@@ -812,20 +812,20 @@ DECLARE(NewFolder)
       }
       else
       {
-        if(isIncomingFolder(&data->newFolder) || isTrashFolder(&data->newFolder))
+        if(isIncomingFolder(&data->newFolder) || isTrashFolder(&data->newFolder) || isDraftsFolder(&data->newFolder) || isSpamFolder(&data->newFolder) || isArchiveFolder(&data->newFolder))
           data->newFolder.Type = FT_CUSTOM;
         else if(isOutgoingFolder(&data->newFolder) || isSentFolder(&data->newFolder))
           data->newFolder.Type = FT_CUSTOMSENT;
 
         // now that we have the correct folder type, we set some default values for the new
         // folder
-        data->newFolder.Path[0]     = '\0';
-        data->newFolder.Name[0]     = '\0';
+        data->newFolder.Path[0] = '\0';
+        data->newFolder.Name[0] = '\0';
         data->newFolder.imageObject = NULL;
         // erase the message list which might have been copied from the current folder
-        data->newFolder.messages    = NULL;
+        data->newFolder.messages = NULL;
         // no image for the folder by default
-        data->newFolder.ImageIndex  = -1;
+        data->newFolder.ImageIndex = -1;
       }
     }
     break;
