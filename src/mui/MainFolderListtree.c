@@ -836,7 +836,7 @@ DECLARE(NewFolder)
       struct FileReqCache *frc;
 
       CreateFilename("Folders", foldersPath, sizeof(foldersPath));
-      if((frc = ReqFile(ASL_FOLDER, _win(obj), tr(MSG_FO_SelectDir), REQF_DRAWERSONLY, G->foldersPath, "")) != NULL)
+      if((frc = ReqFile(ASL_FOLDER, _win(obj), tr(MSG_FO_SelectDir), REQF_DRAWERSONLY, foldersPath, "")) != NULL)
       {
         strlcpy(data->newFolder.Path, frc->drawer, sizeof(data->newFolder.Path));
 
