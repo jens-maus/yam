@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-11-20 Jens Maus <mail@jens-maus.de>
+
+  * resources/zoneinfo, tools/tzdata, extrasrc/tzcode: updated tzdata/tzcode
+    environment to the latest version (2013h) released by iana.org.
+
 2013-11-20 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/MainFolderListtree.c: added handling of all kinds of default folders
