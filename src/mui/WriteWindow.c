@@ -3230,12 +3230,8 @@ DECLARE(AddAttachment) // const char *filename, const char *name, ULONG istemp
       nnset(data->PO_CTYPE, MUIA_MimeTypePopup_MimeType, attach.ContentType);
       nnset(data->ST_DESC, MUIA_String_Contents, attach.Description);
 
-      // put the attachment into our attachment MUI list and set
-      // it active.
-      DoMethod(data->LV_ATTACH, MUIM_NList_InsertSingle, &attach, MUIV_NList_Insert_Bottom);
-      set(data->LV_ATTACH, MUIA_NList_Active, MUIV_NList_Active_Bottom);
-      set(data->GR_ATTACH_TINY, MUIA_ShowMe, TRUE);
-      set(data->GR_ATTACH_REMIND, MUIA_ShowMe, FALSE);
+      // put the attachment into our attachment list and set it active
+      DoMethod(obj, METHOD(InsertAttachment), &attach);
 
       // the mail is modified
       data->mailModified = TRUE;
@@ -3258,9 +3254,13 @@ DECLARE(InsertAttachment) // struct Attach *attach
 {
   GETDATA;
   ULONG result;
+
   ENTER();
 
   result = DoMethod(data->LV_ATTACH, MUIM_NList_InsertSingle, msg->attach, MUIV_NList_Insert_Bottom);
+  set(data->LV_ATTACH, MUIA_NList_Active, MUIV_NList_Active_Bottom);
+  set(data->GR_ATTACH_TINY, MUIA_ShowMe, TRUE);
+  set(data->GR_ATTACH_REMIND, MUIA_ShowMe, FALSE);
 
   RETURN(result);
   return result;
@@ -3712,7 +3712,6 @@ DECLARE(LoadText) // char *filename, ULONG changed
 // When editing a message, sets write window options to old values ***/
 DECLARE(SetupFromOldMail) // struct ReadMailData *rmData
 {
-  GETDATA;
   struct Part *part;
 
   ENTER();
@@ -3754,7 +3753,7 @@ DECLARE(SetupFromOldMail) // struct ReadMailData *rmData
       strlcpy(attach.ContentType, part->ContentType, sizeof(attach.ContentType));
       strlcpy(attach.Description, part->Description, sizeof(attach.Description));
 
-      DoMethod(data->LV_ATTACH, MUIM_NList_InsertSingle, &attach, MUIV_NList_Insert_Bottom);
+      DoMethod(obj, METHOD(InsertAttachment), &attach);
 
       BusyEnd(busy);
     }

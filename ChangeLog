@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-11-22 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/WriteWindow.c: all attachments are now added through a single method
+    which ensures that the tiny attachment list on the first page is made
+    visible and that a possibly visible attachment reminder is hidden again.
+    This method also ensures that the tiny attachment list is correctly made
+    visible when editing a draft mail with attachments a second time.
+
 2013-11-20 Jens Maus <mail@jens-maus.de>
 
   * resources/zoneinfo, tools/tzdata, extrasrc/tzcode: updated tzdata/tzcode
