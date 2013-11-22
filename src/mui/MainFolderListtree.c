@@ -1000,9 +1000,6 @@ DECLARE(DeleteFolder)
         if(FolderIsUsedByFilters(folder) == TRUE)
           RemoveFolderFromFilters(folder);
 
-        delete_folder = TRUE;
-        DeleteMailDir(folder->Fullpath, FALSE);
-
         // Here we dispose the folderimage Object because the destructor
         // of the Folder Listtree can't do this without throwing enforcer hits
         if(folder->imageObject != NULL)
@@ -1014,6 +1011,9 @@ DECLARE(DeleteFolder)
           MUI_DisposeObject(folder->imageObject);
           folder->imageObject = NULL; // let's set it to NULL so that the destructor doesn't do the work again.
         }
+
+        delete_folder = TRUE;
+        DeleteMailDir(folder->Fullpath, FALSE);
       }
     }
     break;
