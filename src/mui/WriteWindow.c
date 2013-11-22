@@ -3259,6 +3259,7 @@ DECLARE(InsertAttachment) // struct Attach *attach
 
   result = DoMethod(data->LV_ATTACH, MUIM_NList_InsertSingle, msg->attach, MUIV_NList_Insert_Bottom);
   set(data->LV_ATTACH, MUIA_NList_Active, MUIV_NList_Active_Bottom);
+  set(data->LV_ATTACH_TINY, MUIA_NList_Active, MUIV_NList_Active_Bottom);
   set(data->GR_ATTACH_TINY, MUIA_ShowMe, TRUE);
   set(data->GR_ATTACH_REMIND, MUIA_ShowMe, FALSE);
 
