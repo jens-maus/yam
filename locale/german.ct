@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.37 (15.11.2013)
+## version $VER: YAM.catalog 8.38 (23.11.2013)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Maus, Thore Böckelmann
@@ -2830,7 +2830,7 @@ Kommentar zu diesem Eintrag.
 ;
 MSG_HELP_EA_ST_REALNAME
 Vollständiger Name\n\
-für diesen Eintrags\n\
+für diesen Eintrag\n\
 (Vorname Nachname).
 ; Full name of this entry\n\
 ; (first name last name)

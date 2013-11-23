@@ -10,6 +10,7 @@ $URL$
   * mui/AddressBookWindow.c: don't use a local variable for a new address book
     entry and duplicate it later on as the copy will still point to the local
     variable. This closes #457.
+  * locale/german.ct: fixed a typo. This closes #459.
 
 2013-11-22 Thore Böckelmann <tboeckel@gmx.de>
 
