@@ -107,7 +107,7 @@ void AddABookNode(struct ABookNode *group, struct ABookNode *member, struct ABoo
 void RemoveABookNode(struct ABookNode *member);
 void MoveABookNode(struct ABookNode *group, struct ABookNode *member, struct ABookNode *afterThis);
 BOOL CompareABookNodes(const struct ABookNode *abn1, const struct ABookNode *abn2);
-void InitABook(struct ABook *abook);
+void InitABook(struct ABook *abook, const char *name);
 void ClearABook(struct ABook *abook);
 void MoveABookNodes(struct ABook *dst, struct ABook *src);
 BOOL IterateABook(const struct ABook *abook, ULONG flags, BOOL (*nodeFunc)(const struct ABookNode *abn, ULONG flags, void *userData), void *userData);

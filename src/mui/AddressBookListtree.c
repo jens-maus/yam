@@ -682,7 +682,7 @@ DECLARE(BuildABook)
 
   // we need a temporary address book, because me move all entries
   // from the global book to the temporary one
-  InitABook(&tempABook);
+  InitABook(&tempABook, NULL);
 
   parentTN[0] = MUIV_NListtree_GetEntry_ListNode_Root;
   groupABN[0] = &tempABook.rootGroup;

@@ -106,7 +106,7 @@ static void LoadEMailCache(const char *name, struct ABook *cache)
 
   ENTER();
 
-  InitABook(cache);
+  InitABook(cache, "cache");
 
   if((fh = fopen(name, "r")) != NULL)
   {
@@ -574,8 +574,6 @@ OVERLOAD(OM_NEW)
     struct DateTime dt;
     struct TagItem *tags = inittags(msg), *tag;
 
-    data->emailCacheName = (STRPTR)EMAILCACHENAME;
-
     // now we generate some static default for our whole application
     dt.dat_Stamp.ds_Days   = yamversiondays;
     dt.dat_Stamp.ds_Minute = 0;
@@ -594,6 +592,7 @@ OVERLOAD(OM_NEW)
                                                                             yamcompiler,
                                                                             yamsvnrev);
 
+    data->emailCacheName = (STRPTR)EMAILCACHENAME;
     while((tag = NextTagItem((APTR)&tags)) != NULL)
     {
       switch(tag->ti_Tag)

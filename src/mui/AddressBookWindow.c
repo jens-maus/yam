@@ -842,7 +842,7 @@ DECLARE(InsertNewEntry) // Object *editWindow, ULONG type
       // the listtree already does the dirty work to insert the node in the address book
       DoMethod(data->LV_ADDRESSES, MUIM_NListtree_Insert, dup->Alias, dup, groupTN, predTN, MUIV_NListtree_Insert_Flag_Active);
       DoMethod(msg->editWindow, MUIM_AddressBookEditWindow_Close);
-      AppendToLogfile(LF_VERBOSE, 71, tr(MSG_LOG_NewAddress), abn.Alias);
+      AppendToLogfile(LF_VERBOSE, 71, tr(MSG_LOG_NewAddress), dup->Alias);
       G->abook.modified = TRUE;
     }
     else

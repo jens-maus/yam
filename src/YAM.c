@@ -2457,7 +2457,7 @@ int main(int argc, char **argv)
     NewMinList(&G->normalBusyList);
     NewMinList(&G->arexxBusyList);
     NewMinList(&G->tzoneContinentList);
-    InitABook(&G->abook);
+    InitABook(&G->abook, NULL);
 
     if((C = AllocConfig()) == NULL)
     {

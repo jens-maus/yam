@@ -110,8 +110,6 @@ void DeleteABookNode(struct ABookNode *abn)
     dstrfree(abn->ListMembers);
   }
 
-  // the member list of groups is assumed to be cleared already
-
   FreeSysObject(ASOT_NODE, abn);
 
   LEAVE();
@@ -230,12 +228,12 @@ BOOL CompareABookNodes(const struct ABookNode *abn1, const struct ABookNode *abn
 
 ///
 /// InitABook
-void InitABook(struct ABook *abook)
+void InitABook(struct ABook *abook, const char *name)
 {
   ENTER();
 
   InitABookNode(&abook->rootGroup, ABNT_GROUP);
-  strlcpy(abook->rootGroup.Alias, "root", sizeof(abook->rootGroup.Alias));
+  strlcpy(abook->rootGroup.Alias, name != NULL ? name : "root", sizeof(abook->rootGroup.Alias));
   abook->modified = FALSE;
 
   LEAVE();
@@ -253,7 +251,7 @@ static void ClearABookGroup(struct ABookNode *group)
   D(DBF_ABOOK, "free members of group %08lx '%s'", group, group->Alias);
   SafeIterateList(&group->GroupMembers, struct ABookNode *, abn, next)
   {
-    D(DBF_ABOOK, "free member %08lx '%s'", abn, abn->Alias);
+    D(DBF_ABOOK, "free member %08lx '%s' '%s'", abn, abn->Alias, abn->Address);
     DeleteABookNode(abn);
   }
   NewMinList(&group->GroupMembers);
@@ -268,7 +266,7 @@ void ClearABook(struct ABook *abook)
   ENTER();
 
   ClearABookGroup(&abook->rootGroup);
-  InitABook(abook);
+  InitABook(abook, NULL);
 
   LEAVE();
 }
