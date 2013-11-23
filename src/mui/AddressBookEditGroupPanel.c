@@ -138,7 +138,8 @@ OVERLOAD(OM_GET)
       if(abn != NULL)
       {
         // we must not use InitABookNode() here, because that would kill
-        // the embedded node structure of old entries
+        // the embedded node structure of old entries. The same applies
+        // for the member list of groups.
         abn->type = ABNT_GROUP;
         GetMUIString(abn->Alias, data->ST_ALIAS, sizeof(abn->Alias));
         GetMUIString(abn->Comment, data->ST_COMMENT, sizeof(abn->Comment));

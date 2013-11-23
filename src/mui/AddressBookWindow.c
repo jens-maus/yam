@@ -813,7 +813,9 @@ DECLARE(InsertNewEntry) // Object *editWindow, ULONG type
 
   ENTER();
 
+  InitABookNode(&abn, msg->type);
   get(msg->editWindow, MUIA_AddressBookEditWindow_ABookNode, &abn);
+
   if(CheckABookNode(obj, &abn) == TRUE)
   {
     struct MUI_NListtree_TreeNode *predTN;
