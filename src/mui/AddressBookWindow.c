@@ -809,45 +809,43 @@ DECLARE(AddNewEntry) // ULONG type
 DECLARE(InsertNewEntry) // Object *editWindow, ULONG type
 {
   GETDATA;
-  struct ABookNode abn;
+  struct ABookNode *abn;
 
   ENTER();
 
-  InitABookNode(&abn, msg->type);
-  get(msg->editWindow, MUIA_AddressBookEditWindow_ABookNode, &abn);
-
-  if(CheckABookNode(obj, &abn) == TRUE)
+  if((abn = CreateABookNode(msg->type)) != NULL)
   {
-    struct MUI_NListtree_TreeNode *predTN;
-    struct MUI_NListtree_TreeNode *groupTN;
-    struct ABookNode *dup;
+    get(msg->editWindow, MUIA_AddressBookEditWindow_ABookNode, abn);
 
-    FixAlias(&G->abook, &abn, NULL);
+    if(CheckABookNode(obj, abn) == TRUE)
+    {
+      struct MUI_NListtree_TreeNode *predTN;
+      struct MUI_NListtree_TreeNode *groupTN;
 
-    // find the preceeding and the group node of the active entry
-    predTN = (struct MUI_NListtree_TreeNode *)xget(data->LV_ADDRESSES, MUIA_NListtree_Active);
-    if(predTN == (struct MUI_NListtree_TreeNode *)MUIV_NListtree_Active_Off)
-    {
-      predTN = (struct MUI_NListtree_TreeNode *)MUIV_NListtree_Insert_PrevNode_Tail;
-      groupTN = (struct MUI_NListtree_TreeNode *)MUIV_NListtree_Insert_ListNode_Root;
-    }
-    else
-    {
-      groupTN = (struct MUI_NListtree_TreeNode *)DoMethod(data->LV_ADDRESSES, MUIM_NListtree_GetEntry, predTN, MUIV_NListtree_GetEntry_Position_Parent, MUIF_NONE);
-    }
+      FixAlias(&G->abook, abn, NULL);
 
-    if((dup = DuplicateNode(&abn, sizeof(abn))) != NULL)
-    {
+      // find the preceeding and the group node of the active entry
+      predTN = (struct MUI_NListtree_TreeNode *)xget(data->LV_ADDRESSES, MUIA_NListtree_Active);
+      if(predTN == (struct MUI_NListtree_TreeNode *)MUIV_NListtree_Active_Off)
+      {
+        predTN = (struct MUI_NListtree_TreeNode *)MUIV_NListtree_Insert_PrevNode_Tail;
+        groupTN = (struct MUI_NListtree_TreeNode *)MUIV_NListtree_Insert_ListNode_Root;
+      }
+      else
+      {
+        groupTN = (struct MUI_NListtree_TreeNode *)DoMethod(data->LV_ADDRESSES, MUIM_NListtree_GetEntry, predTN, MUIV_NListtree_GetEntry_Position_Parent, MUIF_NONE);
+      }
+
       // insert the new node in both the address book and the listtree
       // the listtree already does the dirty work to insert the node in the address book
-      DoMethod(data->LV_ADDRESSES, MUIM_NListtree_Insert, dup->Alias, dup, groupTN, predTN, MUIV_NListtree_Insert_Flag_Active);
+      DoMethod(data->LV_ADDRESSES, MUIM_NListtree_Insert, abn->Alias, abn, groupTN, predTN, MUIV_NListtree_Insert_Flag_Active);
       DoMethod(msg->editWindow, MUIM_AddressBookEditWindow_Close);
-      AppendToLogfile(LF_VERBOSE, 71, tr(MSG_LOG_NewAddress), dup->Alias);
+      AppendToLogfile(LF_VERBOSE, 71, tr(MSG_LOG_NewAddress), abn->Alias);
       G->abook.modified = TRUE;
     }
     else
     {
-      dstrfree(abn.ListMembers);
+      DeleteABookNode(abn);
     }
   }
 

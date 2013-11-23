@@ -7,8 +7,9 @@ $URL$
 
 2013-11-23 Thore Böckelmann <tboeckel@gmx.de>
 
-  * mui/AddressBookWindow.c: added a missing initialization of a new address
-    book node. This refs #457.
+  * mui/AddressBookWindow.c: don't use a local variable for a new address book
+    entry and duplicate it later on as the copy will still point to the local
+    variable. This closes #457.
 
 2013-11-22 Thore Böckelmann <tboeckel@gmx.de>
 
