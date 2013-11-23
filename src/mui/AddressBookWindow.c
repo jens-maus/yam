@@ -115,7 +115,7 @@ static BOOL CheckABookNode(Object *obj, struct ABookNode *abn)
     ok = FALSE;
   }
 
-  if(ok == TRUE && IsStrEmpty(abn->Address) == TRUE)
+  if(ok == TRUE && abn->type != ABNT_GROUP && IsStrEmpty(abn->Address) == TRUE)
   {
     ER_NewError(tr(MSG_ER_ErrorNoAddress));
     ok = FALSE;
