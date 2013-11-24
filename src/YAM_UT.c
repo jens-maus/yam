@@ -5048,7 +5048,7 @@ void FolderTreeUpdate(void)
   UnlockFolderList(G->folders);
 
   // redraw the folder tree and the AppIcon
-  DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, MUIV_NListtree_Redraw_All, MUIF_NONE);
+  DoMethod(G->MA->GUI.LT_FOLDERS, MUIM_NListtree_Redraw, MUIV_NListtree_Redraw_All, MUIF_NONE);
   if(G->AppIconQuiet == FALSE)
     UpdateAppIcon();
 

@@ -66,7 +66,7 @@
 /* CLASSDATA
 struct Data
 {
-  Object *LV_FOLDERS;
+  Object *LT_FOLDERS;
   Object *GR_SEARCH;
   Object *LV_MAILS;
   Object *GR_PAGE;
@@ -138,7 +138,7 @@ MakeStaticHook(SearchOptFromFilterPopupHook, SearchOptFromFilterPopup);
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
-  Object *LV_FOLDERS;
+  Object *LT_FOLDERS;
   Object *GR_SEARCH;
   Object *LV_MAILS;
   Object *GR_PAGE;
@@ -169,7 +169,7 @@ OVERLOAD(OM_NEW)
           MUIA_HorizWeight, 1,
           Child, NListviewObject,
             MUIA_CycleChain, 1,
-            MUIA_NListview_NList, LV_FOLDERS = FolderRequestListtreeObject,
+            MUIA_NListview_NList, LT_FOLDERS = FolderRequestListtreeObject,
               InputListFrame,
               MUIA_NList_AutoVisible, TRUE,
               MUIA_NList_AdjustWidth, TRUE,
@@ -248,7 +248,7 @@ OVERLOAD(OM_NEW)
 
     DoMethod(G->App, OM_ADDMEMBER, obj);
 
-    data->LV_FOLDERS = LV_FOLDERS;
+    data->LT_FOLDERS = LT_FOLDERS;
     data->GR_SEARCH = GR_SEARCH;
     data->LV_MAILS = LV_MAILS;
     data->GR_PAGE = GR_PAGE;
@@ -271,7 +271,7 @@ OVERLOAD(OM_NEW)
               MUIA_Window_Title, tr(MSG_FI_FindMessages),
               MUIA_Window_ScreenTitle, CreateScreenTitle(data->screenTitle, sizeof(data->screenTitle), tr(MSG_FI_FindMessages)));
 
-    SetHelp(LV_FOLDERS,       MSG_HELP_FI_LV_FOLDERS);
+    SetHelp(LT_FOLDERS,       MSG_HELP_FI_LV_FOLDERS);
     SetHelp(BT_ALL,           MSG_HELP_FI_BT_ALL);
     SetHelp(BT_NONE,          MSG_HELP_FI_BT_NONE);
     SetHelp(PO_FROMRULE,      MSG_HELP_FI_PO_FROMRULE);
@@ -284,8 +284,8 @@ OVERLOAD(OM_NEW)
 
     DoMethod(BT_ABORT,        MUIM_Notify, MUIA_Pressed,             FALSE,          obj,              1, METHOD(Abort));
     DoMethod(LV_FROMRULE,     MUIM_Notify, MUIA_NList_DoubleClick,   TRUE,           PO_FROMRULE,      2, MUIM_Popstring_Close, TRUE);
-    DoMethod(BT_ALL,          MUIM_Notify, MUIA_Pressed,             FALSE,          LV_FOLDERS,       5, MUIM_NListtree_Select, MUIV_NListtree_Select_All, MUIV_NListtree_Select_On, MUIF_NONE, NULL);
-    DoMethod(BT_NONE,         MUIM_Notify, MUIA_Pressed,             FALSE,          LV_FOLDERS,       5, MUIM_NListtree_Select, MUIV_NListtree_Select_All, MUIV_NListtree_Select_Off, MUIF_NONE, NULL);
+    DoMethod(BT_ALL,          MUIM_Notify, MUIA_Pressed,             FALSE,          LT_FOLDERS,       5, MUIM_NListtree_Select, MUIV_NListtree_Select_All, MUIV_NListtree_Select_On, MUIF_NONE, NULL);
+    DoMethod(BT_NONE,         MUIM_Notify, MUIA_Pressed,             FALSE,          LT_FOLDERS,       5, MUIM_NListtree_Select, MUIV_NListtree_Select_All, MUIV_NListtree_Select_Off, MUIF_NONE, NULL);
     DoMethod(BT_TORULE,       MUIM_Notify, MUIA_Pressed,             FALSE,          obj,              1, METHOD(CreateFilter));
     DoMethod(BT_SEARCH,       MUIM_Notify, MUIA_Pressed,             FALSE,          obj,              1, METHOD(Search));
     DoMethod(BT_SELECT,       MUIM_Notify, MUIA_Pressed,             FALSE,          obj,              1, METHOD(SelectMails));
@@ -333,7 +333,7 @@ DECLARE(Open) // struct Folder *selectFolder
 
   // formerly a folder was marked to be searched in only if one was given
   // as this is quite unintuitive we now fall back to the current folder
-  if(selectFolder == NULL && (struct MUI_NListtree_TreeNode *)xget(data->LV_FOLDERS, MUIA_NListtree_Active) == NULL)
+  if(selectFolder == NULL && (struct MUI_NListtree_TreeNode *)xget(data->LT_FOLDERS, MUIA_NListtree_Active) == NULL)
     selectFolder = GetCurrentFolder();
 
   if(selectFolder != NULL)
@@ -343,13 +343,13 @@ DECLARE(Open) // struct Folder *selectFolder
 
     // now we have to walk through the nlisttree and find
     // the folder so that we can set it as active
-    while((tn = (struct MUI_NListtree_TreeNode *)DoMethod(data->LV_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE)) != NULL)
+    while((tn = (struct MUI_NListtree_TreeNode *)DoMethod(data->LT_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE)) != NULL)
     {
       struct FolderNode *fnode = tn->tn_User;
 
       if(fnode->folder == selectFolder)
       {
-        set(data->LV_FOLDERS, MUIA_NListtree_Active, tn);
+        set(data->LT_FOLDERS, MUIA_NListtree_Active, tn);
         break;
       }
 
@@ -435,7 +435,7 @@ DECLARE(Search)
   // up the search process if many mails match the search criteria.
   set(data->LV_MAILS, MUIA_NList_Quiet, TRUE);
 
-  DoMethod(data->LV_FOLDERS, MUIM_NListtree_Select, MUIV_NListtree_Select_All, MUIV_NListtree_Select_Ask, 0, &numSelected);
+  DoMethod(data->LT_FOLDERS, MUIM_NListtree_Select, MUIV_NListtree_Select_All, MUIV_NListtree_Select_Ask, 0, &numSelected);
   if((selectedFolders = calloc(numSelected, sizeof(selectedFolders[0]))) != NULL)
   {
     struct MUI_NListtree_TreeNode *tn = (struct MUI_NListtree_TreeNode *)MUIV_NListtree_NextSelected_Start;
@@ -445,7 +445,7 @@ DECLARE(Search)
     {
       struct Folder *folder;
 
-      DoMethod(data->LV_FOLDERS, MUIM_NListtree_NextSelected, &tn);
+      DoMethod(data->LT_FOLDERS, MUIM_NListtree_NextSelected, &tn);
       if(tn == (struct MUI_NListtree_TreeNode *)MUIV_NListtree_NextSelected_End)
         break;
 

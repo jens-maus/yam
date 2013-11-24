@@ -3403,7 +3403,7 @@ void ValidateConfig(struct Config *co, BOOL update, BOOL saveChanges)
     {
       // First we set the PG_MAILLIST and NL_FOLDER Quiet
       set(G->MA->GUI.PG_MAILLIST,MUIA_NList_Quiet,     TRUE);
-      set(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Quiet, TRUE);
+      set(G->MA->GUI.LT_FOLDERS, MUIA_NListtree_Quiet, TRUE);
 
       // Now we reorder the Maingroup accordingly to the InfoBar/QuickSearchBar setting
       DoMethod(G->MA->GUI.WI, MUIM_MainWindow_Relayout);
@@ -3413,13 +3413,13 @@ void ValidateConfig(struct Config *co, BOOL update, BOOL saveChanges)
 
       // Modify the ContextMenu flags
       set(G->MA->GUI.PG_MAILLIST,MUIA_ContextMenu, C->MessageCntMenu ? MUIV_NList_ContextMenu_Always : MUIV_NList_ContextMenu_Never);
-      set(G->MA->GUI.NL_FOLDERS, MUIA_ContextMenu, C->FolderCntMenu ? MUIV_NList_ContextMenu_Always : MUIV_NList_ContextMenu_Never);
+      set(G->MA->GUI.LT_FOLDERS, MUIA_ContextMenu, C->FolderCntMenu ? MUIV_NList_ContextMenu_Always : MUIV_NList_ContextMenu_Never);
 
       // Make sure to save the GUI layout before continuing
       SaveLayout(FALSE);
 
       // recreate the MUIA_NList_Format strings
-      DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_MainFolderListtree_MakeFormat);
+      DoMethod(G->MA->GUI.LT_FOLDERS, MUIM_MainFolderListtree_MakeFormat);
       DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_MakeFormat);
 
       // now reload the layout
@@ -3427,7 +3427,7 @@ void ValidateConfig(struct Config *co, BOOL update, BOOL saveChanges)
 
       // Now we give the control back to the NLists
       set(G->MA->GUI.PG_MAILLIST,MUIA_NList_Quiet,     FALSE);
-      set(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Quiet, FALSE);
+      set(G->MA->GUI.LT_FOLDERS, MUIA_NListtree_Quiet, FALSE);
 
       // and to not let the embedded read pane be empty when it is newly created
       // we have to make sure the actual selected mail is loaded
@@ -3741,7 +3741,7 @@ BOOL CheckConfigDiffs(const BOOL *visited)
             ClearFolderMails(spamFolder, TRUE);
 
             // remove the folder from the folder list
-            DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Remove, MUIV_NListtree_Remove_ListNode_Root, spamFolder->Treenode, MUIF_NONE);
+            DoMethod(G->MA->GUI.LT_FOLDERS, MUIM_NListtree_Remove, MUIV_NListtree_Remove_ListNode_Root, spamFolder->Treenode, MUIF_NONE);
 
             // and finally save the modified tree to the folder config now
             FO_SaveTree();
@@ -3769,7 +3769,7 @@ BOOL CheckConfigDiffs(const BOOL *visited)
             if(spamFolder->imageObject != NULL)
             {
               // we make sure that the NList also doesn't use the image in future anymore
-              DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, spamFolder->ImageIndex, MUIF_NONE);
+              DoMethod(G->MA->GUI.LT_FOLDERS, MUIM_NList_UseImage, NULL, spamFolder->ImageIndex, MUIF_NONE);
               spamFolder->imageObject = NULL;
               // we don't need to dispose the image, because it is one of the standard images and not
               // a custom image of the user.
@@ -3860,13 +3860,13 @@ BOOL CheckConfigDiffs(const BOOL *visited)
         if((spamFolder = FO_GetFolderByPath((STRPTR)FolderName[FT_SPAM], NULL)) != NULL)
         {
           // remove the folder from the folder list
-          DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Remove, MUIV_NListtree_Remove_ListNode_Root, spamFolder->Treenode, MUIF_NONE);
+          DoMethod(G->MA->GUI.LT_FOLDERS, MUIM_NListtree_Remove, MUIV_NListtree_Remove_ListNode_Root, spamFolder->Treenode, MUIF_NONE);
           spamFolder->Treenode = NULL;
 
           if(spamFolder->imageObject != NULL)
           {
             // we make sure that the NList also doesn't use the image in future anymore
-            DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, spamFolder->ImageIndex, MUIF_NONE);
+            DoMethod(G->MA->GUI.LT_FOLDERS, MUIM_NList_UseImage, NULL, spamFolder->ImageIndex, MUIF_NONE);
             spamFolder->imageObject = NULL;
           }
         }
@@ -3886,7 +3886,7 @@ BOOL CheckConfigDiffs(const BOOL *visited)
           struct Folder *this = FO_GetFolderByType(FT_SPAM, NULL);
           struct Folder *prev = FO_GetFolderByType(FT_TRASH, NULL);
 
-          DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Move, MUIV_NListtree_Move_OldListNode_Root, this->Treenode, MUIV_NListtree_Move_NewListNode_Root, prev->Treenode, MUIF_NONE);
+          DoMethod(G->MA->GUI.LT_FOLDERS, MUIM_NListtree_Move, MUIV_NListtree_Move_OldListNode_Root, this->Treenode, MUIV_NListtree_Move_NewListNode_Root, prev->Treenode, MUIF_NONE);
 
           // update the toolbar to the new settings
           if(G->MA->GUI.TO_TOOLBAR != NULL)

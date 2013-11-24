@@ -136,9 +136,9 @@ void ActivateFolder(const struct Folder *fo)
   if(fo != NULL)
   {
     // make sure the tree is opened to display it
-    DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Open, MUIV_NListtree_Open_ListNode_Parent, fo->Treenode, MUIF_NONE);
+    DoMethod(G->MA->GUI.LT_FOLDERS, MUIM_NListtree_Open, MUIV_NListtree_Open_ListNode_Parent, fo->Treenode, MUIF_NONE);
 
-    nnset(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Active, fo->Treenode);
+    nnset(G->MA->GUI.LT_FOLDERS, MUIA_NListtree_Active, fo->Treenode);
 
     // and remember the new current folder
     SetCurrentFolder(fo);
@@ -578,7 +578,7 @@ BOOL FO_LoadFolderImage(struct Folder *folder)
     if(folder->ImageIndex >= FI_MAX)
     {
       char fname[SIZE_PATHFILE];
-      Object *lv = G->MA->GUI.NL_FOLDERS;
+      Object *lv = G->MA->GUI.LT_FOLDERS;
 
       AddPath(fname, folder->Fullpath, ".fimage", sizeof(fname));
       if(FileExists(fname) == TRUE)
@@ -633,7 +633,7 @@ void FO_UnloadFolderImage(struct Folder *folder)
       // is going to call this function.
 
       // remove the bodychunk object from the nlist
-      DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, folder->ImageIndex, MUIF_NONE);
+      DoMethod(G->MA->GUI.LT_FOLDERS, MUIM_NList_UseImage, NULL, folder->ImageIndex, MUIF_NONE);
 
       MUI_DisposeObject(folder->imageObject);
       // let's set it to NULL so that the destructor doesn't do the work again.
@@ -741,7 +741,7 @@ BOOL FO_CreateFolder(enum FolderType type, const char * const path, const char *
       // remember the backlink to our own folder node
       fnode->folder->self = fnode;
 
-      if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, folder->Name, fnode, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE)) != NULL)
+      if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.LT_FOLDERS, MUIM_NListtree_Insert, folder->Name, fnode, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE)) != NULL)
       {
         if(FO_SaveConfig(folder) == TRUE)
         {
@@ -755,7 +755,7 @@ BOOL FO_CreateFolder(enum FolderType type, const char * const path, const char *
           // If we reach here the SaveConfig() returned FALSE and we need to remove the folder again
           // from the listtree. But we MUST pass the treenode and NOT the folder, because the folder
           // pointer is no valid treenode but just the user data!!
-          DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Remove, MUIV_NListtree_Remove_ListNode_Root, tn, MUIF_NONE);
+          DoMethod(G->MA->GUI.LT_FOLDERS, MUIM_NListtree_Remove, MUIV_NListtree_Remove_ListNode_Root, tn, MUIF_NONE);
         }
       }
     }
@@ -834,7 +834,7 @@ enum LoadTreeResult FO_LoadTree(void)
   int i = 0;
   int j = FI_MAX;
   FILE *fh;
-  APTR lv = G->MA->GUI.NL_FOLDERS;
+  APTR lv = G->MA->GUI.LT_FOLDERS;
   struct MUI_NListtree_TreeNode *tn_root = MUIV_NListtree_Insert_ListNode_Root;
   struct FolderNode *fnode_root = NULL; // NULL == root
   BOOL saveTree = FALSE;
@@ -1222,7 +1222,7 @@ static BOOL FO_SaveSubTree(FILE *fh, struct MUI_NListtree_TreeNode *subtree)
   BOOL noendgroup = FALSE;
   struct Folder *fo;
   struct MUI_NListtree_TreeNode *tn, *tn_root, *tn_parent;
-  APTR lv = G->MA->GUI.NL_FOLDERS;
+  APTR lv = G->MA->GUI.LT_FOLDERS;
   int i;
 
   ENTER();
@@ -1372,12 +1372,12 @@ void FO_UpdateTreeStatistics(const struct Folder *folder, const BOOL redraw)
   if(redraw == TRUE)
   {
     // let's redraw the folderentry in the listtree
-    DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, tn, MUIF_NONE);
+    DoMethod(G->MA->GUI.LT_FOLDERS, MUIM_NListtree_Redraw, tn, MUIF_NONE);
   }
 
   // Now we have to recalculate all parent and grandparents treenodes to
   // set their status accordingly.
-  while((tn_parent = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Parent, MUIF_NONE)))
+  while((tn_parent = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.LT_FOLDERS, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Parent, MUIF_NONE)))
   {
     if(tn_parent->tn_User != NULL)
     {
@@ -1397,7 +1397,7 @@ void FO_UpdateTreeStatistics(const struct Folder *folder, const BOOL redraw)
         struct MUI_NListtree_TreeNode *tn_child;
         struct Folder *fo_child;
 
-        tn_child = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, tn_parent, i, MUIV_NListtree_GetEntry_Flag_SameLevel);
+        tn_child = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.LT_FOLDERS, MUIM_NListtree_GetEntry, tn_parent, i, MUIV_NListtree_GetEntry_Flag_SameLevel);
         if(tn_child == NULL)
           break;
 
@@ -1411,7 +1411,7 @@ void FO_UpdateTreeStatistics(const struct Folder *folder, const BOOL redraw)
       }
 
       if(redraw == TRUE)
-        DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, tn_parent, MUIF_NONE);
+        DoMethod(G->MA->GUI.LT_FOLDERS, MUIM_NListtree_Redraw, tn_parent, MUIF_NONE);
 
       // for the next step we set tn to the current parent so that we get the
       // grandparents ;)

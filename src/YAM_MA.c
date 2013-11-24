@@ -2996,18 +2996,18 @@ void MA_ArchiveMail(struct Mail *mail)
   snprintf(archivePathName, sizeof(archivePathName), "%s%ld", FolderName[FT_ARCHIVE], d.rem);
 
   // hide the possible add and move operations within the listtree
-  set(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Quiet, TRUE);
+  set(G->MA->GUI.LT_FOLDERS, MUIA_NListtree_Quiet, TRUE);
 
   // create the "Archive" folder group if it doesn't exist yet
   if(FO_GetFolderGroup(tr(MSG_MA_ARCHIVE), NULL) == NULL)
   {
-    if(DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_MainFolderListtree_NewFolderGroup, tr(MSG_MA_ARCHIVE)) != FALSE)
+    if(DoMethod(G->MA->GUI.LT_FOLDERS, MUIM_MainFolderListtree_NewFolderGroup, tr(MSG_MA_ARCHIVE)) != FALSE)
     {
       // move the new archive group folder after the sent folder
       struct Folder *this = FO_GetFolderGroup(tr(MSG_MA_ARCHIVE), NULL);
       struct Folder *prev = FO_GetFolderByType(FT_SENT, NULL);
 
-      DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Move, MUIV_NListtree_Move_OldListNode_Root, this->Treenode, MUIV_NListtree_Move_NewListNode_Root, prev->Treenode, MUIF_NONE);
+      DoMethod(G->MA->GUI.LT_FOLDERS, MUIM_NListtree_Move, MUIV_NListtree_Move_OldListNode_Root, this->Treenode, MUIV_NListtree_Move_NewListNode_Root, prev->Treenode, MUIF_NONE);
       saveTree = TRUE;
     }
   }
@@ -3025,12 +3025,12 @@ void MA_ArchiveMail(struct Mail *mail)
       // Note: there is no point in trying to sort the folders as they can be rearranged
       // by the user which contradicts the requirement of a sorted list to be able
       // to insert the new entry at the correct position
-      DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Move, MUIV_NListtree_Move_OldListNode_Root, this->Treenode, group->Treenode, MUIV_NListtree_Move_NewTreeNode_Tail, MUIF_NONE);
+      DoMethod(G->MA->GUI.LT_FOLDERS, MUIM_NListtree_Move, MUIV_NListtree_Move_OldListNode_Root, this->Treenode, group->Treenode, MUIV_NListtree_Move_NewTreeNode_Tail, MUIF_NONE);
       saveTree = TRUE;
     }
   }
 
-  set(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Quiet, FALSE);
+  set(G->MA->GUI.LT_FOLDERS, MUIA_NListtree_Quiet, FALSE);
 
   if(saveTree == TRUE)
     FO_SaveTree();
@@ -3325,9 +3325,9 @@ HOOKPROTONHNO(MA_DelKeyFunc, void, int *arg)
   if(actobj == NULL || actobj == MUIV_Window_ActiveObject_None)
     actobj = (Object *)xget(G->MA->GUI.WI, MUIA_Window_DefaultObject);
 
-  if(actobj == G->MA->GUI.LV_FOLDERS || actobj == G->MA->GUI.NL_FOLDERS)
+  if(actobj == G->MA->GUI.LV_FOLDERS || actobj == G->MA->GUI.LT_FOLDERS)
   {
-    DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_MainFolderListtree_DeleteFolder);
+    DoMethod(G->MA->GUI.LT_FOLDERS, MUIM_MainFolderListtree_DeleteFolder);
   }
   else if(actobj == G->MA->GUI.PG_MAILLIST ||
           actobj == (Object *)xget(G->MA->GUI.PG_MAILLIST, MUIA_MainMailListGroup_ActiveListObject) ||
@@ -3837,7 +3837,7 @@ struct MA_ClassData *MA_New(void)
             MUIA_HelpNode,    "Windows/Mainwindow#Folderlist",
             MUIA_CycleChain,  TRUE,
             MUIA_Listview_DragType, MUIV_Listview_DragType_Immediate,
-            MUIA_NListview_NList, data->GUI.NL_FOLDERS = MainFolderListtreeObject,
+            MUIA_NListview_NList, data->GUI.LT_FOLDERS = MainFolderListtreeObject,
             End,
           End,
           Child, NBalanceObject,
@@ -3891,10 +3891,10 @@ struct MA_ClassData *MA_New(void)
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT_DELETE,    MUIV_Notify_Self,        2, MUIM_MainWindow_DoEditAction, EA_DELETE);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT_SALL,      MUIV_Notify_Self,        2, MUIM_MainWindow_DoEditAction, EA_SELECTALL);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDIT_SNONE,     MUIV_Notify_Self,        2, MUIM_MainWindow_DoEditAction, EA_SELECTNONE);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_NEWF,           data->GUI.NL_FOLDERS,    1, MUIM_MainFolderListtree_NewFolder);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_NEWFG,          data->GUI.NL_FOLDERS,    2, MUIM_MainFolderListtree_NewFolderGroup, NULL);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDITF,          data->GUI.NL_FOLDERS,    2, MUIM_MainFolderListtree_EditFolder, FALSE);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_DELETEF,        data->GUI.NL_FOLDERS,    1, MUIM_MainFolderListtree_DeleteFolder);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_NEWF,           data->GUI.LT_FOLDERS,    1, MUIM_MainFolderListtree_NewFolder);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_NEWFG,          data->GUI.LT_FOLDERS,    2, MUIM_MainFolderListtree_NewFolderGroup, NULL);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_EDITF,          data->GUI.LT_FOLDERS,    2, MUIM_MainFolderListtree_EditFolder, FALSE);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_DELETEF,        data->GUI.LT_FOLDERS,    1, MUIM_MainFolderListtree_DeleteFolder);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SELALL,         data->GUI.PG_MAILLIST,   4, MUIM_NList_Select,         MUIV_NList_Select_All, MUIV_NList_Select_On, NULL);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SELNONE,        data->GUI.PG_MAILLIST,   4, MUIM_NList_Select,         MUIV_NList_Select_All, MUIV_NList_Select_Off, NULL);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_SELTOGG,        data->GUI.PG_MAILLIST,   4, MUIM_NList_Select,         MUIV_NList_Select_All, MUIV_NList_Select_Toggle, NULL);

@@ -1314,7 +1314,7 @@ static void DownloadMails(struct TransferContext *tc)
 
   ENTER();
 
-  // depending on the incoming folder settings in the 
+  // depending on the incoming folder settings in the
   // POP3 server configuration we store mail either in the
   // folder configured there or in the default incoming folder
   if(tc->msn->mailStoreFolderID == 0 ||
@@ -1342,7 +1342,7 @@ static void DownloadMails(struct TransferContext *tc)
         if(TimeHasElapsed(&tc->lastUpdateTime, 250000) == TRUE)
         {
           // redraw the folderentry in the listtree 4 times per second at most
-          PushMethodOnStack(G->MA->GUI.NL_FOLDERS, 3, MUIM_NListtree_Redraw, incomingFolder->Treenode, MUIF_NONE);
+          PushMethodOnStack(G->MA->GUI.LT_FOLDERS, 3, MUIM_NListtree_Redraw, incomingFolder->Treenode, MUIF_NONE);
         }
 
         // put the transferStat for this mail to 100%

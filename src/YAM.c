@@ -770,7 +770,7 @@ static void Terminate(void)
     set(G->MA->GUI.WI, MUIA_Window_Open, FALSE);
 
     // close any open folder edit window immediately
-    DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_MainFolderListtree_CloseFolderEditWindow, TRUE);
+    DoMethod(G->MA->GUI.LT_FOLDERS, MUIM_MainFolderListtree_CloseFolderEditWindow, TRUE);
   }
 
   D(DBF_STARTUP, "freeing folders...");
@@ -1521,7 +1521,7 @@ static void InitAfterLogin(void)
       // move the new incoming folder to the top
       struct Folder *this = FO_GetFolderByType(FT_INCOMING, NULL);
 
-      DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Move, MUIV_NListtree_Move_OldListNode_Root, this->Treenode, MUIV_NListtree_Move_NewListNode_Root, MUIV_NListtree_Move_NewTreeNode_Head, MUIF_NONE);
+      DoMethod(G->MA->GUI.LT_FOLDERS, MUIM_NListtree_Move, MUIV_NListtree_Move_OldListNode_Root, this->Treenode, MUIV_NListtree_Move_NewListNode_Root, MUIV_NListtree_Move_NewTreeNode_Head, MUIF_NONE);
       newfolders = TRUE;
     }
   }
@@ -1534,7 +1534,7 @@ static void InitAfterLogin(void)
       struct Folder *this = FO_GetFolderByType(FT_DRAFTS, NULL);
       struct Folder *prev = FO_GetFolderByType(FT_INCOMING, NULL);
 
-      DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Move, MUIV_NListtree_Move_OldListNode_Root, this->Treenode, MUIV_NListtree_Move_NewListNode_Root, prev->Treenode, MUIF_NONE);
+      DoMethod(G->MA->GUI.LT_FOLDERS, MUIM_NListtree_Move, MUIV_NListtree_Move_OldListNode_Root, this->Treenode, MUIV_NListtree_Move_NewListNode_Root, prev->Treenode, MUIF_NONE);
       newfolders = TRUE;
     }
   }
@@ -1547,7 +1547,7 @@ static void InitAfterLogin(void)
       struct Folder *this = FO_GetFolderByType(FT_OUTGOING, NULL);
       struct Folder *prev = FO_GetFolderByType(FT_DRAFTS, NULL);
 
-      DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Move, MUIV_NListtree_Move_OldListNode_Root, this->Treenode, MUIV_NListtree_Move_NewListNode_Root, prev->Treenode, MUIF_NONE);
+      DoMethod(G->MA->GUI.LT_FOLDERS, MUIM_NListtree_Move, MUIV_NListtree_Move_OldListNode_Root, this->Treenode, MUIV_NListtree_Move_NewListNode_Root, prev->Treenode, MUIF_NONE);
       newfolders = TRUE;
     }
   }
@@ -1560,7 +1560,7 @@ static void InitAfterLogin(void)
       struct Folder *this = FO_GetFolderByType(FT_SENT, NULL);
       struct Folder *prev = FO_GetFolderByType(FT_OUTGOING, NULL);
 
-      DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Move, MUIV_NListtree_Move_OldListNode_Root, this->Treenode, MUIV_NListtree_Move_NewListNode_Root, prev->Treenode, MUIF_NONE);
+      DoMethod(G->MA->GUI.LT_FOLDERS, MUIM_NListtree_Move, MUIV_NListtree_Move_OldListNode_Root, this->Treenode, MUIV_NListtree_Move_NewListNode_Root, prev->Treenode, MUIF_NONE);
       newfolders = TRUE;
     }
   }
@@ -1573,7 +1573,7 @@ static void InitAfterLogin(void)
       struct Folder *this = FO_GetFolderByType(FT_TRASH, NULL);
       struct Folder *prev = FO_GetFolderByType(FT_SENT, NULL);
 
-      DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Move, MUIV_NListtree_Move_OldListNode_Root, this->Treenode, MUIV_NListtree_Move_NewListNode_Root, prev->Treenode, MUIF_NONE);
+      DoMethod(G->MA->GUI.LT_FOLDERS, MUIM_NListtree_Move, MUIV_NListtree_Move_OldListNode_Root, this->Treenode, MUIV_NListtree_Move_NewListNode_Root, prev->Treenode, MUIF_NONE);
       newfolders = TRUE;
     }
   }
@@ -1640,12 +1640,12 @@ static void InitAfterLogin(void)
           if(spamFolder->Treenode != NULL)
           {
             // remove the folder from the folder list
-            DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Remove, MUIV_NListtree_Remove_ListNode_Root, spamFolder->Treenode, MUIF_NONE);
+            DoMethod(G->MA->GUI.LT_FOLDERS, MUIM_NListtree_Remove, MUIV_NListtree_Remove_ListNode_Root, spamFolder->Treenode, MUIF_NONE);
           }
           if(spamFolder->imageObject != NULL)
           {
             // we make sure that the NList also doesn't use the image in future anymore
-            DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, spamFolder->ImageIndex, MUIF_NONE);
+            DoMethod(G->MA->GUI.LT_FOLDERS, MUIM_NList_UseImage, NULL, spamFolder->ImageIndex, MUIF_NONE);
             spamFolder->imageObject = NULL;
           }
         }
@@ -1656,7 +1656,7 @@ static void InitAfterLogin(void)
           struct Folder *this = FO_GetFolderByType(FT_SPAM, NULL);
           struct Folder *prev = FO_GetFolderByType(FT_TRASH, NULL);
 
-          DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Move, MUIV_NListtree_Move_OldListNode_Root, this->Treenode, MUIV_NListtree_Move_NewListNode_Root, prev->Treenode, MUIF_NONE);
+          DoMethod(G->MA->GUI.LT_FOLDERS, MUIM_NListtree_Move, MUIV_NListtree_Move_OldListNode_Root, this->Treenode, MUIV_NListtree_Move_NewListNode_Root, prev->Treenode, MUIF_NONE);
           newfolders = TRUE;
         }
       }
@@ -1670,7 +1670,7 @@ static void InitAfterLogin(void)
 
   if(newfolders == TRUE)
   {
-    set(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Active, MUIV_NListtree_Active_FirstVisible);
+    set(G->MA->GUI.LT_FOLDERS, MUIA_NListtree_Active, MUIV_NListtree_Active_FirstVisible);
     FO_SaveTree();
   }
 

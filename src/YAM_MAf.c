@@ -3151,7 +3151,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
           // anymore.
           folder->LoadedMode = LM_REBUILD;
           // visually update this state change
-          DoMethod(gui->NL_FOLDERS, MUIM_NListtree_Redraw, folder->Treenode, MUIF_NONE);
+          DoMethod(gui->LT_FOLDERS, MUIM_NListtree_Redraw, folder->Treenode, MUIF_NONE);
 
           while((ed = ExamineDir(context)) != NULL)
           {

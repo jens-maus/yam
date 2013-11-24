@@ -227,7 +227,7 @@ static BOOL SaveOldFolder(struct IClass *cl, Object *obj)
       strlcpy(data->oldFolder->Name, folder.Name, sizeof(data->oldFolder->Name));
 
       // trigger a change of the main window's folder listtree
-      set(G->MA->GUI.LV_FOLDERS, MUIA_MainFolderListtree_TreeChanged, TRUE);
+      set(G->MA->GUI.LT_FOLDERS, MUIA_MainFolderListtree_TreeChanged, TRUE);
     }
 
     // if the folderpath string has changed
@@ -441,23 +441,23 @@ static BOOL SaveNewFolder(struct IClass *cl, Object *obj)
                 fnode->folder->self = fnode;
 
                 // allow the listtree to reorder our folder list
-                set(G->MA->GUI.NL_FOLDERS, MUIA_MainFolderListtree_ReorderFolderList, TRUE);
+                set(G->MA->GUI.LT_FOLDERS, MUIA_MainFolderListtree_ReorderFolderList, TRUE);
 
                 prevFolder = GetCurrentFolder();
                 if(isGroupFolder(prevFolder))
                 {
                   // add the folder to the end of the current folder group
-                  data->oldFolder->Treenode = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, data->oldFolder->Name, fnode, prevFolder->Treenode, MUIV_NListtree_Insert_PrevNode_Tail, MUIV_NListtree_Insert_Flag_Active);
+                  data->oldFolder->Treenode = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.LT_FOLDERS, MUIM_NListtree_Insert, data->oldFolder->Name, fnode, prevFolder->Treenode, MUIV_NListtree_Insert_PrevNode_Tail, MUIV_NListtree_Insert_Flag_Active);
                 }
                 else
                 {
                   // add the folder after the current folder
-                  data->oldFolder->Treenode = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, data->oldFolder->Name, fnode, MUIV_NListtree_Insert_ListNode_Active, MUIV_NListtree_Insert_PrevNode_Active, MUIV_NListtree_Insert_Flag_Active);
+                  data->oldFolder->Treenode = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.LT_FOLDERS, MUIM_NListtree_Insert, data->oldFolder->Name, fnode, MUIV_NListtree_Insert_ListNode_Active, MUIV_NListtree_Insert_PrevNode_Active, MUIV_NListtree_Insert_Flag_Active);
                 }
 
                 // the MainFolderListtree class has catched the insert operation and
                 // moved the new folder node within the folder list to the correct position.
-                set(G->MA->GUI.NL_FOLDERS, MUIA_MainFolderListtree_ReorderFolderList, FALSE);
+                set(G->MA->GUI.LT_FOLDERS, MUIA_MainFolderListtree_ReorderFolderList, FALSE);
 
                 success = TRUE;
 

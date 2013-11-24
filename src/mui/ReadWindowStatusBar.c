@@ -408,7 +408,7 @@ DECLARE(Update) // struct Mail *mail
       }
       else if(folder->ImageIndex >= 0 && folder->ImageIndex < FI_MAX)
       {
-        Object **imageArray = (Object **)xget(G->MA->GUI.NL_FOLDERS, MUIA_FolderListtree_ImageArray);
+        Object **imageArray = (Object **)xget(G->MA->GUI.LT_FOLDERS, MUIA_FolderListtree_ImageArray);
 
         D(DBF_GUI, "init imagearea: 0x%08lx[%ld]", imageArray, folder->ImageIndex);
 

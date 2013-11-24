@@ -331,7 +331,7 @@ struct MA_GUIData
   Object *MI_UPDINDEX;
   Object *MI_SELECT;
   Object *LV_FOLDERS;
-  Object *NL_FOLDERS;
+  Object *LT_FOLDERS;
   Object *TO_TOOLBAR;
   Object *IB_INFOBAR;
   Object *GR_MAIN;
