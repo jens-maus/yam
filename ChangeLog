@@ -10,6 +10,8 @@ $URL$
   * mui/WriteWindow.c: draft mails being edited a second time are no longer
     deleted when the user did some changes and closes the write window to
     discard the changes. This closes #460.
+  * UserIdentity.c: don't set a default Sent folder name as this will always
+    reenable the custom Sent folder even if it was disabled before.
 
 2013-11-23 Thore Böckelmann <tboeckel@gmx.de>
 

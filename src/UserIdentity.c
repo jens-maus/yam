@@ -104,12 +104,6 @@ struct UserIdentityNode *CreateNewUserIdentity(const struct Config *co)
     if((sentFolder = FO_GetFolderByType(FT_SENT, NULL)) != NULL)
     {
       uin->sentFolderID = sentFolder->ID;
-      strlcpy(uin->sentFolderName, sentFolder->Name, sizeof(uin->sentFolderName));
-    }
-    else
-    {
-      // leave the folder ID unassigned, this will be resolved later
-      strlcpy(uin->sentFolderName, tr(MSG_MA_Sent), sizeof(uin->sentFolderName));
     }
   }
 

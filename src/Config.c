@@ -1199,7 +1199,7 @@ int LoadConfig(struct Config *co, const char *fname)
                 if((msn = CreateNewMailServer(MST_SMTP, co, FALSE)) != NULL)
                   AddTail((struct List *)&co->smtpServerList, (struct Node *)msn);
                 else
-                  E(DBF_CONFIG, "Couldn't create new SMTP structure %ld", id);
+                  E(DBF_CONFIG, "couldn't create new SMTP structure %ld", id);
               }
 
               if(msn != NULL)
@@ -1246,7 +1246,7 @@ int LoadConfig(struct Config *co, const char *fname)
                 if((msn = CreateNewMailServer(MST_POP3, co, FALSE)) != NULL)
                   AddTail((struct List *)&co->pop3ServerList, (struct Node *)msn);
                 else
-                  E(DBF_CONFIG, "Couldn't create new POP3 structure %ld", id);
+                  E(DBF_CONFIG, "couldn't create new POP3 structure %ld", id);
               }
 
               if(msn != NULL)
@@ -1308,7 +1308,7 @@ int LoadConfig(struct Config *co, const char *fname)
                 if((sn = CreateNewSignature()) != NULL)
                   AddTail((struct List *)&co->signatureList, (struct Node *)sn);
                 else
-                  E(DBF_CONFIG, "Couldn't create new Signature structure %ld", num);
+                  E(DBF_CONFIG, "couldn't create new signature structure %ld", num);
               }
 
               if(sn != NULL)
@@ -1344,7 +1344,7 @@ int LoadConfig(struct Config *co, const char *fname)
                 if((uin = CreateNewUserIdentity(co)) != NULL)
                   AddTail((struct List *)&co->userIdentityList, (struct Node *)uin);
                 else
-                  E(DBF_CONFIG, "Couldn't create new UserIdentity structure %ld", id);
+                  E(DBF_CONFIG, "couldn't create new user identity structure %ld", id);
               }
 
               if(uin != NULL)
@@ -1365,9 +1365,9 @@ int LoadConfig(struct Config *co, const char *fname)
                 else if(stricmp(q, "MailReplyTo") == 0)          strlcpy(uin->mailReplyTo, value, sizeof(uin->mailReplyTo));
                 else if(stricmp(q, "ExtraHeaders") == 0)         strlcpy(uin->extraHeaders, value, sizeof(uin->extraHeaders));
                 else if(stricmp(q, "PhotoURL") == 0)             strlcpy(uin->photoURL, value, sizeof(uin->photoURL));
+                else if(stricmp(q, "SaveSentMail") == 0)         uin->saveSentMail = Txt2Bool(value);
                 else if(stricmp(q, "SentFolderID") == 0)         uin->sentFolderID = strtoul(value, NULL, 16);
                 else if(stricmp(q, "SentFolder") == 0)           strlcpy(uin->sentFolderName, value, sizeof(uin->sentFolderName));
-                else if(stricmp(q, "SaveSentMail") == 0)         uin->saveSentMail = Txt2Bool(value);
                 else if(stricmp(q, "QuoteMails") == 0)           uin->quoteMails = Txt2Bool(value);
                 else if(stricmp(q, "QuotePosition") == 0)        uin->quotePosition = atoi(value);
                 else if(stricmp(q, "SignaturePosition") == 0)    uin->signaturePosition = atoi(value);
