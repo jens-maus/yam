@@ -4636,8 +4636,9 @@ DECLARE(CancelAction)
         case 2:
         {
           // discard
-          // remove a previously saved draft mail from the drafts folder
-          if(data->wmData->draftMail != NULL)
+          // remove a previously saved draft mail from the drafts folder, but only if the
+          // draft mail was not the one being edited a second time
+          if(data->wmData->mode != NMM_EDIT && data->wmData->draftMail != NULL)
             MA_DeleteSingle(data->wmData->draftMail, DELF_AT_ONCE);
         }
         break;

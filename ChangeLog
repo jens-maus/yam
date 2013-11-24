@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-11-24 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/WriteWindow.c: draft mails being edited a second time are no longer
+    deleted when the user did some changes and closes the write window to
+    discard the changes. This closes #460.
+
 2013-11-23 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/AddressBookWindow.c: don't use a local variable for a new address book
