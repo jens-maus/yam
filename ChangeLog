@@ -12,6 +12,12 @@ $URL$
     discard the changes. This closes #460.
   * UserIdentity.c: don't set a default Sent folder name as this will always
     reenable the custom Sent folder even if it was disabled before.
+  * mui/FolderRequestListtree.c: set the notification for a changed folder tree
+    for the correct object. The former approach used the NListview object
+    instead of the NListtree object. This might have caused a crash, because
+    the notification was never removed and a changed folder tree would then
+    access a no longer existing object when the notification was eventually
+    triggered. This closes #451.
 
 2013-11-23 Thore Böckelmann <tboeckel@gmx.de>
 

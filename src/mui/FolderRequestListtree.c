@@ -79,7 +79,7 @@ OVERLOAD(OM_NEW)
 
     // keep us informed about all changes to the main window's folder listtree
     if(G->MA != NULL)
-      DoMethod(G->MA->GUI.LV_FOLDERS, MUIM_Notify, MUIA_MainFolderListtree_TreeChanged, MUIV_EveryTime, obj, 1, METHOD(RefreshTree));
+      DoMethod(G->MA->GUI.LT_FOLDERS, MUIM_Notify, MUIA_MainFolderListtree_TreeChanged, MUIV_EveryTime, obj, 1, METHOD(RefreshTree));
   }
 
   RETURN((IPTR)obj);
@@ -98,7 +98,7 @@ OVERLOAD(OM_DISPOSE)
 
   // remove the notification if the main window is still alive
   if(G->MA != NULL)
-    DoMethod(G->MA->GUI.LV_FOLDERS, MUIM_KillNotifyObj, MUIA_MainFolderListtree_TreeChanged, obj);
+    DoMethod(G->MA->GUI.LT_FOLDERS, MUIM_KillNotifyObj, MUIA_MainFolderListtree_TreeChanged, obj);
 
   for(i=0; i < ARRAY_SIZE(data->userImage); i++)
   {
