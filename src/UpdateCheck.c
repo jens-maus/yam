@@ -160,6 +160,8 @@ char *BuildUpdateRequest(void)
 {
   char *request;
 
+  ENTER();
+
   // now we prepare our request string which we send to our update server
   // and will inform it about our configuration/YAM version and so on.
   // use a max. request buffer of 1K.
