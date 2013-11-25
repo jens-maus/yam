@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.38 (23.11.2013)
+## version $VER: YAM.catalog 8.39 (25.11.2013)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Maus, Thore Böckelmann
@@ -6178,7 +6178,7 @@ Einstellungen korrekt sind und Sie über \
 genügend freien Speicher verfügen.
 ;
 MSG_MA_CONFIRMDELETION
-%ld Nachrichte(n) sind ausgewählt.\n\
+%ld Nachrichten sind ausgewählt.\n\
 \n\
 Möchten Sie diese wirklich löschen?
 ; AMOUNT
