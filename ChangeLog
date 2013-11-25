@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-11-25 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/MainMailListGroup.c: perform certain methods on the list object directly
+    instead of the listview object, as these methods will be forwarded to the
+    list object anyway.
+
 2013-11-24 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/WriteWindow.c: draft mails being edited a second time are no longer

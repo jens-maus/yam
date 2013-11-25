@@ -194,8 +194,8 @@ OVERLOAD(OM_SET)
       {
         if(tag->ti_Data == TRUE || data->listIsFreezed == FALSE)
         {
-          set(data->mainListviewObjects[LT_MAIN], MUIA_NList_Quiet, tag->ti_Data);
-          set(data->mainListviewObjects[LT_QUICKVIEW], MUIA_NList_Quiet, tag->ti_Data);
+          set(data->mainListObjects[LT_MAIN], MUIA_NList_Quiet, tag->ti_Data);
+          set(data->mainListObjects[LT_QUICKVIEW], MUIA_NList_Quiet, tag->ti_Data);
         }
 
         // make the superMethod call ignore those tags
@@ -209,8 +209,8 @@ OVERLOAD(OM_SET)
       case MUIA_NList_SortType2:
       case MUIA_NList_KeyLeftFocus:
       {
-        set(data->mainListviewObjects[LT_MAIN], tag->ti_Tag, tag->ti_Data);
-        set(data->mainListviewObjects[LT_QUICKVIEW], tag->ti_Tag, tag->ti_Data);
+        set(data->mainListObjects[LT_MAIN], tag->ti_Tag, tag->ti_Data);
+        set(data->mainListObjects[LT_QUICKVIEW], tag->ti_Tag, tag->ti_Data);
 
         // make the superMethod call ignore those tags
         tag->ti_Tag = TAG_IGNORE;
@@ -464,7 +464,7 @@ DECLARE(SwitchToList) // enum MainListType type
       // last active mail as well.
       if(data->lastActiveMail != NULL)
       {
-        // retrieve the number of the lastActive entry within the main mail listview
+        // retrieve the number of the lastActive entry within the main mail list
         DoMethod(data->mainListObjects[LT_MAIN], MUIM_NList_GetPos, data->lastActiveMail, &pos);
       }
 
@@ -520,7 +520,7 @@ DECLARE(RemoveMail) // struct Mail* mail
   // the mail from the main list
   if(data->activeList == LT_QUICKVIEW)
   {
-    // forward the command to the listview itself
+    // forward the command to the list itself
     DoMethod(data->mainListObjects[LT_MAIN], MUIM_MainMailList_RemoveMail, msg->mail);
   }
 
@@ -533,7 +533,7 @@ DECLARE(RemoveMail) // struct Mail* mail
 
 ///
 /// DECLARE(RedrawMail)
-// redraws the mail on our currently active listview
+// redraws the mail on our currently active list
 DECLARE(RedrawMail) // struct Mail* mail
 {
   GETDATA;
