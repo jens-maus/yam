@@ -494,7 +494,7 @@ DECLARE(AddMailToList) // enum MainListType type, struct Mail* mail
 {
   GETDATA;
 
-  ASSERT(msg->type <= LT_QUICKVIEW);
+  ENTER();
 
   // we add the mail to a specific list of our group
   DoMethod(data->mainListObjects[msg->type], MUIM_NList_InsertSingle, msg->mail, MUIV_NList_Insert_Sorted);
@@ -503,6 +503,7 @@ DECLARE(AddMailToList) // enum MainListType type, struct Mail* mail
   if(data->activeList == LT_QUICKVIEW)
     DoMethod(G->MA->GUI.GR_QUICKSEARCHBAR, MUIM_QuickSearchBar_UpdateStats, FALSE);
 
+  RETURN(0);
   return 0;
 }
 
@@ -539,6 +540,7 @@ DECLARE(RedrawMail) // struct Mail* mail
   GETDATA;
   LONG pos = MUIV_NList_GetPos_Start;
   BOOL result = FALSE;
+
   ENTER();
 
   DoMethod(data->mainListObjects[data->activeList], MUIM_NList_GetPos, msg->mail, &pos);
