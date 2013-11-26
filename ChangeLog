@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-11-26 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/RecipientString.c: restored the behaviour of YAM 2.7 when resolving the
+    names of address book mailing lists. Additionally the resolve process did
+    not specify any flag for the kind of entries to search when resolving the
+    recipients. This closes #458.
+
 2013-11-25 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/MainMailListGroup.c: perform certain methods on the list object directly

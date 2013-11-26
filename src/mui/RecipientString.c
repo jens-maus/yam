@@ -176,8 +176,9 @@ static void NormalizeSelection(Object *obj)
 
       // remove the current recipient from the string, including the " >> " marks
       // and everything typed so far
-      xset(obj, MUIA_String_BufferPos, start,
-                MUIA_BetterString_SelectSize, rcpSize + marksSize);
+      xset(obj,
+        MUIA_String_BufferPos, start,
+        MUIA_BetterString_SelectSize, rcpSize + marksSize);
 
       DoMethod(obj, MUIM_BetterString_ClearSelected);
 
@@ -327,8 +328,9 @@ OVERLOAD(OM_NEW)
       }
     }
 
-    xset(obj, MUIA_String_Popup, obj,
-              MUIA_String_Reject, data->MultipleRecipients ? NULL : ",");
+    xset(obj,
+      MUIA_String_Popup, obj,
+      MUIA_String_Reject, data->MultipleRecipients ? NULL : ",");
   }
 
   RETURN((IPTR)obj);
@@ -832,12 +834,28 @@ OVERLOAD(MUIM_HandleEvent)
                 char address[SIZE_LARGE];
 
                 strlcpy(address, " >> ", sizeof(address));
-                BuildAddress(&address[4], sizeof(address)-4, matchEntry->Address, data->NoFullName ? NULL : matchEntry->RealName);
+                if(matchEntry->type == ABNT_LIST)
+                {
+                  // insert the matching string for lists
+                  char *unquotedAddress;
+
+                  if((unquotedAddress = UnquoteString(abentry->MatchString, TRUE)) != NULL)
+                  {
+                    strlcat(address, unquotedAddress, sizeof(address));
+                    free(unquotedAddress);
+                  }
+                }
+                else
+                {
+                  // insert the full address for all other entries
+                  BuildAddress(&address[4], sizeof(address)-4, matchEntry->Address, data->NoFullName ? NULL : matchEntry->RealName);
+                }
 
                 DoMethod(obj, MUIM_BetterString_Insert, address, pos);
 
-                xset(obj, MUIA_String_BufferPos, pos,
-                          MUIA_BetterString_SelectSize, strlen(address));
+                xset(obj,
+                  MUIA_String_BufferPos, pos,
+                  MUIA_BetterString_SelectSize, strlen(address));
               }
             }
           }
@@ -974,7 +992,7 @@ DECLARE(Resolve) // ULONG flags
           DoMethod(obj, MUIM_BetterString_Insert, strchr(uin->address, '@')+1, MUIV_BetterString_Insert_EndOfString);
         }
       }
-      else if((hits = SearchABook(&G->abook, s, ASM_ALIAS|ASM_REALNAME|ASM_ADDRESS|ASM_COMPLETE, &entry)) != 0) /* entry found in address book */
+      else if((hits = SearchABook(&G->abook, s, ASM_ALIAS|ASM_REALNAME|ASM_ADDRESS|ASM_USER|ASM_LIST|ASM_COMPLETE, &entry)) != 0) /* entry found in address book */
       {
         D(DBF_GUI, "found match '%s'", s);
 
