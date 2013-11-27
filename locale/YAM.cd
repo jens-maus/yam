@@ -4616,7 +4616,8 @@ MSG_HELP_CO_DETECT_CYRILLIC (1707//)
 Try to use the auto-detect feature\n\
 of codesets.library to automatically\n\
 identify the correct cyrillic charset\n\
-(only relevant for cyrillic users).
+(only relevant for users of cyrillic\n\
+charsets).
 ;
 MSG_WR_ErrorNotEnoughUndoMem (1708//)
 The erased text was too large to be\n\
