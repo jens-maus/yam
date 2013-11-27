@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-11-27 Thore Böckelmann <tboeckel@gmx.de>
+
+  * Config.c: implemented a check to catch the automatic detection of cyrillic
+    charsets while the configured local charset is not cyrillic. As this might
+    cause malformed characters the user is now asked to deactivate the automatic
+    detection. This closes #463.
+
 2013-11-26 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/RecipientString.c: restored the behaviour of YAM 2.7 when resolving the

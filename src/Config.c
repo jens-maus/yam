@@ -3079,7 +3079,7 @@ void ValidateConfig(struct Config *co, BOOL update, BOOL saveChanges)
   // check if the Location is setup correctly and if not
   // we use GuessTZone() to actually get an almost matching Location
   // definition or we set the Location to a default in the catalog
-  if(co->Location[0] == '\0')
+  if(IsStrEmpty(co->Location) == TRUE)
   {
     if(G->Locale != NULL)
     {
@@ -3114,7 +3114,7 @@ void ValidateConfig(struct Config *co, BOOL update, BOOL saveChanges)
     {
       // now we check whether the currently set localCharset matches
       // the system charset or not
-      if(co->DefaultLocalCodeset[0] != '\0' && G->systemCodeset->name[0] != '\0')
+      if(IsStrEmpty(co->DefaultLocalCodeset) == FALSE && IsStrEmpty(G->systemCodeset->name) == FALSE)
       {
         if(stricmp(co->DefaultLocalCodeset, G->systemCodeset->name) != 0)
         {
@@ -3140,7 +3140,7 @@ void ValidateConfig(struct Config *co, BOOL update, BOOL saveChanges)
           }
         }
       }
-      else if(G->systemCodeset->name[0] != '\0')
+      else if(IsStrEmpty(G->systemCodeset->name) == TRUE)
       {
         D(DBF_CONFIG, "updated local codeset from '%s' to '%s'", co->DefaultLocalCodeset, G->systemCodeset->name);
         strlcpy(co->DefaultLocalCodeset, G->systemCodeset->name, sizeof(co->DefaultLocalCodeset));
@@ -3155,21 +3155,21 @@ void ValidateConfig(struct Config *co, BOOL update, BOOL saveChanges)
 
   // if the local charset is still empty we set the default
   // charset to 'iso-8859-1' as this one is probably the most common one.
-  if(co->DefaultLocalCodeset[0] == '\0')
+  if(IsStrEmpty(co->DefaultLocalCodeset) == TRUE)
   {
     D(DBF_CONFIG, "updated local codeset from '%s' to '%s'", co->DefaultLocalCodeset, "ISO-8859-1");
     strlcpy(co->DefaultLocalCodeset, "ISO-8859-1", sizeof(co->DefaultLocalCodeset));
     saveAtEnd = TRUE;
   }
 
-  if(co->DefaultWriteCodeset[0] == '\0')
+  if(IsStrEmpty(co->DefaultWriteCodeset) == TRUE)
   {
     D(DBF_CONFIG, "updated write codeset from '%s' to '%s'", co->DefaultWriteCodeset, co->DefaultLocalCodeset);
     strlcpy(co->DefaultWriteCodeset, co->DefaultLocalCodeset, sizeof(co->DefaultWriteCodeset));
     saveAtEnd = TRUE;
   }
 
-  if(co->DefaultEditorCodeset[0] == '\0')
+  if(IsStrEmpty(co->DefaultEditorCodeset) == TRUE)
   {
     D(DBF_CONFIG, "updated editor codeset from '%s' to '%s'", co->DefaultEditorCodeset, co->DefaultLocalCodeset);
     strlcpy(co->DefaultEditorCodeset, co->DefaultLocalCodeset, sizeof(co->DefaultEditorCodeset));
@@ -3238,6 +3238,28 @@ void ValidateConfig(struct Config *co, BOOL update, BOOL saveChanges)
       D(DBF_CONFIG, "updated editor codeset from '%s' to '%s'", co->DefaultEditorCodeset, G->systemCodeset->name);
       G->editorCodeset = G->systemCodeset;
       strlcpy(co->DefaultEditorCodeset, G->systemCodeset->name, sizeof(co->DefaultEditorCodeset));
+      saveAtEnd = TRUE;
+    }
+  }
+
+  // finally check if "auto-detect cyrillic charsets" is active, but the local charset
+  // for reading is no cyrillic charset. As this will malform certain characters like
+  // the german umlauts we better warn the user about this.
+  if(co->DetectCyrillic == TRUE &&
+     stricmp(co->DefaultLocalCodeset, "Windows-1251") != 0 &&
+     stricmp(co->DefaultLocalCodeset, "IBM866") != 0 &&
+     stricmp(co->DefaultLocalCodeset, "KOI8-R") != 0)
+  {
+    int res = MUI_Request(G->App, refWindow, MUIF_NONE,
+                          tr(MSG_CO_CHARSETWARN_TITLE),
+                          tr(MSG_CO_CYRILLICCHARSETWARN_BT),
+                          tr(MSG_CO_CYRILLICCHARSETWARN),
+                          co->DefaultLocalCodeset);
+    if(res == 1)
+    {
+      // deactivate the "auto-detect cyrillic charsets" feature
+      D(DBF_CONFIG, "deactivate automatic cyrillic charset detection");
+      co->DetectCyrillic = FALSE;
       saveAtEnd = TRUE;
     }
   }

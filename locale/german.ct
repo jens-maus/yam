@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.40 (27.11.2013)
+## version $VER: YAM.catalog 8.41 (27.11.2013)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Maus, Thore Böckelmann
@@ -6043,9 +6043,10 @@ MSG_HELP_CO_DETECT_CYRILLIC
 Versucht mittels einer automatischen\n\
 Erkennung der codesets.library, den\n\
 benutzten kyrillischen Zeichensatz zu\n\
-identifizieren\n\
-(nur für Benutzer kyrillischer Zeichensätze\n\
-relevant)
+identifizieren.\n\
+Aktivieren Sie diese Option nur, falls Sie\n\
+tatsächlich einen kyrillischen Zeichensatz\n\
+verwenden.
 ;
 MSG_WR_ErrorNotEnoughUndoMem
 Der gelöschte Text war zu lang um diesen\n\
@@ -8860,4 +8861,16 @@ gespeichert werden sollen.
 ;
 MSG_DOC_LANGUAGE_CODE
 de
+;
+MSG_CO_CYRILLICCHARSETWARN
+Die automatische Erkennung von kyrillischen Zeichensätzen\n\
+ist aktiviert, aber der eingestellte Zeichensatz '%s'\n\
+ist kein kyrillischer Zeichensatz.\n\
+Diese Kombination könnte ungültige Zeichen erzeugen.\n\
+\n\
+Wollen Sie die Erkennung kyrillischer Zeichensätze deaktivieren?
+; LOCALCHARSET
+;
+MSG_CO_CYRILLICCHARSETWARN_BT
+*_Deaktivieren|_Ignorieren
 ;

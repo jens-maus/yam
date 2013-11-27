@@ -4615,9 +4615,9 @@ Auto-detect c_yrillic charsets
 MSG_HELP_CO_DETECT_CYRILLIC (1707//)
 Try to use the auto-detect feature\n\
 of codesets.library to automatically\n\
-identify the correct cyrillic charset\n\
-(only relevant for users of cyrillic\n\
-charsets).
+identify the correct cyrillic charset.\n\
+Use this option only if you are using\n\
+a cyrillic charset.
 ;
 MSG_WR_ErrorNotEnoughUndoMem (1708//)
 The erased text was too large to be\n\
@@ -7478,4 +7478,15 @@ MSG_DOC_LANGUAGE_CODE (2519//)
 ; documentation request (HELP hotkey) and thus a
 ; potentially translated page should come up. For
 ; english, the MSG_LANGUAGE_CODE should be empty.
+;
+MSG_CO_CYRILLICCHARSETWARN (2520//)
+Automatic detection of cyrillic charsets is enabled, but the\n\
+configured charset '%s' is no cyrillic charset.\n\
+This combination might cause malformed characters.\n\
+\n\
+Do you want to deactivate the cyrillic charset detection?
+; LOCALCHARSET
+;
+MSG_CO_CYRILLICCHARSETWARN_BT (2521//)
+*_Deactivate|_Ignore
 ;
