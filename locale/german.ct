@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.41 (27.11.2013)
+## version $VER: YAM.catalog 8.42 (27.11.2013)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Maus, Thore Böckelmann
@@ -6052,7 +6052,7 @@ MSG_WR_ErrorNotEnoughUndoMem
 Der gelöschte Text war zu lang um diesen\n\
 in den Undobuffer zu kopieren.\n\
 \n\
-Ein wiederrufen des Löschens ist daher\n\
+Ein Widerrufen des Löschens ist daher\n\
 nicht möglich.
 ;
 MSG_RE_HEADERDISPLAY
