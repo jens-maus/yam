@@ -1528,10 +1528,10 @@ static BOOL RE_ConsumeRestOfPart(FILE *ifh, FILE *ofh, const struct codeset *src
       // free the codesets converted string
       if(codesetConverted == TRUE)
         CodesetsFreeA(dststr, NULL);
-
-      // free the dynamic string
-      dstrfree(dstr);
     }
+
+    // free the dynamic string
+    dstrfree(dstr);
   }
 
   RETURN(result);
