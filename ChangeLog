@@ -5,6 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-11-28 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_RE.c: for attachments without an explicit size information by the header
+    lines YAM will now do a VERY rough size estimation to be able to preallocate
+    a buffer. Although this estimation might be far too big if there are several
+    attachments it nevertheless speeds up parsing big mails/attachments a lot as
+    this avoids the need to dynamically resize a constantly growing buffer for
+    reading. The former approach required almost twice the size of an attachment
+    as dynamic buffer, so this estimation shouldn't be too bad. This closes
+    #466 again.
+
 2013-11-27 Thore Böckelmann <tboeckel@gmx.de>
 
   * Config.c: implemented a check to catch the automatic detection of cyrillic

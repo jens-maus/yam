@@ -28,6 +28,7 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
 
 #include <clib/alib_protos.h>
 #include <libraries/asl.h>
@@ -1318,46 +1319,75 @@ static BOOL RE_ConsumeRestOfPart(FILE *ifh, FILE *ofh, const struct codeset *src
         skipCodesets = TRUE;
       }
 
-      // preallocate a buffer in case the part size is known already
-      if(rp->Size > 0 && ofh != NULL)
+      if(ofh != NULL)
       {
-        switch(rp->EncodingCode)
+        // preallocate a buffer for the part
+        size_t encodedSize = 0;
+
+        if(rp->Size <= 0)
         {
-          case ENC_7BIT:
-          case ENC_8BIT:
-          case ENC_BIN:
-          case ENC_QP:
+          // the size is unknown hence we do a *VERY* rough estimation by
+          // assuming that the current part is the only remaining part. Although
+          // this estimation will result in far too big numbers if there are
+          // further parts following it speeds up parsing large attachments
+          // without size information a lot. And since the amount of memory
+          // will be required anyway this rough estimation is better than
+          // having to reallocate a constantly growing buffer in lots of small
+          // steps.
+          struct stat st;
+
+          if(fstat(fileno(ifh), &st) != -1)
           {
-            dstr = dstralloc(rp->Size);
+            encodedSize = st.st_size - ftell(ifh);
+
+            D(DBF_MIME, "estimated part size %ld", encodedSize);
           }
-          break;
-
-          case ENC_B64:
-          {
-            size_t encodedSize;
-
-            // base64 encodes 3 input bytes in 4 output bytes
-            encodedSize = rp->Size * 4 / 3;
-            // each encoded line consists of 72 characters at most
-            // add the number of lines for the LF characters inbetween
-            encodedSize += (encodedSize + 71) / 72;
-            dstr = dstralloc(encodedSize);
-          }
-          break;
-
-          case ENC_UUE:
-          {
-            size_t encodedSize;
-
-            // uue encodes 3 input bytes in 4 output bytes
-            encodedSize = rp->Size * 4 / 3;
-            // each encoded line consists of 63 characters at most
-            // add the number of lines for the LF characters inbetween
-            encodedSize += (encodedSize + 62) / 63;
-            dstr = dstralloc(encodedSize);
-          }
-          break;
+          else
+            W(DBF_MIME, "cannot fstat() input file: %s", strerror(errno));
         }
+        else
+        {
+          // the decoded size is known already, depending on the encoding we
+          // we do a very good estimation of the encoded part size
+          switch(rp->EncodingCode)
+          {
+            case ENC_7BIT:
+            case ENC_8BIT:
+            case ENC_BIN:
+            case ENC_QP:
+            {
+              encodedSize = rp->Size;
+            }
+            break;
+
+            case ENC_B64:
+            {
+              size_t encodedSize;
+
+              // base64 encodes 3 input bytes in 4 output bytes
+              encodedSize = rp->Size * 4 / 3;
+              // each encoded line consists of 72 characters at most
+              // add the number of lines for the LF characters inbetween
+              encodedSize += (encodedSize + 71) / 72;
+            }
+            break;
+
+            case ENC_UUE:
+            {
+              size_t encodedSize;
+
+              // uue encodes 3 input bytes in 4 output bytes
+              encodedSize = rp->Size * 4 / 3;
+              // each encoded line consists of 63 characters at most
+              // add the number of lines for the LF characters inbetween
+              encodedSize += (encodedSize + 62) / 63;
+            }
+            break;
+          }
+        }
+
+        if(encodedSize != 0)
+          dstr = dstralloc(encodedSize);
       }
     }
 
