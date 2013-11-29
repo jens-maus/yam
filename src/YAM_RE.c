@@ -1235,7 +1235,7 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, enum ReadHeaderM
       // alternative part of the mail structure which is partly incorrect regarding
       // the various RFCs.
       if(strnicmp(rp->ContentDisposition, "attachment", 10) == 0 ||
-         strnicmp(rp->ContentDisposition, "inline", 6) == 0))
+         strnicmp(rp->ContentDisposition, "inline", 6) == 0)
       {
         // declare this part as an attachment instead of an alternative part
         setFlag(rp->Flags, PFLAG_ATTACHMENT);
