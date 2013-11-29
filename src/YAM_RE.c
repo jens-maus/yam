@@ -955,6 +955,12 @@ static void RE_ParseContentParameters(char *str, struct Part *rp, enum parameter
     {
       free(rp->ContentDisposition);
       rp->ContentDisposition = s;
+
+      if(strncmp(s, "attachment", 10) == 0)
+      {
+        // declare this part as an attachment
+        setFlag(rp->Flags, PFLAG_ATTACHMENT);
+      }
     }
     break;
   }
@@ -975,6 +981,7 @@ static void RE_ParseContentParameters(char *str, struct Part *rp, enum parameter
       {
         // depending on the parameterType we
         // have to parse different parameters
+
         switch(pType)
         {
           case PT_CONTENTTYPE:
@@ -1324,14 +1331,14 @@ static BOOL RE_ConsumeRestOfPart(FILE *ifh, FILE *ofh, const struct codeset *src
         // preallocate a buffer for the part
         size_t encodedSize = 0;
 
-        if(rp->Size <= 0)
+        if(rp->Size <= 0 && isAttachment(rp) == TRUE)
         {
-          // the size is unknown hence we do a *VERY* rough estimation by
-          // assuming that the current part is the only remaining part. Although
-          // this estimation will result in far too big numbers if there are
-          // further parts following it speeds up parsing large attachments
-          // without size information a lot. And since the amount of memory
-          // will be required anyway this rough estimation is better than
+          // the attachment's size is unknown hence we do a *VERY* rough
+          // estimation by assuming that the current part is the only remaining
+          // part. Although this estimation will result in far too big numbers
+          // if there are further parts following it speeds up parsing large
+          // attachments without size information a lot. And since the amount of
+          // memory will be required anyway this rough estimation is better than
           // having to reallocate a constantly growing buffer in lots of small
           // steps.
           struct stat st;
@@ -1345,7 +1352,7 @@ static BOOL RE_ConsumeRestOfPart(FILE *ifh, FILE *ofh, const struct codeset *src
           else
             W(DBF_MIME, "cannot fstat() input file: %s", strerror(errno));
         }
-        else
+        else if(rp->Size > 0)
         {
           // the decoded size is known already, depending on the encoding we
           // we do a very good estimation of the encoded part size
@@ -1385,6 +1392,8 @@ static BOOL RE_ConsumeRestOfPart(FILE *ifh, FILE *ofh, const struct codeset *src
             break;
           }
         }
+
+        // all other parts (no attachment, no size) will be read 100% dynamically
 
         if(encodedSize != 0)
           dstr = dstralloc(encodedSize);

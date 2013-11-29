@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-11-29 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_RE.c: added a detection of real attachments to be able to perform the
+    rough size estimation for these parts only. All other parts without size
+    information will be read dynamically.
+
 2013-11-28 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_RE.c: for attachments without an explicit size information by the header

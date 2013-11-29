@@ -109,11 +109,13 @@ struct ReadMailData
 #define PFLAG_DECODED       (1<<2)  // part was already decoded
 #define PFLAG_ALTPART       (1<<3)  // this part is an alternative part (multipart/alternative)
 #define PFLAG_MIME          (1<<4)  // this part conforms to the MIME standard
+#define PFLAG_ATTACHMENT    (1<<5)  // this part is explicitly declared as attachment
 #define hasSubHeaders(part)     (isFlagSet((part)->Flags, PFLAG_SUBHEADERS))
 #define isPrintable(part)       (isFlagSet((part)->Flags, PFLAG_PRINTABLE))
 #define isDecoded(part)         (isFlagSet((part)->Flags, PFLAG_DECODED))
 #define isAlternativePart(part) (isFlagSet((part)->Flags, PFLAG_ALTPART))
 #define isMIMEconform(part)     (isFlagSet((part)->Flags, PFLAG_MIME))
+#define isAttachment(part)      (isFlagSet((part)->Flags, PFLAG_ATTACHMENT))
 
 // a struct Part is a structure for managing certain message
 // parts according to the hierarchical structuring of e-mails
