@@ -955,12 +955,6 @@ static void RE_ParseContentParameters(char *str, struct Part *rp, enum parameter
     {
       free(rp->ContentDisposition);
       rp->ContentDisposition = s;
-
-      if(strncmp(s, "attachment", 10) == 0 || strncmp(s, "inline", 6) == 0)
-      {
-        // declare this part as an attachment
-        setFlag(rp->Flags, PFLAG_ATTACHMENT);
-      }
     }
     break;
   }
@@ -1240,10 +1234,11 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, enum ReadHeaderM
       // iPhone mail client which is known to always drop their attachments in the
       // alternative part of the mail structure which is partly incorrect regarding
       // the various RFCs.
-      if(isAlternativePart(rp) &&
-         (strnicmp(rp->ContentDisposition, "attachment", 10) == 0 ||
-          strnicmp(rp->ContentDisposition, "inline", 6) == 0))
+      if(strnicmp(rp->ContentDisposition, "attachment", 10) == 0 ||
+         strnicmp(rp->ContentDisposition, "inline", 6) == 0))
       {
+        // declare this part as an attachment instead of an alternative part
+        setFlag(rp->Flags, PFLAG_ATTACHMENT);
         clearFlag(rp->Flags, PFLAG_ALTPART);
       }
     }
