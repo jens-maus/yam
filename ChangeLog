@@ -10,6 +10,8 @@ $URL$
   * YAM_RE.c: added a detection of real attachments to be able to perform the
     rough size estimation for these parts only. All other parts without size
     information will be read dynamically.
+  * mui/MainFolderListtree.c, mui/FolderEditWindow.c: newly created folders and
+    folder groups are made the active entry in the listtree.
 
 2013-11-28 Thore Böckelmann <tboeckel@gmx.de>
 

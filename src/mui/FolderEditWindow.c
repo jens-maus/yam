@@ -454,6 +454,8 @@ static BOOL SaveNewFolder(struct IClass *cl, Object *obj)
                   // add the folder after the current folder
                   data->oldFolder->Treenode = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.LT_FOLDERS, MUIM_NListtree_Insert, data->oldFolder->Name, fnode, MUIV_NListtree_Insert_ListNode_Active, MUIV_NListtree_Insert_PrevNode_Active, MUIV_NListtree_Insert_Flag_Active);
                 }
+                if(data->oldFolder->Treenode != NULL)
+                  set(G->MA->GUI.LT_FOLDERS, MUIA_NListtree_Active, data->oldFolder->Treenode);
 
                 // the MainFolderListtree class has catched the insert operation and
                 // moved the new folder node within the folder list to the correct position.

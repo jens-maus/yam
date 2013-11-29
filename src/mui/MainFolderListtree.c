@@ -769,7 +769,8 @@ DECLARE(NewFolderGroup) // char *name
       fnode->folder->self = fnode;
 
       // insert the new folder node and remember its treenode pointer
-      fnode->folder->Treenode = (struct MUI_NListtree_TreeNode *)DoMethod(obj, MUIM_NListtree_Insert, folder.Name, fnode, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, TNF_LIST | TNF_OPEN);
+      if((fnode->folder->Treenode = (struct MUI_NListtree_TreeNode *)DoMethod(obj, MUIM_NListtree_Insert, folder.Name, fnode, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, TNF_LIST | TNF_OPEN)) != NULL)
+        set(obj, MUIA_NListtree_Active, fnode->folder->Treenode);
 
       result = FO_SaveTree();
     }
@@ -807,7 +808,7 @@ DECLARE(NewFolder)
 
       if(isGroupFolder(&data->newFolder))
       {
-        DoMethod(obj, MUIM_MainFolderListtree_NewFolderGroup, NULL);
+        DoMethod(obj, METHOD(NewFolderGroup), NULL);
         openEditWindow = FALSE;
       }
       else
