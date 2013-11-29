@@ -956,7 +956,7 @@ static void RE_ParseContentParameters(char *str, struct Part *rp, enum parameter
       free(rp->ContentDisposition);
       rp->ContentDisposition = s;
 
-      if(strncmp(s, "attachment", 10) == 0)
+      if(strncmp(s, "attachment", 10) == 0 || strncmp(s, "inline", 6) == 0)
       {
         // declare this part as an attachment
         setFlag(rp->Flags, PFLAG_ATTACHMENT);
