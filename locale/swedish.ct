@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.5 (27.10.2013)
+## version $VER: YAM.catalog 8.6 (30.11.2013)
 ## language svenska
 ## codeset 0
 ;
@@ -1762,19 +1762,19 @@ Konvertera inte till 7-bitar vid överföring.\nAnvänd detta val bara om din SMTP-
 ; supports 8-bit transfers, otherwise your messages may get corrupted.
 ;
 MSG_HELP_CO_LV_POP3
-Lista över POP3-konton.
+Lista över POP3-servrar.
 ; List of the POP3\n\
-; accounts.
+; servers.
 ;
 MSG_HELP_CO_BT_PADD
-Lägg till ett nytt POP3-konto.
-; Add a new POP3 account\n\
+Lägg till en ny POP3-server.
+; Add a new POP3 servers\n\
 ; to the list.
 ;
 MSG_HELP_CO_BT_PDEL
-Ta bort valt POP3-konto från listan.
+Ta bort vald POP3-server från listan.
 ; Remove the selected POP3\n\
-; account from the list.
+; servers from the list.
 ;
 MSG_HELP_CO_ST_POPUSERID
 Användarnamn för att logga in på POP3-servern.\nOm du lämnar detta fält tomt, kommer användar-\nnamnet från din e-postadress att användas.
@@ -5618,8 +5618,8 @@ Inställningar TCP/IP
 ; TCP/IP Settings
 ;
 MSG_CO_TCPIP_SUMMARY
-Konfigurera dina SMTP och POP3-konton...
-; Configure your SMTP and POP3 accounts...
+Konfigurera dina SMTP och POP3-servrar...
+; Configure your SMTP and POP3 servers...
 ;
 MSG_CO_FILTER_TITLE
 Inställningar brevfilter
@@ -5911,11 +5911,17 @@ Autodetektera c_yrillisk teckenuppsättning
 ; Auto-detect c_yrillic charsets
 ;
 MSG_HELP_CO_DETECT_CYRILLIC
-Försök använda autodetektera\nfunktionen i codesets.library för att\nautomatiskt identifiera korrekt cyrillisk\nteckenuppsättning\n(endast relevant för cyrilliska användare).
+Försök använda autodetektera\n\
+funktionen i codesets.library för att\n\
+automatiskt identifiera korrekt cyrillisk\n\
+teckenuppsättning.\n\
+Använd endast detta val om du använder en\n\
+cyrillisk teckenupsättning.
 ; Try to use the auto-detect feature\n\
 ; of codesets.library to automatically\n\
-; identify the correct cyrillic charset\n\
-; (only relevant for cyrillic users).
+; identify the correct cyrillic charset.\n\
+; Use this option only if you are using\n\
+; a cyrillic charset.
 ;
 MSG_WR_ErrorNotEnoughUndoMem
 Den raderade texten var för stor\nför att stoppas i ångra bufferten.\n\nDärför är ångra bufferten förlorad.
@@ -8643,20 +8649,6 @@ denna användaridentitet.
 ; An optional URL to a photo associated with\n\
 ; this user identity.
 ;
-MSG_HELP_CO_CH_IDENTITY_SENTFOLDER
-Om vald, kommer skickade brev att lagras i\n\
-en mapp för skickade brev. Annars kommer\n\
-skickade brev att raderas.
-; If enabled, sent mail will be stored in a\n\
-; sent mail folder. Otherwise the sent mail\n\
-; will be deleted.
-;
-MSG_HELP_CO_TX_IDENTITY_SENTFOLDER
-Tillåter dig att specifiera vilken brevmapp\n\
-som ska användas för att lagra skickade brev.
-; Allows to specify which mail folder should\n\
-; be used when storing sent mail.
-;
 MSG_HELP_CO_CH_IDENTITY_QUOTEMAILS
 Vid svar eller vidarebefodran, kommer brevtexten\n\
 att citeras om detta är valt.
@@ -9544,6 +9536,163 @@ MSG_QUICKSEARCH_BODY
 Meddelande
 ; Mail body
 ;
+MSG_CO_CHECK_FOR_MISSING_ATTACHMENTS
+Kontrollera efter saknade bilagor
+; Check for missing attachments
+;
+MSG_CO_ATTACHMENT_KEYWORDS
+Nyckelord:
+; Keywords:
+;
+MSG_HELP_CO_CH_ATTACHMENTREMINDER
+Vill du bli varnad om brevhuvudet\n\
+antyder att en bilaga existerar\n\
+men att de saknas?
+; Would you like to be warned if the\n\
+; mail body suggests the existance of\n\
+; an attachment but these are missing?
+;
+MSG_HELP_CO_LV_ATTACHMENTKEYWORDS
+Konfigurera nyckelorden som kanske\n\
+indikerar att en bilaga existerar.
+; Configure the keywords which might\n\
+; suggest the desired existance of an\n\
+; attachment.
+;
+MSG_ATTACHMENT_KEYWORDS
+bilaga,bilagor,bifoga,bifogad,bifogar,CV,följebrev
+; attachment,attach,attached,attaching,enclosed,CV,cover letter
+;
+MSG_ATTACHMENT_REMIND_INFO
+Glömde du möjligtvis att lägga till en bilaga?
+; Did you possibly forget to add an attachment?
+;
+MSG_ATTACHMENT_REMIND_ADD
+Lägg till bilaga...
+; Add attachment...
+;
+MSG_ATTACHMENT_REMIND_LATER
+Påminn mig senare
+; Remind me later
+;
+MSG_WR_NO_ATTACHMENTS_TITLE
+Bilagepåminnare
+; Attachment reminder
+;
+MSG_WR_NO_ATTACHMENTS
+Glömde du att lägga till en bilaga?
+; Did you forget to add an attachment?
+;
+MSG_WR_NO_ATTACHMENTS_GADS
+Ja, det gjorde jag|Nej, skicka nu
+; Yes, I did|No, send now
+;
+MSG_CO_MAILACCOUNT_TRANSFERRED
+Brevkonto
+; Mail account
+;
+MSG_MAILACCOUNT_TRANSFERRED
+Brevkonto
+; Mail account
+;
+MSG_CO_SAVE_LAYOUT
+Spara användargränssnittets layout
+; Save user interface layout
+;
+MSG_HELP_CO_CH_SAVELAYOUTQUIT
+Spara positioner och dimensioner permanent för\n\
+alla fönster, layouten för vissa grupper och\n\
+tillstånden för vissa grafiska objekt.
+; Permanently save the position and dimensions\n\
+; of all windows, the layout of certain groups\n\
+; and the state of various graphical objects.
+;
+MSG_CO_SMTP_FOLDERS
+Förvalda mappar
+; Default folders
+;
+MSG_CO_SMTP_SENTFOLDER
+Mappen 'Skickat'
+; 'Sent' folder
+;
+MSG_HELP_CO_PO_SMTP_SENTFOLDER
+Tillåter att ställa in en annan mapp, där brev\n\
+lagras efter de har skickats iväg.
+; Allows to set a different folder where mails\n\
+; will be stored after being sent out.
+;
+MSG_CO_IDENTITY_SAVESENTMAIL
+Efter skickande, lagra brev i mappen 'Skickat'
+; After transfer store mails in 'Sent' folder
+;
+MSG_HELP_CO_CH_IDENTITY_SAVESENTMAIL
+Om aktiverat, så kommer brev att lagras efter\n\
+de har skickats. Annars kommer skickade brev\n\
+att raderas.
+; If enabled, sent mails will be stored after\n\
+; the mail transfer. Otherwise the sent mails\n\
+; will be deleted.
+;
+MSG_CO_IDENTITY_ALTSENTFOLDER
+Använd alternativ 'Skickat' mapp:
+; Use alternative 'Sent' folder:
+;
+MSG_HELP_CO_CH_IDENTITY_ALTSENTFOLDER
+Om aktiverat, så kommer skickade brev att lagras\n\
+i en alternativ brevmapp, än vad som konfigurerats\n\
+i TCP/IP sektionen i inställningarna.
+; If enabled, sent mails will be stored in an\n\
+; alternative mail folder than configured in\n\
+; the TCP/IP section of the configuration.
+;
+MSG_HELP_CO_TX_IDENTITY_ALTSENTFOLDER
+Tillåter att specifiera vilken alternativ\n\
+brevmapp som ska användas för att lagra\n\
+skickade brev.
+; Allows to specify which alternative mail\n\
+; folder should be used when storing sent mail.
+;
+MSG_CO_POP_FOLDERS
+Förvalda mappar
+; Default folders
+;
+MSG_CO_POP_INCOMINGFOLDER
+Mappen 'Inkorg'
+; 'Incoming' folder
+;
+MSG_HELP_CO_PO_POP_INCOMINGFOLDER
+Tillåter att ställa in en annan mapp där brev\n\
+kommer att lagras efter de har mottagits.
+; Allows to set a different folder where mails\n\
+; will be stored after having received them.
+;
 MSG_DOC_LANGUAGE_CODE
 sv
+; 
+; !!! NOTE !!!
+; When translating MSG_LANGUAGE_CODE please put the
+; language code (see http://yam.ch/wiki/TracLanguages)
+; for the language you translate YAM to here. This
+; language code will then be appended to each online
+; documentation request (HELP hotkey) and thus a
+; potentially translated page should come up. For
+; english, the MSG_LANGUAGE_CODE should be empty.
+;
+MSG_CO_CYRILLICCHARSETWARN
+Automatisk detektering av cyrillisk teckenuppsättning är aktivt\n\
+men den inställda teckenuppsättningen '%s' är inte en cyrillisk\n\
+teckenuppsättning.\n\
+Denna kombination kan orsaka felaktiga tecken.\n\
+\n\
+Vill du inaktivera detekteringen av cyrillisk teckenuppsättning?
+; Automatic detection of cyrillic charsets is enabled, but the\n\
+; configured charset '%s' is no cyrillic charset.\n\
+; This combination might cause malformed characters.\n\
+; \n\
+; Do you want to deactivate the cyrillic charset detection?
+; LOCALCHARSET
+;
+MSG_CO_CYRILLICCHARSETWARN_BT
+*_Inaktivera|I_gnorera
+; *_Deactivate|_Ignore
 ;

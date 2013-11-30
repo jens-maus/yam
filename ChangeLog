@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-11-30 Pär Boberg <pbobbenb@spray.se>
+
+  * locale/swedish.ct: updated to the latest changes.
+
 2013-11-29 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_RE.c: added a detection of real attachments to be able to perform the
