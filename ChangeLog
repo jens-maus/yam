@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-12-06 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/WriteWindow.c: renamed the first answer of the confirmation requester
+    if the user chooses to send a mail without a receiver from "Add later" to
+    "Save to draft and close window" as this is what is really done. The write
+    window will be closed, because this is the intended action of the "Send
+    now/later" buttons. This closes #469.
+
 2013-11-30 Pär Boberg <pbobbenb@spray.se>
 
   * locale/swedish.ct: updated to the latest changes.

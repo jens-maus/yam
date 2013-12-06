@@ -3796,6 +3796,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
   struct FolderNode *fnode;
   struct Folder *mlFolder = NULL;
   ULONG success = FALSE;
+  BOOL closeWindow = (mode != WRITE_DRAFT);
 
   ENTER();
 
@@ -3841,8 +3842,9 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
     if(MUI_Request(_app(obj), obj, MUIF_NONE, NULL, tr(MSG_WR_NoRcptReqGad), tr(MSG_WR_ErrorNoRcpt)) != 0)
     {
-      // turn the action into writing a draft mail
+      // turn the action into writing a draft mail, but close the window nevertheless
       mode = WRITE_DRAFT;
+      closeWindow = TRUE;
     }
     else
       goto out;
@@ -4390,7 +4392,8 @@ DECLARE(ComposeMail) // enum WriteMode mode
     // if this method is called as an "auto save" action this flag will be restored right after the call
     data->autoSaved = FALSE;
   }
-  else
+
+  if(closeWindow == TRUE)
   {
     // cleanup certain references if the window is to be closed
     wmData->refMail = NULL;
@@ -4466,7 +4469,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
   // make sure to dispose the window data by calling
   // CleanupWriteMailData method as soon as this method is finished
-  if(mode != WRITE_DRAFT)
+  if(closeWindow == TRUE)
     DoMethod(_app(obj), MUIM_Application_PushMethod, _app(obj), 2, MUIM_YAMApplication_CleanupWriteMailData, wmData);
 
   // update the statistics of the outgoing folder
@@ -4483,8 +4486,8 @@ out:
     DeleteMailList(refMailList);
 
   // free the list of MIME parts but don't delete temporary
-  // files when saving a draft mail
-  FreePartsList(comp.FirstPart, mode != WRITE_DRAFT);
+  // files when the window is left open
+  FreePartsList(comp.FirstPart, closeWindow);
 
   // free the compose structure
   FreeCompose(&comp);

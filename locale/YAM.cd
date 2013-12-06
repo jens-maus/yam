@@ -2488,9 +2488,6 @@ message.
 MSG_WR_ErrorNoRcpt (914//)
 Mail is incomplete: no recipient.
 ;
-MSG_WR_NoRcptReqGad (915//)
-_Add recipient later|*_Cancel
-;
 MSG_WR_DiscardChanges (917//)
 Do you really want to discard all\n\
 modifications to this message?
@@ -7489,4 +7486,7 @@ Do you want to deactivate the cyrillic charset detection?
 ;
 MSG_CO_CYRILLICCHARSETWARN_BT (2521//)
 *_Deactivate|_Ignore
+;
+MSG_WR_NoRcptReqGad (2522//)
+_Save as draft and close window|*_Cancel
 ;

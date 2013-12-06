@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.42 (27.11.2013)
+## version $VER: YAM.catalog 8.43 (6.12.2013)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Maus, Thore Böckelmann
@@ -3353,11 +3353,6 @@ weiterleiten.
 ;
 MSG_WR_ErrorNoRcpt
 Nachricht ist unvollständig: Kein Empfänger.
-; Mail is incomplete: no recipient.
-;
-MSG_WR_NoRcptReqGad
-_Empfänger später hinzufügen|*_Abbrechen
-; _Add recipient later|*_Cancel
 ;
 MSG_WR_DiscardChanges
 Wollen Sie wirklich alle Änderungen\n\
@@ -8873,4 +8868,7 @@ Wollen Sie die Erkennung kyrillischer Zeichensätze deaktivieren?
 ;
 MSG_CO_CYRILLICCHARSETWARN_BT
 *_Deaktivieren|_Ignorieren
+;
+MSG_WR_NoRcptReqGad
+Als _Entwurf speichern und Fenster schließen|*_Abbrechen
 ;
