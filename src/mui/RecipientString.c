@@ -992,63 +992,66 @@ DECLARE(Resolve) // ULONG flags
           DoMethod(obj, MUIM_BetterString_Insert, strchr(uin->address, '@')+1, MUIV_BetterString_Insert_EndOfString);
         }
       }
-      else if((hits = SearchABook(&G->abook, s, ASM_ALIAS|ASM_REALNAME|ASM_ADDRESS|ASM_USER|ASM_LIST|ASM_COMPLETE, &entry)) != 0) /* entry found in address book */
+      else if((hits = SearchABook(&G->abook, s, ASM_ALIAS|ASM_REALNAME|ASM_ADDRESS|ASM_USER|ASM_COMPLETE, &entry)) != 0) /* entry found in address book */
       {
         D(DBF_GUI, "found match '%s'", s);
 
         // Now we have to check if there exists another entry in the AB with this string
         if(hits == 1)
         {
-          if(entry->type == ABNT_USER) /* it's a normal person */
+          D(DBF_GUI, "\tplain user '%s' <%s>", entry->RealName, entry->Address);
+
+          if(withrealname == TRUE && entry->RealName[0] != '\0')
           {
-            D(DBF_GUI, "\tplain user '%s' <%s>", entry->RealName, entry->Address);
+            char address[SIZE_LARGE];
 
-            if(withrealname == TRUE && entry->RealName[0] != '\0')
-            {
-              char address[SIZE_LARGE];
-
-              BuildAddress(address, sizeof(address), entry->Address, entry->RealName);
-              DoMethod(obj, METHOD(AddRecipient), address);
-            }
-            else
-              DoMethod(obj, METHOD(AddRecipient), entry->Address);
+            BuildAddress(address, sizeof(address), entry->Address, entry->RealName);
+            DoMethod(obj, METHOD(AddRecipient), address);
           }
-          else if(entry->type == ABNT_LIST) /* it's a list of persons */
+          else
+            DoMethod(obj, METHOD(AddRecipient), entry->Address);
+        }
+        else
+        {
+          D(DBF_GUI, "found more than one matching entry in address book!");
+          DoMethod(obj, METHOD(AddRecipient), s);
+          if(quiet == FALSE)
+            set(_win(obj), MUIA_Window_ActiveObject, obj);
+          res = FALSE;
+        }
+      }
+      else if((hits = SearchABook(&G->abook, s, ASM_ALIAS|ASM_REALNAME|ASM_LIST|ASM_COMPLETE, &entry)) != 0) /* entry found in address book */
+      {
+        D(DBF_GUI, "found match '%s'", s);
+
+        // Now we have to check if there exists another entry in the AB with this string
+        if(hits == 1)
+        {
+          if(data->MultipleRecipients == TRUE)
           {
-            if(data->MultipleRecipients == TRUE)
+            char *members;
+
+            if((members = strdup(entry->ListMembers)) != NULL)
             {
-              char *members;
+              char *lf;
 
-              if((members = strdup(entry->ListMembers)) != NULL)
-              {
-                char *lf;
+              while((lf = strchr(members, '\n')) != NULL)
+                lf[0] = ',';
 
-                while((lf = strchr(members, '\n')) != NULL)
-                  lf[0] = ',';
+              D(DBF_GUI, "found list '%s'", members);
+              DoMethod(obj, METHOD(AddRecipient), members);
+              free(members);
 
-                D(DBF_GUI, "found list '%s'", members);
-                DoMethod(obj, METHOD(AddRecipient), members);
-                free(members);
+              if(data->ReplyTo != NULL && entry->Address[0] != '\0')
+                set(data->ReplyTo, MUIA_String_Contents, entry->Address);
 
-                if(data->ReplyTo != NULL && entry->Address[0] != '\0')
-                  set(data->ReplyTo, MUIA_String_Contents, entry->Address);
-
-                list_expansion = TRUE;
-              }
-            }
-            else
-            {
-              D(DBF_GUI, "string doesn't allow multiple recipients");
-              DoMethod(obj, METHOD(AddRecipient), s);
-              res = FALSE;
+              list_expansion = TRUE;
             }
           }
-          else /* it's unknown... */
+          else
           {
-            D(DBF_GUI, "found matching entry in address book with unknown type %ld", entry->type);
+            D(DBF_GUI, "string doesn't allow multiple recipients");
             DoMethod(obj, METHOD(AddRecipient), s);
-            if(quiet == FALSE)
-              set(_win(obj), MUIA_Window_ActiveObject, obj);
             res = FALSE;
           }
         }

@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-12-08 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/RecipientString.c: separated the address book search for persons and
+    lists, because lists should never be matched against addresses to avoid
+    treating a single recipient as a synonym for a list containing exctly this
+    recipient either as reply address or as member.
+
 2013-12-06 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/WriteWindow.c: renamed the first answer of the confirmation requester
