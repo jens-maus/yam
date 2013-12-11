@@ -545,6 +545,10 @@ OVERLOAD(MUIM_NList_Display)
         ndm->preparses[3] = C->StyleMailUnread;
         ndm->preparses[4] = C->StyleMailUnread;
         ndm->preparses[5] = C->StyleMailUnread;
+        ndm->preparses[6] = C->StyleMailUnread;
+        ndm->preparses[7] = C->StyleMailUnread;
+        ndm->preparses[8] = C->StyleMailUnread;
+        ndm->preparses[9] = C->StyleMailUnread;
       }
       else
       {
@@ -553,6 +557,10 @@ OVERLOAD(MUIM_NList_Display)
         ndm->preparses[3] = C->StyleMailRead;
         ndm->preparses[4] = C->StyleMailRead;
         ndm->preparses[5] = C->StyleMailRead;
+        ndm->preparses[6] = C->StyleMailRead;
+        ndm->preparses[7] = C->StyleMailRead;
+        ndm->preparses[8] = C->StyleMailRead;
+        ndm->preparses[9] = C->StyleMailRead;
       }
     }
   }

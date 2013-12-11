@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-12-11 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/MainMailList.c: the read/unread marking of mails is now done for all
+    columns. This closes #471.
+
 2013-12-08 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/RecipientString.c: separated the address book search for persons and
