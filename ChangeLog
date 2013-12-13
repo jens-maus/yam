@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-12-14 Vit Sindlar <sindlarv at centrum dot cz>
+
+  * locale/czech.ct: updated Czech translation.
+
 2013-12-13 Jens Maus <mail@jens-maus.de>
 
   * YAM_RE.c: fixed a bug where the the local 'encodedSize' variable shadowed

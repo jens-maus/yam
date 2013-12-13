@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.3 (25.10.2013)
+## version $VER: YAM.catalog 8.4 (14.12.2013)
 ## language czech
 ## codeset 5
 ;
@@ -1803,19 +1803,19 @@ V opaèném pøípadì riskujete po¹kození obsahu zpráv.
 ; supports 8-bit transfers, otherwise your messages may get corrupted.
 ;
 MSG_HELP_CO_LV_POP3
-Seznam úètù POP3
+Seznam serverù POP3
 ; List of the POP3\n\
-; accounts.
+; servers.
 ;
 MSG_HELP_CO_BT_PADD
-Pøidá nový úèet POP3 do seznamu.
-; Add a new POP3 account\n\
+Umo¾ní pøidat nový server POP3.
+; Add a new POP3 servers\n\
 ; to the list.
 ;
 MSG_HELP_CO_BT_PDEL
-Odstraní vybraný úèet POP3 ze seznamu.
+Umo¾ní odstranit vybraný server POP3.
 ; Remove the selected POP3\n\
-; account from the list.
+; servers from the list.
 ;
 MSG_HELP_CO_ST_POPUSERID
 U¾ivatelské jméno pro pøihlá¹ení k POP3 serveru.\n\
@@ -3374,10 +3374,6 @@ zprávu.
 MSG_WR_ErrorNoRcpt
 Zpráva není úplná: Zadejte adresu pøíjemce.
 ; Mail is incomplete: no recipient.
-;
-MSG_WR_NoRcptReqGad
-Pøid_at pozdìji|*_Zru¹it
-; _Add recipient later|*_Cancel
 ;
 MSG_WR_DiscardChanges
 Opravdu chcete pøijít o v¹echny provedené úpravy?
@@ -5992,7 +5988,7 @@ Nastavení TCP/IP
 ;
 MSG_CO_TCPIP_SUMMARY
 Konfigurace serverù pro stahování a odesílání po¹ty...
-; Configure your SMTP and POP3 accounts...
+; Configure your SMTP and POP3 servers...
 ;
 MSG_CO_FILTER_TITLE
 Filtrování po¹ty
@@ -6297,8 +6293,9 @@ Pokusí se automaticky detekovat správnì kódování\n\
 rusky psaného textu.
 ; Try to use the auto-detect feature\n\
 ; of codesets.library to automatically\n\
-; identify the correct cyrillic charset\n\
-; (only relevant for cyrillic users).
+; identify the correct cyrillic charset.\n\
+; Use this option only if you are using\n\
+; a cyrillic charset.
 ;
 MSG_WR_ErrorNotEnoughUndoMem
 Vymazaný blok textu byl pøíli¹ velký, a proto\n\
@@ -6802,7 +6799,7 @@ Aktualizovat index
 ; Update index
 ;
 MSG_MA_MREAD
-Pøeèíst...
+Pøeèíst
 ; Read
 ;
 MSG_MA_TOUNREAD
@@ -6850,7 +6847,7 @@ Odpovìdìt...
 ; Reply...
 ;
 MSG_MA_MFORWARD
-Pøeposlat
+Pøeposlat...
 ; Forward...
 ;
 MSG_MA_MSAVEADDRESS
@@ -7203,11 +7200,11 @@ Upozornìní :: Zamknutý soubor
 ; YAM cleanup warning
 ;
 MSG_CO_SHOWALTPARTS
-Zobrazit a_lternativní texty
+Zo_brazit v¹echny varianty zprávy
 ; Show a_lternative parts
 ;
 MSG_HELP_CO_CH_SHOWALTPARTS
-Zobrazí ve¹keré verze zprávy ve formì pøílohy.\n\
+Zobrazí ve¹keré varianty zprávy ve formì pøílohy.\n\
 \n\
 Po¹tovní program si obvykle sám vybere takovou,\n\
 kterou doká¾e nejlépe zpracovat a zbylé nechá\n\
@@ -9363,17 +9360,6 @@ Definuje odkaz na fotografii daného u¾ivatele.
 ; An optional URL to a photo associated with\n\
 ; this user identity.
 ;
-MSG_HELP_CO_CH_IDENTITY_SENTFOLDER
-Urèuje, zda bude odchozí po¹ta ukládána nebo ne.
-; If enabled, sent mail will be stored in a\n\
-; sent mail folder. Otherwise the sent mail\n\
-; will be deleted.
-;
-MSG_HELP_CO_TX_IDENTITY_SENTFOLDER
-Definuje slo¾ku pro ukládání odchozí po¹ty.
-; Allows to specify which mail folder should\n\
-; be used when storing sent mail.
-;
 MSG_HELP_CO_CH_IDENTITY_QUOTEMAILS
 Urèuje, zda bude k odpovìdi (nebo pøi pøeposílání)\n\
 pøilo¾ena i pøedchozí zpráva.
@@ -10238,6 +10224,160 @@ MSG_QUICKSEARCH_BODY
 Text zprávy
 ; Mail body
 ;
+MSG_CO_CHECK_FOR_MISSING_ATTACHMENTS
+Kontrolovat chybìjící pøílohy
+; Check for missing attachments
+;
+MSG_CO_ATTACHMENT_KEYWORDS
+Klíèová slova:
+; Keywords:
+;
+MSG_HELP_CO_CH_ATTACHMENTREMINDER
+Program upozorní na potenciálnì chybìjící pøílohu\n\
+v pøípadì, ¾e ji ve zprávì zmiòujete a pøitom ¾ádná\n\
+není pøipojena.
+; Would you like to be warned if the\n\
+; mail body suggests the existance of\n\
+; an attachment but these are missing?
+;
+MSG_HELP_CO_LV_ATTACHMENTKEYWORDS
+Definuje klíèová slova, podle kterých vás program\n\
+upozorní na potenciálnì chybìjící pøílohu.
+; Configure the keywords which might\n\
+; suggest the desired existance of an\n\
+; attachment.
+;
+MSG_ATTACHMENT_KEYWORDS
+pøíloha,pøílohy,pøílohu,pøikládám,pøilo¾ený,pøilo¾ené,CV
+; attachment,attach,attached,attaching,enclosed,CV,cover letter
+;
+MSG_ATTACHMENT_REMIND_INFO
+Nezapomnìli jste náhodou na pøílohu?
+; Did you possibly forget to add an attachment?
+;
+MSG_ATTACHMENT_REMIND_ADD
+Pøidat...
+; Add attachment...
+;
+MSG_ATTACHMENT_REMIND_LATER
+Pøipomenout pozdìji
+; Remind me later
+;
+MSG_WR_NO_ATTACHMENTS_TITLE
+Upomínka na pøílohu
+; Attachment reminder
+;
+MSG_WR_NO_ATTACHMENTS
+Nezapomnìli jste náhodou na pøílohu?
+; Did you forget to add an attachment?
+;
+MSG_WR_NO_ATTACHMENTS_GADS
+Ano|Ne
+; Yes, I did|No, send now
+;
+MSG_CO_MAILACCOUNT_TRANSFERRED
+Po¹tovní úèet
+; Mail account
+;
+MSG_MAILACCOUNT_TRANSFERRED
+Po¹tovní úèet
+; Mail account
+;
+MSG_CO_SAVE_LAYOUT
+Ulo¾it rozmístìní a velikost oken
+; Save user interface layout
+;
+MSG_HELP_CO_CH_SAVELAYOUTQUIT
+Zapne ukládání rozmístìní a velikosti v¹ech oken\n\
+vèetnì rozvr¾ení a stavu skupin èi jiných objektù\n\
+v rámci okna.
+; Permanently save the position and dimensions\n\
+; of all windows, the layout of certain groups\n\
+; and the state of various graphical objects.
+;
+MSG_CO_SMTP_FOLDERS
+Výchozí slo¾ky
+; Default folders
+;
+MSG_CO_SMTP_SENTFOLDER
+Odeslané do
+; 'Sent' folder
+;
+MSG_HELP_CO_PO_SMTP_SENTFOLDER
+Definuje slo¾ku pro ukládání odeslané po¹ty.
+; Allows to set a different folder where mails\n\
+; will be stored after being sent out.
+;
+MSG_CO_IDENTITY_SAVESENTMAIL
+Ulo¾it odeslané zprávy do slo¾ky 'Odeslané'
+; After transfer store mails in 'Sent' folder
+;
+MSG_HELP_CO_CH_IDENTITY_SAVESENTMAIL
+Zapne ukládání odeslané po¹ty. V opaèném pøípadì\n\
+budou odeslané zprávy rovnou smazány.
+; If enabled, sent mails will be stored after\n\
+; the mail transfer. Otherwise the sent mails\n\
+; will be deleted.
+;
+MSG_CO_IDENTITY_ALTSENTFOLDER
+Pou¾ít jinou slo¾ku pro odeslané zprávy:
+; Use alternative 'Sent' folder:
+;
+MSG_HELP_CO_CH_IDENTITY_ALTSENTFOLDER
+Zapne ukládání odeslané po¹ty do jiné slo¾ky,\n\
+ne¾ jakou jste nastavili v sekci TCP/IP.
+; If enabled, sent mails will be stored in an\n\
+; alternative mail folder than configured in\n\
+; the TCP/IP section of the configuration.
+;
+MSG_HELP_CO_TX_IDENTITY_ALTSENTFOLDER
+Definuje vlastní slo¾ku pro ukládání odeslané po¹ty.
+; Allows to specify which alternative mail\n\
+; folder should be used when storing sent mail.
+;
+MSG_CO_POP_FOLDERS
+Výchozí slo¾ky
+; Default folders
+;
+MSG_CO_POP_INCOMINGFOLDER
+Doruèené do
+; 'Incoming' folder
+;
+MSG_HELP_CO_PO_POP_INCOMINGFOLDER
+Definuje slo¾ku pro ukládání doruèené po¹ty.
+; Allows to set a different folder where mails\n\
+; will be stored after having received them.
+;
 MSG_DOC_LANGUAGE_CODE
 cs
+; 
+; !!! NOTE !!!
+; When translating MSG_LANGUAGE_CODE please put the
+; language code (see http://yam.ch/wiki/TracLanguages)
+; for the language you translate YAM to here. This
+; language code will then be appended to each online
+; documentation request (HELP hotkey) and thus a
+; potentially translated page should come up. For
+; english, the MSG_LANGUAGE_CODE should be empty.
+;
+MSG_CO_CYRILLICCHARSETWARN
+Je zapnutá automatická detekce azbuky a zároveò\n\
+nastaveno kódování, které není urèeno pro toto\n\
+písmo (%s). Uvedená kombinace mù¾e zapøíèinit\n\
+odeslání neèitelného textu.\n\
+Nechcete vypnout automatickou detekci azbuky?
+; Automatic detection of cyrillic charsets is enabled, but the\n\
+; configured charset '%s' is no cyrillic charset.\n\
+; This combination might cause malformed characters.\n\
+; \n\
+; Do you want to deactivate the cyrillic charset detection?
+; LOCALCHARSET
+;
+MSG_CO_CYRILLICCHARSETWARN_BT
+*_Vypnout|_Ignorovat
+; *_Deactivate|_Ignore
+;
+MSG_WR_NoRcptReqGad
+Ulo¾it rozep_sané a zavøít|*_Zru¹it
+; _Save as draft and close window|*_Cancel
 ;
