@@ -686,6 +686,7 @@ static void FreeCompose(struct Compose *comp)
 
   if(comp->MailReplyTo != NULL)
     free(comp->MailReplyTo);
+
   if(comp->MailFollowupTo != NULL)
     free(comp->MailFollowupTo);
 
@@ -3982,7 +3983,8 @@ DECLARE(ComposeMail) // enum WriteMode mode
     {
       char address[SIZE_ADDRESS];
       comp.MailReplyTo = strdup(BuildAddress(address, sizeof(address), wmData->identity->address, wmData->identity->realname));
-      comp.MailFollowupTo = strdup(mlFolder->MLAddress);
+      if(IsStrEmpty(mlFolder->MLAddress) == FALSE)
+        comp.MailFollowupTo = strdup(mlFolder->MLAddress);
     }
 
     // unlock the folder list again
