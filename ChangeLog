@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-12-14 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_RE.c: the attempt to replace NUL bytes within a stream would always
+    replace the terminating NUL byte by a space if a message consisted of a
+    single line only without an LF at the end. By pure luck the allocated
+    buffer was always big enough to carry an additional NUL byte to finally
+    terminating the string again without causing a buffer overrung. Now the
+    replacement correctly stops one byte earlier. This closes #472.
+
 2013-12-14 Vit Sindlar <sindlarv at centrum dot cz>
 
   * locale/czech.ct: updated Czech translation.

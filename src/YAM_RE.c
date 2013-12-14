@@ -3136,7 +3136,8 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
             }
 
             rptr = msg;
-            msgend = msg+nread+1;
+            msgend = msg+nread;
+
             // parse the message string
             // make sure we don't read beyond the buffer's limits
             // as we will modify the buffer contents inbetween
