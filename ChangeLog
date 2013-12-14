@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-12-14 Jens Maus <mail@jens-maus.de>
+
+  * YAM.c: bumped all minimum required versions of all third-party mccs and
+    codesets.library to the latest released versions to prepare the upcoming
+    2.9 release.
+  * mui/WriteWindow.c: minor fix where strdup was potentially used on a NULL
+    pointer
+
 2013-12-14 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_RE.c: the attempt to replace NUL bytes within a stream would always
