@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.53 (16.11.2013)
+## version $VER: YAM.catalog 8.54 (14.12.2013)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -1889,8 +1889,9 @@ durante il prelievo della nuova posta.
 ; when you get new mail.
 ;
 MSG_HELP_CO_ST_NOTISOUND
-Il suono che si desidera venga suonato\n\
-durante il prelievo della nuova posta.
+Il campione audio che si desidera venga\n\
+suonato durante il prelievo della nuova\n\
+posta.
 ; The sound file you want to play\n\
 ; when you get new mail.
 ;
@@ -3418,10 +3419,6 @@ messaggio.
 MSG_WR_ErrorNoRcpt
 Il messaggio è incompleto: nessun destinatario.
 ; Mail is incomplete: no recipient.
-;
-MSG_WR_NoRcptReqGad
-Agg. _destinatario dopo|*_Annulla
-; _Add recipient later|*_Cancel
 ;
 MSG_WR_DiscardChanges
 Sei sicuro di voler cancellare tutte\n\
@@ -5456,7 +5453,7 @@ Inviati/Ricevuti
 ; Sent/Received
 ;
 MSG_CO_DATE_SNTRCVD
-Data invio/ricezione
+Data di invio/ricezione
 ; Date Sent/Received
 ;
 MSG_FROMTO
@@ -6497,13 +6494,13 @@ Messaggio %%ld di %ld
 ; COUNT, COUNT
 ;
 MSG_CO_CONVERTHTML
-Converti messaggi _HTML in testo semplice
+Converti come semplice testo i messaggi _HTML
 ; Con_vert HTML e-mails to plain text
 ;
 MSG_HELP_CO_CONVERTHTML
 Selezionando questa opzione sarà possibile convertire\n\
 i messaggi di posta (aventi consistenti parti HTML) in\n\
-testo semplice prima della loro visualizzazione finale.
+semplice testo prima della loro visualizzazione finale.
 ; If the main part of an e-mail is HTML, YAM will\n\
 ; convert it to plain text before displaying it.
 ;
@@ -9466,15 +9463,15 @@ Impostazioni per la composizione del messaggio
 ; Compose Mail Settings
 ;
 MSG_CO_IDENTITY_CC
-Indirizzo CC:
+Indirizzo CC
 ; CC: address
 ;
 MSG_CO_IDENTITY_BCC
-Indirizzo BCC:
+Indirizzo BCC
 ; BCC: address
 ;
 MSG_CO_IDENTITY_REPLYTO
-Indirizzo Rispondi-A:
+Indirizzo Rispondi-A
 ; Reply-To: address
 ;
 MSG_CO_IDENTITY_COMPOSE_OPTIONS
@@ -10672,7 +10669,7 @@ Cartelle predefinite
 ; Default folders
 ;
 MSG_CO_POP_INCOMINGFOLDER
-Cartella 'in arrivo'
+Cartella in arrivo
 ; 'Incoming' folder
 ;
 MSG_HELP_CO_PO_POP_INCOMINGFOLDER
@@ -10692,4 +10689,25 @@ it
 ; documentation request (HELP hotkey) and thus a
 ; potentially translated page should come up. For
 ; english, the MSG_LANGUAGE_CODE should be empty.
+;
+MSG_CO_CYRILLICCHARSETWARN
+La rilevazione automatica del set di caratteri cirillico è attivata ma\n\
+l'attuale configurazione del set di caratteri '%s' è incorretta.\n\
+Questa combinazione potrebbe causare problemi nei caratteri.\n\
+\n\
+Si desidera disattivare la rilevazione del set di caratteri cirillico?
+; Automatic detection of cyrillic charsets is enabled, but the\n\
+; configured charset '%s' is no cyrillic charset.\n\
+; This combination might cause malformed characters.\n\
+; \n\
+; Do you want to deactivate the cyrillic charset detection?
+; LOCALCHARSET
+;
+MSG_CO_CYRILLICCHARSETWARN_BT
+*_Disattiva|_Ignora
+; *_Deactivate|_Ignore
+;
+MSG_WR_NoRcptReqGad
+_Salva come bozza e chiudi|*_Annulla
+; _Save as draft and close window|*_Cancel
 ;
