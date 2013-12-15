@@ -2485,9 +2485,6 @@ message.
 ;
 ; Module WR - Procedures
 ;
-MSG_WR_ErrorNoRcpt (914//)
-Mail is incomplete: no recipient.
-;
 MSG_WR_DiscardChanges (917//)
 Do you really want to discard all\n\
 modifications to this message?
@@ -7068,7 +7065,7 @@ the 'rexxsyslib.library' in 'MOSSYS:Libs' and reboot your \
 system.
 ;
 MSG_WR_SAVEASDRAFT (2402//)
-Save as draft
+Save as _draft
 ;
 MSG_HELP_WR_BT_SAVEASDRAFT (2403//)
 Saves the message to\n\
@@ -7487,6 +7484,28 @@ Do you want to deactivate the cyrillic charset detection?
 MSG_CO_CYRILLICCHARSETWARN_BT (2521//)
 *_Deactivate|_Ignore
 ;
-MSG_WR_NoRcptReqGad (2522//)
-_Save as draft and close window|*_Cancel
+MSG_WR_NORCPT_WARNING_GADGET (2522//)
+_Save as draft|*_Cancel
+;
+MSG_WR_NORCPT_WARNING (2523//)
+The message is incomplete since\n\
+no recipient had been specified.\n\
+\n\
+How do you want to proceed?
+;
+MSG_WR_DISCARDCHANGES_GADGET (2524//)
+*_Save as draft|_Discard|_Cancel
+;
+MSG_MA_NO_SUBJECT (2525//)
+(No Subject)
+;
+MSG_MA_NO_RECIPIENTS (2526//)
+(No Recipients)
+;
+MSG_WR_CANCEL (2527//)
+_Cancel
+;
+MSG_HELP_WR_BT_CANCEL (2528//)
+Aborts the mail editing and\n\
+closes the window.
 ;

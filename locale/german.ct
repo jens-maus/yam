@@ -3351,9 +3351,6 @@ weiterleiten.
 ; Forward this\n\
 ; message
 ;
-MSG_WR_ErrorNoRcpt
-Nachricht ist unvollständig: Kein Empfänger.
-;
 MSG_WR_DiscardChanges
 Wollen Sie wirklich alle Änderungen\n\
 an dieser Nachricht verwerfen?
@@ -6771,7 +6768,7 @@ MSG_WR_SENDNOW
 Jetzt _senden
 ;
 MSG_WR_SENDLATER
-Später senden
+S_päter senden
 ;
 MSG_WR_MSENDNOW
 Jetzt senden
@@ -8869,6 +8866,28 @@ Wollen Sie die Erkennung kyrillischer Zeichensätze deaktivieren?
 MSG_CO_CYRILLICCHARSETWARN_BT
 *_Deaktivieren|_Ignorieren
 ;
-MSG_WR_NoRcptReqGad
-Als _Entwurf speichern und Fenster schließen|*_Abbrechen
+MSG_WR_NORCPT_WARNING_GADGET
+Als _Entwurf speichern|*_Abbrechen
+;
+MSG_WR_NORCPT_WARNING
+Die Nachricht ist unvollständig da kein\n\
+Empfänger angegeben wurde.\n\
+\n\
+Wie möchten Sie fortfahren?
+;
+MSG_WR_DISCARDCHANGES_GADGET
+*Als Entwurf _speichern|_Verwerfen|_Abbrechen
+;
+MSG_MA_NO_SUBJECT
+(Kein Betreff)
+;
+MSG_MA_NO_RECIPIENTS
+(Keine Empfänger)
+;
+MSG_WR_CANCEL
+_Abbrechen
+;
+MSG_HELP_WR_BT_CANCEL
+Bricht das Editieren der Nachricht ab\n\
+und schließt das Fenster.
 ;

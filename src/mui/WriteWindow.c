@@ -145,6 +145,7 @@ struct Data
   Object *BT_SAVEASDRAFT;
   Object *BT_QUEUE;
   Object *BT_SEND;
+  Object *BT_CANCEL;
   Object *MI_BOLD;
   Object *MI_ITALIC;
   Object *MI_UNDERLINE;
@@ -811,7 +812,6 @@ OVERLOAD(OM_NEW)
           MUIA_Menu_CopyStrings, FALSE,
           MenuChild, Menuitem(tr(MSG_WR_MSENDNOW), "S", TRUE, FALSE, WMEN_SENDNOW),
           MenuChild, Menuitem(tr(MSG_WR_MSENDLATER), "L", TRUE, FALSE, WMEN_QUEUE),
-        //MenuChild, Menuitem(tr(MSG_WR_MSAVEASDRAFT), "H", TRUE, FALSE, WMEN_SAVEASDRAFT),
           MenuChild, Menuitem(tr(MSG_WR_MCLOSE), "W", TRUE, FALSE, WMEN_CLOSE),
         End,
         MenuChild, MenuObject,
@@ -865,10 +865,11 @@ OVERLOAD(OM_NEW)
               Child, data->GR_BCC = MakeAddressField(&data->ST_BCC, tr(MSG_WR_REDIRECT_BCC), MSG_HELP_WR_ST_BCC, ABM_BCC, data->windowNumber, AFF_ALLOW_MULTI|AFF_EXTERNAL_SHORTCUTS),
             End,
 
-            Child, ColGroup(2),
-              Child, data->BT_SEND        = MakeButton(tr(MSG_WR_SENDNOW)),
-              Child, data->BT_QUEUE       = MakeButton(tr(MSG_WR_SENDLATER)),
-            //Child, data->BT_SAVEASDRAFT = MakeButton(tr(MSG_WR_SAVEASDRAFT)),
+            Child, ColGroup(4),
+              Child, data->BT_SEND  = MakeButton(tr(MSG_WR_SENDNOW)),
+              Child, data->BT_QUEUE = MakeButton(tr(MSG_WR_SENDLATER)),
+              Child, HVSpace,
+              Child, data->BT_CANCEL = MakeButton(tr(MSG_WR_CANCEL)),
             End,
 
           End,
@@ -879,7 +880,6 @@ OVERLOAD(OM_NEW)
       {
         DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SENDNOW,     obj, 2, METHOD(ComposeMail), WRITE_SEND);
         DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_QUEUE,       obj, 2, METHOD(ComposeMail), WRITE_QUEUE);
-        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SAVEASDRAFT, obj, 2, METHOD(ComposeMail), WRITE_DRAFT);
         DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_CLOSE,       obj, 1, METHOD(CancelAction));
         DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_CUT,         obj, 2, METHOD(EditActionPerformed), EA_CUT);
         DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_COPY,        obj, 2, METHOD(EditActionPerformed), EA_COPY);
@@ -1279,10 +1279,12 @@ OVERLOAD(OM_NEW)
             End,
 
             // Buttons
-            Child, ColGroup(3),
+            Child, ColGroup(5),
               Child, data->BT_SEND        = MakeButton(tr(MSG_WR_SENDNOW)),
               Child, data->BT_QUEUE       = MakeButton(tr(MSG_WR_SENDLATER)),
+              Child, HVSpace,
               Child, data->BT_SAVEASDRAFT = MakeButton(tr(MSG_WR_SAVEASDRAFT)),
+              Child, data->BT_CANCEL      = MakeButton(tr(MSG_WR_CANCEL)),
             End,
           End,
 
@@ -1586,6 +1588,7 @@ OVERLOAD(OM_NEW)
       SetHelp(data->BT_QUEUE,       MSG_HELP_WR_BT_QUEUE);
       SetHelp(data->BT_SAVEASDRAFT, MSG_HELP_WR_BT_SAVEASDRAFT);
       SetHelp(data->BT_SEND,        MSG_HELP_WR_BT_SEND);
+      SetHelp(data->BT_CANCEL,      MSG_HELP_WR_BT_CANCEL);
       SetHelp(data->PO_CODESET,     MSG_HELP_WR_PO_CHARSET);
 
       // declare the mail as modified if any of these objects reports a change
@@ -1611,6 +1614,7 @@ OVERLOAD(OM_NEW)
       DoMethod(data->BT_SAVEASDRAFT, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(ComposeMail), WRITE_DRAFT);
       DoMethod(data->BT_QUEUE,       MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(ComposeMail), WRITE_QUEUE);
       DoMethod(data->BT_SEND,        MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(ComposeMail), WRITE_SEND);
+      DoMethod(data->BT_CANCEL,      MUIM_Notify, MUIA_Pressed, FALSE, obj, 1, METHOD(CancelAction));
 
       // connect the closerequest attribute to the cancel action method so that
       // users might get informed of an eventually data loss
@@ -3797,7 +3801,6 @@ DECLARE(ComposeMail) // enum WriteMode mode
   struct FolderNode *fnode;
   struct Folder *mlFolder = NULL;
   ULONG success = FALSE;
-  BOOL closeWindow = (mode != WRITE_DRAFT);
 
   ENTER();
 
@@ -3841,11 +3844,10 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
     set(obj, MUIA_Window_ActiveObject, data->ST_TO);
 
-    if(MUI_Request(_app(obj), obj, MUIF_NONE, NULL, tr(MSG_WR_NoRcptReqGad), tr(MSG_WR_ErrorNoRcpt)) != 0)
+    if(MUI_Request(_app(obj), obj, MUIF_NONE, NULL, tr(MSG_WR_NORCPT_WARNING_GADGET), tr(MSG_WR_NORCPT_WARNING)) != 0)
     {
       // turn the action into writing a draft mail, but close the window nevertheless
       mode = WRITE_DRAFT;
-      closeWindow = TRUE;
     }
     else
       goto out;
@@ -4395,30 +4397,27 @@ DECLARE(ComposeMail) // enum WriteMode mode
     data->autoSaved = FALSE;
   }
 
-  if(closeWindow == TRUE)
+  // cleanup certain references if the window is to be closed
+  wmData->refMail = NULL;
+  wmData->draftMail = NULL;
+
+  if(wmData->refMailList != NULL)
   {
-    // cleanup certain references if the window is to be closed
-    wmData->refMail = NULL;
-    wmData->draftMail = NULL;
+    DeleteMailList(wmData->refMailList);
+    wmData->refMailList = NULL;
+  }
 
-    if(wmData->refMailList != NULL)
-    {
-      DeleteMailList(wmData->refMailList);
-      wmData->refMailList = NULL;
-    }
+  // cleanup the In-Reply-To / References stuff
+  if(wmData->inReplyToMsgID != NULL)
+  {
+    dstrfree(wmData->inReplyToMsgID);
+    wmData->inReplyToMsgID = NULL;
+  }
 
-    // cleanup the In-Reply-To / References stuff
-    if(wmData->inReplyToMsgID != NULL)
-    {
-      dstrfree(wmData->inReplyToMsgID);
-      wmData->inReplyToMsgID = NULL;
-    }
-
-    if(wmData->references != NULL)
-    {
-      dstrfree(wmData->references);
-      wmData->references = NULL;
-    }
+  if(wmData->references != NULL)
+  {
+    dstrfree(wmData->references);
+    wmData->references = NULL;
   }
 
   // now we make sure we immediately send out the mail.
@@ -4471,8 +4470,7 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
   // make sure to dispose the window data by calling
   // CleanupWriteMailData method as soon as this method is finished
-  if(closeWindow == TRUE)
-    DoMethod(_app(obj), MUIM_Application_PushMethod, _app(obj), 2, MUIM_YAMApplication_CleanupWriteMailData, wmData);
+  DoMethod(_app(obj), MUIM_Application_PushMethod, _app(obj), 2, MUIM_YAMApplication_CleanupWriteMailData, wmData);
 
   // update the statistics of the outgoing folder
   DisplayStatistics(outfolder, TRUE);
@@ -4489,7 +4487,7 @@ out:
 
   // free the list of MIME parts but don't delete temporary
   // files when the window is left open
-  FreePartsList(comp.FirstPart, closeWindow);
+  FreePartsList(comp.FirstPart, TRUE);
 
   // free the compose structure
   FreeCompose(&comp);
@@ -4610,7 +4608,7 @@ DECLARE(DoAutoSave)
 DECLARE(CancelAction)
 {
   GETDATA;
-  BOOL discard = TRUE;
+  BOOL closeWindow = TRUE;
 
   ENTER();
 
@@ -4621,26 +4619,25 @@ DECLARE(CancelAction)
        data->autoSaved == TRUE ||
        (data->wmData->mode != NMM_REDIRECT && xget(data->TE_EDIT, MUIA_TextEditor_HasChanged) == TRUE))
     {
-      switch(MUI_Request(_app(obj), obj, MUIF_NONE, NULL, tr(MSG_WR_DiscardChangesGad), tr(MSG_WR_DiscardChanges)))
+      switch(MUI_Request(_app(obj), obj, MUIF_NONE, NULL, tr(MSG_WR_DISCARDCHANGES_GADGET), tr(MSG_WR_DiscardChanges)))
       {
         case 0:
         {
-          // cancel
-          discard = FALSE;
+          // cancel and keep window open
+          closeWindow = FALSE;
         }
         break;
 
         case 1:
         {
-          // send later
-          DoMethod(obj, METHOD(ComposeMail), WRITE_QUEUE);
-          discard = FALSE;
+          // save as draft and close window
+          DoMethod(obj, METHOD(ComposeMail), WRITE_DRAFT);
         }
         break;
 
         case 2:
         {
-          // discard
+          // discard the mail and
           // remove a previously saved draft mail from the drafts folder, but only if the
           // draft mail was not the one being edited a second time
           if(data->wmData->mode != NMM_EDIT && data->wmData->draftMail != NULL)
@@ -4655,7 +4652,7 @@ DECLARE(CancelAction)
   // However, please note that because we do kill the window upon closing it
   // we have to use MUIM_Application_PushMethod instead of calling the
   // CleanupWriteMailData method directly
-  if(discard == TRUE)
+  if(closeWindow == TRUE)
     DoMethod(_app(obj), MUIM_Application_PushMethod, _app(obj), 2, MUIM_YAMApplication_CleanupWriteMailData, data->wmData);
 
   RETURN(0);

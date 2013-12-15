@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-12-15 Jens Maus <mail@jens-maus.de>
+
+  * mui/WriteWindow.c: modified all warnings when trying to close an unfinished
+    message to request to save a message as a draft rather than "send later".
+    In addition, all button actions will now work consistent and close the
+    window after performing the desired action which should be more intuitive.
+  * mui/MainMailList.c: a mail with no subject and/or no recipient will now
+    show "(No Subject)" and/or "(No Recipients)" in the mail list instead of
+    keeping the respective columns empty.
+
 2013-12-14 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: update to the latest changes.
