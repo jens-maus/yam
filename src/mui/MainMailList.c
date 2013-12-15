@@ -487,12 +487,17 @@ OVERLOAD(MUIM_NList_Display)
           addr = AddrName(*pe);
 
         // lets put the string together
-        snprintf(data->fromBuffer, sizeof(data->fromBuffer), "%s%s%s%s", isMultiRCPTMail(mail) ? SI_STR(SI_GROUP) : "",
-                                                       toPrefix ? tr(MSG_MA_ToPrefix) : "",
-                                                       addr,
-                                                       isMultiSenderMail(mail) && toPrefix == FALSE ? ", ..." : "");
+        if(IsStrEmpty(addr) == FALSE)
+        {
+          snprintf(data->fromBuffer, sizeof(data->fromBuffer), "%s%s%s%s", isMultiRCPTMail(mail) ? SI_STR(SI_GROUP) : "",
+                                                         toPrefix ? tr(MSG_MA_ToPrefix) : "",
+                                                         addr,
+                                                         isMultiSenderMail(mail) && toPrefix == FALSE ? ", ..." : "");
 
-        ndm->strings[1] = data->fromBuffer;
+          ndm->strings[1] = data->fromBuffer;
+        }
+        else
+          ndm->strings[1] = (char *)tr(MSG_MA_NO_RECIPIENTS);
       }
 
       // lets set all other fields now
@@ -508,7 +513,10 @@ OVERLOAD(MUIM_NList_Display)
       }
 
       // then the Subject
-      ndm->strings[3] = mail->Subject;
+      if(IsStrEmpty(mail->Subject) == FALSE)
+        ndm->strings[3] = mail->Subject;
+      else
+        ndm->strings[3] = (char *)tr(MSG_MA_NO_SUBJECT);
 
       if(hasMColDate(C->MessageCols) || data->inSearchWindow == TRUE)
       {
