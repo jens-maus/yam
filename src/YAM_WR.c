@@ -439,14 +439,16 @@ static void EmitRcptHeader(FILE *fh, const char *hdr, const char *body, struct c
 {
   ENTER();
 
-  D(DBF_MAIL, "writing recipient header '%s' with content '%s'", hdr, SafeStr(body));
-
   if(body != NULL)
   {
+    D(DBF_MAIL, "writing recipient header '%s' with content '%s'", hdr, SafeStr(body));
+
     fprintf(fh, "%s: ", hdr);
     EmitRcptField(fh, body, codeset);
     fputc('\n', fh);
   }
+  else
+    D(DBF_MAIL, "omitting recipient header '%s' because of empty body", hdr);
 
   LEAVE();
 }
@@ -2169,8 +2171,20 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
       if(quiet == FALSE)
         SafeOpenWindow(wmData->window);
 
+      // make sure that either the To:, Subject: or the
+      // texteditor is the active object depending on which
+      // string is empty
       p = (char *)xget(wmData->window, MUIA_WriteWindow_To);
-      set(wmData->window, MUIA_WriteWindow_ActiveObject, p[0] != '\0' ? MUIV_WriteWindow_ActiveObject_TextEditor : MUIV_WriteWindow_ActiveObject_To);
+      if(IsStrEmpty(p))
+        set(wmData->window, MUIA_WriteWindow_ActiveObject, MUIV_WriteWindow_ActiveObject_To);
+      else
+      {
+        p = (char *)xget(wmData->window, MUIA_WriteWindow_Subject);
+        if(IsStrEmpty(p))
+          set(wmData->window, MUIA_WriteWindow_ActiveObject, MUIV_WriteWindow_ActiveObject_Subject);
+        else
+          set(wmData->window, MUIA_WriteWindow_ActiveObject, MUIV_WriteWindow_ActiveObject_TextEditor);
+      }
 
       // start with an unmodified message
       set(wmData->window, MUIA_WriteWindow_Modified, FALSE);
@@ -2706,7 +2720,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
         switch(repmode)
         {
           // user wants to reply to sender of the
-          // mail only
+          // mail only or he didn't decide anything yet (default)
           case 1:
           {
             BOOL addDefault = FALSE;

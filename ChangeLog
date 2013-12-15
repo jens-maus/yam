@@ -7,6 +7,10 @@ $URL$
 
 2013-12-15 Jens Maus <mail@jens-maus.de>
 
+  * YAM_WR.c: when editing a draft mail where To: recipients exist the status
+    of the Subject: will now also be checked and then the Subject: string
+    object be activated if it was found empty instead of falling back to
+    activating the texteditor.
   * mui/WriteWindow.c: modified all warnings when trying to close an unfinished
     message to request to save a message as a draft rather than "send later".
     In addition, all button actions will now work consistent and close the
