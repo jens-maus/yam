@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-12-15 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: fixed some strings and updated to the latest changes.
+
 2013-12-15 Jens Maus <mail@jens-maus.de>
 
   * YAM_WR.c: when editing a draft mail where To: recipients exist the status

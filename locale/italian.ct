@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.54 (14.12.2013)
+## version $VER: YAM.catalog 8.55 (15.12.2013)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -842,8 +842,8 @@ e preleva i nuovi messaggi.
 ; and download new messages.
 ;
 MSG_HELP_MA_BT_SENDALL
-Spedisce tutti i messaggi di questa\n\
-cartella al server di posta.
+Invia i messaggi in attesa\n\
+nella cartella in uscita.
 ; Send queued messages\n\
 ; in the Outgoing folder.
 ;
@@ -1543,7 +1543,7 @@ Segna nuovi messaggi come non letti
 ; Mark new mail as unread
 ;
 MSG_CO_SendStart
-Spedisci la posta della cartella in attesa
+Spedisci la posta della cartella in uscita
 ; Send mail in outgoing queue
 ;
 MSG_CO_CheckDOB
@@ -1591,7 +1591,7 @@ Salva _foto in
 ; Save _photos in
 ;
 MSG_CO_AddToAddrbook
-Sal_va indirizzo del mittente
+Sal_va indirizzo mittente
 ; Sa_ve sender's address
 ;
 MSG_CO_ProxyServer
@@ -3416,13 +3416,9 @@ messaggio.
 ;
 ; Module WR - Procedures
 ;
-MSG_WR_ErrorNoRcpt
-Il messaggio è incompleto: nessun destinatario.
-; Mail is incomplete: no recipient.
-;
 MSG_WR_DiscardChanges
-Sei sicuro di voler cancellare tutte\n\
-le modifiche a questo messaggio?
+Sei sicuro di voler cancellare tutte le modifiche\n\
+apportate a questo messaggio?
 ; Do you really want to discard all\n\
 ; modifications to this message?
 ;
@@ -3905,13 +3901,13 @@ questo messaggio.
 ;
 MSG_HELP_WR_BT_QUEUE
 Copia il messaggio creato nella\n\
-cartella In uscita.
+cartella in uscita.
 ; Copy the created message to\n\
 ; the Outgoing folder.
 ;
 MSG_HELP_WR_BT_SEND
 Copia il messaggio creato nella cartella\n\
-In uscita e lo spedisce immediatamente.
+in uscita e lo spedisce immediatamente.
 ; Copy the created message to\n\
 ; the Outgoing folder and send\n\
 ; it immediately.
@@ -6467,7 +6463,7 @@ e di avere gli appropriati permessi di lettura
 ; and not read protected.
 ;
 MSG_CO_ABOOKLOOKUP
-Esegui un controllo sulla _rubrica nella lista messaggi
+Esegui un controllo della lista messaggi nella _rubrica
 ; _Address book lookup in message list
 ;
 MSG_HELP_CO_CH_ABOOKLOOKUP
@@ -9499,7 +9495,7 @@ Usa la firma nella risposta
 ; Use signature when replying
 ;
 MSG_CO_IDENTITY_USESIG_FORWARD
-Usa firma nel messaggio inoltrato
+Usa firma nel messaggio da inoltrare
 ; Use signature when forwarding
 ;
 MSG_CO_IDENTITY_PGPSETTINGS
@@ -9624,8 +9620,8 @@ quale questa identità appartiene.
 ;
 MSG_HELP_CO_CY_IDENTITY_MAILSERVER
 Consente di selezionare il server in uscita SMTP che\n\
-sarà utilizzato quando il messaggio sarà in procinto\n\
-di essere inviato attraverso questa identità.
+sarà utilizzato qualora il messaggio sia in procinto di\n\
+essere inviato attraverso questa identità.
 ; Allows you to select the outgoing SMTP server\n\
 ; which will be used when mail is going to be\n\
 ; sent using this user identity.
@@ -9650,8 +9646,8 @@ durante la composizione di un nuovo messaggio.
 ;
 MSG_HELP_CO_ST_IDENTITY_EXTRAHEADER
 Consente di specificare un valore predefinito per\n\
-l'aggiunta di intestazioni addizionali nel messaggio\n\
-di posta in uscita.
+l'aggiunta di intestazioni addizionali nei messaggi\n\
+presenti nella posta in uscita.
 ; Allows you to specify the default for putting\n\
 ; additional headers to an outgoing mail.
 ;
@@ -10401,7 +10397,7 @@ Validazione cartelle...
 ; Validating folders...
 ;
 MSG_MA_MARCHIVE
-Archivio
+Archivia
 ; Archive
 ;
 MSG_MA_ARCHIVE
@@ -10461,7 +10457,7 @@ caratteri di sistema, per cui il set visualizzato dovrà\n\
 coincidere con quello dei messaggi di posta in fase\n\
 di composizione.\n\
 Tuttavia sarà sempre possibile scegliere un altro\n\
-tipo di codifica per le mail in uscita.
+tipo di codifica per i messaggi di posta in uscita.
 ; Use the popup button to select the character set\n\
 ; you would like YAM to encode emails to.\n\
 ; This should usually match your system's default\n\
@@ -10707,7 +10703,39 @@ MSG_CO_CYRILLICCHARSETWARN_BT
 *_Disattiva|_Ignora
 ; *_Deactivate|_Ignore
 ;
-MSG_WR_NoRcptReqGad
-_Salva come bozza e chiudi|*_Annulla
-; _Save as draft and close window|*_Cancel
+MSG_WR_NORCPT_WARNING_GADGET
+_Salva come bozza|*_Annulla
+; _Save as draft|*_Cancel
+;
+MSG_WR_NORCPT_WARNING
+Il messaggio è incompleto in quanto non\n\
+è stato specificato alcun destinatario.\n\
+\n\
+Come si desidera procedere?
+; The message is incomplete since\n\
+; no recipient had been specified.\n\
+; \n\
+; How do you want to proceed?
+;
+MSG_WR_DISCARDCHANGES_GADGET
+*_Salva come bozza|_Cancella|_Annulla
+; *_Save as draft|_Discard|_Cancel
+;
+MSG_MA_NO_SUBJECT
+(Nessun oggetto)
+; (No Subject)
+;
+MSG_MA_NO_RECIPIENTS
+(Nessun destinatario)
+; (No Recipients)
+;
+MSG_WR_CANCEL
+_Annulla
+; _Cancel
+;
+MSG_HELP_WR_BT_CANCEL
+Annulla le modifiche apportate al\n\
+messaggio e chiude la finestra.
+; Aborts the mail editing and\n\
+; closes the window.
 ;
