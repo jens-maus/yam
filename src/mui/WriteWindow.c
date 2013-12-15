@@ -4630,8 +4630,12 @@ DECLARE(CancelAction)
 
         case 1:
         {
-          // save as draft and close window
+          // save as draft (ComposeMail method will close the window)
           DoMethod(obj, METHOD(ComposeMail), WRITE_DRAFT);
+
+          // set closeWindow to FALSE beause ComposeMail already
+          // cleans up / closes the window
+          closeWindow = FALSE;
         }
         break;
 
