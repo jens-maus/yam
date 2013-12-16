@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.43 (6.12.2013)
+## version $VER: YAM.catalog 8.44 (16.12.2013)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Maus, Thore Böckelmann
@@ -529,7 +529,7 @@ Die Nachricht hat mehrere mögliche Empfänger.\n\
 Möchten Sie die Antwort senden an die...
 ;
 MSG_MA_ReplyReqOpt
-*Ab_sender|A_bsender&Empfänger|_Empfänger|_Abbrechen
+*Ab_sender|A_bsender & Empfänger|_Empfänger|_Abbrechen
 ;
 MSG_MA_CompareReq
 Die Absenderadresse (From) ist \033b<%s>\033n,\n\
@@ -8891,3 +8891,5 @@ MSG_HELP_WR_BT_CANCEL
 Bricht das Editieren der Nachricht ab\n\
 und schließt das Fenster.
 ;
+MSG_MA_REPLYREQ_OPTIONS2
+*Ab_sender|A_bsender & Empfänger|_Abbrechen

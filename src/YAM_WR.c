@@ -2693,11 +2693,21 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
 
         // If this mail is a standard multi-recipient mail and the user hasn't pressed SHIFT
         // or ALT we going to ask him to which recipient he want to send the mail to.
-        if(isMultiRCPTMail(mail) && hasPrivateFlag(flags) == FALSE && hasMListFlag(flags) == FALSE)
+        if((isMultiRCPTMail(mail) || (email->NumMailReplyTo > 0 && email->NumFollowUpTo > 0)) && 
+            hasPrivateFlag(flags) == FALSE && hasMListFlag(flags) == FALSE)
         {
+          const char *opt;
+
+          // if we are here because of the Mail-Reply-To and Mail-Followup-To headers
+          // we only present two options instead of three
+          if(email->NumMailReplyTo > 0 && email->NumFollowUpTo > 0)
+            opt = tr(MSG_MA_REPLYREQ_OPTIONS2);
+          else
+            opt = tr(MSG_MA_ReplyReqOpt);
+
           // ask the user and in case he want to abort, quit this
           // function immediately.
-          if((repmode = MUI_Request(_app(wmData->window), G->MA->GUI.WI, MUIF_NONE, NULL, tr(MSG_MA_ReplyReqOpt), tr(MSG_MA_ReplyReq))) == 0)
+          if((repmode = MUI_Request(_app(wmData->window), G->MA->GUI.WI, MUIF_NONE, NULL, opt, tr(MSG_MA_ReplyReq))) == 0)
           {
             MA_FreeEMailStruct(email);
             fclose(out);
@@ -2793,7 +2803,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
             }
             else if(C->CompareAddress == TRUE &&
                     (hasMListFlag(flags) == FALSE || hasPrivateFlag(flags) == TRUE) &&
-                    (mail->ReplyTo.Address[0] != '\0' || email->NumMailReplyTo > 0))
+                    (IsStrEmpty(mail->ReplyTo.Address) == FALSE || email->NumMailReplyTo > 0))
             {
               BOOL askUser = FALSE;
 
@@ -2801,31 +2811,13 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
               // Thus we check for that one first
               if(email->NumMailReplyTo > 0)
               {
-                if(email->NumSFrom+1 == email->NumMailReplyTo)
-                {
-                  for(k=0; k < email->NumMailReplyTo; k++)
-                  {
-                    int diff;
-
-                    if(k == 0)
-                      diff = stricmp(mail->From.Address, email->MailReplyTo[k].Address);
-                    else
-                      diff = stricmp(email->SFrom[k-1].Address, email->MailReplyTo[k].Address);
-
-                    if(diff != 0)
-                    {
-                      askUser = TRUE;
-                      break;
-                    }
-                  }
-                }
-                else
-                  askUser = TRUE;
+                // force to use the Mail-Reply-To: header without asking anyone
+                askUser = FALSE;
               }
-              // now we have to check whether the ReplyTo: and From: of the original
-              // message are the very same or not.
               else if(email->NumSFrom == email->NumSReplyTo)
               {
+                // now we have to check whether the ReplyTo: and From: of the original
+                // message are the very same or not.
                 for(k=0; k < email->NumSFrom+1; k++)
                 {
                   int diff;
@@ -2849,10 +2841,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
               // ask the user which address he wants to reply to.
               if(askUser == TRUE)
               {
-                if(email->NumMailReplyTo > 0)
-                  snprintf(buffer, sizeof(buffer), tr(MSG_MA_CompareReq), mail->From.Address, email->MailReplyTo[0].Address);
-                else
-                  snprintf(buffer, sizeof(buffer), tr(MSG_MA_CompareReq), mail->From.Address, mail->ReplyTo.Address);
+                snprintf(buffer, sizeof(buffer), tr(MSG_MA_CompareReq), mail->From.Address, mail->ReplyTo.Address);
 
                 switch(MUI_Request(_app(wmData->window), G->MA->GUI.WI, MUIF_NONE, NULL, tr(MSG_MA_Compare3ReqOpt), buffer))
                 {
@@ -2934,7 +2923,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
           // user wants to reply to all senders and recipients
           case 2:
           {
-            // user wants to reply to all senders and recipients
+            // user wants to 'reply-to-all'
             // here Mail-Followup-To: has preference over Reply-To: or the
             // content of the From: recipient list
             if(email->NumFollowUpTo > 0)

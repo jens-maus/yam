@@ -406,7 +406,7 @@ The selected message has multiple recipients.\n\
 You want to send the reply to the...
 ;
 MSG_MA_ReplyReqOpt (150//)
-*_sender|sender and _all recipients|_recipients|_Cancel
+*_Sender|Sender and _all Recipients|_Recipients|_Cancel
 ;
 MSG_MA_CompareReq (151//)
 Sender address (From) is \033b<%s>\033n, but\n\
@@ -7508,4 +7508,7 @@ _Cancel
 MSG_HELP_WR_BT_CANCEL (2528//)
 Aborts the mail editing and\n\
 closes the window.
+;
+MSG_MA_REPLYREQ_OPTIONS2 (2529//)
+*_Sender|Sender and _all Recipients|_Cancel
 ;

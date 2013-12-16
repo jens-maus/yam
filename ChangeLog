@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-12-16 Jens Maus <mail@jens-maus.de>
+
+  * YAM_WR.c: fixed the partly broken reply routines not correctly respecting
+    the Mail-Reply-To: and Mail-Followup-To: headers by now correctly taking
+    preference of these two headers and explicitly asking the user if he either
+    wants to reply-to-sender or reply-to-all. This closes #454.
+
 2013-12-16 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: fixed some more strings.
