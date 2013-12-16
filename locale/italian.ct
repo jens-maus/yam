@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.55 (15.12.2013)
+## version $VER: YAM.catalog 8.56 (16.12.2013)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -888,7 +888,7 @@ Sei sicuro di volerli eliminare?
 ; Do you really want to delete it?
 ;
 MSG_CO_InvalidConf
-La configurazione è errata o incompleta!\n\
+La tua configurazione di YAM è errata o incompleta!\n\
 (Nome host, Indirizzo e-mail e/o password mancanti)\n\
 \n\
 Per favore riempi questi campi e riprova nuovamente.
@@ -9164,7 +9164,7 @@ Dimensione: %s
 ; NAME, ADDRESS, NAME, ADDRESS, SUBJECT, DATE, FILENAME, SIZE
 ;
 MSG_CO_UPDATE_DOWNLOAD_PATH
-_Percorso download:
+_Percorso download
 ; Download _path:
 ;
 MSG_UPD_NOTIFICATION_DOWNLOAD

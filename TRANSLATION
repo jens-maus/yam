@@ -19,7 +19,7 @@
  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
  YAM Official Support Site :  http://www.yam.ch/
- YAM OpenSource project    :  http://sourceforge.net/projects/yamos/
+ YAM OpenSource project    :  http://sourceforge.net/projects/yam/?source=directory
 
  $Id$
 
@@ -46,7 +46,7 @@ http://www.aminet.net/package.php?package=dev/misc/subversion-1.1.4.lha
 After that, you can go and do a checkout by doing something like this:
 
  cd "where you want to store the files"
- svn co https://svn.yam.ch/svn/yam/trunk yam
+ svn co https://svn.yam.ch/trunk
 
 This will checkout the sources from our "trunk" to your local directory
 "yam".

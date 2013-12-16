@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-12-16 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: fixed some more strings.
+  * TRANSLATION: updated to the recent checkout url.
+
 2013-12-16 Vit Sindlar <sindlarv at centrum dot cz>
 
   * locale/czech.ct: once again updated the Czech translation.
