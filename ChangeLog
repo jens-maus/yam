@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-12-16 Vit Sindlar <sindlarv at centrum dot cz>
+
+  * locale/czech.ct: once again updated the Czech translation.
+
 2013-12-15 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: fixed some strings and updated to the latest changes.

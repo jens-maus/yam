@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.4 (14.12.2013)
+## version $VER: YAM.catalog 8.5 (16.12.2013)
 ## language czech
 ## codeset 5
 ;
@@ -3371,17 +3371,13 @@ zprávu.
 ;
 ; Module WR - Procedures
 ;
-MSG_WR_ErrorNoRcpt
-Zpráva není úplná: Zadejte adresu pøíjemce.
-; Mail is incomplete: no recipient.
-;
 MSG_WR_DiscardChanges
 Opravdu chcete pøijít o v¹echny provedené úpravy?
 ; Do you really want to discard all\n\
 ; modifications to this message?
 ;
 MSG_WR_DiscardChangesGad
-*Ode_slat pozdìji|Zavøí_t|_Zru¹it
+*Ode_slat pozdìji|Z_avøít bez ulo¾ení|_Zru¹it
 ; *_Send later|_Discard|_Cancel
 ;
 MSG_WR_SaveTextAs
@@ -9794,8 +9790,8 @@ nakonec restartovat systém.
 ; system.
 ;
 MSG_WR_SAVEASDRAFT
-Ulo¾it jako koncept
-; Save as draft
+Ulo¾it jako _koncept
+; Save as _draft
 ;
 MSG_HELP_WR_BT_SAVEASDRAFT
 Ulo¾í rozepsanou zprávu do slo¾ky 'Koncepty'.
@@ -10377,7 +10373,38 @@ MSG_CO_CYRILLICCHARSETWARN_BT
 *_Vypnout|_Ignorovat
 ; *_Deactivate|_Ignore
 ;
-MSG_WR_NoRcptReqGad
-Ulo¾it rozep_sané a zavøít|*_Zru¹it
-; _Save as draft and close window|*_Cancel
+MSG_WR_NORCPT_WARNING_GADGET
+Ulo¾it rozep_sané|*_Zru¹it
+; _Save as draft|*_Cancel
+;
+MSG_WR_NORCPT_WARNING
+Je¹tì jste nezadali ve¹keré potøebné údaje, jako\n\
+je napøíklad pøíjemce zprávy.\n\
+\n\
+Co si pøejete udìlat?
+; The message is incomplete since\n\
+; no recipient had been specified.\n\
+; \n\
+; How do you want to proceed?
+;
+MSG_WR_DISCARDCHANGES_GADGET
+*Ulo¾it rozep_sané|Z_avøít bez ulo¾ení|_Zru¹it
+; *_Save as draft|_Discard|_Cancel
+;
+MSG_MA_NO_SUBJECT
+(bez pøedmìtu)
+; (No Subject)
+;
+MSG_MA_NO_RECIPIENTS
+(bez adresátù)
+; (No Recipients)
+;
+MSG_WR_CANCEL
+_Zru¹it
+; _Cancel
+;
+MSG_HELP_WR_BT_CANCEL
+Zavøe okno se zprávou.
+; Aborts the mail editing and\n\
+; closes the window.
 ;
