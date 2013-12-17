@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-12-17 Pär Boberg <pbobbenb@spray.se>
+
+  * locale/swedish.ct: updated to the latest changes.
+
 2013-12-17 Jens Maus <mail@jens-maus.de>
 
   * mui/WriteWindow.c, misc: partly reverted the recent change to the

@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.6 (30.11.2013)
+## version $VER: YAM.catalog 8.7 (17.12.2013)
 ## language svenska
 ## codeset 0
 ;
@@ -528,8 +528,8 @@ Det valda meddelandet har flera mottagare.\n\nDu vill skicka svaret till...
 ; You want to send the reply to the...
 ;
 MSG_MA_ReplyReqOpt
-*av_sändaren|avsändaren och _alla mottagare|mottaga_re|A_vbryt
-; *_sender|sender and _all recipients|_recipients|_Cancel
+*Av_sändaren|Avsändaren och _alla mottagare|Mottaga_re|A_vbryt
+; *_Sender|Sender and _all Recipients|_Recipients|_Cancel
 ;
 MSG_MA_CompareReq
 Avsändarens adress (Från) är \033b<%s>\033n, men\nsvarsadressen (Svar till) är \033b<%s>\033n.\n\nVilken adress vill du använda?
@@ -3200,14 +3200,6 @@ Vidarebefordra\ndetta meddelande.
 ;
 ;
 ; Module WR - Procedures
-;
-MSG_WR_ErrorNoRcpt
-Brevet saknar mottagare!
-; Mail is incomplete: no recipient.
-;
-MSG_WR_NoRcptReqGad
-Lägg till mott_agare senare|*A_vbryt
-; _Add recipient later|*_Cancel
 ;
 MSG_WR_DiscardChanges
 Vill du verkligen kasta alla ändringar?
@@ -9102,8 +9094,8 @@ till 'SYS:Libs', sedan döpa om 'rexxsyslib.library' i \
 ; system.
 ;
 MSG_WR_SAVEASDRAFT
-Spara som utkast
-; Save as draft
+Spara som _utkast
+; Save as _draft
 ;
 MSG_HELP_WR_BT_SAVEASDRAFT
 Sparar meddelandet till\n\
@@ -9695,4 +9687,44 @@ Vill du inaktivera detekteringen av cyrillisk teckenuppsättning?
 MSG_CO_CYRILLICCHARSETWARN_BT
 *_Inaktivera|I_gnorera
 ; *_Deactivate|_Ignore
+;
+MSG_WR_NORCPT_WARNING_GADGET
+_Spara som utkast|*_Avbryt
+; _Save as draft|*_Cancel
+;
+MSG_WR_NORCPT_WARNING
+Meddelandet är ej komplett, eftersom\n\
+ingen mottagare specifierats.\n\
+\n\
+Hur vill du fortsätta?
+; The message is incomplete since\n\
+; no recipient had been specified.\n\
+; \n\
+; How do you want to proceed?
+;
+MSG_WR_DISCARDCHANGES_GADGET
+*_Spara som utkast|_Kasta|_Avbryt
+; *_Save as draft|_Discard|_Cancel
+;
+MSG_MA_NO_SUBJECT
+(Inget ärende)
+; (No Subject)
+;
+MSG_MA_NO_RECIPIENTS
+(Inga mottagare)
+; (No Recipients)
+;
+MSG_WR_CANCEL
+A_vbryt
+; _Cancel
+;
+MSG_HELP_WR_BT_CANCEL
+Avbryter brevredigeringen och\n\
+stänger fönstret.
+; Aborts the mail editing and\n\
+; closes the window.
+;
+MSG_MA_REPLYREQ_OPTIONS2
+*_Avsändare|Avsändare _och alla mottagare|A_vbryt
+; *_Sender|Sender and _all Recipients|_Cancel
 ;
