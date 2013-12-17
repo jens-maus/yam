@@ -5812,6 +5812,10 @@ BOOL GotoURL(const char *url, const BOOL newWindow)
       }
     }
   }
+  if(wentToUrl == FALSE)
+    W(DBF_UTIL, "opening URL '%s' was NOT successful", url);
+  else
+    D(DBF_UTIL, "opening URL '%s' was successful", url);
 
   RETURN(wentToURL);
   return wentToURL;

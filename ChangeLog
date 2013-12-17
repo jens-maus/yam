@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-12-17 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_UT.c: added some output whether opening a URL was successful or not.
+
 2013-12-16 Jens Maus <mail@jens-maus.de>
 
   * YAM_WR.c: fixed the partly broken reply routines not correctly respecting
