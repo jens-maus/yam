@@ -64,7 +64,7 @@ void rx_writesend(UNUSED struct RexxHost *host, struct RexxParams *params, enum 
       struct WriteMailData *wmData = G->ActiveRexxWMData;
 
       if(wmData != NULL && wmData->window != NULL)
-        DoMethod(wmData->window, MUIM_WriteWindow_ComposeMail, WRITE_SEND);
+        DoMethod(wmData->window, MUIM_WriteWindow_ComposeMail, WRITE_SEND, TRUE);
       else
         params->rc = RETURN_ERROR;
     }

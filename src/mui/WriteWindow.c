@@ -878,8 +878,8 @@ OVERLOAD(OM_NEW)
 
       if(obj != NULL)
       {
-        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SENDNOW,     obj, 2, METHOD(ComposeMail), WRITE_SEND);
-        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_QUEUE,       obj, 2, METHOD(ComposeMail), WRITE_QUEUE);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SENDNOW,     obj, 3, METHOD(ComposeMail), WRITE_SEND, TRUE);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_QUEUE,       obj, 3, METHOD(ComposeMail), WRITE_QUEUE, TRUE);
         DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_CLOSE,       obj, 1, METHOD(CancelAction));
         DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_CUT,         obj, 2, METHOD(EditActionPerformed), EA_CUT);
         DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_COPY,        obj, 2, METHOD(EditActionPerformed), EA_COPY);
@@ -1385,9 +1385,9 @@ OVERLOAD(OM_NEW)
         DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_INSUUCODE,   obj, 2, METHOD(EditorCmd), ED_INSUUCODE);
         DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SAVEAS,      obj, 1, METHOD(SaveTextAs));
         DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_EDIT,        obj, 1, METHOD(LaunchEditor));
-        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SENDNOW,     obj, 2, METHOD(ComposeMail), WRITE_SEND);
-        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_QUEUE,       obj, 2, METHOD(ComposeMail), WRITE_QUEUE);
-        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SAVEASDRAFT, obj, 2, METHOD(ComposeMail), WRITE_DRAFT);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SENDNOW,     obj, 3, METHOD(ComposeMail), WRITE_SEND, TRUE);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_QUEUE,       obj, 3, METHOD(ComposeMail), WRITE_QUEUE, TRUE);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SAVEASDRAFT, obj, 3, METHOD(ComposeMail), WRITE_DRAFT, TRUE);
         DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_CLOSE,       obj, 1, METHOD(CancelAction));
         DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_CUT,         obj, 2, METHOD(EditActionPerformed), EA_CUT);
         DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_COPY,        obj, 2, METHOD(EditActionPerformed), EA_COPY);
@@ -1611,9 +1611,9 @@ OVERLOAD(OM_NEW)
       DoMethod(data->PO_CODESET, MUIM_Notify, MUIA_CodesetPopup_Codeset, MUIV_EveryTime, obj, 2, METHOD(CodesetChanged), MUIV_TriggerValue);
 
       // set main window button notifies
-      DoMethod(data->BT_SAVEASDRAFT, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(ComposeMail), WRITE_DRAFT);
-      DoMethod(data->BT_QUEUE,       MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(ComposeMail), WRITE_QUEUE);
-      DoMethod(data->BT_SEND,        MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(ComposeMail), WRITE_SEND);
+      DoMethod(data->BT_SAVEASDRAFT, MUIM_Notify, MUIA_Pressed, FALSE, obj, 3, METHOD(ComposeMail), WRITE_DRAFT, TRUE);
+      DoMethod(data->BT_QUEUE,       MUIM_Notify, MUIA_Pressed, FALSE, obj, 3, METHOD(ComposeMail), WRITE_QUEUE, TRUE);
+      DoMethod(data->BT_SEND,        MUIM_Notify, MUIA_Pressed, FALSE, obj, 3, METHOD(ComposeMail), WRITE_SEND, TRUE);
       DoMethod(data->BT_CANCEL,      MUIM_Notify, MUIA_Pressed, FALSE, obj, 1, METHOD(CancelAction));
 
       // connect the closerequest attribute to the cancel action method so that
@@ -3786,7 +3786,7 @@ DECLARE(GetAttachment) // int num, struct Attach *att
 ///
 /// DECLARE(ComposeMail)
 //  Validates write window options and generates a new message
-DECLARE(ComposeMail) // enum WriteMode mode
+DECLARE(ComposeMail) // enum WriteMode mode, ULONG closeWindow
 {
   GETDATA;
   struct Compose comp;
@@ -4397,27 +4397,30 @@ DECLARE(ComposeMail) // enum WriteMode mode
     data->autoSaved = FALSE;
   }
 
-  // cleanup certain references if the window is to be closed
-  wmData->refMail = NULL;
-  wmData->draftMail = NULL;
-
-  if(wmData->refMailList != NULL)
+  if(msg->closeWindow == TRUE)
   {
-    DeleteMailList(wmData->refMailList);
-    wmData->refMailList = NULL;
-  }
+    // cleanup certain references if the window is to be closed
+    wmData->refMail = NULL;
+    wmData->draftMail = NULL;
 
-  // cleanup the In-Reply-To / References stuff
-  if(wmData->inReplyToMsgID != NULL)
-  {
-    dstrfree(wmData->inReplyToMsgID);
-    wmData->inReplyToMsgID = NULL;
-  }
+    if(wmData->refMailList != NULL)
+    {
+      DeleteMailList(wmData->refMailList);
+      wmData->refMailList = NULL;
+    }
 
-  if(wmData->references != NULL)
-  {
-    dstrfree(wmData->references);
-    wmData->references = NULL;
+    // cleanup the In-Reply-To / References stuff
+    if(wmData->inReplyToMsgID != NULL)
+    {
+      dstrfree(wmData->inReplyToMsgID);
+      wmData->inReplyToMsgID = NULL;
+    }
+
+    if(wmData->references != NULL)
+    {
+      dstrfree(wmData->references);
+      wmData->references = NULL;
+    }
   }
 
   // now we make sure we immediately send out the mail.
@@ -4470,7 +4473,8 @@ DECLARE(ComposeMail) // enum WriteMode mode
 
   // make sure to dispose the window data by calling
   // CleanupWriteMailData method as soon as this method is finished
-  DoMethod(_app(obj), MUIM_Application_PushMethod, _app(obj), 2, MUIM_YAMApplication_CleanupWriteMailData, wmData);
+  if(msg->closeWindow == TRUE)
+    DoMethod(_app(obj), MUIM_Application_PushMethod, _app(obj), 2, MUIM_YAMApplication_CleanupWriteMailData, wmData);
 
   // update the statistics of the outgoing folder
   DisplayStatistics(outfolder, TRUE);
@@ -4487,7 +4491,7 @@ out:
 
   // free the list of MIME parts but don't delete temporary
   // files when the window is left open
-  FreePartsList(comp.FirstPart, TRUE);
+  FreePartsList(comp.FirstPart, msg->closeWindow);
 
   // free the compose structure
   FreeCompose(&comp);
@@ -4582,7 +4586,7 @@ DECLARE(DoAutoSave)
          xget(data->ST_BCC, MUIA_RecipientString_MatchwindowOpen) == FALSE &&
          xget(data->ST_REPLYTO, MUIA_RecipientString_MatchwindowOpen) == FALSE)
       {
-        if(DoMethod(obj, METHOD(ComposeMail), WRITE_DRAFT) == TRUE)
+        if(DoMethod(obj, METHOD(ComposeMail), WRITE_DRAFT, FALSE) == TRUE)
         {
           // we must remember if the mail was automatically saved, since the editor object cannot
           // tell about changes anymore if they don't happen from now on.
@@ -4631,7 +4635,7 @@ DECLARE(CancelAction)
         case 1:
         {
           // save as draft (ComposeMail method will close the window)
-          DoMethod(obj, METHOD(ComposeMail), WRITE_DRAFT);
+          DoMethod(obj, METHOD(ComposeMail), WRITE_DRAFT, TRUE);
 
           // set closeWindow to FALSE beause ComposeMail already
           // cleans up / closes the window

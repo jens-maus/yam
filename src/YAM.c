@@ -1286,7 +1286,7 @@ BOOL StayInProg(void)
       SafeIterateList(&G->writeMailDataList, struct WriteMailData *, wmData, succ)
       {
         if(wmData->window != NULL)
-          DoMethod(wmData->window, MUIM_WriteWindow_ComposeMail, WRITE_QUEUE);
+          DoMethod(wmData->window, MUIM_WriteWindow_ComposeMail, WRITE_QUEUE, TRUE);
       }
     }
   }

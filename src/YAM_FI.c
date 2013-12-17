@@ -1373,7 +1373,7 @@ BOOL ExecuteFilterAction(const struct FilterNode *filter, struct Mail *mail, str
       if((wmData = NewRedirectMailWindow(mlist, NEWF_QUIET)) != NULL)
       {
         set(wmData->window, MUIA_WriteWindow_To, filter->redirectTo);
-        DoMethod(wmData->window, MUIM_WriteWindow_ComposeMail, WRITE_QUEUE);
+        DoMethod(wmData->window, MUIM_WriteWindow_ComposeMail, WRITE_QUEUE, TRUE);
 
         if(result != NULL)
           result->Redirected++;
@@ -1397,7 +1397,7 @@ BOOL ExecuteFilterAction(const struct FilterNode *filter, struct Mail *mail, str
       if((wmData = NewForwardMailWindow(mlist, NEWF_QUIET)) != NULL)
       {
         set(wmData->window, MUIA_WriteWindow_To, filter->forwardTo);
-        DoMethod(wmData->window, MUIM_WriteWindow_ComposeMail, WRITE_QUEUE);
+        DoMethod(wmData->window, MUIM_WriteWindow_ComposeMail, WRITE_QUEUE, TRUE);
 
         if(result != NULL)
           result->Forwarded++;
@@ -1421,7 +1421,7 @@ BOOL ExecuteFilterAction(const struct FilterNode *filter, struct Mail *mail, str
       if((wmData = NewReplyMailWindow(mlist, NEWF_QUIET, NULL)) != NULL)
       {
         DoMethod(wmData->window, MUIM_WriteWindow_LoadText, filter->replyFile, TRUE);
-        DoMethod(wmData->window, MUIM_WriteWindow_ComposeMail, WRITE_QUEUE);
+        DoMethod(wmData->window, MUIM_WriteWindow_ComposeMail, WRITE_QUEUE, TRUE);
 
         if(result != NULL)
           result->Replied++;

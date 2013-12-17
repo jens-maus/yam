@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-12-17 Jens Maus <mail@jens-maus.de>
+
+  * mui/WriteWindow.c, misc: partly reverted the recent change to the
+    ComposeMail function which was changed to always close a write window
+    after any operation. Now the function will take an additional argument
+    to allow to define if the function should close a window or not after
+    the desired operation. This allowed to fix a problem where upon
+    autosaving a mail the window was always closed. This closes #474.
+
 2013-12-17 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_UT.c: added some output whether opening a URL was successful or not.
