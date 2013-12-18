@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.5 (16.12.2013)
+## version $VER: YAM.catalog 8.6 (18.12.2013)
 ## language czech
 ## codeset 5
 ;
@@ -533,7 +533,7 @@ Chcete odpovìdìt...
 ;
 MSG_MA_ReplyReqOpt
 *ode_sílateli|odesílateli _a v¹em ostatním|jen _pøíjemcùm|_Zru¹it
-; *_sender|sender and _all recipients|_recipients|_Cancel
+; *_Sender|Sender and _all Recipients|_Recipients|_Cancel
 ;
 MSG_MA_CompareReq
 Adresa odesílatele (From) je \033b<%s>\033n,\n\
@@ -10407,4 +10407,8 @@ MSG_HELP_WR_BT_CANCEL
 Zavøe okno se zprávou.
 ; Aborts the mail editing and\n\
 ; closes the window.
+;
+MSG_MA_REPLYREQ_OPTIONS2
+*ode_sílateli|odesílateli _a v¹em ostatním|_Zru¹it
+; *_Sender|Sender and _all Recipients|_Cancel
 ;

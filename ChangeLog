@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-12-18 Vit Sindlar <sindlarv at centrum dot cz>
+
+  * locale/czech.ct: updated Czech translation.
+
 2013-12-18 Jens Maus <mail@jens-maus.de>
 
   * YAM.c: bumped the minimum required versions of TheBar.mcc and
