@@ -987,6 +987,7 @@ static void Terminate(void)
     FreeSysObject(ASOT_ITEMPOOL, G->mailItemPool);
     G->mailItemPool = NULL;
   }
+
   if(G->mailNodeItemPool != NULL)
   {
     FreeSysObject(ASOT_ITEMPOOL, G->mailNodeItemPool);
@@ -1886,16 +1887,16 @@ static void InitBeforeLogin(BOOL hidden)
   //       this causes the MUI version of MorphOS to be borked, thus this workaround!
   //
   //       customclass      minv minr maxv maxr  mand  url
-  CheckMCC(MUIC_TheBar,       26,  13,   0,   0, TRUE, "http://sf.net/p/thebar/");
-  CheckMCC(MUIC_TheBarVirt,   26,  13,   0,   0, TRUE, "http://sf.net/p/thebar/");
-  CheckMCC(MUIC_TheButton,    26,  13,   0,   0, TRUE, "http://sf.net/p/thebar/");
+  CheckMCC(MUIC_TheBar,       26,  14,   0,   0, TRUE, "http://sf.net/p/thebar/");
+  CheckMCC(MUIC_TheBarVirt,   26,  14,   0,   0, TRUE, "http://sf.net/p/thebar/");
+  CheckMCC(MUIC_TheButton,    26,  14,   0,   0, TRUE, "http://sf.net/p/thebar/");
   CheckMCC(MUIC_BetterString, 11,  26,  30,   0, TRUE, "http://sf.net/p/bstring-mcc/");
   CheckMCC(MUIC_NList,        20, 136,   0,   0, TRUE, "http://sf.net/p/nlist-classes/");
   CheckMCC(MUIC_NListview,    19,  91,   0,   0, TRUE, "http://sf.net/p/nlist-classes/");
   CheckMCC(MUIC_NFloattext,   19,  72,   0,   0, TRUE, "http://sf.net/p/nlist-classes/");
   CheckMCC(MUIC_NListtree,    18,  43,   0,   0, TRUE, "http://sf.net/p/nlist-classes/");
   CheckMCC(MUIC_NBalance,     15,  17,   0,   0, TRUE, "http://sf.net/p/nlist-classes/");
-  CheckMCC(MUIC_TextEditor,   15,  42,   0,   0, TRUE, "http://sf.net/p/texteditor-mcc/");
+  CheckMCC(MUIC_TextEditor,   15,  43,   0,   0, TRUE, "http://sf.net/p/texteditor-mcc/");
 
   // now we search through PROGDIR:Charsets and load all user defined
   // codesets via codesets.library

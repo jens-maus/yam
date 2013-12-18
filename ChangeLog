@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-12-18 Jens Maus <mail@jens-maus.de>
+
+  * YAM.c: bumped the minimum required versions of TheBar.mcc and
+    TextEditor.mcc to the latest available versions since they fix
+    some important bugs related to YAM.
+
 2013-12-17 Pär Boberg <pbobbenb@spray.se>
 
   * locale/swedish.ct: updated to the latest changes.
