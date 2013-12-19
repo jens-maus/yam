@@ -2503,6 +2503,7 @@ int main(int argc, char **argv)
     // these two must be accessible all the time
     if((G->virtualMailpart[0] = calloc(1, sizeof(*G->virtualMailpart[0]))) == NULL)
       break;
+
     if((G->virtualMailpart[1] = calloc(1, sizeof(*G->virtualMailpart[1]))) == NULL)
       break;
 
@@ -2517,6 +2518,7 @@ int main(int argc, char **argv)
       // break out immediately to signal an error!
       break;
     }
+
     if((G->mailNodeItemPool = AllocSysObjectTags(ASOT_ITEMPOOL,
       ASOITEM_MFlags, MEMF_SHARED|MEMF_CLEAR,
       ASOITEM_ItemSize, sizeof(struct MailNode),

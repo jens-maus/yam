@@ -433,6 +433,7 @@ struct Mail *CloneMail(const struct Mail *mail)
   if((clone = ItemPoolAlloc(G->mailItemPool)) != NULL)
   {
     memcpy(clone, mail, sizeof(*clone));
+
     // start with a reference counter of zero
     clone->RefCounter = 0;
   }
@@ -448,8 +449,13 @@ void FreeMail(struct Mail *mail)
 {
   ENTER();
 
-  if(mail != NULL && mail->RefCounter == 0)
-    ItemPoolFree(G->mailItemPool, mail);
+  if(mail != NULL)
+  {
+    if(mail->RefCounter == 0)
+      ItemPoolFree(G->mailItemPool, mail);
+    else
+      W(DBF_MAIL, "FreeMail attempt on mail (%08lx) with RefCounter > 0 (%d)", mail, mail->RefCounter);
+  }
 
   LEAVE();
 }
