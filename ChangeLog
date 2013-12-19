@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-12-18 Alexandre Balaban <abalaban@free.fr>
+
+  * locale/french.ct: updated according to latest changes.
+
 2013-12-19 Jens Maus <mail@jens-maus.de>
 
   * locale/YAM.cd, locale/german.ct: removed orphaned strings from catalog.

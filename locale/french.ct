@@ -1,10 +1,10 @@
-## version $VER: YAM.catalog 8.1 (04.02.2013)
+## version $VER: YAM.catalog 8.1 (18.12.2013)
 ## language français
 ## codeset 111
 ;
 ## chunk AUTH Alexandre Balaban/ATO-fr
 ; YAM.cd - YAM 2.8 catalog description file
-; based on YAM.cd 6554 2013-01-29 12:39:56Z
+; $Id$
 ;
 ; Please note that all catalog strings have to carry a proper
 ; identifier number in the (X//) string part of the MSG_ identifier
@@ -38,10 +38,6 @@ Pièces jointes
 MSG_Options
 Options
 ; Options
-;
-MSG_Del
-Su_pprimer
-; _Delete
 ;
 MSG_New
 Nouveau
@@ -206,10 +202,6 @@ MSG_To
 MSG_Columns
 Colonnes
 ; Columns
-;
-MSG_Path
-Chemin
-; Path
 ;
 MSG_Version
 Version:
@@ -467,11 +459,6 @@ Message de « %s » sur « %s » retransmis à « %s »
 ; Forwarded message from '%s' about '%s' to '%s'
 ; SENDER, SUBJECT, RECIPIENT
 ;
-MSG_LOG_Filtering
-%ld message(s) du dossier « %s » filtré(s) : %ld correspondances
-; Filtered %ld message(s) in folder '%s': %ld match(es)
-; COUNT, FOLDER, COUNT
-;
 MSG_LOG_SavingConfig
 Fichier de configuration « %s » sauvegardé
 ; Saved configuration file '%s'
@@ -537,19 +524,19 @@ Entrez le mot de passe pour y accéder :
 ; FOLDER
 ;
 MSG_MA_ReplyReq
-Ce message à de multiple destinataires.\n\
+Ce message a de multiples destinataires.\n\
 \n\
-Vous voulez envoyer la réponse...
+À qui voulez-vous envoyer la réponse ?
 ; The selected message has multiple recipients.\n\
 ; \n\
 ; You want to send the reply to the...
 ;
 MSG_MA_ReplyReqOpt
-*à\n\
-l'_expéditeur|à l'expéditeur et\n\
-à _tous les destinataires|aux\n\
+*À\n\
+l'_expéditeur|À l'expéditeur et\n\
+à _tous les destinataires|Aux\n\
 _destinataires|_Annuler
-; *_sender|sender and _all recipients|_recipients|_Cancel
+; *_Sender|Sender and _all Recipients|_Recipients|_Cancel
 ;
 MSG_MA_CompareReq
 L'expéditeur est \033b<%s>\033n, mais\n\
@@ -578,13 +565,13 @@ Filtrage terminé :\n\
 \n\
 %3ld messages vérifiés,\n\
 %3ld retransmis,\n\
-%3ld archivés,\n\
+%3ld déplacés,\n\
 %3ld effacés.
 ; Filtering done:\n\
 ; \n\
 ; %3ld messages checked,\n\
 ; %3ld forwarded,\n\
-; %3ld archived,\n\
+; %3ld moved,\n\
 ; %3ld deleted
 ; COUNT, COUNT, COUNT, COUNT
 ;
@@ -745,18 +732,6 @@ MSG_MA_NewFolder
 Nouveau dossier
 ; New folder
 ;This is the title of the new folder window, not the menu item.
-;
-MSG_MA_SortOrder
-Ordre
-; Order
-;
-MSG_MA_OSave
-Enregistrer
-; Save
-;
-MSG_MA_Reset
-Restituer
-; Reset
 ;
 MSG_MA_Select
 Sélectionner
@@ -1112,106 +1087,6 @@ MSG_CO_Cancel
 _Annuler
 ; _Cancel
 ;
-MSG_CO_TZoneM12
-(GMT-12:00) Les îles Kwajalein (IDLW)
-; (GMT-12:00) Kwajalein Islands (IDLW)
-;
-MSG_CO_TZoneM11
-(GMT-11:00) Les îles Midway, Samoa (NT)
-; (GMT-11:00) Midway Islands, Samoa (NT)
-;
-MSG_CO_TZoneM10
-(GMT-10:00) Honolulu, Tahiti (HST)
-; (GMT-10:00) Honolulu, Tahiti (HST)
-;
-MSG_CO_TZoneM9
-(GMT-09:00) Anchorage (AKST)
-; (GMT-09:00) Anchorage (AKST)
-;
-MSG_CO_TZoneM8
-(GMT-08:00) Los Angeles, San Francisco (PST)
-; (GMT-08:00) Los Angeles, San Francisco (PST)
-;
-MSG_CO_TZoneM7
-(GMT-07:00) Calgary, Denver, Phoenix (MST)
-; (GMT-07:00) Calgary, Denver, Phoenix (MST)
-;
-MSG_CO_TZoneM6
-(GMT-06:00) Chicago, Dallas, Mexique ville (CST)
-; (GMT-06:00) Chicago, Dallas, Mexico City (CST)
-;
-MSG_CO_TZoneM5
-(GMT-05:00) Lima, Miami, Montréal, New York (EST)
-; (GMT-05:00) Lima, Miami, Montreal, New York (EST)
-;
-MSG_CO_TZoneM4
-(GMT-04:00) Caracas, Santiago, Thule (AST)
-; (GMT-04:00) Caracas, Santiago, Thule (AST)
-;
-MSG_CO_TZoneM3
-(GMT-03:00) Buenos Aires, Rio de Janeiro (BRT)
-; (GMT-03:00) Buenos Aires, Rio de Janeiro (BRT)
-;
-MSG_CO_TZoneM2
-(GMT-02:00) Est Brésil (FNT)
-; (GMT-02:00) Brazil East (FNT)
-;
-MSG_CO_TZoneM1
-(GMT-01:00) Açores (WAT)
-; (GMT-01:00) Azores (WAT)
-;
-MSG_CO_TZone0
-(GMT 00:00) Dublin, Lisbonne, Londres (GMT/UTC)
-; (GMT 00:00) Dublin, Lisbon, London (GMT/UTC)
-;
-MSG_CO_TZone1
-(GMT+01:00) Berlin, Paris, Madrid, Oslo (CET)
-; (GMT+01:00) Berlin, Paris, Madrid, Oslo (CET)
-;
-MSG_CO_TZone2
-(GMT+02:00) Athènes, Caire, Helsinki (EET)
-; (GMT+02:00) Athens, Cairo, Helsinki (EET)
-;
-MSG_CO_TZone3
-(GMT+03:00) Bagdad, Koweït, Moscou, Nairobi (EEST)
-; (GMT+03:00) Baghdad, Kuwait, Moscow, Nairobi (EEST)
-;
-MSG_CO_TZone4
-(GMT+04:00) Dubaï, Port Louis, Victoria (ZP4)
-; (GMT+04:00) Dubai, Port Louis, Victoria (ZP4)
-;
-MSG_CO_TZone5
-(GMT+05:00) Islamabad, Karachi (ZP5)
-; (GMT+05:00) Islamabad, Karachi (ZP5)
-;
-MSG_CO_TZone6
-(GMT+06:00) Alma-Ata, Dhaka, Tashkent (ZP6)
-; (GMT+06:00) Alma-Ata, Dhaka, Tashkent (ZP6)
-;
-MSG_CO_TZone7
-(GMT+07:00) Bangkok, Hanoi, Phnom Penh
-; (GMT+07:00) Bangkok, Hanoi, Phnom Penh
-;
-MSG_CO_TZone8
-(GMT+08:00) Hong Kong, Shanghai, Singapour (WST)
-; (GMT+08:00) Hong Kong, Shanghai, Singapore (WST)
-;
-MSG_CO_TZone9
-(GMT+09:00) Osaka, Séoul, Tokyo (JST)
-; (GMT+09:00) Osaka, Seoul, Tokyo (JST)
-;
-MSG_CO_TZone10
-(GMT+10:00) Melbourne, Sydney, Vladivostok (GST)
-; (GMT+10:00) Melbourne, Sydney, Vladivostok (GST)
-;
-MSG_CO_TZone11
-(GMT+11:00) Nouvelle Calédonie (AEDT)
-; (GMT+11:00) New Caldonia (AEDT)
-;
-MSG_CO_TZone12
-(GMT+12:00) Auckland, Wellington (IDLE)
-; (GMT+12:00) Auckland, Wellington (IDLE)
-;
 MSG_CO_MinConfig
 Configuration minimale
 ; Minimal configuration
@@ -1315,26 +1190,6 @@ Co_mmande
 MSG_CO_Name
 No_m
 ; N_ame
-;
-MSG_CO_CTAnd
-et
-; and
-;
-MSG_CO_CTOr
-ou
-; or
-;
-MSG_CO_CTXor
-ou exclusif
-; exclusive or
-;
-MSG_CO_Comparison
-Comparaison
-; Comparison
-;
-MSG_CO_Action
-Action
-; Action
 ;
 MSG_CO_Remote
 Filtrer à d_istance
@@ -1527,10 +1382,6 @@ avant d'envoyer
 MSG_CO_ExternalEditor
 _Éditeur externe
 ; _External editor
-;
-MSG_CO_Launch
-Ouvrir _immédiatement
-; _Launch immediately
 ;
 MSG_CO_PhraseOpen
 Début
@@ -1927,12 +1778,6 @@ au serveur POP3.
 ; Password to access\n\
 ; the POP3 server.
 ;
-MSG_HELP_CO_CY_TZONE
-Choisissez le fuseau horaire\n\
-correspondant à votre lieu
-; Select the time zone of\n\
-; your current location.
-;
 MSG_HELP_CO_ST_SMTPHOST
 Adresse du serveur SMTP pour l'envoi du courrier.\n\
 Si vous laissez cette zone vide, ce sera\n\
@@ -1950,21 +1795,21 @@ le mode 8 bits, sinon vos messages peuvent être illisibles.
 ; supports 8-bit transfers, otherwise your messages may get corrupted.
 ;
 MSG_HELP_CO_LV_POP3
-Liste des comptes POP3
+Liste des serveurs POP3
 ; List of the POP3\n\
-; accounts.
+; servers.
 ;
 MSG_HELP_CO_BT_PADD
 Ajoute un nouveau\n\
-compte POP3 à la liste
-; Add a new POP3 account\n\
+serveur POP3 à la liste
+; Add a new POP3 servers\n\
 ; to the list.
 ;
 MSG_HELP_CO_BT_PDEL
 Supprime de la liste le\n\
-compte POP3 sélectionné
+serveur POP3 sélectionné
 ; Remove the selected POP3\n\
-; account from the list.
+; servers from the list.
 ;
 MSG_HELP_CO_ST_POPUSERID
 Nom d'utilisateur pour le serveur POP3. Si vous\n\
@@ -2064,12 +1909,6 @@ Applique ce filtre lors d'une\n\
 demande de filtrage manuel
 ; Apply this filter when you use\n\
 ; the filter function manually.
-;
-MSG_HELP_CO_CY_COMBINE
-Comment sont combinés les\n\
-critères de ce filtre
-; How to combine the rules\n\
-; for this filter.
 ;
 MSG_HELP_CO_CH_AFORWARD
 Retransmet les messages correspondant\n\
@@ -2277,12 +2116,6 @@ Lance automatiquement l'éditeur externe\n\
 lors de la création d'un nouveau message
 ; Automatically launch the external editor\n\
 ; when starting a new message.
-;
-MSG_HELP_CO_ST_EDITOR
-Nom de votre éditeur\n\
-de texte préféré
-; Filename of your\n\
-; favorite text editor.
 ;
 MSG_HELP_CO_ST_FWDSTART
 Texte utilisé pour introduire un\n\
@@ -2674,8 +2507,8 @@ _Effectuer la recherche
 ; _Start search
 ;
 MSG_AB_FoundEntryGads
-_Suivant|_Éditer|_Annuler
-; _Next hit|_Edit hit|_Cancel
+_Suivant|*_Éditer|_Annuler
+; _Next hit|*_Edit hit|_Cancel
 ;
 MSG_AB_NoneFound
 Aucune correspondance trouvée.
@@ -2684,13 +2517,6 @@ Aucune correspondance trouvée.
 MSG_AB_Modified
 Le carnet d'adresses a été modifié.
 ; Address book has been modified.
-;
-MSG_AB_ModifiedGads
-*Enregi_strer|_Utiliser|_Perdre|_Annuler
-; *_Save|_Use|_Discard changes|_Cancel
-;
-;
-; Module AB - Hooks
 ;
 MSG_AB_TitleAlias
 Alias
@@ -3099,12 +2925,6 @@ Charge une image depuis le disque\n\
 ; Select a picture file from disk\n\
 ; (image datatypes supported).
 ;
-MSG_HELP_EA_ST_REALNAME_L
-Nom complet de cette liste de distribution\n\
-(Sera utilisé dans le champ « À » (To))
-; Full name of this distribution list\n\
-; (it will be used in the 'To:' field).
-;
 MSG_HELP_EA_ST_ADDRESS_L
 Adresse de réponse à utiliser pour\n\
 envoyer un message à cette liste
@@ -3333,10 +3153,6 @@ dans votre carnet d'adresses ?
 ; \eb%s\en\n\
 ; to your address book?
 ; SENDER
-;
-MSG_RE_NewGroupTitle
-Entrées ajoutées automatiquement
-; Automatically added entries
 ;
 MSG_RE_ContentType
 Type de contenu
@@ -3579,23 +3395,11 @@ vers d'autres destinataires
 ;
 ; Module WR - Procedures
 ;
-MSG_WR_ErrorNoRcpt
-Courrier incomplet : pas de destinataire.
-; Mail is incomplete: no recipient.
-;
-MSG_WR_NoRcptReqGad
-Ajouter _le(s) destinataire(s) plus tard|*_Annuler
-; _Add recipient later|*_Cancel
-;
 MSG_WR_DiscardChanges
 Voulez-vous vraiment perdre toutes les\n\
 modifications apportées à ce message ?
 ; Do you really want to discard all\n\
 ; modifications to this message?
-;
-MSG_WR_DiscardChangesGad
-*_Envoyer plus tard|_Perdre|_Annuler
-; *_Send later|_Discard|_Cancel
 ;
 MSG_WR_SaveTextAs
 Enregistrer texte sous
@@ -5303,10 +5107,6 @@ MSG_CO_TOTALMSGS
 %t  Messages au total
 ; %t  Total messages
 ;
-MSG_CO_DELMSGS
-%d  Messages effacés
-; %d  Deleted messages
-;
 MSG_CO_SENTMSGS
 %s  Messages envoyés
 ; %s  Sent messages
@@ -5316,11 +5116,11 @@ Statistiques dans l'_icône
 ; App_Icon stats
 ;
 MSG_HELP_FO_CH_STATS
-Voulez-vous ajouter les statistiques de ce dossier\n\
-et les afficher dans le nom de l'icône d'application ?
+Voulez-vous voir les statistiques de ce\n\
+dossier dans le nom de l'icône d'application ?
 ; Would you like to see this\n\
-; folder's statistics in the\n\
-; YAM AppIcon's label?
+; folder's statistics in YAM's\n\
+; AppIcon label?
 ;
 MSG_OPENGUI
 Ouverture de l'interface graphique...
@@ -5486,10 +5286,6 @@ analysant les 5 premiers courriers du dossier.
 MSG_FO_NOTRECOGNIZED
 non reconnu.
 ; Couldn't be recognized.
-;
-MSG_FO_MAXAGEFMT
-%ld jours
-; %ld days
 ;
 MSG_CO_NB_EMAILCACHE
 Mémoriser les adresses électroniques
@@ -5698,38 +5494,6 @@ des courriers sur cette liste.
 MSG_CTapplicationpdf
 Document PDF
 ; PDF document
-;
-MSG_CO_TZoneM330
-(GMT-03:30) Newfoundland (NFT)
-; (GMT-03:30) Newfoundland (NFT)
-;
-MSG_CO_TZone330
-(GMT+03:30) Téhéran (IT)
-; (GMT+03:30) Teheran (IT)
-;
-MSG_CO_TZone430
-(GMT+04:30) Kaboul
-; (GMT+04:30) Kabul
-;
-MSG_CO_TZone530
-(GMT+05:30) Chennai, Kolkata, Mumbai, New-Delhi (IST)
-; (GMT+05:30) Chennai, Kolkata, Mumbai, New-Delhi (IST)
-;
-MSG_CO_TZone545
-(GMT+05:45) Katmandou
-; (GMT+05:45) Katmandu
-;
-MSG_CO_TZone630
-(GMT+06:30) Rangoon (NST)
-; (GMT+06:30) Rangun (NST)
-;
-MSG_CO_TZone930
-(GMT+09:30) Adélaïde, Darwin (ACST)
-; (GMT+09:30) Adelaide, Darwin (ACST)
-;
-MSG_CO_TZone13
-(GMT+13:00) Nuku'alofa (NZDT)
-; (GMT+13:00) Nuku'alofa (NZDT)
 ;
 MSG_HELP_CO_ST_INFOBARTXT
 Texte qui devraît être affiché\n\
@@ -6020,14 +5784,6 @@ MSG_CTunknown
 inconnu
 ; unknown
 ;
-MSG_CO_More
-P_lus
-; _More
-;
-MSG_CO_Less
-_Moins
-; _Less
-;
 MSG_CO_NB_AUTOSAVE
 Intervalle de sauvegarde automatique
 ; Autosave interval
@@ -6057,18 +5813,6 @@ soit un chemin de destination invalide ou protégé en écriture.
 ; This may be due to insufficient space or an invalid or not writable \
 ; destination path.
 ;
-MSG_CO_QUICKSEARCHBAR
-Afficher la barre de recherche dans la fenêtre principale
-; Show search _bar in main window
-;
-MSG_HELP_CO_CH_QUICKSEARCHBAR
-Active une barre de recherche\n\
-dans la fenêtre principale pour\n\
-une recherche rapide de messages.
-; If checked, a search bar will appear\n\
-; in the main window to let you find\n\
-; certain e-mails more quickly.
-;
 MSG_FI_SELECTACTIVE
 Sélectionner ce résult_at
 ; Select this m_atch
@@ -6078,30 +5822,6 @@ Sélectionne dans la fenêtre\n\
 principale le message courant.
 ; Select the current message\n\
 ; in the main window.
-;
-MSG_QUICKSEARCH_SO_SUBJECT
-Sujet
-; Subject
-;
-MSG_QUICKSEARCH_SO_SENDER
-Expéditeur
-; Sender
-;
-MSG_QUICKSEARCH_SO_SUBJORSENDER
-Sujet Ou Expéditeur
-; Subject Or Sender
-;
-MSG_QUICKSEARCH_SO_TOORCC
-Destinataire (À Ou Cc)
-; Recipient (To or CC)
-;
-MSG_QUICKSEARCH_SO_INMSG
-Corps du message
-; Message Body
-;
-MSG_QUICKSEARCH_SO_ENTIREMSG
-Message complet
-; Whole Message
 ;
 MSG_QUICKSEARCH_VO_ALL
 Tous
@@ -6163,12 +5883,6 @@ Le texte inséré ici sera utilisé comme filtre\n\
 d'affichage des courriers du dossier courant.
 ; Text inserted here will be used as the search\n\
 ; criterion to display mail in this folder.
-;
-MSG_HELP_QUICKSEARCH_SEARCHOPTIONPOPUP
-Sélectionnez ici où le texte saisi à droite\n\
-doit être recherché dans le courrier.
-; Select here where the string at the right\n\
-; should be searched in the mail.
 ;
 MSG_BUSY_SEARCHINGFOLDER
 Recherche de messages dans « %s »...
@@ -6328,7 +6042,7 @@ Réglages TCP/IP
 ;
 MSG_CO_TCPIP_SUMMARY
 Configure vos serveurs SMTP et POP3...
-; Configure your SMTP and POP3 accounts...
+; Configure your SMTP and POP3 servers...
 ;
 MSG_CO_FILTER_TITLE
 Réglages des filtres
@@ -6458,44 +6172,6 @@ MSG_CO_AMISSLWARN_BT
 MSG_BUSY_OPENINGCONFIG
 Ouverture de la configuration...
 ; Opening configuration...
-;
-MSG_CO_TIMEZONEWARN_TITLE
-Avertissement de réglage de fuseau horaire
-; Time zone setting warning
-;
-MSG_CO_TIMEZONEWARN
-Le fuseau horaire configuré dans YAM ne\n\
-correspond pas à celui du système.\n\
-\n\
-Que désirez-vous faire ?
-; The time zone setting in YAM doesn't match\n\
-; the system's default time zone.\n\
-; \n\
-; How do you want to proceed?
-;
-MSG_CO_TIMEZONEWARN_BT
-*_Changer|_Toujours ignorer|_Ignorer
-; *_Change|Ignore _always|_Ignore
-;
-MSG_CO_AUTODSTWARN_TITLE
-Avertissement de changement d'heure
-; AutoDST warning
-;
-MSG_CO_AUTODSTWARN
-YAM a détecté un utilitaire de basculement automatique\n\
-d'heure d'été <-> heure d'hiver qui indique un réglage\n\
-d'heure d'été/hiver différent de celui configuré dans YAM.\n\
-\n\
-Que désirez-vous faire ?
-; YAM has found an AutoDST tool active and\n\
-; it is reporting a Daylight Saving Time\n\
-; different to what is configured in YAM.\n\
-; \n\
-; How do you want to proceed?
-;
-MSG_CO_AUTODSTWARN_BT
-_Changer|_Toujours ignorer|_Ignorer
-; *_Change|Ignore _always|_Ignore
 ;
 MSG_MA_UPDATECHECK
 Rechercher des mises à jour
@@ -6672,11 +6348,13 @@ Tente d'utiliser la fonctionnalité\n\
 d'auto-détection de codesets.library\n\
 pour identifier automatiquement le\n\
 jeu de caractères cyrillique correct.\n\
-(utile qu'aux utilisateurs cyrilliques)
+N'utilisez cette options que si vous\n\
+utilisez un jeu de caractères cyrillique.
 ; Try to use the auto-detect feature\n\
 ; of codesets.library to automatically\n\
-; identify the correct cyrillic codeset\n\
-; (only relevant for cyrillic users).
+; identify the correct cyrillic charset.\n\
+; Use this option only if you are using\n\
+; a cyrillic charset.
 ;
 MSG_WR_ErrorNotEnoughUndoMem
 Le texte effacé était trop important pour\n\
@@ -7480,18 +7158,6 @@ MSG_CO_CRDLOOKFEEL
 Apparence
 ; Look & Feel
 ;
-MSG_CO_DSTACTIVE
-La _correction d'heure d'été (DST) est active
-; D_aylight Saving Time (DST) is active
-;
-MSG_HELP_CO_CH_DSTACTIVE
-À activer si la correction d'heure est\n\
-actuellement en cours pour votre fuseau\n\
-horaire (i.e. heure d'été).
-; Enable this if daylight saving time is\n\
-; currently active in your time zone\n\
-; (summer time).
-;
 MSG_CO_SMTP_SERVERPORT
 Ser_veur/Port
 ; Ser_ver/Port
@@ -7532,14 +7198,6 @@ de la date complète si possible.
 ; If selected, columns with date information\n\
 ; will use a relative output (e.g. 'Today' or\n\
 ; 'Yesterday') instead of the full date if possible.
-;
-MSG_FOLDER_SNAPSHOT_TREE
-Figer la disposition
-; Snapshot arrangement
-;
-MSG_FOLDER_RELOAD_TREE
-Recharger la disposition
-; Reload arrangement
 ;
 MSG_ER_USER_UNKNOWN_TITLE
 Utilisateur inconnu
@@ -8358,18 +8016,6 @@ Supprime le portrait sélectionné.\n\
 ; 'Forget' this picture (the\n\
 ; file on disk will remain).
 ;
-MSG_HELP_CO_TX_DEFAULTCHARSET
-Utilisez le bouton popup pour choisir le jeu de\n\
-caractère que vous voulez que YAM utilise par défaut.\n\
-Cela doit correspondre au jeu de caractères par défaut\n\
-de votre système, sinon une requête sera affichée pour\n\
-vous demander commenet procéder.
-; Use the popup button to select the character set\n\
-; you would like YAM to use by default. This should\n\
-; match the system's default charset, otherwise a\n\
-; requester will appear asking how do you want to\n\
-; proceed.
-;
 MSG_HELP_CO_CH_NOTISOUND
 Joue un son lors de la\n\
 réception de nouveau courrier.
@@ -8489,14 +8135,14 @@ Filtrage terminé :\n\
 \n\
 %3ld messages vérifiés,\n\
 %3ld retransmis,\n\
-%3ld archivés,\n\
+%3ld déplacés,\n\
 %3ld effacés,\n\
 %3ld classés indésirables.
 ; Filtering done:\n\
 ; \n\
 ; %3ld messages checked,\n\
 ; %3ld forwarded,\n\
-; %3ld archived,\n\
+; %3ld moved,\n\
 ; %3ld deleted,\n\
 ; %3ld classified as spam
 ; COUNT, COUNT, COUNT, COUNT, COUNT
@@ -9667,10 +9313,6 @@ MSG_CO_IDENTITY_COMPOSE_OPTIONS
 Options
 ; Options
 ;
-MSG_CO_IDENTITY_COMPOSE_SENTFOLDER
-Sauvegarder message envoyé dans le dossier
-; Store sent mail to folder
-;
 MSG_CO_IDENTITY_COMPOSE_QUOTE
 Citer les messages lors des réponses
 ; Quote messages when answering
@@ -9784,10 +9426,6 @@ MSG_MA_FLUSH_ALL_INDICES
 Libérer les indices
 ; Flush all indices
 ;
-MSG_FI_CONDITION
-Condition
-; Condition
-;
 MSG_HELP_CO_CH_IDENTITY_ENABLED
 Active/Désactive l'utilisation de cette identité.
 ; If checked, this user identity is enabled for use.
@@ -9856,21 +9494,6 @@ Une URL optionnel vers une photo\n\
 associée à cette identité.
 ; An optional URL to a photo associated with\n\
 ; this user identity.
-;
-MSG_HELP_CO_CH_IDENTITY_SENTFOLDER
-Avec cette option, les messages envoyés seront\n\
-stockés dans un répertoire d'envoi. Dans le cas\n\
-contraire ils seront effacés.
-; If enabled, sent mail will be stored in a\n\
-; sent mail folder. Otherwise the sent mail\n\
-; will be deleted.
-;
-MSG_HELP_CO_TX_IDENTITY_SENTFOLDER
-Permet de spécifier quel dossier\n\
-de courrier doit être utilisé pour\n\
-stocker les messages envoyés.
-; Allows to specify which mail folder should\n\
-; be used when storing sent mail.
 ;
 MSG_HELP_CO_CH_IDENTITY_QUOTEMAILS
 Avec cette option, le texte des messages\n\
@@ -10305,7 +9928,6 @@ Impossible de créer la classe « %s »\n\
 en tant que sous classe de « %s ».
 ; Failed to create custom class '%s'\n\
 ; as subclass of '%s'.
-;
 ; CLASS,SUPERCLASS
 ;
 MSG_ER_MORPHOS_REXX_WARNING
@@ -10329,8 +9951,8 @@ système.
 ; system.
 ;
 MSG_WR_SAVEASDRAFT
-Enregistrer comme brouillon
-; Save as draft
+Enregistrer comme _brouillon
+; Save as _draft
 ;
 MSG_HELP_WR_BT_SAVEASDRAFT
 Enregistre le message dans\n\
@@ -10349,7 +9971,6 @@ Fermer
 MSG_LOG_REDIRECT
 Message de « %s » à propos de « %s » redirigé vers « %s »
 ; Redirected message from '%s' about '%s' to '%s'
-;
 ; SENDER, SUBJECT, RECIPIENT
 ;
 MSG_CO_ACTIONREDIRECT
@@ -10399,9 +10020,580 @@ Cause : répertoire de dossier invalide ou espace disque insuffisant.
 ; Could not create mail file '%s'.\n\
 ; \n\
 ; Reason: invalid folder directory or insufficient disk space.
-;
 ; FILE
+;
+MSG_WR_RENAME
+_Renommer
+; _Rename
+;
+MSG_WR_RENAME_ATTACHMENT
+Renommer la pièce jointe
+; Rename attachment
+;
+MSG_WR_ENTER_NEW_NAME
+Entrez le nouveau nom de pièce jointe :
+; Enter new attachment name:
+;
+MSG_FI_SKIP_ENCRYPTED
+Ignorer les messages cryptés
+; Skip encrypted mails
+;
+MSG_HELP_FI_CH_SKIP_ENCRYPTED
+Ignore les messages cryptés\n\
+(ex. PGP) pendant la recherche.
+; Skip encrypted mails (i.e. PGP)\n\
+; during the search.
+;
+MSG_CO_QUICKSEARCHBAR
+Afficher la barre de recherche dans la fenêtre principale
+; Quick search bar
+;
+MSG_HELP_CO_CH_QUICKSEARCHBAR
+Active une barre de recherche\n\
+dans la fenêtre principale pour\n\
+une recherche rapide de messages.
+; Here you can select the position of\n\
+; the quick search bar.
+;
+MSG_CO_QUICKSEARCHBARPOS
+Posi_tion
+; Posi_tion
+;
+MSG_CO_QUICKSEARCHBARPOS01
+Désactivé
+; Disabled
+;
+MSG_CO_QUICKSEARCHBARPOS02
+Haut
+; Top
+;
+MSG_CO_QUICKSEARCHBARPOS03
+Bas
+; Bottom
+;
+MSG_CO_FILTER_REGISTER_SETTINGS
+Général
+; General
+;
+MSG_CO_FILTER_REGISTER_CONDITIONS
+Conditions
+; Conditions
+;
+MSG_CO_FILTER_REGISTER_ACTIONS
+Actions
+; Actions
+;
+MSG_CO_CONDITION_ALL
+toutes
+; all
+;
+MSG_CO_CONDITION_MIN_ONE
+une ou plusieurs
+; one or more
+;
+MSG_CO_CONDITION_MAX_ONE
+seulement une
+; only one
+;
+MSG_WR_CMENU_TITLE
+Pièces jointes
+; Attachments
+;
+MSG_WR_CMENU_ADD_ATTACHMENT
+Ajouter fichier(s)...
+; Add file(s)...
+;
+MSG_WR_CMENU_ADD_ARCHIVE_ATTACHMENT
+Compresser et ajouter...
+; Pack & add...
+;
+MSG_WR_CMENU_REMOVE_ATTACHMENT
+Supprimer
+; Remove
+;
+MSG_WR_CMENU_RENAME_ATTACHMENT
+Renommer...
+; Rename...
+;
+MSG_WR_CMENU_DISPLAY_ATTACHMENT
+Monter
+; Display
+;
+MSG_WR_TITLEATTACHMENT
+Pièce jointe
+; Attachment
+;
+MSG_WR_REMOVE
+Suppri_mer
+; Re_move
+;
+MSG_CO_CONDITION_PREPHRASE
+Si
+; If
+;
+MSG_CO_CONDITION_POSTPHRASE
+des conditions suivantes sont remplies :
+; of the following conditions are met:
+;
+MSG_CO_FALLBACK_TZONE
+Europe/Paris
+; America/New_York
+; !!! WARNING !!!
+; Do not translate this fallback name, but just choose a
+; location which represents the language's time zone
+; as good as possible. If there are multiple possibilities
+; for you language, use the one that matches the captial
+; of your country/language most. This fallback name MUST
+; match EXACTLY one of the locations in the Resources/zoneinfo
+; directory. Spaces MUST be replaced by '_'. All locations
+; names MUST be kept in english language.
+;
+MSG_HELP_CO_GR_TZONE
+Ici vous pouvez renseigner votre position/fuseau horaire courant.
+; Here you can set your current location/time zone.
+;
+MSG_CO_TZONE_GMTOFFSET
+Décalage UTC actuel :
+; Current GMT offset:
+;
+MSG_CO_TZONE_NEXTDSTSWITCH
+Prochain ajustement d'heure :
+; Next DST switch:
+;
+MSG_CO_TZONE_NODSTSWITCH
+aucun ajustement d'heure
+; no daylight saving
+;
+MSG_CO_TZONE_DESCRIPTION
+Description :
+; Description:
+;
+MSG_CO_TZONE_DESCRIPTION_NA
+n/d
+; n/a
+;
+MSG_TZONE_ZONETAB_FILE_MISSING
+Impossible d'ouvrire le fichier de\n\
+description de fuseau horaire\n\
+« %s/Resources/zoneinfo/zone.tab ».\n\
+\n\
+Veuillez vous assurer d'installer tous\n\
+les fichiers relatifs à la gestion des\n\
+fuseaux horaires dans le répertoire\n\
+« %s/Resources/zoneinfo ».
+; Cannot open time zones description file\n\
+; '%s/Resources/zoneinfo/zone.tab'.\n\
+; \n\
+; Please make sure to install all time zones management\n\
+; related files to the '%s/Resources/zoneinfo' directory.
+;
+MSG_TZONE_LOCATION_FILE_MISSING
+Impossible d'ouvrir le fichier d'information de\n\
+fuseau horaire « %s ».\n\
+\n\
+Les informations de fuseau horaire seront invalides.\n\
+Veuillez vous assurer d'installer tous les fichiers\n\
+de gestion de fuseau horaire dans le répertoire\n\
+« %s/Resources/zoneinfo ».
+; Cannot open time zone information file '%s'.\n\
+; \n\
+; Time zone information will be incorrect. Please make sure \
+; to install all time zones management related files to the \
+; '%s/Resources/zoneinfo' directory.
+;
+MSG_FOLDER_MOVE_WARNING_TITLE
+Avertissement de format de dossier YAM
+; YAM folder format warning
+;
+MSG_FOLDER_MOVE_WARNING
+Un format de stockage de dossier obsolète a été trouvé.\n\
+\n\
+YAM va maintenant déplacer tous les répertoires de\n\
+dossier dans un sous-répertoire nommé « Folders » dans\n\
+le répertoire de messagerie « %s ».\n\
+\n\
+\033bAVERTISSEMENT :\033n\n\
+Cette opération est \033birréversible\033n et va rendre les\n\
+dossiers incompatibles avec les anciennes versions de YAM.\n\
+\n\
+Voulez-vous effectuer cette opération maintenant ou quitter\n\
+YAM afin de réaliser une sauvegarde auparavant ?
+; An obsolete folder storage format has been found.\n\
+; \n\
+; YAM will now move all folder directories to a new\n\
+; subdirectory called 'Folders' in the mail directory '%s'.\n\
+; \n\
+; \033bWARNING:\033n\n\
+; This operation is \033birreversible\033n and will result in\n\
+; folders which are no longer compatible to former\n\
+; versions of YAM.\n\
+; \n\
+; Do you want to perform this operation now or\n\
+; quit YAM and make a backup first?
+;
+MSG_FOLDER_MOVE_WARNING_GADS
+_Continuer|*_Quitter
+; _Continue|*_Quit
+;
+MSG_FO_DISPLAYNAME
+_Nom affiché
+; Display _name
+;
+MSG_FO_DIRECTORYNAME
+No_m de répertoire
+; Directory na_me
+;
+MSG_VALIDATING_FOLDERS
+Validation des dossiers...
+; Validating folders...
+;
+MSG_MA_MARCHIVE
+Archive
+; Archive
+;
+MSG_MA_ARCHIVE
+Archive
+; Archive
+;
+MSG_CO_SHOW_ARCHIVER_PROGRESS
+Afficher la progression
+; Show progress
+;
+MSG_CO_LAUNCH_EXTEDITOR
+_Lancer l'éditeur externe immédiatement
+; _Launch external editor immediately
+;
+MSG_CO_EXTEDITOR
+Paramètres de l'éditeur externe
+; External editor settings
+;
+MSG_HELP_CO_ST_EDITOR_EXT
+Chemin vers votre éditeur externe\n\
+favori qui doit être utilisé comme\n\
+alternative à l'éditeur interner.
+; Path to your favourite external\n\
+; editor which you can use as an\n\
+; alternative to the internal one.
+;
+MSG_CO_EXTEDITOR_CODESET
+Jeu de caractères affic_hé
+; Display c_harset
+;
+MSG_HELP_CO_TX_DEFCODESET_EDITOR
+Choisissez le jeu de caractères dans\n\
+lequel le texte sera converti avant\n\
+de lancer l'éditeur externe.
+; Choose a charset to which the text\n\
+; will be converted to before starting\n\
+; the external editor.
+;
+MSG_HELP_CO_TX_DEFCODESET_LOCAL
+Utilisez le bouton popup pour sélectionner le jeu\n\
+de caractères à utiliser par YAM pour afficher du\n\
+texte. Cela doit en général correspondre avec le\n\
+jeu de caractères par défaut de votre système, dans\n\
+le cas échéant une requête s'affichera pour demander\n\
+la marche à suivre.
+; Use the popup button to select the character set\n\
+; you would like YAM to use for displaying text.\n\
+; This should usually match your system's default\n\
+; charset, otherwise a requester will appear asking\n\
+; how to proceed.
+;
+MSG_HELP_CO_TX_DEFCODESET_WRITE
+Utilisez le bouton popup pour sélectionner le jeu\n\
+de caractères à utiliser par YAM pour encoder les\n\
+messages. Cela doit en général correspondre avec le\n\
+jeu de caractères par défaut de votre système pour\n\
+que le jeu de caractères d'affichage corresponde à\n\
+celui utilisé pour écrire vos messages. Cependant\n\
+vous pouvez choisir n'importe quel jeu de caractères\n\
+pour encoder vos messages sortants.
+; Use the popup button to select the character set\n\
+; you would like YAM to encode emails to.\n\
+; This should usually match your system's default\n\
+; charset so that the displayed character set matches\n\
+; the one you write mail. However, you can select any\n\
+; character set you want to encode your outgoing mails\n\
+; to.
+;
+MSG_CO_DEFAULTCODESET_WRITE
+Jeu de _caractères par défaut
+; Default c_harset
+;
+MSG_CO_MIME_CODESET
+Jeu de caractères de l'affic_hage
+; Display _charset
+;
+MSG_HELP_CO_TX_MIME_CODESET
+Choisissez le jeu de caractères dans lequel\n\
+le texte imprimable doit être converti avant\n\
+d'exécuter la commande pour ce type MIME.
+; Select the charset here that printable\n\
+; text should be converted to before\n\
+; executing the command of this MIME type.
+;
+MSG_CO_DEFAULTVIEWER_CODESET
+Jeu _de caractères de l'affichage
+; _Display charset
+;
+MSG_HELP_CO_TX_DEFVIEWER_CODESET
+Choisissez le jeu de caractères dans lequel\n\
+le texte imprimable doit être converti avant\n\
+de lancer la visionneuse par défaut.
+; Select the charset here that printable\n\
+; text should be converted to before\n\
+; starting the default viewer.
+;
+MSG_LOG_FILTER_DONE
+%ld message(s) filtré(s) avec %ld correspondance(s)
+; Filtered %ld message(s) with %ld match(es)
+; COUNT, COUNT
+;
+MSG_FO_JUMP_TO_UNREAD_MESSAGE
+Sauter au premier message non lu
+; Jump to first unread message
+;
+MSG_HELP_FO_CH_JUMPTOUNREAD
+Saute au premier message non lu\n\
+lors de l'entrée dans ce dossier.
+; Jump to the first unread message when\n\
+; entering this folder.
+;
+MSG_FO_JUMP_TO_RECENT_MESSAGE
+Sauter au message le plus récent
+; Jump to newest message
+;
+MSG_HELP_FO_CH_JUMPTORECENT
+Saute au message le plus récent\n\
+lors de l'entrée dans ce dossier.
+; Jump to the most recent message when\n\
+; entering this folder.
+;
+MSG_FO_MAXAGE_DAYS
+jours
+; days
+;
+MSG_QUICKSEARCH_FILTER_LIST
+Filtrage de la liste...
+; Filter list...
+;
+MSG_QUICKSEARCH_FROM
+Émetteur
+; Sender
+;
+MSG_QUICKSEARCH_TO
+Destinataire
+; Receiver
+;
+MSG_QUICKSEARCH_SUBJECT
+Sujet
+; Subject
+;
+MSG_QUICKSEARCH_BODY
+Corps
+; Mail body
+;
+MSG_CO_CHECK_FOR_MISSING_ATTACHMENTS
+Vérifier les pièces jointes manquantes
+; Check for missing attachments
+;
+MSG_CO_ATTACHMENT_KEYWORDS
+Mots clefs :
+; Keywords:
+;
+MSG_HELP_CO_CH_ATTACHMENTREMINDER
+Avec cette option vous êtes avertis\n\
+si le corps du message suggère la\n\
+présence de pièces jointes mais\n\
+qu'elles sont absentes.
+; Would you like to be warned if the\n\
+; mail body suggests the existance of\n\
+; an attachment but these are missing?
+;
+MSG_HELP_CO_LV_ATTACHMENTKEYWORDS
+Configure les mots clefs qui peuvent\n\
+suggérer la présence voulue d'une\n\
+pièce jointe.
+; Configure the keywords which might\n\
+; suggest the desired existance of an\n\
+; attachment.
+;
+MSG_ATTACHMENT_KEYWORDS
+pièce jointe,attaché,joins,CV
+; attachment,attach,attached,attaching,enclosed,CV,cover letter
+;
+MSG_ATTACHMENT_REMIND_INFO
+Auriez-vous éventuellement oublié de joindre une pièce ?
+; Did you possibly forget to add an attachment?
+;
+MSG_ATTACHMENT_REMIND_ADD
+Ajouter une pièce jointe...
+; Add attachment...
+;
+MSG_ATTACHMENT_REMIND_LATER
+Me rappeler plus tard
+; Remind me later
+;
+MSG_WR_NO_ATTACHMENTS_TITLE
+Rappel de pièce jointe
+; Attachment reminder
+;
+MSG_WR_NO_ATTACHMENTS
+Avez-vous oublié d'ajouter une pièce jointe ?
+; Did you forget to add an attachment?
+;
+MSG_WR_NO_ATTACHMENTS_GADS
+Oui, en effet|Non, envoyer maintenant
+; Yes, I did|No, send now
+;
+MSG_CO_MAILACCOUNT_TRANSFERRED
+Compte de messagerie
+; Mail account
+;
+MSG_MAILACCOUNT_TRANSFERRED
+Compte de messagerie
+; Mail account
+;
+MSG_CO_SAVE_LAYOUT
+Enregistre la mise en page utilisateur
+; Save user interface layout
+;
+MSG_HELP_CO_CH_SAVELAYOUTQUIT
+Enregistrement la position et les dimensions de\n\
+toutes les fenêtres, la mise en page de certains\n\
+groupes et l'état de différents objets graphiques.
+; Permanently save the position and dimensions\n\
+; of all windows, the layout of certain groups\n\
+; and the state of various graphical objects.
+;
+MSG_CO_SMTP_FOLDERS
+Dossiers par défaut
+; Default folders
+;
+MSG_CO_SMTP_SENTFOLDER
+Dossier « Envoyés »
+; 'Sent' folder
+;
+MSG_HELP_CO_PO_SMTP_SENTFOLDER
+Permet de définir un dossier différent dans\n\
+lequel sont stockés les messages envoyés.
+; Allows to set a different folder where mails\n\
+; will be stored after being sent out.
+;
+MSG_CO_IDENTITY_SAVESENTMAIL
+Stocker le courier dans le dossier « Envoyés » après l'envoi
+; After transfer store mails in 'Sent' folder
+;
+MSG_HELP_CO_CH_IDENTITY_SAVESENTMAIL
+Avec cette option, les messages envoyés seront\n\
+stockés après leur envoi. Sans cette option les\n\
+messages envoyés sont effacés.
+; If enabled, sent mails will be stored after\n\
+; the mail transfer. Otherwise the sent mails\n\
+; will be deleted.
+;
+MSG_CO_IDENTITY_ALTSENTFOLDER
+Utiliser le dossier « Envoyés » alternatif :
+; Use alternative 'Sent' folder:
+;
+MSG_HELP_CO_CH_IDENTITY_ALTSENTFOLDER
+Avec cette option, les messages envoyés seront\n\
+stockés dans un dossier alternatif que celui\n\
+spécifié dans la section TCP/IP de la configuration.
+; If enabled, sent mails will be stored in an\n\
+; alternative mail folder than configured in\n\
+; the TCP/IP section of the configuration.
+;
+MSG_HELP_CO_TX_IDENTITY_ALTSENTFOLDER
+Permet de spécifier quel dossier de\n\
+messagerie alternatif doit être utilisé\n\
+pour stocker les messages envoyés.
+; Allows to specify which alternative mail\n\
+; folder should be used when storing sent mail.
+;
+MSG_CO_POP_FOLDERS
+Dossiers par défaut
+; Default folders
+;
+MSG_CO_POP_INCOMINGFOLDER
+Dossier « Boite de réception »
+; 'Incoming' folder
+;
+MSG_HELP_CO_PO_POP_INCOMINGFOLDER
+Permet de définir un dossier différent pour\n\
+stocker les messages après leur réception.
+; Allows to set a different folder where mails\n\
+; will be stored after having received them.
 ;
 MSG_DOC_LANGUAGE_CODE
 fr
+; 
+; !!! NOTE !!!
+; When translating MSG_LANGUAGE_CODE please put the
+; language code (see http://yam.ch/wiki/TracLanguages)
+; for the language you translate YAM to here. This
+; language code will then be appended to each online
+; documentation request (HELP hotkey) and thus a
+; potentially translated page should come up. For
+; english, the MSG_LANGUAGE_CODE should be empty.
+;
+MSG_CO_CYRILLICCHARSETWARN
+La détection automatique de jeu de caractères cyrillique est\n\
+activée, mais le jeu de caractères configuré « %s »\n\
+n'est pas un jeu de caractères cyrillique.\n\
+Cette combinaison peut produire des caractères malformés.\n\
+\n\
+Voulez-vous désactiver la détection automatique de jeu de\n\
+caractères cyrillique ?
+; Automatic detection of cyrillic charsets is enabled, but the\n\
+; configured charset '%s' is no cyrillic charset.\n\
+; This combination might cause malformed characters.\n\
+; \n\
+; Do you want to deactivate the cyrillic charset detection?
+; LOCALCHARSET
+;
+MSG_CO_CYRILLICCHARSETWARN_BT
+*_Désactiver|_Ignorer
+; *_Deactivate|_Ignore
+;
+MSG_WR_NORCPT_WARNING_GADGET
+Enregi_strer comme brouillon|*_Annuler
+; _Save as draft|*_Cancel
+;
+MSG_WR_NORCPT_WARNING
+Le message est incomplet puisqu'il\n\
+n'a aucun destinataire spécifié.\n\
+\n\
+Comment voulez-vous procéder ?
+; The message is incomplete since\n\
+; no recipient had been specified.\n\
+; \n\
+; How do you want to proceed?
+;
+MSG_WR_DISCARDCHANGES_GADGET
+*Enregi_strer comme brouillon|Per_dre|_Annuler
+; *_Save as draft|_Discard|_Cancel
+;
+MSG_MA_NO_SUBJECT
+(Pas de sujet)
+; (No Subject)
+;
+MSG_MA_NO_RECIPIENTS
+(Pas de destinataire)
+; (No Recipients)
+;
+MSG_WR_CANCEL
+_Annuler
+; _Cancel
+;
+MSG_HELP_WR_BT_CANCEL
+Annule l'édition du messaget\n\
+et ferme la fenêtre.
+; Aborts the mail editing and\n\
+; closes the window.
+;
+MSG_MA_REPLYREQ_OPTIONS2
+*À l'_expéditeur|À l'expéditeur et\n\tous les _destinataires|_Annuler
+; *_Sender|Sender and _all Recipients|_Cancel
 ;
