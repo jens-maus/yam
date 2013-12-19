@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.44 (16.12.2013)
+## version $VER: YAM.catalog 8.45 (20.12.2013)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Maus, Thore Böckelmann
@@ -719,18 +719,6 @@ MSG_MA_NewFolder
 Neues Postfach
 ; New folder
 ;This is the title of the new folder window, not the menu item.
-;
-MSG_MA_SortOrder
-Anordnung
-; Order
-;
-MSG_MA_OSave
-Speichern
-; Save
-;
-MSG_MA_Reset
-Zurücksetzen
-; Reset
 ;
 MSG_MA_Select
 Auswählen
@@ -2476,13 +2464,6 @@ MSG_AB_Modified
 Adressbuch wurde geändert.
 ; Address book has been modified.
 ;
-MSG_AB_ModifiedGads
-*_Speichern|_Benutzen|_Verwerfen|_Abbrechen
-; *_Save|_Use|_Discard changes|_Cancel
-;
-;
-; Module AB - Hooks
-;
 MSG_AB_TitleAlias
 Alias
 ; Alias
@@ -2888,12 +2869,6 @@ Bilddatei von der Festplatte laden\n\
 ; Select a picture file from disk\n\
 ; (image datatypes supported)
 ;
-MSG_HELP_EA_ST_REALNAME_L
-Voller Name dieser Verteilerliste\n\
-(wird in To-Feld benutzt).
-; Full name of this distribution list\n\
-; (will be used in the To: field)
-;
 MSG_HELP_EA_ST_ADDRESS_L
 Antwortadresse, die beim Versenden einer\n\
 Nachricht an diese Liste benutzt wird.
@@ -3111,10 +3086,6 @@ in Ihr Adressbuch aufnehmen?
 ; \eb%s\en\n\
 ; to your address book?
 ; SENDER
-;
-MSG_RE_NewGroupTitle
-Automatisch hinzugefügte Einträge
-; Automatically added entries
 ;
 MSG_RE_ContentType
 Content-Type
@@ -3356,10 +3327,6 @@ Wollen Sie wirklich alle Änderungen\n\
 an dieser Nachricht verwerfen?
 ; Do you really want to discard all\n\
 ; modifications to this message?
-;
-MSG_WR_DiscardChangesGad
-*_Später senden|_Verwerfen|_Abbrechen
-; *_Send later|_Discard|_Cancel
 ;
 MSG_WR_SaveTextAs
 Text speichern unter
@@ -6635,12 +6602,6 @@ Falls aktiv, werden alle Spalten mit Datumsangaben\n\
 relativ dargestellt. Zum Beispiel wird das aktuelle\n\
 Datum als 'Heute' angezeigt.
 ;
-MSG_FOLDER_SNAPSHOT_TREE
-Anordnung fixieren
-;
-MSG_FOLDER_RELOAD_TREE
-Anordnung aktualisieren
-;
 MSG_ER_USER_UNKNOWN_TITLE
 Unbekannter Benutzer
 ;
@@ -8036,9 +7997,6 @@ Reply-To: Adresse
 ;
 MSG_CO_IDENTITY_COMPOSE_OPTIONS
 Optionen
-;
-MSG_CO_IDENTITY_COMPOSE_SENTFOLDER
-Gesendete Nachrichten speichern im Postfach
 ;
 MSG_CO_IDENTITY_COMPOSE_QUOTE
 Nachrichten beim Beantworten zitieren

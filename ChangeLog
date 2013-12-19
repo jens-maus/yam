@@ -7,6 +7,7 @@ $URL$
 
 2013-12-19 Jens Maus <mail@jens-maus.de>
 
+  * locale/YAM.cd, locale/german.ct: removed orphaned strings from catalog.
   * YAM_MA.c: fixed a problem when the autosave functionality of a write
     window kicked in and afterwards the write window was discarded and
     thus the mail deleted again from the drafts folders. This consistently

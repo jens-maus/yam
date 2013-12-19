@@ -553,15 +553,6 @@ MSG_MA_NewFolder (206//)
 New folder
 ;This is the title of the new folder window, not the menu item.
 ;
-MSG_MA_SortOrder (208//)
-Order
-;
-MSG_MA_OSave (209//)
-Save
-;
-MSG_MA_Reset (210//)
-Reset
-;
 MSG_MA_Select (211//)
 Select
 ;
@@ -1835,12 +1826,6 @@ No matching entries found.
 MSG_AB_Modified (717//)
 Address book has been modified.
 ;
-MSG_AB_ModifiedGads (718//)
-*_Save|_Use|_Discard changes|_Cancel
-;
-;
-; Module AB - Hooks
-;
 MSG_AB_TitleAlias (719//)
 Alias
 ;
@@ -2140,10 +2125,6 @@ MSG_HELP_EA_BT_SELECTPHOTO (812//)
 Select a picture file from disk\n\
 (image datatypes supported).
 ;
-MSG_HELP_EA_ST_REALNAME_L (814//)
-Full name of this distribution list\n\
-(it will be used in the 'To:' field).
-;
 MSG_HELP_EA_ST_ADDRESS_L (815//)
 Return address to use when\n\
 sending a message to this list.
@@ -2303,9 +2284,6 @@ Do you want to add the sender\n\
 \eb%s\en\n\
 to your address book?
 ; SENDER
-;
-MSG_RE_NewGroupTitle (863//)
-Automatically added entries
 ;
 MSG_RE_ContentType (865//)
 Content-Type
@@ -2488,9 +2466,6 @@ message.
 MSG_WR_DiscardChanges (917//)
 Do you really want to discard all\n\
 modifications to this message?
-;
-MSG_WR_DiscardChangesGad (918//)
-*_Send later|_Discard|_Cancel
 ;
 MSG_WR_SaveTextAs (919//)
 Save text as
@@ -5201,12 +5176,6 @@ If selected, columns with date information\n\
 will use a relative output (e.g. 'Today' or\n\
 'Yesterday') instead of the full date if possible.
 ;
-MSG_FOLDER_SNAPSHOT_TREE (1908//)
-Snapshot arrangement
-;
-MSG_FOLDER_RELOAD_TREE (1909//)
-Reload arrangement
-;
 MSG_ER_USER_UNKNOWN_TITLE (1910//)
 Unknown user
 ;
@@ -6628,9 +6597,6 @@ Reply-To: address
 ;
 MSG_CO_IDENTITY_COMPOSE_OPTIONS (2284//)
 Options
-;
-MSG_CO_IDENTITY_COMPOSE_SENTFOLDER (2285//)
-Store sent mail to folder
 ;
 MSG_CO_IDENTITY_COMPOSE_QUOTE (2287//)
 Quote messages when answering
