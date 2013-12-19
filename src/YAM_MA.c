@@ -739,15 +739,23 @@ void MA_DeleteSingle(struct Mail *mail, const ULONG delFlags)
       GetMailFile(mailfile, sizeof(mailfile), NULL, mail);
       DeleteFile(mailfile);
 
+      // increase the mail's reference counter to prevent RemoveMailFromFolder() from
+      // freeing the mail in its DeleteMailNode() call
+      ReferenceMail(mail);
+
       // now remove the mail from its folder/mail list
       // this might already free the mail if the reference counter drops to zero
       RemoveMailFromFolder(mail, isFlagSet(delFlags, DELF_CLOSE_WINDOWS), isFlagSet(delFlags, DELF_CHECK_CONNECTIONS));
+
+      // decrease the reference counter again
+      // it should be freed now since the refcount should decrease to 0 now
+      DereferenceMail(mail);
 
       // if we are allowed to make some noise we
       // update our Statistics
       if(isFlagClear(delFlags, DELF_QUIET))
         DisplayStatistics(folder, isFlagSet(delFlags, DELF_UPDATE_APPICON));
-   }
+    }
     else
     {
       struct Folder *delfolder = FO_GetFolderByType(FT_TRASH, NULL);

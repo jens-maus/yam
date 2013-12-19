@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-12-19 Jens Maus <mail@jens-maus.de>
+
+  * YAM_MA.c: fixed a problem when the autosave functionality of a write
+    window kicked in and afterwards the write window was discarded and
+    thus the mail deleted again from the drafts folders. This consistently
+    caused a crash when afterwards attempting to load another large index
+    file of another folder. The problem seems to be with the new
+    RemoveMailFromFolder() function which it directly removed the freed
+    the mail pointer instead of MA_DeleteSingle() doing that job.
+
 2013-12-18 Vit Sindlar <sindlarv at centrum dot cz>
 
   * locale/czech.ct: updated Czech translation.
