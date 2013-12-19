@@ -531,6 +531,7 @@ OVERLOAD(OM_NEW)
                                          "NListviews.mcc",
                                          "TextEditor.mcc",
                                          "TheBar.mcc",
+                                         "Urltext.mcc",
                                          NULL
                                        };
 
