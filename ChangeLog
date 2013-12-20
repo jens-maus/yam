@@ -5,7 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
-2013-12-18 Alexandre Balaban <abalaban@free.fr>
+2013-12-19 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: update to the latest changes.
+
+2013-12-19 Alexandre Balaban <abalaban@free.fr>
 
   * locale/french.ct: updated according to latest changes.
   * doc/YAM_french.guide: updated according to latest changes.
