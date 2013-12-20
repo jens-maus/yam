@@ -33,7 +33,7 @@
 @REMARK  - Jean-Marc Mossu <jeanmarc.mossu@free.fr>
 @REMARK  - Pascal Rullier <rullier@bugss.org>
 @REMARK  Mise à jour v2.5 et suivantes Alexandre Balaban <alexandre@balaban.fr>
-@REMARK  Basée sur YAM_english v4600
+@REMARK  Basée sur YAM_english v6519
 
 @NODE "Main" "YAM - Documentation en Français (ATO-Fr)"
 
@@ -4826,7 +4826,7 @@ sont donnés dans le chapitre @{" Trucs et astuces " link "TIP4"}.
     ________________________________________________________________
    | @{fg shine}Alias@{fg text}    |     @{fg shine}Nom@{fg text}      |   @{fg shine}Description@{fg text}   |       @{fg shine}Adresse@{fg text}      |
    |----------|--------------|-----------------|--------------------|
-   |js        | John Smith   | mate            | jsmith\@isp.co.uk   |
+   |jd        | Jean Dupont  | pote            | jdupont\@fai.fr     |
    |          |              |                 |                    |
    |          |              |                 |                    |
    |          |              |                 |                    |
@@ -5071,21 +5071,21 @@ le carnet d'adresses sans ambiguïté. Cette fonction économise la frappe
 autres détails associés au moment de l'envoi du message). Si vous laissez ce
 champ libre, YAM créera un alias de lui même.
 
- @{i}Exemple :@{ui}JohnD
+ @{i}Exemple :@{ui}JeanD
 
 
 @{u}Nom réel@{uu}
 
    Le prénom et le nom de la personne.
 
- @{i}Exemple :@{ui}John Doe
+ @{i}Exemple :@{ui}Jean Dupont
 
 
 @{u}Adresse élec.@{uu}
 
    L' adresse électronique à utiliser pour joindre la personne.
 
- @{i}Exemple :@{ui} jdoe\@athome.uk
+ @{i}Exemple :@{ui} jdupont\@maison.fr
 
 
 @{u}ID de clé PGP@{uu}
@@ -5179,7 +5179,8 @@ et/ou l'adresse électronique, de vous connecter à l'Internet et de cliquer
 le bouton [Télécharger]. YAM commence par charger la liste des photos
 disponibles et recherche le nom de la personne. Si il trouve des
 informations manquantes à votre carnet d'adresses (nom, adresse e-mail et
-page d'accueil), celles-ci seront ajoutées et la photo téléchargée.
+page d'accueil), celles-ci seront ajoutées et la photo téléchargée dans
+la gallerie.
 
 
 @{b}===================== liste ====================@{ub}
@@ -6335,14 +6336,17 @@ ADDRLOAD
      AddrLoad -- Load an address book from disk.  (V2.0)
 
 @{b}SYNTAXE@{ub}
-     FILENAME/A
+     FILENAME/A,OPEN/S
 
 @{b}FONCTION@{ub}
      Loads the specified address book from disk, replacing the
-     current address book in RAM.
+     current address book in RAM. If requested the address book
+     window will be opened immediately after the address book
+     file has been loaded successfully.
 
 @{b}ENTREES@{ub}
      FILENAME/A   - address book to be loaded
+     OPEN/S       - open the address book window
 
 @{b}RESULTAT@{ub}
      RC is set to 10 if the filename cannot be opened.
@@ -11052,7 +11056,7 @@ la liste de discussions de YAM. Pour y souscrire, envoyez un courrier
    http://www.freelists.org/archives/yam
 
 
-@{b}La liste de discussion YAM pour les développeurs@{ub}
+@{b}La liste de discussion pour les développeurs de YAM@{ub}
 
    Si vous souhaitez participer au développement de YAM, vous êtes les
 bienvenus sur la liste YAMos-Dev. Pour y souscrire, envoyez un courrier
@@ -11060,6 +11064,11 @@ bienvenus sur la liste YAMos-Dev. Pour y souscrire, envoyez un courrier
    Vous pouvez aussi utiliser l'interface internet située à :
 http://www.freelists.org/list/yamos-dev ou les archives sur
 http://www.freelists.org/archives/yamos-dev
+
+   Veuillez noter que les inscriptions à la liste YAMos-dev ne sont pas
+acceptées à moins que vous ne contactiez le propriétaire de la liste ou
+l'un des développeurs YAMos en indiquant comment vous allez contribuer
+au projet.
 
 @endnode
 
@@ -11077,11 +11086,11 @@ naviguez dans la base de données des erreurs connues, rapportées par les
 utilisateurs de YAM.
 
    Si vous souhaitez remplir un rapport d'erreur, il faut que vous soyez
-au préalable enregistré sur le site de SourceForge.
-Posséder votre propre compte SF vous permet d'être prévenu par courrier
-électronique lorsque le statut de votre erreur est modifié, cela raccourci
-le délai pour relayer les informations à ce propos, si on a besoin de
-précisions de votre part. L'erreur en sera corrigée plus rapidement.
+au préalable enregistré. Posséder votre propre compte  vous permet d'être
+automatiquement prévenu par courrier électronique lorsque le statut de
+votre rapport est modifié, cela raccourci les délais de va-et-vient en
+cas de nécessité d'information complémentaires de votre part. Réduisant
+ainsi le temps de traitement, l'erreur en sera corrigée plus rapidement.
 
    Lorsque vous soumettez une erreur que vous avez trouvé, merci de garder
 à l'esprit les points suivants :
@@ -11133,7 +11142,7 @@ Support - Demandes d'améliorations
 ==================================
 
    Vous avez absolument besoin que YAM puisse faire ceci ou cela ? Décrivez
-l'amélioration souhaitée sur http://bugs.yam.ch/. J'étudierais votre requête
+l'amélioration souhaitée sur http://bugs.yam.ch/. Nous étudierons votre requête
 pour une prochaine mise à jour.
 
 @endnode
@@ -11163,9 +11172,9 @@ Support - Dépôt SVN
 ===================
 
 
-   Le dépôt SVN YAM est hébergé par SourceForge.net et peut être téléchargé
-à travers accès SVN anonyme. Vous pouvez obtenir les tous derniers sources de
-YAM (dans la branche trunk) en utilisant la commande suivante :
+   Le dépôt SVN YAM est hébergé publiquement et peut être téléchargé à travers
+un accès SVN anonyme. Vous pouvez obtenir les tous derniers sources de YAM (dans
+la branche trunk) en utilisant la commande suivante :
 
      svn co https://svn.yam.ch/svn/yam/trunk yam
 
