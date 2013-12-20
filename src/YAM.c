@@ -38,6 +38,7 @@
 #include <libraries/amisslmaster.h>
 #include <libraries/asl.h>
 #include <mui/BetterString_mcc.h>
+#include <mui/NBitmap_mcc.h>
 #include <mui/NListview_mcc.h>
 #include <mui/NListtree_mcc.h>
 #include <mui/NFloattext_mcc.h>
@@ -1896,6 +1897,7 @@ static void InitBeforeLogin(BOOL hidden)
   CheckMCC(MUIC_NFloattext,   19,  72,   0,   0, TRUE, "http://sf.net/p/nlist-classes/");
   CheckMCC(MUIC_NListtree,    18,  43,   0,   0, TRUE, "http://sf.net/p/nlist-classes/");
   CheckMCC(MUIC_NBalance,     15,  17,   0,   0, TRUE, "http://sf.net/p/nlist-classes/");
+  CheckMCC(MUIC_NBitmap,      15,  21,   0,   0, TRUE, "http://sf.net/p/nlist-classes/");
   CheckMCC(MUIC_TextEditor,   15,  43,   0,   0, TRUE, "http://sf.net/p/texteditor-mcc/");
 
   // now we search through PROGDIR:Charsets and load all user defined
