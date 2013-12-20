@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-12-20 Jens Maus <mail@jens-maus.de>
+
+  * mui/Aboutwindow.c: added a "Make a donation" button to the About window
+    to attract more people to make a direct donation to our project since
+    the number of donations seem to decrease somehwat.
+
 2013-12-19 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: update to the latest changes.

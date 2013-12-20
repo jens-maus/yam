@@ -20,7 +20,7 @@
 ** TheBar class Support Site: http://www.sf.net/projects/thebar
 **
 ** $Id: TheBar_mcc.h 332 2009-10-04 11:57:03Z thboeckel $
-** $URL: https://thebar.svn.sourceforge.net/svnroot/thebar/trunk/include/mui/TheBar_mcc.h $
+** $URL: https://svn.code.sf.net/p/thebar/code/trunk/include/mui/TheBar_mcc.h $
 **
 **/
 
@@ -351,12 +351,12 @@ struct MUIS_TheBar_Strip
   struct BitMap *dgreyBM;     /* Grey disabled BitMap */
   struct BitMap *dmask;       /* Grey mask            */
 
-  UBYTE  *nchunky;
-  UBYTE  *gchunky;
+  UBYTE *nchunky;
+  UBYTE *gchunky;
   UBYTE *snchunky;
   UBYTE *sgchunky;
   UBYTE *dnchunky;
-  UBYTE  *dgchunky;
+  UBYTE *dgchunky;
 };
 
 

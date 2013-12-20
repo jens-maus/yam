@@ -7478,3 +7478,6 @@ closes the window.
 MSG_MA_REPLYREQ_OPTIONS2 (2529//)
 *_Sender|Sender and _all Recipients|_Cancel
 ;
+MSG_ABOUT_DONATE_TEXT (2530//)
+Secure the future of YAM
+;

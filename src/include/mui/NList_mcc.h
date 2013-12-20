@@ -5,7 +5,7 @@
                                            0x9d5100C0 to 0x9d5100FF
 
  Copyright (C) 1996-2001 by Gilles Masson
- Copyright (C) 2001-2009 by NList Open Source Team
+ Copyright (C) 2001-2013 by NList Open Source Team
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -19,7 +19,7 @@
 
  NList classes Support Site:  http://www.sf.net/projects/nlist-classes
 
- $Id: NList_mcc.h 462 2010-08-12 09:51:03Z damato $
+ $Id: NList_mcc.h 710 2013-11-25 15:29:55Z thboeckel $
 
 ***************************************************************************/
 
@@ -47,6 +47,9 @@ extern "C" {
 // STACKED ensures proper alignment on AROS 64 bit systems
 #if !defined(__AROS__) && !defined(STACKED)
 #define STACKED
+#endif
+#if !defined(__AROS__) && !defined(SIPTR)
+#define SIPTR LONG
 #endif
 
 /***********************************************************************/
@@ -191,9 +194,9 @@ extern "C" {
 #define MUIV_NList_TypeSelect_Line        0
 #define MUIV_NList_TypeSelect_Char        1
 
-#define MUIV_NList_Font                 -20
-#define MUIV_NList_Font_Little          -21
-#define MUIV_NList_Font_Fixed           -22
+#define MUIV_NList_Font                 ((IPTR)-20)
+#define MUIV_NList_Font_Little          ((IPTR)-21)
+#define MUIV_NList_Font_Fixed           ((IPTR)-22)
 
 #define MUIV_NList_ConstructHook_String  -1
 #define MUIV_NList_DestructHook_String   -1
@@ -539,6 +542,7 @@ struct MUI_NList_GetSelectInfo
 #define MUIM_NList_SetActive          0x9d5100A7UL /* GM */
 
 /*
+for future extensions, skip 0x9d5100A8 as method ID, this one is already used by NListview
 for future extensions, skip 0x9d5100AF as method ID, this one is already used by NFloattext
 */
 
@@ -587,7 +591,7 @@ struct MUIP_NList_Compare            { STACKED ULONG MethodID; STACKED APTR entr
 struct MUIP_NList_Display            { STACKED ULONG MethodID; STACKED APTR entry; STACKED LONG entry_pos; STACKED STRPTR *strings; STACKED STRPTR *preparses; };
 struct MUIP_NList_GoActive           { STACKED ULONG MethodID; };
 struct MUIP_NList_GoInactive         { STACKED ULONG MethodID; };
-struct MUIP_NList_SetActive          { STACKED ULONG MethodID; STACKED LONG pos; STACKED ULONG flags; };
+struct MUIP_NList_SetActive          { STACKED ULONG MethodID; STACKED SIPTR pos; STACKED ULONG flags; };
 
 #define DISPLAY_ARRAY_MAX 64
 

@@ -2,7 +2,7 @@
 
  NListtree.mcc - New Listtree MUI Custom Class
  Copyright (C) 1999-2001 by Carsten Scholling
- Copyright (C) 2001-2009 by NList Open Source Team
+ Copyright (C) 2001-2013 by NList Open Source Team
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -16,7 +16,7 @@
 
  NList classes Support Site:  http://www.sf.net/projects/nlist-classes
 
- $Id: NListtree_mcc.h 557 2011-01-17 07:10:45Z thboeckel $
+ $Id: NListtree_mcc.h 675 2013-02-19 19:31:52Z thboeckel $
 
 ***************************************************************************/
 
@@ -466,36 +466,36 @@ struct MUIP_NListtree_Compare
 
 /*** Special method values ***/
 
-#define MUIV_NListtree_Close_ListNode_Root                  0
-#define MUIV_NListtree_Close_ListNode_Parent                -1
-#define MUIV_NListtree_Close_ListNode_Active                -2
+#define MUIV_NListtree_Close_ListNode_Root                  ((IPTR)0)
+#define MUIV_NListtree_Close_ListNode_Parent                ((IPTR)-1)
+#define MUIV_NListtree_Close_ListNode_Active                ((IPTR)-2)
 
-#define MUIV_NListtree_Close_TreeNode_Head                  0
-#define MUIV_NListtree_Close_TreeNode_Tail                  -1
-#define MUIV_NListtree_Close_TreeNode_Active                -2
-#define MUIV_NListtree_Close_TreeNode_All                   -3
-
-
-
-#define MUIV_NListtree_Exchange_ListNode1_Root              0
-#define MUIV_NListtree_Exchange_ListNode1_Active            -2
-
-#define MUIV_NListtree_Exchange_TreeNode1_Head              0
-#define MUIV_NListtree_Exchange_TreeNode1_Tail              -1
-#define MUIV_NListtree_Exchange_TreeNode1_Active            -2
-
-#define MUIV_NListtree_Exchange_ListNode2_Root              0
-#define MUIV_NListtree_Exchange_ListNode2_Active            -2
-
-#define MUIV_NListtree_Exchange_TreeNode2_Head              0
-#define MUIV_NListtree_Exchange_TreeNode2_Tail              -1
-#define MUIV_NListtree_Exchange_TreeNode2_Active            -2
-#define MUIV_NListtree_Exchange_TreeNode2_Up                -5
-#define MUIV_NListtree_Exchange_TreeNode2_Down              -6
+#define MUIV_NListtree_Close_TreeNode_Head                  ((IPTR)0)
+#define MUIV_NListtree_Close_TreeNode_Tail                  ((IPTR)-1)
+#define MUIV_NListtree_Close_TreeNode_Active                ((IPTR)-2)
+#define MUIV_NListtree_Close_TreeNode_All                   ((IPTR)-3)
 
 
-#define MUIV_NListtree_FindName_ListNode_Root               0
-#define MUIV_NListtree_FindName_ListNode_Active             -2
+
+#define MUIV_NListtree_Exchange_ListNode1_Root              ((IPTR)0)
+#define MUIV_NListtree_Exchange_ListNode1_Active            ((IPTR)-2)
+
+#define MUIV_NListtree_Exchange_TreeNode1_Head              ((IPTR)0)
+#define MUIV_NListtree_Exchange_TreeNode1_Tail              ((IPTR)-1)
+#define MUIV_NListtree_Exchange_TreeNode1_Active            ((IPTR)-2)
+
+#define MUIV_NListtree_Exchange_ListNode2_Root              ((IPTR)0)
+#define MUIV_NListtree_Exchange_ListNode2_Active            ((IPTR)-2)
+
+#define MUIV_NListtree_Exchange_TreeNode2_Head              ((IPTR)0)
+#define MUIV_NListtree_Exchange_TreeNode2_Tail              ((IPTR)-1)
+#define MUIV_NListtree_Exchange_TreeNode2_Active            ((IPTR)-2)
+#define MUIV_NListtree_Exchange_TreeNode2_Up                ((IPTR)-5)
+#define MUIV_NListtree_Exchange_TreeNode2_Down              ((IPTR)-6)
+
+
+#define MUIV_NListtree_FindName_ListNode_Root               ((IPTR)0)
+#define MUIV_NListtree_FindName_ListNode_Active             ((IPTR)-2)
 
 #define MUIV_NListtree_FindName_Flag_SameLevel              (1<<15)
 #define MUIV_NListtree_FindName_Flag_Visible                (1<<14)
@@ -505,8 +505,8 @@ struct MUIP_NListtree_Compare
 #define MUIV_NListtree_FindName_Flag_Reverse                (1<<9)
 
 
-#define MUIV_NListtree_FindUserData_ListNode_Root           0
-#define MUIV_NListtree_FindUserData_ListNode_Active         -2
+#define MUIV_NListtree_FindUserData_ListNode_Root           ((IPTR)0)
+#define MUIV_NListtree_FindUserData_ListNode_Active         ((IPTR)-2)
 
 #define MUIV_NListtree_FindUserData_Flag_SameLevel          (1<<15)
 #define MUIV_NListtree_FindUserData_Flag_Visible            (1<<14)
@@ -516,22 +516,22 @@ struct MUIP_NListtree_Compare
 #define MUIV_NListtree_FindUserData_Flag_Reverse            (1<<9)
 
 
-#define MUIV_NListtree_GetEntry_ListNode_Root               0
-#define MUIV_NListtree_GetEntry_ListNode_Active             -2
-#define MUIV_NListtree_GetEntry_TreeNode_Active             -3
+#define MUIV_NListtree_GetEntry_ListNode_Root               ((IPTR)0)
+#define MUIV_NListtree_GetEntry_ListNode_Active             ((IPTR)-2)
+#define MUIV_NListtree_GetEntry_TreeNode_Active             ((IPTR)-3)
 
-#define MUIV_NListtree_GetEntry_Position_Head               0
-#define MUIV_NListtree_GetEntry_Position_Tail               -1
-#define MUIV_NListtree_GetEntry_Position_Active             -2
-#define MUIV_NListtree_GetEntry_Position_Next               -3
-#define MUIV_NListtree_GetEntry_Position_Previous           -4
-#define MUIV_NListtree_GetEntry_Position_Parent             -5
+#define MUIV_NListtree_GetEntry_Position_Head               (0)
+#define MUIV_NListtree_GetEntry_Position_Tail               (-1)
+#define MUIV_NListtree_GetEntry_Position_Active             (-2)
+#define MUIV_NListtree_GetEntry_Position_Next               (-3)
+#define MUIV_NListtree_GetEntry_Position_Previous           (-4)
+#define MUIV_NListtree_GetEntry_Position_Parent             (-5)
 
 #define MUIV_NListtree_GetEntry_Flag_SameLevel              (1<<15)
 #define MUIV_NListtree_GetEntry_Flag_Visible                (1<<14)
 
 
-#define MUIV_NListtree_GetNr_TreeNode_Active                -2
+#define MUIV_NListtree_GetNr_TreeNode_Active                ((IPTR)-2)
 
 #define MUIV_NListtree_GetNr_Flag_CountAll                  (1<<15)
 #define MUIV_NListtree_GetNr_Flag_CountLevel                (1<<14)
@@ -540,125 +540,125 @@ struct MUIP_NListtree_Compare
 #define MUIV_NListtree_GetNr_Flag_Visible                   (1<<11)
 
 
-#define MUIV_NListtree_Insert_ListNode_Root                 0
-#define MUIV_NListtree_Insert_ListNode_Active               -2
-#define MUIV_NListtree_Insert_ListNode_LastInserted         -3
-#define MUIV_NListtree_Insert_ListNode_ActiveFallback       -4
+#define MUIV_NListtree_Insert_ListNode_Root                 ((IPTR)0)
+#define MUIV_NListtree_Insert_ListNode_Active               ((IPTR)-2)
+#define MUIV_NListtree_Insert_ListNode_LastInserted         ((IPTR)-3)
+#define MUIV_NListtree_Insert_ListNode_ActiveFallback       ((IPTR)-4)
 
-#define MUIV_NListtree_Insert_PrevNode_Head                 0
-#define MUIV_NListtree_Insert_PrevNode_Tail                 -1
-#define MUIV_NListtree_Insert_PrevNode_Active               -2
-#define MUIV_NListtree_Insert_PrevNode_Sorted               -4
+#define MUIV_NListtree_Insert_PrevNode_Head                 ((IPTR)0)
+#define MUIV_NListtree_Insert_PrevNode_Tail                 ((IPTR)-1)
+#define MUIV_NListtree_Insert_PrevNode_Active               ((IPTR)-2)
+#define MUIV_NListtree_Insert_PrevNode_Sorted               ((IPTR)-4)
 
 #define MUIV_NListtree_Insert_Flag_Active                   (1<<13)
 #define MUIV_NListtree_Insert_Flag_NextNode                 (1<<12)
 
 
-#define MUIV_NListtree_Move_OldListNode_Root                0
-#define MUIV_NListtree_Move_OldListNode_Active              -2
+#define MUIV_NListtree_Move_OldListNode_Root                ((IPTR)0)
+#define MUIV_NListtree_Move_OldListNode_Active              ((IPTR)-2)
 
-#define MUIV_NListtree_Move_OldTreeNode_Head                0
-#define MUIV_NListtree_Move_OldTreeNode_Tail                -1
-#define MUIV_NListtree_Move_OldTreeNode_Active              -2
+#define MUIV_NListtree_Move_OldTreeNode_Head                ((IPTR)0)
+#define MUIV_NListtree_Move_OldTreeNode_Tail                ((IPTR)-1)
+#define MUIV_NListtree_Move_OldTreeNode_Active              ((IPTR)-2)
 
-#define MUIV_NListtree_Move_NewListNode_Root                0
-#define MUIV_NListtree_Move_NewListNode_Active              -2
+#define MUIV_NListtree_Move_NewListNode_Root                ((IPTR)0)
+#define MUIV_NListtree_Move_NewListNode_Active              ((IPTR)-2)
 
-#define MUIV_NListtree_Move_NewTreeNode_Head                0
-#define MUIV_NListtree_Move_NewTreeNode_Tail                -1
-#define MUIV_NListtree_Move_NewTreeNode_Active              -2
-#define MUIV_NListtree_Move_NewTreeNode_Sorted              -4
+#define MUIV_NListtree_Move_NewTreeNode_Head                ((IPTR)0)
+#define MUIV_NListtree_Move_NewTreeNode_Tail                ((IPTR)-1)
+#define MUIV_NListtree_Move_NewTreeNode_Active              ((IPTR)-2)
+#define MUIV_NListtree_Move_NewTreeNode_Sorted              ((IPTR)-4)
 
 #define MUIV_NListtree_Move_Flag_KeepStructure              (1<<13)
 
 
-#define MUIV_NListtree_Open_ListNode_Root                   0
-#define MUIV_NListtree_Open_ListNode_Parent                 -1
-#define MUIV_NListtree_Open_ListNode_Active                 -2
-#define MUIV_NListtree_Open_TreeNode_Head                   0
-#define MUIV_NListtree_Open_TreeNode_Tail                   -1
-#define MUIV_NListtree_Open_TreeNode_Active                 -2
-#define MUIV_NListtree_Open_TreeNode_All                    -3
+#define MUIV_NListtree_Open_ListNode_Root                   ((IPTR)0)
+#define MUIV_NListtree_Open_ListNode_Parent                 ((IPTR)-1)
+#define MUIV_NListtree_Open_ListNode_Active                 ((IPTR)-2)
+#define MUIV_NListtree_Open_TreeNode_Head                   ((IPTR)0)
+#define MUIV_NListtree_Open_TreeNode_Tail                   ((IPTR)-1)
+#define MUIV_NListtree_Open_TreeNode_Active                 ((IPTR)-2)
+#define MUIV_NListtree_Open_TreeNode_All                    ((IPTR)-3)
 
 
 
-#define MUIV_NListtree_Remove_ListNode_Root                 0
-#define MUIV_NListtree_Remove_ListNode_Active               -2
-#define MUIV_NListtree_Remove_TreeNode_Head                 0
-#define MUIV_NListtree_Remove_TreeNode_Tail                 -1
-#define MUIV_NListtree_Remove_TreeNode_Active               -2
-#define MUIV_NListtree_Remove_TreeNode_All                  -3
-#define MUIV_NListtree_Remove_TreeNode_Selected             -4
+#define MUIV_NListtree_Remove_ListNode_Root                 ((IPTR)0)
+#define MUIV_NListtree_Remove_ListNode_Active               ((IPTR)-2)
+#define MUIV_NListtree_Remove_TreeNode_Head                 ((IPTR)0)
+#define MUIV_NListtree_Remove_TreeNode_Tail                 ((IPTR)-1)
+#define MUIV_NListtree_Remove_TreeNode_Active               ((IPTR)-2)
+#define MUIV_NListtree_Remove_TreeNode_All                  ((IPTR)-3)
+#define MUIV_NListtree_Remove_TreeNode_Selected             ((IPTR)-4)
 
 #define MUIV_NListtree_Remove_Flag_NoActive                 (1<<13)
 
 
 
 
-#define MUIV_NListtree_Rename_TreeNode_Active               -2
+#define MUIV_NListtree_Rename_TreeNode_Active               ((IPTR)-2)
 
 #define MUIV_NListtree_Rename_Flag_User                     (1<<8)
 #define MUIV_NListtree_Rename_Flag_NoRefresh                (1<<9)
 
 
-#define MUIV_NListtree_Sort_ListNode_Root                   0
-#define MUIV_NListtree_Sort_ListNode_Active                 -2
-#define MUIV_NListtree_Sort_TreeNode_Active                 -3
+#define MUIV_NListtree_Sort_ListNode_Root                   ((IPTR)0)
+#define MUIV_NListtree_Sort_ListNode_Active                 ((IPTR)-2)
+#define MUIV_NListtree_Sort_TreeNode_Active                 ((IPTR)-3)
 
 #define MUIV_NListtree_Sort_Flag_RecursiveOpen              (1<<13)
 #define MUIV_NListtree_Sort_Flag_RecursiveAll               (1<<12)
 
 
-#define MUIV_NListtree_TestPos_Result_None                  0
-#define MUIV_NListtree_TestPos_Result_Above                 1
-#define MUIV_NListtree_TestPos_Result_Below                 2
-#define MUIV_NListtree_TestPos_Result_Onto                  3
-#define MUIV_NListtree_TestPos_Result_Sorted                4
+#define MUIV_NListtree_TestPos_Result_None                  (0)
+#define MUIV_NListtree_TestPos_Result_Above                 (1)
+#define MUIV_NListtree_TestPos_Result_Below                 (2)
+#define MUIV_NListtree_TestPos_Result_Onto                  (3)
+#define MUIV_NListtree_TestPos_Result_Sorted                (4)
 
-#define MUIV_NListtree_Redraw_Active                        -1
-#define MUIV_NListtree_Redraw_All                           -2
+#define MUIV_NListtree_Redraw_Active                        ((IPTR)-1)
+#define MUIV_NListtree_Redraw_All                           ((IPTR)-2)
 
 #define MUIV_NListtree_Redraw_Flag_Nr                       (1<<15)
 
-#define MUIV_NListtree_Select_Active                        -1
-#define MUIV_NListtree_Select_All                           -2
-#define MUIV_NListtree_Select_Visible                       -3
+#define MUIV_NListtree_Select_Active                        ((IPTR)-1)
+#define MUIV_NListtree_Select_All                           ((IPTR)-2)
+#define MUIV_NListtree_Select_Visible                       ((IPTR)-3)
 
-#define MUIV_NListtree_Select_Off                           0
-#define MUIV_NListtree_Select_On                            1
-#define MUIV_NListtree_Select_Toggle                        2
-#define MUIV_NListtree_Select_Ask                           3
+#define MUIV_NListtree_Select_Off                           ((IPTR)0)
+#define MUIV_NListtree_Select_On                            ((IPTR)1)
+#define MUIV_NListtree_Select_Toggle                        ((IPTR)2)
+#define MUIV_NListtree_Select_Ask                           ((IPTR)3)
 
 #define MUIV_NListtree_Select_Flag_Force                    (1<<15)
 
 
-#define MUIV_NListtree_NextSelected_Start                   -1
-#define MUIV_NListtree_NextSelected_End                     -1
+#define MUIV_NListtree_NextSelected_Start                   ((IPTR)-1)
+#define MUIV_NListtree_NextSelected_End                     ((IPTR)-1)
 
 
-#define MUIV_NListtree_Copy_SourceListNode_Root             0
-#define MUIV_NListtree_Copy_SourceListNode_Active           -2
+#define MUIV_NListtree_Copy_SourceListNode_Root             ((IPTR)0)
+#define MUIV_NListtree_Copy_SourceListNode_Active           ((IPTR)-2)
 
-#define MUIV_NListtree_Copy_SourceTreeNode_Head             0
-#define MUIV_NListtree_Copy_SourceTreeNode_Tail             -1
-#define MUIV_NListtree_Copy_SourceTreeNode_Active           -2
+#define MUIV_NListtree_Copy_SourceTreeNode_Head             ((IPTR)0)
+#define MUIV_NListtree_Copy_SourceTreeNode_Tail             ((IPTR)-1)
+#define MUIV_NListtree_Copy_SourceTreeNode_Active           ((IPTR)-2)
 
-#define MUIV_NListtree_Copy_DestListNode_Root               0
-#define MUIV_NListtree_Copy_DestListNode_Active             -2
+#define MUIV_NListtree_Copy_DestListNode_Root               ((IPTR)0)
+#define MUIV_NListtree_Copy_DestListNode_Active             ((IPTR)-2)
 
-#define MUIV_NListtree_Copy_DestTreeNode_Head               0
-#define MUIV_NListtree_Copy_DestTreeNode_Tail               -1
-#define MUIV_NListtree_Copy_DestTreeNode_Active             -2
-#define MUIV_NListtree_Copy_DestTreeNode_Sorted             -4
+#define MUIV_NListtree_Copy_DestTreeNode_Head               ((IPTR)0)
+#define MUIV_NListtree_Copy_DestTreeNode_Tail               ((IPTR)-1)
+#define MUIV_NListtree_Copy_DestTreeNode_Active             ((IPTR)-2)
+#define MUIV_NListtree_Copy_DestTreeNode_Sorted             ((IPTR)-4)
 
 #define MUIV_NListtree_Copy_Flag_KeepStructure              (1<<13)
 
 
-#define MUIV_NListtree_PrevSelected_Start                   -1
-#define MUIV_NListtree_PrevSelected_End                     -1
+#define MUIV_NListtree_PrevSelected_Start                   ((IPTR)-1)
+#define MUIV_NListtree_PrevSelected_End                     ((IPTR)-1)
 
 
-#define MUIV_NListtree_CopyToClip_Active                    -1
+#define MUIV_NListtree_CopyToClip_Active                    ((IPTR)-1)
 
 
 /*** Hook message structs ***/

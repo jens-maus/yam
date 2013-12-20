@@ -19,7 +19,7 @@
 
  TextEditor class Support Site:  http://www.sf.net/projects/texteditor-mcc
 
- $Id: TextEditor_mcc.h 929 2013-11-01 08:30:20Z thboeckel $
+ $Id: TextEditor_mcc.h 931 2013-11-01 18:47:32Z thboeckel $
 
 ***************************************************************************/
 
