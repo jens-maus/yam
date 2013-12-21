@@ -29,6 +29,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <clib/alib_protos.h>
 #include <proto/codesets.h>
 #include <proto/dos.h>
 #include <proto/exec.h>

@@ -2540,8 +2540,8 @@ int main(int argc, char **argv)
 
     // install the low memory handler
     if((G->lowMemHandler = AllocSysObjectTags(ASOT_INTERRUPT,
-      ASOINTR_Code, LowMemHandler,
-      ASOINTR_Data, FindTask(NULL),
+      ASOINTR_Code, (ULONG)LowMemHandler,
+      ASOINTR_Data, (ULONG)FindTask(NULL),
       TAG_DONE)) != NULL)
     {
       G->lowMemHandler->is_Node.ln_Pri = 50;

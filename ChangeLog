@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-12-21 Jens Maus <mail@jens-maus.de>
+
+  * src/AddressBook.c, src/TZone.c, src/YAM.c: fixed some MorphOS' related
+    compiler warnings.
+
 2013-12-20 Jens Maus <mail@jens-maus.de>
 
   * YAM.c: added "NBitmap.mcc" as a required dependency.
