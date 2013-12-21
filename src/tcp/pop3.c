@@ -983,8 +983,9 @@ static int ConnectToPOP3(struct TransferContext *tc)
 
   PushMethodOnStack(tc->transferGroup, 2, MUIM_TransferControlGroup_ShowStatus, tr(MSG_TR_Connecting));
 
+  // show some busy text in the main window
   tc->busy = BusyBegin(BUSY_TEXT);
-  BusyText(tc->busy, tr(MSG_TR_MailTransferFrom), tc->msn->description);
+  BusyText(tc->busy, tr(MSG_TR_MAILCHECKFROM), tc->msn->description);
 
   // now we start our connection to the POP3 server
   if((err = ConnectToHost(tc->connection, tc->msn)) != CONNECTERR_SUCCESS)
@@ -1314,6 +1315,9 @@ static void DownloadMails(struct TransferContext *tc)
 
   ENTER();
 
+  // Now we are actually downloading, so lets change the busy text
+  BusyText(tc->busy, tr(MSG_TR_MailTransferFrom), tc->msn->description);
+
   // depending on the incoming folder settings in the
   // POP3 server configuration we store mail either in the
   // folder configured there or in the default incoming folder
@@ -1408,7 +1412,7 @@ static void DownloadMails(struct TransferContext *tc)
   PushMethodOnStack(G->App, 3, MUIM_YAMApplication_DisplayStatistics, incomingFolder, TRUE);
 
   // update the menu items and toolbars
-  PushMethodOnStack(G->App, 2, MUIM_YAMApplication_ChangeSelected, incomingFolder, TRUE);
+  PushMethodOnStack(G->App, 3, MUIM_YAMApplication_ChangeSelected, incomingFolder, TRUE);
 
   LEAVE();
 }
@@ -1560,7 +1564,7 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
             {
               strlcpy(tc->password, msn->password, sizeof(tc->password));
 
-              snprintf(tc->transferGroupTitle, sizeof(tc->transferGroupTitle), tr(MSG_TR_MailTransferFrom), msn->description);
+              snprintf(tc->transferGroupTitle, sizeof(tc->transferGroupTitle), tr(MSG_TR_MAILCHECKFROM), msn->description);
 
               if((tc->transferGroup = (Object *)PushMethodOnStackWait(G->App, 6, MUIM_YAMApplication_CreateTransferGroup, CurrentThread(), tc->transferGroupTitle, tc->connection, TRUE, isFlagSet(tc->flags, RECEIVEF_USER))) != NULL)
               {
@@ -1605,9 +1609,9 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
                         D(DBF_NET, "preselection is required");
                         doDownload = FALSE;
 
-                        snprintf(tc->windowTitle, sizeof(tc->windowTitle), tr(MSG_TR_MailTransferFrom), tc->msn->description);
+                        snprintf(tc->windowTitle, sizeof(tc->windowTitle), tr(MSG_TR_MAILCHECKFROM), tc->msn->description);
 
-                        if((tc->preselectWindow = (Object *)PushMethodOnStackWait(G->App, 7, MUIM_YAMApplication_CreatePreselectionWindow, CurrentThread(), tc->windowTitle, tc->msn->largeMailSizeLimit, PRESELWINMODE_DOWNLOAD, tc->transferList)) != NULL)
+                        if((tc->preselectWindow = (Object *)PushMethodOnStackWait(G->App, 6, MUIM_YAMApplication_CreatePreselectionWindow, CurrentThread(), tc->windowTitle, tc->msn->largeMailSizeLimit, PRESELWINMODE_DOWNLOAD, tc->transferList)) != NULL)
                         {
                           int mustWait;
 
@@ -1698,7 +1702,7 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
           if(tc->downloadResult.downloaded > 0)
           {
             PushMethodOnStackWait(G->App, 3, MUIM_YAMApplication_FilterNewMails, tc->msn->downloadedMails, &tc->filterResult);
-            PushMethodOnStackWait(G->App, 4, MUIM_YAMApplication_NewMailAlert, tc->msn, &tc->downloadResult, &tc->filterResult, tc->flags);
+            PushMethodOnStackWait(G->App, 5, MUIM_YAMApplication_NewMailAlert, tc->msn, &tc->downloadResult, &tc->filterResult, tc->flags);
           }
 
           // forget about the downloaded mails again

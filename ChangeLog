@@ -7,6 +7,11 @@ $URL$
 
 2013-12-21 Jens Maus <mail@jens-maus.de>
 
+  * src/tcp/pop3.c: fixed some PushMethodOnStack() calls having used an
+    incorrect number for specifying how many arguments will follow.
+  * src/tcp/pop3.c, locale/YAM.cd, locale/german.ct: while just checking for
+    mails, YAM will now show a "Checking mails from..." instead of calling
+    in "Mail Transfer from..." as this might be misleading. This closes #478.
   * src/Busy.c: fixed a potential problem with calling BusyEnd() from a thread
     and awaiting it to be processed immediately so that the BusyNode can be
     NULLed afterwards. Now BusyEnd() will use PushMethodOnStackWait() instead

@@ -7481,3 +7481,7 @@ MSG_MA_REPLYREQ_OPTIONS2 (2529//)
 MSG_ABOUT_DONATE_TEXT (2530//)
 Secure the future of YAM
 ;
+MSG_TR_MAILCHECKFROM (2531//)
+Checking mails from '%s'
+; DESCRIPTION
+;
