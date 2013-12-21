@@ -10,7 +10,7 @@ $URL$
   * YAM.c: added "NBitmap.mcc" as a required dependency.
   * mui/Aboutwindow.c: added a "Make a donation" button to the About window
     to attract more people to make a direct donation to our project since
-    the number of donations seem to decrease somehwat.
+    the number of donations seem to decrease somewhat.
 
 2013-12-19 Samir Hawamdeh <s.hawamdeh@tin.it>
 

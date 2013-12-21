@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.57 (19.12.2013)
+## version $VER: YAM.catalog 8.58 (21.12.2013)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -10700,4 +10700,8 @@ messaggio e chiude la finestra.
 MSG_MA_REPLYREQ_OPTIONS2
 *_Mittente|Mittente e _tutti i destinatari|_Annulla
 ; *_Sender|Sender and _all Recipients|_Cancel
+;
+MSG_ABOUT_DONATE_TEXT
+Assicura un futuro a YAM
+; Secure the future of YAM
 ;
