@@ -7,6 +7,9 @@ $URL$
 
 2013-12-21 Jens Maus <mail@jens-maus.de>
 
+  * src/mui/InfoBar.c, src/mui/QuickSearchBar.c: we use MakeCloseButton()
+    now for all situations where we had "X"-based close buttons to provide
+    functionality to abort a process.
   * src/tcp/pop3.c: fixed some PushMethodOnStack() calls having used an
     incorrect number for specifying how many arguments will follow.
   * src/tcp/pop3.c, locale/YAM.cd, locale/german.ct: while just checking for

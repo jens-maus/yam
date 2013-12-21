@@ -222,7 +222,17 @@ Object *MakeCloseButton(void)
   else
   {
     // create a simple button with a bold "X"
-    obj = MakeButton(MUIX_B "X");
+    obj = TextObject,
+            ButtonFrame,
+            MUIA_CycleChain,     TRUE,
+            MUIA_Font,           MUIV_Font_Tiny,
+            MUIA_InputMode,      MUIV_InputMode_RelVerify,
+            MUIA_Background,     MUII_ButtonBack,
+            MUIA_Text_SetMax,    TRUE,
+            MUIA_Text_Copy,      FALSE,
+            MUIA_Text_PreParse,  MUIX_B,
+            MUIA_Text_Contents,  "X",
+          End;
   }
 
   RETURN(obj);
