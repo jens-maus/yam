@@ -7,6 +7,8 @@ $URL$
 
 2013-12-21 Jens Maus <mail@jens-maus.de>
 
+  * resources/zoneinfo, tools/tzdata, tools/tzcode: updated tzdata/tzcode
+    environment to the latest version (2013i) released by iana.org.
   * src/AddressBook.c, src/TZone.c, src/YAM.c: fixed some MorphOS' related
     compiler warnings.
 
