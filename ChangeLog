@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-12-21 Pär Boberg <pbobbenb@spray.se>
+
+  * locale/swedish.ct: updated to the latest changes.
+
 2013-12-21 Jens Maus <mail@jens-maus.de>
 
   * src/mui/InfoBar.c, src/mui/QuickSearchBar.c: we use MakeCloseButton()

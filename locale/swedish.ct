@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.7 (17.12.2013)
+## version $VER: YAM.catalog 8.8 (21.12.2013)
 ## language svenska
 ## codeset 0
 ;
@@ -717,18 +717,6 @@ MSG_MA_NewFolder
 Ny mapp
 ; New folder
 ;This is the title of the new folder window, not the menu item.
-;
-MSG_MA_SortOrder
-Ordning
-; Order
-;
-MSG_MA_OSave
-Spara
-; Save
-;
-MSG_MA_Reset
-Återställ
-; Reset
 ;
 MSG_MA_Select
 Välj
@@ -2372,13 +2360,6 @@ MSG_AB_Modified
 Adressboken har ändrats!
 ; Address book has been modified.
 ;
-MSG_AB_ModifiedGads
-*_Spara|_Använd|Kasta än_dringar|A_vbryt
-; *_Save|_Use|_Discard changes|_Cancel
-;
-;
-; Module AB - Hooks
-;
 MSG_AB_TitleAlias
 Alias
 ; Alias
@@ -2764,11 +2745,6 @@ Välj en bildfil från disk\n(bilddatatyper stöds).
 ; Select a picture file from disk\n\
 ; (image datatypes supported).
 ;
-MSG_HELP_EA_ST_REALNAME_L
-Fullt namn på denna sändlista\n(kommer att användas i Till: fältet).
-; Full name of this distribution list\n\
-; (it will be used in the 'To:' field).
-;
 MSG_HELP_EA_ST_ADDRESS_L
 Svarsadress att använda när\ndu skickar till denna lista.
 ; Return address to use when\n\
@@ -2969,10 +2945,6 @@ Vill du lägga till avsändaren\n\eb%s\en\ntill din adressbok?
 ; \eb%s\en\n\
 ; to your address book?
 ; SENDER
-;
-MSG_RE_NewGroupTitle
-Automatiskt tillagda poster
-; Automatically added entries
 ;
 MSG_RE_ContentType
 Innehållstyp
@@ -3205,10 +3177,6 @@ MSG_WR_DiscardChanges
 Vill du verkligen kasta alla ändringar?
 ; Do you really want to discard all\n\
 ; modifications to this message?
-;
-MSG_WR_DiscardChangesGad
-*_Skicka senare|_Kasta|A_vbryt
-; *_Send later|_Discard|_Cancel
 ;
 MSG_WR_SaveTextAs
 Spara text som
@@ -6670,14 +6638,6 @@ Om vald, kommer datumkolumner att använda\nrelativt datum istället. Dessa kolumn
 ; will use a relative output (e.g. 'Today' or\n\
 ; 'Yesterday') instead of the full date if possible.
 ;
-MSG_FOLDER_SNAPSHOT_TREE
-Memorera ordning
-; Snapshot arrangement
-;
-MSG_FOLDER_RELOAD_TREE
-Läs om ordning
-; Reload arrangement
-;
 MSG_ER_USER_UNKNOWN_TITLE
 Okänd användare
 ; Unknown user
@@ -8459,10 +8419,6 @@ MSG_CO_IDENTITY_COMPOSE_OPTIONS
 Alternativ
 ; Options
 ;
-MSG_CO_IDENTITY_COMPOSE_SENTFOLDER
-Spara skickade brev till mapp
-; Store sent mail to folder
-;
 MSG_CO_IDENTITY_COMPOSE_QUOTE
 Citera meddelanden vid svar
 ; Quote messages when answering
@@ -9727,4 +9683,13 @@ stänger fönstret.
 MSG_MA_REPLYREQ_OPTIONS2
 *_Avsändare|Avsändare _och alla mottagare|A_vbryt
 ; *_Sender|Sender and _all Recipients|_Cancel
+;
+MSG_ABOUT_DONATE_TEXT
+Säkra framtiden för YAM
+; Secure the future of YAM
+;
+MSG_TR_MAILCHECKFROM
+Kontrollerar brev från '%s'
+; Checking mails from '%s'
+; DESCRIPTION
 ;
