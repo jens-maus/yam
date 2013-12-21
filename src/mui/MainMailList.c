@@ -870,9 +870,9 @@ OVERLOAD(MUIM_CreateShortHelp)
 
         if(asprintf(&shortHelp, tr(MSG_MAILINFO_SHORTHELP), mail->From.RealName,
                                                             mail->From.Address,
-                                                            mail->To.RealName,
+                                                            IsStrEmpty(mail->To.Address) ? tr(MSG_MA_NO_RECIPIENTS) : mail->To.RealName,
                                                             mail->To.Address,
-                                                            mail->Subject,
+                                                            IsStrEmpty(mail->Subject) ? tr(MSG_MA_NO_SUBJECT) : mail->Subject,
                                                             datestr,
                                                             mail->MailFile,
                                                             sizestr) == -1)

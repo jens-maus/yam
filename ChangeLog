@@ -7,6 +7,9 @@ $URL$
 
 2013-12-21 Jens Maus <mail@jens-maus.de>
 
+  * src/mui/MainMailList.c: the dynamically generated short help for each 
+    mail in the mail list will now also show "(No Recipients)" and 
+    "(No Subject)" in case one if that information is missing.
   * resources/zoneinfo, tools/tzdata, tools/tzcode: updated tzdata/tzcode
     environment to the latest version (2013i) released by iana.org.
   * src/AddressBook.c, src/TZone.c, src/YAM.c: fixed some MorphOS' related
