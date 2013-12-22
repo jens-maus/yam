@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.58 (21.12.2013)
+## version $VER: YAM.catalog 8.59 (22.12.2013)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -10433,7 +10433,7 @@ _Mostra set di caratteri
 ; Display _charset
 ;
 MSG_HELP_CO_TX_MIME_CODESET
-Seleziona il set di caratteri qui in modo che\n\
+Seleziona qui il set di caratteri in modo che\n\
 i caratteri stampabili siano convertiti prima\n\
 dell'esecuzione del comando di questo tipo\n\
 di MIME.
@@ -10474,7 +10474,7 @@ Vai al messaggio più recente
 ;
 MSG_HELP_FO_CH_JUMPTORECENT
 Vai al messaggio più recente quando\n\
-si accede a questa cartella
+si accede a questa cartella.
 ; Jump to the most recent message when\n\
 ; entering this folder.
 ;
@@ -10521,7 +10521,7 @@ possibile allegato da includere al messaggio?
 MSG_HELP_CO_LV_ATTACHMENTKEYWORDS
 Configura delle parole chiave per istruire\n\
 il programma circa l'eventuale mancanza\n\
-di allegati prima dell'invio della posta.
+di allegati da inviare per posta.
 ; Configure the keywords which might\n\
 ; suggest the desired existance of an\n\
 ; attachment.
@@ -10647,7 +10647,7 @@ it
 MSG_CO_CYRILLICCHARSETWARN
 La rilevazione automatica del set di caratteri cirillico è attivata ma\n\
 l'attuale configurazione del set di caratteri '%s' è incorretta.\n\
-Questa combinazione potrebbe causare problemi nei caratteri.\n\
+Questa combinazione potrebbe causare dei problemi nei caratteri.\n\
 \n\
 Si desidera disattivare la rilevazione del set di caratteri cirillico?
 ; Automatic detection of cyrillic charsets is enabled, but the\n\
@@ -10704,4 +10704,9 @@ MSG_MA_REPLYREQ_OPTIONS2
 MSG_ABOUT_DONATE_TEXT
 Assicura un futuro a YAM
 ; Secure the future of YAM
+;
+MSG_TR_MAILCHECKFROM
+Controlla messaggi di posta da '%s'
+; Checking mails from '%s'
+; DESCRIPTION
 ;
