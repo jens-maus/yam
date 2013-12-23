@@ -884,8 +884,20 @@
     (all)
     (help @copyfiles-help)
 )
-
+)
 (complete 70)
+
+(set Zoneinfo_dir (tackon Resources_dir "Zoneinfo"))
+(if (not (exists Zoneinfo_dir))
+    (makedir Zoneinfo_dir)
+)
+(copyfiles
+    (source "/Resources/Zoneinfo/")
+    (dest Zoneinfo_dir)
+    (all)
+    (help @copyfiles-help)
+)
+(complete 75)
 
 (set Gallery_dir (tackon Resources_dir "Gallery"))
 (if (not (exists Gallery_dir))
@@ -907,7 +919,7 @@
     (help @copyfiles-help)
 )
 
-(complete 75)
+(complete 85)
 
 (set Docs_dir (tackon YAM_dir "Docs"))
 (if (not (exists Docs_dir))
@@ -937,7 +949,7 @@
     (help @copyfiles-help)
 )
 
-(complete 80)
+(complete 90)
 
 (set ARexx_dir (tackon YAM_dir "Rexx"))
 (if (not (exists ARexx_dir))
@@ -960,7 +972,7 @@
     )
 )
 
-(complete 85)
+(complete 95)
 
 (if (= detectedSystem "mos")
     ; MorphOS has no MUI: assign anymore but places MUI subclasses in SYS:Classes/MUI
@@ -985,7 +997,7 @@
     )
 )
 
-(complete 90)
+(complete 97)
 
 (foreach "Libs/" "#?.library"
     (copylib
