@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+#### YAM 2.9 RELEASE ####################################################
+
+2013-12-24 Jens Maus <mail@jens-maus.de>
+
+  * misc: final YAM 2.9 release. Merry christmas!
+
 2013-12-21 Pär Boberg <pbobbenb@spray.se>
 
   * locale/swedish.ct: updated to the latest changes.
