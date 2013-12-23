@@ -41,8 +41,8 @@ case $1 in
 esac
 echo "  MK $yamsys release"
 
-yamver="2.8p1"
-yamarcver="28p1"
+yamver=`grep "#define __YAM_VERSION" YAM_global.c | cut -d "\"" -f2`
+yamarcver=`echo ${yamver} | tr -d "."`
 
 mkdir -p release
 
@@ -78,7 +78,7 @@ cp -a ../COPYING "release/$yamsys/YAM $yamver/Docs/COPYING"
 cp -a ../icons/$yamicons/Docs_COPYING.info "release/$yamsys/YAM $yamver/Docs/COPYING.info"
 echo "  MK $yamsys/Install"
 mkdir -p "release/$yamsys/YAM $yamver/Install"
-svn --force export "https://svn.yam.ch/svn/yam/distribution/$yamsys/YAM%20$yamver/Install/" "release/$yamsys/YAM $yamver/Install/"
+svn --force export "https://svn.yam.ch/distribution/$yamsys/YAM%20$yamver/Install/" "release/$yamsys/YAM $yamver/Install/"
 cp -a ../icons/$yamicons/Install_directory.info "release/$yamsys/YAM $yamver/Install.info"
 cp -a ../doc/Install-YAM "release/$yamsys/YAM $yamver/Install/Install-YAM"
 cp -a ../icons/$yamicons/Install-YAM.info "release/$yamsys/YAM $yamver/Install/Install-YAM.info"

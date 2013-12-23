@@ -1,5 +1,5 @@
 ;
-; $VER: Install-YAM 1.33 (8.10.2013) (c) 2000-2013 by YAM Open Source Team
+; $VER: Install-YAM 1.34 (23.12.2013) (c) 2000-2013 by YAM Open Source Team
 ; Language support added by Sφnke Tesch/ATO
 ;
 ; $Id$
@@ -42,9 +42,9 @@
 (set #no_way_back_warning (cat "WARNING!!\n"
                                "(if you want to update an existing YAM 2.4 installation)\n"
                                "\n"
-                               "The mail naming scheme has been changed completely. When you run YAM 2.8p1 for the first time all your existing mails will be converted automatically to the new scheme. After that YAM 2.4 will not be able to handle them anymore. So better backup ALL your mails BEFORE running YAM 2.8p1.\n"
+                               "The mail naming scheme has been changed completely. When you run YAM 2.9 for the first time all your existing mails will be converted automatically to the new scheme. After that YAM 2.4 will not be able to handle them anymore. So better backup ALL your mails BEFORE running YAM 2.9.\n"
                                "\n"
-                               "However, it is absolutely NO problem to install YAM 2.4 and YAM 2.8p1 in separate directories."))
+                               "However, it is absolutely NO problem to install YAM 2.4 and YAM 2.9 in separate directories."))
 (set #faq_and_bugtracker (cat "\n"
                               "If you have any questions concerning YAM you can ask these in the YAM forum:\n"
                               "http://forum.yam.ch/\n"
@@ -78,9 +78,9 @@
         (set #no_way_back_warning (cat "WARNUNG!!\n"
                                        "(falls Sie eine bestehende Installation von YAM 2.4 updaten wollen)\n"
                                        "\n"
-                                       "Das Namensformat der EMail-Dateien wurde grundlegend geδndert. Wenn Sie YAM 2.8p1 zum ersten Mal starten werden alle Ihre EMails automatisch auf das neue Namensformat konvertiert. Danach kφnnen sie NICHT mehr von YAM 2.4 verarbeitet werden. Machen Sie also besser ein Backup BEVOR Sie YAM 2.8p1 starten.\n"
+                                       "Das Namensformat der EMail-Dateien wurde grundlegend geδndert. Wenn Sie YAM 2.9 zum ersten Mal starten werden alle Ihre EMails automatisch auf das neue Namensformat konvertiert. Danach kφnnen sie NICHT mehr von YAM 2.4 verarbeitet werden. Machen Sie also besser ein Backup BEVOR Sie YAM 2.9 starten.\n"
                                        "\n"
-                                       "Es ist absolut KEIN Problem YAM 2.4 und YAM 2.8p1 in unterschiedlichen Verzeichnissen zu installieren."))
+                                       "Es ist absolut KEIN Problem YAM 2.4 und YAM 2.9 in unterschiedlichen Verzeichnissen zu installieren."))
         (set #faq_and_bugtracker (cat "\n"
                                       "Falls Sie allgemeine Fragen zu YAM haben, kφnnen Sie diese im YAM-Forum stellen:\n"
                                       "http://forum.yam.ch/\n"
@@ -115,9 +115,9 @@
         (set #no_way_back_warning (cat "OSTRZEZENIE!!\n"
                                        "(jesli chcesz uaktualnic istniejaca instalacje programu YAM 2.4)\n"
                                        "\n"
-                                       "Zostal calkowicie zmieniony system nazywania plikow wiadomosci. Przy pierwszym uruchomieniu programu YAM 2.8p1, wszystkie istniejace wiadomosci zostana automatycznie przekonwertowane na nowy format. Po tej czynnosci YAM 2.4 nie bedzie potrafil juz ich obsluzyc. Lepiej wykonaj kopie bezpieczenstwa WSZYSTKICH swoich wiadomosci PRZED uruchomieniem programu YAM 2.8p1.\n"
+                                       "Zostal calkowicie zmieniony system nazywania plikow wiadomosci. Przy pierwszym uruchomieniu programu YAM 2.9, wszystkie istniejace wiadomosci zostana automatycznie przekonwertowane na nowy format. Po tej czynnosci YAM 2.4 nie bedzie potrafil juz ich obsluzyc. Lepiej wykonaj kopie bezpieczenstwa WSZYSTKICH swoich wiadomosci PRZED uruchomieniem programu YAM 2.9.\n"
                                        "\n"
-                                       "Jednakze nie stanowi zadnego problemu zainstalowanie programow YAM 2.4 i 2.8p1 w osobnych katalogach."))
+                                       "Jednakze nie stanowi zadnego problemu zainstalowanie programow YAM 2.4 i 2.9 w osobnych katalogach."))
         (set #faq_and_bugtracker (cat "\n"
                                       "Jesli masz jakies pytania dotyczace programu, mozesz je zadac na forum:\n"
                                       "http://forum.yam.ch/\n"
@@ -152,9 +152,9 @@
         (set #no_way_back_warning (cat  "VARNING!!\n"
                                        "(om du vill uppdatera en existerande YAM 2.4 installation)\n"
                                        "\n"
-                                       "Namnschemat fφr mailfilerna har δndrats totalt. Nδr du kφr YAM 2.8p1 fφr fφrsta gεngen, kommer alla dina nuvarande mailfiler att konverteras automatiskt till det nya schemat. Efter det kommer inte YAM 2.4 att kunna hantera dem lδngre. Sε, backa upp ALLA dina mailfiler FΦRE du kφr YAM 2.8p1.\n"
+                                       "Namnschemat fφr mailfilerna har δndrats totalt. Nδr du kφr YAM 2.9 fφr fφrsta gεngen, kommer alla dina nuvarande mailfiler att konverteras automatiskt till det nya schemat. Efter det kommer inte YAM 2.4 att kunna hantera dem lδngre. Sε, backa upp ALLA dina mailfiler FΦRE du kφr YAM 2.9.\n"
                                        "\n"
-                                       "Men, det δr absolut INGA problem att installera YAM 2.4 och YAM 2.8p1 i separata kataloger."))
+                                       "Men, det δr absolut INGA problem att installera YAM 2.4 och YAM 2.9 i separata kataloger."))
         (set #faq_and_bugtracker (cat "\n"
                                       "Om du har nεgra frεgor rφrande YAM kan du frεga dessa i YAM's forum:\n"
                                       "http://forum.yam.ch/\n"
@@ -189,9 +189,9 @@
         (set #no_way_back_warning (cat "ATTENTION !!\n"
                                        "(si vous voulez mettre ΰ jour une installation existante de YAM 2.4)\n"
                                        "\n"
-                                       "Le schιma de nommage des messages a complθtement changι. Lorsque vous lancez YAM 2.8p1 pour la premiθre fois, tous vos messages existants seront automatiquement convertis. Aprθs cela YAM 2.4 ne pourra plus les gιrer. Vous devriez donc faire une sauvegarde de TOUS vos messages AVANT de lancer YAM 2.8p1.\n"
+                                       "Le schιma de nommage des messages a complθtement changι. Lorsque vous lancez YAM 2.9 pour la premiθre fois, tous vos messages existants seront automatiquement convertis. Aprθs cela YAM 2.4 ne pourra plus les gιrer. Vous devriez donc faire une sauvegarde de TOUS vos messages AVANT de lancer YAM 2.9.\n"
                                        "\n"
-                                       "Cependant, il n'y a absolument AUCUN problθme ΰ installer YAM 2.4 et 2.8p1 dans des rιpertoires diffιrents."))
+                                       "Cependant, il n'y a absolument AUCUN problθme ΰ installer YAM 2.4 et 2.9 dans des rιpertoires diffιrents."))
         (set #faq_and_bugtracker (cat "\n"
                                       "Si vous avez des questions concernant YAM vous pouvez les poser sur le forum :\n"
                                       "http://forum.yam.ch/\n"
@@ -261,7 +261,7 @@
         (set #no_way_back_warning (cat "ATTENZIONE!!\n"
                                        "(Nel caso si desideri aggiornare il programma da una precedente installazione di YAM 2.4.)\n"
                                        "\n"
-                                       "Lo schema dei nomi relativo ai messaggi di posta θ stato completamente modificato, alla prima esecuzione di YAM 2.8p1 tutti i precedenti messaggi verranno automaticamente convertiti al nuovo schema. Nota che YAM 2.4 non sarΰ piω in grado di accedere a questi messaggi perciς θ consigliabile effettuare un backup di TUTTI i vecchi messaggi di posta prima di procedere con questa operazione.\n"
+                                       "Lo schema dei nomi relativo ai messaggi di posta θ stato completamente modificato, alla prima esecuzione di YAM 2.9 tutti i precedenti messaggi verranno automaticamente convertiti al nuovo schema. Nota che YAM 2.4 non sarΰ piω in grado di accedere a questi messaggi perciς θ consigliabile effettuare un backup di TUTTI i vecchi messaggi di posta prima di procedere con questa operazione.\n"
                                        "\n"
                                        "Ricorda che seppur in directory separate, sarΰ sempre possibile installare due differenti versioni di YAM."))
         (set #faq_and_bugtracker (cat "\n"
@@ -298,9 +298,9 @@
         (set #no_way_back_warning (cat "ΠΡΟΣΟΧΗ !!!\n"
                                        "(εάν θέλετε να αναβαθμίσετε μια ήδη υπάρχουσα εγκατάσταση του YAM 2.4)\n"
                                        "\n"
-                                       "Η μορφή ονομάτων αλληλογραφίας έχει αλλάξει εντελώς. Όταν τρέξετε το YAM 2.8p1 για πρώτη φορά όλες οι υπάρχουσες αλληλογραφίες θα μετατραπούν αυτόματα στη νέα μορφή. Μετά από αυτό, το YAM 2.4 δε θα μπορεί να τις χειριστεί πλέον. Έτσι είναι καλύτερα να κάνετε αντίγραφο ασφαλείας σε ΌΛΕΣ τις αλληλογραφίες σας ΠΡΙΝ τρέξετε το YAM 2.8p1.\n"
+                                       "Η μορφή ονομάτων αλληλογραφίας έχει αλλάξει εντελώς. Όταν τρέξετε το YAM 2.9 για πρώτη φορά όλες οι υπάρχουσες αλληλογραφίες θα μετατραπούν αυτόματα στη νέα μορφή. Μετά από αυτό, το YAM 2.4 δε θα μπορεί να τις χειριστεί πλέον. Έτσι είναι καλύτερα να κάνετε αντίγραφο ασφαλείας σε ΌΛΕΣ τις αλληλογραφίες σας ΠΡΙΝ τρέξετε το YAM 2.9.\n"
                                        "\n"
-                                       "Όμως, δεν υπάρχει ΚΑΝΕΝΑ πρόβλημα να εγκαταστήσετε το YAM 2.4 και ΥAM 2.8p1 σε διαφορετικούς καταλόγους."))
+                                       "Όμως, δεν υπάρχει ΚΑΝΕΝΑ πρόβλημα να εγκαταστήσετε το YAM 2.4 και ΥAM 2.9 σε διαφορετικούς καταλόγους."))
         (set #faq_and_bugtracker (cat "\n"
                                       "Εάν έχετε οποιαδήποτε απορία σχετικά με το YAM μπορείτε να την αναφέρετε στα forum του YAM:\n"
                                       "http://forum.yam.ch/\n"
@@ -333,9 +333,9 @@
                                        "(si quiere actualizar la versiσn existente\n"
                                        "de YAM 2.4)\n"
                                        "\n"
-                                       "El esquema de denominaciσn de correo ha cambiado completamente. Cuando ejecute YAM 2.8p1 por primera vez todos sus correos existentes serαn convertidos automαticamente al nuevo esquema. Despuιs de esto YAM 2.4 no se podrα utilizar mαs. Asν que mejor guarde TODOS sus correos ANTES de ejecutar YAM 2.8p1.\n"
+                                       "El esquema de denominaciσn de correo ha cambiado completamente. Cuando ejecute YAM 2.9 por primera vez todos sus correos existentes serαn convertidos automαticamente al nuevo esquema. Despuιs de esto YAM 2.4 no se podrα utilizar mαs. Asν que mejor guarde TODOS sus correos ANTES de ejecutar YAM 2.9.\n"
                                        "\n"
-                                       "Aunque, NO hay problema en absoluto el instalar YAM 2.4 y YAM 2.8p1 en directorios separados."))
+                                       "Aunque, NO hay problema en absoluto el instalar YAM 2.4 y YAM 2.9 en directorios separados."))
         (set #faq_and_bugtracker (cat "\n"
                                       "Si tiene alguna consulta concerniente a YAM puede realizarla en el forum de YAM:\n"
                                       "http://forum.yam.ch/\n"
@@ -370,9 +370,9 @@
         (set #no_way_back_warning (cat "VAROITUS!!\n"
                                        "(jos haluat pδivittδδ jo asennetun YAM 2.4-version)\n"
                                        "\n"
-                                       "Postin nimeδmistapa on muuttunut tδysin. Kun kδynnistδt YAM -version 2.8p1 ensimmδistδ kertaa, kaikki olemassa olevat postisi muunnetaan uuden tavan mukaisiksi. Tδmδn jδlkeen YAM 2.4 ei enδδ pysty kδsittelemδδn niitδ. Joten sinun kannattaa varmuuskopioida kaikki sδhkφpostisi ENNEN kuin kδynnistδt YAM 2.8p1:n.\n"
+                                       "Postin nimeδmistapa on muuttunut tδysin. Kun kδynnistδt YAM -version 2.9 ensimmδistδ kertaa, kaikki olemassa olevat postisi muunnetaan uuden tavan mukaisiksi. Tδmδn jδlkeen YAM 2.4 ei enδδ pysty kδsittelemδδn niitδ. Joten sinun kannattaa varmuuskopioida kaikki sδhkφpostisi ENNEN kuin kδynnistδt YAM 2.9:n.\n"
                                        "\n"
-                                       "Kuitenkin voit ongelmitta asentaa YAM-version 2.4 ja YAM-version 2.8p1 eri hakemistoihin."))
+                                       "Kuitenkin voit ongelmitta asentaa YAM-version 2.4 ja YAM-version 2.9 eri hakemistoihin."))
         (set #faq_and_bugtracker (cat "\n"
                                       "Jos sinulla on mitδ tahansa YAMia koskevia kysymyksiδ, voit kysyδ niitδ YAM-keskustelufoorumissa:\n"
                                       "http://forum.yam.ch/\n"
@@ -547,7 +547,7 @@
         (makedir YAM_dir)
         ; copy the directory icon
         (copyfiles
-            (source "//YAM 2.8p1.info")
+            (source "//YAM 2.9.info")
             (dest (tackon YAM_dir "/"))
             (newname "YAM.info")
             (infos)

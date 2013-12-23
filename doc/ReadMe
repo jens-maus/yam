@@ -1,14 +1,14 @@
-Short:        YAM 2.8p1 - MUI-based E-mail client
+Short:        YAM 2.9 - MUI-based E-mail client
 Author:       YAM Open Source Team (http://yam.ch/)
 Uploader:     Jens Maus <mail@jens-maus.de>
 Type:         comm/yam
-Version:      2.8p1
+Version:      2.9
 Replaces:     comm/yam/YAM28*
 Requires:     AmigaOS 3.0+, MorphOS or AROS, MUI 3.8+, 68020+/PPC604e+
 Architecture: ppc-amigaos >= 4.0.5; m68k-amigaos >= 3.0; ppc-morphos >= 1.4.2; i386-aros; ppc-aros; x86_64-aros
 
 ---------------------------------------------------------------------------
-                          YAM - Version 2.8p1
+                          YAM - Version 2.9
 ---------------------------------------------------------------------------
 
 About YAM
@@ -46,10 +46,12 @@ re-save your  configuration as  soon as  possible in  order to  update your
 .config  file to  the new  format, which  will reveal  all the  new options
 available.
 
-In addition,  please note  that since  YAM 2.5 no  YAM: assign  is required
+In addition,  please note  that since  YAM 2.5 no 'YAM:' assign is required
 anymore. That means, you may even install it in a new location and start it
 right  away from  there  without  having to  touch  your old  installation.
 Afterwards you  may manually import  the mails from your  old installation.
+Thus, you can in principle now have to independent installation of YAM
+using two completly different versions.
 
 
 What's new
@@ -58,10 +60,12 @@ Here's a  list (in  alphabetical order)  of the  brave developers  who have
 contributed   to    this   release    since   the   last    official   one:
 
               Jens Maus
-              Thore Boeckelmann
+              Thore Böckelmann
 
 And here's a  PARTIAL list of the  changes in this version  with respect to
-the previous official 2.8 update:
+the previous official update:
+
+- 
 
 - updated translations for czech, greek, swedish, french, spanish, italian,
   turkish language.
@@ -130,7 +134,7 @@ the previous official 2.8 update:
 If  you want  to have  a more  detailed technical  information on  what was
 actually  changed, please  have a  look at  the included  'ChangeLog' file.
 You can also consult the official YAM homepage for more information on the
-changes done with YAM 2.8p1 (e.g. see http://yam.ch/milestone/YAM%202.8p1)
+changes done with YAM 2.9 (http://yam.ch/milestone/YAM%202.9)
 
 What is still missing?
 ----------------------
@@ -147,10 +151,6 @@ What is still missing?
   documentation system people are welcome updating the online documentation
   which can be found at http://docs.yam.ch/ and is based on a public wiki
   engine.
-- now that YAM 2.5+ comes with a new themes management, users are free to
-  create own themes in a fashion that allow them to exchange them with
-  other users. So go and create your own themes and submit them via
-  AmiNET&Co! :)
 
 Source code
 -----------
@@ -193,8 +193,7 @@ resources cover your daily YAM needs:
 
    For Developers:
 
-   http://nightly.yam.ch/  - Access to automatic nightly developer
-                             snapshots
+   http://nightly.yam.ch/  - Access to experimental developer snapshots
    http://svn.yam.ch/      - Web-based source code SVN access
    http://stats.yam.ch/    - Daily updated development statistics
 
@@ -203,5 +202,3 @@ resources cover your daily YAM needs:
    __  / /   Only Amiga makes it possible...
    \ \/ /
     \__/
-
-Amiga is a trademark of Amiga, Inc.
