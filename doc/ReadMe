@@ -65,71 +65,161 @@ contributed   to    this   release    since   the   last    official   one:
 And here's a  PARTIAL list of the  changes in this version  with respect to
 the previous official update:
 
-- 
-
-- updated translations for czech, greek, swedish, french, spanish, italian,
-  turkish language.
-- fixed an issue related to BetterString.mcc which cause YAM to crash.
-- extended the ADDRLOAD command to take a second parameter OPEN/S to
-  immediately open then address book window after the address book file
-  has been loaded successfully.
-- added a new option in the hidden section of the configuration. Setting the
-  option "OverrideFromAddress" to "Y" will add a recipient string object
-  below the identity chooser in the write window. The contents default to
-  the chosen identity's address but can be modified freely. This makes it
-  possible to use a different From: address than the one configured in the
-  identity while still using all other settings like the SMTP server.
-- renamed the 'Bounce' mail functionality for redirecting emails to alternative
-  recipients to 'Redirect' as that better reflects the purpose of this
-  functionality and should not confuse users anymore. Also adapted the
-  functionality to add all well-known Resent-#? headers to redirected emails.
-  This should adapt YAM to be somehwat more RFC compliant. Furthermore, a
-  Resent-CC and Resent-BCC can now be specified. In addition, YAM will now
-  allow to bounce to multiple emails in one operation. That means, a user
-  can now select more than one mail in the mail listview and when a redirect
-  operation is performed YAM will redirect all of these mails in one run.
-- fixed bug where hidden Cc, BCC or Reply-To string gadgets could have ended
-  up at wrong positions when hiding/showing them dynamically in the write
-  window.
-- fixed a bug where 'new' mail was never changed to 'unread' status if it was
-  moved to a subfolder. Now the index of all folders carrying 'new' mail will
-  be loaded and the status adapted accordingly.
-- fixed a problem where under certain setups the automatically chosen full
-  qualified domain name (FQDN) was unluckily chosen and thus mail sending being
-  rejected when using YAM. Now YAM should use a better mechanism and even let
-  you override the FQDN using a new hidden 'MachineFQDN' option.
-- fixed a crash where it could have happened that YAM accessed an invalid
-  memory location when creating a new mail.
-- added a new 'WRITEIDENTITY' ARexx command to let a script choose the user
-  identity to be used when composing a new mail via ARexx.
-- fixed a bug where the signature settings of a folder got lost when updating
-  from YAM versions <= 2.7 to 2.8
-- fixed a crash when entering certain text in the CC string gadget of a write
-  window.
-- fixed some problems with the new Drafts folder managment where emails could
-  end up duplicated. In addition, the 'Hold' button has been renamed to 'Save
-  to Drafts' to better differentate between the operations.
-- fixed a bug where the number of mails in the outgoing folder was not correctly
-  set when a mail was moved by mail filter operation.
-- fixed a bug where the From: address was not properly restored when the hidden
-  "OverrideFromAddress" option had been used.
-- fixed a bug where keeping the write window open for a while could suddenly
-  crash YAM.
-- fixed some crashes related to virtual email display (e.g. opening .eml
-  attachments).
-- fixed a bug in the mail header parsing routines where a header line starting
-  with a newline cause problems.
-- fixed a memory trashing problem where toolbar images of different sizes cause
-  some memory leaks within TheButton.mcc.
-- fixed a bug where resaving a mail in the drafts folder caused the mail
-  active/inactive state to get messed up.
-- modified remote filters to be applied when getting the single message details.
-  This makes it possible to let the filters check all available information but
-  it also requires the user to wait until the details of all new mails have been
-  received. Otherwise it could have happened that some mails were not received
-  although they should be filtered out.
-- fixed a crash bug when deleting a folder group.
-- fixed some incorrect dimensions of certain theme images.
+- implemented proper UTF-8 support for the whole index of a folder. This
+  allows now to switch charsets without having to rescan a folder index.
+- implemented a completely new procedure to deal with timezone and daylight
+  saving times as the old method were unable to identify the daylight
+  saving time for past dates. Now the official timezone databases published
+  by iana.org are used instead. This finally corrects the time display for
+  old mails when DST times changes relative to the current date/time.
+- The main window layout (size+position) and list sorting options will now
+  be automatically saved upon exiting YAM rather than forcing a user to
+  explicitly 'snapshot' that information via the corresponding MUI
+  functionality. An additional option in the configuration of YAM allow to
+  disable this, thought.
+- Enforce disposing of all images if YAM is running on an 8 bit screen
+  (excluding the Workbench) as soon as the image is no longer used. This
+  works around a bug in picture.datatype which seems to keep a pointer to
+  the screen the image was remapped to and accesses it later even if the
+  screen no longer exists.
+- fixed the partly broken support for the Mail-Reply-To (MRT) and
+  Mail-Followup-To (MFT) headers where YAM was not suggesting the right
+  reply addresses according to the documentation of the MRT/MFT feature.
+- improved charset/codeset handling support when using external editors
+  aware of UTF-8
+- fixed a problem where YAM was unable to create properly UTF-8 encoded
+  emails.
+- when adding new filters YAM will now automatically jump to the bottom of
+  the filter rule list.
+- To cleanup the main program directory of YAM all folder directories will
+  be automatically moved to a new subdirectory named "Folders" in the
+  user's mail directory (which defaults to YAM's program directory if not
+  changed via ToolTypes or the user configuration). Possibly duplicate
+  directory names get a unique number appended. To ease folder setup it is
+  not possible anymore to select any arbitrary path for a folder, but only
+  the directory name within the "Folders" directory.
+- The write window now features a small clone of the attachment list on the
+  first page. A context menu allows to perform the same actions as for the
+  big list on the second page.
+- Implemented an interactive attachment reminder feature as known from
+  Thunderbird. If enabled and the user types in certain keywords from a
+  user definable list and no attachment has been added to the mail a
+  reminder will be shown to inform the user that an attachment might be
+  desired.
+- Implemented an 'Archive' folder which move mails to a folder named after
+  the mail's original send date. The archive folders are excluded from
+  deleting old mails automatically to make sure the mails are really
+  archived until the user explicitly deletes them.
+- implemented a new functionality to allow to define different 'incoming'
+  and 'sent' folders per configured mail account (POP3/SMTP). This should
+  allow to more easily and directly filter emails not requiring to
+  explicitly define separate filters.
+- Fixed a bug which caused YAM to use the first matching address of a mail
+  as user identity even if this address was the sending instead of the
+  receiving one.
+- fixed a bug where the MAILINFO ARexx command caused a crash if the mail
+  in question contained no message ID.
+- when opening a new window YAM will now set the title of a screen to the
+  same title as well. This improves recognition of the currently active
+  window as the screen titlebar will then automatically refer to YAM and
+  thus make it possible that a user identifies by looking at the screen
+  title bar which application is the currently active one.
+- fixed a buffer overrun in the RFC 2014 decoding routines which
+  potentially caused unexpected crashes.
+- restored the behavior of previous versions when resolving the names of
+  address book mailing lists. The new method added in YAM 2.8+ caused
+  certain problems.
+- fixed the read/unread marking of mails which was not done for all columns
+  of the mail list.
+- when checking for new mails YAM will now show "Checking mails from ..."
+  rather than "Mail Transfer from ..." which was not entirely correct.
+- The position of the quick search bar is now configurable and allows the
+  user to place the bar below the main mail list.
+- improved online documentation (http://doc.yam.ch/) regarding the use of
+  quotes when specifying file/directory paths.
+- changed the "jumping to the first unread and/or most recent message when
+  entering a folder" functionality to be configurable on a per folder basis
+  instead of a being a global option only.
+- The time and date information from the Date: header line will now be
+  converted to local time if the usual "short" headers are shown. For full
+  header display it will be shown as it is.
+- The entered search string is now automatically cloned between the
+  different pages.
+- The output of the external archiver command can now be redirected
+  optionally to a console window while the archiver is running to show the
+  progress.
+- The single items of the list can now be activated immediately by pressing
+  their number on the keyboard. "0" will be mapped to the 10th attachment.
+- All kinds of links (http(s), ftp, etc) will now be underlined as well.
+- deleting or archiving a single mail will now behave consistently in every
+  situation and correctly respect the folder's current sort order.
+- any rule of a configured filter can now be removed or an additional one
+  added in between instead of allowing only to add/delete rules to/from the
+  bottom of the rule list.
+- The mail preselection list now shows the contents of the To: header line
+  to let users spot unwanted mails easier.
+- Printing a mail will now include a list of attachments. Additionally the
+  printout will no longer contain a plain copy of all header lines, but a
+  stripped down version of subject sender, receiver and date.
+- implemented a NOICONS switch for the REQUESTFILE Arexx command which will
+  open the corresponding file requester but hide and icons (#?.info files).
+- The Get and Send toolbar buttons will now be disabled in case there is no
+  active POP3 or SMTP server available.
+- fixed a problem with not seeing a folder added to the folder list
+  immediately.
+- address book entries can now be sorted by clicking on the list titles
+  similar to the mail list of the main window.
+- fixed the LISTFREEZE and LISTUNFREEZE arexx commands to deal correctly
+  with the Quiet settings of other YAM components.
+- PGP encrypted mails can now be excluded from a search to let in run
+  unattended without the need to enter a password.
+- Mails dragged out of the spam folder will now be marked as non-spam in
+  case the "mark on move" option is enabled.
+- implemented a new "Mail Account" column in the main mail list to be able
+  to sort emails based on mail account/hostname a mail was received so that
+  users can better order their mails due to the fact that since YAM 2.8
+  mails are now transferred asynchronously from multiple servers.
+- Searching user identities by address or ID will now correctly respect the
+  identity's active state and return active identities only. In case a mail
+  references an inactive user identity YAM will silently fall back to the
+  next best matching identity.
+- Implemented a new option to trigger a snapshot action on all alive
+  windows and to save the layout/state of certain groups and objects.
+- fixed a bug so that any edit operation in the quick search bar will now
+  abort a search operation in progress.
+- fixed a problem when YAM was run for the very first time after an
+  installation without any valid .config file. Opening the config window
+  too early caused this window to be opened without any graphics from the
+  default theme.
+- when changing a folder's path the global .folders file will be
+  immediately saved to make the change persistent.
+- mails from the Trash folder are now excluded from the spam filter.
+- mail disposal is now protected by a reference counter. This makes it
+  possible to move a mail to a different folder in concurrent processes
+  while still accessing the same mail without accessing invalid or already
+  freed memory. This fixes numerous different potential crash problems.
+- All SPAM filter related GUI elements will now be properly disabled if the
+  SPAM filter is completely disabled as well.
+- fixed a crash bug when using the gravatar image search functionality on a
+  never set address book entry.
+- the online ARexx documentation (http://doc.yam.ch/) can now be directly
+  accessed via the corresponding main menu item.
+- fixed a problem where html parts of a mail weren't forwarded to a web
+  browser but saved to disk instead due to not using the right file
+  extension.
+- added a fresh and updated finnish translation/catalog to YAM.
+- added a low memory handler to flush all folder indexes automatically if a
+  system is about to run low on memory.
+- fixed a crash bug when in the write window the autosave functionality
+  activates while typing.
+- when enabling the "detect cyrillic code sets" functionality YAM will now
+  warn the user in case he has setup YAM to use a non-cyrillic code set for
+  as the local charset.
+- significantly improved performance of parsing emails with large
+  attachments. Now YAM will reuse the size parameter of each MIME part to
+  speed up memory allocations during MIME parsing.
+- fixed a problem where editing a mail a second time added an additional
+  superfluous white space to the mail body.
 
 If  you want  to have  a more  detailed technical  information on  what was
 actually  changed, please  have a  look at  the included  'ChangeLog' file.
