@@ -385,7 +385,7 @@ OVERLOAD(OM_NEW)
           MUIA_NBitmap_Height, 23,
           MUIA_NBitmap_Type,   MUIV_NBitmap_Type_ARGB32,
           MUIA_NBitmap_Normal, donate_truecolor_body,
-//          MUIA_NBitmap_Button, TRUE,
+          MUIA_NBitmap_Button, TRUE,
         End,
       End,
 
