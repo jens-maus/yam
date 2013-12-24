@@ -757,6 +757,10 @@ DECLARE(ToggleRemoteFlag) // ULONG remote
 
   ENTER();
 
+  // update the filter's remote state
+  data->filter->remote = msg->remote;
+
+  // propagate the new state to all rules
   ruleState = NULL;
   while((ruleItem = (Object *)DoMethod(data->GR_SGROUP, MUIM_ObjectList_IterateItems, &ruleState)) != NULL)
   {
@@ -764,6 +768,9 @@ DECLARE(ToggleRemoteFlag) // ULONG remote
   }
 
   GhostOutFilter(cl, obj);
+
+  // show the new state in the filter list
+  DoMethod(data->LV_RULES, MUIM_NList_Redraw, MUIV_NList_Redraw_Active);
 
   RETURN(0);
   return 0;

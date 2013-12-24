@@ -7,6 +7,11 @@ $URL$
 
 #### YAM 2.9 RELEASE ####################################################
 
+2013-12-24 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/FiltersConfigPage.c: toggling the filter's remote state correctly
+    disables certain GUI objects again. This closes #481.
+
 2013-12-24 Jens Maus <mail@jens-maus.de>
 
   * misc: final YAM 2.9 release. Merry christmas!
@@ -29,8 +34,8 @@ $URL$
     and awaiting it to be processed immediately so that the BusyNode can be
     NULLed afterwards. Now BusyEnd() will use PushMethodOnStackWait() instead
     to secure that situation.
-  * src/mui/MainMailList.c: the dynamically generated short help for each 
-    mail in the mail list will now also show "(No Recipients)" and 
+  * src/mui/MainMailList.c: the dynamically generated short help for each
+    mail in the mail list will now also show "(No Recipients)" and
     "(No Subject)" in case one if that information is missing.
   * resources/zoneinfo, tools/tzdata, tools/tzcode: updated tzdata/tzcode
     environment to the latest version (2013i) released by iana.org.
