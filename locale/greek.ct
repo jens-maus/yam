@@ -1,9 +1,9 @@
-## version $VER: yam.catalog 8.2 (24.5.2013)
+## version $VER: yam.catalog 9.1 (24.12.2013)
 ## language greek
 ## codeset 10
 ## chunk AUTH Antonis Iliakis
 ;
-; YAM.cd - YAM 2.8 catalog description file
+; YAM.cd - YAM 2.9 catalog description file
 ; $Id$
 ;
 ; Please note that all catalog strings have to carry a proper
@@ -36,10 +36,6 @@ MSG_Attachments
 MSG_Options
 Επιλογές
 ; Options
-;
-MSG_Del
-_Διαγραφή
-; _Delete
 ;
 MSG_New
 Νέο
@@ -204,10 +200,6 @@ MSG_To
 MSG_Columns
 Στήλες
 ; Columns
-;
-MSG_Path
-Διαδρομή
-; Path
 ;
 MSG_Version
 Έκδοση:
@@ -463,11 +455,6 @@ MSG_LOG_Forwarding
 ; Forwarded message from '%s' about '%s' to '%s'
 ; SENDER, SUBJECT, RECIPIENT
 ;
-MSG_LOG_Filtering
-Φιλτραρίστηκαν %ld μηνύματα στο φάκελο '%s': %ld ταιριάζουν
-; Filtered %ld message(s) in folder '%s': %ld match(es)
-; COUNT, FOLDER, COUNT
-;
 MSG_LOG_SavingConfig
 Αποθηκεύτηκε το αρχείο ρυθμίσεων '%s'
 ; Saved configuration file '%s'
@@ -715,18 +702,6 @@ MSG_MA_NewFolder
 Νέος φάκελος
 ; New folder
 ;This is the title of the new folder window, not the menu item.
-;
-MSG_MA_SortOrder
-Ταξινόμηση
-; Order
-;
-MSG_MA_OSave
-Αποθήκευση
-; Save
-;
-MSG_MA_Reset
-Επαναφορά
-; Reset
 ;
 MSG_MA_Select
 Επιλογή
@@ -1035,106 +1010,6 @@ MSG_CO_Cancel
 Α_κύρωση
 ; _Cancel
 ;
-MSG_CO_TZoneM12
-(GMT-12:00) Νησιά Κουατζαλέϊν (IDLW)
-; (GMT-12:00) Kwajalein Islands (IDLW)
-;
-MSG_CO_TZoneM11
-(GMT-11:00) Νησιά Μιντγουέι, Σαμόα (NT)
-; (GMT-11:00) Midway Islands, Samoa (NT)
-;
-MSG_CO_TZoneM10
-(GMT-10:00) Χονολουλού, Ταϊτή (HST)
-; (GMT-10:00) Honolulu, Tahiti (HST)
-;
-MSG_CO_TZoneM9
-(GMT-09:00) Ανκορέιτζ, Αλάσκα (AKST)
-; (GMT-09:00) Anchorage (AKST)
-;
-MSG_CO_TZoneM8
-(GMT-08:00) Λος Άντζελες, Σαν Φραντζίσκο (PST)
-; (GMT-08:00) Los Angeles, San Francisco (PST)
-;
-MSG_CO_TZoneM7
-(GMT-07:00) Κάλγκαρι, Ντένβερ, Φοίνιξ (MST)
-; (GMT-07:00) Calgary, Denver, Phoenix (MST)
-;
-MSG_CO_TZoneM6
-(GMT-06:00) Σικάγο, Ντάλας, Πόλη Μεξικού (CST)
-; (GMT-06:00) Chicago, Dallas, Mexico City (CST)
-;
-MSG_CO_TZoneM5
-(GMT-05:00) Λίμα, Μαϊάμι, Μόντρεαλ, Νέα Υόρκη (EST)
-; (GMT-05:00) Lima, Miami, Montreal, New York (EST)
-;
-MSG_CO_TZoneM4
-(GMT-04:00) Καράκας, Σαντιάγκο, Θούλη (AST)
-; (GMT-04:00) Caracas, Santiago, Thule (AST)
-;
-MSG_CO_TZoneM3
-(GMT-03:00) Μπουένος Άιρες, Ρίο ντε Τζανέιρο (BRT)
-; (GMT-03:00) Buenos Aires, Rio de Janeiro (BRT)
-;
-MSG_CO_TZoneM2
-(GMT-02:00) Ανατολική Βραζιλία (FNT)
-; (GMT-02:00) Brazil East (FNT)
-;
-MSG_CO_TZoneM1
-(GMT-01:00) Αζόρες (WAT)
-; (GMT-01:00) Azores (WAT)
-;
-MSG_CO_TZone0
-(GMT 00:00) Δουβλίνο, Λισαβόνα, Λονδίνο (GMT/UTC)
-; (GMT 00:00) Dublin, Lisbon, London (GMT/UTC)
-;
-MSG_CO_TZone1
-(GMT+01:00) Βερολίνο, Παρίσι, Μαδρίτη, Όσλο (CET)
-; (GMT+01:00) Berlin, Paris, Madrid, Oslo (CET)
-;
-MSG_CO_TZone2
-(GMT+02:00) Αθήνα, Κάιρο, Ελσίνκι (EET)
-; (GMT+02:00) Athens, Cairo, Helsinki (EET)
-;
-MSG_CO_TZone3
-(GMT+03:00) Βαγδάτη, Κουβέιτ, Μόσχα, Ναϊρόμπι (EEST)
-; (GMT+03:00) Baghdad, Kuwait, Moscow, Nairobi (EEST)
-;
-MSG_CO_TZone4
-(GMT+04:00) Ντουμπάι, Πόρτ Λούις, Βικτώρια (ZP4)
-; (GMT+04:00) Dubai, Port Louis, Victoria (ZP4)
-;
-MSG_CO_TZone5
-(GMT+05:00) Ισλαμαμπάντ, Καράτσι (ZP5)
-; (GMT+05:00) Islamabad, Karachi (ZP5)
-;
-MSG_CO_TZone6
-(GMT+06:00) Άλμα-Ατα, Ντάκα, Τασκένδη (ZP6)
-; (GMT+06:00) Alma-Ata, Dhaka, Tashkent (ZP6)
-;
-MSG_CO_TZone7
-(GMT+07:00) Μπανγκόγκ, Ανόϊ, Πνόμ Πένχ
-; (GMT+07:00) Bangkok, Hanoi, Phnom Penh
-;
-MSG_CO_TZone8
-(GMT+08:00) Χόνγκ Κόνγκ, Σανγκάη, Σιγκαπούρη (WST)
-; (GMT+08:00) Hong Kong, Shanghai, Singapore (WST)
-;
-MSG_CO_TZone9
-(GMT+09:00) Οσάκα, Σεούλ, Τόκυο (JST)
-; (GMT+09:00) Osaka, Seoul, Tokyo (JST)
-;
-MSG_CO_TZone10
-(GMT+10:00) Μελβούρνη, Σύδνευ, Βλαδιβοστόκ (GST)
-; (GMT+10:00) Melbourne, Sydney, Vladivostok (GST)
-;
-MSG_CO_TZone11
-(GMT+11:00) Νέα Καλυδωνία (AEDT)
-; (GMT+11:00) New Caldonia (AEDT)
-;
-MSG_CO_TZone12
-(GMT+12:00) Όκλαντ, Ουέλινγκτον (IDLE)
-; (GMT+12:00) Auckland, Wellington (IDLE)
-;
 MSG_CO_MinConfig
 Ελάχιστη ρύθμιση
 ; Minimal configuration
@@ -1238,26 +1113,6 @@ MSG_CO_NotiCommand
 MSG_CO_Name
 Όνομα
 ; N_ame
-;
-MSG_CO_CTAnd
-και
-; and
-;
-MSG_CO_CTOr
-ή
-; or
-;
-MSG_CO_CTXor
-αποκλειστικό ή
-; exclusive or
-;
-MSG_CO_Comparison
-Σύγκριση
-; Comparison
-;
-MSG_CO_Action
-Ενέργεια
-; Action
 ;
 MSG_CO_Remote
 Απομακρυσμένο φίλτρο
@@ -1450,10 +1305,6 @@ MSG_CO_EWBeforeSend
 MSG_CO_ExternalEditor
 Εξωτερικός κειμενογράφος
 ; _External editor
-;
-MSG_CO_Launch
-Άμεση εκκίνηση
-; _Launch immediately
 ;
 MSG_CO_PhraseOpen
 Άνοιγμα
@@ -1842,10 +1693,6 @@ MSG_HELP_CO_ST_PASSWD
 Κωδικός για την πρόσβαση\nτου διακομιστή POP3.
 ; Password to access\nthe POP3 server.
 ;
-MSG_HELP_CO_CY_TZONE
-Επιλέξτε την ζώνη ώρας της\nτρέχουσας περιοχής σας.
-; Select the time zone of\nyour current location.
-;
 MSG_HELP_CO_ST_SMTPHOST
 Η διεύθυνση του διακομιστή SMTP για να στέλνετε αλληλογραφία.\nΕάν το αφήσετε κενό, η διεύθυνση του διακομιστή\nPOP3 θα χρησιμοποιηθεί αντί αυτής.
 ; The address of the SMTP server to send mail to.\nIf you leave this field empty, the address of the\nPOP3 server will be used as fallback.
@@ -1933,10 +1780,6 @@ MSG_HELP_CO_CH_APPLYSENT
 MSG_HELP_CO_CH_APPLYREQ
 Εφαρμογή αυτού του φίλτρου όταν κάνετε χρήση\nτης λειτουργίας φίλτρου χειροκίνητα.
 ; Apply this filter when you use\nthe filter function manually.
-;
-MSG_HELP_CO_CY_COMBINE
-Πως να συγκρίνετε τους όρους\nγια αυτό το φίλτρο.
-; How to combine the rules\nfor this filter.
 ;
 MSG_HELP_CO_CH_AFORWARD
 Προώθηση μηνυμάτων που ταιριάζουν\nσε άλλο άτομο.
@@ -2077,10 +1920,6 @@ MSG_HELP_CO_CY_EDWRAP
 MSG_HELP_CO_CH_LAUNCH
 Αυτόματη εκτέλεση του εξωτερικού κειμενογράφου\nόταν αρχίζετε ένα νέο μήνυμα.
 ; Automatically launch the external editor\nwhen starting a new message.
-;
-MSG_HELP_CO_ST_EDITOR
-Όνομα αρχείου του αγαπημένου\nσας κειμενογράφου.
-; Filename of your\nfavorite text editor.
 ;
 MSG_HELP_CO_ST_FWDSTART
 Κείμενο που θα χρησιμοποιείται για την εισαγωγή ενός προωθημένου μηνύματος.\nΚάντε κλικ στο κουμπί δεξιά για να δείτε τις μεταβλητές που μπορείτε να χρησιμοποιήσετε.
@@ -2361,10 +2200,6 @@ MSG_AB_NoneFound
 MSG_AB_Modified
 Το βιβλίο διευθύνσεων έχει τροποποιηθεί!
 ; Address book has been modified!
-;
-MSG_AB_ModifiedGads
-*Απο_θήκευση|_Χρήση|Απόρριψη Α_λλαγών|_Ακύρωση
-; *_Save|_Use|_Discard changes|_Cancel
 ;
 ;
 ; Module AB - Hooks
@@ -2731,10 +2566,6 @@ MSG_HELP_EA_BT_SELECTPHOTO
 Επιλέξτε ένα αρχείο εικόνας από τον δίσκο\n(υποστηρίζονται τύποι δεδομένων εικόνας).
 ; Select a picture file from disk\n(image datatypes supported).
 ;
-MSG_HELP_EA_ST_REALNAME_L
-Πλήρες όνομα αυτής της λίστας διανομής\n(θα χρησιμοποιηθεί στο πεδίο 'Προς:').
-; Full name of this distribution list\n(it will be used in the 'To:' field).
-;
 MSG_HELP_EA_ST_ADDRESS_L
 Χρήση διεύθυνση επιστροφής όταν στέλνετε\nένα μήνυμα σε αυτή τη λίστα.
 ; Return address to use when\nsending a message to this list.
@@ -2903,10 +2734,6 @@ MSG_RE_AddSender
 Θέλετε να προσθέσετε τον αποστολέα\n\eb%s\en\nστο βιβλίο διευθύνσεών σας;
 ; Do you want to add the sender\n\eb%s\en\nto your address book?
 ; SENDER
-;
-MSG_RE_NewGroupTitle
-Αυτόματη προσθήκη καταχωρήσεων
-; Automatically added entries
 ;
 MSG_RE_ContentType
 Περιεχόμενο-Τύπος
@@ -3120,21 +2947,9 @@ MSG_HELP_RE_BT_FORWARD
 ;
 ; Module WR - Procedures
 ;
-MSG_WR_ErrorNoRcpt
-Η αλληλογραφία είναι ελλιπής: χωρίς παραλήπτη!
-; Mail is incomplete: no recipient!
-;
-MSG_WR_NoRcptReqGad
-_Προσθήκη παραλήπτη αργότερα|*_Ακύρωση
-; _Add recipient later|*_Cancel
-;
 MSG_WR_DiscardChanges
 Θέλετε σίγουρα να απορρίψετε όλες τις\nμετατροπές σε αυτό το μήνυμα;
 ; Do you really want to discard all\nmodifications to this message?
-;
-MSG_WR_DiscardChangesGad
-*Απο_στολή αργότερα|Από_ρριψη|_Ακύρωση
-; *_Send later|_Discard|_Cancel
 ;
 MSG_WR_SaveTextAs
 Αποθήκευση κειμένου ως
@@ -4594,10 +4409,6 @@ MSG_CO_TOTALMSGS
 %t  Συνολικά μηνύματα
 ; %t  Total messages
 ;
-MSG_CO_DELMSGS
-%d  Διαγραμμένα μηνύματα
-; %d  Deleted messages
-;
 MSG_CO_SENTMSGS
 %s  Απεσταλμένα μηνύματα
 ; %s  Sent messages
@@ -4747,10 +4558,6 @@ MSG_HELP_FO_BT_AUTODETECT
 MSG_FO_NOTRECOGNIZED
 Αδυναμία αναγνώρισης!
 ; Couldn't be recognized!
-;
-MSG_FO_MAXAGEFMT
-%ld ημέρες
-; %ld days
 ;
 MSG_CO_NB_EMAILCACHE
 E-mail cache
@@ -4914,38 +4721,6 @@ MSG_HELP_FO_CY_MLSIGNATURE
 MSG_CTapplicationpdf
 έγγραφο PDF
 ; PDF document
-;
-MSG_CO_TZoneM330
-(GMT-03:30) Νέο Φάουντλαντ (NFT)
-; (GMT-03:30) Newfoundland (NFT)
-;
-MSG_CO_TZone330
-(GMT+03:30) Τεχεράνη(IT)
-; (GMT+03:30) Teheran (IT)
-;
-MSG_CO_TZone430
-(GMT+04:30) Καμπούλ
-; (GMT+04:30) Kabul
-;
-MSG_CO_TZone530
-(GMT+05:30) Τσενάϊ, Κολκάτα, Μουμπάϊ, Νέο Δελχί (IST)
-; (GMT+05:30) Chennai, Kolkata, Mumbai, New-Delhi (IST)
-;
-MSG_CO_TZone545
-(GMT+05:45) Κατμαντού
-; (GMT+05:45) Katmandu
-;
-MSG_CO_TZone630
-(GMT+06:30) Ρανγκούν (NST)
-; (GMT+06:30) Rangun (NST)
-;
-MSG_CO_TZone930
-(GMT+09:30) Αδελαϊδα, Ντάρβιν (ACST)
-; (GMT+09:30) Adelaide, Darwin (ACST)
-;
-MSG_CO_TZone13
-(GMT+13:00) Νούκου'αλόφα (NZDT)
-; (GMT+13:00) Nuku'alofa (NZDT)
 ;
 MSG_HELP_CO_ST_INFOBARTXT
 Κείμενο που θα εμφανιστεί\nστην μπάρα κατάστασης.
@@ -5165,14 +4940,6 @@ MSG_CTunknown
 άγνωστο
 ; unknown
 ;
-MSG_CO_More
-Περισσότερα
-; _More
-;
-MSG_CO_Less
-Λιγότερα
-; _Less
-;
 MSG_CO_NB_AUTOSAVE
 Διάστημα αυτόματης αποθήκευσης
 ; Autosave interval
@@ -5204,30 +4971,6 @@ MSG_FI_SELECTACTIVE
 MSG_HELP_FI_BT_SELECTACTIVE
 Επιλέξτε το τρέχων μήνυμα\nστο κύριο παράθυρο.
 ; Select the current message\nin the main window.
-;
-MSG_QUICKSEARCH_SO_SUBJECT
-Θέμα
-; Subject
-;
-MSG_QUICKSEARCH_SO_SENDER
-Αποστολέας
-; Sender
-;
-MSG_QUICKSEARCH_SO_SUBJORSENDER
-Θέμα ή Αποστολέας
-; Subject Or Sender
-;
-MSG_QUICKSEARCH_SO_TOORCC
-Αποδέκτης (Προς ή Κοιν)
-; Recipient (To or CC)
-;
-MSG_QUICKSEARCH_SO_INMSG
-Σώμα Μηνύματος
-; Message Body
-;
-MSG_QUICKSEARCH_SO_ENTIREMSG
-Όλο το μήνυμα
-; Whole Message
 ;
 MSG_QUICKSEARCH_VO_ALL
 Όλα
@@ -5285,10 +5028,6 @@ MSG_HELP_QUICKSEARCH_VIEWOPTIONS
 MSG_HELP_QUICKSEARCH_SEARCHSTRING
 Το κείμενο που θα εισαχθεί εδώ θα χρησιμοποιηθεί ως το\nκριτήριο αναζήτησης για την εμφάνιση αλληλογραφίας σε αυτό το φάκελο.
 ; Text inserted here will be used as the search\ncriterion to display mail in this folder.
-;
-MSG_HELP_QUICKSEARCH_SEARCHOPTIONPOPUP
-Επιλέξτε εδώ που θέλετε η συμβολοσειρά στα δεξιά\nνα αναζητηθεί στην αλληλογραφία.
-; Select here where the string at the right\nshould be searched in the mail.
 ;
 MSG_BUSY_SEARCHINGFOLDER
 Αναζήτηση μηνυμάτων στον φάκελο '%s'...
@@ -5502,30 +5241,6 @@ MSG_CO_AMISSLWARN_BT
 MSG_BUSY_OPENINGCONFIG
 Άνοιγμα ρυθμίσεων...
 ; Opening configuration...
-;
-MSG_CO_TIMEZONEWARN_TITLE
-Προειδοποίηση ρύθμισης ζώνης ώρας
-; Time zone setting warning
-;
-MSG_CO_TIMEZONEWARN
-Η ρύθμιση ώρας ζώνης του YAM δεν αντιστοιχεί\nμε την προκαθορισμένη ζώνη ώρας του συστήματος.\n\nΠως θέλετε να προχωρήσετε;
-; The time zone setting in YAM doesn't match\nthe system's default time zone.\n\nHow do you want to proceed?
-;
-MSG_CO_TIMEZONEWARN_BT
-*_Αλλαγή|Πάντα πα_ράβλεψη|_Παράβλεψη
-; *_Change|Ignore _always|_Ignore
-;
-MSG_CO_AUTODSTWARN_TITLE
-Προειδοποίηση AutoDST
-; AutoDST warning
-;
-MSG_CO_AUTODSTWARN
-Το YAM βρήκε ότι ένα εργαλείο AutoDST είναι ενεργό και\nαναφέρει μια θερινή ώρα διαφορετική\nαπό αυτή που έχει διαμορφωθεί στο YAM.\n\nΠως θέλετε να συνεχίσετε;
-; YAM has found an AutoDST tool active and\nit is reporting a Daylight Saving Time\ndifferent to what is configured in YAM.\n\nHow do you want to proceed?
-;
-MSG_CO_AUTODSTWARN_BT
-*_Αλλαγή|Πάντα πα_ράβλεψη|_Παράβλεψη
-; *_Change|Ignore _always|_Ignore
 ;
 MSG_MA_UPDATECHECK
 Έλεγχος για ενημερώσεις
@@ -6339,14 +6054,6 @@ MSG_CO_CRDLOOKFEEL
 Εμφάνιση & Εντύπωση
 ; Look & Feel
 ;
-MSG_CO_DSTACTIVE
-Η θερινή ώρα (DST) είναι ενεργοποιημένη
-; D_aylight Saving Time (DST) is active
-;
-MSG_HELP_CO_CH_DSTACTIVE
-Ενεργοποιήστε αυτό εάν η θερινή ώρα είναι\nενεργοποιημένη ήδη στην ζώνη ώρας σας (θερινή ώρα).
-; Enable this if daylight saving time is\ncurrently active in your time zone\n(summer time).
-;
 MSG_CO_LOOKFEEL_THEMES
 Θέματα
 ; Themes
@@ -6374,14 +6081,6 @@ MSG_CO_RELDATETIME
 MSG_HELP_CO_CH_RELDATETIME
 Εάν επιλεχτεί, οι στήλες με ημερομηνία θα\nχρησιμοποιήσουν μια σχετική έξοδο (π.χ. 'Σήμερα ή\n'Χθές') αντί της πλήρης ημερομηνίας εάν είναι δυνατόν.
 ; If selected, columns with date information\nwill use a relative output (e.g. 'Today' or\n'Yesterday') instead of the full date if possible.
-;
-MSG_FOLDER_SNAPSHOT_TREE
-Διάταξη στιγμιότυπου
-; Snapshot arrangement
-;
-MSG_FOLDER_RELOAD_TREE
-Επαναφόρτωση διάταξης
-; Reload arrangement
 ;
 MSG_ER_USER_UNKNOWN_TITLE
 Άγνωστος χρήστης
@@ -6893,10 +6592,6 @@ MSG_EA_REMOVEPHOTO
 MSG_HELP_EA_BT_REMOVEPHOTO
 'Ξεχάστε' αυτή την εικόνα (το\nαρχείο στο δίσκο θα παραμείνει).
 ; 'Forget' this picture (the\nfile on disk will remain).
-;
-MSG_HELP_CO_TX_DEFAULTCHARSET
-Χρησιμοποιήστε το κουμπί για να επιλέξετε το σετ χαρακτήρα\nπου θέλετε να χρησιμοποιήσει το YAM ως προεπιλεγμένο. Αυτό θα\nταιριάξει με προκαθορισμένο σετ χαρακτήρων του συστήματος, αλλιώς\nένα αίτημα θα εμφανιστεί ρωτώντας πως θέλετε να προχωρήσετε.
-; Use the popup button to select the character set\nyou would like YAM to use by default. This should\nmatch the system's default charset, otherwise a\nrequester will appear asking how do you want to\nproceed.
 ;
 MSG_HELP_CO_CH_NOTISOUND
 Αναπαράγετε ένα αρχείο ήχου\nόταν λαμβάνετε νέα αλληλογραφία.
@@ -7892,10 +7587,6 @@ MSG_CO_IDENTITY_COMPOSE_OPTIONS
 Επιλογές
 ; Options
 ;
-MSG_CO_IDENTITY_COMPOSE_SENTFOLDER
-Αποθήκευση απεσταλμένης αλληλογραφίας στον φάκελο
-; Store sent mail to folder
-;
 MSG_CO_IDENTITY_COMPOSE_QUOTE
 Παράθεση μηνυμάτων κατά την απάντηση
 ; Quote messages when answering
@@ -8009,10 +7700,6 @@ MSG_MA_FLUSH_ALL_INDICES
 Ανανέωση όλων των δεικτών
 ; Flush all indices
 ;
-MSG_FI_CONDITION
-Κατάσταση
-; Condition
-;
 MSG_HELP_CO_CH_IDENTITY_ENABLED
 Αν επιλεχτεί, αυτή η ταυτότητα χρήστη θα ενεργοποιηθεί για χρήση.
 ; If checked, this user identity is enabled for use.
@@ -8078,21 +7765,6 @@ MSG_HELP_CO_ST_IDENTITY_PHOTOURL
 με αυτή την ταυτότητα χρήστη.
 ; An optional URL to a photo associated with\n\
 ; this user identity.
-;
-MSG_HELP_CO_CH_IDENTITY_SENTFOLDER
-Αν ενεργοποιηθεί, η απεσταλμένη αλληλογραφία θα\n\
-αποθηκεύεται σε έναν φάκελο. Αλλιώς η απεσταλμένη\n\
-αλληλογραφίας θα διαγράφεται.
-; If enabled, sent mail will be stored in a\n\
-; sent mail folder. Otherwise the sent mail\n\
-; will be deleted.
-;
-MSG_HELP_CO_TX_IDENTITY_SENTFOLDER
-Επιτρέπει να καθορίστε ποιός φάκελος αλληλογραφίας\n\
-θα χρησιμοποιείται κατά την αποθήκευση απεσταλμένης\n\
-αλληλογραφίας.
-; Allows to specify which mail folder should\n\
-; be used when storing sent mail.
 ;
 MSG_HELP_CO_CH_IDENTITY_QUOTEMAILS
 Κατά την απάντηση ή προώθηση αλληλογραφίας, το κείμενο\n\

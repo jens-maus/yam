@@ -1,9 +1,9 @@
-## version $VER: YAM.catalog 8.6 (18.12.2013)
+## version $VER: YAM.catalog 9.1 (24.12.2013)
 ## language czech
 ## codeset 5
 ;
 ## chunk AUTH Vit Sindlar
-; YAM.cd - YAM 2.8 catalog description file
+; YAM.cd - YAM 2.9 catalog description file
 ; $Id$
 ;
 ; Please note that all catalog strings have to carry a proper
@@ -18,7 +18,7 @@
 ; new entries. And if you delete an entry NEVER reorder or resort
 ; the ID numbers accordingly.
 ;
-;#version 8
+;#version 9
 ;#language english
 ;
 ; General
@@ -730,18 +730,6 @@ MSG_MA_NewFolder
 Nová slo¾ka
 ; New folder
 ;This is the title of the new folder window, not the menu item.
-;
-MSG_MA_SortOrder
-Øazení
-; Order
-;
-MSG_MA_OSave
-Ulo¾it
-; Save
-;
-MSG_MA_Reset
-Výchozí
-; Reset
 ;
 MSG_MA_Select
 Vybrat
@@ -2484,10 +2472,6 @@ MSG_AB_Modified
 Seznamu kontaktù byl zmìnìn. Chcete ho ulo¾it?
 ; Address book has been modified.
 ;
-MSG_AB_ModifiedGads
-*_Ulo¾it|_Pou¾ít|Neuklá_dat|_Zru¹it
-; *_Save|_Use|_Discard changes|_Cancel
-;
 ;
 ; Module AB - Hooks
 ;
@@ -2893,12 +2877,6 @@ typy v operaèním systému.
 ; Select a picture file from disk\n\
 ; (image datatypes supported).
 ;
-MSG_HELP_EA_ST_REALNAME_L
-Urèuje název rozesílacího seznamu (uvidíte ho\n\
-v poli 'Komu:').
-; Full name of this distribution list\n\
-; (it will be used in the 'To:' field).
-;
 MSG_HELP_EA_ST_ADDRESS_L
 Definuje zpáteèní adresu pro komunikaci s osobami\n\
 v tomto seznamu.
@@ -3125,10 +3103,6 @@ mezi ostatní do seznamu kontaktù?
 ; \eb%s\en\n\
 ; to your address book?
 ; SENDER
-;
-MSG_RE_NewGroupTitle
-Automaticky pøidaná osoby
-; Automatically added entries
 ;
 MSG_RE_ContentType
 Typ pøílohy
@@ -3375,10 +3349,6 @@ MSG_WR_DiscardChanges
 Opravdu chcete pøijít o v¹echny provedené úpravy?
 ; Do you really want to discard all\n\
 ; modifications to this message?
-;
-MSG_WR_DiscardChangesGad
-*Ode_slat pozdìji|Z_avøít bez ulo¾ení|_Zru¹it
-; *_Send later|_Discard|_Cancel
 ;
 MSG_WR_SaveTextAs
 Ulo¾te text
@@ -7108,14 +7078,6 @@ a vèerej¹í 'vèera'.
 ; will use a relative output (e.g. 'Today' or\n\
 ; 'Yesterday') instead of the full date if possible.
 ;
-MSG_FOLDER_SNAPSHOT_TREE
-Ulo¾it stav slo¾ek
-; Snapshot arrangement
-;
-MSG_FOLDER_RELOAD_TREE
-Naèíst stav slo¾ek
-; Reload arrangement
-;
 MSG_ER_USER_UNKNOWN_TITLE
 Neznámý u¾ivatel
 ; Unknown user
@@ -9179,10 +9141,6 @@ Zpáteèní adresa
 MSG_CO_IDENTITY_COMPOSE_OPTIONS
 Dal¹í mo¾nosti
 ; Options
-;
-MSG_CO_IDENTITY_COMPOSE_SENTFOLDER
-Odeslanou po¹tu ulo¾it do slo¾ky
-; Store sent mail to folder
 ;
 MSG_CO_IDENTITY_COMPOSE_QUOTE
 Do odpovìdi pøidat i text pùvodní zprávy

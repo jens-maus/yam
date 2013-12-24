@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 8.4 (06.09.2013)
+## version $VER: YAM.catalog 9.1 (24.12.2013)
 ## codeset 0
 ## language español
 ## chunk AUTH Emilio Jimenez
@@ -700,18 +700,6 @@ MSG_MA_NewFolder
 Nueva Carpeta
 ; New folder
 ;This is the title of the new folder window, not the menu item.
-;
-MSG_MA_SortOrder
-Ordenar
-; Order
-;
-MSG_MA_OSave
-Salvar
-; Save
-;
-MSG_MA_Reset
-Restaurar
-; Reset
 ;
 MSG_MA_Select
 Seleccionar
@@ -2211,10 +2199,6 @@ MSG_AB_Modified
 La Agenda de Contactos ha sido modificada.
 ; Address book has been modified.
 ;
-MSG_AB_ModifiedGads
-*_Salvar|_Usar|_Deshacer cambios|_Cancelar
-; *_Save|_Use|_Discard changes|_Cancel
-;
 ;
 ; Module AB - Hooks
 ;
@@ -2580,10 +2564,6 @@ MSG_HELP_EA_BT_SELECTPHOTO
 Selecciona una imagen desde disco\n(soporta datatypes de imagen).
 ; Select a picture file from disk\n(image datatypes supported).
 ;
-MSG_HELP_EA_ST_REALNAME_L
-Nombre completo de la lista de distribución\n(será utilizado en el campo 'Para:').
-; Full name of this distribution list\n(it will be used in the 'To:' field).
-;
 MSG_HELP_EA_ST_ADDRESS_L
 Dirección de retorno cuando usas\nenviar un mensaje a esta lista.
 ; Return address to use when\nsending a message to this list.
@@ -2752,10 +2732,6 @@ MSG_RE_AddSender
 Quieres añadir al remitente\n\eb%s\en\na tu agenda de contactos?
 ; Do you want to add the sender\n\eb%s\en\nto your address book?
 ; SENDER
-;
-MSG_RE_NewGroupTitle
-Añade automáticamente los contactos
-; Automatically added entries
 ;
 MSG_RE_ContentType
 Tipo-Contenido
@@ -2969,21 +2945,9 @@ Reenviar este\nmensaje.
 ;
 ; Module WR - Procedures
 ;
-MSG_WR_ErrorNoRcpt
-Correo incompleto: sin destinatario.
-; Mail is incomplete: no recipient.
-;
-MSG_WR_NoRcptReqGad
-_Añadir destinatario más tarde|*_Cancelar
-; _Add recipient later|*_Cancel
-;
 MSG_WR_DiscardChanges
 Quieres realmente cancelar todas\nlas modificaciones de este mensaje?
 ; Do you really want to discard all\nmodifications to this message?
-;
-MSG_WR_DiscardChangesGad
-*_Enviar más tarde|_Descartar|_Cancelar
-; *_Send later|_Discard|_Cancel
 ;
 MSG_WR_SaveTextAs
 Salvar texto como
@@ -4443,10 +4407,6 @@ MSG_CO_TOTALMSGS
 %t  Mensajes totales
 ; %t  Total messages
 ;
-MSG_CO_DELMSGS
-%d  Mensajes borrados
-; %d  Deleted messages
-;
 MSG_CO_SENTMSGS
 %s  Mensajes enviados
 ; %s  Sent messages
@@ -4596,10 +4556,6 @@ Intenta reunir automáticamente las preferencias de soporte\nútiles ML escaneando
 MSG_FO_NOTRECOGNIZED
 No puede ser reconocido.
 ; Couldn't be recognized.
-;
-MSG_FO_MAXAGEFMT
-%ld días
-; %ld days
 ;
 MSG_CO_NB_EMAILCACHE
 Cac_hé de Correo
@@ -5014,30 +4970,6 @@ MSG_HELP_FI_BT_SELECTACTIVE
 Selecciona el mensaje actual\nen la ventana principal.
 ; Select the current message\nin the main window.
 ;
-MSG_QUICKSEARCH_SO_SUBJECT
-Asunto
-; Subject
-;
-MSG_QUICKSEARCH_SO_SENDER
-Remitente
-; Sender
-;
-MSG_QUICKSEARCH_SO_SUBJORSENDER
-Asunto o Remitente
-; Subject Or Sender
-;
-MSG_QUICKSEARCH_SO_TOORCC
-Destinatario (Para o CC)
-; Recipient (To or CC)
-;
-MSG_QUICKSEARCH_SO_INMSG
-Cuerpo del Mensaje
-; Message Body
-;
-MSG_QUICKSEARCH_SO_ENTIREMSG
-Mensaje Completo
-; Whole Message
-;
 MSG_QUICKSEARCH_VO_ALL
 Todos
 ; All
@@ -5094,10 +5026,6 @@ Sólo se mostrarán los mensajes que\ncoincidan con este criterio.
 MSG_HELP_QUICKSEARCH_SEARCHSTRING
 El texto insertado se utilizará como criterio de búsqueda\npara mostrar el correo en la carpeta.
 ; Text inserted here will be used as the search\ncriterion to display mail in this folder.
-;
-MSG_HELP_QUICKSEARCH_SEARCHOPTIONPOPUP
-Selecciona aquí donde se buscará\nla cadena de la derecha en el correo.
-; Select here where the string at the right\nshould be searched in the mail.
 ;
 MSG_BUSY_SEARCHINGFOLDER
 Buscando mensajes en la carpeta '%s'...
@@ -6151,14 +6079,6 @@ Informar Fecha Rela_tiva
 MSG_HELP_CO_CH_RELDATETIME
 Si está activado, las columnas con información de fecha\nserá relativa (ej. 'Hoy' o\n'Ayer') en vez de la fecha completa siempre que sea posible.
 ; If selected, columns with date information\nwill use a relative output (e.g. 'Today' or\n'Yesterday') instead of the full date if possible.
-;
-MSG_FOLDER_SNAPSHOT_TREE
-Fijar estructura
-; Snapshot arrangement
-;
-MSG_FOLDER_RELOAD_TREE
-Recargar estructura
-; Reload arrangement
 ;
 MSG_ER_USER_UNKNOWN_TITLE
 Usuario desconocido
@@ -7506,10 +7426,6 @@ MSG_CO_IDENTITY_COMPOSE_OPTIONS
 Opciones
 ; Options
 ;
-MSG_CO_IDENTITY_COMPOSE_SENTFOLDER
-Guardar correo enviado a
-; Store sent mail to folder
-;
 MSG_CO_IDENTITY_COMPOSE_QUOTE
 Citar mensajes al responder
 ; Quote messages when answering
@@ -7650,14 +7566,6 @@ Le permite especificar el valor predeterminado para poner\n encabezados adiciona
 MSG_HELP_CO_ST_IDENTITY_PHOTOURL
 URL opcional a una fotografía asociada con\n la identidad de usuario.
 ; An optional URL to a photo associated with\nthis user identity.
-;
-MSG_HELP_CO_CH_IDENTITY_SENTFOLDER
-Si está activado, el correo enviado se guardará en una\ncarpeta de correo enviado. De lo contrario el correo enviado\nserá eliminado.
-; If enabled, sent mail will be stored in a\nsent mail folder. Otherwise the sent mail\nwill be deleted.
-;
-MSG_HELP_CO_TX_IDENTITY_SENTFOLDER
-Permite especificar qué carpeta de correo debe\n utilizarse para almacenar los mensajes enviados.
-; Allows to specify which mail folder should\nbe used when storing sent mail.
 ;
 MSG_HELP_CO_CH_IDENTITY_QUOTEMAILS
 Al responder o reenviar el texto del mensaje\n será citado, si esta opción está activada.

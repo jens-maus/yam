@@ -1,9 +1,9 @@
-## version $VER: YAM.catalog 8.1 (25.10.2013)
+## version $VER: YAM.catalog 9.1 (24.12.2013)
 ## language suomi
 ## codeset 0
 ;
 ## chunk AUTH Marko Raina
-; YAM.cd - YAM 2.8 catalog description file
+; YAM.cd - YAM 2.9 catalog description file
 ; $Id$
 ;
 ; Please note that all catalog strings have to carry a proper
@@ -18,7 +18,7 @@
 ; new entries. And if you delete an entry NEVER reorder or resort
 ; the ID numbers accordingly.
 ;
-;#version 8
+;#version 9
 ;#language english
 ;
 ; General
@@ -719,18 +719,6 @@ MSG_MA_NewFolder
 Uusi kansio
 ; New folder
 ;This is the title of the new folder window, not the menu item.
-;
-MSG_MA_SortOrder
-Järjestys
-; Order
-;
-MSG_MA_OSave
-Tallenna
-; Save
-;
-MSG_MA_Reset
-Palauta
-; Reset
 ;
 MSG_MA_Select
 Valitse
@@ -2384,10 +2372,6 @@ MSG_AB_Modified
 Osoitekirjaa on muutettu!
 ; Address book has been modified.
 ;
-MSG_AB_ModifiedGads
-*_Tallenna|_Käytä|P_eru muutokset|_Peru
-; *_Save|_Use|_Discard changes|_Cancel
-;
 ;
 ; Module AB - Hooks
 ;
@@ -2776,11 +2760,6 @@ Valitse kuvatiedosto tiedostosta\n(kuvadatatyypit ovat tuettuja)
 ; Select a picture file from disk\n\
 ; (image datatypes supported).
 ;
-MSG_HELP_EA_ST_REALNAME_L
-Tämän jakelulistan koko nimi\n(käytetään Vastaanottaja: -kentässä)
-; Full name of this distribution list\n\
-; (it will be used in the 'To:' field).
-;
 MSG_HELP_EA_ST_ADDRESS_L
 Palautusosoite, jota käytetään\nlähetettäessä viesti tälle listalle.
 ; Return address to use when\n\
@@ -2981,10 +2960,6 @@ Haluatko lisätä lähettäjän\n\eb%s\en\nosoitekirjaasi?
 ; \eb%s\en\n\
 ; to your address book?
 ; SENDER
-;
-MSG_RE_NewGroupTitle
-Automaattisesti lisätyt tiedot
-; Automatically added entries
 ;
 MSG_RE_ContentType
 Sisällön tyyppi
@@ -3213,22 +3188,10 @@ Välitä tämä\nviesti
 ;
 ; Module WR - Procedures
 ;
-MSG_WR_ErrorNoRcpt
-Viesti on epätäydellinen: Vastaanottaja puuttuu!
-; Mail is incomplete: no recipient.
-;
-MSG_WR_NoRcptReqGad
-_Lisää vastaanottaja myöhemmin|*_Peru
-; _Add recipient later|*_Cancel
-;
 MSG_WR_DiscardChanges
 Haluatko tosiaan perua kaikki tähän viestiin tehdyt muutokset?
 ; Do you really want to discard all\n\
 ; modifications to this message?
-;
-MSG_WR_DiscardChangesGad
-*_Lähetä myöhemmin|P_eru muutokset|_Peru
-; *_Send later|_Discard|_Cancel
 ;
 MSG_WR_SaveTextAs
 Tallenna teksti nimellä
@@ -6921,14 +6884,6 @@ tieto suhteellisessa muodossa (esim. 'Tänään' tai\n\
 ; will use a relative output (e.g. 'Today' or\n\
 ; 'Yesterday') instead of the full date if possible.
 ;
-MSG_FOLDER_SNAPSHOT_TREE
-Tallenna järjestely
-; Snapshot arrangement
-;
-MSG_FOLDER_RELOAD_TREE
-Lataa järjestely uudelleen
-; Reload arrangement
-;
 MSG_ER_USER_UNKNOWN_TITLE
 Tuntematon käyttäjä
 ; Unknown user
@@ -9008,10 +8963,6 @@ MSG_CO_IDENTITY_COMPOSE_OPTIONS
 Valinnat
 ; Options
 ;
-MSG_CO_IDENTITY_COMPOSE_SENTFOLDER
-Tallenna lähetetty posti kansioon
-; Store sent mail to folder
-;
 MSG_CO_IDENTITY_COMPOSE_QUOTE
 Lainaa viestejä vastatessasi
 ; Quote messages when answering
@@ -9188,20 +9139,6 @@ Valinnainen URL valokuvaan, joka liittyy\n\
 tähän käyttäjäidentiteettiin.
 ; An optional URL to a photo associated with\n\
 ; this user identity.
-;
-MSG_HELP_CO_CH_IDENTITY_SENTFOLDER
-Jos valittu, lähetetty posti tallennetaan\n\
-lähetetyn postin kansioon. Muutoin lähetetty\n\
-posti poistetaan.
-; If enabled, sent mail will be stored in a\n\
-; sent mail folder. Otherwise the sent mail\n\
-; will be deleted.
-;
-MSG_HELP_CO_TX_IDENTITY_SENTFOLDER
-Voit valita mihin postikansioon\n\
-lähetetty posti tallennetaan.
-; Allows to specify which mail folder should\n\
-; be used when storing sent mail.
 ;
 MSG_HELP_CO_CH_IDENTITY_QUOTEMAILS
 Kun viestiin vastataan tai lähetetään eteenpäin,\n\

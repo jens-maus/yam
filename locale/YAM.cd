@@ -1,4 +1,4 @@
-; YAM.cd - YAM 2.8 catalog description file
+; YAM.cd - YAM 2.9 catalog description file
 ; $Id$
 ;
 ; Please note that all catalog strings have to carry a proper
@@ -13,7 +13,7 @@
 ; new entries. And if you delete an entry NEVER reorder or resort
 ; the ID numbers accordingly.
 ;
-#version 8
+#version 9
 #language english
 ;
 ; General

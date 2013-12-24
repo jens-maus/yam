@@ -1,9 +1,9 @@
-## version $VER: YAM.catalog 8.6 (16.10.2013)
+## version $VER: YAM.catalog 9.1 (24.12.2013)
 ## language türkçe
 ## codeset 0
 ## chunk AUTH Alper Sönmez <amithlondestek@gmail.com>
 ;
-; YAM.cd - YAM 2.8 catalog description file
+; YAM.cd - YAM 2.9 catalog description file
 ; $Id$
 ;
 ; Please note that all catalog strings have to carry a proper
@@ -18,7 +18,7 @@
 ; new entries. And if you delete an entry NEVER reorder or resort
 ; the ID numbers accordingly.
 ;
-;#version 8
+;#version 9
 ;#language english
 ;
 ; General
@@ -730,18 +730,6 @@ MSG_MA_NewFolder
 Yeni klasör
 ; New folder
 ;This is the title of the new folder window, not the menu item.
-;
-MSG_MA_SortOrder
-Sýrala
-; Order
-;
-MSG_MA_OSave
-Kaydet
-; Save
-;
-MSG_MA_Reset
-Sýfýrla
-; Reset
 ;
 MSG_MA_Select
 Seç
@@ -2528,10 +2516,6 @@ MSG_AB_Modified
 Adres defteri deðiþtirildi.
 ; Address book has been modified.
 ;
-MSG_AB_ModifiedGads
-*_Kaydet|K_ullan|Deðiþiklikleri _yoksay|_Ýptal
-; *_Save|_Use|_Discard changes|_Cancel
-;
 ;
 ; Module AB - Hooks
 ;
@@ -2943,12 +2927,6 @@ Diskten bir resim dosyasý seçiniz\n\
 ; Select a picture file from disk\n\
 ; (image datatypes supported).
 ;
-MSG_HELP_EA_ST_REALNAME_L
-Bu daðýtým listesinin tam adý\n\
-('Kime:' alanýnda kullanýlacaktýr).
-; Full name of this distribution list\n\
-; (it will be used in the 'To:' field).
-;
 MSG_HELP_EA_ST_ADDRESS_L
 Bu listeye ileti gönderildiðinde\n\
 kullanýlacak geri dönüþ adresi.
@@ -3181,10 +3159,6 @@ istiyor musunuz?
 ; \eb%s\en\n\
 ; to your address book?
 ; SENDER
-;
-MSG_RE_NewGroupTitle
-Otomatik olarak eklenmiþ girdiler
-; Automatically added entries
 ;
 MSG_RE_ContentType
 Ýçerik-Türü
@@ -3428,23 +3402,11 @@ ilet.
 ;
 ; Module WR - Procedures
 ;
-MSG_WR_ErrorNoRcpt
-Posta eksik: alýcý yok.
-; Mail is incomplete: no recipient.
-;
-MSG_WR_NoRcptReqGad
-Alýcýyý daha _sonra ekle|*_Ýptal
-; _Add recipient later|*_Cancel
-;
 MSG_WR_DiscardChanges
 Bu iletiye yapýlan tüm deðiþiklikleri\n\
 gerçekten yoksaymak istiyor musunuz?
 ; Do you really want to discard all\n\
 ; modifications to this message?
-;
-MSG_WR_DiscardChangesGad
-*Daha _sonra gönder|_Yoksay|_Ýptal
-; *_Send later|_Discard|_Cancel
 ;
 MSG_WR_SaveTextAs
 Metini farklý kaydet
@@ -5149,10 +5111,6 @@ MSG_CO_TOTALMSGS
 %t  Toplam ileti
 ; %t  Total messages
 ;
-MSG_CO_DELMSGS
-%d  Silinmiþ iletiler
-; %d  Deleted messages
-;
 MSG_CO_SENTMSGS
 %s  Gönderilmiþ iletiler
 ; %s  Sent messages
@@ -5332,10 +5290,6 @@ etmeye çalýþýr.
 MSG_FO_NOTRECOGNIZED
 Tanýmlanamadý.
 ; Couldn't be recognized.
-;
-MSG_FO_MAXAGEFMT
-%ld gün
-; %ld days
 ;
 MSG_CO_NB_EMAILCACHE
 E-posta önbelleði
@@ -5877,30 +5831,6 @@ seçili iletiyi kullan.
 ; Select the current message\n\
 ; in the main window.
 ;
-MSG_QUICKSEARCH_SO_SUBJECT
-Konu
-; Subject
-;
-MSG_QUICKSEARCH_SO_SENDER
-Gönderen
-; Sender
-;
-MSG_QUICKSEARCH_SO_SUBJORSENDER
-Konu veya Gönderen
-; Subject Or Sender
-;
-MSG_QUICKSEARCH_SO_TOORCC
-Alýcý (Kime veya CC)
-; Recipient (To or CC)
-;
-MSG_QUICKSEARCH_SO_INMSG
-Ýleti Gövdesi
-; Message Body
-;
-MSG_QUICKSEARCH_SO_ENTIREMSG
-Ýletinin Tümü
-; Whole Message
-;
 MSG_QUICKSEARCH_VO_ALL
 Tümü
 ; All
@@ -5961,12 +5891,6 @@ Buraya girilen metin, bu klasörde görüntülencek\n\
 postalar için bir arama kriteri olarak kullanýlacaktýr.
 ; Text inserted here will be used as the search\n\
 ; criterion to display mail in this folder.
-;
-MSG_HELP_QUICKSEARCH_SEARCHOPTIONPOPUP
-Buradan saðdaki metnin\n\
-postalarda aranacaðý yeri seçin.
-; Select here where the string at the right\n\
-; should be searched in the mail.
 ;
 MSG_BUSY_SEARCHINGFOLDER
 '%s' klasöründe iletiler aranýyor...
@@ -7267,14 +7191,6 @@ kullanýlacaktýr (örn. 'Bugün' veya 'Yarýn' gibi).
 ; If selected, columns with date information\n\
 ; will use a relative output (e.g. 'Today' or\n\
 ; 'Yesterday') instead of the full date if possible.
-;
-MSG_FOLDER_SNAPSHOT_TREE
-Düzenlemenin anlýk görüntüsünü al
-; Snapshot arrangement
-;
-MSG_FOLDER_RELOAD_TREE
-Düzenlemeyi geri yükle
-; Reload arrangement
 ;
 MSG_ER_USER_UNKNOWN_TITLE
 Bilinmeyen kullanýcý
@@ -9373,10 +9289,6 @@ MSG_CO_IDENTITY_COMPOSE_OPTIONS
 Seçenekler
 ; Options
 ;
-MSG_CO_IDENTITY_COMPOSE_SENTFOLDER
-Gönderilen iletileri klasöre koy
-; Store sent mail to folder
-;
 MSG_CO_IDENTITY_COMPOSE_QUOTE
 Yanýtlarken önceki iletileri alýntýla
 ; Quote messages when answering
@@ -9556,20 +9468,6 @@ MSG_HELP_CO_ST_IDENTITY_PHOTOURL
 iliþkilendirilebilecek fotoðraf URL'si.
 ; An optional URL to a photo associated with\n\
 ; this user identity.
-;
-MSG_HELP_CO_CH_IDENTITY_SENTFOLDER
-Etkinleþtirildiðinde, gönderilen e-postalar bir\n\
-'Gönderilmiþ' klasöründe saklanacaktýr.\n\
-Aksi takdirde gönderilen posta saklanmayacaktýr.
-; If enabled, sent mail will be stored in a\n\
-; sent mail folder. Otherwise the sent mail\n\
-; will be deleted.
-;
-MSG_HELP_CO_TX_IDENTITY_SENTFOLDER
-Gönderilen e-postalarýn hangi posta klasöründe\n\
-saklanacaðýný belirlemenizi saðlar.
-; Allows to specify which mail folder should\n\
-; be used when storing sent mail.
 ;
 MSG_HELP_CO_CH_IDENTITY_QUOTEMAILS
 E-postalarý yanýtlarken veya iletirken\n\
