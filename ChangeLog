@@ -7,14 +7,18 @@ $URL$
 
 #### YAM 2.9 RELEASE ####################################################
 
+2013-12-24 Jens Maus <mail@jens-maus.de>
+
+  * misc: final YAM 2.9 release. Merry christmas!
+  * mui/WriteWindow.c: fixed a problem where upon editing a drafts mail
+    and aborting the edit operation the mail in question was immediately
+    deleted if an autosave action was executed in the meantime.
+    This closes #482.
+
 2013-12-24 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/FiltersConfigPage.c: toggling the filter's remote state correctly
     disables certain GUI objects again. This closes #481.
-
-2013-12-24 Jens Maus <mail@jens-maus.de>
-
-  * misc: final YAM 2.9 release. Merry christmas!
 
 2013-12-21 Pär Boberg <pbobbenb@spray.se>
 

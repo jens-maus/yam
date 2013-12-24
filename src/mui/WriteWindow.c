@@ -795,6 +795,8 @@ OVERLOAD(OM_NEW)
     // set user identity node
     uin = data->wmData->identity;
 
+    D(DBF_GUI, "write window mode: %08lx", data->wmData->mode);
+
     // if this write window is processed in NMM_REDIRECT mode we create
     // a slightly different graphical interface and hide all other things
     if(data->wmData->mode == NMM_REDIRECT)
@@ -4079,6 +4081,8 @@ DECLARE(ComposeMail) // enum WriteMode mode, ULONG closeWindow
       // mode. All other modes can't have multiple output files
       if(cntRefMail == 0 || wmData->mode == NMM_REDIRECT)
       {
+        enum NewMailMode newmode = wmData->mode;
+
         switch(wmData->mode)
         {
           case NMM_EDIT:
@@ -4092,23 +4096,29 @@ DECLARE(ComposeMail) // enum WriteMode mode, ULONG closeWindow
           // continue
 
           case NMM_EDITASNEW:
-            wmData->mode = NMM_NEW;
+            newmode = NMM_NEW;
           // continue
 
           default:
           {
             if(isDraftsFolder(outfolder) && wmData->draftMail != NULL && MailExists(wmData->draftMail, outfolder) == TRUE)
+            {
               GetMailFile(newMailFile, sizeof(newMailFile), outfolder, wmData->draftMail);
+
+              if(wmData->mode == NMM_EDIT)
+                newmode = NMM_EDIT; // keep EDIT mode when we were editing a drafts mail.
+            }
             else
               MA_NewMailFile(outfolder, newMailFile, sizeof(newMailFile));
           }
           break;
         }
+
+        wmData->mode = newmode;
       }
 
-      D(DBF_MAIL, "new mail file '%s'", newMailFile);
-
-      if(newMailFile[0] != '\0')
+      D(DBF_MAIL, "new mail file '%s' - %d", newMailFile, wmData->mode);
+      if(IsStrEmpty(newMailFile) == FALSE)
       {
         // now open the new mail file for write operations
         if((comp.FH = fopen(newMailFile, "w")) != NULL)
@@ -4648,6 +4658,7 @@ DECLARE(CancelAction)
           // discard the mail and
           // remove a previously saved draft mail from the drafts folder, but only if the
           // draft mail was not the one being edited a second time
+          D(DBF_MAIL, "about to discard mail %08lx in mode %08lx", data->wmData->draftMail, data->wmData->mode);
           if(data->wmData->mode != NMM_EDIT && data->wmData->draftMail != NULL)
             MA_DeleteSingle(data->wmData->draftMail, DELF_AT_ONCE);
         }
