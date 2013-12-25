@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-12-25 Jens Maus <mail@jens-maus.de>
+
+  * doc/Install-YAM: fixed "Unmatched parenthesis in line 885" error
+    showing up when trying to install on AmigaOS3. This closes #483.
+
 #### YAM 2.9 RELEASE ####################################################
 
 2013-12-24 Jens Maus <mail@jens-maus.de>
