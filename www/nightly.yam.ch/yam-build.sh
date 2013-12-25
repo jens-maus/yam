@@ -45,7 +45,7 @@ UPDCHKPATH="/var/www/www.yam.ch/update/updates/nightly" # path to the update che
 export PATH="/usr/local/amiga/gg/bin:/usr/local/amiga/bin:$PATH"
 MODULEPATH=${CHECKOUTDIR}/${MODULE}
 BUILDID=`date +%Y%m%d`
-BUILDVER="2.9"
+BUILDVER="2.10"
 BUILDV=`echo ${BUILDVER} | tr -d "."`
 DEVDIR=$CHECKOUTDIR/`date +%F-dev`
 

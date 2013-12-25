@@ -7,6 +7,7 @@ $URL$
 
 2013-12-25 Jens Maus <mail@jens-maus.de>
 
+  * misc: lets start with development on milestone 2.10.
   * doc/Install-YAM: fixed "Unmatched parenthesis in line 885" error
     showing up when trying to install on AmigaOS3. This closes #483.
 
