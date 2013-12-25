@@ -1,0 +1,200 @@
+VERSION: 2.8p1
+BUILDID:
+BUILDDATE: 07.07.2013
+URL: ppc-amigaos http://downloads.sf.net/yam/YAM28p1-AmigaOS4.lha
+URL: m68k-amigaos http://downloads.sf.net/yam/YAM28p1-AmigaOS3.lha
+URL: ppc-morphos http://downloads.sf.net/yam/YAM28p1-MorphOS.lha
+URL: i386-aros http://downloads.sf.net/yam/YAM28p1-AROS-i386.lha
+URL: ppc-aros http://downloads.sf.net/yam/YAM28p1-AROS-ppc.lha
+URL: x86_64-aros http://downloads.sf.net/yam/YAM28p1-AROS-x86_64.lha
+CHANGES:
+---------------------------------------------------------------------------
+                          YAM - Version 2.8p1
+---------------------------------------------------------------------------
+
+About YAM
+---------
+YAM (Yet Another Mailer) lets you send and receive electronic mail (e-mail)
+over the Internet and maintain archives  of messages in your computer via a
+graphical  user interface.  The idea  came to  the original  author (Marcel
+Beck)  back in  1995  when  he first  tried  using  e-mail. The  programmes
+available at the time were either powerful but complicated to configure, or
+else  used a  too  limiting user  interface. The  goal,  therefore, was  to
+program a  cross between AdMail and  AirMail, with a few  ideas coming from
+Pegasus Mail.
+
+While  earlier  versions  of  YAM were  developed  closed  source,  today's
+versions are developed  by an independent open source  community. Since the
+year 2000 a group of mixed developers maintain YAM and release new versions
+from time  to time.  While these  versions are all  targeted for  the Amiga
+platform,  versions of  different AmigaOS  incarnations are  supplied. This
+includes native  PowerPC ports to  modern Amiga platforms like  AmigaOS4 or
+MorphOS.
+
+
+Before you start the installation
+---------------------------------
+YAM 2.5+ not only uses newer  configuration files, the files  used to store
+separate emails are named differently  as well. Therefore, before you start
+the  installation  script to  overwrite  your  existing installation,  it's
+strongly recommended that you create a backup of your old YAM installation,
+including all folders  and configuration files. Afterwards  you can install
+the update into your old YAM directory  if you wish. On  start-up, YAM 2.5+
+will automatically convert  your old  configuration files  to the  new 2.5+
+format,  and after  being  started,  YAM will  rename  your  old emails  as
+necessary,  always under  your control.  It  is also  recommended that  you
+re-save your  configuration as  soon as  possible in  order to  update your
+.config  file to  the new  format, which  will reveal  all the  new options
+available.
+
+In addition,  please note  that since  YAM 2.5 no  YAM: assign  is required
+anymore. That means, you may even install it in a new location and start it
+right  away from  there  without  having to  touch  your old  installation.
+Afterwards you  may manually import  the mails from your  old installation.
+
+
+What's new
+----------
+Here's a  list (in  alphabetical order)  of the  brave developers  who have
+contributed   to    this   release    since   the   last    official   one:
+
+              Jens Langner
+              Thore Boeckelmann
+
+And here's a  PARTIAL list of the  changes in this version  with respect to
+the previous official 2.8 update:
+
+- updated translations for czech, greek, swedish, french, spanish, italian,
+  turkish language.
+- fixed an issue related to BetterString.mcc which cause YAM to crash.
+- extended the ADDRLOAD command to take a second parameter OPEN/S to
+  immediately open then address book window after the address book file
+  has been loaded successfully.
+- added a new option in the hidden section of the configuration. Setting the
+  option "OverrideFromAddress" to "Y" will add a recipient string object
+  below the identity chooser in the write window. The contents default to
+  the chosen identity's address but can be modified freely. This makes it
+  possible to use a different From: address than the one configured in the
+  identity while still using all other settings like the SMTP server.
+- renamed the 'Bounce' mail functionality for redirecting emails to alternative
+  recipients to 'Redirect' as that better reflects the purpose of this
+  functionality and should not confuse users anymore. Also adapted the
+  functionality to add all well-known Resent-#? headers to redirected emails.
+  This should adapt YAM to be somehwat more RFC compliant. Furthermore, a
+  Resent-CC and Resent-BCC can now be specified. In addition, YAM will now
+  allow to bounce to multiple emails in one operation. That means, a user
+  can now select more than one mail in the mail listview and when a redirect
+  operation is performed YAM will redirect all of these mails in one run.
+- fixed bug where hidden Cc, BCC or Reply-To string gadgets could have ended
+  up at wrong positions when hiding/showing them dynamically in the write
+  window.
+- fixed a bug where 'new' mail was never changed to 'unread' status if it was
+  moved to a subfolder. Now the index of all folders carrying 'new' mail will
+  be loaded and the status adapted accordingly.
+- fixed a problem where under certain setups the automatically chosen full
+  qualified domain name (FQDN) was unluckily chosen and thus mail sending being
+  rejected when using YAM. Now YAM should use a better mechanism and even let
+  you override the FQDN using a new hidden 'MachineFQDN' option.
+- fixed a crash where it could have happened that YAM accessed an invalid
+  memory location when creating a new mail.
+- added a new 'WRITEIDENTITY' ARexx command to let a script choose the user
+  identity to be used when composing a new mail via ARexx.
+- fixed a bug where the signature settings of a folder got lost when updating
+  from YAM versions <= 2.7 to 2.8
+- fixed a crash when entering certain text in the CC string gadget of a write
+  window.
+- fixed some problems with the new Drafts folder managment where emails could
+  end up duplicated. In addition, the 'Hold' button has been renamed to 'Save
+  to Drafts' to better differentate between the operations.
+- fixed a bug where the number of mails in the outgoing folder was not correctly
+  set when a mail was moved by mail filter operation.
+- fixed a bug where the From: address was not properly restored when the hidden
+  "OverrideFromAddress" option had been used.
+- fixed a bug where keeping the write window open for a while could suddenly
+  crash YAM.
+- fixed some crashes related to virtual email display (e.g. opening .eml
+  attachments).
+- fixed a bug in the mail header parsing routines where a header line starting
+  with a newline cause problems.
+- fixed a memory trashing problem where toolbar images of different sizes cause
+  some memory leaks within TheButton.mcc.
+- fixed a bug where resaving a mail in the drafts folder caused the mail
+  active/inactive state to get messed up.
+- modified remote filters to be applied when getting the single message details.
+  This makes it possible to let the filters check all available information but
+  it also requires the user to wait until the details of all new mails have been
+  received. Otherwise it could have happened that some mails were not received
+  although they should be filtered out.
+- fixed a crash bug when deleting a folder group.
+- fixed some incorrect dimensions of certain theme images.
+
+If  you want  to have  a more  detailed technical  information on  what was
+actually  changed, please  have a  look at  the included  'ChangeLog' file.
+You can also consult the official YAM homepage for more information on the
+changes done with YAM 2.8p1 (e.g. see http://yam.ch/milestone/YAM%202.8p1)
+
+What is still missing?
+----------------------
+- lots of translators! YAM 2.4 featured lots of different languages, but
+  due to the large amount of changed texts these catalogs are completely
+  outdated. Especially support for such common languages as Danish,
+  Finnish, etc. is currently missing. If you are a native speaker
+  of a language that YAM does not offer (anymore), then please contact us.
+  See http://yam.ch/wiki/Localization for more information.
+- lots of documentation! As with the translation, the documentation largely
+  lags behind. Again, if you are a native speaker (even for English) and if
+  you are interested in updating/writing YAM's documentation then please
+  contact us. Now that with YAM 2.8+ we have switch to a pure online-based
+  documentation system people are welcome updating the online documentation
+  which can be found at http://docs.yam.ch/ and is based on a public wiki
+  engine.
+- now that YAM 2.5+ comes with a new themes management, users are free to
+  create own themes in a fashion that allow them to exchange them with
+  other users. So go and create your own themes and submit them via
+  AmiNET&Co! :)
+
+Source code
+-----------
+Due to lack of time and motivation, Marcel Beck stopped working on YAM back
+in 2000, but the sources were released under the GNU General Public License
+at SourceForge.net. If you want to  help developing this program further or
+perhaps you are considering a port  to a different operating system, please
+consider joining the YAM Open Source team  instead of doing it on your own.
+Our  home page  is  at http://yam.ch/  from which  you  can obtain  all
+necessary  information   to  contact  us.   We  want  to  hear   from  you!
+
+Donations
+---------
+If you  like the development of  YAM and you  want to give our  open source
+developers an additional motivation to continue  to update YAM in future or
+if you simply want to say "Thanks", the YAM project accepts money donations
+via PayPal.  All the  donations during  a release  cycle are  collected and
+divided by considering  the activity of each developer during  the time the
+development lasted. This way we hope  to attract more developers in future,
+which   in   turn  should   give   you   a   new  version   more   quickly.
+
+   http://yam.ch/wiki/Donations
+
+So in  case you  want to support  our efforts to  develop a  modern up2date
+e-mail client  for modern AmigaOS-based  systems, please consult  the above
+URL for more information on how to donate to us.
+
+
+Online resources
+----------------
+As  YAM is  an  open  source development  effort,  we  have several  online
+resources cover your daily YAM needs:
+
+   http://yam.ch/          - Official Support Homepage
+   http://download.yam.ch/ - Direct path to the download page
+   http://docs.yam.ch/     - Online documentation system
+   http://faq.yam.ch/      - Online Frequently Asked Questions (FAQ)
+   http://bugs.yam.ch/     - Bugtracker and Feature Requests
+   http://forum.yam.ch/    - Web-based online forum
+
+   For Developers:
+
+   http://nightly.yam.ch/  - Access to automatic nightly developer
+                             snapshots
+   http://svn.yam.ch/      - Web-based source code SVN access
+   http://stats.yam.ch/    - Daily updated development statistics

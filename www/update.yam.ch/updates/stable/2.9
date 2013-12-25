@@ -1,0 +1,289 @@
+VERSION: 2.9
+BUILDID:
+BUILDDATE: 24.12.2013
+URL: ppc-amigaos http://downloads.sf.net/yam/YAM29-AmigaOS4.lha
+URL: m68k-amigaos http://downloads.sf.net/yam/YAM29-AmigaOS3.lha
+URL: ppc-morphos http://downloads.sf.net/yam/YAM29-MorphOS.lha
+URL: i386-aros http://downloads.sf.net/yam/YAM29-AROS-i386.lha
+URL: ppc-aros http://downloads.sf.net/yam/YAM29-AROS-ppc.lha
+URL: x86_64-aros http://downloads.sf.net/yam/YAM29-AROS-x86_64.lha
+CHANGES:
+---------------------------------------------------------------------------
+                          YAM - Version 2.9
+---------------------------------------------------------------------------
+
+About YAM
+---------
+YAM (Yet Another Mailer) lets you send and receive electronic mail (e-mail)
+over the Internet and maintain archives  of messages in your computer via a
+graphical  user interface.  The idea  came to  the original  author (Marcel
+Beck)  back in  1995  when  he first  tried  using  e-mail. The  programmes
+available at the time were either powerful but complicated to configure, or
+else  used a  too  limiting user  interface. The  goal,  therefore, was  to
+program a  cross between AdMail and  AirMail, with a few  ideas coming from
+Pegasus Mail.
+
+While  earlier  versions  of  YAM were  developed  closed  source,  today's
+versions are developed  by an independent open source  community. Since the
+year 2000 a group of mixed developers maintain YAM and release new versions
+from time  to time.  While these  versions are all  targeted for  the Amiga
+platform,  versions of  different AmigaOS  incarnations are  supplied. This
+includes native  PowerPC ports to  modern Amiga platforms like  AmigaOS4 or
+MorphOS.
+
+
+Before you start the installation
+---------------------------------
+YAM 2.5+ not only uses newer  configuration files, the files  used to store
+separate emails are named differently  as well. Therefore, before you start
+the  installation  script to  overwrite  your  existing installation,  it's
+strongly recommended that you create a backup of your old YAM installation,
+including all folders  and configuration files. Afterwards  you can install
+the update into your old YAM directory  if you wish. On  start-up, YAM 2.5+
+will automatically convert  your old  configuration files  to the  new 2.5+
+format,  and after  being  started,  YAM will  rename  your  old emails  as
+necessary,  always under  your control.  It  is also  recommended that  you
+re-save your  configuration as  soon as  possible in  order to  update your
+.config  file to  the new  format, which  will reveal  all the  new options
+available.
+
+In addition,  please note  that since  YAM 2.5 no 'YAM:' assign is required
+anymore. That means, you may even install it in a new location and start it
+right  away from  there  without  having to  touch  your old  installation.
+Afterwards you  may manually import  the mails from your  old installation.
+Thus, you can in principle now have to independent installation of YAM
+using two completly different versions.
+
+
+What's new
+----------
+Here's a  list (in  alphabetical order)  of the  brave developers  who have
+contributed   to    this   release    since   the   last    official   one:
+
+              Jens Maus
+              Thore Böckelmann
+
+And here's a  PARTIAL list of the  changes in this version  with respect to
+the previous official update:
+
+- implemented proper UTF-8 support for the whole index of a folder. This
+  allows now to switch charsets without having to rescan a folder index.
+- implemented a completely new procedure to deal with timezone and daylight
+  saving times as the old method were unable to identify the daylight
+  saving time for past dates. Now the official timezone databases published
+  by iana.org are used instead. This finally corrects the time display for
+  old mails when DST times changes relative to the current date/time.
+- The main window layout (size+position) and list sorting options will now
+  be automatically saved upon exiting YAM rather than forcing a user to
+  explicitly 'snapshot' that information via the corresponding MUI
+  functionality. An additional option in the configuration of YAM allow to
+  disable this, thought.
+- Enforce disposing of all images if YAM is running on an 8 bit screen
+  (excluding the Workbench) as soon as the image is no longer used. This
+  works around a bug in picture.datatype which seems to keep a pointer to
+  the screen the image was remapped to and accesses it later even if the
+  screen no longer exists.
+- fixed the partly broken support for the Mail-Reply-To (MRT) and
+  Mail-Followup-To (MFT) headers where YAM was not suggesting the right
+  reply addresses according to the documentation of the MRT/MFT feature.
+- improved charset/codeset handling support when using external editors
+  aware of UTF-8
+- fixed a problem where YAM was unable to create properly UTF-8 encoded
+  emails.
+- when adding new filters YAM will now automatically jump to the bottom of
+  the filter rule list.
+- To cleanup the main program directory of YAM all folder directories will
+  be automatically moved to a new subdirectory named "Folders" in the
+  user's mail directory (which defaults to YAM's program directory if not
+  changed via ToolTypes or the user configuration). Possibly duplicate
+  directory names get a unique number appended. To ease folder setup it is
+  not possible anymore to select any arbitrary path for a folder, but only
+  the directory name within the "Folders" directory.
+- The write window now features a small clone of the attachment list on the
+  first page. A context menu allows to perform the same actions as for the
+  big list on the second page.
+- Implemented an interactive attachment reminder feature as known from
+  Thunderbird. If enabled and the user types in certain keywords from a
+  user definable list and no attachment has been added to the mail a
+  reminder will be shown to inform the user that an attachment might be
+  desired.
+- Implemented an 'Archive' folder which move mails to a folder named after
+  the mail's original send date. The archive folders are excluded from
+  deleting old mails automatically to make sure the mails are really
+  archived until the user explicitly deletes them.
+- implemented a new functionality to allow to define different 'incoming'
+  and 'sent' folders per configured mail account (POP3/SMTP). This should
+  allow to more easily and directly filter emails not requiring to
+  explicitly define separate filters.
+- Fixed a bug which caused YAM to use the first matching address of a mail
+  as user identity even if this address was the sending instead of the
+  receiving one.
+- fixed a bug where the MAILINFO ARexx command caused a crash if the mail
+  in question contained no message ID.
+- when opening a new window YAM will now set the title of a screen to the
+  same title as well. This improves recognition of the currently active
+  window as the screen titlebar will then automatically refer to YAM and
+  thus make it possible that a user identifies by looking at the screen
+  title bar which application is the currently active one.
+- fixed a buffer overrun in the RFC 2014 decoding routines which
+  potentially caused unexpected crashes.
+- restored the behavior of previous versions when resolving the names of
+  address book mailing lists. The new method added in YAM 2.8+ caused
+  certain problems.
+- fixed the read/unread marking of mails which was not done for all columns
+  of the mail list.
+- when checking for new mails YAM will now show "Checking mails from ..."
+  rather than "Mail Transfer from ..." which was not entirely correct.
+- The position of the quick search bar is now configurable and allows the
+  user to place the bar below the main mail list.
+- improved online documentation (http://doc.yam.ch/) regarding the use of
+  quotes when specifying file/directory paths.
+- changed the "jumping to the first unread and/or most recent message when
+  entering a folder" functionality to be configurable on a per folder basis
+  instead of a being a global option only.
+- The time and date information from the Date: header line will now be
+  converted to local time if the usual "short" headers are shown. For full
+  header display it will be shown as it is.
+- The entered search string is now automatically cloned between the
+  different pages.
+- The output of the external archiver command can now be redirected
+  optionally to a console window while the archiver is running to show the
+  progress.
+- The single items of the list can now be activated immediately by pressing
+  their number on the keyboard. "0" will be mapped to the 10th attachment.
+- All kinds of links (http(s), ftp, etc) will now be underlined as well.
+- deleting or archiving a single mail will now behave consistently in every
+  situation and correctly respect the folder's current sort order.
+- any rule of a configured filter can now be removed or an additional one
+  added in between instead of allowing only to add/delete rules to/from the
+  bottom of the rule list.
+- The mail preselection list now shows the contents of the To: header line
+  to let users spot unwanted mails easier.
+- Printing a mail will now include a list of attachments. Additionally the
+  printout will no longer contain a plain copy of all header lines, but a
+  stripped down version of subject sender, receiver and date.
+- implemented a NOICONS switch for the REQUESTFILE Arexx command which will
+  open the corresponding file requester but hide and icons (#?.info files).
+- The Get and Send toolbar buttons will now be disabled in case there is no
+  active POP3 or SMTP server available.
+- fixed a problem with not seeing a folder added to the folder list
+  immediately.
+- address book entries can now be sorted by clicking on the list titles
+  similar to the mail list of the main window.
+- fixed the LISTFREEZE and LISTUNFREEZE arexx commands to deal correctly
+  with the Quiet settings of other YAM components.
+- PGP encrypted mails can now be excluded from a search to let in run
+  unattended without the need to enter a password.
+- Mails dragged out of the spam folder will now be marked as non-spam in
+  case the "mark on move" option is enabled.
+- implemented a new "Mail Account" column in the main mail list to be able
+  to sort emails based on mail account/hostname a mail was received so that
+  users can better order their mails due to the fact that since YAM 2.8
+  mails are now transferred asynchronously from multiple servers.
+- Searching user identities by address or ID will now correctly respect the
+  identity's active state and return active identities only. In case a mail
+  references an inactive user identity YAM will silently fall back to the
+  next best matching identity.
+- Implemented a new option to trigger a snapshot action on all alive
+  windows and to save the layout/state of certain groups and objects.
+- fixed a bug so that any edit operation in the quick search bar will now
+  abort a search operation in progress.
+- fixed a problem when YAM was run for the very first time after an
+  installation without any valid .config file. Opening the config window
+  too early caused this window to be opened without any graphics from the
+  default theme.
+- when changing a folder's path the global .folders file will be
+  immediately saved to make the change persistent.
+- mails from the Trash folder are now excluded from the spam filter.
+- mail disposal is now protected by a reference counter. This makes it
+  possible to move a mail to a different folder in concurrent processes
+  while still accessing the same mail without accessing invalid or already
+  freed memory. This fixes numerous different potential crash problems.
+- All SPAM filter related GUI elements will now be properly disabled if the
+  SPAM filter is completely disabled as well.
+- fixed a crash bug when using the gravatar image search functionality on a
+  never set address book entry.
+- the online ARexx documentation (http://doc.yam.ch/) can now be directly
+  accessed via the corresponding main menu item.
+- fixed a problem where html parts of a mail weren't forwarded to a web
+  browser but saved to disk instead due to not using the right file
+  extension.
+- added a fresh and updated finnish translation/catalog to YAM.
+- added a low memory handler to flush all folder indexes automatically if a
+  system is about to run low on memory.
+- fixed a crash bug when in the write window the autosave functionality
+  activates while typing.
+- when enabling the "detect cyrillic code sets" functionality YAM will now
+  warn the user in case he has setup YAM to use a non-cyrillic code set for
+  as the local charset.
+- significantly improved performance of parsing emails with large
+  attachments. Now YAM will reuse the size parameter of each MIME part to
+  speed up memory allocations during MIME parsing.
+- fixed a problem where editing a mail a second time added an additional
+  superfluous white space to the mail body.
+
+If  you want  to have  a more  detailed technical  information on  what was
+actually  changed, please  have a  look at  the included  'ChangeLog' file.
+You can also consult the official YAM homepage for more information on the
+changes done with YAM 2.9 (http://yam.ch/milestone/YAM%202.9)
+
+What is still missing?
+----------------------
+- lots of translators! YAM 2.4 featured lots of different languages, but
+  due to the large amount of changed texts these catalogs are completely
+  outdated. Especially support for such common languages as Danish,
+  Finnish, etc. is currently missing. If you are a native speaker
+  of a language that YAM does not offer (anymore), then please contact us.
+  See http://yam.ch/wiki/Localization for more information.
+- lots of documentation! As with the translation, the documentation largely
+  lags behind. Again, if you are a native speaker (even for English) and if
+  you are interested in updating/writing YAM's documentation then please
+  contact us. Now that with YAM 2.8+ we have switch to a pure online-based
+  documentation system people are welcome updating the online documentation
+  which can be found at http://docs.yam.ch/ and is based on a public wiki
+  engine.
+
+Source code
+-----------
+Due to lack of time and motivation, Marcel Beck stopped working on YAM back
+in 2000, but the sources were released under the GNU General Public License
+at SourceForge.net. If you want to  help developing this program further or
+perhaps you are considering a port  to a different operating system, please
+consider joining the YAM Open Source team  instead of doing it on your own.
+Our  home page  is  at http://yam.ch/  from which  you  can obtain  all
+necessary  information   to  contact  us.   We  want  to  hear   from  you!
+
+Donations
+---------
+If you  like the development of  YAM and you  want to give our  open source
+developers an additional motivation to continue  to update YAM in future or
+if you simply want to say "Thanks", the YAM project accepts money donations
+via PayPal.  All the  donations during  a release  cycle are  collected and
+divided by considering  the activity of each developer during  the time the
+development lasted. This way we hope  to attract more developers in future,
+which   in   turn  should   give   you   a   new  version   more   quickly.
+
+   http://yam.ch/wiki/Donations
+
+So in  case you  want to support  our efforts to  develop a  modern up2date
+e-mail client  for modern AmigaOS-based  systems, please consult  the above
+URL for more information on how to donate to us.
+
+
+Online resources
+----------------
+As  YAM is  an  open  source development  effort,  we  have several  online
+resources cover your daily YAM needs:
+
+   http://yam.ch/          - Official Support Homepage
+   http://download.yam.ch/ - Direct path to the download page
+   http://docs.yam.ch/     - Online documentation system
+   http://faq.yam.ch/      - Online Frequently Asked Questions (FAQ)
+   http://bugs.yam.ch/     - Bugtracker and Feature Requests
+   http://forum.yam.ch/    - Web-based online forum
+
+   For Developers:
+
+   http://nightly.yam.ch/  - Access to experimental developer snapshots
+   http://svn.yam.ch/      - Web-based source code SVN access
+   http://stats.yam.ch/    - Daily updated development statistics

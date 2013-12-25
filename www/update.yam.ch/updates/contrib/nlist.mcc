@@ -1,10 +1,10 @@
 NAME: NList.mcc
-VERSION: 20.134
-BUILDDATE: 22.12.2012
-URL: * http://downloads.sf.net/nlist-classes/MCC_NList-0.115.lha
+VERSION: 20.136
+BUILDDATE: 13.12.2013
+URL: * http://downloads.sf.net/nlist-classes/MCC_NList-0.117.lha
 CHANGES:
 ---------------------------------------------------------------------------
-                           NList.mcc - 20.134
+                           NList.mcc - 20.136
 ---------------------------------------------------------------------------
 
 NList.mcc is a MUI custom class used for managing large amount of data in

@@ -1,0 +1,114 @@
+VERSION: 2.9-dev
+BUILDID: 20131222
+BUILDDATE: 22.12.2013
+URL: m68k-amigaos http://nightly.yam.ch/2013-12-22-dev/YAM29dev-AmigaOS3.lha
+URL: ppc-amigaos http://nightly.yam.ch/2013-12-22-dev/YAM29dev-AmigaOS4.lha
+URL: ppc-morphos http://nightly.yam.ch/2013-12-22-dev/YAM29dev-MorphOS.lha
+URL: i386-aros http://nightly.yam.ch/2013-12-22-dev/YAM29dev-AROSi386.lha
+URL: ppc-aros http://nightly.yam.ch/2013-12-22-dev/YAM29dev-AROSppc.lha
+URL: x86_64-aros http://nightly.yam.ch/2013-12-22-dev/YAM29dev-AROSx86_64.lha
+URL: arm-aros http://nightly.yam.ch/2013-12-22-dev/YAM29dev-AROSarm.lha
+CHANGES:
+---------------------------
+YAM Open Source - ChangeLog
+---------------------------
+
+$Id: ChangeLog 7408 2013-12-21 22:35:58Z pbobbenb $
+$URL: file:///home/svn/yam/trunk/ChangeLog $
+
+2013-12-21 Pär Boberg <pbobbenb@spray.se>
+
+  * locale/swedish.ct: updated to the latest changes.
+
+2013-12-21 Jens Maus <mail@jens-maus.de>
+
+  * src/mui/InfoBar.c, src/mui/QuickSearchBar.c: we use MakeCloseButton()
+    now for all situations where we had "X"-based close buttons to provide
+    functionality to abort a process.
+  * src/tcp/pop3.c: fixed some PushMethodOnStack() calls having used an
+    incorrect number for specifying how many arguments will follow.
+  * src/tcp/pop3.c, locale/YAM.cd, locale/german.ct: while just checking for
+    mails, YAM will now show a "Checking mails from..." instead of calling
+    in "Mail Transfer from..." as this might be misleading. This closes #478.
+  * src/Busy.c: fixed a potential problem with calling BusyEnd() from a thread
+    and awaiting it to be processed immediately so that the BusyNode can be
+    NULLed afterwards. Now BusyEnd() will use PushMethodOnStackWait() instead
+    to secure that situation.
+  * src/mui/MainMailList.c: the dynamically generated short help for each 
+    mail in the mail list will now also show "(No Recipients)" and 
+    "(No Subject)" in case one if that information is missing.
+  * resources/zoneinfo, tools/tzdata, tools/tzcode: updated tzdata/tzcode
+    environment to the latest version (2013i) released by iana.org.
+  * src/AddressBook.c, src/TZone.c, src/YAM.c: fixed some MorphOS' related
+    compiler warnings.
+
+2013-12-20 Jens Maus <mail@jens-maus.de>
+
+  * YAM.c: added "NBitmap.mcc" as a required dependency.
+  * mui/Aboutwindow.c: added a "Make a donation" button to the About window
+    to attract more people to make a direct donation to our project since
+    the number of donations seem to decrease somewhat.
+
+2013-12-19 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: update to the latest changes.
+
+2013-12-19 Alexandre Balaban <abalaban@free.fr>
+
+  * locale/french.ct: updated according to latest changes.
+  * doc/YAM_french.guide: updated according to latest changes.
+
+2013-12-19 Jens Maus <mail@jens-maus.de>
+
+  * YAM_MA.c: fixed a problem when the autosave functionality of a write
+    window kicked in and afterwards the write window was discarded and
+    thus the mail deleted again from the drafts folders. This consistently
+    caused a crash when afterwards attempting to load another large index
+    file of another folder. The problem seems to be with the new
+    RemoveMailFromFolder() function which it directly removed the freed
+    the mail pointer instead of MA_DeleteSingle() doing that job.
+
+2013-12-18 Vit Sindlar <sindlarv at centrum dot cz>
+
+  * locale/czech.ct: updated Czech translation.
+
+2013-12-18 Jens Maus <mail@jens-maus.de>
+
+  * YAM.c: bumped the minimum required versions of TheBar.mcc and
+    TextEditor.mcc to the latest available versions since they fix
+    some important bugs related to YAM.
+
+2013-12-17 Pär Boberg <pbobbenb@spray.se>
+
+  * locale/swedish.ct: updated to the latest changes.
+
+2013-12-17 Jens Maus <mail@jens-maus.de>
+
+  * mui/WriteWindow.c, misc: partly reverted the recent change to the
+    ComposeMail function which was changed to always close a write window
+    after any operation. Now the function will take an additional argument
+    to allow to define if the function should close a window or not after
+    the desired operation. This allowed to fix a problem where upon
+    autosaving a mail the window was always closed. This closes #474.
+
+2013-12-17 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_UT.c: added some output whether opening a URL was successful or not.
+
+2013-12-16 Jens Maus <mail@jens-maus.de>
+
+  * YAM_WR.c: fixed the partly broken reply routines not correctly respecting
+    the Mail-Reply-To: and Mail-Followup-To: headers by now correctly taking
+    preference of these two headers and explicitly asking the user if he either
+    wants to reply-to-sender or reply-to-all. This closes #454.
+
+2013-12-16 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: fixed some more strings.
+  * TRANSLATION: updated to the recent checkout url.
+
+2013-12-16 Vit Sindlar <sindlarv at centrum dot cz>
+
+
+
+THIS IS JUST A 100 LINE STRIPPED VERSION OF THE CHANGELOG
