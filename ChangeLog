@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-12-26 Samir Hawamdeh <s.hawamdeh@tin.it>
+
+  * locale/italian.ct: applied some minor changes.
+
 2013-12-25 Jens Maus <mail@jens-maus.de>
 
   * misc: lets start with development on milestone 2.10.
