@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.3 (18.05.2012)
+## version $VER: YAM.catalog 7.4 (27.12.2013)
 ## language dutch
 ## codeset 0
 ## chunk AUTH Johan Banis
@@ -2517,34 +2517,32 @@ MSG_RE_MDNdisplay
 Het mailtje %s\n\
 is getoond op het scherm.\n\
 Dat is geen garantie dat de inhoud\n\
-ook gelezen of begrepen is.
+ook gelezen of begrepen is.\n
 ;
 MSG_RE_MDNdeleted
 Het mailtje %s\n\
 is weggegooid %s.\n\
 De ontvanger heeft het misschien wel of misschien niet gelezen.\n\
 De ontvanger kan later het mailtje weer uit de prullebak halen\n\
-en het dan alsnog lezen.
+en het dan alsnog lezen.\n
 ;
 MSG_RE_MDNunknown
 Het mailtje %s\n\
-is %s%s.\n\
-
+is %s%s.\n
 ;
 MSG_RE_PGPNotAllowed
 >PGP-fout<\n\
 \n\
 Je hebt geen toestemming om dit PGP-versleutelde mailtje te lezen.\n\
 Misschien is jouw PGP-software niet goed geconfigureerd of\n\
-het mailtje was voor iemand anders versleuteld.
+het mailtje was voor iemand anders versleuteld.\n
 ;
 MSG_RE_MsgReadOnly
 Dit mailtje kan alleen gelezen worden door\n\
-%s.\n\
-
+%s.\n
 ;
 MSG_RE_AddSender
-Wil je de afzender eb%s\en\n\
+Wil je de afzender \033b%s\033n\n\
 aan jouw adresboek toevoegen?
 ;
 MSG_RE_NewGroupTitle

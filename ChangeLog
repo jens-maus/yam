@@ -7,6 +7,8 @@ $URL$
 
 2013-12-27 Jens Maus <mail@jens-maus.de>
 
+  * locale: fixed a bunch of catalog translation related problems where
+    the catalog description syntax/layout was not always maintained.
   * mui/SignatureTextEdit.c: modified the signature text editor to not
     parse the signature text via the ParseEmailText() function as otherwise
     the text styles end up in mixing up the signature. This closes #489.

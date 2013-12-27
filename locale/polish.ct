@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 7.30 (18.05.2012)
+## version $VER: YAM.catalog 7.31 (27.12.2013)
 ## language polski
 ## codeset 5
 ## chunk AUTH Mariusz Danilewicz <mandi@interia.pl>
@@ -558,7 +558,7 @@ Chcesz wys³aæ odpowied¼...
 ; You want to send the reply to the...
 ;
 MSG_MA_ReplyReqOpt
-*...do\n_nadawcy|...do n_adawcy\n\i wszystkich odbiorców|...do\n\odbio_rców|Ponie_chaj
+*...do\n_nadawcy|...do n_adawcy\ni wszystkich odbiorców|...do\nodbio_rców|Ponie_chaj
 ; *_sender|sender and _all recipients|_recipients|_Cancel
 ;
 MSG_MA_CompareReq

@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 9.1 (26.12.2013)
+## version $VER: YAM.catalog 9.2 (27.12.2013)
 ## language italiano
 ## codeset 0
 ## chunk AUTH Luca Longone & Samir Hawamdeh
@@ -898,21 +898,22 @@ Salve,\\n
 ; Hello,\\\\n
 ;
 MSG_CO_AltRepIntroDef
-\0
+
 ; \0
 ;
 MSG_CO_AltRepPatternDef
-\0
+
 ; \0
 ;
 MSG_CO_ForwardIntroDef
-*** Inizio del messaggio inoltrato ***\\\\n\
-\\\\n\
+*** Inizio del messaggio inoltrato ***\\n\
+\\n\
 Data: %c\\n\
 Da: %n <%e>\\n\
 Oggetto: %s\\n\
 \\n\
---- Segue messaggio inoltrato ---
+--- Segue messaggio inoltrato ---\\n\
+\\n
 ; *** Begin of forwarded message ***\\\\n\
 ; \\\\n\
 ; Date: %c\\\\n\
@@ -923,7 +924,7 @@ Oggetto: %s\\n\
 ; \\\\n
 ;
 MSG_CO_ForwardFinishDef
-*** Fine del messaggio inoltrato ***
+*** Fine del messaggio inoltrato ***\\n
 ; *** End of forwarded message ***\\\\n
 ;
 MSG_CO_GreetingsDef
@@ -931,19 +932,19 @@ Cordiali saluti.
 ; Kind regards
 ;
 MSG_CO_AltRepHelloDef
-\0
+
 ; \0
 ;
 MSG_CO_AltRepByeDef
-\0
+
 ; \0
 ;
 MSG_CO_MLRepHelloDef
-\0
+
 ; \0
 ;
 MSG_CO_MLRepIntroDef
-Il %c, %n ha scritto:\n
+Il %c, %n ha scritto:\\n
 ; On %c, %n wrote:\\\\n
 ;
 MSG_CO_MLRepByeDef
@@ -951,7 +952,7 @@ Saluti
 ; Regards
 ;
 MSG_CO_LineBreak
-\\\\n\
+\\n\
   Interruzione di linea
 ;  \\\\n\
 ;  Line break
@@ -7801,7 +7802,7 @@ MSG_ER_MIME_ERROR
 Impossibile estrarre il messaggio MIME dal file '%s'.\n\
 \n\
 Il messaggio potrebbe contenere delle parti MIME non\n\
-conformi, oppure il MIME stesso risulta vuoto o troncato.\n
+conformi, oppure il MIME stesso risulta vuoto o troncato.
 ; Couldn't extract MIME message from file '%s'.\n\
 ; \n\
 ; The message contains malformed MIME parts, or it is empty or truncated.

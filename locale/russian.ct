@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 5.2 (26.05.2001)
+## version $VER: YAM.catalog 5.3 (27.12.2013)
 ## language russian
 ## codeset 0
 ;
@@ -701,7 +701,7 @@ MSG_MA_ReplyReq
 ;Do you want to send the reply...
 ;
 MSG_MA_ReplyReqOpt
-*О_тправителю\n|Отправителю _и\nвсем получателям|_Получателям\n|_Отмена\n
+*О_тправителю\n|Отправителю _и\nвсем получателям|_Получателям\n|_Отмена
 ;*to the\n\
 ;_sender|to the sender and\n\
 ;_all recipients|to the\n\

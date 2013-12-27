@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 9.1 (24.12.2013)
+## version $VER: YAM.catalog 9.2 (27.12.2013)
 ## language türkçe
 ## codeset 0
 ## chunk AUTH Alper Sönmez <amithlondestek@gmail.com>
@@ -928,7 +928,7 @@ Konu: %s\\\\n\
 ; \\\\n
 ;
 MSG_CO_ForwardFinishDef
-*** Ýletilmiþ mesajýn sonu ***\\\n\
+*** Ýletilmiþ mesajýn sonu ***\\\\n\
 ; *** End of forwarded message ***\\\\n
 ;
 MSG_CO_GreetingsDef
@@ -1796,7 +1796,8 @@ desteklediðinden eminseniz kullanýnýz. Aksi taktirde iletiler bozulabilir.
 ; supports 8-bit transfers, otherwise your messages may get corrupted.
 ;
 MSG_HELP_CO_LV_POP3
-POP3 hesaplarý\n\ listesi.
+POP3 hesaplarý\n\
+listesi.
 ; List of the POP3\n\
 ; accounts.
 ;
@@ -3108,7 +3109,7 @@ MSG_RE_MDNdisplay
 Aþaðýdaki Ýleti\n\
 %s\n\
 görüntülenmiþtir.\n\
-Bu içeriðin okunduðuna veya anlaþýldýðýna dair bir teminat deðildir.
+Bu içeriðin okunduðuna veya anlaþýldýðýna dair bir teminat deðildir.\n
 ; The message\n\
 ; %s\n\
 ; has been displayed.\n\
@@ -3139,7 +3140,7 @@ MSG_RE_PGPNotAllowed
 \n\
 Bu PGP ile þifrelenmiþ iletiyi okuma yetkiniz yok.\n\
 PGP yazýlýmýnýz düzgün yapýlandýrýlmamýþ veya\n\
-ileti bir baþkasýnýn okumasý için þifrelenmiþ olabillir.
+ileti bir baþkasýnýn okumasý için þifrelenmiþ olabillir.\n
 ; >PGP Error<\n\
 ; \n\
 ; You're not allowed to view this PGP encrypted message.\n\
@@ -3147,7 +3148,7 @@ ileti bir baþkasýnýn okumasý için þifrelenmiþ olabillir.
 ; the message was encrypted for someone else.\n
 ;
 MSG_RE_MsgReadOnly
-Ýleti yalnýzca %s tarafýndan okunabilir.
+Ýleti yalnýzca %s tarafýndan okunabilir.\n
 ; The message can only be read by %s\n
 ; RECIPIENT
 ;
@@ -5078,16 +5079,6 @@ MSG_CO_SIZEFORMAT04
 MSG_CO_SIZEFORMAT05
 10^-3 doðruluk (0.001 GB/MB/KB)
 ; 10^-3 precision (0.001 GB/MB/KB)
-;
-MSG_HELP_CO_ST_SMTPAUTHUSER
-Kullanýcý adý\n\
-; User name of the\n\
-; SMTP AUTH user.
-;
-MSG_HELP_CO_ST_SMTPAUTHPASS
-Þifresi\n\
-; Password of the\n\
-; SMTP AUTH user.
 ;
 MSG_HELP_CO_ST_APPICON
 Masaüstü simgesiyle\n\

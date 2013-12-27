@@ -1,4 +1,4 @@
-## version $VER: yam.catalog 9.1 (24.12.2013)
+## version $VER: yam.catalog 9.2 (27.12.2013)
 ## language greek
 ## codeset 10
 ## chunk AUTH Antonis Iliakis
@@ -526,7 +526,7 @@ MSG_MA_ReplyReqOpt
 ; *_sender|sender and _all recipients|_recipients|_Cancel
 ;
 MSG_MA_CompareReq
-Η διεύθυνση αποστολέα (Από) είναι \033b<%s>\033n, αλλά\nη διεύθυνση επιστροφής (Απάντηση-Προς) είναι \033b<%s>\033n.\n\Σε ποιά διεύθυνση θέλετε να απαντήσετε;
+Η διεύθυνση αποστολέα (Από) είναι \033b<%s>\033n, αλλά\nη διεύθυνση επιστροφής (Απάντηση-Προς) είναι \033b<%s>\033n.\nΣε ποιά διεύθυνση θέλετε να απαντήσετε;
 ; Sender address (From) is \033b<%s>\033n, but\nreturn address (Reply-To) is \033b<%s>\033n.\n\nTo which address do you want to reply to?
 ; ADDRESS, ADDRESS
 ;
@@ -2714,7 +2714,7 @@ MSG_RE_MDNdisplay
 ; The message\n%s\nhas been displayed.\nThis is no guarantee that the content has been read or understood.\n
 ;
 MSG_RE_MDNdeleted
-Το μήνυμα\n%s\nέχει διαγραφτεί%s.\nΟ παραλήπτης μπορεί ή όχι να έχει δει το μήνυμα. Ο παραλήπτης μπορεί\nνα \"ξεδιαγράψει"\ το μήνυμα αργότερα και να το διαβάσει.\n
+Το μήνυμα\n%s\nέχει διαγραφτεί%s.\nΟ παραλήπτης μπορεί ή όχι να έχει δει το μήνυμα. Ο παραλήπτης μπορεί\nνα \"ξεδιαγράψει\" το μήνυμα αργότερα και να το διαβάσει.\n
 ; The message\n%s\nhas been deleted%s.\nThe recipient may or may not have seen the message. The recipient\nmay \"undelete\" the message at a later time and read the message.\n
 ;
 MSG_RE_MDNunknown
@@ -4610,7 +4610,7 @@ MSG_ER_ADDRBOOKLOAD
 ; FILENAME
 ;
 MSG_AB_NOYAMADDRBOOK
-Το αρχείο '%s' δεν είναι έγκυρο βιβλίο διευθύνσεων YAM.\n\nΕπεξεργαστείτε το ως αρχείο που περιέχει διευθύνσεις e-mail\σε ξεχωριστές γραμμές;
+Το αρχείο '%s' δεν είναι έγκυρο βιβλίο διευθύνσεων YAM.\n\nΕπεξεργαστείτε το ως αρχείο που περιέχει διευθύνσεις e-mail\nσε ξεχωριστές γραμμές;
 ; File '%s' isn't a valid YAM address book.\n\nProcess it as a file containing e-mail addresses\non separate lines?
 ; FILENAME
 ;
@@ -6713,7 +6713,7 @@ _Σετ χαρακτήρων
 ; _Charset
 ;
 MSG_HELP_WR_PO_CHARSET
-Χρησιμοποιήστε το κουμπί για να επιλέξετε το σετ χαρακτήρων\nπου θέλετε να χρησιμοποιήσει το YAM για αυτή την αλληλογραφία.\Αυτό προκαθορίζεται στο καθολικό σετ χαρακτήρων.
+Χρησιμοποιήστε το κουμπί για να επιλέξετε το σετ χαρακτήρων\nπου θέλετε να χρησιμοποιήσει το YAM για αυτή την αλληλογραφία.\nΑυτό προκαθορίζεται στο καθολικό σετ χαρακτήρων.
 ; Use the popup button to select the character set\nyou would like YAM to use for this mail. This\ndefaults to the global character set.
 ;
 MSG_ABOUTYAM
@@ -7010,7 +7010,7 @@ MSG_RE_DEFAULT_MIMEPART_NAME
 ; PARENTNUMBER PARTNUMER
 ;
 MSG_OPEN_WRITEWINDOWS
-Υπάρχουν ήδη μερικά ανοιχτά παράθυρα.\n\\n\Θέλετε να προχωρήσετε;
+Υπάρχουν ήδη μερικά ανοιχτά παράθυρα.\n\nΘέλετε να προχωρήσετε;
 ; There are still some write windows open.\n\
 ; \n\
 ; How do you want to proceed?
@@ -7058,7 +7058,7 @@ MSG_AB_BirthdayReqBody
 ; DATE, NAME, AGE
 ;
 MSG_ER_AREXX_EXECUTION_ERROR
-Η εκτέλεση της εντολής ARexx '%s' απέτυχε (κωδικός σφάλματος %ld).\n\Παρακαλώ βεβαιωθείτε ότι το αρχείο ARexx είναι προσπελάσιμο και έγκυρο.
+Η εκτέλεση της εντολής ARexx '%s' απέτυχε (κωδικός σφάλματος %ld).\nΠαρακαλώ βεβαιωθείτε ότι το αρχείο ARexx είναι προσπελάσιμο και έγκυρο.
 ; Execution of the ARexx command '%s' failed (error code %ld).\n\
 ; Please make sure that the file is accessible and is a valid ARexx script.
 ; COMMANDNAME, ERRORCODE
@@ -7076,7 +7076,7 @@ MSG_UPD_NO_UPDATES_FOUND_TITLE
 ; No software updates available
 ;
 MSG_UPD_NO_UPDATES_FOUND
-Δεν υπάρχουν ενημερώσεις λογισμικού.\n\%s
+Δεν υπάρχουν ενημερώσεις λογισμικού.\n%s
 ; There are no software updates available.\n\
 ; %s
 ; HINT
@@ -7094,7 +7094,7 @@ MSG_THREAD_EXIT_WARNING_TITLE
 ; YAM warning
 ;
 MSG_THREAD_EXIT_WARNING
-Βρέθηκαν υπο-νήματα που ακόμα εκτελούνται κατά την προσπάθεια καθαρισμού του YAM.\n\Παρακαλώ κλείστε όλα τα τυχόν υπο-νήματα (π.χ. προβολές ΜΙΜΕ, κτλ)\n\που πιθανόν να έχετε διενεργήσει από το YAM.\n\\n\Θέλετε να ξαναδοκιμάσετε να εγκαταλείψετε το YAM\n\ή να αγνοήσετε τα ήδη ενεργά υπό-νήματα (που μπορεί να προκαλέσουν σφάλματα αργότερα);
+Βρέθηκαν υπο-νήματα που ακόμα εκτελούνται κατά την προσπάθεια καθαρισμού του YAM.\nΠαρακαλώ κλείστε όλα τα τυχόν υπο-νήματα (π.χ. προβολές ΜΙΜΕ, κτλ)\nπου πιθανόν να έχετε διενεργήσει από το YAM.\n\nΘέλετε να ξαναδοκιμάσετε να εγκαταλείψετε το YAM\nή να αγνοήσετε τα ήδη ενεργά υπό-νήματα (που μπορεί να προκαλέσουν σφάλματα αργότερα);
 ; While trying to cleanup YAM still running sub threads\n\
 ; have been found. Please make sure to close all still\n\
 ; existing sub threads (e.g. MIME viewers, etc.) you may\n\
@@ -7135,7 +7135,7 @@ MSG_LOG_RETRIEVED_POP3
 ; COUNT, ACCOUNT
 ;
 MSG_TR_ENTER_POP3_PASSWORD
-Παρακαλώ εισάγετε τον κωδικό για τον\n\POP3 λογαριασμό '%s':
+Παρακαλώ εισάγετε τον κωδικό για τον\nPOP3 λογαριασμό '%s':
 ; Please enter the password for\n\
 ; POP3 account '%s':
 ; ACCOUNT
@@ -7161,7 +7161,7 @@ MSG_TR_WAIT_FOR_PRESELECTION
 ; Waiting for user's preselection...
 ;
 MSG_POP3_NEW_MAIL_NOTIFY_REQ
-Έχετε νέο μήνυμα από τον λογαριασμό '%s'.\e2\n\\n\%3ld μηνύματα λήφθηκαν,\n\%3ld παρέμειναν στον διακομιστή\n\%3ld διπλά παραλείπονται\n
+Έχετε νέο μήνυμα από τον λογαριασμό '%s'.\e2\n\n%3ld μηνύματα λήφθηκαν,\n%3ld παρέμειναν στον διακομιστή\n%3ld διπλά παραλείπονται\n
 ; \e8You have new mail from account '%s'.\e2\n\
 ; \n\
 ; %3ld messages downloaded,\n\
@@ -7170,13 +7170,13 @@ MSG_POP3_NEW_MAIL_NOTIFY_REQ
 ; ACCOUNT, COUNT, COUNT, COUNT, COUNT
 ;
 MSG_POP3_NEW_MAIL_NOTIFY_OS4_ONE
-%s\n\1 νέο μήνυμα ελήφθη.
+%s\n1 νέο μήνυμα ελήφθη.
 ; %s\n\
 ; Received 1 new mail.
 ; ACCOUNT
 ;
 MSG_POP3_NEW_MAIL_NOTIFY_OS4_MANY
-%s\n\Ελήφθησαν %ld νέα μηνύματα.
+%s\nΕλήφθησαν %ld νέα μηνύματα.
 ; %s\n\
 ; Received %ld new mails.
 ; ACCOUNT, COUNT
@@ -7222,7 +7222,7 @@ MSG_CO_APPLY_REMOTE_FILTERS
 ; Apply remote _filters
 ;
 MSG_HELP_CO_CH_APPLY_REMOTE_FILTERS
-Εφαρμογή όλων των καθορισμένων απομακρυσμένων φίλτρων κατά την\n\λήψη αλληλογραφίας από αυτό τον διακομιστή.
+Εφαρμογή όλων των καθορισμένων απομακρυσμένων φίλτρων κατά την\nλήψη αλληλογραφίας από αυτό τον διακομιστή.
 ; Apply all defined remote filters\n\
 ; when downloading mail from this\n\
 ; server.
@@ -7232,7 +7232,7 @@ MSG_CO_DOWNLOAD_ON_STARTUP
 ; Check for new mail on startup
 ;
 MSG_HELP_CO_CH_DOWNLOAD_ON_STARTUP
-Έλεγχος του λογαριασμού για νέα μηνύματα αυτόματα\n\κάθε φορά που γίνεται εκκίνηση του YAM.
+Έλεγχος του λογαριασμού για νέα μηνύματα αυτόματα\nκάθε φορά που γίνεται εκκίνηση του YAM.
 ; Check this account for new mail on every\n\
 ; startup of YAM automatically.
 ;
@@ -7247,13 +7247,13 @@ MSG_IMPORT_NO_MAILS
 ; FILE
 ;
 MSG_CO_CONFIG_IS_LOCKED
-Οι ρυθμίσεις είναι κλειδωμένες προς το παρόν.\n\\n\Παρακαλώ περιμένετε μέχρι να τελειώσουν όλες οι POP3 και SMTP μεταφορές.
+Οι ρυθμίσεις είναι κλειδωμένες προς το παρόν.\n\nΠαρακαλώ περιμένετε μέχρι να τελειώσουν όλες οι POP3 και SMTP μεταφορές.
 ; The configuration is currently locked.\n\
 ; \n\
 ; Please wait until all POP3 and SMTP transfers are finished.
 ;
 MSG_FOLDERINFO_SHORTHELP
-\ebΦάκελος\en\n\Όνομα: %s\n\Διαδρομή: %s\n\Μέγεθος: %s\n\Μηνύματα: %ld (%ld νέα, %ld μη διαβασμένα)
+\ebΦάκελος\en\nΌνομα: %s\nΔιαδρομή: %s\nΜέγεθος: %s\nΜηνύματα: %ld (%ld νέα, %ld μη διαβασμένα)
 ; \ebFolder\en\n\
 ; Name: %s\n\
 ; Path: %s\n\
@@ -7262,7 +7262,7 @@ MSG_FOLDERINFO_SHORTHELP
 ; NAME, PATH, SIZE, COUNT, COUNT, COUNT
 ;
 MSG_MAILINFO_SHORTHELP
-\ebΜήνυμα\en\n\Από: %s <%s>\n\Προς: %s <%s>\n\Θέμα: %s\n\Ημερ/νία: %s\n\Αρχείο: %s\n\Μέγεθος: %s
+\ebΜήνυμα\en\nΑπό: %s <%s>\nΠρος: %s <%s>\nΘέμα: %s\nΗμερ/νία: %s\nΑρχείο: %s\nΜέγεθος: %s
 ; \ebMail\en\n\
 ; From: %s <%s>\n\
 ; To: %s <%s>\n\
@@ -7301,14 +7301,14 @@ MSG_EA_SEARCH_GRAVATAR
 ; Search on gra_vatar.com...
 ;
 MSG_ER_NO_GRAVATAR_FOUND
-Δεν βρέθηκε εικόνα για την διεύθυνση '%s'.\n\Πιθανόν το άτομο δεν έχει ανεβάσει κάποια στο gravatar.com ακόμα.
+Δεν βρέθηκε εικόνα για την διεύθυνση '%s'.\n\nΠιθανόν το άτομο δεν έχει ανεβάσει κάποια στο gravatar.com ακόμα.
 ; No Gravatar found for address '%s'.\n\
 ; \n\
 ; Perhaps the person has not uploaded a portrait image to gravatar.com yet.
 ; ADDRESS
 ;
 MSG_ER_NON_MIME_CONFORMANT_MAIL
-Δεν βρέθηκε γραμμή κεφαλίδας του 'ΜΙΜE-Version' κατά την σάρωση του αρχείου μηνύματος '%s'.\n\Προφανώς το αρχείο εξόδου θα περιέχει άκυρα δεδομένα ή μπορεί να είναι αλλοιωμένο.
+Δεν βρέθηκε γραμμή κεφαλίδας του 'ΜΙΜE-Version' κατά την σάρωση του αρχείου μηνύματος '%s'.\nΠροφανώς το αρχείο εξόδου θα περιέχει άκυρα δεδομένα ή μπορεί να είναι αλλοιωμένο.
 ; No 'MIME-Version' header line was found while scanning the mail file '%s'. \
 ; The generated output may therefore contain invalid data or may be corrupted.
 ; MSGFILE

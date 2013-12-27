@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 9.1 (24.12.2013)
+## version $VER: YAM.catalog 9.2 (27.12.2013)
 ## language deutsch
 ## codeset 0
 ## chunk AUTH Jens Maus, Thore Böckelmann
@@ -2430,6 +2430,7 @@ Alias
 ;
 MSG_AB_FoundEntry
 Passenden Eintrag gefunden.\n\
+\n\
 Alias: \eb%s\en\n\
 Name: \eb%s\en
 ; Found matching entry.\n\
@@ -3074,7 +3075,7 @@ wurde für jemand anderen verschlüsselt.\n
 ; the message was encrypted for someone else.\n
 ;
 MSG_RE_MsgReadOnly
-Diese Nachricht kann nur von %s gelesen werden
+Diese Nachricht kann nur von %s gelesen werden\n
 ; The message can only be read by %s\n
 ; RECIPIENT
 ;
@@ -7327,6 +7328,7 @@ MSG_ER_UNKNOWN_HOST_POP3
 Unbekannter POP3-Server '%s' von Konto '%s'.\n\
 \n\
 Der TCP/IP-Stack ist inaktiv oder die Serveradresse ist ungültig.
+;
 MSG_ER_CANNOT_CONNECT_POP3
 Keine Verbindung mit '%s' von Konto '%s'.\n\
 \n\

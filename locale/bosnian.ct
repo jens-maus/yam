@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 5.2 (07.06.2001)
+## version $VER: YAM.catalog 5.3 (27.12.2013)
 ## language bosanski
 ## codeset 0
 ;
@@ -3820,7 +3820,7 @@ Poruka\n%s\je primljena i poslana negdje%s,\nali je primalac nije otvorio. Nema 
 ; the message later.\n
 ;
 MSG_RE_MDNdeleted
-Poruka\n%s\je primljena i izbrisana%s.\nNema garancije da je primalac vidio poruku.\n
+Poruka\n%s\nje primljena i izbrisana%s.\nNema garancije da je primalac vidio poruku.\n
 ; The message\n\
 ; %s\n\
 ; has been deleted%s.\n\

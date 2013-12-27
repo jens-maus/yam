@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 9.1 (24.12.2013)
+## version $VER: YAM.catalog 9.2 (27.12.2013)
 ## language français
 ## codeset 111
 ;
@@ -5691,7 +5691,7 @@ seconde(s)
 ;
 MSG_HELP_CO_SETSTATUSDELAYED
 Après l'ouverture d'un courrier,\n\
-YAM\ attendra le temps spécifié\n\
+YAM attendra le temps spécifié\n\
 avant de le marquer « lu ».
 ; After opening an e-mail, YAM will\n\
 ; wait this amount of time before\n\
@@ -5933,7 +5933,7 @@ Export de messages
 ; Export messages
 ;
 MSG_YAMINFO
-Logiciel de courrier électronique en Open Source pour Amiga\n
+Logiciel de courrier électronique en Open Source pour Amiga
 ; Open Source E-Mail Client for the Amiga
 ;
 MSG_CO_SYSTEMSETTINGS
@@ -7701,7 +7701,7 @@ fichier est supposé être stocké.
 MSG_ER_INDEX_CORRUPTED
 Le fichier d'index « %s » du dossier « %s » est corrompu à la position %d \
 près des informations concernant le fichier de message « %s » (OctetsSupp. : 0x%x).\n\
-\­\
+\n\
 Le dossier a été marqué 'déchargé' et une réindexation a été lancée ou \
 est requise pour corriger le problème.
 ; Index file '%s' in folder '%s' is corrupt at position \
@@ -8148,6 +8148,7 @@ Filtrage terminé :\n\
 ; COUNT, COUNT, COUNT, COUNT, COUNT
 ;
 MSG_TR_FILTER_STATS_SPAM
+\n\
 Filtrage terminé :\n\
 \n\
 %3ld messages vérifiés,\n\
@@ -8201,7 +8202,7 @@ L'envoi de %ld messages(s) en utilisant le serveur SMTP '%s' a échoué
 ;
 MSG_HELP_EA_ST_BIRTHDAY
 Date de naissance au format local.\n\
-(par exemple 19.06.1974 ou 19/06/1974)\n\
+(par exemple 19.06.1974 ou 19/06/1974)
 ; Date of birth in locale format\n\
 ; (e.g. 19.06.1974 or 19/06/1974).
 ; Date of birth in locale format\n\
