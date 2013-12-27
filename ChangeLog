@@ -7,6 +7,11 @@ $URL$
 
 2013-12-27 Jens Maus <mail@jens-maus.de>
 
+  * locale/cd2po.sh: added a first version of a shell script which allows
+    to convert our catalog description (.cd) and translation (.ct) related
+	 files to gettext (.pot/.po) files so that we can in future switch to
+	 the web-based services of transifex.com. Back-conversion routines are
+	 still missing, thought.
   * locale: fixed a bunch of catalog translation related problems where
     the catalog description syntax/layout was not always maintained.
   * mui/SignatureTextEdit.c: modified the signature text editor to not
