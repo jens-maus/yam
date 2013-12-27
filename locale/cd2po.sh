@@ -210,10 +210,121 @@ BEGIN {
 }
 EOF
 
+read -d '' po2ct << 'EOF'
+BEGIN {
+  tagfound=0
+  multiline=0
+  msgidfound=0
+  msgstrfound=0
+  print "## version $VER: YAM.catalog 1.0 (27.12.2013)"
+  print "## language XXXXXXX"
+  print "## codeset 0"
+  print "## chunk AUTH XXXXXXXXX"
+  print ";"
+  print "; $Id: $"
+  print ";"
+}
+{
+  if($1 ~ /^msgctxt.*/)
+  {
+    tagfound=1
+    multiline=0
+    msgidfound=0
+    msgstrfound=0
+
+    # strip quotes (") so that we get the plain MSG_XXXX
+    # tag names
+    gsub(/"/, "", $2);
+    tag=$2
+  }
+  else if(length($0) == 0 && length(tag) != 0)
+  {
+    tagfound=0
+    multiline=0
+    msgidfound=0
+    msgstrfound=0
+
+    print tag
+    print msgstr
+    print msgid
+    print ";"
+
+    tag=""
+  }
+
+  if(tagfound == 1)
+  {
+    if($1 ~ /^msgid.*/)
+    {
+      # get the msgid text only
+      msgid=substr($0, length($1)+2)
+
+      # strip quotes (") from start&end
+      gsub(/^"/, "", msgid)
+      gsub(/"$/, "", msgid)
+
+      # replace "<EMPTY>" with ""
+      gsub(/<EMPTY>/, "", msgid)
+
+      msgid = "; " msgid
+
+      msgstrfound=0
+      msgidfound=1
+    }
+    else if($1 ~ /^msgstr.*/)
+    {
+      # get the msgid text only
+      msgstr=substr($0, length($1)+2)
+
+      # strip quotes (") from start&end
+      gsub(/^"/, "", msgstr)
+      gsub(/"$/, "", msgstr)
+
+      # replace "<EMPTY>" with ""
+      gsub(/<EMPTY>/, "", msgstr)
+
+      msgstrfound=1
+      msgidfound=0
+    }
+    else if(msgidfound == 1)
+    {
+      # strip quotes (") from start&end
+      gsub(/^"/, "")
+      gsub(/"$/, "")
+
+      msgid = msgid "\\\\\\n; " $0
+    }
+    else if(msgstrfound == 1)
+    {
+      # strip quotes (") from start&end
+      gsub(/^"/, "")
+      gsub(/"$/, "")
+
+      msgstr = msgstr "\\\\\\n" $0
+    }
+  }
+}
+END {
+  if(length(tag) != 0)
+  {
+    print tag
+    print msgstr
+    print msgid
+    print ";"
+  }
+}
+EOF
+
+# convert from cd -> pot
 #awk "${cd2pot}" ${CDFILE}
+
+# convert from ct -> po
 iconv -c -f iso-8859-1 -t utf8 ${CDFILE} | awk "${ct2po}"
 #iconv -c -f iso-8859-2 -t utf8 ${CDFILE} | awk "${ct2po}" # czech/polish/slovenian
 #iconv -c -f windows-1251 -t utf8 ${CDFILE} | awk "${ct2po}" # russian
 #iconv -c -f iso-8859-7 -t utf8 ${CDFILE} | awk "${ct2po}" # greek
+
+# convert from po -> ct
+#awk "${po2ct}" ${CDFILE} | iconv -c -f utf8 -t iso-8859-1
 
 exit 0
