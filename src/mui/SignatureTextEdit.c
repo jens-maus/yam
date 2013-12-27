@@ -118,10 +118,9 @@ OVERLOAD(OM_SET)
       case ATTR(SignatureText):
       {
         char *sig = (char *)tag->ti_Data;
-        char *parsedSig;
 
         // refresh ourself with the new signature text
-        if(sig != NULL && (parsedSig = ParseEmailText(sig, FALSE, TRUE, TRUE)) != NULL)
+        if(sig != NULL)
         {
           BOOL modified;
 
@@ -130,11 +129,9 @@ OVERLOAD(OM_SET)
           else
             modified = TRUE;
 
-          SetSuperAttrs(cl, obj, MUIA_TextEditor_Contents, parsedSig,
+          SetSuperAttrs(cl, obj, MUIA_TextEditor_Contents, sig,
                                  MUIA_TextEditor_HasChanged, modified,
                                  TAG_DONE);
-
-          dstrfree(parsedSig);
         }
         else
         {

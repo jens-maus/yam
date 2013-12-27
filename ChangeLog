@@ -7,6 +7,9 @@ $URL$
 
 2013-12-27 Jens Maus <mail@jens-maus.de>
 
+  * mui/SignatureTextEdit.c: modified the signature text editor to not
+    parse the signature text via the ParseEmailText() function as otherwise
+    the text styles end up in mixing up the signature. This closes #489.
   * mui/AddressBookConfigPage.c, mui/FiltersConfigPage.c, 
     mui/IdentitiesConfigPage.c, mui/ScriptsConfigPage.c: fixed a minor
     cosmetic bug where the wrong config page titles were displayed.
