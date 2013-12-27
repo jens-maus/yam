@@ -225,7 +225,7 @@ OVERLOAD(OM_NEW)
 
   if((obj = DoSuperNew(cl, obj,
     MUIA_HelpNode, "Configuration#Filters",
-    MUIA_ConfigPage_Page, cp_Signature,
+    MUIA_ConfigPage_Page, cp_Filters,
     MUIA_ConfigPage_UseScrollgroup, FALSE,
     MUIA_ConfigPage_AddSpacer, FALSE,
     MUIA_ConfigPage_Contents, HGroup,

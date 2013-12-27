@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-12-27 Jens Maus <mail@jens-maus.de>
+
+  * mui/AddressBookConfigPage.c, mui/FiltersConfigPage.c, 
+    mui/IdentitiesConfigPage.c, mui/ScriptsConfigPage.c: fixed a minor
+    cosmetic bug where the wrong config page titles were displayed.
+    This closes #488.
+
 2013-12-26 Samir Hawamdeh <s.hawamdeh@tin.it>
 
   * locale/italian.ct: applied some minor changes.

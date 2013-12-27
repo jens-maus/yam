@@ -155,7 +155,7 @@ OVERLOAD(OM_NEW)
 
   if((obj = DoSuperNew(cl, obj,
     MUIA_HelpNode, "Configuration#Identities",
-    MUIA_ConfigPage_Page, cp_TCPIP,
+    MUIA_ConfigPage_Page, cp_Identities,
     MUIA_ConfigPage_UseScrollgroup, FALSE,
     MUIA_ConfigPage_AddSpacer, FALSE,
     MUIA_ConfigPage_Contents, HGroup,

@@ -85,7 +85,7 @@ OVERLOAD(OM_NEW)
 
   if((obj = DoSuperNew(cl, obj,
     MUIA_HelpNode, "Configuration#Scripts",
-    MUIA_ConfigPage_Page, cp_Security,
+    MUIA_ConfigPage_Page, cp_Scripts,
     MUIA_ConfigPage_AddSpacer, FALSE,
     MUIA_ConfigPage_Contents, VGroup,
       Child, VGroup,

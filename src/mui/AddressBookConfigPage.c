@@ -79,7 +79,7 @@ OVERLOAD(OM_NEW)
 
   if((obj = DoSuperNew(cl, obj,
     MUIA_HelpNode, "Configuration#Addressbook",
-    MUIA_ConfigPage_Page, cp_FirstSteps,
+    MUIA_ConfigPage_Page, cp_AddressBook,
     MUIA_ConfigPage_Contents, VGroup,
       Child, HGroup, GroupFrameT(tr(MSG_Columns)),
         Child, HVSpace,
