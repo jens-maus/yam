@@ -1,11 +1,27 @@
 #!/bin/bash
 #
-# a shell script that converts an Amiga catalog description file (.cd)
-# to an apropriate gettext (.po) file.
+# a shell script that allows to convert between Amiga-style catalog
+# description/translation files (.cd/.ct) and gettext-style translation
+# files (.pot/.po).
 #
 # Copyright 2013 Jens Maus <mail@jens-maus.de>
 #
-
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+# $Id$
+#
 
 ########################################################
 # Script starts here
@@ -23,8 +39,8 @@ fi
 ################################
 
 # the following is an awk script that converts an
-# Amiga-style catalog description file to a gettext
-# PO-style translation template file.
+# Amiga-style catalog description file (.cd) to a gettext
+# PO-style translation template file (.pot).
 read -d '' cd2pot << 'EOF'
 BEGIN {
   tagfound=0
@@ -45,7 +61,7 @@ BEGIN {
   print "\\"Language: \\\\n\\""
 }
 {
-  if($1 ~ /^MSG_.*\(.*\)/)
+  if($0 ~ /^MSG_.*\(.*\)/)
   {
     tagfound=1
     print "\\n#: " $0
@@ -53,7 +69,7 @@ BEGIN {
 
     next
   }
-  else if($1 ~ /^;/)
+  else if($0 ~ /^;.*/)
   {
     if(tagfound == 1)
     {
@@ -99,6 +115,85 @@ BEGIN {
   }
 }
 EOF
+
+# the following is an awk script that converts a
+# gettext PO-style translation template file (.pot)
+# to an Amiga-style catalog description file (.cd)
+read -d '' pot2cd << 'EOF'
+BEGIN {
+  tagfound=0
+  msgidfound=0
+  print "; YAM.cd - YAM catalog description file"
+  print "; $Id$"
+  print ";"
+  print "; WARNING: This file was automatically generated via cd2po.sh"
+  print ";"
+  print "#version X"
+  print "#language english"
+  print ";"
+}
+{
+  if($0 ~ /^#: MSG_.*\(.*\).*/)
+  {
+    tagfound=1
+    msgidfound=0
+
+    # extract the tag "MSG_XXXXX (X//)" as tag
+    tag=substr($0, length($1)+2)
+  }
+  else if(length($0) == 0 && length(tag) != 0)
+  {
+    tagfound=0
+    msgidfound=0
+
+    print tag
+    print msgid
+    print ";"
+
+    tag=""
+  }
+
+  if(tagfound == 1)
+  {
+    if($0 ~ /^msgid ".*/)
+    {
+      # get the msgid text only
+      msgid=substr($0, length($1)+2)
+
+      # strip quotes (") from start&end
+      gsub(/^"/, "", msgid)
+      gsub(/"$/, "", msgid)
+
+      # replace "<EMPTY>" with ""
+      gsub(/<EMPTY>/, "", msgid)
+
+      msgidfound=1
+    }
+    else if($1 ~ /^msgstr.*/)
+    {
+      # ignore msgstr
+      msgidfound=0
+    }
+    else if(msgidfound == 1)
+    {
+      # strip quotes (") from start&end
+      gsub(/^"/, "")
+      gsub(/"$/, "")
+
+      msgid = msgid "\\\\\\n" $0
+    }
+  }
+}
+END {
+  if(length(tag) != 0)
+  {
+    print tag
+    print msgid
+    print ";"
+  }
+}
+EOF
+
 
 read -d '' ct2po << 'EOF'
 BEGIN {
@@ -213,7 +308,6 @@ EOF
 read -d '' po2ct << 'EOF'
 BEGIN {
   tagfound=0
-  multiline=0
   msgidfound=0
   msgstrfound=0
   print "## version $VER: YAM.catalog 1.0 (27.12.2013)"
@@ -221,14 +315,13 @@ BEGIN {
   print "## codeset 0"
   print "## chunk AUTH XXXXXXXXX"
   print ";"
-  print "; $Id: $"
+  print "; $Id$"
   print ";"
 }
 {
   if($1 ~ /^msgctxt.*/)
   {
     tagfound=1
-    multiline=0
     msgidfound=0
     msgstrfound=0
 
@@ -240,7 +333,6 @@ BEGIN {
   else if(length($0) == 0 && length(tag) != 0)
   {
     tagfound=0
-    multiline=0
     msgidfound=0
     msgstrfound=0
 
@@ -316,15 +408,18 @@ END {
 EOF
 
 # convert from cd -> pot
-#awk "${cd2pot}" ${CDFILE}
+#iconv -c -f iso-8859-1 -t utf8 ${CDFILE} | awk "${cd2pot}"
 
 # convert from ct -> po
-iconv -c -f iso-8859-1 -t utf8 ${CDFILE} | awk "${ct2po}"
+#iconv -c -f iso-8859-1 -t utf8 ${CDFILE} | awk "${ct2po}"
 #iconv -c -f iso-8859-2 -t utf8 ${CDFILE} | awk "${ct2po}" # czech/polish/slovenian
 #iconv -c -f windows-1251 -t utf8 ${CDFILE} | awk "${ct2po}" # russian
 #iconv -c -f iso-8859-7 -t utf8 ${CDFILE} | awk "${ct2po}" # greek
 
 # convert from po -> ct
 #awk "${po2ct}" ${CDFILE} | iconv -c -f utf8 -t iso-8859-1
+
+# convert from pot -> cd
+awk "${pot2cd}" ${CDFILE} | iconv -c -f utf8 -t iso-8859-1
 
 exit 0
