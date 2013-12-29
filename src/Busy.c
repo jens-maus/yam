@@ -192,7 +192,7 @@ void BusyEnd(struct BusyNode *busy)
     else
     {
       // called from a thread, push a method on the stack
-      PushMethodOnStackWait(G->App, 2, MUIM_YAMApplication_BusyEnd, busy);
+      PushMethodOnStack(G->App, 2, MUIM_YAMApplication_BusyEnd, busy);
     }
   }
 

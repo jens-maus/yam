@@ -4962,29 +4962,37 @@ void DisplayStatistics(struct Folder *fo, BOOL updateAppIcon)
 {
   ENTER();
 
-  // If the parsed argument is NULL we want to show the statistics from the actual folder
-  if(fo == NULL)
-    fo = GetCurrentFolder();
-  else if(fo == (struct Folder *)-1)
-    fo = FO_GetFolderByType(FT_INCOMING, NULL);
-
-  if(fo != NULL)
+  if(IsMainThread() == TRUE)
   {
-    D(DBF_GUI, "updating statistics for folder '%s', appicon %ld", fo->Name, updateAppIcon);
+    // If the parsed argument is NULL we want to show the statistics from the actual folder
+    if(fo == NULL)
+     fo = GetCurrentFolder();
+    else if(fo == (struct Folder *)-1)
+      fo = FO_GetFolderByType(FT_INCOMING, NULL);
 
-    // update the folder image
-    if(isGroupFolder(fo) == FALSE)
-      FO_SetFolderImage(fo);
-    // recalc the number of messages of the folder group
-    FO_UpdateTreeStatistics(fo, TRUE);
-
-    if(fo == GetCurrentFolder())
+    if(fo != NULL)
     {
-      DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_SetFolder, fo);
-    }
+      D(DBF_GUI, "updating statistics for folder '%s', appicon %ld", fo->Name, updateAppIcon);
 
-    if(G->AppIconQuiet == FALSE && updateAppIcon == TRUE)
-      UpdateAppIcon();
+      // update the folder image
+      if(isGroupFolder(fo) == FALSE)
+        FO_SetFolderImage(fo);
+      // recalc the number of messages of the folder group
+      FO_UpdateTreeStatistics(fo, TRUE);
+
+      if(fo == GetCurrentFolder())
+      {
+        DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_SetFolder, fo);
+      }
+
+      if(G->AppIconQuiet == FALSE && updateAppIcon == TRUE)
+        UpdateAppIcon();
+    }
+  }
+  else
+  {
+    // called from a thread, push a method on the stack
+    PushMethodOnStack(G->App, 3, MUIM_YAMApplication_DisplayStatistics, fo, updateAppIcon);
   }
 
   LEAVE();
