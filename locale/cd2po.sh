@@ -23,16 +23,22 @@
 # $Id$
 #
 
+VERSION="1.0"
+
 ########################################################
 # Script starts here
 #
 
-if [ "$1" != "" ]; then
-  IFILE="$1"
-else
-  echo "ERROR: missing cmdline argument"
-  exit 1
-fi
+displayUsage()
+{
+  echo >&2 "cd2po.sh v${VERSION} - convert between Amiga-style and gettext translation files"
+  echo >&2 "Copyright (c) 2013 Jens Maus <mail@jens-maus.de>"
+  echo >&2 
+  echo >&2 "Usage: $0 <options> [inputfile (.cd/.ct/.pot/.po)]"
+  echo >&2 "Options:"
+  echo >&2 "  -c <charset> : use <charset> when converting the input file"
+  echo >&2 "                 default: iso-8859-1"
+}
 
 ################################
 # AWK scripts                  #
@@ -475,8 +481,8 @@ BEGIN {
     if(firsttag == 0)
     {
       print "## version $VER: YAM.catalog " version ".1 (" revdate ")"
-      print "## language " language
-      print "## codeset 0"
+      print "## language " lang
+      print "## codeset " cset
       print "## chunk AUTH " auth
       print ";"
       print "; $Id$"
@@ -567,19 +573,189 @@ END {
 }
 EOF
 
-# convert from cd -> pot
-#iconv -c -f iso-8859-1 -t utf8 ${IFILE} | awk "${cd2pot}"
+###################################################
+identifyCharset()
+{
+  file="$1"
+  charset=""
+  
+  case "${file}" in
+    czech)
+      charset="iso-8859-2"
+    ;;
+    polish)
+      charset="iso-8859-2"
+    ;;
+    slovenian)
+      charset="iso-8859-2"
+    ;;
+    russian)
+      charset="windows-1251"
+    ;;
+    greek)
+      charset="iso-8859-7"
+    ;;
+    *)
+      charset="iso-8859-1"
+    ;;
+  esac
 
-# convert from pot -> cd
-#awk "${pot2cd}" ${IFILE} | iconv -c -f utf8 -t iso-8859-1
+  echo ${charset}
+}
 
-# convert from ct -> po
-#iconv -c -f iso-8859-1 -t utf8 ${IFILE} | awk "${ct2po}"
-#iconv -c -f iso-8859-2 -t utf8 ${IFILE} | awk "${ct2po}" # czech/polish/slovenian
-#iconv -c -f windows-1251 -t utf8 ${IFILE} | awk "${ct2po}" # russian
-#iconv -c -f iso-8859-7 -t utf8 ${IFILE} | awk "${ct2po}" # greek
+identifyCodeset()
+{
+  file="$1"
+  codeset=""
+  
+  case "${file}" in
+    czech)
+      codeset="5"
+    ;;
+    polish)
+      codeset="5"
+    ;;
+    slovenian)
+      codeset="5"
+    ;;
+    greek)
+      codeset="10"
+    ;;
+    *)
+      codeset="0"
+    ;;
+  esac
 
-# convert from po -> ct
-awk "${po2ct}" ${IFILE} | iconv -c -f utf8 -t iso-8859-1
+  echo ${codeset}
+}
+
+identifyLanguage()
+{
+  file="$1"
+  language=""
+  
+  case "${file}" in
+    bosnian)
+      language="bosanski"
+    ;;
+    czech)
+      language="czech"
+    ;;
+    danish)
+      language="dansk"
+    ;;
+    dutch)
+      language="dutch"
+    ;;
+    english-british)
+      language="english-british"
+    ;;
+    finnish)
+      language="suomi"
+    ;;
+    french)
+      language="français"
+    ;;
+    german)
+      language="deutsch"
+    ;;
+    greek)
+      language="greek"
+    ;;
+    hungarian)
+      language="magyar"
+    ;;
+    italian)
+      language="italiano"
+    ;;
+    norwegian)
+      language="norsk"
+    ;;
+    polish)
+      language="polski"
+    ;;
+    portuguese-brazil)
+      language="português-brasil"
+    ;;
+    portuguese)
+      language="português"
+    ;;
+    russian)
+      language="russian"
+    ;;
+    serbian)
+      language="srpski"
+    ;;
+    slovenian)
+      language="slovensko"
+    ;;
+    spanish)
+      language="español"
+    ;;
+    swedish)
+      language="svenska"
+    ;;
+    turkish)
+      language="türkçe"
+    ;;
+  esac
+
+  echo ${language}
+}
+
+
+###################################################
+charset=""
+inputfile="$1"
+
+# parse the command-line options
+while getopts "c:" opt
+do
+  case "$opt" in
+    c)  charset="$OPTARG";;
+    \?)   # unknown flag
+      displayUsage
+      exit 2;;
+  esac
+done
+shift `expr $OPTIND - 1`
+
+if [ -z "${inputfile}" ]; then
+  displayUsage
+  exit 2
+fi
+ 
+# lets identify by the file extension which operation to perform
+fname=$(basename "${inputfile}")
+filename="${fname%.*}"
+extension="${fname##*.}"
+case "${extension}" in
+  cd) # convert from cd -> pot
+    if [ -z "${charset}" ]; then
+      charset="iso-8859-1"
+    fi
+    iconv -c -f "${charset}" -t utf8 ${inputfile} | awk "${cd2pot}"
+  ;;
+  ct) # convert from ct -> po
+    if [ -z "${charset}" ]; then
+      charset=$(identifyCharset ${filename})
+    fi
+    iconv -c -f ${charset} -t utf8 ${inputfile} | awk "${ct2po}"
+  ;;
+  po) # convert from po -> ct
+    if [ -z "${charset}" ]; then
+      charset=$(identifyCharset ${filename})
+      codeset=$(identifyCodeset ${filename})
+    fi
+    lang=$(identifyLanguage ${filename})
+    awk -v lang=${lang} -v cset=${codeset} "${po2ct}" ${inputfile} | iconv -c -f utf8 -t ${charset}
+  ;;
+  pot) # convert from pot -> cd
+    if [ -z "${charset}" ]; then
+      charset="iso-8859-1"
+    fi
+    awk "${pot2cd}" ${inputfile} | iconv -c -f utf8 -t ${charset}
+  ;;
+esac
 
 exit 0
