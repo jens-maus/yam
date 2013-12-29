@@ -28,7 +28,7 @@
 #
 
 if [ "$1" != "" ]; then
-  CDFILE="$1"
+  IFILE="$1"
 else
   echo "ERROR: missing cmdline argument"
   exit 1
@@ -225,7 +225,7 @@ BEGIN {
 
       msgidfound=1
     }
-    else if($1 ~ /^msgstr.*/)
+    else if($0 ~ /^msgstr ".*/)
     {
       # ignore msgstr
       msgidfound=0
@@ -294,7 +294,7 @@ BEGIN {
     }
   }
 
-  if($1 ~ /^MSG_.*$/)
+  if($0 ~ /^MSG_.*$/)
   {
     tagfound=1
     multiline=0
@@ -302,10 +302,10 @@ BEGIN {
 
     if(firsttag == 0)
     {
-      print "## version " version
-      print "## language " language
-      print "## codeset " codeset
-      print "## chunk AUTH " auth
+      print "# version " version
+      print "# language " language
+      print "# codeset " codeset
+      print "# chunk AUTH " auth
       print "#"
       print "# Translators:"
       print "msgid \\"\\""
@@ -366,7 +366,7 @@ BEGIN {
 
     next
   }
-  else if($1 ~ /^;/)
+  else if($0 ~ /^;.*/)
   {
     tagfound=0
     multiline=0
@@ -414,22 +414,76 @@ EOF
 read -d '' po2ct << 'EOF'
 BEGIN {
   tagfound=0
+  firsttag=0
   msgidfound=0
   msgstrfound=0
-  print "## version $VER: YAM.catalog 1.0 (27.12.2013)"
-  print "## language XXXXXXX"
-  print "## codeset 0"
-  print "## chunk AUTH XXXXXXXXX"
-  print ";"
-  print "; $Id$"
-  print ";"
 }
 {
-  if($1 ~ /^msgctxt.*/)
+  if(firsttag == 0)
+  {
+    if($0 ~ /^#? version .*/)
+    {
+      version=substr($0, length($1)+length($2)+3)
+      next
+    }
+    else if($0 ~ /^## language .*/)
+    {
+      language=$3
+      next
+    }
+    else if($0 ~ /^## codeset .*/)
+    {
+      codeset=$3
+      next
+    }
+    else if($0 ~ /^## chunk AUTH .*/)
+    {
+      auth=substr($0, length($1)+length($2)+length($3)+4)
+      next
+    }
+    else if($0 ~ /^"PO-Revision-Date: .*"/)
+    {
+      revdate=substr($0, length($1)+2)
+      gsub(/\\\\n"/, "", revdate);
+
+      # parse the revision date
+      cmd="date +'%d.%m.%Y' -d \\"" revdate "\\""
+      cmd |& getline revdate
+
+      next
+    }
+    else if($0 ~ /^"Language: .*"/)
+    {
+      language=substr($0, length($1)+2)
+      gsub(/\\\\n"/, "", language);
+      next
+    }
+    else if($0 ~ /^"Language-Team: .*"/)
+    {
+      auth=substr($0, length($1)+2)
+      gsub(/\\\\n"/, "", auth);
+      next
+    }
+  }
+
+  if($0 ~ /^msgctxt ".*/)
   {
     tagfound=1
     msgidfound=0
     msgstrfound=0
+
+    if(firsttag == 0)
+    {
+      print "## version $VER: YAM.catalog " version ".1 (" revdate ")"
+      print "## language " language
+      print "## codeset 0"
+      print "## chunk AUTH " auth
+      print ";"
+      print "; $Id$"
+      print ";"
+
+      firsttag=1
+    }
 
     # strip quotes (") so that we get the plain MSG_XXXX
     # tag names
@@ -452,7 +506,7 @@ BEGIN {
 
   if(tagfound == 1)
   {
-    if($1 ~ /^msgid.*/)
+    if($0 ~ /^msgid ".*/)
     {
       # get the msgid text only
       msgid=substr($0, length($1)+2)
@@ -469,7 +523,7 @@ BEGIN {
       msgstrfound=0
       msgidfound=1
     }
-    else if($1 ~ /^msgstr.*/)
+    else if($0 ~ /^msgstr ".*/)
     {
       # get the msgid text only
       msgstr=substr($0, length($1)+2)
@@ -514,18 +568,18 @@ END {
 EOF
 
 # convert from cd -> pot
-#iconv -c -f iso-8859-1 -t utf8 ${CDFILE} | awk "${cd2pot}"
+#iconv -c -f iso-8859-1 -t utf8 ${IFILE} | awk "${cd2pot}"
 
 # convert from pot -> cd
-#awk "${pot2cd}" ${CDFILE} | iconv -c -f utf8 -t iso-8859-1
+#awk "${pot2cd}" ${IFILE} | iconv -c -f utf8 -t iso-8859-1
 
 # convert from ct -> po
-iconv -c -f iso-8859-1 -t utf8 ${CDFILE} | awk "${ct2po}"
-#iconv -c -f iso-8859-2 -t utf8 ${CDFILE} | awk "${ct2po}" # czech/polish/slovenian
-#iconv -c -f windows-1251 -t utf8 ${CDFILE} | awk "${ct2po}" # russian
-#iconv -c -f iso-8859-7 -t utf8 ${CDFILE} | awk "${ct2po}" # greek
+#iconv -c -f iso-8859-1 -t utf8 ${IFILE} | awk "${ct2po}"
+#iconv -c -f iso-8859-2 -t utf8 ${IFILE} | awk "${ct2po}" # czech/polish/slovenian
+#iconv -c -f windows-1251 -t utf8 ${IFILE} | awk "${ct2po}" # russian
+#iconv -c -f iso-8859-7 -t utf8 ${IFILE} | awk "${ct2po}" # greek
 
 # convert from po -> ct
-#awk "${po2ct}" ${CDFILE} | iconv -c -f utf8 -t iso-8859-1
+awk "${po2ct}" ${IFILE} | iconv -c -f utf8 -t iso-8859-1
 
 exit 0
