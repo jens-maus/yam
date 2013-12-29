@@ -1,0 +1,28 @@
+[main]
+host = https://www.transifex.com
+
+[yam.trunk]
+source_file = locale/YAM.pot
+source_lang = en
+trans.bs = locale/bosnian.po
+trans.cs = locale/czech.po
+trans.da = locale/danish.po
+trans.de = locale/german.po
+trans.el = locale/greek.po
+trans.en_GB = locale/english-british.po
+trans.es = locale/spanish.po
+trans.fi = locale/finnish.po
+trans.fr = locale/french.po
+trans.hu = locale/hungarian.po
+trans.it = locale/italian.po
+trans.nl = locale/dutch.po
+trans.no = locale/norwegian.po
+trans.pl = locale/polish.po
+trans.pt = locale/portuguese.po
+trans.pt_BR = locale/portuguese-brazil.po
+trans.ru = locale/russian.po
+trans.sl = locale/slovenian.po
+trans.sr = locale/serbian.po
+trans.sv = locale/swedish.po
+trans.tr = locale/turkish.po
+

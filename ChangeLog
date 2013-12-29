@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-12-29 Jens Maus <mail@jens-maus.de>
+
+  * .tx/config: added default configuration for the transifex command-line
+    client (cf. http://support.transifex.com/customer/portal/topics/440187-transifex-client/)
+	 This client allows to pull and push upcoming po-based translation files
+	 to the transifex server.
+
 2013-12-29 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_UT.c: changed the DisplayStatistics() function to be thread safe. It
