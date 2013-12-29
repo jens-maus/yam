@@ -654,7 +654,7 @@ identifyLanguage()
       language="suomi"
     ;;
     french)
-      language="franÃ§ais"
+      language="français"
     ;;
     german)
       language="deutsch"
@@ -675,10 +675,10 @@ identifyLanguage()
       language="polski"
     ;;
     portuguese-brazil)
-      language="portuguÃªs-brasil"
+      language="português-brasil"
     ;;
     portuguese)
-      language="portuguÃªs"
+      language="português"
     ;;
     russian)
       language="russian"
@@ -690,13 +690,13 @@ identifyLanguage()
       language="slovensko"
     ;;
     spanish)
-      language="espaÃ±ol"
+      language="español"
     ;;
     swedish)
       language="svenska"
     ;;
     turkish)
-      language="tÃ¼rkÃ§e"
+      language="türkçe"
     ;;
   esac
 
