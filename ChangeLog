@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-12-31 Niels Bache <nbache2@mail.dk>
+
+  * locale/danish.ct: at long last updated to a current state. This version is
+    compatible with YAM 2.8p1, but should work also with later ones. The
+    intention is to get it in sync with 2.9p1.
+
 2013-12-29 Jens Maus <mail@jens-maus.de>
 
   * .tx/config: added default configuration for the transifex command-line
