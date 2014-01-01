@@ -368,8 +368,8 @@ OVERLOAD(OM_NEW)
         SetHelp(data->CH_SKIPENCRYPTED[i], MSG_HELP_FI_CH_SKIP_ENCRYPTED);
       }
 
-      if(data->BT_EDIT[i] != NULL)
-        DoMethod(data->BT_EDIT[i], MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(EditFile), data->BT_EDIT[i]);
+      if(data->BT_EDIT[i] != NULL && data->ST_MATCH[i] != NULL)
+        DoMethod(data->BT_EDIT[i], MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(EditFile), data->ST_MATCH[i]);
     }
 
     // set up some notifications to let certain objects share the same search string
@@ -460,7 +460,11 @@ OVERLOAD(OM_SET)
           if(data->BT_FILE[i] != NULL)
             set(data->BT_FILE[i], MUIA_Disabled, disabled || oper != 4);
           if(data->BT_EDIT[i] != NULL)
-            set(data->BT_EDIT[i], MUIA_Disabled, disabled || oper != 4);
+          {
+            const char *file = (data->ST_MATCH[i] != NULL) ? (const char *)xget(data->ST_MATCH[i], MUIA_String_Contents) : NULL;
+
+            set(data->BT_EDIT[i], MUIA_Disabled, disabled || oper != 4 || IsStrEmpty(file));
+          }
         }
 
         RETURN(0);
@@ -751,6 +755,9 @@ DECLARE(CloneSearchString) // Object *origin, char *str
     nnset(data->ST_MATCH[1], MUIA_String_Contents, msg->str);
   if(msg->origin != data->ST_MATCH[4])
     nnset(data->ST_MATCH[4], MUIA_String_Contents, msg->str);
+
+  // update the enabled state of certain objects, i.e. the edit button for "IN" pattern files
+  set(obj, MUIA_Disabled, FALSE);
 
   RETURN(0);
   return 0;

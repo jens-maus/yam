@@ -11,6 +11,9 @@ $URL$
     catalogs in nightly builds and future releases.
   * mui/FiltersConfigPage.c: fixed the broken reactivation of some objects in
     case a filter takes the search patterns from a file. This refs #500.
+  * mui/SearchControlGroup.c: for empty IN pattern files the edit button will
+    be disabled now. Only the popup button will be enabled to let the user
+    select an existing pattern file. This closes #500.
 
 2013-12-31 Niels Bache <nbache2@mail.dk>
 
