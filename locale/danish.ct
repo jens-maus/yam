@@ -1,6 +1,7 @@
 ## version $VER: YAM.catalog 8.1 (31.12.2013)
 ## language danish
 ## codeset 111
+## chunk AUTH Niels Bache <nbache2@mail.dk>
 ;
 ; YAM.cd - YAM 2.8 catalog description file
 ; $Id$
