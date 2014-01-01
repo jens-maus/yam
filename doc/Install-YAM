@@ -1,5 +1,5 @@
 ;
-; $VER: Install-YAM 1.34 (23.12.2013) (c) 2000-2013 by YAM Open Source Team
+; $VER: Install-YAM 1.35 (1.1.2014) (c) 2000-2013 by YAM Open Source Team
 ; Language support added by Sönke Tesch/ATO
 ;
 ; $Id$
@@ -18,7 +18,8 @@
 (set #def_lang_hungarian           $100)
 (set #def_lang_polish              $200)
 (set #def_lang_finnish             $400)
-;(set #def_lang_dutch               $800)
+(set #def_lang_danish              $800)
+(set #def_lang_dutch               $1000)
 ; add more languages here
 ; (set #def_lang_<language name>     bitmask)
 ;
@@ -450,6 +451,8 @@
         (set #cat_name_turkish               "turkish")
         (set #cat_name_hungarian             "hungarian")
         (set #cat_name_finnish               "finnish")
+        (set #cat_name_danish                "danish")
+        (set #cat_name_dutch                 "dutch")
         (set #cat_name_english_british       "english-british")
     )
     ; AmigaOS 3.x and MorphOS use localized locale names
@@ -466,6 +469,8 @@
         (set #cat_name_turkish               "türkçe")
         (set #cat_name_hungarian             "magyar")
         (set #cat_name_finnish               "suomi")
+        (set #cat_name_danish                "dansk")
+        (set #cat_name_dutch                 "nederlands")
     )
 )
 
@@ -785,6 +790,34 @@
                     (source "/Catalogs/finnish")
                     (choices "YAM.catalog")
                     (dest (tackon Cat_dir #cat_name_finnish))
+                    (help @copyfiles-help)
+                )
+            )
+        )
+
+        ; danish catalog file
+        (if (bitand catalog_lang #def_lang_danish)
+            (
+                (makedir (tackon Cat_dir #cat_name_danish))
+
+                (copyfiles
+                    (source "/Catalogs/danish")
+                    (choices "YAM.catalog")
+                    (dest (tackon Cat_dir #cat_name_danish))
+                    (help @copyfiles-help)
+                )
+            )
+        )
+
+        ; dutch catalog file
+        (if (bitand catalog_lang #def_lang_dutch)
+            (
+                (makedir (tackon Cat_dir #cat_name_dutch))
+
+                (copyfiles
+                    (source "/Catalogs/dutch")
+                    (choices "YAM.catalog")
+                    (dest (tackon Cat_dir #cat_name_dutch))
                     (help @copyfiles-help)
                 )
             )

@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-01-01 Thore Böckelmann <tboeckel@gmx.de>
+
+  * doc/Install-YAM, tools/mkrelease.sh, Makefile: include danish and dutch
+    catalogs in nightly builds and future releases.
+
 2013-12-31 Niels Bache <nbache2@mail.dk>
 
   * locale/danish.ct: at long last updated to a current state. This version is

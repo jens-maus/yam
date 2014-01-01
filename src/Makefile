@@ -735,6 +735,7 @@ OBJS = \
 # available catalog translations
 CATALOGS = \
 	$(LOCALE)/czech.catalog \
+	$(LOCALE)/danish.catalog \
 	$(LOCALE)/dutch.catalog \
 	$(LOCALE)/english-british.catalog \
 	$(LOCALE)/finnish.catalog \
@@ -748,7 +749,6 @@ CATALOGS = \
 	$(LOCALE)/swedish.catalog \
 	$(LOCALE)/turkish.catalog
 	# $(LOCALE)/bosnian.catalog
-	# $(LOCALE)/danish.catalog
 	# $(LOCALE)/norwegian.catalog
 	# $(LOCALE)/portuguese-brazil.catalog
 	# $(LOCALE)/portuguese.catalog
