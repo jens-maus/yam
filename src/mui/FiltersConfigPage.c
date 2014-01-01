@@ -123,6 +123,7 @@ static void GhostOutFilter(struct IClass *cl, Object *obj)
   set(data->CH_AFORWARD,          MUIA_Disabled, filter == NULL || isremote);
   set(data->CH_ARESPONSE,         MUIA_Disabled, filter == NULL || isremote);
   set(data->CY_FILTER_COMBINE,    MUIA_Disabled, filter == NULL);
+  set(data->GR_SGROUP,            MUIA_Disabled, filter == NULL);
   set(data->CH_AEXECUTE,          MUIA_Disabled, filter == NULL);
   set(data->CH_APLAY,             MUIA_Disabled, filter == NULL);
   set(data->CH_AMOVE,             MUIA_Disabled, filter == NULL || isremote);

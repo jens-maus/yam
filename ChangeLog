@@ -9,6 +9,8 @@ $URL$
 
   * doc/Install-YAM, tools/mkrelease.sh, Makefile: include danish and dutch
     catalogs in nightly builds and future releases.
+  * mui/FiltersConfigPage.c: fixed the broken reactivation of some objects in
+    case a filter takes the search patterns from a file. This refs #500.
 
 2013-12-31 Niels Bache <nbache2@mail.dk>
 
