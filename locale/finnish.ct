@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 9.1 (24.12.2013)
+## version $VER: YAM.catalog 9.1 (05.01.2014)
 ## language suomi
 ## codeset 0
 ;
@@ -531,7 +531,7 @@ Haluatko l‰hett‰‰ vastauksen...
 ;
 MSG_MA_ReplyReqOpt
 *_l‰hett‰j‰lle|l‰hett‰j‰lle _ja\nvastaanottajille|_vastaanottajille|_Peru
-; *_sender|sender and _all recipients|_recipients|_Cancel
+; *_Sender|Sender and _all Recipients|_Recipients|_Cancel
 ;
 MSG_MA_CompareReq
 L‰hett‰j‰n (From) osoite on <%s>, mutta\nvastausosoite on (Reply-To) <%s>.\nKumpaa osoitetta tahdot k‰ytt‰‰?
@@ -984,7 +984,7 @@ MSG_CO_ORecptAddress
 ; %a  Original recipient: Address
 ;
 MSG_CO_CompleteHeader
-%h T‰ydellinen otsake
+%h T‰ydellinen otsikko
 ; %h  Complete header
 ;
 MSG_CO_ArchiveName
@@ -1243,7 +1243,7 @@ ei allekirjoitusta
 ; no signature
 ;
 MSG_CO_HeaderLayout
-Otsakkeen asettelu
+Otsikon asettelu
 ; Header layout
 ;
 MSG_CO_BodyLayout
@@ -1255,7 +1255,7 @@ Muut valinnat
 ; Other options
 ;
 MSG_CO_WrapHeader
-_Rivit‰ otsake
+_Rivit‰ otsikot
 ; _Wrap headers
 ;
 MSG_CO_OldQuotes
@@ -1263,7 +1263,7 @@ _Vanhat lainaukset
 ; Old quotes
 ;
 MSG_CO_Header
-_Otsake
+_Otsikko
 ; _Headers
 ;
 MSG_CO_SenderInfo
@@ -1756,17 +1756,17 @@ MSG_HELP_CO_CH_SMTP8BIT
 MSG_HELP_CO_LV_POP3
 POP3-palvelinlista.
 ; List of the POP3\n\
-; accounts.
+; servers.
 ;
 MSG_HELP_CO_BT_PADD
 Lis‰‰ uusi POP3-palvelin listalle.
-; Add a new POP3 account\n\
+; Add a new POP3 servers\n\
 ; to the list.
 ;
 MSG_HELP_CO_BT_PDEL
 Poista valittu POP3-palvelin listalta.
 ; Remove the selected POP3\n\
-; account from the list.
+; servers from the list.
 ;
 MSG_HELP_CO_ST_POPUSERID
 K‰ytt‰j‰nimi, jolla kirjaudut POP3-palvelimelle.\nJos j‰t‰t t‰m‰n kent‰n tyhj‰ksi, k‰ytt‰j‰tunnuksena\n k‰ytet‰‰n s‰hkˆpostiosoitettasi.
@@ -1924,17 +1924,18 @@ Vaihda v‰ri‰, jota k‰ytet‰‰n n‰ytt‰m‰‰n lainattua viesti‰.
 ; 2nd level quotes.
 ;
 MSG_HELP_CO_CH_WRAPHEAD
-N‰yt‰ pitk‰t otsakkeet monella rivill‰.
+N‰yt‰ pitk‰t otsikot monella rivill‰.
 ; Split long headers\n\
 ; on multiple lines.
 ;
 MSG_HELP_CO_CY_HEADER
-Haluatko n‰ytt‰‰\nviestin otsakkeen\nlukuikkunassa?
+Mitk‰ viestin otsikot haluat YAMin n‰ytt‰v‰n\n\
+oletuksena lukuikkunassa?
 ; Which message headers do you want YAM\n\
 ; to display by default in the Read window?
 ;
 MSG_HELP_CO_ST_HEADERS
-M‰‰rit‰ englanniksi AmigaDOS-mallinne, jolla\nvalitaan otsakkeen esitysj‰rjestys.\nOletus on (From|To|Cc|BCC|Date|Subject).
+M‰‰rit‰ englanniksi AmigaDOS-mallinne, jolla\nvalitaan otsikon esitysj‰rjestys.\nOletus on (From|To|Cc|BCC|Date|Subject).
 ; Specify an AmigaDOS pattern to\n\
 ; choose the headers in SELECTED format.\n\
 ; Default is (From|To|Cc|BCC|Date|Subject).
@@ -2371,9 +2372,6 @@ T‰sm‰‰vi‰ tietoja ei lˆytynyt!
 MSG_AB_Modified
 Osoitekirjaa on muutettu!
 ; Address book has been modified.
-;
-;
-; Module AB - Hooks
 ;
 MSG_AB_TitleAlias
 Alias
@@ -4127,7 +4125,7 @@ Viestin koko
 ; Message size
 ;
 MSG_FI_MessageHeader
-Viestin otsake
+Viestin otsikot
 ; Message headers
 ;
 MSG_FI_MessageBody
@@ -5752,7 +5750,7 @@ TCP/IP-asetukset
 ;
 MSG_CO_TCPIP_SUMMARY
 Muokkaa SMTP- ja POP3-tilej‰si...
-; Configure your SMTP and POP3 accounts...
+; Configure your SMTP and POP3 servers...
 ;
 MSG_CO_FILTER_TITLE
 P‰‰suodatinasetukset
@@ -5807,7 +5805,7 @@ K‰ynnistys/Lopetusasetukset
 ; Startup/Quit Action Settings
 ;
 MSG_CO_STARTUP_SUMMARY
-M‰‰rit‰, mmit‰ YAM tekee k‰ynnistyksess‰ ja lopetuksessa...
+M‰‰rit‰, mit‰ YAM tekee k‰ynnistyksess‰ ja lopetuksessa...
 ; Configure what YAM should do on startup and exit...
 ;
 MSG_CO_MIME_TITLE
@@ -6057,8 +6055,9 @@ kirjaimisto codesets.library-kirjaston avulla\n\
 (koskee vain kyrillisien kirjaimistojen k‰ytt‰ji‰).
 ; Try to use the auto-detect feature\n\
 ; of codesets.library to automatically\n\
-; identify the correct cyrillic charset\n\
-; (only relevant for cyrillic users).
+; identify the correct cyrillic charset.\n\
+; Use this option only if you are using\n\
+; a cyrillic charset.
 ;
 MSG_WR_ErrorNotEnoughUndoMem
 Poistettu teksti ei mahtunut\n\
@@ -8900,7 +8899,7 @@ Identiteettiasetukset
 ; Identities Settings
 ;
 MSG_CO_IDENTITIES_SUMMARY
-Yll‰pid‰ useita identiteettej‰ viestien rakentamisessa...
+Yll‰pid‰ useita identiteettej‰ viestej‰ kootessa...
 ; Manage multiple identities for composing mails...
 ;
 MSG_CO_IDENTITY_LIST
@@ -8916,7 +8915,7 @@ Yleiset asetukset
 ; General Settings
 ;
 MSG_CO_IDENTITY_REGISTER_COMPOSE
-Viestin rakentaminen
+Viestin kokoaminen
 ; Compose Mail
 ;
 MSG_CO_IDENTITY_REGISTER_PGPSEC
@@ -8944,7 +8943,7 @@ Postipalvelin (SMTP)
 ; Mail server (SMTP)
 ;
 MSG_CO_IDENTITY_COMPOSE
-Viestin rakentamisasetukset
+Viestin kokoamisasetukset
 ; Compose mail settings
 ;
 MSG_CO_IDENTITY_CC
@@ -9589,7 +9588,7 @@ k‰ynnist‰‰ j‰rjestelm‰si uudestaan.
 ;
 MSG_WR_SAVEASDRAFT
 Tallenna luonnoksena
-; Save as draft
+; Save as _draft
 ;
 MSG_HELP_WR_BT_SAVEASDRAFT
 Tallentaa viestin\n\
@@ -9800,11 +9799,11 @@ ei kes‰aikaa
 ; no daylight saving
 ;
 MSG_CO_TZONE_DESCRIPTION
-Kuvaus
+Kuvaus:
 ; Description:
 ;
 MSG_CO_TZONE_DESCRIPTION_NA
-ei sovellu
+ei ole
 ; n/a
 ;
 MSG_TZONE_ZONETAB_FILE_MISSING
@@ -9981,18 +9980,15 @@ MSG_FO_JUMP_TO_UNREAD_MESSAGE
 Siirry ensimm‰iseen lukemattomaan viestiin
 ; Jump to first unread message
 ;
-;
 MSG_HELP_FO_CH_JUMPTOUNREAD
 Siirry ensimm‰iseen lukemattomaan viestiin,\n\
 kun t‰m‰ kansio avataan.
 ; Jump to the first unread message when\n\
 ; entering this folder.
 ;
-;
 MSG_FO_JUMP_TO_RECENT_MESSAGE
 Siirry uusimpaan viestiin
 ; Jump to newest message
-;
 ;
 MSG_HELP_FO_CH_JUMPTORECENT
 Siirry uusimpaan viestiin,\n\
@@ -10000,37 +9996,273 @@ kun t‰m‰ kansio avataan.
 ; Jump to the most recent message when\n\
 ; entering this folder.
 ;
-;
 MSG_FO_MAXAGE_DAYS
 p‰iv‰‰
 ; days
-;
 ;
 MSG_QUICKSEARCH_FILTER_LIST
 Suodatuslista...
 ; Filter list...
 ;
-;
 MSG_QUICKSEARCH_FROM
 L‰hett‰j‰
 ; Sender
-;
 ;
 MSG_QUICKSEARCH_TO
 Vastaanottaja
 ; Receiver
 ;
-;
 MSG_QUICKSEARCH_SUBJECT
 Aihe
 ; Subject
-;
 ;
 MSG_QUICKSEARCH_BODY
 Viesti
 ; Mail body
 ;
+MSG_CO_CHECK_FOR_MISSING_ATTACHMENTS
+Tarkista puuttuvat liitetiedostot
+; Check for missing attachments
+;
+;
+MSG_CO_ATTACHMENT_KEYWORDS
+Avainsanat:
+; Keywords:
+;
+;
+MSG_HELP_CO_CH_ATTACHMENTREMINDER
+Haluatko, ett‰ sinua varoitetaan, jos\n\
+viestiss‰ on tieto liitetiedostoista\n\
+mutta n‰m‰ puuttuvat?
+; Would you like to be warned if the\n\
+; mail body suggests the existance of\n\
+; an attachment but these are missing?
+;
+;
+MSG_HELP_CO_LV_ATTACHMENTKEYWORDS
+Muokkaa avainsanoja, jotka viittaavat\n\
+liitetiedoston olemassaoloon.
+; Configure the keywords which might\n\
+; suggest the desired existance of an\n\
+; attachment.
+;
+;
+MSG_ATTACHMENT_KEYWORDS
+liite,liitetiedosto,liitteen‰,liit‰n
+; attachment,attach,attached,attaching,enclosed,CV,cover letter
+;
+;
+MSG_ATTACHMENT_REMIND_INFO
+Unohditko ehk‰ lis‰t‰ liitetiedoston?
+; Did you possibly forget to add an attachment?
+;
+;
+MSG_ATTACHMENT_REMIND_ADD
+Lis‰‰ liitetiedosto...
+; Add attachment...
+;
+;
+MSG_ATTACHMENT_REMIND_LATER
+Muistuta minua myˆhemmin
+; Remind me later
+;
+;
+MSG_WR_NO_ATTACHMENTS_TITLE
+Liitetiedostomuistutus
+; Attachment reminder
+;
+;
+MSG_WR_NO_ATTACHMENTS
+Unohditko lis‰t‰ liitetiedoston?
+; Did you forget to add an attachment?
+;
+;
+MSG_WR_NO_ATTACHMENTS_GADS
+Kyll‰|Ei, l‰het‰ nyt
+; Yes, I did|No, send now
+;
+;
+MSG_CO_MAILACCOUNT_TRANSFERRED
+Postitili
+; Mail account
+;
+;
+MSG_MAILACCOUNT_TRANSFERRED
+Postitili
+; Mail account
+;
+;
+MSG_CO_SAVE_LAYOUT
+Tallenna k‰yttˆliittym‰n asetukset
+; Save user interface layout
+;
+;
+MSG_HELP_CO_CH_SAVELAYOUTQUIT
+Tallenna pysyv‰sti ikkunoiden, ryhmien\n\
+ja eri graafisten objektien paikat ja\n\
+koot.
+; Permanently save the position and dimensions\n\
+; of all windows, the layout of certain groups\n\
+; and the state of various graphical objects.
+;
+;
+MSG_CO_SMTP_FOLDERS
+Oletuskansiot
+; Default folders
+;
+;
+MSG_CO_SMTP_SENTFOLDER
+'L‰hetetty'-kansio
+; 'Sent' folder
+;
+;
+MSG_HELP_CO_PO_SMTP_SENTFOLDER
+Voit asettaa eri hakemiston, johon l‰hetetyt\n\
+viestit tallennetaan.
+; Allows to set a different folder where mails\n\
+; will be stored after being sent out.
+;
+;
+MSG_CO_IDENTITY_SAVESENTMAIL
+Siirron j‰lkeen tallenna viestit 'L‰hetetyt'-kansioon
+; After transfer store mails in 'Sent' folder
+;
+;
+MSG_HELP_CO_CH_IDENTITY_SAVESENTMAIL
+Jos valittu, l‰hetetyt viestit tallennetaan\n\
+viestin l‰hetyksen j‰lkeen. Muutoin l‰hetetyt\n\
+viestit poistetaan.
+; If enabled, sent mails will be stored after\n\
+; the mail transfer. Otherwise the sent mails\n\
+; will be deleted.
+;
+;
+MSG_CO_IDENTITY_ALTSENTFOLDER
+K‰yt‰ vaihtoehtoista 'L‰hetetyt'-kansiota:
+; Use alternative 'Sent' folder:
+;
+;
+MSG_HELP_CO_CH_IDENTITY_ALTSENTFOLDER
+Jos valittu, l‰hetetut viestit tallennetaan\n\
+vaihtoehtoiseen kansioon eik‰ TCP/IP-asetuksiin\n\
+merkittyyn kansioon.
+; If enabled, sent mails will be stored in an\n\
+; alternative mail folder than configured in\n\
+; the TCP/IP section of the configuration.
+;
+;
+MSG_HELP_CO_TX_IDENTITY_ALTSENTFOLDER
+Voit m‰‰ritell‰, mihin vaihtoehtoiseen kansioon\n\
+l‰hetetyt viestit tallennetaan.
+; Allows to specify which alternative mail\n\
+; folder should be used when storing sent mail.
+;
+;
+MSG_CO_POP_FOLDERS
+Oletuskansiot
+; Default folders
+;
+;
+MSG_CO_POP_INCOMINGFOLDER
+'Saapuvat'-kansio
+; 'Incoming' folder
+;
+;
+MSG_HELP_CO_PO_POP_INCOMINGFOLDER
+Voit m‰‰ritell‰ eri kansion, johon vastaanotetut\n\
+viestit tallennetaan.
+; Allows to set a different folder where mails\n\
+; will be stored after having received them.
+;
 ;
 MSG_DOC_LANGUAGE_CODE
-fi
+
+; 
+; !!! NOTE !!!
+; When translating MSG_LANGUAGE_CODE please put the
+; language code (see http://yam.ch/wiki/TracLanguages)
+; for the language you translate YAM to here. This
+; language code will then be appended to each online
+; documentation request (HELP hotkey) and thus a
+; potentially translated page should come up. For
+; english, the MSG_LANGUAGE_CODE should be empty.
+;
+MSG_CO_CYRILLICCHARSETWARN
+Automaattinen kyrillisten kirjaimistojen tarkistus on p‰‰ll‰\n\
+mutta valittu kirjaimisto '%s' ei ole kyrillinen kirjaimisto.\n\
+T‰m‰ yhdistelm‰ voi aiheuttaa virheellisi‰ kirjaimia.\n\
+\n\
+Haluatko kytke‰ kyrillisten kirjaimistojen tarkistuksen pois p‰‰lt‰?
+; Automatic detection of cyrillic charsets is enabled, but the\n\
+; configured charset '%s' is no cyrillic charset.\n\
+; This combination might cause malformed characters.\n\
+; \n\
+; Do you want to deactivate the cyrillic charset detection?
+;
+; LOCALCHARSET
+;
+MSG_CO_CYRILLICCHARSETWARN_BT
+*_Kytke pois|_Ohita
+; *_Deactivate|_Ignore
+;
+;
+MSG_WR_NORCPT_WARNING_GADGET
+_Tallenna luonnoksena|*_Peruuta
+; _Save as draft|*_Cancel
+;
+;
+MSG_WR_NORCPT_WARNING
+T‰m‰ viesti on ep‰t‰ydellinen, koska\n\
+vastaanottajaa ei ole m‰‰ritelty.\n\
+\n\
+Miten haluat edet‰?
+; The message is incomplete since\n\
+; no recipient had been specified.\n\
+; \n\
+; How do you want to proceed?
+;
+;
+MSG_WR_DISCARDCHANGES_GADGET
+*_Tallenna luonnoksena|_Hylk‰‰|_Peruuta
+; *_Save as draft|_Discard|_Cancel
+;
+;
+MSG_MA_NO_SUBJECT
+(Ei aihetta)
+; (No Subject)
+;
+;
+MSG_MA_NO_RECIPIENTS
+(Ei vastaanottajia)
+; (No Recipients)
+;
+;
+MSG_WR_CANCEL
+_Peruuta
+; _Cancel
+;
+;
+MSG_HELP_WR_BT_CANCEL
+Keskeytt‰‰ viestin muokkauksen ja\n\
+sulkee ikkunan.
+; Aborts the mail editing and\n\
+; closes the window.
+;
+;
+MSG_MA_REPLYREQ_OPTIONS2
+*_L‰hett‰j‰|L‰hett‰j‰ ja _kaikki vastaanottajat|_Peruuta
+; *_Sender|Sender and _all Recipients|_Cancel
+;
+;
+MSG_ABOUT_DONATE_TEXT
+Varmista YAMin tulevaisuus
+; Secure the future of YAM
+;
+;
+MSG_TR_MAILCHECKFROM
+Tarkistetaan viestej‰ tililt‰ '%s'
+; Checking mails from '%s'
+;
+; ***NEW***
+; DESCRIPTION
 ;

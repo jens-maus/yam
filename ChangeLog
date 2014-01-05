@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-01-05 Marko Raina <marko.raina@fimnet.fi)
+
+  * locale/finnish.ct: updated Finnish locale to current state, compatible with
+    YAM 2.9
+
 2014-01-01 Thore Böckelmann <tboeckel@gmx.de>
 
   * doc/Install-YAM, tools/mkrelease.sh, Makefile: include danish and dutch
