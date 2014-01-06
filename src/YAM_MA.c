@@ -3046,6 +3046,9 @@ void MA_ArchiveMail(struct Mail *mail)
   // finally move the mail to the archive folder
   if((archive = FO_GetFolderByPath(archivePathName, NULL)) != NULL)
   {
+    // archived mails are considered to be read before, why should one
+    // archive them otherwise without knowing the content?
+    setStatusToRead(mail);
     MA_MoveCopy(mail, archive, 0);
   }
 

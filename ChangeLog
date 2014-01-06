@@ -17,6 +17,9 @@ $URL$
   * Config.c: correctly handle the different meaning of the filter's rule
     combination mode when upgrading from older configuration versions. This
     closes #503.
+  * YAM_MA.c: archived mails are now marked as "read", because their contents is
+    considered to be read. Otherwise one wouldn't know why this mail deserves to
+    be archived.
 
 2014-01-05 Marko Raina <marko.raina@fimnet.fi)
 
