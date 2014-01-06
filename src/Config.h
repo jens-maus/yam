@@ -102,6 +102,8 @@ enum WrapMode
 
 struct Config
 {
+  int version; // the version of the loaded configuration file
+
   struct MinList pop3ServerList;   // list of configured POP3 servers
   struct MinList smtpServerList;   // list of configured SMTP servers
   struct MinList filterList;       // list of currently available filter node

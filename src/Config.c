@@ -1132,6 +1132,9 @@ int LoadConfig(struct Config *co, const char *fname)
       // useall (reset it, e.g.)
       SetDefaultConfig(co, cp_AllPages);
 
+      // remember the loaded version for further reference
+      co->version = version;
+
       while(getline(&buf, &buflen, fh) > 0)
       {
         char *p;
@@ -1177,7 +1180,7 @@ int LoadConfig(struct Config *co, const char *fname)
         //       in case an older config version is loaded we provide
         //       some kind of a backward compatibility.
         //
-        if(*buf != '\0' && value != NULL)
+        if(IsStrEmpty(buf) == FALSE && value != NULL)
         {
 /* First Steps */
           if(stricmp(buf, "Location") == 0)          strlcpy(co->Location, value, sizeof(co->Location));
@@ -3362,6 +3365,16 @@ void ValidateConfig(struct Config *co, BOOL update, BOOL saveChanges)
     saveAtEnd = TRUE;
   }
 
+  // finally check the version of the loaded configuration
+  // if it is an older version than the current one we must save it
+  // to make any implicit or explicit option upgrade permanent.
+  if(co->version < LATEST_CFG_VERSION)
+  {
+    D(DBF_CONFIG, "upgraded version from %ld to %ld", co->version, LATEST_CFG_VERSION);
+    co->version = LATEST_CFG_VERSION;
+    saveAtEnd = TRUE;
+  }
+
   if(update == TRUE && G->ConfigWinObject != NULL)
   {
     BOOL updateAll = xget(G->ConfigWinObject, MUIA_ConfigWindow_UpdateAll);
@@ -3555,6 +3568,7 @@ void ResolveConfigFolders(struct Config *co)
   struct MailServerNode *msn;
   struct UserIdentityNode *uin;
   struct FilterNode *filter;
+  BOOL saveAtEnd = FALSE;
 
   ENTER();
 
@@ -3566,7 +3580,16 @@ void ResolveConfigFolders(struct Config *co)
       struct Folder *folder;
 
       if((folder = FO_GetFolderByName(msn->mailStoreFolderName, NULL)) != NULL)
-        msn->mailStoreFolderID = folder->ID;
+      {
+        if(folder->ID == 0)
+          W(DBF_CONFIG, "incoming folder '%s' of POP3 server '%s' has no valid ID", msn->mailStoreFolderName, msn->description);
+        else
+        {
+          D(DBF_CONFIG, "resolved incoming folder '%s' of POP3 server to ID %08lx", msn->mailStoreFolderName, msn->description, folder->ID);
+          msn->mailStoreFolderID = folder->ID;
+          saveAtEnd = TRUE;
+        }
+      }
       else
         W(DBF_CONFIG, "cannot resolve incoming folder '%s' of POP3 server '%s'", msn->mailStoreFolderName, msn->description);
     }
@@ -3579,9 +3602,6 @@ void ResolveConfigFolders(struct Config *co)
       else
         W(DBF_CONFIG, "cannot resolve incoming folder ID 0x%08lx of POP3 server '%s'", msn->mailStoreFolderID, msn->description);
     }
-
-    if(msn->mailStoreFolderID == 0)
-      W(DBF_CONFIG, "incoming folder '%s' of POP3 server '%s' has no valid ID", msn->mailStoreFolderName, msn->description);
   }
 
   // resolve the sent folders of the SMTP servers
@@ -3592,7 +3612,16 @@ void ResolveConfigFolders(struct Config *co)
       struct Folder *folder;
 
       if((folder = FO_GetFolderByName(msn->mailStoreFolderName, NULL)) != NULL)
-        msn->mailStoreFolderID = folder->ID;
+      {
+        if(folder->ID == 0)
+          W(DBF_CONFIG, "sent folder '%s' of SMTP server '%s' has no valid ID", msn->mailStoreFolderName, msn->description);
+        else
+        {
+          D(DBF_CONFIG, "resolved sent folder '%s' of SMTP server to ID %08lx", msn->mailStoreFolderName, msn->description, folder->ID);
+          msn->mailStoreFolderID = folder->ID;
+          saveAtEnd = TRUE;
+        }
+      }
       else
         W(DBF_CONFIG, "cannot resolve sent folder '%s' of SMTP server '%s'", msn->mailStoreFolderName, msn->description);
     }
@@ -3605,9 +3634,6 @@ void ResolveConfigFolders(struct Config *co)
       else
         W(DBF_CONFIG, "cannot resolve sent folder ID 0x%08lx of SMTP server '%s'", msn->mailStoreFolderID, msn->description);
     }
-
-    if(msn->mailStoreFolderID == 0)
-      W(DBF_CONFIG, "sent folder '%s' of SMTP server '%s' has no valid ID", msn->mailStoreFolderName, msn->description);
   }
 
   // resolve the sent folders of the user identities
@@ -3618,7 +3644,16 @@ void ResolveConfigFolders(struct Config *co)
       struct Folder *folder;
 
       if((folder = FO_GetFolderByName(uin->sentFolderName, NULL)) != NULL)
-        uin->sentFolderID = folder->ID;
+      {
+        if(folder->ID == 0)
+          W(DBF_CONFIG, "sent folder '%s' of user identity '%s' has no valid ID", uin->sentFolderName, uin->description);
+        else
+        {
+          D(DBF_CONFIG, "resolved sent folder '%s' of user identity '%s' to ID %08lx", uin->sentFolderName, uin->description, folder->ID);
+          uin->sentFolderID = folder->ID;
+          saveAtEnd = TRUE;
+        }
+      }
       else
         W(DBF_CONFIG, "cannot resolve sent folder '%s' of user identity '%s'", uin->sentFolderName, uin->description);
     }
@@ -3631,12 +3666,6 @@ void ResolveConfigFolders(struct Config *co)
       else
         W(DBF_CONFIG, "cannot resolve sent folder ID 0x%08lx of user identity '%s'", uin->sentFolderID, uin->description);
     }
-
-    // complain only if there is no folder ID but a name
-    // the user identity's sent folder is optional and an ID equal to zero plus
-    // no folder names indicates that NO custom sent folder is configured
-    if(uin->sentFolderID == 0 && IsStrEmpty(uin->sentFolderName) == FALSE)
-      W(DBF_CONFIG, "sent folder '%s' of user identity '%s' has no valid ID", uin->sentFolderName, uin->description);
   }
 
   // resolve the "move to" folders of the filters
@@ -3650,7 +3679,16 @@ void ResolveConfigFolders(struct Config *co)
         struct Folder *folder;
 
         if((folder = FO_GetFolderByName(filter->moveToName, NULL)) != NULL)
-          filter->moveToID = folder->ID;
+        {
+          if(folder->ID == 0)
+            W(DBF_CONFIG, "moveTo folder '%s' of filter '%s' has no valid ID", filter->moveToName, filter->name);
+          else
+          {
+            D(DBF_CONFIG, "resolved moveTo folder '%s' of filter '%s' to ID %08lx", filter->moveToName, filter->name, folder->ID);
+            filter->moveToID = folder->ID;
+            saveAtEnd = TRUE;
+          }
+        }
         else
           W(DBF_CONFIG, "cannot resolve moveTo folder '%s' of filter '%s'", filter->moveToName, filter->name);
       }
@@ -3663,10 +3701,13 @@ void ResolveConfigFolders(struct Config *co)
         else
           W(DBF_CONFIG, "cannot resolve moveTo folder ID 0x%08lx of filter '%s'", filter->moveToID, filter->name);
       }
-
-      if(filter->moveToID == 0)
-        W(DBF_CONFIG, "moveTo folder '%s' of filter '%s' has no valid ID", filter->moveToName, filter->name);
     }
+  }
+
+  if(saveAtEnd == TRUE)
+  {
+    D(DBF_CONFIG, "saving configuration due to newly resolved folders");
+    SaveConfig(co, G->CO_PrefsFile);
   }
 
   LEAVE();

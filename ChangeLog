@@ -9,6 +9,11 @@ $URL$
 
   * mui/FiltersConfigPage.c: jump to the "General" page when creating a new
     filter.
+  * Config.c: the configuration version is now remembered globally and any
+    upgraded configuration will be saved after the validation to make the
+    upgraded options permanent. Furthermore any newly resolved folder ID during
+    the upgrade will also trigger the saving of the new configuration. This
+    closes #502.
 
 2014-01-05 Marko Raina <marko.raina@fimnet.fi)
 
