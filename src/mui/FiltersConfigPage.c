@@ -63,6 +63,7 @@ struct Data
   Object *BT_FILTERUP;
   Object *BT_FILTERDOWN;
   Object *BT_FILTER_IMPORT;
+  Object *GR_PAGES;
   Object *ST_RNAME;
   Object *CH_REMOTE;
   Object *CH_APPLYNEW;
@@ -179,6 +180,7 @@ OVERLOAD(OM_NEW)
   Object *BT_FILTERUP;
   Object *BT_FILTERDOWN;
   Object *BT_FILTER_IMPORT;
+  Object *GR_PAGES;
   Object *ST_RNAME;
   Object *CH_REMOTE;
   Object *CH_APPLYNEW;
@@ -259,7 +261,7 @@ OVERLOAD(OM_NEW)
       Child, NBalanceObject,
          MUIA_Balance_Quiet, TRUE,
       End,
-      Child, RegisterGroup(rtitles),
+      Child, GR_PAGES = RegisterGroup(rtitles),
         MUIA_CycleChain, TRUE,
 
         // general settings
@@ -369,6 +371,7 @@ OVERLOAD(OM_NEW)
     data->BT_FILTERUP =          BT_FILTERUP;
     data->BT_FILTERDOWN =        BT_FILTERDOWN;
     data->BT_FILTER_IMPORT =     BT_FILTER_IMPORT;
+    data->GR_PAGES =             GR_PAGES;
     data->ST_RNAME =             ST_RNAME;
     data->CH_REMOTE =            CH_REMOTE;
     data->CH_APPLYNEW =          CH_APPLYNEW;
@@ -707,6 +710,8 @@ DECLARE(AddFilterEntry)
     DoMethod(data->LV_RULES, MUIM_NList_InsertSingle, filterNode, MUIV_NList_Insert_Bottom);
     set(data->LV_RULES, MUIA_NList_Active, MUIV_NList_Active_Bottom);
 
+    // make the first page the active one
+    set(data->GR_PAGES, MUIA_Group_ActivePage, 0);
     // lets set the new string gadget active and select all text in there automatically to
     // be more handy to the user ;)
     set(_win(data->LV_RULES), MUIA_Window_ActiveObject, data->ST_RNAME);
