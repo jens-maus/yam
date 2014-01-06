@@ -14,6 +14,9 @@ $URL$
     upgraded options permanent. Furthermore any newly resolved folder ID during
     the upgrade will also trigger the saving of the new configuration. This
     closes #502.
+  * Config.c: correctly handle the different meaning of the filter's rule
+    combination mode when upgrading from older configuration versions. This
+    closes #503.
 
 2014-01-05 Marko Raina <marko.raina@fimnet.fi)
 

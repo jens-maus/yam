@@ -1445,7 +1445,25 @@ int LoadConfig(struct Config *co, const char *fname)
               else if(stricmp(q, "ApplyToSent") == 0)            lastFilter->applyToSent = Txt2Bool(value);
               else if(stricmp(q, "ApplyOnReq") == 0)             lastFilter->applyOnReq = Txt2Bool(value);
               else if(stricmp(q, "Actions") == 0)                lastFilter->actions = atoi(value);
-              else if(stricmp(q, "Combine") == 0)                lastFilter->combine = atoi(value);
+              else if(stricmp(q, "Combine") == 0)
+              {
+                if(version < 6)
+                {
+                  // convert the old combination value to the new interpretation
+                  switch(atoi(value))
+                  {
+                    case 1: lastFilter->combine = CB_AT_LEAST_ONE; break;
+                    default:
+                    case 2: lastFilter->combine = CB_ALL; break;
+                    case 3: lastFilter->combine = CB_EXACTLY_ONE; break;
+                  }
+                }
+                else
+                {
+                  // use the new value "as is"
+                  lastFilter->combine = atoi(value);
+                }
+              }
               else if(stricmp(q, "RedirectTo") == 0 || stricmp(q, "BounceTo") == 0)
                 strlcpy(lastFilter->redirectTo, value, sizeof(lastFilter->redirectTo));
               else if(stricmp(q, "ForwardTo") == 0)              strlcpy(lastFilter->forwardTo, value, sizeof(lastFilter->forwardTo));
