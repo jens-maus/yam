@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-01-07 14:53+0100\n"
-"PO-Revision-Date: 2014-01-07 14:32+0000\n"
+"PO-Revision-Date: 2014-01-07 22:02+0000\n"
 "Last-Translator: damato <mail@jens-maus.de>\n"
 "Language-Team: Polish (http://www.transifex.com/projects/p/yam/language/pl/)\n"
 "MIME-Version: 1.0\n"
@@ -865,10 +865,16 @@ msgctxt "MSG_CO_NewIntroDef (268//)"
 msgid "Hello,\\\\n"
 msgstr "Cześć,\\n"
 
+#. Replace <EMPTY> with a reply intro phrase which
+#. will be used when MSG_CO_AltRepPatternDef is true
+#. (e.g. "On %c you wrote:\\\\n")
 msgctxt "MSG_CO_AltRepIntroDef (269//)"
 msgid "<EMPTY>"
 msgstr ""
 
+#. Replace <EMPTY> with a pattern of domain names
+#. for which MSG_CO_AltRepIntroDef will be used
+#. (e.g. "#?.(en|uk|us|com)")
 msgctxt "MSG_CO_AltRepPatternDef (270//)"
 msgid "<EMPTY>"
 msgstr ""
@@ -887,14 +893,23 @@ msgctxt "MSG_CO_GreetingsDef (273//)"
 msgid "Kind regards"
 msgstr "Pozdrawiam"
 
+#. Replace <EMPTY> with an alternative hello phrase
+#. when replying to mails where MSG_CO_AltRepPatternDef
+#. becomes true (e.g. "Hello,\\\\n")
 msgctxt "MSG_CO_AltRepHelloDef (274//)"
 msgid "<EMPTY>"
 msgstr ""
 
+#. Replace <EMPTY> with an alternative bye phrase
+#. when replying to mails where MSG_CO_AltRepPatternDef
+#. becomes true (e.g. "Kind regards")
 msgctxt "MSG_CO_AltRepByeDef (275//)"
 msgid "<EMPTY>"
 msgstr ""
 
+#. Replace <EMPTY> with a hello phrase
+#. when replying to mails of an identifed mailing list
+#. (e.g. "Hi all,\\\\n")
 msgctxt "MSG_CO_MLRepHelloDef (276//)"
 msgid "<EMPTY>"
 msgstr ""
