@@ -4,7 +4,7 @@
 # description/translation files (.cd/.ct) and gettext-style translation
 # files (.pot/.po).
 #
-# Copyright 2013 Jens Maus <mail@jens-maus.de>
+# Copyright 2013-2014 Jens Maus <mail@jens-maus.de>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 # $Id$
 #
 
-VERSION="1.0"
+VERSION="1.1"
 
 ########################################################
 # Script starts here
@@ -32,7 +32,7 @@ VERSION="1.0"
 displayUsage()
 {
   echo >&2 "cd2po.sh v${VERSION} - convert between Amiga-style and gettext translation files"
-  echo >&2 "Copyright (c) 2013 Jens Maus <mail@jens-maus.de>"
+  echo >&2 "Copyright (c) 2013-2014 Jens Maus <mail@jens-maus.de>"
   echo >&2 
   echo >&2 "Usage: $0 <options> [inputfile (.cd/.ct/.pot/.po)]"
   echo >&2 "Options:"
@@ -55,7 +55,7 @@ BEGIN {
 
   # get current date/time
   cmd="date +'%Y-%m-%d %H:%M%z'"
-  cmd |& getline date
+  cmd | getline date
 
   print "# YAM.pot - YAM catalog description file (pot-style)"
   print "# $Id$"
@@ -104,21 +104,50 @@ BEGIN {
       firsttag=1
     }
 
-    print "\\n#: " $0
-    print "msgctxt \\"" $1 "\\""
-   
+    msgctxt=$0
+    msgcomment=$1
+
     # proceed with next word
     next
   }
-  else if($0 ~ /^;.*/)
+  else if($0 ~ /^;$/)
   {
     if(tagfound == 1)
     {
+      # this is the end of the current
+      # tag so lets output it in PO-format
+      print ""
+      #print "#: " msgcomment
+      if(length(comment) > 0)
+      {
+        print comment
+      }
+      print "msgctxt \\"" msgctxt "\\""
+      print "msgid " msgid
       print "msgstr \\"\\""
     }
-
+   
     tagfound=0
     multiline=0
+    comment=""
+
+    # proceed with next word
+    next
+  }
+  else if($0 ~ /^;.+/)
+  {
+    if(length(comment) > 0)
+    {
+      comment = comment "\\n"
+    }
+
+    tmp=substr($0, 2)
+    gsub(/^ /, "", tmp)
+    comment = comment "#. " tmp
+    multiline=0
+
+    # proceed with next word
+    next
   }
 
   if(tagfound == 1)
@@ -140,18 +169,18 @@ BEGIN {
       # strings, thus lets escape them with <EMPTY>
       if(length($0) == 0)
       {
-        print "msgid \\"<EMPTY>\\""
+        msgid="\\"<EMPTY>\\""
       }
       else
       {
-        print "msgid \\"" $0 "\\""
+        msgid="\\"" $0 "\\""
       }
 
       multiline=1
     }
     else
     {
-      print "\\"" $0 "\\""
+      msgid=msgid "\\n" "\\"" $0 "\\""
     }
   }
 }
@@ -186,7 +215,7 @@ BEGIN {
     }
   }
 
-  if($0 ~ /^#: MSG_.*\(.*\).*/)
+  if($0 ~ /^msgctxt "MSG_.*/)
   {
     tagfound=1
     msgidfound=0
@@ -202,6 +231,19 @@ BEGIN {
 
     # extract the tag "MSG_XXXXX (X//)" as tag
     tag=substr($0, length($1)+2)
+
+    # strip quotes (") from start&end
+    gsub(/^"/, "", tag)
+    gsub(/"$/, "", tag)
+  }
+  else if($0 ~ /^#\. .*/)
+  {
+    if(length(comment) > 0)
+    {
+      comment = comment "\\n"
+    }
+
+    comment = comment "; " substr($0, length($1)+2)
   }
   else if(length($0) == 0 && length(tag) != 0)
   {
@@ -210,9 +252,14 @@ BEGIN {
 
     print tag
     print msgid
+    if(length(comment) > 0)
+    {
+      print comment
+    }
     print ";"
 
     tag=""
+    comment=""
   }
 
   if(tagfound == 1)
@@ -251,6 +298,10 @@ END {
   {
     print tag
     print msgid
+    if(length(comment) > 0)
+    {
+      print comment
+    }
     print ";"
   }
 }
@@ -267,7 +318,7 @@ BEGIN {
 
   # get current date/time
   cmd="date +'%Y-%m-%d %H:%M%z'"
-  cmd |& getline date
+  cmd | getline date
 
   print "# YAM.po - YAM catalog translation file (po-style)"
   print "# $Id$"
@@ -304,7 +355,9 @@ BEGIN {
   {
     tagfound=1
     multiline=0
-    i=0
+    msgctxt=""
+    msgid=""
+    comment=""
 
     if(firsttag == 0)
     {
@@ -331,41 +384,67 @@ BEGIN {
     }
 
     # now we have to search in the CD file for the same string
-    cmd="sed -e '1,/" $1 " /d' -e '/^;/,$d' YAM.cd"
-    while((cmd |& getline output) > 0)
+    cmd="sed -n '/^" $1 " (/,/^;$/p' YAM.cd"
+    while((cmd | getline output) > 0)
     {
-      i++
-
-      # remove any backslash at the end of line
-      gsub(/\\\\$/, "", output)
-
-      # replace \e with \033
-      gsub(/\\\\\\e/, "\\\\033", output)
-
-      # replace plain " with \" but make
-      # sure to check if \" is already there
-      gsub(/\\\\"/, "\\"", output) # replace \" with "
-      gsub(/"/, "\\\\\\"", output) # replace " with \"
-
-      if(length(output) == 0)
+      if(output ~ /^MSG_.*$/)
       {
-        output="<EMPTY>"
+        msgctxt=output
       }
+      else if(output ~ /^;.+$/)
+      {
+        if(length(comment) > 0)
+        {
+          comment = comment "\\n"
+        }
 
-      if(i == 1)
-      {
-        print "\\n#: " $0
-        print "msgctxt \\"" $1 "\\""
-        print "msgid \\"" output "\\""
+        tmp=substr(output, 2)
+        gsub(/^ /, "", tmp)
+        comment = comment "#. " tmp
       }
-      else
+      else if(output ~ /^;$/)
       {
-        print "\\"" output "\\""
+        # output the stuff
+        print ""
+        if(length(comment) > 0)
+        {
+          print comment
+        }
+        print "msgctxt \\"" msgctxt "\\""
+
+        if(length(msgid) <= 2)
+        {
+          print "msgid \\"<EMPTY>\\""
+        }
+        else
+        {
+          print "msgid " msgid
+        }
+      }
+      else if(length(msgctxt) > 0)
+      {
+        # remove any backslash at the end of line
+        gsub(/\\\\$/, "", output)
+
+        # replace \e with \033
+        gsub(/\\\\\\e/, "\\\\033", output)
+
+        # replace plain " with \" but make
+        # sure to check if \" is already there
+        gsub(/\\\\"/, "\\"", output) # replace \" with "
+        gsub(/"/, "\\\\\\"", output) # replace " with \"
+
+        if(length(msgid) > 0)
+        {
+          msgid = msgid "\\n"
+        }
+
+        msgid = msgid "\\"" output "\\""
       }
     }
     close(cmd)
 
-    if(i == 0)
+    if(length(msgctxt) == 0)
     {
       tagfound=0
     }
@@ -454,7 +533,7 @@ BEGIN {
 
       # parse the revision date
       cmd="date +'%d.%m.%Y' -d \\"" revdate "\\""
-      cmd |& getline revdate
+      cmd | getline revdate
 
       next
     }
@@ -472,11 +551,13 @@ BEGIN {
     }
   }
 
-  if($0 ~ /^msgctxt ".*/)
+  if($0 ~ /^msgctxt "MSG_.*/)
   {
     tagfound=1
     msgidfound=0
     msgstrfound=0
+    msgid=""
+    msgstr=""
 
     if(firsttag == 0)
     {
@@ -515,16 +596,26 @@ BEGIN {
     if($0 ~ /^msgid ".*/)
     {
       # get the msgid text only
-      msgid=substr($0, length($1)+2)
+      tmp=substr($0, length($1)+2)
 
       # strip quotes (") from start&end
-      gsub(/^"/, "", msgid)
-      gsub(/"$/, "", msgid)
+      gsub(/^"/, "", tmp)
+      gsub(/"$/, "", tmp)
 
       # replace "<EMPTY>" with ""
-      gsub(/<EMPTY>/, "", msgid)
+      gsub(/<EMPTY>/, "", tmp)
 
-      msgid = "; " msgid
+      if(length(tmp) > 0)
+      {
+        if(length(msgid) > 0)
+        {
+          msgid = msgid "\\\\\\n; " tmp
+        }
+        else
+        {
+          msgid = "; " tmp
+        }
+      }
 
       msgstrfound=0
       msgidfound=1
@@ -532,14 +623,26 @@ BEGIN {
     else if($0 ~ /^msgstr ".*/)
     {
       # get the msgid text only
-      msgstr=substr($0, length($1)+2)
+      tmp=substr($0, length($1)+2)
 
       # strip quotes (") from start&end
-      gsub(/^"/, "", msgstr)
-      gsub(/"$/, "", msgstr)
+      gsub(/^"/, "", tmp)
+      gsub(/"$/, "", tmp)
 
       # replace "<EMPTY>" with ""
-      gsub(/<EMPTY>/, "", msgstr)
+      gsub(/<EMPTY>/, "", tmp)
+
+      if(length(tmp) > 0)
+      {
+        if(length(msgstr) > 0)
+        {
+          msgstr = msgstr "\\\\\\n" tmp
+        }
+        else
+        {
+          msgstr = tmp
+        }
+      }
 
       msgstrfound=1
       msgidfound=0
@@ -550,7 +653,17 @@ BEGIN {
       gsub(/^"/, "")
       gsub(/"$/, "")
 
-      msgid = msgid "\\\\\\n; " $0
+      if(length($0) > 0)
+      {
+        if(length(msgid) > 0)
+        {
+          msgid = msgid "\\\\\\n; " $0
+        }
+        else
+        {
+          msgid = "; " $0
+        }
+      }
     }
     else if(msgstrfound == 1)
     {
@@ -558,7 +671,17 @@ BEGIN {
       gsub(/^"/, "")
       gsub(/"$/, "")
 
-      msgstr = msgstr "\\\\\\n" $0
+      if(length($0) > 0)
+      {
+        if(length(msgstr) > 0)
+        {
+          msgstr = msgstr "\\\\\\n" $0
+        }
+        else
+        {
+          msgstr = $0
+        }
+      }
     }
   }
 }
@@ -595,6 +718,15 @@ identifyCharset()
     greek)
       charset="iso-8859-7"
     ;;
+    danish)
+      charset="iso-8859-15"
+    ;;
+    french)
+      charset="iso-8859-15"
+    ;;
+    german)
+      charset="iso-8859-15"
+    ;;
     *)
       charset="iso-8859-1"
     ;;
@@ -620,6 +752,15 @@ identifyCodeset()
     ;;
     greek)
       codeset="10"
+    ;;
+    danish)
+      codeset="111"
+    ;;
+    french)
+      codeset="111"
+    ;;
+    german)
+      codeset="111"
     ;;
     *)
       codeset="0"
