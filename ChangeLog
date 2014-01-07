@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2013-01-07 Jens Maus <mail@jens-maus.de>
+
+  * locale/*.po: added all converted .po files which will replace our .ct files
+    as soon as the makefile has been adapted to generate them on the fly.
+    This refs #496.
+
 2014-01-06 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/FiltersConfigPage.c: jump to the "General" page when creating a new
@@ -21,7 +27,7 @@ $URL$
     considered to be read. Otherwise one wouldn't know why this mail deserves to
     be archived.
 
-2014-01-05 Marko Raina <marko.raina@fimnet.fi)
+2014-01-05 Marko Raina <marko.raina@fimnet.fi>
 
   * locale/finnish.ct: updated Finnish locale to current state, compatible with
     YAM 2.9
@@ -46,8 +52,8 @@ $URL$
 
   * .tx/config: added default configuration for the transifex command-line
     client (cf. http://support.transifex.com/customer/portal/topics/440187-transifex-client/)
-	 This client allows to pull and push upcoming po-based translation files
-	 to the transifex server.
+    This client allows to pull and push upcoming po-based translation files
+    to the transifex server.
 
 2013-12-29 Thore Böckelmann <tboeckel@gmx.de>
 
