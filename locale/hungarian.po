@@ -5,15 +5,15 @@
 # language english
 # 
 # Translators:
-# Miklós Gubucz <gmiki1@freemail.hu>, 2013
 # Dósa Márton <dm_@freemail.hu>, 2003
+# Miklós Gubucz <gmiki1@freemail.hu>, 2013
 msgid ""
 msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-01-07 14:53+0100\n"
 "PO-Revision-Date: 2014-01-07 14:31+0000\n"
-"Last-Translator: Miklós Gubucz <gmiki1@freemail.hu>\n"
+"Last-Translator: damato <mail@jens-maus.de>\n"
 "Language-Team: Hungarian (http://www.transifex.com/projects/p/yam/language/hu/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"

@@ -5,15 +5,15 @@
 # language english
 # 
 # Translators:
-# Samir Hawamdeh <s.hawamdeh@tin.it>, 2013
 # Luca Longone <hexaae@tiscalinet.it>, 2013
+# Samir Hawamdeh <s.hawamdeh@tin.it>, 2013
 msgid ""
 msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-01-07 14:53+0100\n"
 "PO-Revision-Date: 2014-01-07 14:31+0000\n"
-"Last-Translator: Samir Hawamdeh <s.hawamdeh@tin.it>\n"
+"Last-Translator: damato <mail@jens-maus.de>\n"
 "Language-Team: Italian (http://www.transifex.com/projects/p/yam/language/it/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"

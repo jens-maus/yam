@@ -5,8 +5,9 @@
 # language english
 # 
 # Translators:
-# tboeckel <tboeckel@gmx.de>, 2014
 # damato <mail@jens-maus.de>, 2014
+# damato <mail@jens-maus.de>, 2014
+# tboeckel <tboeckel@gmx.de>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: YAM\n"
