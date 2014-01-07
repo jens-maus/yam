@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: YAM.cd 9\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
-"POT-Creation-Date: 2014-01-07 14:53+0100\n"
+"POT-Creation-Date: 2014-01-07 23:48+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -7765,6 +7765,11 @@ msgid "No software updates available"
 msgstr ""
 
 #. HINT
+msgctxt "MSG_UPD_NO_UPDATES_FOUND (2171//)"
+msgid "There are no software updates available.\n"
+"%s"
+msgstr ""
+
 msgctxt "MSG_UPD_NO_UPDATES_FOUND_HINT_AUTOCHECK (2172//)"
 msgid "YAM will check for available updates automatically."
 msgstr ""
@@ -7970,6 +7975,10 @@ msgid "Download"
 msgstr ""
 
 #. SERVER
+msgctxt "MSG_TR_DOWNLOADING_FROM_SERVER (2213//)"
+msgid "Downloading from '%s'"
+msgstr ""
+
 msgctxt "MSG_MA_HELP (2214//)"
 msgid "Help"
 msgstr ""

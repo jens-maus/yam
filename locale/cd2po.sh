@@ -80,6 +80,21 @@ BEGIN {
 
   if($0 ~ /^MSG_.*\(.*\)/)
   {
+    if(tagfound == 1)
+    {
+      # this is the end of the current
+      # tag so lets output it in PO-format
+      print ""
+      #print "#: " msgcomment
+      if(length(comment) > 0)
+      {
+        print comment
+      }
+      print "msgctxt \\"" msgctxt "\\""
+      print "msgid " msgid
+      print "msgstr \\"\\""
+    }
+ 
     tagfound=1
 
     if(firsttag == 0)
