@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-01-07 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/ReadWindow.c: don't allow to archive virtual mails.
+
 2013-01-07 Jens Maus <mail@jens-maus.de>
 
   * locale/*.po: added all converted .po files which will replace our .ct files

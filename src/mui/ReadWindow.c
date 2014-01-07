@@ -69,6 +69,7 @@ struct Data
 {
   Object *MI_EDIT;
   Object *MI_MOVE;
+  Object *MI_ARCHIVE;
   Object *MI_DELETE;
   Object *MI_DETACH;
   Object *MI_DELETEATT;
@@ -257,7 +258,7 @@ OVERLOAD(OM_NEW)
       MenuChild, data->MI_EDIT = Menuitem(tr(MSG_MA_MEDIT), "E", TRUE, FALSE, RMEN_EDIT),
       MenuChild, data->MI_MOVE = Menuitem(tr(MSG_MA_MMOVE), "M", TRUE, FALSE, RMEN_MOVE),
       MenuChild, Menuitem(tr(MSG_MA_MCOPY), "Y", TRUE, FALSE, RMEN_COPY),
-      MenuChild, Menuitem(tr(MSG_MA_MARCHIVE), NULL, TRUE, FALSE, RMEN_ARCHIVE),
+      MenuChild, data->MI_ARCHIVE = Menuitem(tr(MSG_MA_MARCHIVE), NULL, TRUE, FALSE, RMEN_ARCHIVE),
       MenuChild, data->MI_DELETE = Menuitem(tr(MSG_MA_MDelete), "Del", TRUE, TRUE, RMEN_DELETE),
       MenuChild, MenuBarLabel,
       MenuChild, Menuitem(tr(MSG_Print), "P", TRUE, FALSE, RMEN_PRINT),
@@ -606,6 +607,7 @@ DECLARE(ReadMail) // struct Mail *mail
   // enable/disable some menuitems in advance
   set(data->MI_EDIT,      MUIA_Menuitem_Enabled, isRealMail && !inSpamFolder);
   set(data->MI_MOVE,      MUIA_Menuitem_Enabled, isRealMail);
+  set(data->MI_ARCHIVE,   MUIA_Menuitem_Enabled, isRealMail);
   set(data->MI_DELETE,    MUIA_Menuitem_Enabled, isRealMail);
   set(data->MI_DETACH,    MUIA_Menuitem_Enabled, hasAttach);
   set(data->MI_DELETEATT, MUIA_Menuitem_Enabled, isRealMail && hasAttach);
