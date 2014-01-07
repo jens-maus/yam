@@ -899,7 +899,7 @@ msgstr "Mit freundlichem Gruss,"
 
 msgctxt "MSG_CO_MLRepHelloDef (276//)"
 msgid "<EMPTY>"
-msgstr "<EMPTY>"
+msgstr "Hallo %f,\\n"
 
 msgctxt "MSG_CO_MLRepIntroDef (277//)"
 msgid "On %c, %n wrote:\\\\n"

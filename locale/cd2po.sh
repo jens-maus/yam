@@ -583,10 +583,13 @@ BEGIN {
     msgidfound=0
     msgstrfound=0
 
-    print tag
-    print msgstr
-    print msgid
-    print ";"
+    if(length(msgstr) > 0)
+    {
+      print tag
+      print msgstr
+      print msgid
+      print ";"
+    }
 
     tag=""
   }
@@ -601,9 +604,6 @@ BEGIN {
       # strip quotes (") from start&end
       gsub(/^"/, "", tmp)
       gsub(/"$/, "", tmp)
-
-      # replace "<EMPTY>" with ""
-      gsub(/<EMPTY>/, "", tmp)
 
       if(length(tmp) > 0)
       {
@@ -629,11 +629,11 @@ BEGIN {
       gsub(/^"/, "", tmp)
       gsub(/"$/, "", tmp)
 
-      # replace "<EMPTY>" with ""
-      gsub(/<EMPTY>/, "", tmp)
-
       if(length(tmp) > 0)
       {
+        # replace "<EMPTY>" with ""
+        gsub(/<EMPTY>/, "", tmp)
+
         if(length(msgstr) > 0)
         {
           msgstr = msgstr "\\\\\\n" tmp
@@ -686,7 +686,7 @@ BEGIN {
   }
 }
 END {
-  if(length(tag) != 0)
+  if(length(tag) != 0 && length(msgstr) > 0)
   {
     print tag
     print msgstr

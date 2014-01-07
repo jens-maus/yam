@@ -10,7 +10,11 @@ $URL$
   * mui/ReadWindow.c: don't allow to archive virtual mails.
 
 2013-01-07 Jens Maus <mail@jens-maus.de>
-
+ 
+  * locale, src/Makefile: adapted the Makefile to generate the corresponding .cd
+    and .ct files on demand from the .po files. This finally fulfills the switch
+    to transifex and closes #496. However, documentation how to translate YAM
+    from now on is still missing.
   * locale/*.po: added all converted .po files which will replace our .ct files
     as soon as the makefile has been adapted to generate them on the fly.
     This refs #496.

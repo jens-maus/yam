@@ -867,11 +867,11 @@ msgstr "Hei,\\\\n"
 
 msgctxt "MSG_CO_AltRepIntroDef (269//)"
 msgid "<EMPTY>"
-msgstr "<EMPTY>"
+msgstr ""
 
 msgctxt "MSG_CO_AltRepPatternDef (270//)"
 msgid "<EMPTY>"
-msgstr "<EMPTY>"
+msgstr ""
 
 msgctxt "MSG_CO_ForwardIntroDef (271//)"
 msgid ""
@@ -889,15 +889,15 @@ msgstr "Parhain terveisin"
 
 msgctxt "MSG_CO_AltRepHelloDef (274//)"
 msgid "<EMPTY>"
-msgstr "<EMPTY>"
+msgstr ""
 
 msgctxt "MSG_CO_AltRepByeDef (275//)"
 msgid "<EMPTY>"
-msgstr "<EMPTY>"
+msgstr ""
 
 msgctxt "MSG_CO_MLRepHelloDef (276//)"
 msgid "<EMPTY>"
-msgstr "<EMPTY>"
+msgstr ""
 
 msgctxt "MSG_CO_MLRepIntroDef (277//)"
 msgid "On %c, %n wrote:\\\\n"
@@ -9734,7 +9734,7 @@ msgstr "Voit määritellä eri kansion, johon vastaanotetut\nviestit tallennetaa
 #. english, the MSG_LANGUAGE_CODE should be empty.
 msgctxt "MSG_DOC_LANGUAGE_CODE (2519//)"
 msgid "<EMPTY>"
-msgstr "<EMPTY>"
+msgstr "fi"
 
 #. LOCALCHARSET
 msgctxt "MSG_CO_CYRILLICCHARSETWARN (2520//)"

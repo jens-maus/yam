@@ -896,6 +896,10 @@ $(SVNREV)/svnrev: $(SVNREV)/svnrev.c $(SVNREV)/svnrev.h
 
 ## CATALOG GENERATION #################
 
+$(LOCALE)/%.ct: $(LOCALE)/%.po
+	@echo "  GN $@"
+	@$(LOCALE)/cd2po.sh $< >$@
+
 $(LOCALE)/%.catalog: $(LOCALE)/%.ct $(LOCALE)/YAM.cd
 	@echo "  MK $@"
 	@$(FC) $(LOCALE)/YAM.cd $< CATALOG $@
@@ -906,8 +910,12 @@ catalogs: $(CATALOGS)
 
 ## FLEXCAT ############################
 
+$(LOCALE)/YAM.cd: $(LOCALE)/YAM.pot
+	@echo "  GN $@"
+	@$(LOCALE)/cd2po.sh $< >$@
+
 Locale.h: Locale.c
-Locale.c: ../locale/YAM.cd Locale_h.sd Locale_c.sd
+Locale.c: $(LOCALE)/YAM.cd Locale_h.sd Locale_c.sd
 	@echo "  GN $@"
 	@$(FC) $(LOCALE)/YAM.cd Locale.h=Locale_h.sd Locale.c=Locale_c.sd
 

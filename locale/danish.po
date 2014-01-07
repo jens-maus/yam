@@ -867,11 +867,11 @@ msgstr "Hej,\\\\n"
 
 msgctxt "MSG_CO_AltRepIntroDef (269//)"
 msgid "<EMPTY>"
-msgstr "<EMPTY>"
+msgstr ""
 
 msgctxt "MSG_CO_AltRepPatternDef (270//)"
 msgid "<EMPTY>"
-msgstr "<EMPTY>"
+msgstr ""
 
 msgctxt "MSG_CO_ForwardIntroDef (271//)"
 msgid ""
@@ -889,15 +889,15 @@ msgstr "Venlig hilsen"
 
 msgctxt "MSG_CO_AltRepHelloDef (274//)"
 msgid "<EMPTY>"
-msgstr "<EMPTY>"
+msgstr ""
 
 msgctxt "MSG_CO_AltRepByeDef (275//)"
 msgid "<EMPTY>"
-msgstr "<EMPTY>"
+msgstr ""
 
 msgctxt "MSG_CO_MLRepHelloDef (276//)"
 msgid "<EMPTY>"
-msgstr "<EMPTY>"
+msgstr ""
 
 msgctxt "MSG_CO_MLRepIntroDef (277//)"
 msgid "On %c, %n wrote:\\\\n"

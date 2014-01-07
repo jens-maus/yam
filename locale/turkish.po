@@ -871,7 +871,7 @@ msgstr "Selam,\\\\n"
 
 msgctxt "MSG_CO_AltRepPatternDef (270//)"
 msgid "<EMPTY>"
-msgstr "<EMPTY>"
+msgstr ""
 
 msgctxt "MSG_CO_ForwardIntroDef (271//)"
 msgid ""
@@ -889,15 +889,15 @@ msgstr "Sevgiler"
 
 msgctxt "MSG_CO_AltRepHelloDef (274//)"
 msgid "<EMPTY>"
-msgstr "<EMPTY>"
+msgstr ""
 
 msgctxt "MSG_CO_AltRepByeDef (275//)"
 msgid "<EMPTY>"
-msgstr "<EMPTY>"
+msgstr ""
 
 msgctxt "MSG_CO_MLRepHelloDef (276//)"
 msgid "<EMPTY>"
-msgstr "<EMPTY>"
+msgstr ""
 
 msgctxt "MSG_CO_MLRepIntroDef (277//)"
 msgid "On %c, %n wrote:\\\\n"
@@ -1577,7 +1577,7 @@ msgstr "Ýletileri Kaydet/Sil"
 
 msgctxt "MSG_CO_ConfirmDelPart1 (515//)"
 msgid "Confirm _deletion of"
-msgstr "<EMPTY>"
+msgstr ""
 
 msgctxt "MSG_CO_ConfirmDelPart2 (516//)"
 msgid "or more messages"
@@ -8979,7 +8979,7 @@ msgstr "MIME türü"
 
 msgctxt "MSG_CO_DOWNLOAD_LARGE_MAILS1 (2357//)"
 msgid "_Download messages larger than"
-msgstr "<EMPTY>"
+msgstr ""
 
 msgctxt "MSG_CO_DOWNLOAD_LARGE_MAILS2 (2358//)"
 msgid "KB"
