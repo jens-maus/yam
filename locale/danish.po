@@ -6,13 +6,14 @@
 # 
 # Translators:
 # damato <mail@jens-maus.de>, 2014
+# damato <mail@jens-maus.de>, 2014
 # Niels Bache <nbache2@mail.dk>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
-"POT-Creation-Date: 2014-01-07 14:53+0100\n"
-"PO-Revision-Date: 2014-01-07 22:09+0000\n"
+"POT-Creation-Date: 2014-01-07 23:48+0100\n"
+"PO-Revision-Date: 2014-01-08 00:14+0000\n"
 "Last-Translator: damato <mail@jens-maus.de>\n"
 "Language-Team: Danish (http://www.transifex.com/projects/p/yam/language/da/)\n"
 "MIME-Version: 1.0\n"
@@ -8133,10 +8134,10 @@ msgstr "Ingen opdateringer tilgængelige"
 
 #. HINT
 msgctxt "MSG_UPD_NO_UPDATES_FOUND (2171//)"
-msgid "There are no software updates available.\n"
+msgid ""
+"There are no software updates available.\n"
 "%s"
-msgstr "Der er ingen programopdateringer tilgængelige.\n"
-"%s"
+msgstr "Der er ingen programopdateringer tilgængelige.\n%s"
 
 msgctxt "MSG_UPD_NO_UPDATES_FOUND_HINT_AUTOCHECK (2172//)"
 msgid "YAM will check for available updates automatically."

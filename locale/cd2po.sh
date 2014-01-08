@@ -282,14 +282,22 @@ BEGIN {
     if($0 ~ /^msgid ".*/)
     {
       # get the msgid text only
-      msgid=substr($0, length($1)+2)
+      tmp=substr($0, length($1)+2)
 
       # strip quotes (") from start&end
-      gsub(/^"/, "", msgid)
-      gsub(/"$/, "", msgid)
+      gsub(/^"/, "", tmp)
+      gsub(/"$/, "", tmp)
 
-      # replace "<EMPTY>" with ""
-      gsub(/<EMPTY>/, "", msgid)
+      if(length(tmp) > 0)
+      {
+        # replace "<EMPTY>" with ""
+        gsub(/<EMPTY>/, "", tmp)
+        msgid = tmp
+      }
+      else
+      {
+        msgid=""
+      }
 
       msgidfound=1
     }
@@ -304,7 +312,14 @@ BEGIN {
       gsub(/^"/, "")
       gsub(/"$/, "")
 
-      msgid = msgid "\\\\\\n" $0
+      if(length(msgid) > 0)
+      {
+        msgid = msgid "\\\\\\n" $0
+      }
+      else
+      {
+        msgid = $0
+      }
     }
   }
 }
