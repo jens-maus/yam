@@ -8131,6 +8131,11 @@ msgid "No software updates available"
 msgstr "Δεν υπάρχουν ενημερώσεις λογισμικού"
 
 #. HINT
+msgctxt "MSG_UPD_NO_UPDATES_FOUND (2171//)"
+msgid "There are no software updates available.\n"
+"%s"
+msgstr "Δεν υπάρχουν ενημερώσεις λογισμικού.\n%s"
+
 msgctxt "MSG_UPD_NO_UPDATES_FOUND_HINT_AUTOCHECK (2172//)"
 msgid "YAM will check for available updates automatically."
 msgstr "Το YAM θα ελέγξει αυτόματα για τυχόν ενημερώσεις."
@@ -8347,6 +8352,10 @@ msgid "Download"
 msgstr "Λήψη"
 
 #. SERVER
+msgctxt "MSG_TR_DOWNLOADING_FROM_SERVER (2213//)"
+msgid "Downloading from '%s'"
+msgstr "Γίνεται λήψη από τον '%s'"
+
 msgctxt "MSG_MA_HELP (2214//)"
 msgid "Help"
 msgstr "Βοήθεια"

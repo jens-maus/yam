@@ -8132,6 +8132,11 @@ msgid "No software updates available"
 msgstr "Nincs elérhetõ szoftver frissítés"
 
 #. HINT
+msgctxt "MSG_UPD_NO_UPDATES_FOUND (2171//)"
+msgid "There are no software updates available.\n"
+"%s"
+msgstr "Nincs elérhetõ szoftver frissítés.\n%s"
+
 msgctxt "MSG_UPD_NO_UPDATES_FOUND_HINT_AUTOCHECK (2172//)"
 msgid "YAM will check for available updates automatically."
 msgstr "A YAM automatikusan keresni fogja a legújabb frissítéseket."
@@ -8348,6 +8353,10 @@ msgid "Download"
 msgstr "Letöltés"
 
 #. SERVER
+msgctxt "MSG_TR_DOWNLOADING_FROM_SERVER (2213//)"
+msgid "Downloading from '%s'"
+msgstr "Letöltés innen:'%s'"
+
 msgctxt "MSG_MA_HELP (2214//)"
 msgid "Help"
 msgstr "Súgó"

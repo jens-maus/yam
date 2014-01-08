@@ -8132,6 +8132,12 @@ msgid "No software updates available"
 msgstr "Nessun aggiornamento disponibile"
 
 #. HINT
+msgctxt "MSG_UPD_NO_UPDATES_FOUND (2171//)"
+msgid "There are no software updates available.\n"
+"%s"
+msgstr "Non è stato trovato alcun nuovo aggiornamento.\n"
+"%s"
+
 msgctxt "MSG_UPD_NO_UPDATES_FOUND_HINT_AUTOCHECK (2172//)"
 msgid "YAM will check for available updates automatically."
 msgstr "YAM verificherà periodicamente la presenza dei\nnuovi aggiornamenti."
@@ -8348,6 +8354,10 @@ msgid "Download"
 msgstr "Scarica"
 
 #. SERVER
+msgctxt "MSG_TR_DOWNLOADING_FROM_SERVER (2213//)"
+msgid "Downloading from '%s'"
+msgstr "Scaricamento da '%s'"
+
 msgctxt "MSG_MA_HELP (2214//)"
 msgid "Help"
 msgstr "Aiuto"
