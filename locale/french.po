@@ -6,14 +6,16 @@
 # 
 # Translators:
 # Translators:
+# Translators:
 # Alexandre Balaban <abalaban@free.fr>, 2013
+# abalaban <transifex@balaban.fr>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-01-07 23:48+0100\n"
-"PO-Revision-Date: 2014-01-08 00:15+0000\n"
-"Last-Translator: damato <mail@jens-maus.de>\n"
+"PO-Revision-Date: 2014-01-08 13:22+0000\n"
+"Last-Translator: abalaban <transifex@balaban.fr>\n"
 "Language-Team: French (http://www.transifex.com/projects/p/yam/language/fr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -871,14 +873,14 @@ msgstr "Salut,\\\\n"
 #. (e.g. "On %c you wrote:\\\\n")
 msgctxt "MSG_CO_AltRepIntroDef (269//)"
 msgid "<EMPTY>"
-msgstr ""
+msgstr "On %c you wrote:\\\\\\\\n"
 
 #. Replace <EMPTY> with a pattern of domain names
 #. for which MSG_CO_AltRepIntroDef will be used
 #. (e.g. "#?.(en|uk|us|com)")
 msgctxt "MSG_CO_AltRepPatternDef (270//)"
 msgid "<EMPTY>"
-msgstr ""
+msgstr "#?.(en|uk|us|com)"
 
 msgctxt "MSG_CO_ForwardIntroDef (271//)"
 msgid ""
@@ -906,14 +908,14 @@ msgstr "Bonjour,\\n"
 #. becomes true (e.g. "Kind regards")
 msgctxt "MSG_CO_AltRepByeDef (275//)"
 msgid "<EMPTY>"
-msgstr ""
+msgstr "Best regards"
 
 #. Replace <EMPTY> with a hello phrase
 #. when replying to mails of an identifed mailing list
 #. (e.g. "Hi all,\\\\n")
 msgctxt "MSG_CO_MLRepHelloDef (276//)"
 msgid "<EMPTY>"
-msgstr ""
+msgstr "Hi all,\\\\\\\\n"
 
 msgctxt "MSG_CO_MLRepIntroDef (277//)"
 msgid "On %c, %n wrote:\\\\n"
@@ -9816,9 +9818,9 @@ msgstr "*À l'_expéditeur|À l'expéditeur et\n\tous les _destinataires|_Annule
 
 msgctxt "MSG_ABOUT_DONATE_TEXT (2530//)"
 msgid "Secure the future of YAM"
-msgstr ""
+msgstr "Assurer le futur de YAM"
 
 #. DESCRIPTION
 msgctxt "MSG_TR_MAILCHECKFROM (2531//)"
 msgid "Checking mails from '%s'"
-msgstr ""
+msgstr "Vérification du courrier sur « %s »"
