@@ -841,7 +841,7 @@ clean:
 cleanall: clean
 	@echo "  CLEANALL"
 	@$(RM) Locale.? ParseEmail.c HTML2Mail.c $(MUIDIR)/Classes.* $(MUIDIR)/*_cl.h $(MUIDIR)/*.crc
-	@$(RM) $(LOCALE)/*.catalog
+	@$(RM) $(LOCALE)/*.catalog $(LOCALE)/*.ct $(LOCALE)/*.cd
 	@$(RMDIR) $(OBJDIR)
 	@$(RMDIR) $(DEPDIR)
 
