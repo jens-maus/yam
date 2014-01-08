@@ -5,7 +5,9 @@
 # language english
 # 
 # Translators:
+# Translators:
 # Andrija Antonijevic <antony-os4@heightanxiety.com>, 2001
+# damato <mail@jens-maus.de>, 2014
 # damato <mail@jens-maus.de>, 2014
 # Ljubomir Jankovic <lurch@afrodita.rcub.bg.ac.yu>, 2000
 msgid ""

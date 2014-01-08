@@ -5,6 +5,7 @@
 # language english
 # 
 # Translators:
+# Translators:
 # Antonis Iliakis <amiga.phantom@yahoo.gr>, 2013
 msgid ""
 msgstr ""

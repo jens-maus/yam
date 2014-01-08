@@ -5,6 +5,7 @@
 # language english
 # 
 # Translators:
+# Translators:
 # Alper Sönmez <amithlondestek@gmail.com>, 2013
 msgid ""
 msgstr ""

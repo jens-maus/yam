@@ -5,6 +5,7 @@
 # language english
 # 
 # Translators:
+# Translators:
 msgid ""
 msgstr ""
 "Project-Id-Version: YAM\n"

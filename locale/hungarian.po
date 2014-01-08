@@ -5,6 +5,7 @@
 # language english
 # 
 # Translators:
+# Translators:
 # Dósa Márton <dm_@freemail.hu>, 2003
 # Miklós Gubucz <gmiki1@freemail.hu>, 2013
 msgid ""

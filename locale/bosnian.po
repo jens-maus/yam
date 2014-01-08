@@ -5,6 +5,8 @@
 # language english
 # 
 # Translators:
+# Translators:
+# damato <mail@jens-maus.de>, 2014
 # damato <mail@jens-maus.de>, 2014
 msgid ""
 msgstr ""
