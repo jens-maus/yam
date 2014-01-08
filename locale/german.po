@@ -6,6 +6,7 @@
 # 
 # Translators:
 # Translators:
+# Translators:
 # damato <mail@jens-maus.de>, 2014
 # damato <mail@jens-maus.de>, 2014
 # tboeckel <tboeckel@gmx.de>, 2014
@@ -14,7 +15,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-01-07 23:48+0100\n"
-"PO-Revision-Date: 2014-01-08 00:13+0000\n"
+"PO-Revision-Date: 2014-01-08 15:15+0000\n"
 "Last-Translator: damato <mail@jens-maus.de>\n"
 "Language-Team: German (http://www.transifex.com/projects/p/yam/language/de/)\n"
 "MIME-Version: 1.0\n"
