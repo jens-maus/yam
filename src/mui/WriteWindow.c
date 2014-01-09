@@ -1099,14 +1099,14 @@ OVERLOAD(OM_NEW)
                       Child, data->LB_TO = Label(tr(MSG_WR_To)),
                       Child, data->GR_TO = MakeAddressField(&data->ST_TO, tr(MSG_WR_To), MSG_HELP_WR_ST_TO, ABM_TO, data->windowNumber, AFF_ALLOW_MULTI|AFF_EXTERNAL_SHORTCUTS),
 
-                      Child, data->LB_CC = Label("_CC"),
-                      Child, data->GR_CC = MakeAddressField(&data->ST_CC, tr(MSG_WR_CopyTo), MSG_HELP_WR_ST_CC, ABM_CC, data->windowNumber, AFF_ALLOW_MULTI|AFF_EXTERNAL_SHORTCUTS),
+                      Child, data->LB_CC = Label(tr(MSG_WR_CC)),
+                      Child, data->GR_CC = MakeAddressField(&data->ST_CC, tr(MSG_WR_CC), MSG_HELP_WR_ST_CC, ABM_CC, data->windowNumber, AFF_ALLOW_MULTI|AFF_EXTERNAL_SHORTCUTS),
 
-                      Child, data->LB_BCC = Label("_BCC"),
-                      Child, data->GR_BCC = MakeAddressField(&data->ST_BCC, tr(MSG_WR_BlindCopyTo), MSG_HELP_WR_ST_BCC, ABM_BCC, data->windowNumber, AFF_ALLOW_MULTI|AFF_EXTERNAL_SHORTCUTS),
+                      Child, data->LB_BCC = Label(tr(MSG_WR_BCC)),
+                      Child, data->GR_BCC = MakeAddressField(&data->ST_BCC, tr(MSG_WR_BCC), MSG_HELP_WR_ST_BCC, ABM_BCC, data->windowNumber, AFF_ALLOW_MULTI|AFF_EXTERNAL_SHORTCUTS),
 
-                      Child, data->LB_REPLYTO = Label(tr(MSG_WR_ReplyTo)),
-                      Child, data->GR_REPLYTO = MakeAddressField(&data->ST_REPLYTO, tr(MSG_WR_ReplyTo), MSG_HELP_WR_ST_REPLYTO, ABM_REPLYTO, data->windowNumber, AFF_ALLOW_MULTI|AFF_EXTERNAL_SHORTCUTS),
+                      Child, data->LB_REPLYTO = Label(tr(MSG_WR_REPLYTO)),
+                      Child, data->GR_REPLYTO = MakeAddressField(&data->ST_REPLYTO, tr(MSG_WR_REPLYTO), MSG_HELP_WR_ST_REPLYTO, ABM_REPLYTO, data->windowNumber, AFF_ALLOW_MULTI|AFF_EXTERNAL_SHORTCUTS),
 
                       Child, data->LB_SUBJECT = Label(tr(MSG_WR_Subject)),
                       Child, data->ST_SUBJECT = BetterStringObject,

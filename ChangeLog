@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-01-09 Jens Maus <mail@jens-maus.de>
+ 
+  * mui/WriteWindow.c, locale/YAM.pot: updated the catalog strings for the Cc,
+    Bcc and Reply-To adress fields and their corresponding menu items. Now they
+    can be properly translated. This closes #495.
+
 2014-01-08 Jens Maus <mail@jens-maus.de>
  
   * misc: bumped copyright year to 2014. Happy new year!
