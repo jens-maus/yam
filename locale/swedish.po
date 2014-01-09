@@ -6,13 +6,14 @@
 # 
 # Translators:
 # Translators:
+# Translators:
 # Pär Boberg <pbobbenb@spray.se>, 2013
 msgid ""
 msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-01-07 23:48+0100\n"
-"PO-Revision-Date: 2014-01-08 00:17+0000\n"
+"PO-Revision-Date: 2014-01-09 17:02+0000\n"
 "Last-Translator: damato <mail@jens-maus.de>\n"
 "Language-Team: Swedish (http://www.transifex.com/projects/p/yam/language/sv/)\n"
 "MIME-Version: 1.0\n"
@@ -3384,21 +3385,9 @@ msgctxt "MSG_WR_Description (949//)"
 msgid "D_escription"
 msgstr "_Beskrivning"
 
-msgctxt "MSG_WR_CopyTo (950//)"
-msgid "C_opies to (CC)"
-msgstr "K_opior till (CC)"
-
-msgctxt "MSG_WR_BlindCopyTo (951//)"
-msgid "Hidde_n copies to (BCC)"
-msgstr "_Dolda kopior till (BCC)"
-
 msgctxt "MSG_WR_From (952//)"
 msgid "_From"
 msgstr "_Från"
-
-msgctxt "MSG_WR_ReplyTo (953//)"
-msgid "Reply _to"
-msgstr "Svar _till"
 
 msgctxt "MSG_WR_ExtraHeaders (954//)"
 msgid "_Additional headers"
@@ -8952,16 +8941,16 @@ msgid "_Continue|*_Abort"
 msgstr "_Fortsätt|*_Avbryt"
 
 msgctxt "MSG_WR_MCCADDRFIELD (2346//)"
-msgid "CC address field"
-msgstr "Adressfält kopia"
+msgid "Cc Address Field"
+msgstr ""
 
 msgctxt "MSG_WR_MBCCADDRFIELD (2347//)"
-msgid "BCC address field"
-msgstr "Adressfält dold kopia"
+msgid "Bcc Address Field"
+msgstr ""
 
 msgctxt "MSG_WR_MREPLYTOADDRFIELD (2348//)"
-msgid "Reply-To address field"
-msgstr "Adressfält Svar till"
+msgid "Reply-To Address Field"
+msgstr ""
 
 msgctxt "MSG_CO_LISTCOLUMNSETTINGS (2349//)"
 msgid "Column settings"
@@ -9822,3 +9811,15 @@ msgstr "Säkra framtiden för YAM"
 msgctxt "MSG_TR_MAILCHECKFROM (2531//)"
 msgid "Checking mails from '%s'"
 msgstr "Kontrollerar brev från '%s'"
+
+msgctxt "MSG_WR_CC (2532//)"
+msgid "_Cc"
+msgstr ""
+
+msgctxt "MSG_WR_BCC (2533//)"
+msgid "_Bcc"
+msgstr ""
+
+msgctxt "MSG_WR_REPLYTO (2534//)"
+msgid "Reply _To"
+msgstr ""
