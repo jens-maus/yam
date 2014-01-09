@@ -6,6 +6,7 @@
 # 
 # Translators:
 # Translators:
+# Translators:
 # Andrija Antonijevic <antony-os4@heightanxiety.com>, 2001
 # damato <mail@jens-maus.de>, 2014
 # damato <mail@jens-maus.de>, 2014
@@ -15,7 +16,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-01-07 23:48+0100\n"
-"PO-Revision-Date: 2014-01-07 22:54+0000\n"
+"PO-Revision-Date: 2014-01-09 17:02+0000\n"
 "Last-Translator: damato <mail@jens-maus.de>\n"
 "Language-Team: Serbian (http://www.transifex.com/projects/p/yam/language/sr/)\n"
 "MIME-Version: 1.0\n"
@@ -3387,21 +3388,9 @@ msgctxt "MSG_WR_Description (949//)"
 msgid "D_escription"
 msgstr "_Opis"
 
-msgctxt "MSG_WR_CopyTo (950//)"
-msgid "C_opies to (CC)"
-msgstr "Kopije _za (CC)"
-
-msgctxt "MSG_WR_BlindCopyTo (951//)"
-msgid "Hidde_n copies to (BCC)"
-msgstr "Skrive_ne kopije za (BCC)"
-
 msgctxt "MSG_WR_From (952//)"
 msgid "_From"
 msgstr "_Od"
-
-msgctxt "MSG_WR_ReplyTo (953//)"
-msgid "Reply _to"
-msgstr "Od_govor na"
 
 msgctxt "MSG_WR_ExtraHeaders (954//)"
 msgid "_Additional headers"
@@ -8955,15 +8944,15 @@ msgid "_Continue|*_Abort"
 msgstr ""
 
 msgctxt "MSG_WR_MCCADDRFIELD (2346//)"
-msgid "CC address field"
+msgid "Cc Address Field"
 msgstr ""
 
 msgctxt "MSG_WR_MBCCADDRFIELD (2347//)"
-msgid "BCC address field"
+msgid "Bcc Address Field"
 msgstr ""
 
 msgctxt "MSG_WR_MREPLYTOADDRFIELD (2348//)"
-msgid "Reply-To address field"
+msgid "Reply-To Address Field"
 msgstr ""
 
 msgctxt "MSG_CO_LISTCOLUMNSETTINGS (2349//)"
@@ -9824,4 +9813,16 @@ msgstr ""
 #. DESCRIPTION
 msgctxt "MSG_TR_MAILCHECKFROM (2531//)"
 msgid "Checking mails from '%s'"
+msgstr ""
+
+msgctxt "MSG_WR_CC (2532//)"
+msgid "_Cc"
+msgstr ""
+
+msgctxt "MSG_WR_BCC (2533//)"
+msgid "_Bcc"
+msgstr ""
+
+msgctxt "MSG_WR_REPLYTO (2534//)"
+msgid "Reply _To"
 msgstr ""
