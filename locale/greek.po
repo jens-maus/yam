@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-01-07 23:48+0100\n"
-"PO-Revision-Date: 2014-01-10 17:44+0000\n"
+"PO-Revision-Date: 2014-01-10 18:23+0000\n"
 "Last-Translator: Phantom\n"
 "Language-Team: Greek (http://www.transifex.com/projects/p/yam/language/el/)\n"
 "MIME-Version: 1.0\n"
@@ -69,7 +69,7 @@ msgstr "Επεξεργασία..."
 
 msgctxt "MSG_Okay (16//)"
 msgid "_Ok"
-msgstr "_Εντάξει"
+msgstr "_OK"
 
 msgctxt "MSG_Use (17//)"
 msgid "_Use"
@@ -165,7 +165,7 @@ msgstr "Όνομα"
 
 msgctxt "MSG_Email (46//)"
 msgid "E-mail address"
-msgstr "Διεύθυνση Ε-mail"
+msgstr "Διεύθυνση e-mail"
 
 msgctxt "MSG_Address (47//)"
 msgid "Address"
@@ -367,7 +367,7 @@ msgstr "βίντεο Microsoft AVI"
 
 msgctxt "MSG_CTmessagerfc822 (106//)"
 msgid "E-mail message"
-msgstr "μήνυμα Ε-mail"
+msgstr "μήνυμα e-mail"
 
 msgctxt "MSG_LOG_Started (107//)"
 msgid "YAM started"
@@ -445,7 +445,7 @@ msgstr "Επεξεργάστηκε μήνυμα από '%s' προς '%s' με �
 #. RECIPIENT, SUBJECT, COUNT
 msgctxt "MSG_LOG_Creating (124//)"
 msgid "Wrote new message for '%s' about '%s', including %ld attachment(s)"
-msgstr "Συντάχθηκε νέο μήνυμα για '%s' με θέμα '%s', περιλαμβάνοντας %ld επισυνάψεις"
+msgstr "Συντάχτηκε νέο μήνυμα για '%s' με θέμα '%s', περιλαμβάνοντας %ld συνημμένα"
 
 #. SENDER, SUBJECT
 msgctxt "MSG_LOG_Replying (125//)"
@@ -699,7 +699,7 @@ msgstr "Περί MUI..."
 
 msgctxt "MSG_MA_LastErrors (202//)"
 msgid "Show last message"
-msgstr "Εμφάνιση τελευταίου μηνύματος"
+msgstr "Προβολή τελευταίου μηνύματος"
 
 msgctxt "MSG_MA_Restart (203//)"
 msgid "Restart"
