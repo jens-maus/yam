@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-01-07 23:48+0100\n"
-"PO-Revision-Date: 2014-01-10 13:50+0000\n"
+"PO-Revision-Date: 2014-01-10 14:05+0000\n"
 "Last-Translator: Phantom\n"
 "Language-Team: Greek (http://www.transifex.com/projects/p/yam/language/el/)\n"
 "MIME-Version: 1.0\n"
@@ -873,14 +873,14 @@ msgstr "Γειά σας,\\\\n"
 #. (e.g. "On %c you wrote:\\\\n")
 msgctxt "MSG_CO_AltRepIntroDef (269//)"
 msgid "<EMPTY>"
-msgstr ""
+msgstr "Στις %c γράψατε:\\\\\\\\n"
 
 #. Replace <EMPTY> with a pattern of domain names
 #. for which MSG_CO_AltRepIntroDef will be used
 #. (e.g. "#?.(en|uk|us|com)")
 msgctxt "MSG_CO_AltRepPatternDef (270//)"
 msgid "<EMPTY>"
-msgstr ""
+msgstr "#?.(gr|uk|us|com)"
 
 msgctxt "MSG_CO_ForwardIntroDef (271//)"
 msgid ""
@@ -901,21 +901,21 @@ msgstr "Μετά τιμής"
 #. becomes true (e.g. "Hello,\\\\n")
 msgctxt "MSG_CO_AltRepHelloDef (274//)"
 msgid "<EMPTY>"
-msgstr ""
+msgstr "Γειά σας,\\\\\\\\n"
 
 #. Replace <EMPTY> with an alternative bye phrase
 #. when replying to mails where MSG_CO_AltRepPatternDef
 #. becomes true (e.g. "Kind regards")
 msgctxt "MSG_CO_AltRepByeDef (275//)"
 msgid "<EMPTY>"
-msgstr ""
+msgstr "Μετά τιμής"
 
 #. Replace <EMPTY> with a hello phrase
 #. when replying to mails of an identifed mailing list
 #. (e.g. "Hi all,\\\\n")
 msgctxt "MSG_CO_MLRepHelloDef (276//)"
 msgid "<EMPTY>"
-msgstr ""
+msgstr "Γειά σε όλους,\\\\\\\\n"
 
 msgctxt "MSG_CO_MLRepIntroDef (277//)"
 msgid "On %c, %n wrote:\\\\n"
@@ -9815,11 +9815,11 @@ msgstr "Έλεγχος αλληλογραφίας από '%s'"
 
 msgctxt "MSG_WR_CC (2532//)"
 msgid "_Cc"
-msgstr ""
+msgstr "_Κοιν"
 
 msgctxt "MSG_WR_BCC (2533//)"
 msgid "_Bcc"
-msgstr ""
+msgstr "_Ιδ.Κοιν."
 
 msgctxt "MSG_WR_REPLYTO (2534//)"
 msgid "Reply _To"
