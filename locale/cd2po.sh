@@ -23,7 +23,7 @@
 # $Id$
 #
 
-VERSION="1.1"
+VERSION="1.2"
 
 ########################################################
 # Script starts here
@@ -434,22 +434,7 @@ BEGIN {
       }
       else if(output ~ /^;$/)
       {
-        # output the stuff
-        print ""
-        if(length(comment) > 0)
-        {
-          print comment
-        }
-        print "msgctxt \\"" msgctxt "\\""
-
-        if(length(msgid) <= 2)
-        {
-          print "msgid \\"<EMPTY>\\""
-        }
-        else
-        {
-          print "msgid " msgid
-        }
+        # nothing
       }
       else if(length(msgctxt) > 0)
       {
@@ -481,10 +466,45 @@ BEGIN {
 
     next
   }
-  else if($0 ~ /^;.*/)
+  else if($0 ~ /^;.*$/)
   {
-    tagfound=0
-    multiline=0
+    if(tagfound == 1)
+    {
+      # output the stuff
+      print ""
+      if(length(comment) > 0)
+      {
+        print comment
+      }
+      print "msgctxt \\"" msgctxt "\\""
+
+      # the .po format doesn't allow empty msgid
+      # strings, thus lets escape them with <EMPTY>
+      if(length(msgid) <= 2)
+      {
+        print "msgid \\"<EMPTY>\\""
+      }
+      else
+      {
+        # find out if this msgid is a multiline msgid or not
+        if(msgid ~ /\\n/)
+        {
+          print "msgid \\"\\""
+          print msgid
+        }
+        else
+        {
+          print "msgid " msgid
+        }
+      }
+
+      print "msgstr \\"" msgstr "\\""
+ 
+      tagfound=0
+      multiline=0
+    }
+
+    next
   }
 
   if(tagfound == 1)
@@ -502,22 +522,12 @@ BEGIN {
 
     if(multiline == 0)
     {
-      # the .po format doesn't allow empty msgid
-      # strings, thus lets escape them with <EMPTY>
-      if(length($0) == 0)
-      {
-        print "msgstr \\"<EMPTY>\\""
-      }
-      else
-      {
-        print "msgstr \\"" $0 "\\""
-      }
-
+      msgstr = $0
       multiline=1
     }
     else
     {
-      print "\\"" $0 "\\""
+      msgstr = msgstr $0
     }
   }
 }
