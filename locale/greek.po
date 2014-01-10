@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-01-07 23:48+0100\n"
-"PO-Revision-Date: 2014-01-09 17:02+0000\n"
+"PO-Revision-Date: 2014-01-10 11:29+0000\n"
 "Last-Translator: damato <mail@jens-maus.de>\n"
 "Language-Team: Greek (http://www.transifex.com/projects/p/yam/language/el/)\n"
 "MIME-Version: 1.0\n"
@@ -32,7 +32,7 @@ msgstr "Μήνυμα"
 
 msgctxt "MSG_Attachments (2//)"
 msgid "Attachments"
-msgstr "Συνημμένα"
+msgstr "Επισυνάψεις"
 
 msgctxt "MSG_Options (3//)"
 msgid "Options"
@@ -212,7 +212,7 @@ msgstr "Ημερομηνία σύνταξης:"
 
 msgctxt "MSG_UserLogin (65//)"
 msgid "Click your name to login:"
-msgstr "Κάντε κλικ στο όνομά σας για να εισέρθετε"
+msgstr "Κάντε κλικ στο όνομά σας για να συνδεθείτε:"
 
 msgctxt "MSG_ErrorStartup (67//)"
 msgid "Error during startup"
@@ -232,7 +232,7 @@ msgstr "Δημιουργία περιβάλλον χρήστη..."
 
 msgctxt "MSG_ErrorMuiApp (72//)"
 msgid "Can't create application"
-msgstr "Αδυναμία δημιουργίας εφαρμογής"
+msgstr "Αδύνατη η δημιουργία εφαρμογής"
 
 msgctxt "MSG_RebuildIndices (73//)"
 msgid "Rebuilding folders' indices..."
@@ -252,15 +252,15 @@ msgstr "Προετοιμασία βιβλιοθηκών και κλάσεων...
 
 msgctxt "MSG_ErrorAslStruct (78//)"
 msgid "Can't allocate ASL structure"
-msgstr "Αδυναμία κατανομής δομής ASL"
+msgstr "Αδύνατη η κατανομή δομής ASL"
 
 msgctxt "MSG_ErrorTimer (79//)"
 msgid "Can't open timer.device"
-msgstr "Αδυναμία ανοίγματος timer.device"
+msgstr "Αδύνατο το άνοιγμα της timer.device"
 
 msgctxt "MSG_ErrorARexx (80//)"
 msgid "Can't create ARexx port"
-msgstr "Αδυναμία δημιουργίας θύρας ARexx"
+msgstr "Αδύνατη η δημιουργία θύρας ARexx"
 
 msgctxt "MSG_LoadingGFX (81//)"
 msgid "Loading graphics..."
@@ -270,7 +270,7 @@ msgctxt "MSG_SendStartReq (82//)"
 msgid ""
 "The Outgoing folder contains unsent mail.\n"
 "Do you want to send these messages now?"
-msgstr "Ο φάκελος εξερχόμενα περιέχει μη σταλμένα μηνύματα.\nΘέλετε να τα στείλετε τώρα;"
+msgstr "Ο φάκελος 'Εξερχόμενα' περιέχει μη απεσταλμένα μηνύματα.\nΘέλετε να στείλετε αυτά τα μηνύματα τώρα;"
 
 msgctxt "MSG_QuitYAMReq (83//)"
 msgid "Do you really want to quit YAM?"
@@ -314,7 +314,7 @@ msgstr "αρχείο συμπίεσης ZIP"
 
 msgctxt "MSG_CTapplicationamigaexe (93//)"
 msgid "Amiga executable"
-msgstr "εκτελέσιμο Amiga"
+msgstr "εκτελέσιμο αρχείο Amiga"
 
 msgctxt "MSG_CTimagejpeg (94//)"
 msgid "JPEG/JFIF picture"
@@ -379,22 +379,22 @@ msgstr "Το YAM τερματίστηκε"
 #. USER_NAME
 msgctxt "MSG_LOG_LoggedIn (109//)"
 msgid "Logged in as user '%s'"
-msgstr "Συνδεδεμένος ως χρήστης '%s'"
+msgstr "Συνδεμένος ως χρήστης '%s'"
 
 #. USER_NAME, CONFIG_FILE, FOLDER_PATH
 msgctxt "MSG_LOG_LoggedInVerbose (110//)"
 msgid "Logged in as '%s', using configuration '%s' and mail directory '%s'"
-msgstr "Συνδεδεμένος ως '%s', χρησιμοποιώντας τις ρυθμίσεις '%s' και κατάλογο αλληλογραφίας '%s'"
+msgstr "Συνδεμένος ως '%s', χρησιμοποιώντας τις ρυθμίσεις '%s' και κατάλογο αλληλογραφίας '%s'"
 
 #. COUNT, FOLDER
 msgctxt "MSG_LOG_Deleting (111//)"
 msgid "Deleted %ld message(s) in folder '%s'"
-msgstr "Διαγράφτηκαν %ld μηνύματα στο φάκελο '%s'"
+msgstr "Διεγράφηκαν %ld μηνύματα στο φάκελο '%s'"
 
 #. SENDER, SUBJECT, FOLDER
 msgctxt "MSG_LOG_DeletingVerbose (112//)"
 msgid "Deleted message from '%s' about '%s' in folder '%s'"
-msgstr "Διαγράφτηκε μήνυμα από '%s' με θέμα '%s' στο φάκελο '%s'"
+msgstr "Διεγράφηκε μήνυμα από '%s' με θέμα '%s' στο φάκελο '%s'"
 
 #. COUNT, FOLDER, FOLDER
 msgctxt "MSG_LOG_Moving (113//)"
@@ -409,12 +409,12 @@ msgstr "Μετακινήθηκε το μήνυμα από '%s' με θέμα '%s
 #. COUNT, FOLDER, FOLDER
 msgctxt "MSG_LOG_Copying (115//)"
 msgid "Copied %ld message(s) from folder '%s' to '%s'"
-msgstr "Αντιγράφτηκαν %ld μηνύματα από το φάκελο '%s' στο φάκελο '%s'"
+msgstr "Αντιγράφηκαν %ld μηνύματα από το φάκελο '%s' στο φάκελο '%s'"
 
 #. SENDER, SUBJECT, FOLDER, FOLDER
 msgctxt "MSG_LOG_CopyingVerbose (116//)"
 msgid "Copied message from '%s' about '%s' from folder '%s' to '%s'"
-msgstr "Αντιγράφτηκε το μήνυμα από '%s' με θέμα '%s' από το φάκελο '%s' στο φάκελο '%s'"
+msgstr "Αντιγράφηκε το μήνυμα από '%s' με θέμα '%s' από το φάκελο '%s' στο φάκελο '%s'"
 
 #. SENDER, SUBJECT, SIZE
 msgctxt "MSG_LOG_RetrievingVerbose (118//)"
@@ -429,12 +429,12 @@ msgstr "Συνδέθηκε στον SMTP διακομιστή '%s'"
 #. RECIPIENT, SUBJECT, SIZE
 msgctxt "MSG_LOG_SendingVerbose (121//)"
 msgid "Sent message to '%s' about '%s' (%ld bytes)"
-msgstr "Εστάλει μήνυμα προς '%s' με θέμα '%s' (%ld bytes)"
+msgstr "Εστάλθηκε μήνυμα προς '%s' με θέμα '%s' (%ld bytes)"
 
 #. COUNT, HOST
 msgctxt "MSG_LOG_Sending (122//)"
 msgid "Sent %ld message(s) using SMTP server '%s'"
-msgstr "Εστάλησαν %ld μηνύματα χρησιμοποιώντας τον SMTP διακομιστή '%s'"
+msgstr "Εστάλθησαν %ld μηνύματα χρησιμοποιώντας τον SMTP διακομιστή '%s'"
 
 #. SENDER, RECIPIENT, SUBJECT
 msgctxt "MSG_LOG_Editing (123//)"
@@ -444,7 +444,7 @@ msgstr "Επεξεργάστηκε μήνυμα από '%s' προς '%s' με �
 #. RECIPIENT, SUBJECT, COUNT
 msgctxt "MSG_LOG_Creating (124//)"
 msgid "Wrote new message for '%s' about '%s', including %ld attachment(s)"
-msgstr "Συντάχτηκε νέο μήνυμα για '%s' με θέμα '%s', περιλαμβάνοντας %ld συνημμένα"
+msgstr "Συντάχθηκε νέο μήνυμα για '%s' με θέμα '%s', περιλαμβάνοντας %ld επισυνάψεις"
 
 #. SENDER, SUBJECT
 msgctxt "MSG_LOG_Replying (125//)"
@@ -488,7 +488,7 @@ msgstr "Έγινε εξαγωγή %ld μηνυμάτων από το φάκελ�
 #. FILENAME, MAILFILE, FOLDER
 msgctxt "MSG_LOG_SavingAtt (135//)"
 msgid "Saved attachment '%s' of message '%s' in folder '%s'"
-msgstr "Αποθηκεύτηκε το συνημμένο '%s' του μηνύματος '%s' στο φάκελο '%s'"
+msgstr "Αποθηκεύτηκε η επισύναψη '%s' του μηνύματος '%s' στο φάκελο '%s'"
 
 #. SUBJECT, MAILFILE, FOLDER, SUBJECT
 msgctxt "MSG_LOG_ChangingSubject (137//)"
@@ -505,7 +505,7 @@ msgstr "Φόρτωση"
 
 msgctxt "MSG_UT_PGPPassReq (140//)"
 msgid "Please enter your PGP passphrase:"
-msgstr "Παρακαλώ εισάγετε την φράση PGP:"
+msgstr "Παρακαλώ εισάγετε την φράση σας PGP:"
 
 #. FOLDER
 msgctxt "MSG_MA_GetFolderPass (144//)"
@@ -523,7 +523,7 @@ msgstr "Το επιλεγμένο μήνυμα έχει πολλούς παρα�
 
 msgctxt "MSG_MA_ReplyReqOpt (150//)"
 msgid "*_Sender|Sender and _all Recipients|_Recipients|_Cancel"
-msgstr "*α_ποστολέα|αποστολέα και ό_λους τους παραλήπτες|πα_ραλήπτες|_Ακύρωση"
+msgstr "*_Αποστολέα|Αποστολέα και ό_λους τους Παραλήπτες|Πα_ραλήπτες|Α_κύρωση"
 
 #. ADDRESS, ADDRESS
 msgctxt "MSG_MA_CompareReq (151//)"
@@ -532,15 +532,15 @@ msgid ""
 "return address (Reply-To) is \\033b<%s>\\033n.\n"
 "\n"
 "To which address do you want to reply to?"
-msgstr "Η διεύθυνση αποστολέα (Από) είναι \\033b<%s>\\033n, αλλά\nη διεύθυνση επιστροφής (Απάντηση-Προς) είναι \\033b<%s>\\033n.\nΣε ποιά διεύθυνση θέλετε να απαντήσετε;"
+msgstr "Η διεύθυνση αποστολέα (Από) είναι \\033b<%s>\\033n, αλλά\nη διεύθυνση επιστροφής (Απάντηση-Προς) είναι \\033b<%s>\\033n.\n\nΣε ποιά διεύθυνση θέλετε να απαντήσετε;"
 
 msgctxt "MSG_MA_Compare3ReqOpt (152//)"
 msgid "_From|*_Reply-To|_Both|_Cancel"
-msgstr "Α_πό|*Απάντηση-Π_ρος|Α_μφότερες|_Ακύρωση"
+msgstr "_Από|*Απάντηση-_Προς|Α_μφότερες|Α_κύρωση"
 
 msgctxt "MSG_MA_Compare2ReqOpt (153//)"
 msgid "_From|*_Reply-To|_Cancel"
-msgstr "Α_πό|*Απάντηση-Π_ρος|_Ακύρωση"
+msgstr "_Από|*Απάντηση-_Προς|Α_κύρωση"
 
 msgctxt "MSG_MA_ConfirmReq (155//)"
 msgid "Confirmation Request"
@@ -555,7 +555,7 @@ msgid ""
 "%3ld forwarded,\n"
 "%3ld moved,\n"
 "%3ld deleted"
-msgstr "Το φιλτράρισμα έγινε:\n\n%3ld μηνύματα ελέγχθηκαν,\n%3ld προωθήθηκαν,\n%3ld αρχειοθετήθηκαν,\n%3ld διαγράφηκαν"
+msgstr "Το φιλτράρισμα έγινε:\n\n%3ld μηνύματα ελέγχθηκαν,\n%3ld προωθήθηκαν,\n%3ld μετακινήθηκαν,\n%3ld διαγράφηκαν"
 
 msgctxt "MSG_MA_ExportAppendReq (161//)"
 msgid ""
@@ -650,7 +650,7 @@ msgstr "_Διαγραφή"
 
 msgctxt "MSG_MA_TBGetAddr (188//8)"
 msgid "Ge_tAdd"
-msgstr "_Λήψη Διεύθ."
+msgstr "_Λήψη διεύθ."
 
 msgctxt "MSG_MA_TBWrite (189//8)"
 msgid "_New"
@@ -678,11 +678,11 @@ msgstr "_Φίλτρο"
 
 msgctxt "MSG_MA_TBFind (195//8)"
 msgid "_Find"
-msgstr "_Εύρεση"
+msgstr "Ανα_ζήτηση"
 
 msgctxt "MSG_MA_TBAddrBook (196//8)"
 msgid "A_book"
-msgstr "_Βιβλίο Διευθ."
+msgstr "_Βιβλίο διευθ."
 
 msgctxt "MSG_MA_TBConfig (197//8)"
 msgid "_Config"
@@ -759,7 +759,7 @@ msgctxt "MSG_HELP_MA_BT_READ (247//)"
 msgid ""
 "Display the contents of\n"
 "the current message."
-msgstr "Εμφανίστε τα περιεχόμενα του\nτρέχων μηνύματος."
+msgstr "Προβάλετε τα περιεχόμενα\nτου τρέχων μηνύματος."
 
 msgctxt "MSG_HELP_MA_BT_EDIT (248//)"
 msgid ""
@@ -771,7 +771,7 @@ msgctxt "MSG_HELP_MA_BT_MOVE (249//)"
 msgid ""
 "Move selected message(s)\n"
 "to another folder."
-msgstr "Μετακινήστε τα επιλεγμένα μηνύματα\nσε άλλο φάκελο."
+msgstr "Μετακινήστε τα επιλεγμένα\nμηνύματα σε άλλο φάκελο."
 
 msgctxt "MSG_HELP_MA_BT_DELETE (250//)"
 msgid "Delete selected message(s)."
@@ -781,7 +781,7 @@ msgctxt "MSG_HELP_MA_BT_GETADDRESS (251//)"
 msgid ""
 "Save sender's address\n"
 "in your address book."
-msgstr "Αποθηκεύστε την διεύθυνση αποστολέα\nστο βιβλίο διευθύνσεων."
+msgstr "Αποθηκεύστε την διεύθυνση αποστολέα\nστο βιβλίο διευθύνσεών σας."
 
 msgctxt "MSG_HELP_MA_BT_WRITE (252//)"
 msgid "Compose a new message."
@@ -791,7 +791,7 @@ msgctxt "MSG_HELP_MA_BT_REPLY (253//)"
 msgid ""
 "Reply to the\n"
 "selected message(s)."
-msgstr "Απαντήστε στο\nεπιλεγμένο μήνυμα."
+msgstr "Απαντήστε στα\nεπιλεγμένα μηνύματα."
 
 msgctxt "MSG_HELP_MA_BT_FORWARD (254//)"
 msgid ""
@@ -809,7 +809,7 @@ msgctxt "MSG_HELP_MA_BT_SENDALL (256//)"
 msgid ""
 "Send queued messages\n"
 "in the Outgoing folder."
-msgstr "Στείλτε τα μηνύματα αναμονής\nστο φάκελο εξερχόμενα."
+msgstr "Στείλτε τα μηνύματα αναμονής\nστο φάκελο 'Εξερχόμενα'."
 
 msgctxt "MSG_HELP_MA_BT_FILTER (257//)"
 msgid ""
@@ -819,7 +819,7 @@ msgid ""
 "Please note that if 2 or more\n"
 "messages are currently selected,\n"
 "only those will be filtered."
-msgstr "Εφαρμόστε τα φίλτρα στα μηνύματα\nσε αυτό το φάκελο.\n\nΕάν έχουν επιλεχτεί 2 ή περισσότερα\nμηνύματα, μόνο αυτά θα φιλτραριστούν."
+msgstr "Εφαρμόστε τα φίλτρα στα μηνύματα\nσε αυτόν το φάκελο.\n\nΣημειώστε ότι αν έχουν επιλεχτεί 2 ή περισσότερα\nμηνύματα, μόνο αυτά θα φιλτραριστούν."
 
 msgctxt "MSG_HELP_MA_BT_SEARCH (258//)"
 msgid "Search your mail folders."
@@ -853,7 +853,7 @@ msgid ""
 "server name or e-mail address).\n"
 "\n"
 "Please fill in these fields and try again."
-msgstr "Λανθασμένη ρύθμιση (λείπουν τα ονόματα διακομιστών SMTP/POP3\nή οι διευθύνσεις ταχυδρομείου).\n\nΠαρακαλώ συμπληρώστε αυτά τα πεδία και ξαναπροσπαθήστε!"
+msgstr "Λανθασμένη ρύθμιση (λείπουν τα ονόματα διακομιστών\nSMTP/POP3 ή οι διευθύνσεις ταχυδρομείου).\n\nΠαρακαλώ συμπληρώστε αυτά τα πεδία και ξαναπροσπαθήστε!"
 
 msgctxt "MSG_CO_ImportMIMEReq (266//)"
 msgid "Import settings from..."
@@ -918,7 +918,7 @@ msgstr ""
 
 msgctxt "MSG_CO_MLRepIntroDef (277//)"
 msgid "On %c, %n wrote:\\\\n"
-msgstr "Στις %c, %n έγγραψε:\\\\n"
+msgstr "Στις %c, ο/η %n έγγραψε:\\\\n"
 
 msgctxt "MSG_CO_MLRepByeDef (278//)"
 msgid "Regards"
