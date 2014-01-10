@@ -7,14 +7,15 @@
 # Translators:
 # Translators:
 # Translators:
+# NATMAN <ejim@ono.com>, 2014
 # Emilio Jimenez <ejim@ono.com>, 2013
 msgid ""
 msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-01-07 23:48+0100\n"
-"PO-Revision-Date: 2014-01-09 17:02+0000\n"
-"Last-Translator: damato <mail@jens-maus.de>\n"
+"PO-Revision-Date: 2014-01-10 23:49+0000\n"
+"Last-Translator: NATMAN <ejim@ono.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/projects/p/yam/language/es/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -872,14 +873,14 @@ msgstr "Hola,\\\\n"
 #. (e.g. "On %c you wrote:\\\\n")
 msgctxt "MSG_CO_AltRepIntroDef (269//)"
 msgid "<EMPTY>"
-msgstr ""
+msgstr "El %c escribió:\\\\\\\\n"
 
 #. Replace <EMPTY> with a pattern of domain names
 #. for which MSG_CO_AltRepIntroDef will be used
 #. (e.g. "#?.(en|uk|us|com)")
 msgctxt "MSG_CO_AltRepPatternDef (270//)"
 msgid "<EMPTY>"
-msgstr ""
+msgstr "#?.(es|com|org)"
 
 msgctxt "MSG_CO_ForwardIntroDef (271//)"
 msgid ""
@@ -900,21 +901,21 @@ msgstr "Saludos Cordiales"
 #. becomes true (e.g. "Hello,\\\\n")
 msgctxt "MSG_CO_AltRepHelloDef (274//)"
 msgid "<EMPTY>"
-msgstr ""
+msgstr "Hola, \\\\\\\\n"
 
 #. Replace <EMPTY> with an alternative bye phrase
 #. when replying to mails where MSG_CO_AltRepPatternDef
 #. becomes true (e.g. "Kind regards")
 msgctxt "MSG_CO_AltRepByeDef (275//)"
 msgid "<EMPTY>"
-msgstr ""
+msgstr "Saludos"
 
 #. Replace <EMPTY> with a hello phrase
 #. when replying to mails of an identifed mailing list
 #. (e.g. "Hi all,\\\\n")
 msgctxt "MSG_CO_MLRepHelloDef (276//)"
 msgid "<EMPTY>"
-msgstr ""
+msgstr "Hola a todos, \\\\\\\\n"
 
 msgctxt "MSG_CO_MLRepIntroDef (277//)"
 msgid "On %c, %n wrote:\\\\n"
@@ -8942,15 +8943,15 @@ msgstr "_Continuar|*_Abortar"
 
 msgctxt "MSG_WR_MCCADDRFIELD (2346//)"
 msgid "Cc Address Field"
-msgstr ""
+msgstr "Campo dirección CC"
 
 msgctxt "MSG_WR_MBCCADDRFIELD (2347//)"
 msgid "Bcc Address Field"
-msgstr ""
+msgstr "Campo dirección CCO"
 
 msgctxt "MSG_WR_MREPLYTOADDRFIELD (2348//)"
 msgid "Reply-To Address Field"
-msgstr ""
+msgstr "Dirección de Responder a"
 
 msgctxt "MSG_CO_LISTCOLUMNSETTINGS (2349//)"
 msgid "Column settings"
@@ -9572,7 +9573,7 @@ msgstr "%ld mensaje(s) filtrado(s) con %ld coincide(n)"
 
 msgctxt "MSG_FO_JUMP_TO_UNREAD_MESSAGE (2476//)"
 msgid "Jump to first unread message"
-msgstr ""
+msgstr "Ir al primer mensaje no leído"
 
 msgctxt "MSG_HELP_FO_CH_JUMPTOUNREAD (2477//)"
 msgid ""
@@ -9582,7 +9583,7 @@ msgstr ""
 
 msgctxt "MSG_FO_JUMP_TO_RECENT_MESSAGE (2478//)"
 msgid "Jump to newest message"
-msgstr ""
+msgstr "Ir al mensaje más reciente"
 
 msgctxt "MSG_HELP_FO_CH_JUMPTORECENT (2479//)"
 msgid ""
@@ -9592,85 +9593,85 @@ msgstr ""
 
 msgctxt "MSG_FO_MAXAGE_DAYS (2480//)"
 msgid "days"
-msgstr ""
+msgstr "días"
 
 msgctxt "MSG_QUICKSEARCH_FILTER_LIST (2481//)"
 msgid "Filter list..."
-msgstr ""
+msgstr "Lista de filtros..."
 
 msgctxt "MSG_QUICKSEARCH_FROM (2482//)"
 msgid "Sender"
-msgstr ""
+msgstr "Remitente"
 
 msgctxt "MSG_QUICKSEARCH_TO (2483//)"
 msgid "Receiver"
-msgstr ""
+msgstr "Destinatario"
 
 msgctxt "MSG_QUICKSEARCH_SUBJECT (2484//)"
 msgid "Subject"
-msgstr ""
+msgstr "Asunto"
 
 msgctxt "MSG_QUICKSEARCH_BODY (2485//)"
 msgid "Mail body"
-msgstr ""
+msgstr "Contenido del mensaje"
 
 msgctxt "MSG_CO_CHECK_FOR_MISSING_ATTACHMENTS (2486//)"
 msgid "Check for missing attachments"
-msgstr ""
+msgstr "Verificar la existencia de anexos "
 
 msgctxt "MSG_CO_ATTACHMENT_KEYWORDS (2487//)"
 msgid "Keywords:"
-msgstr ""
+msgstr "Palabras clave:"
 
 msgctxt "MSG_HELP_CO_CH_ATTACHMENTREMINDER (2495//)"
 msgid ""
 "Would you like to be warned if the\n"
 "mail body suggests the existance of\n"
 "an attachment but these are missing?"
-msgstr ""
+msgstr "Desearía ser advertido si el contenido\ndel mensaje sugiere la existencia de un\nanexo/s pero estos no están incluídos? "
 
 msgctxt "MSG_HELP_CO_LV_ATTACHMENTKEYWORDS (2496//)"
 msgid ""
 "Configure the keywords which might\n"
 "suggest the desired existance of an\n"
 "attachment."
-msgstr ""
+msgstr "Configure las palabras clave que deberían\nsugerir la existencia del anexo deseado."
 
 msgctxt "MSG_ATTACHMENT_KEYWORDS (2497//)"
 msgid "attachment,attach,attached,attaching,enclosed,CV,cover letter"
-msgstr ""
+msgstr "anexo, adjunto, adjuntado, añadido, incluído,CV,incluyo"
 
 msgctxt "MSG_ATTACHMENT_REMIND_INFO (2498//)"
 msgid "Did you possibly forget to add an attachment?"
-msgstr ""
+msgstr "Olvidó añadir un anexo?"
 
 msgctxt "MSG_ATTACHMENT_REMIND_ADD (2499//)"
 msgid "Add attachment..."
-msgstr ""
+msgstr "Añadir anexo..."
 
 msgctxt "MSG_ATTACHMENT_REMIND_LATER (2500//)"
 msgid "Remind me later"
-msgstr ""
+msgstr "Recordarme más tarde"
 
 msgctxt "MSG_WR_NO_ATTACHMENTS_TITLE (2501//)"
 msgid "Attachment reminder"
-msgstr ""
+msgstr "Recordatorio de anexo"
 
 msgctxt "MSG_WR_NO_ATTACHMENTS (2502//)"
 msgid "Did you forget to add an attachment?"
-msgstr ""
+msgstr "Olvido añadir un anexo?"
 
 msgctxt "MSG_WR_NO_ATTACHMENTS_GADS (2503//)"
 msgid "Yes, I did|No, send now"
-msgstr ""
+msgstr "Si, efectivamente|No, enviar ahora"
 
 msgctxt "MSG_CO_MAILACCOUNT_TRANSFERRED (2504//)"
 msgid "Mail account"
-msgstr ""
+msgstr "Cuenta de correo"
 
 msgctxt "MSG_MAILACCOUNT_TRANSFERRED (2505//)"
 msgid "Mail account"
-msgstr ""
+msgstr "Cuenta de correo"
 
 msgctxt "MSG_CO_SAVE_LAYOUT (2506//)"
 msgid "Save user interface layout"
@@ -9685,59 +9686,59 @@ msgstr ""
 
 msgctxt "MSG_CO_SMTP_FOLDERS (2508//)"
 msgid "Default folders"
-msgstr ""
+msgstr "Carpetas por defecto"
 
 msgctxt "MSG_CO_SMTP_SENTFOLDER (2509//)"
 msgid "'Sent' folder"
-msgstr ""
+msgstr "Carpeta 'Enviados'"
 
 msgctxt "MSG_HELP_CO_PO_SMTP_SENTFOLDER (2510//)"
 msgid ""
 "Allows to set a different folder where mails\n"
 "will be stored after being sent out."
-msgstr ""
+msgstr "Permite definir diferentes carpetas donde los mensajes\nse guardarán después de ser enviados."
 
 msgctxt "MSG_CO_IDENTITY_SAVESENTMAIL (2511//)"
 msgid "After transfer store mails in 'Sent' folder"
-msgstr ""
+msgstr "Después de enviar almacenar los correos en la carpeta 'Enviados'"
 
 msgctxt "MSG_HELP_CO_CH_IDENTITY_SAVESENTMAIL (2512//)"
 msgid ""
 "If enabled, sent mails will be stored after\n"
 "the mail transfer. Otherwise the sent mails\n"
 "will be deleted."
-msgstr ""
+msgstr "Si está activado, los mensajes enviados se guardarán\ndespués de la transferencia de correo. En caso contrario\nlos mensajes enviados serán borrados."
 
 msgctxt "MSG_CO_IDENTITY_ALTSENTFOLDER (2513//)"
 msgid "Use alternative 'Sent' folder:"
-msgstr ""
+msgstr "Usar carpeta alternativa 'Enviados':"
 
 msgctxt "MSG_HELP_CO_CH_IDENTITY_ALTSENTFOLDER (2514//)"
 msgid ""
 "If enabled, sent mails will be stored in an\n"
 "alternative mail folder than configured in\n"
 "the TCP/IP section of the configuration."
-msgstr ""
+msgstr "Si está activado, los mensajes enviados se guardarán\nen una carpeta de correo alternativa que se define\nen la sección TCP/IP de la configuración."
 
 msgctxt "MSG_HELP_CO_TX_IDENTITY_ALTSENTFOLDER (2515//)"
 msgid ""
 "Allows to specify which alternative mail\n"
 "folder should be used when storing sent mail."
-msgstr ""
+msgstr "Permite especificar que carpeta alternativa de \ncorreo deberá usarse para guardar los mensajes enviados."
 
 msgctxt "MSG_CO_POP_FOLDERS (2516//)"
 msgid "Default folders"
-msgstr ""
+msgstr "Carpetas por defecto"
 
 msgctxt "MSG_CO_POP_INCOMINGFOLDER (2517//)"
 msgid "'Incoming' folder"
-msgstr ""
+msgstr "Carpeta 'Entrada'"
 
 msgctxt "MSG_HELP_CO_PO_POP_INCOMINGFOLDER (2518//)"
 msgid ""
 "Allows to set a different folder where mails\n"
 "will be stored after having received them."
-msgstr ""
+msgstr "Permite definir una carpeta diferente donde los\nmensajes se guardarán después de recibirlos."
 
 #. !!! NOTE !!!
 #. When translating MSG_LANGUAGE_CODE please put the
@@ -9759,15 +9760,15 @@ msgid ""
 "This combination might cause malformed characters.\n"
 "\n"
 "Do you want to deactivate the cyrillic charset detection?"
-msgstr ""
+msgstr "Detección automática de juego de caracteres cirílicos está activada,\npero el juego de caracteres configurado '%s' no es un juego de caracteres cirílico.\nEsta combinación podría causar caracteres incorrectos.\n\nDesea desactivar la detección del juego de caracteres cirílicos?"
 
 msgctxt "MSG_CO_CYRILLICCHARSETWARN_BT (2521//)"
 msgid "*_Deactivate|_Ignore"
-msgstr ""
+msgstr "*_Desactivar|_Ignorar"
 
 msgctxt "MSG_WR_NORCPT_WARNING_GADGET (2522//)"
 msgid "_Save as draft|*_Cancel"
-msgstr ""
+msgstr "_Salvar como borrador|*_Cancelar"
 
 msgctxt "MSG_WR_NORCPT_WARNING (2523//)"
 msgid ""
@@ -9775,33 +9776,33 @@ msgid ""
 "no recipient had been specified.\n"
 "\n"
 "How do you want to proceed?"
-msgstr ""
+msgstr "El mensaje está incompleto ya que\nno se ha especificado destinatario.\n\nComo quiere proceder?"
 
 msgctxt "MSG_WR_DISCARDCHANGES_GADGET (2524//)"
 msgid "*_Save as draft|_Discard|_Cancel"
-msgstr ""
+msgstr "*_Salvar como borrador|_Descartar|_Cancelar"
 
 msgctxt "MSG_MA_NO_SUBJECT (2525//)"
 msgid "(No Subject)"
-msgstr ""
+msgstr "(Sin asunto)"
 
 msgctxt "MSG_MA_NO_RECIPIENTS (2526//)"
 msgid "(No Recipients)"
-msgstr ""
+msgstr "(Sin Destinatarios)"
 
 msgctxt "MSG_WR_CANCEL (2527//)"
 msgid "_Cancel"
-msgstr ""
+msgstr "_Cancelar"
 
 msgctxt "MSG_HELP_WR_BT_CANCEL (2528//)"
 msgid ""
 "Aborts the mail editing and\n"
 "closes the window."
-msgstr ""
+msgstr "Abortar la edición del mensaje y\ncerrar la ventana."
 
 msgctxt "MSG_MA_REPLYREQ_OPTIONS2 (2529//)"
 msgid "*_Sender|Sender and _all Recipients|_Cancel"
-msgstr ""
+msgstr "*_Remitente|Remitente y _todos los destinatarios|_Cancelar"
 
 msgctxt "MSG_ABOUT_DONATE_TEXT (2530//)"
 msgid "Secure the future of YAM"
@@ -9810,16 +9811,16 @@ msgstr ""
 #. DESCRIPTION
 msgctxt "MSG_TR_MAILCHECKFROM (2531//)"
 msgid "Checking mails from '%s'"
-msgstr ""
+msgstr "Comprobar mensajes desde '%s'"
 
 msgctxt "MSG_WR_CC (2532//)"
 msgid "_Cc"
-msgstr ""
+msgstr "_CC"
 
 msgctxt "MSG_WR_BCC (2533//)"
 msgid "_Bcc"
-msgstr ""
+msgstr "CC_O"
 
 msgctxt "MSG_WR_REPLYTO (2534//)"
 msgid "Reply _To"
-msgstr ""
+msgstr "_Responder a"
