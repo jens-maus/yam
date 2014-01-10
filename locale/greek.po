@@ -7,14 +7,15 @@
 # Translators:
 # Translators:
 # Translators:
+# Phantom, 2014
 # Antonis Iliakis <amiga.phantom@yahoo.gr>, 2013
 msgid ""
 msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-01-07 23:48+0100\n"
-"PO-Revision-Date: 2014-01-10 12:44+0000\n"
-"Last-Translator: damato <mail@jens-maus.de>\n"
+"PO-Revision-Date: 2014-01-10 13:50+0000\n"
+"Last-Translator: Phantom\n"
 "Language-Team: Greek (http://www.transifex.com/projects/p/yam/language/el/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -9822,4 +9823,4 @@ msgstr ""
 
 msgctxt "MSG_WR_REPLYTO (2534//)"
 msgid "Reply _To"
-msgstr ""
+msgstr "Απά_ντηση προς"
