@@ -7,6 +7,7 @@
 # Translators:
 # Translators:
 # Translators:
+# abalaban <transifex@balaban.fr>, 2014
 # Alexandre Balaban <abalaban@free.fr>, 2013
 # abalaban <transifex@balaban.fr>, 2014
 msgid ""
@@ -14,8 +15,8 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-01-07 23:48+0100\n"
-"PO-Revision-Date: 2014-01-09 17:26+0000\n"
-"Last-Translator: abalaban <transifex@balaban.fr>\n"
+"PO-Revision-Date: 2014-01-11 23:44+0000\n"
+"Last-Translator: damato <mail@jens-maus.de>\n"
 "Language-Team: French (http://www.transifex.com/projects/p/yam/language/fr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -864,16 +865,17 @@ msgctxt "MSG_CO_ImportMIMEGads (267//)"
 msgid "*_MIME.prefs|m_ailcap|m_ime.types|_Cancel"
 msgstr "*_MIME.prefs|mail_cap|m_ime.types|_Annuler"
 
+#. Please keep the number of backslashes (e.g. \\n)
 msgctxt "MSG_CO_NewIntroDef (268//)"
-msgid "Hello,\\\\n"
-msgstr "Salut,\\\\n"
+msgid "Hello,\\n"
+msgstr "Salut,\\n"
 
 #. Replace <EMPTY> with a reply intro phrase which
 #. will be used when MSG_CO_AltRepPatternDef is true
-#. (e.g. "On %c you wrote:\\\\n")
+#. (e.g. "On %c you wrote:\\n")
 msgctxt "MSG_CO_AltRepIntroDef (269//)"
 msgid "<EMPTY>"
-msgstr "On %c you wrote:\\\\\\\\n"
+msgstr "On %c you wrote:\\\\n"
 
 #. Replace <EMPTY> with a pattern of domain names
 #. for which MSG_CO_AltRepIntroDef will be used
@@ -882,15 +884,17 @@ msgctxt "MSG_CO_AltRepPatternDef (270//)"
 msgid "<EMPTY>"
 msgstr "#?.(en|uk|us|com)"
 
+#. Please keep the number of backslashes (e.g. \\n)
 msgctxt "MSG_CO_ForwardIntroDef (271//)"
 msgid ""
-"*** Begin of forwarded message ***\\\\n\\\\nDate: %c\\\\nFrom: %n "
-"<%e>\\\\nSubject: %s\\\\n\\\\n--- Forwarded message follows ---\\\\n\\\\n"
-msgstr "*** Message retransmis ***\\\\n\\\\nDate : %c\\\\nDe : %n <%e>\\\\nSujet : %s\\\\n\\\\n--- Début du message retransmis ---\\\\n\\\\n"
+"*** Begin of forwarded message ***\\n\\nDate: %c\\nFrom: %n <%e>\\nSubject: "
+"%s\\n\\n--- Forwarded message follows ---\\n\\n"
+msgstr "*** Message retransmis ***\\n\\nDate : %c\\nDe : %n <%e>\\nSujet : %s\\n\\n--- Début du message retransmis ---\\n\\n"
 
+#. Please keep the number of backslashes (e.g. \\n)
 msgctxt "MSG_CO_ForwardFinishDef (272//)"
-msgid "*** End of forwarded message ***\\\\n"
-msgstr "*** Fin du message retransmis ***\\\\n"
+msgid "*** End of forwarded message ***\\n"
+msgstr "*** Fin du message retransmis ***\\n"
 
 msgctxt "MSG_CO_GreetingsDef (273//)"
 msgid "Kind regards"
@@ -898,7 +902,7 @@ msgstr "Mes salutations"
 
 #. Replace <EMPTY> with an alternative hello phrase
 #. when replying to mails where MSG_CO_AltRepPatternDef
-#. becomes true (e.g. "Hello,\\\\n")
+#. becomes true (e.g. "Hello,\\n")
 msgctxt "MSG_CO_AltRepHelloDef (274//)"
 msgid "<EMPTY>"
 msgstr "Bonjour,\\n"
@@ -912,22 +916,24 @@ msgstr "Best regards"
 
 #. Replace <EMPTY> with a hello phrase
 #. when replying to mails of an identifed mailing list
-#. (e.g. "Hi all,\\\\n")
+#. (e.g. "Hi all,\\n")
 msgctxt "MSG_CO_MLRepHelloDef (276//)"
 msgid "<EMPTY>"
-msgstr "Hi all,\\\\\\\\n"
+msgstr "Hi all,\\\\n"
 
+#. Please keep the number of backslashes (e.g. \\n)
 msgctxt "MSG_CO_MLRepIntroDef (277//)"
-msgid "On %c, %n wrote:\\\\n"
-msgstr "Le %c, %n a écrit :\\\\n"
+msgid "On %c, %n wrote:\\n"
+msgstr "Le %c, %n a écrit :\\n"
 
 msgctxt "MSG_CO_MLRepByeDef (278//)"
 msgid "Regards"
 msgstr "Salutations"
 
+#. Please keep the number of backslashes (e.g. \\n)
 msgctxt "MSG_CO_LineBreak (279//)"
-msgid "\\\\n  Line break"
-msgstr "\\\\n  Saut de ligne"
+msgid "\\n  Line break"
+msgstr "\\n  Saut de ligne"
 
 msgctxt "MSG_CO_SenderName (280//)"
 msgid "%n  Original sender: Name"
