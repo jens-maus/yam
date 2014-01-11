@@ -157,7 +157,13 @@ BEGIN {
     }
 
     tmp=substr($0, 2)
+
+    # remove any leading white space
     gsub(/^ /, "", tmp)
+
+    # replace \\\\ by \\
+    gsub(/\\\\\\\\/, "\\\\", tmp)
+
     comment = comment "#. " tmp
     multiline=0
 
@@ -177,6 +183,9 @@ BEGIN {
     # sure to check if \" is already there
     gsub(/\\\\"/, "\\"") # replace \" with "
     gsub(/"/, "\\\\\\"") # replace " with \"
+
+    # replace \\\\ by \\
+    gsub(/\\\\\\\\/, "\\\\")
 
     if(multiline == 0)
     {
@@ -258,6 +267,9 @@ BEGIN {
       comment = comment "\\n"
     }
 
+    # replace \\ by \\\\
+    gsub(/\\\\\\\\/, "\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\")
+
     comment = comment "; " substr($0, length($1)+2)
   }
   else if(length($0) == 0 && length(tag) != 0)
@@ -288,6 +300,9 @@ BEGIN {
       gsub(/^"/, "", tmp)
       gsub(/"$/, "", tmp)
 
+      # replace \\ by \\\\
+      gsub(/\\\\\\\\/, "\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\", tmp)
+
       if(length(tmp) > 0)
       {
         # replace "<EMPTY>" with ""
@@ -311,6 +326,9 @@ BEGIN {
       # strip quotes (") from start&end
       gsub(/^"/, "")
       gsub(/"$/, "")
+
+      # replace \\ by \\\\
+      gsub(/\\\\\\\\/, "\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\")
 
       if(length(msgid) > 0)
       {

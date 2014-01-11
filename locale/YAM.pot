@@ -526,11 +526,11 @@ msgstr "*_Sender|Sender and _all Recipients|_Recipients|_Cancel"
 #. ADDRESS, ADDRESS
 msgctxt "MSG_MA_CompareReq (151//)"
 msgid ""
-"Sender address (From) is \\033b<%s>\\033n, but\n"
-"return address (Reply-To) is \\033b<%s>\\033n.\n"
+"Sender address (From) is \033b<%s>\033n, but\n"
+"return address (Reply-To) is \033b<%s>\033n.\n"
 "\n"
 "To which address do you want to reply to?"
-msgstr "Sender address (From) is \\033b<%s>\\033n, but\nreturn address (Reply-To) is \\033b<%s>\\033n.\n\nTo which address do you want to reply to?"
+msgstr "Sender address (From) is \033b<%s>\033n, but\nreturn address (Reply-To) is \033b<%s>\033n.\n\nTo which address do you want to reply to?"
 
 msgctxt "MSG_MA_Compare3ReqOpt (152//)"
 msgid "_From|*_Reply-To|_Both|_Cancel"
@@ -615,8 +615,8 @@ msgid "YAM %s - User: %s"
 msgstr "YAM %s - User: %s"
 
 msgctxt "MSG_MA_ToPrefix (178//)"
-msgid "\\033bTo: \\033n"
-msgstr "\\033bTo: \\033n"
+msgid "\033bTo: \033n"
+msgstr "\033bTo: \033n"
 
 msgctxt "MSG_MA_Incoming (179//)"
 msgid "Incoming"
@@ -861,13 +861,14 @@ msgctxt "MSG_CO_ImportMIMEGads (267//)"
 msgid "*_MIME.prefs|m_ailcap|m_ime.types|_Cancel"
 msgstr "*_MIME.prefs|m_ailcap|m_ime.types|_Cancel"
 
+#. Please keep the number of backslashes (e.g. \\n)
 msgctxt "MSG_CO_NewIntroDef (268//)"
-msgid "Hello,\\\\n"
-msgstr "Hello,\\\\n"
+msgid "Hello,\\n"
+msgstr "Hello,\\n"
 
 #. Replace <EMPTY> with a reply intro phrase which
 #. will be used when MSG_CO_AltRepPatternDef is true
-#. (e.g. "On %c you wrote:\\\\n")
+#. (e.g. "On %c you wrote:\\n")
 msgctxt "MSG_CO_AltRepIntroDef (269//)"
 msgid "<EMPTY>"
 msgstr "<EMPTY>"
@@ -879,15 +880,17 @@ msgctxt "MSG_CO_AltRepPatternDef (270//)"
 msgid "<EMPTY>"
 msgstr "<EMPTY>"
 
+#. Please keep the number of backslashes (e.g. \\n)
 msgctxt "MSG_CO_ForwardIntroDef (271//)"
 msgid ""
-"*** Begin of forwarded message ***\\\\n\\\\nDate: %c\\\\nFrom: %n "
-"<%e>\\\\nSubject: %s\\\\n\\\\n--- Forwarded message follows ---\\\\n\\\\n"
-msgstr "*** Begin of forwarded message ***\\\\n\\\\nDate: %c\\\\nFrom: %n <%e>\\\\nSubject: %s\\\\n\\\\n--- Forwarded message follows ---\\\\n\\\\n"
+"*** Begin of forwarded message ***\\n\\nDate: %c\\nFrom: %n "
+"<%e>\\nSubject: %s\\n\\n--- Forwarded message follows ---\\n\\n"
+msgstr "*** Begin of forwarded message ***\\n\\nDate: %c\\nFrom: %n <%e>\\nSubject: %s\\n\\n--- Forwarded message follows ---\\n\\n"
 
+#. Please keep the number of backslashes (e.g. \\n)
 msgctxt "MSG_CO_ForwardFinishDef (272//)"
-msgid "*** End of forwarded message ***\\\\n"
-msgstr "*** End of forwarded message ***\\\\n"
+msgid "*** End of forwarded message ***\\n"
+msgstr "*** End of forwarded message ***\\n"
 
 msgctxt "MSG_CO_GreetingsDef (273//)"
 msgid "Kind regards"
@@ -895,7 +898,7 @@ msgstr "Kind regards"
 
 #. Replace <EMPTY> with an alternative hello phrase
 #. when replying to mails where MSG_CO_AltRepPatternDef
-#. becomes true (e.g. "Hello,\\\\n")
+#. becomes true (e.g. "Hello,\\n")
 msgctxt "MSG_CO_AltRepHelloDef (274//)"
 msgid "<EMPTY>"
 msgstr "<EMPTY>"
@@ -909,22 +912,24 @@ msgstr "<EMPTY>"
 
 #. Replace <EMPTY> with a hello phrase
 #. when replying to mails of an identifed mailing list
-#. (e.g. "Hi all,\\\\n")
+#. (e.g. "Hi all,\\n")
 msgctxt "MSG_CO_MLRepHelloDef (276//)"
 msgid "<EMPTY>"
 msgstr "<EMPTY>"
 
+#. Please keep the number of backslashes (e.g. \\n)
 msgctxt "MSG_CO_MLRepIntroDef (277//)"
-msgid "On %c, %n wrote:\\\\n"
-msgstr "On %c, %n wrote:\\\\n"
+msgid "On %c, %n wrote:\\n"
+msgstr "On %c, %n wrote:\\n"
 
 msgctxt "MSG_CO_MLRepByeDef (278//)"
 msgid "Regards"
 msgstr "Regards"
 
+#. Please keep the number of backslashes (e.g. \\n)
 msgctxt "MSG_CO_LineBreak (279//)"
-msgid "\\\\n  Line break"
-msgstr "\\\\n  Line break"
+msgid "\\n  Line break"
+msgstr "\\n  Line break"
 
 msgctxt "MSG_CO_SenderName (280//)"
 msgid "%n  Original sender: Name"
@@ -2419,9 +2424,9 @@ msgctxt "MSG_AB_FoundEntry (711//)"
 msgid ""
 "Found matching entry.\n"
 "\n"
-"Alias: \\033b%s\\033n\n"
-"Name: \\033b%s\\033n"
-msgstr "Found matching entry.\n\nAlias: \\033b%s\\033n\nName: \\033b%s\\033n"
+"Alias: \033b%s\033n\n"
+"Name: \033b%s\033n"
+msgstr "Found matching entry.\n\nAlias: \033b%s\033n\nName: \033b%s\033n"
 
 msgctxt "MSG_AB_FindEntry (712//)"
 msgid "Find Entry"
@@ -3053,9 +3058,9 @@ msgstr "The message can only be read by %s\n"
 msgctxt "MSG_RE_AddSender (862//)"
 msgid ""
 "Do you want to add the sender\n"
-"\\033b%s\\033n\n"
+"\033b%s\033n\n"
 "to your address book?"
-msgstr "Do you want to add the sender\n\\033b%s\\033n\nto your address book?"
+msgstr "Do you want to add the sender\n\033b%s\033n\nto your address book?"
 
 msgctxt "MSG_RE_ContentType (865//)"
 msgid "Content-Type"
@@ -4779,9 +4784,9 @@ msgstr "Select portrait"
 
 msgctxt "MSG_RE_MoveNextFolderReq (1347//)"
 msgid ""
-"Next folder with unread messages is \\033b%s\\033n\n"
+"Next folder with unread messages is \033b%s\033n\n"
 "Go to this folder and continue reading there?"
-msgstr "Next folder with unread messages is \\033b%s\\033n\nGo to this folder and continue reading there?"
+msgstr "Next folder with unread messages is \033b%s\033n\nGo to this folder and continue reading there?"
 
 msgctxt "MSG_ATTACH_NO (1352//)"
 msgid "No."
@@ -6115,12 +6120,12 @@ msgstr "%%ld of %ld messages"
 #. PART-NR, NAME, DESCRIPTION, CONTENT-TYPE, SIZE
 msgctxt "MSG_MA_MIMEPART_INFO (1725//)"
 msgid ""
-"\\033bAttachment - MIME part #%ld\\033n\n"
+"\033bAttachment - MIME part #%ld\033n\n"
 "Name: %s\n"
 "Description: %s\n"
 "Content-Type: %s <%s>\n"
 "Size: ~%s"
-msgstr "\\033bAttachment - MIME part #%ld\\033n\nName: %s\nDescription: %s\nContent-Type: %s <%s>\nSize: ~%s"
+msgstr "\033bAttachment - MIME part #%ld\033n\nName: %s\nDescription: %s\nContent-Type: %s <%s>\nSize: ~%s"
 
 msgctxt "MSG_MA_MIMEPART_MENU (1726//)"
 msgid "Attachment/MIME part #%ld"
@@ -7053,8 +7058,8 @@ msgstr "This program uses the following third party software:"
 msgctxt "MSG_ABOUT_YAM_NEWS (1968//)"
 msgid ""
 "The latest news about YAM can be found at the\n"
-"YAM Support Site at \\0335http://yam.ch/\\033n"
-msgstr "The latest news about YAM can be found at the\nYAM Support Site at \\0335http://yam.ch/\\033n"
+"YAM Support Site at \0335http://yam.ch/\033n"
+msgstr "The latest news about YAM can be found at the\nYAM Support Site at \0335http://yam.ch/\033n"
 
 msgctxt "MSG_WR_VIEW (1969//)"
 msgid "View"
@@ -7308,28 +7313,28 @@ msgid "Reply-To"
 msgstr "Reply-To"
 
 msgctxt "MSG_FI_FROM_FIELD (2014//)"
-msgid "\\033bFrom\\033n"
-msgstr "\\033bFrom\\033n"
+msgid "\033bFrom\033n"
+msgstr "\033bFrom\033n"
 
 msgctxt "MSG_FI_TO_FIELD (2015//)"
-msgid "\\033bTo\\033n"
-msgstr "\\033bTo\\033n"
+msgid "\033bTo\033n"
+msgstr "\033bTo\033n"
 
 msgctxt "MSG_FI_CC_FIELD (2016//)"
-msgid "\\033bCC\\033n"
-msgstr "\\033bCC\\033n"
+msgid "\033bCC\033n"
+msgstr "\033bCC\033n"
 
 msgctxt "MSG_FI_REPLYTO_FIELD (2017//)"
-msgid "\\033bReply-To\\033n"
-msgstr "\\033bReply-To\\033n"
+msgid "\033bReply-To\033n"
+msgstr "\033bReply-To\033n"
 
 msgctxt "MSG_FI_SUBJECT_FIELD (2018//)"
-msgid "\\033bSubject\\033n"
-msgstr "\\033bSubject\\033n"
+msgid "\033bSubject\033n"
+msgstr "\033bSubject\033n"
 
 msgctxt "MSG_FI_DATE_FIELD (2019//)"
-msgid "\\033bDate\\033n"
-msgstr "\\033bDate\\033n"
+msgid "\033bDate\033n"
+msgstr "\033bDate\033n"
 
 msgctxt "MSG_FO_TO_PATTERN (2020//)"
 msgid "_Pattern (To:/CC:)"
@@ -7390,11 +7395,11 @@ msgstr "An error occurred while trying to Base64 decode MIME part %ld of mail fi
 #. ADDRESS, ADDRESS
 msgctxt "MSG_MA_ADD_WHICH_ADDRESS (2031//)"
 msgid ""
-"The sender address (From) is \\033b<%s>\\033n but\n"
-"the return address (Reply-To) is \\033b<%s>\\033n.\n"
+"The sender address (From) is \033b<%s>\033n but\n"
+"the return address (Reply-To) is \033b<%s>\033n.\n"
 "\n"
 "Which address do you want to add to your address book?"
-msgstr "The sender address (From) is \\033b<%s>\\033n but\nthe return address (Reply-To) is \\033b<%s>\\033n.\n\nWhich address do you want to add to your address book?"
+msgstr "The sender address (From) is \033b<%s>\033n but\nthe return address (Reply-To) is \033b<%s>\033n.\n\nWhich address do you want to add to your address book?"
 
 msgctxt "MSG_CO_SCRIPTACTION (2032//)"
 msgid "Action (Name)"
@@ -8211,12 +8216,12 @@ msgstr "Waiting for user's preselection..."
 #. ACCOUNT, COUNT, COUNT, COUNT, COUNT
 msgctxt "MSG_POP3_NEW_MAIL_NOTIFY_REQ (2189//)"
 msgid ""
-"\\0338You have new mail from account '%s'.\\0332\n"
+"\0338You have new mail from account '%s'.\0332\n"
 "\n"
 "%3ld messages downloaded,\n"
 "%3ld left on server\n"
 "%3ld duplicates skipped\n"
-msgstr "\\0338You have new mail from account '%s'.\\0332\n\n%3ld messages downloaded,\n%3ld left on server\n%3ld duplicates skipped\n"
+msgstr "\0338You have new mail from account '%s'.\0332\n\n%3ld messages downloaded,\n%3ld left on server\n%3ld duplicates skipped\n"
 
 #. ACCOUNT
 msgctxt "MSG_POP3_NEW_MAIL_NOTIFY_OS4_ONE (2190//)"
@@ -8313,24 +8318,24 @@ msgstr "The configuration is currently locked.\n\nPlease wait until all POP3 and
 #. NAME, PATH, SIZE, COUNT, COUNT, COUNT
 msgctxt "MSG_FOLDERINFO_SHORTHELP (2209//)"
 msgid ""
-"\\033bFolder\\033n\n"
+"\033bFolder\033n\n"
 "Name: %s\n"
 "Path: %s\n"
 "Size: %s\n"
 "Messages: %ld (%ld new, %ld unread)"
-msgstr "\\033bFolder\\033n\nName: %s\nPath: %s\nSize: %s\nMessages: %ld (%ld new, %ld unread)"
+msgstr "\033bFolder\033n\nName: %s\nPath: %s\nSize: %s\nMessages: %ld (%ld new, %ld unread)"
 
 #. NAME, ADDRESS, NAME, ADDRESS, SUBJECT, DATE, FILENAME, SIZE
 msgctxt "MSG_MAILINFO_SHORTHELP (2210//)"
 msgid ""
-"\\033bMail\\033n\n"
+"\033bMail\033n\n"
 "From: %s <%s>\n"
 "To: %s <%s>\n"
 "Subject: %s\n"
 "Date: %s\n"
 "Filename: %s\n"
 "Size: %s"
-msgstr "\\033bMail\\033n\nFrom: %s <%s>\nTo: %s <%s>\nSubject: %s\nDate: %s\nFilename: %s\nSize: %s"
+msgstr "\033bMail\033n\nFrom: %s <%s>\nTo: %s <%s>\nSubject: %s\nDate: %s\nFilename: %s\nSize: %s"
 
 msgctxt "MSG_CO_UPDATE_DOWNLOAD_PATH (2211//)"
 msgid "Download _path:"
@@ -9078,8 +9083,8 @@ msgstr "_Accept|Accept _Permanently|_Show Certificate|*_Reject"
 
 #. HOSTNAME, PORT
 msgctxt "MSG_SSL_CERT_WARNING_INTRO (2377//)"
-msgid "Error validating server certificate for '\\033b%s:%d\\033n':"
-msgstr "Error validating server certificate for '\\033b%s:%d\\033n':"
+msgid "Error validating server certificate for '\033b%s:%d\033n':"
+msgstr "Error validating server certificate for '\033b%s:%d\033n':"
 
 msgctxt "MSG_SSL_CERT_WARNING_UNTRUSTED (2378//)"
 msgid ""
@@ -9107,11 +9112,11 @@ msgstr "- The certificate has an unknown error."
 msgctxt "MSG_SSL_CERT_WARNING_INFO (2383//)"
 msgid ""
 "Certificate information:\n"
-"- Hostname: \\033b%s\\033n\n"
-"- Valid: \\033b%s\\033n until \\033b%s\\033n\n"
-"- Issuer: \\033b%s\\033n\n"
-"- Fingerprint: \\033b%s\\033n"
-msgstr "Certificate information:\n- Hostname: \\033b%s\\033n\n- Valid: \\033b%s\\033n until \\033b%s\\033n\n- Issuer: \\033b%s\\033n\n- Fingerprint: \\033b%s\\033n"
+"- Hostname: \033b%s\033n\n"
+"- Valid: \033b%s\033n until \033b%s\033n\n"
+"- Issuer: \033b%s\033n\n"
+"- Fingerprint: \033b%s\033n"
+msgstr "Certificate information:\n- Hostname: \033b%s\033n\n- Valid: \033b%s\033n until \033b%s\033n\n- Issuer: \033b%s\033n\n- Fingerprint: \033b%s\033n"
 
 #. HOSTNAME, PORT
 msgctxt "MSG_SSL_CERT_WARNING_SHOWTITLE (2384//)"
@@ -9454,14 +9459,14 @@ msgid ""
 "YAM will now move all folder directories to a new\n"
 "subdirectory called 'Folders' in the mail directory '%s'.\n"
 "\n"
-"\\033bWARNING:\\033n\n"
-"This operation is \\033birreversible\\033n and will result in\n"
+"\033bWARNING:\033n\n"
+"This operation is \033birreversible\033n and will result in\n"
 "folders which are no longer compatible to former\n"
 "versions of YAM.\n"
 "\n"
 "Do you want to perform this operation now or\n"
 "quit YAM and make a backup first?"
-msgstr "An obsolete folder storage format has been found.\n\nYAM will now move all folder directories to a new\nsubdirectory called 'Folders' in the mail directory '%s'.\n\n\\033bWARNING:\\033n\nThis operation is \\033birreversible\\033n and will result in\nfolders which are no longer compatible to former\nversions of YAM.\n\nDo you want to perform this operation now or\nquit YAM and make a backup first?"
+msgstr "An obsolete folder storage format has been found.\n\nYAM will now move all folder directories to a new\nsubdirectory called 'Folders' in the mail directory '%s'.\n\n\033bWARNING:\033n\nThis operation is \033birreversible\033n and will result in\nfolders which are no longer compatible to former\nversions of YAM.\n\nDo you want to perform this operation now or\nquit YAM and make a backup first?"
 
 msgctxt "MSG_FOLDER_MOVE_WARNING_GADS (2455//)"
 msgid "_Continue|*_Quit"
