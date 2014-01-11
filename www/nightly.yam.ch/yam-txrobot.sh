@@ -96,7 +96,7 @@ echo "committing modified transifex translations:"
 echo "==========================================="
 files=`echo "$output" | awk '{ print $2 }'`
 for file in ${files}; do
-   user=`grep "Last-Translator:" ${file} | awk '{ print $2 }'`
+   user=`grep "Last-Translator:" ${file} | awk '{ gsub(/\\\\n"/, ""); print tolower($2) }'`
 
    echo "${user}: ${file}"
    output=`${SVN} commit -m '[tx-robot] updated translation from transifex' --non-interactive --username ${user} ${file}`
