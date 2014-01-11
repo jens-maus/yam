@@ -7,14 +7,15 @@
 # Translators:
 # Translators:
 # Translators:
+# pbobbenb <pbobbenb@icloud.com>, 2014
 # Pär Boberg <pbobbenb@spray.se>, 2013
 msgid ""
 msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-01-07 23:48+0100\n"
-"PO-Revision-Date: 2014-01-09 17:02+0000\n"
-"Last-Translator: damato <mail@jens-maus.de>\n"
+"PO-Revision-Date: 2014-01-11 09:56+0000\n"
+"Last-Translator: pbobbenb <pbobbenb@icloud.com>\n"
 "Language-Team: Swedish (http://www.transifex.com/projects/p/yam/language/sv/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -212,7 +213,7 @@ msgstr "Kompileringsdatum:"
 
 msgctxt "MSG_UserLogin (65//)"
 msgid "Click your name to login:"
-msgstr "Välj användare för att logga in"
+msgstr "Välj användare för att logga in:"
 
 msgctxt "MSG_ErrorStartup (67//)"
 msgid "Error during startup"
@@ -765,7 +766,7 @@ msgctxt "MSG_HELP_MA_BT_EDIT (248//)"
 msgid ""
 "Modify the\n"
 "current message."
-msgstr "Redigera nuvarande meddelande."
+msgstr "Redigera nuvarande\nmeddelande."
 
 msgctxt "MSG_HELP_MA_BT_MOVE (249//)"
 msgid ""
@@ -791,7 +792,7 @@ msgctxt "MSG_HELP_MA_BT_REPLY (253//)"
 msgid ""
 "Reply to the\n"
 "selected message(s)."
-msgstr "Svara på val(t/da) meddelande(n)."
+msgstr "Svara på val(t/da)\nmeddelande(n)."
 
 msgctxt "MSG_HELP_MA_BT_FORWARD (254//)"
 msgid ""
@@ -853,7 +854,7 @@ msgid ""
 "server name or e-mail address).\n"
 "\n"
 "Please fill in these fields and try again."
-msgstr "Felaktig konfiguration (SMTP/POP3\nservernamn eller e-postadress saknas)\n\nFyll i dessa fält och försök igen!"
+msgstr "Felaktig konfiguration (SMTP/POP3\nservernamn eller e-postadress saknas).\n\nFyll i dessa fält och försök igen."
 
 msgctxt "MSG_CO_ImportMIMEReq (266//)"
 msgid "Import settings from..."
@@ -865,31 +866,31 @@ msgstr "*_MIME.prefs|m_ailcap|m_ime.types|A_vbryt"
 
 msgctxt "MSG_CO_NewIntroDef (268//)"
 msgid "Hello,\\\\n"
-msgstr "Hej,\\n"
+msgstr "Hej,\\\\n"
 
 #. Replace <EMPTY> with a reply intro phrase which
 #. will be used when MSG_CO_AltRepPatternDef is true
 #. (e.g. "On %c you wrote:\\\\n")
 msgctxt "MSG_CO_AltRepIntroDef (269//)"
 msgid "<EMPTY>"
-msgstr ""
+msgstr "Den %c skrev du:\\\\\\\\n"
 
 #. Replace <EMPTY> with a pattern of domain names
 #. for which MSG_CO_AltRepIntroDef will be used
 #. (e.g. "#?.(en|uk|us|com)")
 msgctxt "MSG_CO_AltRepPatternDef (270//)"
 msgid "<EMPTY>"
-msgstr ""
+msgstr "#?.se|uk|com|org"
 
 msgctxt "MSG_CO_ForwardIntroDef (271//)"
 msgid ""
 "*** Begin of forwarded message ***\\\\n\\\\nDate: %c\\\\nFrom: %n "
 "<%e>\\\\nSubject: %s\\\\n\\\\n--- Forwarded message follows ---\\\\n\\\\n"
-msgstr "*** Detta är ett vidarebefordrat meddelande ***\\n\\nDatum: %c\\nFrån: %n <%e>\\nÄrende: %s\\n\\n--- Vidarebefordrat meddelande följer ---\\n\\n"
+msgstr "*** Detta är ett vidarebefordrat meddelande ***\\\\n\\\\nDatum: %c\\\\nFrån: %n <%e>\\\\nÄrende: %s\\\\n\\\\n--- Vidarebefordrat meddelande följer ---\\\\n\\\\n"
 
 msgctxt "MSG_CO_ForwardFinishDef (272//)"
 msgid "*** End of forwarded message ***\\\\n"
-msgstr "*** Slut på vidarebefordrat meddelande ***\\n"
+msgstr "*** Slut på vidarebefordrat meddelande ***\\\\n"
 
 msgctxt "MSG_CO_GreetingsDef (273//)"
 msgid "Kind regards"
@@ -900,25 +901,25 @@ msgstr "Med vänliga hälsningar"
 #. becomes true (e.g. "Hello,\\\\n")
 msgctxt "MSG_CO_AltRepHelloDef (274//)"
 msgid "<EMPTY>"
-msgstr ""
+msgstr "Hej,\\\\\\\\n"
 
 #. Replace <EMPTY> with an alternative bye phrase
 #. when replying to mails where MSG_CO_AltRepPatternDef
 #. becomes true (e.g. "Kind regards")
 msgctxt "MSG_CO_AltRepByeDef (275//)"
 msgid "<EMPTY>"
-msgstr ""
+msgstr "Med vänliga hälsningar"
 
 #. Replace <EMPTY> with a hello phrase
 #. when replying to mails of an identifed mailing list
 #. (e.g. "Hi all,\\\\n")
 msgctxt "MSG_CO_MLRepHelloDef (276//)"
 msgid "<EMPTY>"
-msgstr ""
+msgstr "Hej alla,\\\\\\\\n"
 
 msgctxt "MSG_CO_MLRepIntroDef (277//)"
 msgid "On %c, %n wrote:\\\\n"
-msgstr "Den %c skrev %n:\\n"
+msgstr "Den %c skrev %n:\\\\n"
 
 msgctxt "MSG_CO_MLRepByeDef (278//)"
 msgid "Regards"
@@ -926,7 +927,7 @@ msgstr "Hälsningar"
 
 msgctxt "MSG_CO_LineBreak (279//)"
 msgid "\\\\n  Line break"
-msgstr "\\n  Radbrytning"
+msgstr "\\\\n  Radbrytning"
 
 msgctxt "MSG_CO_SenderName (280//)"
 msgid "%n  Original sender: Name"
