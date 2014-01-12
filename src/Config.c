@@ -798,7 +798,7 @@ void SetDefaultConfig(struct Config *co, enum ConfigPage page)
 
   if(page == cp_ReplyForward || page == cp_AllPages)
   {
-    strlcpy(co->ReplyHello, "Hello %f\\n", sizeof(co->ReplyHello));
+    strlcpy(co->ReplyHello, "Hello %f,\\n", sizeof(co->ReplyHello));
     strlcpy(co->ReplyIntro, "On %d, you wrote:\\n", sizeof(co->ReplyIntro));
     strlcpy(co->ReplyBye, "Regards", sizeof(co->ReplyBye));
     strlcpy(co->AltReplyHello, tr(MSG_CO_AltRepHelloDef), sizeof(co->AltReplyHello));

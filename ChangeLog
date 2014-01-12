@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-01-12 Jens Maus <mail@jens-maus.de>
+ 
+  * Config.c: added missing comma to default english mail creating intro text.
+
 2014-01-09 Jens Maus <mail@jens-maus.de>
  
   * mui/WriteWindow.c, locale/YAM.pot: updated the catalog strings for the Cc,
