@@ -8,12 +8,13 @@
 # abalaban <transifex@balaban.fr>, 2014
 # Alexandre Balaban <abalaban@free.fr>, 2013
 # abalaban <transifex@balaban.fr>, 2014
+# damato <mail@jens-maus.de>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-01-07 23:48+0100\n"
-"PO-Revision-Date: 2014-01-12 19:30+0000\n"
+"PO-Revision-Date: 2014-01-12 23:37+0000\n"
 "Last-Translator: damato <mail@jens-maus.de>\n"
 "Language-Team: French (http://www.transifex.com/projects/p/yam/language/fr/)\n"
 "MIME-Version: 1.0\n"
@@ -868,19 +869,21 @@ msgctxt "MSG_CO_NewIntroDef (268//)"
 msgid "Hello,\\n"
 msgstr "Salut,\\n"
 
-#. Replace <EMPTY> with a reply intro phrase which
-#. will be used when MSG_CO_AltRepPatternDef is true
-#. (e.g. "On %c you wrote:\n")
+#. Replace the whole line with a reply intro phrase in your
+#. language similar to what is written behind <EMPTY>. This
+#. phrase will be used if MSG_CO_AltRepPatternDef matches.
 msgctxt "MSG_CO_AltRepIntroDef (269//)"
-msgid "<EMPTY>\\n"
-msgstr "On %c you wrote:\\n"
+msgid "<EMPTY>On %c, %n wrote:\\n"
+msgstr "Le %c, %n a écrit :\\n"
 
-#. Replace <EMPTY> with a pattern of domain names
-#. for which MSG_CO_AltRepIntroDef will be used
-#. (e.g. "#?.(en|uk|us|com)")
+#. Replace the whole line with an AmigaDOS pattern of domain
+#. names which are used in your language area similar to what
+#. is written behind <EMPTY>. If this pattern matches an email
+#. address of a recipient and the user is replying all the
+#. alternative intro and bye phrases are used.
 msgctxt "MSG_CO_AltRepPatternDef (270//)"
-msgid "<EMPTY>"
-msgstr "#?.(en|uk|us|com)"
+msgid "<EMPTY>#?.(com|uk|org|gov)"
+msgstr "#?.(fr)"
 
 #. Please keep the number of backslashes (e.g. \n)
 msgctxt "MSG_CO_ForwardIntroDef (271//)"
@@ -898,26 +901,28 @@ msgctxt "MSG_CO_GreetingsDef (273//)"
 msgid "Kind regards"
 msgstr "Mes salutations"
 
-#. Replace <EMPTY> with an alternative hello phrase
-#. when replying to mails where MSG_CO_AltRepPatternDef
-#. becomes true (e.g. "Hello,\n")
+#. Replace the whole line with an alternative hello phrase in your
+#. language similar to what is written behind <EMPTY>. This phrase
+#. will be used when replying to mails and if the AmigaDOS pattern
+#. defined in MSG_CO_AltRepPatternDef matches.
 msgctxt "MSG_CO_AltRepHelloDef (274//)"
-msgid "<EMPTY>\\n"
-msgstr "Bonjour,\\n"
+msgid "<EMPTY>Hello %f,\\n"
+msgstr "Salut %f,\\n"
 
-#. Replace <EMPTY> with an alternative bye phrase
-#. when replying to mails where MSG_CO_AltRepPatternDef
-#. becomes true (e.g. "Kind regards")
+#. Replace the whole line with an alternative bye phrase in your
+#. language similar to what is written behind <EMPTY>. This phrase
+#. will be used when replying to mails and if the AmigaDOS pattern
+#. defined in MSG_CO_AltRepPatternDef matches.
 msgctxt "MSG_CO_AltRepByeDef (275//)"
-msgid "<EMPTY>"
-msgstr "Best regards"
+msgid "<EMPTY>Kind regards"
+msgstr "Mes salutations"
 
-#. Replace <EMPTY> with a hello phrase
-#. when replying to mails of an identifed mailing list
-#. (e.g. "Hi all,\n")
+#. Replace the whole line with a hello phrase similar to what is
+#. written behind <EMPTY>. This phrase will be used if a mailing
+#. list AmigaDOS-pattern matches and the user is replying.
 msgctxt "MSG_CO_MLRepHelloDef (276//)"
-msgid "<EMPTY>\\n"
-msgstr "Hi all,\\n"
+msgid "<EMPTY>Hello %f,\\n"
+msgstr "Salut %f,\\n"
 
 #. Please keep the number of backslashes (e.g. \n)
 msgctxt "MSG_CO_MLRepIntroDef (277//)"
@@ -9753,7 +9758,7 @@ msgstr "Permet de définir un dossier différent pour\nstocker les messages apr�
 #. potentially translated page should come up. For
 #. english, the MSG_LANGUAGE_CODE should be empty.
 msgctxt "MSG_DOC_LANGUAGE_CODE (2519//)"
-msgid "<EMPTY>"
+msgid "<EMPTY>en"
 msgstr "fr"
 
 #. LOCALCHARSET
