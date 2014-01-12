@@ -267,6 +267,9 @@ BEGIN {
       comment = comment "\\n"
     }
 
+    # replace \\033 with \033
+    gsub(/\\\\\\\\033/, "\\\\033")
+
     # replace \\ by \\\\
     gsub(/\\\\\\\\/, "\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\")
 
@@ -300,6 +303,9 @@ BEGIN {
       gsub(/^"/, "", tmp)
       gsub(/"$/, "", tmp)
 
+      # replace \\033 with \033
+      gsub(/\\\\\\\\033/, "\\\\033", tmp)
+
       # replace \\ by \\\\
       gsub(/\\\\\\\\/, "\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\", tmp)
 
@@ -326,6 +332,9 @@ BEGIN {
       # strip quotes (") from start&end
       gsub(/^"/, "")
       gsub(/"$/, "")
+
+      # replace \\033 with \033
+      gsub(/\\\\\\\\033/, "\\\\033")
 
       # replace \\ by \\\\
       gsub(/\\\\\\\\/, "\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\")
@@ -441,6 +450,9 @@ BEGIN {
       }
       else if(output ~ /^;.+$/)
       {
+        # replace \\\\ by \\
+        gsub(/\\\\\\\\/, "\\\\", output)
+
         if(length(comment) > 0)
         {
           comment = comment "\\n"
@@ -466,6 +478,12 @@ BEGIN {
         # sure to check if \" is already there
         gsub(/\\\\"/, "\\"", output) # replace \" with "
         gsub(/"/, "\\\\\\"", output) # replace " with \"
+
+        # replace \\\\ by \\
+        gsub(/\\\\\\\\/, "\\\\", output)
+
+        # replace \033 with \\033
+        gsub(/\\\\033/, "\\\\\\\\\\\\033", output)
 
         if(length(msgid) > 0)
         {
@@ -537,6 +555,9 @@ BEGIN {
     # sure to check if \" is already there
     gsub(/\\\\"/, "\\"") # replace \" with "
     gsub(/"/, "\\\\\\"") # replace " with \"
+
+    # replace \033 with \\033
+    gsub(/\\\\033/, "\\\\\\\\\\\\033")
 
     if(multiline == 0)
     {
@@ -663,6 +684,9 @@ BEGIN {
       gsub(/^"/, "", tmp)
       gsub(/"$/, "", tmp)
 
+      # replace \\033 with \033
+      gsub(/\\\\\\\\033/, "\\\\033", tmp)
+
       if(length(tmp) > 0)
       {
         if(length(msgid) > 0)
@@ -686,6 +710,9 @@ BEGIN {
       # strip quotes (") from start&end
       gsub(/^"/, "", tmp)
       gsub(/"$/, "", tmp)
+
+      # replace \\033 with \033
+      gsub(/\\\\\\\\033/, "\\\\033", tmp)
 
       if(length(tmp) > 0)
       {
@@ -711,6 +738,9 @@ BEGIN {
       gsub(/^"/, "")
       gsub(/"$/, "")
 
+      # replace \\033 with \033
+      gsub(/\\\\\\\\033/, "\\\\033")
+
       if(length($0) > 0)
       {
         if(length(msgid) > 0)
@@ -728,6 +758,9 @@ BEGIN {
       # strip quotes (") from start&end
       gsub(/^"/, "")
       gsub(/"$/, "")
+
+      # replace \\033 with \033
+      gsub(/\\\\\\\\033/, "\\\\033")
 
       if(length($0) > 0)
       {
