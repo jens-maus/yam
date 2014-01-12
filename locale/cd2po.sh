@@ -312,7 +312,7 @@ BEGIN {
       if(length(tmp) > 0)
       {
         # replace "<EMPTY>" with ""
-        gsub(/<EMPTY>/, "", tmp)
+        gsub(/<EMPTY>.*/, "", tmp)
         msgid = tmp
       }
       else
@@ -717,7 +717,7 @@ BEGIN {
       if(length(tmp) > 0)
       {
         # replace "<EMPTY>" with ""
-        gsub(/<EMPTY>/, "", tmp)
+        gsub(/<EMPTY>.*/, "", tmp)
 
         if(length(msgstr) > 0)
         {

@@ -868,8 +868,8 @@ msgstr "Hello,\\n"
 #. will be used when MSG_CO_AltRepPatternDef is true
 #. (e.g. "On %c you wrote:\n")
 msgctxt "MSG_CO_AltRepIntroDef (269//)"
-msgid "<EMPTY>"
-msgstr "<EMPTY>"
+msgid "<EMPTY>\\n"
+msgstr "<EMPTY>\\n"
 
 #. Replace <EMPTY> with a pattern of domain names
 #. for which MSG_CO_AltRepIntroDef will be used
@@ -898,8 +898,8 @@ msgstr "Kind regards"
 #. when replying to mails where MSG_CO_AltRepPatternDef
 #. becomes true (e.g. "Hello,\n")
 msgctxt "MSG_CO_AltRepHelloDef (274//)"
-msgid "<EMPTY>"
-msgstr "<EMPTY>"
+msgid "<EMPTY>\\n"
+msgstr "<EMPTY>\\n"
 
 #. Replace <EMPTY> with an alternative bye phrase
 #. when replying to mails where MSG_CO_AltRepPatternDef
@@ -912,8 +912,8 @@ msgstr "<EMPTY>"
 #. when replying to mails of an identifed mailing list
 #. (e.g. "Hi all,\n")
 msgctxt "MSG_CO_MLRepHelloDef (276//)"
-msgid "<EMPTY>"
-msgstr "<EMPTY>"
+msgid "<EMPTY>\\n"
+msgstr "<EMPTY>\\n"
 
 #. Please keep the number of backslashes (e.g. \n)
 msgctxt "MSG_CO_MLRepIntroDef (277//)"
