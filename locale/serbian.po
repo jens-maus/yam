@@ -5,8 +5,6 @@
 # language english
 # 
 # Translators:
-# Translators:
-# Translators:
 # Andrija Antonijevic <antony-os4@heightanxiety.com>, 2001
 # damato <mail@jens-maus.de>, 2014
 # damato <mail@jens-maus.de>, 2014
@@ -16,7 +14,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-01-07 23:48+0100\n"
-"PO-Revision-Date: 2014-01-11 23:47+0000\n"
+"PO-Revision-Date: 2014-01-12 19:15+0000\n"
 "Last-Translator: damato <mail@jens-maus.de>\n"
 "Language-Team: Serbian (http://www.transifex.com/projects/p/yam/language/sr/)\n"
 "MIME-Version: 1.0\n"
@@ -866,16 +864,16 @@ msgctxt "MSG_CO_ImportMIMEGads (267//)"
 msgid "*_MIME.prefs|m_ailcap|m_ime.types|_Cancel"
 msgstr "*_MIME.prefs|m_ailcap|m_ime.types|_Poniãti"
 
-#. Please keep the number of backslashes (e.g. \\n)
+#. Please keep the number of backslashes (e.g. \n)
 msgctxt "MSG_CO_NewIntroDef (268//)"
 msgid "Hello,\\n"
 msgstr "Zdravo,\\n"
 
 #. Replace <EMPTY> with a reply intro phrase which
 #. will be used when MSG_CO_AltRepPatternDef is true
-#. (e.g. "On %c you wrote:\\n")
+#. (e.g. "On %c you wrote:\n")
 msgctxt "MSG_CO_AltRepIntroDef (269//)"
-msgid "<EMPTY>"
+msgid "<EMPTY>\\n"
 msgstr ""
 
 #. Replace <EMPTY> with a pattern of domain names
@@ -885,14 +883,14 @@ msgctxt "MSG_CO_AltRepPatternDef (270//)"
 msgid "<EMPTY>"
 msgstr ""
 
-#. Please keep the number of backslashes (e.g. \\n)
+#. Please keep the number of backslashes (e.g. \n)
 msgctxt "MSG_CO_ForwardIntroDef (271//)"
 msgid ""
 "*** Begin of forwarded message ***\\n\\nDate: %c\\nFrom: %n <%e>\\nSubject: "
 "%s\\n\\n--- Forwarded message follows ---\\n\\n"
 msgstr "*** Poàetak prosleâene poruke ***\\n\\nDatum: %c\\nOd: %n <%e>\\nTema: %s\\n\\n--- Prosleâena poruka sledi ---\\n\\n"
 
-#. Please keep the number of backslashes (e.g. \\n)
+#. Please keep the number of backslashes (e.g. \n)
 msgctxt "MSG_CO_ForwardFinishDef (272//)"
 msgid "*** End of forwarded message ***\\n"
 msgstr "*** Kraj prosleâene poruke ***\\n"
@@ -903,9 +901,9 @@ msgstr "Puno pozdrava"
 
 #. Replace <EMPTY> with an alternative hello phrase
 #. when replying to mails where MSG_CO_AltRepPatternDef
-#. becomes true (e.g. "Hello,\\n")
+#. becomes true (e.g. "Hello,\n")
 msgctxt "MSG_CO_AltRepHelloDef (274//)"
-msgid "<EMPTY>"
+msgid "<EMPTY>\\n"
 msgstr ""
 
 #. Replace <EMPTY> with an alternative bye phrase
@@ -917,12 +915,12 @@ msgstr ""
 
 #. Replace <EMPTY> with a hello phrase
 #. when replying to mails of an identifed mailing list
-#. (e.g. "Hi all,\\n")
+#. (e.g. "Hi all,\n")
 msgctxt "MSG_CO_MLRepHelloDef (276//)"
-msgid "<EMPTY>"
+msgid "<EMPTY>\\n"
 msgstr ""
 
-#. Please keep the number of backslashes (e.g. \\n)
+#. Please keep the number of backslashes (e.g. \n)
 msgctxt "MSG_CO_MLRepIntroDef (277//)"
 msgid "On %c, %n wrote:\\n"
 msgstr "Dana %c, %n je napisao(la):\\n"
@@ -931,7 +929,7 @@ msgctxt "MSG_CO_MLRepByeDef (278//)"
 msgid "Regards"
 msgstr "Pozdravi"
 
-#. Please keep the number of backslashes (e.g. \\n)
+#. Please keep the number of backslashes (e.g. \n)
 msgctxt "MSG_CO_LineBreak (279//)"
 msgid "\\n  Line break"
 msgstr "\\n  Kraj linije"
