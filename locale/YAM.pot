@@ -4,13 +4,12 @@
 # version 9
 # language english
 # 
-# Translators:
 msgid ""
 msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-01-07 23:48+0100\n"
-"PO-Revision-Date: 2014-01-07 22:54+0000\n"
+"PO-Revision-Date: 2014-01-11 23:41+0000\n"
 "Last-Translator: damato <mail@jens-maus.de>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -867,7 +866,7 @@ msgstr "Hello,\\n"
 
 #. Replace <EMPTY> with a reply intro phrase which
 #. will be used when MSG_CO_AltRepPatternDef is true
-#. (e.g. "On %c you wrote:\\n")
+#. (e.g. "On %c you wrote:\n")
 msgctxt "MSG_CO_AltRepIntroDef (269//)"
 msgid "<EMPTY>"
 msgstr "<EMPTY>"
@@ -882,8 +881,8 @@ msgstr "<EMPTY>"
 #. Please keep the number of backslashes (e.g. \n)
 msgctxt "MSG_CO_ForwardIntroDef (271//)"
 msgid ""
-"*** Begin of forwarded message ***\\n\\nDate: %c\\nFrom: %n "
-"<%e>\\nSubject: %s\\n\\n--- Forwarded message follows ---\\n\\n"
+"*** Begin of forwarded message ***\\n\\nDate: %c\\nFrom: %n <%e>\\nSubject: "
+"%s\\n\\n--- Forwarded message follows ---\\n\\n"
 msgstr "*** Begin of forwarded message ***\\n\\nDate: %c\\nFrom: %n <%e>\\nSubject: %s\\n\\n--- Forwarded message follows ---\\n\\n"
 
 #. Please keep the number of backslashes (e.g. \n)
@@ -897,7 +896,7 @@ msgstr "Kind regards"
 
 #. Replace <EMPTY> with an alternative hello phrase
 #. when replying to mails where MSG_CO_AltRepPatternDef
-#. becomes true (e.g. "Hello,\\n")
+#. becomes true (e.g. "Hello,\n")
 msgctxt "MSG_CO_AltRepHelloDef (274//)"
 msgid "<EMPTY>"
 msgstr "<EMPTY>"
@@ -911,7 +910,7 @@ msgstr "<EMPTY>"
 
 #. Replace <EMPTY> with a hello phrase
 #. when replying to mails of an identifed mailing list
-#. (e.g. "Hi all,\\n")
+#. (e.g. "Hi all,\n")
 msgctxt "MSG_CO_MLRepHelloDef (276//)"
 msgid "<EMPTY>"
 msgstr "<EMPTY>"
