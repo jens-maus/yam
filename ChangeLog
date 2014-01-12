@@ -7,6 +7,10 @@ $URL$
 
 2014-01-12 Jens Maus <mail@jens-maus.de>
  
+  * locale/YAM.pot, Config.c: modified the default reply intro phrase to specify
+    the name of the person. In addition, the developer comments in the pot file
+    have been slightly revised so that it is more clear what translators should
+    have to do.
   * Config.c: added missing comma to default english mail creating intro text.
 
 2014-01-09 Jens Maus <mail@jens-maus.de>
