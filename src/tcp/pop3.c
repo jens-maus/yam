@@ -120,10 +120,11 @@ struct TransferContext
   char transferGroupTitle[SIZE_DEFAULT]; // the TransferControlGroup's title
   char password[SIZE_PASSWORD];
   ULONG flags;
-  struct UIDLhash *UIDLhashTable;   // for maintaining all UIDLs
+  struct UIDLhash *UIDLhashTable;        // for maintaining all UIDLs
   struct MinList *remoteFilters;
   struct MailTransferList *transferList;
   struct MailTransferNode *firstPreselect;
+  struct Folder *incomingFolder;         // the folder to place the downloaded mails into
   BOOL useTLS;
   struct DownloadResult downloadResult;
   struct FilterResult filterResult;
@@ -1310,22 +1311,12 @@ static BOOL DeleteMessage(struct TransferContext *tc, const int number)
 /// DownloadMails
 static void DownloadMails(struct TransferContext *tc)
 {
-  struct Folder *incomingFolder;
   struct MailTransferNode *tnode;
 
   ENTER();
 
   // Now we are actually downloading, so lets change the busy text
   BusyText(tc->busy, tr(MSG_TR_MailTransferFrom), tc->msn->description);
-
-  // depending on the incoming folder settings in the
-  // POP3 server configuration we store mail either in the
-  // folder configured there or in the default incoming folder
-  if(tc->msn->mailStoreFolderID == 0 ||
-     (incomingFolder = FindFolderByID(G->folders, tc->msn->mailStoreFolderID)) == NULL)
-  {
-    incomingFolder = FO_GetFolderByType(FT_INCOMING, NULL);
-  }
 
   GetSysTime(TIMEVAL(&tc->lastUpdateTime));
 
@@ -1341,12 +1332,12 @@ static void DownloadMails(struct TransferContext *tc)
       // update the transfer status
       PushMethodOnStack(tc->transferGroup, 5, MUIM_TransferControlGroup_Next, tnode->index - tc->numberOfMailsSkipped, tnode->position, mail->Size, tr(MSG_TR_Downloading));
 
-      if(LoadMessage(tc, incomingFolder, tnode->index) == TRUE)
+      if(LoadMessage(tc, tc->incomingFolder, tnode->index) == TRUE)
       {
         if(TimeHasElapsed(&tc->lastUpdateTime, 250000) == TRUE)
         {
           // redraw the folderentry in the listtree 4 times per second at most
-          PushMethodOnStack(G->MA->GUI.LT_FOLDERS, 3, MUIM_NListtree_Redraw, incomingFolder->Treenode, MUIF_NONE);
+          PushMethodOnStack(G->MA->GUI.LT_FOLDERS, 3, MUIM_NListtree_Redraw, tc->incomingFolder->Treenode, MUIF_NONE);
         }
 
         // put the transferStat for this mail to 100%
@@ -1409,10 +1400,10 @@ static void DownloadMails(struct TransferContext *tc)
   PushMethodOnStack(tc->transferGroup, 1, MUIM_TransferControlGroup_Finish);
 
   // update the stats
-  PushMethodOnStack(G->App, 3, MUIM_YAMApplication_DisplayStatistics, incomingFolder, TRUE);
+  PushMethodOnStack(G->App, 3, MUIM_YAMApplication_DisplayStatistics, tc->incomingFolder, TRUE);
 
   // update the menu items and toolbars
-  PushMethodOnStack(G->App, 3, MUIM_YAMApplication_ChangeSelected, incomingFolder, TRUE);
+  PushMethodOnStack(G->App, 3, MUIM_YAMApplication_ChangeSelected, tc->incomingFolder, TRUE);
 
   LEAVE();
 }
@@ -1533,195 +1524,211 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
     tc->abortMask = (1UL << ThreadAbortSignal());
     tc->wakeupMask = (1UL << ThreadWakeupSignal());
 
-    // try to open the TCP/IP stack
-    if((tc->connection = CreateConnection(TRUE)) != NULL && ConnectionIsOnline(tc->connection) == TRUE)
+    // depending on the incoming folder settings in the
+    // POP3 server configuration we store mail either in the
+    // folder configured there or in the default incoming folder
+    if(tc->msn->mailStoreFolderID == 0 ||
+       (tc->incomingFolder = FindFolderByID(G->folders, tc->msn->mailStoreFolderID)) == NULL)
     {
-      // copy a link to the mailservernode for which we created
-      // the connection
-      tc->connection->server = tc->msn;
-
-      if((tc->transferList = CreateMailTransferList()) != NULL)
-      {
-        if(hasServerApplyRemoteFilters(tc->msn) == FALSE || (tc->remoteFilters = CloneFilterList(APPLY_REMOTE)) != NULL)
-        {
-          if(InitThreadTimer() == TRUE)
-          {
-            BOOL uidlOk = FALSE;
-
-            tc->timerMask = (1UL << ThreadTimerSignal());
-
-            if(hasServerAvoidDuplicates(tc->msn) == TRUE)
-            {
-              if((tc->UIDLhashTable = InitUIDLhash(tc->msn)) != NULL)
-                uidlOk = TRUE;
-              else
-                ER_NewError(tr(MSG_ER_POP3_UIDLHASH_INIT_FAILED));
-            }
-            else
-              uidlOk = TRUE;
-
-            if(uidlOk == TRUE)
-            {
-              strlcpy(tc->password, msn->password, sizeof(tc->password));
-
-              snprintf(tc->transferGroupTitle, sizeof(tc->transferGroupTitle), tr(MSG_TR_MAILCHECKFROM), msn->description);
-
-              if((tc->transferGroup = (Object *)PushMethodOnStackWait(G->App, 6, MUIM_YAMApplication_CreateTransferGroup, CurrentThread(), tc->transferGroupTitle, tc->connection, TRUE, isFlagSet(tc->flags, RECEIVEF_USER))) != NULL)
-              {
-                int msgs;
-
-                if((msgs = ConnectToPOP3(tc)) != -1)
-                {
-                  // connection succeeded
-                  success = TRUE;
-
-                  // but we continue only if there is something to be downloaded at all
-                  if(msgs > 0)
-                  {
-                    // there are messages on the server
-                    if(GetMessageList(tc) == TRUE)
-                    {
-                      BOOL goOn = TRUE;
-                      BOOL doPreselect;
-                      BOOL doDownload;
-
-                      // if the user wants to avoid to receive the same message from the
-                      // POP3 server again we have to analyze the UIDL of it
-                      if(goOn == TRUE && hasServerAvoidDuplicates(tc->msn) == TRUE)
-                        goOn = FilterDuplicates(tc);
-
-                      // receive all message details to be able to apply the remote filters
-                      if(goOn == TRUE && hasServerApplyRemoteFilters(tc->msn) == TRUE && IsMinListEmpty(tc->remoteFilters) == FALSE)
-                      {
-                        PushMethodOnStack(tc->transferGroup, 2, MUIM_TransferControlGroup_ShowStatus, tr(MSG_TR_ApplyFilters));
-                        goOn = GetAllMessageDetails(tc, TRUE);
-                      }
-
-                      // check the list of mails if some kind of preselection is required
-                      if(goOn == TRUE && isFlagSet(tc->flags, RECEIVEF_USER) && ScanMailTransferList(tc->transferList, TRF_PRESELECT, TRF_PRESELECT, TRUE) != NULL)
-                        doPreselect = TRUE;
-                      else
-                        doPreselect = FALSE;
-
-                      if(doPreselect == TRUE)
-                      {
-                        // show the preselection window in case user interaction is requested
-                        D(DBF_NET, "preselection is required");
-                        doDownload = FALSE;
-
-                        snprintf(tc->windowTitle, sizeof(tc->windowTitle), tr(MSG_TR_MAILCHECKFROM), tc->msn->description);
-
-                        if((tc->preselectWindow = (Object *)PushMethodOnStackWait(G->App, 6, MUIM_YAMApplication_CreatePreselectionWindow, CurrentThread(), tc->windowTitle, tc->msn->largeMailSizeLimit, PRESELWINMODE_DOWNLOAD, tc->transferList)) != NULL)
-                        {
-                          int mustWait;
-
-                          PushMethodOnStack(tc->preselectWindow, 3, MUIM_Set, MUIA_PreselectionWindow_ActiveMail, tc->firstPreselect);
-                          PushMethodOnStack(tc->transferGroup, 2, MUIM_TransferControlGroup_ShowStatus, tr(MSG_TR_WAIT_FOR_PRESELECTION));
-
-                          if(ThreadWasAborted() == FALSE)
-                          {
-                            if((mustWait = GetAllMessageDetails(tc, FALSE)) != 0)
-                            {
-                              if(mustWait == 1)
-                              {
-                                // we got all details, now wait for the user to finish the preselection
-                                doDownload = WaitForPreselection(tc);
-                              }
-                              else
-                              {
-                                // getting the details has been aborted early by pressing the "Start" button
-                                doDownload = TRUE;
-                              }
-                            }
-                            else
-                              D(DBF_NET, "getting message details failed/was aborted, no preselection");
-
-                            PushMethodOnStack(G->App, 2, MUIM_YAMApplication_DisposeWindow, tc->preselectWindow);
-                          }
-                        }
-                      }
-                      else
-                      {
-                        D(DBF_NET, "no preselection required");
-                        doDownload = goOn;
-                      }
-
-                      // is there anything left to transfer or delete?
-                      if(ThreadWasAborted() == FALSE && doDownload == TRUE && ScanMailTransferList(tc->transferList, TRF_TRANSFER|TRF_DELETE, TRF_NONE, FALSE) != NULL)
-                      {
-                        SumUpMails(tc);
-                        PushMethodOnStack(tc->transferGroup, 3, MUIM_TransferControlGroup_Start, tc->numberOfMailsTotal - tc->numberOfMailsSkipped, tc->totalSize);
-
-                        DownloadMails(tc);
-
-                        PushMethodOnStack(tc->transferGroup, 1, MUIM_TransferControlGroup_Finish);
-
-                        if(tc->connection->abort == FALSE && tc->connection->error == CONNECTERR_NO_ERROR)
-                          tc->downloadResult.error = FALSE;
-                      }
-                      else
-                        W(DBF_NET, "no mails to be transferred");
-                    }
-                    else
-                      E(DBF_NET, "couldn't retrieve MessageList");
-                  }
-                  else
-                    W(DBF_NET, "no messages found on server '%s'", tc->msn->hostname);
-                }
-
-                // disconnect no matter if the connect operation succeeded or not
-                DisconnectFromPOP3(tc);
-
-                PushMethodOnStack(G->App, 2, MUIM_YAMApplication_DeleteTransferGroup, tc->transferGroup);
-              }
-
-              CleanupUIDLhash(tc->UIDLhashTable);
-            }
-
-            CleanupThreadTimer();
-          }
-
-          if(tc->remoteFilters != NULL)
-            DeleteFilterList(tc->remoteFilters);
-        }
-        else
-          E(DBF_NET, "could not clone remote filters");
-
-        // perform the finalizing actions only if we haven't been aborted externally
-        if(ThreadWasAborted() == FALSE)
-        {
-          char downloadedStr[SIZE_SMALL];
-
-          snprintf(downloadedStr, sizeof(downloadedStr), "%d", (int)tc->downloadResult.downloaded);
-          PushMethodOnStackWait(G->App, 3, MUIM_YAMApplication_StartMacro, MACRO_POSTGET, downloadedStr);
-
-          AppendToLogfile(LF_ALL, 30, tr(MSG_LOG_RETRIEVED_POP3), tc->downloadResult.downloaded, msn->description);
-
-          // we only apply the filters if we downloaded something, or it's wasted
-          D(DBF_NET, "filter %ld downloaded mails", tc->downloadResult.downloaded);
-          if(tc->downloadResult.downloaded > 0)
-          {
-            PushMethodOnStackWait(G->App, 3, MUIM_YAMApplication_FilterNewMails, tc->msn->downloadedMails, &tc->filterResult);
-            PushMethodOnStackWait(G->App, 5, MUIM_YAMApplication_NewMailAlert, tc->msn, &tc->downloadResult, &tc->filterResult, tc->flags);
-          }
-
-          // forget about the downloaded mails again
-          LockMailList(tc->msn->downloadedMails);
-          ClearMailList(tc->msn->downloadedMails);
-          UnlockMailList(tc->msn->downloadedMails);
-        }
-        else
-        {
-          // signal failure
-          success = FALSE;
-        }
-
-        // clean up the transfer list
-        DeleteMailTransferList(tc->transferList);
-      }
+      tc->incomingFolder = FO_GetFolderByType(FT_INCOMING, NULL);
     }
 
-    DeleteConnection(tc->connection);
+    if(tc->incomingFolder != NULL)
+    {
+      // try to open the TCP/IP stack
+      if((tc->connection = CreateConnection(TRUE)) != NULL && ConnectionIsOnline(tc->connection) == TRUE)
+      {
+        // copy a link to the mailservernode for which we created
+        // the connection
+        tc->connection->server = tc->msn;
+
+        if((tc->transferList = CreateMailTransferList()) != NULL)
+        {
+          if(hasServerApplyRemoteFilters(tc->msn) == FALSE || (tc->remoteFilters = CloneFilterList(APPLY_REMOTE)) != NULL)
+          {
+            if(InitThreadTimer() == TRUE)
+            {
+              BOOL uidlOk = FALSE;
+
+              tc->timerMask = (1UL << ThreadTimerSignal());
+
+              if(hasServerAvoidDuplicates(tc->msn) == TRUE)
+              {
+                if((tc->UIDLhashTable = InitUIDLhash(tc->msn)) != NULL)
+                  uidlOk = TRUE;
+                else
+                  ER_NewError(tr(MSG_ER_POP3_UIDLHASH_INIT_FAILED));
+              }
+              else
+                uidlOk = TRUE;
+
+              if(uidlOk == TRUE)
+              {
+                strlcpy(tc->password, msn->password, sizeof(tc->password));
+
+                snprintf(tc->transferGroupTitle, sizeof(tc->transferGroupTitle), tr(MSG_TR_MAILCHECKFROM), msn->description);
+
+                if((tc->transferGroup = (Object *)PushMethodOnStackWait(G->App, 6, MUIM_YAMApplication_CreateTransferGroup, CurrentThread(), tc->transferGroupTitle, tc->connection, TRUE, isFlagSet(tc->flags, RECEIVEF_USER))) != NULL)
+                {
+                  int msgs;
+
+                  if((msgs = ConnectToPOP3(tc)) != -1)
+                  {
+                    // connection succeeded
+                    success = TRUE;
+
+                    // but we continue only if there is something to be downloaded at all
+                    if(msgs > 0)
+                    {
+                      // there are messages on the server
+                      if(GetMessageList(tc) == TRUE)
+                      {
+                        BOOL goOn = TRUE;
+                        BOOL doPreselect;
+                        BOOL doDownload;
+
+                        // if the user wants to avoid to receive the same message from the
+                        // POP3 server again we have to analyze the UIDL of it
+                        if(goOn == TRUE && hasServerAvoidDuplicates(tc->msn) == TRUE)
+                          goOn = FilterDuplicates(tc);
+
+                        // receive all message details to be able to apply the remote filters
+                        if(goOn == TRUE && hasServerApplyRemoteFilters(tc->msn) == TRUE && IsMinListEmpty(tc->remoteFilters) == FALSE)
+                        {
+                          PushMethodOnStack(tc->transferGroup, 2, MUIM_TransferControlGroup_ShowStatus, tr(MSG_TR_ApplyFilters));
+                          goOn = GetAllMessageDetails(tc, TRUE);
+                        }
+
+                        // check the list of mails if some kind of preselection is required
+                        if(goOn == TRUE && isFlagSet(tc->flags, RECEIVEF_USER) && ScanMailTransferList(tc->transferList, TRF_PRESELECT, TRF_PRESELECT, TRUE) != NULL)
+                          doPreselect = TRUE;
+                        else
+                          doPreselect = FALSE;
+
+                        if(doPreselect == TRUE)
+                        {
+                          // show the preselection window in case user interaction is requested
+                          D(DBF_NET, "preselection is required");
+                          doDownload = FALSE;
+
+                          snprintf(tc->windowTitle, sizeof(tc->windowTitle), tr(MSG_TR_MAILCHECKFROM), tc->msn->description);
+
+                          if((tc->preselectWindow = (Object *)PushMethodOnStackWait(G->App, 6, MUIM_YAMApplication_CreatePreselectionWindow, CurrentThread(), tc->windowTitle, tc->msn->largeMailSizeLimit, PRESELWINMODE_DOWNLOAD, tc->transferList)) != NULL)
+                          {
+                            int mustWait;
+
+                            PushMethodOnStack(tc->preselectWindow, 3, MUIM_Set, MUIA_PreselectionWindow_ActiveMail, tc->firstPreselect);
+                            PushMethodOnStack(tc->transferGroup, 2, MUIM_TransferControlGroup_ShowStatus, tr(MSG_TR_WAIT_FOR_PRESELECTION));
+
+                            if(ThreadWasAborted() == FALSE)
+                            {
+                              if((mustWait = GetAllMessageDetails(tc, FALSE)) != 0)
+                              {
+                                if(mustWait == 1)
+                                {
+                                  // we got all details, now wait for the user to finish the preselection
+                                  doDownload = WaitForPreselection(tc);
+                                }
+                                else
+                                {
+                                  // getting the details has been aborted early by pressing the "Start" button
+                                  doDownload = TRUE;
+                                }
+                              }
+                              else
+                                D(DBF_NET, "getting message details failed/was aborted, no preselection");
+
+                              PushMethodOnStack(G->App, 2, MUIM_YAMApplication_DisposeWindow, tc->preselectWindow);
+                            }
+                          }
+                        }
+                        else
+                        {
+                          D(DBF_NET, "no preselection required");
+                          doDownload = goOn;
+                        }
+
+                        // is there anything left to transfer or delete?
+                        if(ThreadWasAborted() == FALSE && doDownload == TRUE && ScanMailTransferList(tc->transferList, TRF_TRANSFER|TRF_DELETE, TRF_NONE, FALSE) != NULL)
+                        {
+                          SumUpMails(tc);
+                          PushMethodOnStack(tc->transferGroup, 3, MUIM_TransferControlGroup_Start, tc->numberOfMailsTotal - tc->numberOfMailsSkipped, tc->totalSize);
+
+                          DownloadMails(tc);
+
+                          PushMethodOnStack(tc->transferGroup, 1, MUIM_TransferControlGroup_Finish);
+
+                          if(tc->connection->abort == FALSE && tc->connection->error == CONNECTERR_NO_ERROR)
+                            tc->downloadResult.error = FALSE;
+                        }
+                        else
+                          W(DBF_NET, "no mails to be transferred");
+                      }
+                      else
+                        E(DBF_NET, "couldn't retrieve MessageList");
+                    }
+                    else
+                      W(DBF_NET, "no messages found on server '%s'", tc->msn->hostname);
+                  }
+
+                  // disconnect no matter if the connect operation succeeded or not
+                  DisconnectFromPOP3(tc);
+
+                  PushMethodOnStack(G->App, 2, MUIM_YAMApplication_DeleteTransferGroup, tc->transferGroup);
+                }
+
+                CleanupUIDLhash(tc->UIDLhashTable);
+              }
+
+              CleanupThreadTimer();
+            }
+
+            if(tc->remoteFilters != NULL)
+              DeleteFilterList(tc->remoteFilters);
+          }
+          else
+            E(DBF_NET, "could not clone remote filters");
+
+          // perform the finalizing actions only if we haven't been aborted externally
+          if(ThreadWasAborted() == FALSE)
+          {
+            char downloadedStr[SIZE_SMALL];
+
+            snprintf(downloadedStr, sizeof(downloadedStr), "%d", (int)tc->downloadResult.downloaded);
+            PushMethodOnStackWait(G->App, 3, MUIM_YAMApplication_StartMacro, MACRO_POSTGET, downloadedStr);
+
+            AppendToLogfile(LF_ALL, 30, tr(MSG_LOG_RETRIEVED_POP3), tc->downloadResult.downloaded, msn->description);
+
+            // we only apply the filters if we downloaded something, or it's wasted
+            D(DBF_NET, "filter %ld downloaded mails", tc->downloadResult.downloaded);
+            if(tc->downloadResult.downloaded > 0)
+            {
+              PushMethodOnStackWait(G->App, 3, MUIM_YAMApplication_FilterNewMails, tc->msn->downloadedMails, &tc->filterResult);
+              PushMethodOnStackWait(G->App, 5, MUIM_YAMApplication_NewMailAlert, tc->msn, &tc->downloadResult, &tc->filterResult, tc->flags);
+            }
+
+            // forget about the downloaded mails again
+            LockMailList(tc->msn->downloadedMails);
+            ClearMailList(tc->msn->downloadedMails);
+            UnlockMailList(tc->msn->downloadedMails);
+          }
+          else
+          {
+            // signal failure
+            success = FALSE;
+          }
+
+          // clean up the transfer list
+          DeleteMailTransferList(tc->transferList);
+        }
+      }
+
+      DeleteConnection(tc->connection);
+    }
+    else
+    {
+      E(DBF_FOLDER, "could not resolve incoming folder of POP3 server '%s'", tc->msn->description);
+    }
 
     // finally copy the download stats of this operation if someone is interested in them
     if(dlResult != NULL)

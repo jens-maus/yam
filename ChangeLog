@@ -5,8 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-01-14 Thore Böckelmann <tboeckel@gmx.de>
+
+  * tcp/pop3.c, tcp/smtp.c: added some checks for correctly resolved incoming
+    and sent folders. This refs #499.
+
 2014-01-12 Jens Maus <mail@jens-maus.de>
- 
+
   * locale/YAM.pot, Config.c: modified the default reply intro phrase to specify
     the name of the person. In addition, the developer comments in the pot file
     have been slightly revised so that it is more clear what translators should
@@ -14,13 +19,13 @@ $URL$
   * Config.c: added missing comma to default english mail creating intro text.
 
 2014-01-09 Jens Maus <mail@jens-maus.de>
- 
+
   * mui/WriteWindow.c, locale/YAM.pot: updated the catalog strings for the Cc,
     Bcc and Reply-To adress fields and their corresponding menu items. Now they
     can be properly translated. This closes #495.
 
 2014-01-08 Jens Maus <mail@jens-maus.de>
- 
+
   * misc: bumped copyright year to 2014. Happy new year!
 
 2014-01-07 Thore Böckelmann <tboeckel@gmx.de>
@@ -28,7 +33,7 @@ $URL$
   * mui/ReadWindow.c: don't allow to archive virtual mails.
 
 2014-01-07 Jens Maus <mail@jens-maus.de>
- 
+
   * locale, src/Makefile: adapted the Makefile to generate the corresponding .cd
     and .ct files on demand from the .po files. This finally fulfills the switch
     to transifex and closes #496. However, documentation how to translate YAM
