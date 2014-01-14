@@ -535,12 +535,12 @@ void WriteContentTypeAndEncoding(FILE *fh, const struct WritePart *part)
     HeaderFputs(fh, part->Name, "name", 0, NULL);
 
     // output the Content-Disposition (RFC 2183)
-    if(part->IsAttachment == TRUE)
-      fprintf(fh, "\n"
-                  "Content-Disposition: attachment");
-    else
+    if(part->IsAttachment == FALSE && isPrintable == TRUE)
       fprintf(fh, "\n"
                   "Content-Disposition: inline");
+    else
+      fprintf(fh, "\n"
+                  "Content-Disposition: attachment");
 
     // add the filename parameter to the Content-Disposition
     fputc(';', fh);
