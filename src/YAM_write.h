@@ -133,6 +133,7 @@ struct WritePart
   char *            Name;
   long              Size;
   struct codeset *  Codeset; // the character set being used for this part
+  BOOL              IsAttachment;
   BOOL              IsTemp;
   enum Encoding     EncType;
 };

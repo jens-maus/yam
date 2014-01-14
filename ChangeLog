@@ -9,6 +9,9 @@ $URL$
 
   * tcp/pop3.c, tcp/smtp.c: added some checks for correctly resolved incoming
     and sent folders. This refs #499.
+  * YAM_WR.c, mui/WriteWindow.c: attachments are now always flagged as such in
+    the generated mail instead of letting YAM choose their content disposition
+    on basis of their type (text or not). This closes #507.
 
 2014-01-12 Jens Maus <mail@jens-maus.de>
 

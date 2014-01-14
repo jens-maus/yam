@@ -514,6 +514,7 @@ static struct WritePart *BuildPartsList(struct WriteMailData *wmData, BOOL delTe
     struct WritePart *p;
 
     p = first;
+    p->IsAttachment = FALSE;
     p->IsTemp = TRUE;
     p->EncType = WhichEncodingForFile(p->Filename, p->ContentType, wmData->identity->smtpServer);
 
@@ -539,12 +540,13 @@ static struct WritePart *BuildPartsList(struct WriteMailData *wmData, BOOL delTe
           p->Next = np;
 
           // and now set the information for the new part
-          np->ContentType = att->ContentType;
-          np->Filename    = att->FilePath;
-          np->Description = att->Description;
-          np->Name        = att->Name;
-          np->Size        = att->Size;
-          np->IsTemp      = att->IsTemp;
+          np->ContentType  = att->ContentType;
+          np->Filename     = att->FilePath;
+          np->Description  = att->Description;
+          np->Name         = att->Name;
+          np->Size         = att->Size;
+          np->IsAttachment = TRUE;
+          np->IsTemp       = att->IsTemp;
 
           // find out which encoding we use for the attachment
           np->EncType = WhichEncodingForFile(np->Filename, np->ContentType, wmData->identity->smtpServer);

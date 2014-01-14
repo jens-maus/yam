@@ -535,12 +535,12 @@ void WriteContentTypeAndEncoding(FILE *fh, const struct WritePart *part)
     HeaderFputs(fh, part->Name, "name", 0, NULL);
 
     // output the Content-Disposition (RFC 2183)
-    if(isPrintable == TRUE)
-      fprintf(fh, "\n"
-                  "Content-Disposition: inline");
-    else
+    if(part->IsAttachment == TRUE)
       fprintf(fh, "\n"
                   "Content-Disposition: attachment");
+    else
+      fprintf(fh, "\n"
+                  "Content-Disposition: inline");
 
     // add the filename parameter to the Content-Disposition
     fputc(';', fh);
@@ -2693,7 +2693,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
 
         // If this mail is a standard multi-recipient mail and the user hasn't pressed SHIFT
         // or ALT we going to ask him to which recipient he want to send the mail to.
-        if((isMultiRCPTMail(mail) || (email->NumMailReplyTo > 0 && email->NumFollowUpTo > 0)) && 
+        if((isMultiRCPTMail(mail) || (email->NumMailReplyTo > 0 && email->NumFollowUpTo > 0)) &&
             hasPrivateFlag(flags) == FALSE && hasMListFlag(flags) == FALSE)
         {
           const char *opt;
