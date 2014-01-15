@@ -2342,24 +2342,8 @@ struct WriteMailData *NewForwardMailWindow(struct MailList *mlist, const int fla
           // let simply add the original mail as an attachment
           case FWM_ATTACH:
           {
-            char filename[SIZE_PATHFILE];
-            struct Attach attach;
-
-            memset(&attach, 0, sizeof(struct Attach));
-
-            GetMailFile(filename, sizeof(filename), NULL, mail);
-            if(StartUnpack(filename, attach.FilePath, mail->Folder) != NULL)
-            {
-              snprintf(attach.Name, sizeof(attach.Name), "%s.eml", mail->Subject);
-              strlcpy(attach.Description, mail->Subject, sizeof(attach.Description));
-              strlcpy(attach.ContentType, "message/rfc822", sizeof(attach.ContentType));
-              attach.Size = mail->Size;
-
-              // add the attachment to our attachment listview
-              DoMethod(wmData->window, MUIM_WriteWindow_InsertAttachment, &attach);
-            }
-            else
-              E(DBF_MAIL, "unpacking of file '%s' failed!", filename);
+            // add the mail to our attachment list
+            DoMethod(wmData->window, MUIM_WriteWindow_AddMailAttachment, mail);
           }
           break;
 

@@ -15,6 +15,9 @@ $URL$
   * mui/WriteWindow.c: pass an additional parameter to the method to display a
     double clicked attachment entry to respect the clicked list object. This
     closes #511.
+  * YAM_WR.c, mui/WriteAttachmentList.c, mui/WriteWindow.c: all attachments are
+    now added by a central method to ensure that they appear in both list
+    objects. This closes #510.
 
 2014-01-14 Thore Böckelmann <tboeckel@gmx.de>
 

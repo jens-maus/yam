@@ -3276,6 +3276,43 @@ DECLARE(InsertAttachment) // struct Attach *attach
 }
 
 ///
+/// DECLARE(AddMailAttachment)
+// add a mail as attachment
+DECLARE(AddMailAttachment) // struct Mail *mail
+{
+  BOOL result = FALSE;
+
+  ENTER();
+
+  if(msg->mail != NULL)
+  {
+    char filename[SIZE_PATHFILE];
+    struct Attach attach;
+
+    memset(&attach, 0, sizeof(struct Attach));
+
+    GetMailFile(filename, sizeof(filename), NULL, msg->mail);
+    if(StartUnpack(filename, attach.FilePath, msg->mail->Folder) != NULL)
+    {
+      snprintf(attach.Name, sizeof(attach.Name), "%s.eml", msg->mail->Subject);
+      strlcpy(attach.Description, msg->mail->Subject, sizeof(attach.Description));
+      strlcpy(attach.ContentType, "message/rfc822", sizeof(attach.ContentType));
+      attach.Size = msg->mail->Size;
+
+      // add the attachment to our attachment list
+      DoMethod(obj, METHOD(InsertAttachment), &attach);
+
+      result = TRUE;
+    }
+    else
+      E(DBF_MAIL, "unpacking of file '%s' failed!", filename);
+  }
+
+  RETURN(result);
+  return result;
+}
+
+///
 /// DECLARE(AddSignature)
 //  Adds a signature to the end of the file
 DECLARE(AddSignature)

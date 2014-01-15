@@ -173,36 +173,15 @@ OVERLOAD(MUIM_DragDrop)
 
     do
     {
-      struct Mail *mail=NULL;
+      struct Mail *mail = NULL;
 
       DoMethod(d->obj, MUIM_NList_NextSelected, &id);
       if(id == MUIV_NList_NextSelected_End)
         break;
 
       DoMethod(d->obj, MUIM_NList_GetEntry, id, &mail);
-      if(mail != NULL)
-      {
-        char filename[SIZE_PATHFILE];
-        struct Attach attach;
-
-        memset(&attach, 0, sizeof(struct Attach));
-
-        GetMailFile(filename, sizeof(filename), NULL, mail);
-        if(StartUnpack(filename, attach.FilePath, mail->Folder) != NULL)
-        {
-          snprintf(attach.Name, sizeof(attach.Name), "%s.eml", mail->Subject);
-          strlcpy(attach.Description, mail->Subject, sizeof(attach.Description));
-          strlcpy(attach.ContentType, "message/rfc822", sizeof(attach.ContentType));
-          attach.Size = mail->Size;
-
-          // add the attachment to our attachment listview
-          DoMethod(obj, MUIM_NList_InsertSingle, &attach, MUIV_NList_Insert_Bottom);
-        }
-        else
-          E(DBF_MAIL, "unpacking of file '%s' failed!", filename);
-      }
-      else
-        break;
+      // add the attachment to our attachment list
+      DoMethod(_win(obj), MUIM_WriteWindow_AddMailAttachment, mail);
     }
     while(TRUE);
 
@@ -237,11 +216,11 @@ OVERLOAD(MUIM_DragDrop)
       attach.Size = mailPart->Size;
       attach.IsTemp = TRUE;
 
-      if(mailPart->Name)
+      if(mailPart->Name != NULL)
         strlcpy(attach.Name, mailPart->Name, sizeof(attach.Name));
 
-      // add the new attachment to the NList
-      DoMethod(obj, MUIM_NList_InsertSingle, &attach, MUIV_NList_Insert_Bottom);
+      // add the attachment to our attachment list
+      DoMethod(_win(obj), MUIM_WriteWindow_InsertAttachment, &attach);
     }
     else
       DisplayBeep(_screen(obj));
