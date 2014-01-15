@@ -190,6 +190,7 @@ OVERLOAD(MUIM_DragDrop)
         GetMailFile(filename, sizeof(filename), NULL, mail);
         if(StartUnpack(filename, attach.FilePath, mail->Folder) != NULL)
         {
+          snprintf(attach.Name, sizeof(attach.Name), "%s.eml", mail->Subject);
           strlcpy(attach.Description, mail->Subject, sizeof(attach.Description));
           strlcpy(attach.ContentType, "message/rfc822", sizeof(attach.ContentType));
           attach.Size = mail->Size;
