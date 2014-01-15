@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-01-15 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_WR.c: mails being forwarded as attachment now get a proper name. This in
+    turn lets YAM generate some more header lines for the attachment part. This
+    closes #507 again.
+
 2014-01-14 Thore Böckelmann <tboeckel@gmx.de>
 
   * tcp/pop3.c, tcp/smtp.c: added some checks for correctly resolved incoming
