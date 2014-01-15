@@ -7,14 +7,15 @@
 # Translators:
 # damato <mail@jens-maus.de>, 2014
 # Luca Longone <hexaae@tiscalinet.it>, 2013
+# samo79 <s.hawamdeh@teletu.it>, 2014
 # Samir Hawamdeh <s.hawamdeh@tin.it>, 2013
 msgid ""
 msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-01-07 23:48+0100\n"
-"PO-Revision-Date: 2014-01-12 23:40+0000\n"
-"Last-Translator: damato <mail@jens-maus.de>\n"
+"PO-Revision-Date: 2014-01-15 18:45+0000\n"
+"Last-Translator: samo79 <s.hawamdeh@teletu.it>\n"
 "Language-Team: Italian (http://www.transifex.com/projects/p/yam/language/it/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -906,7 +907,7 @@ msgstr "Cordiali saluti."
 #. defined in MSG_CO_AltRepPatternDef matches.
 msgctxt "MSG_CO_AltRepHelloDef (274//)"
 msgid "<EMPTY>Hello %f,\\n"
-msgstr ""
+msgstr "Ciao %f,\\n"
 
 #. Replace the whole line with an alternative bye phrase in your
 #. language similar to what is written behind <EMPTY>. This phrase
@@ -921,7 +922,7 @@ msgstr "Cordiali saluti."
 #. list AmigaDOS-pattern matches and the user is replying.
 msgctxt "MSG_CO_MLRepHelloDef (276//)"
 msgid "<EMPTY>Hello %f,\\n"
-msgstr ""
+msgstr "Ciao %f,\\n"
 
 #. Please keep the number of backslashes (e.g. \n)
 msgctxt "MSG_CO_MLRepIntroDef (277//)"
@@ -8951,15 +8952,15 @@ msgstr "_Continua|*_Annulla"
 
 msgctxt "MSG_WR_MCCADDRFIELD (2346//)"
 msgid "Cc Address Field"
-msgstr ""
+msgstr "Campo indirizzo CC"
 
 msgctxt "MSG_WR_MBCCADDRFIELD (2347//)"
 msgid "Bcc Address Field"
-msgstr ""
+msgstr "Campo indirizzo BCC"
 
 msgctxt "MSG_WR_MREPLYTOADDRFIELD (2348//)"
 msgid "Reply-To Address Field"
-msgstr ""
+msgstr "Campo indirizzo Rispondi-A"
 
 msgctxt "MSG_CO_LISTCOLUMNSETTINGS (2349//)"
 msgid "Column settings"
@@ -9823,12 +9824,12 @@ msgstr "Controlla messaggi di posta da '%s'"
 
 msgctxt "MSG_WR_CC (2532//)"
 msgid "_Cc"
-msgstr ""
+msgstr "_CC"
 
 msgctxt "MSG_WR_BCC (2533//)"
 msgid "_Bcc"
-msgstr ""
+msgstr "_BCC"
 
 msgctxt "MSG_WR_REPLYTO (2534//)"
 msgid "Reply _To"
-msgstr ""
+msgstr "Rispondi _A"
