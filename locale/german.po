@@ -8,13 +8,14 @@
 # damato <mail@jens-maus.de>, 2014
 # damato <mail@jens-maus.de>, 2014
 # tboeckel <tboeckel@gmx.de>, 2014
+# tboeckel <tboeckel@gmx.de>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-01-07 23:48+0100\n"
-"PO-Revision-Date: 2014-01-12 23:33+0000\n"
-"Last-Translator: damato <mail@jens-maus.de>\n"
+"PO-Revision-Date: 2014-01-15 07:39+0000\n"
+"Last-Translator: tboeckel <tboeckel@gmx.de>\n"
 "Language-Team: German (http://www.transifex.com/projects/p/yam/language/de/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -9784,7 +9785,7 @@ msgid ""
 "no recipient had been specified.\n"
 "\n"
 "How do you want to proceed?"
-msgstr "Die Nachricht ist unvollständig da kein\nEmpfänger angegeben wurde.\n\nWie möchten Sie fortfahren?"
+msgstr "Die Nachricht ist unvollständig, da kein\nEmpfänger angegeben wurde.\n\nWie möchten Sie fortfahren?"
 
 msgctxt "MSG_WR_DISCARDCHANGES_GADGET (2524//)"
 msgid "*_Save as draft|_Discard|_Cancel"
