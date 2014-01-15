@@ -12,6 +12,9 @@ $URL$
     closes #507 again.
   * mui/YAMApplication.c: the address cache now saves unquoted real names and
     removes possible quotes upon loading the cached addresses. This closes #508.
+  * mui/WriteWindow.c: pass an additional parameter to the method to display a
+    double clicked attachment entry to respect the clicked list object. This
+    closes #511.
 
 2014-01-14 Thore Böckelmann <tboeckel@gmx.de>
 

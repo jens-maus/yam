@@ -1499,10 +1499,10 @@ OVERLOAD(OM_NEW)
         DoMethod(data->BT_ADDPACK,     MUIM_Notify, MUIA_Pressed,                           FALSE,          obj, 1, METHOD(AddArchive));
         DoMethod(data->BT_REMOVE,      MUIM_Notify, MUIA_Pressed,                           FALSE,          obj, 1, METHOD(RemoveAttachment));
         DoMethod(data->BT_RENAME,      MUIM_Notify, MUIA_Pressed,                           FALSE,          obj, 1, METHOD(RenameAttachment));
-        DoMethod(data->BT_DISPLAY,     MUIM_Notify, MUIA_Pressed,                           FALSE,          obj, 1, METHOD(DisplayAttachment));
-        DoMethod(data->LV_ATTACH,      MUIM_Notify, MUIA_NList_DoubleClick,                 MUIV_EveryTime, obj, 1, METHOD(DisplayAttachment));
+        DoMethod(data->BT_DISPLAY,     MUIM_Notify, MUIA_Pressed,                           FALSE,          obj, 2, METHOD(DisplayAttachment), data->LV_ATTACH);
+        DoMethod(data->LV_ATTACH,      MUIM_Notify, MUIA_NList_DoubleClick,                 MUIV_EveryTime, obj, 2, METHOD(DisplayAttachment), data->LV_ATTACH);
         DoMethod(data->LV_ATTACH,      MUIM_Notify, MUIA_NList_Active,                      MUIV_EveryTime, obj, 1, METHOD(GetAttachmentEntry));
-        DoMethod(data->LV_ATTACH_TINY, MUIM_Notify, MUIA_NList_DoubleClick,                 MUIV_EveryTime, obj, 1, METHOD(DisplayAttachment));
+        DoMethod(data->LV_ATTACH_TINY, MUIM_Notify, MUIA_NList_DoubleClick,                 MUIV_EveryTime, obj, 2, METHOD(DisplayAttachment), data->LV_ATTACH_TINY);
         DoMethod(data->LV_ATTACH_TINY, MUIM_Notify, MUIA_NList_Active,                      MUIV_EveryTime, obj, 1, METHOD(GetAttachmentEntry));
         DoMethod(data->PO_CTYPE,       MUIM_Notify, MUIA_MimeTypePopup_MimeTypeChanged,     MUIV_EveryTime, obj, 1, METHOD(PutAttachmentEntry));
         DoMethod(data->ST_DESC,        MUIM_Notify, MUIA_String_Contents,                   MUIV_EveryTime, obj, 1, METHOD(PutAttachmentEntry));
@@ -2625,14 +2625,13 @@ DECLARE(RenameAttachment)
 ///
 /// DECLARE(DisplayAttachment)
 // Displays an attached file using a MIME viewer
-DECLARE(DisplayAttachment)
+DECLARE(DisplayAttachment) // Object *originator
 {
-  GETDATA;
   struct Attach *attach = NULL;
 
   ENTER();
 
-  DoMethod(data->LV_ATTACH, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &attach);
+  DoMethod(msg->originator, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &attach);
   if(attach != NULL)
   {
     if(FileExists(attach->FilePath) == TRUE)
