@@ -132,7 +132,7 @@ static void LoadEMailCache(const char *name, struct ABook *cache)
           {
             addr[-1] = '\0';
             // copy the real name
-            strlcpy(abn->RealName, line, sizeof(abn->RealName));
+            strlcpy(abn->RealName, UnquoteString(line, FALSE), sizeof(abn->RealName));
           }
           end[0] = '\0';
           strlcpy(abn->Address, addr+1, sizeof(abn->Address));
@@ -177,7 +177,7 @@ static BOOL SaveEMailCacheEntry(const struct ABookNode *abn, UNUSED ULONG flags,
   {
     // the cache contains user entries only, thus we don't have to care about the type here
     if(abn->RealName[0] != '\0')
-      fprintf(stuff->fh, "%s <%s>\n", abn->RealName, abn->Address);
+      fprintf(stuff->fh, "%s <%s>\n", UnquoteString(abn->RealName, FALSE), abn->Address);
     else
       fprintf(stuff->fh, "<%s>\n", abn->Address);
 
@@ -478,18 +478,8 @@ DECLARE(AddToEmailCache) // struct Person *person
       {
         char *p;
 
-        // Lets copy the data in the new Person struct
-        // for the real name we have to check for possible commas without quotes yet
-        if(strchr(msg->person->RealName, ',') != NULL && msg->person->RealName[0] != '"')
-        {
-          // add the necessary double quotes around the real name
-          snprintf(abn->RealName, sizeof(abn->RealName), "\"%s\"", msg->person->RealName);
-        }
-        else
-        {
-          // simply copy the real name
-          strlcpy(abn->RealName, msg->person->RealName, sizeof(abn->RealName));
-        }
+        // copy the data into the new cache entry
+        strlcpy(abn->RealName, msg->person->RealName, sizeof(abn->RealName));
         strlcpy(abn->Address, msg->person->Address, sizeof(abn->Address));
 
         // strip any single quotes from the real name

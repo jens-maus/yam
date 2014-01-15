@@ -10,6 +10,8 @@ $URL$
   * YAM_WR.c: mails being forwarded as attachment now get a proper name. This in
     turn lets YAM generate some more header lines for the attachment part. This
     closes #507 again.
+  * mui/YAMApplication.c: the address cache now saves unquoted real names and
+    removes possible quotes upon loading the cached addresses. This closes #508.
 
 2014-01-14 Thore Böckelmann <tboeckel@gmx.de>
 
