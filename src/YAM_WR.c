@@ -2676,9 +2676,9 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
           }
         }
 
-        // If this mail is a standard multi-recipient mail and the user hasn't pressed SHIFT
-        // or ALT we going to ask him to which recipient he want to send the mail to.
-        if((isMultiRCPTMail(mail) || (email->NumMailReplyTo > 0 && email->NumFollowUpTo > 0)) &&
+        // If this mail is a standard multi-recipient mail and the user hasn't pressed SHIFT (private)
+        // or ALT (send to mailing list) we going to ask him to which recipient he want to send the mail to.
+        if((isMultiRCPTMail(mail) || (email->NumMailReplyTo > 0 && email->NumFollowUpTo > 0 && foundMLFolder == FALSE)) && 
             hasPrivateFlag(flags) == FALSE && hasMListFlag(flags) == FALSE)
         {
           const char *opt;
@@ -2734,7 +2734,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
                 rto = AppendRcpt(rto, &email->STo[k], email->identity, FALSE);
             }
             else if(hasPrivateFlag(flags) == FALSE &&
-                    foundMLFolder == TRUE && mlistTo != NULL)
+                    foundMLFolder == TRUE)
             {
               char *p;
 
@@ -2760,6 +2760,21 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
                 }
 
                 free(p);
+              }
+              else
+              {
+                // the user hasn't specified a To: address so lets check which one to take
+                if(email->NumFollowUpTo > 0)
+                {
+                  for(k=0; k < email->NumFollowUpTo; k++)
+                    rto = AppendRcpt(rto, &email->FollowUpTo[k], email->identity, FALSE);
+                }
+                else if(IsStrEmpty(mail->ReplyTo.Address) == FALSE)
+                {
+                  rto = AppendRcpt(rto, &mail->ReplyTo, email->identity, FALSE);
+                  for(k=0; k < email->NumSReplyTo; k++)
+                    rto = AppendRcpt(rto, &email->SReplyTo[k], email->identity, FALSE);
+                }
               }
 
               // add all Reply-To: recipients of the mailing list config
@@ -2797,6 +2812,12 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
               if(email->NumMailReplyTo > 0)
               {
                 // force to use the Mail-Reply-To: header without asking anyone
+                askUser = FALSE;
+              }
+              else if(hasPrivateFlag(flags) == TRUE)
+              {
+                // the user don't want to be asked if he presses the SHIT key while replying
+                // so skip any requester
                 askUser = FALSE;
               }
               else if(email->NumSFrom == email->NumSReplyTo)
@@ -2884,12 +2905,17 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
               // use that instead of any Reply-To: or From: mail header. Otherwise we
               // use the Reply-To: recipient list and if that is also not present we
               // use the From: recipient list only.
-              if(email->NumMailReplyTo > 0)
+              if(email->NumMailReplyTo > 0 && hasMListFlag(flags) == FALSE)
               {
                 for(k=0; k < email->NumMailReplyTo; k++)
                   rto = AppendRcpt(rto, &email->MailReplyTo[k], email->identity, FALSE);
               }
-              else if(mail->ReplyTo.Address[0] != '\0')
+              else if(email->NumFollowUpTo > 0 && hasMListFlag(flags) == TRUE)
+              {
+                for(k=0; k < email->NumFollowUpTo; k++)
+                  rto = AppendRcpt(rto, &email->FollowUpTo[k], email->identity, FALSE);
+              }
+              else if(IsStrEmpty(mail->ReplyTo.Address) == FALSE && hasPrivateFlag(flags) == FALSE)
               {
                 rto = AppendRcpt(rto, &mail->ReplyTo, email->identity, FALSE);
                 for(k=0; k < email->NumSReplyTo; k++)

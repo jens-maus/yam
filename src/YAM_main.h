@@ -199,13 +199,13 @@ enum ForwardMode
 #define DELF_UPDATE_APPICON     (1<<3)
 #define DELF_CHECK_CONNECTIONS  (1<<4) // make sure there is an active connection
 
-// flags and macros for creating new mails
+// flags and macros for creating/replying/forwarding mails
 #define NEWF_QUIET               (1<<0)
-#define NEWF_REP_NOQUOTE         (1<<1)
-#define NEWF_REP_PRIVATE         (1<<2)
-#define NEWF_REP_MLIST           (1<<3)
-#define NEWF_FWD_NOATTACH        (1<<4) // remove any attachement from the forwared mail
-#define NEWF_FWD_ALTMODE         (1<<5)
+#define NEWF_REP_NOQUOTE         (1<<1) // force reply to mail without quoting (CTRL qualifier)
+#define NEWF_REP_PRIVATE         (1<<2) // force reply to the sender (SHIFT qualifier)
+#define NEWF_REP_MLIST           (1<<3) // force reply to mailing list address (ALT qualifier)
+#define NEWF_FWD_NOATTACH        (1<<4) // remove any attachement from the forwared mail (CTRL qualifier)
+#define NEWF_FWD_ALTMODE         (1<<5) // used alternative (not configured) forward mode (ALT qualifier)
 #define NEWF_FWD_AS_ATTACHMENT   (1<<6) // force forwarding as an attachment
 #define NEWF_FWD_INLINED         (1<<7) // force forwarding as inlined text
 #define hasQuietFlag(v)               (isFlagSet((v), NEWF_QUIET))

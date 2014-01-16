@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-01-16 Jens Maus <mail@jens-maus.de>
+
+  * YAM_WR.c: slightly changed the logical of the reply action. YAM will now
+    directly reply to the Mail-Followup-To header entry if a matching mailing
+    list is found. In addition, the SHIFT key will now make sure that a reply
+    will always end up at the sender of a mail. Contrary to that, pressing
+    the ALT key will directly reply to all (e.g. the mailing list).
+    This closes #498.
+  
 2014-01-15 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_WR.c: mails being forwarded as attachment now get a proper name. This in
