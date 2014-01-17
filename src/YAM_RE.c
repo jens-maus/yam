@@ -3049,7 +3049,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
 
           setvbuf(fh, NULL, _IOFBF, SIZE_FILEBUF);
 
-          // allocate memory for the complete part plus and trailing NUL byte
+          // allocate memory for the complete part plus a trailing NUL byte
           if((msg = dstralloc(part->Size+1)) != NULL)
           {
             int nread;
@@ -3101,7 +3101,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                                          TAG_DONE)) != NULL && cstrlen > 0)
             {
               // if the size didn't change this should be a signal that nothing
-              // had been actually
+              // had been actually convert to UTF8
               if(cstrlen != dstrlen(msg))
               {
                 // msg has been converted to local charset now, so lets
@@ -3129,14 +3129,14 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                 // free the old HTML text
                 dstrfree(msg);
 
-                // overwrite the old values
-                nread = dstrlen(converted);
+                // overwrite the old value
                 msg = converted;
               }
             }
 
+D(DBF_MIME, "nread: %ld %ld", nread, dstrlen(msg));
             rptr = msg;
-            msgend = msg+nread;
+            msgend = msg+dstrlen(msg);
 
             // parse the message string
             // make sure we don't read beyond the buffer's limits

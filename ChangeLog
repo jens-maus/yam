@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-01-17 Jens Maus <mail@jens-maus.de>
+
+  * YAM_RE.c: fixed a bug in the mail parsing routines where it could have
+    happened that YAM was parsing over the boundaries of a readable MIME
+    part if the text contained many UTF8 convertable characters. This resulted
+    in arbirary characters being added at the end of a displayed text.
+    This closes #509.
+
 2014-01-16 Jens Maus <mail@jens-maus.de>
 
   * YAM_WR.c: slightly changed the logical of the reply action. YAM will now
