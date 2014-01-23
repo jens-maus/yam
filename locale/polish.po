@@ -7,13 +7,14 @@
 # Translators:
 # damato <mail@jens-maus.de>, 2014
 # Mariusz Danilewicz <mandi@interia.pl>, 2011
+# mailman <sebastian.rosa@wp.pl>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-01-07 23:48+0100\n"
-"PO-Revision-Date: 2014-01-12 23:46+0000\n"
-"Last-Translator: damato <mail@jens-maus.de>\n"
+"PO-Revision-Date: 2014-01-23 21:40+0000\n"
+"Last-Translator: mailman <sebastian.rosa@wp.pl>\n"
 "Language-Team: Polish (http://www.transifex.com/projects/p/yam/language/pl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -8440,7 +8441,7 @@ msgstr ""
 
 msgctxt "MSG_CO_POP_AUTH (2234//)"
 msgid "Authentification"
-msgstr ""
+msgstr "Uwierzytelnienie"
 
 msgctxt "MSG_HELP_CO_CY_POPAUTH (2235//)"
 msgid ""
@@ -8464,7 +8465,7 @@ msgstr ""
 
 msgctxt "MSG_CO_POP_SECURITY_NONE (2239//)"
 msgid "No Security"
-msgstr ""
+msgstr "Bez zabezpieczeń"
 
 msgctxt "MSG_CO_POP_SECURITY_TLS (2240//)"
 msgid "STARTTLS"
@@ -8485,15 +8486,15 @@ msgstr ""
 
 msgctxt "MSG_CO_POP_SERVERLIST (2243//)"
 msgid "Server List"
-msgstr ""
+msgstr "Lista serwerów"
 
 msgctxt "MSG_CO_POP_SERVERSETTINGS (2244//)"
 msgid "Server Settings"
-msgstr ""
+msgstr "Ustawienia serwera"
 
 msgctxt "MSG_CO_POP_SECURITYAUTH (2245//)"
 msgid "Security and Authentification"
-msgstr ""
+msgstr "Zabezpieczenia i uwierzytelnianie"
 
 msgctxt "MSG_CO_POP_MSGHANDLING (2246//)"
 msgid "Message handling"
@@ -8501,15 +8502,15 @@ msgstr ""
 
 msgctxt "MSG_CO_SMTP_SERVERLIST (2247//)"
 msgid "Server List"
-msgstr ""
+msgstr "Lista serwerów"
 
 msgctxt "MSG_CO_SMTP_SERVERSETTINGS (2248//)"
 msgid "Server Settings"
-msgstr ""
+msgstr "Ustawienia serwera"
 
 msgctxt "MSG_CO_POP_DESC (2249//)"
 msgid "Description"
-msgstr ""
+msgstr "Opis"
 
 msgctxt "MSG_HELP_CO_ST_POPDESC (2250//)"
 msgid ""
@@ -8520,7 +8521,7 @@ msgstr ""
 
 msgctxt "MSG_CO_SMTP_DESC (2251//)"
 msgid "Description"
-msgstr ""
+msgstr "Opis"
 
 msgctxt "MSG_HELP_CO_ST_SMTPDESC (2252//)"
 msgid ""
