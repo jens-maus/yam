@@ -6,6 +6,7 @@
 # 
 # Translators:
 # Alex Plotnicov <wildcat@alba.august.ru>, 2000
+# peguser <mobydick@amiga.org.ru>, 2014
 # damato <mail@jens-maus.de>, 2014
 # Oleg Sergeev <bigblack@mail.lanck.net>, 2000
 msgid ""
@@ -13,8 +14,8 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-01-07 23:48+0100\n"
-"PO-Revision-Date: 2014-01-12 23:50+0000\n"
-"Last-Translator: damato <mail@jens-maus.de>\n"
+"PO-Revision-Date: 2014-01-25 21:30+0000\n"
+"Last-Translator: peguser <mobydick@amiga.org.ru>\n"
 "Language-Team: Russian (http://www.transifex.com/projects/p/yam/language/ru/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -32,11 +33,11 @@ msgstr "Сообщение"
 
 msgctxt "MSG_Attachments (2//)"
 msgid "Attachments"
-msgstr "Аттачи"
+msgstr "Приложения"
 
 msgctxt "MSG_Options (3//)"
 msgid "Options"
-msgstr "Опции"
+msgstr "Параметры"
 
 msgctxt "MSG_New (6//)"
 msgid "New"
@@ -64,23 +65,23 @@ msgstr "Печать..."
 
 msgctxt "MSG_Edit (12//)"
 msgid "Edit..."
-msgstr "Изменить..."
+msgstr "Редактировать..."
 
 msgctxt "MSG_Okay (16//)"
 msgid "_Ok"
-msgstr "О'ке_й"
+msgstr "_Далее"
 
 msgctxt "MSG_Use (17//)"
 msgid "_Use"
-msgstr "Пр_инять"
+msgstr "_Использовать"
 
 msgctxt "MSG_Cancel (18//)"
 msgid "_Cancel"
-msgstr "_Отмена"
+msgstr "_Отменить"
 
 msgctxt "MSG_OkayReq (21//)"
 msgid "*_Ok"
-msgstr "*О'ке_й"
+msgstr "*_Далее"
 
 msgctxt "MSG_YesNoReq (23//)"
 msgid "*_Yes|_No"
