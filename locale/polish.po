@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-01-07 23:48+0100\n"
-"PO-Revision-Date: 2014-01-23 21:40+0000\n"
+"PO-Revision-Date: 2014-01-25 08:37+0000\n"
 "Last-Translator: mailman <sebastian.rosa@wp.pl>\n"
 "Language-Team: Polish (http://www.transifex.com/projects/p/yam/language/pl/)\n"
 "MIME-Version: 1.0\n"
@@ -8561,15 +8561,15 @@ msgstr ""
 
 msgctxt "MSG_CO_SMTP_AUTH (2259//)"
 msgid "Authentification"
-msgstr ""
+msgstr "Uwierzytelnienie"
 
 msgctxt "MSG_CO_SMTPAUTH_NONE (2260//)"
 msgid "No Authentication"
-msgstr ""
+msgstr "Bez uwierzytelnienia"
 
 msgctxt "MSG_CO_SMTP_OPTIONS (2261//)"
 msgid "Options"
-msgstr ""
+msgstr "Opcje"
 
 msgctxt "MSG_CO_CRDIDENTITIES (2262//)"
 msgid "Identities"
@@ -8589,83 +8589,83 @@ msgstr ""
 
 msgctxt "MSG_CO_IDENTITY_SETTINGS (2266//)"
 msgid "General Settings"
-msgstr ""
+msgstr "Ogólne ustawienia"
 
 msgctxt "MSG_CO_IDENTITY_REGISTER_SETTINGS (2268//)"
 msgid "General Settings"
-msgstr ""
+msgstr "Ogólne ustawienia"
 
 msgctxt "MSG_CO_IDENTITY_REGISTER_COMPOSE (2269//)"
 msgid "Compose Mail"
-msgstr ""
+msgstr "Tworzenie wiadomości"
 
 msgctxt "MSG_CO_IDENTITY_REGISTER_PGPSEC (2270//)"
 msgid "PGP-Security"
-msgstr ""
+msgstr "Zabezpieczenia PGP"
 
 msgctxt "MSG_CO_IDENTITY_NOSIGNATURE (2271//)"
 msgid "no signature"
-msgstr ""
+msgstr "Bez podpisu"
 
 msgctxt "MSG_CO_IDENTITY_ABOVEQUOTE (2272//)"
 msgid "above quotes"
-msgstr ""
+msgstr "Nad cytowanym"
 
 msgctxt "MSG_CO_IDENTITY_BELOWQUOTE (2273//)"
 msgid "below quotes"
-msgstr ""
+msgstr "Pod cytowanym"
 
 msgctxt "MSG_CO_IDENTITY_DESCRIPTION (2274//)"
 msgid "Description"
-msgstr ""
+msgstr "Opis"
 
 msgctxt "MSG_CO_IDENTITY_MAILSERVER (2275//)"
 msgid "Mail server (SMTP)"
-msgstr ""
+msgstr "Serwer poczty (SMTP)"
 
 msgctxt "MSG_CO_IDENTITY_COMPOSE (2277//)"
 msgid "Compose mail settings"
-msgstr ""
+msgstr "Ustawienia tworzenia wiadomości"
 
 msgctxt "MSG_CO_IDENTITY_CC (2278//)"
 msgid "CC: address"
-msgstr ""
+msgstr "Adres DW"
 
 msgctxt "MSG_CO_IDENTITY_BCC (2280//)"
 msgid "BCC: address"
-msgstr ""
+msgstr "Adres UDW"
 
 msgctxt "MSG_CO_IDENTITY_REPLYTO (2282//)"
 msgid "Reply-To: address"
-msgstr ""
+msgstr "Adres Odpisz-Do"
 
 msgctxt "MSG_CO_IDENTITY_COMPOSE_OPTIONS (2284//)"
 msgid "Options"
-msgstr ""
+msgstr "Opcje"
 
 msgctxt "MSG_CO_IDENTITY_COMPOSE_QUOTE (2287//)"
 msgid "Quote messages when answering"
-msgstr ""
+msgstr "Cytuj wiadomość, gdy odpowiadasz"
 
 msgctxt "MSG_CO_IDENTITY_COMPOSE_ANSWER (2288//)"
 msgid "Put my answer"
-msgstr ""
+msgstr "Umieść moją odpowiedź"
 
 msgctxt "MSG_CO_IDENTITY_COMPOSE_SIGNATURE (2289//)"
 msgid "Put my signature"
-msgstr ""
+msgstr "Umieść mój podpis"
 
 msgctxt "MSG_CO_IDENTITY_USESIG_REPLY (2290//)"
 msgid "Use signature when replying"
-msgstr ""
+msgstr "Umieść podpis, gdy odpowiadam"
 
 msgctxt "MSG_CO_IDENTITY_USESIG_FORWARD (2291//)"
 msgid "Use signature when forwarding"
-msgstr ""
+msgstr "Umieść podpis, gdy przekazuję dalej"
 
 msgctxt "MSG_CO_IDENTITY_PGPSETTINGS (2292//)"
 msgid "PGP-Security Settings"
-msgstr ""
+msgstr "Ustawienia zabezpieczeń PGP"
 
 msgctxt "MSG_CO_IDENTITY_USEPGP (2293//)"
 msgid "Use PGP for this identity"
@@ -8673,47 +8673,47 @@ msgstr ""
 
 msgctxt "MSG_CO_IDENTITY_PGPKEY_ID (2294//)"
 msgid "PGP key ID"
-msgstr ""
+msgstr "ID klucza PGP"
 
 msgctxt "MSG_CO_IDENTITY_PGPKEY_URL (2295//)"
 msgid "PGP key URL"
-msgstr ""
+msgstr "URL klucza PGP"
 
 msgctxt "MSG_CO_IDENTITY_PGP_OPTIONS (2296//)"
 msgid "Options"
-msgstr ""
+msgstr "Opcje"
 
 msgctxt "MSG_CO_IDENTITY_PGP_SIGN_UNENC (2297//)"
 msgid "Sign unencrypted mails per default"
-msgstr ""
+msgstr "Domyślnie podpisz nieszyfrowane wiadomości"
 
 msgctxt "MSG_CO_IDENTITY_PGP_SIGN_ENC (2298//)"
 msgid "Sign encrypted mails per default"
-msgstr ""
+msgstr "Domyślnie podpisz szyfrowane wiadomości"
 
 msgctxt "MSG_CO_IDENTITY_PGP_ENCRYPTALL (2299//)"
 msgid "Encrypt all mails per default"
-msgstr ""
+msgstr "Domyślnie szyfruj wszystkie wiadomości"
 
 msgctxt "MSG_CO_IDENTITY_PGP_ADDOWN (2300//)"
 msgid "Add own key when encrypting mails"
-msgstr ""
+msgstr "Dodaj własny klucz szyfrując wiadomości"
 
 msgctxt "MSG_CO_IDENTITY_PHOTOURL (2301//)"
 msgid "URL to own photo"
-msgstr ""
+msgstr "Adres URL do własnego zdjęcia"
 
 msgctxt "MSG_CO_IDENTITY_ADDINFO (2302//)"
 msgid "Add personal information"
-msgstr ""
+msgstr "Dodaj informacje osobowe"
 
 msgctxt "MSG_CO_IDENTITY_REQUESTMDN (2303//)"
 msgid "Request a return receipt"
-msgstr ""
+msgstr "Żądaj potwierdzenia odbioru"
 
 msgctxt "MSG_CO_SERVERNAME (2304//)"
 msgid "Server name"
-msgstr ""
+msgstr "Nazwa serwera"
 
 msgctxt "MSG_HELP_CO_ST_USER (2305//)"
 msgid ""
@@ -8742,7 +8742,7 @@ msgstr ""
 #. PATH, ERROR
 msgctxt "MSG_ER_CANNOT_CREATE_FOLDER (2308//)"
 msgid "Failed to create directory '%s' (%s)."
-msgstr ""
+msgstr "Nie udało się stworzyć katalogu '%s' (%s)."
 
 msgctxt "MSG_CO_IdentityActive (2309//)"
 msgid "_Active"
@@ -8967,7 +8967,7 @@ msgstr ""
 
 msgctxt "MSG_CO_LOOKFEEL_MAINWINDOW (2350//)"
 msgid "Main window"
-msgstr ""
+msgstr "Główne okno"
 
 msgctxt "MSG_CO_LOOKFEEL_TITLE_THEME (2351//)"
 msgid "Theme"
@@ -8986,7 +8986,7 @@ msgstr ""
 
 msgctxt "MSG_WR_PGPSECURITY (2354//)"
 msgid "PGP security level"
-msgstr ""
+msgstr "Poziom zabezpieczeń PGP"
 
 msgctxt "MSG_HELP_WR_CY_SECURITY (2355//)"
 msgid ""
@@ -8999,7 +8999,7 @@ msgstr ""
 
 msgctxt "MSG_CO_MIMETYPE_TITLE (2356//)"
 msgid "MIME type"
-msgstr ""
+msgstr "Typ MIME"
 
 msgctxt "MSG_CO_DOWNLOAD_LARGE_MAILS1 (2357//)"
 msgid "_Download messages larger than"
@@ -9007,23 +9007,23 @@ msgstr ""
 
 msgctxt "MSG_CO_DOWNLOAD_LARGE_MAILS2 (2358//)"
 msgid "KB"
-msgstr ""
+msgstr "kB"
 
 msgctxt "MSG_MA_DRAFTS (2359//)"
 msgid "Drafts"
-msgstr ""
+msgstr "Szkic"
 
 msgctxt "MSG_CO_SIGNATURE (2360//)"
 msgid "Signature"
-msgstr ""
+msgstr "Podpis"
 
 msgctxt "MSG_CO_SIGNATURES (2361//)"
 msgid "Signatures"
-msgstr ""
+msgstr "Podpisy"
 
 msgctxt "MSG_CO_SIGNATURE_DESCRIPTION (2362//)"
 msgid "Description"
-msgstr ""
+msgstr "Opis"
 
 msgctxt "MSG_CO_SIGNATURE_ACTIVE (2363//)"
 msgid "_Active"
@@ -9031,27 +9031,27 @@ msgstr ""
 
 msgctxt "MSG_CO_IDENTITY_SIGNATURE (2364//)"
 msgid "Signature"
-msgstr ""
+msgstr "Podpis"
 
 msgctxt "MSG_HELP_CO_LV_SIGNATURE (2365//)"
 msgid "List of all signatures"
-msgstr ""
+msgstr "Lista wszystkich podpisów"
 
 msgctxt "MSG_HELP_CO_BT_SIGADD (2366//)"
 msgid "Adds a new signature to the list."
-msgstr ""
+msgstr "Dodaj nowy podpis do listy"
 
 msgctxt "MSG_HELP_CO_BT_SIGDEL (2367//)"
 msgid "Removes selected signature from list."
-msgstr ""
+msgstr "Usuwa zaznaczone podpisy z listy"
 
 msgctxt "MSG_HELP_CO_BT_SIGUP (2368//)"
 msgid "Moves signature one entry up."
-msgstr ""
+msgstr "Przesuwa podpis jedną pozycję wyżej"
 
 msgctxt "MSG_HELP_CO_BT_SIGDOWN (2369//)"
 msgid "Moves signature one entry down."
-msgstr ""
+msgstr "Przesuwa podpis jedną pozycję niżej"
 
 msgctxt "MSG_HELP_CO_BT_SIG_ACTIVE (2370//)"
 msgid ""
@@ -9073,7 +9073,7 @@ msgstr ""
 
 msgctxt "MSG_CO_MIXED_CONNECTIONS (2373//)"
 msgid "Connections"
-msgstr ""
+msgstr "Połączenia"
 
 msgctxt "MSG_CO_POP_NOTIFICATION (2374//)"
 msgid "Notification for new mails"
@@ -9182,11 +9182,11 @@ msgstr ""
 
 msgctxt "MSG_CO_SIGNATURE_TEXT (2394//)"
 msgid "Signature text"
-msgstr ""
+msgstr "Treść podpisu"
 
 msgctxt "MSG_CO_APPEND_SIGNATURE_FILE (2395//)"
 msgid "Append a file as signature instead"
-msgstr ""
+msgstr "Dołącz plik podpisu"
 
 msgctxt "MSG_PRESELECT_GETTING_DETAILS (2396//)"
 msgid "Getting message details (%%ld of %ld)"
@@ -9194,11 +9194,11 @@ msgstr ""
 
 msgctxt "MSG_CO_UPDATES_INFO_MANUAL (2397//)"
 msgid "You will have to check for updates manually."
-msgstr ""
+msgstr "Będziesz musiał sprawdzać ręcznie dostępność nowych aktualizacji."
 
 msgctxt "MSG_CO_UPDATES_INFO_AUTO (2398//)"
 msgid "You will be notified as soon as updates are available."
-msgstr ""
+msgstr "Będziesz informowany o nowych aktualizacjach."
 
 msgctxt "MSG_PGPPASS_SHOW_CHARS (2399//)"
 msgid "Show characters"
@@ -9220,7 +9220,7 @@ msgstr ""
 
 msgctxt "MSG_WR_SAVEASDRAFT (2402//)"
 msgid "Save as _draft"
-msgstr ""
+msgstr "Zapisz jako _draft"
 
 msgctxt "MSG_HELP_WR_BT_SAVEASDRAFT (2403//)"
 msgid ""
@@ -9230,11 +9230,11 @@ msgstr ""
 
 msgctxt "MSG_WR_MSAVEASDRAFT (2404//)"
 msgid "Save as draft"
-msgstr ""
+msgstr "Zapisz jako szkic"
 
 msgctxt "MSG_WR_MCLOSE (2405//)"
 msgid "Close"
-msgstr ""
+msgstr "Zamknij"
 
 #. SENDER, SUBJECT, RECIPIENT
 msgctxt "MSG_LOG_REDIRECT (2406//)"
@@ -9279,7 +9279,7 @@ msgstr ""
 
 msgctxt "MSG_WR_REDIRECT_TITLE (2415//)"
 msgid "Redirect message(s)"
-msgstr ""
+msgstr "Przekieruj wiadomości"
 
 #. FILE
 msgctxt "MSG_ER_CANNOT_CREATE_MAIL_FILE (2416//)"
@@ -9295,15 +9295,15 @@ msgstr ""
 
 msgctxt "MSG_WR_RENAME_ATTACHMENT (2418//)"
 msgid "Rename attachment"
-msgstr ""
+msgstr "Zmień nazwę załącznika"
 
 msgctxt "MSG_WR_ENTER_NEW_NAME (2419//)"
 msgid "Enter new attachment name:"
-msgstr ""
+msgstr "Podaj nową nazwę załącznika:"
 
 msgctxt "MSG_FI_SKIP_ENCRYPTED (2420//)"
 msgid "Skip encrypted mails"
-msgstr ""
+msgstr "Pomiń zaszyfrowane wiadomości"
 
 msgctxt "MSG_HELP_FI_CH_SKIP_ENCRYPTED (2421//)"
 msgid ""
@@ -9327,67 +9327,67 @@ msgstr ""
 
 msgctxt "MSG_CO_QUICKSEARCHBARPOS01 (2425//)"
 msgid "Disabled"
-msgstr ""
+msgstr "Wyłączona"
 
 msgctxt "MSG_CO_QUICKSEARCHBARPOS02 (2426//)"
 msgid "Top"
-msgstr ""
+msgstr "Na górze"
 
 msgctxt "MSG_CO_QUICKSEARCHBARPOS03 (2427//)"
 msgid "Bottom"
-msgstr ""
+msgstr "Na dole"
 
 msgctxt "MSG_CO_FILTER_REGISTER_SETTINGS (2428//)"
 msgid "General"
-msgstr ""
+msgstr "Ogólne"
 
 msgctxt "MSG_CO_FILTER_REGISTER_CONDITIONS (2429//)"
 msgid "Conditions"
-msgstr ""
+msgstr "Warunki"
 
 msgctxt "MSG_CO_FILTER_REGISTER_ACTIONS (2430//)"
 msgid "Actions"
-msgstr ""
+msgstr "Działania"
 
 msgctxt "MSG_CO_CONDITION_ALL (2431//)"
 msgid "all"
-msgstr ""
+msgstr "wszystkie"
 
 msgctxt "MSG_CO_CONDITION_MIN_ONE (2432//)"
 msgid "one or more"
-msgstr ""
+msgstr "jeden lub więcej"
 
 msgctxt "MSG_CO_CONDITION_MAX_ONE (2433//)"
 msgid "only one"
-msgstr ""
+msgstr "tylko jeden"
 
 msgctxt "MSG_WR_CMENU_TITLE (2434//)"
 msgid "Attachments"
-msgstr ""
+msgstr "Załączniki"
 
 msgctxt "MSG_WR_CMENU_ADD_ATTACHMENT (2435//)"
 msgid "Add file(s)..."
-msgstr ""
+msgstr "Dodaj pliki..."
 
 msgctxt "MSG_WR_CMENU_ADD_ARCHIVE_ATTACHMENT (2436//)"
 msgid "Pack & add..."
-msgstr ""
+msgstr "Spakuj i dodaj..."
 
 msgctxt "MSG_WR_CMENU_REMOVE_ATTACHMENT (2437//)"
 msgid "Remove"
-msgstr ""
+msgstr "Usuń"
 
 msgctxt "MSG_WR_CMENU_RENAME_ATTACHMENT (2438//)"
 msgid "Rename..."
-msgstr ""
+msgstr "Zmień nazwę..."
 
 msgctxt "MSG_WR_CMENU_DISPLAY_ATTACHMENT (2439//)"
 msgid "Display"
-msgstr ""
+msgstr "Wyświetl"
 
 msgctxt "MSG_WR_TITLEATTACHMENT (2440//)"
 msgid "Attachment"
-msgstr ""
+msgstr "Załącznik"
 
 msgctxt "MSG_WR_REMOVE (2441//)"
 msgid "Re_move"
@@ -9655,11 +9655,11 @@ msgstr ""
 
 msgctxt "MSG_ATTACHMENT_REMIND_ADD (2499//)"
 msgid "Add attachment..."
-msgstr ""
+msgstr "Dodaj załącznik..."
 
 msgctxt "MSG_ATTACHMENT_REMIND_LATER (2500//)"
 msgid "Remind me later"
-msgstr ""
+msgstr "Przypomnij później"
 
 msgctxt "MSG_WR_NO_ATTACHMENTS_TITLE (2501//)"
 msgid "Attachment reminder"
@@ -9667,11 +9667,11 @@ msgstr ""
 
 msgctxt "MSG_WR_NO_ATTACHMENTS (2502//)"
 msgid "Did you forget to add an attachment?"
-msgstr ""
+msgstr "Czy zapomniałeś dodać załącznik?"
 
 msgctxt "MSG_WR_NO_ATTACHMENTS_GADS (2503//)"
 msgid "Yes, I did|No, send now"
-msgstr ""
+msgstr "Tak, zapomniałem|Nie, wyślij teraz"
 
 msgctxt "MSG_CO_MAILACCOUNT_TRANSFERRED (2504//)"
 msgid "Mail account"
@@ -9694,7 +9694,7 @@ msgstr ""
 
 msgctxt "MSG_CO_SMTP_FOLDERS (2508//)"
 msgid "Default folders"
-msgstr ""
+msgstr "Domyślne foldery"
 
 msgctxt "MSG_CO_SMTP_SENTFOLDER (2509//)"
 msgid "'Sent' folder"
@@ -9736,7 +9736,7 @@ msgstr ""
 
 msgctxt "MSG_CO_POP_FOLDERS (2516//)"
 msgid "Default folders"
-msgstr ""
+msgstr "Domyślne foldery"
 
 msgctxt "MSG_CO_POP_INCOMINGFOLDER (2517//)"
 msgid "'Incoming' folder"
