@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-01-26 Jens Maus <mail@jens-maus.de>
+
+  * mui/AddressBookWindow.c: fixed a bug where upon creating a new addressbook
+    group new entries couldn't be inserted into that group until a reload of
+    the addressbook had been performed. This closes #515.
+
 2014-01-17 Jens Maus <mail@jens-maus.de>
 
   * YAM_RE.c: fixed a bug in the mail parsing routines where it could have
