@@ -693,6 +693,14 @@ DECLARE(BuildABook)
   {
     struct ABookNode *abn = (struct ABookNode *)tn->tn_User;
 
+    if(i == 0)
+    {
+      // if this is the first iteration we must obtain the parent tree node
+      // of the current one to make sure we have a valid pointer to compare
+      // instead of the artificial internal number.
+      parentTN[0] = (struct MUI_NListtree_TreeNode *)DoMethod(obj, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Parent, MUIF_NONE);
+    }
+
     if(abn->type == ABNT_GROUP)
     {
       // move group nodes before bumping the nesting level
@@ -711,7 +719,7 @@ DECLARE(BuildABook)
       struct MUI_NListtree_TreeNode *parent;
 
       parent = (struct MUI_NListtree_TreeNode *)DoMethod(obj, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Parent, MUIF_NONE);
-      if(parent != parentTN[nestLevel])
+      if(parent != parentTN[nestLevel] && nestLevel != 0)
       {
         // the parent treenode has changed, so go back until we find the correct treenode
         do
