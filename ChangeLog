@@ -8,6 +8,9 @@ $URL$
 2014-01-27 Thore Böckelmann <tboeckel@gmx.de>
 
   * locale/spanish.po: removed two trailing spaces.
+  * mui/AddressBookListtree.c: get the true root treenode pointer during the
+    first iteration when rebuilding the address book after a sort operation.
+    This refs #298.
 
 2014-01-26 Jens Maus <mail@jens-maus.de>
 
