@@ -1,9 +1,9 @@
 # YAM.pot - YAM catalog description file (pot-style)
 # $Id$
-# 
+#
 # version 9
 # language english
-# 
+#
 # Translators:
 # NATMAN <ejim@ono.com>, 2014
 # NATMAN <ejim@ono.com>, 2013
@@ -9626,7 +9626,7 @@ msgstr "Contenido del mensaje"
 
 msgctxt "MSG_CO_CHECK_FOR_MISSING_ATTACHMENTS (2486//)"
 msgid "Check for missing attachments"
-msgstr "Verificar la existencia de anexos "
+msgstr "Verificar la existencia de anexos"
 
 msgctxt "MSG_CO_ATTACHMENT_KEYWORDS (2487//)"
 msgid "Keywords:"
@@ -9637,7 +9637,7 @@ msgid ""
 "Would you like to be warned if the\n"
 "mail body suggests the existance of\n"
 "an attachment but these are missing?"
-msgstr "Desearía ser advertido si el contenido\ndel mensaje sugiere la existencia de un\nanexo/s pero estos no están incluídos? "
+msgstr "Desearía ser advertido si el contenido\ndel mensaje sugiere la existencia de un\nanexo/s pero estos no están incluídos?"
 
 msgctxt "MSG_HELP_CO_LV_ATTACHMENTKEYWORDS (2496//)"
 msgid ""

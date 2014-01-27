@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-01-27 Thore Böckelmann <tboeckel@gmx.de>
+
+  * locale/spanish.po: removed two trailing spaces.
+
 2014-01-26 Jens Maus <mail@jens-maus.de>
 
   * mui/AddressBookWindow.c: fixed a bug where upon creating a new addressbook
@@ -27,7 +31,7 @@ $URL$
     will always end up at the sender of a mail. Contrary to that, pressing
     the ALT key will directly reply to all (e.g. the mailing list).
     This closes #498.
-  
+
 2014-01-15 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_WR.c: mails being forwarded as attachment now get a proper name. This in
