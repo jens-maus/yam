@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-01-07 23:48+0100\n"
-"PO-Revision-Date: 2014-01-25 21:30+0000\n"
+"PO-Revision-Date: 2014-01-27 20:57+0000\n"
 "Last-Translator: peguser <mobydick@amiga.org.ru>\n"
 "Language-Team: Russian (http://www.transifex.com/projects/p/yam/language/ru/)\n"
 "MIME-Version: 1.0\n"
@@ -129,7 +129,7 @@ msgstr "Сообщения"
 
 msgctxt "MSG_Realname (36//)"
 msgid "Real name"
-msgstr "Реальное имя"
+msgstr "Настоящее имя"
 
 msgctxt "MSG_Filename (37//)"
 msgid "Filename"
@@ -233,7 +233,7 @@ msgstr "Создаю интерфейс пользователя..."
 
 msgctxt "MSG_ErrorMuiApp (72//)"
 msgid "Can't create application"
-msgstr "Не создать приложение"
+msgstr "Не могу создать приложение"
 
 msgctxt "MSG_RebuildIndices (73//)"
 msgid "Rebuilding folders' indices..."
@@ -253,11 +253,11 @@ msgstr "Инициализирую библиотеки и классы..."
 
 msgctxt "MSG_ErrorAslStruct (78//)"
 msgid "Can't allocate ASL structure"
-msgstr "Не создать ASL структуру"
+msgstr "Не могу создать структуру ASL"
 
 msgctxt "MSG_ErrorTimer (79//)"
 msgid "Can't open timer.device"
-msgstr "Не открыть timer.device"
+msgstr "Не могу открыть timer.device"
 
 msgctxt "MSG_ErrorARexx (80//)"
 msgid "Can't create ARexx port"
@@ -271,7 +271,7 @@ msgctxt "MSG_SendStartReq (82//)"
 msgid ""
 "The Outgoing folder contains unsent mail.\n"
 "Do you want to send these messages now?"
-msgstr "Исходящая папка содержит неотосланные сообщения.\nХотите отправить эти сообщения сейчас?"
+msgstr "Папка «Исходящие» содержит неотправленные сообщения.\nХотите отправить эти сообщения сейчас?"
 
 msgctxt "MSG_QuitYAMReq (83//)"
 msgid "Do you really want to quit YAM?"
@@ -283,7 +283,7 @@ msgstr "простой текст"
 
 msgctxt "MSG_CTtexthtml (85//)"
 msgid "HTML document"
-msgstr "HTML документ"
+msgstr "документ HTML"
 
 msgctxt "MSG_CTtextaguide (86//)"
 msgid "AmigaGuide document"
@@ -295,11 +295,11 @@ msgstr "двоичный файл"
 
 msgctxt "MSG_CTapplicationpostscript (88//)"
 msgid "Postscript document"
-msgstr "Документ постскрипт"
+msgstr "документ Postscript"
 
 msgctxt "MSG_CTapplicationrtf (89//)"
 msgid "Rich Text Format"
-msgstr "RTF текст"
+msgstr "текст в формате RTF"
 
 msgctxt "MSG_CTapplicationlha (90//)"
 msgid "LhA archive"
@@ -445,7 +445,7 @@ msgstr "Отредактировано сообщение от «%s» для «%
 #. RECIPIENT, SUBJECT, COUNT
 msgctxt "MSG_LOG_Creating (124//)"
 msgid "Wrote new message for '%s' about '%s', including %ld attachment(s)"
-msgstr "Написано новое сообщение для «%s» о «%s», включая %ld аттач(ей)"
+msgstr "Написано новое сообщение для «%s» о «%s», включая %ld приложение(-й)"
 
 #. SENDER, SUBJECT
 msgctxt "MSG_LOG_Replying (125//)"
@@ -460,21 +460,21 @@ msgstr "Процитировано сообщение от «%s» о «%s» дл
 #. CONFIG_FILE
 msgctxt "MSG_LOG_SavingConfig (129//)"
 msgid "Saved configuration file '%s'"
-msgstr "Записан конфигурационный файл «%s»"
+msgstr "Файл конфигурации «%s» сохранён"
 
 #. FILENAME
 msgctxt "MSG_LOG_SavingABook (130//)"
 msgid "Saved address book '%s'"
-msgstr "Записана адресная книга «%s»"
+msgstr "Адресная книга «%s» сохранена"
 
 msgctxt "MSG_LOG_SavingUsers (131//)"
 msgid "Saved user configuration"
-msgstr "Записана пользовательская конфигурация"
+msgstr "Пользовательская конфигурация сохранена"
 
 #. ALIAS
 msgctxt "MSG_LOG_NewAddress (132//)"
 msgid "Added address book entry '%s'"
-msgstr "Добавлена запись «%s» в адресную книгу"
+msgstr "В адресную книгу добавлена запись «%s»"
 
 #. COUNT, FILENAME, FOLDER
 msgctxt "MSG_LOG_Importing (133//)"
@@ -489,7 +489,7 @@ msgstr "Экспортировано %ld сообщение(ий) из папк�
 #. FILENAME, MAILFILE, FOLDER
 msgctxt "MSG_LOG_SavingAtt (135//)"
 msgid "Saved attachment '%s' of message '%s' in folder '%s'"
-msgstr "Сохранен аттач «%s» из сообщения «%s» в папке «%s»"
+msgstr "Приложение «%s» из сообщения «%s» сохранено в папке «%s»"
 
 #. SUBJECT, MAILFILE, FOLDER, SUBJECT
 msgctxt "MSG_LOG_ChangingSubject (137//)"
@@ -498,11 +498,11 @@ msgstr "Изменена тема «%s» сообщения «%s» в папке
 
 msgctxt "MSG_UT_Save (138//)"
 msgid "Save"
-msgstr "Записать"
+msgstr "Сохранить"
 
 msgctxt "MSG_UT_Load (139//)"
 msgid "Load"
-msgstr "Считать"
+msgstr "Загрузить"
 
 msgctxt "MSG_UT_PGPPassReq (140//)"
 msgid "Please enter your PGP passphrase:"
@@ -574,11 +574,11 @@ msgstr "Перемещение сообщения(ий)"
 
 msgctxt "MSG_MA_MoveMsgReq (164//)"
 msgid "Please select a destination folder:"
-msgstr "Пожалуйста, укажите папку-приёмник:"
+msgstr "Пожалуйста, укажите целевую папку:"
 
 msgctxt "MSG_MA_MoveGad (165//)"
 msgid "_Move"
-msgstr "_Перенос"
+msgstr "_Переместить"
 
 msgctxt "MSG_MA_CopyMsg (166//)"
 msgid "Copy message(s)"
@@ -586,7 +586,7 @@ msgstr "Скопировать сообщение(я)"
 
 msgctxt "MSG_MA_CopyGad (167//)"
 msgid "Cop_y"
-msgstr "_Копия"
+msgstr "_Копировать"
 
 msgctxt "MSG_MA_ChangeSubjReq (168//)"
 msgid "Enter a new subject:"
@@ -635,7 +635,7 @@ msgstr "Отправленные"
 
 msgctxt "MSG_MA_TBRead (184//8)"
 msgid "Rea_d"
-msgstr "_Чтение"
+msgstr "Про_честь"
 
 msgctxt "MSG_MA_TBEdit (185//8)"
 msgid "_Edit"
@@ -659,7 +659,7 @@ msgstr "_Новое"
 
 msgctxt "MSG_MA_TBReply (190//8)"
 msgid "_Reply"
-msgstr "_Ответ"
+msgstr "_Ответить"
 
 msgctxt "MSG_MA_TBForward (191//8)"
 msgid "For_ward"
