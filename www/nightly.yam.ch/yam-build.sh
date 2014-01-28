@@ -177,11 +177,15 @@ create_catalogs()
   echo "Creating catalog files:"
   echo "================================================================="
   set -x
-  mkdir $DEVDIR/locale
+  mkdir $DEVDIR/catalogs
   cd $MODULEPATH/src
   rm ../locale/*.catalog
   $MAKE catalogs
-  cp ../locale/*.catalog $DEVDIR/locale/
+  cd $MODULEPATH/locale
+  for cat in *.catalog; do
+    mkdir $DEVDIR/catalogs/${cat%.catalog}
+    cp $cat $DEVDIR/catalogs/${cat%.catalog}/YAM.catalog
+  done
   set +x
   echo "================================================================="
   echo "done."
@@ -311,7 +315,7 @@ compile_debug AROSarm aros-arm
 
 # then delete the temporary stuff again
 rm $DEVDIR/ChangeLog $DEVDIR/README.txt
-rm -rf $DEVDIR/locale
+rm -rf $DEVDIR/catalogs
 rm -rf $DEVDIR/resources
 rm $DEVDIR/YAM.info
 rm $DEVDIR/YAM.debug.info
