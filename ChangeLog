@@ -12,6 +12,12 @@ $URL$
     closes #493.
   * Makefile, doc/Install-YAM, tools/mkrelease.sh: added the updated polish and
     russian translations to the list of supported languages again.
+  * doc/Install-YAM: reworked the Installer script to check for a running
+    instance of YAM. If that is the case then the user is prompted to terminate
+    that instance to make sure that no files which might get overwritten during
+    the installation are locked. After the installation a reboot is recommended
+    to ensure that updated libraries and classes are really flushed from memory.
+    This closes #491.
 
 2014-01-27 Thore Böckelmann <tboeckel@gmx.de>
 

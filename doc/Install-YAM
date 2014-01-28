@@ -1,5 +1,6 @@
 ;
-; $VER: Install-YAM 1.36 (28.1.2014) (c) 2000-2014 by YAM Open Source Team
+; $VER: Install-YAM 1.36 (28.1.2014)
+; Copyright (C) 2000-2014 YAM Open Source Team
 ; Language support added by Sφnke Tesch/ATO
 ;
 ; $Id$
@@ -34,72 +35,78 @@
 ;----------------------------------------------------------------------------
 ;/// ***** English
 (set #def_cat_lang #def_lang_english)
-(set #acknowledgeOS (cat "Please acknowledge the automatic\n"
-                         "detection of your operating system:"))
-(set #YAM_dir  (cat "Please select a directory for YAM\n"
-                    "(NO extra drawer will be created!)"))
-(set #lang_catalog (cat "Which catalog file do you want to install?\n"
-                        "(English language is built-in)"))
-(set #ask_charsets "Do you want to install the character set files required by codesets.library?")
+(set #acknowledgeOS       (cat "Please acknowledge the automatic\n"
+                               "detection of your operating system:"))
+(set #ask_terminate       (cat "\n"
+                               "YAM is still running.\n"
+                               "To install this new version the running instance of YAM must be terminated. Otherwise certain files cannot be installed.\n"
+                               "\n"
+                               "Do you want to terminate YAM?"))
+(set #terminate                "Terminate YAM")
+(set #ignore_and_proceed       "Ignore and proceed")
+(set #YAM_dir             (cat "Please select a directory for YAM\n"
+                               "(NO extra drawer will be created!)"))
+(set #lang_catalog        (cat "Which catalog file do you want to install?\n"
+                               "(English language is built-in)"))
+(set #ask_charsets             "Do you want to install the character set files required by codesets.library?")
 (set #no_way_back_warning (cat "WARNING!!\n"
                                "(if you want to update an existing YAM 2.4 installation)\n"
                                "\n"
                                "The mail naming scheme has been changed completely. When you run YAM 2.9 for the first time all your existing mails will be converted automatically to the new scheme. After that YAM 2.4 will not be able to handle them anymore. So better backup ALL your mails BEFORE running YAM 2.9.\n"
                                "\n"
                                "However, it is absolutely NO problem to install YAM 2.4 and YAM 2.9 in separate directories."))
-(set #faq_and_bugtracker (cat "\n"
-                              "If you have any questions concerning YAM you can ask these in the YAM forum:\n"
-                              "http://forum.yam.ch/\n"
-                              "\n"
-                              "Frequently asked questions are already answered in the YAM FAQ:\n"
-                              "http://faq.yam.ch/\n"
-                              "\n"
-                              "In case you find a bug in YAM, please, report it in the YAM bugtracker:\n"
-                              "http://bugs.yam.ch/"))
-(set #done_1   (cat "\n"
-                    "YAM has been successfully installed.\n"
-                    "\n"
-                    "Double click the \"YAM\" icon in the\n"))
-(set #done_2   (cat "\n"
-                    "directory to taste it.\n"
-                    "\n"
-                    "Have fun..."))
+(set #faq_and_bugtracker  (cat "\n"
+                               "If you have any questions concerning YAM you can ask these in the YAM forum:\n"
+                               "http://forum.yam.ch/\n"
+                               "\n"
+                               "Frequently asked questions are already answered in the YAM FAQ:\n"
+                               "http://faq.yam.ch/\n"
+                               "\n"
+                               "In case you find a bug in YAM, please, report it in the YAM bugtracker:\n"
+                               "http://bugs.yam.ch/"))
+(set #done                (cat "\n"
+                               "YAM has been successfully installed.\n"
+                               "\n"
+                               "Please reboot your system before running YAM to ensure that all updated libraries and classes are really used"))
 
 ; ///
 ; /// ***** Deutsch
 (if (= @language "deutsch")
     (
         (set #def_cat_lang #def_lang_german)
-        (set #acknowledgeOS (cat "Bitte bestδtigen Sie die automatische\n"
-                                 "Ermittlung Ihres Betriebssystems:"))
-        (set #YAM_dir  (cat "Wδhlen Sie ein Verzeichnis fόr YAM\n"
-                            "(es wird KEIN eigenes Verzeichnis erstellt!)"))
-        (set #lang_catalog (cat "Welche catalog-Datei wollen Sie installieren?\n"
-                                "(Englisch ist eingebaut)"))
-        (set #ask_charsets "Wollen Sie die von der codesets.library benφtigten Zeichensatzdateien installieren?")
+        (set #acknowledgeOS         (cat "Bitte bestδtigen Sie die automatische\n"
+                                       "Ermittlung Ihres Betriebssystems:"))
+        (set #ask_terminate       (cat "\n"
+                                       "YAM lδuft zur Zeit noch.\n"
+                                       "Um diese neue Version zu installieren muss die laufende YAM-Instanz beendet werden. Anderenfalls kφnnen einige Dateien nicht installiert werden.\n"
+                                       "\n"
+                                       "Soll YAM beendet werden?"))
+        (set #terminate                "YAM beenden")
+        (set #ignore_and_proceed       "Ignorieren und fortsetzen")
+        (set #YAM_dir             (cat "Wδhlen Sie ein Verzeichnis fόr YAM\n"
+                                       "(es wird KEIN eigenes Verzeichnis erstellt!)"))
+        (set #lang_catalog        (cat "Welche catalog-Datei wollen Sie installieren?\n"
+                                       "(Englisch ist eingebaut)"))
+        (set #ask_charsets             "Wollen Sie die von der codesets.library benφtigten Zeichensatzdateien installieren?")
         (set #no_way_back_warning (cat "WARNUNG!!\n"
                                        "(falls Sie eine bestehende Installation von YAM 2.4 updaten wollen)\n"
                                        "\n"
                                        "Das Namensformat der EMail-Dateien wurde grundlegend geδndert. Wenn Sie YAM 2.9 zum ersten Mal starten werden alle Ihre EMails automatisch auf das neue Namensformat konvertiert. Danach kφnnen sie NICHT mehr von YAM 2.4 verarbeitet werden. Machen Sie also besser ein Backup BEVOR Sie YAM 2.9 starten.\n"
                                        "\n"
                                        "Es ist absolut KEIN Problem YAM 2.4 und YAM 2.9 in unterschiedlichen Verzeichnissen zu installieren."))
-        (set #faq_and_bugtracker (cat "\n"
-                                      "Falls Sie allgemeine Fragen zu YAM haben, kφnnen Sie diese im YAM-Forum stellen:\n"
-                                      "http://forum.yam.ch/\n"
-                                      "\n"
-                                      "Oft gestellte Fragen werden in der YAM-FAQ beantwortet:\n"
-                                      "http://faq.yam.ch/\n"
-                                      "\n"
-                                      "Falls Sie einen Fehler in YAM finden sollten, dann melden Sie ihn bitte im YAM-Bugtracker:\n"
-                                      "http://bugs.yam.ch/"))
-        (set #done_1   (cat "\n"
-                            "YAM wurde erfolgreich installiert.\n"
-                            "\n"
-                            "Klicken Sie auf das \"YAM\"-Icon im Verzeichnis\n"))
-        (set #done_2   (cat "\n"
-                            "und es kann losgehen.\n"
-                            "\n"
-                            "Viel Spass!"))
+        (set #faq_and_bugtracker  (cat "\n"
+                                       "Falls Sie allgemeine Fragen zu YAM haben, kφnnen Sie diese im YAM-Forum stellen:\n"
+                                       "http://forum.yam.ch/\n"
+                                       "\n"
+                                       "Oft gestellte Fragen werden in der YAM-FAQ beantwortet:\n"
+                                       "http://faq.yam.ch/\n"
+                                       "\n"
+                                       "Falls Sie einen Fehler in YAM finden sollten, dann melden Sie ihn bitte im YAM-Bugtracker:\n"
+                                       "http://bugs.yam.ch/"))
+        (set #done                (cat "\n"
+                                       "YAM wurde erfolgreich installiert.\n"
+                                       "\n"
+                                       "Bitte starten Sie Ihr System neu, um sicherzustellen, dass die neuen Bibliotheken und Klassen auch tatsδchlich verwendet werden."))
     )
 )
 ; ///
@@ -107,36 +114,28 @@
 (if (= @language "polski")
     (
         (set #def_cat_lang #def_lang_polish)
-        (set #acknowledgeOS (cat "Prosze potwierdzic automatycznie\n"
-                                 "wykryty system operacyjny:"))
-        (set #YAM_dir  (cat "Prosze wybrac katalog dla programu YAM\n"
-                            "(NIE zostanie utworzony dodatkowy podkatalog!)"))
-        (set #lang_catalog (cat "Ktore pliki lokalizacyjne chcesz zainstalowac?\n"
-                                "(jezyk angielski jest wbudowany)"))
-        (set #ask_charsets "Czy chcesz zainstalowac wymagane przez codesets.library pliki zestawow znakow?")
-        (set #no_way_back_warning (cat "OSTRZEZENIE!!\n"
+        (set #acknowledgeOS       (cat "Prosze potwierdzic automatycznie\n"
+                                       "wykryty system operacyjny:"))
+        (set #YAM_dir             (cat "Prosze wybrac katalog dla programu YAM\n"
+                                       "(NIE zostanie utworzony dodatkowy podkatalog!)"))
+        (set #lang_catalog        (cat "Ktore pliki lokalizacyjne chcesz zainstalowac?\n"
+                                       "(jezyk angielski jest wbudowany)"))
+        (set #ask_charsets             "Czy chcesz zainstalowac wymagane przez codesets.library pliki zestawow znakow?")
+        (set #no_way_back_ arning (cat "OSTRZEZENIE!!\n"
                                        "(jesli chcesz uaktualnic istniejaca instalacje programu YAM 2.4)\n"
                                        "\n"
                                        "Zostal calkowicie zmieniony system nazywania plikow wiadomosci. Przy pierwszym uruchomieniu programu YAM 2.9, wszystkie istniejace wiadomosci zostana automatycznie przekonwertowane na nowy format. Po tej czynnosci YAM 2.4 nie bedzie potrafil juz ich obsluzyc. Lepiej wykonaj kopie bezpieczenstwa WSZYSTKICH swoich wiadomosci PRZED uruchomieniem programu YAM 2.9.\n"
                                        "\n"
                                        "Jednakze nie stanowi zadnego problemu zainstalowanie programow YAM 2.4 i 2.9 w osobnych katalogach."))
-        (set #faq_and_bugtracker (cat "\n"
-                                      "Jesli masz jakies pytania dotyczace programu, mozesz je zadac na forum:\n"
-                                      "http://forum.yam.ch/\n"
-                                      "\n"
-                                      "Najczesciej zadawane pytania sa juz zebrane w FAQ:\n"
-                                      "http://faq.yam.ch/\n"
-                                      "\n"
-                                      "W przypadku znalezienia bledu w programie, prosze dokonac zgloszenia na:\n"
-                                      "http://bugs.yam.ch/"))
-        (set #done_1   (cat "\n"
-                            "Program YAM zostal zainstalowany pomyslnie.\n"
-                            "\n"
-                            "Dwukliknij na ikonce \"YAM\" w katalogu\n"))
-        (set #done_2   (cat "\n"
-                            "by go wyprobowac.\n"
-                            "\n"
-                            "Milej zabawy..."))
+        (set #faq_and_bugtracker  (cat "\n"
+                                       "Jesli masz jakies pytania dotyczace programu, mozesz je zadac na forum:\n"
+                                       "http://forum.yam.ch/\n"
+                                       "\n"
+                                       "Najczesciej zadawane pytania sa juz zebrane w FAQ:\n"
+                                       "http://faq.yam.ch/\n"
+                                       "\n"
+                                       "W przypadku znalezienia bledu w programie, prosze dokonac zgloszenia na:\n"
+                                       "http://bugs.yam.ch/"))
     )
 )
 ; ///
@@ -144,36 +143,28 @@
 (if (= @language "svenska")
     (
         (set #def_cat_lang #def_lang_swedish)
-        (set #acknowledgeOS (cat "Var god bekrδfta den automatiska\n"
-                                 "detekteringen av ditt operativsystem:"))
-        (set #YAM_dir  (cat "Vδlj katalog att installera YAM i\n"
-                            "(nεgon underkatalog kommer INTE att skapas!)"))
-        (set #lang_catalog (cat "Vilka sprεkkataloger vill du installera?\n"
-                                "(Engelska δr inbyggt)"))
-        (set #ask_charsets "Vill du installera de teckenset som krδvs av codesets.library?")
-        (set #no_way_back_warning (cat  "VARNING!!\n"
+        (set #acknowledgeOS       (cat "Var god bekrδfta den automatiska\n"
+                                       "detekteringen av ditt operativsystem:"))
+        (set #YAM_dir             (cat "Vδlj katalog att installera YAM i\n"
+                                       "(nεgon underkatalog kommer INTE att skapas!)"))
+        (set #lang_catalog        (cat "Vilka sprεkkataloger vill du installera?\n"
+                                       "(Engelska δr inbyggt)"))
+        (set #ask_charsets             "Vill du installera de teckenset som krδvs av codesets.library?")
+        (set #no_way_back_warning (cat "VARNING!!\n"
                                        "(om du vill uppdatera en existerande YAM 2.4 installation)\n"
                                        "\n"
                                        "Namnschemat fφr mailfilerna har δndrats totalt. Nδr du kφr YAM 2.9 fφr fφrsta gεngen, kommer alla dina nuvarande mailfiler att konverteras automatiskt till det nya schemat. Efter det kommer inte YAM 2.4 att kunna hantera dem lδngre. Sε, backa upp ALLA dina mailfiler FΦRE du kφr YAM 2.9.\n"
                                        "\n"
                                        "Men, det δr absolut INGA problem att installera YAM 2.4 och YAM 2.9 i separata kataloger."))
-        (set #faq_and_bugtracker (cat "\n"
-                                      "Om du har nεgra frεgor rφrande YAM kan du frεga dessa i YAM's forum:\n"
-                                      "http://forum.yam.ch/\n"
-                                      "\n"
-                                      "Frequently asked questions δr redan besvarade i YAM's FAQ:\n"
-                                      "http://faq.yam.ch/\n"
-                                      "\n"
-                                      "Om du skulle hitta en bugg i YAM, var god rapportera det i YAM's buggtracker:\n"
-                                      "http://bugs.yam.ch/"))
-        (set #done_1   (cat "\n"
-                            "YAM installerades utan problem\n"
-                            "\n"
-                            "Klicka pε \"YAM\"-ikonen i katalogen\n"))
-        (set #done_2   (cat "\n"
-                            "fφr att prφva det.\n"
-                            "\n"
-                            "Ha det sε kul..."))
+        (set #faq_and_bugtracker  (cat "\n"
+                                       "Om du har nεgra frεgor rφrande YAM kan du frεga dessa i YAM's forum:\n"
+                                       "http://forum.yam.ch/\n"
+                                       "\n"
+                                       "Frequently asked questions δr redan besvarade i YAM's FAQ:\n"
+                                       "http://faq.yam.ch/\n"
+                                       "\n"
+                                       "Om du skulle hitta en bugg i YAM, var god rapportera det i YAM's buggtracker:\n"
+                                       "http://bugs.yam.ch/"))
     )
 )
 ; ///
@@ -181,36 +172,28 @@
 (if (= @language "franηais")
     (
         (set #def_cat_lang #def_lang_french)
-        (set #acknowledgeOS (cat "Veuillez confirmer la dιtection\n"
-                                 "automatique de votre systθme d'exploitation :"))
-        (set #YAM_dir  (cat "Veuillez sιlectionner un rιpertoire pour YAM\n"
-                            "(AUCUN nouveau tiroir ne sera crιι !)"))
-        (set #lang_catalog (cat "Quel catalogue voulez-vous installer ?\n"
-                                "(L'anglais est dιjΰ incorporι)"))
-        (set #ask_charsets "Voulez-vous installer les fichiers de jeux de caractθres requis par codesets.library ?")
+        (set #acknowledgeOS       (cat "Veuillez confirmer la dιtection\n"
+                                       "automatique de votre systθme d'exploitation :"))
+        (set #YAM_dir             (cat "Veuillez sιlectionner un rιpertoire pour YAM\n"
+                                       "(AUCUN nouveau tiroir ne sera crιι !)"))
+        (set #lang_catalog        (cat "Quel catalogue voulez-vous installer ?\n"
+                                       "(L'anglais est dιjΰ incorporι)"))
+        (set #ask_charsets             "Voulez-vous installer les fichiers de jeux de caractθres requis par codesets.library ?")
         (set #no_way_back_warning (cat "ATTENTION !!\n"
                                        "(si vous voulez mettre ΰ jour une installation existante de YAM 2.4)\n"
                                        "\n"
                                        "Le schιma de nommage des messages a complθtement changι. Lorsque vous lancez YAM 2.9 pour la premiθre fois, tous vos messages existants seront automatiquement convertis. Aprθs cela YAM 2.4 ne pourra plus les gιrer. Vous devriez donc faire une sauvegarde de TOUS vos messages AVANT de lancer YAM 2.9.\n"
                                        "\n"
                                        "Cependant, il n'y a absolument AUCUN problθme ΰ installer YAM 2.4 et 2.9 dans des rιpertoires diffιrents."))
-        (set #faq_and_bugtracker (cat "\n"
-                                      "Si vous avez des questions concernant YAM vous pouvez les poser sur le forum :\n"
-                                      "http://forum.yam.ch/\n"
-                                      "\n"
-                                      "Une Foire Aux Questions dιjΰ rιpondues se trouve ΰ l'adresse :\n"
-                                      "http://faq.yam.ch/\n"
-                                      "\n"
-                                      "Si vous trouvez un bug dans YAM, veuillez le rapporter dans le suivi d'anomalies :\n"
-                                      "http://bugs.yam.ch/"))
-        (set #done_1   (cat "\n"
-                            "YAM a ιtι installι avec succιs.\n"
-                            "\n"
-                            "Double-cliquez the sur l'icτne « YAM » dans\n"))
-        (set #done_2   (cat "\n"
-                            "le rιpertoire pour le tester.\n"
-                            "\n"
-                            "Amusez-vous bien!"))
+        (set #faq_and_bugtracker  (cat "\n"
+                                       "Si vous avez des questions concernant YAM vous pouvez les poser sur le forum :\n"
+                                       "http://forum.yam.ch/\n"
+                                       "\n"
+                                       "Une Foire Aux Questions dιjΰ rιpondues se trouve ΰ l'adresse :\n"
+                                       "http://faq.yam.ch/\n"
+                                       "\n"
+                                       "Si vous trouvez un bug dans YAM, veuillez le rapporter dans le suivi d'anomalies :\n"
+                                       "http://bugs.yam.ch/"))
     )
 )
 ; ///
@@ -218,106 +201,84 @@
 (if (= @language "czech")
     (
         (set #def_cat_lang #def_lang_czech)
-        (set #YAM_dir  (cat "Vyberte prosνm cνlovύ adresαψ pro YAM\n"
-                            "(Instalαtor Ύαdnύ adresαψ nevytvoψν!)"))
-        (set #lang_catalog (cat "Kterι z pψekladω chcete nainstalovat?\n"
-                                "(Angliθtinu pouΎνvα program internμ.)"))
-        (set #ask_charsets "Chcete nainstalovat dodateθnα kσdovαnν pro knihovnu codesets.library?")
+        (set #YAM_dir             (cat "Vyberte prosνm cνlovύ adresαψ pro YAM\n"
+                                       "(Instalαtor Ύαdnύ adresαψ nevytvoψν!)"))
+        (set #lang_catalog        (cat "Kterι z pψekladω chcete nainstalovat?\n"
+                                       "(Angliθtinu pouΎνvα program internμ.)"))
+        (set #ask_charsets             "Chcete nainstalovat dodateθnα kσdovαnν pro knihovnu codesets.library?")
         (set #no_way_back_warning (cat "UPOZORNΜNΝ!\n"
                                        "(Platν pro pψνpad, Ύe chcete pψejνt z verze 2.4.)\n"
                                        "\n"
                                        "Zpωsob pojmenovαnν souborω se zprαvami a jejich formαt byl v novι verzi ϊplnμ pψepracovαn. Pψi prvnνm spuΉtμnν budou vΉechny zprαvy automaticky pψevedeny do novιho systιmu a pak uΎ je nebude moΎnι pouΎνvat v YAM 2.4! JeΉtμ PΨED spuΉtμnνm tιto novι verze proto dωraznμ doporuθujeme zazαlohovat V©ECHNY zprαvy.\n"
                                        "\n"
                                        "Pozn.: Technicky nenν Ύαdnύ problιm nainstalovat a pouΎνvat YAM 2.4 i novμjΉν verzi ve dvou rωznύch adresαψνch."))
-        (set #faq_and_bugtracker (cat "\n"
-                                      "Mαte-li jakιkoli dotazy ohlednμ programu YAM, zeptejte se na tomto diskusnνm fσru:\n"
-                                      "http://forum.yam.ch/\n"
-                                      "\n"
-                                      "Nejθastμji kladenι otαzky a jejich ψeΉenν najdete na adrese:\n"
-                                      "http://faq.yam.ch/\n"
-                                      "\n"
-                                      "Pokud najdete chybu, dejte nαm prosνm vμdμt:\n"
-                                      "http://bugs.yam.ch/"))
-        (set #done_1   (cat "\n"
-                            "Instalace programu YAM byla ϊspμΉnμ dokonθena.\n"
-                            "\n"
-                            "Nynν vyhledejte ikonu \"YAM\" v adresαψi\n"))
-        (set #done_2   (cat "\n"
-                            "a dvojνm kliknutνm program spus»te.\n"
-                            "\n"
-                            "A» se Vαm lνbν!"))
-    )
+        (set #faq_and_bugtracker  (cat "\n"
+                                       "Mαte-li jakιkoli dotazy ohlednμ programu YAM, zeptejte se na tomto diskusnνm fσru:\n"
+                                       "http://forum.yam.ch/\n"
+                                       "\n"
+                                       "Nejθastμji kladenι otαzky a jejich ψeΉenν najdete na adrese:\n"
+                                       "http://faq.yam.ch/\n"
+                                       "\n"
+                                       "Pokud najdete chybu, dejte nαm prosνm vμdμt:\n"
+                                       "http://bugs.yam.ch/"))
+     )
 )
 ; ///
 ; /// ***** Italiano
 (if (= @language "italiano")
     (
         (set #def_cat_lang #def_lang_italian)
-        (set #acknowledgeOS (cat "Per favore istruisci il sistema ad auto-rilevare\n"
-                         "i file necessari per il sistema operativo in uso:"))
-        (set #YAM_dir  (cat "Per favore seleziona una directory per YAM\n"
-                            "(Non verrΰ creata nessuna cartella extra!)"))
-        (set #lang_catalog (cat "Quale catalogo di lingua si desidera installare?\n"
-                                "(La lingua inglese θ quella predefinita)"))
-        (set #ask_charsets "Si desidera installare i file del set di caratteri richiesti dalla codesets.library?")
+        (set #acknowledgeOS       (cat "Per favore istruisci il sistema ad auto-rilevare\n"
+                                       "i file necessari per il sistema operativo in uso:"))
+        (set #YAM_dir             (cat "Per favore seleziona una directory per YAM\n"
+                                       "(Non verrΰ creata nessuna cartella extra!)"))
+        (set #lang_catalog        (cat "Quale catalogo di lingua si desidera installare?\n"
+                                       "(La lingua inglese θ quella predefinita)"))
+        (set #ask_charsets             "Si desidera installare i file del set di caratteri richiesti dalla codesets.library?")
         (set #no_way_back_warning (cat "ATTENZIONE!!\n"
                                        "(Nel caso si desideri aggiornare il programma da una precedente installazione di YAM 2.4.)\n"
                                        "\n"
                                        "Lo schema dei nomi relativo ai messaggi di posta θ stato completamente modificato, alla prima esecuzione di YAM 2.9 tutti i precedenti messaggi verranno automaticamente convertiti al nuovo schema. Nota che YAM 2.4 non sarΰ piω in grado di accedere a questi messaggi perciς θ consigliabile effettuare un backup di TUTTI i vecchi messaggi di posta prima di procedere con questa operazione.\n"
                                        "\n"
                                        "Ricorda che seppur in directory separate, sarΰ sempre possibile installare due differenti versioni di YAM."))
-        (set #faq_and_bugtracker (cat "\n"
-                                      "Nel caso si abbiano delle domande concernenti YAM ed il suo sviluppo potete contattarci attraverso il nostro forum all'indirizzo internet:\n"
-                                      "http://forum.yam.ch/\n"
-                                      "\n"
-                                      "Nota che le domande piω frequentemente risposte sono disponibili nelle FAQ del sito di YAM all'indirizzo:\n"
-                                      "http://faq.yam.ch/\n"
-                                      "\n"
-                                      "Nel caso si riscontri qualche bug o qualsiasi altro problema su YAM, potete segnalarcelo attraverso il nostro bugtracker all'indirizzo:\n"
-                                      "http://bugs.yam.ch/"))
-        (set #done_1   (cat "\n"
-                            "Congratulazioni, YAM θ stato installato con successo!\n"
-                            "\n"
-                            "Doppio click sull'icona di \"YAM\" nella directory\n"))
-        (set #done_2   (cat "\n"
-                            "in modo da poter avviare il programma.\n"
-                            "\n"
-                            "Buon divertimento!"))
-    )
+        (set #faq_and_bugtracker  (cat "\n"
+                                       "Nel caso si abbiano delle domande concernenti YAM ed il suo sviluppo potete contattarci attraverso il nostro forum all'indirizzo internet:\n"
+                                       "http://forum.yam.ch/\n"
+                                       "\n"
+                                       "Nota che le domande piω frequentemente risposte sono disponibili nelle FAQ del sito di YAM all'indirizzo:\n"
+                                       "http://faq.yam.ch/\n"
+                                       "\n"
+                                       "Nel caso si riscontri qualche bug o qualsiasi altro problema su YAM, potete segnalarcelo attraverso il nostro bugtracker all'indirizzo:\n"
+                                       "http://bugs.yam.ch/"))
+     )
 )
 ; ///
 ;/// ***** Greek
 (if (= @language "greek")
     (
         (set #def_cat_lang #def_lang_greek)
-        (set #acknowledgeOS (cat "Παρακαλώ αναγνωρίστε την αυτόματη ανίχνευση\n"
-        	                 "του λειτουργικού σας συστήματος:"))
-        (set #YAM_dir  (cat "Παρακαλώ επιλέξτε ένα κατάλογο για το YAM.\n"
-                            "(ΔΕΝ θα δημιουργηθεί επιπλέον φάκελος)"))
-        (set #lang_catalog (cat "Ποιό αρχείο καταλόγου θέλετε να εγκαταστήσετε;\n"
-                                "(Η αγγλική γλώσσα είναι ενσωματομένη)"))
-        (set #ask_charsets "Θέλετε να εγκαταστήσετε τα αρχεία κωδικοποίησης χαρακτήρων που απαιτείται από την codesets.library;")
+        (set #acknowledgeOS       (cat "Παρακαλώ αναγνωρίστε την αυτόματη ανίχνευση\n"
+        	                           "του λειτουργικού σας συστήματος:"))
+        (set #YAM_dir             (cat "Παρακαλώ επιλέξτε ένα κατάλογο για το YAM.\n"
+                                       "(ΔΕΝ θα δημιουργηθεί επιπλέον φάκελος)"))
+        (set #lang_catalog        (cat "Ποιό αρχείο καταλόγου θέλετε να εγκαταστήσετε;\n"
+                                       "(Η αγγλική γλώσσα είναι ενσωματομένη)"))
+        (set #ask_charsets             "Θέλετε να εγκαταστήσετε τα αρχεία κωδικοποίησης χαρακτήρων που απαιτείται από την codesets.library;")
         (set #no_way_back_warning (cat "ΠΡΟΣΟΧΗ !!!\n"
                                        "(εάν θέλετε να αναβαθμίσετε μια ήδη υπάρχουσα εγκατάσταση του YAM 2.4)\n"
                                        "\n"
                                        "Η μορφή ονομάτων αλληλογραφίας έχει αλλάξει εντελώς. Όταν τρέξετε το YAM 2.9 για πρώτη φορά όλες οι υπάρχουσες αλληλογραφίες θα μετατραπούν αυτόματα στη νέα μορφή. Μετά από αυτό, το YAM 2.4 δε θα μπορεί να τις χειριστεί πλέον. Έτσι είναι καλύτερα να κάνετε αντίγραφο ασφαλείας σε ΌΛΕΣ τις αλληλογραφίες σας ΠΡΙΝ τρέξετε το YAM 2.9.\n"
                                        "\n"
                                        "Όμως, δεν υπάρχει ΚΑΝΕΝΑ πρόβλημα να εγκαταστήσετε το YAM 2.4 και ΥAM 2.9 σε διαφορετικούς καταλόγους."))
-        (set #faq_and_bugtracker (cat "\n"
-                                      "Εάν έχετε οποιαδήποτε απορία σχετικά με το YAM μπορείτε να την αναφέρετε στα forum του YAM:\n"
-                                      "http://forum.yam.ch/\n"
-                                      "\n"
-                                      "Συχνές ερωτήσεις που έχουν ήδη απαντηθεί βρίσκονται στο YAM FAQ:\n"
-                                      "http://faq.yam.ch/\n"
-                                      "\n"
-                                      "Σε περίπτωση που βρείτε κάποιο πρόβλημα στο YAM, παρακαλώ, αναφέρετέ το στο YAM bugtracker:\n"
-                                      "http://bugs.yam.ch/"))
-        (set #done_1   (cat "\nΤο YAM εγκαταστάθηκε επιτυχώς.\n"
-                             "\n"
-                            "Κάντε διπλό-κλίκ στο εικονίδιο \"YAM\" στο\n"))
-        (set #done_2   (cat "\nκατάλογο για να το δοκιμάσετε.\n"
-                            "\n"
-                            "Καλή διασκέδαση!"))
+        (set #faq_and_bugtracker  (cat "\n"
+                                       "Εάν έχετε οποιαδήποτε απορία σχετικά με το YAM μπορείτε να την αναφέρετε στα forum του YAM:\n"
+                                       "http://forum.yam.ch/\n"
+                                       "\n"
+                                       "Συχνές ερωτήσεις που έχουν ήδη απαντηθεί βρίσκονται στο YAM FAQ:\n"
+                                       "http://faq.yam.ch/\n"
+                                       "\n"
+                                       "Σε περίπτωση που βρείτε κάποιο πρόβλημα στο YAM, παρακαλώ, αναφέρετέ το στο YAM bugtracker:\n"
+                                       "http://bugs.yam.ch/"))
     )
 )
 ; ///
@@ -325,12 +286,12 @@
 (if (= @language "espaρol")
     (
         (set #def_cat_lang #def_lang_spanish)
-        (set #acknowledgeOS (cat "Por favor confirme la detecciσn\n"
-                                 "automαtica de su sistema operativo:"))
-        (set #YAM_dir  (cat "Por favor seleccione un directorio para YAM\n"
-                            "(NO se crearα un cajσn extra!)"))
-        (set #lang_catalog (cat "Quι catαlogo desea instalar?\n"
-                                "(Inglιs estα por defecto)"))
+        (set #acknowledgeOS       (cat "Por favor confirme la detecciσn\n"
+                                       "automαtica de su sistema operativo:"))
+        (set #YAM_dir             (cat "Por favor seleccione un directorio para YAM\n"
+                                       "(NO se crearα un cajσn extra!)"))
+        (set #lang_catalog        (cat "Quι catαlogo desea instalar?\n"
+                                       "(Inglιs estα por defecto)"))
         (set #no_way_back_warning (cat "ATENCION!!\n"
                                        "(si quiere actualizar la versiσn existente\n"
                                        "de YAM 2.4)\n"
@@ -338,23 +299,15 @@
                                        "El esquema de denominaciσn de correo ha cambiado completamente. Cuando ejecute YAM 2.9 por primera vez todos sus correos existentes serαn convertidos automαticamente al nuevo esquema. Despuιs de esto YAM 2.4 no se podrα utilizar mαs. Asν que mejor guarde TODOS sus correos ANTES de ejecutar YAM 2.9.\n"
                                        "\n"
                                        "Aunque, NO hay problema en absoluto el instalar YAM 2.4 y YAM 2.9 en directorios separados."))
-        (set #faq_and_bugtracker (cat "\n"
-                                      "Si tiene alguna consulta concerniente a YAM puede realizarla en el forum de YAM:\n"
-                                      "http://forum.yam.ch/\n"
-                                      "\n"
-                                      "Las preguntas mαs frecuentes son a su vez\ contestadas en el FAQ de YAM:\n"
-                                      "http://faq.yam.ch/\n"
-                                      "\n"
-                                      "En caso de que encuentre algϊn fallo en YAM, por favor, hαgalo saber en el registro de fallos de YAM:\n"
-                                      "http://bugs.yam.ch/"))
-        (set #done_1   (cat "\n"
-                            "YAM ha sido instalado satisfactoriamente.\n"
-                            "\n"
-                            "Haga doble click en el icono de \"YAM\" en el \n"))
-        (set #done_2   (cat "\n"
-                            "directorio seleccionado.\n"
-                            "\n"
-                            "Que lo disfrute..."))
+        (set #faq_and_bugtracker  (cat "\n"
+                                       "Si tiene alguna consulta concerniente a YAM puede realizarla en el forum de YAM:\n"
+                                       "http://forum.yam.ch/\n"
+                                       "\n"
+                                       "Las preguntas mαs frecuentes son a su vez\ contestadas en el FAQ de YAM:\n"
+                                       "http://faq.yam.ch/\n"
+                                       "\n"
+                                       "En caso de que encuentre algϊn fallo en YAM, por favor, hαgalo saber en el registro de fallos de YAM:\n"
+                                       "http://bugs.yam.ch/"))
     )
 )
 ; ///
@@ -362,36 +315,28 @@
 (if (= @language "soumi")
     (
         (set #def_cat_lang #def_lang_finnish)
-        (set #acknowledgeOS (cat "Tarkista kδyttφjδrjestelmδsi\n"
-                                 "automaattinen tunnistus:"))
-        (set #YAM_dir  (cat "Valitse hakemisto YAMia varten.\n"
-                            "(Uutta hakemistoa EI luoda!)"))
-        (set #lang_catalog (cat "Mikδ kδδnnφstiedosto asennetaan?\n"
-                                "(Englanninkieliset tekstit on sisδδnrakennettu)"))
-        (set #ask_charsets "Haluatko asentaa codesets.libraryn tarvitsemat kirjaimistotiedostot?")
+        (set #acknowledgeOS       (cat "Tarkista kδyttφjδrjestelmδsi\n"
+                                       "automaattinen tunnistus:"))
+        (set #YAM_dir             (cat "Valitse hakemisto YAMia varten.\n"
+                                       "(Uutta hakemistoa EI luoda!)"))
+        (set #lang_catalog        (cat "Mikδ kδδnnφstiedosto asennetaan?\n"
+                                       "(Englanninkieliset tekstit on sisδδnrakennettu)"))
+        (set #ask_charsets             "Haluatko asentaa codesets.libraryn tarvitsemat kirjaimistotiedostot?")
         (set #no_way_back_warning (cat "VAROITUS!!\n"
                                        "(jos haluat pδivittδδ jo asennetun YAM 2.4-version)\n"
                                        "\n"
                                        "Postin nimeδmistapa on muuttunut tδysin. Kun kδynnistδt YAM -version 2.9 ensimmδistδ kertaa, kaikki olemassa olevat postisi muunnetaan uuden tavan mukaisiksi. Tδmδn jδlkeen YAM 2.4 ei enδδ pysty kδsittelemδδn niitδ. Joten sinun kannattaa varmuuskopioida kaikki sδhkφpostisi ENNEN kuin kδynnistδt YAM 2.9:n.\n"
                                        "\n"
                                        "Kuitenkin voit ongelmitta asentaa YAM-version 2.4 ja YAM-version 2.9 eri hakemistoihin."))
-        (set #faq_and_bugtracker (cat "\n"
-                                      "Jos sinulla on mitδ tahansa YAMia koskevia kysymyksiδ, voit kysyδ niitδ YAM-keskustelufoorumissa:\n"
-                                      "http://forum.yam.ch/\n"
-                                      "\n"
-                                      "Usein kysyttyjδ kysymyksiδ on jo vastattu YAM FAQ-sivulla:\n"
-                                      "http://faq.yam.ch/\n"
-                                      "\n"
-                                      "Jos lφydδt YAMista ohjelmointivirheen, ilmoita se YAMin bugtracker-palveluun:\n"
-                                      "http://bugs.yam.ch/"))
-        (set #done_1   (cat "\n"
-                            "YAM on asennettu onnistuneesti.\n"
-                            "\n"
-                            "Tuplaklikkaa \"YAM\" -kuvaketta\n"))
-        (set #done_2   (cat "\n"
-                            "hakemistossa ja pδδset kokeilemaan sitδ.\n"
-                            "\n"
-                            "Pidδ hauskaa..."))
+        (set #faq_and_bugtracker  (cat "\n"
+                                       "Jos sinulla on mitδ tahansa YAMia koskevia kysymyksiδ, voit kysyδ niitδ YAM-keskustelufoorumissa:\n"
+                                       "http://forum.yam.ch/\n"
+                                       "\n"
+                                       "Usein kysyttyjδ kysymyksiδ on jo vastattu YAM FAQ-sivulla:\n"
+                                       "http://faq.yam.ch/\n"
+                                       "\n"
+                                       "Jos lφydδt YAMista ohjelmointivirheen, ilmoita se YAMin bugtracker-palveluun:\n"
+                                       "http://bugs.yam.ch/"))
     )
 )
 ; ///
@@ -482,6 +427,38 @@
 (message #no_way_back_warning)
 
 (complete 1)
+
+(set YAM_running (rexx "isyamrunning.rx"))
+(while (= 1 YAM_running)
+	(if (= 0 @user-level)
+	    (
+	        ; novice users are asked no questions, enforce the termination
+	        (set doTerminate 1)
+	    )
+	    (
+	        (set doTerminate
+	            (askbool
+	                (prompt #ask_terminate)
+	                (help @askbool-help)
+	                (choices #terminate #ignore_and_proceed)
+	            )
+	        )
+	    )
+	)
+    (if (= 1 doTerminate)
+        (
+             ; quit YAM and try again
+             (rexx "quityam.rx")
+             (set YAM_running (rexx "yamrunning.rx"))
+        )
+        (
+             ; ignore and proceed
+             (set YAM_running 0)
+        )
+    )
+)
+
+(complete 5)
 
 (if (<> 0 (exists "YAM:" (noreq)))
     (set YAM_def_dir (getassign "YAM"))
@@ -1070,7 +1047,7 @@
 
 (complete 100)
 
-(message #done_1 "\"" YAM_dir "\"" #done_2)
+(message #done)
 
 ; /// ********************
 ;----------------------------------------------------------------------------

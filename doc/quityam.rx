@@ -1,0 +1,11 @@
+/* quit YAM and wait for its termination */
+/* $Id$ */
+
+if show('ports', 'YAM') then do
+  address "YAM"
+  'quit force'
+  address command
+  do while show('ports', 'YAM')
+    'wait 1'
+  end
+end
