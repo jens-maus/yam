@@ -148,7 +148,10 @@ OVERLOAD(MUIM_NList_Display)
       ndm->strings[0] = hdrNode->name;
 
     // set the content of the header line
-    if(stricmp("Date", hdrNode->name) == 0 && data->rmData->headerMode == HM_SHORTHEADER)
+    // check for a valid mail pointer first, it might happen that this method is
+    // called with a yet invalid pointer. Calculating the pointer to the date
+    // below is working, but dereferencing it will cause a crash otherwise.
+    if(data->rmData->mail != NULL && stricmp("Date", hdrNode->name) == 0 && data->rmData->headerMode == HM_SHORTHEADER)
     {
       // some special treatment of the Date: header line in "short" mode
       // always show the date/time converted to local time

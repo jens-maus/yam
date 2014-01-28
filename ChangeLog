@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-01-28 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/HeaderList.c: added a NULL pointer check for the rare case that the list
+    of header lines gets updated while the mail pointer is not yet valid. This
+    closes #493.
+
 2014-01-27 Thore Böckelmann <tboeckel@gmx.de>
 
   * locale/spanish.po: removed two trailing spaces.
