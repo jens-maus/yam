@@ -10,6 +10,8 @@ $URL$
   * mui/HeaderList.c: added a NULL pointer check for the rare case that the list
     of header lines gets updated while the mail pointer is not yet valid. This
     closes #493.
+  * Makefile, doc/Install-YAM, tools/mkrelease.sh: added the updated polish and
+    russian translations to the list of supported languages again.
 
 2014-01-27 Thore Böckelmann <tboeckel@gmx.de>
 

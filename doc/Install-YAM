@@ -1,5 +1,5 @@
 ;
-; $VER: Install-YAM 1.35 (1.1.2014) (c) 2000-2013 by YAM Open Source Team
+; $VER: Install-YAM 1.36 (28.1.2014) (c) 2000-2014 by YAM Open Source Team
 ; Language support added by Sönke Tesch/ATO
 ;
 ; $Id$
@@ -20,12 +20,13 @@
 (set #def_lang_finnish             $400)
 (set #def_lang_danish              $800)
 (set #def_lang_dutch               $1000)
+(set #def_lang_russian             $2000)
 ; add more languages here
 ; (set #def_lang_<language name>     bitmask)
 ;
 ; accents of languages should be appended at the end rather than somewhere in the middle,
 ; because only AmigaOS 4.x can handle them.
-(set #def_lang_english_british     $800)
+(set #def_lang_english_british     $4000)
 ; add more accents of languages here
 ; (set #def_lang_<language name>     bitmask)
 ; ///
@@ -439,38 +440,38 @@
 (if (= detectedSystem "os4")
     ; AmigaOS 4.x uses english locale names only
     (
-        (set #cat_name_german                "german")
-        (set #cat_name_swedish               "swedish")
         (set #cat_name_czech                 "czech")
-        (set #cat_name_italian               "italian")
-        (set #cat_name_french                "french")
-        (set #cat_name_greek                 "greek")
-        (set #cat_name_dutch                 "dutch")
-        (set #cat_name_polish                "polish")
-        (set #cat_name_spanish               "spanish")
-        (set #cat_name_turkish               "turkish")
-        (set #cat_name_hungarian             "hungarian")
-        (set #cat_name_finnish               "finnish")
         (set #cat_name_danish                "danish")
         (set #cat_name_dutch                 "dutch")
         (set #cat_name_english_british       "english-british")
+        (set #cat_name_finnish               "finnish")
+        (set #cat_name_french                "french")
+        (set #cat_name_german                "german")
+        (set #cat_name_greek                 "greek")
+        (set #cat_name_hungarian             "hungarian")
+        (set #cat_name_italian               "italian")
+        (set #cat_name_polish                "polish")
+        (set #cat_name_russian               "russian")
+        (set #cat_name_spanish               "spanish")
+        (set #cat_name_swedish               "swedish")
+        (set #cat_name_turkish               "turkish")
     )
     ; AmigaOS 3.x and MorphOS use localized locale names
     (
-        (set #cat_name_german                "deutsch")
-        (set #cat_name_swedish               "svenska")
         (set #cat_name_czech                 "czech")
-        (set #cat_name_italian               "italiano")
-        (set #cat_name_french                "français")
-        (set #cat_name_greek                 "greek")
-        (set #cat_name_dutch                 "nederlands")
-        (set #cat_name_polish                "polski")
-        (set #cat_name_spanish               "español")
-        (set #cat_name_turkish               "türkçe")
-        (set #cat_name_hungarian             "magyar")
-        (set #cat_name_finnish               "suomi")
         (set #cat_name_danish                "dansk")
         (set #cat_name_dutch                 "nederlands")
+        (set #cat_name_finnish               "suomi")
+        (set #cat_name_french                "français")
+        (set #cat_name_german                "deutsch")
+        (set #cat_name_greek                 "greek")
+        (set #cat_name_hungarian             "magyar")
+        (set #cat_name_italian               "italiano")
+        (set #cat_name_polish                "polski")
+        (set #cat_name_russian               "russian")
+        (set #cat_name_spanish               "español")
+        (set #cat_name_swedish               "svenska")
+        (set #cat_name_turkish               "türkçe")
     )
 )
 
@@ -514,6 +515,9 @@
                      "Magyar"
                      "Polski"
                      "Suomi"
+                     "Dansk"
+                     "Nederlands"
+                     "Ruski"
                      "English (british)"
             )
             (default #def_cat_lang)
@@ -535,6 +539,9 @@
                      "Magyar"
                      "Polski"
                      "Suomi"
+                     "Dansk"
+                     "Nederlands"
+                     "Ruski"
             )
             (default #def_cat_lang)
         )
@@ -711,33 +718,19 @@
             )
         )
 
-        ; dutch catalog file
-        ;(if (bitand catalog_lang #def_lang_dutch)
-        ;    (
-        ;        (makedir (tackon Cat_dir #cat_name_dutch))
-
-        ;        (copyfiles
-        ;            (source "/Catalogs/dutch")
-        ;            (choices "YAM.catalog")
-        ;            (dest (tackon Cat_dir #cat_name_dutch))
-        ;            (help @copyfiles-help)
-        ;        )
-        ;    )
-        ;)
-
         ; polish catalog file
-        ;(if (bitand catalog_lang #def_lang_polish)
-        ;    (
-        ;        (makedir (tackon Cat_dir #cat_name_polish))
+        (if (bitand catalog_lang #def_lang_polish)
+            (
+                (makedir (tackon Cat_dir #cat_name_polish))
 
-        ;        (copyfiles
-        ;            (source "/Catalogs/polish")
-        ;            (choices "YAM.catalog")
-        ;            (dest (tackon Cat_dir #cat_name_polish))
-        ;            (help @copyfiles-help)
-        ;        )
-        ;    )
-        ;)
+                (copyfiles
+                    (source "/Catalogs/polish")
+                    (choices "YAM.catalog")
+                    (dest (tackon Cat_dir #cat_name_polish))
+                    (help @copyfiles-help)
+                )
+            )
+        )
 
         ; spanish catalog file
         (if (bitand catalog_lang #def_lang_spanish)
@@ -818,6 +811,20 @@
                     (source "/Catalogs/dutch")
                     (choices "YAM.catalog")
                     (dest (tackon Cat_dir #cat_name_dutch))
+                    (help @copyfiles-help)
+                )
+            )
+        )
+
+        ; russian catalog file
+        (if (bitand catalog_lang #def_lang_russian)
+            (
+                (makedir (tackon Cat_dir #cat_name_russian))
+
+                (copyfiles
+                    (source "/Catalogs/russian")
+                    (choices "YAM.catalog")
+                    (dest (tackon Cat_dir #cat_name_russian))
                     (help @copyfiles-help)
                 )
             )
