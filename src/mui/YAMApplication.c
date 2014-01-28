@@ -1649,9 +1649,7 @@ DECLARE(OpenAddressBookWindow) // enum AddressbookMode mode, LONG windowNumber, 
   ENTER();
 
   if(G->ABookWinObject == NULL)
-  {
     G->ABookWinObject = AddressBookWindowObject, End;
-  }
 
   if(G->ABookWinObject != NULL)
   {

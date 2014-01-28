@@ -1253,7 +1253,7 @@ DECLARE(GrabSenderAddress)
     if((mlist = CreateMailList()) != NULL)
     {
       AddNewMailNode(mlist, mail);
-      MA_GetAddress(mlist);
+      MA_GetAddress(mlist, NULL, 0);
       DeleteMailList(mlist);
     }
   }

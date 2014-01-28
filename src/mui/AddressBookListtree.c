@@ -503,11 +503,17 @@ OVERLOAD(MUIM_NListtree_Display)
 OVERLOAD(MUIM_DragQuery)
 {
   struct MUIP_DragQuery *d = (struct MUIP_DragQuery *)msg;
+  ULONG result;
+
+  ENTER();
 
   if(DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_IsMailList, d->obj) == TRUE)
-    return MUIV_DragQuery_Accept;
+    result = MUIV_DragQuery_Accept;
+  else
+    result = DoSuperMethodA(cl, obj, msg);
 
-  return DoSuperMethodA(cl, obj, msg);
+  RETURN(result);
+  return result;
 }
 
 ///
@@ -515,6 +521,9 @@ OVERLOAD(MUIM_DragQuery)
 OVERLOAD(MUIM_DragDrop)
 {
   struct MUIP_DragDrop *d = (struct MUIP_DragDrop *)msg;
+  ULONG result = 0;
+
+  ENTER();
 
   if(DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_IsMailList, d->obj) == TRUE)
   {
@@ -522,12 +531,17 @@ OVERLOAD(MUIM_DragDrop)
 
     if((mlist = MA_CreateMarkedList(d->obj, FALSE)) != NULL)
     {
-      MA_GetAddress(mlist);
+      MA_GetAddress(mlist, (struct MUI_NListtree_TreeNode *)xget(obj, MUIA_NListtree_DropTarget),
+                           xget(obj, MUIA_NListtree_DropType));
+
       DeleteMailList(mlist);
     }
   }
+  else
+    result = DoSuperMethodA(cl, obj, msg);
 
-  return DoSuperMethodA(cl, obj, msg);
+  RETURN(result);
+  return result;
 }
 
 ///
@@ -861,7 +875,7 @@ DECLARE(IncrementalSearch) // const char *pattern, ULONG *iterator
 
         if(found == TRUE)
         {
-          D(DBF_ALWAYS, "found pattern '%s' in entry with address '%s'", msg->pattern, abn->Address);
+          D(DBF_ABOOK, "found pattern '%s' in entry with address '%s'", msg->pattern, abn->Address);
 
           DoMethod(obj, MUIM_NListtree_Open, MUIV_NListtree_Open_ListNode_Parent, tn, MUIF_NONE);
           set(obj, MUIA_NListtree_Active, tn);

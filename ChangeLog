@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-01-28 Jens Maus <mail@jens-maus.de>
+
+  * mui/AddressBookWindow.c, mui/AddressBookListtree.c, misc: fixed a bug where
+    on one hand YAM was showing a drop mark in the addressbook when drag&dropping
+    mails into its window. On the other hand the new address book entry wasn't
+    created at that particular position but always at the end of the list. Now
+    the drop position is properly propagated and YAM should be able to drop
+    the new entries at the chosen location. This closes #22.
+
 2014-01-28 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/HeaderList.c: added a NULL pointer check for the rare case that the list

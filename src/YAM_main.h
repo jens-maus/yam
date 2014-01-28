@@ -39,6 +39,7 @@
 struct Mail;
 struct Folder;
 struct Part;
+struct MUI_NListtree_TreeNode;
 
 // General internal flags of a mail (no status information)
 // Warning: Please note that if you change something here you have to make
@@ -382,7 +383,7 @@ void  MA_DeleteMessage(BOOL delatonce, BOOL force);
 void  MA_DeleteSingle(struct Mail *mail, const ULONG delFlags);
 BOOL MA_ExportMessages(char *filename, const BOOL all, ULONG flags);
 struct Mail *MA_GetActiveMail(struct Folder *forcefolder, struct Folder **folderp, LONG *activep);
-void  MA_GetAddress(struct MailList *mlist);
+void MA_GetAddress(struct MailList *mlist, struct MUI_NListtree_TreeNode *dropTarget, ULONG dropType);
 BOOL MA_ImportMessages(const char *fname, const ULONG flags);
 struct MA_ClassData *MA_New(void);
 void  MA_ArchiveMail(struct Mail *mail);

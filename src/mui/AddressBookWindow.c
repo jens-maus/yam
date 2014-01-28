@@ -390,8 +390,12 @@ OVERLOAD(OM_SET)
     {
       case MUIA_Window_Open:
       {
-        // rebuild the listtree upon opening the window
-        if(tag->ti_Data == TRUE)
+        // rebuild the listtree upon opening the window. However, only do
+        // this if the window isn't currently open because otherwise the
+        // listtree will automatically close all its subnodes and this
+        // seems to be somewhat unintuitive (e.g. during a drag&drop
+        // operation when dragging mails to the addressbook).
+        if(tag->ti_Data == TRUE && xget(obj, MUIA_Window_Open) == FALSE)
           DoMethod(data->LV_ADDRESSES, MUIM_AddressBookListtree_BuildTree);
       }
       break;
@@ -795,7 +799,7 @@ DECLARE(AddNewEntry) // ULONG type
   End) != NULL)
   {
     set(editWin, MUIA_AddressBookEditWindow_ABookNode, NULL);
-    DoMethod(editWin, MUIM_Notify, MUIA_AddressBookEditWindow_SaveContents, MUIV_EveryTime, obj, 3, METHOD(InsertNewEntry), editWin, msg->type);
+    DoMethod(editWin, MUIM_Notify, MUIA_AddressBookEditWindow_SaveContents, MUIV_EveryTime, obj, 5, METHOD(InsertNewEntry), editWin, msg->type, NULL, 0);
     SafeOpenWindow(editWin);
   }
 
@@ -806,7 +810,7 @@ DECLARE(AddNewEntry) // ULONG type
 ///
 /// DECLARE(InsertNewEntry)
 // add a new entry to the address book
-DECLARE(InsertNewEntry) // Object *editWindow, ULONG type
+DECLARE(InsertNewEntry) // Object *editWindow, ULONG type, struct MUI_NListtree_TreeNode *dropTarget, ULONG dropType
 {
   GETDATA;
   struct ABookNode *abn;
@@ -819,21 +823,44 @@ DECLARE(InsertNewEntry) // Object *editWindow, ULONG type
 
     if(CheckABookNode(obj, abn) == TRUE)
     {
-      struct MUI_NListtree_TreeNode *predTN;
-      struct MUI_NListtree_TreeNode *groupTN;
+      struct MUI_NListtree_TreeNode *predTN = NULL;
+      struct MUI_NListtree_TreeNode *groupTN = NULL;
 
       FixAlias(&G->abook, abn, NULL);
 
-      // find the preceeding and the group node of the active entry
-      predTN = (struct MUI_NListtree_TreeNode *)xget(data->LV_ADDRESSES, MUIA_NListtree_Active);
-      if(predTN == (struct MUI_NListtree_TreeNode *)MUIV_NListtree_Active_Off)
+      // if the user has supplied a drop target (e.g. the user drags a mail into the
+      // addressbook window) we have to find the specific drop position and find out
+      // predTN and groupTN accordingly.
+      if(msg->dropTarget != NULL && msg->dropTarget->tn_Name != NULL &&
+         msg->dropType != MUIV_NListtree_DropType_None)
       {
-        predTN = (struct MUI_NListtree_TreeNode *)MUIV_NListtree_Insert_PrevNode_Tail;
-        groupTN = (struct MUI_NListtree_TreeNode *)MUIV_NListtree_Insert_ListNode_Root;
+        groupTN = msg->dropTarget;
+
+        if(msg->dropType == MUIV_NListtree_DropType_Above)
+        {
+          predTN = (struct MUI_NListtree_TreeNode *)DoMethod(data->LV_ADDRESSES, MUIM_NListtree_GetEntry, msg->dropTarget, MUIV_NListtree_GetEntry_Position_Previous, MUIF_NONE);
+        }
+        else if(msg->dropType == MUIV_NListtree_DropType_Below ||
+                msg->dropType == MUIV_NListtree_DropType_Onto)
+        {
+          predTN = msg->dropTarget;
+        }
+        else
+          predTN = (struct MUI_NListtree_TreeNode *)MUIV_NListtree_Insert_PrevNode_Sorted;
       }
       else
       {
-        groupTN = (struct MUI_NListtree_TreeNode *)DoMethod(data->LV_ADDRESSES, MUIM_NListtree_GetEntry, predTN, MUIV_NListtree_GetEntry_Position_Parent, MUIF_NONE);
+        // find the preceeding and the group node of the active entry
+        predTN = (struct MUI_NListtree_TreeNode *)xget(data->LV_ADDRESSES, MUIA_NListtree_Active);
+        if(predTN == (struct MUI_NListtree_TreeNode *)MUIV_NListtree_Active_Off)
+        {
+          predTN = (struct MUI_NListtree_TreeNode *)MUIV_NListtree_Insert_PrevNode_Tail;
+          groupTN = (struct MUI_NListtree_TreeNode *)MUIV_NListtree_Insert_ListNode_Root;
+        }
+        else
+        {
+          groupTN = (struct MUI_NListtree_TreeNode *)DoMethod(data->LV_ADDRESSES, MUIM_NListtree_GetEntry, predTN, MUIV_NListtree_GetEntry_Position_Parent, MUIF_NONE);
+        }
       }
 
       // insert the new node in both the address book and the listtree
@@ -856,7 +883,7 @@ DECLARE(InsertNewEntry) // Object *editWindow, ULONG type
 ///
 /// DECLARE(EditNewEntry)
 // edit an already setup entry and add it to the address book
-DECLARE(EditNewEntry) // struct ABookNode *abn
+DECLARE(EditNewEntry) // struct ABookNode *abn, struct MUI_NListtree_TreeNode *dropTarget, ULONG dropType
 {
   Object *editWin;
 
@@ -867,7 +894,7 @@ DECLARE(EditNewEntry) // struct ABookNode *abn
   End) != NULL)
   {
     set(editWin, MUIA_AddressBookEditWindow_ABookNode, msg->abn);
-    DoMethod(editWin, MUIM_Notify, MUIA_AddressBookEditWindow_SaveContents, MUIV_EveryTime, obj, 3, METHOD(InsertNewEntry), editWin, msg->abn->type);
+    DoMethod(editWin, MUIM_Notify, MUIA_AddressBookEditWindow_SaveContents, MUIV_EveryTime, obj, 5, METHOD(InsertNewEntry), editWin, msg->abn->type, msg->dropTarget, msg->dropType);
     SafeOpenWindow(editWin);
   }
 
@@ -981,7 +1008,7 @@ DECLARE(DuplicateEntry)
         MUIA_AddressBookEditWindow_ABookNode, abn,
         MUIA_AddressBookEditWindow_Address, buf);
 
-      DoMethod(editWin, MUIM_Notify, MUIA_AddressBookEditWindow_SaveContents, MUIV_EveryTime, obj, 3, METHOD(InsertNewEntry), editWin, abn->type);
+      DoMethod(editWin, MUIM_Notify, MUIA_AddressBookEditWindow_SaveContents, MUIV_EveryTime, obj, 5, METHOD(InsertNewEntry), editWin, abn->type, NULL, 0);
       SafeOpenWindow(editWin);
     }
   }

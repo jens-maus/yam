@@ -2218,7 +2218,7 @@ MakeHook(MA_ClassifyMessageHook, MA_ClassifyMessageFunc);
 ///
 /// MA_GetAddress
 //  Stores address from a list of messages to the address book
-void MA_GetAddress(struct MailList *mlist)
+void MA_GetAddress(struct MailList *mlist, struct MUI_NListtree_TreeNode *dropTarget, ULONG dropType)
 {
   struct MailNode *mnode = FirstMailNode(mlist);
   struct Mail *mail = mnode->mail;
@@ -2365,8 +2365,9 @@ void MA_GetAddress(struct MailList *mlist)
     UnlockMailList(mlist);
   }
 
+  // lets open an addressbook window or bring one to the front
   if(DoMethod(G->App, MUIM_YAMApplication_OpenAddressBookWindow, ABM_EDIT, -1, NULL) == TRUE)
-    DoMethod(G->ABookWinObject, MUIM_AddressBookWindow_EditNewEntry, &abn);
+    DoMethod(G->ABookWinObject, MUIM_AddressBookWindow_EditNewEntry, &abn, dropTarget, dropType);
 
   // free the list members, it is handled now by the edit window
   dstrfree(abn.ListMembers);
@@ -2385,7 +2386,7 @@ HOOKPROTONHNONP(MA_GetAddressFunc, void)
 
   if((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE)) != NULL)
   {
-    MA_GetAddress(mlist);
+    MA_GetAddress(mlist, NULL, 0);
     DeleteMailList(mlist);
   }
 
