@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-01-29 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/FiltersConfigPage.c: make sure that all objects are disabled in case no
+    filter is defined at all. This closes #516.
+
 2014-01-28 Jens Maus <mail@jens-maus.de>
 
   * mui/AddressBookWindow.c, mui/AddressBookListtree.c, misc: fixed a bug where

@@ -98,6 +98,8 @@ struct Data
   Object *CH_ATERMINATE;
 
   struct FilterNode *filter;
+
+  BOOL setup;
 };
 */
 
@@ -155,13 +157,22 @@ static void GhostOutFilter(struct IClass *cl, Object *obj)
   if(filter == NULL)
     DoMethod(data->GR_SGROUP, MUIM_ObjectList_Clear);
 
-  // These three "disables" must be done in another context, because the Popasl object will en/disable
-  // the pop button itself as long as the requester is open. After that this hook is called but the object
-  // has not yet enabled the pop button again, so we might get wrong visible results. Not a very nice
-  // solution, I must say :(
-  DoMethod(_app(obj), MUIM_Application_PushMethod, data->PO_ARESPONSE, 3, MUIM_Set, MUIA_Disabled, filter == NULL || isremote || !xget(data->CH_ARESPONSE, MUIA_Selected));
-  DoMethod(_app(obj), MUIM_Application_PushMethod, data->PO_AEXECUTE, 3, MUIM_Set, MUIA_Disabled, filter == NULL || !xget(data->CH_AEXECUTE, MUIA_Selected));
-  DoMethod(_app(obj), MUIM_Application_PushMethod, data->PO_APLAY, 3, MUIM_Set, MUIA_Disabled, filter == NULL || !xget(data->CH_APLAY, MUIA_Selected));
+  if(data->setup == TRUE)
+  {
+    // These three "disables" must be done in another context, because the Popasl object will en/disable
+    // the pop button itself as long as the requester is open. After that this hook is called but the object
+    // has not yet enabled the pop button again, so we might get wrong visible results. Not a very nice
+    // solution, I must say :(
+    DoMethod(_app(obj), MUIM_Application_PushMethod, data->PO_ARESPONSE, 3, MUIM_Set, MUIA_Disabled, filter == NULL || isremote || !xget(data->CH_ARESPONSE, MUIA_Selected));
+    DoMethod(_app(obj), MUIM_Application_PushMethod, data->PO_AEXECUTE, 3, MUIM_Set, MUIA_Disabled, filter == NULL || !xget(data->CH_AEXECUTE, MUIA_Selected));
+    DoMethod(_app(obj), MUIM_Application_PushMethod, data->PO_APLAY, 3, MUIM_Set, MUIA_Disabled, filter == NULL || !xget(data->CH_APLAY, MUIA_Selected));
+  }
+  else
+  {
+    set(data->PO_ARESPONSE,         MUIA_Disabled, filter == NULL || isremote);
+    set(data->PO_AEXECUTE,          MUIA_Disabled, filter == NULL);
+    set(data->PO_APLAY,             MUIA_Disabled, filter == NULL);
+  }
 
   LEAVE();
 }
@@ -486,10 +497,46 @@ OVERLOAD(OM_NEW)
     DoMethod(CH_ASTATUSTOUNREAD,   MUIM_Notify, MUIA_Selected,                             TRUE,           CH_ASTATUSTOREAD,     3, MUIM_Set, MUIA_Selected, FALSE);
     DoMethod(CH_ASTATUSTOSPAM,     MUIM_Notify, MUIA_Selected,                             TRUE,           CH_ASTATUSTOHAM,      3, MUIM_Set, MUIA_Selected, FALSE);
     DoMethod(CH_ASTATUSTOHAM,      MUIM_Notify, MUIA_Selected,                             TRUE,           CH_ASTATUSTOSPAM,     3, MUIM_Set, MUIA_Selected, FALSE);
+
+    GhostOutFilter(cl, obj);
   }
 
   RETURN((IPTR)obj);
   return (IPTR)obj;
+}
+
+///
+/// OVERLOAD(MUIM_Setup)
+OVERLOAD(MUIM_Setup)
+{
+  GETDATA;
+  IPTR rc;
+
+  ENTER();
+
+  // the knowledge of a successful MUIM_Setup call is required in GhostOutFilter()
+  // to know whether _app() returns a valid value
+  if((rc = DoSuperMethodA(cl, obj, msg)) != 0)
+    data->setup = TRUE;
+
+  RETURN(rc);
+  return rc;
+}
+
+///
+/// OVERLOAD(MUIM_Cleanup)
+OVERLOAD(MUIM_Cleanup)
+{
+  GETDATA;
+  IPTR rc;
+
+  ENTER();
+
+  rc = DoSuperMethodA(cl, obj, msg);
+  data->setup = FALSE;
+
+  RETURN(rc);
+  return rc;
 }
 
 ///
