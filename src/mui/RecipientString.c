@@ -1131,7 +1131,7 @@ DECLARE(AddRecipient) // STRPTR address
 
   ENTER();
 
-  D(DBF_GUI, "add recipient \"%s\"", msg->address);
+  D(DBF_GUI, "add recipient '%s'", msg->address);
 
   // set String_Contents to NULL in case we have
   // a single recipient in the string. Also set the
