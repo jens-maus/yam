@@ -9,6 +9,9 @@ $URL$
 
   * DynamicString.c: implemented dstrins() to insert a string into a dynamic
     string at a certain position in the middle.
+  * YAM_RE.c: possible prefixes and postfixes of placeholders (i.e. file://%s)
+    are now correctly quoted as a complete word instead of the inserted string
+    for the placeholder only. This closes #513.
 
 2014-01-29 Thore Böckelmann <tboeckel@gmx.de>
 

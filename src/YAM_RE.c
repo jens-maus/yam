@@ -270,21 +270,24 @@ BOOL RE_PrintFile(const char *filename, Object *win)
 ///
 /// BuildCommandString
 // sets up a complete MIME command string, substituting place holders if necessary
-static void BuildCommandString(char *command, const size_t commandLen, const char *format, const char *file)
+static char *BuildCommandString(const char *format, const char *file)
 {
   const char *p;
+  char *command = NULL;
 
   ENTER();
-
-  command[0] = '\0';
 
   if((p = format) != NULL)
   {
     char c;
+    char *wordStart;
     BOOL hasQuotes = FALSE;
+    BOOL closeQuotes = FALSE;
 
-    D(DBF_MIME, "building command string of '%s'", format);
+    D(DBF_MIME, "building command string from '%s'", format);
 
+    command = dstralloc(0);
+    wordStart = command;
     while((c = *p++) != '\0')
     {
       switch(c)
@@ -307,24 +310,29 @@ static void BuildCommandString(char *command, const size_t commandLen, const cha
 
                 // obtain the public screen name
                 GetPubScreenName((struct Screen *)xget(G->MA->GUI.WI, MUIA_Window_Screen), pubScreenName, sizeof(pubScreenName));
+                D(DBF_MIME, "insert public screen name '%s'", pubScreenName);
 
                 // insert the public screen name
                 if(hasQuotes == FALSE)
-                  strlcat(command, "\"", commandLen);
-                strlcat(command, pubScreenName, commandLen);
+                  dstrcat(&command, "\"");
+                dstrcat(&command, pubScreenName);
                 if(hasQuotes == FALSE)
-                  strlcat(command, "\"", commandLen);
+                  dstrcat(&command, "\"");
               }
               break;
 
               case 's':
               {
                 // insert the filename
+                D(DBF_MIME, "insert file name '%s'", file);
+
                 if(hasQuotes == FALSE)
-                  strlcat(command, "\"", commandLen);
-                strlcat(command, file, commandLen);
-                if(hasQuotes == FALSE)
-                  strlcat(command, "\"", commandLen);
+                {
+                  dstrins(&command, "\"", wordStart-command);
+                  closeQuotes = TRUE;
+                }
+                dstrcat(&command, file);
+                // the closing quotes will be added later
               }
               break;
 
@@ -336,7 +344,7 @@ static void BuildCommandString(char *command, const size_t commandLen, const cha
 
                 tmp[0] = '%';
                 tmp[1] = '\0';
-                strlcat(command, tmp, commandLen);
+                dstrcat(&command, tmp);
               }
               break;
 
@@ -361,18 +369,39 @@ static void BuildCommandString(char *command, const size_t commandLen, const cha
         {
           char tmp[2];
 
+          if(c == ' ')
+          {
+            // add possibly missing closing quotes
+            if(closeQuotes == TRUE)
+            {
+              dstrcat(&command, "\"");
+              closeQuotes = FALSE;
+            }
+          }
+
           tmp[0] = c;
           tmp[1] = '\0';
-          strlcat(command, tmp, commandLen);
+          dstrcat(&command, tmp);
+
+          if(c == ' ')
+          {
+            // remember the start of a new word
+            wordStart = &command[dstrlen(command)];
+          }
         }
         break;
       }
     }
+
+    // add possibly missing closing quotes
+    if(closeQuotes == TRUE)
+      dstrcat(&command, "\"");
   }
 
-  D(DBF_MIME, "built command string '%s'", command);
+  D(DBF_MIME, "built command string '%s'", SafeStr(command));
 
-  LEAVE();
+  RETURN(command);
+  return command;
 }
 ///
 /// RE_DisplayMIME
@@ -477,10 +506,10 @@ void RE_DisplayMIME(const char *srcfile, const char *dstfile,
   }
   else
   {
-    char command[SIZE_COMMAND+SIZE_PATHFILE];
     char dstFilePath[SIZE_PATHFILE];
     char *cmdPtr = NULL;
     char *codesetName = NULL;
+    char *command;
 
     // if we still didn't found the correct mime type or the command line of the
     // current mime type is empty we use the default mime viewer specified in
@@ -616,10 +645,12 @@ void RE_DisplayMIME(const char *srcfile, const char *dstfile,
       dstfile = srcfile;
 
     // set up the command string
-    BuildCommandString(command, sizeof(command), cmdPtr, GetRealPath(dstfile));
-
-    // execute the command
-    LaunchCommand(command, LAUNCHF_ASYNC, OUT_NIL);
+    if((command = BuildCommandString(cmdPtr, GetRealPath(dstfile))) != NULL)
+    {
+      // execute the command
+      LaunchCommand(command, LAUNCHF_ASYNC, OUT_NIL);
+      dstrfree(command);
+    }
   }
 
   LEAVE();
