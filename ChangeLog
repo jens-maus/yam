@@ -12,6 +12,10 @@ $URL$
   * YAM_RE.c: possible prefixes and postfixes of placeholders (i.e. file://%s)
     are now correctly quoted as a complete word instead of the inserted string
     for the placeholder only. This closes #513.
+  * YAM_MA.c: force the charset of plain texts to UTF8 when removing attachments
+    from mails. This is not a 100% clean solution but it at leasts keeps non
+    7bit ASCII characters in a suitable encoding which does not malform them.
+    This closes #517.
 
 2014-01-29 Thore Böckelmann <tboeckel@gmx.de>
 

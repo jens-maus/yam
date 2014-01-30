@@ -42,6 +42,7 @@
 #include <mui/NListtree_mcc.h>
 #include <mui/TextEditor_mcc.h>
 #include <mui/TheBar_mcc.h>
+#include <proto/codesets.h>
 #include <proto/dos.h>
 #include <proto/exec.h>
 #include <proto/intuition.h>
@@ -1440,7 +1441,12 @@ void MA_RemoveAttach(struct Mail *mail, struct Part **whichParts, BOOL warning)
                     writePart.Filename = part->Filename;
                     writePart.Description = part->CParDesc;
                     writePart.Name = part->CParName;
-                    writePart.Codeset = G->writeCodeset;
+                    // declare plain texts as UTF8 as this is our in-memory representation
+                    // after having decoded them. Other parts get their charset preserved.
+                    if(stricmp(part->ContentType, "text/plain") == 0)
+                      writePart.Codeset = CodesetsFind((char *)"UTF8", TAG_DONE);
+                    else
+                      writePart.Codeset = CodesetsFind(part->CParCSet, TAG_DONE);
                     writePart.EncType = part->EncodingCode;
 
                     // create a new header, since decoded parts have these stripped
