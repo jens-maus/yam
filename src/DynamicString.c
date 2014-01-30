@@ -330,7 +330,7 @@ char *dstrins(char **dstr, const char *src, size_t pos)
   }
 
   // insert the string into the new buffer
-  if(srcsize > 0 && pos < ds->strlen)
+  if(srcsize > 0 && pos <= ds->strlen)
   {
     memmove(&ds->str[pos + srcsize], &ds->str[pos], ds->strlen-srcsize+1);
     memmove(&ds->str[pos], src, srcsize);
