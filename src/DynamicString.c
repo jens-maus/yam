@@ -267,6 +267,83 @@ char *dstrcat(char **dstr, const char *src)
 }
 
 ///
+/// dstrins
+// insert a string into a dynamic string at a certain position
+char *dstrins(char **dstr, const char *src, size_t pos)
+{
+  size_t srcsize;
+  size_t reqsize;
+  struct DynamicString *ds = NULL;
+  char *result = NULL;
+
+  ENTER();
+
+  if(src != NULL)
+    srcsize = strlen(src);
+  else
+    srcsize = 0;
+
+  reqsize = srcsize;
+
+  // if dstr itself is NULL we replace dstr with a new local
+  // version
+  if(dstr == NULL)
+    dstr = &result;
+
+  // if our dstr is NULL we have to allocate a new buffer
+  if(*dstr == NULL)
+  {
+    if((ds = dstrallocInternal(reqsize)) != NULL)
+      *dstr = DSTR_TO_STR(ds);
+    else
+      srcsize = 0;
+  }
+  else
+  {
+    ds = STR_TO_DSTR(*dstr);
+
+    CHECK_DSTR(ds);
+
+    // increase required size by the content length of
+    // the old dstr
+    reqsize += ds->strlen;
+
+    // make sure the string buffer is large enough to keep the
+    // requested amount of characters + NUL byte
+    if(reqsize+1 > ds->size)
+    {
+      struct DynamicString *newdstr;
+
+      // allocate a new buffer and replace the old one with it
+      if((newdstr = dstrallocInternal(reqsize)) != NULL)
+      {
+        newdstr->strlen = ds->strlen;
+        // copy the old dstr to the new one including the terminating NUL byte
+        memmove(newdstr->str, ds->str, ds->strlen+1);
+        free(ds);
+        ds = newdstr;
+        *dstr = DSTR_TO_STR(ds);
+      }
+      else
+        reqsize = 0;
+    }
+  }
+
+  // insert the string into the new buffer
+  if(srcsize > 0 && pos < ds->strlen)
+  {
+    memmove(&ds->str[pos + srcsize], &ds->str[pos], ds->strlen-srcsize+1);
+    memmove(&ds->str[pos], src, srcsize);
+    ds->strlen += srcsize;
+
+    result = *dstr;
+  }
+
+  RETURN(result);
+  return result;
+}
+
+///
 /// dstrlen
 // return the current length of a dynamic string buffer without calculation
 size_t dstrlen(const char *dstr)

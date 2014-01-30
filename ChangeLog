@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-01-30 Thore Böckelmann <tboeckel@gmx.de>
+
+  * DynamicString.c: implemented dstrins() to insert a string into a dynamic
+    string at a certain position in the middle.
+
 2014-01-29 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/FiltersConfigPage.c: make sure that all objects are disabled in case no

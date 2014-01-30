@@ -39,6 +39,7 @@ char *dstralloc(size_t initsize);
 void dstrreset(const char *dstr);
 char *dstrcpy(char **dstr, const char *src);
 char *dstrcat(char **dstr, const char *src);
+char *dstrins(char **dstr, const char *src, size_t pos);
 size_t dstrlen(const char *dstr);
 size_t dstrsize(const char *dstr);
 size_t dstrfread(char **dstr, size_t size, FILE *fh);
