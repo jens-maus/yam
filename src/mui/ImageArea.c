@@ -260,11 +260,6 @@ static void Image_Scale(struct Data *data)
         BOOL result;
 
         result = DoMethod(data->imageNode.dt_obj, PDTM_SCALE, newWidth, newHeight, 0);
-        #if defined(__MORPHOS__)
-        // MorphOS < v2.0 may return an invalid value for the PDTM_SCALE method
-        // so ignore it
-        result = TRUE;
-        #endif
         if(result == TRUE)
         {
           data->scaledBytesPerRow = newWidth * data->imageNode.bytesPerPixel;
@@ -277,12 +272,6 @@ static void Image_Scale(struct Data *data)
             // for writing the image data of the image in our pixelArray
             result = DoMethod(data->imageNode.dt_obj, PDTM_READPIXELARRAY, data->scaledPixelArray, data->imageNode.pixelFormat, data->scaledBytesPerRow,
                                                                            0, 0, newWidth, newHeight);
-
-            #if defined(__MORPHOS__)
-            // MorphOS < v2.0 doesn't return a valid value for the PDTM_READPIXELARRAY method
-            // so ignore it
-            result = TRUE;
-            #endif
 
             if(result == FALSE)
             {

@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-01-31 Jens Maus <mail@jens-maus.de>
+
+  * mui/ImageArea.c: removed some workaround for some broken functionality in
+    MorphOS < 2.0 where the picture.datatype returned invalid data requiring
+    us to ignore the return values of these PDTM_SCALE calls. This caused the
+    image scaling to fail for newer MorphOS versions which should have
+    become more popular and widespread than these old variants. This
+    closes #519.
+
 2014-01-30 Thore Böckelmann <tboeckel@gmx.de>
 
   * DynamicString.c: implemented dstrins() to insert a string into a dynamic
