@@ -13,9 +13,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
-"POT-Creation-Date: 2014-01-07 23:48+0100\n"
-"PO-Revision-Date: 2014-01-13 05:12+0000\n"
-"Last-Translator: pbobbenb <pbobbenb@icloud.com>\n"
+"POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
+"PO-Revision-Date: 2014-02-01 17:11+0000\n"
+"Last-Translator: damato <mail@jens-maus.de>\n"
 "Language-Team: Swedish (http://www.transifex.com/projects/p/yam/language/sv/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -9822,10 +9822,14 @@ msgctxt "MSG_TR_MAILCHECKFROM (2531//)"
 msgid "Checking mails from '%s'"
 msgstr "Kontrollerar brev från '%s'"
 
+#. Translate "Cc" which means "Carbon Copy"
+#. (e.g. 'Kopie (_Cc)' in German)
 msgctxt "MSG_WR_CC (2532//)"
 msgid "_Cc"
 msgstr "_Kopia"
 
+#. Translate "Bcc" which means "Blind Carbon Copy"
+#. (e.g. 'Blindkopie (_Bcc)' in German)
 msgctxt "MSG_WR_BCC (2533//)"
 msgid "_Bcc"
 msgstr "_Dold kopia"
@@ -9833,3 +9837,44 @@ msgstr "_Dold kopia"
 msgctxt "MSG_WR_REPLYTO (2534//)"
 msgid "Reply _To"
 msgstr "Svara _till"
+
+msgctxt "MSG_AB_TO_TOOLBAR (2535//)"
+msgid "_To:"
+msgstr ""
+
+#. Translate "Cc" which means "Carbon Copy"
+#. (e.g. 'Kopie (_Cc):' in German)
+msgctxt "MSG_AB_CC_TOOLBAR (2536//)"
+msgid "_Cc:"
+msgstr ""
+
+#. Translate "Bcc" which means "Blind Carbon Copy"
+#. (e.g. 'Blindkopie (_Bcc):' in German)
+msgctxt "MSG_AB_BCC_TOOLBAR (2537//)"
+msgid "_Bcc:"
+msgstr ""
+
+# Use same phrase as MSG_WR_FROM but in parentheses
+msgctxt "MSG_AB_FROM_TITLE (2538//)"
+msgid "(From)"
+msgstr ""
+
+# Use same phrase as MSG_WR_To but in parentheses
+msgctxt "MSG_AB_TO_TITLE (2539//)"
+msgid "(To)"
+msgstr ""
+
+# Use same phrase as MSG_WR_CC but in parentheses
+msgctxt "MSG_AB_CC_TITLE (2540//)"
+msgid "(Cc)"
+msgstr ""
+
+# Use same phrase as MSG_WR_BCC but in parentheses
+msgctxt "MSG_AB_BCC_TITLE (2541//)"
+msgid "(Bcc)"
+msgstr ""
+
+# Use same phrase as MSG_WR_REPLYTO but in parentheses
+msgctxt "MSG_AB_REPLYTO_TITLE (2542//)"
+msgid "(Reply To)"
+msgstr ""
