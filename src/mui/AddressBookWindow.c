@@ -269,18 +269,18 @@ OVERLOAD(OM_NEW)
       Child, hasHideToolBarFlag(C->HideGUIElements) ?
         (HGroup,
           MUIA_HelpNode, "Windows/Addressbook#Toolbar",
-          Child, BT_TO  = MakeButton("_To:"),
-          Child, BT_CC  = MakeButton("_CC:"),
-          Child, BT_BCC = MakeButton("_BCC:"),
+          Child, BT_TO  = MakeButton(tr(MSG_AB_TO_TOOLBAR)),
+          Child, BT_CC  = MakeButton(tr(MSG_AB_CC_TOOLBAR)),
+          Child, BT_BCC = MakeButton(tr(MSG_AB_BCC_TOOLBAR)),
         End) :
         (HGroup, GroupSpacing(0),
           MUIA_HelpNode, "Windows/Addressbook#Toolbar",
           Child, VGroup,
             MUIA_Weight, 10,
             MUIA_Group_Spacing, 1,
-            Child, BT_TO  = MakeButton("_To:"),
-            Child, BT_CC  = MakeButton("_CC:"),
-            Child, BT_BCC = MakeButton("_BCC:"),
+            Child, BT_TO  = MakeButton(tr(MSG_AB_TO_TOOLBAR)),
+            Child, BT_CC  = MakeButton(tr(MSG_AB_CC_TOOLBAR)),
+            Child, BT_BCC = MakeButton(tr(MSG_AB_BCC_TOOLBAR)),
             Child, HVSpace,
           End,
           Child, MUI_MakeObject(MUIO_VBar, 12),
@@ -458,30 +458,35 @@ OVERLOAD(OM_GET)
 DECLARE(Open) // enum AddressbookMode mode, LONG windowNumber, Object *recipientObj
 {
   GETDATA;
-  const char *md;
-  struct MUI_NListtree_TreeNode *tn;
+  const char *md = NULL;
 
   ENTER();
 
   switch(msg->mode)
   {
-    case ABM_FROM:    md = "(From)";     break;
-    case ABM_TO:      md = "(To)";       break;
-    case ABM_CC:      md = "(CC)";       break;
-    case ABM_BCC:     md = "(BCC)";      break;
-    case ABM_REPLYTO: md = "(Reply-To)"; break;
-    case ABM_CONFIG:  md = "";           break;
-    default:          md = "";           break;
+    case ABM_FROM:    md = tr(MSG_AB_FROM_TITLE); break;
+    case ABM_TO:      md = tr(MSG_AB_TO_TITLE); break;
+    case ABM_CC:      md = tr(MSG_AB_CC_TITLE); break;
+    case ABM_BCC:     md = tr(MSG_AB_BCC_TITLE); break;
+    case ABM_REPLYTO: md = tr(MSG_AB_REPLYTO_TITLE); break;
+
+    case ABM_CONFIG:
+    case ABM_NONE:
+    case ABM_EDIT:
+      // nothing
+    break;
   }
 
   data->mode = msg->mode;
-  data->windowNumber = (*md != '\0' ? msg->windowNumber : -1);
+  data->windowNumber = (IsStrEmpty(md) == FALSE ? msg->windowNumber : -1);
 
   // enable/disable the To/CC/BCC buttons depending on whether there is an active entry or not
-  tn = (struct MUI_NListtree_TreeNode *)xget(data->LV_ADDRESSES, MUIA_NListtree_Active);
-  DoMethod(obj, METHOD(ActiveChange), tn);
+  DoMethod(obj, METHOD(ActiveChange), xget(data->LV_ADDRESSES, MUIA_NListtree_Active));
 
-  snprintf(data->windowTitle, sizeof(data->windowTitle), "%s %s", tr(MSG_MA_MAddrBook), md);
+  if(IsStrEmpty(md) == TRUE)
+    snprintf(data->windowTitle, sizeof(data->windowTitle), "%s", tr(MSG_MA_MAddrBook));
+  else
+    snprintf(data->windowTitle, sizeof(data->windowTitle), "%s - %s", tr(MSG_MA_MAddrBook), md);
 
   xset(obj,
     MUIA_Window_Title, data->windowTitle,

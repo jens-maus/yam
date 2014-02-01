@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-02-01 Jens Maus <mail@jens-maus.de>
+
+  * locale/YAM.pot, mui/AddressBookWindow.c: moved some yet untranslatable
+    strings in the addressbook to be part of the official translation
+    catalog.
+
 2014-01-31 Jens Maus <mail@jens-maus.de>
 
   * mui/ImageArea.c: removed some workaround for some broken functionality in

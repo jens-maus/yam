@@ -1,9 +1,9 @@
 # YAM.pot - YAM catalog description file (pot-style)
 # $Id$
-# 
+#
 # version 9
 # language english
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: YAM\n"
@@ -9817,10 +9817,14 @@ msgctxt "MSG_TR_MAILCHECKFROM (2531//)"
 msgid "Checking mails from '%s'"
 msgstr "Checking mails from '%s'"
 
+#. Translate "Cc" which means "Carbon Copy"
+#. (e.g. 'Kopie (_Cc)' in German)
 msgctxt "MSG_WR_CC (2532//)"
 msgid "_Cc"
 msgstr "_Cc"
 
+#. Translate "Bcc" which means "Blind Carbon Copy"
+#. (e.g. 'Blindkopie (_Bcc)' in German)
 msgctxt "MSG_WR_BCC (2533//)"
 msgid "_Bcc"
 msgstr "_Bcc"
@@ -9828,3 +9832,44 @@ msgstr "_Bcc"
 msgctxt "MSG_WR_REPLYTO (2534//)"
 msgid "Reply _To"
 msgstr "Reply _To"
+
+msgctxt "MSG_AB_TO_TOOLBAR (2535//)"
+msgid "_To:"
+msgstr "_To:"
+
+#. Translate "Cc" which means "Carbon Copy"
+#. (e.g. 'Kopie (_Cc):' in German)
+msgctxt "MSG_AB_CC_TOOLBAR (2536//)"
+msgid "_Cc:"
+msgstr "_Cc:"
+
+#. Translate "Bcc" which means "Blind Carbon Copy"
+#. (e.g. 'Blindkopie (_Bcc):' in German)
+msgctxt "MSG_AB_BCC_TOOLBAR (2537//)"
+msgid "_Bcc:"
+msgstr "_Bcc:"
+
+# Use same phrase as MSG_WR_FROM but in parentheses 
+msgctxt "MSG_AB_FROM_TITLE (2538//)"
+msgid "(From)"
+msgstr "(From)"
+
+# Use same phrase as MSG_WR_To but in parentheses 
+msgctxt "MSG_AB_TO_TITLE (2539//)"
+msgid "(To)"
+msgstr "(To)"
+
+# Use same phrase as MSG_WR_CC but in parentheses 
+msgctxt "MSG_AB_CC_TITLE (2540//)"
+msgid "(Cc)"
+msgstr "(Cc)"
+
+# Use same phrase as MSG_WR_BCC but in parentheses 
+msgctxt "MSG_AB_BCC_TITLE (2541//)"
+msgid "(Bcc)"
+msgstr "(Bcc)"
+
+# Use same phrase as MSG_WR_REPLYTO but in parentheses 
+msgctxt "MSG_AB_REPLYTO_TITLE (2542//)"
+msgid "(Reply To)"
+msgstr "(Reply To)"
