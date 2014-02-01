@@ -766,7 +766,6 @@ DECLARE(FolderToGUI)
 
   nnset(data->ST_FNAME, MUIA_String_Contents, folder->Name);
   nnset(data->ST_FPATH, MUIA_String_Contents, folder->Path);
-  set(data->ST_FNAME, MUIA_Disabled, isDefault || isArchive);
   set(data->ST_FPATH, MUIA_Disabled, isDefault || isArchive);
 
   xset(data->ST_MAXAGE, MUIA_String_Integer, folder->MaxAge,

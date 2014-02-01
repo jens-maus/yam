@@ -7,6 +7,9 @@ $URL$
 
 2014-02-01 Jens Maus <mail@jens-maus.de>
 
+  * mui/FolderEditWindow.c: the display name of folders can now always be
+    changed to a user choice no matter which mail folder type it is. This
+    closes #520.
   * locale/YAM.pot, mui/AddressBookWindow.c: moved some yet untranslatable
     strings in the addressbook to be part of the official translation
     catalog.
