@@ -92,10 +92,49 @@ fi
 echo "$output"
 echo
 
+# now we try to filter out trivial changes
+echo "checking for trivial changes to ignore"
+echo "======================================"
+modifiedfiles=`echo "$output" | awk '{ print $2 }'`
+changedfiles=""
+for file in ${modifiedfiles}; do
+   diff=`${SVN} diff --ignore-properties --diff-cmd diff -x "-w --old-line-format= --new-line-format=%L --unchanged-group-format= --old-group-format=" ${file} | tail -n +3`
+
+   # ignore whatever we feel is not worth a checkin
+   diff=`echo "${diff}" | sed 's/^#.*//'` # comments
+   diff=`echo "${diff}" | sed 's/^"Project-Id-Version: .*\\\n"//'`
+   diff=`echo "${diff}" | sed 's/^"Report-Msgid-Bugs-To: .*\\\n"//'`
+   diff=`echo "${diff}" | sed 's/^"POT-Creation-Date: .*\\\n"//'`
+   diff=`echo "${diff}" | sed 's/^"PO-Revision-Date: .*\\\n"//'`
+   diff=`echo "${diff}" | sed 's/^"Last-Translator: .*\\\n"//'`
+   diff=`echo "${diff}" | sed 's/^"Language-Team: .*\\\n"//'`
+   diff=`echo "${diff}" | sed 's/^"MIME-Version: .*\\\n"//'`
+   diff=`echo "${diff}" | sed 's/^"Content-Type: .*\\\n"//'`
+   diff=`echo "${diff}" | sed 's/^"Content-Transfer-Encoding: .*\\\n"//'`
+   diff=`echo "${diff}" | sed 's/^"Language: .*\\\n"//'`
+   diff=`echo "${diff}" | sed 's/^"Plural-Forms: .*\\\n"//'`
+
+   if [ -n "${diff}" ]; then
+      # now we found somewhat relevant changes but have
+      # to filter them for things we want to ignore
+      echo "relevant changes found in file ${file}"
+      changedfiles="${changedfiles} ${file}"
+   else
+      echo "NO relevant changes found in file ${file}"
+   fi
+done
+
+# exit if no changed files were identified
+if [ ! -n "${changedfiles}" ]; then
+   exit 0
+fi
+echo
+
+# finally commit the changes to our repository, but with the user
+# name of transifex
 echo "committing modified transifex translations:"
 echo "==========================================="
-files=`echo "$output" | awk '{ print $2 }'`
-for file in ${files}; do
+for file in ${changedfiles}; do
    user=`grep "Last-Translator:" ${file} | awk '{ gsub(/\\\\n"/, ""); print tolower($2) }'`
 
    echo "${user}: ${file}"
