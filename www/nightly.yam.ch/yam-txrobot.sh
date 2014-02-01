@@ -138,7 +138,7 @@ for file in ${changedfiles}; do
    user=`grep "Last-Translator:" ${file} | awk '{ gsub(/\\\\n"/, ""); print tolower($2) }'`
 
    echo "${user}: ${file}"
-   output=`${SVN} commit -m '[tx-robot] updated translation from transifex' --non-interactive --username ${user} ${file}`
+   output=`${SVN} commit -m '[tx-robot] updated translation from transifex' --non-interactive --no-auth-cache --username ${user} ${file}`
    ret=$?
    if [ $ret != 0 ]; then
       echo >&2 "ERROR: svn commit failed! aborting."
