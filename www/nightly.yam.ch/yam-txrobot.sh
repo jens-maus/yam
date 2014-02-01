@@ -102,17 +102,18 @@ for file in ${modifiedfiles}; do
 
    # ignore whatever we feel is not worth a checkin
    diff=`echo "${diff}" | sed 's/^#.*//'` # comments
-   diff=`echo "${diff}" | sed 's/^"Project-Id-Version: .*\\\n"//'`
-   diff=`echo "${diff}" | sed 's/^"Report-Msgid-Bugs-To: .*\\\n"//'`
-   diff=`echo "${diff}" | sed 's/^"POT-Creation-Date: .*\\\n"//'`
-   diff=`echo "${diff}" | sed 's/^"PO-Revision-Date: .*\\\n"//'`
-   diff=`echo "${diff}" | sed 's/^"Last-Translator: .*\\\n"//'`
-   diff=`echo "${diff}" | sed 's/^"Language-Team: .*\\\n"//'`
-   diff=`echo "${diff}" | sed 's/^"MIME-Version: .*\\\n"//'`
-   diff=`echo "${diff}" | sed 's/^"Content-Type: .*\\\n"//'`
-   diff=`echo "${diff}" | sed 's/^"Content-Transfer-Encoding: .*\\\n"//'`
-   diff=`echo "${diff}" | sed 's/^"Language: .*\\\n"//'`
-   diff=`echo "${diff}" | sed 's/^"Plural-Forms: .*\\\n"//'`
+   diff=`echo "${diff}" | sed 's/^"Project-Id-Version: .*\\\n".*//'`
+   diff=`echo "${diff}" | sed 's/^"Report-Msgid-Bugs-To: .*\\\n".*//'`
+   diff=`echo "${diff}" | sed 's/^"POT-Creation-Date: .*\\\n".*//'`
+   diff=`echo "${diff}" | sed 's/^"PO-Revision-Date: .*\\\n".*//'`
+   diff=`echo "${diff}" | sed 's/^"Last-Translator: .*\\\n".*//'`
+   diff=`echo "${diff}" | sed 's/^"Language-Team: .*\\\n".*//'`
+   diff=`echo "${diff}" | sed 's/^"MIME-Version: .*\\\n".*//'`
+   diff=`echo "${diff}" | sed 's/^"Content-Type: .*\\\n".*//'`
+   diff=`echo "${diff}" | sed 's/^"Content-Transfer-Encoding: .*\\\n".*//'`
+   diff=`echo "${diff}" | sed 's/^"Language: .*\\\n".*//'`
+   diff=`echo "${diff}" | sed 's/^"Plural-Forms: .*\\\n".*//'`
+   diff=`echo "${diff}" | tr -d '\n'`
 
    if [ -n "${diff}" ]; then
       # now we found somewhat relevant changes but have
