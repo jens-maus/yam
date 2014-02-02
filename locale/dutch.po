@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-02-02 16:00+0000\n"
+"PO-Revision-Date: 2014-02-02 18:58+0000\n"
 "Last-Translator: JohanB <j.banis@banis.info>\n"
 "Language-Team: Dutch (http://www.transifex.com/projects/p/yam/language/nl/)\n"
 "MIME-Version: 1.0\n"
@@ -7607,7 +7607,7 @@ msgid ""
 "%3ld moved,\n"
 "%3ld deleted,\n"
 "%3ld classified as spam"
-msgstr ""
+msgstr "Filteren gedaan:\n\n%3ld mailtjes gechecked,\n%3ld doorgestuurd,\n%3ld gearchiveerd,\n%3ld gewist,\n%3ld als spam aangemerkt."
 
 #. COUNT, COUNT, COUNT, COUNT, COUNT, COUNT, COUNT, COUNT
 msgctxt "MSG_TR_FILTER_STATS_SPAM (2072//)"
@@ -7645,7 +7645,7 @@ msgstr "Je hebt de tekst in het schrijfvenster bewerkt\nmet een externe editor, 
 #. COUNT, HOST
 msgctxt "MSG_LOG_SENDING_FAILED (2080//)"
 msgid "Sending %ld message(s) using SMTP server '%s' failed"
-msgstr ""
+msgstr "Versturen van %ld mailtje(s) via SMTP-server '%s' is mislukt"
 
 msgctxt "MSG_HELP_EA_ST_BIRTHDAY (2081//)"
 msgid ""
@@ -7655,7 +7655,7 @@ msgstr "Geboortedatum in\nAmigaDOS formaat\n(10-Jan-1950)."
 
 msgctxt "MSG_ERROR_THREADS (2082//)"
 msgid "Cannot initialize thread system."
-msgstr ""
+msgstr "Kan threadsysteem niet initialiseren"
 
 #. FILE
 msgctxt "MSG_ERROR_PLAYSOUND (2083//)"
@@ -7663,22 +7663,22 @@ msgid ""
 "An error occurred while trying to play the sound file '%s'.\n"
 "\n"
 "This could be either due to a broken or unsupported sound file or because your sound datatype is not properly working."
-msgstr ""
+msgstr "Er ging iets mis bij het afspelen van geluidsbestand '%s'.\n\nDit kan komen door een kapot of niet-ondersteund bestand\nof omdat jouw geluids-datatype niet goed werkt."
 
 msgctxt "MSG_WR_CHARSET (2084//)"
 msgid "_Charset"
-msgstr ""
+msgstr "_Charset"
 
 msgctxt "MSG_HELP_WR_PO_CHARSET (2085//)"
 msgid ""
 "Use the popup button to select the character set\n"
 "you would like YAM to use for this mail. This\n"
 "defaults to the global character set."
-msgstr ""
+msgstr "Gebruik de pop-up buttons om de karakterset te kiezen\ndie je voor dit mailtje wil gebruiken."
 
 msgctxt "MSG_ABOUTYAM (2086//)"
 msgid "About YAM"
-msgstr ""
+msgstr "Over YAM"
 
 #. HOST, ACCOUNT
 msgctxt "MSG_ER_CONNECTERR_SOCKET_IN_USE_POP3 (2087//)"
@@ -7686,7 +7686,7 @@ msgid ""
 "Couldn't connect to host '%s' of account '%s'.\n"
 "\n"
 "A TCP/IP socket connection seems to be already active. Please close any other existing transfers."
-msgstr ""
+msgstr "Kan niet verbinden met host '%s' van account '%s'.\n\nEr schijnt al een TCP/IP-socketverbinding te bestaan.\nJe moet alle andere overdrachten afsluiten."
 
 #. HOST, ACCOUNT
 msgctxt "MSG_ER_CONNECTERR_TIMEDOUT_POP3 (2088//)"
@@ -7694,7 +7694,7 @@ msgid ""
 "Couldn't connect to host '%s' of account '%s'.\n"
 "\n"
 "The mail server didn't respond within the predefined time frame and therefore timed out."
-msgstr ""
+msgstr "Kan niet verbinden met host '%s' van account '%s'.\nDe mailserver reageerde niet binnen de tijd."
 
 #. HOST, ACCOUNT
 msgctxt "MSG_ER_CONNECTERR_NO_SOCKET_POP3 (2089//)"
@@ -7702,7 +7702,7 @@ msgid ""
 "Couldn't connect to host '%s' of account '%s'.\n"
 "\n"
 "YAM wasn't able to establish a socket connection to the mail server. Please make sure that your TCP/IP stack is online and working properly."
-msgstr ""
+msgstr "Kan niet verbinden met '%s' van account '%s'.\nYAM kan geen socketverbinding tot stand brengen met de mailserver.\nZorg ervoor dat jouw TCP/IP-stack online is en naar behoren werkt."
 
 #. HOST, ACCOUNT
 msgctxt "MSG_ER_CONNECTERR_NO_NONBLOCKIO_POP3 (2090//)"
@@ -7710,7 +7710,7 @@ msgid ""
 "Couldn't connect to host '%s' of account '%s'.\n"
 "\n"
 "YAM wasn't able to establish a non-blocking I/O connection to the mail server. Please make sure that your TCP/IP stack can establish non-blocking I/O connections."
-msgstr ""
+msgstr "Kan niet verbinden met host '%s' van account '%s'.\n\nYAM kan geen non-blocking IO-verbinding met de mailserver tot stand brengen.\nZorg ervoor dat jouw TCP/IP-stack wel zo'n verbinding kan maken."
 
 #. HOST, ACCOUNT
 msgctxt "MSG_ER_UNKNOWN_HOST_POP3 (2091//)"
@@ -7718,7 +7718,7 @@ msgid ""
 "Unknown POP3 server '%s' of account '%s'.\n"
 "\n"
 "TCP/IP is offline or the server address is invalid."
-msgstr ""
+msgstr "Onbekende POP3-server '%s' van account '%s'.\n\nTCP/IP is offline of het serveradres is ongeldig."
 
 #. HOST, ACCOUNT
 msgctxt "MSG_ER_CANNOT_CONNECT_POP3 (2092//)"
@@ -7726,7 +7726,7 @@ msgid ""
 "Couldn't connect to host '%s' of account '%s'.\n"
 "\n"
 "The mail server is currently down or doesn't support the POP3 protocols."
-msgstr ""
+msgstr "Kan niet verbinden met host '%s' van account '%s'.\n\nDe mailserver is momenteel down of ondersteunt geen POP3-protocollen."
 
 #. SERVER, ACCOUNT, TEXT
 msgctxt "MSG_ER_POP3WELCOME (2093//)"
@@ -7744,20 +7744,20 @@ msgid ""
 "%s\n"
 "\n"
 "The mail server couldn't execute the command and replied with the above error message."
-msgstr ""
+msgstr "Slechte reactie van mailserver '%s' van account '%s' op opdracht '%s':\n%s\n\nDe mailserver kan die opdracht niet uitvoeren en antwoordt\nmet bovenstaande foutmelding."
 
 #. HOST, ACCOUNT
 msgctxt "MSG_ER_INITTLS_POP3 (2095//)"
 msgid ""
 "Couldn't initialize TLSv1/SSLv3 session with host '%s' of account '%s'."
-msgstr ""
+msgstr "Kan de TLSv1/SSLv3-sessie met host '%s'\nvan account '%s\" niet initializeren."
 
 #. HOST, ACCOUNT
 msgctxt "MSG_ER_NO_APOP (2096//)"
 msgid ""
 "The POP3 server '%s' of account '%s' doesn't support APOP. Please disable "
 "APOP in the configuration."
-msgstr ""
+msgstr "De POP3-server '%s' van account '%s' ondersteunt geen APOP.\nJe moet APOP in de configuratie uitschakelen."
 
 #. HOST
 msgctxt "MSG_ER_CONNECTERR_SOCKET_IN_USE_SMTP (2097//)"
@@ -7765,7 +7765,7 @@ msgid ""
 "Couldn't connect to host '%s'.\n"
 "\n"
 "A TCP/IP socket connection seems to be already active. Please close any other existing transfers."
-msgstr ""
+msgstr "Kan niet verbinden met host '%s'.\n\nEr schijnt al een TCP/IP-socketverbinding actief te zijn.\nJe moet alle andere bestaande overdrachten sluiten."
 
 #. HOST
 msgctxt "MSG_ER_CONNECTERR_TIMEDOUT_SMTP (2098//)"
@@ -7773,7 +7773,7 @@ msgid ""
 "Couldn't connect to host '%s'.\n"
 "\n"
 "The mail server didn't respond within the predefined time frame and therefore timed out."
-msgstr ""
+msgstr "Kan niet verbinden met host '%s'.\n\nDe mailserver antwoorde niet binnen de gestelde tijd."
 
 #. HOST
 msgctxt "MSG_ER_CONNECTERR_NO_SOCKET_SMTP (2099//)"
@@ -7781,7 +7781,7 @@ msgid ""
 "Couldn't connect to host '%s'.\n"
 "\n"
 "YAM wasn't able to establish a socket connection to the mail server. Please make sure that your TCP/IP stack is online and working properly."
-msgstr ""
+msgstr "Kan niet verbinden met host '%s'.\n\nYAM kan geen socketverbinding met de mailserver tot stand brengen.\nZorg ervoor dat jouw TCP/IP-stack online is en naar behoren werkt."
 
 #. HOST
 msgctxt "MSG_ER_CONNECTERR_NO_NONBLOCKIO_SMTP (2100//)"
@@ -7789,19 +7789,19 @@ msgid ""
 "Couldn't connect to host '%s'.\n"
 "\n"
 "YAM wasn't able to establish a non-blocking I/O connection to the mail server. Please make sure that your TCP/IP stack can establish non-blocking I/O connections."
-msgstr ""
+msgstr "Kan niet verbinden met host '%s'.\n\nYAM kan geen non-blocking I/O-verbinding met de mailserver tot stand brengen.\nZorg ervoor dat jouw TCP/IP-stack wel zo'n verbinding kan maken."
 
 #. HOST
 msgctxt "MSG_ER_INITTLS_SMTP (2101//)"
 msgid "Couldn't initialize TLSv1/SSLv3 session with host '%s'."
-msgstr ""
+msgstr "Kan TLSv1/SSLv3-sessie met host '%s' niet initialiseren"
 
 #. HOST
 msgctxt "MSG_ER_NOSTARTTLS_SMTP (2102//)"
 msgid ""
 "Your SMTP server '%s' doesn't support TLS/SSL. Please disable this option in"
 " the configuration."
-msgstr ""
+msgstr "Jouw SMTP-server '%s' ondersteunt TLS/SSL niet.\n\nJe moet deze optie in de configuratie uitschakelen."
 
 #. SERVER, COMMAND, TEXT
 msgctxt "MSG_ER_BADRESPONSE_SMTP (2103//)"
@@ -7811,7 +7811,7 @@ msgid ""
 "%s\n"
 "\n"
 "The mail server couldn't execute the command and replied with the above error message."
-msgstr ""
+msgstr "Slechte reactie van mailserver '%s' op opdracht '%s':\n\n%s\n\nDe mailserver kan die opdracht niet uitvoeren en\nantwoordde met bovenstaande foutmelding."
 
 #. HOS
 msgctxt "MSG_ER_CANNOT_CONNECT_SMTP (2104//)"
@@ -7819,7 +7819,7 @@ msgid ""
 "Couldn't connect to host '%s'.\n"
 "\n"
 "The mail server is currently down or doesn't support the SMTP protocols."
-msgstr ""
+msgstr "Kan niet verbinden met host '%s'.\n\nDe mailserver is momenteel down of ondersteunt geen SMTP-protocollen,"
 
 #. HOST
 msgctxt "MSG_ER_UNKNOWN_HOST_SMTP (2105//)"
@@ -7827,7 +7827,7 @@ msgid ""
 "Unknown SMTP server '%s'.\n"
 "\n"
 "TCP/IP is offline or the server address is invalid."
-msgstr ""
+msgstr "Onbekende SMTP-server '%s'.\n\nTCP/IP is offline of het serveradres is ongeldig."
 
 msgctxt "MSG_ER_NO8BITMIME_SMTP (2106//)"
 msgid ""
@@ -7836,19 +7836,19 @@ msgid ""
 "Please disable this option in your TCP/IP preferences\n"
 "and re-edit the e-mail before trying to send it again,\n"
 "otherwise the e-mail may be malformed."
-msgstr ""
+msgstr "De SMTP-server '%s' antwoordt dat hij geen 8bit mailoverdracht ondersteunt\nondanks de ingeschakelde optie '8bit toestaan'.\n\nJe moet deze optie in jouw TCP/IP-voorkeuren uitschakelen\nen het mailtje opnieuw opstellen voordat je het verstuurt.\nAnders zou het mailtje wel eens verminkt kunnen worden."
 
 msgctxt "MSG_CO_FOLDERDBLCLICK (2107//)"
 msgid "Double click on folder opens folder settings"
-msgstr ""
+msgstr "Dubbel klikken op folders opent de folderinstellingen"
 
 msgctxt "MSG_MA_ATTACHMENT_DELETE (2108//)"
 msgid "Delete"
-msgstr ""
+msgstr "Wissen"
 
 msgctxt "MSG_MA_ATTACHMENT_DELETESEL (2109//)"
 msgid "Delete selected"
-msgstr ""
+msgstr "Wis geselecteerde mailtjes"
 
 msgctxt "MSG_MA_DELETESELECTEDREQUEST (2110//)"
 msgid ""
@@ -7856,16 +7856,16 @@ msgid ""
 "deleted:\n"
 "%s\n"
 "Do you really want to proceed?"
-msgstr ""
+msgstr "Onderstaande bijlagen zullen worden gewist:\n%s\n\nWil je hiermee wel doorgaan?"
 
 #. MAILFILE, FOLDER
 msgctxt "MSG_LOG_DELETEDATT (2111//)"
 msgid "Deleted attachment(s) of message '%s' in folder '%s'"
-msgstr ""
+msgstr "Bijlagen van mailtje (-s) '%s' in folder '%s' gewist"
 
 msgctxt "MSG_MA_DELETEATT (2112//)"
 msgid "Delete"
-msgstr ""
+msgstr "Weggooien"
 
 msgctxt "MSG_MA_DELETEATTREQUEST (2113//)"
 msgid ""
@@ -7873,19 +7873,19 @@ msgid ""
 "mails will be deleted.\n"
 "\n"
 "Do you really want to proceed?"
-msgstr ""
+msgstr "Alle bijlagen van de gekozen mailtjes zullen worden gewist.\n\nWil je hiermee wel doorgaan?"
 
 msgctxt "MSG_MA_ATTACHMENT_DELETEALL (2114//)"
 msgid "Delete all"
-msgstr ""
+msgstr "Alles weggooien"
 
 msgctxt "MSG_MA_MDELETEATT (2115//)"
 msgid "Delete"
-msgstr ""
+msgstr "Weggooien"
 
 msgctxt "MSG_CO_MAPFOREIGNCHARS (2116//)"
 msgid "Map foreign chars to ASCII"
-msgstr ""
+msgstr "Vreemde karakters mappen naar ASCII"
 
 msgctxt "MSG_HELP_CO_MAPFOREIGNCHARS (2117//)"
 msgid ""
@@ -7893,23 +7893,23 @@ msgid ""
 "be converted to the read charset\n"
 "will be mapped to looklike ASCII\n"
 "sequences."
-msgstr ""
+msgstr "Als je dit selecteert zullen karakters die niet\nomgezet kunnen worden naar de lees-charset\nworden gemapped naar gelijkende ASCII-sequences."
 
 msgctxt "MSG_MA_NAVIGATION (2118//)"
 msgid "Navigation"
-msgstr ""
+msgstr "Navigatie"
 
 msgctxt "MSG_MA_MNEXTTH (2119//)"
 msgid "Next message in thread"
-msgstr ""
+msgstr "Volgende mailtje in reeks"
 
 msgctxt "MSG_MA_MPREVTH (2120//)"
 msgid "Previous message in thread"
-msgstr ""
+msgstr "Vorige mailtje in reeks"
 
 msgctxt "MSG_CO_GLOBALMAILTHREADS (2121//)"
 msgid "Search for mails of same thread in all folders"
-msgstr ""
+msgstr "Zoek naar mailtjes van dezelfde reeks in alle folders"
 
 msgctxt "MSG_HELP_CO_CH_GLOBALMAILTHREADS (2122//)"
 msgid ""
@@ -7917,7 +7917,7 @@ msgid ""
 "the same thread will be extended to all\n"
 "folders rather than only searching for\n"
 "mails in the same folder."
-msgstr ""
+msgstr "Als je dit inschakeld word het zoeken naar mailtjes\nvan dezelfde reeks uitgebreid naar alle folders\nin plaats van alleen maar te zoeken in dezelfde folder."
 
 #. FILENAME
 msgctxt "MSG_FILE_OVERWRITE (2123//)"
@@ -7925,72 +7925,72 @@ msgid ""
 "File '%s' already exists.\n"
 "\n"
 "Do you want to overwrite it?"
-msgstr ""
+msgstr "Bestand '%s' bestaat al.\n\nWil je dit overschrijven?"
 
 #. PATH, USERNAME
 msgctxt "MSG_ER_USER_DIR_MISSING (2124//)"
 msgid "The home directory '%s' of user '%s' does not exist."
-msgstr ""
+msgstr "De thuismap '%s' van gebruiker '%s' bestaat niet"
 
 msgctxt "MSG_CO_TEXTCOLORS_READ (2125//)"
 msgid "Show te_xt colors"
-msgstr ""
+msgstr "Toon tekstkleuren"
 
 msgctxt "MSG_HELP_CO_CH_TEXTCOLORS_READ (2126//)"
 msgid ""
 "Use text colors to signal special\n"
 "text passages, (e.g. quotations, etc.)"
-msgstr ""
+msgstr "Gebruik tekstkleuren om speciale passages\nte markeren (bijvoorbeeld quotes etc)."
 
 msgctxt "MSG_CO_TEXTSTYLES_READ (2127//)"
 msgid "Show te_xt styles"
-msgstr ""
+msgstr "Toon tekststijlen"
 
 msgctxt "MSG_HELP_CO_CH_TEXTSTYLES_READ (2128//)"
 msgid ""
 "Interpret '/', '*', '_' and '#' as\n"
 "control characters for text styles."
-msgstr ""
+msgstr "Interpreteer '/', '*', '_' en '#' als\ncontrolekarakters voor tekststijlen."
 
 msgctxt "MSG_CO_TEXTCOLORS_WRITE (2129//)"
 msgid "Show tex_t colors"
-msgstr ""
+msgstr "Toon tekstkleuren"
 
 msgctxt "MSG_HELP_CO_CH_TEXTCOLORS_WRITE (2130//)"
 msgid ""
 "Use text colors to signal special\n"
 "text passages, (e.g. quotations, etc.)"
-msgstr ""
+msgstr "Gebruik tekstkleuren om speciale passages\nte markeren (bijvoorbeeld quotes etc)"
 
 msgctxt "MSG_CO_TEXTSTYLES_WRITE (2131//)"
 msgid "Show te_xt styles"
-msgstr ""
+msgstr "Toon tekststijlen"
 
 msgctxt "MSG_HELP_CO_CH_TEXTSTYLES_WRITE (2132//)"
 msgid ""
 "Interpret '/', '*', '_' and '#' as\n"
 "control characters for text styles."
-msgstr ""
+msgstr "Interpreteer '/', '*', '_' en '#' als\ncontrolekarakters voor tekststijlen"
 
 msgctxt "MSG_CO_FONTSETTINGS (2133//)"
 msgid "Font settings"
-msgstr ""
+msgstr "Font instellingen"
 
 msgctxt "MSG_CO_FIXEDFONT_WRITE (2134//)"
 msgid "Use _fixed font"
-msgstr ""
+msgstr "Gebruik font met vaste breedte"
 
 msgctxt "MSG_RE_TEXTCOLORS (2135//)"
 msgid "Text colors?"
-msgstr ""
+msgstr "Tekstkleuren?"
 
 msgctxt "MSG_WR_TEXTSTYLES (2136//)"
 msgid "Text styles?"
-msgstr ""
+msgstr "Tekststijlen?"
 
 msgctxt "MSG_WR_TEXTCOLORS (2137//)"
 msgid "Text colors?"
-msgstr ""
+msgstr "Tekstkleuren?"
 
 msgctxt "MSG_WR_FIXEDFONT (2138//)"
 msgid "Fixed font?"
