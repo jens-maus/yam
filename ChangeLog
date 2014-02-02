@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-02-02 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/AboutWindow.c: use the input handling of Area.mui instead of the one
+    done by NBitmap.mcc to avoid the duplicate background drawing. This closes
+    #521.
+
 2014-02-01 Jens Maus <mail@jens-maus.de>
 
   * mui/FolderEditWindow.c: the display name of folders can now always be
