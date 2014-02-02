@@ -15,8 +15,8 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-02-01 17:11+0000\n"
-"Last-Translator: damato <mail@jens-maus.de>\n"
+"PO-Revision-Date: 2014-02-02 21:06+0000\n"
+"Last-Translator: NATMAN <ejim@ono.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/projects/p/yam/language/es/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -9841,41 +9841,41 @@ msgstr "_Responder a"
 
 msgctxt "MSG_AB_TO_TOOLBAR (2535//)"
 msgid "_To:"
-msgstr ""
+msgstr "_Para:"
 
 #. Translate "Cc" which means "Carbon Copy"
 #. (e.g. 'Kopie (_Cc):' in German)
 msgctxt "MSG_AB_CC_TOOLBAR (2536//)"
 msgid "_Cc:"
-msgstr ""
+msgstr "_Cc:"
 
 #. Translate "Bcc" which means "Blind Carbon Copy"
 #. (e.g. 'Blindkopie (_Bcc):' in German)
 msgctxt "MSG_AB_BCC_TOOLBAR (2537//)"
 msgid "_Bcc:"
-msgstr ""
+msgstr "Cc_o:"
 
 # Use same phrase as MSG_WR_FROM but in parentheses
 msgctxt "MSG_AB_FROM_TITLE (2538//)"
 msgid "(From)"
-msgstr ""
+msgstr "(De)"
 
 # Use same phrase as MSG_WR_To but in parentheses
 msgctxt "MSG_AB_TO_TITLE (2539//)"
 msgid "(To)"
-msgstr ""
+msgstr "(Para)"
 
 # Use same phrase as MSG_WR_CC but in parentheses
 msgctxt "MSG_AB_CC_TITLE (2540//)"
 msgid "(Cc)"
-msgstr ""
+msgstr "(Cc)"
 
 # Use same phrase as MSG_WR_BCC but in parentheses
 msgctxt "MSG_AB_BCC_TITLE (2541//)"
 msgid "(Bcc)"
-msgstr ""
+msgstr "(Cco)"
 
 # Use same phrase as MSG_WR_REPLYTO but in parentheses
 msgctxt "MSG_AB_REPLYTO_TITLE (2542//)"
 msgid "(Reply To)"
-msgstr ""
+msgstr "(Responder a)"
