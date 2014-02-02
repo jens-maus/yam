@@ -5,6 +5,7 @@
 # language english
 # 
 # Translators:
+# JohanB <j.banis@banis.info>, 2014
 # damato <mail@jens-maus.de>, 2014
 # Johan Banis <j.banis@worldonline.nl>, 2010
 msgid ""
@@ -12,8 +13,8 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-02-01 17:11+0000\n"
-"Last-Translator: damato <mail@jens-maus.de>\n"
+"PO-Revision-Date: 2014-02-02 14:58+0000\n"
+"Last-Translator: JohanB <j.banis@banis.info>\n"
 "Language-Team: Dutch (http://www.transifex.com/projects/p/yam/language/nl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -223,11 +224,11 @@ msgstr "Afsluiten"
 
 msgctxt "MSG_LoadingConfig (70//)"
 msgid "Loading configuration..."
-msgstr "Laadt configuratie..."
+msgstr "Configuratie laden..."
 
 msgctxt "MSG_CreatingGUI (71//)"
 msgid "Creating user interface..."
-msgstr "Maakt gebruikersinterface..."
+msgstr "Gebruikersinterface maken..."
 
 msgctxt "MSG_ErrorMuiApp (72//)"
 msgid "Can't create application"
@@ -235,19 +236,19 @@ msgstr "Kan applicatie niet aanmaken"
 
 msgctxt "MSG_RebuildIndices (73//)"
 msgid "Rebuilding folders' indices..."
-msgstr "Opnieuw opbouwen van folderindexen..."
+msgstr "Folderindexen opnieuw opbouwen..."
 
 msgctxt "MSG_LoadingFolders (74//)"
 msgid "Loading folders..."
-msgstr "Laadt folders..."
+msgstr "Folders laden..."
 
 msgctxt "MSG_LoadingABook (75//)"
 msgid "Loading address book..."
-msgstr "Laadt adresboek..."
+msgstr "Adresboek laden..."
 
 msgctxt "MSG_InitLibs (76//)"
 msgid "Initializing libraries and classes..."
-msgstr "Initialiseert libraries en classes..."
+msgstr "Libs en classes initialiseren..."
 
 msgctxt "MSG_ErrorAslStruct (78//)"
 msgid "Can't allocate ASL structure"
@@ -263,7 +264,7 @@ msgstr "Kan ARexx-poort niet maken"
 
 msgctxt "MSG_LoadingGFX (81//)"
 msgid "Loading graphics..."
-msgstr "Laadt graphics..."
+msgstr "Graphics laden..."
 
 msgctxt "MSG_SendStartReq (82//)"
 msgid ""
@@ -297,7 +298,7 @@ msgstr "Postscript-document"
 
 msgctxt "MSG_CTapplicationrtf (89//)"
 msgid "Rich Text Format"
-msgstr "Rich Text Format"
+msgstr "Rich Text formaat"
 
 msgctxt "MSG_CTapplicationlha (90//)"
 msgid "LhA archive"
@@ -393,7 +394,7 @@ msgstr "Er zijn %ld mailtje(-s) in folder %s gewist"
 #. SENDER, SUBJECT, FOLDER
 msgctxt "MSG_LOG_DeletingVerbose (112//)"
 msgid "Deleted message from '%s' about '%s' in folder '%s'"
-msgstr "Mailtje van %s over %s in folder %s is gewist"
+msgstr "Mailtje van %s, over %s, in folder %s is gewist"
 
 #. COUNT, FOLDER, FOLDER
 msgctxt "MSG_LOG_Moving (113//)"
@@ -403,7 +404,7 @@ msgstr "Er zijn %ld mailtje(-s) van folder %s verplaatst naar %s"
 #. SENDER, SUBJECT, FOLDER, FOLDER
 msgctxt "MSG_LOG_MovingVerbose (114//)"
 msgid "Moved message from '%s' about '%s' from folder '%s' to '%s'"
-msgstr "Mailtje van %s over %s in folder %s is verplaatst naar %s"
+msgstr "Mailtje van %s. over %s. in folder %s is verplaatst naar %s"
 
 #. COUNT, FOLDER, FOLDER
 msgctxt "MSG_LOG_Copying (115//)"
@@ -413,12 +414,12 @@ msgstr "Er zijn %ld mailtje(-s) in folder %s gecopieerd naar %s"
 #. SENDER, SUBJECT, FOLDER, FOLDER
 msgctxt "MSG_LOG_CopyingVerbose (116//)"
 msgid "Copied message from '%s' about '%s' from folder '%s' to '%s'"
-msgstr "Mailtje van %s over %s in folder %s is gecopieerd naar %s"
+msgstr "Mailtje van %s. over %s. in folder %s is gecopieerd naar %s"
 
 #. SENDER, SUBJECT, SIZE
 msgctxt "MSG_LOG_RetrievingVerbose (118//)"
 msgid "Retrieved message from '%s' about '%s' (%ld bytes)"
-msgstr "Mailtje(-s) opgehaald van %s over %s (%ld bytes)"
+msgstr "Mailtje(-s) opgehaald van %s, over %s (%ld bytes)"
 
 #. HOST
 msgctxt "MSG_LOG_ConnectSMTP (120//)"
@@ -428,7 +429,7 @@ msgstr "Verbonden met SMTP-server %s"
 #. RECIPIENT, SUBJECT, SIZE
 msgctxt "MSG_LOG_SendingVerbose (121//)"
 msgid "Sent message to '%s' about '%s' (%ld bytes)"
-msgstr "Mailtje verstuurd naar %s over %s (%ld bytes)"
+msgstr "Mailtje verstuurd naar %s, over %s (%ld bytes)"
 
 #. COUNT, HOST
 msgctxt "MSG_LOG_Sending (122//)"
@@ -438,22 +439,22 @@ msgstr "Er zijn %ld mailtje(-s) verstuurd via SMTP-server %s"
 #. SENDER, RECIPIENT, SUBJECT
 msgctxt "MSG_LOG_Editing (123//)"
 msgid "Edited message from '%s' to '%s' about '%s'"
-msgstr "Mailtje bewerkt van %s aan %s over %s"
+msgstr "Mailtje bewerkt van %s, aan %s, over %s"
 
 #. RECIPIENT, SUBJECT, COUNT
 msgctxt "MSG_LOG_Creating (124//)"
 msgid "Wrote new message for '%s' about '%s', including %ld attachment(s)"
-msgstr "Nieuw mailtje geschreven aan %s over %s, inclusief %ld bijlagen"
+msgstr "Nieuw mailtje geschreven aan %s, over %s, inclusief %ld bijlagen"
 
 #. SENDER, SUBJECT
 msgctxt "MSG_LOG_Replying (125//)"
 msgid "Replied message from '%s' about '%s'"
-msgstr "Mailtje beantwoord van %s over %s"
+msgstr "Mailtje beantwoord van %s, over %s"
 
 #. SENDER, SUBJECT, RECIPIENT
 msgctxt "MSG_LOG_Forwarding (127//)"
 msgid "Forwarded message from '%s' about '%s' to '%s'"
-msgstr "Doorgestuurd mailtje van %s over %s aan %s"
+msgstr "Doorgestuurd mailtje van %s, over %s, aan %s"
 
 #. CONFIG_FILE
 msgctxt "MSG_LOG_SavingConfig (129//)"
@@ -492,7 +493,7 @@ msgstr "Er zijn %s bijlagen bewaard van mailtje %s in folder %s"
 #. SUBJECT, MAILFILE, FOLDER, SUBJECT
 msgctxt "MSG_LOG_ChangingSubject (137//)"
 msgid "Changed subject '%s' of message '%s' in folder '%s' to '%s'"
-msgstr "Het onderwerp %s van mailtje %s in folder %s is veranderd in %s"
+msgstr "Het onderwerp %s van mailtje %s, in folder %s, is veranderd in %s"
 
 msgctxt "MSG_UT_Save (138//)"
 msgid "Save"
@@ -511,18 +512,18 @@ msgctxt "MSG_MA_GetFolderPass (144//)"
 msgid ""
 "Folder '%s' is a protected folder.\n"
 "Please enter the password to unlock it:"
-msgstr "Folder %s is beschermd.\nGeef een wachtwoord op om het te ontsluiten."
+msgstr "Folder %s is beschermd.\nGeef een wachtwoord op om het te ontsluiten:"
 
 msgctxt "MSG_MA_ReplyReq (149//)"
 msgid ""
 "The selected message has multiple recipients.\n"
 "\n"
 "You want to send the reply to the..."
-msgstr "Het geselecteerde mailtje heeft meerdere ontvangers.\n\nWil je jouw antwoord zenden aan de..."
+msgstr "Het geselecteerde mailtje heeft meerdere ontvangers.\n\nWil je antwoorden aan de..."
 
 msgctxt "MSG_MA_ReplyReqOpt (150//)"
 msgid "*_Sender|Sender and _all Recipients|_Recipients|_Cancel"
-msgstr "*_afzender|afzender en alle ontvangers|_ontvangers|Afbreken"
+msgstr "*_Afzender|Afzender en alle ontvangers|_Ontvangers|Afbreken"
 
 #. ADDRESS, ADDRESS
 msgctxt "MSG_MA_CompareReq (151//)"
