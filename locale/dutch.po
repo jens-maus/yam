@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-02-02 14:58+0000\n"
+"PO-Revision-Date: 2014-02-02 15:58+0000\n"
 "Last-Translator: JohanB <j.banis@banis.info>\n"
 "Language-Team: Dutch (http://www.transifex.com/projects/p/yam/language/nl/)\n"
 "MIME-Version: 1.0\n"
@@ -532,7 +532,7 @@ msgid ""
 "return address (Reply-To) is \\033b<%s>\\033n.\n"
 "\n"
 "To which address do you want to reply to?"
-msgstr "Afzender-adres (Van) is \\x1Bb<%s>\\x1Bn, maar\nantwoord-adres (Antwoord aan) is \\x1Bb<%s>\\x1Bn.\n\nNaar welk adres wil je antwoorden?"
+msgstr "Afzender-adres (Van) is \\x1Bb<%s>\\x1Bn,\nmaar antwoord-adres (Antwoord aan) is \\x1Bb<%s>\\x1Bn.\n\nNaar welk adres wil je antwoorden?"
 
 msgctxt "MSG_MA_Compare3ReqOpt (152//)"
 msgid "_From|*_Reply-To|_Both|_Cancel"
@@ -555,13 +555,13 @@ msgid ""
 "%3ld forwarded,\n"
 "%3ld moved,\n"
 "%3ld deleted"
-msgstr "Klaar met filteren:\n\n%3ld mailtjes gechecked,\n%3ld doorgestuurd,\n%3ld gearchiveerd,\n%3ld gewist"
+msgstr "Klaar met filteren:\n\n%3ld mailtjes gechecked,\n%3ld doorgestuurd,\n%3ld gearchiveerd,\n%3ld gewist."
 
 msgctxt "MSG_MA_ExportAppendReq (161//)"
 msgid ""
 "The output file already exists. Do you want\n"
 "to overwrite it or append the messages?"
-msgstr "Het uitvoerbestand bestaat al. Wil je het overschrijven\nof de mailtjes toevoegen?"
+msgstr "Het uitvoerbestand bestaat al.\nWil je het overschrijven of de mailtjes toevoegen?"
 
 msgctxt "MSG_MA_ExportAppendOpts (162//)"
 msgid "*_Overwrite|_Append|_Cancel"
@@ -642,7 +642,7 @@ msgstr "_Bewerk"
 
 msgctxt "MSG_MA_TBMove (186//8)"
 msgid "_Move"
-msgstr "Move"
+msgstr "Verplaats"
 
 msgctxt "MSG_MA_TBDelete (187//8)"
 msgid "De_lete"
@@ -650,7 +650,7 @@ msgstr "_Wis"
 
 msgctxt "MSG_MA_TBGetAddr (188//8)"
 msgid "Ge_tAdd"
-msgstr "Pak adr"
+msgstr "Pak adres"
 
 msgctxt "MSG_MA_TBWrite (189//8)"
 msgid "_New"
@@ -658,11 +658,11 @@ msgstr "_Nieuw"
 
 msgctxt "MSG_MA_TBReply (190//8)"
 msgid "_Reply"
-msgstr "_Antw"
+msgstr "_Antwoord"
 
 msgctxt "MSG_MA_TBForward (191//8)"
 msgid "For_ward"
-msgstr "Verder"
+msgstr "Doors_turen"
 
 msgctxt "MSG_MA_TBGetMail (192//8)"
 msgid "_Get"
@@ -682,7 +682,7 @@ msgstr "_Zoek"
 
 msgctxt "MSG_MA_TBAddrBook (196//8)"
 msgid "A_book"
-msgstr "Adrsboek"
+msgstr "Adresboek"
 
 msgctxt "MSG_MA_TBConfig (197//8)"
 msgid "_Config"
@@ -731,7 +731,7 @@ msgstr "Zet status op"
 
 msgctxt "MSG_MA_ChangeSubj (241//)"
 msgid "Change subject..."
-msgstr "Wijzig subject..."
+msgstr "Wijzig onderwerp..."
 
 msgctxt "MSG_MA_MSend (242//)"
 msgid "Send"
@@ -898,7 +898,7 @@ msgstr "*** Einde van doorgestuurd mailtje ***\\n"
 
 msgctxt "MSG_CO_GreetingsDef (273//)"
 msgid "Kind regards"
-msgstr "Vriendelijke groeten,"
+msgstr "Met vriendelijke groeten,"
 
 #. Replace the whole line with an alternative hello phrase in your
 #. language similar to what is written behind <EMPTY>. This phrase
@@ -1071,7 +1071,7 @@ msgstr "_Echte naam"
 
 msgctxt "MSG_CO_EmailAddress (345//)"
 msgid "_E-mail address"
-msgstr "_E-mail adres"
+msgstr "_E-mailadres"
 
 msgctxt "MSG_CO_Password (347//)"
 msgid "_Password"
@@ -1079,7 +1079,7 @@ msgstr "_Wachtwoord"
 
 msgctxt "MSG_CO_TimeZone (348//)"
 msgid "Time _zone"
-msgstr "Tijd _zone"
+msgstr "Tijd_zone"
 
 msgctxt "MSG_CO_SendMail (350//)"
 msgid "Send mail (SMTP)"
@@ -1139,7 +1139,7 @@ msgstr "_Transfervenster"
 
 msgctxt "MSG_CO_PreSelect (369//)"
 msgid "_Pre-selection"
-msgstr "_Pre-selectie"
+msgstr "_Voorselectie"
 
 msgctxt "MSG_CO_CheckMail (374//)"
 msgid "Check for new mail every"
@@ -1183,7 +1183,7 @@ msgstr "Toepassen op verzoek"
 
 msgctxt "MSG_CO_ActionForward (393//)"
 msgid "_Forward"
-msgstr "_Verder"
+msgstr "Doors_turen"
 
 msgctxt "MSG_CO_ActionReply (394//)"
 msgid "Repl_y"
@@ -1195,7 +1195,7 @@ msgstr "Uitvoeren"
 
 msgctxt "MSG_CO_ActionPlay (396//)"
 msgid "_Play sound"
-msgstr "Geluid spelen"
+msgstr "Geluid s_pelen"
 
 msgctxt "MSG_CO_ActionMove (397//)"
 msgid "_Move"
@@ -1339,7 +1339,7 @@ msgstr "Editor"
 
 msgctxt "MSG_CO_WordWrap (438//)"
 msgid "_Word-wrap"
-msgstr "_Woord-wrap"
+msgstr "_Woordomslag"
 
 msgctxt "MSG_CO_EWOff (439//)"
 msgid "off"
@@ -1371,7 +1371,7 @@ msgstr "Sluiten"
 
 msgctxt "MSG_CO_Forwarding (447//)"
 msgid "Forwarding"
-msgstr "Verder zenden"
+msgstr "Doorsturen"
 
 msgctxt "MSG_CO_FwdInit (448//)"
 msgid "_Initial phrase"
@@ -1555,7 +1555,7 @@ msgstr "Persoonsdata-uitwisseling"
 
 msgctxt "MSG_CO_Gallery (501//)"
 msgid "Save _photos in"
-msgstr "Bewaar fotos in"
+msgstr "Bewaar foto's in"
 
 msgctxt "MSG_CO_AddToAddrbook (503//)"
 msgid "Sa_ve sender's address"
@@ -1984,7 +1984,7 @@ msgctxt "MSG_HELP_CO_CY_SIGSEPLINE (609//)"
 msgid ""
 "Type of separation line\n"
 "for the signature."
-msgstr "Type scheidingslijn\nvoor de handtekening."
+msgstr "Type scheidslijn\nvoor de handtekening."
 
 msgctxt "MSG_HELP_CO_CH_ALLTEXTS (611//)"
 msgid ""
@@ -2002,7 +2002,7 @@ msgctxt "MSG_HELP_CO_CA_COLTEXT (613//)"
 msgid ""
 "Color for the 'colored' text used in\n"
 "the Read window and the editor."
-msgstr "Kleur voor de \"gekleurde tekst\"\ngebruikt in het leesvenster en de editor."
+msgstr "Kleur voor de gekleurde tekst\ngebruikt in het leesvenster en de editor."
 
 msgctxt "MSG_HELP_CO_CH_FIXFEDIT (614//)"
 msgid ""
@@ -2044,7 +2044,7 @@ msgctxt "MSG_HELP_CO_ST_DEFVIEWER (620//)"
 msgid ""
 "Program used to display\n"
 "attachments of unknown type."
-msgstr "Programma dat gebrukt wordt om attachments\nvan een onbekend type te tonen."
+msgstr "Programma dat gebrukt wordt om bijlagen\nvan een onbekend type te tonen."
 
 msgctxt "MSG_HELP_CO_ST_HELLOTEXT (625//)"
 msgid ""
@@ -2125,13 +2125,13 @@ msgid ""
 "If checked, you will be asked where to send your\n"
 "reply when the 'From:' and 'Reply-To:' addresses\n"
 "of the original message differ."
-msgstr "Als het Van:- en Antwoord aan:-adres verschillend zijn zal je worden\ngevraagd naar welk adres je jouw antwoord wilt sturen.\nAls je dit aangevinkt hebt, tenminste..."
+msgstr "Als het Van:- en Antwoord aan:-adres verschillend zijn zal je worden\ngevraagd naar welk adres je jouw antwoord wilt sturen.\nAls je dit aangevinkt hebt, tenminste."
 
 msgctxt "MSG_HELP_CO_CH_STRIPSIG (643//)"
 msgid ""
 "Avoids quoting the signature\n"
 "of the original message."
-msgstr "Verhinderd het quoten van de handtekening\nvan het originele mailtje."
+msgstr "Verhindert het quoten van de handtekening\nvan het originele mailtje."
 
 msgctxt "MSG_HELP_CO_BT_EDITSIG (645//)"
 msgid ""
@@ -2261,7 +2261,7 @@ msgctxt "MSG_HELP_CO_CY_ATAB (673//)"
 msgid ""
 "Automatically create an address book entry\n"
 "for the sender when you read his/her message?"
-msgstr "Automatisch een adresboekvermelding maken van de\nafzender wanneer je zijn of haar mailtje hebt gelezen?"
+msgstr "Wil je automatisch een adresboekvermelding maken van de\nafzender wanneer je zijn of haar mailtje hebt gelezen?"
 
 msgctxt "MSG_HELP_CO_ST_PROXY (674//)"
 msgid ""
@@ -2395,7 +2395,7 @@ msgstr "Sluit configuratievenster\nen gebruik de oude instellingen."
 
 msgctxt "MSG_AB_BirthdayReminder (703//)"
 msgid "Birthday Reminder"
-msgstr "Verjaardag reminder"
+msgstr "Verjaardagsattentie"
 
 msgctxt "MSG_AB_HappyBirthday (704//)"
 msgid "Happy birthday"
@@ -2432,7 +2432,7 @@ msgid ""
 "\n"
 "Alias: \\033b%s\\033n\n"
 "Name: \\033b%s\\033n"
-msgstr "Overeenkomst gevonden!\n\nAlias: \\033b%s\\033n\nNaam: \\033b%s\\033n"
+msgstr "Overeenkomst gevonden.\n\nAlias: \\033b%s\\033n\nNaam: \\033b%s\\033n"
 
 msgctxt "MSG_AB_FindEntry (712//)"
 msgid "Find Entry"
@@ -2443,7 +2443,7 @@ msgid ""
 "This module finds a given text in the alias, name, address,\n"
 "description, street, city or country fields. Please enter\n"
 "the search pattern (AmigaDOS wildchars are supported):"
-msgstr "Deze module vindt een bepaalde tekst in het alias-,\nnaam-,  adres-, beschrijving-, straat-, stad- of landveld.\nGeef het zoekpatroon (AmigaDOS-wildcards worden ondersteund):"
+msgstr "Deze module vindt een bepaalde tekst in het\nalias-, naam-,  adres-, beschrijving-, straat-, stad- of landveld.\nGeef het zoekpatroon (AmigaDOS-wildcards worden ondersteund):"
 
 msgctxt "MSG_AB_StartSearch (714//)"
 msgid "_Start search"
@@ -2643,7 +2643,7 @@ msgstr "Voeg een nieuwe distributielijst\ntoe aan het adresboek."
 
 msgctxt "MSG_HELP_AB_BT_EDIT (762//)"
 msgid "Edit this entry."
-msgstr "Bewerk deze ingave"
+msgstr "Bewerk deze invoer"
 
 msgctxt "MSG_HELP_AB_BT_DELETE (763//)"
 msgid ""
@@ -2711,7 +2711,7 @@ msgstr "Echte naam"
 
 msgctxt "MSG_EA_EmailAddress (782//)"
 msgid "E-_mail address"
-msgstr "E-_mail adres"
+msgstr "E-_mailadres"
 
 msgctxt "MSG_EA_PGPId (783//)"
 msgid "PGP _key ID"
@@ -2747,11 +2747,11 @@ msgstr "Diversen"
 
 msgctxt "MSG_EA_Description (791//)"
 msgid "D_escription"
-msgstr "Beschrijving"
+msgstr "B_eschrijving"
 
 msgctxt "MSG_EA_DOB (792//)"
 msgid "Date of _birth"
-msgstr "Geboortedatum"
+msgstr "Ge_boortedatum"
 
 msgctxt "MSG_EA_Portrait (793//)"
 msgid "Portrait"
@@ -2763,11 +2763,11 @@ msgstr "Se_lecteer"
 
 msgctxt "MSG_EA_ReturnAddress (796//)"
 msgid "_Return address"
-msgstr "Antwoordadres"
+msgstr "Antwoo_rdadres"
 
 msgctxt "MSG_EA_MLName (797//)"
 msgid "_Mailing list name"
-msgstr "Naam maillijst"
+msgstr "Naam _maillijst"
 
 msgctxt "MSG_EA_Members (798//)"
 msgid "Members"
@@ -3189,11 +3189,11 @@ msgstr "_Volgend"
 
 msgctxt "MSG_RE_TBPrevTh (894//8)"
 msgid "Prev_Thr"
-msgstr "Vrg thrd"
+msgstr "Vorige\nreeks"
 
 msgctxt "MSG_RE_TBNextTh (895//8)"
 msgid "NextT_hr"
-msgstr "Vlg thrd"
+msgstr "Volgende\nreeks"
 
 msgctxt "MSG_RE_TBDisplay (896//8)"
 msgid "_Display"
@@ -3213,7 +3213,7 @@ msgstr "Wis"
 
 msgctxt "MSG_RE_TBMove (900//8)"
 msgid "_Move"
-msgstr "Move"
+msgstr "Verplaats"
 
 msgctxt "MSG_RE_TBReply (901//8)"
 msgid "_Reply"
@@ -3221,7 +3221,7 @@ msgstr "Antwoord"
 
 msgctxt "MSG_RE_TBForward (902//8)"
 msgid "For_ward"
-msgstr "Verder"
+msgstr "Doorsturen"
 
 msgctxt "MSG_HELP_RE_BT_PREVIOUS (903//)"
 msgid ""
@@ -3233,21 +3233,21 @@ msgctxt "MSG_HELP_RE_BT_NEXT (904//)"
 msgid ""
 "Display contents of\n"
 "the next message."
-msgstr "Toon inhoud van\nhet opvolgende mailtje."
+msgstr "Toon inhoud van\nhet volgende mailtje."
 
 msgctxt "MSG_HELP_RE_BT_QUESTION (905//)"
 msgid ""
 "Show the message that\n"
 "is being answered here\n"
 "(go back in thread)."
-msgstr "Toon het mailtje dat hier\nbeantwoord is (terug in thread)."
+msgstr "Toon het mailtje dat hier\nbeantwoord is (terug in reeks)."
 
 msgctxt "MSG_HELP_RE_BT_ANSWER (906//)"
 msgid ""
 "Show the reply\n"
 "to this message\n"
 "(follow thread)."
-msgstr "Toon het antwoord op\ndit mailtje (verder in thread)."
+msgstr "Toon het antwoord op\ndit mailtje (verder in reeks)."
 
 msgctxt "MSG_HELP_RE_BT_DISPLAY (907//)"
 msgid ""
@@ -3290,7 +3290,7 @@ msgctxt "MSG_HELP_RE_BT_FORWARD (913//)"
 msgid ""
 "Forward this\n"
 "message."
-msgstr "Dit mailtje\nverder sturen."
+msgstr "Dit mailtje\ndoorsturen."
 
 msgctxt "MSG_WR_DiscardChanges (917//)"
 msgid ""
@@ -3376,7 +3376,7 @@ msgstr "_Aan"
 
 msgctxt "MSG_WR_Add (944//)"
 msgid "_Add file(s)..."
-msgstr "_Voeg bestand(en) toe..."
+msgstr "_Voeg bestand(-en) toe..."
 
 msgctxt "MSG_WR_AddPack (945//)"
 msgid "_Pack & add..."
@@ -3460,7 +3460,7 @@ msgstr "Schuin"
 
 msgctxt "MSG_WR_TBUnderlined (976//8)"
 msgid "ULined"
-msgstr "Onderstr"
+msgstr "Onderstreept"
 
 msgctxt "MSG_WR_TBColored (977//8)"
 msgid "Color"
@@ -4892,7 +4892,7 @@ msgstr "Wil je de statistieken van deze\nfolder zien in het label van het\nAppIc
 
 msgctxt "MSG_OPENGUI (1380//)"
 msgid "Opening GUI..."
-msgstr "Opent GUI..."
+msgstr "GUI openen..."
 
 msgctxt "MSG_CO_CONTEXTMENU (1382//)"
 msgid "Context menu"
@@ -4926,7 +4926,7 @@ msgstr "Wil je gewaarschuwd worden wanneer\nje geen onderwerp opgegeven hebt?"
 
 msgctxt "MSG_WR_NOSUBJECTREQ (1389//)"
 msgid "The subject is missing, continue anyway?"
-msgstr "Het onderwerp ontbreekt. Toch verder gaan?"
+msgstr "Het onderwerp ontbreekt.\nWil je toch verder gaan?"
 
 msgctxt "MSG_WR_TBSearch (1390//8)"
 msgid "Search"
@@ -5054,7 +5054,7 @@ msgstr "E-mail cache"
 
 msgctxt "MSG_CO_NB_EMAILCACHEFMT (1423//)"
 msgid "%ld address(es)"
-msgstr "%ld adres(en)"
+msgstr "%ld adres(-sen)"
 
 msgctxt "MSG_HELP_CO_NB_EMAILCACHE (1424//)"
 msgid ""
@@ -5531,7 +5531,7 @@ msgid ""
 "How often YAM should write to disk a backup\n"
 "of the e-mail you are currently composing.\n"
 "Select 0 to disable this feature."
-msgstr "Geeft aan hoe vaak YAM het mailtje dat je\n aan het schrijven bent moet backuppen.\nKies 0 (nul) om deze optie uit te schakelen."
+msgstr "Geeft aan hoe vaak YAM het mailtje dat je\naan het schrijven bent moet backuppen.\nKies 0 (nul) om deze optie uit te schakelen."
 
 msgctxt "MSG_ER_MOVEFOLDERDIR (1573//)"
 msgid ""
@@ -5684,7 +5684,7 @@ msgid ""
 "\n"
 "Please make sure you have at least this\n"
 "minimum version correctly installed."
-msgstr "Kan vereiste %s, versie v%lu.%lu niet openen.\n\nControleer of je wel deze minimaal vereiste versie correct geïntalleerd hebt."
+msgstr "Kan vereiste %s, versie v%lu.%lu niet openen.\n\nControleer of je wel deze minimaal vereiste versie\ncorrect geïnstalleerd hebt."
 
 #. LIBRARY_NAME, LIBRARY_VERSION, LIBRARY_REVISION, LIBRARY_URL
 msgctxt "MSG_ER_LIB_URL (1615//)"
@@ -5771,7 +5771,7 @@ msgstr "Instellingen voor het schrijven van e-mail..."
 
 msgctxt "MSG_CO_REPLY_TITLE (1631//)"
 msgid "Mail Reply & Forward Settings"
-msgstr "Mail beantwoorden en verder zenden"
+msgstr "Mail beantwoorden en doorsturen"
 
 msgctxt "MSG_CO_REPLY_SUMMARY (1632//)"
 msgid "Settings related to e-mail replying & forwarding..."
@@ -6077,7 +6077,7 @@ msgstr "Er ging iets mis bij het maken van een archief van de geselecteerde best
 
 msgctxt "MSG_CO_ABOOKLOOKUP (1713//)"
 msgid "_Address book lookup in message list"
-msgstr "_Address book lookup in message list"
+msgstr "_Adresboek zoektocht en mailtjeslijst"
 
 msgctxt "MSG_HELP_CO_CH_ABOOKLOOKUP (1714//)"
 msgid ""
@@ -6089,7 +6089,7 @@ msgid ""
 "and may bring down the performance of the list display.\n"
 "This is especially true for a large amount of address\n"
 "book entries."
-msgstr "Adres van ontvanger en afzender boven water halen uit de mailtjeslijst\ndoor ze op te zoeken in het adresboek en de echte naam te tonen.\n\nDit kost heel veel tijd en kan het weergeven van de lijst ernstig vertragen.\nDit geldt met name bij een grote hoeveelheid adressen in het adresboek."
+msgstr "Adres van ontvanger en afzender boven water halen uit\nde mailtjeslijst door ze op te zoeken in het adresboek\nen de echte naam te tonen.\n\nDit kost heel veel tijd en kan het weergeven van de lijst\nernstig vertragen. Dit geldt met name bij een grote\nhoeveelheid adressen in het adresboek."
 
 #. COUNT, COUNT
 msgctxt "MSG_TR_MESSAGEGAUGE (1715//)"
@@ -6226,7 +6226,7 @@ msgstr "Sp_am"
 
 msgctxt "MSG_MA_TBNOTSPAM (1747//8)"
 msgid "N.Sp_am"
-msgstr "Gn sp_am"
+msgstr "Geen sp_am"
 
 msgctxt "MSG_HELP_MA_BT_SPAM (1748//)"
 msgid "Mark message as spam"
@@ -6312,7 +6312,7 @@ msgstr "Weggooien van spam training data..."
 
 msgctxt "MSG_CO_SPAM_MARKONMOVE (1772//)"
 msgid "Mark mails as spam when _moved to the Spam folder"
-msgstr "Markeer mailtjes als spam wanneer ze verplaatst worden naar de spamfolder"
+msgstr "Markeer mailtjes als spam wanneer ze verplaatst\nworden naar de spamfolder"
 
 msgctxt "MSG_CO_SPAM_ADDRESSBOOKISWHITELIST (1773//)"
 msgid "Address book is _white list"
@@ -6393,7 +6393,7 @@ msgid ""
 "The SMTP server '%s' doesn't seem to support the selected SMTP-AUTH method.\n"
 "\n"
 "Please ask your provider which authentication methods are available and how to configure them in your e-mail client."
-msgstr "De SMTP-server '%s schijnt de gekozen SMTP-AUTH-methode niet te ondersteunen.\nVraag jouw provider welke authenticatiemethodes beschikbaar zijn en\nhoe je die moet configureren in YAM."
+msgstr "De SMTP-server '%s schijnt de gekozen SMTP-AUTH-methode\nniet te ondersteunen. Vraag jouw provider welke authenticatiemethodes beschikbaar zijn en\nhoe je die moet configureren in YAM."
 
 msgctxt "MSG_ER_SPAMDIR_EXISTS (1791//)"
 msgid ""
@@ -6601,7 +6601,7 @@ msgstr "Zoek opnieuw"
 
 msgctxt "MSG_WR_AUTOWRAP (1850//)"
 msgid "Word-wrap?"
-msgstr "Woord-omslaan?"
+msgstr "Woordomslag?"
 
 msgctxt "MSG_CO_SPAM_MARK_AS_READ (1851//)"
 msgid "Mark new spam mai_ls as read"
@@ -6788,11 +6788,11 @@ msgstr "Uiterlijk en karakter"
 
 msgctxt "MSG_CO_SMTP_SERVERPORT (1891//)"
 msgid "Ser_ver/Port"
-msgstr ""
+msgstr "Ser_ver/Poort"
 
 msgctxt "MSG_CO_POP_SERVERPORT (1892//)"
 msgid "Serve_r/Port"
-msgstr ""
+msgstr "Serve_r\\Poort"
 
 msgctxt "MSG_CO_LOOKFEEL_THEMES (1898//)"
 msgid "Themes"
@@ -7595,7 +7595,7 @@ msgstr "Je hebt verschillende mailtjes in folder %s gekozen.\nAlleen deze mailtj
 
 msgctxt "MSG_AB_XML (2070//)"
 msgid "XML address book (*.xml)"
-msgstr ""
+msgstr "XML adresboek (*.xml)"
 
 #. COUNT, COUNT, COUNT, COUNT, COUNT
 msgctxt "MSG_MA_FILTER_STATS_SPAM (2071//)"
@@ -7623,11 +7623,11 @@ msgid ""
 "%3ld moved,\n"
 "%3ld deleted,\n"
 "%3ld classified as spam"
-msgstr ""
+msgstr "\nFilteren gedaan:\n\n%3ld mailtjes gecontroleerd,\n%3ld omgeleid,\n%3ld doorgestuurd,\n%3ld auto-beantwoord\n%3ld opdracht geaktiveerd\n%3ld verplaatst\n%3ld gewist\n%3ld aangemerkt als spam"
 
 msgctxt "MSG_FCHANGE_WARN_TITLE (2078//)"
 msgid "Filechange warning"
-msgstr ""
+msgstr "Waarschuwing voor bestandswijziging"
 
 #. NUMBER
 msgctxt "MSG_FCHANGE_WARN (2079//)"
