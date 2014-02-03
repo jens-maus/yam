@@ -1,8 +1,7 @@
-# YAM.pot - YAM catalog description file (pot-style)
+# YAM catalog description/translation file (PO-style)
 # $Id$
-# 
+# $URL$
 # version 9
-# language english
 # 
 # Translators:
 # Dósa Márton <dm_@freemail.hu>, 2003
