@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-02-03 18:51+0000\n"
+"PO-Revision-Date: 2014-02-03 19:35+0000\n"
 "Last-Translator: peguser <mobydick@amiga.org.ru>\n"
 "Language-Team: Russian (http://www.transifex.com/projects/p/yam/language/ru/)\n"
 "MIME-Version: 1.0\n"
@@ -140,7 +140,7 @@ msgstr "Описание"
 
 msgctxt "MSG_DOB (40//)"
 msgid "Date of birth"
-msgstr "День рождения"
+msgstr "Дата рождения"
 
 msgctxt "MSG_City (41//)"
 msgid "City"
@@ -5228,55 +5228,55 @@ msgstr "Порядок по умолчанию: этот"
 
 msgctxt "MSG_MA_CTX_DEFORDER_ALL (1479//)"
 msgid "Default order: all"
-msgstr ""
+msgstr "Порядок по умолчанию: все"
 
 msgctxt "MSG_MA_CTX_MAILLIST (1480//)"
 msgid "Message list"
-msgstr ""
+msgstr "Сообщения"
 
 msgctxt "MSG_MA_CTX_FOLDERLIST (1481//)"
 msgid "Folder list"
-msgstr ""
+msgstr "Папки"
 
 msgctxt "MSG_HELP_FO_CY_MLSIGNATURE (1482//)"
 msgid ""
 "Use this signature when posting\n"
 "new mails to the list."
-msgstr ""
+msgstr "Использовать эту подпись при\nотправке сообщений в рассылку."
 
 msgctxt "MSG_CTapplicationpdf (1483//)"
 msgid "PDF document"
-msgstr ""
+msgstr "Документ PDF"
 
 msgctxt "MSG_HELP_CO_ST_INFOBARTXT (1492//)"
 msgid ""
 "Text that should be displayed\n"
 "in the status bar."
-msgstr ""
+msgstr "Тект для отображения в строке состояния."
 
 msgctxt "MSG_YesNoReq2 (1494//)"
 msgid "_Yes|*_No"
-msgstr ""
+msgstr "_Да|*_Нет"
 
 msgctxt "MSG_HELP_FO_ST_HELLOTEXT (1495//)"
 msgid ""
 "Text to insert at the\n"
 "top of a new message."
-msgstr ""
+msgstr "Текст, вставляемый в начало\nкаждого нового сообщения."
 
 msgctxt "MSG_HELP_FO_ST_BYETEXT (1496//)"
 msgid ""
 "Text to insert at the\n"
 "bottom of a new message."
-msgstr ""
+msgstr "Текст, вставляемый в конец\nкаждого нового сообщения."
 
 msgctxt "MSG_FO_Welcome (1497//)"
 msgid "_Welcome phrase"
-msgstr ""
+msgstr "_Приветствие"
 
 msgctxt "MSG_FO_Greetings (1498//)"
 msgid "C_losing phrase"
-msgstr ""
+msgstr "По_желание"
 
 #. OPTIONNAME
 msgctxt "MSG_ER_SOCKETOPTION (1499//)"
@@ -5284,48 +5284,48 @@ msgid ""
 "Couldn't set socket option '%s'.\n"
 "\n"
 "Either this option is not supported by the TCP/IP stack your are using, or it is specified wrong in your configuration."
-msgstr ""
+msgstr "Не могу установить параметр «%s» сокета.\n\nИли этот параметр не поддерживается стеком TCP/IP, который вы используете, или у вас неправильная конфигурация."
 
 #. FILENAME
 msgctxt "MSG_ER_B64FILEENCODE (1500//)"
 msgid ""
 "An unexpected error occurred while trying to encode file '%s' with the "
 "Base64 file encoding routines."
-msgstr ""
+msgstr "Неожиданная ошибка встретилась при попытке закодировать файл «%s» в формат Base64."
 
 #. FILENAME
 msgctxt "MSG_ER_QPFILEENCODE (1501//)"
 msgid ""
 "An unexpected error occurred while trying to encode file '%s' with the "
 "Quoted-Printable (QP) file encoding routines."
-msgstr ""
+msgstr "Неожиданная ошибка встретилась при попытке закодировать файл «%s» в формат Quoted-Printable (QP)."
 
 #. FILENAME
 msgctxt "MSG_ER_UUFILEENCODE (1502//)"
 msgid ""
 "An unexpected error occurred while trying to encode file '%s' with the "
 "UUcode file encoding routines."
-msgstr ""
+msgstr "Неожиданная ошибка встретилась при попытке закодировать файл «%s» в формат UUEncode."
 
 msgctxt "MSG_ER_QPDEC_FILEIO (1503//)"
 msgid ""
 "An input/output error occurred during decoding of the Quoted-Printable (QP) "
 "encoded file '%s'."
-msgstr ""
+msgstr "Случилась ошибка ввода/вывода при декодировании файла «%s» из формата Quoted-Printable (QP)."
 
 #. FILENAME
 msgctxt "MSG_ER_QPDEC_UNEXP (1504//)"
 msgid ""
 "An unexpected error occurred while trying to decode file '%s' with the "
 "Quoted-Printable (QP) file decoding routines."
-msgstr ""
+msgstr "Неожиданная ошибка встретилась при попытке декодировать файл «%s» из формата Quoted-Printable (QP)."
 
 #. FILENAME
 msgctxt "MSG_ER_QPDEC_WARN (1505//)"
 msgid ""
 "During the Quoted-Printable (QP) decoding of file '%s' some broken control "
 "sequences were detected and kept undecoded in the output."
-msgstr ""
+msgstr "При декодировании файла «%s» из формата Quoted-Printable (QP) встретилась и осталась недекодированной повреждённая  последовательность."
 
 #. FILENAME
 msgctxt "MSG_ER_QPDEC_CHAR (1506//)"
