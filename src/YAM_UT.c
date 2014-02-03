@@ -3553,6 +3553,8 @@ void DisplayMailList(struct Folder *fo, Object *lv)
     DoMethod(lv, MUIM_NList_Clear);
     DoMethod(lv, MUIM_NList_Insert, array, fo->Total, MUIV_NList_Insert_Sorted,
                  C->AutoColumnResize ? MUIF_NONE : MUIV_NList_Insert_Flag_Raw);
+    if(lastActive >= 0)
+      DoMethod(lv, MUIM_NList_SetActive, lastActive, MUIV_NList_SetActive_Jump_Center);
     set(lv, MUIA_NList_Quiet, FALSE);
 
     free(array);

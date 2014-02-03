@@ -9,6 +9,8 @@ $URL$
 
   * YAM_UT.c: clear and insert the mail list in quiet mode to avoid multiple
     relayout and redraw actions caused by removed and readded scrollbars.
+  * YAM_MAf.c, YAM_UT.c: jump to the last active mail right after adding all
+    mails to the mail list and while the quite mode is still active.
 
 2014-02-02 Thore Böckelmann <tboeckel@gmx.de>
 

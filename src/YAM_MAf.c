@@ -910,7 +910,7 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
 
         if(jumped == FALSE && folder->LastActive >= 0)
         {
-          DoMethod(gui->PG_MAILLIST, MUIM_NList_SetActive, folder->LastActive, MUIV_NList_SetActive_Jump_Center);
+          // the jump has been done in DisplayMailList already
           jumped = TRUE;
         }
 
