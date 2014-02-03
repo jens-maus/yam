@@ -3533,9 +3533,9 @@ BOOL MailExists(const struct Mail *mailptr, struct Folder *folder)
 //  Lists folder contents in the message listview
 void DisplayMailList(struct Folder *fo, Object *lv)
 {
-  struct Mail **array;
   int lastActive;
   struct BusyNode *busy;
+  struct Mail **array;
 
   ENTER();
 
@@ -3549,11 +3549,11 @@ void DisplayMailList(struct Folder *fo, Object *lv)
   // to quickly populate the NList object.
   if((array = MailListToMailArray(fo->messages)) != NULL)
   {
-    // We do not encapsulate this Clear&Insert with a NList_Quiet because
-    // this will speed up the Insert with about 3-4 seconds for ~6000 items
+    set(lv, MUIA_NList_Quiet, TRUE);
     DoMethod(lv, MUIM_NList_Clear);
     DoMethod(lv, MUIM_NList_Insert, array, fo->Total, MUIV_NList_Insert_Sorted,
                  C->AutoColumnResize ? MUIF_NONE : MUIV_NList_Insert_Flag_Raw);
+    set(lv, MUIA_NList_Quiet, FALSE);
 
     free(array);
   }
