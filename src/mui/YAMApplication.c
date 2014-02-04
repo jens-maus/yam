@@ -55,6 +55,7 @@
 #include "mui/AddressMatchPopupWindow.h"
 #include "mui/ConfigWindow.h"
 #include "mui/InfoWindow.h"
+#include "mui/MainMailListGroup.h"
 #include "mui/SearchMailWindow.h"
 #include "mui/StringRequestWindow.h"
 #include "mui/TransferControlGroup.h"
@@ -1205,7 +1206,7 @@ DECLARE(FilterNewMails) // const struct MailList *mailList, struct FilterResult 
   // Now we jump to the first new mail we received if the number of messages has changed
   // after the mail transfer
   if(C->JumpToIncoming == TRUE)
-    MA_JumpToNewMsg();
+    DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_JumpToFirstNewMailOfFolder, GetCurrentFolder());
 
   // only call the DisplayStatistics() function if the actual folder wasn't already the INCOMING
   // one or we would have refreshed it twice
@@ -1700,7 +1701,7 @@ DECLARE(EmptyTrashFolder) // ULONG quiet
       MA_ExpireIndex(folder);
 
       if(GetCurrentFolder() == folder)
-        DisplayMailList(folder, G->MA->GUI.PG_MAILLIST);
+        DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_DisplayMailsOfFolder, folder);
 
       AppendToLogfile(LF_NORMAL, 20, tr(MSG_LOG_Deleting), i, folder->Name);
 

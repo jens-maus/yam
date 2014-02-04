@@ -60,6 +60,7 @@
 
 #include "mui/ClassesExtra.h"
 #include "mui/InfoBar.h"
+#include "mui/MainMailListGroup.h"
 #include "mui/QuickSearchBar.h"
 #include "mui/ReadMailGroup.h"
 #include "mime/base64.h"
@@ -876,8 +877,6 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
       }
       else if(folder == current) // check again for the current folder
       {
-        BOOL jumped;
-
         // set the SortFlag in the NList accordingly
         MA_SetSortFlag();
 
@@ -897,29 +896,8 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
           DoMethod(gui->GR_QUICKSEARCHBAR, MUIM_QuickSearchBar_Clear);
         }
 
-        // Create the Mail List and display it
-        DisplayMailList(folder, gui->PG_MAILLIST);
-
-        // now we have to assure that the folder is enabled
-        set(gui->PG_MAILLIST, MUIA_Disabled, FALSE);
-
-        // Now we jump to messages that are NEW
-        jumped = FALSE;
-        if(jumped == FALSE && folder->JumpToUnread == TRUE && (folder->New != 0 || folder->Unread != 0))
-          jumped = MA_JumpToNewMsg();
-
-        if(jumped == FALSE && folder->LastActive >= 0)
-        {
-          // the jump has been done in DisplayMailList already
-          jumped = TRUE;
-        }
-
-        if(jumped == FALSE && folder->JumpToRecent == TRUE)
-          jumped = MA_JumpToRecentMsg();
-
-        // if there is still no entry active in the NList we make the first one active
-        if(jumped == FALSE)
-          set(gui->PG_MAILLIST, MUIA_NList_Active, MUIV_NList_Active_Top);
+        // create the Mail List and display it
+        DoMethod(gui->PG_MAILLIST, MUIM_MainMailListGroup_DisplayMailsOfFolder, folder);
 
         // if there are no messages in the folder the GUI needs to be updated nevertheless
         if(folder->Total == 0)
@@ -929,100 +907,6 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
   }
 
   LEAVE();
-}
-
-///
-/// MA_JumpToNewMsg
-// Function that jumps to the first or last unread mail in a folder,
-// depending on sort order of the folder
-BOOL MA_JumpToNewMsg(void)
-{
-  Object *lv;
-  struct Folder *folder;
-  int i, incr, newIdx = -1;
-  BOOL jumped = FALSE;
-
-  ENTER();
-
-  lv = G->MA->GUI.PG_MAILLIST;
-  folder = GetCurrentFolder();
-
-  if(folder->Sort[0] < 0 || folder->Sort[1] < 0)
-  {
-    i = xget(lv, MUIA_NList_Entries) - 1;
-    incr = -1;
-  }
-  else
-  {
-    i = 0;
-    incr = 1;
-  }
-
-  while(TRUE)
-  {
-    struct Mail *mail;
-
-    DoMethod(lv, MUIM_NList_GetEntry, i, &mail);
-    if(mail == NULL)
-      break;
-
-    if(hasStatusNew(mail) || !hasStatusRead(mail))
-    {
-      newIdx = i;
-      break;
-    }
-
-    i += incr;
-  }
-
-  if(newIdx >= 0 && newIdx != folder->LastActive)
-  {
-    set(lv, MUIA_NList_Active, newIdx);
-    jumped = TRUE;
-  }
-
-  RETURN(jumped);
-  return jumped;
-}
-
-///
-/// MA_JumpToRecentMsg
-// Function that jumps to the most recent mail in a folder
-BOOL MA_JumpToRecentMsg(void)
-{
-  struct MailNode *recent = NULL;
-  struct MailNode *mnode;
-  struct Folder *folder;
-  BOOL jumped = FALSE;
-
-  ENTER();
-
-  folder = GetCurrentFolder();
-
-  LockMailList(folder->messages);
-
-  mnode = FirstMailNode(folder->messages);
-  while(mnode != NULL)
-  {
-    if(recent == NULL || CompareMailsByDate(mnode, recent) > 0)
-    {
-      // this mail is more recent than the yet most recent known
-      recent = mnode;
-    }
-
-    mnode = NextMailNode(mnode);
-  }
-
-  if(recent != NULL)
-  {
-    DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_SetActive, recent->mail, MUIV_NList_SetActive_Entry|MUIV_NList_SetActive_Jump_Center);
-    jumped = TRUE;
-  }
-
-  UnlockMailList(folder->messages);
-
-  RETURN(jumped);
-  return jumped;
 }
 
 ///

@@ -1433,7 +1433,7 @@ DECLARE(SwitchMail) // LONG direction, ULONG qualifier
               }
               else
               {
-                MA_JumpToNewMsg();
+                DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_JumpToFirstNewMailOfFolder, fo);
               }
 
               DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);

@@ -557,7 +557,7 @@ DECLARE(RedrawMail) // struct Mail* mail
 ///
 /// DECLARE(IsMailList)
 // checks if a passed object pointer is one of our maillists (for checking dragdrop requests)
-DECLARE(IsMailList) // Object* list
+DECLARE(IsMailList) // Object *list
 {
   GETDATA;
 
@@ -565,6 +565,55 @@ DECLARE(IsMailList) // Object* list
 
   return (ULONG)(msg->list == data->mainListObjects[LT_MAIN] ||
                  msg->list == data->mainListObjects[LT_QUICKVIEW]);
+}
+
+///
+/// DECLARE(JumpToFirstNewMailOfFolder)
+// jump to the first "new" mail of a folder
+DECLARE(JumpToFirstNewMailOfFolder) // struct Folder *folder
+{
+  GETDATA;
+  BOOL jumped;
+
+  ENTER();
+
+  jumped = DoMethod(data->mainListObjects[data->activeList], MUIM_MainMailList_JumpToFirstNewMailOfFolder, msg->folder);
+
+  RETURN(jumped);
+  return jumped;
+}
+
+///
+/// DECLARE(JumpToRecentMailOfFolder)
+// jump to the most recent mail of a folder
+DECLARE(JumpToRecentMailOfFolder) // struct Folder *folder
+{
+  GETDATA;
+  BOOL jumped;
+
+  ENTER();
+
+  jumped = DoMethod(data->mainListObjects[data->activeList], MUIM_MainMailList_JumpToRecentMailOfFolder, msg->folder);
+
+  RETURN(jumped);
+  return jumped;
+}
+
+///
+/// DECLARE(DisplayMailsOfFolder)
+// display the mails of the given folder
+DECLARE(DisplayMailsOfFolder) // struct Folder *folder
+{
+  GETDATA;
+
+  ENTER();
+
+  DoMethod(data->mainListObjects[data->activeList], MUIM_MainMailList_DisplayMailsOfFolder, msg->folder);
+  // make sure the maillist is enabled
+  set(obj, MUIA_Disabled, FALSE);
+
+  RETURN(0);
+  return 0;
 }
 
 ///

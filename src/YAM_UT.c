@@ -3529,46 +3529,6 @@ BOOL MailExists(const struct Mail *mailptr, struct Folder *folder)
 }
 
 ///
-/// DisplayMailList
-//  Lists folder contents in the message listview
-void DisplayMailList(struct Folder *fo, Object *lv)
-{
-  int lastActive;
-  struct BusyNode *busy;
-  struct Mail **array;
-
-  ENTER();
-
-  lastActive = fo->LastActive;
-
-  busy = BusyBegin(BUSY_TEXT);
-  BusyText(busy, tr(MSG_BusyDisplayingList), "");
-
-  // we convert the mail list of the folder
-  // to a temporary array because that allows us
-  // to quickly populate the NList object.
-  if((array = MailListToMailArray(fo->messages)) != NULL)
-  {
-    set(lv, MUIA_NList_Quiet, TRUE);
-    DoMethod(lv, MUIM_NList_Clear);
-    DoMethod(lv, MUIM_NList_Insert, array, fo->Total, MUIV_NList_Insert_Sorted,
-                 C->AutoColumnResize ? MUIF_NONE : MUIV_NList_Insert_Flag_Raw);
-    if(lastActive >= 0)
-      DoMethod(lv, MUIM_NList_SetActive, lastActive, MUIV_NList_SetActive_Jump_Center);
-    set(lv, MUIA_NList_Quiet, FALSE);
-
-    free(array);
-  }
-
-  BusyEnd(busy);
-
-  // Now we have to recover the LastActive or otherwise it will be -1 later
-  fo->LastActive = lastActive;
-
-  LEAVE();
-}
-
-///
 /// AddMailToFolder
 //  Adds a message to a folder
 void AddMailToFolder(struct Mail *mail, struct Folder *folder)

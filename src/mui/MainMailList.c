@@ -48,8 +48,10 @@
 
 #include "AddressBook.h"
 #include "BayesFilter.h"
+#include "Busy.h"
 #include "Config.h"
 #include "Locale.h"
+#include "MailList.h"
 #include "MUIObjects.h"
 #include "Themes.h"
 
@@ -1006,6 +1008,162 @@ DECLARE(RemoveMail) // struct Mail* mail
 
   RETURN(result);
   return result;
+}
+
+///
+/// DECLARE(JumpToRecentMailOfFolder)
+// jump to the first "new" mail of a folder
+DECLARE(JumpToFirstNewMailOfFolder) // struct Folder *folder
+{
+  struct Folder *folder = msg->folder;
+  int i, incr, newIdx = -1;
+  BOOL jumped;
+
+  ENTER();
+
+  if(folder->Sort[0] < 0 || folder->Sort[1] < 0)
+  {
+    i = xget(obj, MUIA_NList_Entries) - 1;
+    incr = -1;
+  }
+  else
+  {
+    i = 0;
+    incr = 1;
+  }
+
+  while(TRUE)
+  {
+    struct Mail *mail;
+
+    DoMethod(obj, MUIM_NList_GetEntry, i, &mail);
+    if(mail == NULL)
+      break;
+
+    if(hasStatusNew(mail) || !hasStatusRead(mail))
+    {
+      newIdx = i;
+      break;
+    }
+
+    i += incr;
+  }
+
+  if(newIdx >= 0 && newIdx != folder->LastActive)
+  {
+    set(obj, MUIA_NList_Active, newIdx);
+    jumped = TRUE;
+  }
+  else
+    jumped = FALSE;
+
+  RETURN(jumped);
+  return jumped;
+}
+
+///
+/// DECLARE(JumpToRecentMailOfFolder)
+// jump to the most recent mail of a folder
+DECLARE(JumpToRecentMailOfFolder) // struct Folder *folder
+{
+  struct MailNode *recent = NULL;
+  struct MailNode *mnode;
+  struct Folder *folder = msg->folder;
+  BOOL jumped;
+
+  ENTER();
+
+  LockMailList(folder->messages);
+
+  mnode = FirstMailNode(folder->messages);
+  while(mnode != NULL)
+  {
+    if(recent == NULL || CompareMailsByDate(mnode, recent) > 0)
+    {
+      // this mail is more recent than the yet most recent known
+      recent = mnode;
+    }
+
+    mnode = NextMailNode(mnode);
+  }
+
+  if(recent != NULL)
+  {
+    DoMethod(obj, MUIM_NList_SetActive, recent->mail, MUIV_NList_SetActive_Entry|MUIV_NList_SetActive_Jump_Center);
+    jumped = TRUE;
+  }
+  else
+    jumped = FALSE;
+
+  UnlockMailList(folder->messages);
+
+  RETURN(jumped);
+  return jumped;
+}
+
+///
+/// DECLARE(DisplayMailsOfFolder)
+// display the mails of the given folder
+DECLARE(DisplayMailsOfFolder) // struct Folder *folder
+{
+  struct Folder *folder = msg->folder;
+  int lastActive;
+  struct BusyNode *busy;
+  struct Mail **array = NULL;
+
+  ENTER();
+
+  lastActive = folder->LastActive;
+
+  busy = BusyBegin(BUSY_TEXT);
+  BusyText(busy, tr(MSG_BusyDisplayingList), "");
+
+  // we convert the mail list of the folder
+  // to a temporary array because that allows us
+  // to quickly populate the NList object.
+  if(folder->Total == 0 || (array = MailListToMailArray(folder->messages)) != NULL)
+  {
+    set(obj, MUIA_NList_Quiet, TRUE);
+    DoMethod(obj, MUIM_NList_Clear);
+
+    // perform the usual jumps to specific mails, if there are any left
+    if(folder->Total != 0)
+    {
+      BOOL jumped = FALSE;
+
+      DoMethod(obj, MUIM_NList_Insert, array, folder->Total, MUIV_NList_Insert_Sorted,
+                     C->AutoColumnResize ? MUIF_NONE : MUIV_NList_Insert_Flag_Raw);
+
+      // Now we jump to messages that are NEW
+      if(jumped == FALSE && folder->JumpToUnread == TRUE && (folder->New != 0 || folder->Unread != 0))
+        jumped = DoMethod(obj, METHOD(JumpToFirstNewMailOfFolder), folder);
+
+      if(jumped == FALSE && lastActive >= 0)
+      {
+        DoMethod(obj, MUIM_NList_SetActive, lastActive, MUIV_NList_SetActive_Jump_Center);
+        jumped = TRUE;
+      }
+
+      if(jumped == FALSE && folder->JumpToRecent == TRUE)
+        jumped = DoMethod(obj, METHOD(JumpToRecentMailOfFolder), folder);
+
+      // if there is still no entry active in the NList we make the first one active
+      if(jumped == FALSE)
+        set(obj, MUIA_NList_Active, MUIV_NList_Active_Top);
+    }
+
+    set(obj, MUIA_NList_Quiet, FALSE);
+
+    free(array);
+  }
+
+  BusyEnd(busy);
+
+  // Now we have to recover the LastActive or otherwise it will be -1 later
+  folder->LastActive = lastActive;
+
+  RETURN(0);
+  return 0;
 }
 
 ///

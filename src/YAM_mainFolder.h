@@ -108,8 +108,6 @@ enum ReadHeaderMode
 void  MA_ChangeFolder(struct Folder *folder, BOOL set_active);
 void  MA_ExpireIndex(struct Folder *folder);
 struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *file, const BOOL deep);
-BOOL  MA_JumpToNewMsg(void);
-BOOL  MA_JumpToRecentMsg(void);
 void  MA_FreeEMailStruct(struct ExtendedMail *email);
 BOOL  MA_GetIndex(struct Folder *folder);
 enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full);

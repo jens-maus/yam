@@ -294,7 +294,6 @@ BOOL     String2TimeVal(struct TimeVal *dst, const char *string, enum DateStampT
 char *   Decrypt(const char *source);
 BOOL     DeleteMailDir(const char *dir, BOOL isroot);
 const char *DescribeCT(const char *ct);
-void     DisplayMailList(struct Folder *fo, Object *lv);
 void     DisplayStatistics(struct Folder *fo, BOOL updateAppIcon);
 void     DisposeModule(void *modptr);
 BOOL     DoPack(const char *file, const char *newfile, const struct Folder *folder);

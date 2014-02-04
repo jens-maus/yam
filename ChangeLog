@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-02-04 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MAf.c, YAM_UT.c, mui/MainMailList.c: moved the functions to display the
+    mails of a folder to the mail list class including all necessary jumps to
+    recently active or new mails.
+
 2014-02-03 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_UT.c: clear and insert the mail list in quiet mode to avoid multiple
