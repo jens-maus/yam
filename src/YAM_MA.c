@@ -3963,7 +3963,7 @@ struct MA_ClassData *MA_New(void)
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_PREVTH,         MUIV_Notify_Application, 3, MUIM_CallHook,             &FollowThreadHook, -1);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_NEXTTH,         MUIV_Notify_Application, 3, MUIM_CallHook,             &FollowThreadHook, +1);
       DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_HELP_CONTENTS,  MUIV_Notify_Application, 5, MUIM_Application_ShowHelp, data->GUI.WI, NULL, NULL, 0);
-      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_HELP_AREXX,     MUIV_Notify_Application, 5, MUIM_Application_ShowHelp, data->GUI.WI, NULL, "ARexx%20API", 0);
+      DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_HELP_AREXX,     MUIV_Notify_Application, 5, MUIM_Application_ShowHelp, data->GUI.WI, NULL, "ARexxAPI", 0);
 
       for(i=0; i < MAXRX_MENU; i++)
         DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_MenuAction, MMEN_MACRO+i, MUIV_Notify_Application, 3, MUIM_YAMApplication_StartMacro, i, NULL);
