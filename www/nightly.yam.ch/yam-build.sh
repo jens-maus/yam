@@ -128,7 +128,7 @@ compile_release()
     cp src/YAM.${TARGETEXT} $DEVDIR/YAM
     cp $MODULEPATH/icons/${TARGETEXT}/YAM.info $DEVDIR/
     cd $DEVDIR
-    $LHA ao5 YAM${BUILDV}dev-${TARGET}.lha YAM YAM.info ChangeLog README.txt locale resources >/dev/null 2>&1
+    $LHA ao5 YAM${BUILDV}dev-${TARGET}.lha YAM YAM.info ChangeLog README.txt catalogs resources >/dev/null 2>&1
     $MD5SUM YAM${BUILDV}dev-${TARGET}.lha >YAM${BUILDV}dev-${TARGET}.lha.md5
     rm YAM
     set +x
@@ -160,7 +160,7 @@ compile_debug()
     cp src/YAM.${TARGETEXT}.debug $DEVDIR/YAM.debug
     cp $MODULEPATH/icons/${TARGETEXT}/YAM.info $DEVDIR/YAM.debug.info
     cd $DEVDIR
-    $LHA ao5 YAM${BUILDV}dev-${TARGET}-debug.lha YAM.debug YAM.debug.info ChangeLog README.txt locale resources >/dev/null 2>&1
+    $LHA ao5 YAM${BUILDV}dev-${TARGET}-debug.lha YAM.debug YAM.debug.info ChangeLog README.txt catalogs resources >/dev/null 2>&1
     $MD5SUM YAM${BUILDV}dev-${TARGET}-debug.lha >YAM${BUILDV}dev-${TARGET}-debug.lha.md5
     rm YAM.debug
     set +x
@@ -196,7 +196,7 @@ create_catalogs()
 # The main stuff starts here
 #
 echo >&2 "yam-build.sh v${VERSION} - a script to build the nightly for YAM"
-echo >&2 "Copyright (c) 2004-2011 by Jens Langner <Jens.Langner@light-speed.de>"
+echo >&2 "Copyright (c) 2004-2014 Jens Maus <mail@jens-maus.de>"
 echo >&2
 
 # define the variables we know
