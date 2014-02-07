@@ -9,8 +9,9 @@ $URL$
 
   * mui/MainMailList.c: jumping to the first new/unread mail is now done in the
     same way as jumping to other recent mails.
-  * YAM_MA.c: enforce an update of the embedded read pane after a folder change,
+  * YAM_MAf.c: enforce an update of the embedded read pane after a folder change,
     because NList doesn't trigger notifications in "quiet" mode.
+  * YAM_MAf.c: clear the mail list in case a folder group is activated.
 
 2014-02-04 Thore Böckelmann <tboeckel@gmx.de>
 

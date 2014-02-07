@@ -854,6 +854,7 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
       // if this folder should be disabled, lets do it now
       if(isGroupFolder(folder) || MA_GetIndex(folder) == FALSE)
       {
+        DoMethod(gui->PG_MAILLIST, MUIM_NList_Clear);
         xset(gui->PG_MAILLIST, MUIA_Disabled,     TRUE,
                                MUIA_NList_Active, MUIV_NList_Active_Off);
 
