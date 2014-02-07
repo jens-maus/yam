@@ -1051,7 +1051,7 @@ DECLARE(JumpToFirstNewMailOfFolder) // struct Folder *folder
 
   if(newIdx >= 0 && newIdx != folder->LastActive)
   {
-    set(obj, MUIA_NList_Active, newIdx);
+    DoMethod(obj, MUIM_NList_SetActive, newIdx, MUIV_NList_SetActive_Jump_Center);
     jumped = TRUE;
   }
   else

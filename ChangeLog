@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-02-07 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/MainMailList.c: jumping to the first new/unread mail is now done in the
+    same way as jumping to other recent mails.
+
 2014-02-04 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MAf.c, YAM_UT.c, mui/MainMailList.c: moved the functions to display the
