@@ -899,9 +899,12 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
         // create the Mail List and display it
         DoMethod(gui->PG_MAILLIST, MUIM_MainMailListGroup_DisplayMailsOfFolder, folder);
 
-        // if there are no messages in the folder the GUI needs to be updated nevertheless
-        if(folder->Total == 0)
-          MA_ChangeSelected(TRUE);
+        // Force an update of the current mail.
+        // Usually this should be done upon a notification trigger by NList.
+        // Unfortunately NList doesn't seem to trigger notifications in "quiet"
+        // mode. But we are lucky here, because the update must be done manually
+        // for empty folders anyway, hence this call doesn't hurt.
+        MA_ChangeSelected(TRUE);
       }
     }
   }
