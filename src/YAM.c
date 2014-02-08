@@ -2333,7 +2333,7 @@ int main(int argc, char **argv)
                                    "version from the YAM nightly build page at:\n\n"
                                    "http://nightly.yam.ch/\n\n"
                                    "All developer versions will automatically expire\n"
-                                   "after a certian time interval. This is to insure\n"
+                                   "after a certain time interval. This is to ensure\n"
                                    "that no old versions are floating around causing\n"
                                    "users to report bugs on old versions.\n\n"
                                    "Thanks for your help in improving YAM!";

@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-02-08 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c: fixed some typos in the expire requester message.
+
 2014-02-07 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/MainMailList.c: jumping to the first new/unread mail is now done in the
