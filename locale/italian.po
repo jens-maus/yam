@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-02-07 20:01+0000\n"
+"PO-Revision-Date: 2014-02-08 19:18+0000\n"
 "Last-Translator: samo79 <s.hawamdeh@teletu.it>\n"
 "Language-Team: Italian (http://www.transifex.com/projects/p/yam/language/it/)\n"
 "MIME-Version: 1.0\n"
@@ -7059,7 +7059,7 @@ msgstr "YAM è un software libero; è lecito redistribuirlo o\nmodificarlo secon
 
 msgctxt "MSG_ABOUT_3RD_PARTY_SOFTWARE (1967//)"
 msgid "This program uses the following third party software:"
-msgstr "Questo programma usa i seguenti software di terze parti:"
+msgstr "YAM usa i seguenti software di terze parti:"
 
 msgctxt "MSG_ABOUT_YAM_NEWS (1968//)"
 msgid ""
