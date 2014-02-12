@@ -23,7 +23,7 @@
 # $Id$
 #
 
-VERSION="1.2"
+VERSION="1.3"
 
 ########################################################
 # Script starts here
@@ -590,6 +590,11 @@ BEGIN {
       version=substr($0, length($1)+length($2)+3)
       next
     }
+    else if($0 ~ /^# \\$Id: .* \\$$/)
+    {
+      revision=$4 # get revision out of $Id$ SVN keyword
+      next
+    }
     else if($0 ~ /^## language .*/)
     {
       language=$3
@@ -640,7 +645,7 @@ BEGIN {
 
     if(firsttag == 0)
     {
-      print "## version $VER: YAM.catalog " version ".1 (" revdate ")"
+      print "## version $VER: YAM.catalog " version "." revision " (" revdate ")"
       print "## language " lang
       print "## codeset " cset
       print "## chunk AUTH " auth
