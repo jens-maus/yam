@@ -2861,6 +2861,10 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
               setFlag(mail->sflags, SFLAG_NEW);
             break;
 
+            case SCHAR_HOLD:
+              setFlag(mail->sflags, SFLAG_HOLD);
+            break;
+
             case SCHAR_SENT:
               setFlag(mail->sflags, SFLAG_SENT);
             break;
@@ -3340,6 +3344,66 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
   RETURN(result);
   return result;
 }
-///
 
-/*** Hooks ***/
+///
+/// MoveHeldMailsToDraftsFolder
+// move all "hold" mails in the Outgoing folder over to the Drafts folder
+void MoveHeldMailsToDraftsFolder(void)
+{
+  struct Folder *outgoing;
+  struct Folder *drafts;
+
+  ENTER();
+
+  if((outgoing = FO_GetFolderByType(FT_OUTGOING, NULL)) != NULL && (drafts = FO_GetFolderByType(FT_DRAFTS, NULL)) != NULL)
+  {
+    struct MailList *mlist = NULL;
+
+    LockMailListShared(outgoing->messages);
+
+    // find all "hold" mails in the outgoing folder first
+    if(IsMailListEmpty(outgoing->messages) == FALSE)
+    {
+      if((mlist = CreateMailList()) != NULL)
+      {
+        struct MailNode *mnode;
+
+        ForEachMailNode(outgoing->messages, mnode)
+        {
+          struct Mail *mail = mnode->mail;
+
+          // add all "hold" mails to the list
+          if(hasStatusHold(mail))
+            AddNewMailNode(mlist, mail);
+        }
+
+        D(DBF_FOLDER, "found %ld old hold mails in folder '%s'", mlist->count, outgoing->Name);
+      }
+    }
+
+    UnlockMailList(outgoing->messages);
+
+    // now move all found "hold" mails over to the drafts folder
+    if(mlist != NULL)
+    {
+      if(IsMailListEmpty(mlist) == FALSE)
+      {
+        struct MailNode *mnode;
+
+        ForEachMailNode(mlist, mnode)
+        {
+          MA_MoveCopy(mnode->mail, drafts, MVCPF_CLOSE_WINDOWS);
+          // mails in the Drafts folder are always "new"
+          // the "hold" state is no longer needed
+          MA_ChangeMailStatus(mnode->mail, SFLAG_NEW, SFLAG_HOLD);
+        }
+      }
+
+      DeleteMailList(mlist);
+    }
+  }
+
+  LEAVE();
+}
+
+///

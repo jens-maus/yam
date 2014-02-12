@@ -113,6 +113,7 @@ struct MUI_NListtree_TreeNode;
 #define hasStatusReplied(mail)        (isFlagSet((mail)->sflags, SFLAG_REPLIED))
 #define hasStatusForwarded(mail)      (isFlagSet((mail)->sflags, SFLAG_FORWARDED))
 #define hasStatusNew(mail)            (isFlagSet((mail)->sflags, SFLAG_NEW))
+#define hasStatusHold(mail)           (isFlagSet((mail)->sflags, SFLAG_HOLD))
 #define hasStatusSent(mail)           (isFlagSet((mail)->sflags, SFLAG_SENT))
 #define hasStatusMarked(mail)         (isFlagSet((mail)->sflags, SFLAG_MARKED))
 #define hasStatusError(mail)          (isFlagSet((mail)->sflags, SFLAG_ERROR))

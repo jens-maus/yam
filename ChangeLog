@@ -9,6 +9,10 @@ $URL$
 
   * mui/WriteWindow.c: make sure that the displayed cursor position is correctly
     updated after (re)loading the mail body text.
+  * YAM.c, YAM_MAf.c: mails put on "hold" by older versions of YAM without a
+    dedicated Drafts folder will now be moved from the Outgoing folder to the
+    Drafts folder upon startup to avoid being sent out by accident. This closes
+    #528.
 
 2014-02-08 Thore Böckelmann <tboeckel@gmx.de>
 

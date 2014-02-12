@@ -1695,7 +1695,7 @@ static void InitAfterLogin(void)
     if(isGroupFolder(folder))
       continue;
 
-    if((isIncomingFolder(folder) || isOutgoingFolder(folder) || isTrashFolder(folder) ||
+    if((isIncomingFolder(folder) || isOutgoingFolder(folder) || isDraftsFolder(folder) || isTrashFolder(folder) ||
         C->LoadAllFolders == TRUE) && !isProtectedFolder(folder))
     {
       // call the getIndex function which on one hand loads the full .index file
@@ -1731,6 +1731,9 @@ static void InitAfterLogin(void)
 
     DoMethod(G->App, MUIM_Application_InputBuffered);
   }
+
+  // move any still existing "hold" mail from pre 2.9 installations over to the Drafts folder
+  MoveHeldMailsToDraftsFolder();
 
   SplashProgress(tr(MSG_RebuildIndices), 60);
   MA_RebuildIndexes();
