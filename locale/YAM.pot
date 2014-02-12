@@ -3704,9 +3704,9 @@ msgstr "Send a carbon copy (Cc) of the\nmessage to these recipients."
 
 msgctxt "MSG_HELP_WR_ST_BCC (1036//)"
 msgid ""
-"Send a blind carbon copy (BCc) of\n"
+"Send a blind carbon copy (Bcc) of\n"
 "the message to these recipients."
-msgstr "Send a blind carbon copy (BCc) of\nthe message to these recipients."
+msgstr "Send a blind carbon copy (Bcc) of\nthe message to these recipients."
 
 msgctxt "MSG_HELP_WR_ST_EXTHEADER (1037//)"
 msgid ""
