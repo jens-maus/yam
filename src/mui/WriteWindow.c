@@ -1157,7 +1157,7 @@ OVERLOAD(OM_NEW)
                           Child, VSpace(0),
                           Child, data->TX_POSI = TextObject,
                             MUIA_Weight,        0,
-                            MUIA_Text_Contents, "000 \n000 ",
+                            MUIA_Text_Contents, "000\n000",
                             MUIA_Text_Copy,     FALSE,
                             MUIA_Background,    MUII_RegisterBack,
                             MUIA_Frame,         MUIV_Frame_None,
@@ -2310,6 +2310,7 @@ DECLARE(AddPGPKey)
 DECLARE(UpdateCursorPos)
 {
   GETDATA;
+
   ENTER();
 
   snprintf(data->cursorPos, sizeof(data->cursorPos), "%03ld\n%03ld", xget(data->TE_EDIT, MUIA_TextEditor_CursorY)+1,
@@ -3747,7 +3748,11 @@ DECLARE(LoadText) // char *filename, ULONG changed
   if(data->useTextColors == TRUE)
     setFlag(flags, MUIF_MailTextEdit_LoadFromFile_UseColors);
 
-  result = DoMethod(data->TE_EDIT, MUIM_MailTextEdit_LoadFromFile, (msg->filename != NULL) ? msg->filename : data->wmData->filename, NULL, flags);
+  if((result = DoMethod(data->TE_EDIT, MUIM_MailTextEdit_LoadFromFile, (msg->filename != NULL) ? msg->filename : data->wmData->filename, NULL, flags)) == TRUE)
+  {
+    // update the cursor position
+    DoMethod(obj, METHOD(UpdateCursorPos));
+  }
 
   RETURN(result);
   return (ULONG)result;
