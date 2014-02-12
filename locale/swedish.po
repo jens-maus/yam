@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-02-01 17:11+0000\n"
+"PO-Revision-Date: 2014-02-12 19:32+0000\n"
 "Last-Translator: damato <mail@jens-maus.de>\n"
 "Language-Team: Swedish (http://www.transifex.com/projects/p/yam/language/sv/)\n"
 "MIME-Version: 1.0\n"
@@ -1971,8 +1971,8 @@ msgctxt "MSG_HELP_CO_ST_HEADERS (607//)"
 msgid ""
 "Specify an AmigaDOS pattern to\n"
 "choose the headers in SELECTED format.\n"
-"Default is (From|To|Cc|BCC|Date|Subject)."
-msgstr "Ange ett AmigaDOS-mönster för att\nvälja hur brevhuvudet ska se ut.\nFörvalt är (Från|Till|Kopia|Dold kopia|Datum|Ärende)."
+"Default is (From|To|Cc|Bcc|Date|Subject)."
+msgstr "Ange ett AmigaDOS-mönster för att\nvälja hur brevhuvudet ska se ut.\nFörvalt är (From|To|Cc|Bcc|Date|Subject)."
 
 msgctxt "MSG_HELP_CO_CY_SENDERINFO (608//)"
 msgid ""
@@ -3703,15 +3703,15 @@ msgstr "Valfri beskrivning för markerad bilaga."
 
 msgctxt "MSG_HELP_WR_ST_CC (1035//)"
 msgid ""
-"Send a carbon copy (CC) of the\n"
+"Send a carbon copy (Cc) of the\n"
 "message to these recipients."
-msgstr "Skicka en kopia (CC) av\nmeddelandet till dessa\nmottagare."
+msgstr "Skicka en kopia (Cc) av\nmeddelandet till dessa\nmottagare."
 
 msgctxt "MSG_HELP_WR_ST_BCC (1036//)"
 msgid ""
-"Send a blind carbon copy of\n"
+"Send a blind carbon copy (Bcc) of\n"
 "the message to these recipients."
-msgstr "Skicka en dold kopia (BCC) av\nmeddelandet till dessa mottagare."
+msgstr "Skicka en dold kopia (Bcc) av\nmeddelandet till dessa mottagare."
 
 msgctxt "MSG_HELP_WR_ST_EXTHEADER (1037//)"
 msgid ""
@@ -7327,8 +7327,8 @@ msgid "\\033bTo\\033n"
 msgstr "\\033bTill\\033n"
 
 msgctxt "MSG_FI_CC_FIELD (2016//)"
-msgid "\\033bCC\\033n"
-msgstr "\\033bKopia\\033n"
+msgid "\\033bCc\\033n"
+msgstr "\\033bKopia (Cc)\\033n"
 
 msgctxt "MSG_FI_REPLYTO_FIELD (2017//)"
 msgid "\\033bReply-To\\033n"
@@ -7343,8 +7343,8 @@ msgid "\\033bDate\\033n"
 msgstr "\\033bDatum\\033n"
 
 msgctxt "MSG_FO_TO_PATTERN (2020//)"
-msgid "_Pattern (To:/CC:)"
-msgstr "_Mönster (Till:/CC:)"
+msgid "_Pattern (To:/Cc:)"
+msgstr "_Mönster (Till:/Cc:)"
 
 msgctxt "MSG_FO_TO_ADDRESS (2021//)"
 msgid "Destination address (_To:)"
@@ -8628,11 +8628,11 @@ msgid "Compose mail settings"
 msgstr "Skriv brev inställningar"
 
 msgctxt "MSG_CO_IDENTITY_CC (2278//)"
-msgid "CC: address"
+msgid "Cc: address"
 msgstr "Kopia: adress"
 
 msgctxt "MSG_CO_IDENTITY_BCC (2280//)"
-msgid "BCC: address"
+msgid "Bcc: address"
 msgstr "Dold kopia: adress"
 
 msgctxt "MSG_CO_IDENTITY_REPLYTO (2282//)"
@@ -8789,13 +8789,13 @@ msgstr "Tillåter dig att välja SMTP server som ska\nanvändas när brev skicka
 
 msgctxt "MSG_HELP_CO_ST_IDENTITY_CC (2318//)"
 msgid ""
-"The default CC: recipients added when\n"
+"The default Cc: recipients added when\n"
 "composing a new mail."
 msgstr "Förvalda Kopia: mottagare som läggs till\nvid skapande av nytt brev."
 
 msgctxt "MSG_HELP_CO_ST_IDENTITY_BCC (2319//)"
 msgid ""
-"The default BCC: recipients added when\n"
+"The default Bcc: recipients added when\n"
 "composing a new mail."
 msgstr "Förvalda Dold kopia: mottagare som läggs till\nvid skapande av nytt brev."
 
@@ -9270,12 +9270,12 @@ msgid "Resent-_To"
 msgstr "Återsänt _Till"
 
 msgctxt "MSG_WR_REDIRECT_CC (2413//)"
-msgid "Resent-_CC"
-msgstr "Återsänt _CC"
+msgid "Resent-_Cc"
+msgstr "Återsänt _Cc"
 
 msgctxt "MSG_WR_REDIRECT_BCC (2414//)"
-msgid "Resent-_BCC"
-msgstr "Återsänt _BCC"
+msgid "Resent-_Bcc"
+msgstr "Återsänt _Bcc"
 
 msgctxt "MSG_WR_REDIRECT_TITLE (2415//)"
 msgid "Redirect message(s)"
@@ -9839,41 +9839,41 @@ msgstr "Svara _till"
 
 msgctxt "MSG_AB_TO_TOOLBAR (2535//)"
 msgid "_To:"
-msgstr ""
+msgstr "_Till:"
 
 #. Translate "Cc" which means "Carbon Copy"
 #. (e.g. 'Kopie (_Cc):' in German)
 msgctxt "MSG_AB_CC_TOOLBAR (2536//)"
 msgid "_Cc:"
-msgstr ""
+msgstr "_Kopia:"
 
 #. Translate "Bcc" which means "Blind Carbon Copy"
 #. (e.g. 'Blindkopie (_Bcc):' in German)
 msgctxt "MSG_AB_BCC_TOOLBAR (2537//)"
 msgid "_Bcc:"
-msgstr ""
+msgstr "_Dold kopia:"
 
 # Use same phrase as MSG_WR_FROM but in parentheses
 msgctxt "MSG_AB_FROM_TITLE (2538//)"
 msgid "(From)"
-msgstr ""
+msgstr "(Från)"
 
 # Use same phrase as MSG_WR_To but in parentheses
 msgctxt "MSG_AB_TO_TITLE (2539//)"
 msgid "(To)"
-msgstr ""
+msgstr "(Till)"
 
 # Use same phrase as MSG_WR_CC but in parentheses
 msgctxt "MSG_AB_CC_TITLE (2540//)"
 msgid "(Cc)"
-msgstr ""
+msgstr "(Kopia)"
 
 # Use same phrase as MSG_WR_BCC but in parentheses
 msgctxt "MSG_AB_BCC_TITLE (2541//)"
 msgid "(Bcc)"
-msgstr ""
+msgstr "(Dold kopia)"
 
 # Use same phrase as MSG_WR_REPLYTO but in parentheses
 msgctxt "MSG_AB_REPLYTO_TITLE (2542//)"
 msgid "(Reply To)"
-msgstr ""
+msgstr "(Svara till)"
