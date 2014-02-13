@@ -13,8 +13,8 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-02-12 18:54+0000\n"
-"Last-Translator: damato <mail@jens-maus.de>\n"
+"PO-Revision-Date: 2014-02-13 17:58+0000\n"
+"Last-Translator: peguser <mobydick@amiga.org.ru>\n"
 "Language-Team: Russian (http://www.transifex.com/projects/p/yam/language/ru/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -5542,103 +5542,103 @@ msgstr "При попытке переместить содержимое пап
 
 msgctxt "MSG_FI_SELECTACTIVE (1576//)"
 msgid "Select this m_atch"
-msgstr ""
+msgstr "Выбрать это _вхождение"
 
 msgctxt "MSG_HELP_FI_BT_SELECTACTIVE (1577//)"
 msgid ""
 "Select the current message\n"
 "in the main window."
-msgstr ""
+msgstr "Выбрать текущее сообщение\nв основном окне."
 
 msgctxt "MSG_QUICKSEARCH_VO_ALL (1584//)"
 msgid "All"
-msgstr ""
+msgstr "Все"
 
 msgctxt "MSG_QUICKSEARCH_VO_UNREAD (1585//)"
 msgid "Unread"
-msgstr ""
+msgstr "Непрочитанные"
 
 msgctxt "MSG_QUICKSEARCH_VO_NEW (1586//)"
 msgid "New"
-msgstr ""
+msgstr "Новые"
 
 msgctxt "MSG_QUICKSEARCH_VO_MARKED (1587//)"
 msgid "Marked"
-msgstr ""
+msgstr "Отмеченные"
 
 msgctxt "MSG_QUICKSEARCH_VO_IMPORTANT (1588//)"
 msgid "Important"
-msgstr ""
+msgstr "Важные"
 
 msgctxt "MSG_QUICKSEARCH_VO_LAST5DAYS (1589//)"
 msgid "Last 5 Days"
-msgstr ""
+msgstr "За последние 5 дней"
 
 msgctxt "MSG_QUICKSEARCH_VO_KNOWNPEOPLE (1590//)"
 msgid "People I Know"
-msgstr ""
+msgstr "Среди знакомых"
 
 msgctxt "MSG_QUICKSEARCH_VO_HASATTACHMENTS (1591//)"
 msgid "Has Attachments"
-msgstr ""
+msgstr "С приложениями"
 
 msgctxt "MSG_QUICKSEARCH_VO_MINSIZE (1592//)"
 msgid "Message Size > 1 MB"
-msgstr ""
+msgstr "Размер сообщения >1 МБ"
 
 msgctxt "MSG_QUICKSEARCH_VIEW (1593//)"
 msgid "_View:"
-msgstr ""
+msgstr "_Просмотреть:"
 
 #. COUNT, COUNT
 msgctxt "MSG_QUICKSEARCH_SHOWNMSGS (1594//)"
 msgid "%ld of %ld shown"
-msgstr ""
+msgstr "Показано %ld из %ld"
 
 msgctxt "MSG_FI_NOFOLDERS (1595//)"
 msgid "n_owhere"
-msgstr ""
+msgstr "_нигде"
 
 msgctxt "MSG_HELP_QUICKSEARCH_VIEWOPTIONS (1596//)"
 msgid ""
 "Only mail matching this criterion\n"
 "will be displayed."
-msgstr ""
+msgstr "Будут показаны только те сообщения,\nкоторые удовлетворяют указанным условиям."
 
 msgctxt "MSG_HELP_QUICKSEARCH_SEARCHSTRING (1597//)"
 msgid ""
 "Text inserted here will be used as the search\n"
 "criterion to display mail in this folder."
-msgstr ""
+msgstr "Наличие в сообщении вставленного сюда текста\nбудет критерием для отображения сообщений\nв этой папке."
 
 #. FOLDERNAME
 msgctxt "MSG_BUSY_SEARCHINGFOLDER (1599//)"
 msgid "Searching messages in folder '%s'..."
-msgstr ""
+msgstr "Ищу сообщения в папке «%s»..."
 
 msgctxt "MSG_CO_WBAPPICON (1600//)"
 msgid "A_ppIcon on Workbench"
-msgstr ""
+msgstr "_Иконка приложения на рабочем столе"
 
 msgctxt "MSG_HELP_CO_CH_WBAPPICON (1601//)"
 msgid ""
 "If checked, an AppIcon will appear on\n"
 "Workbench showing folder statistics."
-msgstr ""
+msgstr "Если включено, на рабочем столе будет иконка\nприложения (AppIcon) со статистикой по папкам."
 
 msgctxt "MSG_CO_DOCKYICON (1602//)"
 msgid "Enable 'd_ocky' icon"
-msgstr ""
+msgstr "Включить иконку «d_ocky»"
 
 msgctxt "MSG_HELP_CO_CH_DOCKYICON (1603//)"
 msgid ""
 "If checked, YAM will add a 'docky' to\n"
 "AmiDock. This requires AmigaOS 4.x."
-msgstr ""
+msgstr "Если выбрано, YAM добавит «docky» в AmiDock.\nТребуется AmigaOS 4.x."
 
 msgctxt "MSG_MA_MessageImport (1606//)"
 msgid "Import messages"
-msgstr ""
+msgstr "Импорт сообщений"
 
 #. FILENAME
 msgctxt "MSG_ER_MESSAGEIMPORT (1607//)"
@@ -5646,23 +5646,23 @@ msgid ""
 "An error occurred while trying to import mail from file '%s'.\n"
 "\n"
 "Please check that the file is readable and contains RFC822 compliant e-mails using a format supported by YAM. The currently supported formats are 'MBOX', 'DBX' (Outlook Express) or plain RFC822 mail files. Read the documentation for more information."
-msgstr ""
+msgstr "Произошла ошибка при попытке импортировать сообщение из файла «%s».\n\nУбедитесь, что файл читаемый и содержит электронную почту, соответствующую RFC822, в формате, поддерживаемом YAM. В настоящее время поддерживаются форматы «MBOX», «DBX» (Outlook Express) и простые текстовые файлы по RFC822. Подробнее вы можете узнать об этом в документации. "
 
 msgctxt "MSG_MA_MESSAGEEXPORT (1608//)"
 msgid "Export messages"
-msgstr ""
+msgstr "Экспорт сообщений"
 
 msgctxt "MSG_YAMINFO (1609//)"
 msgid "Open Source E-Mail Client for the Amiga"
-msgstr ""
+msgstr "Почтовый клиент с открытым исходным кодом для Amiga"
 
 msgctxt "MSG_CO_SYSTEMSETTINGS (1610//)"
 msgid "System settings"
-msgstr ""
+msgstr "Системные настройки"
 
 msgctxt "MSG_CO_DEFAULTCHARSET (1611//)"
 msgid "C_harset"
-msgstr ""
+msgstr "_Кодовая таблица"
 
 #. LOCALCHARSET
 msgctxt "MSG_CO_CHARSETUNKNOWNWARN (1612//)"
