@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-02-13 18:39+0000\n"
+"PO-Revision-Date: 2014-02-13 19:58+0000\n"
 "Last-Translator: peguser <mobydick@amiga.org.ru>\n"
 "Language-Team: Russian (http://www.transifex.com/projects/p/yam/language/ru/)\n"
 "MIME-Version: 1.0\n"
@@ -5811,31 +5811,31 @@ msgstr "Создайте собственные типы MIME и настрой�
 
 msgctxt "MSG_CO_ABOOK_TITLE (1643//)"
 msgid "Address Book Settings"
-msgstr ""
+msgstr "Настройки адресной книги"
 
 msgctxt "MSG_CO_ABOOK_SUMMARY (1644//)"
 msgid "Configure address book related options..."
-msgstr ""
+msgstr "Настройки, связанные с адресной книгой..."
 
 msgctxt "MSG_CO_SCRIPTS_TITLE (1645//)"
 msgid "Scripts Settings"
-msgstr ""
+msgstr "Настройки сценариев"
 
 msgctxt "MSG_CO_SCRIPTS_SUMMARY (1646//)"
 msgid "Configure your helper scripts..."
-msgstr ""
+msgstr "Настройте полезные сценарии..."
 
 msgctxt "MSG_CO_MIXED_TITLE (1647//)"
 msgid "Miscellaneous Settings"
-msgstr ""
+msgstr "Разные настройки"
 
 msgctxt "MSG_CO_MIXED_SUMMARY (1648//)"
 msgid "A bunch of settings that don't fit anywhere else..."
-msgstr ""
+msgstr "Всякие настройки, которые больше некуда деть..."
 
 msgctxt "MSG_CO_UPDATE_TITLE (1649//)"
 msgid "Software Updates"
-msgstr ""
+msgstr "Обновление программы"
 
 msgctxt "MSG_CO_UPDATE_SUMMARY (1650//)"
 msgid "Keep track of updates to YAM and related components..."
