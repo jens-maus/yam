@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-02-13 19:58+0000\n"
+"PO-Revision-Date: 2014-02-13 20:04+0000\n"
 "Last-Translator: peguser <mobydick@amiga.org.ru>\n"
 "Language-Team: Russian (http://www.transifex.com/projects/p/yam/language/ru/)\n"
 "MIME-Version: 1.0\n"
@@ -5835,19 +5835,19 @@ msgstr "Всякие настройки, которые больше некуд�
 
 msgctxt "MSG_CO_UPDATE_TITLE (1649//)"
 msgid "Software Updates"
-msgstr "Обновление программы"
+msgstr "Обновления программ"
 
 msgctxt "MSG_CO_UPDATE_SUMMARY (1650//)"
 msgid "Keep track of updates to YAM and related components..."
-msgstr ""
+msgstr "Контролирует обновления YAM и связанных компонент..."
 
 msgctxt "MSG_CO_CrdUpdate (1651//)"
 msgid "Updates"
-msgstr ""
+msgstr "Обновления"
 
 msgctxt "MSG_CO_AMISSLWARN_TITLE (1652//)"
 msgid "AmiSSL not available"
-msgstr ""
+msgstr "Отсутствует AmiSSL"
 
 #. AMISSL_VERSION, AMISSL_REVISION
 msgctxt "MSG_CO_AMISSLWARN (1653//)"
@@ -5858,7 +5858,7 @@ msgid ""
 "\n"
 "Please verify that at least AmiSSL v%lu.%lu is\n"
 "correctly installed and then restart YAM."
-msgstr ""
+msgstr "Выяснилось, что отсутсвует AmiSSL. Поэтому\nбезопасные соединения (SSL/TLS) отключены\nдо тех пор, пока AmiSSL не будет правильно\nустановлена.\n\nУбедитесь, что AmiSSL версии v%lu.%lu\nустановлена правильно и перезапустите YAM."
 
 msgctxt "MSG_CO_AMISSLWARN_BT (1654//)"
 msgid "*_Exit|Ignore _always|Ignore"
