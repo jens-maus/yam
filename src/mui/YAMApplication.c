@@ -1666,11 +1666,11 @@ DECLARE(OpenAddressBookWindow) // enum AddressbookMode mode, LONG windowNumber, 
 /// DECLARE(EmptyTrashFolder)
 DECLARE(EmptyTrashFolder) // ULONG quiet
 {
-  struct Folder *folder;
+  struct Folder *trashFolder;
 
   ENTER();
 
-  if((folder = FO_GetFolderByType(FT_TRASH, NULL)) != NULL)
+  if((trashFolder = FO_GetFolderByType(FT_TRASH, NULL)) != NULL)
   {
     struct BusyNode *busy;
     struct MailNode *mnode;
@@ -1679,37 +1679,37 @@ DECLARE(EmptyTrashFolder) // ULONG quiet
     busy = BusyBegin(BUSY_PROGRESS);
     BusyText(busy, tr(MSG_BusyEmptyingTrash), "");
 
-    LockMailList(folder->messages);
+    LockMailList(trashFolder->messages);
 
     i = 0;
-    ForEachMailNode(folder->messages, mnode)
+    ForEachMailNode(trashFolder->messages, mnode)
     {
       struct Mail *mail = mnode->mail;
       char mailfile[SIZE_PATHFILE];
 
-      BusyProgress(busy, ++i, folder->Total);
-      AppendToLogfile(LF_VERBOSE, 21, tr(MSG_LOG_DeletingVerbose), AddrName(mail->From), mail->Subject, folder->Name);
+      BusyProgress(busy, ++i, trashFolder->Total);
+      AppendToLogfile(LF_VERBOSE, 21, tr(MSG_LOG_DeletingVerbose), AddrName(mail->From), mail->Subject, trashFolder->Name);
       GetMailFile(mailfile, sizeof(mailfile), NULL, mail);
       DeleteFile(mailfile);
     }
 
-    // We only clear the folder if it wasn't empty anyway..
+    // We only clear the trash folder if it wasn't empty anyway..
     if(i > 0)
     {
-      ClearFolderMails(folder, TRUE);
+      ClearFolderMails(trashFolder, TRUE);
 
-      MA_ExpireIndex(folder);
+      MA_ExpireIndex(trashFolder);
 
-      if(GetCurrentFolder() == folder)
-        DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_DisplayMailsOfFolder, folder);
+      if(GetCurrentFolder() == trashFolder)
+        DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_DisplayMailsOfFolder, trashFolder);
 
-      AppendToLogfile(LF_NORMAL, 20, tr(MSG_LOG_Deleting), i, folder->Name);
+      AppendToLogfile(LF_NORMAL, 20, tr(MSG_LOG_Deleting), i, trashFolder->Name);
 
       if(msg->quiet == FALSE)
-        DisplayStatistics(folder, TRUE);
+        DisplayStatistics(trashFolder, TRUE);
     }
 
-    UnlockMailList(folder->messages);
+    UnlockMailList(trashFolder->messages);
 
     BusyEnd(busy);
   }
@@ -1741,6 +1741,7 @@ DECLARE(DeleteOldMails)
     ULONG f;
     struct FolderNode *fnode;
     ULONG delFlags = (C->RemoveOnQuit == TRUE) ? DELF_AT_ONCE : 0;
+    struct Folder *currentFolder = GetCurrentFolder();
 
     busy = BusyBegin(BUSY_PROGRESS_ABORT);
     BusyText(busy, tr(MSG_BusyDeletingOld), "");
@@ -1807,6 +1808,11 @@ DECLARE(DeleteOldMails)
 
         if(IsMailListEmpty(toBeDeletedList) == FALSE)
         {
+          // "mute" the main mail list for the current folder to avoid a redraw for
+          // every single deleted mail
+          if(folder == currentFolder)
+            set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, TRUE);
+
           // no need to lock the "to be deleted" list as this is known in this function only.
           // Iterate through the list "by foot" as we remove the nodes, ForEachMailNode() is
           // not safe to call here!
@@ -1822,6 +1828,10 @@ DECLARE(DeleteOldMails)
             // delete the mail node itself
             DeleteMailNode(mnode);
           }
+
+          // "unmute" the main mail list again
+          if(folder == currentFolder)
+            set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, FALSE);
 
           DisplayStatistics(folder, FALSE);
         }

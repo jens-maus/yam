@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-02-14 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/YAMApplication.c: put the main mail list into quiet mode for the current
+    folder when deleting old mails to avoid a redraw for every single deleted
+    mail.
+
 2014-02-12 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/WriteWindow.c: make sure that the displayed cursor position is correctly
