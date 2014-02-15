@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-02-15 Jens Maus <mail@jens-maus.de>
+
+  * extrasrc/NewReadArgs.c: adapted sources to latest OS4 API where CurrentDir()
+    have been flagged obsolete and replaced by SetCurrentDir().
+
 2014-02-14 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/YAMApplication.c: put the main mail list into quiet mode for the current
