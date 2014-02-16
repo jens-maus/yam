@@ -732,29 +732,9 @@ OBJS = \
 	$(addprefix $(TCPDIR)/,$(TCPOBJS)) \
 	$(addprefix $(EXTRADIR)/,$(EXTRAOBJS))
 
-# available catalog translations
+# available catalog translations (po files)
 CATALOGS = \
-	$(LOCALE)/czech.catalog \
-	$(LOCALE)/danish.catalog \
-	$(LOCALE)/dutch.catalog \
-	$(LOCALE)/english-british.catalog \
-	$(LOCALE)/finnish.catalog \
-	$(LOCALE)/french.catalog \
-	$(LOCALE)/german.catalog \
-	$(LOCALE)/greek.catalog \
-	$(LOCALE)/hungarian.catalog \
-	$(LOCALE)/italian.catalog \
-	$(LOCALE)/polish.catalog \
-	$(LOCALE)/russian.catalog \
-	$(LOCALE)/spanish.catalog \
-	$(LOCALE)/swedish.catalog \
-	$(LOCALE)/turkish.catalog
-	# $(LOCALE)/bosnian.catalog
-	# $(LOCALE)/norwegian.catalog
-	# $(LOCALE)/portuguese-brazil.catalog
-	# $(LOCALE)/portuguese.catalog
-	# $(LOCALE)/serbian.catalog
-	# $(LOCALE)/slovenian.catalog
+	$(patsubst %.po,%.catalog,$(wildcard $(LOCALE)/*.po))
 
 # main target
 .PHONY: all
