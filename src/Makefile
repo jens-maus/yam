@@ -841,7 +841,7 @@ clean:
 cleanall: clean
 	@echo "  CLEANALL"
 	@$(RM) Locale.? ParseEmail.c HTML2Mail.c $(MUIDIR)/Classes.* $(MUIDIR)/*_cl.h $(MUIDIR)/*.crc
-	@$(RM) $(LOCALE)/*.catalog $(LOCALE)/*.ct $(LOCALE)/*.cd
+	@$(RM) $(LOCALE)/*.catalog
 	@$(RMDIR) $(OBJDIR)
 	@$(RMDIR) $(DEPDIR)
 
@@ -896,13 +896,9 @@ $(SVNREV)/svnrev: $(SVNREV)/svnrev.c $(SVNREV)/svnrev.h
 
 ## CATALOG GENERATION #################
 
-$(LOCALE)/%.ct: $(LOCALE)/%.po
-	@echo "  GN $@"
-	@$(LOCALE)/cd2po.sh $< >$@
-
-$(LOCALE)/%.catalog: $(LOCALE)/%.ct $(LOCALE)/YAM.cd
+$(LOCALE)/%.catalog: $(LOCALE)/%.po
 	@echo "  MK $@"
-	@$(FC) $(LOCALE)/YAM.cd $< CATALOG $@
+	@$(FC) POFILE $< CATALOG $@
 
 .IGNORE: $(CATALOGS)
 
@@ -910,14 +906,10 @@ catalogs: $(CATALOGS)
 
 ## FLEXCAT ############################
 
-$(LOCALE)/YAM.cd: $(LOCALE)/YAM.pot
-	@echo "  GN $@"
-	@$(LOCALE)/cd2po.sh $< >$@
-
 Locale.h: Locale.c
-Locale.c: $(LOCALE)/YAM.cd Locale_h.sd Locale_c.sd
+Locale.c: $(LOCALE)/YAM.pot Locale_h.sd Locale_c.sd
 	@echo "  GN $@"
-	@$(FC) $(LOCALE)/YAM.cd Locale.h=Locale_h.sd Locale.c=Locale_c.sd
+	@$(FC) $(LOCALE)/YAM.pot Locale.h=Locale_h.sd Locale.c=Locale_c.sd
 
 ## TO CREATE RELEASE ARCHIVES #########
 

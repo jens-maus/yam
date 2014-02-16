@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-02-16 Jens Maus <mail@jens-maus.de>
+
+  * Makefile, locale: modified makefile to directly use FlexCat 2.13+ to convert
+    our .po style translation files to their corresponding .catalog files instead
+    of using our 'cd2po.sh' shell script which is now part of the FlexCat project
+    instead. Please note that the upcoming FlexCat 2.13 or newer version is
+    required to convert po-files to catalog files.
+
 2014-02-15 Jens Maus <mail@jens-maus.de>
 
   * Locale_?.sd, misc: slightly reworked our flexcat source templates to behave
