@@ -889,7 +889,7 @@ $(LIB)/libtz.a: $(TZLIB)/asctime.c $(TZLIB)/difftime.c \
 
 svnrev.h: $(SVNREV)/svnrev
 	@echo "  GN $@"
-	@$(SVNREV)/svnrev -o$@ *.c *.h *.l $(MUIDIR)/*.c $(REXXDIR)/*.c $(MIMEDIR)/*.c $(MIMEDIR)/*.h $(TCPDIR)/*.c $(TCPDIR)/*.h $(EXTRADIR)/*.c $(EXTRADIR)/*.h $(LOCALE)/*.cd $(LOCALE)/*.pot $(LOCALE)/*.po
+	@$(SVNREV)/svnrev -o$@ *.c *.h *.l $(MUIDIR)/*.c $(REXXDIR)/*.c $(MIMEDIR)/*.c $(MIMEDIR)/*.h $(TCPDIR)/*.c $(TCPDIR)/*.h $(EXTRADIR)/*.c $(EXTRADIR)/*.h $(LOCALE)/*.pot $(LOCALE)/*.po
 
 $(SVNREV)/svnrev: $(SVNREV)/svnrev.c $(SVNREV)/svnrev.h
 	@$(MAKE) -C $(SVNREV) HOST=$(HOST)
