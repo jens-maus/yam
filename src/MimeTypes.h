@@ -54,7 +54,7 @@ struct IntMimeType
 {
   const char *ContentType;  // IANA conform content-type (e.g. 'application/pdf')
   const char *Extension;    // space separated string list of extensions
-  const char *Description;  // a short description of the MIME type
+  const struct fcstr * const Description;  // a short description of the MIME type
 };
 
 extern const struct IntMimeType IntMimeTypeArray[];

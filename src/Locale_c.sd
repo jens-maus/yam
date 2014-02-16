@@ -39,20 +39,20 @@
 
 #include "Debug.h"
 
-struct FC_Type { const long ID; const char * const Str; };
+struct fcstr { const long ID; const char * const Str; };
 
-const struct FC_Type _%i = { %d, %s };
+const struct fcstr const _%i = { %d, %s };
 
 /*** Catalog functions ***/
 /// tr()
-const char *tr(const void *fcstr)
+const char *tr(const struct fcstr* const fc)
 {
-  const char *defaultstr = ((struct FC_Type *)fcstr)->Str;
+  const char *result = fc->Str;
 
-  if(G->Catalog)
-    return (const char *)GetCatalogStr(G->Catalog, ((struct FC_Type *)fcstr)->ID, (STRPTR)defaultstr);
+  if(G->Catalog != NULL)
+    result = (const char *)GetCatalogStr(G->Catalog, fc->ID, (STRPTR)fc->Str);
 
-  return defaultstr;
+  return result;
 }
 ///
 /// Close%bCatalog()

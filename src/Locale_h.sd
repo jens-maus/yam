@@ -35,16 +35,18 @@
 #ifndef LOCALE_H
 #define LOCALE_H
 
+// forward declaration
+struct fcstr;
+
 // catalog translation functions
-extern const char *tr(const void *);
+extern const char *tr(const struct fcstr* const);
 extern BOOL Open%bCatalog(void);
 extern void Close%bCatalog(void);
 
 // const pointers to internal strings
-extern const void* const _%i;
+extern const struct fcstr* const _%i;
 
 // substiting defines to directly use MSG_XXXXX strings
-#define MSG_Space ((const void* const)1)
-#define %i ((const void* const)&_%i)
+#define %i ((const struct fcstr* const)&_%i)
 
 #endif /* LOCALE_H */

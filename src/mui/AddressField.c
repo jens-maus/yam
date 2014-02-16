@@ -70,7 +70,7 @@ OVERLOAD(OM_NEW)
   struct TagItem *tag;
   ULONG flags = 0;
   char shortCut = '\0';
-  const char *help = NULL;
+  const struct fcstr * help = NULL;
   enum AddressbookMode mode = ABM_NONE;
   LONG windowNumber = -1;
 
@@ -82,7 +82,7 @@ OVERLOAD(OM_NEW)
     {
       case ATTR(Flags):        flags = tag->ti_Data; break;
       case ATTR(Shortcut):     shortCut = tag->ti_Data; break;
-      case ATTR(Help):         help = (const char *)tag->ti_Data; break;
+      case ATTR(Help):         help = (const struct fcstr *)tag->ti_Data; break;
       case ATTR(Mode):         mode = tag->ti_Data; break;
       case ATTR(WindowNumber): windowNumber = tag->ti_Data; break;
     }

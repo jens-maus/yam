@@ -30,7 +30,9 @@
 
 #include "SDI_compiler.h"
 
+// forward declarations
 struct FileRequester;
+struct fcstr;
 
 Object *MakeButton(const char *txt);
 Object *MakeCheck(const char *label);
@@ -40,7 +42,7 @@ Object *MakeInteger(int maxlen, const char *label);
 Object *MakeNumeric(int min, int max, BOOL percent);
 Object *MakePassString(const char *label);
 Object *MakeString(int maxlen, const char *label);
-Object *MakeAddressField(Object **string, const char *label, const void *help, int abmode, int winnr, ULONG flags);
+Object *MakeAddressField(Object **string, const char *label, const struct fcstr * const help, int abmode, int winnr, ULONG flags);
 Object *MakeCloseButton(void);
 char ShortCut(const char *label);
 

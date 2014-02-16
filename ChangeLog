@@ -7,6 +7,10 @@ $URL$
 
 2014-02-15 Jens Maus <mail@jens-maus.de>
 
+  * Locale_?.sd, misc: slightly reworked our flexcat source templates to behave
+    a bit more typesafe. Previously everything was performed with "void*"
+    pointers. Now typesafe pointers to a struct are used to make sure that only
+    valid flexcat definitions are passed to tr().
   * extrasrc/NewReadArgs.c: adapted sources to latest OS4 API where CurrentDir()
     have been flagged obsolete and replaced by SetCurrentDir().
 
