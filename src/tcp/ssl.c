@@ -846,6 +846,21 @@ BOOL MakeSecureConnection(struct Connection *conn)
                     default:
                     {
                       E(DBF_NET, "SSL_connect() returned error %ld", err);
+
+                      // get more information on the error
+                      #if defined(DEBUG)
+                      {
+                        char buf[255];
+                        unsigned long errcode;
+
+                        while((errcode = ERR_get_error()) != 0)
+                        {
+                          ERR_error_string_n(errcode, buf, sizeof(buf));
+                          E(DBF_NET, "ERR_get_error() stack: '%s'", buf);
+                        }
+                      }
+                      #endif
+
                       errorState = TRUE;
                     }
                     break;
