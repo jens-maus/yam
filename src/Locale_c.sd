@@ -41,7 +41,7 @@
 
 struct fcstr { const long ID; const char * const Str; };
 
-const struct fcstr const _%i = { %d, %s };
+const struct fcstr _%i = { %d, %s };
 
 /*** Catalog functions ***/
 /// tr()

@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-02-17 Jens Maus <mail@jens-maus.de>
+
+  * Locale_c.sd: removed a not required 'const' statement that also caused some
+    compiler warnings with older GCC versions.
+
 2014-02-16 Jens Maus <mail@jens-maus.de>
 
   * Makefile: we use a wildcard makefile statement now to get all available
