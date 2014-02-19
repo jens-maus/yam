@@ -837,7 +837,7 @@ BOOL MakeSecureConnection(struct Connection *conn)
                       else
                       {
                         // the rest should signal an error
-                        E(DBF_NET, "WaitSelect() returned error %ld", err);
+                        E(DBF_NET, "WaitSelect() returned %ld with SSL_get_error() = %d", retVal, err);
                         errorState = TRUE;
                       }
                     }
@@ -845,7 +845,7 @@ BOOL MakeSecureConnection(struct Connection *conn)
 
                     default:
                     {
-                      E(DBF_NET, "SSL_connect() returned error %ld", err);
+                      E(DBF_NET, "SSL_connect() returned %d with SSL_get_errror() = %d", res, err);
 
                       // get more information on the error
                       #if defined(DEBUG)
@@ -853,10 +853,11 @@ BOOL MakeSecureConnection(struct Connection *conn)
                         char buf[255];
                         unsigned long errcode;
 
+                        E(DBF_NET, "querying ERR_get_error() stack:");
                         while((errcode = ERR_get_error()) != 0)
                         {
                           ERR_error_string_n(errcode, buf, sizeof(buf));
-                          E(DBF_NET, "ERR_get_error() stack: '%s'", buf);
+                          E(DBF_NET, "ERR_get_error()=%ld stack: '%s'", errcode, buf);
                         }
                       }
                       #endif
