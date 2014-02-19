@@ -54,8 +54,8 @@ struct Data
 /* EXPORT
 struct PageList
 {
-  int  Offset;
-  const void *PageLabel;
+  int Offset;
+  const struct fcstr *PageLabel;
 };
 
 enum ConfigPage
