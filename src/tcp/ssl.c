@@ -790,9 +790,13 @@ BOOL MakeSecureConnection(struct Connection *conn)
                 D(DBF_NET, "connect SSL context %08lx", conn->ssl);
                 while(errorState == FALSE && (res = SSL_connect(conn->ssl)) <= 0)
                 {
-                  int err = SSL_get_error(conn->ssl, res);
+                  #if defined(DEBUG)
+                  int errnosv = errno; // preserve errno directly after SSL_connect()
+                  #endif
+                  int err;
 
-                  switch(err)
+                  // get the reason why SSL_connect() returned an error
+                  switch((err = SSL_get_error(conn->ssl, res)))
                   {
                     case SSL_ERROR_WANT_READ:
                     case SSL_ERROR_WANT_WRITE:
@@ -854,9 +858,16 @@ BOOL MakeSecureConnection(struct Connection *conn)
                         unsigned long errcode;
 
                         // query errno first
+                        #if defined(__amigaos4__) || defined(__amigaos3__)
                         strerror_r(errno, buf, sizeof(buf));
-
                         E(DBF_NET, "errno(%d) = '%s'", errno, buf);
+                        strerror_r(errnosv, buf, sizeof(buf));
+                        E(DBF_NET, "errnosv(%d) = '%s'", errnosv, buf);
+                        #else
+                        E(DBF_NET, "errno(%d) = '%s'", errno, strerror(errno));
+                        E(DBF_NET, "errnosv(%d) = '%s'", errnosv, strerror(errnosv));
+                        #endif
+
                         E(DBF_NET, "querying ERR_get_error() stack:");
                         while((errcode = ERR_get_error()) != 0)
                         {
