@@ -15,7 +15,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-02-20 20:46+0000\n"
+"PO-Revision-Date: 2014-02-22 20:34+0000\n"
 "Last-Translator: peguser <mobydick@amiga.org.ru>\n"
 "Language-Team: Russian (http://www.transifex.com/projects/p/yam/language/ru/)\n"
 "MIME-Version: 1.0\n"
@@ -6079,7 +6079,7 @@ msgstr "При попытке создать архив из выбранных 
 
 msgctxt "MSG_CO_ABOOKLOOKUP (1713//)"
 msgid "_Address book lookup in message list"
-msgstr ""
+msgstr "_Заменить адреса на имена в списке сообщений"
 
 msgctxt "MSG_HELP_CO_CH_ABOOKLOOKUP (1714//)"
 msgid ""
@@ -6091,7 +6091,7 @@ msgid ""
 "and may bring down the performance of the list display.\n"
 "This is especially true for a large amount of address\n"
 "book entries."
-msgstr ""
+msgstr "Заменить адреса отправителей/получателей в\nсписке сообщений на настоящие имена из\nадресной книги.\n\nИмейте ввиду, что это требует времени и может\nухудшить время отображения списка. Особенно\nэто заметно при большом количестве записей\nв адресной книге."
 
 #. COUNT, COUNT
 msgctxt "MSG_TR_MESSAGEGAUGE (1715//)"
@@ -6106,7 +6106,7 @@ msgctxt "MSG_HELP_CO_CONVERTHTML (1717//)"
 msgid ""
 "If the main part of an e-mail is HTML, YAM will\n"
 "convert it to plain text before displaying it."
-msgstr ""
+msgstr "Если основная часть сообщения в HTML, YAM\nконвертирует его в обычный текст перед отображением."
 
 #. SIZE, SIZE, SPEED, MINS, SECS, MINS, SECS
 msgctxt "MSG_TR_TRANSFERSTATUS (1719//)"
@@ -6118,12 +6118,12 @@ msgstr ""
 #. SIZE, SIZE
 msgctxt "MSG_TR_TRANSFERSIZE (1720//)"
 msgid "%s of %s"
-msgstr ""
+msgstr "%s из %s"
 
 #. COUNT, COUNT
 msgctxt "MSG_FI_GAUGETEXT (1721//)"
 msgid "%%ld of %ld messages"
-msgstr ""
+msgstr "%%ld из %ld сообщений"
 
 #. PART-NR, NAME, DESCRIPTION, CONTENT-TYPE, SIZE
 msgctxt "MSG_MA_MIMEPART_INFO (1725//)"
@@ -6156,19 +6156,19 @@ msgstr ""
 
 msgctxt "MSG_UT_PGPPASSREQ_TITLE (1730//)"
 msgid "PGP passphrase request"
-msgstr ""
+msgstr "Ввод пароля PGP"
 
 msgctxt "MSG_CO_GR_REPLYFORWARD (1731//)"
 msgid "Reply/Forward"
-msgstr ""
+msgstr "Ответить/Цитировать"
 
 msgctxt "MSG_CO_GR_SCRIPTS (1732//)"
 msgid "Scripts"
-msgstr ""
+msgstr "Сценарии"
 
 msgctxt "MSG_CO_GR_STARTUPQUIT (1733//)"
 msgid "Startup/Quit"
-msgstr ""
+msgstr "Запуск/Выход"
 
 msgctxt "MSG_CO_SCRIPTS_PREGET (1734//)"
 msgid "%p  Type of download action"
@@ -6216,117 +6216,117 @@ msgstr ""
 
 msgctxt "MSG_MA_SPAM (1744//)"
 msgid "Spam"
-msgstr ""
+msgstr "Спам"
 
 msgctxt "MSG_LOADINGSPAMTRAININGDATA (1745//)"
 msgid "Loading spam training data..."
-msgstr ""
+msgstr "Загружаю данные для тренировки фильтра спама..."
 
 msgctxt "MSG_MA_TBSPAM (1746//8)"
 msgid "Sp_am"
-msgstr ""
+msgstr "Сп_ам"
 
 msgctxt "MSG_MA_TBNOTSPAM (1747//8)"
 msgid "N.Sp_am"
-msgstr ""
+msgstr "Н_е спам"
 
 msgctxt "MSG_HELP_MA_BT_SPAM (1748//)"
 msgid "Mark message as spam"
-msgstr ""
+msgstr "Пометить сообщение как спам"
 
 msgctxt "MSG_HELP_MA_BT_NOTSPAM (1749//)"
 msgid "Mark message as not spam"
-msgstr ""
+msgstr "Пометить сообщение как не спам"
 
 msgctxt "MSG_RE_TBSPAM (1750//8)"
 msgid "Sp_am"
-msgstr ""
+msgstr "Спам"
 
 msgctxt "MSG_RE_TBNOTSPAM (1751//8)"
 msgid "N.Sp_am"
-msgstr ""
+msgstr "Н_е спам"
 
 msgctxt "MSG_HELP_RE_BT_SPAM (1752//)"
 msgid "Mark message as spam."
-msgstr ""
+msgstr "Пометить сообщение как спам."
 
 msgctxt "MSG_HELP_RE_BT_NOTSPAM (1753//)"
 msgid "Mark message as not spam."
-msgstr ""
+msgstr "Пометить сообщение как не спам."
 
 #. SENDER, SUBJECT
 msgctxt "MSG_LOG_MAILISSPAM (1754//)"
 msgid "Message from '%s' about '%s' is treated as spam."
-msgstr ""
+msgstr "Сообщение от «%s» о «%s» признано спамом."
 
 #. SENDER, SUBJECT
 msgctxt "MSG_LOG_MAILISNOTSPAM (1755//)"
 msgid "Message from '%s' about '%s' is no longer treated as spam."
-msgstr ""
+msgstr "Сообщение от «%s» о «%s» больше не считается спамом."
 
 msgctxt "MSG_FI_STATSPAM (1756//)"
 msgid "Spam"
-msgstr ""
+msgstr "Спам"
 
 msgctxt "MSG_MA_TOSPAM (1757//)"
 msgid "Spam"
-msgstr ""
+msgstr "Спам"
 
 msgctxt "MSG_MA_TONOTSPAM (1758//)"
 msgid "Not spam"
-msgstr ""
+msgstr "Не спам"
 
 msgctxt "MSG_CO_CRDSPAMFILTER (1761//)"
 msgid "Spam"
-msgstr ""
+msgstr "Спам"
 
 msgctxt "MSG_CO_SPAMFILTER (1762//)"
 msgid "Spam filter"
-msgstr ""
+msgstr "Фильтр спама"
 
 msgctxt "MSG_CO_SPAMFILTER_TITLE (1763//)"
 msgid "Spam filter"
-msgstr ""
+msgstr "Фильтр спама"
 
 msgctxt "MSG_CO_SPAMFILTER_SUMMARY (1764//)"
 msgid "Configure the spam filter..."
-msgstr ""
+msgstr "Настройки фильтра спама..."
 
 msgctxt "MSG_CO_SPAM_FILTERFORNEWMAIL (1765//)"
 msgid "Check _new mails for spam content"
-msgstr ""
+msgstr "Проверить _новые сообщения на наличие спама"
 
 msgctxt "MSG_CO_SPAM_RESETTRAININGDATA (1766//)"
 msgid "_Reset training data"
-msgstr ""
+msgstr "_Сбросить тренировочные данные"
 
 msgctxt "MSG_CO_SPAM_GOODCOUNT (1767//)"
 msgid "\"Not spam\" classified mails"
-msgstr ""
+msgstr "Сообщения, которые не спам"
 
 msgctxt "MSG_CO_SPAM_BADCOUNT (1768//)"
 msgid "\"Spam\" classified mails"
-msgstr ""
+msgstr "Сообщения, признанные спамом"
 
 msgctxt "MSG_BUSYFLUSHINGSPAMTRAININGDATA (1771//)"
 msgid "Flushing spam training data..."
-msgstr ""
+msgstr "Сбрасываю данные для тренировки фильтра спама..."
 
 msgctxt "MSG_CO_SPAM_MARKONMOVE (1772//)"
 msgid "Mark mails as spam when _moved to the Spam folder"
-msgstr ""
+msgstr "Помечать сообщения как спам при пере_мещении в папку «Спам»"
 
 msgctxt "MSG_CO_SPAM_ADDRESSBOOKISWHITELIST (1773//)"
 msgid "Address book is _white list"
-msgstr ""
+msgstr "Адресная книга - _белый список"
 
 msgctxt "MSG_CO_SPAM_RECOGNITION (1774//)"
 msgid "Spam recognition"
-msgstr ""
+msgstr "Распознавание спама"
 
 msgctxt "MSG_CO_SPAM_FILTERENABLED (1775//)"
 msgid "S_pam filter enabled"
-msgstr ""
+msgstr "_Фильтр спама включен"
 
 msgctxt "MSG_CO_SPAM_RESETTRAININGDATAASK (1776//)"
 msgid ""
@@ -6435,19 +6435,19 @@ msgstr ""
 
 msgctxt "MSG_MA_TRASH (1798//)"
 msgid "Trash"
-msgstr ""
+msgstr "Корзина"
 
 msgctxt "MSG_WR_SEARCH (1799//)"
 msgid "Search..."
-msgstr ""
+msgstr "Найти..."
 
 msgctxt "MSG_AB_IMPORT (1800//)"
 msgid "Import"
-msgstr ""
+msgstr "Импортировать"
 
 msgctxt "MSG_AB_EXPORT (1801//)"
 msgid "Export"
-msgstr ""
+msgstr "Экспортировать"
 
 msgctxt "MSG_AB_LDIF (1802//)"
 msgid "LDIF address book (*.ldif)"
@@ -6475,15 +6475,15 @@ msgstr ""
 
 msgctxt "MSG_MA_HIDE (1809//)"
 msgid "Hide"
-msgstr ""
+msgstr "Скрыть"
 
 msgctxt "MSG_MA_QUIT (1810//)"
 msgid "Quit"
-msgstr ""
+msgstr "Выход"
 
 msgctxt "MSG_MA_SELECTALL (1811//)"
 msgid "All"
-msgstr ""
+msgstr "Все"
 
 msgctxt "MSG_MA_SELECTNONE (1812//)"
 msgid "None"
@@ -6491,19 +6491,19 @@ msgstr ""
 
 msgctxt "MSG_MA_SELECTTOGGLE (1813//)"
 msgid "Toggle"
-msgstr ""
+msgstr "Инвертировать"
 
 msgctxt "MSG_MA_MSEARCH (1814//)"
 msgid "Search..."
-msgstr ""
+msgstr "Найти..."
 
 msgctxt "MSG_MA_MFILTER (1815//)"
 msgid "Filter..."
-msgstr ""
+msgstr "Фильтровать..."
 
 msgctxt "MSG_MA_REMOVEDELETED (1816//)"
 msgid "Empty trash"
-msgstr ""
+msgstr "Очистить корзину"
 
 msgctxt "MSG_MA_UPDATEINDEX (1817//)"
 msgid "Update index"
