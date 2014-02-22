@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-02-22 Jens Maus <mail@jens-maus.de>
+
+  * tcp/ssl.c: added more debug output to the SSL connection routines.
+
 2014-02-19 Jens Maus <mail@jens-maus.de>
 
   * Locale_c.sd,Locale_h.sd: reworked the flexcat catalog string handling

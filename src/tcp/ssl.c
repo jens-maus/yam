@@ -853,6 +853,10 @@ BOOL MakeSecureConnection(struct Connection *conn)
                         char buf[255];
                         unsigned long errcode;
 
+                        // query errno first
+                        strerror_r(errno, buf, sizeof(buf));
+
+                        E(DBF_NET, "errno(%d) = '%s'", errno, buf);
                         E(DBF_NET, "querying ERR_get_error() stack:");
                         while((errcode = ERR_get_error()) != 0)
                         {
