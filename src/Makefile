@@ -877,8 +877,8 @@ $(SVNREV)/svnrev: $(SVNREV)/svnrev.c $(SVNREV)/svnrev.h
 ## CATALOG GENERATION #################
 
 $(LOCALE)/%.catalog: $(LOCALE)/%.po
-	@echo "  MK $@"
-	@$(FC) POFILE $< CATALOG $@
+	@echo "  FC $@"
+	@$(FC) POFILE $< CATALOG $@ CODESET UTF-8
 
 .IGNORE: $(CATALOGS)
 
@@ -888,8 +888,8 @@ catalogs: $(CATALOGS)
 
 Locale.h: Locale.c
 Locale.c: $(LOCALE)/YAM.pot Locale_h.sd Locale_c.sd
-	@echo "  GN $@"
-	@$(FC) $(LOCALE)/YAM.pot Locale.h=Locale_h.sd Locale.c=Locale_c.sd
+	@echo "  FC $@"
+	@$(FC) $(LOCALE)/YAM.pot Locale.h=Locale_h.sd Locale.c=Locale_c.sd CODESET ISO-8859-1
 
 ## TO CREATE RELEASE ARCHIVES #########
 

@@ -943,7 +943,6 @@ static void Terminate(void)
   #endif
   CLOSELIB(ExpatBase,       IExpat);
   CLOSELIB(OpenURLBase,     IOpenURL);
-  CLOSELIB(CodesetsBase,    ICodesets);
   CLOSELIB(DataTypesBase,   IDataTypes);
   CLOSELIB(MUIMasterBase,   IMUIMaster);
   CLOSELIB(RexxSysBase,     IRexxSys);
@@ -962,6 +961,7 @@ static void Terminate(void)
     G->Locale = NULL;
   }
 
+  CLOSELIB(CodesetsBase, ICodesets);
   CLOSELIB(LocaleBase, ILocale);
 
   // free the configuration semaphore
@@ -1809,8 +1809,13 @@ static void InitBeforeLogin(BOOL hidden)
   if(INITLIB("locale.library", 38, 0, &LocaleBase, "main", 1, &ILocale, TRUE, NULL))
     G->Locale = OpenLocale(NULL);
 
+  // try to open the mandatory codesets.library before we open the catalog
+  // since on OS3/MOS/AROS we use it to convert the catalogs from UTF8 to the
+  // local charset.
+  INITLIB("codesets.library", 6, 16, &CodesetsBase,  "main", 1, &ICodesets,  TRUE, "http://sf.net/p/codesetslib/");
+
   // Now load the catalog of YAM
-  if(G->NoCatalogTranslation == FALSE && OpenYAMCatalog() == FALSE)
+  if(OpenYAMCatalog() == FALSE)
     Abort(NULL);
 
   // load&initialize all required libraries
@@ -1830,16 +1835,13 @@ static void InitBeforeLogin(BOOL hidden)
   #endif
 
   // try to open MUI 3.8+
-  INITLIB("muimaster.library",     19, 0, &MUIMasterBase, "main", 1, &IMUIMaster, TRUE, "http://www.sasg.com/");
+  INITLIB("muimaster.library",     19, 0, &MUIMasterBase, "main", 1, &IMUIMaster, TRUE, "http://muidev.de/");
 
   // openurl.library has a homepage, but providing that homepage without having OpenURL
   // installed would result in a paradoxon, because InitLib() would provide a button
   // to visit the URL which in turn requires OpenURL to be installed...
   // Hence we try to open openurl.library without
   INITLIB("openurl.library",        1, 0, &OpenURLBase,   "main", 1, &IOpenURL,   FALSE, NULL);
-
-  // try to open the mandatory codesets.library
-  INITLIB("codesets.library",       6, 16, &CodesetsBase,  "main", 1, &ICodesets,  TRUE, "http://sf.net/p/codesetslib/");
 
   // try to open expat.library for our XML import stuff
   INITLIB("expat.library", XML_MAJOR_VERSION, 0, &ExpatBase, "main", 1, &IExpat, FALSE, NULL);

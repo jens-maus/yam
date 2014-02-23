@@ -34,6 +34,10 @@
 #include <proto/dos.h>
 #include <proto/locale.h>
 
+#if !defined(__amigaos4__)
+#include <proto/codesets.h>
+#endif
+
 #include "Locale.h"
 #include "YAM.h"
 
@@ -41,7 +45,7 @@
 
 struct fcstr %b_Strings[%n] =
 { 
-  { %d, %s, NULL }%(,) 
+  { %s, %d }%(,) 
 };
 
 /*** Catalog functions ***/
@@ -50,7 +54,24 @@ void Close%bCatalog(void)
 {
   ENTER();
 
+  #if !defined(__amigaos4__)
   if(G->Catalog != NULL)
+  {
+    int i;
+    struct fcstr *fc;
+
+    for(i=0, fc = (struct fcstr *)%b_Strings;  i < %n;  i++, fc++)
+    {
+      if(fc->msg != NULL)
+      {
+        CodesetsFreeA((STRPTR)fc->msg, NULL);
+        fc->msg = NULL;
+      }
+    }
+  }
+  #endif
+ 
+  if(G->Locale != NULL && G->Catalog != NULL)
   {
     CloseCatalog(G->Catalog);
     G->Catalog = NULL;
@@ -67,11 +88,24 @@ BOOL Open%bCatalog(void)
   ENTER();
 
   // now we try to open the catalog
-  if(LocaleBase != NULL && G->Catalog == NULL)
+  if(G->Locale != NULL && G->Catalog == NULL)
   {
+    struct fcstr *fc;
+    int i;
+
     // try to open the catalog file in its
     // specified version.
-    G->Catalog = OpenCatalogA(NULL, (STRPTR)"%b.catalog", NULL);
+    if(G->NoCatalogTranslation == FALSE)
+    {
+      G->Catalog = OpenCatalog(NULL, 
+                               (STRPTR)"%b.catalog", 
+                               OC_BuiltInLanguage, "english",
+                               OC_BuiltInCodeSet,  4, // 4 = iso-8859-1
+                               #if defined(__amigaos4__)
+                               OC_BuiltInVersion,  %v,
+                               #endif
+                               TAG_END);
+    }
 
     // check if an error occurred.
     if(G->Catalog != NULL)
@@ -106,25 +140,35 @@ BOOL Open%bCatalog(void)
         G->Catalog = NULL;
       }
       else
-      {
-        struct fcstr * fc = (struct fcstr *)%b_Strings;
-        int i;
-
-        for(i=0;  i < %n;  i++, fc++)
-        {
-          fc->tmsg = GetCatalogStr(G->Catalog, fc->id, (STRPTR)fc->msg);
-        }
-
-        D(DBF_STARTUP, "successfully opened %b.catalog version %%%d", G->Catalog->cat_Version);
-      }
+        D(DBF_STARTUP, "successfully opened %b.catalog v%%%d.%%%d (language: '%%%s', codeset: %%%d)", G->Catalog->cat_Version, G->Catalog->cat_Revision, G->Catalog->cat_Language, G->Catalog->cat_CodeSet);
     }
-    else
+    else if(G->NoCatalogTranslation == FALSE)
     {
       // now we check the error state
       if(IoErr() != 0)
         W(DBF_STARTUP, "could not open '%b.catalog': IoErr: %%%d", IoErr());
       else
         W(DBF_STARTUP, "could not open '%b.catalog': builtin strings can be used");
+    }
+ 
+    // retrieve the translated catalog strings and store them into fc->msg
+    // G->Catalog might be NULL here which means the original strings will be
+    // converted by GetCatalogStr() (e.g. conversion from UTF-8 -> local charset)
+    for(i=0, fc = (struct fcstr *)%b_Strings;  i < %n;  i++, fc++)
+    {
+      const char *tstr = GetCatalogStr(G->Catalog, fc->id, (STRPTR)fc->msg);
+
+      if(tstr != NULL)
+      {
+        #if !defined(__amigaos4__)
+        if(G->Catalog != NULL)
+          fc->msg = CodesetsUTF8ToStr(CSA_Source, tstr, TAG_DONE);
+        else
+          fc->msg = tstr;
+        #else
+        fc->msg = tstr;
+        #endif
+      }
     }
   }
   else

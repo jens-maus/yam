@@ -114,6 +114,10 @@ UTF8 *CodesetsUTF8Create(Tag tag1, ...)
 ULONG URL_Open(STRPTR url, Tag tag1, ...)
 { return URL_OpenA(url, (struct TagItem *)&tag1); }
 
+#include <proto/locale.h>
+struct Catalog *OpenCatalog(struct Locale *locale, STRPTR name, Tag tag1, ...)
+{ return OpenCatalogA(locale, name, (struct TagItem *)&tag1); }
+
 #else
   #error "VARGS stubs are only save on m68k systems!"
 #endif // !defined(__PPC__)

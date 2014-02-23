@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-02-23 Jens Maus <mail@jens-maus.de>
+
+  * Locale_c.sd,Locale_h.sd,YAM.c,Makefile,misc: modified FlexCat execution to
+    always produce UTF-8 encoded catalogs. On AmigaOS4 (which supports UTF8)
+    these catalogs will be automatically converted to the currently active
+    display charset. On other platforms we use codesets.library ourself to
+    convert to the respective charset when loading YAM. So please note that
+    on other platforms than AmigaOS4 the catalog files have to be generated
+    with FlexCat 2.13+ which supports creating of UTF-8 catalog files.
+
 2014-02-22 Jens Maus <mail@jens-maus.de>
 
   * tcp/ssl.c: added more debug output to the SSL connection routines.
