@@ -7,6 +7,8 @@ $URL$
 
 2014-02-23 Jens Maus <mail@jens-maus.de>
 
+  * Locale_c.sd,Locale_h.sd: some more optimizations to the catalog conversion
+    routines.
   * Locale_c.sd,Locale_h.sd,YAM.c,Makefile,misc: modified FlexCat execution to
     always produce UTF-8 encoded catalogs. On AmigaOS4 (which supports UTF8)
     these catalogs will be automatically converted to the currently active

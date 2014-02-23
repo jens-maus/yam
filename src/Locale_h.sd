@@ -36,8 +36,9 @@
 // flexcat string structure
 struct fcstr
 {
-  const char *msg; // the catalog string
-  const long id;   // catalog string identifier
+  const char * const defmsg; // the default/fallback catalog string
+  const char * msg;          // the translated/converted catalog string
+  const long id;             // catalog string identifier
 };
 
 // catalog open/close functions
@@ -45,7 +46,7 @@ extern BOOL Open%bCatalog(void);
 extern void Close%bCatalog(void);
 
 // define to retrieve the translated catalog string
-#define tr(fc) ((fc)->msg)
+#define tr(fc) ((fc)->msg != NULL ? (fc)->msg : (fc)->defmsg)
 
 // array of catalog translation strings
 extern struct fcstr %b_Strings[%n];

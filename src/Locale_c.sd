@@ -45,7 +45,7 @@
 
 struct fcstr %b_Strings[%n] =
 { 
-  { %s, %d }%(,) 
+  { %s, NULL, %d }%(,) 
 };
 
 /*** Catalog functions ***/
@@ -100,9 +100,10 @@ BOOL Open%bCatalog(void)
       G->Catalog = OpenCatalog(NULL, 
                                (STRPTR)"%b.catalog", 
                                OC_BuiltInLanguage, "english",
-                               OC_BuiltInCodeSet,  4, // 4 = iso-8859-1
+                               OC_BuiltInCodeSet, 4, // 4 = iso-8859-1
                                #if defined(__amigaos4__)
-                               OC_BuiltInVersion,  %v,
+                               OC_BuiltInVersion, %v,
+                               OC_PreferExternal, TRUE,
                                #endif
                                TAG_END);
     }
@@ -156,19 +157,16 @@ BOOL Open%bCatalog(void)
     // converted by GetCatalogStr() (e.g. conversion from UTF-8 -> local charset)
     for(i=0, fc = (struct fcstr *)%b_Strings;  i < %n;  i++, fc++)
     {
-      const char *tstr = GetCatalogStr(G->Catalog, fc->id, (STRPTR)fc->msg);
+      const char *cs = GetCatalogStr(G->Catalog, fc->id, (STRPTR)fc->defmsg);
 
-      if(tstr != NULL)
-      {
-        #if !defined(__amigaos4__)
-        if(G->Catalog != NULL)
-          fc->msg = CodesetsUTF8ToStr(CSA_Source, tstr, TAG_DONE);
-        else
-          fc->msg = tstr;
-        #else
-        fc->msg = tstr;
-        #endif
-      }
+      #if !defined(__amigaos4__)
+      if(G->Catalog != NULL && cs != NULL)
+        fc->msg = CodesetsUTF8ToStr(CSA_Source, cs, TAG_DONE);
+      else
+        fc->msg = cs;
+      #else
+      fc->msg = cs;
+      #endif
     }
   }
   else
