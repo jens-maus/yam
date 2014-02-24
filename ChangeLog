@@ -13,6 +13,10 @@ $URL$
   * MailServers.c: the default settings for POP3 servers now enforce the
     applicance of remote filters, because this was the implicit behaviour of YAM
     until version 2.6p1. This closes #534.
+  * Config.c, MailServers.c: moved the "apply remote filters" check over to the
+    config loading process. The old behaviour of applying remote filters for all
+    accounts will be presevered only when upgrading from an older version. This
+    refs# 534.
 
 2014-02-23 Jens Maus <mail@jens-maus.de>
 

@@ -1247,7 +1247,15 @@ int LoadConfig(struct Config *co, const char *fname)
               if((msn = GetMailServer(&co->pop3ServerList, id)) == NULL)
               {
                 if((msn = CreateNewMailServer(MST_POP3, co, FALSE)) != NULL)
+                {
                   AddTail((struct List *)&co->pop3ServerList, (struct Node *)msn);
+
+                  // up to YAM 2.7 applying remote filters always happened for all
+                  // accounts. Keep this behaviour in case we are reading an old
+                  // config file.
+                  if(version <= 3)
+                    setFlag(msn->flags, MSF_APPLY_REMOTE_FILTERS);
+                }
                 else
                   E(DBF_CONFIG, "couldn't create new POP3 structure %ld", id);
               }
