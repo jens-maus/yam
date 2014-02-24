@@ -108,6 +108,8 @@ struct MailServerNode *CreateNewMailServer(const enum MailServerType type, const
             setFlag(msn->flags, MSF_PURGEMESSGAES);
             setFlag(msn->flags, MSF_AVOID_DUPLICATES);
             setFlag(msn->flags, MSF_DOWNLOAD_LARGE_MAILS);
+            setFlag(msn->flags, MSF_APPLY_REMOTE_FILTERS);
+
             // set a download interval of 10 minutes, but don't enable it
             msn->downloadInterval = 10;
             msn->largeMailSizeLimit = 1024;

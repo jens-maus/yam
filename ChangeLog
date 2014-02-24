@@ -10,6 +10,9 @@ $URL$
   * mui/FilterRuleList.c: setting the disabled state of the filter rules list
     will only disable the individual rule objects, but not the complete object.
     This closes #533.
+  * MailServers.c: the default settings for POP3 servers now enforce the
+    applicance of remote filters, because this was the implicit behaviour of YAM
+    until version 2.6p1. This closes #534.
 
 2014-02-23 Jens Maus <mail@jens-maus.de>
 
