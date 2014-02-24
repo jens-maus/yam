@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-02-24 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/FilterRuleList.c: setting the disabled state of the filter rules list
+    will only disable the individual rule objects, but not the complete object.
+    This closes #533.
+
 2014-02-23 Jens Maus <mail@jens-maus.de>
 
   * Locale_c.sd,Locale_h.sd: some more optimizations to the catalog conversion

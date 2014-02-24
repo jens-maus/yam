@@ -467,8 +467,8 @@ OVERLOAD(OM_SET)
           }
         }
 
-        RETURN(0);
-        return 0;
+        // let our superclass ignore this tag
+        tag->ti_Tag = TAG_IGNORE;
       }
       break;
     }

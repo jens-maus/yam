@@ -89,6 +89,22 @@ OVERLOAD(OM_SET)
         data->filter = (struct FilterNode *)tag->ti_Data;
       }
       break;
+
+      case MUIA_Disabled:
+      {
+        Object *ruleState = NULL;
+        Object *ruleItem;
+
+        // disable the individual rule objects, but not the complete group
+        while((ruleItem = (Object *)DoMethod(obj, MUIM_ObjectList_IterateItems, &ruleState)) != NULL)
+        {
+          set(ruleItem, MUIA_Disabled, tag->ti_Data);
+        }
+
+        // let our superclass ignore this tag
+        tag->ti_Tag = TAG_IGNORE;
+      }
+      break;
     }
   }
 
