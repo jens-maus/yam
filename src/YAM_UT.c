@@ -6732,6 +6732,7 @@ static BOOL ParseDateString(const char *string, const char *fmt, struct TM *res)
         else if(sc == ' ')
         {
           // ignore any spaces within the day spec
+          sc = *string++;
         }
         else if(sc >= '0' && sc <= '9')
         {
