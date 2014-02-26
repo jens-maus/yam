@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-02-26 Thore Böckelmann <tboeckel@gmx.de>
+
+  * locale/english-british.po: changed the english/british translation to be a
+    100% catalog containing all strings. This has become very easy now, because
+    the .po file format is self contained. This avoid tons of warnings about
+    untranslated strings compared to the old .ct file format.
+
 2014-02-25 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_UT.c: fixed a possible endless loop in the ParseDateString() function.
