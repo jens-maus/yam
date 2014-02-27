@@ -70,6 +70,7 @@ struct Data
   char sizeBuffer[SIZE_SMALL];
   char context_menu_title[SIZE_DEFAULT];
   BOOL inSearchWindow;
+  LONG helpEntry;
 };
 */
 
@@ -838,10 +839,30 @@ OVERLOAD(MUIM_ContextMenuChoice)
 }
 
 ///
+/// OVERLOAD(MUIM_CheckShortHelp)
+// check whether the entry under the mouse pointer changed and a new bubble help is required
+OVERLOAD(MUIM_CheckShortHelp)
+{
+  GETDATA;
+  struct MUIP_CheckShortHelp *csh = (struct MUIP_CheckShortHelp *)msg;
+  struct MUI_NList_TestPos_Result res;
+  BOOL changeHelp;
+
+  ENTER();
+
+  DoMethod(obj, MUIM_NList_TestPos, csh->mx, csh->my, &res);
+  changeHelp = (res.entry == data->helpEntry) ? TRUE : FALSE;
+
+  RETURN(changeHelp);
+  return changeHelp;
+}
+
+///
 /// OVERLOAD(MUIM_CreateShortHelp)
 // set up a text for the bubble help
 OVERLOAD(MUIM_CreateShortHelp)
 {
+  GETDATA;
   struct MUIP_CreateShortHelp *csh = (struct MUIP_CreateShortHelp *)msg;
   char *shortHelp = NULL;
 
@@ -881,6 +902,10 @@ OVERLOAD(MUIM_CreateShortHelp)
         {
           // string formatting failed
           shortHelp = NULL;
+        }
+        else
+        {
+          data->helpEntry = res.entry;
         }
       }
     }

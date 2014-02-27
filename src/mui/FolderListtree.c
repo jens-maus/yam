@@ -65,6 +65,7 @@ struct Data
   char unreadStr[SIZE_SMALL];
   char newStr[SIZE_SMALL];
   char sizeStr[SIZE_SMALL];
+  struct MUI_NListtree_TreeNode *helpTN;
 };
 */
 
@@ -250,10 +251,30 @@ OVERLOAD(OM_GET)
 }
 
 ///
+/// OVERLOAD(MUIM_CheckShortHelp)
+// check whether the entry under the mouse pointer changed and a new bubble help is required
+OVERLOAD(MUIM_CheckShortHelp)
+{
+  GETDATA;
+  struct MUIP_CheckShortHelp *csh = (struct MUIP_CheckShortHelp *)msg;
+  struct MUI_NListtree_TestPos_Result res;
+  BOOL changeHelp;
+
+  ENTER();
+
+  DoMethod(obj, MUIM_NListtree_TestPos, csh->mx, csh->my, &res);
+  changeHelp = (res.tpr_TreeNode == data->helpTN) ? TRUE : FALSE;
+
+  RETURN(changeHelp);
+  return changeHelp;
+}
+
+///
 /// OVERLOAD(MUIM_CreateShortHelp)
 // set up a text for the bubble help
 OVERLOAD(MUIM_CreateShortHelp)
 {
+  GETDATA;
   struct MUIP_CreateShortHelp *csh = (struct MUIP_CreateShortHelp *)msg;
   struct MUI_NListtree_TestPos_Result res;
   char *shortHelp = NULL;
@@ -279,6 +300,10 @@ OVERLOAD(MUIM_CreateShortHelp)
                                                             folder->Unread) == -1)
       {
         shortHelp = NULL;
+      }
+      else
+      {
+        data->helpTN = res.tpr_TreeNode;
       }
     }
   }

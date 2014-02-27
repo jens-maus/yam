@@ -113,7 +113,7 @@
 #endif
 #ifndef MUIM_Layout
 #define MUIM_Layout                         0x8042845b /* V4  */
-struct  MUIP_Layout                         { ULONG MethodID; LONG left; LONG top; LONG width; LONG height; ULONG flags; };
+struct  MUIP_Layout                         { STACKED ULONG MethodID; STACKED LONG left; STACKED LONG top; STACKED LONG width; STACKED LONG height; STACKED ULONG flags; };
 #endif
 #ifndef MUIA_Window_DisableKeys
 #define MUIA_Window_DisableKeys             0x80424c36UL /* V15 isg ULONG    */
@@ -134,10 +134,10 @@ struct  MUIP_Layout                         { ULONG MethodID; LONG left; LONG to
 #define MUIA_Text_HiIndex                   0x804214f5UL /* V11 i.. LONG     */
 #endif
 #ifndef MUIM_DeleteDragImage
-#define MUIM_DeleteDragImage         0x80423037UL
+#define MUIM_DeleteDragImage                0x80423037UL
 #endif
 #ifndef MUIM_Group_MoveMember
-#define MUIM_Group_MoveMember        0x8042ff4eUL /* V16 */
+#define MUIM_Group_MoveMember               0x8042ff4eUL /* V16 */
 #endif
 #ifndef MUIM_Group_ExitChange2
 #define MUIM_Group_ExitChange2              0x8042e541 /* private */ /* V12 */
@@ -171,6 +171,10 @@ struct  MUIP_DoDrag                         { STACKED ULONG MethodID; STACKED LO
 #endif
 #ifndef MUIA_Menuitem_CopyStrings
 #define MUIA_Menuitem_CopyStrings           0x8042dc1bUL /* V20 i.. BOOL              */
+#endif
+#ifndef MUIM_CheckShortHelp
+#define MUIM_CheckShortHelp                 0x80423c79 /* private */ /* V20 */
+struct  MUIP_CheckShortHelp                 { STACKED ULONG MethodID; STACKED STRPTR help; STACKED LONG mx; STACKED LONG my; }; /* private */
 #endif
 #ifndef MUII_Close
 #define MUII_Close                          54

@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-02-27 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/FolderListtree.c, mui/MainMailList.c: implemented the private method
+    MUIM_CheckShortHelp to support multiple bubble help texts within the lists
+    without having to leave the object.
+
 2014-02-27 Jens Maus <mail@jens-maus.de>
 
   * Locale_c.sd,Locale_h.sd: changed the catalog translation I/O routines once
