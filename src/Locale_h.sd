@@ -46,7 +46,7 @@ extern BOOL Open%bCatalog(void);
 extern void Close%bCatalog(void);
 
 // define to retrieve the translated catalog string
-#define tr(fc) ((fc)->msg != NULL ? (fc)->msg : (fc)->defmsg)
+#define tr(fc) ((fc)->msg)
 
 // array of catalog translation strings
 extern struct fcstr %b_Strings[%n];

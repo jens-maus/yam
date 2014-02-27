@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-02-27 Jens Maus <mail@jens-maus.de>
+
+  * Locale_c.sd,Locale_h.sd: changed the catalog translation I/O routines once
+    more to use a much more simple tr() macro than having to NULL check for
+    every catalog string to be used.
+
 2014-02-26 Thore Böckelmann <tboeckel@gmx.de>
 
   * locale/english-british.po: changed the english/british translation to be a

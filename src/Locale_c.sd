@@ -52,24 +52,21 @@ struct fcstr %b_Strings[%n] =
 /// Close%bCatalog()
 void Close%bCatalog(void)
 {
+  int i;
+  struct fcstr *fc;
+
   ENTER();
 
-  #if !defined(__amigaos4__)
-  if(G->Catalog != NULL)
+  for(i=0, fc = (struct fcstr *)%b_Strings;  i < %n;  i++, fc++)
   {
-    int i;
-    struct fcstr *fc;
-
-    for(i=0, fc = (struct fcstr *)%b_Strings;  i < %n;  i++, fc++)
+    if(fc->msg != NULL && fc->msg != fc->defmsg)
     {
-      if(fc->msg != NULL)
-      {
-        CodesetsFreeA((STRPTR)fc->msg, NULL);
-        fc->msg = NULL;
-      }
+      #if !defined(__amigaos4__)
+      CodesetsFreeA((STRPTR)fc->msg, NULL);
+      #endif
+      fc->msg = fc->defmsg;
     }
   }
-  #endif
  
   if(G->Locale != NULL && G->Catalog != NULL)
   {
@@ -84,15 +81,14 @@ void Close%bCatalog(void)
 BOOL Open%bCatalog(void)
 {
   BOOL success = TRUE;
+  struct fcstr *fc = NULL;
+  int i = 0;
 
   ENTER();
 
   // now we try to open the catalog
   if(G->Locale != NULL && G->Catalog == NULL)
   {
-    struct fcstr *fc;
-    int i;
-
     // try to open the catalog file in its
     // specified version.
     if(G->NoCatalogTranslation == FALSE)
@@ -151,27 +147,34 @@ BOOL Open%bCatalog(void)
       else
         W(DBF_STARTUP, "could not open '%b.catalog': builtin strings can be used");
     }
- 
-    // retrieve the translated catalog strings and store them into fc->msg
-    // G->Catalog might be NULL here which means the original strings will be
-    // converted by GetCatalogStr() (e.g. conversion from UTF-8 -> local charset)
-    for(i=0, fc = (struct fcstr *)%b_Strings;  i < %n;  i++, fc++)
-    {
-      const char *cs = GetCatalogStr(G->Catalog, fc->id, (STRPTR)fc->defmsg);
-
-      #if !defined(__amigaos4__)
-      if(G->Catalog != NULL && cs != NULL)
-        fc->msg = CodesetsUTF8ToStr(CSA_Source, cs, TAG_DONE);
-      else
-        fc->msg = cs;
-      #else
-      fc->msg = cs;
-      #endif
-    }
   }
   else
-    W(DBF_STARTUP, "locale.library was not open, skipping catalog opening.");
+    W(DBF_STARTUP, "locale.library was not open or catalog already opened.");
 
+  // retrieve the translated catalog strings and store them into fc->msg
+  // G->Catalog might be NULL here which means the original strings will be
+  // converted by GetCatalogStr() (e.g. conversion from UTF-8 -> local charset)
+  for(i=0, fc = (struct fcstr *)%b_Strings;  i < %n;  i++, fc++)
+  {
+    const char *cs;
+    
+    // check if G->Locale is NULL (locale.lib couldn't be open). Otherwise
+    // use the default msg string.
+    if(G->Locale != NULL)
+      cs = GetCatalogStr(G->Catalog, fc->id, (STRPTR)fc->defmsg);
+    else
+      cs = fc->defmsg;
+   
+    #if !defined(__amigaos4__)
+    if(G->Catalog != NULL && cs != NULL)
+      fc->msg = CodesetsUTF8ToStr(CSA_Source, cs, TAG_DONE);
+    else
+      fc->msg = cs;
+    #else
+    fc->msg = cs;
+    #endif
+  }
+ 
   RETURN(success);
   return success;
 }
