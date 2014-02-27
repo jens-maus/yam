@@ -1,4 +1,4 @@
-﻿# YAM catalog description/translation file (PO-style)
+# YAM catalog description/translation file (PO-style)
 # $Id$
 # $URL$
 # version 9
