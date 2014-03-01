@@ -5,6 +5,8 @@
 # 
 # Translators:
 # damato <mail@jens-maus.de>, 2014
+# damato <mail@jens-maus.de>, 2014
+# Prober <kabara.jaroslav@gmail.com>, 2014
 # Prober <kabara.jaroslav@gmail.com>, 2014
 # Vit Sindlar <sindlarv@centrum.cz>, 2014
 msgid ""

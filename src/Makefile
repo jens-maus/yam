@@ -120,6 +120,7 @@ CP      = copy
 CC      = gcc
 STRIP   = strip
 OBJDUMP = objdump
+TX      = tx
 
 # path definitions
 CDUP  = /
@@ -890,6 +891,16 @@ Locale.h: Locale.c
 Locale.c: $(LOCALE)/YAM.pot Locale_h.sd Locale_c.sd
 	@echo "  FC $@"
 	@$(FC) $(LOCALE)/YAM.pot Locale.h=Locale_h.sd Locale.c=Locale_c.sd CODESET ISO-8859-1
+
+## TRANSIFEX ##########################
+
+.PHONY: txpull
+txpull:
+	@$(TX) pull -a -f
+
+.PHONY: txpush
+txpush:
+	@$(TX) push -t
 
 ## TO CREATE RELEASE ARCHIVES #########
 

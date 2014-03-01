@@ -7,6 +7,7 @@
 # Phantom, 2014
 # Antonis Iliakis <amiga.phantom@yahoo.gr>, 2013
 # damato <mail@jens-maus.de>, 2014
+# damato <mail@jens-maus.de>, 2014
 # Phantom, 2014
 msgid ""
 msgstr ""

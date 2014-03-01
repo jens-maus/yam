@@ -5,6 +5,7 @@
 # 
 # Translators:
 # damato <mail@jens-maus.de>, 2014
+# damato <mail@jens-maus.de>, 2014
 # pbobbenb <pbobbenb@icloud.com>, 2014
 # Pär Boberg <pbobbenb@spray.se>, 2013
 # pbobbenb <pbobbenb@icloud.com>, 2014

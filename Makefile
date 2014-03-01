@@ -48,9 +48,13 @@ cleanall:
 distclean:
 	@$(MAKE) -C src distclean
 
-.PHONY: depend
-depend:
-	@$(MAKE) -C src depend
+.PHONY: txpull
+txpull:
+	@$(MAKE) -C src txpull
+
+.PHONY: txpush
+txpush:
+	@$(MAKE) -C src txpush
 
 .PHONY: release
 release:

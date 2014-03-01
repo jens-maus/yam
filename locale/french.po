@@ -8,6 +8,7 @@
 # Alexandre Balaban <abalaban@free.fr>, 2013
 # abalaban <transifex@balaban.fr>, 2014
 # damato <mail@jens-maus.de>, 2014
+# damato <mail@jens-maus.de>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: YAM\n"

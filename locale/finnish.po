@@ -4,9 +4,11 @@
 # version 9
 # 
 # Translators:
+# blmara <marko.raina@fimnet.fi>, 2014
+# damato <mail@jens-maus.de>, 2014
 # damato <mail@jens-maus.de>, 2014
 # blmara <marko.raina@fimnet.fi>, 2014
-# Marko Raina <marko.raina@fimnet.fi>, 2014
+# blmara <marko.raina@fimnet.fi>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: YAM\n"

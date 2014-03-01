@@ -5,9 +5,11 @@
 # 
 # Translators:
 # damato <mail@jens-maus.de>, 2014
+# damato <mail@jens-maus.de>, 2014
 # Luca Longone <hexaae@tiscalinet.it>, 2013
 # samo79 <s.hawamdeh@teletu.it>, 2014
 # Samir Hawamdeh <s.hawamdeh@tin.it>, 2013
+# samo79 <s.hawamdeh@teletu.it>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: YAM\n"
