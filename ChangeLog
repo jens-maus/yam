@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-03-02 Jens Maus <mail@jens-maus.de>
+
+  * tools/mkrelease.sh: modified script to automatically copy all existing
+    catalog file to the release archive instead of having to maintain a fixed
+    list of languages in the script itself.
+
 2014-02-27 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/FolderListtree.c, mui/MainMailList.c: implemented the private method

@@ -59,9 +59,11 @@ echo "  MK $yamsys/Catalogs"
 mkdir -p "release/$yamsys/YAM $yamver/Catalogs"
 cp -a ../icons/$yamicons/Catalogs_directory.info "release/$yamsys/YAM $yamver/Catalogs.info"
 cp -a ../locale/YAM.cd "release/$yamsys/YAM $yamver/Catalogs/YAM.cd"
-for language in czech danish dutch english-british finnish french german greek hungarian italian polish russian spanish swedish turkish; do
-	mkdir -p "release/$yamsys/YAM $yamver/Catalogs/$language"
-	cp -a ../locale/$language.catalog "release/$yamsys/YAM $yamver/Catalogs/$language/YAM.catalog"
+for language in `ls ../locale/*.catalog`; do
+  catalog=$(basename "$language")
+  lang="${catalog%.*}"
+  mkdir -p "release/$yamsys/YAM $yamver/Catalogs/${lang}"
+  cp -a ${language} "release/$yamsys/YAM $yamver/Catalogs/${lang}/YAM.catalog"
 done
 echo "  MK $yamsys/Docs"
 mkdir -p "release/$yamsys/YAM $yamver/Docs"
