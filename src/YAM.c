@@ -1856,7 +1856,7 @@ static void InitBeforeLogin(BOOL hidden)
       {
         G->TR_UseableTLS = TRUE;
 
-        D(DBF_STARTUP, "successfully opened AmiSSL library.");
+        D(DBF_STARTUP, "successfully opened AmiSSL library %d.%d (%s)", AmiSSLBase->lib_Version, AmiSSLBase->lib_Revision, AmiSSLBase->lib_IdString);
       }
     }
   }
