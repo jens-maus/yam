@@ -44,7 +44,7 @@
 #include <workbench/icon.h>
 
 #if defined(__amigaos4__)
-#include <graphics/blitattr.h>
+#include <hardware/blit.h>
 #endif
 
 #include <proto/dos.h>

@@ -34,7 +34,7 @@
 #include <string.h>
 
 #if defined(__amigaos4__)
-#include <graphics/blitattr.h>
+#include <hardware/blit.h>
 #else
 #include <cybergraphx/cybergraphics.h>
 #include <proto/cybergraphics.h>
