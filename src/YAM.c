@@ -1854,6 +1854,20 @@ static void InitBeforeLogin(BOOL hidden)
       if((AmiSSLBase = OpenAmiSSL()) != NULL &&
          GETINTERFACE("main", 1, IAmiSSL, AmiSSLBase))
       {
+        char tmp[24+1];
+
+        // initialize AmiSSL/OpenSSL related stuff that
+        // needs to be initialized before each threads spans
+        // own initializations
+        SSL_library_init();
+        SSL_load_error_strings();
+
+        // seed the random number generator with some valuable entropy
+        D(DBF_NET, "seeding random number generator");
+        snprintf(tmp, sizeof(tmp), "%08lx%08lx%08lx", (unsigned long)time((time_t *)NULL), (unsigned long)FindTask(NULL), (unsigned long)rand());
+        RAND_seed(tmp, strlen(tmp));
+
+        // flag SSL/TLS to be usable
         G->TR_UseableTLS = TRUE;
 
         D(DBF_STARTUP, "successfully opened AmiSSL library %d.%d (%s)", AmiSSLBase->lib_Version, AmiSSLBase->lib_Revision, AmiSSLBase->lib_IdString);

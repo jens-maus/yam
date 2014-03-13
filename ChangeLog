@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-03-13 Jens Maus <mail@jens-maus.de>
+
+  * tcp/ssl.c, YAM.c: slightly reworked the AmiSSL initialization part to
+    initialize the library and the global error strings right after opening
+    amissl library and not within the connection process of each thread. This
+    could potentially fix some runtime problems. This refs #530.
+
 2014-03-02 Jens Maus <mail@jens-maus.de>
 
   * tools/mkrelease.sh: modified script to automatically copy all existing
