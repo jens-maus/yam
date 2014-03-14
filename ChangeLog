@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-03-14 Thore Böckelmann <tboeckel@gmx.de>
+
+  * rexx/mailcheck.c: added the missing initialization of the result stem
+    variable. This closes #536.
+
 2014-03-13 Jens Maus <mail@jens-maus.de>
 
   * tcp/ssl.c, YAM.c: slightly reworked the AmiSSL initialization part to

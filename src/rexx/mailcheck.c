@@ -86,6 +86,13 @@ void rx_mailcheck(UNUSED struct RexxHost *host, struct RexxParams *params, enum 
     {
       int pop;
 
+      optional->dlResult.downloaded = 0;
+      optional->dlResult.onServer = 0;
+      optional->dlResult.dupeSkipped = 0;
+      optional->dlResult.deleted = 0;
+      optional->dlResult.error = FALSE;
+      optional->remaining = 0;
+
       if(args->pop == NULL)
         pop = -1;
       else
@@ -99,13 +106,6 @@ void rx_mailcheck(UNUSED struct RexxHost *host, struct RexxParams *params, enum 
         {
           struct MailServerNode *msn;
           struct DownloadResult dlResult;
-
-          optional->dlResult.downloaded = 0;
-          optional->dlResult.onServer = 0;
-          optional->dlResult.dupeSkipped = 0;
-          optional->dlResult.deleted = 0;
-          optional->dlResult.error = FALSE;
-          optional->remaining = 0;
 
           pop = 0;
           while((msn = GetMailServer(&C->pop3ServerList, pop)) != NULL)
@@ -157,6 +157,11 @@ void rx_mailcheck(UNUSED struct RexxHost *host, struct RexxParams *params, enum 
       }
       else
         params->rc = RETURN_ERROR;
+
+      results->downloaded = &optional->dlResult.downloaded;
+      results->onserver = &optional->dlResult.onServer;
+      results->dupskipped = &optional->dlResult.dupeSkipped;
+      results->deleted = &optional->dlResult.deleted;
     }
     break;
 
