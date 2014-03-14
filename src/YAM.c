@@ -2878,7 +2878,7 @@ void MiniMainLoop(void)
 
   // start the event loop
   signals = 0;
-  while(DoMethod(G->App, MUIM_Application_NewInput, &signals) == 0)
+  while((LONG)DoMethod(G->App, MUIM_Application_NewInput, &signals) != MUIV_Application_ReturnID_Quit)
   {
     if(signals != 0)
     {

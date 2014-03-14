@@ -9,6 +9,8 @@ $URL$
 
   * rexx/mailcheck.c: added the missing initialization of the result stem
     variable. This closes #536.
+  * YAM.c: fixed the early abortion of ARexx initiated mail transfers when the
+    user manually opens the transfer window.
 
 2014-03-13 Jens Maus <mail@jens-maus.de>
 
