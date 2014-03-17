@@ -722,7 +722,7 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
               MenuChild, Menuitem(tr(MSG_MA_MFORWARD_ATTACH), NULL, TRUE, FALSE, MMEN_FORWARD_ATTACH),
               MenuChild, Menuitem(tr(MSG_MA_MFORWARD_INLINE), NULL, TRUE, FALSE, MMEN_FORWARD_INLINE),
             End,
-            MenuChild, Menuitem(tr(MSG_MA_MREDIRECT), NULL, TRUE, FALSE, MMEN_REDIRECT),
+            MenuChild, Menuitem(tr(MSG_MA_MREDIRECT), NULL, !isSentMail, FALSE, MMEN_REDIRECT),
             MenuChild, MenuBarLabel,
             MenuChild, Menuitem(tr(MSG_MA_MSAVEADDRESS), NULL, TRUE, FALSE, MMEN_SAVEADDR),
             MenuChild, MenuitemObject,

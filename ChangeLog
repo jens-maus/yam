@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-03-17 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/MainMailList.c: disable the "Redirect" item of the mail context menu
+    for the Sent folder. This closes #537.
+
 2014-03-14 Thore Böckelmann <tboeckel@gmx.de>
 
   * rexx/mailcheck.c: added the missing initialization of the result stem
