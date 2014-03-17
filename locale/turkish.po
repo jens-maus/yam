@@ -7,13 +7,14 @@
 # Alper Sönmez <amithlondestek@gmail.com>, 2013
 # damato <mail@jens-maus.de>, 2014
 # damato <mail@jens-maus.de>, 2014
+# muratenez <muratenez@gmail.com>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-02-16 13:00+0000\n"
-"Last-Translator: damato <mail@jens-maus.de>\n"
+"PO-Revision-Date: 2014-03-17 17:35+0000\n"
+"Last-Translator: muratenez <muratenez@gmail.com>\n"
 "Language-Team: Turkish (http://www.transifex.com/projects/p/yam/language/tr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -9600,35 +9601,35 @@ msgstr "Bu klasöre girildiğinde, klasördeki en\nyakın tarihli iletiye atlar.
 
 msgctxt "MSG_FO_MAXAGE_DAYS (2480//)"
 msgid "days"
-msgstr ""
+msgstr "gün"
 
 msgctxt "MSG_QUICKSEARCH_FILTER_LIST (2481//)"
 msgid "Filter list..."
-msgstr ""
+msgstr "Listeyi filtrele..."
 
 msgctxt "MSG_QUICKSEARCH_FROM (2482//)"
 msgid "Sender"
-msgstr ""
+msgstr "Gönderen"
 
 msgctxt "MSG_QUICKSEARCH_TO (2483//)"
 msgid "Receiver"
-msgstr ""
+msgstr "Alıcı"
 
 msgctxt "MSG_QUICKSEARCH_SUBJECT (2484//)"
 msgid "Subject"
-msgstr ""
+msgstr "Konu"
 
 msgctxt "MSG_QUICKSEARCH_BODY (2485//)"
 msgid "Mail body"
-msgstr ""
+msgstr "Posta yapısı"
 
 msgctxt "MSG_CO_CHECK_FOR_MISSING_ATTACHMENTS (2486//)"
 msgid "Check for missing attachments"
-msgstr ""
+msgstr "Eksik eklentileri kontrol et"
 
 msgctxt "MSG_CO_ATTACHMENT_KEYWORDS (2487//)"
 msgid "Keywords:"
-msgstr ""
+msgstr "Anahtar kelimeler:"
 
 msgctxt "MSG_HELP_CO_CH_ATTACHMENTREMINDER (2495//)"
 msgid ""
@@ -9654,35 +9655,35 @@ msgstr ""
 
 msgctxt "MSG_ATTACHMENT_REMIND_ADD (2499//)"
 msgid "Add attachment..."
-msgstr ""
+msgstr "Eklenti ekle..."
 
 msgctxt "MSG_ATTACHMENT_REMIND_LATER (2500//)"
 msgid "Remind me later"
-msgstr ""
+msgstr "Daha sonra hatırlat"
 
 msgctxt "MSG_WR_NO_ATTACHMENTS_TITLE (2501//)"
 msgid "Attachment reminder"
-msgstr ""
+msgstr "Eklenti hatırlatıcısı"
 
 msgctxt "MSG_WR_NO_ATTACHMENTS (2502//)"
 msgid "Did you forget to add an attachment?"
-msgstr ""
+msgstr "Bir eklenti eklemeyi unuttun mu?"
 
 msgctxt "MSG_WR_NO_ATTACHMENTS_GADS (2503//)"
 msgid "Yes, I did|No, send now"
-msgstr ""
+msgstr "Evet, unuttum | Hayır, şimdi gönder"
 
 msgctxt "MSG_CO_MAILACCOUNT_TRANSFERRED (2504//)"
 msgid "Mail account"
-msgstr ""
+msgstr "Posta hesabı"
 
 msgctxt "MSG_MAILACCOUNT_TRANSFERRED (2505//)"
 msgid "Mail account"
-msgstr ""
+msgstr "Posta Hesabı"
 
 msgctxt "MSG_CO_SAVE_LAYOUT (2506//)"
 msgid "Save user interface layout"
-msgstr ""
+msgstr "Kullanıcı arayüz düzenini kaydet"
 
 msgctxt "MSG_HELP_CO_CH_SAVELAYOUTQUIT (2507//)"
 msgid ""
@@ -9693,11 +9694,11 @@ msgstr ""
 
 msgctxt "MSG_CO_SMTP_FOLDERS (2508//)"
 msgid "Default folders"
-msgstr ""
+msgstr "Varsayılan dizinler"
 
 msgctxt "MSG_CO_SMTP_SENTFOLDER (2509//)"
 msgid "'Sent' folder"
-msgstr ""
+msgstr "'Gönderilen' dizini"
 
 msgctxt "MSG_HELP_CO_PO_SMTP_SENTFOLDER (2510//)"
 msgid ""
@@ -9735,7 +9736,7 @@ msgstr ""
 
 msgctxt "MSG_CO_POP_FOLDERS (2516//)"
 msgid "Default folders"
-msgstr ""
+msgstr "Varsayılan dizinler"
 
 msgctxt "MSG_CO_POP_INCOMINGFOLDER (2517//)"
 msgid "'Incoming' folder"
@@ -9791,11 +9792,11 @@ msgstr ""
 
 msgctxt "MSG_MA_NO_SUBJECT (2525//)"
 msgid "(No Subject)"
-msgstr ""
+msgstr "(Konu Yok)"
 
 msgctxt "MSG_MA_NO_RECIPIENTS (2526//)"
 msgid "(No Recipients)"
-msgstr ""
+msgstr "(Alıcı Yok)"
 
 msgctxt "MSG_WR_CANCEL (2527//)"
 msgid "_Cancel"
