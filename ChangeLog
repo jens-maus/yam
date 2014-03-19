@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-03-19 Thore Böckelmann <tboeckel@gmx.de>
+
+  * tcp/pop.c: don't treat no downloadable messages on the server as an error.
+    This refs #536.
+
 2014-03-17 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/MainMailList.c: disable the "Redirect" item of the mail context menu

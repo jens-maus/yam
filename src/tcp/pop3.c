@@ -1662,13 +1662,23 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
                             tc->downloadResult.error = FALSE;
                         }
                         else
+                        {
                           W(DBF_NET, "no mails to be transferred");
+
+                          if(tc->connection->abort == FALSE && tc->connection->error == CONNECTERR_NO_ERROR)
+                            tc->downloadResult.error = FALSE;
+                        }
                       }
                       else
                         E(DBF_NET, "couldn't retrieve MessageList");
                     }
                     else
+                    {
                       W(DBF_NET, "no messages found on server '%s'", tc->msn->hostname);
+
+                      if(tc->connection->abort == FALSE && tc->connection->error == CONNECTERR_NO_ERROR)
+                        tc->downloadResult.error = FALSE;
+                    }
                   }
 
                   // disconnect no matter if the connect operation succeeded or not
