@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-03-20 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MA.c: added some debug output to the mail sending preparation.
+
 2014-03-19 Thore Böckelmann <tboeckel@gmx.de>
 
   * tcp/pop.c: don't treat no downloadable messages on the server as an error.

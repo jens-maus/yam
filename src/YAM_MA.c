@@ -2574,6 +2574,8 @@ BOOL MA_Send(enum SendMailMode mode, ULONG flags)
       }
     }
 
+    D(DBF_MAIL, "%ld mails waiting to be sent", mlist->count);
+
     // if there is anything todo we need to find out
     // which user identity a certain mail belongs to (by using MA_ExamineMail)
     // and then create a subgroup of mlist with them.
@@ -2653,6 +2655,8 @@ BOOL MA_Send(enum SendMailMode mode, ULONG flags)
           {
             struct UserIdentityNode *uin = GetUserIdentity(&C->userIdentityList, i, TRUE);
 
+            D(DBF_MAIL, "%ld mails waiting to be sent to SMTP server '%s'", uin->smtpServer->description);
+
             // mark the server as "in use"
             LockMailServer(uin->smtpServer);
             uin->smtpServer->useCount++;
@@ -2669,6 +2673,7 @@ BOOL MA_Send(enum SendMailMode mode, ULONG flags)
             if(sendMailSuccess == FALSE)
             {
               // reset everything in case of failure
+              E(DBF_MAIL, "sending to SMTP server '%s' failed", uin->smtpServer->description);
               uin->smtpServer->useCount--;
               CleanMailsInTransfer(mailsToSend[i]);
 
