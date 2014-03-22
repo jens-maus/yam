@@ -937,6 +937,8 @@ static void RE_ParseContentParameters(char *str, struct Part *rp, enum parameter
 
   ENTER();
 
+  D(DBF_ALWAYS, "content '%s'", str);
+
   // scan for the real size of the content-type: value without the
   // corresponding parameters.
   while(*p != '\0')
@@ -979,6 +981,7 @@ static void RE_ParseContentParameters(char *str, struct Part *rp, enum parameter
     {
       free(rp->ContentType);
       rp->ContentType = s;
+      D(DBF_ALWAYS, "0 content type '%s'", rp->ContentType);
     }
     break;
 
@@ -2758,38 +2761,51 @@ static void RE_HandleEncryptedMessage(struct Part *frp)
 //  Decodes a single message part
 static void RE_LoadMessagePart(struct ReadMailData *rmData, struct Part *part)
 {
+  BOOL decodePart = TRUE;
+
   ENTER();
 
   switch(RE_RequiresSpecialHandling(part))
   {
     case SMT_SIGNED:
+    {
       RE_HandleSignedMessage(part);
+    }
     break;
 
     case SMT_ENCRYPTED:
+    {
       RE_HandleEncryptedMessage(part);
+    }
     break;
 
     case SMT_MDN:
     {
       if(RE_HandleMDNReport(part) == TRUE)
-        break;
+        decodePart = FALSE;
     }
-    // continue
+    break;
 
+    default:
     case SMT_NORMAL:
     {
-      struct Part *rp;
+      // no special handling required
+    }
+    break;
+  }
 
-      for(rp = part->Next; rp; rp = rp->Next)
+  if(decodePart == TRUE)
+  {
+    struct Part *rp;
+
+    for(rp = part->Next; rp; rp = rp->Next)
+    {
+      if(stricmp(rp->ContentType, "application/pgp-keys") == 0)
+        rmData->hasPGPKey = TRUE;
+      else if(rp->Nr == PART_RAW || rp->Nr == rmData->letterPartNum ||
+              (isPrintable(rp) && C->DisplayAllTexts))
       {
-        if(stricmp(rp->ContentType, "application/pgp-keys") == 0)
-          rmData->hasPGPKey = TRUE;
-        else if(rp->Nr == PART_RAW || rp->Nr == rmData->letterPartNum ||
-                (isPrintable(rp) && C->DisplayAllTexts))
-        {
-          RE_DecodePart(rp);
-        }
+        RE_DecodePart(rp);
       }
     }
   }
@@ -3165,7 +3181,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
               }
             }
 
-D(DBF_MIME, "nread: %ld %ld", nread, dstrlen(msg));
+            D(DBF_MIME, "nread: %ld %ld", nread, dstrlen(msg));
             rptr = msg;
             msgend = msg+dstrlen(msg);
 

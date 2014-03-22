@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-03-22 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_RE.c: decode the letter part of multipart/signed mails in any case.
+    Otherwise such mails will end up as raw mail dump. For example AppleMail
+    creates such mails.
+
 2014-03-20 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MA.c: added some debug output to the mail sending preparation.
