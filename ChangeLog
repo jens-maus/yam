@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-03-23 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/MainMailList.c: changed the (yet) non-translatable context menu of
+    NList.mcc for empty folders by the same context menu as is created for the
+    list title bar. This closes #541.
+
 2014-03-23 Jens Maus <mail@jens-maus.de>
 
   * resources/zoneinfo, tools/tzdata, tools/tzcode: updated tzdata/tzcode

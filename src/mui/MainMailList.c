@@ -638,20 +638,20 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
   {
     data->context_menu = MenustripObject,
       MenuChild, MenuObjectT(tr(MSG_MA_CTX_MAILLIST)),
-        MenuChild, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_Status),               MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, 1, MUIA_Menuitem_Enabled, FALSE, MUIA_Menuitem_Checked, TRUE, MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
-        MenuChild, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_SenderRecpt),          MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, 2, MUIA_Menuitem_Checked, hasMColSender(C->MessageCols),    MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
-        MenuChild, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_ReturnAddress),        MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, 3, MUIA_Menuitem_Checked, hasMColReplyTo(C->MessageCols),   MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
-        MenuChild, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_Subject),              MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, 4, MUIA_Menuitem_Checked, hasMColSubject(C->MessageCols),   MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
-        MenuChild, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MessageDate),          MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, 5, MUIA_Menuitem_Checked, hasMColDate(C->MessageCols),      MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
-        MenuChild, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_Size),                 MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, 6, MUIA_Menuitem_Checked, hasMColSize(C->MessageCols),      MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
-        MenuChild, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_Filename),             MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, 7, MUIA_Menuitem_Checked, hasMColFilename(C->MessageCols),  MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
-        MenuChild, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_CO_DATE_SNTRCVD),      MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, 8, MUIA_Menuitem_Checked, hasMColTransDate(C->MessageCols), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
+        MenuChild, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_Status),                     MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, 1, MUIA_Menuitem_Enabled, FALSE, MUIA_Menuitem_Checked, TRUE, MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
+        MenuChild, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_SenderRecpt),                MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, 2, MUIA_Menuitem_Checked, hasMColSender(C->MessageCols),    MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
+        MenuChild, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_ReturnAddress),              MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, 3, MUIA_Menuitem_Checked, hasMColReplyTo(C->MessageCols),   MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
+        MenuChild, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_Subject),                    MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, 4, MUIA_Menuitem_Checked, hasMColSubject(C->MessageCols),   MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
+        MenuChild, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MessageDate),                MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, 5, MUIA_Menuitem_Checked, hasMColDate(C->MessageCols),      MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
+        MenuChild, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_Size),                       MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, 6, MUIA_Menuitem_Checked, hasMColSize(C->MessageCols),      MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
+        MenuChild, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_Filename),                   MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, 7, MUIA_Menuitem_Checked, hasMColFilename(C->MessageCols),  MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
+        MenuChild, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_CO_DATE_SNTRCVD),            MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, 8, MUIA_Menuitem_Checked, hasMColTransDate(C->MessageCols), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
         MenuChild, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_CO_MAILACCOUNT_TRANSFERRED), MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, 9, MUIA_Menuitem_Checked, hasMColMailAccount(C->MessageCols),MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
         MenuChild, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-        MenuChild, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_CTX_DEFWIDTH_THIS), MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, MUIV_NList_Menu_DefWidth_This, End,
-        MenuChild, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_CTX_DEFWIDTH_ALL),  MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, MUIV_NList_Menu_DefWidth_All,  End,
-        MenuChild, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_CTX_DEFORDER_THIS), MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, MUIV_NList_Menu_DefOrder_This, End,
-        MenuChild, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_CTX_DEFORDER_ALL),  MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, MUIV_NList_Menu_DefOrder_All,  End,
+        MenuChild, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_CTX_DEFWIDTH_THIS),       MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, MUIV_NList_Menu_DefWidth_This, End,
+        MenuChild, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_CTX_DEFWIDTH_ALL),        MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, MUIV_NList_Menu_DefWidth_All,  End,
+        MenuChild, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_CTX_DEFORDER_THIS),       MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, MUIV_NList_Menu_DefOrder_This, End,
+        MenuChild, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_CTX_DEFORDER_ALL),        MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, MUIV_NList_Menu_DefOrder_All,  End,
       End,
     End;
   }
@@ -760,6 +760,28 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
           DoMethod(data->context_menu, MUIM_Family_Insert, spamItem, afterThis);
         }
       }
+    }
+    else
+    {
+      // for empty folders the same context menu as for the title bar is created
+      data->context_menu = MenustripObject,
+        MenuChild, MenuObjectT(tr(MSG_MA_CTX_MAILLIST)),
+          MenuChild, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_Status),                     MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, 1, MUIA_Menuitem_Enabled, FALSE, MUIA_Menuitem_Checked, TRUE, MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
+          MenuChild, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_SenderRecpt),                MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, 2, MUIA_Menuitem_Checked, hasMColSender(C->MessageCols),    MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
+          MenuChild, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_ReturnAddress),              MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, 3, MUIA_Menuitem_Checked, hasMColReplyTo(C->MessageCols),   MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
+          MenuChild, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_Subject),                    MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, 4, MUIA_Menuitem_Checked, hasMColSubject(C->MessageCols),   MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
+          MenuChild, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MessageDate),                MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, 5, MUIA_Menuitem_Checked, hasMColDate(C->MessageCols),      MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
+          MenuChild, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_Size),                       MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, 6, MUIA_Menuitem_Checked, hasMColSize(C->MessageCols),      MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
+          MenuChild, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_Filename),                   MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, 7, MUIA_Menuitem_Checked, hasMColFilename(C->MessageCols),  MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
+          MenuChild, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_CO_DATE_SNTRCVD),            MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, 8, MUIA_Menuitem_Checked, hasMColTransDate(C->MessageCols), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
+          MenuChild, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_CO_MAILACCOUNT_TRANSFERRED), MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, 9, MUIA_Menuitem_Checked, hasMColMailAccount(C->MessageCols),MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
+          MenuChild, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
+          MenuChild, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_CTX_DEFWIDTH_THIS),       MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, MUIV_NList_Menu_DefWidth_This, End,
+          MenuChild, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_CTX_DEFWIDTH_ALL),        MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, MUIV_NList_Menu_DefWidth_All,  End,
+          MenuChild, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_CTX_DEFORDER_THIS),       MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, MUIV_NList_Menu_DefOrder_This, End,
+          MenuChild, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_MA_CTX_DEFORDER_ALL),        MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, MUIV_NList_Menu_DefOrder_All,  End,
+        End,
+      End;
     }
   }
 
