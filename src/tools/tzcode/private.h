@@ -15,7 +15,7 @@
 ** Thank you!
 */
 
-#define GRANDPARENTED  "Local time zone must be set--see zic manual page"
+#define GRANDPARENTED	"Local time zone must be set--see zic manual page"
 
 /*
 ** Defaults for preprocessor symbols.
@@ -23,47 +23,47 @@
 */
 
 #ifndef HAVE_ADJTIME
-#define HAVE_ADJTIME    1
+#define HAVE_ADJTIME		1
 #endif /* !defined HAVE_ADJTIME */
 
 #ifndef HAVE_GETTEXT
-#define HAVE_GETTEXT    0
+#define HAVE_GETTEXT		0
 #endif /* !defined HAVE_GETTEXT */
 
 #ifndef HAVE_INCOMPATIBLE_CTIME_R
-#define HAVE_INCOMPATIBLE_CTIME_R  0
+#define HAVE_INCOMPATIBLE_CTIME_R	0
 #endif /* !defined INCOMPATIBLE_CTIME_R */
 
 #ifndef HAVE_LINK
-#define HAVE_LINK    1
+#define HAVE_LINK		1
 #endif /* !defined HAVE_LINK */
 
 #ifndef HAVE_SETTIMEOFDAY
-#define HAVE_SETTIMEOFDAY  3
+#define HAVE_SETTIMEOFDAY	3
 #endif /* !defined HAVE_SETTIMEOFDAY */
 
 #ifndef HAVE_SYMLINK
-#define HAVE_SYMLINK    1
+#define HAVE_SYMLINK		1
 #endif /* !defined HAVE_SYMLINK */
 
 #ifndef HAVE_SYS_STAT_H
-#define HAVE_SYS_STAT_H    1
+#define HAVE_SYS_STAT_H		1
 #endif /* !defined HAVE_SYS_STAT_H */
 
 #ifndef HAVE_SYS_WAIT_H
-#define HAVE_SYS_WAIT_H    1
+#define HAVE_SYS_WAIT_H		1
 #endif /* !defined HAVE_SYS_WAIT_H */
 
 #ifndef HAVE_UNISTD_H
-#define HAVE_UNISTD_H    1
+#define HAVE_UNISTD_H		1
 #endif /* !defined HAVE_UNISTD_H */
 
 #ifndef HAVE_UTMPX_H
-#define HAVE_UTMPX_H    0
+#define HAVE_UTMPX_H		0
 #endif /* !defined HAVE_UTMPX_H */
 
 #ifndef LOCALE_HOME
-#define LOCALE_HOME    "/usr/lib/locale"
+#define LOCALE_HOME		"/usr/lib/locale"
 #endif /* !defined LOCALE_HOME */
 
 #if HAVE_INCOMPATIBLE_CTIME_R
@@ -75,11 +75,11 @@
 ** Nested includes
 */
 
-#include "sys/types.h"  /* for time_t */
+#include "sys/types.h"	/* for time_t */
 #include "stdio.h"
 #include "errno.h"
 #include "string.h"
-#include "limits.h"  /* for CHAR_BIT et al. */
+#include "limits.h"	/* for CHAR_BIT et al. */
 #include "time.h"
 #include "stdlib.h"
 
@@ -88,25 +88,25 @@
 #endif /* HAVE_GETTEXT */
 
 #if HAVE_SYS_WAIT_H
-#include <sys/wait.h>  /* for WIFEXITED and WEXITSTATUS */
+#include <sys/wait.h>	/* for WIFEXITED and WEXITSTATUS */
 #endif /* HAVE_SYS_WAIT_H */
 
 #ifndef WIFEXITED
-#define WIFEXITED(status)  (((status) & 0xff) == 0)
+#define WIFEXITED(status)	(((status) & 0xff) == 0)
 #endif /* !defined WIFEXITED */
 #ifndef WEXITSTATUS
-#define WEXITSTATUS(status)  (((status) >> 8) & 0xff)
+#define WEXITSTATUS(status)	(((status) >> 8) & 0xff)
 #endif /* !defined WEXITSTATUS */
 
 #if HAVE_UNISTD_H
-#include "unistd.h"  /* for F_OK, R_OK, and other POSIX goodness */
+#include "unistd.h"	/* for F_OK, R_OK, and other POSIX goodness */
 #endif /* HAVE_UNISTD_H */
 
 #ifndef F_OK
-#define F_OK  0
+#define F_OK	0
 #endif /* !defined F_OK */
 #ifndef R_OK
-#define R_OK  4
+#define R_OK	4
 #endif /* !defined R_OK */
 
 /* Unlike <ctype.h>'s isdigit, this also works if c < 0 | c > UCHAR_MAX. */
@@ -120,8 +120,8 @@
 */
 #ifndef HAVE_STDINT_H
 #define HAVE_STDINT_H \
-  (199901 <= __STDC_VERSION__ || \
-  2 < (__GLIBC__ + (0 < __GLIBC_MINOR__)))
+	(199901 <= __STDC_VERSION__ || \
+	2 < (__GLIBC__ + (0 < __GLIBC_MINOR__)))
 #endif /* !defined HAVE_STDINT_H */
 
 #if HAVE_STDINT_H
@@ -138,7 +138,7 @@
 #ifndef INT_FAST64_MAX
 /* Pre-C99 GCC compilers define __LONG_LONG_MAX__ instead of LLONG_MAX.  */
 #if defined LLONG_MAX || defined __LONG_LONG_MAX__
-typedef long long  int_fast64_t;
+typedef long long	int_fast64_t;
 # ifdef LLONG_MAX
 #  define INT_FAST64_MIN LLONG_MIN
 #  define INT_FAST64_MAX LLONG_MAX
@@ -152,16 +152,12 @@ typedef long long  int_fast64_t;
 Please use a compiler that supports a 64-bit integer type (or wider);
 you may need to compile with "-DHAVE_STDINT_H".
 #endif /* (LONG_MAX >> 31) < 0xffffffff */
-typedef long    int_fast64_t;
+typedef long		int_fast64_t;
 # define INT_FAST64_MIN LONG_MIN
 # define INT_FAST64_MAX LONG_MAX
 # define SCNdFAST64 "ld"
 #endif /* ! (defined LLONG_MAX || defined __LONG_LONG_MAX__) */
 #endif /* !defined INT_FAST64_MAX */
-
-#ifndef LLONG_MAX
-#define LLONG_MAX  9223372036854775807LL
-#endif
 
 #ifndef INT_FAST32_MAX
 # if INT_MAX >> 31 == 0
@@ -242,7 +238,7 @@ typedef unsigned long uintmax_t;
 */
 
 #ifndef asctime_r
-extern char *  asctime_r(struct tm const *, char *);
+extern char *	asctime_r(struct tm const *, char *);
 #endif
 
 /*
@@ -253,7 +249,7 @@ extern char *  asctime_r(struct tm const *, char *);
 ** typical platforms.
 */
 #ifdef time_tz
-#if 0 /* AMIGA */
+#ifndef TZSET_ARG
 static time_t sys_time(time_t *x) { return time(x); }
 #endif
 
@@ -322,14 +318,14 @@ size_t strftime(char * const s, const size_t maxsize, const char *const format,
 char *asctime_r(register const struct tm *timeptr, char *buf);
 char *asctime(register const struct tm *timeptr);
 
-#if 0 /* AMIGA */ 
+#ifndef TZSET_ARG
 static time_t
 time(time_t *p)
 {
-  time_t r = sys_time(0);
-  if (p)
-    *p = r;
-  return r;
+	time_t r = sys_time(0);
+	if (p)
+		*p = r;
+	return r;
 }
 #endif
 #endif
@@ -338,24 +334,24 @@ time(time_t *p)
 ** Private function declarations.
 */
 
-char *    icatalloc(char * old, const char * new);
-char *    icpyalloc(const char * string);
-const char *  scheck(const char * string, const char * format);
+char *		icatalloc(char * old, const char * new);
+char *		icpyalloc(const char * string);
+const char *	scheck(const char * string, const char * format);
 
 /*
 ** Finally, some convenience items.
 */
 
 #ifndef TRUE
-#define TRUE  1
+#define TRUE	1
 #endif /* !defined TRUE */
 
 #ifndef FALSE
-#define FALSE  0
+#define FALSE	0
 #endif /* !defined FALSE */
 
 #ifndef TYPE_BIT
-#define TYPE_BIT(type)  (sizeof (type) * CHAR_BIT)
+#define TYPE_BIT(type)	(sizeof (type) * CHAR_BIT)
 #endif /* !defined TYPE_BIT */
 
 #ifndef TYPE_SIGNED
@@ -380,8 +376,8 @@ static time_t const time_t_max =
 ** add one more for a minus sign if the type is signed.
 */
 #define INT_STRLEN_MAXIMUM(type) \
-  ((TYPE_BIT(type) - TYPE_SIGNED(type)) * 302 / 1000 + \
-  1 + TYPE_SIGNED(type))
+	((TYPE_BIT(type) - TYPE_SIGNED(type)) * 302 / 1000 + \
+	1 + TYPE_SIGNED(type))
 #endif /* !defined INT_STRLEN_MAXIMUM */
 
 /*
@@ -401,7 +397,7 @@ static time_t const time_t_max =
 
 #ifndef INITIALIZE
 #ifdef GNUC_or_lint
-#define INITIALIZE(x)  ((x) = 0)
+#define INITIALIZE(x)	((x) = 0)
 #endif /* defined GNUC_or_lint */
 #ifndef GNUC_or_lint
 #define INITIALIZE(x)
@@ -434,7 +430,7 @@ char *ctime_r(time_t const *, char *);
 #endif /* HAVE_INCOMPATIBLE_CTIME_R */
 
 #ifndef YEARSPERREPEAT
-#define YEARSPERREPEAT    400  /* years before a Gregorian repeat */
+#define YEARSPERREPEAT		400	/* years before a Gregorian repeat */
 #endif /* !defined YEARSPERREPEAT */
 
 /*
@@ -442,15 +438,15 @@ char *ctime_r(time_t const *, char *);
 */
 
 #ifndef AVGSECSPERYEAR
-#define AVGSECSPERYEAR    31556952L
+#define AVGSECSPERYEAR		31556952L
 #endif /* !defined AVGSECSPERYEAR */
 
 #ifndef SECSPERREPEAT
-#define SECSPERREPEAT    ((int_fast64_t) YEARSPERREPEAT * (int_fast64_t) AVGSECSPERYEAR)
+#define SECSPERREPEAT		((int_fast64_t) YEARSPERREPEAT * (int_fast64_t) AVGSECSPERYEAR)
 #endif /* !defined SECSPERREPEAT */
 
 #ifndef SECSPERREPEAT_BITS
-#define SECSPERREPEAT_BITS  34  /* ceil(log2(SECSPERREPEAT)) */
+#define SECSPERREPEAT_BITS	34	/* ceil(log2(SECSPERREPEAT)) */
 #endif /* !defined SECSPERREPEAT_BITS */
 
 /*

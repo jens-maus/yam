@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-03-23 Jens Maus <mail@jens-maus.de>
+
+  * resources/zoneinfo, tools/tzdata, tools/tzcode: updated tzdata/tzcode
+    environment to the latest version (2014a) released by iana.org.
+
 2014-03-22 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_RE.c: decode the letter part of multipart/signed mails in any case.
