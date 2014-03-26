@@ -3369,11 +3369,11 @@ void FormatSize(LONG size, char *buf, int buflen, enum SizeFormat forcedPrecisio
       char *p;
 
       if(size < KB)
-        snprintf(buf, buflen, "%d B", (unsigned int)size);
+        snprintf(buf, buflen, "%d %s", (unsigned int)size, tr(MSG_SIZE_BYTES));
       else if(size < MB)
-        snprintf(buf, buflen, "%.1f KB", dsize/KB);
+        snprintf(buf, buflen, "%.1f %s", dsize/KB, tr(MSG_SIZE_KILOBYTES));
       else if(size < GB)
-        snprintf(buf, buflen, "%.1f MB", dsize/MB);
+        snprintf(buf, buflen, "%.1f %s", dsize/MB, tr(MSG_SIZE_MEGABYTES));
       else
         snprintf(buf, buflen, "%.1f GB", dsize/GB);
 
@@ -3392,13 +3392,13 @@ void FormatSize(LONG size, char *buf, int buflen, enum SizeFormat forcedPrecisio
       char *p;
 
       if(size < KB)
-        snprintf(buf, buflen, "%d B", (unsigned int)size);
+        snprintf(buf, buflen, "%d %s", (unsigned int)size, tr(MSG_SIZE_BYTES));
       else if(size < MB)
-        snprintf(buf, buflen, "%.2f KB", dsize/KB);
+        snprintf(buf, buflen, "%.2f %s", dsize/KB, tr(MSG_SIZE_KILOBYTES));
       else if(size < GB)
-        snprintf(buf, buflen, "%.2f MB", dsize/MB);
+        snprintf(buf, buflen, "%.2f %s", dsize/MB, tr(MSG_SIZE_MEGABYTES));
       else
-        snprintf(buf, buflen, "%.2f GB", dsize/GB);
+        snprintf(buf, buflen, "%.2f %s", dsize/GB, tr(MSG_SIZE_GIGABYTES));
 
       if((p = strchr(buf, '.')) != NULL)
         *p = *dp;
@@ -3415,13 +3415,13 @@ void FormatSize(LONG size, char *buf, int buflen, enum SizeFormat forcedPrecisio
       char *p;
 
       if(size < KB)
-        snprintf(buf, buflen, "%d B", (unsigned int)size);
+        snprintf(buf, buflen, "%d %s", (unsigned int)size, tr(MSG_SIZE_BYTES));
       else if(size < MB)
-        snprintf(buf, buflen, "%.3f KB", dsize/KB);
+        snprintf(buf, buflen, "%.3f %s", dsize/KB, tr(MSG_SIZE_KILOBYTES));
       else if(size < GB)
-        snprintf(buf, buflen, "%.3f MB", dsize/MB);
+        snprintf(buf, buflen, "%.3f %s", dsize/MB, tr(MSG_SIZE_MEGABYTES));
       else
-        snprintf(buf, buflen, "%.3f GB", dsize/GB);
+        snprintf(buf, buflen, "%.3f %s", dsize/GB, tr(MSG_SIZE_GIGABYTES));
 
       if((p = strchr(buf, '.')) != NULL)
         *p = *dp;
@@ -3438,13 +3438,13 @@ void FormatSize(LONG size, char *buf, int buflen, enum SizeFormat forcedPrecisio
       char *p;
 
       if(size < KB)
-        snprintf(buf, buflen, "%d B", (unsigned int)size);
+        snprintf(buf, buflen, "%d %s", (unsigned int)size, tr(MSG_SIZE_BYTES));
       else if(size < MB)
-        snprintf(buf, buflen, "%.1f KB", dsize/KB);
+        snprintf(buf, buflen, "%.1f %s", dsize/KB, tr(MSG_SIZE_KILOBYTES));
       else if(size < GB)
-        snprintf(buf, buflen, "%.2f MB", dsize/MB);
+        snprintf(buf, buflen, "%.2f %s", dsize/MB, tr(MSG_SIZE_MEGABYTES));
       else
-        snprintf(buf, buflen, "%.3f GB", dsize/GB);
+        snprintf(buf, buflen, "%.3f %s", dsize/GB, tr(MSG_SIZE_GIGABYTES));
 
       if((p = strchr(buf, '.')) != NULL)
         *p = *dp;
@@ -3466,14 +3466,14 @@ void FormatSize(LONG size, char *buf, int buflen, enum SizeFormat forcedPrecisio
 
       if(size < KiB)
       {
-        snprintf(buf, buflen, "%d B", (unsigned int)size);
+        snprintf(buf, buflen, "%d %s", (unsigned int)size, tr(MSG_SIZE_BYTES));
       }
       else if(size < MiB)
       {
         ldiv_t k;
 
         k = ldiv(size, KiB);
-        snprintf(buf, buflen, "%d%s%03d B", (unsigned int)k.quot, gs, (unsigned int)k.rem);
+        snprintf(buf, buflen, "%d%s%03d %s", (unsigned int)k.quot, gs, (unsigned int)k.rem, tr(MSG_SIZE_BYTES));
       }
       else if(size < GiB)
       {
@@ -3481,7 +3481,7 @@ void FormatSize(LONG size, char *buf, int buflen, enum SizeFormat forcedPrecisio
 
         m = ldiv(size, MiB);
         k = ldiv(m.rem, KiB);
-        snprintf(buf, buflen, "%d%s%03d%s%03d B", (unsigned int)m.quot, gs, (unsigned int)k.quot, gs, (unsigned int)k.rem);
+        snprintf(buf, buflen, "%d%s%03d%s%03d %s", (unsigned int)m.quot, gs, (unsigned int)k.quot, gs, (unsigned int)k.rem, tr(MSG_SIZE_BYTES));
       }
       else
       {
@@ -3490,7 +3490,7 @@ void FormatSize(LONG size, char *buf, int buflen, enum SizeFormat forcedPrecisio
         g = ldiv(size, GiB);
         m = ldiv(g.rem, MiB);
         k = ldiv(m.rem, KiB);
-        snprintf(buf, buflen, "%d%s%03d%s%03d%s%03d B", (unsigned int)g.quot, gs, (unsigned int)m.quot, gs, (unsigned int)k.quot, gs, (unsigned int)k.rem);
+        snprintf(buf, buflen, "%d%s%03d%s%03d%s%03d %s", (unsigned int)g.quot, gs, (unsigned int)m.quot, gs, (unsigned int)k.quot, gs, (unsigned int)k.rem, tr(MSG_SIZE_BYTES));
       }
     }
     break;

@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-03-26 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_UT.c, locale/YAM.pot: made all size abbreviations translatable.
+
 2014-03-23 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/MainMailList.c: changed the (yet) non-translatable context menu of

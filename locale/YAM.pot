@@ -9872,3 +9872,19 @@ msgstr "(Bcc)"
 msgctxt "MSG_AB_REPLYTO_TITLE (2542//)"
 msgid "(Reply To)"
 msgstr "(Reply To)"
+
+msgctxt "MSG_SIZE_BYTES (2543//)"
+msgid "B"
+msgstr "B"
+
+msgctxt "MSG_SIZE_KILOBYTES (2544//)"
+msgid "KB"
+msgstr "KB"
+
+msgctxt "MSG_SIZE_MEGABYTES (2545//)"
+msgid "MB"
+msgstr "MB"
+
+msgctxt "MSG_SIZE_GIGABYTES (2546//)"
+msgid "GB"
+msgstr "GB"
