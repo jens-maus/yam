@@ -5,6 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-03-27 Jens Maus <mail@jens-maus.de>
+
+  * locale/YAM.pot: added some comments to the pot file for properly translating
+    B/KB/MB/GB units. Translators should keep on using kilo/mega/giga (10^x)
+    rather than using kibi/mibi/gibi (2^x) because these units are still more
+    common than the newer SI-standard units which users might be confused on. In
+    addition translators should use appropriate abbreviations for "byte" (B) and
+    not use "octet" (o). Please see http://en.wikipedia.org/wiki/Byte for more
+    information.
+  * YAM_UT.c: added one more case where a translation for "GB" was missing.
+
 2014-03-26 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_UT.c, locale/YAM.pot: made all size abbreviations translatable.

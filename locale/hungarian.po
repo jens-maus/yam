@@ -9854,43 +9854,56 @@ msgctxt "MSG_AB_BCC_TOOLBAR (2537//)"
 msgid "_Bcc:"
 msgstr ""
 
-# Use same phrase as MSG_WR_FROM but in parentheses
+#. Use same phrase as MSG_WR_FROM but in parentheses
 msgctxt "MSG_AB_FROM_TITLE (2538//)"
 msgid "(From)"
 msgstr ""
 
-# Use same phrase as MSG_WR_To but in parentheses
+#. Use same phrase as MSG_WR_To but in parentheses
 msgctxt "MSG_AB_TO_TITLE (2539//)"
 msgid "(To)"
 msgstr ""
 
-# Use same phrase as MSG_WR_CC but in parentheses
+#. Use same phrase as MSG_WR_CC but in parentheses
 msgctxt "MSG_AB_CC_TITLE (2540//)"
 msgid "(Cc)"
 msgstr ""
 
-# Use same phrase as MSG_WR_BCC but in parentheses
+#. Use same phrase as MSG_WR_BCC but in parentheses
 msgctxt "MSG_AB_BCC_TITLE (2541//)"
 msgid "(Bcc)"
 msgstr ""
 
-# Use same phrase as MSG_WR_REPLYTO but in parentheses
+#. Use same phrase as MSG_WR_REPLYTO but in parentheses
 msgctxt "MSG_AB_REPLYTO_TITLE (2542//)"
 msgid "(Reply To)"
 msgstr ""
 
+#. Please use a translation corresponding to "bytes" which
+#. has the abbreviation "B" and NOT "octet" which has the
+#. abbreviation "o"
+#. see http://en.wikipedia.org/wiki/Byte
 msgctxt "MSG_SIZE_BYTES (2543//)"
 msgid "B"
 msgstr ""
 
+#. Please use a translation corresponding to "kilo" (10^3)
+#. and NOT "kibi" (2^10) as this is an unintuitive unit.
+#. see http://en.wikipedia.org/wiki/Byte
 msgctxt "MSG_SIZE_KILOBYTES (2544//)"
 msgid "KB"
 msgstr ""
 
+#. Please use a translation corresponding to "mega" (10^6)
+#. and NOT "mibi" (2^20) as this is an unintuitive unit.
+#. see http://en.wikipedia.org/wiki/Byte
 msgctxt "MSG_SIZE_MEGABYTES (2545//)"
 msgid "MB"
 msgstr ""
 
+#. Please use a translation corresponding to "giga" (10^9)
+#. and NOT "gibi" (2^30) as this is an unintuitive unit.
+#. see http://en.wikipedia.org/wiki/Byte
 msgctxt "MSG_SIZE_GIGABYTES (2546//)"
 msgid "GB"
 msgstr ""
