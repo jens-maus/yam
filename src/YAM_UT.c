@@ -3375,7 +3375,7 @@ void FormatSize(LONG size, char *buf, int buflen, enum SizeFormat forcedPrecisio
       else if(size < GB)
         snprintf(buf, buflen, "%.1f %s", dsize/MB, tr(MSG_SIZE_MEGABYTES));
       else
-        snprintf(buf, buflen, "%.1f GB", dsize/GB);
+        snprintf(buf, buflen, "%.1f %s", dsize/GB, tr(MSG_SIZE_GIGABYTES));
 
       if((p = strchr(buf, '.')) != NULL)
         *p = *dp;
