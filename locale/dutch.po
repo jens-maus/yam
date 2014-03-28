@@ -2,7 +2,6 @@
 # $Id$
 # $URL$
 # version 9
-# 
 # Translators:
 # damato <mail@jens-maus.de>, 2014
 # JohanB <j.banis@banis.info>, 2014
@@ -15,7 +14,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-03-26 19:24+0000\n"
+"PO-Revision-Date: 2014-03-28 08:48+0000\n"
 "Last-Translator: JohanB <j.banis@banis.info>\n"
 "Language-Team: Dutch (http://www.transifex.com/projects/p/yam/language/nl/)\n"
 "MIME-Version: 1.0\n"
@@ -9886,21 +9885,21 @@ msgstr "(Antwoord aan)"
 #. see http://en.wikipedia.org/wiki/Byte
 msgctxt "MSG_SIZE_BYTES (2543//)"
 msgid "B"
-msgstr ""
+msgstr "B"
 
 #. Please use a translation corresponding to "kilo" (10^3)
 #. and NOT "kibi" (2^10) as this is an unintuitive unit.
 #. see http://en.wikipedia.org/wiki/Byte
 msgctxt "MSG_SIZE_KILOBYTES (2544//)"
 msgid "KB"
-msgstr ""
+msgstr "kB"
 
 #. Please use a translation corresponding to "mega" (10^6)
 #. and NOT "mibi" (2^20) as this is an unintuitive unit.
 #. see http://en.wikipedia.org/wiki/Byte
 msgctxt "MSG_SIZE_MEGABYTES (2545//)"
 msgid "MB"
-msgstr ""
+msgstr "MB"
 
 #. Please use a translation corresponding to "giga" (10^9)
 #. and NOT "gibi" (2^30) as this is an unintuitive unit.
