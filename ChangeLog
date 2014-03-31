@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-03-23 Jens Maus <mail@jens-maus.de>
+
+  * resources/zoneinfo, tools/tzdata, tools/tzcode: updated tzdata/tzcode
+    environment to the latest version (2014b) released by iana.org.
+
 2014-03-27 Jens Maus <mail@jens-maus.de>
 
   * locale/YAM.pot: added some comments to the pot file for properly translating
