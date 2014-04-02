@@ -693,8 +693,29 @@ time_t FindNextDSTSwitch(const char *tzone, struct TimeVal *tv)
   // in the outer loop we iterate per DAY with a maximum of
   // one year
   startt = now;
-  maxdiff = (365/2+2)*SECSPERDAY;
   step = 3*SECSPERMONTH;
+  // we look ahead half a year plus 3 month at most
+  maxdiff = (365/2)*SECSPERDAY + step;
+
+  #if defined(DEBUG)
+  if(localtime_r(&now, &lasttm) != NULL)
+  {
+    newt = now + maxdiff;
+    if(localtime_r(&newt, &newtm) != NULL)
+    {
+      struct TM fromUTC;
+      struct TM toUTC;
+      char fromTime[SIZE_DEFAULT];
+      char toTime[SIZE_DEFAULT];
+
+      gmtime_r(&now, &fromUTC);
+      gmtime_r(&newt, &toUTC);
+      strftime(fromTime, sizeof(fromTime), "%a, %d %b %Y %T %z", &fromUTC);
+      strftime(toTime, sizeof(toTime), "%a, %d %b %Y %T %z", &toUTC);
+      D(DBF_TZONE, "searching for DST switch between UTC %s %s and UTC %s %s", fromTime, lasttm.tm_zone, toTime, newtm.tm_zone);
+    }
+  }
+  #endif
 
   for(newt=startt; maxdiff == 0 || (time_t)abs(newt - startt) < maxdiff; newt += step)
   {

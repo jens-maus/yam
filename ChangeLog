@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-04-02 Thore Böckelmann <tboeckel@gmx.de>
+
+  * TZone.c: fixed the broken search for the next DST switch in case it is more
+    than half a year from today until that next switch.
+
 2014-04-01 Thore Böckelmann <tboeckel@gmx.de>
 
   * locale: added a new header line to the .po files to specify a correct name
