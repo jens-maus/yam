@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-04-06 Jens Maus <mail@jens-maus.de>
+
+  * resources/certificats, tools/mk-ca-bundle.pl: updated our root certificate
+    bundle with the latest version available via http://curl.haxx.se/ca/cacert.pem
+
 2014-04-02 Thore Böckelmann <tboeckel@gmx.de>
 
   * TZone.c: fixed the broken search for the next DST switch in case it is more
