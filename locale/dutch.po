@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-03-28 08:48+0000\n"
+"PO-Revision-Date: 2014-04-06 11:36+0000\n"
 "Last-Translator: JohanB <j.banis@banis.info>\n"
 "Language-Team: Dutch (http://www.transifex.com/projects/p/yam/language/nl/)\n"
 "MIME-Version: 1.0\n"
@@ -579,7 +579,7 @@ msgstr "Kies een bestemmingsfolder:"
 
 msgctxt "MSG_MA_MoveGad (165//)"
 msgid "_Move"
-msgstr "_Verplaats"
+msgstr "_Verpl"
 
 msgctxt "MSG_MA_CopyMsg (166//)"
 msgid "Copy message(s)"
@@ -644,7 +644,7 @@ msgstr "_Bewerk"
 
 msgctxt "MSG_MA_TBMove (186//8)"
 msgid "_Move"
-msgstr "Verplaats"
+msgstr "Verpl"
 
 msgctxt "MSG_MA_TBDelete (187//8)"
 msgid "De_lete"
@@ -652,7 +652,7 @@ msgstr "_Wis"
 
 msgctxt "MSG_MA_TBGetAddr (188//8)"
 msgid "Ge_tAdd"
-msgstr "Pak adres"
+msgstr "PakAdr"
 
 msgctxt "MSG_MA_TBWrite (189//8)"
 msgid "_New"
@@ -660,11 +660,11 @@ msgstr "_Nieuw"
 
 msgctxt "MSG_MA_TBReply (190//8)"
 msgid "_Reply"
-msgstr "_Antwoord"
+msgstr "_Antw"
 
 msgctxt "MSG_MA_TBForward (191//8)"
 msgid "For_ward"
-msgstr "Doors_turen"
+msgstr "Verder"
 
 msgctxt "MSG_MA_TBGetMail (192//8)"
 msgid "_Get"
@@ -684,7 +684,7 @@ msgstr "_Zoek"
 
 msgctxt "MSG_MA_TBAddrBook (196//8)"
 msgid "A_book"
-msgstr "Adresboek"
+msgstr "A_boek"
 
 msgctxt "MSG_MA_TBConfig (197//8)"
 msgid "_Config"
@@ -1201,7 +1201,7 @@ msgstr "Geluid s_pelen"
 
 msgctxt "MSG_CO_ActionMove (397//)"
 msgid "_Move"
-msgstr "_Verplaats"
+msgstr "_Verpl"
 
 msgctxt "MSG_CO_ActionDelete (398//)"
 msgid "Dele_te"
@@ -2761,7 +2761,7 @@ msgstr "Foto"
 
 msgctxt "MSG_EA_SelectPhoto (794//)"
 msgid "Se_lect..."
-msgstr "Se_lecteer"
+msgstr "Se_lecteer..."
 
 msgctxt "MSG_EA_ReturnAddress (796//)"
 msgid "_Return address"
@@ -3191,11 +3191,11 @@ msgstr "_Volgend"
 
 msgctxt "MSG_RE_TBPrevTh (894//8)"
 msgid "Prev_Thr"
-msgstr "Vorige\nreeks"
+msgstr "Vrg_Thr"
 
 msgctxt "MSG_RE_TBNextTh (895//8)"
 msgid "NextT_hr"
-msgstr "Volgende\nreeks"
+msgstr "VlgT_hr"
 
 msgctxt "MSG_RE_TBDisplay (896//8)"
 msgid "_Display"
@@ -3215,15 +3215,15 @@ msgstr "Wis"
 
 msgctxt "MSG_RE_TBMove (900//8)"
 msgid "_Move"
-msgstr "Verplaats"
+msgstr "Verpl"
 
 msgctxt "MSG_RE_TBReply (901//8)"
 msgid "_Reply"
-msgstr "Antwoord"
+msgstr "Antw"
 
 msgctxt "MSG_RE_TBForward (902//8)"
 msgid "For_ward"
-msgstr "Doorsturen"
+msgstr "Verder"
 
 msgctxt "MSG_HELP_RE_BT_PREVIOUS (903//)"
 msgid ""
@@ -3462,7 +3462,7 @@ msgstr "Schuin"
 
 msgctxt "MSG_WR_TBUnderlined (976//8)"
 msgid "ULined"
-msgstr "Onderstreept"
+msgstr "Ondstr"
 
 msgctxt "MSG_WR_TBColored (977//8)"
 msgid "Color"
@@ -3790,7 +3790,7 @@ msgstr "Zend wachtwoord..."
 
 msgctxt "MSG_TR_GetStats (1058//)"
 msgid "Getting statistics..."
-msgstr "Ontvang statistieken"
+msgstr " Ontvang statistieken..."
 
 msgctxt "MSG_TR_Disconnecting (1059//)"
 msgid "Disconnecting..."
@@ -4788,7 +4788,7 @@ msgstr "Alternatief ge-quote"
 
 msgctxt "MSG_EA_SelectPhoto_Title (1346//)"
 msgid "Select portrait"
-msgstr "Selecteer portret"
+msgstr "Kies portret"
 
 msgctxt "MSG_RE_MoveNextFolderReq (1347//)"
 msgid ""
@@ -5733,11 +5733,11 @@ msgstr "Kan vereiste MUI custom class %s, v%lu.%lu niet openen.\n\n%lu.%lu is mo
 
 msgctxt "MSG_CO_FIRSTSTEPS_TITLE (1619//)"
 msgid "First Steps Settings"
-msgstr "Eerste stapjes..."
+msgstr "Eerste stapjes"
 
 msgctxt "MSG_CO_FIRSTSTEPS_SUMMARY (1620//)"
 msgid "The minimum parameters to be able to send/receive e-mail..."
-msgstr "De minimale configuratie om mail te ontvangen en te sturen"
+msgstr "De minimale configuratie om mail te ontvangen en te sturen..."
 
 msgctxt "MSG_CO_TCPIP_TITLE (1621//)"
 msgid "TCP/IP Settings"
@@ -5777,7 +5777,7 @@ msgstr "Mail beantwoorden en doorsturen"
 
 msgctxt "MSG_CO_REPLY_SUMMARY (1632//)"
 msgid "Settings related to e-mail replying & forwarding..."
-msgstr "Instellingen voor het beantwoorden en doorsturen van e-mail"
+msgstr "Instellingen voor het beantwoorden en doorsturen van e-mail..."
 
 msgctxt "MSG_CO_SIGNATURE_TITLE (1633//)"
 msgid "Mail Signature Settings"
@@ -6228,7 +6228,7 @@ msgstr "Sp_am"
 
 msgctxt "MSG_MA_TBNOTSPAM (1747//8)"
 msgid "N.Sp_am"
-msgstr "Geen sp_am"
+msgstr "GnSp_am"
 
 msgctxt "MSG_HELP_MA_BT_SPAM (1748//)"
 msgid "Mark message as spam"
@@ -6244,7 +6244,7 @@ msgstr "Sp_am"
 
 msgctxt "MSG_RE_TBNOTSPAM (1751//8)"
 msgid "N.Sp_am"
-msgstr "Gn sp_am"
+msgstr "GnSp_am"
 
 msgctxt "MSG_HELP_RE_BT_SPAM (1752//)"
 msgid "Mark message as spam."
@@ -6499,7 +6499,7 @@ msgstr "Zoek..."
 
 msgctxt "MSG_MA_MFILTER (1815//)"
 msgid "Filter..."
-msgstr "Filter"
+msgstr "Filter..."
 
 msgctxt "MSG_MA_REMOVEDELETED (1816//)"
 msgid "Empty trash"
@@ -6539,7 +6539,7 @@ msgstr "Kopieer..."
 
 msgctxt "MSG_MA_MPRINT (1830//)"
 msgid "Print..."
-msgstr "Print"
+msgstr "Print..."
 
 msgctxt "MSG_MA_MSAVE (1831//)"
 msgid "Save..."
@@ -6551,7 +6551,7 @@ msgstr "Bewaar..."
 
 msgctxt "MSG_MA_MNEW (1834//)"
 msgid "New..."
-msgstr "Nieuw"
+msgstr "Nieuw..."
 
 msgctxt "MSG_MA_MREPLY (1835//)"
 msgid "Reply..."
@@ -7642,7 +7642,7 @@ msgid ""
 "Do you really want to use the text of\n"
 "the external editor dropping the changes\n"
 "done in the internal editor?"
-msgstr "Je hebt de tekst in het schrijfvenster bewerkt\nmet een externe editor, maar de tekst in de\ninterne editor is ook gewijzigd.\n\nWil je de tekst van de externe editor gebruiken\nen de wijzigingen van de interne editor verliezen?"
+msgstr "Je hebt de tekst in het schrijfvenster %ld bewerkt\nmet een externe editor, maar de tekst in de\ninterne editor is ook gewijzigd.\n\nWil je de tekst van de externe editor gebruiken\nen de wijzigingen van de interne editor verliezen?"
 
 #. COUNT, HOST
 msgctxt "MSG_LOG_SENDING_FAILED (2080//)"
@@ -9599,7 +9599,7 @@ msgctxt "MSG_HELP_FO_CH_JUMPTORECENT (2479//)"
 msgid ""
 "Jump to the most recent message when\n"
 "entering this folder."
-msgstr "Ga naar het nieuwste mailtje wanneer\ndeze folder geopend wordt. "
+msgstr "Ga naar het nieuwste mailtje wanneer\ndeze folder geopend wordt."
 
 msgctxt "MSG_FO_MAXAGE_DAYS (2480//)"
 msgid "days"
@@ -9645,7 +9645,7 @@ msgid ""
 "Configure the keywords which might\n"
 "suggest the desired existance of an\n"
 "attachment."
-msgstr "Configureer de sleutelwoorden die wellicht\nhet gewenste bestaan van een bijlage suggereren. "
+msgstr "Configureer de sleutelwoorden die wellicht\nhet gewenste bestaan van een bijlage suggereren."
 
 msgctxt "MSG_ATTACHMENT_KEYWORDS (2497//)"
 msgid "attachment,attach,attached,attaching,enclosed,CV,cover letter"
