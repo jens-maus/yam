@@ -1457,10 +1457,16 @@ BOOL SendMails(struct UserIdentityNode *uin, struct MailList *mailsToSend, enum 
           // just go on if we really have something
           if(transferList->count > 0)
           {
+            ULONG twFlags;
+
             snprintf(tc->transferGroupTitle, sizeof(tc->transferGroupTitle), tr(MSG_TR_MailTransferTo), msn->hostname);
 
+            twFlags = TWF_OPEN;
+            if(mode == SENDMAIL_ALL_USER || mode == SENDMAIL_ACTIVE_USER)
+              setFlag(twFlags, TWF_ACTIVATE);
+
             D(DBF_GUI, "create transfer control group");
-            if((tc->transferGroup = (Object *)PushMethodOnStackWait(G->App, 6, MUIM_YAMApplication_CreateTransferGroup, CurrentThread(), tc->transferGroupTitle, tc->conn, mode == SENDMAIL_ALL_USER || mode == SENDMAIL_ACTIVE_USER, TRUE)) != NULL)
+            if((tc->transferGroup = (Object *)PushMethodOnStackWait(G->App, 5, MUIM_YAMApplication_CreateTransferGroup, CurrentThread(), tc->transferGroupTitle, tc->conn, twFlags)) != NULL)
             {
               struct MinList *sentMailFilters;
 

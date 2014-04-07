@@ -79,9 +79,15 @@ BOOL ExportMails(const char *fname, struct MailList *mlist, const ULONG flags)
     // no socket required
     if((tc->connection = CreateConnection(FALSE)) != NULL)
     {
+      ULONG twFlags;
+
       snprintf(tc->transferGroupTitle, sizeof(tc->transferGroupTitle), tr(MSG_TR_MailTransferTo), fname);
 
-      if((tc->transferGroup = (Object *)PushMethodOnStackWait(G->App, 6, MUIM_YAMApplication_CreateTransferGroup, CurrentThread(), tc->transferGroupTitle, tc->connection, TRUE, isFlagClear(flags, EXPORTF_QUIET))) != NULL)
+      twFlags = TWF_ACTIVATE;
+      if(isFlagClear(flags, EXPORTF_QUIET))
+        setFlag(twFlags, TWF_FORCE_OPEN);
+
+      if((tc->transferGroup = (Object *)PushMethodOnStackWait(G->App, 5, MUIM_YAMApplication_CreateTransferGroup, CurrentThread(), tc->transferGroupTitle, tc->connection, twFlags)) != NULL)
       {
         BOOL abortExport = FALSE;
         struct MailNode *mnode;

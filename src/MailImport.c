@@ -851,9 +851,15 @@ static void ProcessImport(struct TransferContext *tc, const char *importFile, st
   // no socket required
   if((conn = CreateConnection(FALSE)) != NULL)
   {
+    ULONG twFlags;
+
     snprintf(tc->transferGroupTitle, sizeof(tc->transferGroupTitle), tr(MSG_TR_MsgInFile), importFile);
 
-    if((tc->transferGroup = (Object *)PushMethodOnStackWait(G->App, 6, MUIM_YAMApplication_CreateTransferGroup, CurrentThread(), tc->transferGroupTitle, conn, TRUE, isFlagClear(flags, IMPORTF_QUIET))) != NULL)
+    twFlags = TWF_ACTIVATE;
+    if(isFlagClear(flags, IMPORTF_QUIET))
+      setFlag(twFlags, TWF_FORCE_OPEN);
+
+    if((tc->transferGroup = (Object *)PushMethodOnStackWait(G->App, 5, MUIM_YAMApplication_CreateTransferGroup, CurrentThread(), tc->transferGroupTitle, conn, twFlags)) != NULL)
     {
       enum FolderType ftype = folder->Type;
 

@@ -84,6 +84,13 @@ struct Data
 
 /* EXPORT
 #define TCG_SETMAX   (-1)
+
+enum TransferWindowFlags
+{
+  TWF_ACTIVATE   = (1<<0),
+  TWF_OPEN       = (1<<1),
+  TWF_FORCE_OPEN = (1<<2)
+};
 */
 
 /* INCLUDE

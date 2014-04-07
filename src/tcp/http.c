@@ -254,7 +254,15 @@ redirected:
 
       // create a new transfer window
       if(tc->transferGroup == NULL)
-        tc->transferGroup = (Object *)PushMethodOnStackWait(G->App, 6, MUIM_YAMApplication_CreateTransferGroup, CurrentThread(), tc->transferGroupTitle, tc->connection, TRUE, isFlagSet(flags, DLURLF_VISIBLE));
+      {
+        ULONG twFlags;
+
+        twFlags = TWF_ACTIVATE;
+        if(isFlagSet(flags, DLURLF_VISIBLE))
+          setFlag(twFlags, TWF_FORCE_OPEN);
+
+        tc->transferGroup = (Object *)PushMethodOnStackWait(G->App, 5, MUIM_YAMApplication_CreateTransferGroup, CurrentThread(), tc->transferGroupTitle, tc->connection, twFlags);
+      }
 
       if(tc->transferGroup != NULL)
       {

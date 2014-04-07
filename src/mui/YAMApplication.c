@@ -878,7 +878,7 @@ DECLARE(DisplayStatistics) // struct Folder *folder, ULONG updateAppIcon
 
 ///
 /// DECLARE(CreateTransferGroup)
-DECLARE(CreateTransferGroup) // APTR thread, const char *title, struct Connection *connection, ULONG activate, ULONG openWindow
+DECLARE(CreateTransferGroup) // APTR thread, const char *title, struct Connection *connection, ULONG flags
 {
   GETDATA;
   Object *group = NULL;
@@ -888,10 +888,20 @@ DECLARE(CreateTransferGroup) // APTR thread, const char *title, struct Connectio
   // create a new transfer window if we don't have one yet
   if(data->transferWindow == NULL)
   {
+    BOOL activate;
+
     D(DBF_GUI, "creating new transfer window");
 
+    if(isFlagSet(msg->flags, TWF_ACTIVATE))
+      activate = TRUE;
+    else if (isFlagSet(msg->flags, TWF_OPEN) || isFlagSet(msg->flags, TWF_FORCE_OPEN))
+      activate = TRUE;
+    else
+      activate = FALSE;
+
+
     if((data->transferWindow = TransferWindowObject,
-      MUIA_Window_Activate, C->TransferWindow != TWM_HIDE && msg->openWindow == TRUE && msg->activate == TRUE,
+      MUIA_Window_Activate, activate,
     End) != NULL)
     {
       // enable the menu item
@@ -905,21 +915,27 @@ DECLARE(CreateTransferGroup) // APTR thread, const char *title, struct Connectio
 
     if((group = (Object *)DoMethod(data->transferWindow, MUIM_TransferWindow_CreateTransferControlGroup, msg->title)) != NULL)
     {
+      BOOL open;
+
       // tell the control group about the thread and the connection being used
       xset(group, MUIA_TransferControlGroup_Thread, msg->thread,
                   MUIA_TransferControlGroup_Connection, msg->connection);
 
       // respect the user's settings for the transfer window
-      if(C->TransferWindow != TWM_HIDE)
-      {
-        if(msg->openWindow == TRUE || C->TransferWindow == TWM_SHOW)
-        {
-          D(DBF_GUI, "visible transfer window is requested");
+      if(isFlagSet(msg->flags, TWF_FORCE_OPEN))
+        open = TRUE;
+      else if(C->TransferWindow != TWM_HIDE && isFlagSet(msg->flags, TWF_OPEN))
+        open = TRUE;
+      else
+        open = FALSE;
 
-          // open the window only once
-          if(xget(data->transferWindow, MUIA_Window_Open) == FALSE)
-            SafeOpenWindow(data->transferWindow);
-        }
+      if(open == TRUE)
+      {
+        D(DBF_GUI, "visible transfer window is requested");
+
+        // open the window only once
+        if(xget(data->transferWindow, MUIA_Window_Open) == FALSE)
+          SafeOpenWindow(data->transferWindow);
       }
     }
   }

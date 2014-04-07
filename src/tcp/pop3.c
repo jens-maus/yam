@@ -1564,11 +1564,16 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
 
               if(uidlOk == TRUE)
               {
-                strlcpy(tc->password, msn->password, sizeof(tc->password));
+                ULONG twFlags;
 
+                strlcpy(tc->password, msn->password, sizeof(tc->password));
                 snprintf(tc->transferGroupTitle, sizeof(tc->transferGroupTitle), tr(MSG_TR_MAILCHECKFROM), msn->description);
 
-                if((tc->transferGroup = (Object *)PushMethodOnStackWait(G->App, 6, MUIM_YAMApplication_CreateTransferGroup, CurrentThread(), tc->transferGroupTitle, tc->connection, TRUE, isFlagSet(tc->flags, RECEIVEF_USER))) != NULL)
+                twFlags = TWF_ACTIVATE;
+                if(isFlagSet(tc->flags, RECEIVEF_USER))
+                  setFlag(twFlags, TWF_OPEN);
+
+                if((tc->transferGroup = (Object *)PushMethodOnStackWait(G->App, 5, MUIM_YAMApplication_CreateTransferGroup, CurrentThread(), tc->transferGroupTitle, tc->connection, twFlags)) != NULL)
                 {
                   int msgs;
 
