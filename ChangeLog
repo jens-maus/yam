@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-04-07 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/YAMApplication.c, misc: downloading an update archive will now always
+    show the transfer window to inform the user about the download's progress
+    no matter what if the transfer window is configured to be invisible for
+    mail transfers. This closes #543.
+
 2014-04-06 Jens Maus <mail@jens-maus.de>
 
   * resources/certificats, tools/mk-ca-bundle.pl: updated our root certificate
