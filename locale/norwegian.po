@@ -882,7 +882,7 @@ msgstr ""
 #. Make sure to remove the <EMPTY> tag in your translation
 msgctxt "MSG_CO_AltRepPatternDef (270//)"
 msgid "<EMPTY>#?.(com|uk|org|gov)"
-msgstr ""
+msgstr "#?.(no)"
 
 #. Please keep the number of backslashes (e.g. \n)
 msgctxt "MSG_CO_ForwardIntroDef (271//)"
@@ -9762,7 +9762,7 @@ msgstr ""
 #. Make sure to remove the <EMPTY> tag in your translation
 msgctxt "MSG_DOC_LANGUAGE_CODE (2519//)"
 msgid "<EMPTY>en"
-msgstr ""
+msgstr "no"
 
 #. LOCALCHARSET
 msgctxt "MSG_CO_CYRILLICCHARSETWARN (2520//)"
