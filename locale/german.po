@@ -873,7 +873,7 @@ msgstr "Hallo,\\n"
 #. language similar to what is written behind <EMPTY>. This
 #. phrase will be used if MSG_CO_AltRepPatternDef matches.
 msgctxt "MSG_CO_AltRepIntroDef (269//)"
-msgid "<EMPTY>On %c, %n wrote:\\n"
+msgid "On %c, %n wrote:\\n"
 msgstr "Am %c schrieb %n:\\n"
 
 #. Replace the whole line with an AmigaDOS pattern of domain
@@ -882,7 +882,7 @@ msgstr "Am %c schrieb %n:\\n"
 #. address of a recipient and the user is replying all the
 #. alternative intro and bye phrases are used.
 msgctxt "MSG_CO_AltRepPatternDef (270//)"
-msgid "<EMPTY>#?.(com|uk|org|gov)"
+msgid "#?.(com|uk|org|gov)"
 msgstr "#?.(de|ch|at)"
 
 #. Please keep the number of backslashes (e.g. \n)
@@ -906,7 +906,7 @@ msgstr "Mit freundlichen Grüssen"
 #. will be used when replying to mails and if the AmigaDOS pattern
 #. defined in MSG_CO_AltRepPatternDef matches.
 msgctxt "MSG_CO_AltRepHelloDef (274//)"
-msgid "<EMPTY>Hello %f,\\n"
+msgid "Hello %f,\\n"
 msgstr "Hallo %f,\\n"
 
 #. Replace the whole line with an alternative bye phrase in your
@@ -914,14 +914,14 @@ msgstr "Hallo %f,\\n"
 #. will be used when replying to mails and if the AmigaDOS pattern
 #. defined in MSG_CO_AltRepPatternDef matches.
 msgctxt "MSG_CO_AltRepByeDef (275//)"
-msgid "<EMPTY>Kind regards"
+msgid "Kind regards"
 msgstr "Mit freundlichen Grüssen"
 
 #. Replace the whole line with a hello phrase similar to what is
 #. written behind <EMPTY>. This phrase will be used if a mailing
 #. list AmigaDOS-pattern matches and the user is replying.
 msgctxt "MSG_CO_MLRepHelloDef (276//)"
-msgid "<EMPTY>Hello %f,\\n"
+msgid "Hello %f,\\n"
 msgstr "Hallo %f,\\n"
 
 #. Please keep the number of backslashes (e.g. \n)
@@ -9758,7 +9758,7 @@ msgstr "Erlaubt es, ein anderes Postfach auszuwählen,\nin dem eingehende Nachri
 #. potentially translated page should come up. For
 #. english, the MSG_LANGUAGE_CODE should be empty.
 msgctxt "MSG_DOC_LANGUAGE_CODE (2519//)"
-msgid "<EMPTY>en"
+msgid "en"
 msgstr "de"
 
 #. LOCALCHARSET
