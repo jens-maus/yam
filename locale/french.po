@@ -1,7 +1,7 @@
 # YAM catalog description/translation file (PO-style)
 # $Id$
 # $URL$
-# version 9
+# version 10
 # Translators:
 # abalaban <transifex@balaban.fr>, 2014
 # Alexandre Balaban <abalaban@free.fr>, 2013
@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-03-27 10:05+0000\n"
+"PO-Revision-Date: 2014-04-13 18:29+0000\n"
 "Last-Translator: damato <mail@jens-maus.de>\n"
 "Language-Team: French (http://www.transifex.com/projects/p/yam/language/fr/)\n"
 "MIME-Version: 1.0\n"
@@ -872,8 +872,9 @@ msgstr "Salut,\\n"
 #. Replace the whole line with a reply intro phrase in your
 #. language similar to what is written behind <EMPTY>. This
 #. phrase will be used if MSG_CO_AltRepPatternDef matches.
+#. Make sure to remove the <EMPTY> tag in your translation
 msgctxt "MSG_CO_AltRepIntroDef (269//)"
-msgid "On %c, %n wrote:\\n"
+msgid "<EMPTY>On %c, %n wrote:\\n"
 msgstr "Le %c, %n a écrit :\\n"
 
 #. Replace the whole line with an AmigaDOS pattern of domain
@@ -881,8 +882,9 @@ msgstr "Le %c, %n a écrit :\\n"
 #. is written behind <EMPTY>. If this pattern matches an email
 #. address of a recipient and the user is replying all the
 #. alternative intro and bye phrases are used.
+#. Make sure to remove the <EMPTY> tag in your translation
 msgctxt "MSG_CO_AltRepPatternDef (270//)"
-msgid "#?.(com|uk|org|gov)"
+msgid "<EMPTY>#?.(com|uk|org|gov)"
 msgstr "#?.(fr)"
 
 #. Please keep the number of backslashes (e.g. \n)
@@ -905,23 +907,26 @@ msgstr "Mes salutations"
 #. language similar to what is written behind <EMPTY>. This phrase
 #. will be used when replying to mails and if the AmigaDOS pattern
 #. defined in MSG_CO_AltRepPatternDef matches.
+#. Make sure to remove the <EMPTY> tag in your translation
 msgctxt "MSG_CO_AltRepHelloDef (274//)"
-msgid "Hello %f,\\n"
+msgid "<EMPTY>Hello %f,\\n"
 msgstr "Salut %f,\\n"
 
 #. Replace the whole line with an alternative bye phrase in your
 #. language similar to what is written behind <EMPTY>. This phrase
 #. will be used when replying to mails and if the AmigaDOS pattern
 #. defined in MSG_CO_AltRepPatternDef matches.
+#. Make sure to remove the <EMPTY> tag in your translation
 msgctxt "MSG_CO_AltRepByeDef (275//)"
-msgid "Kind regards"
+msgid "<EMPTY>Kind regards"
 msgstr "Mes salutations"
 
 #. Replace the whole line with a hello phrase similar to what is
 #. written behind <EMPTY>. This phrase will be used if a mailing
 #. list AmigaDOS-pattern matches and the user is replying.
+#. Make sure to remove the <EMPTY> tag in your translation
 msgctxt "MSG_CO_MLRepHelloDef (276//)"
-msgid "Hello %f,\\n"
+msgid "<EMPTY>Hello %f,\\n"
 msgstr "Salut %f,\\n"
 
 #. Please keep the number of backslashes (e.g. \n)
@@ -9757,8 +9762,9 @@ msgstr "Permet de définir un dossier différent pour\nstocker les messages apr�
 #. documentation request (HELP hotkey) and thus a
 #. potentially translated page should come up. For
 #. english, the MSG_LANGUAGE_CODE should be empty.
+#. Make sure to remove the <EMPTY> tag in your translation
 msgctxt "MSG_DOC_LANGUAGE_CODE (2519//)"
-msgid "en"
+msgid "<EMPTY>en"
 msgstr "fr"
 
 #. LOCALCHARSET
