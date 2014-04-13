@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-04-13 05:58+0000\n"
+"PO-Revision-Date: 2014-04-13 06:18+0000\n"
 "Last-Translator: mailman <sebastian.rosa@wp.pl>\n"
 "Language-Team: Polish (http://www.transifex.com/projects/p/yam/language/pl/)\n"
 "MIME-Version: 1.0\n"
@@ -8462,7 +8462,7 @@ msgstr ""
 
 msgctxt "MSG_CO_POP_SECURITY (2238//)"
 msgid "Connection Security"
-msgstr ""
+msgstr "Zabezpieczenie połączenia"
 
 msgctxt "MSG_CO_POP_SECURITY_NONE (2239//)"
 msgid "No Security"
@@ -8470,11 +8470,11 @@ msgstr "Bez zabezpieczeń"
 
 msgctxt "MSG_CO_POP_SECURITY_TLS (2240//)"
 msgid "STARTTLS"
-msgstr ""
+msgstr "STARTTLS"
 
 msgctxt "MSG_CO_POP_SECURITY_SSL (2241//)"
 msgid "SSL/TLS"
-msgstr ""
+msgstr "SSL/TLS"
 
 msgctxt "MSG_HELP_CO_CY_POPSECURE (2242//)"
 msgid ""
@@ -8533,23 +8533,23 @@ msgstr ""
 
 msgctxt "MSG_CO_SMTP_SECURITY (2253//)"
 msgid "Connection Security"
-msgstr ""
+msgstr "Zabezpieczenie połączenia"
 
 msgctxt "MSG_CO_SMTP_SECURITY_NONE (2254//)"
 msgid "No Security"
-msgstr ""
+msgstr "Bez zabezpieczeń"
 
 msgctxt "MSG_CO_SMTP_SECURITY_TLS (2255//)"
 msgid "STARTTLS"
-msgstr ""
+msgstr "STARTTLS"
 
 msgctxt "MSG_CO_SMTP_SECURITY_SSL (2256//)"
 msgid "SSL/TLS"
-msgstr ""
+msgstr "SSL/TLS"
 
 msgctxt "MSG_CO_SMTP_SECURITYAUTH (2257//)"
 msgid "Security and Authentification"
-msgstr ""
+msgstr "Zabezpieczenia i uwierzytelnianie"
 
 msgctxt "MSG_HELP_CO_CY_SMTPSECURE (2258//)"
 msgid ""
@@ -8916,7 +8916,7 @@ msgstr ""
 
 msgctxt "MSG_CO_CONFIGWARNING_TITLE (2340//)"
 msgid "Configuration Warning"
-msgstr ""
+msgstr "Konfiguracja ostrzeżeń"
 
 msgctxt "MSG_CO_CONFIGWARNING (2341//)"
 msgid ""
@@ -8964,7 +8964,7 @@ msgstr "Pole adresu Odpisz-Do"
 
 msgctxt "MSG_CO_LISTCOLUMNSETTINGS (2349//)"
 msgid "Column settings"
-msgstr ""
+msgstr "Ustawienia kolumn"
 
 msgctxt "MSG_CO_LOOKFEEL_MAINWINDOW (2350//)"
 msgid "Main window"
@@ -8976,7 +8976,7 @@ msgstr ""
 
 msgctxt "MSG_CO_LOOKFEEL_TITLE_INFO (2352//)"
 msgid "Information"
-msgstr ""
+msgstr "Informacje"
 
 msgctxt "MSG_HELP_WR_CY_SIGNATURE (2353//)"
 msgid ""
@@ -9078,7 +9078,7 @@ msgstr "Połączenia"
 
 msgctxt "MSG_CO_POP_NOTIFICATION (2374//)"
 msgid "Notification for new mails"
-msgstr ""
+msgstr "Powiadomienia dla nowych wiadomości"
 
 msgctxt "MSG_SSL_CERT_WARNING_TITLE (2375//)"
 msgid "SSL Certificate Warning"
@@ -9501,7 +9501,7 @@ msgstr ""
 
 msgctxt "MSG_CO_SHOW_ARCHIVER_PROGRESS (2461//)"
 msgid "Show progress"
-msgstr ""
+msgstr "Pokaż postęp"
 
 msgctxt "MSG_CO_LAUNCH_EXTEDITOR (2462//)"
 msgid "_Launch external editor immediately"
@@ -9509,7 +9509,7 @@ msgstr ""
 
 msgctxt "MSG_CO_EXTEDITOR (2463//)"
 msgid "External editor settings"
-msgstr ""
+msgstr "Ustawienia edytora zewnętrznego."
 
 msgctxt "MSG_HELP_CO_ST_EDITOR_EXT (2464//)"
 msgid ""
@@ -9578,73 +9578,73 @@ msgstr ""
 #. COUNT, COUNT
 msgctxt "MSG_LOG_FILTER_DONE (2475//)"
 msgid "Filtered %ld message(s) with %ld match(es)"
-msgstr ""
+msgstr "Wyfiltrowano %ld wiadomości z szukaną frazą %ld"
 
 msgctxt "MSG_FO_JUMP_TO_UNREAD_MESSAGE (2476//)"
 msgid "Jump to first unread message"
-msgstr ""
+msgstr "Skocz do pierwszej, nieprzeczytanej wiadomości."
 
 msgctxt "MSG_HELP_FO_CH_JUMPTOUNREAD (2477//)"
 msgid ""
 "Jump to the first unread message when\n"
 "entering this folder."
-msgstr ""
+msgstr "Skocz do pierwszej, nieprzeczytanej wiadomości\npo wejściu do tego folderu."
 
 msgctxt "MSG_FO_JUMP_TO_RECENT_MESSAGE (2478//)"
 msgid "Jump to newest message"
-msgstr ""
+msgstr "Skocz do najnowszej wiadomości."
 
 msgctxt "MSG_HELP_FO_CH_JUMPTORECENT (2479//)"
 msgid ""
 "Jump to the most recent message when\n"
 "entering this folder."
-msgstr ""
+msgstr "Skocz do najnowszej wiadomości,\npo wejściu do tego folderu."
 
 msgctxt "MSG_FO_MAXAGE_DAYS (2480//)"
 msgid "days"
-msgstr ""
+msgstr "dni"
 
 msgctxt "MSG_QUICKSEARCH_FILTER_LIST (2481//)"
 msgid "Filter list..."
-msgstr ""
+msgstr "Lista filtrów..."
 
 msgctxt "MSG_QUICKSEARCH_FROM (2482//)"
 msgid "Sender"
-msgstr ""
+msgstr "Nadawca"
 
 msgctxt "MSG_QUICKSEARCH_TO (2483//)"
 msgid "Receiver"
-msgstr ""
+msgstr "Odbiorca"
 
 msgctxt "MSG_QUICKSEARCH_SUBJECT (2484//)"
 msgid "Subject"
-msgstr ""
+msgstr "Temat"
 
 msgctxt "MSG_QUICKSEARCH_BODY (2485//)"
 msgid "Mail body"
-msgstr ""
+msgstr "Treść wiadomości"
 
 msgctxt "MSG_CO_CHECK_FOR_MISSING_ATTACHMENTS (2486//)"
 msgid "Check for missing attachments"
-msgstr ""
+msgstr "Sprawdź brakujące załączniki"
 
 msgctxt "MSG_CO_ATTACHMENT_KEYWORDS (2487//)"
 msgid "Keywords:"
-msgstr ""
+msgstr "Słowa kluczowe:"
 
 msgctxt "MSG_HELP_CO_CH_ATTACHMENTREMINDER (2495//)"
 msgid ""
 "Would you like to be warned if the\n"
 "mail body suggests the existance of\n"
 "an attachment but these are missing?"
-msgstr ""
+msgstr "Czy chcesz być ostrzegany,\ngdy treść wiadomości sugeruje\nistnienie załącznika, którego nie ma?"
 
 msgctxt "MSG_HELP_CO_LV_ATTACHMENTKEYWORDS (2496//)"
 msgid ""
 "Configure the keywords which might\n"
 "suggest the desired existance of an\n"
 "attachment."
-msgstr "Określ słowa, które mogą sugerować\nistnieje żądanego załącznika."
+msgstr "Określ słowa kluczowe, które mogą\nsugerować istnieje żądanego\nzałącznika."
 
 msgctxt "MSG_ATTACHMENT_KEYWORDS (2497//)"
 msgid "attachment,attach,attached,attaching,enclosed,CV,cover letter"
@@ -9664,7 +9664,7 @@ msgstr "Przypomnij później"
 
 msgctxt "MSG_WR_NO_ATTACHMENTS_TITLE (2501//)"
 msgid "Attachment reminder"
-msgstr ""
+msgstr "Powiadomienia dotyczące załączników."
 
 msgctxt "MSG_WR_NO_ATTACHMENTS (2502//)"
 msgid "Did you forget to add an attachment?"
@@ -9709,7 +9709,7 @@ msgstr "Pozwala ustawić inny folder do przechowywania\nwiadomości po ich wysł
 
 msgctxt "MSG_CO_IDENTITY_SAVESENTMAIL (2511//)"
 msgid "After transfer store mails in 'Sent' folder"
-msgstr ""
+msgstr "Po transferze, przechowuj wiadomości w folderze wysłanych wiadomości."
 
 msgctxt "MSG_HELP_CO_CH_IDENTITY_SAVESENTMAIL (2512//)"
 msgid ""
