@@ -49,6 +49,7 @@ echo >&2
 echo "checking out SVN repository:"
 echo "============================"
 cd $CHECKOUTDIR
+rm -rf ${MODULE}
 output=`${SVN} checkout --config-option config:miscellany:use-commit-times=yes ${SVNROOT} ${MODULE}`
 ret=$?
 if [ $ret != 0 ]; then
