@@ -1812,7 +1812,7 @@ static void InitBeforeLogin(BOOL hidden)
   // try to open the mandatory codesets.library before we open the catalog
   // since on OS3/MOS/AROS we use it to convert the catalogs from UTF8 to the
   // local charset.
-  INITLIB("codesets.library", 6, 16, &CodesetsBase,  "main", 1, &ICodesets,  TRUE, "http://sf.net/p/codesetslib/");
+  INITLIB("codesets.library", 6, 18, &CodesetsBase,  "main", 1, &ICodesets,  TRUE, "http://sf.net/p/codesetslib/");
 
   // Now load the catalog of YAM
   if(OpenYAMCatalog() == FALSE)
@@ -1907,21 +1907,22 @@ static void InitBeforeLogin(BOOL hidden)
   //       this causes the MUI version of MorphOS to be borked, thus this workaround!
   //
   //       customclass      minv minr maxv maxr  mand  url
-  CheckMCC(MUIC_TheBar,       26,  14,   0,   0, TRUE, "http://sf.net/p/thebar/");
-  CheckMCC(MUIC_TheBarVirt,   26,  14,   0,   0, TRUE, "http://sf.net/p/thebar/");
-  CheckMCC(MUIC_TheButton,    26,  14,   0,   0, TRUE, "http://sf.net/p/thebar/");
-  CheckMCC(MUIC_BetterString, 11,  26,  30,   0, TRUE, "http://sf.net/p/bstring-mcc/");
-  CheckMCC(MUIC_NList,        20, 136,   0,   0, TRUE, "http://sf.net/p/nlist-classes/");
-  CheckMCC(MUIC_NListview,    19,  91,   0,   0, TRUE, "http://sf.net/p/nlist-classes/");
-  CheckMCC(MUIC_NFloattext,   19,  72,   0,   0, TRUE, "http://sf.net/p/nlist-classes/");
-  CheckMCC(MUIC_NListtree,    18,  43,   0,   0, TRUE, "http://sf.net/p/nlist-classes/");
-  CheckMCC(MUIC_NBalance,     15,  17,   0,   0, TRUE, "http://sf.net/p/nlist-classes/");
-  CheckMCC(MUIC_NBitmap,      15,  21,   0,   0, TRUE, "http://sf.net/p/nlist-classes/");
-  CheckMCC(MUIC_TextEditor,   15,  43,   0,   0, TRUE, "http://sf.net/p/texteditor-mcc/");
+  CheckMCC(MUIC_TheBar,       26,  15,   0,   0, TRUE, "http://sf.net/p/thebar/");
+  CheckMCC(MUIC_TheBarVirt,   26,  15,   0,   0, TRUE, "http://sf.net/p/thebar/");
+  CheckMCC(MUIC_TheButton,    26,  15,   0,   0, TRUE, "http://sf.net/p/thebar/");
+  CheckMCC(MUIC_BetterString, 11,  28,  30,   0, TRUE, "http://sf.net/p/bstring-mcc/");
+  CheckMCC(MUIC_NList,        20, 138,   0,   0, TRUE, "http://sf.net/p/nlist-classes/");
+  CheckMCC(MUIC_NListview,    19,  93,   0,   0, TRUE, "http://sf.net/p/nlist-classes/");
+  CheckMCC(MUIC_NFloattext,   19,  74,   0,   0, TRUE, "http://sf.net/p/nlist-classes/");
+  CheckMCC(MUIC_NListtree,    18,  45,   0,   0, TRUE, "http://sf.net/p/nlist-classes/");
+  CheckMCC(MUIC_NBalance,     15,  19,   0,   0, TRUE, "http://sf.net/p/nlist-classes/");
+  CheckMCC(MUIC_NBitmap,      15,  23,   0,   0, TRUE, "http://sf.net/p/nlist-classes/");
+  CheckMCC(MUIC_TextEditor,   15,  45,   0,   0, TRUE, "http://sf.net/p/texteditor-mcc/");
 
   // now we search through PROGDIR:Charsets and load all user defined
   // codesets via codesets.library
   G->codesetsList = CodesetsListCreateA(NULL);
+
   // get the system's default codeset
   G->systemCodeset = CodesetsFindA(NULL, NULL);
 
