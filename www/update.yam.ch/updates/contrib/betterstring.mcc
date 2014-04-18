@@ -1,10 +1,10 @@
 NAME: BetterString.mcc
-VERSION: 11.26
-BUILDDATE: 13.12.2013
-URL: * http://downloads.sf.net/bstring-mcc/MCC_BetterString-11.26.lha
+VERSION: 11.28
+BUILDDATE: 04.04.2014
+URL: * http://downloads.sf.net/bstring-mcc/MCC_BetterString-11.28.lha
 CHANGES:
 ---------------------------------------------------------------------------
-                       BetterString.mcc - 11.26
+                       BetterString.mcc - 11.28
 ---------------------------------------------------------------------------
 
 BetterString.mcc is the MUI custom class used for managing the string

@@ -1,10 +1,10 @@
 NAME: NListtree.mcc
-VERSION: 18.43
-BUILDDATE: 13.12.2013
-URL: * http://downloads.sf.net/nlist-classes/MCC_NList-0.117.lha
+VERSION: 18.45
+BUILDDATE: 05.04.2014
+URL: * http://downloads.sf.net/nlist-classes/MCC_NList-0.119.lha
 CHANGES:
 ---------------------------------------------------------------------------
-                         NListtree.mcc - 18.43
+                         NListtree.mcc - 18.45
 ---------------------------------------------------------------------------
 
 NListtree.mcc is a MUI custom class used for managing large amount of data

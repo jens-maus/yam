@@ -1,10 +1,10 @@
 NAME: openurl.library
-VERSION: 7.14
-BUILDDATE: 13.12.2013
-URL: * http://downloads.sf.net/openurllib/OpenURL-7.14.lha
+VERSION: 7.15
+BUILDDATE: 05.04.2014
+URL: * http://downloads.sf.net/openurllib/OpenURL-7.15.lha
 CHANGES:
 ---------------------------------------------------------------------------
-                          openurl.library - 7.14
+                          openurl.library - 7.15
 ---------------------------------------------------------------------------
 
 openurl.library is a library to make it easier for application programmers
