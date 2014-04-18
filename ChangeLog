@@ -5,6 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+#### YAM 2.9p1 RELEASE ##################################################
+
+2014-04-18 Jens Maus <mail@jens-maus.de>
+
+  * misc: final YAM 2.9p1 release. Happy easter and welcome Marten!
+  * misc: some general release preparations. Time to get everyting sorted
+    out.
+  * doc/Install-YAM, tools/mkrelease.sh: slightly fixed and optimized the
+    install script and modified mkrelease script to copy the quityam.rx and
+    isyamrunning.rx script to the Install directory as well.
+
 2014-04-07 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/YAMApplication.c, misc: downloading an update archive will now always
