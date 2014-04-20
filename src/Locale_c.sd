@@ -151,7 +151,7 @@ BOOL Open%bCatalog(void)
               // expunge locale.library. This is not going to succeed, because we still keep it
               // opened. But trying to expunge it will let locale.library expunge all unused
               // catalogs, and this is what we are trying to archive here.
-              RemLibrary(LocaleBase);
+              RemLibrary((struct Library *)LocaleBase);
               D(DBF_STARTUP, "expungeed locale.library");
             break;
 
