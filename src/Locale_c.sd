@@ -32,6 +32,7 @@
 // PLEASE DO NOT EDIT!!!
 
 #include <proto/dos.h>
+#include <proto/exec.h>
 #include <proto/locale.h>
 
 #if !defined(__amigaos4__)
@@ -44,8 +45,8 @@
 #include "Debug.h"
 
 struct fcstr %b_Strings[%n] =
-{ 
-  { %s, NULL, %d }%(,) 
+{
+  { %s, NULL, %d }%(,)
 };
 
 /*** Catalog functions ***/
@@ -67,7 +68,7 @@ void Close%bCatalog(void)
       fc->msg = fc->defmsg;
     }
   }
- 
+
   if(G->Locale != NULL && G->Catalog != NULL)
   {
     CloseCatalog(G->Catalog);
@@ -76,10 +77,12 @@ void Close%bCatalog(void)
 
   LEAVE();
 }
+
 ///
 /// Open%bCatalog()
 BOOL Open%bCatalog(void)
 {
+  BOOL retry = TRUE;
   BOOL success = TRUE;
   struct fcstr *fc = NULL;
   int i = 0;
@@ -89,63 +92,91 @@ BOOL Open%bCatalog(void)
   // now we try to open the catalog
   if(G->Locale != NULL && G->Catalog == NULL)
   {
-    // try to open the catalog file in its
-    // specified version.
-    if(G->NoCatalogTranslation == FALSE)
+    while(retry == TRUE)
     {
-      G->Catalog = OpenCatalog(NULL, 
-                               (STRPTR)"%b.catalog", 
-                               OC_BuiltInLanguage, "english",
-                               OC_BuiltInCodeSet, 4, // 4 = iso-8859-1
-                               #if defined(__amigaos4__)
-                               OC_BuiltInVersion, %v,
-                               OC_PreferExternal, TRUE,
-                               #endif
-                               TAG_END);
-    }
-
-    // check if an error occurred.
-    if(G->Catalog != NULL)
-    {
-      // now we check if the opened catalog has the correct version or not
-      // and we don't care about revisions here.
-      if(G->Catalog->cat_Version != %v)
+      // try to open the catalog file in its
+      // specified version.
+      if(G->NoCatalogTranslation == FALSE)
       {
-        struct EasyStruct ErrReq;
-
-        W(DBF_STARTUP, "Catalog version (%%%d) != required version (%v). Warning user!", G->Catalog->cat_Version);
-
-        ErrReq.es_StructSize = sizeof(struct EasyStruct);
-        ErrReq.es_Flags      = 0;
-
-        ErrReq.es_Title        = (STRPTR)"%b.catalog version incompatible!";
-        ErrReq.es_TextFormat   = (STRPTR)"YAM has found a translation catalog file in\\n"
-                                         "your native language to be available. However,\\n"
-                                         "it couldn't be activated as its version is\\n"
-                                         "incompatible to version %v which YAM requires.\\n"
-                                         "\\n"
-                                         "Please check if there is a version %v of your\\n"
-                                         "native catalog available or remove the old one.";
-        ErrReq.es_GadgetFormat = (STRPTR)"Continue|Exit";
-
-        DisplayBeep(NULL);
-        success = EasyRequestArgs(NULL, &ErrReq, NULL, NULL);
-
-        // close the catalog immediately again
-        // so that we fallback to the internal language
-        CloseCatalog(G->Catalog);
-        G->Catalog = NULL;
+        G->Catalog = OpenCatalog(NULL,
+                                 (STRPTR)"%b.catalog",
+                                 OC_BuiltInLanguage, "english",
+                                 OC_BuiltInCodeSet, 4, // 4 = iso-8859-1
+                                 #if defined(__amigaos4__)
+                                 OC_BuiltInVersion, %v,
+                                 OC_PreferExternal, TRUE,
+                                 #endif
+                                 TAG_END);
       }
-      else
-        D(DBF_STARTUP, "successfully opened %b.catalog v%%%d.%%%d (language: '%%%s', codeset: %%%d)", G->Catalog->cat_Version, G->Catalog->cat_Revision, G->Catalog->cat_Language, G->Catalog->cat_CodeSet);
-    }
-    else if(G->NoCatalogTranslation == FALSE)
-    {
-      // now we check the error state
-      if(IoErr() != 0)
-        W(DBF_STARTUP, "could not open '%b.catalog': IoErr: %%%d", IoErr());
-      else
-        W(DBF_STARTUP, "could not open '%b.catalog': builtin strings can be used");
+
+      // check if an error occurred.
+      if(G->Catalog != NULL)
+      {
+        // now we check if the opened catalog has the correct version or not
+        // and we don't care about revisions here.
+        if(G->Catalog->cat_Version != %v)
+        {
+          struct EasyStruct es;
+
+          W(DBF_STARTUP, "Catalog version (%%%d) != required version (%v). Warning user!", G->Catalog->cat_Version);
+
+          // close the catalog immediately again
+          // so that we fallback to the internal language
+          CloseCatalog(G->Catalog);
+          G->Catalog = NULL;
+
+          DisplayBeep(NULL);
+
+          es.es_StructSize = sizeof(es);
+          es.es_Flags      = 0;
+
+          es.es_Title        = (STRPTR)"Incompatible %b.catalog version!";
+          es.es_TextFormat   = (STRPTR)"YAM has found a translation catalog file in\\n"
+                                       "your native language to be available. However,\\n"
+                                       "it couldn't be activated as its version is\\n"
+                                       "incompatible to version %v which YAM requires.\\n"
+                                       "\\n"
+                                       "Please check if there is a version %v of your\\n"
+                                       "native catalog available or remove the old one.";
+          es.es_GadgetFormat = (STRPTR)"Retry|Continue|Quit";
+
+          switch(EasyRequestArgs(NULL, &es, NULL, NULL))
+          {
+            case 0: // quit
+              retry = FALSE;
+              success = FALSE;
+            break;
+
+            case 1: // retry
+              // expunge locale.library. This is not going to succeed, because we still keep it
+              // opened. But trying to expunge it will let locale.library expunge all unused
+              // catalogs, and this is what we are trying to archive here.
+              RemLibrary(LocaleBase);
+              D(DBF_STARTUP, "expungeed locale.library");
+            break;
+
+            case 2: // continue
+              retry = FALSE;
+              success = TRUE;
+            break;
+          }
+        }
+        else
+        {
+          D(DBF_STARTUP, "successfully opened %b.catalog v%%%d.%%%d (language: '%%%s', codeset: %%%d)", G->Catalog->cat_Version, G->Catalog->cat_Revision, G->Catalog->cat_Language, G->Catalog->cat_CodeSet);
+          retry = FALSE;
+        }
+      }
+      else if(G->NoCatalogTranslation == FALSE)
+      {
+        // now we check the error state
+        if(IoErr() != 0)
+          W(DBF_STARTUP, "could not open '%b.catalog': IoErr: %%%d", IoErr());
+        else
+          W(DBF_STARTUP, "could not open '%b.catalog': builtin strings can be used");
+
+        retry = FALSE;
+      }
     }
   }
   else
@@ -157,14 +188,14 @@ BOOL Open%bCatalog(void)
   for(i=0, fc = (struct fcstr *)%b_Strings;  i < %n;  i++, fc++)
   {
     const char *cs;
-    
+
     // check if G->Locale is NULL (locale.lib couldn't be open). Otherwise
     // use the default msg string.
     if(G->Locale != NULL)
       cs = GetCatalogStr(G->Catalog, fc->id, (STRPTR)fc->defmsg);
     else
       cs = fc->defmsg;
-   
+
     #if !defined(__amigaos4__)
     if(G->Catalog != NULL && cs != NULL)
       fc->msg = CodesetsUTF8ToStr(CSA_Source, cs, TAG_DONE);
@@ -174,8 +205,9 @@ BOOL Open%bCatalog(void)
     fc->msg = cs;
     #endif
   }
- 
+
   RETURN(success);
   return success;
 }
+
 ///

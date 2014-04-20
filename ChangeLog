@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-04-20 Thore Böckelmann <tboeckel@gmx.de>
+
+  * Locale_c.sd: in case an incompatible catalog version is found in memory YAM
+    will now try to expunge locale.library in order to flush any unused catalogs
+    from memory. This closes #548.
+
 #### YAM 2.9p1 RELEASE ##################################################
 
 2014-04-18 Jens Maus <mail@jens-maus.de>
