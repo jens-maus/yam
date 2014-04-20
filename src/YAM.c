@@ -338,7 +338,10 @@ static BOOL CheckMCC(const char *name,
           W(DBF_STARTUP, "found %s to be >= v%ld.%ld (max)", name, maxver, maxrev);
         }
         else
-          success = TRUE; // success, the mcc meets our requirements
+        {
+          // success, the mcc meets our requirements
+          success = TRUE;
+        }
       }
     }
 
