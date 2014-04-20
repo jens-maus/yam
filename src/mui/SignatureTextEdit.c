@@ -75,8 +75,7 @@ OVERLOAD(OM_SET)
           if((sig = (char *)DoMethod(obj, MUIM_TextEditor_ExportText)) != NULL)
           {
             // replace the old text with the current one
-            free(data->sigNode->signature);
-            data->sigNode->signature = strdup(sig);
+            dstrcpy(&data->sigNode->signature, sig);
             FreeVec(sig);
           }
         }

@@ -10,6 +10,10 @@ $URL$
   * Locale_c.sd: in case an incompatible catalog version is found in memory YAM
     will now try to expunge locale.library in order to flush any unused catalogs
     from memory. This closes #548.
+  * mui/SignatureTextEdit.c: getting a modified signature text from the editor
+    object must treat the destination string as a dynamically allocated string.
+    Otherwise a crash will happen when the string is finally freed. This closes
+    #545.
 
 #### YAM 2.9p1 RELEASE ##################################################
 
