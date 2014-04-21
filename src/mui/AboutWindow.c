@@ -166,6 +166,7 @@ OVERLOAD(OM_NEW)
                           "Marko Raina (finnish)\n"
                           "Alexandre Balaban (french)\n"
                           "Thore Boeckelmann, Jens Maus (german)\n"
+                          "Anthony Iliakis (greek)\n"
                           "Miklos Gubucz (hungarian)\n"
                           "Samir Hawamdeh (italian)\n"
                           "Emilio Jimenez (spanish)\n"
