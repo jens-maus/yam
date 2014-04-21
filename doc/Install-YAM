@@ -1,5 +1,5 @@
 ;
-; $VER: Install-YAM 1.37 (17.04.2014)
+; $VER: Install-YAM 1.38 (21.04.2014)
 ; Copyright (C) 2000-2014 YAM Open Source Team
 ; Language support added by Sönke Tesch/ATO
 ;
@@ -121,7 +121,7 @@
         (set #lang_catalog        (cat "Ktore pliki lokalizacyjne chcesz zainstalowac?\n"
                                        "(jezyk angielski jest wbudowany)"))
         (set #ask_charsets             "Czy chcesz zainstalowac wymagane przez codesets.library pliki zestawow znakow?")
-        (set #no_way_back_ arning (cat "OSTRZEZENIE!!\n"
+        (set #no_way_back_warning (cat "OSTRZEZENIE!!\n"
                                        "(jesli chcesz uaktualnic istniejaca instalacje programu YAM 2.4)\n"
                                        "\n"
                                        "Zostal calkowicie zmieniony system nazywania plikow wiadomosci. Przy pierwszym uruchomieniu programu YAM 2.9p1, wszystkie istniejace wiadomosci zostana automatycznie przekonwertowane na nowy format. Po tej czynnosci YAM 2.4 nie bedzie potrafil juz ich obsluzyc. Lepiej wykonaj kopie bezpieczenstwa WSZYSTKICH swoich wiadomosci PRZED uruchomieniem programu YAM 2.9p1.\n"

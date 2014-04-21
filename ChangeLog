@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-04-21 Jens Maus <mail@jens-maus.de>
+
+  * doc/Install-YAM: fixed a bug in the polish language support in the installer
+    script. This fixes #549.
+
 2014-04-20 Thore Böckelmann <tboeckel@gmx.de>
 
   * Locale_c.sd: in case an incompatible catalog version is found in memory YAM
