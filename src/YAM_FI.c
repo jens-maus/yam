@@ -1500,6 +1500,7 @@ BOOL ExecuteFilterAction(const struct FilterNode *filter, struct Mail *mail, str
           accessFreed = TRUE;
         }
 
+        AppendToLogfile(LF_VERBOSE, 23, tr(MSG_LOG_FILTER_MOVE_MAIL), filter->name, AddrName(mail->From), mail->Subject, mail->Folder->Name, fo->Name);
         MA_MoveCopy(mail, fo, MVCPF_CLOSE_WINDOWS|MVCPF_QUIET);
 
         // restore the old access mode if it was changed before

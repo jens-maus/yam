@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-04-21 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_FI.c: moving a mail from one folder to another by a filter will now
+    create a log entry in verbose mode including the filter which caused the
+    move operation. This closes #550.
+
 2014-04-21 Jens Maus <mail@jens-maus.de>
 
   * doc/Install-YAM: fixed a bug in the polish language support in the installer
