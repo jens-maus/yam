@@ -13,8 +13,8 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-04-13 18:29+0000\n"
-"Last-Translator: damato <mail@jens-maus.de>\n"
+"PO-Revision-Date: 2014-04-21 04:58+0000\n"
+"Last-Translator: mailman <sebastian.rosa@wp.pl>\n"
 "Language-Team: Polish (http://www.transifex.com/projects/p/yam/language/pl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -9017,7 +9017,7 @@ msgstr "kB"
 
 msgctxt "MSG_MA_DRAFTS (2359//)"
 msgid "Drafts"
-msgstr "Szkic"
+msgstr "Szkice"
 
 msgctxt "MSG_CO_SIGNATURE (2360//)"
 msgid "Signature"
@@ -9226,13 +9226,13 @@ msgstr ""
 
 msgctxt "MSG_WR_SAVEASDRAFT (2402//)"
 msgid "Save as _draft"
-msgstr "Zapisz jako _draft"
+msgstr "Zapisz jako _szkic"
 
 msgctxt "MSG_HELP_WR_BT_SAVEASDRAFT (2403//)"
 msgid ""
 "Saves the message to\n"
 "the 'Drafts' folder."
-msgstr ""
+msgstr "Zapisuje wiadomości do\nfolderu 'Szkiców'."
 
 msgctxt "MSG_WR_MSAVEASDRAFT (2404//)"
 msgid "Save as draft"
@@ -9783,7 +9783,7 @@ msgstr ""
 
 msgctxt "MSG_WR_NORCPT_WARNING_GADGET (2522//)"
 msgid "_Save as draft|*_Cancel"
-msgstr ""
+msgstr "_Zapisz jako szkic|*Ponie_chaj"
 
 msgctxt "MSG_WR_NORCPT_WARNING (2523//)"
 msgid ""
@@ -9795,7 +9795,7 @@ msgstr "Wiadomość jest niekompletna, gdyż\nnie został wybrany żaden odbiorc
 
 msgctxt "MSG_WR_DISCARDCHANGES_GADGET (2524//)"
 msgid "*_Save as draft|_Discard|_Cancel"
-msgstr ""
+msgstr "_Zapisz jako szkic|_Opuść|Ponie_chaj"
 
 msgctxt "MSG_MA_NO_SUBJECT (2525//)"
 msgid "(No Subject)"
@@ -9842,7 +9842,7 @@ msgstr ""
 
 msgctxt "MSG_WR_REPLYTO (2534//)"
 msgid "Reply _To"
-msgstr ""
+msgstr "Odpisz _do"
 
 msgctxt "MSG_AB_TO_TOOLBAR (2535//)"
 msgid "_To:"
