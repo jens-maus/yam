@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-04-22 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MA.c: added a missing parameter for a debug statement.
+
 2014-04-21 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_FI.c: moving a mail from one folder to another by a filter will now

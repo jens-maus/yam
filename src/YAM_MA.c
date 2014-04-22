@@ -2655,7 +2655,7 @@ BOOL MA_Send(enum SendMailMode mode, ULONG flags)
           {
             struct UserIdentityNode *uin = GetUserIdentity(&C->userIdentityList, i, TRUE);
 
-            D(DBF_MAIL, "%ld mails waiting to be sent to SMTP server '%s'", uin->smtpServer->description);
+            D(DBF_MAIL, "%ld mails waiting to be sent to SMTP server '%s'", mailsToSend[i]->count, uin->smtpServer->description);
 
             // mark the server as "in use"
             LockMailServer(uin->smtpServer);
