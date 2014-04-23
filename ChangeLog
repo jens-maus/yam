@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-04-23 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM.c, Locale.c: fixed an empty error message in case codesets.library does
+    not meet YAM's requirements but would be required for the translated error
+    message. YAM will fall back to the built-in strings then. This closes #552.
+
 2014-04-22 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MA.c: added a missing parameter for a debug statement.
