@@ -5737,11 +5737,16 @@ BOOL GotoURL(const char *url, const BOOL newWindow)
     // and if a script has been configured for this purpose.
     if(G != NULL && G->InStartupPhase == FALSE && C->RX[MACRO_URL].Script[0] != '\0')
     {
-      char newurl[SIZE_LARGE];
+      char *newurl;
 
-      snprintf(newurl, sizeof(newurl), "\"%s\"", url);
-      D(DBF_UTIL, "trying script '%s' to open URL '%s'", C->RX[MACRO_URL].Script, url);
-      wentToURL = DoMethod(G->App, MUIM_YAMApplication_StartMacro, MACRO_URL, newurl);
+      if(asprintf(&newurl, "\"%s\"", url) != -1)
+      {
+        D(DBF_UTIL, "trying script '%s' to open URL '%s'", C->RX[MACRO_URL].Script, url);
+        wentToURL = DoMethod(G->App, MUIM_YAMApplication_StartMacro, MACRO_URL, newurl);
+        free(newurl);
+      }
+      else
+        E(DBF_UTIL, "no memory for URL string");
     }
     else
     {
@@ -5749,24 +5754,30 @@ BOOL GotoURL(const char *url, const BOOL newWindow)
       // try URL: device at first
       if(wentToURL == FALSE)
       {
-        char newurl[SIZE_LARGE];
-        APTR oldWinPtr;
-        BPTR urlFH;
+        char *newurl;
 
-        snprintf(newurl, sizeof(newurl), "URL:%s", url);
-
-        // disable requesters
-        oldWinPtr = SetProcWindow((APTR)-1);
-
-        D(DBF_UTIL, "trying URL: device to open URL '%s'", url);
-        if((urlFH = Open(newurl, MODE_OLDFILE)) != ZERO)
+        if(asprintf(&newurl, "URL:%s", url) != -1)
         {
-          Close(urlFH);
-          wentToURL = TRUE;
-        }
+          APTR oldWinPtr;
+          BPTR urlFH;
 
-        // enable requesters again
-        SetProcWindow(oldWinPtr);
+          // disable requesters
+          oldWinPtr = SetProcWindow((APTR)-1);
+
+          D(DBF_UTIL, "trying URL: device to open URL '%s'", url);
+          if((urlFH = Open(newurl, MODE_OLDFILE)) != ZERO)
+          {
+            Close(urlFH);
+            wentToURL = TRUE;
+          }
+
+          // enable requesters again
+          SetProcWindow(oldWinPtr);
+
+          free(newurl);
+        }
+        else
+          E(DBF_UTIL, "no memory for URL string");
       }
       #endif
 
@@ -5776,7 +5787,7 @@ BOOL GotoURL(const char *url, const BOOL newWindow)
         // let the user decide himself if he wants to see
         // it popping up in a new window or not (via OpenURL
         // prefs)
-        D(DBF_UTIL, "trying openurl.library to open URL '%s'", url);
+       D(DBF_UTIL, "trying openurl.library to open URL '%s'", url);
         wentToURL = URL_Open((STRPTR)url, URL_NewWindow, newWindow,
                                           TAG_DONE);
       }

@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-04-25 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_UT.c: use a dynamically allocated buffer when having to add qoutes or
+    the "URL:" device prefix for an URL to be opened instead of a fixed size
+    buffer. This closes #553.
+
 2014-04-23 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.c, Locale.c: fixed an empty error message in case codesets.library does
