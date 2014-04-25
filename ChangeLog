@@ -10,6 +10,8 @@ $URL$
   * YAM_UT.c: use a dynamically allocated buffer when having to add qoutes or
     the "URL:" device prefix for an URL to be opened instead of a fixed size
     buffer. This closes #553.
+  * Locale.c, YAM.c: simplified the access to the built-in strings before any
+    catalog is loaded to ensure that the tr() always refers to a valid string.
 
 2014-04-23 Thore Böckelmann <tboeckel@gmx.de>
 

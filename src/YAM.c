@@ -247,16 +247,11 @@ static BOOL InitLib(const char *libname,
         BOOL gotoURLPossible = GotoURLPossible();
         LONG answer;
 
-        // obtaining translated strings here might be (yet) impossible in case
-        // codesets.library is too old. But codesets.library is required for
-        // converting the UTF8 catalogs to the current locale. Hence we fall
-        // back to the builtin english strings here if necessary.
-
-        snprintf(error, sizeof(error), trdef(MSG_ER_LIB_URL), libname, version, revision, homepage);
+        snprintf(error, sizeof(error), tr(MSG_ER_LIB_URL), libname, version, revision, homepage);
 
         if(MUIMasterBase != NULL && G != NULL && G->App != NULL)
         {
-          answer = MUI_Request(G->App, NULL, MUIF_NONE, trdef(MSG_ErrorStartup), (gotoURLPossible == TRUE) ? trdef(MSG_HOMEPAGE_QUIT_GAD) : trdef(MSG_Quit), error);
+          answer = MUI_Request(G->App, NULL, MUIF_NONE, tr(MSG_ErrorStartup), (gotoURLPossible == TRUE) ? tr(MSG_HOMEPAGE_QUIT_GAD) : tr(MSG_Quit), error);
         }
         else if(IntuitionBase != NULL)
         {
@@ -264,9 +259,9 @@ static BOOL InitLib(const char *libname,
 
           ErrReq.es_StructSize   = sizeof(struct EasyStruct);
           ErrReq.es_Flags        = 0;
-          ErrReq.es_Title        = (STRPTR)trdef(MSG_ErrorStartup);
+          ErrReq.es_Title        = (STRPTR)tr(MSG_ErrorStartup);
           ErrReq.es_TextFormat   = error;
-          ErrReq.es_GadgetFormat = (gotoURLPossible == TRUE) ? (STRPTR)trdef(MSG_HOMEPAGE_QUIT_GAD) : (STRPTR)trdef(MSG_Quit);
+          ErrReq.es_GadgetFormat = (gotoURLPossible == TRUE) ? (STRPTR)tr(MSG_HOMEPAGE_QUIT_GAD) : (STRPTR)tr(MSG_Quit);
 
           answer = EasyRequestArgs(NULL, &ErrReq, NULL, NULL);
         }
@@ -2324,6 +2319,10 @@ int main(int argc, char **argv)
   #if defined(DEBUG)
   SetupDebug();
   #endif // DEBUG
+
+  // initialize all strings to their built-in default strings to make the tr() macro
+  // usable even without having the catalog opened yet.
+  InitYAMCatalog();
 
   #if defined(DEVWARNING)
   {

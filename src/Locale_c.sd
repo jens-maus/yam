@@ -50,29 +50,18 @@ struct fcstr %b_Strings[%n] =
 };
 
 /*** Catalog functions ***/
-/// Close%bCatalog()
-void Close%bCatalog(void)
+/// Init%bCatalog()
+void Init%bCatalog(void)
 {
   int i;
   struct fcstr *fc;
 
   ENTER();
 
+  // initialize all strings to their built-in default strings
   for(i=0, fc = (struct fcstr *)%b_Strings;  i < %n;  i++, fc++)
   {
-    if(fc->msg != NULL && fc->msg != fc->defmsg)
-    {
-      #if !defined(__amigaos4__)
-      CodesetsFreeA((STRPTR)fc->msg, NULL);
-      #endif
-      fc->msg = fc->defmsg;
-    }
-  }
-
-  if(G->Locale != NULL && G->Catalog != NULL)
-  {
-    CloseCatalog(G->Catalog);
-    G->Catalog = NULL;
+    fc->msg = fc->defmsg;
   }
 
   LEAVE();
@@ -196,32 +185,59 @@ BOOL Open%bCatalog(void)
   else
     W(DBF_STARTUP, "locale.library was not open or catalog already opened.");
 
-  // retrieve the translated catalog strings and store them into fc->msg
+  // Retrieve the translated catalog strings and store them into fc->msg
   // G->Catalog might be NULL here which means the original strings will be
-  // converted by GetCatalogStr() (e.g. conversion from UTF-8 -> local charset)
-  for(i=0, fc = (struct fcstr *)%b_Strings;  i < %n;  i++, fc++)
+  // converted by GetCatalogStr() (e.g. conversion from UTF-8 -> local charset).
+  if(G->Locale != NULL && G->Catalog != NULL)
   {
-    const char *cs;
+    for(i=0, fc = (struct fcstr *)%b_Strings;  i < %n;  i++, fc++)
+    {
+      const char *cs;
 
-    // check if G->Locale is NULL (locale.lib couldn't be open). Otherwise
-    // use the default msg string.
-    if(G->Locale != NULL)
       cs = GetCatalogStr(G->Catalog, fc->id, (STRPTR)fc->defmsg);
-    else
-      cs = fc->defmsg;
 
-    #if !defined(__amigaos4__)
-    if(G->Catalog != NULL && cs != NULL)
-      fc->msg = CodesetsUTF8ToStr(CSA_Source, cs, TAG_DONE);
-    else
+      #if defined(__amigaos4__)
+      // for AmigaOS4 locale.library has done the conversion from UTF8 to
+      // the local charset already
       fc->msg = cs;
-    #else
-    fc->msg = cs;
-    #endif
+      #else
+      // for all other systems we must do this ourself here
+      fc->msg = CodesetsUTF8ToStr(CSA_Source, cs, TAG_DONE);
+      #endif
+    }
   }
 
   RETURN(success);
   return success;
+}
+
+///
+/// Close%bCatalog()
+void Close%bCatalog(void)
+{
+  int i;
+  struct fcstr *fc;
+
+  ENTER();
+
+  for(i=0, fc = (struct fcstr *)%b_Strings;  i < %n;  i++, fc++)
+  {
+    if(fc->msg != NULL && fc->msg != fc->defmsg)
+    {
+      #if !defined(__amigaos4__)
+      CodesetsFreeA((STRPTR)fc->msg, NULL);
+      #endif
+      fc->msg = fc->defmsg;
+    }
+  }
+
+  if(G->Locale != NULL && G->Catalog != NULL)
+  {
+    CloseCatalog(G->Catalog);
+    G->Catalog = NULL;
+  }
+
+  LEAVE();
 }
 
 ///
