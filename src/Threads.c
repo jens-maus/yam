@@ -452,7 +452,7 @@ void AbortThread(APTR thread, BOOL waitForTermination)
 
   if(thread == NULL || thread == G->mainThread)
   {
-    D(DBF_THREAD, "aborting main thread");
+    W(DBF_THREAD, "aborting main thread");
     proc = G->mainThread;
     sig = SIGBREAKB_CTRL_C;
     waitForTermination = FALSE;
@@ -461,7 +461,7 @@ void AbortThread(APTR thread, BOOL waitForTermination)
   {
     struct Thread *_thread = thread;
 
-    D(DBF_THREAD, "aborting thread '%s'", _thread->name);
+    W(DBF_THREAD, "aborting thread '%s'", _thread->name);
     _thread->aborted = TRUE;
     proc = _thread->process;
     sig = _thread->abortSignal;
