@@ -257,77 +257,91 @@ static void SetSocketOpts(struct Connection *conn)
   {
     int optval = C->SocketOptions.KeepAlive;
 
-    if(setsockopt(conn->socket, SOL_SOCKET, SO_KEEPALIVE, &optval, sizeof(optval)) == -1)
+    if(setsockopt(conn->socket, SOL_SOCKET, SO_KEEPALIVE, &optval, sizeof(optval)) < 0)
     {
       E(DBF_NET, "setsockopt(SO_KEEPALIVE) error");
       ER_NewError(tr(MSG_ER_SOCKETOPTION), "SO_KEEPALIVE");
     }
+    else
+      D(DBF_NET, "set SO_KEEPALIVE in socket");
   }
 
   if(C->SocketOptions.NoDelay == TRUE)
   {
     int optval = C->SocketOptions.NoDelay;
 
-    if(setsockopt(conn->socket, IPPROTO_TCP, TCP_NODELAY, &optval, sizeof(optval)) == -1)
+    if(setsockopt(conn->socket, IPPROTO_TCP, TCP_NODELAY, &optval, sizeof(optval)) < 0)
     {
       E(DBF_NET, "setsockopt(TCP_NODELAY) error");
       ER_NewError(tr(MSG_ER_SOCKETOPTION), "TCP_NODELAY");
     }
+    else
+      D(DBF_NET, "set TCP_NODELAY in socket");
   }
 
   if(C->SocketOptions.LowDelay == TRUE)
   {
     int optval = IPTOS_LOWDELAY;
 
-    if(setsockopt(conn->socket, IPPROTO_IP, IP_TOS, &optval, sizeof(optval)) == -1)
+    if(setsockopt(conn->socket, IPPROTO_IP, IP_TOS, &optval, sizeof(optval)) < 0)
     {
       E(DBF_NET, "setsockopt(IPTOS_LOWDELAY) error");
       ER_NewError(tr(MSG_ER_SOCKETOPTION), "IPTOS_LOWDELAY");
     }
+    else
+      D(DBF_NET, "set IPTOS_LOWDELAY in socket");
   }
 
   if(C->SocketOptions.SendBuffer > -1)
   {
     int optval = C->SocketOptions.SendBuffer;
 
-    if(setsockopt(conn->socket, SOL_SOCKET, SO_SNDBUF, &optval, sizeof(optval)) == -1)
+    if(setsockopt(conn->socket, SOL_SOCKET, SO_SNDBUF, &optval, sizeof(optval)) < 0)
     {
       E(DBF_NET, "setsockopt(SO_SNDBUF) error");
       ER_NewError(tr(MSG_ER_SOCKETOPTION), "SO_SNDBUF");
     }
+    else
+      D(DBF_NET, "set SO_SNDBUF in socket");
   }
 
   if(C->SocketOptions.RecvBuffer > -1)
   {
     int optval = C->SocketOptions.RecvBuffer;
 
-    if(setsockopt(conn->socket, SOL_SOCKET, SO_RCVBUF, &optval, sizeof(optval)) == -1)
+    if(setsockopt(conn->socket, SOL_SOCKET, SO_RCVBUF, &optval, sizeof(optval)) < 0)
     {
       E(DBF_NET, "setsockopt(SO_RCVBUF) error");
       ER_NewError(tr(MSG_ER_SOCKETOPTION), "SO_RCVBUF");
     }
+    else
+      D(DBF_NET, "set SO_RCVBUF in socket");
   }
 
   if(C->SocketOptions.SendLowAt > -1)
   {
     int optval = C->SocketOptions.SendLowAt;
 
-    if(setsockopt(conn->socket, SOL_SOCKET, SO_SNDLOWAT, &optval, sizeof(optval)) == -1)
+    if(setsockopt(conn->socket, SOL_SOCKET, SO_SNDLOWAT, &optval, sizeof(optval)) < 0)
     {
       E(DBF_NET, "setsockopt(SO_SNDLOWAT) error");
       ER_NewError(tr(MSG_ER_SOCKETOPTION), "SO_SNDLOWAT");
     }
+    else
+      D(DBF_NET, "set SO_SNDLOWAT in socket");
   }
 
   if(C->SocketOptions.RecvLowAt > -1)
   {
     int optval = C->SocketOptions.RecvLowAt;
 
-    if(setsockopt(conn->socket, SOL_SOCKET, SO_RCVLOWAT, &optval, sizeof(optval)) == -1)
+    if(setsockopt(conn->socket, SOL_SOCKET, SO_RCVLOWAT, &optval, sizeof(optval)) < 0)
     {
       E(DBF_NET, "setsockopt(SO_RCVLOWAT) error");
       ER_NewError(tr(MSG_ER_SOCKETOPTION), "SO_RCVLOWAT");
     }
+    else
+      D(DBF_NET, "set SO_RCVLOWAT in socket");
   }
 
   if(C->SocketOptions.SendTimeOut > -1)
@@ -337,11 +351,13 @@ static void SetSocketOpts(struct Connection *conn)
     tv.Seconds = C->SocketOptions.SendTimeOut;
     tv.Microseconds = 0;
 
-    if(setsockopt(conn->socket, SOL_SOCKET, SO_SNDTIMEO, &tv, sizeof(struct TimeVal)) == -1)
+    if(setsockopt(conn->socket, SOL_SOCKET, SO_SNDTIMEO, &tv, sizeof(struct TimeVal)) < 0)
     {
       E(DBF_NET, "setsockopt(SO_SNDTIMEO) error");
       ER_NewError(tr(MSG_ER_SOCKETOPTION), "SO_SNDTIMEO");
     }
+    else
+      D(DBF_NET, "set SO_SNDTIMEO in socket");
   }
 
   if(C->SocketOptions.RecvTimeOut > -1)
@@ -351,11 +367,13 @@ static void SetSocketOpts(struct Connection *conn)
     tv.Seconds = C->SocketOptions.RecvTimeOut;
     tv.Microseconds = 0;
 
-    if(setsockopt(conn->socket, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(struct TimeVal)) == -1)
+    if(setsockopt(conn->socket, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(struct TimeVal)) < 0)
     {
       E(DBF_NET, "setsockopt(SO_RCVTIMEO) error");
       ER_NewError(tr(MSG_ER_SOCKETOPTION), "SO_RCVTIMEO");
     }
+    else
+      D(DBF_NET, "set SO_RCVTIMEO in socket");
   }
 
   // lets print out the current socket options
@@ -371,40 +389,40 @@ static void SetSocketOpts(struct Connection *conn)
     // the value of the length pointer must be updated ahead of each call, because
     // getsockopt() might have modified it.
     optlen = sizeof(optval);
-    getsockopt(conn->socket, SOL_SOCKET, SO_KEEPALIVE, &optval, &optlen);
-    D(DBF_NET, "SO_KEEPALIVE..: %ld", optval);
+    if(getsockopt(conn->socket, SOL_SOCKET, SO_KEEPALIVE, &optval, &optlen) >= 0)
+      D(DBF_NET, "SO_KEEPALIVE..: %ld [bool]", optval);
 
     optlen = sizeof(optval);
-    getsockopt(conn->socket, IPPROTO_TCP, TCP_NODELAY, &optval, &optlen);
-    D(DBF_NET, "TCP_NODELAY...: %ld", optval);
+    if(getsockopt(conn->socket, IPPROTO_TCP, TCP_NODELAY, &optval, &optlen) >= 0)
+      D(DBF_NET, "TCP_NODELAY...: %ld [bool]", optval);
 
     optlen = sizeof(optval);
-    getsockopt(conn->socket, IPPROTO_IP, IP_TOS, &optval, &optlen);
-    D(DBF_NET, "IPTOS_LOWDELAY: %ld", isAnyFlagSet(optval, IPTOS_LOWDELAY));
+    if(getsockopt(conn->socket, IPPROTO_IP, IP_TOS, &optval, &optlen) >= 0)
+      D(DBF_NET, "IPTOS_LOWDELAY: %ld [bool]", isAnyFlagSet(optval, IPTOS_LOWDELAY));
 
     optlen = sizeof(optval);
-    getsockopt(conn->socket, SOL_SOCKET, SO_SNDBUF, &optval, &optlen);
-    D(DBF_NET, "SO_SNDBUF.....: %ld bytes", optval);
+    if(getsockopt(conn->socket, SOL_SOCKET, SO_SNDBUF, &optval, &optlen) >= 0)
+      D(DBF_NET, "SO_SNDBUF.....: %ld bytes", optval);
 
     optlen = sizeof(optval);
-    getsockopt(conn->socket, SOL_SOCKET, SO_RCVBUF, &optval, &optlen);
-    D(DBF_NET, "SO_RCVBUF.....: %ld bytes", optval);
+    if(getsockopt(conn->socket, SOL_SOCKET, SO_RCVBUF, &optval, &optlen) >= 0)
+      D(DBF_NET, "SO_RCVBUF.....: %ld bytes", optval);
 
     optlen = sizeof(optval);
-    getsockopt(conn->socket, SOL_SOCKET, SO_SNDLOWAT, &optval, &optlen);
-    D(DBF_NET, "SO_SNDLOWAT...: %ld", optval);
+    if(getsockopt(conn->socket, SOL_SOCKET, SO_SNDLOWAT, &optval, &optlen) >= 0)
+      D(DBF_NET, "SO_SNDLOWAT...: %ld bytes", optval);
 
     optlen = sizeof(optval);
-    getsockopt(conn->socket, SOL_SOCKET, SO_RCVLOWAT, &optval, &optlen);
-    D(DBF_NET, "SO_RCVLOWAT...: %ld", optval);
+    if(getsockopt(conn->socket, SOL_SOCKET, SO_RCVLOWAT, &optval, &optlen) >= 0)
+      D(DBF_NET, "SO_RCVLOWAT...: %ld bytes", optval);
 
     tvlen = sizeof(tv);
-    getsockopt(conn->socket, SOL_SOCKET, SO_SNDTIMEO, &tv, &tvlen);
-    D(DBF_NET, "SO_SNDTIMEO...: %ld", tv.Seconds);
+    if(getsockopt(conn->socket, SOL_SOCKET, SO_SNDTIMEO, &tv, &tvlen) >= 0)
+      D(DBF_NET, "SO_SNDTIMEO...: %ld.%ld s", tv.Seconds, tv.Microseconds);
 
     tvlen = sizeof(tv);
-    getsockopt(conn->socket, SOL_SOCKET, SO_RCVTIMEO, &tv, &tvlen);
-    D(DBF_NET, "SO_RCVTIMEO...: %ld", tv.Seconds);
+    if(getsockopt(conn->socket, SOL_SOCKET, SO_RCVTIMEO, &tv, &tvlen) >= 0)
+      D(DBF_NET, "SO_RCVTIMEO...: %ld.%ld s", tv.Seconds, tv.Microseconds);
   }
   #endif
 
