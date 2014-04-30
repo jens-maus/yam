@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-04-30 Thore Böckelmann <tboeckel@gmx.de>
+
+  * icons/os4: replaced the faulty Gallery drawer icon by a fixed one. This
+    closes #551.
+
 2014-04-26 Jens Maus <mail@jens-maus.de>
 
   * tcp/Connection.c: added some more debug output to the setsockopt() and
