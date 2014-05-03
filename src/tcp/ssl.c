@@ -845,20 +845,20 @@ BOOL MakeSecureConnection(struct Connection *conn)
                       #if defined(DEBUG)
                       {
                         char buf[255];
-                        // save the errno(sv) values to avoid that it is modified by other function calls
+                        // save the errno(sv) values to avoid that they are modified by further function calls
                         int _errno = errno;
                         int _errnosv = errnosv;
                         unsigned long errcode;
 
                         // query errno first
                         #if defined(__amigaos4__) || defined(__amigaos3__)
-                        if(strerror_r(_errno, buf, sizeof(buf) != 0)
+                        if(strerror_r(_errno, buf, sizeof(buf)) != 0)
                         {
                           E(DBF_NET, "strerror_r(errno=%ld) failed", _errno);
                           buf[0] = '\0';
                         }
                         E(DBF_NET, "errno(%ld) = '%s'", _errno, buf);
-                        if(strerror_r(_errnosv, buf, sizeof(buf) != 0)
+                        if(strerror_r(_errnosv, buf, sizeof(buf)) != 0)
                         {
                           E(DBF_NET, "strerror_r(errnosv=%ld) failed", _errnosv);
                           buf[0] = '\0';
