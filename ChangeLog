@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-05-03 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MAf.c: fixed a wrong signature ID extraction which could have caused
+    that the always the first signature was used.
+
 2014-04-30 Thore Böckelmann <tboeckel@gmx.de>
 
   * icons/os4: replaced the faulty Gallery drawer icon by a fixed one. This

@@ -2630,9 +2630,9 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
           // check for the signature flag
           if((p = strcasestr(value, "signature=")) != NULL)
           {
-            char idStr[9] = ""; // the is only 8 chars long + 1 NUL
+            char idStr[9] = ""; // the signature ID is only 8 chars long + 1 NUL
 
-            strlcpy(idStr, &p[8], sizeof(idStr));
+            strlcpy(idStr, &p[10], sizeof(idStr));
             email->signatureID = strtoul(idStr, NULL, 16);
 
             // try to get the signature structure
@@ -2650,7 +2650,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
           // set email->identity ptr)
           if((p = strcasestr(value, "identity=")) != NULL)
           {
-            char idStr[9] = ""; // the id is only 8 chars long + 1 NUL
+            char idStr[9] = ""; // the identity ID is only 8 chars long + 1 NUL
 
             strlcpy(idStr, &p[9], sizeof(idStr));
             email->identityID = strtoul(idStr, NULL, 16);
