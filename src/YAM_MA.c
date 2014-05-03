@@ -2529,7 +2529,7 @@ BOOL MA_Send(enum SendMailMode mode, ULONG flags)
 
   ENTER();
 
-  D(DBF_MAIL, "send mails from outgoing folder '%s', current folder is '%s'", outfolder->Name, GetCurrentFolder()->Name);
+  D(DBF_MAIL, "send mails from outgoing folder '%s', current folder is '%s', mode %ld", outfolder->Name, GetCurrentFolder()->Name, mode);
 
   // make sure the mail server nodes do not vanish
   ObtainSemaphoreShared(G->configSemaphore);
