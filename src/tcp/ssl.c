@@ -680,7 +680,7 @@ BOOL MakeSecureConnection(struct Connection *conn)
       // 1) init AmiSSL
       rc = InitAmiSSL(AmiSSL_ErrNoPtr, &errno,
                       #if defined(__amigaos4__)
-                      AmiSSL_ISocket, conn->socketIFace, 
+                      AmiSSL_ISocket, conn->socketIFace,
                       #else
                       AmiSSL_SocketBase, conn->socketBase,
                       #endif
@@ -839,23 +839,34 @@ BOOL MakeSecureConnection(struct Connection *conn)
 
                     default:
                     {
-                      E(DBF_NET, "SSL_connect() returned %d with SSL_get_errror() = %d", res, err);
+                      E(DBF_NET, "SSL_connect() returned %ld with SSL_get_errror() = %ld", res, err);
 
                       // get more information on the error
                       #if defined(DEBUG)
                       {
                         char buf[255];
+                        // save the errno(sv) values to avoid that it is modified by other function calls
+                        int _errno = errno;
+                        int _errnosv = errnosv;
                         unsigned long errcode;
 
                         // query errno first
                         #if defined(__amigaos4__) || defined(__amigaos3__)
-                        strerror_r(errno, buf, sizeof(buf));
-                        E(DBF_NET, "errno(%d) = '%s'", errno, buf);
-                        strerror_r(errnosv, buf, sizeof(buf));
-                        E(DBF_NET, "errnosv(%d) = '%s'", errnosv, buf);
+                        if(strerror_r(_errno, buf, sizeof(buf) != 0)
+                        {
+                          E(DBF_NET, "strerror_r(errno=%ld) failed", _errno);
+                          buf[0] = '\0';
+                        }
+                        E(DBF_NET, "errno(%ld) = '%s'", _errno, buf);
+                        if(strerror_r(_errnosv, buf, sizeof(buf) != 0)
+                        {
+                          E(DBF_NET, "strerror_r(errnosv=%ld) failed", _errnosv);
+                          buf[0] = '\0';
+                        }
+                        E(DBF_NET, "errnosv(%ld) = '%s'", _errnosv, buf);
                         #else
-                        E(DBF_NET, "errno(%d) = '%s'", errno, strerror(errno));
-                        E(DBF_NET, "errnosv(%d) = '%s'", errnosv, strerror(errnosv));
+                        E(DBF_NET, "errno(%ld) = '%s'", _errno, strerror(_errno));
+                        E(DBF_NET, "errnosv(%ld) = '%s'", _errnosv, strerror(_errnosv));
                         #endif
 
                         E(DBF_NET, "querying ERR_get_error() stack:");
