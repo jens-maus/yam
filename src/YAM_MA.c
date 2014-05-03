@@ -586,6 +586,8 @@ struct MailList *MA_CreateFullList(struct Folder *fo, BOOL onlyNew)
 
   if(fo != NULL && isGroupFolder(fo) == FALSE)
   {
+    D(DBF_MAIL, "create mail list for folder '%s'", fo->Name);
+
     if((onlyNew == TRUE  && fo->New > 0) ||
        (onlyNew == FALSE && fo->Total > 0))
     {
@@ -630,6 +632,8 @@ struct MailList *MA_CreateFullList(struct Folder *fo, BOOL onlyNew)
         mlist = CloneMailList(fo->messages);
       }
     }
+    else
+      W(DBF_MAIL, "no mails to be added to the list (onlyNew %ld, new %ld, total %ld)", onlyNew, fo->New, fo->Total);
   }
 
   RETURN(mlist);
