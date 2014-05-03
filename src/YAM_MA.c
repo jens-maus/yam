@@ -2529,6 +2529,8 @@ BOOL MA_Send(enum SendMailMode mode, ULONG flags)
 
   ENTER();
 
+  D(DBF_MAIL, "send mails from outgoing folder '%s', current folder is '%s'", outfolder->Name, GetCurrentFolder()->Name);
+
   // make sure the mail server nodes do not vanish
   ObtainSemaphoreShared(G->configSemaphore);
 
@@ -2704,6 +2706,8 @@ BOOL MA_Send(enum SendMailMode mode, ULONG flags)
     // delete the mlist mail list as this is not required anymore
     DeleteMailList(mlist);
   }
+  else
+    W(DBF_MAIL, "failed to create mail list for folder '%s'", outfolder->Name);
 
   // now we are done
   ReleaseSemaphore(G->configSemaphore);
