@@ -453,7 +453,7 @@ long uudecode_file(FILE *in, FILE *out, struct codeset *srcCodeset, BOOL isText)
           // if the caller supplied a source codeset, we have to
           // make sure we convert our outbuffer before writing it out
           // to the file in UTF8
-          if(srcCodeset != NULL)
+          if(srcCodeset != NULL && stricmp(srcCodeset->name, "utf8") != 0)
           {
             ULONG strLen = 0;
 
@@ -588,7 +588,7 @@ long uudecode_file(FILE *in, FILE *out, struct codeset *srcCodeset, BOOL isText)
     // if the caller supplied a source codeset, we have to
     // make sure we convert our outbuffer before writing it out
     // to the file in UTF8
-    if(srcCodeset != NULL)
+    if(srcCodeset != NULL && stricmp(srcCodeset->name, "utf8") != 0)
     {
       ULONG strLen = 0;
 

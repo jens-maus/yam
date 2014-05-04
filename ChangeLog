@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-05-04 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mime/base64.c, mime/qprintable.c, mime/uucode.c: don't try to convert the
+    decoded strings to UTF8 if they are already UTF8 strings.
+
 2014-05-03 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MAf.c: fixed a wrong signature ID extraction which could have caused
