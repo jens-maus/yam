@@ -3598,7 +3598,7 @@ void ResolveConfigFolders(struct Config *co)
 
   ENTER();
 
-  // resolve the sent folders of the POP3 servers
+  // resolve the incoming folders of the POP3 servers
   IterateList(&co->pop3ServerList, struct MailServerNode *, msn)
   {
     if(msn->mailStoreFolderID == 0 && IsStrEmpty(msn->mailStoreFolderName) == FALSE)
