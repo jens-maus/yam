@@ -1442,7 +1442,7 @@ static char *AppendRcpt(char *sbuf, const struct Person *pe,
 
   if(pe != NULL)
   {
-    D(DBF_MAIL, "add recipient for person named '%s', address '%s'", SafeStr(pe->RealName), SafeStr(pe->Address));
+    D(DBF_MAIL, "add recipient for person named '%s', address '%s', %s address '%s'", SafeStr(pe->RealName), SafeStr(pe->Address), excludeme ? "excluding" : "including", uin != NULL ? uin->address : "NULL");
 
     // Make sure that the person has at least either name or address and
     // that these are non-empty strings. Otherwise we will add invalid
@@ -1454,7 +1454,9 @@ static char *AppendRcpt(char *sbuf, const struct Person *pe,
       BOOL skip = FALSE;
 
       if(strchr(pe->Address, '@') != NULL)
+      {
         ins = BuildAddress(address, sizeof(address), pe->Address, pe->RealName);
+      }
       else
       {
         // address does not contain any @ nor domain, lets add it
@@ -1464,7 +1466,7 @@ static char *AppendRcpt(char *sbuf, const struct Person *pe,
         if(uin != NULL)
           p = strchr(uin->address, '@');
 
-        snprintf(addr, sizeof(addr), "%s%s", pe->Address, p ? p : "");
+        snprintf(addr, sizeof(addr), "%s%s", pe->Address, p != NULL ? p : "");
         ins = BuildAddress(address, sizeof(address), addr, pe->RealName);
       }
 
@@ -1475,21 +1477,28 @@ static char *AppendRcpt(char *sbuf, const struct Person *pe,
           skip = TRUE;
 
         // if the string already contains this person then skip it
-        if(skip == FALSE && strcasestr(sbuf, ins) != NULL)
+        if(skip == FALSE && sbuf != NULL && strcasestr(sbuf, ins) != NULL)
           skip = TRUE;
 
         if(skip == FALSE)
         {
           D(DBF_MAIL, "adding recipient '%s'", ins);
 
-          // lets prepend a ", " sequence in case sbuf
-          // is not empty
-          if(*sbuf != '\0')
+          // prepend a ", " sequence in case sbuf is not empty
+          if(IsStrEmpty(sbuf) == FALSE)
             dstrcat(&sbuf, ", ");
 
           dstrcat(&sbuf, ins);
         }
+        else
+        {
+          D(DBF_MAIL, "skipping recipient '%s'", ins);
+        }
       }
+    }
+    else
+    {
+      W(DBF_MAIL, "neither name nor address to build a recipient");
     }
   }
 
@@ -2678,7 +2687,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
 
         // If this mail is a standard multi-recipient mail and the user hasn't pressed SHIFT (private)
         // or ALT (send to mailing list) we going to ask him to which recipient he want to send the mail to.
-        if((isMultiRCPTMail(mail) || (email->NumMailReplyTo > 0 && email->NumFollowUpTo > 0 && foundMLFolder == FALSE)) && 
+        if((isMultiRCPTMail(mail) || (email->NumMailReplyTo > 0 && email->NumFollowUpTo > 0 && foundMLFolder == FALSE)) &&
             hasPrivateFlag(flags) == FALSE && hasMListFlag(flags) == FALSE)
         {
           const char *opt;
@@ -2729,9 +2738,13 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
               // sent mail folder. As such all mail should originate from ourself
               // and as such when he presses "reply" on it we send it to
               // the To: address recipient instead.
+              D(DBF_MAIL, "adding To recipient '%s'", mail->To.Address);
               rto = AppendRcpt(rto, &mail->To, email->identity, FALSE);
               for(k=0; k < email->NumSTo; k++)
+              {
+                D(DBF_MAIL, "adding To recipient '%s'", email->STo[k].Address);
                 rto = AppendRcpt(rto, &email->STo[k], email->identity, FALSE);
+              }
             }
             else if(hasPrivateFlag(flags) == FALSE &&
                     foundMLFolder == TRUE)
@@ -2754,6 +2767,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
                     *next++ = '\0';
 
                   ExtractAddress(ptr, &pe);
+                  D(DBF_MAIL, "adding To recipient '%s'", pe.Address);
                   rto = AppendRcpt(rto, &pe, email->identity, FALSE);
 
                   ptr = next;
@@ -2767,13 +2781,20 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
                 if(email->NumFollowUpTo > 0)
                 {
                   for(k=0; k < email->NumFollowUpTo; k++)
+                  {
+                    D(DBF_MAIL, "adding To recipient '%s'", email->FollowUpTo[k].Address);
                     rto = AppendRcpt(rto, &email->FollowUpTo[k], email->identity, FALSE);
+                  }
                 }
                 else if(IsStrEmpty(mail->ReplyTo.Address) == FALSE)
                 {
+                  D(DBF_MAIL, "adding To recipient '%s'", mail->ReplyTo.Address);
                   rto = AppendRcpt(rto, &mail->ReplyTo, email->identity, FALSE);
                   for(k=0; k < email->NumSReplyTo; k++)
+                  {
+                    D(DBF_MAIL, "adding To recipient '%s'", email->SReplyTo[k].Address);
                     rto = AppendRcpt(rto, &email->SReplyTo[k], email->identity, FALSE);
+                  }
                 }
               }
 
@@ -2793,6 +2814,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
                     *next++ = '\0';
 
                   ExtractAddress(ptr, &pe);
+                  D(DBF_MAIL, "adding ReplyTo recipient '%s'", pe.Address);
                   rrepto = AppendRcpt(rrepto, &pe, email->identity, FALSE);
 
                   ptr = next;
@@ -2855,9 +2877,13 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
                   case 3:
                   {
                     // add all From: addresses to the CC: list
+                    D(DBF_MAIL, "adding CC recipient '%s'", mail->From.Address);
                     rcc = AppendRcpt(rcc, &mail->From, email->identity, FALSE);
                     for(k=0; k < email->NumSFrom; k++)
+                    {
+                      D(DBF_MAIL, "adding CC recipient '%s'", email->SFrom[k].Address);
                       rcc = AppendRcpt(rcc, &email->SFrom[k], email->identity, FALSE);
+                    }
                   }
                   // continue
 
@@ -2871,9 +2897,13 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
                   // only From: addresses
                   case 1:
                   {
+                    D(DBF_MAIL, "adding To recipient '%s'", mail->From.Address);
                     rto = AppendRcpt(rto, &mail->From, email->identity, FALSE);
                     for(k=0; k < email->NumSFrom; k++)
+                    {
+                      D(DBF_MAIL, "adding To recipient '%s'", email->SFrom[k].Address);
                       rto = AppendRcpt(rto, &email->SFrom[k], email->identity, FALSE);
+                    }
                   }
                   break;
 
@@ -2908,24 +2938,38 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
               if(email->NumMailReplyTo > 0 && hasMListFlag(flags) == FALSE)
               {
                 for(k=0; k < email->NumMailReplyTo; k++)
+                {
+                  D(DBF_MAIL, "adding To recipient '%s'", email->MailReplyTo[k].Address);
                   rto = AppendRcpt(rto, &email->MailReplyTo[k], email->identity, FALSE);
+                }
               }
               else if(email->NumFollowUpTo > 0 && hasMListFlag(flags) == TRUE)
               {
                 for(k=0; k < email->NumFollowUpTo; k++)
+                {
+                  D(DBF_MAIL, "adding To recipient '%s'", email->FollowUpTo[k].Address);
                   rto = AppendRcpt(rto, &email->FollowUpTo[k], email->identity, FALSE);
+                }
               }
               else if(IsStrEmpty(mail->ReplyTo.Address) == FALSE && hasPrivateFlag(flags) == FALSE)
               {
+                D(DBF_MAIL, "adding To recipient '%s'", mail->ReplyTo.Address);
                 rto = AppendRcpt(rto, &mail->ReplyTo, email->identity, FALSE);
                 for(k=0; k < email->NumSReplyTo; k++)
+                {
+                  D(DBF_MAIL, "adding To recipient '%s'", email->SReplyTo[k].Address);
                   rto = AppendRcpt(rto, &email->SReplyTo[k], email->identity, FALSE);
+                }
               }
               else
               {
+                D(DBF_MAIL, "adding To recipient '%s'", mail->From.Address);
                 rto = AppendRcpt(rto, &mail->From, email->identity, FALSE);
                 for(k=0; k < email->NumSFrom; k++)
+                {
+                  D(DBF_MAIL, "adding To recipient '%s'", email->SFrom[k].Address);
                   rto = AppendRcpt(rto, &email->SFrom[k], email->identity, FALSE);
+                }
               }
             }
           }
@@ -2940,36 +2984,57 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
             if(email->NumFollowUpTo > 0)
             {
               for(k=0; k < email->NumFollowUpTo; k++)
+              {
+                D(DBF_MAIL, "adding To recipient '%s'", email->FollowUpTo[k].Address);
                 rto = AppendRcpt(rto, &email->FollowUpTo[k], email->identity, FALSE);
+              }
             }
             else
             {
               if(email->NumMailReplyTo > 0)
               {
                 for(k=0; k < email->NumMailReplyTo; k++)
+                {
+                  D(DBF_MAIL, "adding To recipient '%s'", email->MailReplyTo[k].Address);
                   rto = AppendRcpt(rto, &email->MailReplyTo[k], email->identity, FALSE);
+                }
               }
               else if(mail->ReplyTo.Address[0] != '\0')
               {
                 // add Reply-To: addresses to To:
+                D(DBF_MAIL, "adding To recipient '%s'", mail->ReplyTo.Address);
                 rto = AppendRcpt(rto, &mail->ReplyTo, email->identity, FALSE);
                 for(k=0; k < email->NumSReplyTo; k++)
+                {
+                  D(DBF_MAIL, "adding To recipient '%s'", email->SReplyTo[k].Address);
                   rto = AppendRcpt(rto, &email->SReplyTo[k], email->identity, FALSE);
+                }
               }
               else
               {
                 // add From: addresses to To:
+                D(DBF_MAIL, "adding To recipient '%s'", mail->From.Address);
                 rto = AppendRcpt(rto, &mail->From, email->identity, FALSE);
                 for(k=0; k < email->NumSFrom; k++)
+                {
+                  D(DBF_MAIL, "adding To recipient '%s'", email->SFrom[k].Address);
                   rto = AppendRcpt(rto, &email->SFrom[k], email->identity, FALSE);
+                }
               }
 
               // add To: addresses to CC:
+              D(DBF_MAIL, "adding CC recipient '%s'", mail->To.Address);
               rcc = AppendRcpt(rcc, &mail->To, email->identity, TRUE);
               for(k=0; k < email->NumSTo; k++)
+              {
+                D(DBF_MAIL, "adding CC recipient '%s'", email->STo[k].Address);
                 rcc = AppendRcpt(rcc, &email->STo[k], email->identity, TRUE);
+              }
               for(k=0; k < email->NumCC; k++)
+              {
+                D(DBF_MAIL, "adding CC recipient '%s'", email->CC[k].Address);
                 rcc = AppendRcpt(rcc, &email->CC[k], email->identity, TRUE);
+              }
             }
           }
           break;
@@ -2979,13 +3044,19 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
           case 3:
           {
             // now add all original To: addresses to To:
+            D(DBF_MAIL, "adding To recipient '%s'", mail->To.Address);
             rto = AppendRcpt(rto, &mail->To, email->identity, TRUE);
             for(k=0; k < email->NumSTo; k++)
+            {
+              D(DBF_MAIL, "adding To recipient '%s'", email->STo[k].Address);
               rto = AppendRcpt(rto, &email->STo[k], email->identity, TRUE);
-
+            }
             // add the CC: addresses as well
             for(k=0; k < email->NumCC; k++)
+            {
+              D(DBF_MAIL, "adding CC recipient '%s'", email->CC[k].Address);
               rcc = AppendRcpt(rcc, &email->CC[k], email->identity, TRUE);
+            }
           }
           break;
         }
