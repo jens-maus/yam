@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-05-06 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/Attachment.c, mui/AttachmentGroup.c, mui/AttachmentImage.c: implemented
+    Drag'n'Drop for multiple selected attachments. Please note that there is no
+    visual feedback yet if one or multiple attachments are dragged. The drag
+    image will be the one of the attachment which started the DnD action. This
+    closes #73.
+
 2014-05-04 Thore Böckelmann <tboeckel@gmx.de>
 
   * mime/base64.c, mime/qprintable.c, mime/uucode.c: don't try to convert the

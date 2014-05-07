@@ -202,6 +202,36 @@ enum
 
 ///
 
+/* Private functions */
+/// CountSelectedAttachments
+// count the number of selected attachments
+static ULONG CountSelectedAttachments(struct IClass *cl, Object *obj)
+{
+  GETDATA;
+  ULONG numSelected = 0;
+  struct List *childList;
+
+  ENTER();
+
+  // iterate through our child list
+  if((childList = (struct List *)xget(obj, MUIA_Group_ChildList)) != NULL)
+  {
+    Object *cstate = (Object *)childList->lh_Head;
+    Object *child;
+
+    while((child = NextObject(&cstate)) != NULL)
+    {
+      if(xget(child, MUIA_Selected) == TRUE)
+        numSelected++;
+    }
+  }
+
+  RETURN(numSelected);
+  return numSelected;
+}
+
+///
+
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
@@ -256,6 +286,20 @@ OVERLOAD(OM_SET)
       }
       break;
     }
+  }
+
+  return DoSuperMethodA(cl, obj, msg);
+}
+
+///
+/// OVERLOAD(OM_GET)
+OVERLOAD(OM_GET)
+{
+  IPTR *store = ((struct opGet *)msg)->opg_Storage;
+
+  switch(((struct opGet *)msg)->opg_AttrID)
+  {
+    case ATTR(NumSelectedAttachments) : *store = CountSelectedAttachments(cl, obj); return TRUE;
   }
 
   return DoSuperMethodA(cl, obj, msg);
@@ -568,24 +612,16 @@ DECLARE(DeleteSelected)
   // iterate through our child list
   if((childList = (struct List *)xget(obj, MUIA_Group_ChildList)) != NULL)
   {
-    ULONG numSelected = 0;
-    Object *cstate = (Object *)childList->lh_Head;
-    Object *child;
+    ULONG numSelected = CountSelectedAttachments(cl, obj);
     struct Part **parts;
 
-    // first count the number of selected attachments
-    while((child = NextObject(&cstate)) != NULL)
-    {
-      if(xget(child, MUIA_Selected) == TRUE)
-        numSelected++;
-    }
-
-    // now build a list of selected attachments
+    // build a list of selected attachments
     if(numSelected > 0 && (parts = calloc(numSelected + 1, sizeof(*parts))) != NULL)
     {
+      Object *cstate = (Object *)childList->lh_Head;
+      Object *child;
       ULONG i = 0;
 
-      cstate = (Object *)childList->lh_Head;
       while((child = NextObject(&cstate)) != NULL)
       {
         if(xget(child, MUIA_Selected) == TRUE)
@@ -620,6 +656,34 @@ DECLARE(ClearSelection)
     {
       D(DBF_GUI, "clearing MUIA_Selected of object %08lx", child);
       set(child, MUIA_Selected, FALSE);
+    }
+  }
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(AttachmentDropped)
+DECLARE(AttachmentDropped) // const char *dropPath
+{
+  struct List *childList;
+
+  ENTER();
+
+  if((childList = (struct List *)xget(obj, MUIA_Group_ChildList)) != NULL)
+  {
+    Object *cstate = (Object *)childList->lh_Head;
+    Object *child;
+
+    // forward the drop path to all selected attachments
+    while((child = NextObject(&cstate)) != NULL)
+    {
+      if(xget(child, MUIA_Selected) == TRUE)
+      {
+        D(DBF_GUI, "forwarding drop path '%s' to selected object %08lx", msg->dropPath, child);
+        DoMethod(child, MUIM_Attachment_ImageDropped, msg->dropPath);
+      }
     }
   }
 

@@ -995,126 +995,122 @@ OVERLOAD(MUIM_HandleEvent)
 {
   GETDATA;
   struct IntuiMessage *imsg = ((struct MUIP_HandleEvent *)msg)->imsg;
+  ULONG rc = 0;
 
   ENTER();
 
-  if(imsg == NULL)
+  if(imsg != NULL)
   {
-    RETURN(0);
-    return 0;
-  }
-
-  if(imsg->Class == IDCMP_MOUSEBUTTONS)
-  {
-    if(!(_isinobject(obj, imsg->MouseX, imsg->MouseY)))
+    switch(imsg->Class)
     {
-      data->selectSecs = 0;
-      data->selectMicros = 0;
-
-      RETURN(0);
-      return 0;
-    }
-
-    // in case the image is selected
-    if(imsg->Code == SELECTDOWN)
-    {
-      // check if this has been a double click at the image
-      if(DoubleClick(data->selectSecs, data->selectMicros, imsg->Seconds, imsg->Micros))
+      case IDCMP_MOUSEBUTTONS:
       {
-        xset(obj, MUIA_AttachmentImage_DoubleClick, TRUE,
-                  MUIA_Selected, TRUE);
-      }
-      else
-      {
-        BOOL lastState = xget(obj, MUIA_Selected);
-
-        // only clear the selection if the user hasn't used
-        // the SHIFT key to select multiple items.
-        if(isAnyFlagSet(imsg->Qualifier, IEQUALIFIER_RSHIFT|IEQUALIFIER_LSHIFT) == FALSE)
-          DoMethod(data->attachmentGroup, MUIM_AttachmentGroup_ClearSelection);
-
-        // invert the selection state
-        set(obj, MUIA_Selected, !lastState);
-      }
-
-      // save the seconds/micros for the next handleEvent call
-      data->selectSecs = imsg->Seconds;
-      data->selectMicros = imsg->Micros;
-
-      if(LIB_VERSION_IS_AT_LEAST(WorkbenchBase, 45, 0) == TRUE && data->eventHandlerAdded == TRUE)
-      {
-        DoMethod(_win(obj), MUIM_Window_RemEventHandler, &data->ehnode);
-        data->ehnode.ehn_Events |= IDCMP_MOUSEMOVE;
-        DoMethod(_win(obj), MUIM_Window_AddEventHandler, &data->ehnode);
-      }
-
-      RETURN(MUI_EventHandlerRC_Eat);
-      return MUI_EventHandlerRC_Eat;
-    }
-
-    // in case the image is unselected by the user
-    if(imsg->Code == SELECTUP)
-    {
-      if(LIB_VERSION_IS_AT_LEAST(WorkbenchBase, 45, 0) == TRUE)
-      {
-        DoMethod(_win(obj), MUIM_Window_RemEventHandler, &data->ehnode);
-        data->ehnode.ehn_Events &= ~IDCMP_MOUSEMOVE;
-        DoMethod(_win(obj), MUIM_Window_AddEventHandler, &data->ehnode);
-      }
-
-      RETURN(MUI_EventHandlerRC_Eat);
-      return MUI_EventHandlerRC_Eat;
-    }
-
-  }
-
-  // in case this event is a mouse move we signal a dragging event, but only
-  // if it starts within our object region.
-  if(imsg->Class == IDCMP_MOUSEMOVE &&
-     _isinobject(obj, imsg->MouseX, imsg->MouseY))
-  {
-    DoMethod(obj, MUIM_DoDrag, imsg->MouseX - _mleft(obj), imsg->MouseY - _mtop(obj));
-  }
-
-  if(imsg->Class == IDCMP_RAWKEY)
-  {
-    switch(imsg->Code)
-    {
-      case IECODE_RETURN:
-      {
-        if(obj == (Object *)xget(_win(obj), MUIA_Window_ActiveObject))
+        if(_isinobject(obj, imsg->MouseX, imsg->MouseY) == FALSE)
         {
-          set(obj, MUIA_AttachmentImage_DoubleClick, TRUE);
+          data->selectSecs = 0;
+          data->selectMicros = 0;
+          break;
+        }
 
-          RETURN(MUI_EventHandlerRC_Eat);
-          return MUI_EventHandlerRC_Eat;
+        // in case the image is selected
+        if(imsg->Code == SELECTDOWN)
+        {
+          // check if this has been a double click at the image
+          if(DoubleClick(data->selectSecs, data->selectMicros, imsg->Seconds, imsg->Micros))
+          {
+            xset(obj, ATTR(DoubleClick), TRUE,
+                      MUIA_Selected, TRUE);
+          }
+          else
+          {
+            BOOL lastState = xget(obj, MUIA_Selected);
+
+            // only clear the selection if the user hasn't used
+            // the SHIFT key to select multiple items.
+            if(isAnyFlagSet(imsg->Qualifier, IEQUALIFIER_RSHIFT|IEQUALIFIER_LSHIFT) == FALSE)
+              DoMethod(data->attachmentGroup, MUIM_AttachmentGroup_ClearSelection);
+
+            // invert the selection state
+            set(obj, MUIA_Selected, !lastState);
+          }
+
+          // save the seconds/micros for the next handleEvent call
+          data->selectSecs = imsg->Seconds;
+          data->selectMicros = imsg->Micros;
+
+          if(LIB_VERSION_IS_AT_LEAST(WorkbenchBase, 45, 0) == TRUE && data->eventHandlerAdded == TRUE)
+          {
+            DoMethod(_win(obj), MUIM_Window_RemEventHandler, &data->ehnode);
+            data->ehnode.ehn_Events |= IDCMP_MOUSEMOVE;
+            DoMethod(_win(obj), MUIM_Window_AddEventHandler, &data->ehnode);
+          }
+
+          rc = MUI_EventHandlerRC_Eat;
+        }
+        // in case the image is unselected by the user
+        else if(imsg->Code == SELECTUP)
+        {
+          if(LIB_VERSION_IS_AT_LEAST(WorkbenchBase, 45, 0) == TRUE)
+          {
+            DoMethod(_win(obj), MUIM_Window_RemEventHandler, &data->ehnode);
+            data->ehnode.ehn_Events &= ~IDCMP_MOUSEMOVE;
+            DoMethod(_win(obj), MUIM_Window_AddEventHandler, &data->ehnode);
+          }
+
+          rc = MUI_EventHandlerRC_Eat;
         }
       }
       break;
 
-      case IECODE_SPACE:
+      case IDCMP_MOUSEMOVE:
       {
-        if(obj == (Object *)xget(_win(obj), MUIA_Window_ActiveObject))
+        // in case this event is a mouse move we signal a dragging event, but only
+        // if it starts within our object region.
+        if(_isinobject(obj, imsg->MouseX, imsg->MouseY) == TRUE)
         {
-          BOOL lastState = xget(obj, MUIA_Selected);
+          DoMethod(obj, MUIM_DoDrag, imsg->MouseX - _left(obj), imsg->MouseY - _top(obj));
+        }
+      }
+      break;
 
-          // only clear the selection if the user hasn't used
-          // the SHIFT key to select multiple items.
-          if(isAnyFlagSet(imsg->Qualifier, IEQUALIFIER_RSHIFT|IEQUALIFIER_LSHIFT) == FALSE)
-            DoMethod(data->attachmentGroup, MUIM_AttachmentGroup_ClearSelection);
+      case IDCMP_RAWKEY:
+      {
+        switch(imsg->Code)
+        {
+          case IECODE_RETURN:
+          {
+            if(obj == (Object *)xget(_win(obj), MUIA_Window_ActiveObject))
+            {
+              set(obj, ATTR(DoubleClick), TRUE);
+              rc = MUI_EventHandlerRC_Eat;
+            }
+          }
+          break;
 
-          set(obj, MUIA_Selected, !lastState);
+          case IECODE_SPACE:
+          {
+            if(obj == (Object *)xget(_win(obj), MUIA_Window_ActiveObject))
+            {
+              BOOL lastState = xget(obj, MUIA_Selected);
 
-          RETURN(MUI_EventHandlerRC_Eat);
-          return MUI_EventHandlerRC_Eat;
+              // only clear the selection if the user hasn't used
+              // the SHIFT key to select multiple items.
+              if(isAnyFlagSet(imsg->Qualifier, IEQUALIFIER_RSHIFT|IEQUALIFIER_LSHIFT) == FALSE)
+                DoMethod(data->attachmentGroup, MUIM_AttachmentGroup_ClearSelection);
+
+              set(obj, MUIA_Selected, !lastState);
+              rc = MUI_EventHandlerRC_Eat;
+            }
+          }
+          break;
         }
       }
       break;
     }
   }
 
-  RETURN(0);
-  return 0;
+  RETURN(rc);
+  return rc;
 }
 
 ///
@@ -1143,7 +1139,7 @@ OVERLOAD(MUIM_DeleteDragImage)
       {
         if(wbscreen == _screen(obj))
         {
-#if defined(__amigaos4__)
+          #if defined(__amigaos4__)
           char *buf;
 
           if((buf = (STRPTR)malloc(SIZE_PATHFILE)) != NULL)
@@ -1178,8 +1174,8 @@ OVERLOAD(MUIM_DeleteDragImage)
             {
               if((data->dropPath = strdup(buf)) != NULL)
               {
-                D(DBF_GUI, "found dropPath: [%s]", data->dropPath);
-                DoMethod(_app(obj), MUIM_Application_PushMethod, obj, 3, MUIM_Set, MUIA_AttachmentImage_DropPath, data->dropPath);
+                D(DBF_GUI, "found dropPath '%s'", data->dropPath);
+                DoMethod(_app(obj), MUIM_Application_PushMethod, obj, 3, MUIM_Set, ATTR(DropPath), data->dropPath);
               }
             }
             else
@@ -1190,7 +1186,7 @@ OVERLOAD(MUIM_DeleteDragImage)
 
             free(buf);
           }
-#else // __amigaos4__
+          #else // __amigaos4__
           // this stuff only works with Workbench v45+
           if(LIB_VERSION_IS_AT_LEAST(WorkbenchBase, 45, 0) == TRUE)
           {
@@ -1259,8 +1255,8 @@ OVERLOAD(MUIM_DeleteDragImage)
               // found out where to icon has dropped at exactly.
               if(data->dropPath != NULL)
               {
-                D(DBF_GUI, "found dropPath: [%s]", data->dropPath);
-                DoMethod(_app(obj), MUIM_Application_PushMethod, obj, 3, MUIM_Set, MUIA_AttachmentImage_DropPath, data->dropPath);
+                D(DBF_GUI, "found dropPath '%s'", data->dropPath);
+                DoMethod(_app(obj), MUIM_Application_PushMethod, obj, 3, MUIM_Set, ATTR(DropPath), data->dropPath);
               }
               else
               {
@@ -1274,7 +1270,7 @@ OVERLOAD(MUIM_DeleteDragImage)
               DisplayBeep(_screen(obj));
             }
           }
-#endif // __amigaos4__
+          #endif // __amigaos4__
         }
         else
           W(DBF_GUI, "YAM is not running on workbench, skipping drop operation");
@@ -1342,6 +1338,3 @@ OVERLOAD(MUIM_DeleteShortHelp)
 }
 
 ///
-
-/* Public Methods */
-

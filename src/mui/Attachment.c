@@ -104,8 +104,8 @@ OVERLOAD(OM_NEW)
   {
     switch(tag->ti_Tag)
     {
-      case ATTR(MailPart):   mailPart = (struct Part *)tag->ti_Data; break;
-      case ATTR(Group):      attGroupObject = (Object *)tag->ti_Data; break;
+      case ATTR(MailPart): mailPart = (struct Part *)tag->ti_Data; break;
+      case ATTR(Group):    attGroupObject = (Object *)tag->ti_Data; break;
     }
   }
 
@@ -115,9 +115,9 @@ OVERLOAD(OM_NEW)
     MUIA_Group_Horiz,   TRUE,
     MUIA_Group_Spacing, 2,
     Child, imageObject = AttachmentImageObject,
-      MUIA_CycleChain,                 TRUE,
-      MUIA_AttachmentImage_MailPart,   mailPart,
-      MUIA_AttachmentImage_Group,      attGroupObject,
+      MUIA_CycleChain,               TRUE,
+      MUIA_AttachmentImage_MailPart, mailPart,
+      MUIA_AttachmentImage_Group,    attGroupObject,
     End,
     Child, textObject = TextObject,
       MUIA_Font,        MUIV_Font_Tiny,
@@ -135,8 +135,7 @@ OVERLOAD(OM_NEW)
 
     // connect some notifies which we might be interested in
     DoMethod(imageObject, MUIM_Notify, MUIA_AttachmentImage_DoubleClick, TRUE, obj, 1, METHOD(Display));
-    DoMethod(imageObject, MUIM_Notify, MUIA_AttachmentImage_DropPath, MUIV_EveryTime, obj, 2, METHOD(ImageDropped), MUIV_TriggerValue);
-
+    DoMethod(imageObject, MUIM_Notify, MUIA_AttachmentImage_DropPath, MUIV_EveryTime, attGroupObject, 2, MUIM_AttachmentGroup_AttachmentDropped, MUIV_TriggerValue);
   }
 
   RETURN((IPTR)obj);
@@ -165,9 +164,9 @@ OVERLOAD(OM_GET)
 
   switch(((struct opGet *)msg)->opg_AttrID)
   {
-    case ATTR(ImageObject) : *store = (ULONG)data->imageObject; return TRUE;
-    case ATTR(MailPart)    : *store = (ULONG)data->mailPart;    return TRUE;
-    case MUIA_Selected: *store = xget(data->imageObject, MUIA_Selected); return TRUE;
+    case ATTR(ImageObject): *store = (ULONG)data->imageObject; return TRUE;
+    case ATTR(MailPart):    *store = (ULONG)data->mailPart;    return TRUE;
+    case MUIA_Selected:     *store = xget(data->imageObject, MUIA_Selected); return TRUE;
   }
 
   return DoSuperMethodA(cl, obj, msg);
@@ -462,7 +461,7 @@ DECLARE(Print)
 
 ///
 /// DECLARE(ImageDropped)
-DECLARE(ImageDropped) // char *dropPath
+DECLARE(ImageDropped) // const char *dropPath
 {
   GETDATA;
   BOOL result = FALSE;
@@ -485,7 +484,7 @@ DECLARE(ImageDropped) // char *dropPath
   {
     // make sure the drawer is opened upon the drag operation
     if(LIB_VERSION_IS_AT_LEAST(WorkbenchBase, 44, 0) == TRUE)
-      OpenWorkbenchObjectA(msg->dropPath, NULL);
+      OpenWorkbenchObjectA((char *)msg->dropPath, NULL);
 
     // get the suggested filename of the message part
     fileName = SuggestPartFileName(data->mailPart);
@@ -613,4 +612,3 @@ DECLARE(UpdateDescription)
 }
 
 ///
-
