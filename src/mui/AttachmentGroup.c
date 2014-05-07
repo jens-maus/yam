@@ -205,9 +205,8 @@ enum
 /* Private functions */
 /// CountSelectedAttachments
 // count the number of selected attachments
-static ULONG CountSelectedAttachments(struct IClass *cl, Object *obj)
+static ULONG CountSelectedAttachments(Object *obj)
 {
-  GETDATA;
   ULONG numSelected = 0;
   struct List *childList;
 
@@ -299,7 +298,7 @@ OVERLOAD(OM_GET)
 
   switch(((struct opGet *)msg)->opg_AttrID)
   {
-    case ATTR(NumSelectedAttachments) : *store = CountSelectedAttachments(cl, obj); return TRUE;
+    case ATTR(NumSelectedAttachments): *store = CountSelectedAttachments(obj); return TRUE;
   }
 
   return DoSuperMethodA(cl, obj, msg);
@@ -612,7 +611,7 @@ DECLARE(DeleteSelected)
   // iterate through our child list
   if((childList = (struct List *)xget(obj, MUIA_Group_ChildList)) != NULL)
   {
-    ULONG numSelected = CountSelectedAttachments(cl, obj);
+    ULONG numSelected = CountSelectedAttachments(obj);
     struct Part **parts;
 
     // build a list of selected attachments
