@@ -2586,6 +2586,11 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
           return NULL;
         }
 
+        SHOWSTRING(DBF_MAIL, mail->ReplyTo.Address);
+        SHOWSTRING(DBF_MAIL, mail->From.Address);
+        SHOWVALUE(DBF_MAIL, email->NumMailReplyTo);
+        SHOWVALUE(DBF_MAIL, email->NumFollowUpTo);
+
         // make sure we setup the quote string
         // correctly.
         SetupExpandTextData(&etd, &email->Mail);
@@ -2632,20 +2637,29 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
           dstrcat(&wmData->inReplyToMsgID, " ");
 
         if(email->messageID != NULL)
+        {
+          D(DBF_MAIL, "adding inReplyToMsgID '%s'", email->inReplyToMsgID);
           dstrcat(&wmData->inReplyToMsgID, email->messageID);
+        }
 
         // in addition, we check for "References:" message header stuff
         if(wmData->references != NULL)
           dstrcat(&wmData->references, " ");
 
         if(email->references != NULL)
+        {
+          D(DBF_MAIL, "adding references '%s'", email->references);
           dstrcat(&wmData->references, email->references);
+        }
         else
         {
           // check if this email contains inReplyToMsgID data and if so we
           // create a new references header entry
           if(email->inReplyToMsgID != NULL)
+          {
+            D(DBF_MAIL, "adding references '%s'", email->inReplyToMsgID);
             dstrcat(&wmData->references, email->inReplyToMsgID);
+          }
         }
 
         // Now we analyse the folder of the selected mail and if it
@@ -2685,6 +2699,11 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
           }
         }
 
+        SHOWVALUE(DBF_MAIL, foundSentFolder);
+        SHOWVALUE(DBF_MAIL, foundMLFolder);
+        SHOWVALUE(DBF_MAIL, hasPrivateFlag(flags));
+        SHOWVALUE(DBF_MAIL, hasMListFlag(flags));
+
         // If this mail is a standard multi-recipient mail and the user hasn't pressed SHIFT (private)
         // or ALT (send to mailing list) we going to ask him to which recipient he want to send the mail to.
         if((isMultiRCPTMail(mail) || (email->NumMailReplyTo > 0 && email->NumFollowUpTo > 0 && foundMLFolder == FALSE)) &&
@@ -2721,6 +2740,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
         // repmode == 1 : To Sender (From:/ReplyTo: -> To:)
         // repmode == 2 : To Sender and all recipients (From:/ReplyTo: -> To:, To:+CC: -> CC:)
         // repmode == 3 : To Recipients (To:+CC: -> To:)
+        SHOWVALUE(DBF_MAIL, repmode);
         switch(repmode)
         {
           // user wants to reply to sender of the
@@ -2931,6 +2951,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
 
             if(addDefault == TRUE)
             {
+              D(DBF_MAIL, "add default To recipients");
               // we first check if there is a Mail-Reply-To: mail header and if so we
               // use that instead of any Reply-To: or From: mail header. Otherwise we
               // use the Reply-To: recipient list and if that is also not present we
