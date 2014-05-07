@@ -801,12 +801,14 @@ BOOL ProcessTimerEvent(void)
   while((timeReq = (struct TimeRequest *)GetMsg(G->timerData.port)) != NULL)
   {
     enum Timer tid;
-    struct MailServerNode *msn;
+
+    D(DBF_TIMER, "handle timer event %08lx", timeReq);
 
     for(tid=0; tid < TIMER_NUM; tid++)
     {
       struct TRequest *timer = &G->timerData.timer[tid];
 
+      D(DBF_TIMER, "check timer event %08lx vs %08lx tid %ld", timeReq, timer->tr, tid);
       if(timeReq == timer->tr)
       {
         // set the timer to be not running and not be prepared for
@@ -826,36 +828,42 @@ BOOL ProcessTimerEvent(void)
       }
     }
 
-    // continue to check the POP3 timers
-    ObtainSemaphoreShared(G->configSemaphore);
-
-    IterateList(&C->pop3ServerList, struct MailServerNode *, msn)
+    if(processed == FALSE)
     {
-      struct TRequest *timer = &msn->downloadTimer;
+      struct MailServerNode *msn;
 
-      if(timeReq == timer->tr)
+      // continue to check the POP3 timers
+      ObtainSemaphoreShared(G->configSemaphore);
+
+      IterateList(&C->pop3ServerList, struct MailServerNode *, msn)
       {
-        // set the timer to be not running and not be prepared for
-        // another shot. Our dispatcher have to do the rest then
-        timer->isRunning = FALSE;
-        timer->isPrepared = FALSE;
+        struct TRequest *timer = &msn->downloadTimer;
 
-        // download the mails from this POP3 server
-        MA_PopNow(msn, RECEIVEF_TIMER, NULL);
+        D(DBF_TIMER, "check timer event %08lx vs %08lx pop3 '%s'", timeReq, timer->tr, timer->pop3Server->description);
+        if(timeReq == timer->tr)
+        {
+          // set the timer to be not running and not be prepared for
+          // another shot. Our dispatcher have to do the rest then
+          timer->isRunning = FALSE;
+          timer->isPrepared = FALSE;
 
-        // signal that we processed something
-        processed = TRUE;
+          // download the mails from this POP3 server
+          MA_PopNow(msn, RECEIVEF_TIMER, NULL);
 
-        // preparestart the server's timer again
-        PrepareTRequest(timer, msn->downloadInterval*60, 0, FALSE);
-        StartTRequest(timer);
+          // signal that we processed something
+          processed = TRUE;
 
-        // break out of the loop
-        break;
+          // preparestart the server's timer again
+          PrepareTRequest(timer, msn->downloadInterval*60, 0, FALSE);
+          StartTRequest(timer);
+
+          // break out of the loop
+          break;
+        }
       }
-    }
 
-    ReleaseSemaphore(G->configSemaphore);
+      ReleaseSemaphore(G->configSemaphore);
+    }
 
     // no ReplyMsg() needed
   }
