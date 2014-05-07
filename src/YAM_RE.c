@@ -937,7 +937,7 @@ static void RE_ParseContentParameters(char *str, struct Part *rp, enum parameter
 
   ENTER();
 
-  D(DBF_ALWAYS, "content '%s'", str);
+  D(DBF_MIME, "content '%s'", str);
 
   // scan for the real size of the content-type: value without the
   // corresponding parameters.
@@ -981,7 +981,7 @@ static void RE_ParseContentParameters(char *str, struct Part *rp, enum parameter
     {
       free(rp->ContentType);
       rp->ContentType = s;
-      D(DBF_ALWAYS, "0 content type '%s'", rp->ContentType);
+      D(DBF_MIME, "content type '%s'", rp->ContentType);
     }
     break;
 
@@ -989,6 +989,7 @@ static void RE_ParseContentParameters(char *str, struct Part *rp, enum parameter
     {
       free(rp->ContentDisposition);
       rp->ContentDisposition = s;
+      D(DBF_MIME, "content disposition '%s'", rp->ContentType);
     }
     break;
   }
