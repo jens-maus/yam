@@ -989,7 +989,7 @@ static void RE_ParseContentParameters(char *str, struct Part *rp, enum parameter
     {
       free(rp->ContentDisposition);
       rp->ContentDisposition = s;
-      D(DBF_MIME, "content disposition '%s'", rp->ContentType);
+      D(DBF_MIME, "content disposition '%s'", rp->ContentDisposition);
     }
     break;
   }
