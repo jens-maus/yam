@@ -839,7 +839,7 @@ BOOL MakeSecureConnection(struct Connection *conn)
 
                     default:
                     {
-                      E(DBF_NET, "SSL_connect() returned %ld with SSL_get_errror() = %ld", res, err);
+                      E(DBF_NET, "SSL_connect() returned %ld with SSL_get_error() = %ld", res, err);
 
                       // get more information on the error
                       #if defined(DEBUG)
