@@ -199,7 +199,7 @@ void MA_ChangeSelected(BOOL forceUpdate)
         StopTimer(TIMER_READPANEUPDATE);
 
         // clear the readmail group now
-        DoMethod(gui->MN_EMBEDDEDREADPANE, MUIM_ReadMailGroup_Clear, folder->Total > 0 ? MUIF_ReadMailGroup_Clear_KeepAttachmentGroup : MUIF_NONE);
+        DoMethod(gui->MN_EMBEDDEDREADPANE, MUIM_ReadMailGroup_Clear, MUIF_NONE);
         lastMail = NULL;
       }
     }

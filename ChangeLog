@@ -12,6 +12,9 @@ $URL$
     situations, and second because updating the progress bar might cause certain
     updates of the GUI which in turn can access memory which has just been
     freed, i.e. when deleting a mail. This refs #556.
+  * YAM_MA.c: hide the embedded read pane's attachment group if more than one
+    mail is selected. Otherwise invalid memory might be accessed due to the
+    still visible attachment objects.
 
 2014-05-06 Thore Böckelmann <tboeckel@gmx.de>
 
