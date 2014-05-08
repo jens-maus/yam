@@ -913,17 +913,22 @@ void MA_MoveCopy(struct Mail *mail, struct Folder *tobox, const ULONG flags)
   }
   else if((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE)) != NULL)
   {
-    struct BusyNode *busy;
+    struct BusyNode *busy = NULL;
     char selectedStr[SIZE_SMALL];
     struct MailNode *mnode;
     ULONG i;
 
     // get the list of the currently marked mails
     selected = mlist->count;
-    snprintf(selectedStr, sizeof(selectedStr), "%d", selected);
+
     set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, TRUE);
-    busy = BusyBegin(BUSY_PROGRESS_ABORT);
-    BusyText(busy, tr(MSG_BusyMoving), selectedStr);
+
+    if(mlist->count != 1)
+    {
+      snprintf(selectedStr, sizeof(selectedStr), "%d", selected);
+      busy = BusyBegin(BUSY_PROGRESS_ABORT);
+      BusyText(busy, tr(MSG_BusyMoving), selectedStr);
+    }
 
     i = 0;
     ForEachMailNode(mlist, mnode)
@@ -938,6 +943,7 @@ void MA_MoveCopy(struct Mail *mail, struct Folder *tobox, const ULONG flags)
       }
     }
     BusyEnd(busy);
+
     set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Quiet, FALSE);
 
     DeleteMailList(mlist);
@@ -1984,7 +1990,7 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
       if(okToDelete == TRUE)
       {
         struct Folder *folder = GetCurrentFolder();
-        struct BusyNode *busy;
+        struct BusyNode *busy = NULL;
         char selectedStr[SIZE_SMALL];
         struct MailNode *mnode;
         ULONG deleted;
@@ -2017,9 +2023,13 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
         // modify the menu items
         set(gui->MI_DELETE, MUIA_Menuitem_Enabled, FALSE);
 
-        snprintf(selectedStr, sizeof(selectedStr), "%d", (int)mlist->count);
-        busy = BusyBegin(BUSY_PROGRESS_ABORT);
-        BusyText(busy, tr(MSG_BusyDeleting), selectedStr);
+        // show the abortable busy bar only if we are deleting more than a single mail
+        if(mlist->count != 1)
+        {
+          snprintf(selectedStr, sizeof(selectedStr), "%d", (int)mlist->count);
+          busy = BusyBegin(BUSY_PROGRESS_ABORT);
+          BusyText(busy, tr(MSG_BusyDeleting), selectedStr);
+        }
 
         deleted = 0;
         ForEachMailNode(mlist, mnode)

@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-05-07 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MA.c: don't show a progress bar when deleting, copying or moving single
+    mails. First because the progress bar makes no real sense in these
+    situations, and second because updating the progress bar might cause certain
+    updates of the GUI which in turn can access memory which has just been
+    freed, i.e. when deleting a mail. This refs #556.
+
 2014-05-06 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/Attachment.c, mui/AttachmentGroup.c, mui/AttachmentImage.c: implemented
