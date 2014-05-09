@@ -3392,7 +3392,7 @@ void MoveHeldMailsToDraftsFolder(void)
 
         ForEachMailNode(mlist, mnode)
         {
-          MA_MoveCopy(mnode->mail, drafts, MVCPF_CLOSE_WINDOWS);
+          MA_MoveCopy(mnode->mail, drafts, "held mail", MVCPF_CLOSE_WINDOWS);
           // mails in the Drafts folder are always "new"
           // the "hold" state is no longer needed
           MA_ChangeMailStatus(mnode->mail, SFLAG_NEW, SFLAG_HOLD);

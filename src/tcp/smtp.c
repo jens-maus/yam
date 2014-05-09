@@ -1583,7 +1583,7 @@ BOOL SendMails(struct UserIdentityNode *uin, struct MailList *mailsToSend, enum 
                           if(PushMethodOnStackWait(G->App, 3, MUIM_YAMApplication_FilterMail, sentMailFilters, mail) == TRUE)
                           {
                             // the filter process did not move the mail, hence we do it now
-                            PushMethodOnStackWait(G->App, 5, MUIM_YAMApplication_MoveCopyMail, mail, tc->sentFolder, MVCPF_CLOSE_WINDOWS);
+                            PushMethodOnStackWait(G->App, 5, MUIM_YAMApplication_MoveCopyMail, mail, tc->sentFolder, "sent mail", MVCPF_CLOSE_WINDOWS);
                           }
                           else
                           {

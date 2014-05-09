@@ -9908,6 +9908,14 @@ msgctxt "MSG_SIZE_GIGABYTES (2546//)"
 msgid "GB"
 msgstr "GB"
 
-msgctxt "MSG_LOG_FILTER_MOVE_MAIL (2547//)"
-msgid "Filter '%s' moved message from '%s' about '%s' from folder '%s' to '%s'"
-msgstr "Filter '%s' moved message from '%s' about '%s' from folder '%s' to '%s'"
+msgctxt "MSG_LOG_COPY_MAIL (2548//)"
+msgid "%s: Copied message from '%s' about '%s' from folder '%s' to '%s'"
+msgstr "%s: Copied message from '%s' about '%s' from folder '%s' to '%s'"
+
+msgctxt "MSG_LOG_MOVE_MAIL (2549//)"
+msgid "%s: Moved message from '%s' about '%s' from folder '%s' to '%s'"
+msgstr "%s: Moved message from '%s' about '%s' from folder '%s' to '%s'"
+
+msgctxt "MSG_LOG_FILTER_ORIGINATOR (2550//)"
+msgid "Filter '%s'"
+msgstr "Filter '%s'"

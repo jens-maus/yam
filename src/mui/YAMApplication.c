@@ -1182,11 +1182,11 @@ DECLARE(StartMacro) // enum Macro num, const char *param
 
 ///
 /// DECLARE(MoveCopyMail)
-DECLARE(MoveCopyMail) // struct Mail *mail, struct Folder *tobox, ULONG flags
+DECLARE(MoveCopyMail) // struct Mail *mail, struct Folder *tobox, const char *originator, ULONG flags
 {
   ENTER();
 
-  MA_MoveCopy(msg->mail, msg->tobox, msg->flags);
+  MA_MoveCopy(msg->mail, msg->tobox, msg->originator, msg->flags);
 
   RETURN(0);
   return 0;

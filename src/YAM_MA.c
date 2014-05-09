@@ -107,7 +107,7 @@
 #include "Debug.h"
 
 /* local protos */
-static void MA_MoveCopySingle(struct Mail *mail, struct Folder *to, const ULONG flags);
+static void MA_MoveCopySingle(struct Mail *mail, struct Folder *to, const char *originator, const ULONG flags);
 
 /***************************************************************************
  Module: Main
@@ -767,7 +767,7 @@ void MA_DeleteSingle(struct Mail *mail, const ULONG delFlags)
 
       D(DBF_MAIL, "moving mail with subject '%s' from folder '%s' to folder 'trash'", mail->Subject, folder->Name);
 
-      MA_MoveCopySingle(mail, delfolder, isFlagSet(delFlags, DELF_CLOSE_WINDOWS) ? MVCPF_CLOSE_WINDOWS : 0);
+      MA_MoveCopySingle(mail, delfolder, "delete", isFlagSet(delFlags, DELF_CLOSE_WINDOWS) ? MVCPF_CLOSE_WINDOWS : 0);
 
       // if we are allowed to make some noise we
       // update our statistics
@@ -790,7 +790,7 @@ void MA_DeleteSingle(struct Mail *mail, const ULONG delFlags)
 ///
 /// MA_MoveCopySingle
 //  Moves or copies a single message from one folder to another
-static void MA_MoveCopySingle(struct Mail *mail, struct Folder *to, const ULONG flags)
+static void MA_MoveCopySingle(struct Mail *mail, struct Folder *to, const char *originator, const ULONG flags)
 {
   struct Folder *from;
   struct Mail *newMail = NULL;
@@ -806,7 +806,7 @@ static void MA_MoveCopySingle(struct Mail *mail, struct Folder *to, const ULONG 
   {
     if(isFlagSet(flags, MVCPF_COPY))
     {
-      AppendToLogfile(LF_VERBOSE, 25, tr(MSG_LOG_CopyingVerbose), AddrName(mail->From), mail->Subject, from->Name, to->Name);
+      AppendToLogfile(LF_VERBOSE, 25, tr(MSG_LOG_COPY_MAIL), originator, AddrName(mail->From), mail->Subject, from->Name, to->Name);
 
       if((newMail = CloneMail(mail)) != NULL)
       {
@@ -819,7 +819,7 @@ static void MA_MoveCopySingle(struct Mail *mail, struct Folder *to, const ULONG 
     }
     else
     {
-      AppendToLogfile(LF_VERBOSE, 23, tr(MSG_LOG_MovingVerbose), AddrName(mail->From), mail->Subject, from->Name, to->Name);
+      AppendToLogfile(LF_VERBOSE, 23, tr(MSG_LOG_MOVE_MAIL), originator, AddrName(mail->From), mail->Subject, from->Name, to->Name);
 
       // increase the mail's reference counter to prevent RemoveMailFromFolder() from
       // freeing the mail in its DeleteMailNode() call
@@ -886,7 +886,7 @@ static void MA_MoveCopySingle(struct Mail *mail, struct Folder *to, const ULONG 
 ///
 /// MA_MoveCopy
 //  Moves or copies messages from one folder to another
-void MA_MoveCopy(struct Mail *mail, struct Folder *tobox, const ULONG flags)
+void MA_MoveCopy(struct Mail *mail, struct Folder *tobox, const char *originator, const ULONG flags)
 {
   struct Folder *frombox;
   struct MailList *mlist;
@@ -909,7 +909,7 @@ void MA_MoveCopy(struct Mail *mail, struct Folder *tobox, const ULONG flags)
   if(mail != NULL)
   {
     selected = 1;
-    MA_MoveCopySingle(mail, tobox, flags);
+    MA_MoveCopySingle(mail, tobox, originator, flags);
   }
   else if((mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE)) != NULL)
   {
@@ -933,7 +933,7 @@ void MA_MoveCopy(struct Mail *mail, struct Folder *tobox, const ULONG flags)
     i = 0;
     ForEachMailNode(mlist, mnode)
     {
-      MA_MoveCopySingle(mnode->mail, tobox, flags);
+      MA_MoveCopySingle(mnode->mail, tobox, originator, flags);
 
       // if BusyProgress() returns FALSE, then the user aborted
       if(BusyProgress(busy, ++i, selected) == FALSE)
@@ -2161,7 +2161,7 @@ void MA_ClassifyMessage(enum BayesClassification bclass)
             setStatusToUserSpam(mail);
 
             // move the mail
-            MA_MoveCopySingle(mail, spamFolder, MVCPF_CLOSE_WINDOWS);
+            MA_MoveCopySingle(mail, spamFolder, "mark as spam", MVCPF_CLOSE_WINDOWS);
           }
           else if(hasStatusHam(mail) == FALSE && bclass == BC_HAM)
           {
@@ -2192,7 +2192,7 @@ void MA_ClassifyMessage(enum BayesClassification bclass)
 
               // if the mail has not been moved to another folder before we move it to the incoming folder now.
               if(moveToIncoming == TRUE)
-                MA_MoveCopySingle(mail, incomingFolder, MVCPF_CLOSE_WINDOWS);
+                MA_MoveCopySingle(mail, incomingFolder, "mark as ham", MVCPF_CLOSE_WINDOWS);
               else
                 selectNext = -1;
             }
@@ -2992,7 +2992,7 @@ HOOKPROTONHNONP(MA_MoveMessageFunc, void)
   ENTER();
 
   if((dst = FolderRequest(tr(MSG_MA_MoveMsg), tr(MSG_MA_MoveMsgReq), tr(MSG_MA_MoveGad), tr(MSG_Cancel), NULL, G->MA->GUI.WI)) != NULL)
-    MA_MoveCopy(NULL, dst, MVCPF_CLOSE_WINDOWS);
+    MA_MoveCopy(NULL, dst, "manual move", MVCPF_CLOSE_WINDOWS);
 
   LEAVE();
 }
@@ -3008,7 +3008,7 @@ HOOKPROTONHNONP(MA_CopyMessageFunc, void)
   ENTER();
 
   if((dst = FolderRequest(tr(MSG_MA_CopyMsg), tr(MSG_MA_MoveMsgReq), tr(MSG_MA_CopyGad), tr(MSG_Cancel), NULL, G->MA->GUI.WI)) != NULL)
-    MA_MoveCopy(NULL, dst, MVCPF_COPY);
+    MA_MoveCopy(NULL, dst, "manual copy", MVCPF_COPY);
 
   LEAVE();
 }
@@ -3079,7 +3079,7 @@ void MA_ArchiveMail(struct Mail *mail)
     // archived mails are considered to be read before, why should one
     // archive them otherwise without knowing the content?
     setStatusToRead(mail);
-    MA_MoveCopy(mail, archive, 0);
+    MA_MoveCopy(mail, archive, "archive", 0);
   }
 
   LEAVE();

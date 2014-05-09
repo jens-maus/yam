@@ -328,7 +328,7 @@ OVERLOAD(MUIM_DragDrop)
       struct Folder *dstfolder = ((struct FolderNode *)tn_dst->tn_User)->folder;
 
       if(isGroupFolder(dstfolder) == FALSE)
-        MA_MoveCopy(NULL, dstfolder, MVCPF_CLOSE_WINDOWS);
+        MA_MoveCopy(NULL, dstfolder, "manual drag", MVCPF_CLOSE_WINDOWS);
     }
 
     result = 0;

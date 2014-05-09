@@ -1487,6 +1487,7 @@ BOOL ExecuteFilterAction(const struct FilterNode *filter, struct Mail *mail, str
     {
       if(mail->Folder != fo)
       {
+        char originator[SIZE_DEFAULT];
         BOOL accessFreed = FALSE;
         enum LoadedMode oldLoadedMode = fo->LoadedMode;
 
@@ -1500,8 +1501,9 @@ BOOL ExecuteFilterAction(const struct FilterNode *filter, struct Mail *mail, str
           accessFreed = TRUE;
         }
 
-        AppendToLogfile(LF_VERBOSE, 23, tr(MSG_LOG_FILTER_MOVE_MAIL), filter->name, AddrName(mail->From), mail->Subject, mail->Folder->Name, fo->Name);
-        MA_MoveCopy(mail, fo, MVCPF_CLOSE_WINDOWS|MVCPF_QUIET);
+        // setup the current filter name as originator for the move
+        snprintf(originator, sizeof(originator), tr(MSG_LOG_FILTER_ORIGINATOR), filter->name);
+        MA_MoveCopy(mail, fo, originator, MVCPF_CLOSE_WINDOWS|MVCPF_QUIET);
 
         // restore the old access mode if it was changed before
         if(accessFreed)
@@ -1640,7 +1642,7 @@ void FilterMails(const struct MailList *mlist, const int mode, struct FilterResu
                 setStatusToAutoSpam(mail);
 
               // move newly recognized spam to the spam folder
-              MA_MoveCopy(mail, spamfolder, MVCPF_QUIET);
+              MA_MoveCopy(mail, spamfolder, "spam filter", MVCPF_QUIET);
               wasSpam = TRUE;
 
               // update the stats

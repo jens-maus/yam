@@ -388,7 +388,7 @@ void MA_GetAddress(struct MailList *mlist, struct MUI_NListtree_TreeNode *dropTa
 BOOL MA_ImportMessages(const char *fname, const ULONG flags);
 struct MA_ClassData *MA_New(void);
 void  MA_ArchiveMail(struct Mail *mail);
-void  MA_MoveCopy(struct Mail *mail, struct Folder *tobox, const ULONG flags);
+void  MA_MoveCopy(struct Mail *mail, struct Folder *tobox, const char *originator, const ULONG flags);
 void  MA_ExchangeMail(const ULONG receiveFlags);
 BOOL  MA_PopNow(struct MailServerNode *msn, const ULONG flags, struct DownloadResult *dlResult);
 void  MA_RemoveAttach(struct Mail *mail, struct Part **whichParts, BOOL warning);
