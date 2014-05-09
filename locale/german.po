@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-04-21 19:17+0000\n"
+"PO-Revision-Date: 2014-05-09 18:30+0000\n"
 "Last-Translator: tboeckel <tboeckel@gmx.de>\n"
 "Language-Team: German (http://www.transifex.com/projects/p/yam/language/de/)\n"
 "MIME-Version: 1.0\n"
@@ -402,20 +402,10 @@ msgctxt "MSG_LOG_Moving (113//)"
 msgid "Moved %ld message(s) from folder '%s' to '%s'"
 msgstr "%ld Nachricht(en) aus dem Postfach '%s' nach '%s' verschoben"
 
-#. SENDER, SUBJECT, FOLDER, FOLDER
-msgctxt "MSG_LOG_MovingVerbose (114//)"
-msgid "Moved message from '%s' about '%s' from folder '%s' to '%s'"
-msgstr "Nachricht von '%s' über '%s' aus dem Postfach '%s' nach '%s' verschoben"
-
 #. COUNT, FOLDER, FOLDER
 msgctxt "MSG_LOG_Copying (115//)"
 msgid "Copied %ld message(s) from folder '%s' to '%s'"
 msgstr "%ld Nachricht(en) aus dem Postfach '%s' nach '%s' kopiert"
-
-#. SENDER, SUBJECT, FOLDER, FOLDER
-msgctxt "MSG_LOG_CopyingVerbose (116//)"
-msgid "Copied message from '%s' about '%s' from folder '%s' to '%s'"
-msgstr "Nachricht von '%s' über '%s' aus dem Postfach '%s' nach '%s' kopiert"
 
 #. SENDER, SUBJECT, SIZE
 msgctxt "MSG_LOG_RetrievingVerbose (118//)"
@@ -9914,7 +9904,17 @@ msgctxt "MSG_SIZE_GIGABYTES (2546//)"
 msgid "GB"
 msgstr "GB"
 
-msgctxt "MSG_LOG_FILTER_MOVE_MAIL (2547//)"
-msgid ""
-"Filter '%s' moved message from '%s' about '%s' from folder '%s' to '%s'"
-msgstr "Filter '%s' hat Nachricht von '%s' über '%s' aus dem Postfach '%s' nach '%s' verschoben"
+#. ORIGINATOR, SENDER, SUBJECT, FOLDER, FOLDER
+msgctxt "MSG_LOG_COPY_MAIL (2548//)"
+msgid "%s: Copied message from '%s' about '%s' from folder '%s' to '%s'"
+msgstr "%s: Nachricht von '%s' über '%s' aus dem Postfach '%s' nach '%s' kopiert"
+
+#. ORIGINATOR, SENDER, SUBJECT, FOLDER, FOLDER
+msgctxt "MSG_LOG_MOVE_MAIL (2549//)"
+msgid "%s: Moved message from '%s' about '%s' from folder '%s' to '%s'"
+msgstr "%s: Nachricht von '%s' über '%s' aus dem Postfach '%s' nach '%s' verschoben"
+
+#. FILTERNAME
+msgctxt "MSG_LOG_FILTER_ORIGINATOR (2550//)"
+msgid "Filter '%s'"
+msgstr "Filter '%s'"
