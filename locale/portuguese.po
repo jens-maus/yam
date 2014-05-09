@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-04-21 19:16+0000\n"
+"PO-Revision-Date: 2014-05-09 18:28+0000\n"
 "Last-Translator: tboeckel <tboeckel@gmx.de>\n"
 "Language-Team: Portuguese (http://www.transifex.com/projects/p/yam/language/pt/)\n"
 "MIME-Version: 1.0\n"
@@ -399,20 +399,10 @@ msgctxt "MSG_LOG_Moving (113//)"
 msgid "Moved %ld message(s) from folder '%s' to '%s'"
 msgstr "O utilizador moveu %ld mensagem(s) da pasta '%s' para a pasta '%s'"
 
-#. SENDER, SUBJECT, FOLDER, FOLDER
-msgctxt "MSG_LOG_MovingVerbose (114//)"
-msgid "Moved message from '%s' about '%s' from folder '%s' to '%s'"
-msgstr "O utilizador moveu a mensagem de '%s', acerca de '%s', da pasta '%s' para a pasta '%s'"
-
 #. COUNT, FOLDER, FOLDER
 msgctxt "MSG_LOG_Copying (115//)"
 msgid "Copied %ld message(s) from folder '%s' to '%s'"
 msgstr "O utilizador copiou %ld mensagem(s) da pasta '%s' para a '%s'"
-
-#. SENDER, SUBJECT, FOLDER, FOLDER
-msgctxt "MSG_LOG_CopyingVerbose (116//)"
-msgid "Copied message from '%s' about '%s' from folder '%s' to '%s'"
-msgstr "O utilizador copiou a mensagem de '%s', acerca de '%s', da pasta '%s' para a pasta '%s'"
 
 #. SENDER, SUBJECT, SIZE
 msgctxt "MSG_LOG_RetrievingVerbose (118//)"
@@ -9911,7 +9901,17 @@ msgctxt "MSG_SIZE_GIGABYTES (2546//)"
 msgid "GB"
 msgstr ""
 
-msgctxt "MSG_LOG_FILTER_MOVE_MAIL (2547//)"
-msgid ""
-"Filter '%s' moved message from '%s' about '%s' from folder '%s' to '%s'"
+#. ORIGINATOR, SENDER, SUBJECT, FOLDER, FOLDER
+msgctxt "MSG_LOG_COPY_MAIL (2548//)"
+msgid "%s: Copied message from '%s' about '%s' from folder '%s' to '%s'"
+msgstr ""
+
+#. ORIGINATOR, SENDER, SUBJECT, FOLDER, FOLDER
+msgctxt "MSG_LOG_MOVE_MAIL (2549//)"
+msgid "%s: Moved message from '%s' about '%s' from folder '%s' to '%s'"
+msgstr ""
+
+#. FILTERNAME
+msgctxt "MSG_LOG_FILTER_ORIGINATOR (2550//)"
+msgid "Filter '%s'"
 msgstr ""
