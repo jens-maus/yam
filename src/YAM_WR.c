@@ -2458,6 +2458,7 @@ static BOOL FindMLIdentity(struct Folder *folder, struct ExtendedMail *email, ch
   ENTER();
 
   D(DBF_MAIL, "checking ML support of folder '%s' -> %ld '%s' '%s'", folder->Name, folder->MLSupport, folder->MLPattern, folder->MLAddress);
+  // ML support must be active and the pattern and To: address must exist
   if(folder->MLSupport == TRUE && IsStrEmpty(folder->MLPattern) == FALSE && IsStrEmpty(folder->MLAddress) == FALSE)
   {
     int k;
@@ -2782,14 +2783,13 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
                 rto = AppendRcpt(rto, &email->STo[k], email->identity, FALSE);
               }
             }
-            else if(hasPrivateFlag(flags) == FALSE &&
-                    foundMLFolder == TRUE)
+            else if(hasPrivateFlag(flags) == FALSE && foundMLFolder == TRUE && IsStrEmpty(mlistTo) == FALSE)
             {
               char *p;
 
               // add all To: recipients of the mailing list config
               // to the actual rto list
-              if(mlistTo != NULL && (p = strdup(mlistTo)) != NULL)
+              if((p = strdup(mlistTo)) != NULL)
               {
                 char *ptr = p;
 
@@ -2836,7 +2836,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
 
               // add all Reply-To: recipients of the mailing list config
               // to the actual rrepto list
-              if(mlistReplyTo != NULL && (p = strdup(mlistReplyTo)) != NULL)
+              if(IsStrEmpty(mlistReplyTo) == FALSE && (p = strdup(mlistReplyTo)) != NULL)
               {
                 char *ptr = p;
 
