@@ -396,20 +396,10 @@ msgctxt "MSG_LOG_Moving (113//)"
 msgid "Moved %ld message(s) from folder '%s' to '%s'"
 msgstr "Moved %ld message(s) from folder '%s' to '%s'"
 
-#. SENDER, SUBJECT, FOLDER, FOLDER
-msgctxt "MSG_LOG_MovingVerbose (114//)"
-msgid "Moved message from '%s' about '%s' from folder '%s' to '%s'"
-msgstr "Moved message from '%s' about '%s' from folder '%s' to '%s'"
-
 #. COUNT, FOLDER, FOLDER
 msgctxt "MSG_LOG_Copying (115//)"
 msgid "Copied %ld message(s) from folder '%s' to '%s'"
 msgstr "Copied %ld message(s) from folder '%s' to '%s'"
-
-#. SENDER, SUBJECT, FOLDER, FOLDER
-msgctxt "MSG_LOG_CopyingVerbose (116//)"
-msgid "Copied message from '%s' about '%s' from folder '%s' to '%s'"
-msgstr "Copied message from '%s' about '%s' from folder '%s' to '%s'"
 
 #. SENDER, SUBJECT, SIZE
 msgctxt "MSG_LOG_RetrievingVerbose (118//)"
@@ -9908,14 +9898,17 @@ msgctxt "MSG_SIZE_GIGABYTES (2546//)"
 msgid "GB"
 msgstr "GB"
 
+#. ORIGINATOR, SENDER, SUBJECT, FOLDER, FOLDER
 msgctxt "MSG_LOG_COPY_MAIL (2548//)"
 msgid "%s: Copied message from '%s' about '%s' from folder '%s' to '%s'"
 msgstr "%s: Copied message from '%s' about '%s' from folder '%s' to '%s'"
 
+#. ORIGINATOR, SENDER, SUBJECT, FOLDER, FOLDER
 msgctxt "MSG_LOG_MOVE_MAIL (2549//)"
 msgid "%s: Moved message from '%s' about '%s' from folder '%s' to '%s'"
 msgstr "%s: Moved message from '%s' about '%s' from folder '%s' to '%s'"
 
+#. FILTERNAME
 msgctxt "MSG_LOG_FILTER_ORIGINATOR (2550//)"
 msgid "Filter '%s'"
 msgstr "Filter '%s'"
