@@ -12,6 +12,9 @@ $URL$
   * YAM_MA.c, misc: added an originator name for all mail movements. This name
     will be put into the verbose log for reference. In case the move was caused
     by a filter the filter's name will be used. This closes #550 again.
+  * YAM_WR.c: when trying to find a suitable user identity when replying to a
+    mail in a folder with active mailling list support the To: address must now
+    be valid as well. This refs #555.
 
 2014-05-07 Thore Böckelmann <tboeckel@gmx.de>
 

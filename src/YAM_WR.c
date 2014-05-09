@@ -2457,24 +2457,31 @@ static BOOL FindMLIdentity(struct Folder *folder, struct ExtendedMail *email, ch
 
   ENTER();
 
-  if(folder->MLSupport == TRUE && folder->MLPattern[0] != '\0')
+  D(DBF_MAIL, "checking ML support of folder '%s' -> %ld '%s' '%s'", folder->Name, folder->MLSupport, folder->MLPattern, folder->MLAddress);
+  if(folder->MLSupport == TRUE && IsStrEmpty(folder->MLPattern) == FALSE && IsStrEmpty(folder->MLAddress) == FALSE)
   {
     int k;
 
     // first, search in all To: addresses for the
     // mailing list address
-    for(k=0; k < email->NumSTo+1; k++)
+    for(k=-1; k < email->NumSTo; k++)
     {
       struct Person *person;
 
-      if(k == 0)
+      if(k == -1)
         person = &email->Mail.To;
       else
-        person = &email->STo[k-1];
+        person = &email->STo[k];
 
-      if(MatchNoCase(person->Address, folder->MLPattern) == TRUE ||
-         MatchNoCase(person->RealName, folder->MLPattern) == TRUE)
+      if(MatchNoCase(person->Address, folder->MLPattern) == TRUE)
       {
+        D(DBF_MAIL, "address '%s' matches pattern '%s'", person->Address, folder->MLPattern);
+        result = TRUE;
+        break;
+      }
+      else if(MatchNoCase(person->RealName, folder->MLPattern) == TRUE)
+      {
+        D(DBF_MAIL, "name '%s' matches pattern '%s'", person->RealName, folder->MLPattern);
         result = TRUE;
         break;
       }
@@ -2488,9 +2495,15 @@ static BOOL FindMLIdentity(struct Folder *folder, struct ExtendedMail *email, ch
       {
         struct Person *person = &email->CC[k];
 
-        if(MatchNoCase(person->Address, folder->MLPattern) == TRUE ||
-           MatchNoCase(person->RealName, folder->MLPattern) == TRUE)
+        if(MatchNoCase(person->Address, folder->MLPattern) == TRUE)
         {
+          D(DBF_MAIL, "address '%s' matches pattern '%s'", person->Address, folder->MLPattern);
+          result = TRUE;
+          break;
+        }
+        else if(MatchNoCase(person->RealName, folder->MLPattern) == TRUE)
+        {
+          D(DBF_MAIL, "name '%s' matches pattern '%s'", person->RealName, folder->MLPattern);
           result = TRUE;
           break;
         }
@@ -2499,12 +2512,15 @@ static BOOL FindMLIdentity(struct Folder *folder, struct ExtendedMail *email, ch
 
     if(result == TRUE)
     {
-      *mlistTo = folder->MLAddress[0] != '\0' ? folder->MLAddress : NULL;
+      *mlistTo = IsStrEmpty(folder->MLAddress) ? NULL : folder->MLAddress;
 
       if(folder->MLIdentity != NULL)
+      {
+        D(DBF_MAIL, "use ML identity '%s'", folder->MLIdentity->description);
         email->identity = folder->MLIdentity;
+      }
 
-      if(folder->MLReplyToAddress[0] != '\0')
+      if(IsStrEmpty(folder->MLReplyToAddress) == FALSE)
         *mlistReplyTo = folder->MLReplyToAddress;
     }
   }
