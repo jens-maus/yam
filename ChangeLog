@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-05-09 Thore Böckelmann <tboeckel@gmx.de>
+
+  * tcp/pop3.c: removed a superflous parameter when logging the number of mails
+    waiting on a POP3 server. This closes #558.
+
 2014-05-07 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MA.c: don't show a progress bar when deleting, copying or moving single

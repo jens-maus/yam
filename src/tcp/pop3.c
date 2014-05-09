@@ -1169,7 +1169,7 @@ static int ConnectToPOP3(struct TransferContext *tc)
 
   sscanf(&resp[4], "%d", &msgs);
   if(msgs != 0)
-    AppendToLogfile(LF_VERBOSE, 31, tr(MSG_LOG_CONNECT_POP3), tc->msn->username, tc->msn->hostname, msgs);
+    AppendToLogfile(LF_VERBOSE, 31, tr(MSG_LOG_CONNECT_POP3), tc->msn->description, msgs);
 
 out:
 
