@@ -1861,7 +1861,7 @@ struct WriteMailData *NewWriteMailWindow(struct Mail *mail, const int flags)
         // check whether the old mail contains a ReplyTo: address
         // or not. And if so we prefer that one instead of using the
         // To: adresses
-        if(mail->ReplyTo.Address[0] != '\0')
+        if(IsStrEmpty(mail->ReplyTo.Address) == FALSE)
         {
           // add the Reply-To: address as the new To: address
           toAddr = AppendRcpt(toAddr, &mail->ReplyTo, wmData->identity, FALSE);
@@ -1908,33 +1908,33 @@ struct WriteMailData *NewWriteMailWindow(struct Mail *mail, const int flags)
       }
       else if(folder->MLSupport == TRUE)
       {
-        if(folder->MLAddress[0] != '\0')
+        if(IsStrEmpty(folder->MLAddress) == FALSE)
           dstrcpy(&toAddr, folder->MLAddress);
 
         if(folder->MLIdentity != NULL)
           userIdentity = folder->MLIdentity;
 
-        if(folder->MLReplyToAddress[0] != '\0')
+        if(IsStrEmpty(folder->MLReplyToAddress) == FALSE)
           dstrcpy(&replyToAddr, folder->MLReplyToAddress);
       }
 
-      if(folder->WriteIntro[0] != '\0')
+      if(IsStrEmpty(folder->WriteIntro) == FALSE)
         InsertIntroText(out, folder->WriteIntro, NULL);
       else
         InsertIntroText(out, C->NewIntro, NULL);
 
-      if(folder->WriteGreetings[0] != '\0')
+      if(IsStrEmpty(folder->WriteGreetings) == FALSE)
         InsertIntroText(out, folder->WriteGreetings, NULL);
       else
         InsertIntroText(out, C->Greetings, NULL);
 
       // make sure to set the correct user identity
       xset(wmData->window, MUIA_WriteWindow_Identity, userIdentity,
-                           toAddr[0] != '\0' ? MUIA_WriteWindow_To : TAG_IGNORE, toAddr,
-                           replyToAddr[0] != '\0' ? MUIA_WriteWindow_ReplyTo : TAG_IGNORE, replyToAddr);
+                           IsStrEmpty(toAddr) == FALSE ? MUIA_WriteWindow_To : TAG_IGNORE, toAddr,
+                           IsStrEmpty(replyToAddr) == FALSE ? MUIA_WriteWindow_ReplyTo : TAG_IGNORE, replyToAddr);
 
       // add a signature to the mail depending on the selected signature for this list
-      WriteSignature(out, folder->MLSupport ? folder->MLSignature : userIdentity->signature, TRUE);
+      WriteSignature(out, folder->MLSupport == TRUE ? folder->MLSignature : userIdentity->signature, TRUE);
 
       // close the output file handle
       fclose(out);
@@ -2057,13 +2057,13 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
             dstrfree(cmsg);
 
             // set the In-Reply-To / References message header references, if they exist
-            if(email->inReplyToMsgID != NULL)
+            if(IsStrEmpty(email->inReplyToMsgID) == FALSE)
             {
               D(DBF_MAIL, "adding inReplyToMsgID '%s'", email->inReplyToMsgID);
               dstrcpy(&wmData->inReplyToMsgID, email->inReplyToMsgID);
             }
 
-            if(email->references != NULL)
+            if(IsStrEmpty(email->references) == FALSE)
             {
               D(DBF_MAIL, "adding references '%s'", email->references);
               dstrcpy(&wmData->references, email->references);
@@ -2080,7 +2080,7 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
               if(folder->MLIdentity != NULL)
                 email->identity = folder->MLIdentity;
 
-              if(folder->MLReplyToAddress[0] != '\0')
+              if(IsStrEmpty(folder->MLReplyToAddress) == FALSE)
               {
                 set(wmData->window, MUIA_WriteWindow_ReplyTo, folder->MLReplyToAddress);
                 reuseReplyToAddress = FALSE;
@@ -2184,12 +2184,12 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
       // texteditor is the active object depending on which
       // string is empty
       p = (char *)xget(wmData->window, MUIA_WriteWindow_To);
-      if(IsStrEmpty(p))
+      if(IsStrEmpty(p) == TRUE)
         set(wmData->window, MUIA_WriteWindow_ActiveObject, MUIV_WriteWindow_ActiveObject_To);
       else
       {
         p = (char *)xget(wmData->window, MUIA_WriteWindow_Subject);
-        if(IsStrEmpty(p))
+        if(IsStrEmpty(p) == TRUE)
           set(wmData->window, MUIA_WriteWindow_ActiveObject, MUIV_WriteWindow_ActiveObject_Subject);
         else
           set(wmData->window, MUIA_WriteWindow_ActiveObject, MUIV_WriteWindow_ActiveObject_TextEditor);
