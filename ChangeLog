@@ -9,6 +9,9 @@ $URL$
 
   * mui/YAMApplication.c: make sure to clear the embedded read pane when
     deleting all mails from the trash folder.
+  * YAM_MA.c: clear the embedded read pane ahead of deleting single mails to
+    ensure that no structures of the active but possibly already deleted mail
+    are accessed during a possible redraw action. This refs #556.
 
 2014-05-09 Thore Böckelmann <tboeckel@gmx.de>
 

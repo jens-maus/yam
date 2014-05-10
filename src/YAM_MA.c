@@ -2023,6 +2023,15 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
         // modify the menu items
         set(gui->MI_DELETE, MUIA_Menuitem_Enabled, FALSE);
 
+        // clear the readmail group ahead of the deletion. This is necessary, because deleting mails
+        // from the context menu might trigger a redraw of certain objects if these were covered by
+        // the menu. For the active mail this might be lethal if it gets deleted at first. In this
+        // case the redraw of the header lines list will access invalid memory as the mail plus all
+        // dynamically allocated structures are no longer available, but YAM did not yet activate
+        // another mail.
+        if(C->EmbeddedReadPane == TRUE)
+          DoMethod(gui->MN_EMBEDDEDREADPANE, MUIM_ReadMailGroup_Clear, MUIF_NONE);
+
         // show the abortable busy bar only if we are deleting more than a single mail
         if(mlist->count != 1)
         {
