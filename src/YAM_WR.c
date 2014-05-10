@@ -2615,7 +2615,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
 
         // If the mail which we are going to reply to already has a subject,
         // we are going to add a "Re:" to it.
-        if(mail->Subject[0] != '\0')
+        if(IsStrEmpty(mail->Subject) == FALSE)
         {
           if(j > 0)
           {
@@ -2641,7 +2641,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
           // try to find following subjects in the yet created reply subject
           if(strstr(rsub, buffer) == NULL)
           {
-            if(rsub[0] != '\0')
+            if(IsStrEmpty(rsub) == FALSE)
               dstrcat(&rsub, "; ");
 
             dstrcat(&rsub, buffer);
@@ -2653,17 +2653,17 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
         if(wmData->inReplyToMsgID != NULL)
           dstrcat(&wmData->inReplyToMsgID, " ");
 
-        if(email->messageID != NULL)
+        if(IsStrEmpty(email->messageID) == FALSE)
         {
-          D(DBF_MAIL, "adding inReplyToMsgID '%s'", email->inReplyToMsgID);
+          D(DBF_MAIL, "adding inReplyToMsgID '%s'", email->messageID);
           dstrcat(&wmData->inReplyToMsgID, email->messageID);
         }
 
         // in addition, we check for "References:" message header stuff
-        if(wmData->references != NULL)
+        if(IsStrEmpty(wmData->references) == FALSE)
           dstrcat(&wmData->references, " ");
 
-        if(email->references != NULL)
+        if(IsStrEmpty(email->references) == FALSE)
         {
           D(DBF_MAIL, "adding references '%s'", email->references);
           dstrcat(&wmData->references, email->references);
@@ -2672,7 +2672,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
         {
           // check if this email contains inReplyToMsgID data and if so we
           // create a new references header entry
-          if(email->inReplyToMsgID != NULL)
+          if(IsStrEmpty(email->inReplyToMsgID) == FALSE)
           {
             D(DBF_MAIL, "adding references '%s'", email->inReplyToMsgID);
             dstrcat(&wmData->references, email->inReplyToMsgID);
@@ -3194,9 +3194,9 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
       }
 
       // now we complement the "References:" header by adding our replyto header to it
-      if(wmData->inReplyToMsgID != NULL)
+      if(IsStrEmpty(wmData->inReplyToMsgID) == FALSE)
       {
-        if(wmData->references != NULL)
+        if(IsStrEmpty(wmData->references) == FALSE)
           dstrcat(&wmData->references, " ");
 
         dstrcat(&wmData->references, wmData->inReplyToMsgID);
@@ -3207,10 +3207,10 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
       // and also set other important GUI elements with information we
       // collected here.
       xset(wmData->window, MUIA_WriteWindow_Identity, firstIdentity,
-                           rto[0] != '\0' ? MUIA_WriteWindow_To      : TAG_IGNORE, rto,
-                           rsub[0] != '\0'? MUIA_WriteWindow_Subject : TAG_IGNORE, rsub,
-                           rcc[0] != '\0' ? (rto[0] != '\0' ? MUIA_WriteWindow_CC : MUIA_WriteWindow_To) : TAG_IGNORE, rcc,
-                           rrepto[0] != '\0' ? MUIA_WriteWindow_ReplyTo : TAG_IGNORE, rrepto);
+                           IsStrEmpty(rto) == FALSE ? MUIA_WriteWindow_To      : TAG_IGNORE, rto,
+                           IsStrEmpty(rsub) == FALSE ? MUIA_WriteWindow_Subject : TAG_IGNORE, rsub,
+                           IsStrEmpty(rcc) == FALSE ? (IsStrEmpty(rto) == FALSE ? MUIA_WriteWindow_CC : MUIA_WriteWindow_To) : TAG_IGNORE, rcc,
+                           IsStrEmpty(rrepto) == FALSE ? MUIA_WriteWindow_ReplyTo : TAG_IGNORE, rrepto);
 
       // now that the mail is finished, we go and output some footer message to
       // the reply text. But we only do this if the user hasn't selected to have
