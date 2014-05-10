@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-05-10 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/YAMApplication.c: make sure to clear the embedded read pane when
+    deleting all mails from the trash folder.
+
 2014-05-09 Thore Böckelmann <tboeckel@gmx.de>
 
   * tcp/pop3.c: removed a superflous parameter when logging the number of mails

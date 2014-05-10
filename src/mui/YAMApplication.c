@@ -1723,6 +1723,8 @@ DECLARE(EmptyTrashFolder) // ULONG quiet
 
       if(msg->quiet == FALSE)
         DisplayStatistics(trashFolder, TRUE);
+
+      MA_ChangeSelected(FALSE);
     }
 
     UnlockMailList(trashFolder->messages);
