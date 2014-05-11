@@ -9933,6 +9933,6 @@ msgid ""
 "You have been warned!"
 msgstr "Network debug output is enabled!\n\nThe generated debug output will contain unencrypted\nand human readable passwords and more private stuff.\n\nMake sure to remove any private data before making this\nlog public anywhere!\n\nThe YAM development team takes no responsibility for\nhacked mail accounts in any way!\n\nYou have been warned!"
 
-msgctxt "MSG_STARTUP_SECURITY_WARNING_GADGETS (2553//)
+msgctxt "MSG_STARTUP_SECURITY_WARNING_GADGETS (2553//)"
 msgid "Understood"
 msgstr "Understood"
