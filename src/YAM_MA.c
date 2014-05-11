@@ -2494,6 +2494,7 @@ BOOL MA_PopNow(struct MailServerNode *msn, const ULONG flags, struct DownloadRes
   if(msn == NULL)
   {
     success = TRUE;
+
     IterateList(&C->pop3ServerList, struct MailServerNode *, msn)
     {
       // fetch mails from active servers only
@@ -2504,6 +2505,8 @@ BOOL MA_PopNow(struct MailServerNode *msn, const ULONG flags, struct DownloadRes
         if(isFlagClear(flags, RECEIVEF_STARTUP) || hasServerDownloadOnStartup(msn) == TRUE)
           success &= ReceiveMailsFromPOP(msn, flags, dlResult);
       }
+      else
+        W(DBF_NET, "POP3 server of identity '%s' is still in use'", msn->description);
     }
   }
   else

@@ -842,6 +842,7 @@ BOOL ProcessTimerEvent(void)
         D(DBF_TIMER, "check timer event %08lx vs %08lx pop3 '%s'", timeReq, timer->tr, timer->pop3Server->description);
         if(timeReq == timer->tr)
         {
+          D(DBF_TIMER, "check POP3 server '%s' for new mail", msn->description);
           // set the timer to be not running and not be prepared for
           // another shot. Our dispatcher have to do the rest then
           timer->isRunning = FALSE;
