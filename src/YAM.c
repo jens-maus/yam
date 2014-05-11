@@ -2297,16 +2297,16 @@ int main(int argc, char **argv)
   {
     if((IntuitionBase = (APTR)OpenLibrary("intuition.library", 36)) != NULL)
     {
-      struct EasyStruct ErrReq;
+      struct EasyStruct es;
 
-      ErrReq.es_StructSize = sizeof(struct EasyStruct);
-      ErrReq.es_Flags      = 0;
-      ErrReq.es_Title        = (STRPTR)"YAM Startup Error";
-      ErrReq.es_TextFormat   = (STRPTR)"This version of YAM requires at\n"
-                                       "least an 68020 processor or higher.";
-      ErrReq.es_GadgetFormat = (STRPTR)"Exit";
+      es.es_StructSize = sizeof(es);
+      es.es_Flags      = 0;
+      es.es_Title        = (STRPTR)"YAM Startup Error";
+      es.es_TextFormat   = (STRPTR)"This version of YAM requires at\n"
+                                   "least an 68020 processor or higher.";
+      es.es_GadgetFormat = (STRPTR)"Exit";
 
-      EasyRequestArgs(NULL, &ErrReq, NULL, NULL);
+      EasyRequestArgs(NULL, &es, NULL, NULL);
 
       CloseLibrary((struct Library *)IntuitionBase);
    }
@@ -2335,7 +2335,7 @@ int main(int argc, char **argv)
          GETINTERFACE("main", 1, IUtility, UtilityBase))
       {
         char var;
-        struct EasyStruct ErrReq;
+        struct EasyStruct es;
         struct DateStamp ds;
 
         // try to open openurl.library to make GotoURL() work at this early stage
@@ -2348,30 +2348,30 @@ int main(int argc, char **argv)
 
         DateStamp(&ds); // get actual time/date
 
-        ErrReq.es_StructSize = sizeof(struct EasyStruct);
-        ErrReq.es_Flags      = 0;
+        es.es_StructSize = sizeof(es);
+        es.es_Flags      = 0;
 
         #if defined(EXPDATE)
         if(EXPDATE <= ds.ds_Days)
         {
-          ErrReq.es_Title        = (STRPTR)"YAM Developer Version Expired!";
-          ErrReq.es_TextFormat   = (STRPTR)"This developer version of YAM has expired!\n\n"
-                                   "Please note that you may download a new, updated\n"
-                                   "version from the YAM nightly build page at:\n\n"
-                                   "http://nightly.yam.ch/\n\n"
-                                   "All developer versions will automatically expire\n"
-                                   "after a certain time interval. This is to ensure\n"
-                                   "that no old versions are floating around causing\n"
-                                   "users to report bugs on old versions.\n\n"
-                                   "Thanks for your help in improving YAM!";
+          es.es_Title        = (STRPTR)"YAM Developer Version Expired!";
+          es.es_TextFormat   = (STRPTR)"This developer version of YAM has expired!\n\n"
+                                       "Please note that you may download a new, updated\n"
+                                       "version from the YAM nightly build page at:\n\n"
+                                       "http://nightly.yam.ch/\n\n"
+                                       "All developer versions will automatically expire\n"
+                                       "after a certain time interval. This is to ensure\n"
+                                       "that no old versions are floating around causing\n"
+                                       "users to report bugs on old versions.\n\n"
+                                       "Thanks for your help in improving YAM!";
 
           if(GotoURLPossible() == TRUE)
-            ErrReq.es_GadgetFormat = (STRPTR)"Visit homepage|Exit";
+            es.es_GadgetFormat = (STRPTR)"Visit homepage|Exit";
           else
-            ErrReq.es_GadgetFormat = (STRPTR)"Exit";
+            es.es_GadgetFormat = (STRPTR)"Exit";
 
           DisplayBeep(NULL);
-          if(EasyRequestArgs(NULL, &ErrReq, NULL, NULL) == 1)
+          if(EasyRequestArgs(NULL, &es, NULL, NULL) == 1)
           {
             // visit YAM's nightly build page and exit
             GotoURL("http://nightly.yam.ch/", FALSE);
@@ -2385,30 +2385,30 @@ int main(int argc, char **argv)
         {
           LONG answer;
 
-          ErrReq.es_Title        = (STRPTR)"YAM Developer Snapshot Warning!";
-          ErrReq.es_TextFormat   = (STRPTR)"This is just an *internal* developer snapshot\n"
-                                           "version of YAM. It is not recommended or intended\n"
-                                           "for general use as it may contain bugs that can\n"
-                                           "lead to any loss of data. No regular support\n"
-                                           "for this version is provided.\n\n"
-                                           #if defined(EXPDATE)
-                                           "In addition, this version will automatically\n"
-                                           "expire after a certain time interval.\n\n"
-                                           #endif // EXPDATE
-                                           "So, if you're unsure and prefer to have a stable\n"
-                                           "installation instead of a potentially dangerous\n"
-                                           "version, please consider to use the current\n"
-                                           "stable release version available from:\n\n"
-                                           "http://yam.ch/\n\n"
-                                           "Thanks for your help in improving YAM!";
+          es.es_Title        = (STRPTR)"YAM Developer Snapshot Warning!";
+          es.es_TextFormat   = (STRPTR)"This is just an *internal* developer snapshot\n"
+                                       "version of YAM. It is not recommended or intended\n"
+                                       "for general use as it may contain bugs that can\n"
+                                       "lead to any loss of data. No regular support\n"
+                                       "for this version is provided.\n\n"
+                                       #if defined(EXPDATE)
+                                       "In addition, this version will automatically\n"
+                                       "expire after a certain time interval.\n\n"
+                                       #endif // EXPDATE
+                                       "So, if you're unsure and prefer to have a stable\n"
+                                       "installation instead of a potentially dangerous\n"
+                                       "version, please consider to use the current\n"
+                                       "stable release version available from:\n\n"
+                                       "http://yam.ch/\n\n"
+                                       "Thanks for your help in improving YAM!";
 
           if(GotoURLPossible() == TRUE)
-            ErrReq.es_GadgetFormat = (STRPTR)"Go on|Visit homepage|Exit";
+            es.es_GadgetFormat = (STRPTR)"Go on|Visit homepage|Exit";
           else
-            ErrReq.es_GadgetFormat = (STRPTR)"Go on|Exit";
+            es.es_GadgetFormat = (STRPTR)"Go on|Exit";
 
           DisplayBeep(NULL);
-          answer = EasyRequestArgs(NULL, &ErrReq, NULL, NULL);
+          answer = EasyRequestArgs(NULL, &es, NULL, NULL);
           if(answer == 0)
           {
             // exit YAM
@@ -2607,6 +2607,29 @@ int main(int argc, char **argv)
       strlcpy(G->MA_MailDir, G->ProgDir, sizeof(G->MA_MailDir));
 
     G->TR_Debug = args.debug ? TRUE : FALSE;
+    if(G->TR_Debug == TRUE)
+    {
+      struct EasyStruct es;
+
+      es.es_StructSize = sizeof(es);
+      es.es_Flags      = 0;
+      es.es_Title        = (STRPTR)"YAM security warning";
+      es.es_TextFormat   = (STRPTR)"Network debug output is enabled!\n\n"
+                                   "The generated debug output will contain unencrypted\n"
+                                   "and human readable passwords and more private stuff."
+                                   "\n"
+                                   "Make sure to remove any private data before making this\n"
+                                   "log public anywhere!\n"
+                                   "\n"
+                                   "The YAM development team takes no responsibility for\n"
+                                   "hacked mail accounts in any way!\n"
+                                   "\n"
+                                   "You have been warned!";
+      es.es_GadgetFormat = (STRPTR)"Understood";
+
+      EasyRequestArgs(NULL, &es, NULL, NULL);
+    }
+
     G->NoImageWarning = args.noImgWarning ? TRUE : FALSE;
     G->NoCatalogTranslation = args.noCatalog ? TRUE : FALSE;
 

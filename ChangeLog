@@ -11,6 +11,9 @@ $URL$
     server structure for logging purposes.
   * tcp/Connection.c include the server description in each printed line when
     running in debug mode. This refs #530.
+  * YAM.c: added a warning requester in case the network debug option is active
+    to warn the user about the possibility of unencrypted passwords in the
+    generated log.
 
 2014-05-10 Thore Böckelmann <tboeckel@gmx.de>
 
