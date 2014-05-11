@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-05-11 Thore Böckelmann <tboeckel@gmx.de>
+
+  * tcp/http.c: use the extracted host name as description of the temporary
+    server structure for logging purposes.
+
 2014-05-10 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/YAMApplication.c: make sure to clear the embedded read pane when

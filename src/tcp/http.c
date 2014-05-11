@@ -252,6 +252,9 @@ redirected:
 
       snprintf(tc->transferGroupTitle, sizeof(tc->transferGroupTitle), tr(MSG_TR_DOWNLOADING_FROM_SERVER), tc->server.hostname);
 
+      // use the extracted host name as description for logging purposes
+      strlcpy(tc->server.description, tc->server.hostname, sizeof(tc->server.description));
+
       // create a new transfer window
       if(tc->transferGroup == NULL)
       {
