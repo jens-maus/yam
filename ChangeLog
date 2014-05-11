@@ -9,6 +9,8 @@ $URL$
 
   * tcp/http.c: use the extracted host name as description of the temporary
     server structure for logging purposes.
+  * tcp/Connection.c include the server description in each printed line when
+    running in debug mode. This refs #530.
 
 2014-05-10 Thore Böckelmann <tboeckel@gmx.de>
 
