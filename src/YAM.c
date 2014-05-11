@@ -2611,21 +2611,11 @@ int main(int argc, char **argv)
     {
       struct EasyStruct es;
 
-      es.es_StructSize = sizeof(es);
-      es.es_Flags      = 0;
-      es.es_Title        = (STRPTR)"YAM security warning";
-      es.es_TextFormat   = (STRPTR)"Network debug output is enabled!\n\n"
-                                   "The generated debug output will contain unencrypted\n"
-                                   "and human readable passwords and more private stuff."
-                                   "\n"
-                                   "Make sure to remove any private data before making this\n"
-                                   "log public anywhere!\n"
-                                   "\n"
-                                   "The YAM development team takes no responsibility for\n"
-                                   "hacked mail accounts in any way!\n"
-                                   "\n"
-                                   "You have been warned!";
-      es.es_GadgetFormat = (STRPTR)"Understood";
+      memset(&es, 0, sizeof(es));
+      es.es_StructSize   = sizeof(es);
+      es.es_Title        = (STRPTR)tr(MSG_STARTUP_SECURITY_WARNING_TITLE);
+      es.es_TextFormat   = (STRPTR)tr(MSG_STARTUP_SECURITY_WARNING);
+      es.es_GadgetFormat = (STRPTR)tr(MSG_STARTUP_SECURITY_WARNING_GADGETS);
 
       EasyRequestArgs(NULL, &es, NULL, NULL);
     }
