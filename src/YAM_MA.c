@@ -512,7 +512,6 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
   {
     char newFileName[SIZE_MFILE];
     char newFilePath[SIZE_PATHFILE];
-    LONG ok;
 
     // generate a new filename with the data we have collected
     snprintf(newFileName, sizeof(newFileName), "%s.%03d,%s", dateFilePart, mcounter, statusFilePart);
@@ -528,17 +527,19 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
     AddPath(newFilePath, mail->Folder->Fullpath, newFileName, sizeof(newFilePath));
 
     // then rename it
-    ok = Rename(oldFilePath, newFilePath);
-    if(ok == DOSFALSE)
+    if(Rename(oldFilePath, newFilePath) == DOSFALSE)
     {
       E(DBF_MAIL, "could not rename '%s' to '%s', error %ld", oldFilePath, newFilePath, IoErr());
 
-      // assume success neverthess for the drafts folder
-      if(isDraftsFolder(mail->Folder) == TRUE)
-        ok = DOSTRUE;
-    }
+      // if we end up here then a file with the newFileName
+      // probably already exists, so lets increase the mail
+      // counter.
+      mcounter++;
 
-    if(ok != DOSFALSE)
+      if(mcounter > 999)
+        break;
+    }
+    else
     {
       struct ReadMailData *rmData;
 
@@ -556,16 +557,6 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
         if(rmData->mail == mail && strcmp(rmData->readFile, oldFilePath) == 0)
           strlcpy(rmData->readFile, newFilePath, sizeof(rmData->readFile));
       }
-    }
-    else
-    {
-      // if we end up here then a file with the newFileName
-      // probably already exists, so lets increase the mail
-      // counter.
-      mcounter++;
-
-      if(mcounter > 999)
-        break;
     }
   }
 

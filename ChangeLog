@@ -15,6 +15,8 @@ $URL$
     This closes #562.
   * Timer.c: fixed the not processed POP3 timers in case two or more timer
     events were handled within one loop. This closes #561.
+  * YAM_MA.c: don't apply a special handling for failed rename actions of mail
+    files in the Drafts folder.
 
 2014-05-11 Thore Böckelmann <tboeckel@gmx.de>
 
