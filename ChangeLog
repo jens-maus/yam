@@ -17,6 +17,8 @@ $URL$
     events were handled within one loop. This closes #561.
   * YAM_MA.c: don't apply a special handling for failed rename actions of mail
     files in the Drafts folder.
+  * MailImport.c: use the current date and time as transfer date even if the
+    import happens in the Drafts or Outgoing folder.
 
 2014-05-11 Thore Böckelmann <tboeckel@gmx.de>
 

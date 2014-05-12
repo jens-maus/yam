@@ -1003,9 +1003,8 @@ static void ProcessImport(struct TransferContext *tc, const char *importFile, st
               // set the status flags now
               setFlag(mail->sflags, status | xstatus);
 
-              // depending on the folder type we have to set the transDate or not
-              if(ftype != FT_DRAFTS && ftype != FT_OUTGOING)
-                GetSysTimeUTC(&mail->transDate);
+              // use the current date/time as transfer date
+              GetSysTimeUTC(&mail->transDate);
 
               // add the mail to the folderlist now
               AddMailToFolder(mail, folder);
@@ -1094,9 +1093,8 @@ static void ProcessImport(struct TransferContext *tc, const char *importFile, st
                 setFlag(mail->sflags, stat);
               }
 
-              // depending on the folder type we have to set the transDate or not
-              if(ftype != FT_DRAFTS && ftype != FT_OUTGOING)
-                GetSysTimeUTC(&mail->transDate);
+              // use the current date/time as transfer date
+              GetSysTimeUTC(&mail->transDate);
 
               // add the mail to the folderlist now
               AddMailToFolder(mail, folder);
