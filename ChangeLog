@@ -13,6 +13,8 @@ $URL$
     refs #555.
   * tcp/smtp.c: removed the plain text and encoded password from the debug log.
     This closes #562.
+  * Timer.c: fixed the not processed POP3 timers in case two or more timer
+    events were handled within one loop. This closes #561.
 
 2014-05-11 Thore Böckelmann <tboeckel@gmx.de>
 

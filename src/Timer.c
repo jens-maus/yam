@@ -792,7 +792,7 @@ static void TimerDispatcher(const enum Timer tid)
 // process on them and then restart those fired accordingly.
 BOOL ProcessTimerEvent(void)
 {
-  BOOL processed = FALSE;
+  BOOL processedAny = FALSE;
   struct TimeRequest *timeReq;
 
   ENTER();
@@ -807,6 +807,7 @@ BOOL ProcessTimerEvent(void)
     for(tid=0; tid < TIMER_NUM; tid++)
     {
       struct TRequest *timer = &G->timerData.timer[tid];
+      BOOL processedThis = FALSE;
 
       D(DBF_TIMER, "check timer event %08lx vs %08lx tid %ld", timeReq, timer->tr, tid);
       if(timeReq == timer->tr)
@@ -821,14 +822,15 @@ BOOL ProcessTimerEvent(void)
         TimerDispatcher(tid);
 
         // signal that we processed something
-        processed = TRUE;
+        processedAny = TRUE;
+        processedThis = TRUE;
 
         // break out of the for() loop
         break;
       }
     }
 
-    if(processed == FALSE)
+    if(processedThis == FALSE)
     {
       struct MailServerNode *msn;
 
@@ -852,7 +854,8 @@ BOOL ProcessTimerEvent(void)
           MA_PopNow(msn, RECEIVEF_TIMER, NULL);
 
           // signal that we processed something
-          processed = TRUE;
+          processedAny = TRUE;
+          processedThis = TRUE;
 
           // preparestart the server's timer again
           PrepareTRequest(timer, msn->downloadInterval*60, 0, FALSE);
@@ -870,7 +873,7 @@ BOOL ProcessTimerEvent(void)
   }
 
   // make sure that we are starting the timer again after the GetMsg loop
-  if(processed == TRUE)
+  if(processedAny == TRUE)
   {
     // here we just check for the timers that TimerDispatcher really
     // prepares and not all of them in a loop
@@ -910,8 +913,8 @@ BOOL ProcessTimerEvent(void)
     E(DBF_ALWAYS, "timer[%ld]: TIMER_AUTOSAVE is not running and was probably lost!", TIMER_AUTOSAVE);
   #endif
 
-  RETURN(processed);
-  return processed;
+  RETURN(processedAny);
+  return processedAny;
 }
 
 ///
