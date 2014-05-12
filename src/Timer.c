@@ -800,6 +800,7 @@ BOOL ProcessTimerEvent(void)
   // check if we have a waiting message
   while((timeReq = (struct TimeRequest *)GetMsg(G->timerData.port)) != NULL)
   {
+    BOOL processedThis = FALSE;
     enum Timer tid;
 
     D(DBF_TIMER, "handle timer event %08lx", timeReq);
@@ -807,7 +808,6 @@ BOOL ProcessTimerEvent(void)
     for(tid=0; tid < TIMER_NUM; tid++)
     {
       struct TRequest *timer = &G->timerData.timer[tid];
-      BOOL processedThis = FALSE;
 
       D(DBF_TIMER, "check timer event %08lx vs %08lx tid %ld", timeReq, timer->tr, tid);
       if(timeReq == timer->tr)
