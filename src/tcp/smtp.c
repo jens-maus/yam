@@ -1003,7 +1003,7 @@ static BOOL InitSMTPAUTH(struct TransferContext *tc)
              && (rc = getResponseCode(tc->tempBuffer)) == 334)
           {
             // prepare the password challenge
-            D(DBF_NET, "prepared AUTH LOGIN challenge: '%s'", tc->msn->password);
+            D(DBF_NET, "prepared AUTH LOGIN challenge: <password>");
             if(base64encode(&enctext, tc->msn->password, strlen(tc->msn->password)) > 0)
             {
               strlcpy(tc->tempBuffer, enctext, sizeof(tc->tempBuffer));
@@ -1015,7 +1015,7 @@ static BOOL InitSMTPAUTH(struct TransferContext *tc)
               RETURN(FALSE);
               return FALSE;
             }
-            D(DBF_NET, "encoded  AUTH LOGIN challenge: '%s'", tc->tempBuffer);
+            D(DBF_NET, "encoded  AUTH LOGIN challenge: <encoded password>");
             strlcat(tc->tempBuffer, "\r\n", sizeof(tc->tempBuffer));
 
             // now lets send the Password

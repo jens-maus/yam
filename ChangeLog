@@ -11,6 +11,8 @@ $URL$
     folder's configuration. Especially the mailing list options have been
     reworked to avoid invalid settings which might cause problems later. This
     refs #555.
+  * tcp/smtp.c: removed the plain text and encoded password from the debug log.
+    This closes #562.
 
 2014-05-11 Thore Böckelmann <tboeckel@gmx.de>
 
