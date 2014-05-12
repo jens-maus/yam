@@ -167,7 +167,7 @@ static BOOL EnterPassword(Object *obj, struct Folder *fo)
     if(StringRequest(passwd, SIZE_PASSWORD, tr(MSG_Folder), tr(MSG_CO_ChangeFolderPass), tr(MSG_Okay), NULL, tr(MSG_Cancel), TRUE, obj) == 0)
       break;
 
-    if(passwd[0] != '\0' && StringRequest(passwd2, SIZE_PASSWORD, tr(MSG_Folder), tr(MSG_CO_RetypePass), tr(MSG_Okay), NULL, tr(MSG_Cancel), TRUE, obj) == 0)
+    if(IsStrEmpty(passwd) == FALSE && StringRequest(passwd2, SIZE_PASSWORD, tr(MSG_Folder), tr(MSG_CO_RetypePass), tr(MSG_Okay), NULL, tr(MSG_Cancel), TRUE, obj) == 0)
       break;
 
     if(strcasecmp(passwd, passwd2) == 0)
@@ -199,164 +199,196 @@ static BOOL SaveOldFolder(struct IClass *cl, Object *obj)
   DoMethod(obj, METHOD(GUIToFolder), &folder);
   SHOWSTRING(DBF_FOLDER, folder.Name);
 
-  // check if something has changed and if not we exit here immediately
-  if(CompareFolders(&folder, data->oldFolder) == FALSE)
+  do
   {
-    BOOL nameChanged = (strcasecmp(data->oldFolder->Name, folder.Name) != 0);
-    BOOL pathChanged = (strcasecmp(data->oldFolder->Path, folder.Path) != 0);
 
-    // first check for a valid folder name
-    // it is invalid if:
-    // - the folder name is empty, or
-    // - it was changed and the new name already exists
-    if(folder.Name[0] == '\0' || (nameChanged == TRUE && FO_GetFolderByName(folder.Name, NULL) != NULL))
+    // check if something has changed and if not we exit here immediately
+    if(CompareFolders(&folder, data->oldFolder) == FALSE)
     {
-      MUI_Request(_app(obj), obj, MUIF_NONE, NULL, tr(MSG_OkayReq), tr(MSG_FO_FOLDERNAMEINVALID));
-      goto out;
-    }
+      BOOL nameChanged = (strcasecmp(data->oldFolder->Name, folder.Name) != 0);
+      BOOL pathChanged = (strcasecmp(data->oldFolder->Path, folder.Path) != 0);
+      BOOL modeChanged = FALSE;
 
-    if(nameChanged == TRUE)
-    {
-      // check if the filter name has changed and if it is part of
-      // an active filter and if so rename it in the filter definition
-      // as well.
-      if(FolderIsUsedByFilters(data->oldFolder) == TRUE)
-        RenameFolderInFilters(data->oldFolder, &folder);
-
-      // copy the new folder name
-      strlcpy(data->oldFolder->Name, folder.Name, sizeof(data->oldFolder->Name));
-
-      // trigger a change of the main window's folder listtree
-      set(G->MA->GUI.LT_FOLDERS, MUIA_MainFolderListtree_TreeChanged, TRUE);
-    }
-
-    // if the folderpath string has changed
-    if(pathChanged == TRUE)
-    {
-      LONG result;
-
-      // ask the user whether to perform the move or not
-      result = MUI_Request(_app(obj), obj, MUIF_NONE, NULL, tr(MSG_YesNoReq), tr(MSG_FO_MOVEFOLDERTO), data->oldFolder->Fullpath, folder.Fullpath);
-      if(result == 1)
+      // first check for a valid folder name
+      // it is invalid if:
+      // - the folder name is empty, or
+      // - it was changed and the new name already exists
+      if(IsStrEmpty(folder.Name) == TRUE || (nameChanged == TRUE && FO_GetFolderByName(folder.Name, NULL) != NULL))
       {
-        // first unload the old folder image to make it moveable/deletable
-        FO_UnloadFolderImage(data->oldFolder);
+        MUI_Request(_app(obj), obj, MUIF_NONE, NULL, tr(MSG_OkayReq), tr(MSG_FO_FOLDERNAMEINVALID));
+        set(obj, MUIA_Window_ActiveObject, data->ST_FNAME);
+        break;
+      }
 
-        if(Rename(data->oldFolder->Fullpath, folder.Fullpath) == FALSE)
+      // check for an empty path
+      if(IsStrEmpty(folder.Path) == TRUE)
+      {
+        MUI_Request(_app(obj), obj, MUIF_NONE, NULL, tr(MSG_OkayReq), tr(MSG_FO_PATH_INVALID));
+        set(obj, MUIA_Window_ActiveObject, data->ST_FPATH);
+        break;
+      }
+
+      if(folder.MLSupport == TRUE)
+      {
+        // check for empty and "catch all" patterns
+        if(IsStrEmpty(folder.MLPattern) == TRUE || strcmp(folder.MLPattern, "#?") == 0 || strcmp(folder.MLPattern, "*") == 0)
         {
-          if(CreateDirectory(folder.Fullpath) == FALSE || FO_MoveFolderDir(&folder, data->oldFolder) == FALSE)
-          {
-            ER_NewError(tr(MSG_ER_MOVEFOLDERDIR), folder.Name, folder.Fullpath);
-            goto out;
-          }
+          MUI_Request(_app(obj), obj, MUIF_NONE, NULL, tr(MSG_OkayReq), tr(MSG_FO_MLPATTERN_INVALID));
+          set(obj, MUIA_Window_ActiveObject, data->ST_MLPATTERN);
+          break;
         }
 
-        // now reload the image from the new path
-        if(FO_LoadFolderImage(&folder) == TRUE)
+        // check for an empty To: address
+        if(IsStrEmpty(folder.MLAddress) == TRUE)
         {
-          // remember the newly obtained image pointer
-          data->oldFolder->imageObject = folder.imageObject;
+          MUI_Request(_app(obj), obj, MUIF_NONE, NULL, tr(MSG_OkayReq), tr(MSG_FO_MLADDRESS_INVALID));
+          set(obj, MUIA_Window_ActiveObject, data->ST_MLADDRESS);
+          break;
         }
       }
-      else
-      {
-        goto out;
-      }
-    }
 
-    strlcpy(data->oldFolder->Path,             folder.Path, sizeof(data->oldFolder->Path));
-    strlcpy(data->oldFolder->Fullpath,         folder.Fullpath, sizeof(data->oldFolder->Fullpath));
-    strlcpy(data->oldFolder->WriteIntro,       folder.WriteIntro, sizeof(data->oldFolder->WriteIntro));
-    strlcpy(data->oldFolder->WriteGreetings,   folder.WriteGreetings, sizeof(data->oldFolder->WriteGreetings));
-    strlcpy(data->oldFolder->MLReplyToAddress, folder.MLReplyToAddress, sizeof(data->oldFolder->MLReplyToAddress));
-    strlcpy(data->oldFolder->MLAddress,        folder.MLAddress, sizeof(data->oldFolder->MLAddress));
-    strlcpy(data->oldFolder->MLPattern,        folder.MLPattern, sizeof(data->oldFolder->MLPattern));
-    data->oldFolder->MLIdentity   = folder.MLIdentity;
-    data->oldFolder->MLSignature  = folder.MLSignature;
-    data->oldFolder->Sort[0]      = folder.Sort[0];
-    data->oldFolder->Sort[1]      = folder.Sort[1];
-    data->oldFolder->MaxAge       = folder.MaxAge;
-    data->oldFolder->ExpireUnread = folder.ExpireUnread;
-    data->oldFolder->Stats        = folder.Stats;
-    data->oldFolder->JumpToUnread = folder.JumpToUnread;
-    data->oldFolder->JumpToRecent = folder.JumpToRecent;
-    data->oldFolder->MLSupport    = folder.MLSupport;
+      if(nameChanged == TRUE)
+      {
+        // check if the filter name has changed and if it is part of
+        // an active filter and if so rename it in the filter definition
+        // as well.
+        if(FolderIsUsedByFilters(data->oldFolder) == TRUE)
+          RenameFolderInFilters(data->oldFolder, &folder);
 
-    if(xget(data->CY_FTYPE, MUIA_Disabled) == FALSE)
-    {
-      enum FolderMode oldmode = data->oldFolder->Mode;
-      enum FolderMode newmode = folder.Mode;
-      BOOL changed = TRUE;
+        // copy the new folder name
+        strlcpy(data->oldFolder->Name, folder.Name, sizeof(data->oldFolder->Name));
 
-      if(oldmode == newmode || (newmode > FM_SIMPLE && XpkBase == NULL))
-      {
-        changed = FALSE;
-      }
-      else if(isProtectedFolder(&folder) == FALSE && isProtectedFolder(data->oldFolder) == TRUE &&
-              data->oldFolder->LoadedMode != LM_VALID)
-      {
-        if((changed = MA_PromptFolderPassword(&folder, obj)) == FALSE)
-          goto out;
-      }
-      else if(isProtectedFolder(&folder) == TRUE && isProtectedFolder(data->oldFolder) == FALSE)
-      {
-        if((changed = EnterPassword(obj, &folder)) == FALSE)
-          goto out;
+        // trigger a change of the main window's folder listtree
+        set(G->MA->GUI.LT_FOLDERS, MUIA_MainFolderListtree_TreeChanged, TRUE);
       }
 
-      if(isProtectedFolder(&folder) == TRUE && isProtectedFolder(data->oldFolder) == TRUE)
-         strlcpy(folder.Password, data->oldFolder->Password, sizeof(folder.Password));
-
-      if(changed == TRUE)
+      // if the folderpath string has changed
+      if(pathChanged == TRUE)
       {
-        if(isProtectedFolder(&folder) == FALSE)
-          folder.Password[0] = '\0';
+        LONG result;
 
-        if(folder.Mode != oldmode)
+        // ask the user whether to perform the move or not
+        result = MUI_Request(_app(obj), obj, MUIF_NONE, NULL, tr(MSG_YesNoReq), tr(MSG_FO_MOVEFOLDERTO), data->oldFolder->Fullpath, folder.Fullpath);
+        if(result == 1)
         {
-          struct BusyNode *busy;
-          struct MailNode *mnode;
-          ULONG i;
+          // first unload the old folder image to make it moveable/deletable
+          FO_UnloadFolderImage(data->oldFolder);
 
-          busy = BusyBegin(BUSY_PROGRESS);
-          BusyText(busy, tr(MSG_BusyUncompressingFO), "");
-
-          LockMailListShared(folder.messages);
-
-          i = 0;
-          ForEachMailNode(folder.messages, mnode)
+          if(Rename(data->oldFolder->Fullpath, folder.Fullpath) == FALSE)
           {
-            BusyProgress(busy, ++i, folder.Total);
-            RepackMailFile(mnode->mail, folder.Mode, folder.Password);
+            if(CreateDirectory(folder.Fullpath) == FALSE || FO_MoveFolderDir(&folder, data->oldFolder) == FALSE)
+            {
+              ER_NewError(tr(MSG_ER_MOVEFOLDERDIR), folder.Name, folder.Fullpath);
+              break;
+            }
           }
 
-          UnlockMailList(folder.messages);
+          // now reload the image from the new path
+          if(FO_LoadFolderImage(&folder) == TRUE)
+          {
+            // remember the newly obtained image pointer
+            data->oldFolder->imageObject = folder.imageObject;
+          }
+        }
+        else
+        {
+          break;
+        }
+      }
 
-          BusyEnd(busy);
+      strlcpy(data->oldFolder->Path,             folder.Path, sizeof(data->oldFolder->Path));
+      strlcpy(data->oldFolder->Fullpath,         folder.Fullpath, sizeof(data->oldFolder->Fullpath));
+      strlcpy(data->oldFolder->WriteIntro,       folder.WriteIntro, sizeof(data->oldFolder->WriteIntro));
+      strlcpy(data->oldFolder->WriteGreetings,   folder.WriteGreetings, sizeof(data->oldFolder->WriteGreetings));
+      strlcpy(data->oldFolder->MLReplyToAddress, folder.MLReplyToAddress, sizeof(data->oldFolder->MLReplyToAddress));
+      strlcpy(data->oldFolder->MLAddress,        folder.MLAddress, sizeof(data->oldFolder->MLAddress));
+      strlcpy(data->oldFolder->MLPattern,        folder.MLPattern, sizeof(data->oldFolder->MLPattern));
+      data->oldFolder->MLIdentity   = folder.MLIdentity;
+      data->oldFolder->MLSignature  = folder.MLSignature;
+      data->oldFolder->Sort[0]      = folder.Sort[0];
+      data->oldFolder->Sort[1]      = folder.Sort[1];
+      data->oldFolder->MaxAge       = folder.MaxAge;
+      data->oldFolder->ExpireUnread = folder.ExpireUnread;
+      data->oldFolder->Stats        = folder.Stats;
+      data->oldFolder->JumpToUnread = folder.JumpToUnread;
+      data->oldFolder->JumpToRecent = folder.JumpToRecent;
+      data->oldFolder->MLSupport    = folder.MLSupport;
 
-          data->oldFolder->Mode = newmode;
+      if(xget(data->CY_FTYPE, MUIA_Disabled) == FALSE)
+      {
+        enum FolderMode oldmode = data->oldFolder->Mode;
+        enum FolderMode newmode = folder.Mode;
+
+        if(oldmode == newmode || (newmode > FM_SIMPLE && XpkBase == NULL))
+        {
+          modeChanged = FALSE;
+        }
+        else if(isProtectedFolder(&folder) == FALSE && isProtectedFolder(data->oldFolder) == TRUE &&
+                data->oldFolder->LoadedMode != LM_VALID)
+        {
+          if((modeChanged = MA_PromptFolderPassword(&folder, obj)) == FALSE)
+            break;
+        }
+        else if(isProtectedFolder(&folder) == TRUE && isProtectedFolder(data->oldFolder) == FALSE)
+        {
+          if((modeChanged = EnterPassword(obj, &folder)) == FALSE)
+            break;
         }
 
-        strlcpy(data->oldFolder->Password, folder.Password, sizeof(data->oldFolder->Password));
-      }
-      data->oldFolder->Type = folder.Type;
-    }
+        if(isProtectedFolder(&folder) == TRUE && isProtectedFolder(data->oldFolder) == TRUE)
+           strlcpy(folder.Password, data->oldFolder->Password, sizeof(folder.Password));
 
-    if(FO_SaveConfig(data->oldFolder) == TRUE)
+        if(modeChanged == TRUE)
+        {
+          if(isProtectedFolder(&folder) == FALSE)
+            folder.Password[0] = '\0';
+
+          if(folder.Mode != oldmode)
+          {
+            struct BusyNode *busy;
+            struct MailNode *mnode;
+            ULONG i;
+
+            busy = BusyBegin(BUSY_PROGRESS);
+            BusyText(busy, tr(MSG_BusyUncompressingFO), "");
+
+            LockMailListShared(folder.messages);
+
+            i = 0;
+            ForEachMailNode(folder.messages, mnode)
+            {
+              BusyProgress(busy, ++i, folder.Total);
+              RepackMailFile(mnode->mail, folder.Mode, folder.Password);
+            }
+
+            UnlockMailList(folder.messages);
+
+            BusyEnd(busy);
+
+            data->oldFolder->Mode = newmode;
+          }
+
+          strlcpy(data->oldFolder->Password, folder.Password, sizeof(data->oldFolder->Password));
+        }
+        data->oldFolder->Type = folder.Type;
+      }
+
+      if(FO_SaveConfig(data->oldFolder) == TRUE)
+        success = TRUE;
+
+      // if everything went well and either the folder's name or path
+      // has changed we must save the folder tree, too
+      if(success == TRUE && (nameChanged == TRUE || pathChanged == TRUE))
+        FO_SaveTree();
+    }
+    else
+    {
+      // nothing changed
       success = TRUE;
-
-    // if everything went well and either the folder's name or path
-    // has changed we must save the folder tree, too
-    if(success == TRUE && (nameChanged == TRUE || pathChanged == TRUE))
-      FO_SaveTree();
+    }
   }
-  else
-  {
-    // nothing changed
-    success = TRUE;
-  }
+  while(FALSE);
 
-out:
   RETURN(success);
   return success;
 }
@@ -376,44 +408,56 @@ static BOOL SaveNewFolder(struct IClass *cl, Object *obj)
 
   if((folder.messages = CreateMailList()) != NULL)
   {
-    LONG result;
-
     DoMethod(obj, MUIM_FolderEditWindow_GUIToFolder, &folder);
     SHOWSTRING(DBF_FOLDER, folder.Name);
 
-    // first check for a valid folder name
-    // it is invalid if:
-    // - the folder name is empty, or
-    // - the new name already exists
-    if(folder.Name[0] == '\0' || FO_GetFolderByName(folder.Name, NULL) != NULL)
+    do
     {
-      MUI_Request(_app(obj), obj, MUIF_NONE, NULL, tr(MSG_OkayReq), tr(MSG_FO_FOLDERNAMEINVALID));
-      result = 0;
-    }
-    else
-      result = 1;
+      // first check for a valid folder name
+      // it is invalid if:
+      // - the folder name is empty, or
+      // - the new name already exists
+      if(IsStrEmpty(folder.Name) == TRUE || FO_GetFolderByName(folder.Name, NULL) != NULL)
+      {
+        MUI_Request(_app(obj), obj, MUIF_NONE, NULL, tr(MSG_OkayReq), tr(MSG_FO_FOLDERNAMEINVALID));
+        break;
+      }
 
-    if(result == 1)
-    {
-      // lets check if entered folder path is valid or not
-      if(folder.Path[0] == '\0')
+      // check for an empty path
+      if(IsStrEmpty(folder.Path) == TRUE)
       {
-        MUI_Request(_app(obj), obj, MUIF_NONE, NULL, tr(MSG_OkayReq), tr(MSG_FO_FOLDERPATHINVALID));
-        result = 0;
+        MUI_Request(_app(obj), obj, MUIF_NONE, NULL, tr(MSG_OkayReq), tr(MSG_FO_PATH_INVALID));
+        set(obj, MUIA_Window_ActiveObject, data->ST_FPATH);
+        break;
       }
-      else if(FileExists(folder.Fullpath) == TRUE) // check if the combined full path already exists
-      {
-        result = MUI_Request(_app(obj), obj, MUIF_NONE, NULL, tr(MSG_YesNoReq), tr(MSG_FO_FOLDER_ALREADY_EXISTS), folder.Fullpath);
-      }
-      else
-      {
-        result = 1;
-      }
-    }
 
-    // only if the user want to proceed we go on.
-    if(result == 1)
-    {
+      // check if the combined full path already exists
+      if(FileExists(folder.Fullpath) == TRUE)
+      {
+        MUI_Request(_app(obj), obj, MUIF_NONE, NULL, tr(MSG_YesNoReq), tr(MSG_FO_FOLDER_ALREADY_EXISTS), folder.Fullpath);
+        set(obj, MUIA_Window_ActiveObject, data->ST_FPATH);
+        break;
+      }
+
+      if(folder.MLSupport == TRUE)
+      {
+        // check for empty and "catch all" patterns
+        if(IsStrEmpty(folder.MLPattern) == TRUE || strcmp(folder.MLPattern, "#?") == 0 || strcmp(folder.MLPattern, "*") == 0)
+        {
+          MUI_Request(_app(obj), obj, MUIF_NONE, NULL, tr(MSG_OkayReq), tr(MSG_FO_MLPATTERN_INVALID));
+          set(obj, MUIA_Window_ActiveObject, data->ST_MLPATTERN);
+          break;
+        }
+
+        // check for an empty To: address
+        if(IsStrEmpty(folder.MLAddress) == TRUE)
+        {
+          MUI_Request(_app(obj), obj, MUIF_NONE, NULL, tr(MSG_OkayReq), tr(MSG_FO_MLADDRESS_INVALID));
+          set(obj, MUIA_Window_ActiveObject, data->ST_MLADDRESS);
+          break;
+        }
+      }
+
       if(isProtectedFolder(&folder) == FALSE || EnterPassword(obj, &folder) == TRUE)
       {
         if(CreateDirectory(folder.Fullpath) == TRUE)
@@ -479,6 +523,7 @@ static BOOL SaveNewFolder(struct IClass *cl, Object *obj)
         }
       }
     }
+    while(FALSE);
   }
 
   RETURN(success);
@@ -857,22 +902,34 @@ DECLARE(GUIToFolder) // struct Folder *folder
   folder->Stats = GetMUICheck(data->CH_STATS);
   folder->JumpToUnread = GetMUICheck(data->CH_JUMPTOUNREAD);
   folder->JumpToRecent = GetMUICheck(data->CH_JUMPTORECENT);
-  folder->MLSupport = GetMUICheck(data->CH_MLSUPPORT);
 
   GetMUIString(folder->WriteIntro, data->ST_HELLOTEXT, sizeof(folder->WriteIntro));
   GetMUIString(folder->WriteGreetings, data->ST_BYETEXT, sizeof(folder->WriteGreetings));
 
-  GetMUIString(folder->MLPattern, data->ST_MLPATTERN, sizeof(folder->MLPattern));
+  folder->MLSupport = GetMUICheck(data->CH_MLSUPPORT);
+  if(folder->MLSupport == FALSE || isDefaultFolder(folder) || isArchiveFolder(folder))
+  {
+    // make sure we don't keep any trash settings for folders without ML support
+    folder->MLPattern[0] = '\0';
+    folder->MLAddress[0] = '\0';
+    folder->MLReplyToAddress[0] = '\0';
+    folder->MLSignature = NULL;
+    folder->MLIdentity = NULL;
+  }
+  else
+  {
+    GetMUIString(folder->MLPattern, data->ST_MLPATTERN, sizeof(folder->MLPattern));
 
-  // resolve the addresses first, in case someone entered an alias
-  DoMethod(data->ST_MLADDRESS, MUIM_RecipientString_Resolve, MUIF_NONE);
-  DoMethod(data->ST_MLREPLYTOADDRESS, MUIM_RecipientString_Resolve, MUIF_NONE);
+    // resolve the addresses first, in case someone entered an alias
+    DoMethod(data->ST_MLADDRESS, MUIM_RecipientString_Resolve, MUIF_NONE);
+    DoMethod(data->ST_MLREPLYTOADDRESS, MUIM_RecipientString_Resolve, MUIF_NONE);
 
-  GetMUIString(folder->MLAddress, data->ST_MLADDRESS, sizeof(folder->MLAddress));
-  GetMUIString(folder->MLReplyToAddress, data->ST_MLREPLYTOADDRESS, sizeof(folder->MLReplyToAddress));
+    GetMUIString(folder->MLAddress, data->ST_MLADDRESS, sizeof(folder->MLAddress));
+    GetMUIString(folder->MLReplyToAddress, data->ST_MLREPLYTOADDRESS, sizeof(folder->MLReplyToAddress));
 
-  folder->MLSignature = (struct SignatureNode *)xget(data->CY_MLSIGNATURE, MUIA_SignatureChooser_Signature);
-  folder->MLIdentity = (struct UserIdentityNode *)xget(data->CY_MLIDENTITY, MUIA_IdentityChooser_Identity);
+    folder->MLSignature = (struct SignatureNode *)xget(data->CY_MLSIGNATURE, MUIA_SignatureChooser_Signature);
+    folder->MLIdentity = (struct UserIdentityNode *)xget(data->CY_MLIDENTITY, MUIA_IdentityChooser_Identity);
+  }
 
   RETURN(0);
   return 0;
@@ -1029,7 +1086,7 @@ DECLARE(MLAutoDetect)
         // lets make a pattern out of the found SWS string
         if(takePattern == TRUE)
         {
-          if(strlen(toPattern) >= 2 && !(toPattern[0] == '#' && toPattern[1] == '?'))
+          if(strlen(toPattern) >= 2 && strncmp(toPattern, "#?", 2) == 0)
           {
             if(res != NULL)
               res = realloc(res, strlen(res)+3);
@@ -1073,7 +1130,7 @@ DECLARE(MLAutoDetect)
           D(DBF_FOLDER, "ML-Pattern: [%s]", toPattern);
 
           // Now we set the new pattern & address values to the string gadgets
-          setstring(data->ST_MLPATTERN, takePattern == TRUE && toPattern[0] != '\0' ? toPattern : tr(MSG_FO_NOTRECOGNIZED));
+          setstring(data->ST_MLPATTERN, takePattern == TRUE && IsStrEmpty(toPattern) == FALSE ? toPattern : tr(MSG_FO_NOTRECOGNIZED));
           setstring(data->ST_MLADDRESS, takeAddress == TRUE ? toAddress : tr(MSG_FO_NOTRECOGNIZED));
         }
       }

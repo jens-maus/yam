@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-05-12 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/FolderEditWindow.c: restructured the safety checks before saving the
+    folder's configuration. Especially the mailing list options have been
+    reworked to avoid invalid settings which might cause problems later. This
+    refs #555.
+
 2014-05-11 Thore Böckelmann <tboeckel@gmx.de>
 
   * tcp/http.c: use the extracted host name as description of the temporary
