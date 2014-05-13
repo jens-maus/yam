@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-05-13 Jens Maus <mail@jens-maus.de>
+
+  * mime/md5.c: fixed a bug in the md5final() function which was not using
+    memset() correctly and didn't clear the whole md5 context structure
+    correctly.
+
 2014-05-12 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/FolderEditWindow.c: restructured the safety checks before saving the

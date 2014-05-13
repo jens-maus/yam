@@ -281,7 +281,7 @@ void md5final(unsigned char digest[16], struct MD5Context *ctx)
   md5transform(ctx->state, ctx->buffer.u32);
   byteReverse((unsigned char *)ctx->state, 4);
   memcpy(digest, ctx->state, 16);
-  memset(ctx, 0, sizeof(ctx));    /* In case it's sensitive */
+  memset(ctx, 0, sizeof(*ctx));    /* In case it's sensitive */
 }
 ///
 /// md5hmac()
