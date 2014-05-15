@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-05-15 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/YAMApplication.c: make sure to clear the embedded read pane when
+    deleting all mails from the trash folder. This refs #556.
+
 2014-05-13 Jens Maus <mail@jens-maus.de>
 
   * mime/md5.c: fixed a bug in the md5final() function which was not using
@@ -38,8 +43,6 @@ $URL$
 
 2014-05-10 Thore Böckelmann <tboeckel@gmx.de>
 
-  * mui/YAMApplication.c: make sure to clear the embedded read pane when
-    deleting all mails from the trash folder.
   * YAM_MA.c: clear the embedded read pane ahead of deleting single mails to
     ensure that no structures of the active but possibly already deleted mail
     are accessed during a possible redraw action. This refs #556.

@@ -56,6 +56,7 @@
 #include "mui/ConfigWindow.h"
 #include "mui/InfoWindow.h"
 #include "mui/MainMailListGroup.h"
+#include "mui/ReadMailGroup.h"
 #include "mui/SearchMailWindow.h"
 #include "mui/StringRequestWindow.h"
 #include "mui/TransferControlGroup.h"
@@ -1694,6 +1695,10 @@ DECLARE(EmptyTrashFolder) // ULONG quiet
 
     busy = BusyBegin(BUSY_PROGRESS);
     BusyText(busy, tr(MSG_BusyEmptyingTrash), "");
+
+    // clear the readmail group ahead of the deletion
+    if(C->EmbeddedReadPane == TRUE)
+      DoMethod(G->MA->GUI.MN_EMBEDDEDREADPANE, MUIM_ReadMailGroup_Clear, MUIF_NONE);
 
     LockMailList(trashFolder->messages);
 
