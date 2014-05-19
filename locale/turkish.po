@@ -15,7 +15,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-05-19 09:56+0000\n"
+"PO-Revision-Date: 2014-05-19 10:47+0000\n"
 "Last-Translator: Alpyre <amithlondestek@gmail.com>\n"
 "Language-Team: Turkish (http://www.transifex.com/projects/p/yam/language/tr/)\n"
 "MIME-Version: 1.0\n"
@@ -1133,7 +1133,7 @@ msgstr "her zaman göster"
 
 msgctxt "MSG_CO_TransferWin (368//)"
 msgid "_Transfer window"
-msgstr "_Aktarım penceresi"
+msgstr "Aktarım _penceresi"
 
 msgctxt "MSG_CO_PreSelect (369//)"
 msgid "_Pre-selection"
@@ -1305,7 +1305,7 @@ msgstr "_Görüntüleyici"
 
 msgctxt "MSG_CO_Extension (427//)"
 msgid "File e_xtensions"
-msgstr "Dosya _uzantıları"
+msgstr "Dosya u_zantıları"
 
 msgctxt "MSG_CO_DefaultViewer (428//)"
 msgid "De_fault viewer"
@@ -1609,7 +1609,7 @@ msgstr "veya daha fazla mesaj silineceğinde onay penceresi göster"
 
 msgctxt "MSG_CO_Remove (517//)"
 msgid "_Remove messages immediately"
-msgstr "İletileri _hemen sil"
+msgstr "İletileri hemen _sil"
 
 msgctxt "MSG_CO_XPK (525//)"
 msgid "XPK/LhA settings"
@@ -1678,7 +1678,7 @@ msgstr "Bir URL'yi çift-tıklattıktan sonra"
 
 msgctxt "MSG_CO_Script (541//)"
 msgid "Sc_ript"
-msgstr "Sc_ript"
+msgstr "_Betik"
 
 msgctxt "MSG_CO_OpenConsole (542//)"
 msgid "_Open console window"
@@ -5019,7 +5019,7 @@ msgstr "Kapalı"
 
 msgctxt "MSG_CO_FOLDERLABEL (1415//)"
 msgid "_Label"
-msgstr "E_tiket"
+msgstr "_Etiket"
 
 msgctxt "MSG_FO_MLSUPPORT (1416//)"
 msgid "ML_-Support"
@@ -8339,7 +8339,7 @@ msgstr "\\033bPosta\\033n\nKimden: %s <%s>\nKime: %s <%s>\nKonu: %s\nTarih: %s\n
 
 msgctxt "MSG_CO_UPDATE_DOWNLOAD_PATH (2211//)"
 msgid "Download _path:"
-msgstr "İndirme _yeri:"
+msgstr "İ_ndirme yeri:"
 
 msgctxt "MSG_UPD_NOTIFICATION_DOWNLOAD (2212//)"
 msgid "Download"
@@ -9548,7 +9548,7 @@ msgstr "_Varsayılan karakter Seti"
 
 msgctxt "MSG_CO_MIME_CODESET (2471//)"
 msgid "Display _charset"
-msgstr "Karakter setini _görüntüle"
+msgstr "Karakter _setini görüntüle"
 
 msgctxt "MSG_HELP_CO_TX_MIME_CODESET (2472//)"
 msgid ""
@@ -9559,7 +9559,7 @@ msgstr "Bu MIME türündeki komut çalıştırılmadan\nönce yazdırılabilir m
 
 msgctxt "MSG_CO_DEFAULTVIEWER_CODESET (2473//)"
 msgid "_Display charset"
-msgstr "Karakter setini _görüntüle"
+msgstr "Karakter setini g_örüntüle"
 
 msgctxt "MSG_HELP_CO_TX_DEFVIEWER_CODESET (2474//)"
 msgid ""
@@ -9619,7 +9619,7 @@ msgstr "Posta yapısı"
 
 msgctxt "MSG_CO_CHECK_FOR_MISSING_ATTACHMENTS (2486//)"
 msgid "Check for missing attachments"
-msgstr "Eksik eklentileri kontrol et"
+msgstr "Unutulan dosya ekleri için denetle"
 
 msgctxt "MSG_CO_ATTACHMENT_KEYWORDS (2487//)"
 msgid "Keywords:"
