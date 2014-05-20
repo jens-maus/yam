@@ -1949,8 +1949,11 @@ static BOOL MA_ScanDate(struct Mail *mail, const char *date)
   char ttime[SIZE_SMALL];
   char tzAbbr[SIZE_SMALL];
   struct DateTime dt;
+  BOOL nonRFC2822 = FALSE;
 
   ENTER();
+
+  D(DBF_MAIL, "parse date from '%s'", date);
 
   // make sure to skip the weekday definition if it exists
   if((s = strpbrk(date, " |;,")) != NULL)
@@ -1964,7 +1967,7 @@ static BOOL MA_ScanDate(struct Mail *mail, const char *date)
   }
   else
   {
-    W(DBF_MAIL, "no starting separator found!!");
+    W(DBF_MAIL, "no starting separator found");
 
     s = (char *)date;
   }
@@ -1989,11 +1992,23 @@ static BOOL MA_ScanDate(struct Mail *mail, const char *date)
       // get the day
       case 0:
       {
-        if(!isdigit(*s) || (day = atoi(s)) > 31)
+        char *end;
+
+        day = strtol(s, &end, 10);
+        if(day <= 0 || day > 31)
         {
           W(DBF_MAIL, "couldn't parse day from '%s'", s);
 
           day = 1;
+        }
+
+        // gracefully handle possible non RFC-2822 conformant dates which use
+        // a '-' character instead of a space as separator
+        if(end != e && end[0] == '-')
+        {
+          W(DBF_MAIL, "non RFC 2822 conformant date string '%s'", date);
+          nonRFC2822 = TRUE;
+          e = &end[1];
         }
       }
       break;
@@ -2010,23 +2025,41 @@ static BOOL MA_ScanDate(struct Mail *mail, const char *date)
         if(mon > 12)
         {
           W(DBF_MAIL, "couldn't parse month from '%s'", s);
-
           mon = 1;
         }
+
+        // gracefully handle possible non RFC-2822 conformant dates which use
+        // a '-' character instead of a space as separator
+        if(nonRFC2822 == TRUE && strlen(s) >= 4 && s[3] == '-')
+          e = &s[4];
       }
       break;
 
       // get the year
       case 2:
       {
-        if(isdigit(*s))
-          year = atoi(s);
-        else
+        char *end;
+
+        year = strtol(s, &end, 10);
+        // gracefully handle the obsolete 2-digit year specs
+        if(year < 100)
+        {
+          W(DBF_MAIL, "obsolete year spec '%s' found", s);
+          // numbers from 78 to 99 are considered to be 1978 to 1999,
+          // everything else is 2000 to 2077
+          if(year >= 78)
+            year += 1900;
+          else
+            year += 2000;
+        }
+
+        if(year < 1978 || year > 2038)
         {
           W(DBF_MAIL, "couldn't parse year from '%s'", s);
-
           year = 1978;
         }
+
+        // no further special handling for non RFC 2822 conformant dates required
       }
       break;
 
@@ -2088,7 +2121,7 @@ static BOOL MA_ScanDate(struct Mail *mail, const char *date)
         }
         else
         {
-          W(DBF_MAIL, "No GMT offset found in date string: %s", date);
+          W(DBF_MAIL, "no GMT offset found in date string '%s'", date);
 
           // make sure the next iteration ends up at the same position
           e = s;
@@ -2113,7 +2146,7 @@ static BOOL MA_ScanDate(struct Mail *mail, const char *date)
           strlcpy(tzAbbr, s, MIN(sizeof(tzAbbr), (unsigned int)(e-s+1)));
         }
         else
-          W(DBF_MAIL, "No timezone abbreviation found in date string: %s", date);
+          W(DBF_MAIL, "no timezone abbreviation found in date string '%s'", date);
       }
       break;
     }
@@ -2167,7 +2200,7 @@ static BOOL MA_ScanDate(struct Mail *mail, const char *date)
     while(ds->ds_Minute >= 1440) { ds->ds_Minute -= 1440; ds->ds_Days++; }
 
     // now we do copy the datestamp stuff over the one from our mail
-    memcpy(&mail->Date, ds, sizeof(struct DateStamp));
+    memcpy(&mail->Date, ds, sizeof(mail->Date));
 
     success = TRUE;
   }

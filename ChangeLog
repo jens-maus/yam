@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-05-19 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MAf.c: try parse non RFC 2822 conformant Date header lines which use '-'
+    instead of spaces as separator. Usually this happens for spam mails only.
+    Before the parsed date always ended up in January 1978 making such mails an
+    easy bait for YAM's automatic deletion of too old mails such that they got
+    deleted too early. This should never happen to an important mail.
+
 2014-05-15 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/YAMApplication.c: make sure to clear the embedded read pane when
