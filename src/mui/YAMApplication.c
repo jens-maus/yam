@@ -36,6 +36,7 @@
 #include <proto/icon.h>
 #include <proto/muimaster.h>
 #include <proto/rexxsyslib.h>
+#include <proto/timer.h>
 #if defined(__amigaos4__)
 #include <proto/application.h>
 #endif
@@ -1745,17 +1746,16 @@ DECLARE(EmptyTrashFolder) // ULONG quiet
 /// DECLARE(DeleteOldMails)
 DECLARE(DeleteOldMails)
 {
-  struct DateStamp today;
-  ULONG today_days;
+  struct TimeVal today;
   BOOL mailsDeleted = FALSE;
   struct MailList *toBeDeletedList;
 
   ENTER();
 
-  DateStampUTC(&today);
-  today.ds_Minute = 0;
-  today.ds_Tick = 0;
-  today_days = today.ds_Days;
+  GetSysTimeUTC(&today);
+  // round the current time to full days
+  today.Seconds = (today.Seconds + 86399) & ~86400;
+  today.Microseconds = 0;
 
   // we need a temporary "to be deleted" list of mails to avoid doubly locking a folder's mail list
   if((toBeDeletedList = CreateMailList()) != NULL)
@@ -1779,9 +1779,11 @@ DECLARE(DeleteOldMails)
       if(isGroupFolder(folder) == FALSE && folder->MaxAge > 0 && !isArchiveFolder(folder) && MA_GetIndex(folder) == TRUE)
       {
         struct MailNode *mnode;
+        struct TimeVal ageLimit;
 
-        // calculate the maximum age for this folder
-        today.ds_Days = today_days - folder->MaxAge;
+        // calculate the age limit for this folder
+        ageLimit.Seconds = today.Seconds - folder->MaxAge * 86400;
+        ageLimit.Microseconds = 0;
 
         LockMailList(folder->messages);
 
@@ -1792,7 +1794,7 @@ DECLARE(DeleteOldMails)
         {
           struct Mail *mail = mnode->mail;
 
-          if(CompareDates(&today, &mail->Date) < 0)
+          if(CmpTime(TIMEVAL(&ageLimit), TIMEVAL(&mail->transDate)) < 0)
           {
             BOOL deleteMail;
 

@@ -15,6 +15,10 @@ $URL$
   * YAM_UT.c: made the password decryption function a bit more robust against
     wrong encrypted strings by letting it terminate if no encrypted byte is
     found or a buffer underrun occurs.
+  * mui/YAMApplication.c: changed the deletion of mails older than the folder's
+    maximum age to chech the current date against the mails' receive/send date
+    instead of their compose date. Thus mails are really kept for the desired
+    amount of days on the system. This closes #563.
 
 2014-05-19 Thore Böckelmann <tboeckel@gmx.de>
 
