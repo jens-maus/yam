@@ -2359,8 +2359,8 @@ BOOL SaveConfig(struct Config *co, const char *fname, BOOL savePrivateData)
       fprintf(fh, "SMTP%02d.SecMethod             = %d\n", i, MSF2SMTPSecMethod(msn));
       fprintf(fh, "SMTP%02d.Allow8bit             = %s\n", i, Bool2Txt(hasServer8bit(msn)));
       fprintf(fh, "SMTP%02d.SMTP-AUTH             = %s\n", i, Bool2Txt(hasServerAuth(msn)));
-      fprintf(fh, "SMTP%02d.AUTH-User             = %s\n", i, savePrivateData == TRUE ? msn->username : "");
-      fprintf(fh, "SMTP%02d.AUTH-Pass             = %s\n", i, savePrivateData == TRUE ? Encrypt(msn->password) : "");
+      fprintf(fh, "SMTP%02d.AUTH-User             = %s\n", i, savePrivateData == TRUE ? msn->username : "<intentionally removed>");
+      fprintf(fh, "SMTP%02d.AUTH-Pass             = %s\n", i, savePrivateData == TRUE ? Encrypt(msn->password) : "<intentionally removed>");
       fprintf(fh, "SMTP%02d.AUTH-Method           = %d\n", i, MSF2SMTPAuthMethod(msn));
       fprintf(fh, "SMTP%02d.SSLCert               = %s\n", i, msn->certFingerprint);
       fprintf(fh, "SMTP%02d.SSLCertFailures       = %d\n", i, msn->certFailures);
@@ -2378,8 +2378,8 @@ BOOL SaveConfig(struct Config *co, const char *fname, BOOL savePrivateData)
       fprintf(fh, "POP%02d.Description            = %s\n", i, msn->description);
       fprintf(fh, "POP%02d.Server                 = %s\n", i, msn->hostname);
       fprintf(fh, "POP%02d.Port                   = %d\n", i, msn->port);
-      fprintf(fh, "POP%02d.User                   = %s\n", i, savePrivateData == TRUE ? msn->username : "");
-      fprintf(fh, "POP%02d.Password               = %s\n", i, savePrivateData == TRUE ? Encrypt(msn->password) : "");
+      fprintf(fh, "POP%02d.User                   = %s\n", i, savePrivateData == TRUE ? msn->username : "<intentionally removed>");
+      fprintf(fh, "POP%02d.Password               = %s\n", i, savePrivateData == TRUE ? Encrypt(msn->password) : "<intentionally removed>");
       fprintf(fh, "POP%02d.SSLMode                = %d\n", i, MSF2POP3SecMethod(msn));
       fprintf(fh, "POP%02d.UseAPOP                = %s\n", i, Bool2Txt(hasServerAPOP(msn)));
       fprintf(fh, "POP%02d.Delete                 = %s\n", i, Bool2Txt(hasServerPurge(msn)));
