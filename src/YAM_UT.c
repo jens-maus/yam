@@ -31,6 +31,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
+#include <ctype.h>
 
 #if defined(__AROS__)
 #include <sys/types.h>
@@ -444,7 +445,8 @@ char *Decrypt(const char *source)
   ENTER();
 
   *write-- = '\0';
-  while(*source != '\0')
+  // bail out as soon as we hit the end or a non-digit character or underrun our output buffer
+  while(*source != '\0' && isdigit(*source) && write >= buffer)
   {
     *write-- = ((char)atoi(source)) ^ CRYPTBYTE;
     source += 4;

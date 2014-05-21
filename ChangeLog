@@ -12,6 +12,9 @@ $URL$
     file without private data (username, password). This makes it easy to create
     a configuration file which can easily be published without risking hacked
     accounts due to accidentally published passwords. This closes #564.
+  * YAM_UT.c: made the password decryption function a bit more robust against
+    wrong encrypted strings by letting it terminate if no encrypted byte is
+    found or a buffer underrun occurs.
 
 2014-05-19 Thore Böckelmann <tboeckel@gmx.de>
 
