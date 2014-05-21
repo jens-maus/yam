@@ -119,7 +119,7 @@ OVERLOAD(MUIM_NList_Display)
 
   if(entry != NULL)
   {
-    ndm->strings[0] = FilePart(entry->directory);
+    ndm->strings[0] = (char *)FilePart(entry->directory);
 
     if(stricmp(ndm->strings[0], CE->ThemeName) == 0)
       ndm->preparses[0] = (char *)"\033b";

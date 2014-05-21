@@ -347,7 +347,7 @@ DECLARE(CheckGravatar)
     strlcat(imagePath, ".jpg", sizeof(imagePath));
 
     // replace possibly invalid characters within the file name at last
-    ReplaceInvalidChars(FilePart(imagePath));
+    ReplaceInvalidChars((char *)FilePart(imagePath));
 
     doDownload = TRUE;
     while(FileExists(imagePath) == TRUE)

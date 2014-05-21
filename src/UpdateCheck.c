@@ -489,7 +489,7 @@ BOOL ExtractUpdateFilename(const char *url, char *file, size_t fileSize)
   ENTER();
 
   // try the last component first, this one should include a dot
-  if((p = FilePart(url)) != NULL && strchr(p, '.') != NULL)
+  if((p = (char *)FilePart(url)) != NULL && strchr(p, '.') != NULL)
   {
     strlcpy(file, p, fileSize);
     success = TRUE;
