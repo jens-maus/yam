@@ -1862,8 +1862,10 @@ static void InitBeforeLogin(BOOL hidden)
         // initialize AmiSSL/OpenSSL related stuff that
         // needs to be initialized before each threads spans
         // own initializations
-        SSL_library_init();
-        SSL_load_error_strings();
+        ERR_load_BIO_strings(); // Load BIO error strings
+        SSL_load_error_strings(); // Load SSL error strings
+        OpenSSL_add_all_algorithms(); // Load all available encryption algorithms
+        SSL_library_init(); // Initialize OpenSSL's SSL libraries
 
         // seed the random number generator with some valuable entropy
         D(DBF_NET, "seeding random number generator");

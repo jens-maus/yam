@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-05-21 Jens Maus <mail@jens-maus.de>
+
+  * YAM.c: slightly changed the OpenSSL/AmiSSL initialization and added a call
+    to OpenSSL_add_all_algorithms(). This hopefully improves verbosity of error
+    output and perhaps improves cipher/digest handling. This refs #530 and #559.
+  * UpdateCheck.c, mui/ThemeList.c, mui/UserPortraitGroup.c: fixed some minor
+    compiler warnings due to CONST_STRPTR return value definition of FilePart()
+    on AmigaOS4.
+
 2014-05-21 Thore Böckelmann <tboeckel@gmx.de>
 
   * Config.c, mui/ConfigWindow.c, misc: added a new menu item in the menu of the
