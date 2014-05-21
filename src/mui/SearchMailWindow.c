@@ -632,7 +632,7 @@ DECLARE(CreateFilter)
 
       // check if we should immediately save our configuration or not
       if(ch == 1)
-        SaveConfig(C, G->CO_PrefsFile);
+        SaveConfig(C, G->CO_PrefsFile, TRUE);
     }
   }
 

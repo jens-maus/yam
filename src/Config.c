@@ -2302,7 +2302,7 @@ static char *MUIStyle2String(const char *style)
 ///
 /// SaveConfig
 // saves configuration to a file
-BOOL SaveConfig(struct Config *co, const char *fname)
+BOOL SaveConfig(struct Config *co, const char *fname, BOOL savePrivateData)
 {
   BOOL result = FALSE;
   FILE *fh;
@@ -2359,8 +2359,8 @@ BOOL SaveConfig(struct Config *co, const char *fname)
       fprintf(fh, "SMTP%02d.SecMethod             = %d\n", i, MSF2SMTPSecMethod(msn));
       fprintf(fh, "SMTP%02d.Allow8bit             = %s\n", i, Bool2Txt(hasServer8bit(msn)));
       fprintf(fh, "SMTP%02d.SMTP-AUTH             = %s\n", i, Bool2Txt(hasServerAuth(msn)));
-      fprintf(fh, "SMTP%02d.AUTH-User             = %s\n", i, msn->username);
-      fprintf(fh, "SMTP%02d.AUTH-Pass             = %s\n", i, Encrypt(msn->password));
+      fprintf(fh, "SMTP%02d.AUTH-User             = %s\n", i, savePrivateData == TRUE ? msn->username : "");
+      fprintf(fh, "SMTP%02d.AUTH-Pass             = %s\n", i, savePrivateData == TRUE ? Encrypt(msn->password) : "");
       fprintf(fh, "SMTP%02d.AUTH-Method           = %d\n", i, MSF2SMTPAuthMethod(msn));
       fprintf(fh, "SMTP%02d.SSLCert               = %s\n", i, msn->certFingerprint);
       fprintf(fh, "SMTP%02d.SSLCertFailures       = %d\n", i, msn->certFailures);
@@ -2378,8 +2378,8 @@ BOOL SaveConfig(struct Config *co, const char *fname)
       fprintf(fh, "POP%02d.Description            = %s\n", i, msn->description);
       fprintf(fh, "POP%02d.Server                 = %s\n", i, msn->hostname);
       fprintf(fh, "POP%02d.Port                   = %d\n", i, msn->port);
-      fprintf(fh, "POP%02d.User                   = %s\n", i, msn->username);
-      fprintf(fh, "POP%02d.Password               = %s\n", i, Encrypt(msn->password));
+      fprintf(fh, "POP%02d.User                   = %s\n", i, savePrivateData == TRUE ? msn->username : "");
+      fprintf(fh, "POP%02d.Password               = %s\n", i, savePrivateData == TRUE ? Encrypt(msn->password) : "");
       fprintf(fh, "POP%02d.SSLMode                = %d\n", i, MSF2POP3SecMethod(msn));
       fprintf(fh, "POP%02d.UseAPOP                = %s\n", i, Bool2Txt(hasServerAPOP(msn)));
       fprintf(fh, "POP%02d.Delete                 = %s\n", i, Bool2Txt(hasServerPurge(msn)));
@@ -3537,7 +3537,7 @@ void ValidateConfig(struct Config *co, BOOL update, BOOL saveChanges)
   // but only if we allowed to do so
   // forbidding will occur when the configuration is "used" only
   if(saveAtEnd == TRUE && saveChanges == TRUE)
-    SaveConfig(co, G->CO_PrefsFile);
+    SaveConfig(co, G->CO_PrefsFile, TRUE);
 
   // update possibly open read windows
   if(updateReadWindows == TRUE || updateHeaderMode == TRUE || updateSenderInfo == TRUE || updateMenuShortcuts == TRUE)
@@ -3733,7 +3733,7 @@ void ResolveConfigFolders(struct Config *co)
   if(saveAtEnd == TRUE)
   {
     D(DBF_CONFIG, "saving configuration due to newly resolved folders");
-    SaveConfig(co, G->CO_PrefsFile);
+    SaveConfig(co, G->CO_PrefsFile, TRUE);
   }
 
   LEAVE();

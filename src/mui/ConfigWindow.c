@@ -121,7 +121,7 @@ OVERLOAD(OM_NEW)
   Object *PG_PAGES[cp_Max];
 
   // menu item enums
-  enum { CMEN_OPEN = 1201, CMEN_SAVEAS, CMEN_DEF, CMEN_DEFALL, CMEN_LAST, CMEN_REST };
+  enum { CMEN_OPEN = 1201, CMEN_SAVEAS, CMEN_SAVEWOPRIV, CMEN_DEF, CMEN_DEFALL, CMEN_LAST, CMEN_REST };
 
   ENTER();
 
@@ -160,6 +160,7 @@ OVERLOAD(OM_NEW)
         MUIA_Menu_CopyStrings, FALSE,
         MenuChild, Menuitem(tr(MSG_CO_Open), "O", TRUE, FALSE, CMEN_OPEN),
         MenuChild, Menuitem(tr(MSG_CO_SaveAs), "A", TRUE, FALSE, CMEN_SAVEAS),
+        MenuChild, Menuitem(tr(MSG_CO_SAVE_WITHOUT_PRIVATE_DATA), NULL, TRUE, FALSE, CMEN_SAVEWOPRIV),
       End,
       MenuChild, MenuObject,
         MUIA_Menu_Title, tr(MSG_CO_Edit),
@@ -240,17 +241,18 @@ OVERLOAD(OM_NEW)
     SetHelp(BT_USE,    MSG_HELP_CO_BT_USE);
     SetHelp(BT_CANCEL, MSG_HELP_CO_BT_CANCEL);
 
-    DoMethod(obj,        MUIM_Notify, MUIA_Window_MenuAction,   CMEN_OPEN,      obj, 1, METHOD(OpenConfig));
-    DoMethod(obj,        MUIM_Notify, MUIA_Window_MenuAction,   CMEN_SAVEAS,    obj, 1, METHOD(SaveConfigAs));
-    DoMethod(obj,        MUIM_Notify, MUIA_Window_MenuAction,   CMEN_DEF,       obj, 2, METHOD(ResetToDefault), FALSE);
-    DoMethod(obj,        MUIM_Notify, MUIA_Window_MenuAction,   CMEN_DEFALL,    obj, 2, METHOD(ResetToDefault), TRUE);
-    DoMethod(obj,        MUIM_Notify, MUIA_Window_MenuAction,   CMEN_LAST,      obj, 1, METHOD(LastSaved));
-    DoMethod(obj,        MUIM_Notify, MUIA_Window_MenuAction,   CMEN_REST,      obj, 1, METHOD(Restore));
-    DoMethod(LV_PAGE,    MUIM_Notify, MUIA_NList_Active,        MUIV_EveryTime, obj, 2, METHOD(ChangePage), MUIV_TriggerValue);
-    DoMethod(BT_SAVE,    MUIM_Notify, MUIA_Pressed,             FALSE,          obj, 2, METHOD(Close), MUIV_ConfigWindow_Close_Save);
-    DoMethod(BT_USE,     MUIM_Notify, MUIA_Pressed,             FALSE,          obj, 2, METHOD(Close), MUIV_ConfigWindow_Close_Use);
-    DoMethod(BT_CANCEL,  MUIM_Notify, MUIA_Pressed,             FALSE,          obj, 2, METHOD(Close), MUIV_ConfigWindow_Close_Cancel);
-    DoMethod(obj,        MUIM_Notify, MUIA_Window_CloseRequest, TRUE,           obj, 2, METHOD(Close), MUIV_ConfigWindow_Close_Cancel);
+    DoMethod(obj,        MUIM_Notify, MUIA_Window_MenuAction,   CMEN_OPEN,       obj, 1, METHOD(OpenConfig));
+    DoMethod(obj,        MUIM_Notify, MUIA_Window_MenuAction,   CMEN_SAVEAS,     obj, 2, METHOD(SaveConfigAs), TRUE);
+    DoMethod(obj,        MUIM_Notify, MUIA_Window_MenuAction,   CMEN_SAVEWOPRIV, obj, 2, METHOD(SaveConfigAs), FALSE);
+    DoMethod(obj,        MUIM_Notify, MUIA_Window_MenuAction,   CMEN_DEF,        obj, 2, METHOD(ResetToDefault), FALSE);
+    DoMethod(obj,        MUIM_Notify, MUIA_Window_MenuAction,   CMEN_DEFALL,     obj, 2, METHOD(ResetToDefault), TRUE);
+    DoMethod(obj,        MUIM_Notify, MUIA_Window_MenuAction,   CMEN_LAST,       obj, 1, METHOD(LastSaved));
+    DoMethod(obj,        MUIM_Notify, MUIA_Window_MenuAction,   CMEN_REST,       obj, 1, METHOD(Restore));
+    DoMethod(LV_PAGE,    MUIM_Notify, MUIA_NList_Active,        MUIV_EveryTime,  obj, 2, METHOD(ChangePage), MUIV_TriggerValue);
+    DoMethod(BT_SAVE,    MUIM_Notify, MUIA_Pressed,             FALSE,           obj, 2, METHOD(Close), MUIV_ConfigWindow_Close_Save);
+    DoMethod(BT_USE,     MUIM_Notify, MUIA_Pressed,             FALSE,           obj, 2, METHOD(Close), MUIV_ConfigWindow_Close_Use);
+    DoMethod(BT_CANCEL,  MUIM_Notify, MUIA_Pressed,             FALSE,           obj, 2, METHOD(Close), MUIV_ConfigWindow_Close_Cancel);
+    DoMethod(obj,        MUIM_Notify, MUIA_Window_CloseRequest, TRUE,            obj, 2, METHOD(Close), MUIV_ConfigWindow_Close_Cancel);
 
     // set up a cross-page notification to let all pages react on changes on all other pages
     // currently only the TCPIP and Signature pages cause an update on the Identities page
@@ -398,14 +400,14 @@ DECLARE(OpenConfig)
 ///
 /// DECLARE(SaveConfigAs)
 // saves configuration to a file using an alternative name
-DECLARE(SaveConfigAs)
+DECLARE(SaveConfigAs) // ULONG savePrivateData
 {
   GETDATA;
   struct FileReqCache *frc;
 
   ENTER();
 
-  if((frc = ReqFile(ASL_CONFIG, obj, tr(MSG_CO_SaveAs), REQF_SAVEMODE, G->MA_MailDir, "")) != NULL)
+  if((frc = ReqFile(ASL_CONFIG, obj, msg->savePrivateData ? tr(MSG_CO_SaveAs) : tr(MSG_CO_SAVE_WITHOUT_PRIVATE_DATA), REQF_SAVEMODE, G->MA_MailDir, "")) != NULL)
   {
     char cname[SIZE_PATHFILE];
 
@@ -423,7 +425,7 @@ DECLARE(SaveConfigAs)
       // resolve any changed folder IDs
       ResolveConfigFolders(CE);
       NewPrefsFile(cl, obj, cname);
-      SaveConfig(CE, cname);
+      SaveConfig(CE, cname, msg->savePrivateData);
     }
   }
 
@@ -560,7 +562,7 @@ DECLARE(Close) // ULONG how
         // we save the configuration if the user
         // has pressed on 'Save' only.
         if(msg->how == MUIV_ConfigWindow_Close_Save)
-          SaveConfig(C, G->CO_PrefsFile);
+          SaveConfig(C, G->CO_PrefsFile, TRUE);
       }
       else if(configsEqual == FALSE)
       {

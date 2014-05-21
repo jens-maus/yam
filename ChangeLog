@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-05-21 Thore Böckelmann <tboeckel@gmx.de>
+
+  * Config.c, mui/ConfigWindow.c, misc: added a new menu item in the menu of the
+    configuration which allows to save the configuration to a user selectable
+    file without private data (username, password). This makes it easy to create
+    a configuration file which can easily be published without risking hacked
+    accounts due to accidentally published passwords. This closes #564.
+
 2014-05-19 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MAf.c: try parse non RFC 2822 conformant Date header lines which use '-'

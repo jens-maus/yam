@@ -665,7 +665,7 @@ BOOL CertWarningRequest(struct Connection *conn, struct Certificate *cert)
                 conn->server->certFailures = failures;
 
                 // make sure to save the config afterwards
-                SaveConfig(C, G->CO_PrefsFile);
+                SaveConfig(C, G->CO_PrefsFile, TRUE);
 
                 // signal NO error
                 result = TRUE;

@@ -306,7 +306,7 @@ BOOL CopyConfig(struct Config *dco, const struct Config *sco);
 BOOL CompareConfigs(const struct Config *c1, const struct Config *c2);
 void SetDefaultConfig(struct Config *co, enum ConfigPage page);
 int LoadConfig(struct Config *co, const char *fname);
-BOOL SaveConfig(struct Config *co, const char *fname);
+BOOL SaveConfig(struct Config *co, const char *fname, BOOL savePrivateData);
 BOOL IsValidConfig(const struct Config *co);
 void ValidateConfig(struct Config *co, BOOL update, BOOL saveChanges);
 void ResolveConfigFolders(struct Config *co);

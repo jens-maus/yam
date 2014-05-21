@@ -9944,3 +9944,7 @@ msgstr "The pattern (To:/CC:)  must be non-empty and no 'catch all'."
 msgctxt "MSG_FO_MLADDRESS_INVALID (2556//)"
 msgid "The destination address (To:) must be non-empty."
 msgstr "The destination address (To:) must be non-empty."
+
+msgctxt "MSG_CO_SAVE_WITHOUT_PRIVATE_DATA (2557//)"
+msgid "Save without private data..."
+msgstr "Save without private data..."

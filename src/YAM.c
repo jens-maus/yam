@@ -1230,7 +1230,7 @@ BOOL StayInProg(void)
       case 1:
       {
         // save and quit
-        SaveConfig(C, G->CO_PrefsFile);
+        SaveConfig(C, G->CO_PrefsFile, TRUE);
       }
       break;
 

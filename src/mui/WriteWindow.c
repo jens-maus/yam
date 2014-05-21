@@ -5177,7 +5177,7 @@ DECLARE(MenuToggleRecipientObject) // enum RcptType rtype
   // then we save the new default state for the
   // manually hidden/shown recipient object
   if(saveConfig == TRUE)
-    SaveConfig(C, G->CO_PrefsFile);
+    SaveConfig(C, G->CO_PrefsFile, TRUE);
 
   RETURN(0);
   return 0;

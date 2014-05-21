@@ -240,7 +240,7 @@ static void SnapshotAppIcon(void)
     // be saved as well. However, such a snapshot action
     // is done very rarely and the user would definitly
     // expect that the position will be saved immediately.
-    SaveConfig(C, G->CO_PrefsFile);
+    SaveConfig(C, G->CO_PrefsFile, TRUE);
   }
 
   LEAVE();
@@ -265,7 +265,7 @@ static void UnsnapshotAppIcon(void)
   // be saved as well. However, such a snapshot action
   // is done very rarely and the user would definitly
   // expect that the position will be saved immediately.
-  SaveConfig(C, G->CO_PrefsFile);
+  SaveConfig(C, G->CO_PrefsFile, TRUE);
 
   // refresh the AppIcon
   UpdateAppIcon();
