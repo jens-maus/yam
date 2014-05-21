@@ -605,6 +605,12 @@ BOOL CertWarningRequest(struct Connection *conn, struct Certificate *cert)
       dstrcat(&format, "\n");
     }
 
+    if(isFlagSet(failures, SSL_CERT_ERR_SIGINVALID))
+    {
+      dstrcat(&format, tr(MSG_SSL_CERT_WARNING_SIGINVALID));
+      dstrcat(&format, "\n");
+    }
+
     if(isFlagSet(failures, SSL_CERT_ERR_OTHER))
     {
       dstrcat(&format, tr(MSG_SSL_CERT_WARNING_OTHER));
@@ -613,6 +619,9 @@ BOOL CertWarningRequest(struct Connection *conn, struct Certificate *cert)
 
     dstrcat(&format, "\n");
     dstrcat(&format, tr(MSG_SSL_CERT_WARNING_INFO));
+
+    dstrcat(&format, "\n\n");
+    dstrcat(&format, tr(MSG_SSL_CERT_WARNING_OUTRO));
 
     // convert the format string now to a full string
     // with contents

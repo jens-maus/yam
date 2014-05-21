@@ -116,22 +116,30 @@ CROSSCALL2(verify_callback, int, int, preverify_ok, X509_STORE_CTX *, x509_ctx)
         case X509_V_ERR_CERT_UNTRUSTED:
         case X509_V_ERR_UNABLE_TO_VERIFY_LEAF_SIGNATURE:
         {
-          D(DBF_NET, "ssl: verify failure SSL_CERT_ERR_UNTRUSTED found");
+          W(DBF_NET, "ssl: verify failure SSL_CERT_ERR_UNTRUSTED found");
           setFlag(failures, SSL_CERT_ERR_UNTRUSTED);
         }
         break;
 
         case X509_V_ERR_CERT_NOT_YET_VALID:
         {
-          D(DBF_NET, "ssl: verify failure %s found", depth > 0 ? "SSL_CERT_ERR_BADCHAIN" : "SSL_CERT_ERR_NOTYETVALID");
+          W(DBF_NET, "ssl: verify failure %s found", depth > 0 ? "SSL_CERT_ERR_BADCHAIN" : "SSL_CERT_ERR_NOTYETVALID");
           setFlag(failures, depth > 0 ? SSL_CERT_ERR_BADCHAIN : SSL_CERT_ERR_NOTYETVALID);
         }
         break;
 
         case X509_V_ERR_CERT_HAS_EXPIRED:
         {
-          D(DBF_NET, "ssl: verify failure %s found", depth > 0 ? "SSL_CERT_ERR_BADCHAIN" : "SSL_CERT_ERR_EXPIRED");
+          W(DBF_NET, "ssl: verify failure %s found", depth > 0 ? "SSL_CERT_ERR_BADCHAIN" : "SSL_CERT_ERR_EXPIRED");
           setFlag(failures, depth > 0 ? SSL_CERT_ERR_BADCHAIN : SSL_CERT_ERR_EXPIRED);
+        }
+        break;
+
+        case X509_V_ERR_CERT_SIGNATURE_FAILURE:
+        case X509_V_ERR_CRL_SIGNATURE_FAILURE:
+        {
+          W(DBF_NET, "ssl: cert signature failed, signaling SSL_CERT_ERR_SIGINVALID");
+          setFlag(failures, SSL_CERT_ERR_SIGINVALID);
         }
         break;
 

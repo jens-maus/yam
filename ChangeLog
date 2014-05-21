@@ -7,6 +7,13 @@ $URL$
 
 2014-05-21 Jens Maus <mail@jens-maus.de>
 
+  * tcp/ssl.c, Requesters.c: the SSL certificate check now also catches cases
+    where the certificate signature was found to be invalid which was otherwise
+    throwing a connection error immediately. This case recently happens for
+    connections to servers which use certifcates with SHA256-based signatures
+    which are not supported by the latest AmiSSL 3.6 version. Now a user is
+    warned instead about these invalid signatures and can continue the
+    connection if he still believes he is trusting the server. This closes #559.
   * YAM.c: slightly changed the OpenSSL/AmiSSL initialization and added a call
     to OpenSSL_add_all_algorithms(). This hopefully improves verbosity of error
     output and perhaps improves cipher/digest handling. This refs #530 and #559.

@@ -9948,3 +9948,11 @@ msgstr "The destination address (To:) must be non-empty."
 msgctxt "MSG_CO_SAVE_WITHOUT_PRIVATE_DATA (2557//)"
 msgid "Save without private data..."
 msgstr "Save without private data..."
+
+msgctxt "MSG_SSL_CERT_WARNING_SIGINVALID (2558//)"
+msgid "- The signature of the certificate is invalid."
+msgstr "- The signature of the certificate is invalid."
+
+msgctxt "MSG_SSL_CERT_WARNING_OUTRO (2559//)"
+msgid "If you continue the data transfer will be encrypted (protection from\ninterception), but the identity of the server cannot be guaranteed\n(\033bNO\033n protection from fraud).\n\nDo you still want to accept the connection?"
+msgstr "If you continue the data transfer will be encrypted (protection from\ninterception), but the identity of the server cannot be guaranteed\n(\033bNO\033n protection from fraud).\n\nDo you still want to accept the connection?"

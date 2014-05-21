@@ -38,8 +38,9 @@ struct Connection;
 #define SSL_CERT_ERR_IDMISMATCH   (1<<2) // the hostname does not match hostname of server
 #define SSL_CERT_ERR_UNTRUSTED    (1<<3) // the certificate authority which signed the cert is not trusted
 #define SSL_CERT_ERR_BADCHAIN     (1<<4) // the certificate chain contained a cert which failed trust
-#define SSL_CERT_ERR_OTHER        (1<<5) // other certificate error not specified here
-#define SSL_CERT_ERR_UNHANDLED    (1<<6) // unhandled error occurred during cert verification
+#define SSL_CERT_ERR_SIGINVALID   (1<<5) // the signature of the certificate is invalid
+#define SSL_CERT_ERR_OTHER        (1<<6) // other certificate error not specified here
+#define SSL_CERT_ERR_UNHANDLED    (1<<7) // unhandled error occurred during cert verification
 
 #define SSL_DIGESTLEN 60
 
