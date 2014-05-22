@@ -5,9 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-05-22 Thore Böckelmann <tboeckel@gmx.de>
+
+  * themes/NewIcons: added missing archive folder images. Thanks to Alper Sönmez
+    for providing them.
+
 2014-05-22 Jens Maus <mail@jens-maus.de>
 
-  * tcp/ssl.c: Now all possible X509_V_ERR_#? error defines are catched in
+  * tcp/ssl.c: Now all possible X509_V_ERR_#? error defines are catchedt in
     our certificate verification routines. This should make sure that we don't
     have any uncritical case which otherwise would cause YAM to abort the
     connection initialization. This refs #559.
