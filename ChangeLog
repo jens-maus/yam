@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-05-22 Jens Maus <mail@jens-maus.de>
+
+  * tcp/ssl.c: Now all possible X509_V_ERR_#? error defines are catched in
+    our certificate verification routines. This should make sure that we don't
+    have any uncritical case which otherwise would cause YAM to abort the
+    connection initialization. This refs #559.
+
 2014-05-21 Jens Maus <mail@jens-maus.de>
 
   * tcp/ssl.c, Requesters.c: the SSL certificate check now also catches cases

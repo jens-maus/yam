@@ -109,32 +109,72 @@ CROSSCALL2(verify_callback, int, int, preverify_ok, X509_STORE_CTX *, x509_ctx)
       // we cna query later on when checking the certificate chain later again
       switch(err)
       {
+        // (0) the operation was successful.
+        case X509_V_OK:
+          // nothing
+        break;
+
+        // (2) unable to get issuer certificate
+        // (18) self signed certificate
+        // (19) self signed certificate in certificate chain
+        // (20) unable to get local issuer certificate
+        // (21) unable to verify the first certificate
+        // (23) the certificate has been revoked.
+        // (27) certificate not trusted
+        // (28) the root CA is marked to reject the specified purpose.
         case X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT:
-        case X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT_LOCALLY:
-        case X509_V_ERR_SELF_SIGNED_CERT_IN_CHAIN:
         case X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT:
-        case X509_V_ERR_CERT_UNTRUSTED:
+        case X509_V_ERR_SELF_SIGNED_CERT_IN_CHAIN:
+        case X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT_LOCALLY:
         case X509_V_ERR_UNABLE_TO_VERIFY_LEAF_SIGNATURE:
+        case X509_V_ERR_CERT_REVOKED:
+        case X509_V_ERR_CERT_UNTRUSTED:
+        case X509_V_ERR_CERT_REJECTED:
         {
           W(DBF_NET, "ssl: verify failure SSL_CERT_ERR_UNTRUSTED found");
           setFlag(failures, SSL_CERT_ERR_UNTRUSTED);
         }
         break;
 
-        case X509_V_ERR_CERT_NOT_YET_VALID:
+        // (3) the CRL of a certificate could not be found.
+        // (4) the certificate signature could not be decrypted.
+        // (5) the CRL signature could not be decrypted.
+        // (6) the public key in the certificate SubjectPublicKeyInfo could not be read.
+        // (11) the CRL is not yet valid.
+        // (12) the CRL has expired.
+        // (15) the CRL lastUpdate field contains an invalid time.
+        // (16) the CRL nextUpdate field contains an invalid time.
+        // (22) the certificate chain length is greater than the supplied maximum depth. Unused.
+        // (24) a CA certificate is invalid. Either it is not a CA or its extensions are not consistent with the supplied purpose.
+        // (25) the basicConstraints pathlength parameter has been exceeded.
+        // (26) the supplied certificate cannot be used for the specified purpose.
+        // (29) subject issuer mismatch: the current candidate issuer certificate was rejected.
+        // (30) authority and subject key identifier mismatch: the current candidate issuer certificate was rejected.
+        // (31) authority and issuer serial number mismatch: the current candidate issuer certificate was rejected.
+        // (32) key usage does not include certificate signing:  the current candidate issuer certificate was rejected. 
+        case X509_V_ERR_UNABLE_TO_GET_CRL:
+        case X509_V_ERR_UNABLE_TO_DECRYPT_CERT_SIGNATURE:
+        case X509_V_ERR_UNABLE_TO_DECRYPT_CRL_SIGNATURE:
+        case X509_V_ERR_UNABLE_TO_DECODE_ISSUER_PUBLIC_KEY:
+        case X509_V_ERR_CRL_NOT_YET_VALID:
+        case X509_V_ERR_CRL_HAS_EXPIRED:
+        case X509_V_ERR_ERROR_IN_CRL_LAST_UPDATE_FIELD:
+        case X509_V_ERR_ERROR_IN_CRL_NEXT_UPDATE_FIELD:
+        case X509_V_ERR_CERT_CHAIN_TOO_LONG:
+        case X509_V_ERR_INVALID_CA:
+        case X509_V_ERR_PATH_LENGTH_EXCEEDED:
+        case X509_V_ERR_INVALID_PURPOSE:
+        case X509_V_ERR_SUBJECT_ISSUER_MISMATCH:
+        case X509_V_ERR_AKID_ISSUER_SERIAL_MISMATCH:
+        case X509_V_ERR_KEYUSAGE_NO_CERTSIGN:
         {
-          W(DBF_NET, "ssl: verify failure %s found", depth > 0 ? "SSL_CERT_ERR_BADCHAIN" : "SSL_CERT_ERR_NOTYETVALID");
-          setFlag(failures, depth > 0 ? SSL_CERT_ERR_BADCHAIN : SSL_CERT_ERR_NOTYETVALID);
+          W(DBF_NET, "ssl: other uncritical certificate problem. Signaling SSL_CERT_ERR_OTHER.");
+          setFlag(failures, SSL_CERT_ERR_OTHER);
         }
         break;
 
-        case X509_V_ERR_CERT_HAS_EXPIRED:
-        {
-          W(DBF_NET, "ssl: verify failure %s found", depth > 0 ? "SSL_CERT_ERR_BADCHAIN" : "SSL_CERT_ERR_EXPIRED");
-          setFlag(failures, depth > 0 ? SSL_CERT_ERR_BADCHAIN : SSL_CERT_ERR_EXPIRED);
-        }
-        break;
-
+        // (7) the signature of the certificate is invalid.
+        // (8) the signature of the certificate is invalid.
         case X509_V_ERR_CERT_SIGNATURE_FAILURE:
         case X509_V_ERR_CRL_SIGNATURE_FAILURE:
         {
@@ -143,10 +183,28 @@ CROSSCALL2(verify_callback, int, int, preverify_ok, X509_STORE_CTX *, x509_ctx)
         }
         break;
 
-        case X509_V_OK:
-          // nothing
+        // (9) the certificate is not yet valid: the notBefore date is after the current time.
+        // (13) the certificate notBefore field contains an invalid time.
+        case X509_V_ERR_CERT_NOT_YET_VALID: 
+        case X509_V_ERR_ERROR_IN_CERT_NOT_BEFORE_FIELD:
+        {
+          W(DBF_NET, "ssl: verify failure %s found", depth > 0 ? "SSL_CERT_ERR_BADCHAIN" : "SSL_CERT_ERR_NOTYETVALID");
+          setFlag(failures, depth > 0 ? SSL_CERT_ERR_BADCHAIN : SSL_CERT_ERR_NOTYETVALID);
+        }
         break;
 
+        // (10) the certificate has expired: that is the notAfter date is before the current time.
+        // (14) the certificate notAfter field contains an invalid time.
+        case X509_V_ERR_CERT_HAS_EXPIRED:
+        case X509_V_ERR_ERROR_IN_CERT_NOT_AFTER_FIELD:
+        {
+          W(DBF_NET, "ssl: verify failure %s found", depth > 0 ? "SSL_CERT_ERR_BADCHAIN" : "SSL_CERT_ERR_EXPIRED");
+          setFlag(failures, depth > 0 ? SSL_CERT_ERR_BADCHAIN : SSL_CERT_ERR_EXPIRED);
+        }
+        break;
+
+        // (17) X509_V_ERR_OUT_OF_MEM: an error occurred trying to allocate memory. This should never happen.
+        // (50) X509_V_ERR_APPLICATION_VERIFICATION: an application specific error. Unused.
         default:
         {
           // clear the failures bitmask so check_certificates() knows this
