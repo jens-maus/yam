@@ -2659,6 +2659,11 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
             D(DBF_MIME, "delsent found");
             email->DelSent = TRUE;
           }
+          if(strcasestr(value, "redirect") != NULL)
+          {
+            D(DBF_MIME, "redirect found");
+            email->Redirect = TRUE;
+          }
 
           // check for the signature flag
           if((p = strcasestr(value, "signature=")) != NULL)

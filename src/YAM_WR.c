@@ -805,7 +805,7 @@ static BOOL WR_Redirect(FILE *fh, const struct Compose *comp)
       // now we add the "Resent-#?" type headers which are defined
       // by RFC2822 section 3.6.6. The RFC defined that these headers
       // should be added to the top of a message
-      EmitHeader(fh, "Resent-From", BuildAddress(address, sizeof(address), comp->Identity->address, comp->Identity->realname), comp->codeset);
+      EmitRcptHeader(fh, "Resent-From", BuildAddress(address, sizeof(address), comp->Identity->address, comp->Identity->realname), comp->codeset);
       EmitRcptHeader(fh, "Resent-To", comp->MailTo, comp->codeset);
       EmitRcptHeader(fh, "Resent-CC", comp->MailCC, comp->codeset);
       EmitRcptHeader(fh, "Resent-BCC", comp->MailBCC, comp->codeset);
@@ -1971,49 +1971,76 @@ struct WriteMailData *NewWriteMailWindow(struct Mail *mail, const int flags)
 //  Edits a message in a new write window
 struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
 {
-  BOOL quiet = hasQuietFlag(flags);
   struct Folder *folder;
   struct WriteMailData *wmData = NULL;
 
   ENTER();
 
-  // check the parameters
-  if(mail == NULL || (folder = mail->Folder) == NULL)
+  // check the parameters and the configuration
+  if(mail != NULL && (folder = mail->Folder) != NULL && IsValidConfig(C) == TRUE)
   {
-    RETURN(wmData);
-    return wmData;
-  }
+    struct ExtendedMail *email = NULL;
+    struct ReadMailData *rmData = NULL;
+    char *cmsg = NULL;
+    FILE *out = NULL;
 
-  // check if the mail in question resists in the drafts
-  // folder
-  if(isDraftsFolder(folder))
-  {
-    // search through our WriteMailDataList
-    struct WriteMailData *lwmData;
-
-    IterateList(&G->writeMailDataList, struct WriteMailData *, lwmData)
+    do
     {
-      if(lwmData->window != NULL && lwmData->refMail == mail)
+      enum NewMailMode newMailMode;
+      size_t msglen;
+
+      // check if the mail in question resists in the drafts
+      // folder
+      if(isDraftsFolder(folder))
       {
-        DoMethod(lwmData->window, MUIM_Window_ToFront);
+        // search through our WriteMailDataList
+        struct WriteMailData *lwmData;
 
-        RETURN(lwmData);
-        return lwmData;
+        IterateList(&G->writeMailDataList, struct WriteMailData *, lwmData)
+        {
+          if(lwmData->window != NULL && lwmData->refMail == mail)
+          {
+            DoMethod(lwmData->window, MUIM_Window_ToFront);
+            wmData = lwmData;
+            break;
+          }
+        }
+
+        if(wmData != NULL)
+          break;
       }
-    }
-  }
 
-  // check if necessary settings for writing are OK and open new window
-  if(IsValidConfig(C) == TRUE &&
-     (wmData = CreateWriteWindow(isDraftsFolder(folder) ? NMM_EDIT : NMM_EDITASNEW, quiet)) != NULL)
-  {
-    FILE *out;
+      if((email = MA_ExamineMail(folder, mail->MailFile, TRUE)) == NULL)
+      {
+        char mailfile[SIZE_PATHFILE];
 
-    if((out = fopen(wmData->filename, "w")) != NULL)
-    {
-      struct ReadMailData *rmData;
-      struct ExtendedMail *email;
-      char *p;
+        GetMailFile(mailfile, sizeof(mailfile), NULL, mail);
+        ER_NewError(tr(MSG_ER_CantOpenFile), mailfile);
+
+        break;
+      }
+
+      if((rmData = AllocPrivateRMData(mail, PM_ALL)) == NULL)
+        break;
+
+      if((cmsg = RE_ReadInMessage(rmData, RIM_EDIT)) == NULL)
+        break;
+
+      if(isDraftsFolder(folder) == TRUE)
+      {
+        if(email->Redirect == TRUE)
+          newMailMode = NMM_REDIRECT;
+        else
+          newMailMode = NMM_EDIT;
+      }
+      else
+        newMailMode = NMM_EDITASNEW;
+
+      if((wmData = CreateWriteWindow(newMailMode, hasQuietFlag(flags))) == NULL)
+        break;
+
+      if((out = fopen(wmData->filename, "w")) == NULL)
+        break;
 
       setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
 
@@ -2023,189 +2050,198 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
       else
         wmData->refMail = mail;
 
-      if((email = MA_ExamineMail(folder, mail->MailFile, TRUE)) == NULL)
-      {
-        char mailfile[SIZE_PATHFILE];
+      msglen = dstrlen(cmsg);
 
-        GetMailFile(mailfile, sizeof(mailfile), NULL, mail);
-        ER_NewError(tr(MSG_ER_CantOpenFile), mailfile);
+      // we check whether cmsg contains any text and if so we
+      // write out the whole text to our temporary file.
+      if(msglen == 0 || fwrite(cmsg, msglen, 1, out) == 1)
+      {
+        int i;
+        char address[SIZE_LARGE];
+        BOOL reuseReplyToAddress = TRUE;
+        char *sbuf = NULL;
+        char *p;
+
+        // close the output file
         fclose(out);
-        CleanupWriteMailData(wmData);
+        out = NULL;
 
-        RETURN(NULL);
-        return NULL;
-      }
-
-      if((rmData = AllocPrivateRMData(mail, PM_ALL)) != NULL)
-      {
-        char *cmsg;
-
-        if((cmsg = RE_ReadInMessage(rmData, RIM_EDIT)) != NULL)
+        // set the In-Reply-To / References message header references, if they exist
+        if(IsStrEmpty(email->inReplyToMsgID) == FALSE)
         {
-          size_t msglen = dstrlen(cmsg);
+          D(DBF_MAIL, "adding inReplyToMsgID '%s'", email->inReplyToMsgID);
+          dstrcpy(&wmData->inReplyToMsgID, email->inReplyToMsgID);
+        }
 
-          // we check whether cmsg contains any text and if so we
-          // write out the whole text to our temporary file.
-          if(msglen == 0 || fwrite(cmsg, msglen, 1, out) == 1)
+        if(IsStrEmpty(email->references) == FALSE)
+        {
+          D(DBF_MAIL, "adding references '%s'", email->references);
+          dstrcpy(&wmData->references, email->references);
+        }
+
+        // set the subject gadget
+        set(wmData->window, MUIA_WriteWindow_Subject, mail->Subject);
+
+        // in case this is a EDITASNEW action with a mailing list
+        // folder we have to make sure to add the From: and ReplyTo:
+        // address of the mailing list
+        if(wmData->mode == NMM_EDITASNEW && folder->MLSupport == TRUE)
+        {
+          if(folder->MLIdentity != NULL)
+            email->identity = folder->MLIdentity;
+
+          if(IsStrEmpty(folder->MLReplyToAddress) == FALSE)
           {
-            int i;
-            char address[SIZE_LARGE];
-            BOOL reuseReplyToAddress = TRUE;
-            char *sbuf = NULL;
-
-            // free our temp text now
-            dstrfree(cmsg);
-
-            // set the In-Reply-To / References message header references, if they exist
-            if(IsStrEmpty(email->inReplyToMsgID) == FALSE)
-            {
-              D(DBF_MAIL, "adding inReplyToMsgID '%s'", email->inReplyToMsgID);
-              dstrcpy(&wmData->inReplyToMsgID, email->inReplyToMsgID);
-            }
-
-            if(IsStrEmpty(email->references) == FALSE)
-            {
-              D(DBF_MAIL, "adding references '%s'", email->references);
-              dstrcpy(&wmData->references, email->references);
-            }
-
-            // set the subject gadget
-            set(wmData->window, MUIA_WriteWindow_Subject, mail->Subject);
-
-            // in case this is a EDITASNEW action with a mailing list
-            // folder we have to make sure to add the From: and ReplyTo:
-            // address of the mailing list
-            if(wmData->mode == NMM_EDITASNEW && folder->MLSupport == TRUE)
-            {
-              if(folder->MLIdentity != NULL)
-                email->identity = folder->MLIdentity;
-
-              if(IsStrEmpty(folder->MLReplyToAddress) == FALSE)
-              {
-                set(wmData->window, MUIA_WriteWindow_ReplyTo, folder->MLReplyToAddress);
-                reuseReplyToAddress = FALSE;
-              }
-            }
-
-            // we now set the user identity in the write window (either the one
-            // ExamineMail found out for us or the one we have overwritten
-            // due to the MLSupport
-            set(wmData->window, MUIA_WriteWindow_Identity, email->identity);
-            set(wmData->window, MUIA_WriteWindow_From, mail->From.Address);
-
-            if(reuseReplyToAddress == TRUE)
-            {
-              // add all ReplyTo: recipients
-              D(DBF_MAIL, "adding ReplyTo recipient '%s'", mail->ReplyTo.Address);
-              dstrcpy(&sbuf, BuildAddress(address, sizeof(address), mail->ReplyTo.Address, mail->ReplyTo.RealName));
-              for(i=0; i < email->NumSReplyTo; i++)
-              {
-                D(DBF_MAIL, "adding ReplyTo recipient '%s'", email->SReplyTo[i].Address);
-                sbuf = AppendRcpt(sbuf, &email->SReplyTo[i], email->identity, FALSE);
-              }
-              set(wmData->window, MUIA_WriteWindow_ReplyTo, sbuf);
-            }
-
-            // add all "To:" recipients of the mail
-            D(DBF_MAIL, "adding To recipient '%s'", mail->To.Address);
-            dstrcpy(&sbuf, BuildAddress(address, sizeof(address), mail->To.Address, mail->To.RealName));
-            for(i=0; i < email->NumSTo; i++)
-            {
-              D(DBF_MAIL, "adding To recipient '%s'", email->STo[i].Address);
-              sbuf = AppendRcpt(sbuf, &email->STo[i], email->identity, FALSE);
-            }
-            set(wmData->window, MUIA_WriteWindow_To, sbuf);
-
-            // add all "CC:" recipients of the mail
-            dstrreset(sbuf);
-            for(i=0; i < email->NumCC; i++)
-            {
-              D(DBF_MAIL, "adding CC recipient '%s'", email->CC[i].Address);
-              sbuf = AppendRcpt(sbuf, &email->CC[i], email->identity, FALSE);
-            }
-            set(wmData->window, MUIA_WriteWindow_CC, sbuf);
-
-            // add all "BCC:" recipients of the mail
-            dstrreset(sbuf);
-            for(i=0; i < email->NumBCC; i++)
-            {
-              D(DBF_MAIL, "adding BCC recipient '%s'", email->BCC[i].Address);
-              sbuf = AppendRcpt(sbuf, &email->BCC[i], email->identity, FALSE);
-            }
-            set(wmData->window, MUIA_WriteWindow_BCC, sbuf);
-
-            // free our temporary buffer
-            dstrfree(sbuf);
-
-            if(email->extraHeaders != NULL)
-              set(wmData->window, MUIA_WriteWindow_ExtHeaders, email->extraHeaders);
-
-            xset(wmData->window, MUIA_WriteWindow_DelSent,    email->DelSent,
-                                 MUIA_WriteWindow_MDN,        isSendMDNMail(mail),
-                                 MUIA_WriteWindow_AddInfo,    isSenderInfoMail(mail),
-                                 MUIA_WriteWindow_Importance, getImportanceLevel(mail) == IMP_HIGH ? 0 : getImportanceLevel(mail)+1,
-                                 MUIA_WriteWindow_Signature,  email->signature,
-                                 MUIA_WriteWindow_Security,   email->Security);
-
-            // setup the write window from an existing readmailData structure
-            DoMethod(wmData->window, MUIM_WriteWindow_SetupFromOldMail, rmData);
-          }
-          else
-          {
-            E(DBF_MAIL, "Error while writing cmsg to out FH");
-
-            // an error occurred while trying to write the text to out
-            dstrfree(cmsg);
-            FreePrivateRMData(rmData);
-            fclose(out);
-            MA_FreeEMailStruct(email);
-
-            CleanupWriteMailData(wmData);
-
-            RETURN(NULL);
-            return NULL;
+            set(wmData->window, MUIA_WriteWindow_ReplyTo, folder->MLReplyToAddress);
+            reuseReplyToAddress = FALSE;
           }
         }
 
-        FreePrivateRMData(rmData);
+        // we now set the user identity in the write window (either the one
+        // ExamineMail found out for us or the one we have overwritten
+        // due to the MLSupport
+        set(wmData->window, MUIA_WriteWindow_Identity, email->identity);
+        set(wmData->window, MUIA_WriteWindow_From, mail->From.Address);
+
+        if(reuseReplyToAddress == TRUE)
+        {
+          // add all ReplyTo: recipients
+          D(DBF_MAIL, "adding ReplyTo recipient '%s'", mail->ReplyTo.Address);
+          dstrcpy(&sbuf, BuildAddress(address, sizeof(address), mail->ReplyTo.Address, mail->ReplyTo.RealName));
+          for(i=0; i < email->NumSReplyTo; i++)
+          {
+            D(DBF_MAIL, "adding ReplyTo recipient '%s'", email->SReplyTo[i].Address);
+            sbuf = AppendRcpt(sbuf, &email->SReplyTo[i], email->identity, FALSE);
+          }
+          set(wmData->window, MUIA_WriteWindow_ReplyTo, sbuf);
+        }
+
+        // add all "To:" recipients of the mail
+        if(email->Redirect == TRUE)
+        {
+          for(i=0; i < email->NumResentTo; i++)
+          {
+            D(DBF_MAIL, "adding Resent-To recipient '%s'", email->ResentTo[i].Address);
+            sbuf = AppendRcpt(sbuf, &email->ResentTo[i], email->identity, FALSE);
+          }
+        }
+        else
+        {
+          D(DBF_MAIL, "adding To recipient '%s'", mail->To.Address);
+          dstrcpy(&sbuf, BuildAddress(address, sizeof(address), mail->To.Address, mail->To.RealName));
+          for(i=0; i < email->NumSTo; i++)
+          {
+            D(DBF_MAIL, "adding To recipient '%s'", email->STo[i].Address);
+            sbuf = AppendRcpt(sbuf, &email->STo[i], email->identity, FALSE);
+          }
+        }
+        set(wmData->window, MUIA_WriteWindow_To, sbuf);
+
+        // add all "CC:" recipients of the mail
+        dstrreset(sbuf);
+        if(email->Redirect == TRUE)
+        {
+          for(i=0; i < email->NumResentCC; i++)
+          {
+            D(DBF_MAIL, "adding Resent-CC recipient '%s'", email->ResentCC[i].Address);
+            sbuf = AppendRcpt(sbuf, &email->ResentCC[i], email->identity, FALSE);
+          }
+        }
+        else
+        {
+          for(i=0; i < email->NumCC; i++)
+          {
+            D(DBF_MAIL, "adding CC recipient '%s'", email->CC[i].Address);
+            sbuf = AppendRcpt(sbuf, &email->CC[i], email->identity, FALSE);
+          }
+        }
+        set(wmData->window, MUIA_WriteWindow_CC, sbuf);
+
+        // add all "BCC:" recipients of the mail
+        dstrreset(sbuf);
+        if(email->Redirect == TRUE)
+        {
+          for(i=0; i < email->NumResentBCC; i++)
+          {
+            D(DBF_MAIL, "adding Resent-BCC recipient '%s'", email->ResentBCC[i].Address);
+            sbuf = AppendRcpt(sbuf, &email->ResentBCC[i], email->identity, FALSE);
+          }
+        }
+        else
+        {
+          for(i=0; i < email->NumBCC; i++)
+          {
+            D(DBF_MAIL, "adding BCC recipient '%s'", email->BCC[i].Address);
+            sbuf = AppendRcpt(sbuf, &email->BCC[i], email->identity, FALSE);
+          }
+        }
+        set(wmData->window, MUIA_WriteWindow_BCC, sbuf);
+
+        // free our temporary buffer
+        dstrfree(sbuf);
+
+        if(email->extraHeaders != NULL)
+          set(wmData->window, MUIA_WriteWindow_ExtHeaders, email->extraHeaders);
+
+        xset(wmData->window, MUIA_WriteWindow_DelSent,    email->DelSent,
+                             MUIA_WriteWindow_MDN,        isSendMDNMail(mail),
+                             MUIA_WriteWindow_AddInfo,    isSenderInfoMail(mail),
+                             MUIA_WriteWindow_Importance, getImportanceLevel(mail) == IMP_HIGH ? 0 : getImportanceLevel(mail)+1,
+                             MUIA_WriteWindow_Signature,  email->signature,
+                             MUIA_WriteWindow_Security,   email->Security);
+
+        // setup the write window from an existing readmailData structure
+        DoMethod(wmData->window, MUIM_WriteWindow_SetupFromOldMail, rmData);
+
+        // update the message text
+        DoMethod(wmData->window, MUIM_WriteWindow_LoadText, NULL, FALSE);
+
+        // make sure the window is opened
+        if(hasQuietFlag(flags) == FALSE)
+          SafeOpenWindow(wmData->window);
+
+        // make sure that either the To:, Subject: or the
+        // texteditor is the active object depending on which
+        // string is empty
+        p = (char *)xget(wmData->window, MUIA_WriteWindow_To);
+        if(IsStrEmpty(p) == TRUE)
+          set(wmData->window, MUIA_WriteWindow_ActiveObject, MUIV_WriteWindow_ActiveObject_To);
+        else
+        {
+          p = (char *)xget(wmData->window, MUIA_WriteWindow_Subject);
+          if(IsStrEmpty(p) == TRUE)
+            set(wmData->window, MUIA_WriteWindow_ActiveObject, MUIV_WriteWindow_ActiveObject_Subject);
+          else
+            set(wmData->window, MUIA_WriteWindow_ActiveObject, MUIV_WriteWindow_ActiveObject_TextEditor);
+        }
+
+        // start with an unmodified message
+        set(wmData->window, MUIA_WriteWindow_Modified, FALSE);
+
+        if(C->LaunchAlways == TRUE && hasQuietFlag(flags) == FALSE)
+          DoMethod(wmData->window, MUIM_WriteWindow_LaunchEditor);
       }
-
-      fclose(out);
-      MA_FreeEMailStruct(email);
-
-      // update the message text
-      DoMethod(wmData->window, MUIM_WriteWindow_LoadText, NULL, FALSE);
-
-      // make sure the window is opened
-      if(quiet == FALSE)
-        SafeOpenWindow(wmData->window);
-
-      // make sure that either the To:, Subject: or the
-      // texteditor is the active object depending on which
-      // string is empty
-      p = (char *)xget(wmData->window, MUIA_WriteWindow_To);
-      if(IsStrEmpty(p) == TRUE)
-        set(wmData->window, MUIA_WriteWindow_ActiveObject, MUIV_WriteWindow_ActiveObject_To);
       else
       {
-        p = (char *)xget(wmData->window, MUIA_WriteWindow_Subject);
-        if(IsStrEmpty(p) == TRUE)
-          set(wmData->window, MUIA_WriteWindow_ActiveObject, MUIV_WriteWindow_ActiveObject_Subject);
-        else
-          set(wmData->window, MUIA_WriteWindow_ActiveObject, MUIV_WriteWindow_ActiveObject_TextEditor);
+        // an error occurred while trying to write the text to out
+        E(DBF_MAIL, "Error while writing cmsg to out FH");
+        CleanupWriteMailData(wmData);
+        wmData = NULL;
       }
-
-      // start with an unmodified message
-      set(wmData->window, MUIA_WriteWindow_Modified, FALSE);
-
-      if(C->LaunchAlways == TRUE && quiet == FALSE)
-        DoMethod(wmData->window, MUIM_WriteWindow_LaunchEditor);
     }
-    else
-    {
-      CleanupWriteMailData(wmData);
-      wmData = NULL;
-    }
+    while(FALSE);
+
+    // clean up anything that is still alive
+    if(out != NULL)
+      fclose(out);
+
+    dstrfree(cmsg);
+
+    if(rmData != NULL)
+      FreePrivateRMData(rmData);
+
+    if(email != NULL)
+      MA_FreeEMailStruct(email);
   }
 
   RETURN(wmData);

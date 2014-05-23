@@ -816,6 +816,7 @@ OVERLOAD(OM_NEW)
           MUIA_Menu_CopyStrings, FALSE,
           MenuChild, Menuitem(tr(MSG_WR_MSENDNOW), "S", TRUE, FALSE, WMEN_SENDNOW),
           MenuChild, Menuitem(tr(MSG_WR_MSENDLATER), "L", TRUE, FALSE, WMEN_QUEUE),
+          MenuChild, Menuitem(tr(MSG_WR_MSAVEASDRAFT), "H", TRUE, FALSE, WMEN_SAVEASDRAFT),
           MenuChild, Menuitem(tr(MSG_WR_MCLOSE), "W", TRUE, FALSE, WMEN_CLOSE),
         End,
         MenuChild, MenuObject,
@@ -869,10 +870,11 @@ OVERLOAD(OM_NEW)
               Child, data->GR_BCC = MakeAddressField(&data->ST_BCC, tr(MSG_WR_REDIRECT_BCC), MSG_HELP_WR_ST_BCC, ABM_BCC, data->windowNumber, AFF_ALLOW_MULTI|AFF_EXTERNAL_SHORTCUTS),
             End,
 
-            Child, ColGroup(4),
+            Child, ColGroup(5),
               Child, data->BT_SEND  = MakeButton(tr(MSG_WR_SENDNOW)),
               Child, data->BT_QUEUE = MakeButton(tr(MSG_WR_SENDLATER)),
               Child, HVSpace,
+              Child, data->BT_SAVEASDRAFT = MakeButton(tr(MSG_WR_SAVEASDRAFT)),
               Child, data->BT_CANCEL = MakeButton(tr(MSG_WR_CANCEL)),
             End,
 
@@ -884,6 +886,7 @@ OVERLOAD(OM_NEW)
       {
         DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SENDNOW,     obj, 3, METHOD(ComposeMail), WRITE_SEND, TRUE);
         DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_QUEUE,       obj, 3, METHOD(ComposeMail), WRITE_QUEUE, TRUE);
+        DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_SAVEASDRAFT, obj, 3, METHOD(ComposeMail), WRITE_DRAFT, TRUE);
         DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_CLOSE,       obj, 1, METHOD(CancelAction));
         DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_CUT,         obj, 2, METHOD(EditActionPerformed), EA_CUT);
         DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, WMEN_COPY,        obj, 2, METHOD(EditActionPerformed), EA_COPY);
@@ -3967,6 +3970,9 @@ DECLARE(ComposeMail) // enum WriteMode mode, ULONG closeWindow
   else if(IsStrEmpty(addr) == FALSE)
     comp.MailBCC = addr;
 
+  // set the write codeset for any mail to be written
+  comp.codeset = wmData->codeset;
+
   // from here on a mail redirect window/operation doesn't need to take care
   // of reply-to, attachments checking, etc.
   if(wmData->mode != NMM_REDIRECT)
@@ -4049,7 +4055,6 @@ DECLARE(ComposeMail) // enum WriteMode mode, ULONG closeWindow
     comp.Signature = (struct SignatureNode *)xget(data->CY_SIGNATURE, MUIA_SignatureChooser_Signature);
     comp.Security = GetMUICycle(data->CY_SECURITY);
     comp.SelSecurity = comp.Security;
-    comp.codeset = wmData->codeset;
 
     if(comp.Security == SEC_DEFAULTS &&
        SetDefaultSecurity(&comp, obj) == FALSE)
@@ -4623,37 +4628,31 @@ DECLARE(DoAutoSave)
 
   ENTER();
 
-  // Redirected mails are never saved automatically.
-  // There is not much to loose as the window lets
-  // the user enter new addresses only anyway.
-  if(data->wmData->mode != NMM_REDIRECT)
+  // do the autosave only if something was modified
+  if(data->mailModified == TRUE || xget(data->TE_EDIT, MUIA_TextEditor_HasChanged) == TRUE)
   {
-    // do the autosave only if something was modified
-    if(data->mailModified == TRUE || xget(data->TE_EDIT, MUIA_TextEditor_HasChanged) == TRUE)
+    // prevent the autosave from happening when one of the match windows of
+    // the recipientstring objects are open or otherwise they are intermediately
+    // closed and resolved as soon as the autosave happens.
+    if(xget(data->ST_TO, MUIA_RecipientString_MatchwindowOpen) == FALSE &&
+       xget(data->ST_CC, MUIA_RecipientString_MatchwindowOpen) == FALSE &&
+       xget(data->ST_BCC, MUIA_RecipientString_MatchwindowOpen) == FALSE &&
+       xget(data->ST_REPLYTO, MUIA_RecipientString_MatchwindowOpen) == FALSE)
     {
-      // prevent the autosave from happening when one of the match windows of
-      // the recipientstring objects are open or otherwise they are intermediately
-      // closed and resolved as soon as the autosave happens.
-      if(xget(data->ST_TO, MUIA_RecipientString_MatchwindowOpen) == FALSE &&
-         xget(data->ST_CC, MUIA_RecipientString_MatchwindowOpen) == FALSE &&
-         xget(data->ST_BCC, MUIA_RecipientString_MatchwindowOpen) == FALSE &&
-         xget(data->ST_REPLYTO, MUIA_RecipientString_MatchwindowOpen) == FALSE)
+      if(DoMethod(obj, METHOD(ComposeMail), WRITE_DRAFT, FALSE) == TRUE)
       {
-        if(DoMethod(obj, METHOD(ComposeMail), WRITE_DRAFT, FALSE) == TRUE)
-        {
-          // we must remember if the mail was automatically saved, since the editor object cannot
-          // tell about changes anymore if they don't happen from now on.
-          data->autoSaved = TRUE;
+        // we must remember if the mail was automatically saved, since the editor object cannot
+        // tell about changes anymore if they don't happen from now on.
+        data->autoSaved = TRUE;
 
-          D(DBF_MAIL, "saved mail text of write window #%d", data->windowNumber);
-        }
+        D(DBF_MAIL, "saved mail text of write window #%d", data->windowNumber);
       }
-      else
-        W(DBF_MAIL, "match window of recipientstring open, rejected autosave of write window #%d", data->windowNumber);
     }
     else
-      D(DBF_MAIL, "no changes found in editor, no need to save an autosave file");
+      W(DBF_MAIL, "match window of recipientstring open, rejected autosave of write window #%d", data->windowNumber);
   }
+  else
+    D(DBF_MAIL, "no changes found in editor, no need to save an autosave file");
 
   RETURN(0);
   return 0;

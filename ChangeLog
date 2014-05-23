@@ -10,6 +10,9 @@ $URL$
   * themes: updated the "MagicWB", "MagicWB reduced" and "Mason old" themes.
     Thanks to Alper Sönmez for providing them. The "MagicWB reduced" themes has
     no config images to speed up loading as the config window is seldom used.
+  * YAM_WR.c: reworked the creation of the edit mail window to examine the mail
+    ahead of creating the window. This makes it possible to edit redirected
+    mails in the Drafts folder. This closes #383.
 
 2014-05-22 Thore Böckelmann <tboeckel@gmx.de>
 
