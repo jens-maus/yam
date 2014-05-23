@@ -2653,12 +2653,14 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
           char *p;
           int sec;
 
-          // check for the delsent flag first
+          // check for the delsent flag
           if(strcasestr(value, "delsent") != NULL)
           {
             D(DBF_MIME, "delsent found");
             email->DelSent = TRUE;
           }
+
+          // check for the redirect flag
           if(strcasestr(value, "redirect") != NULL)
           {
             D(DBF_MIME, "redirect found");
