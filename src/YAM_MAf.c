@@ -2657,7 +2657,7 @@ struct ExtendedMail *MA_ExamineMail(const struct Folder *folder, const char *fil
           if(strcasestr(value, "delsent") != NULL)
           {
             D(DBF_MIME, "delsent found");
-            email->DelSend = TRUE;
+            email->DelSent = TRUE;
           }
 
           // check for the signature flag

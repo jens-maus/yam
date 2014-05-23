@@ -72,7 +72,7 @@ void rx_writeoptions(UNUSED struct RexxHost *host, struct RexxParams *params, en
       {
         struct WriteMailData *wmData = G->ActiveRexxWMData;
 
-        xset(wmData->window, MUIA_WriteWindow_DelSend,    args->delete,
+        xset(wmData->window, MUIA_WriteWindow_DelSent,    args->delete,
                              MUIA_WriteWindow_MDN,        args->receipt,
                              MUIA_WriteWindow_AddInfo,    args->addinfo);
 

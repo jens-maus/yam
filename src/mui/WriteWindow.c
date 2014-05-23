@@ -135,7 +135,7 @@ struct Data
   Object *ST_FROM_OVERRIDE;
   Object *GR_FROM_OVERRIDE;
   Object *ST_EXTHEADER;
-  Object *CH_DELSEND;
+  Object *CH_DELSENT;
   Object *CH_MDN;
   Object *CH_ADDINFO;
   Object *CY_IMPORTANCE;
@@ -152,7 +152,7 @@ struct Data
   Object *MI_COLORED;
   Object *MI_AUTOSPELL;
   Object *MI_AUTOWRAP;
-  Object *MI_DELSEND;
+  Object *MI_DELSENT;
   Object *MI_MDN;
   Object *MI_ADDINFO;
   Object *MI_FFONT;
@@ -236,7 +236,7 @@ enum
   WMEN_DICT,WMEN_STYLE_BOLD,WMEN_STYLE_ITALIC,WMEN_STYLE_UNDERLINE,
   WMEN_STYLE_COLORED,WMEN_EMOT0,WMEN_EMOT1,WMEN_EMOT2,WMEN_EMOT3,WMEN_UNDO,WMEN_REDO,
   WMEN_AUTOSP,WMEN_AUTOWRAP,WMEN_ADDFILE, WMEN_ADDCLIP, WMEN_ADDPGP,
-  WMEN_DELSEND,WMEN_MDN,WMEN_ADDINFO,WMEN_IMPORT0,WMEN_IMPORT1,
+  WMEN_DELSENT,WMEN_MDN,WMEN_ADDINFO,WMEN_IMPORT0,WMEN_IMPORT1,
   WMEN_IMPORT2,WMEN_SIGN0,WMEN_SIGN1,WMEN_SIGN2,WMEN_SIGN3,WMEN_SIGN4,WMEN_SIGN5,WMEN_SIGN6,WMEN_SIGN7,
   WMEN_SECUR0,WMEN_SECUR1,WMEN_SECUR2,WMEN_SECUR3,WMEN_SECUR4,WMEN_INSUUCODE,
   WMEN_SENDNOW,WMEN_QUEUE,WMEN_SAVEASDRAFT,WMEN_CLOSE,WMEN_SWITCH1,WMEN_SWITCH2,WMEN_SWITCH3,
@@ -1028,7 +1028,7 @@ OVERLOAD(OM_NEW)
         MenuChild, MenuObject,
           MUIA_Menu_Title, tr(MSG_Options),
           MUIA_Menu_CopyStrings, FALSE,
-          MenuChild, data->MI_DELSEND = MenuitemCheck(tr(MSG_WR_MDelSend), NULL, TRUE, FALSE, TRUE, 0, WMEN_DELSEND),
+          MenuChild, data->MI_DELSENT = MenuitemCheck(tr(MSG_WR_MDelSend), NULL, TRUE, FALSE, TRUE, 0, WMEN_DELSENT),
           MenuChild, data->MI_MDN = MenuitemCheck(tr(MSG_WR_MReceipt), NULL, TRUE, FALSE, TRUE, 0, WMEN_MDN),
           MenuChild, data->MI_ADDINFO = MenuitemCheck(tr(MSG_WR_MAddInfo), NULL, TRUE, FALSE, TRUE, 0, WMEN_ADDINFO),
           MenuChild, MenuitemObject,
@@ -1266,7 +1266,7 @@ OVERLOAD(OM_NEW)
                   Child, HBarT(tr(MSG_WR_SendOpt)), End,
 
                   Child, HSpace(1),
-                  Child, MakeCheckGroup((Object **)&data->CH_DELSEND, tr(MSG_WR_DelSend)),
+                  Child, MakeCheckGroup((Object **)&data->CH_DELSENT, tr(MSG_WR_DelSend)),
 
                   Child, HSpace(1),
                   Child, MakeCheckGroup((Object **)&data->CH_MDN,     tr(MSG_WR_Receipt)),
@@ -1363,7 +1363,7 @@ OVERLOAD(OM_NEW)
         SetHelp(data->PO_CTYPE,       MSG_HELP_WR_ST_CTYPE);
         SetHelp(data->ST_DESC,        MSG_HELP_WR_ST_DESC);
         SetHelp(data->ST_EXTHEADER,   MSG_HELP_WR_ST_EXTHEADER);
-        SetHelp(data->CH_DELSEND,     MSG_HELP_WR_CH_DELSEND);
+        SetHelp(data->CH_DELSENT,     MSG_HELP_WR_CH_DELSEND);
         SetHelp(data->CH_MDN,         MSG_HELP_WR_CH_RECEIPT);
         SetHelp(data->CH_ADDINFO,     MSG_HELP_WR_CH_ADDINFO);
         SetHelp(data->CY_IMPORTANCE,  MSG_HELP_WR_CY_IMPORTANCE);
@@ -1506,13 +1506,13 @@ OVERLOAD(OM_NEW)
         DoMethod(data->LV_ATTACH_TINY, MUIM_Notify, MUIA_NList_Active,                      MUIV_EveryTime, obj, 1, METHOD(GetAttachmentEntry));
         DoMethod(data->PO_CTYPE,       MUIM_Notify, MUIA_MimeTypePopup_MimeTypeChanged,     MUIV_EveryTime, obj, 1, METHOD(PutAttachmentEntry));
         DoMethod(data->ST_DESC,        MUIM_Notify, MUIA_String_Contents,                   MUIV_EveryTime, obj, 1, METHOD(PutAttachmentEntry));
-        DoMethod(data->CH_DELSEND,     MUIM_Notify, MUIA_Selected,                          MUIV_EveryTime, data->MI_DELSEND,        3, MUIM_Set,      MUIA_Menuitem_Checked, MUIV_TriggerValue);
+        DoMethod(data->CH_DELSENT,     MUIM_Notify, MUIA_Selected,                          MUIV_EveryTime, data->MI_DELSENT,        3, MUIM_Set,      MUIA_Menuitem_Checked, MUIV_TriggerValue);
         DoMethod(data->CH_MDN,         MUIM_Notify, MUIA_Selected,                          MUIV_EveryTime, data->MI_MDN,            3, MUIM_Set,      MUIA_Menuitem_Checked, MUIV_TriggerValue);
         DoMethod(data->CH_ADDINFO,     MUIM_Notify, MUIA_Selected,                          MUIV_EveryTime, data->MI_ADDINFO,        3, MUIM_Set,      MUIA_Menuitem_Checked, MUIV_TriggerValue);
         DoMethod(data->MI_AUTOSPELL,   MUIM_Notify, MUIA_Menuitem_Checked,                  MUIV_EveryTime, data->TE_EDIT,           3, MUIM_Set,      MUIA_TextEditor_TypeAndSpell, MUIV_TriggerValue);
         DoMethod(data->MI_AUTOWRAP,    MUIM_Notify, MUIA_Menuitem_Checked,                  TRUE,           data->TE_EDIT,           3, MUIM_Set,      MUIA_TextEditor_WrapBorder, C->EdWrapCol);
         DoMethod(data->MI_AUTOWRAP,    MUIM_Notify, MUIA_Menuitem_Checked,                  FALSE,          data->TE_EDIT,           3, MUIM_Set,      MUIA_TextEditor_WrapBorder, 0);
-        DoMethod(data->MI_DELSEND,     MUIM_Notify, MUIA_Menuitem_Checked,                  MUIV_EveryTime, data->CH_DELSEND,        3, MUIM_Set,      MUIA_Selected, MUIV_TriggerValue);
+        DoMethod(data->MI_DELSENT,     MUIM_Notify, MUIA_Menuitem_Checked,                  MUIV_EveryTime, data->CH_DELSENT,        3, MUIM_Set,      MUIA_Selected, MUIV_TriggerValue);
         DoMethod(data->MI_MDN,         MUIM_Notify, MUIA_Menuitem_Checked,                  MUIV_EveryTime, data->CH_MDN,            3, MUIM_Set,      MUIA_Selected, MUIV_TriggerValue);
         DoMethod(data->MI_ADDINFO,     MUIM_Notify, MUIA_Menuitem_Checked,                  MUIV_EveryTime, data->CH_ADDINFO,        3, MUIM_Set,      MUIA_Selected, MUIV_TriggerValue);
         DoMethod(data->MI_FFONT,       MUIM_Notify, MUIA_Menuitem_Checked,                  MUIV_EveryTime, obj, 1, METHOD(StyleOptionsChanged));
@@ -1607,7 +1607,7 @@ OVERLOAD(OM_NEW)
       DoMethod(data->PO_CODESET,       MUIM_Notify, MUIA_CodesetPopup_CodesetChanged,       MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
       DoMethod(data->CY_IMPORTANCE,    MUIM_Notify, MUIA_Cycle_Active,                      MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
       DoMethod(data->CY_SECURITY,      MUIM_Notify, MUIA_Cycle_Active,                      MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
-      DoMethod(data->CH_DELSEND,       MUIM_Notify, MUIA_Selected,                          MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
+      DoMethod(data->CH_DELSENT,       MUIM_Notify, MUIA_Selected,                          MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
       DoMethod(data->CH_MDN,           MUIM_Notify, MUIA_Selected,                          MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
       DoMethod(data->CH_ADDINFO,       MUIM_Notify, MUIA_Selected,                          MUIV_EveryTime, obj, 3, MUIM_Set, ATTR(Modified), TRUE);
 
@@ -1957,9 +1957,9 @@ OVERLOAD(OM_SET)
       }
       break;
 
-      case ATTR(DelSend):
+      case ATTR(DelSent):
       {
-        setcheckmark(data->CH_DELSEND, tag->ti_Data);
+        setcheckmark(data->CH_DELSENT, tag->ti_Data);
 
         // make the superMethod call ignore those tags
         tag->ti_Tag = TAG_IGNORE;
@@ -4057,7 +4057,7 @@ DECLARE(ComposeMail) // enum WriteMode mode, ULONG closeWindow
       goto out;
     }
 
-    comp.DelSend = GetMUICheck(data->CH_DELSEND);
+    comp.DelSent = GetMUICheck(data->CH_DELSENT);
     comp.UserInfo = GetMUICheck(data->CH_ADDINFO);
 
     // we execute the POSTWRITE macro right before writing out
@@ -4800,7 +4800,7 @@ DECLARE(IdentityChanged) // struct UserIdentityNode *uin;
     set(data->CY_SIGNATURE, MUIA_SignatureChooser_Signature, msg->uin->signature);
     set(data->ST_REPLYTO, MUIA_String_Contents, msg->uin->mailReplyTo);
     set(data->ST_EXTHEADER, MUIA_String_Contents, msg->uin->extraHeaders);
-    set(data->CH_DELSEND, MUIA_Selected, msg->uin->saveSentMail == FALSE);
+    set(data->CH_DELSENT, MUIA_Selected, msg->uin->saveSentMail == FALSE);
     set(data->CH_ADDINFO, MUIA_Selected, msg->uin->addPersonalInfo);
     set(data->CH_MDN, MUIA_Selected, msg->uin->requestMDN);
     set(data->ST_REPLYTO, MUIA_RecipientString_ActiveIdentity, msg->uin);

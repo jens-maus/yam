@@ -1225,7 +1225,7 @@ BOOL WriteOutMessage(struct Compose *comp)
 
   if(comp->Mode == NMM_REDIRECT)
   {
-    if(comp->DelSend == TRUE)
+    if(comp->DelSent == TRUE)
       EmitHeader(fh, "X-YAM-Options", "delsent,redirect", comp->codeset);
     else
       EmitHeader(fh, "X-YAM-Options", "redirect", comp->codeset);
@@ -1271,7 +1271,7 @@ BOOL WriteOutMessage(struct Compose *comp)
       tcomp.MailBCC = NULL;
       tcomp.ExtHeader = NULL;
       tcomp.Importance = 0;
-      tcomp.DelSend = FALSE;
+      tcomp.DelSent = FALSE;
       tcomp.RequestMDN = FALSE;
       tcomp.UserInfo = FALSE;
 
@@ -1325,7 +1325,7 @@ BOOL WriteOutMessage(struct Compose *comp)
   snprintf(buf, sizeof(buf), "signature=%08x,identity=%08x,security=%s%s", comp->Signature != NULL ? comp->Signature->id : 0,
                                                                            comp->Identity->id,
                                                                            SecCodes[comp->SelSecurity],
-                                                                           comp->DelSend == TRUE ? ",delsent" : "");
+                                                                           comp->DelSent == TRUE ? ",delsent" : "");
   EmitHeader(fh, "X-YAM-Options", buf, comp->codeset);
 
   // add the "X-YAM-MailAccount" header to track over which SMTP server
@@ -2140,7 +2140,7 @@ struct WriteMailData *NewEditMailWindow(struct Mail *mail, const int flags)
             if(email->extraHeaders != NULL)
               set(wmData->window, MUIA_WriteWindow_ExtHeaders, email->extraHeaders);
 
-            xset(wmData->window, MUIA_WriteWindow_DelSend,    email->DelSend,
+            xset(wmData->window, MUIA_WriteWindow_DelSent,    email->DelSent,
                                  MUIA_WriteWindow_MDN,        isSendMDNMail(mail),
                                  MUIA_WriteWindow_AddInfo,    isSenderInfoMail(mail),
                                  MUIA_WriteWindow_Importance, getImportanceLevel(mail) == IMP_HIGH ? 0 : getImportanceLevel(mail)+1,

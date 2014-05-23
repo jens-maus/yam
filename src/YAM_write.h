@@ -160,7 +160,7 @@ struct Compose
   struct SignatureNode *    Signature;      // the signature that is used when composing the mail
   BOOL                      RequestMDN;     // should a MDN be requested?
   BOOL                      GenerateMDN;    // should a MDN report be generated?
-  BOOL                      DelSend;        // should the mail be deleted after having sent it?
+  BOOL                      DelSent;        // should the mail be deleted after having sent it?
   BOOL                      UserInfo;       // should personal user info be added to the mail?
   enum Security             Security;       // (PGP) security level to be applied to mail
   enum Security             SelSecurity;    // (PGP) security level selected in WriteWindow

@@ -92,7 +92,7 @@ struct ExtendedMail
   struct SignatureNode *   signature;      // ptr to matched signature (can also be NULL for no sig)
   int                      identityID;     // id of the user identity found in the mail (X-YAM-Options:)
   struct UserIdentityNode *identity;       // ptr to matched identity (can also be the default id)
-  BOOL                     DelSend;
+  BOOL                     DelSent;
   struct Person            ReturnPath;     // the "Return-Path" address of the mail, if present
   struct Person            ReceiptTo;      // the recipient in for a requested MDN
   struct Person            OriginalRcpt;   // the original recipient for a requested MDN

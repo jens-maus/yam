@@ -1351,7 +1351,7 @@ static int SendMessage(struct TransferContext *tc, struct Mail *mail)
                   // now that we are at 100% we have to set the transfer Date of the message
                   GetSysTimeUTC(&mail->transDate);
 
-                  result = email->DelSend ? 2 : 1;
+                  result = email->DelSent ? 2 : 1;
                   AppendToLogfile(LF_VERBOSE, 42, tr(MSG_LOG_SendingVerbose), AddrName(mail->To), mail->Subject, mail->Size);
                 }
               }
