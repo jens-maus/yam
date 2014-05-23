@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-05-23 Thore Böckelmann <tboeckel@gmx.de>
+
+  * themes: updated the "MagicWB", "MagicWB reduced" and "Mason old" themes.
+    Thanks to Alper Sönmez for providing them. The "MagicWB reduced" themes has
+    no config images to speed up loading as the config window is seldom used.
+
 2014-05-22 Thore Böckelmann <tboeckel@gmx.de>
 
   * themes/NewIcons: added missing archive folder images. Thanks to Alper Sönmez
