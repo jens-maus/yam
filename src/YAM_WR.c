@@ -996,7 +996,7 @@ static BOOL WR_ComposePGP(FILE *fh, const struct Compose *comp, const char *boun
   enum Security sec = comp->Security;
   BOOL success = FALSE;
   struct WritePart pgppart;
-  char *ids = dstralloc(SIZE_DEFAULT);
+  char *ids = NULL;
   char pgpfile[SIZE_PATHFILE];
   struct TempFile *tf;
 
@@ -1513,10 +1513,9 @@ static char *AppendRcpt(char *sbuf, const struct Person *pe,
 //  Replaces variables with values
 static char *ExpandText(const char *src, struct ExpandTextData *etd)
 {
-  char buf[SIZE_ADDRESS];
   char *p;
   char *p2;
-  char *dst = dstralloc(SIZE_DEFAULT);
+  char *dst = NULL;
 
   ENTER();
 
@@ -1547,6 +1546,8 @@ static char *ExpandText(const char *src, struct ExpandTextData *etd)
 
         case 'f':
         {
+          char buf[SIZE_ADDRESS];
+
           strlcpy(buf, etd->OS_Name, sizeof(buf));
 
           if((p = strchr(buf, ',')) != NULL)
@@ -1630,6 +1631,8 @@ static char *ExpandText(const char *src, struct ExpandTextData *etd)
 
         case 'v':
         {
+          char buf[SIZE_ADDRESS];
+
           strlcpy(buf, etd->R_Name, sizeof(buf));
           if((p = strchr(buf, ',')) != NULL)
             p = Trim(++p);
@@ -1651,6 +1654,8 @@ static char *ExpandText(const char *src, struct ExpandTextData *etd)
 
         case 'i':
         {
+          char buf[SIZE_ADDRESS];
+
           strlcpy(buf, etd->OS_Name, sizeof(buf));
 
           for(p = p2 = &buf[1]; *p; p++)
@@ -1665,6 +1670,8 @@ static char *ExpandText(const char *src, struct ExpandTextData *etd)
 
         case 'j':
         {
+          char buf[SIZE_ADDRESS];
+
           strlcpy(buf, etd->OS_Name, sizeof(buf));
 
           for(p2 = &buf[1], p = &buf[strlen(buf)-1]; p > p2; p--)
@@ -1843,8 +1850,8 @@ struct WriteMailData *NewWriteMailWindow(struct Mail *mail, const int flags)
     // open a new file for writing the default mail text
     if((out = fopen(wmData->filename, "w")) != NULL)
     {
-      char *toAddr = dstralloc(SIZE_ADDRESS);
-      char *replyToAddr = dstralloc(SIZE_ADDRESS);
+      char *toAddr = NULL;
+      char *replyToAddr = NULL;
 
       setvbuf(out, NULL, _IOFBF, SIZE_FILEBUF);
 
@@ -2269,7 +2276,7 @@ struct WriteMailData *NewForwardMailWindow(struct MailList *mlist, const int fla
       struct SignatureNode *signature = NULL;
       int j = 0;
       enum ForwardMode fwdMode = C->ForwardMode;
-      char *rsub = dstralloc(SIZE_SUBJECT);
+      char *rsub = NULL;
       struct MailNode *mnode;
       struct UserIdentityNode *firstIdentity = NULL; // first identified identity over all mails
 
@@ -2355,9 +2362,9 @@ struct WriteMailData *NewForwardMailWindow(struct MailList *mlist, const int fla
           char buffer[SIZE_LARGE];
 
           snprintf(buffer, sizeof(buffer), "Fwd: %s", mail->Subject);
-          if(strstr(rsub, buffer) == NULL)
+          if(IsStrEmpty(rsub) == TRUE || strstr(rsub, buffer) == NULL)
           {
-            if(rsub[0] != '\0')
+            if(IsStrEmpty(rsub) == FALSE)
               dstrcat(&rsub, "; ");
 
             dstrcat(&rsub, buffer);
@@ -2590,10 +2597,10 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
       BOOL altpat = FALSE;
       char *domain = NULL;
       struct UserIdentityNode *firstIdentity = NULL; // first identified identity over all mails
-      char *rto = dstralloc(SIZE_ADDRESS);
-      char *rcc = dstralloc(SIZE_ADDRESS);
-      char *rrepto = dstralloc(SIZE_ADDRESS);
-      char *rsub = dstralloc(SIZE_SUBJECT);
+      char *rto = NULL;
+      char *rcc = NULL;
+      char *rrepto = NULL;
+      char *rsub = NULL;
       char buffer[SIZE_LARGE];
       struct ExpandTextData etd;
       BOOL mlIntro = FALSE; // an mailing list intro text was added
@@ -2675,7 +2682,7 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
           }
 
           // try to find following subjects in the yet created reply subject
-          if(strstr(rsub, buffer) == NULL)
+          if(IsStrEmpty(rsub) == TRUE || strstr(rsub, buffer) == NULL)
           {
             if(IsStrEmpty(rsub) == FALSE)
               dstrcat(&rsub, "; ");

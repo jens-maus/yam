@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-05-24 Thore Böckelmann <tboeckel@gmx.de>
+
+  * misc: removed some preallocated dynamic strings. The first modification of
+    the strings will now perform the allocation. Additionally the preallocation
+    size was much smaller than the chunk size resulting in wasted memory in case
+    the strings were never modified at all.
+
 2014-05-23 Thore Böckelmann <tboeckel@gmx.de>
 
   * themes: updated the "MagicWB", "MagicWB reduced" and "Mason old" themes.

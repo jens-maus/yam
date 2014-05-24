@@ -286,7 +286,6 @@ static char *BuildCommandString(const char *format, const char *file)
 
     D(DBF_MIME, "building command string from '%s'", format);
 
-    command = dstralloc(0);
     wordStart = command;
     while((c = *p++) != '\0')
     {
@@ -4416,7 +4415,7 @@ static BOOL RE_HandleMDNReport(const struct Part *frp)
     FILE *fh;
     const char *mode;
     char *type;
-    char *msgdesc = dstralloc(SIZE_DEFAULT);
+    char *msgdesc = NULL;
     char disposition[SIZE_DEFAULT];
     char file[SIZE_FILE];
     char buf[SIZE_PATHFILE];

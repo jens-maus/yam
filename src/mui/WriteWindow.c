@@ -2388,9 +2388,12 @@ DECLARE(AddArchive)
     // now ask the user for the choosen archive name
     if(StringRequest(arcname, SIZE_FILE, tr(MSG_WR_CreateArc), tr(MSG_WR_CreateArcReq), tr(MSG_Okay), NULL, tr(MSG_Cancel), FALSE, obj))
     {
-      char *command;
+      char *command = NULL;
       char arcpath[SIZE_PATHFILE];
       struct TempFile *tf = NULL;
+      char *src;
+      BPTR filedir;
+      BOOL mustCloseQuote = FALSE;
 
       // create the destination archive name
       AddPath(arcpath, C->TempDir, arcname, sizeof(arcpath));
@@ -2411,101 +2414,97 @@ DECLARE(AddArchive)
 
       // now we create the command we are going to
       // execute for generating the archive.
-      if((command = dstralloc(SIZE_DEFAULT)) != NULL)
+      for(src = C->PackerCommand; *src != '\0'; src++)
       {
-        char *src;
-        BPTR filedir;
-        BOOL mustCloseQuote = FALSE;
-
-        for(src = C->PackerCommand; *src != '\0'; src++)
+        if(*src == '%')
         {
-          if(*src == '%')
+          src++;
+          switch(*src)
           {
-            src++;
-            switch(*src)
+            case '%':
+              dstrcat(&command, "%");
+            break;
+
+            case 'a':
             {
-              case '%':
-                dstrcat(&command, "%");
-              break;
-
-              case 'a':
+              D(DBF_UTIL, "insert archive name '%s'", arcpath);
+              if(strchr(arcpath, ' ') != NULL)
               {
-                D(DBF_UTIL, "insert archive name '%s'", arcpath);
-                if(strchr(arcpath, ' ') != NULL)
-                {
-                  // surround the file name by quotes if it contains spaces
-                  dstrcat(&command, "\"");
-                  dstrcat(&command, arcpath);
-                  // remember to add the closing quotes
-                  mustCloseQuote = TRUE;
-                }
-                else
-                  dstrcat(&command, arcpath);
+                // surround the file name by quotes if it contains spaces
+                dstrcat(&command, "\"");
+                dstrcat(&command, arcpath);
+                // remember to add the closing quotes
+                mustCloseQuote = TRUE;
               }
-              break;
+              else
+                dstrcat(&command, arcpath);
+            }
+            break;
 
-              case 'l':
+            case 'l':
+            {
+              D(DBF_UTIL, "insert filename '%s'", tf->Filename);
+              if(strchr(tf->Filename, ' ') != NULL)
               {
-                D(DBF_UTIL, "insert filename '%s'", tf->Filename);
-                if(strchr(tf->Filename, ' ') != NULL)
-                {
-                  // surround the file name by quotes if it contains spaces
-                  dstrcat(&command, "\"");
-                  dstrcat(&command, tf->Filename);
-                  // remember to add the closing quotes
-                  mustCloseQuote = TRUE;
-                }
-                else
-                  dstrcat(&command, tf->Filename);
+                // surround the file name by quotes if it contains spaces
+                dstrcat(&command, "\"");
+                dstrcat(&command, tf->Filename);
+                // remember to add the closing quotes
+                mustCloseQuote = TRUE;
               }
-              break;
+              else
+                dstrcat(&command, tf->Filename);
+            }
+            break;
 
-              case 'f':
+            case 'f':
+            {
+              int i;
+
+              for(i=0; i < frc->numArgs; i++)
               {
-                int i;
+                char filename[SIZE_PATHFILE];
 
-                for(i=0; i < frc->numArgs; i++)
-                {
-                  char filename[SIZE_PATHFILE];
-
-                  snprintf(filename, sizeof(filename), "\"%s\" ", frc->argList[i]);
-                  dstrcat(&command, filename);
-                }
-                break;
+                snprintf(filename, sizeof(filename), "\"%s\" ", frc->argList[i]);
+                dstrcat(&command, filename);
               }
               break;
             }
+            break;
           }
-          else if(*src == ' ')
+        }
+        else if(*src == ' ')
+        {
+          // if we are to insert a space character and there are quotes
+          // to be closed we do it now and forget about the quotes afterwards.
+          if(mustCloseQuote == TRUE)
           {
-            // if we are to insert a space character and there are quotes
-            // to be closed we do it now and forget about the quotes afterwards.
-            if(mustCloseQuote == TRUE)
-            {
-              dstrcat(&command, "\" ");
-              mustCloseQuote = FALSE;
-            }
-            else
-            {
-              // no quotes to be closed, just add the space character
-              dstrcat(&command, " ");
-            }
+            dstrcat(&command, "\" ");
+            mustCloseQuote = FALSE;
           }
           else
           {
-            char chr[2];
-
-            chr[0] = *src;
-            chr[1] = '\0';
-
-            dstrcat(&command, chr);
+            // no quotes to be closed, just add the space character
+            dstrcat(&command, " ");
           }
         }
+        else
+        {
+          char chr[2];
 
-        // if there are still quotes to be closed do it now
-        if(mustCloseQuote == TRUE)
-          dstrcat(&command, "\"");
+          chr[0] = *src;
+          chr[1] = '\0';
 
+          dstrcat(&command, chr);
+        }
+      }
+
+      // if there are still quotes to be closed do it now
+      if(mustCloseQuote == TRUE)
+        dstrcat(&command, "\"");
+
+      if(IsStrEmpty(command) == FALSE)
+      {
         // now we make the request drawer the current one temporarly.
         if((filedir = Lock(frc->drawer, ACCESS_READ)) != 0)
         {
@@ -2519,42 +2518,43 @@ DECLARE(AddArchive)
           CurrentDir(olddir);
           UnLock(filedir);
         }
+      }
 
-        // free our private resources
-        dstrfree(command);
-        CloseTempFile(tf);
+      // free our private resources
+      dstrfree(command);
+      CloseTempFile(tf);
 
-        // if everything worked out fine we go
-        // and find out the real final attachment name
-        if(result == TRUE)
+      // if everything worked out fine we go
+      // and find out the real final attachment name
+      if(result == TRUE)
+      {
+        APTR oldwin;
+        LONG size;
+        char filename[SIZE_PATHFILE];
+
+        // don't let DOS bother us with requesters while we check some files
+        oldwin = SetProcWindow((APTR)-1);
+
+        strlcpy(filename, arcpath, sizeof(filename));
+        if(ObtainFileInfo(filename, FI_SIZE, &size) == FALSE)
         {
-          APTR oldwin;
-          LONG size;
-          char filename[SIZE_PATHFILE];
-
-          // don't let DOS bother us with requesters while we check some files
-          oldwin = SetProcWindow((APTR)-1);
-
-          strlcpy(filename, arcpath, sizeof(filename));
+          snprintf(filename, sizeof(filename), "%s.lha", arcpath);
           if(ObtainFileInfo(filename, FI_SIZE, &size) == FALSE)
           {
-            snprintf(filename, sizeof(filename), "%s.lha", arcpath);
+            snprintf(filename, sizeof(filename), "%s.lzx", arcpath);
             if(ObtainFileInfo(filename, FI_SIZE, &size) == FALSE)
-            {
-              snprintf(filename, sizeof(filename), "%s.lzx", arcpath);
-              if(ObtainFileInfo(filename, FI_SIZE, &size) == FALSE)
-                snprintf(filename, sizeof(filename), "%s.zip", arcpath);
-            }
+              snprintf(filename, sizeof(filename), "%s.zip", arcpath);
           }
-
-          // allow requesters from DOS again
-          SetProcWindow(oldwin);
-
-          DoMethod(obj, METHOD(AddAttachment), filename, NULL, TRUE);
         }
-        else
-          ER_NewError(tr(MSG_ER_PACKERROR));
+
+        // allow requesters from DOS again
+        SetProcWindow(oldwin);
+
+        DoMethod(obj, METHOD(AddAttachment), filename, NULL, TRUE);
       }
+      else
+        ER_NewError(tr(MSG_ER_PACKERROR));
+
     }
   }
 

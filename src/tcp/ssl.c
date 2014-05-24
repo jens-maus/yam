@@ -151,7 +151,7 @@ CROSSCALL2(verify_callback, int, int, preverify_ok, X509_STORE_CTX *, x509_ctx)
         // (29) subject issuer mismatch: the current candidate issuer certificate was rejected.
         // (30) authority and subject key identifier mismatch: the current candidate issuer certificate was rejected.
         // (31) authority and issuer serial number mismatch: the current candidate issuer certificate was rejected.
-        // (32) key usage does not include certificate signing:  the current candidate issuer certificate was rejected. 
+        // (32) key usage does not include certificate signing:  the current candidate issuer certificate was rejected.
         case X509_V_ERR_UNABLE_TO_GET_CRL:
         case X509_V_ERR_UNABLE_TO_DECRYPT_CERT_SIGNATURE:
         case X509_V_ERR_UNABLE_TO_DECRYPT_CRL_SIGNATURE:
@@ -185,7 +185,7 @@ CROSSCALL2(verify_callback, int, int, preverify_ok, X509_STORE_CTX *, x509_ctx)
 
         // (9) the certificate is not yet valid: the notBefore date is after the current time.
         // (13) the certificate notBefore field contains an invalid time.
-        case X509_V_ERR_CERT_NOT_YET_VALID: 
+        case X509_V_ERR_CERT_NOT_YET_VALID:
         case X509_V_ERR_ERROR_IN_CERT_NOT_BEFORE_FIELD:
         {
           W(DBF_NET, "ssl: verify failure %s found", depth > 0 ? "SSL_CERT_ERR_BADCHAIN" : "SSL_CERT_ERR_NOTYETVALID");
@@ -510,7 +510,7 @@ static int GetCertFingerprint(const struct Certificate *cert, char *digest)
 // extract a readable string of all issuers DNAME information
 static char *ExtractReadableDN(X509_NAME *dname)
 {
-  char *result = dstralloc(SIZE_DEFAULT);
+  char *result = NULL;
   int n;
   int flag = 0;
   const ASN1_OBJECT * const cname = OBJ_nid2obj(NID_commonName);
