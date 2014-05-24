@@ -547,7 +547,7 @@ static BOOL ASN1Time2TimeVal(const ASN1_TIME *atm, struct TimeVal *tv)
 
   ENTER();
 
-  if(atm->length >= 10)
+  if(atm->length >= 12)
   {
     char datestring[] = "MM-DD-YY HH:MM:SS";
 
