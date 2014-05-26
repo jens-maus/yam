@@ -575,7 +575,8 @@ struct MailList *MA_CreateFullList(struct Folder *fo, BOOL onlyNew)
 
   ENTER();
 
-  if(fo != NULL && isGroupFolder(fo) == FALSE)
+  // we need a valid non-group folder and a loaded index
+  if(fo != NULL && isGroupFolder(fo) == FALSE && MA_GetIndex(fo) == TRUE)
   {
     D(DBF_MAIL, "create mail list for folder '%s'", fo->Name);
 

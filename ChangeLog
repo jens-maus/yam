@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-05-26 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MA.c: make sure to load the Outgoing folder's index before trying to
+    clone its list of mails for sending. This closes #538.
+
 2014-05-24 Thore Böckelmann <tboeckel@gmx.de>
 
   * misc: removed some preallocated dynamic strings. The first modification of
