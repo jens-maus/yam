@@ -1019,7 +1019,7 @@ DECLARE(MLAutoDetect)
 
   ENTER();
 
-  if(data->oldFolder != NULL)
+  if(data->oldFolder != NULL && MA_GetIndex(data->oldFolder) == TRUE)
   {
     LockMailListShared(data->oldFolder->messages);
 

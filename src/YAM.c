@@ -2016,7 +2016,7 @@ static BOOL SendWaitingMail(const BOOL hideDisplay)
 
   ENTER();
 
-  if((fo = FO_GetFolderByType(FT_OUTGOING, NULL)) != NULL)
+  if((fo = FO_GetFolderByType(FT_OUTGOING, NULL)) != NULL && MA_GetIndex(fo) == TRUE)
   {
     struct MailNode *mnode;
 

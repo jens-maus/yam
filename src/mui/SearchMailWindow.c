@@ -493,7 +493,7 @@ DECLARE(Search)
         struct Folder *folder = selectedFolders[i];
         struct MailList *folderMessages;
 
-        if((folderMessages = CloneMailList(folder->messages)) != NULL)
+        if(MA_GetIndex(folder) == TRUE && (folderMessages = CloneMailList(folder->messages)) != NULL)
         {
           struct MailNode *mnode;
 

@@ -1688,7 +1688,7 @@ DECLARE(EmptyTrashFolder) // ULONG quiet
 
   ENTER();
 
-  if((trashFolder = FO_GetFolderByType(FT_TRASH, NULL)) != NULL)
+  if((trashFolder = FO_GetFolderByType(FT_TRASH, NULL)) != NULL && MA_GetIndex(trashFolder) == TRUE)
   {
     struct BusyNode *busy;
     struct MailNode *mnode;

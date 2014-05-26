@@ -3397,49 +3397,52 @@ void MoveHeldMailsToDraftsFolder(void)
 
   if((outgoing = FO_GetFolderByType(FT_OUTGOING, NULL)) != NULL && (drafts = FO_GetFolderByType(FT_DRAFTS, NULL)) != NULL)
   {
-    struct MailList *mlist = NULL;
-
-    LockMailListShared(outgoing->messages);
-
-    // find all "hold" mails in the outgoing folder first
-    if(IsMailListEmpty(outgoing->messages) == FALSE)
+    if(MA_GetIndex(outgoing) == TRUE && MA_GetIndex(drafts) == TRUE)
     {
-      if((mlist = CreateMailList()) != NULL)
+      struct MailList *mlist = NULL;
+
+      LockMailListShared(outgoing->messages);
+
+      // find all "hold" mails in the outgoing folder first
+      if(IsMailListEmpty(outgoing->messages) == FALSE)
       {
-        struct MailNode *mnode;
-
-        ForEachMailNode(outgoing->messages, mnode)
+        if((mlist = CreateMailList()) != NULL)
         {
-          struct Mail *mail = mnode->mail;
+          struct MailNode *mnode;
 
-          // add all "hold" mails to the list
-          if(hasStatusHold(mail))
-            AddNewMailNode(mlist, mail);
-        }
+          ForEachMailNode(outgoing->messages, mnode)
+          {
+            struct Mail *mail = mnode->mail;
 
-        D(DBF_FOLDER, "found %ld old hold mails in folder '%s'", mlist->count, outgoing->Name);
-      }
-    }
+            // add all "hold" mails to the list
+            if(hasStatusHold(mail))
+              AddNewMailNode(mlist, mail);
+          }
 
-    UnlockMailList(outgoing->messages);
-
-    // now move all found "hold" mails over to the drafts folder
-    if(mlist != NULL)
-    {
-      if(IsMailListEmpty(mlist) == FALSE)
-      {
-        struct MailNode *mnode;
-
-        ForEachMailNode(mlist, mnode)
-        {
-          MA_MoveCopy(mnode->mail, drafts, "held mail", MVCPF_CLOSE_WINDOWS);
-          // mails in the Drafts folder are always "new"
-          // the "hold" state is no longer needed
-          MA_ChangeMailStatus(mnode->mail, SFLAG_NEW, SFLAG_HOLD);
+          D(DBF_FOLDER, "found %ld old hold mails in folder '%s'", mlist->count, outgoing->Name);
         }
       }
 
-      DeleteMailList(mlist);
+      UnlockMailList(outgoing->messages);
+
+      // now move all found "hold" mails over to the drafts folder
+      if(mlist != NULL)
+      {
+        if(IsMailListEmpty(mlist) == FALSE)
+        {
+          struct MailNode *mnode;
+
+          ForEachMailNode(mlist, mnode)
+          {
+            MA_MoveCopy(mnode->mail, drafts, "held mail", MVCPF_CLOSE_WINDOWS);
+            // mails in the Drafts folder are always "new"
+            // the "hold" state is no longer needed
+            MA_ChangeMailStatus(mnode->mail, SFLAG_NEW, SFLAG_HOLD);
+          }
+        }
+
+        DeleteMailList(mlist);
+      }
     }
   }
 
