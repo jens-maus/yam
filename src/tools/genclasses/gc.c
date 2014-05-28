@@ -1102,6 +1102,11 @@ void gen_supportroutines( FILE *fp )
   fprintf(fp, "      success = FALSE;\n");
   fprintf(fp, "      break;\n");
   fprintf(fp, "    }\n");
+  fprintf(fp, "    else\n");
+  fprintf(fp, "    {\n");
+  fprintf(fp, "      if(LIB_VERSION_IS_AT_LEAST(MUIMasterBase, 20, 0) == TRUE)\n");
+  fprintf(fp, "        %sClasses[i]->mcc_Class->cl_ID = (STRPTR)MCCInfo[i].Name;\n", bn);
+  fprintf(fp, "    }\n");
   fprintf(fp, "  }\n");
   fprintf(fp, "\n");
   fprintf(fp, "  if(success == FALSE)\n");
