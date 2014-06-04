@@ -3,18 +3,18 @@
 # $URL$
 # version 10
 # Translators:
-# abalaban <transifex@balaban.fr>, 2014
+# Alexandre BALABAN <transifex@balaban.fr>, 2014
 # Alexandre Balaban <abalaban@free.fr>, 2013
-# abalaban <transifex@balaban.fr>, 2014
-# damato <mail@jens-maus.de>, 2014
-# damato <mail@jens-maus.de>, 2014
+# Alexandre BALABAN <transifex@balaban.fr>, 2014
+# Jens Maus <mail@jens-maus.de>, 2014
+# Jens Maus <mail@jens-maus.de>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-05-21 22:31+0000\n"
-"Last-Translator: damato <mail@jens-maus.de>\n"
+"PO-Revision-Date: 2014-06-04 14:29+0000\n"
+"Last-Translator: Alexandre BALABAN <transifex@balaban.fr>\n"
 "Language-Team: French (http://www.transifex.com/projects/p/yam/language/fr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -6778,14 +6778,6 @@ msgctxt "MSG_CO_CRDLOOKFEEL (1888//)"
 msgid "Look & Feel"
 msgstr "Apparence"
 
-msgctxt "MSG_CO_SMTP_SERVERPORT (1891//)"
-msgid "Ser_ver/Port"
-msgstr "Ser_veur/Port"
-
-msgctxt "MSG_CO_POP_SERVERPORT (1892//)"
-msgid "Serve_r/Port"
-msgstr "Serveu_r/Port"
-
 msgctxt "MSG_CO_LOOKFEEL_THEMES (1898//)"
 msgid "Themes"
 msgstr "Thèmes"
@@ -9941,23 +9933,23 @@ msgstr "Compris"
 
 msgctxt "MSG_FO_PATH_INVALID (2554//)"
 msgid "The path must be non-empty."
-msgstr ""
+msgstr "Le chemin ne doit pas être vide."
 
 msgctxt "MSG_FO_MLPATTERN_INVALID (2555//)"
 msgid "The pattern (To:/CC:) must be non-empty and no 'catch all'."
-msgstr ""
+msgstr "Le motif (A:/CC:) ne doit pas être vide et ne pas correspondre avec tout."
 
 msgctxt "MSG_FO_MLADDRESS_INVALID (2556//)"
 msgid "The destination address (To:) must be non-empty."
-msgstr ""
+msgstr "L'adresse du destinataire (A:) ne doit pas être vide."
 
 msgctxt "MSG_CO_SAVE_WITHOUT_PRIVATE_DATA (2557//)"
 msgid "Save without private data..."
-msgstr ""
+msgstr "Enregistrer sans les données personnelles..."
 
 msgctxt "MSG_SSL_CERT_WARNING_SIGINVALID (2558//)"
 msgid "- The signature of the certificate is invalid."
-msgstr ""
+msgstr "- La signature du certificat est invalide."
 
 msgctxt "MSG_SSL_CERT_WARNING_OUTRO (2559//)"
 msgid ""
@@ -9966,4 +9958,28 @@ msgid ""
 "(\\033bNO\\033n protection from fraud).\n"
 "\n"
 "Do you still want to accept the connection?"
-msgstr ""
+msgstr "Si vous poursuivez le transfert des données sera pas crypté\n(protection contre l'interception), mais l'identité du serveur ne\npeut pas être garantie (\\033bPAS\\033n de protection contre\nla fraude).\n\nVoulez-vous toujours accepter la connexion?"
+
+msgctxt "MSG_CO_POP_SERVER (2560//)"
+msgid "Serve_r"
+msgstr "Serveu_r"
+
+msgctxt "MSG_CO_POP_PORT (2561//)"
+msgid "P_ort"
+msgstr "P_ort"
+
+msgctxt "MSG_CO_POP_PORT_STANDARD (2562//)"
+msgid "Standard:"
+msgstr "Standard :"
+
+msgctxt "MSG_CO_SMTP_SERVER (2563//)"
+msgid "Ser_ver"
+msgstr "Ser_veur"
+
+msgctxt "MSG_CO_SMTP_PORT (2564//)"
+msgid "_Port"
+msgstr "_Port"
+
+msgctxt "MSG_CO_SMTP_PORT_STANDARD (2565//)"
+msgid "Standard:"
+msgstr "Standard :"
