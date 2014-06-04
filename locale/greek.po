@@ -3,19 +3,19 @@
 # $URL$
 # version 10
 # Translators:
-# Phantom, 2014
-# Phantom, 2014
+# Anthony I., 2014
+# Anthony I., 2014
 # Antonis Iliakis <amiga.phantom@yahoo.gr>, 2013
-# damato <mail@jens-maus.de>, 2014
-# damato <mail@jens-maus.de>, 2014
+# Jens Maus <mail@jens-maus.de>, 2014
+# Jens Maus <mail@jens-maus.de>, 2014
 # Phantom, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-06-03 20:58+0000\n"
-"Last-Translator: Phantom\n"
+"PO-Revision-Date: 2014-06-04 14:24+0000\n"
+"Last-Translator: Anthony I.\n"
 "Language-Team: Greek (http://www.transifex.com/projects/p/yam/language/el/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -6779,14 +6779,6 @@ msgctxt "MSG_CO_CRDLOOKFEEL (1888//)"
 msgid "Look & Feel"
 msgstr "Εμφάνιση & Εντύπωση"
 
-msgctxt "MSG_CO_SMTP_SERVERPORT (1891//)"
-msgid "Ser_ver/Port"
-msgstr "Δια_κομιστής/Θύρα"
-
-msgctxt "MSG_CO_POP_SERVERPORT (1892//)"
-msgid "Serve_r/Port"
-msgstr "Διακο_μιστής/Θύρα"
-
 msgctxt "MSG_CO_LOOKFEEL_THEMES (1898//)"
 msgid "Themes"
 msgstr "Θέματα"
@@ -9968,3 +9960,27 @@ msgid ""
 "\n"
 "Do you still want to accept the connection?"
 msgstr "Αν συνεχίσετε η μεταφορά δεδομένων θα κρυπτογραφηθεί (προστασία\nαπό υποκλοπή), αλλά η ταυτότητα του διακομιστή δεν μπορεί να εγγυηθεί\n(\\033bΜΗ\\033n προστασία από απάτη).\n\nΘέλετε ακόμα να δεχτείτε την σύνδεση;"
+
+msgctxt "MSG_CO_POP_SERVER (2560//)"
+msgid "Serve_r"
+msgstr "Διακομισ_τής"
+
+msgctxt "MSG_CO_POP_PORT (2561//)"
+msgid "P_ort"
+msgstr "Θύ_ρα"
+
+msgctxt "MSG_CO_POP_PORT_STANDARD (2562//)"
+msgid "Standard:"
+msgstr "Πρότυπο:"
+
+msgctxt "MSG_CO_SMTP_SERVER (2563//)"
+msgid "Ser_ver"
+msgstr "Διακο_μιστής"
+
+msgctxt "MSG_CO_SMTP_PORT (2564//)"
+msgid "_Port"
+msgstr "_Θύρα"
+
+msgctxt "MSG_CO_SMTP_PORT_STANDARD (2565//)"
+msgid "Standard:"
+msgstr "Πρότυπο:"
