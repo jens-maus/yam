@@ -3,19 +3,19 @@
 # $URL$
 # version 10
 # Translators:
-# damato <mail@jens-maus.de>, 2014
-# JohanB <j.banis@banis.info>, 2014
-# damato <mail@jens-maus.de>, 2014
-# JohanB <j.banis@banis.info>, 2014
+# Jens Maus <mail@jens-maus.de>, 2014
+# Johan Banis <j.banis@banis.info>, 2014
+# Jens Maus <mail@jens-maus.de>, 2014
+# Johan Banis <j.banis@banis.info>, 2014
 # Johan Banis <j.banis@worldonline.nl>, 2010
-# JohanB <j.banis@banis.info>, 2014
+# Johan Banis <j.banis@banis.info>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-05-21 22:31+0000\n"
-"Last-Translator: damato <mail@jens-maus.de>\n"
+"PO-Revision-Date: 2014-06-04 14:09+0000\n"
+"Last-Translator: Thore Böckelmann <tboeckel@gmx.de>\n"
 "Language-Team: Dutch (http://www.transifex.com/projects/p/yam/language/nl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -6779,14 +6779,6 @@ msgctxt "MSG_CO_CRDLOOKFEEL (1888//)"
 msgid "Look & Feel"
 msgstr "Uiterlijk en karakter"
 
-msgctxt "MSG_CO_SMTP_SERVERPORT (1891//)"
-msgid "Ser_ver/Port"
-msgstr "Ser_ver/Poort"
-
-msgctxt "MSG_CO_POP_SERVERPORT (1892//)"
-msgid "Serve_r/Port"
-msgstr "Serve_r\\Poort"
-
 msgctxt "MSG_CO_LOOKFEEL_THEMES (1898//)"
 msgid "Themes"
 msgstr "Thema's"
@@ -9967,4 +9959,28 @@ msgid ""
 "(\\033bNO\\033n protection from fraud).\n"
 "\n"
 "Do you still want to accept the connection?"
+msgstr ""
+
+msgctxt "MSG_CO_POP_SERVER (2560//)"
+msgid "Serve_r"
+msgstr ""
+
+msgctxt "MSG_CO_POP_PORT (2561//)"
+msgid "P_ort"
+msgstr ""
+
+msgctxt "MSG_CO_POP_PORT_STANDARD (2562//)"
+msgid "Standard:"
+msgstr ""
+
+msgctxt "MSG_CO_SMTP_SERVER (2563//)"
+msgid "Ser_ver"
+msgstr ""
+
+msgctxt "MSG_CO_SMTP_PORT (2564//)"
+msgid "_Port"
+msgstr ""
+
+msgctxt "MSG_CO_SMTP_PORT_STANDARD (2565//)"
+msgid "Standard:"
 msgstr ""
