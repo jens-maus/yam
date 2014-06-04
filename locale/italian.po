@@ -3,19 +3,19 @@
 # $URL$
 # version 10
 # Translators:
-# damato <mail@jens-maus.de>, 2014
-# damato <mail@jens-maus.de>, 2014
+# Jens Maus <mail@jens-maus.de>, 2014
+# Jens Maus <mail@jens-maus.de>, 2014
 # Luca Longone <hexaae@tiscalinet.it>, 2013
-# samo79 <s.hawamdeh@teletu.it>, 2014
+# Samir Hawamdeh <s.hawamdeh@teletu.it>, 2014
 # Samir Hawamdeh <s.hawamdeh@tin.it>, 2013
-# samo79 <s.hawamdeh@teletu.it>, 2014
+# Samir Hawamdeh <s.hawamdeh@teletu.it>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-05-21 23:51+0000\n"
-"Last-Translator: samo79 <s.hawamdeh@teletu.it>\n"
+"PO-Revision-Date: 2014-06-04 14:09+0000\n"
+"Last-Translator: Thore Böckelmann <tboeckel@gmx.de>\n"
 "Language-Team: Italian (http://www.transifex.com/projects/p/yam/language/it/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -6779,14 +6779,6 @@ msgctxt "MSG_CO_CRDLOOKFEEL (1888//)"
 msgid "Look & Feel"
 msgstr "Aspetto"
 
-msgctxt "MSG_CO_SMTP_SERVERPORT (1891//)"
-msgid "Ser_ver/Port"
-msgstr "Ser_ver/Porta"
-
-msgctxt "MSG_CO_POP_SERVERPORT (1892//)"
-msgid "Serve_r/Port"
-msgstr "Serve_r/Porta"
-
 msgctxt "MSG_CO_LOOKFEEL_THEMES (1898//)"
 msgid "Themes"
 msgstr "Temi"
@@ -9968,3 +9960,27 @@ msgid ""
 "\n"
 "Do you still want to accept the connection?"
 msgstr "Se si decide di continuare il trasferimento dei dati verrà crittografato\\n\n(protetto da ogni eventuale intercettazione), ma l'identità del server\\n\nnon sarà garantita (\\033bNESSUNA\\033n protezione in caso di frode).\\n\n\\n\nSei sicuro di voler accettare questa connessione?"
+
+msgctxt "MSG_CO_POP_SERVER (2560//)"
+msgid "Serve_r"
+msgstr ""
+
+msgctxt "MSG_CO_POP_PORT (2561//)"
+msgid "P_ort"
+msgstr ""
+
+msgctxt "MSG_CO_POP_PORT_STANDARD (2562//)"
+msgid "Standard:"
+msgstr ""
+
+msgctxt "MSG_CO_SMTP_SERVER (2563//)"
+msgid "Ser_ver"
+msgstr ""
+
+msgctxt "MSG_CO_SMTP_PORT (2564//)"
+msgid "_Port"
+msgstr ""
+
+msgctxt "MSG_CO_SMTP_PORT_STANDARD (2565//)"
+msgid "Standard:"
+msgstr ""
