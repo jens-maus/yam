@@ -66,6 +66,7 @@ struct Data
   Object *ST_POPDESC;
   Object *ST_POPHOST;
   Object *ST_POPPORT;
+  Object *LB_POPPORT;
   Object *CY_POPSECURE;
   Object *CY_POPAUTH;
   Object *ST_POPUSERID;
@@ -95,6 +96,7 @@ struct Data
   Object *ST_SMTPDESC;
   Object *ST_SMTPHOST;
   Object *ST_SMTPPORT;
+  Object *LB_SMTPPORT;
   Object *CY_SMTPSECURE;
   Object *CY_SMTPAUTH;
   Object *ST_SMTPAUTHUSER;
@@ -127,6 +129,7 @@ OVERLOAD(OM_NEW)
   Object *ST_POPDESC;
   Object *ST_POPHOST;
   Object *ST_POPPORT;
+  Object *LB_POPPORT;
   Object *CY_POPSECURE;
   Object *CY_POPAUTH;
   Object *ST_POPUSERID;
@@ -156,6 +159,7 @@ OVERLOAD(OM_NEW)
   Object *ST_SMTPDESC;
   Object *ST_SMTPHOST;
   Object *ST_SMTPPORT;
+  Object *LB_SMTPPORT;
   Object *CY_SMTPSECURE;
   Object *CY_SMTPAUTH;
   Object *ST_SMTPAUTHUSER;
@@ -262,10 +266,11 @@ OVERLOAD(OM_NEW)
                 Child, Label2(tr(MSG_CO_POP_DESC)),
                 Child, ST_POPDESC = MakeString(SIZE_DEFAULT, tr(MSG_CO_POP_DESC)),
 
-                Child, Label2(tr(MSG_CO_POP_SERVERPORT)),
+                Child, Label2(tr(MSG_CO_POP_SERVER)),
+                Child, ST_POPHOST = MakeString(SIZE_HOST, tr(MSG_CO_POP_SERVER)),
+
+                Child, Label2(tr(MSG_CO_POP_PORT)),
                 Child, HGroup,
-                  MUIA_Group_Spacing, 1,
-                  Child, ST_POPHOST = MakeString(SIZE_HOST, tr(MSG_CO_POP_SERVERPORT)),
                   Child, ST_POPPORT = BetterStringObject,
                     StringFrame,
                     MUIA_CycleChain,          TRUE,
@@ -274,7 +279,11 @@ OVERLOAD(OM_NEW)
                     MUIA_String_AdvanceOnCR,  TRUE,
                     MUIA_String_Integer,      0,
                     MUIA_String_Accept,       "0123456789",
+                    MUIA_ControlChar,         ShortCut(tr(MSG_CO_POP_PORT)),
                   End,
+                  Child, Label2(tr(MSG_CO_POP_PORT_STANDARD)),
+                  Child, LB_POPPORT = LLabel2("000"),
+                  Child, HSpace(0),
                 End,
 
                 Child, HSpace(1),
@@ -442,10 +451,11 @@ OVERLOAD(OM_NEW)
                 Child, Label2(tr(MSG_CO_SMTP_DESC)),
                 Child, ST_SMTPDESC = MakeString(SIZE_DEFAULT, tr(MSG_CO_SMTP_DESC)),
 
-                Child, Label2(tr(MSG_CO_SMTP_SERVERPORT)),
+                Child, Label2(tr(MSG_CO_SMTP_SERVER)),
+                Child, ST_SMTPHOST = MakeString(SIZE_HOST, tr(MSG_CO_SMTP_SERVER)),
+
+                Child, Label2(tr(MSG_CO_SMTP_PORT)),
                 Child, HGroup,
-                  MUIA_Group_Spacing, 1,
-                  Child, ST_SMTPHOST = MakeString(SIZE_HOST, tr(MSG_CO_SMTP_SERVERPORT)),
                   Child, ST_SMTPPORT = BetterStringObject,
                     StringFrame,
                     MUIA_CycleChain,          TRUE,
@@ -454,7 +464,11 @@ OVERLOAD(OM_NEW)
                     MUIA_String_AdvanceOnCR,  TRUE,
                     MUIA_String_Integer,      0,
                     MUIA_String_Accept,       "0123456789",
+                    MUIA_ControlChar,         ShortCut(tr(MSG_CO_SMTP_PORT)),
                   End,
+                  Child, Label2(tr(MSG_CO_SMTP_PORT_STANDARD)),
+                  Child, LB_SMTPPORT = LLabel2("000"),
+                  Child, HSpace(0),
                 End,
 
                 Child, HSpace(1),
@@ -512,6 +526,7 @@ OVERLOAD(OM_NEW)
     data->ST_POPDESC =                ST_POPDESC;
     data->ST_POPHOST =                ST_POPHOST;
     data->ST_POPPORT =                ST_POPPORT;
+    data->LB_POPPORT =                LB_POPPORT;
     data->CY_POPSECURE =              CY_POPSECURE;
     data->CY_POPAUTH =                CY_POPAUTH;
     data->ST_POPUSERID =              ST_POPUSERID;
@@ -541,6 +556,7 @@ OVERLOAD(OM_NEW)
     data->ST_SMTPDESC =               ST_SMTPDESC;
     data->ST_SMTPHOST =               ST_SMTPHOST;
     data->ST_SMTPPORT =               ST_SMTPPORT;
+    data->LB_SMTPPORT =               LB_SMTPPORT;
     data->CY_SMTPSECURE =             CY_SMTPSECURE;
     data->CY_SMTPAUTH =               CY_SMTPAUTH;
     data->ST_SMTPAUTHUSER =           ST_SMTPAUTHUSER;
@@ -793,6 +809,11 @@ DECLARE(POP3ToGUI)
 
     // we have to enabled/disable the SSL support accordingly
     set(data->CY_POPSECURE, MUIA_Disabled, G->TR_UseableTLS == FALSE);
+
+    if(hasServerSSL(msn) == TRUE)
+      nnset(data->LB_POPPORT, MUIA_Text_Contents, "995");
+    else
+      nnset(data->LB_POPPORT, MUIA_Text_Contents, "110");
   }
 
   RETURN(0);
@@ -817,12 +838,12 @@ DECLARE(GUIToPOP3)
     DoMethod(data->LV_POP3, MUIM_NList_GetEntry, p, &msn);
     if(msn != NULL)
     {
-      unsigned int oldSSLFlags = 0;
+      unsigned int oldSSLFlags;
 
-      GetMUIString(msn->description,  data->ST_POPDESC,    sizeof(msn->description));
-      GetMUIString(msn->hostname,     data->ST_POPHOST,    sizeof(msn->hostname));
-      GetMUIString(msn->username,     data->ST_POPUSERID,  sizeof(msn->username));
-      GetMUIString(msn->password,     data->ST_PASSWD,     sizeof(msn->password));
+      GetMUIString(msn->description,  data->ST_POPDESC,   sizeof(msn->description));
+      GetMUIString(msn->hostname,     data->ST_POPHOST,   sizeof(msn->hostname));
+      GetMUIString(msn->username,     data->ST_POPUSERID, sizeof(msn->username));
+      GetMUIString(msn->password,     data->ST_PASSWD,    sizeof(msn->password));
       msn->preselection = GetMUICycle(data->CY_PRESELECTION);
 
       if(GetMUICheck(data->CH_POPENABLED) == TRUE)
@@ -879,6 +900,8 @@ DECLARE(GUIToPOP3)
       if(IsStrEmpty(msn->description) || strcmp(msn->description, tr(MSG_NewEntry)) == 0)
         snprintf(msn->description, sizeof(msn->description), "%s@%s", msn->username, msn->hostname);
 
+      msn->port = GetMUIInteger(data->ST_POPPORT);
+
       // remember the current flags of the server
       oldSSLFlags = msn->flags;
 
@@ -914,12 +937,26 @@ DECLARE(GUIToPOP3)
       if(oldSSLFlags != msn->flags)
       {
         if(hasServerSSL(msn) == TRUE)
-          nnset(data->ST_POPPORT, MUIA_String_Integer, 995);
+        {
+          nnset(data->LB_POPPORT, MUIA_Text_Contents, "995");
+          // adapt the port only if was the standard port for the previous security type before
+          if(msn->port == 110)
+          {
+            nnset(data->ST_POPPORT, MUIA_String_Integer, 995);
+            msn->port = 995;
+          }
+        }
         else
-          nnset(data->ST_POPPORT, MUIA_String_Integer, 110);
+        {
+          nnset(data->LB_POPPORT, MUIA_Text_Contents, "110");
+          // adapt the port only if was the standard port for the previous security type before
+          if(msn->port == 995)
+          {
+            nnset(data->ST_POPPORT, MUIA_String_Integer, 110);
+            msn->port = 110;
+          }
+        }
       }
-
-      msn->port = GetMUIInteger(data->ST_POPPORT);
 
       msn->notifyByRequester = GetMUICheck(data->CH_POP3_NOTIFY_REQ);
       #if defined(__amigaos4__)
@@ -1060,6 +1097,13 @@ DECLARE(SMTPToGUI)
 
     set(data->ST_SMTPAUTHUSER, MUIA_Disabled, hasServerAuth(msn) == FALSE);
     set(data->ST_SMTPAUTHPASS, MUIA_Disabled, hasServerAuth(msn) == FALSE);
+
+    if(hasServerSSL(msn) == TRUE)
+      nnset(data->LB_SMTPPORT, MUIA_Text_Contents, "465");
+    else if(hasServerTLS(msn) == TRUE)
+      nnset(data->LB_SMTPPORT, MUIA_Text_Contents, "587");
+    else
+      nnset(data->LB_SMTPPORT, MUIA_Text_Contents, "25");
   }
 
   RETURN(0);
@@ -1084,12 +1128,12 @@ DECLARE(GUIToSMTP)
     DoMethod(data->LV_SMTP, MUIM_NList_GetEntry, p, &msn);
     if(msn != NULL)
     {
-      unsigned int oldSSLFlags = 0;
+      unsigned int oldSSLFlags;
 
-      GetMUIString(msn->description,  data->ST_SMTPDESC,    sizeof(msn->description));
-      GetMUIString(msn->hostname,     data->ST_SMTPHOST,    sizeof(msn->hostname));
-      GetMUIString(msn->username,     data->ST_SMTPAUTHUSER,sizeof(msn->username));
-      GetMUIString(msn->password,     data->ST_SMTPAUTHPASS,sizeof(msn->password));
+      GetMUIString(msn->description,  data->ST_SMTPDESC,     sizeof(msn->description));
+      GetMUIString(msn->hostname,     data->ST_SMTPHOST,     sizeof(msn->hostname));
+      GetMUIString(msn->username,     data->ST_SMTPAUTHUSER, sizeof(msn->username));
+      GetMUIString(msn->password,     data->ST_SMTPAUTHPASS, sizeof(msn->password));
 
       if(GetMUICheck(data->CH_SMTPENABLED) == TRUE)
         setFlag(msn->flags, MSF_ACTIVE);
@@ -1105,6 +1149,9 @@ DECLARE(GUIToSMTP)
         setFlag(msn->flags, MSF_ALLOW_8BIT);
       else
         clearFlag(msn->flags, MSF_ALLOW_8BIT);
+
+      // get the port number
+      msn->port = GetMUIInteger(data->ST_SMTPPORT);
 
       // remember the current flags of the server
       oldSSLFlags = msn->flags;
@@ -1141,13 +1188,39 @@ DECLARE(GUIToSMTP)
       if(oldSSLFlags != msn->flags)
       {
         if(hasServerSSL(msn) == TRUE)
-          nnset(data->ST_SMTPPORT, MUIA_String_Integer, 465);
+        {
+          nnset(data->LB_SMTPPORT, MUIA_Text_Contents, "465");
+          // adapt the port only if was the standard port for the previous security type before
+          if((isFlagSet(oldSSLFlags, MSF_SEC_TLS) && msn->port == 587) ||
+             (isFlagClear(oldSSLFlags, MSF_SEC_TLS) && isFlagClear(oldSSLFlags, MSF_SEC_SSL) && msn->port == 25))
+          {
+            nnset(data->ST_SMTPPORT, MUIA_String_Integer, 465);
+            msn->port = 465;
+          }
+        }
+        else if(hasServerTLS(msn) == TRUE)
+        {
+          nnset(data->LB_SMTPPORT, MUIA_Text_Contents, "587");
+          // adapt the port only if was the standard port for the previous security type before
+          if((isFlagSet(oldSSLFlags, MSF_SEC_SSL) && msn->port == 465) ||
+             (isFlagClear(oldSSLFlags, MSF_SEC_TLS) && isFlagClear(oldSSLFlags, MSF_SEC_SSL) && msn->port == 25))
+          {
+            nnset(data->ST_SMTPPORT, MUIA_String_Integer, 587);
+            msn->port = 587;
+          }
+        }
         else
-          nnset(data->ST_SMTPPORT, MUIA_String_Integer, 25);
+        {
+          nnset(data->LB_SMTPPORT, MUIA_Text_Contents, "25");
+          // adapt the port only if was the standard port for the previous security type before
+          if((isFlagSet(oldSSLFlags, MSF_SEC_SSL) && msn->port == 465) ||
+             (isFlagSet(oldSSLFlags, MSF_SEC_TLS) && msn->port == 587))
+          {
+            nnset(data->ST_SMTPPORT, MUIA_String_Integer, 25);
+            msn->port = 25;
+          }
+        }
       }
-
-      // get port number
-      msn->port = GetMUIInteger(data->ST_SMTPPORT);
 
       switch(GetMUICycle(data->CY_SMTPAUTH))
       {

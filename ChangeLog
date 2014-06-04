@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-06-04 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/TCPIPConfigPage.c: the standard POP3 and SMTP port numbers will now be
+    shown right of the current port number. Changing the security settings will
+    adapt the current port number only if it matches the standard port number to
+    avoid loosing custom settings. Furthermore the SMTP port number together
+    with the STARTTLS security option as been changed to the common value 587.
+
 2014-05-28 Thore Böckelmann <tboeckel@gmx.de>
 
   * tools/genclasses/gc.c: set the class' name in the created custom class

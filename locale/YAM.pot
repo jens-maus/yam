@@ -6772,14 +6772,6 @@ msgctxt "MSG_CO_CRDLOOKFEEL (1888//)"
 msgid "Look & Feel"
 msgstr "Look & Feel"
 
-msgctxt "MSG_CO_SMTP_SERVERPORT (1891//)"
-msgid "Ser_ver/Port"
-msgstr "Ser_ver/Port"
-
-msgctxt "MSG_CO_POP_SERVERPORT (1892//)"
-msgid "Serve_r/Port"
-msgstr "Serve_r/Port"
-
 msgctxt "MSG_CO_LOOKFEEL_THEMES (1898//)"
 msgid "Themes"
 msgstr "Themes"
@@ -9956,3 +9948,27 @@ msgstr "- The signature of the certificate is invalid."
 msgctxt "MSG_SSL_CERT_WARNING_OUTRO (2559//)"
 msgid "If you continue the data transfer will be encrypted (protection from\ninterception), but the identity of the server cannot be guaranteed\n(\033bNO\033n protection from fraud).\n\nDo you still want to accept the connection?"
 msgstr "If you continue the data transfer will be encrypted (protection from\ninterception), but the identity of the server cannot be guaranteed\n(\033bNO\033n protection from fraud).\n\nDo you still want to accept the connection?"
+
+msgctxt "MSG_CO_POP_SERVER (2560//)"
+msgid "Serve_r"
+msgstr "Serve_r"
+
+msgctxt "MSG_CO_POP_PORT (2561//)"
+msgid "P_ort"
+msgstr "P_ort"
+
+msgctxt "MSG_CO_POP_PORT_STANDARD (2562//)"
+msgid "Standard:"
+msgstr "Standard:"
+
+msgctxt "MSG_CO_SMTP_SERVER (2563//)"
+msgid "Ser_ver"
+msgstr "Ser_ver"
+
+msgctxt "MSG_CO_SMTP_PORT (2564//)"
+msgid "_Port"
+msgstr "_Port"
+
+msgctxt "MSG_CO_SMTP_PORT_STANDARD (2565//)"
+msgid "Standard:"
+msgstr "Standard:"
