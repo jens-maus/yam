@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-06-04 14:09+0000\n"
+"PO-Revision-Date: 2014-06-06 06:25+0000\n"
 "Last-Translator: Thore Böckelmann <tboeckel@gmx.de>\n"
 "Language-Team: Portuguese (http://www.transifex.com/projects/p/yam/language/pt/)\n"
 "MIME-Version: 1.0\n"
@@ -9979,4 +9979,54 @@ msgstr ""
 
 msgctxt "MSG_CO_SMTP_PORT_STANDARD (2565//)"
 msgid "Standard:"
+msgstr ""
+
+msgctxt "MSG_CO_POP3_TEST_CONNECTION_SETTINGS (2566//)"
+msgid "Test connection settings"
+msgstr ""
+
+msgctxt "MSG_HELP_CO_BT_POPTEST (2567//)"
+msgid ""
+"Test the current settings to\n"
+"establish a reliable connection for\n"
+"POP3 downloads."
+msgstr ""
+
+msgctxt "MSG_CO_POP3_CONNECTION_TITLE (2568//)"
+msgid "POP3 connection"
+msgstr ""
+
+#. SERVER
+msgctxt "MSG_CO_POP3_CONNECTION_SUCCESS (2569//)"
+msgid "Connection to POP3 server '%s' was successful."
+msgstr ""
+
+#. SERVER
+msgctxt "MSG_CO_POP3_CONNECTION_FAILURE (2570//)"
+msgid "Connection to POP3 server '%s' failed."
+msgstr ""
+
+msgctxt "MSG_CO_SMTP_TEST_CONNECTION_SETTINGS (2571//)"
+msgid "Test connection settings"
+msgstr ""
+
+msgctxt "MSG_HELP_CO_BT_SMTPTEST (2572//)"
+msgid ""
+"Test the current settings to\n"
+"establish a reliable connection for\n"
+"SMTP uploads."
+msgstr ""
+
+msgctxt "MSG_CO_SMTP_CONNECTION_TITLE (2573//)"
+msgid "SMTP connection"
+msgstr ""
+
+#. SERVER
+msgctxt "MSG_CO_SMTP_CONNECTION_SUCCESS (2574//)"
+msgid "Connection to SMTP server '%s' was successful."
+msgstr ""
+
+#. SERVER
+msgctxt "MSG_CO_SMTP_CONNECTION_FAILURE (2575//)"
+msgid "Connection to SMTP server '%s' failed."
 msgstr ""
