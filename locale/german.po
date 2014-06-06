@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-06-04 14:10+0000\n"
+"PO-Revision-Date: 2014-06-06 06:30+0000\n"
 "Last-Translator: Thore Böckelmann <tboeckel@gmx.de>\n"
 "Language-Team: German (http://www.transifex.com/projects/p/yam/language/de/)\n"
 "MIME-Version: 1.0\n"
@@ -9983,3 +9983,53 @@ msgstr "_Port"
 msgctxt "MSG_CO_SMTP_PORT_STANDARD (2565//)"
 msgid "Standard:"
 msgstr "Standard:"
+
+msgctxt "MSG_CO_POP3_TEST_CONNECTION_SETTINGS (2566//)"
+msgid "Test connection settings"
+msgstr "Teste Verbindungseinstellungen"
+
+msgctxt "MSG_HELP_CO_BT_POPTEST (2567//)"
+msgid ""
+"Test the current settings to\n"
+"establish a reliable connection for\n"
+"POP3 downloads."
+msgstr "Testet, ob mit den aktuellen Einstellungen eine\nerfolgreiche POP3-Verbindung aufgebaut werden kann."
+
+msgctxt "MSG_CO_POP3_CONNECTION_TITLE (2568//)"
+msgid "POP3 connection"
+msgstr "POP3-Verbindung"
+
+#. SERVER
+msgctxt "MSG_CO_POP3_CONNECTION_SUCCESS (2569//)"
+msgid "Connection to POP3 server '%s' was successful."
+msgstr "Die Verbindung zum POP3-Server '%s' war erfolgreich."
+
+#. SERVER
+msgctxt "MSG_CO_POP3_CONNECTION_FAILURE (2570//)"
+msgid "Connection to POP3 server '%s' failed."
+msgstr "Die Verbindung zum POP3-Server '%s' ist fehlgeschlagen."
+
+msgctxt "MSG_CO_SMTP_TEST_CONNECTION_SETTINGS (2571//)"
+msgid "Test connection settings"
+msgstr "Teste Verbindungseinstellungen"
+
+msgctxt "MSG_HELP_CO_BT_SMTPTEST (2572//)"
+msgid ""
+"Test the current settings to\n"
+"establish a reliable connection for\n"
+"SMTP uploads."
+msgstr "Testet, ob mit den aktuellen Einstellungen eine\nerfolgreiche SMTP-Verbindung aufgebaut werden kann."
+
+msgctxt "MSG_CO_SMTP_CONNECTION_TITLE (2573//)"
+msgid "SMTP connection"
+msgstr "SMTP-Verbindung"
+
+#. SERVER
+msgctxt "MSG_CO_SMTP_CONNECTION_SUCCESS (2574//)"
+msgid "Connection to SMTP server '%s' was successful."
+msgstr "Die Verbindung zum SMTP-Server '%s' war erfolgreich."
+
+#. SERVER
+msgctxt "MSG_CO_SMTP_CONNECTION_FAILURE (2575//)"
+msgid "Connection to SMTP server '%s' failed."
+msgstr "Die Verbindung zum SMTP-Server '%s' ist fehlgeschlagen."
