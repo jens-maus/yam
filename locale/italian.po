@@ -14,8 +14,8 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-06-06 06:25+0000\n"
-"Last-Translator: Thore Böckelmann <tboeckel@gmx.de>\n"
+"PO-Revision-Date: 2014-06-06 17:49+0000\n"
+"Last-Translator: Samir Hawamdeh <s.hawamdeh@teletu.it>\n"
 "Language-Team: Italian (http://www.transifex.com/projects/p/yam/language/it/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1136,7 +1136,7 @@ msgstr "_Finestra trasferimenti"
 
 msgctxt "MSG_CO_PreSelect (369//)"
 msgid "_Pre-selection"
-msgstr "_Pre-selezione"
+msgstr "Prese_lezione"
 
 msgctxt "MSG_CO_CheckMail (374//)"
 msgid "Check for new mail every"
@@ -1148,11 +1148,11 @@ msgstr "minuto(i)"
 
 msgctxt "MSG_CO_NotiReq (378//)"
 msgid "_Requester"
-msgstr "_Requester"
+msgstr "Re_quester"
 
 msgctxt "MSG_CO_NotiSound (379//)"
 msgid "S_ound"
-msgstr "Su_ono"
+msgstr "Campio_ne"
 
 msgctxt "MSG_CO_NotiCommand (380//)"
 msgid "Co_mmand"
@@ -8024,7 +8024,7 @@ msgstr "La data di nascita utilizza un formato errato. Il formato corretto è '%
 
 msgctxt "MSG_CO_NOTIOS41SYSTEM (2149//)"
 msgid "AmigaOS_4.1 notification system"
-msgstr "Gestore notifiche di AmigaOS _4.1+ (Ringhio)"
+msgstr "Gestore notifiche di AmigaOS 4.1+ (Rin_ghio)"
 
 msgctxt "MSG_HELP_CO_CH_NOTIOS41SYSTEM (2150//)"
 msgid ""
@@ -8988,7 +8988,7 @@ msgstr "Tipo di MIME"
 
 msgctxt "MSG_CO_DOWNLOAD_LARGE_MAILS1 (2357//)"
 msgid "_Download messages larger than"
-msgstr "_Preleva messaggi più grandi di"
+msgstr "Prele_va messaggi più grandi di"
 
 msgctxt "MSG_CO_DOWNLOAD_LARGE_MAILS2 (2358//)"
 msgid "KB"
@@ -9963,74 +9963,74 @@ msgstr "Se si decide di continuare il trasferimento dei dati verrà crittografat
 
 msgctxt "MSG_CO_POP_SERVER (2560//)"
 msgid "Serve_r"
-msgstr ""
+msgstr "Serve_r"
 
 msgctxt "MSG_CO_POP_PORT (2561//)"
 msgid "P_ort"
-msgstr ""
+msgstr "P_orta"
 
 msgctxt "MSG_CO_POP_PORT_STANDARD (2562//)"
 msgid "Standard:"
-msgstr ""
+msgstr "Predefinita:"
 
 msgctxt "MSG_CO_SMTP_SERVER (2563//)"
 msgid "Ser_ver"
-msgstr ""
+msgstr "Ser_ver"
 
 msgctxt "MSG_CO_SMTP_PORT (2564//)"
 msgid "_Port"
-msgstr ""
+msgstr "_Porta"
 
 msgctxt "MSG_CO_SMTP_PORT_STANDARD (2565//)"
 msgid "Standard:"
-msgstr ""
+msgstr "Predefinita:"
 
 msgctxt "MSG_CO_POP3_TEST_CONNECTION_SETTINGS (2566//)"
 msgid "Test connection settings"
-msgstr ""
+msgstr "Impostazioni test di connessione"
 
 msgctxt "MSG_HELP_CO_BT_POPTEST (2567//)"
 msgid ""
 "Test the current settings to\n"
 "establish a reliable connection for\n"
 "POP3 downloads."
-msgstr ""
+msgstr "Verifica le impostazioni correnti per\nstabilire una connessione affidabile\nper i download tramite POP3"
 
 msgctxt "MSG_CO_POP3_CONNECTION_TITLE (2568//)"
 msgid "POP3 connection"
-msgstr ""
+msgstr "Connessione POP3"
 
 #. SERVER
 msgctxt "MSG_CO_POP3_CONNECTION_SUCCESS (2569//)"
 msgid "Connection to POP3 server '%s' was successful."
-msgstr ""
+msgstr "Connessione al server POP3 '%s' avvenuta con successo."
 
 #. SERVER
 msgctxt "MSG_CO_POP3_CONNECTION_FAILURE (2570//)"
 msgid "Connection to POP3 server '%s' failed."
-msgstr ""
+msgstr "Connessione al server POP3 '%s' fallita."
 
 msgctxt "MSG_CO_SMTP_TEST_CONNECTION_SETTINGS (2571//)"
 msgid "Test connection settings"
-msgstr ""
+msgstr "Impostazioni test di connessione"
 
 msgctxt "MSG_HELP_CO_BT_SMTPTEST (2572//)"
 msgid ""
 "Test the current settings to\n"
 "establish a reliable connection for\n"
 "SMTP uploads."
-msgstr ""
+msgstr "Verifica le impostazioni correnti per\nstabilire una connessione affidabile\nper gli upload tramite SMTP"
 
 msgctxt "MSG_CO_SMTP_CONNECTION_TITLE (2573//)"
 msgid "SMTP connection"
-msgstr ""
+msgstr "Connessione SMTP"
 
 #. SERVER
 msgctxt "MSG_CO_SMTP_CONNECTION_SUCCESS (2574//)"
 msgid "Connection to SMTP server '%s' was successful."
-msgstr ""
+msgstr "Connessione al server SMTP '%s' avvenuta con successo."
 
 #. SERVER
 msgctxt "MSG_CO_SMTP_CONNECTION_FAILURE (2575//)"
 msgid "Connection to SMTP server '%s' failed."
-msgstr ""
+msgstr "Connessione al server SMTP '%s' fallita."
