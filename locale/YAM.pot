@@ -9972,3 +9972,53 @@ msgstr "_Port"
 msgctxt "MSG_CO_SMTP_PORT_STANDARD (2565//)"
 msgid "Standard:"
 msgstr "Standard:"
+
+msgctxt "MSG_CO_POP3_TEST_CONNECTION_SETTINGS (2566//)"
+msgid "Test connection settings"
+msgstr "Test connection settings"
+
+msgctxt "MSG_HELP_CO_BT_POPTEST (2567//)"
+msgid ""
+"Test the current settings to\n"
+"establish a reliable connection for\n"
+"POP3 downloads."
+msgstr "Test the current settings to\nestablish a reliable connection for\nPOP3 downloads."
+
+msgctxt "MSG_CO_POP3_CONNECTION_TITLE (2568//)"
+msgid "POP3 connection"
+msgstr "POP3 connection"
+
+#. SERVER
+msgctxt "MSG_CO_POP3_CONNECTION_SUCCESS (2569//)"
+msgid "Connection to POP3 server '%s' was successful."
+msgstr "Connection to POP3 server '%s' was successful."
+
+#. SERVER
+msgctxt "MSG_CO_POP3_CONNECTION_FAILURE (2570//)"
+msgid "Connection to POP3 server '%s' failed."
+msgstr "Connection to POP3 server '%s' failed."
+
+msgctxt "MSG_CO_SMTP_TEST_CONNECTION_SETTINGS (2571//)"
+msgid "Test connection settings"
+msgstr "Test connection settings"
+
+msgctxt "MSG_HELP_CO_BT_SMTPTEST (2572//)"
+msgid ""
+"Test the current settings to\n"
+"establish a reliable connection for\n"
+"SMTP uploads."
+msgstr "Test the current settings to\nestablish a reliable connection for\nSMTP uploads."
+
+msgctxt "MSG_CO_SMTP_CONNECTION_TITLE (2573//)"
+msgid "SMTP connection"
+msgstr "SMTP connection"
+
+#. SERVER
+msgctxt "MSG_CO_SMTP_CONNECTION_SUCCESS (2574//)"
+msgid "Connection to SMTP server '%s' was successful."
+msgstr "Connection to SMTP server '%s' was successful."
+
+#. SERVER
+msgctxt "MSG_CO_SMTP_CONNECTION_FAILURE (2575//)"
+msgid "Connection to SMTP server '%s' failed."
+msgstr "Connection to SMTP server '%s' failed."

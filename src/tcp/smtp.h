@@ -40,7 +40,8 @@ enum SendMailMode
   SENDMAIL_ACTIVE_AUTO
 };
 
-#define SENDF_SIGNAL  (1<<0) // wakeup a waiting thread after the transfer
+#define SENDF_SIGNAL          (1<<0) // wakeup a waiting thread after the transfer
+#define SENDF_TEST_CONNECTION (1<<1) // test the connection
 
 // prototypes
 BOOL SendMails(struct UserIdentityNode *uin, struct MailList *mailsToSend, enum SendMailMode mode, const ULONG flags);

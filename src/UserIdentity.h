@@ -83,6 +83,7 @@ struct UserIdentityNode
 
 // public functions
 struct UserIdentityNode *CreateNewUserIdentity(const struct Config *co);
+void DeleteUserIdentity(struct UserIdentityNode *uin);
 void FreeUserIdentityList(struct MinList *userIdentityList);
 BOOL CompareUserIdentityLists(const struct MinList *msl1, const struct MinList *msl2);
 struct UserIdentityNode *GetUserIdentity(const struct MinList *userIdentityList, const unsigned int num, const BOOL activeOnly);

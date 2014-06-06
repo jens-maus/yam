@@ -1552,7 +1552,7 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
 
               tc->timerMask = (1UL << ThreadTimerSignal());
 
-              if(hasServerAvoidDuplicates(tc->msn) == TRUE)
+              if(isFlagClear(flags, RECEIVEF_TEST_CONNECTION) && hasServerAvoidDuplicates(tc->msn) == TRUE)
               {
                 if((tc->UIDLhashTable = InitUIDLhash(tc->msn)) != NULL)
                   uidlOk = TRUE;
@@ -1583,7 +1583,7 @@ BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct Download
                     success = TRUE;
 
                     // but we continue only if there is something to be downloaded at all
-                    if(msgs > 0)
+                    if(isFlagClear(flags, RECEIVEF_TEST_CONNECTION) && msgs > 0)
                     {
                       // there are messages on the server
                       if(GetMessageList(tc) == TRUE)

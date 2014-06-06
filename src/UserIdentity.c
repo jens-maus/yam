@@ -112,6 +112,17 @@ struct UserIdentityNode *CreateNewUserIdentity(const struct Config *co)
 }
 
 ///
+/// DeleteUserIdentity
+void DeleteUserIdentity(struct UserIdentityNode *uin)
+{
+  ENTER();
+
+  FreeSysObject(ASOT_NODE, uin);
+
+  LEAVE();
+}
+
+///
 /// FreeUserIdentityList
 void FreeUserIdentityList(struct MinList *userIdentityList)
 {
@@ -123,7 +134,7 @@ void FreeUserIdentityList(struct MinList *userIdentityList)
   // we have to free the userIdentityList
   SafeIterateList(userIdentityList, struct UserIdentityNode *, uin, next)
   {
-    FreeSysObject(ASOT_NODE, uin);
+    DeleteUserIdentity(uin);
   }
   NewMinList(userIdentityList);
 

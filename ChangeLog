@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-06-06 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/TCPIPConfigPage.c, tcp/pop3.c, tcp/smtp.c: added a "Test connection"
+    button for the POP3 and SMTP settings to test the current settings to
+    establish a realiable connection. No mails will be transferred in either
+    direction during the test.
+
 2014-06-04 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/TCPIPConfigPage.c: the standard POP3 and SMTP port numbers will now be

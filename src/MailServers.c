@@ -307,11 +307,9 @@ static BOOL CompareMailServerNodes(const struct Node *n1, const struct Node *n2)
     }
     else if(msn1->type == MST_SMTP)
     {
-      if(msn1->smtpFlags != msn2->smtpFlags)
-      {
-        // something does not match
-        equal = FALSE;
-      }
+      // nothing to be compared here
+      // the smtpFlags field will be modified during a connection but it is never
+      // saved to a configuration file
     }
   }
 

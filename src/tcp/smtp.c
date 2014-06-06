@@ -421,21 +421,21 @@ static BOOL ConnectToSMTP(struct TransferContext *tc)
       }
 
       #ifdef DEBUG
-      D(DBF_NET, "SMTP Server '%s' serves:", tc->msn->hostname);
-      D(DBF_NET, "  ESMTP..............: %ld", hasESMTP(flags));
-      D(DBF_NET, "  AUTH CRAM-MD5......: %ld", hasCRAM_MD5_Auth(flags));
-      D(DBF_NET, "  AUTH DIGEST-MD5....: %ld", hasDIGEST_MD5_Auth(flags));
-      D(DBF_NET, "  AUTH LOGIN.........: %ld", hasLOGIN_Auth(flags));
-      D(DBF_NET, "  AUTH PLAIN.........: %ld", hasPLAIN_Auth(flags));
-      D(DBF_NET, "  STARTTLS...........: %ld", hasSTARTTLS(flags));
-      D(DBF_NET, "  SIZE...............: %ld", hasSIZE(flags));
-      D(DBF_NET, "  PIPELINING.........: %ld", hasPIPELINING(flags));
-      D(DBF_NET, "  8BITMIME...........: %ld", has8BITMIME(flags));
-      D(DBF_NET, "  DSN................: %ld", hasDSN(flags));
-      D(DBF_NET, "  ETRN...............: %ld", hasETRN(flags));
-      D(DBF_NET, "  ENHANCEDSTATUSCODES: %ld", hasENHANCEDSTATUSCODES(flags));
-      D(DBF_NET, "  DELIVERBY..........: %ld", hasDELIVERBY(flags));
-      D(DBF_NET, "  HELP...............: %ld", hasHELP(flags));
+      D(DBF_NET, "SMTP Server '%s' provides:", tc->msn->hostname);
+      D(DBF_NET, "  ESMTP..............: %s", Bool2Txt(hasESMTP(flags)));
+      D(DBF_NET, "  AUTH CRAM-MD5......: %s", Bool2Txt(hasCRAM_MD5_Auth(flags)));
+      D(DBF_NET, "  AUTH DIGEST-MD5....: %s", Bool2Txt(hasDIGEST_MD5_Auth(flags)));
+      D(DBF_NET, "  AUTH LOGIN.........: %s", Bool2Txt(hasLOGIN_Auth(flags)));
+      D(DBF_NET, "  AUTH PLAIN.........: %s", Bool2Txt(hasPLAIN_Auth(flags)));
+      D(DBF_NET, "  STARTTLS...........: %s", Bool2Txt(hasSTARTTLS(flags)));
+      D(DBF_NET, "  SIZE...............: %s", Bool2Txt(hasSIZE(flags)));
+      D(DBF_NET, "  PIPELINING.........: %s", Bool2Txt(hasPIPELINING(flags)));
+      D(DBF_NET, "  8BITMIME...........: %s", Bool2Txt(has8BITMIME(flags)));
+      D(DBF_NET, "  DSN................: %s", Bool2Txt(hasDSN(flags)));
+      D(DBF_NET, "  ETRN...............: %s", Bool2Txt(hasETRN(flags)));
+      D(DBF_NET, "  ENHANCEDSTATUSCODES: %s", Bool2Txt(hasENHANCEDSTATUSCODES(flags)));
+      D(DBF_NET, "  DELIVERBY..........: %s", Bool2Txt(hasDELIVERBY(flags)));
+      D(DBF_NET, "  HELP...............: %s", Bool2Txt(hasHELP(flags)));
       #endif
 
       // now we check the 8BITMIME extension against
@@ -1430,32 +1430,35 @@ BOOL SendMails(struct UserIdentityNode *uin, struct MailList *mailsToSend, enum 
           ULONG totalSize = 0;
           struct MailNode *mnode;
 
-          // start the PRESEND macro first and wait for it to terminate
-          PushMethodOnStackWait(G->App, 3, MUIM_YAMApplication_StartMacro, MACRO_PRESEND, NULL);
-
-          // now we build the list of mails to be transfered.
-          LockMailListShared(mailsToSend);
-
-          ForEachMailNode(mailsToSend, mnode)
+          if(isFlagClear(flags, SENDF_TEST_CONNECTION))
           {
-            struct Mail *mail = mnode->mail;
-            struct MailTransferNode *tnode;
+            // start the PRESEND macro first and wait for it to terminate
+            PushMethodOnStackWait(G->App, 3, MUIM_YAMApplication_StartMacro, MACRO_PRESEND, NULL);
 
-            if((tnode = CreateMailTransferNode(mail, TRF_TRANSFER)) != NULL)
+            // now we build the list of mails to be transfered.
+            LockMailListShared(mailsToSend);
+
+            ForEachMailNode(mailsToSend, mnode)
             {
-              AddMailTransferNode(transferList, tnode);
+              struct Mail *mail = mnode->mail;
+              struct MailTransferNode *tnode;
 
-              tnode->index = transferList->count;
-              totalSize += mail->Size;
+              if((tnode = CreateMailTransferNode(mail, TRF_TRANSFER)) != NULL)
+              {
+                AddMailTransferNode(transferList, tnode);
+
+                tnode->index = transferList->count;
+                totalSize += mail->Size;
+              }
             }
+
+            UnlockMailList(mailsToSend);
+
+            D(DBF_NET, "prepared %ld mails for sending, %ld bytes", transferList->count, totalSize);
           }
 
-          UnlockMailList(mailsToSend);
-
-          D(DBF_NET, "prepared %ld mails for sending, %ld bytes", transferList->count, totalSize);
-
-          // just go on if we really have something
-          if(transferList->count > 0)
+          // just go on if we really have something to send
+          if(isFlagSet(flags, SENDF_TEST_CONNECTION) || transferList->count > 0)
           {
             ULONG twFlags;
 
@@ -1545,65 +1548,68 @@ BOOL SendMails(struct UserIdentityNode *uin, struct MailList *mailsToSend, enum 
                     success = TRUE;
                     AppendToLogfile(LF_VERBOSE, 41, tr(MSG_LOG_ConnectSMTP), msn->hostname);
 
-                    ForEachMailTransferNode(transferList, tn)
+                    if(isFlagClear(flags, SENDF_TEST_CONNECTION))
                     {
-                      struct Mail *mail = tn->mail;
-
-                      if(tc->conn->abort == TRUE || tc->conn->error != CONNECTERR_NO_ERROR)
-                        break;
-
-                      PushMethodOnStack(tc->transferGroup, 5, MUIM_TransferControlGroup_Next, tn->index, -1, mail->Size, tr(MSG_TR_Sending));
-
-                      switch(SendMessage(tc, mail))
+                      ForEachMailTransferNode(transferList, tn)
                       {
-                        // -1 means that SendMessage was aborted within the
-                        // DATA part and so we cannot issue a RSET command and have to abort
-                        // immediatly by leaving the mailserver alone.
-                        case -1:
-                        {
-                          setStatusToError(mail);
-                          tc->conn->error = CONNECTERR_UNKNOWN_ERROR;
-                        }
-                        break;
+                        struct Mail *mail = tn->mail;
 
-                        // 0 means that an error occured before the DATA part and
-                        // so we can abort the transaction cleanly by a RSET and QUIT
-                        case 0:
-                        {
-                          setStatusToError(mail);
-                          SendSMTPCommand(tc, SMTP_RSET, NULL, NULL); // no error check
-                          tc->conn->error = CONNECTERR_NO_ERROR;
-                        }
-                        break;
+                        if(tc->conn->abort == TRUE || tc->conn->error != CONNECTERR_NO_ERROR)
+                          break;
 
-                        // 1 means we filter the mails and then copy/move the mail to the send folder
-                        case 1:
-                        {
-                          setStatusToSent(mail);
-                          if(PushMethodOnStackWait(G->App, 3, MUIM_YAMApplication_FilterMail, sentMailFilters, mail) == TRUE)
-                          {
-                            // the filter process did not move the mail, hence we do it now
-                            PushMethodOnStackWait(G->App, 5, MUIM_YAMApplication_MoveCopyMail, mail, tc->sentFolder, "sent mail", MVCPF_CLOSE_WINDOWS);
-                          }
-                          else
-                          {
-                            // update the Outgoing folder's stats as the mail just got (re)moved
-                            PushMethodOnStack(G->App, 3, MUIM_YAMApplication_DisplayStatistics, tc->outFolder, TRUE);
-                          }
-                        }
-                        break;
+                        PushMethodOnStack(tc->transferGroup, 5, MUIM_TransferControlGroup_Next, tn->index, -1, mail->Size, tr(MSG_TR_Sending));
 
-                        // 2 means we filter and delete afterwards
-                        case 2:
+                        switch(SendMessage(tc, mail))
                         {
-                          setStatusToSent(mail);
-                          if(PushMethodOnStackWait(G->App, 3, MUIM_YAMApplication_FilterMail, sentMailFilters, mail) == TRUE)
+                          // -1 means that SendMessage was aborted within the
+                          // DATA part and so we cannot issue a RSET command and have to abort
+                          // immediatly by leaving the mailserver alone.
+                          case -1:
                           {
-                            // the filter process did not delete the mail, hence we do it now
-                            PushMethodOnStackWait(G->App, 3, MUIM_YAMApplication_DeleteMail, mail, DELF_UPDATE_APPICON);
+                            setStatusToError(mail);
+                            tc->conn->error = CONNECTERR_UNKNOWN_ERROR;
                           }
+                          break;
+
+                          // 0 means that an error occured before the DATA part and
+                          // so we can abort the transaction cleanly by a RSET and QUIT
+                          case 0:
+                          {
+                            setStatusToError(mail);
+                            SendSMTPCommand(tc, SMTP_RSET, NULL, NULL); // no error check
+                            tc->conn->error = CONNECTERR_NO_ERROR;
+                          }
+                          break;
+
+                          // 1 means we filter the mails and then copy/move the mail to the send folder
+                          case 1:
+                          {
+                            setStatusToSent(mail);
+                            if(PushMethodOnStackWait(G->App, 3, MUIM_YAMApplication_FilterMail, sentMailFilters, mail) == TRUE)
+                            {
+                              // the filter process did not move the mail, hence we do it now
+                              PushMethodOnStackWait(G->App, 5, MUIM_YAMApplication_MoveCopyMail, mail, tc->sentFolder, "sent mail", MVCPF_CLOSE_WINDOWS);
+                            }
+                            else
+                            {
+                              // update the Outgoing folder's stats as the mail just got (re)moved
+                              PushMethodOnStack(G->App, 3, MUIM_YAMApplication_DisplayStatistics, tc->outFolder, TRUE);
+                            }
+                          }
+                          break;
+
+                          // 2 means we filter and delete afterwards
+                          case 2:
+                          {
+                            setStatusToSent(mail);
+                            if(PushMethodOnStackWait(G->App, 3, MUIM_YAMApplication_FilterMail, sentMailFilters, mail) == TRUE)
+                            {
+                              // the filter process did not delete the mail, hence we do it now
+                              PushMethodOnStackWait(G->App, 3, MUIM_YAMApplication_DeleteMail, mail, DELF_UPDATE_APPICON);
+                            }
+                          }
+                          break;
                         }
-                        break;
                       }
                     }
 

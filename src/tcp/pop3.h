@@ -42,11 +42,12 @@ struct DownloadResult
   BOOL error;
 };
 
-#define RECEIVEF_USER    (1<<0) // transfer initiated by user
-#define RECEIVEF_STARTUP (1<<1) // transfer initiated by startup
-#define RECEIVEF_TIMER   (1<<2) // transfer initiated by timer
-#define RECEIVEF_AREXX   (1<<3) // transfer initiated by ARexx
-#define RECEIVEF_SIGNAL  (1<<4) // wakeup a waiting thread after the transfer
+#define RECEIVEF_USER            (1<<0) // transfer initiated by user
+#define RECEIVEF_STARTUP         (1<<1) // transfer initiated by startup
+#define RECEIVEF_TIMER           (1<<2) // transfer initiated by timer
+#define RECEIVEF_AREXX           (1<<3) // transfer initiated by ARexx
+#define RECEIVEF_SIGNAL          (1<<4) // wakeup a waiting thread after the transfer
+#define RECEIVEF_TEST_CONNECTION (1<<1) // test the connection
 
 // prototypes
 BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct DownloadResult *dlResult);

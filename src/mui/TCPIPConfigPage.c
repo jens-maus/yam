@@ -49,6 +49,8 @@
 
 #include "Config.h"
 #include "MailServers.h"
+#include "Requesters.h"
+#include "Threads.h"
 #include "UIDL.h"
 #include "UserIdentity.h"
 
@@ -67,6 +69,7 @@ struct Data
   Object *ST_POPHOST;
   Object *ST_POPPORT;
   Object *LB_POPPORT;
+  Object *BT_POPTEST;
   Object *CY_POPSECURE;
   Object *CY_POPAUTH;
   Object *ST_POPUSERID;
@@ -97,6 +100,7 @@ struct Data
   Object *ST_SMTPHOST;
   Object *ST_SMTPPORT;
   Object *LB_SMTPPORT;
+  Object *BT_SMTPTEST;
   Object *CY_SMTPSECURE;
   Object *CY_SMTPAUTH;
   Object *ST_SMTPAUTHUSER;
@@ -130,6 +134,7 @@ OVERLOAD(OM_NEW)
   Object *ST_POPHOST;
   Object *ST_POPPORT;
   Object *LB_POPPORT;
+  Object *BT_POPTEST;
   Object *CY_POPSECURE;
   Object *CY_POPAUTH;
   Object *ST_POPUSERID;
@@ -160,6 +165,7 @@ OVERLOAD(OM_NEW)
   Object *ST_SMTPHOST;
   Object *ST_SMTPPORT;
   Object *LB_SMTPPORT;
+  Object *BT_SMTPTEST;
   Object *CY_SMTPSECURE;
   Object *CY_SMTPAUTH;
   Object *ST_SMTPAUTHUSER;
@@ -285,6 +291,9 @@ OVERLOAD(OM_NEW)
                   Child, LB_POPPORT = LLabel2("000"),
                   Child, HSpace(0),
                 End,
+
+                Child, HSpace(1),
+                Child, BT_POPTEST = MakeButton(tr(MSG_CO_POP3_TEST_CONNECTION_SETTINGS)),
 
                 Child, HSpace(1),
                 Child, HBarT(tr(MSG_CO_POP_SECURITYAUTH)), End,
@@ -472,6 +481,9 @@ OVERLOAD(OM_NEW)
                 End,
 
                 Child, HSpace(1),
+                Child, BT_SMTPTEST = MakeButton(tr(MSG_CO_SMTP_TEST_CONNECTION_SETTINGS)),
+
+                Child, HSpace(1),
                 Child, HBarT(tr(MSG_CO_SMTP_SECURITYAUTH)), End,
 
                 Child, Label2(tr(MSG_CO_SMTP_SECURITY)),
@@ -527,6 +539,7 @@ OVERLOAD(OM_NEW)
     data->ST_POPHOST =                ST_POPHOST;
     data->ST_POPPORT =                ST_POPPORT;
     data->LB_POPPORT =                LB_POPPORT;
+    data->BT_POPTEST =                BT_POPTEST;
     data->CY_POPSECURE =              CY_POPSECURE;
     data->CY_POPAUTH =                CY_POPAUTH;
     data->ST_POPUSERID =              ST_POPUSERID;
@@ -557,6 +570,7 @@ OVERLOAD(OM_NEW)
     data->ST_SMTPHOST =               ST_SMTPHOST;
     data->ST_SMTPPORT =               ST_SMTPPORT;
     data->LB_SMTPPORT =               LB_SMTPPORT;
+    data->BT_SMTPTEST =               BT_SMTPTEST;
     data->CY_SMTPSECURE =             CY_SMTPSECURE;
     data->CY_SMTPAUTH =               CY_SMTPAUTH;
     data->ST_SMTPAUTHUSER =           ST_SMTPAUTHUSER;
@@ -568,8 +582,10 @@ OVERLOAD(OM_NEW)
     data->CH_POP3_NOTIFY_OS41SYSTEM = CH_POP3_NOTIFY_OS41SYSTEM;
     #endif // __amigaos4__
 
+    SetHelp(ST_SMTPDESC,               MSG_HELP_CO_ST_SMTPDESC);
     SetHelp(ST_SMTPHOST,               MSG_HELP_CO_ST_SMTPHOST);
     SetHelp(ST_SMTPPORT,               MSG_HELP_CO_ST_SMTPPORT);
+    SetHelp(BT_SMTPTEST,               MSG_HELP_CO_BT_SMTPTEST);
     SetHelp(CH_SMTP8BIT,               MSG_HELP_CO_CH_SMTP8BIT);
     SetHelp(ST_SMTPAUTHUSER,           MSG_HELP_CO_ST_SMTPAUTHUSER);
     SetHelp(ST_SMTPAUTHPASS,           MSG_HELP_CO_ST_SMTPAUTHPASS);
@@ -578,9 +594,9 @@ OVERLOAD(OM_NEW)
     SetHelp(BT_PADD,                   MSG_HELP_CO_BT_PADD);
     SetHelp(BT_PDEL,                   MSG_HELP_CO_BT_PDEL);
     SetHelp(ST_POPDESC,                MSG_HELP_CO_ST_POPDESC);
-    SetHelp(ST_SMTPDESC,               MSG_HELP_CO_ST_SMTPDESC);
     SetHelp(ST_POPHOST,                MSG_HELP_CO_ST_POPHOST);
     SetHelp(ST_POPPORT,                MSG_HELP_CO_ST_POPPORT);
+    SetHelp(BT_POPTEST,                MSG_HELP_CO_BT_POPTEST);
     SetHelp(ST_POPUSERID,              MSG_HELP_CO_ST_POPUSERID);
     SetHelp(ST_PASSWD,                 MSG_HELP_CO_ST_PASSWD);
     SetHelp(CH_DELETE,                 MSG_HELP_CO_CH_DELETE);
@@ -610,6 +626,7 @@ OVERLOAD(OM_NEW)
     DoMethod(ST_POPDESC,                MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, obj, 1, METHOD(GUIToPOP3));
     DoMethod(ST_POPHOST,                MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, obj, 1, METHOD(GUIToPOP3));
     DoMethod(ST_POPPORT,                MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, obj, 1, METHOD(GUIToPOP3));
+    DoMethod(BT_POPTEST,                MUIM_Notify, MUIA_Pressed,          FALSE,          obj, 1, METHOD(TestPOP3Connection));
     DoMethod(ST_POPUSERID,              MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, obj, 1, METHOD(GUIToPOP3));
     DoMethod(ST_PASSWD,                 MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, obj, 1, METHOD(GUIToPOP3));
     DoMethod(CH_POPENABLED,             MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, obj, 1, METHOD(GUIToPOP3));
@@ -638,19 +655,20 @@ OVERLOAD(OM_NEW)
     DoMethod(PO_POP_INCOMINGFOLDER,     MUIM_Notify, MUIA_FolderRequestPopup_FolderChanged, MUIV_EveryTime, obj, 1, METHOD(GUIToPOP3));
 
     // connect SMTP related stuff to the corresponding Hooks
-    DoMethod(LV_SMTP              , MUIM_Notify, MUIA_NList_Active,     MUIV_EveryTime, obj, 1, METHOD(SMTPToGUI));
-    DoMethod(ST_SMTPDESC          , MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, obj, 1, METHOD(GUIToSMTP));
-    DoMethod(ST_SMTPHOST          , MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, obj, 1, METHOD(GUIToSMTP));
-    DoMethod(ST_SMTPPORT          , MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, obj, 1, METHOD(GUIToSMTP));
-    DoMethod(ST_SMTPAUTHUSER      , MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, obj, 1, METHOD(GUIToSMTP));
-    DoMethod(ST_SMTPAUTHPASS      , MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, obj, 1, METHOD(GUIToSMTP));
-    DoMethod(CH_SMTPENABLED       , MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, obj, 1, METHOD(GUIToSMTP));
-    DoMethod(CY_SMTPAUTH          , MUIM_Notify, MUIA_Cycle_Active,     MUIV_EveryTime, obj, 1, METHOD(GUIToSMTP));
+    DoMethod(LV_SMTP,               MUIM_Notify, MUIA_NList_Active,     MUIV_EveryTime, obj, 1, METHOD(SMTPToGUI));
+    DoMethod(ST_SMTPDESC,           MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, obj, 1, METHOD(GUIToSMTP));
+    DoMethod(ST_SMTPHOST,           MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, obj, 1, METHOD(GUIToSMTP));
+    DoMethod(ST_SMTPPORT,           MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, obj, 1, METHOD(GUIToSMTP));
+    DoMethod(BT_SMTPTEST,           MUIM_Notify, MUIA_Pressed,          FALSE,          obj, 1, METHOD(TestSMTPConnection));
+    DoMethod(ST_SMTPAUTHUSER,       MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, obj, 1, METHOD(GUIToSMTP));
+    DoMethod(ST_SMTPAUTHPASS,       MUIM_Notify, MUIA_String_Contents,  MUIV_EveryTime, obj, 1, METHOD(GUIToSMTP));
+    DoMethod(CH_SMTPENABLED,        MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, obj, 1, METHOD(GUIToSMTP));
+    DoMethod(CY_SMTPAUTH,           MUIM_Notify, MUIA_Cycle_Active,     MUIV_EveryTime, obj, 1, METHOD(GUIToSMTP));
     DoMethod(CH_SMTP8BIT,           MUIM_Notify, MUIA_Selected,         MUIV_EveryTime, obj, 1, METHOD(GUIToSMTP));
-    DoMethod(BT_SADD              , MUIM_Notify, MUIA_Pressed,          FALSE,          obj, 1, METHOD(AddSMTPEntry));
-    DoMethod(BT_SDEL              , MUIM_Notify, MUIA_Pressed,          FALSE,          obj, 1, METHOD(DeleteSMTPEntry));
-    DoMethod(BT_SMTPUP            , MUIM_Notify, MUIA_Pressed,          FALSE,          LV_SMTP, 3, MUIM_NList_Move, MUIV_NList_Move_Selected, MUIV_NList_Move_Previous);
-    DoMethod(BT_SMTPDOWN          , MUIM_Notify, MUIA_Pressed,          FALSE,          LV_SMTP, 3, MUIM_NList_Move, MUIV_NList_Move_Selected, MUIV_NList_Move_Next);
+    DoMethod(BT_SADD,               MUIM_Notify, MUIA_Pressed,          FALSE,          obj, 1, METHOD(AddSMTPEntry));
+    DoMethod(BT_SDEL,               MUIM_Notify, MUIA_Pressed,          FALSE,          obj, 1, METHOD(DeleteSMTPEntry));
+    DoMethod(BT_SMTPUP,             MUIM_Notify, MUIA_Pressed,          FALSE,          LV_SMTP, 3, MUIM_NList_Move, MUIV_NList_Move_Selected, MUIV_NList_Move_Previous);
+    DoMethod(BT_SMTPDOWN,           MUIM_Notify, MUIA_Pressed,          FALSE,          LV_SMTP, 3, MUIM_NList_Move, MUIV_NList_Move_Selected, MUIV_NList_Move_Next);
     DoMethod(CY_SMTPSECURE,         MUIM_Notify, MUIA_Cycle_Active,     MUIV_EveryTime, obj, 1, METHOD(GUIToSMTP));
     DoMethod(PO_SMTP_SENTFOLDER,    MUIM_Notify, MUIA_FolderRequestPopup_FolderChanged, MUIV_EveryTime, obj, 1, METHOD(GUIToSMTP));
 
@@ -723,6 +741,47 @@ OVERLOAD(MUIM_ConfigPage_GUIToConfig)
   // bring NList elements and Exec list elements into sync
   SortNListToExecList(data->LV_POP3, &CE->pop3ServerList);
   SortNListToExecList(data->LV_SMTP, &CE->smtpServerList);
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// OVERLOAD(MUIM_ThreadFinished)
+OVERLOAD(MUIM_ThreadFinished)
+{
+  GETDATA;
+  struct MUIP_ThreadFinished *tf = (struct MUIP_ThreadFinished *)msg;
+
+  ENTER();
+
+  switch(tf->action)
+  {
+    case TA_ReceiveMails:
+    {
+      // get the server node from the taglist we supplied to the thread call
+      struct MailServerNode *msn = (struct MailServerNode *)GetTagData(TT_ReceiveMails_MailServer, (IPTR)NULL, tf->actionTags);
+
+      MUI_Request(_app(obj), _win(obj), MUIF_NONE, tr(MSG_CO_POP3_CONNECTION_TITLE), tr(MSG_OkayReq), (tf->result == TRUE) ? tr(MSG_CO_POP3_CONNECTION_SUCCESS) : tr(MSG_CO_POP3_CONNECTION_FAILURE), msn->hostname);
+
+      set(data->BT_POPTEST, MUIA_Disabled, FALSE);
+    }
+    break;
+
+    case TA_SendMails:
+    {
+      // get the server node from the taglist we supplied to the thread call
+      struct UserIdentityNode *uin = (struct UserIdentityNode *)GetTagData(TT_SendMails_UserIdentity, (IPTR)NULL, tf->actionTags);
+      struct MailServerNode *msn = uin->smtpServer;
+
+      MUI_Request(_app(obj), _win(obj), MUIF_NONE, tr(MSG_CO_SMTP_CONNECTION_TITLE), tr(MSG_OkayReq), (tf->result == TRUE) ? tr(MSG_CO_SMTP_CONNECTION_SUCCESS) : tr(MSG_CO_SMTP_CONNECTION_FAILURE), msn->hostname);
+
+      // delete the temporary fake identity again
+      DeleteUserIdentity(uin);
+      set(data->BT_SMTPTEST, MUIA_Disabled, FALSE);
+    }
+    break;
+  }
 
   RETURN(0);
   return 0;
@@ -979,6 +1038,52 @@ DECLARE(GUIToPOP3)
       set(data->PO_POP3_NOTIFY_CMD, MUIA_Disabled, msn == NULL || msn->notifyByCommand == FALSE);
 
       DoMethod(data->LV_POP3, MUIM_NList_Redraw, p);
+    }
+  }
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(TestPOP3Connection)
+DECLARE(TestPOP3Connection)
+{
+  GETDATA;
+  int p;
+
+  ENTER();
+
+  p = xget(data->LV_POP3, MUIA_NList_Active);
+  if(p != MUIV_NList_Active_Off)
+  {
+    struct MailServerNode *msn = NULL;
+
+    DoMethod(data->LV_POP3, MUIM_NList_GetEntry, p, &msn);
+    if(msn != NULL)
+    {
+      // make sure we have an up-to-date server structure
+      DoMethod(obj, METHOD(GUIToPOP3));
+
+      // mark the server as "in use" and try to establish a connection
+      LockMailServer(msn);
+      msn->useCount++;
+
+      set(data->BT_POPTEST, MUIA_Disabled, TRUE);
+
+      if(DoAction(obj, TA_ReceiveMails,
+        TT_ReceiveMails_MailServer, msn,
+        TT_ReceiveMails_Flags, RECEIVEF_USER|RECEIVEF_TEST_CONNECTION,
+        TAG_DONE) == FALSE)
+      {
+        // setting up the thread failed, revert all changes
+        msn->useCount--;
+        set(data->BT_POPTEST, MUIA_Disabled, FALSE);
+      }
+
+      // when the thread eventually terminates it will call the MUIM_ThreadFinished method
+
+      UnlockMailServer(msn);
     }
   }
 
@@ -1319,6 +1424,62 @@ DECLARE(GUIToSMTP)
 
       // redraw the list
       DoMethod(data->LV_SMTP, MUIM_NList_Redraw, p);
+    }
+  }
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(TestSMTPConnection)
+DECLARE(TestSMTPConnection)
+{
+  GETDATA;
+  int p;
+
+  ENTER();
+
+  p = xget(data->LV_SMTP, MUIA_NList_Active);
+  if(p != MUIV_NList_Active_Off)
+  {
+    struct MailServerNode *msn = NULL;
+
+    DoMethod(data->LV_SMTP, MUIM_NList_GetEntry, p, &msn);
+    if(msn != NULL)
+    {
+      struct UserIdentityNode *uin;
+
+      // make sure we have an up-to-date server structure
+      DoMethod(obj, METHOD(GUIToSMTP));
+
+      // we need a fake user identity to place the SMTP server into
+      if((uin = CreateNewUserIdentity(CE)) != NULL)
+      {
+        uin->smtpServer = msn;
+
+        // mark the server as "in use" and try to establish a connection
+        LockMailServer(msn);
+        msn->useCount++;
+
+        set(data->BT_SMTPTEST, MUIA_Disabled, TRUE);
+
+        if(DoAction(obj, TA_SendMails,
+          TT_SendMails_UserIdentity, uin,
+          TT_SendMails_Mode, SENDMAIL_ALL_USER,
+          TT_SendMails_Flags, SENDF_TEST_CONNECTION,
+          TAG_DONE) == FALSE)
+        {
+          // setting up the thread failed, revert all changes
+          DeleteUserIdentity(uin);
+          msn->useCount--;
+          set(data->BT_SMTPTEST, MUIA_Disabled, FALSE);
+        }
+
+        // when the thread eventually terminates it will call the MUIM_ThreadFinished method
+
+        UnlockMailServer(msn);
+      }
     }
   }
 
