@@ -4,14 +4,17 @@
 /* Includeheader
 
         Name:           SDI_stdarg.h
-        Versionstring:  $VER: SDI_stdarg.h 1.0 (05.07.2004)
-        Author:         Jens Langner
+        Versionstring:  $VER: SDI_stdarg.h 1.1 (06.06.2014)
+        Author:         Jens Maus
         Distribution:   PD
-        Project page:   http://www.sf.net/projects/sditools/
+        Project page:   http://sf.net/p/adtools/code/HEAD/tree/trunk/sdi/
         Description:    defines to hide OS specific variable arguments
                         function definitions
+        Id:             $Id: SDI_stdarg.h 3544 2014-06-06 11:12:16Z tboeckel $
+        URL:            $URL: https://svn.code.sf.net/p/adtools/code/trunk/sdi/SDI_stdarg.h $
 
- 1.0   05.07.04 : initial version
+ 1.0   05.07.2004 : initial version
+ 1.1   06.06.2014 : added a type cast to VA_ARG() result
 
 */
 
@@ -25,9 +28,9 @@
 ** (e.g. add your name or nick name).
 **
 ** Find the latest version of this file at:
-** http://cvs.sourceforge.net/viewcvs.py/sditools/sditools/headers/
+** http://sf.net/p/adtools/code/HEAD/tree/trunk/sdi/
 **
-** Jens Langner <Jens.Langner@light-speed.de> and
+** Jens Maus <mail@jens-maus.de>
 ** Dirk Stöcker <soft@dstoecker.de>
 */
 
@@ -93,12 +96,12 @@
 #elif defined(__MORPHOS__)
   #define VA_LIST             va_list
   #define VA_START(va, start) va_start((va), (start))
-  #define VA_ARG(va, type)    (va)->overflow_arg_area
+  #define VA_ARG(va, type)    (type)((va)->overflow_arg_area)
   #define VA_END(va)          va_end((va))
 #else
   #define VA_LIST             va_list
   #define VA_START(va, start) va_start((va), (start))
-  #define VA_ARG(va, type)    (va)
+  #define VA_ARG(va, type)    (type)(va)
   #define VA_END(va)          va_end((va))
 #endif
 
