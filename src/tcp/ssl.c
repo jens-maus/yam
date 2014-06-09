@@ -808,19 +808,20 @@ BOOL MakeSecureConnection(struct Connection *conn)
           else
           {
             D(DBF_NET, "initializing TLS/SSL session");
+            D(DBF_NET, "SSL ctx timeout: %ld s", SSL_CTX_get_timeout(conn->sslCtx));
 
             // 9) check if we are ready for creating the ssl connection
             if((conn->ssl = SSL_new(conn->sslCtx)) == NULL)
               E(DBF_NET, "can't create a new SSL structure for a connection");
             else
             {
-              // output some debug information on the
-              // available ciphers
+              // output some debug information
               #if defined(DEBUG)
               {
                 int i = 0;
                 const char *next = NULL;
 
+                // output all availble ciphers
                 D(DBF_NET, "available SSL ciphers:");
                 do
                 {
@@ -841,15 +842,29 @@ BOOL MakeSecureConnection(struct Connection *conn)
               {
                 BOOL errorState = FALSE;
                 int res;
+                #if defined(DEBUG)
+                int iter = 0;
+                #endif
 
                 // 11) establish the ssl connection and take care of non-blocking IO
                 D(DBF_NET, "connect SSL context %08lx", conn->ssl);
+                STARTCLOCK(DBF_NET);
                 while(errorState == FALSE && (res = SSL_connect(conn->ssl)) <= 0)
                 {
                   #if defined(DEBUG)
                   int errnosv = errno; // preserve errno directly after SSL_connect()
+                  SSL_SESSION *sslSession = NULL;
                   #endif
                   int err;
+
+                  #if defined(DEBUG)
+                  if(++iter == 1)
+                    STOPCLOCK(DBF_NET, "SSL_connect()");
+
+                  sslSession = SSL_get_session(conn->ssl);
+                  D(DBF_NET, "SSL session timeout: %ld s", SSL_get_timeout(sslSession));
+                  D(DBF_NET, "SSL session times: %ld (%ld)", SSL_get_time(sslSession), time(NULL));
+                  #endif
 
                   // get the reason why SSL_connect() returned an error
                   switch((err = SSL_get_error(conn->ssl, res)))
