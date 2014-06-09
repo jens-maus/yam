@@ -43,10 +43,6 @@
 #include <string.h>
 #include <workbench/icon.h>
 
-#if defined(__amigaos4__)
-#define __USE_CLASSIC_MINTERM__
-#endif
-
 #include <proto/dos.h>
 #include <proto/graphics.h>
 #include <proto/layers.h>
@@ -958,7 +954,7 @@ OVERLOAD(MUIM_Draw)
                       BLITA_DestY,      _mtop(obj),
                       BLITA_Width,      _mwidth(obj),
                       BLITA_Height,     _mheight(obj),
-                      BLITA_Minterm,    (ABC|ABNC|ANBC),
+                      BLITA_Minterm,    MINTERM_SRCMASK,
                       BLITA_MaskPlane,  bitmask->Planes[0],
                       TAG_DONE);
       }
@@ -972,7 +968,7 @@ OVERLOAD(MUIM_Draw)
                       BLITA_DestY,      _mtop(obj),
                       BLITA_Width,      _mwidth(obj),
                       BLITA_Height,     _mheight(obj),
-                      BLITA_Minterm,    (ABC|ABNC),
+                      BLITA_Minterm,    MINTERM_ABC | MINTERM_ABNC,
                       TAG_DONE);
       }
       #else

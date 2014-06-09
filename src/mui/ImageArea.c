@@ -33,9 +33,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#if defined(__amigaos4__)
-#define __USE_CLASSIC_MINTERM__
-#else
+#if !defined(__amigaos4__)
 #include <cybergraphx/cybergraphics.h>
 #include <proto/cybergraphics.h>
 #endif
@@ -825,7 +823,7 @@ OVERLOAD(MUIM_Draw)
                         BLITA_DestY,      _mtop(obj) + (_mheight(obj) - data->label_height - height) / 2,
                         BLITA_Width,      width,
                         BLITA_Height,     height,
-                        BLITA_Minterm,    (ABC|ABNC|ANBC),
+                        BLITA_Minterm,    MINTERM_SRCMASK,
                         BLITA_MaskPlane,  data->scaledBitMask->Planes[0],
                         TAG_DONE);
         }
@@ -840,7 +838,7 @@ OVERLOAD(MUIM_Draw)
                         BLITA_DestY,      _mtop(obj) + (_mheight(obj) - data->label_height - height) / 2,
                         BLITA_Width,      width,
                         BLITA_Height,     height,
-                        BLITA_Minterm,    (ABC|ABNC),
+                        BLITA_Minterm,    MINTERM_ABC | MINTERM_ABNC,
                         TAG_DONE);
         }
         #else
@@ -998,7 +996,7 @@ OVERLOAD(MUIM_Draw)
                           BLITA_DestY,      _mtop(obj)  + (_mheight(obj) - data->label_height - data->imageNode.height)/2,
                           BLITA_Width,      data->imageNode.width,
                           BLITA_Height,     data->imageNode.height,
-                          BLITA_Minterm,    (ABC|ABNC|ANBC),
+                          BLITA_Minterm,    MINTERM_SRCMASK,
                           BLITA_MaskPlane,  data->imageNode.mask,
                           TAG_DONE);
           }
@@ -1013,7 +1011,7 @@ OVERLOAD(MUIM_Draw)
                           BLITA_DestY,      _mtop(obj)  + (_mheight(obj) - data->label_height - data->imageNode.height)/2,
                           BLITA_Width,      data->imageNode.width,
                           BLITA_Height,     data->imageNode.height,
-                          BLITA_Minterm,    (ABC|ABNC),
+                          BLITA_Minterm,    MINTERM_ABC | MINTERM_ABNC,
                           TAG_DONE);
           }
           #else
