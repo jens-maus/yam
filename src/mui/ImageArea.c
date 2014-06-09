@@ -34,7 +34,7 @@
 #include <string.h>
 
 #if defined(__amigaos4__)
-#include <hardware/blit.h>
+#define __USE_CLASSIC_MINTERM__
 #else
 #include <cybergraphx/cybergraphics.h>
 #include <proto/cybergraphics.h>

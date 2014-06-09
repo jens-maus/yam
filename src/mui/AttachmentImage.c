@@ -44,7 +44,7 @@
 #include <workbench/icon.h>
 
 #if defined(__amigaos4__)
-#include <hardware/blit.h>
+#define __USE_CLASSIC_MINTERM__
 #endif
 
 #include <proto/dos.h>
