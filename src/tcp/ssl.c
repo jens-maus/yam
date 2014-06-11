@@ -878,6 +878,10 @@ BOOL MakeSecureConnection(struct Connection *conn)
                       LONG retVal;
                       GET_SOCKETBASE(conn);
 
+                      D(DBF_NET, "SSL_get_error returned %s, running WaitSelect()", err == SSL_ERROR_WANT_READ ? "SSL_ERROR_WANT_READ" : "SSL_ERROR_WANT_WRITE");
+
+                      // set SocketTimeout to our timeout variable
+                      // so that we can let WaitSelect() timeout correctly.
                       conn->timeout.tv_sec = C->SocketTimeout;
                       conn->timeout.tv_usec = 0;
 
@@ -897,7 +901,7 @@ BOOL MakeSecureConnection(struct Connection *conn)
 
                       // if WaitSelect() returns 1 we successfully waited for
                       // being able to write to the socket. So we go and do another
-                      // iteration in the while() loop as the next connect() call should
+                      // iteration in the while() loop as the next SSL_connect() call should
                       // return EISCONN if the connection really succeeded.
                       if(retVal >= 1 && FD_ISSET(conn->socket, &conn->fdset))
                       {
@@ -925,10 +929,12 @@ BOOL MakeSecureConnection(struct Connection *conn)
                       // get more information on the error
                       #if defined(DEBUG)
                       {
+                        GET_SOCKETBASE(conn);
                         char buf[255];
                         // save the errno(sv) values to avoid that they are modified by further function calls
                         int _errno = errno;
                         int _errnosv = errnosv;
+                        LONG _bsderrno = Errno();
                         unsigned long errcode;
 
                         // query errno first
@@ -950,12 +956,14 @@ BOOL MakeSecureConnection(struct Connection *conn)
                         E(DBF_NET, "errnosv(%ld) = '%s'", _errnosv, strerror(_errnosv));
                         #endif
 
+                        E(DBF_NET, "bsderrno(%ld)", _bsderrno);
                         E(DBF_NET, "querying ERR_get_error() stack:");
                         while((errcode = ERR_get_error()) != 0)
                         {
                           ERR_error_string_n(errcode, buf, sizeof(buf));
                           E(DBF_NET, "ERR_get_error()=%ld stack: '%s'", errcode, buf);
                         }
+                        E(DBF_NET, "done");
                       }
                       #endif
 
