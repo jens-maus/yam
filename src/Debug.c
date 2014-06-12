@@ -263,6 +263,35 @@ INLINE BOOL matchDebugSpec(const unsigned long c, const unsigned f,
 
 /****************************************************************************/
 
+static char *_NOW(void)
+{
+  struct TimeVal now;
+  LONG hour;
+  LONG minute;
+  LONG second;
+  static char nowStr[64];
+
+  if(TimerBase != NULL)
+  {
+    GetSysTime(TIMEVAL(&now));
+    now.Seconds %= 86400;
+  }
+  else
+  {
+    memset(&now, 0, sizeof(now));
+  }
+
+  second = now.Seconds % 60;
+  minute = now.Seconds / 60;
+  hour = minute / 60;
+  minute %= 60;
+  snprintf(nowStr, sizeof(nowStr), "%02ld:%02ld:%02ld.%06ld", hour, minute, second, now.Microseconds);
+
+  return nowStr;
+}
+
+/****************************************************************************/
+
 INLINE void _VDPRINTF(const unsigned long c,
                       const char *file, unsigned long line,
                       const char *format, va_list args)
@@ -289,17 +318,17 @@ INLINE void _VDPRINTF(const unsigned long c,
 
   if(ansi_output)
   {
-    _DBPRINTF("%s%ldm%02ld:%s%s%s%s%s:%s%s:%ld:%s%s\n",
+    _DBPRINTF("%s%ldm%02ld:%s%s%s%s%s (%s) %s%s:%ld:%s%s\n",
                 ANSI_ESC_BG, (threadID+1)%6, threadID, ANSI_ESC_CLR,
-                bg, id, ANSI_ESC_CLR, fg, _INDENT(),
+                bg, id, ANSI_ESC_CLR, fg, _NOW(), _INDENT(),
                 (strrchr(file, '/') ? strrchr(file, '/')+1 : file),
                 line, buf, ANSI_ESC_CLR);
   }
   else
   {
-    _DBPRINTF("%02ld:%s:%s%s:%ld:%s\n",
+    _DBPRINTF("%02ld:%s (%s) %s%s:%ld:%s\n",
                 threadID,
-                id, _INDENT(),
+                id, _NOW(), _INDENT(),
                 (strrchr(file, '/') ? strrchr(file, '/')+1 : file),
                 line, buf);
   }
@@ -601,19 +630,19 @@ void _ENTER(const unsigned long c, const char *m,
 
     if(ansi_output)
     {
-      _DBPRINTF("%s%ldm%02ld:%s%s:%s%s:%ld:Entering %s%s\n",
+      _DBPRINTF("%s%ldm%02ld:%s%s (%s) %s%s:%ld:Entering %s%s\n",
                   ANSI_ESC_BG, (threadID+1)%6, threadID, ANSI_ESC_CLR,
                   DBC_CTRACE_BGCOLOR DBC_CTRACE_STR ANSI_ESC_CLR DBC_CTRACE_COLOR,
-                  _INDENT(),
+                  _NOW(), _INDENT(),
                   (strrchr(file, '/') ? strrchr(file, '/')+1 : file),
                   line, function, ANSI_ESC_CLR);
     }
     else
     {
-      _DBPRINTF("%02ld:%s:%s%s:%ld:Entering %s\n",
+      _DBPRINTF("%02ld:%s (%s) %s%s:%ld:Entering %s\n",
                   threadID,
                   DBC_CTRACE_STR,
-                  _INDENT(),
+                  _NOW(), _INDENT(),
                   (strrchr(file, '/') ? strrchr(file, '/')+1 : file),
                   line, function);
     }
@@ -642,19 +671,19 @@ void _LEAVE(const unsigned long c, const char *m,
 
     if(ansi_output)
     {
-      _DBPRINTF("%s%ldm%02ld:%s%s:%s%s:%ld:Leaving %s%s\n",
+      _DBPRINTF("%s%ldm%02ld:%s%s (%s) %s%s:%ld:Leaving %s%s\n",
                   ANSI_ESC_BG, (threadID+1)%6, threadID, ANSI_ESC_CLR,
                   DBC_CTRACE_BGCOLOR DBC_CTRACE_STR ANSI_ESC_CLR DBC_CTRACE_COLOR,
-                  _INDENT(),
+                  _NOW(), _INDENT(),
                   (strrchr(file, '/') ? strrchr(file, '/')+1 : file),
                   line, function, ANSI_ESC_CLR);
     }
     else
     {
-      _DBPRINTF("%02ld:%s:%s%s:%ld:Leaving %s\n",
+      _DBPRINTF("%02ld:%s (%s) %s%s:%ld:Leaving %s\n",
                   threadID,
                   DBC_CTRACE_STR,
-                  _INDENT(),
+                  _NOW(), _INDENT(),
                   (strrchr(file, '/') ? strrchr(file, '/')+1 : file),
                   line, function);
     }
@@ -681,19 +710,19 @@ void _RETURN(const unsigned long c, const char *m,
 
     if(ansi_output)
     {
-      _DBPRINTF("%s%ldm%02ld:%s%s:%s%s:%ld:Leaving %s (result 0x%08lx, %ld)%s\n",
+      _DBPRINTF("%s%ldm%02ld:%s%s (%s) %s%s:%ld:Leaving %s (result 0x%08lx, %ld)%s\n",
                   ANSI_ESC_BG, (threadID+1)%6, threadID, ANSI_ESC_CLR,
                   DBC_CTRACE_BGCOLOR DBC_CTRACE_STR ANSI_ESC_CLR DBC_CTRACE_COLOR,
-                  _INDENT(),
+                  _NOW(), _INDENT(),
                   (strrchr(file, '/') ? strrchr(file, '/')+1 : file),
                   line, function, result, result, ANSI_ESC_CLR);
     }
     else
     {
-      _DBPRINTF("%02ld:%s:%s%s:%ld:Leaving %s (result 0x%08lx, %ld)\n",
+      _DBPRINTF("%02ld:%s (%s) %s%s:%ld:Leaving %s (result 0x%08lx, %ld)\n",
                   threadID,
                   DBC_CTRACE_STR,
-                  _INDENT(),
+                  _NOW(), _INDENT(),
                   (strrchr(file, '/') ? strrchr(file, '/')+1 : file),
                   line, function, result, result);
     }
@@ -733,19 +762,19 @@ void _SHOWVALUE(const unsigned long c, const unsigned long f, const char *m,
 
     if(ansi_output)
     {
-      _DBPRINTF("%s%ldm%02ld:%s%s:%s%s:%ld:%s = %ld, 0x",
+      _DBPRINTF("%s%ldm%02ld:%s%s (%s) %s%s:%ld:%s = %ld, 0x",
                   ANSI_ESC_BG, (threadID+1)%6, threadID, ANSI_ESC_CLR,
                   DBC_REPORT_BGCOLOR DBC_REPORT_STR ANSI_ESC_CLR DBC_REPORT_COLOR,
-                  _INDENT(),
+                  _NOW(), _INDENT(),
                   (strrchr(file, '/') ? strrchr(file, '/')+1 : file),
                   line, name, value);
     }
     else
     {
-      _DBPRINTF("%02ld:%s:%s%s:%ld:%s = %ld, 0x",
+      _DBPRINTF("%02ld:%s (%s) %s%s:%ld:%s = %ld, 0x",
                   threadID,
                   DBC_CTRACE_STR,
-                  _INDENT(),
+                  _NOW(), _INDENT(),
                   (strrchr(file, '/') ? strrchr(file, '/')+1 : file),
                   line, name, value);
     }
@@ -798,19 +827,19 @@ void _SHOWPOINTER(const unsigned long c, const unsigned long f, const char *m,
 
     if(ansi_output)
     {
-      _DBPRINTF("%s%ldm%02ld:%s%s:%s%s:%ld:%s = ",
+      _DBPRINTF("%s%ldm%02ld:%s%s (%s) %s%s:%ld:%s = ",
                   ANSI_ESC_BG, (threadID+1)%6, threadID, ANSI_ESC_CLR,
                   DBC_REPORT_BGCOLOR DBC_REPORT_STR ANSI_ESC_CLR DBC_REPORT_COLOR,
-                  _INDENT(),
+                  _NOW(), _INDENT(),
                   (strrchr(file, '/') ? strrchr(file, '/')+1 : file),
                   line, name);
     }
     else
     {
-      _DBPRINTF("%02ld:%s:%s%s:%ld:%s = ",
+      _DBPRINTF("%02ld:%s (%s) %s%s:%ld:%s = ",
                   threadID,
                   DBC_CTRACE_STR,
-                  _INDENT(),
+                  _NOW(), _INDENT(),
                   (strrchr(file, '/') ? strrchr(file, '/')+1 : file),
                   line, name);
     }
@@ -843,19 +872,19 @@ void _SHOWSTRING(const unsigned long c, const unsigned long f, const char *m,
 
     if(ansi_output)
     {
-      _DBPRINTF("%s%ldm%02ld:%s%s:%s%s:%ld:%s = 0x%08lx \"%s\"%s\n",
+      _DBPRINTF("%s%ldm%02ld:%s%s (%s) %s%s:%ld:%s = 0x%08lx \"%s\"%s\n",
                   ANSI_ESC_BG, (threadID+1)%6, threadID, ANSI_ESC_CLR,
                   DBC_REPORT_BGCOLOR DBC_REPORT_STR ANSI_ESC_CLR DBC_REPORT_COLOR,
-                  _INDENT(),
+                  _NOW(), _INDENT(),
                   (strrchr(file, '/') ? strrchr(file, '/')+1 : file),
                   line, name, (unsigned long)string, string, ANSI_ESC_CLR);
     }
     else
     {
-      _DBPRINTF("%02ld:%s:%s%s:%ld:%s = 0x%08lx \"%s\"\n",
+      _DBPRINTF("%02ld:%s (%s) %s%s:%ld:%s = 0x%08lx \"%s\"\n",
                   threadID,
                   DBC_REPORT_STR,
-                  _INDENT(),
+                  _NOW(), _INDENT(),
                   (strrchr(file, '/') ? strrchr(file, '/')+1 : file),
                   line, name, (unsigned long)string, string);
     }
@@ -878,19 +907,19 @@ void _SHOWMSG(const unsigned long c, const unsigned long f, const char *m,
 
     if(ansi_output)
     {
-      _DBPRINTF("%s%ldm%02ld:%s%s:%s%s:%ld:%s%s\n",
+      _DBPRINTF("%s%ldm%02ld:%s%s (%s) %s%s:%ld:%s%s\n",
                   ANSI_ESC_BG, (threadID+1)%6, threadID, ANSI_ESC_CLR,
                   DBC_REPORT_BGCOLOR DBC_REPORT_STR ANSI_ESC_CLR DBC_REPORT_COLOR,
-                  _INDENT(),
+                  _NOW(), _INDENT(),
                   (strrchr(file, '/') ? strrchr(file, '/')+1 : file),
                   line, msg, ANSI_ESC_CLR);
     }
     else
     {
-      _DBPRINTF("%02ld:%s:%s%s:%ld:%s\n",
+      _DBPRINTF("%02ld:%s (%s) %s%s:%ld:%s\n",
                   threadID,
                   DBC_REPORT_STR,
-                  _INDENT(),
+                  _NOW(), _INDENT(),
                   (strrchr(file, '/') ? strrchr(file, '/')+1 : file),
                   line, msg);
     }
@@ -916,19 +945,19 @@ void _SHOWTAGS(const unsigned long c, const unsigned long f, const char *m,
 
     if(ansi_output)
     {
-      _DBPRINTF("%s%ldm%02ld:%s%s:%s%s:%ld:tag list %08lx%s\n",
+      _DBPRINTF("%s%ldm%02ld:%s%s (%s) %s%s:%ld:tag list %08lx%s\n",
                   ANSI_ESC_BG, (threadID+1)%6, threadID, ANSI_ESC_CLR,
                   DBC_REPORT_BGCOLOR DBC_REPORT_STR ANSI_ESC_CLR DBC_REPORT_COLOR,
-                  _INDENT(),
+                  _NOW(), _INDENT(),
                   (strrchr(file, '/') ? strrchr(file, '/')+1 : file),
                   line, tags, ANSI_ESC_CLR);
     }
     else
     {
-      _DBPRINTF("%02ld:%s:%s%s:%ld:tag list %08lx\n",
+      _DBPRINTF("%02ld:%s (%s) %s%s:%ld:tag list %08lx\n",
                   threadID,
                   DBC_REPORT_STR,
-                  _INDENT(),
+                  _NOW(), _INDENT(),
                   (strrchr(file, '/') ? strrchr(file, '/')+1 : file),
                   line, tags);
     }

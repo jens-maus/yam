@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-06-12 Thore Böckelmann <tboeckel@gmx.de>
+
+  * Debug.c: each debug message will now include the current time to be able to
+    spot long delays more easily. This refs #530 and #568.
+
 2014-06-06 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/TCPIPConfigPage.c, tcp/pop3.c, tcp/smtp.c: added a "Test connection"
