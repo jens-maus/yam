@@ -873,7 +873,7 @@ BOOL MakeSecureConnection(struct Connection *conn)
                   #endif
 
                   // get the reason why SSL_connect() returned an error
-                  switch((err = SSL_get_error(conn->ssl, res)) != SSL_ERROR_NONE)
+                  switch((err = SSL_get_error(conn->ssl, res)))
                   {
                     case SSL_ERROR_WANT_READ:
                     case SSL_ERROR_WANT_WRITE:
