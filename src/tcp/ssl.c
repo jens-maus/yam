@@ -85,16 +85,17 @@
 // verification step
 CROSSCALL2(verify_callback, int, int, preverify_ok, X509_STORE_CTX *, x509_ctx)
 {
-  struct Connection *conn;
-
   ENTER();
 
+  D(DBF_NET, "verify_callback() called");
   SHOWVALUE(DBF_NET, preverify_ok);
   SHOWVALUE(DBF_NET, x509_ctx);
 
   // if there is no error we do nothing but return
   if(preverify_ok == 0)
   {
+    struct Connection *conn;
+
     // get our (struct Connection) structure out of the app data
     if((conn = X509_STORE_CTX_get_app_data(x509_ctx)) != NULL)
     {
@@ -244,15 +245,25 @@ CROSSCALL2(cert_verify_callback, int, X509_STORE_CTX *, x509_ctx, void *, parm)
 
   ENTER();
 
+  D(DBF_NET, "cert_verify_callback() called");
   SHOWVALUE(DBF_NET, x509_ctx);
   SHOWVALUE(DBF_NET, parm);
 
   // Store param (struct Connection) in context for verify_callback()
-  ok = X509_STORE_CTX_set_app_data(x509_ctx, parm);
-
-  // and verify the certificate chain if no error
-  if(ok == 1)
-    ok = X509_verify_cert(x509_ctx);
+  if((ok = X509_STORE_CTX_set_app_data(x509_ctx, parm)) == 1)
+  {
+    // and verify the certificate chain if no error
+    if((ok = X509_verify_cert(x509_ctx)) != 1)
+    {
+      W(DBF_NET, "X509_verify_cert() returned %d", ok);
+      ok = 0;
+    }
+  }
+  else
+  {
+    W(DBF_NET, "X509_STORE_CTX_set_app_data() returned %d", ok);
+    ok = 0;
+  }
 
   RETURN(ok);
   return ok;
@@ -842,9 +853,6 @@ BOOL MakeSecureConnection(struct Connection *conn)
               {
                 BOOL errorState = FALSE;
                 int res;
-                #if defined(DEBUG)
-                int iter = 0;
-                #endif
 
                 // 11) establish the ssl connection and take care of non-blocking IO
                 D(DBF_NET, "connect SSL context %08lx", conn->ssl);
@@ -858,16 +866,14 @@ BOOL MakeSecureConnection(struct Connection *conn)
                   int err;
 
                   #if defined(DEBUG)
-                  if(++iter == 1)
-                    STOPCLOCK(DBF_NET, "SSL_connect()");
-
+                  STOPCLOCK(DBF_NET, "SSL_connect()");
                   sslSession = SSL_get_session(conn->ssl);
                   D(DBF_NET, "SSL session timeout: %ld s", SSL_get_timeout(sslSession));
                   D(DBF_NET, "SSL session times: %ld (%ld)", SSL_get_time(sslSession), time(NULL));
                   #endif
 
                   // get the reason why SSL_connect() returned an error
-                  switch((err = SSL_get_error(conn->ssl, res)))
+                  switch((err = SSL_get_error(conn->ssl, res)) != SSL_ERROR_NONE)
                   {
                     case SSL_ERROR_WANT_READ:
                     case SSL_ERROR_WANT_WRITE:
@@ -878,7 +884,7 @@ BOOL MakeSecureConnection(struct Connection *conn)
                       LONG retVal;
                       GET_SOCKETBASE(conn);
 
-                      D(DBF_NET, "SSL_get_error returned %s, running WaitSelect()", err == SSL_ERROR_WANT_READ ? "SSL_ERROR_WANT_READ" : "SSL_ERROR_WANT_WRITE");
+                      D(DBF_NET, "SSL_get_error returned %s, running WaitSelect() with timeout %ld s", err == SSL_ERROR_WANT_READ ? "SSL_ERROR_WANT_READ" : "SSL_ERROR_WANT_WRITE", C->SocketTimeout);
 
                       // set SocketTimeout to our timeout variable
                       // so that we can let WaitSelect() timeout correctly.
@@ -894,10 +900,14 @@ BOOL MakeSecureConnection(struct Connection *conn)
                       // we either do a WaitSelect() on the read or write mode
                       // as with SSL both things can happen
                       // see http://www.openssl.org/docs/ssl/SSL_connect.html
+                      STARTCLOCK(DBF_NET);
+
                       if(err == SSL_ERROR_WANT_READ)
                         retVal = WaitSelect(conn->socket+1, &conn->fdset, NULL, NULL, (APTR)&conn->timeout, NULL);
                       else
                         retVal = WaitSelect(conn->socket+1, NULL, &conn->fdset, NULL, (APTR)&conn->timeout, NULL);
+
+                      STOPCLOCK(DBF_NET, "WaitSelect()");
 
                       // if WaitSelect() returns 1 we successfully waited for
                       // being able to write to the socket. So we go and do another
@@ -906,6 +916,7 @@ BOOL MakeSecureConnection(struct Connection *conn)
                       if(retVal >= 1 && FD_ISSET(conn->socket, &conn->fdset))
                       {
                         // everything fine
+                        STARTCLOCK(DBF_NET); // for the next iteration in calling SSL_connect()
                         continue;
                       }
                       else if(retVal == 0)
