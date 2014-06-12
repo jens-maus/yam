@@ -791,7 +791,11 @@ BOOL MakeSecureConnection(struct Connection *conn)
               ER_NewError(tr(MSG_ER_WARN_CAFILE), DEFAULT_CAFILE);
 
             // 5) load the certificates (e.g. CA) from either a file or a directory path
-            if((rc = SSL_CTX_load_verify_locations(conn->sslCtx, DEFAULT_CAFILE, DEFAULT_CAPATH)) == 0)
+            STARTCLOCK(DBF_NET);
+            rc = SSL_CTX_load_verify_locations(conn->sslCtx, DEFAULT_CAFILE, DEFAULT_CAPATH);
+            STOPCLOCK(DBF_NET, "SSL_CTX_load_verify_locations()");
+
+            if(rc == 0)
             {
               W(DBF_NET, "warning: setting default verify locations failed!");
 
