@@ -2498,7 +2498,7 @@ BOOL MA_PopNow(struct MailServerNode *msn, const ULONG flags, struct DownloadRes
           success &= ReceiveMailsFromPOP(msn, flags, dlResult);
       }
       else
-        W(DBF_NET, "POP3 server of identity '%s' is still in use'", msn->description);
+        W(DBF_NET, "POP3 server of identity '%s' is inactive'", msn->description);
     }
   }
   else
