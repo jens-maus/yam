@@ -318,7 +318,7 @@ INLINE void _VDPRINTF(const unsigned long c,
 
   if(ansi_output)
   {
-    _DBPRINTF("%s%ldm%02ld:%s%s%s%s%s (%s) %s%s:%ld:%s%s\n",
+    _DBPRINTF("%s%ldm%02ld:%s%s%s%s%s|%s|%s%s:%ld:%s%s\n",
                 ANSI_ESC_BG, (threadID+1)%6, threadID, ANSI_ESC_CLR,
                 bg, id, ANSI_ESC_CLR, fg, _NOW(), _INDENT(),
                 (strrchr(file, '/') ? strrchr(file, '/')+1 : file),
@@ -326,7 +326,7 @@ INLINE void _VDPRINTF(const unsigned long c,
   }
   else
   {
-    _DBPRINTF("%02ld:%s (%s) %s%s:%ld:%s\n",
+    _DBPRINTF("%02ld:%s|%s|%s%s:%ld:%s\n",
                 threadID,
                 id, _NOW(), _INDENT(),
                 (strrchr(file, '/') ? strrchr(file, '/')+1 : file),
@@ -630,7 +630,7 @@ void _ENTER(const unsigned long c, const char *m,
 
     if(ansi_output)
     {
-      _DBPRINTF("%s%ldm%02ld:%s%s (%s) %s%s:%ld:Entering %s%s\n",
+      _DBPRINTF("%s%ldm%02ld:%s%s|%s|%s%s:%ld:Entering %s%s\n",
                   ANSI_ESC_BG, (threadID+1)%6, threadID, ANSI_ESC_CLR,
                   DBC_CTRACE_BGCOLOR DBC_CTRACE_STR ANSI_ESC_CLR DBC_CTRACE_COLOR,
                   _NOW(), _INDENT(),
@@ -639,7 +639,7 @@ void _ENTER(const unsigned long c, const char *m,
     }
     else
     {
-      _DBPRINTF("%02ld:%s (%s) %s%s:%ld:Entering %s\n",
+      _DBPRINTF("%02ld:%s|%s|%s%s:%ld:Entering %s\n",
                   threadID,
                   DBC_CTRACE_STR,
                   _NOW(), _INDENT(),
@@ -671,7 +671,7 @@ void _LEAVE(const unsigned long c, const char *m,
 
     if(ansi_output)
     {
-      _DBPRINTF("%s%ldm%02ld:%s%s (%s) %s%s:%ld:Leaving %s%s\n",
+      _DBPRINTF("%s%ldm%02ld:%s%s|%s|%s%s:%ld:Leaving %s%s\n",
                   ANSI_ESC_BG, (threadID+1)%6, threadID, ANSI_ESC_CLR,
                   DBC_CTRACE_BGCOLOR DBC_CTRACE_STR ANSI_ESC_CLR DBC_CTRACE_COLOR,
                   _NOW(), _INDENT(),
@@ -680,7 +680,7 @@ void _LEAVE(const unsigned long c, const char *m,
     }
     else
     {
-      _DBPRINTF("%02ld:%s (%s) %s%s:%ld:Leaving %s\n",
+      _DBPRINTF("%02ld:%s|%s|%s%s:%ld:Leaving %s\n",
                   threadID,
                   DBC_CTRACE_STR,
                   _NOW(), _INDENT(),
@@ -710,7 +710,7 @@ void _RETURN(const unsigned long c, const char *m,
 
     if(ansi_output)
     {
-      _DBPRINTF("%s%ldm%02ld:%s%s (%s) %s%s:%ld:Leaving %s (result 0x%08lx, %ld)%s\n",
+      _DBPRINTF("%s%ldm%02ld:%s%s|%s|%s%s:%ld:Leaving %s (result 0x%08lx, %ld)%s\n",
                   ANSI_ESC_BG, (threadID+1)%6, threadID, ANSI_ESC_CLR,
                   DBC_CTRACE_BGCOLOR DBC_CTRACE_STR ANSI_ESC_CLR DBC_CTRACE_COLOR,
                   _NOW(), _INDENT(),
@@ -719,7 +719,7 @@ void _RETURN(const unsigned long c, const char *m,
     }
     else
     {
-      _DBPRINTF("%02ld:%s (%s) %s%s:%ld:Leaving %s (result 0x%08lx, %ld)\n",
+      _DBPRINTF("%02ld:%s|%s|%s%s:%ld:Leaving %s (result 0x%08lx, %ld)\n",
                   threadID,
                   DBC_CTRACE_STR,
                   _NOW(), _INDENT(),
@@ -762,7 +762,7 @@ void _SHOWVALUE(const unsigned long c, const unsigned long f, const char *m,
 
     if(ansi_output)
     {
-      _DBPRINTF("%s%ldm%02ld:%s%s (%s) %s%s:%ld:%s = %ld, 0x",
+      _DBPRINTF("%s%ldm%02ld:%s%s|%s|%s%s:%ld:%s = %ld, 0x",
                   ANSI_ESC_BG, (threadID+1)%6, threadID, ANSI_ESC_CLR,
                   DBC_REPORT_BGCOLOR DBC_REPORT_STR ANSI_ESC_CLR DBC_REPORT_COLOR,
                   _NOW(), _INDENT(),
@@ -771,7 +771,7 @@ void _SHOWVALUE(const unsigned long c, const unsigned long f, const char *m,
     }
     else
     {
-      _DBPRINTF("%02ld:%s (%s) %s%s:%ld:%s = %ld, 0x",
+      _DBPRINTF("%02ld:%s|%s|%s%s:%ld:%s = %ld, 0x",
                   threadID,
                   DBC_CTRACE_STR,
                   _NOW(), _INDENT(),
@@ -827,7 +827,7 @@ void _SHOWPOINTER(const unsigned long c, const unsigned long f, const char *m,
 
     if(ansi_output)
     {
-      _DBPRINTF("%s%ldm%02ld:%s%s (%s) %s%s:%ld:%s = ",
+      _DBPRINTF("%s%ldm%02ld:%s%s|%s|%s%s:%ld:%s = ",
                   ANSI_ESC_BG, (threadID+1)%6, threadID, ANSI_ESC_CLR,
                   DBC_REPORT_BGCOLOR DBC_REPORT_STR ANSI_ESC_CLR DBC_REPORT_COLOR,
                   _NOW(), _INDENT(),
@@ -836,7 +836,7 @@ void _SHOWPOINTER(const unsigned long c, const unsigned long f, const char *m,
     }
     else
     {
-      _DBPRINTF("%02ld:%s (%s) %s%s:%ld:%s = ",
+      _DBPRINTF("%02ld:%s|%s|%s%s:%ld:%s = ",
                   threadID,
                   DBC_CTRACE_STR,
                   _NOW(), _INDENT(),
@@ -872,7 +872,7 @@ void _SHOWSTRING(const unsigned long c, const unsigned long f, const char *m,
 
     if(ansi_output)
     {
-      _DBPRINTF("%s%ldm%02ld:%s%s (%s) %s%s:%ld:%s = 0x%08lx \"%s\"%s\n",
+      _DBPRINTF("%s%ldm%02ld:%s%s|%s|%s%s:%ld:%s = 0x%08lx \"%s\"%s\n",
                   ANSI_ESC_BG, (threadID+1)%6, threadID, ANSI_ESC_CLR,
                   DBC_REPORT_BGCOLOR DBC_REPORT_STR ANSI_ESC_CLR DBC_REPORT_COLOR,
                   _NOW(), _INDENT(),
@@ -881,7 +881,7 @@ void _SHOWSTRING(const unsigned long c, const unsigned long f, const char *m,
     }
     else
     {
-      _DBPRINTF("%02ld:%s (%s) %s%s:%ld:%s = 0x%08lx \"%s\"\n",
+      _DBPRINTF("%02ld:%s|%s|%s%s:%ld:%s = 0x%08lx \"%s\"\n",
                   threadID,
                   DBC_REPORT_STR,
                   _NOW(), _INDENT(),
@@ -907,7 +907,7 @@ void _SHOWMSG(const unsigned long c, const unsigned long f, const char *m,
 
     if(ansi_output)
     {
-      _DBPRINTF("%s%ldm%02ld:%s%s (%s) %s%s:%ld:%s%s\n",
+      _DBPRINTF("%s%ldm%02ld:%s%s|%s|%s%s:%ld:%s%s\n",
                   ANSI_ESC_BG, (threadID+1)%6, threadID, ANSI_ESC_CLR,
                   DBC_REPORT_BGCOLOR DBC_REPORT_STR ANSI_ESC_CLR DBC_REPORT_COLOR,
                   _NOW(), _INDENT(),
@@ -916,7 +916,7 @@ void _SHOWMSG(const unsigned long c, const unsigned long f, const char *m,
     }
     else
     {
-      _DBPRINTF("%02ld:%s (%s) %s%s:%ld:%s\n",
+      _DBPRINTF("%02ld:%s|%s|%s%s:%ld:%s\n",
                   threadID,
                   DBC_REPORT_STR,
                   _NOW(), _INDENT(),
@@ -945,7 +945,7 @@ void _SHOWTAGS(const unsigned long c, const unsigned long f, const char *m,
 
     if(ansi_output)
     {
-      _DBPRINTF("%s%ldm%02ld:%s%s (%s) %s%s:%ld:tag list %08lx%s\n",
+      _DBPRINTF("%s%ldm%02ld:%s%s|%s|%s%s:%ld:tag list %08lx%s\n",
                   ANSI_ESC_BG, (threadID+1)%6, threadID, ANSI_ESC_CLR,
                   DBC_REPORT_BGCOLOR DBC_REPORT_STR ANSI_ESC_CLR DBC_REPORT_COLOR,
                   _NOW(), _INDENT(),
@@ -954,7 +954,7 @@ void _SHOWTAGS(const unsigned long c, const unsigned long f, const char *m,
     }
     else
     {
-      _DBPRINTF("%02ld:%s (%s) %s%s:%ld:tag list %08lx\n",
+      _DBPRINTF("%02ld:%s|%s|%s%s:%ld:tag list %08lx\n",
                   threadID,
                   DBC_REPORT_STR,
                   _NOW(), _INDENT(),
