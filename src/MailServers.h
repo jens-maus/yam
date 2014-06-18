@@ -119,7 +119,7 @@ struct MailServerNode
   char hostname[SIZE_HOST];              // servername/IP
   int  port;                             // the port
   char username[SIZE_USERID];            // the account ID/name
-  char password[SIZE_USERID];            // the password for this account
+  char password[SIZE_PASSWORD];          // the password for this account
 
   char certFingerprint[SIZE_DEFAULT];    // the fingerprint of the SSL certificate this server uses
   int certFailures;                      // the SSL cert failures bitmask
