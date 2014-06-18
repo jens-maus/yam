@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-06-08 00:11+0000\n"
+"PO-Revision-Date: 2014-06-18 04:35+0000\n"
 "Last-Translator: Kabara Jaroslav <kabara.jaroslav@gmail.com>\n"
 "Language-Team: Czech (http://www.transifex.com/projects/p/yam/language/cs/)\n"
 "MIME-Version: 1.0\n"
@@ -9949,7 +9949,7 @@ msgstr ""
 
 msgctxt "MSG_SSL_CERT_WARNING_SIGINVALID (2558//)"
 msgid "- The signature of the certificate is invalid."
-msgstr ""
+msgstr "- Podpis certifikátu není platný."
 
 msgctxt "MSG_SSL_CERT_WARNING_OUTRO (2559//)"
 msgid ""
@@ -10027,7 +10027,7 @@ msgstr ""
 #. SERVER
 msgctxt "MSG_CO_SMTP_CONNECTION_SUCCESS (2574//)"
 msgid "Connection to SMTP server '%s' was successful."
-msgstr ""
+msgstr "Spojení se SMTP serverem '%s' bylo úspěšné."
 
 #. SERVER
 msgctxt "MSG_CO_SMTP_CONNECTION_FAILURE (2575//)"
