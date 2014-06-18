@@ -270,7 +270,7 @@ OVERLOAD(OM_NEW)
                 Child, MakeCheckGroup(&CH_POPENABLED, tr(MSG_CO_POPActive)),
 
                 Child, Label2(tr(MSG_CO_POP_DESC)),
-                Child, ST_POPDESC = MakeString(SIZE_DEFAULT, tr(MSG_CO_POP_DESC)),
+                Child, ST_POPDESC = MakeString(SIZE_LARGE, tr(MSG_CO_POP_DESC)),
 
                 Child, Label2(tr(MSG_CO_POP_SERVER)),
                 Child, ST_POPHOST = MakeString(SIZE_HOST, tr(MSG_CO_POP_SERVER)),
@@ -305,7 +305,7 @@ OVERLOAD(OM_NEW)
                 Child, CY_POPAUTH = MakeCycle(pop3AuthMethods, tr(MSG_CO_POP_AUTH)),
 
                 Child, Label2(tr(MSG_CO_POPUserID)),
-                Child, ST_POPUSERID = MakeString(SIZE_USERID,tr(MSG_CO_POPUserID)),
+                Child, ST_POPUSERID = MakeString(SIZE_USERID, tr(MSG_CO_POPUserID)),
 
                 Child, Label2(tr(MSG_CO_Password)),
                 Child, ST_PASSWD = MakePassString(tr(MSG_CO_Password)),
@@ -458,7 +458,7 @@ OVERLOAD(OM_NEW)
                 Child, MakeCheckGroup(&CH_SMTPENABLED, tr(MSG_CO_SMTP_ACTIVE)),
 
                 Child, Label2(tr(MSG_CO_SMTP_DESC)),
-                Child, ST_SMTPDESC = MakeString(SIZE_DEFAULT, tr(MSG_CO_SMTP_DESC)),
+                Child, ST_SMTPDESC = MakeString(SIZE_LARGE, tr(MSG_CO_SMTP_DESC)),
 
                 Child, Label2(tr(MSG_CO_SMTP_SERVER)),
                 Child, ST_SMTPHOST = MakeString(SIZE_HOST, tr(MSG_CO_SMTP_SERVER)),
@@ -493,7 +493,7 @@ OVERLOAD(OM_NEW)
                 Child, CY_SMTPAUTH = MakeCycle(smtpAuthMethods, tr(MSG_CO_SMTP_AUTH)),
 
                 Child, Label2(tr(MSG_CO_SMTPUser)),
-                Child, ST_SMTPAUTHUSER = MakeString(SIZE_USERID,tr(MSG_CO_SMTPUser)),
+                Child, ST_SMTPAUTHUSER = MakeString(SIZE_USERID, tr(MSG_CO_SMTPUser)),
 
                 Child, Label2(tr(MSG_CO_SMTPPass)),
                 Child, ST_SMTPAUTHPASS = MakePassString(tr(MSG_CO_SMTPPass)),
