@@ -15,7 +15,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-06-08 11:22+0000\n"
+"PO-Revision-Date: 2014-06-22 16:59+0000\n"
 "Last-Translator: Javier de las Rivas <jabierdlr@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/projects/p/yam/language/es/)\n"
 "MIME-Version: 1.0\n"
@@ -55,11 +55,11 @@ msgstr "Añadir..."
 
 msgctxt "MSG_Save (9//)"
 msgid "Save"
-msgstr "Salvar"
+msgstr "Guardar"
 
 msgctxt "MSG_SaveAs (10//)"
 msgid "Save as..."
-msgstr "Salvar como..."
+msgstr "Guardar como..."
 
 msgctxt "MSG_Print (11//)"
 msgid "Print..."
@@ -452,16 +452,16 @@ msgstr "Mensaje reenviado de '%s' sobre '%s' para '%s'"
 #. CONFIG_FILE
 msgctxt "MSG_LOG_SavingConfig (129//)"
 msgid "Saved configuration file '%s'"
-msgstr "Salvado archivo de configuración '%s'"
+msgstr "Guardada configuración '%s'"
 
 #. FILENAME
 msgctxt "MSG_LOG_SavingABook (130//)"
 msgid "Saved address book '%s'"
-msgstr "Salvada agenda de contactos '%s'"
+msgstr "Guardada agenda '%s'"
 
 msgctxt "MSG_LOG_SavingUsers (131//)"
 msgid "Saved user configuration"
-msgstr "Salvada configuración de usuario"
+msgstr "Guardada configuración de usuario"
 
 #. ALIAS
 msgctxt "MSG_LOG_NewAddress (132//)"
@@ -481,7 +481,7 @@ msgstr "%ld mensaje(s) exportado(s) de la carpeta '%s' al archivo '%s'"
 #. FILENAME, MAILFILE, FOLDER
 msgctxt "MSG_LOG_SavingAtt (135//)"
 msgid "Saved attachment '%s' of message '%s' in folder '%s'"
-msgstr "Anexo '%s' del mensaje '%s' salvado en la carpeta '%s'"
+msgstr "Anexo '%s' del mensaje '%s' guardado en '%s'"
 
 #. SUBJECT, MAILFILE, FOLDER, SUBJECT
 msgctxt "MSG_LOG_ChangingSubject (137//)"
@@ -490,7 +490,7 @@ msgstr "Asunto cambiado '%s' del mensaje '%s' en la carpeta '%s' para '%s'"
 
 msgctxt "MSG_UT_Save (138//)"
 msgid "Save"
-msgstr "Salvar"
+msgstr "Guardar"
 
 msgctxt "MSG_UT_Load (139//)"
 msgid "Load"
@@ -712,11 +712,11 @@ msgstr "Borrar"
 
 msgctxt "MSG_MA_Save (230//)"
 msgid "Save..."
-msgstr "Salvar..."
+msgstr "Guardar..."
 
 msgctxt "MSG_MA_MGetAddress (235//)"
 msgid "Save address..."
-msgstr "Salvar dirección de correo..."
+msgstr "Guardar dirección de correo..."
 
 msgctxt "MSG_MA_SetStatus (236//)"
 msgid "Set status to"
@@ -774,7 +774,7 @@ msgctxt "MSG_HELP_MA_BT_GETADDRESS (251//)"
 msgid ""
 "Save sender's address\n"
 "in your address book."
-msgstr "Salvar dirección de correo del remitente\nen la agenda de contactos."
+msgstr "Guardar dirección de correo del remitente\nen la agenda de contactos."
 
 msgctxt "MSG_HELP_MA_BT_WRITE (252//)"
 msgid "Compose a new message."
@@ -1049,7 +1049,7 @@ msgstr "Agenda de Contactos"
 
 msgctxt "MSG_CO_Save (315//)"
 msgid "_Save"
-msgstr "_Salvar"
+msgstr "_Guardar"
 
 msgctxt "MSG_CO_Use (316//)"
 msgid "_Use"
@@ -1553,7 +1553,7 @@ msgstr "Intercambio de Datos Personales"
 
 msgctxt "MSG_CO_Gallery (501//)"
 msgid "Save _photos in"
-msgstr "Salvar _fotografías en"
+msgstr "Guardar _fotos en"
 
 msgctxt "MSG_CO_AddToAddrbook (503//)"
 msgid "Sa_ve sender's address"
@@ -1597,7 +1597,7 @@ msgstr "_Gadget de Cerrar iconifica el programa"
 
 msgctxt "MSG_CO_SaveDelete (514//)"
 msgid "Save/delete messages"
-msgstr "Salvar/borrar mensajes"
+msgstr "Guardar/borrar mensajes"
 
 msgctxt "MSG_CO_ConfirmDelPart1 (515//)"
 msgid "Confirm _deletion of"
@@ -1694,7 +1694,7 @@ msgstr "Abrir..."
 
 msgctxt "MSG_CO_SaveAs (545//)"
 msgid "Save as..."
-msgstr "Salvar como..."
+msgstr "Guardar como..."
 
 msgctxt "MSG_CO_Edit (546//)"
 msgid "Edit"
@@ -1710,7 +1710,7 @@ msgstr "Restaurar todas las preferencias"
 
 msgctxt "MSG_CO_LastSaved (549//)"
 msgid "Last saved"
-msgstr "Ultimo salvado"
+msgstr "Últimos guardados"
 
 msgctxt "MSG_CO_Restore (550//)"
 msgid "Restore"
@@ -2253,7 +2253,7 @@ msgctxt "MSG_HELP_CO_ST_GALLDIR (671//)"
 msgid ""
 "Directory to save the pictures\n"
 "of your correspondents."
-msgstr "Directorio donde salvar las imágenes\nde tus contactos."
+msgstr "Directorio donde guardar las imágenes\nde tus contactos."
 
 msgctxt "MSG_HELP_CO_CY_ATAB (673//)"
 msgid ""
@@ -2284,7 +2284,7 @@ msgctxt "MSG_HELP_CO_ST_DETACHDIR (677//)"
 msgid ""
 "Directory to save\n"
 "attached files to."
-msgstr "Directorio donde salvar\nlos archivos anexos."
+msgstr "Directorio donde guardar\nlos archivos anexos."
 
 msgctxt "MSG_HELP_CO_ST_ATTACHDIR (678//)"
 msgid ""
@@ -2378,7 +2378,7 @@ msgstr "No ejecutar el script\nasíncronamente pero espera\na que finalice."
 
 msgctxt "MSG_HELP_CO_BT_SAVE (699//)"
 msgid "Save current settings."
-msgstr "Salva las preferencias actuales."
+msgstr "Guardar las preferencias actuales."
 
 msgctxt "MSG_HELP_CO_BT_USE (700//)"
 msgid "Use current settings."
@@ -2573,7 +2573,7 @@ msgstr "Desplegar todo"
 
 msgctxt "MSG_AB_TBSave (747//8)"
 msgid "_Save"
-msgstr "_Salvar"
+msgstr "_Guardar"
 
 msgctxt "MSG_AB_TBFind (748//8)"
 msgid "_Find"
@@ -2613,7 +2613,7 @@ msgstr "Rec_oger"
 
 msgctxt "MSG_HELP_AB_BT_SAVE (757//)"
 msgid "Save current changes."
-msgstr "Salva cambios realizados."
+msgstr "Guardar los cambios realizados."
 
 msgctxt "MSG_HELP_AB_BT_SEARCH (758//)"
 msgid ""
@@ -2902,7 +2902,7 @@ msgstr "El remitente de este mensaje solicita una confirmación de recepción.\n
 
 msgctxt "MSG_RE_SaveMessage (827//)"
 msgid "Save message"
-msgstr "Salvar mensaje"
+msgstr "Guardar mensaje"
 
 msgctxt "MSG_RE_PrintMsg (829//)"
 msgid "Print message"
@@ -2918,11 +2918,11 @@ msgstr "_Imprimir"
 
 msgctxt "MSG_RE_SelectSavePart (832//)"
 msgid "Select part to save:"
-msgstr "Selecciona parte a salvar:"
+msgstr "Parte a guardar:"
 
 msgctxt "MSG_RE_SaveGad (833//)"
 msgid "_Save"
-msgstr "_Salvar"
+msgstr "_Guardar"
 
 msgctxt "MSG_RE_DisplayMsg (834//)"
 msgid "Display message"
@@ -3107,7 +3107,7 @@ msgstr "Mostrar..."
 
 msgctxt "MSG_RE_SaveAll (874//)"
 msgid "Save all..."
-msgstr "Salvar todo..."
+msgstr "Guardar todo..."
 
 msgctxt "MSG_RE_Navigation (875//)"
 msgid "Navigation"
@@ -3143,7 +3143,7 @@ msgstr "Extraer clave(s) pública"
 
 msgctxt "MSG_RE_SaveDecrypted (883//)"
 msgid "Save decrypted message"
-msgstr "Salvar mensaje descriptado"
+msgstr "Guardar mensaje desencriptado"
 
 msgctxt "MSG_RE_NoHeaders (884//)"
 msgid "No headers"
@@ -3199,7 +3199,7 @@ msgstr "_Mostrar"
 
 msgctxt "MSG_RE_TBSave (897//8)"
 msgid "_Save"
-msgstr "_Salvar"
+msgstr "_Guardar"
 
 msgctxt "MSG_RE_TBPrint (898//8)"
 msgid "Pr_int"
@@ -3258,7 +3258,7 @@ msgctxt "MSG_HELP_RE_BT_EXPORT (908//)"
 msgid ""
 "Save displayed message or\n"
 "a part of it to disk."
-msgstr "Salvar mensaje mostrado o\nparte de él a disco."
+msgstr "Guardar mensaje mostrado o\nparte de él a disco."
 
 msgctxt "MSG_HELP_RE_BT_PRINT (909//)"
 msgid ""
@@ -3298,7 +3298,7 @@ msgstr "Quieres realmente cancelar todas\nlas modificaciones de este mensaje?"
 
 msgctxt "MSG_WR_SaveTextAs (919//)"
 msgid "Save text as"
-msgstr "Salvar texto como"
+msgstr "Guardar texto como"
 
 msgctxt "MSG_WR_AddFile (920//)"
 msgid "Select files to attach"
@@ -4026,7 +4026,7 @@ msgid ""
 "Write error on mail file: %s.\n"
 "\n"
 "YAM can't save the message to disk, maybe you're out of disk space."
-msgstr "Error de escritura en archivo de correo: %s.\n\nYAM no puede salvar el mensaje a disco, puede que el disco esté lleno."
+msgstr "Error de escritura en archivo de correo: %s.\n\nYAM no puede guardar el mensaje, puede que el disco esté lleno."
 
 #. FILENAME
 msgctxt "MSG_ER_ErrorReadMailfile (1135//)"
@@ -4611,7 +4611,7 @@ msgstr "Usa esta dirección de destinatario para\nuna respuesta a un mensaje de 
 #. FILENAME
 msgctxt "MSG_BusySavingAB (1271//)"
 msgid "Saving address book '%s'..."
-msgstr "Salvando agenda de contactos '%s'..."
+msgstr "Guardando agenda '%s'..."
 
 msgctxt "MSG_BusyPrintingAB (1272//)"
 msgid "Printing address book..."
@@ -4619,7 +4619,7 @@ msgstr "Imprimiendo agenda de contactos..."
 
 msgctxt "MSG_BusySavingDI (1273//)"
 msgid "Saving glossary..."
-msgstr "Salvando glosario..."
+msgstr "Guardando glosario..."
 
 msgctxt "MSG_BusyLoadingDI (1274//)"
 msgid "Loading glossary..."
@@ -4667,7 +4667,7 @@ msgstr "Cargando índice de la carpeta '%s'..."
 #. FOLDER
 msgctxt "MSG_BusySavingIndex (1285//)"
 msgid "Saving index of folder '%s'..."
-msgstr "Salvando índice de la carpeta '%s'..."
+msgstr "Guardando índice de '%s'..."
 
 #. FOLDER
 msgctxt "MSG_BusyScanning (1286//)"
