@@ -15,7 +15,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-06-22 16:59+0000\n"
+"PO-Revision-Date: 2014-06-22 17:58+0000\n"
 "Last-Translator: Javier de las Rivas <jabierdlr@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/projects/p/yam/language/es/)\n"
 "MIME-Version: 1.0\n"
@@ -71,7 +71,7 @@ msgstr "Editar..."
 
 msgctxt "MSG_Okay (16//)"
 msgid "_Ok"
-msgstr "_Sí"
+msgstr "_Aceptar"
 
 msgctxt "MSG_Use (17//)"
 msgid "_Use"
@@ -83,7 +83,7 @@ msgstr "_Cancelar"
 
 msgctxt "MSG_OkayReq (21//)"
 msgid "*_Ok"
-msgstr "*_Sí"
+msgstr "*_Aceptar"
 
 msgctxt "MSG_YesNoReq (23//)"
 msgid "*_Yes|_No"
@@ -175,7 +175,7 @@ msgstr "Dirección"
 
 msgctxt "MSG_ReturnAddress (48//)"
 msgid "Return address"
-msgstr "Dirección de retorno"
+msgstr "Dirección de respuesta"
 
 msgctxt "MSG_SenderRecpt (49//)"
 msgid "Sender/recipient"
@@ -255,7 +255,7 @@ msgstr "Inicializando librerias y clases..."
 
 msgctxt "MSG_ErrorAslStruct (78//)"
 msgid "Can't allocate ASL structure"
-msgstr "No puedo localizar estructura ASL"
+msgstr "No puedo asignar estructura ASL"
 
 msgctxt "MSG_ErrorTimer (79//)"
 msgid "Can't open timer.device"
@@ -273,11 +273,11 @@ msgctxt "MSG_SendStartReq (82//)"
 msgid ""
 "The Outgoing folder contains unsent mail.\n"
 "Do you want to send these messages now?"
-msgstr "La Bandeja de Salida contiene correo sin enviar.\nQuieres enviar estos mensajes ahora?"
+msgstr "La Bandeja de Salida contiene correo sin enviar.\n¿Quiere enviar estos mensajes ahora?"
 
 msgctxt "MSG_QuitYAMReq (83//)"
 msgid "Do you really want to quit YAM?"
-msgstr "Realmente quieres quitar YAM?"
+msgstr "¿Realmente quiere salir de YAM?"
 
 msgctxt "MSG_CTtextplain (84//)"
 msgid "plain text"
@@ -301,15 +301,15 @@ msgstr "documento Postscript"
 
 msgctxt "MSG_CTapplicationrtf (89//)"
 msgid "Rich Text Format"
-msgstr "Formato Texto Enriquecido RTF"
+msgstr "documento RTF"
 
 msgctxt "MSG_CTapplicationlha (90//)"
 msgid "LhA archive"
-msgstr "Archivo Lha"
+msgstr "archivo LHA"
 
 msgctxt "MSG_CTapplicationlzx (91//)"
 msgid "LZX archive"
-msgstr "Archivo LZX"
+msgstr "archivo LZX"
 
 msgctxt "MSG_CTapplicationzip (92//)"
 msgid "ZIP archive"
@@ -337,35 +337,35 @@ msgstr "imagen TIFF"
 
 msgctxt "MSG_CTimageilbm (98//)"
 msgid "Amiga IFF-ILBM picture"
-msgstr "imagen Amiga IFF-ILBM"
+msgstr "imagen IFF-ILBM"
 
 msgctxt "MSG_CTaudiobasic (99//)"
 msgid "UNIX audio file"
-msgstr "archivo audio UNIX"
+msgstr "audio UNIX"
 
 msgctxt "MSG_CTaudio8svx (100//)"
 msgid "Amiga IFF-8SVX audio"
-msgstr "audio Amiga IFF-8SVX"
+msgstr "audio IFF-8SVX"
 
 msgctxt "MSG_CTaudiowav (101//)"
 msgid "Microsoft WAV audio"
-msgstr "audio Microsoft WAV"
+msgstr "audio WAV"
 
 msgctxt "MSG_CTvideompeg (102//)"
 msgid "MPEG video stream"
-msgstr "video stream MPEG"
+msgstr "video MPEG"
 
 msgctxt "MSG_CTvideoquicktime (103//)"
 msgid "Apple QuickTime video"
-msgstr "video Apple QuickTime"
+msgstr "video QuickTime"
 
 msgctxt "MSG_CTvideoanim (104//)"
 msgid "Amiga IFF-ANIM video"
-msgstr "video Amiga IFF-ANIM"
+msgstr "video IFF-ANIM"
 
 msgctxt "MSG_CTvideomsvideo (105//)"
 msgid "Microsoft AVI video"
-msgstr "video Microsoft AVI"
+msgstr "video AVI"
 
 msgctxt "MSG_CTmessagerfc822 (106//)"
 msgid "E-mail message"
@@ -498,25 +498,25 @@ msgstr "Cargar"
 
 msgctxt "MSG_UT_PGPPassReq (140//)"
 msgid "Please enter your PGP passphrase:"
-msgstr "Por favor introduce frase clave PGP:"
+msgstr "Por favor introduczca clave PGP:"
 
 #. FOLDER
 msgctxt "MSG_MA_GetFolderPass (144//)"
 msgid ""
 "Folder '%s' is a protected folder.\n"
 "Please enter the password to unlock it:"
-msgstr "La carpeta '%s' está protegida.\nPor favor introduce la clave para desprotegerla:"
+msgstr "La carpeta '%s' está protegida.\nPor favor introduzca clave para desprotegerla:"
 
 msgctxt "MSG_MA_ReplyReq (149//)"
 msgid ""
 "The selected message has multiple recipients.\n"
 "\n"
 "You want to send the reply to the..."
-msgstr "El mensaje seleccionado tiene varios destinatarios.\n\nQuieres enviarle respuesta a..."
+msgstr "El mensaje seleccionado tiene varios destinatarios.\n\nEnviarle respuesta a..."
 
 msgctxt "MSG_MA_ReplyReqOpt (150//)"
 msgid "*_Sender|Sender and _all Recipients|_Recipients|_Cancel"
-msgstr "*_remitente|remitente y _todos los destinatarios|_destinatarios|_Cancelar"
+msgstr "*Al\\n_remitente|Al remitente _y\\ndestinatarios|A los\\n_destinatarios|_Cancelar"
 
 #. ADDRESS, ADDRESS
 msgctxt "MSG_MA_CompareReq (151//)"
@@ -525,11 +525,11 @@ msgid ""
 "return address (Reply-To) is \\033b<%s>\\033n.\n"
 "\n"
 "To which address do you want to reply to?"
-msgstr "La dirección de remitente (De) es \\033b<%s>\\033n, pero\nla dirección de retorno (Responder A) es \\033b<%s>\\033n.\n\nA que dirección quiere responder?"
+msgstr "La dirección de remitente (De) es \\033b<%s>\\033n, pero\nla dirección de respuesta (Responder A) es \\033b<%s>\\033n.\n\n¿A que dirección quiere responder?"
 
 msgctxt "MSG_MA_Compare3ReqOpt (152//)"
 msgid "_From|*_Reply-To|_Both|_Cancel"
-msgstr "_De|*_Responder A|_Ambos|_Cancelar"
+msgstr "_De|*_Responder A|_Ambas|_Cancelar"
 
 msgctxt "MSG_MA_Compare2ReqOpt (153//)"
 msgid "_From|*_Reply-To|_Cancel"
@@ -615,11 +615,11 @@ msgstr "\\033bPara: \\033n"
 
 msgctxt "MSG_MA_Incoming (179//)"
 msgid "Incoming"
-msgstr "Entrada"
+msgstr "Recibido"
 
 msgctxt "MSG_MA_Outgoing (180//)"
 msgid "Outgoing"
-msgstr "Salida"
+msgstr "A enviar"
 
 msgctxt "MSG_MA_Sent (181//)"
 msgid "Sent"
@@ -651,7 +651,7 @@ msgstr "_Nuevo"
 
 msgctxt "MSG_MA_TBReply (190//8)"
 msgid "_Reply"
-msgstr "Responde"
+msgstr "Resp."
 
 msgctxt "MSG_MA_TBForward (191//8)"
 msgid "For_ward"
@@ -679,7 +679,7 @@ msgstr "A_genda"
 
 msgctxt "MSG_MA_TBConfig (197//8)"
 msgid "_Config"
-msgstr "_Config"
+msgstr "Ajustes"
 
 msgctxt "MSG_MA_Project (198//)"
 msgid "Project"
@@ -854,7 +854,7 @@ msgstr "Importar preferencias desde..."
 
 msgctxt "MSG_CO_ImportMIMEGads (267//)"
 msgid "*_MIME.prefs|m_ailcap|m_ime.types|_Cancel"
-msgstr "*_MIME.prefs|m_ailcap|m_ime.tipos|_Cancelar"
+msgstr "*_MIME.prefs|m_ailcap|m_ime.types|_Cancelar"
 
 #. Please keep the number of backslashes (e.g. \n)
 msgctxt "MSG_CO_NewIntroDef (268//)"
@@ -1041,7 +1041,7 @@ msgstr "Seguridad"
 
 msgctxt "MSG_CO_CrdMixed (311//)"
 msgid "Miscellaneous"
-msgstr "Diversos"
+msgstr "Miscelánea"
 
 msgctxt "MSG_CO_CrdABook (314//)"
 msgid "Address book"
@@ -1073,7 +1073,7 @@ msgstr "Correo elec_trónico"
 
 msgctxt "MSG_CO_Password (347//)"
 msgid "_Password"
-msgstr "_Clave"
+msgstr "_Contraseña"
 
 msgctxt "MSG_CO_TimeZone (348//)"
 msgid "Time _zone"
@@ -1437,23 +1437,23 @@ msgstr "Insertar frase adicional aleato_ria"
 
 msgctxt "MSG_CO_InsertENV (466//)"
 msgid "Insert E_NV:Signature"
-msgstr "Insertar E_NV:Firma"
+msgstr "Insertar E_NV:Signature"
 
 msgctxt "MSG_CO_Taglines (467//)"
 msgid "Taglines"
-msgstr "Frases adicionales"
+msgstr "Citas"
 
 msgctxt "MSG_CO_TaglineFile (468//)"
 msgid "Tagline _file"
-msgstr "Archivo _Frases"
+msgstr "_Fichero citas"
 
 msgctxt "MSG_CO_TaglineSep (469//)"
 msgid "T_agline separator"
-msgstr "Separador de Fr_ases"
+msgstr "Sep_arador de citas"
 
 msgctxt "MSG_CO_FixedFontList (470//)"
 msgid "Use _fixed font"
-msgstr "Usar _fuente fija"
+msgstr "Tipo letra de anchura _fija"
 
 msgctxt "MSG_CO_SwatchBeat (471//)"
 msgid "Show time in Swatch _Beats"
@@ -1473,7 +1473,7 @@ msgstr "Intenso"
 
 msgctxt "MSG_CO_PGPExe (475//)"
 msgid "P_GP's directory"
-msgstr "Directorio P_GP's"
+msgstr "Directorio P_GP"
 
 msgctxt "MSG_CO_Logfiles (481//)"
 msgid "Log files"
@@ -1589,7 +1589,7 @@ msgstr "Estado del Buzón de Correo"
 
 msgctxt "MSG_CO_PositionX (512//)"
 msgid "Position _X"
-msgstr "Posición _X"
+msgstr "Posición: _X"
 
 msgctxt "MSG_CO_CloseGadget (513//)"
 msgid "Close _gadget iconifies program"
@@ -1630,7 +1630,7 @@ msgstr "Archi_var"
 #. COUNT
 msgctxt "MSG_CO_ScriptMenu (529//)"
 msgid "'Scripts' menu entry %ld"
-msgstr "'Scripts' menu entrada %ld"
+msgstr "'Scripts' menú entrada %ld"
 
 msgctxt "MSG_CO_ScriptStartup (530//)"
 msgid "Program startup"
@@ -1816,7 +1816,7 @@ msgstr "Mensajes entrantes mayores que esto\nse considerarán como 'grandes'."
 
 msgctxt "MSG_HELP_CO_ST_INTERVAL (575//)"
 msgid "How often do you want YAM to automatically check for new mail?"
-msgstr "Con qué frecuencia quieres que YAM compruebe automáticamente el buzón de correo?"
+msgstr "Con qué frecuencia desea que YAM compruebe automáticamente el buzón de correo."
 
 msgctxt "MSG_HELP_CO_CH_DLLARGE (576//)"
 msgid ""
@@ -1963,7 +1963,7 @@ msgctxt "MSG_HELP_CO_CY_HEADER (606//)"
 msgid ""
 "Which message headers do you want YAM\n"
 "to display by default in the Read window?"
-msgstr "Qué cabecera de mensaje quieres que YAM\nmuestre por defecto en la ventana de lectura?"
+msgstr "Cabecera del mensaje que desea que YAM\nmuestre por defecto en la ventana de lectura."
 
 msgctxt "MSG_HELP_CO_ST_HEADERS (607//)"
 msgid ""
@@ -2080,7 +2080,7 @@ msgid ""
 "Text used to introduce a forwarded message.\n"
 "Click the popup button at the right to see\n"
 "the variables you can use."
-msgstr "Texto utilizado al introducir un mensaje reenviado.\nHaz Click en el botón emergente de la derecha para ver\nlas variables que puedes usar."
+msgstr "Texto utilizado al introducir un mensaje reenviado.\nHaz click en el botón emergente de la derecha para ver\nlas variables que puedes usar."
 
 msgctxt "MSG_HELP_CO_ST_FWDEND (634//)"
 msgid ""
@@ -2116,7 +2116,7 @@ msgctxt "MSG_HELP_CO_CH_QUOTEEMPTY (641//)"
 msgid ""
 "Insert quote character\n"
 "for empty lines?"
-msgstr "Insertar carácter de cita\npara líneas vacías?"
+msgstr "Insertar carácter de cita\npara líneas vacías."
 
 msgctxt "MSG_HELP_CO_CH_COMPADDR (642//)"
 msgid ""
@@ -2147,7 +2147,7 @@ msgctxt "MSG_HELP_CO_BT_INSENV (647//)"
 msgid ""
 "Insert a control code for the\n"
 "'SIGNATURE' environment variable."
-msgstr "Inserta un código de control para la\nvariable de entorno de 'FIRMA'."
+msgstr "Inserta un código de control para la\nvariable de entorno de 'SIGNATURE'."
 
 msgctxt "MSG_HELP_CO_ST_TAGFILE (648//)"
 msgid ""
@@ -2189,7 +2189,7 @@ msgctxt "MSG_HELP_CO_CH_BEAT (654//)"
 msgid ""
 "Display time in Swatch Beats, the\n"
 "unit of time from Swatch."
-msgstr "Muestra la hora en pasos Swatch,\nla unidad de tiempo de Swatch."
+msgstr "Muestra la hora en Swatch-Beats,\nla unidad de tiempo de Swatch."
 
 msgctxt "MSG_HELP_CO_ST_PGPCMD (655//)"
 msgid ""
@@ -2259,7 +2259,7 @@ msgctxt "MSG_HELP_CO_CY_ATAB (673//)"
 msgid ""
 "Automatically create an address book entry\n"
 "for the sender when you read his/her message?"
-msgstr "Crear automáticamente una entrada en la agenda de contactos\ncon el remitente cuando lees su mensaje?"
+msgstr "Crear automáticamente una entrada en la agenda de contactos\ncon el remitente cuando lee su mensaje."
 
 msgctxt "MSG_HELP_CO_ST_PROXY (674//)"
 msgid ""
@@ -2302,13 +2302,13 @@ msgctxt "MSG_HELP_CO_CH_CLGADGET (680//)"
 msgid ""
 "Do you want YAM to iconify when\n"
 "you hit the close gadget?"
-msgstr "Quieres que YAM se iconifique\ncuando haces click en el gadget de cerrar?"
+msgstr "Iconificar YAM cuando cierra la ventana."
 
 msgctxt "MSG_HELP_CO_CH_CONFIRM (681//)"
 msgid ""
 "Do you want to confirm\n"
 "deletion of messages?"
-msgstr "Quieres confirmar\nel borrado de mensajes?"
+msgstr "Confirmar el borrado de mensajes."
 
 msgctxt "MSG_HELP_CO_NB_CONFIRMDEL (682//)"
 msgid ""
@@ -2413,7 +2413,7 @@ msgstr "Alias (GRUPO)"
 
 msgctxt "MSG_AB_PrintReqGads (708//)"
 msgid "_Long format|_Short format|_Cancel"
-msgstr "Formato_Largo|Formato C_orto|_Cancelar"
+msgstr "Formato _Largo|Formato C_orto|_Cancelar"
 
 msgctxt "MSG_AB_PrintReq (709//)"
 msgid "Select print format:"
@@ -2449,7 +2449,7 @@ msgstr "_Iniciar Búsqueda"
 
 msgctxt "MSG_AB_FoundEntryGads (715//)"
 msgid "_Next hit|*_Edit hit|_Cancel"
-msgstr "_Próximo|_Editar|_Cancelar"
+msgstr "_Próximo|*_Editar|_Cancelar"
 
 msgctxt "MSG_AB_NoneFound (716//)"
 msgid "No matching entries found."
@@ -2497,7 +2497,7 @@ msgstr "Fecha Nacimiento"
 
 msgctxt "MSG_AB_TitlePGPId (728//)"
 msgid "PGP Id"
-msgstr "PGP Id"
+msgstr "Id. PGP"
 
 msgctxt "MSG_AB_TitleHomepage (729//)"
 msgid "Homepage"
@@ -2565,7 +2565,7 @@ msgstr "Ver"
 
 msgctxt "MSG_AB_Fold (745//)"
 msgid "Fold all"
-msgstr "Recoger todo"
+msgstr "Plegar todo"
 
 msgctxt "MSG_AB_Unfold (746//)"
 msgid "Unfold all"
@@ -2605,11 +2605,11 @@ msgstr "Imprimir"
 
 msgctxt "MSG_AB_TBOpenTree (755//8)"
 msgid "_Unfold"
-msgstr "Desplega"
+msgstr "Desplegar"
 
 msgctxt "MSG_AB_TBCloseTree (756//8)"
 msgid "F_old"
-msgstr "Rec_oger"
+msgstr "Plegar"
 
 msgctxt "MSG_HELP_AB_BT_SAVE (757//)"
 msgid "Save current changes."
@@ -2713,7 +2713,7 @@ msgstr "_Dirección de Correo"
 
 msgctxt "MSG_EA_PGPId (783//)"
 msgid "PGP _key ID"
-msgstr "Cla_ve PGP ID"
+msgstr "Cla_ve PGP"
 
 msgctxt "MSG_EA_Homepage (784//)"
 msgid "_Homepage"
@@ -2737,7 +2737,7 @@ msgstr "Re_gión/País"
 
 msgctxt "MSG_EA_Phone (789//)"
 msgid "_Phone number(s)"
-msgstr "_Número(s) de Teléfono"
+msgstr "Teléfono(s)"
 
 msgctxt "MSG_EA_Miscellaneous (790//)"
 msgid "Miscellaneous"
@@ -2761,7 +2761,7 @@ msgstr "Selecci_onar..."
 
 msgctxt "MSG_EA_ReturnAddress (796//)"
 msgid "_Return address"
-msgstr "Dirección de _retorno"
+msgstr "Dirección de _respuesta"
 
 msgctxt "MSG_EA_MLName (797//)"
 msgid "_Mailing list name"
@@ -2803,7 +2803,7 @@ msgctxt "MSG_HELP_EA_ST_PGPKEY (804//)"
 msgid ""
 "Hexadecimal ID of this\n"
 "person's public PGP key."
-msgstr "Clave pública PGP de esta persona\nen ID Hexadecimal."
+msgstr "Clave pública PGP de esta\npersona, en hexadecimal."
 
 msgctxt "MSG_HELP_EA_ST_HOMEPAGE (805//)"
 msgid ""
@@ -2828,7 +2828,7 @@ msgctxt "MSG_HELP_EA_ST_COUNTRY (808//)"
 msgid ""
 "Postal address: state\n"
 "and/or country."
-msgstr "Dirección Postal: Región\ny/o país."
+msgstr "Dirección Postal: región\ny/o país."
 
 msgctxt "MSG_HELP_EA_ST_PHONE (809//)"
 msgid ""
@@ -2898,7 +2898,7 @@ msgid ""
 "a return receipt.\n"
 "\n"
 "What do you want to do?"
-msgstr "El remitente de este mensaje solicita una confirmación de recepción.\n\nQué quieres hacer?"
+msgstr "El remitente de este mensaje solicita acuse de recibo.\n\n¿Qué desea hacer?"
 
 msgctxt "MSG_RE_SaveMessage (827//)"
 msgid "Save message"
@@ -2930,7 +2930,7 @@ msgstr "Mostrar mensaje"
 
 msgctxt "MSG_RE_SelectDisplayPart (835//)"
 msgid "Select part to display:"
-msgstr "Selecciona parte a mostrar:"
+msgstr "Parte a mostrar:"
 
 msgctxt "MSG_RE_DisplayGad (836//)"
 msgid "_Display"
@@ -2938,7 +2938,7 @@ msgstr "_Mostrar"
 
 msgctxt "MSG_RE_BadSig (837//)"
 msgid "WARNING: Bad signature"
-msgstr "ATENCION: Firma errónea"
+msgstr "ATENCIÓN: Firma errónea"
 
 msgctxt "MSG_RE_GoodSig (838//)"
 msgid "Good signature"
@@ -2960,7 +2960,7 @@ msgctxt "MSG_RE_SaveDecReq (842//)"
 msgid ""
 "What do you want to do with the\n"
 "original (encrypted) message?"
-msgstr "Que desea hacer con el\nmensaje (encriptado) original?"
+msgstr "Que desea hacer con el\nmensaje (encriptado) original."
 
 msgctxt "MSG_RE_Header (843//)"
 msgid "Header"
@@ -2992,7 +2992,7 @@ msgctxt "MSG_RE_MDNMessageID (848//)"
 msgid ""
 "\n"
 "Message-ID:"
-msgstr "\nMensaje-ID:"
+msgstr "\nID-Mensaje:"
 
 msgctxt "MSG_RE_MDNDate (849//)"
 msgid ""
@@ -3064,7 +3064,7 @@ msgid ""
 "Do you want to add the sender\n"
 "\\033b%s\\033n\n"
 "to your address book?"
-msgstr "Quieres añadir al remitente\n\\033b%s\\033n\na tu agenda de contactos?"
+msgstr "¿Añadir el remitente\n\\033b%s\\033n\na su agenda de contactos?"
 
 msgctxt "MSG_RE_ContentType (865//)"
 msgid "Content-Type"
@@ -3076,14 +3076,14 @@ msgstr "Descripción"
 
 msgctxt "MSG_RE_UUencodedFile (867//)"
 msgid "UUencoded file"
-msgstr "Archivo UUencoded"
+msgstr "archivo UUencoded"
 
 #. ADDRESS
 msgctxt "MSG_RE_SelectAddressReq (868//)"
 msgid ""
 "Selected address: %s\n"
 "What do you want to do?"
-msgstr "Dirección de correo seleccionada: %s\nQué quieres hacer?"
+msgstr "Dirección de correo seleccionada: %s\n¿Qué desea hacer?"
 
 msgctxt "MSG_RE_SelectAddressEdit (869//)"
 msgid "*_Write message|_Edit entry|_Cancel"
@@ -3119,7 +3119,7 @@ msgstr "Mensaje siguiente"
 
 msgctxt "MSG_RE_MPrev (877//)"
 msgid "Previous message"
-msgstr "Mensaje Anterior"
+msgstr "Mensaje anterior"
 
 msgctxt "MSG_RE_MURNext (878//)"
 msgid "Next unread message"
@@ -3131,15 +3131,15 @@ msgstr "Anterior mensaje no leído"
 
 msgctxt "MSG_RE_MNextTh (880//)"
 msgid "Next message in thread"
-msgstr "Mensaje Siguiente en tratamiento"
+msgstr "Mensaje siguiente mismo asunto"
 
 msgctxt "MSG_RE_MPrevTh (881//)"
 msgid "Previous message in thread"
-msgstr "Mensaje anterior en tratamiento"
+msgstr "Mensaje anterior mismo asunto"
 
 msgctxt "MSG_RE_ExtractKey (882//)"
 msgid "Extract public key(s)"
-msgstr "Extraer clave(s) pública"
+msgstr "Extraer clave(s) pública(s)"
 
 msgctxt "MSG_RE_SaveDecrypted (883//)"
 msgid "Save decrypted message"
@@ -3147,7 +3147,7 @@ msgstr "Guardar mensaje desencriptado"
 
 msgctxt "MSG_RE_NoHeaders (884//)"
 msgid "No headers"
-msgstr "Sin cabeceras"
+msgstr "Sin cabecera"
 
 msgctxt "MSG_RE_ShortHeaders (885//)"
 msgid "Short headers"
@@ -3183,15 +3183,15 @@ msgstr "Anterior"
 
 msgctxt "MSG_RE_TBNext (893//8)"
 msgid "_Next"
-msgstr "Siguient"
+msgstr "Siguien."
 
 msgctxt "MSG_RE_TBPrevTh (894//8)"
 msgid "Prev_Thr"
-msgstr "Tema Ant"
+msgstr "Asunto <"
 
 msgctxt "MSG_RE_TBNextTh (895//8)"
 msgid "NextT_hr"
-msgstr "Sig Tema"
+msgstr "Asunto >"
 
 msgctxt "MSG_RE_TBDisplay (896//8)"
 msgid "_Display"
@@ -3215,7 +3215,7 @@ msgstr "_Mover"
 
 msgctxt "MSG_RE_TBReply (901//8)"
 msgid "_Reply"
-msgstr "Responde"
+msgstr "Respond."
 
 msgctxt "MSG_RE_TBForward (902//8)"
 msgid "For_ward"
@@ -3294,7 +3294,7 @@ msgctxt "MSG_WR_DiscardChanges (917//)"
 msgid ""
 "Do you really want to discard all\n"
 "modifications to this message?"
-msgstr "Quieres realmente cancelar todas\nlas modificaciones de este mensaje?"
+msgstr "¿Desea cancelar todas las\nmodificaciones de este mensaje?"
 
 msgctxt "MSG_WR_SaveTextAs (919//)"
 msgid "Save text as"
@@ -3378,7 +3378,7 @@ msgstr "_Añadir archivo(s)..."
 
 msgctxt "MSG_WR_AddPack (945//)"
 msgid "_Pack & add..."
-msgstr "_Empaquetar y añadir..."
+msgstr "Archivar y a_ñadir..."
 
 msgctxt "MSG_WR_Display (946//)"
 msgid "D_isplay"
@@ -3454,11 +3454,11 @@ msgstr "Negrita"
 
 msgctxt "MSG_WR_TBItalic (975//8)"
 msgid "Italic"
-msgstr "Itálica"
+msgstr "Cursiva"
 
 msgctxt "MSG_WR_TBUnderlined (976//8)"
 msgid "ULined"
-msgstr "Subrayad"
+msgstr "Subray."
 
 msgctxt "MSG_WR_TBColored (977//8)"
 msgid "Color"
@@ -3482,7 +3482,7 @@ msgstr "Cita"
 
 msgctxt "MSG_WR_ROT13 (982//)"
 msgid "ROT13 encoded"
-msgstr "codificado ROT13"
+msgstr "codificación ROT13"
 
 msgctxt "MSG_WR_LaunchEd (983//)"
 msgid "Launch editor"
@@ -3530,7 +3530,7 @@ msgstr "Negrita"
 
 msgctxt "MSG_WR_Italic (994//)"
 msgid "Italic"
-msgstr "Itálica"
+msgstr "Cursiva"
 
 msgctxt "MSG_WR_Underlined (995//)"
 msgid "Underlined"
@@ -3562,7 +3562,7 @@ msgstr "Irónico"
 
 msgctxt "MSG_WR_SpellCheck (1005//)"
 msgid "Type and spell?"
-msgstr "Escribir y corregir?"
+msgstr "Corregir al escribir"
 
 msgctxt "MSG_WR_MAddFile (1006//)"
 msgid "Add file..."
@@ -3570,7 +3570,7 @@ msgstr "Añadir archivo..."
 
 msgctxt "MSG_WR_AddCB (1007//)"
 msgid "Add clipboard"
-msgstr "Añadir clipboard"
+msgstr "Añadir portapapeles"
 
 msgctxt "MSG_WR_AddKey (1008//)"
 msgid "Add PGP key"
@@ -4376,7 +4376,7 @@ msgstr "Todos los mensajes, carpetas y archivos de configuración\nde este usuar
 
 msgctxt "MSG_US_RemoveReqGads (1216//)"
 msgid "*_Ok|_Keep files|_Cancel"
-msgstr "*_Sí|_Mantener archivos|_Cancelar"
+msgstr "*_Aceptar|_Mantener archivos|_Cancelar"
 
 msgctxt "MSG_US_UserName (1218//)"
 msgid "_User name"
@@ -4696,7 +4696,7 @@ msgstr "Decodificando/imprimiendo..."
 
 msgctxt "MSG_BusyDecSaving (1293//)"
 msgid "Decoding/saving..."
-msgstr "Decodificando/salvando..."
+msgstr "Decodificando/guardando..."
 
 msgctxt "MSG_BusyDecDisplaying (1294//)"
 msgid "Decoding/displaying..."
@@ -5441,7 +5441,7 @@ msgstr "Mostrar"
 
 msgctxt "MSG_MA_ATTACHMENT_SAVEAS (1533//)"
 msgid "Save as..."
-msgstr "Salvar como..."
+msgstr "Guardar como..."
 
 msgctxt "MSG_MA_ATTACHMENT_PRINT (1534//)"
 msgid "Print"
@@ -5449,11 +5449,11 @@ msgstr "Imprimir"
 
 msgctxt "MSG_MA_ATTACHMENT_SAVEALL (1535//)"
 msgid "Save all..."
-msgstr "Salvar todo..."
+msgstr "Guardar todo..."
 
 msgctxt "MSG_MA_ATTACHMENT_SAVESEL (1536//)"
 msgid "Save selected..."
-msgstr "Salvar selección..."
+msgstr "Guardar seleccionado..."
 
 msgctxt "MSG_CO_SImageOnly (1538//)"
 msgid "image only"
@@ -5514,7 +5514,7 @@ msgstr "Desconocido"
 
 msgctxt "MSG_CO_NB_AUTOSAVE (1566//)"
 msgid "Autosave interval"
-msgstr "Intervalo Auto_guardado"
+msgstr "Intervalo auto_guardado"
 
 msgctxt "MSG_CO_NB_AUTOSAVEFMT (1567//)"
 msgid "%ld minute(s)"
@@ -6535,11 +6535,11 @@ msgstr "Imprimir..."
 
 msgctxt "MSG_MA_MSAVE (1831//)"
 msgid "Save..."
-msgstr "Salvar..."
+msgstr "Guardar..."
 
 msgctxt "MSG_MA_MSAVEATT (1832//)"
 msgid "Save..."
-msgstr "Salvar..."
+msgstr "Guardar..."
 
 msgctxt "MSG_MA_MNEW (1834//)"
 msgid "New..."
@@ -6555,7 +6555,7 @@ msgstr "Reenviar..."
 
 msgctxt "MSG_MA_MSAVEADDRESS (1838//)"
 msgid "Save address..."
-msgstr "Salvar dirección..."
+msgstr "Guardar dirección..."
 
 msgctxt "MSG_MA_MADDRESSBOOK (1839//)"
 msgid "Address book..."
@@ -6817,7 +6817,7 @@ msgstr "Usuario desconocido"
 
 msgctxt "MSG_ER_USER_UNKNOWN_BUTTON (1911//)"
 msgid "*_Ok"
-msgstr "*_Sí"
+msgstr "*_Aceptar"
 
 msgctxt "MSG_ER_USER_UNKNOWN_ERROR (1912//)"
 msgid "Unknown user '%s'."
@@ -7063,15 +7063,15 @@ msgid ""
 "but wasn't saved yet.\n"
 "\n"
 "How do you want to proceed?"
-msgstr "La configuración ha sido modificada,\npero no se ha salvado todavía.\n\nQue quieres hacer?"
+msgstr "La configuración ha sido modificada,\npero no se ha guardado todavía.\n\n¿Qué desea hacer?"
 
 msgctxt "MSG_CONFIG_MODIFIED_GAD (1975//)"
 msgid "*_Save now|_Quit without saving|_Cancel"
-msgstr "*_Salvar ahora|_Quitar sin salvar|_Cancelar"
+msgstr "*_Guardar ahora|_Salir sin guardar|_Cancelar"
 
 msgctxt "MSG_ABOOK_MODIFIED_GAD (1976//)"
 msgid "*_Save now|_Quit without saving|_Cancel"
-msgstr "*_Salvar ahora|_Quitar sin salvar|_Cancelar"
+msgstr "*_Guardar ahora|_Salir sin guardar|_Cancelar"
 
 msgctxt "MSG_HELP_CO_BT_MIMEIMPORT (1977//)"
 msgid ""
@@ -7117,7 +7117,7 @@ msgstr "Las preferencias de seguridad de la agenda de contactos para el destinat
 
 msgctxt "MSG_WR_INVALIDSECURITY_GADS (1983//)"
 msgid "*_Ok|_Cancel"
-msgstr "*_Sí|_Cancelar"
+msgstr "*_Aceptar|_Cancelar"
 
 #. FILENAME
 msgctxt "MSG_ER_FILEENCODE (1984//)"
@@ -7259,7 +7259,7 @@ msgid ""
 "Unknown MIME encoding '%s' in mail file '%s'.\n"
 "\n"
 "YAM failed to decode a part of the message. Save the message to disk and try with a different decoder."
-msgstr "Desconocida codificación MIME '%s' en el archivo de correo '%s'.\n\nYAM falló al decodificar una parte del mensaje. Salva el mensaje a disco e inténtalo con otro decodificador."
+msgstr "Desconocida codificación MIME '%s' en el archivo de correo '%s'.\n\nYAM falló al decodificar una parte del mensaje. Guarde el mensaje a disco e inténtelo con otro decodificador."
 
 #. ENCODING_TYPE, FILENAME
 msgctxt "MSG_ER_UNKNOWN_HEADER_ENCODING (2008//)"
@@ -7458,7 +7458,7 @@ msgctxt "MSG_ER_THEME_ACTIVATED (2046//)"
 msgid ""
 "Before the selected theme can be applied, you have\n"
 "to save the configuration and restart YAM."
-msgstr "Antes de poder aplicarse el tema seleccionado, tienes\nque salvar la configuración y reiniciar YAM."
+msgstr "Antes de poder aplicar el tema seleccionado, tiene\nque guardar la configuración y reiniciar YAM."
 
 msgctxt "MSG_FOLDER_ALLTOREAD (2047//)"
 msgid "Mark folder read"
@@ -8052,7 +8052,7 @@ msgstr "Existen todavía algunas ventanas de escritura abiertas!\n\nCómo quiere
 
 msgctxt "MSG_OPEN_WRITEWINDOWS_GAD (2155//)"
 msgid "*_Save now|_Quit without saving|_Cancel"
-msgstr "*_Salvar ahora|_Salir sin salvar|_Cancelar"
+msgstr "*_Guardar ahora|_Salir sin guardar|_Cancelar"
 
 msgctxt "MSG_MA_MFORWARD_ATTACH (2156//)"
 msgid "as attachment"
@@ -8109,7 +8109,7 @@ msgstr "No mostrar esta solicitud hoy de nuevo."
 
 msgctxt "MSG_RE_SAVE_FILE (2169//)"
 msgid "Save file"
-msgstr "Salvar archivo"
+msgstr "Guardar archivo"
 
 msgctxt "MSG_UPD_NO_UPDATES_FOUND_TITLE (2170//)"
 msgid "No software updates available"
@@ -8929,7 +8929,7 @@ msgid ""
 "to their default values.\n"
 "\n"
 "How do you want to proceed?"
-msgstr "El archivo de configuración que YAM trata de\n cargar fue salvado por una versión más reciente de YAM.\nSi continua cargando este archivo algunos ajustes\nde configuración se pueden perder y se establezcan\n sus valores por defecto.\n\nCómo desea proceder?"
+msgstr "El archivo de configuración que YAM trata de cargar\nfue guardado por una versión más reciente de YAM.\nSi continua cargando este archivo algunos ajustes de\nconfiguración se pueden perder y se establecerán\nsus valores por defecto.\n\n¿Cómo desea proceder?"
 
 msgctxt "MSG_CO_CONFIGVERSIONWARNING_BT (2345//)"
 msgid "_Continue|*_Abort"
@@ -9206,17 +9206,17 @@ msgstr "YAM ha identificado que está ejecutando una versión de la 'rexxsyslib.
 
 msgctxt "MSG_WR_SAVEASDRAFT (2402//)"
 msgid "Save as _draft"
-msgstr "Salvar como borrador"
+msgstr "Guardar como borrador"
 
 msgctxt "MSG_HELP_WR_BT_SAVEASDRAFT (2403//)"
 msgid ""
 "Saves the message to\n"
 "the 'Drafts' folder."
-msgstr "Salvar el mensaje en\nla carpeta 'Borradores'."
+msgstr "Guardar el mensaje en\nla carpeta 'Borradores'."
 
 msgctxt "MSG_WR_MSAVEASDRAFT (2404//)"
 msgid "Save as draft"
-msgstr "Salvar como borrador"
+msgstr "Guardar como borrador"
 
 msgctxt "MSG_WR_MCLOSE (2405//)"
 msgid "Close"
@@ -9414,7 +9414,7 @@ msgstr "Próximo cambio DST:"
 
 msgctxt "MSG_CO_TZONE_NODSTSWITCH (2448//)"
 msgid "no daylight saving"
-msgstr "No cambiar horario de verano"
+msgstr "No cambiar a horario de verano"
 
 msgctxt "MSG_CO_TZONE_DESCRIPTION (2449//)"
 msgid "Description:"
@@ -9669,7 +9669,7 @@ msgstr "Cuenta de correo"
 
 msgctxt "MSG_CO_SAVE_LAYOUT (2506//)"
 msgid "Save user interface layout"
-msgstr "Guarde el diseño de interfaz de usuario"
+msgstr "Guardar el diseño de interfaz de usuario"
 
 msgctxt "MSG_HELP_CO_CH_SAVELAYOUTQUIT (2507//)"
 msgid ""
@@ -9763,7 +9763,7 @@ msgstr "*_Desactivar|_Ignorar"
 
 msgctxt "MSG_WR_NORCPT_WARNING_GADGET (2522//)"
 msgid "_Save as draft|*_Cancel"
-msgstr "_Salvar como borrador|*_Cancelar"
+msgstr "_Guardar como borrador|*_Cancelar"
 
 msgctxt "MSG_WR_NORCPT_WARNING (2523//)"
 msgid ""
@@ -9775,7 +9775,7 @@ msgstr "El mensaje está incompleto ya que\nno se ha especificado destinatario.\
 
 msgctxt "MSG_WR_DISCARDCHANGES_GADGET (2524//)"
 msgid "*_Save as draft|_Discard|_Cancel"
-msgstr "*_Salvar como borrador|_Descartar|_Cancelar"
+msgstr "*_Guardar como borrador|_Descartar|_Cancelar"
 
 msgctxt "MSG_MA_NO_SUBJECT (2525//)"
 msgid "(No Subject)"
@@ -9964,11 +9964,11 @@ msgstr "Si continua los datos a transferir se encriptarán (protección contra\n
 
 msgctxt "MSG_CO_POP_SERVER (2560//)"
 msgid "Serve_r"
-msgstr "Se_rvidor:"
+msgstr "Ser_vidor:"
 
 msgctxt "MSG_CO_POP_PORT (2561//)"
 msgid "P_ort"
-msgstr "Puert_o:"
+msgstr "_Puerto:"
 
 msgctxt "MSG_CO_POP_PORT_STANDARD (2562//)"
 msgid "Standard:"
