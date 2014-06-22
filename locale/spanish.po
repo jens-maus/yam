@@ -15,7 +15,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-06-22 17:58+0000\n"
+"PO-Revision-Date: 2014-06-22 18:20+0000\n"
 "Last-Translator: Javier de las Rivas <jabierdlr@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/projects/p/yam/language/es/)\n"
 "MIME-Version: 1.0\n"
@@ -3578,15 +3578,15 @@ msgstr "Añadir clave PGP"
 
 msgctxt "MSG_WR_MDelSend (1009//)"
 msgid "Delete after sending?"
-msgstr "_Borrar después de enviar?"
+msgstr "_Borrar después de enviar"
 
 msgctxt "MSG_WR_MReceipt (1010//)"
 msgid "Return receipt?"
-msgstr "Notificar _recepción?"
+msgstr "Acuse de _recibo"
 
 msgctxt "MSG_WR_MAddInfo (1012//)"
 msgid "Add personal information?"
-msgstr "Añadir información _personal?"
+msgstr "Añadir información _personal"
 
 msgctxt "MSG_WR_MImportance (1013//)"
 msgid "Importance"
@@ -3622,17 +3622,17 @@ msgstr "Inserta el contenido de un archivo de texto\nen la posición actual del 
 
 msgctxt "MSG_HELP_WR_BT_CUT (1020//)"
 msgid "Cut marked text to the clipboard."
-msgstr "Cortar texto marcado al clipboard."
+msgstr "Cortar texto marcado al portapapeles."
 
 msgctxt "MSG_HELP_WR_BT_COPY (1021//)"
 msgid "Copy marked text to the clipboard."
-msgstr "Copiar texto marcado al clipboard."
+msgstr "Copiar texto marcado al portapapeles."
 
 msgctxt "MSG_HELP_WR_BT_PASTE (1022//)"
 msgid ""
 "Insert the contents of the clipboard\n"
 "at the current cursor position."
-msgstr "Insertar el contenido del clipboard\nen la posición actual del cursor."
+msgstr "Insertar el contenido del portapapeles\nen la posición actual del cursor."
 
 msgctxt "MSG_HELP_WR_BT_UNDO (1023//)"
 msgid "Undo the last change in the text."
@@ -3648,7 +3648,7 @@ msgctxt "MSG_HELP_WR_BT_ITALIC (1025//)"
 msgid ""
 "Use italic typeface for marked\n"
 "text (whole words only)."
-msgstr "Usa tipo de letra itálica para el texto\nmarcado (sólo palabras completas)."
+msgstr "Usa tipo de letra cursiva para el texto\nmarcado (sólo palabras completas)."
 
 msgctxt "MSG_HELP_WR_BT_UNDERL (1026//)"
 msgid ""
@@ -3778,7 +3778,7 @@ msgstr "Enviando información de identificación APOP..."
 
 msgctxt "MSG_TR_SendUserID (1056//)"
 msgid "Sending user ID..."
-msgstr "Enviando usuario ID..."
+msgstr "Enviando usuario..."
 
 msgctxt "MSG_TR_SendPassword (1057//)"
 msgid "Sending password..."
@@ -3842,12 +3842,12 @@ msgstr "Descargando mensaje..."
 #. HOST
 msgctxt "MSG_TR_MailTransferFrom (1073//)"
 msgid "Mail transfer from '%s'"
-msgstr "Transferencia de Correo desde '%s'"
+msgstr "Transfiriendo desde '%s'"
 
 #. HOST
 msgctxt "MSG_TR_MailTransferTo (1074//)"
 msgid "Mail transfer to '%s'"
-msgstr "Transferencia de Correo hacia '%s'"
+msgstr "Transfiriendo hacia '%s'"
 
 msgctxt "MSG_TR_MsgInFile (1075//)"
 msgid "Messages in file %s"
@@ -3863,7 +3863,7 @@ msgstr "_Todo"
 
 msgctxt "MSG_TR_DownloadOnly (1079//)"
 msgid "_Download only"
-msgstr "_Sólo Descargar"
+msgstr "_Sólo descargar"
 
 msgctxt "MSG_TR_Leave (1080//)"
 msgid "L_eave"
@@ -3875,7 +3875,7 @@ msgstr "_Limpiar"
 
 msgctxt "MSG_TR_DeleteOnly (1083//)"
 msgid "Delete _only"
-msgstr "Sólo B_orrar"
+msgstr "Sólo b_orrar"
 
 msgctxt "MSG_TR_DownloadDelete (1084//)"
 msgid "Do_wnload & delete"
@@ -3891,7 +3891,7 @@ msgstr "Estado"
 
 msgctxt "MSG_TR_Abort (1088//)"
 msgid "_Abort"
-msgstr "_Abortar"
+msgstr "Interru_mpir"
 
 msgctxt "MSG_HELP_TR_TX_STATUS (1092//)"
 msgid ""
@@ -4150,7 +4150,7 @@ msgstr "Introduce un nombre para el nuevo filtro"
 
 msgctxt "MSG_FI_StatNew (1162//)"
 msgid "New/Unread"
-msgstr "Nuevo/No leído"
+msgstr "Nuevo/Sin Leer"
 
 msgctxt "MSG_FI_StatRead (1163//)"
 msgid "Read"
@@ -4162,7 +4162,7 @@ msgstr "Reenviado"
 
 msgctxt "MSG_FI_StatReplied (1165//)"
 msgid "Replied"
-msgstr "Contestado"
+msgstr "Respondido"
 
 msgctxt "MSG_FI_StatQueued (1166//)"
 msgid "Queued"
@@ -4206,7 +4206,7 @@ msgstr "Buscar en"
 
 msgctxt "MSG_FI_CaseSensitive (1182//)"
 msgid "Case sensitive"
-msgstr "Diferenciar Mayúsculas"
+msgstr "MAYÚS.<>minús."
 
 msgctxt "MSG_FI_SubString (1183//)"
 msgid "Substring search"
@@ -4226,7 +4226,7 @@ msgstr "Buscar en"
 
 msgctxt "MSG_FI_FindWhat (1187//)"
 msgid "Find what"
-msgstr "Qué Buscar"
+msgstr "cadena a buscar"
 
 msgctxt "MSG_FI_UseFilter (1188//)"
 msgid "_Use filter settings"
@@ -4254,7 +4254,7 @@ msgstr "_Leer mensaje"
 
 msgctxt "MSG_FI_Abort (1194//)"
 msgid "_Abort"
-msgstr "_Abortar"
+msgstr "Interru_mpir"
 
 msgctxt "MSG_HELP_FI_LV_FOLDERS (1195//)"
 msgid ""
@@ -4336,7 +4336,7 @@ msgctxt "MSG_HELP_FI_CH_CASESENS (1208//)"
 msgid ""
 "Should the search\n"
 "be case sensitive?"
-msgstr "Debería la búsqueda\ndiferenciar mayúsculas?"
+msgstr "Diferenciar MAYÚSCULAS/minúsculas en la búsqueda."
 
 msgctxt "MSG_HELP_FI_CH_SUBSTR (1209//)"
 msgid ""
@@ -4352,7 +4352,7 @@ msgstr "Tipo de comparación. Selecciona <> para obtenet todos los mensajes que\
 
 msgctxt "MSG_US_EnterPassword (1211//)"
 msgid "Please enter your password"
-msgstr "Por favor introduce tu clave"
+msgstr "Introduzca su clave"
 
 msgctxt "MSG_US_TitleUserName (1212//)"
 msgid "User name"
@@ -4372,7 +4372,7 @@ msgid ""
 "files belonging to this user will be lost.\n"
 "\n"
 "Do you really want to remove the user?"
-msgstr "Todos los mensajes, carpetas y archivos de configuración\nde este usuario se perderán!\n\nQuieres realmente borrar el usuario?"
+msgstr "¡Todos los mensajes, carpetas y archivos de\nconfiguración de este usuario se PERDERÁN!\n\n¿Borrar realmente el usuario?"
 
 msgctxt "MSG_US_RemoveReqGads (1216//)"
 msgid "*_Ok|_Keep files|_Cancel"
@@ -4400,7 +4400,7 @@ msgstr "C_opiar configuración del usuario actual"
 
 msgctxt "MSG_US_Password (1223//)"
 msgid "_Password"
-msgstr "Clav_e"
+msgstr "Contrase_ña"
 
 msgctxt "MSG_US_SuperVisor (1224//)"
 msgid "_Supervisor privileges"
@@ -4468,7 +4468,7 @@ msgid ""
 "What settings do you want to use for the new folder?\n"
 "Select 'Existing directory' if you want to re-use an\n"
 "already existing directory."
-msgstr "Que preferencias quieres utilizar para la nueva carpeta?\nSelecciona 'Directorio Existente' si quieres reutilizar un\ndirectorio existente."
+msgstr "¿Qué preferencias quiere utilizar para la nueva carpeta?\nSeleccione 'Directorio Existente' si quiere reutilizar un\ndirectorio existente."
 
 msgctxt "MSG_FO_NewFolderGads (1238//)"
 msgid "*_Internal defaults|_Like current|_Existing directory|_Cancel"
@@ -4544,7 +4544,7 @@ msgstr "Tam_bién por"
 
 msgctxt "MSG_FO_Reverse (1257//)"
 msgid "Rev"
-msgstr "Asc"
+msgstr "Inv."
 
 msgctxt "MSG_FO_MLSupport (1258//)"
 msgid "Mailing list support"
@@ -4615,7 +4615,7 @@ msgstr "Guardando agenda '%s'..."
 
 msgctxt "MSG_BusyPrintingAB (1272//)"
 msgid "Printing address book..."
-msgstr "Imprimiendo agenda de contactos..."
+msgstr "Imprimiendo agenda..."
 
 msgctxt "MSG_BusySavingDI (1273//)"
 msgid "Saving glossary..."
@@ -4672,7 +4672,7 @@ msgstr "Guardando índice de '%s'..."
 #. FOLDER
 msgctxt "MSG_BusyScanning (1286//)"
 msgid "Scanning folder '%s'..."
-msgstr "Escaneando carpeta '%s'..."
+msgstr "Examinando carpeta '%s'..."
 
 msgctxt "MSG_BusyReading (1287//)"
 msgid "Reading message..."
@@ -4708,7 +4708,7 @@ msgstr "Script AmigaDOS"
 
 msgctxt "MSG_CTapplicationrexx (1297//)"
 msgid "Rexx script"
-msgstr "script Rexx"
+msgstr "script ARexx"
 
 msgctxt "MSG_FOLDER_NEWFOLDER (1300//)"
 msgid "New folder..."
@@ -4768,7 +4768,7 @@ msgstr "Error creando un mensaje PGP multiparte. Encriptado/signing no activo."
 
 msgctxt "MSG_RE_FixedFont (1335//)"
 msgid "Fixed font?"
-msgstr "Fuente fija?"
+msgstr "T. letra anchura fija"
 
 msgctxt "MSG_CO_SMTPUser (1338//)"
 msgid "Us_er name"
@@ -4790,11 +4790,11 @@ msgctxt "MSG_RE_MoveNextFolderReq (1347//)"
 msgid ""
 "Next folder with unread messages is \\033b%s\\033n\n"
 "Go to this folder and continue reading there?"
-msgstr "La siguiente carpeta con mensajes no leídos es \\033b%s\\033n\nIr a esta carpeta y continuar leyendo mensajes?"
+msgstr "La siguiente carpeta con mensajes no leídos es \\033b%s\\033n\n¿Ir a esta carpeta y continuar leyendo mensajes?"
 
 msgctxt "MSG_ATTACH_NO (1352//)"
 msgid "No."
-msgstr "No."
+msgstr "Nº"
 
 msgctxt "MSG_ATTACH_PART (1353//)"
 msgid "Part"
@@ -4825,19 +4825,19 @@ msgstr "Formato antiguo - (1.234.567 bytes)"
 
 msgctxt "MSG_CO_SIZEFORMAT02 (1363//)"
 msgid "Mixed precision (0.001 GB, 0.01 MB, 0.1 KB)"
-msgstr "Precisión media (0.001 GB, 0.01 MB, 0.1 KB)"
+msgstr "Precisión media (0,001 GB, 0,01 MB, 0,1 KB)"
 
 msgctxt "MSG_CO_SIZEFORMAT03 (1364//)"
 msgid "10^-1 precision (0.1 GB/MB/KB)"
-msgstr "precisión de 0.1 GB/MB/KB"
+msgstr "precisión de 0,1 GB/MB/KB"
 
 msgctxt "MSG_CO_SIZEFORMAT04 (1365//)"
 msgid "10^-2 precision (0.01 GB/MB/KB)"
-msgstr "precisión de 0.01 GB/MB/KB"
+msgstr "precisión de 0,01 GB/MB/KB"
 
 msgctxt "MSG_CO_SIZEFORMAT05 (1366//)"
 msgid "10^-3 precision (0.001 GB/MB/KB)"
-msgstr "precisión de 0.001 GB/MB/KB"
+msgstr "precisión de 0,001 GB/MB/KB"
 
 msgctxt "MSG_HELP_CO_ST_SMTPAUTHUSER (1368//)"
 msgid ""
@@ -4867,7 +4867,7 @@ msgstr "%n  Mensajes nuevos"
 
 msgctxt "MSG_CO_UNREADMSGS (1373//)"
 msgid "%u  Unread messages"
-msgstr "%u  Mensajes no leídos"
+msgstr "%u  Mensajes sin leer"
 
 msgctxt "MSG_CO_TOTALMSGS (1374//)"
 msgid "%t  Total messages"
@@ -4879,7 +4879,7 @@ msgstr "%s  Mensajes enviados"
 
 msgctxt "MSG_FO_DSTATS (1377//)"
 msgid "App_Icon stats"
-msgstr "_Estadísticas Icono"
+msgstr "_Estadísticas AppIcono"
 
 msgctxt "MSG_HELP_FO_CH_STATS (1378//)"
 msgid ""
@@ -4914,7 +4914,7 @@ msgstr "Aquí puedes seleccionar la posición de la barra de estado\nque muestra
 
 msgctxt "MSG_CO_WARNSUBJECT (1386//)"
 msgid "Warn when there's an empty su_bject line"
-msgstr "A_visar cuando no se indica el asunto"
+msgstr "A_visar cuando asunto está vacío"
 
 msgctxt "MSG_HELP_CO_CH_WARNSUBJECT (1387//)"
 msgid ""
@@ -4966,7 +4966,7 @@ msgid ""
 "be moved to the parent folder on deletion.\n"
 "\n"
 "Do you really want to delete this group?"
-msgstr "Este grupo contiene subcarpetas, que serán\nmovidas to the parent folder on deletion.\n\nQuieres realmente borrar este grupo?"
+msgstr "Este grupo contiene subcarpetas, que serán\nmovidas to the parent folder on deletion.\n\n¿Borrar realmente este grupo?"
 
 msgctxt "MSG_FOLDER_NONSEL (1403//)"
 msgid "(none selected)"
