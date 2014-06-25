@@ -1316,13 +1316,6 @@ void DisconnectFromHost(struct Connection *conn)
       conn->ssl = NULL;
     }
 
-    if(conn->sslCtx != NULL)
-    {
-      // dispose the SSL context
-      SSL_CTX_free(conn->sslCtx);
-      conn->sslCtx = NULL;
-    }
-
     if(conn->socket != INVALID_SOCKET)
     {
       // close the connection

@@ -867,7 +867,7 @@ DECLARE(POP3ToGUI)
       nnset(data->CY_POPSECURE, MUIA_Cycle_Active, 0);
 
     // we have to enabled/disable the SSL support accordingly
-    set(data->CY_POPSECURE, MUIA_Disabled, G->TR_UseableTLS == FALSE);
+    set(data->CY_POPSECURE, MUIA_Disabled, G->sslCtx == NULL);
 
     if(hasServerSSL(msn) == TRUE)
       nnset(data->LB_POPPORT, MUIA_Text_Contents, "995");
@@ -1196,7 +1196,7 @@ DECLARE(SMTPToGUI)
 
     xset(data->CY_SMTPSECURE, MUIA_NoNotify,     TRUE,
                               MUIA_Cycle_Active, MSF2SMTPSecMethod(msn),
-                              MUIA_Disabled,     G->TR_UseableTLS == FALSE);
+                              MUIA_Disabled,     G->sslCtx == NULL);
 
     nnset(data->CY_SMTPAUTH, MUIA_Cycle_Active, hasServerAuth(msn) ? MSF2SMTPAuthMethod(msn)+1 : 0);
 

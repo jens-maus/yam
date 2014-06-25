@@ -97,6 +97,8 @@
 #include "mui/WriteWindow.h"
 #include "mui/YAMApplication.h"
 
+#include "tcp/ssl.h"
+
 #include "Busy.h"
 #include "Config.h"
 #include "DockyIcon.h"
@@ -3298,13 +3300,13 @@ void ValidateConfig(struct Config *co, BOOL update, BOOL saveChanges)
   // amissl installation.
   if(co->AmiSSLCheck == TRUE)
   {
-    if(AmiSSLMasterBase == NULL || AmiSSLBase == NULL || G->TR_UseableTLS == FALSE)
+    if(AmiSSLMasterBase == NULL || AmiSSLBase == NULL || G->sslCtx == NULL)
     {
       int res = MUI_Request(G->App, refWindow, MUIF_NONE,
                             tr(MSG_CO_AMISSLWARN_TITLE),
                             tr(MSG_CO_AMISSLWARN_BT),
                             tr(MSG_CO_AMISSLWARN),
-                            AMISSLMASTER_MIN_VERSION, 5);
+                            AMISSLMASTER_VERSION, AMISSLMASTER_REVISION);
 
       // if the user has clicked on "Ignore always", we do
       // change the AmiSSLCheck variables and save the config
@@ -3325,7 +3327,7 @@ void ValidateConfig(struct Config *co, BOOL update, BOOL saveChanges)
   {
     // we reenable the AmiSSLCheck as soon as we found
     // the library to be working fine.
-    if(AmiSSLMasterBase != NULL && AmiSSLBase != NULL && G->TR_UseableTLS == TRUE)
+    if(AmiSSLMasterBase != NULL && AmiSSLBase != NULL && G->sslCtx == NULL)
     {
       D(DBF_CONFIG, "(re)enabled AmiSSL check");
       co->AmiSSLCheck = TRUE;

@@ -67,8 +67,7 @@ struct Connection
 {
   LONG socket;                      // the socket ID returned by socket()
 
-  SSL_CTX *sslCtx;                  // SSL context stuff
-  SSL *ssl;
+  SSL *ssl;                         // SSL connection pointer
   int sslCertFailures;              // SSL certification verification error bitmask
 
   char *receiveBuffer;              // receive buffer

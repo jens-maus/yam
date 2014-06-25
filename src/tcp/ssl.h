@@ -28,8 +28,19 @@
 
 ***************************************************************************/
 
+#include <libraries/amisslmaster.h>
+
 // forward declarations
 struct Connection;
+typedef struct x509_st X509;
+typedef struct X509_name_st X509_NAME;
+
+// make sure to open at least 3.5 of amisslmaster.library
+#define AMISSLMASTER_VERSION  3
+#define AMISSLMASTER_REVISION 5
+
+// AmiSSL/OpenSSL version to initialize
+#define AMISSL_VERSION AMISSL_CURRENT_VERSION
 
 // SSL certificate verification failures
 #define SSL_CERT_ERR_NONE         (0<<0) // no error
@@ -60,6 +71,8 @@ struct Certificate
 };
 
 // public functions
+BOOL InitSSLConnections(void);
+void CleanupSSLConnections(void);
 BOOL MakeSecureConnection(struct Connection *conn);
 
 #endif /* SSL_H */

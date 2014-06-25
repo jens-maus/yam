@@ -35,7 +35,6 @@
 #endif
 
 #include <exec/execbase.h>
-#include <libraries/amisslmaster.h>
 #include <libraries/asl.h>
 #include <mui/BetterString_mcc.h>
 #include <mui/NBitmap_mcc.h>
@@ -45,8 +44,6 @@
 #include <mui/TextEditor_mcc.h>
 #include <mui/TheBar_mcc.h>
 #include <mui/NBalance_mcc.h>
-#include <proto/amissl.h>
-#include <proto/amisslmaster.h>
 #include <proto/codesets.h>
 #include <proto/datatypes.h>
 #include <proto/diskfont.h>
@@ -122,6 +119,7 @@
 #include "TZone.h"
 #include "UpdateCheck.h"
 #include "UserIdentity.h"
+#include "tcp/ssl.h"
 
 #include "Debug.h"
 
@@ -736,6 +734,9 @@ static void Terminate(void)
   D(DBF_STARTUP, "freeing spam filter module...");
   BayesFilterCleanup();
 
+  D(DBF_STARTUP, "cleaning up AmiSSL stuff...");
+  CleanupSSLConnections();
+
   D(DBF_STARTUP, "freeing config module...");
   if(G->ConfigWinObject != NULL)
     DoMethod(G->App, MUIM_YAMApplication_CloseConfigWindow);
@@ -918,18 +919,6 @@ static void Terminate(void)
 
   D(DBF_STARTUP, "cleaning up connection stuff...");
   CleanupConnections();
-
-  // cleaning up all AmiSSL stuff
-  D(DBF_STARTUP, "cleaning up AmiSSL stuff...");
-  if(AmiSSLBase != NULL)
-  {
-    CleanupAmiSSLA(NULL);
-
-    DROPINTERFACE(IAmiSSL);
-    CloseAmiSSL();
-    AmiSSLBase = NULL;
-  }
-  CLOSELIB(AmiSSLMasterBase, IAmiSSLMaster);
 
   D(DBF_STARTUP, "cleaning up busy actions...");
   BusyCleanup();
@@ -1477,6 +1466,10 @@ static void InitAfterLogin(void)
   else if(res == -1)
     SetDefaultConfig(C, cp_AllPages); // reset things to defaults if config file missing/invalid
 
+  // initialize SSL connections
+  if(InitSSLConnections() == FALSE)
+    W(DBF_STARTUP, "AmiSSL: initialization not possible - disabled SSL functionality");
+
   // load all necessary graphics/themes
   SplashProgress(tr(MSG_LoadingGFX), 30);
 
@@ -1848,37 +1841,6 @@ static void InitBeforeLogin(BOOL hidden)
 
   // try to open expat.library for our XML import stuff
   INITLIB("expat.library", XML_MAJOR_VERSION, 0, &ExpatBase, "main", 1, &IExpat, FALSE, NULL);
-
-  // we check for the amisslmaster.library v3 accordingly
-  if(INITLIB("amisslmaster.library", AMISSLMASTER_MIN_VERSION, 5, &AmiSSLMasterBase, "main", 1, &IAmiSSLMaster, FALSE, NULL))
-  {
-    if(InitAmiSSLMaster(AMISSL_CURRENT_VERSION, TRUE))
-    {
-      if((AmiSSLBase = OpenAmiSSL()) != NULL &&
-         GETINTERFACE("main", 1, IAmiSSL, AmiSSLBase))
-      {
-        char tmp[24+1];
-
-        // initialize AmiSSL/OpenSSL related stuff that
-        // needs to be initialized before each threads spans
-        // own initializations
-        ERR_load_BIO_strings(); // Load BIO error strings
-        SSL_load_error_strings(); // Load SSL error strings
-        OpenSSL_add_all_algorithms(); // Load all available encryption algorithms
-        SSL_library_init(); // Initialize OpenSSL's SSL libraries
-
-        // seed the random number generator with some valuable entropy
-        D(DBF_NET, "seeding random number generator");
-        snprintf(tmp, sizeof(tmp), "%08lx%08lx%08lx", (unsigned long)time((time_t *)NULL), (unsigned long)FindTask(NULL), (unsigned long)rand());
-        RAND_seed(tmp, strlen(tmp));
-
-        // flag SSL/TLS to be usable
-        G->TR_UseableTLS = TRUE;
-
-        D(DBF_STARTUP, "successfully opened AmiSSL library %d.%d (%s)", AmiSSLBase->lib_Version, AmiSSLBase->lib_Revision, AmiSSLBase->lib_IdString);
-      }
-    }
-  }
 
   #if defined(__amigaos4__)
   // now we try to open the application.library which is part of OS4

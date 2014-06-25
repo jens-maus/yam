@@ -67,6 +67,7 @@ struct HashTable;
 struct NotifyRequest;
 struct Process;
 struct TZoneInfo;
+typedef struct ssl_ctx_st SSL_CTX;
 
 /**************************************************************************/
 
@@ -126,7 +127,8 @@ struct Global
   APTR                     mailNodeItemPool;     // item pool for struct MailNode
   struct Screen *          workbenchScreen;
   struct MailList *        mailsInTransfer;      // list of mail currently being sent
-  struct Interrupt *       lowMemHandler;       // low memory handler to flush all indexes
+  struct Interrupt *       lowMemHandler;        // low memory handler to flush all indexes
+  SSL_CTX *                sslCtx;               // global SSL protocol context (NULL == unusable SSL)
 
   #if defined(__amigaos4__)
   struct MsgPort *         AppLibPort;
@@ -144,6 +146,7 @@ struct Global
   #endif
   time_t                   LastPGPUsage;
   int                      gmtOffset;           // the current offset to GMT in min (+/-)
+  int                      sslDataIndex;        // index number of data stored
 
   #if defined(__amigaos4__)
   uint32                   applicationID;
@@ -154,7 +157,6 @@ struct Global
   BOOL                     AppIconQuiet;
   BOOL                     PGPPassVolatile;
   BOOL                     TR_Debug;
-  BOOL                     TR_UseableTLS;
   BOOL                     InStartupPhase;
   BOOL                     NoImageWarning;
   BOOL                     NoCatalogTranslation;

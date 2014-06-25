@@ -89,184 +89,161 @@ CROSSCALL2(verify_callback, int, int, preverify_ok, X509_STORE_CTX *, x509_ctx)
 
   D(DBF_NET, "verify_callback() called");
   SHOWVALUE(DBF_NET, preverify_ok);
-  SHOWVALUE(DBF_NET, x509_ctx);
 
   // if there is no error we do nothing but return
   if(preverify_ok == 0)
   {
-    struct Connection *conn;
+    int sslIndex = SSL_get_ex_data_X509_STORE_CTX_idx();
+    SSL *ssl = NULL;
 
-    // get our (struct Connection) structure out of the app data
-    if((conn = X509_STORE_CTX_get_app_data(x509_ctx)) != NULL)
+    SHOWVALUE(DBF_NET, x509_ctx);
+
+    // get SSL connection pointer
+    if(sslIndex >= 0 && (ssl = X509_STORE_CTX_get_ex_data(x509_ctx, sslIndex)) != NULL)
     {
-      // get some information on the potential error
-      int err = X509_STORE_CTX_get_error(x509_ctx);
-      int depth = X509_STORE_CTX_get_error_depth(x509_ctx);
-      int failures = 0;
+      struct Connection *conn;
 
-      W(DBF_NET, "ssl: verify callback @ %ld => %ld:'%s'", depth, err, X509_verify_cert_error_string(err));
-
-      // map the specific X509 error codes to general failures
-      // we cna query later on when checking the certificate chain later again
-      switch(err)
+      // get our (struct Connection) structure out of the app data
+      if((conn = SSL_get_ex_data(ssl, G->sslDataIndex)) != NULL)
       {
-        // (0) the operation was successful.
-        case X509_V_OK:
-          // nothing
-        break;
+        // get some information on the potential error
+        int err = X509_STORE_CTX_get_error(x509_ctx);
+        int depth = X509_STORE_CTX_get_error_depth(x509_ctx);
+        int failures = 0;
 
-        // (2) unable to get issuer certificate
-        // (18) self signed certificate
-        // (19) self signed certificate in certificate chain
-        // (20) unable to get local issuer certificate
-        // (21) unable to verify the first certificate
-        // (23) the certificate has been revoked.
-        // (27) certificate not trusted
-        // (28) the root CA is marked to reject the specified purpose.
-        case X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT:
-        case X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT:
-        case X509_V_ERR_SELF_SIGNED_CERT_IN_CHAIN:
-        case X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT_LOCALLY:
-        case X509_V_ERR_UNABLE_TO_VERIFY_LEAF_SIGNATURE:
-        case X509_V_ERR_CERT_REVOKED:
-        case X509_V_ERR_CERT_UNTRUSTED:
-        case X509_V_ERR_CERT_REJECTED:
+        W(DBF_NET, "ssl: verify callback @ %ld => %ld:'%s'", depth, err, X509_verify_cert_error_string(err));
+
+        // map the specific X509 error codes to general failures
+        // we cna query later on when checking the certificate chain later again
+        switch(err)
         {
-          W(DBF_NET, "ssl: verify failure SSL_CERT_ERR_UNTRUSTED found");
-          setFlag(failures, SSL_CERT_ERR_UNTRUSTED);
-        }
-        break;
+          // (0) the operation was successful.
+          case X509_V_OK:
+            // nothing
+          break;
 
-        // (3) the CRL of a certificate could not be found.
-        // (4) the certificate signature could not be decrypted.
-        // (5) the CRL signature could not be decrypted.
-        // (6) the public key in the certificate SubjectPublicKeyInfo could not be read.
-        // (11) the CRL is not yet valid.
-        // (12) the CRL has expired.
-        // (15) the CRL lastUpdate field contains an invalid time.
-        // (16) the CRL nextUpdate field contains an invalid time.
-        // (22) the certificate chain length is greater than the supplied maximum depth. Unused.
-        // (24) a CA certificate is invalid. Either it is not a CA or its extensions are not consistent with the supplied purpose.
-        // (25) the basicConstraints pathlength parameter has been exceeded.
-        // (26) the supplied certificate cannot be used for the specified purpose.
-        // (29) subject issuer mismatch: the current candidate issuer certificate was rejected.
-        // (30) authority and subject key identifier mismatch: the current candidate issuer certificate was rejected.
-        // (31) authority and issuer serial number mismatch: the current candidate issuer certificate was rejected.
-        // (32) key usage does not include certificate signing:  the current candidate issuer certificate was rejected.
-        case X509_V_ERR_UNABLE_TO_GET_CRL:
-        case X509_V_ERR_UNABLE_TO_DECRYPT_CERT_SIGNATURE:
-        case X509_V_ERR_UNABLE_TO_DECRYPT_CRL_SIGNATURE:
-        case X509_V_ERR_UNABLE_TO_DECODE_ISSUER_PUBLIC_KEY:
-        case X509_V_ERR_CRL_NOT_YET_VALID:
-        case X509_V_ERR_CRL_HAS_EXPIRED:
-        case X509_V_ERR_ERROR_IN_CRL_LAST_UPDATE_FIELD:
-        case X509_V_ERR_ERROR_IN_CRL_NEXT_UPDATE_FIELD:
-        case X509_V_ERR_CERT_CHAIN_TOO_LONG:
-        case X509_V_ERR_INVALID_CA:
-        case X509_V_ERR_PATH_LENGTH_EXCEEDED:
-        case X509_V_ERR_INVALID_PURPOSE:
-        case X509_V_ERR_SUBJECT_ISSUER_MISMATCH:
-        case X509_V_ERR_AKID_ISSUER_SERIAL_MISMATCH:
-        case X509_V_ERR_KEYUSAGE_NO_CERTSIGN:
-        {
-          W(DBF_NET, "ssl: other uncritical certificate problem. Signaling SSL_CERT_ERR_OTHER.");
-          setFlag(failures, SSL_CERT_ERR_OTHER);
-        }
-        break;
+          // (2) unable to get issuer certificate
+          // (18) self signed certificate
+          // (19) self signed certificate in certificate chain
+          // (20) unable to get local issuer certificate
+          // (21) unable to verify the first certificate
+          // (23) the certificate has been revoked.
+          // (27) certificate not trusted
+          // (28) the root CA is marked to reject the specified purpose.
+          case X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT:
+          case X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT:
+          case X509_V_ERR_SELF_SIGNED_CERT_IN_CHAIN:
+          case X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT_LOCALLY:
+          case X509_V_ERR_UNABLE_TO_VERIFY_LEAF_SIGNATURE:
+          case X509_V_ERR_CERT_REVOKED:
+          case X509_V_ERR_CERT_UNTRUSTED:
+          case X509_V_ERR_CERT_REJECTED:
+          {
+            W(DBF_NET, "ssl: verify failure SSL_CERT_ERR_UNTRUSTED found");
+            setFlag(failures, SSL_CERT_ERR_UNTRUSTED);
+          }
+          break;
 
-        // (7) the signature of the certificate is invalid.
-        // (8) the signature of the certificate is invalid.
-        case X509_V_ERR_CERT_SIGNATURE_FAILURE:
-        case X509_V_ERR_CRL_SIGNATURE_FAILURE:
-        {
-          W(DBF_NET, "ssl: cert signature failed, signaling SSL_CERT_ERR_SIGINVALID");
-          setFlag(failures, SSL_CERT_ERR_SIGINVALID);
-        }
-        break;
+          // (3) the CRL of a certificate could not be found.
+          // (4) the certificate signature could not be decrypted.
+          // (5) the CRL signature could not be decrypted.
+          // (6) the public key in the certificate SubjectPublicKeyInfo could not be read.
+          // (11) the CRL is not yet valid.
+          // (12) the CRL has expired.
+          // (15) the CRL lastUpdate field contains an invalid time.
+          // (16) the CRL nextUpdate field contains an invalid time.
+          // (22) the certificate chain length is greater than the supplied maximum depth. Unused.
+          // (24) a CA certificate is invalid. Either it is not a CA or its extensions are not consistent with the supplied purpose.
+          // (25) the basicConstraints pathlength parameter has been exceeded.
+          // (26) the supplied certificate cannot be used for the specified purpose.
+          // (29) subject issuer mismatch: the current candidate issuer certificate was rejected.
+          // (30) authority and subject key identifier mismatch: the current candidate issuer certificate was rejected.
+          // (31) authority and issuer serial number mismatch: the current candidate issuer certificate was rejected.
+          // (32) key usage does not include certificate signing:  the current candidate issuer certificate was rejected.
+          case X509_V_ERR_UNABLE_TO_GET_CRL:
+          case X509_V_ERR_UNABLE_TO_DECRYPT_CERT_SIGNATURE:
+          case X509_V_ERR_UNABLE_TO_DECRYPT_CRL_SIGNATURE:
+          case X509_V_ERR_UNABLE_TO_DECODE_ISSUER_PUBLIC_KEY:
+          case X509_V_ERR_CRL_NOT_YET_VALID:
+          case X509_V_ERR_CRL_HAS_EXPIRED:
+          case X509_V_ERR_ERROR_IN_CRL_LAST_UPDATE_FIELD:
+          case X509_V_ERR_ERROR_IN_CRL_NEXT_UPDATE_FIELD:
+          case X509_V_ERR_CERT_CHAIN_TOO_LONG:
+          case X509_V_ERR_INVALID_CA:
+          case X509_V_ERR_PATH_LENGTH_EXCEEDED:
+          case X509_V_ERR_INVALID_PURPOSE:
+          case X509_V_ERR_SUBJECT_ISSUER_MISMATCH:
+          case X509_V_ERR_AKID_ISSUER_SERIAL_MISMATCH:
+          case X509_V_ERR_KEYUSAGE_NO_CERTSIGN:
+          {
+            W(DBF_NET, "ssl: other uncritical certificate problem. Signaling SSL_CERT_ERR_OTHER.");
+            setFlag(failures, SSL_CERT_ERR_OTHER);
+          }
+          break;
 
-        // (9) the certificate is not yet valid: the notBefore date is after the current time.
-        // (13) the certificate notBefore field contains an invalid time.
-        case X509_V_ERR_CERT_NOT_YET_VALID:
-        case X509_V_ERR_ERROR_IN_CERT_NOT_BEFORE_FIELD:
-        {
-          W(DBF_NET, "ssl: verify failure %s found", depth > 0 ? "SSL_CERT_ERR_BADCHAIN" : "SSL_CERT_ERR_NOTYETVALID");
-          setFlag(failures, depth > 0 ? SSL_CERT_ERR_BADCHAIN : SSL_CERT_ERR_NOTYETVALID);
-        }
-        break;
+          // (7) the signature of the certificate is invalid.
+          // (8) the signature of the certificate is invalid.
+          case X509_V_ERR_CERT_SIGNATURE_FAILURE:
+          case X509_V_ERR_CRL_SIGNATURE_FAILURE:
+          {
+            W(DBF_NET, "ssl: cert signature failed, signaling SSL_CERT_ERR_SIGINVALID");
+            setFlag(failures, SSL_CERT_ERR_SIGINVALID);
+          }
+          break;
 
-        // (10) the certificate has expired: that is the notAfter date is before the current time.
-        // (14) the certificate notAfter field contains an invalid time.
-        case X509_V_ERR_CERT_HAS_EXPIRED:
-        case X509_V_ERR_ERROR_IN_CERT_NOT_AFTER_FIELD:
-        {
-          W(DBF_NET, "ssl: verify failure %s found", depth > 0 ? "SSL_CERT_ERR_BADCHAIN" : "SSL_CERT_ERR_EXPIRED");
-          setFlag(failures, depth > 0 ? SSL_CERT_ERR_BADCHAIN : SSL_CERT_ERR_EXPIRED);
-        }
-        break;
+          // (9) the certificate is not yet valid: the notBefore date is after the current time.
+          // (13) the certificate notBefore field contains an invalid time.
+          case X509_V_ERR_CERT_NOT_YET_VALID:
+          case X509_V_ERR_ERROR_IN_CERT_NOT_BEFORE_FIELD:
+          {
+            W(DBF_NET, "ssl: verify failure %s found", depth > 0 ? "SSL_CERT_ERR_BADCHAIN" : "SSL_CERT_ERR_NOTYETVALID");
+            setFlag(failures, depth > 0 ? SSL_CERT_ERR_BADCHAIN : SSL_CERT_ERR_NOTYETVALID);
+          }
+          break;
 
-        // (17) X509_V_ERR_OUT_OF_MEM: an error occurred trying to allocate memory. This should never happen.
-        // (50) X509_V_ERR_APPLICATION_VERIFICATION: an application specific error. Unused.
-        default:
-        {
-          // clear the failures bitmask so check_certificates() knows this
-          // is a bailout
-          setFlag(conn->sslCertFailures, SSL_CERT_ERR_UNHANDLED);
-          W(DBF_NET, "ssl: Unhandled certification verification error: SSL_CERT_ERR_UNHANDLED");
+          // (10) the certificate has expired: that is the notAfter date is before the current time.
+          // (14) the certificate notAfter field contains an invalid time.
+          case X509_V_ERR_CERT_HAS_EXPIRED:
+          case X509_V_ERR_ERROR_IN_CERT_NOT_AFTER_FIELD:
+          {
+            W(DBF_NET, "ssl: verify failure %s found", depth > 0 ? "SSL_CERT_ERR_BADCHAIN" : "SSL_CERT_ERR_EXPIRED");
+            setFlag(failures, depth > 0 ? SSL_CERT_ERR_BADCHAIN : SSL_CERT_ERR_EXPIRED);
+          }
+          break;
 
-          // make sure we return an error and stop the
-          // cert verification right away
-          RETURN(0);
-          return 0;
+          // (17) X509_V_ERR_OUT_OF_MEM: an error occurred trying to allocate memory. This should never happen.
+          // (50) X509_V_ERR_APPLICATION_VERIFICATION: an application specific error. Unused.
+          default:
+          {
+            // clear the failures bitmask so check_certificates() knows this
+            // is a bailout
+            setFlag(conn->sslCertFailures, SSL_CERT_ERR_UNHANDLED);
+            W(DBF_NET, "ssl: Unhandled certification verification error: SSL_CERT_ERR_UNHANDLED");
+
+            // make sure we return an error and stop the
+            // cert verification right away
+            RETURN(0);
+            return 0;
+          }
         }
+
+        // set the connection-wise sslCertFailure bitmask
+        setFlag(conn->sslCertFailures, failures);
+        D(DBF_NET, "ssl: verify failures |= %ld => %ld", failures, conn->sslCertFailures);
+
+        // make sure we return 1 (success) so that
+        // the verification process continues and collects more failures
+        preverify_ok = 1;
       }
-
-      // set the connection-wise sslCertFailure bitmask
-      setFlag(conn->sslCertFailures, failures);
-      D(DBF_NET, "ssl: verify failures |= %ld => %ld", failures, conn->sslCertFailures);
-
-      // make sure we return 1 (success) so that
-      // the verification process continues and collects more failures
-      preverify_ok = 1;
+      else
+        E(DBF_NET, "SSL_get_ex_data() returned invalid 'conn'");
     }
     else
-      E(DBF_NET, "X509_STORE_CTX_get_app_data() return invalid 'conn'");
+      E(DBF_NET, "X509_STORE_CTX_get_ex_data() returned invalid SSL structure");
   }
 
   RETURN(preverify_ok);
   return preverify_ok;
-}
-
-///
-/// cert_verify_callback
-//
-CROSSCALL2(cert_verify_callback, int, X509_STORE_CTX *, x509_ctx, void *, parm)
-{
-  int ok;
-
-  ENTER();
-
-  D(DBF_NET, "cert_verify_callback() called");
-  SHOWVALUE(DBF_NET, x509_ctx);
-  SHOWVALUE(DBF_NET, parm);
-
-  // Store param (struct Connection) in context for verify_callback()
-  if((ok = X509_STORE_CTX_set_app_data(x509_ctx, parm)) == 1)
-  {
-    // and verify the certificate chain if no error
-    if((ok = X509_verify_cert(x509_ctx)) != 1)
-    {
-      W(DBF_NET, "X509_verify_cert() returned %d", ok);
-      ok = 0;
-    }
-  }
-  else
-  {
-    W(DBF_NET, "X509_STORE_CTX_set_app_data() returned %d", ok);
-    ok = 0;
-  }
-
-  RETURN(ok);
-  return ok;
 }
 
 ///
@@ -773,297 +750,245 @@ BOOL MakeSecureConnection(struct Connection *conn)
         // 2) check if we have enough entropy
         if((rc = RAND_status()) == 0) // rc=0 is error
           E(DBF_NET, "not enough entropy in the SSL pool");
-        // 3) create new SSL context
-        else if((conn->sslCtx = SSL_CTX_new(SSLv23_client_method())) == NULL)
-          E(DBF_NET, "can't create SSL_CTX object!");
-        // 4) disable SSLv2 as it is insecure and obsolete
-        else if(isFlagClear(SSL_CTX_set_options(conn->sslCtx, SSL_OP_ALL | SSL_OP_NO_SSLv2), SSL_OP_NO_SSLv2))
-          E(DBF_NET, "SSLv2 couldn't be disabled. SSL: %s", ERR_error_string(ERR_get_error(), NULL));
+        // 3) check if we are ready for creating the ssl connection
+        else if((conn->ssl = SSL_new(G->sslCtx)) == NULL)
+          E(DBF_NET, "can't create a new SSL structure for a connection");
+        else if(SSL_set_ex_data(conn->ssl, G->sslDataIndex, conn) == 0)
+          E(DBF_NET, "couldn't assign connection pointer");
         else
         {
-          rc = 0; // make sure set_default_verify_paths() is called
-
-          if(FileExists(DEFAULT_CAPATH) == TRUE)
+          // output some debug information
+          #if defined(DEBUG)
           {
-            D(DBF_NET, "CAfile = '%s', CApath = '%s'", DEFAULT_CAFILE, DEFAULT_CAPATH);
+            int i = 0;
+            const char *next = NULL;
 
-            if(FileExists(DEFAULT_CAFILE) == FALSE)
-              ER_NewError(tr(MSG_ER_WARN_CAFILE), DEFAULT_CAFILE);
-
-            // 5) load the certificates (e.g. CA) from either a file or a directory path
-            STARTCLOCK(DBF_NET);
-            rc = SSL_CTX_load_verify_locations(conn->sslCtx, DEFAULT_CAFILE, DEFAULT_CAPATH);
-            STOPCLOCK(DBF_NET, "SSL_CTX_load_verify_locations()");
-
-            if(rc == 0)
+            // output all availble ciphers
+            D(DBF_NET, "available SSL ciphers:");
+            do
             {
-              W(DBF_NET, "warning: setting default verify locations failed!");
+              if((next = SSL_get_cipher_list(conn->ssl, i)) != NULL)
+                D(DBF_NET, "%s", next);
 
-              ER_NewError(tr(MSG_ER_WARN_LOADCAPATH), DEFAULT_CAFILE, DEFAULT_CAPATH);
+              i++;
             }
+            while(next != NULL);
           }
-          else
-            ER_NewError(tr(MSG_ER_WARN_CAPATH), DEFAULT_CAPATH);
+          #endif
 
-          // 5) if no CA file or path is given we set the default pathes
-          if(rc == 0 && (rc = SSL_CTX_set_default_verify_paths(conn->sslCtx)) == 0)
-            E(DBF_NET, "error: setting default verify locations failed");
-
-          // 6) set SSL_VERIFY_PEER so that we later can decide on our own in the verify_callback
-          //    function wheter the connection should continue or if it should be terminated right away.
-          SSL_CTX_set_verify(conn->sslCtx, SSL_VERIFY_PEER, ENTRY(verify_callback));
-
-          // 7) set the cert_verify_callback as well so that we can supply userdata (struct Connection)
-          //    to the verify_callback() func
-          SSL_CTX_set_cert_verify_callback(conn->sslCtx, ENTRY(cert_verify_callback), conn);
-
-          // 8) set the ciphers we want to use and exclude unwanted ones
-          if(rc != 0 && (rc = SSL_CTX_set_cipher_list(conn->sslCtx, C->DefaultSSLCiphers)) == 0)
-            E(DBF_NET, "SSL_CTX_set_cipher_list() error!");
+          // 4) set the socket descriptor to the ssl context
+          D(DBF_NET, "set socket descriptor %ld for context %08lx", conn->socket, conn->ssl);
+          if(SSL_set_fd(conn->ssl, (int)conn->socket) != 1)
+            E(DBF_NET, "SSL_set_fd() error, socket %ld", conn->socket);
           else
           {
-            D(DBF_NET, "initializing TLS/SSL session");
-            D(DBF_NET, "SSL ctx timeout: %ld s", SSL_CTX_get_timeout(conn->sslCtx));
+            BOOL errorState = FALSE;
+            int res;
 
-            // 9) check if we are ready for creating the ssl connection
-            if((conn->ssl = SSL_new(conn->sslCtx)) == NULL)
-              E(DBF_NET, "can't create a new SSL structure for a connection");
-            else
+            // 5) establish the ssl connection and take care of non-blocking IO
+            D(DBF_NET, "connect SSL context %08lx", conn->ssl);
+            STARTCLOCK(DBF_NET);
+            while(errorState == FALSE && (res = SSL_connect(conn->ssl)) <= 0)
             {
-              // output some debug information
               #if defined(DEBUG)
-              {
-                int i = 0;
-                const char *next = NULL;
+              int errnosv = errno; // preserve errno directly after SSL_connect()
+              SSL_SESSION *sslSession = NULL;
+              #endif
+              int err;
 
-                // output all availble ciphers
-                D(DBF_NET, "available SSL ciphers:");
-                do
-                {
-                  if((next = SSL_get_cipher_list(conn->ssl, i)) != NULL)
-                    D(DBF_NET, "%s", next);
-
-                  i++;
-                }
-                while(next != NULL);
-              }
+              #if defined(DEBUG)
+              STOPCLOCK(DBF_NET, "SSL_connect()");
+              sslSession = SSL_get_session(conn->ssl);
+              D(DBF_NET, "SSL session timeout: %ld s", SSL_get_timeout(sslSession));
+              D(DBF_NET, "SSL session times: %ld (%ld)", SSL_get_time(sslSession), time(NULL));
               #endif
 
-              // 10) set the socket descriptor to the ssl context
-              D(DBF_NET, "set socket descriptor %ld for context %08lx", conn->socket, conn->ssl);
-              if(SSL_set_fd(conn->ssl, (int)conn->socket) != 1)
-                E(DBF_NET, "SSL_set_fd() error, socket %ld", conn->socket);
-              else
+              // get the reason why SSL_connect() returned an error
+              switch((err = SSL_get_error(conn->ssl, res)))
               {
-                BOOL errorState = FALSE;
-                int res;
-
-                // 11) establish the ssl connection and take care of non-blocking IO
-                D(DBF_NET, "connect SSL context %08lx", conn->ssl);
-                STARTCLOCK(DBF_NET);
-                while(errorState == FALSE && (res = SSL_connect(conn->ssl)) <= 0)
+                case SSL_ERROR_WANT_READ:
+                case SSL_ERROR_WANT_WRITE:
                 {
-                  #if defined(DEBUG)
-                  int errnosv = errno; // preserve errno directly after SSL_connect()
-                  SSL_SESSION *sslSession = NULL;
-                  #endif
-                  int err;
+                  // we are using non-blocking socket IO so an SSL_ERROR_WANT_READ
+                  // signals that the SSL socket wants us to wait until data
+                  // is available and reissue the SSL_connect() command.
+                  LONG retVal;
+                  GET_SOCKETBASE(conn);
 
-                  #if defined(DEBUG)
-                  STOPCLOCK(DBF_NET, "SSL_connect()");
-                  sslSession = SSL_get_session(conn->ssl);
-                  D(DBF_NET, "SSL session timeout: %ld s", SSL_get_timeout(sslSession));
-                  D(DBF_NET, "SSL session times: %ld (%ld)", SSL_get_time(sslSession), time(NULL));
-                  #endif
+                  D(DBF_NET, "SSL_get_error returned %s, running WaitSelect() with timeout %ld s", err == SSL_ERROR_WANT_READ ? "SSL_ERROR_WANT_READ" : "SSL_ERROR_WANT_WRITE", C->SocketTimeout);
 
-                  // get the reason why SSL_connect() returned an error
-                  switch((err = SSL_get_error(conn->ssl, res)))
+                  // set SocketTimeout to our timeout variable
+                  // so that we can let WaitSelect() timeout correctly.
+                  conn->timeout.tv_sec = C->SocketTimeout;
+                  conn->timeout.tv_usec = 0;
+
+                  // now we put our socket handle into a descriptor set
+                  // we can pass on to WaitSelect()
+                  FD_ZERO(&conn->fdset);
+                  FD_SET(conn->socket, &conn->fdset);
+
+                  // depending on the SSL error (WANT_READ/WANT_WRITE)
+                  // we either do a WaitSelect() on the read or write mode
+                  // as with SSL both things can happen
+                  // see http://www.openssl.org/docs/ssl/SSL_connect.html
+                  STARTCLOCK(DBF_NET);
+
+                  if(err == SSL_ERROR_WANT_READ)
+                    retVal = WaitSelect(conn->socket+1, &conn->fdset, NULL, NULL, (APTR)&conn->timeout, NULL);
+                  else
+                    retVal = WaitSelect(conn->socket+1, NULL, &conn->fdset, NULL, (APTR)&conn->timeout, NULL);
+
+                  STOPCLOCK(DBF_NET, "WaitSelect()");
+
+                  // if WaitSelect() returns 1 we successfully waited for
+                  // being able to write to the socket. So we go and do another
+                  // iteration in the while() loop as the next SSL_connect() call should
+                  // return EISCONN if the connection really succeeded.
+                  if(retVal >= 1 && FD_ISSET(conn->socket, &conn->fdset))
                   {
-                    case SSL_ERROR_WANT_READ:
-                    case SSL_ERROR_WANT_WRITE:
-                    {
-                      // we are using non-blocking socket IO so an SSL_ERROR_WANT_READ
-                      // signals that the SSL socket wants us to wait until data
-                      // is available and reissue the SSL_connect() command.
-                      LONG retVal;
-                      GET_SOCKETBASE(conn);
-
-                      D(DBF_NET, "SSL_get_error returned %s, running WaitSelect() with timeout %ld s", err == SSL_ERROR_WANT_READ ? "SSL_ERROR_WANT_READ" : "SSL_ERROR_WANT_WRITE", C->SocketTimeout);
-
-                      // set SocketTimeout to our timeout variable
-                      // so that we can let WaitSelect() timeout correctly.
-                      conn->timeout.tv_sec = C->SocketTimeout;
-                      conn->timeout.tv_usec = 0;
-
-                      // now we put our socket handle into a descriptor set
-                      // we can pass on to WaitSelect()
-                      FD_ZERO(&conn->fdset);
-                      FD_SET(conn->socket, &conn->fdset);
-
-                      // depending on the SSL error (WANT_READ/WANT_WRITE)
-                      // we either do a WaitSelect() on the read or write mode
-                      // as with SSL both things can happen
-                      // see http://www.openssl.org/docs/ssl/SSL_connect.html
-                      STARTCLOCK(DBF_NET);
-
-                      if(err == SSL_ERROR_WANT_READ)
-                        retVal = WaitSelect(conn->socket+1, &conn->fdset, NULL, NULL, (APTR)&conn->timeout, NULL);
-                      else
-                        retVal = WaitSelect(conn->socket+1, NULL, &conn->fdset, NULL, (APTR)&conn->timeout, NULL);
-
-                      STOPCLOCK(DBF_NET, "WaitSelect()");
-
-                      // if WaitSelect() returns 1 we successfully waited for
-                      // being able to write to the socket. So we go and do another
-                      // iteration in the while() loop as the next SSL_connect() call should
-                      // return EISCONN if the connection really succeeded.
-                      if(retVal >= 1 && FD_ISSET(conn->socket, &conn->fdset))
-                      {
-                        // everything fine
-                        STARTCLOCK(DBF_NET); // for the next iteration in calling SSL_connect()
-                        continue;
-                      }
-                      else if(retVal == 0)
-                      {
-                        W(DBF_NET, "WaitSelect() socket timeout reached");
-                        errorState = TRUE;
-                      }
-                      else
-                      {
-                        // the rest should signal an error
-                        E(DBF_NET, "WaitSelect() returned %ld with SSL_get_error() = %d", retVal, err);
-                        errorState = TRUE;
-                      }
-                    }
-                    break;
-
-                    default:
-                    {
-                      E(DBF_NET, "SSL_connect() returned %ld with SSL_get_error() = %ld", res, err);
-
-                      // get more information on the error
-                      #if defined(DEBUG)
-                      {
-                        GET_SOCKETBASE(conn);
-                        char buf[255];
-                        // save the errno(sv) values to avoid that they are modified by further function calls
-                        int _errno = errno;
-                        int _errnosv = errnosv;
-                        LONG _bsderrno = Errno();
-                        unsigned long errcode;
-
-                        // query errno first
-                        #if defined(__amigaos4__) || defined(__amigaos3__)
-                        if(strerror_r(_errno, buf, sizeof(buf)) != 0)
-                        {
-                          E(DBF_NET, "strerror_r(errno=%ld) failed", _errno);
-                          buf[0] = '\0';
-                        }
-                        E(DBF_NET, "errno(%ld) = '%s'", _errno, buf);
-                        if(strerror_r(_errnosv, buf, sizeof(buf)) != 0)
-                        {
-                          E(DBF_NET, "strerror_r(errnosv=%ld) failed", _errnosv);
-                          buf[0] = '\0';
-                        }
-                        E(DBF_NET, "errnosv(%ld) = '%s'", _errnosv, buf);
-                        #else
-                        E(DBF_NET, "errno(%ld) = '%s'", _errno, strerror(_errno));
-                        E(DBF_NET, "errnosv(%ld) = '%s'", _errnosv, strerror(_errnosv));
-                        #endif
-
-                        E(DBF_NET, "bsderrno(%ld)", _bsderrno);
-                        E(DBF_NET, "querying ERR_get_error() stack:");
-                        while((errcode = ERR_get_error()) != 0)
-                        {
-                          ERR_error_string_n(errcode, buf, sizeof(buf));
-                          E(DBF_NET, "ERR_get_error()=%ld stack: '%s'", errcode, buf);
-                        }
-                        E(DBF_NET, "done");
-                      }
-                      #endif
-
-                      errorState = TRUE;
-                    }
-                    break;
+                    // everything fine
+                    STARTCLOCK(DBF_NET); // for the next iteration in calling SSL_connect()
+                    continue;
                   }
-                }
-
-                if(errorState == FALSE)
-                {
-                  STACK_OF(X509) *chain;
-
-                  // 12) now we get the peer certificate chain
-                  D(DBF_NET, "get peer certificate chain");
-                  chain = SSL_get_peer_cert_chain(conn->ssl);
-                  if(chain == NULL || sk_X509_num(chain) == 0)
-                    E(DBF_NET, "SSL server did not present certificate, chain=%08lx", chain);
+                  else if(retVal == 0)
+                  {
+                    W(DBF_NET, "WaitSelect() socket timeout reached");
+                    errorState = TRUE;
+                  }
                   else
                   {
-                    struct Certificate *cert;
-
-                    // 13) make a local copy of the certificate chain so that
-                    //     we can bug the user with information on accepting/rejecting the certificate
-                    cert = MakeCertificateChain(chain);
-
-                    // 14) now check the certificate chain for any errors and ask the user
-                    //     how to proceed in case there were an certificate error found
-                    if(CheckCertificate(conn, cert) != 0)
-                      E(DBF_NET, "SSL certificate checks failed");
-                    else
-                    {
-                      // everything was successfully so lets set the result
-                      // value of that function to true
-                      secure = TRUE;
-
-                      // Debug information on the certificate
-                      #if defined(DEBUG)
-                      {
-                        char *x509buf;
-                        SSL_CIPHER *cipher;
-                        X509 *server_cert;
-                        char peer_CN[256] = "";
-
-                        cipher = SSL_get_current_cipher(conn->ssl);
-                        if(cipher != NULL)
-                          D(DBF_NET, "%s connection using %s", SSL_CIPHER_get_version(cipher), SSL_get_cipher(conn->ssl));
-
-                        D(DBF_NET, "Certificate verify result: %ld", SSL_get_verify_result(conn->ssl));
-
-                        if((server_cert = SSL_get_peer_certificate(conn->ssl)) == NULL)
-                          E(DBF_NET, "SSL_get_peer_certificate() error!");
-
-                        D(DBF_NET, "Server public key is %ld bits", EVP_PKEY_bits(X509_get_pubkey(server_cert)));
-
-                        X509_NAME_get_text_by_NID(X509_get_subject_name(server_cert), NID_commonName, peer_CN, sizeof(peer_CN));
-                        D(DBF_NET, "peer_commonName: '%s'", peer_CN);
-
-                        #define X509BUFSIZE 4096
-                        if((x509buf = calloc(1, X509BUFSIZE)) != NULL)
-                        {
-                          D(DBF_NET, "Server certificate:");
-
-                          if(!(X509_NAME_oneline(X509_get_subject_name(server_cert), x509buf, X509BUFSIZE)))
-                            E(DBF_NET, "X509_NAME_oneline...[subject] error!");
-
-                          D(DBF_NET, "subject: %s", x509buf);
-
-                          if(!(X509_NAME_oneline(X509_get_issuer_name(server_cert), x509buf, X509BUFSIZE)))
-                            E(DBF_NET, "X509_NAME_oneline...[issuer] error!");
-
-                          D(DBF_NET, "issuer:  %s", x509buf);
-
-                          free(x509buf);
-                        }
-
-                        if(server_cert != NULL)
-                          X509_free(server_cert);
-                      }
-                      #endif
-                    }
-
-                    FreeCertificateChain(cert);
+                    // the rest should signal an error
+                    E(DBF_NET, "WaitSelect() returned %ld with SSL_get_error() = %d", retVal, err);
+                    errorState = TRUE;
                   }
                 }
+                break;
+
+                default:
+                {
+                  E(DBF_NET, "SSL_connect() returned %ld with SSL_get_error() = %ld", res, err);
+
+                  // get more information on the error
+                  #if defined(DEBUG)
+                  {
+                    GET_SOCKETBASE(conn);
+                    char buf[255];
+                    // save the errno(sv) values to avoid that they are modified by further function calls
+                    int _errno = errno;
+                    int _errnosv = errnosv;
+                    LONG _bsderrno = Errno();
+                    unsigned long errcode;
+
+                    // query errno first
+                    #if defined(__amigaos4__) || defined(__amigaos3__)
+                    if(strerror_r(_errno, buf, sizeof(buf)) != 0)
+                    {
+                      E(DBF_NET, "strerror_r(errno=%ld) failed", _errno);
+                      buf[0] = '\0';
+                    }
+                    E(DBF_NET, "errno(%ld) = '%s'", _errno, buf);
+                    if(strerror_r(_errnosv, buf, sizeof(buf)) != 0)
+                    {
+                      E(DBF_NET, "strerror_r(errnosv=%ld) failed", _errnosv);
+                      buf[0] = '\0';
+                    }
+                    E(DBF_NET, "errnosv(%ld) = '%s'", _errnosv, buf);
+                    #else
+                    E(DBF_NET, "errno(%ld) = '%s'", _errno, strerror(_errno));
+                    E(DBF_NET, "errnosv(%ld) = '%s'", _errnosv, strerror(_errnosv));
+                    #endif
+
+                    E(DBF_NET, "bsderrno(%ld)", _bsderrno);
+                    E(DBF_NET, "querying ERR_get_error() stack:");
+                    while((errcode = ERR_get_error()) != 0)
+                    {
+                      ERR_error_string_n(errcode, buf, sizeof(buf));
+                      E(DBF_NET, "ERR_get_error()=%ld stack: '%s'", errcode, buf);
+                    }
+                    E(DBF_NET, "done");
+                  }
+                  #endif
+
+                  errorState = TRUE;
+                }
+                break;
+              }
+            }
+
+            if(errorState == FALSE)
+            {
+              STACK_OF(X509) *chain;
+
+              // 6) now we get the peer certificate chain
+              D(DBF_NET, "get peer certificate chain");
+              chain = SSL_get_peer_cert_chain(conn->ssl);
+              if(chain == NULL || sk_X509_num(chain) == 0)
+                E(DBF_NET, "SSL server did not present certificate, chain=%08lx", chain);
+              else
+              {
+                struct Certificate *cert;
+
+                // 7) make a local copy of the certificate chain so that
+                //     we can bug the user with information on accepting/rejecting the certificate
+                cert = MakeCertificateChain(chain);
+
+                // 8) now check the certificate chain for any errors and ask the user
+                //     how to proceed in case there were an certificate error found
+                if(CheckCertificate(conn, cert) != 0)
+                  E(DBF_NET, "SSL certificate checks failed");
+                else
+                {
+                  // everything was successfully so lets set the result
+                  // value of that function to true
+                  secure = TRUE;
+
+                  // Debug information on the certificate
+                  #if defined(DEBUG)
+                  {
+                    char *x509buf;
+                    SSL_CIPHER *cipher;
+                    X509 *server_cert;
+                    char peer_CN[256] = "";
+
+                    cipher = SSL_get_current_cipher(conn->ssl);
+                    if(cipher != NULL)
+                      D(DBF_NET, "%s connection using %s", SSL_CIPHER_get_version(cipher), SSL_get_cipher(conn->ssl));
+
+                    D(DBF_NET, "Certificate verify result: %ld", SSL_get_verify_result(conn->ssl));
+
+                    if((server_cert = SSL_get_peer_certificate(conn->ssl)) == NULL)
+                      E(DBF_NET, "SSL_get_peer_certificate() error!");
+
+                    D(DBF_NET, "Server public key is %ld bits", EVP_PKEY_bits(X509_get_pubkey(server_cert)));
+
+                    X509_NAME_get_text_by_NID(X509_get_subject_name(server_cert), NID_commonName, peer_CN, sizeof(peer_CN));
+                    D(DBF_NET, "peer_commonName: '%s'", peer_CN);
+
+                    #define X509BUFSIZE 4096
+                    if((x509buf = calloc(1, X509BUFSIZE)) != NULL)
+                    {
+                      D(DBF_NET, "Server certificate:");
+
+                      if(!(X509_NAME_oneline(X509_get_subject_name(server_cert), x509buf, X509BUFSIZE)))
+                        E(DBF_NET, "X509_NAME_oneline...[subject] error!");
+
+                      D(DBF_NET, "subject: %s", x509buf);
+
+                      if(!(X509_NAME_oneline(X509_get_issuer_name(server_cert), x509buf, X509BUFSIZE)))
+                        E(DBF_NET, "X509_NAME_oneline...[issuer] error!");
+
+                      D(DBF_NET, "issuer:  %s", x509buf);
+
+                      free(x509buf);
+                    }
+
+                    if(server_cert != NULL)
+                      X509_free(server_cert);
+                  }
+                  #endif
+                }
+
+                FreeCertificateChain(cert);
               }
             }
           }
@@ -1077,12 +1002,6 @@ BOOL MakeSecureConnection(struct Connection *conn)
     // before leaving
     if(secure == FALSE)
     {
-      if(conn->sslCtx != NULL)
-      {
-        SSL_CTX_free(conn->sslCtx);
-        conn->sslCtx = NULL;
-      }
-
       conn->ssl = NULL;
       conn->error = CONNECTERR_SSLFAILED;
 
@@ -1094,6 +1013,150 @@ BOOL MakeSecureConnection(struct Connection *conn)
 
   RETURN(secure);
   return secure;
+}
+
+///
+///
+BOOL InitSSLConnections(void)
+{
+  BOOL result = FALSE;
+  ENTER();
+
+  // try to open amisslmaster.library first
+  if((AmiSSLMasterBase = OpenLibrary("amisslmaster.library", AMISSLMASTER_VERSION)) != NULL &&
+     LIB_VERSION_IS_AT_LEAST(AmiSSLMasterBase, AMISSLMASTER_VERSION, AMISSLMASTER_REVISION) && // minimum 3.5
+     GETINTERFACE("main", 1, IAmiSSLMaster, AmiSSLMasterBase))
+  {
+    if(InitAmiSSLMaster(AMISSL_VERSION, TRUE))
+    {
+      if((AmiSSLBase = OpenAmiSSL()) != NULL &&
+         GETINTERFACE("main", 1, IAmiSSL, AmiSSLBase))
+      {
+        char tmp[24+1];
+
+        D(DBF_STARTUP, "successfully opened AmiSSL library %d.%d (%s)", AmiSSLBase->lib_Version, AmiSSLBase->lib_Revision, AmiSSLBase->lib_IdString);
+
+        // initialize AmiSSL/OpenSSL related stuff that
+        // needs to be initialized before each threads spans
+        // own initializations
+        ERR_load_BIO_strings(); // Load BIO error strings
+        SSL_load_error_strings(); // Load SSL error strings
+        OpenSSL_add_all_algorithms(); // Load all available encryption algorithms
+        SSL_library_init(); // Initialize OpenSSL's SSL libraries
+
+        // seed the random number generator with some valuable entropy
+        D(DBF_NET, "AmiSSL: seeding random number generator");
+        snprintf(tmp, sizeof(tmp), "%08lx%08lx%08lx", (unsigned long)time((time_t *)NULL), (unsigned long)FindTask(NULL), (unsigned long)rand());
+        RAND_seed(tmp, strlen(tmp));
+      
+        // 1) now we create a common SSL_CTX object which all our SSL connections will share
+        if((G->sslCtx = SSL_CTX_new(SSLv23_client_method())) == NULL)
+          E(DBF_NET, "AmiSSL: can't create SSL_CTX object!");
+        // 2) disable SSLv2 as it is insecure and obsolete
+        else if(isFlagClear(SSL_CTX_set_options(G->sslCtx, SSL_OP_ALL | SSL_OP_NO_SSLv2), SSL_OP_NO_SSLv2))
+          E(DBF_NET, "AmiSSL: SSLv2 couldn't be disabled. SSL: %s", ERR_error_string(ERR_get_error(), NULL));
+        else
+        {
+          int rc = 0; // make sure set_default_verify_paths() is called
+      
+          D(DBF_NET, "AmiSSL: SSL ctx timeout: %ld s", SSL_CTX_get_timeout(G->sslCtx));
+
+          if(FileExists(DEFAULT_CAPATH) == TRUE)
+          {
+            D(DBF_NET, "AmiSSL: CAfile = '%s', CApath = '%s'", DEFAULT_CAFILE, DEFAULT_CAPATH);
+      
+            if(FileExists(DEFAULT_CAFILE) == FALSE)
+              ER_NewError(tr(MSG_ER_WARN_CAFILE), DEFAULT_CAFILE);
+      
+            // 3) load the certificates (e.g. CA) from either a file or a directory path
+            STARTCLOCK(DBF_NET);
+            rc = SSL_CTX_load_verify_locations(G->sslCtx, DEFAULT_CAFILE, DEFAULT_CAPATH);
+            STOPCLOCK(DBF_NET, "AmiSSL: SSL_CTX_load_verify_locations()");
+      
+            if(rc == 0)
+            {
+              W(DBF_NET, "AmiSSL: setting default verify locations failed!");
+      
+              ER_NewError(tr(MSG_ER_WARN_LOADCAPATH), DEFAULT_CAFILE, DEFAULT_CAPATH);
+            }
+          }
+          else
+            ER_NewError(tr(MSG_ER_WARN_CAPATH), DEFAULT_CAPATH);
+      
+          // 4) if no CA file or path is given we set the default pathes
+          if(rc == 0 && (rc = SSL_CTX_set_default_verify_paths(G->sslCtx)) == 0)
+            E(DBF_NET, "AmiSSL: setting default verify locations failed");
+      
+          // 5) get a new ssl Data Index for storing application specific data
+          if(rc != 0 && (G->sslDataIndex = SSL_get_ex_new_index(0, NULL, NULL, NULL, NULL)) < 0)
+          {
+            E(DBF_NET, "AmiSSL: SSL_get_ex_new_index() failed");
+            rc = 0; // error
+          }
+
+          // 6) set SSL_VERIFY_PEER so that we later can decide on our own in the verify_callback
+          //    function wheter the connection should continue or if it should be terminated right away.
+          SSL_CTX_set_verify(G->sslCtx, SSL_VERIFY_PEER, ENTRY(verify_callback));
+      
+          // 7) set the ciphers we want to use and exclude unwanted ones
+          if(rc != 0 && (rc = SSL_CTX_set_cipher_list(G->sslCtx, C->DefaultSSLCiphers)) == 0)
+             E(DBF_NET, "AmiSSL: SSL_CTX_set_cipher_list() error!");
+          else
+          {
+            D(DBF_STARTUP, "AmiSSL: successfully initialized");
+
+            result = TRUE;
+          }
+        }
+      }
+      else
+        E(DBF_NET, "AmiSSL: OpenAmiSSL() returned an error");
+    }
+    else
+      E(DBF_NET, "AmiSSL: InitAmiSSLMaster() returned an error");
+  }
+  else
+    W(DBF_NET, "AmiSSL: Couldn't open required amisslmaster lib version %d.%d", AMISSLMASTER_VERSION, AMISSLMASTER_REVISION);
+
+  // if an error occurred make sure to have everything cleaned up correctly.
+  if(result == FALSE)
+    CleanupSSLConnections();
+
+  RETURN(result);
+  return result;
+}
+
+///
+///
+void CleanupSSLConnections(void)
+{
+  ENTER();
+
+  // cleanup the SSL connection context
+  if(G->sslCtx != NULL)
+  {
+    SSL_CTX_free(G->sslCtx);
+    G->sslCtx = NULL;
+  }
+
+  // close amissl
+  if(AmiSSLBase != NULL)
+  {
+    CleanupAmiSSL(NULL);
+    DROPINTERFACE(IAmiSSL);
+    CloseAmiSSL();
+    AmiSSLBase = NULL;
+  }
+
+  // close amisslmaster
+  if(AmiSSLMasterBase != NULL)
+  {
+    DROPINTERFACE(IAmiSSLMaster);
+    CloseLibrary(AmiSSLMasterBase);
+    AmiSSLMasterBase = NULL;
+  }
+ 
+  LEAVE();
 }
 
 ///

@@ -5,6 +5,20 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-06-26 Jens Maus <mail@jens-maus.de>
+
+  * tcp/ssl.c: added new InitSSLConnections() and CleanupSSLConnection()
+    functions which will now be called from the global startup routines in
+    YAM. These new InitSSL/CleanupSSL functions will take care now to
+    initialize+cleanup a single global SSL_CTX structure rather than having
+    to create such a structure for every SSL connection being initiated. Apart
+    from reducing the connection overhead in general this change also allowed
+    to load the ca-bundle.crt once upon starting YAM rather than on every
+    SSL connection. In fact, this should slightly reduce the SSL negotation
+    delay by 2-3 seconds on slow m68k systems and should perhaps increase the
+    probability that SSL negotiations to mail servers from gmx.de, web.de and
+    1und1.de are not timing out. This refs #530.
+
 2014-06-12 Thore Böckelmann <tboeckel@gmx.de>
 
   * Debug.c: each debug message will now include the current time to be able to
