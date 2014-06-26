@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-06-06 06:25+0000\n"
+"PO-Revision-Date: 2014-06-26 08:26+0000\n"
 "Last-Translator: Thore Böckelmann <tboeckel@gmx.de>\n"
 "Language-Team: Portuguese (Brazil) (http://www.transifex.com/projects/p/yam/language/pt_BR/)\n"
 "MIME-Version: 1.0\n"
@@ -9110,14 +9110,6 @@ msgctxt "MSG_SSL_CERT_WARNING_SHOWTITLE (2384//)"
 msgid "Certificate of %s:%d"
 msgstr ""
 
-#. FILEPATH
-msgctxt "MSG_ER_WARN_CAFILE (2385//)"
-msgid ""
-"While trying to establish a SSL connection the certificate bundle file '%s' was found to be missing.\n"
-"\n"
-"Please make sure that the file exists and is uptodate or otherwise each SSL connection will be flagged as unverified."
-msgstr ""
-
 #. FILEPATH, DIRPATH
 msgctxt "MSG_ER_WARN_LOADCAPATH (2386//)"
 msgid ""
@@ -10029,4 +10021,12 @@ msgstr ""
 #. SERVER
 msgctxt "MSG_CO_SMTP_CONNECTION_FAILURE (2575//)"
 msgid "Connection to SMTP server '%s' failed."
+msgstr ""
+
+#. FILEPATH
+msgctxt "MSG_ER_WARN_CAFILE (2576//)"
+msgid ""
+"While trying initialize the SSL certificate authorities the certificate bundle file '%s' was found to be missing.\n"
+"\n"
+"Please make sure that the file exists and is uptodate or otherwise each SSL connection will be flagged as unverified."
 msgstr ""
