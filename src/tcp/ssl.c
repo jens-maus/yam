@@ -1142,7 +1142,7 @@ void CleanupSSLConnections(void)
   // close amissl
   if(AmiSSLBase != NULL)
   {
-    CleanupAmiSSL(NULL);
+    CleanupAmiSSLA(NULL);
     DROPINTERFACE(IAmiSSL);
     CloseAmiSSL();
     AmiSSLBase = NULL;
