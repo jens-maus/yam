@@ -1069,10 +1069,11 @@ BOOL InitSSLConnections(void)
               ER_NewError(tr(MSG_ER_WARN_CAFILE), DEFAULT_CAFILE);
       
             // 3) load the certificates (e.g. CA) from either a file or a directory path
-            STARTCLOCK(DBF_NET);
-            rc = SSL_CTX_load_verify_locations(G->sslCtx, DEFAULT_CAFILE, DEFAULT_CAPATH);
-            STOPCLOCK(DBF_NET, "AmiSSL: SSL_CTX_load_verify_locations()");
-      
+            if(FileExists(DEFAULT_CAFILE) == TRUE)
+              rc = SSL_CTX_load_verify_locations(G->sslCtx, DEFAULT_CAFILE, DEFAULT_CAPATH);
+            else
+              rc = SSL_CTX_load_verify_locations(G->sslCtx, NULL, DEFAULT_CAPATH);
+
             if(rc == 0)
             {
               W(DBF_NET, "AmiSSL: setting default verify locations failed!");
