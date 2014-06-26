@@ -29,15 +29,10 @@
 ***************************************************************************/
 
 #include <libraries/amisslmaster.h>
+#include <proto/amissl.h>
 
 // forward declarations
 struct Connection;
-#if __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ > 0)
-typedef struct x509_st X509;
-typedef struct X509_name_st X509_NAME;
-#else
-#include <proto/amissl.h>
-#endif
 
 // make sure to open at least 3.5 of amisslmaster.library
 #define AMISSLMASTER_VERSION  3
