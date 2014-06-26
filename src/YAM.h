@@ -67,7 +67,11 @@ struct HashTable;
 struct NotifyRequest;
 struct Process;
 struct TZoneInfo;
+#if __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ > 0)
 typedef struct ssl_ctx_st SSL_CTX;
+#else
+#include <proto/amissl.h>
+#endif
 
 /**************************************************************************/
 
