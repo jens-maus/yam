@@ -9,6 +9,8 @@ $URL$
 
   * YAM.h, tcp/ssl.h: fixed the broken build for all platforms using a GCC
     version older than 3.0.
+  * locale/YAM.pot: rephrased an SSL error message to better suit the current
+    situation.
 
 2014-06-26 Jens Maus <mail@jens-maus.de>
 

@@ -9107,14 +9107,6 @@ msgctxt "MSG_SSL_CERT_WARNING_SHOWTITLE (2384//)"
 msgid "Certificate of %s:%d"
 msgstr "Certificate of %s:%d"
 
-#. FILEPATH
-msgctxt "MSG_ER_WARN_CAFILE (2385//)"
-msgid ""
-"While trying to establish a SSL connection the certificate bundle file '%s' was found to be missing.\n"
-"\n"
-"Please make sure that the file exists and is uptodate or otherwise each SSL connection will be flagged as unverified."
-msgstr "While trying to establish a SSL connection the certificate bundle file '%s' was found to be missing.\n\nPlease make sure that the file exists and is uptodate or otherwise each SSL connection will be flagged as unverified."
-
 #. FILEPATH, DIRPATH
 msgctxt "MSG_ER_WARN_LOADCAPATH (2386//)"
 msgid ""
@@ -10022,3 +10014,11 @@ msgstr "Connection to SMTP server '%s' was successful."
 msgctxt "MSG_CO_SMTP_CONNECTION_FAILURE (2575//)"
 msgid "Connection to SMTP server '%s' failed."
 msgstr "Connection to SMTP server '%s' failed."
+
+#. FILEPATH
+msgctxt "MSG_ER_WARN_CAFILE (2576//)"
+msgid ""
+"While trying initialize the SSL certificate authorities the certificate bundle file '%s' was found to be missing.\n"
+"\n"
+"Please make sure that the file exists and is uptodate or otherwise each SSL connection will be flagged as unverified."
+msgstr "While trying initialize the SSL certificate authorities the certificate bundle file '%s' was found to be missing.\n\nPlease make sure that the file exists and is uptodate or otherwise each SSL connection will be flagged as unverified."
