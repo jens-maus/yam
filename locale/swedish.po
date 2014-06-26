@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-06-06 06:25+0000\n"
+"PO-Revision-Date: 2014-06-26 08:26+0000\n"
 "Last-Translator: Thore Böckelmann <tboeckel@gmx.de>\n"
 "Language-Team: Swedish (http://www.transifex.com/projects/p/yam/language/sv/)\n"
 "MIME-Version: 1.0\n"
@@ -9113,14 +9113,6 @@ msgctxt "MSG_SSL_CERT_WARNING_SHOWTITLE (2384//)"
 msgid "Certificate of %s:%d"
 msgstr "Certifikat för %s:%d"
 
-#. FILEPATH
-msgctxt "MSG_ER_WARN_CAFILE (2385//)"
-msgid ""
-"While trying to establish a SSL connection the certificate bundle file '%s' was found to be missing.\n"
-"\n"
-"Please make sure that the file exists and is uptodate or otherwise each SSL connection will be flagged as unverified."
-msgstr "Vid försök att erhålla en SSL anslutning, så befanns certifikatpaketets fil '%s' att saknas.\n\nVar god kontrollera att filen existerar och är uppdaterad, annars kommer varje SSL anslutning att flaggas som overifierad."
-
 #. FILEPATH, DIRPATH
 msgctxt "MSG_ER_WARN_LOADCAPATH (2386//)"
 msgid ""
@@ -9895,21 +9887,21 @@ msgstr "Gb"
 #. ORIGINATOR, SENDER, SUBJECT, FOLDER, FOLDER
 msgctxt "MSG_LOG_COPY_MAIL (2548//)"
 msgid "%s: Copied message from '%s' about '%s' from folder '%s' to '%s'"
-msgstr ""
+msgstr "%s: Kopierade meddelande från '%s' om '%s' från mapp '%s' till '%s'"
 
 #. ORIGINATOR, SENDER, SUBJECT, FOLDER, FOLDER
 msgctxt "MSG_LOG_MOVE_MAIL (2549//)"
 msgid "%s: Moved message from '%s' about '%s' from folder '%s' to '%s'"
-msgstr ""
+msgstr "%s: Flyttade meddelande från '%s' om '%s' från mapp '%s' till '%s'"
 
 #. FILTERNAME
 msgctxt "MSG_LOG_FILTER_ORIGINATOR (2550//)"
 msgid "Filter '%s'"
-msgstr ""
+msgstr "Filter '%s'"
 
 msgctxt "MSG_STARTUP_SECURITY_WARNING_TITLE (2551//)"
 msgid "YAM security warning"
-msgstr ""
+msgstr "YAM säkerhetsvarning"
 
 msgctxt "MSG_STARTUP_SECURITY_WARNING (2552//)"
 msgid ""
@@ -9925,31 +9917,31 @@ msgid ""
 "hacked mail accounts in any way!\n"
 "\n"
 "You have been warned!"
-msgstr ""
+msgstr "Nätverksdebugutmatning är aktiverat!\n\nDen genererade debugutmatningen innehåller okrypterat och\nfullt läsbara lösenord och annat privat innehåll.\n\nKontrollera att du tagit bort privat data innan du publicerar\ndenna logg publikt!\n\nYAM's utvecklingsteam tar inget ansvar för hackade mailkonton\növerhuvudtaget!\n\nDu har blivit varnad!"
 
 msgctxt "MSG_STARTUP_SECURITY_WARNING_GADGETS (2553//)"
 msgid "Understood"
-msgstr ""
+msgstr "Förstått"
 
 msgctxt "MSG_FO_PATH_INVALID (2554//)"
 msgid "The path must be non-empty."
-msgstr ""
+msgstr "Sökvägen kan inte vara tom."
 
 msgctxt "MSG_FO_MLPATTERN_INVALID (2555//)"
 msgid "The pattern (To:/CC:) must be non-empty and no 'catch all'."
-msgstr ""
+msgstr "Mönstret (Till:/Kopia:) kan inte vara tomt och inget 'matcha alla'."
 
 msgctxt "MSG_FO_MLADDRESS_INVALID (2556//)"
 msgid "The destination address (To:) must be non-empty."
-msgstr ""
+msgstr "Destinationsadressen (Till:) kan inte vara tom."
 
 msgctxt "MSG_CO_SAVE_WITHOUT_PRIVATE_DATA (2557//)"
 msgid "Save without private data..."
-msgstr ""
+msgstr "Spara utan privat data..."
 
 msgctxt "MSG_SSL_CERT_WARNING_SIGINVALID (2558//)"
 msgid "- The signature of the certificate is invalid."
-msgstr ""
+msgstr "- Certifikatets signatur är ogiltigt."
 
 msgctxt "MSG_SSL_CERT_WARNING_OUTRO (2559//)"
 msgid ""
@@ -9958,78 +9950,86 @@ msgid ""
 "(\\033bNO\\033n protection from fraud).\n"
 "\n"
 "Do you still want to accept the connection?"
-msgstr ""
+msgstr "Om du fortsätter så kommer dataöverföringen att vara krypterad\n(skydd mot avlyssning) men serverns identitet kan inte garanteras\n(\\033bNO\\033n skydd mot bedrägeri).\n\nVill du fortfarande acceptera anslutningen? "
 
 msgctxt "MSG_CO_POP_SERVER (2560//)"
 msgid "Serve_r"
-msgstr ""
+msgstr "Serve_r"
 
 msgctxt "MSG_CO_POP_PORT (2561//)"
 msgid "P_ort"
-msgstr ""
+msgstr "P_ort"
 
 msgctxt "MSG_CO_POP_PORT_STANDARD (2562//)"
 msgid "Standard:"
-msgstr ""
+msgstr "Standard:"
 
 msgctxt "MSG_CO_SMTP_SERVER (2563//)"
 msgid "Ser_ver"
-msgstr ""
+msgstr "Ser_ver"
 
 msgctxt "MSG_CO_SMTP_PORT (2564//)"
 msgid "_Port"
-msgstr ""
+msgstr "_Port"
 
 msgctxt "MSG_CO_SMTP_PORT_STANDARD (2565//)"
 msgid "Standard:"
-msgstr ""
+msgstr "Standard:"
 
 msgctxt "MSG_CO_POP3_TEST_CONNECTION_SETTINGS (2566//)"
 msgid "Test connection settings"
-msgstr ""
+msgstr "Testa anslutningsinställningar"
 
 msgctxt "MSG_HELP_CO_BT_POPTEST (2567//)"
 msgid ""
 "Test the current settings to\n"
 "establish a reliable connection for\n"
 "POP3 downloads."
-msgstr ""
+msgstr "Testa nuvarande inställningar\nför att etablera en pålitlig anslutning\nför POP3 nedladdningar."
 
 msgctxt "MSG_CO_POP3_CONNECTION_TITLE (2568//)"
 msgid "POP3 connection"
-msgstr ""
+msgstr "POP3 anslutning"
 
 #. SERVER
 msgctxt "MSG_CO_POP3_CONNECTION_SUCCESS (2569//)"
 msgid "Connection to POP3 server '%s' was successful."
-msgstr ""
+msgstr "Anslutning till POP3 servern '%s' var lyckad."
 
 #. SERVER
 msgctxt "MSG_CO_POP3_CONNECTION_FAILURE (2570//)"
 msgid "Connection to POP3 server '%s' failed."
-msgstr ""
+msgstr "Anslutning till POP3 servern '%s' misslyckades."
 
 msgctxt "MSG_CO_SMTP_TEST_CONNECTION_SETTINGS (2571//)"
 msgid "Test connection settings"
-msgstr ""
+msgstr "Testa anslutningsinställningar"
 
 msgctxt "MSG_HELP_CO_BT_SMTPTEST (2572//)"
 msgid ""
 "Test the current settings to\n"
 "establish a reliable connection for\n"
 "SMTP uploads."
-msgstr ""
+msgstr "Testa nuvarande inställningar\nför att etablera en pålitlig anslutning\nför SMTP uppladdningar."
 
 msgctxt "MSG_CO_SMTP_CONNECTION_TITLE (2573//)"
 msgid "SMTP connection"
-msgstr ""
+msgstr "SMTP anslutning"
 
 #. SERVER
 msgctxt "MSG_CO_SMTP_CONNECTION_SUCCESS (2574//)"
 msgid "Connection to SMTP server '%s' was successful."
-msgstr ""
+msgstr "Anslutning till SMTP servern '%s' var lyckad."
 
 #. SERVER
 msgctxt "MSG_CO_SMTP_CONNECTION_FAILURE (2575//)"
 msgid "Connection to SMTP server '%s' failed."
+msgstr "Anslutning till SMTP servern '%s' misslyckades."
+
+#. FILEPATH
+msgctxt "MSG_ER_WARN_CAFILE (2576//)"
+msgid ""
+"While trying initialize the SSL certificate authorities the certificate bundle file '%s' was found to be missing.\n"
+"\n"
+"Please make sure that the file exists and is uptodate or otherwise each SSL connection will be flagged as unverified."
 msgstr ""
