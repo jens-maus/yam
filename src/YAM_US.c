@@ -345,12 +345,13 @@ BOOL US_Login(const char *username, const char *password, const char *maildir, c
     AddPath(G->abookFilename, user->UseAddr ? G->ProgDir : G->MA_MailDir, ".addressbook", sizeof(G->abookFilename));
     AddPath(G->DI_Filename, user->UseDict ? G->ProgDir : G->MA_MailDir, ".glossary", sizeof(G->DI_Filename));
 
-    if(user->Password[0] != '\0')
+    if(IsStrEmpty(user->Password) == FALSE)
     {
-      // prompt for a password, if none was given by tooltypes/command line
-      if(password != NULL)
+      // prompt for a password, if the given one does not match or none was given by tooltypes/command line
+      if(IsStrEmpty(password) == FALSE)
         loggedin = (strcmp(password, user->Password) == 0 || strcmp(password, "\01") == 0);
-      else
+
+      if(loggedin == FALSE)
         loggedin = DoMethod(G->SplashWinObject, MUIM_SplashWindow_PasswordRequest, user);
     }
     else

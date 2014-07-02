@@ -90,14 +90,13 @@ OVERLOAD(OM_NEW)
 
     if((obj = DoSuperNew(cl, obj,
 
-      MUIA_Window_DragBar,        FALSE,
-      MUIA_Window_CloseGadget,    FALSE,
-      MUIA_Window_DepthGadget,    FALSE,
-      MUIA_Window_SizeGadget,     FALSE,
-      MUIA_Window_LeftEdge,       MUIV_Window_LeftEdge_Centered,
-      MUIA_Window_TopEdge,        MUIV_Window_TopEdge_Centered,
-      MUIA_Window_ActiveObject,   NULL,
-      MUIA_Window_DefaultObject,  NULL,
+      MUIA_Window_DragBar,     FALSE,
+      MUIA_Window_CloseGadget, FALSE,
+      MUIA_Window_DepthGadget, FALSE,
+      MUIA_Window_SizeGadget,  FALSE,
+      MUIA_Window_LeftEdge,    MUIV_Window_LeftEdge_Centered,
+      MUIA_Window_TopEdge,     MUIV_Window_TopEdge_Centered,
+      MUIA_Window_Activate,    TRUE,
       WindowContents, windowGroup = VGroup,
         MUIA_Background, MUII_GroupBack,
         Child, HGroup,
@@ -141,12 +140,10 @@ OVERLOAD(OM_NEW)
 
       DoMethod(G->App, OM_ADDMEMBER, obj);
 
-      data->windowGroup   = windowGroup;
-      data->statusGauge   = statusGauge;
+      data->windowGroup = windowGroup;
+      data->statusGauge = statusGauge;
       data->progressGauge = progressGauge;
       data->progressGaugeActive = FALSE;
-
-      set(obj, MUIA_Window_Activate, TRUE);
     }
     else
       MUI_DisposeObject(progressGauge);
@@ -283,8 +280,8 @@ DECLARE(SelectUser)
   // it manually later on
   selectGroup = VGroup,
     Child, RectangleObject,
-       MUIA_Rectangle_HBar, TRUE,
-       MUIA_FixHeight, 8,
+      MUIA_Rectangle_HBar, TRUE,
+      MUIA_FixHeight, 8,
     End,
     Child, userGroup = VGroup,
       Child, TextObject,
@@ -298,21 +295,14 @@ DECLARE(SelectUser)
 
   if(selectGroup != NULL)
   {
-    // lets add the selectGroup to the window first as MUIA_ShowMe doesn't work
-    // correctly
-    if(DoMethod(data->windowGroup, MUIM_Group_InitChange))
-    {
-      DoMethod(data->windowGroup, OM_ADDMEMBER, selectGroup);
-      DoMethod(data->windowGroup, MUIM_Group_ExitChange);
-    }
+    Object *group = ColGroup(2), End;
+    Object *button0 = NULL;
+    BOOL wasIconified;
+    BOOL wasOpen;
 
     if(DoMethod(userGroup, MUIM_Group_InitChange))
     {
-      Object *button0 = NULL;
-      Object *group = ColGroup(2), End;
       int i;
-      BOOL wasIconified;
-      BOOL wasOpen;
 
       for(i = 0; i < G->Users.Num; i++)
       {
@@ -330,6 +320,14 @@ DECLARE(SelectUser)
 
       DoMethod(userGroup, OM_ADDMEMBER, group);
       DoMethod(userGroup, MUIM_Group_ExitChange);
+    }
+
+    if(DoMethod(data->windowGroup, MUIM_Group_InitChange))
+    {
+      ULONG signals;
+
+      DoMethod(data->windowGroup, OM_ADDMEMBER, selectGroup);
+      DoMethod(data->windowGroup, MUIM_Group_ExitChange);
 
       set(data->statusGauge, MUIA_Gauge_InfoText, tr(MSG_US_WaitLogin));
 
@@ -340,7 +338,7 @@ DECLARE(SelectUser)
       if(wasOpen == FALSE)
         set(obj, MUIA_Window_Open, TRUE);
 
-      if(wasIconified)
+      if(wasIconified == TRUE)
         set(_app(obj), MUIA_Application_Iconified, FALSE);
 
       // we add the esc key to the input event of the requester and if we receive it we close the requester by safely
@@ -351,15 +349,14 @@ DECLARE(SelectUser)
       DoMethod(obj, MUIM_Window_ToFront);
 
       // make the first button the active object in the window
-      xset(obj, MUIA_Window_ActiveObject,  button0,
-                MUIA_Window_DefaultObject, button0);
+      set(obj, MUIA_Window_ActiveObject, button0);
 
       // lets collect the waiting returnIDs now
       COLLECT_RETURNIDS;
 
+      signals = 0;
       do
       {
-        static ULONG signals=0;
         LONG ret = DoMethod(_app(obj), MUIM_Application_NewInput, &signals)-ID_LOGIN;
 
         // bail out if a button was hit
@@ -378,19 +375,16 @@ DECLARE(SelectUser)
         if(signals)
           signals = Wait(signals);
       }
-      while(1);
+      while(TRUE);
 
       // now lets reissue the collected returnIDs again
       REISSUE_RETURNIDS;
 
-      // kill the notifies afterwards again
+      // kill the window notifies afterwards again
       DoMethod(obj, MUIM_KillNotify, MUIA_Window_CloseRequest);
-      for(i=0; i < G->Users.Num; i++)
-        DoMethod(obj, MUIM_KillNotify, MUIA_Pressed);
 
-      // make sure no object of the window is active and default afterwards
-      xset(obj, MUIA_Window_ActiveObject,  NULL,
-                MUIA_Window_DefaultObject, NULL);
+      // make sure no object of the window is active afterwards
+      set(obj, MUIA_Window_ActiveObject, NULL);
 
       // lets iconify/close the window if it had this state previously
       if(wasOpen == FALSE)
@@ -399,20 +393,11 @@ DECLARE(SelectUser)
       if(wasIconified == TRUE)
         set(_app(obj), MUIA_Application_Iconified, TRUE);
 
-      if(DoMethod(userGroup, MUIM_Group_InitChange))
+      if(DoMethod(data->windowGroup, MUIM_Group_InitChange))
       {
-        // remove & dispose the group object
-        DoMethod(userGroup, OM_REMMEMBER, group);
-        MUI_DisposeObject(group);
-
-        DoMethod(userGroup, MUIM_Group_ExitChange);
+        DoMethod(data->windowGroup, OM_REMMEMBER, selectGroup);
+        DoMethod(data->windowGroup, MUIM_Group_ExitChange);
       }
-    }
-
-    if(DoMethod(data->windowGroup, MUIM_Group_InitChange))
-    {
-      DoMethod(data->windowGroup, OM_REMMEMBER, selectGroup);
-      DoMethod(data->windowGroup, MUIM_Group_ExitChange);
     }
   }
 
@@ -432,6 +417,8 @@ DECLARE(PasswordRequest) // struct User *user
   Object *bt_okay;
   Object *bt_cancel;
   BOOL result = FALSE;
+
+  ENTER();
 
   // create the passwordGroup object now
   pwGroup = VGroup,
@@ -456,103 +443,98 @@ DECLARE(PasswordRequest) // struct User *user
 
   if(pwGroup != NULL)
   {
-    BOOL wasIconified;
-    BOOL wasOpen;
-    LONG ret;
-
-    // lets add the pwGroup to the window first as MUIA_ShowMe doesn't work
-    // correctly
     if(DoMethod(data->windowGroup, MUIM_Group_InitChange))
     {
+      BOOL wasIconified;
+      BOOL wasOpen;
+      ULONG signals;
+      LONG ret;
+
       DoMethod(data->windowGroup, OM_ADDMEMBER, pwGroup);
       DoMethod(data->windowGroup, MUIM_Group_ExitChange);
-    }
 
-    set(data->statusGauge, MUIA_Gauge_InfoText, tr(MSG_US_WaitLogin));
+      set(data->statusGauge, MUIA_Gauge_InfoText, tr(MSG_US_WaitLogin));
 
-    // place the returnID notifies
-    DoMethod(bt_okay,   MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_Application_ReturnID, ID_LOGIN+1);
-    DoMethod(bt_cancel, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_Application_ReturnID, ID_LOGIN+2);
-    DoMethod(pwString,  MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_Application_ReturnID, ID_LOGIN+1);
-    DoMethod(obj,        MUIM_Notify, MUIA_Window_CloseRequest, TRUE, MUIV_Notify_Application, 2, MUIM_Application_ReturnID, ID_LOGIN+2);
+      // place the returnID notifies
+      DoMethod(bt_okay,   MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_Application_ReturnID, ID_LOGIN+1);
+      DoMethod(bt_cancel, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_Application_ReturnID, ID_LOGIN+2);
+      DoMethod(pwString,  MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_Application_ReturnID, ID_LOGIN+1);
+      DoMethod(obj,       MUIM_Notify, MUIA_Window_CloseRequest, TRUE, MUIV_Notify_Application, 2, MUIM_Application_ReturnID, ID_LOGIN+2);
 
-    // make sure the window is open and not iconified
-    wasOpen = xget(obj, MUIA_Window_Open);
-    wasIconified = xget(_app(obj), MUIA_Application_Iconified);
+      // make sure the window is open and not iconified
+      wasOpen = xget(obj, MUIA_Window_Open);
+      wasIconified = xget(_app(obj), MUIA_Application_Iconified);
 
-    if(wasOpen == FALSE)
-      set(obj, MUIA_Window_Open, TRUE);
+      if(wasOpen == FALSE)
+        set(obj, MUIA_Window_Open, TRUE);
 
-    if(wasIconified == TRUE)
-      set(_app(obj), MUIA_Application_Iconified, FALSE);
+      if(wasIconified == TRUE)
+        set(_app(obj), MUIA_Application_Iconified, FALSE);
 
-    // make sure the window is at the front
-    DoMethod(obj, MUIM_Window_ToFront);
+      // make sure the window is at the front
+      DoMethod(obj, MUIM_Window_ToFront);
 
-    // lets collect the waiting returnIDs now
-    COLLECT_RETURNIDS;
+      // lets collect the waiting returnIDs now
+      COLLECT_RETURNIDS;
 
-    // make the passwordString the active object
-    xset(obj, MUIA_Window_ActiveObject,  pwString,
-              MUIA_Window_DefaultObject, pwString);
+      // make the passwordString the active object
+      set(obj, MUIA_Window_ActiveObject, pwString);
 
-    do
-    {
-      static ULONG signals=0;
-      ret = DoMethod(_app(obj), MUIM_Application_NewInput, &signals)-ID_LOGIN;
-
-      // if the returnID is 1 then we check the password against the supplied
-      // password
-      if(ret == 1)
+      signals = 0;
+      do
       {
-        if(strcmp((char *)xget(pwString, MUIA_String_Contents), msg->user->Password) == 0)
+        ret = DoMethod(_app(obj), MUIM_Application_NewInput, &signals)-ID_LOGIN;
+
+        // if the returnID is 1 then we check the password against the supplied
+        // password
+        if(ret == 1)
         {
-          result = TRUE;
-          break;
+          if(strcmp((char *)xget(pwString, MUIA_String_Contents), msg->user->Password) == 0)
+          {
+            result = TRUE;
+            break;
+          }
+
+          DisplayBeep(_screen(obj));
         }
+        else if(ret == 2)
+          break;
 
-        DisplayBeep(_screen(obj));
+        if(signals != 0)
+          signals = Wait(signals);
       }
-      else if(ret == 2)
-        break;
+      while(TRUE);
 
-      if(signals != 0)
-        signals = Wait(signals);
-    }
-    while(1);
+      // now lets reissue the collected returnIDs again
+      REISSUE_RETURNIDS;
 
-    // now lets reissue the collected returnIDs again
-    REISSUE_RETURNIDS;
+      // kill the window notifies afterwards again
+      DoMethod(obj, MUIM_KillNotify, MUIA_Window_CloseRequest);
 
-    // kill the notifies afterwards again
-    DoMethod(obj, MUIM_KillNotify, MUIA_Window_CloseRequest);
-    DoMethod(obj, MUIM_KillNotify, MUIA_String_Acknowledge);
-    DoMethod(obj, MUIM_KillNotify, MUIA_Pressed);
-    DoMethod(obj, MUIM_KillNotify, MUIA_Pressed);
+      // make sure no object of the window is active afterwards
+      set(obj, MUIA_Window_ActiveObject,  NULL);
 
-    // make sure no object of the window is active and default afterwards
-    xset(obj, MUIA_Window_ActiveObject,  NULL,
-              MUIA_Window_DefaultObject, NULL);
+      // lets iconify/close the window if it had this state previously
+      if(wasOpen == FALSE)
+        set(obj, MUIA_Window_Open, FALSE);
 
-    // lets iconify/close the window if it had this state previously
-    if(wasOpen == FALSE)
-      set(obj, MUIA_Window_Open, FALSE);
+      if(wasIconified == TRUE)
+        set(_app(obj), MUIA_Application_Iconified, TRUE);
 
-    if(wasIconified == TRUE)
-      set(_app(obj), MUIA_Application_Iconified, TRUE);
+      // remove the passwordRequest again
+      if(DoMethod(data->windowGroup, MUIM_Group_InitChange))
+      {
+        DoMethod(data->windowGroup, OM_REMMEMBER, pwGroup);
+        MUI_DisposeObject(pwGroup);
 
-    // remove the passwordRequest again
-    if(DoMethod(data->windowGroup, MUIM_Group_InitChange))
-    {
-      DoMethod(data->windowGroup, OM_REMMEMBER, pwGroup);
-      MUI_DisposeObject(pwGroup);
-
-      DoMethod(data->windowGroup, MUIM_Group_ExitChange);
+        DoMethod(data->windowGroup, MUIM_Group_ExitChange);
+      }
     }
   }
 
   DoMethod(_app(obj), MUIM_Application_InputBuffered);
 
+  RETURN(result);
   return result;
 }
 

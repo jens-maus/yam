@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-07-02 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/SplashWindow.c: restructured the dynamic object creation a bit to handle
+    possible failures more gracefully.
+
 2014-06-26 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM.h, tcp/ssl.h: fixed the broken build for all platforms using a GCC
