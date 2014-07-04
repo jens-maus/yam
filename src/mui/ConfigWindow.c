@@ -414,7 +414,7 @@ DECLARE(SaveConfigAs) // ULONG savePrivateData
     AddPath(cname, frc->drawer, frc->file, sizeof(cname));
 
     if(FileExists(cname) == FALSE ||
-       MUI_Request(_app(obj), obj, MUIF_NONE, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq), tr(MSG_FILE_OVERWRITE), frc->file) != 0)
+       MUI_Request(_app(obj), obj, MUIF_NONE, tr(MSG_MA_ConfirmReq), tr(MSG_YesNoReq2), tr(MSG_FILE_OVERWRITE), frc->file) != 0)
     {
       // first let the currently visible page flush any pending changes to the configuration
       DoMethod(data->PG_PAGES[data->visiblePage], MUIM_ConfigPage_GUIToConfig);

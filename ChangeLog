@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-07-04 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/ConfigWindow.c: let the confirmation requester when overwriting a file
+    default to "No" instead of "Yes".
+
 2014-07-02 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/SplashWindow.c: restructured the dynamic object creation a bit to handle
