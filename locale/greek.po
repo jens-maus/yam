@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-06-26 12:36+0000\n"
+"PO-Revision-Date: 2014-07-07 21:59+0000\n"
 "Last-Translator: Anthony I.\n"
 "Language-Team: Greek (http://www.transifex.com/projects/p/yam/language/el/)\n"
 "MIME-Version: 1.0\n"
@@ -391,12 +391,12 @@ msgstr "Συνδεμένος ως '%s', χρησιμοποιώντας τις ρ
 #. COUNT, FOLDER
 msgctxt "MSG_LOG_Deleting (111//)"
 msgid "Deleted %ld message(s) in folder '%s'"
-msgstr "Διεγράφηκαν %ld μηνύματα στο φάκελο '%s'"
+msgstr "Διαγράφτηκαν %ld μηνύματα στο φάκελο '%s'"
 
 #. SENDER, SUBJECT, FOLDER
 msgctxt "MSG_LOG_DeletingVerbose (112//)"
 msgid "Deleted message from '%s' about '%s' in folder '%s'"
-msgstr "Διεγράφηκε μήνυμα από '%s' με θέμα '%s' στο φάκελο '%s'"
+msgstr "Διαγράφτηκε μήνυμα από '%s' με θέμα '%s' στο φάκελο '%s'"
 
 #. COUNT, FOLDER, FOLDER
 msgctxt "MSG_LOG_Moving (113//)"
@@ -593,11 +593,11 @@ msgstr "Κατάσταση"
 
 msgctxt "MSG_MA_Scripts (172//)"
 msgid "Scripts"
-msgstr "Δέσμες εντολών"
+msgstr "Σενάρια εντολών"
 
 msgctxt "MSG_MA_ExecuteScript (173//)"
 msgid "Execute script..."
-msgstr "Εκτέλεση δέσμης εντολών..."
+msgstr "Εκτέλεση σεναρίου εντολών..."
 
 msgctxt "MSG_MA_CheckSingle (174//)"
 msgid "Check single account"
@@ -936,75 +936,75 @@ msgstr "\\n  Διακοπή γραμμής"
 
 msgctxt "MSG_CO_SenderName (280//)"
 msgid "%n  Original sender: Name"
-msgstr "%n  Αρχικός αποστολέας: Όνομα"
+msgstr "%n Αρχικός αποστολέας: Όνομα"
 
 msgctxt "MSG_CO_SenderFirstname (281//)"
 msgid "%f  Original sender: First name"
-msgstr "%f  Αρχικός αποστολέας: Πρώτο όνομα"
+msgstr "%f Αρχικός αποστολέας: Πρώτο όνομα"
 
 msgctxt "MSG_CO_SenderAddress (282//)"
 msgid "%e  Original sender: Address"
-msgstr "%e  Αρχικός αποστολέας: Διεύθυνση"
+msgstr "%e Αρχικός αποστολέας: Διεύθυνση"
 
 msgctxt "MSG_CO_SenderSubject (283//)"
 msgid "%s  Original message: Subject"
-msgstr "%s  Αρχικό μήνυμα: Θέμα"
+msgstr "%s Αρχικό μήνυμα: Θέμα"
 
 msgctxt "MSG_CO_SenderDate (284//)"
 msgid "%d  Original message: Date"
-msgstr "%d  Αρχικό μήνυμα: Ημερομηνία"
+msgstr "%d Αρχικό μήνυμα: Ημερομηνία"
 
 msgctxt "MSG_CO_SenderTime (285//)"
 msgid "%t  Original message: Time"
-msgstr "%t  Αρχικό μήνυμα: Ώρα"
+msgstr "%t Αρχικό μήνυμα: Ώρα"
 
 msgctxt "MSG_CO_SenderDOW (286//)"
 msgid "%w  Original message: Day of week"
-msgstr "%w  Αρχικό μήνυμα: Ημέρα εβδομάδας"
+msgstr "%w Αρχικό μήνυμα: Ημέρα εβδομάδας"
 
 msgctxt "MSG_CO_SenderMsgID (287//)"
 msgid "%m  Original message: Message ID"
-msgstr "%m  Αρχικό μήνυμα: Ταυτότητα μηνύματος"
+msgstr "%m Αρχικό μήνυμα: Ταυτότητα μηνύματος"
 
 msgctxt "MSG_CO_RecptName (290//)"
 msgid "%r  Recipient: Name"
-msgstr "%r  Παραλήπτης: Όνομα"
+msgstr "%r Παραλήπτης: Όνομα"
 
 msgctxt "MSG_CO_RecptFirstname (291//)"
 msgid "%v  Recipient: First name"
-msgstr "%v  Παραλήπτης: Πρώτο Όνομα"
+msgstr "%v Παραλήπτης: Πρώτο όνομα"
 
 msgctxt "MSG_CO_RecptAddress (292//)"
 msgid "%a  Recipient: Address"
-msgstr "%a  Παραλήπτης: Διεύθυνση"
+msgstr "%a Παραλήπτης: Διεύθυνση"
 
 msgctxt "MSG_CO_ORecptName (293//)"
 msgid "%r  Original recipient: Name"
-msgstr "%r  Αρχικός παραλήπτης: Όνομα"
+msgstr "%r Αρχικός παραλήπτης: Όνομα"
 
 msgctxt "MSG_CO_ORecptFirstname (294//)"
 msgid "%v  Original recipient: First name"
-msgstr "%v  Αρχικός παραλήπτης: Πρώτο όνομα"
+msgstr "%v Αρχικός παραλήπτης: Πρώτο όνομα"
 
 msgctxt "MSG_CO_ORecptAddress (295//)"
 msgid "%a  Original recipient: Address"
-msgstr "%a  Αρχικός παραλήπτης: Διεύθυνση"
+msgstr "%a Αρχικός παραλήπτης: Διεύθυνση"
 
 msgctxt "MSG_CO_CompleteHeader (296//)"
 msgid "%h  Complete header"
-msgstr "%h  Πλήρης κεφαλίδα"
+msgstr "%h Πλήρης κεφαλίδα"
 
 msgctxt "MSG_CO_ArchiveName (297//)"
 msgid "%a  Filename of archive"
-msgstr "%a  Όνομα αρχείου συμπίεσης"
+msgstr "%a Όνομα αρχείου συμπίεσης"
 
 msgctxt "MSG_CO_ArchiveFiles (298//)"
 msgid "%f  Files to be archived"
-msgstr "%f  Αρχεία προς συμπίεση"
+msgstr "%f Αρχεία προς συμπίεση"
 
 msgctxt "MSG_CO_ArchiveFilelist (299//)"
 msgid "%l  List containing filenames"
-msgstr "%l  Κατάλογος περιεχομένων αρχείων"
+msgstr "%l Κατάλογος περιεχομένων αρχείων"
 
 msgctxt "MSG_CO_CrdFirstSteps (300//)"
 msgid "First steps"
@@ -1064,19 +1064,19 @@ msgstr "Ελάχιστη ρύθμιση"
 
 msgctxt "MSG_CO_RealName (344//)"
 msgid "_Real name"
-msgstr "Αληθινό όνομα"
+msgstr "_Αληθινό όνομα"
 
 msgctxt "MSG_CO_EmailAddress (345//)"
 msgid "_E-mail address"
-msgstr "Διεύθυνση E-mail"
+msgstr "Διεύθυνση _E-mail"
 
 msgctxt "MSG_CO_Password (347//)"
 msgid "_Password"
-msgstr "Κωδικός"
+msgstr "_Κωδικός"
 
 msgctxt "MSG_CO_TimeZone (348//)"
 msgid "Time _zone"
-msgstr "Ζώνη ώρας"
+msgstr "_Ζώνη ώρας"
 
 msgctxt "MSG_CO_SendMail (350//)"
 msgid "Send mail (SMTP)"
@@ -1084,7 +1084,7 @@ msgstr "Αποστολή αλληλογραφίας (SMTP)"
 
 msgctxt "MSG_CO_Allow8bit (353//)"
 msgid "Server allows _8bit characters"
-msgstr "Ο διακομιστής επιτρέπει 8bit χαρακτήρες"
+msgstr "Ο διακομιστής επιτρέπει _8bit χαρακτήρες"
 
 msgctxt "MSG_CO_ReceiveMail (354//)"
 msgid "Receive mail (POP3)"
@@ -1096,11 +1096,11 @@ msgstr "Όνομα χρήστη"
 
 msgctxt "MSG_CO_POPActive (356//)"
 msgid "_Active"
-msgstr "Ενεργός"
+msgstr "_Ενεργός"
 
 msgctxt "MSG_CO_DeleteServerMail (357//)"
 msgid "Delete mail _on server"
-msgstr "Διαγραφή αλληλογραφίας στον διακομιστή"
+msgstr "Διαγραφή αλληλογραφίας _στον διακομιστή"
 
 msgctxt "MSG_CO_PSNever (359//)"
 msgid "never"
@@ -1124,7 +1124,7 @@ msgstr "πάντα απόκρυψη"
 
 msgctxt "MSG_CO_TWAuto (364//)"
 msgid "automatic"
-msgstr "αυτόματο"
+msgstr "αυτόματα"
 
 msgctxt "MSG_CO_TWAlways (365//)"
 msgid "show always"
@@ -1132,11 +1132,11 @@ msgstr "πάντα εμφάνιση"
 
 msgctxt "MSG_CO_TransferWin (368//)"
 msgid "_Transfer window"
-msgstr "Παράθυρο μεταφοράς"
+msgstr "Παράθυρο _μεταφοράς"
 
 msgctxt "MSG_CO_PreSelect (369//)"
 msgid "_Pre-selection"
-msgstr "Προεπιλογή"
+msgstr "_Προεπιλογή"
 
 msgctxt "MSG_CO_CheckMail (374//)"
 msgid "Check for new mail every"
@@ -1148,63 +1148,63 @@ msgstr "λεπτά"
 
 msgctxt "MSG_CO_NotiReq (378//)"
 msgid "_Requester"
-msgstr "Παράθυρο αιτήματος"
+msgstr "Παρά_θυρο αιτήματος"
 
 msgctxt "MSG_CO_NotiSound (379//)"
 msgid "S_ound"
-msgstr "Ήχος"
+msgstr "Ή_χος"
 
 msgctxt "MSG_CO_NotiCommand (380//)"
 msgid "Co_mmand"
-msgstr "Εντολή"
+msgstr "Ε_ντολή"
 
 msgctxt "MSG_CO_Name (381//)"
 msgid "N_ame"
-msgstr "Όνομα"
+msgstr "Ό_νομα"
 
 msgctxt "MSG_CO_Remote (388//)"
 msgid "Remote _filter"
-msgstr "Απομακρυσμένο φίλτρο"
+msgstr "Απομακρυσμένο _φίλτρο"
 
 msgctxt "MSG_CO_ApplyToNew (389//)"
 msgid "A_pply to new mail"
-msgstr "Εφαρμογή σε νέα αλληλογραφία"
+msgstr "Εφα_ρμογή σε νέα αλληλογραφία"
 
 msgctxt "MSG_CO_ApplyToSent (390//)"
 msgid "Apply to sent _mail"
-msgstr "Εφαρμογή σε απεσταλμένη αλληλογραφία"
+msgstr "Εφαρμογή σε απεστα_λμένη αλληλογραφία"
 
 msgctxt "MSG_CO_ApplyOnReq (391//)"
 msgid "Apply on _request"
-msgstr "Εφαρμογή κατόπιν αιτήσεως"
+msgstr "Εφαρμογή κατόπιν αι_τήσεως"
 
 msgctxt "MSG_CO_ActionForward (393//)"
 msgid "_Forward"
-msgstr "Προώθηση"
+msgstr "Προώ_θηση"
 
 msgctxt "MSG_CO_ActionReply (394//)"
 msgid "Repl_y"
-msgstr "Απάντηση"
+msgstr "Απάντησ_η"
 
 msgctxt "MSG_CO_ActionExecute (395//)"
 msgid "E_xecute"
-msgstr "Εκτέλεση"
+msgstr "Ε_κτέλεση"
 
 msgctxt "MSG_CO_ActionPlay (396//)"
 msgid "_Play sound"
-msgstr "Αναπαραγωγή ήχου"
+msgstr "Αναπαρα_γωγή ήχου"
 
 msgctxt "MSG_CO_ActionMove (397//)"
 msgid "_Move"
-msgstr "Μετακίνηση"
+msgstr "_Μετακίνηση"
 
 msgctxt "MSG_CO_ActionDelete (398//)"
 msgid "Dele_te"
-msgstr "Διαγραφή"
+msgstr "Διαγρα_φή"
 
 msgctxt "MSG_CO_ActionSkip (399//)"
 msgid "Don't do_wnload"
-msgstr "Μη γίνει λήψη"
+msgstr "Μη γίνει λή_ψη"
 
 msgctxt "MSG_CO_HeadNone (400//)"
 msgid "none"
@@ -1260,7 +1260,7 @@ msgstr "Άλλες επιλογές"
 
 msgctxt "MSG_CO_WrapHeader (413//)"
 msgid "_Wrap headers"
-msgstr "Αναδίπλωση κεφαλίδων"
+msgstr "Ανα_δίπλωση κεφαλίδων"
 
 msgctxt "MSG_CO_OldQuotes (414//)"
 msgid "Old quotes"
@@ -1268,15 +1268,15 @@ msgstr "Παλιές παραθέσεις"
 
 msgctxt "MSG_CO_Header (416//)"
 msgid "_Headers"
-msgstr "Κεφαλίδες"
+msgstr "_Κεφαλίδες"
 
 msgctxt "MSG_CO_SenderInfo (417//)"
 msgid "Sender _info"
-msgstr "Πληροφορίες αποστολέα"
+msgstr "Πληροφορίες _αποστολέα"
 
 msgctxt "MSG_CO_SignatureSep (418//)"
 msgid "Si_g. separator"
-msgstr "Διαχωριστικό υπογραφής"
+msgstr "Δια_χωριστικό υπογραφής"
 
 msgctxt "MSG_CO_ColoredText (419//)"
 msgid "Colored text"
@@ -1284,39 +1284,39 @@ msgstr "Χρωματισμένο κείμενο"
 
 msgctxt "MSG_CO_MultiReadWin (420//)"
 msgid "_Multiple windows"
-msgstr "Πολλαπλά παράθυρα"
+msgstr "_Πολλαπλά παράθυρα"
 
 msgctxt "MSG_CO_DisplayAll (422//)"
 msgid "Display _all texts"
-msgstr "Εμφάνιση όλων των κειμένων"
+msgstr "Εμφάνιση ό_λων των κειμένων"
 
 msgctxt "MSG_CO_FixedFontEdit (423//)"
 msgid "Use _fixed font"
-msgstr "Χρήση σταθερής γραμματοσειράς"
+msgstr "Χρήση στα_θερής γραμματοσειράς"
 
 msgctxt "MSG_CO_MimeType (425//)"
 msgid "MIME _type"
-msgstr "Τύπος MIME"
+msgstr "Τύπος _MIME"
 
 msgctxt "MSG_CO_MimeCmd (426//)"
 msgid "_Viewer"
-msgstr "Αρχείο προβολής"
+msgstr "Αρχείο π_ροβολής"
 
 msgctxt "MSG_CO_Extension (427//)"
 msgid "File e_xtensions"
-msgstr "Προεκτάσεις αρχείων"
+msgstr "Προε_κτάσεις αρχείων"
 
 msgctxt "MSG_CO_DefaultViewer (428//)"
 msgid "De_fault viewer"
-msgstr "Προεπιλεγμένο αρχείο προβολής"
+msgstr "Προεπιλε_γμένο αρχείο προβολής"
 
 msgctxt "MSG_CO_Organization (432//)"
 msgid "_Organization"
-msgstr "Οργάνωση"
+msgstr "_Οργάνωση"
 
 msgctxt "MSG_CO_ExtraHeaders (433//)"
 msgid "E_xtra headers"
-msgstr "Πρόσθετες κεφαλίδες"
+msgstr "Πρόσθετες κε_φαλίδες"
 
 msgctxt "MSG_CO_MessageBody (434//)"
 msgid "Message body"
@@ -1324,11 +1324,11 @@ msgstr "Σώμα μηνύματος"
 
 msgctxt "MSG_CO_Welcome (435//)"
 msgid "Welcome _phrase"
-msgstr "Φράση υποδοχής"
+msgstr "Φράση _υποδοχής"
 
 msgctxt "MSG_CO_Greetings (436//)"
 msgid "Closing p_hrase"
-msgstr "Φράση κλεισίματος"
+msgstr "Φράση κ_λεισίματος"
 
 msgctxt "MSG_CO_Editor (437//)"
 msgid "Editor"
@@ -1336,7 +1336,7 @@ msgstr "Κειμενογράφος"
 
 msgctxt "MSG_CO_WordWrap (438//)"
 msgid "_Word-wrap"
-msgstr "Αναδίπλωση λέξης"
+msgstr "Ανα_δίπλωση λέξης"
 
 msgctxt "MSG_CO_EWOff (439//)"
 msgid "off"
@@ -1352,7 +1352,7 @@ msgstr "πριν την αποστολή"
 
 msgctxt "MSG_CO_ExternalEditor (442//)"
 msgid "_External editor"
-msgstr "Εξωτερικός κειμενογράφος"
+msgstr "Ε_ξωτερικός κειμενογράφος"
 
 msgctxt "MSG_CO_PhraseOpen (444//)"
 msgid "Open"
@@ -1372,11 +1372,11 @@ msgstr "Προώθηση"
 
 msgctxt "MSG_CO_FwdInit (448//)"
 msgid "_Initial phrase"
-msgstr "Αρχική φράση"
+msgstr "Αρ_χική φράση"
 
 msgctxt "MSG_CO_FwdFinish (449//)"
 msgid "_Terminating phrase"
-msgstr "Τερματισμός φράσης"
+msgstr "_Τερματισμός φράσης"
 
 msgctxt "MSG_CO_Replying (450//)"
 msgid "Replying"
@@ -1384,31 +1384,31 @@ msgstr "Απάντηση"
 
 msgctxt "MSG_CO_RepInit (451//)"
 msgid "Default _reply phrases"
-msgstr "Προεπιλεγμένες φράσεις απάντησης"
+msgstr "Προεπιλεγμένες φράσεις α_πάντησης"
 
 msgctxt "MSG_CO_AltRepInit (452//)"
 msgid "_Alternative reply phrases"
-msgstr "Εναλλακτικές φράσεις απάντησης"
+msgstr "Ε_ναλλακτικές φράσεις απάντησης"
 
 msgctxt "MSG_CO_AltRepPat (453//)"
 msgid "Use with these _domains"
-msgstr "Χρήση με αυτούς τους τομείς"
+msgstr "Χρήση με αυτούς τους _τομείς"
 
 msgctxt "MSG_CO_MLRepInit (454//)"
 msgid "_Mailing list reply phrases"
-msgstr "Λίστα αλληλογραφίας φράσεων απάντησης"
+msgstr "_Λίστα αλληλογραφίας φράσεων απάντησης"
 
 msgctxt "MSG_CO_QuoteEmpty (456//)"
 msgid "Quote _empty lines"
-msgstr "Παράθεση κενών γραμμών"
+msgstr "Παράθεση κ_ενών γραμμών"
 
 msgctxt "MSG_CO_VerifyAddress (457//)"
 msgid "_Verify recipient address"
-msgstr "Επαλήθευση διεύθυνσης παραλήπτη"
+msgstr "Επαλή_θευση διεύθυνσης παραλήπτη"
 
 msgctxt "MSG_CO_StripSignature (458//)"
 msgid "Stri_p signature"
-msgstr "Αφαίρεση υπογραφής"
+msgstr "Α_φαίρεση υπογραφής"
 
 msgctxt "MSG_CO_DefSig (459//)"
 msgid "Default signature"
@@ -1428,15 +1428,15 @@ msgstr "Υπογραφή"
 
 msgctxt "MSG_CO_EditSig (464//)"
 msgid "_Edit in external editor"
-msgstr "Επεξεργασία με εξωτερικό κειμενογράφο"
+msgstr "Επε_ξεργασία με εξωτερικό κειμενογράφο"
 
 msgctxt "MSG_CO_InsertTag (465//)"
 msgid "Insert _random tagline"
-msgstr "Εισαγωγή τυχαίας γραμμής ετικέτας"
+msgstr "Εισαγωγή τυ_χαίας γραμμής ετικέτας"
 
 msgctxt "MSG_CO_InsertENV (466//)"
 msgid "Insert E_NV:Signature"
-msgstr "Εισαγωγή από ENV:Signature"
+msgstr "Εισαγωγή από E_NV:Signature"
 
 msgctxt "MSG_CO_Taglines (467//)"
 msgid "Taglines"
@@ -1444,19 +1444,19 @@ msgstr "Γραμμές ετικέτας"
 
 msgctxt "MSG_CO_TaglineFile (468//)"
 msgid "Tagline _file"
-msgstr "Αρχείο γραμμών ετικέτας"
+msgstr "Αρ_χείο γραμμών ετικέτας"
 
 msgctxt "MSG_CO_TaglineSep (469//)"
 msgid "T_agline separator"
-msgstr "Διαχωριστικό γραμμών ετικέτας"
+msgstr "Διαχω_ριστικό γραμμών ετικέτας"
 
 msgctxt "MSG_CO_FixedFontList (470//)"
 msgid "Use _fixed font"
-msgstr "Χρήση σταθερής γραμματοσειράς"
+msgstr "Χρήση _σταθερής γραμματοσειράς"
 
 msgctxt "MSG_CO_SwatchBeat (471//)"
 msgid "Show time in Swatch _Beats"
-msgstr "Ένδειξη ώρας με μέθοδο Swatch Beats"
+msgstr "Ένδειξη ώρας με μέθοδο Swatch _Beats"
 
 msgctxt "MSG_CO_LogNone (472//)"
 msgid "none"
@@ -1472,7 +1472,7 @@ msgstr "λεπτομερής"
 
 msgctxt "MSG_CO_PGPExe (475//)"
 msgid "P_GP's directory"
-msgstr "Κατάλογος PGP"
+msgstr "Κατάλογος P_GP"
 
 msgctxt "MSG_CO_Logfiles (481//)"
 msgid "Log files"
@@ -1480,19 +1480,19 @@ msgstr "Αρχεία καταγραφής"
 
 msgctxt "MSG_CO_LogPath (482//)"
 msgid "_Path"
-msgstr "Διαδρομή"
+msgstr "_Διαδρομή"
 
 msgctxt "MSG_CO_LogSplit (483//)"
 msgid "Split _log file"
-msgstr "Διαχωρισμός αρχείου καταγραφής"
+msgstr "Διαχω_ρισμός αρχείου καταγραφής"
 
 msgctxt "MSG_CO_LogMode (484//)"
 msgid "_Mode"
-msgstr "Κατάσταση"
+msgstr "_Κατάσταση"
 
 msgctxt "MSG_CO_LogAllEvents (485//)"
 msgid "Log _all events"
-msgstr "Καταγραφή όλων των συμβάντων"
+msgstr "Καταγραφή ό_λων των συμβάντων"
 
 msgctxt "MSG_CO_OnStartup (486//)"
 msgid "On program startup"
@@ -1504,7 +1504,7 @@ msgstr "Φόρτωση όλων των φακέλων"
 
 msgctxt "MSG_CO_MarkNew (488//)"
 msgid "Mark new mail as unread"
-msgstr "Σημάδεμα νέας αλληλογραφίας ως μη αναγνωσμένη"
+msgstr "Μαρκάρισμα νέας αλληλογραφίας ως μη αναγνωσμένη"
 
 msgctxt "MSG_CO_SendStart (489//)"
 msgid "Send mail in outgoing queue"
@@ -1536,11 +1536,11 @@ msgstr "ερώτηση πρώτα"
 
 msgctxt "MSG_CO_ATABinfoask (497//)"
 msgid "if info available; ask"
-msgstr "εάν υπάρχουν πληροφορίες, ερώτηση"
+msgstr "αν υπάρχουν πληροφορίες, ερώτηση"
 
 msgctxt "MSG_CO_ATABinfo (498//)"
 msgid "if info available"
-msgstr "εάν υπάρχουν πληροφορίες"
+msgstr "αν υπάρχουν πληροφορίες"
 
 msgctxt "MSG_CO_ATABalways (499//)"
 msgid "always"
@@ -1552,11 +1552,11 @@ msgstr "Ανταλλαγή προσωπικών δεδομένων"
 
 msgctxt "MSG_CO_Gallery (501//)"
 msgid "Save _photos in"
-msgstr "Αποθήκευση φωτογραφιών σε"
+msgstr "Αποθήκευση _φωτογραφιών σε"
 
 msgctxt "MSG_CO_AddToAddrbook (503//)"
 msgid "Sa_ve sender's address"
-msgstr "Αποθήκευση διεύθυνσης αποστολέα"
+msgstr "Απο_θήκευση διεύθυνσης αποστολέα"
 
 msgctxt "MSG_CO_ProxyServer (504//)"
 msgid "_HTTP proxy server"
