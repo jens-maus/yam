@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-07-07 21:59+0000\n"
+"PO-Revision-Date: 2014-07-07 22:07+0000\n"
 "Last-Translator: Anthony I.\n"
 "Language-Team: Greek (http://www.transifex.com/projects/p/yam/language/el/)\n"
 "MIME-Version: 1.0\n"
@@ -1560,11 +1560,11 @@ msgstr "Απο_θήκευση διεύθυνσης αποστολέα"
 
 msgctxt "MSG_CO_ProxyServer (504//)"
 msgid "_HTTP proxy server"
-msgstr "Διακομιστής μεσολάβησης HTTP"
+msgstr "Διακομιστής μεσολάβησης _HTTP"
 
 msgctxt "MSG_CO_NewGroup (505//)"
 msgid "_Group for new entries"
-msgstr "Ομάδα για νέες καταχωρήσεις"
+msgstr "_Ομάδα για νέες καταχωρήσεις"
 
 msgctxt "MSG_CO_Paths (507//)"
 msgid "Paths"
@@ -1572,15 +1572,15 @@ msgstr "Διαδρομές"
 
 msgctxt "MSG_CO_Detach (508//)"
 msgid "D_ecode files to"
-msgstr "Αποκωδικοποίηση αρχείων προς"
+msgstr "Απο_κωδικοποίηση αρχείων προς"
 
 msgctxt "MSG_CO_Attach (509//)"
 msgid "_Attach files from"
-msgstr "Επισύναψη αρχείων από"
+msgstr "_Επισύναψη αρχείων από"
 
 msgctxt "MSG_CO_TempDir (510//)"
 msgid "For _temporary files"
-msgstr "Για προσωρινά αρχεία"
+msgstr "Για π_ροσωρινά αρχεία"
 
 msgctxt "MSG_CO_AppIcon (511//)"
 msgid "Mailbox status"
@@ -1588,11 +1588,11 @@ msgstr "Κατάσταση γραμματοκιβωτίου"
 
 msgctxt "MSG_CO_PositionX (512//)"
 msgid "Position _X"
-msgstr "Θέση X"
+msgstr "Θέση _X"
 
 msgctxt "MSG_CO_CloseGadget (513//)"
 msgid "Close _gadget iconifies program"
-msgstr "Κλείσιμο παραθύρου για ελαχιστοποίηση"
+msgstr "Κλείσιμο _αντικειμένου για ελαχιστοποίηση"
 
 msgctxt "MSG_CO_SaveDelete (514//)"
 msgid "Save/delete messages"
@@ -1600,7 +1600,7 @@ msgstr "Αποθήκευση/διαγραφή μηνυμάτων"
 
 msgctxt "MSG_CO_ConfirmDelPart1 (515//)"
 msgid "Confirm _deletion of"
-msgstr "Επιβεβαίωση διαγραφής για"
+msgstr "Επι_βεβαίωση διαγραφής για"
 
 msgctxt "MSG_CO_ConfirmDelPart2 (516//)"
 msgid "or more messages"
@@ -1608,7 +1608,7 @@ msgstr "ή περισσότερα μηνύματα"
 
 msgctxt "MSG_CO_Remove (517//)"
 msgid "_Remove messages immediately"
-msgstr "Άμεση αφαίρεση μηνυμάτων"
+msgstr "Ά_μεση αφαίρεση μηνυμάτων"
 
 msgctxt "MSG_CO_XPK (525//)"
 msgid "XPK/LhA settings"
@@ -1624,12 +1624,12 @@ msgstr "Συμπίεση/Προστασία"
 
 msgctxt "MSG_CO_Archiver (528//)"
 msgid "Archi_ver"
-msgstr "Αρχειοθέτης"
+msgstr "Αρχειο_θέτης"
 
 #. COUNT
 msgctxt "MSG_CO_ScriptMenu (529//)"
 msgid "'Scripts' menu entry %ld"
-msgstr "Καταχώρηση μενού 'Δέσμης εντολών' %ld"
+msgstr "Καταχώρηση μενού 'Σενάριο εντολών' %ld"
 
 msgctxt "MSG_CO_ScriptStartup (530//)"
 msgid "Program startup"
@@ -1661,7 +1661,7 @@ msgstr "Μετά την αποστολή αλληλογραφίας"
 
 msgctxt "MSG_CO_ScriptReadMsg (537//)"
 msgid "When reading a message"
-msgstr "Ενώ διαβάζοντας ένα μήνυμα"
+msgstr "Κατά την ανάγνωση μηνύματος"
 
 msgctxt "MSG_CO_ScriptPreWriteMsg (538//)"
 msgid "Before writing a message"
@@ -1673,19 +1673,19 @@ msgstr "Μετά την σύνταξη μηνύματος"
 
 msgctxt "MSG_CO_ScriptClickURL (540//)"
 msgid "When double-clicking an URL"
-msgstr "Με διπλό-κλικ σε ένα URL"
+msgstr "Με διπλό-κλικ σε μια σελίδα"
 
 msgctxt "MSG_CO_Script (541//)"
 msgid "Sc_ript"
-msgstr "Δέσμη εντολών"
+msgstr "_Σενάριο εντολών"
 
 msgctxt "MSG_CO_OpenConsole (542//)"
 msgid "_Open console window"
-msgstr "Άνοιγμα παραθύρου κονσόλας"
+msgstr "Άνοιγμα παραθύρου _κονσόλας"
 
 msgctxt "MSG_CO_WaitTerm (543//)"
 msgid "_Wait for termination"
-msgstr "Αναμονή για τερματισμό"
+msgstr "Ανα_μονή για τερματισμό"
 
 msgctxt "MSG_CO_Open (544//)"
 msgid "Open..."
@@ -1815,7 +1815,7 @@ msgstr "Εισερχόμενα μηνύματα μεγαλύτερα από αυ
 
 msgctxt "MSG_HELP_CO_ST_INTERVAL (575//)"
 msgid "How often do you want YAM to automatically check for new mail?"
-msgstr "Πόσο συχνά θέλετε το YAM να ελέγχει αυτόματα για νέα αλληλογραφία;\nΧρησιμοποιήστε '0' εάν δεν θέλετε να γίνετε αυτό."
+msgstr "Πόσο συχνά θέλετε το YAM να ελέγχει αυτόματα για νέα αλληλογραφία;"
 
 msgctxt "MSG_HELP_CO_CH_DLLARGE (576//)"
 msgid ""
