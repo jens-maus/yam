@@ -3253,10 +3253,10 @@ void ValidateConfig(struct Config *co, BOOL update, BOOL saveChanges)
 
   // now we check if the set editor codeset is a valid one also supported
   // by codesets.library and if not we warn the user
-  if(CodesetsFind(co->DefaultEditorCodeset,
-                  CSA_CodesetList,       G->codesetsList,
-                  CSA_FallbackToDefault, FALSE,
-                  TAG_DONE) == NULL)
+  if((G->editorCodeset = CodesetsFind(co->DefaultEditorCodeset,
+                                      CSA_CodesetList,       G->codesetsList,
+                                      CSA_FallbackToDefault, FALSE,
+                                      TAG_DONE)) == NULL)
   {
     int res = MUI_Request(G->App, refWindow, MUIF_NONE,
                           tr(MSG_CO_CHARSETWARN_TITLE),

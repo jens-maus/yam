@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-07-08 Thore Böckelmann <tboeckel@gmx.de>
+
+  * Config.c: added a missing assignment for the editor codeset. This closes
+    #571.
+
 2014-07-04 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/ConfigWindow.c: let the confirmation requester when overwriting a file
