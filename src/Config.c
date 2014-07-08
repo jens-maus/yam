@@ -2238,6 +2238,10 @@ int LoadConfig(struct Config *co, const char *fname)
             strlcpy(msn->notifyCommand, globalPOP3NotifyCommand, sizeof(msn->notifyCommand));
           }
         }
+
+        // try to load external spam filters
+        if(co->SpamFilterEnabled == TRUE)
+          ImportExternalSpamFilters(co);
       }
       else
         E(DBF_CONFIG, "error during config load operation");
@@ -3356,8 +3360,6 @@ void ValidateConfig(struct Config *co, BOOL update, BOOL saveChanges)
       co->SpamProbabilityThreshold = 99;
       saveAtEnd = TRUE;
     }
-
-    ImportExternalSpamFilters(co);
   }
 
   if(co->StatusChangeDelay < 1000)

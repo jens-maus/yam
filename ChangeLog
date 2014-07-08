@@ -11,6 +11,9 @@ $URL$
     #571.
   * YAM_UT.c: make sure that the strippedCharsetName() function always returns a
     valid pointer.
+  * Config.c: the external spam filters are now imported as soon as the
+    configuration file has been parsed. This avoids the problem that YAM reports
+    a changed configuration in case the current configuration is reloaded again.
 
 2014-07-04 Thore Böckelmann <tboeckel@gmx.de>
 
