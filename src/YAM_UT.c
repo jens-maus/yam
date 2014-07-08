@@ -6089,24 +6089,34 @@ ULONG CRC32(const void *buffer, unsigned int count, ULONG crc)
 ///
 /// strippedCharsetName()
 // return the charset code stripped and without any white spaces
-char *strippedCharsetName(const struct codeset* codeset)
+char *strippedCharsetName(const struct codeset *codeset)
 {
-  char *strStart = TrimStart(codeset->name);
-  char *strEnd = strchr(strStart, ' ');
+  char *name = (char *)"";
 
-  if(strEnd > strStart || strStart > codeset->name)
+  ENTER();
+
+  if(codeset != NULL)
   {
-    static char strippedName[SIZE_CTYPE+1];
+    char *strStart = TrimStart(codeset->name);
+    char *strEnd = strchr(strStart, ' ');
 
-    if(strEnd > strStart && (size_t)(strEnd-strStart) < sizeof(strippedName))
-      strlcpy(strippedName, strStart, strEnd-strStart+1);
+    if(strEnd > strStart || strStart > codeset->name)
+    {
+      static char strippedName[SIZE_CTYPE+1];
+
+      if(strEnd > strStart && (size_t)(strEnd-strStart) < sizeof(strippedName))
+        strlcpy(strippedName, strStart, strEnd-strStart+1);
+      else
+        strlcpy(strippedName, strStart, sizeof(strippedName));
+
+      name = strippedName;
+    }
     else
-      strlcpy(strippedName, strStart, sizeof(strippedName));
-
-    return strippedName;
+      name = codeset->name;
   }
-  else
-    return codeset->name;
+
+  RETURN(name);
+  return name;
 }
 
 ///
