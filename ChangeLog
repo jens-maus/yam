@@ -9,6 +9,8 @@ $URL$
 
   * Config.c: added a missing assignment for the editor codeset. This closes
     #571.
+  * YAM_UT.c: make sure that the strippedCharsetName() function always returns a
+    valid pointer.
 
 2014-07-04 Thore Böckelmann <tboeckel@gmx.de>
 

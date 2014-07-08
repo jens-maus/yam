@@ -203,7 +203,7 @@ DECLARE(EditExternally)
           BOOL converted = FALSE;
 
           // convert the text from the editor back to our local charset
-          if(stricmp(G->editorCodeset->name, G->localCodeset->name) != 0)
+          if(stricmp(strippedCharsetName(G->editorCodeset), strippedCharsetName(G->localCodeset)) != 0)
           {
             // convert from the editorCodeset to the localCodeset
             dstText = CodesetsConvertStr(CSA_SourceCodeset,   G->editorCodeset,
