@@ -4377,7 +4377,7 @@ MakeHook(DisposeModuleHook,DisposeModuleFunc);
 void LoadLayout(void)
 {
   const char *ls;
-  char *endptr;
+  size_t i;
 
   ENTER();
 
@@ -4431,69 +4431,24 @@ void LoadLayout(void)
   if(isdigit(ls[0]))
   {
     LONG v;
+    char *endptr;
 
     D(DBF_UTIL, "parsing old style layout string");
 
     // lets get the numbers for each weight factor out of the contents
     // of the fake string gadget
-    v = strtol(ls, &endptr, 10);
-    if(endptr != NULL && endptr != ls)
-      G->Weights[0] = v;
-
-    ls = endptr;
-    v = strtol(ls, &endptr, 10);
-    if(endptr != NULL && endptr != ls)
-      G->Weights[1] = v;
-
-    ls = endptr;
-    v = strtol(ls, &endptr, 10);
-    if(endptr != NULL && endptr != ls)
-      G->Weights[2] = v;
-
-    ls = endptr;
-    v = strtol(ls, &endptr, 10);
-    if(endptr != NULL && endptr != ls)
-      G->Weights[3] = v;
-
-    ls = endptr;
-    v = strtol(ls, &endptr, 10);
-    if(endptr != NULL && endptr != ls)
-      G->Weights[4] = v;
-
-    ls = endptr;
-    v = strtol(ls, &endptr, 10);
-    if(endptr != NULL && endptr != ls)
-      G->Weights[5] = v;
-
-    ls = endptr;
-    v = strtol(ls, &endptr, 10);
-    if(endptr != NULL && endptr != ls)
-      G->Weights[6] = v;
-
-    ls = endptr;
-    v = strtol(ls, &endptr, 10);
-    if(endptr != NULL && endptr != ls)
-      G->Weights[7] = v;
-
-    ls = endptr;
-    v = strtol(ls, &endptr, 10);
-    if(endptr != NULL && endptr != ls)
-      G->Weights[8] = v;
-
-    ls = endptr;
-    v = strtol(ls, &endptr, 10);
-    if(endptr != NULL && endptr != ls)
-      G->Weights[9] = v;
-
-    ls = endptr;
-    v = strtol(ls, &endptr, 10);
-    if(endptr != NULL && endptr != ls)
-      G->Weights[10] = v;
-
-    ls = endptr;
-    v = strtol(ls, &endptr, 10);
-    if(endptr != NULL && endptr != ls)
-      G->Weights[11] = v;
+    for(i = 0; i < ARRAY_SIZE(G->Weights); i++)
+    {
+      v = strtol(ls, &endptr, 10);
+      if(endptr != NULL && endptr != ls)
+      {
+        // never use a weight of 0 as this makes the objects unresizeable
+        if(v != 0)
+          G->Weights[i] = v;
+      }
+      else
+        break;
+    }
 
     if(endptr != NULL)
       strlcpy(G->preselectionListLayout, Trim(endptr), sizeof(G->preselectionListLayout));
@@ -4559,34 +4514,34 @@ void LoadLayout(void)
       {
         D(DBF_UTIL, "ReadArgs() of '%s' succeeded", ls);
 
-        if(args.vars.mainFolderTreeHoriz != NULL)
+        if(args.vars.mainFolderTreeHoriz != NULL && args.vars.mainFolderTreeHoriz[0] != 0)
           G->Weights[0] = args.vars.mainFolderTreeHoriz[0];
 
-        if(args.vars.mainMailListHoriz != NULL)
+        if(args.vars.mainMailListHoriz != NULL && args.vars.mainMailListHoriz[0] != 0)
           G->Weights[1] = args.vars.mainMailListHoriz[0];
 
-        if(args.vars.mainMailListVert != NULL)
+        if(args.vars.mainMailListVert != NULL && args.vars.mainMailListVert[0] != 0)
           G->Weights[6] = args.vars.mainMailListVert[0];
 
-        if(args.vars.glossaryListHoriz != NULL)
+        if(args.vars.glossaryListHoriz != NULL && args.vars.glossaryListHoriz[0] != 0)
           G->Weights[4] = args.vars.glossaryListHoriz[0];
 
-        if(args.vars.glossaryTextHoriz != NULL)
+        if(args.vars.glossaryTextHoriz != NULL && args.vars.glossaryTextHoriz[0] != 0)
           G->Weights[5] = args.vars.glossaryTextHoriz[0];
 
-        if(args.vars.readPaneVert != NULL)
+        if(args.vars.readPaneVert != NULL && args.vars.readPaneVert[0] != 0)
           G->Weights[7] = args.vars.readPaneVert[0];
 
-        if(args.vars.readPaneHeaderVert != NULL)
+        if(args.vars.readPaneHeaderVert != NULL && args.vars.readPaneHeaderVert[0] != 0)
           G->Weights[8] = args.vars.readPaneHeaderVert[0];
 
-        if(args.vars.readPaneTextVert != NULL)
+        if(args.vars.readPaneTextVert != NULL && args.vars.readPaneTextVert[0] != 0)
           G->Weights[9] = args.vars.readPaneTextVert[0];
 
-        if(args.vars.readWinHeaderVert != NULL)
+        if(args.vars.readWinHeaderVert != NULL && args.vars.readWinHeaderVert[0] != 0)
           G->Weights[10] = args.vars.readWinHeaderVert[0];
 
-        if(args.vars.readWinTextVert != NULL)
+        if(args.vars.readWinTextVert != NULL && args.vars.readWinTextVert[0] != 0)
           G->Weights[11] = args.vars.readWinTextVert[0];
 
         if(args.vars.preselectionList != NULL)
@@ -4606,6 +4561,9 @@ void LoadLayout(void)
       FreeDosObject(DOS_RDARGS, rdsource);
     }
   }
+
+  for(i = 0; i < ARRAY_SIZE(G->Weights); i++)
+    D(DBF_UTIL, "loaded weight %2ld = %ld", i, G->Weights[i]);
 
   // lets set the weight factors to the corresponding GUI elements now
   // if they exist

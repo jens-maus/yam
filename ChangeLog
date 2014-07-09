@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-07-09 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_UT.c: the restored layout weight values are now checked for consistency,
+    because setting a horizontal weight of zero for certain groups will make
+    these as small as possible and hence unresizeable. Even worse, this effect
+    could be reverted in a normal fashion but only be deleting the file
+    ENV(ARC):MUI/YAM.cfg and having to relayout all windows again from scratch.
+    See MUI ticket #43 for details.
+
 2014-07-08 Thore Böckelmann <tboeckel@gmx.de>
 
   * Config.c: added a missing assignment for the editor codeset. This closes
