@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-07-11 15:07+0000\n"
+"PO-Revision-Date: 2014-07-11 20:58+0000\n"
 "Last-Translator: Anthony I.\n"
 "Language-Team: Greek (http://www.transifex.com/projects/p/yam/language/el/)\n"
 "MIME-Version: 1.0\n"
@@ -4317,7 +4317,7 @@ msgctxt "MSG_HELP_FI_RA_ADRMODE (1205//)"
 msgid ""
 "Choose whether you want to search in the\n"
 "address or real name part of the field."
-msgstr "Επιλέξτε εάν θέλετε να κάνετε αναζήτηση στην διεύθυνση\nή στο αληθινό όνομα μέρους του πεδίου."
+msgstr "Επιλέξτε αν θέλετε να κάνετε αναζήτηση στην διεύθυνση\nή στο αληθινό όνομα μέρους του πεδίου."
 
 msgctxt "MSG_HELP_FI_CY_STATUS (1206//)"
 msgid ""
@@ -4375,43 +4375,43 @@ msgstr "Όλα τα αρχεία μηνυμάτων, φακέλων και ρυ�
 
 msgctxt "MSG_US_RemoveReqGads (1216//)"
 msgid "*_Ok|_Keep files|_Cancel"
-msgstr "*_Εντάξει|_Διατήρηση αρχείων|_Ακύρωση"
+msgstr "*_ΟΚ|_Διατήρηση αρχείων|_Ακύρωση"
 
 msgctxt "MSG_US_UserName (1218//)"
 msgid "_User name"
-msgstr "Όνομα χρήστη"
+msgstr "Όνομα _χρήστη"
 
 msgctxt "MSG_US_MailDirectory (1219//)"
 msgid "_Mail directory"
-msgstr "Κατάλογος αλληλογραφίας"
+msgstr "_Κατάλογος αλληλογραφίας"
 
 msgctxt "MSG_US_GlobalAddrBook (1220//)"
 msgid "Use global address _book"
-msgstr "Χρήση καθολικού βιβλίου διευθύνσεων"
+msgstr "Χρήση καθολικού βιβλίου _διευθύνσεων"
 
 msgctxt "MSG_US_GlobalDict (1221//)"
 msgid "Use global _glossary"
-msgstr "Χρήση καθολικού γλωσσάριου"
+msgstr "Χρήση καθολικού _γλωσσάριου"
 
 msgctxt "MSG_US_CopyConfig (1222//)"
 msgid "C_opy configuration from current user"
-msgstr "Αντιγραφή ρυθμίσεων του τρέχοντος χρήστη"
+msgstr "Αντιγρα_φή ρυθμίσεων του τρέχοντος χρήστη"
 
 msgctxt "MSG_US_Password (1223//)"
 msgid "_Password"
-msgstr "Κωδικός"
+msgstr "Κω_δικός"
 
 msgctxt "MSG_US_SuperVisor (1224//)"
 msgid "_Supervisor privileges"
-msgstr "Προνόμια χρήστη"
+msgstr "Π_ρονόμια χρήστη"
 
 msgctxt "MSG_US_AddUser (1225//)"
 msgid "_Add user"
-msgstr "Προσθήκη χρήστη"
+msgstr "Προσ_θήκη χρήστη"
 
 msgctxt "MSG_US_DelUser (1226//)"
 msgid "_Delete user"
-msgstr "Διαγραφή χρήστη"
+msgstr "_Διαγραφή χρήστη"
 
 msgctxt "MSG_HELP_US_ST_USER (1227//)"
 msgid "Name of the new YAM user."
@@ -4446,7 +4446,7 @@ msgctxt "MSG_HELP_US_CH_ROOT (1232//)"
 msgid ""
 "Enable this option if the user should be\n"
 "allowed to add or remove other users."
-msgstr "Ενεργοποιήστε αυτή την επιλογή εάν ο χρήστης θα μπορεί\nνα προσθέτει ή να αφαιρεί άλλους χρήστες."
+msgstr "Ενεργοποιήστε αυτή την επιλογή αν ο χρήστης θα μπορεί\nνα προσθέτει ή να αφαιρεί άλλους χρήστες."
 
 msgctxt "MSG_HELP_US_CH_CLONE (1233//)"
 msgid ""
@@ -4467,11 +4467,11 @@ msgid ""
 "What settings do you want to use for the new folder?\n"
 "Select 'Existing directory' if you want to re-use an\n"
 "already existing directory."
-msgstr "Τι ρυθμίσεις θέλετε να χρησιμοποιήσετε για το νέο φάκελο;\nΕπιλέξτε 'Υπάρχων κατάλογο' εάν θέλετε να επαναχρησιμοποιήσετε\nέναν ήδη υπάρχων κατάλογο."
+msgstr "Τι ρυθμίσεις θέλετε να χρησιμοποιήσετε για το νέο φάκελο;\nΕπιλέξτε 'Υπάρχων κατάλογος' αν θέλετε να επαναχρησιμοποιήσετε\nέναν ήδη υπάρχων κατάλογο."
 
 msgctxt "MSG_FO_NewFolderGads (1238//)"
 msgid "*_Internal defaults|_Like current|_Existing directory|_Cancel"
-msgstr "*_Εσωτερικός προκαθορισμένος|Όπως τον _Τρέχων|_Υπάρχων κατάλογος|_Ακύρωση"
+msgstr "*_Εσωτερ. προκαθορισμένος|Όπως τον _τρέχων|_Υπάρχων κατάλογος|_Ακύρωση"
 
 msgctxt "MSG_FO_SelectDir (1239//)"
 msgid "Select directory"
@@ -4527,19 +4527,19 @@ msgstr "Μεγ. χρόνος"
 
 msgctxt "MSG_FO_FolderType (1253//)"
 msgid "T_ype"
-msgstr "Τύπος"
+msgstr "_Τύπος"
 
 msgctxt "MSG_FO_FolderMode (1254//)"
 msgid "_Mode"
-msgstr "Κατάσταση"
+msgstr "_Κατάσταση"
 
 msgctxt "MSG_FO_SortBy (1255//)"
 msgid "_Sort by"
-msgstr "Ταξινόμηση κατά"
+msgstr "Τα_ξινόμηση προς"
 
 msgctxt "MSG_FO_ThenBy (1256//)"
 msgid "T_hen by"
-msgstr "Μετά από"
+msgstr "_Μετά από"
 
 msgctxt "MSG_FO_Reverse (1257//)"
 msgid "Rev"
@@ -4599,7 +4599,7 @@ msgid ""
 "A message belongs to a mailing list\n"
 "if the contents of the 'To:' field are\n"
 "matched by this pattern."
-msgstr "Ένα μήνυμα που ανήκει στην λίστα αλληλογραφίας\nεάν τα περιεχόμενα του πεδίου 'Προς:'\nταιριάζουν με αυτό το μοτίβο."
+msgstr "Ένα μήνυμα που ανήκει στην λίστα αλληλογραφίας\nαν τα περιεχόμενα του πεδίου 'Προς:'\nταιριάζουν με αυτό το μοτίβο."
 
 msgctxt "MSG_HELP_FO_ST_MLADDRESS (1270//)"
 msgid ""
@@ -4703,11 +4703,11 @@ msgstr "Αποκωδικοποίηση/εμφάνιση..."
 
 msgctxt "MSG_CTapplicationadosscript (1296//)"
 msgid "AmigaDOS script"
-msgstr "Δέσμη εντολών AmigaDOS"
+msgstr "Σενάριο εντολών AmigaDOS"
 
 msgctxt "MSG_CTapplicationrexx (1297//)"
 msgid "Rexx script"
-msgstr "Δέσμη εντολών Rexx"
+msgstr "Σενάριο εντολών Rexx"
 
 msgctxt "MSG_FOLDER_NEWFOLDER (1300//)"
 msgid "New folder..."
@@ -4749,7 +4749,7 @@ msgstr "Χρησιμοποιήστε αυτή την διεύθυνση 'Απά�
 
 msgctxt "MSG_EA_DefSecurity (1329//)"
 msgid "Sec_urity"
-msgstr "Ασφάλεια"
+msgstr "Ασφά_λεια"
 
 msgctxt "MSG_HELP_MA_CY_DEFSECURITY (1330//)"
 msgid ""
@@ -4763,7 +4763,7 @@ msgstr "Προκαθορισμένη"
 
 msgctxt "MSG_ER_PGPMultipart (1334//)"
 msgid "Error creating multipart PGP message. Encrypting/signing disabled."
-msgstr "Σφάλμα κατά την δημιουργία πολλαπλού μηνύματος PGP. Απενεργοποίηση κρυπτογράφησης/εισόδου!"
+msgstr "Σφάλμα κατά την δημιουργία πολλαπλού μηνύματος PGP. Απενεργοποίηση κρυπτογράφησης/εισόδου."
 
 msgctxt "MSG_RE_FixedFont (1335//)"
 msgid "Fixed font?"
@@ -4771,11 +4771,11 @@ msgstr "Σταθερή γραμματοσειρά;"
 
 msgctxt "MSG_CO_SMTPUser (1338//)"
 msgid "Us_er name"
-msgstr "Όνομα χρήστη"
+msgstr "Όνομα _χρήστη"
 
 msgctxt "MSG_CO_SMTPPass (1339//)"
 msgid "Pass_word"
-msgstr "Κωδικός"
+msgstr "_Κωδικός"
 
 msgctxt "MSG_WR_AltQuoted (1342//)"
 msgid "Alternative quoted"
@@ -4810,7 +4810,7 @@ msgstr "Γενικές ρυθμίσεις"
 
 msgctxt "MSG_CO_SIZEFORMAT (1360//)"
 msgid "Si_ze format"
-msgstr "Μορφή μεγέθους"
+msgstr "Μορφή _μεγέθους"
 
 msgctxt "MSG_HELP_CO_CY_SIZE (1361//)"
 msgid ""
@@ -4858,27 +4858,27 @@ msgstr "Κείμενο που θα εμφανίζεται ως\nτην ετικ�
 
 msgctxt "MSG_CO_APPICONTEXT (1371//)"
 msgid "_Label"
-msgstr "Ετικέτα"
+msgstr "_Ετικέτα"
 
 msgctxt "MSG_CO_NEWMSGS (1372//)"
 msgid "%n  New messages"
-msgstr "%n  Νέα μηνύματα"
+msgstr "%n Νέα μηνύματα"
 
 msgctxt "MSG_CO_UNREADMSGS (1373//)"
 msgid "%u  Unread messages"
-msgstr "%u  Μη αναγνωσμένα μηνύματα"
+msgstr "%u Μη αναγνωσμένα μηνύματα"
 
 msgctxt "MSG_CO_TOTALMSGS (1374//)"
 msgid "%t  Total messages"
-msgstr "%t  Συνολικά μηνύματα"
+msgstr "%t Συνολικά μηνύματα"
 
 msgctxt "MSG_CO_SENTMSGS (1376//)"
 msgid "%s  Sent messages"
-msgstr "%s  Απεσταλμένα μηνύματα"
+msgstr "%s Απεσταλμένα μηνύματα"
 
 msgctxt "MSG_FO_DSTATS (1377//)"
 msgid "App_Icon stats"
-msgstr "Στατιστικά AppIcon"
+msgstr "_Στατιστικά AppIcon"
 
 msgctxt "MSG_HELP_FO_CH_STATS (1378//)"
 msgid ""
@@ -4913,7 +4913,7 @@ msgstr "Εδώ μπορείτε να επιλέξετε την θέση της �
 
 msgctxt "MSG_CO_WARNSUBJECT (1386//)"
 msgid "Warn when there's an empty su_bject line"
-msgstr "Προειδοποίηση όταν υπάρχει κενό θέμα"
+msgstr "Προειδοποίηση όταν υπάρχει κενό _θέμα"
 
 msgctxt "MSG_HELP_CO_CH_WARNSUBJECT (1387//)"
 msgid ""
@@ -4941,15 +4941,15 @@ msgstr "Εύρεση"
 
 msgctxt "MSG_SEARCHWINDOW_TOGGLE_CASESENSITVE (1393//)"
 msgid "C_ase sensitive"
-msgstr "Ευαισθησία πεζών-κεφαλαίων"
+msgstr "Ευαισθησία _πεζών-κεφαλαίων"
 
 msgctxt "MSG_SEARCHWINDOW_BT_SEARCH (1394//)"
 msgid "_Search"
-msgstr "Εύρεση"
+msgstr "_Εύρεση"
 
 msgctxt "MSG_SEARCHWINDOW_BT_CANCEL (1396//)"
 msgid "_Cancel"
-msgstr "Ακύρωση"
+msgstr "Α_κύρωση"
 
 msgctxt "MSG_SEARCHNOTFOUND_TITLE (1397//)"
 msgid "Search"
@@ -4986,7 +4986,7 @@ msgid ""
 "Couldn't move mail '%s' to folder '%s'.\n"
 "\n"
 "No folder with this name could be found. Please check your Filters configuration."
-msgstr "Αδυναμία μετακίνησης της αλληλογραφίας '%s' στον φάκελο '%s'.\n\nΔεν υπάρχει φάκελος με αυτό το όνομα. Παρακαλώ ελέγξτε τις ρυθμίσεις Φίλτρων."
+msgstr "Αδύνατη η μετακίνηση της αλληλογραφίας '%s' στον φάκελο '%s'.\n\nΔεν υπάρχει φάκελος με αυτό το όνομα. Παρακαλώ ελέγξτε τις ρυθμίσεις Φίλτρων."
 
 msgctxt "MSG_MA_EXECUTINGCMD (1408//)"
 msgid "Executing command..."
@@ -4994,11 +4994,11 @@ msgstr "Εκτέλεση εντολής..."
 
 msgctxt "MSG_APP_DESCRIPTION (1409//)"
 msgid "SMTP/POP3 E-Mail Client for AmigaOS"
-msgstr "Πρόγραμμα Ηλεκτρονικού Ταχυδρομείου SMTP/POP3 για AmigaOS"
+msgstr "Εφαρμογή ηλεκτρονικού ταχυδρομείου SMTP/POP3 για AmigaOS"
 
 msgctxt "MSG_CO_INFOBARPOS (1410//)"
 msgid "Pos_ition"
-msgstr "Θέση"
+msgstr "_Θέση"
 
 msgctxt "MSG_CO_INFOBARPOS01 (1411//)"
 msgid "Top"
@@ -5010,7 +5010,7 @@ msgstr "Κέντρο"
 
 msgctxt "MSG_CO_INFOBARPOS03 (1413//)"
 msgid "Bottom"
-msgstr "Κάτω"
+msgstr "Τέρμα"
 
 msgctxt "MSG_CO_INFOBARPOS04 (1414//)"
 msgid "Disabled"
@@ -5018,11 +5018,11 @@ msgstr "Απενεργοποιημένο"
 
 msgctxt "MSG_CO_FOLDERLABEL (1415//)"
 msgid "_Label"
-msgstr "Ετικέτα"
+msgstr "_Ετικέτα"
 
 msgctxt "MSG_FO_MLSUPPORT (1416//)"
 msgid "ML_-Support"
-msgstr "Υποστήριξη ML"
+msgstr "_Υποστήριξη ML"
 
 msgctxt "MSG_HELP_FO_CH_MLSUPPORT (1417//)"
 msgid ""
@@ -5032,22 +5032,22 @@ msgstr "Ενεργοποίηση ή μη της υποστήριξης λίστ�
 
 msgctxt "MSG_FO_AUTODETECT (1418//)"
 msgid "Auto_detect"
-msgstr "Αυτόματη ανίχνευση"
+msgstr "Αυτόματη α_νίχνευση"
 
 msgctxt "MSG_HELP_FO_BT_AUTODETECT (1419//)"
 msgid ""
 "Try to guess automatically the suitable\n"
 "ML support settings by scanning the\n"
 "first five e-mails in the folder."
-msgstr "Προσπαθεί να μαντέψει αυτόματα τις ρυθμίσεις υποστήριξης\nML που ταιριάζουν, κάνοντας σάρωση στα πέντε\nπρώτα e-mails στον φάκελο."
+msgstr "Προσπαθεία να μαντέψει αυτόματα τις ρυθμίσεις υποστήριξης\nML που ταιριάζουν, κάνοντας σάρωση στις πέντε\nπρώτες αλληλογραφίες στον φάκελο."
 
 msgctxt "MSG_FO_NOTRECOGNIZED (1420//)"
 msgid "Couldn't be recognized."
-msgstr "Αδυναμία αναγνώρισης!"
+msgstr "Αδύνατη η αναγνώριση."
 
 msgctxt "MSG_CO_NB_EMAILCACHE (1422//)"
 msgid "E-mail cache"
-msgstr "E-mail cache"
+msgstr "Προσωρινή μνήμη αλληλογραφίας"
 
 msgctxt "MSG_CO_NB_EMAILCACHEFMT (1423//)"
 msgid "%ld address(es)"
@@ -5058,7 +5058,7 @@ msgid ""
 "Cache size for the most recently used\n"
 "recipients not yet in the address book.\n"
 "Select 0 to disable this feature."
-msgstr "Το μέγεθος cache των πιο πρόσφατων χρησιμοποιημένων\nαποστολέων που δεν υπάρχουν ακόμα στο βιβλίο διευθύνσεων.\nΕπιλέξτε 0 για απενεργοποίηση."
+msgstr "Το μέγεθος προσωρινής μνήμης των πιο πρόσφατων χρησιμοποιημένων\nαποστολέων που δεν υπάρχουν ακόμα στο βιβλίο διευθύνσεων.\nΕπιλέξτε 0 για απενεργοποίηση."
 
 msgctxt "MSG_HELP_CO_ST_SMTPPORT (1432//)"
 msgid ""
@@ -5078,14 +5078,14 @@ msgstr "- Σύνολο: %t Νέα: %n Μη αναγνωσμένα: %u"
 
 msgctxt "MSG_TR_INITTLS (1436//)"
 msgid "Initializing TLSv1/SSLv3 session..."
-msgstr "Αρχικοποίηση συνεδρίας TLSv1/SSLv3..."
+msgstr "Προετοιμασία συνεδρίας TLSv1/SSLv3..."
 
 msgctxt "MSG_ER_INITAMISSL (1437//)"
 msgid ""
 "Couldn't init amissl.library - TLSv1/SSLv3 support disabled.\n"
 "\n"
 "Please check your AmiSSL installation and restart YAM."
-msgstr "Αδυναμία αρχικοποίησης amissl.library - η υποστήριξη TLSv1/SSLv3 απενεργοποιήθηκε.\n\nΠαρακαλώ ελέγξτε την εγκατάσταση του AmiSSL και κάντε επανεκκίνηση."
+msgstr "Αδύνατη η προετοιμασία amissl.library - η υποστήριξη TLSv1/SSLv3 απενεργοποιήθηκε.\n\nΠαρακαλώ ελέγξτε την εγκατάσταση του AmiSSL και κάντε επανεκκίνηση."
 
 msgctxt "MSG_TR_SENDAUTH (1439//)"
 msgid "Sending SMTP AUTH request..."
@@ -5101,7 +5101,7 @@ msgid ""
 "Couldn't transfer mail '%s' to folder '%s'.\n"
 "\n"
 "Either the file doesn't exist or it couldn't be copied for some reason."
-msgstr "Αδυναμία μεταφοράς της αλληλογραφίας '%s' στον φάκελο '%s'.\n\nΕίτε το αρχείο δεν υπάρχει ή δεν μπορεί να αντιγραφτεί για κάποιο λόγο."
+msgstr "Αδύνατη η μεταφορά της αλληλογραφίας '%s' στον φάκελο '%s'.\n\nΕίτε το αρχείο δεν υπάρχει ή δεν μπορεί να αντιγραφτεί για κάποιο λόγο."
 
 #. FILENAME
 msgctxt "MSG_ER_ADDRBOOKLOAD (1445//)"
@@ -5109,7 +5109,7 @@ msgid ""
 "Couldn't load address book from file '%s'.\n"
 "\n"
 "Either the file doesn't exist or it couldn't be opened for some reason."
-msgstr "Αδυναμία φόρτωσης του βιβλίου διευθύνσεων από το αρχείο '%s'.\n\nΕίτε το αρχείο δεν υπάρχει ή δεν μπορεί να ανοιχτεί για κάποιο λόγο."
+msgstr "Αδύνατη η φόρτωση του βιβλίου διευθύνσεων από το αρχείο '%s'.\n\nΕίτε το αρχείο δεν υπάρχει ή δεν μπορεί να ανοιχτεί για κάποιο λόγο."
 
 #. FILENAME
 msgctxt "MSG_AB_NOYAMADDRBOOK (1446//)"
@@ -5118,7 +5118,7 @@ msgid ""
 "\n"
 "Process it as a file containing e-mail addresses\n"
 "on separate lines?"
-msgstr "Το αρχείο '%s' δεν είναι έγκυρο βιβλίο διευθύνσεων YAM.\n\nΕπεξεργαστείτε το ως αρχείο που περιέχει διευθύνσεις e-mail\nσε ξεχωριστές γραμμές;"
+msgstr "Το αρχείο '%s' δεν είναι έγκυρο βιβλίο διευθύνσεων YAM.\n\nΕπεξεργαστείτε το ως αρχείο που περιέχει διευθύνσεις\nαλληλογραφίας σε ξεχωριστές γραμμές;"
 
 msgctxt "MSG_AB_NOYAMADDRBOOK_GADS (1447//)"
 msgid "_Yes|*_No"
@@ -5137,7 +5137,7 @@ msgid ""
 "You have selected TLSv1/SSLv3 for this connection, but AmiSSL couldn't be "
 "initialized. Please check your AmiSSL installation or disable TLS/SSL for "
 "this connection."
-msgstr "Έχετε επιλέξει TLSv1/SSLv3 για αυτή την σύνδεση,\nαλλά το AmiSSL δεν μπορεί να αρχικοποιηθεί.\nΠαρακαλώ ελέγξτε την εγκατάσταση του AmiSSL ή απενεργοποιήστε το TLS/SSL για αυτή τη σύνδεση."
+msgstr "Έχετε επιλέξει TLSv1/SSLv3 για αυτή την σύνδεση,\nαλλά το AmiSSL δεν μπορεί να προετοιμαστεί.\nΠαρακαλώ ελέγξτε την εγκατάσταση του AmiSSL ή απενεργοποιήστε το TLS/SSL για αυτή τη σύνδεση."
 
 msgctxt "MSG_RETRY_QUIT_GAD (1454//)"
 msgid "Try again|Quit"
@@ -5147,7 +5147,7 @@ msgctxt "MSG_ER_NOAUTHUSERPASS (1456//)"
 msgid ""
 "No user name or password was specified for the SMTP AUTH connection YAM was "
 "trying to establish. Please check your configuration."
-msgstr "Δεν καθορίστηκε όνομα χρήστη ή κωδικός για την σύνδεση\nμε SMTP AUTH που προσπάθησε να καταρτίσει το YAM.\nΠαρακαλώ ελέγξτε τις ρυθμίσεις."
+msgstr "Δεν καθορίστηκε όνομα χρήστη ή κωδικός για την σύνδεση\nμε SMTP AUTH που προσπάθησε να καταρτίσει το YAM.\nΠαρακαλώ ελέγξτε τις ρυθμίσεις σας."
 
 msgctxt "MSG_CO_APPICON_LABEL (1458//)"
 msgid "New: %n Total: %t"
@@ -5193,13 +5193,13 @@ msgstr "Χρώμα για την εμφάνιση\nπαραθέσεων 4ου ε
 
 msgctxt "MSG_CO_URLCOLOR (1467//)"
 msgid "URL color"
-msgstr "Χρώμα URL"
+msgstr "Χρώμα σελίδας"
 
 msgctxt "MSG_HELP_CO_CA_COLURL (1468//)"
 msgid ""
 "Color used to display\n"
 "clickable URL links."
-msgstr "Χρώμα για την εμφάνιση\nτης σύνδεσης URL."
+msgstr "Χρώμα για την εμφάνιση\nτης σύνδεσης σελίδας."
 
 msgctxt "MSG_FO_FOLDERNAMEINVALID (1471//)"
 msgid ""
@@ -5261,15 +5261,15 @@ msgctxt "MSG_HELP_FO_ST_BYETEXT (1496//)"
 msgid ""
 "Text to insert at the\n"
 "bottom of a new message."
-msgstr "Κείμενο που θα εισάγετε στο\nτέλος του νέου μηνύματος."
+msgstr "Κείμενο που θα εισάγετε στο\nτέρμα του νέου μηνύματος."
 
 msgctxt "MSG_FO_Welcome (1497//)"
 msgid "_Welcome phrase"
-msgstr "Φράση υποδοχής"
+msgstr "Φράση _υποδοχής"
 
 msgctxt "MSG_FO_Greetings (1498//)"
 msgid "C_losing phrase"
-msgstr "Φράση κλεισίματος"
+msgstr "Φράση _κλεισίματος"
 
 #. OPTIONNAME
 msgctxt "MSG_ER_SOCKETOPTION (1499//)"
@@ -5277,7 +5277,7 @@ msgid ""
 "Couldn't set socket option '%s'.\n"
 "\n"
 "Either this option is not supported by the TCP/IP stack your are using, or it is specified wrong in your configuration."
-msgstr "Αδυναμία ορισμού επιλογής υποδοχής '%s'.\n\nΕίτε η επιλογή δεν υποστηρίζεται από το TCP/IP που χρησιμοποιείτε, ή έχει καθοριστεί λανθασμένα στις ρυθμίσεις."
+msgstr "Αδύνατος ο ορισμός επιλογής υποδοχής '%s'.\n\nΕίτε η επιλογή δεν υποστηρίζεται από το TCP/IP που χρησιμοποιείτε, ή έχει καθοριστεί λανθασμένα στις ρυθμίσεις."
 
 #. FILENAME
 msgctxt "MSG_ER_B64FILEENCODE (1500//)"
@@ -5342,7 +5342,7 @@ msgid ""
 "that the resulting file might be corrupt.\n"
 "\n"
 "Either the message is truncated or it was generated with a faulty UUcode encoder."
-msgstr "Κατά την αποκωδικοποίηση UUcode του αρχείου '%s' βρέθηκαν μερικά μη έγκυρα\nαθροίσματα ελέγχου (checksums), έτσι το τελικό αρχείο μπορεί να είναι αλλοιωμένο."
+msgstr "Κατά την αποκωδικοποίηση UUcode του αρχείου '%s' βρέθηκαν μερικά μη έγκυρα\nαθροίσματα ελέγχου (checksums), έτσι το τελικό αρχείο μπορεί να είναι αλλοιωμένο.\n\nΕίτε το μήνυμα είναι περικομμένο ή δημιουργήθηκε με εσφαλμένη κωδικοποίηση UUcode."
 
 #. FILENAME
 msgctxt "MSG_ER_UUDEC_CORRUPT (1509//)"
@@ -5354,7 +5354,7 @@ msgstr "Κατά την αποκωδικοποίηση UUcode του αρχεί�
 
 msgctxt "MSG_FI_StatMarked (1510//)"
 msgid "Marked"
-msgstr "Σημαδεμένο"
+msgstr "Μαρκαρισμένο"
 
 #. FILENAME, FOLDER
 msgctxt "MSG_MA_CREQUEST_OLDFILE (1511//)"
@@ -5403,7 +5403,7 @@ msgstr "Βρέθηκε άγνωστο αρχείο στον κατάλογο φ�
 
 msgctxt "MSG_CO_SHOWEMBEDDEDREADPANE (1523//)"
 msgid "Show embedded read _pane in main window"
-msgstr "Εμφάνιση ενσωματωμένου παραθύρου ανάγνωσης στο κύριο παράθυρο"
+msgstr "Εμφάνιση ενσωματωμένου _παραθύρου ανάγνωσης στο κύριο παράθυρο"
 
 msgctxt "MSG_HELP_CO_CH_EMBEDDEDREADPANE (1524//)"
 msgid ""
@@ -5413,7 +5413,7 @@ msgstr "Εμφάνιση ενσωματωμένου παραθύρου ανάγ�
 
 msgctxt "MSG_CO_SETSTATUSDELAYED1 (1525//)"
 msgid "Delay mar_king of displayed mail as read for"
-msgstr "Καθυστέρηση μαρκαρίσματος εμφανισμένης αλληλογραφίας ως αναγνωσμένη για"
+msgstr "Καθυστέρηση _μαρκαρίσματος εμφανισμένης αλληλογραφίας ως αναγνωσμένη για"
 
 msgctxt "MSG_CO_SETSTATUSDELAYED2 (1526//)"
 msgid "second(s)"
@@ -5424,7 +5424,7 @@ msgid ""
 "After opening an e-mail, YAM will\n"
 "wait this amount of time before\n"
 "marking the e-mail as 'read'."
-msgstr "Μετά το άνοιγμα αλληλογραφίας, το YAM θα\nπεριμένει τόσο χρόνο πριν τα σημαδέψει\nως 'αναγνωσμένα'."
+msgstr "Μετά το άνοιγμα αλληλογραφίας, το YAM θα\nπεριμένει τόσο χρόνο πριν τα μαρκάρει\nως 'αναγνωσμένα'."
 
 msgctxt "MSG_MA_ATTACHMENT (1528//)"
 msgid "Attachment"
@@ -5535,7 +5535,7 @@ msgstr "Ένα σφάλμα συνέβη κατά την προσπάθεια μ
 
 msgctxt "MSG_FI_SELECTACTIVE (1576//)"
 msgid "Select this m_atch"
-msgstr "Επιλογή αυτής της αντιστοιχίας"
+msgstr "Επιλογή αυτής της _αντιστοιχίας"
 
 msgctxt "MSG_HELP_FI_BT_SELECTACTIVE (1577//)"
 msgid ""
@@ -5557,7 +5557,7 @@ msgstr "Νέο"
 
 msgctxt "MSG_QUICKSEARCH_VO_MARKED (1587//)"
 msgid "Marked"
-msgstr "Σημαδεμένο"
+msgstr "Μαρκαρισμένο"
 
 msgctxt "MSG_QUICKSEARCH_VO_IMPORTANT (1588//)"
 msgid "Important"
@@ -5590,13 +5590,13 @@ msgstr "%ld από %ld εμφανίζονται"
 
 msgctxt "MSG_FI_NOFOLDERS (1595//)"
 msgid "n_owhere"
-msgstr "πουθενά"
+msgstr "που_θενά"
 
 msgctxt "MSG_HELP_QUICKSEARCH_VIEWOPTIONS (1596//)"
 msgid ""
 "Only mail matching this criterion\n"
 "will be displayed."
-msgstr "Θα εμφανιστεί αλληλογραφία μόνο\nεάν ταιριάζει με αυτά τα κριτήρια."
+msgstr "Θα εμφανιστεί αλληλογραφία μόνο\nαν ταιριάζει με αυτά τα κριτήρια."
 
 msgctxt "MSG_HELP_QUICKSEARCH_SEARCHSTRING (1597//)"
 msgid ""
@@ -5611,23 +5611,23 @@ msgstr "Αναζήτηση μηνυμάτων στον φάκελο '%s'..."
 
 msgctxt "MSG_CO_WBAPPICON (1600//)"
 msgid "A_ppIcon on Workbench"
-msgstr "AppIcon στο Workbench"
+msgstr "_AppIcon στο Workbench"
 
 msgctxt "MSG_HELP_CO_CH_WBAPPICON (1601//)"
 msgid ""
 "If checked, an AppIcon will appear on\n"
 "Workbench showing folder statistics."
-msgstr "Εάν επιλεχτεί, θα εμφανιστεί ένα AppIcon στο\nWorkbench εμφανίζοντας τα στατιστικά φακέλου."
+msgstr "Αν επιλεχτεί, θα εμφανιστεί ένα AppIcon στο\nWorkbench εμφανίζοντας τα στατιστικά φακέλου."
 
 msgctxt "MSG_CO_DOCKYICON (1602//)"
 msgid "Enable 'd_ocky' icon"
-msgstr "Ενεργοποίηση εικονιδίου 'docky'"
+msgstr "Ενεργοποίηση εικονιδίου '_docky'"
 
 msgctxt "MSG_HELP_CO_CH_DOCKYICON (1603//)"
 msgid ""
 "If checked, YAM will add a 'docky' to\n"
 "AmiDock. This requires AmigaOS 4.x."
-msgstr "Εάν επιλεχτεί, το YAM θα προσθέσει ένα 'docky' στο\nAmiDock. Αυτό απαιτεί AmigaOS 4.x."
+msgstr "Αν επιλεχτεί, το YAM θα προσθέσει ένα 'docky' στο\nAmiDock. Αυτό απαιτεί AmigaOS 4.x."
 
 msgctxt "MSG_MA_MessageImport (1606//)"
 msgid "Import messages"
