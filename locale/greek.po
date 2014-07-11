@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-07-11 14:58+0000\n"
+"PO-Revision-Date: 2014-07-11 15:07+0000\n"
 "Last-Translator: Anthony I.\n"
 "Language-Team: Greek (http://www.transifex.com/projects/p/yam/language/el/)\n"
 "MIME-Version: 1.0\n"
@@ -4079,7 +4079,7 @@ msgstr "Άγνωστο ψευδώνυμο ή όνομα: %s.\n\nΤο YAM δεν 
 #. RECIPIENT, ADDRESS
 msgctxt "MSG_ER_ErrorNoPGPId (1146//)"
 msgid "Couldn't find PGP ID for '%s' in the address book, now trying '%s'."
-msgstr "Αδυναμία εύρεσης της ταυτότητας PGP για '%s' στο βιβλίο διευθύνσεων, δοκιμή με '%s'."
+msgstr "Αδύνατη η εύρεση της ταυτότητας PGP για '%s' στο βιβλίο διευθύνσεων, γίνεται δοκιμή με '%s'."
 
 #. KEY_ID
 msgctxt "MSG_ER_ErrorAppendKey (1147//)"
@@ -4087,27 +4087,27 @@ msgid ""
 "Couldn't append public PGP key %s.\n"
 "\n"
 "There was a problem extracting it from the PGP keyring."
-msgstr "Αδυναμία προσάρτησης κοινού κλειδιού PGP %s.\n\nΥπήρξε πρόβλημα κατά την εξαγωγή του από τα κλειδιά PGP."
+msgstr "Αδύνατη η προσάρτηση δημόσιου κλειδιού PGP %s.\n\nΥπήρξε πρόβλημα κατά την εξαγωγή του από τα κλειδιά PGP."
 
 msgctxt "MSG_DI_Alias (1148//)"
 msgid "_Abbreviation"
-msgstr "Συντομογραφία"
+msgstr "_Συντομογραφία"
 
 msgctxt "MSG_DI_New (1149//)"
 msgid "_New"
-msgstr "Όνομα"
+msgstr "Ό_νομα"
 
 msgctxt "MSG_DI_AddSelect (1150//)"
 msgid "Add _selection"
-msgstr "Προσθήκη επιλογής"
+msgstr "Προσ_θήκη επιλογής"
 
 msgctxt "MSG_DI_Delete (1151//)"
 msgid "_Delete"
-msgstr "Διαγραφή"
+msgstr "_Διαγραφή"
 
 msgctxt "MSG_DI_Paste (1152//)"
 msgid "_Paste"
-msgstr "Επικόλληση"
+msgstr "Επικό_λληση"
 
 msgctxt "MSG_HELP_DI_LV_ENTRIES (1153//)"
 msgid "List of available abbreviations."
@@ -4127,7 +4127,7 @@ msgctxt "MSG_HELP_DI_BT_ADDSELECT (1156//)"
 msgid ""
 "Create a new entry based on\n"
 "the text marked in the editor."
-msgstr "Δημιουργία μιας νέας καταχώρησης βασισμένη στο\nσημαδεμένο κείμενο του κειμενογράφου."
+msgstr "Δημιουργία μιας νέας καταχώρησης βασισμένη στο\nμαρκαρισμένο κείμενο του κειμενογράφου."
 
 msgctxt "MSG_HELP_DI_BT_DELETE (1157//)"
 msgid "Remove the selected entry."
@@ -4217,7 +4217,7 @@ msgstr "Εύρεση μηνυμάτων"
 
 msgctxt "MSG_FI_AllFolders (1185//)"
 msgid "_everywhere"
-msgstr "παντού"
+msgstr "_παντού"
 
 msgctxt "MSG_FI_FindIn (1186//)"
 msgid "Find in"
@@ -4225,15 +4225,15 @@ msgstr "Εύρεση σε"
 
 msgctxt "MSG_FI_FindWhat (1187//)"
 msgid "Find what"
-msgstr "Εύρεση τι"
+msgstr "Εύρεση ποιός"
 
 msgctxt "MSG_FI_UseFilter (1188//)"
 msgid "_Use filter settings"
-msgstr "Χρήση φίλτρου ρυθμίσεων"
+msgstr "_Χρήση φίλτρου ρυθμίσεων"
 
 msgctxt "MSG_FI_AddAsFilter (1189//)"
 msgid "Add as _new filter"
-msgstr "Προσθήκη ως νέου φίλτρου"
+msgstr "Προσθήκη ως _νέου φίλτρου"
 
 msgctxt "MSG_FI_Results (1190//)"
 msgid "Results"
@@ -4241,19 +4241,19 @@ msgstr "Αποτελέσματα"
 
 msgctxt "MSG_FI_StartSearch (1191//)"
 msgid "_Start search"
-msgstr "Έναρξη εύρεσης"
+msgstr "Έναρ_ξη εύρεσης"
 
 msgctxt "MSG_FI_SelectMatched (1192//)"
 msgid "Select _matched"
-msgstr "Επιλογή ταιριαστών"
+msgstr "Επιλογή _ταιριαστών"
 
 msgctxt "MSG_FI_ReadMessage (1193//)"
 msgid "_Read message"
-msgstr "Ανάγνωση μηνύματος"
+msgstr "Α_νάγνωση μηνύματος"
 
 msgctxt "MSG_FI_Abort (1194//)"
 msgid "_Abort"
-msgstr "Ματαίωση"
+msgstr "_Ματαίωση"
 
 msgctxt "MSG_HELP_FI_LV_FOLDERS (1195//)"
 msgid ""
