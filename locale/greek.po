@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-07-11 20:58+0000\n"
+"PO-Revision-Date: 2014-07-14 15:58+0000\n"
 "Last-Translator: Anthony I.\n"
 "Language-Team: Greek (http://www.transifex.com/projects/p/yam/language/el/)\n"
 "MIME-Version: 1.0\n"
@@ -5647,7 +5647,7 @@ msgstr "Εξαγωγή μηνυμάτων"
 
 msgctxt "MSG_YAMINFO (1609//)"
 msgid "Open Source E-Mail Client for the Amiga"
-msgstr "Πρόγραμμα Ηλεκτρονικού Ταχυδρομείου για Amiga"
+msgstr "Εφαρμογή ηλεκτρονικού ταχυδρομείου για Amiga"
 
 msgctxt "MSG_CO_SYSTEMSETTINGS (1610//)"
 msgid "System settings"
@@ -5655,7 +5655,7 @@ msgstr "Ρυθμίσεις συστήματος"
 
 msgctxt "MSG_CO_DEFAULTCHARSET (1611//)"
 msgid "C_harset"
-msgstr "Σύνολο χαρακτήρων"
+msgstr "_Σύνολο χαρακτήρων"
 
 #. LOCALCHARSET
 msgctxt "MSG_CO_CHARSETUNKNOWNWARN (1612//)"
@@ -5677,7 +5677,7 @@ msgid ""
 "\n"
 "Please make sure you have at least this\n"
 "minimum version correctly installed."
-msgstr "Αδυναμία ανοίγματος της απαιτούμενης '%s', έκδοση v%lu.%lu\n\nΠαρακαλώ βεβαιωθείτε ότι έχετε τουλάχιστον\nαυτή την μικρότερη έκδοση εγκατεστημένη."
+msgstr "Αδύνατο το άνοιγμα της απαιτούμενης '%s', έκδοση v%lu.%lu\n\nΠαρακαλώ βεβαιωθείτε ότι έχετε τουλάχιστον\nαυτή την μικρότερη έκδοση εγκατεστημένη."
 
 #. LIBRARY_NAME, LIBRARY_VERSION, LIBRARY_REVISION, LIBRARY_URL
 msgctxt "MSG_ER_LIB_URL (1615//)"
@@ -5687,7 +5687,7 @@ msgid ""
 "Please visit '%s',\n"
 "download the most recent version and make\n"
 "sure you have it correctly installed."
-msgstr "Αδυναμία ανοίγματος της απαιτούμενης '%s', έκδοση v%lu.%lu\n\nΠαρακαλώ επισκεφτείτε την διεύθυνση '%s',\nκάντε λήψη της πιο πρόσφατης έκδοσης και βεβαιωθείτε\nότι την έχετε εγκαταστήσει σωστά."
+msgstr "Αδύνατο το άνοιγμα της απαιτούμενης '%s', έκδοση v%lu.%lu\n\nΠαρακαλώ επισκεφτείτε την διεύθυνση '%s',\nκάντε λήψη της πιο πρόσφατης έκδοσης και βεβαιωθείτε\nότι την έχετε εγκαταστήσει σωστά."
 
 #. MCC_NAME, MCC_VERSION, MCC_REVISION, MCC_URL
 msgctxt "MSG_ER_NO_MCC (1616//)"
@@ -5697,7 +5697,7 @@ msgid ""
 "Please visit '%s',\n"
 "download the most recent version and make\n"
 "sure you have it correctly installed."
-msgstr "Αδυναμία ανοίγματος της απαιτούμενης ειδικής κλάσης MUI '%s' v%lu.%lu.\n\nΠαρακαλώ επισκεφτείτε την διεύθυνση '%s',\nκάντε λήψη της πιο πρόσφατης έκδοσης και βεβαιωθείτε\nότι την έχετε εγκαταστήσει σωστά."
+msgstr "Αδύνατο το άνοιγμα της απαιτούμενης ειδικής κλάσης MUI '%s' v%lu.%lu.\n\nΠαρακαλώ επισκεφτείτε την διεύθυνση '%s',\nκάντε λήψη της πιο πρόσφατης έκδοσης και βεβαιωθείτε\nότι την έχετε εγκαταστήσει σωστά."
 
 #. MCC_NAME, MCC_VERSION, MCC_REVISION, MCC_URL
 msgctxt "MSG_ER_MCC_OLD (1617//)"
@@ -5706,7 +5706,7 @@ msgid ""
 "\n"
 "Currently installed is v%lu.%lu. Please upgrade by downloading\n"
 "the latest version from '%s'."
-msgstr "Αδυναμία ανοίγματος της απαιτούμενης ειδικής κλάσης MUI '%s' v%lu.%lu.\n\nΗ τρέχουσα εγκατεστημένη είναι η v%lu.%lu. Κάντε αναβάθμιση κάνοντας\nλήψη της τελευταίας έκδοσης από '%s'."
+msgstr "Αδύνατο το άνοιγμα της απαιτούμενης ειδικής κλάσης MUI '%s' v%lu.%lu.\n\nΗ τρέχουσα εγκατεστημένη είναι η v%lu.%lu. Κάντε αναβάθμιση κάνοντας\nλήψη της τελευταίας έκδοσης από '%s'."
 
 #. MCC_NAME, MCC_VERSION, MCC_REVISION, MCC_VERSION, MCC_REVISION, MCC_URL
 msgctxt "MSG_ER_MCC_IN_USE (1618//)"
@@ -5720,11 +5720,11 @@ msgid ""
 "sure you have it correctly installed. Then close\n"
 "all MUI programs and make sure the old class\n"
 "is flushed from memory and try again."
-msgstr "Αδυναμία ανοίγματος της απαιτούμενης ειδικής κλάσης MUI '%s' v%lu.%lu.\n\nΗ %lu.%lu ήδη χρησιμοποιείται από άλλες εφαρμογές.\n\nΕπισκεφτείτε την διεύθυνση '%s',\nκάντε λήψη της πιο πρόσφατης έκδοσης και βεβαιωθείτε ότι\nτην έχετε εγκαταστήσει σωστά. Μετά κλείστε όλα τα MUI προγράμματα\nκαι βεβαιωθείτε ότι η παλιότερες κλάσεις έχουν εκκαθαριστεί από\nτην μνήμη και προσπαθήστε ξανά."
+msgstr "Αδύνατο το άνοιγμα της απαιτούμενης ειδικής κλάσης MUI '%s' v%lu.%lu.\n\nΗ %lu.%lu ήδη χρησιμοποιείται από άλλες εφαρμογές.\n\nΕπισκεφτείτε την διεύθυνση '%s',\nκάντε λήψη της πιο πρόσφατης έκδοσης και βεβαιωθείτε ότι\nτην έχετε εγκαταστήσει σωστά. Μετά κλείστε όλα τα MUI προγράμματα\nκαι βεβαιωθείτε ότι η παλιότερες κλάσεις έχουν εκκαθαριστεί από\nτην μνήμη και προσπαθήστε ξανά."
 
 msgctxt "MSG_CO_FIRSTSTEPS_TITLE (1619//)"
 msgid "First Steps Settings"
-msgstr "Ρυθμίσεις Πρώτων Βημάτων"
+msgstr "Ρυθμίσεις πρώτων βημάτων"
 
 msgctxt "MSG_CO_FIRSTSTEPS_SUMMARY (1620//)"
 msgid "The minimum parameters to be able to send/receive e-mail..."
@@ -5736,11 +5736,11 @@ msgstr "Ρυθμίσεις TCP/IP"
 
 msgctxt "MSG_CO_TCPIP_SUMMARY (1622//)"
 msgid "Configure your SMTP and POP3 servers..."
-msgstr "Ρύθμιση των λογαριασμών σας SMTP και POP3..."
+msgstr "Ρύθμιση των διακομιστών σας SMTP και POP3..."
 
 msgctxt "MSG_CO_FILTER_TITLE (1625//)"
 msgid "Mail Filter Settings"
-msgstr "Ρυθμίσεις Φίλτρων Αλληλογραφίας"
+msgstr "Ρυθμίσεις φίλτρων αλληλογραφίας"
 
 msgctxt "MSG_CO_FILTER_SUMMARY (1626//)"
 msgid "Define own mail filters you need..."
@@ -5748,7 +5748,7 @@ msgstr "Ορίστε τα δικά σας φίλτρα αλληλογραφία�
 
 msgctxt "MSG_CO_READ_TITLE (1627//)"
 msgid "Mail Reading Settings"
-msgstr "Ρυθμίσεις Ανάγνωσης Αλληλογραφίας"
+msgstr "Ρυθμίσεις ανάγνωσης αλληλογραφίας"
 
 msgctxt "MSG_CO_READ_SUMMARY (1628//)"
 msgid "Settings related to e-mail reading..."
@@ -5756,7 +5756,7 @@ msgstr "Ρυθμίσεις σχετικές με την ανάγνωση αλλ�
 
 msgctxt "MSG_CO_WRITE_TITLE (1629//)"
 msgid "Mail Writing Settings"
-msgstr "Ρυθμίσεις Σύνταξης Αλληλογραφίας"
+msgstr "Ρυθμίσεις σύνταξης αλληλογραφίας"
 
 msgctxt "MSG_CO_WRITE_SUMMARY (1630//)"
 msgid "Settings related to e-mail composing..."
@@ -5764,7 +5764,7 @@ msgstr "Ρυθμίσεις σχετικές με την σύνταξη αλλη�
 
 msgctxt "MSG_CO_REPLY_TITLE (1631//)"
 msgid "Mail Reply & Forward Settings"
-msgstr "Ρυθμίσεις Απάντησης & Προώθησης"
+msgstr "Ρυθμίσεις απάντησης & προώθησης"
 
 msgctxt "MSG_CO_REPLY_SUMMARY (1632//)"
 msgid "Settings related to e-mail replying & forwarding..."
@@ -5772,7 +5772,7 @@ msgstr "Ρυθμίσεις σχετικές με την απάντηση και 
 
 msgctxt "MSG_CO_SIGNATURE_TITLE (1633//)"
 msgid "Mail Signature Settings"
-msgstr "Ρυθμίσεις Υπογραφής Αλληλογραφίας"
+msgstr "Ρυθμίσεις υπογραφής αλληλογραφίας"
 
 msgctxt "MSG_CO_SIGNATURE_SUMMARY (1634//)"
 msgid "Configure your e-mail signatures..."
@@ -5780,7 +5780,7 @@ msgstr "Διαμορφώστε τις υπογραφές της αλληλογρ
 
 msgctxt "MSG_CO_SECURITY_TITLE (1637//)"
 msgid "Security Settings"
-msgstr "Ρυθμίσεις Ασφαλείας"
+msgstr "Ρυθμίσεις ασφαλείας"
 
 msgctxt "MSG_CO_SECURITY_SUMMARY (1638//)"
 msgid "Configure security related settings..."
@@ -5788,7 +5788,7 @@ msgstr "Διαμορφώστε σχετικές ρυθμίσεις ασφαλε�
 
 msgctxt "MSG_CO_STARTUP_TITLE (1639//)"
 msgid "Startup/Quit Action Settings"
-msgstr "Ρυθμίσεις Ενέργειας Εκκίνησης/Εξόδου"
+msgstr "Ρυθμίσεις ενέργειας εκκίνησης/εξόδου"
 
 msgctxt "MSG_CO_STARTUP_SUMMARY (1640//)"
 msgid "Configure what YAM should do on startup and exit..."
@@ -5796,15 +5796,15 @@ msgstr "Διαμορφώστε τι θα κάνει το YAM κατά την ε�
 
 msgctxt "MSG_CO_MIME_TITLE (1641//)"
 msgid "MIME Types Settings"
-msgstr "Ρυθμίσεις Τύπων MIME"
+msgstr "Ρυθμίσεις τύπων MIME"
 
 msgctxt "MSG_CO_MIME_SUMMARY (1642//)"
 msgid "Configure own MIME types and viewers..."
-msgstr "Διαμορφώστε τους δικούς σας τύπους και προγράμματα MIME..."
+msgstr "Διαμορφώστε τους δικούς σας τύπους και προβολείς MIME..."
 
 msgctxt "MSG_CO_ABOOK_TITLE (1643//)"
 msgid "Address Book Settings"
-msgstr "Ρυθμίσεις Βιβλίου Διευθύνσεων"
+msgstr "Ρυθμίσεις βιβλίου διευθύνσεων"
 
 msgctxt "MSG_CO_ABOOK_SUMMARY (1644//)"
 msgid "Configure address book related options..."
@@ -5812,15 +5812,15 @@ msgstr "Διαμορφώστε σχετικές επιλογές για το β�
 
 msgctxt "MSG_CO_SCRIPTS_TITLE (1645//)"
 msgid "Scripts Settings"
-msgstr "Ρυθμίσεις Δέσμης Εντολών"
+msgstr "Ρυθμίσεις σεναρίου εντολών"
 
 msgctxt "MSG_CO_SCRIPTS_SUMMARY (1646//)"
 msgid "Configure your helper scripts..."
-msgstr "Διαμορφώστε τις βοηθητικές σας δέσμες εντολών..."
+msgstr "Διαμορφώστε τα βοηθητικά σας σενάρια εντολών..."
 
 msgctxt "MSG_CO_MIXED_TITLE (1647//)"
 msgid "Miscellaneous Settings"
-msgstr "Διάφορες Ρυθμίσεις"
+msgstr "Διάφορες ρυθμίσεις"
 
 msgctxt "MSG_CO_MIXED_SUMMARY (1648//)"
 msgid "A bunch of settings that don't fit anywhere else..."
@@ -5828,7 +5828,7 @@ msgstr "Διάφορες επιλογές που δεν ταιριάζουν π�
 
 msgctxt "MSG_CO_UPDATE_TITLE (1649//)"
 msgid "Software Updates"
-msgstr "Αναβαθμίσεις Λογισμικού"
+msgstr "Αναβαθμίσεις λογισμικού"
 
 msgctxt "MSG_CO_UPDATE_SUMMARY (1650//)"
 msgid "Keep track of updates to YAM and related components..."
@@ -5840,7 +5840,7 @@ msgstr "Αναβαθμίσεις"
 
 msgctxt "MSG_CO_AMISSLWARN_TITLE (1652//)"
 msgid "AmiSSL not available"
-msgstr "δεν είναι διαθέσιμη η AmiSSL"
+msgstr "Δεν είναι διαθέσιμη η AmiSSL"
 
 #. AMISSL_VERSION, AMISSL_REVISION
 msgctxt "MSG_CO_AMISSLWARN (1653//)"
@@ -5855,7 +5855,7 @@ msgstr "H AmiSSL βρέθηκε να είναι μη διαθέσιμη. Συν�
 
 msgctxt "MSG_CO_AMISSLWARN_BT (1654//)"
 msgid "*_Exit|Ignore _always|Ignore"
-msgstr "*_Εξοδος|_Πάντα παράβλεψη|Παράβλεψη"
+msgstr "*Έ_ξοδος|_Πάντα παράβλεψη|Παράβλεψη"
 
 msgctxt "MSG_BUSY_OPENINGCONFIG (1655//)"
 msgid "Opening configuration..."
@@ -5883,11 +5883,11 @@ msgstr "Μηνιαία"
 
 msgctxt "MSG_CO_SEARCHFORUPDATES (1667//)"
 msgid "Check for up_dates"
-msgstr "Ελέγξτε για ενημερώσεις"
+msgstr "Ελέγξτε για ε_νημερώσεις"
 
 msgctxt "MSG_CO_SEARCHNOW (1669//)"
 msgid "Check _now"
-msgstr "Έλεγχος τώρα"
+msgstr "Έλεγχος _τώρα"
 
 msgctxt "MSG_CO_LASTSEARCH (1670//)"
 msgid "Last check:"
@@ -5903,7 +5903,7 @@ msgstr "Δεν υπάρχουν νέες διαθέσιμες ενημερώσε
 
 msgctxt "MSG_CO_LASTSTATUS_NOQUERY (1673//)"
 msgid "Couldn't query server for updates."
-msgstr "Αδυναμία ερωτήματος διακομιστή για τις ενημερώσεις."
+msgstr "Αδύνατο το ερώτημα διακομιστή για τις ενημερώσεις."
 
 msgctxt "MSG_CO_LASTSTATUS_UPDATESUCCESS (1674//)"
 msgid "Successfully found and notified user on new updates."
@@ -5959,11 +5959,11 @@ msgstr "Εγκατεστημένο"
 
 msgctxt "MSG_UPD_NOTIFICATION_URL (1689//)"
 msgid "URL"
-msgstr "URL"
+msgstr "Σελίδα"
 
 msgctxt "MSG_CO_MIME_DESCRIPTION (1690//)"
 msgid "D_escription"
-msgstr "Περιγραφή"
+msgstr "_Περιγραφή"
 
 msgctxt "MSG_CTapplicationgz (1691//)"
 msgid "GNU zip archive"
@@ -6019,7 +6019,7 @@ msgstr "αρχείο gzipped tar"
 
 msgctxt "MSG_CTapplicationpgp (1704//)"
 msgid "PGP encrypted file"
-msgstr "κρυπτογραφ. αρχείο PGP"
+msgstr "κρυπτογραφημένο αρχείο PGP"
 
 msgctxt "MSG_CTapplicationbz2 (1705//)"
 msgid "BZIP2 archive"
@@ -6027,7 +6027,7 @@ msgstr "αρχείο BZIP2"
 
 msgctxt "MSG_CO_DETECT_CYRILLIC (1706//)"
 msgid "Auto-detect c_yrillic charsets"
-msgstr "Αυτόματη ανίχνευση κυριλλικών χαρακτήρων"
+msgstr "Αυτόματη ανίχνευση κυρι_λλικών χαρακτήρων"
 
 msgctxt "MSG_HELP_CO_DETECT_CYRILLIC (1707//)"
 msgid ""
@@ -6044,7 +6044,7 @@ msgid ""
 "put into the undo buffer.\n"
 "\n"
 "Therefore, the undo buffer is lost."
-msgstr "Το διαγραμμένο κείμενο ήταν πολύ μεγάλο για\nτην είσοδό του στην μνήμη αναίρεσης.\n\nΣυνεπώς, η μνήμη αναίρεσης χάθηκε."
+msgstr "Το διεγραμμένο κείμενο ήταν πολύ μεγάλο για\nτην είσοδό του στην μνήμη αναίρεσης.\n\nΣυνεπώς, η μνήμη αναίρεσης χάθηκε."
 
 msgctxt "MSG_RE_HEADERDISPLAY (1709//)"
 msgid "Header display"
@@ -6070,7 +6070,7 @@ msgstr "Ένα σφάλμα συνέβη κατά την προσπάθεια δ
 
 msgctxt "MSG_CO_ABOOKLOOKUP (1713//)"
 msgid "_Address book lookup in message list"
-msgstr "Αναζήτηση βιβλίου διευθύνσεων στην λίστα μηνυμάτων"
+msgstr "Αναζήτηση βιβλίου _διευθύνσεων στην λίστα μηνυμάτων"
 
 msgctxt "MSG_HELP_CO_CH_ABOOKLOOKUP (1714//)"
 msgid ""
@@ -6091,13 +6091,13 @@ msgstr "Μήνυμα %%ld από %ld"
 
 msgctxt "MSG_CO_CONVERTHTML (1716//)"
 msgid "Con_vert HTML e-mails to plain text"
-msgstr "Μετατροπή αλληλογραφίας HTML σε απλό κείμενο"
+msgstr "Μετα_τροπή αλληλογραφίας HTML σε απλό κείμενο"
 
 msgctxt "MSG_HELP_CO_CONVERTHTML (1717//)"
 msgid ""
 "If the main part of an e-mail is HTML, YAM will\n"
 "convert it to plain text before displaying it."
-msgstr "Εάν το κύριο μέρος της αλληλογραφίας είναι HTML, το YAM θα\nτο μετατρέψει σε απλό κείμενο πριν το εμφανίσει."
+msgstr "Αν το κύριο μέρος της αλληλογραφίας είναι HTML, το YAM θα\nτο μετατρέψει σε απλό κείμενο πριν το εμφανίσει."
 
 #. SIZE, SIZE, SPEED, MINS, SECS, MINS, SECS
 msgctxt "MSG_TR_TRANSFERSTATUS (1719//)"
@@ -6124,7 +6124,7 @@ msgid ""
 "Description: %s\n"
 "Content-Type: %s <%s>\n"
 "Size: ~%s"
-msgstr "\\033bΣυνημμένο - Μέρος MIME #%ld\\033n\nΌνομα: %s\nΠεριγραφή: %s\nΤύπος Περιεχομένων: %s <%s>\nΜέγεθος: ~%s"
+msgstr "\\033bΣυνημμένο - Μέρος MIME #%ld\\033n\nΌνομα: %s\nΠεριγραφή: %s\nΤύπος περιεχομένων: %s <%s>\nΜέγεθος: ~%s"
 
 msgctxt "MSG_MA_MIMEPART_MENU (1726//)"
 msgid "Attachment/MIME part #%ld"
@@ -6132,7 +6132,7 @@ msgstr "Συνημμένο/Τύπος MIME #%ld"
 
 msgctxt "MSG_CO_PGPPASSINTERVAL1 (1727//)"
 msgid "Remem_ber passphrase for"
-msgstr "Απομνημόνευση φράσης πρόσβασης για"
+msgstr "Απο_μνημόνευση φράσης πρόσβασης για"
 
 msgctxt "MSG_CO_PGPPASSINTERVAL2 (1728//)"
 msgid "idle minute(s)"
@@ -6143,7 +6143,7 @@ msgid ""
 "If selected, your PGP passphrase will be remembered\n"
 "for this amount of time. Subsequent PGP operations then\n"
 "won't trigger another passphrase query."
-msgstr "Εάν επιλεχτεί, η φράση πρόσβασής σας PGP θα απομνημονευθεί\nγια αυτό τον χρόνο. Επόμενες λειτουργίες PGP δεν\nθα ενεργοποιήσουν άλλες φράσεις πρόσβασης."
+msgstr "Αν επιλεχτεί, η φράση πρόσβασής σας PGP θα απομνημονευθεί\nγια αυτό τον χρόνο. Επόμενες λειτουργίες PGP δεν\nθα ενεργοποιήσουν άλλες φράσεις πρόσβασης."
 
 msgctxt "MSG_UT_PGPPASSREQ_TITLE (1730//)"
 msgid "PGP passphrase request"
@@ -6155,7 +6155,7 @@ msgstr "Απάντηση/Προώθηση"
 
 msgctxt "MSG_CO_GR_SCRIPTS (1732//)"
 msgid "Scripts"
-msgstr "Δέσμες εντολών"
+msgstr "Σενάρια εντολών"
 
 msgctxt "MSG_CO_GR_STARTUPQUIT (1733//)"
 msgid "Startup/Quit"
@@ -6183,7 +6183,7 @@ msgstr "%p  Αριθμός παραθύρων σύνταξης"
 
 msgctxt "MSG_CO_SCRIPTS_URL (1739//)"
 msgid "%p  Full URL path"
-msgstr "%p  Πλήρες διαδρομή URL"
+msgstr "%p  Πλήρης διαδρομή σελίδας"
 
 msgctxt "MSG_CO_MIMECMD_PARAMETER (1740//)"
 msgid "%s  Full path of file"
@@ -6215,35 +6215,35 @@ msgstr "Φόρτωση δεδομένων κατάρτισης ανεπιθύμ�
 
 msgctxt "MSG_MA_TBSPAM (1746//8)"
 msgid "Sp_am"
-msgstr "Ανεπιθύμητο"
+msgstr "Ανεπι_θύμητο"
 
 msgctxt "MSG_MA_TBNOTSPAM (1747//8)"
 msgid "N.Sp_am"
-msgstr "Μη Ανεπιθύμητο"
+msgstr "_Μη Ανεπιθύμητο"
 
 msgctxt "MSG_HELP_MA_BT_SPAM (1748//)"
 msgid "Mark message as spam"
-msgstr "Σημαδέψτε το μήνυμα ως ανεπιθύμητο"
+msgstr "Μαρκάρετε το μήνυμα ως ανεπιθύμητο"
 
 msgctxt "MSG_HELP_MA_BT_NOTSPAM (1749//)"
 msgid "Mark message as not spam"
-msgstr "Σημαδέψτε το μήνυμα ως μη ανεπιθύμητο"
+msgstr "Μαρκάρετε το μήνυμα ως μη ανεπιθύμητο"
 
 msgctxt "MSG_RE_TBSPAM (1750//8)"
 msgid "Sp_am"
-msgstr "Ανεπιθύμητο"
+msgstr "Ανεπι_θύμητο"
 
 msgctxt "MSG_RE_TBNOTSPAM (1751//8)"
 msgid "N.Sp_am"
-msgstr "Μη Ανεπιθύμητο"
+msgstr "_Μη Ανεπιθύμητο"
 
 msgctxt "MSG_HELP_RE_BT_SPAM (1752//)"
 msgid "Mark message as spam."
-msgstr "Σημαδέψτε το μήνυμα ως ανεπιθύμητο."
+msgstr "Μαρκάρετε το μήνυμα ως ανεπιθύμητο."
 
 msgctxt "MSG_HELP_RE_BT_NOTSPAM (1753//)"
 msgid "Mark message as not spam."
-msgstr "Σημαδέψτε το μήνυμα ως μη ανεπιθύμητο."
+msgstr "Μαρκάρετε το μήνυμα ως μη ανεπιθύμητο."
 
 #. SENDER, SUBJECT
 msgctxt "MSG_LOG_MAILISSPAM (1754//)"
@@ -6285,11 +6285,11 @@ msgstr "Διαμόρφωση του φίλτρου ανεπιθύμητων..."
 
 msgctxt "MSG_CO_SPAM_FILTERFORNEWMAIL (1765//)"
 msgid "Check _new mails for spam content"
-msgstr "Ελέγξτε νέα μηνύματα για ανεπιθύμητο περιεχόμενο"
+msgstr "Ελέγξτε _νέα μηνύματα για ανεπιθύμητο περιεχόμενο"
 
 msgctxt "MSG_CO_SPAM_RESETTRAININGDATA (1766//)"
 msgid "_Reset training data"
-msgstr "Επαναφορά δεδομένων κατάρτισης"
+msgstr "_Επαναφορά δεδομένων κατάρτισης"
 
 msgctxt "MSG_CO_SPAM_GOODCOUNT (1767//)"
 msgid "\"Not spam\" classified mails"
@@ -6305,7 +6305,7 @@ msgstr "Εκκαθάριση δεδομένων κατάρτισης ανεπι�
 
 msgctxt "MSG_CO_SPAM_MARKONMOVE (1772//)"
 msgid "Mark mails as spam when _moved to the Spam folder"
-msgstr "Σημαδέψτε τα μηνύματα ως ανεπιθύμητα όταν μετακινούνται στον φάκελο ανεπιθύμητα"
+msgstr "Μαρκάρετε τα μηνύματα ως ανεπιθύμητα όταν μετα_κινούνται στον φάκελο ανεπιθύμητα"
 
 msgctxt "MSG_CO_SPAM_ADDRESSBOOKISWHITELIST (1773//)"
 msgid "Address book is _white list"
