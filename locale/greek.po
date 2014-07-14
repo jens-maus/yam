@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-07-14 15:58+0000\n"
+"PO-Revision-Date: 2014-07-14 16:13+0000\n"
 "Last-Translator: Anthony I.\n"
 "Language-Team: Greek (http://www.transifex.com/projects/p/yam/language/el/)\n"
 "MIME-Version: 1.0\n"
@@ -6309,7 +6309,7 @@ msgstr "Μαρκάρετε τα μηνύματα ως ανεπιθύμητα ό�
 
 msgctxt "MSG_CO_SPAM_ADDRESSBOOKISWHITELIST (1773//)"
 msgid "Address book is _white list"
-msgstr "Το βιβλίο διευθύνσεων είναι στην άσπρη λίστα"
+msgstr "Το βιβλίο διευθύνσεων είναι στην _λευκή λίστα"
 
 msgctxt "MSG_CO_SPAM_RECOGNITION (1774//)"
 msgid "Spam recognition"
@@ -6317,7 +6317,7 @@ msgstr "Αναγνώριση ανεπιθύμητης αλληλογραφίας
 
 msgctxt "MSG_CO_SPAM_FILTERENABLED (1775//)"
 msgid "S_pam filter enabled"
-msgstr "Ενεργοποιημένο φίλτρο ανεπιθύμητης αλληλογραφίας"
+msgstr "Ενεργοποιημένο φίλτρο α_νεπιθύμητης αλληλογραφίας"
 
 msgctxt "MSG_CO_SPAM_RESETTRAININGDATAASK (1776//)"
 msgid ""
@@ -6341,15 +6341,15 @@ msgstr "Το φίλτρο ανεπιθύμητης αλληλογραφίας ε
 
 msgctxt "MSG_CO_SPAM_RESETTDATA (1780//)"
 msgid "_Reset training data"
-msgstr "Επαναφορά κατάρτισης δεδομένων"
+msgstr "Επα_ναφορά κατάρτισης δεδομένων"
 
 msgctxt "MSG_CO_SPAM_RESETMAILFLAGS (1781//)"
 msgid "Reset _spam state of all mails"
-msgstr "Επαναφορά κατάστασης ανεπιθύμητης αλληλογραφίας σε όλα τα μηνύματα"
+msgstr "Επαναφορά κατάστασης ανεπι_θύμητης αλληλογραφίας σε όλα τα μηνύματα"
 
 msgctxt "MSG_CO_SPAM_DELETESPAMFOLDER (1782//)"
 msgid "_Delete Spam folder"
-msgstr "Διαγραφή φακέλου ανεπιθύμητης αλληλογραφίας"
+msgstr "_Διαγραφή φακέλου ανεπιθύμητης αλληλογραφίας"
 
 msgctxt "MSG_HELP_CO_CY_SMTPAUTHMETHOD (1784//)"
 msgid ""
@@ -6406,7 +6406,7 @@ msgid ""
 "Couldn't create the standard Spam folder.\n"
 "\n"
 "The spam filter has been disabled again. Please make sure that there is enough space left on the drive and that the drive is not write protected."
-msgstr "Αδυναμία δημιουργίας του τυπικού φακέλου ανεπιθύμητης αλληλογραφίας.\n\nΤο φίλτρο ανεπιθύμητης αλληλογραφίας έχει απενεργοποιηθεί ξανά. Βεβαιωθείτε ότι υπάρχει αρκετός χώρος στον δίσκο και ότι δεν είναι προστατευμένος από εγγραφή."
+msgstr "Αδύνατη η δημιουργία του τυπικού φακέλου ανεπιθύμητης αλληλογραφίας.\n\nΤο φίλτρο ανεπιθύμητης αλληλογραφίας έχει απενεργοποιηθεί ξανά. Βεβαιωθείτε ότι υπάρχει αρκετός χώρος στον δίσκο και ότι δεν είναι προστατευμένος από εγγραφή."
 
 msgctxt "MSG_MA_CHECKSPAM (1794//)"
 msgid "Apply spam filter"
@@ -6454,11 +6454,11 @@ msgstr "Τιμές διαχωρισμένες με ΤAB (*.tab)"
 
 msgctxt "MSG_ER_ADDRBOOKIMPORT (1805//)"
 msgid "Could not import address book \"%s\"."
-msgstr "Αδυναμία εισαγωγής βιβλίου διευθύνσεων \"%s\"."
+msgstr "Αδύνατη η εισαγωγή του βιβλίου διευθύνσεων \"%s\"."
 
 msgctxt "MSG_ER_ADDRBOOKEXPORT (1806//)"
 msgid "Could not export address book \"%s\"."
-msgstr "Αδυναμία εξαγωγής βιβλίου διευθύνσεων \"%s\"."
+msgstr "Αδύνατη η εξαγωγή του βιβλίου διευθύνσεων \"%s\"."
 
 msgctxt "MSG_LOADINGUPDATESTATE (1807//)"
 msgid "Loading update state data..."
@@ -6566,11 +6566,11 @@ msgstr "Ρυθμίσεις..."
 
 msgctxt "MSG_MA_TOMARKED (1841//)"
 msgid "Marked"
-msgstr "Σημαδεμένο"
+msgstr "Μαρκαρισμένο"
 
 msgctxt "MSG_MA_TOUNMARKED (1842//)"
 msgid "Unmarked"
-msgstr "Μη σημαδεμένο"
+msgstr "Αμαρκάριστο"
 
 msgctxt "MSG_MA_ALLTOREAD (1843//)"
 msgid "All to read"
@@ -6598,7 +6598,7 @@ msgstr "Αναδίπλωση λέξης;"
 
 msgctxt "MSG_CO_SPAM_MARK_AS_READ (1851//)"
 msgid "Mark new spam mai_ls as read"
-msgstr "Σημαδέψτε τα νέα μηνύματα ως αναγνωσμένα"
+msgstr "Μαρκάρετε τα νέα μηνύματα ως αναγνωσμένα"
 
 msgctxt "MSG_HELP_CH_SPAMFILTERENABLED (1852//)"
 msgid ""
@@ -6630,26 +6630,26 @@ msgctxt "MSG_HELP_CH_SPAMFILTERFORNEWMAIL (1856//)"
 msgid ""
 "If enabled, new incoming e-mail will be\n"
 "immediately analyzed by the spam filter."
-msgstr "Επιλέξτε εάν θέλετε, η νέα εισερχόμενη αλληλογραφία να\nαναλύεται αμέσως από το φίλτρο ανεπιθύμητης αλληλογραφίας."
+msgstr "Επιλέξτε αν θέλετε, η νέα εισερχόμενη αλληλογραφία να\nαναλύεται αμέσως από το φίλτρο ανεπιθύμητης αλληλογραφίας."
 
 msgctxt "MSG_HELP_CH_SPAMABOOKISWHITELIST (1857//)"
 msgid ""
 "If enabled, any e-mail with a From: address that\n"
 "can be found in the address book will never\n"
 "be considered as spam."
-msgstr "Επιλέξτε εάν θέλετε, κάθε αλληλογραφία με διεύθυνση Από:\nπου μπορεί να βρεθεί στο βιβλίο διευθύνσεων να μην\nθεωρείται ως ανεπιθύμητη ποτέ."
+msgstr "Επιλέξτε αν θέλετε, κάθε αλληλογραφία με διεύθυνση Από:\nπου μπορεί να βρεθεί στο βιβλίο διευθύνσεων να μην\nθεωρείται ως ανεπιθύμητη ποτέ."
 
 msgctxt "MSG_HELP_CH_SPAMMARKONMOVE (1858//)"
 msgid ""
 "If checked, any e-mail manually moved to the Spam\n"
 "folder will be automatically marked as spam."
-msgstr "Επιλέξτε εάν θέλετε, κάθε αλληλογραφία που μετακινήθηκε στον\nφάκελο ανεπιθύμητης αλληλογραφίας χειροκίνητα, να\nσημαδεύεται αυτόματα ως ανεπιθύμητη."
+msgstr "Επιλέξτε αν θέλετε, κάθε αλληλογραφία που μετακινήθηκε στον\nφάκελο ανεπιθύμητης αλληλογραφίας χειροκίνητα, να\nμαρκάρεται αυτόματα ως ανεπιθύμητη."
 
 msgctxt "MSG_HELP_CH_SPAMMARKASREAD (1859//)"
 msgid ""
 "If checked, spam mail will be\n"
 "automatically flagged as 'read'."
-msgstr "Επιλέξτε εάν θέλετε, η ανεπιθύμητη αλληλογραφία να παίρνει\nτην ετικέτα 'αναγνωσμένο' αυτόματα."
+msgstr "Επιλέξτε αν θέλετε, η ανεπιθύμητη αλληλογραφία να παίρνει\nτην ετικέτα 'αναγνωσμένο' αυτόματα."
 
 msgctxt "MSG_HELP_CH_UPDATECHECK (1860//)"
 msgid ""
@@ -6666,21 +6666,21 @@ msgctxt "MSG_RE_MDN_ACCEPT_LATER (1862//)"
 msgid ""
 "Accept and\n"
 "send _later"
-msgstr "Δέχομαι και\nαποστολή αργότερα"
+msgstr "Δέχομαι και\nαποστολή α_ργότερα"
 
 msgctxt "MSG_RE_MDN_ACCEPT_NOW (1863//)"
 msgid ""
 "Accept and\n"
 "send _now"
-msgstr "Δέχομαι και\nαποστολή τώρα"
+msgstr "Δέχομαι και\nαποστολή _τώρα"
 
 msgctxt "MSG_RE_MDN_IGNORE (1864//)"
 msgid "_Ignore"
-msgstr "Παράβλεψη"
+msgstr "_Παράβλεψη"
 
 msgctxt "MSG_RE_MDN_IGNORE_ALL (1865//)"
 msgid "Ignore _all"
-msgstr "Παράβλεψη όλων"
+msgstr "Παράβλεψη _όλων"
 
 msgctxt "MSG_CO_MDN_ACTION_IGNORE (1866//)"
 msgid "Never send"
@@ -6708,11 +6708,11 @@ msgstr "Όταν λαμβάνω μια αίτηση για αναφορά επι
 
 msgctxt "MSG_CO_MDN_DISABLED (1872//)"
 msgid "_Never send a return receipt"
-msgstr "Να μην στέλνεται ποτέ αναφορά επιστροφής"
+msgstr "Να _μην στέλνεται ποτέ αναφορά επιστροφής"
 
 msgctxt "MSG_CO_MDN_ENABLED (1873//)"
 msgid "Allow _return receipts for some messages"
-msgstr "Να επιτρέπετε η αναφορά επιστροφής για ορισμένα μηνύματα"
+msgstr "Να επιτρέπετε η αναφορά _επιστροφής για ορισμένα μηνύματα"
 
 msgctxt "MSG_CO_MDN_NORECIPIENT (1874//)"
 msgid "If I'm not in the _To: or Cc: of the message:"
@@ -6720,27 +6720,27 @@ msgstr "Αν δεν είμαι στο _Προς: ή Κοιν: του μηνύμ�
 
 msgctxt "MSG_CO_MDN_NODOMAIN (1875//)"
 msgid "If the sender is _outside my domain:"
-msgstr "Εάν ο αποστολέας είναι εκτός του δικού μου τομέα:"
+msgstr "Αν ο αποστολέας είναι _εκτός του δικού μου τομέα:"
 
 msgctxt "MSG_CO_MDN_DELETE (1876//)"
 msgid "If I'm going to just _delete the message:"
-msgstr "Εάν πάω απλά να διαγράψω το μήνυμα:"
+msgstr "Αν πάω απλά να _διαγράψω το μήνυμα:"
 
 msgctxt "MSG_CO_MDN_OTHER (1877//)"
 msgid "In all oth_er cases:"
-msgstr "Σε όλες τις άλλες περιπτώσεις:"
+msgstr "Σε όλες τις ά_λλες περιπτώσεις:"
 
 msgctxt "MSG_HELP_CO_CH_MDN_NEVER (1880//)"
 msgid ""
 "If selected, no return receipt will be\n"
 "sent, even if explicitly requested."
-msgstr "Εάν επιλεχτεί, δεν θα αποσταλεί καμιά αναφορά\nεπιστροφής, ακόμα κι αν ζητηθεί."
+msgstr "Αν επιλεχτεί, δεν θα αποσταλεί καμιά αναφορά\nεπιστροφής, ακόμα κι αν ζητηθεί."
 
 msgctxt "MSG_HELP_CO_CH_MDN_ALLOW (1881//)"
 msgid ""
 "If selected, return receipts will be processed\n"
 "according to the rules defined here."
-msgstr "Εάν επιλεχτεί, οι αναφορές επιστροφής θα προχωρήσουν\nσύμφωνα με τους κανόνες που ορίζονται εδώ."
+msgstr "Αν επιλεχτεί, οι αναφορές επιστροφής θα προχωρήσουν\nσύμφωνα με τους κανόνες που ορίζονται εδώ."
 
 msgctxt "MSG_HELP_CO_CY_MDN_NORECIPIENT (1882//)"
 msgid ""
@@ -6769,7 +6769,7 @@ msgstr "Τι να κάνετε με μια αίτηση αναφοράς επι�
 
 msgctxt "MSG_CO_LOOKFEEL_TITLE (1886//)"
 msgid "Look & Feel"
-msgstr "Εμφάνιση & Εντύπωση"
+msgstr "Εμφάνιση & εντύπωση"
 
 msgctxt "MSG_CO_LOOKFEEL_SUMMARY (1887//)"
 msgid "Configure the general Look & Feel of YAM..."
@@ -6777,7 +6777,7 @@ msgstr "Διαμορφώστε την γενική εμφάνιση & εντύπ
 
 msgctxt "MSG_CO_CRDLOOKFEEL (1888//)"
 msgid "Look & Feel"
-msgstr "Εμφάνιση & Εντύπωση"
+msgstr "Εμφάνιση & εντύπωση"
 
 msgctxt "MSG_CO_LOOKFEEL_THEMES (1898//)"
 msgid "Themes"
@@ -6785,7 +6785,7 @@ msgstr "Θέματα"
 
 msgctxt "MSG_CO_THEME_ACTIVATE (1899//)"
 msgid "_Activate"
-msgstr "Ενεργοποίηση"
+msgstr "_Ενεργοποίηση"
 
 msgctxt "MSG_CO_THEME_PREVIEW (1900//)"
 msgid "Preview"
@@ -6797,18 +6797,18 @@ msgstr "Δημιουργός"
 
 msgctxt "MSG_CO_THEME_URL (1902//)"
 msgid "URL"
-msgstr "URL"
+msgstr "Σελίδα"
 
 msgctxt "MSG_CO_RELDATETIME (1903//)"
 msgid "Rela_tive date output"
-msgstr "Σχετική ημερομηνία εξόδου"
+msgstr "Σ_χετική ημερομηνία εξόδου"
 
 msgctxt "MSG_HELP_CO_CH_RELDATETIME (1904//)"
 msgid ""
 "If selected, columns with date information\n"
 "will use a relative output (e.g. 'Today' or\n"
 "'Yesterday') instead of the full date if possible."
-msgstr "Εάν επιλεχτεί, οι στήλες με ημερομηνία θα\nχρησιμοποιήσουν μια σχετική έξοδο (π.χ. 'Σήμερα ή\n'Χθές') αντί της πλήρης ημερομηνίας εάν είναι δυνατόν."
+msgstr "Αν επιλεχτεί, οι στήλες με ημερομηνία θα\nχρησιμοποιήσουν μια σχετική έξοδο (π.χ. 'Σήμερα ή\n'Χθές') αντί της πλήρης ημερομηνίας εάν είναι δυνατόν."
 
 msgctxt "MSG_ER_USER_UNKNOWN_TITLE (1910//)"
 msgid "Unknown user"
@@ -6820,7 +6820,7 @@ msgstr "*_ΟΚ"
 
 msgctxt "MSG_ER_USER_UNKNOWN_ERROR (1912//)"
 msgid "Unknown user '%s'."
-msgstr "Άγνωστος χρήστης '%s'!"
+msgstr "Άγνωστος χρήστης '%s'."
 
 msgctxt "MSG_HELP_CO_CA_COLSIG (1913//)"
 msgid ""
@@ -6885,7 +6885,7 @@ msgstr "Προειδοποίηση καθαρίσματος YAM"
 
 msgctxt "MSG_CO_SHOWALTPARTS (1926//)"
 msgid "Show a_lternative parts"
-msgstr "Εμφάνιση εναλλακτικών τμημάτων"
+msgstr "Εμφάνιση ενα_λλακτικών τμημάτων"
 
 msgctxt "MSG_HELP_CO_CH_SHOWALTPARTS (1927//)"
 msgid ""
@@ -6893,7 +6893,7 @@ msgid ""
 "'multipart/alternative' e-mail that\n"
 "would otherwise remain hidden will be\n"
 "displayed as attachments instead."
-msgstr "Εάν επιλεχτεί, εναλλακτικά τμήματα MIME μιας\n'πολλαπλής/εναλλακτικής' αλληλογραφίας που\nαλλιώς θα παρέμενε κρυφή θα\nεμφανιστεί ως συνημμένα."
+msgstr "Αν επιλεχτεί, εναλλακτικά τμήματα MIME μιας\n'πολλαπλής/εναλλακτικής' αλληλογραφίας που\nαλλιώς θα παρέμενε κρυφή θα\nεμφανιστεί ως συνημμένα."
 
 msgctxt "MSG_US_DIRECTORY_DOESNT_EXIST (1928//)"
 msgid ""
@@ -6910,24 +6910,24 @@ msgstr "Κάντε κλικ για να πάρετε την\nτρέχουσα θ
 
 msgctxt "MSG_CO_MOVE_HAM_TO_INCOMING (1930//)"
 msgid "Move 'not spam' e-mails back to _Incoming folder"
-msgstr "Μετακίνηση 'μη ανεπιθύμητης' αλληλογραφίας πίσω στον φάκελο εισερχόμενα."
+msgstr "Μετακίνηση 'μη ανεπιθύμητης' αλληλογραφίας πίσω στον φάκελο _εισερχόμενα."
 
 msgctxt "MSG_HELP_CH_MOVE_HAM_TO_INCOMING (1931//)"
 msgid ""
 "If enabled, any e-mail which was incorrectly classified\n"
 "as 'spam' and later manually marked as 'not spam' will be\n"
 "automatically moved back to the Incoming folder."
-msgstr "Εάν επιλεχτεί, οποιαδήποτε αλληλογραφία που θεωρήθηκε εσφαλμένα\nως 'ανεπιθύμητη' και αργότερα μαρκαρίστηκε χειροκίνητα ως 'μη ανεπιθύμητη'\nθα μετακινηθεί αυτόματα πίσω στον φάκελο εισερχόμενα."
+msgstr "Αν επιλεχτεί, οποιαδήποτε αλληλογραφία που θεωρήθηκε εσφαλμένα\nως 'ανεπιθύμητη' και αργότερα μαρκαρίστηκε χειροκίνητα ως 'μη ανεπιθύμητη'\nθα μετακινηθεί αυτόματα πίσω στον φάκελο εισερχόμενα."
 
 msgctxt "MSG_CO_FILTER_HAM (1933//)"
 msgid "Apply _filters"
-msgstr "Εφαρμογή φίλτρων"
+msgstr "Εφαρμογή _φίλτρων"
 
 msgctxt "MSG_HELP_CH_FILTER_HAM (1934//)"
 msgid ""
 "If enabled, after moving the e-mail all the user\n"
 "defined filters will be applied to it."
-msgstr "Εάν επιλεχτεί, μετά την μετακίνηση της αλληλογραφίας, όλα τα\nορισμένα φίλτρα του χρήστη θα εφαρμοστούν σε αυτή."
+msgstr "Αν επιλεχτεί, μετά την μετακίνηση της αλληλογραφίας, όλα τα\nορισμένα φίλτρα του χρήστη θα εφαρμοστούν σε αυτή."
 
 msgctxt "MSG_SHUTDOWN_SHUTTING_DOWN (1935//)"
 msgid "Shutting down YAM..."
@@ -6967,15 +6967,15 @@ msgctxt "MSG_HELP_FO_CH_EXPIREUNREAD (1946//)"
 msgid ""
 "If selected, old messages will be deleted,\n"
 "even if they are not yet read."
-msgstr "Εάν επιλεχτεί, τα παλαιά μηνύματα θα διαγραφούν,\nακόμα και εάν δεν έχουν διαβαστεί."
+msgstr "Αν επιλεχτεί, τα παλαιά μηνύματα θα διαγραφούν,\nακόμα και εάν δεν έχουν διαβαστεί."
 
 msgctxt "MSG_WR_SENDNOW (1947//)"
 msgid "_Send now"
-msgstr "Αποστολή τώρα"
+msgstr "Αποστολή _τώρα"
 
 msgctxt "MSG_WR_SENDLATER (1948//)"
 msgid "Send _later"
-msgstr "Αποστολή αργότερα"
+msgstr "Αποστολή _αργότερα"
 
 msgctxt "MSG_WR_MSENDNOW (1951//)"
 msgid "Send now"
@@ -7007,7 +7007,7 @@ msgstr "Επιλογές"
 
 msgctxt "MSG_CO_FWDMSG (1959//)"
 msgid "_Forward messages"
-msgstr "Προωθημένα μηνύματα"
+msgstr "_Προώθηση μηνυμάτων"
 
 msgctxt "MSG_CO_FWDMSG_INLINE (1961//)"
 msgid "inlined"
@@ -7050,7 +7050,7 @@ msgctxt "MSG_ABOUT_YAM_NEWS (1968//)"
 msgid ""
 "The latest news about YAM can be found at the\n"
 "YAM Support Site at \\0335http://yam.ch/\\033n"
-msgstr "Οι τελευταίες ειδήσεις σχετικά με το YAM μπορούν να\nβρεθούν στην διεύθυνση του YAM στο \\0335http://www.yam.ch/\\033n"
+msgstr "Τα τελευταία νέα σχετικά με το YAM μπορούν να\nβρεθούν στην διεύθυνση του YAM στο \\0335http://www.yam.ch/\\033n"
 
 msgctxt "MSG_WR_VIEW (1969//)"
 msgid "View"
