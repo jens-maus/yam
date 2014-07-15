@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-07-15 20:59+0000\n"
+"PO-Revision-Date: 2014-07-15 21:06+0000\n"
 "Last-Translator: Anthony I.\n"
 "Language-Team: Greek (http://www.transifex.com/projects/p/yam/language/el/)\n"
 "MIME-Version: 1.0\n"
@@ -9750,7 +9750,7 @@ msgstr "Ο αυτόματος εντοπισμός κυριλλικών χαρα
 
 msgctxt "MSG_CO_CYRILLICCHARSETWARN_BT (2521//)"
 msgid "*_Deactivate|_Ignore"
-msgstr "*_Απενεργοποίηση|Α_γνόηση"
+msgstr "*_Απενεργοποίηση|_Παράβλεψη"
 
 msgctxt "MSG_WR_NORCPT_WARNING_GADGET (2522//)"
 msgid "_Save as draft|*_Cancel"
@@ -9784,11 +9784,11 @@ msgctxt "MSG_HELP_WR_BT_CANCEL (2528//)"
 msgid ""
 "Aborts the mail editing and\n"
 "closes the window."
-msgstr "Ματαίωση την επεξεργασία αλληλογραφίας\nκαι κλείσιμο του παραθύρου."
+msgstr "Ματαίωση της επεξεργασίας αλληλογραφίας\nκαι κλείσιμο του παραθύρου."
 
 msgctxt "MSG_MA_REPLYREQ_OPTIONS2 (2529//)"
 msgid "*_Sender|Sender and _all Recipients|_Cancel"
-msgstr "*_Αποστολέας|Αποστολές και όλοι οι _Παραλήπτες|Α_κύρωση"
+msgstr "*_Αποστολέας|Αποστολέας και όλοι οι _Παραλήπτες|Α_κύρωση"
 
 msgctxt "MSG_ABOUT_DONATE_TEXT (2530//)"
 msgid "Secure the future of YAM"
@@ -9809,7 +9809,7 @@ msgstr "_Κοιν"
 #. (e.g. 'Blindkopie (_Bcc)' in German)
 msgctxt "MSG_WR_BCC (2533//)"
 msgid "_Bcc"
-msgstr "_Ιδιαίτ.Κοιν."
+msgstr "_Λευκή Κοιν."
 
 msgctxt "MSG_WR_REPLYTO (2534//)"
 msgid "Reply _To"
@@ -9829,7 +9829,7 @@ msgstr "_Κοιν:"
 #. (e.g. 'Blindkopie (_Bcc):' in German)
 msgctxt "MSG_AB_BCC_TOOLBAR (2537//)"
 msgid "_Bcc:"
-msgstr "_Ιδ.Κοιν:"
+msgstr "_Λευκή Κοιν:"
 
 #. Use same phrase as MSG_WR_FROM but in parentheses
 msgctxt "MSG_AB_FROM_TITLE (2538//)"
@@ -9849,7 +9849,7 @@ msgstr "(Κοιν)"
 #. Use same phrase as MSG_WR_BCC but in parentheses
 msgctxt "MSG_AB_BCC_TITLE (2541//)"
 msgid "(Bcc)"
-msgstr "(Ιδ.Κοιν)"
+msgstr "(Λευκή Κοιν.)"
 
 #. Use same phrase as MSG_WR_REPLYTO but in parentheses
 msgctxt "MSG_AB_REPLYTO_TITLE (2542//)"
