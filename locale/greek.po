@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-07-14 16:13+0000\n"
+"PO-Revision-Date: 2014-07-15 20:59+0000\n"
 "Last-Translator: Anthony I.\n"
 "Language-Team: Greek (http://www.transifex.com/projects/p/yam/language/el/)\n"
 "MIME-Version: 1.0\n"
@@ -7091,7 +7091,7 @@ msgid ""
 "\n"
 "Do you want to reset the default security\n"
 "setting for this entry?"
-msgstr "Αυτή η καταχώρηση του βιβλίου διευθύνσεων ορίστηκε προεπιλεγμένα\nνα είναι είτε υπογεγραμμένη και/ή κρυπτογραφημένη, αλλά η\nαπαραίτητη εγκατάσταση PGP δεν βρέθηκε.\n\nΘέλετε να επαναφέρετε τις προεπιλεγμένες\nρυθμίσεις ασφαλείας για αυτή την καταχώρηση;"
+msgstr "Αυτή η καταχώρηση του βιβλίου διευθύνσεων ορίστηκε προεπιλεγμένα\nνα είναι είτε υπεγραμμένη και/ή κρυπτογραφημένη, αλλά η\nαπαραίτητη εγκατάσταση PGP δεν βρέθηκε.\n\nΘέλετε να επαναφέρετε τις προεπιλεγμένες\nρυθμίσεις ασφαλείας για αυτή την καταχώρηση;"
 
 msgctxt "MSG_AB_INVALIDSECURITY_GADS (1980//)"
 msgid "*_Yes|_No"
@@ -7112,7 +7112,7 @@ msgid ""
 "but the required PGP installation wasn't found.\n"
 "\n"
 "The message will be neither signed or encrypted."
-msgstr "Η ρύθμιση ασφαλείας του βιβλίου διευθύνσεων για τον παραλήπτη\n\n'%s'\n\nέχει οριστεί σε υπογεγραμμένη ή κρυπτογραφημένη,\nαλλά η απαραίτητη εγκατάσταση PGP δεν βρέθηκε.\n\nΤο μήνυμα δε θα είναι ούτε υπογεγραμμένο ούτε κρυπτογραφημένο."
+msgstr "Η ρύθμιση ασφαλείας του βιβλίου διευθύνσεων για τον παραλήπτη\n\n'%s'\n\nέχει οριστεί σε υπεγραμμένη ή κρυπτογραφημένη,\nαλλά η απαραίτητη εγκατάσταση PGP δεν βρέθηκε.\n\nΤο μήνυμα δε θα είναι ούτε υπογεγραμμένο ούτε κρυπτογραφημένο."
 
 msgctxt "MSG_WR_INVALIDSECURITY_GADS (1983//)"
 msgid "*_Ok|_Cancel"
@@ -7250,7 +7250,7 @@ msgid ""
 "Index file '%s' in folder '%s' is corrupt at position %d near the information about mail file '%s' (MoreBytes: 0x%x).\n"
 "\n"
 "The folder was flagged as 'unloaded' and an index update was initiated or is required to solve the problem."
-msgstr "Το αρχείο ευρετηρίου '%s' στον φάκελο '%s' είναι αλλοιωμένο στην θέση %d κοντά στην πληροφορία σχετικά με το αρχείο αλληλογραφίας '%s' (MoreBytes: 0x%x).\n\nΟ φάκελος σημειώθηκε ως 'μη φορτωμένος' και αρχικοποιήθηκε μια ενημέρωση ευρετηρίου ή χρειάζεται για την λύση του προβλήματος."
+msgstr "Το αρχείο ευρετηρίου '%s' στον φάκελο '%s' είναι αλλοιωμένο στην θέση %d κοντά στην πληροφορία σχετικά με το αρχείο αλληλογραφίας '%s' (MoreBytes: 0x%x).\n\nΟ φάκελος σημειώθηκε ως 'μη φορτωμένος' και προετοιμάστηκε μια ενημέρωση ευρετηρίου ή χρειάζεται για την λύση του προβλήματος."
 
 #. ENCODING_TYPE, FILENAME
 msgctxt "MSG_ER_UNKNOWN_MIME_ENCODING (2007//)"
@@ -7333,15 +7333,15 @@ msgstr "Μοτίβο (Προς:/Κοιν:)"
 
 msgctxt "MSG_FO_TO_ADDRESS (2021//)"
 msgid "Destination address (_To:)"
-msgstr "Διεύθυνση προορισμού (Προς:)"
+msgstr "Διεύθυνση προορισμού (_Προς:)"
 
 msgctxt "MSG_FO_FROM_ADDRESS (2022//)"
 msgid "Sender address (_From:)"
-msgstr "Διεύθυνση αποστολέα (Από:)"
+msgstr "Διεύθυνση αποστολέα (_Από:)"
 
 msgctxt "MSG_FO_REPLYTO_ADDRESS (2023//)"
 msgid "_Reply address (Reply-To:)"
-msgstr "Διεύθυνση απάντησης (Αποστολή-Προς:)"
+msgstr "Διεύθυνση απάντησης (Απο_στολή-Προς:)"
 
 msgctxt "MSG_RETRY_HOMEPAGE_QUIT_GAD (2024//)"
 msgid "Try again|Visit homepage|Quit"
@@ -7461,11 +7461,11 @@ msgstr "Πριν την εφαρμογή του επιλεγμένου θέμα�
 
 msgctxt "MSG_FOLDER_ALLTOREAD (2047//)"
 msgid "Mark folder read"
-msgstr "Σημαδέψτε τον φάκελο ως αναγνωσμένο"
+msgstr "Μαρκάρετε τον φάκελο ως αναγνωσμένο"
 
 msgctxt "MSG_EA_REMOVEPHOTO (2048//)"
 msgid "Remo_ve"
-msgstr "Αφαίρεση"
+msgstr "Α_φαίρεση"
 
 msgctxt "MSG_HELP_EA_BT_REMOVEPHOTO (2049//)"
 msgid ""
@@ -7507,7 +7507,7 @@ msgctxt "MSG_HELP_CO_BT_FILTERDOWN (2056//)"
 msgid ""
 "Move this filter\n"
 "down in the list."
-msgstr "Μετακινήστε αυτό το φίλτρο\nστον πάτο της λίστας."
+msgstr "Μετακινήστε αυτό το φίλτρο\nστο τέλος της λίστας."
 
 msgctxt "MSG_HELP_CO_PO_APLAY (2057//)"
 msgid ""
@@ -7527,7 +7527,7 @@ msgstr "Μια προσαρμοσμένη περιγραφή για\nαυτό τ
 
 msgctxt "MSG_HELP_CO_LV_REXX (2061//)"
 msgid "List of scripts."
-msgstr "Λίστα με δέσμες εντολών."
+msgstr "Λίστα με σενάρια εντολών."
 
 msgctxt "MSG_HELP_CO_BT_UPDATENOW (2062//)"
 msgid ""
@@ -7543,7 +7543,7 @@ msgstr "Λίστα συνημμένων σε αυτό το μήνυμα."
 
 msgctxt "MSG_QUICKSEARCH_STR_CONTROLCHAR (2064//)"
 msgid "k"
-msgstr "κ"
+msgstr "k"
 
 msgctxt "MSG_CO_UPDATE_NEVER (2065//)"
 msgid "Never"
@@ -7551,7 +7551,7 @@ msgstr "Ποτέ"
 
 msgctxt "MSG_MA_EXECUTESCRIPT_TITLE (2066//)"
 msgid "Select script to execute"
-msgstr "Επιλέξτε δέσμη εντολών για εκτέλεση"
+msgstr "Επιλέξτε σενάριο εντολών για εκτέλεση"
 
 msgctxt "MSG_HELP_FI_BT_NONE (2067//)"
 msgid ""
@@ -7566,7 +7566,7 @@ msgid ""
 "'%s' will be filtered.\n"
 "\n"
 "Do you want to proceed?"
-msgstr "Εάν συνεχίσετε, όλα τα μηνύματα του φακέλου\n'%s' θα φιλτραριστούν.\n\nΘέλετε να προχωρήσετε;"
+msgstr "Αν συνεχίσετε, όλα τα μηνύματα του φακέλου\n'%s' θα φιλτραριστούν.\n\nΘέλετε να προχωρήσετε;"
 
 #. FOLDER
 msgctxt "MSG_MA_CONFIRMFILTER_SELECTED (2069//)"
@@ -7630,7 +7630,7 @@ msgstr "Ενώ έχετε επεξεργαστεί το κείμενο του μ
 #. COUNT, HOST
 msgctxt "MSG_LOG_SENDING_FAILED (2080//)"
 msgid "Sending %ld message(s) using SMTP server '%s' failed"
-msgstr "Αποτυχία αποστολής %ld μηνυμάτων χρησιμοποιώντας τον διακομιστή SMTP '%s'"
+msgstr "Απέτυχε η αποστολή %ld μηνυμάτων χρησιμοποιώντας τον διακομιστή SMTP '%s'"
 
 msgctxt "MSG_HELP_EA_ST_BIRTHDAY (2081//)"
 msgid ""
@@ -7640,7 +7640,7 @@ msgstr "Ημερομηνία γέννησης σε τοπική μορφή\n(π.
 
 msgctxt "MSG_ERROR_THREADS (2082//)"
 msgid "Cannot initialize thread system."
-msgstr "Αδύνατη η αρχικοποίηση του συστήματος νημάτων"
+msgstr "Αδύνατη η προετοιμασία του συστήματος νημάτων"
 
 #. FILE
 msgctxt "MSG_ERROR_PLAYSOUND (2083//)"
@@ -7735,7 +7735,7 @@ msgstr "Κακή απόκριση από τον διακομιστή αλληλ�
 msgctxt "MSG_ER_INITTLS_POP3 (2095//)"
 msgid ""
 "Couldn't initialize TLSv1/SSLv3 session with host '%s' of account '%s'."
-msgstr "Αδύνατη η αρχικοποίηση της διεργασίας TLSv1/SSLv3 με τον κόμβο '%s' του λογαριασμού '%s'."
+msgstr "Αδύνατη η προετοιμασία της διεργασίας TLSv1/SSLv3 με τον κόμβο '%s' του λογαριασμού '%s'."
 
 #. HOST, ACCOUNT
 msgctxt "MSG_ER_NO_APOP (2096//)"
@@ -7750,7 +7750,7 @@ msgid ""
 "Couldn't connect to host '%s'.\n"
 "\n"
 "A TCP/IP socket connection seems to be already active. Please close any other existing transfers."
-msgstr "Αδύνατη η σύνδεση με τον κόμβο '%s'.\n\nΗ σύνδεση TCP/IP φαίνεται να είναι ήδη ενεργή. Κλείστε τις υπόλοιπες υπάρχοντες μεταφορές."
+msgstr "Αδύνατη η σύνδεση με τον κόμβο '%s'.\n\nΗ σύνδεση TCP/IP φαίνεται να είναι ήδη ενεργή. Κλείστε τις υπόλοιπες υπάρχουσες μεταφορές."
 
 #. HOST
 msgctxt "MSG_ER_CONNECTERR_TIMEDOUT_SMTP (2098//)"
@@ -7766,7 +7766,7 @@ msgid ""
 "Couldn't connect to host '%s'.\n"
 "\n"
 "YAM wasn't able to establish a socket connection to the mail server. Please make sure that your TCP/IP stack is online and working properly."
-msgstr "Αδυναμία σύνδεσης με τον κόμβο '%s'.\n\nΤο YAM δεν μπόρεσε να πραγματοποιήσει μια σύνδεση με τον διακομιστή αλληλογραφίας. Βεβαιωθείτε ότι το TCP/IP είναι ενεργό και δουλεύει σωστά."
+msgstr "Αδύνατη η σύνδεση με τον κόμβο '%s'.\n\nΤο YAM δεν μπόρεσε να πραγματοποιήσει μια σύνδεση με τον διακομιστή αλληλογραφίας. Βεβαιωθείτε ότι το TCP/IP είναι ενεργό και δουλεύει σωστά."
 
 #. HOST
 msgctxt "MSG_ER_CONNECTERR_NO_NONBLOCKIO_SMTP (2100//)"
@@ -7779,7 +7779,7 @@ msgstr "Αδύνατη η σύνδεση με τον κόμβο '%s'.\n\nΤο YA
 #. HOST
 msgctxt "MSG_ER_INITTLS_SMTP (2101//)"
 msgid "Couldn't initialize TLSv1/SSLv3 session with host '%s'."
-msgstr "Αδύνατη η αρχικοποίηση της διεργασίας TLSv1/SSLv3 με τον κόμβο '%s'."
+msgstr "Αδύνατη η προετοιμασία της διεργασίας TLSv1/SSLv3 με τον κόμβο '%s'."
 
 #. HOST
 msgctxt "MSG_ER_NOSTARTTLS_SMTP (2102//)"
@@ -7878,7 +7878,7 @@ msgid ""
 "be converted to the read charset\n"
 "will be mapped to looklike ASCII\n"
 "sequences."
-msgstr "Εάν επιλεχτεί, οι χαρακτήρες που δεν μπορούν\nνα μετατραπούν στο σετ χαρακτήρων ανάγνωσης\nθα χαρτογραφηθούν ώστε να μοιάζουν με ακολουθίες ASCII."
+msgstr "Αν επιλεχτεί, οι χαρακτήρες που δεν μπορούν\nνα μετατραπούν στο σετ χαρακτήρων ανάγνωσης\nθα χαρτογραφηθούν ώστε να μοιάζουν με ακολουθίες ASCII."
 
 msgctxt "MSG_MA_NAVIGATION (2118//)"
 msgid "Navigation"
@@ -7902,7 +7902,7 @@ msgid ""
 "the same thread will be extended to all\n"
 "folders rather than only searching for\n"
 "mails in the same folder."
-msgstr "Εάν επιλεχτεί, η αναζήτηση για μηνύματα του\nίδιου νήματος θα επεκταθεί σε όλους τους\nφακέλους αντί για αναζήτηση μηνυμάτων\nμόνο στον ίδιο φάκελο."
+msgstr "Αν επιλεχτεί, η αναζήτηση για μηνύματα του\nίδιου νήματος θα επεκταθεί σε όλους τους\nφακέλους αντί για αναζήτηση μηνυμάτων\nμόνο στον ίδιο φάκελο."
 
 #. FILENAME
 msgctxt "MSG_FILE_OVERWRITE (2123//)"
@@ -7915,11 +7915,11 @@ msgstr "Το αρχείο '%s' υπάρχει ήδη.\n\nΘέλετε να το 
 #. PATH, USERNAME
 msgctxt "MSG_ER_USER_DIR_MISSING (2124//)"
 msgid "The home directory '%s' of user '%s' does not exist."
-msgstr "Ο αρχικός κατάλογος '%s' του χρήστη '%s' δεν υπάρχει!"
+msgstr "Ο αρχικός κατάλογος '%s' του χρήστη '%s' δεν υπάρχει."
 
 msgctxt "MSG_CO_TEXTCOLORS_READ (2125//)"
 msgid "Show te_xt colors"
-msgstr "Εμφάνιση χρωμάτων κειμένου"
+msgstr "Εμφάνιση _χρωμάτων κειμένου"
 
 msgctxt "MSG_HELP_CO_CH_TEXTCOLORS_READ (2126//)"
 msgid ""
@@ -7929,7 +7929,7 @@ msgstr "Χρησιμοποιήστε τα χρώματα κειμένου για
 
 msgctxt "MSG_CO_TEXTSTYLES_READ (2127//)"
 msgid "Show te_xt styles"
-msgstr "Εμφάνιση στύλ κειμένου"
+msgstr "Εμφάνιση _στύλ κειμένου"
 
 msgctxt "MSG_HELP_CO_CH_TEXTSTYLES_READ (2128//)"
 msgid ""
@@ -7939,7 +7939,7 @@ msgstr "Ερμηνεύστε τα '/', '*', '_' και '#' ως\nχαρακτή�
 
 msgctxt "MSG_CO_TEXTCOLORS_WRITE (2129//)"
 msgid "Show tex_t colors"
-msgstr "Εμφάνιση χρωμάτων κειμένου"
+msgstr "Εμφάνιση χρωμάτων _κειμένου"
 
 msgctxt "MSG_HELP_CO_CH_TEXTCOLORS_WRITE (2130//)"
 msgid ""
@@ -7949,7 +7949,7 @@ msgstr "Χρησιμοποιήστε τα χρώματα κειμένου για
 
 msgctxt "MSG_CO_TEXTSTYLES_WRITE (2131//)"
 msgid "Show te_xt styles"
-msgstr "Εμφάνιση στύλ κειμένου"
+msgstr "Εμφάνιση στύ_λ κειμένου"
 
 msgctxt "MSG_HELP_CO_CH_TEXTSTYLES_WRITE (2132//)"
 msgid ""
@@ -7963,7 +7963,7 @@ msgstr "Ρυθμίσεις γραμματοσειράς"
 
 msgctxt "MSG_CO_FIXEDFONT_WRITE (2134//)"
 msgid "Use _fixed font"
-msgstr "Χρήση σταθερής γραμματοσειράς"
+msgstr "Χρήση στα_θερής γραμματοσειράς"
 
 msgctxt "MSG_RE_TEXTCOLORS (2135//)"
 msgid "Text colors?"
@@ -7983,7 +7983,7 @@ msgstr "Σταθερή γραμματοσειρά;"
 
 msgctxt "MSG_CO_SPAM_OPTIMIZE_TRAININGDATA (2139//)"
 msgid "_Optimize training data"
-msgstr "Βελτιστοποίηση δεδομένων κατάρτισης"
+msgstr "_Βελτιστοποίηση δεδομένων κατάρτισης"
 
 msgctxt "MSG_HELP_BT_OPTIMIZE_TRAININGDATA (2140//)"
 msgid ""
@@ -8031,7 +8031,7 @@ msgid ""
 "If checked, YAM will use AmigaOS4.1's notification\n"
 "system to notify the user about new received mails.\n"
 "This requires at least application.library V53.2."
-msgstr "Εάν επιλεχτεί, το YAM θα χρησιμοποιήσει το σύστημα\nπροειδοποίησης του AmigaOS4.1 για την ειδοποίηση του\nχρήστη σχετικά με νέα ληφθέντα μηνύματα.\nΑυτό απαιτεί τουλάχιστον την application.library V53.2."
+msgstr "Αν επιλεχτεί, το YAM θα χρησιμοποιήσει το σύστημα\nπροειδοποίησης του AmigaOS4.1 για την ειδοποίηση του\nχρήστη σχετικά με νέα ληφθέντα μηνύματα.\nΑυτό απαιτεί τουλάχιστον την application.library V53.2."
 
 msgctxt "MSG_USERNAME_FALLBACK (2152//)"
 msgid "John Doe"
@@ -8157,7 +8157,7 @@ msgstr "Η εκτέλεση της εντολής '%s' απέτυχε (κωδι�
 
 msgctxt "MSG_ERROR_METHODSTACK (2178//)"
 msgid "Cannot initialize method stack."
-msgstr "Αδύνατη η αρχικοποίηση της στοίβας μεθόδου."
+msgstr "Αδύνατη η προετοιμασία της στοίβας μεθόδου."
 
 msgctxt "MSG_TRANSFERS_IN_PROGRESS (2179//)"
 msgid "Transfers in progress"
@@ -8165,7 +8165,7 @@ msgstr "Μεταφορές σε εξέλιξη"
 
 msgctxt "MSG_ERROR_CONNECTIONS (2180//)"
 msgid "Cannot initialize connections."
-msgstr "Αδύνατη η αρχικοποίηση των συνδέσεων."
+msgstr "Αδύνατη η προετοιμασία των συνδέσεων."
 
 #. ACCOUNT, COUNT
 msgctxt "MSG_LOG_CONNECT_POP3 (2181//)"
@@ -8212,37 +8212,37 @@ msgid ""
 "%3ld messages downloaded,\n"
 "%3ld left on server\n"
 "%3ld duplicates skipped\n"
-msgstr "Έχετε νέο μήνυμα από τον λογαριασμό '%s'.\\0332\n\n%3ld μηνύματα λήφθηκαν,\n%3ld παρέμειναν στον διακομιστή\n%3ld διπλά παραλείπονται\n"
+msgstr "\\0338Έχετε νέα αλληλογραφία από τον λογαριασμό '%s'.\\0332\n\n%3ld μηνύματα λήφθηκαν,\n%3ld παρέμειναν στον διακομιστή\n%3ld διπλά παραλείπονται\n"
 
 #. ACCOUNT
 msgctxt "MSG_POP3_NEW_MAIL_NOTIFY_OS4_ONE (2190//)"
 msgid ""
 "%s\n"
 "Received 1 new mail."
-msgstr "%s\nΕλήφθη 1 νέο μήνυμα."
+msgstr "%s\nΕλήφθη 1 νέα αλληλογραφία."
 
 #. ACCOUNT, COUNT
 msgctxt "MSG_POP3_NEW_MAIL_NOTIFY_OS4_MANY (2191//)"
 msgid ""
 "%s\n"
 "Received %ld new mails."
-msgstr "%s\nΕλήφθησαν %ld νέα μηνύματα."
+msgstr "%s\nΕλήφθησαν %ld νέες αλληλογραφίες."
 
 msgctxt "MSG_MA_SEND_AND_GET_MAIL (2192//)"
 msgid "Send and get mail"
-msgstr "Αποστολή και λήψη μηνύματος"
+msgstr "Αποστολή και λήψη αλληλογραφίας"
 
 msgctxt "MSG_MA_SEND_MAIL (2193//)"
 msgid "Send mail"
-msgstr "Αποστολή μηνύματος"
+msgstr "Αποστολή αλληλογραφίας"
 
 msgctxt "MSG_MA_GET_MAIL (2194//)"
 msgid "Get mail"
-msgstr "Λήψη μηνύματος"
+msgstr "Λήψη αλληλογραφίας"
 
 msgctxt "MSG_WR_SECURITYREQ_GADS (2195//)"
 msgid "*_Plain|_Signed|_Encrypted|S_igned & encrypted|_Cancel"
-msgstr "*_Απλή|_Υπογεγραμμένη|_Κωδικοποιημένη|Υ_πογ. & Κωδ.|Α_νώνυμη|Α_κύρωση"
+msgstr "*_Απλή|_Υπογραμμένη|_Κωδικοποιημένη|Υ_πογ. & Κωδ.|Α_νώνυμη|Α_κύρωση"
 
 msgctxt "MSG_HTTP_CONNECTING_TO_SERVER (2196//)"
 msgid "Connecting to server..."
@@ -8281,23 +8281,23 @@ msgstr "Εφαρμογή όλων των καθορισμένων απομακρ
 
 msgctxt "MSG_CO_DOWNLOAD_ON_STARTUP (2204//)"
 msgid "Check for new mail on startup"
-msgstr "Έλεγχος νέων μηνυμάτων κατά την εκκίνηση"
+msgstr "Έλεγχος νέας αλληλογραφίας κατά την εκκίνηση"
 
 msgctxt "MSG_HELP_CO_CH_DOWNLOAD_ON_STARTUP (2205//)"
 msgid ""
 "Check this account for new mail on every\n"
 "startup of YAM automatically."
-msgstr "Έλεγχος του λογαριασμού για νέα μηνύματα αυτόματα\nκάθε φορά που γίνεται εκκίνηση του YAM."
+msgstr "Έλεγχος του λογαριασμού για νέα αλληλογραφία αυτόματα\nκάθε φορά που γίνεται εκκίνηση του YAM."
 
 #. FILE
 msgctxt "MSG_IMPORT_UNKNOWN_FILE_FORMAT (2206//)"
 msgid "Unknown mail file format in file '%s'."
-msgstr "Άγνωστος τύπος αρχείου μηνύματος στο αρχείο '%s'."
+msgstr "Άγνωστος τύπος αρχείου αλληλογραφίας στο αρχείο '%s'."
 
 #. FILE
 msgctxt "MSG_IMPORT_NO_MAILS (2207//)"
 msgid "The file '%s' does not contain any importable mails."
-msgstr "Το αρχείο '%s' δεν περιέχει εισαγόμενα μηνύματα."
+msgstr "Το αρχείο '%s' δεν περιέχει σημαντική αλληλογραφία."
 
 msgctxt "MSG_CO_CONFIG_IS_LOCKED (2208//)"
 msgid ""
@@ -8374,19 +8374,19 @@ msgstr "Δεν βρέθηκε γραμμή κεφαλίδας του 'ΜΙΜE-Ve
 
 msgctxt "MSG_CO_ACTION_SET_STATUS_TO_MARKED (2221//)"
 msgid "Set status to 'Marked'"
-msgstr "Ορισμός κατάστασης σε 'Σημαδεμένο'"
+msgstr "Ορισμός κατάστασης σε 'Μαρκαρισμένο'"
 
 msgctxt "MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_MARKED (2222//)"
 msgid "Set the status of the filtered mail to 'Marked'"
-msgstr "Ορισμός κατάστασης του φιλτραρισμένου μηνύματος σε 'Σημαδεμένο'"
+msgstr "Ορισμός κατάστασης του φιλτραρισμένου μηνύματος σε 'Μαρκαρισμένο'"
 
 msgctxt "MSG_CO_ACTION_SET_STATUS_TO_UNMARKED (2223//)"
 msgid "Set status to 'Unmarked'"
-msgstr "Ορισμός κατάστασης σε 'Μη-σημαδεμένο'"
+msgstr "Ορισμός κατάστασης σε 'Αμαρκάριστο'"
 
 msgctxt "MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_UNMARKED (2224//)"
 msgid "Set the status of the filtered mail to 'Unmarked'"
-msgstr "Ορισμός κατάστασης του φιλτραρισμένου μηνύματος σε 'Μη-σημαδεμένο'"
+msgstr "Ορισμός κατάστασης του φιλτραρισμένου μηνύματος σε 'Αμαρκάριστο'"
 
 msgctxt "MSG_CO_ACTION_SET_STATUS_TO_READ (2225//)"
 msgid "Set status to 'Read'"
@@ -8658,11 +8658,11 @@ msgstr "Χρήση PGP για αυτή την ταυτότητα"
 
 msgctxt "MSG_CO_IDENTITY_PGPKEY_ID (2294//)"
 msgid "PGP key ID"
-msgstr "ID κλειδί PGP"
+msgstr "Ταυτότητα κλειδιού PGP"
 
 msgctxt "MSG_CO_IDENTITY_PGPKEY_URL (2295//)"
 msgid "PGP key URL"
-msgstr "URL κλειδί PGP"
+msgstr "Σελίδα κλειδιού PGP"
 
 msgctxt "MSG_CO_IDENTITY_PGP_OPTIONS (2296//)"
 msgid "Options"
@@ -8686,7 +8686,7 @@ msgstr "Προσθήκη δικού σας κλειδιού κατά την απ
 
 msgctxt "MSG_CO_IDENTITY_PHOTOURL (2301//)"
 msgid "URL to own photo"
-msgstr "URL φωτογραφίας μου"
+msgstr "Σελίδα φωτογραφίας μου"
 
 msgctxt "MSG_CO_IDENTITY_ADDINFO (2302//)"
 msgid "Add personal information"
@@ -8727,7 +8727,7 @@ msgstr "Ένα αρχείο ή κατάλογος με το όνομα '%s' υπ
 #. PATH, ERROR
 msgctxt "MSG_ER_CANNOT_CREATE_FOLDER (2308//)"
 msgid "Failed to create directory '%s' (%s)."
-msgstr "Αποτυχία δημιουργίας του καταλόγου '%s' (%s)."
+msgstr "Απέτυχε η δημιουργία του καταλόγου '%s' (%s)."
 
 msgctxt "MSG_CO_IdentityActive (2309//)"
 msgid "_Active"
@@ -8800,7 +8800,7 @@ msgctxt "MSG_HELP_CO_ST_IDENTITY_PHOTOURL (2322//)"
 msgid ""
 "An optional URL to a photo associated with\n"
 "this user identity."
-msgstr "Μια προαιρετική URL σε μια φωτογραφία που σχετίζεται\nμε αυτή την ταυτότητα χρήστη."
+msgstr "Μια προαιρετική σελίδα σε μια φωτογραφία που σχετίζεται\nμε αυτή την ταυτότητα χρήστη."
 
 msgctxt "MSG_HELP_CO_CH_IDENTITY_QUOTEMAILS (2325//)"
 msgid ""
@@ -8812,13 +8812,13 @@ msgctxt "MSG_HELP_CO_CH_IDENTITY_QUOTEPOS (2326//)"
 msgid ""
 "Allows to define if your answer should be\n"
 "placed above or below quotes."
-msgstr "Επιτρέπει να ορίσετε εάν η απάντησή σας θα πρέπει\nνα τοποθετείται πάνω ή κάτω από τις παραθέσεις."
+msgstr "Επιτρέπει να ορίσετε αν η απάντησή σας θα πρέπει\nνα τοποθετείται πάνω ή κάτω από τις παραθέσεις."
 
 msgctxt "MSG_HELP_CO_CH_IDENTITY_SIGPOS (2327//)"
 msgid ""
 "Allows to define if your signature should\n"
 "appear below or above the quotes."
-msgstr "Επιτρέπει να ορίσετε εάν η υπογραφή σας θα πρέπει\nνα τοποθετείται πάνω ή κάτω από τις παραθέσεις."
+msgstr "Επιτρέπει να ορίσετε αν η υπογραφή σας θα πρέπει\nνα τοποθετείται πάνω ή κάτω από τις παραθέσεις."
 
 msgctxt "MSG_HELP_CO_CH_IDENTITY_SIGREPLY (2328//)"
 msgid ""
@@ -8857,13 +8857,13 @@ msgctxt "MSG_HELP_CO_ST_IDENTITY_PGPID (2333//)"
 msgid ""
 "Allows to specify the PGP-Key ID which should\n"
 "be used for this user identity."
-msgstr "Επιτρέπει να καθορίσετε το ID κλειδί PGP που θα\nχρησιμοποιηθεί για αυτή την ταυτότητα χρήστη."
+msgstr "Επιτρέπει να καθορίσετε την ταυτότητα κλειδιού PGP που θα\nχρησιμοποιηθεί για αυτή την ταυτότητα χρήστη."
 
 msgctxt "MSG_HELP_CO_ST_IDENTITY_PGPURL (2334//)"
 msgid ""
 "Allows to specify an URL where the public key\n"
 "for this user identity can be accessed."
-msgstr "Επιτρέπει να καθορίσετε ένα URL που το κοινό κλειδί\nμπορεί να έχει πρόσβαση για αυτή την ταυτότητα χρήστη."
+msgstr "Επιτρέπει να καθορίσετε μια σελίδα που το δημόσιο κλειδί\nμπορεί να έχει πρόσβαση για αυτή την ταυτότητα χρήστη."
 
 msgctxt "MSG_HELP_CO_CH_IDENTITY_PGPSIGN_UNENC (2335//)"
 msgid ""
@@ -8932,7 +8932,7 @@ msgstr "Το αρχείο ρύθμισης που προσπαθεί το ΥΑΜ
 
 msgctxt "MSG_CO_CONFIGVERSIONWARNING_BT (2345//)"
 msgid "_Continue|*_Abort"
-msgstr "_Συνέχιση|*_Ματαίωση"
+msgstr "_Συνέχεια|*_Ματαίωση"
 
 msgctxt "MSG_WR_MCCADDRFIELD (2346//)"
 msgid "Cc Address Field"
@@ -9186,7 +9186,7 @@ msgctxt "MSG_CANNOT_CREATE_CUSTOM_CLASS (2400//)"
 msgid ""
 "Failed to create custom class '%s'\n"
 "as subclass of '%s'."
-msgstr "Αποτυχία δημιουργίας custom class '%s'\nως subclass της '%s'."
+msgstr "Απέτυχε η δημιουργία της custom class '%s'\nως subclass της '%s'."
 
 msgctxt "MSG_ER_MORPHOS_REXX_WARNING (2401//)"
 msgid ""
@@ -9197,7 +9197,7 @@ msgstr "Το ΥΑΜ αναγνώρισε ότι τρέχετε μια έκδοσ
 
 msgctxt "MSG_WR_SAVEASDRAFT (2402//)"
 msgid "Save as _draft"
-msgstr "Αποθήκευση ως πρόχειρο"
+msgstr "Αποθήκευση ως _πρόχειρο"
 
 msgctxt "MSG_HELP_WR_BT_SAVEASDRAFT (2403//)"
 msgid ""
@@ -9232,7 +9232,7 @@ msgctxt "MSG_HELP_CO_ST_AREDIRECT (2409//)"
 msgid ""
 "E-mail address(es) that should\n"
 "get the redirected messages."
-msgstr "Οι διευθύνσεις e-mail που θα πρέπει\nνα κάνουν λήψη τα μηνύματα ανακατεύθυνσης."
+msgstr "Οι διευθύνσεις ηλ. αλληλογραφίας που θα πρέπει\nνα κάνουν λήψη τα μηνύματα ανακατεύθυνσης."
 
 msgctxt "MSG_MA_MREDIRECT (2410//)"
 msgid "Redirect..."
@@ -9264,7 +9264,7 @@ msgid ""
 "Could not create mail file '%s'.\n"
 "\n"
 "Reason: invalid folder directory or insufficient disk space."
-msgstr "Αδυναμία δημιουργίας του αρχείου αλληλογραφίας '%s'.\n\nΑιτία: άκυρη διαδρομή φακέλου ή μη επαρκής ελεύθερος χώρος στο δίσκο."
+msgstr "Αδύνατη η δημιουργία του αρχείου αλληλογραφίας '%s'.\n\nΑιτία: άκυρη διαδρομή φακέλου ή μη επαρκής ελεύθερος χώρος στο δίσκο."
 
 msgctxt "MSG_WR_RENAME (2417//)"
 msgid "_Rename"
@@ -9290,13 +9290,13 @@ msgstr "Παράβλεψη κρυπτογραφημένης αλληλογραφ
 
 msgctxt "MSG_CO_QUICKSEARCHBAR (2422//)"
 msgid "Quick search bar"
-msgstr "Εμφάνιση μπάρας εύρεσης στο κύριο παράθυρο"
+msgstr "Εμφάνιση μπάρας αναζήτησης στο κύριο παράθυρο"
 
 msgctxt "MSG_HELP_CO_CH_QUICKSEARCHBAR (2423//)"
 msgid ""
 "Here you can select the position of\n"
 "the quick search bar."
-msgstr "Εάν επιλεχτεί, θα εμφανιστεί μια μπάρα εύρεσης\nστο κύριο παράθυρο όπου μπορείτε να αναζητήσετε\nορισμένες αλληλογραφίες γρηγορότερα."
+msgstr "Αν επιλεχτεί, θα εμφανιστεί μια μπάρα αναζήτησης\nστο κύριο παράθυρο όπου μπορείτε να αναζητήσετε\nορισμένες αλληλογραφίες γρηγορότερα."
 
 msgctxt "MSG_CO_QUICKSEARCHBARPOS (2424//)"
 msgid "Posi_tion"
@@ -9312,7 +9312,7 @@ msgstr "Κορυφή"
 
 msgctxt "MSG_CO_QUICKSEARCHBARPOS03 (2427//)"
 msgid "Bottom"
-msgstr "Κάτω μέρος"
+msgstr "Τέρμα"
 
 msgctxt "MSG_CO_FILTER_REGISTER_SETTINGS (2428//)"
 msgid "General"
