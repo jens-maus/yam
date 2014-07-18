@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-07-18 19:45+0000\n"
+"PO-Revision-Date: 2014-07-18 20:58+0000\n"
 "Last-Translator: Andrei Shestakov <mobydick@amiga.org.ru>\n"
 "Language-Team: Russian (http://www.transifex.com/projects/p/yam/language/ru/)\n"
 "MIME-Version: 1.0\n"
@@ -7301,15 +7301,15 @@ msgstr ""
 
 msgctxt "MSG_RE_HDR_REPLYTO (2013//)"
 msgid "Reply-To"
-msgstr ""
+msgstr "Ответить отправителю"
 
 msgctxt "MSG_FI_FROM_FIELD (2014//)"
 msgid "\\033bFrom\\033n"
-msgstr ""
+msgstr "\\033bОт\\033n"
 
 msgctxt "MSG_FI_TO_FIELD (2015//)"
 msgid "\\033bTo\\033n"
-msgstr ""
+msgstr "\\033bКому\\033n"
 
 msgctxt "MSG_FI_CC_FIELD (2016//)"
 msgid "\\033bCc\\033n"
@@ -7317,15 +7317,15 @@ msgstr ""
 
 msgctxt "MSG_FI_REPLYTO_FIELD (2017//)"
 msgid "\\033bReply-To\\033n"
-msgstr ""
+msgstr "\\033bОтветить отправителю\\033n"
 
 msgctxt "MSG_FI_SUBJECT_FIELD (2018//)"
 msgid "\\033bSubject\\033n"
-msgstr ""
+msgstr "\\033bТема\\033n"
 
 msgctxt "MSG_FI_DATE_FIELD (2019//)"
 msgid "\\033bDate\\033n"
-msgstr ""
+msgstr "\\033bДата\\033n"
 
 msgctxt "MSG_FO_TO_PATTERN (2020//)"
 msgid "_Pattern (To:/Cc:)"
@@ -7333,31 +7333,31 @@ msgstr ""
 
 msgctxt "MSG_FO_TO_ADDRESS (2021//)"
 msgid "Destination address (_To:)"
-msgstr ""
+msgstr "Адрес получателя (_To:)"
 
 msgctxt "MSG_FO_FROM_ADDRESS (2022//)"
 msgid "Sender address (_From:)"
-msgstr ""
+msgstr "Адрес отправителя (_From:)"
 
 msgctxt "MSG_FO_REPLYTO_ADDRESS (2023//)"
 msgid "_Reply address (Reply-To:)"
-msgstr ""
+msgstr "_Адрес для ответа (Reply-To:)"
 
 msgctxt "MSG_RETRY_HOMEPAGE_QUIT_GAD (2024//)"
 msgid "Try again|Visit homepage|Quit"
-msgstr ""
+msgstr "Попробовать ещё раз|Посетить домашнюю страницу|Выйти"
 
 msgctxt "MSG_HOMEPAGE_QUIT_GAD (2025//)"
 msgid "Visit homepage|Quit"
-msgstr ""
+msgstr "Посетить домашнюю страницу|Выйти"
 
 msgctxt "MSG_MA_EDIT_DELETE (2026//)"
 msgid "Delete"
-msgstr ""
+msgstr "Удалить"
 
 msgctxt "MSG_WR_DELETE (2027//)"
 msgid "Delete"
-msgstr ""
+msgstr "Удалить"
 
 #. PARTNR, MSGFILE
 msgctxt "MSG_ER_B64DEC_FILEIO (2028//)"
@@ -8035,12 +8035,12 @@ msgstr ""
 
 msgctxt "MSG_USERNAME_FALLBACK (2152//)"
 msgid "John Doe"
-msgstr ""
+msgstr "Вася Пупкин"
 
 #. PARENTNUMBER PARTNUMER
 msgctxt "MSG_RE_DEFAULT_MIMEPART_NAME (2153//)"
 msgid "Part %ld.%ld"
-msgstr ""
+msgstr "Часть %ld.%ld"
 
 msgctxt "MSG_OPEN_WRITEWINDOWS (2154//)"
 msgid ""
@@ -8081,11 +8081,11 @@ msgctxt "MSG_HELP_FI_CH_DOS_PATTERN (2162//)"
 msgid ""
 "Enable AmigaDOS patterns\n"
 "in the string search."
-msgstr ""
+msgstr "Использовать шаблоны AmigaDOS\nв строке поиска."
 
 msgctxt "MSG_CTapplicationpgpsig (2163//)"
 msgid "PGP signature"
-msgstr ""
+msgstr "Подпись PGP"
 
 #. DATE, NAME, AGE
 msgctxt "MSG_AB_BirthdayReqBody (2164//)"
@@ -8093,26 +8093,26 @@ msgid ""
 "Today, on %s, %s reaches age %ld.\n"
 "\n"
 "Do you want to send a greetings card?"
-msgstr ""
+msgstr "Сегодня, %s, %s отмечает %ld лет.\n\nХотите отправить поздравление?"
 
 #. COMMANDNAME, ERRORCODE
 msgctxt "MSG_ER_AREXX_EXECUTION_ERROR (2165//)"
 msgid ""
 "Execution of the ARexx command '%s' failed (error code %ld).\n"
 "Please make sure that the file is accessible and is a valid ARexx script."
-msgstr ""
+msgstr "Команда ARexx «%s» не исполнилась (код ошибки %ld).\nУбедитесь, что файл доступен и что это действительно\nскрипт ARexx."
 
 msgctxt "MSG_BIRTHDAYREQUEST_DONTSHOWAGAIN (2166//)"
 msgid "Do not show this requester today again."
-msgstr ""
+msgstr "Больше не спрашивать об этом сегодня."
 
 msgctxt "MSG_RE_SAVE_FILE (2169//)"
 msgid "Save file"
-msgstr ""
+msgstr "Сохранить файл"
 
 msgctxt "MSG_UPD_NO_UPDATES_FOUND_TITLE (2170//)"
 msgid "No software updates available"
-msgstr ""
+msgstr "Нет доступных обновлений ПО"
 
 #. HINT
 msgctxt "MSG_UPD_NO_UPDATES_FOUND (2171//)"
@@ -8123,17 +8123,17 @@ msgstr ""
 
 msgctxt "MSG_UPD_NO_UPDATES_FOUND_HINT_AUTOCHECK (2172//)"
 msgid "YAM will check for available updates automatically."
-msgstr ""
+msgstr "YAM будет проверять обновления автоматически."
 
 msgctxt "MSG_UPD_NO_UPDATES_FOUND_HINT_NOAUTOCHECK (2173//)"
 msgid ""
 "Please try again later or activate the automatic\n"
 "software update check."
-msgstr ""
+msgstr "Попробуйте ещё раз попозже или\nвключите автоматическую проверку обновлений."
 
 msgctxt "MSG_THREAD_EXIT_WARNING_TITLE (2174//)"
 msgid "YAM warning"
-msgstr ""
+msgstr "Сообщение от YAM"
 
 msgctxt "MSG_THREAD_EXIT_WARNING (2175//)"
 msgid ""
@@ -8148,7 +8148,7 @@ msgstr ""
 
 msgctxt "MSG_THREAD_EXIT_WARNING_BT (2176//)"
 msgid "_Retry|_Ignore"
-msgstr ""
+msgstr "_Попробовать|_Игнорировать"
 
 #. COMMAND, ERRORCODE, ERRORSTRING
 msgctxt "MSG_EXECUTE_COMMAND_FAILED (2177//)"
@@ -8198,7 +8198,7 @@ msgstr ""
 
 msgctxt "MSG_TR_WAIT_FOR_PASSWORD (2187//)"
 msgid "Waiting for user's password input..."
-msgstr ""
+msgstr "Жду ввода пароля пользователя..."
 
 msgctxt "MSG_TR_WAIT_FOR_PRESELECTION (2188//)"
 msgid "Waiting for user's preselection..."
@@ -8219,7 +8219,7 @@ msgctxt "MSG_POP3_NEW_MAIL_NOTIFY_OS4_ONE (2190//)"
 msgid ""
 "%s\n"
 "Received 1 new mail."
-msgstr ""
+msgstr "%s\nПринято одно новое сообщение."
 
 #. ACCOUNT, COUNT
 msgctxt "MSG_POP3_NEW_MAIL_NOTIFY_OS4_MANY (2191//)"
@@ -8246,23 +8246,23 @@ msgstr ""
 
 msgctxt "MSG_HTTP_CONNECTING_TO_SERVER (2196//)"
 msgid "Connecting to server..."
-msgstr ""
+msgstr "Подключаюсь к серверу..."
 
 msgctxt "MSG_HTTP_SENDING_REQUEST (2197//)"
 msgid "Sending HTTP request..."
-msgstr ""
+msgstr "Отправляю запрос HTTP..."
 
 msgctxt "MSG_HTTP_WAITING_FOR_ANSWER (2198//)"
 msgid "Waiting for server's answer..."
-msgstr ""
+msgstr "Ожидаю ответа сервера..."
 
 msgctxt "MSG_HTTP_RECEIVING_DATA (2199//)"
 msgid "Receiving data..."
-msgstr ""
+msgstr "Принимаю данные..."
 
 msgctxt "MSG_HTTP_DISCONNECTING_FROM_SERVER (2200//)"
 msgid "Disconnecting from server..."
-msgstr ""
+msgstr "Отключаюсь от сервера..."
 
 msgctxt "MSG_SHOW_TRANSFER_WINDOW (2201//)"
 msgid "Show transfers in progress..."
@@ -8330,11 +8330,11 @@ msgstr ""
 
 msgctxt "MSG_CO_UPDATE_DOWNLOAD_PATH (2211//)"
 msgid "Download _path:"
-msgstr ""
+msgstr "Путь для _сохранения:"
 
 msgctxt "MSG_UPD_NOTIFICATION_DOWNLOAD (2212//)"
 msgid "Download"
-msgstr ""
+msgstr "Сохранение"
 
 #. SERVER
 msgctxt "MSG_TR_DOWNLOADING_FROM_SERVER (2213//)"
@@ -8343,19 +8343,19 @@ msgstr ""
 
 msgctxt "MSG_MA_HELP (2214//)"
 msgid "Help"
-msgstr ""
+msgstr "Помощь"
 
 msgctxt "MSG_MA_HELP_CONTENTS (2215//)"
 msgid "Contents"
-msgstr ""
+msgstr "Содержимое"
 
 msgctxt "MSG_MA_HELP_AREXX (2216//)"
 msgid "ARexx interface"
-msgstr ""
+msgstr "Интерфейс ARexx"
 
 msgctxt "MSG_EA_SEARCH_GRAVATAR (2218//)"
 msgid "Search on gra_vatar.com..."
-msgstr ""
+msgstr "Искать на gra_vatar.com..."
 
 #. ADDRESS
 msgctxt "MSG_ER_NO_GRAVATAR_FOUND (2219//)"
@@ -8374,15 +8374,15 @@ msgstr ""
 
 msgctxt "MSG_CO_ACTION_SET_STATUS_TO_MARKED (2221//)"
 msgid "Set status to 'Marked'"
-msgstr ""
+msgstr "Установить состояние на «отмечено»"
 
 msgctxt "MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_MARKED (2222//)"
 msgid "Set the status of the filtered mail to 'Marked'"
-msgstr ""
+msgstr "Изменить состояние фильтрованной почты на «отмечено»"
 
 msgctxt "MSG_CO_ACTION_SET_STATUS_TO_UNMARKED (2223//)"
 msgid "Set status to 'Unmarked'"
-msgstr ""
+msgstr "Установить состояние на «не отмечено»"
 
 msgctxt "MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_UNMARKED (2224//)"
 msgid "Set the status of the filtered mail to 'Unmarked'"
@@ -8521,19 +8521,19 @@ msgstr ""
 
 msgctxt "MSG_CO_SMTP_SECURITY_NONE (2254//)"
 msgid "No Security"
-msgstr ""
+msgstr "Без защиты"
 
 msgctxt "MSG_CO_SMTP_SECURITY_TLS (2255//)"
 msgid "STARTTLS"
-msgstr ""
+msgstr "STARTTLS"
 
 msgctxt "MSG_CO_SMTP_SECURITY_SSL (2256//)"
 msgid "SSL/TLS"
-msgstr ""
+msgstr "SSL/TLS"
 
 msgctxt "MSG_CO_SMTP_SECURITYAUTH (2257//)"
 msgid "Security and Authentification"
-msgstr ""
+msgstr "Безопасность и аутентификация"
 
 msgctxt "MSG_HELP_CO_CY_SMTPSECURE (2258//)"
 msgid ""
@@ -8546,11 +8546,11 @@ msgstr ""
 
 msgctxt "MSG_CO_SMTP_AUTH (2259//)"
 msgid "Authentification"
-msgstr ""
+msgstr "Аутентификация"
 
 msgctxt "MSG_CO_SMTPAUTH_NONE (2260//)"
 msgid "No Authentication"
-msgstr ""
+msgstr "Без аутентификации"
 
 msgctxt "MSG_CO_SMTP_OPTIONS (2261//)"
 msgid "Options"
@@ -8678,7 +8678,7 @@ msgstr ""
 
 msgctxt "MSG_CO_IDENTITY_PGP_ENCRYPTALL (2299//)"
 msgid "Encrypt all mails per default"
-msgstr ""
+msgstr "Шифровать всю почту по умолчанию"
 
 msgctxt "MSG_CO_IDENTITY_PGP_ADDOWN (2300//)"
 msgid "Add own key when encrypting mails"
@@ -8686,25 +8686,25 @@ msgstr ""
 
 msgctxt "MSG_CO_IDENTITY_PHOTOURL (2301//)"
 msgid "URL to own photo"
-msgstr ""
+msgstr "URL к вашей фотографии"
 
 msgctxt "MSG_CO_IDENTITY_ADDINFO (2302//)"
 msgid "Add personal information"
-msgstr ""
+msgstr "Добавить персональные данные"
 
 msgctxt "MSG_CO_IDENTITY_REQUESTMDN (2303//)"
 msgid "Request a return receipt"
-msgstr ""
+msgstr "Запросить квитанцию о доставке"
 
 msgctxt "MSG_CO_SERVERNAME (2304//)"
 msgid "Server name"
-msgstr ""
+msgstr "Имя сервера"
 
 msgctxt "MSG_HELP_CO_ST_USER (2305//)"
 msgid ""
 "The username for accessing the\n"
 "mail server."
-msgstr ""
+msgstr "Имя пользователя для доступа к постовому серверу."
 
 #. FROM,TO
 msgctxt "MSG_FO_MOVEFOLDERTO (2306//)"
@@ -8713,7 +8713,7 @@ msgid ""
 "'%s'\n"
 "to\n"
 "'%s'?"
-msgstr ""
+msgstr "Вы действительно желаете переместить папку из «%s» в «%s»?"
 
 #. PATH
 msgctxt "MSG_FO_FOLDER_ALREADY_EXISTS (2307//)"
@@ -8722,12 +8722,12 @@ msgid ""
 "and will be overwritten/deleted.\n"
 "\n"
 "Do you really want to proceed?"
-msgstr ""
+msgstr "Файл или каталог с именем «%s» уже существует\nи будет переписан/удалён. Продолжать?"
 
 #. PATH, ERROR
 msgctxt "MSG_ER_CANNOT_CREATE_FOLDER (2308//)"
 msgid "Failed to create directory '%s' (%s)."
-msgstr ""
+msgstr "Не получилось создать каталог «%s» (%s)"
 
 msgctxt "MSG_CO_IdentityActive (2309//)"
 msgid "_Active"
