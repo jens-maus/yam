@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-07-19 19:57+0000\n"
+"PO-Revision-Date: 2014-07-19 20:57+0000\n"
 "Last-Translator: Andrei Shestakov <mobydick@amiga.org.ru>\n"
 "Language-Team: Russian (http://www.transifex.com/projects/p/yam/language/ru/)\n"
 "MIME-Version: 1.0\n"
@@ -7527,7 +7527,7 @@ msgstr ""
 
 msgctxt "MSG_HELP_CO_LV_REXX (2061//)"
 msgid "List of scripts."
-msgstr ""
+msgstr "Список файлов сценариев."
 
 msgctxt "MSG_HELP_CO_BT_UPDATENOW (2062//)"
 msgid ""
@@ -7539,7 +7539,7 @@ msgctxt "MSG_HELP_WR_LV_ATTACH (2063//)"
 msgid ""
 "List of attachments\n"
 "in this message."
-msgstr ""
+msgstr "Список приложений\nк этому сообщению."
 
 msgctxt "MSG_QUICKSEARCH_STR_CONTROLCHAR (2064//)"
 msgid "k"
@@ -7547,11 +7547,11 @@ msgstr ""
 
 msgctxt "MSG_CO_UPDATE_NEVER (2065//)"
 msgid "Never"
-msgstr ""
+msgstr "Никогда"
 
 msgctxt "MSG_MA_EXECUTESCRIPT_TITLE (2066//)"
 msgid "Select script to execute"
-msgstr ""
+msgstr "Выбор сценария для исполнения"
 
 msgctxt "MSG_HELP_FI_BT_NONE (2067//)"
 msgid ""
@@ -7663,7 +7663,7 @@ msgstr ""
 
 msgctxt "MSG_ABOUTYAM (2086//)"
 msgid "About YAM"
-msgstr ""
+msgstr "О YAM"
 
 #. HOST, ACCOUNT
 msgctxt "MSG_ER_CONNECTERR_SOCKET_IN_USE_POP3 (2087//)"
@@ -7779,14 +7779,14 @@ msgstr ""
 #. HOST
 msgctxt "MSG_ER_INITTLS_SMTP (2101//)"
 msgid "Couldn't initialize TLSv1/SSLv3 session with host '%s'."
-msgstr ""
+msgstr "Не могу инициализировать сессию TLSv1/SSLv3 с хостом «%s»."
 
 #. HOST
 msgctxt "MSG_ER_NOSTARTTLS_SMTP (2102//)"
 msgid ""
 "Your SMTP server '%s' doesn't support TLS/SSL. Please disable this option in"
 " the configuration."
-msgstr ""
+msgstr "Ваш SMTP сервер не поддерживает TLS/SSL. Отключите эту опцию в настройках."
 
 #. SERVER, COMMAND, TEXT
 msgctxt "MSG_ER_BADRESPONSE_SMTP (2103//)"
@@ -7804,7 +7804,7 @@ msgid ""
 "Couldn't connect to host '%s'.\n"
 "\n"
 "The mail server is currently down or doesn't support the SMTP protocols."
-msgstr ""
+msgstr "Не могу соединиться с хостом «%s».\n\nПочтовый сервер сейчас не работает или не поддерживет протоколы SMTP."
 
 #. HOST
 msgctxt "MSG_ER_UNKNOWN_HOST_SMTP (2105//)"
@@ -7812,7 +7812,7 @@ msgid ""
 "Unknown SMTP server '%s'.\n"
 "\n"
 "TCP/IP is offline or the server address is invalid."
-msgstr ""
+msgstr "Неизвестный SMTP сервер «%s».\n\nСоединение TCP/IP не доступно или адрес сервера неправильный."
 
 msgctxt "MSG_ER_NO8BITMIME_SMTP (2106//)"
 msgid ""
@@ -7825,15 +7825,15 @@ msgstr ""
 
 msgctxt "MSG_CO_FOLDERDBLCLICK (2107//)"
 msgid "Double click on folder opens folder settings"
-msgstr ""
+msgstr "Двойной щелчок на папке открывает её настройки"
 
 msgctxt "MSG_MA_ATTACHMENT_DELETE (2108//)"
 msgid "Delete"
-msgstr ""
+msgstr "Удалить"
 
 msgctxt "MSG_MA_ATTACHMENT_DELETESEL (2109//)"
 msgid "Delete selected"
-msgstr ""
+msgstr "Удалить выбранное"
 
 msgctxt "MSG_MA_DELETESELECTEDREQUEST (2110//)"
 msgid ""
@@ -7841,16 +7841,16 @@ msgid ""
 "deleted:\n"
 "%s\n"
 "Do you really want to proceed?"
-msgstr ""
+msgstr "Следующие приложения будут удалены:\n%s\nХотите продолжить?"
 
 #. MAILFILE, FOLDER
 msgctxt "MSG_LOG_DELETEDATT (2111//)"
 msgid "Deleted attachment(s) of message '%s' in folder '%s'"
-msgstr ""
+msgstr "Удалены приложения к сообщению «%s» в папке «%s»"
 
 msgctxt "MSG_MA_DELETEATT (2112//)"
 msgid "Delete"
-msgstr ""
+msgstr "Удалить"
 
 msgctxt "MSG_MA_DELETEATTREQUEST (2113//)"
 msgid ""
@@ -7858,15 +7858,15 @@ msgid ""
 "mails will be deleted.\n"
 "\n"
 "Do you really want to proceed?"
-msgstr ""
+msgstr "Все приложения в выделенных сообщениях\nбудут удалены.\n\nХотите продолжить?"
 
 msgctxt "MSG_MA_ATTACHMENT_DELETEALL (2114//)"
 msgid "Delete all"
-msgstr ""
+msgstr "Удалить всё"
 
 msgctxt "MSG_MA_MDELETEATT (2115//)"
 msgid "Delete"
-msgstr ""
+msgstr "Удалить"
 
 msgctxt "MSG_CO_MAPFOREIGNCHARS (2116//)"
 msgid "Map foreign chars to ASCII"
@@ -7882,7 +7882,7 @@ msgstr ""
 
 msgctxt "MSG_MA_NAVIGATION (2118//)"
 msgid "Navigation"
-msgstr ""
+msgstr "Навигация"
 
 msgctxt "MSG_MA_MNEXTTH (2119//)"
 msgid "Next message in thread"
@@ -7910,16 +7910,16 @@ msgid ""
 "File '%s' already exists.\n"
 "\n"
 "Do you want to overwrite it?"
-msgstr ""
+msgstr "Файл «%s» уже существует.\n\nПереписать его?"
 
 #. PATH, USERNAME
 msgctxt "MSG_ER_USER_DIR_MISSING (2124//)"
 msgid "The home directory '%s' of user '%s' does not exist."
-msgstr ""
+msgstr "Домашний каталог «%s» пользователя «%s» не существует."
 
 msgctxt "MSG_CO_TEXTCOLORS_READ (2125//)"
 msgid "Show te_xt colors"
-msgstr ""
+msgstr "Показать _цвета текста"
 
 msgctxt "MSG_HELP_CO_CH_TEXTCOLORS_READ (2126//)"
 msgid ""
@@ -7929,17 +7929,17 @@ msgstr ""
 
 msgctxt "MSG_CO_TEXTSTYLES_READ (2127//)"
 msgid "Show te_xt styles"
-msgstr ""
+msgstr "Показать _стили текста"
 
 msgctxt "MSG_HELP_CO_CH_TEXTSTYLES_READ (2128//)"
 msgid ""
 "Interpret '/', '*', '_' and '#' as\n"
 "control characters for text styles."
-msgstr ""
+msgstr "Интерпретировать «/», «*», «_» и «#» как\nуправляющие символы для стилей текста."
 
 msgctxt "MSG_CO_TEXTCOLORS_WRITE (2129//)"
 msgid "Show tex_t colors"
-msgstr ""
+msgstr "Показать _цвета текста"
 
 msgctxt "MSG_HELP_CO_CH_TEXTCOLORS_WRITE (2130//)"
 msgid ""
@@ -7949,41 +7949,41 @@ msgstr ""
 
 msgctxt "MSG_CO_TEXTSTYLES_WRITE (2131//)"
 msgid "Show te_xt styles"
-msgstr ""
+msgstr "Показать _стили текста"
 
 msgctxt "MSG_HELP_CO_CH_TEXTSTYLES_WRITE (2132//)"
 msgid ""
 "Interpret '/', '*', '_' and '#' as\n"
 "control characters for text styles."
-msgstr ""
+msgstr "Интерпретировать «/», «*», «_» и «#» как\nуправляющие символы для стилей текста."
 
 msgctxt "MSG_CO_FONTSETTINGS (2133//)"
 msgid "Font settings"
-msgstr ""
+msgstr "Настройки шрифта"
 
 msgctxt "MSG_CO_FIXEDFONT_WRITE (2134//)"
 msgid "Use _fixed font"
-msgstr ""
+msgstr "Использовать _моноширинный шрифт"
 
 msgctxt "MSG_RE_TEXTCOLORS (2135//)"
 msgid "Text colors?"
-msgstr ""
+msgstr "Цвета текста?"
 
 msgctxt "MSG_WR_TEXTSTYLES (2136//)"
 msgid "Text styles?"
-msgstr ""
+msgstr "Стили текста?"
 
 msgctxt "MSG_WR_TEXTCOLORS (2137//)"
 msgid "Text colors?"
-msgstr ""
+msgstr "Цвета текста?"
 
 msgctxt "MSG_WR_FIXEDFONT (2138//)"
 msgid "Fixed font?"
-msgstr ""
+msgstr "Моноширинный шрифт?"
 
 msgctxt "MSG_CO_SPAM_OPTIMIZE_TRAININGDATA (2139//)"
 msgid "_Optimize training data"
-msgstr ""
+msgstr "_Оптимизировать тренировочные данные"
 
 msgctxt "MSG_HELP_BT_OPTIMIZE_TRAININGDATA (2140//)"
 msgid ""
@@ -8004,7 +8004,7 @@ msgstr ""
 
 msgctxt "MSG_CO_SPAM_STATISTICS (2142//)"
 msgid "%ld (%ld words)"
-msgstr ""
+msgstr "%ld (%ld слов)"
 
 #. DOBFORMAT
 msgctxt "MSG_ER_WRONG_DOB_FORMAT (2143//)"
@@ -8024,14 +8024,14 @@ msgstr ""
 
 msgctxt "MSG_CO_NOTIOS41SYSTEM (2149//)"
 msgid "AmigaOS_4.1 notification system"
-msgstr ""
+msgstr "Система уведомлений AmigaOS_4.1"
 
 msgctxt "MSG_HELP_CO_CH_NOTIOS41SYSTEM (2150//)"
 msgid ""
 "If checked, YAM will use AmigaOS4.1's notification\n"
 "system to notify the user about new received mails.\n"
 "This requires at least application.library V53.2."
-msgstr ""
+msgstr "Если включено, YAM будет использовать систему\nуведомлений AmigaOS4.1, чтобы сообщить пользователю\nо вновь поступившей почте.\nДля этого требуется application.library 53.2 или новее."
 
 msgctxt "MSG_USERNAME_FALLBACK (2152//)"
 msgid "John Doe"
@@ -8051,11 +8051,11 @@ msgstr ""
 
 msgctxt "MSG_OPEN_WRITEWINDOWS_GAD (2155//)"
 msgid "*_Save now|_Quit without saving|_Cancel"
-msgstr ""
+msgstr "*_Сохранить сейчас|_Выйти без сохранения|_Отменить"
 
 msgctxt "MSG_MA_MFORWARD_ATTACH (2156//)"
 msgid "as attachment"
-msgstr ""
+msgstr "как приложение"
 
 msgctxt "MSG_MA_MFORWARD_INLINE (2157//)"
 msgid "inlined"
@@ -8281,7 +8281,7 @@ msgstr ""
 
 msgctxt "MSG_CO_DOWNLOAD_ON_STARTUP (2204//)"
 msgid "Check for new mail on startup"
-msgstr ""
+msgstr "Проверять новую почту при запуске"
 
 msgctxt "MSG_HELP_CO_CH_DOWNLOAD_ON_STARTUP (2205//)"
 msgid ""
@@ -8292,7 +8292,7 @@ msgstr "Проверять новую почту для этой учётной 
 #. FILE
 msgctxt "MSG_IMPORT_UNKNOWN_FILE_FORMAT (2206//)"
 msgid "Unknown mail file format in file '%s'."
-msgstr ""
+msgstr "Неизвестный формат файла почты «%s»."
 
 #. FILE
 msgctxt "MSG_IMPORT_NO_MAILS (2207//)"
@@ -8304,7 +8304,7 @@ msgid ""
 "The configuration is currently locked.\n"
 "\n"
 "Please wait until all POP3 and SMTP transfers are finished."
-msgstr ""
+msgstr "Сейчас конфигурация заблокирована.\n\nДождитесь окончания передачи всех исходящих\nи входящих сообщений."
 
 #. NAME, PATH, SIZE, COUNT, COUNT, COUNT
 msgctxt "MSG_FOLDERINFO_SHORTHELP (2209//)"
