@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-07-20 19:59+0000\n"
+"PO-Revision-Date: 2014-07-20 20:14+0000\n"
 "Last-Translator: Andrei Shestakov <mobydick@amiga.org.ru>\n"
 "Language-Team: Russian (http://www.transifex.com/projects/p/yam/language/ru/)\n"
 "MIME-Version: 1.0\n"
@@ -866,7 +866,7 @@ msgstr "Hello,\\n"
 #. Make sure to remove the <EMPTY> tag in your translation
 msgctxt "MSG_CO_AltRepIntroDef (269//)"
 msgid "<EMPTY>On %c, %n wrote:\\n"
-msgstr ""
+msgstr "%c %n написал(а):\\n"
 
 #. Replace the whole line with an AmigaDOS pattern of domain
 #. names which are used in your language area similar to what
@@ -910,7 +910,7 @@ msgstr "Привет, %f!\\n"
 #. Make sure to remove the <EMPTY> tag in your translation
 msgctxt "MSG_CO_AltRepByeDef (275//)"
 msgid "<EMPTY>Kind regards"
-msgstr ""
+msgstr "С наилучшими пожеланиями"
 
 #. Replace the whole line with a hello phrase similar to what is
 #. written behind <EMPTY>. This phrase will be used if a mailing
@@ -918,7 +918,7 @@ msgstr ""
 #. Make sure to remove the <EMPTY> tag in your translation
 msgctxt "MSG_CO_MLRepHelloDef (276//)"
 msgid "<EMPTY>Hello %f,\\n"
-msgstr ""
+msgstr "Привет, %f!\\n"
 
 #. Please keep the number of backslashes (e.g. \n)
 msgctxt "MSG_CO_MLRepIntroDef (277//)"
@@ -9926,7 +9926,7 @@ msgstr ""
 
 msgctxt "MSG_FO_PATH_INVALID (2554//)"
 msgid "The path must be non-empty."
-msgstr ""
+msgstr "Путь не должен быть пустым."
 
 msgctxt "MSG_FO_MLPATTERN_INVALID (2555//)"
 msgid "The pattern (To:/CC:) must be non-empty and no 'catch all'."
@@ -9934,7 +9934,7 @@ msgstr ""
 
 msgctxt "MSG_FO_MLADDRESS_INVALID (2556//)"
 msgid "The destination address (To:) must be non-empty."
-msgstr ""
+msgstr "Адрес получателя (To:) не должен быть пустым."
 
 msgctxt "MSG_CO_SAVE_WITHOUT_PRIVATE_DATA (2557//)"
 msgid "Save without private data..."
@@ -9979,39 +9979,39 @@ msgstr ""
 
 msgctxt "MSG_CO_POP3_TEST_CONNECTION_SETTINGS (2566//)"
 msgid "Test connection settings"
-msgstr ""
+msgstr "Тестировать настройки подключения"
 
 msgctxt "MSG_HELP_CO_BT_POPTEST (2567//)"
 msgid ""
 "Test the current settings to\n"
 "establish a reliable connection for\n"
 "POP3 downloads."
-msgstr ""
+msgstr "Тестирует текущие настройки\nдля установки подключения\nдля скачивания по POP3."
 
 msgctxt "MSG_CO_POP3_CONNECTION_TITLE (2568//)"
 msgid "POP3 connection"
-msgstr ""
+msgstr "Подключение к POP3"
 
 #. SERVER
 msgctxt "MSG_CO_POP3_CONNECTION_SUCCESS (2569//)"
 msgid "Connection to POP3 server '%s' was successful."
-msgstr ""
+msgstr "Успешное подключение к POP3 серверу «%s»."
 
 #. SERVER
 msgctxt "MSG_CO_POP3_CONNECTION_FAILURE (2570//)"
 msgid "Connection to POP3 server '%s' failed."
-msgstr ""
+msgstr "Подключиться к POP3 серверу «%s» не удалось."
 
 msgctxt "MSG_CO_SMTP_TEST_CONNECTION_SETTINGS (2571//)"
 msgid "Test connection settings"
-msgstr ""
+msgstr "Тестировать настройки подключения"
 
 msgctxt "MSG_HELP_CO_BT_SMTPTEST (2572//)"
 msgid ""
 "Test the current settings to\n"
 "establish a reliable connection for\n"
 "SMTP uploads."
-msgstr ""
+msgstr "Тестирует текущие настройки\nдля установки подключения\nдля передачи по SMTP."
 
 msgctxt "MSG_CO_SMTP_CONNECTION_TITLE (2573//)"
 msgid "SMTP connection"
