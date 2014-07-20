@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-07-19 20:57+0000\n"
+"PO-Revision-Date: 2014-07-20 18:47+0000\n"
 "Last-Translator: Andrei Shestakov <mobydick@amiga.org.ru>\n"
 "Language-Team: Russian (http://www.transifex.com/projects/p/yam/language/ru/)\n"
 "MIME-Version: 1.0\n"
@@ -8642,11 +8642,11 @@ msgstr ""
 
 msgctxt "MSG_CO_IDENTITY_USESIG_REPLY (2290//)"
 msgid "Use signature when replying"
-msgstr ""
+msgstr "Использовать подпись при ответе"
 
 msgctxt "MSG_CO_IDENTITY_USESIG_FORWARD (2291//)"
 msgid "Use signature when forwarding"
-msgstr ""
+msgstr "Использовать подпись при пересылке"
 
 msgctxt "MSG_CO_IDENTITY_PGPSETTINGS (2292//)"
 msgid "PGP-Security Settings"
@@ -8658,11 +8658,11 @@ msgstr ""
 
 msgctxt "MSG_CO_IDENTITY_PGPKEY_ID (2294//)"
 msgid "PGP key ID"
-msgstr ""
+msgstr "Идентификатор ключа PGP"
 
 msgctxt "MSG_CO_IDENTITY_PGPKEY_URL (2295//)"
 msgid "PGP key URL"
-msgstr ""
+msgstr "URL ключа PGP"
 
 msgctxt "MSG_CO_IDENTITY_PGP_OPTIONS (2296//)"
 msgid "Options"
@@ -8670,11 +8670,11 @@ msgstr ""
 
 msgctxt "MSG_CO_IDENTITY_PGP_SIGN_UNENC (2297//)"
 msgid "Sign unencrypted mails per default"
-msgstr ""
+msgstr "Подписывать незашифрованную почту по умолчанию"
 
 msgctxt "MSG_CO_IDENTITY_PGP_SIGN_ENC (2298//)"
 msgid "Sign encrypted mails per default"
-msgstr ""
+msgstr "Подписывать зашифрованную почту по умолчанию"
 
 msgctxt "MSG_CO_IDENTITY_PGP_ENCRYPTALL (2299//)"
 msgid "Encrypt all mails per default"
@@ -8682,7 +8682,7 @@ msgstr "Шифровать всю почту по умолчанию"
 
 msgctxt "MSG_CO_IDENTITY_PGP_ADDOWN (2300//)"
 msgid "Add own key when encrypting mails"
-msgstr ""
+msgstr "Добавить свой ключ для шифрования почты"
 
 msgctxt "MSG_CO_IDENTITY_PHOTOURL (2301//)"
 msgid "URL to own photo"
@@ -9042,7 +9042,7 @@ msgctxt "MSG_HELP_CO_BT_SIG_ACTIVE (2370//)"
 msgid ""
 "Flags the currently selected signature\n"
 "as active or inactive."
-msgstr ""
+msgstr "Помечает выбранную в настоящий\nмомент подпись как активную или неактивную."
 
 msgctxt "MSG_HELP_CO_ST_SIG_DESC (2371//)"
 msgid ""
@@ -9058,11 +9058,11 @@ msgstr ""
 
 msgctxt "MSG_CO_MIXED_CONNECTIONS (2373//)"
 msgid "Connections"
-msgstr ""
+msgstr "Соединения"
 
 msgctxt "MSG_CO_POP_NOTIFICATION (2374//)"
 msgid "Notification for new mails"
-msgstr ""
+msgstr "Уведомления о новой почте"
 
 msgctxt "MSG_SSL_CERT_WARNING_TITLE (2375//)"
 msgid "SSL Certificate Warning"
@@ -9220,13 +9220,13 @@ msgstr "Перенаправлено сообщение от «%s» о «%s» к
 
 msgctxt "MSG_CO_ACTIONREDIRECT (2407//)"
 msgid "_Redirect"
-msgstr ""
+msgstr "_Перенаправить"
 
 msgctxt "MSG_HELP_CO_CH_AREDIRECT (2408//)"
 msgid ""
 "Redirect matching messages\n"
 "to another person."
-msgstr ""
+msgstr "Перенаправить найденные сообщения\nдругому адресату. "
 
 msgctxt "MSG_HELP_CO_ST_AREDIRECT (2409//)"
 msgid ""
@@ -9236,7 +9236,7 @@ msgstr ""
 
 msgctxt "MSG_MA_MREDIRECT (2410//)"
 msgid "Redirect..."
-msgstr ""
+msgstr "Перенаправление..."
 
 msgctxt "MSG_WR_REDIRECT_FROM (2411//)"
 msgid "Resent-_From"
@@ -9268,25 +9268,25 @@ msgstr ""
 
 msgctxt "MSG_WR_RENAME (2417//)"
 msgid "_Rename"
-msgstr ""
+msgstr "_Переименовать"
 
 msgctxt "MSG_WR_RENAME_ATTACHMENT (2418//)"
 msgid "Rename attachment"
-msgstr ""
+msgstr "Переименовать приложение"
 
 msgctxt "MSG_WR_ENTER_NEW_NAME (2419//)"
 msgid "Enter new attachment name:"
-msgstr ""
+msgstr "Введите новое имя приложения:"
 
 msgctxt "MSG_FI_SKIP_ENCRYPTED (2420//)"
 msgid "Skip encrypted mails"
-msgstr ""
+msgstr "Пропускать зашифрованную почту"
 
 msgctxt "MSG_HELP_FI_CH_SKIP_ENCRYPTED (2421//)"
 msgid ""
 "Skip encrypted mails (i.e. PGP)\n"
 "during the search."
-msgstr ""
+msgstr "Пропускать зашифрованную почту (например, PGP)\nпри поиске."
 
 msgctxt "MSG_CO_QUICKSEARCHBAR (2422//)"
 msgid "Quick search bar"
