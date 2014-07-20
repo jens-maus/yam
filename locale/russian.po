@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-07-20 18:47+0000\n"
+"PO-Revision-Date: 2014-07-20 19:59+0000\n"
 "Last-Translator: Andrei Shestakov <mobydick@amiga.org.ru>\n"
 "Language-Team: Russian (http://www.transifex.com/projects/p/yam/language/ru/)\n"
 "MIME-Version: 1.0\n"
@@ -8438,11 +8438,11 @@ msgstr ""
 
 msgctxt "MSG_CO_POP_AUTH_PLAIN (2236//)"
 msgid "Plain Password"
-msgstr ""
+msgstr "Открытый пароль"
 
 msgctxt "MSG_CO_POP_AUTH_APOP (2237//)"
 msgid "Encrypted Password (APOP)"
-msgstr ""
+msgstr "Зашифрованный пароль (APOP)"
 
 msgctxt "MSG_CO_POP_SECURITY (2238//)"
 msgid "Connection Security"
@@ -8491,7 +8491,7 @@ msgstr ""
 
 msgctxt "MSG_CO_SMTP_SERVERSETTINGS (2248//)"
 msgid "Server Settings"
-msgstr ""
+msgstr "Настройки сервера"
 
 msgctxt "MSG_CO_POP_DESC (2249//)"
 msgid "Description"
@@ -8542,7 +8542,7 @@ msgid ""
 "e-mail through an encrypted connection. If this cycle\n"
 "gadget is ghosted, it means AmiSSL support is currently\n"
 "not available."
-msgstr ""
+msgstr "Для получения почты по зашифрованному соединению\nмежду POP3-сервером и YAM будет установлено безопасное\nсоединение по протоколу STARTTLS или SSL/TLS. Если\nциклическое поле выбора не активно, значит AmiSSL\nв настоящий момент не поддерживается."
 
 msgctxt "MSG_CO_SMTP_AUTH (2259//)"
 msgid "Authentification"
@@ -8594,19 +8594,19 @@ msgstr "без подписи"
 
 msgctxt "MSG_CO_IDENTITY_ABOVEQUOTE (2272//)"
 msgid "above quotes"
-msgstr ""
+msgstr "перед цитатой"
 
 msgctxt "MSG_CO_IDENTITY_BELOWQUOTE (2273//)"
 msgid "below quotes"
-msgstr ""
+msgstr "после цитаты"
 
 msgctxt "MSG_CO_IDENTITY_DESCRIPTION (2274//)"
 msgid "Description"
-msgstr ""
+msgstr "Описание"
 
 msgctxt "MSG_CO_IDENTITY_MAILSERVER (2275//)"
 msgid "Mail server (SMTP)"
-msgstr ""
+msgstr "Почтовый сервер (SMTP)"
 
 msgctxt "MSG_CO_IDENTITY_COMPOSE (2277//)"
 msgid "Compose mail settings"
@@ -8630,7 +8630,7 @@ msgstr ""
 
 msgctxt "MSG_CO_IDENTITY_COMPOSE_QUOTE (2287//)"
 msgid "Quote messages when answering"
-msgstr ""
+msgstr "Цитировать сообщения при ответе"
 
 msgctxt "MSG_CO_IDENTITY_COMPOSE_ANSWER (2288//)"
 msgid "Put my answer"
@@ -8913,7 +8913,7 @@ msgstr ""
 
 msgctxt "MSG_CO_CONFIGWARNING_BT (2342//)"
 msgid "_Close window|*_Abort"
-msgstr ""
+msgstr "_Закрыть окно|*_Прервать"
 
 msgctxt "MSG_CO_CONFIGVERSIONWARNING_TITLE (2343//)"
 msgid "Configuration Version Warning"
@@ -8932,7 +8932,7 @@ msgstr ""
 
 msgctxt "MSG_CO_CONFIGVERSIONWARNING_BT (2345//)"
 msgid "_Continue|*_Abort"
-msgstr ""
+msgstr "П_родолжить|*_Прервать"
 
 msgctxt "MSG_WR_MCCADDRFIELD (2346//)"
 msgid "Cc Address Field"
@@ -8948,26 +8948,26 @@ msgstr ""
 
 msgctxt "MSG_CO_LISTCOLUMNSETTINGS (2349//)"
 msgid "Column settings"
-msgstr ""
+msgstr "Настройки колонок"
 
 msgctxt "MSG_CO_LOOKFEEL_MAINWINDOW (2350//)"
 msgid "Main window"
-msgstr ""
+msgstr "Основное окно"
 
 msgctxt "MSG_CO_LOOKFEEL_TITLE_THEME (2351//)"
 msgid "Theme"
-msgstr ""
+msgstr "Тема"
 
 msgctxt "MSG_CO_LOOKFEEL_TITLE_INFO (2352//)"
 msgid "Information"
-msgstr ""
+msgstr "Информация"
 
 msgctxt "MSG_HELP_WR_CY_SIGNATURE (2353//)"
 msgid ""
 "Allows to select which signature\n"
 "show be used for the currently\n"
 "composed message."
-msgstr ""
+msgstr "Позволяет выбрать подпись\nдля создаваемого сообщения."
 
 msgctxt "MSG_WR_PGPSECURITY (2354//)"
 msgid "PGP security level"
@@ -9143,7 +9143,7 @@ msgstr ""
 
 msgctxt "MSG_CO_FILTER_IMPORT (2390//)"
 msgid "Import..."
-msgstr ""
+msgstr "Импорт..."
 
 msgctxt "MSG_FILTER_IMPORT_TITLE (2391//)"
 msgid "Import filter"
@@ -9713,17 +9713,17 @@ msgstr ""
 
 msgctxt "MSG_CO_POP_FOLDERS (2516//)"
 msgid "Default folders"
-msgstr ""
+msgstr "Папки по умолчанию"
 
 msgctxt "MSG_CO_POP_INCOMINGFOLDER (2517//)"
 msgid "'Incoming' folder"
-msgstr ""
+msgstr "Папка «Входящие»"
 
 msgctxt "MSG_HELP_CO_PO_POP_INCOMINGFOLDER (2518//)"
 msgid ""
 "Allows to set a different folder where mails\n"
 "will be stored after having received them."
-msgstr ""
+msgstr "Позволяет указать различные папки,\nв которые будут сохраняться сообщения\nпри получении."
 
 #. !!! NOTE !!!
 #. When translating MSG_LANGUAGE_CODE please put the
@@ -9750,11 +9750,11 @@ msgstr ""
 
 msgctxt "MSG_CO_CYRILLICCHARSETWARN_BT (2521//)"
 msgid "*_Deactivate|_Ignore"
-msgstr ""
+msgstr "*_Деактивировать|_Игнорировать"
 
 msgctxt "MSG_WR_NORCPT_WARNING_GADGET (2522//)"
 msgid "_Save as draft|*_Cancel"
-msgstr ""
+msgstr "_Сохранить как черновик|_Отменить"
 
 msgctxt "MSG_WR_NORCPT_WARNING (2523//)"
 msgid ""
@@ -9762,15 +9762,15 @@ msgid ""
 "no recipient had been specified.\n"
 "\n"
 "How do you want to proceed?"
-msgstr ""
+msgstr "Сообщение не завершено,\nпоскольку получатель не указан.\n\nХотите продолжить?"
 
 msgctxt "MSG_WR_DISCARDCHANGES_GADGET (2524//)"
 msgid "*_Save as draft|_Discard|_Cancel"
-msgstr ""
+msgstr "*_Сохранить как черновик|_Всё-равно продолжить|_Отменить"
 
 msgctxt "MSG_MA_NO_SUBJECT (2525//)"
 msgid "(No Subject)"
-msgstr ""
+msgstr "(Без темы)"
 
 msgctxt "MSG_MA_NO_RECIPIENTS (2526//)"
 msgid "(No Recipients)"
@@ -9834,17 +9834,17 @@ msgstr ""
 #. Use same phrase as MSG_WR_FROM but in parentheses
 msgctxt "MSG_AB_FROM_TITLE (2538//)"
 msgid "(From)"
-msgstr ""
+msgstr "(От)"
 
 #. Use same phrase as MSG_WR_To but in parentheses
 msgctxt "MSG_AB_TO_TITLE (2539//)"
 msgid "(To)"
-msgstr ""
+msgstr "(Кому)"
 
 #. Use same phrase as MSG_WR_CC but in parentheses
 msgctxt "MSG_AB_CC_TITLE (2540//)"
 msgid "(Cc)"
-msgstr ""
+msgstr "(Копия)"
 
 #. Use same phrase as MSG_WR_BCC but in parentheses
 msgctxt "MSG_AB_BCC_TITLE (2541//)"
@@ -9854,7 +9854,7 @@ msgstr ""
 #. Use same phrase as MSG_WR_REPLYTO but in parentheses
 msgctxt "MSG_AB_REPLYTO_TITLE (2542//)"
 msgid "(Reply To)"
-msgstr ""
+msgstr "(Ответить на...)"
 
 #. Please use a translation corresponding to "bytes" which
 #. has the abbreviation "B" and NOT "octet" which has the
@@ -10015,17 +10015,17 @@ msgstr ""
 
 msgctxt "MSG_CO_SMTP_CONNECTION_TITLE (2573//)"
 msgid "SMTP connection"
-msgstr ""
+msgstr "Подключение к SMTP"
 
 #. SERVER
 msgctxt "MSG_CO_SMTP_CONNECTION_SUCCESS (2574//)"
 msgid "Connection to SMTP server '%s' was successful."
-msgstr ""
+msgstr "Успешное подключение к SMTP серверу «%s»."
 
 #. SERVER
 msgctxt "MSG_CO_SMTP_CONNECTION_FAILURE (2575//)"
 msgid "Connection to SMTP server '%s' failed."
-msgstr ""
+msgstr "Подключиться к SMTP серверу «%s» не удалось."
 
 #. FILEPATH
 msgctxt "MSG_ER_WARN_CAFILE (2576//)"
