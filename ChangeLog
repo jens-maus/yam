@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-08-15 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/SplashWindow.c: added a small delay before activating the password
+    string object. This is necessary because MUI will refuse to activate a just
+    added object before the window is resized and the object is considered to be
+    yet invisible.
+
 2014-07-09 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_UT.c: the restored layout weight values are now checked for consistency,

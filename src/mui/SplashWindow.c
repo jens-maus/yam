@@ -349,7 +349,13 @@ DECLARE(SelectUser)
       DoMethod(obj, MUIM_Window_ToFront);
 
       // make the first button the active object in the window
-      set(obj, MUIA_Window_ActiveObject, button0);
+      // This cannot be done directly by a simple set(), because the window needs to be
+      // resized to make the string object appear. Without this resize action the object
+      // is considered to be invisible and hence MUI will refuse to activate it. But the
+      // resizing is not done before Intuition sends the necessary IDCMP_NEWSIZE message
+      // to the window which will be handled in the MUIM_Application_NewInput method.
+      // The solution is to delay the activation a bit.
+      DoMethod(_app(obj), MUIM_Application_PushMethod, obj, 3|MUIV_PushMethod_Delay(100), MUIM_Set, MUIA_Window_ActiveObject, button0);
 
       // lets collect the waiting returnIDs now
       COLLECT_RETURNIDS;
@@ -478,7 +484,13 @@ DECLARE(PasswordRequest) // struct User *user
       COLLECT_RETURNIDS;
 
       // make the passwordString the active object
-      set(obj, MUIA_Window_ActiveObject, pwString);
+      // This cannot be done directly by a simple set(), because the window needs to be
+      // resized to make the string object appear. Without this resize action the object
+      // is considered to be invisible and hence MUI will refuse to activate it. But the
+      // resizing is not done before Intuition sends the necessary IDCMP_NEWSIZE message
+      // to the window which will be handled in the MUIM_Application_NewInput method.
+      // The solution is to delay the activation a bit.
+      DoMethod(_app(obj), MUIM_Application_PushMethod, obj, 3|MUIV_PushMethod_Delay(100), MUIM_Set, MUIA_Window_ActiveObject, pwString);
 
       signals = 0;
       do
