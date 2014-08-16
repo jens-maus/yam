@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-08-16 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_UT.c: the DOS error string will be output in case opening an ASL
+    requester fails.
+
 2014-08-15 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/SplashWindow.c: added a small delay before activating the password

@@ -1349,15 +1349,23 @@ struct FileReqCache *ReqFile(enum ReqFileType num, Object *win,
         // our globally cached filereq structure.
         result = frc;
       }
-      else if(IoErr() != 0)
+      else
       {
+        LONG error = IoErr();
+
         // and IoErr() != 0 signals that something
         // serious happend and that we have to inform the
         // user
-        ER_NewError(tr(MSG_ER_CANTOPENASL));
+        if(error != 0)
+        {
+          char errorStr[SIZE_LARGE];
 
-        // beep the display as well
-        DisplayBeep(_screen(win));
+          Fault(error, NULL, errorStr, sizeof(errorStr));
+          ER_NewError(tr(MSG_ER_CANNOT_OPEN_ASLREQ), error, errorStr);
+
+          // beep the display as well
+          DisplayBeep(_screen(win));
+        }
       }
 
 

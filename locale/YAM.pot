@@ -6182,13 +6182,6 @@ msgctxt "MSG_CO_MIMECMD_PARAMETER (1740//)"
 msgid "%s  Full path of file"
 msgstr "%s  Full path of file"
 
-msgctxt "MSG_ER_CANTOPENASL (1741//)"
-msgid ""
-"An error occurred while trying to open an ASL requester.\n"
-"\n"
-"Please make sure that your ASL setup is valid and that you have enough memory left."
-msgstr "An error occurred while trying to open an ASL requester.\n\nPlease make sure that your ASL setup is valid and that you have enough memory left."
-
 #. AMOUNT
 msgctxt "MSG_MA_CONFIRMDELETION (1742//)"
 msgid ""
@@ -10022,3 +10015,10 @@ msgid ""
 "\n"
 "Please make sure that the file exists and is uptodate or otherwise each SSL connection will be flagged as unverified."
 msgstr "While trying initialize the SSL certificate authorities the certificate bundle file '%s' was found to be missing.\n\nPlease make sure that the file exists and is uptodate or otherwise each SSL connection will be flagged as unverified."
+
+#. ERRORNUM, ERRORSTR
+msgctxt "MSG_ER_CANNOT_OPEN_ASLREQ (2577//)"
+msgid ""
+"An error occurred while trying to open an ASL requester.\n"
+"Error %ld: %s"
+msgstr "An error occurred while trying to open an ASL requester.\nError %ld: %s"
