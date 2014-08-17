@@ -1703,6 +1703,7 @@ DECLARE(EmptyTrashFolder) // ULONG quiet
 
     LockMailList(trashFolder->messages);
 
+    D(DBF_STARTUP, "emptying trash folder '%s' with %ld mails", trashFolder->Name, trashFolder->messages->count);
     i = 0;
     ForEachMailNode(trashFolder->messages, mnode)
     {
@@ -1715,7 +1716,8 @@ DECLARE(EmptyTrashFolder) // ULONG quiet
       DeleteFile(mailfile);
     }
 
-    // We only clear the trash folder if it wasn't empty anyway..
+    // we only clear the trash folder if it wasn't empty anyway..
+    D(DBF_STARTUP, "deleted %ld mails from trash folder '%s'", i, trashFolder->Name);
     if(i > 0)
     {
       ClearFolderMails(trashFolder, TRUE);
@@ -1736,6 +1738,10 @@ DECLARE(EmptyTrashFolder) // ULONG quiet
     UnlockMailList(trashFolder->messages);
 
     BusyEnd(busy);
+  }
+  else
+  {
+    W(DBF_STARTUP, "no trash folder found or failed to get its index");
   }
 
   RETURN(0);
