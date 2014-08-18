@@ -210,11 +210,10 @@ static BOOL SaveOldFolder(struct IClass *cl, Object *obj)
 
       // first check for a valid folder name
       // it is invalid if:
-      // - the folder name is empty, or
-      // - it was changed and the new name already exists
-      if(IsStrEmpty(folder.Name) == TRUE || (nameChanged == TRUE && FO_GetFolderByName(folder.Name, NULL) != NULL))
+      // - the folder name is empty
+      if(IsStrEmpty(folder.Name) == TRUE)
       {
-        MUI_Request(_app(obj), obj, MUIF_NONE, NULL, tr(MSG_OkayReq), tr(MSG_FO_FOLDERNAMEINVALID));
+        MUI_Request(_app(obj), obj, MUIF_NONE, NULL, tr(MSG_OkayReq), tr(MSG_FO_FOLDER_NAME_INVALID));
         set(obj, MUIA_Window_ActiveObject, data->ST_FNAME);
         break;
       }
@@ -416,9 +415,9 @@ static BOOL SaveNewFolder(struct IClass *cl, Object *obj)
       // it is invalid if:
       // - the folder name is empty, or
       // - the new name already exists
-      if(IsStrEmpty(folder.Name) == TRUE || FO_GetFolderByName(folder.Name, NULL) != NULL)
+      if(IsStrEmpty(folder.Name) == TRUE)
       {
-        MUI_Request(_app(obj), obj, MUIF_NONE, NULL, tr(MSG_OkayReq), tr(MSG_FO_FOLDERNAMEINVALID));
+        MUI_Request(_app(obj), obj, MUIF_NONE, NULL, tr(MSG_OkayReq), tr(MSG_FO_FOLDER_NAME_INVALID));
         break;
       }
 
