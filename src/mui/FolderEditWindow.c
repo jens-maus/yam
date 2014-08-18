@@ -201,7 +201,6 @@ static BOOL SaveOldFolder(struct IClass *cl, Object *obj)
 
   do
   {
-
     // check if something has changed and if not we exit here immediately
     if(CompareFolders(&folder, data->oldFolder) == FALSE)
     {
@@ -1174,7 +1173,9 @@ DECLARE(SaveFolder)
     MA_SetSortFlag();
     DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_Redraw, MUIV_NList_Redraw_Title);
     DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_Sort);
-    MA_ChangeFolder(FO_GetFolderByName(data->oldFolder->Name, NULL), FALSE);
+    // oldFolder is always valid, even after creating a new folder as it is
+    // modified in SaveNewFolder()
+    MA_ChangeFolder(data->oldFolder, FALSE);
 
     // save the folder tree only if we just created a new folder, otherwise
     // a temporarily modified open/close state of folder groups will be saved

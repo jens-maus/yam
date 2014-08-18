@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-08-18 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/FolderEditWindow.c: removed a superflous "search by name check" after a
+    folder has been edited or created.
+
 2014-08-16 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_UT.c: the DOS error string will be output in case opening an ASL
