@@ -47,7 +47,7 @@ struct DownloadResult
 #define RECEIVEF_TIMER           (1<<2) // transfer initiated by timer
 #define RECEIVEF_AREXX           (1<<3) // transfer initiated by ARexx
 #define RECEIVEF_SIGNAL          (1<<4) // wakeup a waiting thread after the transfer
-#define RECEIVEF_TEST_CONNECTION (1<<1) // test the connection
+#define RECEIVEF_TEST_CONNECTION (1<<5) // just test the connection, don't download any mails
 
 // prototypes
 BOOL ReceiveMails(struct MailServerNode *msn, const ULONG flags, struct DownloadResult *dlResult);

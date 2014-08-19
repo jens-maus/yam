@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-08-19 Thore Böckelmann <tboeckel@gmx.de>
+
+  * tcp/pop3.h: fixed a wrong flag definition which caused the automatic mail
+    download upon startup to be treated as a connection test which does not
+    download any mails by intention. This closes #577.
+
 2014-08-18 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/FolderEditWindow.c: removed a superflous "search by name check" after a
