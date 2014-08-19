@@ -1678,7 +1678,7 @@ int ReceiveLineFromHost(struct Connection *conn, char *vptr, const int maxlen)
 
       // perform some debug output on the console if requested
       // by the user
-      if(G->TR_Debug == TRUE)
+      if(G->NetLog == TRUE)
       {
         fprintf(stderr, "SERVER['%s', %04d]: %s", conn->server->description, n, vptr);
         // add a linefeed in case of an error
@@ -1728,7 +1728,7 @@ int ReceiveFromHost(struct Connection *conn, char *recvdata, const int maxlen)
       else
         recvdata[nread] = '\0';
 
-      if(G->TR_Debug == TRUE)
+      if(G->NetLog == TRUE)
       {
         fprintf(stderr, "SERVER['%s', %04d]: %s", conn->server->description, nread, recvdata);
         // add a linefeed in case of an error
@@ -2122,7 +2122,7 @@ int SendToHost(struct Connection *conn, const char *ptr, const int len, const in
 
       // perform some debug output on the console if requested
       // by the user
-      if(G->TR_Debug == TRUE && ptr != NULL)
+      if(G->NetLog == TRUE && ptr != NULL)
         fprintf(stderr, "CLIENT['%s', %04d]: %s", conn->server->description, len, ptr);
 
       // we call the WriteBuffered() function to write this characters

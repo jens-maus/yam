@@ -137,7 +137,7 @@ struct Args
   char  *prefsfile;
   LONG   nocheck;
   LONG   hide;
-  LONG   debug;
+  LONG   netlog;
   char  *mailto;
   char  *subject;
   char  *letter;
@@ -2125,7 +2125,7 @@ static LONG ParseCommandArgs(void)
                           "PREFSFILE/K,"
                           "NOCHECK/S,"
                           "HIDE/S,"
-                          "DEBUG/S,"
+                          "NETLOG=DEBUG/S,"
                           "MAILTO/K,"
                           "SUBJECT/K,"
                           "LETTER/K,"
@@ -2146,8 +2146,8 @@ static LONG ParseCommandArgs(void)
                          "  NOCHECK             : Starts YAM without trying to receive/send\n"
                          "                        any mail.\n"
                          "  HIDE                : Starts YAM in iconify mode.\n"
-                         "  DEBUG               : Sends all conversations between YAM and a\n"
-                         "                        mail server to the console window.\n"
+                         "  NETLOG              : Sends all network conversations between\n"
+                         "                        YAM and a server to the console window.\n"
                          "  MAILTO=<recipient>  : Creates a new mail for the specified\n"
                          "                        recipients when YAM started.\n"
                          "  SUBJECT=<subject>   : Sets the subject text for a new mail.\n"
@@ -2570,8 +2570,8 @@ int main(int argc, char **argv)
     if(args.maildir == NULL)
       strlcpy(G->MA_MailDir, G->ProgDir, sizeof(G->MA_MailDir));
 
-    G->TR_Debug = args.debug ? TRUE : FALSE;
-    if(G->TR_Debug == TRUE)
+    G->NetLog = args.netlog ? TRUE : FALSE;
+    if(G->NetLog == TRUE)
     {
       struct EasyStruct es;
 

@@ -10,6 +10,9 @@ $URL$
   * tcp/pop3.h: fixed a wrong flag definition which caused the automatic mail
     download upon startup to be treated as a connection test which does not
     download any mails by intention. This closes #577.
+  * YAM.c, tcp/Connection.c: renamed the DEBUG command line option to NETLOG to
+    avoid unnessary confusion with the debug build of YAM. The old DEBUG keyword
+    is kept as an alias.
 
 2014-08-18 Thore Böckelmann <tboeckel@gmx.de>
 

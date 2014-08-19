@@ -157,7 +157,7 @@ struct Global
   BOOL                     PGP5;
   BOOL                     AppIconQuiet;
   BOOL                     PGPPassVolatile;
-  BOOL                     TR_Debug;
+  BOOL                     NetLog;
   BOOL                     InStartupPhase;
   BOOL                     NoImageWarning;
   BOOL                     NoCatalogTranslation;
