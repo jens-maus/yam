@@ -201,14 +201,19 @@ static char *SendPOP3Command(struct TransferContext *tc, const enum POPCommand c
 
     // let us read the next line from the server and check if
     // some status message can be retrieved.
-    if((received = ReceiveLineFromHost(tc->connection, tc->pop3Buffer, sizeof(tc->pop3Buffer))) > 0 &&
-      strncmp(tc->pop3Buffer, POP_RESP_OKAY, strlen(POP_RESP_OKAY)) == 0)
+    if((received = ReceiveLineFromHost(tc->connection, tc->pop3Buffer, sizeof(tc->pop3Buffer))) > 0)
     {
-      // everything worked out fine so lets set
-      // the result to our allocated buffer
-      result = tc->pop3Buffer;
+      D(DBF_NET, "received POP3 answer '%s'", tc->pop3Buffer);
+
+      if(strncmp(tc->pop3Buffer, POP_RESP_OKAY, strlen(POP_RESP_OKAY)) == 0)
+      {
+        // everything worked out fine so lets set
+        // the result to our allocated buffer
+        result = tc->pop3Buffer;
+      }
     }
-    else
+
+    if(result == NULL)
     {
       BOOL showError;
 
@@ -975,6 +980,7 @@ static int ConnectToPOP3(struct TransferContext *tc)
   char *p;
   char *welcomemsg = NULL;
   int msgs = -1;
+  long bytes = 0;
   char *resp;
   enum ConnectError err;
 
@@ -1167,7 +1173,11 @@ static int ConnectToPOP3(struct TransferContext *tc)
   if((resp = SendPOP3Command(tc, POPCMD_STAT, NULL, tr(MSG_ER_BADRESPONSE_POP3))) == NULL)
     goto out;
 
-  sscanf(&resp[4], "%d", &msgs);
+  msgs = strtoul(&resp[4], &p, 10);
+  if(p != NULL)
+    bytes = strtoul(p+1, NULL, 10);
+
+  D(DBF_NET, "STAT signaled %ld messages with %ld bytes on server", msgs, bytes);
   if(msgs != 0)
     AppendToLogfile(LF_VERBOSE, 31, tr(MSG_LOG_CONNECT_POP3), tc->msn->description, msgs);
 

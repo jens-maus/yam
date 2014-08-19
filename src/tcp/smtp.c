@@ -156,7 +156,7 @@ static char *SendSMTPCommand(struct TransferContext *tc, const enum SMTPCommand 
   else
     snprintf(tc->smtpBuffer, sizeof(tc->smtpBuffer), "%s %s\r\n", SMTPcmd[command], parmtext);
 
-  D(DBF_NET, "TCP: SMTP cmd '%s' with param '%s'", SMTPcmd[command], SafeStr(parmtext));
+  D(DBF_NET, "TCP: send SMTP cmd '%s' with param '%s'", SMTPcmd[command], SafeStr(parmtext));
 
   // lets send the command via TR_WriteLine, but not if we are in connection
   // state
@@ -170,6 +170,8 @@ static char *SendSMTPCommand(struct TransferContext *tc, const enum SMTPCommand 
     {
       // get the response code
       int rc = strtol(tc->smtpBuffer, NULL, 10);
+
+      D(DBF_NET, "received SMTP answer '%s'", tc->smtpBuffer);
 
       // if the response is a multiline response we have to get out more
       // from the socket
