@@ -1582,7 +1582,7 @@ DECLARE(CloseAboutWindow)
 
   ENTER();
 
-  DoMethod(_app(obj), MUIM_YAMApplication_DisposeWindow, data->aboutWindow);
+  DoMethod(obj, MUIM_YAMApplication_DisposeWindow, data->aboutWindow);
   data->aboutWindow = NULL;
 
   RETURN(0);
@@ -1636,7 +1636,7 @@ DECLARE(CloseConfigWindow)
 {
   ENTER();
 
-  DoMethod(_app(obj), MUIM_YAMApplication_DisposeWindow, G->ConfigWinObject);
+  DoMethod(obj, MUIM_YAMApplication_DisposeWindow, G->ConfigWinObject);
   G->ConfigWinObject = NULL;
 
   RETURN(0);
