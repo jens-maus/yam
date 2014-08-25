@@ -537,6 +537,9 @@ void CleanupTimers(void)
     // then close the device
     if(G->timerData.timer[0].tr->Request.io_Device != NULL)
     {
+      // forget the TimerBase to avoid crashes when quitting YAM
+      TimerBase = NULL;
+
       // drop the OS4 Interface of the TimerBase
       DROPINTERFACE(ITimer);
 

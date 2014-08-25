@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-08-25 Thore Böckelmann <tboeckel@gmx.de>
+
+  * Timer.c: forget the TimerBase variable right before closing timer.device.
+    This is necessary for the debug build, otherwise any debug output that
+    happens after cleaning up the timers will cause a crash due to the time
+    output for each debug statement. This refs #572.
+
 2014-08-19 Thore Böckelmann <tboeckel@gmx.de>
 
   * tcp/pop3.h: fixed a wrong flag definition which caused the automatic mail
