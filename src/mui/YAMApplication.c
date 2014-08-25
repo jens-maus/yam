@@ -1713,7 +1713,12 @@ DECLARE(EmptyTrashFolder) // ULONG quiet
       BusyProgress(busy, ++i, trashFolder->Total);
       AppendToLogfile(LF_VERBOSE, 21, tr(MSG_LOG_DeletingVerbose), AddrName(mail->From), mail->Subject, trashFolder->Name);
       GetMailFile(mailfile, sizeof(mailfile), NULL, mail);
-      DeleteFile(mailfile);
+      if(DeleteFile(mailfile) == DOSFALSE)
+      {
+        LONG error = IoErr();
+
+        E(DBF_STARTUP, "failed to delete file '%s', error %ld", mailfile, error);
+      }
     }
 
     // we only clear the trash folder if it wasn't empty anyway..
