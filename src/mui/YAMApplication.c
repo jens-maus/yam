@@ -1692,7 +1692,8 @@ DECLARE(EmptyTrashFolder) // ULONG quiet
   {
     struct BusyNode *busy;
     struct MailNode *mnode;
-    int i;
+    int count;
+    int deleted;
 
     busy = BusyBegin(BUSY_PROGRESS);
     BusyText(busy, tr(MSG_BusyEmptyingTrash), "");
@@ -1704,26 +1705,33 @@ DECLARE(EmptyTrashFolder) // ULONG quiet
     LockMailList(trashFolder->messages);
 
     D(DBF_STARTUP, "emptying trash folder '%s' with %ld mails", trashFolder->Name, trashFolder->messages->count);
-    i = 0;
+    count = 0;
+    deleted = 0;
     ForEachMailNode(trashFolder->messages, mnode)
     {
       struct Mail *mail = mnode->mail;
       char mailfile[SIZE_PATHFILE];
 
-      BusyProgress(busy, ++i, trashFolder->Total);
+      BusyProgress(busy, ++count, trashFolder->Total);
       AppendToLogfile(LF_VERBOSE, 21, tr(MSG_LOG_DeletingVerbose), AddrName(mail->From), mail->Subject, trashFolder->Name);
       GetMailFile(mailfile, sizeof(mailfile), NULL, mail);
       if(DeleteFile(mailfile) == DOSFALSE)
       {
+        #if defined(DEBUG)
         LONG error = IoErr();
 
         E(DBF_STARTUP, "failed to delete file '%s', error %ld", mailfile, error);
+        #endif
+      }
+      else
+      {
+        deleted++;
       }
     }
 
     // we only clear the trash folder if it wasn't empty anyway..
-    D(DBF_STARTUP, "deleted %ld mails from trash folder '%s'", i, trashFolder->Name);
-    if(i > 0)
+    D(DBF_STARTUP, "deleted %ld mails from trash folder '%s'", deleted, trashFolder->Name);
+    if(deleted > 0)
     {
       ClearFolderMails(trashFolder, TRUE);
 
@@ -1732,7 +1740,7 @@ DECLARE(EmptyTrashFolder) // ULONG quiet
       if(GetCurrentFolder() == trashFolder)
         DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_DisplayMailsOfFolder, trashFolder);
 
-      AppendToLogfile(LF_NORMAL, 20, tr(MSG_LOG_Deleting), i, trashFolder->Name);
+      AppendToLogfile(LF_NORMAL, 20, tr(MSG_LOG_Deleting), deleted, trashFolder->Name);
 
       if(msg->quiet == FALSE)
         DisplayStatistics(trashFolder, TRUE);

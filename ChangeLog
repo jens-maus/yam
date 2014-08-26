@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-08-26 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/YAMApplication.c: emptying the trash folder will now count the number of
+    actually deleted mails instead of just counting the number of handled mails.
+
 2014-08-25 Thore Böckelmann <tboeckel@gmx.de>
 
   * Timer.c: forget the TimerBase variable right before closing timer.device.
