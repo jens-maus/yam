@@ -179,6 +179,9 @@ struct  MUIP_CheckShortHelp                 { STACKED ULONG MethodID; STACKED ST
 #ifndef MUII_Close
 #define MUII_Close                          54
 #endif
+#ifndef MUIV_PushMethod_Delay
+#define MUIV_PushMethod_Delay(millis)       MIN(0x0ffffff0,(((ULONG)millis)<<8))
+#endif
 
 enum { IECODE_SPACE = 64,
        IECODE_TAB = 66,

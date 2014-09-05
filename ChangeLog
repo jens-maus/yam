@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-09-05 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/ClassesExtra.h: added a definition of the MUIV_PushMethod_Delay macro.
+    This fixes the broken AROS builds.
+
 2014-08-26 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/YAMApplication.c: emptying the trash folder will now count the number of
