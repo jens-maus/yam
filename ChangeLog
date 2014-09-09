@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-09-09 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/YAMApplication.c: added a workaround for MUI 3.8 which does not yet
+    support delayed execution of pushed methods. The delay time must be stripped
+    from the parameter counter. Otherwise it will be treated as an arbitrarily
+    large number of parameters which might cause all kinds of weird behaviour to
+    happen. This closes #582.
+
 2014-09-05 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/ClassesExtra.h: added a definition of the MUIV_PushMethod_Delay macro.

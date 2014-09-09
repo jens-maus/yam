@@ -755,6 +755,27 @@ OVERLOAD(MUIM_Application_ShowHelp)
 }
 
 ///
+/// OVERLOAD(MUIM_Application_PushMethod)
+OVERLOAD(MUIM_Application_PushMethod)
+{
+  struct MUIP_Application_PushMethod *pm = (struct MUIP_Application_PushMethod *)msg;
+  IPTR rc;
+
+  ENTER();
+
+  // MUI 3.8 does not yet support delayed execution of pushed methods. Hence the
+  // delay time must be stripped. Otherwise it will be treated as an aribitrarily
+  // large number of parameters.
+  if(LIB_VERSION_IS_AT_LEAST(MUIMasterBase, 20, 0) == FALSE)
+    pm->count &= 0x0000000f;
+
+  rc = DoSuperMethodA(cl, obj, msg);
+
+  RETURN(rc);
+  return rc;
+}
+
+///
 /// DECLARE(UpdateCheck)
 DECLARE(UpdateCheck) // ULONG quiet
 {
