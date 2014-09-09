@@ -726,26 +726,32 @@ OVERLOAD(MUIM_Application_ShowHelp)
     char *url = NULL;
     char *helpNode = ((struct MUIP_Application_ShowHelp *)msg)->node;
     const char *langCode = tr(MSG_DOC_LANGUAGE_CODE);
+    int rc;
 
     if(helpNode != NULL)
     {
       if(IsStrEmpty(langCode))
-        asprintf(&url, "%s/Documentation/%s", helpFile, helpNode);
+        rc = asprintf(&url, "%s/Documentation/%s", helpFile, helpNode);
       else
-        asprintf(&url, "%s/%s:Documentation/%s", helpFile, langCode, helpNode);
+        rc = asprintf(&url, "%s/%s:Documentation/%s", helpFile, langCode, helpNode);
     }
     else
     {
       if(IsStrEmpty(langCode))
-        asprintf(&url, "%s/Documentation", helpFile);
+        rc = asprintf(&url, "%s/Documentation", helpFile);
       else
-        asprintf(&url, "%s/%s:Documentation", helpFile, langCode);
+        rc = asprintf(&url, "%s/%s:Documentation", helpFile, langCode);
     }
 
-    D(DBF_GUI, "opening help url: '%s'", url);
-    GotoURL(url, FALSE);
+    if(rc != -1)
+    {
+      D(DBF_GUI, "opening help URL '%s'", url);
+      GotoURL(url, FALSE);
 
-    free(url);
+      free(url);
+    }
+    else
+      E(DBF_GUI, "asprintf() failed");
   }
   else
     W(DBF_GUI, "HelpFile is NULL");
