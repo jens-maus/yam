@@ -9,13 +9,14 @@
 # Jens Maus <mail@jens-maus.de>, 2014
 # Oleg Sergeev <bigblack@mail.lanck.net>, 2000
 # Andrei Shestakov <mobydick@amiga.org.ru>, 2014
+# Vlad Vinogradov, 2005
 msgid ""
 msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-08-29 22:09+0000\n"
-"Last-Translator: Andrei Shestakov <mobydick@amiga.org.ru>\n"
+"PO-Revision-Date: 2014-09-17 14:51+0000\n"
+"Last-Translator: Michael Malyshev\n"
 "Language-Team: Russian (http://www.transifex.com/projects/p/yam/language/ru/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -66,7 +67,7 @@ msgstr "Печать..."
 
 msgctxt "MSG_Edit (12//)"
 msgid "Edit..."
-msgstr "Редактировать..."
+msgstr "Изменить..."
 
 msgctxt "MSG_Okay (16//)"
 msgid "_Ok"
@@ -234,7 +235,7 @@ msgstr "Создаю интерфейс пользователя..."
 
 msgctxt "MSG_ErrorMuiApp (72//)"
 msgid "Can't create application"
-msgstr "Не могу создать приложение"
+msgstr "Невозможно создать приложение"
 
 msgctxt "MSG_RebuildIndices (73//)"
 msgid "Rebuilding folders' indices..."
@@ -254,15 +255,15 @@ msgstr "Инициализирую библиотеки и классы..."
 
 msgctxt "MSG_ErrorAslStruct (78//)"
 msgid "Can't allocate ASL structure"
-msgstr "Не могу создать структуру ASL"
+msgstr "Невозможно создать структуру ASL"
 
 msgctxt "MSG_ErrorTimer (79//)"
 msgid "Can't open timer.device"
-msgstr "Не могу открыть timer.device"
+msgstr "Невозможно открыть timer.device"
 
 msgctxt "MSG_ErrorARexx (80//)"
 msgid "Can't create ARexx port"
-msgstr "Не создать АRexx порт"
+msgstr "Невозможно создать АRexx порт"
 
 msgctxt "MSG_LoadingGFX (81//)"
 msgid "Loading graphics..."
@@ -288,7 +289,7 @@ msgstr "документ HTML"
 
 msgctxt "MSG_CTtextaguide (86//)"
 msgid "AmigaGuide document"
-msgstr "AmigaGuide документ"
+msgstr "документ AmigaGuide"
 
 msgctxt "MSG_CTapplicationoctetstream (87//)"
 msgid "binary file"
@@ -336,7 +337,7 @@ msgstr "TIFF изображение"
 
 msgctxt "MSG_CTimageilbm (98//)"
 msgid "Amiga IFF-ILBM picture"
-msgstr "Амига IFF-ILBM изображение"
+msgstr "Amiga IFF-ILBM изображение"
 
 msgctxt "MSG_CTaudiobasic (99//)"
 msgid "UNIX audio file"
@@ -344,7 +345,7 @@ msgstr "UNIX аудио файл"
 
 msgctxt "MSG_CTaudio8svx (100//)"
 msgid "Amiga IFF-8SVX audio"
-msgstr "Амига IFF-8SVX аудио"
+msgstr "Amiga IFF-8SVX аудио"
 
 msgctxt "MSG_CTaudiowav (101//)"
 msgid "Microsoft WAV audio"
@@ -360,7 +361,7 @@ msgstr "Apple QuickTime видео"
 
 msgctxt "MSG_CTvideoanim (104//)"
 msgid "Amiga IFF-ANIM video"
-msgstr "Амига IFF-ANIM видео"
+msgstr "Amiga IFF-ANIM видео"
 
 msgctxt "MSG_CTvideomsvideo (105//)"
 msgid "Microsoft AVI video"
@@ -436,7 +437,7 @@ msgstr "Отредактировано сообщение от «%s» для «%
 #. RECIPIENT, SUBJECT, COUNT
 msgctxt "MSG_LOG_Creating (124//)"
 msgid "Wrote new message for '%s' about '%s', including %ld attachment(s)"
-msgstr "Написано новое сообщение для «%s» о «%s», включая %ld приложение(-й)"
+msgstr "Написано новое сообщение для «%s» о «%s», включая %ld вложение(я)"
 
 #. SENDER, SUBJECT
 msgctxt "MSG_LOG_Replying (125//)"
@@ -480,7 +481,7 @@ msgstr "Экспортировано %ld сообщение(ий) из папк�
 #. FILENAME, MAILFILE, FOLDER
 msgctxt "MSG_LOG_SavingAtt (135//)"
 msgid "Saved attachment '%s' of message '%s' in folder '%s'"
-msgstr "Приложение «%s» из сообщения «%s» сохранено в папке «%s»"
+msgstr "Вложение «%s» из сообщения «%s» сохранено в папке «%s»"
 
 #. SUBJECT, MAILFILE, FOLDER, SUBJECT
 msgctxt "MSG_LOG_ChangingSubject (137//)"
@@ -511,11 +512,11 @@ msgid ""
 "The selected message has multiple recipients.\n"
 "\n"
 "You want to send the reply to the..."
-msgstr "Это сообщение содержит несколько получателей.\n\nКому Вы хотите отправить ответ?"
+msgstr "Это сообщение содержит несколько получателей.\n\nВы хотите отправить ответ..."
 
 msgctxt "MSG_MA_ReplyReqOpt (150//)"
 msgid "*_Sender|Sender and _all Recipients|_Recipients|_Cancel"
-msgstr "*О_тправителю\n|Отправителю _и\nвсем получателям|_Получателям\n|_Отмена"
+msgstr "*_Только\nотправителю|Отправителю _и\nвсем получателям|Только\n_получателям|_Отменить\nответ"
 
 #. ADDRESS, ADDRESS
 msgctxt "MSG_MA_CompareReq (151//)"
@@ -524,15 +525,15 @@ msgid ""
 "return address (Reply-To) is \\033b<%s>\\033n.\n"
 "\n"
 "To which address do you want to reply to?"
-msgstr "Адрес отправителя (От) - <%s>, но\nобратный адрес (Ответ-На) - <%s>.\nКакой адрес Вы хотите использовать?"
+msgstr "Адрес отправителя (От) - \\033b<%s>\\033n, но\nобратный адрес (Ответ-На) - \\033b<%s>\\033n.\nНа какой адрес Вы хотите ответить?"
 
 msgctxt "MSG_MA_Compare3ReqOpt (152//)"
 msgid "_From|*_Reply-To|_Both|_Cancel"
-msgstr "О_т|*Ответ-_На|О_ба|_Отмена"
+msgstr "О_т|*Ответ-_На|О_ба|_Отменить"
 
 msgctxt "MSG_MA_Compare2ReqOpt (153//)"
 msgid "_From|*_Reply-To|_Cancel"
-msgstr "О_т|*Ответ-_На|_Отмена"
+msgstr "О_т|*Ответ-_На|_Отменить"
 
 msgctxt "MSG_MA_ConfirmReq (155//)"
 msgid "Confirmation Request"
@@ -557,7 +558,7 @@ msgstr "Выходной файл уже имеется. Хотите\nпере�
 
 msgctxt "MSG_MA_ExportAppendOpts (162//)"
 msgid "*_Overwrite|_Append|_Cancel"
-msgstr "*_Переписать|_Добавить|_Отмена"
+msgstr "*_Переписать|_Добавить|_Отменить"
 
 msgctxt "MSG_MA_MoveMsg (163//)"
 msgid "Move message(s)"
@@ -610,7 +611,7 @@ msgstr "YAM %s - Пользователь: %s"
 
 msgctxt "MSG_MA_ToPrefix (178//)"
 msgid "\\033bTo: \\033n"
-msgstr "\\x1BbДля: \\x1Bn"
+msgstr "\\033bДля: \\033n"
 
 msgctxt "MSG_MA_Incoming (179//)"
 msgid "Incoming"
@@ -736,12 +737,12 @@ msgstr "Настройки"
 #. This is the title of the address book window, not the menu item.
 msgctxt "MSG_MA_MAddrBook (244//)"
 msgid "Address book"
-msgstr "Адресная книга..."
+msgstr "Адресная книга"
 
 #. This is the title of the configuration window, not the menu item.
 msgctxt "MSG_MA_MConfig (245//)"
 msgid "Configuration"
-msgstr "Конфигурация..."
+msgstr "Конфигурация"
 
 msgctxt "MSG_MA_MUsers (246//)"
 msgid "Users"
@@ -853,7 +854,7 @@ msgstr "Импорт параметров из..."
 
 msgctxt "MSG_CO_ImportMIMEGads (267//)"
 msgid "*_MIME.prefs|m_ailcap|m_ime.types|_Cancel"
-msgstr "*_MIME.prefs|m_ailcap|m_ime.types|_Отмена"
+msgstr "*_MIME.prefs|m_ailcap|m_ime.types|_Отменить"
 
 #. Please keep the number of backslashes (e.g. \n)
 msgctxt "MSG_CO_NewIntroDef (268//)"
@@ -2412,7 +2413,7 @@ msgstr "Псевдоним (ГРУППА)"
 
 msgctxt "MSG_AB_PrintReqGads (708//)"
 msgid "_Long format|_Short format|_Cancel"
-msgstr "_Длинный формат|_Короткий формат|_Отмена"
+msgstr "_Длинный формат|_Короткий формат|_Отменить"
 
 msgctxt "MSG_AB_PrintReq (709//)"
 msgid "Select print format:"
@@ -2448,7 +2449,7 @@ msgstr "Начать _поиск"
 
 msgctxt "MSG_AB_FoundEntryGads (715//)"
 msgid "_Next hit|*_Edit hit|_Cancel"
-msgstr "_Следущее совпадение|_Изменить|_Отмена"
+msgstr "_Следущее совпадение|_Изменить|_Отменить"
 
 msgctxt "MSG_AB_NoneFound (716//)"
 msgid "No matching entries found."
@@ -2953,7 +2954,7 @@ msgstr "Проверить PGP подпись"
 
 msgctxt "MSG_RE_SaveDecGads (841//)"
 msgid "*_Keep|_Replace|_Cancel"
-msgstr "*_Сохранить|_Заменить|_Отмена"
+msgstr "*_Сохранить|_Заменить|_Отменить"
 
 msgctxt "MSG_RE_SaveDecReq (842//)"
 msgid ""
@@ -3086,11 +3087,11 @@ msgstr "Выбран адрес: %s\nЧто Вы хотите с ним сдел
 
 msgctxt "MSG_RE_SelectAddressEdit (869//)"
 msgid "*_Write message|_Edit entry|_Cancel"
-msgstr "*_Написать сообщение|_Изменить запись|_Отмена"
+msgstr "*_Написать сообщение|_Изменить запись|_Отменить"
 
 msgctxt "MSG_RE_SelectAddressAdd (870//)"
 msgid "*_Write message|_Add entry|_Cancel"
-msgstr "*_Написать сообщение|_Добавить запись|_Отмена"
+msgstr "*_Написать сообщение|_Добавить запись|_Отменить"
 
 msgctxt "MSG_RE_Original (871//)"
 msgid "Raw format"
@@ -3445,7 +3446,7 @@ msgstr "Вклеить"
 
 msgctxt "MSG_WR_TBUndo (973//8)"
 msgid "Undo"
-msgstr "Отмена"
+msgstr "Отменить"
 
 msgctxt "MSG_WR_TBBold (974//8)"
 msgid "Bold"
@@ -3509,7 +3510,7 @@ msgstr "Вставить как"
 
 msgctxt "MSG_WR_MUndo (989//)"
 msgid "Undo"
-msgstr "Отмена"
+msgstr "Отменить"
 
 msgctxt "MSG_WR_Redo (990//)"
 msgid "Redo"
@@ -4375,7 +4376,7 @@ msgstr "Все сообщения, папки и конфигурационны�
 
 msgctxt "MSG_US_RemoveReqGads (1216//)"
 msgid "*_Ok|_Keep files|_Cancel"
-msgstr "*О'ке_й|_Сохранить файлы|_Отмена"
+msgstr "*О'ке_й|_Сохранить файлы|_Отменить"
 
 msgctxt "MSG_US_UserName (1218//)"
 msgid "_User name"
@@ -4471,7 +4472,7 @@ msgstr "Какие параметры Вы хотите использовать
 
 msgctxt "MSG_FO_NewFolderGads (1238//)"
 msgid "*_Internal defaults|_Like current|_Existing directory|_Cancel"
-msgstr "*_Внутренние настройки|Как _текущие|_Каталог имеется|_Отмена"
+msgstr "*_Внутренние настройки|Как _текущие|_Каталог имеется|_Отменить"
 
 msgctxt "MSG_FO_SelectDir (1239//)"
 msgid "Select directory"
@@ -9529,7 +9530,7 @@ msgstr ""
 
 msgctxt "MSG_CO_DEFAULTVIEWER_CODESET (2473//)"
 msgid "_Display charset"
-msgstr ""
+msgstr "Кодировка"
 
 msgctxt "MSG_HELP_CO_TX_DEFVIEWER_CODESET (2474//)"
 msgid ""
@@ -9541,59 +9542,59 @@ msgstr ""
 #. COUNT, COUNT
 msgctxt "MSG_LOG_FILTER_DONE (2475//)"
 msgid "Filtered %ld message(s) with %ld match(es)"
-msgstr ""
+msgstr "Отфильтровано %ld сообщения(й) с %ld совпадением(ями)"
 
 msgctxt "MSG_FO_JUMP_TO_UNREAD_MESSAGE (2476//)"
 msgid "Jump to first unread message"
-msgstr ""
+msgstr "Переходить к первому непрочитанному письму"
 
 msgctxt "MSG_HELP_FO_CH_JUMPTOUNREAD (2477//)"
 msgid ""
 "Jump to the first unread message when\n"
 "entering this folder."
-msgstr ""
+msgstr "Переходить к первому непрочитанному письму\nпри входе в эту папку."
 
 msgctxt "MSG_FO_JUMP_TO_RECENT_MESSAGE (2478//)"
 msgid "Jump to newest message"
-msgstr ""
+msgstr "Переходить к новейшему письму"
 
 msgctxt "MSG_HELP_FO_CH_JUMPTORECENT (2479//)"
 msgid ""
 "Jump to the most recent message when\n"
 "entering this folder."
-msgstr ""
+msgstr "Переходить к новейшему письму\nпри входе в эту папку."
 
 msgctxt "MSG_FO_MAXAGE_DAYS (2480//)"
 msgid "days"
-msgstr ""
+msgstr "дней"
 
 msgctxt "MSG_QUICKSEARCH_FILTER_LIST (2481//)"
 msgid "Filter list..."
-msgstr ""
+msgstr "Список фильтров..."
 
 msgctxt "MSG_QUICKSEARCH_FROM (2482//)"
 msgid "Sender"
-msgstr ""
+msgstr "Отправитель"
 
 msgctxt "MSG_QUICKSEARCH_TO (2483//)"
 msgid "Receiver"
-msgstr ""
+msgstr "Получатель"
 
 msgctxt "MSG_QUICKSEARCH_SUBJECT (2484//)"
 msgid "Subject"
-msgstr ""
+msgstr "Тема:"
 
 msgctxt "MSG_QUICKSEARCH_BODY (2485//)"
 msgid "Mail body"
-msgstr ""
+msgstr "Тело письма"
 
 msgctxt "MSG_CO_CHECK_FOR_MISSING_ATTACHMENTS (2486//)"
 msgid "Check for missing attachments"
-msgstr ""
+msgstr "Проверять на отсутствующие вложения"
 
 msgctxt "MSG_CO_ATTACHMENT_KEYWORDS (2487//)"
 msgid "Keywords:"
-msgstr ""
+msgstr "Ключевые слова:"
 
 msgctxt "MSG_HELP_CO_CH_ATTACHMENTREMINDER (2495//)"
 msgid ""
@@ -9611,27 +9612,27 @@ msgstr ""
 
 msgctxt "MSG_ATTACHMENT_KEYWORDS (2497//)"
 msgid "attachment,attach,attached,attaching,enclosed,CV,cover letter"
-msgstr ""
+msgstr "attachment,attach,attached,attaching,enclosed,CV,cover letter,вложение,приложение,прилагается"
 
 msgctxt "MSG_ATTACHMENT_REMIND_INFO (2498//)"
 msgid "Did you possibly forget to add an attachment?"
-msgstr ""
+msgstr "Вы не забыли добавить вложение к письму?"
 
 msgctxt "MSG_ATTACHMENT_REMIND_ADD (2499//)"
 msgid "Add attachment..."
-msgstr ""
+msgstr "Добавить вложение..."
 
 msgctxt "MSG_ATTACHMENT_REMIND_LATER (2500//)"
 msgid "Remind me later"
-msgstr ""
+msgstr "Напомнить мне потом"
 
 msgctxt "MSG_WR_NO_ATTACHMENTS_TITLE (2501//)"
 msgid "Attachment reminder"
-msgstr "Напоминание о приложении"
+msgstr "Напоминание о вложение"
 
 msgctxt "MSG_WR_NO_ATTACHMENTS (2502//)"
 msgid "Did you forget to add an attachment?"
-msgstr "Вы не забыли прикрепить приложение?"
+msgstr "Вы не забыли прикрепить вложение?"
 
 msgctxt "MSG_WR_NO_ATTACHMENTS_GADS (2503//)"
 msgid "Yes, I did|No, send now"
@@ -9639,15 +9640,15 @@ msgstr "Да, забыл(а)|Нет, отправить сейчас"
 
 msgctxt "MSG_CO_MAILACCOUNT_TRANSFERRED (2504//)"
 msgid "Mail account"
-msgstr ""
+msgstr "Учётная запись"
 
 msgctxt "MSG_MAILACCOUNT_TRANSFERRED (2505//)"
 msgid "Mail account"
-msgstr ""
+msgstr "Учётная запись"
 
 msgctxt "MSG_CO_SAVE_LAYOUT (2506//)"
 msgid "Save user interface layout"
-msgstr ""
+msgstr "Сохранить интерфейс пользователя"
 
 msgctxt "MSG_HELP_CO_CH_SAVELAYOUTQUIT (2507//)"
 msgid ""
@@ -9683,7 +9684,7 @@ msgstr "Если включено, после отправки сообщени�
 
 msgctxt "MSG_CO_IDENTITY_ALTSENTFOLDER (2513//)"
 msgid "Use alternative 'Sent' folder:"
-msgstr "Использовать другую папку для отправленных:"
+msgstr "Использовать альтернативную папку «Отправленные»"
 
 msgctxt "MSG_HELP_CO_CH_IDENTITY_ALTSENTFOLDER (2514//)"
 msgid ""
@@ -9733,7 +9734,7 @@ msgid ""
 "This combination might cause malformed characters.\n"
 "\n"
 "Do you want to deactivate the cyrillic charset detection?"
-msgstr ""
+msgstr "Включено автоматическое определение кириллицы, но выбранная\nкодировка '%s' не поддерживает кириллицу.\nТакая комбинация может привести к формированию плохих символов.\n\nВы хотите отключить определение кириллицы?"
 
 msgctxt "MSG_CO_CYRILLICCHARSETWARN_BT (2521//)"
 msgid "*_Deactivate|_Ignore"
@@ -9741,7 +9742,7 @@ msgstr "*_Деактивировать|_Игнорировать"
 
 msgctxt "MSG_WR_NORCPT_WARNING_GADGET (2522//)"
 msgid "_Save as draft|*_Cancel"
-msgstr "_Сохранить как черновик|_Отменить"
+msgstr "_Сохранить как черновик|*_Отменить"
 
 msgctxt "MSG_WR_NORCPT_WARNING (2523//)"
 msgid ""
@@ -9749,23 +9750,23 @@ msgid ""
 "no recipient had been specified.\n"
 "\n"
 "How do you want to proceed?"
-msgstr "Сообщение не завершено,\nпоскольку получатель не указан.\n\nХотите продолжить?"
+msgstr "Сообщение не готово,\nне указан получатель.\n\nКак Вы хотите действовать?"
 
 msgctxt "MSG_WR_DISCARDCHANGES_GADGET (2524//)"
 msgid "*_Save as draft|_Discard|_Cancel"
-msgstr "*_Сохранить как черновик|_Всё-равно продолжить|_Отменить"
+msgstr "*_Сохранить как черновик|_Выкинуть|_Отменить"
 
 msgctxt "MSG_MA_NO_SUBJECT (2525//)"
 msgid "(No Subject)"
-msgstr "(Без темы)"
+msgstr "(нет темы)"
 
 msgctxt "MSG_MA_NO_RECIPIENTS (2526//)"
 msgid "(No Recipients)"
-msgstr ""
+msgstr "(нет получателя)"
 
 msgctxt "MSG_WR_CANCEL (2527//)"
 msgid "_Cancel"
-msgstr ""
+msgstr "_Отменить"
 
 msgctxt "MSG_HELP_WR_BT_CANCEL (2528//)"
 msgid ""
@@ -9775,48 +9776,48 @@ msgstr "Отбросить созданное сообщение."
 
 msgctxt "MSG_MA_REPLYREQ_OPTIONS2 (2529//)"
 msgid "*_Sender|Sender and _all Recipients|_Cancel"
-msgstr ""
+msgstr "*О_тправитель|Отправитель и _все Получатели|_Отменить"
 
 msgctxt "MSG_ABOUT_DONATE_TEXT (2530//)"
 msgid "Secure the future of YAM"
-msgstr ""
+msgstr "Будущее YAM зависит от Вас!"
 
 #. DESCRIPTION
 msgctxt "MSG_TR_MAILCHECKFROM (2531//)"
 msgid "Checking mails from '%s'"
-msgstr ""
+msgstr "Проверяю почту с «%s»"
 
 #. Translate "Cc" which means "Carbon Copy"
 #. (e.g. 'Kopie (_Cc)' in German)
 msgctxt "MSG_WR_CC (2532//)"
 msgid "_Cc"
-msgstr ""
+msgstr "К"
 
 #. Translate "Bcc" which means "Blind Carbon Copy"
 #. (e.g. 'Blindkopie (_Bcc)' in German)
 msgctxt "MSG_WR_BCC (2533//)"
 msgid "_Bcc"
-msgstr ""
+msgstr "СК"
 
 msgctxt "MSG_WR_REPLYTO (2534//)"
 msgid "Reply _To"
-msgstr ""
+msgstr "Ответить"
 
 msgctxt "MSG_AB_TO_TOOLBAR (2535//)"
 msgid "_To:"
-msgstr ""
+msgstr "Кому:"
 
 #. Translate "Cc" which means "Carbon Copy"
 #. (e.g. 'Kopie (_Cc):' in German)
 msgctxt "MSG_AB_CC_TOOLBAR (2536//)"
 msgid "_Cc:"
-msgstr ""
+msgstr "К:"
 
 #. Translate "Bcc" which means "Blind Carbon Copy"
 #. (e.g. 'Blindkopie (_Bcc):' in German)
 msgctxt "MSG_AB_BCC_TOOLBAR (2537//)"
 msgid "_Bcc:"
-msgstr ""
+msgstr "СК:"
 
 #. Use same phrase as MSG_WR_FROM but in parentheses
 msgctxt "MSG_AB_FROM_TITLE (2538//)"
@@ -9831,17 +9832,17 @@ msgstr "(Кому)"
 #. Use same phrase as MSG_WR_CC but in parentheses
 msgctxt "MSG_AB_CC_TITLE (2540//)"
 msgid "(Cc)"
-msgstr "(Копия)"
+msgstr "(Копии)"
 
 #. Use same phrase as MSG_WR_BCC but in parentheses
 msgctxt "MSG_AB_BCC_TITLE (2541//)"
 msgid "(Bcc)"
-msgstr ""
+msgstr "(Скрытые копии)"
 
 #. Use same phrase as MSG_WR_REPLYTO but in parentheses
 msgctxt "MSG_AB_REPLYTO_TITLE (2542//)"
 msgid "(Reply To)"
-msgstr "(Ответить на...)"
+msgstr "(Ответить на)"
 
 #. Please use a translation corresponding to "bytes" which
 #. has the abbreviation "B" and NOT "octet" which has the
@@ -9885,11 +9886,11 @@ msgstr ""
 #. FILTERNAME
 msgctxt "MSG_LOG_FILTER_ORIGINATOR (2550//)"
 msgid "Filter '%s'"
-msgstr ""
+msgstr "Фильтр «%s»"
 
 msgctxt "MSG_STARTUP_SECURITY_WARNING_TITLE (2551//)"
 msgid "YAM security warning"
-msgstr ""
+msgstr "Уведомление системы безопасности YAM"
 
 msgctxt "MSG_STARTUP_SECURITY_WARNING (2552//)"
 msgid ""
@@ -9909,7 +9910,7 @@ msgstr ""
 
 msgctxt "MSG_STARTUP_SECURITY_WARNING_GADGETS (2553//)"
 msgid "Understood"
-msgstr ""
+msgstr "Понятно"
 
 msgctxt "MSG_FO_PATH_INVALID (2554//)"
 msgid "The path must be non-empty."
@@ -9942,27 +9943,27 @@ msgstr ""
 
 msgctxt "MSG_CO_POP_SERVER (2560//)"
 msgid "Serve_r"
-msgstr ""
+msgstr "_Сервер"
 
 msgctxt "MSG_CO_POP_PORT (2561//)"
 msgid "P_ort"
-msgstr ""
+msgstr "_Порт"
 
 msgctxt "MSG_CO_POP_PORT_STANDARD (2562//)"
 msgid "Standard:"
-msgstr ""
+msgstr "Стандарт:"
 
 msgctxt "MSG_CO_SMTP_SERVER (2563//)"
 msgid "Ser_ver"
-msgstr ""
+msgstr "_Сервер"
 
 msgctxt "MSG_CO_SMTP_PORT (2564//)"
 msgid "_Port"
-msgstr ""
+msgstr "_Порт"
 
 msgctxt "MSG_CO_SMTP_PORT_STANDARD (2565//)"
 msgid "Standard:"
-msgstr ""
+msgstr "Стандарт:"
 
 msgctxt "MSG_CO_POP3_TEST_CONNECTION_SETTINGS (2566//)"
 msgid "Test connection settings"
