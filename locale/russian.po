@@ -15,7 +15,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-09-17 14:51+0000\n"
+"PO-Revision-Date: 2014-09-17 18:14+0000\n"
 "Last-Translator: Michael Malyshev\n"
 "Language-Team: Russian (http://www.transifex.com/projects/p/yam/language/ru/)\n"
 "MIME-Version: 1.0\n"
@@ -8314,20 +8314,20 @@ msgid ""
 "Date: %s\n"
 "Filename: %s\n"
 "Size: %s"
-msgstr ""
+msgstr "\\033bПочта\\033n\nОт: %s <%s>\nКому: %s <%s>\nТема: %s\nДата: %s\nФайл: %s\nРазмер: %s"
 
 msgctxt "MSG_CO_UPDATE_DOWNLOAD_PATH (2211//)"
 msgid "Download _path:"
-msgstr "Путь для _сохранения:"
+msgstr "Путь приёма:"
 
 msgctxt "MSG_UPD_NOTIFICATION_DOWNLOAD (2212//)"
 msgid "Download"
-msgstr "Сохранение"
+msgstr "Приём"
 
 #. SERVER
 msgctxt "MSG_TR_DOWNLOADING_FROM_SERVER (2213//)"
 msgid "Downloading from '%s'"
-msgstr ""
+msgstr "Скачиваю с «%s»"
 
 msgctxt "MSG_MA_HELP (2214//)"
 msgid "Help"
@@ -8351,7 +8351,7 @@ msgid ""
 "No Gravatar found for address '%s'.\n"
 "\n"
 "Perhaps the person has not uploaded a portrait image to gravatar.com yet."
-msgstr ""
+msgstr "Нет Gravatar данных для «%s».\n\nВозможно, персона ещё не отправила свой портрет на gravatar.com"
 
 #. MSGFILE
 msgctxt "MSG_ER_NON_MIME_CONFORMANT_MAIL (2220//)"
@@ -8382,7 +8382,7 @@ msgstr "Установить состояние в «прочтённые»"
 
 msgctxt "MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_READ (2226//)"
 msgid "Set the status of the filtered mail to 'Read'"
-msgstr "Пометить фильтрованную почту как прочтённую"
+msgstr "Пометить фильтрованную почту как «прочтённую»"
 
 msgctxt "MSG_CO_ACTION_SET_STATUS_TO_UNREAD (2227//)"
 msgid "Set status to 'Unread'"
@@ -8390,15 +8390,15 @@ msgstr "Установить состояние в «непрочтённые»"
 
 msgctxt "MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_UNREAD (2228//)"
 msgid "Set the status of the filtered mail to 'Unread'"
-msgstr "Пометить фильтрованную почту как непрочтённую"
+msgstr "Пометить фильтрованную почту как «непрочтённую»"
 
 msgctxt "MSG_CO_ACTION_SET_STATUS_TO_SPAM (2229//)"
 msgid "Set status to 'Spam'"
-msgstr "Отметить как спам"
+msgstr "Отметить как «спам»"
 
 msgctxt "MSG_HELP_CO_CH_ACTION_SET_STATUS_TO_SPAM (2230//)"
 msgid "Set the status of the filtered mail to 'Spam'"
-msgstr "Пометить фильтрованную почту как спам"
+msgstr "Пометить фильтрованную почту как «спам»"
 
 msgctxt "MSG_CO_ACTION_SET_STATUS_TO_HAM (2231//)"
 msgid "Set status to 'Not spam'"
@@ -8410,7 +8410,7 @@ msgstr "Пометить фильтрованную почту как «не с�
 
 msgctxt "MSG_CO_SMTP_ACTIVE (2233//)"
 msgid "_Active"
-msgstr ""
+msgstr "Активировать"
 
 msgctxt "MSG_CO_POP_AUTH (2234//)"
 msgid "Authentification"
@@ -8426,7 +8426,7 @@ msgstr ""
 
 msgctxt "MSG_CO_POP_AUTH_PLAIN (2236//)"
 msgid "Plain Password"
-msgstr "Открытый пароль"
+msgstr "Простой пароль"
 
 msgctxt "MSG_CO_POP_AUTH_APOP (2237//)"
 msgid "Encrypted Password (APOP)"
@@ -8471,11 +8471,11 @@ msgstr "Безопасность и аутентификация"
 
 msgctxt "MSG_CO_POP_MSGHANDLING (2246//)"
 msgid "Message handling"
-msgstr ""
+msgstr "Обработка сообщений"
 
 msgctxt "MSG_CO_SMTP_SERVERLIST (2247//)"
 msgid "Server List"
-msgstr ""
+msgstr "Список серверов"
 
 msgctxt "MSG_CO_SMTP_SERVERSETTINGS (2248//)"
 msgid "Server Settings"
@@ -8505,7 +8505,7 @@ msgstr "Произвольное описание/наименование\nсо
 
 msgctxt "MSG_CO_SMTP_SECURITY (2253//)"
 msgid "Connection Security"
-msgstr ""
+msgstr "Безопасность соединения"
 
 msgctxt "MSG_CO_SMTP_SECURITY_NONE (2254//)"
 msgid "No Security"
@@ -8542,7 +8542,7 @@ msgstr "Без аутентификации"
 
 msgctxt "MSG_CO_SMTP_OPTIONS (2261//)"
 msgid "Options"
-msgstr ""
+msgstr "Параметры"
 
 msgctxt "MSG_CO_CRDIDENTITIES (2262//)"
 msgid "Identities"
@@ -8558,7 +8558,7 @@ msgstr "Идентифицируйте себя при создании сооб
 
 msgctxt "MSG_CO_IDENTITY_LIST (2265//)"
 msgid "Identities"
-msgstr "Идентификаторы"
+msgstr "Идентификации"
 
 msgctxt "MSG_CO_IDENTITY_SETTINGS (2266//)"
 msgid "General Settings"
@@ -8570,11 +8570,11 @@ msgstr "Общие настройки"
 
 msgctxt "MSG_CO_IDENTITY_REGISTER_COMPOSE (2269//)"
 msgid "Compose Mail"
-msgstr ""
+msgstr "Создание письма"
 
 msgctxt "MSG_CO_IDENTITY_REGISTER_PGPSEC (2270//)"
 msgid "PGP-Security"
-msgstr ""
+msgstr "PGP-Безопасность"
 
 msgctxt "MSG_CO_IDENTITY_NOSIGNATURE (2271//)"
 msgid "no signature"
@@ -8598,23 +8598,23 @@ msgstr "Почтовый сервер (SMTP)"
 
 msgctxt "MSG_CO_IDENTITY_COMPOSE (2277//)"
 msgid "Compose mail settings"
-msgstr ""
+msgstr "Настройки создания письма"
 
 msgctxt "MSG_CO_IDENTITY_CC (2278//)"
 msgid "Cc: address"
-msgstr ""
+msgstr "Cc: адрес"
 
 msgctxt "MSG_CO_IDENTITY_BCC (2280//)"
 msgid "Bcc: address"
-msgstr ""
+msgstr "Bcc: адрес"
 
 msgctxt "MSG_CO_IDENTITY_REPLYTO (2282//)"
 msgid "Reply-To: address"
-msgstr ""
+msgstr "Reply-To: адрес"
 
 msgctxt "MSG_CO_IDENTITY_COMPOSE_OPTIONS (2284//)"
 msgid "Options"
-msgstr ""
+msgstr "Параметры"
 
 msgctxt "MSG_CO_IDENTITY_COMPOSE_QUOTE (2287//)"
 msgid "Quote messages when answering"
@@ -8622,11 +8622,11 @@ msgstr "Цитировать сообщения при ответе"
 
 msgctxt "MSG_CO_IDENTITY_COMPOSE_ANSWER (2288//)"
 msgid "Put my answer"
-msgstr ""
+msgstr "Вставлять мой ответ"
 
 msgctxt "MSG_CO_IDENTITY_COMPOSE_SIGNATURE (2289//)"
 msgid "Put my signature"
-msgstr ""
+msgstr "Вставлять мою подпись"
 
 msgctxt "MSG_CO_IDENTITY_USESIG_REPLY (2290//)"
 msgid "Use signature when replying"
@@ -8638,11 +8638,11 @@ msgstr "Использовать подпись при пересылке"
 
 msgctxt "MSG_CO_IDENTITY_PGPSETTINGS (2292//)"
 msgid "PGP-Security Settings"
-msgstr ""
+msgstr "Настройки безопасности PGP"
 
 msgctxt "MSG_CO_IDENTITY_USEPGP (2293//)"
 msgid "Use PGP for this identity"
-msgstr "Использовать PGP для этого идентификатора"
+msgstr "Использовать PGP для пользователя"
 
 msgctxt "MSG_CO_IDENTITY_PGPKEY_ID (2294//)"
 msgid "PGP key ID"
@@ -8654,7 +8654,7 @@ msgstr "URL ключа PGP"
 
 msgctxt "MSG_CO_IDENTITY_PGP_OPTIONS (2296//)"
 msgid "Options"
-msgstr ""
+msgstr "Параметры"
 
 msgctxt "MSG_CO_IDENTITY_PGP_SIGN_UNENC (2297//)"
 msgid "Sign unencrypted mails per default"
@@ -8670,19 +8670,19 @@ msgstr "Шифровать всю почту по умолчанию"
 
 msgctxt "MSG_CO_IDENTITY_PGP_ADDOWN (2300//)"
 msgid "Add own key when encrypting mails"
-msgstr "Добавить свой ключ для шифрования почты"
+msgstr "Добавить свой ключ при шифрования почты"
 
 msgctxt "MSG_CO_IDENTITY_PHOTOURL (2301//)"
 msgid "URL to own photo"
-msgstr "URL к вашей фотографии"
+msgstr "URL личного фото"
 
 msgctxt "MSG_CO_IDENTITY_ADDINFO (2302//)"
 msgid "Add personal information"
-msgstr "Добавить персональные данные"
+msgstr "Добавить персональную информацию"
 
 msgctxt "MSG_CO_IDENTITY_REQUESTMDN (2303//)"
 msgid "Request a return receipt"
-msgstr "Запросить квитанцию о доставке"
+msgstr "Запросить подтверждение получения"
 
 msgctxt "MSG_CO_SERVERNAME (2304//)"
 msgid "Server name"
@@ -8692,7 +8692,7 @@ msgctxt "MSG_HELP_CO_ST_USER (2305//)"
 msgid ""
 "The username for accessing the\n"
 "mail server."
-msgstr "Имя пользователя для доступа к постовому серверу."
+msgstr "Имя пользователя для доступа к почтовому серверу."
 
 #. FROM,TO
 msgctxt "MSG_FO_MOVEFOLDERTO (2306//)"
@@ -8701,7 +8701,7 @@ msgid ""
 "'%s'\n"
 "to\n"
 "'%s'?"
-msgstr "Вы действительно желаете переместить папку из «%s» в «%s»?"
+msgstr "Вы действительно желаете переместить папку из\n«%s»\nв\n«%s»?"
 
 #. PATH
 msgctxt "MSG_FO_FOLDER_ALREADY_EXISTS (2307//)"
@@ -8719,11 +8719,11 @@ msgstr "Не получилось создать каталог «%s» (%s)"
 
 msgctxt "MSG_CO_IdentityActive (2309//)"
 msgid "_Active"
-msgstr ""
+msgstr "Активировать"
 
 msgctxt "MSG_MA_FLUSH_ALL_INDICES (2310//)"
 msgid "Flush all indices"
-msgstr ""
+msgstr "Сбросить все индексы"
 
 msgctxt "MSG_HELP_CO_CH_IDENTITY_ENABLED (2312//)"
 msgid "If checked, this user identity is enabled for use."
@@ -8888,7 +8888,7 @@ msgstr ""
 
 msgctxt "MSG_CO_CONFIGWARNING_TITLE (2340//)"
 msgid "Configuration Warning"
-msgstr ""
+msgstr "Внимание! Изменены настройки"
 
 msgctxt "MSG_CO_CONFIGWARNING (2341//)"
 msgid ""
@@ -8901,11 +8901,11 @@ msgstr ""
 
 msgctxt "MSG_CO_CONFIGWARNING_BT (2342//)"
 msgid "_Close window|*_Abort"
-msgstr "_Закрыть окно|*_Прервать"
+msgstr "_Закрыть окно|*_Отменить"
 
 msgctxt "MSG_CO_CONFIGVERSIONWARNING_TITLE (2343//)"
 msgid "Configuration Version Warning"
-msgstr ""
+msgstr "Уведомление о версии конфигурации"
 
 msgctxt "MSG_CO_CONFIGVERSIONWARNING (2344//)"
 msgid ""
@@ -8920,7 +8920,7 @@ msgstr ""
 
 msgctxt "MSG_CO_CONFIGVERSIONWARNING_BT (2345//)"
 msgid "_Continue|*_Abort"
-msgstr "П_родолжить|*_Прервать"
+msgstr "_Продолжить|*_Отменить"
 
 msgctxt "MSG_WR_MCCADDRFIELD (2346//)"
 msgid "Cc Address Field"
@@ -8936,7 +8936,7 @@ msgstr ""
 
 msgctxt "MSG_CO_LISTCOLUMNSETTINGS (2349//)"
 msgid "Column settings"
-msgstr "Настройки колонок"
+msgstr "Настройки колонки"
 
 msgctxt "MSG_CO_LOOKFEEL_MAINWINDOW (2350//)"
 msgid "Main window"
@@ -8959,7 +8959,7 @@ msgstr "Позволяет выбрать подпись\nдля создава�
 
 msgctxt "MSG_WR_PGPSECURITY (2354//)"
 msgid "PGP security level"
-msgstr ""
+msgstr "Уровень PGP безопасности"
 
 msgctxt "MSG_HELP_WR_CY_SECURITY (2355//)"
 msgid ""
@@ -8972,27 +8972,27 @@ msgstr ""
 
 msgctxt "MSG_CO_MIMETYPE_TITLE (2356//)"
 msgid "MIME type"
-msgstr ""
+msgstr "Тип MIME"
 
 msgctxt "MSG_CO_DOWNLOAD_LARGE_MAILS1 (2357//)"
 msgid "_Download messages larger than"
-msgstr ""
+msgstr "С_качивать сообщения больше чем"
 
 msgctxt "MSG_CO_DOWNLOAD_LARGE_MAILS2 (2358//)"
 msgid "KB"
-msgstr ""
+msgstr "КБ"
 
 msgctxt "MSG_MA_DRAFTS (2359//)"
 msgid "Drafts"
-msgstr ""
+msgstr "Черновики"
 
 msgctxt "MSG_CO_SIGNATURE (2360//)"
 msgid "Signature"
-msgstr ""
+msgstr "Подпись"
 
 msgctxt "MSG_CO_SIGNATURES (2361//)"
 msgid "Signatures"
-msgstr ""
+msgstr "Подписи"
 
 msgctxt "MSG_CO_SIGNATURE_DESCRIPTION (2362//)"
 msgid "Description"
@@ -9000,31 +9000,31 @@ msgstr "Описание"
 
 msgctxt "MSG_CO_SIGNATURE_ACTIVE (2363//)"
 msgid "_Active"
-msgstr ""
+msgstr "_Активировать"
 
 msgctxt "MSG_CO_IDENTITY_SIGNATURE (2364//)"
 msgid "Signature"
-msgstr ""
+msgstr "Подпись"
 
 msgctxt "MSG_HELP_CO_LV_SIGNATURE (2365//)"
 msgid "List of all signatures"
-msgstr ""
+msgstr "Список всех подписей"
 
 msgctxt "MSG_HELP_CO_BT_SIGADD (2366//)"
 msgid "Adds a new signature to the list."
-msgstr ""
+msgstr "Добавляет подпись в список."
 
 msgctxt "MSG_HELP_CO_BT_SIGDEL (2367//)"
 msgid "Removes selected signature from list."
-msgstr ""
+msgstr "Удаляет выбранные подписи из списка."
 
 msgctxt "MSG_HELP_CO_BT_SIGUP (2368//)"
 msgid "Moves signature one entry up."
-msgstr ""
+msgstr "Перемещает подпись на один пункт вверх."
 
 msgctxt "MSG_HELP_CO_BT_SIGDOWN (2369//)"
 msgid "Moves signature one entry down."
-msgstr ""
+msgstr "Перемещает подпись на один пункт вниз."
 
 msgctxt "MSG_HELP_CO_BT_SIG_ACTIVE (2370//)"
 msgid ""
@@ -9042,7 +9042,7 @@ msgctxt "MSG_HELP_CO_TE_SIGEDIT (2372//)"
 msgid ""
 "Text editor for entering/changing\n"
 "the signature text."
-msgstr ""
+msgstr "Текстовый редактор для\nввода/изменения текста подписи."
 
 msgctxt "MSG_CO_MIXED_CONNECTIONS (2373//)"
 msgid "Connections"
@@ -9054,11 +9054,11 @@ msgstr "Уведомления о новой почте"
 
 msgctxt "MSG_SSL_CERT_WARNING_TITLE (2375//)"
 msgid "SSL Certificate Warning"
-msgstr ""
+msgstr "Уведомление SSL Сертификата"
 
 msgctxt "MSG_SSL_CERT_WARNING_BUTTONS (2376//)"
 msgid "_Accept|Accept _Permanently|_Show Certificate|*_Reject"
-msgstr ""
+msgstr "_Принять|Принять _навсегда|Показать _Сертификат|*_Отказать"
 
 #. HOSTNAME, PORT
 msgctxt "MSG_SSL_CERT_WARNING_INTRO (2377//)"
@@ -9077,15 +9077,15 @@ msgstr ""
 
 msgctxt "MSG_SSL_CERT_WARNING_NOTYETVALID (2380//)"
 msgid "- The certificate is not yet valid."
-msgstr ""
+msgstr "- Сертификат пока ещё недействителен."
 
 msgctxt "MSG_SSL_CERT_WARNING_EXPIRED (2381//)"
 msgid "- The certificate has expired."
-msgstr ""
+msgstr "- Сертификат устарел."
 
 msgctxt "MSG_SSL_CERT_WARNING_OTHER (2382//)"
 msgid "- The certificate has an unknown error."
-msgstr ""
+msgstr "- Сертификат содержит неизвестную ошибку."
 
 #. HOSTNAME, VALID_FROM, VALID_TO, ISSUER, FINGERPRINT
 msgctxt "MSG_SSL_CERT_WARNING_INFO (2383//)"
@@ -9095,12 +9095,12 @@ msgid ""
 "- Valid: \\033b%s\\033n until \\033b%s\\033n\n"
 "- Issuer: \\033b%s\\033n\n"
 "- Fingerprint: \\033b%s\\033n"
-msgstr ""
+msgstr "Информация о сертификате:\n- Адрес: \\033b%s\\033n\n- Годность: \\033b%s\\033n до \\033b%s\\033n\n- Издатель: \\033b%s\\033n\n- Отпечаток: \\033b%s\\033n"
 
 #. HOSTNAME, PORT
 msgctxt "MSG_SSL_CERT_WARNING_SHOWTITLE (2384//)"
 msgid "Certificate of %s:%d"
-msgstr ""
+msgstr "Сертификат %s:%d"
 
 #. FILEPATH, DIRPATH
 msgctxt "MSG_ER_WARN_LOADCAPATH (2386//)"
@@ -9120,7 +9120,7 @@ msgstr ""
 
 msgctxt "MSG_CO_ACTION_TERMINATE_FILTER (2388//)"
 msgid "Terminate filter process"
-msgstr ""
+msgstr "Отменить процесс фильтрации"
 
 msgctxt "MSG_HELP_CO_CH_ATERMINATE (2389//)"
 msgid ""
@@ -9131,11 +9131,11 @@ msgstr ""
 
 msgctxt "MSG_CO_FILTER_IMPORT (2390//)"
 msgid "Import..."
-msgstr "Импорт..."
+msgstr "Импортировать..."
 
 msgctxt "MSG_FILTER_IMPORT_TITLE (2391//)"
 msgid "Import filter"
-msgstr ""
+msgstr "Фильтр импорта"
 
 msgctxt "MSG_SPAM_TRUSTHEADERLINES (2392//)"
 msgid "Trust header lines of this external filter:"
@@ -9167,7 +9167,7 @@ msgstr "Вы будете уведомлены о наличии обновле�
 
 msgctxt "MSG_PGPPASS_SHOW_CHARS (2399//)"
 msgid "Show characters"
-msgstr ""
+msgstr "Показывать символы"
 
 #. CLASS,SUPERCLASS
 msgctxt "MSG_CANNOT_CREATE_CUSTOM_CLASS (2400//)"
@@ -9195,7 +9195,7 @@ msgstr "Сохраняет сообщение в папку «Черновики
 
 msgctxt "MSG_WR_MSAVEASDRAFT (2404//)"
 msgid "Save as draft"
-msgstr "Сохранить как черновик"
+msgstr "Сохранить черновик"
 
 msgctxt "MSG_WR_MCLOSE (2405//)"
 msgid "Close"
@@ -9224,27 +9224,27 @@ msgstr ""
 
 msgctxt "MSG_MA_MREDIRECT (2410//)"
 msgid "Redirect..."
-msgstr "Перенаправление..."
+msgstr "Перенаправить..."
 
 msgctxt "MSG_WR_REDIRECT_FROM (2411//)"
 msgid "Resent-_From"
-msgstr ""
+msgstr "Resent-_From"
 
 msgctxt "MSG_WR_REDIRECT_TO (2412//)"
 msgid "Resent-_To"
-msgstr ""
+msgstr "Resent-_To"
 
 msgctxt "MSG_WR_REDIRECT_CC (2413//)"
 msgid "Resent-_Cc"
-msgstr ""
+msgstr "Resent-_Cc"
 
 msgctxt "MSG_WR_REDIRECT_BCC (2414//)"
 msgid "Resent-_Bcc"
-msgstr ""
+msgstr "Resent-_Bcc"
 
 msgctxt "MSG_WR_REDIRECT_TITLE (2415//)"
 msgid "Redirect message(s)"
-msgstr ""
+msgstr "Перенаправить сообщение(я)"
 
 #. FILE
 msgctxt "MSG_ER_CANNOT_CREATE_MAIL_FILE (2416//)"
@@ -9260,11 +9260,11 @@ msgstr "_Переименовать"
 
 msgctxt "MSG_WR_RENAME_ATTACHMENT (2418//)"
 msgid "Rename attachment"
-msgstr "Переименовать приложение"
+msgstr "Переименовать вложение"
 
 msgctxt "MSG_WR_ENTER_NEW_NAME (2419//)"
 msgid "Enter new attachment name:"
-msgstr "Введите новое имя приложения:"
+msgstr "Введите новое имя вложения:"
 
 msgctxt "MSG_FI_SKIP_ENCRYPTED (2420//)"
 msgid "Skip encrypted mails"
@@ -9278,7 +9278,7 @@ msgstr "Пропускать зашифрованную почту (наприм
 
 msgctxt "MSG_CO_QUICKSEARCHBAR (2422//)"
 msgid "Quick search bar"
-msgstr ""
+msgstr "Быстрый поиск"
 
 msgctxt "MSG_HELP_CO_CH_QUICKSEARCHBAR (2423//)"
 msgid ""
@@ -9288,63 +9288,63 @@ msgstr ""
 
 msgctxt "MSG_CO_QUICKSEARCHBARPOS (2424//)"
 msgid "Posi_tion"
-msgstr ""
+msgstr "Положение"
 
 msgctxt "MSG_CO_QUICKSEARCHBARPOS01 (2425//)"
 msgid "Disabled"
-msgstr ""
+msgstr "Отключено"
 
 msgctxt "MSG_CO_QUICKSEARCHBARPOS02 (2426//)"
 msgid "Top"
-msgstr ""
+msgstr "Сверху"
 
 msgctxt "MSG_CO_QUICKSEARCHBARPOS03 (2427//)"
 msgid "Bottom"
-msgstr ""
+msgstr "Снизу"
 
 msgctxt "MSG_CO_FILTER_REGISTER_SETTINGS (2428//)"
 msgid "General"
-msgstr ""
+msgstr "Основные"
 
 msgctxt "MSG_CO_FILTER_REGISTER_CONDITIONS (2429//)"
 msgid "Conditions"
-msgstr ""
+msgstr "Условия"
 
 msgctxt "MSG_CO_FILTER_REGISTER_ACTIONS (2430//)"
 msgid "Actions"
-msgstr ""
+msgstr "Действия"
 
 msgctxt "MSG_CO_CONDITION_ALL (2431//)"
 msgid "all"
-msgstr ""
+msgstr "все"
 
 msgctxt "MSG_CO_CONDITION_MIN_ONE (2432//)"
 msgid "one or more"
-msgstr ""
+msgstr "один и более"
 
 msgctxt "MSG_CO_CONDITION_MAX_ONE (2433//)"
 msgid "only one"
-msgstr ""
+msgstr "только один"
 
 msgctxt "MSG_WR_CMENU_TITLE (2434//)"
 msgid "Attachments"
-msgstr ""
+msgstr "Вложения"
 
 msgctxt "MSG_WR_CMENU_ADD_ATTACHMENT (2435//)"
 msgid "Add file(s)..."
-msgstr ""
+msgstr "Добавить файл(ы)..."
 
 msgctxt "MSG_WR_CMENU_ADD_ARCHIVE_ATTACHMENT (2436//)"
 msgid "Pack & add..."
-msgstr ""
+msgstr "Запаковать и вложить..."
 
 msgctxt "MSG_WR_CMENU_REMOVE_ATTACHMENT (2437//)"
 msgid "Remove"
-msgstr ""
+msgstr "Удалить"
 
 msgctxt "MSG_WR_CMENU_RENAME_ATTACHMENT (2438//)"
 msgid "Rename..."
-msgstr ""
+msgstr "Переименовать..."
 
 msgctxt "MSG_WR_CMENU_DISPLAY_ATTACHMENT (2439//)"
 msgid "Display"
@@ -9352,7 +9352,7 @@ msgstr "Показать"
 
 msgctxt "MSG_WR_TITLEATTACHMENT (2440//)"
 msgid "Attachment"
-msgstr "Приложение"
+msgstr "Вложение"
 
 msgctxt "MSG_WR_REMOVE (2441//)"
 msgid "Re_move"
@@ -9360,11 +9360,11 @@ msgstr "_Удалить"
 
 msgctxt "MSG_CO_CONDITION_PREPHRASE (2442//)"
 msgid "If"
-msgstr ""
+msgstr "Если"
 
 msgctxt "MSG_CO_CONDITION_POSTPHRASE (2443//)"
 msgid "of the following conditions are met:"
-msgstr ""
+msgstr "из следующих условий удовлетворены:"
 
 #. !!! WARNING !!!
 #. Do not translate this fallback name, but just choose a
@@ -9377,23 +9377,23 @@ msgstr ""
 #. names MUST be kept in english language.
 msgctxt "MSG_CO_FALLBACK_TZONE (2444//)"
 msgid "America/New_York"
-msgstr ""
+msgstr "Russia/Moscow"
 
 msgctxt "MSG_HELP_CO_GR_TZONE (2445//)"
 msgid "Here you can set your current location/time zone."
-msgstr "Здесь вы можете установить ваш часовой пояс."
+msgstr "Здесь Вы можете выбрать Ваше местоположение/часовой пояс."
 
 msgctxt "MSG_CO_TZONE_GMTOFFSET (2446//)"
 msgid "Current GMT offset:"
-msgstr "Смещение от GMT:"
+msgstr "Текущее смещение от Гринвича:"
 
 msgctxt "MSG_CO_TZONE_NEXTDSTSWITCH (2447//)"
 msgid "Next DST switch:"
-msgstr "Перевод стрелок будет:"
+msgstr "Следующая смена часов:"
 
 msgctxt "MSG_CO_TZONE_NODSTSWITCH (2448//)"
 msgid "no daylight saving"
-msgstr "нет летнего времени"
+msgstr "без летнего время"
 
 msgctxt "MSG_CO_TZONE_DESCRIPTION (2449//)"
 msgid "Description:"
@@ -9401,7 +9401,7 @@ msgstr "Описание:"
 
 msgctxt "MSG_CO_TZONE_DESCRIPTION_NA (2450//)"
 msgid "n/a"
-msgstr "нет данных"
+msgstr "нет"
 
 msgctxt "MSG_TZONE_ZONETAB_FILE_MISSING (2451//)"
 msgid ""
@@ -9421,7 +9421,7 @@ msgstr ""
 
 msgctxt "MSG_FOLDER_MOVE_WARNING_TITLE (2453//)"
 msgid "YAM folder format warning"
-msgstr ""
+msgstr "Уведомление YAM о формате папки"
 
 msgctxt "MSG_FOLDER_MOVE_WARNING (2454//)"
 msgid ""
@@ -9441,19 +9441,19 @@ msgstr "Обнаружен устаревший формат хранения п
 
 msgctxt "MSG_FOLDER_MOVE_WARNING_GADS (2455//)"
 msgid "_Continue|*_Quit"
-msgstr ""
+msgstr "_Продолжить|*_Выход"
 
 msgctxt "MSG_FO_DISPLAYNAME (2456//)"
 msgid "Display _name"
-msgstr ""
+msgstr "Отображаемое _имя"
 
 msgctxt "MSG_FO_DIRECTORYNAME (2457//)"
 msgid "Directory na_me"
-msgstr ""
+msgstr "И_мя директории"
 
 msgctxt "MSG_VALIDATING_FOLDERS (2458//)"
 msgid "Validating folders..."
-msgstr ""
+msgstr "Проверка папок..."
 
 msgctxt "MSG_MA_MARCHIVE (2459//)"
 msgid "Archive"
@@ -9465,15 +9465,15 @@ msgstr "В архив"
 
 msgctxt "MSG_CO_SHOW_ARCHIVER_PROGRESS (2461//)"
 msgid "Show progress"
-msgstr ""
+msgstr "Показывать прогресс"
 
 msgctxt "MSG_CO_LAUNCH_EXTEDITOR (2462//)"
 msgid "_Launch external editor immediately"
-msgstr ""
+msgstr "Немедленно _запустить внешней редактор"
 
 msgctxt "MSG_CO_EXTEDITOR (2463//)"
 msgid "External editor settings"
-msgstr ""
+msgstr "Настройки внешнего редактора"
 
 msgctxt "MSG_HELP_CO_ST_EDITOR_EXT (2464//)"
 msgid ""
@@ -9484,7 +9484,7 @@ msgstr ""
 
 msgctxt "MSG_CO_EXTEDITOR_CODESET (2465//)"
 msgid "Display c_harset"
-msgstr ""
+msgstr "Кодировка"
 
 msgctxt "MSG_HELP_CO_TX_DEFCODESET_EDITOR (2467//)"
 msgid ""
@@ -9515,11 +9515,11 @@ msgstr ""
 
 msgctxt "MSG_CO_DEFAULTCODESET_WRITE (2470//)"
 msgid "Default c_harset"
-msgstr ""
+msgstr "Кодировка по умолчанию"
 
 msgctxt "MSG_CO_MIME_CODESET (2471//)"
 msgid "Display _charset"
-msgstr ""
+msgstr "Кодировка"
 
 msgctxt "MSG_HELP_CO_TX_MIME_CODESET (2472//)"
 msgid ""
