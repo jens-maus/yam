@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-09-26 Thore Böckelmann <tboeckel@gmx.de>
+
+  * resources/certificates/ca-bundle.crt: regenerated certificate file.
+
 2014-09-09 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/YAMApplication.c: added a workaround for MUI 3.8 which does not yet
