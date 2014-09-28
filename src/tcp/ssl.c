@@ -664,7 +664,7 @@ static int CheckCertificate(struct Connection *conn, struct Certificate *cert)
     #if defined(DEBUG)
     long result = SSL_get_verify_result(conn->ssl);
 
-    E(DBF_NET, "Certificate verification error: %s", X509_verify_cert_error_string(result));
+    E(DBF_NET, "certificate verification error: %s", X509_verify_cert_error_string(result));
     #endif
 
     RETURN(1);
@@ -674,7 +674,7 @@ static int CheckCertificate(struct Connection *conn, struct Certificate *cert)
   ret = CheckCertificateIdentity(conn->server->hostname, x509_cert, NULL);
   if(ret < 0)
   {
-    E(DBF_NET, "Server certificate was missing commonName attribute in subject name");
+    E(DBF_NET, "server certificate was missing commonName attribute in subject name");
 
     RETURN(1);
     return 1;
@@ -691,6 +691,14 @@ static int CheckCertificate(struct Connection *conn, struct Certificate *cert)
     ret = 0;
   else
   {
+    #if defined(DEBUG)
+    if((conn->sslCertFailures & ~conn->server->certFailures) != 0)
+      W(DBF_NET, "different certificate failures %08lx vs %08lx", conn->sslCertFailures, conn->server->certFailures);
+
+    if(stricmp(cert->fingerprint, conn->server->certFingerprint) != 0)
+      W(DBF_NET, "mismatching finger prints '%s' vs '%s'", cert->fingerprint, conn->server->certFingerprint);
+    #endif
+
     // now that we have identified cert failures we check
     // if the user has already accepted these failures and
     // the cert or if we have to ask him once again
@@ -705,7 +713,7 @@ static int CheckCertificate(struct Connection *conn, struct Certificate *cert)
     }
     else
     {
-      W(DBF_NET, "User accepted cert permanently %08lx vs %08lx", conn->sslCertFailures, conn->server->certFailures);
+      W(DBF_NET, "user accepted cert permanently %08lx vs %08lx", conn->sslCertFailures, conn->server->certFailures);
 
       // signal NO error
       ret = 0;
@@ -1048,7 +1056,7 @@ BOOL InitSSLConnections(void)
         D(DBF_NET, "AmiSSL: seeding random number generator");
         snprintf(tmp, sizeof(tmp), "%08lx%08lx%08lx", (unsigned long)time((time_t *)NULL), (unsigned long)FindTask(NULL), (unsigned long)rand());
         RAND_seed(tmp, strlen(tmp));
-      
+
         // 1) now we create a common SSL_CTX object which all our SSL connections will share
         if((G->sslCtx = SSL_CTX_new(SSLv23_client_method())) == NULL)
           E(DBF_NET, "AmiSSL: can't create SSL_CTX object!");
@@ -1058,16 +1066,16 @@ BOOL InitSSLConnections(void)
         else
         {
           int rc = 0; // make sure set_default_verify_paths() is called
-      
+
           D(DBF_NET, "AmiSSL: SSL ctx timeout: %ld s", SSL_CTX_get_timeout(G->sslCtx));
 
           if(FileExists(DEFAULT_CAPATH) == TRUE)
           {
             D(DBF_NET, "AmiSSL: CAfile = '%s', CApath = '%s'", DEFAULT_CAFILE, DEFAULT_CAPATH);
-      
+
             if(FileExists(DEFAULT_CAFILE) == FALSE)
               ER_NewError(tr(MSG_ER_WARN_CAFILE), DEFAULT_CAFILE);
-      
+
             // 3) load the certificates (e.g. CA) from either a file or a directory path
             if(FileExists(DEFAULT_CAFILE) == TRUE)
               rc = SSL_CTX_load_verify_locations(G->sslCtx, DEFAULT_CAFILE, DEFAULT_CAPATH);
@@ -1077,17 +1085,17 @@ BOOL InitSSLConnections(void)
             if(rc == 0)
             {
               W(DBF_NET, "AmiSSL: setting default verify locations failed!");
-      
+
               ER_NewError(tr(MSG_ER_WARN_LOADCAPATH), DEFAULT_CAFILE, DEFAULT_CAPATH);
             }
           }
           else
             ER_NewError(tr(MSG_ER_WARN_CAPATH), DEFAULT_CAPATH);
-      
+
           // 4) if no CA file or path is given we set the default pathes
           if(rc == 0 && (rc = SSL_CTX_set_default_verify_paths(G->sslCtx)) == 0)
             E(DBF_NET, "AmiSSL: setting default verify locations failed");
-      
+
           // 5) get a new ssl Data Index for storing application specific data
           if(rc != 0 && (G->sslDataIndex = SSL_get_ex_new_index(0, NULL, NULL, NULL, NULL)) < 0)
           {
@@ -1098,7 +1106,7 @@ BOOL InitSSLConnections(void)
           // 6) set SSL_VERIFY_PEER so that we later can decide on our own in the verify_callback
           //    function wheter the connection should continue or if it should be terminated right away.
           SSL_CTX_set_verify(G->sslCtx, SSL_VERIFY_PEER, ENTRY(verify_callback));
-      
+
           // 7) set the ciphers we want to use and exclude unwanted ones
           if(rc != 0 && (rc = SSL_CTX_set_cipher_list(G->sslCtx, C->DefaultSSLCiphers)) == 0)
              E(DBF_NET, "AmiSSL: SSL_CTX_set_cipher_list() error!");
@@ -1156,7 +1164,7 @@ void CleanupSSLConnections(void)
     CloseLibrary(AmiSSLMasterBase);
     AmiSSLMasterBase = NULL;
   }
- 
+
   LEAVE();
 }
 

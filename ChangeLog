@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-09-28 Thore Böckelmann <tboeckel@gmx.de>
+
+  * tcp/ssl.c: added some more debug output to catch why the certificate warning
+    requester is really opened.
+
 2014-09-26 Thore Böckelmann <tboeckel@gmx.de>
 
   * resources/certificates/ca-bundle.crt: regenerated certificate file.
