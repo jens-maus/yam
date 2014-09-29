@@ -113,8 +113,8 @@ struct Data
   #if defined(__amigaos4__)
   Object *CH_POP3_NOTIFY_OS41SYSTEM;
   #endif
-  Object *GR_POP3_SSLCERTERRORS;
-  Object *GR_SMTP_SSLCERTERRORS;
+  Object *GR_POP3_SSLCERTWARNINGS;
+  Object *GR_SMTP_SSLCERTWARNINGS;
 };
 */
 
@@ -180,8 +180,8 @@ OVERLOAD(OM_NEW)
   #if defined(__amigaos4__)
   Object *CH_POP3_NOTIFY_OS41SYSTEM;
   #endif
-  Object *GR_POP3_SSLCERTERRORS;
-  Object *GR_SMTP_SSLCERTERRORS;
+  Object *GR_POP3_SSLCERTWARNINGS;
+  Object *GR_SMTP_SSLCERTWARNINGS;
 
   ENTER();
 
@@ -405,7 +405,7 @@ OVERLOAD(OM_NEW)
                 End,
 
                 Child, HSpace(1),
-                Child, GR_POP3_SSLCERTERRORS = VGroup,
+                Child, GR_POP3_SSLCERTWARNINGS = VGroup,
                 End,
 
                 Child, HVSpace,
@@ -526,7 +526,7 @@ OVERLOAD(OM_NEW)
                 End,
 
                 Child, HSpace(1),
-                Child, GR_SMTP_SSLCERTERRORS = VGroup,
+                Child, GR_SMTP_SSLCERTWARNINGS = VGroup,
                 End,
 
                 Child, HVSpace,
@@ -595,8 +595,8 @@ OVERLOAD(OM_NEW)
     #if defined(__amigaos4__)
     data->CH_POP3_NOTIFY_OS41SYSTEM = CH_POP3_NOTIFY_OS41SYSTEM;
     #endif // __amigaos4__
-    data->GR_POP3_SSLCERTERRORS =     GR_POP3_SSLCERTERRORS;
-    data->GR_SMTP_SSLCERTERRORS =     GR_SMTP_SSLCERTERRORS;
+    data->GR_POP3_SSLCERTWARNINGS =   GR_POP3_SSLCERTWARNINGS;
+    data->GR_SMTP_SSLCERTWARNINGS =   GR_SMTP_SSLCERTWARNINGS;
 
     SetHelp(ST_SMTPDESC,               MSG_HELP_CO_ST_SMTPDESC);
     SetHelp(ST_SMTPHOST,               MSG_HELP_CO_ST_SMTPHOST);
@@ -890,7 +890,7 @@ DECLARE(POP3ToGUI)
     else
       nnset(data->LB_POPPORT, MUIA_Text_Contents, "110");
 
-    DoMethod(obj, METHOD(ShowSSLCertErrors), data->GR_POP3_SSLCERTERRORS, msn);
+    DoMethod(obj, METHOD(ShowSSLCertWarnings), data->GR_POP3_SSLCERTWARNINGS, msn);
   }
 
   RETURN(0);
@@ -1228,7 +1228,7 @@ DECLARE(SMTPToGUI)
     else
       nnset(data->LB_SMTPPORT, MUIA_Text_Contents, "25");
 
-    DoMethod(obj, METHOD(ShowSSLCertErrors), data->GR_SMTP_SSLCERTERRORS, msn);
+    DoMethod(obj, METHOD(ShowSSLCertWarnings), data->GR_SMTP_SSLCERTWARNINGS, msn);
   }
 
   RETURN(0);
@@ -1583,8 +1583,8 @@ DECLARE(PlaySound) // Object *strObj
 }
 
 ///
-/// DECLARE(ShowSSLCertErrors)
-DECLARE(ShowSSLCertErrors) // Object *group, struct MailServerNode *msn
+/// DECLARE(ShowSSLCertWarnings)
+DECLARE(ShowSSLCertWarnings) // Object *group, struct MailServerNode *msn
 {
   ENTER();
 
@@ -1596,7 +1596,7 @@ DECLARE(ShowSSLCertErrors) // Object *group, struct MailServerNode *msn
     {
       Object *reset;
 
-      DoMethod(msg->group, OM_ADDMEMBER, HBarT(tr(MSG_CO_ACCEPTED_SERVER_CERT_ERRORS)), End);
+      DoMethod(msg->group, OM_ADDMEMBER, HBarT(tr(MSG_CO_ACCEPTED_SERVER_CERT_WARNINGS)), End);
 
       if(isFlagSet(failures, SSL_CERT_ERR_UNTRUSTED))
         DoMethod(msg->group, OM_ADDMEMBER, TextObject, MUIA_Text_Copy, FALSE, MUIA_Text_Contents, tr(MSG_SSL_CERT_WARNING_UNTRUSTED), End);
@@ -1616,8 +1616,8 @@ DECLARE(ShowSSLCertErrors) // Object *group, struct MailServerNode *msn
       if(isFlagSet(failures, SSL_CERT_ERR_OTHER))
         DoMethod(msg->group, OM_ADDMEMBER, TextObject, MUIA_Text_Copy, FALSE, MUIA_Text_Contents, tr(MSG_SSL_CERT_WARNING_OTHER), End);
 
-      reset = MakeButton(tr(MSG_CO_RESET_SERVER_CERT_ERRORS));
-      DoMethod(reset, MUIM_Notify, MUIA_Pressed, FALSE, obj, 3, METHOD(ResetSSLCertErrors), msg->group, msg->msn);
+      reset = MakeButton(tr(MSG_CO_CLEAR_SERVER_CERT_WARNINGS));
+      DoMethod(reset, MUIM_Notify, MUIA_Pressed, FALSE, obj, 3, METHOD(ClearSSLCertWarnings), msg->group, msg->msn);
 
       DoMethod(msg->group, OM_ADDMEMBER, HGroup,
         Child, HSpace(0),
@@ -1646,14 +1646,14 @@ DECLARE(ShowSSLCertErrors) // Object *group, struct MailServerNode *msn
 }
 
 ///
-/// DECLARE(ResetSSLCertErrors)
-DECLARE(ResetSSLCertErrors) // Object *group, struct MailServerNode *msn
+/// DECLARE(ClearSSLCertWarnings)
+DECLARE(ClearSSLCertWarnings) // Object *group, struct MailServerNode *msn
 {
   ENTER();
 
   // reset all errors and remove the previous list of errors
   msg->msn->certFailures = SSL_CERT_ERR_NONE;
-  DoMethod(obj, METHOD(ShowSSLCertErrors), msg->group, msg->msn);
+  DoMethod(obj, METHOD(ShowSSLCertWarnings), msg->group, msg->msn);
 
   RETURN(0);
   return 0;
