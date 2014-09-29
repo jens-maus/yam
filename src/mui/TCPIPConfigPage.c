@@ -54,6 +54,8 @@
 #include "UIDL.h"
 #include "UserIdentity.h"
 
+#include "tcp/ssl.h"
+
 #include "Debug.h"
 
 /* CLASSDATA
@@ -111,6 +113,8 @@ struct Data
   #if defined(__amigaos4__)
   Object *CH_POP3_NOTIFY_OS41SYSTEM;
   #endif
+  Object *GR_POP3_SSLCERTERRORS;
+  Object *GR_SMTP_SSLCERTERRORS;
 };
 */
 
@@ -176,6 +180,8 @@ OVERLOAD(OM_NEW)
   #if defined(__amigaos4__)
   Object *CH_POP3_NOTIFY_OS41SYSTEM;
   #endif
+  Object *GR_POP3_SSLCERTERRORS;
+  Object *GR_SMTP_SSLCERTERRORS;
 
   ENTER();
 
@@ -398,6 +404,10 @@ OVERLOAD(OM_NEW)
                   End,
                 End,
 
+                Child, HSpace(1),
+                Child, GR_POP3_SSLCERTERRORS = VGroup,
+                End,
+
                 Child, HVSpace,
                 Child, HVSpace,
 
@@ -515,6 +525,10 @@ OVERLOAD(OM_NEW)
                 Child, PO_SMTP_SENTFOLDER = FolderRequestPopupObject,
                 End,
 
+                Child, HSpace(1),
+                Child, GR_SMTP_SSLCERTERRORS = VGroup,
+                End,
+
                 Child, HVSpace,
                 Child, HVSpace,
 
@@ -581,6 +595,8 @@ OVERLOAD(OM_NEW)
     #if defined(__amigaos4__)
     data->CH_POP3_NOTIFY_OS41SYSTEM = CH_POP3_NOTIFY_OS41SYSTEM;
     #endif // __amigaos4__
+    data->GR_POP3_SSLCERTERRORS =     GR_POP3_SSLCERTERRORS;
+    data->GR_SMTP_SSLCERTERRORS =     GR_SMTP_SSLCERTERRORS;
 
     SetHelp(ST_SMTPDESC,               MSG_HELP_CO_ST_SMTPDESC);
     SetHelp(ST_SMTPHOST,               MSG_HELP_CO_ST_SMTPHOST);
@@ -873,6 +889,8 @@ DECLARE(POP3ToGUI)
       nnset(data->LB_POPPORT, MUIA_Text_Contents, "995");
     else
       nnset(data->LB_POPPORT, MUIA_Text_Contents, "110");
+
+    DoMethod(obj, METHOD(ShowSSLCertErrors), data->GR_POP3_SSLCERTERRORS, msn);
   }
 
   RETURN(0);
@@ -1209,6 +1227,8 @@ DECLARE(SMTPToGUI)
       nnset(data->LB_SMTPPORT, MUIA_Text_Contents, "587");
     else
       nnset(data->LB_SMTPPORT, MUIA_Text_Contents, "25");
+
+    DoMethod(obj, METHOD(ShowSSLCertErrors), data->GR_SMTP_SSLCERTERRORS, msn);
   }
 
   RETURN(0);
@@ -1557,6 +1577,83 @@ DECLARE(PlaySound) // Object *strObj
   file = (char *)xget(msg->strObj, MUIA_String_Contents);
   if(IsStrEmpty(file) == FALSE)
     PlaySound(file);
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(ShowSSLCertErrors)
+DECLARE(ShowSSLCertErrors) // Object *group, struct MailServerNode *msn
+{
+  ENTER();
+
+  if(DoMethod(msg->group, MUIM_Group_InitChange))
+  {
+    int failures = msg->msn->certFailures;
+
+    if(failures != SSL_CERT_ERR_NONE)
+    {
+      Object *reset;
+
+      DoMethod(msg->group, OM_ADDMEMBER, HBarT(tr(MSG_CO_POP3_IGNORED_SSL_ERRORS)), End);
+
+      if(isFlagSet(failures, SSL_CERT_ERR_UNTRUSTED))
+        DoMethod(msg->group, OM_ADDMEMBER, TextObject, MUIA_Text_Copy, FALSE, MUIA_Text_Contents, tr(MSG_SSL_CERT_WARNING_UNTRUSTED), End);
+
+      if(isFlagSet(failures, SSL_CERT_ERR_IDMISMATCH))
+        DoMethod(msg->group, OM_ADDMEMBER, TextObject, MUIA_Text_Copy, FALSE, MUIA_Text_Contents, tr(MSG_SSL_CERT_WARNING_IDMISMATCH), End);
+
+      if(isFlagSet(failures, SSL_CERT_ERR_NOTYETVALID))
+        DoMethod(msg->group, OM_ADDMEMBER, TextObject, MUIA_Text_Copy, FALSE, MUIA_Text_Contents, tr(MSG_SSL_CERT_WARNING_NOTYETVALID), End);
+
+      if(isFlagSet(failures, SSL_CERT_ERR_EXPIRED))
+        DoMethod(msg->group, OM_ADDMEMBER, TextObject, MUIA_Text_Copy, FALSE, MUIA_Text_Contents, tr(MSG_SSL_CERT_WARNING_EXPIRED), End);
+
+      if(isFlagSet(failures, SSL_CERT_ERR_SIGINVALID))
+        DoMethod(msg->group, OM_ADDMEMBER, TextObject, MUIA_Text_Copy, FALSE, MUIA_Text_Contents, tr(MSG_SSL_CERT_WARNING_SIGINVALID), End);
+
+      if(isFlagSet(failures, SSL_CERT_ERR_OTHER))
+        DoMethod(msg->group, OM_ADDMEMBER, TextObject, MUIA_Text_Copy, FALSE, MUIA_Text_Contents, tr(MSG_SSL_CERT_WARNING_OTHER), End);
+
+      reset = MakeButton(tr(MSG_CO_POP3_RESET_SSL_ERRORS));
+      DoMethod(reset, MUIM_Notify, MUIA_Pressed, FALSE, obj, 3, METHOD(ResetSSLCertErrors), msg->group, msg->msn);
+
+      DoMethod(msg->group, OM_ADDMEMBER, HGroup,
+        Child, HSpace(0),
+        Child, reset,
+        End);
+    }
+    else
+    {
+      // remove all children
+      struct List *childList = (struct List *)xget(msg->group, MUIA_Group_ChildList);
+      Object *cstate = (Object *)GetHead(childList);
+      Object *item;
+
+      while((item = NextObject(&cstate)) != NULL)
+      {
+        DoMethod(msg->group, OM_REMMEMBER, item);
+        MUI_DisposeObject(item);
+      }
+    }
+
+    DoMethod(msg->group, MUIM_Group_ExitChange);
+  }
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(ResetSSLCertErrors)
+DECLARE(ResetSSLCertErrors) // Object *group, struct MailServerNode *msn
+{
+  ENTER();
+
+  // reset all errors and remove the previous list of errors
+  msg->msn->certFailures = SSL_CERT_ERR_NONE;
+  DoMethod(obj, METHOD(ShowSSLCertErrors), msg->group, msg->msn);
 
   RETURN(0);
   return 0;

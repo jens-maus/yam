@@ -10021,3 +10021,19 @@ msgctxt "MSG_FO_FOLDER_NAME_INVALID (2578//)"
 msgid ""
 "The specified folder name is invalid."
 msgstr "The specified folder name is invalid."
+
+msgctxt "MSG_CO_POP3_IGNORED_SSL_ERRORS (2579//)"
+msgid "Ignored server SSL certificate errors"
+msgstr "Ignored server SSL certificate errors"
+
+msgctxt "MSG_CO_POP3_RESET_SSL_ERRORS (2580//)"
+msgid "Reset errors"
+msgstr "Reset errors"
+
+msgctxt "MSG_CO_SMTP_IGNORED_SSL_ERRORS (2581//)"
+msgid "Ignored server SSL certificate errors"
+msgstr "Ignored server SSL certificate errors"
+
+msgctxt "MSG_CO_SMTP_RESET_SSL_ERRORS (2582//)"
+msgid "Reset errors"
+msgstr "Reset errors"

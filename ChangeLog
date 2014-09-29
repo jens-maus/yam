@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-09-29 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/TCPIPConfigPage.c: for each POP3 and SMTP server a list of all
+    permanently accepted SSL certificate errors is shown below the configuration
+    options along with the a button to reset the errors.
+
 2014-09-28 Thore Böckelmann <tboeckel@gmx.de>
 
   * tcp/ssl.c: added some more debug output to catch why the certificate warning
