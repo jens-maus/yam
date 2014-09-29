@@ -1596,7 +1596,7 @@ DECLARE(ShowSSLCertErrors) // Object *group, struct MailServerNode *msn
     {
       Object *reset;
 
-      DoMethod(msg->group, OM_ADDMEMBER, HBarT(tr(MSG_CO_ACCEPTED_SSL_ERRORS)), End);
+      DoMethod(msg->group, OM_ADDMEMBER, HBarT(tr(MSG_CO_ACCEPTED_SERVER_CERT_ERRORS)), End);
 
       if(isFlagSet(failures, SSL_CERT_ERR_UNTRUSTED))
         DoMethod(msg->group, OM_ADDMEMBER, TextObject, MUIA_Text_Copy, FALSE, MUIA_Text_Contents, tr(MSG_SSL_CERT_WARNING_UNTRUSTED), End);
@@ -1616,7 +1616,7 @@ DECLARE(ShowSSLCertErrors) // Object *group, struct MailServerNode *msn
       if(isFlagSet(failures, SSL_CERT_ERR_OTHER))
         DoMethod(msg->group, OM_ADDMEMBER, TextObject, MUIA_Text_Copy, FALSE, MUIA_Text_Contents, tr(MSG_SSL_CERT_WARNING_OTHER), End);
 
-      reset = MakeButton(tr(MSG_CO_RESET_SSL_ERRORS));
+      reset = MakeButton(tr(MSG_CO_RESET_SERVER_CERT_ERRORS));
       DoMethod(reset, MUIM_Notify, MUIA_Pressed, FALSE, obj, 3, METHOD(ResetSSLCertErrors), msg->group, msg->msn);
 
       DoMethod(msg->group, OM_ADDMEMBER, HGroup,
