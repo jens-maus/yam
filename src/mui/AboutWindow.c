@@ -104,6 +104,7 @@ static Object *UrlObject(void)
       MUIA_Text_Contents, yamurl,
       MUIA_Text_Copy, FALSE,
       MUIA_InputMode, MUIV_InputMode_RelVerify,
+      MUIA_PointerType, MUIV_PointerType_Link,
     End;
   }
 
@@ -387,6 +388,7 @@ OVERLOAD(OM_NEW)
           MUIA_NBitmap_Type,   MUIV_NBitmap_Type_ARGB32,
           MUIA_NBitmap_Normal, donate_truecolor_body,
           MUIA_InputMode, MUIV_InputMode_RelVerify,
+          MUIA_PointerType, MUIV_PointerType_Link,
         End,
       End,
 

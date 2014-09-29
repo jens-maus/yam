@@ -10,6 +10,9 @@ $URL$
   * mui/TCPIPConfigPage.c: for each POP3 and SMTP server a list of all
     permanently accepted SSL certificate errors is shown below the configuration
     options along with the a button to reset the errors.
+  * mui/AboutWindow.c: use the object pointer feature of MUI4 to make it a bit
+    more obvious that clicking certain objects will let react them like clicking
+    a link in a browser.
 
 2014-09-28 Thore Böckelmann <tboeckel@gmx.de>
 

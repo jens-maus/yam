@@ -182,6 +182,12 @@ struct  MUIP_CheckShortHelp                 { STACKED ULONG MethodID; STACKED ST
 #ifndef MUIV_PushMethod_Delay
 #define MUIV_PushMethod_Delay(millis)       MIN(0x0ffffff0,(((ULONG)millis)<<8))
 #endif
+#ifndef MUIA_PointerType
+#define MUIA_PointerType                    0x8042b467 /* V20 isg LONG              */
+#endif
+#ifndef MUIV_PointerType_Link
+#define MUIV_PointerType_Link               13
+#endif
 
 enum { IECODE_SPACE = 64,
        IECODE_TAB = 66,
