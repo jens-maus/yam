@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-08-18 06:51+0000\n"
+"PO-Revision-Date: 2014-09-29 06:56+0000\n"
 "Last-Translator: Thore Böckelmann <tboeckel@gmx.de>\n"
 "Language-Team: Swedish (http://www.transifex.com/projects/p/yam/language/sv/)\n"
 "MIME-Version: 1.0\n"
@@ -10030,4 +10030,20 @@ msgstr "Ett fel uppstod vid försök att öppna ett ASL dialogfönster.\nFel %ld
 
 msgctxt "MSG_FO_FOLDER_NAME_INVALID (2578//)"
 msgid "The specified folder name is invalid."
+msgstr "Det specificerade mappnamnet är ogiltigt."
+
+msgctxt "MSG_CO_POP3_IGNORED_SSL_ERRORS (2579//)"
+msgid "Ignored server SSL certificate errors"
+msgstr ""
+
+msgctxt "MSG_CO_POP3_RESET_SSL_ERRORS (2580//)"
+msgid "Reset errors"
+msgstr ""
+
+msgctxt "MSG_CO_SMTP_IGNORED_SSL_ERRORS (2581//)"
+msgid "Ignored server SSL certificate errors"
+msgstr ""
+
+msgctxt "MSG_CO_SMTP_RESET_SSL_ERRORS (2582//)"
+msgid "Reset errors"
 msgstr ""
