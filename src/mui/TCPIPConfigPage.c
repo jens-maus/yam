@@ -866,9 +866,9 @@ DECLARE(POP3ToGUI)
     set(data->CH_POP3_NOTIFY_OS41SYSTEM, MUIA_Disabled, G->applicationID == 0 || LIB_VERSION_IS_AT_LEAST(ApplicationBase, 53, 2) == FALSE);
     #endif // __amigaos4__
 
-    set(data->PO_POP3_NOTIFY_SOUND, MUIA_Disabled, msn == NULL || msn->notifyBySound == FALSE);
-    set(data->BT_POP3_NOTIFY_SOUND, MUIA_Disabled, msn == NULL || msn->notifyBySound == FALSE);
-    set(data->PO_POP3_NOTIFY_CMD, MUIA_Disabled, msn == NULL || msn->notifyByCommand == FALSE);
+    set(data->PO_POP3_NOTIFY_SOUND, MUIA_Disabled, msn->notifyBySound == FALSE);
+    set(data->BT_POP3_NOTIFY_SOUND, MUIA_Disabled, msn->notifyBySound == FALSE);
+    set(data->PO_POP3_NOTIFY_CMD, MUIA_Disabled, msn->notifyByCommand == FALSE);
 
     if(hasServerAPOP(msn))
       nnset(data->CY_POPAUTH, MUIA_Cycle_Active, 1);
