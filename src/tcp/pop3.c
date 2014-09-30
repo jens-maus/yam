@@ -980,9 +980,11 @@ static int ConnectToPOP3(struct TransferContext *tc)
   char *p;
   char *welcomemsg = NULL;
   int msgs = -1;
-  long bytes = 0;
   char *resp;
   enum ConnectError err;
+  #if defined(DEBUG)
+  long bytes = 0;
+  #endif
 
   ENTER();
 
@@ -1174,10 +1176,13 @@ static int ConnectToPOP3(struct TransferContext *tc)
     goto out;
 
   msgs = strtoul(&resp[4], &p, 10);
+  #if defined(DEBUG)
   if(p != NULL)
     bytes = strtoul(p+1, NULL, 10);
 
   D(DBF_NET, "STAT signaled %ld messages with %ld bytes on server", msgs, bytes);
+  #endif
+
   if(msgs != 0)
     AppendToLogfile(LF_VERBOSE, 31, tr(MSG_LOG_CONNECT_POP3), tc->msn->description, msgs);
 
