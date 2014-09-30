@@ -2083,7 +2083,7 @@ DECLARE(SaveLayout) // ULONG permanent
   if((windowList = (struct List *)xget(obj, MUIA_Application_WindowList)) != NULL)
   {
     Object *window;
-    Object *cstate = (Object *)GetHead(windowList);
+    Object *cstate = (Object *)windowList->lh_Head;
 
     // trigger a snapshot action on all currently alive windows
     while((window = NextObject(&cstate)) != NULL)

@@ -175,7 +175,7 @@ static void RemoveAllChildren(struct Data *data, Object *obj)
   // we first remove all childs from our statusGroup
   if((childList = (struct List *)xget(obj, MUIA_Group_ChildList)) != NULL)
   {
-    Object *cstate = (Object *)GetHead(childList);
+    Object *cstate = (Object *)childList->lh_Head;
     Object *child;
 
     while((child = NextObject(&cstate)) != NULL)

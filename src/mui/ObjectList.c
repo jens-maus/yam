@@ -148,7 +148,7 @@ OVERLOAD(OM_GET)
       if(data->itemCount > 0)
       {
         struct List *childList = (struct List *)xget(data->virtgroup, MUIA_Group_ChildList);
-        Object *cstate = (Object *)GetHead(childList);
+        Object *cstate = (Object *)childList->lh_Head;
 
         *store = (IPTR)NextObject(&cstate);
       }
@@ -165,7 +165,7 @@ OVERLOAD(OM_GET)
       if(data->itemCount > 0)
       {
         struct List *childList = (struct List *)xget(data->virtgroup, MUIA_Group_ChildList);
-        Object *cstate = (Object *)GetHead(childList);
+        Object *cstate = (Object *)childList->lh_Head;
         Object *current;
         Object *last = NULL;
 
@@ -373,7 +373,7 @@ DECLARE(IterateItems) // void **state
     {
       struct List *childList = (struct List *)xget(data->virtgroup, MUIA_Group_ChildList);
 
-      *msg->state = (Object *)GetHead(childList);
+      *msg->state = (Object *)childList->lh_Head;
     }
 
     item = NextObject((Object **)msg->state);
@@ -397,7 +397,7 @@ DECLARE(ItemAt) // ULONG index
   if(data->itemCount > 0)
   {
     struct List *childList = (struct List *)xget(data->virtgroup, MUIA_Group_ChildList);
-    Object *cstate = (Object *)GetHead(childList);
+    Object *cstate = (Object *)childList->lh_Head;
     ULONG idx = 0;
 
     while((item = NextObject(&cstate)) != NULL)
@@ -429,7 +429,7 @@ DECLARE(Clear)
     if(DoMethod(data->virtgroup, MUIM_Group_InitChange))
     {
       struct List *childList = (struct List *)xget(data->virtgroup, MUIA_Group_ChildList);
-      Object *cstate = (Object *)GetHead(childList);
+      Object *cstate = (Object *)childList->lh_Head;
       Object *item;
 
       while((item = NextObject(&cstate)) != NULL)

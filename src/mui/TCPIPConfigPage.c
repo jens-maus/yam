@@ -1628,7 +1628,7 @@ DECLARE(ShowSSLCertWarnings) // Object *group, struct MailServerNode *msn
     {
       // remove all children
       struct List *childList = (struct List *)xget(msg->group, MUIA_Group_ChildList);
-      Object *cstate = (Object *)GetHead(childList);
+      Object *cstate = (Object *)childList->lh_Head;
       Object *item;
 
       while((item = NextObject(&cstate)) != NULL)

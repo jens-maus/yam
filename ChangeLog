@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-09-30 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/misc: the state variable for the NextObject() call must be initialized
+    with the list's lh_Head variable instead of the result of the GetHead()
+    function, because NextObject() does not check for NULL pointers. This closes
+    #586.
+
 2014-09-29 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/TCPIPConfigPage.c: for each POP3 and SMTP server a list of all
