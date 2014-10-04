@@ -61,6 +61,7 @@
 /* CLASSDATA
 struct Data
 {
+  Object *GR_POP3_VIRTROOT;
   Object *LV_POP3;
   Object *BT_PADD;
   Object *BT_PDEL;
@@ -92,6 +93,7 @@ struct Data
   Object *CH_POP3_NOTIFY_CMD;
   Object *PO_POP3_NOTIFY_CMD;
   Object *ST_POP3_NOTIFY_CMD;
+  Object *GR_SMTP_VIRTROOT;
   Object *LV_SMTP;
   Object *BT_SADD;
   Object *BT_SDEL;
@@ -128,6 +130,7 @@ OVERLOAD(OM_NEW)
   static const char *pop3AuthMethods[3];
   static const char *preselectionModes[5];
   static const char *rtitles[3];
+  Object *GR_POP3_VIRTROOT;
   Object *LV_POP3;
   Object *BT_PADD;
   Object *BT_PDEL;
@@ -159,6 +162,7 @@ OVERLOAD(OM_NEW)
   Object *CH_POP3_NOTIFY_CMD;
   Object *PO_POP3_NOTIFY_CMD;
   Object *ST_POP3_NOTIFY_CMD;
+  Object *GR_SMTP_VIRTROOT;
   Object *LV_SMTP;
   Object *BT_SADD;
   Object *BT_SDEL;
@@ -229,7 +233,7 @@ OVERLOAD(OM_NEW)
       Child, ScrollgroupObject,
         MUIA_Scrollgroup_FreeHoriz, FALSE,
         MUIA_Scrollgroup_AutoBars, TRUE,
-        MUIA_Scrollgroup_Contents, VGroupV,
+        MUIA_Scrollgroup_Contents, GR_POP3_VIRTROOT = VGroupV,
 
           Child, HGroup,
             GroupSpacing(0),
@@ -406,6 +410,7 @@ OVERLOAD(OM_NEW)
 
                 Child, HSpace(1),
                 Child, GR_POP3_SSLCERTWARNINGS = VGroup,
+                  Child, HSpace(0),
                 End,
 
                 Child, HVSpace,
@@ -421,7 +426,7 @@ OVERLOAD(OM_NEW)
       Child, ScrollgroupObject,
         MUIA_Scrollgroup_FreeHoriz, FALSE,
         MUIA_Scrollgroup_AutoBars, TRUE,
-        MUIA_Scrollgroup_Contents, VGroupV,
+        MUIA_Scrollgroup_Contents, GR_SMTP_VIRTROOT = VGroupV,
 
           Child, HGroup,
             GroupSpacing(0),
@@ -527,6 +532,7 @@ OVERLOAD(OM_NEW)
 
                 Child, HSpace(1),
                 Child, GR_SMTP_SSLCERTWARNINGS = VGroup,
+                  Child, HSpace(0),
                 End,
 
                 Child, HVSpace,
@@ -543,6 +549,7 @@ OVERLOAD(OM_NEW)
   {
     GETDATA;
 
+    data->GR_POP3_VIRTROOT =          GR_POP3_VIRTROOT;
     data->LV_POP3 =                   LV_POP3;
     data->BT_PADD =                   BT_PADD;
     data->BT_PDEL =                   BT_PDEL;
@@ -574,6 +581,7 @@ OVERLOAD(OM_NEW)
     data->CH_POP3_NOTIFY_CMD =        CH_POP3_NOTIFY_CMD;
     data->PO_POP3_NOTIFY_CMD =        PO_POP3_NOTIFY_CMD;
     data->ST_POP3_NOTIFY_CMD =        ST_POP3_NOTIFY_CMD;
+    data->GR_SMTP_VIRTROOT =          GR_SMTP_VIRTROOT;
     data->LV_SMTP =                   LV_SMTP;
     data->BT_SADD =                   BT_SADD;
     data->BT_SDEL =                   BT_SDEL;
@@ -890,7 +898,7 @@ DECLARE(POP3ToGUI)
     else
       nnset(data->LB_POPPORT, MUIA_Text_Contents, "110");
 
-    DoMethod(obj, METHOD(ShowSSLCertWarnings), data->GR_POP3_SSLCERTWARNINGS, msn);
+    DoMethod(obj, METHOD(ShowSSLCertWarnings), data->GR_POP3_VIRTROOT, data->GR_POP3_SSLCERTWARNINGS, msn);
   }
 
   RETURN(0);
@@ -1228,7 +1236,7 @@ DECLARE(SMTPToGUI)
     else
       nnset(data->LB_SMTPPORT, MUIA_Text_Contents, "25");
 
-    DoMethod(obj, METHOD(ShowSSLCertWarnings), data->GR_SMTP_SSLCERTWARNINGS, msn);
+    DoMethod(obj, METHOD(ShowSSLCertWarnings), data->GR_SMTP_VIRTROOT, data->GR_SMTP_SSLCERTWARNINGS, msn);
   }
 
   RETURN(0);
@@ -1584,61 +1592,70 @@ DECLARE(PlaySound) // Object *strObj
 
 ///
 /// DECLARE(ShowSSLCertWarnings)
-DECLARE(ShowSSLCertWarnings) // Object *group, struct MailServerNode *msn
+DECLARE(ShowSSLCertWarnings) // Object *vroot, Object *group, struct MailServerNode *msn
 {
   ENTER();
 
-  if(DoMethod(msg->group, MUIM_Group_InitChange))
+  // workaround for a bug in MUI 3.8
+  // the surrounding virtual group must be put into change state as well, otherwise the
+  // contents will not be refreshed correctly
+  if(DoMethod(msg->vroot, MUIM_Group_InitChange))
   {
-    int failures = msg->msn->certFailures;
-
-    if(failures != SSL_CERT_ERR_NONE)
+    if(DoMethod(msg->group, MUIM_Group_InitChange))
     {
-      Object *reset;
-
-      DoMethod(msg->group, OM_ADDMEMBER, HBarT(tr(MSG_CO_ACCEPTED_SERVER_CERT_WARNINGS)), End);
-
-      if(isFlagSet(failures, SSL_CERT_ERR_UNTRUSTED))
-        DoMethod(msg->group, OM_ADDMEMBER, TextObject, MUIA_Text_Copy, FALSE, MUIA_Text_Contents, tr(MSG_SSL_CERT_WARNING_UNTRUSTED), End);
-
-      if(isFlagSet(failures, SSL_CERT_ERR_IDMISMATCH))
-        DoMethod(msg->group, OM_ADDMEMBER, TextObject, MUIA_Text_Copy, FALSE, MUIA_Text_Contents, tr(MSG_SSL_CERT_WARNING_IDMISMATCH), End);
-
-      if(isFlagSet(failures, SSL_CERT_ERR_NOTYETVALID))
-        DoMethod(msg->group, OM_ADDMEMBER, TextObject, MUIA_Text_Copy, FALSE, MUIA_Text_Contents, tr(MSG_SSL_CERT_WARNING_NOTYETVALID), End);
-
-      if(isFlagSet(failures, SSL_CERT_ERR_EXPIRED))
-        DoMethod(msg->group, OM_ADDMEMBER, TextObject, MUIA_Text_Copy, FALSE, MUIA_Text_Contents, tr(MSG_SSL_CERT_WARNING_EXPIRED), End);
-
-      if(isFlagSet(failures, SSL_CERT_ERR_SIGINVALID))
-        DoMethod(msg->group, OM_ADDMEMBER, TextObject, MUIA_Text_Copy, FALSE, MUIA_Text_Contents, tr(MSG_SSL_CERT_WARNING_SIGINVALID), End);
-
-      if(isFlagSet(failures, SSL_CERT_ERR_OTHER))
-        DoMethod(msg->group, OM_ADDMEMBER, TextObject, MUIA_Text_Copy, FALSE, MUIA_Text_Contents, tr(MSG_SSL_CERT_WARNING_OTHER), End);
-
-      reset = MakeButton(tr(MSG_CO_CLEAR_SERVER_CERT_WARNINGS));
-      DoMethod(reset, MUIM_Notify, MUIA_Pressed, FALSE, obj, 3, METHOD(ClearSSLCertWarnings), msg->group, msg->msn);
-
-      DoMethod(msg->group, OM_ADDMEMBER, HGroup,
-        Child, HSpace(0),
-        Child, reset,
-        End);
-    }
-    else
-    {
-      // remove all children
+      int failures = msg->msn->certFailures;
       struct List *childList = (struct List *)xget(msg->group, MUIA_Group_ChildList);
       Object *cstate = (Object *)childList->lh_Head;
-      Object *item;
+      Object *child;
 
-      while((item = NextObject(&cstate)) != NULL)
+      // remove all children first in any case
+      while((child = NextObject(&cstate)) != NULL)
       {
-        DoMethod(msg->group, OM_REMMEMBER, item);
-        MUI_DisposeObject(item);
+        DoMethod(msg->group, OM_REMMEMBER, child);
+        MUI_DisposeObject(child);
       }
-    }
 
-    DoMethod(msg->group, MUIM_Group_ExitChange);
+      if(failures != SSL_CERT_ERR_NONE)
+      {
+        Object *clear;
+
+        DoMethod(msg->group, OM_ADDMEMBER, HBarT(tr(MSG_CO_ACCEPTED_SERVER_CERT_WARNINGS)), End);
+
+        if(isFlagSet(failures, SSL_CERT_ERR_UNTRUSTED))
+          DoMethod(msg->group, OM_ADDMEMBER, TextObject, MUIA_Text_Copy, FALSE, MUIA_Text_Contents, tr(MSG_SSL_CERT_WARNING_UNTRUSTED), End);
+
+        if(isFlagSet(failures, SSL_CERT_ERR_IDMISMATCH))
+          DoMethod(msg->group, OM_ADDMEMBER, TextObject, MUIA_Text_Copy, FALSE, MUIA_Text_Contents, tr(MSG_SSL_CERT_WARNING_IDMISMATCH), End);
+
+        if(isFlagSet(failures, SSL_CERT_ERR_NOTYETVALID))
+          DoMethod(msg->group, OM_ADDMEMBER, TextObject, MUIA_Text_Copy, FALSE, MUIA_Text_Contents, tr(MSG_SSL_CERT_WARNING_NOTYETVALID), End);
+
+        if(isFlagSet(failures, SSL_CERT_ERR_EXPIRED))
+          DoMethod(msg->group, OM_ADDMEMBER, TextObject, MUIA_Text_Copy, FALSE, MUIA_Text_Contents, tr(MSG_SSL_CERT_WARNING_EXPIRED), End);
+
+        if(isFlagSet(failures, SSL_CERT_ERR_SIGINVALID))
+          DoMethod(msg->group, OM_ADDMEMBER, TextObject, MUIA_Text_Copy, FALSE, MUIA_Text_Contents, tr(MSG_SSL_CERT_WARNING_SIGINVALID), End);
+
+        if(isFlagSet(failures, SSL_CERT_ERR_OTHER))
+          DoMethod(msg->group, OM_ADDMEMBER, TextObject, MUIA_Text_Copy, FALSE, MUIA_Text_Contents, tr(MSG_SSL_CERT_WARNING_OTHER), End);
+
+        clear = MakeButton(tr(MSG_CO_CLEAR_SERVER_CERT_WARNINGS));
+        DoMethod(clear, MUIM_Notify, MUIA_Pressed, FALSE, obj, 3, METHOD(ClearSSLCertWarnings), msg->group, msg->msn);
+
+        DoMethod(msg->group, OM_ADDMEMBER, HGroup,
+          Child, HSpace(0),
+          Child, clear,
+          End);
+      }
+      else
+      {
+        // just (re)add a spacer if no warnings were ignored
+        DoMethod(msg->group, OM_ADDMEMBER, HSpace(0));
+      }
+
+      DoMethod(msg->group, MUIM_Group_ExitChange);
+    }
+    DoMethod(msg->vroot, MUIM_Group_ExitChange);
   }
 
   RETURN(0);
@@ -1647,13 +1664,13 @@ DECLARE(ShowSSLCertWarnings) // Object *group, struct MailServerNode *msn
 
 ///
 /// DECLARE(ClearSSLCertWarnings)
-DECLARE(ClearSSLCertWarnings) // Object *group, struct MailServerNode *msn
+DECLARE(ClearSSLCertWarnings) // Object *vroot, Object *group, struct MailServerNode *msn
 {
   ENTER();
 
   // reset all errors and remove the previous list of errors
   msg->msn->certFailures = SSL_CERT_ERR_NONE;
-  DoMethod(obj, METHOD(ShowSSLCertWarnings), msg->group, msg->msn);
+  DoMethod(obj, METHOD(ShowSSLCertWarnings), msg->vroot, msg->group, msg->msn);
 
   RETURN(0);
   return 0;

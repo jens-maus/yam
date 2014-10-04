@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-10-04 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/TCPIPConfigPage.c: added a workaround for a bug in MUI 3.8 which causes
+    virtual groups to be not refreshed correctly when objects are dynamically
+    added or removed. Thanks to Frank Busse for the hint.
+
 2014-09-30 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/misc: the state variable for the NextObject() call must be initialized
