@@ -354,7 +354,7 @@ DECLARE(ActivateTheme)
   DoMethod(data->NL_THEMELIST, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &theme);
   if(theme != NULL)
   {
-    char *themeName = FilePart(theme->directory);
+    const char *themeName = FilePart(theme->directory);
 
     // check that this theme isn't already the
     // active one.
