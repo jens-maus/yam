@@ -6,6 +6,7 @@
 # Jens Maus <mail@jens-maus.de>, 2014
 # Jens Maus <mail@jens-maus.de>, 2014
 # Sebastian Rosa <sebastian.rosa@wp.pl>, 2014
+# MandiATO <mandi@interia.pl>, 2014
 # Mariusz Danilewicz <mandi@interia.pl>, 2011
 # Sebastian Rosa <sebastian.rosa@wp.pl>, 2014
 msgid ""
@@ -13,8 +14,8 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-09-29 07:50+0000\n"
-"Last-Translator: Thore Böckelmann <tboeckel@gmx.de>\n"
+"PO-Revision-Date: 2014-10-06 10:33+0000\n"
+"Last-Translator: MandiATO <mandi@interia.pl>\n"
 "Language-Team: Polish (http://www.transifex.com/projects/p/yam/language/pl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -9874,17 +9875,17 @@ msgstr "GB"
 #. ORIGINATOR, SENDER, SUBJECT, FOLDER, FOLDER
 msgctxt "MSG_LOG_COPY_MAIL (2548//)"
 msgid "%s: Copied message from '%s' about '%s' from folder '%s' to '%s'"
-msgstr ""
+msgstr "%s: Skopiowano wiadomość od \\\"%s\\\" o \\\"%s\\\" z folderu \\\"%s\\\" do \\\"%s\\\""
 
 #. ORIGINATOR, SENDER, SUBJECT, FOLDER, FOLDER
 msgctxt "MSG_LOG_MOVE_MAIL (2549//)"
 msgid "%s: Moved message from '%s' about '%s' from folder '%s' to '%s'"
-msgstr ""
+msgstr "%s: Przeniesiono wiadomość od \\\"%s\\\" o \\\"%s\\\" z folderu \\\"%s\\\" do \\\"%s\\\""
 
 #. FILTERNAME
 msgctxt "MSG_LOG_FILTER_ORIGINATOR (2550//)"
 msgid "Filter '%s'"
-msgstr ""
+msgstr "Filtr \\\"%s\\\""
 
 msgctxt "MSG_STARTUP_SECURITY_WARNING_TITLE (2551//)"
 msgid "YAM security warning"
@@ -9941,11 +9942,11 @@ msgstr ""
 
 msgctxt "MSG_CO_POP_SERVER (2560//)"
 msgid "Serve_r"
-msgstr ""
+msgstr "Serwe_r"
 
 msgctxt "MSG_CO_POP_PORT (2561//)"
 msgid "P_ort"
-msgstr ""
+msgstr "P_ort"
 
 msgctxt "MSG_CO_POP_PORT_STANDARD (2562//)"
 msgid "Standard:"
@@ -9953,11 +9954,11 @@ msgstr ""
 
 msgctxt "MSG_CO_SMTP_SERVER (2563//)"
 msgid "Ser_ver"
-msgstr ""
+msgstr "Ser_wer"
 
 msgctxt "MSG_CO_SMTP_PORT (2564//)"
 msgid "_Port"
-msgstr ""
+msgstr "_Port"
 
 msgctxt "MSG_CO_SMTP_PORT_STANDARD (2565//)"
 msgid "Standard:"
@@ -9976,17 +9977,17 @@ msgstr ""
 
 msgctxt "MSG_CO_POP3_CONNECTION_TITLE (2568//)"
 msgid "POP3 connection"
-msgstr ""
+msgstr "Połączenie POP3"
 
 #. SERVER
 msgctxt "MSG_CO_POP3_CONNECTION_SUCCESS (2569//)"
 msgid "Connection to POP3 server '%s' was successful."
-msgstr ""
+msgstr "Połączenie z serwerem POP3 \\\"%s\\\" zakończone powodzeniem."
 
 #. SERVER
 msgctxt "MSG_CO_POP3_CONNECTION_FAILURE (2570//)"
 msgid "Connection to POP3 server '%s' failed."
-msgstr ""
+msgstr "Połączenie z serwerem POP3 \\\"%s\\\" zakończone niepowodzeniem."
 
 msgctxt "MSG_CO_SMTP_TEST_CONNECTION_SETTINGS (2571//)"
 msgid "Test connection settings"
@@ -10001,17 +10002,17 @@ msgstr ""
 
 msgctxt "MSG_CO_SMTP_CONNECTION_TITLE (2573//)"
 msgid "SMTP connection"
-msgstr ""
+msgstr "Połączenie SMTP"
 
 #. SERVER
 msgctxt "MSG_CO_SMTP_CONNECTION_SUCCESS (2574//)"
 msgid "Connection to SMTP server '%s' was successful."
-msgstr ""
+msgstr "Połączenie z serwerem SNMP \\\"%s\\\" zakończone powodzeniem."
 
 #. SERVER
 msgctxt "MSG_CO_SMTP_CONNECTION_FAILURE (2575//)"
 msgid "Connection to SMTP server '%s' failed."
-msgstr ""
+msgstr "Połączenie z serwerem SNMP \\\"%s\\\" zakończone niepowodzeniem."
 
 #. FILEPATH
 msgctxt "MSG_ER_WARN_CAFILE (2576//)"
@@ -10030,7 +10031,7 @@ msgstr ""
 
 msgctxt "MSG_FO_FOLDER_NAME_INVALID (2578//)"
 msgid "The specified folder name is invalid."
-msgstr ""
+msgstr "Podana nazwa folderu jest nieprawidłowa."
 
 msgctxt "MSG_CO_ACCEPTED_SERVER_CERT_WARNINGS (2579//)"
 msgid "Permanently accepted server certificate warnings"
@@ -10038,4 +10039,4 @@ msgstr ""
 
 msgctxt "MSG_CO_CLEAR_SERVER_CERT_WARNINGS (2580//)"
 msgid "Clear warnings"
-msgstr ""
+msgstr "Wyczyść ostrzeżenia"
