@@ -529,14 +529,14 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
     // then rename it
     if(Rename(oldFilePath, newFilePath) == DOSFALSE)
     {
-      E(DBF_MAIL, "could not rename '%s' to '%s', error %ld", oldFilePath, newFilePath, IoErr());
+      LONG error = IoErr();
 
-      // if we end up here then a file with the newFileName
-      // probably already exists, so lets increase the mail
-      // counter.
-      mcounter++;
+      E(DBF_MAIL, "could not rename '%s' to '%s', error %ld", oldFilePath, newFilePath, error);
 
-      if(mcounter > 999)
+      // if we end up here then a file with the newFileName probably already exists, so increase the mail
+      // counter. We also bail out if the original file cannot be found for any reason, although this
+      // should never be happening.
+      if(++mcounter > 999 || error == ERROR_OBJECT_NOT_FOUND)
         break;
     }
     else

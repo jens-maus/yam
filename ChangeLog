@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-10-13 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_MA.c: don't try to continue to rename not existing mail files.
+
 2014-10-04 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/TCPIPConfigPage.c: added a workaround for a bug in MUI 3.8 which causes
