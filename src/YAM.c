@@ -1691,8 +1691,9 @@ static void InitAfterLogin(void)
     if(isGroupFolder(folder))
       continue;
 
-    if((isIncomingFolder(folder) || isOutgoingFolder(folder) || isDraftsFolder(folder) || isTrashFolder(folder) ||
-        C->LoadAllFolders == TRUE) && !isProtectedFolder(folder))
+    if((C->LoadAllFolders == TRUE || isIncomingFolder(folder) || isOutgoingFolder(folder) || isDraftsFolder(folder) || isTrashFolder(folder)) &&
+       !isProtectedFolder(folder) &&
+       !isArchiveFolder(folder))
     {
       // call the getIndex function which on one hand loads the full .index file
       // and makes sure that all "new" mail is marked to unread if the user

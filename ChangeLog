@@ -9,6 +9,9 @@ $URL$
 
   * YAM_UT.c: don't flush the index of the Drafts folder if there are currently
     active drafts mails. This refs #578.
+  * YAM.c: don't load the index of archive folders on startup. This saves memory
+    and is not really required since the archive folders are accessed quite
+    seldom.
 
 2014-10-13 Thore Böckelmann <tboeckel@gmx.de>
 
