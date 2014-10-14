@@ -3807,7 +3807,7 @@ struct Mail *ReplaceMailInFolder(const char *mailFile, struct Mail *mail, struct
 ///
 /// ClearFolderMails
 //  Removes all messages from a folder
-void ClearFolderMails(struct Folder *folder, BOOL resetstats)
+BOOL ClearFolderMails(struct Folder *folder, BOOL resetstats)
 {
   BOOL doClear = TRUE;
   struct ReadMailData *rmData;
@@ -3858,7 +3858,8 @@ void ClearFolderMails(struct Folder *folder, BOOL resetstats)
     }
   }
 
-  LEAVE();
+  RETURN(doClear);
+  return doClear;
 }
 
 ///

@@ -262,7 +262,7 @@ struct Mail *ReplaceMailInFolder(const char *mailFile, struct Mail *mail, struct
 void     AddZombieFile(const char *fileName);
 char *   AllocReqText(const char *s);
 BOOL     CheckPrinter(const Object *win);
-void     ClearFolderMails(struct Folder *folder, BOOL resetstats);
+BOOL     ClearFolderMails(struct Folder *folder, BOOL resetstats);
 BOOL     DeleteZombieFiles(BOOL force);
 void     CloseTempFile(struct TempFile *tf);
 ULONG    CRC32(const void *buffer, unsigned int count, ULONG crc);

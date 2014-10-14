@@ -8,12 +8,14 @@ $URL$
 2014-10-14 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_UT.c: don't flush the index of the Drafts folder if there are currently
-    active drafts mails. This refs #578.
+    active draft mails. This refs #578.
   * YAM.c: don't load the index of archive folders on startup. This saves memory
     and is not really required since the archive folders are accessed quite
     seldom.
   * mui/YAMApplication.c: exclude the Drafts folder when deleting old mails.
     Draft mails should never be deleted automatically.
+  * YAM_UT.c: don't set the folder index state to "flushed" if clearing the mail
+    list was skipped, i.e. due to active draft mails. This finally closes #578.
 
 2014-10-13 Thore Böckelmann <tboeckel@gmx.de>
 
