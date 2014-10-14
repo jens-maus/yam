@@ -12,6 +12,8 @@ $URL$
   * YAM.c: don't load the index of archive folders on startup. This saves memory
     and is not really required since the archive folders are accessed quite
     seldom.
+  * mui/YAMApplication.c: exclude the Drafts folder when deleting old mails.
+    Draft mails should never be deleted automatically.
 
 2014-10-13 Thore Böckelmann <tboeckel@gmx.de>
 

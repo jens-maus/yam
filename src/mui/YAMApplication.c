@@ -383,9 +383,11 @@ static void FlushIndex(struct Folder *folder, time_t minAccessTime)
     else
       D(DBF_FOLDER, "flush index of folder '%s'", folder->Name);
 
-    ClearFolderMails(folder, FALSE);
-    folder->LoadedMode = LM_FLUSHED;
-    clearFlag(folder->Flags, FOFL_FREEXS);
+    if(ClearFolderMails(folder, FALSE) == TRUE)
+    {
+      folder->LoadedMode = LM_FLUSHED;
+      clearFlag(folder->Flags, FOFL_FREEXS);
+    }
   }
 
   LEAVE();
@@ -1822,7 +1824,7 @@ DECLARE(DeleteOldMails)
     {
       struct Folder *folder = fnode->folder;
 
-      if(isGroupFolder(folder) == FALSE && folder->MaxAge > 0 && !isArchiveFolder(folder) && MA_GetIndex(folder) == TRUE)
+      if(isGroupFolder(folder) == FALSE && folder->MaxAge > 0 && !isArchiveFolder(folder) && !isDraftsFolder(folder) && MA_GetIndex(folder) == TRUE)
       {
         struct MailNode *mnode;
         struct TimeVal ageLimit;
