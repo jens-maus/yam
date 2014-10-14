@@ -3809,8 +3809,11 @@ struct Mail *ReplaceMailInFolder(const char *mailFile, struct Mail *mail, struct
 //  Removes all messages from a folder
 void ClearFolderMails(struct Folder *folder, BOOL resetstats)
 {
+  BOOL doClear = TRUE;
   struct ReadMailData *rmData;
-  struct ReadMailData *next;
+  struct ReadMailData *rmNext;
+  struct WriteMailData *wmData;
+  struct WriteMailData *wmNext;
 
   ENTER();
 
@@ -3823,22 +3826,36 @@ void ClearFolderMails(struct Folder *folder, BOOL resetstats)
   // active readMailData is pointing back to the folder. This is
   // much more efficient as one has usually only very few read
   // windows opened in parallel.
-  SafeIterateList(&G->readMailDataList, struct ReadMailData *, rmData, next)
+  SafeIterateList(&G->readMailDataList, struct ReadMailData *, rmData, rmNext)
   {
     if(rmData->mail != NULL && rmData->mail->Folder == folder)
       CleanupReadMailData(rmData, TRUE);
   }
-
-  LockMailList(folder->messages);
-  ClearMailList(folder->messages);
-  UnlockMailList(folder->messages);
-
-  if(resetstats == TRUE)
+  // don't flush the index of the Drafts folder if there are active (currently
+  // being edited) draft mails available
+  SafeIterateList(&G->writeMailDataList, struct WriteMailData *, wmData, wmNext)
   {
-    folder->Total = 0;
-    folder->New = 0;
-    folder->Unread = 0;
-    folder->Size = 0;
+    if(wmData->draftMail != NULL && wmData->draftMail->Folder == folder)
+    {
+      D(DBF_FOLDER, "skip folder '%s' due to active draft mails", folder->Name);
+      doClear = FALSE;
+      break;
+    }
+  }
+
+  if(doClear == TRUE)
+  {
+    LockMailList(folder->messages);
+    ClearMailList(folder->messages);
+    UnlockMailList(folder->messages);
+
+    if(resetstats == TRUE)
+    {
+      folder->Total = 0;
+      folder->New = 0;
+      folder->Unread = 0;
+      folder->Size = 0;
+    }
   }
 
   LEAVE();

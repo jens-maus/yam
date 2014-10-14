@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-10-14 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_UT.c: don't flush the index of the Drafts folder if there are currently
+    active drafts mails. This refs #578.
+
 2014-10-13 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_MA.c: don't try to continue to rename not existing mail files.
