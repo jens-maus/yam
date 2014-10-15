@@ -3396,7 +3396,7 @@ void ValidateConfig(struct Config *co, BOOL update, BOOL saveChanges)
   }
 
   // check for a valid wrapping mode
-  if(co->EdWrapMode < EWM_OFF || co->EdWrapMode > EWM_EDITING)
+  if(co->EdWrapMode > EWM_EDITING)
   {
     D(DBF_CONFIG, "restricted wrapping mode from %ld to %ld", co->EdWrapMode, EWM_EDITING);
     co->EdWrapMode = EWM_EDITING;
