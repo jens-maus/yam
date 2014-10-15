@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-10-15 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_WR.c: respect the maximum allow line length of 998 chars when wrapping
+    the quoted text.
+
 2014-10-14 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_UT.c: don't flush the index of the Drafts folder if there are currently

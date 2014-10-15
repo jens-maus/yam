@@ -3216,12 +3216,12 @@ struct WriteMailData *NewReplyMailWindow(struct MailList *mlist, const int flags
             if(IsStrEmpty(replytxt) == FALSE)
             {
               // make sure we quote the text in question.
-              QuoteText(out, replytxt, strlen(replytxt), C->EdWrapMode != EWM_OFF ? C->EdWrapCol-2 : 1024);
+              QuoteText(out, replytxt, strlen(replytxt), C->EdWrapMode != EWM_OFF ? MIN(998, C->EdWrapCol)-2 : 998-2);
             }
             else if((cmsg = RE_ReadInMessage(rmData, RIM_QUOTE)) != NULL)
             {
               // make sure we quote the text in question.
-              QuoteText(out, cmsg, dstrlen(cmsg), C->EdWrapMode != EWM_OFF ? C->EdWrapCol-2 : 1024);
+              QuoteText(out, cmsg, dstrlen(cmsg), C->EdWrapMode != EWM_OFF ? MIN(998, C->EdWrapCol)-2 : 998-2);
 
               dstrfree(cmsg);
             }
