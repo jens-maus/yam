@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-10-12 14:32+0000\n"
+"PO-Revision-Date: 2014-10-15 21:20+0000\n"
 "Last-Translator: Mariusz Danilewicz <mandi@interia.pl>\n"
 "Language-Team: Polish (http://www.transifex.com/projects/p/yam/language/pl/)\n"
 "MIME-Version: 1.0\n"
@@ -218,7 +218,7 @@ msgstr "Wybierz użytkownika do zalogowania:"
 
 msgctxt "MSG_ErrorStartup (67//)"
 msgid "Error during startup"
-msgstr "Błąd przy starcie"
+msgstr "Błąd przy uruchamianiu"
 
 msgctxt "MSG_Quit (68//)"
 msgid "Quit"
@@ -226,11 +226,11 @@ msgstr "Skończ"
 
 msgctxt "MSG_LoadingConfig (70//)"
 msgid "Loading configuration..."
-msgstr "Wczytuję konfigurację..."
+msgstr "Wczytywanie konfiguracji..."
 
 msgctxt "MSG_CreatingGUI (71//)"
 msgid "Creating user interface..."
-msgstr "Tworzę interfejs użytkownika..."
+msgstr "Tworzenie interfejsu użytkownika..."
 
 msgctxt "MSG_ErrorMuiApp (72//)"
 msgid "Can't create application"
@@ -238,19 +238,19 @@ msgstr "Nie można utworzyć aplikacji"
 
 msgctxt "MSG_RebuildIndices (73//)"
 msgid "Rebuilding folders' indices..."
-msgstr "Odbudowuję indeksy folderów..."
+msgstr "Odbudowywanie indeksów folderów..."
 
 msgctxt "MSG_LoadingFolders (74//)"
 msgid "Loading folders..."
-msgstr "Wczytuję foldery..."
+msgstr "Wczytywanie folderów..."
 
 msgctxt "MSG_LoadingABook (75//)"
 msgid "Loading address book..."
-msgstr "Wczytuję książkę adresową..."
+msgstr "Wczytywanie książki adresowej..."
 
 msgctxt "MSG_InitLibs (76//)"
 msgid "Initializing libraries and classes..."
-msgstr "Inicjalizuję biblioteki i klasy..."
+msgstr "Inicjalizowanie bibliotek i klas..."
 
 msgctxt "MSG_ErrorAslStruct (78//)"
 msgid "Can't allocate ASL structure"
@@ -266,17 +266,17 @@ msgstr "Nie można utworzyć portu ARexx'a"
 
 msgctxt "MSG_LoadingGFX (81//)"
 msgid "Loading graphics..."
-msgstr "Wczytuję grafikę..."
+msgstr "Wczytywanie grafiki..."
 
 msgctxt "MSG_SendStartReq (82//)"
 msgid ""
 "The Outgoing folder contains unsent mail.\n"
 "Do you want to send these messages now?"
-msgstr "Folder \"Wychodzące\" zawiera niewysłane wiadomości.\nCzy chcesz wysłać je teraz?"
+msgstr "Folder \"Wychodzące\" zawiera niewysłane\nwiadomości. Czy chcesz wysłać je teraz?"
 
 msgctxt "MSG_QuitYAMReq (83//)"
 msgid "Do you really want to quit YAM?"
-msgstr "Czy na pewno chcesz skończyć pracę z programem YAM?"
+msgstr "Czy na pewno chcesz skończyć\npracę z programem YAM?"
 
 msgctxt "MSG_CTtextplain (84//)"
 msgid "plain text"
@@ -300,7 +300,7 @@ msgstr "dokument - Postscript"
 
 msgctxt "MSG_CTapplicationrtf (89//)"
 msgid "Rich Text Format"
-msgstr "Rich Text Format"
+msgstr "dokument - RTF"
 
 msgctxt "MSG_CTapplicationlha (90//)"
 msgid "LhA archive"
@@ -391,42 +391,42 @@ msgstr "Zalogowano jako użytkownik \"%s\", używając konfiguracji \"%s\" i kat
 #. COUNT, FOLDER
 msgctxt "MSG_LOG_Deleting (111//)"
 msgid "Deleted %ld message(s) in folder '%s'"
-msgstr "Skasowano %ld wiadomości w folderze \"%s\""
+msgstr "Skasowano wiadomości: %ld - z folderu \"%s\""
 
 #. SENDER, SUBJECT, FOLDER
 msgctxt "MSG_LOG_DeletingVerbose (112//)"
 msgid "Deleted message from '%s' about '%s' in folder '%s'"
-msgstr "Skasowano wiadomość od \"%s\" o \"%s\" w folderze \"%s\""
+msgstr "Skasowano wiadomość od \"%s\" o \"%s\" z folderu \"%s\""
 
 #. COUNT, FOLDER, FOLDER
 msgctxt "MSG_LOG_Moving (113//)"
 msgid "Moved %ld message(s) from folder '%s' to '%s'"
-msgstr "Przeniesiono %ld wiadomości z foldera \"%s\" do \"%s\""
+msgstr "Przeniesiono wiadomości: %ld z folderu \"%s\" do \"%s\""
 
 #. COUNT, FOLDER, FOLDER
 msgctxt "MSG_LOG_Copying (115//)"
 msgid "Copied %ld message(s) from folder '%s' to '%s'"
-msgstr "Skopiowano %ld wiadomości z foldera \"%s\" do \"%s\""
+msgstr "Skopiowano wiadomości: %ld - z folderu \"%s\" do \"%s\""
 
 #. SENDER, SUBJECT, SIZE
 msgctxt "MSG_LOG_RetrievingVerbose (118//)"
 msgid "Retrieved message from '%s' about '%s' (%ld bytes)"
-msgstr "Odebrano wiadomość od \"%s\" o \"%s\" (%ld bajtów)"
+msgstr "Odebrano wiadomość od \"%s\" o \"%s\" (bajtów: %ld)"
 
 #. HOST
 msgctxt "MSG_LOG_ConnectSMTP (120//)"
 msgid "Connected to SMTP server '%s'"
-msgstr "Połączono się z serwerem SMTP \"%s\""
+msgstr "Połączono z serwerem SMTP \"%s\""
 
 #. RECIPIENT, SUBJECT, SIZE
 msgctxt "MSG_LOG_SendingVerbose (121//)"
 msgid "Sent message to '%s' about '%s' (%ld bytes)"
-msgstr "Wysłano wiadomość do \"%s\" o \"%s\" (%ld bajtów)"
+msgstr "Wysłano wiadomość do \"%s\" o \"%s\" (bajtów: %ld)"
 
 #. COUNT, HOST
 msgctxt "MSG_LOG_Sending (122//)"
 msgid "Sent %ld message(s) using SMTP server '%s'"
-msgstr "Wysłano %ld wiadomości używając serwera SMTP \"%s\""
+msgstr "Wysłano wiadomości: %ld - używając serwera SMTP \"%s\""
 
 #. SENDER, RECIPIENT, SUBJECT
 msgctxt "MSG_LOG_Editing (123//)"
@@ -470,12 +470,12 @@ msgstr "Dodano do książki adresowej wpis \"%s\""
 #. COUNT, FILENAME, FOLDER
 msgctxt "MSG_LOG_Importing (133//)"
 msgid "Imported %ld message(s) from file '%s' into folder '%s'"
-msgstr "Importowano %ld wiadomości z pliku \"%s\" do foldera \"%s\""
+msgstr "Zaimportowano wiadomości: %ld - z pliku \"%s\" do folderu \"%s\""
 
 #. COUNT, FOLDER, FILENAME
 msgctxt "MSG_LOG_Exporting (134//)"
 msgid "Exported %ld message(s) from folder '%s' to file '%s'"
-msgstr "Eksportowano %ld wiadomości z foldera \"%s\" do pliku \"%s\""
+msgstr "Wyeksportowano wiadomości: %ld - z folderu \"%s\" do pliku \"%s\""
 
 #. FILENAME, MAILFILE, FOLDER
 msgctxt "MSG_LOG_SavingAtt (135//)"
@@ -497,7 +497,7 @@ msgstr "Wczytaj"
 
 msgctxt "MSG_UT_PGPPassReq (140//)"
 msgid "Please enter your PGP passphrase:"
-msgstr "Podaj swoje hasło PGP:"
+msgstr "Wprowadź hasło PGP:"
 
 #. FOLDER
 msgctxt "MSG_MA_GetFolderPass (144//)"
@@ -511,11 +511,11 @@ msgid ""
 "The selected message has multiple recipients.\n"
 "\n"
 "You want to send the reply to the..."
-msgstr "Wybrana wiadomość ma wielu odbiorców.\n\nChcesz wysłać odpowiedź..."
+msgstr "Wybrana wiadomość ma wielu odbiorców.\n\nChcesz wysłać odpowiedź do..."
 
 msgctxt "MSG_MA_ReplyReqOpt (150//)"
 msgid "*_Sender|Sender and _all Recipients|_Recipients|_Cancel"
-msgstr "*...do\n_nadawcy|...do n_adawcy\ni wszystkich odbiorców|...do\nodbio_rców|Ponie_chaj"
+msgstr "*_nadawcy|n_adawcy i wszystkich odbiorców|odbio_rców|Ponie_chaj"
 
 #. ADDRESS, ADDRESS
 msgctxt "MSG_MA_CompareReq (151//)"
