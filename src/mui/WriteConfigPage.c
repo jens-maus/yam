@@ -96,7 +96,7 @@ OVERLOAD(OM_NEW)
 
   wrapmode[0] = tr(MSG_CO_EWOff);
   wrapmode[1] = tr(MSG_CO_EWAsYouType);
-  wrapmode[2] = tr(MSG_CO_EWBeforeSend);
+  wrapmode[2] = NULL; //tr(MSG_CO_EWBeforeSend);
   wrapmode[3] = NULL;
 
   if((obj = DoSuperNew(cl, obj,
@@ -273,7 +273,7 @@ OVERLOAD(MUIM_ConfigPage_ConfigToGUI)
   setstring(data->ST_BYETEXT, CE->Greetings);
   setcheckmark(data->CH_WARNSUBJECT, CE->WarnSubject);
   set(data->NL_ATTACHMENTKEYWORDS, MUIA_AttachmentKeywordList_Keywords, CE->AttachmentKeywords);
-  xset(data->ST_EDWRAP, 
+  xset(data->ST_EDWRAP,
     MUIA_String_Integer, CE->EdWrapCol,
     MUIA_Disabled, CE->EdWrapMode == EWM_OFF);
   setcycle(data->CY_EDWRAP, CE->EdWrapMode);

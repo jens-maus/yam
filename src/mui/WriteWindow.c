@@ -295,19 +295,20 @@ static enum Encoding WhichEncodingForFile(const char *fname,
         {
           // (RFC 821) restricts 7bit lines to a maximum of 1000 characters
           // so we have to use QP or base64 later on.
-          // but RFC 2822 says that lines shouldn`t be longer than 998 chars, so we take this one
+          // but RFC 2822 says that lines should not be longer than 998 chars,
+          // so we take this one
           if(linesize > 998)
-            ++longlines;
+            longlines++;
 
           linesize = 0;
         }
         else if (c > 127)
-          ++unsafechars; // count the number of non 7bit ASCII chars
+          unsafechars++; // count the number of non 7bit ASCII chars
         else if (c < 32 && c != '\t')
-          ++binarychars; // count the number of chars used in binaries.
+          binarychars++; // count the number of chars used in binaries.
 
         // if we successfully scanned 4000 bytes out of the file and found enough
-        // data we break out here. We have to at least find some longlines or
+        // data we break out here. We have to at least find some long lines or
         // we have to scan the whole part.
         if(total > 4000 && longlines > 0)
           break;
@@ -1181,7 +1182,7 @@ OVERLOAD(OM_NEW)
                     MUIA_TextEditor_FixedFont,       C->UseFixedFontWrite,
                     MUIA_TextEditor_WrapMode,        MUIV_TextEditor_WrapMode_SoftWrap,
                     MUIA_TextEditor_WrapBorder,      C->EdWrapMode == EWM_EDITING ? C->EdWrapCol : 0,
-                    MUIA_TextEditor_ExportWrap,      C->EdWrapMode != EWM_OFF ? C->EdWrapCol : 0,
+                  //MUIA_TextEditor_ExportWrap,      C->EdWrapMode != EWM_OFF ? C->EdWrapCol : 0,
                     MUIA_TextEditor_ImportHook,      MUIV_TextEditor_ImportHook_Plain,
                     MUIA_TextEditor_ExportHook,      MUIV_TextEditor_ExportHook_NoStyle,
                     MUIA_MailTextEdit_CheckKeywords, C->AttachmentReminder,

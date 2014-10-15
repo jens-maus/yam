@@ -783,7 +783,7 @@ void SetDefaultConfig(struct Config *co, enum ConfigPage page)
     co->WarnSubject = TRUE;
     co->AttachmentReminder = TRUE;
     strlcpy(co->AttachmentKeywords, tr(MSG_ATTACHMENT_KEYWORDS), sizeof(co->AttachmentKeywords));
-    co->EdWrapCol = 78;
+    co->EdWrapCol = 81;
     co->EdWrapMode = EWM_EDITING;
     co->UseFixedFontWrite = TRUE;
     co->UseTextStylesWrite = TRUE;
@@ -3392,6 +3392,14 @@ void ValidateConfig(struct Config *co, BOOL update, BOOL saveChanges)
   {
     D(DBF_CONFIG, "raised stack size from %ld to %ld", co->StackSize, SIZE_STACK);
     co->StackSize = SIZE_STACK;
+    saveAtEnd = TRUE;
+  }
+
+  // check for a valid wrapping mode
+  if(co->EdWrapMode < EWM_OFF || co->EdWrapMode > EWM_EDITING)
+  {
+    D(DBF_CONFIG, "restricted wrapping mode from %ld to %ld", co->EdWrapMode, EWM_EDITING);
+    co->EdWrapMode = EWM_EDITING;
     saveAtEnd = TRUE;
   }
 

@@ -9,6 +9,14 @@ $URL$
 
   * YAM_WR.c: respect the maximum allow line length of 998 chars when wrapping
     the quoted text.
+  * mui/WriteWindow.c, Config.c: excluded the "before sending" wrapping mode
+    from the list of possible settings. Too long lines in the generated mail
+    file will be encoded as quoted-printable not exceeded 998 characters anyway
+    already. Resizing the write window more narrow than the wrap column will do
+    a dynamic wrapping anyway, no matter if soft line wrapping (while typing) is
+    active or not. All in all this makes it possible to continue editing a draft
+    mail and being able to insert new text in the middle of a paragraph without
+    being forced to rewrap the paragraph manually. This finally closes #529.
 
 2014-10-14 Thore Böckelmann <tboeckel@gmx.de>
 
