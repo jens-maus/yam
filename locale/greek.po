@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-10-07 22:36+0000\n"
+"PO-Revision-Date: 2014-11-03 00:29+0000\n"
 "Last-Translator: Anthony I.\n"
 "Language-Team: Greek (http://www.transifex.com/projects/p/yam/language/el/)\n"
 "MIME-Version: 1.0\n"
@@ -536,7 +536,7 @@ msgstr "_Από|*Απάντηση-_Προς|Α_κύρωση"
 
 msgctxt "MSG_MA_ConfirmReq (155//)"
 msgid "Confirmation Request"
-msgstr "Αίτηση Επιβεβαίωσης"
+msgstr "Αίτημα Επιβεβαίωσης"
 
 #. COUNT, COUNT, COUNT, COUNT
 msgctxt "MSG_MA_FilterStats (160//)"
@@ -1148,7 +1148,7 @@ msgstr "λεπτά"
 
 msgctxt "MSG_CO_NotiReq (378//)"
 msgid "_Requester"
-msgstr "Παρά_θυρο αιτήματος"
+msgstr "Παρά_θυρο κλήσης"
 
 msgctxt "MSG_CO_NotiSound (379//)"
 msgid "S_ound"
@@ -2568,7 +2568,7 @@ msgstr "Σύμπτυξη όλων"
 
 msgctxt "MSG_AB_Unfold (746//)"
 msgid "Unfold all"
-msgstr "Αναδίπλωση όλων"
+msgstr "Ανάπτυξη όλων"
 
 msgctxt "MSG_AB_TBSave (747//8)"
 msgid "_Save"
@@ -2576,7 +2576,7 @@ msgstr "_Αποθήκευση"
 
 msgctxt "MSG_AB_TBFind (748//8)"
 msgid "_Find"
-msgstr "_Εύρεση"
+msgstr "Ανα_ζήτηση"
 
 msgctxt "MSG_AB_TBNewUser (749//8)"
 msgid "_Person"
@@ -2604,7 +2604,7 @@ msgstr "Εκ_τύπωση"
 
 msgctxt "MSG_AB_TBOpenTree (755//8)"
 msgid "_Unfold"
-msgstr "Α_ναδίπλωση"
+msgstr "Α_νάπτυξη"
 
 msgctxt "MSG_AB_TBCloseTree (756//8)"
 msgid "F_old"
@@ -4201,7 +4201,7 @@ msgstr "Ολόκληρο το μήνυμα"
 
 msgctxt "MSG_FI_SearchIn (1181//)"
 msgid "Search in"
-msgstr "Εύρεση σε"
+msgstr "Αναζήτηση σε"
 
 msgctxt "MSG_FI_CaseSensitive (1182//)"
 msgid "Case sensitive"
@@ -4209,11 +4209,11 @@ msgstr "Ευαισθησία πεζών-κεφαλαίων"
 
 msgctxt "MSG_FI_SubString (1183//)"
 msgid "Substring search"
-msgstr "Εύρεση υπο-συμβολοσειράς"
+msgstr "Αναζήτηση υπο-συμβολοσειράς"
 
 msgctxt "MSG_FI_FindMessages (1184//)"
 msgid "Find messages"
-msgstr "Εύρεση μηνυμάτων"
+msgstr "Αναζήτηση μηνυμάτων"
 
 msgctxt "MSG_FI_AllFolders (1185//)"
 msgid "_everywhere"
@@ -4221,11 +4221,11 @@ msgstr "_παντού"
 
 msgctxt "MSG_FI_FindIn (1186//)"
 msgid "Find in"
-msgstr "Εύρεση σε"
+msgstr "Αναζήτηση σε"
 
 msgctxt "MSG_FI_FindWhat (1187//)"
 msgid "Find what"
-msgstr "Εύρεση ποιός"
+msgstr "Αναζήτηση σε τι"
 
 msgctxt "MSG_FI_UseFilter (1188//)"
 msgid "_Use filter settings"
@@ -4241,7 +4241,7 @@ msgstr "Αποτελέσματα"
 
 msgctxt "MSG_FI_StartSearch (1191//)"
 msgid "_Start search"
-msgstr "Έναρ_ξη εύρεσης"
+msgstr "Έναρ_ξη αναζήτησης"
 
 msgctxt "MSG_FI_SelectMatched (1192//)"
 msgid "Select _matched"
@@ -4927,7 +4927,7 @@ msgstr "Το θέμα απουσιάζει, συνέχεια παρ' όλα αυ
 
 msgctxt "MSG_WR_TBSearch (1390//8)"
 msgid "Search"
-msgstr "Εύρεση"
+msgstr "Αναζήτηση"
 
 msgctxt "MSG_HELP_WR_BT_SEARCH (1391//)"
 msgid ""
@@ -4937,7 +4937,7 @@ msgstr "Αναζήτηση κειμένου για\nτην δεδομένη συ
 
 msgctxt "MSG_SEARCHWINDOW_TITLE (1392//)"
 msgid "Search"
-msgstr "Εύρεση"
+msgstr "Αναζήτηση"
 
 msgctxt "MSG_SEARCHWINDOW_TOGGLE_CASESENSITVE (1393//)"
 msgid "C_ase sensitive"
@@ -4945,7 +4945,7 @@ msgstr "Ευαισθησία _πεζών-κεφαλαίων"
 
 msgctxt "MSG_SEARCHWINDOW_BT_SEARCH (1394//)"
 msgid "_Search"
-msgstr "_Εύρεση"
+msgstr "_Αναζήτηση"
 
 msgctxt "MSG_SEARCHWINDOW_BT_CANCEL (1396//)"
 msgid "_Cancel"
@@ -4953,7 +4953,7 @@ msgstr "Α_κύρωση"
 
 msgctxt "MSG_SEARCHNOTFOUND_TITLE (1397//)"
 msgid "Search"
-msgstr "Εύρεση"
+msgstr "Αναζήτηση"
 
 msgctxt "MSG_SEARCHNOTFOUND_MSG (1398//)"
 msgid "'%s' not found."
