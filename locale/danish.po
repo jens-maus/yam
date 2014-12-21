@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-12-21 20:07+0000\n"
+"PO-Revision-Date: 2014-12-21 21:34+0000\n"
 "Last-Translator: nbache <nbache2@mail.dk>\n"
 "Language-Team: Danish (http://www.transifex.com/projects/p/yam/language/da/)\n"
 "MIME-Version: 1.0\n"
@@ -592,11 +592,11 @@ msgstr "Status"
 
 msgctxt "MSG_MA_Scripts (172//)"
 msgid "Scripts"
-msgstr "Scripts"
+msgstr "Makroer"
 
 msgctxt "MSG_MA_ExecuteScript (173//)"
 msgid "Execute script..."
-msgstr "Udføre script..."
+msgstr "Udføre makro..."
 
 msgctxt "MSG_MA_CheckSingle (174//)"
 msgid "Check single account"
@@ -1575,7 +1575,7 @@ msgstr "Gemme ved_hæftede filer i"
 
 msgctxt "MSG_CO_Attach (509//)"
 msgid "_Attach files from"
-msgstr "_Vedhæfte filer fra"
+msgstr "_Vedlægge filer fra"
 
 msgctxt "MSG_CO_TempDir (510//)"
 msgid "For _temporary files"
@@ -3300,7 +3300,7 @@ msgstr "Gemme tekst som"
 
 msgctxt "MSG_WR_AddFile (920//)"
 msgid "Select files to attach"
-msgstr "Vælg fil(er) at vedhæfte"
+msgstr "Vælg fil(er) at vedlægge"
 
 msgctxt "MSG_WR_CreateArc (921//)"
 msgid "Create archive"
@@ -3392,7 +3392,7 @@ msgstr "_Beskrivelse"
 
 msgctxt "MSG_WR_From (952//)"
 msgid "_From"
-msgstr "A_fsenderadresse"
+msgstr "_Afsenderadresse"
 
 msgctxt "MSG_WR_ExtraHeaders (954//)"
 msgid "_Additional headers"
@@ -6117,7 +6117,7 @@ msgid ""
 "Description: %s\n"
 "Content-Type: %s <%s>\n"
 "Size: ~%s"
-msgstr "\\033bVedhæftning - MIME-del nr. %ld\\033n\nNavn: %s\nBeskrivelse: %s\nIndholdstype: %s <%s>\nStørrelse: ~%s"
+msgstr "\\033bBilag - MIME-del nr. %ld\\033n\nNavn: %s\nBeskrivelse: %s\nIndholdstype: %s <%s>\nStørrelse: ~%s"
 
 msgctxt "MSG_MA_MIMEPART_MENU (1726//)"
 msgid "Attachment/MIME part #%ld"
@@ -6985,7 +6985,7 @@ msgstr "Meddelelse"
 
 msgctxt "MSG_WR_MSWITCH_ATT (1957//)"
 msgid "Attachments"
-msgstr "Vedhæftninger"
+msgstr "Bilag"
 
 msgctxt "MSG_WR_MSWITCH_OPT (1958//)"
 msgid "Options"
@@ -7006,7 +7006,7 @@ msgid ""
 "can be forwarded as an attachment or the\n"
 "message text can be put inlined to the\n"
 "new message."
-msgstr "Her vælges hvordan meddelelser som standard\nskal videresendes. Meddelelser kan enten\nblive videresendt som vedhæftning, eller\nderes tekst kan blive indsat som en del af\nteksten i den nye meddelelse."
+msgstr "Her vælges hvordan meddelelser som standard\nskal videresendes. Meddelelser kan enten\nblive videresendt som bilag, eller\nderes tekst kan blive indsat som en del af\nteksten i den nye meddelelse."
 
 msgctxt "MSG_ABOUT_CURRENT_DEVELOPERS (1963//)"
 msgid "Current Developers:"
@@ -9028,7 +9028,7 @@ msgctxt "MSG_HELP_CO_BT_SIG_ACTIVE (2370//)"
 msgid ""
 "Flags the currently selected signature\n"
 "as active or inactive."
-msgstr "Sætter den markerede signatur til aktiv\neller inaktiv."
+msgstr "Sætter den markerede signatur\ntil aktiv eller inaktiv."
 
 msgctxt "MSG_HELP_CO_ST_SIG_DESC (2371//)"
 msgid ""
@@ -9183,7 +9183,7 @@ msgstr "YAM har konstateret at du i dit MorphOS-system kører med en version af 
 
 msgctxt "MSG_WR_SAVEASDRAFT (2402//)"
 msgid "Save as _draft"
-msgstr "Gemme som kladde"
+msgstr "Gemme som kla_dde"
 
 msgctxt "MSG_HELP_WR_BT_SAVEASDRAFT (2403//)"
 msgid ""
@@ -9258,11 +9258,11 @@ msgstr "_Omdøbe"
 
 msgctxt "MSG_WR_RENAME_ATTACHMENT (2418//)"
 msgid "Rename attachment"
-msgstr "Omdøbe vedhæftning"
+msgstr "Omdøbe bilag"
 
 msgctxt "MSG_WR_ENTER_NEW_NAME (2419//)"
 msgid "Enter new attachment name:"
-msgstr "Indtast nyt vedhæftningsnavn:"
+msgstr "Indtast nyt bilagsnavn:"
 
 msgctxt "MSG_FI_SKIP_ENCRYPTED (2420//)"
 msgid "Skip encrypted mails"
@@ -9276,7 +9276,7 @@ msgstr "Ved hak her vil meddelelser som er krypteret\n(fx med PGP), blive sprung
 
 msgctxt "MSG_CO_QUICKSEARCHBAR (2422//)"
 msgid "Quick search bar"
-msgstr "Vise søge_linje i hovedvinduet"
+msgstr "Vise søgelinje i hovedvinduet"
 
 msgctxt "MSG_HELP_CO_CH_QUICKSEARCHBAR (2423//)"
 msgid ""
@@ -9599,14 +9599,14 @@ msgid ""
 "Would you like to be warned if the\n"
 "mail body suggests the existance of\n"
 "an attachment but these are missing?"
-msgstr "Vil du gerne advares hvis meddelelsen\nindeholder ord der tyder på at der skal\nvedhæftes bilag, men der ikke er nogen?"
+msgstr "Vil du gerne advares hvis meddelelsen\nindeholder ord der tyder på at der skal\nvedlægges bilag, men der ikke er nogen?"
 
 msgctxt "MSG_HELP_CO_LV_ATTACHMENTKEYWORDS (2496//)"
 msgid ""
 "Configure the keywords which might\n"
 "suggest the desired existance of an\n"
 "attachment."
-msgstr "Her angives de nøgleord som kan tyde\npå at man havde planlagt at vedhæfte\net bilag."
+msgstr "Her angives de nøgleord som kan tyde\npå at man havde planlagt at vedlægge\net bilag."
 
 msgctxt "MSG_ATTACHMENT_KEYWORDS (2497//)"
 msgid "attachment,attach,attached,attaching,enclosed,CV,cover letter"
@@ -9614,11 +9614,11 @@ msgstr "vedhæftet,vedhæftning,vedlagt,vedlægges,vedlægger,bilag,attachment,a
 
 msgctxt "MSG_ATTACHMENT_REMIND_INFO (2498//)"
 msgid "Did you possibly forget to add an attachment?"
-msgstr "Har du mon glemt at vedhæfte et bilag?"
+msgstr "Har du mon glemt at vedlægge et bilag?"
 
 msgctxt "MSG_ATTACHMENT_REMIND_ADD (2499//)"
 msgid "Add attachment..."
-msgstr "Vedhæfte bilag..."
+msgstr "Vedlægge bilag..."
 
 msgctxt "MSG_ATTACHMENT_REMIND_LATER (2500//)"
 msgid "Remind me later"
@@ -9630,7 +9630,7 @@ msgstr "Påmindelse om bilag"
 
 msgctxt "MSG_WR_NO_ATTACHMENTS (2502//)"
 msgid "Did you forget to add an attachment?"
-msgstr "Har du glemt at vedhæfte et bilag?"
+msgstr "Har du glemt at vedlægge et bilag?"
 
 msgctxt "MSG_WR_NO_ATTACHMENTS_GADS (2503//)"
 msgid "Yes, I did|No, send now"
@@ -9682,7 +9682,7 @@ msgstr "Ved hak her vil afsendte meddelelser blive\ngemt efter overførslen. Ell
 
 msgctxt "MSG_CO_IDENTITY_ALTSENTFOLDER (2513//)"
 msgid "Use alternative 'Sent' folder:"
-msgstr "Benytte alternativ 'Sendt'-mappe"
+msgstr "Benytte alternativ 'Sendt'-mappe:"
 
 msgctxt "MSG_HELP_CO_CH_IDENTITY_ALTSENTFOLDER (2514//)"
 msgid ""
