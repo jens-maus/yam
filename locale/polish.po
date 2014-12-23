@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-11-09 19:04+0000\n"
+"PO-Revision-Date: 2014-12-23 20:54+0000\n"
 "Last-Translator: Mariusz Danilewicz <mandi@interia.pl>\n"
 "Language-Team: Polish (http://www.transifex.com/projects/p/yam/language/pl/)\n"
 "MIME-Version: 1.0\n"
@@ -9130,11 +9130,11 @@ msgstr ""
 
 msgctxt "MSG_CO_FILTER_IMPORT (2390//)"
 msgid "Import..."
-msgstr ""
+msgstr "Importuj..."
 
 msgctxt "MSG_FILTER_IMPORT_TITLE (2391//)"
 msgid "Import filter"
-msgstr ""
+msgstr "Importowanie filtra"
 
 msgctxt "MSG_SPAM_TRUSTHEADERLINES (2392//)"
 msgid "Trust header lines of this external filter:"
@@ -9154,7 +9154,7 @@ msgstr "Dołącz plik podpisu"
 
 msgctxt "MSG_PRESELECT_GETTING_DETAILS (2396//)"
 msgid "Getting message details (%%ld of %ld)"
-msgstr ""
+msgstr "Pobieranie informacji o wiadomościach (%%ld z %ld)"
 
 msgctxt "MSG_CO_UPDATES_INFO_MANUAL (2397//)"
 msgid "You will have to check for updates manually."
@@ -9166,7 +9166,7 @@ msgstr "Będziesz informowany o nowych aktualizacjach."
 
 msgctxt "MSG_PGPPASS_SHOW_CHARS (2399//)"
 msgid "Show characters"
-msgstr ""
+msgstr "Pokazuj znaki"
 
 #. CLASS,SUPERCLASS
 msgctxt "MSG_CANNOT_CREATE_CUSTOM_CLASS (2400//)"
@@ -9207,13 +9207,13 @@ msgstr ""
 
 msgctxt "MSG_CO_ACTIONREDIRECT (2407//)"
 msgid "_Redirect"
-msgstr ""
+msgstr "P_rzekieruj"
 
 msgctxt "MSG_HELP_CO_CH_AREDIRECT (2408//)"
 msgid ""
 "Redirect matching messages\n"
 "to another person."
-msgstr ""
+msgstr "Przekieruj pasujące wiadomości\ndo innej osoby."
 
 msgctxt "MSG_HELP_CO_ST_AREDIRECT (2409//)"
 msgid ""
@@ -9223,7 +9223,7 @@ msgstr ""
 
 msgctxt "MSG_MA_MREDIRECT (2410//)"
 msgid "Redirect..."
-msgstr ""
+msgstr "Przekierowanie..."
 
 msgctxt "MSG_WR_REDIRECT_FROM (2411//)"
 msgid "Resent-_From"
@@ -9255,7 +9255,7 @@ msgstr ""
 
 msgctxt "MSG_WR_RENAME (2417//)"
 msgid "_Rename"
-msgstr ""
+msgstr "_Zmień nazwę"
 
 msgctxt "MSG_WR_RENAME_ATTACHMENT (2418//)"
 msgid "Rename attachment"
@@ -9287,7 +9287,7 @@ msgstr "Jeśli zaznaczone, pasek wyszukiwania\nbędzie wyświetlany w oknie gł�
 
 msgctxt "MSG_CO_QUICKSEARCHBARPOS (2424//)"
 msgid "Posi_tion"
-msgstr ""
+msgstr "Pozycja"
 
 msgctxt "MSG_CO_QUICKSEARCHBARPOS01 (2425//)"
 msgid "Disabled"
@@ -9359,7 +9359,7 @@ msgstr "Us_uń"
 
 msgctxt "MSG_CO_CONDITION_PREPHRASE (2442//)"
 msgid "If"
-msgstr ""
+msgstr "Jeżeli"
 
 msgctxt "MSG_CO_CONDITION_POSTPHRASE (2443//)"
 msgid "of the following conditions are met:"
@@ -9889,7 +9889,7 @@ msgstr "Filtr \"%s\""
 
 msgctxt "MSG_STARTUP_SECURITY_WARNING_TITLE (2551//)"
 msgid "YAM security warning"
-msgstr ""
+msgstr "YAM - ostrzeżenie o zabezpieczeniach"
 
 msgctxt "MSG_STARTUP_SECURITY_WARNING (2552//)"
 msgid ""
@@ -9909,7 +9909,7 @@ msgstr ""
 
 msgctxt "MSG_STARTUP_SECURITY_WARNING_GADGETS (2553//)"
 msgid "Understood"
-msgstr ""
+msgstr "Rozumiem"
 
 msgctxt "MSG_FO_PATH_INVALID (2554//)"
 msgid "The path must be non-empty."
@@ -9925,11 +9925,11 @@ msgstr ""
 
 msgctxt "MSG_CO_SAVE_WITHOUT_PRIVATE_DATA (2557//)"
 msgid "Save without private data..."
-msgstr ""
+msgstr "Zapisz bez danych prywatnych..."
 
 msgctxt "MSG_SSL_CERT_WARNING_SIGINVALID (2558//)"
 msgid "- The signature of the certificate is invalid."
-msgstr ""
+msgstr "- podpis certyfikatu jest niewłaściwy."
 
 msgctxt "MSG_SSL_CERT_WARNING_OUTRO (2559//)"
 msgid ""
