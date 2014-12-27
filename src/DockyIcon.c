@@ -294,10 +294,14 @@ BOOL HandleDockyIcon(void)
       D(DBF_GUI, "got ApplicationMsg %08lx of type %ld", msg, (msg != NULL) ? msg->type : 0);
       switch(msg->type)
       {
-        // ask the user if he really wants to quit the application
+        // ask the user if he really wants to quit the application, but only if
+        // we are not iconified. Otherwise we don't care.
         case APPLIBMT_Quit:
         {
-          quit = !StayInProg();
+          if(xget(G->App, MUIA_Application_Iconified) == FALSE)
+            quit = !StayInProg();
+          else
+            quit = TRUE;
         }
         break;
 

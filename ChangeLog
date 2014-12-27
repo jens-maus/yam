@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2014-12-27 Thore Böckelmann <tboeckel@gmx.de>
+
+  * DockyIcon.c: selecting "Quit" from the DockyIcon's context menu will quit
+    YAM silently if it is iconified even if there is something which requires
+    confirmation. This closes #591.
+
 2014-10-15 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_WR.c: respect the maximum allow line length of 998 chars when wrapping
