@@ -7,14 +7,14 @@
 # Jens Maus <mail@jens-maus.de>, 2014
 # Sebastian Rosa <sebastian.rosa@wp.pl>, 2014
 # Mariusz Danilewicz <mandi@interia.pl>, 2014
-# Mariusz Danilewicz <mandi@interia.pl>, 2011,2014
+# Mariusz Danilewicz <mandi@interia.pl>, 2011,2014-2015
 # Sebastian Rosa <sebastian.rosa@wp.pl>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-12-23 20:54+0000\n"
+"PO-Revision-Date: 2015-01-30 22:59+0000\n"
 "Last-Translator: Mariusz Danilewicz <mandi@interia.pl>\n"
 "Language-Team: Polish (http://www.transifex.com/projects/p/yam/language/pl/)\n"
 "MIME-Version: 1.0\n"
@@ -9396,7 +9396,7 @@ msgstr ""
 
 msgctxt "MSG_CO_TZONE_DESCRIPTION (2449//)"
 msgid "Description:"
-msgstr ""
+msgstr "Opis:"
 
 msgctxt "MSG_CO_TZONE_DESCRIPTION_NA (2450//)"
 msgid "n/a"
@@ -9913,7 +9913,7 @@ msgstr "Rozumiem"
 
 msgctxt "MSG_FO_PATH_INVALID (2554//)"
 msgid "The path must be non-empty."
-msgstr ""
+msgstr "Ścieżka nie może być pusta."
 
 msgctxt "MSG_FO_MLPATTERN_INVALID (2555//)"
 msgid "The pattern (To:/CC:) must be non-empty and no 'catch all'."
@@ -9950,7 +9950,7 @@ msgstr "P_ort"
 
 msgctxt "MSG_CO_POP_PORT_STANDARD (2562//)"
 msgid "Standard:"
-msgstr ""
+msgstr "Standardowy:"
 
 msgctxt "MSG_CO_SMTP_SERVER (2563//)"
 msgid "Ser_ver"
@@ -9962,11 +9962,11 @@ msgstr "_Port"
 
 msgctxt "MSG_CO_SMTP_PORT_STANDARD (2565//)"
 msgid "Standard:"
-msgstr ""
+msgstr "Standardowy:"
 
 msgctxt "MSG_CO_POP3_TEST_CONNECTION_SETTINGS (2566//)"
 msgid "Test connection settings"
-msgstr ""
+msgstr "Testuj ustawienia połączenia"
 
 msgctxt "MSG_HELP_CO_BT_POPTEST (2567//)"
 msgid ""
@@ -9991,7 +9991,7 @@ msgstr "Połączenie z serwerem POP3 \"%s\" zakończone niepowodzeniem."
 
 msgctxt "MSG_CO_SMTP_TEST_CONNECTION_SETTINGS (2571//)"
 msgid "Test connection settings"
-msgstr ""
+msgstr "Testuj ustawienia połączenia"
 
 msgctxt "MSG_HELP_CO_BT_SMTPTEST (2572//)"
 msgid ""
@@ -10027,7 +10027,7 @@ msgctxt "MSG_ER_CANNOT_OPEN_ASLREQ (2577//)"
 msgid ""
 "An error occurred while trying to open an ASL requester.\n"
 "Error %ld: %s"
-msgstr ""
+msgstr "Podczas próby otwarcia okna wyboru ASL wystąpił błąd.\nBłąd %ld: %s"
 
 msgctxt "MSG_FO_FOLDER_NAME_INVALID (2578//)"
 msgid "The specified folder name is invalid."
@@ -10035,7 +10035,7 @@ msgstr "Podana nazwa folderu jest nieprawidłowa."
 
 msgctxt "MSG_CO_ACCEPTED_SERVER_CERT_WARNINGS (2579//)"
 msgid "Permanently accepted server certificate warnings"
-msgstr ""
+msgstr "Trwale zaakceptowane ostrzeżenia o certyfikatach serwerów"
 
 msgctxt "MSG_CO_CLEAR_SERVER_CERT_WARNINGS (2580//)"
 msgid "Clear warnings"
