@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2015-03-31 19:27+0000\n"
+"PO-Revision-Date: 2015-04-01 19:58+0000\n"
 "Last-Translator: Mariusz Danilewicz <mandi@interia.pl>\n"
 "Language-Team: Polish (http://www.transifex.com/projects/p/yam/language/pl/)\n"
 "MIME-Version: 1.0\n"
@@ -9142,7 +9142,7 @@ msgstr ""
 
 msgctxt "MSG_ER_POP3_UIDLHASH_INIT_FAILED (2393//)"
 msgid "Failed to initialized UIDL hash table."
-msgstr ""
+msgstr "Inicjalizacja tabeli skrótów UIDL zakończona niepowodzeniem."
 
 msgctxt "MSG_CO_SIGNATURE_TEXT (2394//)"
 msgid "Signature text"
@@ -9363,7 +9363,7 @@ msgstr "Jeżeli"
 
 msgctxt "MSG_CO_CONDITION_POSTPHRASE (2443//)"
 msgid "of the following conditions are met:"
-msgstr ""
+msgstr "następujących warunków zostało spełnionych:"
 
 #. !!! WARNING !!!
 #. Do not translate this fallback name, but just choose a
@@ -9409,14 +9409,14 @@ msgid ""
 "\n"
 "Please make sure to install all time zones management\n"
 "related files to the '%s/Resources/zoneinfo' directory."
-msgstr ""
+msgstr "Nie można otworzyć pliku z opisem stref czasowych\n\"%s/Resources/zoneinfo/zone.tab\".\n\nProszę upewnij się, że masz zainstalowane wszystkie pliki\nzwiązane z zarządzaniem strefami czasowymi w katalogu\n\"%s/Resources/zoneinfo\"."
 
 msgctxt "MSG_TZONE_LOCATION_FILE_MISSING (2452//)"
 msgid ""
 "Cannot open time zone information file '%s'.\n"
 "\n"
 "Time zone information will be incorrect. Please make sure to install all time zones management related files to the '%s/Resources/zoneinfo' directory."
-msgstr ""
+msgstr "Nie można otworzyć pliku z informacjami o strefie czasowej\n\"%s\".\n\nProszę upewnij się, że masz zainstalowane wszystkie pliki\nzwiązane z zarządzaniem strefami czasowymi w katalogu\n\"%s/Resources/zoneinfo\"."
 
 msgctxt "MSG_FOLDER_MOVE_WARNING_TITLE (2453//)"
 msgid "YAM folder format warning"
