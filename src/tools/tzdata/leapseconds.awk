@@ -3,7 +3,7 @@
 # This file is in the public domain.
 
 BEGIN {
-  print "# Allowance for leapseconds added to each timezone file."
+  print "# Allowance for leap seconds added to each time zone file."
   print ""
   print "# This file is in the public domain."
   print ""
@@ -13,10 +13,10 @@ BEGIN {
   print "# you should be able to pick up leap-seconds.list from a secondary NIST server."
   print "# For more about leap-seconds.list, please see"
   print "# The NTP Timescale and Leap Seconds"
-  print "# <http://www.eecis.udel.edu/~mills/leap.html>."
+  print "# http://www.eecis.udel.edu/~mills/leap.html"
   print ""
-  print "# The International Earth Rotation Service periodically uses leap seconds"
-  print "# to keep UTC to within 0.9 s of UT1"
+  print "# The International Earth Rotation and Reference Systems Service"
+  print "# periodically uses leap seconds to keep UTC to within 0.9 s of UT1"
   print "# (which measures the true angular orientation of the earth in space); see"
   print "# Terry J Quinn, The BIPM and the accurate measure of time,"
   print "# Proc IEEE 79, 7 (July 1991), 894-905 <http://dx.doi.org/10.1109/5.84965>."
@@ -37,6 +37,11 @@ BEGIN {
 }
 
 /^ *$/ { next }
+
+/^#\tUpdated through/ || /^#\tFile expires on:/ {
+    last_lines = last_lines $0 "\n"
+}
+
 /^#/ { next }
 
 {
@@ -63,4 +68,8 @@ BEGIN {
 	printf "Leap\t%s\t%s\t%s\t%s\tS\n", year, month, day, sign
     }
     old_TAI_minus_UTC = TAI_minus_UTC
+}
+
+END {
+    printf "\n%s", last_lines
 }

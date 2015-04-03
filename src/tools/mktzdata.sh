@@ -19,7 +19,7 @@ for tz in ${TIMEZONES}; do
 done
 
 # copy the .tab files because YAM will use them
-${CP} tzdata/zone.tab ${TZDIR}
+${CP} tzdata/zone1970.tab ${TZDIR}/zone.tab
 
 # remove some backward compatibility files the zic compiler created
 # but yam will not use

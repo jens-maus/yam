@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2015-04-04 Jens Maus <mail@jens-maus.de>
+
+  * resources/zoneinfo, tools/tzdata, tools/tzcode: updated tzdata/tzcode
+    environment to the latest version (2015b) released by iana.org.
+
 2014-12-27 Thore Böckelmann <tboeckel@gmx.de>
 
   * DockyIcon.c: selecting "Quit" from the DockyIcon's context menu will quit
