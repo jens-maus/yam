@@ -6982,3 +6982,146 @@ LONG StringToBirthday(const char *datestr)
 }
 
 ///
+/// parseUtf8
+// extract UTF8 characters from a string
+static int parseUtf8(char **ps)
+{
+  STRPTR s = *ps;
+  int wc, n, i;
+
+  ENTER();
+
+  if(*s<0x80)
+  {
+    *ps = s+1;
+
+    RETURN(*s);
+    return *s;
+  }
+
+  if(*s<0xc2)
+  {
+    RETURN(-1);
+    return -1;
+  }
+  else
+  {
+    if(*s<0xe0)
+    {
+      if((s[1] & 0xc0)!=0x80)
+      {
+        RETURN(-1);
+        return -1;
+      }
+
+      *ps = s+2;
+
+      RETURN(((s[0] & 0x1f)<<6) | (s[1] & 0x3f));
+      return ((s[0] & 0x1f)<<6) | (s[1] & 0x3f);
+    }
+    else
+    {
+      if(*s<0xf0)
+      {
+        n = 3;
+      }
+      else
+      {
+        if(*s<0xf8)
+        {
+          n = 4;
+        }
+        else
+        {
+          if(*s<0xfc)
+          {
+            n = 5;
+          }
+          else
+          {
+            if(*s<0xfe)
+            {
+              n = 6;
+            }
+            else
+            {
+              RETURN(-1);
+              return -1;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  wc = *s++ & ((1<<(7-n))-1);
+
+  for(i = 1; i<n; i++)
+  {
+    if((*s & 0xc0) != 0x80)
+    {
+      RETURN(-1);
+      return -1;
+    }
+
+    wc = (wc << 6) | (*s++ & 0x3f);
+  }
+
+  if(wc < (1 << (5 * n - 4)))
+  {
+    RETURN(-1);
+    return -1;
+  }
+
+  *ps = s;
+
+  RETURN(wc);
+  return wc;
+}
+
+///
+/// IsUTF8String
+// check if a string is a legal UTF8 encoded string
+#define GOOD_UCS(c) \
+     ((c) >= 0x00a0 && ((c) & ~0x03ff) != 0xd800 && \
+      (c) != 0xfeff && (c) != 0xfffe && (c) != 0xffff)
+
+BOOL IsUTF8String(const char *str)
+{
+  BOOL isUTF8 = TRUE;
+  char *t = (char *)str;
+  int ucs;
+  int utf8Chars = 0;
+
+  ENTER();
+
+  // parse the string as long as we find either legal UTF8 sequences
+  // or plain ASCII characters
+  while(isUTF8 == TRUE && (ucs = parseUtf8(&t)) != 0)
+  {
+    // characters between 0x00 and 0x7f are plain 7bit ASCII and don't need any
+    // special UTF8 encoding. Only characters beyond 0x80 require this special
+    // encoding and must be correctly encoded
+    if(ucs < 0)
+    {
+      isUTF8 = FALSE;
+    }
+    else if(ucs >= 0x80)
+    {
+      if(!GOOD_UCS(ucs))
+        isUTF8 = FALSE;
+      else
+        utf8Chars++;
+    }
+  }
+
+  // a UTF8 encoded string should contain some UTF8 characters at all
+  // otherwise we don't need the UTF8 encoding
+  if(isUTF8 == TRUE && utf8Chars == 0)
+    isUTF8 = FALSE;
+
+  RETURN(isUTF8);
+  return isUTF8;
+}
+
+///

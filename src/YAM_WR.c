@@ -511,20 +511,16 @@ const char *EncodingName(const enum Encoding enc)
 //  Outputs content type header including parameters
 void WriteContentTypeAndEncoding(FILE *fh, const struct WritePart *part)
 {
-  BOOL isPrintable = FALSE;
+  BOOL isPrintable;
 
   ENTER();
 
   // identify if the contenttype is printable or not
-  if(strnicmp(part->ContentType, "text", 4) == 0 ||
-     strnicmp(part->ContentType, "message", 7) == 0)
-  {
-    isPrintable = TRUE;
-  }
+  isPrintable = (strnicmp(part->ContentType, "text", 4) == 0 || strnicmp(part->ContentType, "message", 7) == 0);
 
   // output the "Content-Type:
   fprintf(fh, "Content-Type: %s", part->ContentType);
-  if(part->EncType != ENC_7BIT && isPrintable == TRUE)
+  if(part->EncType != ENC_7BIT && isPrintable == TRUE && part->Codeset != NULL)
     fprintf(fh, "; charset=%s", strippedCharsetName(part->Codeset));
 
   // output the "name" and Content-Disposition as well

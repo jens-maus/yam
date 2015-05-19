@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2015-05-19 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_UT.c, WriteWindow.c: implemented a function to check whether a string is
+    correctly UTF8 encoded and contains at least one UTF8 character. Based on
+    this check the charset of text attachments is forced to either UTF8 or
+    ISO-8859-1 instead of the configured write mail charset. This refs #600.
+    Please note that YAM does NO reencoding, it just gives the receiver a hint
+    how to handle the attached file.
+
 2015-04-04 Jens Maus <mail@jens-maus.de>
 
   * resources/zoneinfo, tools/tzdata, tools/tzcode: updated tzdata/tzcode

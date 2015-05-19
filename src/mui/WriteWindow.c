@@ -549,15 +549,38 @@ static struct WritePart *BuildPartsList(struct WriteMailData *wmData, BOOL delTe
           np->IsAttachment = TRUE;
           np->IsTemp       = att->IsTemp;
 
-          // find out which encoding we use for the attachment
+          // find out which encoding to use for the attachment
           np->EncType = WhichEncodingForFile(np->Filename, np->ContentType, wmData->identity->smtpServer);
+
+          // for textual attachments we try to identify true UTF8 texts
+          // everything else will be declared as simple ASCII according to ISO-8859-1
+          if(strnicmp(np->ContentType, "text", 4) == 0 || strnicmp(np->ContentType, "message", 7) == 0)
+          {
+            char *buf;
+
+            if((buf = FileToBuffer(np->Filename, NULL)) != NULL)
+            {
+              if(IsUTF8String(buf) == TRUE)
+              {
+                D(DBF_MAIL, "contents of '%s' are UTF8 encoded", np->Filename);
+                np->Codeset = CodesetsFind((char *)"UTF8", TAG_DONE);
+              }
+              else
+              {
+                D(DBF_MAIL, "contents of '%s' seem to be plain ASCII", np->Filename);
+                np->Codeset = CodesetsFind((char *)"ISO-8859-1", TAG_DONE);
+              }
+
+              free(buf);
+            }
+          }
 
           p = np;
         }
       }
       else
       {
-        W(DBF_MAIL, "file from attachmentlist doesn't exist anymore: '%s'");
+        W(DBF_MAIL, "file from attachment list doesn't exist anymore: '%s'");
 
         ER_NewError(tr(MSG_ER_MISSINGATTFILE), att->FilePath);
       }
