@@ -16,9 +16,9 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2015-06-17 13:13+0000\n"
+"PO-Revision-Date: 2015-07-11 05:39+0000\n"
 "Last-Translator: Michael Malyshev\n"
-"Language-Team: Russian (http://www.transifex.com/projects/p/yam/language/ru/)\n"
+"Language-Team: Russian (http://www.transifex.com/p/yam/language/ru/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -538,7 +538,7 @@ msgstr "О_т|*Ответ-_На|_Отменить"
 
 msgctxt "MSG_MA_ConfirmReq (155//)"
 msgid "Confirmation Request"
-msgstr "Пожалуйста, подтвердите..."
+msgstr "Запрос подтверждения"
 
 #. COUNT, COUNT, COUNT, COUNT
 msgctxt "MSG_MA_FilterStats (160//)"
@@ -549,7 +549,7 @@ msgid ""
 "%3ld forwarded,\n"
 "%3ld moved,\n"
 "%3ld deleted"
-msgstr "Работа фильтра закончена:\n%3ld сообщений проверено,\n%3ld цитировано,\n%3ld заархивировано,\n%3ld удалено"
+msgstr "Работа фильтра закончена:\n\n%3ld сообщений проверено,\n%3ld цитировано,\n%3ld заархивировано,\n%3ld удалено"
 
 msgctxt "MSG_MA_ExportAppendReq (161//)"
 msgid ""
@@ -2021,7 +2021,7 @@ msgid ""
 "the viewer command. Click the popup\n"
 "button to see the list of supported\n"
 "variables."
-msgstr "Маршрут и необязательные аргументы\nдля просмотра. Используйте %s для\nвставки файла с данными."
+msgstr "Маршрут и необязательные аргументы\nдля просмотра. Нажмите кнопку для\nпросмотра списка поддерживаемых\nпеременных."
 
 msgctxt "MSG_HELP_CO_BT_MADD (617//)"
 msgid "Add a new MIME viewer."
@@ -2514,15 +2514,15 @@ msgstr "Запись"
 
 msgctxt "MSG_AB_AddUser (732//)"
 msgid "New person"
-msgstr "Новая персона..."
+msgstr "Новая персона"
 
 msgctxt "MSG_AB_AddGroup (733//)"
 msgid "New group"
-msgstr "Новая группа..."
+msgstr "Новая группа"
 
 msgctxt "MSG_AB_AddList (734//)"
 msgid "New distribution list"
-msgstr "Новый список рассылки..."
+msgstr "Новый список рассылки"
 
 msgctxt "MSG_AB_Duplicate (735//)"
 msgid "Duplicate"
@@ -2758,7 +2758,7 @@ msgstr "Фотография"
 
 msgctxt "MSG_EA_SelectPhoto (794//)"
 msgid "Se_lect..."
-msgstr "В_ыбрать"
+msgstr "В_ыбрать..."
 
 msgctxt "MSG_EA_ReturnAddress (796//)"
 msgid "_Return address"
@@ -2903,7 +2903,7 @@ msgstr "Отправитель сообщения требует подтвер�
 
 msgctxt "MSG_RE_SaveMessage (827//)"
 msgid "Save message"
-msgstr "Запись сообщения..."
+msgstr "Запись сообщения"
 
 msgctxt "MSG_RE_PrintMsg (829//)"
 msgid "Print message"
@@ -3299,11 +3299,11 @@ msgstr "Вы действительно хотите отбросить все �
 
 msgctxt "MSG_WR_SaveTextAs (919//)"
 msgid "Save text as"
-msgstr "Сохранить текст как..."
+msgstr "Сохранить текст как"
 
 msgctxt "MSG_WR_AddFile (920//)"
 msgid "Select files to attach"
-msgstr "Укажите прикрепляемые файлы..."
+msgstr "Укажите прикрепляемые файлы"
 
 msgctxt "MSG_WR_CreateArc (921//)"
 msgid "Create archive"
@@ -3315,7 +3315,7 @@ msgstr "Пожалуйста, введите имя\nнового архива"
 
 msgctxt "MSG_WR_InsertFile (923//)"
 msgid "Insert file"
-msgstr "Вставка файла..."
+msgstr "Вставка файла"
 
 msgctxt "MSG_WR_TitleFile (924//)"
 msgid "Filename"
@@ -3375,11 +3375,11 @@ msgstr "_Для"
 
 msgctxt "MSG_WR_Add (944//)"
 msgid "_Add file(s)..."
-msgstr "_Добавить файл(ы)"
+msgstr "_Добавить файл(ы)..."
 
 msgctxt "MSG_WR_AddPack (945//)"
 msgid "_Pack & add..."
-msgstr "Упа_ковать и добавить"
+msgstr "Упа_ковать и добавить..."
 
 msgctxt "MSG_WR_Display (946//)"
 msgid "D_isplay"
@@ -4477,7 +4477,7 @@ msgstr "*_Внутренние настройки|Как _текущие|_Кат
 
 msgctxt "MSG_FO_SelectDir (1239//)"
 msgid "Select directory"
-msgstr "Выбор каталога..."
+msgstr "Выбор каталога"
 
 msgctxt "MSG_FO_MessageDate (1240//)"
 msgid "Message date"
@@ -4717,7 +4717,7 @@ msgstr "Новая папка..."
 
 msgctxt "MSG_FOLDER_EDIT (1302//)"
 msgid "Edit..."
-msgstr "Изменить"
+msgstr "Изменить..."
 
 msgctxt "MSG_FOLDER_DELETE (1303//)"
 msgid "Delete"
@@ -4864,19 +4864,19 @@ msgstr "_Метка"
 
 msgctxt "MSG_CO_NEWMSGS (1372//)"
 msgid "%n  New messages"
-msgstr "%n Новых сообщений"
+msgstr "%n  Новых сообщений"
 
 msgctxt "MSG_CO_UNREADMSGS (1373//)"
 msgid "%u  Unread messages"
-msgstr "%u Непрочитанных сообщений"
+msgstr "%u  Непрочитанных сообщений"
 
 msgctxt "MSG_CO_TOTALMSGS (1374//)"
 msgid "%t  Total messages"
-msgstr "%t Всего сообщений"
+msgstr "%t  Всего сообщений"
 
 msgctxt "MSG_CO_SENTMSGS (1376//)"
 msgid "%s  Sent messages"
-msgstr "%s Отправленных сообщений"
+msgstr "%s  Отправленных сообщений"
 
 msgctxt "MSG_FO_DSTATS (1377//)"
 msgid "App_Icon stats"
@@ -4996,7 +4996,7 @@ msgstr "Исполнение команды..."
 
 msgctxt "MSG_APP_DESCRIPTION (1409//)"
 msgid "SMTP/POP3 E-Mail Client for AmigaOS"
-msgstr "Почтовый клиент с поддержкой протоколов SMTP/POP3 для AmigaOS "
+msgstr "Почтовый клиент с поддержкой протоколов SMTP/POP3 для AmigaOS"
 
 msgctxt "MSG_CO_INFOBARPOS (1410//)"
 msgid "Pos_ition"
@@ -5095,7 +5095,7 @@ msgstr "Отправляю запрос SMTP AUTH..."
 
 msgctxt "MSG_CO_IMPORTMIMETITLE (1442//)"
 msgid "Import MIME viewers & types"
-msgstr "Импорт типов MIME и просмотрщиков..."
+msgstr "Импорт типов MIME и просмотрщиков"
 
 #. MAILFILE, FOLDERNAME
 msgctxt "MSG_ER_TRANSFERMAIL (1443//)"
@@ -5111,7 +5111,7 @@ msgid ""
 "Couldn't load address book from file '%s'.\n"
 "\n"
 "Either the file doesn't exist or it couldn't be opened for some reason."
-msgstr "Невозможно загрузить адресную книгу из файла «%s».\n\nИли файл не существует, или по каким-то причинам он не может быть открыт. "
+msgstr "Невозможно загрузить адресную книгу из файла «%s».\n\nИли файл не существует, или по каким-то причинам он не может быть открыт."
 
 #. FILENAME
 msgctxt "MSG_AB_NOYAMADDRBOOK (1446//)"
@@ -5477,11 +5477,11 @@ msgstr "*_Изменить|_Всегда игнорировать|И_гнори�
 
 msgctxt "MSG_CO_SenderRFCDateTime (1543//)"
 msgid "%c  Original sender: RFC 2822 date & time"
-msgstr "%с Отправитель: дата и время по RFC 2822"
+msgstr "%c  Отправитель: дата и время по RFC 2822"
 
 msgctxt "MSG_CO_SenderTimeZone (1544//)"
 msgid "%z  Original sender: Time zone (+0000)"
-msgstr "%z Отправитель: Часовой пояс (+0000)"
+msgstr "%z  Отправитель: Часовой пояс (+0000)"
 
 msgctxt "MSG_CO_Filter_Name (1545//)"
 msgid "Name"
@@ -5635,7 +5635,7 @@ msgid ""
 "An error occurred while trying to import mail from file '%s'.\n"
 "\n"
 "Please check that the file is readable and contains RFC822 compliant e-mails using a format supported by YAM. The currently supported formats are 'MBOX', 'DBX' (Outlook Express) or plain RFC822 mail files. Read the documentation for more information."
-msgstr "Произошла ошибка при попытке импортировать сообщение из файла «%s».\n\nУбедитесь, что файл читаемый и содержит электронную почту, соответствующую RFC822, в формате, поддерживаемом YAM. В настоящее время поддерживаются форматы «MBOX», «DBX» (Outlook Express) и простые текстовые файлы по RFC822. Подробнее вы можете узнать об этом в документации. "
+msgstr "Произошла ошибка при попытке импортировать сообщение из файла «%s».\n\nУбедитесь, что файл читаемый и содержит электронную почту, соответствующую RFC822, в формате, поддерживаемом YAM. В настоящее время поддерживаются форматы «MBOX», «DBX» (Outlook Express) и простые текстовые файлы по RFC822. Подробнее вы можете узнать об этом в документации."
 
 msgctxt "MSG_MA_MESSAGEEXPORT (1608//)"
 msgid "Export messages"
@@ -6159,31 +6159,31 @@ msgstr "Запуск/Выход"
 
 msgctxt "MSG_CO_SCRIPTS_PREGET (1734//)"
 msgid "%p  Type of download action"
-msgstr "%p Тип действия скачивания"
+msgstr "%p  Тип действия скачивания"
 
 msgctxt "MSG_CO_SCRIPTS_POSTGET (1735//)"
 msgid "%p  Number of messages received"
-msgstr "%p Количество принятых сообщений"
+msgstr "%p  Количество принятых сообщений"
 
 msgctxt "MSG_CO_SCRIPTS_NEWMSG (1736//)"
 msgid "%p  Name of new message file"
-msgstr "%p Имя нового файла сообщения"
+msgstr "%p  Имя нового файла сообщения"
 
 msgctxt "MSG_CO_SCRIPTS_READ (1737//)"
 msgid "%p  Number of read window"
-msgstr "%p Номер окна чтения"
+msgstr "%p  Номер окна чтения"
 
 msgctxt "MSG_CO_SCRIPTS_WRITE (1738//)"
 msgid "%p  Number of write window"
-msgstr "%p Номер окна написания"
+msgstr "%p  Номер окна написания"
 
 msgctxt "MSG_CO_SCRIPTS_URL (1739//)"
 msgid "%p  Full URL path"
-msgstr "%p Полный путь URL"
+msgstr "%p  Полный путь URL"
 
 msgctxt "MSG_CO_MIMECMD_PARAMETER (1740//)"
 msgid "%s  Full path of file"
-msgstr "%p Полный путь к файлу"
+msgstr "%s  Полный путь к файлу"
 
 #. AMOUNT
 msgctxt "MSG_MA_CONFIRMDELETION (1742//)"
@@ -7436,7 +7436,7 @@ msgid ""
 "The currently activated theme '%s' is either inaccesible or it is corrupt. The default theme was therefore activated as a fallback.\n"
 "\n"
 "Please make sure your selected theme is readable and a valid YAM theme."
-msgstr "В настоящее время активирована тема '% s' которая недоступна или повреждена. Поэтому активирована тема по умолчанию в качестве запасного варианта.\n\nПожалуйста, убедитесь, что Вами выбранная тема доступна для чтения и является подходящей темой для YAM."
+msgstr "В настоящее время активирована тема '%s' которая недоступна или повреждена. Поэтому активирована тема по умолчанию в качестве запасного варианта.\n\nПожалуйста, убедитесь, что Вами выбранная тема доступна для чтения и является подходящей темой для YAM."
 
 msgctxt "MSG_ER_THEME_ACTIVATED_TITLE (2045//)"
 msgid "YAM restart required"
@@ -7775,7 +7775,7 @@ msgctxt "MSG_ER_NOSTARTTLS_SMTP (2102//)"
 msgid ""
 "Your SMTP server '%s' doesn't support TLS/SSL. Please disable this option in"
 " the configuration."
-msgstr "Ваш SMTP сервер не поддерживает TLS/SSL. Отключите эту опцию в настройках."
+msgstr "Ваш SMTP сервер '%s' не поддерживает TLS/SSL. Отключите эту опцию в настройках."
 
 #. SERVER, COMMAND, TEXT
 msgctxt "MSG_ER_BADRESPONSE_SMTP (2103//)"
@@ -8215,7 +8215,7 @@ msgctxt "MSG_POP3_NEW_MAIL_NOTIFY_OS4_MANY (2191//)"
 msgid ""
 "%s\n"
 "Received %ld new mails."
-msgstr "%s\nПринято %s новых сообщений."
+msgstr "%s\nПринято %ld новых сообщений."
 
 msgctxt "MSG_MA_SEND_AND_GET_MAIL (2192//)"
 msgid "Send and get mail"
@@ -8840,7 +8840,7 @@ msgctxt "MSG_HELP_CO_CH_IDENTITY_USEPGP (2332//)"
 msgid ""
 "Allows to enable/disable the PGP functionality\n"
 "for this whole user identity."
-msgstr "Можно включить или выключить использование\nPGP для этого идентификатора пользователя. "
+msgstr "Можно включить или выключить использование\nPGP для этого идентификатора пользователя."
 
 msgctxt "MSG_HELP_CO_ST_IDENTITY_PGPID (2333//)"
 msgid ""
@@ -9215,7 +9215,7 @@ msgctxt "MSG_HELP_CO_CH_AREDIRECT (2408//)"
 msgid ""
 "Redirect matching messages\n"
 "to another person."
-msgstr "Перенаправить найденные сообщения\nдругому адресату. "
+msgstr "Перенаправить найденные сообщения\nдругому адресату."
 
 msgctxt "MSG_HELP_CO_ST_AREDIRECT (2409//)"
 msgid ""
@@ -9670,7 +9670,7 @@ msgctxt "MSG_HELP_CO_PO_SMTP_SENTFOLDER (2510//)"
 msgid ""
 "Allows to set a different folder where mails\n"
 "will be stored after being sent out."
-msgstr "Позволяет установить папку, куда будут\nпомещаться сообщения после оправки. "
+msgstr "Позволяет установить папку, куда будут\nпомещаться сообщения после оправки."
 
 msgctxt "MSG_CO_IDENTITY_SAVESENTMAIL (2511//)"
 msgid "After transfer store mails in 'Sent' folder"
