@@ -1640,7 +1640,7 @@ DECLARE(ShowSSLCertWarnings) // Object *vroot, Object *group, struct MailServerN
           DoMethod(msg->group, OM_ADDMEMBER, TextObject, MUIA_Text_Copy, FALSE, MUIA_Text_Contents, tr(MSG_SSL_CERT_WARNING_OTHER), End);
 
         clear = MakeButton(tr(MSG_CO_CLEAR_SERVER_CERT_WARNINGS));
-        DoMethod(clear, MUIM_Notify, MUIA_Pressed, FALSE, obj, 3, METHOD(ClearSSLCertWarnings), msg->group, msg->msn);
+        DoMethod(clear, MUIM_Notify, MUIA_Pressed, FALSE, obj, 4, METHOD(ClearSSLCertWarnings), msg->vroot, msg->group, msg->msn);
 
         DoMethod(msg->group, OM_ADDMEMBER, HGroup,
           Child, HSpace(0),

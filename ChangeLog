@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2015-08-20 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/TCPIPConfigPage.c: added a missing parameter for a method invocation
+    when clearing the SSL certificate warnings. This closes #605.
+
 2015-05-19 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_UT.c, WriteWindow.c: implemented a function to check whether a string is
