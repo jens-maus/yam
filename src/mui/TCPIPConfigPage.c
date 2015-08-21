@@ -1670,7 +1670,11 @@ DECLARE(ClearSSLCertWarnings) // Object *vroot, Object *group, struct MailServer
 
   // reset all errors and remove the previous list of errors
   msg->msn->certFailures = SSL_CERT_ERR_NONE;
-  DoMethod(obj, METHOD(ShowSSLCertWarnings), msg->vroot, msg->group, msg->msn);
+  // we must push the method instead of calling it directly, because this method
+  // is called from within an OM_SET method (MUIA_Pressed=FALSE) and the update
+  // will dispose the button object. This must crash, because the OM_SET method
+  // will continue after the MUI_DisposeObject() call.
+  DoMethod(_app(obj), MUIM_Application_PushMethod, obj, 4, METHOD(ShowSSLCertWarnings), msg->vroot, msg->group, msg->msn);
 
   RETURN(0);
   return 0;

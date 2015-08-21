@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2015-08-21 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/TCPIPConfigPage.c: the update of the ignored warnings after clearing
+    them will no longer invoke the update method synchronously, but
+    asynchronouly instead. This is necessary, because the "clear" method is
+    invoked from within an OM_SET method and that method will be continued to
+    be executed after the object has been disposed and hence cause a crash.
+    This closes #606.
+
 2015-08-20 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/TCPIPConfigPage.c: added a missing parameter for a method invocation
