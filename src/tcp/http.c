@@ -216,6 +216,8 @@ redirected:
       // of the URI
       if(strnicmp(server, "http://", 7) == 0)
         strlcpy(tc->url, &server[7], sizeof(tc->url));
+      else if(strnicmp(server, "https://", 8) == 0)
+        strlcpy(tc->url, &server[8], sizeof(tc->url));
       else
         strlcpy(tc->url, server, sizeof(tc->url));
 

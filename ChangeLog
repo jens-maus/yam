@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2015-09-09 Thore Böckelmann <tboeckel@gmx.de>
+
+  * tcp/http.c: handle "https://" URLs as well. This partly fixes the download
+    problems on github.com. Unfortunately the redirection scheme used by github
+    still cannot be resolved correctly, hence the download still fails.
+
 2015-08-21 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/TCPIPConfigPage.c: the update of the ignored warnings after clearing
