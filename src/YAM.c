@@ -1809,7 +1809,7 @@ static void InitBeforeLogin(BOOL hidden)
   // try to open the mandatory codesets.library before we open the catalog
   // since on OS3/MOS/AROS we use it to convert the catalogs from UTF8 to the
   // local charset.
-  INITLIB("codesets.library", 6, 18, &CodesetsBase,  "main", 1, &ICodesets,  TRUE, "https://github.com/jens-maus/libopenurl/");
+  INITLIB("codesets.library", 6, 18, &CodesetsBase,  "main", 1, &ICodesets,  TRUE, "https://github.com/jens-maus/libcodesets");
 
   // Now load the catalog of YAM
   if(OpenYAMCatalog() == FALSE)
@@ -1875,17 +1875,17 @@ static void InitBeforeLogin(BOOL hidden)
   //       this causes the MUI version of MorphOS to be borked, thus this workaround!
   //
   //       customclass      minv minr maxv maxr  mand  url
-  CheckMCC(MUIC_TheBar,       26,  15,   0,   0, TRUE, "https://github.com/amiga-mui/thebar/");
-  CheckMCC(MUIC_TheBarVirt,   26,  15,   0,   0, TRUE, "https://github.com/amiga-mui/thebar/");
-  CheckMCC(MUIC_TheButton,    26,  15,   0,   0, TRUE, "https://github.com/amiga-mui/thebar/");
-  CheckMCC(MUIC_BetterString, 11,  28,  30,   0, TRUE, "https://github.com/amiga-mui/betterstring/");
-  CheckMCC(MUIC_NList,        20, 138,   0,   0, TRUE, "https://github.com/amiga-mui/nlist/");
-  CheckMCC(MUIC_NListview,    19,  93,   0,   0, TRUE, "https://github.com/amiga-mui/nlist/");
-  CheckMCC(MUIC_NFloattext,   19,  74,   0,   0, TRUE, "https://github.com/amiga-mui/nlist/");
-  CheckMCC(MUIC_NListtree,    18,  45,   0,   0, TRUE, "https://github.com/amiga-mui/nlist/");
-  CheckMCC(MUIC_NBalance,     15,  19,   0,   0, TRUE, "https://github.com/amiga-mui/nlist/");
-  CheckMCC(MUIC_NBitmap,      15,  23,   0,   0, TRUE, "https://github.com/amiga-mui/nlist/");
-  CheckMCC(MUIC_TextEditor,   15,  45,   0,   0, TRUE, "https://github.com/amiga-mui/texteditor/");
+  CheckMCC(MUIC_TheBar,       26,  15,   0,   0, TRUE, "https://github.com/amiga-mui/thebar");
+  CheckMCC(MUIC_TheBarVirt,   26,  15,   0,   0, TRUE, "https://github.com/amiga-mui/thebar");
+  CheckMCC(MUIC_TheButton,    26,  15,   0,   0, TRUE, "https://github.com/amiga-mui/thebar");
+  CheckMCC(MUIC_BetterString, 11,  28,  30,   0, TRUE, "https://github.com/amiga-mui/betterstring");
+  CheckMCC(MUIC_NList,        20, 138,   0,   0, TRUE, "https://github.com/amiga-mui/nlist");
+  CheckMCC(MUIC_NListview,    19,  93,   0,   0, TRUE, "https://github.com/amiga-mui/nlist");
+  CheckMCC(MUIC_NFloattext,   19,  74,   0,   0, TRUE, "https://github.com/amiga-mui/nlist");
+  CheckMCC(MUIC_NListtree,    18,  45,   0,   0, TRUE, "https://github.com/amiga-mui/nlist");
+  CheckMCC(MUIC_NBalance,     15,  19,   0,   0, TRUE, "https://github.com/amiga-mui/nlist");
+  CheckMCC(MUIC_NBitmap,      15,  23,   0,   0, TRUE, "https://github.com/amiga-mui/nlist");
+  CheckMCC(MUIC_TextEditor,   15,  45,   0,   0, TRUE, "https://github.com/amiga-mui/texteditor");
 
   // now we search through PROGDIR:Charsets and load all user defined
   // codesets via codesets.library
