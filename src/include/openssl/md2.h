@@ -1,3 +1,6 @@
+#ifndef PROTO_AMISSL_H
+#include <proto/amissl.h>
+#endif /* PROTO_AMISSL_H */
 /* crypto/md/md2.h */
 /* Copyright (C) 1995-1997 Eric Young (eay@cryptsoft.com)
  * All rights reserved.
@@ -56,41 +59,38 @@
  * [including the GNU Public Licence.]
  */
 
-#ifndef PROTO_AMISSL_H
-#include <proto/amissl.h>
-#endif /* PROTO_AMISSL_H */
-
 #ifndef HEADER_MD2_H
 #define HEADER_MD2_H
 
+#include <openssl/opensslconf.h> /* OPENSSL_NO_MD2, MD2_INT */
 #ifdef OPENSSL_NO_MD2
 #error MD2 is disabled.
 #endif
+#include <stddef.h>
 
-#define MD2_DIGEST_LENGTH  16
-#define MD2_BLOCK         16
-#include <openssl/opensslconf.h> /* MD2_INT */
+#define MD2_DIGEST_LENGTH	16
+#define MD2_BLOCK       	16
 
 #ifdef  __cplusplus
 extern "C" {
 #endif
 
 typedef struct MD2state_st
-  {
-  int num;
-  unsigned char data[MD2_BLOCK];
-  MD2_INT cksm[MD2_BLOCK];
-  MD2_INT state[MD2_BLOCK];
-  } MD2_CTX;
+	{
+	unsigned int num;
+	unsigned char data[MD2_BLOCK];
+	MD2_INT cksm[MD2_BLOCK];
+	MD2_INT state[MD2_BLOCK];
+	} MD2_CTX;
 
 const char *MD2_options(void);
 #ifdef OPENSSL_FIPS
 int private_MD2_Init(MD2_CTX *c);
 #endif
 int MD2_Init(MD2_CTX *c);
-int MD2_Update(MD2_CTX *c, const unsigned char *data, unsigned long len);
+int MD2_Update(MD2_CTX *c, const unsigned char *data, size_t len);
 int MD2_Final(unsigned char *md, MD2_CTX *c);
-unsigned char *MD2(const unsigned char *d, unsigned long n,unsigned char *md);
+unsigned char *MD2(const unsigned char *d, size_t n,unsigned char *md);
 #ifdef  __cplusplus
 }
 #endif

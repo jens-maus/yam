@@ -1,52 +1,34 @@
+/* Automatically generated header (sfdc 1.5)! Do not edit! */
+
 #ifndef PROTO_AMISSLMASTER_H
 #define PROTO_AMISSLMASTER_H
 
-#ifndef EXEC_TYPES_H
-#include <exec/types.h>
-#endif
+#include <clib/amisslmaster_protos.h>
 
-/****************************************************************************/
-
-#ifndef __NOLIBBASE__
-extern struct Library *AmiSSLMasterBase;
-#endif /* __NOLIBBASE__ */
-
-/****************************************************************************/
+#ifndef _NO_INLINE
+# if defined(__GNUC__)
+#  ifdef __AROS__
+#   include <defines/amisslmaster.h>
+#  else
+#   include <inline/amisslmaster.h>
+#  endif
+# else
+#  include <pragmas/amisslmaster_pragmas.h>
+# endif
+#endif /* _NO_INLINE */
 
 #ifdef __amigaos4__
- #include <interfaces/amisslmaster.h>
- #ifdef __USE_INLINE__
-  #include <inline4/amisslmaster.h>
- #endif /* __USE_INLINE__ */
- #ifndef CLIB_AMISSLMASTER_PROTOS_H
-  #define CLIB_AMISSLMASTER_PROTOS_H 1
- #endif /* CLIB_AMISSLMASTER_PROTOS_H */
- #ifndef __NOGLOBALIFACE__
-  extern struct AmiSSLMasterIFace *IAmiSSLMaster;
- #endif /* __NOGLOBALIFACE__ */
-#else /* __amigaos4__ */
- #ifndef CLIB_AMISSLMASTER_PROTOS_H
-  #include <clib/amisslmaster_protos.h>
- #endif /* CLIB_AMISSLMASTER_PROTOS_H */
- #if defined(__GNUC__)
-  #ifdef __AROS__
-   #include <defines/amisslmaster.h>
-  #else
-   #ifndef __PPC__
-    #include <inline/amisslmaster.h>
-   #else
-    #include <ppcinline/amisslmaster.h>
-   #endif /* __PPC__ */
-  #endif /* __AROS__ */
- #elif defined(__VBCC__)
-  #ifndef __PPC__
-   #include <inline/amisslmaster_protos.h>
-  #endif /* __PPC__ */
- #else
-  #include <pragmas/amisslmaster_pragmas.h>
- #endif /* __GNUC__ */
-#endif /* __amigaos4__ */
+# include <interfaces/amisslmaster.h>
+# ifndef __NOGLOBALIFACE__
+   extern struct AmiSSLMasterIFace *IAmiSSLMaster;
+# endif /* __NOGLOBALIFACE__*/
+#endif /* !__amigaos4__ */
+#ifndef __NOLIBBASE__
+  extern struct Library *
+# ifdef __CONSTLIBBASEDECL__
+   __CONSTLIBBASEDECL__
+# endif /* __CONSTLIBBASEDECL__ */
+  AmiSSLMasterBase;
+#endif /* !__NOLIBBASE__ */
 
-/****************************************************************************/
-
-#endif /* PROTO_AMISSLMASTER_H */
+#endif /* !PROTO_AMISSLMASTER_H */

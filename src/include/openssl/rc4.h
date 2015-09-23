@@ -1,3 +1,6 @@
+#ifndef PROTO_AMISSL_H
+#include <proto/amissl.h>
+#endif /* PROTO_AMISSL_H */
 /* crypto/rc4/rc4.h */
 /* Copyright (C) 1995-1997 Eric Young (eay@cryptsoft.com)
  * All rights reserved.
@@ -56,41 +59,32 @@
  * [including the GNU Public Licence.]
  */
 
-#ifndef PROTO_AMISSL_H
-#include <proto/amissl.h>
-#endif /* PROTO_AMISSL_H */
-
 #ifndef HEADER_RC4_H
 #define HEADER_RC4_H
 
+#include <openssl/opensslconf.h> /* OPENSSL_NO_RC4, RC4_INT */
 #ifdef OPENSSL_NO_RC4
 #error RC4 is disabled.
 #endif
 
-#include <openssl/opensslconf.h> /* RC4_INT */
+#include <stddef.h>
 
 #ifdef  __cplusplus
 extern "C" {
 #endif
 
 typedef struct rc4_key_st
-  {
-  RC4_INT x,y;
-  RC4_INT data[256];
-#if defined(__ia64) || defined(__ia64__) || defined(_M_IA64)
-  /* see crypto/rc4/asm/rc4-ia64.S for further details... */
-  RC4_INT pad[512-256-2];
-#endif
-  } RC4_KEY;
+	{
+	RC4_INT x,y;
+	RC4_INT data[256];
+	} RC4_KEY;
 
  
 const char *RC4_options(void);
-#ifdef OPENSSL_FIPS
-void private_RC4_set_key(RC4_KEY *key, int len, const unsigned char *data);
-#endif
 void RC4_set_key(RC4_KEY *key, int len, const unsigned char *data);
-void RC4(RC4_KEY *key, unsigned long len, const unsigned char *indata,
-    unsigned char *outdata);
+void private_RC4_set_key(RC4_KEY *key, int len, const unsigned char *data);
+void RC4(RC4_KEY *key, size_t len, const unsigned char *indata,
+		unsigned char *outdata);
 
 #ifdef  __cplusplus
 }

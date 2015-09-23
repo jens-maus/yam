@@ -1,3 +1,6 @@
+#ifndef PROTO_AMISSL_H
+#include <proto/amissl.h>
+#endif /* PROTO_AMISSL_H */
 /* crypto/ui/ui.h -*- mode:C; c-file-style: "eay" -*- */
 /* Written by Richard Levitte (richard@levitte.org) for the OpenSSL
  * project 2001.
@@ -56,10 +59,6 @@
  *
  */
 
-#ifndef PROTO_AMISSL_H
-#include <proto/amissl.h>
-#endif /* PROTO_AMISSL_H */
-
 #ifndef HEADER_UI_COMPAT_H
 #define HEADER_UI_COMPAT_H
 
@@ -74,9 +73,9 @@ extern "C" {
    and are provided here for backward compatibility reasons. */
 
 #define des_read_pw_string(b,l,p,v) \
-  _ossl_old_des_read_pw_string((b),(l),(p),(v))
+	_ossl_old_des_read_pw_string((b),(l),(p),(v))
 #define des_read_pw(b,bf,s,p,v) \
-  _ossl_old_des_read_pw((b),(bf),(s),(p),(v))
+	_ossl_old_des_read_pw((b),(bf),(s),(p),(v))
 
 int _ossl_old_des_read_pw_string(char *buf,int length,const char *prompt,int verify);
 int _ossl_old_des_read_pw(char *buf,char *buff,int size,const char *prompt,int verify);

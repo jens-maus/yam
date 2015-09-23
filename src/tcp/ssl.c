@@ -954,7 +954,7 @@ BOOL MakeSecureConnection(struct Connection *conn)
                   #if defined(DEBUG)
                   {
                     char *x509buf;
-                    SSL_CIPHER *cipher;
+                    const SSL_CIPHER *cipher;
                     X509 *server_cert;
                     char peer_CN[256] = "";
 

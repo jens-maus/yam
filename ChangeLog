@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2015-09-23 Jens Maus <mail@jens-maus.de>
+
+  * tcp/ssl.c: minor update to comply with slightly updated AmiSSL API.
+  * include: updated all AmiSSL relevant include files to their very latest
+    development version of the AmiSSL project. This is one of the first steps
+    in getting YAM compatible to the upcoming AmiSSL v4 version with an
+    updated OpenSSL kernel.
+
 2015-09-09 Thore Böckelmann <tboeckel@gmx.de>
 
   * tcp/http.c: handle "https://" URLs as well. This partly fixes the download

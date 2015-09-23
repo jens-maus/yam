@@ -1,3 +1,6 @@
+#ifndef PROTO_AMISSL_H
+#include <proto/amissl.h>
+#endif /* PROTO_AMISSL_H */
 /* conf_api.h */
 /* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
  * All rights reserved.
@@ -56,10 +59,6 @@
  * [including the GNU Public Licence.]
  */
 
-#ifndef PROTO_AMISSL_H
-#include <proto/amissl.h>
-#endif /* PROTO_AMISSL_H */
-
 #ifndef  HEADER_CONF_API_H
 #define HEADER_CONF_API_H
 
@@ -76,11 +75,11 @@ CONF_VALUE *_CONF_new_section(CONF *conf, const char *section);
 CONF_VALUE *_CONF_get_section(const CONF *conf, const char *section);
 /* Up until OpenSSL 0.9.5a, this was CONF_get_section */
 STACK_OF(CONF_VALUE) *_CONF_get_section_values(const CONF *conf,
-                 const char *section);
+					       const char *section);
 
 int _CONF_add_string(CONF *conf, CONF_VALUE *section, CONF_VALUE *value);
 char *_CONF_get_string(const CONF *conf, const char *section,
-           const char *name);
+		       const char *name);
 long _CONF_get_number(const CONF *conf, const char *section, const char *name);
 
 int _CONF_new_data(CONF *conf);

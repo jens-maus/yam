@@ -1,3 +1,6 @@
+#ifndef PROTO_AMISSL_H
+#include <proto/amissl.h>
+#endif /* PROTO_AMISSL_H */
 /* crypto/mdc2/mdc2.h */
 /* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
  * All rights reserved.
@@ -56,10 +59,6 @@
  * [including the GNU Public Licence.]
  */
 
-#ifndef PROTO_AMISSL_H
-#include <proto/amissl.h>
-#endif /* PROTO_AMISSL_H */
-
 #ifndef HEADER_MDC2_H
 #define HEADER_MDC2_H
 
@@ -77,21 +76,22 @@ extern "C" {
 #define MDC2_DIGEST_LENGTH      16
  
 typedef struct mdc2_ctx_st
-  {
-  int num;
-  unsigned char data[MDC2_BLOCK];
-  DES_cblock h,hh;
-  int pad_type; /* either 1 or 2, default 1 */
-  } MDC2_CTX;
+	{
+	unsigned int num;
+	unsigned char data[MDC2_BLOCK];
+	DES_cblock h,hh;
+	int pad_type; /* either 1 or 2, default 1 */
+	} MDC2_CTX;
+
 
 #ifdef OPENSSL_FIPS
 int private_MDC2_Init(MDC2_CTX *c);
 #endif
 int MDC2_Init(MDC2_CTX *c);
-int MDC2_Update(MDC2_CTX *c, const unsigned char *data, unsigned long len);
+int MDC2_Update(MDC2_CTX *c, const unsigned char *data, size_t len);
 int MDC2_Final(unsigned char *md, MDC2_CTX *c);
-unsigned char *MDC2(const unsigned char *d, unsigned long n,
-  unsigned char *md);
+unsigned char *MDC2(const unsigned char *d, size_t n,
+	unsigned char *md);
 
 #ifdef  __cplusplus
 }

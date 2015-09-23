@@ -1,3 +1,6 @@
+#ifndef PROTO_AMISSL_H
+#include <proto/amissl.h>
+#endif /* PROTO_AMISSL_H */
 /* e_os2.h */
 /* ====================================================================
  * Copyright (c) 1998-2000 The OpenSSL Project.  All rights reserved.
@@ -55,10 +58,6 @@
 
 #include <openssl/opensslconf.h>
 
-#ifndef PROTO_AMISSL_H
-#include <proto/amissl.h>
-#endif /* PROTO_AMISSL_H */
-
 #ifndef HEADER_E_OS2_H
 #define HEADER_E_OS2_H
 
@@ -80,16 +79,19 @@ extern "C" {
 # define OPENSSL_SYS_MACINTOSH_CLASSIC
 #endif
 
+/* ----------------------- NetWare ----------------------------------------- */
+#if defined(NETWARE) || defined(OPENSSL_SYSNAME_NETWARE)
+# undef OPENSSL_SYS_UNIX
+# define OPENSSL_SYS_NETWARE
+#endif
+
 /* ---------------------- Microsoft operating systems ---------------------- */
 
-/* The 16 bit environments are pretty straightforward */
-#if defined(OPENSSL_SYSNAME_WIN16) || defined(OPENSSL_SYSNAME_MSDOS)
+/* Note that MSDOS actually denotes 32-bit environments running on top of
+   MS-DOS, such as DJGPP one. */
+#if defined(OPENSSL_SYSNAME_MSDOS)
 # undef OPENSSL_SYS_UNIX
 # define OPENSSL_SYS_MSDOS
-#endif
-#if defined(OPENSSL_SYSNAME_WIN16)
-# undef OPENSSL_SYS_UNIX
-# define OPENSSL_SYS_WIN16
 #endif
 
 /* For 32 bit environment, there seems to be the CygWin environment and then
@@ -118,7 +120,7 @@ extern "C" {
 #endif
 
 /* Anything that tries to look like Microsoft is "Windows" */
-#if defined(OPENSSL_SYS_WIN16) || defined(OPENSSL_SYS_WIN32) || defined(OPENSSL_SYS_WINNT) || defined(OPENSSL_SYS_WINCE)
+#if defined(OPENSSL_SYS_WIN32) || defined(OPENSSL_SYS_WINNT) || defined(OPENSSL_SYS_WINCE)
 # undef OPENSSL_SYS_UNIX
 # define OPENSSL_SYS_WINDOWS
 # ifndef OPENSSL_SYS_MSDOS
@@ -194,13 +196,37 @@ extern "C" {
 #endif
 
 /* --------------------------------- VOS ----------------------------------- */
-#ifdef OPENSSL_SYSNAME_VOS
+#if defined(__VOS__) || defined(OPENSSL_SYSNAME_VOS)
 # define OPENSSL_SYS_VOS
+#ifdef __HPPA__
+# define OPENSSL_SYS_VOS_HPPA
+#endif
+#ifdef __IA32__
+# define OPENSSL_SYS_VOS_IA32
+#endif
 #endif
 
 /* ------------------------------- VxWorks --------------------------------- */
 #ifdef OPENSSL_SYSNAME_VXWORKS
 # define OPENSSL_SYS_VXWORKS
+#endif
+
+/* --------------------------------- BeOS ---------------------------------- */
+#if defined(__BEOS__)
+# define OPENSSL_SYS_BEOS
+# include <sys/socket.h>
+# if defined(BONE_VERSION)
+#  define OPENSSL_SYS_BEOS_BONE
+# else
+#  define OPENSSL_SYS_BEOS_R5
+# endif
+#endif
+
+/* --------------------------------- Amiga --------------------------------- */
+#if defined(OPENSSL_SYSNAME_AMIGA)
+# ifndef OPENSSL_SYS_AMIGA
+#  define OPENSSL_SYS_AMIGA
+# endif
 #endif
 
 /**
@@ -241,10 +267,10 @@ extern "C" {
 # define OPENSSL_IMPORT globalref
 # define OPENSSL_GLOBAL globaldef
 #elif defined(OPENSSL_SYS_WINDOWS) && defined(OPENSSL_OPT_WINDLL)
-# define OPENSSL_EXPORT extern _declspec(dllexport)
-# define OPENSSL_IMPORT extern _declspec(dllimport)
+# define OPENSSL_EXPORT extern __declspec(dllexport)
+# define OPENSSL_IMPORT extern __declspec(dllimport)
 # define OPENSSL_GLOBAL
-#elif defined(AMISSL)
+#elif defined(OPENSSL_SYS_AMIGA)
 # define OPENSSL_EXPORT extern
 # define OPENSSL_IMPORT extern
 # ifdef AMISSL_COMPILE
@@ -260,31 +286,52 @@ extern "C" {
 #endif
 #define OPENSSL_EXTERN OPENSSL_IMPORT
 
-#ifndef AMISSL
+#ifndef OPENSSL_SYS_AMIGA
+#ifndef AMISSL_COMMON_DATA
 # define AMISSL_COMMON_DATA
-#endif /* !AMISSL */
+#endif /* !AMISSL_COMMON_DATA */
+#endif /* !OPENSSL_SYS_AMIGA */
 
 /* Macros to allow global variables to be reached through function calls when
    required (if a shared library version requires it, for example.
    The way it's done allows definitions like this:
 
-  // in foobar.c
-  OPENSSL_IMPLEMENT_GLOBAL(int,foobar) = 0;
-  // in foobar.h
-  OPENSSL_DECLARE_GLOBAL(int,foobar);
-  #define foobar OPENSSL_GLOBAL_REF(foobar)
+	// in foobar.c
+	OPENSSL_IMPLEMENT_GLOBAL(int,foobar,0)
+	// in foobar.h
+	OPENSSL_DECLARE_GLOBAL(int,foobar);
+	#define foobar OPENSSL_GLOBAL_REF(foobar)
 */
 #ifdef OPENSSL_EXPORT_VAR_AS_FUNCTION
-# define OPENSSL_IMPLEMENT_GLOBAL(type,name)           \
-  extern type _hide_##name;             \
-  type *_shadow_##name(void) { return &_hide_##name; }       \
-  type _hide_##name
+# define OPENSSL_IMPLEMENT_GLOBAL(type,name,value)			\
+	type *_shadow_##name(void)					\
+	{ static type _hide_##name=value; return &_hide_##name; }
 # define OPENSSL_DECLARE_GLOBAL(type,name) type *_shadow_##name(void)
 # define OPENSSL_GLOBAL_REF(name) (*(_shadow_##name()))
 #else
-# define OPENSSL_IMPLEMENT_GLOBAL(type,name) OPENSSL_GLOBAL type _shadow_##name
+# define OPENSSL_IMPLEMENT_GLOBAL(type,name,value) OPENSSL_GLOBAL type _shadow_##name=value;
 # define OPENSSL_DECLARE_GLOBAL(type,name) OPENSSL_EXPORT type _shadow_##name
 # define OPENSSL_GLOBAL_REF(name) _shadow_##name
+#endif
+
+#if defined(OPENSSL_SYS_MACINTOSH_CLASSIC) && macintosh==1 && !defined(MAC_OS_GUSI_SOURCE)
+#  define ossl_ssize_t long
+#endif
+
+#ifdef OPENSSL_SYS_MSDOS
+#  define ossl_ssize_t long
+#endif
+
+#if defined(NeXT) || defined(OPENSSL_SYS_NEWS4) || defined(OPENSSL_SYS_SUNOS)
+#  define ssize_t int
+#endif
+
+#if defined(__ultrix) && !defined(ssize_t)
+#  define ossl_ssize_t int 
+#endif
+
+#ifndef ossl_ssize_t
+#  define ossl_ssize_t ssize_t
 #endif
 
 #ifdef  __cplusplus

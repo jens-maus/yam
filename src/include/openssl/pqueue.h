@@ -1,8 +1,13 @@
 #ifndef PROTO_AMISSL_H
 #include <proto/amissl.h>
 #endif /* PROTO_AMISSL_H */
+/* crypto/pqueue/pqueue.h */
+/* 
+ * DTLS implementation written by Nagendra Modadugu
+ * (nagendra@cs.stanford.edu) for the OpenSSL project 2005.  
+ */
 /* ====================================================================
- * Copyright (c) 1999 The OpenSSL Project.  All rights reserved.
+ * Copyright (c) 1999-2005 The OpenSSL Project.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,7 +29,7 @@
  * 4. The names "OpenSSL Toolkit" and "OpenSSL Project" must not be used to
  *    endorse or promote products derived from this software without
  *    prior written permission. For written permission, please contact
- *    licensing@OpenSSL.org.
+ *    openssl-core@OpenSSL.org.
  *
  * 5. Products derived from this software may not be called "OpenSSL"
  *    nor may "OpenSSL" appear in their names without prior written
@@ -55,19 +60,38 @@
  *
  */
 
-/*
- * This header only exists to break a circular dependency between pem and err
- * Ben 30 Jan 1999.
- */
+#ifndef HEADER_PQUEUE_H
+#define HEADER_PQUEUE_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-#ifndef HEADER_PEM_H
-void ERR_load_PEM_strings(void);
-#endif
+typedef struct _pqueue *pqueue;
 
-#ifdef __cplusplus
-}
-#endif
+typedef struct _pitem
+	{
+	unsigned char priority[8]; /* 64-bit value in big-endian encoding */
+	void *data;
+	struct _pitem *next;
+	} pitem;
+
+typedef struct _pitem *piterator;
+
+pitem *pitem_new(unsigned char *prio64be, void *data);
+void   pitem_free(pitem *item);
+
+pqueue pqueue_new(void);
+void   pqueue_free(pqueue pq);
+
+pitem *pqueue_insert(pqueue pq, pitem *item);
+pitem *pqueue_peek(pqueue pq);
+pitem *pqueue_pop(pqueue pq);
+pitem *pqueue_find(pqueue pq, unsigned char *prio64be);
+pitem *pqueue_iterator(pqueue pq);
+pitem *pqueue_next(piterator *iter);
+
+void   pqueue_print(pqueue pq);
+int    pqueue_size(pqueue pq);
+
+#endif /* ! HEADER_PQUEUE_H */

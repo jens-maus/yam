@@ -1,3 +1,6 @@
+#ifndef PROTO_AMISSL_H
+#include <proto/amissl.h>
+#endif /* PROTO_AMISSL_H */
 /* crypto/buffer/buffer.h */
 /* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
  * All rights reserved.
@@ -56,32 +59,39 @@
  * [including the GNU Public Licence.]
  */
 
-#ifndef PROTO_AMISSL_H
-#include <proto/amissl.h>
-#endif /* PROTO_AMISSL_H */
-
 #ifndef HEADER_BUFFER_H
 #define HEADER_BUFFER_H
+
+#include <openssl/ossl_typ.h>
 
 #ifdef  __cplusplus
 extern "C" {
 #endif
 
 #include <stddef.h>
-#include <sys/types.h>
 
-typedef struct buf_mem_st
-  {
-  int length;  /* current number of bytes */
-  char *data;
-  int max;  /* size of buffer */
-  } BUF_MEM;
+#if !defined(NO_SYS_TYPES_H)
+#include <sys/types.h>
+#endif
+
+/* Already declared in ossl_typ.h */
+/* typedef struct buf_mem_st BUF_MEM; */
+
+struct buf_mem_st
+	{
+	size_t length;	/* current number of bytes */
+	char *data;
+	size_t max;	/* size of buffer */
+	};
 
 BUF_MEM *BUF_MEM_new(void);
-void  BUF_MEM_free(BUF_MEM *a);
-int  BUF_MEM_grow(BUF_MEM *str, int len);
-int  BUF_MEM_grow_clean(BUF_MEM *str, int len);
-char *  BUF_strdup(const char *str);
+void	BUF_MEM_free(BUF_MEM *a);
+int	BUF_MEM_grow(BUF_MEM *str, size_t len);
+int	BUF_MEM_grow_clean(BUF_MEM *str, size_t len);
+char *	BUF_strdup(const char *str);
+char *	BUF_strndup(const char *str, size_t siz);
+void *	BUF_memdup(const void *data, size_t siz);
+void	BUF_reverse(unsigned char *out, const unsigned char *in, size_t siz);
 
 /* safe string functions */
 size_t BUF_strlcpy(char *dst,const char *src,size_t siz);
@@ -97,9 +107,12 @@ void ERR_load_BUF_strings(void);
 /* Error codes for the BUF functions. */
 
 /* Function codes. */
-#define BUF_F_BUF_MEM_GROW         100
-#define BUF_F_BUF_MEM_NEW         101
-#define BUF_F_BUF_STRDUP         102
+#define BUF_F_BUF_MEMDUP				 103
+#define BUF_F_BUF_MEM_GROW				 100
+#define BUF_F_BUF_MEM_GROW_CLEAN			 105
+#define BUF_F_BUF_MEM_NEW				 101
+#define BUF_F_BUF_STRDUP				 102
+#define BUF_F_BUF_STRNDUP				 104
 
 /* Reason codes. */
 
