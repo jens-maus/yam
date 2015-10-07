@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2015-10-07 Thore Böckelmann <tboeckel@gmx.de>
+
+  * TZone.c: added a check for a possibly failed mktime() call and an additional
+    NULL pointer check for the generated time zone name. This closes #608.
+
 2015-09-09 Thore Böckelmann <tboeckel@gmx.de>
 
   * tcp/http.c: handle "https://" URLs as well. This partly fixes the download
