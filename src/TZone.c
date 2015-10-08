@@ -831,7 +831,7 @@ void SetTZone(const char *location)
   TimeVal2tm(NULL, &tm);
 
   // call mktime() so that struct tm will be set correctly
-  if(mktime(&tm) != -1)
+  if(mktime(&tm) != (time_t)-1)
   {
     // copy the timezone abbreviation string and the
     // gmtoffset to our global structure
