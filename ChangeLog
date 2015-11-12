@@ -12,6 +12,12 @@ $URL$
     realname parts. This refs #609.
   * mui/WriteWindow.c: don't try to resolve any addresses and don't check the
     subject when saving a mail as Draft. This refs #609.
+  * mui/RecipientString.c: when resolving recipients the address is checked to
+    be really valid, i.e. no spaces in the the address part, correctly paired
+    angle brackets, etc. Invalid recipients will be kept now instead of being
+    removed silently and an error message will be popped up instead. Effectively
+    this makes it impossible to send off mails with invalid recipients. This
+    finally closes #609.
 
 2015-10-07 Thore Böckelmann <tboeckel@gmx.de>
 
