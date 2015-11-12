@@ -10,6 +10,8 @@ $URL$
   * YAM_UT.c: treat address/name combinations like "name <abc@de.fg>" and
     "abc@de.fg (name)" in the same fashion when separating them into address and
     realname parts. This refs #609.
+  * mui/WriteWindow.c: don't try to resolve any addresses and don't check the
+    subject when saving a mail as Draft. This refs #609.
 
 2015-10-07 Thore Böckelmann <tboeckel@gmx.de>
 
