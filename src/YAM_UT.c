@@ -2117,47 +2117,29 @@ void ExtractAddress(const char *line, struct Person *pe)
 
     // if we haven't found the email yet
     // we might have search for something like "mail@address.net (Realname)"
+    if(address == NULL && (start = strchr(p, '(')) != NULL && (end = strchr(start, ')')) != NULL)
+    {
+      *start = '\0';
+      *end = '\0';
+
+      // now we have successfully extract the
+      // realname between start and end
+      realname = ++start;
+
+      // use the front part as address
+      address = p;
+    }
+
+    // if we still didn't find an address at least then we take the full string as address,
+    // although it might be possibly invalid
     if(address == NULL)
     {
-      // extract the mail address first
-      for(start=end=p; *end != '\0' && !isspace(*end) && *end != ',' && *end != '('; end++);
-
-      // now we should have the email address
-      if(end > start)
-      {
-        char *s = NULL;
-
-        if(*end != '\0')
-        {
-          *end = '\0';
-          s = end+1;
-        }
-
-        // we have the mail address
-        address = start;
-
-        // we should have the email address now so we go and extract
-        // the realname encapsulated in ( )
-        if(s != NULL && (s = strchr(s, '(')) != NULL)
-        {
-          start = ++s;
-
-          // now we search for the last closing )
-          end = strrchr(start, ')');
-          if(end != NULL)
-            *end = '\0';
-          else
-            end = start+strlen(start);
-
-          realname = start;
-        }
-      }
+      address = p;
     }
 
     // we successfully found an email adress, so we go
     // and copy it into our person's structure.
-    if(address != NULL)
-      strlcpy(pe->Address, Trim(address), sizeof(pe->Address));
+    strlcpy(pe->Address, Trim(address), sizeof(pe->Address));
 
     // in case we found a descriptive realname we go and
     // parse it for quoted and escaped passages.
