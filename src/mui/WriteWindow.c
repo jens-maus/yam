@@ -5499,7 +5499,10 @@ DECLARE(MatchedKeyword) // const char *keyword
      xget(data->LV_ATTACH, MUIA_NList_Entries) == 0 &&
      xget(data->GR_ATTACH_REMIND, MUIA_ShowMe) == FALSE)
   {
-    set(data->GR_ATTACH_REMIND, MUIA_ShowMe, TRUE);
+    // the method is better call asynchronously instead of synchronously to avoid possible
+    // graphical glitches, because the MUIA_TextEditor_MatchedKeyword attribute is triggered
+    // from within the input handling
+    DoMethod(_app(obj), MUIM_Application_PushMethod, data->GR_ATTACH_REMIND, 3, MUIM_Set, MUIA_ShowMe, TRUE);
   }
 
   RETURN(0);
