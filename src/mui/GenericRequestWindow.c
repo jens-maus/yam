@@ -298,11 +298,8 @@ OVERLOAD(OM_NEW)
   }
   else
   {
-    if(buttons != NULL)
-      free(buttons);
-
-    if(titleText != NULL)
-      free(titleText);
+    free(titleText);
+    free(buttons);
   }
 
   RETURN(obj);
