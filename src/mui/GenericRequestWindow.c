@@ -296,6 +296,14 @@ OVERLOAD(OM_NEW)
 
     DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, obj, 2, MUIM_GenericRequestWindow_FinishInput, 0);
   }
+  else
+  {
+    if(buttons != NULL)
+      free(buttons);
+
+    if(titleText != NULL)
+      free(titleText);
+  }
 
   RETURN(obj);
   return (IPTR)obj;

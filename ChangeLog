@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2016-02-02 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/GenericRequestWindow.c: fixed a memory leak in case creating the window
+    object failed.
+
 2015-12-22 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/WriteWindow.c: show the attachment reminder asynchronously. This might
