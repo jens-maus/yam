@@ -304,7 +304,7 @@ OVERLOAD(MUIM_ContextMenuChoice)
     break;
 
     case CMN_DISPLAY:
-      DoMethod(_win(obj), MUIM_WriteWindow_DisplayAttachment);
+      DoMethod(_win(obj), MUIM_WriteWindow_DisplayAttachment, obj);
     break;
 
     default:

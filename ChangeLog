@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2016-02-04 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mui/WriteAttachmentList.c: added a missing parameter when calling the method
+    to display an attachment. This closes #615.
+
 2016-02-02 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/GenericRequestWindow.c: fixed a memory leak in case creating the window
