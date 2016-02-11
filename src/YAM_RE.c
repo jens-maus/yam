@@ -636,6 +636,11 @@ void RE_DisplayMIME(const char *srcfile, const char *dstfile,
           // proper name (not YAMmXXXXXX)
           CopyFile(dstfile, NULL, srcfile, NULL);
         }
+
+        // treat the file with the converted contents as zombie file to delete it automatically
+        // later, because below the MIME viewer will be launched asynchronously and otherwise
+        // the file will remain in T: forever
+        AddZombieFile(dstfile);
       }
       else
         dstfile = srcfile;

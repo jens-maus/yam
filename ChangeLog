@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2016-02-11 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_RE.c: a temporarily created file when viewing a mail part with a MIME
+    viewer is no longer kept forever in T:, but treated as a zombie file to be
+    deleted automatically later. It cannot be deleted immediately, because the
+    MIME viewer is launched asynchronously.
+
 2016-02-04 Thore Böckelmann <tboeckel@gmx.de>
 
   * mui/WriteAttachmentList.c: added a missing parameter when calling the method
