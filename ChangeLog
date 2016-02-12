@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2016-02-12 Jens Maus <mail@jens-maus.de>
+
+  * include: updated all AmiSSL includes with the latest AmiSSL development
+    version compatible to OpenSSL 1.0.2f.
+
 2015-09-23 Jens Maus <mail@jens-maus.de>
 
   * tcp/ssl.c: minor update to comply with slightly updated AmiSSL API.

@@ -2,7 +2,7 @@
 #define PROTO_AMISSL_H
 
 /*
-**	$Id: amissl.h 540 2015-09-23 12:24:08Z damato $
+**	$Id$
 **
 **	Prototype/inline/pragma header file combo
 **
@@ -23,11 +23,7 @@
 /****************************************************************************/
 
 #ifndef __NOLIBBASE__
- #ifndef __USE_BASETYPE__
-  extern struct Library * AmiSSLBase;
- #else
-  extern struct Library * AmiSSLBase;
- #endif /* __USE_BASETYPE__ */
+ extern struct Library * AmiSSLBase;
 #endif /* __NOLIBBASE__ */
 
 /****************************************************************************/

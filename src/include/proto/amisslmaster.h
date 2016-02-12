@@ -2,7 +2,7 @@
 #define PROTO_AMISSLMASTER_H
 
 /*
-**	$Id: amisslmaster.h 540 2015-09-23 12:24:08Z damato $
+**	$Id$
 **
 **	Prototype/inline/pragma header file combo
 **

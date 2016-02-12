@@ -4,7 +4,7 @@
 #define CLIB_AMISSL_PROTOS_H
 
 /*
-**	$VER: amissl_protos.h $Id: amissl_protos.h 539 2015-09-23 11:36:07Z damato $ $Id: amissl_protos.h 539 2015-09-23 11:36:07Z damato $
+**	$VER: amissl_protos.h $Id$ $Id$
 **
 **	C prototypes. For use with 32 bit integers only.
 **
