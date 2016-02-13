@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2016-02-13 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_RE.c: skip the final conversion of HTML documents to any MIME viewer
+    specific charset. This closes #616.
+
 2016-02-11 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_RE.c: a temporarily created file when viewing a mail part with a MIME

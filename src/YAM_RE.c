@@ -552,6 +552,11 @@ void RE_DisplayMIME(const char *srcfile, const char *dstfile,
       codesetName = mt->CodesetName;
     }
 
+    // don't convert HTML documents
+    // see ticket #616 for details
+    if(convertFromUTF8 == TRUE && stricmp(ctype, "text/html") == 0)
+      dstfile = NULL;
+
     if(dstfile != NULL)
     {
       char suggestedName[SIZE_FILE];
