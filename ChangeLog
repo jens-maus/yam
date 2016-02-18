@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2016-02-18 Jens Maus <mail@jens-maus.de>
+
+  * src/tools: updated mk-ca-bundle.pl tool to version 1.25 and updated
+    our ca-bundle.crt accordingly.
+
 2016-02-12 Jens Maus <mail@jens-maus.de>
 
   * include: updated all AmiSSL includes with the latest AmiSSL development
