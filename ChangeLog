@@ -9,6 +9,8 @@ $URL$
 
   * YAM_RE.c: don't treat HTML documents as text but like binary data. This refs
     #616.
+  * mime/base64.c, mime/qprintble.c, mime/uucode.c: don't convert the decoded
+    data to UTF8 if it is binary/non-text data. This closes #616 again.
 
 2016-02-13 Thore Böckelmann <tboeckel@gmx.de>
 

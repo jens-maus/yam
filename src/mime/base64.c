@@ -636,9 +636,9 @@ long base64decode_file(FILE *in, FILE *out,
     }
 
     // if the caller supplied a source codeset, we have to
-    // make sure we convert our outbuffer to UTF8 before writing it out
-    // to the file into our local charset
-    if(srcCodeset != NULL && stricmp(srcCodeset->name, "utf-8") != 0)
+    // make sure we convert our outbuffer before writing it out
+    // to the file in UTF8, but we must not touch binary/non-text data
+    if(isText == TRUE && srcCodeset != NULL && stricmp(srcCodeset->name, "utf-8") != 0)
     {
       ULONG strLen = 0;
 
