@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2016-03-02 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_RE.c: don't treat HTML documents as text but like binary data. This refs
+    #616.
+
 2016-02-13 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_RE.c: skip the final conversion of HTML documents to any MIME viewer

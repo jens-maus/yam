@@ -1654,7 +1654,7 @@ static BOOL RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
 
   SHOWVALUE(DBF_MAIL, rp->EncodingCode);
 
-  isText = rp->ContentType != NULL && strnicmp(rp->ContentType, "text", 4) == 0;
+  isText = rp->ContentType != NULL && strnicmp(rp->ContentType, "text", 4) == 0 && stricmp(rp->ContentType, "text/html") != 0;
   SHOWVALUE(DBF_MIME, isText);
 
   // lets check if we got some encoding here and
