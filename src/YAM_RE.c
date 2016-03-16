@@ -405,7 +405,7 @@ static char *BuildCommandString(const char *format, const char *file)
 ///
 /// FindHTMLMetaCharset
 // try to find a charset information in a HTML file's meta data
-static BOOL FindHTMLMetaCodeset(const char *filename)
+static BOOL FindHTMLMetaCharset(const char *filename)
 {
   BOOL found = FALSE;
   FILE *fh;
