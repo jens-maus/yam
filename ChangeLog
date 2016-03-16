@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2016-03-16 Thore Böckelmann <tboeckel@gmx.de>
+
+  * YAM_RE.c: made the decision whether to skip the UTF8 conversion for HTML
+    documents or not a bit smarter by searching for embedded meta data which
+    might set an explicit charset in addition to the mail's MIME headers. This
+    closes #616 again.
+
 2016-03-02 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_RE.c: don't treat HTML documents as text but like binary data. This refs

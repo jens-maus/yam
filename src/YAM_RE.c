@@ -403,6 +403,64 @@ static char *BuildCommandString(const char *format, const char *file)
   return command;
 }
 ///
+/// FindHTMLMetaCharset
+// try to find a charset information in a HTML file's meta data
+static BOOL FindHTMLMetaCodeset(const char *filename)
+{
+  BOOL found = FALSE;
+  FILE *fh;
+
+  ENTER();
+
+  if((fh = fopen(filename, "r")) != NULL)
+  {
+    char *line = NULL;
+    size_t lineSize = 0;
+    char *metaString = NULL;
+    ULONG braceCount[2] = {0, 0};
+
+    while(GetLine(&line, &lineSize, fh) > 0)
+    {
+      if(IsStrEmpty(metaString) == FALSE || strstr(line, "<meta") != NULL)
+      {
+        char *p;
+
+        // count the opening and closing braces in the read line
+        for(p = line; *p != '\0'; p++)
+        {
+          if(*p == '<')
+            braceCount[0]++;
+          else if(*p == '>')
+            braceCount[1]++;
+        }
+
+        if(IsStrEmpty(metaString) == FALSE)
+          metaString = dstrcat(&metaString, " ");
+        metaString = dstrcat(&metaString, line);
+
+        // the meta data string is complete if the brace counts match
+        if(braceCount[0] == braceCount[1])
+        {
+          D(DBF_MIME, "HTML meta data '%s'", metaString);
+          fprintf(stderr, "HTML meta data '%s'\n", metaString);
+          if(strcasestr(metaString, "charset=") != NULL)
+          {
+            fprintf(stderr, "found charset information in HTML meta data\n");
+            found = TRUE;
+          }
+          break;
+        }
+      }
+    }
+
+    free(line);
+  }
+
+  RETURN(found);
+  return found;
+}
+
+///
 /// RE_DisplayMIME
 //  Displays a message part (attachment) using a MIME viewer
 void RE_DisplayMIME(const char *srcfile, const char *dstfile,
@@ -552,10 +610,15 @@ void RE_DisplayMIME(const char *srcfile, const char *dstfile,
       codesetName = mt->CodesetName;
     }
 
-    // don't convert HTML documents
+    // don't convert HTML documents if they contain meta data which declares a
+    // charset for the document. The browser application must do the conversion
+    // itself in this case.
     // see ticket #616 for details
     if(convertFromUTF8 == TRUE && stricmp(ctype, "text/html") == 0)
-      dstfile = NULL;
+    {
+      if(FindHTMLMetaCharset(srcfile) == TRUE)
+        dstfile = NULL;
+    }
 
     if(dstfile != NULL)
     {
