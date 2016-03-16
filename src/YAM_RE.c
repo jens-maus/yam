@@ -453,6 +453,8 @@ static BOOL FindHTMLMetaCharset(const char *filename)
     }
 
     free(line);
+
+    fclose(fh);
   }
 
   RETURN(found);
