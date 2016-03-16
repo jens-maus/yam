@@ -442,10 +442,9 @@ static BOOL FindHTMLMetaCodeset(const char *filename)
         if(braceCount[0] == braceCount[1])
         {
           D(DBF_MIME, "HTML meta data '%s'", metaString);
-          fprintf(stderr, "HTML meta data '%s'\n", metaString);
           if(strcasestr(metaString, "charset=") != NULL)
           {
-            fprintf(stderr, "found charset information in HTML meta data\n");
+            D(DBF_MIME, "found charset information in HTML meta data");
             found = TRUE;
           }
           break;
