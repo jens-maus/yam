@@ -10,14 +10,19 @@
 #include <proto/amissl.h>
 #endif
 
+#ifdef __SASC
+#define ossl_ssize_t int
+#define OPENSSL_NO_SHA512 // uses long long, which SAS/C doesn't have
+#endif
+
 #include <openssl/opensslconf.h>
 
 #ifndef OPENSSL_NO_AES
 #include <openssl/aes.h>
 #endif
 #include <openssl/asn1.h>
-#include <openssl/asn1_mac.h>
 #include <openssl/asn1t.h>
+#include <openssl/async.h>
 #include <openssl/bio.h>
 #ifndef OPENSSL_NO_BF
 #include <openssl/blowfish.h>
@@ -38,9 +43,11 @@
 #include <openssl/conf.h>
 #include <openssl/conf_api.h>
 #include <openssl/crypto.h>
+#ifndef OPENSSL_NO_CT
+#include <openssl/ct.h>
+#endif
 #ifndef OPENSSL_NO_DES
 #include <openssl/des.h>
-#include <openssl/des_old.h>
 #endif
 #ifndef OPENSSL_NO_DH
 #include <openssl/dh.h>
@@ -49,7 +56,6 @@
 #include <openssl/dsa.h>
 #endif
 #include <openssl/dso.h>
-#include <openssl/ssl.h>
 #include <openssl/dtls1.h>
 #include <openssl/ebcdic.h>
 #ifndef OPENSSL_NO_EC
@@ -72,8 +78,7 @@
 #ifndef OPENSSL_NO_IDEA
 #include <openssl/idea.h>
 #endif
-#include <openssl/krb5_asn.h>
-#include <openssl/kssl.h>
+#include <openssl/kdf.h>
 #include <openssl/lhash.h>
 #ifndef OPENSSL_NO_MD2
 #include <openssl/md2.h>
@@ -97,8 +102,6 @@
 #include <openssl/pem2.h>
 #include <openssl/pkcs12.h>
 #include <openssl/pkcs7.h>
-#include <openssl/pq_compat.h>
-#include <openssl/pqueue.h>
 #include <openssl/rand.h>
 #ifndef OPENSSL_NO_RC2
 #include <openssl/rc2.h>
@@ -122,21 +125,19 @@
 #ifndef OPENSSL_NO_SHA
 #include <openssl/sha.h>
 #endif
-#include <openssl/ssl.h>
-#include <openssl/ssl2.h>
-#include <openssl/ssl23.h>
-#include <openssl/ssl3.h>
 #ifndef OPENSSL_NO_SRP
 #include <openssl/srp.h>
 #endif
+#include <openssl/srtp.h>
+#include <openssl/ssl.h>
+#include <openssl/ssl2.h>
+#include <openssl/ssl3.h>
 #include <openssl/stack.h>
 #include <openssl/symhacks.h>
 #include <openssl/tls1.h>
-#include <openssl/tmdiff.h>
 #include <openssl/ts.h>
 #include <openssl/txt_db.h>
 #include <openssl/ui.h>
-#include <openssl/ui_compat.h>
 #ifndef OPENSSL_NO_WHIRLPOOL
 #include <openssl/whrlpool.h>
 #endif
