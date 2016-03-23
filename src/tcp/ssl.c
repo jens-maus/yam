@@ -509,10 +509,11 @@ static char *ExtractReadableDN(X509_NAME *dname)
   for(n = X509_NAME_entry_count(dname); n > 0; n--)
   {
     X509_NAME_ENTRY *ent = X509_NAME_get_entry(dname, n-1);
+    ASN1_OBJECT *obj = X509_NAME_ENTRY_get_object(ent);
 
     // Skip commonName or emailAddress except if there is no other
     // attribute in dname.
-    if((OBJ_cmp(ent->object, cname) && OBJ_cmp(ent->object, email)) ||
+    if((OBJ_cmp(obj, cname) && OBJ_cmp(obj, email)) ||
        (!flag && n == 1))
     {
       if(flag++)
