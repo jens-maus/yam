@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2016-03-23 Jens Maus <mail@jens-maus.de>
+
+  * include: updated all AmiSSL includes with the latest AmiSSLv4 development
+    version compatible to OpenSSL 1.1.0-pre4.
+
 2016-02-18 Jens Maus <mail@jens-maus.de>
 
   * src/tools: updated mk-ca-bundle.pl tool to version 1.25 and updated
