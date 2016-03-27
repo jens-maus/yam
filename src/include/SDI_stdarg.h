@@ -4,17 +4,19 @@
 /* Includeheader
 
         Name:           SDI_stdarg.h
-        Versionstring:  $VER: SDI_stdarg.h 1.1 (06.06.2014)
+        Versionstring:  $VER: SDI_stdarg.h 1.2 (27.03.2016)
         Author:         Jens Maus
         Distribution:   PD
-        Project page:   http://sf.net/p/adtools/code/HEAD/tree/trunk/sdi/
+        Project page:   https://github.com/adtools/SDI
         Description:    defines to hide OS specific variable arguments
                         function definitions
-        Id:             $Id: SDI_stdarg.h 3544 2014-06-06 11:12:16Z tboeckel $
-        URL:            $URL: https://svn.code.sf.net/p/adtools/code/trunk/sdi/SDI_stdarg.h $
+        Id:             $Id$
+        URL:            $URL$
 
  1.0   05.07.2004 : initial version
  1.1   06.06.2014 : added a type cast to VA_ARG() result
+ 1.2   27.03.2016 : when using GCC4 for MorphOS overflow_arg_area is not
+                    supported anymore (Jens Maus)
 
 */
 
@@ -28,7 +30,7 @@
 ** (e.g. add your name or nick name).
 **
 ** Find the latest version of this file at:
-** http://sf.net/p/adtools/code/HEAD/tree/trunk/sdi/
+** https://github.com/adtools/SDI
 **
 ** Jens Maus <mail@jens-maus.de>
 ** Dirk Stöcker <soft@dstoecker.de>
@@ -96,7 +98,11 @@
 #elif defined(__MORPHOS__)
   #define VA_LIST             va_list
   #define VA_START(va, start) va_start((va), (start))
-  #define VA_ARG(va, type)    (type)((va)->overflow_arg_area)
+  #if __GNUC__ == 4
+    #define VA_ARG(va, type)    va_arg(va, type)
+  #else
+    #define VA_ARG(va, type)    (type)((va)->overflow_arg_area)
+  #endif
   #define VA_END(va)          va_end((va))
 #else
   #define VA_LIST             va_list
