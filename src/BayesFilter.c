@@ -1140,7 +1140,7 @@ static const double C_11 = 77683.0 / 5796.0;
 
 /// lngamma_asymp
 // truncated asymptotic series in 1/z
-INLINE double lngamma_asymp(double z)
+static INLINE double lngamma_asymp(double z)
 {
   double w, w2, sum;
 
@@ -1199,7 +1199,7 @@ static const double ln_2pi_2 = 0.918938533204672741803; // log(2*PI)/2
 // usually better. For z_in < 8 relative errors increase but are usually
 // < 1e-10. In two small regions, 1 +/- .001 and 2 +/- .001 errors
 // increase quickly.
-static double nsLnGamma (double z_in, int *gsign)
+static INLINE double nsLnGamma (double z_in, int *gsign)
 {
   double scale, z, sum, result;
   int zi = (int) z_in;
@@ -1224,7 +1224,7 @@ static double nsLnGamma (double z_in, int *gsign)
 ///
 /// lnPQfactor
 // log( e^(-x)*x^a/Gamma(a) )
-INLINE double lnPQfactor (double a, double x)
+static INLINE double lnPQfactor (double a, double x)
 {
   int gsign;                // ignored because a > 0
   return a * log (x) - x - nsLnGamma (a, &gsign);
@@ -1347,7 +1347,7 @@ double incompleteGammaP( double a, double x, int *error )
 ///
 /// chi2P
 //
-INLINE double chi2P(double chi2, double nu, int *error)
+static INLINE double chi2P(double chi2, double nu, int *error)
 {
   if(chi2 < 0.0 || nu < 0.0)
   {
