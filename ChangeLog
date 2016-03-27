@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2016-03-28 Jens Maus <mail@jens-maus.de>
+
+  * misc: changed build system to use GCC 5.3.0 for AmigaOS4 and MorphOS target.
+  * misc: bumped copyright year to 2016.
+ 
 2016-03-16 Thore Böckelmann <tboeckel@gmx.de>
 
   * YAM_RE.c: made the decision whether to skip the UTF8 conversion for HTML
