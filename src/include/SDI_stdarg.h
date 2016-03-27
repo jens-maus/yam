@@ -15,7 +15,7 @@
 
  1.0   05.07.2004 : initial version
  1.1   06.06.2014 : added a type cast to VA_ARG() result
- 1.2   27.03.2016 : when using GCC4 for MorphOS overflow_arg_area is not
+ 1.2   27.03.2016 : when using GCC4/5 for MorphOS overflow_arg_area is not
                     supported anymore (Jens Maus)
 
 */
@@ -98,10 +98,10 @@
 #elif defined(__MORPHOS__)
   #define VA_LIST             va_list
   #define VA_START(va, start) va_start((va), (start))
-  #if __GNUC__ == 4
-    #define VA_ARG(va, type)    va_arg(va, type)
-  #else
+  #if __GNUC__ == 2
     #define VA_ARG(va, type)    (type)((va)->overflow_arg_area)
+  #else
+    #define VA_ARG(va, type)    va_arg(va, type)
   #endif
   #define VA_END(va)          va_end((va))
 #else

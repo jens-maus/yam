@@ -63,7 +63,7 @@
                   exist (Gunther Nikl)
  1.37  18.02.16 : changed INLINE define to not include "static" but use a separate STATIC
                   define (Jens Maus)
- 1.38  27.03.16 : when using GCC4 for MorphOS compiles VARARGS68K is not supported (Jens Maus)
+ 1.38  27.03.16 : when using GCC4/5 for MorphOS compiles VARARGS68K is not supported (Jens Maus)
 
 */
 
@@ -154,7 +154,7 @@
     #define STDARGS
     #define REGARGS
     #define STACKEXT
-    #if defined(__MORPHOS__) && __GNUC__ != 4
+    #if defined(__MORPHOS__) && __GNUC__ == 2
       #define VARARGS68K __attribute__((varargs68k))
     #endif
     #if defined(__AROS__)
