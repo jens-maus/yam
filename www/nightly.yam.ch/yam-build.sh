@@ -2,7 +2,7 @@
 #
 # YAM - Yet Another Mailer
 # Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
-# Copyright (C) 2000-2015 YAM Open Source Team
+# Copyright (C) 2000-2016 YAM Open Source Team
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 #
 
 # User definable variables
-VERSION="1.1"                        # the version of the tool
+VERSION="1.2"                        # the version of the tool
 SVN=/usr/bin/svn                     # path to the subversion tool
 SVNROOT="file:///home/svn/yam/trunk"
 MODULE=yam                           # the main module to checkout
@@ -42,7 +42,7 @@ NICE=nice                            # path to nice tool
 UPDCHKPATH="/var/www/www.yam.ch/update/updates/nightly" # path to the update check directory
 
 # lets add additional pathes for our script
-export PATH="/usr/local/amiga/gg/bin:/usr/local/amiga/bin:$PATH"
+export PATH="/opt/ppc-morphos/bin:/opt/m68k-amigaos/bin:/opt/ppc-amigaos/bin:/usr/local/amiga/bin:/usr/local/amiga/gg/bin:$PATH"
 MODULEPATH=${CHECKOUTDIR}/${MODULE}
 BUILDID=`date +%Y%m%d`
 BUILDVER="2.10"
