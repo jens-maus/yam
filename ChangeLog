@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2016-03-29 Jens Maus <mail@jens-maus.de>
+
+  * src/Debug.c: fixed some GCC 5.3.x related compiler warnings.
+
 2016-03-28 Jens Maus <mail@jens-maus.de>
 
   * misc: changed build system to use GCC 5.3.0 for AmigaOS4 and MorphOS target.
