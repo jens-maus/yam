@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2016-03-30 Jens Maus <mail@jens-maus.de>
+
+  * include: updated all AmiSSL includes with the latest AmiSSLv4 header files
+    being fixed for MOS compilation. Now YAM compiles for MOS again - if it
+    actually runs on MorphOS with a 68k AmiSSLv4 is another question.
+
 2016-03-23 Jens Maus <mail@jens-maus.de>
 
   * include: updated all AmiSSL includes with the latest AmiSSLv4 development
