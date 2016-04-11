@@ -36,8 +36,10 @@
 
 BOOL InitMethodStack(void);
 void CleanupMethodStack(void);
-BOOL VARARGS68K PushMethodOnStack(Object *obj, ULONG argCount, ...);
-IPTR VARARGS68K PushMethodOnStackWait(Object *obj, ULONG argCount, ...);
+BOOL PushMethodOnStackA(Object *obj, ULONG argCount, struct TagItem *tags);
+#define PushMethodOnStack(obj, argCount, ...) ({ ULONG _tags[] = { SDI_VACAST(__VA_ARGS__) }; PushMethodOnStackA(obj, argCount, (struct TagItem *)_tags); })
+IPTR PushMethodOnStackWaitA(Object *obj, ULONG argCount, struct TagItem *tags);
+#define PushMethodOnStackWait(obj, argCount, ...) ({ ULONG _tags[] = { SDI_VACAST(__VA_ARGS__) }; PushMethodOnStackWaitA(obj, argCount, (struct TagItem *)_tags); })
 void CheckMethodStack(void);
 
 #endif /* METHODSTACK_H */

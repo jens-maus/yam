@@ -33,16 +33,6 @@
 
 #if defined(NEED_VASPRINTF)
 
-#ifndef VA_COPY
-#if defined(__MORPHOS__)
-#define VA_COPY(dest, src) __va_copy(dest, src)
-#elif defined(__AROS__)
-#define VA_COPY(dest, src) va_copy(dest, src)
-#else
-#define VA_COPY(dest, src) (dest) = (src)
-#endif
-#endif
-
 int vasprintf(char **ptr, const char * format, va_list ap)
 {
   int ret;

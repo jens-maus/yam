@@ -649,24 +649,6 @@ done:
 }
 
 ///
-/// AllocSysObjectTags
-// varargs stub for AllocSysObject() for 68k
-// no ENTER/RETURN macro calls on purpose as this would blow up the trace log too much
-#if !defined(__PPC__)
-APTR VARARGS68K AllocSysObjectTags(ULONG type, ...)
-{
-  VA_LIST args;
-  APTR object;
-
-  VA_START(args, type);
-  object = AllocSysObject(type, (struct TagItem *)VA_ARG(args, struct TagItem *));
-  VA_END(args);
-
-  return object;
-}
-#endif
-
-///
 /// FreeSysObject
 // free a system object and perform basic cleanups depending on the type
 // no ENTER/RETURN macro calls on purpose as this would blow up the trace log too much

@@ -35,15 +35,15 @@
 #include "extrasrc.h"
 
 #if defined(NEED_ASPRINTF)
-int VARARGS68K asprintf(char **ptr, const char * format, ...)
+int asprintf(char **ptr, const char * format, ...)
 {
-  VA_LIST ap;
+  va_list ap;
   int ret;
 
   *ptr = NULL;
-  VA_START(ap, format);
+  va_start(ap, format);
   ret = vasprintf(ptr, format, ap);
-  VA_END(ap);
+  va_end(ap);
 
   return ret;
 }

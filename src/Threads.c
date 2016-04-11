@@ -854,7 +854,7 @@ void PurgeIdleThreads(const BOOL purgeAll)
 ///
 /// DoAction
 //
-APTR VARARGS68K DoAction(Object *obj, const enum ThreadAction action, ...)
+APTR DoActionA(Object *obj, const enum ThreadAction action, struct TagItem *tags)
 {
   APTR success = NULL;
   struct Node *node;
@@ -882,11 +882,7 @@ APTR VARARGS68K DoAction(Object *obj, const enum ThreadAction action, ...)
       ASOMSG_ReplyPort, (IPTR)G->threadPort,
       TAG_DONE)) != NULL)
     {
-      VA_LIST args;
-
-      VA_START(args, action);
-      msg->actionTags = CloneThreadTags((const struct TagItem *)VA_ARG(args, IPTR));
-      VA_END(args);
+      msg->actionTags = CloneThreadTags((const struct TagItem *)tags);
 
       SHOWVALUE(DBF_THREAD, msg->actionTags);
 

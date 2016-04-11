@@ -80,7 +80,8 @@ void CleanupThreads(void);
 void HandleThreads(BOOL handleAll);
 void AbortWorkingThreads(void);
 void PurgeIdleThreads(const BOOL purgeAll);
-APTR VARARGS68K DoAction(Object *obj, const enum ThreadAction action, ...);
+#define DoAction(obj, action, ...) ({ ULONG _tags[] = { SDI_VACAST(__VA_ARGS__) }; DoActionA(obj, action, (struct TagItem *)_tags); })
+APTR DoActionA(Object *obj, const enum ThreadAction action, struct TagItem *tags);
 BOOL IsMainThread(void);
 APTR CurrentThread(void);
 const char *CurrentThreadName(void);

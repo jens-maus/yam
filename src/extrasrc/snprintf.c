@@ -34,14 +34,14 @@
 #include "extrasrc.h"
 
 #if defined(NEED_SNPRINTF)
-int VARARGS68K snprintf(char *s, size_t maxlen, const char *format, ...)
+int snprintf(char *s, size_t maxlen, const char *format, ...)
 {
-  VA_LIST ap;
+  va_list ap;
   int ret;
 
-  VA_START(ap, format);
+  va_start(ap, format);
   ret = (int)vsnprintf(s, maxlen, format, ap);
-  VA_END(ap);
+  va_end(ap);
 
   return ret;
 }

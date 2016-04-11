@@ -7,6 +7,9 @@ $URL$
 
 2016-04-11 Jens Maus <mail@jens-maus.de>
 
+  * misc: replaced several VARARGS68K uses with calls to preprocessor macros which
+    will convert a varargs function call into a tagitem list function call. This
+    is a preparation of GCC5 support for the MorphOS build and refs #617.
   * src/Makefile: removed GCCVER=2 setup for MorphOS build since we are compiling
     the MorphOS build with GCC 5.x now.
 

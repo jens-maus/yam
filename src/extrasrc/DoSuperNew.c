@@ -38,6 +38,8 @@
 
 #if defined(NEED_DOSUPERNEW)
 
+#if (defined(__GNUC__) && __GNUC__ == 2)
+
 // DoSuperNew()
 // Calls parent NEW method within a subclass
 Object * VARARGS68K DoSuperNew(struct IClass *cl, Object *obj, ...)
@@ -55,6 +57,8 @@ Object * VARARGS68K DoSuperNew(struct IClass *cl, Object *obj, ...)
 
   return rc;
 }
+
+#endif
 
 #else
   #warning "NEED_DOSUPERNEW missing or compilation unnecessary"
