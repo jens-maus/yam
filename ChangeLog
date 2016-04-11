@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2016-04-11 Jens Maus <mail@jens-maus.de>
+
+  * src/Makefile: removed GCCVER=2 setup for MorphOS build since we are compiling
+    the MorphOS build with GCC 5.x now.
+
 2016-03-29 Jens Maus <mail@jens-maus.de>
 
   * src/Debug.c: fixed some GCC 5.3.x related compiler warnings.

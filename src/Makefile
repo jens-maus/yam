@@ -292,7 +292,6 @@ ifeq ($(OS), mos)
   CFLAGS  += -noixemul -I./include/netinclude
   LDFLAGS += -noixemul
   LDLIBS  += -lxpk -lamissl -lcodesets -lopenurl
-  GCCVER  = 2
 
   EXTRAOBJS = AllocSysObject.o \
               ExamineDir.o \
