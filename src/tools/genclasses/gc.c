@@ -64,6 +64,8 @@ size_t snprintf(char *s, size_t len, const char *f, ...)
  *
  * History
  * -------
+ * 0.37 - implemented an ASM stub for MorphOS compiles with GCC > 2 because newer
+ *        GCC versions unfortunately don't support VARARGS68K anymore on MorphOS.
  * 0.36 - a .crc file will be created for each class. This makes it possible to
  *        regenerate only those classes which really have been modified.
  * 0.35 - each class now gets its own public header file to avoid depency of lots
@@ -201,7 +203,7 @@ size_t snprintf(char *s, size_t len, const char *f, ...)
  *
  */
 
-static const char * const verstr = "0.36";
+static const char * const verstr = "0.37";
 
 /* Every shitty hack wouldn't be complete without some shitty globals... */
 
@@ -1022,8 +1024,8 @@ void gen_supportroutines( FILE *fp )
 {
   char *bn = arg_basename;
 
-  fprintf(fp, "%s%s%s", arg_storm ? "/// " : "", arg_storm ? bn : "", arg_storm ? "_NewObject()\n" : "");
-  fprintf(fp, "Object * VARARGS68K %s_NewObject(CONST_STRPTR className, ...)\n", bn);
+  fprintf(fp, "%s%s%s", arg_storm ? "/// " : "", arg_storm ? bn : "", arg_storm ? "_NewObjectA()\n" : "");
+  fprintf(fp, "Object * %s_NewObjectA(CONST_STRPTR className, struct TagItem *args)\n", bn);
   fprintf(fp, "{\n");
   fprintf(fp, "  Object *obj = NULL;\n");
   fprintf(fp, "  unsigned int i;\n");
@@ -1034,11 +1036,7 @@ void gen_supportroutines( FILE *fp )
   fprintf(fp, "  {\n");
   fprintf(fp, "    if(strcmp(MCCInfo[i].Name, className) == 0)\n");
   fprintf(fp, "    {\n");
-  fprintf(fp, "      VA_LIST args;\n");
-  fprintf(fp, "\n");
-  fprintf(fp, "      VA_START(args, className);\n");
-  fprintf(fp, "      obj = NewObjectA(%sClasses[i]->mcc_Class, NULL, (struct TagItem *)VA_ARG(args, ULONG));\n", bn);
-  fprintf(fp, "      VA_END(args);\n");
+  fprintf(fp, "      obj = NewObjectA(%sClasses[i]->mcc_Class, NULL, args);\n", bn);
   fprintf(fp, "\n");
   fprintf(fp, "      break;\n");
   fprintf(fp, "    }\n");
@@ -1049,6 +1047,48 @@ void gen_supportroutines( FILE *fp )
   fprintf(fp, "}\n");
   fprintf(fp, "%s", arg_storm ? "\n///" : "");
   fprintf(fp, "\n");
+
+  fprintf(fp, "%s%s%s", arg_storm ? "/// " : "", arg_storm ? bn : "", arg_storm ? "_NewObject()\n" : "");
+  fprintf(fp, "Object * VARARGS68K %s_NewObject(CONST_STRPTR className, ...)\n", bn);
+  fprintf(fp, "{\n");
+  fprintf(fp, "  #if !defined(__MORPHOS__) || __GNUC__ == 2\n");
+  fprintf(fp, "  Object *obj;\n");
+  fprintf(fp, "  VA_LIST args;\n");
+  fprintf(fp, "\n");
+  fprintf(fp, "  ENTER();\n");
+  fprintf(fp, "\n");
+  fprintf(fp, "  VA_START(args, className);\n");
+  fprintf(fp, "  obj = %s_NewObjectA(className, (struct TagItem *)VA_ARG(args, ULONG));\n", bn);
+  fprintf(fp, "  VA_END(args);\n");
+  fprintf(fp, "\n");
+  fprintf(fp, "  RETURN(obj);\n");
+  fprintf(fp, "  return obj;\n");
+  fprintf(fp, "  #else\n");
+  fprintf(fp, "  // the following ASM code will prepare all vararg data for\n");
+  fprintf(fp, "  // the taglist version of the function and then pass it\n");
+  fprintf(fp, "  asm volatile (\"lwz  12,0(1)  \\n\\\n");
+  fprintf(fp, "                 mflr 0        \\n\\\n");
+  fprintf(fp, "                 stwu 1,-48(1) \\n\\\n");
+  fprintf(fp, "                 stw  12,16(1) \\n\\\n");
+  fprintf(fp, "                 stw  0,20(1)  \\n\\\n");
+  fprintf(fp, "                 stw  4,28(1)  \\n\\\n");
+  fprintf(fp, "                 stw  5,32(1)  \\n\\\n");
+  fprintf(fp, "                 stw  6,36(1)  \\n\\\n");
+  fprintf(fp, "                 stw  7,40(1)  \\n\\\n");
+  fprintf(fp, "                 stw  8,44(1)  \\n\\\n");
+  fprintf(fp, "                 stw  9,48(1)  \\n\\\n");
+  fprintf(fp, "                 stw  10,52(1) \\n\\\n");
+  fprintf(fp, "                 addi 4,1,28   \\n\\\n");
+  fprintf(fp, "                 bl %s_NewObjectA \\n\\\n", bn);
+  fprintf(fp, "                 lwz  0,20(1)  \\n\\\n");
+  fprintf(fp, "                 lwz  11,16(1) \\n\\\n");
+  fprintf(fp, "                 mtlr 0        \\n\\\n");
+  fprintf(fp, "                 stwu 11,48(1) \\n\\\n");
+  fprintf(fp, "                \");\n");
+  fprintf(fp, "  #endif\n");
+  fprintf(fp, "}\n");
+  fprintf(fp, "%s\n", arg_storm ? "\n///" : "");
+
 
   fprintf(fp, "%s%s%s", arg_storm ? "/// " : "", arg_storm ? bn : "", arg_storm ? "_SetupClasses()\n" : "");
   fprintf(fp, "BOOL %s_SetupClasses(const char **failClass, const char **failSuperClass)\n", bn);

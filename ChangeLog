@@ -7,6 +7,10 @@ $URL$
 
 2016-04-11 Jens Maus <mail@jens-maus.de>
 
+  * tools/genclasses/gc.c: implemented an ASM stub for MorphOS compiles with
+    GCC > 2 because newer GCC versions unfortunately don't support VARARGS68K
+    anymore. This should hopefully fix recent problems with our GCC5 compiles
+    for MorphOS, thus closes #617.
   * misc: replaced several VARARGS68K uses with calls to preprocessor macros which
     will convert a varargs function call into a tagitem list function call. This
     is a preparation of GCC5 support for the MorphOS build and refs #617.
