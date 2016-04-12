@@ -5,6 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $URL$
 
+2016-04-12 Jens Maus <mail@jens-maus.de>
+
+  * tools/genclasses/gc.c: reworked YAM_NewObject() once more and replaced
+    the ASM stub for the MorphOS build with some C-language equalivant which
+    copies all variable arguments into a "struct TagItem" array with a maximum
+    size of 128 entries. This routine is now generally used rather than using
+    VARARGS68K for the other platforms. In addition, it solves a still existing
+    problem where more than 8 arguments resulted in some undefined problems and
+    thus the ASM stub couldn't be usd. This refs #617.
+  * src/Makefile: added -Wno-pointer-sign to MOS compile to please GCC5.
+
 2016-04-11 Jens Maus <mail@jens-maus.de>
 
   * tools/genclasses/gc.c: implemented an ASM stub for MorphOS compiles with
