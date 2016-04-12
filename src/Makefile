@@ -289,7 +289,7 @@ ifeq ($(OS), mos)
 
   # Compiler/Linker flags
   CPU     = -mcpu=powerpc
-  CFLAGS  += -noixemul -I./include/netinclude
+  CFLAGS  += -noixemul -I./include/netinclude -Wno-pointer-sign
   LDFLAGS += -noixemul
   LDLIBS  += -lxpk -lamissl -lcodesets -lopenurl
 
