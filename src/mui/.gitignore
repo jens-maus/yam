@@ -1,0 +1,7 @@
+*.crc
+*.o
+*_cl.h
+*.h
+Classes.c
+Classes.h
+Classes.crc
