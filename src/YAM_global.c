@@ -32,7 +32,7 @@
 #include "YAM_global.h"
 #include "YAM_stringsizes.h"
 
-#include "svnrev.h"
+#include "gitrev.h"
 
 // stack cookie for shell v45+
 static const char USED_VAR yam_stack_size[] = "$STACK:" STR(SIZE_STACK) "\n";
@@ -144,17 +144,16 @@ const char * const yambuildid       = STR(__YAM_BUILDID);
 #endif
 
 const char * const yamver           = __YAM_VERSION __YAM_DEVEL;
-const char * const yamversion       = __YAM " " __YAM_VERSION __YAM_DEVEL " [" SYSTEMSHORT "/" CPU ", r" STR(SVN_REV) ", " __YAM_COMPILER "]";
+const char * const yamversion       = __YAM " " __YAM_VERSION __YAM_DEVEL " [" SYSTEMSHORT "/" CPU ", " GIT_REVSTR ", " __YAM_COMPILER "]";
 const char * const yamversionver    = __YAM_VERSION __YAM_DEVEL " [" SYSTEMSHORT "/" CPU "]";
-const char * const yamversionstring = "$VER: " __YAM " " __YAM_VERSION __YAM_DEVEL " (" __YAM_VERDATE ") " __YAM_COPYRIGHT " [" SYSTEMSHORT "/" CPU ", r" STR(SVN_REV) "]";
-const char * const yamuseragent     = __YAM "/" __YAM_VERSION __YAM_DEVEL " (" SYSTEM "; " CPU "; rv:" __YAM_BUILDDATE "r" STR(SVN_REV) ")";
+const char * const yamversionstring = "$VER: " __YAM " " __YAM_VERSION __YAM_DEVEL " (" __YAM_VERDATE ") " __YAM_COPYRIGHT " [" SYSTEMSHORT "/" CPU ", " GIT_REVSTR "]";
+const char * const yamuseragent     = __YAM "/" __YAM_VERSION __YAM_DEVEL " (" SYSTEM "; " CPU "; rv:" __YAM_BUILDDATE "-" GIT_REVSTR ")";
 const char * const yamcopyright     = __YAM_COPYRIGHT;
 const char * const yamfullcopyright = __YAM_FULLCOPYRIGHT;
 const char * const yamversiondate   = __YAM_VERDATE;
 const char * const yamcompiler      = __YAM_COMPILER;
 const char * const yamurl           = "http://yam.ch/";
 const unsigned long yamversiondays  = __YAM_VERDAYS;
-const unsigned long yamsvnrev       = SVN_REV;
 
 /* no longer external visible, this is done by proto files! */
 struct Library* DataTypesBase     = NULL;

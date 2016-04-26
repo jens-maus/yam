@@ -220,7 +220,6 @@ ifeq ($(OS), mos)
   CFLAGS  += -noixemul -I./include/netinclude -DHAVE_INTTYPES_H=1
   LDFLAGS += -noixemul
   LDLIBS  +=
-  GCCVER  = 2
 
 else
 ifeq ($(OS), aros-i386)
@@ -323,13 +322,18 @@ $(OBJDIR):
 	@echo "  MK $@"
 	@$(MKDIR) $(OBJDIR)
 
+# make the target directory
+$(TDIR):
+	@echo "  MK $@"
+	@$(MKDIR) $(TDIR)
+
 # for compiling single .c files
 $(OBJDIR)/%.o: %.c
 	@echo "  CC $<"
 	@$(CC) $(CFLAGS) -c $< -o $@
 
 # for linking the target
-$(TDIR)/$(TARGET): $(addprefix $(OBJDIR)/,$(OBJS))
+$(TDIR)/$(TARGET): $(TDIR) $(addprefix $(OBJDIR)/,$(OBJS))
 	@echo "  AR $@"
 	@$(AR) -cr $@ $(addprefix $(OBJDIR)/,$(OBJS))
 

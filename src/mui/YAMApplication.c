@@ -78,6 +78,8 @@
 #include "Rexx.h"
 #include "Threads.h"
 
+#include "gitrev.h"
+
 #include "Debug.h"
 
 #define EMAILCACHENAME "PROGDIR:.emailcache"
@@ -584,9 +586,8 @@ OVERLOAD(OM_NEW)
 
     // now we add the compiler information as YAM can be
     // compiled with different versions and types of compilers
-    snprintf(data->compileInfo, sizeof(data->compileInfo), "%s (%s, r%ld)", data->compileInfo,
-                                                                            yamcompiler,
-                                                                            yamsvnrev);
+    snprintf(data->compileInfo, sizeof(data->compileInfo), "%s (%s, " GIT_REVSTR ")", data->compileInfo,
+                                                                                      yamcompiler);
 
     data->emailCacheName = (STRPTR)EMAILCACHENAME;
     while((tag = NextTagItem((APTR)&tags)) != NULL)

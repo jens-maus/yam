@@ -459,7 +459,6 @@ endif
 
 # Third-party tools/libraries
 GENCLASSES = $(TOOLS)/genclasses
-SVNREV = $(TOOLS)/svnrev
 TZLIB = $(TOOLS)/tzcode
 
 # our few new rewritten classes
@@ -814,7 +813,7 @@ dump:
 .PHONY: clean
 clean:
 	@echo "  CLEAN"
-	@$(RM) $(TARGET) $(TARGET).debug $(TARGET).map $(addprefix $(OBJDIR)/,$(OBJS)) svnrev.h
+	@$(RM) $(TARGET) $(TARGET).debug $(TARGET).map $(addprefix $(OBJDIR)/,$(OBJS)) gitrev.h
 
 # clean all including .obj directory
 .PHONY: cleanall
@@ -830,12 +829,11 @@ cleanall: clean
 distclean: cleanall
 	@echo "  DISTCLEAN"
 	@$(MAKE) -C $(GENCLASSES) clean
-	@$(MAKE) -C $(SVNREV) clean
 	@$(MAKE) -C $(TZLIB) clean
 
 ## ADD FLAGS TARGETS ##################
 
-$(OBJDIR)/YAM_global.o: svnrev.h
+$(OBJDIR)/YAM_global.o: gitrev.h
 $(OBJDIR)/YAM_global.o: CFLAGS += $(YAMVERID)
 
 $(OBJDIR)/YAM.o: CFLAGS += $(DEVFLAGS)
@@ -865,14 +863,11 @@ $(LIB)/libtz.a: $(TZLIB)/asctime.c $(TZLIB)/difftime.c \
 	$(TZLIB)/strftime.c $(TZLIB)/tzfile.h
 	@$(MAKE) -C $(TZLIB)
 
-## SVNREV TOOL ########################
+## GITREV TOOL ########################
 
-svnrev.h: $(SVNREV)/svnrev
+gitrev.h: $(TOOLS)/gitrev.sh
 	@echo "  GN $@"
-	@$(SVNREV)/svnrev -o$@ *.c *.h *.l $(MUIDIR)/*.c $(REXXDIR)/*.c $(MIMEDIR)/*.c $(MIMEDIR)/*.h $(TCPDIR)/*.c $(TCPDIR)/*.h $(EXTRADIR)/*.c $(EXTRADIR)/*.h $(LOCALE)/*.pot $(LOCALE)/*.po
-
-$(SVNREV)/svnrev: $(SVNREV)/svnrev.c $(SVNREV)/svnrev.h
-	@$(MAKE) -C $(SVNREV) HOST=$(HOST)
+	@$(TOOLS)/gitrev.sh >$@
 
 ## CATALOG GENERATION #################
 

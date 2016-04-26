@@ -1,0 +1,6 @@
+*.o
+*.gst
+*.info
+*.lnk
+*.map
+GenClasses

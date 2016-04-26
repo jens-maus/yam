@@ -9,6 +9,7 @@
 *.tmp
 .obj_*
 .dep_*
+gitrev.h
 HTML2Mail.c
 Locale.c
 Locale.h
