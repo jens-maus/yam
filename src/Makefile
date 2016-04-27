@@ -873,7 +873,7 @@ gitrev.h: $(TOOLS)/gitrev.sh
 
 $(LOCALE)/%.catalog: $(LOCALE)/%.po
 	@echo "  FC $@"
-	@$(FC) POFILE $< CATALOG $@ CODESET UTF-8
+	@$(FC) REVISION $(shell git rev-list --all --count $<) POFILE $< CATALOG $@ CODESET UTF-8
 
 .IGNORE: $(CATALOGS)
 
