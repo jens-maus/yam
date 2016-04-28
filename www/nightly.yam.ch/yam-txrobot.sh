@@ -142,9 +142,9 @@ echo
 echo "committing modified transifex translations:"
 echo "==========================================="
 for file in ${changedfiles}; do
-  author=`grep "Last-Translator: " ${file} | sed -r 's/\"Last-Translator: (.*)\\n\"/\1/'`
+  author=`grep "Last-Translator: " ${file} | sed -r 's/\"Last-Translator: (.*)\\\n\"/\\1/'`
 
-  echo "${author}: ${file}"
+  echo "${file}: ${author}"
   output=`${GIT} commit --author="${author}" -m '[tx-robot] updated translation from transifex' ${file} 2>&1`
   ret=$?
   if [ $ret != 0 ]; then
