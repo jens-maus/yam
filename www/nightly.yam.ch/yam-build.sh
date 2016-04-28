@@ -263,7 +263,7 @@ if [ "${force}" != "force" ]; then
   echo "============================"
   if [ ${ret} -ne 0 ]; then
     echo -n "no relevant changes found. checking last build date..."
-    today=`expr \`date +%s\` / 86400 - 2922 - ${last_build}`
+    today=`expr \( \`date +%s\` - ${last_build} \) / 86400`
     echo -n "${today} days passed..."
     if [ ${today} -gt 29 ]; then
        echo "rebuilding."
@@ -371,7 +371,7 @@ echo "${changelog}" | head -c 8K >${UPDCHKPATH}/${BUILDVER}
 # so that at least every 31 days a new YAM is automatically build even if no
 # changes had been applied
 cd $CHECKOUTDIR
-expr `date +%s` / 86400 - 2922 >.last_build
+date +%s >.last_build
 echo "done."
 
 # close the logfile
