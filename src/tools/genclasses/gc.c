@@ -4,7 +4,7 @@
  Copyright (C) 2001 by Andrew Bell <mechanismx@lineone.net>
 
  Contributed to the YAM Open Source Team as a special version
- Copyright (C) 2000-2015 YAM Open Source Team
+ Copyright (C) 2000-2016 YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -64,6 +64,8 @@ size_t snprintf(char *s, size_t len, const char *f, ...)
  *
  * History
  * -------
+ * 0.37 - implemented an ASM stub for MorphOS compiles with GCC > 2 because newer
+ *        GCC versions unfortunately don't support VARARGS68K anymore on MorphOS.
  * 0.36 - a .crc file will be created for each class. This makes it possible to
  *        regenerate only those classes which really have been modified.
  * 0.35 - each class now gets its own public header file to avoid depency of lots
@@ -201,7 +203,7 @@ size_t snprintf(char *s, size_t len, const char *f, ...)
  *
  */
 
-static const char * const verstr = "0.36";
+static const char * const verstr = "0.37";
 
 /* Every shitty hack wouldn't be complete without some shitty globals... */
 
@@ -992,7 +994,7 @@ void gen_gpl( FILE *fp )
   "\n"
   " YAM - Yet Another Mailer\n"
   " Copyright (C) 1995-2000 Marcel Beck\n"
-  " Copyright (C) 2000-2015 YAM Open Source Team\n"
+  " Copyright (C) 2000-2016 YAM Open Source Team\n"
   "\n"
   " This program is free software; you can redistribute it and/or modify\n"
   " it under the terms of the GNU General Public License as published by\n"
@@ -1023,7 +1025,7 @@ void gen_supportroutines( FILE *fp )
   char *bn = arg_basename;
 
   fprintf(fp, "%s%s%s", arg_storm ? "/// " : "", arg_storm ? bn : "", arg_storm ? "_NewObject()\n" : "");
-  fprintf(fp, "Object * VARARGS68K %s_NewObject(CONST_STRPTR className, ...)\n", bn);
+  fprintf(fp, "Object * %s_NewObject(CONST_STRPTR className, ...)\n", bn);
   fprintf(fp, "{\n");
   fprintf(fp, "  Object *obj = NULL;\n");
   fprintf(fp, "  unsigned int i;\n");
@@ -1034,11 +1036,35 @@ void gen_supportroutines( FILE *fp )
   fprintf(fp, "  {\n");
   fprintf(fp, "    if(strcmp(MCCInfo[i].Name, className) == 0)\n");
   fprintf(fp, "    {\n");
-  fprintf(fp, "      VA_LIST args;\n");
+  fprintf(fp, "      unsigned int j;\n");
+  fprintf(fp, "      struct TagItem tags[128];\n");
+  fprintf(fp, "      va_list args;\n");
   fprintf(fp, "\n");
-  fprintf(fp, "      VA_START(args, className);\n");
-  fprintf(fp, "      obj = NewObjectA(%sClasses[i]->mcc_Class, NULL, (struct TagItem *)VA_ARG(args, ULONG));\n", bn);
-  fprintf(fp, "      VA_END(args);\n");
+  fprintf(fp, "      va_start(args, className);");
+  fprintf(fp, "\n");
+  fprintf(fp, "      for(j=0; j < (sizeof(tags) / sizeof(tags[0])); j++)\n");
+  fprintf(fp, "      {\n");
+  fprintf(fp, "        tags[j].ti_Tag = va_arg(args, ULONG);\n");
+  fprintf(fp, "        if(tags[j].ti_Tag != TAG_DONE)\n");
+  fprintf(fp, "          tags[j].ti_Data = va_arg(args, ULONG);\n");
+  fprintf(fp, "        else\n");
+  fprintf(fp, "        {\n");
+  fprintf(fp, "          tags[j].ti_Data = 0;\n");
+  fprintf(fp, "          break;\n");
+  fprintf(fp, "        }\n");
+  fprintf(fp, "      }\n");
+  fprintf(fp, "\n");
+  fprintf(fp, "      #if defined(DEBUG)\n");
+  fprintf(fp, "      if(j >= (sizeof(tags) / sizeof(tags[0])))\n");
+  fprintf(fp, "      {\n");
+  fprintf(fp, "        E(DBF_ALWAYS, \"FATAL ERROR: size of tags[%%ld] array exhausted or no TAG_DONE in %s_NewObject(%%s, ...) call!!!!\", (sizeof(tags) / sizeof(tags[0])), className);\n", bn);
+  fprintf(fp, "        ASSERT(j < (sizeof(tags) / sizeof(tags[0])));\n");
+  fprintf(fp, "      }\n");
+  fprintf(fp, "      #endif\n");
+  fprintf(fp, "\n");
+  fprintf(fp, "      obj = NewObjectA(%sClasses[i]->mcc_Class, NULL, (struct TagItem *)&tags);\n", bn);
+  fprintf(fp, "\n");
+  fprintf(fp, "      va_end(args);\n");
   fprintf(fp, "\n");
   fprintf(fp, "      break;\n");
   fprintf(fp, "    }\n");
@@ -1047,8 +1073,7 @@ void gen_supportroutines( FILE *fp )
   fprintf(fp, "  RETURN(obj);\n");
   fprintf(fp, "  return obj;\n");
   fprintf(fp, "}\n");
-  fprintf(fp, "%s", arg_storm ? "\n///" : "");
-  fprintf(fp, "\n");
+  fprintf(fp, "%s\n", arg_storm ? "\n///" : "");
 
   fprintf(fp, "%s%s%s", arg_storm ? "/// " : "", arg_storm ? bn : "", arg_storm ? "_SetupClasses()\n" : "");
   fprintf(fp, "BOOL %s_SetupClasses(const char **failClass, const char **failSuperClass)\n", bn);
@@ -1573,7 +1598,7 @@ int gen_classheaders( struct list *classlist )
 
       }
 
-      fprintf(fp, "Object * VARARGS68K %s_NewObject(CONST_STRPTR className, ...);\n", bn);
+      fprintf(fp, "Object * %s_NewObject(CONST_STRPTR className, ...);\n", bn);
       fprintf(fp, "\n");
       fprintf(fp, "#define MUIC_%s \"%s_%s\"\n", cn, bn, cn);
       fprintf(fp, "\n");

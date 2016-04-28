@@ -2,7 +2,7 @@
 #
 # YAM - Yet Another Mailer
 # Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
-# Copyright (C) 2000-2015 YAM Open Source Team
+# Copyright (C) 2000-2016 YAM Open Source Team
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,18 +20,15 @@
 #
 # YAM Official Support Site :  http://yam.ch/
 #
-# A shell script to directly download the latest SVN sources of
+# A shell script to directly download the latest GIT sources of
 # the YAM project and builds different snapshots automatically
 # each night
 #
-# $Id$
-# $URL$
-#
 
 # User definable variables
-VERSION="1.1"                        # the version of the tool
-SVN=/usr/bin/svn                     # path to the subversion tool
-SVNROOT="file:///home/svn/yam/trunk"
+VERSION="1.3"                        # the version of the tool
+GIT=/usr/bin/git                     # path to the git tool
+GITROOT="https://github.com/jens-maus/yam.git"
 MODULE=yam                           # the main module to checkout
 CHECKOUTDIR=/usr/local/amiga/yam-build   # directory where to checkout to
 MAKE="make -j1"                      # path to GNU make tool
@@ -42,7 +39,7 @@ NICE=nice                            # path to nice tool
 UPDCHKPATH="/var/www/www.yam.ch/update/updates/nightly" # path to the update check directory
 
 # lets add additional pathes for our script
-export PATH="/usr/local/amiga/gg/bin:/usr/local/amiga/bin:$PATH"
+export PATH="/opt/ppc-morphos/bin:/opt/m68k-amigaos/bin:/opt/ppc-amigaos/bin:/usr/local/amiga/bin:/usr/local/amiga/gg/bin:$PATH"
 MODULEPATH=${CHECKOUTDIR}/${MODULE}
 BUILDID=`date +%Y%m%d`
 BUILDVER="2.10"
@@ -196,7 +193,7 @@ create_catalogs()
 # The main stuff starts here
 #
 echo >&2 "yam-build.sh v${VERSION} - a script to build the nightly for YAM"
-echo >&2 "Copyright (c) 2004-2014 Jens Maus <mail@jens-maus.de>"
+echo >&2 "Copyright (c) 2004-2016 Jens Maus <mail@jens-maus.de>"
 echo >&2
 
 # define the variables we know
@@ -231,56 +228,67 @@ echo "============================================="
 find $WEBDIR/ -maxdepth 1 -type d -daystart -mtime +60 -print -exec rm -rf {} \;
 echo "============================================="
 
-# let us do a fresh SVN checkout and see if something
+# let us do a fresh GIT checkout and see if something
 # has been updated or not
-echo "checking out SVN repository:"
+echo "checking out GIT repository:"
 echo "============================"
-cd $CHECKOUTDIR
-output=`${SVN} co ${SVNROOT} ${MODULE}`
-ret=$?
-if [ $ret != 0 ]; then
-   echo "error during checkout! aborting."
-   echo $output
-   exit 2
+if [ ! -e "${CHECKOUTDIR}/${MODULE}/.git" ]; then
+  mkdir -p ${CHECKOUTDIR}/${MODULE}
+  ${GIT} clone ${GITROOT} ${CHECKOUTDIR}/${MODULE}
+  force="force"
 fi
-echo "$output" | egrep "^[UPAG] .+\.[chl][d]*$" >/dev/null
-ret=$?
-echo "$output"
-echo "============================"
-if [ "$force" != "force" ]; then
-   if [ $ret != 0 ]; then
-      printf "no relevant changes found. checking last build date..."
-      last_build=`cat .last_build`
-      today=`expr \`date +%s\` / 86400 - 2922 - $last_build`
-      printf "$today days passed..."
-      if [ $today -gt 29 ]; then
-         printf "rebuilding.\n"
-      else
-         printf "no rebuild required.\n"
-         exit 0
-      fi
-   fi
+
+# change into our checkout dir
+cd $CHECKOUTDIR
+
+# get the time of the last build
+last_build=0
+if [ -e ".last_build" ]; then
+  last_build=`cat .last_build`
+fi
+
+# now pull changes
+output=`cd ${MODULE}; ${GIT} pull 2>&1 | egrep "^Updating .{7}\.\..{7}" | cut -d' ' -f2`
+if [ "${force}" != "force" ]; then
+  ret=1
+  for id in ${output}; do
+    output=`cd ${MODULE}; ${GIT} diff --name-only ${id}`
+    echo "$output" | egrep ".+\.[chl][d]*$" >/dev/null
+    ret=$?
+    if [ ${ret} -eq 0 ]; then
+      echo "$output"
+      break
+    fi
+  done
+  echo "============================"
+  if [ ${ret} -ne 0 ]; then
+    echo -n "no relevant changes found. checking last build date..."
+    today=`expr \( \`date +%s\` - ${last_build} \) / 86400`
+    echo -n "${today} days passed..."
+    if [ ${today} -gt 29 ]; then
+       echo "rebuilding."
+    else
+       echo "no rebuild required."
+       exit 0
+    fi
+  fi
 else
-   echo "forcing rebuild."
+  echo "forcing rebuild."
 fi
 
 # create a new dev directory
-printf "Generating new dev directory ["
+echo -n "Generating new dev directory ["
 rm -rf $CHECKOUTDIR/*-dev
-printf "$DEVDIR]..."
-mkdir $DEVDIR
-printf "done.\n"
+echo -n "$DEVDIR]..."
+mkdir -p $DEVDIR
+echo "done."
 
 # if we end up here then something has changed since the last checkout
 # so lets build everything right from the start
 cp $WEBDIR/README.txt $DEVDIR/
-cp $MODULEPATH/ChangeLog $DEVDIR/
 
 # copy the resources from the respository to a local copy
 cp -a $MODULEPATH/resources $DEVDIR/ >/dev/null 2>&1
-
-# delete Subversion's database files
-find $DEVDIR/resources/ -name ".svn" -exec rm -rf {} \; >/dev/null 2>&1
 
 # let us generate all catalogs first
 create_catalogs
@@ -320,12 +328,23 @@ rm -rf $DEVDIR/resources
 rm $DEVDIR/YAM.info
 rm $DEVDIR/YAM.debug.info
 
+# now we generate an automatic ChangeLog from the git history
+cd $CHECKOUTDIR
+if [ ${last_build} -eq 0 ]; then
+  since="-10" # last 10 commits
+else
+  since="--since=${last_build}"
+fi
+changelog=$(cd ${MODULE}; git log ${since} --pretty=tformat:'%ad %an <%ae>%n%n  %B' --date=short)
+if [ -z "${changelog}" ]; then
+  changelog="This is only a rebuild of YAM with no functionaly changes but updated expiration date."
+fi
+
 # then finally put up the archives on the webserver.
-cd $MODULEPATH
+cd ${MODULEPATH}
 echo "putting stuff on webserver:"
 set -x
-head -n 100 ChangeLog >$DEVDIR/ChangeLog-`date +%F`
-printf "\n\nTHIS IS JUST A 100 LINE STRIPPED VERSION OF THE CHANGELOG\n" >>$DEVDIR/ChangeLog-`date +%F`
+echo "${changelog}" | head -c 8K >$DEVDIR/ChangeLog-`date +%F`
 rm -rf $WEBDIR/`basename $DEVDIR`
 mv -f $DEVDIR $WEBDIR
 cd $WEBDIR
@@ -346,14 +365,13 @@ printf "URL: ppc-aros http://nightly.yam.ch/`date +%F-dev`/YAM${BUILDV}dev-AROSp
 printf "URL: x86_64-aros http://nightly.yam.ch/`date +%F-dev`/YAM${BUILDV}dev-AROSx86_64.lha\n" >>${UPDCHKPATH}/${BUILDVER}
 printf "URL: arm-aros http://nightly.yam.ch/`date +%F-dev`/YAM${BUILDV}dev-AROSarm.lha\n" >>${UPDCHKPATH}/${BUILDVER}
 printf "CHANGES:\n"  >>${UPDCHKPATH}/${BUILDVER}
-head -n 100 ${MODULEPATH}/ChangeLog >>${UPDCHKPATH}/${BUILDVER}
-printf "\n\nTHIS IS JUST A 100 LINE STRIPPED VERSION OF THE CHANGELOG\n" >>${UPDCHKPATH}/${BUILDVER}
+echo "${changelog}" | head -c 8K >${UPDCHKPATH}/${BUILDVER}
 
 # we write out the number of days to our last-build file
 # so that at least every 31 days a new YAM is automatically build even if no
 # changes had been applied
 cd $CHECKOUTDIR
-expr `date +%s` / 86400 - 2922 >.last_build
+date +%s >.last_build
 echo "done."
 
 # close the logfile

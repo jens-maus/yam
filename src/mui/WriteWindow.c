@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 Marcel Beck
- Copyright (C) 2000-2015 YAM Open Source Team
+ Copyright (C) 2000-2016 YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -3889,110 +3889,129 @@ DECLARE(ComposeMail) // enum WriteMode mode, ULONG closeWindow
   if(data->fromOverrideRcptHidden == FALSE)
     comp.FromOverride = (char *)xget(data->ST_FROM_OVERRIDE, MUIA_String_Contents);
 
-  // get the contents of the TO: String gadget and check if it is valid
-  addr = (char *)DoMethod(data->ST_TO, MUIM_RecipientString_Resolve, MUIF_RecipientString_Resolve_NoValid);
-  if(mode != WRITE_DRAFT && addr == NULL)
+  if(mode == WRITE_DRAFT)
   {
-    ER_NewError(tr(MSG_ER_AliasNotFound), (STRPTR)xget(data->ST_TO, MUIA_String_Contents));
-
-    if(winOpen == TRUE)
-    {
-      // don't trigger notifications as this will change the active object
-      nnset(data->RG_PAGE, MUIA_Group_ActivePage, 0);
-    }
-
-    set(obj, MUIA_Window_ActiveObject, data->ST_TO);
-
-    goto out;
+    // Drafts mail will always save the recipients as they are, no matter if they are valid or not
+    comp.MailTo = (char *)xget(data->ST_TO, MUIA_String_Contents);
+    comp.Subject = (char *)xget(data->ST_SUBJECT, MUIA_String_Contents);
+    comp.MailCC = (char *)xget(data->ST_CC, MUIA_String_Contents);
+    comp.MailBCC = (char *)xget(data->ST_BCC, MUIA_String_Contents);
+    comp.ReplyTo = (char *)xget(data->ST_REPLYTO, MUIA_String_Contents);
   }
-  else if(mode != WRITE_DRAFT && IsStrEmpty(addr) && wmData->quietMode == FALSE)
+  else
   {
-    // set the TO Field active and go back
-    if(winOpen == TRUE)
+    // get the contents of the TO: String gadget and check if it is valid
+    addr = (char *)DoMethod(data->ST_TO, MUIM_RecipientString_Resolve, MUIF_RecipientString_Resolve_NoValid);
+    if(addr == NULL)
     {
-      // don't trigger notifications as this will change the active object
-      nnset(data->RG_PAGE, MUIA_Group_ActivePage, 0);
-    }
+      ER_NewError(tr(MSG_ER_AliasNotFound), (STRPTR)xget(data->ST_TO, MUIA_String_Contents));
 
-    set(obj, MUIA_Window_ActiveObject, data->ST_TO);
+      if(winOpen == TRUE)
+      {
+        // don't trigger notifications as this will change the active object
+        nnset(data->RG_PAGE, MUIA_Group_ActivePage, 0);
+      }
 
-    if(MUI_Request(_app(obj), obj, MUIF_NONE, NULL, tr(MSG_WR_NORCPT_WARNING_GADGET), tr(MSG_WR_NORCPT_WARNING)) != 0)
-    {
-      // turn the action into writing a draft mail, but close the window nevertheless
-      mode = WRITE_DRAFT;
-    }
-    else
-      goto out;
-  }
-  else if(IsStrEmpty(addr) == FALSE)
-    comp.MailTo = addr; // To: address
+      set(obj, MUIA_Window_ActiveObject, data->ST_TO);
 
-  // get the content of the Subject: String gadget and check if it is empty or not.
-  comp.Subject = (char *)xget(data->ST_SUBJECT, MUIA_String_Contents);
-  if(wmData->mode != NMM_REDIRECT && mode != WRITE_DRAFT && wmData->quietMode == FALSE && C->WarnSubject == TRUE &&
-     IsStrEmpty(comp.Subject))
-  {
-    char subject[SIZE_SUBJECT];
-
-    if(winOpen == TRUE)
-    {
-      // don't trigger notifications as this will change the active object
-      nnset(data->RG_PAGE, MUIA_Group_ActivePage, 0);
-    }
-
-    set(obj, MUIA_Window_ActiveObject, data->ST_SUBJECT);
-
-    subject[0] = '\0';
-    if(StringRequest(subject, sizeof(subject), NULL, tr(MSG_WR_NOSUBJECTREQ), tr(MSG_Okay), NULL, tr(MSG_Cancel), FALSE, obj) <= 0)
-    {
       goto out;
     }
-    else
+    else if(IsStrEmpty(addr) == TRUE && wmData->quietMode == FALSE)
     {
-      // copy the entered subject back to string object
-      // this time we don't care whether a subject was entered or not
-      set(data->ST_SUBJECT, MUIA_String_Contents, subject);
-      comp.Subject = (char *)xget(data->ST_SUBJECT, MUIA_String_Contents);
+      // set the TO Field active and go back
+      if(winOpen == TRUE)
+      {
+        // don't trigger notifications as this will change the active object
+        nnset(data->RG_PAGE, MUIA_Group_ActivePage, 0);
+      }
+
+      set(obj, MUIA_Window_ActiveObject, data->ST_TO);
+
+      if(MUI_Request(_app(obj), obj, MUIF_NONE, NULL, tr(MSG_WR_NORCPT_WARNING_GADGET), tr(MSG_WR_NORCPT_WARNING)) != 0)
+      {
+        // turn the action into writing a draft mail, but close the window nevertheless
+        mode = WRITE_DRAFT;
+      }
+      else
+        goto out;
     }
-  }
-
-  // then we check the CC string gadget
-  addr = (char *)DoMethod(data->ST_CC, MUIM_RecipientString_Resolve, MUIF_RecipientString_Resolve_NoValid);
-  if(mode != WRITE_DRAFT && addr == NULL)
-  {
-    ER_NewError(tr(MSG_ER_AliasNotFound), (STRPTR)xget(data->ST_CC, MUIA_String_Contents));
-
-    if(winOpen == TRUE)
+    else if(IsStrEmpty(addr) == FALSE)
     {
-      // don't trigger notifications as this will change the active object
-      nnset(data->RG_PAGE, MUIA_Group_ActivePage, 0);
-    }
-
-    set(obj, MUIA_Window_ActiveObject, data->ST_CC);
-
-    goto out;
-  }
-  else if(IsStrEmpty(addr) == FALSE)
-    comp.MailCC = addr;
-
-  // then we check the BCC string gadget
-  addr = (char *)DoMethod(data->ST_BCC, MUIM_RecipientString_Resolve, MUIF_RecipientString_Resolve_NoValid);
-  if(mode != WRITE_DRAFT && addr == NULL)
-  {
-    ER_NewError(tr(MSG_ER_AliasNotFound), (STRPTR)xget(data->ST_BCC, MUIA_String_Contents));
-
-    if(winOpen == TRUE)
-    {
-      // don't trigger notifications as this will change the active object
-      nnset(data->RG_PAGE, MUIA_Group_ActivePage, 0);
+      // To: address
+      comp.MailTo = addr;
     }
 
-    set(obj, MUIA_Window_ActiveObject, data->ST_BCC);
+    // get the content of the Subject: String gadget and check if it is empty or not.
+    comp.Subject = (char *)xget(data->ST_SUBJECT, MUIA_String_Contents);
+    if(wmData->mode != NMM_REDIRECT && wmData->quietMode == FALSE && C->WarnSubject == TRUE &&
+       IsStrEmpty(comp.Subject))
+    {
+      char subject[SIZE_SUBJECT];
 
-    goto out;
+      if(winOpen == TRUE)
+      {
+        // don't trigger notifications as this will change the active object
+        nnset(data->RG_PAGE, MUIA_Group_ActivePage, 0);
+      }
+
+      set(obj, MUIA_Window_ActiveObject, data->ST_SUBJECT);
+
+      subject[0] = '\0';
+      if(StringRequest(subject, sizeof(subject), NULL, tr(MSG_WR_NOSUBJECTREQ), tr(MSG_Okay), NULL, tr(MSG_Cancel), FALSE, obj) <= 0)
+      {
+        goto out;
+      }
+      else
+      {
+        // copy the entered subject back to string object
+        // this time we don't care whether a subject was entered or not
+        set(data->ST_SUBJECT, MUIA_String_Contents, subject);
+        comp.Subject = (char *)xget(data->ST_SUBJECT, MUIA_String_Contents);
+      }
+    }
+
+    // then we check the CC string gadget
+    addr = (char *)DoMethod(data->ST_CC, MUIM_RecipientString_Resolve, MUIF_RecipientString_Resolve_NoValid);
+    if(addr == NULL)
+    {
+      ER_NewError(tr(MSG_ER_AliasNotFound), (STRPTR)xget(data->ST_CC, MUIA_String_Contents));
+
+      if(winOpen == TRUE)
+      {
+        // don't trigger notifications as this will change the active object
+        nnset(data->RG_PAGE, MUIA_Group_ActivePage, 0);
+      }
+
+      set(obj, MUIA_Window_ActiveObject, data->ST_CC);
+
+      goto out;
+    }
+    else if(IsStrEmpty(addr) == FALSE)
+    {
+      comp.MailCC = addr;
+    }
+
+    // then we check the BCC string gadget
+    addr = (char *)DoMethod(data->ST_BCC, MUIM_RecipientString_Resolve, MUIF_RecipientString_Resolve_NoValid);
+    if(addr == NULL)
+    {
+      ER_NewError(tr(MSG_ER_AliasNotFound), (STRPTR)xget(data->ST_BCC, MUIA_String_Contents));
+
+      if(winOpen == TRUE)
+      {
+        // don't trigger notifications as this will change the active object
+        nnset(data->RG_PAGE, MUIA_Group_ActivePage, 0);
+      }
+
+      set(obj, MUIA_Window_ActiveObject, data->ST_BCC);
+
+      goto out;
+    }
+    else if(IsStrEmpty(addr) == FALSE)
+    {
+      comp.MailBCC = addr;
+    }
   }
-  else if(IsStrEmpty(addr) == FALSE)
-    comp.MailBCC = addr;
 
   // set the write codeset for any mail to be written
   comp.codeset = wmData->codeset;
@@ -4012,60 +4031,65 @@ DECLARE(ComposeMail) // enum WriteMode mode, ULONG closeWindow
       }
     }
 
-    // then we check the ReplyTo string gadget
-    addr = (char *)DoMethod(data->ST_REPLYTO, MUIM_RecipientString_Resolve, MUIF_RecipientString_Resolve_NoValid);
-    if(mode != WRITE_DRAFT && addr == NULL)
+    if(mode != WRITE_DRAFT)
     {
-      ER_NewError(tr(MSG_ER_AliasNotFound), (STRPTR)xget(data->ST_REPLYTO, MUIA_String_Contents));
-
-      if(winOpen == TRUE)
+      // then we check the ReplyTo string gadget
+      addr = (char *)DoMethod(data->ST_REPLYTO, MUIM_RecipientString_Resolve, MUIF_RecipientString_Resolve_NoValid);
+      if(addr == NULL)
       {
-        // don't trigger notifications as this will change the active object
-        nnset(data->RG_PAGE, MUIA_Group_ActivePage, 0);
+        ER_NewError(tr(MSG_ER_AliasNotFound), (STRPTR)xget(data->ST_REPLYTO, MUIA_String_Contents));
+
+        if(winOpen == TRUE)
+        {
+          // don't trigger notifications as this will change the active object
+          nnset(data->RG_PAGE, MUIA_Group_ActivePage, 0);
+        }
+
+        set(obj, MUIA_Window_ActiveObject, data->ST_REPLYTO);
+
+        goto out;
+      }
+      else if(IsStrEmpty(addr) == FALSE)
+      {
+        comp.ReplyTo = addr;
       }
 
-      set(obj, MUIA_Window_ActiveObject, data->ST_REPLYTO);
+      // now we search all To:,CC: and BCC: addresses and try to match them
+      // against all mailing lists
+      LockFolderListShared(G->folders);
 
-      goto out;
-    }
-    else if(IsStrEmpty(addr) == FALSE)
-      comp.ReplyTo = addr;
-
-    // now we search all To:,CC: and BCC: addresses and try to match them
-    // against all mailing lists
-    LockFolderListShared(G->folders);
-
-    // walk through all folders and check if the
-    // mailing list support matches
-    ForEachFolderNode(G->folders, fnode)
-    {
-      struct Folder *curFolder = fnode->folder;
-
-      if(curFolder != NULL && curFolder->MLSupport == TRUE &&
-         curFolder->MLPattern[0] != '\0')
+      // walk through all folders and check if the
+      // mailing list support matches
+      ForEachFolderNode(G->folders, fnode)
       {
-        if((comp.MailTo != NULL && MatchNoCase(comp.MailTo, curFolder->MLPattern) == TRUE) ||
-           (comp.MailCC != NULL && MatchNoCase(comp.MailCC, curFolder->MLPattern) == TRUE) ||
-           (comp.MailBCC != NULL && MatchNoCase(comp.MailBCC, curFolder->MLPattern) == TRUE))
+        struct Folder *curFolder = fnode->folder;
+
+        if(curFolder != NULL && curFolder->MLSupport == TRUE &&
+           curFolder->MLPattern[0] != '\0')
         {
-          mlFolder = curFolder;
-          break;
+          if((comp.MailTo != NULL && MatchNoCase(comp.MailTo, curFolder->MLPattern) == TRUE) ||
+             (comp.MailCC != NULL && MatchNoCase(comp.MailCC, curFolder->MLPattern) == TRUE) ||
+             (comp.MailBCC != NULL && MatchNoCase(comp.MailBCC, curFolder->MLPattern) == TRUE))
+          {
+            mlFolder = curFolder;
+            break;
+          }
         }
       }
-    }
 
-    // if we found that a configued mailing list matches
-    // we go and set Mail-Reply-To: and Mail-Followup-To:
-    if(mlFolder != NULL && wmData->identity != NULL)
-    {
-      char address[SIZE_ADDRESS];
-      comp.MailReplyTo = strdup(BuildAddress(address, sizeof(address), wmData->identity->address, wmData->identity->realname));
-      if(IsStrEmpty(mlFolder->MLAddress) == FALSE)
-        comp.MailFollowupTo = strdup(mlFolder->MLAddress);
-    }
+      // if we found that a configued mailing list matches
+      // we go and set Mail-Reply-To: and Mail-Followup-To:
+      if(mlFolder != NULL && wmData->identity != NULL)
+      {
+        char address[SIZE_ADDRESS];
+        comp.MailReplyTo = strdup(BuildAddress(address, sizeof(address), wmData->identity->address, wmData->identity->realname));
+        if(IsStrEmpty(mlFolder->MLAddress) == FALSE)
+          comp.MailFollowupTo = strdup(mlFolder->MLAddress);
+      }
 
-    // unlock the folder list again
-    UnlockFolderList(G->folders);
+      // unlock the folder list again
+      UnlockFolderList(G->folders);
+    }
 
     // get the extra headers a user might have put into the mail
     comp.ExtHeader = (char *)xget(data->ST_EXTHEADER, MUIA_String_Contents);
@@ -5475,7 +5499,10 @@ DECLARE(MatchedKeyword) // const char *keyword
      xget(data->LV_ATTACH, MUIA_NList_Entries) == 0 &&
      xget(data->GR_ATTACH_REMIND, MUIA_ShowMe) == FALSE)
   {
-    set(data->GR_ATTACH_REMIND, MUIA_ShowMe, TRUE);
+    // the method is better call asynchronously instead of synchronously to avoid possible
+    // graphical glitches, because the MUIA_TextEditor_MatchedKeyword attribute is triggered
+    // from within the input handling
+    DoMethod(_app(obj), MUIM_Application_PushMethod, data->GR_ATTACH_REMIND, 3, MUIM_Set, MUIA_ShowMe, TRUE);
   }
 
   RETURN(0);

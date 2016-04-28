@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 Marcel Beck
- Copyright (C) 2000-2015 YAM Open Source Team
+ Copyright (C) 2000-2016 YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -647,24 +647,6 @@ done:
 
   return object.pointer;
 }
-
-///
-/// AllocSysObjectTags
-// varargs stub for AllocSysObject() for 68k
-// no ENTER/RETURN macro calls on purpose as this would blow up the trace log too much
-#if !defined(__PPC__)
-APTR VARARGS68K AllocSysObjectTags(ULONG type, ...)
-{
-  VA_LIST args;
-  APTR object;
-
-  VA_START(args, type);
-  object = AllocSysObject(type, (struct TagItem *)VA_ARG(args, struct TagItem *));
-  VA_END(args);
-
-  return object;
-}
-#endif
 
 ///
 /// FreeSysObject

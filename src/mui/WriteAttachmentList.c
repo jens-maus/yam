@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 Marcel Beck
- Copyright (C) 2000-2015 YAM Open Source Team
+ Copyright (C) 2000-2016 YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -304,7 +304,7 @@ OVERLOAD(MUIM_ContextMenuChoice)
     break;
 
     case CMN_DISPLAY:
-      DoMethod(_win(obj), MUIM_WriteWindow_DisplayAttachment);
+      DoMethod(_win(obj), MUIM_WriteWindow_DisplayAttachment, obj);
     break;
 
     default:

@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 Marcel Beck
- Copyright (C) 2000-2015 YAM Open Source Team
+ Copyright (C) 2000-2016 YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -403,6 +403,65 @@ static char *BuildCommandString(const char *format, const char *file)
   return command;
 }
 ///
+/// FindHTMLMetaCharset
+// try to find a charset information in a HTML file's meta data
+static BOOL FindHTMLMetaCharset(const char *filename)
+{
+  BOOL found = FALSE;
+  FILE *fh;
+
+  ENTER();
+
+  if((fh = fopen(filename, "r")) != NULL)
+  {
+    char *line = NULL;
+    size_t lineSize = 0;
+    char *metaString = NULL;
+    ULONG braceCount[2] = {0, 0};
+
+    while(GetLine(&line, &lineSize, fh) > 0)
+    {
+      if(IsStrEmpty(metaString) == FALSE || strstr(line, "<meta") != NULL)
+      {
+        char *p;
+
+        // count the opening and closing braces in the read line
+        for(p = line; *p != '\0'; p++)
+        {
+          if(*p == '<')
+            braceCount[0]++;
+          else if(*p == '>')
+            braceCount[1]++;
+        }
+
+        if(IsStrEmpty(metaString) == FALSE)
+          metaString = dstrcat(&metaString, " ");
+        metaString = dstrcat(&metaString, line);
+
+        // the meta data string is complete if the brace counts match
+        if(braceCount[0] == braceCount[1])
+        {
+          D(DBF_MIME, "HTML meta data '%s'", metaString);
+          if(strcasestr(metaString, "charset=") != NULL)
+          {
+            D(DBF_MIME, "found charset information in HTML meta data");
+            found = TRUE;
+          }
+          break;
+        }
+      }
+    }
+
+    free(line);
+
+    fclose(fh);
+  }
+
+  RETURN(found);
+  return found;
+}
+
+///
 /// RE_DisplayMIME
 //  Displays a message part (attachment) using a MIME viewer
 void RE_DisplayMIME(const char *srcfile, const char *dstfile,
@@ -552,6 +611,16 @@ void RE_DisplayMIME(const char *srcfile, const char *dstfile,
       codesetName = mt->CodesetName;
     }
 
+    // don't convert HTML documents if they contain meta data which declares a
+    // charset for the document. The browser application must do the conversion
+    // itself in this case.
+    // see ticket #616 for details
+    if(convertFromUTF8 == TRUE && stricmp(ctype, "text/html") == 0)
+    {
+      if(FindHTMLMetaCharset(srcfile) == TRUE)
+        dstfile = NULL;
+    }
+
     if(dstfile != NULL)
     {
       char suggestedName[SIZE_FILE];
@@ -636,6 +705,11 @@ void RE_DisplayMIME(const char *srcfile, const char *dstfile,
           // proper name (not YAMmXXXXXX)
           CopyFile(dstfile, NULL, srcfile, NULL);
         }
+
+        // treat the file with the converted contents as zombie file to delete it automatically
+        // later, because below the MIME viewer will be launched asynchronously and otherwise
+        // the file will remain in T: forever
+        AddZombieFile(dstfile);
       }
       else
         dstfile = srcfile;
@@ -1644,7 +1718,7 @@ static BOOL RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
 
   SHOWVALUE(DBF_MAIL, rp->EncodingCode);
 
-  isText = rp->ContentType != NULL && strnicmp(rp->ContentType, "text", 4) == 0;
+  isText = rp->ContentType != NULL && strnicmp(rp->ContentType, "text", 4) == 0 && stricmp(rp->ContentType, "text/html") != 0;
   SHOWVALUE(DBF_MIME, isText);
 
   // lets check if we got some encoding here and

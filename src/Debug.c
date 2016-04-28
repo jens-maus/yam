@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 Marcel Beck
- Copyright (C) 2000-2015 YAM Open Source Team
+ Copyright (C) 2000-2016 YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -161,7 +161,7 @@ static char indent_spaces[INDENT_MAX];
 /****************************************************************************/
 
 #if !defined(NO_THREADS)
-INLINE int _thread_id(const void *thread_ptr)
+static INLINE int _thread_id(const void *thread_ptr)
 {
   int result=-1;
   int i=0;
@@ -226,7 +226,7 @@ static void _DBPRINTF(const char *format, ...)
 
 /****************************************************************************/
 
-INLINE char *_INDENT(void)
+static INLINE char *_INDENT(void)
 {
   int levels = INDENT_LEVEL;
   int i;
@@ -241,8 +241,8 @@ INLINE char *_INDENT(void)
 
 /****************************************************************************/
 
-INLINE BOOL matchDebugSpec(const unsigned long c, const unsigned f,
-                           const char *m, const char *file)
+static INLINE BOOL matchDebugSpec(const unsigned long c, const unsigned f,
+                                  const char *m, const char *file)
 {
   BOOL match = FALSE;
 
@@ -292,9 +292,9 @@ static char *_NOW(void)
 
 /****************************************************************************/
 
-INLINE void _VDPRINTF(const unsigned long c,
-                      const char *file, unsigned long line,
-                      const char *format, va_list args)
+static INLINE void _VDPRINTF(const unsigned long c,
+                             const char *file, unsigned long line,
+                             const char *format, va_list args)
 {
   char buf[1024];
   const char *fg;

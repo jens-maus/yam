@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 Marcel Beck
- Copyright (C) 2000-2015 YAM Open Source Team
+ Copyright (C) 2000-2016 YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -112,7 +112,7 @@ void CleanupMethodStack(void)
 ///
 /// PushMethodOnStack
 // push a method with all given parameters on the method stack
-BOOL VARARGS68K PushMethodOnStack(Object *obj, ULONG argCount, ...)
+BOOL PushMethodOnStackA(Object *obj, ULONG argCount, struct TagItem *tags)
 {
   struct PushedMethod *pm;
   BOOL success = FALSE;
@@ -123,18 +123,12 @@ BOOL VARARGS68K PushMethodOnStack(Object *obj, ULONG argCount, ...)
     ASOMSG_Size, sizeof(*pm),
     TAG_DONE)) != NULL)
   {
-    VA_LIST args;
-
-    VA_START(args, argCount);
-
     // fill in the data
     pm->object = obj;
     // execute this one asynchronous
     pm->flags = 0;
     pm->argCount = argCount;
-    pm->args = memdup((void *)VA_ARG(args, IPTR), argCount*sizeof(IPTR));
-
-    VA_END(args);
+    pm->args = memdup((void *)tags, argCount*sizeof(IPTR));
 
     // push the method on the stack
     PutMsg(G->methodStack, (struct Message *)pm);
@@ -150,7 +144,7 @@ BOOL VARARGS68K PushMethodOnStack(Object *obj, ULONG argCount, ...)
 /// PushMethodOnStackWait
 // push a method with all given parameters on the method stack and wait
 // for the application to handle it
-IPTR VARARGS68K PushMethodOnStackWait(Object *obj, ULONG argCount, ...)
+IPTR PushMethodOnStackWaitA(Object *obj, ULONG argCount, struct TagItem *tags)
 {
   struct PushedMethod *pm;
   IPTR result = (IPTR)-1;
@@ -161,18 +155,12 @@ IPTR VARARGS68K PushMethodOnStackWait(Object *obj, ULONG argCount, ...)
     ASOMSG_Size, sizeof(*pm),
     TAG_DONE)) != NULL)
   {
-    VA_LIST args;
-
-    VA_START(args, argCount);
-
     // fill in the data
     pm->object = obj;
     // execute this one synchronous
     pm->flags = PMF_SYNC;
     pm->argCount = argCount;
-    pm->args = memdup((void *)VA_ARG(args, IPTR), argCount*sizeof(IPTR));
-
-    VA_END(args);
+    pm->args = memdup((void *)tags, argCount*sizeof(IPTR));
 
     if(IsMainThread() == TRUE)
     {

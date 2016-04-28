@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 Marcel Beck
- Copyright (C) 2000-2015 YAM Open Source Team
+ Copyright (C) 2000-2016 YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -830,25 +830,30 @@ void SetTZone(const char *location)
   // get the current date/time in struct tm format
   TimeVal2tm(NULL, &tm);
 
-  // call mktime() so that struct tm will be set correctly.
-  mktime(&tm);
-
-  // copy the timezone abbreviation string and the
-  // gmtoffset to our global structure
-  strlcpy(G->tzAbbr, tm.tm_zone, sizeof(G->tzAbbr));
-  G->gmtOffset = tm.tm_gmtoff / 60;
+  // call mktime() so that struct tm will be set correctly
+  if(mktime(&tm) != (time_t)-1)
+  {
+    // copy the timezone abbreviation string and the
+    // gmtoffset to our global structure
+    strlcpy(G->tzAbbr, (tm.tm_zone != NULL) ? tm.tm_zone : "", sizeof(G->tzAbbr));
+    G->gmtOffset = tm.tm_gmtoff / 60;
+  }
+  else
+  {
+    E(DBF_TZONE, "mktime() failed, errno=%ld\n", errno);
+  }
 
   // some debug information/output
-  D(DBF_TZONE, "New TimeZone: '%s'", location);
-  D(DBF_TZONE, "New TimeZone abbreviation: '%s'", G->tzAbbr);
-  D(DBF_TZONE, "New GMT offset: %d", G->gmtOffset);
+  D(DBF_TZONE, "new TimeZone: '%s'", location);
+  D(DBF_TZONE, "new TimeZone abbreviation: '%s'", G->tzAbbr);
+  D(DBF_TZONE, "new GMT offset: %d", G->gmtOffset);
 
   // find out when the next DST switch will happen and
   // save it in the global config accordingly.
   if(FindNextDSTSwitch(location, &G->nextDSTSwitch) <= 0)
   {
     memset(&G->nextDSTSwitch, 0, sizeof(G->nextDSTSwitch));
-    D(DBF_TZONE, "No DST switch");
+    D(DBF_TZONE, "no DST switch");
 
     StopTimer(TIMER_DSTSWITCH);
   }
@@ -860,7 +865,7 @@ void SetTZone(const char *location)
 
     TimeVal2DateStamp(&G->nextDSTSwitch, &ds, TZC_NONE);
     DateStamp2RFCString(nextDSTstr, sizeof(nextDSTstr), &ds, G->gmtOffset, G->tzAbbr, FALSE);
-    D(DBF_TZONE, "Next DST switch @ %s", nextDSTstr);
+    D(DBF_TZONE, "next DST switch @ %s", nextDSTstr);
     #endif
 
     // make sure the update the DSTSWITCH Timer accordingly

@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 Marcel Beck
- Copyright (C) 2000-2015 YAM Open Source Team
+ Copyright (C) 2000-2016 YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -128,6 +128,54 @@ static char *rcptok(char *s, BOOL *quote)
   RETURN(s);
   return s;
 }
+
+///
+/// CheckRcptAddress
+// check a recipient address to be valid
+static BOOL CheckRcptAddress(const char *s)
+{
+  BOOL valid = FALSE;
+  char *at;
+
+  ENTER();
+
+  if((at = strchr(s, '@')) != NULL)
+  {
+    char *openBrace;
+
+    if((openBrace = strchr(s, '<')) != NULL)
+    {
+      // opening brace found, now search for the closing brace after the '@'
+      if(strchr(at, '>') != NULL)
+      {
+        // finally there must be NO space in the address part between the braces
+        if(strchr(openBrace, ' ') == NULL)
+          valid = TRUE;
+        else
+          W(DBF_GUI, "invalid address, space found in '%s'", s);
+      }
+      else
+        W(DBF_GUI, "invalid address, no '>' found in '%s'", s);
+    }
+    else
+    {
+      // no opening brace found, must be something like "abc@def.ghi"
+      // there must be NO space in the address
+      if(strchr(s, ' ') == NULL)
+        valid = TRUE;
+      else
+        W(DBF_GUI, "invalid address, space found in '%s'", s);
+    }
+  }
+  else
+  {
+    W(DBF_GUI, "invalid address, no '@' found in '%s'", s);
+  }
+
+  RETURN(valid);
+  return valid;
+}
+
 ///
 /// NormalizeSelection()
 // normalized/clears the selection and removes eventually existing
@@ -976,20 +1024,30 @@ DECLARE(Resolve) // ULONG flags
 
       if(checkvalids == FALSE && (tmp = strchr(s, '@')) != NULL)
       {
-        D(DBF_GUI, "valid address found.. will not resolve it '%s'", s);
-        DoMethod(obj, METHOD(AddRecipient), s);
-
-        // check if email address lacks domain...
-        // and add the one from the currently active user identity
-        // or fallback to the default one
-        if(tmp[1] == '\0')
+        if(CheckRcptAddress(s) == TRUE)
         {
-          struct UserIdentityNode *uin = data->identity;
+          D(DBF_GUI, "valid address found, will not resolve it '%s'", s);
+          DoMethod(obj, METHOD(AddRecipient), s);
 
-          if(uin == NULL)
-            uin = GetUserIdentity(&C->userIdentityList, 0, TRUE);
+          // check if email address lacks domain...
+          // and add the one from the currently active user identity
+          // or fallback to the default one
+          if(tmp[1] == '\0')
+          {
+            struct UserIdentityNode *uin = data->identity;
 
-          DoMethod(obj, MUIM_BetterString_Insert, strchr(uin->address, '@')+1, MUIV_BetterString_Insert_EndOfString);
+            if(uin == NULL)
+              uin = GetUserIdentity(&C->userIdentityList, 0, TRUE);
+
+            DoMethod(obj, MUIM_BetterString_Insert, strchr(uin->address, '@')+1, MUIV_BetterString_Insert_EndOfString);
+          }
+        }
+        else
+        {
+          // keep the address, but signal failure
+          DoMethod(obj, METHOD(AddRecipient), s);
+          res = FALSE;
+          break;
         }
       }
       else if((hits = SearchABook(&G->abook, s, ASM_ALIAS|ASM_REALNAME|ASM_ADDRESS|ASM_USER|ASM_COMPLETE, &entry)) != 0) /* entry found in address book */
@@ -1081,8 +1139,9 @@ DECLARE(Resolve) // ULONG flags
       {
         D(DBF_GUI, "entry not found '%s'", s);
 
-        if((tmp = strchr(s, '@')) != NULL) /* entry seems to be an email address */
+        if((tmp = strchr(s, '@')) != NULL)
         {
+          // entry seems to be an email address
           D(DBF_GUI, "email address '%s'", s);
           DoMethod(obj, METHOD(AddRecipient), s);
 

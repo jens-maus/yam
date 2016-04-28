@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 Marcel Beck
- Copyright (C) 2000-2015 YAM Open Source Team
+ Copyright (C) 2000-2016 YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -294,7 +294,7 @@ void W(const unsigned long f, const char *format, ...);
 })
 
 #define AllocSysObject(t, p)       ({APTR P = AllocSysObject(t, p); _MEMTRACK(__FILE__, __LINE__, "AllocSysObject", P, t+1); P;})
-#define AllocSysObjectTags(t, ...) ({ULONG _tags[] = { __VA_ARGS__ }; AllocSysObject(t, (struct TagItem *)_tags);})
+#define AllocSysObjectTags(t, ...) ({ULONG _tags[] = { SDI_VACAST(__VA_ARGS__) }; AllocSysObject(t, (struct TagItem *)_tags);})
 #define FreeSysObject(t, p)        ({_UNMEMTRACK(__FILE__, __LINE__, p); FreeSysObject(t, p);})
 #define ItemPoolAlloc(p)           ({APTR P = ItemPoolAlloc(p); _MEMTRACK(__FILE__, __LINE__, "ItemPoolAlloc", P, 1); P; })
 #define ItemPoolFree(p, i)         ({_UNMEMTRACK(__FILE__, __LINE__, i); ItemPoolFree(p, i);})
@@ -319,7 +319,7 @@ void W(const unsigned long f, const char *format, ...);
 })
 
 #define ObtainDirContext(t)       ({APTR P = ObtainDirContext(t); _MEMTRACK(__FILE__, __LINE__, "ObtainDirContext", P, 1); P;})
-#define ObtainDirContextTags(...) ({ULONG _tags[] = { __VA_ARGS__ }; ObtainDirContext((struct TagItem *)_tags);})
+#define ObtainDirContextTags(...) ({ULONG _tags[] = { SDI_VACAST(__VA_ARGS__) }; ObtainDirContext((struct TagItem *)_tags);})
 #define ReleaseDirContext(p)      ({_UNMEMTRACK(__FILE__, __LINE__, p); ReleaseDirContext(p);})
 
 #define AllocSignal(__p0) ({ \
@@ -395,7 +395,7 @@ void W(const unsigned long f, const char *format, ...);
 })
 
 #define AllocSysObject(t, p)       ({APTR P = AllocSysObject(t, p); _MEMTRACK(__FILE__, __LINE__, "AllocSysObject", P, t+1); P;})
-#define AllocSysObjectTags(t, ...) ({APTR P = AllocSysObjectTags(t, __VA_ARGS__); _MEMTRACK(__FILE__, __LINE__, "AllocSysObjectTags", P, t+1); P;})
+#define AllocSysObjectTags(t, ...) ({ULONG _tags[] = { SDI_VACAST(__VA_ARGS__) }; AllocSysObject(t, (struct TagItem *)_tags);})
 #define FreeSysObject(t, p)        ({_UNMEMTRACK(__FILE__, __LINE__, p); FreeSysObject(t, p);})
 #define ItemPoolAlloc(p)           ({APTR P = ItemPoolAlloc(p); _MEMTRACK(__FILE__, __LINE__, "ItemPoolAlloc", P, 1); P; })
 #define ItemPoolFree(p, i)         ({_UNMEMTRACK(__FILE__, __LINE__, i); ItemPoolFree(p, i);})
@@ -420,7 +420,7 @@ void W(const unsigned long f, const char *format, ...);
 })
 
 #define ObtainDirContext(t)       ({APTR P = ObtainDirContext(t); _MEMTRACK(__FILE__, __LINE__, "ObtainDirContext", P, 1); P;})
-#define ObtainDirContextTags(...) ({APTR P = ObtainDirContextTags(__VA_ARGS__); _MEMTRACK(__FILE__, __LINE__, "ObtainDirContextTags", P, 1); P;})
+#define ObtainDirContextTags(...) ({ULONG _tags[] = { SDI_VACAST(__VA_ARGS__) }; ObtainDirContext((struct TagItem *)_tags);})
 #define ReleaseDirContext(p)      ({_UNMEMTRACK(__FILE__, __LINE__, p); ReleaseDirContext(p);})
 
 #define AllocSignal(__p0) ({ \

@@ -5,7 +5,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 Marcel Beck
- Copyright (C) 2000-2015 YAM Open Source Team
+ Copyright (C) 2000-2016 YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -44,7 +44,6 @@ extern const char* const yamfullcopyright;
 extern const char* const yamcompiler;
 extern const char* const yamurl;
 extern const unsigned long yamversiondays;
-extern const unsigned long yamsvnrev;
 extern struct WBStartup * WBmsg;
 #if defined(__amigaos3__)
 extern struct Library * PictureDTBase;

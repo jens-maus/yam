@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 Marcel Beck
- Copyright (C) 2000-2015 YAM Open Source Team
+ Copyright (C) 2000-2016 YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -35,15 +35,15 @@
 #include "extrasrc.h"
 
 #if defined(NEED_ASPRINTF)
-int VARARGS68K asprintf(char **ptr, const char * format, ...)
+int asprintf(char **ptr, const char * format, ...)
 {
-  VA_LIST ap;
+  va_list ap;
   int ret;
 
   *ptr = NULL;
-  VA_START(ap, format);
+  va_start(ap, format);
   ret = vasprintf(ptr, format, ap);
-  VA_END(ap);
+  va_end(ap);
 
   return ret;
 }

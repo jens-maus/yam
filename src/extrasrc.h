@@ -5,7 +5,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 Marcel Beck
- Copyright (C) 2000-2015 YAM Open Source Team
+ Copyright (C) 2000-2016 YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -172,7 +172,7 @@ int vsnprintf(char *buffer, size_t maxlen, const char *fmt, VA_LIST args);
 #endif
 
 #if defined(NEED_SNPRINTF)
-int VARARGS68K snprintf(char *buffer, size_t maxlen, const char *fmt, ...);
+int snprintf(char *buffer, size_t maxlen, const char *fmt, ...);
 #endif
 
 #if defined(NEED_VASPRINTF)
@@ -180,7 +180,7 @@ int vasprintf(char **ptr, const char *format, VA_LIST ap);
 #endif
 
 #if defined(NEED_ASPRINTF)
-int VARARGS68K asprintf(char **ptr, const char *format, ...);
+int asprintf(char **ptr, const char *format, ...);
 #endif
 
 #if defined(NEED_STCGFE)
@@ -209,7 +209,13 @@ ULONG VARARGS68K xset(Object *obj, ...);
 #endif
 
 #if defined(NEED_DOSUPERNEW)
+#if defined(__GNUC__) && __GNUC__ == 2
 Object * VARARGS68K DoSuperNew(struct IClass *cl, Object *obj, ...);
+#elif defined(__AROS__)
+#define DoSuperNew(cl, obj, ...) ({ULONG _tags[] = { SDI_VACAST(__VA_ARGS__) }; (Object *)DoSuperNewTagList(cl, obj, NULL, (struct TagItem *)_tags);})
+#else
+#define DoSuperNew(cl, obj, ...) ({ULONG _tags[] = { SDI_VACAST(__VA_ARGS__) }; (Object *)DoSuperMethod(cl, obj, OM_NEW, (struct TagItem *)_tags, NULL);})
+#endif
 #endif
 
 #if defined(NEED_SETPROCWINDOW)
@@ -218,11 +224,7 @@ APTR SetProcWindow(const void *newWindowPtr);
 
 #if defined(NEED_EXAMINEDIR)
 APTR ObtainDirContext(struct TagItem *tags);
-#if defined(__PPC__)
-#define ObtainDirContextTags(...) ({ULONG _tags[] = { __VA_ARGS__ }; ObtainDirContext((struct TagItem *)_tags);})
-#else
-APTR VARARGS68K ObtainDirContextTags(ULONG tag1, ...);
-#endif
+#define ObtainDirContextTags(...) ({ULONG _tags[] = { SDI_VACAST(__VA_ARGS__) }; ObtainDirContext((struct TagItem *)_tags);})
 void ReleaseDirContext(APTR context);
 struct ExamineData *ExamineDir(APTR context);
 #include "extrasrc/ExamineDir.h"
@@ -230,11 +232,7 @@ struct ExamineData *ExamineDir(APTR context);
 
 #if defined(NEED_ALLOCSYSOBJECT)
 APTR AllocSysObject(ULONG type, struct TagItem *tags);
-#if defined(__PPC__)
-#define AllocSysObjectTags(type, ...) ({ULONG _tags[] = { __VA_ARGS__ }; AllocSysObject(type, (struct TagItem *)_tags);})
-#else
-APTR VARARGS68K AllocSysObjectTags(ULONG type, ...);
-#endif
+#define AllocSysObjectTags(type, ...) ({ULONG _tags[] = { SDI_VACAST(__VA_ARGS__) }; AllocSysObject(type, (struct TagItem *)_tags);})
 void FreeSysObject(ULONG type, APTR object);
 #include "extrasrc/AllocSysObject.h"
 #endif
