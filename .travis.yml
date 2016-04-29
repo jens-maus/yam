@@ -1,15 +1,17 @@
 language: c
 
 before_install:
+  - wget https://dl.bintray.com/jens-maus/adtools/adtools-utils.tar.bz2
   - wget https://dl.bintray.com/jens-maus/adtools/adtools-m68k-amigaos.tar.bz2
   - wget https://dl.bintray.com/jens-maus/adtools/adtools-ppc-amigaos.tar.bz2
   - wget https://dl.bintray.com/jens-maus/adtools/adtools-ppc-morphos.tar.bz2
+  - sudo tar xf adtools-utils.tar.bz2 -C /
   - sudo tar xf adtools-m68k-amigaos.tar.bz2 -C /
   - sudo tar xf adtools-ppc-amigaos.tar.bz2 -C /
   - sudo tar xf adtools-ppc-morphos.tar.bz2 -C /
 
 before_script:
-  - export PATH=/opt/m68k-amigaos/bin:/opt/ppc-amigaos/bin:/opt/ppc-morphos/bin:$PATH
+  - export PATH=/usr/local/amiga/bin:/opt/m68k-amigaos/bin:/opt/ppc-amigaos/bin:/opt/ppc-morphos/bin:$PATH
 
 script:
   - make OS=os4 -j1
