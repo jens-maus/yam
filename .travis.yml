@@ -4,6 +4,12 @@ dist: trusty
 language: c
 
 before_install:
+  # Make sure apt is up to date.
+  - sudo apt-get update -qq
+  # Travis is on 64bit and we need some 32bit compatibility libs installed
+  - sudo apt-get install -qq --force-yes ia32-libs ia32-libs-multiarch
+  - sudo apt-get install -qq --force-yes gcc-multilib
+  # Install all adtools related stuff we need
   - wget https://dl.bintray.com/jens-maus/adtools/adtools-utils.tar.bz2
   - wget https://dl.bintray.com/jens-maus/adtools/adtools-m68k-amigaos.tar.bz2
   - wget https://dl.bintray.com/jens-maus/adtools/adtools-ppc-amigaos.tar.bz2
@@ -14,18 +20,9 @@ before_install:
   - sudo tar xf adtools-ppc-morphos.tar.bz2 -C /
 
 before_script:
-  - export PATH=/usr/local/amiga/bin:/opt/m68k-amigaos/bin:/opt/ppc-amigaos/bin:/opt/ppc-morphos/bin:$PATH
+  - export PATH=/usr/local/amiga/bin:/opt/m68k-amigaos/bin:/opt/ppc-amigaos/bin:/opt/ppc-morphos/bin:${PATH}
 
 script:
-  - ls -la /opt/
-  - ls -la /usr/local/amiga/
-  - ls -la /usr/local/amiga/bin
-  - echo $PATH
   #- make OS=os4 -j1
-  - echo $PATH
-  - ls -la /opt/m68k-amigaos/bin/
   - make OS=os3 -j1
-  - echo $PATH
-  - ls -la /opt/ppc-morphos/bin
-  - ls -la /opt/ppc-morphos/ppc-morphos/bin/
   - make OS=mos -j1
