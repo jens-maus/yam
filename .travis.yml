@@ -17,6 +17,15 @@ before_script:
   - export PATH=/usr/local/amiga/bin:/opt/m68k-amigaos/bin:/opt/ppc-amigaos/bin:/opt/ppc-morphos/bin:$PATH
 
 script:
-  - make OS=os4 -j1
+  - ls -la /opt/
+  - ls -la /usr/local/amiga/
+  - ls -la /usr/local/amiga/bin
+  - echo $PATH
+  #- make OS=os4 -j1
+  - echo $PATH
+  - ls -la /opt/m68k-amigaos/bin/
   - make OS=os3 -j1
+  - echo $PATH
+  - ls -la /opt/ppc-morphos/bin
+  - ls -la /opt/ppc-morphos/ppc-morphos/bin/
   - make OS=mos -j1
