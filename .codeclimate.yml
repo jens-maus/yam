@@ -1,0 +1,12 @@
+---
+engines:
+  duplication:
+    enabled: false
+  fixme:
+    enabled: true
+  gnu-complexity:
+    enabled: true
+  markdownlint:
+    enabled: true
+  phpmd:
+    enabled: true
