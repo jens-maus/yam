@@ -7,9 +7,9 @@ install:
   # Make sure we can install i386 packages as some adtools binaries
   # requires i386 libraries being installed to work in the 64bit env
   # of Travis
-  - "travis_retry sudo dpkg --add-architecture i386"
-  - "travis_retry sudo apt-get update"
-  - "travis_retry sudo apt-get -qq install libc6:i386"
+  - sudo dpkg --add-architecture i386
+  - sudo apt-get -qq update || true
+  - sudo apt-get -qq install libc6:i386
   # Install all adtools related stuff we need
   - wget https://dl.bintray.com/jens-maus/adtools/adtools-utils.tar.bz2
   - wget https://dl.bintray.com/jens-maus/adtools/adtools-m68k-amigaos.tar.bz2
