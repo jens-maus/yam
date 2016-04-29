@@ -3,13 +3,12 @@ dist: trusty
 
 language: c
 
-before_install:
+install:
   # Make sure apt is up to date.
-  - sudo apt-get update -qq
+  - "travis_retry sudo apt-get update"
   # Travis is on 64bit and we need some 32bit compatibility libs installed
-  #- sudo apt-get install -qq --force-yes ia32-libs ia32-libs-multiarch
-  - sudo apt-get install -qq --force-yes libc6:i386
-  - sudo apt-get install -qq --force-yes gcc-multilib
+  - "travis_retry sudo dpkg --add-architecture i386"
+  - "travis_retry sudo apt-get -qq install libc6:i386"
   # Install all adtools related stuff we need
   - wget https://dl.bintray.com/jens-maus/adtools/adtools-utils.tar.bz2
   - wget https://dl.bintray.com/jens-maus/adtools/adtools-m68k-amigaos.tar.bz2
