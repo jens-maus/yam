@@ -19,12 +19,12 @@
 
 /*
 ** Defaults for preprocessor symbols.
-** You can override these in your C compiler options, e.g. '-DHAVE_ADJTIME=0'.
+** You can override these in your C compiler options, e.g. '-DHAVE_GETTEXT=1'.
 */
 
-#ifndef HAVE_ADJTIME
-#define HAVE_ADJTIME		1
-#endif /* !defined HAVE_ADJTIME */
+#ifndef HAVE_DECL_ASCTIME_R
+#define HAVE_DECL_ASCTIME_R 1
+#endif
 
 #ifndef HAVE_GETTEXT
 #define HAVE_GETTEXT		0
@@ -38,9 +38,13 @@
 #define HAVE_LINK		1
 #endif /* !defined HAVE_LINK */
 
-#ifndef HAVE_SETTIMEOFDAY
-#define HAVE_SETTIMEOFDAY	3
-#endif /* !defined HAVE_SETTIMEOFDAY */
+#ifndef HAVE_POSIX_DECLS
+#define HAVE_POSIX_DECLS 1
+#endif
+
+#ifndef HAVE_STRDUP
+#define HAVE_STRDUP 1
+#endif
 
 #ifndef HAVE_SYMLINK
 #define HAVE_SYMLINK		1
@@ -59,7 +63,7 @@
 #endif /* !defined HAVE_UNISTD_H */
 
 #ifndef HAVE_UTMPX_H
-#define HAVE_UTMPX_H		0
+#define HAVE_UTMPX_H		1
 #endif /* !defined HAVE_UTMPX_H */
 
 #ifndef NETBSD_INSPIRED
@@ -109,6 +113,9 @@
 
 #ifndef ENAMETOOLONG
 # define ENAMETOOLONG EINVAL
+#endif
+#ifndef ENOTSUP
+# define ENOTSUP EINVAL
 #endif
 #ifndef EOVERFLOW
 # define EOVERFLOW EINVAL
@@ -191,7 +198,7 @@ typedef long long	int_fast64_t;
 #  define INT_FAST64_MIN LLONG_MIN
 #  define INT_FAST64_MAX LLONG_MAX
 # else
-#  if (LONG_MAX >> 31) < 0xffffffff
+#  if LONG_MAX >> 31 < 0xffffffff
 Please use a compiler that supports a 64-bit integer type (or wider);
 you may need to compile with "-DHAVE_STDINT_H".
 #  endif
@@ -240,6 +247,18 @@ typedef long intmax_t;
 #  define PRIdMAX "lld"
 # else
 #  define PRIdMAX "ld"
+# endif
+#endif
+
+#ifndef UINT_FAST64_MAX
+# if defined ULLONG_MAX || defined __LONG_LONG_MAX__
+typedef unsigned long long uint_fast64_t;
+# else
+#  if ULONG_MAX >> 31 >> 1 < 0xffffffff
+Please use a compiler that supports a 64-bit integer type (or wider);
+you may need to compile with "-DHAVE_STDINT_H".
+#  endif
+typedef unsigned long	uint_fast64_t;
 # endif
 #endif
 
@@ -358,6 +377,9 @@ typedef time_tz tz_time_t;
 # define tzset tz_tzset
 # undef  tzsetwall
 # define tzsetwall tz_tzsetwall
+
+#ifdef AMIGA
+
 # undef  strftime
 # define strftime tz_strftime
 # undef  asctime
@@ -381,6 +403,12 @@ struct glibc_tm
 };
 #define tm glibc_tm
 
+size_t strftime(char * const s, const size_t maxsize, const char *const format, const struct tm *const t);
+char *asctime_r(register const struct tm *timeptr, char *buf);
+char *asctime(register const struct tm *timeptr);
+
+#endif
+
 char *ctime(time_t const *);
 char *ctime_r(time_t const *, char *);
 double difftime(time_t, time_t);
@@ -395,20 +423,25 @@ void tzset(void);
 #else
 void tzset(const char * name);
 #endif
-size_t strftime(char * const s, const size_t maxsize, const char *const format,
-  const struct tm *const t);
-char *asctime_r(register const struct tm *timeptr, char *buf);
-char *asctime(register const struct tm *timeptr);
 #endif
 
-/*
-** Some time.h implementations don't declare asctime_r.
-** Others might define it as a macro.
-** Fix the former without affecting the latter.
-*/
+#if !HAVE_DECL_ASCTIME_R && !defined asctime_r
+extern char *asctime_r(struct tm const *restrict, char *restrict);
+#endif
 
-#ifndef asctime_r
-extern char *	asctime_r(struct tm const *restrict, char *restrict);
+#if !HAVE_POSIX_DECLS
+# ifdef USG_COMPAT
+#  ifndef timezone
+extern long timezone;
+#  endif
+#  ifndef daylight
+extern int daylight;
+#  endif
+# endif
+#endif
+
+#if defined ALTZONE && !defined altzone
+extern long altzone;
 #endif
 
 /*
@@ -479,14 +512,6 @@ time_t time2posix_z(timezone_t, time_t) ATTRIBUTE_PURE;
 #endif
 
 /*
-** Private function declarations.
-*/
-
-char *		icatalloc(char * old, const char * new);
-char *		icpyalloc(const char * string);
-const char *	scheck(const char * string, const char * format);
-
-/*
 ** Finally, some convenience items.
 */
 
@@ -506,15 +531,20 @@ const char *	scheck(const char * string, const char * format);
 #define TYPE_SIGNED(type) (((type) -1) < 0)
 #endif /* !defined TYPE_SIGNED */
 
-/* The minimum and maximum finite time values.  */
-static time_t const time_t_min =
-  (TYPE_SIGNED(time_t)
-   ? (time_t) -1 << (CHAR_BIT * sizeof (time_t) - 1)
-   : 0);
-static time_t const time_t_max =
-  (TYPE_SIGNED(time_t)
-   ? - (~ 0 < 0) - ((time_t) -1 << (CHAR_BIT * sizeof (time_t) - 1))
-   : -1);
+#define TWOS_COMPLEMENT(t) ((t) ~ (t) 0 < 0)
+
+/* Max and min values of the integer type T, of which only the bottom
+   B bits are used, and where the highest-order used bit is considered
+   to be a sign bit if T is signed.  */
+#define MAXVAL(t, b)						\
+  ((t) (((t) 1 << ((b) - 1 - TYPE_SIGNED(t)))			\
+	- 1 + ((t) 1 << ((b) - 1 - TYPE_SIGNED(t)))))
+#define MINVAL(t, b)						\
+  ((t) (TYPE_SIGNED(t) ? - TWOS_COMPLEMENT(t) - MAXVAL(t, b) : 0))
+
+/* The minimum and maximum finite time values.  This assumes no padding.  */
+static time_t const time_t_min = MINVAL(time_t, TYPE_BIT(time_t));
+static time_t const time_t_max = MAXVAL(time_t, TYPE_BIT(time_t));
 
 #ifndef INT_STRLEN_MAXIMUM
 /*
