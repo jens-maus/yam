@@ -7,7 +7,7 @@
 ZIC=zic
 CP=cp
 RM=rm
-TZDIR="../../resources/zoneinfo/"
+TZDIR="../resources/zoneinfo/"
 
 # before starting we clear TZDIR
 ${RM} -rf ${TZDIR}/*
@@ -15,11 +15,11 @@ ${RM} -rf ${TZDIR}/*
 # use 'zic' to generate the zoneinfo files we require for yam
 TIMEZONES="africa antarctica asia australasia europe northamerica southamerica"
 for tz in ${TIMEZONES}; do
-  ${ZIC} -y tzdata/yearistype.sh -d ${TZDIR} -v tzdata/${tz}
+  ${ZIC} -y tz/yearistype.sh -d ${TZDIR} -v tz/${tz}
 done
 
 # copy the .tab files because YAM will use them
-${CP} tzdata/zone1970.tab ${TZDIR}/zone.tab
+${CP} tz/zone1970.tab ${TZDIR}/zone.tab
 
 # remove some backward compatibility files the zic compiler created
 # but yam will not use

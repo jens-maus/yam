@@ -459,7 +459,7 @@ endif
 
 # Third-party tools/libraries
 GENCLASSES = $(TOOLS)/genclasses
-TZLIB = $(TOOLS)/tzcode
+TZLIB = tz
 
 # our few new rewritten classes
 MUIOBJS = \
@@ -829,7 +829,7 @@ cleanall: clean
 distclean: cleanall
 	@echo "  DISTCLEAN"
 	@$(MAKE) -C $(GENCLASSES) clean
-	@$(MAKE) -C $(TZLIB) clean
+	@$(MAKE) -C $(TZLIB) -f Makefile.amiga clean
 
 ## ADD FLAGS TARGETS ##################
 
@@ -861,7 +861,7 @@ $(GENCLASSES)/GenClasses: $(GENCLASSES)/gc.c $(GENCLASSES)/gc.h \
 $(LIB)/libtz.a: $(TZLIB)/asctime.c $(TZLIB)/difftime.c \
 	$(TZLIB)/localtime.c $(TZLIB)/private.h \
 	$(TZLIB)/strftime.c $(TZLIB)/tzfile.h
-	@$(MAKE) -C $(TZLIB)
+	@$(MAKE) -C $(TZLIB) -f Makefile.amiga
 
 ## GITREV TOOL ########################
 

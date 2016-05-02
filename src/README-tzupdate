@@ -1,0 +1,91 @@
+/***************************************************************************
+
+ YAM - Yet Another Mailer
+ Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
+ Copyright (C) 2000-2016 YAM Open Source Team
+
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+ YAM Official Support Site :  http://yam.ch/
+
+***************************************************************************/
+
+This is a short documentation on how to update the tz/zoneinfo sources
+and data from https://www.iana.org/time-zones or https://github.com/eggert/tz
+stored in the 'src/tz' subdirectory of the YAM respository.
+
+We are actually using the "git subtree" functionality to be able to easily
+merge new updated tz/zoneinfo versions into our git repository. So please
+refer to [1] and [2] for more information on git subtrees.
+
+HowTo update the OpenSSL version in "src/tz":
+============================================
+
+1. To merge in a new tz/zoneinfo version execute the following git command
+   within a working copy of the YAM repository:
+   
+   $ git subtree pull --prefix src/tz --squash https://github.com/eggert/tz.git 2016d
+
+   Note, that "2016d" can be replaced by any branch or tag of the tz/zoneinfo
+   git repository at github.com (https://github.com/eggert/tz)
+
+   After execution of the above subtree command git will try to merge in all
+   changes between the currently utilized tz/zoneinfo version and the one specified
+   and also adds the local changes applied due to our YAM changes.
+
+2. In many cases the above command will result in merge conflicts which you
+   need to resolve accordingly before you can commit the changes accordingly.
+
+   Use the following command to display a list of files still in conflict:
+
+   $ git diff --name-only --diff-filter=U
+
+3. Go to "src/" directoy an execute the "tools/mktzdata.sh" script which takes
+   care to regenerate our binary zoneinfo files in the top-level resources
+   directory.
+
+   $ cd src/
+   $ tools/mktzdata.sh
+
+7. Review all changes with "git status" and make sure to commit everything
+   properly.
+
+   $ git status
+   $ git commit -a -m "updated tz/zoneinfo to version 2016d"
+   $ git push
+
+
+HowTo generate a diff file of our YAM changes:
+=============================================
+
+1. Add a remote 'tz' branch to your git working copy and fetch all branches
+   and tags accordingly:
+
+   $ git remote add tz https://github.com/eggert/tz.git
+   $ git fetch tz
+   $ git fetch -t tz
+
+2. Generate the diff from the top-level dir of your working copy.
+
+   $ git diff 2016d master:tz
+  
+   to generate a diff to a remote branch use the following command instead:
+
+   $ git diff master:tz remotes/tz/master
+
+References:
+
+[1] https://gist.github.com/kvnsmth/4688345
+[2] https://medium.com/@v/git-subtrees-a-tutorial-6ff568381844#.q7ivzd39l

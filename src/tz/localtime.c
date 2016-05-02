@@ -1000,7 +1000,7 @@ static bool
 tzparse(const char *name, struct state *sp, bool lastditch)
 {
 	const char *			stdname;
-	const char *			dstname;
+	const char *			dstname = 0;
 	size_t				stdlen;
 	size_t				dstlen;
 	size_t				charcnt;
@@ -1298,18 +1298,29 @@ tzsetwall(void)
 }
 #endif
 
+#ifndef TZSET_ARG
 static void
 tzset_unlocked(void)
 {
   tzsetlcl(getenv("TZ"));
 }
+#endif
 
+#ifndef TZSET_ARG
 void
 tzset(void)
+#else
+void
+tzset(const char * name)
+#endif
 {
   if (lock() != 0)
     return;
+#ifndef TZSET_ARG
   tzset_unlocked();
+#else
+  tzsetlcl(name);
+#endif
   unlock();
 }
 
@@ -1477,8 +1488,10 @@ localtime_tzset(time_t const *timep, struct tm *tmp, bool setname)
     errno = err;
     return NULL;
   }
+#ifndef TZSET_ARG
   if (setname || !lcl_is_set)
     tzset_unlocked();
+#endif
   tmp = localsub(lclptr, timep, setname, tmp);
   unlock();
   return tmp;
@@ -1501,7 +1514,7 @@ localtime_r(const time_t *timep, struct tm *tmp)
 */
 
 static struct tm *
-gmtsub(struct state const *sp, time_t const *timep, int_fast32_t offset,
+gmtsub(struct state const *sp __attribute__((unused)), time_t const *timep, int_fast32_t offset,
        struct tm *tmp)
 {
 	register struct tm *	result;
@@ -2123,7 +2136,9 @@ mktime(struct tm *tmp)
     errno = err;
     return -1;
   }
+#ifndef TZSET_ARG
   tzset_unlocked();
+#endif
   t = mktime_tzname(lclptr, tmp, true);
   unlock();
   return t;
@@ -2199,8 +2214,10 @@ time2posix(time_t t)
     errno = err;
     return -1;
   }
+#ifndef TZSET_ARG
   if (!lcl_is_set)
     tzset_unlocked();
+#endif
   if (lclptr)
     t = time2posix_z(lclptr, t);
   unlock();
@@ -2244,8 +2261,10 @@ posix2time(time_t t)
     errno = err;
     return -1;
   }
+#ifndef TZSET_ARG
   if (!lcl_is_set)
     tzset_unlocked();
+#endif
   if (lclptr)
     t = posix2time_z(lclptr, t);
   unlock();

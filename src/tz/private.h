@@ -378,6 +378,37 @@ typedef time_tz tz_time_t;
 # undef  tzsetwall
 # define tzsetwall tz_tzsetwall
 
+#ifdef AMIGA
+
+# undef  strftime
+# define strftime tz_strftime
+# undef  asctime
+# define asctime tz_asctime
+# undef  asctime_r
+# define asctime_r tz_asctime_r
+
+struct glibc_tm
+{
+  int  tm_sec;
+  int  tm_min;
+  int  tm_hour;
+  int  tm_mday;
+  int  tm_mon;
+  int  tm_year;
+  int  tm_wday;
+  int  tm_yday;
+  int  tm_isdst;
+  long tm_gmtoff;
+  const char *tm_zone;
+};
+#define tm glibc_tm
+
+size_t strftime(char * const s, const size_t maxsize, const char *const format, const struct tm *const t);
+char *asctime_r(register const struct tm *timeptr, char *buf);
+char *asctime(register const struct tm *timeptr);
+
+#endif
+
 char *ctime(time_t const *);
 char *ctime_r(time_t const *, char *);
 double difftime(time_t, time_t);
@@ -387,7 +418,11 @@ struct tm *localtime(time_t const *);
 struct tm *localtime_r(time_t const *restrict, struct tm *restrict);
 time_t mktime(struct tm *);
 time_t time(time_t *);
+#ifndef TZSET_ARG
 void tzset(void);
+#else
+void tzset(const char * name);
+#endif
 #endif
 
 #if !HAVE_DECL_ASCTIME_R && !defined asctime_r
