@@ -8,7 +8,7 @@ ZIC=zic
 CP=cp
 RM=rm
 TZLIB="tools/tz"
-TZDIR="../../resources/zoneinfo/"
+TZDIR="../../../resources/zoneinfo/"
 
 if [ ! -e "${TZLIB}" ]; then
   echo "ERROR: You have to call this script from the 'src' directory."
