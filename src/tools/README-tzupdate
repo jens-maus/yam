@@ -24,19 +24,19 @@
 
 This is a short documentation on how to update the tz/zoneinfo sources
 and data from https://www.iana.org/time-zones or https://github.com/eggert/tz
-stored in the 'src/tz' subdirectory of the YAM respository.
+stored in the 'src/tools/tz' subdirectory of the YAM respository.
 
 We are actually using the "git subtree" functionality to be able to easily
 merge new updated tz/zoneinfo versions into our git repository. So please
 refer to [1] and [2] for more information on git subtrees.
 
-HowTo update the OpenSSL version in "src/tz":
-============================================
+HowTo update the OpenSSL version in "src/tools/tz":
+=================================================
 
 1. To merge in a new tz/zoneinfo version execute the following git command
    within a working copy of the YAM repository:
    
-   $ git subtree pull --prefix src/tz --squash https://github.com/eggert/tz.git 2016d
+   $ git subtree pull --prefix src/tools/tz --squash https://github.com/eggert/tz.git 2016d
 
    Note, that "2016d" can be replaced by any branch or tag of the tz/zoneinfo
    git repository at github.com (https://github.com/eggert/tz)
@@ -52,7 +52,7 @@ HowTo update the OpenSSL version in "src/tz":
 
    $ git diff --name-only --diff-filter=U
 
-3. Go to "src/" directoy an execute the "tools/mktzdata.sh" script which takes
+3. Go to "src" directoy an execute the "tools/mktzdata.sh" script which takes
    care to regenerate our binary zoneinfo files in the top-level resources
    directory.
 

@@ -136,7 +136,7 @@ CDTHIS=
 
 # target definition
 TARGET  = libtz.a
-TDIR    = ../lib/$(OS)
+TDIR    = ../../lib/$(OS)
 
 # Common Directories
 PREFIX    = $(CDTHIS)

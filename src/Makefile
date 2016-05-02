@@ -459,7 +459,7 @@ endif
 
 # Third-party tools/libraries
 GENCLASSES = $(TOOLS)/genclasses
-TZLIB = tz
+TZLIB = $(TOOLS)/tz
 
 # our few new rewritten classes
 MUIOBJS = \

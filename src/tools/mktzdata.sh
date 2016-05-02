@@ -7,7 +7,16 @@
 ZIC=zic
 CP=cp
 RM=rm
-TZDIR="../resources/zoneinfo/"
+TZLIB="tools/tz"
+TZDIR="../../resources/zoneinfo/"
+
+if [ ! -e "${TZLIB}" ]; then
+  echo "ERROR: You have to call this script from the 'src' directory."
+  exit 2
+fi
+
+# change in TZLIB
+cd ${TZLIB}
 
 # before starting we clear TZDIR
 ${RM} -rf ${TZDIR}/*
@@ -15,11 +24,11 @@ ${RM} -rf ${TZDIR}/*
 # use 'zic' to generate the zoneinfo files we require for yam
 TIMEZONES="africa antarctica asia australasia europe northamerica southamerica"
 for tz in ${TIMEZONES}; do
-  ${ZIC} -y tz/yearistype.sh -d ${TZDIR} -v tz/${tz}
+  ${ZIC} -y yearistype.sh -d ${TZDIR} -v ${tz}
 done
 
 # copy the .tab files because YAM will use them
-${CP} tz/zone1970.tab ${TZDIR}/zone.tab
+${CP} zone1970.tab ${TZDIR}/zone.tab
 
 # remove some backward compatibility files the zic compiler created
 # but yam will not use
