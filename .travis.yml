@@ -28,7 +28,8 @@ install:
 
 notifications:
   email:
-    - svn@yam.ch
+    recipients:
+      - svn@yam.ch
     on_success: change
     on_failure: change
 
