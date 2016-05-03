@@ -3,6 +3,16 @@ dist: trusty
 
 language: c
 
+# send build/failure notifications only to a specific
+# email address and only on a status change
+notifications:
+  email:
+    recipients:
+      - svn@yam.ch
+    on_success: change
+    on_failure: change
+
+# download and install our required cross compilers
 install:
   # Make sure we can install i386 packages as some adtools binaries
   # requires i386 libraries being installed to work in the 64bit env
@@ -26,20 +36,20 @@ install:
   - sudo tar xf adtools-i386-aros.tar.bz2 -C /
   - sudo tar xf adtools-x86_64-aros.tar.bz2 -C /
 
-notifications:
-  email:
-    recipients:
-      - svn@yam.ch
-    on_success: change
-    on_failure: change
-
+# set the PATH variable to the directories the cross compilers are installed.
 before_script:
   - export PATH=/usr/local/amiga/bin:/opt/m68k-amigaos/bin:/opt/ppc-amigaos/bin:/opt/ppc-morphos/bin:${PATH}
 
+# specify a list of variables to test (here we test the build for our supported
+# list of operating systems).
+env:
+  - OS=os4
+  - OS=os3
+  - OS=mos
+  - OS=i386-aros
+  - OS=ppc-aros
+  - OS=x86_64-aros
+
+# the build command to execute for each test
 script:
-  - make OS=os4 -j1
-  - make OS=os3 -j1
-  - make OS=mos -j1
-  - make OS=i386-aros -j1
-  - make OS=ppc-aros -j1
-  - make OS=x86_64-aros -j1
+  - make OS=${OS} -j1
