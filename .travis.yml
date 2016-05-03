@@ -21,13 +21,13 @@ install:
   - sudo apt-get -qq update || true
   - sudo apt-get -qq install libc6:i386
   # Install all adtools related stuff we need
-  - curl https://dl.bintray.com/jens-maus/adtools/adtools-utils.tar.bz2 | sudo tar x -C /
-  - if [[ "${OS}" == "os3" ]]; then curl https://dl.bintray.com/jens-maus/adtools/adtools-m68k-amigaos.tar.bz2 | sudo tar x -C / ; fi
-  - if [[ "${OS}" == "os4" ]]; then curl https://dl.bintray.com/jens-maus/adtools/adtools-ppc-amigaos.tar.bz2 | sudo tar x -C / ; fi
-  - if [[ "${OS}" == "mos" ]]; then curl https://dl.bintray.com/jens-maus/adtools/adtools-ppc-morphos.tar.bz2 | sudo tar x -C / ; fi
-  - if [[ "${OS}" == "aros-ppc" ]]; then curl https://dl.bintray.com/jens-maus/adtools/adtools-ppc-aros.tar.bz2 | sudo tar x -C / ; fi
-  - if [[ "${OS}" == "aros-i386" ]]; then curl https://dl.bintray.com/jens-maus/adtools/adtools-i386-aros.tar.bz2 | sudo tar x -C / ; fi
-  - if [[ "${OS}" == "aros-x86_64" ]]; then curl https://dl.bintray.com/jens-maus/adtools/adtools-x86_64-aros.tar.bz2 | sudo tar x -C / ; fi
+  - curl -L https://dl.bintray.com/jens-maus/adtools/adtools-utils.tar.bz2 | sudo tar xj -C /
+  - if [[ "${OS}" == "os3" ]]; then curl -L https://dl.bintray.com/jens-maus/adtools/adtools-m68k-amigaos.tar.bz2 | sudo tar xj -C / ; fi
+  - if [[ "${OS}" == "os4" ]]; then curl -L https://dl.bintray.com/jens-maus/adtools/adtools-ppc-amigaos.tar.bz2 | sudo tar xj -C / ; fi
+  - if [[ "${OS}" == "mos" ]]; then curl -L https://dl.bintray.com/jens-maus/adtools/adtools-ppc-morphos.tar.bz2 | sudo tar xj -C / ; fi
+  - if [[ "${OS}" == "aros-ppc" ]]; then curl -L https://dl.bintray.com/jens-maus/adtools/adtools-ppc-aros.tar.bz2 | sudo tar xj -C / ; fi
+  - if [[ "${OS}" == "aros-i386" ]]; then curl -L https://dl.bintray.com/jens-maus/adtools/adtools-i386-aros.tar.bz2 | sudo tar xj -C / ; fi
+  - if [[ "${OS}" == "aros-x86_64" ]]; then curl -L https://dl.bintray.com/jens-maus/adtools/adtools-x86_64-aros.tar.bz2 | sudo tar xj -C / ; fi
 
 # set the PATH variable to the directories the cross compilers are installed.
 before_script:
