@@ -15,10 +15,22 @@ install:
   - wget https://dl.bintray.com/jens-maus/adtools/adtools-m68k-amigaos.tar.bz2
   - wget https://dl.bintray.com/jens-maus/adtools/adtools-ppc-amigaos.tar.bz2
   - wget https://dl.bintray.com/jens-maus/adtools/adtools-ppc-morphos.tar.bz2
+  - wget https://dl.bintray.com/jens-maus/adtools/adtools-ppc-aros.tar.bz2
+  - wget https://dl.bintray.com/jens-maus/adtools/adtools-i386-aros.tar.bz2
+  - wget https://dl.bintray.com/jens-maus/adtools/adtools-x86_64-aros.tar.bz2
   - sudo tar xf adtools-utils.tar.bz2 -C /
   - sudo tar xf adtools-m68k-amigaos.tar.bz2 -C /
   - sudo tar xf adtools-ppc-amigaos.tar.bz2 -C /
   - sudo tar xf adtools-ppc-morphos.tar.bz2 -C /
+  - sudo tar xf adtools-ppc-aros.tar.bz2 -C /
+  - sudo tar xf adtools-i386-aros.tar.bz2 -C /
+  - sudo tar xf adtools-x86_64-aros.tar.bz2 -C /
+
+notifications:
+  email:
+    - svn@yam.ch
+    on_success: change
+    on_failure: change
 
 before_script:
   - export PATH=/usr/local/amiga/bin:/opt/m68k-amigaos/bin:/opt/ppc-amigaos/bin:/opt/ppc-morphos/bin:${PATH}
@@ -27,3 +39,6 @@ script:
   - make OS=os4 -j1
   - make OS=os3 -j1
   - make OS=mos -j1
+  - make OS=i386-aros -j1
+  - make OS=ppc-aros -j1
+  - make OS=x86_64-aros -j1
