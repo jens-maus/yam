@@ -1,4 +1,7 @@
-# YAM [![Build Status](https://travis-ci.org/jens-maus/yam.svg?branch=master)](https://travis-ci.org/jens-maus/yam) [![Code Climate](https://codeclimate.com/github/jens-maus/yam/badges/gpa.svg)](https://codeclimate.com/github/jens-maus/yam) [![PayPal Donate](https://img.shields.io/badge/paypal-donate-yellow.svg?style=flat)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8L52PD9A9WS36)
+# YAM (Yet Another Mailer)
+
+[![Build Status](https://travis-ci.org/jens-maus/yam.svg?branch=master)](https://travis-ci.org/jens-maus/yam) [![Code Climate](https://codeclimate.com/github/jens-maus/yam/badges/gpa.svg)](https://codeclimate.com/github/jens-maus/yam) [![PayPal Donate](https://img.shields.io/badge/paypal-donate-yellow.svg?style=flat)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8L52PD9A9WS36)
+
 YAM (short for **Y**et **A**nother **M**ailer) is a MIME-compliant open-source mail user agent (MUA) written for Amiga-based computer
 systems (AmigaOS4, AmigaOS3, MorphOS, AROS). It supports POP3, SMTP, TLSv1/SSLv3 connection security, multiple users, multiple identities
 , PGPv2/v5 encryption, unlimited hierarchical folders, filters, a configurable user interface based on the Magic User Interface (MUI)
