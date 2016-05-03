@@ -1,5 +1,6 @@
 # &nbsp;![YAM](https://yam.ch/chrome/site/yam.gif)
 
+<img src="https://yam.ch/chrome/site/mainabout.png" width=300 align="right" />
 [![Build Status](https://travis-ci.org/jens-maus/yam.svg?branch=master)](https://travis-ci.org/jens-maus/yam) [![Code Climate](https://codeclimate.com/github/jens-maus/yam/badges/gpa.svg)](https://codeclimate.com/github/jens-maus/yam) [![PayPal Donate](https://img.shields.io/badge/paypal-donate-yellow.svg?style=flat)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8L52PD9A9WS36)
 
 YAM (short for **Y**et **A**nother **M**ailer) is a MIME-compliant open-source mail user agent (MUA) written for Amiga-based computer
