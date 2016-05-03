@@ -1,3 +1,6 @@
+<p align="right">
+  <img width=300 src="https://yam.ch/chrome/site/mainabout.png">
+</p>
 # YAM (Yet Another Mailer)
 
 [![Build Status](https://travis-ci.org/jens-maus/yam.svg?branch=master)](https://travis-ci.org/jens-maus/yam) [![Code Climate](https://codeclimate.com/github/jens-maus/yam/badges/gpa.svg)](https://codeclimate.com/github/jens-maus/yam) [![PayPal Donate](https://img.shields.io/badge/paypal-donate-yellow.svg?style=flat)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8L52PD9A9WS36)
