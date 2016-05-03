@@ -21,20 +21,13 @@ install:
   - sudo apt-get -qq update || true
   - sudo apt-get -qq install libc6:i386
   # Install all adtools related stuff we need
-  - wget https://dl.bintray.com/jens-maus/adtools/adtools-utils.tar.bz2
-  - wget https://dl.bintray.com/jens-maus/adtools/adtools-m68k-amigaos.tar.bz2
-  - wget https://dl.bintray.com/jens-maus/adtools/adtools-ppc-amigaos.tar.bz2
-  - wget https://dl.bintray.com/jens-maus/adtools/adtools-ppc-morphos.tar.bz2
-  - wget https://dl.bintray.com/jens-maus/adtools/adtools-ppc-aros.tar.bz2
-  - wget https://dl.bintray.com/jens-maus/adtools/adtools-i386-aros.tar.bz2
-  - wget https://dl.bintray.com/jens-maus/adtools/adtools-x86_64-aros.tar.bz2
-  - sudo tar xf adtools-utils.tar.bz2 -C /
-  - sudo tar xf adtools-m68k-amigaos.tar.bz2 -C /
-  - sudo tar xf adtools-ppc-amigaos.tar.bz2 -C /
-  - sudo tar xf adtools-ppc-morphos.tar.bz2 -C /
-  - sudo tar xf adtools-ppc-aros.tar.bz2 -C /
-  - sudo tar xf adtools-i386-aros.tar.bz2 -C /
-  - sudo tar xf adtools-x86_64-aros.tar.bz2 -C /
+  - wget https://dl.bintray.com/jens-maus/adtools/adtools-utils.tar.bz2 ; sudo tar xf adtools-utils.tar.bz2 -C /
+  - if [[ "${OS}" == "os3" ]]; then wget https://dl.bintray.com/jens-maus/adtools/adtools-m68k-amigaos.tar.bz2 ; sudo tar xf adtools-m68k-amigaos.tar.bz2 -C / ; fi
+  - if [[ "${OS}" == "os4" ]]; then wget https://dl.bintray.com/jens-maus/adtools/adtools-ppc-amigaos.tar.bz2 ; sudo tar xf adtools-ppc-amigaos.tar.bz2 -C / ; fi
+  - if [[ "${OS}" == "mos" ]]; then wget https://dl.bintray.com/jens-maus/adtools/adtools-ppc-morphos.tar.bz2 ; sudo tar xf adtools-ppc-morphos.tar.bz2 -C / ; fi
+  - if [[ "${OS}" == "ppc-aros" ]]; then wget https://dl.bintray.com/jens-maus/adtools/adtools-ppc-aros.tar.bz2 ; sudo tar xf adtools-ppc-aros.tar.bz2 -C / ; fi
+  - if [[ "${OS}" == "i386-aros" ]]; then wget https://dl.bintray.com/jens-maus/adtools/adtools-i386-aros.tar.bz2 ; sudo tar xf adtools-i386-aros.tar.bz2 -C / ; fi
+  - if [[ "${OS}" == "x86_64-aros" ]]; then wget https://dl.bintray.com/jens-maus/adtools/adtools-x86_64-aros.tar.bz2 ; sudo tar xf adtools-x86_64-aros.tar.bz2 -C / ; fi
 
 # set the PATH variable to the directories the cross compilers are installed.
 before_script:
