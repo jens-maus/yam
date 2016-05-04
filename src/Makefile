@@ -902,13 +902,13 @@ txpush:
 release:
 	@$(RM) $(CATALOGS)
 	## Create distributions for all systems
-	@sh $(TOOLS)/mkrelease.sh os3
-	@sh $(TOOLS)/mkrelease.sh os4
-	@sh $(TOOLS)/mkrelease.sh mos
-	@sh $(TOOLS)/mkrelease.sh aros-i386
-	@sh $(TOOLS)/mkrelease.sh aros-ppc
-	@sh $(TOOLS)/mkrelease.sh aros-x86_64
-	#@sh $(TOOLS)/mkrelease.sh aros-arm
+	@cd ..; scripts/mkrelease.sh os3
+	@cd ..; scripts/mkrelease.sh os4
+	@cd ..; scripts/mkrelease.sh mos
+	@cd ..; scripts/mkrelease.sh aros-i386
+	@cd ..; scripts/mkrelease.sh aros-ppc
+	@cd ..; scripts/mkrelease.sh aros-x86_64
+	#@cd ..; scripts/mkrelease.sh aros-arm
 
 ## DEPENDENCY INCLUDE #################
 

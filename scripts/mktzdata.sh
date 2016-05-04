@@ -7,11 +7,11 @@
 ZIC=zic
 CP=cp
 RM=rm
-TZLIB="tools/tz"
-TZDIR="../../../resources/zoneinfo/"
+TZLIB="src/tools/tz"
+TZDIR="../../../dist/common/YAM/Resources/Zoneinfo/"
 
 if [ ! -e "${TZLIB}" ]; then
-  echo "ERROR: You have to call this script from the 'src' directory."
+  echo "ERROR: You have to call this script from the top-level directory."
   exit 2
 fi
 
