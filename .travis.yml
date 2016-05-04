@@ -22,12 +22,12 @@ install:
   - sudo apt-get -qq install libc6:i386
   # Install all adtools related stuff we need
   - curl -L https://dl.bintray.com/jens-maus/adtools/adtools-utils.tar.bz2 | sudo tar xj -C /
-  - if [[ ${BUILD} =~ os3 || ${BUILD} == release ]]; then curl -L https://dl.bintray.com/jens-maus/adtools/adtools-m68k-amigaos.tar.bz2 | sudo tar xj -C / ; fi
-  - if [[ ${BUILD} =~ os4 || ${BUILD} == release ]]; then curl -L https://dl.bintray.com/jens-maus/adtools/adtools-ppc-amigaos.tar.bz2 | sudo tar xj -C / ; fi
-  - if [[ ${BUILD} =~ mos || ${BUILD} == release ]]; then curl -L https://dl.bintray.com/jens-maus/adtools/adtools-ppc-morphos.tar.bz2 | sudo tar xj -C / ; fi
-  - if [[ ${BUILD} =~ aros-ppc || ${BUILD} == release ]]; then curl -L https://dl.bintray.com/jens-maus/adtools/adtools-ppc-aros.tar.bz2 | sudo tar xj -C / ; fi
-  - if [[ ${BUILD} =~ aros-i386 || ${BUILD} == release ]]; then curl -L https://dl.bintray.com/jens-maus/adtools/adtools-i386-aros.tar.bz2 | sudo tar xj -C / ; fi
-  - if [[ ${BUILD} =~ aros-x86_64 || ${BUILD} == release ]]; then curl -L https://dl.bintray.com/jens-maus/adtools/adtools-x86_64-aros.tar.bz2 | sudo tar xj -C / ; fi
+  - if [[ ${BUILD} =~ os3|release ]]; then curl -L https://dl.bintray.com/jens-maus/adtools/adtools-m68k-amigaos.tar.bz2 | sudo tar xj -C / ; fi
+  - if [[ ${BUILD} =~ os4|release ]]; then curl -L https://dl.bintray.com/jens-maus/adtools/adtools-ppc-amigaos.tar.bz2 | sudo tar xj -C / ; fi
+  - if [[ ${BUILD} =~ mos|release ]]; then curl -L https://dl.bintray.com/jens-maus/adtools/adtools-ppc-morphos.tar.bz2 | sudo tar xj -C / ; fi
+  - if [[ ${BUILD} =~ aros-ppc|release ]]; then curl -L https://dl.bintray.com/jens-maus/adtools/adtools-ppc-aros.tar.bz2 | sudo tar xj -C / ; fi
+  - if [[ ${BUILD} =~ aros-i386|release ]]; then curl -L https://dl.bintray.com/jens-maus/adtools/adtools-i386-aros.tar.bz2 | sudo tar xj -C / ; fi
+  - if [[ ${BUILD} =~ aros-x86_64|release ]]; then curl -L https://dl.bintray.com/jens-maus/adtools/adtools-x86_64-aros.tar.bz2 | sudo tar xj -C / ; fi
 
 # set the PATH variable to the directories the cross compilers are installed.
 before_script:
@@ -60,6 +60,6 @@ deploy:
   user: jens-maus
   on:
     branch: master
-    condition: ${BUILD} =~ release
+    condition: ${BUILD} =~ snapshot
   key:
     secure: bvgGEg+zjiMffttyeiYp393H9AaeJ1M/c5WCeXu+f4bZYvzDN1n8EydFrfogYxjV/khIWGtlZMGVItQTJPy7XfKKZhgakhBzpihkXBBKybRkKKyAUzrP+3P4a8A97I+7do+4L7Gj8iH/UNIumc7geiIqY+8cf8z9nOxc8SOZLO4brLlGYCPDjbQalPp74CHQjyCSZU+4r4YzYpqX/S98fAHU3e+EKuBOh8yQhJ20zTND5KKE6C4B+Kop5eoGv1D3d+qbI67YUitPqAPspFAJwOPVxyNR26Sztc6DUem81CW6BhZUKuZ1Jm2goS+nSKFF1Te2WfFWiqtxxdHJdoZNVc9y8yge7o/TUNv6DdF1DyHs0MjxffULrZiCF8l7UPIIhqulM+ZneJ64yoY6nqYgHpaiBjC6mpMPHqwYoy1v9iSa96qel+mlRYfnYy9Jj72ZvgdZNBviQYhRRMOX4LqqsFm+r4h38PPU9ZTAuCKYom2vjQ5zQ+DTvzWjCuWxOlxVPyYRPC0QRb1YOtaIuOPCQG0zpx669MK3H2AMmaTQIn0g2qZWfADf3b5rPywvST5dg4Z2NrPWEAC9xRBtRCn6I5wBep/UTquyeVE0SbP3KII8OejARHUue73ODuUJz8HsTfoJekWVQ5C+6aH5YaUgthnb9KfgFbEw7ptolV8y1DE=
