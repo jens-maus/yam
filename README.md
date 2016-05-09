@@ -9,6 +9,7 @@ systems (AmigaOS4, AmigaOS3, MorphOS, AROS). It supports POP3, SMTP, TLSv1/SSLv3
 framework and an ARexx interface and many other features which are common for MUAs today.
 
 ## Features
+
 As the development of YAM goes back to 1995 it is one of the most feature-rich applications on the Amiga platform. Especially
 the MUI-based user interface allowed to implement functionality which are commonly used in graphical mail user client on other platforms today. Furthermore, the focus on support and compliance to recent RFCs is one of the key goals of YAM.
 
@@ -43,13 +44,35 @@ the MUI-based user interface allowed to implement functionality which are common
 * ... and much, much more.
 
 ## Downloads/Releases
+
 All releases up to the most current ones can be downloaded from our [central releases management](https://github.com/jens-maus/yam/releases). In addition to the standard releases we are also offering regular development builds of the most recent code taken from this code repository. These nightly builds are available through http://nightly.yam.ch/ and are regularly updated based on the changes applied to this repository.
 
 ## Contributing
+
 There are several ways how you can potentially contribute to this project. One important way to contribute to YAM is to actually *report bugs/issues* you might identify. In addition you can also bring up feature/enhancements requests by using our [central issue tracker](https://github.com/jens-maus/yam/issues). Another way is to *help us translating* the user interface to a wide range of different languages by actually contributing your translations at the [transifex project pages](https://www.transifex.com/ato/yam/) we are maintaining to manage all translations.  
 
 ## Development
+
 Contributing your own code/modifications to YAM is quite straight forward since you can use the nice resources of GitHub and submit your changes in terms of [pull requests](https://github.com/jens-maus/yam/pulls). If you, however, feel you might be better suited by joining our development team directly and you would like to directly submit your changes to this code repository we could easily provide you direct write access.
 
 ## License & Copyright
+
 YAM is distributed and license under the GNU General Public License Version 2. See [COPYING](COPYING) for more detailed information.
+
+## Authors
+
+* Allan Odgaard
+* Andrew Bell
+* Christian Hattemer
+* Dirk Stöcker
+* Emmanuel Lesueur
+* Frank Weber
+* Gunther Nikl
+* Jacob Laursen
+* Jens Maus
+* Jörg Strohmayer
+* Marcel Beck
+* Matthias Bethke
+* Matthias Rustler
+* Nicholai Benalal
+* Thore Böckelmann
