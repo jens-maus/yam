@@ -1,0 +1,17 @@
+---
+engines:
+  duplication:
+    enabled: false
+  fixme:
+    enabled: true
+  markdownlint:
+    enabled: true
+  phpmd:
+    enabled: true
+ratings:
+  paths:
+  - "**.c"
+  - "**.h"
+  - "**.l"
+  - "**.php"
+  - "**.md"

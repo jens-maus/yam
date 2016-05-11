@@ -459,7 +459,7 @@ endif
 
 # Third-party tools/libraries
 GENCLASSES = $(TOOLS)/genclasses
-TZLIB = $(TOOLS)/tzcode
+TZLIB = $(TOOLS)/tz
 
 # our few new rewritten classes
 MUIOBJS = \
@@ -829,7 +829,7 @@ cleanall: clean
 distclean: cleanall
 	@echo "  DISTCLEAN"
 	@$(MAKE) -C $(GENCLASSES) clean
-	@$(MAKE) -C $(TZLIB) clean
+	@$(MAKE) -C $(TZLIB) -f Makefile.amiga clean
 
 ## ADD FLAGS TARGETS ##################
 
@@ -861,7 +861,7 @@ $(GENCLASSES)/GenClasses: $(GENCLASSES)/gc.c $(GENCLASSES)/gc.h \
 $(LIB)/libtz.a: $(TZLIB)/asctime.c $(TZLIB)/difftime.c \
 	$(TZLIB)/localtime.c $(TZLIB)/private.h \
 	$(TZLIB)/strftime.c $(TZLIB)/tzfile.h
-	@$(MAKE) -C $(TZLIB)
+	@$(MAKE) -C $(TZLIB) -f Makefile.amiga
 
 ## GITREV TOOL ########################
 
@@ -902,13 +902,13 @@ txpush:
 release:
 	@$(RM) $(CATALOGS)
 	## Create distributions for all systems
-	@sh $(TOOLS)/mkrelease.sh os3
-	@sh $(TOOLS)/mkrelease.sh os4
-	@sh $(TOOLS)/mkrelease.sh mos
-	@sh $(TOOLS)/mkrelease.sh aros-i386
-	@sh $(TOOLS)/mkrelease.sh aros-ppc
-	@sh $(TOOLS)/mkrelease.sh aros-x86_64
-	#@sh $(TOOLS)/mkrelease.sh aros-arm
+	@cd ..; scripts/mkrelease.sh os3
+	@cd ..; scripts/mkrelease.sh os4
+	@cd ..; scripts/mkrelease.sh mos
+	@cd ..; scripts/mkrelease.sh aros-i386
+	@cd ..; scripts/mkrelease.sh aros-ppc
+	@cd ..; scripts/mkrelease.sh aros-x86_64
+	#@cd ..; scripts/mkrelease.sh aros-arm
 
 ## DEPENDENCY INCLUDE #################
 

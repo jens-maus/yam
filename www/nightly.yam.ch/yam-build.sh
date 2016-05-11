@@ -365,7 +365,7 @@ printf "URL: ppc-aros http://nightly.yam.ch/`date +%F-dev`/YAM${BUILDV}dev-AROSp
 printf "URL: x86_64-aros http://nightly.yam.ch/`date +%F-dev`/YAM${BUILDV}dev-AROSx86_64.lha\n" >>${UPDCHKPATH}/${BUILDVER}
 printf "URL: arm-aros http://nightly.yam.ch/`date +%F-dev`/YAM${BUILDV}dev-AROSarm.lha\n" >>${UPDCHKPATH}/${BUILDVER}
 printf "CHANGES:\n"  >>${UPDCHKPATH}/${BUILDVER}
-echo "${changelog}" | head -c 8K >${UPDCHKPATH}/${BUILDVER}
+echo "${changelog}" | head -c 8K >>${UPDCHKPATH}/${BUILDVER}
 
 # we write out the number of days to our last-build file
 # so that at least every 31 days a new YAM is automatically build even if no
