@@ -1,16 +1,19 @@
-/* crypto/ui/ui.h -*- mode:C; c-file-style: "eay" -*- */
-/* Written by Richard Levitte (richard@levitte.org) for the OpenSSL
- * project 2001.
+#if !defined(PROTO_AMISSL_H) && !defined(AMISSL_COMPILE)
+#include <proto/amissl.h>
+#endif
+/*
+ * DTLS implementation written by Nagendra Modadugu
+ * (nagendra@cs.stanford.edu) for the OpenSSL project 2005.
  */
 /* ====================================================================
- * Copyright (c) 2001 The OpenSSL Project.  All rights reserved.
+ * Copyright (c) 1999-2005 The OpenSSL Project.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -20,12 +23,12 @@
  * 3. All advertising materials mentioning features or use of this
  *    software must display the following acknowledgment:
  *    "This product includes software developed by the OpenSSL Project
- *    for use in the OpenSSL Toolkit. (http://www.openssl.org/)"
+ *    for use in the OpenSSL Toolkit. (http://www.OpenSSL.org/)"
  *
  * 4. The names "OpenSSL Toolkit" and "OpenSSL Project" must not be used to
  *    endorse or promote products derived from this software without
  *    prior written permission. For written permission, please contact
- *    openssl-core@openssl.org.
+ *    openssl-core@OpenSSL.org.
  *
  * 5. Products derived from this software may not be called "OpenSSL"
  *    nor may "OpenSSL" appear in their names without prior written
@@ -34,7 +37,7 @@
  * 6. Redistributions of any form whatsoever must retain the following
  *    acknowledgment:
  *    "This product includes software developed by the OpenSSL Project
- *    for use in the OpenSSL Toolkit (http://www.openssl.org/)"
+ *    for use in the OpenSSL Toolkit (http://www.OpenSSL.org/)"
  *
  * THIS SOFTWARE IS PROVIDED BY THE OpenSSL PROJECT ``AS IS'' AND ANY
  * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -56,30 +59,48 @@
  *
  */
 
-#ifndef PROTO_AMISSL_H
-#include <proto/amissl.h>
-#endif /* PROTO_AMISSL_H */
-
-#ifndef HEADER_UI_COMPAT_H
-#define HEADER_UI_COMPAT_H
-
-#include <openssl/opensslconf.h>
-#include <openssl/ui.h>
+#ifndef HEADER_DTLS1_H
+# define HEADER_DTLS1_H
 
 #ifdef  __cplusplus
 extern "C" {
 #endif
 
-/* The following functions were previously part of the DES section,
-   and are provided here for backward compatibility reasons. */
+# define DTLS1_VERSION                   0xFEFF
+# define DTLS1_2_VERSION                 0xFEFD
+# define DTLS_MIN_VERSION                DTLS1_VERSION
+# define DTLS_MAX_VERSION                DTLS1_2_VERSION
+# define DTLS1_VERSION_MAJOR             0xFE
 
-#define des_read_pw_string(b,l,p,v) \
-  _ossl_old_des_read_pw_string((b),(l),(p),(v))
-#define des_read_pw(b,bf,s,p,v) \
-  _ossl_old_des_read_pw((b),(bf),(s),(p),(v))
+# define DTLS1_BAD_VER                   0x0100
 
-int _ossl_old_des_read_pw_string(char *buf,int length,const char *prompt,int verify);
-int _ossl_old_des_read_pw(char *buf,char *buff,int size,const char *prompt,int verify);
+/* Special value for method supporting multiple versions */
+# define DTLS_ANY_VERSION                0x1FFFF
+
+/* lengths of messages */
+# define DTLS1_COOKIE_LENGTH                     256
+
+# define DTLS1_RT_HEADER_LENGTH                  13
+
+# define DTLS1_HM_HEADER_LENGTH                  12
+
+# define DTLS1_HM_BAD_FRAGMENT                   -2
+# define DTLS1_HM_FRAGMENT_RETRY                 -3
+
+# define DTLS1_CCS_HEADER_LENGTH                  1
+
+# ifdef DTLS1_AD_MISSING_HANDSHAKE_MESSAGE
+#  define DTLS1_AL_HEADER_LENGTH                   7
+# else
+#  define DTLS1_AL_HEADER_LENGTH                   2
+# endif
+
+
+/* Timeout multipliers (timeout slice is defined in apps/timeouts.h */
+# define DTLS1_TMO_READ_COUNT                      2
+# define DTLS1_TMO_WRITE_COUNT                     2
+
+# define DTLS1_TMO_ALERT_COUNT                     12
 
 #ifdef  __cplusplus
 }

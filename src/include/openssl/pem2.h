@@ -1,3 +1,6 @@
+#if !defined(PROTO_AMISSL_H) && !defined(AMISSL_COMPILE)
+#include <proto/amissl.h>
+#endif
 /* ====================================================================
  * Copyright (c) 1999 The OpenSSL Project.  All rights reserved.
  *
@@ -6,7 +9,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -60,10 +63,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#ifndef PROTO_AMISSL_H
-#include <proto/amissl.h>
-#endif /* PROTO_AMISSL_H */
 
 #ifndef HEADER_PEM_H
 void ERR_load_PEM_strings(void);

@@ -1,25 +1,27 @@
-/* crypto/rc4/rc4.h */
+#if !defined(PROTO_AMISSL_H) && !defined(AMISSL_COMPILE)
+#include <proto/amissl.h>
+#endif
 /* Copyright (C) 1995-1997 Eric Young (eay@cryptsoft.com)
  * All rights reserved.
  *
  * This package is an SSL implementation written
  * by Eric Young (eay@cryptsoft.com).
  * The implementation was written so as to conform with Netscapes SSL.
- * 
+ *
  * This library is free for commercial and non-commercial use as long as
  * the following conditions are aheared to.  The following conditions
  * apply to all code found in this distribution, be it the RC4, RSA,
  * lhash, DES, etc., code; not just the SSL code.  The SSL documentation
  * included with this distribution is covered by the same copyright terms
  * except that the holder is Tim Hudson (tjh@cryptsoft.com).
- * 
+ *
  * Copyright remains Eric Young's, and as such any Copyright notices in
  * the code are not to be removed.
  * If this package is used in a product, Eric Young should be given attribution
  * as the author of the parts of the library used.
  * This can be in the form of a textual message at program startup or
  * in documentation (online or textual) provided with the package.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -34,10 +36,10 @@
  *     Eric Young (eay@cryptsoft.com)"
  *    The word 'cryptographic' can be left out if the rouines from the library
  *    being used are not cryptographic related :-).
- * 4. If you include any Windows specific code (or a derivative thereof) from 
+ * 4. If you include any Windows specific code (or a derivative thereof) from
  *    the apps directory (application code) you must include an acknowledgement:
  *    "This product includes software written by Tim Hudson (tjh@cryptsoft.com)"
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY ERIC YOUNG ``AS IS'' AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -49,51 +51,37 @@
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- * 
+ *
  * The licence and distribution terms for any publically available version or
  * derivative of this code cannot be changed.  i.e. this code cannot simply be
  * copied and put under another distribution licence
  * [including the GNU Public Licence.]
  */
 
-#ifndef PROTO_AMISSL_H
-#include <proto/amissl.h>
-#endif /* PROTO_AMISSL_H */
-
 #ifndef HEADER_RC4_H
-#define HEADER_RC4_H
+# define HEADER_RC4_H
 
-#ifdef OPENSSL_NO_RC4
-#error RC4 is disabled.
-#endif
+# include <openssl/opensslconf.h>
 
-#include <openssl/opensslconf.h> /* RC4_INT */
-
+# ifndef OPENSSL_NO_RC4
+# include <stddef.h>
 #ifdef  __cplusplus
 extern "C" {
 #endif
 
-typedef struct rc4_key_st
-  {
-  RC4_INT x,y;
-  RC4_INT data[256];
-#if defined(__ia64) || defined(__ia64__) || defined(_M_IA64)
-  /* see crypto/rc4/asm/rc4-ia64.S for further details... */
-  RC4_INT pad[512-256-2];
-#endif
-  } RC4_KEY;
+typedef struct rc4_key_st {
+    RC4_INT x, y;
+    RC4_INT data[256];
+} RC4_KEY;
 
- 
 const char *RC4_options(void);
-#ifdef OPENSSL_FIPS
-void private_RC4_set_key(RC4_KEY *key, int len, const unsigned char *data);
-#endif
 void RC4_set_key(RC4_KEY *key, int len, const unsigned char *data);
-void RC4(RC4_KEY *key, unsigned long len, const unsigned char *indata,
-    unsigned char *outdata);
+void RC4(RC4_KEY *key, size_t len, const unsigned char *indata,
+         unsigned char *outdata);
 
-#ifdef  __cplusplus
+# ifdef  __cplusplus
 }
-#endif
+# endif
+# endif
 
 #endif
