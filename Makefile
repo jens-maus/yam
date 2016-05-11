@@ -2,7 +2,7 @@
 #
 # YAM - Yet Another Mailer
 # Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
-# Copyright (C) 2000-2015 YAM Open Source Team
+# Copyright (C) 2000-2016 YAM Open Source Team
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,44 +18,26 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-# YAM Official Support Site :  http://www.yam.ch
-# YAM OpenSource project    :  http://sourceforge.net/projects/yamos/
-#
-# $Id$
+# YAM Official Support Site :  http://yam.ch/
+# YAM OpenSource project    :  https://github.com/jens-maus/yam/
 #
 #***************************************************************************/
 
-.PHONY: all
-all: src
+# List targets defined in this file
+TARGETS_SELF :=
 
-.PHONY: src
-src:
-	@$(MAKE) -C src
+# Exclude targets defined in this file
+TARGETS_OTHER := $(filter-out $(TARGETS_SELF), $(MAKECMDGOALS))
 
-.PHONY: catalogs
-catalogs:
-	@$(MAKE) -C src catalogs
+# Call all targets using `Makefile` in src directory in one `make` command. It
+# can depend on targets defined in this file, e.g., depending on a target to
+# create the Makefile.
+#
+# If no targets are specified, use the dummy `all` target
+$(or $(lastword $(TARGETS_OTHER)),all):
+	@$(MAKE) -C src $(TARGETS_OTHER)
+.PHONY: $(TARGETS_OTHER) all
 
-.PHONY: clean
-clean:
-	@$(MAKE) -C src clean
-
-.PHONY: cleanall
-cleanall:
-	@$(MAKE) -C src cleanall
-
-.PHONY: distclean
-distclean:
-	@$(MAKE) -C src distclean
-
-.PHONY: txpull
-txpull:
-	@$(MAKE) -C src txpull
-
-.PHONY: txpush
-txpush:
-	@$(MAKE) -C src txpush
-
-.PHONY: release
-release:
-	@$(MAKE) -C src release
+# Do nothing for all targets but last. Also quiet the message "Noting to be done on xxx"
+$(filter-out $(lastword $(TARGETS_OTHER)), $(TARGETS_OTHER)):
+	@cd .
