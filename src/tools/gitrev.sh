@@ -24,8 +24,15 @@ function echo_git_info {
   return
 }
 
-echo "/* Auto-generated file by 'gitrev.sh' */"
-echo "#ifndef GIT_REV_H"
-echo "#define GIT_REV_H"
-echo " #define GIT_REVSTR \"$(echo_git_info)\""
-echo "#endif"
+# we output a whole c-like header file in case
+# arguments are given to gitrev.sh
+if [[ $# -gt 0 ]]; then
+  echo "/* Auto-generated file by 'gitrev.sh' */"
+  echo "#ifndef GIT_REV_H"
+  echo "#define GIT_REV_H"
+  echo " #define GIT_REVSTR \"$(echo_git_info)\""
+  echo "#endif"
+else
+  # otherwise we output the git revision only.
+  echo_git_info
+fi

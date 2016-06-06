@@ -140,10 +140,10 @@ ifneq ($(HOST), AmigaOS4)
 
   # this is either a cross-compiler build on a UNIX-like system or
   # on MorphOS, so lets use expr/gdate instead of the above ARexx stuff
-  DEVFLAGS = -DDEVWARNING -DEXPDATE="`$(EXPR) \`$(DATE) +%s\` / 86400 - 2922 + 31`"
-  YAMVERID = -D__YAM_VERDATE=\"`$(DATE) +%d.%m.%Y`\" \
-             -D__YAM_VERDAYS="`$(EXPR) \`$(DATE) +%s\` / 86400 - 2922`" \
-             -D__YAM_BUILDDATE=\"`$(DATE) +%Y%m%d`\" \
+  DEVFLAGS = -DDEVWARNING -DEXPDATE="$(shell $(EXPR) `$(DATE) +%s` / 86400 - 2922 + 31)"
+  YAMVERID = -D__YAM_VERDATE=\"$(shell $(DATE) +%d.%m.%Y)\" \
+             -D__YAM_VERDAYS="$(shell $(EXPR) `$(DATE) +%s` / 86400 - 2922)" \
+             -D__YAM_BUILDDATE=\"$(shell $(DATE) +%Y%m%d)\" \
              -D__YAM_BUILDID="$(BUILDID)"
 
   ifneq ($(HOST), MorphOS)
@@ -175,7 +175,6 @@ endif
 
 # target definition
 TARGET  = YAM.$(OS)
-BUILDID = 0
 
 # Common Directories
 PREFIX    = $(CDTHIS)
@@ -867,7 +866,7 @@ $(LIB)/libtz.a: $(TZLIB)/asctime.c $(TZLIB)/difftime.c \
 
 gitrev.h: $(TOOLS)/gitrev.sh
 	@echo "  GN $@"
-	@$(TOOLS)/gitrev.sh >$@
+	@$(TOOLS)/gitrev.sh header >$@
 
 ## CATALOG GENERATION #################
 
@@ -899,9 +898,7 @@ txpush:
 ## TO CREATE RELEASE ARCHIVES #########
 
 .PHONY: release
-release:
-	@$(RM) $(CATALOGS)
-	## Create distributions for all systems
+release: distclean
 	@cd ..; scripts/mkrelease.sh os3
 	@cd ..; scripts/mkrelease.sh os4
 	@cd ..; scripts/mkrelease.sh mos
@@ -909,6 +906,19 @@ release:
 	@cd ..; scripts/mkrelease.sh aros-ppc
 	@cd ..; scripts/mkrelease.sh aros-x86_64
 	#@cd ..; scripts/mkrelease.sh aros-arm
+
+## TO CREATE A SNAPSHOT ARCHIVE #######
+
+.PHONY: snapshot
+snapshot: BUILDID = $(shell $(TOOLS)/gitrev.sh)
+snapshot: distclean all
+	@lha a YAM_$(OS)_$(shell $(TOOLS)/gitrev.sh).lha $(TARGET)*
+
+## TO CREATE A NIGHTLY-BUILD ARCHIVE #######
+
+.PHONY: nightly
+nightly: BUILDID = $(shell date +%Y%m%d)
+nightly: distclean all
 
 ## DEPENDENCY INCLUDE #################
 
