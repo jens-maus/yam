@@ -37,6 +37,8 @@
 
 #include "YAM_utilities.h"
 
+#include "mui/UpdateNotifyWindow.h"
+
 #include "Locale.h"
 #include "MUIObjects.h"
 #include "UpdateCheck.h"
@@ -55,6 +57,7 @@ struct Data
 enum
 {
   UMEN_DOWNLOAD=100,
+  UMEN_DOWNLOAD_WITH_BROWSER,
 };
 
 ///
@@ -173,7 +176,7 @@ OVERLOAD(MUIM_NList_Display)
 OVERLOAD(MUIM_ContextMenuBuild)
 {
   GETDATA;
-  struct UpdateComponent *entry;
+  struct UpdateComponent *comp;
 
   ENTER();
 
@@ -184,13 +187,14 @@ OVERLOAD(MUIM_ContextMenuBuild)
     data->contextMenu = NULL;
   }
 
-  if((entry = (struct UpdateComponent *)DoMethod(obj, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, NULL)) != NULL)
+  if((comp = (struct UpdateComponent *)DoMethod(obj, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, NULL)) != NULL)
   {
-    strlcpy(data->menuTitle, entry->name, sizeof(data->menuTitle));
+    strlcpy(data->menuTitle, comp->name, sizeof(data->menuTitle));
 
     data->contextMenu = MenustripObject,
       Child, MenuObjectT(data->menuTitle),
-        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_UPD_NOTIFICATION_DOWNLOAD_WITH_BROWSER), MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, UMEN_DOWNLOAD, End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_UPD_NOTIFICATION_DOWNLOAD),              MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, UMEN_DOWNLOAD, End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_UPD_NOTIFICATION_DOWNLOAD_WITH_BROWSER), MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, UMEN_DOWNLOAD_WITH_BROWSER, End,
       End,
     End;
   }
@@ -204,23 +208,27 @@ OVERLOAD(MUIM_ContextMenuBuild)
 OVERLOAD(MUIM_ContextMenuChoice)
 {
   struct MUIP_ContextMenuChoice *m = (struct MUIP_ContextMenuChoice *)msg;
+  ULONG rc;
+
+  ENTER();
 
   switch(xget(m->item, MUIA_UserData))
   {
     case UMEN_DOWNLOAD:
-    {
-      struct UpdateComponent *entry;
+      rc = DoMethod(_win(obj), MUIM_UpdateNotifyWindow_Download);
+    break;
 
-      if((entry = (struct UpdateComponent *)DoMethod(obj, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, NULL)) != NULL)
-        GotoURL(entry->url, FALSE);
-    }
+    case UMEN_DOWNLOAD_WITH_BROWSER:
+      rc = DoMethod(_win(obj), MUIM_UpdateNotifyWindow_DownloadWithBrowser);
     break;
 
     default:
-      return DoSuperMethodA(cl, obj, msg);
+      rc = DoSuperMethodA(cl, obj, msg);
+    break;
   }
 
-  return 0;
+  RETURN(rc);
+  return rc;
 }
 
 ///

@@ -68,6 +68,7 @@ struct Data
   Object *componentHistory;
   Object *skipInFutureCheckBox;
   Object *downloadButton;
+  Object *downloadWithBrowserButton;
   char *changeLogText;
   char windowTitle[SIZE_DEFAULT];
   char screenTitle[SIZE_DEFAULT];
@@ -92,6 +93,7 @@ OVERLOAD(OM_NEW)
     Object *componentHistory;
     Object *skipInFutureCheckBox;
     Object *downloadButton;
+    Object *downloadWithBrowserButton;
     Object *closeButton;
 
     if((obj = DoSuperNew(cl, obj,
@@ -169,6 +171,7 @@ OVERLOAD(OM_NEW)
           Child, HVSpace,
           Child, closeButton = MakeButton(tr(MSG_UPD_NOTIFICATION_CLOSE)),
           Child, downloadButton = MakeButton(tr(MSG_UPD_NOTIFICATION_DOWNLOAD)),
+          Child, downloadWithBrowserButton = MakeButton(tr(MSG_UPD_NOTIFICATION_DOWNLOAD_WITH_BROWSER)),
         End,
 
       End,
@@ -183,16 +186,19 @@ OVERLOAD(OM_NEW)
       data->componentHistory = componentHistory;
       data->skipInFutureCheckBox = skipInFutureCheckBox;
       data->downloadButton = downloadButton;
+      data->downloadWithBrowserButton = downloadWithBrowserButton;
       data->tempFile = tempFile;
 
       // start with a disabled "Download" button
       set(downloadButton, MUIA_Disabled, TRUE);
+      set(downloadWithBrowserButton, MUIA_Disabled, TRUE);
 
-      DoMethod(obj,              MUIM_Notify, MUIA_Window_CloseRequest, TRUE, MUIV_Notify_Self, 3, METHOD(Close));
-      DoMethod(componentList,    MUIM_Notify, MUIA_NList_Active, MUIV_EveryTime, obj, 2, METHOD(Select), MUIV_TriggerValue);
-      DoMethod(componentHistory, MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime, obj, 1, METHOD(Download));
-      DoMethod(downloadButton,   MUIM_Notify, MUIA_Pressed, FALSE, obj, 1, METHOD(Download));
-      DoMethod(closeButton,      MUIM_Notify, MUIA_Pressed, FALSE, obj, 3, METHOD(Close));
+      DoMethod(obj,                       MUIM_Notify, MUIA_Window_CloseRequest, TRUE, MUIV_Notify_Self, 3, METHOD(Close));
+      DoMethod(componentList,             MUIM_Notify, MUIA_NList_Active, MUIV_EveryTime, obj, 2, METHOD(Select), MUIV_TriggerValue);
+      DoMethod(componentHistory,          MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime, obj, 1, METHOD(Download));
+      DoMethod(downloadButton,            MUIM_Notify, MUIA_Pressed, FALSE, obj, 1, METHOD(Download));
+      DoMethod(downloadWithBrowserButton, MUIM_Notify, MUIA_Pressed, FALSE, obj, 1, METHOD(DownloadWithBrowser));
+      DoMethod(closeButton,               MUIM_Notify, MUIA_Pressed, FALSE, obj, 3, METHOD(Close));
 
       set(obj, MUIA_Window_Activate, TRUE);
     }
@@ -355,6 +361,7 @@ DECLARE(Select) // ULONG num
 
   // disable the "Download" button in case we found no valid component
   set(data->downloadButton, MUIA_Disabled, comp == NULL);
+  set(data->downloadWithBrowserButton, MUIA_Disabled, comp == NULL || GotoURLPossible() == FALSE);
 
   if(comp != NULL && comp->changeLogFile != NULL)
   {
@@ -407,12 +414,11 @@ DECLARE(AddComponent) // struct UpdateComponent *comp
 DECLARE(Download)
 {
   GETDATA;
-  struct UpdateComponent *comp = NULL;
+  struct UpdateComponent *comp;
 
   ENTER();
 
-  DoMethod(data->componentList, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &comp);
-  if(comp != NULL)
+  if((comp = (struct UpdateComponent *)DoMethod(data->componentList, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, NULL)) != NULL)
   {
     char urlFile[SIZE_FILE];
 
@@ -467,6 +473,22 @@ DECLARE(Download)
       }
     }
   }
+
+  RETURN(0);
+  return 0;
+}
+
+///
+/// DECLARE(DownloadWithBrowser)
+DECLARE(DownloadWithBrowser)
+{
+  GETDATA;
+  struct UpdateComponent *comp;
+
+  ENTER();
+
+  if((comp = (struct UpdateComponent *)DoMethod(data->componentList, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, NULL)) != NULL)
+    GotoURL(comp->url, FALSE);
 
   RETURN(0);
   return 0;
