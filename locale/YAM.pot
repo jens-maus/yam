@@ -10029,3 +10029,7 @@ msgstr "Permanently accepted server certificate warnings"
 msgctxt "MSG_CO_CLEAR_SERVER_CERT_WARNINGS (2580//)"
 msgid "Clear warnings"
 msgstr "Clear warnings"
+
+msgctxt "MSG_UPD_NOTIFICATION_DOWNLOAD_WITH_BROWSER (2581//)"
+msgid "Download update with browser..."
+msgstr "Download update with browser..."
