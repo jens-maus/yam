@@ -9917,7 +9917,7 @@ msgstr "Η διαδρομή δεν πρέπει να είναι κενή."
 
 msgctxt "MSG_FO_MLPATTERN_INVALID (2555//)"
 msgid "The pattern (To:/CC:) must be non-empty and no 'catch all'."
-msgstr "Το μοτίβο (Προς:/Κοιν:) δεν πρέπει να είναι κενό και όχι ᾽σύλληψη όλων᾽."
+msgstr "Το μοτίβο (Προς:/Κοιν:) δεν πρέπει να είναι κενό και όχι ᾽σύλληψη όλων᾽."
 
 msgctxt "MSG_FO_MLADDRESS_INVALID (2556//)"
 msgid "The destination address (To:) must be non-empty."
