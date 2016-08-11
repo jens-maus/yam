@@ -9115,7 +9115,7 @@ msgid ""
 "While trying to setup a SSL certificate verify the directory '%s' was found to be missing.\n"
 "\n"
 "Please make sure that the path exists and contains the certificate bundle file as supplied during the installation process of YAM."
-msgstr "Podczas próby ustawienia weryfikacji certyfikatu SSL stwierdzono brak podkatalogu \"%s\".\n\nProszę upewnić się, że podana ścieżka istnieje i zawiera plik z pakietem certyfikatów dostarczony w trakcie instalacji programu YAM. "
+msgstr "Podczas próby ustawienia weryfikacji certyfikatu SSL stwierdzono brak podkatalogu \"%s\".\n\nProszę upewnić się, że podana ścieżka istnieje i zawiera plik z pakietem certyfikatów dostarczony w trakcie instalacji programu YAM."
 
 msgctxt "MSG_CO_ACTION_TERMINATE_FILTER (2388//)"
 msgid "Terminate filter process"

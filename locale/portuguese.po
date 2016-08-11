@@ -2429,7 +2429,7 @@ msgstr "Foi encontrada uma ocorrência!\nPseudónimo: %s\nNome: %s"
 
 msgctxt "MSG_AB_FindEntry (712//)"
 msgid "Find Entry"
-msgstr "Procurar uma Entrada "
+msgstr "Procurar uma Entrada"
 
 msgctxt "MSG_AB_FindEntryReq (713//)"
 msgid ""
