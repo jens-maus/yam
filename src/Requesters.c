@@ -290,6 +290,9 @@ int PassphraseRequest(char *string, int size, Object *parent)
   {
     DoMethod(win, MUIM_Notify, MUIA_PassphraseRequestWindow_Result, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_Application_ReturnID, REQUESTER_RETURNID);
 
+    // this is an important requester, uniconify outself automatically to ensure it becomes visible
+    set(G->App, MUIA_Application_Iconified, FALSE);
+
     set(G->App, MUIA_Application_Sleep, TRUE);
 
     if(SafeOpenWindow(win) == TRUE)
@@ -642,6 +645,9 @@ BOOL CertWarningRequest(struct Connection *conn, struct Certificate *cert)
       if(win != NULL)
       {
         DoMethod(win, MUIM_Notify, MUIA_GenericRequestWindow_Result, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_Application_ReturnID, REQUESTER_RETURNID);
+
+        // this is an important requester, uniconify outself automatically to ensure it becomes visible
+        set(G->App, MUIA_Application_Iconified, FALSE);
 
         set(G->App, MUIA_Application_Sleep, TRUE);
 
