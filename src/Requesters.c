@@ -654,6 +654,8 @@ BOOL CertWarningRequest(struct Connection *conn, struct Certificate *cert)
         if(SafeOpenWindow(win) == TRUE)
         {
           ULONG signals = 0;
+          ULONG threadSig = (1UL << G->threadPort->mp_SigBit);
+          ULONG methodStackSig = (1UL << G->methodStack->mp_SigBit);
 
           do
           {
@@ -715,7 +717,7 @@ BOOL CertWarningRequest(struct Connection *conn, struct Certificate *cert)
             }
 
             if(signals != 0)
-              signals = Wait(signals | SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_F);
+              signals = Wait(signals | SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_F | threadSig | methodStackSig);
 
             // bail out if we receive a CTRL-C
             if(isFlagSet(signals, SIGBREAKF_CTRL_C))
@@ -724,6 +726,14 @@ BOOL CertWarningRequest(struct Connection *conn, struct Certificate *cert)
             // show ourselves if we receive a CTRL-F
             if(isFlagSet(signals, SIGBREAKF_CTRL_F))
               PopUp();
+
+            // handle pushed methods
+            if(isFlagSet(signals, methodStackSig))
+              CheckMethodStack();
+
+            // handle thread messages
+            if(isFlagSet(signals, threadSig))
+              HandleThreads(TRUE);
           }
           while(TRUE);
         }
