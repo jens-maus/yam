@@ -496,7 +496,7 @@ static int GetCertFingerprint(const struct Certificate *cert, char *digest)
 ///
 /// ExtractReadableDN
 // extract a readable string of all issuers DNAME information
-static char *ExtractReadableDN(X509_NAME *dname)
+static char *ExtractReadableDN(const X509_NAME *dname)
 {
   char *result = NULL;
   int n;

@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2016-10-20 12:48+0000\n"
+"PO-Revision-Date: 2016-10-20 13:52+0000\n"
 "Last-Translator: Samir Hawamdeh <s.hawamdeh@teletu.it>\n"
 "Language-Team: Italian (http://www.transifex.com/ato/yam/language/it/)\n"
 "MIME-Version: 1.0\n"
@@ -3050,7 +3050,7 @@ msgid ""
 "You're not allowed to view this PGP encrypted message.\n"
 "Either your PGP software isn't configured properly or\n"
 "the message was encrypted for someone else.\n"
-msgstr ">Errore da PGP<\n\nImpossibile visualizzare questo messaggio codificato con chiave PGP.\nIl problema potrebbe essere dovuto ad un errore della configurazione\ndi PGP, oppure il messaggio è stato codificato per un altra persona.\n"
+msgstr ">Errore da PGP<\n\nImpossibile visualizzare questo messaggio codificato con chiave PGP.\nIl problema potrebbe essere dovuto ad un errore della configurazione\ndi PGP, oppure il messaggio è stato codificato per un'altra persona.\n"
 
 #. RECIPIENT
 msgctxt "MSG_RE_MsgReadOnly (861//)"
@@ -3809,7 +3809,7 @@ msgstr "Invio del messaggio..."
 
 msgctxt "MSG_TR_Importing (1067//)"
 msgid "Importing message..."
-msgstr "Importazione del messagio..."
+msgstr "Importazione del messaggio..."
 
 msgctxt "MSG_TR_DeletingServerMail (1068//)"
 msgid "Deleting mail on server..."
@@ -4121,7 +4121,7 @@ msgctxt "MSG_HELP_DI_BT_NEW (1155//)"
 msgid ""
 "Add a new abbreviation\n"
 "to the glossary."
-msgstr "Aggiunge un nuova abbreviazione\nal glossario."
+msgstr "Aggiunge una nuova abbreviazione\nal glossario."
 
 msgctxt "MSG_HELP_DI_BT_ADDSELECT (1156//)"
 msgid ""
@@ -4842,7 +4842,7 @@ msgctxt "MSG_HELP_CO_ST_SMTPAUTHUSER (1368//)"
 msgid ""
 "User name of the\n"
 "SMTP AUTH user."
-msgstr "Inserisci qui il nome utente\ndell'utente SMTP AUTH."
+msgstr "Inserisci qui il nome\ndell'utente SMTP AUTH."
 
 msgctxt "MSG_HELP_CO_ST_SMTPAUTHPASS (1369//)"
 msgid ""
@@ -5122,7 +5122,7 @@ msgstr "Il file '%s' non è una valida rubrica per YAM.\n\nSi desidera processar
 
 msgctxt "MSG_AB_NOYAMADDRBOOK_GADS (1447//)"
 msgid "_Yes|*_No"
-msgstr "_Sì|*_No"
+msgstr "_Si|*_No"
 
 msgctxt "MSG_FO_EDIT_FGROUP (1448//)"
 msgid "Folder group preferences"
@@ -5369,7 +5369,7 @@ msgstr "YAM ha trovato un file sconosciuto '%s' nella directory della cartella '
 
 msgctxt "MSG_MA_YESNOTOALL (1513//)"
 msgid "*_Yes|Y_es to all|_No|N_o to all"
-msgstr "*_Sì|S_ì per tutti|_No|N_o per tutti"
+msgstr "*_Si|S_i per tutti|_No|N_o per tutti"
 
 #. FILENAME, FOLDER
 msgctxt "MSG_ER_CONVERTMFILE (1514//)"
@@ -6386,7 +6386,7 @@ msgstr "La directory \"spam\" è già esistente!\n\nSi desidera usare la cartell
 
 msgctxt "MSG_ER_SPAMDIR_EXISTS_ANSWERS (1792//)"
 msgid "C_leanup&Use|_Use|*_Cancel"
-msgstr "P_ulisci&Usa|_Usa|*_Annulla"
+msgstr "_Pulisci&Usa|_Usa|*_Annulla"
 
 msgctxt "MSG_CO_ER_CANNOT_CREATE_SPAMFOLDER (1793//)"
 msgid ""
@@ -6611,7 +6611,7 @@ msgid ""
 "Allows to manually reset the whole spam filter\n"
 "training data. This should be necessary only\n"
 "in very rare cases."
-msgstr "Permette di resettare manualmente l'intero\nfiltro AntiSpam.\nQuesta opzione potrebbe rendersi necessaria\nsolo in taluni e molto rari casi."
+msgstr "Permette di resettare manualmente l'intero\nfiltro AntiSpam.\nQuesta opzione potrebbe rendersi necessaria\nsolo in taluni casi molto rari."
 
 msgctxt "MSG_HELP_CH_SPAMFILTERFORNEWMAIL (1856//)"
 msgid ""
@@ -6978,7 +6978,7 @@ msgid ""
 "Connection with server '%s' was interrupted while trying to send command '%s'.\n"
 "\n"
 "This may be due to a connection dropped by the server."
-msgstr "La connessione con il server '%s' è stata\ninterrotta durante il tentativo di invio\ndel comando '%s'.\n\nQuesto problema potrebbe essersi verificato\na causa della disconnessione del server."
+msgstr "La connessione con il server '%s' è stata\ninterrotta durante il tentativo di invio\ndel comando '%s'.\n\nQuesto problema potrebbe essersi verificato\na causa di una disconnessione dal server."
 
 msgctxt "MSG_WR_MSWITCH_MSG (1956//)"
 msgid "Message"
