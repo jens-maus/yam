@@ -1,5 +1,5 @@
 /* ====================================================================
- * Copyright (c) 1999 The OpenSSL Project.  All rights reserved.
+ * Copyright (c) 2003 The OpenSSL Project.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -16,12 +16,12 @@
  * 3. All advertising materials mentioning features or use of this
  *    software must display the following acknowledgment:
  *    "This product includes software developed by the OpenSSL Project
- *    for use in the OpenSSL Toolkit. (http://www.OpenSSL.org/)"
+ *    for use in the OpenSSL Toolkit. (http://www.openssl.org/)"
  *
  * 4. The names "OpenSSL Toolkit" and "OpenSSL Project" must not be used to
  *    endorse or promote products derived from this software without
  *    prior written permission. For written permission, please contact
- *    licensing@OpenSSL.org.
+ *    openssl-core@openssl.org.
  *
  * 5. Products derived from this software may not be called "OpenSSL"
  *    nor may "OpenSSL" appear in their names without prior written
@@ -30,7 +30,7 @@
  * 6. Redistributions of any form whatsoever must retain the following
  *    acknowledgment:
  *    "This product includes software developed by the OpenSSL Project
- *    for use in the OpenSSL Toolkit (http://www.OpenSSL.org/)"
+ *    for use in the OpenSSL Toolkit (http://www.openssl.org/)"
  *
  * THIS SOFTWARE IS PROVIDED BY THE OpenSSL PROJECT ``AS IS'' AND ANY
  * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -44,31 +44,34 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
- * ====================================================================
- *
- * This product includes cryptographic software written by Eric Young
- * (eay@cryptsoft.com).  This product includes software written by Tim
- * Hudson (tjh@cryptsoft.com).
  *
  */
-
-/*
- * This header only exists to break a circular dependency between pem and err
- * Ben 30 Jan 1999.
- */
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 #ifndef PROTO_AMISSL_H
 #include <proto/amissl.h>
 #endif /* PROTO_AMISSL_H */
 
-#ifndef HEADER_PEM_H
-void ERR_load_PEM_strings(void);
+#ifndef HEADER_FIPS_RAND_H
+#define HEADER_FIPS_RAND_H
+
+#include "des.h"
+
+#ifdef OPENSSL_FIPS
+
+#ifdef  __cplusplus
+extern "C" {
 #endif
 
-#ifdef __cplusplus
+void FIPS_set_prng_key(const unsigned char k1[8],const unsigned char k2[8]);
+void FIPS_test_mode(int test,const unsigned char faketime[8]);
+void FIPS_rand_seed(const void *buf, FIPS_RAND_SIZE_T num);
+/* NB: this returns true if _partially_ seeded */
+int FIPS_rand_seeded(void);
+
+RAND_METHOD *FIPS_rand_method(void);
+
+#ifdef  __cplusplus
 }
+#endif
+#endif
 #endif

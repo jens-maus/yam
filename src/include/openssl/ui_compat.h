@@ -1,5 +1,9 @@
+/* crypto/ui/ui.h -*- mode:C; c-file-style: "eay" -*- */
+/* Written by Richard Levitte (richard@levitte.org) for the OpenSSL
+ * project 2001.
+ */
 /* ====================================================================
- * Copyright (c) 1999 The OpenSSL Project.  All rights reserved.
+ * Copyright (c) 2001 The OpenSSL Project.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -16,12 +20,12 @@
  * 3. All advertising materials mentioning features or use of this
  *    software must display the following acknowledgment:
  *    "This product includes software developed by the OpenSSL Project
- *    for use in the OpenSSL Toolkit. (http://www.OpenSSL.org/)"
+ *    for use in the OpenSSL Toolkit. (http://www.openssl.org/)"
  *
  * 4. The names "OpenSSL Toolkit" and "OpenSSL Project" must not be used to
  *    endorse or promote products derived from this software without
  *    prior written permission. For written permission, please contact
- *    licensing@OpenSSL.org.
+ *    openssl-core@openssl.org.
  *
  * 5. Products derived from this software may not be called "OpenSSL"
  *    nor may "OpenSSL" appear in their names without prior written
@@ -30,7 +34,7 @@
  * 6. Redistributions of any form whatsoever must retain the following
  *    acknowledgment:
  *    "This product includes software developed by the OpenSSL Project
- *    for use in the OpenSSL Toolkit (http://www.OpenSSL.org/)"
+ *    for use in the OpenSSL Toolkit (http://www.openssl.org/)"
  *
  * THIS SOFTWARE IS PROVIDED BY THE OpenSSL PROJECT ``AS IS'' AND ANY
  * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -52,23 +56,32 @@
  *
  */
 
-/*
- * This header only exists to break a circular dependency between pem and err
- * Ben 30 Jan 1999.
- */
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #ifndef PROTO_AMISSL_H
 #include <proto/amissl.h>
 #endif /* PROTO_AMISSL_H */
 
-#ifndef HEADER_PEM_H
-void ERR_load_PEM_strings(void);
+#ifndef HEADER_UI_COMPAT_H
+#define HEADER_UI_COMPAT_H
+
+#include <openssl/opensslconf.h>
+#include <openssl/ui.h>
+
+#ifdef  __cplusplus
+extern "C" {
 #endif
 
-#ifdef __cplusplus
+/* The following functions were previously part of the DES section,
+   and are provided here for backward compatibility reasons. */
+
+#define des_read_pw_string(b,l,p,v) \
+  _ossl_old_des_read_pw_string((b),(l),(p),(v))
+#define des_read_pw(b,bf,s,p,v) \
+  _ossl_old_des_read_pw((b),(bf),(s),(p),(v))
+
+int _ossl_old_des_read_pw_string(char *buf,int length,const char *prompt,int verify);
+int _ossl_old_des_read_pw(char *buf,char *buff,int size,const char *prompt,int verify);
+
+#ifdef  __cplusplus
 }
+#endif
 #endif
