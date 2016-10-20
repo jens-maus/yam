@@ -7,13 +7,13 @@
 # Jens Maus <mail@jens-maus.de>, 2014
 # Jens Maus <mail@jens-maus.de>, 2014
 # Marko Raina <marko.raina@fimnet.fi>, 2014
-# Marko Raina <marko.raina@fimnet.fi>, 2014
+# Marko Raina <marko.raina@fimnet.fi>, 2014,2016
 msgid ""
 msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-10-09 02:28+0000\n"
+"PO-Revision-Date: 2016-10-08 07:41+0000\n"
 "Last-Translator: Marko Raina <marko.raina@fimnet.fi>\n"
 "Language-Team: Finnish (http://www.transifex.com/ato/yam/language/fi/)\n"
 "MIME-Version: 1.0\n"
@@ -10039,3 +10039,7 @@ msgstr "Pysyvästi hyväksytyt palvelinvarmennevaroitukset"
 msgctxt "MSG_CO_CLEAR_SERVER_CERT_WARNINGS (2580//)"
 msgid "Clear warnings"
 msgstr "Poista varoitukset"
+
+msgctxt "MSG_UPD_NOTIFICATION_DOWNLOAD_WITH_BROWSER (2581//)"
+msgid "Download update with browser..."
+msgstr "Lataa päivitys selaimella..."

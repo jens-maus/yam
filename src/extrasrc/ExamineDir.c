@@ -200,7 +200,7 @@ struct ExamineData *ExamineDir(APTR context)
 
     // copy over the data we might be interested in
     ed->Name = isFlagSet(ctx->dataFields, EXF_NAME) ? ctx->eaData->ed_Name : NULL;
-    ed->FileSize = isFlagSet(ctx->dataFields, EXF_SIZE) ? ctx->eaData->ed_Size : -1;
+    ed->FileSize = isFlagSet(ctx->dataFields, EXF_SIZE) ? (LONG)ctx->eaData->ed_Size : -1;
 
     // convert the ExAll() type to ExamineDir() style
     if(isFlagSet(ctx->dataFields, EXF_TYPE))

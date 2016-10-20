@@ -52,12 +52,12 @@ HowTo update the OpenSSL version in "src/tools/tz":
 
    $ git diff --name-only --diff-filter=U
 
-3. Go to "src" directoy an execute the "tools/mktzdata.sh" script which takes
-   care to regenerate our binary zoneinfo files in the top-level resources
-   directory.
+3. Go to the top-level of your working directory and execute the "scripts/mktzdata.sh"
+   script which takes care to regenerate our binary zoneinfo files in the top-level
+   resources directory.
 
-   $ cd src/
-   $ tools/mktzdata.sh
+   $ cd <top-level>
+   $ scripts/mktzdata.sh
 
 7. Review all changes with "git status" and make sure to commit everything
    properly.

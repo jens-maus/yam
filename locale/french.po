@@ -8,14 +8,16 @@
 # Alexandre BALABAN <transifex@balaban.fr>, 2014
 # Jens Maus <mail@jens-maus.de>, 2014
 # Guillaume Boesel, 2015
+# Guillaume Boesel, 2015
 # Jens Maus <mail@jens-maus.de>, 2014
+# Stefan Haubenthal <polluks@sdf.lonestar.org>, 2016
 msgid ""
 msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2015-04-13 05:09+0000\n"
-"Last-Translator: Guillaume Boesel\n"
+"PO-Revision-Date: 2016-08-11 12:05+0000\n"
+"Last-Translator: Stefan Haubenthal <polluks@sdf.lonestar.org>\n"
 "Language-Team: French (http://www.transifex.com/ato/yam/language/fr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -4824,19 +4826,19 @@ msgstr "Ancien format - (1.234.567 octets)"
 
 msgctxt "MSG_CO_SIZEFORMAT02 (1363//)"
 msgid "Mixed precision (0.001 GB, 0.01 MB, 0.1 KB)"
-msgstr "Précision adaptée (0.001 Go, 0.01 Mo, 0.1 Ko)"
+msgstr "Précision adaptée (0,001 Go, 0,01 Mo, 0,1 Ko)"
 
 msgctxt "MSG_CO_SIZEFORMAT03 (1364//)"
 msgid "10^-1 precision (0.1 GB/MB/KB)"
-msgstr "Précision à 10^-1 (0.1 Go/Mo/Ko)"
+msgstr "Précision à 10^-1 (0,1 Go/Mo/Ko)"
 
 msgctxt "MSG_CO_SIZEFORMAT04 (1365//)"
 msgid "10^-2 precision (0.01 GB/MB/KB)"
-msgstr "Précision à 10^-2 (0.01 Go/Mo/Ko)"
+msgstr "Précision à 10^-2 (0,01 Go/Mo/Ko)"
 
 msgctxt "MSG_CO_SIZEFORMAT05 (1366//)"
 msgid "10^-3 precision (0.001 GB/MB/KB)"
-msgstr "Précision à 10^-3 (0.001 Go/Mo/Ko)"
+msgstr "Précision à 10^-3 (0,001 Go/Mo/Ko)"
 
 msgctxt "MSG_HELP_CO_ST_SMTPAUTHUSER (1368//)"
 msgid ""
@@ -10040,3 +10042,7 @@ msgstr "Avertissements de certificats de serveur acceptés de façon permanente"
 msgctxt "MSG_CO_CLEAR_SERVER_CERT_WARNINGS (2580//)"
 msgid "Clear warnings"
 msgstr "Effacer les avertissements"
+
+msgctxt "MSG_UPD_NOTIFICATION_DOWNLOAD_WITH_BROWSER (2581//)"
+msgid "Download update with browser..."
+msgstr "Télécharger la mise à jour avec le navigateur..."

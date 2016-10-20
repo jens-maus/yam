@@ -321,6 +321,8 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
           // mail list for each single mail we get from the index
           if((tempFolder = AllocFolder()) != NULL)
           {
+            BOOL systemIsUTF8 = (G->systemCodeset != NULL && G->systemCodeset->name != NULL && stricmp(G->systemCodeset->name, "utf-8") == 0);
+
             do
             {
               struct Mail *mail;
@@ -362,16 +364,24 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
               // make sure to NUL terminate the utf8 string
               utf8buf[cmail.moreBytes] = '\0';
 
-              // convert the utf8 encoded buffer to the local charset
-              if((buf = CodesetsUTF8ToStr(CSA_Source,          utf8buf,
-                                          CSA_SourceLen,       cmail.moreBytes,
-                                          CSA_DestCodeset,     G->systemCodeset,
-                                          CSA_MapForeignChars, C->MapForeignChars,
-                                          TAG_DONE)) == NULL)
+              if(systemIsUTF8 == TRUE)
               {
-                E(DBF_FOLDER, "error while converting UTF8 data to local charset");
-                error = TRUE;
-                break;
+                // no conversion required
+                buf = utf8buf;
+			  }
+			  else
+			  {
+                // convert the utf8 encoded buffer to the local charset
+                if((buf = CodesetsUTF8ToStr(CSA_Source,          utf8buf,
+                                            CSA_SourceLen,       cmail.moreBytes,
+                                            CSA_DestCodeset,     G->systemCodeset,
+                                            CSA_MapForeignChars, C->MapForeignChars,
+                                            TAG_DONE)) == NULL)
+                {
+                  E(DBF_FOLDER, "error while converting UTF8 data to local charset");
+                  error = TRUE;
+                  break;
+                }
               }
 
               // create a new mail structure
@@ -450,8 +460,11 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
               else
                 error = TRUE;
 
-              // free the codesets buffer
-              CodesetsFreeA(buf, NULL);
+              if(systemIsUTF8 == FALSE)
+              {
+                // free the codesets buffer
+                CodesetsFreeA(buf, NULL);
+              }
             }
             while(error == FALSE);
           }
@@ -566,6 +579,8 @@ BOOL MA_SaveIndex(struct Folder *folder)
     // write the index header out first
     if(fwrite(&fi, sizeof(fi), 1, fh) == 1)
     {
+      BOOL systemIsUTF8 = (G->systemCodeset != NULL && G->systemCodeset->name != NULL && stricmp(G->systemCodeset->name, "utf-8") == 0);
+
       // assume success at first
       success = TRUE;
 
@@ -585,12 +600,22 @@ BOOL MA_SaveIndex(struct Folder *folder)
                                    mail->ReplyTo.Address, mail->ReplyTo.RealName,
                                    mail->MailAccount);
 
-        // convert the buffer string to UTF8
-        // the length of the generated string is directly put into the moreBytes variable
-        if((utf8buf = CodesetsUTF8Create(CSA_Source, buf,
-                                         CSA_SourceCodeset, G->systemCodeset,
-                                         CSA_DestLenPtr, &cmail.moreBytes,
-                                         TAG_DONE)) != NULL)
+        if(systemIsUTF8 == TRUE)
+        {
+          // no conversion required;
+          utf8buf = (UTF8 *)buf;
+		}
+		else
+		{
+          // convert the buffer string to UTF8
+          // the length of the generated string is directly put into the moreBytes variable
+          utf8buf = CodesetsUTF8Create(CSA_Source, buf,
+                                       CSA_SourceCodeset, G->systemCodeset,
+                                       CSA_DestLenPtr, &cmail.moreBytes,
+                                       TAG_DONE);
+        }
+
+        if(utf8buf != NULL)
         {
           strlcpy(cmail.mailFile, mail->MailFile, sizeof(cmail.mailFile));
           cmail.date = mail->Date;
@@ -610,8 +635,11 @@ BOOL MA_SaveIndex(struct Folder *folder)
             success = FALSE;
           }
 
-          // free the codesets buffer
-          CodesetsFreeA(utf8buf, NULL);
+          if(systemIsUTF8 == FALSE)
+          {
+            // free the codesets buffer
+            CodesetsFreeA(utf8buf, NULL);
+          }
         }
         else
           success = FALSE;

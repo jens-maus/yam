@@ -32,15 +32,35 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <proto/muimaster.h>
 #include <mui/NList_mcc.h>
 
 #include "YAM_utilities.h"
 
+#include "mui/UpdateNotifyWindow.h"
+
 #include "Locale.h"
+#include "MUIObjects.h"
 #include "UpdateCheck.h"
 
 #include "Debug.h"
 
+/* CLASSDATA
+struct Data
+{
+  Object *contextMenu;
+  char menuTitle[SIZE_DEFAULT];
+};
+*/
+
+/// Menu enumerations
+enum
+{
+  UMEN_DOWNLOAD=100,
+  UMEN_DOWNLOAD_WITH_BROWSER,
+};
+
+///
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
@@ -59,13 +79,26 @@ OVERLOAD(OM_NEW)
     MUIA_NList_TitleSeparator,       TRUE,
     MUIA_NList_DragType,             MUIV_NList_DragType_None,
     MUIA_NList_DefaultObjectOnClick, TRUE,
-    MUIA_ContextMenu,                0,
+    MUIA_ContextMenu,                TRUE,
     MUIA_Dropable,                   FALSE,
 
     TAG_MORE, inittags(msg));
 
   RETURN((IPTR)obj);
   return (IPTR)obj;
+}
+
+///
+/// OVERLOAD(OM_DISPOSE)
+OVERLOAD(OM_DISPOSE)
+{
+  GETDATA;
+
+  // make sure that our context menus are also disposed
+  if(data->contextMenu != NULL)
+    MUI_DisposeObject(data->contextMenu);
+
+  return DoSuperMethodA(cl, obj, msg);
 }
 
 ///
@@ -136,6 +169,66 @@ OVERLOAD(MUIM_NList_Display)
 
   RETURN(0);
   return 0;
+}
+
+///
+/// OVERLOAD(MUIM_ContextMenuBuild)
+OVERLOAD(MUIM_ContextMenuBuild)
+{
+  GETDATA;
+  struct UpdateComponent *comp;
+
+  ENTER();
+
+  // dispose the old context_menu if it still exists
+  if(data->contextMenu != NULL)
+  {
+    MUI_DisposeObject(data->contextMenu);
+    data->contextMenu = NULL;
+  }
+
+  if((comp = (struct UpdateComponent *)DoMethod(obj, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, NULL)) != NULL)
+  {
+    strlcpy(data->menuTitle, comp->name, sizeof(data->menuTitle));
+
+    data->contextMenu = MenustripObject,
+      Child, MenuObjectT(data->menuTitle),
+        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_UPD_NOTIFICATION_DOWNLOAD),              MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, UMEN_DOWNLOAD, End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_UPD_NOTIFICATION_DOWNLOAD_WITH_BROWSER), MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, UMEN_DOWNLOAD_WITH_BROWSER, End,
+      End,
+    End;
+  }
+
+  RETURN(data->contextMenu);
+  return (IPTR)data->contextMenu;
+}
+
+///
+/// OVERLOAD(MUIM_ContextMenuChoice)
+OVERLOAD(MUIM_ContextMenuChoice)
+{
+  struct MUIP_ContextMenuChoice *m = (struct MUIP_ContextMenuChoice *)msg;
+  ULONG rc;
+
+  ENTER();
+
+  switch(xget(m->item, MUIA_UserData))
+  {
+    case UMEN_DOWNLOAD:
+      rc = DoMethod(_win(obj), MUIM_UpdateNotifyWindow_Download);
+    break;
+
+    case UMEN_DOWNLOAD_WITH_BROWSER:
+      rc = DoMethod(_win(obj), MUIM_UpdateNotifyWindow_DownloadWithBrowser);
+    break;
+
+    default:
+      rc = DoSuperMethodA(cl, obj, msg);
+    break;
+  }
+
+  RETURN(rc);
+  return rc;
 }
 
 ///

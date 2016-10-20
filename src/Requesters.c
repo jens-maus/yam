@@ -290,6 +290,9 @@ int PassphraseRequest(char *string, int size, Object *parent)
   {
     DoMethod(win, MUIM_Notify, MUIA_PassphraseRequestWindow_Result, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_Application_ReturnID, REQUESTER_RETURNID);
 
+    // this is an important requester, uniconify outself automatically to ensure it becomes visible
+    set(G->App, MUIA_Application_Iconified, FALSE);
+
     set(G->App, MUIA_Application_Sleep, TRUE);
 
     if(SafeOpenWindow(win) == TRUE)
@@ -643,11 +646,16 @@ BOOL CertWarningRequest(struct Connection *conn, struct Certificate *cert)
       {
         DoMethod(win, MUIM_Notify, MUIA_GenericRequestWindow_Result, MUIV_EveryTime, MUIV_Notify_Application, 2, MUIM_Application_ReturnID, REQUESTER_RETURNID);
 
+        // this is an important requester, uniconify outself automatically to ensure it becomes visible
+        set(G->App, MUIA_Application_Iconified, FALSE);
+
         set(G->App, MUIA_Application_Sleep, TRUE);
 
         if(SafeOpenWindow(win) == TRUE)
         {
           ULONG signals = 0;
+          ULONG threadSig = (1UL << G->threadPort->mp_SigBit);
+          ULONG methodStackSig = (1UL << G->methodStack->mp_SigBit);
 
           do
           {
@@ -709,7 +717,7 @@ BOOL CertWarningRequest(struct Connection *conn, struct Certificate *cert)
             }
 
             if(signals != 0)
-              signals = Wait(signals | SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_F);
+              signals = Wait(signals | SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_F | threadSig | methodStackSig);
 
             // bail out if we receive a CTRL-C
             if(isFlagSet(signals, SIGBREAKF_CTRL_C))
@@ -718,6 +726,14 @@ BOOL CertWarningRequest(struct Connection *conn, struct Certificate *cert)
             // show ourselves if we receive a CTRL-F
             if(isFlagSet(signals, SIGBREAKF_CTRL_F))
               PopUp();
+
+            // handle pushed methods
+            if(isFlagSet(signals, methodStackSig))
+              CheckMethodStack();
+
+            // handle thread messages
+            if(isFlagSet(signals, threadSig))
+              HandleThreads(TRUE);
           }
           while(TRUE);
         }

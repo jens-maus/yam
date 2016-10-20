@@ -351,7 +351,18 @@ DECLARE(ShowBusyBar) // struct BusyNode *busy
               // give the application the chance to clear its event loop
               DoMethod(_app(obj), MUIM_Application_InputBuffered);
 
-              goOn = (data->stopButtonPressed == FALSE);
+              if(data->stopButtonPressed == TRUE)
+              {
+                // abort the currently running action
+                goOn = FALSE;
+                // forget the pressed stop button again, otherwise all future
+                // busy actions will be aborted immediately again
+                data->stopButtonPressed = FALSE;
+              }
+              else
+              {
+                goOn = TRUE;
+              }
             }
 
             // we have been visible at least once
@@ -379,6 +390,9 @@ DECLARE(ShowBusyBar) // struct BusyNode *busy
 
   // remember the changed busy action
   data->lastBusy = msg->busy;
+  // make sure to forget any pressed stop button in case the last busy action terminates
+  if(data->lastBusy == NULL)
+    data->stopButtonPressed = FALSE;
 
   RETURN(goOn);
   return goOn;

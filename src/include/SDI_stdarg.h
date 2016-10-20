@@ -4,19 +4,22 @@
 /* Includeheader
 
         Name:           SDI_stdarg.h
-        Versionstring:  $VER: SDI_stdarg.h 1.2 (27.03.2016)
+        Versionstring:  $VER: SDI_stdarg.h 1.3 (06.08.2016)
         Author:         Jens Maus
         Distribution:   PD
         Project page:   https://github.com/adtools/SDI
         Description:    defines to hide OS specific variable arguments
                         function definitions
-        Id:             $Id$
-        URL:            $URL$
 
  1.0   05.07.2004 : initial version
  1.1   06.06.2014 : added a type cast to VA_ARG() result
  1.2   27.03.2016 : when using GCC4/5 for MorphOS overflow_arg_area is not
                     supported anymore (Jens Maus)
+ 1.3   06.08.2016 : implemented VA_COPY() and SDI_VACAST type helper macros
+                    to fight the problem that GCC5 for MorphOS doesn't support
+                    VARARGS68K and thus we need type casts to please the
+                    compiler on complaining about the GCC inline macros that
+                    can be used to partly replace it.
 
 */
 

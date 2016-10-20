@@ -3,10 +3,10 @@
 # $URL$
 # version 10
 # Translators:
-# Alper Sönmez <amithlondestek@gmail.com>, 2013
+# İbrahim Alper Sönmez <amithlondestek@gmail.com>, 2013
 # İbrahim Alper Sönmez <amithlondestek@gmail.com>, 2014
 # Jens Maus <mail@jens-maus.de>, 2014
-# İbrahim Alper Sönmez <amithlondestek@gmail.com>, 2014-2015
+# İbrahim Alper Sönmez <amithlondestek@gmail.com>, 2014-2016
 # Jens Maus <mail@jens-maus.de>, 2014
 # Murat ENEZ <muratenez@gmail.com>, 2014
 # Murat ENEZ <muratenez@gmail.com>, 2014
@@ -15,7 +15,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2015-06-09 14:35+0000\n"
+"PO-Revision-Date: 2016-10-13 06:17+0000\n"
 "Last-Translator: İbrahim Alper Sönmez <amithlondestek@gmail.com>\n"
 "Language-Team: Turkish (http://www.transifex.com/ato/yam/language/tr/)\n"
 "MIME-Version: 1.0\n"
@@ -9364,7 +9364,7 @@ msgstr "Aşağıdaki koşullardan"
 
 msgctxt "MSG_CO_CONDITION_POSTPHRASE (2443//)"
 msgid "of the following conditions are met:"
-msgstr "tanesi karşılandıysa:"
+msgstr "karşılandıysa:"
 
 #. !!! WARNING !!!
 #. Do not translate this fallback name, but just choose a
@@ -10041,3 +10041,7 @@ msgstr "Kalıcı olarak kabul edilmiş sunucu sertifikası uyarıları"
 msgctxt "MSG_CO_CLEAR_SERVER_CERT_WARNINGS (2580//)"
 msgid "Clear warnings"
 msgstr "Uyarıları temizle"
+
+msgctxt "MSG_UPD_NOTIFICATION_DOWNLOAD_WITH_BROWSER (2581//)"
+msgid "Download update with browser..."
+msgstr "Güncellemeyi internet tarayıcısı ile indir..."

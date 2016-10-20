@@ -5,16 +5,17 @@
 # Translators:
 # Jens Maus <mail@jens-maus.de>, 2014
 # Jens Maus <mail@jens-maus.de>, 2014
+# Stefan Haubenthal <polluks@sdf.lonestar.org>, 2016
 # Thore Böckelmann <tboeckel@gmx.de>, 2014
 # Thore Böckelmann <tboeckel@gmx.de>, 2014
-# Thore Böckelmann <tboeckel@gmx.de>, 2014
+# Thore Böckelmann <tboeckel@gmx.de>, 2014,2016
 msgid ""
 msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2014-09-29 07:51+0000\n"
-"Last-Translator: Thore Böckelmann <tboeckel@gmx.de>\n"
+"PO-Revision-Date: 2016-08-17 11:08+0000\n"
+"Last-Translator: Stefan Haubenthal <polluks@sdf.lonestar.org>\n"
 "Language-Team: German (http://www.transifex.com/ato/yam/language/de/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -891,7 +892,7 @@ msgstr "*** Ende der weitergeleiteten Nachricht ***\\n"
 
 msgctxt "MSG_CO_GreetingsDef (273//)"
 msgid "Kind regards"
-msgstr "Mit freundlichen Grüssen"
+msgstr "Mit freundlichen Grüßen"
 
 #. Replace the whole line with an alternative hello phrase in your
 #. language similar to what is written behind <EMPTY>. This phrase
@@ -909,7 +910,7 @@ msgstr "Hallo %f,\\n"
 #. Make sure to remove the <EMPTY> tag in your translation
 msgctxt "MSG_CO_AltRepByeDef (275//)"
 msgid "<EMPTY>Kind regards"
-msgstr "Mit freundlichen Grüssen"
+msgstr "Mit freundlichen Grüßen"
 
 #. Replace the whole line with a hello phrase similar to what is
 #. written behind <EMPTY>. This phrase will be used if a mailing
@@ -926,7 +927,7 @@ msgstr "Am %c schrieb %n:\\n"
 
 msgctxt "MSG_CO_MLRepByeDef (278//)"
 msgid "Regards"
-msgstr "Grüsse"
+msgstr "Grüße"
 
 #. Please keep the number of backslashes (e.g. \n)
 msgctxt "MSG_CO_LineBreak (279//)"
@@ -1107,7 +1108,7 @@ msgstr "niemals"
 
 msgctxt "MSG_CO_PSLarge (360//)"
 msgid "large messages"
-msgstr "grosse Nachrichten"
+msgstr "große Nachrichten"
 
 msgctxt "MSG_CO_PSAlways (361//)"
 msgid "always"
@@ -1115,7 +1116,7 @@ msgstr "immer"
 
 msgctxt "MSG_CO_PSAlwaysFast (362//)"
 msgid "always, only sizes"
-msgstr "immer, nur Grössen"
+msgstr "immer, nur Größen"
 
 msgctxt "MSG_CO_TWNever (363//)"
 msgid "hide always"
@@ -1323,7 +1324,7 @@ msgstr "Brief"
 
 msgctxt "MSG_CO_Welcome (435//)"
 msgid "Welcome _phrase"
-msgstr "Be_grüssung"
+msgstr "Be_grüßung"
 
 msgctxt "MSG_CO_Greetings (436//)"
 msgid "Closing p_hrase"
@@ -1471,7 +1472,7 @@ msgstr "ausführlich"
 
 msgctxt "MSG_CO_PGPExe (475//)"
 msgid "P_GP's directory"
-msgstr "_PGP Verzeichnis"
+msgstr "_PGP-Verzeichnis"
 
 msgctxt "MSG_CO_Logfiles (481//)"
 msgid "Log files"
@@ -1591,7 +1592,7 @@ msgstr "Position _X"
 
 msgctxt "MSG_CO_CloseGadget (513//)"
 msgid "Close _gadget iconifies program"
-msgstr "Beim Schließen _ikonifizieren"
+msgstr "Beim Schließen verber_gen"
 
 msgctxt "MSG_CO_SaveDelete (514//)"
 msgid "Save/delete messages"
@@ -2300,7 +2301,7 @@ msgctxt "MSG_HELP_CO_CH_CLGADGET (680//)"
 msgid ""
 "Do you want YAM to iconify when\n"
 "you hit the close gadget?"
-msgstr "Soll YAM beim Betätigen des Schließgadgets\nikonifiziert werden?"
+msgstr "Soll YAM beim Betätigen des Schließgadgets\nverborgen werden?"
 
 msgctxt "MSG_HELP_CO_CH_CONFIRM (681//)"
 msgid ""
@@ -5117,7 +5118,7 @@ msgid ""
 "\n"
 "Process it as a file containing e-mail addresses\n"
 "on separate lines?"
-msgstr "Die Datei '%s' ist keine YAM Adressbuchdatei.\n\nMöchten Sie trotzdem diese Datei als eine durch Zeilenumbruch\ngetrennte Adressbuchdatei laden ?"
+msgstr "Die Datei '%s' ist keine YAM-Adressbuchdatei.\n\nMöchten Sie trotzdem diese Datei als eine durch Zeilenumbruch\ngetrennte Adressbuchdatei laden?"
 
 msgctxt "MSG_AB_NOYAMADDRBOOK_GADS (1447//)"
 msgid "_Yes|*_No"
@@ -5258,7 +5259,7 @@ msgstr "Text, welcher am Ende einer\nneuen Nachricht eingefügt wird."
 
 msgctxt "MSG_FO_Welcome (1497//)"
 msgid "_Welcome phrase"
-msgstr "Be_grüssung"
+msgstr "Be_grüßung"
 
 msgctxt "MSG_FO_Greetings (1498//)"
 msgid "C_losing phrase"
@@ -5936,7 +5937,7 @@ msgstr "In Zukunft nicht mehr benachrichtigen"
 
 msgctxt "MSG_UPD_NOTIFICATION_CLOSE (1685//)"
 msgid "Close"
-msgstr "Schliessen"
+msgstr "Schließen"
 
 msgctxt "MSG_UPD_NOTIFICATION_COMP (1686//)"
 msgid "Component"
@@ -6117,7 +6118,7 @@ msgid ""
 "Description: %s\n"
 "Content-Type: %s <%s>\n"
 "Size: ~%s"
-msgstr "\\033bAnhang - MIME-Teil #%ld\\033n\nName: %s\nBeschreibung: %s\nContent-Type: %s <%s>\nGrösse: ~%s"
+msgstr "\\033bAnhang - MIME-Teil #%ld\\033n\nName: %s\nBeschreibung: %s\nContent-Type: %s <%s>\nGröße: ~%s"
 
 msgctxt "MSG_MA_MIMEPART_MENU (1726//)"
 msgid "Attachment/MIME part #%ld"
@@ -6136,11 +6137,11 @@ msgid ""
 "If selected, your PGP passphrase will be remembered\n"
 "for this amount of time. Subsequent PGP operations then\n"
 "won't trigger another passphrase query."
-msgstr "Wenn diese Option aktiviert ist, wird ein einge-\ngebendes PGP-Passphrase erst nach der definierten\nZeit einer Untätigkeit vergessen. Dies erlaubt die\nNutzung mehrerer PGP Operationen ohne jedesmal das\nPassphrase erneut eingeben zu müssen."
+msgstr "Wenn diese Option aktiviert ist, wird ein einge-\ngebendes PGP-Passwort erst nach der definierten\nZeit einer Untätigkeit vergessen. Dies erlaubt die\nNutzung mehrerer PGP-Operationen, ohne jedesmal das\nPasswort erneut eingeben zu müssen."
 
 msgctxt "MSG_UT_PGPPASSREQ_TITLE (1730//)"
 msgid "PGP passphrase request"
-msgstr "PGP Passphrase Anfrage"
+msgstr "PGP-Passwortabfrage"
 
 msgctxt "MSG_CO_GR_REPLYFORWARD (1731//)"
 msgid "Reply/Forward"
@@ -8006,7 +8007,7 @@ msgid ""
 "%%Y  - year with leading zeros (4 digits)\n"
 "%%-Y - year without leading zeros (4 digits)\n"
 "The year number must be greater or equal 1900."
-msgstr "Das Geburtstagsdatum ist im falschen Format. Das korrekte Format ist '%s'.\n%%d  - Tag mit führenden Nullen (01-31)\n%%-d - Tag ohne führende Nullen (1-31)\n%%e  - Tag mit führenden Leerzeichen ( 1-31)\n%%m  - Monat mit führenden Nullen (01-12)\n%%-m - Monat ohne führende Nullen (1-12)\n%%y  - Jahr mit führenden Nullen (00-99, 2-stellig)\n%%-y - Jahr ohne führende Nullen (0-99, 2-stellig)\n%%Y  - Jahr mit führenden Nullen (4-stellig)\n%%-Y - Jahr ohne führenden Nullen (4-stellig)\nDie Jahreszahl muss größer oder gleich 1900 sein."
+msgstr "Das Geburtsdatum ist im falschen Format. Das korrekte Format ist '%s'.\n%%d  - Tag mit führenden Nullen (01-31)\n%%-d - Tag ohne führende Nullen (1-31)\n%%e  - Tag mit führenden Leerzeichen ( 1-31)\n%%m  - Monat mit führenden Nullen (01-12)\n%%-m - Monat ohne führende Nullen (1-12)\n%%y  - Jahr mit führenden Nullen (00-99, 2-stellig)\n%%-y - Jahr ohne führende Nullen (0-99, 2-stellig)\n%%Y  - Jahr mit führenden Nullen (4-stellig)\n%%-Y - Jahr ohne führenden Nullen (4-stellig)\nDie Jahreszahl muss größer oder gleich 1900 sein."
 
 msgctxt "MSG_CO_NOTIOS41SYSTEM (2149//)"
 msgid "AmigaOS_4.1 notification system"
@@ -8300,7 +8301,7 @@ msgid ""
 "Path: %s\n"
 "Size: %s\n"
 "Messages: %ld (%ld new, %ld unread)"
-msgstr "\\033bPostfach\\033n\nName: %s\nPfad: %s\nGrösse: %s\nNachrichten: %ld (%ld Neu, %ld Ungelesen)"
+msgstr "\\033bPostfach\\033n\nName: %s\nPfad: %s\nGröße: %s\nNachrichten: %ld (%ld neu, %ld ungelesen)"
 
 #. NAME, ADDRESS, NAME, ADDRESS, SUBJECT, DATE, FILENAME, SIZE
 msgctxt "MSG_MAILINFO_SHORTHELP (2210//)"
@@ -8312,7 +8313,7 @@ msgid ""
 "Date: %s\n"
 "Filename: %s\n"
 "Size: %s"
-msgstr "\\033bNachricht\\033n\nVon: %s <%s>\nAn: %s <%s>\nBetreff: %s\nDatum: %s\nDateiname: %s\nGrösse: %s"
+msgstr "\\033bNachricht\\033n\nVon: %s <%s>\nAn: %s <%s>\nBetreff: %s\nDatum: %s\nDateiname: %s\nGröße: %s"
 
 msgctxt "MSG_CO_UPDATE_DOWNLOAD_PATH (2211//)"
 msgid "Download _path:"
@@ -10039,3 +10040,7 @@ msgstr "Dauerhaft akzeptierte Serverzertifikatswarnungen"
 msgctxt "MSG_CO_CLEAR_SERVER_CERT_WARNINGS (2580//)"
 msgid "Clear warnings"
 msgstr "Warnungen löschen"
+
+msgctxt "MSG_UPD_NOTIFICATION_DOWNLOAD_WITH_BROWSER (2581//)"
+msgid "Download update with browser..."
+msgstr "Update mit Browser herunterladen..."

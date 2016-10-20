@@ -114,9 +114,6 @@ static const char USED_VAR yam_stack_size[] = "$STACK:" STR(SIZE_STACK) "\n";
 #ifndef __YAM_DEVEL
 #define __YAM_DEVEL     "-dev"
 #endif
-#ifndef __YAM_BUILDID
-#define __YAM_BUILDID   0
-#endif
 #define __YAM_COPYRIGHT     "Copyright (C) 2000-2016 YAM Open Source Team"
 #define __YAM_FULLCOPYRIGHT "Copyright (C) 1995-2000 Marcel Beck\n" __YAM_COPYRIGHT
 
@@ -137,7 +134,7 @@ static const char USED_VAR yam_stack_size[] = "$STACK:" STR(SIZE_STACK) "\n";
 #endif
 
 // __YAM_BUILDID is 0 for non-nightly builds
-#if __YAM_BUILDID == 0
+#if !defined(__YAM_BUILDID)
 const char * const yambuildid       = "";
 #else
 const char * const yambuildid       = STR(__YAM_BUILDID);
