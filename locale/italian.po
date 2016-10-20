@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2016-10-20 13:52+0000\n"
+"PO-Revision-Date: 2016-10-20 14:41+0000\n"
 "Last-Translator: Samir Hawamdeh <s.hawamdeh@teletu.it>\n"
 "Language-Team: Italian (http://www.transifex.com/ato/yam/language/it/)\n"
 "MIME-Version: 1.0\n"
@@ -7766,7 +7766,7 @@ msgstr "Impossibile connettersi all'host '%s'.\n\nYAM non è stato in grado di s
 #. HOST
 msgctxt "MSG_ER_INITTLS_SMTP (2101//)"
 msgid "Couldn't initialize TLSv1/SSLv3 session with host '%s'."
-msgstr "Impossible inizializzare una sessione TLSv1/SSLv3 con l'host '%s'."
+msgstr "Impossibile inizializzare una sessione TLSv1/SSLv3 con l'host '%s'."
 
 #. HOST
 msgctxt "MSG_ER_NOSTARTTLS_SMTP (2102//)"
@@ -8241,7 +8241,7 @@ msgstr "Invio richiesta HTTP..."
 
 msgctxt "MSG_HTTP_WAITING_FOR_ANSWER (2198//)"
 msgid "Waiting for server's answer..."
-msgstr "In attesa della risposta del server..."
+msgstr "In attesa di risposta dal server..."
 
 msgctxt "MSG_HTTP_RECEIVING_DATA (2199//)"
 msgid "Receiving data..."
@@ -8334,7 +8334,7 @@ msgstr "Aiuto"
 
 msgctxt "MSG_MA_HELP_CONTENTS (2215//)"
 msgid "Contents"
-msgstr "Guida in linea"
+msgstr "Guida in linea..."
 
 msgctxt "MSG_MA_HELP_AREXX (2216//)"
 msgid "ARexx interface"
@@ -8876,7 +8876,7 @@ msgid ""
 "will have the PGP key added of this user identity.\n"
 "If disabled, encrypted emails cannot be decrypted\n"
 "by this user identity."
-msgstr "Se selezionato tutti i messaggi di posta criptati da una\nchiave PGP verranno aggiunti a questa identità utente.\nSe disattivato i messaggi criptati non potranni essere\ndecriptati da questa identità utente."
+msgstr "Se selezionato tutti i messaggi di posta criptati da una\nchiave PGP verranno aggiunti a questa identità utente.\nSe disattivato i messaggi criptati non potranno essere\ndecriptati da questa identità utente."
 
 msgctxt "MSG_HELP_CO_CY_IDENTITY_SIGNATURE (2339//)"
 msgid ""
@@ -9668,7 +9668,7 @@ msgctxt "MSG_HELP_CO_PO_SMTP_SENTFOLDER (2510//)"
 msgid ""
 "Allows to set a different folder where mails\n"
 "will be stored after being sent out."
-msgstr "Permette di impostare una cartella diversa in\ncui conservare i messaggi una volta inviati."
+msgstr "Permette di impostare una cartella diversa nella\nquale conservare i messaggi una volta inviati."
 
 msgctxt "MSG_CO_IDENTITY_SAVESENTMAIL (2511//)"
 msgid "After transfer store mails in 'Sent' folder"
@@ -9710,7 +9710,7 @@ msgctxt "MSG_HELP_CO_PO_POP_INCOMINGFOLDER (2518//)"
 msgid ""
 "Allows to set a different folder where mails\n"
 "will be stored after having received them."
-msgstr "Permette di impostare una cartella differente nel\nquale conservare i messaggi una volta ricevuti."
+msgstr "Permette di impostare una cartella diversa nella\nquale conservare i messaggi una volta ricevuti."
 
 #. !!! NOTE !!!
 #. When translating MSG_LANGUAGE_CODE please put the
