@@ -1,15 +1,6 @@
 #ifndef PROTO_AMISSLMASTER_H
 #define PROTO_AMISSLMASTER_H
 
-/*
-**	$Id$
-**
-**	Prototype/inline/pragma header file combo
-**
-**	Copyright (c) 2010 Hyperion Entertainment CVBA.
-**	All Rights Reserved.
-*/
-
 #ifndef EXEC_TYPES_H
 #include <exec/types.h>
 #endif
@@ -17,11 +8,7 @@
 /****************************************************************************/
 
 #ifndef __NOLIBBASE__
- #ifndef __USE_BASETYPE__
-  extern struct Library * AmiSSLMasterBase;
- #else
-  extern struct Library * AmiSSLMasterBase;
- #endif /* __USE_BASETYPE__ */
+extern struct Library *AmiSSLMasterBase;
 #endif /* __NOLIBBASE__ */
 
 /****************************************************************************/
@@ -42,16 +29,20 @@
   #include <clib/amisslmaster_protos.h>
  #endif /* CLIB_AMISSLMASTER_PROTOS_H */
  #if defined(__GNUC__)
-  #ifndef __PPC__
-   #include <inline/amisslmaster.h>
-  #else /* __PPC__ */
-   #include <ppcinline/amisslmaster.h>
-  #endif /* __PPC__ */
+  #ifdef __AROS__
+   #include <defines/amisslmaster.h>
+  #else
+   #ifndef __PPC__
+    #include <inline/amisslmaster.h>
+   #else
+    #include <ppcinline/amisslmaster.h>
+   #endif /* __PPC__ */
+  #endif /* __AROS__ */
  #elif defined(__VBCC__)
   #ifndef __PPC__
    #include <inline/amisslmaster_protos.h>
   #endif /* __PPC__ */
- #else /* __GNUC__ */
+ #else
   #include <pragmas/amisslmaster_pragmas.h>
  #endif /* __GNUC__ */
 #endif /* __amigaos4__ */
