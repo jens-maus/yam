@@ -1718,13 +1718,9 @@
    t9 _##name##_v9 = (v9);					\
    t10 _##name##_v10 = (v10);					\
    t11 _##name##_v11 = (v11);					\
-   rt _##name##_re2 =						\
-   ({								\
-      register int _d1 __asm("d1");				\
-      register int _a0 __asm("a0");				\
-      register int _a1 __asm("a1");				\
+   {								\
       register rt _##name##_re __asm("d0");			\
-      register void *const _##name##_bn __asm("a6") = (bn);	\
+      register struct Library *const _##name##_bn __asm("a6") = (struct Library*)(bn); \
       register t1 _n1 __asm(#r1) = _##name##_v1;		\
       register t2 _n2 __asm(#r2) = _##name##_v2;		\
       register t3 _n3 __asm(#r3) = _##name##_v3;		\
@@ -1737,12 +1733,11 @@
       register t10 _n10 __asm(#r10) = _##name##_v10;		\
       register t11 _n11 __asm(#r11) = _##name##_v11;		\
       __asm volatile ("jsr a6@(-"#offs":W)"			\
-      : "=r" (_##name##_re), "=r" (_d1), "=r" (_a0), "=r" (_a1)	\
+      : "=r" (_##name##_re)					\
       : "r" (_##name##_bn), "rf"(_n1), "rf"(_n2), "rf"(_n3), "rf"(_n4), "rf"(_n5), "rf"(_n6), "rf"(_n7), "rf"(_n8), "rf"(_n9), "rf"(_n10), "rf"(_n11) \
-      : "fp0", "fp1", "cc", "memory");				\
+      : "d0", "d1", "a0", "a1", "fp0", "fp1", "cc", "memory");	\
       _##name##_re;						\
-   });								\
-   _##name##_re2;						\
+   }								\
 })
 
 #endif /* __INLINE_MACROS_H */
