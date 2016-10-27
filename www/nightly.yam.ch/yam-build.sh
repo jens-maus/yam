@@ -249,7 +249,7 @@ fi
 
 # undo all possible local changes to the local working copy so that
 # we won't get any conflicts.
-$(cd ${MODULE}; ${GIT} checkout . 2>&1 >/dev/null)
+$(cd ${MODULE}; ${GIT} clean -d -x -f 2>&1 >/dev/null)
 
 # now pull changes
 output=`cd ${MODULE}; ${GIT} pull 2>&1 | egrep "^Updating .{7}\.\..{7}" | cut -d' ' -f2`
