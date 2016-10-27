@@ -148,9 +148,9 @@ void rx_addrinfo(UNUSED struct RexxHost *host, struct RexxParams *params, enum R
             else
               params->rc = RETURN_ERROR;
           }
+          else
+            params->rc = RETURN_ERROR;
         }
-        else
-          params->rc = RETURN_ERROR;
       }
       else
         params->rc = RETURN_ERROR;
