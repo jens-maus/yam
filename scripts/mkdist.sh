@@ -40,10 +40,10 @@ case $2 in
   os3)         yamsys="os3"; yamplatform="os3"; yamarchive="AmigaOS3";;
   os4)         yamsys="os4"; yamplatform="os4"; yamarchive="AmigaOS4";;
   mos)         yamsys="mos"; yamplatform="mos"; yamarchive="MorphOS";;
-  aros-i386)   yamsys="aros-i386"; yamplatform="aros"; yamarchive="AROS-i386";;
-  aros-ppc)    yamsys="aros-ppc"; yamplatform="aros"; yamarchive="AROS-ppc";;
-  aros-x86_64) yamsys="aros-x86_64"; yamplatform="aros"; yamarchive="AROS-x86_64";;
-  aros-arm)    yamsys="aros-arm"; yamplatform="aros"; yamarchive="AROS-arm";;
+  aros-i386)   yamsys="aros-i386"; yamplatform="aros"; yamarchive="AROSi386";;
+  aros-ppc)    yamsys="aros-ppc"; yamplatform="aros"; yamarchive="AROSppc";;
+  aros-x86_64) yamsys="aros-x86_64"; yamplatform="aros"; yamarchive="AROSx86_64";;
+  aros-arm)    yamsys="aros-arm"; yamplatform="aros"; yamarchive="AROSarm";;
   *)           echo "ERROR: '$2' option (operating system) unknown."; exit 2;;
 esac
 
