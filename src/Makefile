@@ -899,13 +899,25 @@ txpush:
 
 .PHONY: release
 release: distclean
-	@cd ..; scripts/mkrelease.sh os3
-	@cd ..; scripts/mkrelease.sh os4
-	@cd ..; scripts/mkrelease.sh mos
-	@cd ..; scripts/mkrelease.sh aros-i386
-	@cd ..; scripts/mkrelease.sh aros-ppc
-	@cd ..; scripts/mkrelease.sh aros-x86_64
-	#@cd ..; scripts/mkrelease.sh aros-arm
+	@cd ..; scripts/mkdist.sh release os3
+	@cd ..; scripts/mkdist.sh release os4
+	@cd ..; scripts/mkdist.sh release mos
+	@cd ..; scripts/mkdist.sh release aros-i386
+	@cd ..; scripts/mkdist.sh release aros-ppc
+	@cd ..; scripts/mkdist.sh release aros-x86_64
+	#@cd ..; scripts/mkdist.sh release aros-arm
+
+## TO CREATE A NIGHTLY-BUILD ARCHIVE #######
+
+.PHONY: nightly
+nightly: distclean
+	@cd ..; scripts/mkdist.sh nightly os3
+	@cd ..; scripts/mkdist.sh nightly os4
+	@cd ..; scripts/mkdist.sh nightly mos
+	@cd ..; scripts/mkdist.sh nightly aros-i386
+	@cd ..; scripts/mkdist.sh nightly aros-ppc
+	@cd ..; scripts/mkdist.sh nightly aros-x86_64
+	#@cd ..; scripts/mkdist.sh nightly aros-arm
 
 ## TO CREATE A SNAPSHOT ARCHIVE #######
 
@@ -913,12 +925,6 @@ release: distclean
 snapshot: BUILDID = $(shell $(TOOLS)/gitrev.sh)
 snapshot: distclean all
 	@lha a YAM_$(OS)_$(shell $(TOOLS)/gitrev.sh).lha $(TARGET)*
-
-## TO CREATE A NIGHTLY-BUILD ARCHIVE #######
-
-.PHONY: nightly
-nightly: BUILDID = $(shell date +%Y%m%d)
-nightly: distclean all
 
 ## DEPENDENCY INCLUDE #################
 
