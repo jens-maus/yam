@@ -249,7 +249,7 @@ ifeq ($(OS), os3)
   CPU	    = -m68020-60 -msoft-float
   CFLAGS  += -mcrt=clib2 -I./include/netinclude -DNO_INLINE_STDARG -D__amigaos3__
   LDFLAGS += -mcrt=clib2
-  LDLIBS  += -ldebug -lmui
+  LDLIBS  = ./lib/os3/libtz.a ./lib/os3/libmui.a ./lib/os3/libm.a ./lib/os3/libdebug.a ./lib/os3/libamiga.a ./lib/os3/libc.a
   GCCVER  = 2
 
   EXTRAOBJS = AllocSysObject.o \
