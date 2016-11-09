@@ -194,7 +194,7 @@ OVERLOAD(MUIM_ContextMenuBuild)
     data->contextMenu = MenustripObject,
       Child, MenuObjectT(data->menuTitle),
         Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_UPD_NOTIFICATION_DOWNLOAD),              MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, UMEN_DOWNLOAD, End,
-        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_UPD_NOTIFICATION_DOWNLOAD_WITH_BROWSER), MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, UMEN_DOWNLOAD_WITH_BROWSER, End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, tr(MSG_UPD_NOTIFICATION_DOWNLOAD_WITH_BROWSER), MUIA_Menuitem_CopyStrings, FALSE, MUIA_UserData, UMEN_DOWNLOAD_WITH_BROWSER, MUIA_Menuitem_Enabled, GotoURLPossible(), End,
       End,
     End;
   }

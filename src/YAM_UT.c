@@ -5755,7 +5755,7 @@ BOOL GotoURL(const char *url, const BOOL newWindow)
         // let the user decide himself if he wants to see
         // it popping up in a new window or not (via OpenURL
         // prefs)
-       D(DBF_UTIL, "trying openurl.library to open URL '%s'", url);
+        D(DBF_UTIL, "trying openurl.library to open URL '%s'", url);
         wentToURL = URL_Open((STRPTR)url, URL_NewWindow, newWindow,
                                           TAG_DONE);
       }
