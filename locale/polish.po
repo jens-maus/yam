@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2016-11-26 21:58+0000\n"
+"PO-Revision-Date: 2016-11-26 22:07+0000\n"
 "Last-Translator: Mariusz Danilewicz <mandi@interia.pl>\n"
 "Language-Team: Polish (http://www.transifex.com/ato/yam/language/pl/)\n"
 "MIME-Version: 1.0\n"
@@ -3765,7 +3765,7 @@ msgstr "Łączenie z serwerem..."
 
 msgctxt "MSG_TR_WaitWelcome (1052//)"
 msgid "Connected, awaiting welcome message..."
-msgstr "Połączyłem, czekam na powitanie..."
+msgstr "Po‭‭‭‭łączono, oczekiwanie na powitanie..."
 
 msgctxt "MSG_TR_PopLogin (1054//)"
 msgid "POP3 login"
@@ -3777,43 +3777,43 @@ msgstr "Wysyłam informacje APOP..."
 
 msgctxt "MSG_TR_SendUserID (1056//)"
 msgid "Sending user ID..."
-msgstr "Wysyłam identyfikator użytkownika..."
+msgstr "Wysyłanie identyfikatora użytkownika..."
 
 msgctxt "MSG_TR_SendPassword (1057//)"
 msgid "Sending password..."
-msgstr "Wysyłam hasło..."
+msgstr "Wysyłanie hasła..."
 
 msgctxt "MSG_TR_GetStats (1058//)"
 msgid "Getting statistics..."
-msgstr "Pobieram statystyki..."
+msgstr "Pobieranie statystyk..."
 
 msgctxt "MSG_TR_Disconnecting (1059//)"
 msgid "Disconnecting..."
-msgstr "Rozłączam..."
+msgstr "Rozłączanie..."
 
 msgctxt "MSG_TR_ApplyFilters (1060//)"
 msgid "Applying remote filters..."
-msgstr "Używam filtrów zdalnych..."
+msgstr "Używanie filtrów zdalnych..."
 
 msgctxt "MSG_TR_SendHello (1061//)"
 msgid "Sending 'Hello'..."
-msgstr "Wysyłam \"Hello\"..."
+msgstr "Wysyłanie \"Hello\"..."
 
 msgctxt "MSG_TR_Exporting (1065//)"
 msgid "Exporting message..."
-msgstr "Eksportuję wiadomość..."
+msgstr "Eksportowanie wiadomości..."
 
 msgctxt "MSG_TR_Sending (1066//)"
 msgid "Sending message..."
-msgstr "Wysyłam wiadomość..."
+msgstr "Wysyłanie wiadomości..."
 
 msgctxt "MSG_TR_Importing (1067//)"
 msgid "Importing message..."
-msgstr "Importuję wiadomość..."
+msgstr "Importowanie wiadomości..."
 
 msgctxt "MSG_TR_DeletingServerMail (1068//)"
 msgid "Deleting mail on server..."
-msgstr "Usuwam pocztę z serwera..."
+msgstr "Usuwanie poczty z serwera..."
 
 #. COUNT, COUNT, COUNT, COUNT, COUNT, COUNT, COUNT
 msgctxt "MSG_TR_FilterStats (1070//)"
@@ -3836,17 +3836,17 @@ msgstr "Nowa poczta"
 
 msgctxt "MSG_TR_Downloading (1072//)"
 msgid "Downloading message..."
-msgstr "Odbieram wiadomość..."
+msgstr "Odbieranie wiadomości..."
 
 #. HOST
 msgctxt "MSG_TR_MailTransferFrom (1073//)"
 msgid "Mail transfer from '%s'"
-msgstr "Odbieram pocztę z \"%s\""
+msgstr "Odbieranie poczty z \"%s\""
 
 #. HOST
 msgctxt "MSG_TR_MailTransferTo (1074//)"
 msgid "Mail transfer to '%s'"
-msgstr "Wysyłam pocztę na \"%s\""
+msgstr "Wysyłanie poczty na \"%s\""
 
 msgctxt "MSG_TR_MsgInFile (1075//)"
 msgid "Messages in file %s"
@@ -3902,7 +3902,7 @@ msgctxt "MSG_HELP_TR_BT_ABORT (1093//)"
 msgid ""
 "Abort mail transfer\n"
 "as soon as possible."
-msgstr "Przerwij przesyłanie\ntak szybko jak\nbędzie to możliwe."
+msgstr "Przerywa przesyłanie\ntak szybko jak\nbędzie to możliwe."
 
 msgctxt "MSG_ER_ErrorMessages (1094//)"
 msgid "Error messages"
