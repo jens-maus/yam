@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2016-12-25 00:58+0000\n"
+"PO-Revision-Date: 2016-12-25 01:22+0000\n"
 "Last-Translator: Kabara Jaroslav <kabara.jaroslav@gmail.com>\n"
 "Language-Team: Czech (http://www.transifex.com/ato/yam/language/cs/)\n"
 "MIME-Version: 1.0\n"
@@ -9904,11 +9904,11 @@ msgid ""
 "hacked mail accounts in any way!\n"
 "\n"
 "You have been warned!"
-msgstr ""
+msgstr "Je povolen síťový debug výstup!\n\nVygenerovaný debug výstup bude obsahovat nezašifrované\na běžně čitelné hesla a jiné soukromé informace.\n\nNež tento výstup někde zveřejníte veřejně, ujistěte se, že jste \nz něj odstranili jakékoli soukromá data!\n\nVývojový tým v žádném případě nenese žádnou odpovědnost\nza hacknuté e-mailové účty!\n\nByli jste varování!"
 
 msgctxt "MSG_STARTUP_SECURITY_WARNING_GADGETS (2553//)"
 msgid "Understood"
-msgstr ""
+msgstr "Rozumím"
 
 msgctxt "MSG_FO_PATH_INVALID (2554//)"
 msgid "The path must be non-empty."
@@ -9916,7 +9916,7 @@ msgstr "Cesta nesmí být prázdná."
 
 msgctxt "MSG_FO_MLPATTERN_INVALID (2555//)"
 msgid "The pattern (To:/CC:) must be non-empty and no 'catch all'."
-msgstr ""
+msgstr "Vzor (Komu:/standardní kopie:) nesmí být prázdná a ne 'pro všechny'."
 
 msgctxt "MSG_FO_MLADDRESS_INVALID (2556//)"
 msgid "The destination address (To:) must be non-empty."
@@ -9924,7 +9924,7 @@ msgstr "Adresa příjemce (Kom_u:) nesmí být prázdná."
 
 msgctxt "MSG_CO_SAVE_WITHOUT_PRIVATE_DATA (2557//)"
 msgid "Save without private data..."
-msgstr ""
+msgstr "Uložit bez soukromých dat..."
 
 msgctxt "MSG_SSL_CERT_WARNING_SIGINVALID (2558//)"
 msgid "- The signature of the certificate is invalid."
@@ -9937,7 +9937,7 @@ msgid ""
 "(\\033bNO\\033n protection from fraud).\n"
 "\n"
 "Do you still want to accept the connection?"
-msgstr ""
+msgstr "Pokud budete pokračovat, bude datový přenos šifrován (ochrana\npřed odposlechem), ale nelze zaručit totožnost serveru\n(\\033bŽÁDNÁ\\033n ochrana před podvodem).\n\nOpravdu chcete přijmout toto spojení?"
 
 msgctxt "MSG_CO_POP_SERVER (2560//)"
 msgid "Serve_r"
@@ -9965,43 +9965,43 @@ msgstr "Standardní:"
 
 msgctxt "MSG_CO_POP3_TEST_CONNECTION_SETTINGS (2566//)"
 msgid "Test connection settings"
-msgstr ""
+msgstr "Vyzkoušet spojení se serverem"
 
 msgctxt "MSG_HELP_CO_BT_POPTEST (2567//)"
 msgid ""
 "Test the current settings to\n"
 "establish a reliable connection for\n"
 "POP3 downloads."
-msgstr ""
+msgstr "Vyzkouší aktuální nastavení pro\nnavázání spolehlivého spojení pro\nstahování pomocí POP3."
 
 msgctxt "MSG_CO_POP3_CONNECTION_TITLE (2568//)"
 msgid "POP3 connection"
-msgstr ""
+msgstr "Spojení s POP3 serverem"
 
 #. SERVER
 msgctxt "MSG_CO_POP3_CONNECTION_SUCCESS (2569//)"
 msgid "Connection to POP3 server '%s' was successful."
-msgstr ""
+msgstr "Spojení s POP3 serverem '%s' bylo úspěšné."
 
 #. SERVER
 msgctxt "MSG_CO_POP3_CONNECTION_FAILURE (2570//)"
 msgid "Connection to POP3 server '%s' failed."
-msgstr ""
+msgstr "Spojení s POP3 serverem '%s' nebylo úspěšné."
 
 msgctxt "MSG_CO_SMTP_TEST_CONNECTION_SETTINGS (2571//)"
 msgid "Test connection settings"
-msgstr ""
+msgstr "Vyzkoušet spojení se serverem"
 
 msgctxt "MSG_HELP_CO_BT_SMTPTEST (2572//)"
 msgid ""
 "Test the current settings to\n"
 "establish a reliable connection for\n"
 "SMTP uploads."
-msgstr ""
+msgstr "Vyzkouší aktuální nastavení pro\nnavázání spolehlivého spojení pro\nodesílání pomocí SMTP."
 
 msgctxt "MSG_CO_SMTP_CONNECTION_TITLE (2573//)"
 msgid "SMTP connection"
-msgstr ""
+msgstr "Spojení se SMTP serverem"
 
 #. SERVER
 msgctxt "MSG_CO_SMTP_CONNECTION_SUCCESS (2574//)"
@@ -10011,7 +10011,7 @@ msgstr "Spojení se SMTP serverem '%s' bylo úspěšné."
 #. SERVER
 msgctxt "MSG_CO_SMTP_CONNECTION_FAILURE (2575//)"
 msgid "Connection to SMTP server '%s' failed."
-msgstr ""
+msgstr "Spojení se SMTP serverem '%s' nebylo úspěšné."
 
 #. FILEPATH
 msgctxt "MSG_ER_WARN_CAFILE (2576//)"
@@ -10019,18 +10019,18 @@ msgid ""
 "While trying initialize the SSL certificate authorities the certificate bundle file '%s' was found to be missing.\n"
 "\n"
 "Please make sure that the file exists and is uptodate or otherwise each SSL connection will be flagged as unverified."
-msgstr ""
+msgstr "Nelze najít soubor s balíčkem certifikátů '%s'.\n\nDoplňte prosím tento soubor, jinak nelze ověřit zabezpečení spojení."
 
 #. ERRORNUM, ERRORSTR
 msgctxt "MSG_ER_CANNOT_OPEN_ASLREQ (2577//)"
 msgid ""
 "An error occurred while trying to open an ASL requester.\n"
 "Error %ld: %s"
-msgstr ""
+msgstr "Chyba při otevírání dialogového okna.\nChyba %ld: %s"
 
 msgctxt "MSG_FO_FOLDER_NAME_INVALID (2578//)"
 msgid "The specified folder name is invalid."
-msgstr ""
+msgstr "Zadaný název složky je neplatný."
 
 msgctxt "MSG_CO_ACCEPTED_SERVER_CERT_WARNINGS (2579//)"
 msgid "Permanently accepted server certificate warnings"
