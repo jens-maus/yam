@@ -5,7 +5,7 @@
 # Translators:
 # Jens Maus <mail@jens-maus.de>, 2014
 # Jens Maus <mail@jens-maus.de>, 2014
-# Kabara Jaroslav <kabara.jaroslav@gmail.com>, 2014
+# Kabara Jaroslav <kabara.jaroslav@gmail.com>, 2014,2016
 # Kabara Jaroslav <kabara.jaroslav@gmail.com>, 2014
 # Vit Sindlar <sindlarv@centrum.cz>, 2014
 msgid ""
@@ -13,8 +13,8 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2016-08-09 07:16+0000\n"
-"Last-Translator: Thore Böckelmann <tboeckel@gmx.de>\n"
+"PO-Revision-Date: 2016-12-25 00:58+0000\n"
+"Last-Translator: Kabara Jaroslav <kabara.jaroslav@gmail.com>\n"
 "Language-Team: Czech (http://www.transifex.com/ato/yam/language/cs/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -10034,12 +10034,12 @@ msgstr ""
 
 msgctxt "MSG_CO_ACCEPTED_SERVER_CERT_WARNINGS (2579//)"
 msgid "Permanently accepted server certificate warnings"
-msgstr ""
+msgstr "Trvale potvrdit upozornění na certifikát serveru"
 
 msgctxt "MSG_CO_CLEAR_SERVER_CERT_WARNINGS (2580//)"
 msgid "Clear warnings"
-msgstr ""
+msgstr "Vymazat upozornění"
 
 msgctxt "MSG_UPD_NOTIFICATION_DOWNLOAD_WITH_BROWSER (2581//)"
 msgid "Download update with browser..."
-msgstr ""
+msgstr "Stáhnout aktualizaci pomocí prohlížeče...."
