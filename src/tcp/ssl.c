@@ -1033,7 +1033,7 @@ BOOL InitSSLConnections(void)
 
   // try to open amisslmaster.library first
   if((AmiSSLMasterBase = OpenLibrary("amisslmaster.library", AMISSLMASTER_VERSION)) != NULL &&
-     LIB_VERSION_IS_AT_LEAST(AmiSSLMasterBase, AMISSLMASTER_VERSION, AMISSLMASTER_REVISION) && // minimum 3.5
+     LIB_VERSION_IS_AT_LEAST(AmiSSLMasterBase, AMISSLMASTER_VERSION, AMISSLMASTER_REVISION) &&
      GETINTERFACE("main", 1, IAmiSSLMaster, AmiSSLMasterBase))
   {
     if(InitAmiSSLMaster(AMISSL_VERSION, TRUE))
