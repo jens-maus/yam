@@ -496,7 +496,7 @@ static int GetCertFingerprint(const struct Certificate *cert, char *digest)
 ///
 /// ExtractReadableDN
 // extract a readable string of all issuers DNAME information
-static char *ExtractReadableDN(X509_NAME *dname)
+static char *ExtractReadableDN(const X509_NAME *dname)
 {
   char *result = NULL;
   int n;
@@ -509,10 +509,11 @@ static char *ExtractReadableDN(X509_NAME *dname)
   for(n = X509_NAME_entry_count(dname); n > 0; n--)
   {
     X509_NAME_ENTRY *ent = X509_NAME_get_entry(dname, n-1);
+    ASN1_OBJECT *obj = X509_NAME_ENTRY_get_object(ent);
 
     // Skip commonName or emailAddress except if there is no other
     // attribute in dname.
-    if((OBJ_cmp(ent->object, cname) && OBJ_cmp(ent->object, email)) ||
+    if((OBJ_cmp(obj, cname) && OBJ_cmp(obj, email)) ||
        (!flag && n == 1))
     {
       if(flag++)
@@ -954,7 +955,7 @@ BOOL MakeSecureConnection(struct Connection *conn)
                   #if defined(DEBUG)
                   {
                     char *x509buf;
-                    SSL_CIPHER *cipher;
+                    const SSL_CIPHER *cipher;
                     X509 *server_cert;
                     char peer_CN[256] = "";
 
@@ -1032,7 +1033,7 @@ BOOL InitSSLConnections(void)
 
   // try to open amisslmaster.library first
   if((AmiSSLMasterBase = OpenLibrary("amisslmaster.library", AMISSLMASTER_VERSION)) != NULL &&
-     LIB_VERSION_IS_AT_LEAST(AmiSSLMasterBase, AMISSLMASTER_VERSION, AMISSLMASTER_REVISION) && // minimum 3.5
+     LIB_VERSION_IS_AT_LEAST(AmiSSLMasterBase, AMISSLMASTER_VERSION, AMISSLMASTER_REVISION) &&
      GETINTERFACE("main", 1, IAmiSSLMaster, AmiSSLMasterBase))
   {
     if(InitAmiSSLMaster(AMISSL_VERSION, TRUE))
@@ -1058,11 +1059,11 @@ BOOL InitSSLConnections(void)
         RAND_seed(tmp, strlen(tmp));
 
         // 1) now we create a common SSL_CTX object which all our SSL connections will share
-        if((G->sslCtx = SSL_CTX_new(SSLv23_client_method())) == NULL)
+        if((G->sslCtx = SSL_CTX_new(TLS_client_method())) == NULL)
           E(DBF_NET, "AmiSSL: can't create SSL_CTX object!");
-        // 2) disable SSLv2 as it is insecure and obsolete
-        else if(isFlagClear(SSL_CTX_set_options(G->sslCtx, SSL_OP_ALL | SSL_OP_NO_SSLv2), SSL_OP_NO_SSLv2))
-          E(DBF_NET, "AmiSSL: SSLv2 couldn't be disabled. SSL: %s", ERR_error_string(ERR_get_error(), NULL));
+        // 2) set minimum allowed protocol version to SSL3 (SSLv2 is deprecated/insecure)
+        else if(SSL_CTX_set_min_proto_version(G->sslCtx, SSL3_VERSION) == 0)
+          E(DBF_NET, "AmiSSL: couldn't set minimum protocol version to SSL3. SSL: %s", ERR_error_string(ERR_get_error(), NULL));
         else
         {
           int rc = 0; // make sure set_default_verify_paths() is called

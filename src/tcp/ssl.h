@@ -34,9 +34,9 @@
 // forward declarations
 struct Connection;
 
-// make sure to open at least 3.5 of amisslmaster.library
-#define AMISSLMASTER_VERSION  3
-#define AMISSLMASTER_REVISION 5
+// make sure to open at least 4.0 of amisslmaster.library
+#define AMISSLMASTER_VERSION  4
+#define AMISSLMASTER_REVISION 0
 
 // AmiSSL/OpenSSL version to initialize
 #define AMISSL_VERSION AMISSL_CURRENT_VERSION
