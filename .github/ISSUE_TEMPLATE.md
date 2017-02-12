@@ -5,17 +5,16 @@
 --->
 
 ## Submission type
-  - [ ] Bug report
-  - [ ] Feature request
+  - Bug report / Feature Request
 
 ## YAM version
 [...]
 
 ## Used operating system
-  - [ ] AmigaOS3/m68k
-  - [ ] AmigaOS4/PPC
-  - [ ] MorphOS/PPC
-  - [ ] AROS
+  - AmigaOS3/m68k
+  - AmigaOS4/PPC
+  - MorphOS/PPC
+  - AROS
 
 ## Used Amiga system
 [...]
