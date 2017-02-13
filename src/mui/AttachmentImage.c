@@ -49,6 +49,22 @@
 #include <proto/icon.h>
 #include <proto/wb.h>
 
+#if defined(__amigaos4__)
+#include <graphics/blitattr.h>
+#ifndef MINTERM_ABC
+  #define MINTERM_ABC  0x80
+#endif
+#ifndef MINTERM_ABNC
+  #define MINTERM_ABNC 0x40
+#endif
+#ifndef MINTERM_ANBC
+  #define MINTERM_ANBC 0x20
+#endif
+#ifndef MINTERM_SRCMASK
+  #define MINTERM_SRCMASK (MINTERM_ABC | MINTERM_ABNC | MINTERM_ANBC)
+#endif
+#endif
+
 #include "YAM.h"
 #include "YAM_write.h"
 

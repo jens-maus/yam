@@ -271,11 +271,7 @@ LONG NewReadArgs(struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
         if(nrdargs->PrgToolTypesOnly && num)
           continue;
 
-        #if defined(__amigaos4__)
-        olddir = SetCurrentDir(wbarg->wa_Lock);
-        #else
         olddir = CurrentDir(wbarg->wa_Lock);
-        #endif
 
         /*- get tooltypes from .info file -*/
         dobj =
@@ -392,11 +388,7 @@ LONG NewReadArgs(struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
           FreeDiskObject(dobj);
         }
 
-        #if defined(__amigaos4__)
-        SetCurrentDir(olddir);
-        #else
         CurrentDir(olddir);
-        #endif
       }
 
       /*- now copy all given args to a single line -*/
