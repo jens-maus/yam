@@ -26,7 +26,7 @@
 #
 
 # User definable variables
-VERSION="1.4"                        # the version of the tool
+VERSION="1.5"                        # the version of the tool
 GIT=/usr/bin/git                     # path to the git tool
 GITROOT="https://github.com/jens-maus/yam.git"
 MODULE=yam                           # the main module to checkout
@@ -129,7 +129,7 @@ create_nightlies()
 # The main stuff starts here
 #
 echo >&2 "yam-build.sh v${VERSION} - a script to create the nightly builds for YAM"
-echo >&2 "Copyright (c) 2004-2016 Jens Maus <mail@jens-maus.de>"
+echo >&2 "Copyright (c) 2004-2017 Jens Maus <mail@jens-maus.de>"
 echo >&2
 
 # define the variables we know
@@ -166,8 +166,9 @@ echo "============================================="
 
 # let us do a fresh GIT checkout and see if something
 # has been updated or not
-echo "checking out GIT repository:"
-echo "============================"
+echo
+echo "updating GIT repository:"
+echo "======================="
 if [[ ! -e ${CHECKOUTDIR}/${MODULE}/.git ]]; then
   mkdir -p ${CHECKOUTDIR}/${MODULE}
   ${GIT} clone ${GITROOT} ${CHECKOUTDIR}/${MODULE}
@@ -185,23 +186,25 @@ fi
 
 # undo all possible local changes to the local working copy so that
 # we won't get any conflicts.
-$(cd ${MODULE}; ${GIT} reset --hard 2>&1 >/dev/null; ${GIT} clean -d -x -f 2>&1 >/dev/null)
+(cd ${MODULE}; ${GIT} reset --hard; ${GIT} clean -d -x -f)
 
 # now pull changes
-output=$(cd ${MODULE}; ${GIT} pull 2>&1 | egrep "^Updating .{7}\.\..{7}" | cut -d' ' -f2)
+output=$(cd ${MODULE}; ${GIT} pull 2>&1)
 if [[ ${force} != "force" ]]; then
   ret=1
-  for id in ${output}; do
+  update_output=$(echo "${output}" | egrep "^Updating .{7}\.\..{7}" | cut -d' ' -f2)
+  for id in ${update_output}; do
     output=`cd ${MODULE}; ${GIT} diff --name-only ${id}`
-    echo "$output" | egrep ".+\.[chl][d]*$" >/dev/null
+    echo "${update_output}" | egrep ".+\.[chl][d]*$" >/dev/null
     ret=$?
     if [[ ${ret} -eq 0 ]]; then
-      echo "$output"
+      echo "${update_output}"
       break
     fi
   done
-  echo "============================"
   if [[ ${ret} -ne 0 ]]; then
+    echo "${output}"
+    echo "============================"
     echo -n "no relevant changes found. checking last build date..."
     today=`expr \( \`date +%s\` - ${last_build} \) / 86400`
     echo -n "${today} days passed..."
@@ -211,6 +214,9 @@ if [[ ${force} != "force" ]]; then
       echo "no rebuild required."
       exit 0
     fi
+  else
+    echo "============================"
+    echo "relevant changes found, running build."
   fi
 else
   echo "forcing rebuild."
