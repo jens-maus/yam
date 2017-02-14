@@ -114,11 +114,11 @@
         return (STACK_OF(t1) *)OPENSSL_sk_deep_copy((const OPENSSL_STACK *)sk, \
                                             (OPENSSL_sk_copyfunc)copyfunc, \
                                             (OPENSSL_sk_freefunc)freefunc); \
-    } \
+    }/* THIS IS A WORKAROUND OF AN UNRESOLVED ISSUE WITH AMISSL4 AND AROS \
     static ossl_inline sk_##t1##_compfunc sk_##t1##_set_cmp_func(STACK_OF(t1) *sk, sk_##t1##_compfunc compare) \
     { \
         return (sk_##t1##_compfunc)OPENSSL_sk_set_cmp_func((OPENSSL_STACK *)sk, (OPENSSL_sk_compfunc)compare); \
-    }
+    }*/
 
 DEFINE_STACK_OF(SCT)
 DEFINE_STACK_OF(CTLOG)
