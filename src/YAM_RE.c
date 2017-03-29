@@ -3009,8 +3009,8 @@ BOOL RE_LoadMessage(struct ReadMailData *rmData)
 /// RE_ReadInMessage
 //  Reads a message into a dynamic buffer and returns this buffer.
 //  The text returned should *NOT* contain any MUI specific escape sequences, as
-//  we will later parse the buffer again before we put it into the texteditor. So no deeep lexical analysis
-//  are necessary here.
+//  we will later parse the buffer again before we put it into the texteditor.
+//  So no deep lexical analysis is necessary here.
 char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
 {
   struct Part *first;
@@ -3212,26 +3212,33 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
               W(DBF_MAIL, "Warning: EOF detected at pos %ld of '%s'", ftell(fh), part->Filename);
             }
 
-            // now we need to convert 'msg' (which is the text of our part) from UTF8
-            // to the local charset because the mail file is always saved as UTF8
-            if((cstr = CodesetsUTF8ToStr(CSA_Source,          msg,
-                                         CSA_SourceLen,       dstrlen(msg),
-                                         CSA_DestCodeset,     G->localCodeset,
-                                         CSA_DestLenPtr,      &cstrlen,
-                                         CSA_MapForeignChars, C->MapForeignChars,
-                                         TAG_DONE)) != NULL && cstrlen > 0)
+            // Apply the same logic as in RE_DecodeStream() for HTML parts.
+            // These are kept in their original codeset and hence don't need to be converted from UTF8
+            // unless they are really UTF8 encoded.
+            if((part->ContentType != NULL && strnicmp(part->ContentType, "text", 4) == 0 && stricmp(part->ContentType, "text/html") != 0) ||
+               (part->CParCSet != NULL && stricmp(part->CParCSet, "UTF-8") == 0))
             {
-              // if the size didn't change this should be a signal that nothing
-              // had been actually convert to UTF8
-              if(cstrlen != dstrlen(msg))
+              // now we need to convert 'msg' (which is the text of our part) from UTF8
+              // to the local charset because the mail file is always saved as UTF8
+              if((cstr = CodesetsUTF8ToStr(CSA_Source,          msg,
+                                           CSA_SourceLen,       dstrlen(msg),
+                                           CSA_DestCodeset,     G->localCodeset,
+                                           CSA_DestLenPtr,      &cstrlen,
+                                           CSA_MapForeignChars, C->MapForeignChars,
+                                           TAG_DONE)) != NULL && cstrlen > 0)
               {
-                // msg has been converted to local charset now, so lets
-                // copy it back
-                dstrcpy(&msg, cstr);
-              }
+                // if the size didn't change this should be a signal that nothing
+                // had been actually convert to UTF8
+                if(cstrlen != dstrlen(msg))
+                {
+                  // msg has been converted to local charset now, so lets
+                  // copy it back
+                  dstrcpy(&msg, cstr);
+                }
 
-              // free the converted string again
-              CodesetsFreeA(cstr, NULL);
+                // free the converted string again
+                CodesetsFreeA(cstr, NULL);
+              }
             }
 
             // now we analyze if that part of the mail text contains HTML
