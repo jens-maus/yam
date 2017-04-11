@@ -1,12 +1,13 @@
 # &nbsp;![YAM](https://yam.ch/chrome/site/yam.gif)
-
 <img src="https://yam.ch/chrome/site/mainabout.png" width=300 align="right" />
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8L52PD9A9WS36)
+
+[![Release](https://img.shields.io/github/release/jens-maus/yam.svg)](https://github.com/jens-maus/yam/releases/latest)
+[![Downloads](https://img.shields.io/github/downloads/jens-maus/yam/latest/total.svg)](https://github.com/jens-maus/yam/releases/latest)
+[![Issues](https://img.shields.io/github/issues/jens-maus/yam.svg)](https://github.com/jens-maus/yam/issues)
 [![Build Status](https://travis-ci.org/jens-maus/yam.svg?branch=master)](https://travis-ci.org/jens-maus/yam)
 [![Code Climate](https://codeclimate.com/github/jens-maus/yam/badges/gpa.svg)](https://codeclimate.com/github/jens-maus/yam)
 [![License](http://img.shields.io/:license-gpl2-blue.svg?style=flat)](http://www.gnu.org/licenses/gpl-2.0.html)
-[![Github Issues](http://githubbadges.herokuapp.com/jens-maus/yam/issues.svg)](https://github.com/jens-maus/yam/issues)
-[![Download](https://api.bintray.com/packages/jens-maus/yam/stable/images/download.svg)](https://bintray.com/jens-maus/yam/stable/_latestVersion)
+[![Donate](https://img.shields.io/badge/donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8L52PD9A9WS36)
 
 YAM (short for **Y**et **A**nother **M**ailer) is a MIME-compliant open-source mail user agent (MUA) written for Amiga-based computer
 systems (AmigaOS4, AmigaOS3, MorphOS, AROS). It supports POP3, SMTP, TLSv1/SSLv3 connection security, multiple users, multiple identities
