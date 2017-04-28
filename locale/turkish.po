@@ -6,7 +6,7 @@
 # İbrahim Alper Sönmez <amithlondestek@gmail.com>, 2013
 # İbrahim Alper Sönmez <amithlondestek@gmail.com>, 2014
 # Jens Maus <mail@jens-maus.de>, 2014
-# İbrahim Alper Sönmez <amithlondestek@gmail.com>, 2014-2016
+# İbrahim Alper Sönmez <amithlondestek@gmail.com>, 2014-2017
 # Jens Maus <mail@jens-maus.de>, 2014
 # Murat ENEZ <muratenez@gmail.com>, 2014
 # Murat ENEZ <muratenez@gmail.com>, 2014
@@ -15,7 +15,7 @@ msgstr ""
 "Project-Id-Version: YAM\n"
 "Report-Msgid-Bugs-To: http://yam.ch/\n"
 "POT-Creation-Date: 2014-02-01 17:13:00+0100\n"
-"PO-Revision-Date: 2016-10-13 06:17+0000\n"
+"PO-Revision-Date: 2017-04-28 12:38+0000\n"
 "Last-Translator: İbrahim Alper Sönmez <amithlondestek@gmail.com>\n"
 "Language-Team: Turkish (http://www.transifex.com/ato/yam/language/tr/)\n"
 "MIME-Version: 1.0\n"
@@ -10045,3 +10045,7 @@ msgstr "Uyarıları temizle"
 msgctxt "MSG_UPD_NOTIFICATION_DOWNLOAD_WITH_BROWSER (2581//)"
 msgid "Download update with browser..."
 msgstr "Güncellemeyi internet tarayıcısı ile indir..."
+
+msgctxt "MSG_NIGHTLY_EXPIRY_DATE (2582//)"
+msgid "\\033bThis nightly build expires on %s"
+msgstr "\\033bBu \"gece-yapımı\"nın son kullanma tarihi: %s"
