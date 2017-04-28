@@ -123,6 +123,7 @@ OVERLOAD(OM_NEW)
   Object *bt_donate;
   Object *bt_okay;
   Object *bt_gopage;
+  Object *infoGroup;
   Object *infoObject = NULL;
 
   // Now we create the about text
@@ -240,7 +241,6 @@ OVERLOAD(OM_NEW)
                           "\n"
                           "\n"
                           "\n";
-
   ENTER();
 
   compileInfo = (char *)xget(G->App, MUIA_YAMApplication_CompileInfo);
@@ -353,7 +353,7 @@ OVERLOAD(OM_NEW)
         Child, MakeImageObject("logo", logopath),
         Child, HSpace(0),
       End,
-      Child, HCenter((VGroup,
+      Child, HCenter((infoGroup = VGroup,
         Child, CLabel(tr(MSG_YAMINFO)),
         Child, CLabel(yamfullcopyright),
         Child, ColGroup(2),
@@ -414,11 +414,25 @@ OVERLOAD(OM_NEW)
     TAG_MORE, inittags(msg))) != NULL)
   {
     GETDATA;
+    #if defined(EXPDATE)
+    struct DateStamp expireDS;
+    char expireMessage[128];
+    char expireDate[32];
+    #endif
 
     DoMethod(G->App, OM_ADDMEMBER, obj);
 
     data->aboutText1 = aboutText1;
     data->aboutText2 = aboutText2;
+
+    #if defined(EXPDATE)
+    memset(&expireDS, 0, sizeof(expireDS));
+    expireDS.ds_Days = EXPDATE;
+    DateStamp2String(expireDate, sizeof(expireDate), &expireDS, DSS_DATE, TZC_NONE);
+    snprintf(expireMessage, sizeof(expireMessage), tr(MSG_NIGHTLY_EXPIRY_DATE), expireDate);
+
+    DoMethod(infoGroup, OM_ADDMEMBER, CLabel(expireMessage));
+    #endif
 
     DoMethod(obj,       MUIM_Notify, MUIA_Window_CloseRequest, TRUE, MUIV_Notify_Self, 3, MUIM_Set, MUIA_Window_Open, FALSE);
     DoMethod(bt_donate, MUIM_Notify, MUIA_Pressed, FALSE, obj, 2, METHOD(GotoYAMPage), "http://yam.ch/wiki/Donations");

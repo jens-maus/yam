@@ -196,7 +196,7 @@ WARN     = -W -Wall -Wwrite-strings -Wpointer-arith -Wsign-compare #-Wunreachabl
 OPTFLAGS = -O3 -fomit-frame-pointer -fno-strict-aliasing
 DEBUG    = -DDEBUG -fno-omit-frame-pointer #-O0
 DEBUGSYM = -g -gstabs
-CFLAGS   = -I. -I./include $(CPU) $(WARN) $(OPTFLAGS) $(DEBUG) $(DEBUGSYM)
+CFLAGS   = -I. -I./include $(CPU) $(WARN) $(OPTFLAGS) $(DEVFLAGS) $(DEBUG) $(DEBUGSYM)
 LDFLAGS  = $(CPU) $(DEBUGSYM)
 LDLIBS   = -L$(LIB) -lm -ltz
 
@@ -834,8 +834,6 @@ distclean: cleanall
 
 $(OBJDIR)/YAM_global.o: gitrev.h
 $(OBJDIR)/YAM_global.o: CFLAGS += $(YAMVERID)
-
-$(OBJDIR)/YAM.o: CFLAGS += $(DEVFLAGS)
 
 $(OBJDIR)/ParseEmail.o: CFLAGS += -Wno-sign-compare
 

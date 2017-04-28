@@ -82,6 +82,7 @@ OVERLOAD(OM_NEW)
     char logopath[SIZE_PATHFILE];
     char *compileInfo;
     Object *windowGroup;
+    Object *infoGroup;
     Object *statusGauge;
 
     compileInfo = (char *)xget(G->App, MUIA_YAMApplication_CompileInfo);
@@ -105,7 +106,7 @@ OVERLOAD(OM_NEW)
           Child, MakeImageObject("logo", logopath),
           Child, HSpace(0),
         End,
-        Child, HCenter((VGroup,
+        Child, HCenter((infoGroup = VGroup,
           Child, CLabel(tr(MSG_YAMINFO)),
           Child, CLabel(yamfullcopyright),
           Child, TextObject,
@@ -137,8 +138,22 @@ OVERLOAD(OM_NEW)
       TAG_MORE, inittags(msg))) != NULL)
     {
       GETDATA;
+      #if defined(EXPDATE)
+      struct DateStamp expireDS;
+      char expireMessage[128];
+      char expireDate[32];
+      #endif
 
       DoMethod(G->App, OM_ADDMEMBER, obj);
+
+      #if defined(EXPDATE)
+      memset(&expireDS, 0, sizeof(expireDS));
+      expireDS.ds_Days = EXPDATE;
+      DateStamp2String(expireDate, sizeof(expireDate), &expireDS, DSS_DATE, TZC_NONE);
+      snprintf(expireMessage, sizeof(expireMessage), tr(MSG_NIGHTLY_EXPIRY_DATE), expireDate);
+
+      DoMethod(infoGroup, OM_ADDMEMBER, CLabel(expireMessage));
+      #endif
 
       data->windowGroup = windowGroup;
       data->statusGauge = statusGauge;

@@ -10033,3 +10033,7 @@ msgstr "Clear warnings"
 msgctxt "MSG_UPD_NOTIFICATION_DOWNLOAD_WITH_BROWSER (2581//)"
 msgid "Download update with browser..."
 msgstr "Download update with browser..."
+
+msgctxt "MSG_NIGHTLY_EXPIRY_DATE (2582//)"
+msgid "\033bThis nightly build expires on %s"
+msgstr "\033bThis develonightlypment build expires on %s"
