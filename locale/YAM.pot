@@ -10036,4 +10036,4 @@ msgstr "Download update with browser..."
 
 msgctxt "MSG_NIGHTLY_EXPIRY_DATE (2582//)"
 msgid "\033bThis nightly build expires on %s"
-msgstr "\033bThis develonightlypment build expires on %s"
+msgstr "\033bThis nightly build expires on %s"
